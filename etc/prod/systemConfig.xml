@@ -706,6 +706,12 @@
 		<enabled type="Boolean">true</enabled>
 		<max_offline_size type="Integer">4096000</max_offline_size>
 
+		<!-- Archive settings -->
+		<archive>
+			<path>/home/backup/acars</path>		
+			<buckets type="Integer">384</buckets>
+		</archive>
+
 		<!-- Live Map settings -->		
 		<livemap>
 			<lat type="Double">38.88</lat>
