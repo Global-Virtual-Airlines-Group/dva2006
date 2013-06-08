@@ -29,6 +29,7 @@
 	<classpathentry kind="lib" path="lib/deploy/commons-codec-1.7.jar" sourcepath="lib/src/commons-codec-1.7-sources.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/edtftpj-2.3.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jdom-2.0.5.jar"/>
+	<classpathentry kind="lib" path="lib/jbzip2-0.9.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
