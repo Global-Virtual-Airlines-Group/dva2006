@@ -1,4 +1,4 @@
-// Copyright 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.io.File;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to manually download FAA approach charts.
  * @author Luke
- * @version 5.0
+ * @version 5.1
  * @since 5.0
  */
 
@@ -116,11 +116,19 @@ public class FAAChartDownloadCommand extends AbstractCommand {
 		
 		// Calculate cycle
 		Calendar cld = Calendar.getInstance();
-		int month = cld.get(Calendar.MONTH) + ((cld.get(Calendar.DAY_OF_MONTH) > 15) ? 2 : 1);
+		int month = cld.get(Calendar.MONTH);
 		int year = cld.get(Calendar.YEAR);
-		if (month - cld.get(Calendar.MONTH) > 2) {
-			month -= 12;
-			year++;
+		try {
+			GetNavCycle ncdao = new GetNavCycle(ctx.getConnection());
+			String cycleID = ncdao.getCycle(cld.getTime());
+			if ((cycleID != null) && (cycleID.length() > 3)) {
+				year = StringUtils.parse(cycleID.substring(0, 2), year-2000) + 2000;
+				month = StringUtils.parse(cycleID.substring(2, 4), month);
+			}
+		} catch (DAOException de) {
+			throw new CommandException(de);
+		} finally {
+			ctx.release();
 		}
 		
 		// Set request attributes
@@ -176,7 +184,7 @@ public class FAAChartDownloadCommand extends AbstractCommand {
 		}
 		
 		// Collections of charts to update
-		Collection<Integer> chartsToDelete = new HashSet<Integer>();
+		Collection<Integer> chartsToDelete = new LinkedHashSet<Integer>();
 		Collection<ExternalChart> chartsToLoad = new ArrayList<ExternalChart>();
 		Collection<LogMessage> msgs = new ArrayList<LogMessage>();
 		
