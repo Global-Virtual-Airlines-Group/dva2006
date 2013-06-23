@@ -18,7 +18,6 @@
 	<classpathentry kind="lib" path="lib/deploy/jstl.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/json-1.00.jar"/>
 	<classpathentry kind="lib" path="lib/servlet-api-3.0.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/javamail-1.4.5.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/spymemcached-2.8.2.jar" sourcepath="lib/src/spymemcached-2.8.2-sources.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="jar:platform:/resource/DVA2006/lib/src/spymemcached-2.8.2-javadocs.jar!/"/>
@@ -30,6 +29,7 @@
 	<classpathentry kind="lib" path="lib/deploy/edtftpj-2.3.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jdom-2.0.5.jar"/>
 	<classpathentry kind="lib" path="lib/jbzip2-0.9.1.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/javamail-1.5.0.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
