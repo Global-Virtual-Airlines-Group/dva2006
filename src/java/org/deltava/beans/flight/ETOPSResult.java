@@ -1,4 +1,4 @@
-// Copyright 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.comparators.GeoComparator;
 /**
  * A class to store ETOPS validation results.
  * @author Luke
- * @version 5.0
+ * @version 5.1
  * @since 4.1
  */
 
@@ -23,6 +23,21 @@ public class ETOPSResult {
 	private final GeoLocation _warnPoint;
 	private final Collection<String> _msgs = new ArrayList<String>();
 	
+	private class GeoCodeComparator implements Comparator<NavigationDataBean> {
+		private final GeoComparator _cp;
+		
+		GeoCodeComparator(GeoLocation cp) {
+			super();
+			_cp = new GeoComparator(cp);
+		}
+
+		@Override
+		public int compare(NavigationDataBean nd1, NavigationDataBean nd2) {
+			int tmpResult = _cp.compare(nd1, nd2);
+			return (tmpResult == 0) ? nd1.compareTo(nd2) : tmpResult;
+		}
+	}
+	
 	/**
 	 * Creates an empty results object.
 	 * @param e the ETOPS classification
@@ -31,7 +46,7 @@ public class ETOPSResult {
 		super();
 		_e = e;
 		_warnPoint = new GeoPosition();
-		_airports = new TreeSet<NavigationDataBean>(new GeoComparator(_warnPoint));
+		_airports = new TreeSet<NavigationDataBean>(new GeoCodeComparator(_warnPoint));
 	}
 
 	/**
@@ -45,7 +60,7 @@ public class ETOPSResult {
 		_e = e;
 		_msgs.addAll(msgs);
 		_warnPoint = (loc == null) ? new GeoPosition() : loc;
-		_airports = new TreeSet<NavigationDataBean>(new GeoComparator(_warnPoint));
+		_airports = new TreeSet<NavigationDataBean>(new GeoCodeComparator(_warnPoint));
 	}
 
 	/**
