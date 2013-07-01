@@ -1,4 +1,4 @@
-// Copyright 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to load ACARS build data. 
  * @author Luke
- * @version 5.0
+ * @version 5.1
  * @since 4.1
  */
 
@@ -36,14 +36,16 @@ public class GetACARSBuilds extends DAO {
 			prepareStatement("SELECT DATA FROM acars.VERSION_INFO WHERE (NAME=?) AND (VER=?) AND (DATA LIKE ?)");
 			_ps.setString(1, "beta");
 			_ps.setInt(2, ver.getVersion());
-			_ps.setString(3, String.valueOf(ver.getClientBuild()) + ".%");
+			_ps.setString(3, "%.%");
 			
 			ClientInfo inf = null;
 			try (ResultSet rs = _ps.executeQuery()) {
 				if (rs.next()) {
 					String info = rs.getString(1);
-					int beta = StringUtils.parse(info.substring(info.indexOf('.') + 1), 0);
-					inf = new ClientInfo(ver.getVersion(), ver.getClientBuild(), beta);
+					int pos = info.indexOf('.');
+					int build = StringUtils.parse(info.substring(0, pos), ver.getClientBuild());
+					int beta = StringUtils.parse(info.substring(pos + 1), 0);
+					inf = new ClientInfo(ver.getVersion(), build, beta);
 				}
 			}
 			
