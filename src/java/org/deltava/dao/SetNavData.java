@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -39,38 +39,46 @@ public class SetNavData extends DAO {
 			_ps.setString(2, ndata.getCode());
 			_ps.setDouble(3, ndata.getLatitude());
 			_ps.setDouble(4, ndata.getLongitude());
-			if (ndata.getType() == Navaid.VOR) {
+			switch (ndata.getType()) {
+			case VOR:
 				VOR vor = (VOR) ndata;
 				_ps.setString(5, vor.getFrequency());
 				_ps.setInt(6, 0);
 				_ps.setString(7, vor.getName());
 				_ps.setInt(8, 0);
-			} else if (ndata.getType() == Navaid.NDB) {
+				break;
+				
+			case NDB:
 				NDB ndb = (NDB) ndata;
 				_ps.setString(5, ndb.getFrequency());
 				_ps.setInt(6, 0);
 				_ps.setString(7, ndb.getName());
 				_ps.setInt(8, 0);
-			} else if (ndata.getType() == Navaid.AIRPORT) {
+				break;
+				
+			case AIRPORT:
 				AirportLocation al = (AirportLocation) ndata;
 				_ps.setString(5, "-");
 				_ps.setInt(6, al.getAltitude());
 				_ps.setString(7, al.getName());
 				_ps.setInt(8, 0);
-			} else if (ndata.getType() == Navaid.RUNWAY) {
+				break;
+				
+			case RUNWAY:
 				Runway rwy = (Runway) ndata;
 				_ps.setString(5, rwy.getFrequency());
 				_ps.setInt(6, rwy.getLength());
 				_ps.setString(7, rwy.getName());
 				_ps.setInt(8, rwy.getHeading());
-			} else {
+				break;
+				
+			default:
 				_ps.setString(5, "-");
 				_ps.setInt(6, 0);
 				_ps.setString(7, "-");
 				_ps.setInt(8, 0);
 			}
 
-			// Write to the database - and don't clear the prepared statement
 			_ps.executeUpdate();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -202,12 +210,14 @@ public class SetNavData extends DAO {
 	
 	/**
 	 * Copies navigation data from legacy airports.
+	 * @param navaidType the navigation aid type
 	 * @return the nuber of entries updated
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public int updateLegacy() throws DAOException {
+	public int updateLegacy(Navaid navaidType) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("REPLACE INTO common.NAVDATA (SELECT * FROM common.NAVLEGACY)");
+			prepareStatementWithoutLimits("REPLACE INTO common.NAVDATA (SELECT * FROM common.NAVLEGACY WHERE (ITEMTYPE=?))");
+			_ps.setInt(1, navaidType.ordinal());
 			return executeUpdate(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -271,10 +281,10 @@ public class SetNavData extends DAO {
 	 * @return the number of records deleted
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public int purgeTerminalRoutes(int routeType) throws DAOException {
+	public int purgeTerminalRoutes(TerminalRoute.Type routeType) throws DAOException {
 		try {
 			prepareStatementWithoutLimits("DELETE FROM common.SID_STAR WHERE (TYPE=?) AND (CAN_PURGE=?)");
-			_ps.setInt(1, routeType);
+			_ps.setInt(1, routeType.ordinal());
 			_ps.setBoolean(2, true);
 			return executeUpdate(0);
 		} catch (SQLException se) {
