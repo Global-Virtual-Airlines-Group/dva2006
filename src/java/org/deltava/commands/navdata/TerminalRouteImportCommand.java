@@ -133,18 +133,19 @@ public class TerminalRouteImportCommand extends AbstractCommand {
 			// Get the write DAO and purge the table
 			SetNavData dao = new SetNavData(con);
 			if (doPurge) {
-				int purgeCount = dao.purgeTerminalRoutes(routeType);
-				ctx.setAttribute("purgeCount", new Integer(purgeCount), REQUEST);	
+				int purgeCount = dao.purgeTerminalRoutes(rt);
+				ctx.setAttribute("purgeCount", Integer.valueOf(purgeCount), REQUEST);	
 			}
 
 			// Write the entries
-			for (Iterator<TerminalRoute> i = results.iterator(); i.hasNext(); ) {
-				tr = i.next();
-				if (tr.getTransition() != null) {
-					dao.writeRoute(tr);
-					entryCount++;
-				} else
-					errors.add(tr.getName() + " (" + tr.getICAO() + ") has no transition");
+			for (TerminalRoute trt : results) {
+				if (trt.getTransition() == null) {
+					errors.add(trt.getName() + " (" + trt.getICAO() + ") has no transition");
+					continue;
+				}
+				
+				dao.writeRoute(trt);
+				entryCount++;
 			}
 			
 			// Update the waypoint types
