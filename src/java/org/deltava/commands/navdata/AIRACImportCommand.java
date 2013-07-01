@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.io.*;
@@ -66,7 +66,7 @@ public class AIRACImportCommand extends AbstractCommand {
 		
 		Navaid nt = Navaid.values()[navaidType];
 		List<String> errors = new ArrayList<String>();
-		int entryCount = 0; int regionCount = 0;
+		int entryCount = 0; int regionCount = 0; int legacyCount = 0;
 		try {
 			Connection con = ctx.getConnection();
 			ctx.startTX();
@@ -74,7 +74,7 @@ public class AIRACImportCommand extends AbstractCommand {
 			// Get the write DAO
 			SetNavData dao = new SetNavData(con);
 			ctx.setAttribute("purgeCount", Integer.valueOf(dao.purge(nt)), REQUEST);
-			dao.updateLegacy();
+			legacyCount = dao.updateLegacy();
 
 			// Get the file - skipping the first line
 			InputStream is = navData.getInputStream();
@@ -211,6 +211,7 @@ public class AIRACImportCommand extends AbstractCommand {
 		// Set status attributes
 		ctx.setAttribute("entryCount", Integer.valueOf(entryCount), REQUEST);
 		ctx.setAttribute("regionCount", Integer.valueOf(regionCount), REQUEST);
+		ctx.setAttribute("legacyCount", Integer.valueOf(legacyCount), REQUEST);
 		ctx.setAttribute("navaidType", nt, REQUEST);
 		ctx.setAttribute("isImport", Boolean.TRUE, REQUEST);
 		ctx.setAttribute("navData", Boolean.TRUE, REQUEST);
