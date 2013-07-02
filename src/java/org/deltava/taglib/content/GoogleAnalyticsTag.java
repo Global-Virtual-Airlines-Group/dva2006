@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import javax.servlet.jsp.*;
@@ -9,7 +9,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP Tag to embed Google analytics data.
  * @author Luke
- * @version 5.0
+ * @version 5.1
  * @since 1.0
  */
 
@@ -47,7 +47,7 @@ public class GoogleAnalyticsTag extends TagSupport {
 		else
 			out.print("://www");
 		
-		out.println(".google-analytics.com/ga.js\" type=\"text/javascript\"></script>");
+		out.println(".google-analytics.com/ga.js\"></script>");
 		
 		// Write the analytics script
 		out.println("<script type=\"text/javascript\">");
@@ -76,7 +76,7 @@ public class GoogleAnalyticsTag extends TagSupport {
 	 */
 	private void writeAsync(String accountID) throws Exception {
 		JspWriter out = pageContext.getOut();
-		out.println("<script type=\"text/javascript\">");
+		out.println("<script>");
 		out.println("var _gaq = _gaq || [];");
 		out.println("_gaq.push(['_setAccount', '" + accountID + "']);");
 		out.println("_gaq.push(['_trackPageview']);");
@@ -95,6 +95,7 @@ public class GoogleAnalyticsTag extends TagSupport {
 	 * @return TagSupport#EVAL_PAGE always
 	 * @throws JspException if an I/O error occurs
 	 */
+	@Override
 	public int doEndTag() throws JspException {
 		String accountID = SystemData.get("security.key.analytics");
 		if (accountID == null)
@@ -117,6 +118,7 @@ public class GoogleAnalyticsTag extends TagSupport {
 	/**
 	 * Releases the tag's state variables.
 	 */
+	@Override
 	public void release() {
 		_eventSupport = false;
 		_asyncLoad = true;
