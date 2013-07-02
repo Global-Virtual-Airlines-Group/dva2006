@@ -7,8 +7,9 @@ import java.util.concurrent.atomic.AtomicLong;
 import javax.servlet.jsp.*;
 import javax.servlet.jsp.tagext.TagSupport;
 
-import org.deltava.taglib.ContentHelper;
+import org.json.JSONObject;
 
+import org.deltava.taglib.ContentHelper;
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
@@ -25,6 +26,7 @@ public class InsertGoogleAPITag extends TagSupport {
 	static final String API_VER_ATTR_NAME = "$googleMapAPIVersion$";
 	
 	private static final int MIN_API_VERSION = 2;
+	private static final String DEFAULT_V3_MINOR = "12";
 	
 	private static final String V2_API_URL = "http://maps.google.com/maps?file=api&amp;v=";
 	private static final String V3_API_URL = "http://maps.googleapis.com/maps/api/js?sensor=false&amp;v=";
@@ -83,7 +85,7 @@ public class InsertGoogleAPITag extends TagSupport {
 		
 		// Translate stable/release v3 to minor version
 		if ((_majorVersion == 3) && (_minorVersion == null))
-			_minorVersion = "11";
+			_minorVersion = DEFAULT_V3_MINOR;
 		else if ((_majorVersion == 2) && (_minorVersion == null))
 			_minorVersion = "s";
 		
@@ -121,7 +123,7 @@ public class InsertGoogleAPITag extends TagSupport {
 		
 		JspWriter out = pageContext.getOut();
 		try {
-			out.print("<script type=\"text/javascript\" src=\"");
+			out.print("<script src=\"");
 			out.print((_majorVersion == 3) ? V3_API_URL : V2_API_URL);
 			out.print(String.valueOf(_majorVersion));
 			if (_minorVersion != null) {
@@ -143,22 +145,23 @@ public class InsertGoogleAPITag extends TagSupport {
 			
 			out.println("\"></script>");
 			
+			// Build the Map context object
+			JSONObject mco = new JSONObject();
+			mco.put("IMG_PATH", SystemData.get("path.img"));
+			mco.put("API", _majorVersion);
+			mco.put("tileHost", SystemData.get("weather.tileHost"));
+			mco.put("multiHost", SystemData.getBoolean("weather.multiHost"));
+			mco.put("seriesData", Collections.emptyMap());
+			
 			// Init common code
-			out.println("<script type=\"text/javascript\">");
-			out.print("golgotha.maps = { IMG_PATH:\'");
-			out.print(SystemData.get("path.img"));		
-			out.print("\', API:");
-			out.print(String.valueOf(_majorVersion));
-			out.print(", tileHost:\'");
-			out.print(SystemData.get("weather.tileHost"));
-			out.print("\', multiHost:");
-			out.print(SystemData.getBoolean("weather.multiHost"));
-			out.print(", seriesData: {}");
-			out.println("};</script>");
+			out.println("<script>");
+			out.print("golgotha.maps = ");
+			out.print(mco.toString());
+			out.println(";</script>");
 			
 			// Add JS support file
 			String jsFileName = "googleMapsV" + String.valueOf(_majorVersion);
-			out.print("<script type=\"text/javascript\" src=\"");
+			out.print("<script src=\"");
 			out.print(SystemData.get("path.js"));
 			out.print('/');
 			out.print(jsFileName);
