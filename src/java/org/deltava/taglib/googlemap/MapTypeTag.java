@@ -33,7 +33,7 @@ public class MapTypeTag extends GoogleMapEntryTag {
 		_mapVar = varName;
 	}
 
-	/**
+	/*
 	 * Helper method to convert short codes into map type object names.
 	 */
 	private String convertType(String type) {

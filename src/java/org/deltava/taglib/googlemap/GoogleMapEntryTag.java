@@ -40,14 +40,10 @@ abstract class GoogleMapEntryTag extends JSTag {
 		if (!ContentHelper.containsContent(pageContext, "JS", API_JS_NAME))
 			throw new IllegalStateException("Google Maps API not included in request");
 		
-		// Get the API version
-		Integer rawVersion = (Integer) pageContext.getAttribute(InsertGoogleAPITag.API_VER_ATTR_NAME, PageContext.REQUEST_SCOPE);
-		_apiVersion = (rawVersion == null) ? 3 : rawVersion.intValue();
-
 		// Check for Google Maps support JavaScript
-		String jsFileName = (_apiVersion == 3) ? "googleMapsV3" : "googleMapsV2"; 
+		String jsFileName = (getAPIVersion() == 3) ? "googleMapsV3" : "googleMapsV2"; 
 		if (!ContentHelper.containsContent(pageContext, "JS", jsFileName))
-			throw new IllegalStateException("googleMaps.js not included in request");
+			throw new IllegalStateException(jsFileName + ".js not included in request");
 		
 		return SKIP_BODY;
 	}
@@ -57,6 +53,11 @@ abstract class GoogleMapEntryTag extends JSTag {
 	 * @return the API major version
 	 */
 	protected int getAPIVersion() {
+		if (_apiVersion == 0) {
+			Integer rawVersion = (Integer) pageContext.getAttribute(InsertGoogleAPITag.API_VER_ATTR_NAME, PageContext.REQUEST_SCOPE);
+			_apiVersion = (rawVersion == null) ? 3 : rawVersion.intValue();	
+		}
+		
 		return _apiVersion;
 	}
 
