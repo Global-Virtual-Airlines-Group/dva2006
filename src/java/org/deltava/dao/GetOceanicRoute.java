@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object for Oceanic Routes.
  * @author Luke
- * @version 4.1
+ * @version 5.1
  * @since 1.0
  */
 
@@ -131,50 +131,48 @@ public class GetOceanicRoute extends GetNavAirway {
     			_ps.setTimestamp(2, createTimestamp(dt));
     		
     		// Execute the query
-    		OceanicTrack wp = null;
-    		DailyOceanicTracks results = new DailyOceanicTracks(routeType, dt);
-    		Map<String, NavigationDataBean> wps = new HashMap<String, NavigationDataBean>();
+    		OceanicTrack trk = null;
+    		Collection<OceanicTrack> tmpResults = new ArrayList<OceanicTrack>();
     		try (ResultSet rs = _ps.executeQuery()) {
     			while (rs.next()) {
     				String newTrack = rs.getString(3);
-    				if ((wp == null) || (!newTrack.equals(wp.getTrack()))) {
-    					wp = new OceanicTrack(routeType, newTrack);
-    					wp.setDate(rs.getTimestamp(2));
-    					results.addTrack(wp);
+    				if ((trk == null) || (!newTrack.equals(trk.getTrack()))) {
+    					trk = new OceanicTrack(routeType, newTrack);
+    					trk.setDate(rs.getTimestamp(2));
+    					tmpResults.add(trk);
     				}
     			
-    				// Get the waypoint
-    				String code = rs.getString(5);
-    				NavigationDataBean nd = wps.get(code);
-    				if (nd != null) {
-    					StringBuilder buf = new StringBuilder(nd.getAirway());
-    					buf.append(", ");
-    					buf.append(wp.getCode());
-    					nd.setAirway(buf.toString());
-    				} else {
-    					NavigationDataMap ndmap = get(code);
-    					nd = ndmap.get(code, new GeoPosition(rs.getDouble(6), rs.getDouble(7)));
-    					if (nd != null) {
-    						try {
-    							NavigationDataBean nd2 = (NavigationDataBean) nd.clone();
-    							if (StringUtils.isEmpty(nd2.getAirway()))
-    								nd2.setAirway(wp.getCode());
-    							
-    							wps.put(code, nd2);
-    							nd = nd2;
-    						} catch (CloneNotSupportedException cnse) {
-    							// 	empty
-    						}
-    					}
-    				}
-    			
-    				// Add the waypoint
-    				if (nd != null)
-    					wp.addWaypoint(nd);
+    				// Get the waypoint placeholder - we'll populate later
+    				Intersection np = new Intersection(rs.getString(5), rs.getDouble(6), rs.getDouble(7));
+    				trk.addWaypoint(np);
     			}
     		}
     		
     		_ps.close();
+    		
+    		// Now populate the waypoint data using a different prepared statement
+    		DailyOceanicTracks results = new DailyOceanicTracks(routeType, dt);
+    		for (OceanicTrack ot : tmpResults) {
+    			OceanicTrack nt = new OceanicTrack(ot.getType(), ot.getTrack());
+    			for (NavigationDataBean np : ot.getWaypoints()) {
+    				NavigationDataMap ndmap = get(np.getCode());
+    				NavigationDataBean nd = ndmap.get(np.getCode(), np);
+    				if (nd != null) {
+						try {
+							NavigationDataBean nd2 = (NavigationDataBean) nd.clone();
+							if (StringUtils.isEmpty(nd2.getAirway()))
+								nd2.setAirway(nt.getCode());
+							
+							nt.addWaypoint(nd2);
+						} catch (CloneNotSupportedException cnse) {
+							// 	empty
+						}
+    				}
+    			}
+    			
+    			results.addTrack(nt);
+    		}
+
     		return results;
     	} catch (SQLException se) {
     		throw new DAOException(se);
