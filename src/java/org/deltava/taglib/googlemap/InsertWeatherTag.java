@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP Tag to insert weather.com Series List data into a JSP page. 
  * @author Luke
- * @version 5.0
+ * @version 5.1
  * @since 3.0
  */
 
@@ -105,7 +105,7 @@ public class InsertWeatherTag extends TagSupport {
 
 		try {
 			JspWriter out = pageContext.getOut();
-			out.print("<script id=\"ginsuLoader\" type=\"text/javascript\" src=\"http://");
+			out.print("<script id=\"ginsuLoader\" src=\"http://");
 			out.print(host);
 			out.print("/TileServer/jserieslist.do?function=");
 			out.print(_jsFunc);
