@@ -26,7 +26,7 @@ public class InsertGoogleAPITag extends TagSupport {
 	static final String API_VER_ATTR_NAME = "$googleMapAPIVersion$";
 	
 	private static final int MIN_API_VERSION = 2;
-	private static final String DEFAULT_V3_MINOR = "12";
+	private static final String DEFAULT_V3_MINOR = "13";
 	
 	private static final String V2_API_URL = "http://maps.google.com/maps?file=api&amp;v=";
 	private static final String V3_API_URL = "http://maps.googleapis.com/maps/api/js?sensor=false&amp;v=";
@@ -155,6 +155,7 @@ public class InsertGoogleAPITag extends TagSupport {
 			
 			// Init common code
 			out.println("<script>");
+			out.println("google.maps.visualRefresh = true;");
 			out.print("golgotha.maps = ");
 			out.print(mco.toString());
 			out.println(";</script>");
