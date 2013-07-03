@@ -1,14 +1,16 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
 
 import org.apache.log4j.Logger;
 
+import java.util.concurrent.Future;
+
 /**
  * A utility class to handle Thread operations.
  * @author Luke
- * @version 2.6
+ * @version 5.1
  * @since 1.0
  */
 
@@ -120,5 +122,21 @@ public class ThreadUtils {
 					worker.interrupt();
 			}
 		}
+	}
+
+	/**
+	 * Waits for a collection of operations to complete. 
+	 * @param futures a Collection of Futures
+	 */
+	public static void waitOnFutures(Collection<Future<?>> futures) {
+		final Collection<Future<?>> fPool = new ArrayList<Future<?>>(futures);
+		do {
+			sleep(125);
+			for (Iterator<Future<?>> i = fPool.iterator(); i.hasNext(); ) {
+				Future<?> f = i.next();
+				if (f.isDone())
+					i.remove();
+			}
+		} while (!fPool.isEmpty() && (!Thread.currentThread().isInterrupted()));
 	}
 }
