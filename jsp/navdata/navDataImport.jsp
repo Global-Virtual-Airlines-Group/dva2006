@@ -19,7 +19,7 @@ if (!checkSubmit()) return false;
 isOK = false;
 fName = form.navData.value.substring(form.navData.value.lastIndexOf('\\') + 1).toLowerCase();
 for (x = 0; x < dataFiles.length && !isOK; x++)
-	isOK = isOK || (fName == dataFiles[x]) || (fName == (dataFiles[x] + '.gz'));
+	isOK = isOK || (fName == dataFiles[x]) || (fName == (dataFiles[x] + '.gz')) || (fName == (dataFiles[x] + '.bz2'));
 	
 if (!isOK) {
 	alert('This does not appear to be a valid PSS AIRAC data file.');
