@@ -56,7 +56,7 @@ public class AIRACImportCommand extends AbstractCommand {
 
 		// Strip out .gz extension
 		String name = navData.getName();
-		if (name.endsWith(".gz"))
+		if (name.endsWith(".gz") || name.endsWith(".bz2"))
 			name = name.substring(0, name.lastIndexOf('.'));
 
 		// Get the navaid type

@@ -11,7 +11,7 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-var dataFiles = ['pssawy.dat'];
+var dataFiles = ['pssawy.dat','pssawy.dat.gz','pssawy.dat.bz2'];
 function validate(form)
 {
 if (!checkSubmit()) return false;
@@ -19,7 +19,7 @@ if (!checkSubmit()) return false;
 var isOK = false;
 fName = form.navData.value.substring(form.navData.value.lastIndexOf('\\') + 1).toLowerCase();
 for (x = 0; x < dataFiles.length && !isOK; x++)
-	isOK = isOK || (fName == dataFiles[x]) || (fName == (dataFiles[x] + '.gz'));
+	isOK |= (fName == dataFiles[x]);
 	
 if (!isOK) {
 	alert('This does not appear to be a valid PSS AIRAC data file.');
