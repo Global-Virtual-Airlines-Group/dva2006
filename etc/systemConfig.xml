@@ -5,7 +5,7 @@
 	<airline>
 		<name>Delta Virtual Airlines</name>
 		<domain>deltava.org</domain>
-		<url>dva2006.deltava.org</url>
+		<url>dev.deltava.org</url>
 		<banner>DeltaBanner.png</banner>
 		<code>DVA</code>
 		<forum>Water Cooler</forum>
@@ -114,7 +114,7 @@
 		
 		<partner>
 			<name>Air France Virtual</name>
-			<url>afv2006.afva.net</url>
+			<url>dev.afva.net</url>
 			<location>European</location>
 		</partner>	
 		
@@ -194,7 +194,7 @@
 	<!-- JDBC data source configuration -->
 	<jdbc>
 		<driver>com.mysql.jdbc.Driver</driver>
-		<url>jdbc:mysql://polaris.sce.net/dva</url>
+		<url>jdbc:mysql://localhost/dva</url>
 		<user>dva</user>
 		<pwd>***REMOVED***</pwd>
 		
