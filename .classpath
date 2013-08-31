@@ -29,8 +29,8 @@
 	<classpathentry kind="lib" path="lib/deploy/jdom-2.0.5.jar" sourcepath="lib/src/jdom-2.0.5-sources.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/javamail-1.5.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-5.1.25-bin.jar" sourcepath="lib/src/mysql-connector-java-5.1.25-src.zip"/>
-	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-1.71.jar" sourcepath="/IPC"/>
 	<classpathentry kind="lib" path="lib/deploy/jbzip2-0.9.1.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-1.80.jar" sourcepath="/IPC"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
