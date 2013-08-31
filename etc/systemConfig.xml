@@ -199,6 +199,7 @@
 		<pwd>m4n3l5</pwd>
 		
 		<map name="connectProperties">
+			<socket>/var/run/mysql/mysql.sock</socket>
 			<useCompression>false</useCompression>
 			<useUnicode>true</useUnicode>
 			<characterEncoding>UTF-8</characterEncoding>
@@ -207,9 +208,9 @@
 			<cachePrepStmts>true</cachePrepStmts>
 			<cacheResultSetMetadata>false</cacheResultSetMetadata>
 			<continueBatchOnError>true</continueBatchOnError>
-			<useServerPrepStmts>false</useServerPrepStmts>
+			<useServerPrepStmts>true</useServerPrepStmts>
 			<dontTrackOpenResources>true</dontTrackOpenResources>
-			<useLocalSessionState>false</useLocalSessionState>
+			<useLocalSessionState>true</useLocalSessionState>
 			<useCursorFetch>true</useCursorFetch>
 			<maintainTimeStats>false</maintainTimeStats>
 			<validationQuery>/* ping */</validationQuery>
