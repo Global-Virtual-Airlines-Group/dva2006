@@ -1,7 +1,6 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
-import java.io.*;
 import java.util.*;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -16,7 +15,6 @@ import org.deltava.beans.system.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-import org.deltava.dao.file.SetProperties;
 import org.deltava.security.*;
 
 import org.deltava.util.*;
@@ -25,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to Authenticate users.
  * @author Luke
- * @version 5.0
+ * @version 5.1
  * @since 1.0
  */
 
@@ -269,6 +267,14 @@ public class LoginCommand extends AbstractCommand {
 
 			// Add the user to the User pool
 			UserPool.add(p, s.getId(), addrInfo, userAgent);
+			
+			// Check if we need to save maximum users
+			if (UserPool.getMaxSizeDate().after(maxUserDate)) {
+				String prefix = SystemData.get("airline.code").toLowerCase();
+				SetMetadata mdwdao = new SetMetadata(con);
+				mdwdao.write(prefix + ".users.max.count", String.valueOf(UserPool.getMaxSize()));
+				mdwdao.write(prefix + ".users.max.date", StringUtils.format(UserPool.getMaxSizeDate(), "MM/dd/yyyy HH:mm"));
+			}
 
 			// Commit the transaction
 			ctx.commitTX();
@@ -282,22 +288,6 @@ public class LoginCommand extends AbstractCommand {
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
-		}
-
-		// Check if we need to save maximum users
-		if (UserPool.getMaxSizeDate().after(maxUserDate)) {
-			File f = new File("/var/cache", SystemData.get("airline.code").toLowerCase() + ".maxUsers.properties");
-			try {
-				Properties props = new Properties();
-				props.setProperty("users", String.valueOf(UserPool.getMaxSize()));
-				props.setProperty("date", StringUtils.format(UserPool.getMaxSizeDate(), "MM/dd/yyyy HH:mm"));
-
-				// Save properties
-				SetProperties pdao = new SetProperties(new FileOutputStream(f));
-				pdao.save(props, SystemData.get("airline.name") + " Maximum Users");
-			} catch (Exception ex) {
-				log.warn("Cannot save Maximum User count/date");
-			}
 		}
 
 		// Check if we are going to save the first/last names
