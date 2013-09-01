@@ -4,7 +4,7 @@ package org.deltava.beans;
 import java.io.*;
 import java.util.zip.*;
 
-import org.itadaki.bzip2.BZip2InputStream;
+import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 
 /**
  * A bean to store File Upload data in an HTTP servlet request. This bean can automatically
@@ -57,7 +57,7 @@ public class FileUpload {
     
     /**
      * Returns an input stream backed by the buffer. This will automatically generate a
-     * {@link GZIPInputStream} if the data is already in GZIP format, or a {@link BZip2InputStream}
+     * {@link GZIPInputStream} if the data is already in GZIP format, or a {@link BZip2CompressorInputStream}
      * if the data is already in BZip2 format. If the raw data needs to be obtained, wrapping a
      * {@link ByteArrayInputStream} around the buffer should be used.
      * @return an input stream
@@ -69,7 +69,7 @@ public class FileUpload {
     		if (_name.endsWith(".gz"))
     			return new GZIPInputStream(is);
     		else if (_name.endsWith(".bz2"))
-    			return new BZip2InputStream(is, false);
+    			return new BZip2CompressorInputStream(is);
     	} catch (Exception e) {
     		return is;
     	}
