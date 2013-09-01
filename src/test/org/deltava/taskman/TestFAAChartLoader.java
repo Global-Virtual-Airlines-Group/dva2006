@@ -41,7 +41,7 @@ public class TestFAAChartLoader extends TestCase {
 		ConnectionPool jdbcPool = new ConnectionPool(10, "DVA");
 		jdbcPool.setProperties((Map<?, ?>) SystemData.getObject("jdbc.connectProperties"));
 		jdbcPool.setCredentials("luke", "14072");
-		jdbcPool.setProperty("url", SystemData.get("jdbc.url"));
+		jdbcPool.setURL(SystemData.get("jdbc.url"));
 		jdbcPool.setDriver(SystemData.get("jdbc.driver"));
 		jdbcPool.connect(SystemData.getInt("jdbc.pool_size"));
 		SystemData.add(SystemData.JDBC_POOL, jdbcPool);
