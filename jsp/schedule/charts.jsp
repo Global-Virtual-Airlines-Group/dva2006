@@ -72,9 +72,16 @@ return true;
  <td colspan="7" class="left"><content:airline /> AIRPORT / APPROACH / PROCEDURE CHARTS</td>
 </tr>
 <tr>
- <td class="priB right" style="color: #ffffff; font-size: 8pt;">Filter Options</td>
+ <td class="priB right" style="color:#ffffff; font-size: 8pt;">Filter Options</td>
  <td colspan="6" width="90%" class="left"><el:check name="chartType" className="small" idx="*" width="180" options="${chartTypes}" checked="${selectedTypes}" onChange="void updateVisibility()" /></td>
 </tr>
+<c:if test="${!empty currentCycle}">
+<!-- Chart cycle data -->
+<tr>
+ <td colspan="7">Current Approach / Procedure chart download cycle: <span class="pri bld">${currentCycle}</span>, released on
+ <fmt:date fmt="d" date="${currentCycle.releasedOn}" d="EEEE MMMM dd, YYYY" /></td>
+</tr>
+</c:if>
 <tr class="title">
  <td colspan="2">CHART NAME</td>
  <td style="width:20%">CHART TYPE</td>
@@ -111,10 +118,9 @@ return true;
 </c:choose>
 </view:row>
 </c:forEach>
-
 <c:if test="${anyPDF}">
 <!-- Download Acrobat link -->
-<tr valign="middle">
+<tr>
  <td><a href="http://www.adobe.com/products/acrobat/readstep2.html" rel="external"><el:img src="library/getacro.png" className="noborder" caption="Download Adobe Acrobat Reader" /></a></td>
  <td colspan="6">Some approach charts require <span class="pri bld">Adobe Acrobat Reader 10</span> or newer in order to be viewed. If you are having difficulties 
  viewing our charts, please click on the link to the left to download the latest version of Adobe Acrobat Reader. This is a free download.</td>
