@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.io.*;
@@ -7,23 +7,20 @@ import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.navdata.*;
-
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-
 import org.deltava.security.command.ScheduleAccessControl;
-
 import org.deltava.util.StringUtils;
 import org.deltava.util.cache.CacheManager;
 
 /**
  * A Web Site Command to import airway data in PSS format.
  * @author Luke
- * @version 5.0
+ * @version 5.1
  * @since 2.0
  */
 
-public class AirwayImportCommand extends AbstractCommand {
+public class AirwayImportCommand extends NavDataImportCommand {
 
 	/**
 	 * Executes the command.
@@ -41,6 +38,10 @@ public class AirwayImportCommand extends AbstractCommand {
 		access.validate();
 		if (!access.getCanImport())
 			throw securityException("Cannot import Navigation Data");
+		
+		// Load the data
+		CycleInfo inf = getCurrrentCycle(ctx);
+		ctx.setAttribute("currentNavCycle", inf, REQUEST);
 
 		// If we're doing a GET, then redirect to the JSP
 		FileUpload navData = ctx.getFile("navData");
@@ -51,19 +52,25 @@ public class AirwayImportCommand extends AbstractCommand {
 		}
 		
 		List<String> errors = new ArrayList<String>();
-		boolean doPurge = Boolean.valueOf(ctx.getParameter("doPurge")).booleanValue();
-		int entryCount = 0;
-		try {
-			// Get the file
-			InputStream is = navData.getInputStream();
+		Collection<Airway> results = new ArrayList<Airway>();
+		int entryCount = 0; CycleInfo newCycle = null;
+		try (InputStream is = navData.getInputStream()) {
 			LineNumberReader br = new LineNumberReader(new InputStreamReader(is));
+			br.readLine();
 			
 			// Iterate through the file
 			Airway a = null; int lastSeq = -1; String lastCode = "";
-			Collection<Airway> results = new ArrayList<Airway>();
 			while (br.ready()) {
-				String txtData = br.readLine().replace(" ", "");
-				if ((!txtData.startsWith(";")) && (txtData.length() > 5)) {
+				String txtData = br.readLine(); boolean isComment = txtData.startsWith(";");
+				if (isComment && (newCycle == null)) {
+					int pos = txtData.indexOf("AIRAC Cycle : ");
+					if (pos != -1) {
+						newCycle = new CycleInfo(txtData.substring(pos+14, pos+18));
+						if (newCycle.compareTo(inf) == -1)
+							throw new IllegalStateException("Navigation Data Cycle " + newCycle + " is older than loaded cycle " + inf);
+					}
+				} else if (!isComment && (txtData.length() > 5)) {
+					txtData = txtData.replace(" ", "");
 					List<String> codes = StringUtils.split(txtData, ",");
 					String code = codes.get(1);
 					if ((!code.equals(lastCode)) || ("0".equals(codes.get(6)))) {
@@ -90,40 +97,37 @@ public class AirwayImportCommand extends AbstractCommand {
 					}
 				}
 			}
+		} catch (IOException | IllegalStateException ie) {
+			throw new CommandException(ie);
+		}
 			
-			// Close the stream
-			is.close();
-
-			// Get a connection
+		// Get a connection
+		try {
 			Connection con = ctx.getConnection();
 			ctx.startTX();
-
+			
 			// Get the write DAO and purge the table
 			SetNavData dao = new SetNavData(con);
+			boolean doPurge = Boolean.valueOf(ctx.getParameter("doPurge")).booleanValue();
 			if (doPurge) {
 				int purgeCount = dao.purgeAirways();
-				ctx.setAttribute("purgeCount", new Integer(purgeCount), REQUEST);
+				ctx.setAttribute("purgeCount", Integer.valueOf(purgeCount), REQUEST);
+				ctx.setAttribute("doPurge", Boolean.TRUE, REQUEST);
 			}
 			
 			// Write the airways
-			for (Iterator<Airway> i = results.iterator(); i.hasNext(); ) {
-				a = i.next();
-				dao.write(a);
+			for (Airway aw : results) {
+				dao.write(aw);
 				entryCount++;
 			}
 			
-			// Update the waypoint types
+			// Update the waypoint types and commit
 			int regionCount = dao.updateAirwayWaypoints();
-			ctx.setAttribute("regionCount", new Integer(regionCount), REQUEST);
-			
-			// Commit
+			ctx.setAttribute("regionCount", Integer.valueOf(regionCount), REQUEST);
 			ctx.commitTX();
 		} catch (DAOException de) {
 			ctx.rollbackTX();
 			throw new CommandException(de);
-		} catch (IOException ie) {
-			ctx.rollbackTX();
-			throw new CommandException(ie);
 		} finally {
 			ctx.release();
 		}
@@ -135,8 +139,8 @@ public class AirwayImportCommand extends AbstractCommand {
 		// Set status attributes
 		ctx.setAttribute("entryCount", Integer.valueOf(entryCount), REQUEST);
 		ctx.setAttribute("isImport", Boolean.TRUE, REQUEST);
-		ctx.setAttribute("doPurge", Boolean.valueOf(doPurge), REQUEST);
 		ctx.setAttribute("airway", Boolean.TRUE, REQUEST);
+		ctx.setAttribute("navCycleID", newCycle, REQUEST);
 		
 		// Save error messages
 		if (!errors.isEmpty())
