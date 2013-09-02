@@ -7,14 +7,10 @@ import java.sql.Connection;
 
 import org.deltava.beans.FileUpload;
 import org.deltava.beans.navdata.*;
-
-import org.deltava.service.navdata.DispatchDataService;
-
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-
 import org.deltava.security.command.ScheduleAccessControl;
-
+import org.deltava.service.navdata.DispatchDataService;
 import org.deltava.util.StringUtils;
 import org.deltava.util.cache.CacheManager;
 
@@ -25,7 +21,7 @@ import org.deltava.util.cache.CacheManager;
  * @since 1.0
  */
 
-public class AIRACImportCommand extends AbstractCommand {
+public class AIRACImportCommand extends NavDataImportCommand {
 
 	private static final String[] UPLOAD_NAMES = { "pssapt.dat", "pssvor.dat", "pssndb.dat", "psswpt.dat", "pssrwy.dat" };
 
@@ -45,7 +41,11 @@ public class AIRACImportCommand extends AbstractCommand {
 		access.validate();
 		if (!access.getCanImport())
 			throw securityException("Cannot import Navigation Data");
-
+		
+		// Load the data
+		CycleInfo inf = getCurrrentCycle(ctx);
+		ctx.setAttribute("currentNavCycle", inf, REQUEST);
+		
 		// If we're doing a GET, then redirect to the JSP
 		FileUpload navData = ctx.getFile("navData");
 		if (navData == null) {
@@ -66,24 +66,31 @@ public class AIRACImportCommand extends AbstractCommand {
 		
 		Navaid nt = Navaid.values()[navaidType];
 		List<String> errors = new ArrayList<String>();
-		int entryCount = 0; int regionCount = 0;
-		try {
+		int entryCount = 0; int regionCount = 0; CycleInfo newCycle = null;
+		try (InputStream is = navData.getInputStream()) {
 			Connection con = ctx.getConnection();
 			ctx.startTX();
-
+			
 			// Get the write DAO
 			SetNavData dao = new SetNavData(con);
 			ctx.setAttribute("purgeCount", Integer.valueOf(dao.purge(nt)), REQUEST);
 			ctx.setAttribute("legacyCount", Integer.valueOf(dao.updateLegacy(nt)), REQUEST);
 
 			// Get the file - skipping the first line
-			InputStream is = navData.getInputStream();
 			LineNumberReader br = new LineNumberReader(new InputStreamReader(is));
+			br.readLine();
 
 			// Iterate through the file
 			while (br.ready()) {
-				String txtData = br.readLine();
-				if ((!txtData.startsWith(";")) && (txtData.length() > 5)) {
+				String txtData = br.readLine(); boolean isComment = txtData.startsWith(";"); 
+				if ((newCycle == null) && isComment) {
+					int pos = txtData.indexOf("AIRAC Cycle : ");
+					if (pos != -1) {
+						newCycle = new CycleInfo(txtData.substring(pos+14, pos+18));
+						if (newCycle.compareTo(inf) == -1)
+							throw new DAOException("Navigation Data Cycle " + newCycle + " is older than loaded cycle " + inf);
+					}
+				} else if (!isComment && (txtData.length() > 5)) {
 					double lat, lon;
 					NavigationDataBean nd = null;
 
@@ -186,16 +193,14 @@ public class AIRACImportCommand extends AbstractCommand {
 
 			// Update the regions
 			regionCount = dao.updateRegions(nt);
-
-			// Commit and close down the stream
+			
+			// Write the cycle ID and commit
+			SetMetadata mdwdao = new SetMetadata(con);
+			mdwdao.write("navdata.cycle", newCycle.toString());
 			ctx.commitTX();
-			is.close();
-		} catch (IOException ie) {
+		} catch (IOException | DAOException ie) {
 			ctx.rollbackTX();
 			throw new CommandException(ie);
-		} catch (DAOException de) {
-			ctx.rollbackTX();
-			throw new CommandException(de);
 		} finally {
 			ctx.release();
 		}
@@ -212,6 +217,7 @@ public class AIRACImportCommand extends AbstractCommand {
 		ctx.setAttribute("entryCount", Integer.valueOf(entryCount), REQUEST);
 		ctx.setAttribute("regionCount", Integer.valueOf(regionCount), REQUEST);
 		ctx.setAttribute("navaidType", nt, REQUEST);
+		ctx.setAttribute("navCycleID", newCycle, REQUEST);
 		ctx.setAttribute("isImport", Boolean.TRUE, REQUEST);
 		ctx.setAttribute("navData", Boolean.TRUE, REQUEST);
 

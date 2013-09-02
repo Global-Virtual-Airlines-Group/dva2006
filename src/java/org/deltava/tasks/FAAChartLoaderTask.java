@@ -4,12 +4,13 @@ package org.deltava.tasks;
 import java.io.File;
 import java.util.*;
 import java.util.concurrent.*;
+import java.sql.Connection;
 
+import org.deltava.beans.navdata.CycleInfo;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.dao.*;
 import org.deltava.dao.http.*;
-
 import org.deltava.taskman.*;
 
 import org.deltava.util.*;
@@ -88,10 +89,10 @@ public class FAAChartLoaderTask extends Task {
 		int month = cld.get(Calendar.MONTH); int year = cld.get(Calendar.YEAR);
 		try {
 			GetNavCycle ncdao = new GetNavCycle(ctx.getConnection());
-			String cycleID = ncdao.getCycle(cld.getTime());
-			if ((cycleID != null) && (cycleID.length() > 3)) {
-				year = StringUtils.parse(cycleID.substring(0, 2), year-2000) + 2000;
-				month = StringUtils.parse(cycleID.substring(2, 4), month);
+			CycleInfo cycleInfo = ncdao.getCycle(cld.getTime());
+			if (cycleInfo != null) {
+				year = cycleInfo.getYear();
+				month = cycleInfo.getSequence();
 			}
 		} catch (DAOException de) {
 			log.error(de.getMessage(), de);
@@ -101,7 +102,7 @@ public class FAAChartLoaderTask extends Task {
 		
 		// Calculate URL and local file name
 		String baseURL = SystemData.get("schedule.chart.url.faa");
-		baseURL = baseURL.replace("${YY}", StringUtils.format(year, "yy")).replace("${MM}", StringUtils.format(month, "00"));
+		baseURL = baseURL.replace("${YY}", StringUtils.format(year, "00")).replace("${MM}", StringUtils.format(month, "00"));
 		String localName = "faaChartMetadata-${YY}${MM}.xml".replace("${MM}", StringUtils.format(month, "00")).replace("${YY}", StringUtils.format(year, "00"));
 		boolean noDL = SystemData.getBoolean("schedule.chart.noDownload");
 
@@ -179,9 +180,13 @@ public class FAAChartLoaderTask extends Task {
 		log.info("Added " + addCnt + ", updated " + updCnt + ", deleted " + delCnt + " charts");
 		
 		try {
-			SetChart cwdao = new SetChart(ctx.getConnection()); ctx.startTX();
+			Connection con = ctx.getConnection();
+			SetChart cwdao = new SetChart(con); ctx.startTX();
 			for (Integer id : chartsToDelete)
 				cwdao.delete(id.intValue());
+			
+			SetMetadata mddao = new SetMetadata(con);
+			mddao.write("charts.cycle.faa", StringUtils.format(year, "00") +  StringUtils.format(month, "00"));
 			
 			// Commit and release
 			ctx.commitTX(); ctx.release();

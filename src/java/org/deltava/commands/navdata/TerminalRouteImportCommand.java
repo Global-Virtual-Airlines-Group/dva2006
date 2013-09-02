@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.io.*;
@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
  * @since 2.0
  */
 
-public class TerminalRouteImportCommand extends AbstractCommand {
+public class TerminalRouteImportCommand extends NavDataImportCommand {
 
 	private static final Logger log = Logger.getLogger(TerminalRouteImportCommand.class);
 	
@@ -49,6 +49,10 @@ public class TerminalRouteImportCommand extends AbstractCommand {
 		access.validate();
 		if (!access.getCanImport())
 			throw securityException("Cannot import Navigation Data");
+		
+		// Load the data
+		CycleInfo inf = getCurrrentCycle(ctx);
+		ctx.setAttribute("currentNavCycle", inf, REQUEST);
 
 		// If we're doing a GET, then redirect to the JSP
 		FileUpload navData = ctx.getFile("navData");
@@ -60,7 +64,7 @@ public class TerminalRouteImportCommand extends AbstractCommand {
 		
 		// Strip out .gz extension
 		String name = navData.getName();
-		if (name.endsWith(".gz"))
+		if (name.endsWith(".gz") || name.endsWith(".bz2"))
 			name = name.substring(0, name.lastIndexOf('.'));
 		
 		// Get the navaid type
@@ -76,7 +80,7 @@ public class TerminalRouteImportCommand extends AbstractCommand {
 			br = new LineNumberReader(new InputStreamReader(is));
 			
 			// Iterate through the file
-			TerminalRoute tr = null;
+			TerminalRoute tr = null; 
 			Collection<String> IDs = new HashSet<String>();
 			Collection<String> trIDs = new HashSet<String>();
 			Collection<TerminalRoute> results = new ArrayList<TerminalRoute>();

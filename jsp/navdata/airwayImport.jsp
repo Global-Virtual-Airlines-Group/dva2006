@@ -3,6 +3,7 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <html lang="en">
 <head>
 <title><content:airline /> Airway Data Import</title>
@@ -44,12 +45,17 @@ return true;
 <el:form action="awyimport.do" method="post" allowUpload="true" validate="return validate(this)">
 <el:table className="form">
 <tr class="title caps">
- <td colspan="2">PSS AIRAC NAVIGATION DATA UPLOAD</td>
+ <td colspan="2">AIRAC NAVIGATION DATA UPLOAD</td>
+</tr>
+<tr>
+ <td class="label">Current Cycle</td>
+ <td class="data"><span class="pri bld">${currentNavCycle}</span><c:if test="${!empty currentNavCycle.releasedOn}">, released on 
+ <fmt:date date="${currentNavCycle.releasedOn}" fmt="d" d="EEEE MMMM dd, YYYY" /></c:if></td>
 </tr>
 <tr>
  <td class="label">Upload Data File</td>
  <td class="data"><el:file name="navData" idx="*" className="small req" size="80" max="144" />&nbsp;
-<span class="small">AIRAC data must be in PSS Format.</span></td>
+<span class="small ita">AIRAC data must be in PSS Format.</span></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
