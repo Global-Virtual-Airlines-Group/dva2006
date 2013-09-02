@@ -1,7 +1,8 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
+import java.sql.Connection;
 
 import org.deltava.beans.schedule.*;
 
@@ -15,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display Approach Charts.
  * @author Luke
- * @version 4.2
+ * @version 5.1
  * @since 1.0
  */
 
@@ -43,10 +44,22 @@ public class ChartsCommand extends AbstractCommand {
         access.validate();
         ctx.setAttribute("access", access, REQUEST);
 
-        // Get charts for the airport
         try {
-            GetChart dao = new GetChart(ctx.getConnection());
+        	Connection con = ctx.getConnection();
+        	
+        	// Load the chars
+            GetChart dao = new GetChart(con);
             ctx.setAttribute("charts", dao.getCharts(a), REQUEST);
+            
+            // If this is a US airport, get the chart cycle data
+            if (a.getCountry().equals("US")) {
+            	GetMetadata mddao = new GetMetadata(con);
+            	String chartCycleID = mddao.get("charts.cycle.faa");
+            	if (chartCycleID != null) {
+            		GetNavCycle ncdao = new GetNavCycle(con);
+            		ctx.setAttribute("currentCycle", ncdao.getCycle(chartCycleID), REQUEST);
+            	}
+            }
         } catch (DAOException de) {
             throw new CommandException(de);
         } finally {

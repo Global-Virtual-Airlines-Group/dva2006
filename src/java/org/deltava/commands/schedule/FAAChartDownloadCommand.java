@@ -4,11 +4,13 @@ package org.deltava.commands.schedule;
 import java.io.File;
 import java.util.*;
 import java.util.concurrent.*;
+import java.sql.Connection;
 
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.ComboAlias;
 import org.deltava.beans.schedule.*;
+import org.deltava.beans.navdata.CycleInfo;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -115,16 +117,13 @@ public class FAAChartDownloadCommand extends AbstractCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Calculate cycle
+		CycleInfo cycleInfo = null;
 		Calendar cld = Calendar.getInstance();
-		int month = cld.get(Calendar.MONTH);
-		int year = cld.get(Calendar.YEAR);
 		try {
 			GetNavCycle ncdao = new GetNavCycle(ctx.getConnection());
-			String cycleID = ncdao.getCycle(cld.getTime());
-			if ((cycleID != null) && (cycleID.length() > 3)) {
-				year = StringUtils.parse(cycleID.substring(0, 2), year-2000) + 2000;
-				month = StringUtils.parse(cycleID.substring(2, 4), month);
-			}
+			cycleInfo = ncdao.getCycle(cld.getTime());
+			if (cycleInfo == null)
+				cycleInfo = CycleInfo.getCurrent();
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
@@ -134,15 +133,15 @@ public class FAAChartDownloadCommand extends AbstractCommand {
 		// Set request attributes
 		Collection<Integer> yrs = new TreeSet<Integer>();
 		yrs.add(Integer.valueOf(cld.get(Calendar.YEAR)));
-		yrs.add(Integer.valueOf(year));
+		yrs.add(Integer.valueOf(cycleInfo.getYear()));
 		ctx.setAttribute("months", MONTHS, REQUEST);
 		ctx.setAttribute("years", yrs, REQUEST);
 
 		// Get comamnd result
 		CommandResult result = ctx.getResult();
 		if (ctx.getParameter("month") == null) {
-			ctx.setAttribute("m", StringUtils.format(month, "00"), REQUEST);
-			ctx.setAttribute("y", Integer.valueOf(year), REQUEST);
+			ctx.setAttribute("m", StringUtils.format(cycleInfo.getSequence(), "00"), REQUEST);
+			ctx.setAttribute("y", Integer.valueOf(cycleInfo.getYear()), REQUEST);
 			
 			// Send to the JSP
 			result.setURL("/jsp/schedule/faaChartDownload.jsp");
@@ -232,13 +231,18 @@ public class FAAChartDownloadCommand extends AbstractCommand {
 		}
 		
 		try {
-			SetChart cwdao = new SetChart(ctx.getConnection());
+			Connection con = ctx.getConnection();
+			SetChart cwdao = new SetChart(con);
 			ctx.startTX();
 			for (Integer id : chartsToDelete)
 				cwdao.delete(id.intValue());
 			
 			ctx.commitTX();
 			ctx.release();
+			
+			// Write the cycle
+			SetMetadata mddao = new SetMetadata(con);
+			mddao.write("charts.cycle.faa", StringUtils.format(y, "00") + ctx.getParameter("month")); 
 			
 			// Create the thread pool
 			BlockingQueue<ExternalChart> work = new LinkedBlockingQueue<ExternalChart>();
