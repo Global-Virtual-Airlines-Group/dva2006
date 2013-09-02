@@ -290,6 +290,7 @@ public class GetNavAirway extends GetNavData {
 	public Collection<TerminalRoute> getAll() throws DAOException {
 		try {
 			prepareStatementWithoutLimits("SELECT * FROM common.SID_STAR ORDER BY ICAO, NAME, TRANSITION, RUNWAY, SEQ");
+			_ps.setFetchSize(2500);
 			List<TerminalRoute> results = executeSIDSTAR();
 			return results;
 		} catch (SQLException se) {
@@ -410,7 +411,7 @@ public class GetNavAirway extends GetNavData {
 		}
 	}
 	
-	/**
+	/*
 	 * Helper method to iterate through a SID_STAR result set.
 	 */
 	private List<TerminalRoute> executeSIDSTAR() throws SQLException {

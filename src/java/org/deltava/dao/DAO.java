@@ -145,7 +145,7 @@ public abstract class DAO {
 
 		// Set the query timeout and fetch size
 		_ps.setQueryTimeout(_queryTimeout);
-		_ps.setFetchSize(Math.min(100, _queryMax));
+		_ps.setFetchSize(Math.min(250, _queryMax));
 		_queryCount.incrementAndGet();
 	}
 
@@ -160,7 +160,7 @@ public abstract class DAO {
 	protected void prepareStatementWithoutLimits(String sql) throws SQLException {
 		_ps = _c.prepareStatement(sql);
 		_ps.setQueryTimeout(_queryTimeout);
-		_ps.setFetchSize(100);
+		_ps.setFetchSize(500);
 		_queryCount.incrementAndGet();
 	}
 
