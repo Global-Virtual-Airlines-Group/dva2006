@@ -7,10 +7,12 @@ import java.sql.Connection;
 
 import org.deltava.beans.FileUpload;
 import org.deltava.beans.navdata.*;
+
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+
 import org.deltava.security.command.ScheduleAccessControl;
-import org.deltava.service.navdata.DispatchDataService;
+
 import org.deltava.util.StringUtils;
 import org.deltava.util.cache.CacheManager;
 
@@ -205,14 +207,13 @@ public class AIRACImportCommand extends NavDataImportCommand {
 			ctx.release();
 		}
 
-		// Purge the dispatch web service file cache and navdata cache
-		DispatchDataService.invalidate();
+		// Purge the navdata cache
 		CacheManager.invalidate("NavData");
 		CacheManager.invalidate("NavAirway");
 		CacheManager.invalidate("NavRunway");
 		CacheManager.invalidate("NavSIDSTAR");
 		CacheManager.invalidate("NavRoute");
-
+		
 		// Set status attributes
 		ctx.setAttribute("entryCount", Integer.valueOf(entryCount), REQUEST);
 		ctx.setAttribute("regionCount", Integer.valueOf(regionCount), REQUEST);
