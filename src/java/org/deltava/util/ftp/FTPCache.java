@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.ftp;
 
 import java.io.*;
@@ -6,13 +6,12 @@ import java.util.Date;
 import java.util.zip.*;
 
 import org.apache.log4j.Logger;
-
 import org.deltava.util.*;
 
 /**
  * A utility class to provide cached access to a remote FTP server.
  * @author Luke
- * @version 5.0
+ * @version 5.1
  * @since 1.0
  */
 
@@ -148,7 +147,8 @@ public class FTPCache {
 			throw new FTPClientException("Cannot download " + fileName);
 
 		// If the file name ends with .zip, then wrap in a ZIP stream
-		if (fileName.toLowerCase().endsWith(".zip")) {
+		String fn = fileName.toLowerCase();
+		if (fn.endsWith(".zip")) {
 			ZipInputStream zis = new ZipInputStream(is);
 			try {
 				ZipEntry entry = zis.getNextEntry();
@@ -156,6 +156,13 @@ public class FTPCache {
 				return zis;
 			} catch (IOException ie) {
 				throw new FTPClientException("Error opening ZIP file - " + ie.getMessage());
+			}
+		} else if (fn.endsWith(".gz")) {
+			try {
+				log.info("Detected ZIP File - Returning " + fn.substring(0, fn.length() - 3));
+				return new GZIPInputStream(is);
+			} catch (IOException ie) {
+				throw new FTPClientException("Error opening GZIP file - " + ie.getMessage());
 			}
 		}
 
