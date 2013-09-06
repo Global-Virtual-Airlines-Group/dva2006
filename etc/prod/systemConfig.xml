@@ -741,6 +741,7 @@
 		<enabled type="Boolean">true</enabled>
 		<minFlights type="Integer">1</minFlights>
 		<eqType>EMB-120</eqType>
+		<ato type="Boolean">true</ato>
 	</academy>
 
 	<!-- Help Desk Data -->
