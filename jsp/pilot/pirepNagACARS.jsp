@@ -23,7 +23,7 @@
 <br />
 <span class="bld ita">Do you know that you can log all of your Flights here at <content:airline /> automatically?</span><br />
 <br />
-Our ACARS package has successfully logged thousands of <content:airline /> flights and provides a wealth of information to
+Our ACARS package has successfully logged hundreds of thousands of <content:airline /> flights and provides a wealth of information to
 Pilots about their route and flight data. Additionally, ACARS allows you to communicate with other <content:airline /> Pilots while
 flying, load Charts and Navigation information and load fuel on your aircraft based on your route and weather conditions. The
 vast majority of our Flight Reports are logged using ACARS because it makes the process so easy.<br />
@@ -42,8 +42,9 @@ You can download ACARS from the <content:airline /> <el:cmd url="fleetlibrary" c
 are two different versions of ACARS available for download, depending on your needs and your computer's capabilities. ACARS 1.0
 is a basic version of ACARS, designed for lower-end systems. ACARS 2.0 is the latest version, running on the Microsoft .NET 2.0 
 Framework. All versions of ACARS run on Microsoft Windows 2000, XP, Vista, Windows 7 (including 64-bit) and are fully compatible with 
-Microsoft Flight Simulator 2002, 2004 and Flight Simulator X. You can also run ACARS on a seperate computer if you have a 
-registered version of <el:link external="true" url="http://www.schiratti.com/dowson.html">Peter Dowson's WideFS</el:link>.<br />
+Microsoft Flight Simulator 2002, 2004 and Flight Simulator X. Our latest version of ACARS supports Lockheed-Martin's Prepar3D
+product. You can also run ACARS on a seperate computer if you have a registered version of 
+<el:link external="true" url="http://www.schiratti.com/dowson.html">Peter Dowson's WideFS</el:link>.<br />
 <br />
 The final benefit to using ACARS is that it will get rid of this page. To continue filing your Flight Report manually, 
 <el:cmd url="pirep" op="edit" className="sec bld">Click Here</el:cmd>.<br />
