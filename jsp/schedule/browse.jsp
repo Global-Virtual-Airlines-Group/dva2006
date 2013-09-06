@@ -71,20 +71,22 @@ updateAirports(f.airportA, 'code=${airportD.IATA}', ${useICAO}, '${airportA.IATA
 
 <!-- Table Header Bars -->
 <tr class="title">
- <td class="left caps" colspan="2"><content:airline /> SCHEDULE</td>
- <td class="right" colspan="5">FROM <el:combo name="airportD" idx="*" size="1" className="small" options="${emptyList}" onChange="void setAirportD(this)" />
+ <td class="left caps" colspan="7"><content:airline /> FLIGHT SCHEDULE<c:if test="${!empty importDate}"> IMPORTED ON <fmt:date date="${importDate}" /></c:if></td>
+</tr>
+<tr class="title">
+ <td class="right" colspan="7">FLIGHTS FROM <el:combo name="airportD" idx="*" size="1" className="small" options="${emptyList}" onChange="void setAirportD(this)" />
  <el:text name="airportDCode" idx="*" size="3" max="4" value="${useICAO ? airportD.ICAO : airportD.IATA}" onBlur="void setAirportDCode(this.value)" /> TO
  <el:combo name="airportA" idx="*" size="1" className="small" firstEntry="-" options="${emptyList}" onChange="void setAirportA(this)" />
-<c:if test="${isSchedule}"><el:cmdbutton url="sched" op="edit" label="NEW SCHEDULE ENTRY" /></c:if></td>
+<c:if test="${isSchedule}"><el:cmdbutton url="sched" op="edit" label="NEW FLIGHT SCHEDULE ENTRY" /></c:if></td>
 </tr>
 <tr class="title caps">
  <td style="width:15%">FLIGHT NUMBER</td>
- <td style="width:10%">EQUIPMENT</td>
+ <td>EQUIPMENT</td>
  <td style="width:35%">AIRPORTS</td>
- <td style="width:10%">DEPARTS</td>
- <td style="width:10%">ARRIVES</td>
+ <td style="width:9%">DEPARTS</td>
+ <td style="width:9%">ARRIVES</td>
  <td style="width:10%">DISTANCE</td>
- <td>DURATION</td>
+ <td>style="width:10%">DURATION</td>
 </tr>
 
 <!-- Table Data Section -->
@@ -108,8 +110,6 @@ updateAirports(f.airportA, 'code=${airportD.IATA}', ${useICAO}, '${airportA.IATA
  <view:legend width="150" labels="Regular Flight,Historic Flight" classes=" ,opt2" /></td>
 </tr>
 </view:table>
-<c:if test="${innovataLink}">
-<%@ include file="/jsp/schedule/innovataLink.jspf" %></c:if>
 </el:form>
 <br />
 <content:copyright />
