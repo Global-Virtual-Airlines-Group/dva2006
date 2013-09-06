@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to edit Equipment Type profiles. 
  * @author Luke
- * @version 4.1
+ * @version 5.1
  * @since 1.0
  */
 
@@ -111,6 +111,7 @@ public class EquipmentCommand extends AbstractFormCommand {
 			eq.setPromotionSwitchLength(StringUtils.parse(ctx.getParameter("switchDistance"), 0));
 			eq.setMaximumAccelTime(StringUtils.parse(ctx.getParameter("maxAccel"), 0));
 			eq.setMinimum1XTime(StringUtils.parse(ctx.getParameter("min1X"), 0));
+			eq.setNewHires(Boolean.valueOf(ctx.getParameter("newHires")).booleanValue());
 			eq.setACARSPromotionLegs(Boolean.valueOf(ctx.getParameter("acarsPromote")).booleanValue());
 			eq.setRanks(ctx.getParameters("ranks"));
 			eq.setRatings(ctx.getParameters("pRatings"), ctx.getParameters("sRatings"));

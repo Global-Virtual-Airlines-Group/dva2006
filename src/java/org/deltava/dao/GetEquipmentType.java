@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to retrieve equipment type profiles.
  * @author Luke
- * @version 5.0
+ * @version 5.1
  * @since 1.0
  */
 
@@ -408,7 +408,7 @@ public class GetEquipmentType extends DAO {
 		_ps.close();
 	}
 
-	/**
+	/*
 	 * Helper method to iterate through the result set.
 	 */
 	private List<EquipmentType> execute() throws SQLException {
@@ -419,17 +419,18 @@ public class GetEquipmentType extends DAO {
 				eq.setCPID(rs.getInt(2));
 				eq.addRanks(rs.getString(3), ",");
 				eq.setActive(rs.getBoolean(4));
-				eq.setPromotionLegs(rs.getInt(5));
-				eq.setPromotionHours(rs.getInt(6));
-				eq.setACARSPromotionLegs(rs.getBoolean(7));
-				eq.setPromotionMinLength(rs.getInt(8));
-				eq.setPromotionSwitchLength(rs.getInt(9));
-				eq.setMinimum1XTime(rs.getInt(10));
-				eq.setMaximumAccelTime(rs.getInt(11));
-				eq.setOwner(SystemData.getApp(rs.getString(12)));
-				eq.setStage(rs.getInt(13));
-				eq.setCPName(rs.getString(14));
-				eq.setCPEmail(rs.getString(15));
+				eq.setNewHires(rs.getBoolean(5));
+				eq.setPromotionLegs(rs.getInt(6));
+				eq.setPromotionHours(rs.getInt(7));
+				eq.setACARSPromotionLegs(rs.getBoolean(8));
+				eq.setPromotionMinLength(rs.getInt(9));
+				eq.setPromotionSwitchLength(rs.getInt(10));
+				eq.setMinimum1XTime(rs.getInt(11));
+				eq.setMaximumAccelTime(rs.getInt(12));
+				eq.setOwner(SystemData.getApp(rs.getString(13)));
+				eq.setStage(rs.getInt(14));
+				eq.setCPName(rs.getString(15));
+				eq.setCPEmail(rs.getString(16));
 				results.add(eq);
 			}
 		}
