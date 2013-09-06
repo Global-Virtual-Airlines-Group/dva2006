@@ -71,8 +71,9 @@ return true;
 function updateAirline(combo)
 {
 var f = document.forms[0];
-updateAirports(f.airportD, 'useSched=true&airline=' + getValue(combo), ${useICAO}, getValue(f.airportD));
-updateAirports(f.airportA, 'useSched=true&dst=true&airline=' + getValue(combo), ${useICAO}, getValue(f.airportA));
+var nv = f.notVisited.checked;
+updateAirports(f.airportD, 'useSched=true&notVisited=' + nv + '&airline=' + getValue(combo), ${useICAO}, getValue(f.airportD));
+updateAirports(f.airportA, 'useSched=true&dst=true&notVisited=' + nv + '&airline=' + getValue(combo), ${useICAO}, getValue(f.airportA));
 return true;
 }
 
@@ -98,7 +99,7 @@ return true;
 <el:form method="post" action="findflight.do" op="search" validate="return validate(this)">
 <el:table className="form">
 <tr class="title caps">
- <td colspan="4"><content:airline /> SCHEDULE SEARCH</td>
+ <td colspan="4"><content:airline /> FLIGHT SCHEDULE SEARCH</td>
 </tr>
 <tr>
  <td class="label">Airline</td>
@@ -140,7 +141,8 @@ return true;
 <tr>
  <td class="label top">Search Options</td>
  <td class="data"><el:box name="myEQTypes" value="true" checked="${param.myEQTypes}" label="My rated Equipment Types" /><br />
-<el:box name="showUTCTimes" value="true" checked="${param.showUTCTimes}" label="Show Departure/Arrival Times as UTC" /></td>
+<el:box name="showUTCTimes" value="true" checked="${param.showUTCTimes}" label="Show Departure/Arrival Times as UTC" /><br />
+<el:box name="notVisited" value="true" checked="${param.notVisited}" label="Only include unvisited Airports" /></td>
  <td class="label top">ACARS Dispatch</td>
  <td class="data"><el:box name="checkDispatch" idx="*" value="true" checked="${empty fafCriteria ? true : fafCriteria.checkDispatch}" label="Display Dispatch route count" /><br />
  <el:box name="dispatchOnly" idx="*" value="true" checked="${fafCriteria.dispatchOnly}" label="Flights with Dispatch routes only" /></td>
@@ -163,7 +165,7 @@ return true;
 <el:table className="view">
 <!-- Search Results Data -->
 <tr class="title caps">
- <td colspan="9" class="left">FLIGHT SCHEDULE SEARCH RESULTS<c:if test="${!empty fafResults.importDate}"> - IMPORTED ON <fmt:date date="${fafResults.importDate}" /></c:if></td>
+ <td colspan="9" class="left">FLIGHT SCHEDULE SEARCH RESULTS<c:if test="${!empty importDate}"> - IMPORTED ON <fmt:date date="${importDate}" /></c:if></td>
 </tr>
 
 <!-- Search Results Header Bar -->
@@ -273,9 +275,6 @@ return true;
  <td class="mid">No Flights matching your Search Criteria were found.</td>
 </tr>
 </el:table>
-</c:if>
-<c:if test="${innovataLink}">
-<%@ include file="/jsp/schedule/innovataLink.jspf" %> 
 </c:if>
 <content:copyright />
 </content:region>
