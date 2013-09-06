@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A class for storing equipment program information.
  * @author Luke
- * @version 5.0
+ * @version 5.1
  * @since 1.0
  */
 
@@ -24,6 +24,7 @@ public class EquipmentType implements Cacheable, Comparable<EquipmentType>, Comb
     private int _stage = 1;
     private boolean _active = true;
     private boolean _acarsPromotion;
+    private boolean _newHires;
     
     private String _cpName;
     private String _cpEmail;
@@ -263,6 +264,14 @@ public class EquipmentType implements Cacheable, Comparable<EquipmentType>, Comb
     }
     
     /**
+     * Returns whether this equipment program accepts new hires.
+     * @return TRUE if new hires are accepted, otherwise FALSE
+     */
+    public boolean getNewHires() {
+    	return _newHires;
+    }
+    
+    /**
      * Returns the Airline that owns this equipment program profile.
      * @return an AirlineInformation bean
      * @see EquipmentType#setOwner(AirlineInformation)
@@ -376,6 +385,15 @@ public class EquipmentType implements Cacheable, Comparable<EquipmentType>, Comb
      */
     public void setACARSPromotionLegs(boolean useACARS) {
     	_acarsPromotion = useACARS;
+    }
+    
+    /**
+     * Updates whether this equipment program accepts new hires.
+     * @param newHires TRUE if new hires can be placed directly into this program, otherwise FALSE
+     * @see EquipmentType#getNewHires()
+     */
+    public void setNewHires(boolean newHires) {
+    	_newHires = newHires;
     }
     
     /**

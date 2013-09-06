@@ -117,7 +117,8 @@ return true;
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data small"><el:box name="active" idx="*" value="true" className="sec" checked="${eqType.active}" label="Equipment Program is Active" />
+ <td class="data small"><el:box name="active" idx="*" value="true" checked="${eqType.active}" label="Equipment Program is Active" /><br />
+ <el:box name="newHires" idx="*" value="true" checked="${eqType.newHires}" label="Equipment Program accepts new Hires" /><br />
 <c:if test="${acarsEnabled}"><br />
 <el:box name="acarsPromote" idx="*" value="true" className="bld" checked="${eqType.ACARSPromotionLegs}" label="Require ACARS usage on Flights for Promotion" /></c:if></td>
 </tr>
