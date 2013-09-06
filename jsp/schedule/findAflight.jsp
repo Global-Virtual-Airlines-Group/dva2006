@@ -163,7 +163,7 @@ return true;
 <el:table className="view">
 <!-- Search Results Data -->
 <tr class="title caps">
- <td colspan="9" class="left">FLIGHT SCHEDULE SEARCH RESULTS</td>
+ <td colspan="9" class="left">FLIGHT SCHEDULE SEARCH RESULTS<c:if test="${!empty fafResults.importDate}"> - IMPORTED ON <fmt:date date="${fafResults.importDate}" /></c:if></td>
 </tr>
 
 <!-- Search Results Header Bar -->
