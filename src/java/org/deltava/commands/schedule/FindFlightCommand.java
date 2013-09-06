@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -8,14 +8,13 @@ import org.deltava.beans.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to search the Flight Schedule.
  * @author Luke
- * @version 4.1
+ * @version 5.1
  * @since 1.0
  */
 
@@ -122,9 +121,16 @@ public class FindFlightCommand extends AbstractCommand {
 				// Get the DAO and execute
 				GetScheduleSearch dao = new GetScheduleSearch(con);
 				dao.setQueryMax(criteria.getMaxResults());
+				ScheduleSearchResults results = new ScheduleSearchResults(dao.search(criteria));
+				
+		         // Load schedule import data
+		    	 GetMetadata mddao = new GetMetadata(con);
+		    	 String lastImport = mddao.get(SystemData.get("airline.code").toLowerCase() + ".schedule.import");
+		    	 if (lastImport != null)
+		    		 results.setImportDate(new Date(Long.parseLong(lastImport) * 1000));
 
 				// Save results in the session - since other commands may reference these
-				ctx.setAttribute("fafResults", dao.search(criteria), SESSION);
+				ctx.setAttribute("fafResults", results, SESSION);
 				ctx.setAttribute("doSearch", Boolean.TRUE, REQUEST);
 				
 				// Save destination airport list

@@ -62,6 +62,7 @@ return true;
 <%@ include file="/jsp/academy/header.jspf" %> 
 <%@ include file="/jsp/academy/sideMenu.jspf" %>
 <content:sysdata var="academyFlights" name="academy.minFlights" default="10" />
+<content:sysdata var="isATO" name="academy.ato" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -188,6 +189,17 @@ The <content:airline /> Flight Academy instructors score examianations within 72
 </tr>
 </c:otherwise>
 </c:choose>
+</c:if>
+<c:if test="${isATO}">
+<!-- VATSIM ATO Certificate -->
+<tr class="title caps">
+ <td class="left" colspan="6">VATSIM AUTHORIZED TRAINING ORGANIZATION</td>
+</tr>
+<tr>
+ <td class="left" colspan="5"><content:airline /> is a VATSIM Authorized Training Organization, certified by VATSIM to grant Pilot
+ Ratings to Flight Academy graduates upon the successful completion of certain courses.</td>
+ <td><el:link url="/ATOCertificate.pdf">ATO Certificate</el:link></td>
+</tr>
 </c:if>
 </el:table>
 </el:form>
