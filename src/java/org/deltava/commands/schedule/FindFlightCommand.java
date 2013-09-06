@@ -121,16 +121,15 @@ public class FindFlightCommand extends AbstractCommand {
 				// Get the DAO and execute
 				GetScheduleSearch dao = new GetScheduleSearch(con);
 				dao.setQueryMax(criteria.getMaxResults());
-				ScheduleSearchResults results = new ScheduleSearchResults(dao.search(criteria));
 				
 		         // Load schedule import data
 		    	 GetMetadata mddao = new GetMetadata(con);
 		    	 String lastImport = mddao.get(SystemData.get("airline.code").toLowerCase() + ".schedule.import");
 		    	 if (lastImport != null)
-		    		 results.setImportDate(new Date(Long.parseLong(lastImport) * 1000));
+		    		 ctx.setAttribute("importDate", new Date(Long.parseLong(lastImport) * 1000), REQUEST);
 
 				// Save results in the session - since other commands may reference these
-				ctx.setAttribute("fafResults", results, SESSION);
+				ctx.setAttribute("fafResults", dao.search(criteria), SESSION);
 				ctx.setAttribute("doSearch", Boolean.TRUE, REQUEST);
 				
 				// Save destination airport list
