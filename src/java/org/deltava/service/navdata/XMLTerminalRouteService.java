@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
  * @since 2.4
  */
 
-public class XMLTerminalRouteService extends DispatchDataService {
+public class XMLTerminalRouteService extends DownloadService {
 
 	/**
 	 * Executes the Web Service.
@@ -39,13 +39,17 @@ public class XMLTerminalRouteService extends DispatchDataService {
 		// Ensure we are a dispatcher
 		if (!ctx.isUserInRole("Pilot"))
 			throw error(SC_UNAUTHORIZED, "Not in Pilot role", false);
+		
+		// Check if the file exists
+		File cacheDir = new File(SystemData.get("schedule.cache"));
+		File f = new File(cacheDir, "sidstar.zip");
+		long age = f.exists() ? (System.currentTimeMillis() - f.lastModified()) : Long.MAX_VALUE;
 
 		// Check the cache
-		File f = _dataCache.get("XMLZIPSIDSTAR");
-		if (f != null) {
+		if ((age < 3600_000) && (f.length() > 10240)) {
 			ctx.getResponse().setHeader("Content-disposition", "attachment; filename=xmlsidstar.zip");
 			ctx.getResponse().setContentType("application/zip");
-			ctx.getResponse().setIntHeader("max-age", 600);
+			ctx.getResponse().setIntHeader("max-age", 1800);
 			sendFile(f, ctx.getResponse());
 			return SC_OK;
 		}
@@ -60,10 +64,6 @@ public class XMLTerminalRouteService extends DispatchDataService {
 		} finally {
 			ctx.release();
 		}
-
-		// Write to a temp file
-		File cacheDir = new File(SystemData.get("schedule.cache"));
-		f = new File(cacheDir, "sidstar.zip");
 
 		// Format routes
 		int apCount = 0;
@@ -103,8 +103,7 @@ public class XMLTerminalRouteService extends DispatchDataService {
 
 						// Add the waypoint elements
 						int mrkID = 0;
-						for (Iterator<NavigationDataBean> ii = tr.getWaypoints().iterator(); ii.hasNext();) {
-							NavigationDataBean ai = ii.next();
+						for (NavigationDataBean ai : tr.getWaypoints()) {
 							Element we = new Element("wp");
 							we.setAttribute("code", ai.getCode());
 							we.setAttribute("idx", String.valueOf(++mrkID));
@@ -127,13 +126,10 @@ public class XMLTerminalRouteService extends DispatchDataService {
 				}
 			}
 
-			// Close the file and add to the cache
-			addCacheEntry("XMLZIPSIDSTAR", f);
-
 			// Format and write
 			ctx.getResponse().setHeader("Content-disposition", "attachment; filename=xmlsidstar.zip");
 			ctx.getResponse().setContentType("application/zip");
-			ctx.getResponse().setIntHeader("max-age", 600);
+			ctx.getResponse().setIntHeader("max-age", 1800);
 			ctx.getResponse().setIntHeader("airportCount", apCount);
 			sendFile(f, ctx.getResponse());
 		} catch (Exception e) {
