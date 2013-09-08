@@ -13,8 +13,10 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
+<content:js name="json2" />
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
+<fmt:aptype var="useICAO" />
 <script type="text/javascript">
 function validate(form)
 {
@@ -44,6 +46,14 @@ var f = document.forms[0];
 f.doHire.value = 'true';
 return cmdPost(f.action);
 }
+
+golgotha.onDOMReady(function() {
+	var f = document.forms[0];
+	var cfg = golgotha.airportLoad.config; 
+	cfg.doICAO = ${useICAO}; cfg.airline = 'all';
+	golgotha.airportLoad.setHelpers(f.homeAirport);
+	f.homeAirport.loadAirports(cfg);
+});
 </script>
 </head>
 <content:copyright visible="false" />
@@ -52,6 +62,7 @@ return cmdPost(f.action);
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:tz var="timeZones" />
+<content:singleton var="airports" value="${applicant.homeAirport}" />
 <content:sysdata var="locations" name="locations" />
 <content:sysdata var="schemes" name="html.schemes" />
 <content:enum var="ranks" className="org.deltava.beans.Rank" />
@@ -73,8 +84,8 @@ return cmdPost(f.action);
 </tr>
 <tr>
  <td class="label">Home Airport</td>
- <td class="data"><el:combo name="homeAirport" size="1" idx="*" options="${airports}" required="true" value="${applicant.homeAirport}" onChange="void changeAirport(this)" />
- <el:text name="homeAirportCode" size="3" max="4" onBlur="void setAirport(document.forms[0].homeAirport, this.value)" /></td>
+ <td class="data"><el:combo name="homeAirport" size="1" idx="*" options="${emptyList}" required="true" value="${applicant.homeAirport}" onChange="void this.updateAirportCode()" />
+ <el:text name="homeAirportCode" size="3" max="4" onBlur="void document.forms[0].homeAirport.setAirport(this.value)" /></td>
 </tr>
 <tr>
  <td class="label">Location</td>
@@ -91,7 +102,7 @@ return cmdPost(f.action);
 <content:enum var="imAddr" className="org.deltava.beans.IMAddress" item="AIM" />
 <tr>
  <td class="label">AOL Instant Messenger</td>
- <td class="data"><el:text name="aimHandle" idx="*" size="14" max="36" value="${applicant.IMHandle[imAddr]}" /></td>
+ <td class="data"><el:text name="aimHandle" idx="*" size="32" max="36" value="${applicant.IMHandle[imAddr]}" /></td>
 </tr>
 <content:enum var="imAddr" className="org.deltava.beans.IMAddress" item="MSN" />
 <tr>
@@ -118,7 +129,7 @@ return cmdPost(f.action);
 </tr>
 <tr>
  <td class="label top">E-Mail Notifications</td>
- <td class="data"><el:check name="notifyOption" idx="*" className="small" width="215" cols="2" newLine="true" options="${notifyOptions}" checked="${applicant.notifyOptions}" /></td>
+ <td class="data"><el:check name="notifyOption" idx="*" className="small" width="215" cols="3" newLine="true" options="${notifyOptions}" checked="${applicant.notifyOptions}" /></td>
 </tr>
 
 <!-- Pilot Preferences -->

@@ -12,9 +12,9 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
+<content:js name="json2" />
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
-<fmt:aptype var="useICAO" />
 <script type="text/javascript">
 function validate(form)
 {
@@ -29,17 +29,10 @@ disableButton('SaveButton');
 disableButton('DeleteButton');
 return true;
 }
-
-function loadAirports()
-{
-var f = document.forms[0];
-updateAirports(f.airport, 'airline=all', ${useICAO}, '${chart.airport.ICAO}');
-return true;
-}
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void loadAirports()">
+<body>
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -60,7 +53,7 @@ return true;
 <tr>
  <td class="label">Airport</td>
  <td class="data"><el:combo className="req" name="airport" size="1" idx="*" firstEntry="[ SELECT AIRPORT ]" options="${emptyList}" value="${chart.airport}" />
- <el:text name="airportCode" idx="*" size="3" max="4" value="${chart.airport.ICAO}" onBlur="void setAirport(document.forms[0].airport, this.value)" /></td>
+ <el:text name="airportCode" idx="*" size="3" max="4" value="${chart.airport.ICAO}" onBlur="void document.forms[0].airport.setAirport(this.value)" /></td>
 </tr>
 <tr>
  <td class="label">Chart Name</td>
@@ -100,5 +93,14 @@ return true;
 <content:copyright />
 </content:region>
 </content:page>
+<fmt:aptype var="useICAO" />
+<script type="text/javascript">
+golgotha.airportLoad.config.doICAO = ${useICAO};
+golgotha.airportLoad.config.airlne = 'all';
+
+var f = document.forms[0];
+golgotha.airportLoad.setHelpers(f.airport);
+f.loadAirports(golgotha.airportLoad.config);
+</script>
 </body>
 </html>

@@ -12,8 +12,10 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
+<content:js name="json2" />
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
+<fmt:aptype var="useICAO" />
 <script type="text/javascript">
 <fmt:jsarray var="routeIDs" items="${routeIDs}" />
 function validate(form)
@@ -45,6 +47,13 @@ disableButton('ViewButton');
 disableButton('BalanceButton');
 return true;
 }
+
+golgotha.onDOMReady(function() {
+	var f = document.forms[0];
+	golgotha.airportLoad.config.doICAO = ${useICAO};
+	golgotha.airportLoad.setHelpers(f.airportD);
+	golgotha.airportLoad.setHelpers(f.airportA);	
+});
 </script>
 </head>
 <content:copyright visible="false" />
@@ -82,7 +91,7 @@ return true;
 <el:box name="delete${route.routeID}" value="true" className="small bld" label="Delete this Route" /></td>
  <td class="label top">Maximum Signups</td>
  <td class="data top"><el:text name="maxSignups${route.routeID}" idx="*" className="req" size="2" max="3" value="${route.maxSignups}" />
- <span clas="ita"><fmt:int value="${route.signups}" /> Pilots signed up</span></td>
+ <span class="ita"><fmt:int value="${route.signups}" /> Pilots signed up</span></td>
 </tr>
 </c:forEach>
 
@@ -97,10 +106,10 @@ return true;
 <tr>
  <td class="label">Departing from</td>
  <td class="data"><el:combo name="airportD" idx="*" size="1" options="${airports}" firstEntry="-" />&nbsp;
-<el:text name="adCode" idx="*" size="3" max="4" onBlur="void setAirport(document.forms[0].airportD, this.value)" /></td>
+<el:text name="adCode" idx="*" size="3" max="4" onBlur="void document.forms[0].airportD.setAirport(this.value)" /></td>
  <td class="label">Arriving at</td>
  <td class="data"><el:combo name="airportA" idx="*" size="1" options="${airports}" firstEntry="-" />&nbsp;
-<el:text name="aaCode" idx="*" size="3" max="4" onBlur="void setAirport(document.forms[0].airportA, this.value)" /></td>
+<el:text name="aaCode" idx="*" size="3" max="4" onBlur="void document.forms[0].airportAsetAirport(this.value)" /></td>
 </tr>
 <tr>
  <td class="label">Maximum Signups</td>

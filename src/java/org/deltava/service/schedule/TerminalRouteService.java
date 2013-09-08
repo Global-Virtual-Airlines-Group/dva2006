@@ -1,4 +1,4 @@
-// Copyright 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -6,7 +6,7 @@ import static javax.servlet.http.HttpServletResponse.*;
 import java.util.*;
 import java.io.IOException;
 
-import org.jdom2.*;
+import org.json.*;
 
 import org.deltava.beans.navdata.TerminalRoute;
 import org.deltava.beans.schedule.Airport;
@@ -14,7 +14,6 @@ import org.deltava.beans.schedule.Airport;
 import org.deltava.dao.*;
 import org.deltava.service.*;
 
-import org.deltava.util.XMLUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -52,29 +51,39 @@ public class TerminalRouteService extends WebService {
 			ctx.release();
 		}
 		
-		// Create an XML document
-		Document doc = new Document();
-		Element re = new Element("wsdata");
-		doc.setRootElement(re);
-		
-		// Add SID/STAR names to XML document
-		for (TerminalRoute tr : tRoutes) {
-			Element e = new Element(tr.getType().name().toLowerCase());
-			e.setAttribute("name", tr.getName());
-			e.setAttribute("transition", tr.getTransition());
-			e.setAttribute("code", tr.getCode());
-			re.addContent(e);
-		}
-		
-		// Dump the XML to the output stream
+		// Add SID/STARs to JSON document
 		try {
-			ctx.setContentType("text/xml", "UTF-8");
-			ctx.println(XMLUtils.format(doc, "UTF-8"));
+			JSONObject ro = new JSONObject();
+			JSONArray sids = new JSONArray(); JSONArray stars = new JSONArray();
+			for (TerminalRoute tr : tRoutes) {
+				JSONObject jo = new JSONObject();
+				jo.put("name", tr.getName());
+				jo.put("transition", tr.getTransition());
+				jo.put("code", tr.getCode());
+				JSONArray dst = (tr.getType() == TerminalRoute.Type.SID) ? sids : stars; 
+				dst.put(jo);
+			}
+		
+			// Dump the JSON to the output stream
+			ro.put("sid", sids); ro.put("star", stars);
+			ctx.setContentType("text/javascript", "UTF-8");
+			ctx.println(ro.toString());
 			ctx.commit();
+		} catch (JSONException je) { 
+			throw error(SC_INTERNAL_SERVER_ERROR, "Data Error", je);
 		} catch (IOException ie) {
-			throw error(SC_INTERNAL_SERVER_ERROR, "I/O Error");
+			throw error(SC_CONFLICT, "I/O Error");
 		}
 		
 		return SC_OK;
+	}
+	
+	/**
+	 * Tells the Web Service Servlet not to log invocations of this service.
+	 * @return FALSE
+	 */
+	@Override
+	public boolean isLogged() {
+		return false;
 	}
 }

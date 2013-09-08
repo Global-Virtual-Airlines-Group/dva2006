@@ -13,8 +13,10 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
+<content:js name="json2" />
 <content:js name="airportRefresh" />
 <map:api version="3" libraries="weather" />
+<content:js name="markermanager" />
 <content:js name="progressBar" />
 <content:js name="googleMapsWX" />
 <content:js name="routePlot" />
@@ -55,7 +57,7 @@ setSubmit();
 disableButton('SearchButton');
 disableButton('UpdateButton');
 disableButton('RouteSaveButton');
-gaEvent('Route Plotter', 'Save Route');
+golgotha.event.beacon('Route Plotter', 'Save Route');
 return true;
 } catch (err) {
 	alert(err.description)
@@ -66,8 +68,7 @@ return true;
 function updateAirline(combo)
 {
 var f = document.forms[0];
-updateAirports(f.airportD, 'useSched=true&airline=' + getValue(combo), ${useICAO}, getValue(f.airportD));
-updateAirports(f.airportA, 'useSched=true&dst=true&airline=' + getValue(combo), ${useICAO}, getValue(f.airportA));
+golgotha.airportLoad.changeAirline([f.airportD, f.airportA], golgotha.airportLoad.config);
 return true;
 }
 </script>
@@ -94,18 +95,18 @@ return true;
 <tr>
  <td class="label">Departing from</td>
  <td class="data"><el:combo name="airportD" size="1" idx="*" options="${airportsD}" firstEntry="-" value="${airportD}" onChange="void updateRoute(true, true)" />
- <el:text ID="airportDCode" name="airportDCode" idx="*" size="3" max="4" onChange="setAirport(document.forms[0].airportD, this.value); updateRoute(true)" />
+ <el:text ID="airportDCode" name="airportDCode" idx="*" size="3" max="4" onChange="document.forms[0].airportD.setAirport(this.value); updateRoute(true)" />
 <span id="runways" style="visibility:hidden;"> departing <el:combo name="runway" idx="*" size="1" options="${emptyList}" firstEntry="-" onChange="void updateRoute(true, false)" /></span></td>
 </tr>
 <tr>
  <td class="label">Arriving at</td>
  <td class="data"><el:combo name="airportA" size="1" idx="*" options="${airportsA}" firstEntry="-" value="${airportA}" onChange="void updateRoute(true)" />
- <el:text ID="airportACode" name="airportACode" idx="*" size="3" max="4" onChange="setAirport(document.forms[0].airportA, this.value); updateRoute(true)" /></td>
+ <el:text ID="airportACode" name="airportACode" idx="*" size="3" max="4" onChange="void document.forms[0].airportA.setAirport(this.value, true)" /></td>
 </tr>
 <tr>
  <td class="label">Alternate</td>
  <td class="data"><el:combo name="airportL" size="1" idx="*" options="${emptyList}" firstEntry="-" onChange="updateRoute(); plotMap()" />
- <el:text ID="airportLCode" name="airportLCode" idx="*" size="3" max="4" onChange="setAirport(document.forms[0].airportL, this.value); plotMap()" /></td>
+ <el:text ID="airportLCode" name="airportLCode" idx="*" size="3" max="4" onChange="void document.forms[0].airportL.setAirport(this.value, true)" /></td>
 </tr>
 <tr id="sids" style="display:none;">
  <td class="label">Standard Departure (SID)</td>
@@ -169,12 +170,19 @@ enableObject(f.routes, false);
 enableElement('SearchButton', (f.airportD.selectedIndex > 0) && (f.airportA.selectedIndex > 0));
 
 // Load the airports
-var aCode = getValue(f.airline);
+var cfg = golgotha.airportLoad.config; 
+cfg.doICAO = '${useICAO}';
+golgotha.airportLoad.setHelpers(f.airportD);
+golgotha.airportLoad.setHelpers(f.airportA);
+golgotha.airportLoad.setHelpers(f.airportL);
+var newCfg = cfg.clone();
+
 <c:if test="${empty airportsD}">
-updateAirports(f.airportD, 'airline=' + aCode, ${useICAO}, getValue(f.airportD));</c:if>
+newCfg.airline = getValue(f.airline); 
+f.airportD.loadAirports(newCfg);</c:if>
 <c:if test="${empty airportsA}">
-window.setTimeout("updateAirports(f.airportA, 'airline=' + aCode, ${useICAO}, getValue(f.airportA))", 1250);</c:if>
-window.setTimeout("updateAirports(f.airportL, 'airline=all', ${useICAO}, getValue(f.airportL))", 1500);
+window.setTimeout('f.airportA.loadAirports(newCfg)', 1050);</c:if>
+window.setTimeout("newCfg.airline = 'all'; f.airportL.loadAirports(newCfg)", 1250);
 
 // Create map options
 var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
@@ -198,10 +206,12 @@ map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.Lay
 map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Clouds', new google.maps.weather.CloudLayer()));
 map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerClearControl(map));
 
+//Build departure gates marker manager
+var dGates = new MarkerManager(map, {maxZoom:18});
+
 // Update text color
 google.maps.event.trigger(map, 'maptypeid_changed');
 <c:if test="${!empty airportD}">
-// Initialize the map
 plotMap();</c:if>
 </script>
 </body>

@@ -13,13 +13,13 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
+<content:js name="json2" />
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
 <content:sysdata var="badDomains" name="registration.reject_domain" />
 <c:set var="cspan" value="${!empty manuals ? 3 : 1}" scope="page" />
 <script type="text/javascript">
 <fmt:jsarray var="invalidDomains" items="${badDomains}" />
-
 function validate(form)
 {
 if (!checkSubmit()) return false;
@@ -112,6 +112,7 @@ return true;
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:tz var="timeZones" />
+<content:empty var="emptyList" />
 <content:sysdata var="locations" name="locations" />
 <content:sysdata var="schemes" name="html.schemes" />
 <content:sysdata var="airlineDomain" name="airline.domain" />
@@ -164,8 +165,7 @@ This is also a good time to review <content:airline />'s <el:cmd url="privacy" c
 </tr>
 <tr class="dupeFound" style="display:none;">
  <td colspan="${cspan + 1}" class="mid"><span class="error bld">Another person with the same name has already registered at <content:airline />. If you have
- already registered with us,<br />
-you can simply reactivate your old user account. This is a much faster and simpler process than re-registering.</span><br />
+ already registered with us, you can simply reactivate your old user account. This is a much faster and simpler process than re-registering.</span><br />
 <br />
 <a href="javascript:void sendDupeInfo()" class="pri bld">I'm already a <content:airline /> Pilot. Reactivate my Account.</a><br />
 <br />
@@ -173,8 +173,8 @@ you can simply reactivate your old user account. This is a much faster and simpl
 </tr>
 <tr>
  <td class="label">Home Airport</td>
- <td class="data" colspan="${cspan}"><el:combo name="homeAirport" size="1" idx="*" options="${airports}" className="req" firstEntry="-" value="${param.homeAirport}" onChange="void changeAirport(this)" />
- <el:text name="homeAirportCode" size="3" max="4" onBlur="void setAirport(document.forms[0].homeAirport, this.value)" /></td>
+ <td class="data" colspan="${cspan}"><el:combo name="homeAirport" size="1" idx="*" options="${emptyList}" className="req" firstEntry="-" value="${param.homeAirport}" onChange="void this.updateAirportCode()" />
+ <el:text name="homeAirportCode" size="3" max="4" onBlur="void document.forms[0].homeAirport.setAirport(this.value)" /></td>
 </tr>
 <tr>
  <td class="label">Location</td>
@@ -315,5 +315,12 @@ you can simply reactivate your old user account. This is a much faster and simpl
 <content:copyright />
 </content:region>
 </content:page>
+<fmt:aptype var="useICAO" />
+<script type="text/javascript">
+var f = document.forms[0];
+golgotha.airportLoad.config.doICAO = ${useICAO};
+golgotha.airportLoad.setHelpers(f.homeAirport);
+f.homeAirport.loadAirports(golgotha.airportLoad.config);
+</script>
 </body>
 </html>

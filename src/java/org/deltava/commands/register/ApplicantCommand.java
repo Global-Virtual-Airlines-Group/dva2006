@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.util.*;
@@ -7,20 +7,17 @@ import java.sql.Connection;
 import org.deltava.beans.*;
 import org.deltava.beans.system.*;
 import org.deltava.beans.schedule.Airport;
-
 import org.deltava.comparators.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-
 import org.deltava.security.command.ApplicantAccessControl;
-
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command for processing Applicant Profiles.
  * @author Luke
- * @version 5.0
+ * @version 5.1
  * @since 1.0
  */
 
@@ -118,13 +115,6 @@ public class ApplicantCommand extends AbstractFormCommand {
 	 */
 	@Override
 	protected void execEdit(CommandContext ctx) throws CommandException {
-
-		// Sort and save the airports
-		Map<String, Airport> airports = SystemData.getAirports();
-		Set<Airport> apSet = new TreeSet<Airport>(new AirportComparator(AirportComparator.NAME));
-		apSet.addAll(airports.values());
-		ctx.setAttribute("airports", apSet, REQUEST);
-
 		try {
 			Connection con = ctx.getConnection();
 
@@ -166,6 +156,9 @@ public class ApplicantCommand extends AbstractFormCommand {
 		} finally {
 			ctx.release();
 		}
+		
+		// Save FS Versions
+		ctx.setAttribute("fsVersions", ComboUtils.fromArray(Applicant.FSVERSION), REQUEST);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

@@ -15,6 +15,7 @@
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
+<content:js name="json2" />
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
 <script type="text/javascript">
@@ -51,11 +52,11 @@ return true;
 </tr>
 <tr>
  <td class="label">Departing from</td>
- <td class="data"><el:combo name="airportD" idx="*" size="1" options="${airports}" firstEntry="-" value="${airportD}" />
- <el:text name="airportDCode" idx="*" size="3" max="4" value="${airportD.IATA}" onBlur="void setAirport(document.forms[0].airportD, this.value)" /></td>
+ <td class="data"><el:combo name="airportD" idx="*" size="1" options="${airports}" firstEntry="-" value="${airportD}" onChange="void this.updateAirportCode()" />
+ <el:text name="airportDCode" idx="*" size="3" max="4" value="${airportD.IATA}" onBlur="void document.forms[0].airportD.setAirport(this.value)" /></td>
  <td class="label">Arriving at</td>
- <td class="data"><el:combo name="airportA" idx="*" size="1" options="${airports}" firstEntry="-" value="${airportA}" />
- <el:text name="airportACode" idx="*" size="3" max="4" value="${airportA.IATA}" onBlur="void setAirport(document.forms[0].airportA, this.value)" /></td>
+ <td class="data"><el:combo name="airportA" idx="*" size="1" options="${airports}" firstEntry="-" value="${airportA}" onChange="void this.updateAirportCode()" />
+ <el:text name="airportACode" idx="*" size="3" max="4" value="${airportA.IATA}" onBlur="void document.forms[0].airportA.setAirport(this.value)" /></td>
 </tr>
 </el:table>
 
@@ -123,5 +124,12 @@ ${route.airportA.name} (<fmt:airport airport="${route.airportA}" />)</td>
 <content:copyright />
 </content:region>
 </content:page>
+<fmt:aptype var="useICAO" />
+<script type="text/javascript">
+var f = document.forms[0];
+golgotha.airportLoad.config.doICAO = '${useICAO}';
+golgotha.airportLoad.setHelpers(f.airportD);
+golgotha.airportLoad.setHelpers(f.airportA);
+</script>
 </body>
 </html>

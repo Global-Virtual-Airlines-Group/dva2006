@@ -29,7 +29,7 @@ if ((f.route) && (f.route.value.length > 0))
 	params['route'] = f.route.value;
 if (getInactive)
 	params['getInactive'] = 'true';
-for (var j = 0; j < f.simVersion.length; j++) {
+for (var j = 0; ((f.simVersion) && (j < f.simVersion.length)); j++) {
 	if (f.simVersion[j].checked)
 		params['simVersion'] = f.simVersion[j].value;
 }
@@ -202,9 +202,19 @@ xmlreq.onreadystatechange = function() {
 	var alts = xdoc.getElementsByTagName('alt');
 	if (alts.length > 0) {
 		displayObject(document.getElementById('airportL'), true);
+		var apList = [];
+		for (var x = 0; x < alts.length; x++) {
+			var aE = alts[x];
+			var ap = {};
+			ap.iata = aE.getAttribute('iata');
+			ap.icao = aE.getAttribute('icao');
+			ap.name = aE.getAttribute('name');
+			apList.push(ap);
+		}
+		
 		var oldAL = getValue(f.airportL);
-		createAirportCombo(f.airportL, alts, document.doICAO);
-		if (!setAirport(f.airportL, oldAL))
+		golgotha.airportLoad.setOptions(f.airportL, apList, golgotha.airportLoad.config);
+		if (!f.airportL.setAirport(oldAL))
 			f.airportLCode.value = '';
 	} else
 		displayObject(document.getElementById('airportL'), false);
@@ -240,17 +250,20 @@ xmlreq.onreadystatechange = function() {
 		if (!isTAF) {
 			displayObject(document.getElementById(isDst ? 'wxAr' : 'wxDr'), true);
 			var metarSpan = document.getElementById(isDst ? 'wxAmetar' : 'wxDmetar');
-			metarSpan.innerHTML = golgotha.getCDATA(wx).data;
+			displayObject(metarSpan, true);
+			if (metarSpan)
+				metarSpan.innerHTML = golgotha.getCDATA(wx).data;
 		} else {
 			displayObject(document.getElementById(isDst ? 'wxAr' : 'wxDr'), true);
 			var tafSpan = document.getElementById('wxAtaf');
 			displayObject(tafSpan, true);
-			tafSpan.innerHTML = golgotha.getCDATA(wx).data;
+			if (tafSpan)
+				tafSpan.innerHTML = golgotha.getCDATA(wx).data;
 		}
 	}
 	
 	// Show departure gates if required
-	if (f.showGates.checked)
+	if ((f.showGaes) && f.showGates.checked)
 		toggleGates(dGates);
 
 	return true;
