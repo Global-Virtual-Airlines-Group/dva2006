@@ -45,12 +45,16 @@ public class FlightPreapproveCommand extends AbstractCommand {
 
 		// Check for a GET and redirect
 		if (ctx.getParameter("airportD") == null) {
-			ctx.setAttribute("pilotID", new Integer(ctx.getID()), REQUEST);
+			ctx.setAttribute("pilotID", Integer.valueOf(ctx.getID()), REQUEST);
 
 			// Build Airline list
 			Collection<ComboAlias> airlines = new ArrayList<ComboAlias>();
 			airlines.add(ComboUtils.fromString("All Airlines", "all"));
-			airlines.addAll(SystemData.getAirlines().values());
+			for (Airline a : SystemData.getAirlines().values()) {
+				if (a.getActive())
+					airlines.add(a);
+			}
+			
 			ctx.setAttribute("airlines", airlines, REQUEST);
 
 			try {
@@ -80,6 +84,7 @@ public class FlightPreapproveCommand extends AbstractCommand {
 				ctx.release();
 			}
 
+			
 			result.setURL("/jsp/assign/preApprove.jsp");
 			result.setSuccess(true);
 			return;
