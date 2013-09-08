@@ -13,9 +13,11 @@
 <content:css name="form" />
 <content:css name="view" />
 <content:js name="common" />
+<content:js name="json2" />
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
 <content:pics />
+<fmt:aptype var="useICAO" />
 <script type="text/javascript">
 function updateAirport()
 {
@@ -52,15 +54,24 @@ for (var x = 0; x < cTypes.length; x++) {
 
 return true;
 }
+
+golgotha.onDOMReady(function() {
+	var f = document.forms[0];
+	var cfg = golgotha.airportLoad.config;
+	cfg.doICAO = ${useICAO}; cfg.airline = 'charts'; cfg.useSched = false;
+	golgotha.airportLoad.setHelpers(f.id);
+	f.id.loadAirports(cfg);
+	return true;
+});
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="updateAirports(document.forms[0].id, 'airline=charts', false, '${airport.ICAO}'); updateVisibility()">
+<body onload="void updateVisibility()">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<content:empty var="emptyList" />
 <c:set var="cspan" value="${access.canEdit ? 1 : 2}" scope="page" />
+<content:singleton var="airports" value="${airport}" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -72,7 +83,7 @@ return true;
  <td colspan="7" class="left"><content:airline /> AIRPORT / APPROACH / PROCEDURE CHARTS</td>
 </tr>
 <tr>
- <td class="priB right" style="color:#ffffff; font-size: 8pt;">Filter Options</td>
+ <td class="priB right">Filter Options</td>
  <td colspan="6" width="90%" class="left"><el:check name="chartType" className="small" idx="*" width="180" options="${chartTypes}" checked="${selectedTypes}" onChange="void updateVisibility()" /></td>
 </tr>
 <c:if test="${!empty currentCycle}">
@@ -87,8 +98,8 @@ return true;
  <td style="width:20%">CHART TYPE</td>
  <td style="width:8%"><c:if test="${access.canCreate}"><el:cmdbutton url="chart" op="edit" label="NEW CHART" /></c:if> </td>
  <td style="width:6%">USED</td>
- <td colspan="2" class="right" width="35%">AIRPORT <el:combo name="id" onChange="void updateAirport()" size="1" idx="*" options="${emptyList}" value="${airport}" />
- <el:text name="idCode" idx="*" size="4" max="4" className="bld caps" value="${airport.ICAO}" onBlur="setAirport(document.forms[0].id, this.value); updateAirport();" /></td>
+ <td colspan="2" class="right" width="35%">AIRPORT <el:combo name="id" onChange="void updateAirport()" size="1" idx="*" options="${airports}" value="${airport}" />
+ <el:text name="idCode" idx="*" size="4" max="4" className="bld caps" value="${airport.ICAO}" onBlur="void document.forms[0].id.setAirport(this.value, true);" /></td>
 </tr>
 
 <!-- Table Chart Data -->

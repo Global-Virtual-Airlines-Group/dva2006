@@ -8,15 +8,15 @@
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html lang="en">
 <head>
-<title><content:airline /> Schedule Search</title>
+<title><content:airline /> Flight Schedule Search</title>
 <content:css name="main" />
 <content:css name="form" />
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
+<content:js name="json2" />
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
-<fmt:aptype var="useICAO" />
 <script type="text/javascript">
 function validate(form)
 {
@@ -71,23 +71,22 @@ return true;
 function updateAirline(combo)
 {
 var f = document.forms[0];
-var nv = f.notVisited.checked;
-updateAirports(f.airportD, 'useSched=true&notVisited=' + nv + '&airline=' + getValue(combo), ${useICAO}, getValue(f.airportD));
-updateAirports(f.airportA, 'useSched=true&dst=true&notVisited=' + nv + '&airline=' + getValue(combo), ${useICAO}, getValue(f.airportA));
+var cfg = golgotha.airportLoad.config.clone();
+cfg.airline = getValue(combo); cfg.useSched = true;
+golgotha.airportLoad.changeAirline([f.airportD, f.airportA], cfg)
 return true;
 }
 
 function updateSort(combo)
 {
-if (!combo)
-	combo = document.forms[0].sortType;
+if (!combo) combo = document.forms[0].sortType;
 enableElement('sortDesc', (combo.selectedIndex > 0));
 return true;
 }
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="initLinks(); initAirports(); updateSort()">
+<body onload="initAirports(); updateSort()">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -117,11 +116,11 @@ return true;
 </tr>
 <tr>
  <td class="label">Departing from</td>
- <td class="data"><el:combo name="airportD" idx="*" size="1" firstEntry="-" options="${airports}" value="${fafCriteria.airportD}" onChange="changeAirport(this); updateOrigin(this)" />
- <el:text ID="airportDCode" name="airportDCode" idx="*" size="3" max="4" onBlur="void setAirport(document.forms[0].airportD, this.value, true)" /></td>
+ <td class="data"><el:combo name="airportD" idx="*" size="1" firstEntry="-" options="${airports}" value="${fafCriteria.airportD}" onChange="this.updateAirportCode(); updateOrigin(this)" />
+ <el:text ID="airportDCode" name="airportDCode" idx="*" size="3" max="4" onBlur="void document.forms[0].airportD.setAirport(this.value, true)" /></td>
  <td class="label">Arriving at</td>
- <td class="data"><el:combo name="airportA" idx="*" size="1" firstEntry="-" options="${airportsA}" value="${fafCriteria.airportA}" onChange="void changeAirport(this)" />
- <el:text ID="airportACode" name="airportACode" idx="*" size="3" max="4" onBlur="void setAirport(document.forms[0].airportA, this.value, true)" /></td>
+ <td class="data"><el:combo name="airportA" idx="*" size="1" firstEntry="-" options="${airportsA}" value="${fafCriteria.airportA}" onChange="void this.updateAirportCode()" />
+ <el:text ID="airportACode" name="airportACode" idx="*" size="3" max="4" onBlur="void document.forms[0].airportA.setAirport(this.value, true)" /></td>
 </tr>
 <tr>
  <td class="label">Departure Time (+/- 2h)</td>
@@ -140,11 +139,11 @@ return true;
 <c:if test="${acarsEnabled}">
 <tr>
  <td class="label top">Search Options</td>
- <td class="data"><el:box name="myEQTypes" value="true" checked="${param.myEQTypes}" label="My rated Equipment Types" /><br />
+ <td class="data top"><el:box name="myEQTypes" value="true" checked="${param.myEQTypes}" label="My rated Equipment Types" onChange="golgotha.airportLoad.config.myRated = this.checked" /><br />
 <el:box name="showUTCTimes" value="true" checked="${param.showUTCTimes}" label="Show Departure/Arrival Times as UTC" /><br />
-<el:box name="notVisited" value="true" checked="${param.notVisited}" label="Only include unvisited Airports" /></td>
+<el:box name="notVisited" value="true" checked="${param.notVisited}" label="Only include unvisited Airports" onChange="golgotha.airportLoad.config.notVisited = this.checked" /></td>
  <td class="label top">ACARS Dispatch</td>
- <td class="data"><el:box name="checkDispatch" idx="*" value="true" checked="${empty fafCriteria ? true : fafCriteria.checkDispatch}" label="Display Dispatch route count" /><br />
+ <td class="data top"><el:box name="checkDispatch" idx="*" value="true" checked="${empty fafCriteria ? true : fafCriteria.checkDispatch}" label="Display Dispatch route count" /><br />
  <el:box name="dispatchOnly" idx="*" value="true" checked="${fafCriteria.dispatchOnly}" label="Flights with Dispatch routes only" /></td>
 </tr>
 </c:if>
@@ -279,15 +278,23 @@ return true;
 <content:copyright />
 </content:region>
 </content:page>
+<fmt:aptype var="useICAO" />
 <script type="text/javascript">
 function initAirports()
 {
 var f = document.forms[0];
+var cfg = golgotha.airportLoad.config;
+cfg.notVisited = f.notVisited.checked;
+cfg.doICAO = ${useICAO};
+cfg.myRated = f.myRated.checked;
+
+golgotha.airportLoad.setHelpers(f.airportD);
+golgotha.airportLoad.setHelpers(f.airportA);
 <c:if test="${!empty fafCriteria}">
-changeAirport(f.airportD);
-changeAirport(f.airportA);</c:if>
+f.airportD.updateAirportCode();
+f.airportA.updateAirportCode();</c:if>
 <c:if test="${empty fafCriteria}">
-void updateAirline(f.airline);</c:if>
+f.airline.onchange();</c:if>
 return true;
 }
 </script>

@@ -14,8 +14,6 @@ import org.deltava.beans.servinfo.Certificate;
 import org.deltava.beans.system.*;
 import org.deltava.beans.testing.*;
 
-import org.deltava.comparators.AirportComparator;
-
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.dao.http.GetVATSIMData;
@@ -62,11 +60,6 @@ public class RegisterCommand extends AbstractCommand {
 			return;
 		}
 
-		// Sort and save the airports
-		Collection<Airport> apSet = new TreeSet<Airport>(new AirportComparator(AirportComparator.NAME));
-		apSet.addAll(SystemData.getAirports().values());
-		ctx.setAttribute("airports", apSet, REQUEST);
-		
 		// Check if we ignore the fact that the airline is full
 		boolean isFull = false;
 		boolean isDupeAddr = false;

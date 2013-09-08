@@ -12,8 +12,10 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
+<content:js name="json2" />
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
+<fmt:aptype var="useICAO" />
 <script type="text/javascript">
 function validate(form)
 {
@@ -29,6 +31,28 @@ setSubmit();
 disableButton('SaveButton');
 return true;
 }
+
+function changeAirline(combo)
+{
+var f = document.forms[0];
+golgotha.airportLoad.config.airline = combo.options[combo.selectedIndex].value;
+return golgotha.airportLoad.changeAirline([f.airportD, f.airportA], golgotha.airportLoad.config);
+}
+
+function changeEQ(combo)
+{
+var f = document.forms[0];
+golgotha.airportLoad.config.eqType = combo.options[combo.selectedIndex].value;	
+return golgotha.airportLoad.changeAirline([f.airportD, f.airportA], golgotha.airportLoad.config);
+}
+
+golgotha.onDOMReady(function() {
+	var f = document.forms[0];
+	var cfg = golgotha.airportLoad.config;
+	cfg.useSched = false; cfg.doICAO = ${useICAO};
+	golgotha.airportLoad.setHelpers(f.airportD);
+	golgotha.airportLoad.setHelpers(f.airportA);	
+});
 </script>
 </head>
 <content:copyright visible="false" />
@@ -44,7 +68,7 @@ return true;
 <el:form action="preapprove.do" method="post" linkID="${pilotID}" validate="return validate(this)">
 <el:table className="form">
 <tr class="title caps">
- <td colspan="2">UNSCHEDULED FLIGHT APPROVAL - ${assignPilot.name}</td>
+ <td colspan="2">UNSCHEDULED FLIGHT APPROVAL - ${assignPilot.name} (${assignPilot.pilotCode})</td>
 </tr>
 <c:if test="${charterFlights > 0}">
 <tr>
@@ -55,14 +79,13 @@ return true;
 </c:if>
 <tr>
  <td class="label">Aircraft Type</td>
- <td class="data"><el:combo name="eqType" size="1" idx="*" className="req" options="${eqTypes}" firstEntry="-" /></td>
+ <td class="data"><el:combo name="eqType" size="1" idx="*" className="req" options="${eqTypes}" onChange="void changeEQ(this)" firstEntry="-" /></td>
 </tr>
 <tr>
  <td class="label">Airline</td>
- <td class="data"><el:combo name="airline" size="1" idx="*" className="req" options="${airlines}" onChange="void changeAirline(this, false)" firstEntry="-" /></td>
+ <td class="data"><el:combo name="airline" size="1" idx="*" className="req" options="${airlines}" onChange="void changeAirline(this)" firstEntry="-" /></td>
 </tr>
-<c:set var="flightNumber" value="${assignPilot.pilotNumber}" scope="request" />
-<c:if test="${flightNumber > 9999}"><c:set var="flightNumber" value="${flightNumber % 10000}" scope="request" /></c:if>
+<c:set var="flightNumber" value="${assignPilot.pilotNumber % 10000}" scope="request" />
 <tr>
  <td class="label">Flight / Leg</td>
  <td class="data"><el:text name="flight" idx="*" size="4" max="4" className="pri bld req" value="${flightNumber}" />
@@ -70,13 +93,13 @@ return true;
 </tr>
 <tr>
  <td class="label">Departing from</td>
- <td class="data"><el:combo name="airportD" size="1" idx="*" className="req" options="${emptyList}" firstEntry="-" onChange="void changeAirport(this)" />
- <el:text name="airportDCode" size="4" max="4" idx="*" value="" onBlur="void setAirport(document.forms[0].airportD, this.value)" /></td>
+ <td class="data"><el:combo name="airportD" size="1" idx="*" className="req" options="${emptyList}" firstEntry="-" onChange="void this.updateAirportCode()" />
+ <el:text name="airportDCode" size="4" max="4" idx="*" value="" onBlur="void document.forms[0].airportD.setAirport(this.value)" /></td>
 </tr>
 <tr>
  <td class="label">Arriving at</td>
- <td class="data"><el:combo name="airportA" size="1" idx="*" className="req" options="${emptyList}" firstEntry="-" onChange="void changeAirport(this)" />
- <el:text name="airportACode" size="4" max="4" idx="*" value="" onBlur="void setAirport(document.forms[0].airportA, this.value)" /></td>
+ <td class="data"><el:combo name="airportA" size="1" idx="*" className="req" options="${emptyList}" firstEntry="-" onChange="void this.updateAirportCode()" />
+ <el:text name="airportACode" size="4" max="4" idx="*" value="" onBlur="void document.forms[0].airportD.setAirport(this.value)" /></td>
 </tr>
 </el:table>
 

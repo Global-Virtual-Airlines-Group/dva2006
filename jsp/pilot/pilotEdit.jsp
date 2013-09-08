@@ -13,12 +13,14 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
+<content:js name="json2" />
 <content:js name="airportRefresh" />
 <content:sysdata var="forumName" name="airline.forum" />
 <content:sysdata var="badDomains" name="registration.reject_domain" />
 <content:sysdata var="minPwd" name="security.password.min" />
 <content:sysdata var="defaultTFormat" name="time.time_format" />
 <content:sysdata var="defaultDFormat" name="time.date_format" />
+<fmt:aptype var="useICAO" />
 <script type="text/javascript">
 var hasSignature = ${pilot.hasSignature};
 
@@ -94,10 +96,19 @@ f.df.value = '${defaultDFormat}';
 f.tf.value = '${defaultTFormat}';
 return true;
 }
+
+golgotha.onDOMReady(function() {
+	var f = document.forms[0];
+	var cfg = golgotha.airportLoad.config;
+	f.useDefaultSig.disabled = hasSignature;
+	cfg.doICAO = ${useICAO}; cfg.airline = 'all';
+	golgotha.airportLoad.setHelpers(f.homeAirport);
+	f.homeAirport.loadAirports(cfg);
+});
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="changeAirport(document.forms[0].homeAirport); disableSigBoxes()">
+<body onload="void disableSigBoxes()">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -105,6 +116,7 @@ return true;
 <c:set var="cspan" value="${(!empty exams) || (!empty statusUpdates) ? 6 : 1}" scope="request" />
 <content:sysdata var="db" name="airline.db" />
 <content:tz var="timeZones" />
+<content:singleton var="airports" value="${homeAirport}" />
 <content:enum var="ranks" className="org.deltava.beans.Rank" />
 <content:enum var="notifyOptions" className="org.deltava.beans.Notification" />
 <content:enum var="distanceUnits" className="org.deltava.beans.DistanceUnit" />
@@ -112,7 +124,6 @@ return true;
 <content:enum var="acarsRest" className="org.deltava.beans.acars.Restriction" />
 <content:enum var="acTypes" className="org.deltava.beans.schedule.Airport$Code" />
 <content:sysdata var="locations" name="locations" />
-<content:sysdata var="airports" name="airports" mapValues="true" sort="true" />
 <content:sysdata var="roles" name="security.roles" />
 <content:sysdata var="schemes" name="html.schemes" />
 <content:sysdata var="sigX" name="cooler.sig_max.x" />
@@ -188,8 +199,8 @@ return true;
 </tr>
 <tr>
  <td class="label">Home Airport</td>
- <td colspan="${cspan}" class="data"><el:combo name="homeAirport" size="1" idx="*" options="${airports}" value="${pilot.homeAirport}" onChange="void changeAirport(this)" />
- <el:text name="airportCode" size="3" max="4" onBlur="void setAirport(document.forms[0].airport, this.value)" /></td>
+ <td colspan="${cspan}" class="data"><el:combo name="homeAirport" size="1" idx="*" options="${airports}" value="${homeAirport}" onChange="void this.updateAirportCode()" />
+ <el:text name="homeAirportCode" size="3" max="4" onBlur="void document.forms[0].homeAirport.setAirport(this.value)" /></td>
 </tr>
 <tr>
  <td class="label">VATSIM ID#</td>
@@ -379,10 +390,6 @@ pixels, and the maximum file size is <fmt:int value="${sigSize}" /> bytes.</span
 <content:copyright />
 </content:region>
 </content:page>
-<script type="text/javascript">
-var f = document.forms[0];
-f.useDefaultSig.disabled = hasSignature;
-</script>
 <content:googleAnalytics />
 </body>
 </html>

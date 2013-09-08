@@ -14,9 +14,11 @@
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
+<content:js name="json2" />
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
 <content:sysdata var="innovataLink" name="schedule.innovata.enabled" />
+<fmt:aptype var="useICAO" />
 <script type="text/javascript">
 function setAirportD(combo)
 {
@@ -48,20 +50,26 @@ else {
 return true;
 }
 
-function initChoices()
-{
-var f = document.forms[0];
-updateAirports(f.airportD, 'airline=all&useSched=true', ${useICAO}, '${airportD.IATA}');
-updateAirports(f.airportA, 'code=${airportD.IATA}', ${useICAO}, '${airportA.IATA}');
-}
+golgotha.onDOMReady(function() {
+	var f = document.forms[0];
+	var cfg = golgotha.airportLoad.config; 
+	cfg.doICAO = ${useICAO}; cfg.airline = 'all';
+	golgotha.airportLoad.setHelpers(f.airportD);
+	golgotha.airportLoad.setHelpers(f.airportA);
+	f.airportD.loadAirports(cfg);
+	cfg = cfg.clone(); cfg.code = getValue(f.airportD);
+	f.airportA.loadAirports(cfg);
+	return true;
+};
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="initLinks(); initChoices()">
+<body onload="initLinks()">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<content:empty var="emptyList" />
+<content:singleton var="airportsD" value="${airportD}" />
+<content:singleton var="airportsA" value="${airportA}" />
 <content:attr attr="isSchedule" value="true" roles="Schedule" />
 
 <!-- Main Body Frame -->
@@ -74,9 +82,10 @@ updateAirports(f.airportA, 'code=${airportD.IATA}', ${useICAO}, '${airportA.IATA
  <td class="left caps" colspan="7"><content:airline /> FLIGHT SCHEDULE<c:if test="${!empty importDate}"> IMPORTED ON <fmt:date date="${importDate}" /></c:if></td>
 </tr>
 <tr class="title">
- <td class="right" colspan="7">FLIGHTS FROM <el:combo name="airportD" idx="*" size="1" className="small" options="${emptyList}" onChange="void setAirportD(this)" />
- <el:text name="airportDCode" idx="*" size="3" max="4" value="${useICAO ? airportD.ICAO : airportD.IATA}" onBlur="void setAirportDCode(this.value)" /> TO
- <el:combo name="airportA" idx="*" size="1" className="small" firstEntry="-" options="${emptyList}" onChange="void setAirportA(this)" />
+ <td class="right" colspan="7">FLIGHTS FROM <el:combo name="airportD" idx="*" size="1" className="small" options="${airportsD}" value="${airportD}" onChange="void setAirportD(this)" />
+ <el:text name="airportDCode" idx="*" size="3" max="4" value="${useICAO ? airportD.ICAO : airportD.IATA}" onBlur="void document.forms[0].airportD.setAirport(this.value, true)" /> TO
+ <el:combo name="airportA" idx="*" size="1" className="small" firstEntry="-" options="${airportsA}" value="${airportA}" onChange="void setAirportA(this)" />
+ <el:text name="airportACode" idx="*" size="3" max="4" value="${useICAO ? airportA.ICAO : airportA.IATA}" onBlur="void document.forms[0].airportA.setAirport(this.value, true)" />
 <c:if test="${isSchedule}"><el:cmdbutton url="sched" op="edit" label="NEW FLIGHT SCHEDULE ENTRY" /></c:if></td>
 </tr>
 <tr class="title caps">
@@ -86,7 +95,7 @@ updateAirports(f.airportA, 'code=${airportD.IATA}', ${useICAO}, '${airportA.IATA
  <td style="width:9%">DEPARTS</td>
  <td style="width:9%">ARRIVES</td>
  <td style="width:10%">DISTANCE</td>
- <td>style="width:10%">DURATION</td>
+ <td style="width:10%">DURATION</td>
 </tr>
 
 <!-- Table Data Section -->

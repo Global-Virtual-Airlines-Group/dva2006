@@ -13,6 +13,7 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
+<content:js name="json2" />
 <content:js name="airportRefresh" />
 <c:set var="googleMap" value="${isNew && (!empty airport)}" scope="page" />
 <c:if test="${googleMap}">
@@ -40,10 +41,25 @@ disableButton('SaveButton');
 disableButton('DeleteButton');
 return true;
 }
+
+golgotha.onDOMReady(function() {
+	var f = document.forms[0];
+	var cfg = golgotha.airportLoad.config;
+	cfg.airline = 'all';
+
+	<c:if test="${empty airport}">
+	if (f.country.selectedIndex > 0) cfg.country = getValue(f.country);</c:if>
+	<c:if test="${!empty airport}">
+	cfg.airport = '${airport.ICAO}'; cfg.dist = 50;</c:if>
+
+	golgotha.airportLoad.setHelpers(f.oldAirport);
+	f.oldAirport.loadAirports(cfg);
+	return true;
+});
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void updateOldAirports()">
+<body>
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -180,17 +196,5 @@ var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
 addMarkers(map, 'apMarker');
 </script></c:if>
-<script type="text/javascript">
-function updateOldAirports()
-{
-var f = document.forms[0];
-<c:if test="${empty airport}">
-var cmd = (f.country.selectedIndex > 0) ? ('country=' + getValue(f.country)) : 'airline=all';</c:if>
-<c:if test="${!empty airport}">
-var cmd ='airport=${airport.ICAO}&dist=50';</c:if>
-updateAirports(f.oldAirport, cmd, ${useICAO}, f.oldAirportCode.value);
-return true;
-}
-</script>
 </body>
 </html>

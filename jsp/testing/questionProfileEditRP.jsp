@@ -14,6 +14,7 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
+<content:js name="json2" />
 <content:js name="airportRefresh" />
 <map:api version="3" />
 <content:js name="routePlot" />
@@ -197,8 +198,8 @@ return true;
 </tr>
 <tr>
  <td class="label">Departing from</td>
- <td class="data"><el:combo name="airportD" idx="*" size="1" options="${airports}" firstEntry="-" value="${question.airportD}" className="req" onChange="changeAirport(this); updateSIDSTAR(document.forms[0].sid, getValue(this), 'sid')" />
- <el:text ID="airportDCode" name="airportDCode" idx="*" size="3" max="4" value="${question.airportD.IATA}" onBlur="setAirport(document.forms[0].airportD, this.value); updateSIDSTAR(document.forms[0].sid, this.value, 'sid')" /></td>
+ <td class="data"><el:combo name="airportD" idx="*" size="1" options="${airports}" firstEntry="-" value="${question.airportD}" className="req" onChange="this.updateAirportCode(); this.loadSIDSTAR(getValue(this), 'sid')" />
+ <el:text ID="airportDCode" name="airportDCode" idx="*" size="3" max="4" value="" onBlur="void document.forms[0].airportD.setAirport(this.value, true)" /></td>
 </tr>
 <tr>
  <td class="label">SID</td>
@@ -206,8 +207,8 @@ return true;
 </tr>
 <tr>
  <td class="label">Arriving at</td>
- <td class="data"><el:combo name="airportA" idx="*" size="1" options="${airports}" firstEntry="-" value="${question.airportA}" className="req" onChange="changeAirport(this); updateSIDSTAR(document.forms[0].star, getValue(this), 'star')" />
- <el:text ID="airportACode" name="airportACode" idx="*" size="3" max="4" value="${question.airportA.IATA}" onBlur="setAirport(document.forms[0].airportA, this.value); updateSIDSTAR(document.forms[0].star, this.value, 'star')" /></td>
+ <td class="data"><el:combo name="airportA" idx="*" size="1" options="${airports}" firstEntry="-" value="${question.airportA}" className="req" onChange="this.updateAirportCode(); this.loadSIDSTAR(getValue(this), 'star')" />
+ <el:text ID="airportACode" name="airportACode" idx="*" size="3" max="4" value="" onBlur="void document.forms[0].airportA.setAirport(this.value, true)" /></td>
 </tr>
 <tr>
  <td class="label">STAR</td>
@@ -256,12 +257,20 @@ return true;
 <content:copyright />
 </content:region>
 </content:page>
+<fmt:aptype var="useICAO" />
 <c:set var="mapDistance" value="${(empty question) ? 300 : question.distance}" scope="page" />
 <script type="text/javascript">
 var doRunways = false;
-<map:point var="mapC" point="${mapCenter}" />
+var f = document.forms[0];
+golgotha.airportLoad.config.doICAO = '${useICAO}';
+golgotha.airportLoad.config.useSched = false;
+golgotha.airportLoad.setHelpers(f.airportD, true);
+golgotha.airportLoad.setHelpers(f.airportA, true);
+f.airportD.updateAirportCode();
+f.airportA.updateAirportCode();
 
 // Create map
+<map:point var="mapC" point="${mapCenter}" />
 var mapTypes = {mapTypeIds: [google.maps.MapTypeId.TERRAIN, google.maps.MapTypeId.SATELLITE]};
 var mapOpts = {center:mapC, zoom:getDefaultZoom(${mapDistance}), scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
