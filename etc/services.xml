@@ -65,11 +65,9 @@
 	<service id="xpirep" class="org.deltava.service.xacars.XPIREPService" />
 
 	<!-- ACARS Dispatch Services -->
-	<service id="navaids" class="org.deltava.service.navdata.NavigationAidService" />
-	<service id="airways" class="org.deltava.service.navdata.AirwayService" />
-	<service id="sidstar" class="org.deltava.service.navdata.TerminalRouteService" />
 	<service id="navaidsearch" class="org.deltava.service.navdata.NavaidSearchService" />
 	<service id="xmlsidstar" class="org.deltava.service.navdata.XMLTerminalRouteService" />
+	<service id="airacversion" class="org.deltava.service.navdata.AIRACVersionService" />
 
 	<!-- SID/STAR updating -->
 	<service id="apsidstar" class="org.deltava.service.navdata.AirportTerminalRouteService" />
