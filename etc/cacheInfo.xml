@@ -43,6 +43,7 @@
 	<cache id="AircraftInfo" max="32" expires="3600" />
 	<cache id="EquipmentTypes" max="24" expires="3600" />
 	<cache id="Accomplishments" max="24" expires="3600" />
+	<cache id="Metadata" max="24" expires="1800" />
 
 	<cache id="MessageTemplate" max="16" />
 	<cache id="LibraryDLCount" max="64" expires="1800" />
