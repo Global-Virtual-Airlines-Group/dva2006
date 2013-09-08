@@ -385,7 +385,7 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 	public Collection<Integer> checkSoundex(Person usr, String dbName) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT ID, SOUNDEX(?) AS TARGET, SOUNDEX(LASTNAME) AS SX FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT ID, SOUNDEX(?) AS TARGET, SOUNDEX(LASTNAME COLLATE utf8_general_ci) AS SX FROM ");
 		sqlBuf.append(formatDBName(dbName));
 		sqlBuf.append(".APPLICANTS WHERE (ID<>?) AND (STATUS<>?) HAVING ((LEFT(SX, LENGTH(TARGET))=TARGET) OR "
 				+ "(LEFT(TARGET, LENGTH(SX))=SX)) ORDER BY ID");
@@ -401,7 +401,7 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 		}
 	}
 	
-	/**
+	/*
 	 * Helper method to extract database ID data from the result set.
 	 */
 	private List<Integer> executeIDs() throws SQLException {
@@ -415,7 +415,7 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 		return new ArrayList<Integer>(results);
 	}
 	
-	/**
+	/*
 	 * Helper method to populate stage program choices.
 	 */
 	private void loadStageChoices(Applicant a) throws SQLException {
@@ -430,11 +430,10 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 		_ps.close();
 	}
 
-	/**
+	/*
 	 * Helper method to extract appliacnt data from the result set.
 	 */
 	private List<Applicant> execute() throws SQLException {
-
 		List<Applicant> results = new ArrayList<Applicant>();
 		try (ResultSet rs = _ps.executeQuery()) {
 			while (rs.next()) {
