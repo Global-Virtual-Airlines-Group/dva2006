@@ -708,6 +708,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			GetPilotBoard pbdao = new GetPilotBoard(con);
 			ctx.setAttribute("pilot", p, REQUEST);
 			ctx.setAttribute("pilotLocation", pbdao.getLocation(p.getID()), REQUEST);
+			ctx.setAttribute("homeAirport", SystemData.getAirport(p.getHomeAirport()), REQUEST);
 
 			// Get all equipment type profiles
 			GetEquipmentType eqdao = new GetEquipmentType(con);
