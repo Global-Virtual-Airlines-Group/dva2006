@@ -1,4 +1,6 @@
-var golgotha = { event: {}};
+var golgotha = { event:{}, util:{} };
+golgotha.util.isIE = (navigator.appName == 'Microsoft Internet Explorer');
+golgotha.util.oldIE = (golgotha.util.isIE && ((navigator.appVersion.indexOf('IE 7.0') > 0) || (navigator.appVersion.indexOf('IE 8.0') > 0)));
 golgotha.event.beacon = function() { return false; };
 golgotha.event.stop = function(e) {	e.stopPropagation(); e.preventDefault(); }; 
 
@@ -134,6 +136,13 @@ return false;
 
 golgotha.isFunction = function(o) {
 	return !!(o && o.constructor && o.call && o.apply);
+}
+
+golgotha.onDOMReady = function(f) {
+	if (golgotha.util.oldIE)
+		return document.attachEvent('onreadystatechange', f); 
+	else
+		return document.addEventListener('DOMContentLoaded', f);
 }
 
 function getValue(combo)
