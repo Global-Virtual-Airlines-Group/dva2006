@@ -1,8 +1,6 @@
 var golgotha = { event: {}};
-golgotha.event.stop = function(e) {
-	e.stopPropagation();
-	e.preventDefault();
-} 
+golgotha.event.beacon = function() { return false; };
+golgotha.event.stop = function(e) {	e.stopPropagation(); e.preventDefault(); }; 
 
 function getElementsById(id, eName)
 {
@@ -132,6 +130,10 @@ for (var x = 0; x < combo.options.length; x++) {
 
 combo.selectedIndex = -1;
 return false;
+}
+
+golgotha.isFunction = function(o) {
+	return !!(o && o.constructor && o.call && o.apply);
 }
 
 function getValue(combo)
