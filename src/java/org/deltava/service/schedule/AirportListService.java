@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.util.*;
@@ -7,7 +7,7 @@ import java.sql.Connection;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
-import org.jdom2.*;
+import org.json.*;
 
 import org.deltava.beans.schedule.*;
 import org.deltava.comparators.AirportComparator;
@@ -15,6 +15,7 @@ import org.deltava.comparators.AirportComparator;
 import org.deltava.dao.*;
 import org.deltava.filter.*;
 import org.deltava.service.*;
+
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
@@ -22,10 +23,9 @@ import org.deltava.util.system.SystemData;
  * A Web Service to process Airport List AJAX requests.
  * @author Luke
  * @author Rahul
- * @version 5.2
+ * @version 5.1
  * @since 1.0
  */
-
 
 public class AirportListService extends WebService {
 
@@ -36,7 +36,6 @@ public class AirportListService extends WebService {
 	 * @throws ServiceException if an error occurs
 	 */
 	@Override
-	//TODO : Use WebService to pull visited airports.
 	public int execute(ServiceContext ctx) throws ServiceException {
 		MultiFilter filter = new ANDFilter();
 		filter.add(new NonFilter());
@@ -46,10 +45,28 @@ public class AirportListService extends WebService {
 		Map<String, Airport> allAirports = new HashMap<String, Airport>();
 		try {
 			Connection con = ctx.getConnection();
-
+			
+			// Check for not visited airports
+			if (Boolean.valueOf(ctx.getParameter("notVisited")).booleanValue() && ctx.isAuthenticated()) {
+				Collection<Airport> myAirports = new HashSet<Airport>();
+				
+				GetFlightReports frdao = new GetFlightReports(con);
+				Collection<? extends RoutePair> routes = frdao.getRoutePairs(ctx.getUser().getID());
+				for (RoutePair rp : routes) {
+					myAirports.add(rp.getAirportD());
+					myAirports.add(rp.getAirportA());
+				}
+				
+				// Add academy airports
+				GetSchedule sdao = new GetSchedule(con);
+				myAirports.addAll(sdao.getAcademyAirports());
+				
+				// Create the filter
+				filter.add(new NOTFilter(new IATAFilter(myAirports)));
+			}
+			
 			String al = ctx.getParameter("airline");
 			boolean useSched = Boolean.valueOf(ctx.getParameter("useSched")).booleanValue();
-			boolean notVisited = Boolean.valueOf(ctx.getParameter("notVisited")).booleanValue();
 			if (al != null) {
 				Airline a = SystemData.getAirline(al);
 				// Either search the schedule or return the SystemData list
@@ -97,6 +114,16 @@ public class AirportListService extends WebService {
 					filter.add(new GeoLocationFilter(a, StringUtils.parse(ctx.getParameter("dist"), 5)));
 			}
 			
+			// Add supplementary runway lenght filter
+			if (ctx.getParameter("eqType") != null) {
+				GetAircraft acdao = new GetAircraft(con);
+				Aircraft ac = acdao.get(ctx.getParameter("eqType"));
+				if (ac != null) {
+					int rwyLength = Math.max(ac.getTakeoffRunwayLength(), ac.getLandingRunwayLength());
+					filter.add(new RunwayLengthFilter(rwyLength));
+				}
+			}
+			
 			// Add forced airport
 			GetAirport adao = new GetAirport(con);
 			allAirports.putAll(adao.getAll());
@@ -118,25 +145,25 @@ public class AirportListService extends WebService {
 		}
 
 		// Generate the XML document
-		Document doc = new Document();
-		Element re = new Element("wsdata");
-		doc.setRootElement(re);
-		for (Airport a : airports) {
-			Element e = new Element("airport");
-			e.setAttribute("iata", a.getIATA());
-			e.setAttribute("icao", a.getICAO());
-			e.setAttribute("lat", StringUtils.format(a.getLatitude(), "##0.0000"));
-			e.setAttribute("lng", StringUtils.format(a.getLongitude(), "##0.0000"));
-			e.setAttribute("name", a.getName());
-			re.addContent(e);
-		}
-		
-		// Dump the XML to the output stream
+		JSONArray ja = new JSONArray();
 		try {
-			ctx.setContentType("text/xml", "UTF-8");
+			for (Airport a : airports) {
+				JSONObject ao = new JSONObject();
+				ao.put("iata", a.getIATA());
+				ao.put("icao", a.getICAO());
+				ao.put("lat", a.getLatitude());
+				ao.put("lng", a.getLongitude());
+				ao.put("name", a.getName());
+				ja.put(ao);
+			}
+
+			// Dump the XML to the output stream
+			ctx.setContentType("text/javascript", "UTF-8");
 			ctx.setExpiry(3600);
-			ctx.println(XMLUtils.format(doc, "UTF-8"));
+			ctx.println(ja.toString());
 			ctx.commit();
+		} catch (JSONException je) {
+			throw error(SC_INTERNAL_SERVER_ERROR, "Data Error", je);
 		} catch (IOException ie) {
 			throw error(SC_CONFLICT, "I/O Error", false);
 		}
@@ -148,7 +175,8 @@ public class AirportListService extends WebService {
 	 * Tells the Web Service Servlet not to log invocations of this service.
 	 * @return FALSE
 	 */
-	public final boolean isLogged() {
+	@Override
+	public boolean isLogged() {
 		return false;
 	}
 }

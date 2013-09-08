@@ -4,6 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html lang="en">
 <head>
@@ -12,6 +13,7 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
+<content:js name="json2" />
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
 <script type="text/javascript">
@@ -45,9 +47,8 @@ var endF = f.rangeEnd.value;
 var xmlreq = getXMLHttpRequest();
 xmlreq.open("GET", "next_flight.ws?start=" + startF + "&end=" + endF + "&airline=" + aCode, true);
 xmlreq.onreadystatechange = function () {
-	if (xmlreq.readyState != 4) return false;
-	var xmlDoc = xmlreq.responseXML;
-	var e = xmlDoc.documentElement;
+	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
+	var e = xmlreq.responseXML.documentElement;
 
 	// Update the flight number and leg
 	var f = document.forms[0];
@@ -74,11 +75,10 @@ var aCode = f.airline[f.airline.selectedIndex].value;
 
 // Create the XMLHTTP Request
 var xmlreq = getXMLHttpRequest();
-xmlreq.open("GET", "next_leg.ws?flight=" + f.flightNumber.value + "&airline=" + aCode, true);
+xmlreq.open('get', 'next_leg.ws?flight=' + f.flightNumber.value + '&airline=' + aCode, true);
 xmlreq.onreadystatechange = function () {
-	if (xmlreq.readyState != 4) return false;
-	var xmlDoc = xmlreq.responseXML;
-	var e = xmlDoc.documentElement;
+	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
+	var e = xmlreq.responseXML.documentElement;
 
 	// Update the flight number and leg
 	var f = document.forms[0];
@@ -94,6 +94,17 @@ xmlreq.onreadystatechange = function () {
 disableButton('LegSearchButton');
 disableButton('FlightSearchButton');
 xmlreq.send(null);
+return true;
+}
+
+function changeAirline(combo)
+{
+var f = document.forms[0];
+golgotha.airportLoad.changeAirline([f.airportD, f.airportA], golgotha.airportLoad.config);
+var rows = getElementsByClass('airportRow');
+for (var x = 0; x < rows.length; x++)
+	displayObject(rows[x], (combo.selectedIndex > 0));
+
 return true;
 }
 </c:if>
@@ -117,7 +128,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Airline Name</td>
- <td class="data"><el:combo name="airline" idx="*" required="true" size="1" options="${airlines}" value="${entry.airline}" onChange="void changeAirline(this, false)" firstEntry="[ AIRLINE ]" /></td>
+ <td class="data"><el:combo name="airline" idx="*" required="true" size="1" options="${airlines}" value="${entry.airline}" onChange="void changeAirline(this)" firstEntry="[ AIRLINE ]" /></td>
 </tr>
 <tr>
  <td class="label top">Flight Number / Leg</td>
@@ -127,18 +138,18 @@ return true;
 <hr />
 <span class="small">You can search for an available flight number between 
 <el:text name="rangeStart" idx="*" className="small" size="3" max="4" value="" /> and 
-<el:text name="rangeEnd" idx="*" className="small" size="3" max="4" value="" /></span>
+<el:text name="rangeEnd" idx="*" className="small" size="3" max="4" value="" />
 <el:button ID="FlightSearchButton" onClick="void getAvailableFlight()" label="SEARCH" /><br />
-You can search for the next available Flight Leg. <el:button ID="LegSearchButton" onClick="void getAvailableLeg()" label="SEARCH" /></c:if></td>
+You can search for the next available Flight Leg. <el:button ID="LegSearchButton" onClick="void getAvailableLeg()" label="SEARCH" /></span></c:if></td>
 </tr>
 <tr>
  <td class="label">Equipment Type</td>
  <td class="data"><el:combo name="eqType" idx="*" required="true" size="1" options="${eqTypes}" value="${entry.equipmentType}" firstEntry="[ EQUIPMENT ]" /></td>
 </tr>
-<tr>
+<tr class="airportRow">
  <td class="label">Departing From</td>
- <td class="data"><el:combo name="airportD" size="1" options="${airports}" required="true" value="${entry.airportD}" onChange="void changeAirport(this)" />
- <el:text ID="airportDCode" name="airportDCode" idx="*" size="3" max="4" value="${entry.airportD.ICAO}" onBlur="void setAirport(document.forms[0].airportD, this.value)" />
+ <td class="data"><el:combo name="airportD" size="1" options="${airports}" required="true" value="${entry.airportD}" onChange="void this.updateAirportCode()" />
+ <el:text ID="airportDCode" name="airportDCode" idx="*" size="3" max="4" value="${entry.airportD.ICAO}" onBlur="void document.forms[0].airportD.setAirport(this.value)" />
  at <el:text name="timeD" idx="*" size="4" max="5" value="${fn:dateFmt(entry.timeD, 'HH:mm')}" /> <span class="small">(Format: HH:mm)</span></td>
 </tr>
 <content:hasmsg>
@@ -147,17 +158,17 @@ You can search for the next available Flight Leg. <el:button ID="LegSearchButton
  <td class="data error bld">CANNOT SAVE SCHEDULE ENTRY - <content:sysmsg /></td>
 </tr>
 </content:hasmsg>
-<tr>
+<tr class="airportRow">
  <td class="label">Arriving At</td>
- <td class="data"><el:combo name="airportA" size="1" options="${airports}" required="true" value="${entry.airportA}" onChange="void changeAirport(this)" />
- <el:text ID="airportACode" name="airportACode" idx="*" size="3" max="4" value="${entry.airportA.ICAO}" onBlur="void setAirport(document.forms[0].airportA, this.value)" />
+ <td class="data"><el:combo name="airportA" size="1" options="${airports}" required="true" value="${entry.airportA}" onChange="void this.updateAirportCode()" />
+ <el:text ID="airportACode" name="airportACode" idx="*" size="3" max="4" value="${entry.airportA.ICAO}" onBlur="void document.forms[0].airportA.setAirport(this.value)" />
  at <el:text name="timeA" idx="*" size="4" max="5" value="${fn:dateFmt(entry.timeA, 'HH:mm')}" /> <span class="small">(Format: HH:mm)</span></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="dontPurge" className="small" idx="*" value="true" label="Don't Purge Flight on Schedule Import" checked="${!entry.canPurge}" />
-<el:box name="isHistoric" className="small" idx="*" value="true" label="Historic Flight" checked="${entry.historic}" />
-<c:if test="${academyEnabled}"><el:box name="isAcademy" className="small" idx="*" value="true" label="Flight Academy Flight" checked="${entry.academy}" /></c:if></td>
+ <td class="data"><el:box name="dontPurge" className="small" idx="*" value="true" label="Don't Purge Flight on Schedule Import" checked="${!entry.canPurge}" /><br />
+<el:box name="isHistoric" className="small" idx="*" value="true" label="This is a Historic Flight" checked="${entry.historic}" />
+<c:if test="${academyEnabled}"><br /><el:box name="isAcademy" className="small" idx="*" value="true" label="This is a Flight Academy Flight" checked="${entry.academy}" /></c:if></td>
 </tr>
 </el:table>
 
@@ -174,5 +185,14 @@ You can search for the next available Flight Leg. <el:button ID="LegSearchButton
 <content:copyright />
 </content:region>
 </content:page>
+<fmt:aptype var="useICAO" />
+<script type="text/javascript">
+var f = document.forms[0];
+var cfg = golgotha.airportLoad.config; 
+cfg.doICAO = ${useICAO}; cfg.useSched = false;
+golgotha.airportLoad.setHelpers(f.airportD);
+golgotha.airportLoad.setHelpers(f.airportA);
+changeAirline(f.airline);
+</script>
 </body>
 </html>

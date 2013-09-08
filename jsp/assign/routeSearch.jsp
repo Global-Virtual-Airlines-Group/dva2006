@@ -14,6 +14,7 @@
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
+<content:js name="json2" />
 <content:js name="airportRefresh" />
 <content:sysdata var="innovataLink" name="schedule.innovata.enabled" />
 <script type="text/javascript">
@@ -166,8 +167,11 @@ return true;
 <fmt:aptype var="useICAO" />
 <script type="text/javascript">
 var f = document.forms[0];
-updateAirports(f.airportD, 'useSched=true', ${useICAO}, '${rp.airportD.IATA}');
-updateAirports(f.airportA, 'useSched=true', ${useICAO}, '${rp.airportA.IATA}');
+golgotha.airportLoad.config.doICAO = ${useICAO};
+
+golgotha.airportLoad.setHelpers(f.airportD);
+golgotha.airportLoad.setHelpers(f.airportA);
+golgotha.airportLoad.changeAirline([f.airportD, f.airportA], golgotha.airportLoad.config);
 </script>
 <content:googleAnalytics eventSupport="true" />
 </body>

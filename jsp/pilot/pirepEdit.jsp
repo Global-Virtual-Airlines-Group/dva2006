@@ -19,7 +19,8 @@
 <content:pics />
 <content:js name="common" />
 <content:browser html4="true"><content:js name="hourCalc" /></content:browser>
-<c:if test="${!isAssign}"><content:js name="airportRefresh" /></c:if>
+<c:if test="${!isAssign}"><content:js name="json2" />
+<content:js name="airportRefresh" /></c:if>
 <content:googleAnalytics eventSupport="true" />
 <content:sysdata var="minDays" name="users.pirep.minDays" />
 <script type="text/javascript">
@@ -78,9 +79,12 @@ function loadAirports()
 {
 var f = document.forms[0]
 if (f.airline.selectedIndex != 0) {
-	var aCode = getValue(f.airline);
-	updateAirports(f.airportD, 'airline=' + aCode + '&add=${pirep.airportD.ICAO}', false, '${pirep.airportD.IATA}');
-	updateAirports(f.airportA, 'airline=' + aCode + '&add=${pirep.airportA.ICAO}', false, '${pirep.airportA.IATA}');
+	var cfg = golgotha.airportLoader.config.clone();
+	cfg.add = getValue(f.airportD); 
+	f.airportD.loadAirports(cfg);
+	cfg = golgotha.airportLoader.config.clone();
+	cfg.add = getValue(f.airportA);
+	f.airportA.loadAirports(cfg);
 }
 
 f.airline.focus();	
@@ -126,7 +130,7 @@ return true;
 <c:when test="${!isAssign}">
 <tr>
  <td class="label">Airline Name</td>
- <td class="data"><el:combo name="airline" idx="*" size="1" options="${airlines}" value="${pirep.airline}" onChange="void changeAirline(this, false)" className="req" firstEntry="[ AIRLINE ]" /></td>
+ <td class="data"><el:combo name="airline" idx="*" size="1" options="${airlines}" value="${pirep.airline}" onChange="void loadAirports()" className="req" firstEntry="[ AIRLINE ]" /></td>
 </tr>
 </c:when>
 <c:otherwise>
@@ -149,13 +153,13 @@ return true;
 <c:when test="${!isAssign}">
 <tr>
  <td class="label">Departed from</td>
- <td class="data"><el:combo name="airportD" size="1" options="${emptyList}" required="true" onChange="void changeAirport(this)" />
- <el:text ID="airportDCode" name="airportDCode" idx="*" size="3" max="4" onBlur="void setAirport(document.forms[0].airportD, this.value)" /></td>
+ <td class="data"><el:combo name="airportD" size="1" options="${emptyList}" required="true" onChange="void this.updateAirportCode()" />
+ <el:text ID="airportDCode" name="airportDCode" idx="*" size="3" max="4" onBlur="void document.forms[0].airportD.setAirport(this.value)" /></td>
 </tr>
 <tr>
  <td class="label">Arrived at</td>
- <td class="data"><el:combo name="airportA" size="1" options="${emptyList}" required="true" onChange="void changeAirport(this)" />
- <el:text ID="airportACode" name="airportACode" idx="*" size="3" max="4" onBlur="void setAirport(document.forms[0].airportA, this.value)" /></td>
+ <td class="data"><el:combo name="airportA" size="1" options="${emptyList}" required="true" onChange="void this.updateAirportCode()" />
+ <el:text ID="airportACode" name="airportACode" idx="*" size="3" max="4" onBlur="void document.forms[0].airportA.setAirport(this.value)" /></td>
 </tr>
 </c:when>
 <c:otherwise>
@@ -231,6 +235,14 @@ return true;
 <content:copyright />
 </content:region>
 </content:page>
+<fmt:aptype var="useICAO" />
+<script type="text/javascript">
+var f = document.forms[0];
+golgotha.airportLoad.setHelpers(f.airportD);
+golgotha.airportLoad.setHelpers(f.airportA);
+golgotha.airportLoad.config.doICAO = ${useICAO};
+golgotha.airportLoad.config.useSched = false;
+</script>
 <content:browser html4="true">
 <script type="text/javascript">
 var f = document.forms[0];
