@@ -1,32 +1,29 @@
-// Copyright 2005, 2006, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
+import java.security.Principal;
 import java.util.*;
 import java.io.IOException;
 
-import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.*;
+import javax.servlet.http.HttpServletRequest;
 
-import org.deltava.beans.ComboAlias;
+import org.deltava.beans.*;
+import org.deltava.beans.schedule.Airport;
 import org.deltava.util.StringUtils;
 
 /**
  * A JSP tag to support generating HTML combo/list boxes.
  * @author Luke
- * @version 4.2
+ * @version 5.1
  * @since 1.0
  */
 
 public class ComboTag extends FormElementTag {
 
-	/**
-	 * The combo/listbox choices.
-	 */
-	protected Collection<?> _options;
-	
-	/**
-	 * A first entry for the combo/listbox.
-	 */
-	protected Object _firstEntry;
+	private Collection<?> _options;
+	private Object _firstEntry;
+	private Airport.Code _airportCode;
 
 	/**
 	 * Create a new combo/listbox tag.
@@ -35,7 +32,7 @@ public class ComboTag extends FormElementTag {
 		super("select", false);
 	}
 
-	/**
+	/*
 	 * Helper method to check if an option value is selected.
 	 */
 	private static boolean checkOption(Object optValue, Object setValue) {
@@ -46,41 +43,57 @@ public class ComboTag extends FormElementTag {
 		} else if (optValue instanceof ComboAlias) {
 			ComboAlias ca = (ComboAlias) optValue;
 			return (ca.getComboName().equals(String.valueOf(setValue)) || ca.getComboAlias().equals(String.valueOf(setValue)));
-		} else {
+		} else
 			return String.valueOf(optValue).equals(String.valueOf(setValue));
-		}
 	}
 
-	/**
+	/*
 	 * Helper method render an option to the JSP output stream.
-	 * @param optValue Object the combobox value
-	 * @throws IOException if a network I/O error occurs
 	 */
-	protected void renderOption(Object optValue) throws IOException {
+	private void renderOption(Object optValue) throws IOException {
 
 		// Determine if the option is selected
 		boolean isSelected = false;
 		if (_value instanceof Collection<?>) {
 			for (Iterator<?> i = ((Collection<?>) _value).iterator(); (i.hasNext() && !isSelected);)
 				isSelected = checkOption(optValue, i.next());
-		} else {
+		} else
 			isSelected = checkOption(optValue, _value);
-		}
 
 		// Figure out how to render the choice
 		if (optValue instanceof ComboAlias) {
 			ComboAlias alias = (ComboAlias) optValue;
 			_out.print(" <option ");
+			
+			// Special airport attributes
+			String txt = null;
+			if (optValue instanceof Airport) {
+				Airport a = (Airport) optValue;
+				_out.print("class=\"airport\" iata=\"");
+				_out.print(a.getIATA());
+				_out.print("\" icao=\"");
+				_out.print(a.getICAO());
+				_out.print("\" ");
+
+				// Generate text
+				StringBuilder buf = new StringBuilder(a.getName());
+				buf.append(" (");
+				buf.append((_airportCode == Airport.Code.IATA) ? a.getIATA() : a.getICAO());
+				buf.append(')');
+				txt = buf.toString();
+			} else
+				txt = StringUtils.stripInlineHTML(alias.getComboName());
+
 			if (isSelected)
 				_out.print("selected=\"selected\" ");
-
+			
 			_out.print("value=\"");
 			_out.print(alias.getComboAlias());
 			_out.print("\">");
-			_out.print(StringUtils.stripInlineHTML(alias.getComboName()));
+			_out.print(txt);
 		} else {
 			_out.print(" <option");
-			_out.print((isSelected) ? " selected=\"selected\">" : ">");
+			_out.print(isSelected ? " selected=\"selected\">" : ">");
 			_out.print(StringUtils.stripInlineHTML(optValue.toString()));
 		}
 
@@ -89,10 +102,25 @@ public class ComboTag extends FormElementTag {
 	}
 
 	/**
+	 * Loads airport formatting preferences from the logged in user.
+	 */
+	@Override
+	public void setPageContext(PageContext ctxt) {
+		super.setPageContext(ctxt);
+		HttpServletRequest req = (HttpServletRequest) ctxt.getRequest();
+		Principal user = req.getUserPrincipal();
+		if (user instanceof Person) {
+			Person p = (Person) user;
+			_airportCode = p.getAirportCodeType();
+		}
+	}
+
+	/**
 	 * Generates the combo/listbox by writing a &gt;SELECT&lt; tag, rendering all choices as &gt;OPTION&lt; elements,
 	 * then writing a &gt;/SELECT&lt; tag.
 	 * @throws JspException if an I/O error occurs
 	 */
+	@Override
 	public int doEndTag() throws JspException {
 		try {
 			validateState();
@@ -103,20 +131,16 @@ public class ComboTag extends FormElementTag {
 				renderOption(_firstEntry);
 
 			// Render the options
-			if (_options != null) {
-				for (Iterator<?> i = _options.iterator(); i.hasNext();) {
-					Object opt = i.next();
-					renderOption(opt);
-				}
-			}
+			for (Object opt : _options)
+				renderOption(opt);
 
 			_out.println(_data.close());
 		} catch (Exception e) {
 			throw new JspException(e);
+		} finally {
+			release();	
 		}
 
-		// Release state and return
-		release();
 		return EVAL_PAGE;
 	}
 
@@ -173,8 +197,10 @@ public class ComboTag extends FormElementTag {
 	/**
 	 * Releases the tag's state variables.
 	 */
+	@Override
 	public void release() {
 		super.release();
 		_firstEntry = null;
+		_airportCode = Airport.Code.IATA;
 	}
 }
