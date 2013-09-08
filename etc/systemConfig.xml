@@ -199,7 +199,6 @@
 		<pwd>***REMOVED***</pwd>
 		
 		<map name="connectProperties">
-			<socket>/var/run/mysql/mysql.sock</socket>
 			<useCompression>false</useCompression>
 			<useUnicode>true</useUnicode>
 			<characterEncoding>UTF-8</characterEncoding>
