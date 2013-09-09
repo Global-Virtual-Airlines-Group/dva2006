@@ -68,7 +68,7 @@ else {
 	enableElement(f.eqType, true);
 	enableElement(f.rank, true);
 	pBar.hide();
-	gaEvent('Pilot Map', 'Load');
+	golgotha.event.beacon('Pilot Map', 'Load');
 }
 
 return true;
@@ -110,7 +110,7 @@ if (mrk != null)
 	setTimeout("mrkUpdate('" + rank + "','" + eqType + "'," + batchSize +")", 2);
 else {
 	pBar.hide();
-	gaEvent('Pilot Map', 'Update');	
+	golgotha.event.beacon('Pilot Map', 'Update');	
 }
 
 return true;
@@ -118,7 +118,7 @@ return true;
 
 function updateMapOptions(opt)
 {
-gaEvent('Pilot Map', 'Switch Type');
+golgotha.event.beacon('Pilot Map', 'Switch Type');
 var toggleOpts = {checked:(opt.value != 'MAP')};
 toggleMarkers(map, 'allMarkers', toggleOpts);
 hmap.setMap(toggleOpts.checked ? null : map);
