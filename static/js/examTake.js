@@ -104,7 +104,7 @@ xmlreq.onreadystatechange = function() {
 var answer = getAnswer(txtbox);
 if (answer != null) {
 	xmlreq.send('answer=' + escape(answer));
-	gaEvent('Examination', 'Submit Answer');
+	golgotha.event.beacon('Examination', 'Submit Answer');
 }
 
 return true;
@@ -172,6 +172,6 @@ xmlreq.onreadystatechange = function() {
 
 // Build parameters
 xmlreq.send('route=' + escape(getAnswer(txtbox)));
-gaEvent('Examination', 'Route Plot');
+golgotha.event.beacon('Examination', 'Route Plot');
 return true;
 }

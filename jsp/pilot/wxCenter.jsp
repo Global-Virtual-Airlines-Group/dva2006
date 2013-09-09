@@ -170,7 +170,7 @@ xmlreq.onreadystatechange = function() {
 	if (mrk)
 		google.maps.event.trigger(mrk, 'click');
 
-	gaEvent('WeatherMap', 'Fetch TAF/METAR', code);
+	golgotha.event.beacon('WeatherMap', 'Fetch TAF/METAR', code);
 	return true;
 }
 

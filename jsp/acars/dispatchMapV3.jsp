@@ -58,7 +58,7 @@ return mrk;
 <script type="text/javascript">
 function mapZoom()
 {
-gaEvent('Dispatch', 'Zoom/Pan');
+golgotha.event.beacon('Dispatch', 'Zoom/Pan');
 var b = map.getBounds();
 window.external.doPan(b.getNorthEast().lat(), b.getSouthWest().lng(), b.getSouthWest().lat(), b.getNorthEast().lng(), map.getZoom());
 return true;

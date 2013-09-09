@@ -32,7 +32,7 @@ xmlreq.onreadystatechange = function() {
 	var xml = xmlreq.responseXML;
 	var xe = xml.documentElement;
 	var ac = xe.getElementsByTagName('aircraft');
-	gaEvent('ACARS', 'Aircraft Positions');
+	golgotha.event.beacon('ACARS', 'Aircraft Positions');
 	for (var i = 0; i < ac.length; i++) {
 		var a = ac[i]; var mrk = null;
 		var p = new google.maps.LatLng(parseFloat(a.getAttribute('lat')), parseFloat(a.getAttribute('lng')));
@@ -85,7 +85,7 @@ xmlreq.onreadystatechange = function() {
 
 	var dc = xe.getElementsByTagName('dispatch');
 	if (dc.length > 0)
-		gaEvent('ACARS', 'Dispatch Positions');
+		golgotha.event.beacon('ACARS', 'Dispatch Positions');
 	for (var i = 0; i < dc.length; i++) {
 		var d = dc[i]; var mrk = null;
 		var p = new google.maps.LatLng(parseFloat(d.getAttribute('lat')), parseFloat(d.getAttribute('lng')));
@@ -164,7 +164,7 @@ var f = document.forms[0];
 var isProgress = f.showProgress.checked;
 var isRoute = f.showRoute.checked;
 var isInfo = f.showInfo.checked;
-gaEvent('ACARS', 'Flight Info');
+golgotha.event.beacon('ACARS', 'Flight Info');
 
 // Display the info - show tab 0
 if (isInfo && (this.tabs)) {
@@ -192,7 +192,7 @@ function clickDispatch()
 // Check what info we display
 var f = document.forms[0];
 var isInfo = f.showInfo.checked;
-gaEvent('ACARS', 'Dispatch Info');
+golgotha.event.beacon('ACARS', 'Dispatch Info');
 
 // Display the info
 if (isInfo && (this.tabs)) {
@@ -209,7 +209,7 @@ if (isInfo && (this.tabs)) {
 if (!this.rangeCircle) {
 	this.rangeCircle = getServiceRange(this, this.range);
 	if (this.rangeCircle) {
-		gaEvent('ACARS', 'Dispatch Service Range');
+		golgotha.event.beacon('ACARS', 'Dispatch Service Range');
 		this.rangeCircle.setMap(map);
 	}
 } else
@@ -254,7 +254,7 @@ xreq.onreadystatechange = function() {
 			waypoints.push(p);
 		} // for
 
-		gaEvent('ACARS', 'Flight Route Info');
+		golgotha.event.beacon('ACARS', 'Flight Route Info');
 		routeWaypoints = new google.maps.Polyline({path:waypoints, strokeColor:'#af8040', strokeWeight:2, strokeOpacity:0.7, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
 		routeWaypoints.setMap(map);
 	}
@@ -270,7 +270,7 @@ xreq.onreadystatechange = function() {
 		} // for
 
 		// Draw the line
-		gaEvent('ACARS', 'Flight Progress Info');
+		golgotha.event.beacon('ACARS', 'Flight Progress Info');
 		routeData = new google.maps.Polyline({path:positions, strokeColor:'#4080af', strokeWeight:2, strokeOpacity:0.8, zIndex:(golgotha.maps.z.POLYLINE-1)});
 		routeData.setMap(map);
 	}
