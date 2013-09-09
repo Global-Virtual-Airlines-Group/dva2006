@@ -51,21 +51,20 @@ public class GoogleAnalyticsTag extends TagSupport {
 		
 		// Write the analytics script
 		out.println("<script type=\"text/javascript\">");
-		out.println("try {");
+		out.println("try { ");
 		out.print("var tracker = _gat._getTracker('");
 		out.print(accountID);
-		out.println("');");
-		out.println("tracker._trackPageview();");
+		out.println("'); tracker._trackPageview();");
 		out.println("} catch(err) { }");
 		
 		// Write event tracker function
 		if (_eventSupport) {
 			out.println();
-			out.println("function gaEvent(category, action, label, count) {");
+			out.println("golgotha.event.beacon = function(category, action, label, count) {");
 			out.print("if (tracker == null) return false; ");
 			out.print("tracker._trackEvent(category, action, label, count); ");
 			out.print("return true; ");
-			out.println('}');
+			out.println("};");
 		}
 		
 		out.println("</script>");
@@ -86,7 +85,6 @@ public class GoogleAnalyticsTag extends TagSupport {
 		out.println("ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';");
 		out.println("ga.setAttribute('async', 'true'); document.documentElement.firstChild.appendChild(ga);");
 		out.println("})();");
-
 		out.println("</script>");
 	}
 	

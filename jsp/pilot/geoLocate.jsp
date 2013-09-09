@@ -27,7 +27,7 @@ lng *= (f.lonDir.selectedIndex * -1);
 usrLocation.setMap(null);
 usrLocation = googleMarker('blue', new google.maps.LatLng(lat, lng), labelText);
 usrLocation.setMap(map);
-gaEvent('Pilot Map', 'Update Location');
+golgotha.event.beacon('Pilot Map', 'Update Location');
 return true;
 }
 
@@ -63,7 +63,7 @@ var lbl = '<span class="small"><b>' + result.address_components[0].long_name + '
 var mrk = googleMarker('white', p, lbl);
 mrk.setMap(map);
 map.setCenter(p, 14);
-gaEvent('Pilot Map', 'Geolocate');
+golgotha.event.beacon('Pilot Map', 'Geolocate');
 return true;
 }
 

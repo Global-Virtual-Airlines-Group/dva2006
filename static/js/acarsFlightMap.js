@@ -45,7 +45,7 @@ xmlreq.onreadystatechange = function() {
 	}
 
 	gRoute = new google.maps.Polyline({path:routePoints, strokeColor:'#4080af', strokeWeight:3, strokeOpacity:0.85, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
-	gaEvent('ACARS', 'Flight Data');
+	golgotha.event.beacon('ACARS', 'Flight Data');
 	
 	// Enable checkboxes
 	f.showFDR.disabled = false;
@@ -109,7 +109,7 @@ xmlreq.onreadystatechange = function() {
 		}
 	}
 
-	gaEvent('ACARS', 'Show FIR', code);
+	golgotha.event.beacon('ACARS', 'Show FIR', code);
 	return true;
 }
 

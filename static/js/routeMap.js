@@ -64,7 +64,7 @@ xmlreq.onreadystatechange = function() {
 	addMarkers(map, 'aps');
 	airports[aCode] = aps;
 	isLoading.innerHTML = '';
-	gaEvent('Route Map', 'Airports', aCode);
+	golgotha.event.beacon('Route Map', 'Airports', aCode);
 	return true;
 }
 
@@ -121,9 +121,9 @@ xmlreq.onreadystatechange = function() {
 
 	// Focus on the map
 	isLoading.innerHTML = '';
-	gaEvent('Route Map', 'Routes', this.icao);
+	golgotha.event.beacon('Route Map', 'Routes', this.icao);
 	return true;
-} // function
+}
 
 // Send the XMLHTTP request
 xmlreq.send(null);

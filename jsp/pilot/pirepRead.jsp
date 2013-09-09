@@ -448,23 +448,23 @@ xmlreq.onreadystatechange = function() {
 	data.addColumn('number', 'Ground Speed');
 	data.addColumn('number', 'Altitude');
 	<c:if test="${!isXACARS}">
-	data.addColumn('number', 'Ground Elevation');
-	</c:if>
+	data.addColumn('number', 'Ground Elevation');</c:if>
 	data.addRows(sd);
 	
 	// Read CSS selectors for graph lines
 	var pr = '#0000a1'; var sc = '#008080';
-	var classes = [];
-	for (var x = 0; x < document.styleSheets.length; x++) {
-		var ss = document.styleSheets[x];
-		if ((ss.href == null) || (ss.href.indexOf('main.css') == -1)) continue;
-		for (var y = 0; y < ss.cssRules.length; y++) {
-			var cs = ss.cssRules[y];
-			if (cs.selectorText) {
-				if (cs.selectorText.indexOf('.pri') > -1)
-					pr = cs.style.color;
-				else if (cs.selectorText.indexOf('.sec') > -1)
-					sc = cs.style.color;
+	if (!golgotha.util.oldIE) {
+		for (var x = 0; x < document.styleSheets.length; x++) {
+			var ss = document.styleSheets[x];
+			if ((ss.href == null) || (ss.href.indexOf('main.css') == -1)) continue;
+			for (var y = 0; y < ss.cssRules.length; y++) {
+				var cs = ss.cssRules[y];
+				if (cs.selectorText) {
+					if (cs.selectorText.indexOf('.pri') > -1)
+						pr = cs.style.color;
+					else if (cs.selectorText.indexOf('.sec') > -1)
+						sc = cs.style.color;
+				}
 			}
 		}
 	}
