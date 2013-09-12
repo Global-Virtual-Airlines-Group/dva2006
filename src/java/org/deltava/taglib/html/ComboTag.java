@@ -131,8 +131,10 @@ public class ComboTag extends FormElementTag {
 				renderOption(_firstEntry);
 
 			// Render the options
-			for (Object opt : _options)
-				renderOption(opt);
+			for (Object opt : _options) {
+				if (opt != null)
+					renderOption(opt);
+			}
 
 			_out.println(_data.close());
 		} catch (Exception e) {
