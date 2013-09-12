@@ -60,7 +60,7 @@ golgotha.onDOMReady(function() {
 	cfg = cfg.clone(); cfg.code = getValue(f.airportD);
 	f.airportA.loadAirports(cfg);
 	return true;
-};
+});
 </script>
 </head>
 <content:copyright visible="false" />
