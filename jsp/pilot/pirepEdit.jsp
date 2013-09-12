@@ -23,6 +23,7 @@
 <content:js name="airportRefresh" /></c:if>
 <content:googleAnalytics eventSupport="true" />
 <content:sysdata var="minDays" name="users.pirep.minDays" />
+<fmt:aptype var="useICAO" />
 <script type="text/javascript">
 function validate(form)
 {
@@ -77,19 +78,28 @@ return cmdPost(f.action);
 
 function loadAirports()
 {
-var f = document.forms[0]
+var f = document.forms[0];
 if (f.airline.selectedIndex != 0) {
-	var cfg = golgotha.airportLoader.config.clone();
+	golgotha.airportLoad.config.airline = getValue(f.airline);
+	var cfg = golgotha.airportLoad.config.clone();
 	cfg.add = getValue(f.airportD); 
 	f.airportD.loadAirports(cfg);
-	cfg = golgotha.airportLoader.config.clone();
+	cfg = golgotha.airportLoad.config.clone();
 	cfg.add = getValue(f.airportA);
 	f.airportA.loadAirports(cfg);
-}
+} else
+	delete golgotha.airportLoad.config.airline;
 
 f.airline.focus();	
 return true;
 }
+
+golgotha.onDOMReady(function() {
+	var f = document.forms[0];
+	golgotha.airportLoad.setHelpers(f.airportD);
+	golgotha.airportLoad.setHelpers(f.airportA);
+	golgotha.airportLoad.config.doICAO = ${useICAO};
+});
 <content:browser html4="true">
 // Set PIREP date limitations
 <fmt:jsdate var="fwdLimit" date="${forwardDateLimit}" />
@@ -235,14 +245,6 @@ return true;
 <content:copyright />
 </content:region>
 </content:page>
-<fmt:aptype var="useICAO" />
-<script type="text/javascript">
-var f = document.forms[0];
-golgotha.airportLoad.setHelpers(f.airportD);
-golgotha.airportLoad.setHelpers(f.airportA);
-golgotha.airportLoad.config.doICAO = ${useICAO};
-golgotha.airportLoad.config.useSched = false;
-</script>
 <content:browser html4="true">
 <script type="text/javascript">
 var f = document.forms[0];

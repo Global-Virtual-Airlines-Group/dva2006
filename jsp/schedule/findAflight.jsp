@@ -286,8 +286,7 @@ var f = document.forms[0];
 var cfg = golgotha.airportLoad.config;
 cfg.notVisited = f.notVisited.checked;
 cfg.doICAO = ${useICAO};
-cfg.myRated = f.myRated.checked;
-
+cfg.myRated = f.myEQTypes.checked;
 golgotha.airportLoad.setHelpers(f.airportD);
 golgotha.airportLoad.setHelpers(f.airportA);
 <c:if test="${!empty fafCriteria}">
