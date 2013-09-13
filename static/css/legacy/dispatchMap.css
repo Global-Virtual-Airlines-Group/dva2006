@@ -1,6 +1,7 @@
 /* Dispatch Map Cascading Style Sheet (C) 2005, 2006, 2007, 2008, 2010, 2012 Global Virtual Airlines Group. */
 
-.mapInfoBox {
+div.mapInfoBox {
+	white-space: nowrap;
 	font-family: tahoma, verdana, sans-serif;
 	font-size: 8pt;
 }
