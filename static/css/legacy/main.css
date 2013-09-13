@@ -262,7 +262,7 @@ a:hover {
 }
 
 /* Google Maps infobox font */
-.mapInfoBox {
+div.mapInfoBox {
 	font-family: tahoma, verdana, sans-serif;
 	font-size: 8pt;
 	white-space: nowrap;
