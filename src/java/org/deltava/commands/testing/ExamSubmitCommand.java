@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to submit and score Pilot Examinations.
  * @author Luke
- * @version 5.0
+ * @version 5.1
  * @since 1.0
  */
 
@@ -144,7 +144,7 @@ public class ExamSubmitCommand extends AbstractCommand {
 			// Write the examination to the database and commit
 			SetExam wdao = new SetExam(con);
 			wdao.update(ex);
-			wdao.update(ex);
+			wdao.updateStats(ex);
 			ctx.commitTX();
 
 			// Save the exam to the request
