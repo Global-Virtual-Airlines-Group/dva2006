@@ -32,6 +32,7 @@ if (!validateCombo(form.tz, 'Time Zone')) return false;
 if (!validateText(form.df, 7, 'Date Format')) return false;
 if (!validateText(form.tf, 5, 'Time Format')) return false;
 if (!validateText(form.nf, 5, 'Number Format')) return false;
+if (!validateCheckBox(form.distanceUnits, 1, 'Distance Unit')) return false;
 
 // Validate e-mail domain
 var eMail = form.email.value;
@@ -221,7 +222,8 @@ This is also a good time to review <content:airline />'s <el:cmd url="privacy" c
 </tr>
 <tr>
  <td class="label">Time Zone</td>
- <td class="data" colspan="${cspan}"><el:combo name="tz" idx="*" size="1" options="${timeZones}" className="req" firstEntry="[ TIME ZONE ]" value="${param.tz}" /></td>
+ <td class="data" colspan="${cspan}"><el:combo name="tz" idx="*" size="1" options="${timeZones}" className="req" firstEntry="[ TIME ZONE ]" value="${(!empty myTZ) ? myTZ : param.tz}" />
+<c:if test="${!empty ipInfo}"> <span class="small">( <el:flag countryCode="${ipInfo.country.code}" caption="${ipInfo.location}" /> ${ipInfo.location} )</span></c:if></td>
 </tr>
 <tr>
  <td class="label">Date/Time Format</td>
@@ -238,7 +240,7 @@ This is also a good time to review <content:airline />'s <el:cmd url="privacy" c
 </tr>
 <tr>
  <td class="label">Distance Units</td>
- <td class="data" colspan="${cspan}"><el:check name="distanceUnits" idx="*" type="radio" cols="3" options="${distanceUnits}" value="" /></td>
+ <td class="data" colspan="${cspan}"><el:check name="distanceUnits" idx="*" type="radio" cols="3" options="${distanceUnits}" value="MI" /></td>
 </tr>
 <tr>
  <td class="label">User Interface</td>
@@ -268,27 +270,16 @@ This is also a good time to review <content:airline />'s <el:cmd url="privacy" c
  select your preferred equipment type program in each stage below. You may be placed in a different program than the one you
  selected depending on demand and pilot numbers.</span></td>
 </tr>
-<c:set var="stageEQ" value="${eqTypes[1]}" scope="page" />
+<c:forEach var="stage" items="${fn:keys(eqTypes)}">
+<c:set var="stageEQ" value="${eqTypes[stage]}" scope="page" />
+<c:set var="sXparam" value="s${stage}prefs" scope="page" />
 <c:if test="${fn:sizeof(stageEQ) > 1}">
 <tr>
- <td class="label">Stage 1</td>
- <td class="data" colspan="${cspan}"><el:check name="s1prefs" type="radio" width="100" cols="6" options="${stageEQ}" checked="${param.s1prefs}" /></td>
+ <td class="label">Stage <fmt:int value="${stage}" /></td>
+ <td class="data" colspan="${cspan}"><el:check name="${sXparam}" type="radio" width="100" cols="6" options="${stageEQ}" checked="${param[sXparam]}" /></td>
 </tr>
 </c:if>
-<c:set var="stageEQ" value="${eqTypes[2]}" scope="page" />
-<c:if test="${fn:sizeof(stageEQ) > 1}">
-<tr>
- <td class="label">Stage 2</td>
- <td class="data" colspan="${cspan}"><el:check name="s2prefs" type="radio" width="100" cols="6" options="${stageEQ}" checked="${param.s2prefs}" /></td>
-</tr>
-</c:if>
-<c:set var="stageEQ" value="${eqTypes[3]}" scope="page" />
-<c:if test="${fn:sizeof(stageEQ) > 1}">
-<tr>
- <td class="label">Stage 3</td>
- <td class="data" colspan="${cspan}"><el:check name="s3prefs" type="radio" width="100" cols="6" options="${stageEQ}" checked="${param.s3prefs}" /></td>
-</tr>
-</c:if>
+</c:forEach>
 
 <!-- Applicant Comments -->
 <tr class="title">
