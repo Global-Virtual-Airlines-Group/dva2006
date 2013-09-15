@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.*;
@@ -6,14 +6,14 @@ import java.util.*;
 /**
  * A bean to store a daily collection of Oceanic Tracks. 
  * @author Luke
- * @version 3.4
+ * @version 5.1
  * @since 3.4
  */
 
 public class DailyOceanicTracks implements java.io.Serializable, Comparable<DailyOceanicTracks>, OceanicTrackInfo {
 	
 	private Date _effectiveDate;
-	private Type _type;
+	private final Type _type;
 	private final Map<String, OceanicTrack> _tracks = new TreeMap<String, OceanicTrack>();
 
 	/**
@@ -35,10 +35,6 @@ public class DailyOceanicTracks implements java.io.Serializable, Comparable<Dail
 		return _type;
 	}
 	
-	public String getTypeName() {
-		return TYPES[_type.ordinal()];
-	}
-	
 	/**
 	 * Returns the number of OceanicTracks in the collection.
 	 * @return the number of tracks
@@ -55,7 +51,7 @@ public class DailyOceanicTracks implements java.io.Serializable, Comparable<Dail
 	 */
 	public void addTrack(OceanicTrack t) {
 		if (t.getType() != _type)
-			throw new IllegalArgumentException("Cannot add " + t.getTypeName() + " to " + getTypeName() + " collection");
+			throw new IllegalArgumentException("Cannot add " + t.getType() + " to " + _type + " collection");
 		if (_effectiveDate == null)
 			_effectiveDate = t.getDate();
 		
@@ -123,7 +119,7 @@ public class DailyOceanicTracks implements java.io.Serializable, Comparable<Dail
 	}
 	
 	public String toString() {
-		StringBuilder buf = new StringBuilder(getTypeName());
+		StringBuilder buf = new StringBuilder(_type.name());
 		buf.append("S-");
 		buf.append(_effectiveDate);
 		return buf.toString();
