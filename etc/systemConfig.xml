@@ -554,9 +554,6 @@
 			<addr>luke@deltava.org</addr>
 			<addr>info@deltava.org</addr>
 		</list>
-
-		<!-- Max stage for eq choices -->
-		<max_stage type="Integer">3</max_stage>
 	</registration>
 
 	<!-- PICS content ratings -->
@@ -569,11 +566,20 @@
 		<list name="versions" attr="version" sorted="true">
 			<version>2.2</version>
 			<version>3.0</version>
-			<version>4.0</version>
-			<version>4.2</version>
+			<version>5.1</version>
+			<version>5.2</version>
 		</list>
 		
-		<assignto type="Integer">043</assignto>
+		<assignto>
+			<website type="Integer">54</website>
+			<server type="Integer">8083</server>
+			<fleet type="Integer">8083</fleet>
+			<manuals type="Integer">8083</manuals>
+			<examinations type="Integer">8083</examinations>
+			<acars type="Integer">8083</acars>
+			<schedule type="Integer">8083</schedule>
+			<dispatch type="Integer">8083</dispatch>
+		</assignto>
 	</issue_track>
 	
 	<cooler>

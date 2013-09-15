@@ -14,6 +14,8 @@ import org.deltava.beans.servinfo.Certificate;
 import org.deltava.beans.system.*;
 import org.deltava.beans.testing.*;
 
+import org.deltava.comparators.GeoComparator;
+
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.dao.http.GetVATSIMData;
@@ -71,34 +73,42 @@ public class RegisterCommand extends AbstractCommand {
 				Connection con = ctx.getConnection();
 				
 				// Check if we've used this IP address before
+				String remoteAddr = ctx.getRequest().getRemoteAddr();
 				GetApplicant adao = new GetApplicant(con);
-				isDupeAddr = adao.isIPRegistered(ctx.getRequest().getRemoteAddr(), SystemData.getInt("registration.ip_interval", 1));
+				isDupeAddr = adao.isIPRegistered(remoteAddr, SystemData.getInt("registration.ip_interval", 1));
 				
 				// Check our size - if we're overriding then ignore this
 				GetStatistics stdao = new GetStatistics(con);
 				int size = stdao.getActivePilots(SystemData.get("airline.db"));
 				isFull = (size >= SystemData.getInt("users.max", Integer.MAX_VALUE));
 				
-				// Load program names
-				int maxStage = SystemData.getInt("registration.max_stage", 3);
-				Map<Long, Collection<ComboAlias>> eqTypes = new HashMap<Long, Collection<ComboAlias>>();
-				GetEquipmentType eqdao = new GetEquipmentType(con);
-				for (int stage = 1; stage <= maxStage; stage++) {
-					Collection<EquipmentType> types = eqdao.getByStage(stage, SystemData.get("airline.db"));
-					for (Iterator<EquipmentType> i = types.iterator(); i.hasNext(); ) {
-						EquipmentType eq = i.next();
-						if (!eq.getNewHires())
-							i.remove();
-					}
-					
-					if (types.size() > 1) {
-						Collection<ComboAlias> choices = new ArrayList<ComboAlias>();
-						choices.add(ComboUtils.fromString("No Preference", ""));
-						choices.addAll(types);
-						eqTypes.put(Long.valueOf(stage), choices);
-					}
+				// Load IP data and guess the time zone
+				GetIPLocation ipdao = new GetIPLocation(con);
+				IPBlock ip = ipdao.get(remoteAddr);
+				if (ip != null) {
+					List<Airport> aps = new ArrayList<Airport>(SystemData.getAirports().values());
+					Collections.sort(aps, new GeoComparator(ip));
+					ctx.setAttribute("myTZ", aps.get(0).getTZ(), REQUEST);
+					ctx.setAttribute("ipInfo", ip, REQUEST);
 				}
 				
+				// Load program names
+				GetEquipmentType eqdao = new GetEquipmentType(con);
+				Map<Long, Collection<ComboAlias>> eqTypes = new HashMap<Long, Collection<ComboAlias>>();
+				for (EquipmentType eq : eqdao.getActive(SystemData.get("airline.db"))) {
+					if (eq.getNewHires()) {
+						Long s = Long.valueOf(eq.getStage());
+						Collection<ComboAlias> types = eqTypes.get(s);
+						if (types == null) {
+							types = new LinkedHashSet<ComboAlias>();
+							types.add(ComboUtils.fromString("No Preference", ""));
+							eqTypes.put(s, types);
+						}
+						
+						types.add(eq);
+					}
+				}
+
 				// Save programs
 				ctx.setAttribute("eqTypes", eqTypes, REQUEST);
 				
@@ -114,6 +124,11 @@ public class RegisterCommand extends AbstractCommand {
 				ctx.release();
 			}
 			
+			if (isDupeAddr) {
+				result.setURL("/jsp/register/dupeAddress.jsp");
+				result.setSuccess(true);
+			}
+			
 			// Check for an HTTP session
 			HttpSession s = ctx.getSession();
 			boolean isSession = (s != null) && (s.getAttribute("newSession") != null);
@@ -122,10 +137,7 @@ public class RegisterCommand extends AbstractCommand {
 			ctx.setAttribute("fsVersions", ComboUtils.fromArray(Applicant.FSVERSION), REQUEST);
 			
 			// Forward to the JSP - redirect to seperate page if we're full
-			result.setSuccess(true);
-			if (isDupeAddr)
-				result.setURL("/jsp/register/dupeAddress.jsp");
-			else if (!isSession) {
+			if (!isSession) {
 				ctx.setAttribute("newSession", Boolean.TRUE, SESSION);
 				result.setURL("/jsp/register/initSession.jsp");
 			} else
@@ -178,12 +190,11 @@ public class RegisterCommand extends AbstractCommand {
 		}
 		
 		// Get eq type preferences
-		if (!StringUtils.isEmpty(ctx.getParameter("s1prefs")))
-			a.setTypeChoice(1, ctx.getParameter("s1prefs"));
-		if (!StringUtils.isEmpty(ctx.getParameter("s2prefs")))
-			a.setTypeChoice(2, ctx.getParameter("s2prefs"));
-		if (!StringUtils.isEmpty(ctx.getParameter("s3prefs")))
-			a.setTypeChoice(3, ctx.getParameter("s3prefs"));
+		for (int x = 1; x < 10; x++) {
+			String paramName = "s" + x + "prefs";
+			if (!StringUtils.isEmpty(ctx.getParameter(paramName)))
+				a.setTypeChoice(x, ctx.getParameter(paramName));
+		}
 		
 		// Validate the VATSIM account if any
 		if (a.hasNetworkID(OnlineNetwork.VATSIM)) {
@@ -424,6 +435,11 @@ public class RegisterCommand extends AbstractCommand {
 		// Send the message
 		mailer.send(a);
 
+		// Invalidate the temporary session
+		HttpSession s = ctx.getSession();
+		if (s != null)
+			s.invalidate();
+		
 		// Forward to the welcome page
 		result.setURL("/jsp/register/applicantWelcome.jsp");
 		result.setSuccess(true);
