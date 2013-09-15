@@ -1,4 +1,4 @@
-// Copyright 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.Date;
@@ -8,7 +8,7 @@ import org.deltava.beans.navdata.*;
 /**
  * A bean to store NOTAMs containing Oceanic route data.
  * @author Luke
- * @version 2.6
+ * @version 5.1
  * @since 1.0
  */
 
@@ -42,22 +42,11 @@ public class OceanicNOTAM implements OceanicTrackInfo {
     /**
      * Returns the route type code.
      * @return the route type
-     * @see OceanicTrackInfo#getTypeName()
      */
     public Type getType() {
         return _routeType;
     }
     
-    /**
-     * Returns the route type name.
-     * @return the route type name
-     * @see OceanicTrackInfo#TYPES
-     * @see OceanicTrackInfo#getType()
-     */
-    public String getTypeName() {
-        return OceanicTrackInfo.TYPES[_routeType.ordinal()];
-    }
-	
     /**
      * Returns the source hostname where this NOTAM was downloaded from.
      * @return the hostname
@@ -89,7 +78,6 @@ public class OceanicNOTAM implements OceanicTrackInfo {
      * Updates the route type.
      * @param type the route type code
      * @see OceanicTrackInfo#getType()
-     * @see OceanicTrackInfo#getTypeName()
      */
     public void setType(Type type) {
         _routeType = type;
@@ -124,7 +112,7 @@ public class OceanicNOTAM implements OceanicTrackInfo {
     }
     
     public String toString() {
-		StringBuilder buf = new StringBuilder(getTypeName());
+		StringBuilder buf = new StringBuilder(_routeType.name());
 		buf.append('-');
 		buf.append(getDate().toString());
 		return buf.toString();
