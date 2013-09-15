@@ -23,7 +23,7 @@
 <content:region id="main">
 <el:table className="form">
 <tr class="title caps">
- <td colspan="2">${route.typeName} ROUTES FOR <fmt:date fmt="d" date="${route.date}" /></td>
+ <td colspan="2">${route.type} ROUTES FOR <fmt:date fmt="d" date="${route.date}" /></td>
 </tr>
 <tr>
  <td class="label">Source</td>

@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007, 2009, 2010, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.*;
@@ -8,7 +8,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store Oceanic Track (NAT/PACOT) information.
  * @author Luke
- * @version 3.4
+ * @version 5.1
  * @since 1.0
  */
 
@@ -16,7 +16,7 @@ public class OceanicTrack extends Airway implements OceanicTrackInfo {
 	
 	public static final Collection<? extends OceanicTrack> CONC_ROUTES = Arrays.asList(new ConcordeNAT("SM",
 		"5015N,5020N,5030N,4840N,4750N"), new ConcordeNAT("SN", "4550N,4740N,4930N,4920N,4915N"), 
-		new ConcordeNAT("SO", "4815N,4820N,4830N,4640N,4450N,4260N"));
+		new ConcordeNAT("SO", "4815N,4820N,4830N,4640N,4450N,4260N"), new ConcordeNAT("SP", "4720N,4524N,4230N,3440N"));
 
 	private static class ConcordeNAT extends OceanicTrack {
 
@@ -30,8 +30,14 @@ public class OceanicTrack extends Airway implements OceanicTrackInfo {
 			}
 		}
 
-		public boolean isFixed() {
+		@Override
+		public final boolean isFixed() {
 			return true;
+		}
+		
+		@Override
+		public final Direction getDirection() {
+			return Direction.ALL;
 		}
 	}
 
@@ -63,7 +69,6 @@ public class OceanicTrack extends Airway implements OceanicTrackInfo {
     /**
      * Returns the route type code.
      * @return the route type
-     * @see OceanicTrackInfo#getTypeName()
      */
     public Type getType() {
         return _routeType;
@@ -78,20 +83,10 @@ public class OceanicTrack extends Airway implements OceanicTrackInfo {
 		if (wpl.size() < 2)
 			return Direction.EAST;
 		
-		// Get the frist two waypoints
+		// Get the first two waypoints
 		NavigationDataBean wp1 = wpl.get(0);
 		NavigationDataBean wp2 = wpl.get(1);
 		return (wp1.getLongitude() < wp2.getLongitude()) ? Direction.EAST : Direction.WEST;
-    }
-    
-    /**
-     * Returns the route type name.
-     * @return the route type name
-     * @see OceanicTrackInfo#TYPES
-     * @see OceanicTrackInfo#getType()
-     */
-    public String getTypeName() {
-        return OceanicTrackInfo.TYPES[_routeType.ordinal()];
     }
     
 	/**
@@ -142,7 +137,6 @@ public class OceanicTrack extends Airway implements OceanicTrackInfo {
      * Updates the route type.
      * @param type the route type code
      * @see OceanicTrackInfo#getType()
-     * @see OceanicTrackInfo#getTypeName()
      */
     public void setType(Type type) {
         _routeType = type;
@@ -156,7 +150,7 @@ public class OceanicTrack extends Airway implements OceanicTrackInfo {
      */
     public void setTrack(String id) {
     	_trackID = id.toUpperCase();
-    	setCode(getTypeName() + id);
+    	setCode(_routeType.name() + id);
     }
     
 	/**
@@ -173,10 +167,10 @@ public class OceanicTrack extends Airway implements OceanicTrackInfo {
 	}
     
 	public String toString() {
-		StringBuilder buf = new StringBuilder(getTypeName());
-		buf.append(getTrack());
+		StringBuilder buf = new StringBuilder(_routeType.name());
+		buf.append(_trackID);
 		buf.append('-');
-		buf.append(getDate().toString());
+		buf.append(_date.toString());
 		buf.append('-');
 		for (Iterator<NavigationDataBean> i = getWaypoints().iterator(); i.hasNext(); ) {
 			NavigationDataBean wp = i.next();

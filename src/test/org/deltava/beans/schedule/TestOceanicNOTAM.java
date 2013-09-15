@@ -29,12 +29,10 @@ public class TestOceanicNOTAM extends AbstractBeanTestCase {
     
     public void testProperties() {
         assertEquals(OceanicTrackInfo.Type.NAT, _or.getType());
-        assertEquals(OceanicTrackInfo.TYPES[OceanicTrackInfo.Type.NAT.ordinal()], _or.getTypeName());
         checkProperty("date", new Date());
         checkProperty("source", "localhost");
         checkProperty("route", "!@# SADJSAKD");
         checkProperty("type", OceanicTrackInfo.Type.PACOT);
-        assertEquals(OceanicTrackInfo.TYPES[OceanicTrackInfo.Type.PACOT.ordinal()], _or.getTypeName());
     }
     
     public void testValidation() {
