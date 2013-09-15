@@ -25,9 +25,10 @@
 <content:region id="main">
 <div class="updateHdr">Duplicate Registration Address</div>
 <br />
-Your IP Address ( <span class="sec bld">${pageContext.request.remoteAddr}</span> ) has been used within the past <fmt:int value="${addrInterval}" /> 
-days to register at the <content:airline /> web site, and the previous application is Pending or has already been Approved. You cannot register 
-again from this IP address.<br />
+Your IP Address ( <span class="sec bld">${pageContext.request.remoteAddr}</span> <c:if test="${!empty ipInfo}"> -
+ <el:flag countryCode="${ipInfo.country.code}" caption="${ipInfo.location}" /> ${ipInfo.location} </c:if>) has been used within 
+the past <fmt:int value="${addrInterval}" /> days to register at the <content:airline /> web site, and the previous application 
+is Pending or has already been Approved. You cannot register again from this IP address.<br />
 <br />
 <span class="pri bld">If you are a former <content:airline /> Pilot who has been marked Retired or Inactive, you do NOT need to register again.</span><br />
 <br />
