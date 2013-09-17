@@ -84,7 +84,7 @@ return true;
 <c:if test="${doSearch}">
 <!-- Search Results -->
 <c:if test="${!empty viewContext.results}">
-<view:table className="view" cmd="coolersearch">
+<view:table cmd="coolersearch">
 <!-- Table Sort Combo Bar -->
 <tr class="title">
  <td colspan="1" class="left caps">${forumName} SEARCH RESULTS</td>

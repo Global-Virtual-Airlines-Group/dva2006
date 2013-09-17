@@ -68,7 +68,7 @@ return true;
 </el:table>
 <c:if test="${doSearch}">
 <br />
-<view:table className="view" cmd="dspsearch">
+<view:table cmd="dspsearch">
 <tr class="title caps">
  <td colspan="8" class="left">DISPATCH ROUTE SEARCH RESULTS</td>
 </tr>

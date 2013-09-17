@@ -20,7 +20,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<view:table className="view" cmd="jobapps">
+<view:table cmd="jobapps">
 <tr class="title">
  <td class="caps left" colspan="7"><content:airline /> VOLUNTEER STAFF APPLICATIONS</td>
 </tr>

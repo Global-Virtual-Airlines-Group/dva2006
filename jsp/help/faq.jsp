@@ -24,7 +24,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<view:table className="view" cmd="faq">
+<view:table cmd="faq">
 <tr class="title">
  <td colspan="2" class="left caps"><content:airline /> FREQUENTLY ASKED QUESTIONS</td>
 </tr>

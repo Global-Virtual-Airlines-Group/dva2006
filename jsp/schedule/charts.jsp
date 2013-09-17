@@ -76,7 +76,7 @@ golgotha.onDOMReady(function() {
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="charts.do" method="post" validate="return validate(this)">
-<view:table className="view" cmd="charts">
+<view:table cmd="charts">
 
 <!-- Table Header/Filter Bars-->
 <tr class="title caps">
@@ -106,6 +106,7 @@ golgotha.onDOMReady(function() {
 <c:forEach var="chart" items="${charts}">
 <c:set var="hasPDF" value="${chart.imgType == 'PDF'}" scope="page" />
 <c:set var="anyPDF" value="${anyPDF || hasPDF}" scope="page" />
+<c:set var="anyExt" value="${anyExt || chart.isExternal}" scope="page" />
 <view:row entry="${chart}">
 <c:choose>
 <c:when test="${hasPDF}">
@@ -140,7 +141,8 @@ golgotha.onDOMReady(function() {
 
 <!-- Scroll Bar -->
 <tr class="title">
- <td colspan="7">&nbsp;</td>
+ <td colspan="7">&nbsp;
+<content:filter roles="Operations,Schedule,Developer"><c:if test="${anyExt}"><el:cmd url="extchartrefresh" link="${airport}">REFRESH EXTERNAL APPROACH CHARTS</el:cmd></c:if></content:filter></td>
 </tr>
 </view:table>
 </el:form>

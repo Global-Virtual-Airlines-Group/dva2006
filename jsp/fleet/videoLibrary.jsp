@@ -22,7 +22,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<view:table className="view" cmd="tvlibrary">
+<view:table cmd="tvlibrary">
 <!-- Table Header Bar -->
 <tr class="title caps">
  <td style="width:25%">TITLE</td>

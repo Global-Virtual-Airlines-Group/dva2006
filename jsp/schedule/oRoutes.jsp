@@ -39,7 +39,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="routes.do" method="post" validate="return validate(this)">
-<view:table className="view" cmd="routes">
+<view:table cmd="routes">
 <!-- Table Header Bar -->
 <tr class="title caps">
  <td style="width:15%">DATE</td>

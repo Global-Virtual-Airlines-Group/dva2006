@@ -34,7 +34,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="newsletters" method="get" validate="return false">
-<view:table className="view" cmd="newslibrary">
+<view:table cmd="newslibrary">
 <!-- Table Header Bar -->
 <tr class="title">
  <td style="width:30%">TITLE</td>

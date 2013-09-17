@@ -22,7 +22,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<view:table className="view" cmd="ts2channels">
+<view:table cmd="ts2channels">
 <!-- Table Header Bar -->
 <tr class="title">
  <td style="width:20%">CHANNEL NAME</td>

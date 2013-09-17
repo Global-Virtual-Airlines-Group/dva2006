@@ -46,7 +46,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="airport.do" method="post" validate="return validate(this)">
-<view:table className="view" cmd="airports">
+<view:table cmd="airports">
 
 <!-- Table Header Bar -->
 <tr class="title">

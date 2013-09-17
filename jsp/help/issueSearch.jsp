@@ -58,7 +58,7 @@ return true;
 
 <!-- Search Results Table -->
 <c:if test="${doSearch}">
-<view:table className="view" cmd="hdsearch">
+<view:table cmd="hdsearch">
 <tr class="title caps">
  <td colspan="6" class="left">SEARCH RESULTS</td>
 </tr>

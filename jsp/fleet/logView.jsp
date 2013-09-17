@@ -69,7 +69,7 @@ return true;
 </el:form>
 
 <c:if test="${!empty viewContext.results}">
-<view:table className="view" cmd="fleetlog">
+<view:table cmd="fleetlog">
 <!-- Table Header Bar -->
 <tr class="title caps">
  <td style="width:10%">DATE</td>

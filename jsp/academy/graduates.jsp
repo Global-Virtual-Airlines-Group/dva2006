@@ -31,7 +31,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="graduates.do" method="post" validate="return validate(this)">
-<view:table className="view" cmd="graduates">
+<view:table cmd="graduates">
 <tr class="title">
  <td colspan="3" class="left caps"><content:airline /> FLIGHT ACADEMY GRADUATES</td>
  <td colspan="5" class="right">SELECT COURSE <el:combo name="cert" idx="*" size="1" options="${certs}" firstEntry="-" value="${param.cert}" onChange="void setType()" /></td>

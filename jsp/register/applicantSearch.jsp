@@ -62,7 +62,7 @@ return true;
 </el:form>
 <c:if test="${doSearch}">
 <br />
-<view:table className="view" cmd="appfind">
+<view:table cmd="appfind">
 <!-- Search Results -->
 <c:if test="${!empty applicants}">
 <tr class="title caps">

@@ -30,7 +30,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="simversionstats.do" method="post" validate="return true">
-<view:table className="view" cmd="simversionstats">
+<view:table cmd="simversionstats">
 <tr class="title">
  <td colspan="5" class="left caps"><content:airline /> FLIGHT SIMULATOR VERSION STATISTICS</td>
  <td colspan="5" class="right">GROUP BY <el:combo name="groupType" size="1" idx="*" options="${groupTypes}" value="${param.groupType}" onChange="void updateSort()" />

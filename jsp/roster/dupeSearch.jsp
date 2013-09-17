@@ -84,7 +84,7 @@ return true;
 
 <!-- Search Results -->
 <c:if test="${!noResults}">
-<view:table className="view" cmd="">
+<view:table cmd="">
 <tr class="title caps">
  <td colspan="7" class="left">SEARCH RESULTS</td>
 </tr>

@@ -30,7 +30,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="liveries.do" method="get" validate="return false">
-<view:table className="view" cmd="liveries">
+<view:table cmd="liveries">
 <tr class="title">
  <td colspan="2" class="caps">ACARS MULTI-PLAYER AIRCRAFT LIVERIES</td>
  <td colspan="2" class="right">AIRLINE <el:combo name="airline" idx="*" size="1" options="${airlines}" value="${param.airline}" firstEntry="All Airlines" onChange="void update(this)" /></td>

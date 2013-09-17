@@ -21,7 +21,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<view:table className="view" cmd="msgtemplates">
+<view:table cmd="msgtemplates">
 <!-- Table Header Bar-->
 <tr class="title caps">
  <td style="width:20%">TEMPLATE NAME</td>
