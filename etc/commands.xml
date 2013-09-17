@@ -1792,13 +1792,13 @@
 	<command id="msgtemplates">
 		<name>Message Templates</name>
 		<class>org.deltava.commands.admin.MessageTemplatesCommand</class>
-		<roles>HR,Developer</roles>
+		<roles>HR,Developer,Operations</roles>
 	</command>
 
 	<command id="msgtemplate">
 		<name>Message Template</name>
 		<class>org.deltava.commands.admin.MessageTemplateCommand</class>
-		<roles>HR,Developer</roles>
+		<roles>HR,Developer,Operations</roles>
 	</command>
 
 	<command id="msgtemplatedelete">
@@ -1810,7 +1810,13 @@
 	<command id="cmdlog">
 		<name>View Command Log</name>
 		<class>org.deltava.commands.system.CommandLogViewCommand</class>
-		<roles>Admin,Developer</roles>
+		<roles>Developer</roles>
+	</command>
+
+	<command id="metadata">
+		<name>System Metadata</name>
+		<class>org.deltava.commands.system.MetadataViewCommand</class>
+		<roles>Operations,HR,Developer</roles>	
 	</command>
 
 
@@ -1818,37 +1824,37 @@
 	<command id="ts2channels">
 		<name>TeamSpeak Channel List</name>	
 		<class>org.deltava.commands.ts2.ChannelListCommand</class>
-		<roles>Admin,Tech</roles>
+		<roles>Tech</roles>
 	</command>
 
 	<command id="ts2channeldelete">
 		<name>TeamSpeak Channel Delete</name>	
 		<class>org.deltava.commands.ts2.ChannelDeleteCommand</class>
-		<roles>Admin,Tech</roles>
+		<roles>Tech</roles>
 	</command>
 
 	<command id="ts2channel">
 		<name>TeamSpeak Channel</name>	
 		<class>org.deltava.commands.ts2.ChannelCommand</class>
-		<roles>Admin,Tech</roles>
+		<roles>Tech</roles>
 	</command>
 
 	<command id="ts2servers">
 		<name>TeamSpeak Virtual Server List</name>
 		<class>org.deltava.commands.ts2.ServerListCommand</class>
-		<roles>Admin,Tech</roles>
+		<roles>Tech</roles>
 	</command>
 
 	<command id="ts2srvdelete">
 		<name>TeamSpeak Virtual Server Delete</name>	
 		<class>org.deltava.commands.ts2.ServerDeleteCommand</class>
-		<roles>Admin,Tech</roles>
+		<roles>Tech</roles>
 	</command>
 
 	<command id="ts2server">
 		<name>TeamSpeak Virtual Server</name>	
 		<class>org.deltava.commands.ts2.ServerCommand</class>
-		<roles>Admin,Tech</roles>
+		<roles>Tech</roles>
 	</command>
 
 
@@ -1856,19 +1862,19 @@
 	<command id="mvschannel">
 		<name>MVS Channel</name>
 		<class>org.deltava.commands.mvs.ChannelCommand</class>
-		<roles>Admin,Tech</roles>
+		<roles>Tech</roles>
 	</command>
 
 	<command id="mvschannels">
 		<name>MVS Channel List</name>
 		<class>org.deltava.commands.mvs.ChannelListCommand</class>
-		<roles>Admin,Tech</roles>
+		<roles>Tech</roles>
 	</command>
 
 	<command id="mvschanneldelete">
 		<name>MVS Channel Delete</name>
 		<class>org.deltava.commands.mvs.ChannelDeleteCommand</class>
-		<roles>Admin,Tech</roles>
+		<roles>Tech</roles>
 	</command>
 
 	<!-- Help Desk commands -->
