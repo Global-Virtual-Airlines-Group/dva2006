@@ -32,7 +32,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="pirepqueue.do" method="post" validate="return false">
-<view:table className="view" cmd="pirepqueue">
+<view:table cmd="pirepqueue">
 <!-- Table Header Bar-->
 <tr class="title">
  <td colspan="4" class="left caps"><content:airline /> PENDING FLIGHT REPORT QUEUE</td>

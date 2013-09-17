@@ -46,7 +46,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="poproutes.do" method="post" validate="return true">
-<view:table className="view" cmd="poproutes">
+<view:table cmd="poproutes">
 <!-- Table Header Bar -->
 <tr class="title">
  <td colspan="3" class="left caps"><content:airline /> Flight Route Popularity</td> 

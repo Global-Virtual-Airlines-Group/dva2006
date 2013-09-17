@@ -22,7 +22,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<view:table className="view" cmd="eprofiles">
+<view:table cmd="eprofiles">
 
 <!-- Table Header Bar -->
 <tr class="title caps">

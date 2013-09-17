@@ -20,7 +20,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<view:table className="view" cmd="metadata">
+<view:table cmd="metadata">
 <!-- Table Header Bar -->
 <tr class="title caps">
  <td colspan="2" class="left"><content:airline /> SYSTEM METADATA VALUES</td>

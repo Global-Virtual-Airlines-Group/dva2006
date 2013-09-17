@@ -91,7 +91,7 @@ return true;
 </el:table>
 
 <c:if test="${doSearch}">
-<view:table className="view" cmd="examstats">
+<view:table cmd="examstats">
 <!-- Table Header bar -->
 <tr class="title caps">
  <td style="width:30%">LABEL</td>

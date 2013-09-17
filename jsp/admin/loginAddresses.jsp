@@ -72,7 +72,7 @@ return true;
 </el:form>
 
 <c:if test="${doSearch}">
-<view:table className="view" cmd="loginaddrs">
+<view:table cmd="loginaddrs">
 <tr class="title caps">
  <td colspan="6" class="left">SEARCH RESULTS<c:if test="${!empty addrs}"> - <fmt:int value="${fn:sizeof(addrs)}" /> RESULTS</c:if></td>
 </tr>

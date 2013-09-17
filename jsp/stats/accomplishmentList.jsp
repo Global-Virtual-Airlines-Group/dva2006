@@ -22,7 +22,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<view:table className="view" cmd="accomplishments">
+<view:table cmd="accomplishments">
 <!-- Table Header Bar-->
 <tr class="title caps">
 <c:if test="${access.canCreate}">

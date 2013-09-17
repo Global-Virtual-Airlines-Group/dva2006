@@ -24,7 +24,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<view:table className="view" cmd="newairports">
+<view:table cmd="newairports">
 <tr class="title">
  <td colspan="6" class="left caps"><content:airline /> UNVISITED AIRPORTS FOR ${pilot.name}</td>
 </tr>

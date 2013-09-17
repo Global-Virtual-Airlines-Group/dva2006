@@ -21,7 +21,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<view:table className="view" cmd="coursequeue">
+<view:table cmd="coursequeue">
 <tr class="title">
  <td colspan="7" class="left caps"><content:airline /> FLIGHT ACADEMY COMPLETION QUEUE</td>
 </tr>

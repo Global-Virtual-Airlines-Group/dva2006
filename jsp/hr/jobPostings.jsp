@@ -21,7 +21,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<view:table className="view" cmd="jobs">
+<view:table cmd="jobs">
 <tr class="title">
  <td class="caps left" colspan="${cspan}"><content:airline /> CAREER OPPORTUNITIES</td>
 </tr>

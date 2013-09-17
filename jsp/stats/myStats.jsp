@@ -43,7 +43,7 @@ return true;
 <content:region id="main">
 <el:form action="mystats.do" method="post" validate="return validate(this)">
 <!-- All Flight Report statistics -->
-<view:table className="view" cmd="mystats">
+<view:table cmd="mystats">
 <tr class="title">
  <td colspan="6" class="left caps"><content:airline /> FLIGHT STATISTICS FOR ${pilot.name}</td>
  <td colspan="5" class="right">GROUP BY <el:combo name="groupType" size="1" idx="*" options="${groupTypes}" value="${param.groupType}" onChange="void update()" />

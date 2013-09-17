@@ -21,7 +21,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<view:table className="view" cmd="news">
+<view:table cmd="news">
 <!-- Table Header Bar-->
 <tr class="title caps">
  <td style="width:15%">DATE</td>

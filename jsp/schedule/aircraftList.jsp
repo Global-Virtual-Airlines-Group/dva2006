@@ -22,7 +22,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<view:table className="view" cmd="aircraftlist">
+<view:table cmd="aircraftlist">
 
 <!-- Table Header Bar -->
 <tr class="title">

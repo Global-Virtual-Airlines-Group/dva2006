@@ -24,7 +24,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<view:table className="view" cmd="eqTypes">
+<view:table cmd="eqTypes">
 <!-- Table Header Bar-->
 <tr class="title caps">
  <td style="width:10%">PROGRAM NAME</td>

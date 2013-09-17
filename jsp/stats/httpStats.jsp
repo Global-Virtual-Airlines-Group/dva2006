@@ -31,7 +31,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="httpstats.do" method="get" validate="return false">
-<view:table className="view" cmd="httpstats">
+<view:table cmd="httpstats">
 <tr class="title">
  <td colspan="5" class="left">HTTP SERVER STATISTICS</td>
  <td colspan="2" class="right">SORT BY 

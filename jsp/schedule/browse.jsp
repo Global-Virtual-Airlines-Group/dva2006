@@ -75,7 +75,7 @@ golgotha.onDOMReady(function() {
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="schedule.do" method="post" validate="return false">
-<view:table className="view" cmd="browse">
+<view:table cmd="browse">
 
 <!-- Table Header Bars -->
 <tr class="title">

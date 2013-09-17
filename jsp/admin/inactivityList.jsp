@@ -23,7 +23,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<view:table className="view" cmd="inactivelist">
+<view:table cmd="inactivelist">
 <tr class="title caps">
  <td colspan="6"><content:airline /> PILOT INACTIVITY PURGE PREVIEW - <fmt:int value="${fn:sizeof(fn:keys(results))}" /> PILOTS</td>
 </tr>
