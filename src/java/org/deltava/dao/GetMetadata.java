@@ -68,17 +68,32 @@ public class GetMetadata extends DAO {
 	}
 	
 	/**
+	 * Returns all metadata items.
+	 * @return a Map of values, by key
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Map<String, String> getAll() throws DAOException {
+		return getAll(null);
+	}
+	
+	/**
 	 * Returns all metadata items whose key begins with a particular prefix.
 	 * @param prefix the key prefix
 	 * @return a Map of values, by key
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Map<String, String> getAll(String prefix) throws DAOException {
+		
+		StringBuilder sqlBuf = new StringBuilder("SELECT ID, DATA FROM common.METADATA ");
+		if (prefix != null)
+			sqlBuf.append("WHERE (ID LIKE ?) ");
+		
 		try {
-			prepareStatement("SELECT ID, DATA FROM common.METADATA WHERE (ID LIKE ?) ORDER BY ID");
-			_ps.setString(1, prefix + ".%");
+			prepareStatement(sqlBuf.toString());
+			if (prefix != null)
+				_ps.setString(1, prefix + ".%");
 			
-			Map<String, String> results = new HashMap<String, String>();
+			Map<String, String> results = new LinkedHashMap<String, String>();
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next())
 					results.put(rs.getString(1), rs.getString(2));
