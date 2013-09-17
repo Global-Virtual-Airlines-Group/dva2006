@@ -22,7 +22,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<view:table className="view" cmd="examqueue">
+<view:table cmd="examqueue">
 <!-- Table Header Bar -->
 <tr class="title caps">
  <td style="width:25%">EXAMINATION NAME</td>

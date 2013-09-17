@@ -73,7 +73,7 @@
 <c:choose>
 <c:when test="${!empty viewContext.results}">
 <!-- Table Log Results -->
-<view:table className="view" cmd="acarslogm">
+<view:table cmd="acarslogm">
 <tr class="title">
  <td colspan="4" class="left caps">TEXT MESSAGES</td>
 </tr>

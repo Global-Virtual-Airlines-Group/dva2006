@@ -22,7 +22,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<view:table className="view" cmd="regblocks">
+<view:table cmd="regblocks">
 <!-- Table Header Bar-->
 <tr class="title caps">
  <td style="width:5%">#</td>

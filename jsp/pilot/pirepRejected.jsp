@@ -31,7 +31,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="rejectedpireps.do" method="post" validate="return false">
-<view:table className="view" cmd="rejectedpireps">
+<view:table cmd="rejectedpireps">
 <!-- Table Header Bar-->
 <tr class="title">
  <td colspan="4" class="left caps"><content:airline /> REJECTED FLIGHT REPORTS</td>

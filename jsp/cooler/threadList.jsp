@@ -37,7 +37,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="${viewCmdName}.do" method="get" validate="return false">
-<view:table className="view" cmd="${viewCmdName}">
+<view:table cmd="${viewCmdName}">
 <!-- Table Sort Combo Bar -->
 <tr class="title">
 <c:if test="${channelAccess.canPost}">

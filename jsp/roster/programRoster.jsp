@@ -26,7 +26,7 @@
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="prgroster.do" method="post" validate="return true">
-<view:table className="view" cmd="prgroster">
+<view:table cmd="prgroster">
 <tr class="title">
  <td colspan="3" class="left caps"><content:airline /> ${eqtype.name} PROGRAM METRICS</td>
  <td colspan="4" class="right">SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${param.sortType}" />
@@ -133,7 +133,7 @@
 </el:table>
 </c:if>
 <c:if test="${!empty txQueue}">
-<view:table className="view" cmd="prgroster">
+<view:table cmd="prgroster">
 <tr class="title">
  <td colspan="5" class="left caps">${eqType.name} TRANSFER REQUESTS - <fmt:int value="${fn:sizeof(txQueue)}" /> TRANSFERS
  - <span class="und" onclick="void toggleExpand(this, 'prgTxQueue')">COLLAPSE</span></td>
@@ -167,7 +167,7 @@
 </view:table>
 </c:if>
 <c:if test="${!empty promoQueue}">
-<view:table className="view" cmd="prgroster">
+<view:table cmd="prgroster">
 <tr class="title">
  <td colspan="7" class="left caps">${eqType.name} PROMOTION QUEUE - <fmt:int value="${fn:sizeof(promoQueue)}" /> PILOTS
  - <span class="und" onclick="void toggleExpand(this, 'prgPromoQueue')">COLLAPSE</span></td>
@@ -205,7 +205,7 @@
 </c:if>
 <c:if test="${!empty crStats}">
 <!-- Check Ride Statistics -->
-<view:table className="view" cmd="prgroster">
+<view:table cmd="prgroster">
 <tr class="title caps">
  <td class="left" colspan="7">CHECK RIDE STATISTICS - <span class="und" onclick="void toggleExpand(this, 'crStats')">COLLAPSE</span></td>
 </tr>

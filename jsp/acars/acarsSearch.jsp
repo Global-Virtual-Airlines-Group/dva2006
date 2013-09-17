@@ -94,7 +94,7 @@ return false;
 </el:form>
 <c:if test="${doSearch}">
 <el:form action="acarsprsearch.do" method="get" validate="return showMap(this)">
-<view:table className="view" cmd="acarsprsearch">
+<view:table cmd="acarsprsearch">
 <c:if test="${empty viewContext.results}">
 <!-- Search Results -->
 <tr class="title">

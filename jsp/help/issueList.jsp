@@ -22,7 +22,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<view:table className="view" cmd="${cmdName}">
+<view:table cmd="${cmdName}">
 <tr class="title">
  <td colspan="6" class="left caps"><content:airline /> HELP DESK</td>
 </tr>

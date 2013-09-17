@@ -66,7 +66,7 @@ return true;
 
 <!-- Search Results Table -->
 <c:if test="${doSearch}">
-<view:table className="view" cmd="issues">
+<view:table cmd="issues">
 <tr class="title caps">
  <td colspan="5" class="left">SEARCH RESULTS</td>
  <td colspan="4"><c:if test="${access.canCreate}"><el:cmd url="issue" op="edit">NEW ISSUE</el:cmd></c:if>

@@ -27,7 +27,7 @@ and dedication, demonstrated by over one hundred logged flight legs. Over the ye
 &quot;Century Club&quot; has expanded into a number of levels as our pilots have logged more
 flights.<br />
 <br />
-<view:table className="view" cmd="centuryclub">
+<view:table cmd="centuryclub">
 <!-- Table Header Bar-->
 <tr class="title">
  <td style="width:5%">#</td>

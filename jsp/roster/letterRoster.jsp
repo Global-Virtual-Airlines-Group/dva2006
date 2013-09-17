@@ -23,7 +23,7 @@
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="lroster.do" method="GET" validate="return false;">
-<view:table className="view" cmd="lroster">
+<view:table cmd="lroster">
 <!-- Table Letter Bar -->
 <tr class="title">
  <td class="left">PILOT LOGBOOKS</td>

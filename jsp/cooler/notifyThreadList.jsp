@@ -45,7 +45,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="notifyupdate.do" method="post" validate="return validate(this)">
-<view:table className="view" cmd="${viewCmdName}">
+<view:table cmd="${viewCmdName}">
 <!-- Table Sort Combo Bar -->
 <tr class="title">
 <c:if test="${channelAccess.canPost}">

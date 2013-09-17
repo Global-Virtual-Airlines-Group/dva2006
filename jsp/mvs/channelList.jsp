@@ -22,7 +22,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<view:table className="view" cmd="mvschannels">
+<view:table cmd="mvschannels">
 <tr class="title">
  <td colspan="6" class="left caps">MODERN VOICE SERVER PERSISTENT CHANNELS</td>
 </tr>

@@ -24,7 +24,7 @@
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="imagegallery.cmd" method="POST" validate="return true">
-<view:table className="view" cmd="imagegallery">
+<view:table cmd="imagegallery">
 <!-- Table Header Bar -->
 <tr class="title caps">
  <td style="width:25%">IMAGE TITLE</td>

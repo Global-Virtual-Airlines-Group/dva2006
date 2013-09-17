@@ -33,7 +33,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="txrequests.do" method="post" validate="return false">
-<view:table className="view" cmd="txrequests">
+<view:table cmd="txrequests">
 <!-- Top Header Bar -->
 <tr class="title caps">
  <td colspan="3" class="left"><content:airline /> EQUIPMENT TRANSFER REQUESTS</td>

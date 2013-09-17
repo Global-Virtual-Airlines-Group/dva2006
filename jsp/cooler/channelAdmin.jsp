@@ -23,7 +23,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<view:table className="view" cmd="channeladmin">
+<view:table cmd="channeladmin">
 <tr class="title caps">
  <td class="left" colspan="6">${forumName} CHANNELS</td>
 </tr>

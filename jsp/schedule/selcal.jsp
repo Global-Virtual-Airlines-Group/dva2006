@@ -38,7 +38,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="selcals.do" method="get" validate="return false">
-<view:table className="view" cmd="selcals">
+<view:table cmd="selcals">
 <tr class="title">
  <td class="left caps" colspan="4"><content:airline /> SELCAL CODES</td>
  <td class="right" colspan="3">AIRCRAFT <el:combo name="eqType" idx="*" size="1" options="${eqTypes}" firstEntry="-" value="${param.eqType}" onChange="void filterBy(this)" />

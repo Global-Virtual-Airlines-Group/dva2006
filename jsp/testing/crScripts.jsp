@@ -23,7 +23,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<view:table className="view" cmd="crscripts">
+<view:table cmd="crscripts">
 <!-- Table Header Bar -->
 <tr class="title">
  <td style="width:10%">AIRCRAFT TYPE</td>

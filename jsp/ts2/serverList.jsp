@@ -22,7 +22,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<view:table className="view" cmd="ts2servers">
+<view:table cmd="ts2servers">
 <!-- Table Header Bar -->
 <tr class="title">
  <td style="width:20%">NAME</td>

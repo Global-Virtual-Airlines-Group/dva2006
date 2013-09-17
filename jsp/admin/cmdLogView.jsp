@@ -45,7 +45,7 @@
 </el:table>
 </el:form>
 <c:if test="${doSearch}">
-<view:table className="view" cmd="cmdlog">
+<view:table cmd="cmdlog">
 <tr class="title caps">
  <td colspan="6" class="left">COMMAND LOG RESULTS</td>
 </tr>

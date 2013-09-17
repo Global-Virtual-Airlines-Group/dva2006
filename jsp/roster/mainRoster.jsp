@@ -30,7 +30,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="roster.do" method="post" validate="return false">
-<view:table className="view" cmd="roster">
+<view:table cmd="roster">
 <!-- Table Sort Combo Bar -->
 <tr class="title">
  <td colspan="3" class="left caps"><content:airline /> PILOT ROSTER</td>

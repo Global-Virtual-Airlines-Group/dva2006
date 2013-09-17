@@ -24,7 +24,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<view:table className="view" cmd="airlines">
+<view:table cmd="airlines">
 
 <!-- Table Header Bar -->
 <tr class="title">

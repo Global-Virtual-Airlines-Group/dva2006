@@ -42,7 +42,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="imagegallery.do" method="post" validate="return validate(this)">
-<view:table className="view" cmd="imagegallery">
+<view:table cmd="imagegallery">
 <!-- Table Sort Bar -->
 <tr class="title">
  <td colspan="2">BY DATE <el:text name="imgDate" idx="*" size="10" max="10" value="${param.imgDate}" />

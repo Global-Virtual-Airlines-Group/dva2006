@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.view;
 
 import javax.servlet.jsp.JspException;
@@ -8,22 +8,14 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to support database view tables.
  * @author Luke
- * @version 1.0
+ * @version 5.1
  * @since 1.0
  */
 
 public class TableTag extends org.deltava.taglib.html.TableTag {
 
    private String _viewCommandName;
-   private int _viewSize;
-
-   /**
-    * Creates a new View Table tag.
-    */
-   public TableTag() {
-      super();
-      release();
-   }
+   private int _viewSize = SystemData.getInt("html.table.viewSize");
 
    /**
     * Sets the Web Site Command to execute when scrolling through the view.
@@ -45,19 +37,34 @@ public class TableTag extends org.deltava.taglib.html.TableTag {
    }
    
    /**
-    * Renders the tag to the JSP output stream. This ensures that state is released properly.
+    * Renders the tag to the JSP output stream.
     * @return EVAL_PAGE
-    * @throws JspException if an error occurs.
+    * @throws JspException if an error occurs
     */
+   @Override
+   public int doStartTag() throws JspException {
+	   setClassName("view");
+	   return super.doStartTag();
+   }
+   
+   /**
+    * Renders the tag to the JSP output stream.
+    * @return EVAL_PAGE
+    * @throws JspException if an error occurs
+    */
+   @Override
    public int doEndTag() throws JspException {
-      int result = super.doEndTag();
-      release();
-      return result;
+	   try {
+		   return super.doEndTag();
+	   } finally {
+		   release();
+	   }
    }
    
    /**
     * Releases the tag's state variables.
     */
+   @Override
    public void release() {
       super.release();
       _viewSize = SystemData.getInt("html.table.viewSize");
@@ -73,7 +80,7 @@ public class TableTag extends org.deltava.taglib.html.TableTag {
    }
 
    /**
-    * Returns the view scroll window size (for unit tests)
+    * Returns the view scroll window size (for unit tests).
     * @return the number of rows
     * @see TableTag#setSize(int)
     */

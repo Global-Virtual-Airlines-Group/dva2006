@@ -21,7 +21,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<view:table className="view" cmd="ainfolist">
+<view:table cmd="ainfolist">
 <!-- Table Header Bar-->
 <tr class="title caps">
  <td style="width:25%">AIRLINE NAME</td>

@@ -27,7 +27,7 @@
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="logbook.do" method="post" validate="return true">
-<view:table className="view" cmd="logbook">
+<view:table cmd="logbook">
 <!-- Title Header Bar -->
 <tr class="title">
 <c:set var="cspan" value="${access.canPreApprove ? 4 : 6}" scope="page" />

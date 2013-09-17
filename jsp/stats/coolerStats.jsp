@@ -31,7 +31,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="coolerstats.do" method="post" validate="return true">
-<view:table className="view" cmd="coolerstats">
+<view:table cmd="coolerstats">
 <tr class="title">
  <td colspan="2" class="left">${forumName} STATISTICS</td>
  <td colspan="5" class="right">GROUP BY <el:combo name="groupType" size="1" idx="*" options="${groupTypes}" value="${param.groupType}" onChange="void updateSort()" />
