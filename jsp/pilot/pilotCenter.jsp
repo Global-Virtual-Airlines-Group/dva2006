@@ -893,7 +893,7 @@ performed each time the Terminal Routes have been imported from AIRAC data.</td>
 </content:filter>
 </content:filter>
 </c:if>
-<content:filter roles="HR,Developer">
+<content:filter roles="HR,Developer,Operations">
 <!-- System Admin Section -->
 <tr class="title caps">
  <td colspan="2">SYSTEM ADMINISTRATION</td>
@@ -903,6 +903,12 @@ performed each time the Terminal Routes have been imported from AIRAC data.</td>
  <td class="data">The <content:airline /> web site sends out e-mail notification messages to inform members of
 new Online Events, System News entries and NOTAMs, and Flight Report approval or rejection.</td>
 </tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="metadata">System Metadata</el:cmd></td>
+ <td class="data">You can view system-generated metadata for the <content:airline /> web site.</td>
+</tr>
+</content:filter>
+<content:filter roles="HR,Developer">
 <tr>
  <td class="mid"><el:cmd className="bld" url="helplist">Online Help</el:cmd></td>
  <td class="data">You can view and edit <content:airline /> Online Help entries.</td>
