@@ -16,7 +16,7 @@
 <content:js name="common" />
 <content:js name="json2" />
 <content:js name="airportRefresh" />
-<content:sysdata var="innovataLink" name="schedule.innovata.enabled" />
+<fmt:aptype var="useICAO" />
 <script type="text/javascript">
 function validate(form)
 {
@@ -55,6 +55,13 @@ disableButton('BuildButton');
 return true;	
 }
 </c:if>
+golgotha.onDOMReady(function() {
+	var f = document.forms[0];
+	golgotha.airportLoad.config.doICAO = ${useICAO};
+	golgotha.airportLoad.setHelpers(f.airportD);
+	golgotha.airportLoad.setHelpers(f.airportA);
+	golgotha.airportLoad.changeAirline([f.airportD, f.airportA], golgotha.airportLoad.config);	
+});
 </script>
 </head>
 <content:copyright visible="false" />
@@ -62,7 +69,8 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<content:empty var="emptyList" />
+<content:singleton var="aD" value="${rp.airportD}" />
+<content:singleton var="aA" value="${rp.airportA}" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -73,13 +81,13 @@ return true;
 </tr>
 <tr>
  <td class="label">Departing from</td>
- <td class="data"><el:combo name="airportD" size="1" idx="*" options="${emptyList}" firstEntry="-" />
- <el:text name="airportDCode" idx="*" size="3" max="4" value="${param.airportDCode}" onChange="setAirport(document.forms[0].airportD, this.value)" /></td>
+ <td class="data"><el:combo name="airportD" size="1" idx="*" options="${aD}" firstEntry="-" value="${rp.airportD}" />
+ <el:text name="airportDCode" idx="*" size="3" max="4" value="${param.airportDCode}" onChange="void document.forms[0].airportD.setAirport(this.value)" /></td>
 </tr>
 <tr>
  <td class="label">Arriving at</td>
- <td class="data"><el:combo name="airportA" size="1" idx="*" options="${emptyList}" firstEntry="-" />
- <el:text name="airportACode" idx="*" size="3" max="4" value="${param.airportACode}" onChange="setAirport(document.forms[0].airportA, this.value)" /></td>
+ <td class="data"><el:combo name="airportA" size="1" idx="*" options="${aA}" firstEntry="-" value="${rp.airportA}" />
+ <el:text name="airportACode" idx="*" size="3" max="4" value="${param.airportACode}" onChange="void document.forms[0].airportA.setAirport(this.value)" /></td>
 </tr>
 
 <!-- Button Bar -->
@@ -145,9 +153,6 @@ return true;
 </el:table>
 </el:form>
 <br />
-<c:if test="${innovataLink}">
-<%@ include file="/jsp/schedule/innovataLink.jspf" %> 
-</c:if>
 </c:if>
 <c:if test="${empty results}">
 <el:table className="view">
@@ -164,15 +169,6 @@ return true;
 <content:copyright />
 </content:region>
 </content:page>
-<fmt:aptype var="useICAO" />
-<script type="text/javascript">
-var f = document.forms[0];
-golgotha.airportLoad.config.doICAO = ${useICAO};
-
-golgotha.airportLoad.setHelpers(f.airportD);
-golgotha.airportLoad.setHelpers(f.airportA);
-golgotha.airportLoad.changeAirline([f.airportD, f.airportA], golgotha.airportLoad.config);
-</script>
 <content:googleAnalytics eventSupport="true" />
 </body>
 </html>
