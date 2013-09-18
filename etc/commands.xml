@@ -568,7 +568,13 @@
 	<command id="faachartdl">
 		<name>FAA Chart Download</name>
 		<class>org.deltava.commands.schedule.FAAChartDownloadCommand</class>
-		<roles>Schedule,Operations</roles>
+		<roles>Schedule,Developer,Operations</roles>
+	</command>
+
+	<command id="extchartrefresh">
+		<name>AirCharts Chart Refresh</name>
+		<class>org.deltava.commands.schedule.ExternalChartRefreshCommand</class>
+		<roles>Operations,Schedule,Developer</roles>
 	</command>
 
 	<command id="routemap">
