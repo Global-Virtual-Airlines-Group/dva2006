@@ -106,7 +106,7 @@ golgotha.onDOMReady(function() {
 <c:forEach var="chart" items="${charts}">
 <c:set var="hasPDF" value="${chart.imgType == 'PDF'}" scope="page" />
 <c:set var="anyPDF" value="${anyPDF || hasPDF}" scope="page" />
-<c:set var="anyExt" value="${anyExt || chart.isExternal}" scope="page" />
+<c:set var="anyExt" value="${anyExt || (chart.isExternal && (chart.source == 'AirCharts'))}" scope="page" />
 <view:row entry="${chart}">
 <c:choose>
 <c:when test="${hasPDF}">
@@ -134,7 +134,7 @@ golgotha.onDOMReady(function() {
 <!-- Download Acrobat link -->
 <tr>
  <td><a href="http://www.adobe.com/products/acrobat/readstep2.html" rel="external"><el:img src="library/getacro.png" className="noborder" caption="Download Adobe Acrobat Reader" /></a></td>
- <td colspan="6">Some approach charts require <span class="pri bld">Adobe Acrobat Reader 10</span> or newer in order to be viewed. If you are having difficulties 
+ <td colspan="6">Some approach charts require <span class="pri bld">Adobe Acrobat Reader 11</span> or newer in order to be viewed. If you are having difficulties 
  viewing our charts, please click on the link to the left to download the latest version of Adobe Acrobat Reader. This is a free download.</td>
 </tr>
 </c:if>
@@ -142,7 +142,7 @@ golgotha.onDOMReady(function() {
 <!-- Scroll Bar -->
 <tr class="title">
  <td colspan="7">&nbsp;
-<content:filter roles="Operations,Schedule,Developer"><c:if test="${anyExt}"><el:cmd url="extchartrefresh" link="${airport}">REFRESH EXTERNAL APPROACH CHARTS</el:cmd></c:if></content:filter></td>
+<content:filter roles="Operations,Schedule,Developer"><c:if test="${anyExt}"><el:cmd url="extchartrefresh" linkID="${airport.IATA}">REFRESH EXTERNAL APPROACH CHARTS</el:cmd></c:if></content:filter></td>
 </tr>
 </view:table>
 </el:form>
