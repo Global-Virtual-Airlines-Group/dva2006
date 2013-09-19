@@ -89,7 +89,7 @@ public class AIRACImportCommand extends NavDataImportCommand {
 					int pos = txtData.indexOf("AIRAC Cycle : ");
 					if (pos != -1) {
 						newCycle = new CycleInfo(txtData.substring(pos+14, pos+18));
-						if (newCycle.compareTo(inf) == -1)
+						if ((inf != null) && (newCycle.compareTo(inf) == -1))
 							throw new DAOException("Navigation Data Cycle " + newCycle + " is older than loaded cycle " + inf);
 					}
 				} else if (!isComment && (txtData.length() > 5)) {
