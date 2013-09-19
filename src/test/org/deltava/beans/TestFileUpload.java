@@ -33,10 +33,12 @@ public class TestFileUpload extends TestCase {
 	}
 	
 	public void testLoad() throws IOException {
-        File f = new File("data/testImage.gif");
+        File f = new File("data/testImage.GIF");
         assertTrue(f.exists());
-        InputStream is = new FileInputStream(f);
-        _fu.load(is);
+        try (InputStream is = new FileInputStream(f)) { 
+        	_fu.load(is);
+        }
+        		
         assertNotNull(_fu.getBuffer());
         assertEquals(f.length(), _fu.getSize());
 	}
@@ -64,17 +66,22 @@ public class TestFileUpload extends TestCase {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		try (BZip2CompressorOutputStream bzout = new BZip2CompressorOutputStream(out, 4)) {
 			try (PrintWriter pw = new PrintWriter(bzout)) {
-				pw.println("Line 1");
-				pw.println("Line 2");
+				for (int x = 1; x <= 150000; x++) {
+					pw.print("Line " + x);
+					pw.println(" ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+				}
 			}
 		}
 		
 		ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
 		try (BZip2CompressorInputStream bzin = new BZip2CompressorInputStream(in)) {
-			try (BufferedReader br = new BufferedReader(new InputStreamReader(bzin))) {
-				assertEquals("Line 1", br.readLine());
-				assertEquals("Line 2", br.readLine());
-				assertFalse(br.ready());
+			try (LineNumberReader br = new LineNumberReader(new InputStreamReader(bzin))) {
+				for (int x = 1 ; x<= 150000; x++) {
+					String data = br.readLine();
+					assertNotNull(data);
+					String lineNumber = data.substring(data.indexOf(' ') + 1, data.lastIndexOf(' '));
+					assertEquals(x, Integer.parseInt(lineNumber));
+				}
 			}
 		}
 	}
