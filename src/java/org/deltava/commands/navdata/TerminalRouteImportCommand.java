@@ -84,8 +84,8 @@ public class TerminalRouteImportCommand extends NavDataImportCommand {
 			Collection<String> IDs = new HashSet<String>();
 			Collection<String> trIDs = new HashSet<String>();
 			Collection<TerminalRoute> results = new ArrayList<TerminalRoute>();
-			while (br.ready()) {
-				String txtData = br.readLine();
+			String txtData = br.readLine();
+			while (txtData != null) {
 				if (txtData.startsWith("[")) {
 					IDs.clear();
 					String id = txtData.substring(1, txtData.indexOf(']')).replace(" ", "");
@@ -128,6 +128,8 @@ public class TerminalRouteImportCommand extends NavDataImportCommand {
 						}
 					}
 				}
+				
+				txtData = br.readLine();
 			}
 			
 			// Get a connection
