@@ -78,13 +78,11 @@ public class AIRACImportCommand extends NavDataImportCommand {
 			ctx.setAttribute("purgeCount", Integer.valueOf(dao.purge(nt)), REQUEST);
 			ctx.setAttribute("legacyCount", Integer.valueOf(dao.updateLegacy(nt)), REQUEST);
 
-			// Get the file - skipping the first line
-			LineNumberReader br = new LineNumberReader(new InputStreamReader(is));
-			br.readLine();
-
 			// Iterate through the file
-			while (br.ready()) {
-				String txtData = br.readLine(); boolean isComment = txtData.startsWith(";"); 
+			LineNumberReader br = new LineNumberReader(new InputStreamReader(is));
+			String txtData = br.readLine();
+			while (txtData != null) {
+				boolean isComment = txtData.startsWith(";"); 
 				if ((newCycle == null) && isComment) {
 					int pos = txtData.indexOf("AIRAC Cycle : ");
 					if (pos != -1) {
@@ -191,6 +189,8 @@ public class AIRACImportCommand extends NavDataImportCommand {
 						}
 					}
 				}
+				
+				txtData = br.readLine();
 			}
 
 			// Update the regions

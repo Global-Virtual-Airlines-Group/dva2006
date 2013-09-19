@@ -56,12 +56,12 @@ public class AirwayImportCommand extends NavDataImportCommand {
 		int entryCount = 0; CycleInfo newCycle = null;
 		try (InputStream is = navData.getInputStream()) {
 			LineNumberReader br = new LineNumberReader(new InputStreamReader(is));
-			br.readLine();
 			
 			// Iterate through the file
 			Airway a = null; int lastSeq = -1; String lastCode = "";
-			while (br.ready()) {
-				String txtData = br.readLine(); boolean isComment = txtData.startsWith(";");
+			String txtData = br.readLine(); 
+			while (txtData != null) {
+				boolean isComment = txtData.startsWith(";");
 				if (isComment && (newCycle == null)) {
 					int pos = txtData.indexOf("AIRAC Cycle : ");
 					if (pos != -1) {
@@ -96,6 +96,8 @@ public class AirwayImportCommand extends NavDataImportCommand {
 						errors.add(txtData);
 					}
 				}
+				
+				txtData = br.readLine();
 			}
 		} catch (IOException | IllegalStateException ie) {
 			throw new CommandException(ie);
