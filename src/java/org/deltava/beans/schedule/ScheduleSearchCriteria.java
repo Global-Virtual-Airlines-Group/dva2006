@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.util.ComboUtils;
 /**
  * A bean to store search criteria for the Flight Schedule.
  * @author Luke
- * @version 4.1
+ * @version 5.1
  * @since 1.0
  */
 
@@ -34,6 +34,7 @@ public class ScheduleSearchCriteria extends Flight {
 	private boolean _includeAcademy;
 	private boolean _dispatchRouteCounts;
 	private boolean _dispatchOnly;
+	private int _notVisitedPilotID;
 	private int _maxPerRoute;
 
 	private int _hourD = -1;
@@ -56,7 +57,7 @@ public class ScheduleSearchCriteria extends Flight {
 	
 	public ScheduleSearchCriteria(String sortBy) {
 		super(null, 0, 0);
-		setSortBy(sortBy);
+		_sortBy = sortBy;
 	}
 	
 	public String getDBName() {
@@ -77,6 +78,10 @@ public class ScheduleSearchCriteria extends Flight {
 	
 	public boolean getIncludeAcademy() {
 		return _includeAcademy;
+	}
+	
+	public int getNotVisitedID() {
+		return _notVisitedPilotID;
 	}
 	
 	public boolean getCheckDispatch() {
@@ -158,9 +163,21 @@ public class ScheduleSearchCriteria extends Flight {
 	public void setDistance(int distance) {
 		_distance = Math.max(0, distance);
 	}
-	
+
+	/**
+	 * Sets the distance range of the flight.
+	 * @param range the distance range in miles
+	 */
 	public void setDistanceRange(int range) {
 		_distanceRange = Math.max(0, range);
+	}
+	
+	/**
+	 * The Pilot database ID, if only including unvisited airports.
+	 * @param id the Pilot ID, or zero to search all airports
+	 */
+	public void setNotVisited(int id) {
+		_notVisitedPilotID = Math.max(0, id);
 	}
 
 	/**

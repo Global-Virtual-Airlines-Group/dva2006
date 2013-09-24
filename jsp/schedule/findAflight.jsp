@@ -17,6 +17,7 @@
 <content:js name="json2" />
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
+<fmt:aptype var="useICAO" />
 <script type="text/javascript">
 function validate(form)
 {
@@ -72,21 +73,40 @@ function updateAirline(combo)
 {
 var f = document.forms[0];
 var cfg = golgotha.airportLoad.config.clone();
-cfg.airline = getValue(combo); cfg.useSched = true;
+cfg.airline = getValue(combo);
 golgotha.airportLoad.changeAirline([f.airportD, f.airportA], cfg)
 return true;
 }
 
 function updateSort(combo)
 {
-if (!combo) combo = document.forms[0].sortType;
 enableElement('sortDesc', (combo.selectedIndex > 0));
 return true;
 }
+
+function refreshAirports() {
+	updateAirline(document.forms[0].airline);
+}
+
+golgotha.onDOMReady(function() {
+	var f = document.forms[0];
+	var cfg = golgotha.airportLoad.config;
+	cfg.notVisited = f.notVisited.checked;
+	cfg.doICAO = ${useICAO};
+	cfg.myRated = f.myEQTypes.checked;
+	golgotha.airportLoad.setHelpers(f.airportD);
+	golgotha.airportLoad.setHelpers(f.airportA);
+	<c:if test="${!empty fafCriteria}">
+	f.airportD.updateAirportCode();
+	f.airportA.updateAirportCode();</c:if>
+	<c:if test="${empty fafCriteria}">
+	f.airline.onchange();</c:if>
+	updateSort(f.sortType);
+});
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="initAirports(); updateSort()">
+<body>
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -141,7 +161,7 @@ return true;
  <td class="label top">Search Options</td>
  <td class="data top"><el:box name="myEQTypes" value="true" checked="${param.myEQTypes}" label="My rated Equipment Types" onChange="golgotha.airportLoad.config.myRated = this.checked" /><br />
 <el:box name="showUTCTimes" value="true" checked="${param.showUTCTimes}" label="Show Departure/Arrival Times as UTC" /><br />
-<el:box name="notVisited" value="true" checked="${param.notVisited}" label="Only include unvisited Airports" onChange="golgotha.airportLoad.config.notVisited = this.checked" /></td>
+<el:box name="notVisited" value="true" checked="${param.notVisited}" label="Only include unvisited Airports" onChange="golgotha.airportLoad.config.notVisited = this.checked; refreshAirports()" /></td>
  <td class="label top">ACARS Dispatch</td>
  <td class="data top"><el:box name="checkDispatch" idx="*" value="true" checked="${empty fafCriteria ? true : fafCriteria.checkDispatch}" label="Display Dispatch route count" /><br />
  <el:box name="dispatchOnly" idx="*" value="true" checked="${fafCriteria.dispatchOnly}" label="Flights with Dispatch routes only" /></td>
@@ -278,24 +298,5 @@ return true;
 <content:copyright />
 </content:region>
 </content:page>
-<fmt:aptype var="useICAO" />
-<script type="text/javascript">
-function initAirports()
-{
-var f = document.forms[0];
-var cfg = golgotha.airportLoad.config;
-cfg.notVisited = f.notVisited.checked;
-cfg.doICAO = ${useICAO};
-cfg.myRated = f.myEQTypes.checked;
-golgotha.airportLoad.setHelpers(f.airportD);
-golgotha.airportLoad.setHelpers(f.airportA);
-<c:if test="${!empty fafCriteria}">
-f.airportD.updateAirportCode();
-f.airportA.updateAirportCode();</c:if>
-<c:if test="${empty fafCriteria}">
-f.airline.onchange();</c:if>
-return true;
-}
-</script>
 </body>
 </html>

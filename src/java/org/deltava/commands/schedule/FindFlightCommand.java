@@ -90,10 +90,11 @@ public class FindFlightCommand extends AbstractCommand {
 		criteria.setIncludeAcademy(ctx.isUserInRole("Instructor") || ctx.isUserInRole("Schedule") || ctx.isUserInRole("HR") || ctx.isUserInRole("Operations"));
 		if ((criteria.getMaxResults() < 1) || (criteria.getMaxResults() > 150))
 			criteria.setMaxResults(150);
+		if (Boolean.valueOf(ctx.getParameter("notVisited")).booleanValue())
+			criteria.setNotVisited(ctx.getUser().getID());
 		
 		// Set equipment type(s)
-		boolean myRatedEQ = Boolean.valueOf(ctx.getParameter("myEQTypes")).booleanValue();
-		if (myRatedEQ)
+		if (Boolean.valueOf(ctx.getParameter("myEQTypes")).booleanValue())
 			criteria.setEquipmentTypes(ctx.getUser().getRatings());
 		else
 			criteria.setEquipmentType(ctx.getParameter("eqType"));
@@ -104,8 +105,7 @@ public class FindFlightCommand extends AbstractCommand {
 			sortType = ScheduleSearchCriteria.SORT_CODES[0];
 		
 		// Check for descending sort
-		boolean isDesc = Boolean.valueOf(ctx.getParameter("sortDesc")).booleanValue();
-		if (isDesc)
+		if (Boolean.valueOf(ctx.getParameter("sortDesc")).booleanValue())
 			sortType += " DESC";
 
 		// Save the search criteria in the session
@@ -114,7 +114,7 @@ public class FindFlightCommand extends AbstractCommand {
 
 		// Check if we're doing a new search or returning back existing criteria
 		String opName = (String) ctx.getCmdParameter(OPERATION, "search");
-		if (opName.equals("search")) {
+		if ("search".equals(opName)) {
 			try {
 				Connection con = ctx.getConnection();
 				
@@ -131,10 +131,6 @@ public class FindFlightCommand extends AbstractCommand {
 				// Save results in the session - since other commands may reference these
 				ctx.setAttribute("fafResults", dao.search(criteria), SESSION);
 				ctx.setAttribute("doSearch", Boolean.TRUE, REQUEST);
-				
-				// Save destination airport list
-				GetScheduleAirport adao = new GetScheduleAirport(con);
-				ctx.setAttribute("airportsA", adao.getConnectingAirports(criteria.getAirportD(), true, null), REQUEST);
 			} catch (DAOException de) {
 				throw new CommandException(de);
 			} finally {
