@@ -40,7 +40,9 @@ public class SingletonTag extends SimpleTagSupport {
 	@Override
 	public void doTag() {
 		List<Object> v = new ArrayList<Object>(2);
-		v.add(_value);
+		if (_value != null)
+			v.add(_value);
+		
 		JspContext ctx = getJspContext();
 		ctx.setAttribute(_var, v, PageContext.PAGE_SCOPE);
 	}

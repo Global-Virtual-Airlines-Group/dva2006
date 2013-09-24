@@ -112,6 +112,8 @@ golgotha.onDOMReady(function() {
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:empty var="emptyList" />
+<content:singleton var="apD" value="${pirep.airportD}" />
+<content:singleton var="apA" value="${pirep.airportA}" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -163,12 +165,12 @@ golgotha.onDOMReady(function() {
 <c:when test="${!isAssign}">
 <tr>
  <td class="label">Departed from</td>
- <td class="data"><el:combo name="airportD" size="1" options="${emptyList}" required="true" onChange="void this.updateAirportCode()" />
+ <td class="data"><el:combo name="airportD" size="1" options="${apD}" required="true" value="${pirep.airportD}" onChange="void this.updateAirportCode()" />
  <el:text ID="airportDCode" name="airportDCode" idx="*" size="3" max="4" onBlur="void document.forms[0].airportD.setAirport(this.value)" /></td>
 </tr>
 <tr>
  <td class="label">Arrived at</td>
- <td class="data"><el:combo name="airportA" size="1" options="${emptyList}" required="true" onChange="void this.updateAirportCode()" />
+ <td class="data"><el:combo name="airportA" size="1" options="${apA}" required="true" value="${pirep.airportA}" onChange="void this.updateAirportCode()" />
  <el:text ID="airportACode" name="airportACode" idx="*" size="3" max="4" onBlur="void document.forms[0].airportA.setAirport(this.value)" /></td>
 </tr>
 </c:when>
