@@ -145,8 +145,8 @@ public class AirportListService extends WebService {
 		}
 
 		// Generate the XML document
-		JSONArray ja = new JSONArray();
 		try {
+			JSONArray ja = new JSONArray();
 			for (Airport a : airports) {
 				JSONObject ao = new JSONObject();
 				ao.put("iata", a.getIATA());
