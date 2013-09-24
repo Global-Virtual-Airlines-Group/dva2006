@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.testing.QuestionProfile;
@@ -10,13 +10,13 @@ import org.deltava.util.system.SystemData;
 /**
  * An Access Controller for Examination Question Profiles.
  * @author Luke
- * @version 1.0
+ * @version 5.1
  * @since 1.0
  */
 
 public class QuestionProfileAccessControl extends AccessControl {
 
-	private QuestionProfile _qp;
+	private final QuestionProfile _qp;
 
 	private boolean _canCreate;
 	private boolean _canRead;
@@ -42,7 +42,7 @@ public class QuestionProfileAccessControl extends AccessControl {
 
 		// Calculate access variables
 		final boolean isHR = _ctx.isUserInRole("HR");
-		final boolean isTestAdmin = _ctx.isUserInRole("TestAdmin");
+		final boolean isTestAdmin = _ctx.isUserInRole("TestAdmin") || _ctx.isUserInRole("AcademyAudit") || _ctx.isUserInRole("AcademyAdmin");
 		final boolean isOurs = (_qp == null) || SystemData.get("airline.code").equals(_qp.getOwner().getCode());
 
 		_canCreate = isHR || isTestAdmin;
