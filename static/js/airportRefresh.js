@@ -1,7 +1,7 @@
 golgotha.airportLoad = {};
 
 // Configuration / state object
-golgotha.airportLoad.config = {doICAO:false, alreadyVisited:false, useSched:true, dst:false, myRated:false};
+golgotha.airportLoad.config = {doICAO:false, notVisited:false, useSched:true, dst:false, myRated:false};
 golgotha.airportLoad.config.clone = function() {
 	var o = {};
 	for (p in this) {
