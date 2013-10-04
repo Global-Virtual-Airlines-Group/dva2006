@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -17,7 +17,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to retrieve Water Cooler threads and thread notifications.
  * @author Luke
- * @version 5.0
+ * @version 5.2
  * @since 1.0
  */
 
@@ -185,7 +185,7 @@ public class GetCoolerThreads extends DAO {
 
 		try {
 			// Fetch the thread posts
-			prepareStatementWithoutLimits("SELECT POST_ID, AUTHOR_ID, CREATED, INET_NTOA(REMOTE_ADDR), "
+			prepareStatementWithoutLimits("SELECT POST_ID, AUTHOR_ID, CREATED, INET6_NTOA(REMOTE_ADDR), "
 					+ "REMOTE_HOST, MSGBODY, CONTENTWARN FROM common.COOLER_POSTS WHERE (THREAD_ID=?) "
 					+ "ORDER BY CREATED");
 			_ps.setInt(1, id);
@@ -267,27 +267,26 @@ public class GetCoolerThreads extends DAO {
 	public List<MessageThread> search(SearchCriteria criteria) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder buf = new StringBuilder("SELECT DISTINCT T.ID FROM common.COOLER_THREADS T, "
-				+ "common.COOLER_POSTSEARCH SIDX WHERE (SIDX.THREAD_ID=T.ID) ");
+		StringBuilder buf = new StringBuilder("SELECT DISTINCT ID FROM common.COOLER_THREADS WHERE ");
 		
 		// Check for text / subject search
 		boolean hasQuery = !StringUtils.isEmpty(criteria.getSearchTerm());
 		if (hasQuery) {
-			buf.append("AND ((MATCH(SIDX.MSGBODY) AGAINST (? IN NATURAL LANGUAGE MODE)) ");
+			buf.append("((MATCH(MSGBODY) AGAINST (? IN NATURAL LANGUAGE MODE)) ");
 			if (criteria.getSearchSubject())
-				buf.append("OR (LOCATE(?, T.SUBJECT) > 0)) ");
+				buf.append("OR (LOCATE(?, SUBJECT) > 0)) ");
 			else
 				buf.append(") ");
 		}
 
 		// Add channel/author criteria
 		if (!Channel.ALL.equals(criteria.getChannel()))
-			buf.append("AND (T.CHANNEL=?) ");
+			buf.append("AND (CHANNEL=?) ");
 		if (criteria.getMinimumDate() != null)
-			buf.append("AND (T.LASTUPDATE > ?)");
+			buf.append("AND (LASTUPDATE > ?)");
 
 		if (!hasQuery)
-			buf.append("ORDER BY T.LASTUPDATE DESC");
+			buf.append("ORDER BY LASTUPDATE DESC");
 		
 		try {
 			prepareStatement(buf.toString());

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to handle writing Water Cooler message threads and posts.
  * @author Luke
- * @version 5.0
+ * @version 5.2
  * @since 1.0
  */
 
@@ -33,7 +33,7 @@ public class SetCoolerMessage extends DAO {
 		try {
 			prepareStatementWithoutLimits("INSERT INTO common.COOLER_POSTS (THREAD_ID, AUTHOR_ID, "
 					+ "CREATED, REMOTE_ADDR, REMOTE_HOST, MSGBODY, CONTENTWARN) VALUES (?, ?, NOW(),"
-					+ " INET_ATON(?), ?, ?, ?)");
+					+ " INET6_ATON(?), ?, ?, ?)");
 			_ps.setInt(1, msg.getThreadID());
 			_ps.setInt(2, msg.getAuthorID());
 			_ps.setString(3, msg.getRemoteAddr());
@@ -55,7 +55,7 @@ public class SetCoolerMessage extends DAO {
 	public void update(Message msg) throws DAOException {
 		try {
 			prepareStatementWithoutLimits("UPDATE common.COOLER_POSTS SET MSGBODY=?, REMOTE_HOST=?, "
-					+ "REMOTE_ADDR=INET_ATON(?), CONTENTWARN=? WHERE (THREAD_ID=?) AND (POST_ID=?)");
+					+ "REMOTE_ADDR=INET6_ATON(?), CONTENTWARN=? WHERE (THREAD_ID=?) AND (POST_ID=?)");
 			_ps.setString(1, msg.getBody());
 			_ps.setString(2, msg.getRemoteHost());
 			_ps.setString(3, msg.getRemoteAddr());

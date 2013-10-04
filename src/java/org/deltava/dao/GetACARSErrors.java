@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.acars.ACARSError;
 /**
  * A Data Access Object to load ACARS client error logs.
  * @author Luke
- * @version 5.1
+ * @version 5.2
  * @since 1.0
  */
 
@@ -74,7 +74,7 @@ public class GetACARSErrors extends DAO {
 	 */
 	public ACARSError get(int id) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT *, INET_NTOA(REMOTE_ADDR) FROM acars.ERRORS WHERE (ID=?) LIMIT 1");
+			prepareStatementWithoutLimits("SELECT *, INET6_NTOA(REMOTE_ADDR) FROM acars.ERRORS WHERE (ID=?) LIMIT 1");
 			_ps.setInt(1, id);
 			List<ACARSError> results = execute();
 			return results.isEmpty() ? null : results.get(0);
@@ -91,7 +91,7 @@ public class GetACARSErrors extends DAO {
 	 */
 	public Collection<ACARSError> getByPilot(int id) throws DAOException {
 		try {
-			prepareStatement("SELECT *, INET_NTOA(REMOTE_ADDR) FROM acars.ERRORS WHERE (USERID=?) ORDER BY CREATED_ON");
+			prepareStatement("SELECT *, INET6_NTOA(REMOTE_ADDR) FROM acars.ERRORS WHERE (USERID=?) ORDER BY CREATED_ON");
 			_ps.setInt(1, id);
 			return execute();
 		} catch (SQLException se) {
@@ -107,7 +107,7 @@ public class GetACARSErrors extends DAO {
 	 */
 	public Collection<ACARSError> getByBuild(int build) throws DAOException {
 		try {
-			prepareStatement("SELECT *, INET_NTOA(REMOTE_ADDR) FROM acars.ERRORS WHERE (CLIENT_BUILD=?) ORDER BY CREATED_ON");
+			prepareStatement("SELECT *, INET6_NTOA(REMOTE_ADDR) FROM acars.ERRORS WHERE (CLIENT_BUILD=?) ORDER BY CREATED_ON");
 			_ps.setInt(1, build);
 			return execute();
 		} catch (SQLException se) {
@@ -122,14 +122,14 @@ public class GetACARSErrors extends DAO {
 	 */
 	public Collection<ACARSError> getAll() throws DAOException {
 		try {
-			prepareStatement("SELECT *, INET_NTOA(REMOTE_ADDR) FROM acars.ERRORS ORDER BY CREATED_ON");
+			prepareStatement("SELECT *, INET6_NTOA(REMOTE_ADDR) FROM acars.ERRORS ORDER BY CREATED_ON");
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 	}
 	
-	/**
+	/*
 	 * Helper method to parse ACARS client error result sets.
 	 */
 	private List<ACARSError> execute() throws SQLException {

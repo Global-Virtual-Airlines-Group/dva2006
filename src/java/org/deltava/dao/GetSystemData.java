@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -6,7 +6,6 @@ import java.sql.*;
 
 import org.deltava.beans.servlet.CommandLog;
 import org.deltava.beans.stats.*;
-import org.deltava.beans.system.RegistrationBlock;
 import org.deltava.taskman.TaskLastRun;
 
 import org.deltava.util.cache.*;
@@ -15,7 +14,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Data Access Object for loading system data (Session/Command/HTTP log tables) and Registration blocks.
  * @author Luke
- * @version 5.0
+ * @version 5.2
  * @since 1.0
  */
 
@@ -98,9 +97,9 @@ public class GetSystemData extends DAO {
 	 */
 	public List<CommandLog> getCommands(String remoteAddr) throws DAOException {
 		try {
-			prepareStatement("SELECT CMDDATE, PILOT_ID, INET_NTOA(REMOTE_ADDR), REMOTE_HOST, NAME, RESULT, "
-					+ "TOTAL_TIME, BE_TIME, SUCCESS FROM SYS_COMMANDS WHERE (UCASE(REMOTE_ADDR)=?) OR "
-					+ "(INET_ATON(?)=REMOTE_ADDR) ORDER BY CMDDATE DESC");
+			prepareStatement("SELECT CMDDATE, PILOT_ID, INET6_NTOA(REMOTE_ADDR), REMOTE_HOST, NAME, RESULT, "
+				+ "TOTAL_TIME, BE_TIME, SUCCESS FROM SYS_COMMANDS WHERE (UCASE(REMOTE_ADDR)=?) OR "
+				+ "(INET6_ATON(?)=REMOTE_ADDR) ORDER BY CMDDATE DESC");
 			_ps.setString(1, remoteAddr.toUpperCase());
 			_ps.setString(2, remoteAddr.toUpperCase());
 			return executeCommandLog();
@@ -120,7 +119,7 @@ public class GetSystemData extends DAO {
 			return Collections.emptyList();
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT CMDDATE, PILOT_ID, INET_NTOA(REMOTE_ADDR), REMOTE_HOST, "
+		StringBuilder sqlBuf = new StringBuilder("SELECT CMDDATE, PILOT_ID, INET6_NTOA(REMOTE_ADDR), REMOTE_HOST, "
 				+ "NAME, RESULT, TOTAL_TIME, BE_TIME, SUCCESS FROM SYS_COMMANDS WHERE (");
 		for (Iterator<Integer> i = pilotIDs.iterator(); i.hasNext();) {
 			Integer id = i.next();
@@ -244,69 +243,6 @@ public class GetSystemData extends DAO {
 			
 			_ps.close();
 			return lastRun;
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-
-	/**
-	 * Loads a Registration Block entry from the database.
-	 * @param id the block database ID
-	 * @return a RegistrationBlock bean, or null if not found
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public RegistrationBlock getBlock(int id) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT * FROM REG_BLOCKS WHERE (ID=?) LIMIT 1");
-			_ps.setInt(1, id);
-
-			// Execute the query and return if not found
-			RegistrationBlock rb = null;
-			try (ResultSet rs = _ps.executeQuery()) {
-				if (rs.next()) {
-					rb = new RegistrationBlock(rs.getString(2), rs.getString(3));
-					rb.setID(rs.getInt(1));
-					rb.setNetMask(rs.getInt(5));
-					rb.setAddress(rs.getInt(4));
-					rb.setHostName(rs.getString(6));
-					rb.setComments(rs.getString(7));
-					rb.setHasUserFeedback(rs.getBoolean(8));
-					rb.setActive(rs.getBoolean(9));
-				}
-			}
-
-			_ps.close();
-			return rb;
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-
-	/**
-	 * Loads all Registration Block entries from the database.
-	 * @return a Collection of RegistrationBlock beans
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public Collection<RegistrationBlock> getBlocks() throws DAOException {
-		try {
-			prepareStatement("SELECT * FROM REG_BLOCKS");
-			Collection<RegistrationBlock> results = new ArrayList<RegistrationBlock>();
-			try (ResultSet rs = _ps.executeQuery()) {
-				while (rs.next()) {
-					RegistrationBlock rb = new RegistrationBlock(rs.getString(2), rs.getString(3));
-					rb.setID(rs.getInt(1));
-					rb.setNetMask(rs.getInt(5));
-					rb.setAddress(rs.getInt(4));
-					rb.setHostName(rs.getString(6));
-					rb.setComments(rs.getString(7));
-					rb.setHasUserFeedback(rs.getBoolean(8));
-					rb.setActive(rs.getBoolean(9));
-					results.add(rb);
-				}
-			}
-
-			_ps.close();
-			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

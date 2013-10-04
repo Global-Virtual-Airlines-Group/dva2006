@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -6,14 +6,11 @@ import java.util.*;
 
 import org.deltava.beans.TZInfo;
 import org.deltava.beans.servlet.CommandLog;
-import org.deltava.beans.system.*;
-
-import org.deltava.util.StringUtils;
 
 /**
  * A Data Access Object to write system logging (user commands, tasks) entries.
  * @author Luke
- * @version 2.6
+ * @version 5.2
  * @since 1.0
  */
 
@@ -35,7 +32,7 @@ public class SetSystemData extends DAO {
 	public void logCommands(Collection<CommandLog> entries) throws DAOException {
 		try {
 			prepareStatement("INSERT INTO SYS_COMMANDS (CMDDATE, PILOT_ID, REMOTE_ADDR, REMOTE_HOST, "
-					+ "NAME, RESULT, TOTAL_TIME, BE_TIME, SUCCESS) VALUES (?, ?, INET_ATON(?), ?, ?, ?, ?, ?, ?) ON "
+					+ "NAME, RESULT, TOTAL_TIME, BE_TIME, SUCCESS) VALUES (?, ?, INET6_ATON(?), ?, ?, ?, ?, ?, ?) ON "
 					+ "DUPLICATE KEY UPDATE CMDDATE=?");
 			
 			// Write the log entries
@@ -108,49 +105,6 @@ public class SetSystemData extends DAO {
 	}
 	
 	/**
-	 * Updates a Registration block entry in the database.
-	 * @param block the Registration block bean
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public void write(RegistrationBlock block) throws DAOException {
-		try {
-			prepareStatement("REPLACE INTO REG_BLOCKS (ID, FIRSTNAME, LASTNAME, REMOTE_ADDR, NETMASK, HOSTNAME, "
-					+ "COMMENTS, HAS_FEEDBACK, ACTIVE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-			_ps.setInt(1, block.getID());
-			_ps.setString(2, StringUtils.nullTrim(block.getFirstName()));
-			_ps.setString(3, StringUtils.nullTrim(block.getLastName()));
-			_ps.setLong(4, block.getAddress());
-			_ps.setLong(5, block.getNetMask());
-			_ps.setString(6, StringUtils.nullTrim(block.getHostName()));
-			_ps.setString(7, block.getComments());
-			_ps.setBoolean(8, block.getHasUserFeedback());
-			_ps.setBoolean(9, block.getActive());
-			executeUpdate(1);
-			
-			// Get new ID
-			if (block.getID() == 0)
-				block.setID(getNewID());
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-	
-	/**
-	 * Deletes a Registration block entry from the database.
-	 * @param id the block ID
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public void deleteBlock(int id) throws DAOException {
-		try {
-			prepareStatement("DELETE FROM REG_BLOCKS WHERE (ID=?)");
-			_ps.setInt(1, id);
-			executeUpdate(0);
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-	
-	/**
 	 * Logs user authentication.
 	 * @param dbName the database name
 	 * @param id the User's database ID
@@ -159,15 +113,12 @@ public class SetSystemData extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void login(String dbName, int id, String addr, String host) throws DAOException {
-		
-		// Fix null hostname
-		if (host == null)
-			host = addr;
+		if (host == null) host = addr;
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("INSERT INTO ");
 		sqlBuf.append(formatDBName(dbName));
-		sqlBuf.append(".SYS_LOGINS (ID, REMOTE_ADDR, REMOTE_HOST, LOGINS) VALUES (?, INET_ATON(?), ?, 1) "
+		sqlBuf.append(".SYS_LOGINS (ID, REMOTE_ADDR, REMOTE_HOST, LOGINS) VALUES (?, INET6_ATON(?), ?, 1) "
 				+ "ON DUPLICATE KEY UPDATE LOGINS=LOGINS+1, REMOTE_HOST=?");
 		
 		try {

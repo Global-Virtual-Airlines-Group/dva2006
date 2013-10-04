@@ -3,25 +3,22 @@ package org.deltava.beans.system;
 
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.schedule.*;
-
 import org.deltava.util.*;
 import org.deltava.util.cache.Cacheable;
 
 /**
  * A bean to store IP address block information.
  * @author Luke
- * @version 5.0
+ * @version 5.2
  * @since 2.5
  */
 
-public class IPBlock implements Cacheable, GeoLocation, Comparable<IPBlock> {
+public abstract class IPBlock implements Cacheable, GeoLocation, Comparable<IPBlock> {
 	
 	private final GeoPosition _loc = new GeoPosition(0, 0);
 	
 	private final int _id;
 	private final String _baseAddr;
-	private final String _endAddr;
-	private final long _rawAddr;
 	private final int _bits;
 	
 	private Country _country;
@@ -32,16 +29,13 @@ public class IPBlock implements Cacheable, GeoLocation, Comparable<IPBlock> {
 	 * Initializes the bean.
 	 * @param id the block ID
 	 * @param start the start IP address
-	 * @param end the ending IP address
 	 * @param size the CIDR size in bits
 	 */
-	public IPBlock(int id, String start, String end, int size) {
+	protected IPBlock(int id, String start, int size) {
 		super();
 		_id = id;
 		_baseAddr = start;
-		_endAddr = end;
 		_bits = size;
-		_rawAddr = NetworkUtils.pack(start);
 	}
 
 	/**
@@ -73,8 +67,14 @@ public class IPBlock implements Cacheable, GeoLocation, Comparable<IPBlock> {
 	 * @return the number of addresses in the block
 	 */
 	public int getSize() {
-		return 1 << (32-_bits);
+		return 1 << (getType().getBits() - _bits);
 	}
+	
+	/**
+	 * Returns the IP address type.
+	 * @return an IPAddress
+	 */
+	public abstract IPAddress getType();
 	
 	/**
 	 * Returns the country associated with this IP address.
@@ -119,10 +119,12 @@ public class IPBlock implements Cacheable, GeoLocation, Comparable<IPBlock> {
 		return buf.toString();
 	}
 	
+	@Override
 	public double getLatitude() {
 		return _loc.getLatitude();
 	}
-	
+
+	@Override
 	public double getLongitude() {
 		return _loc.getLongitude();
 	}
@@ -132,10 +134,7 @@ public class IPBlock implements Cacheable, GeoLocation, Comparable<IPBlock> {
 	 * @param addr the IP address
 	 * @return TRUE if the block contains the address, otherwise FALSE
 	 */
-	public boolean contains(String addr) {
-		long intAddr = NetworkUtils.pack(addr);
-		return (intAddr >= _rawAddr) && (intAddr <= NetworkUtils.pack(_endAddr));
-	}
+	public abstract boolean contains(String addr);
 
 	/**
 	 * Updates the country associated with this address block.
@@ -174,27 +173,16 @@ public class IPBlock implements Cacheable, GeoLocation, Comparable<IPBlock> {
 		_loc.setLongitude(lng);
 	}
 	
-	/**
-	 * Compares two IP Ranges by comparing their base addresses and mask sizes.
-	 */
-	public int compareTo(IPBlock ib2) {
-		int tmpResult = Long.valueOf(_rawAddr).compareTo(Long.valueOf(ib2._rawAddr));
-		if (tmpResult == 0)
-			tmpResult = Integer.valueOf(_bits).compareTo(Integer.valueOf(ib2._bits));
-		
-		return tmpResult;
-	}
-	
-	public Object cacheKey() {
-		return Integer.valueOf(_id);
-	}
-
 	public String toString() {
 		StringBuilder buf = new StringBuilder(_baseAddr);
 		buf.append('/').append(_bits);
 		return buf.toString();
 	}
 	
+	public Object cacheKey() {
+		return Long.valueOf(_id);
+	}
+
 	public int hashCode() {
 		return toString().hashCode();
 	}

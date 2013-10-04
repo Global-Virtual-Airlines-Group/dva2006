@@ -381,19 +381,6 @@
 	</tag>
 
 	<tag>
-		<description>Address tag, used to format IPv4 addresses</description>
-		<name>ip4</name>
-		<tag-class>org.deltava.taglib.format.IP4AddressFormatTag</tag-class>
-		<body-content>empty</body-content>
-		<attribute>
-			<name>address</name>
-			<required>true</required>
-			<rtexprvalue>true</rtexprvalue>
-			<type>java.lang.Integer</type>
-		</attribute>
-	</tag>
-
-	<tag>
 		<description>StackDump tag, used to format exception stack traces</description>
 		<name>stack</name>
 		<tag-class>org.deltava.taglib.format.StackDumpFormatTag</tag-class>

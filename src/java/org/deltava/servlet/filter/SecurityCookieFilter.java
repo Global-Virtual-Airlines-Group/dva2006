@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.filter;
 
 import java.io.IOException;
@@ -8,10 +8,8 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 import org.apache.log4j.Logger;
-
 import org.deltava.beans.*;
 import org.deltava.beans.system.IPBlock;
-
 import org.deltava.crypt.*;
 import org.deltava.security.*;
 
@@ -20,14 +18,13 @@ import static org.deltava.commands.CommandContext.*;
 
 import org.deltava.dao.*;
 import org.gvagroup.jdbc.*;
-
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A servlet filter to handle persistent authentication cookies.
  * @author Luke
- * @version 5.0
+ * @version 5.2
  * @since 1.0
  * @see SecurityCookieData
  * @see SecurityCookieGenerator
@@ -137,6 +134,7 @@ public class SecurityCookieFilter implements Filter {
 		}
 
 		// Validate the session/cookie data
+		Connection con = null;
 		try {
 			String savedAddr = (cData == null) ? null : cData.getRemoteAddr();
 			if (UserPool.isBlocked(p))
@@ -144,17 +142,20 @@ public class SecurityCookieFilter implements Filter {
 			else if (hreq.isRequestedSessionIdFromURL())
 				throw new SecurityException(req.getRemoteHost() + " attempting to create HTTP session via URL");
 			else if ((savedAddr != null) && !remoteAddr.equals(savedAddr)) {
-				long pSaved = NetworkUtils.pack(savedAddr) & NetworkUtils.NetworkType.C.getMask();
-				long pRemote = NetworkUtils.pack(remoteAddr) & NetworkUtils.NetworkType.C.getMask();
-				if (pSaved != pRemote)
+				con = _jdbcPool.getConnection();
+				GetIPLocation ipdao = new GetIPLocation(con);
+				IPBlock ipb = ipdao.get(savedAddr);
+				if ((ipb == null) || (!ipb.contains(remoteAddr)))
 					throw new SecurityException("HTTP Session is from " + savedAddr + ", request from " + remoteAddr);
 			}
-		} catch (SecurityException se) {
+		} catch (Exception se) {
 			log.warn(se.getMessage());
 			hrsp.addCookie(new Cookie(AUTH_COOKIE_NAME, ""));
 			req.setAttribute("servlet_error", se.getMessage());
 			s.invalidate();
 			cData = null;
+		} finally {
+			_jdbcPool.release(con);
 		}
 			
 		// Load the user
@@ -164,7 +165,6 @@ public class SecurityCookieFilter implements Filter {
 			IPBlock addrInfo = null;
 			
 			// Load the person and the IP Address data
-			Connection con = null;
 			try {
 				con = _jdbcPool.getConnection();
 				

@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.acars.*;
 /**
  * A Data Access Object to load ACARS log data.
  * @author Luke
- * @version 4.2
+ * @version 5.2
  * @since 1.0
  */
 
@@ -41,7 +41,7 @@ public class GetACARSLog extends GetACARSData {
 			terms.add("(C.DATE < ?)");
 
 		// Build the SQL statement
-		StringBuilder buf = new StringBuilder("SELECT C.ID, C.PILOT_ID, C.DATE, C.ENDDATE, INET_NTOA(C.REMOTE_ADDR), "
+		StringBuilder buf = new StringBuilder("SELECT C.ID, C.PILOT_ID, C.DATE, C.ENDDATE, INET6_NTOA(C.REMOTE_ADDR), "
 				+ "C.REMOTE_HOST, C.CLIENT_BUILD, C.BETA_BUILD FROM acars.CONS C ");
 
 		// Add the terms
@@ -144,7 +144,7 @@ public class GetACARSLog extends GetACARSData {
 			terms.add("(F.CREATED < ?)");
 
 		// Build the SQL statement
-		StringBuilder buf = new StringBuilder("SELECT F.*, INET_NTOA(F.REMOTE_ADDR), FD.ROUTE_ID, "
+		StringBuilder buf = new StringBuilder("SELECT F.*, INET6_NTOA(F.REMOTE_ADDR), FD.ROUTE_ID, "
 			+	"FDR.DISPATCHER_ID FROM acars.FLIGHTS F LEFT JOIN acars.FLIGHT_DISPATCH FD ON (F.ID=FD.ID) "
 			+ "LEFT JOIN acars.FLIGHT_DISPATCHER FDR ON (F.ID=FDR.ID)");
 		if (!terms.isEmpty()) {

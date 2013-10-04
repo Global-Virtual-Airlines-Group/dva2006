@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.io.*;
@@ -19,7 +19,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * A Data Access Object to load ACARS information.
  * @author Luke
- * @version 5.1
+ * @version 5.2
  * @since 1.0
  */
 
@@ -204,7 +204,7 @@ public class GetACARSData extends DAO {
 	 */
 	public FlightInfo getInfo(int flightID) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT F.*, INET_NTOA(F.REMOTE_ADDR), FD.ROUTE_ID, "
+			prepareStatementWithoutLimits("SELECT F.*, INET6_NTOA(F.REMOTE_ADDR), FD.ROUTE_ID, "
 				+ "FDR.DISPATCHER_ID FROM acars.FLIGHTS F LEFT JOIN acars.FLIGHT_DISPATCH FD ON "
 				+ "(F.ID=FD.ID) LEFT JOIN acars.FLIGHT_DISPATCHER FDR ON (F.ID=FDR.ID) WHERE (F.ID=?) LIMIT 1");
 			_ps.setInt(1, flightID);
@@ -281,7 +281,7 @@ public class GetACARSData extends DAO {
 	 */
 	public ConnectionEntry getConnection(long conID) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT C.ID, C.PILOT_ID, C.DATE, C.ENDDATE, INET_NTOA(C.REMOTE_ADDR), "
+			prepareStatementWithoutLimits("SELECT C.ID, C.PILOT_ID, C.DATE, C.ENDDATE, INET6_NTOA(C.REMOTE_ADDR), "
 				+ "C.REMOTE_HOST, C.CLIENT_BUILD, C.BETA_BUILD FROM acars.CONS C WHERE (C.ID=CONV(?,10,16)) LIMIT 1");
 			_ps.setLong(1, conID);
 
