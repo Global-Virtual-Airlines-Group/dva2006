@@ -322,7 +322,7 @@ function updateTab(mrk, ofs, size)
 {
 if ((ofs < 0) || (ofs > mrk.tabs.length)) ofs = 0;
 var tab = mrk.tabs[ofs];
-var txt = '<div class="mapInfoBox"';
+var txt = '<div ';
 if (!size) size = mrk.tabSize;
 if (size) {
 	txt += ' style="width:';
@@ -333,9 +333,9 @@ if (size) {
 	mrk.tabSize = size;
 }
 
-txt += '><span class="bld">';
+txt += '>';
 txt += tab.content;
-txt += '</span><br /><br />';
+txt += '<br /><br />';
 txt += renderTabChoices(mrk.tabs, ofs);
 txt += '</div>';
 map.infoWindow.setContent(txt);
