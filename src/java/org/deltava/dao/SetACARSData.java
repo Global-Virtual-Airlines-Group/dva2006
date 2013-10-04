@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.CalendarUtils;
  * A Data Access Object to write ACARS data. This is used outside of the ACARS server by classes that need to simulate
  * ACARS server writes without having access to the ACARS server message bean code.
  * @author Luke
- * @version 5.1
+ * @version 5.2
  * @since 1.0
  */
 
@@ -39,11 +39,11 @@ public class SetACARSData extends DAO {
 				prepareStatement("INSERT INTO acars.FLIGHTS (FLIGHT_NUM, CREATED, END_TIME, EQTYPE, "
 					+ "CRUISE_ALT, AIRPORT_D, AIRPORT_A, AIRPORT_L, ROUTE, REMARKS, FSVERSION, OFFLINE, "
 					+ "PIREP, XACARS, REMOTE_HOST, REMOTE_ADDR, CLIENT_BUILD, BETA_BUILD, PILOT_ID) "
-					+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, INET_ATON(?), ?, ?, ?)");
+					+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, INET6_ATON(?), ?, ?, ?)");
 			else
 				prepareStatement("UPDATE acars.FLIGHTS SET FLIGHT_NUM=?, CREATED=?, END_TIME=?, "
 					+ "EQTYPE=?, CRUISE_ALT=?, AIRPORT_D=?, AIRPORT_A=?, AIRPORT_L=?, ROUTE=?, REMARKS=?, "
-					+ "FSVERSION=?, OFFLINE=?, PIREP=?, XACARS=?, REMOTE_HOST=?, REMOTE_ADDR=INET_ATON(?), "
+					+ "FSVERSION=?, OFFLINE=?, PIREP=?, XACARS=?, REMOTE_HOST=?, REMOTE_ADDR=INET6_ATON(?), "
 					+ "CLIENT_BUILD=?, BETA_BUILD=?, PILOT_ID=? WHERE (ID=?)");
 			
 			// Write the flight info record

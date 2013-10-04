@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.main;
 
 import java.util.*;
@@ -23,7 +23,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to display the home page.
  * @author Luke
- * @version 2.8
+ * @version 5.2
  * @since 1.0
  */
 
@@ -41,14 +41,14 @@ public class HomeCommand extends AbstractCommand {
 	private static final int ACARS_TOLAND = 5;
 
 	// Dynamic content choices
-	private static final int[] DYN_CHOICES = { NEXT_EVENT, NEW_HIRES, CENTURY_CLUB, PROMOTIONS, 
-		ACARS_USERS, ACARS_TOLAND };
+	private static final int[] DYN_CHOICES = { NEXT_EVENT, NEW_HIRES, CENTURY_CLUB, PROMOTIONS, ACARS_USERS, ACARS_TOLAND };
 
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get Command result
@@ -56,7 +56,9 @@ public class HomeCommand extends AbstractCommand {
 		String myHost = SystemData.get("airline.url");
 		
 		// Check that the hostname is correct
-		if (!ctx.getRequest().getServerName().equals(myHost)) {
+		Boolean ip6Attr = (Boolean) ctx.getRequest().getAttribute(HTTPContext.IPV6_ATTR_NAME);
+		boolean isIPv6 = (ip6Attr != null) && ip6Attr.booleanValue();
+		if (!isIPv6 && !ctx.getRequest().getServerName().equals(myHost)) {
 			result.setType(ResultType.REDIRECT);
 			result.setURL("http://" + myHost + "/");
 			result.setSuccess(true);
@@ -149,8 +151,7 @@ public class HomeCommand extends AbstractCommand {
 					GetACARSTakeoffs todao = new GetACARSTakeoffs(con);
 					todao.setQueryMax(10);
 					Map<TakeoffLanding, FlightInfo> toLand = new LinkedHashMap<TakeoffLanding, FlightInfo>();
-					for (Iterator<TakeoffLanding> i = todao.getLatest().iterator(); i.hasNext(); ) {
-						TakeoffLanding tl = i.next();
+					for (TakeoffLanding tl : todao.getLatest()) {
 						FlightInfo fl = afdao.getInfo(tl.getID());
 						if (fl != null)
 							toLand.put(tl, fl);
@@ -182,10 +183,8 @@ public class HomeCommand extends AbstractCommand {
 					
 					// Get pilot IDs
 					Collection<Integer> IDs = new HashSet<Integer>();
-					for (Iterator<StatusUpdate> i = upds.iterator(); i.hasNext(); ) {
-						StatusUpdate upd = i.next();
-						IDs.add(new Integer(upd.getID()));
-					}
+					for (StatusUpdate upd : upds)
+						IDs.add(Integer.valueOf(upd.getID()));
 					
 					// Load pilots
 					GetPilot pdao = new GetPilot(con);

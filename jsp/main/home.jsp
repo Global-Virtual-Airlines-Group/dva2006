@@ -43,9 +43,9 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-Welcome to the <content:airline /> web site. We are a group of flight simulation enthusiasts who fly Delta Air
-Lines and its alliance partners' routes using Microsoft's Flight Simulator 2002, 2004 or Flight 
-Simulator X. We are in no way affiliated with Delta Air Lines.<br />
+Welcome to the <span class="bld"><content:airline /></span> web site. We are a group of flight simulation enthusiasts
+who fly Delta Air Lines and its alliance partners' routes using Microsoft Flight Simulator 2002, 2004 or Flight 
+Simulator X, Lockheed-Martin Prepar3D and Laminar Research X-Plane. We are in no way affiliated with Delta Air Lines.<br />
 <br />
 Since May 2003, we have received over <fmt:int value="${httpStats.homeHits}" /> visits and received 
 <fmt:int value="${httpStats.hits}" /> hits. During this time, our servers have sent out over
@@ -56,10 +56,16 @@ our ${forumName} discussion forum in the past 24 hours.</c:if>
 <fmt:quantity value="${runTimeHours}" single="hour" /> and <fmt:quantity value="${runTimeMinutes}" single="minute" />.</c:if>
 <br />
 <br />
+<content:ip IPv4="false">
+<div class="ovalBorder mid" style="width:80%;">You are visiting <content:airline /> today using IPv6. This new Internet addressing technology 
+eliminates many of the hacks and workarounds needed to combat the impending exhaustion of IPv4 addresses. Thanks for 
+doing your part to move the Internet forward to IPv6!</div>
+<br />
+</content:ip>
 <content:filter roles="!Pilot">
 Please feel free to browse around our web site. Once you join the <content:airline /> active pilot roster, 
-you may submit flight reports and contribute to our image library. If you are interested in a serious 
-virtual airline, designed for both the experienced pilot and the novice (and all of us that are in 
+you may submit flight reports and contribute to our discussion forums and image library. If you are interested in 
+a serious virtual airline, designed for both the experienced pilot and the novice (and all of us that are in 
 between!) we welcome your interest. <el:cmd url="register" className="pri bld">Click Here to join 
 <content:airline />.</el:cmd><br />
 <br />

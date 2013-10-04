@@ -29,7 +29,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to register a new Applicant.
  * @author Luke
- * @version 5.1
+ * @version 5.2
  * @since 1.0
  */
 
@@ -277,45 +277,6 @@ public class RegisterCommand extends AbstractCommand {
 			// Add HR comments
 			if (buf.length() > 0)
 				a.setHRComments(buf.toString());
-
-			// Load the Registration blacklist
-			GetSystemData sysdao = new GetSystemData(con);
-			Collection<RegistrationBlock> regBList = sysdao.getBlocks();
-			
-			// Check the blacklist
-			long regAddr = NetworkUtils.pack(a.getRegisterAddress());
-			for (Iterator<RegistrationBlock> i = regBList.iterator(); i.hasNext(); ) {
-				RegistrationBlock rb = i.next();
-				boolean doBlock = false;
-				boolean fnMatch = ((rb.getFirstName() != null) && (a.getFirstName().equalsIgnoreCase(rb.getFirstName())));
-				boolean lnMatch = ((rb.getLastName() != null) && (a.getLastName().equalsIgnoreCase(rb.getLastName())));
-				
-				if (((regAddr & rb.getNetMask()) == rb.getAddress()) && (rb.getAddress() != 0)) {
-					doBlock = true;
-					log.warn("Blocking " + a.getRegisterAddress() + ", matches " + NetworkUtils.format(NetworkUtils.convertIP(rb.getAddress()))
-							+ "/" + NetworkUtils.format(NetworkUtils.convertIP(rb.getNetMask())));
-				} else if (fnMatch && (rb.getLastName() == null)) {
-					doBlock = true;
-					log.warn("Blocking " + a.getName() + ", matches fName=" + rb.getFirstName());
-				} else if (lnMatch && (rb.getFirstName() == null)) {
-					doBlock = true;
-					log.warn("Blocking " + a.getName() + ", matches lName=" + rb.getLastName());
-				} else if (fnMatch && lnMatch) {
-					doBlock = true;
-					log.warn("Blocking " + a.getName() + ", matches fName= " + rb.getFirstName() + ", lName=" + rb.getLastName());
-				} else if ((rb.getHostName() != null) && (a.getRegisterHostName().endsWith(rb.getHostName()))) {
-					doBlock = true;
-					log.warn("Blocking " + a.getRegisterHostName() + ", matches host=" + rb.getHostName());
-				}
-			
-				// If we're blocked, shut it down
-				if (doBlock) {
-					ctx.release();
-					result.setURL("/jsp/register/" + (rb.getHasUserFeedback() ? "blackList.jsp" : "applicantWelcome.jsp"));
-					result.setSuccess(true);
-					return;
-				}
-			}
 
 			// Do address uniqueness check
 			if (checkAddr) {

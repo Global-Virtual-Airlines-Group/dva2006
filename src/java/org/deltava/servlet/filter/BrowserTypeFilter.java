@@ -1,6 +1,7 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.filter;
 
+import java.net.*;
 import java.io.IOException;
 
 import javax.servlet.*;
@@ -15,7 +16,7 @@ import org.deltava.util.StringUtils;
 /**
  * A servlet filter to detect the browser type.
  * @author Luke
- * @version 4.2
+ * @version 5.2
  * @since 1.0
  */
 
@@ -59,6 +60,11 @@ public class BrowserTypeFilter implements Filter {
 		ctxt.setVersion(StringUtils.parse(ver.getVersion().substring(0, pos), 0), StringUtils.parse(ver.getVersion().substring(pos + 1), 0));
 		ctxt.setHTML5((ver.getType() == BrowserType.CHROME) && (ctxt.getMajor() >= 20));
 		req.setAttribute(HTTPContext.HTTPCTXT_ATTR_NAME, ctxt);
+		
+    	// Check for IPv6
+    	InetAddress addr = InetAddress.getByName(hreq.getRemoteAddr());
+    	if (addr instanceof Inet6Address)
+    		hreq.setAttribute(HTTPContext.IPV6_ATTR_NAME, Boolean.TRUE);
 
 		// Execute the next filter in the chain
 		fc.doFilter(req, rsp);

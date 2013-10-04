@@ -1,0 +1,54 @@
+// Copyright 2009, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+package org.deltava.beans.system;
+
+import org.deltava.util.*;
+
+/**
+ * A bean to store IP address block information.
+ * @author Luke
+ * @version 5.2
+ * @since 5.2
+ */
+
+public class IP4Block extends IPBlock {
+	
+	private final long _rawAddr;
+	private final long _endAddr;
+	
+	/**
+	 * Initializes the bean.
+	 * @param id the block ID
+	 * @param start the start IP address
+	 * @param end the ending IP address
+	 * @param size the CIDR size in bits
+	 */
+	public IP4Block(int id, String start, String end, int size) {
+		super(id, start, size);
+		_rawAddr = NetworkUtils.pack(start).longValue();
+		_endAddr = NetworkUtils.pack(end).longValue();
+	}
+
+	@Override
+	public IPAddress getType() {
+		return IPAddress.IPV4;
+	}
+
+	@Override
+	public boolean contains(String addr) {
+		long intAddr = NetworkUtils.pack(addr).longValue();
+		return (intAddr >= _rawAddr) && (intAddr <= _endAddr);
+	}
+
+	@Override
+	public int compareTo(IPBlock ib2) {
+		int tmpResult = IPAddress.IPV4.compareTo(ib2.getType());
+		if (tmpResult == 0) {
+			IP4Block ib4 = (IP4Block) ib2;
+			tmpResult = Long.valueOf(_rawAddr).compareTo(Long.valueOf(ib4._rawAddr));
+			if (tmpResult == 0)
+				tmpResult = Integer.valueOf(getBits()).compareTo(Integer.valueOf(ib4.getBits()));
+		}
+		
+		return tmpResult;
+	}
+}
