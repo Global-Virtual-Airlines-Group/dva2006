@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.*;
 /**
  * A Data Access Object to read Applicant data.
  * @author Luke
- * @version 5.0
+ * @version 5.2
  * @since 1.0
  */
 
@@ -276,7 +276,7 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 	public boolean isIPRegistered(String addr, int days) throws DAOException {
 		try {
 			prepareStatement("SELECT COUNT(DISTINCT ID) FROM APPLICANTS WHERE (STATUS <> ?) AND "
-					+ "(REGADDR=INET_ATON(?)) AND (CREATED > DATE_SUB(NOW(), INTERVAL ? DAY))");
+					+ "(REGADDR=INET6_ATON(?)) AND (CREATED > DATE_SUB(NOW(), INTERVAL ? DAY))");
 			_ps.setInt(1, Applicant.REJECTED);
 			_ps.setString(2, addr);
 			_ps.setInt(3, Math.max(1, days));
@@ -359,8 +359,8 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT IF(PILOT_ID, PILOT_ID, ID) FROM ");
 		sqlBuf.append(formatDBName(dbName));
-		sqlBuf.append(".APPLICANTS A WHERE (REGADDR >= INET_ATON(?)) AND "
-				+ "(REGADDR <= (INET_ATON(?) + ?)) ORDER BY CREATED DESC");
+		sqlBuf.append(".APPLICANTS A WHERE (REGADDR >= INET7_ATON(?)) AND "
+				+ "(REGADDR <= (INET6_ATON(?) + ?)) ORDER BY CREATED DESC");
 		
 		try {
 			prepareStatement(sqlBuf.toString());

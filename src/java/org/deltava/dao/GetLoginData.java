@@ -1,4 +1,4 @@
-// Copyright 2007, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009, 2011, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.system.*;
 /**
  * A Data Access Object to load Login IP address data.
  * @author Luke
- * @version 4.1
+ * @version 5.2
  * @since 1.0
  */
 
@@ -31,7 +31,7 @@ public class GetLoginData extends DAO {
 	 */
 	public Collection<LoginAddress> getAddresses(int id) throws DAOException {
 		try {
-			prepareStatement("SELECT ID, INET_NTOA(REMOTE_ADDR), REMOTE_HOST, LOGINS FROM SYS_LOGINS WHERE (ID=?)");
+			prepareStatement("SELECT ID, INET6_NTOA(REMOTE_ADDR), REMOTE_HOST, LOGINS FROM SYS_LOGINS WHERE (ID=?)");
 			_ps.setInt(1, id);
 			return execute();
 		} catch (SQLException se) {
@@ -47,8 +47,8 @@ public class GetLoginData extends DAO {
 	 */
 	public Collection<LoginAddress> getLoginUsers(String host) throws DAOException {
 		try {
-			prepareStatement("SELECT ID, INET_NTOA(REMOTE_ADDR), REMOTE_HOST, LOGINS FROM SYS_LOGINS "
-					+ "WHERE (REMOTE_HOST LIKE ?) OR (INET_NTOA(REMOTE_ADDR) LIKE ?)");
+			prepareStatement("SELECT ID, INET6_NTOA(REMOTE_ADDR), REMOTE_HOST, LOGINS FROM SYS_LOGINS "
+					+ "WHERE (REMOTE_HOST LIKE ?) OR (INET6_NTOA(REMOTE_ADDR) LIKE ?)");
 			_ps.setString(1, host);
 			_ps.setString(2, host);
 			return execute();
@@ -66,8 +66,8 @@ public class GetLoginData extends DAO {
 	 */
 	public Collection<LoginAddress> getLoginUsers(String address, IPBlock addrBlock) throws DAOException {
 		try {
-			prepareStatement("SELECT ID, INET_NTOA(REMOTE_ADDR), REMOTE_HOST, LOGINS FROM SYS_LOGINS "
-					+ "WHERE (REMOTE_ADDR >= INET_ATON(?)) AND (REMOTE_ADDR <= (INET_ATON(?) + ?))");
+			prepareStatement("SELECT ID, INET6_NTOA(REMOTE_ADDR), REMOTE_HOST, LOGINS FROM SYS_LOGINS "
+					+ "WHERE (REMOTE_ADDR >= INET6_ATON(?)) AND (REMOTE_ADDR <= (INET6_ATON(?) + ?))");
 			_ps.setString(1, addrBlock.getAddress());
 			_ps.setString(2, addrBlock.getAddress());
 			_ps.setInt(3, addrBlock.getSize());
@@ -77,7 +77,7 @@ public class GetLoginData extends DAO {
 		}
 	}
 	
-	/**
+	/*
 	 * Helper method to parse result sets.
 	 */
 	private Collection<LoginAddress> execute() throws SQLException {

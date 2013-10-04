@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.acars.*;
 /**
  * A Data Access Object to read the ACARS Dispatcher service calendar.
  * @author Luke
- * @version 4.2
+ * @version 5.2
  * @since 2.2
  */
 
@@ -32,7 +32,7 @@ public class GetDispatchCalendar extends GetACARSData {
 	 */
 	public List<ConnectionEntry> getDispatchConnections(DateRange dr) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT C.ID, C.PILOT_ID, C.DATE, C.ENDDATE, INET_NTOA(C.REMOTE_ADDR), "
+			prepareStatementWithoutLimits("SELECT C.ID, C.PILOT_ID, C.DATE, C.ENDDATE, INET6_NTOA(C.REMOTE_ADDR), "
 				+ "C.REMOTE_HOST, C.CLIENT_BUILD, C.BETA_BUILD FROM acars.CONS C WHERE (C.DATE > ?) AND "
 				+ "(C.DATE < ?) ORDER BY C.ID");
 			_ps.setTimestamp(1, createTimestamp(dr.getStartDate()));
@@ -51,7 +51,7 @@ public class GetDispatchCalendar extends GetACARSData {
 	 */
 	public Collection<FlightInfo> getDispatchedFlights(DispatchConnectionEntry ce) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT F.*, INET_NTOA(F.REMOTE_ADDR), FD.ROUTE_ID, "
+			prepareStatementWithoutLimits("SELECT F.*, INET6_NTOA(F.REMOTE_ADDR), FD.ROUTE_ID, "
 				+ "FDR.DISPATCHER_ID FROM acars.FLIGHTS F LEFT JOIN acars.FLIGHT_DISPATCH FD ON (F.ID=FD.ID) "
 				+ "LEFT JOIN acars.FLIGHT_DISPATCHER FDR ON (F.ID=FDR.ID) WHERE (FDR.DISPATCHER_ID=?) AND "
 				+ "(F.CREATED >= ?) AND (F.CREATED < DATE_ADD(?, INTERVAL ? MINUTE))");
@@ -74,7 +74,7 @@ public class GetDispatchCalendar extends GetACARSData {
 	 */
 	public List<FlightInfo> getDispatchedFlights(int id, DateRange dr) throws DAOException {
 		try {
-			prepareStatement("SELECT F.*, INET_NTOA(F.REMOTE_ADDR),FD.ROUTE_ID, FDR.DISPATCHER_ID FROM "
+			prepareStatement("SELECT F.*, INET6_NTOA(F.REMOTE_ADDR),FD.ROUTE_ID, FDR.DISPATCHER_ID FROM "
 				+ "acars.FLIGHTS F, acars.FLIGHT_DISPATCHER FDR LEFT JOIN acars.FLIGHT_DISPATCH FD ON (F.ID=FD.ID) "
 				+ "WHERE (F.ID=FDR.ID) AND (FDR.DISPATCHER_ID=?) AND (F.CREATED >= ?) AND (F.CREATED < ?)");
 			_ps.setInt(1, id);

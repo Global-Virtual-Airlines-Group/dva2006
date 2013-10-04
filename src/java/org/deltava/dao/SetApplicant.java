@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to write Applicants to the database.
  * @author Luke
- * @version 5.0
+ * @version 5.2
  * @since 1.0
  */
 
@@ -64,7 +64,7 @@ public class SetApplicant extends PilotWriteDAO {
 						+ "MSNHANDLE, VATSIM_ID, IVAO_ID, LEGACY_HOURS, LEGACY_URL, LEGACY_OK, HOME_AIRPORT, NOTIFY, "
 						+ "SHOW_EMAIL, CREATED, REGHOSTNAME, REGADDR, DFORMAT, TFORMAT, NFORMAT, AIRPORTCODE, "
 						+ "DISTANCEUNITS, SIM_VERSION, TZ, UISCHEME, COMMENTS, HR_COMMENTS, ID) VALUES "
-						+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, INET_ATON(?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+						+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, INET6_ATON(?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 				_ps.setString(28, a.getHRComments());
 				_ps.setInt(29, a.getID());
 			} else {
@@ -76,7 +76,7 @@ public class SetApplicant extends PilotWriteDAO {
 				// Create the UPDATE statement
 				prepareStatement("UPDATE APPLICANTS SET STATUS=?, FIRSTNAME=?, LASTNAME=?, EMAIL=?, LOCATION=?, "
 						+ "IMHANDLE=?, MSNHANDLE=?, VATSIM_ID=?, IVAO_ID=?, LEGACY_HOURS=?, LEGACY_URL=?, LEGACY_OK=?, "
-						+ "HOME_AIRPORT=?, NOTIFY=?, SHOW_EMAIL=?, CREATED=?, REGHOSTNAME=?, REGADDR=INET_ATON(?), "
+						+ "HOME_AIRPORT=?, NOTIFY=?, SHOW_EMAIL=?, CREATED=?, REGHOSTNAME=?, REGADDR=INET6_ATON(?), "
 						+ "DFORMAT=?, TFORMAT=?, NFORMAT=?, AIRPORTCODE=?, DISTANCEUNITS=?, SIM_VERSION=?, TZ=?, "
 						+ "UISCHEME=?, COMMENTS=?, EQTYPE=?, RANK=?, HR_COMMENTS=? WHERE (ID=?)");
 				_ps.setString(28, a.getEquipmentType());

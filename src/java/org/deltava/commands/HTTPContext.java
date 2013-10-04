@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
 /**
  * An abstract class to share command data between different HTTP command contexts.
  * @author Luke
- * @version 4.2
+ * @version 5.2
  * @since 2.4
  */
 
@@ -27,6 +27,7 @@ public abstract class HTTPContext extends ConnectionContext implements SecurityC
 	public static final String SU_ATTR_NAME = "superUser";
 	public static final String USERAGENT_ATTR_NAME = "userAgent";
 	public static final String HTTPCTXT_ATTR_NAME = "httpContext";
+	public static final String IPV6_ATTR_NAME = "IPv6";
 
 	private final HttpServletRequest _req;
 	private final HttpServletResponse _rsp;
@@ -56,6 +57,7 @@ public abstract class HTTPContext extends ConnectionContext implements SecurityC
 	 * Returns the current HTTP Servlet Request.
 	 * @return the Servlet Request
 	 */
+	@Override
 	public HttpServletRequest getRequest() {
 		return _req;
 	}
@@ -74,6 +76,7 @@ public abstract class HTTPContext extends ConnectionContext implements SecurityC
 	 * @see HTTPContext#isAuthenticated()
 	 * @see HTTPContext#isUserInRole(String)
 	 */
+	@Override
 	public Pilot getUser() {
 		return (_usr == null) ? (Pilot) _req.getUserPrincipal() : _usr;
 	}
@@ -94,6 +97,7 @@ public abstract class HTTPContext extends ConnectionContext implements SecurityC
 	 * @see CommandContext#getUser()
 	 * @see CommandContext#getRoles()
 	 */
+	@Override
 	public boolean isAuthenticated() {
 		return (getUser() != null);
 	}
@@ -114,6 +118,7 @@ public abstract class HTTPContext extends ConnectionContext implements SecurityC
 	 * @see CommandContext#isAuthenticated()
 	 * @see CommandContext#getUser()
 	 */
+	@Override
 	public Collection<String> getRoles() {
 		return isAuthenticated() ? getUser().getRoles() : ANONYMOUS_ROLES;
 	}
@@ -125,6 +130,7 @@ public abstract class HTTPContext extends ConnectionContext implements SecurityC
 	 * @param roleName the role name
 	 * @return TRUE if the user is a member of the specified role, otherwise FALSE
 	 */
+	@Override
 	public boolean isUserInRole(String roleName) {
 		if (_usr == null)
 			return _req.isUserInRole(roleName);
@@ -217,7 +223,7 @@ public abstract class HTTPContext extends ConnectionContext implements SecurityC
 				return defaultValue;
 			else if (cmdID.startsWith("0x")) {
 				try {
-					return new Integer(Integer.parseInt(cmdID.substring(2), 16));
+					return Integer.valueOf(Integer.parseInt(cmdID.substring(2), 16));
 				} catch (NumberFormatException nfe) {
 					return cmdID;
 				}
