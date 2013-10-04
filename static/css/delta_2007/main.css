@@ -233,6 +233,12 @@ body {
 	font: 11px verdana, tahoma, sans-serif;
 }
 
+div.ovalBorder {
+	border: 1px solid;
+	padding: 12px;
+	border-radius: 14px;
+}
+
 img.noborder {
 	border: none;
 }
