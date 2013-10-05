@@ -70,7 +70,16 @@ public class NetworkUtils {
 	 */
 	public static String getSourceAddress(SocketAddress sa) {
 		InetSocketAddress addr = (InetSocketAddress) sa;
-		StringBuilder buf = new StringBuilder(addr.getAddress().getHostAddress());
+		boolean isIPv6 = (addr.getAddress() instanceof Inet6Address);
+		StringBuilder buf = new StringBuilder();
+		if (isIPv6)
+			buf.append('[');
+		
+		buf.append(addr.getAddress().getHostAddress());
+		
+		if (isIPv6)
+			buf.append(']');
+		
 		buf.append(':');
 		buf.append(addr.getPort());
 		return buf.toString();
