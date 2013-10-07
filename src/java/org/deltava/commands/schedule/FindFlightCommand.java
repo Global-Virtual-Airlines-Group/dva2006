@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to search the Flight Schedule.
  * @author Luke
- * @version 5.1
+ * @version 5.2
  * @since 1.0
  */
 
@@ -121,6 +121,10 @@ public class FindFlightCommand extends AbstractCommand {
 				// Get the DAO and execute
 				GetScheduleSearch dao = new GetScheduleSearch(con);
 				dao.setQueryMax(criteria.getMaxResults());
+				
+				// Get destination airports
+				GetScheduleAirport adao = new GetScheduleAirport(con);
+				ctx.setAttribute("airportsA", adao.getConnectingAirports(criteria.getAirportD(), true, criteria.getAirline()), REQUEST);
 				
 		         // Load schedule import data
 		    	 GetMetadata mddao = new GetMetadata(con);
