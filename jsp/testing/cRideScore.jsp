@@ -37,11 +37,11 @@ return true;
 <el:form action="crscore.do" link="${checkRide}" method="post" validate="return validate(this)">
 <el:table className="form">
 <tr class="title caps">
- <td colspan="2">${checkRide.aircraftType} CHECK RIDE FOR ${pilot.name}</td>
+ <td colspan="2">${checkRide.aircraftType} CHECK RIDE FOR ${pilot.name} (${pilot.pilotCode})</td>
 </tr>
 <tr>
  <td class="label">${fn:pending(checkRide) ? 'Assigned' : 'Scored'} by</td>
- <td class="data sec bld">${scorer.name}</td>
+ <td class="data"><span class="sec bld">${scorer.name}</span> (${scorer.pilotCode})</td>
 </tr>
 <tr>
  <td class="label">Equipment Program</td>
@@ -63,10 +63,6 @@ return true;
 <tr>
  <td class="label">Assigned on</td>
  <td class="data"><fmt:date fmt="d" date="${checkRide.date}" /></td>
-</tr>
-<tr>
- <td class="label">Assigned by</td>
- <td class="data bld">${scorer.name}</td>
 </tr>
 <tr>
  <td class="label">Submitted on</td>

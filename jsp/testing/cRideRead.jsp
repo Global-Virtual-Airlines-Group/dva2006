@@ -35,11 +35,11 @@ return true;
 <content:region id="main">
 <el:table className="form">
 <tr class="title caps">
- <td colspan="2">${checkRide.aircraftType} CHECK RIDE FOR ${pilot.name}</td>
+ <td colspan="2">${checkRide.aircraftType} CHECK RIDE FOR ${pilot.name} (${pilot.pilotCode})</td>
 </tr>
 <tr>
  <td class="label">${fn:pending(checkRide) ? 'Assigned' : 'Scored'} by</td>
- <td class="data sec bld">${scorer.name}</td>
+ <td class="data"><span class="sec bld">${scorer.name}</span> (${scorer.pilotCode})</td>
 </tr>
 <c:if test="${!checkRide.academy}">
 <tr>
@@ -69,12 +69,6 @@ return true;
  <td class="label">Assigned on</td>
  <td class="data"><fmt:date fmt="d" date="${checkRide.date}" /> - <a href="javascript:void toggleBody('crComments')"><span id="toggleC">View</span> Description</a></td>
 </tr>
-<c:if test="${!fn:passed(checkRide) && !fn:failed(checkRide)}">
-<tr>
- <td class="label">Assigned by</td>
- <td class="data bld">${scorer.name}</td>
-</tr>
-</c:if>
 <c:if test="${!empty checkRide.submittedOn}">
 <tr>
  <td class="label">Submitted on</td>
