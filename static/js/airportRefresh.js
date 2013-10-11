@@ -98,7 +98,7 @@ xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	var jsData = JSON.parse(xmlreq.responseText);
 	golgotha.airportLoad.setOptions(combo, jsData, opts);
-	combo.setAirport(oldCode);
+	combo.setAirport(oldCode, true);
 	combo.disabled = false;
 	golgotha.event.beacon('Airports', 'Load Airport List');
 	return true;
