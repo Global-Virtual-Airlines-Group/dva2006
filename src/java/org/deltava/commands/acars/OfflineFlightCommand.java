@@ -55,28 +55,26 @@ public class OfflineFlightCommand extends AbstractCommand {
 		String sha = null; String xml = null;
 		FileUpload zipF = ctx.getFile("zip");
 		if (zipF != null) {
-			try {
-				ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(zipF.getBuffer()));
+			try (ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(zipF.getBuffer()))) {
+				byte[] buffer = new byte[32768];
 				ZipEntry ze = zis.getNextEntry();
 				while ((ze != null) && ((sha == null) || (xml == null))) {
 					String name = ze.getName().toLowerCase();
-					ByteArrayOutputStream out = new ByteArrayOutputStream(102400);
-					byte[] buffer = new byte[16384];
-					int bytesRead = zis.read(buffer);
-					while (bytesRead > -1) {
-						out.write(buffer, 0, bytesRead);
-						bytesRead = zis.read(buffer);
-					}
+					try (ByteArrayOutputStream out = new ByteArrayOutputStream(102400)) {
+						int bytesRead = zis.read(buffer);
+						while (bytesRead > -1) {
+							out.write(buffer, 0, bytesRead);
+							bytesRead = zis.read(buffer);
+						}
 						
-					if (name.endsWith(".xml"))
-						xml = new String(out.toByteArray(), "UTF-8");
-					else if (name.endsWith(".sha"))
-						sha = new String(out.toByteArray(), "UTF-8").trim();
+						if (name.endsWith(".xml"))
+							xml = new String(out.toByteArray(), "UTF-8");
+						else if (name.endsWith(".sha"))
+							sha = new String(out.toByteArray(), "UTF-8").trim();
+					}
 					
 					ze = zis.getNextEntry();
 				}
-			
-				zis.close();
 			} catch (Exception e) {
 				ctx.setMessage("Cannot process ZIP file - " + e.getMessage());
 				result.setSuccess(true);
@@ -182,6 +180,16 @@ public class OfflineFlightCommand extends AbstractCommand {
 				
 				ctx.setMessage(msg);
 				return;
+			}
+			
+			// Validate the Flight ID
+			if (inf.getID() != 0) {
+				GetACARSData addao = new GetACARSData(con);
+				FlightInfo savedInf = addao.getInfo(inf.getID());
+				if (savedInf == null) {
+					ctx.setMessage("Invalid  ACARS Flight ID - " + inf.getID() + ", cannot submit purged/invalid Flight");
+					return;
+				}
 			}
 			
 			// Get the user information
@@ -386,16 +394,6 @@ public class OfflineFlightCommand extends AbstractCommand {
 				SortedSet<Gate> aGates = new TreeSet<Gate>(agc);
 				aGates.addAll(gdao.getAllGates(afr.getAirportA(), inf.getFSVersion()));
 				gA = aGates.isEmpty() ? null : aGates.first();
-			}
-			
-			// Validate the flight ID, otherwise set it to zero
-			if (inf.getID() != 0) {
-				GetACARSData addao = new GetACARSData(con);
-				FlightInfo savedInf = addao.getInfo(inf.getID());
-				if (savedInf == null) {
-					log.warn("Invalid Flight ID - " + inf.getID());
-					inf.setID(0);
-				}
 			}
 			
 			// Validate the dispatch route ID
