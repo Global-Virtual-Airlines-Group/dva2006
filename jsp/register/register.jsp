@@ -105,6 +105,14 @@ var loc = '/register.do?op=dupe&firstName=' + fN + '&lastName=' + lN + '&email='
 self.location = loc;
 return true;
 }
+
+golgotha.onDOMReady(function() {
+	var f = document.forms[0];
+	var cfg = golgotha.airportLoad.config;
+	cfg.airline = 'all'; cfg.useSched = false;
+	golgotha.airportLoad.setHelpers(f.homeAirport);
+	f.homeAirport.loadAirports(cfg);
+});
 </script>
 </head>
 <content:copyright visible="false" />
@@ -175,7 +183,7 @@ This is also a good time to review <content:airline />'s <el:cmd url="privacy" c
 <tr>
  <td class="label">Home Airport</td>
  <td class="data" colspan="${cspan}"><el:combo name="homeAirport" size="1" idx="*" options="${emptyList}" className="req" firstEntry="-" value="${param.homeAirport}" onChange="void this.updateAirportCode()" />
- <el:text name="homeAirportCode" size="3" max="4" onBlur="void document.forms[0].homeAirport.setAirport(this.value)" /></td>
+ <el:text name="homeAirportCode" ID="homeAirportCode" size="3" max="4" onBlur="void document.forms[0].homeAirport.setAirport(this.value)" /></td>
 </tr>
 <tr>
  <td class="label">Location</td>
@@ -306,12 +314,5 @@ This is also a good time to review <content:airline />'s <el:cmd url="privacy" c
 <content:copyright />
 </content:region>
 </content:page>
-<fmt:aptype var="useICAO" />
-<script type="text/javascript">
-var f = document.forms[0];
-golgotha.airportLoad.config.doICAO = ${useICAO};
-golgotha.airportLoad.setHelpers(f.homeAirport);
-f.homeAirport.loadAirports(golgotha.airportLoad.config);
-</script>
 </body>
 </html>

@@ -16,7 +16,6 @@
 <content:js name="json2" />
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
-<fmt:aptype var="useICAO" />
 <script type="text/javascript">
 function validate(form)
 {
@@ -50,7 +49,7 @@ return cmdPost(f.action);
 golgotha.onDOMReady(function() {
 	var f = document.forms[0];
 	var cfg = golgotha.airportLoad.config; 
-	cfg.doICAO = ${useICAO}; cfg.airline = 'all';
+	cfg.airline = 'all'; cfg.useSched = false;
 	golgotha.airportLoad.setHelpers(f.homeAirport);
 	f.homeAirport.loadAirports(cfg);
 });
@@ -62,7 +61,7 @@ golgotha.onDOMReady(function() {
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:tz var="timeZones" />
-<content:singleton var="airports" value="${applicant.homeAirport}" />
+<content:singleton var="airports" value="${homeAirport}" />
 <content:sysdata var="locations" name="locations" />
 <content:sysdata var="schemes" name="html.schemes" />
 <content:enum var="ranks" className="org.deltava.beans.Rank" />
@@ -84,8 +83,8 @@ golgotha.onDOMReady(function() {
 </tr>
 <tr>
  <td class="label">Home Airport</td>
- <td class="data"><el:combo name="homeAirport" size="1" idx="*" options="${emptyList}" required="true" value="${applicant.homeAirport}" onChange="void this.updateAirportCode()" />
- <el:text name="homeAirportCode" size="3" max="4" onBlur="void document.forms[0].homeAirport.setAirport(this.value)" /></td>
+ <td class="data"><el:combo name="homeAirport" size="1" idx="*" options="${airports}" required="true" value="${homeAirport}" onChange="void this.updateAirportCode()" />
+ <el:text name="homeAirportCode" ID="homeAirportCode" size="3" max="4" onBlur="void document.forms[0].homeAirport.setAirport(this.value)" /></td>
 </tr>
 <tr>
  <td class="label">Location</td>
