@@ -267,26 +267,27 @@ public class GetCoolerThreads extends DAO {
 	public List<MessageThread> search(SearchCriteria criteria) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder buf = new StringBuilder("SELECT DISTINCT ID FROM common.COOLER_THREADS WHERE ");
+		StringBuilder buf = new StringBuilder("SELECT DISTINCT T.ID FROM common.COOLER_THREADS T, "
+			+"common.COOLER_POSTS P WHERE (T.ID=P.THREAD_ID) ");
 		
 		// Check for text / subject search
 		boolean hasQuery = !StringUtils.isEmpty(criteria.getSearchTerm());
 		if (hasQuery) {
-			buf.append("((MATCH(MSGBODY) AGAINST (? IN NATURAL LANGUAGE MODE)) ");
+			buf.append("AND ((MATCH(P.MSGBODY) AGAINST (? IN NATURAL LANGUAGE MODE)) ");
 			if (criteria.getSearchSubject())
-				buf.append("OR (LOCATE(?, SUBJECT) > 0)) ");
+				buf.append("OR (LOCATE(?, T.SUBJECT) > 0)) ");
 			else
 				buf.append(") ");
 		}
 
 		// Add channel/author criteria
 		if (!Channel.ALL.equals(criteria.getChannel()))
-			buf.append("AND (CHANNEL=?) ");
+			buf.append("AND (T.CHANNEL=?) ");
 		if (criteria.getMinimumDate() != null)
-			buf.append("AND (LASTUPDATE > ?)");
+			buf.append("AND (T.LASTUPDATE > ?)");
 
 		if (!hasQuery)
-			buf.append("ORDER BY LASTUPDATE DESC");
+			buf.append("ORDER BY T.LASTUPDATE DESC");
 		
 		try {
 			prepareStatement(buf.toString());
