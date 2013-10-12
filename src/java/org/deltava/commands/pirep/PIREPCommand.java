@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -30,7 +30,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle editing/saving Flight Reports.
  * @author Luke
- * @version 5.1
+ * @version 5.2
  * @since 1.0
  */
 
@@ -47,8 +47,8 @@ public class PIREPCommand extends AbstractFormCommand {
 			"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11" });
 
 	// Check ride approval values
-	private static final List<ComboAlias> crApprove = ComboUtils.fromArray(new String[] { "PASSED", "UNSATISFACTORY" },
-			new String[] { "true", "false" });
+	private static final List<ComboAlias> crApprove = ComboUtils.fromArray(new String[] { "PASSED", "UNSATISFACTORY" }, new String[] { "true", "false" });
+	private static final List<ComboAlias> frApprove = ComboUtils.fromArray(new String[] {"APPROVE", "REJECT"}, new String[] {"true", "false"});
 
 	/**
 	 * Initialize the command.
@@ -589,15 +589,17 @@ public class PIREPCommand extends AbstractFormCommand {
 
 						// Save the access controller
 						ctx.setAttribute("crAccess", crAccess, REQUEST);
-						if (crAccess.getCanScore())
+						if (crAccess.getCanScore()) {
 							ctx.setAttribute("crPassFail", crApprove, REQUEST);
+							ctx.setAttribute("pirepApprove", frApprove, REQUEST);
+						}
 
 						// Allow Examiner to score the PIREP even if they otherwise couldn't
 						boolean canScoreCR = crAccess.getCanScore() && (cr.getStatus() == TestStatus.SUBMITTED);
 						canScoreCR &= (ac.getCanApprove() || cr.getAcademy());
 						ctx.setAttribute("scoreCR", Boolean.valueOf(canScoreCR), REQUEST);
 					} catch (AccessControlException ace) {
-						// nothing
+						ctx.setAttribute("scoreCR", Boolean.FALSE, REQUEST);
 					}
 
 					// Save the checkride

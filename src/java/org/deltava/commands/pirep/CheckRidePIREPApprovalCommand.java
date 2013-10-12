@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -26,7 +26,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to approve Flight Reports and Check Rides.
  * @author Luke
- * @version 5.0
+ * @version 5.2
  * @since 1.0
  */
 
@@ -106,7 +106,7 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 			cr.setStatus(TestStatus.SCORED);
 			
 			// Update the flight report
-			int pirepStatus = crApproved ? FlightReport.OK : FlightReport.REJECTED;
+			int pirepStatus = Boolean.valueOf(ctx.getParameter("frApprove")).booleanValue() ? FlightReport.OK : FlightReport.REJECTED;
 			fr.setStatus(pirepStatus);
 			if (ctx.getParameter("dComments") != null)
 				fr.setComments(ctx.getParameter("dComments"));
