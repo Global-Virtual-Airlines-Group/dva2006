@@ -54,8 +54,8 @@ golgotha.airportLoad.setAirport = function(code, fireEvent)
 {
 if (code == null) return false;
 if (code.length < 2) {
-	this.selectedIndex = 0;
-	if (fireEvent && this.onchange) this.onchange();
+	var oldIdx = this.selectedIndex; this.selectedIndex = 0;
+	if (fireEvent && this.onchange && (oldIdx != 0)) this.onchange();
 	return true;
 }
 
@@ -96,9 +96,13 @@ var xmlreq = getXMLHttpRequest();
 xmlreq.open('get', 'airports.ws?' + opts.URLParams(), true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
+	var o = combo.options[combo.selectedIndex];
+	var oldCodes = (o.airport) ? [o.airport.iata, o.airport.icao] : [null];
+	var isChanged = (oldCodes.indexOf(oldCode) < 0);
+	
 	var jsData = JSON.parse(xmlreq.responseText);
 	golgotha.airportLoad.setOptions(combo, jsData, opts);
-	combo.setAirport(oldCode, true);
+	combo.setAirport(oldCode, isChanged);
 	combo.disabled = false;
 	golgotha.event.beacon('Airports', 'Load Airport List');
 	return true;
