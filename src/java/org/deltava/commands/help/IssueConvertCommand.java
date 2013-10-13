@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2011, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.help;
 
 import java.net.*;
@@ -18,7 +18,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to convert a Help Desk Issue into a Development Issue.
  * @author Luke
- * @version 4.1
+ * @version 5.2
  * @since 1.0
  */
 
@@ -29,6 +29,7 @@ public class IssueConvertCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		try {
 			Connection con = ctx.getConnection();
@@ -48,7 +49,7 @@ public class IssueConvertCommand extends AbstractCommand {
 			// Create the new issue bean
 			org.deltava.beans.system.Issue i = new org.deltava.beans.system.Issue(hi.getSubject());
 			i.setAuthorID(hi.getAuthorID());
-			i.setCreatedOn(new Date());
+			i.setCreatedOn(hi.getCreatedOn());
 			i.setSubject(hi.getSubject());
 			i.setStatus(org.deltava.beans.system.Issue.STATUS_OPEN);
 			i.setDescription(hi.getBody());
@@ -102,8 +103,6 @@ public class IssueConvertCommand extends AbstractCommand {
 			SetHelp hwdao = new SetHelp(con);
 			hwdao.write(hi);
 			hwdao.write(hic);
-			
-			// Commit the transaction
 			ctx.commitTX();
 		} catch (DAOException de) {
 			ctx.rollbackTX();
