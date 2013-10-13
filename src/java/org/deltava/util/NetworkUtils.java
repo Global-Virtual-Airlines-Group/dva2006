@@ -72,15 +72,8 @@ public class NetworkUtils {
 		InetSocketAddress addr = (InetSocketAddress) sa;
 		boolean isIPv6 = (addr.getAddress() instanceof Inet6Address);
 		StringBuilder buf = new StringBuilder();
-		if (isIPv6)
-			buf.append('[');
-		
 		buf.append(addr.getAddress().getHostAddress());
-		
-		if (isIPv6)
-			buf.append(']');
-		
-		buf.append(':');
+		buf.append(isIPv6 ? '%' : ':');
 		buf.append(addr.getPort());
 		return buf.toString();
 	}
