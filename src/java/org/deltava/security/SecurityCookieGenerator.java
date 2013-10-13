@@ -1,4 +1,4 @@
-// Copyright 2004, 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2008, 2009, 2011, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.Base64;
  * signature of the above string encoded in Base64. The password is converted into hex bytes, and the entire
  * string is encrypted using a SecretKeyEncryptor.
  * @author Luke
- * @version 3.6
+ * @version 5.2
  * @since 1.0
  */
 
@@ -23,7 +23,7 @@ public final class SecurityCookieGenerator {
 
 	private static SecretKeyEncryptor _encryptor;
 	
-	// Private constructor
+	// Singleton
 	private SecurityCookieGenerator() {
 		super();
 	}
@@ -41,7 +41,7 @@ public final class SecurityCookieGenerator {
 	 * @param cookieText the Security Cookie value
 	 * @throws SecurityException if the cookie contains invalid data
 	 */
-	public static SecurityCookieData readCookie(String cookieText) throws SecurityException {
+	public static synchronized SecurityCookieData readCookie(String cookieText) throws SecurityException {
 		
 		String rawToken = null;
 		byte[] encData = Base64.decode(cookieText);
@@ -94,7 +94,7 @@ public final class SecurityCookieGenerator {
 		
 		// Initalize the cookie data
 		SecurityCookieData scData = new SecurityCookieData(cookieData.get("uid"));
-		scData.setRemoteAddr(cookieData.get("addr"));
+		scData.setRemoteAddr(cookieData.get("addr").replace('%', ':'));
 		try {
 			scData.setLoginDate(Long.parseLong(cookieData.get("login"), 16));
 		    scData.setExpiryDate(Long.parseLong(cookieData.get("expiry"), 16));
@@ -111,13 +111,13 @@ public final class SecurityCookieGenerator {
 	 * @param scData the cookie data
 	 * @return the encrypted cookie.
 	 */
-	public static String getCookieData(SecurityCookieData scData) {
+	public static synchronized String getCookieData(SecurityCookieData scData) {
 		
 		// Build the cookie token
 		StringBuilder buf = new StringBuilder("uid:");
 		buf.append(scData.getUserID());
 		buf.append("@addr:");
-		buf.append(scData.getRemoteAddr());
+		buf.append(scData.getRemoteAddr().replace(':', '%'));
 		buf.append("@login:");
 		buf.append(Long.toHexString(scData.getLoginDate()));
 		buf.append("@expiry:");
