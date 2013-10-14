@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display Approach Charts.
  * @author Luke
- * @version 5.1
+ * @version 5.2
  * @since 1.0
  */
 
@@ -47,9 +47,10 @@ public class ChartsCommand extends AbstractCommand {
         try {
         	Connection con = ctx.getConnection();
         	
-        	// Load the chars
+        	// Load the charts and airports
             GetChart dao = new GetChart(con);
             ctx.setAttribute("charts", dao.getCharts(a), REQUEST);
+            ctx.setAttribute("airports", dao.getAirports(), REQUEST);
             
             // If this is a US airport, get the chart cycle data
             if (a.getCountry().equals("US")) {

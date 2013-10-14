@@ -5,16 +5,14 @@ import java.util.Date;
 import java.sql.Connection;
 
 import org.deltava.beans.schedule.*;
-
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to browse the Flight Schedule.
  * @author Luke
- * @version 5.1
+ * @version 5.2
  * @since 1.0
  */
 
@@ -54,6 +52,11 @@ public class ScheduleBrowseCommand extends AbstractViewCommand {
 		// Do the search
 		try {
 			Connection con = ctx.getConnection();
+			
+			// Load airports
+			GetScheduleAirport dao = new GetScheduleAirport(con);
+			ctx.setAttribute("airportsD",dao.getOriginAirports(null), REQUEST);
+			ctx.setAttribute("airportsA", dao.getConnectingAirports(aD, true, null), REQUEST);
 
 			// Search the schedule
 			GetScheduleSearch sdao = new GetScheduleSearch(con);
