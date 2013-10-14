@@ -14,7 +14,6 @@
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
-<content:js name="json2" />
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
 <content:sysdata var="innovataLink" name="schedule.innovata.enabled" />
@@ -52,13 +51,8 @@ return true;
 
 golgotha.onDOMReady(function() {
 	var f = document.forms[0];
-	var cfg = golgotha.airportLoad.config; 
-	cfg.doICAO = ${useICAO}; cfg.airline = 'all';
 	golgotha.airportLoad.setHelpers(f.airportD);
 	golgotha.airportLoad.setHelpers(f.airportA);
-	f.airportD.loadAirports(cfg);
-	cfg = cfg.clone(); cfg.code = getValue(f.airportD);
-	f.airportA.loadAirports(cfg);
 	return true;
 });
 </script>
@@ -68,7 +62,6 @@ golgotha.onDOMReady(function() {
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<content:singleton var="airportsD" value="${airportD}" />
 <content:singleton var="airportsA" value="${airportA}" />
 <content:attr attr="isSchedule" value="true" roles="Schedule" />
 

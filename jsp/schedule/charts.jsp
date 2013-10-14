@@ -13,7 +13,6 @@
 <content:css name="form" />
 <content:css name="view" />
 <content:js name="common" />
-<content:js name="json2" />
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
 <content:pics />
@@ -55,14 +54,7 @@ for (var x = 0; x < cTypes.length; x++) {
 return true;
 }
 
-golgotha.onDOMReady(function() {
-	var f = document.forms[0];
-	var cfg = golgotha.airportLoad.config;
-	cfg.doICAO = ${useICAO}; cfg.airline = 'charts'; cfg.useSched = false;
-	golgotha.airportLoad.setHelpers(f.id);
-	f.id.loadAirports(cfg);
-	return true;
-});
+golgotha.onDOMReady(function() { return golgotha.airportLoad.setHelpers(document.forms[0].id); });
 </script>
 </head>
 <content:copyright visible="false" />
@@ -71,7 +63,6 @@ golgotha.onDOMReady(function() {
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <c:set var="cspan" value="${access.canEdit ? 1 : 2}" scope="page" />
-<content:singleton var="airports" value="${airport}" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
