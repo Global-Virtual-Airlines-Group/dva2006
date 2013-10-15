@@ -13,11 +13,6 @@ public class TestBase64 extends TestCase {
     private static final String LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     private byte[] data;
     
-    protected void tearDown() throws Exception {
-    	data = null;
-    	super.tearDown();
-    }
-
 	private void initData() {
 		Random rnd = new Random();
 		data = new byte[13107200];
@@ -43,9 +38,11 @@ public class TestBase64 extends TestCase {
     	
     	// Encode using standard Base64
     	long now = System.currentTimeMillis();
-    	String enc_1 = Base64.encode(data);
-    	assertNotNull(enc_1);
-    	enc_1 = null;
+    	for (int x = 0; x < 10; x++) {
+    		String enc_1 = Base64.encode(data);
+    		assertNotNull(enc_1);
+    	}
+    	
     	long time1 = System.currentTimeMillis() - now;
     	System.out.println("Base64 took " + time1 + " ms");
     }
@@ -58,14 +55,35 @@ public class TestBase64 extends TestCase {
     		Method m = c.getDeclaredMethod("encode", byte[].class);
     		
     		long now2 = System.currentTimeMillis();
-    		String enc_2 = new String((byte[]) m.invoke(null, data));
-    		assertNotNull(enc_2);
+    		for (int x = 0; x < 10; x++) {
+    			String enc_2 = new String((byte[]) m.invoke(null, data));
+    			assertNotNull(enc_2);
+    		}
+    			
     		long time2 = System.currentTimeMillis() - now2;
     		System.out.println("JavaMail took " + time2 + " ms");
-    	} catch (NoSuchMethodException nsme) {
+    	} catch (ClassNotFoundException | NoSuchMethodException nsme) {
     		fail("JavaMail not installed");
-    	} catch (ClassNotFoundException cnfe) {
-    		fail("JavaMail not installed");
+    	}
+    }
+    
+    public void testCommonsPerformance() throws Exception {
+    	initData();
+    	
+    	try {
+    		Class<?> c = Class.forName("org.apache.commons.codec.binary.Base64");
+    		Method m = c.getDeclaredMethod("encodeBase64", byte[].class);
+    		
+    		long now3 = System.currentTimeMillis();
+    		for (int x = 0; x < 10; x++) {
+    			String enc_3 = new String((byte[]) m.invoke(null, data));
+    			assertNotNull(enc_3);
+    		}
+
+    		long time3 = System.currentTimeMillis() - now3;
+    		System.out.println("Commons-codec took " + time3 + " ms");
+    	} catch (ClassNotFoundException | NoSuchMethodException nsme) {
+    		fail("Apache commons-codec not installed");
     	}
     }
 }
