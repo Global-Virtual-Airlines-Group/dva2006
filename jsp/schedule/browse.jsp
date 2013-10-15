@@ -62,7 +62,6 @@ golgotha.onDOMReady(function() {
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<content:singleton var="airportsA" value="${airportA}" />
 <content:attr attr="isSchedule" value="true" roles="Schedule" />
 
 <!-- Main Body Frame -->
