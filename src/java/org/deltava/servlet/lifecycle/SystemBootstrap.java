@@ -28,7 +28,7 @@ import org.gvagroup.jdbc.*;
 /**
  * The System bootstrap loader, that fires when the servlet container is started or stopped.
  * @author Luke
- * @version 5.0
+ * @version 5.2
  * @since 1.0
  */
 
@@ -262,8 +262,6 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 		ThreadUtils.sleep(2000);
 		_jdbcPool.close();
 		try {
-			JDBCUtils.cleanMySQLTimer();
-			JDBCUtils.deregisterDrivers();
 			java.beans.Introspector.flushCaches();
 		} finally {
 			SharedData.purge(SystemData.get("airline.code"));
