@@ -24,13 +24,13 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/deploy/log4j-1.2.17.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/commons-codec-1.7.jar" sourcepath="lib/src/commons-codec-1.7-sources.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jdom-2.0.5.jar" sourcepath="lib/src/jdom-2.0.5-sources.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/javamail-1.5.0.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-5.1.25-bin.jar" sourcepath="lib/src/mysql-connector-java-5.1.25-src.zip"/>
-	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-1.80.jar" sourcepath="/IPC"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-compress-1.5.jar" sourcepath="lib/src/commons-compress-1.5-sources.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/edtftpj-2.4.0.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-1.81.jar" sourcepath="/IPC"/>
+	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-5.1.26-bin.jar" sourcepath="lib/src/mysql-connector-java-5.1.26-src.zip"/>
+	<classpathentry kind="lib" path="lib/deploy/commons-codec-1.8.jar" sourcepath="lib/src/commons-codec-1.8-sources.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
