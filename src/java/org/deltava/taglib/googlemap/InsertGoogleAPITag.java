@@ -10,13 +10,14 @@ import javax.servlet.jsp.tagext.TagSupport;
 import org.json.JSONObject;
 
 import org.deltava.taglib.ContentHelper;
+
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A JSP Tag to insert a JavaScript link to the Google Maps API.
  * @author Luke
- * @version 5.1
+ * @version 5.2
  * @since 1.0
  */
 
@@ -155,7 +156,6 @@ public class InsertGoogleAPITag extends TagSupport {
 			
 			// Init common code
 			out.println("<script>");
-			out.println("google.maps.visualRefresh = true;");
 			out.print("golgotha.maps = ");
 			out.print(mco.toString());
 			out.println(";</script>");
