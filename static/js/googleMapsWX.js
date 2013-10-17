@@ -5,17 +5,34 @@ golgotha.maps.util.buildTile = function(pnt, zoom, doc)
 var div = doc.createElement('div');
 div.style.width = '256px';
 div.style.height = '256px';
+div.style.overflow = 'hidden';
+div.style.position = 'relative';
 var img = doc.createElement('img');
-img.src = this.getTileUrl(pnt, zoom);
+var nZ = this.get('nativeZoom');
+if (zoom > nZ) {
+	var numTiles = Math.pow(2, zoom - nZ);
+	var imgSize = numTiles * golgotha.maps.TILE_SIZE.width; // assuming square
+	var offsetX = pnt.x % numTiles;
+	var offsetY = pnt.y % numTiles;
+	img.src = this.getTileUrl(golgotha.maps.convertAddr(pnt, zoom, nZ), nZ);
+	img.width = imgSize;
+	img.height = imgSize;
+	img.style.position = 'relative';
+	if (offsetX > 0)
+		img.style.marginLeft = (golgotha.maps.TILE_SIZE.width * -offsetX) + 'px';
+	if (offsetY > 0)
+		img.style.marginTop = (golgotha.maps.TILE_SIZE.height * -offsetY) + 'px';
+} else {
+	img.src = this.getTileUrl(pnt, zoom);
+	img.width = golgotha.maps.TILE_SIZE.width;
+	img.height = golgotha.maps.TILE_SIZE.height;
+}
+
 var c = 'wxTile ' + this.get('imgClass') + ' ' + this.get('imgClass') + '-' + this.get('date');
 img.setAttribute('class', c);
 if (golgotha.maps.util.oldIE) img.IE8 = c;
-var tx = (this.tempZeroOpacity==true) ? 0 : this.getOpacity();
-if (golgotha.maps.util.isIE && (!golgotha.maps.util.isIE10))
-	img.style.filter = 'alpha(opacity=' + (tx*100) + ')';
-else
-	img.style.opacity = tx;
-
+var tx = (this.tempZeroOpacity == true) ? 0 : this.getOpacity();
+golgotha.maps.setOpacity(img, tx);
 div.appendChild(img);
 return div;	
 }
@@ -104,35 +121,25 @@ golgotha.maps.WeatherLayer = function(opts, name, timestamp) {
 			return true;
 		}
 		
+		var o = isVisible ? this.getOpacity() : 0;
 		var imgs = golgotha.maps.util.getTileImgs(this.get('imgClass') + '-' + this.get('date'), 'img');
-		for (var x = 0; x < imgs.length; x++) {
-			var img = imgs[x];
-			var o = isVisible ? this.getOpacity() : 0;
-			if (golgotha.maps.util.isIE)
-				img.style.filter = 'alpha(opacity=' + (o*100) + ')';
-			else
-				img.style.opacity = o;
-		}
+		for (var x = 0; x < imgs.length; x++)
+			golgotha.maps.setOpacity(imgs[x], o);
 		
 		return true;
 	}
 
 	ov.hideAll = function() {
 		var imgs = golgotha.maps.util.getTileImgs(this.get('imgClass'));
-		for (var x = 0; x < imgs.length; x++) {
-			var img = imgs[x];
-			if (golgotha.maps.util.isIE)
-				img.style.filter = 'alpha(opacity=0)';
-			else
-				img.style.opacity = 0;
-		}
+		for (var x = 0; x < imgs.length; x++)
+			golgotha.maps.setOpacity(imgs[x], 0);
 
 		return true;
 	}
 	
 	ov.preload = function(map, handler, tileLoadHandler) {
 		if (this.preloaded) return true;
-		var vizTiles = map.getVisibleTiles();
+		var vizTiles = map.getVisibleTiles(Math.min(map.getZoom(), this.get('nativeZoom')));
 		var imgsToLoad = []; var ov = this;
 		for (var x = 0; x < vizTiles.length; x++) {
 			var src = ov.getTileUrl(vizTiles[x], map.getZoom());
@@ -315,9 +322,7 @@ for (var x = 0; x < seriesData.seriesNames.length; x++) {
 		slices.push(ovLayer);
 	}
 
-	if (isFF)
-		slices.reverse();
-
+	if (!isFF) slices.reverse();
 	this.layers.names.push(layerName);
 	this.layers.data[layerName] = slices;
 }
@@ -442,8 +447,8 @@ golgotha.maps.LayerAnimateControl = function(map, title, layers, refresh) {
 			document.addClass(this, 'displayed');
 
 		if (!container.isPreloaded) {
-			map.preload = true;
-			golgotha.maps.util.progress.start(map.getVisibleTiles().length * container.layers.length);
+			map.preload = true; var nZ = Math.min(map.getZoom(), container.layers[0].get('nativeZoom'));
+			golgotha.maps.util.progress.start(map.getVisibleTiles(nZ).length * container.layers.length);
 			for (var x = 0; x < container.layers.length; x++) {
 				var ov = container.layers[x];
 				layersToLoad.push(ov);
