@@ -13,6 +13,14 @@ golgotha.maps.util = {isIE:golgotha.util.isIE, oldIE:golgotha.util.oldIE};
 golgotha.maps.util.isIE10 = (golgotha.maps.util.isIE && (navigator.appVersion.indexOf('IE 10.0') > 0));
 golgotha.maps.util.isIOS = (!golgotha.maps.util.isIE && ((navigator.platform == 'iPad') || (navigator.platform == 'iPhone')));
 
+// Cross-browser opacity set
+golgotha.maps.setOpacity = function(e, tx) { 
+	if (golgotha.maps.util.isIE && (!golgotha.maps.util.isIE10))
+		e.style.filter = 'alpha(opacity=' + (tx*100) + ')';
+	else
+		e.style.opacity = tx;
+};
+
 // Calculate GMT offset in seconds from local
 golgotha.maps.GMTOffset = new Date().getTimezoneOffset() * 60000;
 
@@ -112,16 +120,16 @@ google.maps.Map.prototype.setStatus = function(msg) {
 }
 
 // Prototype to calculate visible tile addresses for map
-google.maps.Map.prototype.getVisibleTiles = function()
+google.maps.Map.prototype.getVisibleTiles = function(zoom)
 {
 var bnds = this.getBounds();
 var nw = new google.maps.LatLng(bnds.getNorthEast().lat(), bnds.getSouthWest().lng());
 var se = new google.maps.LatLng(bnds.getSouthWest().lat(), bnds.getNorthEast().lng());
 
 // Get the pixel points of the tiles
-var p = map.getProjection();
-var nwp = p.fromLatLngToPoint(nw); nwp.x = Math.round(nwp.x << map.getZoom()); nwp.y = Math.round(nwp.y << map.getZoom());
-var sep = p.fromLatLngToPoint(se); sep.x = Math.round(sep.x << map.getZoom()); sep.y = Math.round(sep.y << map.getZoom());
+var p = map.getProjection(); if (!zoom) zoom = map.getZoom();
+var nwp = p.fromLatLngToPoint(nw); nwp.x = Math.round(nwp.x << zoom); nwp.y = Math.round(nwp.y << zoom);
+var sep = p.fromLatLngToPoint(se); sep.x = Math.round(sep.x << zoom); sep.y = Math.round(sep.y << zoom);
 var nwAddr = new google.maps.Point((nwp.x >> 8), (nwp.y >> 8));
 var seAddr = new google.maps.Point((sep.x >> 8), (sep.y >> 8));
 
