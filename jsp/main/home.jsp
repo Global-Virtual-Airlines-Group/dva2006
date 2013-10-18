@@ -57,9 +57,13 @@ our ${forumName} discussion forum in the past 24 hours.</c:if>
 <br />
 <br />
 <content:ip IPv4="false">
-<div class="ovalBorder mid" style="width:80%;">You are visiting <content:airline /> today using IPv6. This new Internet addressing technology 
-eliminates many of the hacks and workarounds needed to combat the impending exhaustion of IPv4 addresses. Thanks for 
-doing your part to move the Internet forward to IPv6!</div>
+<div class="ovalBorder mid" style="width:55%; height:128px;">
+<el:img src="IPv6_128.png" caption="World IPv6 Launch" style="float:left; margin-right:20px;"/>
+<span class="mid" style="position:relative; top:28px;">You are visiting <content:airline /> today using IPv6. This new Internet 
+addressing technology eliminates many of the hacks and workarounds needed to combat the impending exhaustion of IPv4 addresses.<br />
+<br /> 
+Thanks for doing your part to move the Internet forward to IPv6!</span>
+</div>
 <br />
 </content:ip>
 <content:filter roles="!Pilot">
