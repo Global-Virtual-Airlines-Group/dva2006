@@ -55,7 +55,8 @@ public class BrowserTypeFilter implements Filter {
 		
 		// Create the Context data object
 		BrowserType.BrowserVersion ver = BrowserType.detect(userAgent);
-		HTTPContextData ctxt = new HTTPContextData(OperatingSystem.detect(userAgent), ver.getType());
+		DeviceType dev = DeviceType.detect(userAgent);
+		HTTPContextData ctxt = new HTTPContextData(OperatingSystem.detect(userAgent), ver.getType(), dev);
 		int pos = ver.getVersion().indexOf('.');
 		ctxt.setVersion(StringUtils.parse(ver.getVersion().substring(0, pos), 0), StringUtils.parse(ver.getVersion().substring(pos + 1), 0));
 		ctxt.setHTML5((ver.getType() == BrowserType.CHROME) && (ctxt.getMajor() >= 20));
@@ -63,8 +64,7 @@ public class BrowserTypeFilter implements Filter {
 		
     	// Check for IPv6
     	InetAddress addr = InetAddress.getByName(hreq.getRemoteAddr());
-    	if (addr instanceof Inet6Address)
-    		hreq.setAttribute(HTTPContext.IPV6_ATTR_NAME, Boolean.TRUE);
+    	ctxt.setIPv6((addr instanceof Inet6Address));
 
 		// Execute the next filter in the chain
 		fc.doFilter(req, rsp);

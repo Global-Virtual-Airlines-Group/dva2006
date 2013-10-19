@@ -8,9 +8,9 @@ import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
+import org.deltava.beans.system.HTTPContextData;
 
 import org.deltava.commands.*;
-
 import org.deltava.dao.*;
 import org.deltava.dao.file.GetProcData;
 
@@ -56,9 +56,8 @@ public class HomeCommand extends AbstractCommand {
 		String myHost = SystemData.get("airline.url");
 		
 		// Check that the hostname is correct
-		Boolean ip6Attr = (Boolean) ctx.getRequest().getAttribute(HTTPContext.IPV6_ATTR_NAME);
-		boolean isIPv6 = (ip6Attr != null) && ip6Attr.booleanValue();
-		if (!isIPv6 && !ctx.getRequest().getServerName().equals(myHost)) {
+		HTTPContextData reqctx = (HTTPContextData) ctx.getRequest().getAttribute(HTTPContext.HTTPCTXT_ATTR_NAME);
+		if (!reqctx.isIPv6() && !ctx.getRequest().getServerName().equals(myHost)) {
 			result.setType(ResultType.REDIRECT);
 			result.setURL("http://" + myHost + "/");
 			result.setSuccess(true);
@@ -81,7 +80,7 @@ public class HomeCommand extends AbstractCommand {
 		}
 		
 		// Build a list of choices
-		List<Integer> cList = new ArrayList<Integer>(DYN_CHOICES.length);
+		List<Integer> cList = new ArrayList<Integer>(DYN_CHOICES.length + 1);
 		for (int x = 0; x < DYN_CHOICES.length; x++)
 			cList.add(Integer.valueOf(DYN_CHOICES[x]));
 
