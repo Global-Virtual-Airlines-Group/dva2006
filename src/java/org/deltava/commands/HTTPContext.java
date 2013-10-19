@@ -27,7 +27,6 @@ public abstract class HTTPContext extends ConnectionContext implements SecurityC
 	public static final String SU_ATTR_NAME = "superUser";
 	public static final String USERAGENT_ATTR_NAME = "userAgent";
 	public static final String HTTPCTXT_ATTR_NAME = "httpContext";
-	public static final String IPV6_ATTR_NAME = "IPv6";
 
 	private final HttpServletRequest _req;
 	private final HttpServletResponse _rsp;
