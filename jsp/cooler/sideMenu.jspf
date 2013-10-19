@@ -44,7 +44,7 @@
 <content:submenu title="Our Airline" width="170">
  <content:subitem><el:link url="/">Home</el:link></content:subitem>
 <content:authUser anonymous="true">
- <content:subitem><el:cmd url="login">Login</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="login" className="bld">Login</el:cmd></content:subitem>
 </content:authUser>
 <content:authUser var="user">
 <c:if test="${isSideMenu}">
@@ -67,7 +67,7 @@
 
 <content:submenu title="Pilot's Lounge" width="170">
 <content:filter roles="Pilot">
- <content:subitem className="bld"><el:cmd url="pilotcenter">Pilot Center</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="pilotcenter" className="bld">Pilot Center</el:cmd></content:subitem>
  <content:subitem><el:cmd url="logbook" link="${user}">Log Book</el:cmd></content:subitem>
 <c:if test="${(academyEnabled && (user.legs > academyFlights))}">
  <content:subitem><el:cmd url="academy">Flight Academy</el:cmd></content:subitem>
