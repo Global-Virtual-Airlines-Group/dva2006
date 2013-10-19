@@ -56,7 +56,7 @@
 
 <content:submenu title="Pilot's Lounge" width="170">
 <content:filter roles="Pilot">
- <content:subitem className="bld"><el:cmd url="pilotcenter">Pilot Center</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="pilotcenter" className="bld">Pilot Center</el:cmd></content:subitem>
  <content:subitem><el:cmd url="logbook" link="${user}">Log Book</el:cmd></content:subitem>
 <c:if test="${(academyEnabled && (user.legs > academyFlights))}">
  <content:subitem><el:cmd url="academy">Flight Academy</el:cmd></content:subitem>
@@ -77,7 +77,7 @@
  
 <content:submenu title="Our People" width="180">
 <content:authUser anonymous="true">
- <content:subitem className="bld"><el:cmd url="register">Join Us</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="register" className="bld">Join Us</el:cmd></content:subitem>
 </content:authUser>
  <content:subitem><el:cmd url="roster">Pilot Roster</el:cmd></content:subitem>
  <content:subitem><el:cmd url="pilotboard">Pilot Locations</el:cmd></content:subitem>
