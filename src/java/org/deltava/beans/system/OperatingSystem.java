@@ -1,4 +1,4 @@
-// Copyright 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 import java.util.*;
@@ -6,13 +6,13 @@ import java.util.*;
 /**
  * An enumeration to store client operating system data.
  * @author Luke
- * @version 3.7
+ * @version 5.2
  * @since 3.7
  */
 
 public enum OperatingSystem {
 	
-	WINDOWS("Windows"), OSX("MAC OS"), LINUX("Linux", "BSD"), IOS("iPad", "iPhone", "iPod"), UNKNOWN;
+	WINDOWS("Windows"), OSX("MAC OS"), LINUX("Linux", "BSD"), IOS("iPad", "iPhone", "iPod"), ANDROID("Android"), UNKNOWN;
 	
 	private final Collection<String> _detectStrings = new LinkedHashSet<String>(4);
 	
