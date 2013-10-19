@@ -1,33 +1,35 @@
-// Copyright 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 /**
  * A bean to store data about the current HTTP request. 
  * @author Luke
- * @version 5.0
+ * @version 5.2
  * @since 3.7
  */
 
 public class HTTPContextData implements java.io.Serializable {
 	
-	private String _userAgent;
-	
 	private final OperatingSystem _os;
 	private final BrowserType _browser;
+	private final DeviceType _device;
 	
 	private int _major;
 	private int _minor;
 	private boolean _html5;
+	private boolean _ipV6;
 
 	/**
 	 * Creates the context data.
 	 * @param os the client OperatingSystem
 	 * @param browser the client browser type 
+	 * @param dev the device type
 	 */
-	public HTTPContextData(OperatingSystem os, BrowserType browser) {
+	public HTTPContextData(OperatingSystem os, BrowserType browser, DeviceType dev) {
 		super();
 		_os = os;
 		_browser = browser;
+		_device = dev;
 	}
 
 	/**
@@ -44,6 +46,14 @@ public class HTTPContextData implements java.io.Serializable {
 	 */
 	public BrowserType getBrowserType() {
 		return _browser;
+	}
+	
+	/**
+	 * Rerturns the device type.
+	 * @return a DeviceType enum
+	 */
+	public DeviceType getDeviceType() {
+		return _device;
 	}
 
 	/**
@@ -71,19 +81,27 @@ public class HTTPContextData implements java.io.Serializable {
 	}
 	
 	/**
-	 * Returns the browser's user-agent header.
-	 * @return the user-agent header
+	 * Returns whether the request was made using IPv6.
+	 * @return TRUE if using IPv6, otherwise FALSE
 	 */
-	public String getUserAgent() {
-		return _userAgent;
+	public boolean isIPv6() {
+		return _ipV6;
 	}
-
+	
 	/**
 	 * Sets whether the client browser has sufficient HTML5 support.
 	 * @param hasHTML5 TRUE if full HTML5 support, otherwise FALSE
 	 */
 	public void setHTML5(boolean hasHTML5) {
 		_html5 = hasHTML5;
+	}
+	
+	/**
+	 * Sets whether the request is made using IPv6.
+	 * @param isIPv6 TRUE if using IPv6, otherwise FALSE
+	 */
+	public void setIPv6(boolean isIPv6) {
+		_ipV6 = isIPv6;
 	}
 	
 	/**
@@ -94,13 +112,5 @@ public class HTTPContextData implements java.io.Serializable {
 	public void setVersion(int major, int minor) {
 		_major = Math.max(1, major);
 		_minor = Math.max(0, minor);
-	}
-	
-	/**
-	 * Updates the browser's user-agent header.
-	 * @param ua the user-agent header
-	 */
-	public void setUserAgent(String ua) {
-		_userAgent = ua;
 	}
 }

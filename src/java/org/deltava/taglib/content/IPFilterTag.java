@@ -1,10 +1,9 @@
 // Copyright 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
-import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.tagext.TagSupport;
+import org.deltava.beans.system.HTTPContextData;
 
-import org.deltava.commands.HTTPContext;
+import org.deltava.taglib.BrowserInfoTag;
 
 /**
  * A JSP tag to filter content based on IPv4 or IPv6 addresses. 
@@ -13,7 +12,7 @@ import org.deltava.commands.HTTPContext;
  * @since 5.2
  */
 
-public class IPFilterTag extends TagSupport {
+public class IPFilterTag extends BrowserInfoTag {
 
 	private boolean _doIPv4 = true;
 	private boolean _doIPv6 = true;
@@ -50,9 +49,8 @@ public class IPFilterTag extends TagSupport {
 	 */
 	@Override
 	public int doStartTag() {
-		Boolean ip6attr = (Boolean) pageContext.getAttribute(HTTPContext.IPV6_ATTR_NAME, PageContext.REQUEST_SCOPE);
-		boolean isIP6 = (ip6attr != null) && ip6attr.booleanValue();
-		return ((isIP6 && _doIPv6) || (!isIP6 && _doIPv4)) ? EVAL_BODY_INCLUDE : SKIP_BODY;
+		HTTPContextData ctxt = getBrowserContext();
+		return ((ctxt.isIPv6() && _doIPv6) || (!ctxt.isIPv6() && _doIPv4)) ? EVAL_BODY_INCLUDE : SKIP_BODY;
 	}
 
 	/**
