@@ -92,23 +92,25 @@ ul.menu:hover ul.submenu li {
 	display: block;
 	opacity: .905;
 	filter: alpha(opacity=90);
+	box-shadow: 3px 3px 2px 1px #4060b0;
 }
 
-ul.menu ul.submenu li a {
+ul.submenu li a {
 	font: normal 11px tahoma, verdana, helvetica, sans-serif;
 	color: #dfffff;
 	background-color: #0000a1;
 	text-transform: uppercase;
 	text-decoration: none;
 	display: block;
-	margin: 1px;
+	margin: 1px 0px 2px 0px;
 	padding: 2px;
 }
 
-ul.menu ul.submenu li :hover {
+ul.submenu li a:hover {
 	background-color: #0000c8;
 	font-weight: bold;
 	color: #ffffff;
+	box-shadow: 3px 3px 2px 1px #6088ff;
 }
 
 ul.menu li ul {
@@ -274,7 +276,7 @@ div.mapInfoBox {
 	white-space: nowrap;
 }
 
-.bld {
+.bld, ul.submenu a.bld {
 	font-weight: bold;
 }
 

@@ -93,25 +93,27 @@ ul.menu ul.submenu li {
 
 ul.menu:hover ul.submenu li {
 	display: block;
-	opacity: .935;
+	opacity: .925;
 	filter: alpha(opacity=93);
+	box-shadow: 3px 3px 2px 1px #7090b0;  
 }
 
-ul.menu ul.submenu li a {
+ul.submenu li a {
 	font: normal 11px verdana, helvetica, sans-serif;
 	color: #cfefff;
 	text-decoration: none;
 	background-color: #1a4876;
 	text-transform: uppercase;
 	display: block;
-	margin: 1px;
+	margin: 1px 0px 1px 0px;
 	padding: 2px;
 }
 
-ul.menu ul.submenu li a:hover {
+ul.submenu li a:hover {
 	background-color: #003366;
 	font-weight: bold;
 	color: #ffffff;
+	box-shadow: 3px 3px 2px 1px #90c8f0;
 }
 
 ul.menu li ul {
@@ -275,7 +277,7 @@ div.mapInfoBox {
 	font-size: 8pt;
 }
 
-.bld {
+.bld, ul.submenu a.bld {
 	font-weight: bold;
 }
 
