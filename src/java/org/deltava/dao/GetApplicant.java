@@ -39,7 +39,7 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 	 */
 	public Applicant get(int id) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT *, INET_NTOA(REGADDR) FROM APPLICANTS WHERE (ID=?) LIMIT 1");
+			prepareStatementWithoutLimits("SELECT *, INET6_NTOA(REGADDR) FROM APPLICANTS WHERE (ID=?) LIMIT 1");
 			_ps.setInt(1, id);
 
 			// Get results, return first or null
@@ -65,7 +65,7 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 	 */
 	public Collection<Applicant> getByName(String fName, String lName) throws DAOException {
 		try {
-			prepareStatement("SELECT *, INET_NTOA(REGADDR) FROM APPLICANTS WHERE (STATUS=?) AND "
+			prepareStatement("SELECT *, INET6_NTOA(REGADDR) FROM APPLICANTS WHERE (STATUS=?) AND "
 					+ "(FIRSTNAME LIKE ?) AND (LASTNAME LIKE ?)");
 			_ps.setInt(1, Applicant.PENDING);
 			_ps.setString(2, fName);
@@ -84,7 +84,7 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 	 */
 	public Applicant getByPilotID(int pilotID) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT *, INET_NTOA(REGADDR) FROM APPLICANTS WHERE (PILOT_ID=?) LIMIT 1");
+			prepareStatementWithoutLimits("SELECT *, INET6_NTOA(REGADDR) FROM APPLICANTS WHERE (PILOT_ID=?) LIMIT 1");
 			_ps.setInt(1, pilotID);
 
 			// Get results, return first or null
@@ -110,13 +110,13 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 		log.debug("Raw set size = " + ids.size());
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT A.*, INET_NTOA(A.REGADDR) FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT A.*, INET6_NTOA(A.REGADDR) FROM ");
 		sqlBuf.append(tableName);
 		sqlBuf.append(" A WHERE (A.ID IN (");
 		int querySize = 0;
 		for (Iterator<?> i = ids.iterator(); i.hasNext();) {
 			Object rawID = i.next();
-			Integer id = (rawID instanceof Integer) ? (Integer) rawID : new Integer(((UserData) rawID).getID());
+			Integer id = (rawID instanceof Integer) ? (Integer) rawID : Integer.valueOf(((UserData) rawID).getID());
 
 			// Pull from the cache if at all possible; this is an evil query
 			querySize++;
@@ -189,7 +189,7 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 	 */
 	public Applicant getFromDirectory(String directoryName) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT *, INET_NTOA(REGADDR) FROM APPLICANTS WHERE (LDAP_DN=?) LIMIT 1");
+			prepareStatementWithoutLimits("SELECT *, INET6_NTOA(REGADDR) FROM APPLICANTS WHERE (LDAP_DN=?) LIMIT 1");
 			_ps.setString(1, directoryName);
 
 			// Get results, return first or null
@@ -215,7 +215,7 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 			throw new IllegalArgumentException("Invalid Lastname Letter - " + letter);
 
 		try {
-			prepareStatement("SELECT *, INET_NTOA(REGADDR) FROM APPLICANTS WHERE (LEFT(LASTNAME, 1)=?) ORDER BY CREATED DESC");
+			prepareStatement("SELECT *, INET6_NTOA(REGADDR) FROM APPLICANTS WHERE (LEFT(LASTNAME, 1)=?) ORDER BY CREATED DESC");
 			_ps.setString(1, letter.substring(0, 1).toUpperCase());
 			return execute();
 		} catch (SQLException se) {
@@ -233,7 +233,7 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 	public List<Applicant> getByStatus(int status, String orderBy) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT *, INET_NTOA(REGADDR) FROM APPLICANTS WHERE (STATUS=?)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT *, INET6_NTOA(REGADDR) FROM APPLICANTS WHERE (STATUS=?)");
 		if (!StringUtils.isEmpty(orderBy)) {
 			sqlBuf.append(" ORDER BY ");
 			sqlBuf.append(orderBy);
@@ -256,7 +256,7 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 	 */
 	public List<Applicant> getByEquipmentType(String eqType) throws DAOException {
 		try {
-			prepareStatement("SELECT *, INET_NTOA(REGADDR) FROM APPLICANTS WHERE (STATUS=?) AND "
+			prepareStatement("SELECT *, INET6_NTOA(REGADDR) FROM APPLICANTS WHERE (STATUS=?) AND "
 					+ "(EQTYPE=?) ORDER BY LASTNAME");
 			_ps.setInt(1, Applicant.APPROVED);
 			_ps.setString(2, eqType);
