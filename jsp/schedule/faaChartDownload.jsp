@@ -37,6 +37,14 @@ return true;
 <tr class="title caps">
  <td colspan="2">FAA APPROACH CHART DOWNLOAD</td>
 </tr>
+<c:if test="${!empty currentCycle}">
+<!-- Chart cycle data -->
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data">Current Approach / Procedure chart download cycle: <span class="pri bld">${currentCycle}</span>, released on
+ <fmt:date fmt="d" date="${currentCycle.releasedOn}" d="EEEE MMMM dd, YYYY" /></td>
+</tr>
+</c:if>
 <tr> 
  <td class="label">Chart Cycle</td>
  <td class="data"><el:combo name="month" required="true" options="${months}" value="${m}" /> <el:combo name="year" required="true" options="${years}" value="${y}" /></td>

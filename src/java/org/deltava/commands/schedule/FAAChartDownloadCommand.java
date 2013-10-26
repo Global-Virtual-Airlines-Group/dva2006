@@ -7,22 +7,19 @@ import java.util.concurrent.*;
 import java.sql.Connection;
 
 import org.apache.log4j.Logger;
-
 import org.deltava.beans.ComboAlias;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.navdata.CycleInfo;
-
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.dao.http.*;
-
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to manually download FAA approach charts.
  * @author Luke
- * @version 5.1
+ * @version 5.2
  * @since 5.0
  */
 
@@ -120,10 +117,19 @@ public class FAAChartDownloadCommand extends AbstractCommand {
 		CycleInfo cycleInfo = null;
 		Calendar cld = Calendar.getInstance();
 		try {
-			GetNavCycle ncdao = new GetNavCycle(ctx.getConnection());
+			Connection con = ctx.getConnection();
+			
+			// Get cycle to download
+			GetNavCycle ncdao = new GetNavCycle(con);
 			cycleInfo = ncdao.getCycle(cld.getTime());
 			if (cycleInfo == null)
 				cycleInfo = CycleInfo.getCurrent();
+			
+			// Get current cycle
+        	GetMetadata mddao = new GetMetadata(con);
+        	String chartCycleID = mddao.get("charts.cycle.faa");
+        	if (chartCycleID != null)
+        		ctx.setAttribute("currentCycle", ncdao.getCycle(chartCycleID), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
