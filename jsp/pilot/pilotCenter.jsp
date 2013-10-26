@@ -454,6 +454,11 @@ departing today.</td>
  <td class="data">You can search the DAFIF database for a particular Airport, VOR, NDB or Intersection.</td>
 </tr>
 <tr>
+ <td class="mid"><el:cmd className="bld" url="navcycles">Navigation Cycle Release Dates</el:cmd></td>
+ <td class="data">You can view when new navigation data cycles will be released, as well as view which cycle data is currently
+ loaded in the <content:airline /> Navigation database and FAA Approach Chart database.</td>
+</tr>
+<tr>
  <td class="mid"><el:cmd className="bld" url="selcals">SELCAL Codes</el:cmd></td>
  <td class="data">You can view SELCAL codes used by <content:airline /> and its partner airlines' aircraft,
  and temporarily reserve up to <fmt:int value="${selcalMax}" /> SELCAL codes for your own use, for up to

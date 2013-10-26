@@ -3,21 +3,23 @@ package org.deltava.beans.navdata;
 
 import java.util.*;
 
+import org.deltava.beans.ViewEntry;
 import org.deltava.util.cache.Cacheable;
 
 /**
  * A bean to store Navigation Data cycle information.
  * @author Luke
- * @version 5.1
+ * @version 5.2
  * @since 5.1
  */
 
-public class CycleInfo implements Cacheable, Comparable<CycleInfo> {
+public class CycleInfo implements Cacheable, ViewEntry, Comparable<CycleInfo> {
 
 	private final String _id;
 	private final int _year;
 	private final int _seq;
 	private Date _releasedOn;
+	private boolean _isLoaded;
 	
 	/**
 	 * Creates the cycle information bean.
@@ -57,6 +59,14 @@ public class CycleInfo implements Cacheable, Comparable<CycleInfo> {
 	}
 
 	/**
+	 * Returns the Cycle ID.
+	 * @return the ID
+	 */
+	public String getID() {
+		return _id;
+	}
+	
+	/**
 	 * Returns the cycle release date.
 	 * @return the release date
 	 */
@@ -65,11 +75,32 @@ public class CycleInfo implements Cacheable, Comparable<CycleInfo> {
 	}
 	
 	/**
+	 * Returns whether this cycle is currently loaded.
+	 * @return TRUE if loaded, otherwise FALSE
+	 */
+	public boolean isLoaded() {
+		return _isLoaded;
+	}
+	
+	/**
 	 * Updates the cycle release datae.
 	 * @param dt the release date
 	 */
 	public void setReleasedOn(Date dt) {
 		_releasedOn = dt;
+	}
+	
+	/**
+	 * Sets whether this cycle is currently loaded.
+	 * @param isLoaded TRUE if loaded, otherwise FALSE
+	 */
+	public void setLoaded(boolean isLoaded) {
+		_isLoaded = isLoaded;
+	}
+	
+	@Override
+	public String getRowClassName() {
+		return _isLoaded ? "opt1" : null;
 	}
 
 	@Override
