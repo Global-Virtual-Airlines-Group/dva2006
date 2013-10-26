@@ -631,6 +631,12 @@
 		<roles>Pilot</roles>
 	</command>
 
+	<command id="navcycles">
+		<name>Navigation Cycle Release Dates</name>
+		<class>org.deltava.commands.schedule.NavigationCycleCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
 	<command id="navimport">
 		<name>Import AIRAC data</name>
 		<class>org.deltava.commands.navdata.AIRACImportCommand</class>
