@@ -86,5 +86,6 @@ public class IPCDaemon implements Runnable {
 		}
 		
 		log.info("Stopping");
+		EventDispatcher.unregister();
 	}
 }
