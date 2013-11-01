@@ -359,7 +359,7 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT IF(PILOT_ID, PILOT_ID, ID) FROM ");
 		sqlBuf.append(formatDBName(dbName));
-		sqlBuf.append(".APPLICANTS A WHERE (REGADDR >= INET7_ATON(?)) AND "
+		sqlBuf.append(".APPLICANTS A WHERE (REGADDR >= INET6_ATON(?)) AND "
 				+ "(REGADDR <= (INET6_ATON(?) + ?)) ORDER BY CREATED DESC");
 		
 		try {
