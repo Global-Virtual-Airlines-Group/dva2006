@@ -56,7 +56,7 @@ our ${forumName} discussion forum in the past 24 hours.</c:if>
 <fmt:quantity value="${runTimeHours}" single="hour" /> and <fmt:quantity value="${runTimeMinutes}" single="minute" />.</c:if>
 <br />
 <br />
-<content:ip IPv4="false">
+<content:ip IPv6="true">
 <div class="ovalBorder mid" style="width:55%; height:128px;">
 <el:img src="IPv6_128.png" caption="World IPv6 Launch" style="float:left; margin-right:20px;"/>
 <span class="mid" style="position:relative; top:28px;">You are visiting <content:airline /> today using IPv6. This new Internet 
@@ -256,6 +256,14 @@ If you have questions or comments, please direct them to our Corporate Offices a
 <content:copyright />
 </content:region>
 </content:page>
+<content:ip IPv6="true">
+<content:googleAnalytics eventSupport="true" />
+<script>
+golgotha.event.beacon('Network', 'IPv6');
+</script>
+</content:ip>
+<content:ip IPv4="true">
 <content:googleAnalytics />
+</content:ip>
 </body>
 </html>
