@@ -7,21 +7,26 @@ import java.sql.*;
 
 import javax.servlet.*;
 
-import org.apache.log4j.*;
+import org.apache.log4j.Logger;
+
 import org.deltava.beans.econ.EconomyInfo;
 import org.deltava.beans.fb.FacebookCredentials;
 import org.deltava.beans.flight.ETOPSHelper;
 import org.deltava.beans.schedule.Airport;
 import org.deltava.beans.stats.AirlineTotals;
+
 import org.deltava.dao.*;
 import org.deltava.dao.mc.MemcachedDAO;
+
 import org.deltava.mail.MailerDaemon;
 import org.deltava.security.*;
 import org.deltava.taskman.*;
+
 import org.deltava.util.*;
-import org.deltava.util.cache.CacheLoader;
+import org.deltava.util.cache.*;
 import org.deltava.util.ipc.IPCDaemon;
 import org.deltava.util.system.SystemData;
+
 import org.gvagroup.common.*;
 import org.gvagroup.jdbc.*;
 
@@ -34,37 +39,27 @@ import org.gvagroup.jdbc.*;
 
 public class SystemBootstrap implements ServletContextListener, Thread.UncaughtExceptionHandler {
 
-	private final Logger log;
+	private static final Logger log = Logger.getLogger(SystemBootstrap.class);
 
 	private ConnectionPool _jdbcPool;
 	private final ThreadGroup _daemonGroup = new ThreadGroup("System Daemons");
 	private final Map<Thread, Runnable> _daemons = new HashMap<Thread, Runnable>();
 
 	/**
-	 * Initialize the System bootstrap loader, and configure log4j.
-	 */
-	public SystemBootstrap() {
-		super();
-		PropertyConfigurator.configure(getClass().getResource("/etc/log4j.properties"));
-		log = Logger.getLogger(SystemBootstrap.class);
-		log.info("Initialized log4j");
-
-		// Force headless AWT operation
-		System.setProperty("java.awt.headless", "true");
-	}
-
-	/**
 	 * Initialize the servlet context. This method will initialize the SystemData singleton, create the JDBC connection
 	 * pool and load "long-lived" bean collections like the Airlines and Airports.
 	 * @param e the ServletContext lifecycle event
 	 */
+	@Override
 	public void contextInitialized(ServletContextEvent e) {
 		e.getServletContext().setAttribute("startedOn", new java.util.Date());
 		_daemonGroup.setDaemon(true);
 
 		// Initialize system data
 		SystemData.init();
-		SharedData.addApp(SystemData.get("airline.code"));
+		String code = SystemData.get("airline.code");
+		log.info("Starting " + code);
+		SharedData.addApp(code);
 		
 		// Set start date
 		AirlineTotals.BIRTHDATE.setTime(StringUtils.parseDate(SystemData.get("airline.birthdate"), "MM/dd/yyyy"));
@@ -230,8 +225,10 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 	 * Shut down resources used by the servlet context.
 	 * @param e the ServletContext lifecycle event
 	 */
+	@Override
 	public void contextDestroyed(ServletContextEvent e) {
-		log.warn("Shutting Down");
+		String code = SystemData.get("airline.code");
+		log.warn("Shutting Down " + code);
 
 		// Shut down the extra threads
 		_daemons.clear();
@@ -239,13 +236,12 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 		
 		// If ACARS is enabled, then clean out the active flags
 		if (SystemData.getBoolean("airline.voice.ts2.enabled") && SystemData.getBoolean("acars.enabled")) {
-			log.info("Resetting TeamSpeak 2 client activity flags");
-
 			Connection c = null;
 			try {
 				c = _jdbcPool.getConnection();
 				SetTS2Data ts2wdao = new SetTS2Data(c);
-				ts2wdao.clearActiveFlags();
+				int cnt = ts2wdao.clearActiveFlags();
+				log.info("Reset " + cnt + " TeamSpeak 2 client activity flags");
 			} catch (ConnectionPoolException cpe) {
 				log.error(cpe.getMessage());
 			} catch (DAOException de) {
@@ -255,28 +251,17 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 			}
 		}
 		
-		// Shut down memcached clients
+		// Shut down memcached clients and JDBC connection pool
 		MemcachedDAO.shutdown();
-
-		// Shut down the JDBC connection pool
-		ThreadUtils.sleep(2000);
 		_jdbcPool.close();
-		try {
-			java.beans.Introspector.flushCaches();
-		} finally {
-			SharedData.purge(SystemData.get("airline.code"));
-		}
-
-		// Close the Log4J manager
-		log.error("Shut down " + SystemData.get("airline.code"));
-		ThreadUtils.sleep(200);
-		LogManager.shutdown();
+		
+		// Clear shared data
+		SharedData.purge(code);
+		log.error("Shut down " + code);
 	}
 
-	/**
+	/*
 	 * Helper method to spawn a system daemon.
-	 * @param sd the daemon to spawn
-	 * @param isLower TRUE if the thread should run with slightly lower priority, otherwise FALSE
 	 */
 	private void spawnDaemon(Runnable sd) {
 		Thread dt = new Thread(_daemonGroup, sd, sd.toString());
