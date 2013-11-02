@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2011, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.layout;
 
 import javax.servlet.http.*;
@@ -14,7 +14,7 @@ import org.deltava.taglib.BrowserInfoTag;
 /**
  * A JSP tag to render page layouts in a user-specific way.
  * @author Luke
- * @version 3.7
+ * @version 5.2
  * @since 1.0
  */
 
@@ -35,37 +35,36 @@ public class PageTag extends BrowserInfoTag {
 	 * @return TagSuppport.EVAL_BODY_INCLUDE always
 	 * @throws JspException if an error occurs
 	 */
+	@Override
 	public int doStartTag() throws JspException {
 
-		// Check for IE6
+		// Check for IE6 and phones
 		HTTPContextData bctxt = getBrowserContext();
-		boolean isIE6 = (bctxt != null) && (bctxt.getBrowserType() == BrowserType.IE) && (bctxt.getMajor() < 7);
+		_sideMenu = (bctxt == null) || (bctxt.getDeviceType().compareTo(DeviceType.DESKTOP) > 0);
+		_sideMenu |= ((bctxt.getBrowserType() == BrowserType.IE) && (bctxt.getMajor() < 7));
 
 		// Check if our screen size is big enough
 		HttpServletRequest hreq = (HttpServletRequest) pageContext.getRequest();
 		HttpSession s = hreq.getSession(false);
-		if (s != null) {
+		if (!_sideMenu && (s != null)) {
 			Pilot usr = (Pilot) hreq.getUserPrincipal();
-			_sideMenu = (usr == null) || !usr.getShowNavBar() || isIE6;
+			_sideMenu = (usr == null) || !usr.getShowNavBar();
 			if (!_sideMenu) {
 				Number sX = (Number) s.getAttribute(CommandContext.SCREENX_ATTR_NAME);
-				_sideMenu = (sX == null) || (sX.intValue() < 1280);
+				_sideMenu = (sX == null) || (sX.intValue() < 1155);
 			}
-		} else
-			_sideMenu = true;
+		}
 
 		// Render the div
 		try {
 			JspWriter out = pageContext.getOut();
-			if (_sideMenu)
-				out.print("<div class=\"navside\">");
-			else
-				out.print("<div class=\"navbar\">");
+			out.print("<div class=\"");
+			out.print(_sideMenu ? "navside" : "navbar");
+			out.print("\">");
 		} catch (Exception e) {
 			throw new JspException(e);
 		}
 
-		// Include the body
 		return EVAL_BODY_INCLUDE;
 	}
 
@@ -74,6 +73,7 @@ public class PageTag extends BrowserInfoTag {
 	 * @return TagSuppport.EVAL_PAGE always
 	 * @throws JspException if an error occurs
 	 */
+	@Override
 	public int doEndTag() throws JspException {
 		try {
 			pageContext.getOut().print("</div>");
