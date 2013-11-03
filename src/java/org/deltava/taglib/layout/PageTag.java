@@ -23,7 +23,7 @@ public class PageTag extends BrowserInfoTag {
 	private boolean _sideMenu;
 
 	/**
-	 * Tells a child tag wheter we are rendering side menus or navigation bars.
+	 * Tells a child tag whether we are rendering side menus or navigation bars.
 	 * @return TRUE if rendering a side menu, otherwise FALSE
 	 */
 	boolean sideMenu() {
@@ -38,10 +38,10 @@ public class PageTag extends BrowserInfoTag {
 	@Override
 	public int doStartTag() throws JspException {
 
-		// Check for IE6 and phones
+		// Check for IE6 and phones/tablets
 		HTTPContextData bctxt = getBrowserContext();
-		_sideMenu = (bctxt == null) || (bctxt.getDeviceType().compareTo(DeviceType.DESKTOP) > 0);
-		_sideMenu |= ((bctxt.getBrowserType() == BrowserType.IE) && (bctxt.getMajor() < 7));
+		_sideMenu = (bctxt == null) || (bctxt.getDeviceType() != DeviceType.DESKTOP);
+		_sideMenu |= ((bctxt.getBrowserType() == BrowserType.IE) && (bctxt.getMajor() < 8));
 
 		// Check if our screen size is big enough
 		HttpServletRequest hreq = (HttpServletRequest) pageContext.getRequest();
@@ -79,8 +79,6 @@ public class PageTag extends BrowserInfoTag {
 			pageContext.getOut().print("</div>");
 		} catch (Exception e) {
 			throw new JspException(e);
-		} finally {
-			release();
 		}
 
 		return EVAL_PAGE;
