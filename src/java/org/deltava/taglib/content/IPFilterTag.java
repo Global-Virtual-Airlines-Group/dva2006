@@ -14,8 +14,8 @@ import org.deltava.taglib.BrowserInfoTag;
 
 public class IPFilterTag extends BrowserInfoTag {
 
-	private boolean _doIPv4 = true;
-	private boolean _doIPv6 = true;
+	private boolean _doIPv4;
+	private boolean _doIPv6;
 	
 	/**
 	 * Sets whether to show content to users accessing the page via IPv4.
@@ -39,8 +39,8 @@ public class IPFilterTag extends BrowserInfoTag {
 	@Override
 	public void release() {
 		super.release();
-		_doIPv4 = true;
-		_doIPv6 = true;
+		_doIPv4 = false;
+		_doIPv6 = false;
 	}
 	
 	/**
