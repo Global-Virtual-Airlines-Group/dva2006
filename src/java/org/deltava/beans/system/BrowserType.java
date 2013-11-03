@@ -1,4 +1,4 @@
-// Copyright 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 import java.util.*;
@@ -6,13 +6,13 @@ import java.util.*;
 /**
  * An enumeration to store browser family data.
  * @author Luke
- * @version 5.0
+ * @version 5.2
  * @since 3.7
  */
 
 public enum BrowserType {
 	
-	IE("MSIE"), CHROME("Chrome"), FIREFOX("Firefox"), WEBKIT("WebKit", "Safari"), OPERA("Opera"), 
+	IE("MSIE", "Trident"), CHROME("Chrome"), FIREFOX("Firefox"), WEBKIT("WebKit", "Safari"), OPERA("Opera"), 
 	SPIDER("Googlebot", "bingbot", "YandexBot", "ezooms.bot", "msnbot", "MJ12bot", "Baiduspider", 
 		"Yahoo! Slurp"), UNKNOWN;
 	
@@ -59,6 +59,10 @@ public enum BrowserType {
 				int pos = userAgent.indexOf(keyword);
 				if (pos != -1) {
 					pos += keyword.length();
+					
+					// If IE11, search for rv:
+					if (bType == BrowserType.IE)
+						pos = Math.max(pos, userAgent.indexOf("rv:") + 2);
 					
 					// Get version string
 					StringBuilder buf = new StringBuilder();
