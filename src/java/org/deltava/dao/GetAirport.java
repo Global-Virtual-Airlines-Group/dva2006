@@ -52,7 +52,7 @@ public class GetAirport extends DAO {
 				+ "MAX(RND.ALTITUDE)) FROM common.AIRPORTS A LEFT JOIN common.NAVDATA ND ON (ND.CODE=A.ICAO) "
 				+ "AND (ND.ITEMTYPE=?) LEFT JOIN common.MAGVAR MV ON (A.ICAO=MV.ICAO) LEFT JOIN "
 				+ "common.RUNWAYS R ON (A.ICAO=R.ICAO) LEFT JOIN common.NAVDATA RND ON ((RND.CODE=A.ICAO) "
-				+ "AND (RND.ITEMTYPE=?)) WHERE ((A.ICAO=?) OR (A.IATA=?)) LIMIT 1");
+				+ "AND (RND.ITEMTYPE=?)) WHERE ((A.ICAO=?) OR (A.IATA=?)) GROUP BY A.IATA LIMIT 1");
 			_ps.setInt(1, Navaid.AIRPORT.ordinal());
 			_ps.setInt(2, Navaid.RUNWAY.ordinal());
 			_ps.setString(3, code.toUpperCase());
