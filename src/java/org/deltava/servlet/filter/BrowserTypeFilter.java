@@ -5,12 +5,13 @@ import java.net.*;
 import java.io.IOException;
 
 import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.*;
 
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.system.*;
 import org.deltava.commands.HTTPContext;
+
 import org.deltava.util.StringUtils;
 
 /**
@@ -65,6 +66,12 @@ public class BrowserTypeFilter implements Filter {
     	// Check for IPv6
     	InetAddress addr = InetAddress.getByName(hreq.getRemoteAddr());
     	ctxt.setIPv6((addr instanceof Inet6Address));
+    	
+    	// If we're using IE, set the compatability header
+    	if (ver.getType() == BrowserType.IE) {
+    		HttpServletResponse hrsp = (HttpServletResponse) rsp;
+    		hrsp.setHeader("X-UA-Compatible", "IE=10, IE=edge");
+    	}
 
 		// Execute the next filter in the chain
 		fc.doFilter(req, rsp);
