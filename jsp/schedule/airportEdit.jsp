@@ -19,7 +19,6 @@
 <c:if test="${googleMap}">
 <map:api version="3" /></c:if>
 <content:googleAnalytics eventSupport="true" />
-<fmt:aptype var="useICAO" />
 <script type="text/javascript">
 function validate(form)
 {
@@ -164,7 +163,7 @@ lack of scheduled flights in the <content:airline /> Flight Schedule.</span></td
  <td colspan="2">AIRPORT INFORMATION</td>
 </tr>
 <tr>
- <td colspan="2" class="mid"><iframe id="airportLookup" style="width:97%; height:280px; scrolling:auto;" src="http://www.theairdb.com/airport/${apCode}.html"></iframe></td>
+ <td colspan="2" class="mid"><iframe id="airportLookup" style="width:97%; height:680px; scrolling:auto;" src="http://www.theairdb.com/airport/${apCode}.html"></iframe></td>
 </tr>
 </c:if>
 </c:if>
@@ -187,7 +186,7 @@ lack of scheduled flights in the <content:airline /> Flight Schedule.</span></td
 <map:point var="mapC" point="${airport}" />
 <map:marker var="apMarker" point="${airport}" color="green" />
 
-//Create map options
+// Create map options
 var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
 var mapOpts = {center:mapC, zoom:6, scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
 
