@@ -2,7 +2,9 @@
 package org.deltava.beans.system;
 
 import org.deltava.beans.GeoLocation;
+
 import org.deltava.beans.schedule.*;
+
 import org.deltava.util.*;
 import org.deltava.util.cache.Cacheable;
 
@@ -19,6 +21,7 @@ public abstract class IPBlock implements Cacheable, GeoLocation, Comparable<IPBl
 	
 	private final int _id;
 	private final String _baseAddr;
+	private final String _endAddr;
 	private final int _bits;
 	
 	private Country _country;
@@ -29,12 +32,14 @@ public abstract class IPBlock implements Cacheable, GeoLocation, Comparable<IPBl
 	 * Initializes the bean.
 	 * @param id the block ID
 	 * @param start the start IP address
+	 * @param end the ending IP address
 	 * @param size the CIDR size in bits
 	 */
-	protected IPBlock(int id, String start, int size) {
+	protected IPBlock(int id, String start, String end, int size) {
 		super();
 		_id = id;
 		_baseAddr = start;
+		_endAddr = end;
 		_bits = size;
 	}
 
@@ -44,6 +49,14 @@ public abstract class IPBlock implements Cacheable, GeoLocation, Comparable<IPBl
 	 */
 	public String getAddress() {
 		return _baseAddr;
+	}
+	
+	/**
+	 * Returns the last Address of the address block.
+	 * @return the last IP address
+	 */
+	public String getLastAddress() {
+		return _endAddr;
 	}
 	
 	/**
