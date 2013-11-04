@@ -315,6 +315,7 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 	 * @return a Collection of database IDs
 	 * @throws DAOException if a JDBC error occurs
 	 */
+	@Override
 	public Collection<Integer> checkUnique(Person p, String dbName, int days) throws DAOException {
 
 		// Build the SQL statement
@@ -360,13 +361,12 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 		StringBuilder sqlBuf = new StringBuilder("SELECT IF(PILOT_ID, PILOT_ID, ID) FROM ");
 		sqlBuf.append(formatDBName(dbName));
 		sqlBuf.append(".APPLICANTS A WHERE (REGADDR >= INET6_ATON(?)) AND "
-				+ "(REGADDR <= (INET6_ATON(?) + ?)) ORDER BY CREATED DESC");
+				+ "(REGADDR <= INET6_ATON(?)) ORDER BY CREATED DESC");
 		
 		try {
 			prepareStatement(sqlBuf.toString());
 			_ps.setString(1, addrBlock.getAddress());
-			_ps.setString(2, addrBlock.getAddress());
-			_ps.setInt(3, addrBlock.getSize());
+			_ps.setString(2, addrBlock.getLastAddress());
 			return executeIDs();
 		} catch (SQLException se) {
 			throw new DAOException(se);
