@@ -67,10 +67,9 @@ public class GetLoginData extends DAO {
 	public Collection<LoginAddress> getLoginUsers(String address, IPBlock addrBlock) throws DAOException {
 		try {
 			prepareStatement("SELECT ID, INET6_NTOA(REMOTE_ADDR), REMOTE_HOST, LOGINS FROM SYS_LOGINS "
-					+ "WHERE (REMOTE_ADDR >= INET6_ATON(?)) AND (REMOTE_ADDR <= (INET6_ATON(?) + ?))");
+					+ "WHERE (REMOTE_ADDR >= INET6_ATON(?)) AND (REMOTE_ADDR <= INET6_ATON(?))");
 			_ps.setString(1, addrBlock.getAddress());
-			_ps.setString(2, addrBlock.getAddress());
-			_ps.setInt(3, addrBlock.getSize());
+			_ps.setString(2, addrBlock.getLastAddress());
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);

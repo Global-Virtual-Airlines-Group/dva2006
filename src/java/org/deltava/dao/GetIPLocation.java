@@ -61,7 +61,7 @@ public class GetIPLocation extends DAO {
 		
 		try {
 			prepareStatementWithoutLimits("SELECT L.*, R.NAME, INET_NTOA(B.BLOCK_START), INET_NTOA(B.BLOCK_END), "
-				+ "32-LOG2(B.BLOCK_END-B.BLOCK_START) FROM geoip.BLOCKS B LEFT JOIN geoip.LOCATIONS L ON (L.ID=B.ID) "
+				+ "32-LOG2(B.BLOCK_END-B.BLOCK_START+1) FROM geoip.BLOCKS B LEFT JOIN geoip.LOCATIONS L ON (L.ID=B.ID) "
 				+ "LEFT JOIN geoip.FIPS_REGIONS R ON ((L.COUNTRY=R.COUNTRY) AND (L.REGION=R.REGION)) WHERE "
 				+ "(B.BLOCK_START <= INET_ATON(?)) ORDER BY B.BLOCK_START DESC LIMIT 1");
 			_ps.setString(1, addr.getHostAddress());
@@ -97,7 +97,7 @@ public class GetIPLocation extends DAO {
 		
 		try {
 			prepareStatementWithoutLimits("SELECT ID, INET6_NTOA(BLOCK_START), INET6_NTOA(BLOCK_END), "
-				+ "128-LOG2(BLOCK_END-BLOCK_START) AS SZ, COUNTRY, LAT, LNG FROM geoip.BLOCKS6 WHERE "
+				+ "128-LOG2(BLOCK_END-BLOCK_START+1) AS SZ, COUNTRY, LAT, LNG FROM geoip.BLOCKS6 WHERE "
 				+ "(BLOCK_START <= ?) LIMIT 1");
 			_ps.setBigDecimal(1, new BigDecimal(new BigInteger(addr.getAddress())));			
 			try (ResultSet rs = _ps.executeQuery()) {
