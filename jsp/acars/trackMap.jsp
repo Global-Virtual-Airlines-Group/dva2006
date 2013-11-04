@@ -63,7 +63,7 @@ return new google.maps.ImageMapType(layerOpts);
 <script type="text/javascript">
 <map:point var="mapC" point="${mapCenter}" />
 var mapTypes = {mapTypeIds: ['acars_trackmap', google.maps.MapTypeId.SATELLITE]};
-var mapOpts = {center:mapC, minZoom:3, maxZoom:12, zoom:6, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
+var mapOpts = {center:mapC, minZoom:3, maxZoom:13, zoom:6, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
 
 // Create the map
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
