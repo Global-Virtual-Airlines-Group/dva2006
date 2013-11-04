@@ -14,7 +14,7 @@ import org.deltava.util.*;
 
 public class IP6Block extends IPBlock {
 	
-	private final BigInteger _rawAddr;
+	private final BigInteger _rawEndAddr;
 	private final BigInteger _endAddr;
 	
 	/**
@@ -25,9 +25,9 @@ public class IP6Block extends IPBlock {
 	 * @param size the CIDR size in bits
 	 */
 	public IP6Block(int id, String start, String end, int size) {
-		super(id, start, size);
+		super(id, start, end, size);
 		_endAddr = NetworkUtils.pack(end);
-		_rawAddr = NetworkUtils.pack(start);
+		_rawEndAddr = NetworkUtils.pack(start);
 	}
 
 	@Override
@@ -42,7 +42,7 @@ public class IP6Block extends IPBlock {
 	 */
 	public boolean contains(String addr) {
 		BigInteger ia = NetworkUtils.pack(addr);
-		return (ia.compareTo(_rawAddr) > -1) && (ia.compareTo(_endAddr) < 1);
+		return (ia.compareTo(_rawEndAddr) > -1) && (ia.compareTo(_endAddr) < 1);
 	}
 
 	/**
@@ -52,7 +52,7 @@ public class IP6Block extends IPBlock {
 		int tmpResult = IPAddress.IPV6.compareTo(ib2.getType());
 		if (tmpResult == 0) {
 			IP6Block ib6 = (IP6Block) ib2;
-			tmpResult = _rawAddr.compareTo(ib6._rawAddr);
+			tmpResult = _rawEndAddr.compareTo(ib6._rawEndAddr);
 			if (tmpResult == 0)
 				tmpResult = Integer.valueOf(getBits()).compareTo(Integer.valueOf(ib6.getBits()));
 		}

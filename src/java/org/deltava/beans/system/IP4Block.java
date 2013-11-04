@@ -13,7 +13,7 @@ import org.deltava.util.*;
 public class IP4Block extends IPBlock {
 	
 	private final long _rawAddr;
-	private final long _endAddr;
+	private final long _rawEndAddr;
 	
 	/**
 	 * Initializes the bean.
@@ -23,9 +23,9 @@ public class IP4Block extends IPBlock {
 	 * @param size the CIDR size in bits
 	 */
 	public IP4Block(int id, String start, String end, int size) {
-		super(id, start, size);
+		super(id, start, end, size);
 		_rawAddr = NetworkUtils.pack(start).longValue();
-		_endAddr = NetworkUtils.pack(end).longValue();
+		_rawEndAddr = NetworkUtils.pack(end).longValue();
 	}
 
 	@Override
@@ -36,7 +36,7 @@ public class IP4Block extends IPBlock {
 	@Override
 	public boolean contains(String addr) {
 		long intAddr = NetworkUtils.pack(addr).longValue();
-		return (intAddr >= _rawAddr) && (intAddr <= _endAddr);
+		return (intAddr >= _rawAddr) && (intAddr <= _rawEndAddr);
 	}
 
 	@Override
