@@ -906,6 +906,12 @@ new Online Events, System News entries and NOTAMs, and Flight Report approval or
  <td class="data">You can view system-generated metadata for the <content:airline /> web site.</td>
 </tr>
 </content:filter>
+<content:filter roles="Developer,Operations">
+<tr>
+ <td class="mid"><el:cmd className="bld" url="ip6import">IPv6 Netblock Import</el:cmd></td>
+ <td class="data">You can import GeoCities IPv6 City network block data files into the database.</td>
+</tr>
+</content:filter>
 <content:filter roles="HR,Developer">
 <tr>
  <td class="mid"><el:cmd className="bld" url="helplist">Online Help</el:cmd></td>
