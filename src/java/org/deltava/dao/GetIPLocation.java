@@ -3,7 +3,6 @@ package org.deltava.dao;
 
 import java.net.*;
 import java.sql.*;
-import java.math.*;
 
 import org.deltava.beans.schedule.Country;
 import org.deltava.beans.system.*;
@@ -97,9 +96,9 @@ public class GetIPLocation extends DAO {
 		
 		try {
 			prepareStatementWithoutLimits("SELECT ID, INET6_NTOA(BLOCK_START), INET6_NTOA(BLOCK_END), "
-				+ "128-LOG2(BLOCK_END-BLOCK_START+1) AS SZ, COUNTRY, LAT, LNG FROM geoip.BLOCKS6 WHERE "
-				+ "(BLOCK_START <= ?) LIMIT 1");
-			_ps.setBigDecimal(1, new BigDecimal(new BigInteger(addr.getAddress())));			
+				+ "BITS, COUNTRY, LAT, LNG FROM geoip.BLOCKS6 WHERE (BLOCK_START <= INET6_ATON(?)) "
+				+ "ORDER BY BLOCK_START DESC LIMIT 1");
+			_ps.setString(1, addr.getHostAddress());			
 			try (ResultSet rs = _ps.executeQuery()) {
 				if (rs.next()) {
 					result = new IP6Block(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4));
