@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A class for storing Pilot entries.
  * @author Luke
- * @version 5.0
+ * @version 5.2
  * @since 1.0
  */
 
@@ -70,6 +70,7 @@ public class Pilot extends Person implements ComboAlias, Cloneable {
 	private boolean _noExams;
 	private boolean _noVoice;
 	private boolean _noCooler;
+	private boolean _noTimeCompression;
 
 	private Restriction _ACARSRestrict;
 	private MapType _mapType;
@@ -177,9 +178,18 @@ public class Pilot extends Person implements ComboAlias, Cloneable {
 	public Restriction getACARSRestriction() {
 		return _ACARSRestrict;
 	}
+	
+	/**
+	 * Returns whether the Pilot cannot submit flight reports with Time Compression.
+	 * @return TRUE if Time Compression disabled, otherwise FALSE
+	 * @see Pilot#setNoCooler(boolean)
+	 */
+	public boolean getNoTimeCompression() {
+		return _noTimeCompression;
+	}
 
 	/**
-	 * Returns wither the Pilot has been locked out of the Testing Center.
+	 * Returns whether the Pilot has been locked out of the Testing Center.
 	 * @return TRUE if the Pilot cannot take any Examinations, otherwise FALSE
 	 * @see Pilot#setNoExams(boolean)
 	 */
@@ -525,6 +535,15 @@ public class Pilot extends Person implements ComboAlias, Cloneable {
 	 */
 	public void setACARSRestriction(Restriction r) {
 		_ACARSRestrict = r;
+	}
+	
+	/**
+	 * Updates whether the Pilot cannot submit flight reports with Time Compression.
+	 * @param noCompress TRUE if Time Compression disabled, otherwise FALSE
+	 * @see Pilot#getNoTimeCompression()
+	 */
+	public void setNoTimeCompression(boolean noCompress) {
+		_noTimeCompression = noCompress;
 	}
 
 	/**
@@ -987,15 +1006,17 @@ public class Pilot extends Person implements ComboAlias, Cloneable {
 		p2.addRoles(getRoles());
 		p2.addRatings(getRatings());
 		p2.setSignatureExtension(getSignatureExtension());
-		p2.setHours(getHours());
-		p2.setLastFlight(getLastFlight());
-		p2.setLegs(getLegs());
+		p2._hours = _hours;
+		p2._lastFlight = _lastFlight;
+		p2._legs = _legs;
 		p2._mapType = _mapType;
 		p2._miles = _miles;
-		p2.setOnlineHours(getOnlineHours());
-		p2.setOnlineLegs(getOnlineLegs());
-		p2.setACARSHours(getACARSHours());
+		p2._onlineHours = _onlineHours;
+		p2._onlineLegs = _onlineLegs;
+		p2._acarsHours = _acarsHours;
 		p2._acarsLegs = _acarsLegs;
+		p2._eventHours = _eventHours;
+		p2._eventLegs = _eventLegs;
 		p2._totalHours = _totalHours;
 		p2._totalLegs = _totalLegs;
 		p2._showSigs = _showSigs;

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -34,7 +34,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to handle editing/saving Pilot Profiles.
  * @author Luke
- * @version 5.0
+ * @version 5.2
  * @since 1.0
  */
 
@@ -181,7 +181,7 @@ public class ProfileCommand extends AbstractFormCommand {
 					upd.setAuthorID(ctx.getUser().getID());
 					upd.setDescription(forumName + " posts " + (coolerPostsLocked ? "locked out" : "enabled"));
 					updates.add(upd);
-					log.warn(p.getName() + " " + upd.getDescription());
+					log.info(p.getName() + " " + upd.getDescription());
 				}
 
 				// Check Testing Center access
@@ -194,7 +194,7 @@ public class ProfileCommand extends AbstractFormCommand {
 					upd.setAuthorID(ctx.getUser().getID());
 					upd.setDescription(examsLocked ? "Testing Center locked out" : "Testing Center enabled");
 					updates.add(upd);
-					log.warn(p.getName() + " " + upd.getDescription());
+					log.info(p.getName() + " " + upd.getDescription());
 				}
 
 				// Check Voice server access
@@ -207,7 +207,7 @@ public class ProfileCommand extends AbstractFormCommand {
 					upd.setAuthorID(ctx.getUser().getID());
 					upd.setDescription(examsLocked ? "Voice access locked out" : "Voice access enabled");
 					updates.add(upd);
-					log.warn(p.getName() + " " + upd.getDescription());
+					log.info(p.getName() + " " + upd.getDescription());
 				}
 
 				// Check ACARS server access
@@ -220,7 +220,20 @@ public class ProfileCommand extends AbstractFormCommand {
 					upd.setAuthorID(ctx.getUser().getID());
 					upd.setDescription("ACARS restrictions set to " + p.getACARSRestriction().getName());
 					updates.add(upd);
-					log.warn(p.getName() + " " + upd.getDescription());
+					log.info(p.getName() + " " + upd.getDescription());
+				}
+				
+				// Check ACARS Time compression access
+				boolean compressLocked = Boolean.valueOf(ctx.getParameter("noTimeCompress")).booleanValue();
+				if (compressLocked != p.getNoTimeCompression()) {
+					p.setNoTimeCompression(compressLocked);
+					
+					// Write the status update entry
+					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.COMMENT);
+					upd.setAuthorID(ctx.getUser().getID());
+					upd.setDescription(examsLocked ? "Time Compression locked out" : "Time Compression enabled");
+					updates.add(upd);
+					log.info(p.getName() + " " + upd.getDescription());
 				}
 			}
 

@@ -154,7 +154,8 @@ golgotha.onDOMReady(function() {
  <td class="label">&nbsp;</td>
  <td colspan="${cspan}" class="data"><el:box name="noCooler" idx="*" value="true" checked="${pilot.noCooler}" label="Disable ${forumName} posting access" /><br />
 <el:box name="noVoice" idx="*" value="true" checked="${pilot.noVoice}" label="Disable Private Voice access" /><br />
-<el:box name="noExams" idx="*" value="true" checked="${pilot.noExams}" label="Disable Testing Center access" /></td>
+<el:box name="noExams" idx="*" value="true" checked="${pilot.noExams}" label="Disable Testing Center access" /><br />
+<el:box name="noTimeCompress" idx="*" value="true" checked="${pilot.noTimeCompression}" label="Disable ACARS Time Compression" /></td>
 </tr>
 <tr>
  <td class="label">ACARS Capabilities</td>
