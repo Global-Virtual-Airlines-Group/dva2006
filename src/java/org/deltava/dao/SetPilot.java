@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to update Pilot profiles.
  * @author Luke
- * @version 5.0
+ * @version 5.2
  * @since 1.0
  */
 
@@ -51,8 +51,8 @@ public class SetPilot extends PilotWriteDAO {
 			+ "IVAO_ID=?, TZ=?, NOTIFY=?, SHOW_EMAIL=?, SHOW_WC_SIG=?, SHOW_WC_SSHOTS=?, "
 			+ "SHOW_DEF_SIG=?, SHOW_NEW_POSTS=?, UISCHEME=?, NAVBAR=?, VIEWSIZE=?, DFORMAT=?, "
 			+ "TFORMAT=?, NFORMAT=?, AIRPORTCODE=?, DISTANCEUNITS=?, MAPTYPE=?, RANK=?, EQTYPE=?, "
-			+ "STATUS=?, NOEXAMS=?, NOVOICE=?, NOCOOLER=?, ACARS_RESTRICT=?, UID=?, MOTTO=?, "
-			+ "FIRSTNAME=?, LASTNAME=? WHERE (ID=?)");
+			+ "STATUS=?, NOEXAMS=?, NOVOICE=?, NOCOOLER=?, NOTIMECOMPRESS=?, ACARS_RESTRICT=?, "
+			+ "UID=?, MOTTO=?, FIRSTNAME=?, LASTNAME=? WHERE (ID=?)");
 
 		try {
 			// This involves a lot of reads and writes, so its written as a single transaction
@@ -86,12 +86,13 @@ public class SetPilot extends PilotWriteDAO {
 			_ps.setBoolean(26, p.getNoExams());
 			_ps.setBoolean(27, p.getNoVoice());
 			_ps.setBoolean(28, p.getNoCooler());
-			_ps.setInt(29, p.getACARSRestriction().ordinal());
-			_ps.setString(30, p.getLDAPName());
-			_ps.setString(31, p.getMotto());
-			_ps.setString(32, p.getFirstName());
-			_ps.setString(33, p.getLastName());
-			_ps.setInt(34, p.getID());
+			_ps.setBoolean(29, p.getNoTimeCompression());
+			_ps.setInt(30, p.getACARSRestriction().ordinal());
+			_ps.setString(31, p.getLDAPName());
+			_ps.setString(32, p.getMotto());
+			_ps.setString(33, p.getFirstName());
+			_ps.setString(34, p.getLastName());
+			_ps.setInt(35, p.getID());
 			executeUpdate(1);
 
 			// Update the roles/ratings

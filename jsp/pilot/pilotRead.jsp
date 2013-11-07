@@ -39,6 +39,7 @@ return true;
 <c:set var="cspan" value="${(!empty exams) || (!empty statusUpdates) || (!empty courses) ? 6 : 1}" scope="request" />
 <content:sysdata var="forumName" name="airline.forum" />
 <content:sysdata var="dbName" name="airline.db" />
+<content:sysdata var="acarsEnabled" name="acars.enabled" />
 <content:filter roles="HR,Signature">
 <c:set var="canSigAuth" value="${pilot.hasSignature && !sigAuthorized}" scope="page" />
 </content:filter>
@@ -61,13 +62,14 @@ return true;
 <c:if test="${pilot.noExams}"> <span class="warn bld">EXAMINATION ACCESS DISABLED</span></c:if>
 </c:if></td>
 </tr>
-<c:if test="${access.canChangeStatus}">
+<c:if test="${acarsEnabled && access.canChangeStatus}">
 <tr>
  <td class="label">ACARS Capabilities</td>
- <td colspan="${cspan}" class="data">${pilot.ACARSRestriction.name}</td>
+ <td colspan="${cspan}" class="data">${pilot.ACARSRestriction.name}
+<c:if test="${pilot.noTimeCompression}"> <span class="warn bld">NO ACARS TIME COMPRESSION</span></c:if></td>
 </tr>
 </c:if>
-<c:if test="${empty pilot.pilotCode}">
+<c:if test="${acarsEnabled && (empty pilot.pilotCode)}">
 <tr>
  <td class="label">ACARS User ID</td>
  <td colspan="${cspan}" class="data"><span class="ita">No Pilot ID assigned.</span> Use <span class="bld">${pilot.ID}</span> as a temporary ACARS User ID.</td>
@@ -208,7 +210,7 @@ ${loginAddr.remoteAddr} (${loginAddr.remoteHost}) - <fmt:int value="${loginAddr.
  <td colspan="${cspan}" class="data pri"><fmt:int value="${pilot.onlineLegs}" /> legs, <fmt:dec value="${pilot.onlineHours}" /> hours</td>
 </tr>
 </c:if>
-<c:if test="${pilot.ACARSLegs > 0}">
+<c:if test="${acarsEnabled && (pilot.ACARSLegs > 0)}">
 <tr>
  <td class="label">ACARS Flights</td>
  <td colspan="${cspan}" class="data sec"><fmt:int value="${pilot.ACARSLegs}" /> legs, <fmt:dec value="${pilot.ACARSHours}" /> hours
