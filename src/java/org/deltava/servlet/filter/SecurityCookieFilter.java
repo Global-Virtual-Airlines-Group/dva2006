@@ -146,7 +146,7 @@ public class SecurityCookieFilter implements Filter {
 				GetIPLocation ipdao = new GetIPLocation(con);
 				IPBlock ipb = ipdao.get(savedAddr);
 				if ((ipb == null) || (!ipb.contains(remoteAddr)))
-					throw new SecurityException("HTTP Session is from " + savedAddr + ", request from " + remoteAddr);
+					throw new SecurityException("HTTP Session for " + p + " is from " + savedAddr + ", request from " + remoteAddr);
 			}
 		} catch (Exception se) {
 			log.warn(se.getMessage());
