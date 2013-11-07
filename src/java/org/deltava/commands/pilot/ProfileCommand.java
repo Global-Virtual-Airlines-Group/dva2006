@@ -231,7 +231,7 @@ public class ProfileCommand extends AbstractFormCommand {
 					// Write the status update entry
 					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.COMMENT);
 					upd.setAuthorID(ctx.getUser().getID());
-					upd.setDescription(examsLocked ? "Time Compression locked out" : "Time Compression enabled");
+					upd.setDescription(compressLocked ? "Time Compression locked out" : "Time Compression enabled");
 					updates.add(upd);
 					log.info(p.getName() + " " + upd.getDescription());
 				}
