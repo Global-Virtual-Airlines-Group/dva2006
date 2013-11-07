@@ -48,11 +48,11 @@ public class PageTag extends BrowserInfoTag {
 		HttpSession s = hreq.getSession(false);
 		if (!_sideMenu && (s != null)) {
 			Pilot usr = (Pilot) hreq.getUserPrincipal();
-			_sideMenu = (usr == null) || !usr.getShowNavBar();
-			if (!_sideMenu) {
+			if (usr == null) {
 				Number sX = (Number) s.getAttribute(CommandContext.SCREENX_ATTR_NAME);
 				_sideMenu = (sX == null) || (sX.intValue() < 1155);
-			}
+			} else
+				_sideMenu = !usr.getShowNavBar();
 		}
 
 		// Render the div
