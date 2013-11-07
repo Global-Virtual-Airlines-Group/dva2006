@@ -2,9 +2,7 @@
 package org.deltava.beans.system;
 
 import org.deltava.beans.GeoLocation;
-
 import org.deltava.beans.schedule.*;
-
 import org.deltava.util.*;
 import org.deltava.util.cache.Cacheable;
 
@@ -184,12 +182,6 @@ public abstract class IPBlock implements Cacheable, GeoLocation, Comparable<IPBl
 	public void setLocation(double lat, double lng) {
 		_loc.setLatitude(lat);
 		_loc.setLongitude(lng);
-	}
-	
-	public String toString() {
-		StringBuilder buf = new StringBuilder(_baseAddr);
-		buf.append('/').append(_bits);
-		return buf.toString();
 	}
 	
 	public Object cacheKey() {
