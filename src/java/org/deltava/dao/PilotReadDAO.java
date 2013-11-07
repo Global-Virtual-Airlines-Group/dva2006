@@ -303,28 +303,29 @@ abstract class PilotReadDAO extends DAO {
 				p.setNoExams(rs.getBoolean(36));
 				p.setNoVoice(rs.getBoolean(37));
 				p.setNoCooler(rs.getBoolean(38));
-				p.setACARSRestriction(Restriction.values()[rs.getInt(39)]);
-				p.setLDAPName(rs.getString(40));
-				p.setMotto(rs.getString(41));
+				p.setNoTimeCompression(rs.getBoolean(39));
+				p.setACARSRestriction(Restriction.values()[rs.getInt(40)]);
+				p.setLDAPName(rs.getString(41));
+				p.setMotto(rs.getString(42));
 
-				// Check if this result set has columns 42-45, which is the PIREP totals
-				if (columnCount > 44) {
-					p.setLegs(rs.getInt(42));
-					p.setMiles(rs.getLong(43));
-					p.setHours(rs.getDouble(44));
-					p.setLastFlight(expandDate(rs.getDate(45)));
+				// Check if this result set has columns 43-46, which is the PIREP totals
+				if (columnCount > 45) {
+					p.setLegs(rs.getInt(43));
+					p.setMiles(rs.getLong(44));
+					p.setHours(rs.getDouble(45));
+					p.setLastFlight(expandDate(rs.getDate(46)));
 				}
 
-				// Check if this result set has columns 46/47, which is the signature extension
-				if (columnCount > 46) {
-					p.setSignatureExtension(rs.getString(46));
-					p.setSignatureModified(rs.getTimestamp(47));
+				// Check if this result set has columns 47/48, which is the signature extension
+				if (columnCount > 47) {
+					p.setSignatureExtension(rs.getString(47));
+					p.setSignatureModified(rs.getTimestamp(48));
 				}
 
-				// Check if this result set has columns 48/49, which are online legs/hours
-				if (columnCount > 48) {
-					p.setOnlineLegs(rs.getInt(48));
-					p.setOnlineHours(rs.getDouble(49));
+				// Check if this result set has columns 49/50, which are online legs/hours
+				if (columnCount > 49) {
+					p.setOnlineLegs(rs.getInt(49));
+					p.setOnlineHours(rs.getDouble(50));
 				}
 
 				results.add(p);
