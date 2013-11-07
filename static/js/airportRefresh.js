@@ -97,7 +97,7 @@ xmlreq.open('get', 'airports.ws?' + opts.URLParams(), true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	var o = combo.options[combo.selectedIndex];
-	var oldCodes = (o.airport) ? [o.airport.iata, o.airport.icao] : [null];
+	var oldCodes = ((o) && (o.airport)) ? [o.airport.iata, o.airport.icao] : [null];
 	var isChanged = (oldCodes.indexOf(oldCode) < 0);
 	
 	var jsData = JSON.parse(xmlreq.responseText);
