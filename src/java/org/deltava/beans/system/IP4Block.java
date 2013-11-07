@@ -51,4 +51,11 @@ public class IP4Block extends IPBlock {
 		
 		return tmpResult;
 	}
+	
+	@Override
+	public String toString() {
+		StringBuilder buf = new StringBuilder(getAddress());
+		buf.append('/').append(getBits());
+		return buf.toString();
+	}
 }
