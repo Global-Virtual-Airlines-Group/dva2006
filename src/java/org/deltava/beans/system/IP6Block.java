@@ -60,6 +60,13 @@ public class IP6Block extends IPBlock {
 		return tmpResult;
 	}
 	
+	@Override
+	public String toString() {
+		StringBuilder buf = new StringBuilder(getAddress());
+		buf.append('/').append(128 - getBits());
+		return buf.toString();
+	}
+	
 	public Object cacheKey() {
 		return Long.valueOf(getID() << 32);
 	}
