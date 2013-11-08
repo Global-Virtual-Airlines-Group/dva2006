@@ -1,0 +1,47 @@
+#!/bin/bash
+#
+# GVA log archive script
+# Copyright 2013 Global Virtual Ailines Group. All Rights Reserved.
+#
+
+LOG_PATH=$1
+THIS_YEAR=`date +%Y`
+THIS_MONTH=`date +%m`
+LAST_MONTH=$[`date +%m` - 1]
+LAST_YEAR=`date +%Y`
+if [ $LAST_MONTH -eq 0 ]
+then
+	LAST_MONTH=12
+	LAST_YEAR=$[$LAST_YEAR - 1]
+fi
+
+echo "Archiving Server logs in $LOG_PATH"
+
+TM_FMT=`date -d$THIS_YEAR-$THIS_MONTH-01 +%Y-%b`
+LM_FMT=`date -d$LAST_YEAR-$LAST_MONTH-01 +%Y-%b`
+
+# Get log counts
+GZ_LOG_COUNT=`find $LOG_PATH -maxdepth 0 -name $TM_FMT-??.gz | wc -l`
+GZ_LOG_COUNT=$[ $GZ_LOG_COUNT + `find $LOG_PATH -maxdepth 0 -name $LM_FMT-??.gz | wc -l`]
+BZ_LM_COUNT=`find $LOG_PATH -maxdepth 0 -name $LM_FMT-??.bz2 | wc -l`
+
+# Convert GZIP'd log files
+if [ $GZ_LOG_COUNT -gt 0 ]
+then
+	echo "Converting $GZ_LOG_COUNT log entries"
+	for LOG_FILE in `ls -a $LOG_PATH/*.gz`
+	do
+		chown root:backup $LOG_FILE
+		nice gunzip $LOG_FILE
+		nice pbzip2 -9 -b20 $LOG_FILE
+	done
+fi
+
+# Move last month's log files
+if [ $BZ_LM_COUNT -gt 0 ]
+then
+	echo "Archiving $BZ_LM_COUNT log entries"
+	mv $LM_FMT-??.bz2 $LAST_YEAR
+fi
+
+exit 0
