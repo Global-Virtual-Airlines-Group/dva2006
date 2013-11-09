@@ -120,6 +120,7 @@ golgotha.onDOMReady(function() {
 <content:enum var="ranks" className="org.deltava.beans.Rank" />
 <content:enum var="notifyOptions" className="org.deltava.beans.Notification" />
 <content:enum var="distanceUnits" className="org.deltava.beans.DistanceUnit" />
+<content:enum var="weightUnits" className="org.deltava.beans.WeightUnit" />
 <content:enum var="mapTypes" className="org.deltava.beans.MapType" />
 <content:enum var="acarsRest" className="org.deltava.beans.acars.Restriction" />
 <content:enum var="acTypes" className="org.deltava.beans.schedule.Airport$Code" />
@@ -321,6 +322,10 @@ pixels, and the maximum file size is <fmt:int value="${sigSize}" /> bytes.</span
 <tr>
  <td class="label">Distance Units</td>
  <td colspan="${cspan}" class="data"><el:check name="distanceUnits" type="radio" cols="3" options="${distanceUnits}" value="${pilot.distanceType}" /></td>
+</tr>
+<tr>
+ <td class="label">Weight Units</td>
+ <td colspan="${cspan}" class="data"><el:check name="weightUnits" type="radio" cols="3" options="${weightUnits}" value="${pilot.weightType}" /></td>
 </tr>
 <tr>
  <td class="label">Route Map Type</td>

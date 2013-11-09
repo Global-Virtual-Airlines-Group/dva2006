@@ -210,6 +210,14 @@ ${dupe.rank.name} <el:cmd url="profile" link="${dupe}" className="bld">${dupe.na
  <td class="data bld">${applicant.airportCodeType}</td>
 </tr>
 <tr>
+ <td class="label">Distance Units</td>
+ <td class="data bld">${applicant.distanceType.unitName}s</td>
+</tr>
+<tr>
+ <td class="label">Weight Units</td>
+ <td class="data bld">${applicant.weightType.unitName}s</td>
+</tr>
+<tr>
  <td class="label">User Interface</td>
  <td class="data">${applicant.UIScheme}</td>
 </tr>

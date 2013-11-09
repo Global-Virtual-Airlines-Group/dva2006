@@ -133,6 +133,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			p.setEmailAccess(StringUtils.parse(ctx.getParameter("privacyOption"), Person.HIDE_EMAIL));
 			p.setTZ(TZInfo.get(ctx.getParameter("tz")));
 			p.setDistanceType(DistanceUnit.valueOf(ctx.getParameter("distanceUnits")));
+			p.setWeightType(WeightUnit.valueOf(ctx.getParameter("weightUnits")));
 			p.setAirportCodeType(Airport.Code.valueOf(ctx.getParameter("airportCodeType")));
 			p.setMapType(MapType.valueOf(ctx.getParameter("mapType")));
 			p.setUIScheme(ctx.getParameter("uiScheme"));

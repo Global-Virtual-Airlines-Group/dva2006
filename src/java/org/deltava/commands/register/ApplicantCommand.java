@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command for processing Applicant Profiles.
  * @author Luke
- * @version 5.1
+ * @version 5.2
  * @since 1.0
  */
 
@@ -69,6 +69,8 @@ public class ApplicantCommand extends AbstractFormCommand {
 			a.setTimeFormat(ctx.getParameter("tf"));
 			a.setNumberFormat(ctx.getParameter("nf"));
 			a.setAirportCodeType(Airport.Code.valueOf(ctx.getParameter("airportCodeType")));
+			a.setDistanceType(DistanceUnit.valueOf(ctx.getParameter("distanceUnits")));
+			a.setWeightType(WeightUnit.valueOf(ctx.getParameter("weightUnits")));
 			a.setTZ(TZInfo.get(ctx.getParameter("tz")));
 			a.setUIScheme(ctx.getParameter("uiScheme"));
 			a.setHRComments(ctx.getParameter("HRcomments"));

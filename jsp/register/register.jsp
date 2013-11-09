@@ -33,6 +33,7 @@ if (!validateText(form.df, 7, 'Date Format')) return false;
 if (!validateText(form.tf, 5, 'Time Format')) return false;
 if (!validateText(form.nf, 5, 'Number Format')) return false;
 if (!validateCheckBox(form.distanceUnits, 1, 'Distance Unit')) return false;
+if (!validateCheckBox(form.weightUnits, 1, 'Weight Unit')) return false;
 
 // Validate e-mail domain
 var eMail = form.email.value;
@@ -127,6 +128,7 @@ golgotha.onDOMReady(function() {
 <content:sysdata var="airlineDomain" name="airline.domain" />
 <content:enum var="notifyOptions" className="org.deltava.beans.Notification" />
 <content:enum var="distanceUnits" className="org.deltava.beans.DistanceUnit" />
+<content:enum var="weightUnits" className="org.deltava.beans.WeightUnit" />
 <content:enum var="acTypes" className="org.deltava.beans.schedule.Airport$Code" />
 
 <!-- Main Body Frame -->
@@ -249,6 +251,10 @@ This is also a good time to review <content:airline />'s <el:cmd url="privacy" c
 <tr>
  <td class="label">Distance Units</td>
  <td class="data" colspan="${cspan}"><el:check name="distanceUnits" idx="*" type="radio" cols="3" options="${distanceUnits}" value="MI" /></td>
+</tr>
+<tr>
+ <td class="label">Wegith Units</td>
+ <td class="data" colspan="${cspan}"><el:check name="weightUnits" idx="*" type="radio" cols="3" options="${weightUnits}" value="LB" /></td>
 </tr>
 <tr>
  <td class="label">User Interface</td>

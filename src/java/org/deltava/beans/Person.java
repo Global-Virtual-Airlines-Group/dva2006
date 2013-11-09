@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * An abstract class storing information about a Person.
  * @author Luke
- * @version 5.0
+ * @version 5.2
  * @since 1.0
  */
 
@@ -66,6 +66,7 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	private String _tFormat = "hh:mm:ss";
 	private Airport.Code _airportCodeType;
 	private DistanceUnit _distanceType;
+	private WeightUnit _weightType;
 	private String _uiScheme;
 	private int _viewCount;
 
@@ -434,11 +435,20 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	
 	/**
 	 * Returns the Person's preferred distance unit.
-	 * @return the unit type code
+	 * @return the unit type
 	 * @see Person#setDistanceType(DistanceUnit)
 	 */
 	public DistanceUnit getDistanceType() {
 		return _distanceType;
+	}
+	
+	/**
+	 * Returns the Person's preferred weight unit.
+	 * @return the unit type
+	 * @see Person#setWeightType(WeightUnit)
+	 */
+	public WeightUnit getWeightType() {
+		return _weightType;
 	}
 	
 	/**
@@ -775,6 +785,15 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	 */
 	public void setDistanceType(DistanceUnit un) {
 		_distanceType = un;
+	}
+	
+	/**
+	 * Updates the Person's preferred weight units.
+	 * @param un the WeightUnit
+	 * @see Person#getWeightType()
+	 */
+	public void setWeightType(WeightUnit un) {
+		_weightType = un;
 	}
 	
 	/**
