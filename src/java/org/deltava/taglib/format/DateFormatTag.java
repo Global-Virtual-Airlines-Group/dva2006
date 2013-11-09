@@ -1,14 +1,10 @@
-// Copyright 2005, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2010, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import java.util.Date;
 import java.text.SimpleDateFormat;
 
-import java.security.Principal;
-
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.*;
-import javax.servlet.jsp.tagext.TagSupport;
 
 import org.deltava.beans.*;
 
@@ -17,20 +13,24 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to support the display of formatted date/time values.
  * @author Luke
- * @version 5.0
+ * @version 5.2
  * @since 1.0
  */
 
-public class DateFormatTag extends TagSupport {
+public class DateFormatTag extends UserSettingsTag {
+	
+	private final String DEFAULT_D_FMT = SystemData.get("time.date_format");
+	private final String DEFAULT_T_FMT = SystemData.get("time.time_format");
+	private final TZInfo DEFAULT_TZ = TZInfo.get(SystemData.get("time.timezone"));
 
 	private enum Format {
 		DT, D, T
 	}
 
 	private Format _dtInclude = Format.DT;
-	private String _dateFormat = SystemData.get("time.date_format");
-	private String _timeFormat = SystemData.get("time.time_format");
-	private TZInfo _tz = TZInfo.get(SystemData.get("time.timezone"));
+	private String _dateFormat = DEFAULT_D_FMT;
+	private String _timeFormat = DEFAULT_T_FMT;
+	private TZInfo _tz = DEFAULT_TZ;
 	private DateTime _dt;
 
 	private String _className;
@@ -43,13 +43,10 @@ public class DateFormatTag extends TagSupport {
 	@Override
 	public final void setPageContext(PageContext ctxt) {
 		super.setPageContext(ctxt);
-		HttpServletRequest req = (HttpServletRequest) ctxt.getRequest();
-		Principal user = req.getUserPrincipal();
-		if (user instanceof Person) {
-			Person p = (Person) user;
-			_dateFormat = p.getDateFormat();
-			_timeFormat = p.getTimeFormat();
-			_tz = p.getTZ();
+		if (_user != null) {
+			_dateFormat = _user.getDateFormat();
+			_timeFormat = _user.getTimeFormat();
+			_tz = _user.getTZ();
 		}
 	}
 
@@ -144,9 +141,9 @@ public class DateFormatTag extends TagSupport {
 	public void release() {
 		super.release();
 		_dtInclude = Format.DT;
-		_dateFormat = SystemData.get("time.date_format");
-		_timeFormat = SystemData.get("time.time_format");
-		_tz = TZInfo.get(SystemData.get("time.timezone"));
+		_dateFormat = DEFAULT_D_FMT;
+		_timeFormat = DEFAULT_T_FMT;
+		_tz = DEFAULT_TZ;
 		_dt = null;
 		_className = null;
 	}
