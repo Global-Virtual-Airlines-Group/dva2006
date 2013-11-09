@@ -1,21 +1,21 @@
-// Copyright 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 /**
- * An enumeration to store units of distance. 
+ * An enumeration to store units of weight.
  * @author Luke
  * @version 5.2
- * @since 5.0
+ * @since 5.2
  */
 
-public enum DistanceUnit implements Unit {
+public enum WeightUnit implements Unit {
 	
-	MI("Statute Mile", 1), NM("Nautical Mile", 0.868976242), KM("Kilometer", 1.609344);
-	
+	LB("Pound", 1), KG("Kilogram", 0.453592);
+
 	private final String _name;
 	private final double _factor;
-	
-	DistanceUnit(String name, double factor) {
+
+	WeightUnit(String name, double factor) {
 		_name = name;
 		_factor = factor;
 	}
@@ -29,7 +29,7 @@ public enum DistanceUnit implements Unit {
 	}
 	
 	/**
-	 * Returns the ratio of this distance unit to statute miles.
+	 * Returns the ratio of this distance unit to pounds.
 	 * @return the ratio
 	 */
 	public double getFactor() {
