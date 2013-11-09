@@ -67,6 +67,7 @@ golgotha.onDOMReady(function() {
 <content:enum var="ranks" className="org.deltava.beans.Rank" />
 <content:enum var="notifyOptions" className="org.deltava.beans.Notification" />
 <content:enum var="distanceUnits" className="org.deltava.beans.DistanceUnit" />
+<content:enum var="weightUnits" className="org.deltava.beans.WeightUnit" />
 <content:enum var="acTypes" className="org.deltava.beans.schedule.Airport$Code" />
 
 <!-- Main Body Frame -->
@@ -159,6 +160,10 @@ golgotha.onDOMReady(function() {
 <tr>
  <td class="label">Distance Units</td>
  <td class="data"><el:check name="distanceUnits" idx="*" type="radio" cols="3" options="${distanceUnits}" value="${applicant.distanceType}" /></td>
+</tr>
+<tr>
+ <td class="label">Weight Units</td>
+ <td class="data"><el:check name="weightUnits" idx="*" type="radio" cols="3" options="${weightUnits}" value="${applicant.weightType}" /></td>
 </tr>
 <tr>
  <td class="label">User Interface</td>

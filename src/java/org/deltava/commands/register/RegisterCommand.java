@@ -159,6 +159,7 @@ public class RegisterCommand extends AbstractCommand {
 		a.setHomeAirport(ctx.getParameter("homeAirport"));
 		a.setEmailAccess(Person.AUTH_EMAIL);
 		a.setDistanceType(DistanceUnit.valueOf(ctx.getParameter("distanceUnits")));
+		a.setWeightType(WeightUnit.valueOf(ctx.getParameter("weightUnits")));
 		a.setAirportCodeType(Airport.Code.valueOf(ctx.getParameter("airportCodeType")));
 		a.setTZ(TZInfo.get(ctx.getParameter("tz")));
 		a.setUIScheme(ctx.getParameter("uiScheme"));
