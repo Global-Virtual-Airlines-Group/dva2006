@@ -63,9 +63,9 @@
 </tr>
 <tr>
  <td class="label">Taxi from Gate</td>
- <td class="data" colspan="${cspan}"><fmt:date date="${pirep.taxiTime}" />, <fmt:int value="${pirep.taxiWeight}" />
- lbs total, <fmt:int value="${pirep.taxiFuel}" /> lbs fuel<c:if test="${acLoaded && (pirep.taxiWeight > acInfo.maxWeight)}"> 
- <span class="small bld">(<fmt:int value="${pirep.taxiWeight - acInfo.maxWeight}" /> lbs overweight)</span></c:if></td>
+ <td class="data" colspan="${cspan}"><fmt:date date="${pirep.taxiTime}" />, <fmt:weight value="${pirep.taxiWeight}" />
+ total, <fmt:weight value="${pirep.taxiFuel}" /> fuel<c:if test="${acLoaded && (pirep.taxiWeight > acInfo.maxWeight)}"> 
+ <span class="small bld">(<fmt:weight value="${pirep.taxiWeight - acInfo.maxWeight}" /> overweight)</span></c:if></td>
 </tr>
 <tr>
  <td class="label">Takeoff Time</td>
@@ -105,9 +105,9 @@
  <fmt:dec value="${pirep.takeoffN1}" />% N<sub>1</sub>, 
 </c:otherwise>
 </c:choose>
- <fmt:int value="${pirep.takeoffWeight}" /> lbs total, <fmt:int value="${pirep.takeoffFuel}" />  lbs fuel
+ <fmt:weight value="${pirep.takeoffWeight}" /> total, <fmt:weight value="${pirep.takeoffFuel}" />  fuel
 <c:if test="${acLoaded && (pirep.takeoffWeight > acInfo.maxTakeoffWeight)}"> 
-<span class="small bld">(<fmt:int value="${pirep.takeoffWeight - acInfo.maxTakeoffWeight}" /> lbs overweight)</span></c:if>
+<span class="small bld">(<fmt:weight value="${pirep.takeoffWeight - acInfo.maxTakeoffWeight}" /> overweight)</span></c:if>
 <c:if test="${access.canDispose && (pirep.takeoffLocation.latitude == 0.0) && (pirep.takeoffLocation.longitude == 0.0)}">
  | <el:cmd url="updtd" link="${flightInfo}">RECALCULATE TAKEOFF POINT</el:cmd></c:if></td>
 </tr>
@@ -159,9 +159,9 @@
 </c:choose>
 <c:if test="${!isXACARS && (pirep.landingCategory != 'NONE')}">
  <span class="sec bld">(ILS ${pirep.landingCategory})</span></c:if>
- <fmt:int value="${pirep.landingWeight}" /> lbs total, <fmt:int value="${pirep.landingFuel}" /> lbs fuel
+ <fmt:weight value="${pirep.landingWeight}" /> total, <fmt:weight value="${pirep.landingFuel}" /> fuel
 <c:if test="${acLoaded && (pirep.landingWeight > acInfo.maxLandingWeight)}">
- <span class="small bld">(<fmt:int value="${pirep.landingWeight - acInfo.maxLandingWeight}" /> lbs overweight)</span></c:if>
+ <span class="small bld">(<fmt:weight value="${pirep.landingWeight - acInfo.maxLandingWeight}" /> overweight)</span></c:if>
 <c:if test="${access.canDispose && (pirep.landingLocation.latitude == 0.0) && (pirep.landingLocation.longitude == 0.0)}">
  | <el:cmd url="updtd" link="${flightInfo}">RECALCULATE TOUCHDOWN POINT</el:cmd></c:if></td>
 </tr>
@@ -175,14 +175,14 @@
 <tr>
  <td class="label">Arrival Information</td>
  <td class="data" colspan="${cspan}"><c:if test="${!empty gate}"><span class="sec bld">${gate.name}</span>, </c:if>
-<fmt:int value="${pirep.gateWeight}" /> lbs total, <fmt:int value="${pirep.gateFuel}" /> lbs fuel
+<fmt:weight value="${pirep.gateWeight}" /> total, <fmt:weight value="${pirep.gateFuel}" /> fuel
 <c:if test="${!empty gate}"> <a href="javascript:void zoomTo(${gate.latitude}, ${gate.longitude}, 15)">Zoom to Gate</a></c:if></td>
 </tr>
 </c:if>
 <c:if test="${pirep.totalFuel > 0}">
 <tr>
  <td class="label">Total Fuel Used</td>
- <td class="data" colspan="${cspan}"><fmt:int value="${pirep.totalFuel}" /> lbs</td>
+ <td class="data" colspan="${cspan}"><fmt:weight value="${pirep.totalFuel}" longUnits="true" /></td>
 </tr>
 </c:if>
 <tr>
