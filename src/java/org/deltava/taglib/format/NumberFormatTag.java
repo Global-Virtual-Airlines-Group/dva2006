@@ -1,23 +1,18 @@
-// Copyright 2004, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2007, 2009, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import java.text.*;
-import java.security.Principal;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.*;
-import javax.servlet.jsp.tagext.TagSupport;
-
-import org.deltava.beans.Person;
 
 /**
  * A JSP tag to support the rendering of formatted numeric values.
  * @author Luke
- * @version 2.4
+ * @version 5.2
  * @since 1.0
  */
 
-public abstract class NumberFormatTag extends TagSupport {
+public abstract class NumberFormatTag extends UserSettingsTag {
 
     protected DecimalFormat _nF;
     protected Number _value;
@@ -72,10 +67,8 @@ public abstract class NumberFormatTag extends TagSupport {
      */
     public void setPageContext(PageContext ctxt) {
         super.setPageContext(ctxt);
-        HttpServletRequest req = (HttpServletRequest) ctxt.getRequest();
-        Principal user = req.getUserPrincipal();
-        if (user instanceof Person)
-            _nF.applyPattern(((Person) user).getNumberFormat());
+        if (_user != null)
+            _nF.applyPattern(_user.getNumberFormat());
     }
     
     /**
