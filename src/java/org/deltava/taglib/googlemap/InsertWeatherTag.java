@@ -4,7 +4,6 @@ package org.deltava.taglib.googlemap;
 import java.util.*;
 
 import javax.servlet.jsp.*;
-import javax.servlet.jsp.tagext.TagSupport;
 
 import org.deltava.taglib.ContentHelper;
 
@@ -14,18 +13,23 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP Tag to insert weather.com Series List data into a JSP page. 
  * @author Luke
- * @version 5.1
+ * @version 5.2
  * @since 3.0
  */
 
-public class InsertWeatherTag extends TagSupport {
+public class InsertWeatherTag extends WeatherJSTag {
 	
-	private static final String DEFAULT_FUNC = "loadSeries";
 	private static final String USAGE_ATTR_NAME = "$wxLayerUsage$";
 	
-	private String _jsFunc = DEFAULT_FUNC;
 	private int _max = 0;
 	private final Collection<String> _layers = new TreeSet<String>();
+	
+	/**
+	 * Constructor. Sets the default function name.
+	 */
+	public InsertWeatherTag() {
+		super("loadSeries");
+	}
 	
 	/**
 	 * Sets the layers to download image series data for.
@@ -44,49 +48,17 @@ public class InsertWeatherTag extends TagSupport {
 	}
 	
 	/**
-	 * Overrides the series list parsing function name.
-	 * @param jsFunc a JavaScript function name
-	 */
-	public void setFunction(String jsFunc) {
-		_jsFunc = jsFunc;
-	}
-	
-	/**
 	 * Releases the tag's state data.
 	 */
 	@Override
 	public void release() {
 		super.release();
 		_layers.clear();
-		_jsFunc = DEFAULT_FUNC;
-	}
-	
-	/**
-	 * Executed before the Tag is rendered. This will check for the presence of required JavaScript files in the
-	 * request. Tags that do not require this check can override this method.
-	 * @return TagSupport.SKIP_BODY always
-	 * @throws IllegalStateException if the Google Maps API or googleMaps.js not included in request
-	 */
-	@Override
-	public int doStartTag() throws JspException {
-		super.doStartTag();
-		
-		// Check if we've already included the Google API
-		if (!ContentHelper.containsContent(pageContext, "JS", GoogleMapEntryTag.API_JS_NAME))
-			throw new JspException("Google Maps API not loaded");
-		
-		// Check for Google Maps / Weather support JavaScript
-		if (!ContentHelper.containsContent(pageContext, "JS", "googleMapsV3"))
-			throw new JspException("googleMaps.js not included in request");
-		if (!ContentHelper.containsContent(pageContext, "JS", "googleMapsWX"))
-			throw new JspException("googleMapsWX.js not included in request");
-		
-		return SKIP_BODY;
 	}
 	
 	/**
 	 * Executed when tag is rendered. Creates a JavaScript block to dynamically load a weather.com
-	 * image series list
+	 * image series list.
 	 * @return TagSupport.EVAL_PAGE always
 	 * @throws JspException if an error occurs
 	 */
