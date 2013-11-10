@@ -463,12 +463,13 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 				a.setNumberFormat(rs.getString(25));
 				a.setAirportCodeType(Airport.Code.values()[rs.getInt(26)]);
 				a.setDistanceType(DistanceUnit.values()[rs.getInt(27)]);
-				a.setSimVersion(rs.getInt(28));
-				a.setTZ(TZInfo.get(rs.getString(29)));
-				a.setUIScheme(rs.getString(30));
-				a.setComments(rs.getString(31));
-				a.setHRComments(rs.getString(32));
-				a.setRegisterAddress(rs.getString(33));
+				a.setWeightType(WeightUnit.values()[rs.getInt(28)]);
+				a.setSimVersion(rs.getInt(29));
+				a.setTZ(TZInfo.get(rs.getString(30)));
+				a.setUIScheme(rs.getString(31));
+				a.setComments(rs.getString(32));
+				a.setHRComments(rs.getString(33));
+				a.setRegisterAddress(rs.getString(34));
 				results.add(a);
 			}
 		}
