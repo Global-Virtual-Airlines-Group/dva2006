@@ -24,6 +24,8 @@
 <content:sysdata var="tileHost" name="weather.tileHost" />
 <c:if test="${!empty tileHost}">
 <script type="text/javascript">
+var frLoader;
+frLoader = new golgotha.maps.FrontLoader();
 var gsLoader;
 gsLoader = new golgotha.maps.GinsuLoader(2);
 gsLoader.setData('radar', 0.45, 'wxRadar');
@@ -31,7 +33,8 @@ gsLoader.setData('eurorad', 0.45, 'wxRadar');
 gsLoader.setData('temp', 0.275, 'wxTemp');
 gsLoader.setData('windspeed', 0.325, 'wxWind');
 </script>
-<map:wxList layers="radar,eurorad,temp,windspeed" function="gsLoader.load" max="2" /></c:if>
+<map:wxList layers="radar,eurorad,temp,windspeed" function="gsLoader.load" max="2" />
+<map:wxFronts function="frLoader.load" /></c:if>
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
 <fmt:aptype var="useICAO" />
 <script type="text/javascript">
@@ -201,6 +204,7 @@ map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(document.getElementBy
 map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Radar', [gsLoader.getLatest('radar'), gsLoader.getLatest('eurorad')]));
 map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Temperature', gsLoader.getLatest('temp')));
 map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Wind Speed', gsLoader.getLatest('windspeed')));
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Fronts', frLoader.getLayer()));
 </c:if>
 // Build the standard weather layers
 map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Clouds', new google.maps.weather.CloudLayer()));
@@ -211,8 +215,7 @@ var dGates = new MarkerManager(map, {maxZoom:18});
 
 // Update text color
 google.maps.event.trigger(map, 'maptypeid_changed');
-<c:if test="${!empty airportD}">
-plotMap();</c:if>
+<c:if test="${!empty airportD}">plotMap();</c:if>
 </script>
 </body>
 </html>

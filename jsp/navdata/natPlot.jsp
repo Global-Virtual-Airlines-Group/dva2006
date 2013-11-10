@@ -17,6 +17,9 @@
 <content:googleAnalytics eventSupport="true" />
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
 <script type="text/javascript">
+var frLoader;
+frLoader = new golgotha.maps.FrontLoader();
+
 function showTrackInfo(marker)
 {
 var label = document.getElementById('trackLabel');
@@ -144,6 +147,7 @@ xmlreq.send(null);
 return true;
 }
 </script>
+<map:wxFronts function="frLoader.load" />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -197,7 +201,8 @@ map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.
 google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });
 google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
 
-// Add clouds
+// Add layers
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Fronts', frLoader.getLayer()));
 map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Clouds', new google.maps.weather.CloudLayer()));
 map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerClearControl(map));
 
