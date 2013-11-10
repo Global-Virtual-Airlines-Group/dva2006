@@ -299,33 +299,34 @@ abstract class PilotReadDAO extends DAO {
 				p.setNumberFormat(rs.getString(32));
 				p.setAirportCodeType(Airport.Code.values()[rs.getInt(33)]);
 				p.setDistanceType(DistanceUnit.values()[rs.getInt(34)]);
-				p.setMapType(MapType.values()[rs.getInt(35)]);
-				p.setNoExams(rs.getBoolean(36));
-				p.setNoVoice(rs.getBoolean(37));
-				p.setNoCooler(rs.getBoolean(38));
-				p.setNoTimeCompression(rs.getBoolean(39));
-				p.setACARSRestriction(Restriction.values()[rs.getInt(40)]);
-				p.setLDAPName(rs.getString(41));
-				p.setMotto(rs.getString(42));
+				p.setWeightType(WeightUnit.values()[rs.getInt(35)]);
+				p.setMapType(MapType.values()[rs.getInt(36)]);
+				p.setNoExams(rs.getBoolean(37));
+				p.setNoVoice(rs.getBoolean(38));
+				p.setNoCooler(rs.getBoolean(39));
+				p.setNoTimeCompression(rs.getBoolean(40));
+				p.setACARSRestriction(Restriction.values()[rs.getInt(41)]);
+				p.setLDAPName(rs.getString(42));
+				p.setMotto(rs.getString(43));
 
-				// Check if this result set has columns 43-46, which is the PIREP totals
-				if (columnCount > 45) {
-					p.setLegs(rs.getInt(43));
-					p.setMiles(rs.getLong(44));
-					p.setHours(rs.getDouble(45));
-					p.setLastFlight(expandDate(rs.getDate(46)));
+				// Check if this result set has columns 44-47, which is the PIREP totals
+				if (columnCount > 46) {
+					p.setLegs(rs.getInt(44));
+					p.setMiles(rs.getLong(45));
+					p.setHours(rs.getDouble(46));
+					p.setLastFlight(expandDate(rs.getDate(47)));
 				}
 
-				// Check if this result set has columns 47/48, which is the signature extension
-				if (columnCount > 47) {
-					p.setSignatureExtension(rs.getString(47));
-					p.setSignatureModified(rs.getTimestamp(48));
+				// Check if this result set has columns 48/49, which is the signature extension
+				if (columnCount > 48) {
+					p.setSignatureExtension(rs.getString(48));
+					p.setSignatureModified(rs.getTimestamp(49));
 				}
 
-				// Check if this result set has columns 49/50, which are online legs/hours
-				if (columnCount > 49) {
-					p.setOnlineLegs(rs.getInt(49));
-					p.setOnlineHours(rs.getDouble(50));
+				// Check if this result set has columns 50/51, which are online legs/hours
+				if (columnCount > 50) {
+					p.setOnlineLegs(rs.getInt(50));
+					p.setOnlineHours(rs.getDouble(51));
 				}
 
 				results.add(p);

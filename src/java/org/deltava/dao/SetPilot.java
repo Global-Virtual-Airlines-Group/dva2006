@@ -50,9 +50,9 @@ public class SetPilot extends PilotWriteDAO {
 		sqlBuf.append(".PILOTS SET EMAIL=?, LOCATION=?, LEGACY_HOURS=?, HOME_AIRPORT=?, VATSIM_ID=?, "
 			+ "IVAO_ID=?, TZ=?, NOTIFY=?, SHOW_EMAIL=?, SHOW_WC_SIG=?, SHOW_WC_SSHOTS=?, "
 			+ "SHOW_DEF_SIG=?, SHOW_NEW_POSTS=?, UISCHEME=?, NAVBAR=?, VIEWSIZE=?, DFORMAT=?, "
-			+ "TFORMAT=?, NFORMAT=?, AIRPORTCODE=?, DISTANCEUNITS=?, MAPTYPE=?, RANK=?, EQTYPE=?, "
-			+ "STATUS=?, NOEXAMS=?, NOVOICE=?, NOCOOLER=?, NOTIMECOMPRESS=?, ACARS_RESTRICT=?, "
-			+ "UID=?, MOTTO=?, FIRSTNAME=?, LASTNAME=? WHERE (ID=?)");
+			+ "TFORMAT=?, NFORMAT=?, AIRPORTCODE=?, DISTANCEUNITS=?, WEIGHTUNITS=?, MAPTYPE=?, "
+			+ "RANK=?, EQTYPE=?, STATUS=?, NOEXAMS=?, NOVOICE=?, NOCOOLER=?, NOTIMECOMPRESS=?, "
+			+ "ACARS_RESTRICT=?, UID=?, MOTTO=?, FIRSTNAME=?, LASTNAME=? WHERE (ID=?)");
 
 		try {
 			// This involves a lot of reads and writes, so its written as a single transaction
@@ -79,20 +79,21 @@ public class SetPilot extends PilotWriteDAO {
 			_ps.setString(19, p.getNumberFormat());
 			_ps.setInt(20, p.getAirportCodeType().ordinal());
 			_ps.setInt(21, p.getDistanceType().ordinal());
-			_ps.setInt(22, p.getMapType().ordinal());
-			_ps.setString(23, p.getRank().getName());
-			_ps.setString(24, p.getEquipmentType());
-			_ps.setInt(25, p.getStatus());
-			_ps.setBoolean(26, p.getNoExams());
-			_ps.setBoolean(27, p.getNoVoice());
-			_ps.setBoolean(28, p.getNoCooler());
-			_ps.setBoolean(29, p.getNoTimeCompression());
-			_ps.setInt(30, p.getACARSRestriction().ordinal());
-			_ps.setString(31, p.getLDAPName());
-			_ps.setString(32, p.getMotto());
-			_ps.setString(33, p.getFirstName());
-			_ps.setString(34, p.getLastName());
-			_ps.setInt(35, p.getID());
+			_ps.setInt(22, p.getWeightType().ordinal());
+			_ps.setInt(23, p.getMapType().ordinal());
+			_ps.setString(24, p.getRank().getName());
+			_ps.setString(25, p.getEquipmentType());
+			_ps.setInt(26, p.getStatus());
+			_ps.setBoolean(27, p.getNoExams());
+			_ps.setBoolean(28, p.getNoVoice());
+			_ps.setBoolean(29, p.getNoCooler());
+			_ps.setBoolean(30, p.getNoTimeCompression());
+			_ps.setInt(31, p.getACARSRestriction().ordinal());
+			_ps.setString(32, p.getLDAPName());
+			_ps.setString(33, p.getMotto());
+			_ps.setString(34, p.getFirstName());
+			_ps.setString(35, p.getLastName());
+			_ps.setInt(36, p.getID());
 			executeUpdate(1);
 
 			// Update the roles/ratings
