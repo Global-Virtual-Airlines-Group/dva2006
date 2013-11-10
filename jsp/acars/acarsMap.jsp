@@ -22,6 +22,8 @@
 <content:js name="googleMapsWX" />
 <c:if test="${!empty tileHost}">
 <script type="text/javascript">
+var frLoader;
+frLoader = new golgotha.maps.FrontLoader();
 var gsLoader;
 gsLoader = new golgotha.maps.GinsuLoader(2);
 gsLoader.setData('radar', 0.4, 'wxRadar');
@@ -30,7 +32,8 @@ gsLoader.setData('temp', 0.275, 'wxTemp');
 gsLoader.setData('windspeed', 0.325, 'wxWind');
 gsLoader.setData('future_radar_ff', 0.375, 'ffRadar');
 </script>
-<map:wxList layers="radar,eurorad,temp,windspeed,future_radar_ff" function="gsLoader.load" max="8" /></c:if>
+<map:wxList layers="radar,eurorad,temp,windspeed,future_radar_ff" function="gsLoader.load" max="8" />
+<map:wxFronts function="frLoader.load" /></c:if>
 <script type="text/javascript">
 function reloadData(isAuto)
 {
@@ -178,6 +181,7 @@ map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.Lay
 map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Temperature', gsLoader.getLatest('temp')));
 map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Wind Speed', gsLoader.getLatest('windspeed')));
 map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerAnimateControl(map, 'Radar Loop', ff, 333));
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Fronts', frLoader.getLayer()));
 map.controls[google.maps.ControlPosition.TOP_CENTER].push(golgotha.maps.util.progress.getDiv());
 </c:if>
 // Add other layers
