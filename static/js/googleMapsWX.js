@@ -243,7 +243,14 @@ var sc = document.createElement('script');
 sc.setAttribute('id', id);
 sc.type = 'text/javascript';
 sc.src = url;
-document.body.appendChild(sc);
+
+var oldSC = document.getElementById(id);
+if (oldSC != null)
+	document.body.replaceChild(odSC, sc)
+else
+	document.body.appendChild(sc);
+
+//window.setInterval("golgotha.maps.loadSeries('" + url + "','" + id + "'," + interval + ")");
 return true;
 }
 
@@ -339,9 +346,7 @@ golgotha.maps.WULoader = function(minZoom) {
 		for (var x = 0; x < seriesData.names.length; x++) {
 			var layerName = seriesData.names[x];
 			var layerData = eval('seriesData.' + layerName);
-			if (layerData == undefined)
-				continue;
-			else if (layerData.length == 0)
+			if ((layerData == undefined) || (layerData.length == 0))
 				continue;
 
 			var myLayerData = this.imgData[layerName];
@@ -581,5 +586,92 @@ golgotha.maps.Animator.prototype.idleHandler = function() {
 		a.start();
 	}
 
+	return true;
+}
+
+// Front options
+golgotha.maps.frontOpts = {
+		"WARM":{strokeOpacity:1, strokeColor:"#ff0000", icons:[{icon:{path:"M 0,-2 A 2,2 0 0 0 0,2 z",fillColor:"red",fillOpacity:1,strokeWeight:1,scale:3},offset:"12px",repeat:"24px"}], zIndex:3, geodesic:true},
+		"COLD":{strokeOpacity:1, strokeColor:"#0000ff", icons:[{icon:{path:"M 0,-2 0,2 -2,0 z",fillColor:"blue",fillOpacity:1,strokeWeight:1,scale:3},offset:"12px",repeat:"24px"}], zIndex:3, geodesic:true},
+		"OCFNT":{strokeOpacity:1, strokeColor:"#912CEE", icons:[{icon:{path:"M 0,-4 A 2,2 0 0 0 0,0 L -3,2 0,4 z",fillColor:"#912CEE",fillOpacity:1,strokeWeight:1,scale:3},offset:"18px",repeat:"36px"}], zIndex:3, geodesic:true},
+		"STNRY":{strokeOpacity:0, icons:[{icon:{path:"M 0,-4 0,4",strokeWeight:3,strokeOpacity:1,strokeColor:"blue"},offset:"0px",repeat:"48px"},{icon:{path:"M 0,-4 0,4",strokeWeight:3,strokeOpacity:1,strokeColor:"red"},offset:"24px",repeat:"48px"},{icon:{path:"M 0,-2 0,2 -2,0 z",fillColor:"blue",fillOpacity:1,scale:3},offset:"0",repeat:"48px"},{icon:{path:"M 0,-2 A 2,2 0 0 1 0,2 z",fillColor:"red",fillOpacity:1,scale:3},offset:"24px",repeat:"48px"}], zIndex:3, geodesic:true},
+		"TROF":{strokeOpacity:0, icons:[{icon:{path:"M 0,-1 0,1",strokeOpacity:1,strokeWeight:2,scale:5,strokeColor:"#999999"},offset:"0",repeat:"20px"}],zIndex:3, geodesic:true}
+};
+
+golgotha.maps.FrontsLayer = function(opts, name) {
+	var fl = {opts:opts, name:name, lines:[], map:null};
+	fl.getMap = function() { return this.map; };
+	fl.setMap = function(m) {
+		for (var x = 0; x < this.lines.length; x++) {
+			var l = this.lines[x];
+			l.setMap(m);
+		}
+	};
+	
+	fl.set = function(k, v) { this.opts[k] = v; };
+	fl.get = function(k) { return this.opts[k]; };
+	fl.addFront = function(l) { if (!this.lines.contains(l)) this.lines.push(l); };
+	fl.removeFront = function(l) { this.lines.remove(l); };
+	fl.getCopyright = function() {
+		var d = this.get('timestamp');
+		return 'Weather Data &copy; ' + d.getFullYear() + ' Weather Underground.'
+	};
+	
+	fl.getTextDate = function() {
+		var d = this.get('timestamp');
+		var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+		return d.getDate() + '-' + months[d.getMonth()] + '-' + d.getFullYear() + '  ' 
+			+ d.getHours() + ':' + ((d.getMinutes() < 10) ? '0' + d.getMinutes() : d.getMinutes());	
+	};
+	
+	return fl;
+}
+
+golgotha.maps.FrontLoader = function() {
+	this.ovLayer = null;
+}
+
+golgotha.maps.FrontLoader.prototype.getLayer = function() { return this.ovLayer; };
+golgotha.maps.FrontLoader.prototype.load = function(seriesData) {
+	var data = seriesData.FRONTS;
+	var d = data.UTCDATE;
+	var ts = new Date(d.year, d.mon-1, d.day, d.hour, 0, 0);
+	var fl = new golgotha.maps.FrontsLayer({timestamp:new Date()}, 'Fronts');
+	
+	// Parse fronts
+	var fd = data.FRONTS;
+	for (var x = 0; x < fd.length; x++) {
+		var f = fd[x]; var l = new google.maps.Polyline(golgotha.maps.frontOpts[f.type]);
+		var pts = [];
+		for (var y = 0; y < f.points.length; y++) {
+			var pt = f.points[y];
+			pts.push(new google.maps.LatLng(pt.lat, pt.lon));
+		}
+
+		l.setPath(pts);
+		fl.addFront(l);
+	}
+	
+	// Parse Highs
+	var hd = data.HIGHS;
+	var hm = new google.maps.MarkerImage('/' + golgotha.maps.IMG_PATH + '/wx/H.png', new google.maps.Size(30, 30), null, new google.maps.Point(15, 15));
+	for (var x = 0; x < hd.length; x++) {
+		var h = hd[x];
+		var ll = new google.maps.LatLng(h.lat, h.lon);
+		var mrk = new google.maps.Marker({icon:hm, position:ll, title:'High Pressure (' + h.pressuremb + 'mb)'});
+		fl.addFront(mrk);
+	}
+	
+	// Parse Lows
+	var ld = data.LOWS;
+	var lm = new google.maps.MarkerImage('/' + golgotha.maps.IMG_PATH + '/wx/L.png', new google.maps.Size(30, 30), null, new google.maps.Point(15, 15));
+	for (var x = 0; x < ld.length; x++) {
+		var l = ld[x];
+		var ll = new google.maps.LatLng(l.lat, l.lon);
+		var mrk = new google.maps.Marker({icon:lm, position:ll, title:'Low Pressure (' + h.pressuremb + 'mb)'});
+		fl.addFront(mrk);
+	}
+	
+	this.ovLayer = fl;
 	return true;
 }
