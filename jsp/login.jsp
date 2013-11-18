@@ -60,12 +60,13 @@ return true;
 <content:page>
 <%@include file="/jsp/main/header.jspf" %> 
 <%@include file="/jsp/main/sideMenu.jspf" %>
+<content:sysdata var="domain" name="airline.domain" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
-Welcome to <content:airline />! In order to access the secure areas of our site, please enter 
+Welcome to <content:airline />! In order to access the secure areas of our web site, please enter 
 your first and last name or your User ID and password. Your browser must be able to accept cookies 
-in order to log into the site.<br />
+from <span class="sec bld">${domain}</span> in order to log into the site.<br />
 <br />
 <el:form method="post" action="login.do" validate="return validate(this)">
 <el:table className="form">

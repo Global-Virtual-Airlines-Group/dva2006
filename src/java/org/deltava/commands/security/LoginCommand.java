@@ -138,16 +138,20 @@ public class LoginCommand extends AbstractCommand {
 					}
 				}
 				
-				// If we got more than one pilot, save in the request and ask the user to pick
-				for (Iterator<Pilot> i = users.iterator(); i.hasNext(); ) {
-					Pilot usr = i.next();
-					if ((usr.getStatus() != Pilot.ACTIVE) && (usr.getStatus() != Pilot.ON_LEAVE))
-						i.remove();
+				// If we got more than one pilot, filter inactive pilots
+				List<Pilot> activeUsers = new ArrayList<Pilot>();
+				for (Pilot usr : users) {
+					if ((usr.getStatus() == Pilot.ACTIVE) || (usr.getStatus() == Pilot.ON_LEAVE))
+						activeUsers.add(usr);
 				}
 				
-				ctx.setAttribute("dupeUsers", users, REQUEST);
-				if (p == null)
+				// If there's more than one, we're good
+				if ((p == null) && (activeUsers.size() == 1))
+					p = activeUsers.get(0);
+				else if (p == null) {
+					ctx.setAttribute("dupeUsers", activeUsers, REQUEST);
 					throw new SecurityException("Multiple Users found - please select");
+				}
 			} else
 				p = users.get(0);
 
