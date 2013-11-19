@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.tile;
 
 import java.util.*;
@@ -8,7 +8,7 @@ import java.awt.image.*;
 /**
  * A class to store color palette data.
  * @author Luke
- * @version 5.0
+ * @version 5.2
  * @since 5.0
  */
 
@@ -19,6 +19,18 @@ public class Palette {
 	private final int _maxSize;
 	
 	private transient int[] _xlator = null;
+
+	/**
+	 * Generates a palette with a maximum number of colors.
+	 * @param maxColors the maximum colors
+	 */
+	Palette(int maxColors) {
+		super();
+		if (maxColors > 256)
+			throw new IllegalArgumentException("Palette size cannot exceed 256 colors!");
+		
+		_maxSize = Math.max(0, maxColors);
+	}
 	
 	/**
 	 * Generates a palette from an existing Image. 
@@ -27,10 +39,7 @@ public class Palette {
 	 * @throws IllegalArgumentException if the Image has over 256 colors
 	 */
 	public Palette(BufferedImage img, int maxColors) {
-		if (maxColors > 256)
-			throw new IllegalArgumentException("Palette size cannot exceed 256 colors!");
-		
-		_maxSize = Math.max(0, maxColors);
+		this(maxColors);
 		
 		// If this already uses a palette, read it
 		if (img.getColorModel() instanceof IndexColorModel) {
