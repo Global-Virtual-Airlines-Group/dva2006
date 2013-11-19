@@ -17,7 +17,7 @@ import org.deltava.beans.schedule.GeoPosition;
 public class MercatorProjection implements Projection {
 	
 	public static final double MAX_LATITUDE = 85.051111;
-	public static final double MIN_LATITUDE = -85.051111;
+	public static final double MIN_LATITUDE = -84.90111;
 	
 	private static final double maxY = toMercator(MAX_LATITUDE);
 	private static final double minY = toMercator(MIN_LATITUDE);
@@ -84,9 +84,11 @@ public class MercatorProjection implements Projection {
 		double pX = ((loc.getLongitude() * -1) - 180) / 360;
 		int x = (int) StrictMath.floor(_xScale - (pX * _xScale));
 		int y = (int) StrictMath.floor(_yScale - (pY * _yScale));
+		if (y == _yScale)
+			y--;
 		
 		// Normalize
-		while (x > _xScale)
+		while (x >= _xScale)
 			x -= _xScale;
 		while (y > _yScale)
 			y -= _yScale;
