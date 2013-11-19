@@ -21,16 +21,6 @@ public interface Tile extends Comparable<Tile> {
 	public static final int WIDTH = 256;
 	
 	/**
-	 * Default mobile tile height in pixels.
-	 */
-	public static final int MOB_HEIGHT = 64;
-	
-	/**
-	 * Default mobile tile width in pixels.
-	 */
-	public static final int MOB_WIDTH = 64;
-	
-	/**
 	 * Returns the Tile address.
 	 * @return the address
 	 */
