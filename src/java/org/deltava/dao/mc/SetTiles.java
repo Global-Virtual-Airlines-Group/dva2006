@@ -1,4 +1,4 @@
-// Copyright 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.mc;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.tile.*;
 /**
  * A Data Access Object to write tiles to memcached. 
  * @author Luke
- * @version 5.0
+ * @version 5.2
  * @since 5.0
  */
 
@@ -31,7 +31,7 @@ public class SetTiles extends MemcachedDAO implements SeriesWriter {
 		addImageDate(is.getType(), is.getDate());
 		
 		// Write the Tiles
-		setBucket("wuTiles", is.getType(), String.valueOf(is.getDate().getTime()));
+		setBucket("mapTiles", is.getType(), String.valueOf(is.getDate().getTime()));
 		_client.add(createKey("$ME"), _expiry, Boolean.TRUE);
 		_client.add(createKey("$SIZE"), _expiry, Integer.valueOf(is.size()));	
 		for (PNGTile pt : is) {
@@ -44,7 +44,7 @@ public class SetTiles extends MemcachedDAO implements SeriesWriter {
 	 * Helper method to use CAS to add an image type.
 	 */
 	private void addImageType(final String type) throws DAOException {
-		setBucket("wuTiles");
+		setBucket("mapTiles");
 		
 		CASMutation<Object> mutation = new CASMutation<Object>() {
 	    	public Collection<String> getNewValue(Object current) {
@@ -68,7 +68,7 @@ public class SetTiles extends MemcachedDAO implements SeriesWriter {
 	 * Helper method to use CAS to add an imagery effective date.
 	 */
 	private void addImageDate(String type, final Date effDate) throws DAOException {
-		setBucket("wuTiles", type);
+		setBucket("mapTiles", type);
 
 		CASMutation<Object> mutation = new CASMutation<Object>() {
 	    	public List<Date> getNewValue(Object current) {
