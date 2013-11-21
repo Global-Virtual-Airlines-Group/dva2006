@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.ftp;
 
 import java.io.*;
@@ -8,7 +8,7 @@ import com.enterprisedt.net.ftp.*;
 /**
  * A utility class to encapsulate FTP operations.
  * @author Luke
- * @version 5.0
+ * @version 5.2
  * @since 1.0
  */
 
@@ -180,7 +180,39 @@ public class FTPConnection implements Closeable {
 
 		return null;
 	}
+	
+	/**
+	 * Returns the name of the newest directory on the FTP server.
+	 * @param dirName the directory name
+	 * @param filter a FilenameFilter, or null if none
+	 * @return the file name, or null if not found
+	 * @throws FTPClientException if an error occurs
+	 */
+	public String getNewestDirectory(String dirName, FilenameFilter filter) throws FTPClientException {
+		try {
+			FTPFile[] files = _client.dirDetails(dirName);
+			if (files == null)
+				return null;
+			
+			// Iterate through the directories
+			FTPFile latest = null;
+			for (int x = 0; x < files.length; x++) {
+				FTPFile f = files[x];
+				if (f.isDir() && !f.isLink()) {
+					boolean isOK = (filter == null) || (filter.accept(null, f.getName()));
+					if (isOK) {
+						if ((latest == null) || (f.lastModified().after(latest.lastModified())))
+							latest = f;
+					}
+				}
+			}
 
+			return (latest == null) ? null : latest.getName();
+		} catch (Exception e) {
+			throw new FTPClientException(e);
+		}
+	}
+	
 	/**
 	 * Returns the name of the newest file on the FTP server.
 	 * @param dirName the directory name
