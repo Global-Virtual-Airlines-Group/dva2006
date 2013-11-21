@@ -46,28 +46,19 @@ public class TestGetWAFSData extends TestCase {
 				for (int x = 0; x < Tile.WIDTH; x++) {
 					for (int y = 0; y < Tile.HEIGHT; y++) {
 						GeoLocation loc = _p.getGeoPosition(pX + x, pY + y);
-						if (Math.abs(loc.getLatitude()) > 83)
+						if (Math.abs(loc.getLatitude()) > 81)
 							continue;
 
 						WindData wd = _data.getResult(loc);
-						//if (wd.getJetStreamSpeed() < 35)
-						if (wd.getTropopauseAltitude() < 22500)
+						if (wd.getJetStreamSpeed() < 40)
 							continue;
 						
-						/*
 						int c = Math.min(255, wd.getJetStreamSpeed() + 40);
-						if (wd.getJetStreamSpeed() > 100) {
-							int r = Math.min(c+40, 255);
-							int g = (wd.getJetStreamSpeed() > 150) ? Math.min(255, c+30): c;
+						if (wd.getJetStreamSpeed() > 99) {
+							int r = Math.min(c+32, 255);
+							int g = (wd.getJetStreamSpeed() > 150) ? Math.min(255, c+36): c;
 							Color rgb = new Color(r,g,c);
 							img.setRGB(x, y, rgb.getRGB());
-						} else
-							img.setRGB(x, y, new Color(c, c, c).getRGB()); */
-						int c = Math.min(255, (wd.getTropopauseAltitude() - 22500) / 220 + 24);
-						if (wd.getTropopauseAltitude() > 47500) {
-							int g = Math.min(255, c+16);
-							int r = (wd.getTropopauseAltitude() > 57000) ? Math.min(255, c+16) : c;
-							img.setRGB(x, y, new Color(r, g, c).getRGB());
 						} else
 							img.setRGB(x, y, new Color(c, c, c).getRGB());
 						
@@ -104,7 +95,7 @@ public class TestGetWAFSData extends TestCase {
 
 	public void testLoadGRIB2() throws Exception {
 
-		File f = new File("data/gfs.t12z.wafs_grb45f06.grib2");
+		File f = new File("data/gfs.t12z.pgrb2bf00.grib");
 		assertTrue(f.exists());
 
 		// Load the data
@@ -114,13 +105,13 @@ public class TestGetWAFSData extends TestCase {
 		assertNotNull(data);
 		assertTrue(data.size() > 0);
 		
-		int tMin = 100000; int tMax = 0;
+		int wMin = 500; int wMax = 0;
 		for (WindData wd : data) {
-			tMin = Math.min(tMin, wd.getTropopauseAltitude());
-			tMax = Math.max(tMax, wd.getTropopauseAltitude());
+			wMin = Math.min(wMin, wd.getJetStreamSpeed());
+			wMax = Math.max(wMax, wd.getJetStreamSpeed());
 		}
 		
-		log.info("Tropopause max = " +tMax +", min = " + tMin);
+		log.info("Jet Stream max = " +wMax +", min = " + wMin);
 		
 		// Get threads
 		int threads = Math.max(2, Runtime.getRuntime().availableProcessors() - 2);
