@@ -1,4 +1,4 @@
-// Copyright 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.mc;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.util.tile.*;
 /**
  * A Data Access Object to read tiles from memcached. 
  * @author Luke
- * @version 5.0
+ * @version 5.2
  * @since 5.0
  */
 
@@ -24,7 +24,7 @@ public class GetTiles extends MemcachedDAO {
 	 */
 	public Collection<String> getTypes() throws DAOException {
 		
-		setBucket("wuTiles");
+		setBucket("mapTiles");
 		Future<Object> f = null;
 		try {
 			checkConnection();
@@ -48,7 +48,7 @@ public class GetTiles extends MemcachedDAO {
 	 */
 	public Collection<Date> getDates(String type) throws DAOException {
 		
-		setBucket("wuTiles", type);
+		setBucket("mapTiles", type);
 		Future<Object> f = null;
 		try {
 			checkConnection();
@@ -61,7 +61,7 @@ public class GetTiles extends MemcachedDAO {
 			// Validate that the tiles exist
 			for (Iterator<Date> i = dates.iterator(); i.hasNext(); ) {
 				Date dt = i.next();
-				setBucket("wuTiles", type, String.valueOf(dt.getTime()));
+				setBucket("mapTiles", type, String.valueOf(dt.getTime()));
 				try {
 					f = _client.asyncGet(createKey("$ME"));
 					Object o = f.get(100, TimeUnit.MILLISECONDS);
@@ -90,12 +90,12 @@ public class GetTiles extends MemcachedDAO {
 	 */
 	public PNGTile getTile(String imgType, Date effDate, TileAddress addr) throws DAOException {
 
-		setBucket("wuTiles", imgType, String.valueOf(effDate.getTime()));
+		setBucket("mapTiles", imgType, String.valueOf(effDate.getTime()));
 		Future<Object> f = null;
 		try {
 			checkConnection();
 			f = _client.asyncGet(createKey(addr.getName()));
-			return (PNGTile) f.get(200, TimeUnit.MILLISECONDS);
+			return (PNGTile) f.get(150, TimeUnit.MILLISECONDS);
 		} catch (Exception e) {
 			if (f != null)
 				f.cancel(true);
