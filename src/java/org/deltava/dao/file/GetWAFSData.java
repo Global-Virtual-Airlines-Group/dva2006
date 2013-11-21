@@ -22,8 +22,8 @@ import ucar.unidata.io.RandomAccessFile;
 
 public class GetWAFSData extends DAO {
 	
-	// 250mb Temp, U, V  Tropopause height, temp
-	private static final int[] RECORDS = {18, 19, 20, 57, 58};
+	// GRIB layer offets - temp, U, V
+	private static final int[] RECORDS = {67, 68};
 	
 	private static final Logger log = Logger.getLogger(GetWAFSData.class);
 
@@ -87,7 +87,7 @@ public class GetWAFSData extends DAO {
 			GRIBResult<WindData> gr = new GRIBResult<WindData>(gds.getNx(), gds.getNy(), gds.getDx(), gds.getDy());
 			gr.setStart(gds.getLa1(), gds.getLo1() - 180);
 			WindData[] results = initObs(gds);
-
+			
 			// Go through the records
 			for (int l = 0; l < RECORDS.length; l++) {
 				int layer = RECORDS[l];
@@ -107,31 +107,18 @@ public class GetWAFSData extends DAO {
 					float v = data[x];
 					WindData wd = results[x];
 					
-					switch (layer) {
-					case 18:
-						wd.setJetStreamTemperature((int) (v -273.15));
-						break;
-						
-					case 19:
+					switch (l) {
+					case 0:
 						wd.setJetStreamU(v);
 						break;
 						
-					case 20:
+					case 1:
 						wd.setJetStreamV(v);
-						break;
-					
-					case 57:
-						wd.setTropopauseAltitude((int) (v * 3.28084));
-						break;
-						
-					case 58:
-						wd.setTropopauseTemperature((int) (v - 273.15));
 						break;
 					}
 				}
 			}
 			
-			// Clean up
 			_raf.close();
 			gr.addAll(Arrays.asList(results));
 			return gr;
@@ -143,6 +130,7 @@ public class GetWAFSData extends DAO {
 	/**
 	 * Finalizer to clean up the file handle.
 	 */
+	@Override
 	protected void finalize() {
 		try {
 			if (_raf != null) {
