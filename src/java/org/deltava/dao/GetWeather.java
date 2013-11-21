@@ -1,13 +1,16 @@
-// Copyright 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 
+import org.deltava.beans.GeospaceLocation;
 import org.deltava.beans.flight.ILSCategory;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.wx.*;
+
+import org.deltava.comparators.GeoComparator;
 
 import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
@@ -15,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load weather data from the database.
  * @author Luke
- * @version 5.0
+ * @version 5.2
  * @since 2.7
  */
 
@@ -166,6 +169,30 @@ public class GetWeather extends DAO {
 			
 			_ps.close();
 			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	public WindData getWinds(GeospaceLocation loc) throws DAOException {
+		try {
+			prepareStatement("SELECT * FROM common.WINDS WHERE (LAT>?) AND (LAT<?) AND (LNG>?) AND (LNG<?) ORDER BY EFFDATE, ALT");
+			_ps.setDouble(1, loc.getLatitude() - 1.1);
+			_ps.setDouble(2, loc.getLatitude() + 1.1);
+			_ps.setDouble(3, loc.getLongitude() - 1.1);
+			_ps.setDouble(4, loc.getLongitude() + 1.1);
+			
+			SortedSet<WindData> data = new TreeSet<WindData>(new GeoComparator(loc));
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					WindData wd = new WindData(rs.getDouble(1), rs.getDouble(2));
+					wd.setAltitude(rs.getInt(3));
+					data.add(wd);
+				}
+			}
+			
+			_ps.close();
+			return data.isEmpty() ? null : data.first();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
