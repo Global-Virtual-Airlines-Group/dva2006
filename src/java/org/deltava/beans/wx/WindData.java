@@ -1,7 +1,7 @@
 // Copyright 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.wx;
 
-import org.deltava.beans.GeoLocation;
+import org.deltava.beans.GeospaceLocation;
 
 /**
  * A bean to store GFS winds aloft and tropopause data.
@@ -10,17 +10,14 @@ import org.deltava.beans.GeoLocation;
  * @since 5.2
  */
 
-public class WindData implements GeoLocation {
+public class WindData implements GeospaceLocation {
 
 	private final double _lat;
 	private final double _lng;
+	private int _alt;
 	
 	private float _jetU;
 	private float _jetV;
-	private int _jetTMP;
-
-	private int _tropAlt;
-	private int _tropTMP;
 
 	/**
 	 * Creates the bean.
@@ -33,33 +30,36 @@ public class WindData implements GeoLocation {
 		_lng = lng;
 	}
 
+	@Override
 	public double getLatitude() {
 		return _lat;
 	}
 
+	@Override
 	public double getLongitude() {
 		return _lng;
 	}
 	
+	@Override
+	public int getAltitude() {
+		return _alt;
+	}
+	
+	/**
+	 * Returns the jet stream wind speed.
+	 * @return the speed in knots
+	 */
 	public int getJetStreamSpeed() {
 		double sp = Math.sqrt((_jetU * _jetU) + (_jetV * _jetV));
 		return (int) (sp * 1.94384449); 
 	}
 
+	/**
+	 * Returns the jet stream wind direction.
+	 * @return the direction in degrees
+	 */
 	public int getJetStreamDirection() {
 		return (int) (57.29578 * Math.atan2(_jetU, _jetV) +180); 
-	}
-
-	public int getJetStreamTemperature() {
-		return _jetTMP;
-	}
-
-	public int getTropopauseAltitude() {
-		return _tropAlt;
-	}
-
-	public int getTropopauseTemperature() {
-		return _tropTMP;
 	}
 
 	public void setJetStreamU(float u) {
@@ -70,15 +70,7 @@ public class WindData implements GeoLocation {
 		_jetV = v;
 	}
 	
-	public void setJetStreamTemperature(int temp) {
-		_jetTMP = temp;
-	}
-
-	public void setTropopauseAltitude(int alt) {
-		_tropAlt = alt;
-	}
-
-	public void setTropopauseTemperature(int temp) {
-		_tropTMP = temp;
+	public void setAltitude(int alt) {
+		_alt = alt;
 	}
 }
