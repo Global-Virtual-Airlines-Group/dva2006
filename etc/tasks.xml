@@ -264,15 +264,15 @@
 		</time>
 	</task>
 
-	<!-- WU Radar Load task -->
-	<task id="wuradar" enabled="false">
-		<class>org.deltava.tasks.RadarLoadTask</class>
+	<!-- GFS Download -->
+	<task id="gfsdl" enabled="false">
+		<class>org.deltava.tasks.GFSDownloadTask</class>
 		<time>
-			<min>0,5,10,15,20,25,30,35,40,45,50,55</min>
-			<hour>*</hour>
+			<min>0</min>
+			<hour>4,10,16,22</hour>
 			<mday>*</mday>
 			<month>*</month>
-			<wday>*</wday>
+			<wday>*</wday>		
 		</time>
 	</task>
 
