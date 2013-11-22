@@ -1,4 +1,4 @@
-// Copyright 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.mc;
 
 import java.util.*;
@@ -7,14 +7,12 @@ import org.apache.log4j.Logger;
 
 import org.deltava.dao.DAOException;
 
-import org.deltava.util.StringUtils;
-
 import net.spy.memcached.*;
 
 /**
  * A Data Access Object to read and write from memcached. 
  * @author Luke
- * @version 5.0
+ * @version 5.2
  * @since 5.0
  */
 
@@ -65,8 +63,18 @@ public abstract class MemcachedDAO {
 	 * Sets the memcached bucket to store in. Bucket names will be chained together with a colon.
 	 * @param buckets the bucket name(s)
 	 */
-	public void setBucket(String... buckets) {
-		_bucket = StringUtils.listConcat(Arrays.asList(buckets), ":");
+	public void setBucket(Object... buckets) {
+		StringBuilder buf = new StringBuilder();
+		for (int x = 0; x < buckets.length; x++) {
+			Object b = buckets[x];
+			if (b != null) {
+				buf.append(String.valueOf(b));
+				if (x < (buckets.length - 1))
+					buf.append(':');
+			}
+		}
+			
+		_bucket = buf.toString();
 	}
 
 	/**
