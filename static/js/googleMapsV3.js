@@ -208,6 +208,44 @@ golgotha.maps.LayerClearControl = function(map) {
 	return container;
 }
 
+// Create an arbitrary overlay layer
+golgotha.maps.ShapeLayer = function(opts, name, baseURL) {
+	opts.name = name;
+	var ov = new google.maps.ImageMapType(opts);
+	ov.set('maxZoom', opts.maxZoom);
+	ov.set('baseURL', baseURL);
+	ov.getTileUrl = golgotha.maps.util.getTileUrl;
+	ov.getTile = golgotha.maps.util.buildTile;
+	ov.getMap = function() { return this.map; }
+	ov.setMap = function(m) {
+		if ((this.map != null) && (m != null)) {
+			if (m == this.map) return false;
+			setMap(null);
+		}
+
+		if (m != null) {
+			golgotha.maps.ovLayers.push(this);
+			m.overlayMapTypes.insertAt(0, this);
+			this.map = m;
+		} else if (this.map != null) {
+			m = this.map;
+			this.map = null;
+			golgotha.maps.ovLayers.remove(this);
+			for (var x = 0; x < m.overlayMapTypes.getLength(); x++) {
+				var l = m.overlayMapTypes.getAt(x);
+				if (l == this) {
+					m.overlayMapTypes.removeAt(x);
+					return true;
+				}
+			}
+		}
+
+		return true;
+	}
+
+	return ov;
+}
+
 function googleMarker(color, point, label)
 {
 if (color == 'null') return point;
