@@ -88,9 +88,19 @@ public class GetTiles extends MemcachedDAO {
 	 * @return a PNGTile, or null if none
 	 * @throws DAOException if a timeout or I/O error occurs
 	 */
+	public PNGTile getTile(String imgType, TileAddress addr) throws DAOException {
+		return getTile(imgType, null, addr);
+	}
+	
+	/**
+	 * Reads a tile from memcached.
+	 * @param addr the TileAddress
+	 * @return a PNGTile, or null if none
+	 * @throws DAOException if a timeout or I/O error occurs
+	 */
 	public PNGTile getTile(String imgType, Date effDate, TileAddress addr) throws DAOException {
 
-		setBucket("mapTiles", imgType, String.valueOf(effDate.getTime()));
+		setBucket("mapTiles", imgType, (effDate == null) ? null : Long.valueOf(effDate.getTime()));
 		Future<Object> f = null;
 		try {
 			checkConnection();
