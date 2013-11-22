@@ -12,8 +12,10 @@ import junit.framework.TestCase;
 
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.wx.*;
-import org.deltava.util.ThreadUtils;
+
+import org.deltava.util.*;
 import org.deltava.util.tile.*;
+import org.deltava.util.ftp.FTPConnection;
 
 public class TestGetWAFSData extends TestCase {
 
@@ -22,14 +24,12 @@ public class TestGetWAFSData extends TestCase {
 	private class TileWorker extends Thread {
 		private final BlockingQueue<TileAddress> _work;
 		private final GRIBResult<WindData> _data;
-		private final Projection _p;
 
-		TileWorker(int id, BlockingQueue<TileAddress> work, GRIBResult<WindData> data, Projection p) {
+		TileWorker(int id, BlockingQueue<TileAddress> work, GRIBResult<WindData> data) {
 			super("TileWorker-"+ id);
 			setDaemon(true);
 			_work = work;
 			_data = data;
-			_p = p;
 		}
 
 		@Override
@@ -37,6 +37,7 @@ public class TestGetWAFSData extends TestCase {
 			TileAddress addr = _work.poll();
 			while (addr != null) {
 				log.info(getName() + " generating tile " + addr);
+				Projection p = new MercatorProjection(addr.getLevel());
 
 				// Plot the pixels
 				int pX = addr.getPixelX(); int pY = addr.getPixelY();
@@ -45,7 +46,7 @@ public class TestGetWAFSData extends TestCase {
 				st.setImage(img); boolean hasData = false;
 				for (int x = 0; x < Tile.WIDTH; x++) {
 					for (int y = 0; y < Tile.HEIGHT; y++) {
-						GeoLocation loc = _p.getGeoPosition(pX + x, pY + y);
+						GeoLocation loc = p.getGeoPosition(pX + x, pY + y);
 						if (Math.abs(loc.getLatitude()) > 81)
 							continue;
 
@@ -54,9 +55,9 @@ public class TestGetWAFSData extends TestCase {
 							continue;
 						
 						int c = Math.min(255, wd.getJetStreamSpeed() + 40);
-						if (wd.getJetStreamSpeed() > 99) {
+						if (wd.getJetStreamSpeed() > 79) {
 							int r = Math.min(c+32, 255);
-							int g = (wd.getJetStreamSpeed() > 150) ? Math.min(255, c+36): c;
+							int g = (wd.getJetStreamSpeed() > 124) ? Math.min(255, c+36): c;
 							Color rgb = new Color(r,g,c);
 							img.setRGB(x, y, rgb.getRGB());
 						} else
@@ -92,10 +93,42 @@ public class TestGetWAFSData extends TestCase {
 		LogManager.shutdown();
 		super.tearDown();
 	}
+	
+	public void testDownloadFile() throws Exception {
+		
+		File outF = new File("data", "gfs.grib");
+		String host = "ftp.ncep.noaa.gov"; ImageSeries is = null;
+		try (FTPConnection con = new FTPConnection(host)) {
+			con.connect("anonymous", "webmaster@deltava.org");
+			log.info("Connected to " + host);
+		
+			// Find the latest GFS run and get the latest GFS file
+			String path = "/pub/data/nccf/com/gfs/prod";
+			String dir = con.getNewestDirectory(path, FileUtils.fileFilter("gfs.", null));
+			String fName = con.getNewest(path + "/" + dir, FileUtils.fileFilter("gfs.", ".pgrb2f00"));
+			Date lm = con.getTimestamp(path + "/" + dir, fName);
+			assertNotNull(lm);
+			if (outF.exists() && (outF.lastModified() == lm.getTime()))
+				return;
+			
+			// Calculate the effective date
+			is = new ImageSeries("jetstream", StringUtils.parseDate(dir.substring(dir.lastIndexOf('.') + 1), "yyyyMMddHH"));
+			assertNotNull(is);
+			assertNotNull(is.getDate());
+		
+			// Download
+			try (InputStream in = con.get(path + "/" + dir + "/" + fName, outF)) {
+				log.info("Downloaded GFS data - " + outF.length());
+				outF.setLastModified(lm.getTime());
+			}
+		}
+		
+		assertTrue(outF.exists());
+	}
 
 	public void testLoadGRIB2() throws Exception {
 
-		File f = new File("data/gfs.t12z.pgrb2bf00.grib");
+		File f = new File("data/gfs.t18z.pgrb2bf00.grib");
 		assertTrue(f.exists());
 
 		// Load the data
@@ -114,29 +147,27 @@ public class TestGetWAFSData extends TestCase {
 		log.info("Jet Stream max = " +wMax +", min = " + wMin);
 		
 		// Get threads
-		int threads = Math.max(2, Runtime.getRuntime().availableProcessors() - 2);
+		int threads = Math.max(2, Runtime.getRuntime().availableProcessors());
 
 		// Plot the tiles
-		for (int zoom = 5; zoom > 1; zoom--) {
+		BlockingQueue<TileAddress> work = new LinkedBlockingQueue<TileAddress>();
+		for (int zoom = 6; zoom > 1; zoom--) {
 			Projection p = new MercatorProjection(zoom);
 			TileAddress nw = p.getAddress(data.getNW()); TileAddress se = p.getAddress(data.getSE());
-
-			// Make work
-			BlockingQueue<TileAddress> work = new LinkedBlockingQueue<TileAddress>();
 			for (int tx = nw.getX(); tx <= se.getX(); tx++) {
 				for (int ty = nw.getY(); ty <= se.getY(); ty++)
 					work.add(new TileAddress(tx, ty, zoom));
 			}
-			
-			// Fire off the threads
-			Collection<TileWorker> workers = new ArrayList<TileWorker>();
-			for (int x = 0; x < threads; x++) {
-				TileWorker tw = new TileWorker(x+1, work, data, p);
-				workers.add(tw);
-				tw.start();
-			}
-			
-			ThreadUtils.waitOnPool(workers);
 		}
+			
+		// Fire off the threads
+		Collection<TileWorker> workers = new ArrayList<TileWorker>();
+		for (int x = 0; x < threads; x++) {
+			TileWorker tw = new TileWorker(x+1, work, data);
+			workers.add(tw);
+			tw.start();
+		}
+			
+		ThreadUtils.waitOnPool(workers);
 	}
 }

@@ -116,14 +116,13 @@ public class GFSDownloadTask extends Task {
 				log.info("Connected to " + host);
 			
 				// Find the latest GFS run and get the latest GFS file
-				String dir = con.getNewestDirectory(SystemData.get("weather.gfs.path"), FileUtils.fileFilter("gfs.", null));
-				String fName = con.getNewest(dir, FileUtils.fileFilter("gfs.", ".pgrb2f00"));
+				String basePath = SystemData.get("weather.gfs.path");
+				String dir = con.getNewestDirectory(basePath, FileUtils.fileFilter("gfs.", null));
+				String fName = con.getNewest(basePath + "/" + dir, FileUtils.fileFilter("gfs.", ".pgrb2f00"));
 				
-				// Calculate the effective date
+				// Calculate the effective date and download
 				is = new ImageSeries("jetstream", StringUtils.parseDate(dir, "yyyyMMddHH"));
-			
-				// Download
-				try (InputStream in = con.get(fName, outF)) {
+				try (InputStream in = con.get(basePath + "/" + dir + "/" + fName, outF)) {
 					log.info("Downloaded GFS data - " + outF.length());
 				}
 			}
@@ -162,7 +161,7 @@ public class GFSDownloadTask extends Task {
 			// Plot the tiles
 			long startTime = System.currentTimeMillis();
 			Collection<TileWorker> workers = new ArrayList<TileWorker>();
-			int threads = Math.max(2, Runtime.getRuntime().availableProcessors() - 1);
+			int threads = Math.max(2, Runtime.getRuntime().availableProcessors());
 			for (int x = 0; x <= threads; x++) {
 				TileWorker tw = new TileWorker(x+1, work, data, is);
 				tw.setPriority(Thread.MIN_PRIORITY);
