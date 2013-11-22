@@ -119,7 +119,7 @@ public class GFSDownloadTask extends Task {
 				Date lm = con.getTimestamp(basePath + "/" + dir, fName);
 				
 				// Calculate the effective date and download
-				is = new ImageSeries("jetstream", StringUtils.parseDate(dir, "yyyyMMddHH"));
+				is = new ImageSeries("jetstream", StringUtils.parseDate(dir.substring(dir.lastIndexOf('.') + 1), "yyyyMMddHH"));
 				if (!outF.exists() || (lm.getTime() > outF.lastModified())) {
 					try (InputStream in = con.get(basePath + "/" + dir + "/" + fName, outF)) {
 						log.info("Downloaded GFS data - " + outF.length());
