@@ -9,13 +9,10 @@ import java.awt.image.BufferedImage;
 
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.wx.*;
-
 import org.deltava.dao.*;
 import org.deltava.dao.file.GetWAFSData;
 import org.deltava.dao.mc.SetTiles;
-
 import org.deltava.taskman.*;
-
 import org.deltava.util.*;
 import org.deltava.util.tile.*;
 import org.deltava.util.ftp.FTPConnection;
@@ -119,11 +116,15 @@ public class GFSDownloadTask extends Task {
 				String basePath = SystemData.get("weather.gfs.path");
 				String dir = con.getNewestDirectory(basePath, FileUtils.fileFilter("gfs.", null));
 				String fName = con.getNewest(basePath + "/" + dir, FileUtils.fileFilter("gfs.", ".pgrb2f00"));
+				Date lm = con.getTimestamp(basePath + "/" + dir, fName);
 				
 				// Calculate the effective date and download
 				is = new ImageSeries("jetstream", StringUtils.parseDate(dir, "yyyyMMddHH"));
-				try (InputStream in = con.get(basePath + "/" + dir + "/" + fName, outF)) {
-					log.info("Downloaded GFS data - " + outF.length());
+				if (!outF.exists() || (lm.getTime() > outF.lastModified())) {
+					try (InputStream in = con.get(basePath + "/" + dir + "/" + fName, outF)) {
+						log.info("Downloaded GFS data - " + outF.length());
+						outF.setLastModified(lm.getTime());
+					}
 				}
 			}
 			
@@ -149,7 +150,7 @@ public class GFSDownloadTask extends Task {
 			
 			// Figure out the tiles to plot
 			BlockingQueue<TileAddress> work = new LinkedBlockingQueue<TileAddress>();
-			for (int zoom = 5; zoom > 1; zoom--) {
+			for (int zoom = 6; zoom > 1; zoom--) {
 				Projection p = new MercatorProjection(zoom);
 				TileAddress nw = p.getAddress(data.getNW()); TileAddress se = p.getAddress(data.getSE());
 				for (int tx = nw.getX(); tx <= se.getX(); tx++) {
