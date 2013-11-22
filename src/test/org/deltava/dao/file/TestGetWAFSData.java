@@ -128,7 +128,7 @@ public class TestGetWAFSData extends TestCase {
 
 	public void testLoadGRIB2() throws Exception {
 
-		File f = new File("data/gfs.t18z.pgrb2bf00.grib");
+		File f = new File("data/gfs.grib");
 		assertTrue(f.exists());
 
 		// Load the data
