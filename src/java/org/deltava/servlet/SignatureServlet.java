@@ -77,7 +77,6 @@ public class SignatureServlet extends GenericServlet {
 			jdbcPool.release(c);
 		}
 
-		// Return the date/time
 		return (lastMod == null) ? -1 : lastMod.getTime();
 	}
 
@@ -154,11 +153,9 @@ public class SignatureServlet extends GenericServlet {
 		rsp.setDateHeader("Expires", System.currentTimeMillis() + (365L * 86400 * 1000));
 
 		// Dump the data to the output stream
-		try {
-			OutputStream out = rsp.getOutputStream();
+		try (OutputStream out = rsp.getOutputStream()) {
 			out.write(imgBuffer);
 			rsp.flushBuffer();
-			out.close();
 		} catch (IOException ie) {
 			// NOOP
 		}
