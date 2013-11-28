@@ -84,6 +84,13 @@
 		<load-on-startup>4</load-on-startup>
 	</servlet>
 
+	<!-- Custom Tile Image servlet -->
+	<servlet>
+		<servlet-name>customTile</servlet-name>
+		<servlet-class>org.deltava.servlet.CustomTileServlet</servlet-class>
+		<load-on-startup>4</load-on-startup>
+	</servlet>
+
 	<!-- Library Donwload servlet -->
 	<servlet>
 		<servlet-name>fleetLibrary</servlet-name>
@@ -206,6 +213,11 @@
     <servlet-mapping>
     	<servlet-name>wxTile</servlet-name>
     	<url-pattern>/wx/*</url-pattern>
+    </servlet-mapping>
+
+	<servlet-mapping>
+    	<servlet-name>customTile</servlet-name>
+    	<url-pattern>/tile/*</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

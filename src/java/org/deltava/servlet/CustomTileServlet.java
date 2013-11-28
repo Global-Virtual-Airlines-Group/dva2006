@@ -15,15 +15,15 @@ import org.deltava.dao.mc.GetTiles;
 import org.deltava.util.tile.PNGTile;
 
 /**
- * A servlet to fetch weather quadtree tiles.
+ * A servlet to fetch non-temporal quadtree tiles.
  * @author Luke
  * @version 5.2
- * @since 5.0
+ * @since 5.2
  */
 
-public class WeatherTileServlet extends TileServlet {
+public class CustomTileServlet extends TileServlet {
 
-	private static final Logger log = Logger.getLogger(WeatherTileServlet.class);
+	private static final Logger log = Logger.getLogger(CustomTileServlet.class);
 	
 	/**
 	 * Returns the servlet description.
@@ -31,7 +31,7 @@ public class WeatherTileServlet extends TileServlet {
 	 */
 	@Override
 	public String getServletInfo() {
-		return "Weather Image Servlet " + VersionInfo.TXT_COPYRIGHT;
+		return "Tile Image Servlet " + VersionInfo.TXT_COPYRIGHT;
 	}
 	
 	/**
@@ -44,13 +44,13 @@ public class WeatherTileServlet extends TileServlet {
 	public void doGet(HttpServletRequest req, HttpServletResponse rsp) throws IOException {
 		
 		// Parse the URL and get the tile address
-		TileAddress5D addr = getTileAddress(req.getRequestURI(), true);
+		TileAddress5D addr = getTileAddress(req.getRequestURI(), false);
 		
 		// Get the data
 		byte[] data = EMPTY;
 		try {
 			GetTiles trdao = new GetTiles();
-			PNGTile pt = trdao.getTile(addr.getType(), addr.getDate(), addr);
+			PNGTile pt = trdao.getTile(addr.getType(), null, addr);
 			if (pt != null)
 				data = pt.getData();
 		} catch (DAOException e) {
