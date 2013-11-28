@@ -281,6 +281,12 @@
 
 	<!-- Weather map tile sources -->	
 	<weather>
+		<cache>/var/cache/wx</cache>
+		<gfs>
+			<host>ftp.ncep.noaa.gov</host>
+			<path>/pub/data/nccf/com/gfs/prod</path>
+		</gfs>
+
 		<tileHost>g%.imwx.com</tileHost>
 		<multiHost type="Boolean">true</multiHost>
 
