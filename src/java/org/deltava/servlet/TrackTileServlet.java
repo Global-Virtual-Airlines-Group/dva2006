@@ -1,4 +1,4 @@
-// Copyright 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.*;
@@ -20,7 +20,7 @@ import org.gvagroup.jdbc.*;
 /**
  * A servlet to display ACARS track tiles.
  * @author Luke
- * @version 5.0
+ * @version 5.2
  * @since 5.0
  */
 
@@ -72,20 +72,6 @@ public class TrackTileServlet extends TileServlet {
 			}
 		}
 
-		// Set headers
-		rsp.setHeader("Cache-Control", "public");
-		rsp.setIntHeader("max-age", 3600);
-		rsp.setContentType("image/png");
-		rsp.setStatus(HttpServletResponse.SC_OK);
-		rsp.setContentLength(data.length);
-		rsp.setBufferSize(Math.min(65536, data.length + 16));
-
-		// Dump the data to the output stream
-		try {
-			rsp.getOutputStream().write(data);
-			rsp.flushBuffer();
-		} catch (IOException ie) {
-			// NOOP
-		}
+		writeTile(rsp, data);
 	}
 }
