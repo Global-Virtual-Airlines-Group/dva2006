@@ -1,10 +1,11 @@
-// Copyright 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.*;
 import java.util.*;
 
 import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletResponse;
 
 import org.deltava.util.URLParser;
 import org.deltava.util.tile.*;
@@ -12,7 +13,7 @@ import org.deltava.util.tile.*;
 /**
  * A servlet to display Quad-tree tiles.
  * @author Luke
- * @version 5.0
+ * @version 5.2
  * @since 5.0
  */
 
@@ -87,7 +88,31 @@ abstract class TileServlet extends GenericServlet {
 		LinkedList<String> pathParts = url.getPath();
 		Collections.reverse(pathParts);
 		
-		long rawDate = getDate? Long.parseLong(pathParts.poll()) : System.currentTimeMillis();
-		return new TileAddress5D(pathParts.poll(), new Date(rawDate), url.getName());
+		long rawDate = getDate? Long.parseLong(pathParts.poll()) : 0;
+		return new TileAddress5D(pathParts.poll(), getDate ? new Date(rawDate) : null, url.getName());
+	}
+	
+	/**
+	 * Helper method to dump the tile data to the output stream.
+	 * @param rsp the HttpServletResponse
+	 * @param data the tile image data
+	 */
+	protected void writeTile(HttpServletResponse rsp, byte[] data) {
+		
+		// Set headers
+		rsp.setHeader("Cache-Control", "public");
+		rsp.setIntHeader("max-age", 300);
+		rsp.setContentType("image/png");
+		rsp.setStatus(HttpServletResponse.SC_OK);
+		rsp.setContentLength(data.length);
+		rsp.setBufferSize(Math.min(65536, data.length + 16));
+		
+		// Dump the data to the output stream
+		try (OutputStream out = rsp.getOutputStream()) {
+			out.write(data);
+			rsp.flushBuffer();
+		} catch (IOException ie) {
+			// NOOP
+		}
 	}
 }
