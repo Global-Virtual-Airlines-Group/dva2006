@@ -1,4 +1,4 @@
-// Copyright 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.tile;
 
 import java.util.*;
@@ -6,11 +6,11 @@ import java.util.*;
 /**
  * A bean to store all tile imagery for a particular date/time.  
  * @author Luke
- * @version 5.0
+ * @version 5.2
  * @since 5.0
  */
 
-public class ImageSeries extends HashSet<PNGTile> implements Comparable<ImageSeries> {
+public class ImageSeries extends HashMap<TileAddress, PNGTile> implements Comparable<ImageSeries> {
 
 	private final String _type;
 	private final Date _effDate;
