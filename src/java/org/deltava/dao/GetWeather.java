@@ -174,18 +174,26 @@ public class GetWeather extends DAO {
 		}
 	}
 	
+	/**
+	 * Retrieves the winds for a particular location.
+	 * @param loc the GeospaceLocation
+	 * @return the closest WindData data
+	 * @throws DAOException if a JDBC error occurs
+	 */
 	public WindData getWinds(GeospaceLocation loc) throws DAOException {
+		PressureLevel lvl = PressureLevel.getClosest(loc.getAltitude());
 		try {
-			prepareStatement("SELECT * FROM common.WINDS WHERE (LAT>?) AND (LAT<?) AND (LNG>?) AND (LNG<?) ORDER BY EFFDATE, ALT");
-			_ps.setDouble(1, loc.getLatitude() - 1.1);
-			_ps.setDouble(2, loc.getLatitude() + 1.1);
-			_ps.setDouble(3, loc.getLongitude() - 1.1);
-			_ps.setDouble(4, loc.getLongitude() + 1.1);
+			prepareStatement("SELECT * FROM common.WINDS WHERE (MB=?) AND (LAT>?) AND (LAT<?) AND (LNG>?) AND (LNG<?)");
+			_ps.setInt(1, lvl.getPressure());
+			_ps.setDouble(2, loc.getLatitude() - 1.1);
+			_ps.setDouble(3, loc.getLatitude() + 1.1);
+			_ps.setDouble(4, loc.getLongitude() - 1.1);
+			_ps.setDouble(5, loc.getLongitude() + 1.1);
 			
 			SortedSet<WindData> data = new TreeSet<WindData>(new GeoComparator(loc));
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
-					WindData wd = new WindData(rs.getDouble(1), rs.getDouble(2));
+					WindData wd = new WindData(lvl, rs.getDouble(1), rs.getDouble(2));
 					wd.setAltitude(rs.getInt(3));
 					data.add(wd);
 				}

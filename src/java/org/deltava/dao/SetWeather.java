@@ -66,19 +66,32 @@ public class SetWeather extends DAO {
 	/**
 	 * Writes wind data to the database.
 	 * @param effDate the effective date of the data
-	 * @param wd the WindData
+	 * @param data the WindData
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void write(java.util.Date effDate, WindData wd) throws DAOException {
+	public void write(java.util.Date effDate, java.util.Collection<WindData> data) throws DAOException {
 		try {
-			prepareStatement("REPLACE INTO common.WINDS (DATE, LAT, LNG, ALT, WSPD, WDIR) VALUES (?, ?, ?, ?, ?, ?)");
+			prepareStatement("REPLACE INTO common.WINDS (DATE, LAT, LNG, MB, ALT, WSPD, WDIR) VALUES (?, ?, ?, ?, ?, ?, ?)");
 			_ps.setTimestamp(1, createTimestamp(effDate));
-			_ps.setDouble(2, wd.getLatitude());
-			_ps.setDouble(3, wd.getLongitude());
-			_ps.setInt(4, wd.getAltitude());
-			_ps.setInt(5, wd.getJetStreamSpeed());
-			_ps.setInt(6, wd.getJetStreamDirection());
-			executeUpdate(1);
+			
+			int cnt = 0;
+			for (WindData wd : data) {
+				cnt++;
+				_ps.setDouble(2, wd.getLatitude());
+				_ps.setDouble(3, wd.getLongitude());
+				_ps.setInt(4, wd.getLevel().getPressure());
+				_ps.setInt(5, 0);
+				_ps.setInt(6, wd.getJetStreamSpeed());
+				_ps.setInt(7, wd.getJetStreamDirection());
+				_ps.addBatch();
+				if (cnt == 128) {
+					_ps.executeBatch();
+					cnt = 0;
+				}
+			}
+
+			_ps.executeBatch();
+			_ps.close();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -104,12 +117,14 @@ public class SetWeather extends DAO {
 	/**
 	 * Purges wind data older than a particular age.
 	 * @param age the age in minutes
+	 * @param lvl the pressure level
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void purgeWinds(int age) throws DAOException {
+	public void purgeWinds(int age, PressureLevel lvl) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("DELETE FROM common.WINDS WHERE (DATE < DATE_SUB(NOW(), INTERVAL ? MINUTE))");
+			prepareStatementWithoutLimits("DELETE FROM common.WINDS WHERE (DATE < DATE_SUB(NOW(), INTERVAL ? MINUTE)) AND (MB=?)");
 			_ps.setInt(1, age);
+			_ps.setInt(2, lvl.getPressure());
 			executeUpdate(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
