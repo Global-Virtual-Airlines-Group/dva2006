@@ -14,18 +14,23 @@ public class WindData implements GeospaceLocation {
 
 	private final double _lat;
 	private final double _lng;
+	private final PressureLevel _pl;
+	
 	private int _alt;
+	private int _tmp;
 	
 	private float _jetU;
 	private float _jetV;
 
 	/**
 	 * Creates the bean.
+	 * @param lvl the PressureLevel
 	 * @param lat the latitude
 	 * @param lng the longitude
 	 */
-	public WindData(double lat, double lng) {
+	public WindData(PressureLevel lvl, double lat, double lng) {
 		super();
+		_pl = lvl;
 		_lat = lat;
 		_lng = lng;
 	}
@@ -43,6 +48,14 @@ public class WindData implements GeospaceLocation {
 	@Override
 	public int getAltitude() {
 		return _alt;
+	}
+	
+	public PressureLevel getLevel() {
+		return _pl;
+	}
+	
+	public int getTemperature() {
+		return _tmp;
 	}
 	
 	/**
@@ -72,5 +85,9 @@ public class WindData implements GeospaceLocation {
 	
 	public void setAltitude(int alt) {
 		_alt = alt;
+	}
+	
+	public void setTemperature(int tmp) {
+		_tmp = tmp;
 	}
 }
