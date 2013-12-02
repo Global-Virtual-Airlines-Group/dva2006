@@ -6,13 +6,17 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.sql.Connection;
 
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.wx.*;
+
 import org.deltava.dao.*;
 import org.deltava.dao.file.GetWAFSData;
 import org.deltava.dao.mc.SetTiles;
+
 import org.deltava.taskman.*;
+
 import org.deltava.util.*;
 import org.deltava.util.tile.*;
 import org.deltava.util.ftp.FTPConnection;
@@ -26,6 +30,8 @@ import org.deltava.util.system.SystemData;
  */
 
 public class GFSDownloadTask extends Task {
+	
+	private static final List<PressureLevel> LEVELS = Arrays.asList(PressureLevel.JET, PressureLevel.LOJET, PressureLevel.MID);
 
 	/**
 	 * Initializes the Task.
@@ -61,17 +67,17 @@ public class GFSDownloadTask extends Task {
 				for (int x = 0; x < Tile.WIDTH; x++) {
 					for (int y = 0; y < Tile.HEIGHT; y++) {
 						GeoLocation loc = p.getGeoPosition(pX + x, pY + y);
-						if (Math.abs(loc.getLatitude()) > 81)
+						if (Math.abs(loc.getLatitude()) > 80.5)
 							continue;
 
 						WindData wd = _data.getResult(loc);
 						if (wd.getJetStreamSpeed() < 40)
 							continue;
 						
-						int c = Math.min(255, wd.getJetStreamSpeed() + 40);
+						int c = Math.min(255, wd.getJetStreamSpeed() + 32);
 						if (wd.getJetStreamSpeed() > 99) {
-							int r = Math.min(c+32, 255);
-							int g = (wd.getJetStreamSpeed() > 150) ? Math.min(255, c+36): c;
+							int r = Math.min(c+30, 255);
+							int g = (wd.getJetStreamSpeed() > 150) ? Math.min(255, c+32): c;
 							Color rgb = new Color(r,g,c);
 							img.setRGB(x, y, rgb.getRGB());
 						} else
@@ -83,14 +89,9 @@ public class GFSDownloadTask extends Task {
 
 				// Convert to PNG
 				if (hasData) {
-					try (ByteArrayOutputStream fo = new ByteArrayOutputStream(512)) {
-						PNGTile png = new PNGTile(st);
-						fo.write(png.getData());
-						synchronized (_out) {
-							_out.add(png);
-						}
-					} catch (IOException ie) {
-						// empty
+					PNGTile png = new PNGTile(st);
+					synchronized (_out) {
+						_out.put(png.getAddress(), png);
 					}
 				}
 
@@ -107,9 +108,9 @@ public class GFSDownloadTask extends Task {
 	protected void execute(TaskContext ctx) {
 		try {
 			File outF = new File(SystemData.get("weather.cache"), "gfs.grib");
-			String host = SystemData.get("weather.gfs.host"); ImageSeries is = null;
+			String host = SystemData.get("weather.gfs.host"); Date dt = null;
 			try (FTPConnection con = new FTPConnection(host)) {
-				con.connect("anonymous", "webmaster@deltava.org");
+				con.connect("anonymous", SystemData.get("airline.mail.webmaster"));
 				log.info("Connected to " + host);
 			
 				// Find the latest GFS run and get the latest GFS file
@@ -119,63 +120,79 @@ public class GFSDownloadTask extends Task {
 				Date lm = con.getTimestamp(basePath + "/" + dir, fName);
 				
 				// Calculate the effective date and download
-				is = new ImageSeries("jetstream", StringUtils.parseDate(dir.substring(dir.lastIndexOf('.') + 1), "yyyyMMddHH"));
+				dt = StringUtils.parseDate(dir.substring(dir.lastIndexOf('.') + 1), "yyyyMMddHH");
 				if (!outF.exists() || (lm.getTime() > outF.lastModified())) {
+					log.info("Downloading updated GFS data");
+					long startTime = System.currentTimeMillis(); 
 					try (InputStream in = con.get(basePath + "/" + dir + "/" + fName, outF)) {
 						log.info("Downloaded GFS data - " + outF.length());
 						outF.setLastModified(lm.getTime());
+						log.info("Download completed in " + (System.currentTimeMillis() - startTime) + "ms");
 					}
 				}
 			}
 			
 			// Load the GFS data
 			GetWAFSData dao = new GetWAFSData(outF.getAbsolutePath());
-			GRIBResult<WindData> data = dao.load();
-			
-			// Write the data to the database
 			try {
+				Connection con = ctx.getConnection();
 				ctx.startTX();
-				SetWeather wwdao = new SetWeather(ctx.getConnection());
-				wwdao.purgeWinds(5);
 				
-				for (WindData wd : data)
-					wwdao.write(is.getDate(), wd);
-				
+				// Write all weather data
+				SetWeather wwdao = new SetWeather(con);
+				for (PressureLevel lvl : PressureLevel.values()) {
+					wwdao.purgeWinds(5, lvl);
+					
+					log.info("Processing " + lvl.getPressure() + "mb data");
+					GRIBResult<WindData> data = dao.load(lvl);
+					wwdao.write(dt, data);	
+					con.commit();
+				}
+
+				// Write GFS cycle data
+				SetMetadata mwdao = new SetMetadata(con);
+				mwdao.write("gfs.cycle", String.valueOf(dt.getTime() / 1000));
 				ctx.commitTX();
 			} catch(DAOException de) {
+				log.error(de.getMessage(), de);
 				ctx.rollbackTX();
 			} finally {
 				ctx.release();
 			}
 			
-			// Figure out the tiles to plot
-			BlockingQueue<TileAddress> work = new LinkedBlockingQueue<TileAddress>();
-			for (int zoom = 6; zoom > 1; zoom--) {
-				Projection p = new MercatorProjection(zoom);
-				TileAddress nw = p.getAddress(data.getNW()); TileAddress se = p.getAddress(data.getSE());
-				for (int tx = nw.getX(); tx <= se.getX(); tx++) {
-					for (int ty = nw.getY(); ty <= se.getY(); ty++)
-						work.add(new TileAddress(tx, ty, zoom));
-				}
-			}
-			
 			// Plot the tiles
-			long startTime = System.currentTimeMillis();
-			Collection<TileWorker> workers = new ArrayList<TileWorker>();
-			int threads = Math.max(2, Runtime.getRuntime().availableProcessors());
-			for (int x = 0; x <= threads; x++) {
-				TileWorker tw = new TileWorker(x+1, work, data, is);
-				tw.setPriority(Thread.MIN_PRIORITY);
-				workers.add(tw);
-				tw.start();
+			BlockingQueue<TileAddress> work = new LinkedBlockingQueue<TileAddress>();
+			for (PressureLevel lvl : LEVELS) {
+				GRIBResult<WindData> data = dao.load(lvl);
+				for (int zoom = 5; zoom > 1; zoom--) {
+					Projection p = new MercatorProjection(zoom);
+					TileAddress nw = p.getAddress(data.getNW()); TileAddress se = p.getAddress(data.getSE());
+					for (int tx = nw.getX(); tx <= se.getX(); tx++) {
+						for (int ty = nw.getY(); ty <= se.getY(); ty++)
+							work.add(new TileAddress(tx, ty, zoom));
+					}
+				}
+				
+				// Plot the tiles
+				long startTime = System.currentTimeMillis(); ImageSeries is = new ImageSeries("wind-" + lvl.name().toLowerCase(), null);
+				Collection<TileWorker> workers = new ArrayList<TileWorker>();
+				int threads = Math.max(2, Runtime.getRuntime().availableProcessors());
+				for (int x = 0; x <= threads; x++) {
+					TileWorker tw = new TileWorker(x+1, work, data, is);
+					tw.setPriority(Thread.MIN_PRIORITY);
+					workers.add(tw);
+					tw.start();
+				}
+
+				ThreadUtils.waitOnPool(workers);
+				log.info(lvl.getPressure() + "mb Tiles plotted in " + (System.currentTimeMillis() - startTime) + "ms");
+
+				// Save in memcached
+				SetTiles twdao = new SetTiles();
+				twdao.purge(is);
+				twdao.setExpiry(60 * 60 * 16);
+				twdao.write(is);
 			}
-			
-			ThreadUtils.waitOnPool(workers);
-			log.info("Workers completed in " + (System.currentTimeMillis() - startTime) + "ms");
-			
-			// Save in memcached
-			SetTiles twdao = new SetTiles();
-			twdao.write(is);
 		} catch (Exception e) {
 			log.error("Error processing GFS data - " + e.getMessage(), e);
 		}

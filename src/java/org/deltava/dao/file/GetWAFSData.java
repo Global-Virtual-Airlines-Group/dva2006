@@ -22,8 +22,9 @@ import ucar.unidata.io.RandomAccessFile;
 
 public class GetWAFSData extends DAO {
 	
-	// GRIB layer offets - temp, U, V
-	private static final int[] RECORDS = {67, 68};
+	// GRIB layer offets - temp, alt, U, V
+	private static final int[][] RECORDS = {{183, 187, 188}, {133, 137, 138}, {103, 107, 108}, {73, 77, 78},
+		{63, 67, 68}, {33, 37, 38}};
 	
 	private static final Logger log = Logger.getLogger(GetWAFSData.class);
 
@@ -42,7 +43,7 @@ public class GetWAFSData extends DAO {
 	/*
 	 * Initializes the Observation array.
 	 */
-	private static WindData[] initObs(Grib2GDSVariables grid) {
+	private static WindData[] initObs(PressureLevel pl, Grib2GDSVariables grid) {
 		int gridW = grid.getNx(); int gridH = grid.getNy();
 		log.info("Generating " + gridW + "x" + gridH + " grid, dLat = " + grid.getDx() + ", dLng = " + grid.getDy());
 		
@@ -56,8 +57,7 @@ public class GetWAFSData extends DAO {
 		int ofs = 0; float startlng = lng;
 		for (int y = 0; y < gridH; y++) {
 			for (int x = 0; x < gridW; x++) {
-				WindData wd = new WindData(lat, lng);
-				results[ofs] = wd;
+				results[ofs] = new WindData(pl, lat, lng);
 				lng += grid.getDx();
 				ofs++;
 			}
@@ -69,7 +69,13 @@ public class GetWAFSData extends DAO {
 		return results;
 	}
 
-	public GRIBResult<WindData> load() throws DAOException {
+	/**
+	 * Loads GFS wind/temperature data for a given Pressure Level.
+	 * @param lvl the PressureLevel
+	 * @return a GRIBResult object
+	 * @throws DAOException if an I/O error occurs
+	 */
+	public GRIBResult<WindData> load(PressureLevel lvl) throws DAOException {
 		try {
 			_raf = new RandomAccessFile(_fileName, "r");
 			_raf.order(RandomAccessFile.BIG_ENDIAN);
@@ -86,11 +92,12 @@ public class GetWAFSData extends DAO {
 			Grib2GDSVariables gds = rc.getGDS().getGdsVars();
 			GRIBResult<WindData> gr = new GRIBResult<WindData>(gds.getNx(), gds.getNy(), gds.getDx(), gds.getDy());
 			gr.setStart(gds.getLa1(), gds.getLo1() - 180);
-			WindData[] results = initObs(gds);
+			WindData[] results = initObs(lvl, gds);
 			
 			// Go through the records
-			for (int l = 0; l < RECORDS.length; l++) {
-				int layer = RECORDS[l];
+			final int[] ofsetts = RECORDS[lvl.ordinal()];
+			for (int l = 0; l < ofsetts.length; l++) {
+				int layer = ofsetts[l];
 				if (layer >= records.size()) {
 					log.warn("GRIB2 file is only " + records.size() + " records long");
 					continue;
@@ -109,10 +116,14 @@ public class GetWAFSData extends DAO {
 					
 					switch (l) {
 					case 0:
-						wd.setJetStreamU(v);
+						wd.setTemperature(Math.round(v));
 						break;
 						
 					case 1:
+						wd.setJetStreamU(v);
+						break;
+						
+					case 2:
 						wd.setJetStreamV(v);
 						break;
 					}
@@ -120,6 +131,7 @@ public class GetWAFSData extends DAO {
 			}
 			
 			_raf.close();
+			_raf = null;
 			gr.addAll(Arrays.asList(results));
 			return gr;
 		} catch (IOException ie) {
