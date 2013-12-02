@@ -194,8 +194,15 @@ map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.
 google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });
 google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
 
+// Create the jetstream layer
+var jsOpts = {maxZoom:8, nativeZoom:5, opacity:0.55, zIndex:golgotha.maps.z.OVERLAY};
+var hjsl = new golgotha.maps.ShapeLayer(jsOpts, 'High Jet', 'wind-jet');
+var ljsl = new golgotha.maps.ShapeLayer(jsOpts, 'Low Jet', 'wind-lojet');
+
 // Add clouds
 map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Clouds', new google.maps.weather.CloudLayer()));
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Lo Jetstream', hjsl));
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Hi Jetstream', ljsl));
 map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerClearControl(map));
 
 // Create the tracks/waypoints
