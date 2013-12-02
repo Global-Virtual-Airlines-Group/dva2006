@@ -134,7 +134,7 @@ public class TestGetWAFSData extends TestCase {
 		// Load the data
 		GetWAFSData dao = new GetWAFSData(f.getAbsolutePath());
 		assertNotNull(dao);
-		GRIBResult<WindData> data = dao.load();
+		GRIBResult<WindData> data = dao.load(PressureLevel.JET);
 		assertNotNull(data);
 		assertTrue(data.size() > 0);
 		
@@ -151,7 +151,7 @@ public class TestGetWAFSData extends TestCase {
 
 		// Plot the tiles
 		BlockingQueue<TileAddress> work = new LinkedBlockingQueue<TileAddress>();
-		for (int zoom = 6; zoom > 1; zoom--) {
+		for (int zoom = 5; zoom > 1; zoom--) {
 			Projection p = new MercatorProjection(zoom);
 			TileAddress nw = p.getAddress(data.getNW()); TileAddress se = p.getAddress(data.getSE());
 			for (int tx = nw.getX(); tx <= se.getX(); tx++) {
