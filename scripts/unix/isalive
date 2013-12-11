@@ -1,6 +1,6 @@
 #!/bin/bash
 # System daemon checking script
-# (c) 2005-2012 Global Virtual Airlines Group. All Rights Reserved.
+# (c) 2005-2013 Global Virtual Airlines Group. All Rights Reserved.
 
 if [ -f "/var/run/siteDown.flag" ]
 then
@@ -170,12 +170,27 @@ then
   then
     echo "Bandwidthd (Bandwidth monitor) is alive"
   else
-    echo "Bandwidthd (Bandwidth monitor) is DOWN "
+    echo "Bandwidthd (Bandwidth monitor) is DOWN"
     /etc/init.d/bandwidthd start
   fi
 else
   echo "Bandwidthd (Bandwidth monitor) is DOWN - no pid"
   /etc/init.d/bandwidthd start
+fi
+
+# Check memcached daemon
+if [ -f "/var/run/memcached.pid" ]
+then
+  if [ -d "/proc/`cat /var/run/memcached.pid`" ]
+  then
+    echo "Memcached (Cache server) is alive"
+  else
+    echo "Memcached (Cache server) is DOWN"
+    /etc/init.d/memcached start
+  fi
+else
+  echo "Memcached (Cache server) is DOWN - no pid"
+  /etc/init.d/memcached start
 fi
 
 # Check VATSIM statistics daemon
