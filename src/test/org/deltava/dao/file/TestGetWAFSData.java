@@ -42,8 +42,8 @@ public class TestGetWAFSData extends TestCase {
 				// Plot the pixels
 				int pX = addr.getPixelX(); int pY = addr.getPixelY();
 				BufferedImage img = new BufferedImage(Tile.WIDTH, Tile.HEIGHT, BufferedImage.TYPE_INT_ARGB);
-				SingleTile st = new SingleTile(addr);
-				st.setImage(img); boolean hasData = false;
+				SingleTile st = new SingleTile(addr, img);
+				boolean hasData = false;
 				for (int x = 0; x < Tile.WIDTH; x++) {
 					for (int y = 0; y < Tile.HEIGHT; y++) {
 						GeoLocation loc = p.getGeoPosition(pX + x, pY + y);
@@ -134,7 +134,7 @@ public class TestGetWAFSData extends TestCase {
 		// Load the data
 		GetWAFSData dao = new GetWAFSData(f.getAbsolutePath());
 		assertNotNull(dao);
-		GRIBResult<WindData> data = dao.load(PressureLevel.JET);
+		GRIBResult<WindData> data = dao.load(PressureLevel.HIGH);
 		assertNotNull(data);
 		assertTrue(data.size() > 0);
 		
@@ -145,6 +145,7 @@ public class TestGetWAFSData extends TestCase {
 		}
 		
 		log.info("Jet Stream max = " +wMax +", min = " + wMin);
+		assertFalse(true);
 		
 		// Get threads
 		int threads = Math.max(2, Runtime.getRuntime().availableProcessors());
