@@ -62,8 +62,8 @@ public class GFSDownloadTask extends Task {
 				// Plot the pixels
 				int pX = addr.getPixelX(); int pY = addr.getPixelY();
 				BufferedImage img = new BufferedImage(Tile.WIDTH, Tile.HEIGHT, BufferedImage.TYPE_INT_ARGB);
-				SingleTile st = new SingleTile(addr);
-				st.setImage(img); boolean hasData = false;
+				SingleTile st = new SingleTile(addr, img);
+				boolean hasData = false;
 				for (int x = 0; x < Tile.WIDTH; x++) {
 					for (int y = 0; y < Tile.HEIGHT; y++) {
 						GeoLocation loc = p.getGeoPosition(pX + x, pY + y);
@@ -135,24 +135,23 @@ public class GFSDownloadTask extends Task {
 			// Load the GFS data
 			GetWAFSData dao = new GetWAFSData(outF.getAbsolutePath());
 			try {
-				Connection con = ctx.getConnection();
-				ctx.startTX();
-				
-				// Write all weather data
-				SetWeather wwdao = new SetWeather(con);
 				for (PressureLevel lvl : PressureLevel.values()) {
+					Connection con = ctx.getConnection();
+					ctx.startTX();
+					
+					SetWeather wwdao = new SetWeather(con);
 					wwdao.purgeWinds(5, lvl);
 					
 					log.info("Processing " + lvl.getPressure() + "mb data");
 					GRIBResult<WindData> data = dao.load(lvl);
 					wwdao.write(dt, data);	
-					con.commit();
+					ctx.commitTX();
+					ctx.release();
 				}
 
 				// Write GFS cycle data
-				SetMetadata mwdao = new SetMetadata(con);
+				SetMetadata mwdao = new SetMetadata(ctx.getConnection());
 				mwdao.write("gfs.cycle", String.valueOf(dt.getTime() / 1000));
-				ctx.commitTX();
 			} catch(DAOException de) {
 				log.error(de.getMessage(), de);
 				ctx.rollbackTX();

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.tile;
 
 import java.awt.Rectangle;
@@ -7,7 +7,7 @@ import java.awt.image.*;
 /**
  * A single Tile.
  * @author Luke
- * @version 5.0
+ * @version 5.2
  * @since 5.0
  */
 
@@ -23,13 +23,25 @@ public class SingleTile extends AbstractTile implements RasterTile {
 	private Boolean _isEmpty = null;
 	
 	/**
-	 * Creates a new Tile.
+	 * Creates a new blank Tile.
 	 * @param addr the address
 	 */
 	public SingleTile(TileAddress addr) {
+		this(addr, null);
+	}
+	
+	/**
+	 * Creates a new Tile.
+	 * @param addr the address
+	 */
+	public SingleTile(TileAddress addr, BufferedImage img) {
 		super(addr);
-		_img = new BufferedImage(Tile.WIDTH, Tile.HEIGHT, BufferedImage.TYPE_BYTE_INDEXED, EMPTY_PAL);
-		_img.setData(EMPTY.getData());
+		if (img == null) {
+			img = new BufferedImage(Tile.WIDTH, Tile.HEIGHT, BufferedImage.TYPE_BYTE_INDEXED, EMPTY_PAL);
+			img.setData(EMPTY.getData());
+		}
+		
+		_img = img;
 	}
 
 	/**
@@ -37,6 +49,7 @@ public class SingleTile extends AbstractTile implements RasterTile {
 	 * @param img the Image
 	 * @throws IllegalArgumentException if the height and width are not equal to that of a single tile
 	 */
+	@Override
 	public void setImage(BufferedImage img) {
 		if ((img != null) && ((img.getWidth() != Tile.WIDTH) || (img.getHeight() != Tile.HEIGHT)))
 			throw new IllegalArgumentException("Invalid image size " + img.getWidth() + "x" + img.getHeight());
