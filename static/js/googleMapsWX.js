@@ -591,7 +591,7 @@ golgotha.maps.Animator.prototype.idleHandler = function() {
 
 // Front options
 golgotha.maps.frontOpts = {
-		"WARM":{strokeOpacity:1, strokeColor:"#ff0000", icons:[{icon:{path:"M 0,-2 A 2,2 0 0 0 0,2 z",fillColor:"red",fillOpacity:1,strokeWeight:1,scale:3},offset:"12px",repeat:"24px"}], zIndex:3, geodesic:true},
+		"WARM":{strokeOpacity:1, strokeColor:"#ff0000", icons:[{icon:{path:"M 0,-2 A 2,2 0 0 1 0,2 z",fillColor:"red",fillOpacity:1,strokeWeight:1,scale:3},offset:"12px",repeat:"24px"}], zIndex:3, geodesic:true},
 		"COLD":{strokeOpacity:1, strokeColor:"#0000ff", icons:[{icon:{path:"M 0,-2 0,2 -2,0 z",fillColor:"blue",fillOpacity:1,strokeWeight:1,scale:3},offset:"12px",repeat:"24px"}], zIndex:3, geodesic:true},
 		"OCFNT":{strokeOpacity:1, strokeColor:"#912CEE", icons:[{icon:{path:"M 0,-4 A 2,2 0 0 0 0,0 L -3,2 0,4 z",fillColor:"#912CEE",fillOpacity:1,strokeWeight:1,scale:3},offset:"18px",repeat:"36px"}], zIndex:3, geodesic:true},
 		"STNRY":{strokeOpacity:0, icons:[{icon:{path:"M 0,-4 0,4",strokeWeight:3,strokeOpacity:1,strokeColor:"blue"},offset:"0px",repeat:"48px"},{icon:{path:"M 0,-4 0,4",strokeWeight:3,strokeOpacity:1,strokeColor:"red"},offset:"24px",repeat:"48px"},{icon:{path:"M 0,-2 0,2 -2,0 z",fillColor:"blue",fillOpacity:1,scale:3},offset:"0",repeat:"48px"},{icon:{path:"M 0,-2 A 2,2 0 0 1 0,2 z",fillColor:"red",fillOpacity:1,scale:3},offset:"24px",repeat:"48px"}], zIndex:3, geodesic:true},
