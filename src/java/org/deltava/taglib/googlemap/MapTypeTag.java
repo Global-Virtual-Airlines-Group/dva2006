@@ -8,17 +8,15 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP tag to set the base layer on a  Google Map.
  * @author Luke
- * @version 5.1
+ * @version 5.2
  * @since 2.1
  */
 
 public class MapTypeTag extends GoogleMapEntryTag {
 	
 	private static final String[] MAP_CODES = {"MAP", "SAT", "TRN"};
-	private static final String[] V2_MAP_OPTS = {"G_NORMAL_MAP", "G_SATELLITE_MAP", "G_PHYSICAL_MAP"};
 	private static final String[] V3_MAP_OPTS = {"ROADMAP", "SATELLITE", "TERRAIN"};
 	
-	private static final String V2_DEFAULT = "G_SATELLITE_MAP";
 	private static final String V3_DEFAULT = "SATELLITE";
 	
 	private String _mapVar;
@@ -40,7 +38,7 @@ public class MapTypeTag extends GoogleMapEntryTag {
 		if (type == null)
 			return null;
 		
-		String[] MAP_OPTS = (getAPIVersion() == 3) ? V3_MAP_OPTS : V2_MAP_OPTS;
+		String[] MAP_OPTS = (getAPIVersion() == 3) ? V3_MAP_OPTS : V3_MAP_OPTS;
 		String mapType = type.toUpperCase();
 		int ofs = StringUtils.arrayIndexOf(MAP_OPTS, mapType, -1);
 		if (ofs != -1)
@@ -82,7 +80,7 @@ public class MapTypeTag extends GoogleMapEntryTag {
 	public int doStartTag() throws JspException {
 		super.doStartTag();
 		if (_default == null)
-			_default = (getAPIVersion() == 3) ? V3_DEFAULT : V2_DEFAULT;
+			_default = (getAPIVersion() == 3) ? V3_DEFAULT : V3_DEFAULT;
 			
 		return SKIP_BODY;
 	}
@@ -98,11 +96,7 @@ public class MapTypeTag extends GoogleMapEntryTag {
 		JspWriter out = pageContext.getOut();
 		try {
 			out.print(_mapVar);
-			if (getAPIVersion() == 3)
-				out.print(".setMapTypeId(google.maps.MapTypeId.");
-			else
-				out.print(".setMapType(");
-			
+			out.print(".setMapTypeId(google.maps.MapTypeId.");
 			out.print((_mapType == null) ? _default : _mapType);
 			out.println(");");
 		} catch (Exception e) {

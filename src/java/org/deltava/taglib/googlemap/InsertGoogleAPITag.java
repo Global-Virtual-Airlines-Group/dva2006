@@ -26,10 +26,9 @@ public class InsertGoogleAPITag extends TagSupport {
 	static final String USAGE_ATTR_NAME = "$googleMapUsage$";
 	static final String API_VER_ATTR_NAME = "$googleMapAPIVersion$";
 	
-	private static final int MIN_API_VERSION = 2;
+	private static final int MIN_API_VERSION = 3;
 	private static final String DEFAULT_V3_MINOR = "15";
 	
-	private static final String V2_API_URL = "http://maps.google.com/maps?file=api&amp;v=";
 	private static final String V3_API_URL = "http://maps.googleapis.com/maps/api/js?sensor=false&amp;v=";
 	
 	private static final AtomicLong USAGE_COUNT = new AtomicLong();
@@ -87,8 +86,6 @@ public class InsertGoogleAPITag extends TagSupport {
 		// Translate stable/release v3 to minor version
 		if ((_majorVersion == 3) && (_minorVersion == null))
 			_minorVersion = DEFAULT_V3_MINOR;
-		else if ((_majorVersion == 2) && (_minorVersion == null))
-			_minorVersion = "s";
 		
 		return super.doStartTag();
 	}
@@ -101,20 +98,6 @@ public class InsertGoogleAPITag extends TagSupport {
 	@Override
 	public int doEndTag() throws JspException {
 
-		// Get the API key
-		String apiKey = null;
-		if (_majorVersion < 3) {
-			Map<?, ?> apiKeys = (Map<?, ?>) SystemData.getObject("security.key.googleMaps");
-			if ((_majorVersion < 3) && (apiKeys == null) || (apiKeys.isEmpty()))
-				throw new JspException("Google Maps API keys not defined");
-
-			// Get the API key for this hostname
-			String hostName = pageContext.getRequest().getServerName().toLowerCase();
-			apiKey = (String) apiKeys.get(hostName);
-			if (apiKey == null)
-				apiKey = (String) apiKeys.values().iterator().next();
-		}
-
 		// Check if we've already included the content
 		if (ContentHelper.containsContent(pageContext, "JS", GoogleMapEntryTag.API_JS_NAME))
 			return EVAL_PAGE;
@@ -125,17 +108,14 @@ public class InsertGoogleAPITag extends TagSupport {
 		JspWriter out = pageContext.getOut();
 		try {
 			out.print("<script src=\"");
-			out.print((_majorVersion == 3) ? V3_API_URL : V2_API_URL);
+			out.print((_majorVersion == 3) ? V3_API_URL : V3_API_URL);
 			out.print(String.valueOf(_majorVersion));
 			if (_minorVersion != null) {
 				out.print('.');
 				out.print(_minorVersion);
 			}
 
-			if (_majorVersion < 3) {
-				out.print("&amp;key=");
-				out.print(apiKey);
-			} else if (!_libraries.isEmpty()) {
+			if (!_libraries.isEmpty()) {
 				out.print("&amp;libraries=");
 				for (Iterator<String> i = _libraries.iterator(); i.hasNext(); ) {
 					out.print(i.next());
