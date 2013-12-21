@@ -400,11 +400,6 @@
 		</cookie>
 
 		<key>
-			<map name="googleMaps">
-				<golgotha.deltava.org>ABQIAAAAWFzTV_nG8JA7h9y7QsKTgRRJS5et9y3wMtdA-gitoKTtRCkjrxQTliO5QvvHxFEb4azcpuZZ39eVjQ</golgotha.deltava.org>
-				<www.deltava.org>ABQIAAAAWFzTV_nG8JA7h9y7QsKTgRQs34dwJzNMJEKBtecbaszCuM2KJhQfgxuxzo6F3mVptlQ6PYPapCaeaA</www.deltava.org>
-				<acars.deltava.org>ABQIAAAAWFzTV_nG8JA7h9y7QsKTgRRn8d3rP8x7XVGbg6YjfVi_J-KSjhQmGdPxb2_Vr0LkHmcNk3lv7dtK7A</acars.deltava.org>
-			</map>
 			<analytics>UA-2066915-1</analytics>
 			<airCharts>bc59d23a-a926-5a6d-83aa-8e477688a38d</airCharts>
 		</key>
