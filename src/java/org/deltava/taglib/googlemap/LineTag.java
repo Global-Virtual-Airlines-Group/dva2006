@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import javax.servlet.jsp.*;
@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP Tag to generate a Google Maps GPolyline created out of GMarkers.
  * @author Luke
- * @version 4.1
+ * @version 5.2
  * @since 1.0
  */
 
@@ -109,33 +109,18 @@ public class LineTag extends GoogleMapEntryTag {
 			}
 
 			// Generate the line
-			if (getAPIVersion() == 3) {
-				out.print("new google.maps.Polyline({");
-				if (_useGC)
-					out.print("geodesic:true, ");
-				out.print("path:new google.maps.MVCArray(");
-				out.print(_srcJsVarName);
-				out.print("), strokeColor:\'");
-				out.print(_color);
-				out.print("\', strokeOpacity:");
-				out.print(StringUtils.format(_transparency, "0.00"));
-				out.print(", strokeWidth:");
-				out.print(String.valueOf(_width));
-				out.print("})");
-			} else {
-				out.print("new GPolyline(");
-				out.print(_srcJsVarName);
-				out.print(",\'");
-				out.print(_color);
-				out.print("\',");
-				out.print(String.valueOf(_width));
-				out.print(',');
-				out.print(StringUtils.format(_transparency, "0.00"));
-				out.print(",{zIndex: golgotha.maps.z.POLYLINE");
-				if (_useGC)
-					out.print(", geodesic:true");
-				out.print("});");
-			}
+			out.print("new google.maps.Polyline({");
+			if (_useGC)
+				out.print("geodesic:true, ");
+			out.print("path:new google.maps.MVCArray(");
+			out.print(_srcJsVarName);
+			out.print("), strokeColor:\'");
+			out.print(_color);
+			out.print("\', strokeOpacity:");
+			out.print(StringUtils.format(_transparency, "0.00"));
+			out.print(", strokeWidth:");
+			out.print(String.valueOf(_width));
+			out.print("})");
 		} catch (Exception e) {
 			throw new JspException(e);
 		} finally {
