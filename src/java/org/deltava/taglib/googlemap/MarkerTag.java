@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2010, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import javax.servlet.jsp.*;
@@ -10,9 +10,9 @@ import org.deltava.taglib.ContentHelper;
 import org.deltava.util.StringUtils;
 
 /**
- * A JSP Tag to generate a Google Maps v2/v3 Marker.
+ * A JSP Tag to generate a Google Maps Marker.
  * @author Luke
- * @version 3.4
+ * @version 5.2
  * @since 1.0
  */
 
@@ -116,11 +116,7 @@ public class MarkerTag extends GoogleMapEntryTag {
          if (_jsPointVarName != null) {
             out.print("\nvar ");
             out.print(_jsPointVarName);
-            if (getAPIVersion() == 3)
-            	out.print(" = new google.maps.LatLng(");
-            else
-            	out.print(" = new GLatLng(");
-            
+           	out.print(" = new google.maps.LatLng(");
             out.print(StringUtils.format(_entry.getLatitude(), "##0.00000"));
             out.print(',');
             out.print(StringUtils.format(_entry.getLongitude(), "##0.00000"));

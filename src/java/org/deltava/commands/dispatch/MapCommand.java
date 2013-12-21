@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2010, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.dispatch;
 
 import org.deltava.commands.*;
@@ -8,7 +8,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to display the ACARS dispatch map.
  * @author Luke
- * @version 5.0
+ * @version 5.2
  * @since 2.1
  */
 
@@ -26,7 +26,7 @@ public class MapCommand extends AbstractCommand {
 		ctx.setAttribute("isDispatch", Boolean.valueOf(ctx.getParameter("dispatchClient")), REQUEST);
 		
 		// Check the Google Maps API version requested
-		int apiVersion = StringUtils.parse(ctx.getParameter("api"), 2);
+		int apiVersion = Math.max(3, StringUtils.parse(ctx.getParameter("api"), 3));
 		ctx.setAttribute("mapAPIVersion", Integer.valueOf(apiVersion), REQUEST);
 		
 		// Forward to the JSP

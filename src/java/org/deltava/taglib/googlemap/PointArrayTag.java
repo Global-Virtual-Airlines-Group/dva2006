@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP Tag to generate a JavaScript array of Google Maps Lat/Lon objects.
  * @author Luke
- * @version 3.4
+ * @version 5.2
  * @since 1.0
  */
 
@@ -34,6 +34,7 @@ public class PointArrayTag extends GoogleMapEntryTag {
 	 * Releases the tag's state variables.
 	 */
 	public void release() {
+		super.release();
 		_entries.clear();
 	}
 
@@ -57,12 +58,7 @@ public class PointArrayTag extends GoogleMapEntryTag {
 
 				// Generate the google point and push it into the array
 				out.print(_jsVarName);
-				out.print(".push(new ");
-				if (getAPIVersion() == 3)
-					out.print("google.maps.LatLng(");
-				else
-					out.print("GLatLng(");
-				
+				out.print(".push(new google.maps.LatLng(");
 				out.print(StringUtils.format(entry.getLatitude(), "##0.00000"));
 				out.print(',');
 				out.print(StringUtils.format(entry.getLongitude(), "##0.00000"));
