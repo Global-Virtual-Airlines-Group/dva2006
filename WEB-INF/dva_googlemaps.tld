@@ -30,13 +30,6 @@
 	</tag>
 
 	<tag>
-		<description>IE VML Style Tag, for inserting a custom behavior for VML in IE</description>
-		<name>vml-ie</name>
-		<tag-class>org.deltava.taglib.googlemap.IEVMLStyleTag</tag-class>
-		<body-content>empty</body-content>
-	</tag>
-
-	<tag>
 		<description>Weather.com TileServer series list Tag, for inserting a JavaScript series list</description>	
 		<name>wxList</name>
 		<tag-class>org.deltava.taglib.googlemap.InsertWeatherTag</tag-class>
