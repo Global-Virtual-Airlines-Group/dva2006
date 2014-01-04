@@ -137,7 +137,7 @@ return true;
 <tr class="title">
  <td colspan="3" class="left caps"><el:cmd className="title" url="channels"><content:airline />
  ${forumName}</el:cmd> | <el:cmd className="title" url="channel" linkID="${thread.channel}">${thread.channel}</el:cmd> |
- <fmt:text value="${thread.subject}" /><c:if test="${access.canReport && (postCount > 1)}">
+ <fmt:text value="${thread.subject}" /><c:if test="${access.canReport}">
  ( <el:cmd url="threadreport" link="${thread}" className="small">WARN MODERATORS</el:cmd> )</c:if></td>
 </tr>
 <c:if test="${!empty thread.stickyUntil}">
