@@ -275,6 +275,15 @@ div.mapInfoBox {
 	white-space: nowrap;
 	font-family: verdana, tahoma, sans-serif;
 	font-size: 8pt;
+	min-width:300px;
+}
+
+div.mapMarkerLabel {
+	font-family: verdana, tahoma, sans-serif;
+	font-size: 9px;
+	color: #0c243b;
+	opacity: .700;
+	filter: alpha(opacity=70);
 }
 
 .bld, ul.submenu a.bld {
