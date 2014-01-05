@@ -19,7 +19,7 @@
 <content:region id="main">
 <div class="updateHdr">Switched to ${user.name}</div>
 <br />
-You have switched user credentials to ${user.name}<c:if test="${!empty user.pilotCode}"> (${user.pilotCode}</c:if>. You
+You have switched user credentials to ${user.name}<c:if test="${!empty user.pilotCode}"> (${user.pilotCode})</c:if>. You
 will continue to operate with these credentials until you log out, at which point you will revert to your proper
 credentials.<br />
 <br />
