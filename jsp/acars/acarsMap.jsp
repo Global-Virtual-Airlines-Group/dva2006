@@ -19,6 +19,8 @@
 <content:sysdata var="refreshInterval" name="acars.livemap.reload" />
 <map:api version="3" libraries="weather" />
 <content:js name="progressBar" />
+<content:js name="markerWithLabel" />
+<content:js name="dayNightLayer" />
 <content:js name="googleMapsWX" />
 <c:if test="${!empty tileHost}">
 <script type="text/javascript">
@@ -188,6 +190,8 @@ map.controls[google.maps.ControlPosition.TOP_CENTER].push(golgotha.maps.util.pro
 map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Clouds', new google.maps.weather.CloudLayer()));
 var k = new google.maps.KmlLayer(self.location.protocol + '//' + self.location.host + '/servinfo/firs.kmz', {preserveViewport:true, clickable:false});
 map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'FIRs', k));
+map.DN = new DayNightOverlay({fillColor:'rgba(40,40,48,0.35)'});
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.SelectControl('Day/Night', function() { map.DN.setMap(map); }, function() { map.DN.setMap(null); }));
 map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerClearControl(map));
 google.maps.event.trigger(this, 'maptypeid_changed');
 google.maps.event.trigger(map, 'zoom_changed');
