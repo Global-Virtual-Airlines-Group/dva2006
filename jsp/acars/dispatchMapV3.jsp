@@ -38,17 +38,17 @@ if (this.uniqueID) {
 return true;
 }
 
-function externalMarker(color, point, id)
+function externalMarker(color, p, id)
 {
-var mrk = googleMarker(color, point, null);
+var mrk = new golgotha.maps.Marker({color:color}, p);
 mrk.uniqueID = id;
 google.maps.event.addListener(mrk, 'click', clickIcon);
 return mrk;
 }
 
-function externalIconMarker(palCode, iconCode, point, id)
+function externalIconMarker(palCode, iconCode, p, id)
 {
-var mrk = googleIconMarker(palCode, iconCode, point, null);
+var mrk = new golgotha.maps.IconMarker({pal:palCode, icon:iconCode}, p);
 mrk.uniqueID = id;
 google.maps.event.addListener(mrk, 'click', clickIcon);
 return mrk;

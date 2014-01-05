@@ -21,10 +21,10 @@ xmlreq.onreadystatechange = function() {
 		var p = new google.maps.LatLng(parseFloat(a.getAttribute('lat')), parseFloat(a.getAttribute('lng')));
 		routePoints.push(p);
 		if (a.getAttribute('icon')) {
-			mrk = googleIconMarker(a.getAttribute('pal'), a.getAttribute('icon'), p, label.data);
+			mrk = new golgotha.maps.IconMarker({pal:a.getAttribute('pal'), icon:a.getAttribute('icon'), info:label.data}, p);
 			routeMarkers.push(mrk);
 		} else if (a.getAttribute('color')) {
-			mrk = googleMarker(a.getAttribute('color'), p, label.data);
+			mrk = new golgotha.maps.Marker({color:a.getAttribute('color'), info:label.data}, p);
 			routeMarkers.push(mrk);
 		}	
 

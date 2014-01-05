@@ -118,12 +118,10 @@ xmlreq.onreadystatechange = function() {
 		codes.push(wp.getAttribute('code'));
 		var mrk = null;
 		if (wp.getAttribute('pal'))
-			mrk = googleIconMarker(wp.getAttribute('pal'), wp.getAttribute('icon'), p, label.data);
+			mrk = new golgotha.maps.IconMarker({pal:wp.getAttribute('pal'), icon:wp.getAttribute('icon'), info:label.data, map:map}, p);
 		else
-			mrk = googleMarker(wp.getAttribute('color'), p, label.data);
-		
-		mrk.setMap(map);
-	} // for
+			mrk = new golgotha.maps.Marker({color:wp.getAttribute('color'), info:label.data, map:map}, p);
+	}
 	
 	// Draw the route
 	var rt = new google.maps.Polyline({path:positions, strokeColor:'#4080af', strokeWeight:2, strokeOpacity:0.8, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
@@ -179,14 +177,12 @@ xmlreq.onreadystatechange = function() {
 		if (etopsWarn == 'true') {
 			var wpt = golgotha.getChild(ete, 'warnPoint');
 			var wll = new google.maps.LatLng(parseFloat(wpt.getAttribute('lat')), parseFloat(wpt.getAttribute('lng')));
-			var wmrk = googleIconMarker(parseInt(wpt.getAttribute('pal')), parseInt(wpt.getAttribute('icon')), wll, wpt.firstChild.data);
-			wmrk.setMap(map);
+			var wmrk = new golgotha.maps.IconMarker({pal:wpt.getAttribute('pal'), icon:wpt.getAttribute('icon'), info:wpt.firstChild.data, map:map}, wll);
 			
 			var pts = ete.getElementsByTagName('airport');
 			for (var x = 0; x < pts.length; x++) {
 				var cll = new google.maps.LatLng(parseFloat(pts[x].getAttribute('lat')), parseFloat(pts[x].getAttribute('lng')));
-				var apmrk = googleIconMarker(parseInt(pts[x].getAttribute('pal')), parseInt(pts[x].getAttribute('icon')), cll, pts[x].firstChild.data);
-				apmrk.setMap(map);
+				var apmrk = new golgotha.maps.IconMarker({pal:pts[x].getAttribute('pal'), icon:pts[x].getAttribute('icon'), info:pts[x].firstChild.data, map:map}, cll);
 				
 				// Draw the circle and line
 				var crng = golgotha.maps.miles2Meter(parseInt(ete.getAttribute('range')));
@@ -231,7 +227,7 @@ xmlreq.onreadystatechange = function() {
 	for (var i = 0; i < dGts.length; i++) {
 		var gt = dGts[i];
 		var p = new google.maps.LatLng(parseFloat(gt.getAttribute('lat')), parseFloat(gt.getAttribute('lng')));
-		var gmrk = googleIconMarker(2, 56, p);
+		var gmrk = new golgotha.maps.IconMarker({pal:2, icon:56}, p);
 		gmrk.gate = gt.getAttribute('name');
 		google.maps.event.addListener(gmrk, 'dblclick', function(e) { setCombo(f.gateD, this.gate); alert('Departure Gate set to ' + this.gate); plotMap(); });
 		dGates.addMarker(gmrk, 10);

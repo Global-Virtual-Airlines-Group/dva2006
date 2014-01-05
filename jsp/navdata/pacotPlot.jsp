@@ -14,6 +14,7 @@
 <content:js name="common" />
 <map:api version="3" libraries="weather" />
 <content:js name="googleMapsWX" />
+<content:js name="markerWithLabel" />
 <content:googleAnalytics eventSupport="true" />
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
 <script type="text/javascript">
@@ -112,7 +113,8 @@ xmlreq.onreadystatechange = function() {
 			trackPos.push(p);
 
 			// Create the map marker
-			var mrk = googleMarker(wp.getAttribute('color'), p, label.data);
+			var code = wp.getAttribute('code'); var cl = wp.getAttribute('color');
+			var mrk = new golgotha.maps.Marker({color:cl, info:label.data, label:code}, p);
 			mrk.title = track.getAttribute('code');
 			mrk.trackPoints = track.getAttribute('track');
 			mrk.showTrack = showTrackInfo;
@@ -201,8 +203,8 @@ var ljsl = new golgotha.maps.ShapeLayer(jsOpts, 'Low Jet', 'wind-lojet');
 
 // Add clouds
 map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Clouds', new google.maps.weather.CloudLayer()));
-map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Lo Jetstream', ljsl));
-map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Hi Jetstream', hjsl));
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Lo Jetstream', hjsl));
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Hi Jetstream', ljsl));
 map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerClearControl(map));
 
 // Create the tracks/waypoints

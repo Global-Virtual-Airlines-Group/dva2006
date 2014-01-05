@@ -37,9 +37,9 @@ xmlreq.onreadystatechange = function() {
 		var a = ac[i]; var mrk = null;
 		var p = new google.maps.LatLng(parseFloat(a.getAttribute('lat')), parseFloat(a.getAttribute('lng')));
 		if (a.getAttribute('pal'))
-			mrk = googleIconMarker(a.getAttribute('pal'), a.getAttribute('icon'), p, null);
+			mrk = new golgotha.maps.IconMarker({pal:a.getAttribute('pal'), icon:a.getAttribute('icon')}, p);
 		else if (a.getAttribute('color'))
-			mrk = googleMarker(a.getAttribute('color'), p, null);
+			mrk = new golgotha.maps.Marker({color:a.getAttribute('color')}, p);
 
 		mrk.flight_id = a.getAttribute('flight_id');
 		mrk.isBusy = (a.getAttribute('busy') == 'true');
@@ -90,9 +90,9 @@ xmlreq.onreadystatechange = function() {
 		var d = dc[i]; var mrk = null;
 		var p = new google.maps.LatLng(parseFloat(d.getAttribute('lat')), parseFloat(d.getAttribute('lng')));
 		if (d.getAttribute('pal'))
-			mrk = googleIconMarker(d.getAttribute('pal'), d.getAttribute('icon'), p, null);
+			mrk = new golgotha.maps.IconMarker({pal:d.getAttribute('pal'), icon:d.getAttribute('icon')}, p);
 		else if (d.getAttribute('color'))
-			mrk = googleMarker(d.getAttribute('color'), p, null);
+			mrk = new golgotha.maps.Marker({color:d.getAttribute('color')}, p);
 
 		mrk.range = parseInt(d.getAttribute('range'));
 		mrk.isBusy = (d.getAttribute('busy') == 'true');

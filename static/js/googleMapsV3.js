@@ -27,24 +27,29 @@ golgotha.maps.GMTOffset = new Date().getTimezoneOffset() * 60000;
 // Convert miles to meters
 golgotha.maps.miles2Meter = function(mi) { return mi * 1609.344 };
 
+// Default infoWindow node
+golgotha.maps.infoWindowSizer = function() {
+	var div = document.createElement('div');
+	div.setAttribute('class', 'mapInfoBox');
+	return div;
+};
+
 // Set best text color for map types
 golgotha.maps.TEXT_COLOR = {roadmap:'#002010', satellite:'#efefef', terrain:'#002010', hybrid:'#efefef', acars_trackmap:'#efefef'};
 golgotha.maps.updateMapText = function () {
 	var newColor = golgotha.maps.TEXT_COLOR[this.getMapTypeId()];
 	var elements = getElementsByClass('mapTextLabel');
-	for (var x = 0; x < elements.length; x++) {
-		var el = elements[x];
-		el.style.color = newColor;
-	}
+	for (var x = 0; x < elements.length; x++)
+		elements[x].style.color = newColor;
 
 	return true;
-}
+};
 
 golgotha.maps.updateZoom = function() {
 	var zl = document.getElementById('zoomLevel');
 	if (zl) zl.innerHTML = 'Zoom Level ' + this.getZoom();
 	return true;
-}
+};
 
 golgotha.maps.displayedMarkers = [];
 golgotha.maps.setMap = function(map) {
@@ -55,7 +60,7 @@ golgotha.maps.setMap = function(map) {
 
 	this.setMap_OLD(map);
 	return true;
-}
+};
 
 // Track overlays
 google.maps.Marker.prototype.setMap_OLD = google.maps.Marker.prototype.setMap;
@@ -73,29 +78,27 @@ google.maps.Map.prototype.clearOverlays = function() {
 	}
 	
 	return true;
-}
+};
 
 // Sets copyright DIV
 google.maps.Map.prototype.setCopyright = function(msg) {
 	var sp = document.getElementById('copyright');
 	if (sp) sp.innerHTML = msg;
 	return true;
-}
+};
 
 // Adds a layer to the map
 google.maps.Map.prototype.addLayer = function(l) {
 	golgotha.maps.ovLayers.push(l);
 	l.setMap(this);
 	return true;
-}
+};
 
 // Closes map infoWindow
 google.maps.Map.prototype.closeWindow = function() {
-	if (this.infoWindow)
-		this.infoWindow.close();
-
+	if (this.infoWindow) this.infoWindow.close();
 	return true;
-}
+};
 
 // Clears all map overlay layers
 google.maps.Map.prototype.clearLayers = function() {
@@ -110,14 +113,14 @@ google.maps.Map.prototype.clearLayers = function() {
 		
 	this.overlayMapTypes.clear();
 	return true;
-}
+};
 
 // Sets a status message
 google.maps.Map.prototype.setStatus = function(msg) {
 	var sp = document.getElementById('mapStatus');
 	if (sp)	sp.innerHTML = msg;
 	return true;
-}
+};
 
 // Prototype to calculate visible tile addresses for map
 google.maps.Map.prototype.getVisibleTiles = function(zoom)
@@ -141,22 +144,46 @@ for (var x = nwAddr.x; x <= seAddr.x; x++) {
 }
 
 return tiles;
-}
+};
 
-golgotha.maps.LayerSelectControl = function(map, title, layers) {
-	var container = document.createElement('div');
+golgotha.maps.CreateButtonDiv = function(txt) {
 	var btn = document.createElement('div');
 	btn.className = 'layerSelect';
-	btn.ovLayers = (layers instanceof Array) ? layers : [layers];
-	if (title.length > 9)
+	if (txt.length > 9)
 		btn.style.width = '8em';
-	else if (title.length > 7)
+	else if (txt.length > 7)
 		btn.style.width = '7em';
 	else
 		btn.style.width = '6em';
 
+	btn.appendChild(document.createTextNode(txt));
+	return btn;
+};
+
+golgotha.maps.SelectControl = function(title, onSelect, onClear) {
+	var container = document.createElement('div'); 
+	var btn = golgotha.maps.CreateButtonDiv(title); 
 	container.appendChild(btn);
-	btn.appendChild(document.createTextNode(title));
+	google.maps.event.addDomListener(btn, 'click', function() {
+		if (this.isSelected) {
+			document.removeClass(btn, 'displayed');
+			try { delete btn.isSelected; } catch (err) { btn.isSelected = false; }
+			if (onClear != null) onClear();
+		} else {
+			document.addClass(btn, 'displayed');
+			btn.isSelected = true;
+			if (onSelect != null) onSelect();
+		}
+	});
+
+	return container;
+};
+
+golgotha.maps.LayerSelectControl = function(map, title, layers) {
+	var container = document.createElement('div'); 
+	var btn = golgotha.maps.CreateButtonDiv(title);
+	container.appendChild(btn);
+	btn.ovLayers = (layers instanceof Array) ? layers : [layers];
 	google.maps.event.addDomListener(btn, 'click', function() {
 		if (this.isSelected) {
 			document.removeClass(btn, 'displayed');
@@ -184,7 +211,7 @@ golgotha.maps.LayerSelectControl = function(map, title, layers) {
 	});
 
 	return container;
-}
+};
 
 golgotha.maps.LayerClearControl = function(map) {
 	var container = document.createElement('div');
@@ -206,7 +233,7 @@ golgotha.maps.LayerClearControl = function(map) {
 	});
 	
 	return container;
-}
+};
 
 // Create an arbitrary overlay layer
 golgotha.maps.ShapeLayer = function(opts, name, imgClass) {
@@ -246,10 +273,64 @@ golgotha.maps.ShapeLayer = function(opts, name, imgClass) {
 	}
 
 	return ov;
-}
+};
+
+golgotha.maps.Marker = function(opts, pt) {
+	if ((opts == null) || (opts.color == 'null')) return pt;
+	var hasLabel = (opts.label != null);
+	if (hasLabel && (MarkerWithLabel == null)) {
+		console.log('MarkerWithLabel not loaded!');
+		hasLabel = false;
+	}
+	
+	var icn = new google.maps.MarkerImage('/' + golgotha.maps.IMG_PATH + '/maps/point_' + opts.color + '.png', null, null, null, golgotha.maps.PIN_SIZE);
+	var mrkOpts = {position:pt, icon:icn, shadow:golgotha.maps.DEFAULT_SHADOW, zIndex:golgotha.maps.z.MARKER};
+	if (hasLabel) {
+		mrkOpts.labelClass = 'mapMarkerLabel';
+		if (opts.labelClass)
+			mrkOpts.labelClass += (' ' + opts.labelClass);
+
+		mrkOpts.labelContent = opts.label;
+		mrkOpts.labelStyle = opts.labelStyle;
+		mrkOpts.labelAnchor = new google.maps.Point((opts.label.length * 3), 0);
+	}
+	
+	var marker = hasLabel ? new MarkerWithLabel(mrkOpts) : new google.maps.Marker(mrkOpts);	
+	if (opts.info != null) {
+		marker.info = opts.info;	
+		google.maps.event.addListener(marker, 'click', function() { map.infoWindow.setContent(this.info); map.infoWindow.open(map, this); });	
+	}
+
+	if (opts.map != null)
+		marker.setMap(map);
+
+	return marker;
+};
+
+golgotha.maps.IconMarker = function(opts, pt) {
+	if (opts == null) opts = {pal:0, icon:0};
+	var hasLabel = (opts.label != null);
+
+	var imgBase = null;
+	if (iconInfo.pal > 0)
+		imgBase = 'http://maps.google.com/mapfiles/kml/pal' + opts.pal + '/icon' + opts.icon;
+	else
+		imgBase = '/' + golgotha.maps.IMG_PATH + '/maps/pal' + opts.pal + '/icon' + opts.icon;
+
+	var icn = new google.maps.MarkerImage(imgBase + '.png', null, null, golgotha.maps.ICON_ANCHOR, golgotha.maps.S_ICON_SIZE);
+	var shd = new google.maps.MarkerImage(imgBase + 's.png', null, null, golgotha.maps.ICON_ANCHOR, golgotha.maps.S_ICON_SHADOW_SIZE);
+	var mrk = new google.maps.Marker({position:pt, icon:icn, shadow:shd, zIndex:golgotha.maps.z.MARKER});
+	if (opts.info != null) {
+		mrk.info = label;
+		google.maps.event.addListener(mrk, 'click', function() { map.infoWindow.setContent(this.info); map.infoWindow.open(map, this); });
+	}
+
+	return mrk;
+};
 
 function googleMarker(color, point, label)
 {
+console.log('googleMarker deprecated');
 if (color == 'null') return point;
 var icn = new google.maps.MarkerImage('/' + golgotha.maps.IMG_PATH + '/maps/point_' + color + '.png', null, null, null, golgotha.maps.PIN_SIZE);
 var marker = new google.maps.Marker({position:point, icon:icn, shadow:golgotha.maps.DEFAULT_SHADOW, zIndex:golgotha.maps.z.MARKER});
@@ -263,6 +344,7 @@ return marker;
 
 function googleIconMarker(palCode, iconCode, point, label)
 {
+console.log('googleIconMarker deprecated');
 var imgBase = null;
 if (palCode > 0)
 	imgBase = 'http://maps.google.com/mapfiles/kml/pal' + palCode + '/icon' + iconCode;

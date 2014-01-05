@@ -95,9 +95,9 @@ xmlreq.onreadystatechange = function() {
 		// Create the marker
 		var p = new google.maps.LatLng(parseFloat(wx.getAttribute('lat')), parseFloat(wx.getAttribute('lng')));
 		if (wx.getAttribute('pal'))
-			mrk = googleIconMarker(wx.getAttribute('pal'), wx.getAttribute('icon'), p, null);
+			mrk = new golgotha.maps.IconMarker({pal:wx.getAttribute('pal'), icon:wx.getAttribute('icon')}, p);
 		else if (wx.getAttribute('color'))
-			mrk = googleMarker(wx.getAttribute('color'), p, null);
+			mrk = new golgotha.maps.Marker({color:wx.getAttribute('color')}, p);
 
 		mrk.code = code;
 		mrk.isOpen = false;

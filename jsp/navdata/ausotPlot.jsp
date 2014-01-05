@@ -14,6 +14,7 @@
 <content:js name="common" />
 <map:api version="3" libraries="weather" />
 <content:js name="googleMapsWX" />
+<content:js name="markerWithLabel" />
 <content:googleAnalytics eventSupport="true" />
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
 <script type="text/javascript">
@@ -117,7 +118,8 @@ xmlreq.onreadystatechange = function() {
 			trackPos.push(p);
 
 			// Create the map marker
-			var mrk = googleMarker(wp.getAttribute('color'), p, label.data);
+			var code = wp.getAttribute('code'); var cl = wp.getAttribute('color');
+			var mrk = new golgotha.maps.Marker({color:cl, info:label.data, label:code}, p);
 			mrk.title = track.getAttribute('code');
 			mrk.trackPoints = track.getAttribute('track');
 			mrk.showTrack = showTrackInfo;
