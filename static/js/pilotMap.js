@@ -43,7 +43,7 @@ pBar.updateBar(2);
 while ((cnt < batchSize) && (a != null)) {
 	var label = a.firstChild;
 	var p = new google.maps.LatLng(parseFloat(a.getAttribute('lat')), parseFloat(a.getAttribute('lng')));
-	var mrk = googleMarker(a.getAttribute('color'), p, null);
+	var mrk = new golgotha.maps.Marker({color:a.getAttribute('color')}, p);
 	mrk.infoLabel = label.data;
 	mrk.rank = a.getAttribute('rank');
 	mrk.eqType = a.getAttribute('eqType');

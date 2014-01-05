@@ -25,8 +25,7 @@ var lng = parseInt(f.lonD.value) + (parseInt(f.lonM.value) / 60) + (parseInt(f.l
 lng *= (f.lonDir.selectedIndex * -1);
 
 usrLocation.setMap(null);
-usrLocation = googleMarker('blue', new google.maps.LatLng(lat, lng), labelText);
-usrLocation.setMap(map);
+usrLocation = new golgotha.maps.Marker({color:'blue', info:labelText, map:map}, new google.maps.LatLng(lat, lng));
 golgotha.event.beacon('Pilot Map', 'Update Location');
 return true;
 }
@@ -60,8 +59,7 @@ if ((!result.geometry) || (status != google.maps.GeocoderStatus.OK)) {
 var p = result.geometry.location;
 var lbl = '<span class="small"><b>' + result.address_components[0].long_name + '<\/b><br /><br /><a href="javascript:void setLatLon({latLng:new google.maps.LatLng('
 	+ p.toUrlValue() + ')});">SET LOCATION</a></span>';
-var mrk = googleMarker('white', p, lbl);
-mrk.setMap(map);
+var mrk = new golgotha.maps.Marker({color:'white', info:lbl, map:map}, p);
 map.setCenter(p, 14);
 golgotha.event.beacon('Pilot Map', 'Geolocate');
 return true;

@@ -149,9 +149,9 @@ xmlreq.onreadystatechange = function() {
 		codes.push(wp.getAttribute('code'));
 		var mrk = null;
 		if (wp.getAttribute('pal'))
-			mrk = googleIconMarker(wp.getAttribute('pal'), wp.getAttribute('icon'), p, label.data);
+			mrk = new golgotha.maps.IconMarker({pal:wp.getAttribute('pal'), icon:wp.getAttribute('icon'), info:label.data}, p);
 		else
-			mrk = googleMarker(wp.getAttribute('color'), p, label.data);
+			mrk = new golgotha.maps.Marker({color:wp.getAttribute('color'), info:label.data}, p);
 
 		mrk.setMap(rpq.map);
 	} // for

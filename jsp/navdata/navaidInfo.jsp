@@ -15,6 +15,7 @@
 <map:api version="3" />
 <content:googleAnalytics eventSupport="true" />
 <content:js name="markermanager" />
+<content:js name="markerWithLabel" />
 <script type="text/javascript">
 function validate(form)
 {
@@ -74,9 +75,9 @@ xmlreq.onreadystatechange = function() {
 			var p = new google.maps.LatLng(parseFloat(wp.getAttribute('lat')), parseFloat(wp.getAttribute('lng')));
 			var mrk;
 			if (wp.getAttribute('pal'))
-				mrk = googleIconMarker(wp.getAttribute('pal'), wp.getAttribute('icon'), p, wp.firstChild.data);
+				mrk = new golgotha.maps.IconMarker({pal:wp.getAttribute('pal'), icon:wp.getAttribute('icon'), info:wp.firstChild.data}, p);
 			else
-				mrk = googleMarker(wp.getAttribute('color'), p, wp.firstChild.data);
+				mrk = new golgotha.maps.Marker({color:wp.getAttribute('color'), info:wp.firstChild.data, label:code}, p);
 
 			mrk.minZoom = 4;
 			var type = wp.getAttribute('type');
