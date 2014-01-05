@@ -99,7 +99,7 @@ golgotha.onDOMReady(function() {
 <tr>
  <td class="label">Arriving at</td>
  <td class="data"><el:combo name="airportA" size="1" idx="*" className="req" options="${emptyList}" firstEntry="-" onChange="void this.updateAirportCode()" />
- <el:text name="airportACode" size="4" max="4" idx="*" value="" onBlur="void document.forms[0].airportD.setAirport(this.value)" /></td>
+ <el:text name="airportACode" size="4" max="4" idx="*" value="" onBlur="void document.forms[0].airportA.setAirport(this.value)" /></td>
 </tr>
 </el:table>
 
