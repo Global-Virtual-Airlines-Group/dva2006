@@ -295,16 +295,16 @@ golgotha.maps.Marker = function(opts, pt) {
 		mrkOpts.labelAnchor = new google.maps.Point((opts.label.length * 3), 0);
 	}
 	
-	var marker = hasLabel ? new MarkerWithLabel(mrkOpts) : new google.maps.Marker(mrkOpts);	
+	var mrk = hasLabel ? new MarkerWithLabel(mrkOpts) : new google.maps.Marker(mrkOpts);	
 	if (opts.info != null) {
-		marker.info = opts.info;	
-		google.maps.event.addListener(marker, 'click', function() { map.infoWindow.setContent(this.info); map.infoWindow.open(map, this); });	
+		mrk.info = opts.info;	
+		google.maps.event.addListener(mrk, 'click', function() { map.infoWindow.setContent(this.info); map.infoWindow.open(map, this); });	
 	}
 
 	if (opts.map != null)
-		marker.setMap(map);
+		mrk.setMap(map);
 
-	return marker;
+	return mrk;
 };
 
 golgotha.maps.IconMarker = function(opts, pt) {
@@ -312,7 +312,7 @@ golgotha.maps.IconMarker = function(opts, pt) {
 	var hasLabel = (opts.label != null);
 
 	var imgBase = null;
-	if (iconInfo.pal > 0)
+	if (opts.pal > 0)
 		imgBase = 'http://maps.google.com/mapfiles/kml/pal' + opts.pal + '/icon' + opts.icon;
 	else
 		imgBase = '/' + golgotha.maps.IMG_PATH + '/maps/pal' + opts.pal + '/icon' + opts.icon;
@@ -321,9 +321,12 @@ golgotha.maps.IconMarker = function(opts, pt) {
 	var shd = new google.maps.MarkerImage(imgBase + 's.png', null, null, golgotha.maps.ICON_ANCHOR, golgotha.maps.S_ICON_SHADOW_SIZE);
 	var mrk = new google.maps.Marker({position:pt, icon:icn, shadow:shd, zIndex:golgotha.maps.z.MARKER});
 	if (opts.info != null) {
-		mrk.info = label;
+		mrk.info = opts.info;
 		google.maps.event.addListener(mrk, 'click', function() { map.infoWindow.setContent(this.info); map.infoWindow.open(map, this); });
 	}
+
+	if (opts.map != null)
+		mrk.setMap(map);
 
 	return mrk;
 };
