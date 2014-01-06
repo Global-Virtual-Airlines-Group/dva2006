@@ -247,6 +247,14 @@ Your last flight was on <fmt:date className="sec bld" date="${lastFlight.date}" 
  (<fmt:airport airport="${lastFlight.airportD}" />) to ${lastFlight.airportA.name} (<fmt:airport airport="${lastFlight.airportA}" />)
  in a ${lastFlight.equipmentType}.</c:if></td>
 </tr>
+<c:if test="${needReturnCharter}">
+<tr>
+ <td class="mid"><el:cmd className="bld" url="rcharter">Request Return Charter</el:cmd></td>
+ <td class="data">There are no flights in the <content:airline /> Flight Schedule between ${lastFlight.airportA.name}
+ (<fmt:airport airport="${lastFlight.airportA}" />) and ${lastFlight.airportD.name} (<fmt:airport airport="${lastFlight.airportD}" />).
+ You can request a Return Charter flight to return to your previous airport.</td>
+</tr>
+</c:if>
 <c:if test="${pilot.legs > 0}">
 <tr>
  <td class="mid bld">Flight Information</td>
