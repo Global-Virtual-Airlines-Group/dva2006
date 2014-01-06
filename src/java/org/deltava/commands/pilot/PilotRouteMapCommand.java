@@ -1,4 +1,4 @@
-// Copyright 2007, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -15,8 +15,8 @@ import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to disply all the routes the pilot has flown.
- * @author LKolin
- * @version 4.1
+ * @author Luke
+ * @version 5.2
  * @since 1.0
  */
 
@@ -53,11 +53,12 @@ public class PilotRouteMapCommand extends AbstractCommand {
 			// Save the user's home airport and max flights
 			int maxFlights = routes.isEmpty() ? 1 : routes.get(0).getFlights();
 			Airport airportH = SystemData.getAirport(usr.getHomeAirport());
+			if (airportH == null)
+				airportH = SystemData.getAirport("LFPG");
 			
 			// Get the airports and maximum
 			Collection<Airport> airports = new LinkedHashSet<Airport>();
-			for (Iterator<? extends RoutePair> i = routes.iterator(); i.hasNext(); ) {
-				RoutePair rp = i.next();
+			for (RoutePair rp : routes) {
 				airports.add(rp.getAirportD());
 				airports.add(rp.getAirportA());
 			}
