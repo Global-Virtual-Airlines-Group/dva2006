@@ -42,7 +42,7 @@
 <script type="text/javascript">
 <map:point var="mapC" point="${home}" />
 var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
-var mapOpts = {center:mapC, zoom:3, scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
+var mapOpts = {center:mapC, minZoom:2, zoom:3, scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
 
 // Create the map
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
