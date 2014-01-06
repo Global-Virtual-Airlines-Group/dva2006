@@ -29,6 +29,7 @@ function validate(form)
 if (!checkSubmit()) return false;
 if (!validateText(form.firstName, 2, 'First (given) Name')) return false;
 if (!validateText(form.lastName, 2, 'Last (family) Name')) return false;
+if (!validateCombo(form.homeAirport, 'Home Airport')) return false;
 if (!validateText(form.df, 7, 'Date Format')) return false;
 if (!validateText(form.tf, 5, 'Time Format')) return false;
 if (!validateText(form.nf, 5, 'Number Format')) return false;
