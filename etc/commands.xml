@@ -1334,7 +1334,13 @@
 		<class>org.deltava.commands.assign.FlightPreapproveCommand</class>
 		<roles>HR,Operations</roles>
 	</command>
-	
+
+	<command id="rcharter">
+		<name>Return Charter Flight</name>
+		<class>org.deltava.commands.assign.ReturnCharterCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
 	<command id="singleassign">
 		<name>Single Flight Assignment</name>
 		<class>org.deltava.commands.assign.SingleAssignmentSearchCommand</class>

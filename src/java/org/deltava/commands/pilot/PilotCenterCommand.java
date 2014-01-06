@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.beans.academy.*;
 import org.deltava.beans.acars.Restriction;
 import org.deltava.beans.flight.FlightReport;
 import org.deltava.beans.hr.TransferRequest;
-import org.deltava.beans.schedule.ScheduleSearchCriteria;
+import org.deltava.beans.schedule.*;
 import org.deltava.beans.system.*;
 
 import org.deltava.commands.*;
@@ -26,7 +26,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display the Pilot Center.
  * @author Luke
- * @version 5.0
+ * @version 5.2
  * @since 1.0
  */
 
@@ -111,14 +111,23 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			ctx.setAttribute("access", access, REQUEST);
 
 			// Load all PIREPs and save the latest PIREP as a separate bean in the request
-			frdao.setQueryMax(10);
+			frdao.setQueryMax(10); FlightReport lastFlight = null;
 			List<FlightReport> results = frdao.getByPilot(p.getID(), new ScheduleSearchCriteria("SUBMITTED DESC"));
 			for (Iterator<FlightReport> i = results.iterator(); i.hasNext();) {
 				FlightReport fr = i.next();
 				if ((fr.getStatus() != FlightReport.DRAFT) && (fr.getStatus() != FlightReport.REJECTED)) {
+					lastFlight = fr;
 					ctx.setAttribute("lastFlight", fr, REQUEST);
 					break;
 				}
+			}
+			
+			// Check if we can request a backout charter
+			if (lastFlight != null) {
+				GetSchedule schdao = new GetSchedule(con);
+				FlightTime ft = schdao.getFlightTime(lastFlight);
+				boolean rCharter = ((ft.getFlightTime() == 0) && !lastFlight.hasAttribute(FlightReport.ATTR_ROUTEWARN)); 
+				ctx.setAttribute("needReturnCharter", Boolean.valueOf(rCharter), REQUEST);
 			}
 			
 			// Get online hours
