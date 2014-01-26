@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2011, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2011, 2013, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.layout;
 
 import javax.servlet.http.*;
@@ -21,6 +21,7 @@ import org.deltava.taglib.BrowserInfoTag;
 public class PageTag extends BrowserInfoTag {
 
 	private boolean _sideMenu;
+	private boolean _isLogged;
 
 	/**
 	 * Tells a child tag whether we are rendering side menus or navigation bars.
@@ -28,6 +29,13 @@ public class PageTag extends BrowserInfoTag {
 	 */
 	boolean sideMenu() {
 		return _sideMenu;
+	}
+	
+	private void logReason(String msg) {
+		if (!_sideMenu || _isLogged) return;
+		HttpServletResponse rsp = (HttpServletResponse) pageContext.getResponse();
+		rsp.setHeader("X-Side-Menu", msg);
+		_isLogged = true;
 	}
 
 	/**
@@ -41,7 +49,9 @@ public class PageTag extends BrowserInfoTag {
 		// Check for IE6 and phones/tablets
 		HTTPContextData bctxt = getBrowserContext();
 		_sideMenu = (bctxt == null) || (bctxt.getDeviceType() != DeviceType.DESKTOP);
-		_sideMenu |= ((bctxt.getBrowserType() == BrowserType.IE) && (bctxt.getMajor() < 8));
+		logReason("Non-desktop device");
+		_sideMenu |= ((bctxt.getBrowserType() == BrowserType.IE) && (bctxt.getMajor() < 9));
+		logReason("Internet Explorer < 9");
 
 		// Check if our screen size is big enough
 		HttpServletRequest hreq = (HttpServletRequest) pageContext.getRequest();
@@ -51,11 +61,13 @@ public class PageTag extends BrowserInfoTag {
 			if (usr == null) {
 				Number sX = (Number) s.getAttribute(CommandContext.SCREENX_ATTR_NAME);
 				_sideMenu = (sX == null) || (sX.intValue() < 1155);
-			} else
+				logReason("Screen Width = " + String.valueOf(sX));
+			} else {
 				_sideMenu = !usr.getShowNavBar();
+				logReason(usr.getName() + " ShowNavBar = " + String.valueOf(usr.getShowNavBar()));
+			}
 		}
 
-		// Render the div
 		try {
 			JspWriter out = pageContext.getOut();
 			out.print("<div class=\"");
@@ -66,6 +78,16 @@ public class PageTag extends BrowserInfoTag {
 		}
 
 		return EVAL_BODY_INCLUDE;
+	}
+	
+	/**
+	 * Releases the tag's state variables.
+	 */
+	@Override
+	public void release() {
+		super.release();
+		_sideMenu = false;
+		_isLogged = false;
 	}
 
 	/**
@@ -79,6 +101,8 @@ public class PageTag extends BrowserInfoTag {
 			pageContext.getOut().print("</div>");
 		} catch (Exception e) {
 			throw new JspException(e);
+		} finally {
+			release();
 		}
 
 		return EVAL_PAGE;
