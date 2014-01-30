@@ -213,10 +213,10 @@ public class SetLibrary extends DAO {
 	public void write(Video v) throws DAOException {
 		try {
 			if (v.getDownloadCount() == 0)
-				prepareStatement("REPLACE INTO VIDEOS (NAME, FILESIZE, SECURITY, AUTHOR, CATEGORY, BODY, "
+				prepareStatement("REPLACE INTO exams.VIDEOS (NAME, FILESIZE, SECURITY, AUTHOR, CATEGORY, BODY, "
 						+ "FILENAME) VALUES (?, ?, ?, ?, ?, ?, ?)");
 			else
-				prepareStatement("UPDATE VIDEOS SET NAME=?, FILESIZE=?, SECURITY=?, AUTHOR=?, CATEGORY=?, "
+				prepareStatement("UPDATE exams.VIDEOS SET NAME=?, FILESIZE=?, SECURITY=?, AUTHOR=?, CATEGORY=?, "
 						+ "BODY=? WHERE (FILENAME=?)");
 			
 			// Update the prepared statement
@@ -250,7 +250,7 @@ public class SetLibrary extends DAO {
 		else if (entry instanceof FileEntry)
 			sqlBuf.append("FILES");
 		else if (entry instanceof Video)
-			sqlBuf.append("VIDEOS");
+			sqlBuf.append("exams.VIDEOS");
 		else
 			throw new IllegalArgumentException("Unknown library entry type - " + entry.getClass().getName());
 
