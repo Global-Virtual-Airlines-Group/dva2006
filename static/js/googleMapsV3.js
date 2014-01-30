@@ -27,13 +27,6 @@ golgotha.maps.GMTOffset = new Date().getTimezoneOffset() * 60000;
 // Convert miles to meters
 golgotha.maps.miles2Meter = function(mi) { return mi * 1609.344 };
 
-// Default infoWindow node
-golgotha.maps.infoWindowSizer = function() {
-	var div = document.createElement('div');
-	div.setAttribute('class', 'mapInfoBox');
-	return div;
-};
-
 // Set best text color for map types
 golgotha.maps.TEXT_COLOR = {roadmap:'#002010', satellite:'#efefef', terrain:'#002010', hybrid:'#efefef', acars_trackmap:'#efefef'};
 golgotha.maps.updateMapText = function () {
