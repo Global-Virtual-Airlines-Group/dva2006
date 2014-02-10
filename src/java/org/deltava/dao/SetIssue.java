@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2011, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.system.*;
 /**
  * A Data Access Object to update development Issues.
  * @author Luke
- * @version 4.1
+ * @version 5.2
  * @since 1.0
  */
 
@@ -22,14 +22,12 @@ public class SetIssue extends DAO {
 		super(c);
 	}
 
-	/**
+	/*
 	 * Helper method to initialize the prepared statement for INSERTs.
 	 */
 	private void insert(Issue i) throws SQLException {
 		prepareStatement("INSERT INTO common.ISSUES (ID, AUTHOR, ASSIGNEDTO, CREATED, RESOLVED, SUBJECT, "
-				+ "DESCRIPTION, AREA, PRIORITY, STATUS, TYPE, MAJOR, MINOR) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-
-		// Populate the prepared statement
+				+ "DESCRIPTION, AREA, PRIORITY, STATUS, TYPE, SECURITY, MAJOR, MINOR) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 		_ps.setInt(1, i.getID());
 		_ps.setInt(2, i.getAuthorID());
 		_ps.setInt(3, i.getAssignedTo());
@@ -41,18 +39,17 @@ public class SetIssue extends DAO {
 		_ps.setInt(9, i.getPriority());
 		_ps.setInt(10, i.getStatus());
 		_ps.setInt(11, i.getType());
-		_ps.setInt(12, i.getMajorVersion());
-		_ps.setInt(13, i.getMinorVersion());
+		_ps.setInt(12, i.getSecurity());
+		_ps.setInt(13, i.getMajorVersion());
+		_ps.setInt(14, i.getMinorVersion());
 	}
 
-	/**
+	/*
 	 * Helper method to initialize the prepared statement for UPDATEs.
 	 */
 	private void update(Issue i) throws SQLException {
 		prepareStatement("UPDATE common.ISSUES SET ASSIGNEDTO=?, RESOLVED=?, SUBJECT=?, DESCRIPTION=?, "
 				+ "AREA=?, PRIORITY=?, STATUS=?, TYPE=?, SECURITY=?, MAJOR=?, MINOR=? WHERE (ID=?)");
-
-		// Populate the prepared statement
 		_ps.setInt(1, i.getAssignedTo());
 		_ps.setTimestamp(2, (i.getStatus() == Issue.STATUS_OPEN) ? null : createTimestamp(i.getResolvedOn()));
 		_ps.setString(3, i.getSubject());
