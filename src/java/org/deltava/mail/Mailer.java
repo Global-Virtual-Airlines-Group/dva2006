@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.mail;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to send e-mail messages.
  * @author Luke
- * @version 3.1
+ * @version 5.2
  * @since 1.0
  */
 
@@ -28,8 +28,8 @@ public class Mailer {
 
 	private static class EMailSender implements EMailAddress {
 
-		private String _name;
-		private String _addr;
+		private final String _name;
+		private final String _addr;
 
 		EMailSender(String addr, String name) {
 			super();
@@ -45,6 +45,10 @@ public class Mailer {
 			return _name;
 		}
 
+		public boolean isInvalid() {
+			return false;
+		}
+		
 		public String toString() {
 			return _name + " (" + _addr + ")";
 		}
@@ -102,12 +106,11 @@ public class Mailer {
 	}
 
 	/**
-	 * Adds an individual address to the recipient list, and sends the message <i>in a new thread</i>. This method will
-	 * check for a valid e-mail address by comparing the address to {@link EMailAddress#INVALID_ADDR}.
+	 * Adds an individual address to the recipient list, and sends the message <i>in a new thread</i>.
 	 * @param addr the recipient name/address
 	 */
 	public void send(EMailAddress addr) {
-		if (addr != null) {
+		if ((addr != null) && !addr.isInvalid()) {
 			_msgTo.add(addr);
 			send();
 		}
@@ -122,12 +125,15 @@ public class Mailer {
 	}
 
 	/**
-	 * Adds a group of addresses to the recipient list, and sends the message <i>in a new thread</i>. This method will
-	 * check for a valid e-mail address by comparing the address to {@link EMailAddress#INVALID_ADDR}.
+	 * Adds a group of addresses to the recipient list, and sends the message <i>in a new thread</i>.
 	 * @param addrs a Collection of recipient names/addresses
 	 */
 	public void send(Collection<? extends EMailAddress> addrs) {
-		_msgTo.addAll(addrs);
+		for (EMailAddress addr : addrs) {
+			if (!addr.isInvalid())
+				_msgTo.add(addr);
+		}
+		
 		send();
 	}
 

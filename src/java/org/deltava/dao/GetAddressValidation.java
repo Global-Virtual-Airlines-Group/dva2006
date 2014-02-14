@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009, 2010, 2011, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.system.AddressValidation;
 /**
  * A Data Access Object to read e-mail address validation entries.
  * @author Luke
- * @version 4.1
+ * @version 5.2
  * @since 1.0
  */
 
@@ -86,16 +86,16 @@ public class GetAddressValidation extends DAO {
 		}
 	}
 
-	/**
+	/*
 	 * Helper method to parse the result set.
 	 */
 	private List<AddressValidation> execute() throws SQLException {
-
 		List<AddressValidation> results = new ArrayList<AddressValidation>();
 		try (ResultSet rs = _ps.executeQuery()) {
 			while (rs.next()) {
 				AddressValidation addr = new AddressValidation(rs.getInt(1), rs.getString(2));
 				addr.setHash(rs.getString(3));
+				addr.setInvalid(!rs.getBoolean(4));
 				results.add(addr);
 			}
 		}

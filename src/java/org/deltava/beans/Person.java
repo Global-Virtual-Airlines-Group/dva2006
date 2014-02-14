@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2013, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -38,6 +38,7 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	private String _ldapDN;
 	private String _email;
 	private int _emailAccess;
+	private boolean _eMailInvalid;
 
 	private final Map<IMAddress, String> _imHandles = new TreeMap<IMAddress, String>();
 
@@ -164,6 +165,10 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	 */
 	public String getEmail() {
 		return _email;
+	}
+	
+	public boolean isInvalid() {
+		return _eMailInvalid;
 	}
 
 	/**
@@ -562,6 +567,15 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	 */
 	public void setEmail(String email) {
 		_email = email;
+	}
+	
+	/**
+	 * Marks the email address as invalid.
+	 * @param isInvalid TRUE if invalid, otherwise FALSE
+	 * @see Person#isInvalid()
+	 */
+	public void setEmailInvalid(boolean isInvalid) {
+		_eMailInvalid = isInvalid;
 	}
 
 	/**
