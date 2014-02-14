@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.mail;
 
 import java.io.UnsupportedEncodingException;
@@ -13,7 +13,7 @@ import org.deltava.beans.EMailAddress;
 /**
  * A bean to aggregate SMTP message information.
  * @author Luke
- * @version 2.6
+ * @version 5.2
  * @since 1.0
  */
 
@@ -168,7 +168,7 @@ class SMTPEnvelope implements java.io.Serializable, Cloneable, Comparable<SMTPEn
 	 * @see SMTPEnvelope#getRecipients()
 	 */
 	public void addRecipient(EMailAddress addr) {
-		if ((addr != null) && (!EMailAddress.INVALID_ADDR.equals(addr.getEmail()))) {
+		if ((addr != null) && !addr.isInvalid()) {
 			try {
 				_msgTo.add(new InternetAddress(addr.getEmail(), addr.getName()));
 			} catch (UnsupportedEncodingException uee) {
@@ -207,7 +207,7 @@ class SMTPEnvelope implements java.io.Serializable, Cloneable, Comparable<SMTPEn
 	 * @see SMTPEnvelope#getCopyTo()
 	 */
 	public void addCopyTo(EMailAddress addr) {
-		if ((addr != null) && (!EMailAddress.INVALID_ADDR.equals(addr.getEmail()))) {
+		if ((addr != null) && !addr.isInvalid()) {
 			try {
 				_copyTo.add(new InternetAddress(addr.getEmail(), addr.getName()));
 			} catch (UnsupportedEncodingException uee) {

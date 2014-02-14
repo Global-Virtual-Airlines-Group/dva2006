@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
  * A DAO to support reading Pilot object(s) from the database. This class contains methods to read an individual Pilot
  * from the database; implementing subclasses typically add methods to retrieve Lists of pilots based on particular criteria.
  * @author Luke
- * @version 5.0
+ * @version 5.2
  * @since 1.0
  */
 
@@ -306,27 +306,28 @@ abstract class PilotReadDAO extends DAO {
 				p.setNoCooler(rs.getBoolean(39));
 				p.setNoTimeCompression(rs.getBoolean(40));
 				p.setACARSRestriction(Restriction.values()[rs.getInt(41)]);
-				p.setLDAPName(rs.getString(42));
-				p.setMotto(rs.getString(43));
+				p.setEmailInvalid(rs.getBoolean(42));
+				p.setLDAPName(rs.getString(43));
+				p.setMotto(rs.getString(44));
 
-				// Check if this result set has columns 44-47, which is the PIREP totals
-				if (columnCount > 46) {
-					p.setLegs(rs.getInt(44));
-					p.setMiles(rs.getLong(45));
-					p.setHours(rs.getDouble(46));
-					p.setLastFlight(expandDate(rs.getDate(47)));
+				// Check if this result set has columns 45-48, which is the PIREP totals
+				if (columnCount > 47) {
+					p.setLegs(rs.getInt(45));
+					p.setMiles(rs.getLong(46));
+					p.setHours(rs.getDouble(47));
+					p.setLastFlight(expandDate(rs.getDate(48)));
 				}
 
-				// Check if this result set has columns 48/49, which is the signature extension
-				if (columnCount > 48) {
-					p.setSignatureExtension(rs.getString(48));
-					p.setSignatureModified(rs.getTimestamp(49));
+				// Check if this result set has columns 49/50, which is the signature extension
+				if (columnCount > 49) {
+					p.setSignatureExtension(rs.getString(49));
+					p.setSignatureModified(rs.getTimestamp(50));
 				}
 
-				// Check if this result set has columns 50/51, which are online legs/hours
-				if (columnCount > 50) {
-					p.setOnlineLegs(rs.getInt(50));
-					p.setOnlineHours(rs.getDouble(51));
+				// Check if this result set has columns 51/52, which are online legs/hours
+				if (columnCount > 51) {
+					p.setOnlineLegs(rs.getInt(51));
+					p.setOnlineHours(rs.getDouble(52));
 				}
 
 				results.add(p);
