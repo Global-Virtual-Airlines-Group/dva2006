@@ -1,16 +1,15 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import javax.servlet.jsp.*;
 import javax.servlet.jsp.tagext.TagSupport;
 
 import org.deltava.beans.Person;
-import org.deltava.beans.EMailAddress;
 
 /**
  * A JSP Tag to display a Pilot's e-mail address.
  * @author Luke
- * @version 1.0
+ * @version 5.2
  * @since 1.0
  */
 
@@ -62,8 +61,10 @@ public class EMailLinkTag extends TagSupport {
 	public int doEndTag() throws JspException {
 		
 		// If we can't display the address, abort
-		if (EMailAddress.INVALID_ADDR.equals(_usr.getEmail()))
+		if (_usr.isInvalid()) {
+			release();
 			return EVAL_PAGE;
+		}
 		
 		JspWriter out = pageContext.getOut();
 		try {
@@ -90,7 +91,6 @@ public class EMailLinkTag extends TagSupport {
 			throw new JspException(e);
 		}
 		
-		// Release state and return
 		release();
 		return EVAL_PAGE;
 	}

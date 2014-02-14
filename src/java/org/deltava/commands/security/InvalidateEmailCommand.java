@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.sql.Connection;
@@ -9,10 +9,12 @@ import org.deltava.beans.system.AddressValidation;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
+import org.deltava.security.AddressValidationHelper;
+
 /**
  * A Web Site Command to invalidate a user's e-mail address.
  * @author Luke
- * @version 2.1
+ * @version 5.2
  * @since 1.0
  */
 
@@ -23,6 +25,7 @@ public class InvalidateEmailCommand extends AbstractCommand {
     * @param ctx the Command context
     * @throws CommandException if an unhandled error occrurs.
     */
+	@Override
    public void execute(CommandContext ctx) throws CommandException {
 
       try {
@@ -39,9 +42,10 @@ public class InvalidateEmailCommand extends AbstractCommand {
          AddressValidation addrValid = avdao.get(p.getID());
          if (addrValid == null) {
             // Invalidate the e-mail address and create the validation entry
-            p.setEmail(EMailAddress.INVALID_ADDR);
-   			addrValid = new AddressValidation(p.getID(), EMailAddress.INVALID_ADDR);
-            addrValid.setHash(EMailAddress.INVALID_ADDR);
+        	 p.setEmailInvalid(true);
+   			addrValid = new AddressValidation(p.getID(), p.getEmail());
+   			addrValid.setHash(AddressValidationHelper.calculateHashCode(p.getEmail()));
+            addrValid.setInvalid(true);
             
             // Create the status entry
             StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.COMMENT);
@@ -67,10 +71,10 @@ public class InvalidateEmailCommand extends AbstractCommand {
             ctx.commitTX();
          } else {
         	 // Check if the old address is still there
-        	 if (EMailAddress.INVALID_ADDR.equals(p.getEmail())) {
+        	 if (p.isInvalid()) {
         		 ctx.setAttribute("alreadyInvalid", Boolean.TRUE, REQUEST);        		 
         	 } else {
-        		 p.setEmail(EMailAddress.INVALID_ADDR);
+        		 p.setEmailInvalid(true);
         		 
                  // Write the e-mail address
                  SetPilot pwdao = new SetPilot(con);

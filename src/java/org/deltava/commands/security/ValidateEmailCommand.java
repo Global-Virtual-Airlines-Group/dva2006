@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.sql.Connection;
@@ -16,7 +16,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to validate e-mail addresses.
  * @author Luke
- * @version 2.1
+ * @version 5.2
  * @since 1.0
  */
 
@@ -27,6 +27,7 @@ public class ValidateEmailCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the command result
@@ -62,7 +63,7 @@ public class ValidateEmailCommand extends AbstractCommand {
 		}
 		
 		// If we're an invalid address, get a new one
-		if (EMailAddress.INVALID_ADDR.equals(av.getAddress())) {
+		if (!av.getIsValid()) {
 			ctx.setAttribute("addr", av, REQUEST);
 			ctx.setAttribute("invalidatedAddr", Boolean.TRUE, REQUEST);
 			result.setURL("/jsp/pilot/eMailUpdate.jsp");
