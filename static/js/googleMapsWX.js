@@ -53,6 +53,10 @@ for (var x = 0; x < all.length; x++) {
 return elements;
 }
 
+// Tile URL generation functions
+golgotha.maps.util.GinsuOverlayLayer = function(name, ts) { return 'http://' + golgotha.maps.tileHost + '/TileServer/imgs/' + name + '/u' + ts + '/'; };
+golgotha.maps.util.S3OverlayLayer = function(name, ts) { return 'http://' + golgotha.maps.tileHost + '/tile/' + name + '/' + ts + '/'; };
+
 // Make cloud layer behave like our layers
 if (google.maps.weather.CloudLayer) {
 	google.maps.weather.CloudLayer.prototype.setMap_OLD = google.maps.weather.CloudLayer.prototype.setMap; 
@@ -68,9 +72,10 @@ if (google.maps.weather.CloudLayer) {
 // Create a ginsu weather overlay type
 golgotha.maps.WeatherLayer = function(opts, name, timestamp) {
 	opts.name = name;
+	var tileURLFunc = (golgotha.maps.tileURL) ? golgotha.maps.tileURL : golgotha.maps.util.GinsuOverlayLayer;	
 	var ov = new google.maps.ImageMapType(opts);
 	ov.set('maxZoom', opts.maxZoom);
-	ov.set('baseURL', 'http://' + golgotha.maps.tileHost + '/TileServer/imgs/' + name + '/u' + timestamp + '/');
+	ov.set('baseURL', tileURLFunc(name, timestamp));
 	ov.set('date', timestamp);
 	ov.set('timestamp', new Date(timestamp));
 	ov.getTileUrl = golgotha.maps.util.getTileUrl;
@@ -214,18 +219,6 @@ golgotha.maps.FFWeatherLayer = function(opts, name, timestamp, effective) {
 	return ov;
 }
 
-// Create a GVA/Wunderground weather overlay type
-golgotha.maps.WUWeatherLayer = function(opts, name, timestamp) {
-	var ov = new golgotha.maps.WeatherLayer(opts, name, timestamp);
-	ov.set('baseURL', 'http://' + self.location.host + '/wx/' + name + '/' + timestamp + '/');
-	ov.getCopyright = function() {
-		var d = this.get('timestamp');
-		return 'Weather Data &copy; ' + d.getFullYear() + ' Weather Underground.'
-	}
-
-	return ov;
-}
-
 // Utility functions
 golgotha.maps.convertAddr = function(pnt, srcZ, dstZ)
 {
@@ -262,14 +255,22 @@ this.layers = { names:[], ts:0, data:[] };
 }
 
 golgotha.maps.GinsuLoader.prototype.getNames = function() { return this.layers.names; }
-golgotha.maps.GinsuLoader.prototype.getLayers = function(name) { return this.layers.data[name]; }
 golgotha.maps.GinsuLoader.prototype.getLatest = function(name) { return this.getLayers(name)[0]; }
-golgotha.maps.GinsuLoader.prototype.getTime = function() { return this.layers.ts; } 
+golgotha.maps.GinsuLoader.prototype.getLayers = function(name, max)
+{ 
+var data = this.layers.data[name];
+if (data == null) return null;
+var mx = (max == null) ? data.length : max;
+var d = data.clone();
+if (mx < d.length) d.splice(mx, data.length);
+return d;
+};
+
 golgotha.maps.GinsuLoader.prototype.setData = function(name, tx, imgClassName)
 {
 this.imgData[name] = {opacity:tx, imgClass:imgClassName};
 return true;
-}
+};
 
 golgotha.maps.GinsuLoader.prototype.clear = function()
 {
@@ -299,17 +300,16 @@ for (var x = 0; ((x < l2.length) && (results.length < max)); x++) {
 return results;
 }
 
+golgotha.maps.GinsuLoader.prototype.loadNew = function(seriesData) { return this.load('id', seriesData); }
 golgotha.maps.GinsuLoader.prototype.load = function(id, seriesData)
 {
 this.clear();
-this.layers.ts = seriesData.timestamp;
-for (var x = 0; x < seriesData.seriesNames.length; x++) {
-	var layerName = seriesData.seriesNames[x];
-	var layerData = eval('seriesData.seriesInfo.' + layerName);
-	if (layerData == undefined)
-		continue;
-	else if (layerData.series.length == 0)
-		continue;
+var seriesData = sd.hasOwnProperty('seriesList') ? sd.seriesList : sd.seriesInfo;
+for (layerName in seriesData) {
+    if (!seriesData.hasOwnProperty(layerName)) continue;
+    var layerData = seriesData[layerName];
+    if (layerData.nativeZoom == null) continue;
+    if (layerData.maxZoom == null) layerData.maxZoom = layerData.nativeZoom + 7;
 
 	// Peek inside the series data - if the first entry is FF, iterate through its timestamps
 	var isFF = (layerData.series[0].ff instanceof Array) && (layerData.series[0].ff.length > 0);
