@@ -60,7 +60,7 @@ public class PageTag extends BrowserInfoTag {
 			Pilot usr = (Pilot) hreq.getUserPrincipal();
 			if (usr == null) {
 				Number sX = (Number) s.getAttribute(CommandContext.SCREENX_ATTR_NAME);
-				_sideMenu = (sX == null) || (sX.intValue() < 1155);
+				_sideMenu = (sX != null) && (sX.intValue() < 1155);
 				logReason("Screen Width = " + String.valueOf(sX));
 			} else {
 				_sideMenu = !usr.getShowNavBar();
@@ -86,7 +86,6 @@ public class PageTag extends BrowserInfoTag {
 	@Override
 	public void release() {
 		super.release();
-		_sideMenu = false;
 		_isLogged = false;
 	}
 
