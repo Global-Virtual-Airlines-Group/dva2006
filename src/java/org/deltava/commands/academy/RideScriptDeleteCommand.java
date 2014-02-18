@@ -1,9 +1,9 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.sql.Connection;
 
-import org.deltava.beans.academy.AcademyRideScript;
+import org.deltava.beans.academy.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -13,7 +13,7 @@ import org.deltava.security.command.AcademyRideScriptAccessControl;
 /**
  * A Web Site Command to delete a Flight Academy Check Ride script. 
  * @author Luke
- * @version 3.4
+ * @version 5.3
  * @since 3.4
  */
 
@@ -32,7 +32,7 @@ public class RideScriptDeleteCommand extends AbstractCommand {
 			
 			// Load the script
 			GetAcademyCertifications acdao = new GetAcademyCertifications(con);
-			AcademyRideScript sc = acdao.getScript(id);
+			AcademyRideScript sc = acdao.getScript(new AcademyRideID(id));
 			if (sc == null)
 				throw notFoundException("Academy Check Ride script not found - " + id);
 			
@@ -44,7 +44,7 @@ public class RideScriptDeleteCommand extends AbstractCommand {
 			
 			// Delete the script
 			SetAcademyCertification awdao = new SetAcademyCertification(con);
-			awdao.deleteScript(id);
+			awdao.deleteScript(new AcademyRideID(id));
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

@@ -1,4 +1,4 @@
-// Copyright 2006, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.academy;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to extract information from a user's Flight Academy history.
  * @author Luke
- * @version 5.0
+ * @version 5.3
  * @since 1.0
  */
 
@@ -110,19 +110,13 @@ public final class AcademyHistoryHelper {
 	 */
 	public void addExams(Collection<Test> tests) {
 		for (Test t : tests) {
-			if (t.getAcademy()) {
-				_tests.add(t);
-				if (t instanceof CheckRide) {
-					CheckRide cr = (CheckRide) t;
-					Course c = getCourse(cr.getCourseID());
-					if (c == null) 
-						continue;
-					
-					if (c.getCheckRide() == null)
-						c.setCheckRide(cr);
-					else if (c.getCheckRide().getDate().before(cr.getDate()))
-						c.setCheckRide(cr);
-				}
+			if (!t.getAcademy()) continue;
+			_tests.add(t);
+			if (t instanceof CheckRide) {
+				CheckRide cr = (CheckRide) t;
+				Course c = getCourse(cr.getCourseID());
+				if (c != null)
+					c.addCheckRide(cr);
 			}
 		}
 	}

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2010, 2011, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Flight Academy Certifications and Check Ride scripts. 
  * @author Luke
- * @version 4.1
+ * @version 5.3
  * @since 1.0
  */
 
@@ -104,14 +104,15 @@ public class GetAcademyCertifications extends DAO {
 	
 	/**
 	 * Loads a specific Flight Academy Check Ride script from the datbaase.
-	 * @param certName the Certification name
+	 * @param id the Check Ride ID
 	 * @return an AcademyRideScript bean, or null if none
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public AcademyRideScript getScript(String certName) throws DAOException {
+	public AcademyRideScript getScript(AcademyRideID id) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT * FROM exams.CERTRIDE_SCRIPTS WHERE (CERTNAME=?)");
-			_ps.setString(1, certName);
+			prepareStatementWithoutLimits("SELECT * FROM exams.CERTRIDE_SCRIPTS WHERE (CERTNAME=?) AND (IDX=?)");
+			_ps.setString(1, id.getName());
+			_ps.setInt(2, id.getIndex());
 			List<AcademyRideScript> results = executeScript();
 			return results.isEmpty() ? null : results.get(0);
 		} catch (SQLException se) {
@@ -133,30 +134,27 @@ public class GetAcademyCertifications extends DAO {
 		}		
 	}
 	
-	/**
+	/*
 	 * Helper method to parse Check Ride script result sets.
 	 */
 	private List<AcademyRideScript> executeScript() throws SQLException {
-		
 		List<AcademyRideScript> results = new ArrayList<AcademyRideScript>();
 		try (ResultSet rs = _ps.executeQuery()) {
 			while (rs.next()) {
-				AcademyRideScript sc = new AcademyRideScript(rs.getString(1));
-				sc.setDescription(rs.getString(2));
+				AcademyRideScript sc = new AcademyRideScript(rs.getString(1), rs.getInt(2));
+				sc.setDescription(rs.getString(3));
 				results.add(sc);
 			}
 		}
 		
-		// Clean up
 		_ps.close();
 		return results;
 	}
 	
-	/**
+	/*
 	 * Helper method to parse Certification result sets.
 	 */
 	private List<Certification> execute() throws SQLException {
-		
 		List<Certification> results = new ArrayList<Certification>();
 		try (ResultSet rs = _ps.executeQuery()) {
 			boolean hasReqCount = (rs.getMetaData().getColumnCount() > 9);
@@ -167,7 +165,7 @@ public class GetAcademyCertifications extends DAO {
 				cert.setReqs(rs.getInt(4));
 				cert.setActive(rs.getBoolean(5));
 				cert.setAutoEnroll(rs.getBoolean(6));
-				cert.setHasCheckRide(rs.getBoolean(7));
+				cert.setRideCount(rs.getInt(7));
 				cert.setDescription(rs.getString(8));
 				if (cert.getReqs() == Certification.REQ_SPECIFIC)
 					cert.setReqCert(rs.getString(9));
@@ -182,7 +180,7 @@ public class GetAcademyCertifications extends DAO {
 		return results;
 	}
 	
-	/**
+	/*
 	 * Helper method to load requirements.
 	 */
 	private void loadRequirements(Certification cert) throws SQLException {
@@ -200,7 +198,7 @@ public class GetAcademyCertifications extends DAO {
 		_ps.close();
 	}
 	
-	/**
+	/*
 	 * Helper method to load roles.
 	 */
 	private void loadRoles(Certification cert) throws SQLException {
@@ -214,7 +212,7 @@ public class GetAcademyCertifications extends DAO {
 		_ps.close();
 	}
 
-	/**
+	/*
 	 * Helper method to load examinations.
 	 */
 	private void loadExams(Certification cert) throws SQLException {
@@ -228,7 +226,7 @@ public class GetAcademyCertifications extends DAO {
 		_ps.close();
 	}
 
-	/**
+	/*
 	 * Helper method to load virtual airlines.
 	 */
 	private void loadAirlines(Certification cert) throws SQLException {

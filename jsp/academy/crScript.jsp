@@ -4,6 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <html lang="en">
 <head>
 <title>Flight Academy Check Ride Script</title>
@@ -16,6 +17,7 @@ function validate(form)
 {
 if (!checkSubmit()) return false;
 if (!validateCombo(form.cert, 'Flight Academy Certification')) return false;
+if (!validateNumber(form.seq, 1, 'Check Ride Number')) return false;
 if (!validateText(form.body, 15, 'Check Ride content')) return false;
 
 setSubmit();
@@ -33,17 +35,20 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="arscript.do" op="save" linkID="${sc.certificationName}" method="post" validate="return validate(this)">
+<el:form action="arscript.do" op="save" linkID="${sc.ID}" method="post" validate="return validate(this)">
 <el:table className="form">
 <!-- Title Bar -->
 <tr class="title caps">
- <td colspan="2">FLIGHT ACADEMY CHECK RIDE SCRIPT</td>
+ <td colspan="2">FLIGHT ACADEMY CHECK RIDE SCRIPT<c:if test="${!empty sc}"> - ${sc.certificationName} #<fmt:int value="${sc.index}" /></c:if></td>
 </tr>
 <c:if test="${empty sc}">
 <tr>
  <td class="label">Certification</td>
  <td class="data"><el:combo name="cert" idx="*" size="1" className="req" options="${certs}" firstEntry="-" value="${sc.certificationName}" /></td>
 </tr>
+<tr>
+ <td class="label">Check Ride #</td>
+ <td class="data"><el:int name="seq" idx="*" size="1" min="1" max="9" required="true" value="" /></td>
 </c:if>
 <tr>
  <td class="label top">Script Text</td>

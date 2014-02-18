@@ -1,7 +1,5 @@
-// Copyright 2006, 2007, 2008, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
-
-import java.util.Iterator;
 
 import org.deltava.beans.academy.*;
 import org.deltava.beans.testing.*;
@@ -11,7 +9,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An Access Controller for Flight Academy Course profiles.
  * @author Luke
- * @version 5.0
+ * @version 5.3
  * @since 1.0
  */
 
@@ -70,15 +68,19 @@ public class CourseAccessControl extends AccessControl {
 		
 		// Check if we've met all of the requirements
 		boolean isComplete = true;
-		for (Iterator<CourseProgress> i = _c.getProgress().iterator(); isComplete && i.hasNext(); ) {
-			CourseProgress cp = i.next();
+		for (CourseProgress cp : _c.getProgress())
 			isComplete &= cp.getComplete();
-		}
 		
 		// Check if we need a Check Ride
-		CheckRide cr = _c.getCheckRide();
-		boolean crComplete = !_c.getHasCheckRide() || ((cr != null) && cr.getPassFail());
-		_canAssignCheckRide = isComplete && isStarted && _c.getHasCheckRide() && ((cr == null) || (!cr.getPassFail() && (cr.getStatus() == TestStatus.SCORED)));
+		int completedRides = 0; boolean hasPendingRide = false;
+		for (CheckRide cr : _c.getCheckRides()) {
+			hasPendingRide |= (cr.getStatus() != TestStatus.SCORED);
+			if (cr.getPassFail())
+				completedRides++;
+		}
+		
+		boolean crComplete = (completedRides == _c.getRideCount());
+		_canAssignCheckRide = isComplete && isStarted && (_c.getRideCount() > 0) && hasPendingRide;
 		_canApprove = crComplete && isComplete && (isHR || isINS) && isStarted && !isMine;
 	}
 
