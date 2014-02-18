@@ -1,0 +1,64 @@
+// Copyright 2014 Global Virtual Airlines Group. All Rights Reserved.
+package org.deltava.beans.academy;
+
+/**
+ * A bean to store Flight Academy Check Ride Script IDs. 
+ * @author Luke
+ * @version 5.3
+ * @since 5.3
+ */
+
+public class AcademyRideID {
+	
+	private final String _name;
+	private final int _idx;
+
+	/**
+	 * Creates the ID.
+	 * @param name the Certification code
+	 * @param idx the ride index
+	 */
+	public AcademyRideID(String name, int idx) {
+		super();
+		_name = name;
+		_idx = Math.max(1, idx);
+	}
+	
+	/**
+	 * Creates the ID.
+	 * @param id the Name-ID pair
+	 */
+	public AcademyRideID(String id) {
+		super();
+		int ofs = id.lastIndexOf('-');
+		_name = id.substring(0, ofs);
+		_idx = Integer.parseInt(id.substring(ofs+1));
+	}
+	
+	/**
+	 * Returns the certification name.
+	 * @return the name
+	 */
+	public String getName() {
+		return _name;
+	}
+	
+	/**
+	 * Returns the Check Ride index.
+	 * @return the index
+	 */
+	public int getIndex() {
+		return _idx;
+	}
+	
+	public int hashCode() {
+		return toString().hashCode();
+	}
+	
+	public String toString() {
+		StringBuilder buf = new StringBuilder(_name);
+		buf.append('-');
+		buf.append(_idx);
+		return buf.toString();
+	}
+}

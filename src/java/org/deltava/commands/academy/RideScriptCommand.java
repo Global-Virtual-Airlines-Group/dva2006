@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.sql.Connection;
@@ -15,7 +15,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to handle Flight Academy Check Ride scripts.
  * @author Luke
- * @version 3.4
+ * @version 5.3
  * @since 3.4
  */
 
@@ -35,7 +35,7 @@ public class RideScriptCommand extends AbstractFormCommand {
 
 			// Get the script
 			GetAcademyCertifications acdao = new GetAcademyCertifications(con);
-			AcademyRideScript sc = acdao.getScript(id);
+			AcademyRideScript sc = acdao.getScript(new AcademyRideID(id));
 			if (!isNew && (sc == null))
 				throw notFoundException("Academy Check Ride script not found - " + id);
 
@@ -52,7 +52,7 @@ public class RideScriptCommand extends AbstractFormCommand {
 				if (c == null)
 					throw notFoundException("Unknown Certification - " + certID);
 				
-				sc = new AcademyRideScript(c.getName());
+				sc = new AcademyRideScript(c.getName(), StringUtils.parse(ctx.getParameter("idx"), 1));
 			}
 				
 			sc.setDescription(ctx.getParameter("body"));
@@ -81,12 +81,13 @@ public class RideScriptCommand extends AbstractFormCommand {
 	@Override
 	protected void execEdit(CommandContext ctx) throws CommandException {
 		String id = (String) ctx.getCmdParameter(ID, null);
+		
 		try {
 			boolean isNew = StringUtils.isEmpty(id);
 			AcademyRideScript sc = null;
 			GetAcademyCertifications acdao = new GetAcademyCertifications(ctx.getConnection());
 			if (!isNew) {
-				sc = acdao.getScript(id);
+				sc = acdao.getScript(new AcademyRideID(id));
 				if (sc == null)
 					throw notFoundException("Academy Check Ride script not found - " + id);
 			}

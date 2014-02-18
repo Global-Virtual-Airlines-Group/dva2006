@@ -1,4 +1,4 @@
-// Copyright 2006, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display a Fleet Academy course.
  * @author Luke
- * @version 5.0
+ * @version 5.3
  * @since 1.0
  */
 
@@ -53,8 +53,8 @@ public class CourseCommand extends AbstractAcademyHistoryCommand {
 			AcademyHistoryHelper helper = initHistory(p, con);
 			helper.setDebug(ctx.isSuperUser());
 			Course c2 = helper.getCourse(c.getID());
-			if (c2.getCheckRide() != null)
-				c.setCheckRide(c2.getCheckRide());
+			for (CheckRide cr : c2.getCheckRides())
+				c.addCheckRide(cr);
 
 			// Get the certification profile
 			Certification cert = helper.getCertification(c.getCode());
