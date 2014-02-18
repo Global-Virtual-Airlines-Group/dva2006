@@ -1,4 +1,4 @@
-// Copyright 2006, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2010, 2011, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to view and update Flight Academy certification profiles.
  * @author Luke
- * @version 3.6
+ * @version 5.3
  * @since 1.0
  */
 
@@ -67,7 +67,7 @@ public class CertificationCommand extends AbstractFormCommand {
 			cert.setReqs(StringUtils.arrayIndexOf(Certification.REQ_NAMES, ctx.getParameter("preReqs")));
 			cert.setActive(Boolean.valueOf(ctx.getParameter("isActive")).booleanValue());
 			cert.setAutoEnroll(Boolean.valueOf(ctx.getParameter("autoEnroll")).booleanValue());
-			cert.setHasCheckRide(Boolean.valueOf(ctx.getParameter("hasCR")).booleanValue());
+			cert.setRideCount(StringUtils.parse(ctx.getParameter("rideCount"), 0));
 			cert.setReqCert((cert.getReqs() != Certification.REQ_SPECIFIC) ? null : ctx.getParameter("reqCert"));
 			cert.setDescription(ctx.getParameter("desc"));
 			cert.setRoles(ctx.getParameters("enrollRoles"));
@@ -140,13 +140,15 @@ public class CertificationCommand extends AbstractFormCommand {
 				if (!access.getCanEdit())
 					throw securityException("Cannot edit Certification");
 				
-				// Check if we have a check ride script
-				if (cert.getHasCheckRide()) {
-					AcademyRideScript sc = dao.getScript(cert.getName());
-					ctx.setAttribute("noScriptWarn", Boolean.valueOf(sc == null), REQUEST);
+				// Check if we have check ride scripts
+				boolean hasScript = true;
+				for (int x = 1; hasScript && (x <= cert.getRideCount()); x++) {
+					AcademyRideScript sc = dao.getScript(new AcademyRideID(cert.getName(), x));
+					hasScript &= (sc != null);
 				}
 				
 				ctx.setAttribute("cert", cert, REQUEST);
+				ctx.setAttribute("noScriptWarn", Boolean.valueOf(!hasScript), REQUEST);
 				allCerts.remove(cert.getCode());
 			} else if (!access.getCanCreate())
 				throw securityException("Cannot create Certification");
@@ -193,12 +195,13 @@ public class CertificationCommand extends AbstractFormCommand {
 			CertificationAccessControl access = new CertificationAccessControl(ctx);
 			access.validate();
 			
-			// Check if we have a check ride script
-			if (cert.getHasCheckRide()) {
-				AcademyRideScript sc = dao.getScript(cert.getName());
-				ctx.setAttribute("noScriptWarn", Boolean.valueOf(sc == null), REQUEST);
+			// Check if we have check ride scripts
+			boolean hasScript = true;
+			for (int x = 1; hasScript && (x <= cert.getRideCount()); x++) {
+				AcademyRideScript sc = dao.getScript(new AcademyRideID(cert.getName(), x));
+				hasScript &= (sc != null);
 			}
-			
+				
 			// If we have a specific pre-req, load it as well
 			if (cert.getReqs() == Certification.REQ_SPECIFIC)
 				ctx.setAttribute("preReqCert", dao.get(cert.getReqCert()), REQUEST);
@@ -210,6 +213,7 @@ public class CertificationCommand extends AbstractFormCommand {
 			// Save in the request
 			ctx.setAttribute("cert", cert, REQUEST);
 			ctx.setAttribute("access", access, REQUEST);
+			ctx.setAttribute("noScriptWarn", Boolean.valueOf(!hasScript), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

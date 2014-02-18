@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010, 2011, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object for Flight Academy Certifications and Check Ride Scripts.
  * @author Luke
- * @version 3.6
+ * @version 5.3
  * @since 3.4
  */
 
@@ -37,14 +37,14 @@ public class SetAcademyCertification extends DAO {
 			
 			// Write the certification entry
 			prepareStatementWithoutLimits("INSERT INTO exams.CERTS (NAME, ABBR, STAGE, PREREQ, ACTIVE, "
-				+ "AUTO_ENROLL, HAS_CHECKRIDE, DESCRIPTION) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+				+ "AUTO_ENROLL, CHECKRIDES, DESCRIPTION) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setString(1, c.getName());
 			_ps.setString(2, c.getCode());
 			_ps.setInt(3, c.getStage());
 			_ps.setInt(4, c.getReqs());
 			_ps.setBoolean(5, c.getActive());
 			_ps.setBoolean(6, c.getAutoEnroll());
-			_ps.setBoolean(7, c.getHasCheckRide());
+			_ps.setInt(7, c.getRideCount());
 			_ps.setString(8, c.getDescription());
 			executeUpdate(1);
 			
@@ -56,8 +56,6 @@ public class SetAcademyCertification extends DAO {
 			writeExams(c.getName(), c.getExamNames());
 			writeRoles(c.getName(), c.getRoles());
 			writeApps(c.getName(), c.getAirlines());
-			
-			// Commit the transaction
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -77,14 +75,14 @@ public class SetAcademyCertification extends DAO {
 			
 			// Write the profile
 			prepareStatementWithoutLimits("UPDATE exams.CERTS SET NAME=?, ABBR=?, STAGE=?, PREREQ=?, ACTIVE=?, "
-				+ "AUTO_ENROLL=?, HAS_CHECKRIDE=?, DESCRIPTION=? WHERE (NAME=?)");
+				+ "AUTO_ENROLL=?, CHECKRIDES=?, DESCRIPTION=? WHERE (NAME=?)");
 			_ps.setString(1, c.getName());
 			_ps.setString(2, c.getCode());
 			_ps.setInt(3, c.getStage());
 			_ps.setInt(4, c.getReqs());
 			_ps.setBoolean(5, c.getActive());
 			_ps.setBoolean(6, c.getAutoEnroll());
-			_ps.setBoolean(7, c.getHasCheckRide());
+			_ps.setInt(7, c.getRideCount());
 			_ps.setString(8, c.getDescription());
 			_ps.setString(9, name);
 			executeUpdate(1);
@@ -128,11 +126,8 @@ public class SetAcademyCertification extends DAO {
 				_ps.addBatch();
 			}
 			
-			// Execute the batch transaction
 			_ps.executeBatch();
 			_ps.close();
-
-			// Commit the transaction
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -173,20 +168,21 @@ public class SetAcademyCertification extends DAO {
 	
 	/**
 	 * Deletes a Flight Academy Check Ride script from the database.
-	 * @param certName the certification name
+	 * @param id the AcademyRideID
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void deleteScript(String certName) throws DAOException {
+	public void deleteScript(AcademyRideID id) throws DAOException {
 		try {
-			prepareStatement("DELETE FROM exams.CERTRIDE_SCRIPTS WHERE (CERTNAME=?)");
-			_ps.setString(1, certName);
+			prepareStatement("DELETE FROM exams.CERTRIDE_SCRIPTS WHERE (CERTNAME=?) AND (IDX=?)");
+			_ps.setString(1, id.getName());
+			_ps.setInt(2, id.getIndex());
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 	}
 	
-	/**
+	/*
 	 * Helper method to write specific Certification pre-requsite.
 	 */
 	private void writePrereq(String certName, String prereqAbbr) throws SQLException {
@@ -202,7 +198,7 @@ public class SetAcademyCertification extends DAO {
 		}
 	}
 	
-	/**
+	/*
 	 * Helper method to write security role names.
 	 */
 	private void writeRoles(String certName, Collection<String> roles) throws SQLException {
@@ -213,13 +209,11 @@ public class SetAcademyCertification extends DAO {
 			_ps.addBatch();			
 		}
 		
-		// Execute the batch transaction
 		_ps.executeBatch();
 		_ps.close();
-		_ps = null;
 	}
 	
-	/**
+	/*
 	 * Helper method to write exam names.
 	 */
 	private void writeExams(String certName, Collection<String> exams) throws SQLException {
@@ -230,13 +224,11 @@ public class SetAcademyCertification extends DAO {
 			_ps.addBatch();
 		}
 		
-		// Execute the batch transaction
 		_ps.executeBatch();
 		_ps.close();
-		_ps = null;
 	}
 	
-	/**
+	/*
 	 * Helper method to write virtual ailrine names.
 	 */
 	private void writeApps(String certName, Collection<AirlineInformation> airlines) throws SQLException {
@@ -247,9 +239,7 @@ public class SetAcademyCertification extends DAO {
 			_ps.addBatch();
 		}
 		
-		// Execute the batch transaction
 		_ps.executeBatch();
 		_ps.close();
-		_ps = null;
 	}
 }

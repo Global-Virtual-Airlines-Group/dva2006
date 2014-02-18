@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to load Flight Academy course data. 
  * @author Luke
- * @version 5.1
+ * @version 5.3
  * @since 1.0
  */
 
@@ -308,11 +308,10 @@ public class GetAcademyCourses extends DAO {
 		}
 	}
 	
-	/**
+	/*
 	 * Helper method to parse Course result sets.
 	 */
 	private List<Course> execute() throws SQLException {
-
 		List<Course> results = new ArrayList<Course>();
 		try (ResultSet rs = _ps.executeQuery()) {
 			boolean hasLastChat = (rs.getMetaData().getColumnCount() > 10);
@@ -323,7 +322,7 @@ public class GetAcademyCourses extends DAO {
 				c.setStatus(Status.values()[rs.getInt(5)]);
 				c.setStartDate(rs.getTimestamp(6));
 				c.setEndDate(rs.getTimestamp(7));
-				c.setHasCheckRide(rs.getBoolean(8));
+				c.setRideCount(rs.getInt(8));
 				c.setStage(rs.getInt(9));
 				c.setCode(rs.getString(10));
 				if (hasLastChat)

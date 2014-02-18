@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.academy.*;
 /**
  * A Data Access Object to write Flight Academy Course data to the database.
  * @author Luke
- * @version 5.0
+ * @version 5.3
  * @since 1.0
  */
 
@@ -34,9 +34,9 @@ public class SetAcademy extends DAO {
 			
 			// Prepare the statement
 			if (c.getID() == 0) {
-				prepareStatement("INSERT INTO exams.COURSES (CERTNAME, PILOT_ID, INSTRUCTOR_ID, STATUS, STARTDATE, HAS_CHECKRIDE) "
+				prepareStatement("INSERT INTO exams.COURSES (CERTNAME, PILOT_ID, INSTRUCTOR_ID, STATUS, STARTDATE, CHECKRIDES) "
 						+ "VALUES (?, ?, ?, ?, ?, ?)");
-				_ps.setBoolean(6, c.getHasCheckRide());
+				_ps.setInt(6, c.getRideCount());
 			} else {
 				prepareStatement("UPDATE exams.COURSES SET CERTNAME=?, PILOT_ID=?, INSTRUCTOR_ID=?, STATUS=?, "
 						+ "STARTDATE=?, ENDDATE=? WHERE (ID=?)");

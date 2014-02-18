@@ -70,7 +70,8 @@ public class CourseDisposalCommand extends AbstractCommand {
 			// Load our exams
 			GetExam exdao = new GetExam(con);
 			List<CheckRide> rides = exdao.getAcademyCheckRides(c.getID());
-			c.setCheckRide(rides.isEmpty() ? null : rides.get(0));
+			for (CheckRide cr : rides)
+				c.addCheckRide(cr);
 			
 			// Get the Message Template DAO
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);

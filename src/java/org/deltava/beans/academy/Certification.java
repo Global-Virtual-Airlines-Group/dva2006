@@ -1,4 +1,4 @@
-// Copyright 2006, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2010, 2011, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.academy;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * A bean to store Flight Academy certification data.
  * @author Luke
- * @version 3.6
+ * @version 5.3
  * @since 1.0
  */
 
@@ -28,10 +28,10 @@ public class Certification implements java.io.Serializable, ComboAlias, ViewEntr
 	private int _stage;
 	private int _preReqs;
 	private int _reqCount;
+	private int _rideCount;
 	
 	private boolean _active;
 	private boolean _autoEnroll;
-	private boolean _hasCR;
 	
 	private String _desc;
 	private final Collection<AirlineInformation> _airlines = new HashSet<AirlineInformation>();
@@ -88,12 +88,12 @@ public class Certification implements java.io.Serializable, ComboAlias, ViewEntr
 	}
 	
 	/**
-	 * Returns whether this Certification has a Check Ride associated with it.
-	 * @return TRUE if a Check Ride is required for completion, otherwise FALSE
-	 * @see Certification#setHasCheckRide(boolean)
+	 * Returns how many Check Rides are required for this Certification.
+	 * @return the number of Check Rides required
+	 * @see Certification#setRideCount(int)
 	 */
-	public boolean getHasCheckRide() {
-		return _hasCR;
+	public int getRideCount() {
+		return _rideCount;
 	}
 	
 	/**
@@ -339,12 +339,12 @@ public class Certification implements java.io.Serializable, ComboAlias, ViewEntr
 	}
 	
 	/**
-	 * Updates whether this Certification requires a Check Ride.
-	 * @param hasCR TRUE if a Check Ride is required, otherwise FALSE
-	 * @see Certification#getHasCheckRide()
+	 * Updates the number of Check Rides required for this Certification.
+	 * @param cr the number of Check Rides required
+	 * @see Certification#getRideCount()
 	 */
-	public void setHasCheckRide(boolean hasCR) {
-		_hasCR = hasCR;
+	public void setRideCount(int cr) {
+		_rideCount = Math.max(0, cr);
 	}
 
 	/**

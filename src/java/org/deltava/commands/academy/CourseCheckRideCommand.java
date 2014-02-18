@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2010, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to assign Check Rides linked to Flight Academy courses.
  * @author Luke
- * @version 5.0
+ * @version 5.3
  * @since 1.0
  */
 
@@ -60,7 +60,8 @@ public class CourseCheckRideCommand extends AbstractCommand {
 			// Load Check Rides for this Course
 			GetExam exdao = new GetExam(con);
 			List<CheckRide> exams = exdao.getAcademyCheckRides(c.getID());
-			c.setCheckRide(exams.isEmpty() ? null : exams.get(0));
+			for (CheckRide cr : exams)
+				c.addCheckRide(cr);
 			
 			// Check our access
 			CourseAccessControl access = new CourseAccessControl(ctx, c);
@@ -78,7 +79,9 @@ public class CourseCheckRideCommand extends AbstractCommand {
 				}
 			}
 			
-			// Save request attributes
+			// Get the check ride
+			AcademyRideID id = new AcademyRideID(c.getName(), c.getNextCheckRide());
+			
 			ctx.setAttribute("course", c, REQUEST);
 			ctx.setAttribute("pilot", p, REQUEST);
 			
@@ -103,7 +106,7 @@ public class CourseCheckRideCommand extends AbstractCommand {
 			
 			// Load the check ride script
 			GetAcademyCertifications crtdao = new GetAcademyCertifications(con);
-			AcademyRideScript sc = crtdao.getScript(c.getName());
+			AcademyRideScript sc = crtdao.getScript(id);
 			ctx.setAttribute("rideScript", sc, REQUEST);
 			
 			// If we're new, forward to the JSP
@@ -115,7 +118,7 @@ public class CourseCheckRideCommand extends AbstractCommand {
 			}
 			
 			// Create a new Check Ride bean
-			CheckRide cr = new CheckRide(c.getName());
+			CheckRide cr = new CheckRide(c.getName() + " " + id.getIndex());
 			cr.setOwner(SystemData.getApp(SystemData.get("airline.code")));
 			cr.setDate(new Date());
 			cr.setAcademy(true);

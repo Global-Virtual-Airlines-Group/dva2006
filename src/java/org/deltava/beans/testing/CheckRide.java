@@ -1,24 +1,26 @@
-// Copyright 2005, 2006, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import org.deltava.beans.EquipmentType;
+import org.deltava.util.StringUtils;
 
 /**
  * A class to store Check Ride data.
  * @author Luke
- * @version 5.0
+ * @version 5.3
  * @since 1.0
  */
 
 public class CheckRide extends Test {
     
-	private static final String[] CLASS_NAMES = {"opt1", "opt1", null};
+	private static final String[] CLASS_NAMES = {"opt2", "opt1", null};
 	
 	private String _eqType;
 	private String _acType;
 	
 	private int _acarsID;
 	private int _courseID;
+	private int _idx;
 
     /**
      * Creates a new Check Ride/Video.
@@ -91,6 +93,14 @@ public class CheckRide extends Test {
      */
     public int getSize() {
        return 1;
+    }
+    
+    /**
+     * Returns the Check Ride index for a Flight Academy course.
+     * @return the Check Ride index
+     */
+    public int getIndex() {
+    	return _idx;
     }
     
     /**
@@ -183,6 +193,20 @@ public class CheckRide extends Test {
     public void setEquipmentType(EquipmentType eq) {
     	setEquipmentType(eq.getName());
     	setStage(eq.getStage());
+    }
+    
+    /**
+     * Marks this Test as part of the Flight Academy.
+     * @param academy TRUE if the Test is part of the Flight Academy, otherwise FALSE
+     * @see Test#getAcademy()
+     */
+    public void setAcademy(boolean academy) {
+    	super.setAcademy(academy);
+    	if (academy) {
+    		String n = getName();
+    		int ofs = n.lastIndexOf(' ');
+    		_idx = (ofs < 0) ? 1 : StringUtils.parse(n.substring(ofs + 1), 1);
+    	}
     }
     
     /**

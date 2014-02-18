@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2010, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.academy;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.testing.CheckRide;
 /**
  * A bean to store Flight Academy Course information.
  * @author Luke
- * @version 5.0
+ * @version 5.3
  * @since 1.0
  */
 
@@ -21,14 +21,13 @@ public class Course extends DatabaseBean implements ViewEntry {
 	private int _instructorID;
 	private Status _status;
 	private int _stage;
+	private int _rideCount;
 	
 	private Date _startDate;
 	private Date _endDate;
 	private Date _lastComment;
 	
-	private boolean _hasCR;
-	private CheckRide _cr;
-	
+	private final Map<Integer, CheckRide> _checkRides = new TreeMap<Integer, CheckRide>();
 	private final Map<Integer, CourseProgress> _progress = new TreeMap<Integer, CourseProgress>();
 	private final SortedSet<CourseComment> _comments = new TreeSet<CourseComment>();
 
@@ -156,21 +155,36 @@ public class Course extends DatabaseBean implements ViewEntry {
 	}
 	
 	/**
-	 * Returns whether this Course has a Check Ride associated with it.
-	 * @return TRUE if a Check Ride is required for completion, otherwise FALSE
-	 * @see Course#setHasCheckRide(boolean)
+	 * Returns the number of Check Rides required for this Course.
+	 * @return the number of Check Rides
+	 * @see Course#setRideCount(int)
 	 */
-	public boolean getHasCheckRide() {
-		return _hasCR;
+	public int getRideCount() {
+		return _rideCount;
+	}
+	
+	/**
+	 * Returns the index of the next required Check Ride.
+	 * @return the Check Ride index
+	 */
+	public int getNextCheckRide() {
+		int idx = 1;
+		for (Map.Entry<Integer, CheckRide> me : _checkRides.entrySet()) {
+			CheckRide cr = me.getValue();
+			if (cr.getPassFail() && (cr.getIndex() == idx))
+				idx++;
+		}
+		
+		return Math.min(idx, _rideCount);
 	}
 	
 	/**
 	 * Returns the most recent check ride for this Course.
 	 * @return a CheckRide object, or null if none
-	 * @see Course#setCheckRide(CheckRide)
+	 * @see Course#addCheckRide(CheckRide)
 	 */
-	public CheckRide getCheckRide() {
-		return _cr;
+	public Collection<CheckRide> getCheckRides() {
+		return _checkRides.values();
 	}
 	
 	/**
@@ -234,12 +248,12 @@ public class Course extends DatabaseBean implements ViewEntry {
 	}
 	
 	/**
-	 * Updates whether this Course requires a Check Ride.
-	 * @param hasCR TRUE if a Check Ride is required, otherwise FALSE
-	 * @see Course#getHasCheckRide()
+	 * Updates the number of Check Rides required for this Course.
+	 * @param cr the number of Check Rides
+	 * @see Course#getRideCount()
 	 */
-	public void setHasCheckRide(boolean hasCR) {
-		_hasCR = hasCR;
+	public void setRideCount(int cr) {
+		_rideCount = Math.max(0, cr); 
 	}
 	
 	/**
@@ -294,10 +308,19 @@ public class Course extends DatabaseBean implements ViewEntry {
 	/**
 	 * Sets the most recent Check Ride for this Course.
 	 * @param cr the CheckRide object, or null
-	 * @see Course#getCheckRide()
+	 * @see Course#getCheckRides()
 	 */
-	public void setCheckRide(CheckRide cr) {
-		_cr = cr;
+	public void addCheckRide(CheckRide cr) {
+		if ((cr.getIndex() < 1) || (cr.getIndex() > _rideCount))
+			throw new IllegalArgumentException("Invalid Check Ride number - " + cr.getIndex());
+		
+		Integer idx = Integer.valueOf(cr.getIndex());
+		if (_checkRides.containsKey(idx)) {
+			CheckRide cr2 = _checkRides.get(idx);
+			if (cr.getDate().after(cr2.getDate()))
+				_checkRides.put(idx, cr);
+		} else
+			_checkRides.put(idx, cr);
 	}
 
 	/**
