@@ -14,7 +14,7 @@ import org.deltava.taglib.BrowserInfoTag;
 /**
  * A JSP tag to render page layouts in a user-specific way.
  * @author Luke
- * @version 5.2
+ * @version 5.3
  * @since 1.0
  */
 
@@ -56,7 +56,7 @@ public class PageTag extends BrowserInfoTag {
 		// Check if our screen size is big enough
 		HttpServletRequest hreq = (HttpServletRequest) pageContext.getRequest();
 		HttpSession s = hreq.getSession(false);
-		if (!_sideMenu && (s != null)) {
+		if (!_sideMenu && (s != null) && !s.isNew()) {
 			Pilot usr = (Pilot) hreq.getUserPrincipal();
 			if (usr == null) {
 				Number sX = (Number) s.getAttribute(CommandContext.SCREENX_ATTR_NAME);
