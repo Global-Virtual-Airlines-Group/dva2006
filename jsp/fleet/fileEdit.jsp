@@ -6,7 +6,6 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html lang="en">
 <head>
 <c:choose>
@@ -41,6 +40,7 @@ return true;
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:sysdata var="cats" name="airline.files.categories" />
+<content:enum var="securityOptions" className="org.deltava.beans.fleet.Security" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -85,7 +85,7 @@ return true;
 </c:if>
 <tr>
  <td class="label">Document Security</td>
- <td class="data"><el:combo name="security" idx="*" size="1" value="${fn:get(securityOptions, entry.security)}" options="${securityOptions}" /></td>
+ <td class="data"><el:combo name="security" idx="*" size="1" required="true" value="${entry.security}" options="${securityOptions}" /></td>
 </tr>
 <c:if test="${(empty entry) || (entry.size == 0)}">
 <tr>

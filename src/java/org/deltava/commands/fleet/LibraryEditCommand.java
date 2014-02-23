@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to support editing Fleet/Document Library entries.
  * @author Luke
- * @version 3.4
+ * @version 5.3
  * @since 1.0
  */
 
@@ -37,7 +37,6 @@ public abstract class LibraryEditCommand extends AbstractFormCommand {
 
 		// Get the file name, or if we're creating a new file
 		String fName = (String) ctx.getCmdParameter(ID, "NEW");
-		ctx.setAttribute("securityOptions", ComboUtils.fromArray(LibraryEntry.SECURITY_LEVELS), REQUEST);
 
 		boolean isNew = "NEW".equalsIgnoreCase(fName);
 		LibraryEntry entry = null; FleetEntryAccessControl access = null;
@@ -107,6 +106,7 @@ public abstract class LibraryEditCommand extends AbstractFormCommand {
      * @param ctx the Command Context
      * @throws UnsupportedOperationException always
      */
+	@Override
 	protected final void execRead(CommandContext ctx) throws CommandException {
 		throw new UnsupportedOperationException();
 	}

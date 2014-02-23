@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.io.File;
@@ -13,14 +13,13 @@ import org.deltava.dao.file.WriteBuffer;
 
 import org.deltava.security.command.FileEntryAccessControl;
 
-import org.deltava.util.ComboUtils;
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to support editing the User File Library.
  * @author Luke
- * @version 1.0
+ * @version 5.3
  * @since 1.0
  */
 
@@ -31,6 +30,7 @@ public class UserFileCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	protected void execSave(CommandContext ctx) throws CommandException {
 
 		// Check if we're uploading a file, that the name is unique
@@ -71,7 +71,7 @@ public class UserFileCommand extends AbstractFormCommand {
 			entry.setName(ctx.getParameter("title"));
 			entry.setCategory(ctx.getParameter("category"));
 			entry.setDescription(ctx.getParameter("desc"));
-			entry.setSecurity(StringUtils.arrayIndexOf(LibraryEntry.SECURITY_LEVELS, ctx.getParameter("security")));
+			entry.setSecurity(Security.valueOf(ctx.getParameter("security")));
 
 			// Start a JDBC transaction
 			ctx.startTX();
@@ -111,12 +111,10 @@ public class UserFileCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	protected void execEdit(CommandContext ctx) throws CommandException {
 
-		// Get the file name
 		String fName = (String) ctx.getCmdParameter(ID, null);
-		ctx.setAttribute("securityOptions", ComboUtils.fromArray(LibraryEntry.SECURITY_LEVELS), REQUEST);
-
 		try {
 			Connection con = ctx.getConnection();
 
@@ -149,11 +147,12 @@ public class UserFileCommand extends AbstractFormCommand {
 	}
 
 	/**
-	 * Callback method called when reading the File Entry. <i>NOT IMPLEMENTED</i>
+	 * Callback method called when reading the File Entry.
 	 * @param ctx the Command context
 	 * @throws UnsupportedOperationException always
 	 */
+	@Override
 	protected void execRead(CommandContext ctx) throws CommandException {
-		throw new UnsupportedOperationException();
+		execEdit(ctx);
 	}
 }

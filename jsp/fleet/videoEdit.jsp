@@ -6,17 +6,9 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html lang="en">
 <head>
-<c:choose>
-<c:when test="${!empty video}">
-<title><content:airline /> Video Library - ${video.name}</title>
-</c:when>
-<c:otherwise>
-<title>New <content:airline /> Video Library Entry</title>
-</c:otherwise>
-</c:choose>
+<title><content:airline /> Video Library - ${(!empty video) ? video.name : 'New Video'}</title>
 <content:css name="main" />
 <content:css name="form" />
 <content:pics />
@@ -25,12 +17,12 @@ function validate(form)
 {
 if (!checkSubmit()) return false;
 if (!validateText(form.title, 10, 'Video Title')) return false;
+if (!validateCombo(form.category, 'Video Category')) return false;
 if (!validateText(form.desc, 10, 'Description')) return false;
-if ((form.file) && (form.file.value.length > 0)) {
-	if (!validateFile(form.file, 'avi,wmv,divx,mp3', 'Uploaded Video')) return false;
-} else if ((form.fileName) && (form.fileName.value.length > 0)) {
-	if (!validateFile(form.file, 'avi,wmv,divx,mp3', 'Local Filesystem Video')) return false;
-}
+if ((form.file) && (form.file.value.length > 0))
+	if (!validateFile(form.file, 'avi,wmv,divx,mp3,mp4', 'Uploaded Video')) return false;
+else if ((form.fileName) && (form.fileName.value.length > 0))
+	if (!validateFile(form.file, 'avi,wmv,divx,mp3,mp4', 'Local Filesystem Video')) return false;
 
 setSubmit();
 disableButton('SaveButton');
@@ -44,6 +36,7 @@ return true;
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:sysdata var="cats" name="airline.video.categories" />
+<content:enum var="securityOptions" className="org.deltava.beans.fleet.Security" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -65,7 +58,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Category</td>
- <td class="data"><el:combo name="category" idx="*" size="1" className="req" options="${cats}" value="${entry.category}" firstEntry="[ CATEGORY ]" /></td>
+ <td class="data"><el:combo name="category" idx="*" size="1" className="req" options="${cats}" value="${video.category}" firstEntry="[ CATEGORY ]" /></td>
 </tr>
 <tr>
  <td class="label top">Description</td>
@@ -86,7 +79,7 @@ return true;
  <td class="data">Downloaded <b><fmt:int value="${video.downloadCount}" /></b> times</td>
 </tr>
 </c:if>
-<content:filter roles="HR">
+<content:filter roles="HR,AcademyAdmin">
 <tr>
  <td class="label top">Flight Academy Certifications</td>
  <td class="data"><el:check name="certNames" width="150" cols="3" className="small" newLine="true" checked="${video.certifications}" options="${certs}" /></td>
@@ -94,7 +87,7 @@ return true;
 </content:filter>
 <tr>
  <td class="label">Document Security</td>
- <td class="data"><el:combo name="security" idx="*" size="1" value="${fn:get(securityOptions, entry.security)}" options="${securityOptions}" /></td>
+ <td class="data"><el:combo name="security" idx="*" size="1" required="true" value="${entry.security}" options="${securityOptions}" /></td>
 </tr>
 <tr>
  <td class="label">Upload File</td>
@@ -115,10 +108,7 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><c:if test="${access.canEdit || access.canCreate}">
-<el:button ID="SaveButton" type="submit" label="SAVE VIDEO" />
-</c:if>
- </td>
+ <td><c:if test="${access.canEdit || access.canCreate}"><el:button ID="SaveButton" type="submit" label="SAVE VIDEO" /></c:if> </td>
 </tr>
 </el:table>
 </el:form>

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update Fleet Library entries.
  * @author Luke
- * @version 5.1
+ * @version 5.3
  * @since 1.0
  */
 
@@ -33,6 +33,7 @@ public class InstallerCommand extends LibraryEditCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	protected void execEdit(CommandContext ctx) throws CommandException {
 		ctx.setAttribute("fsVersions", SIMS, REQUEST);
 		super.execEdit(ctx, "fleet");
@@ -43,6 +44,7 @@ public class InstallerCommand extends LibraryEditCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	protected void execSave(CommandContext ctx) throws CommandException {
 
 		// Get the file name and if we are saving a new document
@@ -87,7 +89,7 @@ public class InstallerCommand extends LibraryEditCommand {
 			entry.setName(ctx.getParameter("title"));
 			entry.setCode(ctx.getParameter("code"));
 			entry.setImage(ctx.getParameter("img"));
-			entry.setSecurity(StringUtils.arrayIndexOf(LibraryEntry.SECURITY_LEVELS, ctx.getParameter("security")));
+			entry.setSecurity(Security.valueOf(ctx.getParameter("security")));
 			entry.setVersion(StringUtils.parse(ctx.getParameter("majorVersion"), 1), StringUtils.parse(ctx
 					.getParameter("minorVersion"), 0), StringUtils.parse(ctx.getParameter("subVersion"), 0));
 			
