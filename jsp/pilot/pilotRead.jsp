@@ -131,10 +131,10 @@ return true;
 </tr>
 <tr>
  <td class="label">E-Mail Address</td>
-<c:if test="${fn:isEMailValid(pilot.email)}">
+<c:if test="${fn:isEMailValid(pilot)}">
  <td colspan="${cspan}" class="data"><a href="mailto:${pilot.email}">${pilot.email}</a></td>
 </c:if>
-<c:if test="${!fn:isEMailValid(pilot.email)}">
+<c:if test="${!fn:isEMailValid(pilot)}">
  <td colspan="${cspan}" class="data error bld">E-MAIL ADDRESS INVALIDATED</td>
 </c:if>
 </tr>

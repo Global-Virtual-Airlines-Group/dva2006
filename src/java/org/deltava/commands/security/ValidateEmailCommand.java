@@ -16,7 +16,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to validate e-mail addresses.
  * @author Luke
- * @version 5.2
+ * @version 5.3
  * @since 1.0
  */
 
@@ -83,20 +83,18 @@ public class ValidateEmailCommand extends AbstractCommand {
 
 		try {
 			Connection con = ctx.getConnection();
-
-			// Start the transaction
 			ctx.startTX();
 
 			// Update the Pilot
 			SetPilot wdao = new SetPilot(con);
 			p.setEmail(av.getAddress());
+			p.setEmailInvalid(false);
 			wdao.write(p);
 
 			// Clear the invalid e-mail entry
 			SetAddressValidation wavdao = new SetAddressValidation(con);
 			wavdao.delete(av.getID());
 
-			// Commit the transaction
 			ctx.commitTX();
 		} catch (DAOException de) {
 			ctx.rollbackTX();
