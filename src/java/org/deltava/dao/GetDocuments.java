@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.io.File;
@@ -6,14 +6,13 @@ import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.fleet.*;
-
 import org.deltava.util.CollectionUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to load Documents from the Libraries.
  * @author Luke
- * @version 4.1
+ * @version 5.3
  * @since 1.0
  */
 
@@ -197,7 +196,7 @@ public class GetDocuments extends GetLibrary {
 		}
 	}
 	
-	/**
+	/*
 	 * Helper method to load Flight Academy Certifications into Manual beans.
 	 */
 	private void loadCertifications(Map<String, Manual> manuals) throws SQLException {
@@ -213,7 +212,7 @@ public class GetDocuments extends GetLibrary {
 		_ps.close();
 	}
 	
-	/**
+	/*
 	 * Helper method to return all Flight Academy Certifications associated with a particular Manual.
 	 */
 	private Collection<String> getCertifications(String fileName) throws SQLException {
@@ -230,12 +229,11 @@ public class GetDocuments extends GetLibrary {
 		return results;
 	}
 
-	/**
+	/*
 	 * Helper method to load from the Document Library table.
 	 */
 	private List<Manual> loadManuals() throws SQLException {
 		List<Manual> results = new ArrayList<Manual>();
-
 		try (ResultSet rs = _ps.executeQuery()) {
 			boolean hasTotals = (rs.getMetaData().getColumnCount() > 8);
 			while (rs.next()) {
@@ -243,7 +241,7 @@ public class GetDocuments extends GetLibrary {
 				Manual doc = new Manual(f.getPath());
 				doc.setName(rs.getString(2));
 				doc.setVersion(rs.getInt(4));
-				doc.setSecurity(rs.getInt(5));
+				doc.setSecurity(Security.values()[rs.getInt(5)]);
 				doc.setShowOnRegister(rs.getBoolean(6));
 				doc.setIgnoreCertifcations(rs.getBoolean(7));
 				doc.setDescription(rs.getString(8));
@@ -260,12 +258,11 @@ public class GetDocuments extends GetLibrary {
 		return results;
 	}
 
-	/**
+	/*
 	 * Helper method to load from the Newsletter Library table.
 	 */
 	private List<Newsletter> loadNewsletters() throws SQLException {
 		List<Newsletter> results = new ArrayList<Newsletter>();
-
 		try (ResultSet rs = _ps.executeQuery()) {
 			boolean hasTotals = (rs.getMetaData().getColumnCount() > 7);
 			while (rs.next()) {
@@ -273,7 +270,7 @@ public class GetDocuments extends GetLibrary {
 				Newsletter nws = new Newsletter(f.getPath());
 				nws.setName(rs.getString(2));
 				nws.setCategory(rs.getString(3));
-				nws.setSecurity(rs.getInt(5));
+				nws.setSecurity(Security.values()[rs.getInt(5)]);
 				nws.setDate(expandDate(rs.getDate(6)));
 				nws.setDescription(rs.getString(7));
 				if (hasTotals)

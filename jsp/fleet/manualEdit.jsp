@@ -6,7 +6,6 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html lang="en">
 <head>
 <c:choose>
@@ -70,8 +69,9 @@ return true;
 <content:copyright visible="false" />
 <body>
 <content:page>
-<%@ include file="/jsp/main/header.jspf" %> 
+<%@ include file="/jsp/main/header.jspf" %>
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:enum var="securityOptions" className="org.deltava.beans.fleet.Security" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -125,7 +125,7 @@ return true;
 </content:filter>
 <tr>
  <td class="label">Document Security</td>
- <td class="data"><el:combo name="security" idx="*" size="1" value="${fn:get(securityOptions, entry.security)}" onChange="void updateSecurity(this)" options="${securityOptions}" /></td>
+ <td class="data"><el:combo name="security" idx="*" size="1" required="true" value="${entry.security}" onChange="void updateSecurity(this)" options="${securityOptions}" /></td>
 </tr>
 <tr>
  <td class="label">Update File</td>

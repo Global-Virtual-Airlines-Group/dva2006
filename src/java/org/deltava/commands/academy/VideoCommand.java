@@ -1,4 +1,4 @@
-// Copyright 2006, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -16,13 +16,12 @@ import org.deltava.mail.*;
 
 import org.deltava.security.command.CertificationAccessControl;
 
-import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to view and update Flight Academy Training videos.
  * @author Luke
- * @version 3.0
+ * @version 5.3
  * @since 1.0
  */
 
@@ -33,6 +32,7 @@ public class VideoCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	protected void execSave(CommandContext ctx) throws CommandException {
 
 		// Get the file name and if we are saving a new document
@@ -94,7 +94,7 @@ public class VideoCommand extends AbstractFormCommand {
 			video.setDescription(ctx.getParameter("desc"));
 			video.setName(ctx.getParameter("title"));
 			video.setCertifications(ctx.getParameters("certNames"));
-			video.setSecurity(StringUtils.arrayIndexOf(LibraryEntry.SECURITY_LEVELS, ctx.getParameter("security")));
+			video.setSecurity(Security.valueOf(ctx.getParameter("security")));
 			if (mFile != null)
 				video.setSize(mFile.getSize());
 
@@ -109,6 +109,7 @@ public class VideoCommand extends AbstractFormCommand {
 			GetPilotDirectory pdao = new GetPilotDirectory(con);
 			pilots.addAll(pdao.getByRole("HR", SystemData.get("airline.db")));
 			pilots.addAll(pdao.getByRole("Instructor", SystemData.get("airline.db")));
+			pilots.addAll(pdao.getByRole("AcademyAdmin", SystemData.get("airline.db")));
 
 			// Start the transaction
 			ctx.startTX();
@@ -159,6 +160,7 @@ public class VideoCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	protected void execEdit(CommandContext ctx) throws CommandException {
 		
 		// Get file name
@@ -202,9 +204,6 @@ public class VideoCommand extends AbstractFormCommand {
 			ctx.release();
 		}
 		
-		// Set security options attribute
-		ctx.setAttribute("securityOptions", ComboUtils.fromArray(LibraryEntry.SECURITY_LEVELS), REQUEST);
-
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
 		result.setURL("/jsp/fleet/videoEdit.jsp");
@@ -212,11 +211,11 @@ public class VideoCommand extends AbstractFormCommand {
 	}
 
 	/**
-	 * Method called when reading the form. <i>NOT IMPLEMENTED</i>
+	 * Method called when reading the form.
 	 * @param ctx the Command context
-	 * @throws UnsupportedOperationException always
 	 */
+	@Override
 	protected void execRead(CommandContext ctx) throws CommandException {
-		throw new UnsupportedOperationException();
+		execEdit(ctx);
 	}
 }

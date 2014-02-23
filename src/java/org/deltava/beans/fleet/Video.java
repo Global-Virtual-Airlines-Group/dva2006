@@ -1,25 +1,20 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.fleet;
-
-import org.deltava.util.StringUtils;
 
 /**
  * A bean to store video data.
  * @author Luke
- * @version 1.0
+ * @version 5.2
  * @since 1.0
  */
 
 public class Video extends FileEntry {
 	
-	public static final int WMV = 0;
-	public static final int AVI = 1;
-	public static final int DIVX = 2;
-	public static final int MP3 = 3;
+	public enum Type {
+		WMV, AVI, DIVX, MP3, MP4
+	}
 	
-	public static final String[] TYPES = {"WMV", "AVI", "DIVX", "MP3" };
-	
-	private int _type;
+	private Type _type;
 
 	/**
 	 * Creates a new video bean. 
@@ -35,9 +30,8 @@ public class Video extends FileEntry {
 	/**
 	 * Returns the video type.
 	 * @return the type code
-	 * @see Video#getTypeName()
 	 */
-	public int getType() {
+	public Type getType() {
 		return _type;
 	}
 	
@@ -46,16 +40,7 @@ public class Video extends FileEntry {
 	 * @return the icon name, minus extension
 	 */
 	public String getIconName() {
-		return (_type == DIVX) ? "divx" : "wmp";
-	}
-	
-	/**
-	 * Returns the video type name.
-	 * @return the type name
-	 * @see Video#getType()
-	 */
-	public String getTypeName() {
-		return TYPES[_type];
+		return (_type == Type.DIVX) ? "divx" : "wmp";
 	}
 	
 	/**
@@ -67,11 +52,11 @@ public class Video extends FileEntry {
 		if (fName.indexOf('.') == -1)
 			throw new IllegalArgumentException("Invalid file name - " + fName);
 		
-		String ext = fName.substring(fName.lastIndexOf('.') + 1).toUpperCase();
-		int videoType = StringUtils.arrayIndexOf(TYPES, ext);
-		if (videoType == -1)
-			throw new IllegalArgumentException("Invalid extension - " + fName);
-		
-		_type = videoType;
+		String ext = fName.substring(fName.lastIndexOf('.') + 1);
+		try {
+			_type = Type.valueOf(ext.toUpperCase());
+		} catch (IllegalArgumentException iae) {
+			throw new IllegalArgumentException("Invalid extension - " + ext);
+		}
 	}
 }

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to write and update Fleet/Document Library metadata.
  * @author Luke
- * @version 5.0
+ * @version 5.3
  * @since 1.0
  */
 
@@ -63,7 +63,7 @@ public class SetLibrary extends DAO {
 			_ps.setString(1, m.getName());
 			_ps.setLong(2, m.getSize());
 			_ps.setInt(3, m.getMajorVersion());
-			_ps.setInt(4, m.getSecurity());
+			_ps.setInt(4, m.getSecurity().ordinal());
 			_ps.setString(5, m.getDescription());
 			_ps.setBoolean(6, m.getShowOnRegister());
 			_ps.setBoolean(7, m.getIgnoreCertifications());
@@ -113,7 +113,7 @@ public class SetLibrary extends DAO {
 			_ps.setString(1, nws.getName());
 			_ps.setString(2, nws.getCategory());
 			_ps.setLong(3, nws.getSize());
-			_ps.setInt(4, nws.getSecurity());
+			_ps.setInt(4, nws.getSecurity().ordinal());
 			_ps.setTimestamp(5, createTimestamp(nws.getDate()));
 			_ps.setString(6, nws.getDescription());
 			_ps.setString(7, nws.getFileName());
@@ -152,7 +152,7 @@ public class SetLibrary extends DAO {
 			_ps.setInt(4, i.getMajorVersion());
 			_ps.setInt(5, i.getMinorVersion());
 			_ps.setInt(6, i.getSubVersion());
-			_ps.setInt(7, i.getSecurity());
+			_ps.setInt(7, i.getSecurity().ordinal());
 			_ps.setString(8, i.getCode());
 			_ps.setString(9, i.getDescription());
 			_ps.setString(10, StringUtils.listConcat(i.getFSVersions(), ","));
@@ -195,7 +195,7 @@ public class SetLibrary extends DAO {
 			// Update the prepared statement
 			_ps.setString(1, e.getName());
 			_ps.setLong(2, e.getSize());
-			_ps.setInt(3, e.getSecurity());
+			_ps.setInt(3, e.getSecurity().ordinal());
 			_ps.setInt(4, e.getAuthorID());
 			_ps.setString(5, e.getDescription());
 			_ps.setString(6, e.getFileName());
@@ -222,7 +222,7 @@ public class SetLibrary extends DAO {
 			// Update the prepared statement
 			_ps.setString(1, v.getName());
 			_ps.setLong(2, v.getSize());
-			_ps.setInt(3, v.getSecurity());
+			_ps.setInt(3, v.getSecurity().ordinal());
 			_ps.setInt(4, v.getAuthorID());
 			_ps.setString(5, v.getCategory());
 			_ps.setString(6, v.getDescription());

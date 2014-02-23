@@ -5,9 +5,9 @@ import java.io.File;
 import java.sql.*;
 import java.util.*;
 
+import org.deltava.beans.fleet.Security;
 import org.deltava.beans.fleet.Video;
 import org.deltava.beans.academy.TrainingVideo;
-
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
@@ -35,7 +35,7 @@ public class GetVideos extends GetLibrary {
 	 */
 	public Collection<Video> getVideos() throws DAOException {
 		try {
-			prepareStatement("SELECT V.*, GROUP_CONCAT(VC.CERTNAME) FROM exams.VIDEOS V LEFT JOIN "
+			prepareStatement("SELECT V.*, GROUP_CONCAT(VC.CERT) FROM exams.VIDEOS V LEFT JOIN "
 					+ "exams.CERTVIDEOS VC ON (V.FILENAME=VC.FILENAME) GROUP BY V.NAME");
 			return loadVideos();
 		} catch (SQLException se) {
@@ -51,7 +51,7 @@ public class GetVideos extends GetLibrary {
 	 */
 	public Collection<Video> getVideos(String certName) throws DAOException {
 		try {
-			prepareStatement("SELECT V.*, GROUP_CONCAT(VC.CERTNAME) FROM exams.VIDEOS V LEFT JOIN "
+			prepareStatement("SELECT V.*, GROUP_CONCAT(VC.CERT) FROM exams.VIDEOS V LEFT JOIN "
 					+ "exams.CERTVIDEOS VC ON (V.FILENAME=VC.FILENAME) WHERE (VC.CERTNAME=?) GROUP BY "
 					+ "V.NAME");
 			_ps.setString(1, certName);
@@ -61,7 +61,7 @@ public class GetVideos extends GetLibrary {
 		}
 	}
 	
-	/**
+	/*
 	 * Helper method to parse result sets.
 	 */
 	private List<Video> loadVideos() throws SQLException {
@@ -81,7 +81,7 @@ public class GetVideos extends GetLibrary {
 			
 				entry.setName(rs.getString(2));
 				entry.setCategory(rs.getString(3));
-				entry.setSecurity(rs.getInt(5));
+				entry.setSecurity(Security.values()[rs.getInt(5)]);
 				entry.setAuthorID(rs.getInt(6));
 				entry.setDescription(rs.getString(7));
 				results.add(entry);
@@ -101,13 +101,11 @@ public class GetVideos extends GetLibrary {
 	public Collection<String> getCertifications(String fName) throws DAOException {
 		Collection<String> results = new ArrayList<String>();
 		try {
-			prepareStatementWithoutLimits("SELECT CERTNAME FROM exams.CERTVIDEOS WHERE (FILENAME=?)");
+			prepareStatementWithoutLimits("SELECT CERT FROM exams.CERTVIDEOS WHERE (FILENAME=?)");
 			_ps.setString(1, fName);
-			
-			// Execute the query
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next())
-				results.add(rs.getString(1));	
+					results.add(rs.getString(1));	
 			}
 			
 			_ps.close();

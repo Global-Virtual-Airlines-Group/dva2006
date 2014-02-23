@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.io.File;
@@ -7,21 +7,18 @@ import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.fleet.*;
-
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.dao.file.WriteBuffer;
 import org.deltava.mail.*;
-
 import org.deltava.security.command.ManualAccessControl;
-
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to update Document Library entries.
  * @author Luke
- * @version 3.6
+ * @version 5.3
  * @since 1.0
  */
 
@@ -32,6 +29,7 @@ public class ManualCommand extends LibraryEditCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	protected void execEdit(CommandContext ctx) throws CommandException {
 		super.execEdit(ctx, "manual");
 	}
@@ -41,6 +39,7 @@ public class ManualCommand extends LibraryEditCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	protected void execSave(CommandContext ctx) throws CommandException {
 
 		// Get the file name and if we are saving a new document
@@ -92,7 +91,7 @@ public class ManualCommand extends LibraryEditCommand {
 			entry.setName(ctx.getParameter("title"));
 			entry.setVersion(StringUtils.parse(ctx.getParameter("version"), 1));
 			entry.setShowOnRegister(Boolean.valueOf(ctx.getParameter("showRegister")).booleanValue());
-			entry.setSecurity(StringUtils.arrayIndexOf(LibraryEntry.SECURITY_LEVELS, ctx.getParameter("security")));
+			entry.setSecurity(Security.valueOf(ctx.getParameter("security")));
 			entry.setLastModified(new java.util.Date());
 			if (mFile != null)
 				entry.setSize(mFile.getBuffer().length);

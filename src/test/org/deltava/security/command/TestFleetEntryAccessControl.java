@@ -1,4 +1,3 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.security.command;
 
 import junit.framework.Test;
@@ -29,7 +28,7 @@ public class TestFleetEntryAccessControl extends AccessControlTestCase {
    }
 
    public void testAccess() throws Exception {
-      assertEquals(LibraryEntry.PUBLIC, _m.getSecurity());
+      assertEquals(Security.PUBLIC, _m.getSecurity());
       _ac.validate();
       
       assertTrue(_ac.getCanView());
@@ -37,7 +36,7 @@ public class TestFleetEntryAccessControl extends AccessControlTestCase {
       assertFalse(_ac.getCanCreate());
       assertFalse(_ac.getCanDelete());
 
-      _m.setSecurity(LibraryEntry.AUTH_ONLY);
+      _m.setSecurity(Security.AUTH);
       _ac.validate();
 
       assertTrue(_ac.getCanView());
@@ -45,7 +44,7 @@ public class TestFleetEntryAccessControl extends AccessControlTestCase {
       assertFalse(_ac.getCanCreate());
       assertFalse(_ac.getCanDelete());
 
-      _m.setSecurity(LibraryEntry.STAFF_ONLY);
+      _m.setSecurity(Security.STAFF);
       _ac.validate();
 
       assertFalse(_ac.getCanView());
@@ -56,7 +55,7 @@ public class TestFleetEntryAccessControl extends AccessControlTestCase {
    
    public void testAnonymousAccess() throws Exception {
       _ctxt.logoff();
-      assertEquals(LibraryEntry.PUBLIC, _m.getSecurity());
+      assertEquals(Security.PUBLIC, _m.getSecurity());
       _ac.validate();
       
       assertTrue(_ac.getCanView());
@@ -64,7 +63,7 @@ public class TestFleetEntryAccessControl extends AccessControlTestCase {
       assertFalse(_ac.getCanCreate());
       assertFalse(_ac.getCanDelete());
       
-      _m.setSecurity(LibraryEntry.AUTH_ONLY);
+      _m.setSecurity(Security.AUTH);
       _ac.validate();
       
       assertFalse(_ac.getCanView());
@@ -72,7 +71,7 @@ public class TestFleetEntryAccessControl extends AccessControlTestCase {
       assertFalse(_ac.getCanCreate());
       assertFalse(_ac.getCanDelete());
 
-      _m.setSecurity(LibraryEntry.STAFF_ONLY);
+      _m.setSecurity(Security.STAFF);
       _ac.validate();
 
       assertFalse(_ac.getCanView());
@@ -82,7 +81,7 @@ public class TestFleetEntryAccessControl extends AccessControlTestCase {
    }
    
    public void testStaffAccess() throws Exception {
-      _m.setSecurity(LibraryEntry.STAFF_ONLY);
+      _m.setSecurity(Security.STAFF);
       _ac.validate();
       
       assertFalse(_ac.getCanView());
