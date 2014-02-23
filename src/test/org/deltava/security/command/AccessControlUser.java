@@ -9,7 +9,6 @@ public class AccessControlUser extends Pilot {
 
 	public AccessControlUser(String fName, String lName) {
 		super(fName, lName);
-		addRole("User");
 	}
 
 	public String getRowClassName() {
