@@ -1,4 +1,4 @@
-// Copyright 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2013, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.io.*;
@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A scheduled task to download GFS global forecast data.
  * @author Luke
- * @version 5.2
+ * @version 5.3
  * @since 5.2
  */
 
@@ -140,6 +140,7 @@ public class GFSDownloadTask extends Task {
 					ctx.startTX();
 					
 					SetWeather wwdao = new SetWeather(con);
+					wwdao.setQueryTimeout(60);
 					wwdao.purgeWinds(5, lvl);
 					
 					log.info("Processing " + lvl.getPressure() + "mb data");
