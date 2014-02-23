@@ -64,9 +64,9 @@ return true;
  <td class="label top">Description</td>
  <td class="data"><el:textbox name="desc" idx="*" width="80%" height="3" className="req">${video.description}</el:textbox></td>
 </tr>
-<c:if test="${!empty entry}">
+<c:if test="${!empty video}">
 <tr>
- <td class="label">Document Size</td>
+ <td class="label">Video Size</td>
 <c:if test="${video.size > 0}">
  <td class="data sec bld"><fmt:int value="${video.size}" /> bytes</td>
 </c:if>
@@ -75,8 +75,8 @@ return true;
 </c:if>
 </tr>
 <tr>
- <td class="label">Download Statistics</td>
- <td class="data">Downloaded <b><fmt:int value="${video.downloadCount}" /></b> times</td>
+ <td class="label">Statistics</td>
+ <td class="data">Viewed <b><fmt:int value="${video.downloadCount}" /></b> times</td>
 </tr>
 </c:if>
 <content:filter roles="HR,AcademyAdmin">
@@ -93,7 +93,7 @@ return true;
  <td class="label">Upload File</td>
  <td class="data"><el:file name="file" className="small req" size="96" max="192" /></td>
 </tr>
-<c:if test="${empty entry}">
+<c:if test="${empty video}">
 <tr>
  <td class="label">Local File</td>
  <td class="data"><el:text name="fileName" className="small req" size="96" max="192" value="" /></td>

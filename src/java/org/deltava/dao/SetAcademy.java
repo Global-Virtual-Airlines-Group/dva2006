@@ -207,7 +207,7 @@ public class SetAcademy extends DAO {
 			executeUpdate(0);
 			
 			// Add the certifications
-			prepareStatementWithoutLimits("INSERT INTO exams.CERTVIDEOS (CERTNAME, FILENAME) VALUES (?, ?)");
+			prepareStatementWithoutLimits("INSERT INTO exams.CERTVIDEOS (CERT, FILENAME) VALUES (?, ?)");
 			_ps.setString(2, video.getFileName());
 			for (Iterator<String> i = video.getCertifications().iterator(); i.hasNext(); ) {
 				_ps.setString(1, i.next());
@@ -217,7 +217,6 @@ public class SetAcademy extends DAO {
 			// Execute the batch transaction and commit
 			_ps.executeBatch();
 			_ps.close();
-			_ps = null;
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
