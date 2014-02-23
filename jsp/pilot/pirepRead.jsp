@@ -45,7 +45,7 @@ return true;
 </script></c:if>
 <c:if test="${isACARS}">
 <content:googleJS />
-<content:js name="json2" />
+<content:json />
 <content:js name="acarsFlightMap" />
 <script type="text/javascript">
 function zoomTo(lat, lng, zoom)

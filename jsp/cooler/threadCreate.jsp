@@ -12,7 +12,7 @@
 <content:css name="main" />
 <content:css name="form" />
 <content:pics />
-<content:js name="json2" />
+<content:json />
 <content:js name="common" />
 <content:js name="datePicker" />
 <script type="text/javascript">

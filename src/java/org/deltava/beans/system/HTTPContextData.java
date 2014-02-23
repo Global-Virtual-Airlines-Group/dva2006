@@ -1,10 +1,10 @@
-// Copyright 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2013, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 /**
  * A bean to store data about the current HTTP request. 
  * @author Luke
- * @version 5.2
+ * @version 5.3
  * @since 3.7
  */
 
@@ -18,6 +18,7 @@ public class HTTPContextData implements java.io.Serializable {
 	private int _minor;
 	private boolean _html5;
 	private boolean _ipV6;
+	private boolean _hasJSON;
 
 	/**
 	 * Creates the context data.
@@ -89,6 +90,14 @@ public class HTTPContextData implements java.io.Serializable {
 	}
 	
 	/**
+	 * Returns whether the browser has native JSON capabilities.
+	 * @return TRUE if JSON object present, otherwise FALSE
+	 */
+	public boolean hasJSON() {
+		return _hasJSON;
+	}
+	
+	/**
 	 * Sets whether the client browser has sufficient HTML5 support.
 	 * @param hasHTML5 TRUE if full HTML5 support, otherwise FALSE
 	 */
@@ -112,5 +121,13 @@ public class HTTPContextData implements java.io.Serializable {
 	public void setVersion(int major, int minor) {
 		_major = Math.max(1, major);
 		_minor = Math.max(0, minor);
+	}
+	
+	/**
+	 * Sets whether the browser has native JSON processing.
+	 * @param hasJSON TRUE if native JSON object, otherwise FALSE
+	 */
+	public void setJSON(boolean hasJSON) {
+		_hasJSON = hasJSON;
 	}
 }
