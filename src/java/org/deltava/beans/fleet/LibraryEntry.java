@@ -1,4 +1,4 @@
-// Copyright 2005, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.fleet;
 
 import java.io.*;
@@ -9,27 +9,18 @@ import org.deltava.util.cache.Cacheable;
 /**
  * An abstract bean to store information about Library entries.
  * @author Luke
- * @version 5.0
+ * @version 5.3
  * @since 1.0
  */
 
 public abstract class LibraryEntry implements Comparable<LibraryEntry>, Cacheable, ViewEntry {
-
-	public static final int PUBLIC = 0;
-	public static final int AUTH_ONLY = 1;
-	public static final int STAFF_ONLY = 2;
-	
-	/**
-	 * Security level names.
-	 */
-	public static final String[] SECURITY_LEVELS = {"Public Resource", "Authorized Users", "Staff Only"};
 
    private final File _file;
    private long _fileSize;
    private String _name;
    private String _description;
    private int _downloadCount;
-   private int _securityLevel;
+   private Security _securityLevel = Security.PUBLIC;
    
    /**
     * Creates a new Library entry.
@@ -89,9 +80,9 @@ public abstract class LibraryEntry implements Comparable<LibraryEntry>, Cacheabl
    /**
     * Returns this resource's security level.
     * @return the security level for this entry
-    * @see LibraryEntry#setSecurity(int)
+    * @see LibraryEntry#setSecurity(Security)
     */
-   public int getSecurity() {
+   public Security getSecurity() {
    	return _securityLevel;
    }
    
@@ -145,13 +136,9 @@ public abstract class LibraryEntry implements Comparable<LibraryEntry>, Cacheabl
    /**
     * Updates this resource's security level.
     * @param level the security level code
-    * @throws IllegalArgumentException if level is negative or invalid
     * @see LibraryEntry#getSecurity()
     */
-   public void setSecurity(int level) {
-   	 if ((level < 0) || (level >= SECURITY_LEVELS.length))
-   	 	throw new IllegalArgumentException("Invalid Security level code - " + level);
-   	 
+   public void setSecurity(Security level) {
        _securityLevel = level;
    }
 

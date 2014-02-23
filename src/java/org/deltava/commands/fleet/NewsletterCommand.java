@@ -1,4 +1,4 @@
-// Copyright 2006, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2011, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.io.File;
@@ -6,8 +6,7 @@ import java.sql.Connection;
 import java.util.List;
 
 import org.deltava.beans.*;
-import org.deltava.beans.fleet.LibraryEntry;
-import org.deltava.beans.fleet.Newsletter;
+import org.deltava.beans.fleet.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -16,13 +15,12 @@ import org.deltava.mail.*;
 
 import org.deltava.security.command.FleetEntryAccessControl;
 
-import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to update Newsletters.
  * @author Luke
- * @version 3.6
+ * @version 5.3
  * @since 1.0
  */
 
@@ -33,6 +31,7 @@ public class NewsletterCommand extends LibraryEditCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	protected void execEdit(CommandContext ctx) throws CommandException {
 		super.execEdit(ctx, "newsletter");
 	}
@@ -42,6 +41,7 @@ public class NewsletterCommand extends LibraryEditCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	protected void execSave(CommandContext ctx) throws CommandException {
 
 		// Get the file name and if we are saving a new document
@@ -92,7 +92,7 @@ public class NewsletterCommand extends LibraryEditCommand {
 			nws.setName(ctx.getParameter("title"));
 			nws.setCategory(ctx.getParameter("category"));
 			nws.setDate(parseDateTime(ctx, "news", SystemData.get("time.date_format"), "HH:mm"));
-			nws.setSecurity(StringUtils.arrayIndexOf(LibraryEntry.SECURITY_LEVELS, ctx.getParameter("security")));
+			nws.setSecurity(Security.valueOf(ctx.getParameter("security")));
 			if (mFile != null)
 				nws.setSize(mFile.getBuffer().length);
 			

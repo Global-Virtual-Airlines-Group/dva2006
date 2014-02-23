@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.io.File;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load metadata from the Fleet/Document Libraries.
  * @author Luke
- * @version 5.1
+ * @version 5.3
  * @since 1.0
  */
 
@@ -229,7 +229,7 @@ public class GetLibrary extends DAO {
 				FileEntry entry = isVideo ? new Video(f.getPath()) : new FileEntry(f.getPath());
 				entry.setName(rs.getString(2));
 				entry.setCategory(rs.getString(3));
-				entry.setSecurity(rs.getInt(5));
+				entry.setSecurity(Security.values()[rs.getInt(5)]);
 				entry.setAuthorID(rs.getInt(6));
 				entry.setDescription(rs.getString(7));
 				if (hasTotals)
@@ -256,7 +256,7 @@ public class GetLibrary extends DAO {
 				entry.setName(rs.getString(2));
 				entry.setImage(rs.getString(3));
 				entry.setVersion(rs.getInt(5), rs.getInt(6), rs.getInt(7));
-				entry.setSecurity(rs.getInt(8));
+				entry.setSecurity(Security.values()[rs.getInt(8)]);
 				entry.setCode(rs.getString(9));
 				entry.setDescription(rs.getString(11));
 				if (f.exists())

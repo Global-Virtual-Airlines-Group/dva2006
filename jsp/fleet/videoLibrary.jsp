@@ -48,7 +48,7 @@
 <c:if test="${!access.canEditVideo}">
  <td class="pri bld"><el:link url="/video/${video.fileName}">${video.name}</el:link></td>
 </c:if>
- <td><el:link url="/video/${video.fileName}"><el:img src="library/${video.iconName}.png" caption="Download ${video.typeName} Video" x="32" y="32" className="noborder" /></el:link></td>
+ <td><el:link url="/video/${video.fileName}"><el:img src="library/${video.iconName}.png" caption="Download ${video.type} Video" x="32" y="32" className="noborder" /></el:link></td>
  <td class="sec bld"><fmt:int value="${video.size}" /></td>
  <td class="small left" colspan="2"><fmt:text value="${video.description}" /></td>
 </view:row>

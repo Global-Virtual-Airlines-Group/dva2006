@@ -45,6 +45,7 @@ return true;
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:sysdata var="dateFmt" name="time.date_format" />
 <content:sysdata var="cats" name="airline.newsletters.categories" />
+<content:enum var="securityOptions" className="org.deltava.beans.fleet.Security" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -95,7 +96,7 @@ return true;
 </c:if>
 <tr>
  <td class="label">Document Security</td>
- <td class="data"><el:combo name="security" idx="*" size="1" value="${fn:get(securityOptions, entry.security)}" options="${securityOptions}" /></td>
+ <td class="data"><el:combo name="security" idx="*" size="1" required="true" value="${entry.security}" options="${securityOptions}" /></td>
 </tr>
 <tr>
  <td class="label">Update File</td>
