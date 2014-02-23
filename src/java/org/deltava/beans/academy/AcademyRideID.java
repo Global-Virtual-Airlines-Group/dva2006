@@ -19,9 +19,7 @@ public class AcademyRideID {
 	 * @param idx the ride index
 	 */
 	public AcademyRideID(String name, int idx) {
-		super();
-		_name = name;
-		_idx = Math.max(1, idx);
+		this(name + "-" + idx);
 	}
 	
 	/**
@@ -31,8 +29,8 @@ public class AcademyRideID {
 	public AcademyRideID(String id) {
 		super();
 		int ofs = id.lastIndexOf('-');
-		_name = id.substring(0, ofs);
-		_idx = Integer.parseInt(id.substring(ofs+1));
+		_name = (ofs < 1) ? id : id.substring(0, ofs);
+		_idx = (ofs < 1) ? 1 : Integer.parseInt(id.substring(ofs+1));
 	}
 	
 	/**
