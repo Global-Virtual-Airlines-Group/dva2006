@@ -14,7 +14,7 @@
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
-<content:js name="json2" />
+<content:json />
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
 <fmt:aptype var="useICAO" />

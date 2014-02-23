@@ -1,16 +1,16 @@
-// Copyright 2005, 2006, 2009 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2014 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
-import javax.servlet.jsp.tagext.TagSupport;
+import org.deltava.taglib.BrowserInfoTag;
 
 /**
  * An abstract class for content insertion JSP tags.
  * @author Luke
- * @version 2.6
+ * @version 5.3
  * @since 1.0
  */
 
-abstract class InsertContentTag extends TagSupport {
+abstract class InsertContentTag extends BrowserInfoTag {
 	
     /**
      * The name of the resource to display, <i>without extension</i>.

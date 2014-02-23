@@ -17,7 +17,7 @@
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
-<content:js name="json2" />
+<content:json />
 <content:googleJS />
 </head>
 <content:copyright visible="false" />

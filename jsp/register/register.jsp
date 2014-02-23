@@ -13,7 +13,7 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
-<content:js name="json2" />
+<content:json />
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
 <content:sysdata var="badDomains" name="registration.reject_domain" />

@@ -13,7 +13,7 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
-<content:js name="json2" />
+<content:json />
 <content:js name="airportRefresh" />
 <c:set var="googleMap" value="${isNew && (!empty airport)}" scope="page" />
 <c:if test="${googleMap}">
