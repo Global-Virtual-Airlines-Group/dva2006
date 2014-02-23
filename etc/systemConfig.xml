@@ -525,7 +525,7 @@
 		<img>img</img>
 		<library>/home/www/library</library>
 		<userfiles>/home/www/library/usrfiles</userfiles>
-		<video>/home/www/library/video</video>
+		<video>/home/www/video</video>
 		<httplog>/var/log/www</httplog>
 	</path>
 	
