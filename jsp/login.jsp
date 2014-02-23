@@ -64,9 +64,9 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-Welcome to <content:airline />! In order to access the secure areas of our web site, please enter 
-your first and last name or your User ID and password. Your browser must be able to accept cookies 
-from <span class="sec bld">${domain}</span> in order to log into the site.<br />
+Welcome to <content:airline />! In order to access the secure areas of our web site, please enter your first and last 
+name <c:if test="${!empty dupeUsers}">or your User ID </c:if>and password. Your browser must be able to accept cookies 
+from <span class="sec bld">${domain}</span> in order to log into our web site.<br />
 <br />
 <el:form method="post" action="login.do" validate="return validate(this)">
 <el:table className="form">
@@ -75,16 +75,16 @@ from <span class="sec bld">${domain}</span> in order to log into the site.<br />
 </tr>
 <tr>
  <td class="label">First / Last Name</td>
- <td class="data"><el:text name="firstName" idx="*" size="10" max="16" value="${fname}" />
-  <el:text name="lastName" idx="*" size="16" max="24" value="${lname}" /></td>
+ <td class="data"><el:text name="firstName" idx="*" size="10" max="16" required="true" value="${fname}" />
+  <el:text name="lastName" idx="*" size="16" max="24" required="true" value="${lname}" /></td>
 </tr>
 <tr>
  <td class="label">Password</td>
- <td class="data"><el:text type="password" name="pwd" idx="*" size="16" max="32" value="" /></td>
+ <td class="data"><el:text type="password" name="pwd" idx="*" size="16" max="32" required="true" value="" /></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data sec small"><el:box name="saveInfo" idx="*" value="true" label="Remember my Name next time I Log in" checked="${!empty fname}" /></td>
+ <td class="data sec small"><el:box name="saveInfo" idx="*" value="true" label="Remember me next time I Log in" checked="${!empty fname}" /></td>
 </tr>
 <c:if test="${!empty dupeUsers}">
 <tr class="title caps">
@@ -113,7 +113,7 @@ from <span class="sec bld">${domain}</span> in order to log into the site.<br />
 <el:text name="screenX" type="hidden" value="1024" />
 <el:text name="screenY" type="hidden" value="768" />
 <el:text name="bodyX" type="hidden" value="0" />
-<el:text name="redirectTo" type="hidden" value="${referTo}" />
+<el:text name="redirectTo" type="hidden" value="${(empty referTo) ? param.redirectTo : referTo}" />
 <c:if test="${empty dupeUsers}"><el:text name="pilotCode" type="hidden" value="${pilotCode}" /></c:if>
 </el:form>
 <br />
