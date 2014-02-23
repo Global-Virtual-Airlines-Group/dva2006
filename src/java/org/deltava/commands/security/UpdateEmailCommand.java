@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2010, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010, 2012, 2013, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.util.Collection;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update a registered Pilot's e-mail address.
  * @author Luke
- * @version 5.1
+ * @version 5.3
  * @since 1.0
  */
 
@@ -99,6 +99,7 @@ public class UpdateEmailCommand extends AbstractCommand {
 			
 			// Calculate the hash code
 			av.setHash(AddressValidationHelper.calculateHashCode(av.getAddress()));
+			av.setInvalid(false);
 			
 			// Save the address validation entry
 			SetAddressValidation avwdao = new SetAddressValidation(con);

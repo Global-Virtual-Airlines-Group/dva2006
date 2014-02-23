@@ -531,7 +531,7 @@
 	
 	<!-- SMTP Server configuration -->
 	<smtp>
-		<server>polaris.sce.net</server>
+		<server>localhost</server>
 		<errors-to>webmaster@sce.net</errors-to>
 		<testMode type="Boolean">true</testMode>
 		<imap>
