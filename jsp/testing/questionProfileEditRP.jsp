@@ -14,7 +14,7 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
-<content:js name="json2" />
+<content:json />
 <content:js name="airportRefresh" />
 <map:api version="3" />
 <content:js name="routePlot" />

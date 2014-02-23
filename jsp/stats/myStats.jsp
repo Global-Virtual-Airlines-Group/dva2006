@@ -14,7 +14,7 @@
 <content:css name="form" />
 <content:css name="view" />
 <content:js name="common" />
-<content:js name="json2" />
+<content:json />
 <content:googleJS />
 <content:pics />
 <script type="text/javascript">

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2013, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.filter;
 
 import java.net.*;
@@ -17,7 +17,7 @@ import org.deltava.util.StringUtils;
 /**
  * A servlet filter to detect the browser type.
  * @author Luke
- * @version 5.2
+ * @version 5.3
  * @since 1.0
  */
 
@@ -56,12 +56,15 @@ public class BrowserTypeFilter implements Filter {
 		
 		// Create the Context data object
 		BrowserType.BrowserVersion ver = BrowserType.detect(userAgent);
+		BrowserType bt = ver.getType();
 		DeviceType dev = DeviceType.detect(userAgent);
 		HTTPContextData ctxt = new HTTPContextData(OperatingSystem.detect(userAgent), ver.getType(), dev);
 		int pos = ver.getVersion().indexOf('.');
 		ctxt.setVersion(StringUtils.parse(ver.getVersion().substring(0, pos), 0), StringUtils.parse(ver.getVersion().substring(pos + 1), 0));
-		ctxt.setHTML5((ver.getType() == BrowserType.CHROME) && (ctxt.getMajor() >= 20));
-		req.setAttribute(HTTPContext.HTTPCTXT_ATTR_NAME, ctxt);
+		ctxt.setHTML5((bt == BrowserType.CHROME) && (ctxt.getMajor() >= 20));
+		
+		// Check for native JSON
+		ctxt.setJSON((bt == BrowserType.CHROME) || (bt == BrowserType.FIREFOX) || (bt == BrowserType.OPERA) || (bt == BrowserType.WEBKIT));
 		
     	// Check for IPv6
     	InetAddress addr = InetAddress.getByName(hreq.getRemoteAddr());
@@ -71,9 +74,12 @@ public class BrowserTypeFilter implements Filter {
     	if (ver.getType() == BrowserType.IE) {
     		HttpServletResponse hrsp = (HttpServletResponse) rsp;
     		hrsp.setHeader("X-UA-Compatible", "IE=10, IE=edge");
+    		ctxt.setJSON(ctxt.getMajor() > 7);
+    		ctxt.setHTML5(ctxt.getMajor() > 10);
     	}
 
 		// Execute the next filter in the chain
+    	req.setAttribute(HTTPContext.HTTPCTXT_ATTR_NAME, ctxt);
 		fc.doFilter(req, rsp);
 	}
 

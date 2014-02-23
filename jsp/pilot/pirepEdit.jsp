@@ -19,7 +19,7 @@
 <content:pics />
 <content:js name="common" />
 <content:browser html4="true"><content:js name="hourCalc" /></content:browser>
-<c:if test="${!isAssign}"><content:js name="json2" />
+<c:if test="${!isAssign}"><content:json />
 <content:js name="airportRefresh" /></c:if>
 <content:googleAnalytics eventSupport="true" />
 <content:sysdata var="minDays" name="users.pirep.minDays" />
