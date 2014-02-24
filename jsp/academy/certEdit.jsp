@@ -56,11 +56,11 @@ return true;
 </tr>
 <tr>
  <td class="label">Certification Name</td>
- <td class="data"><el:text name="name" className="pri bld req" idx="*" size="32" max="32" value="${cert.name}" /></td>
+ <td class="data"><el:text name="name" className="pri bld" required="true" idx="*" size="32" max="32" value="${cert.name}" /></td>
 </tr>
 <tr>
  <td class="label">Code</td>
- <td class="data"><el:text name="code" className="bld req" idx="*" size="4" max="8" value="${cert.code}" /></td>
+ <td class="data"><el:text name="code" className="bld" required="true" idx="*" size="4" max="8" value="${cert.code}" /></td>
 </tr>
 <tr>
  <td class="label">Stage</td>
@@ -68,7 +68,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Prerequisites</td>
- <td class="data"><el:combo name="preReqs" className="req" idx="*" size="1" value="${cert.reqName}" options="${preReqNames}" onChange="void showReqCert(this)" firstEntry="-" /></td>
+ <td class="data"><el:combo name="preReqs" required="true" idx="*" size="1" value="${cert.reqName}" options="${preReqNames}" onChange="void showReqCert(this)" firstEntry="-" /></td>
 </tr>
 <tr id="reqCertRow" style="display:none;">
  <td class="label">Certification</td>
@@ -81,19 +81,16 @@ return true;
 </tr>
 <tr>
  <td class="label">Airlines</td>
- <td class="data"><el:check name="airlines" width="175" options="${airlines}" className="req" checked="${cert.airlines}" /></td>
+ <td class="data"><el:check name="airlines" width="175" options="${airlines}" checked="${cert.airlines}" /></td>
 </tr>
 <tr>
  <td class="label top">Required Examinations</td>
  <td class="data"><el:check name="reqExams" width="220" cols="4" className="small" newLine="true" checked="${cert.examNames}" options="${exams}" /></td>
 </tr>
 <tr>
- <td class="label">Check Ride</td>
- <td class="data"><el:box name="hasCR" idx="*" value="true" className="sec bld" label="This Certification requires a Check Ride" checked="${cert.hasCheckRide}" /></td>
-</tr>
-<tr id="noScriptWarn"<c:if test="${!noScriptWarn}">style="display:none;"</c:if>>
- <td class="label">&nbsp;</td>
- <td class="data"><span class="error bld caps">This Certification requires a Check Ride, but no Check Ride Script exists</span></td>
+ <td class="label">Check Rides</td>
+ <td class="data">This certification requires <el:int name="rideCount" idx="*" min="0" max="9" size="1" className="sec bld" value="${cert.rideCount}" />
+ Check Rides</td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>

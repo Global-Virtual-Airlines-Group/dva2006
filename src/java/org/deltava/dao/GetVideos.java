@@ -52,7 +52,7 @@ public class GetVideos extends GetLibrary {
 	public Collection<Video> getVideos(String certName) throws DAOException {
 		try {
 			prepareStatement("SELECT V.*, GROUP_CONCAT(VC.CERT) FROM exams.VIDEOS V LEFT JOIN "
-					+ "exams.CERTVIDEOS VC ON (V.FILENAME=VC.FILENAME) WHERE (VC.CERTNAME=?) GROUP BY "
+					+ "exams.CERTVIDEOS VC ON (V.FILENAME=VC.FILENAME) WHERE (VC.CERT=?) GROUP BY "
 					+ "V.NAME");
 			_ps.setString(1, certName);
 			return loadVideos();

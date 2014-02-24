@@ -28,16 +28,23 @@ public class RideScriptCommand extends AbstractFormCommand {
 	 */
 	@Override
 	protected void execSave(CommandContext ctx) throws CommandException {
-		String id = (String) ctx.getCmdParameter(ID, null);		
+		String id = (String) ctx.getCmdParameter(ID, null);
+		boolean isNew = StringUtils.isEmpty(id);
 		try {
-			boolean isNew = StringUtils.isEmpty(id);
 			Connection con = ctx.getConnection();
 
-			// Get the script
+			// Get the cert
+			String certID = isNew ? ctx.getParameter("cert") : id.substring(0, id.lastIndexOf('-'));
 			GetAcademyCertifications acdao = new GetAcademyCertifications(con);
-			AcademyRideScript sc = acdao.getScript(new AcademyRideID(id));
+			Certification c = acdao.get(certID);
+			if (c == null)
+				throw notFoundException("Unknown Certification - " + certID);
+			
+			// Get the script
+			AcademyRideID rideID = isNew ? new AcademyRideID(c.getName() + "-" + ctx.getParameter("seq")) : new AcademyRideID(id);
+			AcademyRideScript sc = acdao.getScript(rideID);
 			if (!isNew && (sc == null))
-				throw notFoundException("Academy Check Ride script not found - " + id);
+				throw notFoundException("Academy Check Ride script not found - " + rideID);
 
 			// Check our access
 			AcademyRideScriptAccessControl ac = new AcademyRideScriptAccessControl(ctx, sc);
@@ -46,14 +53,8 @@ public class RideScriptCommand extends AbstractFormCommand {
 				throw securityException("Cannot create/edit Academy Check Ride script");
 			
 			// Build the bean
-			if (sc == null) {
-				String certID = ctx.getParameter("cert");
-				Certification c = acdao.get(certID);
-				if (c == null)
-					throw notFoundException("Unknown Certification - " + certID);
-				
-				sc = new AcademyRideScript(c.getName(), StringUtils.parse(ctx.getParameter("idx"), 1));
-			}
+			if (sc == null)
+				sc = new AcademyRideScript(c.getName(), StringUtils.parse(ctx.getParameter("seq"), 1));
 				
 			sc.setDescription(ctx.getParameter("body"));
 			

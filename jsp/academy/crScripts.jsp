@@ -27,7 +27,8 @@
 <!-- Table Header Bar -->
 <tr class="title">
  <td style="width:15%">CERTIFICATION</td>
- <td style="width:65%" class="left">CHECK RIDE DESCRIPTION</td>
+ <td style="width:5%">#</td>
+ <td style="width:60%" class="left">CHECK RIDE DESCRIPTION</td>
  <td> <c:if test="${ac.canCreate}"><el:cmd url="arscript" op="edit">NEW SCRIPT</el:cmd></c:if></td>
 </tr>
 
@@ -36,18 +37,19 @@
 <view:row entry="${sc}">
 <c:set var="ac" value="${access[sc.certificationName]}" scope="page" />
 <c:if test="${ac.canEdit}">
- <td><el:cmd url="arscript" linkID="${sc.certificationName}" className="pri bld" op="edit">${sc.certificationName}</el:cmd></td>
+ <td><el:cmd url="arscript" linkID="${sc.certificationName}-${sc.index}" className="pri bld" op="edit">${sc.certificationName}</el:cmd></td>
 </c:if>
 <c:if test="${!ac.canEdit}">
  <td class="pri bld">${sc.certificationName}</td>
 </c:if>
+ <td class="sec bld"><fmt:int value="${sc.index}" /></td>
  <td class="small left" colspan="2"><fmt:msg value="${sc.description}" bbCode="true" /></td>
 </view:row>
 </c:forEach>
 
 <!-- Bottom Bar -->
 <tr class="title">
- <td colspan="3">&nbsp;</td>
+ <td colspan="4">&nbsp;</td>
 </tr>
 </view:table>
 <br />

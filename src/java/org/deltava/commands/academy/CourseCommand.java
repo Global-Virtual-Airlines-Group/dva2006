@@ -82,7 +82,7 @@ public class CourseCommand extends AbstractAcademyHistoryCommand {
 				
 				// Get videos
 				GetVideos vdao = new GetVideos(con);
-				ctx.setAttribute("videos", vdao.getVideos(c.getName()), REQUEST);
+				ctx.setAttribute("videos", vdao.getVideos(c.getCode()), REQUEST);
 				
 				// Show exam status
 				Collection<Test> exams = new TreeSet<Test>();
