@@ -50,7 +50,6 @@ public class AcademyRideCountService extends WebService {
 		// Dump the JSON to the output stream
 		try {
 			ctx.setContentType("text/javascript", "UTF-8");
-			ctx.setExpiry(3600);
 			ctx.println(ja.toString());
 			ctx.commit();
 		} catch (Exception e) {

@@ -80,7 +80,7 @@ public class CourseAccessControl extends AccessControl {
 		}
 		
 		boolean crComplete = (completedRides == _c.getRideCount());
-		_canAssignCheckRide = isComplete && isStarted && (_c.getRideCount() > 0) && hasPendingRide;
+		_canAssignCheckRide = isComplete && isStarted && (_c.getRideCount() > 0) && !hasPendingRide && !crComplete;
 		_canApprove = crComplete && isComplete && (isHR || isINS) && isStarted && !isMine;
 	}
 

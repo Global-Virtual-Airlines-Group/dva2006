@@ -81,7 +81,7 @@ public class CourseCheckRideCommand extends AbstractCommand {
 			
 			// Get the check ride
 			AcademyRideID id = new AcademyRideID(c.getName(), c.getNextCheckRide());
-			
+			ctx.setAttribute("rideNumber", Integer.valueOf(id.getIndex()), REQUEST);
 			ctx.setAttribute("course", c, REQUEST);
 			ctx.setAttribute("pilot", p, REQUEST);
 			

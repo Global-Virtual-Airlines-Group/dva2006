@@ -57,7 +57,7 @@ public class CertificationRequirementsCommand extends AbstractFormCommand {
 				
 				// Get the exam
 				String examName = ctx.getParameter("reqExam" + String.valueOf(reqNumber));
-				if (!cert.getExamNames().contains(examName))
+				if ((examName != null) && !cert.getExamNames().contains(examName))
 					examName = null;
 				
 				// Create the requirement bean

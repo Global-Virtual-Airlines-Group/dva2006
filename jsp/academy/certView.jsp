@@ -60,11 +60,11 @@
 </c:forEach></td>
 </tr>
 </c:if>
-<c:if test="${cert.hasCheckRide}">
+<c:if test="${cert.rideCount > 0}">
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data pri bld caps">This Certification requires a Check Ride
-<c:if test="${noScriptWarn}"><br /><span class="error">No Check Ride Script for this Certification exists</span></c:if></td>
+ <td class="data pri bld caps">This Certification requires <fmt:quantity value="${cert.rideCount}" single="Check Ride" />
+<c:if test="${!empty missingScripts}"><br /><span class="error">Missing Check Ride Scripts for Check Ride(s) <fmt:list value="${missingScripts}" delim=", " /></span></c:if></td>
 </tr>
 </c:if>
 <tr>
