@@ -142,9 +142,10 @@ public class SetAcademyCertification extends DAO {
 	 */
 	public void write(AcademyRideScript sc) throws DAOException {
 		try {
-			prepareStatement("REPLACE INTO exams.CERTRIDE_SCRIPTS (CERTNAME, BODY) VALUES (?, ?)");
+			prepareStatement("REPLACE INTO exams.CERTRIDE_SCRIPTS (CERTNAME, IDX, BODY) VALUES (?, ?, ?)");
 			_ps.setString(1, sc.getCertificationName());
-			_ps.setString(2, sc.getDescription());
+			_ps.setInt(2, sc.getIndex());
+			_ps.setString(3, sc.getDescription());
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);

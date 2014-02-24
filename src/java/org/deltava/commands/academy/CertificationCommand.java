@@ -5,12 +5,9 @@ import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.academy.*;
-
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-
 import org.deltava.security.command.CertificationAccessControl;
-
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
@@ -140,15 +137,7 @@ public class CertificationCommand extends AbstractFormCommand {
 				if (!access.getCanEdit())
 					throw securityException("Cannot edit Certification");
 				
-				// Check if we have check ride scripts
-				boolean hasScript = true;
-				for (int x = 1; hasScript && (x <= cert.getRideCount()); x++) {
-					AcademyRideScript sc = dao.getScript(new AcademyRideID(cert.getName(), x));
-					hasScript &= (sc != null);
-				}
-				
 				ctx.setAttribute("cert", cert, REQUEST);
-				ctx.setAttribute("noScriptWarn", Boolean.valueOf(!hasScript), REQUEST);
 				allCerts.remove(cert.getCode());
 			} else if (!access.getCanCreate())
 				throw securityException("Cannot create Certification");
@@ -196,10 +185,11 @@ public class CertificationCommand extends AbstractFormCommand {
 			access.validate();
 			
 			// Check if we have check ride scripts
-			boolean hasScript = true;
-			for (int x = 1; hasScript && (x <= cert.getRideCount()); x++) {
+			Collection<Integer> missingScripts = new TreeSet<Integer>();
+			for (int x = 1; x <= cert.getRideCount(); x++) {
 				AcademyRideScript sc = dao.getScript(new AcademyRideID(cert.getName(), x));
-				hasScript &= (sc != null);
+				if (sc == null)
+					missingScripts.add(Integer.valueOf(x));
 			}
 				
 			// If we have a specific pre-req, load it as well
@@ -213,7 +203,7 @@ public class CertificationCommand extends AbstractFormCommand {
 			// Save in the request
 			ctx.setAttribute("cert", cert, REQUEST);
 			ctx.setAttribute("access", access, REQUEST);
-			ctx.setAttribute("noScriptWarn", Boolean.valueOf(!hasScript), REQUEST);
+			ctx.setAttribute("missingScripts", missingScripts, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

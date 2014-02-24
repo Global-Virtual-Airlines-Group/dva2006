@@ -37,7 +37,7 @@ return true;
 <el:form action="courseride.do" method="post" link="${course}" validate="return validate(this)">
 <el:table className="form">
 <tr class="title caps">
- <td colspan="2">FLIGHT ACADEMY ${course.name} CHECK RIDE - ${pilot.name}</td>
+ <td colspan="2">FLIGHT ACADEMY ${course.name} CHECK RIDE #${rideNumber} - ${pilot.name}</td>
 </tr>
 <tr>
  <td class="label">Aircraft Type</td>

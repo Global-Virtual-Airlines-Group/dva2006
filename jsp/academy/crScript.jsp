@@ -12,6 +12,7 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
+<content:json />
 <script type="text/javascript">
 function validate(form)
 {
@@ -25,6 +26,33 @@ disableButton('SaveButton');
 disableButton('DeleteButton');
 return true;
 }
+
+function loadRideCount(combo)
+{
+var f = document.forms[0]; var ic = f.seq;
+var xmlreq = getXMLHttpRequest();
+if (combo.selectedIndex < 1) {
+	ic.options.length = 1;
+	return false;
+}
+
+var id = combo.options[combo.selectedIndex].value;
+xmlreq.open('get', 'ridecount.ws?id=' + id, true);
+xmlreq.onreadystatechange = function() {
+	if (xmlreq.readyState != 4) return false;
+	var jsData = (xmlreq.status == 200) ? JSON.parse(xmlreq.responseText) : [1];
+
+	// Set combobox options
+	ic.options.length = jsData.length + 1;
+	for (var x = 0; x < jsData.length; x++)
+		ic.options[x+1] = new Option(jsData[x], jsData[x]);
+
+	return true;
+};
+
+xmlreq.send(null);
+return true;
+}
 </script>
 </head>
 <content:copyright visible="false" />
@@ -32,6 +60,7 @@ return true;
 <content:page>
 <%@ include file="/jsp/academy/header.jspf" %> 
 <%@ include file="/jsp/academy/sideMenu.jspf" %>
+<content:empty var="emptyList" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -44,11 +73,11 @@ return true;
 <c:if test="${empty sc}">
 <tr>
  <td class="label">Certification</td>
- <td class="data"><el:combo name="cert" idx="*" size="1" className="req" options="${certs}" firstEntry="-" value="${sc.certificationName}" /></td>
+ <td class="data"><el:combo name="cert" idx="*" size="1" required="true" options="${certs}" firstEntry="-" value="${sc.certificationName}" onChange="void loadRideCount(this)" /></td>
 </tr>
 <tr>
  <td class="label">Check Ride #</td>
- <td class="data"><el:int name="seq" idx="*" size="1" min="1" max="9" required="true" value="" /></td>
+ <td class="data"><el:combo name="seq" idx="*" size="1" required="true" options="${emptyList}" firstEntry="-" value="${sc.idx}" /></td>
 </c:if>
 <tr>
  <td class="label top">Script Text</td>

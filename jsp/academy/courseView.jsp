@@ -80,13 +80,12 @@ return true;
  <td colspan="6" class="data"><span class="sec bld">${course.status.name}</span>, started on 
 <fmt:date fmt="d" date="${course.startDate}" /></td>
 </tr>
-<c:if test="${!empty course.checkRide}">
-<c:set var="cr" value="${course.checkRide}" scope="page" />
+<c:forEach var="cr" items="${course.checkRides}">
 <tr>
- <td class="label">Check Ride</td>
+ <td class="label">Check Ride #<fmt:int value="${cr.index}" /></td>
  <td colspan="6" class="data"><span class="pri bld caps">${cr.status.name}</span><c:if test="${cr.flightID > 0}"> - <el:cmd url="crview" link="${cr}">VIEW FLIGHT REPORT</el:cmd></c:if></td>
 </tr>
-</c:if>
+</c:forEach>
 <c:choose>
 <c:when test="${access.canAssignInstructor}">
 <tr>
