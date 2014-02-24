@@ -28,12 +28,12 @@
 	<classpathentry kind="lib" path="lib/deploy/commons-compress-1.5.jar" sourcepath="lib/src/commons-compress-1.5-sources.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/edtftpj-2.4.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-codec-1.8.jar" sourcepath="lib/src/commons-codec-1.8-sources.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-5.1.27-bin.jar" sourcepath="lib/src/mysql-connector-java-5.1.27-src.zip"/>
 	<classpathentry kind="lib" path="lib/deploy/grib-8.0.29.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/unidataCommon-4.2.20.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/slf4j-api-1.7.5.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/slf4j-simple-1.7.5.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-1.91.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-5.1.29-bin.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
