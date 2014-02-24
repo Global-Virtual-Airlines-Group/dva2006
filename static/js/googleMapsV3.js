@@ -230,7 +230,8 @@ golgotha.maps.LayerClearControl = function(map) {
 
 // Create an arbitrary overlay layer
 golgotha.maps.ShapeLayer = function(opts, name, imgClass) {
-	opts.name = name; opts.isPng = true; opts.tileSize = golgotha.maps.TILE_SIZE;
+	opts.name = name; opts.isPng = true;
+	if (opts.tileSize == null) opts.tileSize = golgotha.maps.TILE_SIZE;
 	var ov = new google.maps.ImageMapType(opts);
 	ov.set('maxZoom', opts.maxZoom);
 	ov.set('nativeZoom', opts.nativeZoom);
