@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2013, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.main;
 
 import java.util.*;
@@ -23,7 +23,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to display the home page.
  * @author Luke
- * @version 5.2
+ * @version 5.3
  * @since 1.0
  */
 
@@ -31,18 +31,11 @@ public class HomeCommand extends AbstractCommand {
 
 	private static final Logger log = Logger.getLogger(HomeCommand.class);
 	private final Random RND = new Random();
-
-	// Dynamic content codes
-	private static final int NEXT_EVENT = 0;
-	private static final int NEW_HIRES = 1;
-	private static final int CENTURY_CLUB = 2;
-	private static final int PROMOTIONS = 3;
-	private static final int ACARS_USERS = 4;
-	private static final int ACARS_TOLAND = 5;
-
-	// Dynamic content choices
-	private static final int[] DYN_CHOICES = { NEXT_EVENT, NEW_HIRES, CENTURY_CLUB, PROMOTIONS, ACARS_USERS, ACARS_TOLAND };
-
+	
+	private enum DynContent {
+		NEXT_EVENT, NEW_HIRES, CENTURY_CLUB, PROMOTIONS, ACARS_USERS, ACARS_TOLAND
+	}
+	
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
@@ -80,15 +73,13 @@ public class HomeCommand extends AbstractCommand {
 		}
 		
 		// Build a list of choices
-		List<Integer> cList = new ArrayList<Integer>(DYN_CHOICES.length + 1);
-		for (int x = 0; x < DYN_CHOICES.length; x++)
-			cList.add(Integer.valueOf(DYN_CHOICES[x]));
+		List<DynContent> cList = new ArrayList<DynContent>(Arrays.asList(DynContent.values()));
 
 		// Check if ACARS has anyone connected
 		ACARSAdminInfo<?> acarsPool = (ACARSAdminInfo<?>) SharedData.get(SharedData.ACARS_POOL);
 		if ((acarsPool == null) || (acarsPool.size() == 0)) {
 			ctx.setAttribute("noACARSUsers", Boolean.TRUE, REQUEST);
-			cList.remove(Integer.valueOf(ACARS_USERS));
+			cList.remove(DynContent.ACARS_USERS);
 		}
 		
 		try {
@@ -107,7 +98,7 @@ public class HomeCommand extends AbstractCommand {
 			GetEvent evdao = new GetEvent(con);
 			if (!evdao.hasFutureEvents()) {
 				ctx.setAttribute("noUpcomingEvents", Boolean.TRUE, REQUEST);
-				cList.remove(Integer.valueOf(NEXT_EVENT));
+				cList.remove(DynContent.NEXT_EVENT);
 			}
 
 			// Get latest water cooler data
@@ -129,17 +120,15 @@ public class HomeCommand extends AbstractCommand {
 			
 			// Calculate the contnt type
 			int ofs = RND.nextInt(cList.size());
-			Integer contentType = cList.get(ofs);
+			DynContent contentType = cList.get(ofs);
 			
 			// Figure out dynamic content
-			switch (contentType.intValue()) {
-				// Next Event
+			switch (contentType) {
 				case NEXT_EVENT:
 					evdao.setQueryMax(5);					
 					ctx.setAttribute("futureEvents", evdao.getFutureEvents(), REQUEST);
 					break;
 
-				// Online ACARS Users
 				case ACARS_USERS:
 					ctx.setAttribute("acarsPool", IPCUtils.deserialize(acarsPool.getPoolInfo(false)), REQUEST);
 					break;
@@ -159,7 +148,6 @@ public class HomeCommand extends AbstractCommand {
 					ctx.setAttribute("toLand", toLand, REQUEST);
 					break;
 
-				// Latest Hires
 				case NEW_HIRES:
 					GetPilot daoP = new GetPilot(con);
 					daoP.setQueryMax(10);
@@ -172,7 +160,7 @@ public class HomeCommand extends AbstractCommand {
 					GetStatusUpdate sudao = new GetStatusUpdate(con);
 					sudao.setQueryMax(5);
 					Collection<StatusUpdate> upds = null;
-					if (contentType.intValue() == CENTURY_CLUB) {
+					if (contentType == DynContent.CENTURY_CLUB) {
 						upds = sudao.getByType(StatusUpdate.RECOGNITION);
 						ctx.setAttribute("centuryClub", upds, REQUEST);
 					} else {
@@ -191,7 +179,6 @@ public class HomeCommand extends AbstractCommand {
 					break;
 			}
 			
-			// Save the content type
 			ctx.setAttribute("dynContentType", contentType, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);

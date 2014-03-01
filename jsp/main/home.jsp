@@ -76,7 +76,7 @@ between!) we welcome your interest. <el:cmd url="register" className="pri bld">C
 If you are interested in a virtual airline with primarily ${partnerLoc} operations, we encourage you to visit 
 our sister airline <a rel="external" href="http://${partnerURL}/" class="sec bld">${partnerName}</a>.<br />
 <br /></content:filter>
-<!-- Dynamic Content Type #${dynContentType} -->
+<!-- Dynamic Content Type ${dynContentType} -->
 <c:if test="${noUpcomingEvents}"><!-- No upcoming Online Events, skipped --></c:if>
 <c:if test="${noACARSUsers}"><!-- No connected ACARS users, skipped --></c:if>
 <c:if test="${!empty notams}">
@@ -259,8 +259,7 @@ If you have questions or comments, please direct them to our Corporate Offices a
 <content:ip IPv6="true">
 <content:googleAnalytics eventSupport="true" />
 <script>
-golgotha.event.beacon('Network', 'IPv6');
-</script>
+golgotha.event.beacon('Network', 'IPv6');</script>
 </content:ip>
 <content:ip IPv4="true">
 <content:googleAnalytics />
