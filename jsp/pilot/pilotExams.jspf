@@ -26,7 +26,7 @@
  
 <!-- Pilot Examination Data -->
 <c:forEach var="exam" items="${exams}">
-<c:set var="examType" value="${fn:isCheckRide(exam)? 'Check Ride' : 'Examination'}" scope="page" />
+<c:set var="examType" value="${fn:isCheckRide(exam) ? 'Check Ride' : 'Examination'}" scope="page" />
 <c:set var="cmdName" value="${fn:isCheckRide(exam) ? 'checkride' : 'exam'}" scope="page" />
 <tr class="mid examHistory"<c:if test="${examCollapse}"> style="display:none;"</c:if>>
 <c:choose>
@@ -42,7 +42,7 @@
 </c:choose>
  <td class="pri bld"><el:cmd url="${cmdName}" link="${exam}">${exam.name}</el:cmd></td>
  <td class="sec"><c:if test="${exam.academy}">Flight Academy </c:if>${examType}</td>
- <td class="bld">${exam.size}</td>
+ <td class="bld">${fn:isCheckRide(exam) ? '-' : exam.size}</td>
 <c:if test="${!fn:passed(exam) && !fn:failed(exam)}">
  <td colspan="2" class="sec bld">NOT SCORED</td>
 </c:if>
