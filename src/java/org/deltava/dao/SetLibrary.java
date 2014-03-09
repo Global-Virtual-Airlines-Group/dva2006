@@ -247,10 +247,10 @@ public class SetLibrary extends DAO {
 			sqlBuf.append("FLEET");
 		else if (entry instanceof Manual)
 			sqlBuf.append("DOCS");
-		else if (entry instanceof FileEntry)
-			sqlBuf.append("FILES");
 		else if (entry instanceof Video)
 			sqlBuf.append("exams.VIDEOS");
+		else if (entry instanceof FileEntry)
+			sqlBuf.append("FILES");
 		else
 			throw new IllegalArgumentException("Unknown library entry type - " + entry.getClass().getName());
 

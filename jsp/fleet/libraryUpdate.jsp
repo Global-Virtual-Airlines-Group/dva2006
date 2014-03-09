@@ -29,6 +29,8 @@ This <content:airline /> ${library} Library entry has been successfully ${fileAd
 <div class="updateHdr">${library} Entry Deleted</div>
 <br />
 The <content:airline /> ${library} Library entry "${entry.name}" has been deleted from the database.<br />
+<c:if test="${fileExisted}">
+The file ${entry.fileName} was delete from the file system.<br /></c:if>
 </c:if>
 <br />
 To return to the ${library} Library, <el:cmd op="${libraryop}" url="${librarycmd}" className="sec bld">Click Here</el:cmd>.<br />
