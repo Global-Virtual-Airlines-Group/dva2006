@@ -11,6 +11,7 @@
 <title><content:airline /> Video Library - ${(!empty video) ? video.name : 'New Video'}</title>
 <content:css name="main" />
 <content:css name="form" />
+<content:js name="common" />
 <content:pics />
 <script type="text/javascript">
 function validate(form)
@@ -108,7 +109,8 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><c:if test="${access.canEdit || access.canCreate}"><el:button ID="SaveButton" type="submit" label="SAVE VIDEO" /></c:if> </td>
+ <td><c:if test="${access.canEdit || access.canCreate}"><el:button ID="SaveButton" type="submit" label="SAVE VIDEO" />
+<c:if test="${!empty video}"> <el:cmdbutton ID="DeleteButton" url="tvdelete" linkID="${video.fileName}" label="DELETE VIDEO" /></c:if></c:if> </td>
 </tr>
 </el:table>
 </el:form>
