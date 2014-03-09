@@ -212,15 +212,12 @@ public class GetAcademyCourses extends DAO {
 	public Collection<Course> getCompletionQueue() throws DAOException {
 		try {
 			prepareStatement("SELECT C.*, CRT.STAGE, CRT.ABBR, MAX(CC.CREATED) AS LC, COUNT(CP.SEQ) AS REQCNT, "
-				+ "SUM(IF(CP.COMPLETE,1,0)) AS CREQCNT, CR.PASS FROM (exams.CERTS CRT, exams.COURSES C) LEFT JOIN "
-				+ "exams.COURSEPROGRESS CP ON (C.ID=CP.ID) LEFT JOIN exams.COURSERIDES CCR ON (C.ID=CCR.COURSE) LEFT JOIN "
-				+ "exams.CHECKRIDES CR ON (CR.ID=CCR.CHECKRIDE) LEFT JOIN exams.COURSECHAT CC ON (C.ID=CC.COURSE_ID) "
-				+ "WHERE (CRT.NAME=C.CERTNAME) AND (C.STATUS=?) AND ((C.HAS_CHECKRIDE=?) OR ((C.HAS_CHECKRIDE=?) "
-				+ "AND (CR.PASS=?))) GROUP BY C.ID HAVING (REQCNT=CREQCNT) ORDER BY LC DESC");
+				+ "SUM(IF(CP.COMPLETE,1,0)) AS CREQCNT, SUM(CR.PASS) AS CRCNT FROM (exams.CERTS CRT, exams.COURSES C) "
+				+ "LEFT JOIN exams.COURSEPROGRESS CP ON (C.ID=CP.ID) LEFT JOIN exams.COURSERIDES CCR ON (C.ID=CCR.COURSE) "
+				+ "LEFT JOIN exams.CHECKRIDES CR ON (CR.ID=CCR.CHECKRIDE) LEFT JOIN exams.COURSECHAT CC ON "
+				+ "(C.ID=CC.COURSE_ID) WHERE (CRT.NAME=C.CERTNAME) AND (C.STATUS=?) GROUP BY C.ID HAVING "
+				+ "(REQCNT=CREQCNT) AND (C.CHECKRIDES=CRCNT) ORDER BY LC DESC");
 			_ps.setInt(1, Status.STARTED.ordinal());
-			_ps.setBoolean(2, false);
-			_ps.setBoolean(3, true);
-			_ps.setBoolean(4, true);
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -342,7 +339,6 @@ public class GetAcademyCourses extends DAO {
 	private void loadComments(Course c) throws SQLException {
 		prepareStatementWithoutLimits("SELECT * FROM exams.COURSECHAT WHERE (COURSE_ID=?)");
 		_ps.setInt(1, c.getID());
-
 		try (ResultSet rs = _ps.executeQuery()) {
 			while (rs.next()) {
 				CourseComment cc = new CourseComment(c.getID(), rs.getInt(2));
@@ -361,7 +357,6 @@ public class GetAcademyCourses extends DAO {
 	private void loadProgress(Course c) throws SQLException {
 		prepareStatementWithoutLimits("SELECT * FROM exams.COURSEPROGRESS WHERE (ID=?) ORDER BY SEQ");
 		_ps.setInt(1, c.getID());
-		
 		try (ResultSet rs = _ps.executeQuery()) {
 			while (rs.next()) {
 				CourseProgress cp = new CourseProgress(c.getID(), rs.getInt(2));
