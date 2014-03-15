@@ -297,21 +297,6 @@
 			<metarCycle>ftp://tgftp.nws.noaa.gov/data/observations/metar/cycles/</metarCycle>
 			<tafCycle>ftp://tgftp.nws.noaa.gov/data/forecasts/taf/cycles/</tafCycle>
 		</url>
-
-		<!-- Jet Stream maps -->
-		<jetstream>
-			<map name="types">
-				<atl>Altantic</atl>
-				<na>North America</na>
-				<pac>Pacific</pac>
-			</map>
-
-			<url>
-				<atl>http://squall.sfsu.edu/gif/jetstream_atl_%H_00.gif</atl>
-				<na>http://squall.sfsu.edu/gif/jetstream_%H_00.gif</na>
-				<pac>http://squall.sfsu.edu/gif/jetstream_pac_%H_00.gif</pac>
-			</url>
-		</jetstream>	
 	</weather>
 
 	<config>
