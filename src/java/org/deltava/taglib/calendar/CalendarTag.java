@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2010, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.calendar;
 
 import java.util.*;
@@ -10,16 +10,14 @@ import javax.servlet.jsp.tagext.*;
 import javax.servlet.http.HttpServletRequest;
 
 import org.deltava.beans.*;
-
 import org.deltava.taglib.XMLRenderer;
-
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A JSP tag to display a calendar view table.
  * @author Luke
- * @version 4.2
+ * @version 5.3
  * @since 1.0
  */
 
@@ -33,6 +31,7 @@ abstract class CalendarTag extends TagSupport {
 	protected Date _startDate;
 	protected Date _endDate;
 	protected Calendar _currentDate;
+	protected Date _today;
 	protected TZInfo _tz;
 	private String _currentDateAttr;
 
@@ -52,9 +51,6 @@ abstract class CalendarTag extends TagSupport {
 	
 	protected XMLRenderer _table;
 	protected XMLRenderer _day;
-	
-	protected int _cellPad = SystemData.getInt("html.table.spacing", 0);
-	protected int _cellSpace = SystemData.getInt("html.table.padding", 0);
 	
 	protected int _intervalType = Calendar.DATE;
 	protected int _intervalLength = 7;
@@ -78,6 +74,46 @@ abstract class CalendarTag extends TagSupport {
 	 * @see CalendarTag#getBackLabel()
 	 */
 	protected abstract String getForwardLabel();
+	
+	/**
+	 * Calculates the CSS class(es) for the content table cell.
+	 * @param dt the cell date
+	 * @return a CSS class list
+	 */
+	protected String getContentClass(Date dt) {
+		boolean isToday = _today.equals(dt);
+		StringBuilder buf = new StringBuilder();
+		if (_contentClass != null) {
+			buf.append(_contentClass);
+			if (isToday)
+				buf.append(' ');
+		}
+		
+		if (isToday)
+			buf.append("calendarToday");
+		
+		return buf.toString();
+	}
+	
+	/**
+	 * Calculates the CSS class(es) for the header table cell.
+	 * @param dt the cell date
+	 * @return a CSS class list
+	 */
+	protected String getHeaderClass(Date dt) {
+		boolean isToday = _today.equals(dt);
+		StringBuilder buf = new StringBuilder();
+		if (_dayBarClass != null) {
+			buf.append(_dayBarClass);
+			if (isToday)
+				buf.append(' ');
+		}
+		
+		if (isToday)
+			buf.append("calendarToday");
+		
+		return buf.toString();
+	}
 	
 	/**
 	 * Calculcates the end date based on the start date and a particular interval amount. <i>This must be called
@@ -175,22 +211,6 @@ abstract class CalendarTag extends TagSupport {
 	}
 	
     /**
-     * Sets the CELLSPACING value for this table.
-     * @param cSpacing the cellspacing attribute value.
-     */
-    public void setSpace(int cSpacing) {
-    	_cellSpace = cSpacing;
-    }
-
-    /**
-     * Sets the CELLPADDING value for this table.
-     * @param cPadding the cellpadding attribute value.
-     */
-    public void setPad(int cPadding) {
-    	_cellPad = cPadding;
-    }
-    
-    /**
      * Sets the BORDER value for this table.
      * @param border the border width attribute value
      */
@@ -218,6 +238,7 @@ abstract class CalendarTag extends TagSupport {
 	 * Sets the page context for the tag, and sets the user's time zone.
 	 * @param ctx the JSP page context
 	 */
+	@Override
 	public void setPageContext(PageContext ctx) {
 		super.setPageContext(ctx);
 		
@@ -225,13 +246,17 @@ abstract class CalendarTag extends TagSupport {
 		HttpServletRequest hreq = (HttpServletRequest) ctx.getRequest();
 		Person usr = (Person) hreq.getUserPrincipal();
 		_tz = (usr != null) ? usr.getTZ() : TZInfo.get(SystemData.get("time.timezone"));
+		
+		// Determine today's date in user's time zone
+		DateTime dt = new DateTime(new Date());
+		dt.convertTo(_tz);
+		_today = CalendarUtils.getInstance(dt.getDate(), true).getTime();
 	}
 	
-    /**
+    /*
      * Helper method to bundle request parameters into a URL string.
      */
     private String buildURL(Map<String, Object> params) {
-    	// Build the URL
         StringBuilder url = new StringBuilder("/");
         url.append(_cmdName);
         url.append(".do?");
@@ -270,8 +295,7 @@ abstract class CalendarTag extends TagSupport {
 		ed.add(Calendar.DATE, 1);
 
 		// Get the entries
-		for (Iterator<CalendarEntry> i = _entries.iterator(); i.hasNext();) {
-			CalendarEntry ce = i.next();
+		for (CalendarEntry ce : _entries) {
 			Date entryDate = ce.getDate();
 			if ((entryDate.after(sd.getTime())) && (entryDate.before(ed.getTime())))
 				results.add(ce);
@@ -286,10 +310,11 @@ abstract class CalendarTag extends TagSupport {
 	 * @return EVAL_BODY_AGAIN if current date is before endDate, otherwise SKIP_BODY 
 	 * @throws JspException never
 	 */
+	@Override
 	public int doAfterBody() throws JspException {
 		_currentDate.add(Calendar.DATE, 1);
 		if (_currentDateAttr != null)
-			pageContext.getRequest().setAttribute(_currentDateAttr, _currentDate.getTime());
+			pageContext.setAttribute(_currentDateAttr, _currentDate.getTime(), PageContext.REQUEST_SCOPE);
 			
 		return _currentDate.getTime().before(_endDate) ? EVAL_BODY_AGAIN : SKIP_BODY;
 	}
@@ -300,24 +325,20 @@ abstract class CalendarTag extends TagSupport {
 	 * @return TagSupport.EVAL_BODY_INCLUDE always
 	 * @throws JspException never
 	 */
+	@Override
 	public int doStartTag() throws JspException {
 
 		// Generate the current date
-		_currentDate = CalendarUtils.getInstance(_startDate);
-		_currentDate.set(Calendar.HOUR_OF_DAY, 0);
-		_currentDate.set(Calendar.MINUTE, 0);
-		_currentDate.set(Calendar.SECOND, 0);
+		_currentDate = CalendarUtils.getInstance(_startDate, true);
 		
 		// Save the current date in the request
 		if (_currentDateAttr != null)
-			pageContext.getRequest().setAttribute(_currentDateAttr, _currentDate.getTime());
+			pageContext.setAttribute(_currentDateAttr, _currentDate.getTime(), PageContext.REQUEST_SCOPE);
 		
 		// Generate the view table
 		_table = new XMLRenderer("table");
 		_table.setAttribute("id", _tableID);
 		_table.setAttribute("class", _tableClass);
-		_table.setAttribute("cellspacing", String.valueOf(_cellSpace));
-		_table.setAttribute("cellpadding", String.valueOf(_cellPad));
 		if (_border != 0)
 			_table.setAttribute("border", String.valueOf(_border));
 
@@ -401,10 +422,9 @@ abstract class CalendarTag extends TagSupport {
 	/**
 	 * Releases the tag's state variables.
 	 */
+	@Override
 	public void release() {
 		super.release();
-		_cellPad = SystemData.getInt("html.table.spacing", 0);
-		_cellSpace = SystemData.getInt("html.table.padding", 0);
 		_border = 0;
 		_showDaysOfWeek = true;
 		_showScrollTags = true;
