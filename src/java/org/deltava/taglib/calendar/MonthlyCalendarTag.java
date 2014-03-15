@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.calendar;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.util.*;
 /**
  * A JSP tag to generate a monthly calendar table.
  * @author Luke
- * @version 2.2
+ * @version 5.3
  * @since 1.0
  */
 
@@ -25,6 +25,7 @@ public class MonthlyCalendarTag extends CalendarTag {
 	 * @param dt the start date
 	 * @see CalendarTag#setStartDate(Date)
 	 */
+	@Override
 	public void setStartDate(Date dt) {
 		Calendar cld = CalendarUtils.getInstance(dt, true);
 		cld.set(Calendar.DAY_OF_MONTH, 1);
@@ -35,6 +36,7 @@ public class MonthlyCalendarTag extends CalendarTag {
 	/**
 	 * Returns the label for the scroll backwards link.
 	 */
+	@Override
 	protected String getBackLabel() {
 		Calendar cld = CalendarUtils.getInstance(_startDate, true);
 		cld.add(_intervalType, _intervalLength * -1);
@@ -44,13 +46,14 @@ public class MonthlyCalendarTag extends CalendarTag {
 	/**
 	 * Returns the label for the scroll forwards link.
 	 */
+	@Override
 	protected String getForwardLabel() {
 		Calendar cld = CalendarUtils.getInstance(_startDate, true);
 		cld.add(_intervalType, _intervalLength);
 		return StringUtils.format(cld.getTime(), "MMMM yyyy");
 	}
 	
-	/**
+	/*
 	 * Opens the table cell for a new day.
 	 */
 	private void openTableCell() throws JspException {
@@ -73,11 +76,9 @@ public class MonthlyCalendarTag extends CalendarTag {
 	
 	private void renderDateRow(boolean openRow) throws JspException {
 		
-		// Generate the table cell renderer and date formatted
+		// Generate the table cell renderer and date formatter
 		XMLRenderer dayHdr = new XMLRenderer("td");
-		dayHdr.setAttribute("class", _dayBarClass);
 		DateFormat df = new SimpleDateFormat(_showDaysOfWeek ? "EEE MMM dd" : "MMM dd");
-		
 		Calendar cd = CalendarUtils.getInstance(_currentDate.getTime());
 		try {
 			_out.println("<!-- Week of " + StringUtils.format(cd.getTime(), "MMMM dd") + " -->");
@@ -87,11 +88,14 @@ public class MonthlyCalendarTag extends CalendarTag {
 			// Render the table header cells
 			for (int x = _currentDate.get(Calendar.DAY_OF_WEEK); x <= Calendar.SATURDAY; x++) {
 				if (cd.getTime().before(_endDate)) {
+					dayHdr.setAttribute("class", getHeaderClass(cd.getTime()));
 					_out.print(dayHdr.open(true));
 					_out.print(df.format(cd.getTime()));
 					_out.print(dayHdr.close());
 				} else {
-					_out.println("<td rowspan=\"2\">&nbsp;</td>");
+					_out.print("<td class=\"");
+					_out.print(getContentClass(cd.getTime()));
+					_out.println("\" rowspan=\"2\">&nbsp;</td>");
 				}
 				
 				cd.add(Calendar.DATE, 1);
@@ -108,6 +112,7 @@ public class MonthlyCalendarTag extends CalendarTag {
 	 * @return TagSupport.EVAL_BODY_INCLUDE always
 	 * @throws JspException if an I/O error occurs
 	 */
+	@Override
 	public int doStartTag() throws JspException {
 		// Init the current date
 		super.doStartTag();
@@ -151,6 +156,7 @@ public class MonthlyCalendarTag extends CalendarTag {
 	 * @return TagSupport#EVAL_BODY_AGAIN if not at end of month, otherwise TagSupport#SKIP_BODY
 	 * @throws JspException never
 	 */
+	@Override
 	public int doAfterBody() throws JspException {
 		try {
 			_out.print(_day.close());
@@ -173,9 +179,9 @@ public class MonthlyCalendarTag extends CalendarTag {
 	 * @return TagSupport#EVAL_PAGE always
 	 * @throws JspException if an I/O error occurs
 	 */
+	@Override
 	public int doEndTag() throws JspException {
 		try {
-			// Close the row and the table
 			_out.println("</tr>");
 			super.doEndTag();
 			_out.println(_table.close());
