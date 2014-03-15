@@ -214,7 +214,6 @@ return true;
  <el:combo name="ffSlice" size="1" className="small" options="${emptyList}" onChange="void updateFF(this)" />
  <el:button ID="AnimateButton" label="ANIMATE" onClick="void animateFF()" /></div>
 </el:form>
-<br />
 <content:copyright />
 </content:region>
 </content:page>
