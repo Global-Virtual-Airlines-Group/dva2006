@@ -78,20 +78,37 @@ golgotha.airportLoad.changeAirline([f.airportD, f.airportA], cfg)
 return true;
 }
 
-function updateSort(combo)
-{
-enableElement('sortDesc', (combo.selectedIndex > 0));
-return true;
+function updateSort(combo) {
+	return enableElement('sortDesc', (combo.selectedIndex > 0));
 }
 
 function refreshAirports() {
 	updateAirline(document.forms[0].airline);
 }
 
+function refreshNV(checkbox, cboName, isDest)
+{
+var f = document.forms[0];
+var srcA = getValue(f.airportD);
+var cfg = golgotha.airportLoad.config.clone();
+cfg.airline = getValue(f.airline); cfg.notVisited = checkbox.checked;
+if (isDest && (srcA != null)) {
+	cfg.dst = true;	
+	cfg.code = srcA;
+}
+
+var cbo = f[cboName];
+if (cbo) {
+	cbo.notVisited = cfg.notVisited;
+	cbo.loadAirports(cfg);
+}
+
+return true;
+}
+
 golgotha.onDOMReady(function() {
 	var f = document.forms[0];
 	var cfg = golgotha.airportLoad.config;
-	cfg.notVisited = f.notVisited.checked;
 	cfg.doICAO = ${useICAO};
 	cfg.myRated = f.myEQTypes.checked;
 	golgotha.airportLoad.setHelpers(f.airportD);
@@ -101,6 +118,8 @@ golgotha.onDOMReady(function() {
 	f.airportA.updateAirportCode();</c:if>
 	<c:if test="${empty fafCriteria}">
 	f.airline.onchange();</c:if>
+	f.airportD.notVisited = f.nVD.checked;
+	f.airportA.notVisited = f.nVA.checked;
 	updateSort(f.sortType);
 });
 </script>
@@ -137,10 +156,12 @@ golgotha.onDOMReady(function() {
 <tr>
  <td class="label">Departing from</td>
  <td class="data"><el:combo name="airportD" idx="*" size="1" firstEntry="-" options="${airports}" value="${fafCriteria.airportD}" onChange="this.updateAirportCode(); updateOrigin(this)" />
- <el:text ID="airportDCode" name="airportDCode" idx="*" size="3" max="4" onBlur="void document.forms[0].airportD.setAirport(this.value, true)" /></td>
+ <el:text ID="airportDCode" name="airportDCode" idx="*" size="3" max="4" onBlur="void document.forms[0].airportD.setAirport(this.value, true)" />
+ <el:box name="nVD" value="true" checked="${param.nVD}" label="Only include unvisited Airports" onChange="void refreshNV(this, 'airportD')" /></td>
  <td class="label">Arriving at</td>
  <td class="data"><el:combo name="airportA" idx="*" size="1" firstEntry="-" options="${airportsA}" value="${fafCriteria.airportA}" onChange="void this.updateAirportCode()" />
- <el:text ID="airportACode" name="airportACode" idx="*" size="3" max="4" onBlur="void document.forms[0].airportA.setAirport(this.value, true)" /></td>
+ <el:text ID="airportACode" name="airportACode" idx="*" size="3" max="4" onBlur="void document.forms[0].airportA.setAirport(this.value, true)" />
+ <el:box name="nVA" value="true" checked="${param.nVA}" label="Only include unvisited Airports" onChange="void refreshNV(this, 'airportA', true)" /></td>
 </tr>
 <tr>
  <td class="label">Departure Time (+/- 2h)</td>
@@ -160,8 +181,7 @@ golgotha.onDOMReady(function() {
 <tr>
  <td class="label top">Search Options</td>
  <td class="data top"><el:box name="myEQTypes" value="true" checked="${param.myEQTypes}" label="My rated Equipment Types" onChange="golgotha.airportLoad.config.myRated = this.checked" /><br />
-<el:box name="showUTCTimes" value="true" checked="${param.showUTCTimes}" label="Show Departure/Arrival Times as UTC" /><br />
-<el:box name="notVisited" value="true" checked="${param.notVisited}" label="Only include unvisited Airports" onChange="golgotha.airportLoad.config.notVisited = this.checked; refreshAirports()" /></td>
+<el:box name="showUTCTimes" value="true" checked="${param.showUTCTimes}" label="Show Departure/Arrival Times as UTC" /></td>
  <td class="label top">ACARS Dispatch</td>
  <td class="data top"><el:box name="checkDispatch" idx="*" value="true" checked="${empty fafCriteria ? true : fafCriteria.checkDispatch}" label="Display Dispatch route count" /><br />
  <el:box name="dispatchOnly" idx="*" value="true" checked="${fafCriteria.dispatchOnly}" label="Flights with Dispatch routes only" /></td>
@@ -170,7 +190,7 @@ golgotha.onDOMReady(function() {
 <c:if test="${!acarsEnabled}">
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data" colspan="3"><el:box name="includeHistoric" idx="*" value="true" checked="${fafCriteria.includeHistoric}" label="Include Historic Flights" /><br />
+ <td class="data" colspan="3"><el:box name="myEQTypes" value="true" checked="${param.myEQTypes}" label="My rated Equipment Types" onChange="golgotha.airportLoad.config.myRated = this.checked" /><br />
 <el:box name="showUTCTimes" value="true" checked="${param.showUTCTimes}" label="Show Departure/Arrival Times as UTC" /></td>
 </tr>
 </c:if>

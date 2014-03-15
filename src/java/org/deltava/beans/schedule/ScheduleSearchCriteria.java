@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2013, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.util.ComboUtils;
 /**
  * A bean to store search criteria for the Flight Schedule.
  * @author Luke
- * @version 5.1
+ * @version 5.3
  * @since 1.0
  */
 
@@ -34,8 +34,11 @@ public class ScheduleSearchCriteria extends Flight {
 	private boolean _includeAcademy;
 	private boolean _dispatchRouteCounts;
 	private boolean _dispatchOnly;
-	private int _notVisitedPilotID;
 	private int _maxPerRoute;
+	
+	private int _pilotID;
+	private boolean _notVisitedD;
+	private boolean _notVisitedA;
 
 	private int _hourD = -1;
 	private int _hourA = -1;
@@ -80,8 +83,16 @@ public class ScheduleSearchCriteria extends Flight {
 		return _includeAcademy;
 	}
 	
-	public int getNotVisitedID() {
-		return _notVisitedPilotID;
+	public int getPilotID() {
+		return _pilotID;
+	}
+	
+	public boolean getNotVisitedD() {
+		return _notVisitedD;
+	}
+	
+	public boolean getNotVisitedA() {
+		return _notVisitedA;
 	}
 	
 	public boolean getCheckDispatch() {
@@ -173,11 +184,11 @@ public class ScheduleSearchCriteria extends Flight {
 	}
 	
 	/**
-	 * The Pilot database ID, if only including unvisited airports.
-	 * @param id the Pilot ID, or zero to search all airports
+	 * The Pilot database ID, if filtering for unvisited airports.
+	 * @param id the Pilot ID
 	 */
-	public void setNotVisited(int id) {
-		_notVisitedPilotID = Math.max(0, id);
+	public void setPilotID(int id) {
+		_pilotID = Math.max(0, id);
 	}
 
 	/**
@@ -257,5 +268,23 @@ public class ScheduleSearchCriteria extends Flight {
 	 */
 	public void setDispatchOnly(boolean dspOnly) {
 		_dispatchOnly = dspOnly;
+	}
+	
+	/**
+	 * Includes only unvisited departure airports.
+	 * @param nv TRUE if only unvisited departure airports should be included, otherwise FALSE
+	 * @see ScheduleSearchCriteria#setPilotID(int)
+	 */
+	public void setNotVisitedD(boolean nv) {
+		_notVisitedD = nv;
+	}
+
+	/**
+	 * Includes only unvisited arrival airports.
+	 * @param nv TRUE if only unvisited arrival airports should be included, otherwise FALSE
+	 * @see ScheduleSearchCriteria#setPilotID(int)
+	 */
+	public void setNotVisitedA(boolean nv) {
+		_notVisitedA = nv;		
 	}
 }

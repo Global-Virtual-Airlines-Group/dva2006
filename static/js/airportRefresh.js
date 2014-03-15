@@ -30,7 +30,7 @@ golgotha.airportLoad.setHelpers = function(combo, addSIDSTARHook) {
 	combo.loadAirports = golgotha.airportLoad.loadAirports;
 	combo.updateAirportCode = golgotha.airportLoad.updateAirportCode;
 	combo.setAirport = golgotha.airportLoad.setAirport;
-	combo.massageSelects();
+	combo.massageSelects(); combo.notVisited = false;
 	if (addSIDSTARHook) combo.loadSIDSTAR = golgotha.airportLod.loadSIDSTAR;
 	return true;
 };
@@ -39,13 +39,14 @@ golgotha.airportLoad.updateAirportCode = function() {
 	var text = document.getElementById(this.name + 'Code');
 	if (text) text.value = this.options[this.selectedIndex].value.toUpperCase();
 	return true;
-}
+};
 
 function updateOrigin(combo)
 {
 var f = document.forms[0];
 var cfg = golgotha.airportLoad.config.clone();
-cfg.useSched = true; cfg.airline = getValue(f.airline); cfg.code = getValue(combo);
+cfg.useSched = true; cfg.notVisited = combo.notVisited; cfg.dst = true;
+cfg.airline = getValue(f.airline); cfg.code = getValue(combo);
 f.airportA.loadAirports(cfg);
 return true;
 }
@@ -70,7 +71,7 @@ for (var x = 0; x < this.options.length; x++) {
 }
 
 return false;
-}
+};
 
 golgotha.airportLoad.setOptions = function(combo, data, opts)
 {
@@ -144,7 +145,7 @@ golgotha.airportLoad.changeAirline = function(combos, opts) {
 
 	golgotha.event.beacon('Airports', 'Change Airline');
 	return true;
-}
+};
 
 golgotha.airportLoad.massageSelects = function(root) {
 	var opts = getElementsByClass('airport', 'option', root);

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to search the Flight Schedule.
  * @author Luke
- * @version 5.1
+ * @version 5.3
  * @since 1.0
  */
 
@@ -126,15 +126,20 @@ public class GetScheduleSearch extends GetSchedule {
 		}
 		
 		// Check to include unvisited airports only
-		if (criteria.getNotVisitedID() > 0) {
-			conditions.add("S.AIRPORT_D NOT IN (SELECT DISTINCT AIRPORT_D FROM PIREPS WHERE (PILOT_ID=?))");
-			params.add(String.valueOf(criteria.getNotVisitedID()));
-			conditions.add("S.AIRPORT_D NOT IN (SELECT DISTINCT AIRPORT_A FROM PIREPS WHERE (PILOT_ID=?))");
-			params.add(String.valueOf(criteria.getNotVisitedID()));
-			conditions.add("S.AIRPORT_A NOT IN (SELECT DISTINCT AIRPORT_D FROM PIREPS WHERE (PILOT_ID=?))");
-			params.add(String.valueOf(criteria.getNotVisitedID()));
-			conditions.add("S.AIRPORT_A NOT IN (SELECT DISTINCT AIRPORT_A FROM PIREPS WHERE (PILOT_ID=?))");
-			params.add(String.valueOf(criteria.getNotVisitedID()));
+		if (criteria.getPilotID() > 0) {
+			if (criteria.getNotVisitedD()) {
+				conditions.add("S.AIRPORT_D NOT IN (SELECT DISTINCT AIRPORT_D FROM PIREPS WHERE (PILOT_ID=?))");
+				params.add(String.valueOf(criteria.getPilotID()));
+				conditions.add("S.AIRPORT_D NOT IN (SELECT DISTINCT AIRPORT_A FROM PIREPS WHERE (PILOT_ID=?))");
+				params.add(String.valueOf(criteria.getPilotID()));
+			}
+			
+			if (criteria.getNotVisitedA()) {
+				conditions.add("S.AIRPORT_A NOT IN (SELECT DISTINCT AIRPORT_D FROM PIREPS WHERE (PILOT_ID=?))");
+				params.add(String.valueOf(criteria.getPilotID()));
+				conditions.add("S.AIRPORT_A NOT IN (SELECT DISTINCT AIRPORT_A FROM PIREPS WHERE (PILOT_ID=?))");
+				params.add(String.valueOf(criteria.getPilotID()));
+			}
 		}
 		
 		// Concat the criteria into a string so we can reuse
