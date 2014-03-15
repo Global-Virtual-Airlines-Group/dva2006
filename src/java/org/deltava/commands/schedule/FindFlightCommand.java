@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -8,13 +8,16 @@ import org.deltava.beans.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+import org.deltava.filter.AirportFilter;
+import org.deltava.filter.IATAFilter;
+import org.deltava.filter.NOTFilter;
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to search the Flight Schedule.
  * @author Luke
- * @version 5.2
+ * @version 5.3
  * @since 1.0
  */
 
@@ -88,10 +91,11 @@ public class FindFlightCommand extends AbstractCommand {
 		criteria.setDispatchOnly(Boolean.valueOf(ctx.getParameter("dispatchOnly")).booleanValue());
 		criteria.setFlightsPerRoute(StringUtils.parse(ctx.getParameter("maxFlights"), 0));
 		criteria.setIncludeAcademy(ctx.isUserInRole("Instructor") || ctx.isUserInRole("Schedule") || ctx.isUserInRole("HR") || ctx.isUserInRole("Operations"));
+		criteria.setPilotID(ctx.getUser().getID());
+		criteria.setNotVisitedD(Boolean.valueOf(ctx.getParameter("nVD")).booleanValue());
+		criteria.setNotVisitedA(Boolean.valueOf(ctx.getParameter("nVA")).booleanValue());
 		if ((criteria.getMaxResults() < 1) || (criteria.getMaxResults() > 150))
 			criteria.setMaxResults(150);
-		if (Boolean.valueOf(ctx.getParameter("notVisited")).booleanValue())
-			criteria.setNotVisited(ctx.getUser().getID());
 		
 		// Set equipment type(s)
 		if (Boolean.valueOf(ctx.getParameter("myEQTypes")).booleanValue())
@@ -124,7 +128,21 @@ public class FindFlightCommand extends AbstractCommand {
 				
 				// Get destination airports
 				GetScheduleAirport adao = new GetScheduleAirport(con);
-				ctx.setAttribute("airportsA", adao.getConnectingAirports(criteria.getAirportD(), true, criteria.getAirline()), REQUEST);
+				Collection<Airport> dsts = adao.getConnectingAirports(criteria.getAirportD(), true, criteria.getAirline());
+				if (criteria.getNotVisitedA()) {
+					Collection<Airport> myAirports = new HashSet<Airport>();
+					
+					GetFlightReports frdao = new GetFlightReports(con);
+					Collection<? extends RoutePair> routes = frdao.getRoutePairs(ctx.getUser().getID());
+					for (RoutePair rp : routes) {
+						myAirports.add(rp.getAirportD());
+						myAirports.add(rp.getAirportA());
+					}
+					
+					AirportFilter fl = new NOTFilter(new IATAFilter(myAirports));
+					ctx.setAttribute("airportsA", fl.filter(dsts), REQUEST);
+				} else
+					ctx.setAttribute("airportsA", dsts, REQUEST);
 				
 		         // Load schedule import data
 		    	 GetMetadata mddao = new GetMetadata(con);
