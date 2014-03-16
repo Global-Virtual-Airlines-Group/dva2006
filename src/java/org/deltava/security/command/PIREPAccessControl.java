@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.Pilot;
@@ -10,7 +10,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An access controller for Flight Report operations.
  * @author Luke
- * @version 5.0
+ * @version 5.3
  * @since 1.0
  */
 
@@ -28,6 +28,7 @@ public class PIREPAccessControl extends AccessControl {
 	private boolean _canReject;
 	private boolean _canDelete;
 	private boolean _canViewComments;
+	private boolean _canUpdateComments;
 	private boolean _canPreApprove;
 
 	/**
@@ -76,7 +77,8 @@ public class PIREPAccessControl extends AccessControl {
 
 		// Check if held by us
 		final int disposalID = _pirep.getDatabaseID(DatabaseID.DISPOSAL);
-		final boolean isHeldByMe = (isHeld && _ctx.isAuthenticated() && ((disposalID == _ctx.getUser().getID())) || (disposalID == 0));
+		final boolean isDisposedByMe = (disposalID == _ctx.getUser().getID());
+		final boolean isHeldByMe = (isHeld && _ctx.isAuthenticated() && isDisposedByMe || (disposalID == 0));
 		final boolean canReleaseHold = !isHeld || isHR || isHeldByMe;
 
 		// Check if we can submit/hold/approve/reject/edit the PIREP
@@ -87,6 +89,7 @@ public class PIREPAccessControl extends AccessControl {
 		_canRelease = (isHeld && _ctx.isAuthenticated() && canReleaseHold);
 		_canEdit = _canSubmit || _canHold || _canApprove || _canReject || _canRelease;
 		_canViewComments = isHR || isPirep || _ourPIREP;
+		_canUpdateComments = (isHR || isDisposedByMe) && (isRejected || isHeld || (status == FlightReport.OK));
 		
 		// Get the flight assignment ID
 		final boolean isCheckRide = _pirep.hasAttribute(FlightReport.ATTR_CHECKRIDE);
@@ -178,6 +181,14 @@ public class PIREPAccessControl extends AccessControl {
 	 */
 	public boolean getCanViewComments() {
 		return _canViewComments;
+	}
+	
+	/**
+	 * Returns whether the disposition comments can be updated.
+	 * @return TRUE if the comments can be updated, otherwise FALSE
+	 */
+	public boolean getCanUpdateComments() {
+		return _canUpdateComments;
 	}
 
 	/**

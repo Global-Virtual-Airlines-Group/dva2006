@@ -1170,6 +1170,12 @@
 		<roles>PIREP</roles>
 	</command>
 
+	<command id="updcomments">
+		<name>PIREP Update Comments</name>
+		<class>org.deltava.commands.pirep.UpdateCommentsCommand</class>
+		<roles>PIREP</roles>
+	</command>
+
 	<command id="gaterecalc">
 		<name>Recalculate Gates</name>
 		<class>org.deltava.commands.pirep.GateCalculateCommand</class>

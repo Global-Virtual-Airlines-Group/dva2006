@@ -92,7 +92,8 @@ return true;
 <el:table className="form">
 <!-- PIREP Title Bar -->
 <tr class="title">
- <td class="caps" colspan="2">FLIGHT ${pirep.flightCode} FLOWN ON <fmt:date fmt="d" date="${pirep.date}" /> by ${pilot.name}</td>
+ <td class="caps" colspan="2">FLIGHT ${pirep.flightCode} FLOWN ON <fmt:date fmt="d" date="${pirep.date}" /> by 
+ <el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></td>
 </tr>
 
 <!-- Pirep Data -->
@@ -306,10 +307,10 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 </tr>
 </c:if>
 </content:browser>
-<c:if test="${!scoreCR && (access.canDispose || (access.canViewComments && (!empty pirep.comments)))}">
+<c:if test="${!scoreCR && (access.canDispose || ((access.canViewComments || access.canUpdateComments) && (!empty pirep.comments)))}">
 <tr>
  <td class="label top">Reviewer Comments</td>
-<c:if test="${access.canDispose}">
+<c:if test="${access.canDispose || access.canUpdateComments}">
  <td class="data"><el:textbox name="dComments" width="100" height="5">${pirep.comments}</el:textbox></td>
 </c:if>
 <c:if test="${!access.canDispose && access.canViewComments}">
@@ -322,12 +323,12 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td>
+ <td>&nbsp;
 <c:if test="${access.canSubmit}">
  <el:cmdbutton url="submit" link="${pirep}" label="SUBMIT FLIGHT REPORT" />
 </c:if>
 <c:if test="${access.canApprove && !scoreCR}">
- <el:cmdbutton url="dispose" link="${pirep}" op="approve" post="true" key="A" label="APPROVE FLIGHT" />
+ <el:cmdbutton url="dispose" link="${pirep}" op="approve" post="true" key="A" label="APPROVE" />
 </c:if>
 <c:if test="${access.canHold}">
  <el:cmdbutton url="dispose" link="${pirep}" op="hold" post="true" key="H" label="HOLD" />
@@ -362,8 +363,9 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 <c:if test="${fn:isDraft(pirep) && (!empty assignmentInfo) && assignAccess.canRelease}">
  <el:cmdbutton url="assignrelease" link="${assignmentInfo}" label="RELEASE ASSIGNMENT" />
 </c:if>
- <el:cmdbutton url="profile" link="${pilot}" key="V" label="VIEW PROFILE" />
- </td>
+<c:if test="${access.canUpdateComments}">
+ <el:cmdbutton url="updcomments" link="${pirep}" post="true" label="UPDATE COMMENTS" /> 
+</c:if></td>
 </tr>
 </el:table>
 </el:form>
