@@ -248,7 +248,7 @@
 		</table>
 		
 		<list name="schemes" attr="css">
-			<css>legacy</css>
+			<css>Legacy</css>
 			<css>Delta 2007</css>
 		</list>
 	</html>
