@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -30,7 +30,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle editing/saving Flight Reports.
  * @author Luke
- * @version 5.2
+ * @version 5.3
  * @since 1.0
  */
 
@@ -179,8 +179,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			} catch (Exception e) {
 				net = null;
 			} finally {
-				fr.setAttribute(FlightReport.ATTR_VATSIM, (net == OnlineNetwork.VATSIM));
-				fr.setAttribute(FlightReport.ATTR_IVAO, (net == OnlineNetwork.IVAO));
+				fr.setNetwork(net);
 			}
 			
 			// Get the flight time
@@ -615,7 +614,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				long age = (fr.getSubmittedOn() == null) ? Long.MAX_VALUE : (System.currentTimeMillis() - fr.getSubmittedOn().getTime()) / 1000;
 				if (pd.isEmpty() && (age < 86000)) {
 					int trackID = tdao.getTrackID(fr.getDatabaseID(DatabaseID.PILOT), fr.getNetwork(), fr.getSubmittedOn(), fr.getAirportD(), fr.getAirportA());
-					if ((trackID == 0) && fr.hasAttribute(FlightReport.ATTR_VATSIM)) {
+					if ((trackID == 0) && (fr.getNetwork() == OnlineNetwork.VATSIM)) {
 						try {
 							GetVRouteData vddao = new GetVRouteData();
 							pd = vddao.getPositions(p, fr.getAirportD(), fr.getAirportA());
