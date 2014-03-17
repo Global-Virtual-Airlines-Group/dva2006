@@ -77,7 +77,7 @@ public class PIREPAccessControl extends AccessControl {
 
 		// Check if held by us
 		final int disposalID = _pirep.getDatabaseID(DatabaseID.DISPOSAL);
-		final boolean isDisposedByMe = (disposalID == _ctx.getUser().getID());
+		final boolean isDisposedByMe = _ctx.isAuthenticated() && (disposalID == _ctx.getUser().getID());
 		final boolean isHeldByMe = (isHeld && _ctx.isAuthenticated() && isDisposedByMe || (disposalID == 0));
 		final boolean canReleaseHold = !isHeld || isHR || isHeldByMe;
 
