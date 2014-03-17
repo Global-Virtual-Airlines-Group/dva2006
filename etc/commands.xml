@@ -1176,6 +1176,12 @@
 		<roles>PIREP</roles>
 	</command>
 
+	<command id="updevent">
+		<name>PIREP Update Event</name>
+		<class>org.deltava.commands.pirep.UpdateEventCommand</class>
+		<roles>PIREP</roles>
+	</command>
+
 	<command id="gaterecalc">
 		<name>Recalculate Gates</name>
 		<class>org.deltava.commands.pirep.GateCalculateCommand</class>
