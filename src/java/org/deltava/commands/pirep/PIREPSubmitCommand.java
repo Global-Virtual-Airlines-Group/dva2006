@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Fligt Report submissions.
  * @author Luke
- * @version 5.0
+ * @version 5.3
  * @since 1.0
  */
 
@@ -133,21 +133,21 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			// Check if it's an Online Event flight
 			GetEvent evdao = new GetEvent(con);
 			if ((pirep.getDatabaseID(DatabaseID.EVENT) == 0) && (pirep.hasAttribute(FlightReport.ATTR_ONLINE_MASK))) {
-				OnlineNetwork net = OnlineNetwork.VATSIM;
-				if (pirep.hasAttribute(FlightReport.ATTR_IVAO))
-					net = OnlineNetwork.IVAO;
-				
-				// Load the event ID
-				pirep.setDatabaseID(DatabaseID.EVENT, evdao.getEvent(pirep.getAirportD(), pirep.getAirportA(), net));
+				int eventID = evdao.getEvent(pirep.getAirportD(), pirep.getAirportA(), pirep.getNetwork());
+				if (eventID != 0) {
+					Event e = evdao.get(eventID);
+					comments.add("SYSTEM: Detected participation in " + e.getName() + " Online Event");
+					pirep.setDatabaseID(DatabaseID.EVENT, eventID);
+				}
 			}
 			
 			// Check that the event hasn't expired
 			if (pirep.getDatabaseID(DatabaseID.EVENT) != 0) {
 				Event e = evdao.get(pirep.getDatabaseID(DatabaseID.EVENT));
 				if (e != null) {
-					long timeSinceEnd = (System.currentTimeMillis() - e.getEndTime().getTime()) / 1000;
-					if (timeSinceEnd > 86400) {
-						comments.add("Flight logged over 24 hours after Event completion");
+					long timeSinceEnd = (System.currentTimeMillis() - e.getEndTime().getTime()) / 3600_1000;
+					if (timeSinceEnd > 24) {
+						comments.add("SYSTEM: Flight logged " + timeSinceEnd + " hours after '" + e.getName() + "' completion");
 						pirep.setDatabaseID(DatabaseID.EVENT, 0);
 					}
 				} else
