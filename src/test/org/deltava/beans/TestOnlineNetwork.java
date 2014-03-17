@@ -6,11 +6,11 @@ import junit.framework.TestCase;
 public class TestOnlineNetwork extends TestCase {
 
 	public void testValue() {
-		assertEquals(0, OnlineNetwork.VATSIM.getValue());
+		assertEquals(0, OnlineNetwork.VATSIM.ordinal());
 		assertEquals(OnlineNetwork.VATSIM, OnlineNetwork.valueOf("VATSIM"));
-		assertEquals(OnlineNetwork.VATSIM, OnlineNetwork.values()[OnlineNetwork.VATSIM.getValue()]);
+		assertEquals(OnlineNetwork.VATSIM, OnlineNetwork.values()[OnlineNetwork.VATSIM.ordinal()]);
 		assertEquals(OnlineNetwork.IVAO, OnlineNetwork.valueOf("IVAO"));
-		assertEquals(OnlineNetwork.IVAO, OnlineNetwork.values()[OnlineNetwork.IVAO.getValue()]);
+		assertEquals(OnlineNetwork.IVAO, OnlineNetwork.values()[OnlineNetwork.IVAO.ordinal()]);
 		
 		assertEquals("VATSIM", OnlineNetwork.VATSIM.toString());
 	}
