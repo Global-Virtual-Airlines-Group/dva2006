@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.functions;
 
 import java.util.Iterator;
@@ -8,7 +8,7 @@ import org.deltava.beans.flight.*;
 /**
  * A JSP Function Library to define Flight Report-related functions.
  * @author Luke
- * @version 5.1
+ * @version 5.3
  * @since 1.0
  */
 
@@ -276,9 +276,6 @@ public class FlightReportFunctions {
      * @param fr the Flight Report
      * @return the name of the network, or &quot;Offline&quot; if flown offline
      * @see FlightReportFunctions#isOnline(FlightReport)
-     * @see FlightReport#ATTR_VATSIM
-     * @see FlightReport#ATTR_IVAO
-     * @see FlightReport#ATTR_FPI
      */
     public static String network(FlightReport fr) {
     	if ((fr == null) || (fr.getNetwork() == null))

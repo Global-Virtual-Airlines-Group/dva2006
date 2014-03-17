@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2012, 2013, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -26,7 +26,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to approve Flight Reports and Check Rides.
  * @author Luke
- * @version 5.2
+ * @version 5.3
  * @since 1.0
  */
 
@@ -120,8 +120,7 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 			} catch (Exception e) {
 				net = fr.getNetwork();
 			} finally {
-				fr.setAttribute(FlightReport.ATTR_VATSIM, (net == OnlineNetwork.VATSIM));
-				fr.setAttribute(FlightReport.ATTR_IVAO, (net == OnlineNetwork.IVAO));
+				fr.setNetwork(net);
 			}
 			
 			// Load the flights for accomplishment purposes

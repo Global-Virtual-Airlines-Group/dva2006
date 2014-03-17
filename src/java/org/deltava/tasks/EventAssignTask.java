@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to automatically assign flghts to Online Event participants.
  * @author Luke
- * @version 4.2
+ * @version 5.3
  * @since 1.0
  */
 
@@ -135,10 +135,7 @@ public class EventAssignTask extends Task {
 						fr.setDatabaseID(DatabaseID.ASSIGN, ai.getID());
 						fr.setDatabaseID(DatabaseID.EVENT, e.getID());
 						fr.setDate(e.getStartTime());
-						if (e.getNetwork() == OnlineNetwork.VATSIM)
-							fr.setAttribute(FlightReport.ATTR_VATSIM, true);
-						else if (e.getNetwork() == OnlineNetwork.IVAO)
-							fr.setAttribute(FlightReport.ATTR_IVAO, true);
+						fr.setNetwork(e.getNetwork());
 						
 						// Write the Flight Report to the proper database
 						fwdao.write(fr, usrData.getDB());
