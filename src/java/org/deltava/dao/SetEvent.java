@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.cache.CacheManager;
 /**
  * A Data Access Object to write Online Event data.
  * @author Luke
- * @version 5.0
+ * @version 5.3
  * @since 1.0
  */
 
@@ -340,7 +340,7 @@ public class SetEvent extends DAO {
 		prepareStatement("INSERT INTO events.EVENTS (TITLE, NETWORK, STATUS, STARTTIME, ENDTIME, SU_DEADLINE, "
 				+ "BRIEFING, CAN_SIGNUP, SIGNUP_URL, OWNER) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 		_ps.setString(1, e.getName());
-		_ps.setInt(2, e.getNetwork().getValue());
+		_ps.setInt(2, e.getNetwork().ordinal());
 		_ps.setInt(3, e.getStatus().ordinal());
 		_ps.setTimestamp(4, createTimestamp(e.getStartTime()));
 		_ps.setTimestamp(5, createTimestamp(e.getEndTime()));
@@ -362,7 +362,7 @@ public class SetEvent extends DAO {
 		prepareStatement("UPDATE events.EVENTS SET TITLE=?, NETWORK=?, STARTTIME=?, ENDTIME=?, SU_DEADLINE=?, "
 				+ "BRIEFING=?, CAN_SIGNUP=?, SIGNUP_URL=?, STATUS=?, OWNER=? WHERE (ID=?)");
 		_ps.setString(1, e.getName());
-		_ps.setInt(2, e.getNetwork().getValue());
+		_ps.setInt(2, e.getNetwork().ordinal());
 		_ps.setTimestamp(3, createTimestamp(e.getStartTime()));
 		_ps.setTimestamp(4, createTimestamp(e.getEndTime()));
 		_ps.setTimestamp(5, createTimestamp(e.getCanSignup() ? e.getSignupDeadline() : e.getStartTime()));
