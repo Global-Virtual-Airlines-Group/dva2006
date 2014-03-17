@@ -1,4 +1,4 @@
-// Copyright 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.xacars;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -30,7 +30,7 @@ import org.deltava.util.system.SystemData;
 /**
  * The XACARS Flight Report Web Service. 
  * @author Luke
- * @version 5.1
+ * @version 5.3
  * @since 4.1
  */
 
@@ -65,7 +65,9 @@ public class XPIREPService extends XAService {
 			GetXACARS xdao = new GetXACARS(con);
 			int flightID = xdao.getID(usr.getID(), f);
 			XAFlightInfo inf = xdao.getFlight(flightID);
-			if (inf == null)
+			if (flightID == 0)
+				throw new InvalidDataException("Flight not Started in XACARS");
+			else if (inf == null)
 				throw new InvalidDataException("Invalid Flight ID - " + flightID);
 			
 			// Validate simulator
