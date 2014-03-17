@@ -1,4 +1,4 @@
-// Copyright 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2013, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,14 +8,20 @@ import java.sql.Connection;
 import org.deltava.beans.acars.IATACodes;
 import org.deltava.beans.flight.FlightReport;
 
+import org.deltava.util.cache.*;
+
 /**
  * A Data Access Object to fetch IATA codes used by aircraft.
  * @author Luke
- * @version 5.1
+ * @version 5.3
  * @since 5.1
  */
 
 public class GetACARSIATACodes extends DAO {
+	
+	@SuppressWarnings("rawtypes")
+	private static final Cache<CacheableMap> _cache = 
+			CacheManager.get(CacheableMap.class, "IATACodes");
 	
 	/**
 	 * Initializes the Data Access Object.
@@ -32,11 +38,18 @@ public class GetACARSIATACodes extends DAO {
 	 */
 	public Map<String, IATACodes> getAll(String db) throws DAOException {
 		
+		// Check the cache
+		String dbName = formatDBName(db);
+		@SuppressWarnings("unchecked")
+		CacheableMap<String, IATACodes> results = _cache.get(dbName);
+		if (results != null)
+			return new LinkedHashMap<String, IATACodes>(results);
+		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT P.EQTYPE, AP.CODE, COUNT(AP.ID) AS CNT FROM ");
-		sqlBuf.append(formatDBName(db));
+		sqlBuf.append(dbName);
 		sqlBuf.append(".PIREPS P, ");
-		sqlBuf.append(formatDBName(db));
+		sqlBuf.append(dbName);
 		sqlBuf.append(".ACARS_PIREPS AP WHERE (P.ID=AP.ID) AND (P.STATUS=?) AND (LENGTH(AP.CODE)>2) GROUP BY P.EQTYPE, "
 				+ "AP.CODE HAVING (CNT>5) ORDER BY P.EQTYPE, CNT DESC"); 
 		
@@ -44,7 +57,7 @@ public class GetACARSIATACodes extends DAO {
 			prepareStatementWithoutLimits(sqlBuf.toString());
 			_ps.setInt(1, FlightReport.OK);
 			
-			Map<String, IATACodes> results = new LinkedHashMap<String, IATACodes>();
+			results = new CacheableMap<String, IATACodes>(dbName);
 			try (ResultSet rs = _ps.executeQuery()) {
 				int max = 0; IATACodes c = null;
 				while (rs.next()) {
@@ -65,7 +78,8 @@ public class GetACARSIATACodes extends DAO {
 			}
 			
 			_ps.close();
-			return results;
+			_cache.add(results);
+			return new LinkedHashMap<String, IATACodes>(results);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

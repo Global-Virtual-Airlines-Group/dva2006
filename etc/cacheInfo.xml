@@ -34,7 +34,6 @@
 	<cache id="TAF" max="256" expires="1800" />
 	<cache id="FlightAwareMETAR" max="256" expires="1800" />
 	<cache id="FlightAwareTAF" max="256" expires="1800" />
-	<cache id="WXImages" max="8" expires="7200" />
 
 	<!-- ServInfo caches -->
 	<cache id="ServInfoData" max="3" expires="30" />
@@ -44,6 +43,7 @@
 	<cache id="EquipmentTypes" max="24" expires="3600" />
 	<cache id="Accomplishments" max="24" expires="3600" />
 	<cache id="Metadata" max="24" expires="1800" />
+	<cache id="IATACodes" max="4" expires="7200" />
 
 	<cache id="MessageTemplate" max="16" />
 	<cache id="LibraryDLCount" max="64" expires="1800" />
