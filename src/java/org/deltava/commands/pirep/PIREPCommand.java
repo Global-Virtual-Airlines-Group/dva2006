@@ -414,11 +414,10 @@ public class PIREPCommand extends AbstractFormCommand {
 				ctx.setAttribute("statusMsg", FlightReport.STATUS[fr.getStatus()], REQUEST);
 
 			// If this PIREP was flown as part of an event, get its information
+			GetEvent evdao = new GetEvent(con);
 			int eventID = fr.getDatabaseID(DatabaseID.EVENT);
-			if (eventID != 0) {
-				GetEvent evdao = new GetEvent(con);
+			if (eventID != 0)
 				ctx.setAttribute("event", evdao.get(eventID), REQUEST);
-			}
 			
 			// If this PIREP is part of a flight assignment and a draft, load the assignment
 			if ((fr.getStatus() == FlightReport.DRAFT) && (fr.getDatabaseID(DatabaseID.ASSIGN) != 0)) {
@@ -445,6 +444,13 @@ public class PIREPCommand extends AbstractFormCommand {
 				FlightTime ft = scdao.getFlightTime(fr);
 				ctx.setAttribute("avgTime", Integer.valueOf(ft.getFlightTime()), REQUEST);
 				ctx.setAttribute("networks", p.getNetworks(), REQUEST);
+			}
+			
+			// If we're online and not on an event, list possible event
+			if (ac.getCanDispose() && fr.hasAttribute(FlightReport.ATTR_ONLINE_MASK) && (fr.getDatabaseID(DatabaseID.EVENT) == 0)) {
+				int evID = evdao.getPossibleEvent(fr);
+				if (evID != 0)
+					ctx.setAttribute("possibleEvents", Collections.singleton(evdao.get(evID)), REQUEST);
 			}
 
 			// Get the Navdata DAO
