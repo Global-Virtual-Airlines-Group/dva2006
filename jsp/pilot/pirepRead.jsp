@@ -176,6 +176,13 @@ return true;
  <td class="label">Online Flight</td>
  <td class="data"><el:check type="radio" name="network" idx="*" width="70" firstEntry="Offline" options="${networks}" value="${fn:network(pirep)}" /></td>
 </tr>
+<c:if test="${(empty event) && (!empty possibleEvents)}">
+<tr>
+ <td class="label">Online Event</td>
+ <td class="data"><el:combo name="onlineEvent" size="1" firstEntry="-" options="${possibleEvents}" />
+ <el:cmdbutton url="updevent" post="true" link="${pirep}" label="UPDATE ONLINE EVENT" /></td>
+</tr>
+</c:if>
 </c:if>
 <tr>
  <td class="label top">Other Information</td>

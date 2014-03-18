@@ -53,7 +53,7 @@ public class UpdateEventCommand extends AbstractCommand {
 			
 			// Set the event and save
 			SetFlightReport frwdao = new SetFlightReport(con);
-			fr.setDatabaseID(DatabaseID.EVENT, e.getID());
+			fr.setDatabaseID(DatabaseID.EVENT, (e == null) ? 0 : e.getID());
 			frwdao.write(fr);
 		} catch (DAOException de) {
 			throw new CommandException(de);

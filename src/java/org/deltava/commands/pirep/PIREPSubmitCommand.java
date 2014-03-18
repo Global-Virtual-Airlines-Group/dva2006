@@ -75,6 +75,9 @@ public class PIREPSubmitCommand extends AbstractCommand {
 				if (!StringUtils.isEmpty(fr.getComments()))
 					comments.add(fr.getComments());
 			}
+			
+			// Submitted!
+			pirep.setSubmittedOn(new Date());
 
 			// Save the Pilot profile
 			ctx.setAttribute("pilot", p, REQUEST);
@@ -133,7 +136,7 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			// Check if it's an Online Event flight
 			GetEvent evdao = new GetEvent(con);
 			if ((pirep.getDatabaseID(DatabaseID.EVENT) == 0) && (pirep.hasAttribute(FlightReport.ATTR_ONLINE_MASK))) {
-				int eventID = evdao.getEvent(pirep.getAirportD(), pirep.getAirportA(), pirep.getNetwork());
+				int eventID = evdao.getPossibleEvent(pirep);
 				if (eventID != 0) {
 					Event e = evdao.get(eventID);
 					comments.add("SYSTEM: Detected participation in " + e.getName() + " Online Event");
@@ -145,7 +148,7 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			if (pirep.getDatabaseID(DatabaseID.EVENT) != 0) {
 				Event e = evdao.get(pirep.getDatabaseID(DatabaseID.EVENT));
 				if (e != null) {
-					long timeSinceEnd = (System.currentTimeMillis() - e.getEndTime().getTime()) / 3600_1000;
+					long timeSinceEnd = (System.currentTimeMillis() - e.getEndTime().getTime()) / 3600_000;
 					if (timeSinceEnd > 24) {
 						comments.add("SYSTEM: Flight logged " + timeSinceEnd + " hours after '" + e.getName() + "' completion");
 						pirep.setDatabaseID(DatabaseID.EVENT, 0);
@@ -170,7 +173,6 @@ public class PIREPSubmitCommand extends AbstractCommand {
 				comments.add("ETOPS classificataion: " + String.valueOf(er));
 			
 			// Calculate the load factor
-			pirep.setSubmittedOn(new Date());
 			EconomyInfo eInfo = (EconomyInfo) SystemData.getObject(SystemData.ECON_DATA);
 			if (eInfo != null) {
 				LoadFactor lf = new LoadFactor(eInfo);
