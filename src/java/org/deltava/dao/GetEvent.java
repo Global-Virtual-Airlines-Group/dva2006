@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -6,7 +6,8 @@ import java.sql.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.event.*;
-import org.deltava.beans.schedule.Airport;
+import org.deltava.beans.flight.FlightReport;
+import org.deltava.beans.schedule.RoutePair;
 
 import org.deltava.util.CollectionUtils;
 import org.deltava.util.system.SystemData;
@@ -14,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Online Event data.
  * @author Luke
- * @version 5.0
+ * @version 5.3
  * @since 1.0
  */
 
@@ -79,25 +80,31 @@ public class GetEvent extends DAO {
 		}
 	}
 	
+	public int getPossibleEvent(FlightReport fr) throws DAOException {
+		return getPossibleEvent(fr, fr.getNetwork(), fr.getSubmittedOn());
+	}
+	
 	/**
-	 * Returns the Online Event for a particular flight route. This will display the Events that took place within the past 2 days. 
-	 * @param airportD the departure Airport
-	 * @param airportA the arrival Airport
-	 * @param network the online network code
+	 * Returns a possible Online Event for a particular flight report. This will select an Event that started prior to the submission date
+	 * and ended less than 2 days before the submission date. 
+	 * @param fr the RoutePair
+	 * @param net the OnlineNetwork
+	 * @param dt the Flight date/time
 	 * @return the Online Event database ID, or zero if none found
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public int getEvent(Airport airportD, Airport airportA, OnlineNetwork network) throws DAOException {
-		if (network == null)
-			return 0;
-		
+	public int getPossibleEvent(RoutePair fr, OnlineNetwork net, java.util.Date dt) throws DAOException {
+		if (net == null) return 0;
 		try {
-			prepareStatementWithoutLimits("SELECT E.ID FROM events.EVENTS E, events.EVENT_AIRPORTS EA WHERE (E.ID=EA.ID) "
-					+ "AND (EA.AIRPORT_D=?) AND (EA.AIRPORT_A=?) AND (E.NETWORK=?) AND (E.STARTTIME < NOW()) AND "
-					+ "(NOW() < DATE_ADD(E.ENDTIME, INTERVAL 2 DAY)) ORDER BY E.ID LIMIT 1");
-			_ps.setString(1, airportD.getIATA());
-			_ps.setString(2, airportA.getIATA());
-			_ps.setInt(3, network.getValue());
+			prepareStatementWithoutLimits("SELECT E.ID FROM events.EVENTS E, events.EVENT_AIRPORTS EA, events.AIRLINES EAL "
+					+ "WHERE (E.ID=EA.ID) AND (E.ID=EAL.ID) AND (EA.AIRPORT_D=?) AND (EA.AIRPORT_A=?) AND (E.NETWORK=?) AND "
+					+ "(EAL.AIRLINE=?) AND (E.STARTTIME < ?) AND (DATE_ADD(E.ENDTIME, INTERVAL 2 DAY) > ?) ORDER BY E.ID LIMIT 1");
+			_ps.setString(1, fr.getAirportD().getIATA());
+			_ps.setString(2, fr.getAirportA().getIATA());
+			_ps.setInt(3, net.ordinal());
+			_ps.setString(4, SystemData.get("airline.code"));
+			_ps.setTimestamp(5, createTimestamp(dt));
+			_ps.setTimestamp(6, createTimestamp(dt));
 			
 			// Execute the Query
 			int eventID = 0;

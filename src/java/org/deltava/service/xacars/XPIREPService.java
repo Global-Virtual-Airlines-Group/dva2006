@@ -8,7 +8,6 @@ import java.sql.Connection;
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
-
 import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.event.Event;
@@ -17,12 +16,10 @@ import org.deltava.beans.flight.*;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.testing.*;
-
 import org.deltava.dao.*;
 import org.deltava.dao.http.SetFacebookData;
 import org.deltava.mail.MessageContext;
 import org.deltava.service.*;
-
 import org.deltava.util.*;
 import org.deltava.util.cache.CacheManager;
 import org.deltava.util.system.SystemData;
@@ -154,24 +151,32 @@ public class XPIREPService extends XAService {
 			// Check that the user has an online network ID
 			OnlineNetwork network = xfr.getNetwork();
 			if ((network != null) && (!usr.hasNetworkID(network))) {
-				log.warn(usr.getName() + " does not have a " + network.toString() + " ID");
-				comments.add("No " + network.toString() + " ID, resetting Online Network flag");
+				comments.add("SYSTEM: No " + network.toString() + " ID, resetting Online Network flag");
 				xfr.setNetwork(null);
-			} else if ((network == null) && (xfr.getDatabaseID(DatabaseID.EVENT) != 0))
+			} else if ((network == null) && (xfr.getDatabaseID(DatabaseID.EVENT) != 0)) {
+				comments.add("SYSTEM: Filed offline, resetting Online Event flag");
 				xfr.setDatabaseID(DatabaseID.EVENT, 0);
+			}
 			
 			// Check if it's an Online Event flight
 			GetEvent evdao = new GetEvent(con);
-			if ((xfr.getDatabaseID(DatabaseID.EVENT) == 0) && (xfr.hasAttribute(FlightReport.ATTR_ONLINE_MASK)))
-				xfr.setDatabaseID(DatabaseID.EVENT, evdao.getEvent(xfr.getAirportD(), xfr.getAirportA(), network));
+			if ((xfr.getDatabaseID(DatabaseID.EVENT) == 0) && (xfr.hasAttribute(FlightReport.ATTR_ONLINE_MASK))) {
+				int eventID = evdao.getPossibleEvent(xfr);
+				if (eventID != 0) {
+					Event e = evdao.get(eventID);
+					comments.add("SYSTEM: Detected participation in " + e.getName() + " Online Event");
+					xfr.setDatabaseID(DatabaseID.EVENT, eventID);
+				}
+			}
 			
 			// Check that the event hasn't expired
 			if (xfr.getDatabaseID(DatabaseID.EVENT) != 0) {
 				Event e = evdao.get(xfr.getDatabaseID(DatabaseID.EVENT));
 				if (e != null) {
-					long timeSinceEnd = (System.currentTimeMillis() - e.getEndTime().getTime()) / 1000;
-					if (timeSinceEnd > 86400) {
+					long timeSinceEnd = (System.currentTimeMillis() - e.getEndTime().getTime()) / 3600_000;
+					if (timeSinceEnd > 24) {
 						log.warn("Flight logged over 24 hours after Event completion");
+						comments.add("SYSTEM: Flight logged over 24 hours after Event completion");
 						xfr.setDatabaseID(DatabaseID.EVENT, 0);
 					}
 				} else
