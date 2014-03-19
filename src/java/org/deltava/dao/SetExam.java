@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.testing.*;
 /**
  * A Data Access Object to write Pilot Examinations and Check Rides to the database.
  * @author Luke
- * @version 5.0
+ * @version 5.3
  * @since 1.0
  */
 
@@ -173,8 +173,8 @@ public class SetExam extends DAO {
 			// Prepare the statement, either an INSERT or an UPDATE
 			if (cr.getID() == 0) {
 				prepareStatement("INSERT INTO exams.CHECKRIDES (NAME, PILOT_ID, STATUS, EQTYPE, ACTYPE, "
-					+ "GRADED_BY, CREATED, SUBMITTED, COMMENTS, PASS, ACADEMY, OWNER) VALUES "
-					+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+					+ "GRADED_BY, CREATED, SUBMITTED, COMMENTS, PASS, TYPE, ACADEMY, OWNER) VALUES "
+					+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 				_ps.setString(1, cr.getName());
 				_ps.setInt(2, cr.getAuthorID());
 				_ps.setInt(3, cr.getStatus().ordinal());
@@ -185,8 +185,9 @@ public class SetExam extends DAO {
 				_ps.setTimestamp(8, createTimestamp(cr.getSubmittedOn()));
 				_ps.setString(9, cr.getComments());
 				_ps.setBoolean(10, cr.getPassFail());
-				_ps.setBoolean(11, cr.getAcademy());
-				_ps.setString(12, cr.getOwner().getCode());
+				_ps.setInt(11, cr.getType().ordinal());
+				_ps.setBoolean(12, cr.getAcademy());
+				_ps.setString(13, cr.getOwner().getCode());
 			} else {
 				prepareStatement("UPDATE exams.CHECKRIDES SET STATUS=?, SUBMITTED=?, GRADED=?, GRADED_BY=?, "
 						+ "PASS=?, COMMENTS=? WHERE (ID=?)");

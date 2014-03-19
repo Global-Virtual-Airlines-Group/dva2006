@@ -1465,6 +1465,12 @@
 		<roles>Examination,HR</roles>
 	</command>
 	
+	<command id="waivecr">
+		<name>Waive Check Ride</name>
+		<class>org.deltava.commands.testing.WaiveCheckRideCommand</class>
+		<roles>HR</roles>	
+	</command>
+
 	<command id="pirepscore">
 		<name>Approve PIREP/Score Ride</name>
 		<class>org.deltava.commands.pirep.CheckRidePIREPApprovalCommand</class>

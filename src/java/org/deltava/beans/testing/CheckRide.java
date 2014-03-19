@@ -15,6 +15,8 @@ public class CheckRide extends Test {
     
 	private static final String[] CLASS_NAMES = {"opt2", "opt1", null};
 	
+	private RideType _type = RideType.CHECKRIDE;
+	
 	private String _eqType;
 	private String _acType;
 	
@@ -59,15 +61,6 @@ public class CheckRide extends Test {
     }
     
     /**
-     * Returns whether this is an initial hire into a program, obviating the need for a First
-     * Officer's examination upon return.
-     * @return TRUE if initial hire, otherwise FALSE
-     */
-    public boolean isInitialHire() {
-    	return getName().contains("Initial Hire");
-    }
-
-    /**
      * Returns the aircraft type used in this Check Ride.
      * @return the aircraft type
      * @see CheckRide#setAircraftType(String)
@@ -101,6 +94,15 @@ public class CheckRide extends Test {
      */
     public int getIndex() {
     	return _idx;
+    }
+    
+    /**
+     * Returns the Check Ride type.
+     * @return the RideType
+     * @see CheckRide#setType(RideType)
+     */
+    public RideType getType() {
+    	return _type;
     }
     
     /**
@@ -193,6 +195,15 @@ public class CheckRide extends Test {
     public void setEquipmentType(EquipmentType eq) {
     	setEquipmentType(eq.getName());
     	setStage(eq.getStage());
+    }
+    
+    /**
+     * Sets the Check Ride Type.
+     * @param rt the RideType
+     * @see CheckRide#getType()
+     */
+    public void setType(RideType rt) {
+    	_type = rt;
     }
     
     /**

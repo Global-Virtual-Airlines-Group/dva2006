@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.util.*;
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to hire new Applicants as Pilots.
  * @author Luke
- * @version 5.0
+ * @version 5.3
  * @since 1.0
  */
 
@@ -129,6 +129,7 @@ public class ApplicantApproveCommand extends AbstractCommand {
 			// Check a dummy check ride entry for the user to reflect the stage qualification
 			CheckRide cr = new CheckRide(a.getEquipmentType() + " Initial Hire");
 			cr.setOwner(SystemData.getApp(SystemData.get("airline.code")));
+			cr.setType(RideType.HIRE);
 			cr.setDate(new Date());
 			cr.setAuthorID(a.getPilotID());
 			cr.setPassFail(true);

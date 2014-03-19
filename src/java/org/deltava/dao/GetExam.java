@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Acces Object for loading Examination/Check Ride data.
  * @author Luke
- * @version 5.0
+ * @version 5.3
  * @since 1.0
  */
 
@@ -447,13 +447,11 @@ public class GetExam extends DAO {
 		}
 	}
 
-	/**
+	/*
 	 * Helper method to parse the examination result set.
 	 */
 	private List<Examination> execute() throws SQLException {
 		List<Examination> results = new ArrayList<Examination>();
-
-		// Execute the Query
 		try (ResultSet rs = _ps.executeQuery()) {
 			boolean hasName = (rs.getMetaData().getColumnCount() > 19);
 			while (rs.next()) {
@@ -490,7 +488,7 @@ public class GetExam extends DAO {
 		return results;
 	}
 
-	/**
+	/*
 	 * Helper method to parse the check ride result set.
 	 */
 	private List<CheckRide> executeCheckride() throws SQLException {
@@ -507,15 +505,16 @@ public class GetExam extends DAO {
 				cr.setScoredOn(rs.getTimestamp(7));
 				cr.setScorerID(rs.getInt(8));
 				cr.setPassFail(rs.getBoolean(9));
-				cr.setComments(rs.getString(10));
-				cr.setAircraftType(rs.getString(11));
-				cr.setEquipmentType(rs.getString(12));
-				cr.setAcademy(rs.getBoolean(13));
-				cr.setOwner(SystemData.getApp(rs.getString(14)));
-				cr.setFlightID(rs.getInt(15));
-				cr.setStage(rs.getInt(16));
+				cr.setType(RideType.values()[rs.getInt(10)]);
+				cr.setComments(rs.getString(11));
+				cr.setAircraftType(rs.getString(12));
+				cr.setEquipmentType(rs.getString(13));
+				cr.setAcademy(rs.getBoolean(14));
+				cr.setOwner(SystemData.getApp(rs.getString(15)));
+				cr.setFlightID(rs.getInt(16));
+				cr.setStage(rs.getInt(17));
 				if (hasAcademy)
-					cr.setCourseID(rs.getInt(17));
+					cr.setCourseID(rs.getInt(18));
 
 				results.add(cr);
 			}
