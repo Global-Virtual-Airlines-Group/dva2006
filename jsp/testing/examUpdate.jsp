@@ -56,6 +56,12 @@ To return to the Examination Queue, <el:cmd url="examqueue" className="sec bld">
 This ${exam.owner.name} ${isCheckRide ? 'Check Ride' : 'Examination'} has been canceled and deleted 
 from the database.<br />
 </c:when>
+<c:when test="${isWaiver}">
+<!-- Check Ride Waiver -->
+<div class="updateHdr">Check Ride Waiver Created</div>
+<br />
+${pilot.name} has been granted a waiver for the ${eqType.name} Check Ride.<br />
+</c:when>
 </c:choose>
 <br />
 <content:copyright />
