@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.filter;
 
 import java.io.IOException;
@@ -8,6 +8,7 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 import org.apache.log4j.Logger;
+
 import org.deltava.beans.*;
 import org.deltava.beans.system.IPBlock;
 import org.deltava.crypt.*;
@@ -18,13 +19,15 @@ import static org.deltava.commands.CommandContext.*;
 
 import org.deltava.dao.*;
 import org.gvagroup.jdbc.*;
+
 import org.deltava.util.*;
+import org.deltava.util.NetworkUtils.AddressType;
 import org.deltava.util.system.SystemData;
 
 /**
  * A servlet filter to handle persistent authentication cookies.
  * @author Luke
- * @version 5.2
+ * @version 5.4
  * @since 1.0
  * @see SecurityCookieData
  * @see SecurityCookieGenerator
@@ -33,6 +36,8 @@ import org.deltava.util.system.SystemData;
 public class SecurityCookieFilter implements Filter {
 
 	private static final Logger log = Logger.getLogger(SecurityCookieFilter.class);
+	
+	private static final String OTHERADDR_ATTR_NAME = "otherIPTypeAddr";
 	
 	private ConnectionPool _jdbcPool;
 	
@@ -142,11 +147,23 @@ public class SecurityCookieFilter implements Filter {
 			else if (hreq.isRequestedSessionIdFromURL())
 				throw new SecurityException(req.getRemoteHost() + " attempting to create HTTP session via URL");
 			else if ((savedAddr != null) && !remoteAddr.equals(savedAddr)) {
-				con = _jdbcPool.getConnection();
-				GetIPLocation ipdao = new GetIPLocation(con);
-				IPBlock ipb = ipdao.get(savedAddr);
-				if ((ipb == null) || (!ipb.contains(remoteAddr)))
-					throw new SecurityException("HTTP Session for " + p + " is from " + savedAddr + ", request from " + remoteAddr);
+				AddressType sT = NetworkUtils.getType(savedAddr); AddressType rT = NetworkUtils.getType(remoteAddr);
+				boolean isOK = (sT != rT);
+				if (isOK) {
+					String savedOtherAddress = (String) s.getAttribute(OTHERADDR_ATTR_NAME);
+					if (savedOtherAddress != null)
+						isOK = savedOtherAddress.equals(remoteAddr);
+					else
+						s.setAttribute(OTHERADDR_ATTR_NAME, savedOtherAddress);
+				}
+
+				if (!isOK) {
+					con = _jdbcPool.getConnection();
+					GetIPLocation ipdao = new GetIPLocation(con);
+					IPBlock ipb = ipdao.get(savedAddr);
+					if ((ipb == null) || (!ipb.contains(remoteAddr)))
+						throw new SecurityException("HTTP Session for " + p + " is from " + savedAddr + ", request from " + remoteAddr);
+				}
 			}
 		} catch (Exception se) {
 			log.warn(se.getMessage());
@@ -212,7 +229,6 @@ public class SecurityCookieFilter implements Filter {
 			}
 		}
 
-		// Invoke the next filter in the chain
 		fc.doFilter(req, rsp);
 	}
 
