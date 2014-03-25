@@ -1,28 +1,25 @@
-// Copyright 2005, 2007, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2010, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.sql.Connection;
 import java.io.IOException;
+import java.util.Base64;
 import java.util.StringTokenizer;
 
 import javax.servlet.http.*;
 
 import org.apache.log4j.Logger;
-
 import org.deltava.beans.Pilot;
-
 import org.deltava.dao.*;
 import org.gvagroup.jdbc.*;
-
 import org.deltava.security.*;
-
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A servlet that supports basic HTTP authentication.
  * @author Luke
- * @version 4.2
+ * @version 5.4
  * @since 1.0
  */
 
@@ -43,7 +40,8 @@ public abstract class BasicAuthServlet extends GenericServlet {
 			return null;
 
 		// Get encoded username/password, and decode them
-		String userPwd = Base64.decodeString(authHdr.substring(6));
+		Base64.Decoder b64d = Base64.getDecoder();
+		String userPwd = new String(b64d.decode(authHdr.substring(6)));
 		StringTokenizer tkns = new StringTokenizer(userPwd, ":");
 		if (tkns.countTokens() != 2)
 			return null;

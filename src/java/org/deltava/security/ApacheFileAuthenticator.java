@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2010, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.io.*;
@@ -16,7 +16,7 @@ import org.deltava.util.*;
  * An Authenticator to authenticate users using an Apache-style password file. This authenticator only supports SHA
  * hashing of the password, not MD5 or crypt().
  * @author Luke
- * @version 3.0
+ * @version 5.4
  * @since 1.0
  */
 
@@ -52,8 +52,7 @@ public class ApacheFileAuthenticator implements Authenticator {
 		}
 
 		// Load the data
-		try {
-			LineNumberReader br = new LineNumberReader(new FileReader(_pwdFile));
+		try (LineNumberReader br = new LineNumberReader(new FileReader(_pwdFile))) {
 			while (br.ready()) {
 				StringTokenizer tkns = new StringTokenizer(br.readLine(), ":");
 				if (tkns.countTokens() != 2)
@@ -65,12 +64,11 @@ public class ApacheFileAuthenticator implements Authenticator {
 						log.warn("Invalid (non-SHA-1) password type on Line " + br.getLineNumber());
 					else {
 						_pwdInfo.put(userID, pwdInfo);
-						log.debug("Loaded user " + userID);
+						if (log.isDebugEnabled())
+							log.debug("Loaded user " + userID);
 					}
 				}
 			}
-
-			br.close();
 		} catch (IOException ie) {
 			log.warn("Error loading " + _props.getProperty("apachefile.name") + " - " + ie.getMessage());
 		}
@@ -91,8 +89,9 @@ public class ApacheFileAuthenticator implements Authenticator {
 			throw new SecurityException("Cannot authenticate " + usr.getName() + " - User not found");
 
 		// Create the password hash
+		Base64.Encoder b64e = Base64.getEncoder();
 		MessageDigester md = new MessageDigester("SHA-1");
-		String hash = SHA_HDR + Base64.encode(md.digest(pwd.getBytes()));
+		String hash = SHA_HDR + b64e.encodeToString(md.digest(pwd.getBytes()));
 		
 		// Get the existing password data
 		String existingHash = _pwdInfo.get(userID);
@@ -130,12 +129,13 @@ public class ApacheFileAuthenticator implements Authenticator {
 		String userID = getID(usr);
 		if (userID == null)
 			return;
-		else if (!_pwdInfo.containsKey(userID))
+		if (!_pwdInfo.containsKey(userID))
 			throw new SecurityException(userID + " not found");
 
 		// Create the new password hash
+		Base64.Encoder b64e = Base64.getEncoder();
 		MessageDigester md = new MessageDigester("SHA-1");
-		String hash = SHA_HDR + Base64.encode(md.digest(pwd.getBytes()));
+		String hash = SHA_HDR + b64e.encodeToString(md.digest(pwd.getBytes()));
 		_pwdInfo.put(userID, hash);
 		save();
 	}
@@ -152,12 +152,13 @@ public class ApacheFileAuthenticator implements Authenticator {
 		String userID = getID(usr);
 		if (userID == null)
 			return;
-		else if (_pwdInfo.containsKey(userID))
+		if (_pwdInfo.containsKey(userID))
 			throw new SecurityException(userID + " already exists");
 		
 		// Create the new password hash
+		Base64.Encoder b64e = Base64.getEncoder();
 		MessageDigester md = new MessageDigester("SHA-1");
-		String hash = SHA_HDR + Base64.encode(md.digest(pwd.getBytes()));
+		String hash = SHA_HDR + b64e.encodeToString(md.digest(pwd.getBytes()));
 		_pwdInfo.put(userID, hash);
 		save();
 	}
@@ -197,7 +198,7 @@ public class ApacheFileAuthenticator implements Authenticator {
 		if ((userID == null) || (!_pwdInfo.containsKey(userID)))
 			return;
 
-		// Remove the ID and update the
+		// Remove the ID and update the file
 		_pwdInfo.remove(userID);
 		save();
 	}
@@ -211,7 +212,7 @@ public class ApacheFileAuthenticator implements Authenticator {
 		remove(usr);
 	}
 
-	/**
+	/*
 	 * Helper method to retrieve a user's alias.
 	 */
 	private String getID(Person usr) {
@@ -224,22 +225,17 @@ public class ApacheFileAuthenticator implements Authenticator {
 		return useLDAP ? ((Pilot) usr).getLDAPName() : usr.getDN();
 	}
 	
-	/**
+	/*
 	 * Updates the password file.
 	 */
 	private void save() throws SecurityException {
-		try {
-			PrintWriter out = new PrintWriter(new FileWriter(_pwdFile));
-			for (Iterator<String> i = _pwdInfo.keySet().iterator(); i.hasNext(); ) {
-				String userID = i.next();
-				out.println(userID + ":" + _pwdInfo.get(userID));
-			}
-		
-			// Close the file
-			out.close();
-			log.debug("Saved " + _pwdInfo.size() + " entries");
+		try (PrintWriter out = new PrintWriter(new FileWriter(_pwdFile))) {
+			for (Map.Entry<String, String> me : _pwdInfo.entrySet())
+				out.println(me.getKey() + ":" + me.getValue());
 		} catch (IOException ie) {
 			throw new SecurityException(ie);
 		}
+
+		log.debug("Saved " + _pwdInfo.size() + " entries");
 	}
 }

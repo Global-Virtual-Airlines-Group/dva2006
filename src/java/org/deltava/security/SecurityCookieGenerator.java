@@ -1,12 +1,10 @@
-// Copyright 2004, 2008, 2009, 2011, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2008, 2009, 2011, 2013, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.util.*;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 import org.deltava.crypt.*;
-
-import org.deltava.util.Base64;
 
 /**
  * A class to generate/interpret cookies to store persistent authentication information.
@@ -15,7 +13,7 @@ import org.deltava.util.Base64;
  * signature of the above string encoded in Base64. The password is converted into hex bytes, and the entire
  * string is encrypted using a SecretKeyEncryptor.
  * @author Luke
- * @version 5.2
+ * @version 5.4
  * @since 1.0
  */
 
@@ -44,13 +42,12 @@ public final class SecurityCookieGenerator {
 	public static synchronized SecurityCookieData readCookie(String cookieText) throws SecurityException {
 		
 		String rawToken = null;
-		byte[] encData = Base64.decode(cookieText);
+		Base64.Decoder b64d = Base64.getDecoder();
+		byte[] encData = b64d.decode(cookieText);
 		try {
-			rawToken = new String(_encryptor.decrypt(encData), "UTF-8");
+			rawToken = new String(_encryptor.decrypt(encData), StandardCharsets.UTF_8);
 		} catch (CryptoException ce) {
 			throw new SecurityException("Cannot decode Security Cookie (size=" + encData.length + ")", ce.getCause());
-		} catch (UnsupportedEncodingException uee) {
-			throw new SecurityException("UTF-8 not available", uee);
 		}
 		
 		// Check that it decrypted properly
@@ -81,16 +78,13 @@ public final class SecurityCookieGenerator {
 		buf.append(cookieData.get("y"));
 		
 		// Get the message digest for the token
-		try {
-			MessageDigester md = new MessageDigester("MD5");
-			String digest = Base64.encode(md.digest(buf.toString().getBytes("UTF-8")));
+		Base64.Encoder b64e = Base64.getEncoder();
+		MessageDigester md = new MessageDigester("MD5");
+		String digest = b64e.encodeToString(md.digest(buf.toString().getBytes(StandardCharsets.UTF_8)));
 		
-			// Validate the token signature against what we calculated
-			if (!digest.equals(cookieData.get("md5")))
-				throw new SecurityException("Security Cookie decryption failure - " + buf.toString());
-		} catch (UnsupportedEncodingException uee) {
-			throw new SecurityException("UTF-8 not available");
-		}
+		// Validate the token signature against what we calculated
+		if (!digest.equals(cookieData.get("md5")))
+			throw new SecurityException("Security Cookie decryption failure - " + buf.toString());
 		
 		// Initalize the cookie data
 		SecurityCookieData scData = new SecurityCookieData(cookieData.get("uid"));
@@ -128,18 +122,15 @@ public final class SecurityCookieGenerator {
 		buf.append(Integer.toHexString(scData.getScreenY()));
 		
 		// Get the message digest for the token
-		try {
-			MessageDigester md = new MessageDigester("MD5");
-			String digest = Base64.encode(md.digest(buf.toString().getBytes("UTF-8")));
+		Base64.Encoder b64e = Base64.getEncoder();
+		MessageDigester md = new MessageDigester("MD5");
+		String digest = b64e.encodeToString(md.digest(buf.toString().getBytes(StandardCharsets.UTF_8)));
 		
-			// Append the message digest
-			buf.append("@md5:");
-			buf.append(digest);
+		// Append the message digest
+		buf.append("@md5:");
+		buf.append(digest);
 		
-			// Encrypt the token
-			return Base64.encode(_encryptor.encrypt(buf.toString().getBytes("UTF-8")));
-		} catch (UnsupportedEncodingException uee) {
-			return "";
-		}
+		// Encrypt the token
+		return b64e.encodeToString(_encryptor.encrypt(buf.toString().getBytes(StandardCharsets.UTF_8)));
 	}
 }

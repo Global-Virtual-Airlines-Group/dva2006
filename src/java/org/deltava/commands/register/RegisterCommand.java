@@ -1,35 +1,31 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.util.*;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 
 import javax.servlet.http.*;
 
 import org.apache.log4j.Logger;
-
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.Airport;
 import org.deltava.beans.servinfo.Certificate;
 import org.deltava.beans.system.*;
 import org.deltava.beans.testing.*;
-
 import org.deltava.comparators.GeoComparator;
-
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.dao.http.GetVATSIMData;
 import org.deltava.mail.*;
-
 import org.deltava.security.AddressValidationHelper;
-
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to register a new Applicant.
  * @author Luke
- * @version 5.2
+ * @version 5.4
  * @since 1.0
  */
 
@@ -266,12 +262,13 @@ public class RegisterCommand extends AbstractCommand {
 				}
 			}
 			if (fn != null) {
+				Base64.Decoder b64d = Base64.getDecoder();
 				buf.append("PC used to login as: ");
-				buf.append(Base64.decodeString(fn.getValue()));
+				buf.append(new String(b64d.decode(fn.getValue()), StandardCharsets.UTF_8));
 				javax.servlet.http.Cookie ln = ctx.getCookie("dva_lname64");
 				if (ln != null) {
 					buf.append(' ');
-					buf.append(Base64.decodeString(ln.getValue()));
+					buf.append(new String(b64d.decode(ln.getValue()), StandardCharsets.UTF_8));
 				}
 			}
 			
