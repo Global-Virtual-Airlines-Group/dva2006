@@ -1,15 +1,13 @@
-// Copyright 2006, 2007, 2008, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.sql.*;
+import java.util.Base64;
 
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
 import org.deltava.crypt.MessageDigester;
-
-import org.deltava.util.*;
-
 import org.gvagroup.jdbc.*;
 
 /**
@@ -17,7 +15,7 @@ import org.gvagroup.jdbc.*;
  * class, this uses the existing JDBC Connection Pool. Since this implements {@link SQLAuthenticator}, this behavior can
  * be overriden by providing a JDBC Connection to use.
  * @author Luke
- * @version 4.1
+ * @version 5.4
  * @since 1.0
  */
 
@@ -35,7 +33,8 @@ public class ApacheSQLAuthenticator extends ConnectionPoolAuthenticator {
 
 		// Generate the password hash
 		MessageDigester md = new MessageDigester("SHA-1");
-		String pwdHash = "{SHA}" + Base64.encode(md.digest(pwd.getBytes()));
+		Base64.Encoder b64e = Base64.getEncoder();
+		String pwdHash = "{SHA}" + b64e.encodeToString(md.digest(pwd.getBytes()));
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT PWD FROM ");
@@ -115,7 +114,8 @@ public class ApacheSQLAuthenticator extends ConnectionPoolAuthenticator {
 	 * @throws SecurityException if a JDBC error occurs
 	 */
 	public void updatePassword(Person usr, String pwd) throws SecurityException {
-		log.debug("Updating password for " + usr.getDN() + " in Directory");
+		if (log.isDebugEnabled())
+			log.debug("Updating password for " + usr.getDN() + " in Directory");
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("UPDATE ");
@@ -124,7 +124,8 @@ public class ApacheSQLAuthenticator extends ConnectionPoolAuthenticator {
 
 		// Generate the password hash
 		MessageDigester md = new MessageDigester("SHA-1");
-		String pwdHash = "{SHA}" + Base64.encode(md.digest(pwd.getBytes()));
+		Base64.Encoder b64e = Base64.getEncoder();
+		String pwdHash = "{SHA}" + b64e.encodeToString(md.digest(pwd.getBytes()));
 
 		Connection con = null;
 		try {
@@ -149,7 +150,8 @@ public class ApacheSQLAuthenticator extends ConnectionPoolAuthenticator {
 	 * @throws SecurityException if a JDBC error occurs
 	 */
 	public void add(Person usr, String pwd) throws SecurityException {
-		log.debug("Adding user " + usr.getDN() + " to Directory");
+		if (log.isDebugEnabled())
+			log.debug("Adding user " + usr.getDN() + " to Directory");
 
 		// Get the ID
 		int id = (usr instanceof Applicant) ? ((Applicant) usr).getPilotID() : usr.getID();
@@ -161,13 +163,13 @@ public class ApacheSQLAuthenticator extends ConnectionPoolAuthenticator {
 
 		// Generate the password hash
 		MessageDigester md = new MessageDigester("SHA-1");
-		String pwdHash = "{SHA}" + Base64.encode(md.digest(pwd.getBytes()));
+		Base64.Encoder b64e = Base64.getEncoder();
+		String pwdHash = "{SHA}" + b64e.encodeToString(md.digest(pwd.getBytes()));
 
 		Connection con = null;
-		boolean isAutoCommit = false;
 		try {
 			con = getConnection();
-			isAutoCommit = con.getAutoCommit();
+			boolean isAutoCommit = con.getAutoCommit();
 			if (isAutoCommit)
 				con.setAutoCommit(false);
 			
@@ -247,7 +249,8 @@ public class ApacheSQLAuthenticator extends ConnectionPoolAuthenticator {
 	 * @throws SecurityException if a JDBC error occurs
 	 */
 	public void remove(Person usr) throws SecurityException {
-		log.debug("Removing user " + usr.getName() + " from Directory");
+		if (log.isDebugEnabled())
+			log.debug("Removing user " + usr.getName() + " from Directory");
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("DELETE FROM ");

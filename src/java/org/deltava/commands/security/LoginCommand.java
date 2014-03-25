@@ -1,29 +1,27 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2013, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.util.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 
 import javax.servlet.http.*;
 
 import org.apache.log4j.Logger;
-
 import org.deltava.beans.*;
 import org.deltava.beans.system.*;
-
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.security.*;
-
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to Authenticate users.
  * @author Luke
- * @version 5.1
+ * @version 5.4
  * @since 1.0
  */
 
@@ -73,16 +71,17 @@ public class LoginCommand extends AbstractCommand {
 		Cookie pcc = ctx.getCookie("dva_pCode");
 		
 		// Save first name
+		Base64.Decoder b64d = Base64.getDecoder();
 		if (fName != null)
 			ctx.setAttribute("fname", fName, REQUEST);
 		else if (fnc != null)
-			ctx.setAttribute("fname", Base64.decodeString(fnc.getValue()), REQUEST);
+			ctx.setAttribute("fname", new String(b64d.decode(fnc.getValue()), StandardCharsets.UTF_8), REQUEST);
 		
 		// Save last name
 		if (lName != null)
 			ctx.setAttribute("lname", lName, REQUEST);
 		else if (lnc != null)
-			ctx.setAttribute("lname", Base64.decodeString(lnc.getValue()), REQUEST);
+			ctx.setAttribute("lname", new String(b64d.decode(lnc.getValue()), StandardCharsets.UTF_8), REQUEST);
 		
 		// Save pilot code
 		if (code != null)
@@ -297,13 +296,14 @@ public class LoginCommand extends AbstractCommand {
 		// Check if we are going to save the first/last names
 		boolean saveName = Boolean.valueOf(ctx.getParameter("saveInfo")).booleanValue();
 		if (saveName) {
+			Base64.Encoder b64e = Base64.getEncoder();
 			int cookieAge = SystemData.getInt("users.user_cookie_age") * 86400;
 
-			fnc = new Cookie("dva_fname64", Base64.encode(p.getFirstName()));
+			fnc = new Cookie("dva_fname64", b64e.encodeToString(p.getFirstName().getBytes(StandardCharsets.UTF_8)));
 			fnc.setMaxAge(cookieAge);
 			ctx.getResponse().addCookie(fnc);
 
-			lnc = new Cookie("dva_lname64", Base64.encode(p.getLastName()));
+			lnc = new Cookie("dva_lname64", b64e.encodeToString(p.getLastName().getBytes(StandardCharsets.UTF_8)));
 			lnc.setMaxAge(cookieAge);
 			ctx.getResponse().addCookie(lnc);
 			
