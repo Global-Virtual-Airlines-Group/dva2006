@@ -123,7 +123,7 @@
 		<!-- Compile the code -->
 		<mkdir dir="${java.io.tmpdir}/build/classes" />
 		<javac srcdir="src/java" destdir="${java.io.tmpdir}/build/classes" debug="true" includeantruntime="false"
-		 debuglevel="lines,vars,source" source="1.7" target="1.7" compiler="modern">
+		 debuglevel="lines,vars,source" source="1.8" target="1.8" compiler="modern">
 			<compilerarg value="-Xlint:unchecked,deprecation,finally" />
 	    	<classpath id="javac.classpath">
 				<pathelement path="${classpath}" />
@@ -185,7 +185,7 @@
 
 		<!-- Compile the files -->
 		<mkdir dir="${java.io.tmpdir}/build/jsp" />
-		<javac srcdir="${java.io.tmpdir}/src/jsp" destdir="${java.io.tmpdir}/build/jsp"
+		<javac srcdir="${java.io.tmpdir}/src/jsp" destdir="${java.io.tmpdir}/build/jsp" compiler="modern"
 			debug="on" debuglevel="source" target="1.7" source="1.7" includeantruntime="false">
 			<compilerarg value="-Xlint:deprecation,finally" />
 			<classpath refid="jspc.classpath" />
@@ -193,8 +193,7 @@
 		</javac>
 		
 		<!-- Compress the Java classes into a single JAR file -->
-		<jar basedir="${java.io.tmpdir}/build/jsp" compress="true" index="true"
-		 	destfile="${java.io.tmpdir}/build/golgotha_jsp.jar" />
+		<jar basedir="${java.io.tmpdir}/build/jsp" compress="true" index="true" destfile="${java.io.tmpdir}/build/golgotha_jsp.jar" />
 		 		 
 		<!-- Force all JSPs to load on startup -->
 		<!-- <replace file="${jspc.webXMLInc}" token="&lt;/servlet-class&gt;">
