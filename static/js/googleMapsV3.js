@@ -236,7 +236,8 @@ golgotha.maps.ShapeLayer = function(opts, name, imgClass) {
 	ov.set('maxZoom', opts.maxZoom);
 	ov.set('nativeZoom', opts.nativeZoom);
 	ov.set('baseURL', 'http://' + self.location.host + '/tile/' + imgClass + '/');
-	ov.set('imgClass', imgClass); 
+	ov.set('imgClass', imgClass);
+	ov.set('tileSize', opts.tileSize);
 	ov.getTileUrl = golgotha.maps.util.getTileUrl;
 	ov.getTile = golgotha.maps.util.buildTile;
 	ov.getMap = function() { return this.map; }
