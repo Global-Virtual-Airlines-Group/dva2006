@@ -7,7 +7,7 @@ import java.sql.Connection;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
-import org.deltava.beans.acars.ACARSRouteEntry;
+import org.deltava.beans.acars.*;
 import org.deltava.beans.assign.AssignmentInfo;
 import org.deltava.beans.fb.NewsEntry;
 import org.deltava.beans.flight.*;
@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Flight Report status changes.
  * @author Luke
- * @version 5.3
+ * @version 5.4
  * @since 1.0
  */
 
@@ -273,12 +273,18 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			}
 			
 			// If we're approving an ACARS PIREP, archive the position data
-			if (((opCode == FlightReport.OK) || (opCode == FlightReport.REJECTED)) && (fr instanceof ACARSFlightReport)) {
+			if ((opCode == FlightReport.OK) || (opCode == FlightReport.REJECTED)) {
+				int acarsID = fr.getDatabaseID(DatabaseID.ACARS);
 				GetACARSPositions posdao = new GetACARSPositions(con);
 				SetACARSArchive acdao = new SetACARSArchive(con);
-				int acarsID = fr.getDatabaseID(DatabaseID.ACARS);
-				Collection<ACARSRouteEntry> entries = posdao.getRouteEntries(acarsID, false);
-				acdao.archive(acarsID, entries);
+				if (fr instanceof ACARSFlightReport) {
+					Collection<ACARSRouteEntry> entries = posdao.getRouteEntries(acarsID, false);
+					acdao.archive(acarsID, entries);
+				} else if (fr instanceof XACARSFlightReport) {
+					Collection<? extends RouteEntry> entries = posdao.getXACARSEntries(acarsID);
+					acdao.archive(acarsID, entries);
+				}
+				
 				ctx.setAttribute("acarsArchive", Boolean.TRUE, REQUEST);
 			}
 			
