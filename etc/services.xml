@@ -94,7 +94,6 @@
 	<service id="acars_map_eplan" class="org.deltava.service.acars.EarthMapPlanService" />
 
 	<!-- ServInfo Services -->
-	<service id="servinfo" class="org.deltava.service.servinfo.DataService" />
 	<service id="si_route" class="org.deltava.service.servinfo.MapRouteService" />
 	<service id="si_data" class="org.deltava.service.servinfo.MapService" />
 	<service id="fir" class="org.deltava.service.servinfo.FIRInfoService" />
