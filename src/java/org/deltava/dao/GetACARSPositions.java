@@ -196,7 +196,7 @@ public class GetACARSPositions extends GetACARSData {
 	 */
 	public List<XARouteEntry> getXACARSEntries(int flightID) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT * FROM acars.POSITION_XARCHIVE WHERE (FLIGHT_ID=?) ORDER BY REPORT_TIME, TIME_MS");
+			prepareStatementWithoutLimits("SELECT * FROM acars.POSITION_XARCHIVE WHERE (FLIGHT_ID=?) ORDER BY REPORT_TIME");
 			_ps.setInt(1, flightID);
 			
 			// Execute the query
