@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A helper class to extract information from a user's examination/check ride history.
  * @author Luke
- * @version 5.3
+ * @version 5.4
  * @since 1.0
  */
 
@@ -156,9 +156,15 @@ public final class TestingHistoryHelper {
 	 * @see EquipmentType#getStage()
 	 */
 	public int getMaxCheckRideStage() {
-		int maxStage = _myEQ.getStage();
+		int maxStage = _myEQ.getStage(); Date now = new Date();
 		for (Test t : _tests) {
-			if ((t instanceof CheckRide) && !t.getAcademy() && t.getPassFail() && SystemData.get("airline.code").equals(t.getOwner().getCode()))
+			if (t.getAcademy() || !t.getPassFail() || (!(t instanceof CheckRide)))
+				continue;
+			if (!SystemData.get("airline.code").equals(t.getOwner().getCode()))
+				continue;
+			
+			CheckRide cr = (CheckRide) t;
+			if ((cr.getExpirationDate() == null) || (now.before(cr.getExpirationDate())))
 				maxStage = Math.max(maxStage, t.getStage());
 		}
 
@@ -390,10 +396,13 @@ public final class TestingHistoryHelper {
 	 * @return TRUE if the user passed the check ride, otherwise FALSE
 	 */
 	public boolean hasCheckRide(EquipmentType eq, RideType rt) {
+		Date now = new Date();
 		for (Test t : _tests) {
 			if ((t instanceof CheckRide) && (t.getPassFail())) {
 				CheckRide cr = (CheckRide) t;
-				if (cr.getEquipmentType().equals(eq.getName()))
+				if (!cr.getEquipmentType().equals(eq.getName()))
+					continue;
+				if ((cr.getExpirationDate() == null) || (now.before(cr.getExpirationDate())))
 					return (rt == null) || (cr.getType() == rt);
 			}
 		}
