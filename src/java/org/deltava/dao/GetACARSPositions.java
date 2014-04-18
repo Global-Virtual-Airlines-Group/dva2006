@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import static org.gvagroup.acars.ACARSFlags.*;
@@ -11,14 +11,13 @@ import org.deltava.beans.GeoLocation;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.schedule.GeoPosition;
 import org.deltava.beans.servinfo.*;
-import org.deltava.dao.file.GetSerializedPosition;
 
-import org.deltava.util.StringUtils;
+import org.deltava.dao.file.GetSerializedPosition;
 
 /**
  * A Data Access Object to load ACARS position data.
  * @author Luke
- * @version 4.1
+ * @version 5.4
  * @since 4.1
  */
 
@@ -61,70 +60,94 @@ public class GetACARSPositions extends GetACARSData {
 	
 	private List<GeoLocation> getLiveEntries(int flightID, boolean includeOnGround) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT P.REPORT_TIME, P.TIME_MS, P.LAT, P.LNG, P.B_ALT, P.R_ALT, P.HEADING, "
-				+ "P.PITCH, P.BANK, P.ASPEED, P.GSPEED, P.VSPEED, P.MACH, P.N1, P.N2, P.FLAPS, P.WIND_HDG, P.WIND_SPEED, P.FUEL, "
-				+ "P.FUELFLOW, P.AOA, P.GFORCE, P.FLAGS, P.FRAMERATE, P.SIM_RATE, P.PHASE, PA.COM1, PA.CALLSIGN, PA.LAT, PA.LNG, "
-				+ "PA.NETWORK_ID FROM acars.POSITIONS P LEFT JOIN acars.POSITION_ATC PA ON (PA.FLIGHT_ID=P.FLIGHT_ID) AND "
-				+ "(PA.REPORT_TIME=P.REPORT_TIME) AND (PA.TIME_MS=P.TIME_MS) WHERE (P.FLIGHT_ID=?) ORDER BY P.REPORT_TIME, P.TIME_MS");
+			prepareStatementWithoutLimits("SELECT P.REPORT_TIME, P.LAT, P.LNG, P.B_ALT, P.R_ALT, P.HEADING, P.PITCH, P.BANK, "
+				+ "P.ASPEED, P.GSPEED, P.VSPEED, P.MACH, P.N1, P.N2, P.FLAPS, P.WIND_HDG, P.WIND_SPEED, P.FUEL, P.FUELFLOW, "
+				+ "P.AOA, P.GFORCE, P.FLAGS, P.FRAMERATE, P.SIM_RATE, P.PHASE, P.NAV1, P.NAV2 FROM acars.POSITIONS P WHERE "
+				+ "(P.FLIGHT_ID=?) ORDER BY P.REPORT_TIME");
 			_ps.setInt(1, flightID);
 
 			// Execute the query
-			List<GeoLocation> results = new ArrayList<GeoLocation>();
+			Map<Long, GeoLocation> results = new LinkedHashMap<Long, GeoLocation>();
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
-					java.util.Date dt = new java.util.Date(rs.getTimestamp(1).getTime() + rs.getInt(2));
-					ACARSRouteEntry entry = new ACARSRouteEntry(dt, new GeoPosition(rs.getDouble(3), rs.getDouble(4)));
-					entry.setFlags(rs.getInt(23));
+					Long ts = Long.valueOf(rs.getTimestamp(1).getTime());
+					GeoLocation pos = new GeoPosition(rs.getDouble(2), rs.getDouble(3));
+					ACARSRouteEntry entry = new ACARSRouteEntry(rs.getTimestamp(1), pos);
+					entry.setFlags(rs.getInt(22));
 
 					// Add to results - or just log a GeoPosition if we're on the ground
 					if (entry.isFlagSet(FLAG_ONGROUND) && !entry.isFlagSet(FLAG_TOUCHDOWN) && !includeOnGround)
-						results.add(new GeoPosition(entry));
+						results.put(ts, pos);
 					else {
-						entry.setAltitude(rs.getInt(5));
-						entry.setRadarAltitude(rs.getInt(6));
-						entry.setHeading(rs.getInt(7));
-						entry.setPitch(rs.getDouble(8));
-						entry.setBank(rs.getDouble(9));
-						entry.setAirSpeed(rs.getInt(10));
-						entry.setGroundSpeed(rs.getInt(11));
-						entry.setVerticalSpeed(rs.getInt(12));
-						entry.setMach(rs.getDouble(13));
-						entry.setN1(rs.getDouble(14));
-						entry.setN2(rs.getDouble(15));
-						entry.setFlaps(rs.getInt(16));
-						entry.setWindHeading(rs.getInt(17));
-						entry.setWindSpeed(rs.getInt(18));
-						entry.setFuelRemaining(rs.getInt(19));
-						entry.setFuelFlow(rs.getInt(20));
-						entry.setAOA(rs.getDouble(21));
-						entry.setG(rs.getDouble(22));
-						entry.setFrameRate(rs.getInt(24));
-						entry.setSimRate(rs.getInt(25));
-						entry.setPhase(rs.getInt(26));
-					
-						// Load ATC info
-						String atcID = rs.getString(28);
-						if (!StringUtils.isEmpty(atcID)) {
-							entry.setCOM1(rs.getString(27));
-							Controller ctr = new Controller(rs.getInt(31));
-							ctr.setPosition(rs.getDouble(29), rs.getDouble(30));
-							ctr.setCallsign(atcID);
-							try {
-								ctr.setFacility(Facility.valueOf(atcID.substring(atcID.lastIndexOf('_') + 1)));
-							} catch (IllegalArgumentException iae) {
-								ctr.setFacility(Facility.CTR);
-							} finally {
-								entry.setController(ctr);
-							}
-						}
-					
-						results.add(entry);
+						entry.setAltitude(rs.getInt(4));
+						entry.setRadarAltitude(rs.getInt(5));
+						entry.setHeading(rs.getInt(6));
+						entry.setPitch(rs.getDouble(7));
+						entry.setBank(rs.getDouble(8));
+						entry.setAirSpeed(rs.getInt(9));
+						entry.setGroundSpeed(rs.getInt(10));
+						entry.setVerticalSpeed(rs.getInt(11));
+						entry.setMach(rs.getDouble(12));
+						entry.setN1(rs.getDouble(13));
+						entry.setN2(rs.getDouble(14));
+						entry.setFlaps(rs.getInt(15));
+						entry.setWindHeading(rs.getInt(16));
+						entry.setWindSpeed(rs.getInt(17));
+						entry.setFuelRemaining(rs.getInt(18));
+						entry.setFuelFlow(rs.getInt(19));
+						entry.setAOA(rs.getDouble(20));
+						entry.setG(rs.getDouble(21));
+						entry.setFrameRate(rs.getInt(23));
+						entry.setSimRate(rs.getInt(24));
+						entry.setPhase(rs.getInt(25));
+						entry.setNAV1(rs.getString(26));
+						entry.setNAV2(rs.getString(27));
+						results.put(ts, entry);
 					}
 				}
 			}
 
 			_ps.close();
-			return results;
+			
+			// Load ATC data
+			prepareStatementWithoutLimits("SELECT REPORT_TIME, IDX, COM1, CALLSIGN, LAT, LNG, NETWORK_ID FROM acars.POSITION_ATC "
+				+ "WHERE (FLIGHT_ID=?) ORDER BY REPORT_TIME");
+			_ps.setInt(1, flightID);
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					Long ts = Long.valueOf(rs.getTimestamp(1).getTime());
+					GeoLocation loc = results.get(ts);
+					if ((loc != null) && (loc instanceof ACARSRouteEntry)) {
+						ACARSRouteEntry entry = (ACARSRouteEntry) loc;
+						int idx = rs.getInt(2);
+						if (idx == 2)
+							entry.setCOM2(rs.getString(3));
+						else
+							entry.setCOM1(rs.getString(3));
+
+						// Set controller
+						String atcID = rs.getString(4);
+						Controller ctr = new Controller(rs.getInt(7));
+						ctr.setPosition(rs.getDouble(5), rs.getDouble(6));
+						ctr.setCallsign(atcID);
+						
+						// Load ATC info
+						try {
+							ctr.setFacility(Facility.valueOf(atcID.substring(atcID.lastIndexOf('_') + 1)));
+						} catch (IllegalArgumentException iae) {
+							ctr.setFacility(Facility.CTR);
+						} finally {
+							if (idx == 2)
+								entry.setATC2(ctr);
+							else
+								entry.setATC1(ctr);
+						}
+					}
+				}
+			}
+			
+			_ps.close();
+			return new ArrayList<GeoLocation>(results.values());
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -180,19 +203,18 @@ public class GetACARSPositions extends GetACARSData {
 			List<XARouteEntry> results = new ArrayList<XARouteEntry>();
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
-					java.util.Date dt = new java.util.Date(rs.getTimestamp(2).getTime() + rs.getInt(3));
-					XARouteEntry re = new XARouteEntry(new GeoPosition(rs.getDouble(4), rs.getDouble(5)), dt);
-					re.setAltitude(rs.getInt(6));
-					re.setHeading(rs.getInt(7));
-					re.setAirSpeed(rs.getInt(8));
-					re.setGroundSpeed(rs.getInt(9));
-					re.setVerticalSpeed(rs.getInt(10));
-					re.setMach(rs.getDouble(11));
-					re.setFuelRemaining(rs.getInt(12));
-					re.setPhase(rs.getInt(13));
-					re.setFlags(rs.getInt(14));
-					re.setWindHeading(rs.getInt(15));
-					re.setWindSpeed(rs.getInt(16));
+					XARouteEntry re = new XARouteEntry(new GeoPosition(rs.getDouble(3), rs.getDouble(4)), rs.getTimestamp(2));
+					re.setAltitude(rs.getInt(5));
+					re.setHeading(rs.getInt(6));
+					re.setAirSpeed(rs.getInt(7));
+					re.setGroundSpeed(rs.getInt(8));
+					re.setVerticalSpeed(rs.getInt(9));
+					re.setMach(rs.getDouble(10));
+					re.setFuelRemaining(rs.getInt(11));
+					re.setPhase(rs.getInt(12));
+					re.setFlags(rs.getInt(13));
+					re.setWindHeading(rs.getInt(14));
+					re.setWindSpeed(rs.getInt(15));
 					results.add(re);
 				}
 			}
