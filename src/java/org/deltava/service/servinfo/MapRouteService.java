@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.servinfo;
 
 import java.io.*;
@@ -15,7 +15,6 @@ import org.deltava.beans.navdata.TerminalRoute;
 import org.deltava.beans.servinfo.*;
 
 import org.deltava.dao.*;
-import org.deltava.dao.file.GetServInfo;
 
 import org.deltava.service.*;
 
@@ -25,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to download ServInfo route data for Google Maps.
  * @author Luke
- * @version 5.1
+ * @version 5.4
  * @since 1.0
  */
 
@@ -45,18 +44,9 @@ public class MapRouteService extends WebService {
 		if (networkName == null)
 			networkName = SystemData.get("online.default_network");
 
-		// Get the network
+		// Get the network info
 		OnlineNetwork net = OnlineNetwork.valueOf(networkName.toUpperCase());
-
-		// Get the network info from the cache
-		NetworkInfo info = null;
-		try {
-			File f = new File(SystemData.get("online." + net.toString().toLowerCase() + ".local.info"));
-			GetServInfo sidao = new GetServInfo(new FileInputStream(f));
-			info = sidao.getInfo(net);
-		} catch (Exception e) {
-			throw error(SC_INTERNAL_SERVER_ERROR, e.getMessage());
-		}
+		NetworkInfo info = ServInfoHelper.getInfo(net);
 
 		// Get the Pilot
 		NetworkUser usr = info.get(StringUtils.parse(ctx.getParameter("id"), 0));
@@ -165,6 +155,7 @@ public class MapRouteService extends WebService {
 	 * Tells the Web Service Servlet not to log invocations of this service.
 	 * @return FALSE
 	 */
+	@Override
 	public final boolean isLogged() {
 		return false;
 	}

@@ -1,4 +1,4 @@
-// Copyright 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -12,7 +12,7 @@ import org.deltava.dao.DAOException;
 /**
  * A Data Access Object to serialize ACARS position records.
  * @author Luke
- * @version 4.2
+ * @version 5.4
  * @since 4.1
  */
 
@@ -35,13 +35,13 @@ public class SetSerializedPosition extends WriteableDAO {
 	public void archivePositions(int flightID, Collection<? extends RouteEntry> positions) throws DAOException {
 		if (positions.isEmpty()) return;
 		RouteEntry re = positions.iterator().next();
-		SerializedDataVersion ver = (re instanceof ACARSRouteEntry) ? SerializedDataVersion.ACARS : SerializedDataVersion.XACARS;
+		SerializedDataVersion ver = (re instanceof ACARSRouteEntry) ? SerializedDataVersion.ACARSv2 : SerializedDataVersion.XACARS;
 		try (DataOutputStream out = new DataOutputStream(_os)) {
 			out.writeShort(ver.ordinal());
 			out.writeInt(flightID);
 			out.writeInt(positions.size());
 			for (RouteEntry rte : positions) {
-				if (ver == SerializedDataVersion.ACARS)
+				if (ver == SerializedDataVersion.ACARSv2)
 					write((ACARSRouteEntry) rte, out);
 				else if (ver == SerializedDataVersion.XACARS)
 					write((XARouteEntry) rte, out);
@@ -81,11 +81,25 @@ public class SetSerializedPosition extends WriteableDAO {
 		out.writeShort(re.getFlaps());
 		out.writeShort(re.getFrameRate());
 		out.writeShort(re.getSimRate());
+		out.writeUTF(re.getNAV1());
+		out.writeUTF(re.getNAV2());
 		
-		// Write controller
-		Controller atc = re.getController();
+		// Write ATC1
+		Controller atc = re.getATC1();
 		if (atc != null) {
 			out.writeUTF(re.getCOM1());
+			out.writeInt(atc.getID());
+			out.writeShort(atc.getFacility().ordinal());
+			out.writeUTF(atc.getCallsign());
+			out.writeFloat((float) atc.getLatitude());
+			out.writeFloat((float) atc.getLongitude());
+		} else
+			out.writeUTF("");
+		
+		// Write ATC2
+		atc = re.getATC2();
+		if (atc != null) {
+			out.writeUTF(re.getCOM2());
 			out.writeInt(atc.getID());
 			out.writeShort(atc.getFacility().ordinal());
 			out.writeUTF(atc.getCallsign());
