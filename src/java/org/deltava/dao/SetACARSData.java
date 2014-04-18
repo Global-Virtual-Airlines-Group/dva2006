@@ -7,8 +7,6 @@ import java.util.*;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.navdata.*;
 
-import org.deltava.util.CalendarUtils;
-
 /**
  * A Data Access Object to write ACARS data. This is used outside of the ACARS server by classes that need to simulate
  * ACARS server writes without having access to the ACARS server message bean code.
@@ -126,9 +124,9 @@ public class SetACARSData extends DAO {
 	 */
 	public void writePositions(int flightID, Collection<ACARSRouteEntry> entries) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("REPLACE INTO acars.POSITIONS (FLIGHT_ID, REPORT_TIME, TIME_MS, LAT, LNG, B_ALT, "
-					+ "R_ALT, HEADING, ASPEED, GSPEED, VSPEED, N1, N2, MACH, FUEL, PHASE, SIM_RATE, FLAGS, FLAPS, PITCH, BANK, "
-					+ "FUELFLOW, WIND_HDG, WIND_SPEED, AOA, GFORCE, FRAMERATE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
+			prepareStatementWithoutLimits("REPLACE INTO acars.POSITIONS (FLIGHT_ID, REPORT_TIME, LAT, LNG, B_ALT, R_ALT, "
+					+ "HEADING, ASPEED, GSPEED, VSPEED, N1, N2, MACH, FUEL, PHASE, SIM_RATE, FLAGS, FLAPS, PITCH, BANK, "
+					+ "FUELFLOW, WIND_HDG, WIND_SPEED, AOA, GFORCE, FRAMERATE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
 					+ "?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 			// Loop through the positions
@@ -136,31 +134,30 @@ public class SetACARSData extends DAO {
 			for (Iterator<ACARSRouteEntry> i = entries.iterator(); i.hasNext();) {
 				ACARSRouteEntry re = i.next();
 				_ps.setTimestamp(2, createTimestamp(re.getDate()));
-				_ps.setInt(3, CalendarUtils.getInstance(re.getDate()).get(Calendar.MILLISECOND));
-				_ps.setDouble(4, re.getLatitude());
-				_ps.setDouble(5, re.getLongitude());
-				_ps.setInt(6, re.getAltitude());
-				_ps.setInt(7, re.getRadarAltitude());
-				_ps.setInt(8, re.getHeading());
-				_ps.setInt(9, re.getAirSpeed());
-				_ps.setInt(10, re.getGroundSpeed());
-				_ps.setInt(11, re.getVerticalSpeed());
-				_ps.setDouble(12, re.getN1());
-				_ps.setDouble(13, re.getN2());
-				_ps.setDouble(14, re.getMach());
-				_ps.setInt(15, re.getFuelRemaining());
-				_ps.setInt(16, re.getPhase().ordinal());
-				_ps.setInt(17, re.getSimRate());
-				_ps.setInt(18, re.getFlags());
-				_ps.setInt(19, re.getFlaps());
-				_ps.setDouble(20, re.getPitch());
-				_ps.setDouble(21, re.getBank());
-				_ps.setInt(22, re.getFuelFlow());
-				_ps.setInt(23, re.getWindHeading());
-				_ps.setInt(24, re.getWindSpeed());
-				_ps.setDouble(25, re.getAOA());
-				_ps.setDouble(26, re.getG());
-				_ps.setInt(27, re.getFrameRate());
+				_ps.setDouble(3, re.getLatitude());
+				_ps.setDouble(4, re.getLongitude());
+				_ps.setInt(5, re.getAltitude());
+				_ps.setInt(6, re.getRadarAltitude());
+				_ps.setInt(7, re.getHeading());
+				_ps.setInt(8, re.getAirSpeed());
+				_ps.setInt(9, re.getGroundSpeed());
+				_ps.setInt(10, re.getVerticalSpeed());
+				_ps.setDouble(11, re.getN1());
+				_ps.setDouble(12, re.getN2());
+				_ps.setDouble(13, re.getMach());
+				_ps.setInt(14, re.getFuelRemaining());
+				_ps.setInt(15, re.getPhase().ordinal());
+				_ps.setInt(16, re.getSimRate());
+				_ps.setInt(17, re.getFlags());
+				_ps.setInt(18, re.getFlaps());
+				_ps.setDouble(19, re.getPitch());
+				_ps.setDouble(20, re.getBank());
+				_ps.setInt(21, re.getFuelFlow());
+				_ps.setInt(22, re.getWindHeading());
+				_ps.setInt(23, re.getWindSpeed());
+				_ps.setDouble(24, re.getAOA());
+				_ps.setDouble(25, re.getG());
+				_ps.setInt(26, re.getFrameRate());
 				_ps.addBatch();
 			}
 

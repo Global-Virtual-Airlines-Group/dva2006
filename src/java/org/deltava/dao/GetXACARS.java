@@ -101,7 +101,7 @@ public class GetXACARS extends DAO {
 	 */
 	public Collection<XARouteEntry> getPositions(int flightID) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT * FROM xacars.POSITIONS WHERE (FLIGHT_ID=?) ORDER BY REPORT_TIME, TIME_MS");
+			prepareStatementWithoutLimits("SELECT * FROM xacars.POSITIONS WHERE (FLIGHT_ID=?) ORDER BY REPORT_TIME");
 			_ps.setInt(1, flightID);
 			
 			// Execute the query
