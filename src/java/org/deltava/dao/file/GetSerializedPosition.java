@@ -81,8 +81,10 @@ public class GetSerializedPosition extends DAO {
 			
 			// Load NAV1/NAV2
 			if (version > 1) {
-				re.setNAV1(in.readUTF());
-				re.setNAV2(in.readUTF());
+				String n1 = in.readUTF();
+				String n2 = in.readUTF();
+				re.setNAV1(StringUtils.isEmpty(n1) ? null : n1);
+				re.setNAV2(StringUtils.isEmpty(n2) ? null : n2);
 			}
 			
 			// Check for ATC1
