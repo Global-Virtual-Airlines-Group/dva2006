@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
  * @author Rahul
- * @version 5.1
+ * @version 5.4
  * @since 1.0
  */
 
@@ -34,8 +34,13 @@ public class ACARSRouteEntry extends RouteEntry {
 	private int _frameRate;
 	private int _simRate;
 	
+	private String _nav1;
+	private String _nav2;
+	
 	private String _com1;
-	private Controller _atc;
+	private String _com2;	
+	private Controller _atc1;
+	private Controller _atc2;
 
 	private static final int[] AP_FLAGS = { FLAG_AP_APR, FLAG_AP_HDG, FLAG_AP_NAV, FLAG_AP_ALT, FLAG_AP_GPS , FLAG_AP_LNAV};
 	private static final String[] AP_FLAG_NAMES = { "APR", "HDG", "NAV", "ALT", "GPS", "LNAV" };
@@ -168,6 +173,24 @@ public class ACARSRouteEntry extends RouteEntry {
 	}
 	
 	/**
+	 * Returns the NAV1 frequency.
+	 * @return the frequency
+	 * @see ACARSRouteEntry#setNAV1(String)
+	 */
+	public String getNAV1() {
+		return _nav1;
+	}
+	
+	/**
+	 * Returns the NAV2 frequency.
+	 * @return the frequency
+	 * @see ACARSRouteEntry#setNAV2(String)
+	 */
+	public String getNAV2() {
+		return _nav2;
+	}
+	
+	/**
 	 * Returns the COM1 frequency.
 	 * @return the frequency
 	 * @see ACARSRouteEntry#setCOM1(String)
@@ -177,12 +200,30 @@ public class ACARSRouteEntry extends RouteEntry {
 	}
 	
 	/**
+	 * Returns the COM2 frequency.
+	 * @return the frequency
+	 * @see ACARSRouteEntry#setCOM2(String)
+	 */
+	public String getCOM2() {
+		return _com2;
+	}
+	
+	/**
 	 * Returns the Controller on COM1. 
 	 * @return a Controller bean, or null if none
-	 * @see ACARSRouteEntry#setController(Controller)
+	 * @see ACARSRouteEntry#setATC1(Controller)
 	 */
-	public Controller getController() {
-		return _atc;
+	public Controller getATC1() {
+		return _atc1;
+	}
+	
+	/**
+	 * Returns the Controller on COM2. 
+	 * @return a Controller bean, or null if none
+	 * @see ACARSRouteEntry#setATC2(Controller)
+	 */
+	public Controller getATC2() {
+		return _atc2;
 	}
 	
 	/**
@@ -313,20 +354,56 @@ public class ACARSRouteEntry extends RouteEntry {
 	
 	/**
 	 * Sets the COM1 radio frequency.
-	 * @param com1 the frequency
+	 * @param freq the frequency
 	 * @see ACARSRouteEntry#getCOM1()
 	 */
-	public void setCOM1(String com1) {
-		_com1 = com1;
+	public void setCOM1(String freq) {
+		_com1 = freq;
+	}
+	
+	/**
+	 * Sets the COM2 radio frequency.
+	 * @param freq the frequency
+	 * @see ACARSRouteEntry#getCOM2()
+	 */
+	public void setCOM2(String freq) {
+		_com2 = freq;
+	}
+	
+	/**
+	 * Sets the NAV1 radio frequency.
+	 * @param freq the frequency
+	 * @see ACARSRouteEntry#getNAV1()
+	 */
+	public void setNAV1(String freq) {
+		_nav1 = freq;
+	}
+	
+	/**
+	 * Sets the NAV2 radio frequency.
+	 * @param freq the frequency
+	 * @see ACARSRouteEntry#getNAV2()
+	 */
+	public void setNAV2(String freq) {
+		_nav2 = freq;
 	}
 	
 	/**
 	 * Sets the controller on COM1.
 	 * @param atc a Controller bean
-	 * @see ACARSRouteEntry#getController()
+	 * @see ACARSRouteEntry#getATC1()
 	 */
-	public void setController(Controller atc) {
-		_atc = atc;
+	public void setATC1(Controller atc) {
+		_atc1 = atc;
+	}
+	
+	/**
+	 * Sets the controller on COM2.
+	 * @param atc a Controller bean
+	 * @see ACARSRouteEntry#getATC2()
+	 */
+	public void setATC2(Controller atc) {
+		_atc2 = atc;
 	}
 	
 	/**
@@ -335,6 +412,22 @@ public class ACARSRouteEntry extends RouteEntry {
 	 */
 	public boolean isWarning() {
 		return (getWarning() != null);
+	}
+	
+	private String getATCData(int idx) {
+		StringBuilder buf = new StringBuilder();
+		Controller ctr = (idx == 1) ? _atc1 : _atc2;
+		if (ctr != null) {
+			buf.append("COM");
+			buf.append(idx);
+			buf.append(": ");
+			buf.append((idx == 1) ? _com1 : _com2);
+			buf.append(" (");
+			buf.append(ctr.getCallsign());
+			buf.append(')');
+		}
+		
+		return buf.toString();
 	}
 	
 	/**
@@ -509,13 +602,9 @@ public class ACARSRouteEntry extends RouteEntry {
 			buf.append("<span class=\"ita\">THRUST REVERSERS</span><br />");
 		
 		// Add ATC info
-		if (_atc != null) {
-			buf.append("COM1: ");
-			buf.append(_com1);
-			buf.append(" (");
-			buf.append(_atc.getCallsign());
-			buf.append(')');
-		}
+		buf.append(getATCData(1));
+		if ((_atc1 != null) && (_atc2 != null)) buf.append("<br />");
+		buf.append(getATCData(2));
 
 		buf.append("</span>");
 		return buf.toString();
