@@ -1,4 +1,4 @@
-// Copyright 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -15,7 +15,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to deserialize ACARS/XACARS position records.  
  * @author Luke
- * @version 4.2
+ * @version 5.4
  * @since 4.1
  */
 
@@ -38,8 +38,8 @@ public class GetSerializedPosition extends DAO {
 		try (DataInputStream in = new DataInputStream(getStream())) {
 			SerializedDataVersion ver = SerializedDataVersion.values()[in.readShort()];
 			in.readInt(); // flight ID
-			if (ver == SerializedDataVersion.ACARS)
-				return loadACARS(in);
+			if ((ver == SerializedDataVersion.ACARS) || (ver == SerializedDataVersion.ACARSv2))
+				return loadACARS(in, ver.getVersion());
 			else if (ver == SerializedDataVersion.XACARS)
 				return loadXACARS(in);
 			
@@ -49,9 +49,9 @@ public class GetSerializedPosition extends DAO {
 		}
 	}
 	
-	private static Collection<ACARSRouteEntry> loadACARS(DataInputStream in) throws IOException {
+	private static Collection<ACARSRouteEntry> loadACARS(DataInputStream in, int version) throws IOException {
 		int size = in.readInt();
-		Collection<ACARSRouteEntry> results = new ArrayList<ACARSRouteEntry>(size);
+		Collection<ACARSRouteEntry> results = new ArrayList<ACARSRouteEntry>(size + 2);
 		for (int x = 0; x < size; x++) {
 			GeoPosition gp = new GeoPosition(in.readDouble(), in.readDouble());
 			ACARSRouteEntry re = new ACARSRouteEntry(new Date(in.readLong()), gp);
@@ -79,7 +79,13 @@ public class GetSerializedPosition extends DAO {
 			re.setFrameRate(in.readShort());
 			re.setSimRate(in.readShort());
 			
-			// Check for controller
+			// Load NAV1/NAV2
+			if (version > 1) {
+				re.setNAV1(in.readUTF());
+				re.setNAV2(in.readUTF());
+			}
+			
+			// Check for ATC1
 			String com1 = in.readUTF();
 			if (!StringUtils.isEmpty(com1)) {
 				re.setCOM1(com1);
@@ -87,7 +93,18 @@ public class GetSerializedPosition extends DAO {
 				atc.setFacility(Facility.values()[in.readShort()]);
 				atc.setCallsign(in.readUTF());
 				atc.setPosition(in.readFloat(), in.readFloat());
-				re.setController(atc);
+				re.setATC1(atc);
+			}
+			
+			// Check for ATC2
+			String com2 = (version > 1) ? in.readUTF() : null;
+			if (!StringUtils.isEmpty(com2)) {
+				re.setCOM2(com2);
+				Controller atc = new Controller(in.readInt());
+				atc.setFacility(Facility.values()[in.readShort()]);
+				atc.setCallsign(in.readUTF());
+				atc.setPosition(in.readFloat(), in.readFloat());
+				re.setATC2(atc);
 			}
 			
 			results.add(re);
@@ -98,7 +115,7 @@ public class GetSerializedPosition extends DAO {
 	
 	private static Collection<XARouteEntry> loadXACARS(DataInputStream in) throws IOException {
 		int size = in.readInt();
-		Collection<XARouteEntry> results = new ArrayList<XARouteEntry>(size);
+		Collection<XARouteEntry> results = new ArrayList<XARouteEntry>(size + 2);
 		for (int x = 0; x < size; x++) {
 			GeoPosition gp = new GeoPosition(in.readDouble(), in.readDouble());
 			XARouteEntry re = new XARouteEntry(gp, new Date(in.readLong()));

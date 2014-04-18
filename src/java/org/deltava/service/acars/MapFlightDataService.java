@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display ACARS Flight Report data.
  * @author Luke
- * @version 5.0
+ * @version 5.4
  * @since 1.0
  */
 
@@ -81,9 +81,9 @@ public class MapFlightDataService extends WebService {
 			e.setAttribute("lng", StringUtils.format(entry.getLongitude(), "##0.00000"));
 			if (entry instanceof ACARSRouteEntry) {
 				ACARSRouteEntry rte = (ACARSRouteEntry) entry;
-				if (rte.getController() != null) {
+				if (rte.getATC1() != null) {
 					Element ae = new Element("atc");
-					Controller ctr = rte.getController();
+					Controller ctr = rte.getATC1();
 					ae.setAttribute("id", ctr.getCallsign());
 					ae.setAttribute("type", String.valueOf(ctr.getFacility()));
 					if ((ctr.getFacility() != Facility.CTR) && (ctr.getFacility() != Facility.FSS)) {

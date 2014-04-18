@@ -1,4 +1,4 @@
-// Copyright 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.servinfo;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -12,7 +12,6 @@ import org.deltava.beans.OnlineNetwork;
 import org.deltava.beans.servinfo.*;
 
 import org.deltava.dao.*;
-import org.deltava.dao.file.GetServInfo;
 
 import org.deltava.service.*;
 
@@ -22,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display an online network map. 
  * @author Luke
- * @version 4.2
+ * @version 5.4
  * @since 3.2
  */
 
@@ -42,18 +41,9 @@ public class MapService extends WebService {
 		if (networkName == null)
 			networkName = SystemData.get("online.default_network");
 		
-		// Get the network and airline codes to highlight
+		// Get the network data
 		OnlineNetwork net = OnlineNetwork.valueOf(networkName.toUpperCase());
-		
-		// Get the network info from the cache
-		NetworkInfo info = null;
-		try {
-			File f = new File(SystemData.get("online." + net.toString().toLowerCase() + ".local.info"));
-			GetServInfo sidao = new GetServInfo(new FileInputStream(f));
-			info = sidao.getInfo(net);
-		} catch (Exception e) {
-			throw error(SC_INTERNAL_SERVER_ERROR, e.getMessage());
-		}
+		NetworkInfo info = ServInfoHelper.getInfo(net);
 		
 		// Populate pilot IDs if required
 		if (!info.hasPilotIDs()) {
@@ -131,6 +121,7 @@ public class MapService extends WebService {
 	 * Tells the Web Service Servlet not to log invocations of this service.
 	 * @return FALSE
 	 */
+	@Override
 	public final boolean isLogged() {
 		return false;
 	}

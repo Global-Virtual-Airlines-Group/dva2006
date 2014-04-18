@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * A Web Service to return ACARS flight data parameters.
  * @author Luke
- * @version 4.2
+ * @version 5.4
  * @since 1.0
  */
 
@@ -59,7 +59,7 @@ public class FlightDataExportService extends WebService {
 		// Write the CSV header
 		if (!info.isXACARS()) {
 			ctx.print("Date/Time,Latitude,Longitude,Altitude,Heading,Air Speed,Ground Speed,Mach,Vertical Speed,N1,N2,Bank,Pitch,Flaps,");
-			ctx.println("WindSpeed,WindHdg,Visibility,FuelFlow,Fuel,Gs,AOA,NAV,HDG,APR,ALT,AT,FrameRate,COM1,ATC,WARN");
+			ctx.println("WindSpeed,WindHdg,Visibility,FuelFlow,Fuel,Gs,AOA,NAV,HDG,APR,ALT,AT,FrameRate,COM1,ATC1,COM2,ATC2,WARN");
 		} else
 			ctx.println("Date/Time,Latitude,Longitude,Altitude,Heading,Air Speed,Ground Speed,Mach,WindSpeed,WindHdg,Fuel");
 
@@ -85,7 +85,7 @@ public class FlightDataExportService extends WebService {
 		return SC_OK;
 	}
 	
-	/**
+	/*
 	 * Helper method to format an XACARS position entry.
 	 */
 	private static String format(XARouteEntry entry) {
@@ -115,7 +115,7 @@ public class FlightDataExportService extends WebService {
 		return buf.toString();
 	}
 
-	/**
+	/*
 	 * Helper method to format an ACARS position entry.
 	 */
 	private static String format(ACARSRouteEntry entry) {
@@ -173,10 +173,18 @@ public class FlightDataExportService extends WebService {
 		buf.append(',');
 		buf.append(String.valueOf(entry.getFrameRate()));
 		buf.append(',');
-		if (entry.getController() != null) {
+		if (entry.getATC1() != null) {
 			buf.append(entry.getCOM1());
 			buf.append(',');
-			buf.append(entry.getController().getCallsign());
+			buf.append(entry.getATC1().getCallsign());
+			buf.append(',');
+		} else
+			buf.append(",,");
+		
+		if (entry.getATC2() != null) {
+			buf.append(entry.getCOM2());
+			buf.append(',');
+			buf.append(entry.getATC2().getCallsign());
 			buf.append(',');
 		} else
 			buf.append(",,");
