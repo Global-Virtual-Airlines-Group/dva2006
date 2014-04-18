@@ -80,8 +80,8 @@ public class GetACARSData extends DAO {
 	
 	private List<? extends RouteEntry> getTakeoffLanding(int flightID) throws DAOException {
 		try {
-			prepareStatement("SELECT REPORT_TIME, TIME_MS, LAT, LNG, B_ALT, HEADING, VSPEED FROM acars.POSITIONS WHERE "
-				+ "(FLIGHT_ID=?) AND ((FLAGS & ?) > 0) ORDER BY REPORT_TIME, TIME_MS");
+			prepareStatement("SELECT REPORT_TIME, LAT, LNG, B_ALT, HEADING, VSPEED FROM acars.POSITIONS WHERE "
+				+ "(FLIGHT_ID=?) AND ((FLAGS & ?) > 0) ORDER BY REPORT_TIME");
 			_ps.setInt(1, flightID);
 			_ps.setInt(2, FLAG_TOUCHDOWN);
 			
@@ -89,11 +89,10 @@ public class GetACARSData extends DAO {
 			List<ACARSRouteEntry> results = new ArrayList<ACARSRouteEntry>();
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
-					java.util.Date dt = new java.util.Date(rs.getTimestamp(1).getTime() + rs.getInt(2));
-					ACARSRouteEntry entry = new ACARSRouteEntry(dt, new GeoPosition(rs.getDouble(3), rs.getDouble(4)));
-					entry.setAltitude(rs.getInt(5));
-					entry.setHeading(rs.getInt(6));
-					entry.setVerticalSpeed(rs.getInt(7));
+					ACARSRouteEntry entry = new ACARSRouteEntry(rs.getTimestamp(1), new GeoPosition(rs.getDouble(2), rs.getDouble(3)));
+					entry.setAltitude(rs.getInt(4));
+					entry.setHeading(rs.getInt(5));
+					entry.setVerticalSpeed(rs.getInt(6));
 					results.add(entry);
 				}
 			}
@@ -113,7 +112,7 @@ public class GetACARSData extends DAO {
 	 */
 	public FuelUse checkRefuel(int flightID) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT FUEL, FLAGS FROM acars.POSITIONS WHERE (FLIGHT_ID=?) ORDER BY REPORT_TIME, TIME_MS");
+			prepareStatementWithoutLimits("SELECT FUEL, FLAGS FROM acars.POSITIONS WHERE (FLIGHT_ID=?) ORDER BY REPORT_TIME");
 			_ps.setInt(1, flightID);
 			
 			// Execute the query
