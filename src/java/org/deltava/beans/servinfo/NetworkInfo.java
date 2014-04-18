@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import java.util.*;
@@ -12,14 +12,14 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store aggregated network information.
  * @author Luke
- * @version 5.0
+ * @version 5.4
  * @since 1.0
  */
 
 public class NetworkInfo implements Cacheable {
 
     private final OnlineNetwork _net;
-    private int _version;
+    private int _version = 7;
     private Date _validDate;
     
     private boolean _isExpired;

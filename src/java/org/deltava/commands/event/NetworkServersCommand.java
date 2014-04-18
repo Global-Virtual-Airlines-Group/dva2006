@@ -1,7 +1,6 @@
-// Copyright 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
-import java.io.*;
 import java.util.*;
 
 import org.deltava.beans.OnlineNetwork;
@@ -10,14 +9,13 @@ import org.deltava.beans.system.IPBlock;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-import org.deltava.dao.file.*;
 
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to display VATSIM/IVAO FSD server information.
  * @author Luke
- * @version 5.0
+ * @version 5.4
  * @since 3.4
  */
 
@@ -39,14 +37,12 @@ public class NetworkServersCommand extends AbstractCommand {
 			// empty
 		}
 
+		// Get the network info
+		NetworkInfo info = ServInfoHelper.getInfo(net);
+		ctx.setAttribute("netInfo", info, REQUEST);
+		
+		// Get IP location
 		try {
-			// Get the network info
-			File f = new File(SystemData.get("online." + net.toString().toLowerCase() + ".local.info"));
-			GetServInfo sidao = new GetServInfo(new FileInputStream(f));
-			NetworkInfo info = sidao.getInfo(net); 
-			ctx.setAttribute("netInfo", info, REQUEST);
-			
-			// Get IP location
 			Map<Server, IPBlock> addrInfo = new HashMap<Server, IPBlock>();
 			GetIPLocation dao = new GetIPLocation(ctx.getConnection());
 			for (Server srv : info.getServers())
