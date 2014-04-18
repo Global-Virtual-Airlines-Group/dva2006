@@ -81,8 +81,8 @@ public class SetSerializedPosition extends WriteableDAO {
 		out.writeShort(re.getFlaps());
 		out.writeShort(re.getFrameRate());
 		out.writeShort(re.getSimRate());
-		out.writeUTF(re.getNAV1());
-		out.writeUTF(re.getNAV2());
+		out.writeUTF((re.getNAV1() == null) ? "" : re.getNAV1());
+		out.writeUTF((re.getNAV2() == null) ? "" : re.getNAV2());
 		
 		// Write ATC1
 		Controller atc = re.getATC1();
