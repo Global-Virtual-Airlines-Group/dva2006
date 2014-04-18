@@ -95,6 +95,12 @@ return true;
  <td class="data"><fmt:date fmt="d" date="${checkRide.scoredOn}" /> by ${scorer.name}</td>
 </tr>
 </c:if>
+<c:if test="${!empty checkRide.expirationDate}">
+<tr>
+ <td class="label">Currency Expires</td>
+ <td class="data"><fmt:date fmt="d" date="${checkRide.expirationDate}" /></td>
+</tr>
+</c:if>
 <tr id="crComments" style="display:none;">
  <td class="label top">Description</td>
  <td class="data top"><fmt:msg value="${checkRide.comments}" bbCode="true" /></td>

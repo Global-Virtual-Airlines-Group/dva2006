@@ -9,7 +9,7 @@ import org.deltava.beans.testing.*;
 /**
  * A Data Access Object to write Pilot Examinations and Check Rides to the database.
  * @author Luke
- * @version 5.3
+ * @version 5.4
  * @since 1.0
  */
 
@@ -64,7 +64,7 @@ public class SetExam extends DAO {
 		}
 	}
 
-	/**
+	/*
 	 * Helper method to write a Question to the database.
 	 */
 	private void write(int id, Question q) throws SQLException {
@@ -173,8 +173,8 @@ public class SetExam extends DAO {
 			// Prepare the statement, either an INSERT or an UPDATE
 			if (cr.getID() == 0) {
 				prepareStatement("INSERT INTO exams.CHECKRIDES (NAME, PILOT_ID, STATUS, EQTYPE, ACTYPE, "
-					+ "GRADED_BY, CREATED, SUBMITTED, COMMENTS, PASS, TYPE, ACADEMY, OWNER) VALUES "
-					+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+					+ "GRADED_BY, CREATED, SUBMITTED, COMMENTS, PASS, TYPE, EXPIRES, ACADEMY, OWNER) "
+					+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 				_ps.setString(1, cr.getName());
 				_ps.setInt(2, cr.getAuthorID());
 				_ps.setInt(3, cr.getStatus().ordinal());
@@ -186,18 +186,20 @@ public class SetExam extends DAO {
 				_ps.setString(9, cr.getComments());
 				_ps.setBoolean(10, cr.getPassFail());
 				_ps.setInt(11, cr.getType().ordinal());
-				_ps.setBoolean(12, cr.getAcademy());
-				_ps.setString(13, cr.getOwner().getCode());
+				_ps.setTimestamp(12, createTimestamp(cr.getExpirationDate()));
+				_ps.setBoolean(13, cr.getAcademy());
+				_ps.setString(14, cr.getOwner().getCode());
 			} else {
 				prepareStatement("UPDATE exams.CHECKRIDES SET STATUS=?, SUBMITTED=?, GRADED=?, GRADED_BY=?, "
-						+ "PASS=?, COMMENTS=? WHERE (ID=?)");
+						+ "PASS=?, COMMENTS=?, EXPIRES=? WHERE (ID=?)");
 				_ps.setInt(1, cr.getStatus().ordinal());
 				_ps.setTimestamp(2, createTimestamp(cr.getSubmittedOn()));
 				_ps.setTimestamp(3, createTimestamp(cr.getScoredOn()));
 				_ps.setInt(4, cr.getScorerID());
 				_ps.setBoolean(5, cr.getPassFail());
 				_ps.setString(6, cr.getComments());
-				_ps.setInt(7, cr.getID());
+				_ps.setTimestamp(7, createTimestamp(cr.getExpirationDate()));
+				_ps.setInt(8, cr.getID());
 			}
 
 			executeUpdate(1);
