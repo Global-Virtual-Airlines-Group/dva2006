@@ -159,7 +159,7 @@ public class TestConvertArchive extends TestCase {
 							} catch (IllegalArgumentException iae) {
 								ctr.setFacility(Facility.CTR);
 							} finally {
-								entry.setController(ctr);
+								entry.setATC1(ctr);
 							}
 						}
 						
