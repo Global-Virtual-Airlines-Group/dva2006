@@ -1,24 +1,22 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
-import java.io.*;
 import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.OnlineNetwork;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.servinfo.*;
-import org.deltava.commands.*;
 
+import org.deltava.commands.*;
 import org.deltava.dao.*;
-import org.deltava.dao.file.GetServInfo;
 
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to display the "who is online" page.
  * @author Luke
- * @version 5.0
+ * @version 5.4
  * @since 1.0
  */
 
@@ -39,14 +37,11 @@ public class FlightBoardCommand extends AbstractCommand {
 		} catch (Exception e) {
 			// empty
 		}
+		
+		// Get the network info
+		NetworkInfo info = ServInfoHelper.getInfo(network);
 
 		try {
-			// Get the network info
-			File f = new File(SystemData.get("online." + network.toString().toLowerCase() + ".local.info"));
-			GetServInfo sidao = new GetServInfo(new FileInputStream(f));
-			NetworkInfo info = sidao.getInfo(network);
-
-			// Get the connection
 			Connection con = ctx.getConnection();
 			
 			// Get the DAO and execute, and highlight our pilots
