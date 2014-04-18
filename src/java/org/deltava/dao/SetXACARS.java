@@ -1,17 +1,14 @@
-// Copyright 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
-import java.util.Calendar;
 
 import org.deltava.beans.acars.*;
-
-import org.deltava.util.CalendarUtils;
 
 /**
  * A Data Access Object for writing XACARS data to the database.
  * @author Luke
- * @version 5.1
+ * @version 5.4
  * @since 4.1
  */
 
@@ -122,18 +119,12 @@ public class SetXACARS extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(XARouteEntry pos) throws DAOException {
-		
-		// Build the timestamp
-		Calendar cld = CalendarUtils.getInstance(pos.getDate());
-		int ms = cld.get(Calendar.MILLISECOND);
-		
 		try {
-			prepareStatementWithoutLimits("INSERT INTO xacars.POSITIONS (FLIGHT_ID, REPORT_TIME, TIME_MS, LAT, LNG, "
-				+ "B_ALT, HEADING, ASPEED, GSPEED, VSPEED, MACH, FUEL, PHASE, WIND_HDG, WIND_SPEED, FLAGS, MSGTYPE) "
-				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			prepareStatementWithoutLimits("INSERT INTO xacars.POSITIONS (FLIGHT_ID, REPORT_TIME, LAT, LNG, B_ALT, "
+				+ "HEADING, ASPEED, GSPEED, VSPEED, MACH, FUEL, PHASE, WIND_HDG, WIND_SPEED, FLAGS, MSGTYPE) "
+				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setInt(1, pos.getFlightID());
-			_ps.setTimestamp(2, new Timestamp(cld.getTimeInMillis() - ms));
-			_ps.setInt(3, ms);
+			_ps.setTimestamp(2, createTimestamp(pos.getDate()));
 			_ps.setDouble(4, pos.getLatitude());
 			_ps.setDouble(5, pos.getLongitude());
 			_ps.setInt(6, pos.getAltitude());
@@ -162,9 +153,9 @@ public class SetXACARS extends DAO {
 	 */
 	public void archive(int oldID, int newID) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("REPLACE INTO acars.POSITION_XARCHIVE (SELECT ?, REPORT_TIME, TIME_MS, "
-				+ "LAT, LNG, B_ALT, HEADING, ASPEED, GSPEED, VSPEED, MACH, FUEL, PHASE, WIND_HDG, WIND_SPEED, FLAGS "
-				+ "FROM xacars.POSITIONS WHERE (FLIGHT_ID=?))");
+			prepareStatementWithoutLimits("REPLACE INTO acars.POSITION_XARCHIVE (SELECT ?, REPORT_TIME, LAT, LNG, "
+				+ "B_ALT, HEADING, ASPEED, GSPEED, VSPEED, MACH, FUEL, PHASE, WIND_HDG, WIND_SPEED, FLAGS FROM "
+				+ "xacars.POSITIONS WHERE (FLIGHT_ID=?))");
 			_ps.setInt(1, newID);
 			_ps.setInt(2, oldID);
 			executeUpdate(1);
