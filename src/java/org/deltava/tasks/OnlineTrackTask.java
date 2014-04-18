@@ -1,7 +1,6 @@
-// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
-import java.io.*;
 import java.util.*;
 import java.sql.Connection;
 
@@ -9,16 +8,14 @@ import org.deltava.beans.OnlineNetwork;
 import org.deltava.beans.servinfo.*;
 
 import org.deltava.dao.*;
-import org.deltava.dao.file.GetServInfo;
 import org.deltava.taskman.*;
 
 import org.deltava.util.system.SystemData;
 
 /**
- * A Scheduled Task to download Online Tracks via the ServInfo feed from all
- * online network
+ * A Scheduled Task to download Online Tracks via the ServInfo feed from all Online networks.
  * @author Luke
- * @version 3.6
+ * @version 5.4
  * @since 3.1
  */
 
@@ -44,19 +41,7 @@ public class OnlineTrackTask extends Task {
 			log.info("Loading " + network + " information for " + SystemData.get("airline.code"));
 			
 			// Get the network info
-			NetworkInfo info = null;
-			try {
-				File f = new File(SystemData.get("online." + network.toString().toLowerCase() + ".local.info"));
-				if (f.exists()) {
-					GetServInfo sidao = new GetServInfo(new FileInputStream(f));
-					info = sidao.getInfo(network);
-				}
-				
-				if (info == null)
-					throw new IllegalStateException("ServInfo returned no data!");
-			} catch (Exception e) {
-				log.error("Cannot load " + network + " ServInfo feed - " + e.getMessage(), e);
-			}
+			NetworkInfo info = ServInfoHelper.getInfo(network);
 			
 			// Load the network IDs
 			Map<String, Integer> networkIDs = new HashMap<String, Integer>();

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -17,7 +17,6 @@ import org.deltava.beans.schedule.Airport;
 import org.deltava.dao.*;
 
 import org.deltava.util.StringUtils;
-import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -30,7 +29,7 @@ import org.deltava.util.system.SystemData;
  * 31 planned_depairport_lat 32 planned_depairport_lon 33 planned_destairport_lat 34 planned_destairport_lon 35
  * atis_message 36 time_last_atis_received 37 time_logon 38 heading 39 QNH_iHg 40 QNH_Mb
  * @author Luke
- * @version 5.0
+ * @version 5.4
  * @since 1.0
  */
 
@@ -38,8 +37,6 @@ public class GetServInfo extends DAO {
 
 	private static final Logger log = Logger.getLogger(GetServInfo.class);
 
-	private static final Cache<NetworkInfo> _infoCache = CacheManager.get(NetworkInfo.class, "ServInfoData");
-	
 	/**
 	 * Initializes the DAO with a particular stream.
 	 * @param is the stream to use
@@ -48,7 +45,7 @@ public class GetServInfo extends DAO {
 		super(is);
 	}
 	
-	/**
+	/*
 	 * Mutable integer class.
 	 */
 	private class MutableInteger {
@@ -127,18 +124,14 @@ public class GetServInfo extends DAO {
 	 * @throws DAOException if an HTTP error occurs
 	 */
 	public NetworkInfo getInfo(OnlineNetwork network) throws DAOException {
-
-		// Get from the cache if possible
-		NetworkInfo info = _infoCache.get(network);
-		if (info != null) return info;
 		try (LineNumberReader br = getReader()) {
-			info = new NetworkInfo(network);
+			NetworkInfo info = new NetworkInfo(network);
 
 			// Initialize date formatter
 			SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
 			Map<String, MutableInteger> serverCons = new HashMap<String, MutableInteger>();
 			String iData = br.readLine();
-			while ((iData != null) && (!Thread.currentThread().isInterrupted())) {
+			while (iData != null) {
 				if ((iData.length() > 7) && (iData.charAt(0) == '!')) {
 					String sectionName = iData.substring(1, 8).toUpperCase();
 					if (log.isDebugEnabled())
@@ -305,7 +298,6 @@ public class GetServInfo extends DAO {
 					iData = br.readLine();
 			}
 
-			_infoCache.add(info);
 			return info;
 		} catch (IOException ie) {
 			throw new DAOException(ie);
