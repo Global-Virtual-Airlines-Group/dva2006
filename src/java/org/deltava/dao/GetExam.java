@@ -494,7 +494,7 @@ public class GetExam extends DAO {
 	private List<CheckRide> executeCheckride() throws SQLException {
 		List<CheckRide> results = new ArrayList<CheckRide>();
 		try (ResultSet rs = _ps.executeQuery()) {
-			boolean hasAcademy = (rs.getMetaData().getColumnCount() > 16);
+			boolean hasAcademy = (rs.getMetaData().getColumnCount() > 18);
 			while (rs.next()) {
 				CheckRide cr = new CheckRide(rs.getString(2));
 				cr.setID(rs.getInt(1));
@@ -506,15 +506,16 @@ public class GetExam extends DAO {
 				cr.setScorerID(rs.getInt(8));
 				cr.setPassFail(rs.getBoolean(9));
 				cr.setType(RideType.values()[rs.getInt(10)]);
-				cr.setComments(rs.getString(11));
-				cr.setAircraftType(rs.getString(12));
-				cr.setEquipmentType(rs.getString(13));
-				cr.setAcademy(rs.getBoolean(14));
-				cr.setOwner(SystemData.getApp(rs.getString(15)));
-				cr.setFlightID(rs.getInt(16));
-				cr.setStage(rs.getInt(17));
+				cr.setExpirationDate(rs.getTimestamp(11));
+				cr.setComments(rs.getString(12));
+				cr.setAircraftType(rs.getString(13));
+				cr.setEquipmentType(rs.getString(14));
+				cr.setAcademy(rs.getBoolean(15));
+				cr.setOwner(SystemData.getApp(rs.getString(16)));
+				cr.setFlightID(rs.getInt(17));
+				cr.setStage(rs.getInt(18));
 				if (hasAcademy)
-					cr.setCourseID(rs.getInt(18));
+					cr.setCourseID(rs.getInt(19));
 
 				results.add(cr);
 			}

@@ -1,13 +1,15 @@
 // Copyright 2005, 2006, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
+import java.util.Date;
+
 import org.deltava.beans.EquipmentType;
 import org.deltava.util.StringUtils;
 
 /**
  * A class to store Check Ride data.
  * @author Luke
- * @version 5.3
+ * @version 5.4
  * @since 1.0
  */
 
@@ -19,6 +21,7 @@ public class CheckRide extends Test {
 	
 	private String _eqType;
 	private String _acType;
+	private Date _expiryDate;
 	
 	private int _acarsID;
 	private int _courseID;
@@ -77,6 +80,15 @@ public class CheckRide extends Test {
      */
     public String getEquipmentType() {
     	return _eqType;
+    }
+    
+    /**
+     * Returns the expiration of this check ride.
+     * @return the expiry date/time, or null if never
+     * @see CheckRide#setExpirationDate(Date)
+     */
+    public Date getExpirationDate() {
+    	return _expiryDate;
     }
     
     /**
@@ -195,6 +207,15 @@ public class CheckRide extends Test {
     public void setEquipmentType(EquipmentType eq) {
     	setEquipmentType(eq.getName());
     	setStage(eq.getStage());
+    }
+    
+    /**
+     * Sets the expiration date for this Check Ride.
+     * @param dt the expiration date/time, or null if never
+     * @see CheckRide#getExpirationDate()
+     */
+    public void setExpirationDate(Date dt) {
+    	_expiryDate = dt;
     }
     
     /**
