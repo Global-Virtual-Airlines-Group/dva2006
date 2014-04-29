@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Flight Academy Certifications and Check Ride scripts. 
  * @author Luke
- * @version 5.3
+ * @version 5.4
  * @since 1.0
  */
 
@@ -90,7 +90,7 @@ public class GetAcademyCertifications extends DAO {
 				+ "ON (C.NAME=CPR.NAME) LEFT JOIN exams.CERTREQS CR ON (C.NAME=CR.CERTNAME) GROUP BY C.NAME "
 				+ "ORDER BY C.STAGE, C.NAME");
 			Collection<Certification> results = execute();
-			for (Certification c: results) {
+			for (Certification c : results) {
 				loadExams(c);
 				loadRoles(c);
 				loadAirlines(c);
@@ -98,6 +98,30 @@ public class GetAcademyCertifications extends DAO {
 			
 			return results;
 		} catch (SQLException se) { 
+			throw new DAOException(se);
+		}
+	}
+
+	/**
+	 * Loads all Flight Academy Certification profiles with at least one Graduate.
+	 * @return a Collection of Certification beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Certification> getWithGraduates() throws DAOException {
+		try {
+			prepareStatement("SELECT C.*, CPR.ABBR, COUNT(CR.SEQ) FROM exams.COURSES CS, exams.CERTS C LEFT JOIN exams.CERTPREREQ CPR "
+				+ "ON (C.NAME=CPR.NAME) LEFT JOIN exams.CERTREQS CR ON (C.NAME=CR.CERTNAME) WHERE (C.NAME=CS.CERTNAME) AND "
+				+ "(CS.STATUS=?) GROUP BY C.NAME ORDER BY C.STAGE, C.NAME;");
+			_ps.setInt(1, Status.COMPLETE.ordinal());
+			Collection<Certification> results = execute();
+			for (Certification c : results) {
+				loadExams(c);
+				loadRoles(c);
+				loadAirlines(c);
+			}
+
+			return results;
+		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 	}
