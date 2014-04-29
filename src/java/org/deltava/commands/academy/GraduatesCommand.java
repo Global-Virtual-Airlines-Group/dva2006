@@ -1,4 +1,4 @@
-// Copyright 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to list individuals who have passed Flight Academy Certifications.
  * @author Luke
- * @version 5.0
+ * @version 5.4
  * @since 3.6
  */
 
@@ -31,7 +31,7 @@ public class GraduatesCommand extends AbstractViewCommand {
 			
 			// Load Certifications
 			GetAcademyCertifications crdao = new GetAcademyCertifications(con);
-			ctx.setAttribute("certs", crdao.getAll(), REQUEST);
+			ctx.setAttribute("certs", crdao.getWithGraduates(), REQUEST);
 			
 			// Get our certification
 			Certification cert = crdao.get(ctx.getParameter("cert"));
@@ -49,7 +49,7 @@ public class GraduatesCommand extends AbstractViewCommand {
 				// Load the Pilot IDs
 				Collection<Integer> IDs = new HashSet<Integer>();
 				for (Course c : courses)
-					IDs.add(new Integer(c.getPilotID()));
+					IDs.add(Integer.valueOf(c.getPilotID()));
 				
 				// Load the Pilots
 				GetUserData uddao = new GetUserData(con);
