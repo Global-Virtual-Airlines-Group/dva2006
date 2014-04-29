@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright 2005, 2006, 2008, 2010, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved. -->
+<!-- Copyright 2005, 2006, 2008, 2010, 2011, 2012, 2013, 2014 Global Virtual Airlines Group. All Rights Reserved. -->
 <project default="deploy">
     <target name="javadoc" description="Build the Golgotha JavaDoc">
 		<mkdir dir="${java.io.tmpdir}/javadoc" />
-        <javadoc destdir="${java.io.tmpdir}/javadoc" access="package" source="1.7" use="false"
+        <javadoc destdir="${java.io.tmpdir}/javadoc" access="package" source="1.8" use="false"
     		useexternalfile="true" notree="false" nonavbar="false" noindex="false" splitindex="true" 
         	author="true" version="true" nodeprecatedlist="false" nodeprecated="false">
         	<fileset dir=".">
@@ -179,14 +179,14 @@
 		<echo message="Pre-compiling JSP files" />
 	    <jasper2 package="org.deltava" uriroot="${basedir}" verbose="0" poolingEnabled="true"
 	    	xpoweredBy="true" validateXml="false" webXmlFragment="${jspc.webXMLInc}"
-	    	compilerTargetVM="1.7" compilerSourceVM="1.7" trimSpaces="false"
+	    	compilerTargetVM="1.8" compilerSourceVM="1.8" trimSpaces="false"
 			outputDir="${java.io.tmpdir}/src/jsp" />
 		<delete file="${basedir}/WEB-INF/web.xml" />
 
 		<!-- Compile the files -->
 		<mkdir dir="${java.io.tmpdir}/build/jsp" />
 		<javac srcdir="${java.io.tmpdir}/src/jsp" destdir="${java.io.tmpdir}/build/jsp" compiler="modern"
-			debug="on" debuglevel="source" target="1.7" source="1.7" includeantruntime="false">
+			debug="on" debuglevel="source" target="1.8" source="1.8" includeantruntime="false">
 			<compilerarg value="-Xlint:deprecation,finally" />
 			<classpath refid="jspc.classpath" />
 			<include name="org/deltava/jsp/**/*.java" />
@@ -363,7 +363,7 @@
 		<!-- Compile the Java source files -->
 		<mkdir dir="${java.io.tmpdir}/build/wsdl" />
 		<javac srcdir="${java.io.tmpdir}/src/wsdl" destdir="${java.io.tmpdir}/build/wsdl"
-			debug="on" debuglevel="source" optimize="on" target="1.7" source="1.7">
+			debug="on" debuglevel="source" optimize="on" target="1.8" source="1.8">
 			<classpath refid="wsdl.classpath" />
 			<compilerarg value="-Xlint:deprecated,finally" />
 		</javac>
