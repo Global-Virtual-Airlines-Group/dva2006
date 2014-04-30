@@ -153,19 +153,20 @@ golgotha.maps.CreateButtonDiv = function(txt) {
 	return btn;
 };
 
-golgotha.maps.SelectControl = function(title, onSelect, onClear) {
+golgotha.maps.SelectControl = function(title, onSelect, onClear, ctx) {
 	var container = document.createElement('div'); 
 	var btn = golgotha.maps.CreateButtonDiv(title); 
 	container.appendChild(btn);
+	if (ctx == null) ctx = window;
 	google.maps.event.addDomListener(btn, 'click', function() {
 		if (this.isSelected) {
 			document.removeClass(btn, 'displayed');
 			try { delete btn.isSelected; } catch (err) { btn.isSelected = false; }
-			if (onClear != null) onClear();
+			if (onClear != null) onClear.call(ctx);
 		} else {
 			document.addClass(btn, 'displayed');
 			btn.isSelected = true;
-			if (onSelect != null) onSelect();
+			if (onSelect != null) onSelect.call(ctx);
 		}
 	});
 
