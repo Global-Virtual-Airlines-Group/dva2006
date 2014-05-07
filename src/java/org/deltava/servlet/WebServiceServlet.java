@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A servlet to handle Web Service data requests.
  * @author Luke
- * @version 5.0
+ * @version 5.4
  * @since 1.0
  */
 
@@ -102,15 +102,21 @@ public class WebServiceServlet extends BasicAuthServlet {
 		TaskTimer tt = new TaskTimer();
 		try {
 			rsp.setStatus(svc.execute(ctx));
-		} catch (ServiceException se) {
-			if (se.isWarning())
-				log.warn("Error executing Web Service - " + se.getMessage());
-			else
-				log.error("Error executing Web Service - " + se.getMessage(), se.getLogStackDump() ? se : null);	
+		} catch (Exception e) {
+			int resultCode = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+			if (e instanceof ServiceException) {
+				ServiceException se = (ServiceException) e;
+				resultCode = se.getCode();
+				if (se.isWarning())
+					log.warn("Error executing Web Service - " + e.getMessage());
+				else
+					log.error("Error executing Web Service - " + e.getMessage(), se.getLogStackDump() ? e : null);	
+			} else
+				log.error("Error executing " + parser.getName() + " - " + e.getMessage(), e);
 
 			try {
-				rsp.sendError(se.getCode(), se.getMessage());
-			} catch (Exception e) {
+				rsp.sendError(resultCode, e.getMessage());
+			} catch (Exception e2) {
 				// empty
 			}
 		} finally {
