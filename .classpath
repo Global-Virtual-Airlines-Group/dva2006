@@ -32,8 +32,8 @@
 	<classpathentry kind="lib" path="lib/deploy/unidataCommon-4.2.20.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/slf4j-api-1.7.5.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/slf4j-simple-1.7.5.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-1.91.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-5.1.29-bin.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-1.92.jar" sourcepath="/IPC"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
