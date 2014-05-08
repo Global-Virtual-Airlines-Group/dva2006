@@ -1,4 +1,4 @@
-// Copyright 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.xacars;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -20,7 +20,7 @@ import org.gvagroup.acars.ACARSFlags;
 /**
  * The XACARS status message Web Service. 
  * @author Luke
- * @version 4.1
+ * @version 5.4
  * @since 4.1
  */
 
@@ -77,10 +77,14 @@ public class MessageService extends XAService {
 	public int execute(ServiceContext ctx) throws ServiceException {
 
 		// Get the data and sanity check
-		int flightID = StringUtils.parse(ctx.getParameter("DATA3"), 0);
+		int flightID = StringUtils.parse(ctx.getParameter("DATA3"), -1);
 		String msgData = ctx.getParameter("DATA4");
 		if ((msgData == null) || (msgData.length() < 32)) {
 			ctx.print("0|Invalid XACARS Message");
+			return SC_OK;
+		} else if (flightID <= 1) {
+			ctx.print("0|");
+			ctx.print((flightID == 0) ? "Flight Not Started" : "Unparseable Flight ID");
 			return SC_OK;
 		}
 		

@@ -1,4 +1,4 @@
-// Copyright 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.xacars;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -15,7 +15,7 @@ import org.deltava.util.StringUtils;
 /**
  * The XACARS End Flight Service.
  * @author Luke
- * @version 4.1
+ * @version 5.4
  * @since 4.1
  */
 
@@ -30,7 +30,13 @@ public class EndFlightService extends XAService {
 	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 
-		int flightID = StringUtils.parse(ctx.getParameter("DATA3"), 0);
+		int flightID = StringUtils.parse(ctx.getParameter("DATA3"), -1);
+		if (flightID <= 1) {
+			ctx.print("0|");
+			ctx.print((flightID == 0) ? "Flight Not Started" : "Unparseable Flight ID");
+			return SC_OK;
+		}
+		
 		try {
 			Connection con = ctx.getConnection();
 			
