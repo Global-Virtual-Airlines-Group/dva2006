@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to retrieve Flight Report statistics.
  * @author Luke
- * @version 5.0
+ * @version 5.4
  * @since 2.1
  */
 
@@ -656,6 +656,7 @@ public class GetFlightReportStatistics extends DAO {
 			_ps.setInt(++param, FlightReport.ATTR_IVAO);
 			_ps.setInt(++param, FlightReport.ATTR_HISTORIC);
 			_ps.setInt(++param, FlightReport.ATTR_DISPATCH);
+			_ps.setInt(++param, FlightReport.ATTR_ONLINE_MASK);
 			_ps.setInt(++param, FlightReport.OK);
 			if (pilotID != 0)
 				_ps.setInt(++param, pilotID);
@@ -714,7 +715,8 @@ public class GetFlightReportStatistics extends DAO {
 				+ "AS HOURS, AVG(F.FLIGHT_TIME) AS AVGHOURS, AVG(DISTANCE) AS AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) "
 				+ "AS ACARSLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OVLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OILEGS, "
 				+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS HISTLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS DSPLEGS, "
-				+ "COUNT(DISTINCT F.PILOT_ID) AS PIDS FROM PIREPS F WHERE (F.STATUS=?) ";
+				+ "COUNT(DISTINCT F.PILOT_ID) AS PIDS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OLEGS FROM PIREPS F "
+				+ "WHERE (F.STATUS=?) ";
 	}
 	
 	/*
@@ -725,8 +727,8 @@ public class GetFlightReportStatistics extends DAO {
 			+ "ROUND(SUM(F.FLIGHT_TIME), 1) AS HOURS, AVG(F.FLIGHT_TIME) AS AVGHOURS, AVG(F.DISTANCE) AS "
 			+ "AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS ACARSLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OVLEGS, "
 			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OILEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS HISTLEGS, "
-			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS DSPLEGS, 1 AS PIDS FROM PILOTS P, PIREPS F WHERE (P.ID=F.PILOT_ID) "
-			+ "AND (F.STATUS=?) ";
+			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS DSPLEGS, 1 AS PIDS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OLEGS "
+			+ "FROM PILOTS P, PIREPS F WHERE (P.ID=F.PILOT_ID) AND (F.STATUS=?) ";
 	}
 	
 	/*
@@ -737,8 +739,9 @@ public class GetFlightReportStatistics extends DAO {
 				+ "ROUND(SUM(F.FLIGHT_TIME), 1) AS HOURS, AVG(F.FLIGHT_TIME) AS AVGHOURS, AVG(F.DISTANCE) AS "
 				+ "AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS ACARSLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OVLEGS, "
 				+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OILEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS HISTLEGS, "
-				+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS DSPLEGS, COUNT(DISTINCT F.PILOT_ID) AS PIDS FROM common.AIRLINES AL, "
-				+ "PIREPS F WHERE (AL.CODE=F.AIRLINE) AND (F.STATUS=?) ";
+				+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS DSPLEGS, COUNT(DISTINCT F.PILOT_ID) AS PIDS, "
+				+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OLEGS FROM common.AIRLINES AL, PIREPS F WHERE "
+				+ "(AL.CODE=F.AIRLINE) AND (F.STATUS=?) ";
 	}
 
 	/*
@@ -749,7 +752,8 @@ public class GetFlightReportStatistics extends DAO {
 				+ "ROUND(SUM(F.FLIGHT_TIME), 1) AS HOURS, AVG(F.FLIGHT_TIME) AS AVGHOURS, AVG(F.DISTANCE) AS "
 				+ "AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS ACARSLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OVLEGS, "
 				+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OILEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS HISTLEGS, "
-				+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS DSPLEGS, COUNT(DISTINCT F.PILOT_ID) AS PIDS FROM common.AIRPORTS AP, "
-				+ "PIREPS F WHERE (AP.IATA=" + apColumn + ") AND (F.STATUS=?) ";
+				+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS DSPLEGS, COUNT(DISTINCT F.PILOT_ID) AS PIDS, "
+				+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OLEGS FROM common.AIRPORTS AP, PIREPS F WHERE (AP.IATA=" 
+				+ apColumn + ") AND (F.STATUS=?) ";
 	}
 }
