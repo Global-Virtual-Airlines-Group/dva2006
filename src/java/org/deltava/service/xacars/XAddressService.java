@@ -54,6 +54,8 @@ public class XAddressService extends XAService {
 			ctx.commit();
 		} catch (IOException ie) {
 			throw error(SC_INTERNAL_SERVER_ERROR, "I/O Error", false);
+		} catch (ServiceException se) {
+			throw se;
 		} catch (Exception e) {
 			throw error(SC_INTERNAL_SERVER_ERROR, e.getMessage(), true);
 		}
