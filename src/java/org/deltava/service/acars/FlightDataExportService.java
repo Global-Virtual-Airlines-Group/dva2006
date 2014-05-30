@@ -58,14 +58,13 @@ public class FlightDataExportService extends WebService {
 
 		// Write the CSV header
 		if (!info.isXACARS()) {
-			ctx.print("Date/Time,Latitude,Longitude,Altitude,Heading,Air Speed,Ground Speed,Mach,Vertical Speed,N1,N2,Bank,Pitch,Flaps,");
-			ctx.println("WindSpeed,WindHdg,Visibility,FuelFlow,Fuel,Gs,AOA,NAV,HDG,APR,ALT,AT,FrameRate,COM1,ATC1,COM2,ATC2,WARN");
+			ctx.println("Date/Time,Latitude,Longitude,Altitude,Heading,Air Speed,Ground Speed,Mach,Vertical Speed,N1,N2,Bank,Pitch,Flaps,"
+				+ "WindSpeed,WindHdg,Visibility,FuelFlow,Fuel,Gs,AOA,NAV,HDG,APR,ALT,AT,FrameRate,NAV1,NAV2,COM1,ATC1,COM2,ATC2,WARN");
 		} else
 			ctx.println("Date/Time,Latitude,Longitude,Altitude,Heading,Air Speed,Ground Speed,Mach,WindSpeed,WindHdg,Fuel");
 
 		// Format the ACARS data
-		for (Iterator<? extends RouteEntry> i = routeData.iterator(); i.hasNext();) {
-			RouteEntry entry = i.next();
+		for (RouteEntry entry : routeData) {
 			if (entry instanceof ACARSRouteEntry)
 				ctx.println(format((ACARSRouteEntry) entry));
 			else if (entry instanceof XARouteEntry)
@@ -81,7 +80,6 @@ public class FlightDataExportService extends WebService {
 			throw error(SC_CONFLICT, "I/O Error", false);
 		}
 
-		// Write success code
 		return SC_OK;
 	}
 	
@@ -172,6 +170,10 @@ public class FlightDataExportService extends WebService {
 		
 		buf.append(',');
 		buf.append(String.valueOf(entry.getFrameRate()));
+		buf.append(',');
+		buf.append(entry.getNAV1());
+		buf.append(',');
+		buf.append(entry.getNAV2());
 		buf.append(',');
 		if (entry.getATC1() != null) {
 			buf.append(entry.getCOM1());
