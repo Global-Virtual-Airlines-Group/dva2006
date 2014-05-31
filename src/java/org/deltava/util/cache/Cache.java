@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.*;
  * An an abstract class to store common cache operations. These caches can store null
  * entries to prevent repeated uncached calls for invalid keys.
  * @author Luke
- * @version 5.0
+ * @version 5.4
  * @since 1.0
  */
 
@@ -19,8 +19,8 @@ public abstract class Cache<T extends Cacheable> {
 	private final Semaphore _ovLock = new Semaphore(1, true);
 	private int _maxSize;
 
-	private final AtomicLong _hits = new AtomicLong();
-	private final AtomicLong _gets = new AtomicLong();
+	private final LongAdder _hits = new LongAdder();
+	private final LongAdder _gets = new LongAdder();
 
 	/**
 	 * Initializes the cache.
@@ -118,7 +118,7 @@ public abstract class Cache<T extends Cacheable> {
 	 * @see Cache#getRequests()
 	 */
 	protected void hit() {
-		_hits.incrementAndGet();
+		_hits.increment();
 	}
 
 	/**
@@ -128,7 +128,7 @@ public abstract class Cache<T extends Cacheable> {
 	 * @see Cache#getRequests()
 	 */
 	protected void request() {
-		_gets.incrementAndGet();
+		_gets.increment();
 	}
 
 	/**

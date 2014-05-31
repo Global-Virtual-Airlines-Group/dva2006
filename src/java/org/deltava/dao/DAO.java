@@ -1,9 +1,9 @@
-// Copyright 2005, 2006, 2007, 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.Calendar;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.LongAdder;
 
 import org.apache.log4j.Logger;
 
@@ -12,14 +12,14 @@ import org.deltava.util.CalendarUtils;
 /**
  * A JDBC Data Access Object. DAOs are used to read and write persistent data to JDBC data sources.
  * @author Luke
- * @version 4.1
+ * @version 5.4
  * @since 1.0
  */
 
 public abstract class DAO {
 	
 	private static final Logger log = Logger.getLogger(DAO.class);
-	private static final AtomicLong _queryCount = new AtomicLong();
+	private static final LongAdder _queryCount = new LongAdder();
 
 	/**
 	 * The maximum number of rows to return.
@@ -38,7 +38,7 @@ public abstract class DAO {
 	/**
 	 * The query timeout, in seconds.
 	 */
-	protected int _queryTimeout = 40;
+	protected int _queryTimeout = 45;
 
 	/**
 	 * A prepared statement that can be used to perform SQL queries.
@@ -138,15 +138,14 @@ public abstract class DAO {
 				buf.append(String.valueOf(_queryStart));
 			}
 
-			// Prepare the statement
 			_ps = _c.prepareStatement(buf.toString());
 		} else
 			_ps = _c.prepareStatement(sql);
 
 		// Set the query timeout and fetch size
 		_ps.setQueryTimeout(_queryTimeout);
-		_ps.setFetchSize(Math.min(250, _queryMax));
-		_queryCount.incrementAndGet();
+		_ps.setFetchSize(Math.min(250, _queryMax + 10));
+		_queryCount.increment();
 	}
 
 	/**
@@ -161,7 +160,7 @@ public abstract class DAO {
 		_ps = _c.prepareStatement(sql);
 		_ps.setQueryTimeout(_queryTimeout);
 		_ps.setFetchSize(500);
-		_queryCount.incrementAndGet();
+		_queryCount.increment();
 	}
 
 	/**
