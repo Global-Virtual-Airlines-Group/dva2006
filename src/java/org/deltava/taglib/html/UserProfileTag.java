@@ -1,25 +1,26 @@
-// Copyright 2005, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import javax.servlet.jsp.JspException;
 
 import org.deltava.beans.UserData;
-
-import org.deltava.util.StringUtils;
+import org.deltava.util.system.SystemData;
 
 /**
  * A JSP Tag to display a User profile across applications.
  * @author Luke
- * @version 5.0
+ * @version 5.4
  * @since 1.0
  */
 
 public class UserProfileTag extends ElementTag {
 
 	private UserData _usrData;
+	private final String _hostName;
 
 	public UserProfileTag() {
 		super("a");
+		_hostName = SystemData.get("airline.url").replace(SystemData.get("airline.domain"), "");
 	}
 
 	/**
@@ -33,13 +34,12 @@ public class UserProfileTag extends ElementTag {
 
 		// Determine the URL
 		boolean isApplicant = "APPLICANTS".equals(ud.getTable());
-		StringBuilder urlBuf = new StringBuilder("http://www.");
+		StringBuilder urlBuf = new StringBuilder("http://");
+		urlBuf.append(_hostName);
 		urlBuf.append(ud.getDomain());
 		urlBuf.append('/');
 		urlBuf.append(isApplicant ? "applicant.do?id=" : "profile.do?id=");
-		urlBuf.append(StringUtils.formatHex(ud.getID()));
-
-		// Save the link URL
+		urlBuf.append(ud.getHexID());
 		_data.setAttribute("href", urlBuf.toString());
 	}
 
@@ -50,13 +50,12 @@ public class UserProfileTag extends ElementTag {
 	@Override
 	public int doStartTag() throws JspException {
 		super.doStartTag();
-		if (_usrData == null)
-			return EVAL_BODY_INCLUDE;
-
-		try {
-			_out.print(_data.open(true));
-		} catch (Exception e) {
-			throw new JspException(e);
+		if (_usrData != null) {
+			try {
+				_out.print(_data.open(true));
+			} catch (Exception e) {
+				throw new JspException(e);
+			}
 		}
 
 		return EVAL_BODY_INCLUDE;
@@ -68,15 +67,15 @@ public class UserProfileTag extends ElementTag {
 	 */
 	@Override
 	public int doEndTag() throws JspException {
-		if (_usrData != null) {
-			try {
+		try {
+			if (_usrData != null)
 				_out.print(_data.close());
-			} catch (Exception e) {
-				throw new JspException(e);
-			}
+		} catch (Exception e) {
+			throw new JspException(e);
+		} finally {
+			release();
 		}
 
-		release();
 		return EVAL_PAGE;
 	}
 }
