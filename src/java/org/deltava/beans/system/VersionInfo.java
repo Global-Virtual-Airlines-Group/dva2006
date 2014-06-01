@@ -13,7 +13,7 @@ public interface VersionInfo {
     public static final int MAJOR = 5;
     public static final int MINOR = 4;
     
-    public static final int BUILD = 471;
+    public static final int BUILD = 472;
     
     //public static final String BUILD_DATE="$BUILD";
     
