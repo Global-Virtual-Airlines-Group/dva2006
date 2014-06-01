@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 /**
  * A NavigationDataBean to represent a navigation aid with a tunable radio frequency.
  * @author Luke
- * @version 5.0
+ * @version 5.4
  * @since 1.0
  */
 
@@ -42,8 +42,9 @@ public abstract class NavigationFrequencyBean extends NavigationDataBean {
 	 * Returns the default Google Maps infobox text.
 	 * @return an HTML String
 	 */
+	@Override
 	public String getInfoBox() {
-		StringBuilder buf = new StringBuilder("<span class=\"mapInfoBox\">");
+		StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox\">");
 		buf.append(getHTMLTitle());
 		if (_freq != null) {
 			buf.append("Frequency: ");
@@ -52,7 +53,7 @@ public abstract class NavigationFrequencyBean extends NavigationDataBean {
 		}
 		
 		buf.append(getHTMLPosition());
-		buf.append("</span>");
+		buf.append("</div>");
 		return buf.toString();
 	}
 }

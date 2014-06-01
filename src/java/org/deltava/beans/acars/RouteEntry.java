@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
- * @version 5.1
+ * @version 5.4
  * @since 1.0
  */
 
@@ -49,6 +49,7 @@ public abstract class RouteEntry extends ACARSMapEntry implements GeospaceLocati
 	 * @return the altitude in feet MSL
 	 * @see RouteEntry#setAltitude(int)
 	 */
+	@Override
 	public int getAltitude() {
 		return _alt;
 	}
@@ -85,6 +86,7 @@ public abstract class RouteEntry extends ACARSMapEntry implements GeospaceLocati
 	 * @return the date/time of this entry
 	 * @see RouteEntry#RouteEntry(GeoLocation, Date)
 	 */
+	@Override
 	public Date getDate() {
 		return _date;
 	}
@@ -324,6 +326,7 @@ public abstract class RouteEntry extends ACARSMapEntry implements GeospaceLocati
 	 * Compares two route entries by comparing their date/times.
 	 * @see Comparable#compareTo(Object)
 	 */
+	@Override
 	public int compareTo(Object o2) {
 		RouteEntry re2 = (RouteEntry) o2;
 		return _date.compareTo(re2.getDate());
@@ -332,6 +335,7 @@ public abstract class RouteEntry extends ACARSMapEntry implements GeospaceLocati
 	/**
 	 * Return the Google Maps icon color.
 	 */
+	@Override
 	public String getIconColor() {
 		if (isFlagSet(FLAG_TOUCHDOWN))
 			return PURPLE;
@@ -347,9 +351,10 @@ public abstract class RouteEntry extends ACARSMapEntry implements GeospaceLocati
 	 * Returns the default Google Maps infobox text.
 	 * @return an HTML String
 	 */
+	@Override
 	public String getInfoBox() {
-		StringBuilder buf = new StringBuilder(144);
-		buf.append("<span class=\"mapInfoBox\">Position: <span class=\"bld\">");
+		StringBuilder buf = new StringBuilder(192);
+		buf.append("<div class=\"mapInfoBox\">Position: <span class=\"bld\">");
 		buf.append(StringUtils.format(_pos, true, GeoLocation.ALL));
 		buf.append("</span><br />Time: ");
 		buf.append(StringUtils.format(_date, "MM/dd/yyyy HH:mm:ss"));
@@ -380,7 +385,7 @@ public abstract class RouteEntry extends ACARSMapEntry implements GeospaceLocati
 			buf.append("</span>");
 		}
 		
-		buf.append("</span>");
+		buf.append("</div>");
 		return buf.toString();
 	}
 }

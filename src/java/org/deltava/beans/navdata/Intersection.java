@@ -1,10 +1,10 @@
-// Copyright 2005, 2007, 2008, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 /**
  * A bean to store Intersection data.
  * @author Luke
- * @version 5.0
+ * @version 5.4
  * @since 1.0
  */
 
@@ -25,6 +25,7 @@ public class Intersection extends NavigationDataBean {
 	 * Returns the Intersection's name. <i>NOT IMPLEMENTED</i>
 	 * @throws UnsupportedOperationException always
 	 */
+	@Override
 	public final String getName() {
 		throw new UnsupportedOperationException();
 	}
@@ -33,6 +34,7 @@ public class Intersection extends NavigationDataBean {
 	 * Updates the Intersection's name. <i>NOT IMPLEMENTED</i>
 	 * @throws UnsupportedOperationException always
 	 */
+	@Override
 	public final void setName(String name) {
 		throw new UnsupportedOperationException();
 	}
@@ -41,6 +43,7 @@ public class Intersection extends NavigationDataBean {
 	 * Return the default Google Maps icon color.
 	 * @return MapEntry#White
 	 */
+	@Override
 	public String getIconColor() {
 		return WHITE;
 	}
@@ -49,6 +52,7 @@ public class Intersection extends NavigationDataBean {
 	 * Returns the Google Earth palette code.
 	 * @return 3
 	 */
+	@Override
 	public int getPaletteCode() {
 		return 3;
 	}
@@ -57,6 +61,7 @@ public class Intersection extends NavigationDataBean {
 	 * Returns the Google Earth icon code.
 	 * @return 56
 	 */
+	@Override
 	public int getIconCode() {
 		return 61;
 	}
@@ -65,11 +70,12 @@ public class Intersection extends NavigationDataBean {
 	 * Returns the default Google Maps infobox text.
 	 * @return an HTML String
 	 */
+	@Override
 	public String getInfoBox() {
-		StringBuilder buf = new StringBuilder("<span class=\"mapInfoBox\">");
+		StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox\">");
 		buf.append(getHTMLTitle());
 		buf.append(getHTMLPosition());
-		buf.append("</span>");
+		buf.append("</div>");
 		return buf.toString();
 	}
 	

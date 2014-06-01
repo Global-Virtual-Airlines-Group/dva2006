@@ -84,7 +84,7 @@ public class PilotLocation implements MarkerMapEntry {
 	 */
 	@Override
 	public String getInfoBox() {
-		StringBuilder buf = new StringBuilder("<span class=\"mapInfoBox\"><span class=\"bld\">");
+		StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox\"><span class=\"bld\">");
 		buf.append(_usr.getName());
 		buf.append("</span> (");
 		buf.append(_usr.getPilotCode());
@@ -119,6 +119,10 @@ public class PilotLocation implements MarkerMapEntry {
 		
 		buf.append("<br />Joined on: ");
 		buf.append(StringUtils.format(_usr.getCreatedOn(), "EEEE MMMM dd, yyyy"));
+		if (_usr.getLastLogin() != null) {
+			buf.append("<br />Last login: ");
+			buf.append(StringUtils.format(_usr.getLastLogin(), "EEEE MMMM dd, yyyy"));
+		}
 		
 		// Add deletion link
 		if (_allowDelete) {
@@ -127,7 +131,7 @@ public class PilotLocation implements MarkerMapEntry {
 			buf.append(")\" class=\"small sec bld\">DELETE MARKER</a>");
 		}
 		
-		buf.append("</span>");
+		buf.append("</div>");
 		return buf.toString();
 	}
 }

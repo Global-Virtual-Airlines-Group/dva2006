@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.wx;
 
 import java.util.Date;
@@ -6,13 +6,12 @@ import java.util.Date;
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.navdata.AirportLocation;
-
 import org.deltava.util.cache.Cacheable;
 
 /**
  * A bean to store weather data for a particular location.
  * @author Luke
- * @version 5.0
+ * @version 5.4
  * @since 2.2
  */
 
@@ -96,6 +95,7 @@ public abstract class WeatherDataBean implements MarkerMapEntry, Cacheable, Comp
 	/**
 	 * Returns the latitude of this observation.
 	 */
+	@Override
 	public double getLatitude() {
 		return _pos.getLatitude();
 	}
@@ -103,6 +103,7 @@ public abstract class WeatherDataBean implements MarkerMapEntry, Cacheable, Comp
 	/**
 	 * Returns the longitude of this observation.
 	 */
+	@Override
 	public double getLongitude() {
 		return _pos.getLongitude();
 	}
@@ -146,6 +147,7 @@ public abstract class WeatherDataBean implements MarkerMapEntry, Cacheable, Comp
 		_wxData = data;
 	}
 	
+	@Override
 	public String getInfoBox() {
 		StringBuilder buf = new StringBuilder();
 		if (_pos != null) {
@@ -154,14 +156,15 @@ public abstract class WeatherDataBean implements MarkerMapEntry, Cacheable, Comp
 		}
 		
 		// Append the weather data
-		buf.append("<span class=\"mapInfoBox\"><span class=\"bld\">");
+		buf.append("<div class=\"mapInfoBox\"><span class=\"bld\">");
 		buf.append(getType());
 		buf.append(" Data</span>:<br />");
 		buf.append(getData());
-		buf.append("</span>");
+		buf.append("</div>");
 		return buf.toString();
 	}
 	
+	@Override
 	public Object cacheKey() {
 		return _pos.getCode();
 	}
@@ -169,6 +172,7 @@ public abstract class WeatherDataBean implements MarkerMapEntry, Cacheable, Comp
 	/**
 	 * Compares two beans by comparing their effectve dates, creation dates and data types.
 	 */
+	@Override
 	public int compareTo(WeatherDataBean o) {
 		int tmpResult = _obsDate.compareTo(o.getDate());
 		if (tmpResult == 0)
@@ -176,14 +180,17 @@ public abstract class WeatherDataBean implements MarkerMapEntry, Cacheable, Comp
 		return (tmpResult == 0) ? getType().compareTo(o.getType()) : tmpResult;
 	}
 	
+	@Override
 	public int hashCode() {
 		return toString().hashCode();
 	}
 	
+	@Override
 	public boolean equals(Object o) {
 		return (o instanceof WeatherDataBean) ? (compareTo((WeatherDataBean) o) == 0) : false;
 	}
 	
+	@Override
 	public String toString() {
 		StringBuilder buf = new StringBuilder(getType().toString());
 		buf.append(' ');

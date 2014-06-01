@@ -1,13 +1,13 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import org.deltava.beans.ComboAlias;
 import org.deltava.util.StringUtils;
 
 /**
- * A bean to store runway information.
+ * A bean to store Runway information.
  * @author Luke
- * @version 5.0
+ * @version 5.4
  * @since 1.0
  */
 
@@ -70,6 +70,7 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 	 * Return the default Google Maps icon color.
 	 * @return org.deltava.beans.MapEntry.YELLOW
 	 */
+	@Override
 	public String getIconColor() {
 		return YELLOW;
 	}
@@ -78,6 +79,7 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 	 * Returns the Google Earth palette code.
 	 * @return 3
 	 */
+	@Override
 	public int getPaletteCode() {
 		return 3;
 	}
@@ -86,6 +88,7 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 	 * Returns the Google Earth icon code.
 	 * @return 60
 	 */
+	@Override
 	public int getIconCode() {
 		return 60;
 	}
@@ -101,8 +104,9 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 	 * Returns the default Google Maps infobox text.
 	 * @return an HTML String
 	 */
+	@Override
 	public String getInfoBox() {
-		StringBuilder buf = new StringBuilder("<span class=\"mapInfoBox\">");
+		StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox\">");
 		buf.append(getHTMLTitle());
 		buf.append("Heading: ");
 		buf.append(StringUtils.format(_heading, "000"));
@@ -118,10 +122,11 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 
 		buf.append("<br />");
 		buf.append(getHTMLPosition());
-		buf.append("</span>");
+		buf.append("</div>");
 		return buf.toString();
 	}
 	
+	@Override
 	public String getComboName() {
 		StringBuilder buf = new StringBuilder("Runway ");
 		buf.append(getName());
@@ -133,6 +138,7 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 		return buf.toString();
 	}
 	
+	@Override
 	public String getComboAlias() {
 		StringBuilder buf = new StringBuilder(getCode());
 		buf.append(" RW");
@@ -140,10 +146,12 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 		return buf.toString();
 	}
 	
+	@Override
 	public int hashCode() {
 		return (getName() == null) ? super.hashCode() : getName().hashCode();
 	}
 	
+	@Override
 	public boolean equals(Object o) {
 		return (o instanceof Runway) && (o.hashCode() == hashCode());
 	}

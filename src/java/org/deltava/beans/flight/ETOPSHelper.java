@@ -1,4 +1,4 @@
-// Copyright 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.GeoUtils;
 /**
  * A utility class to do ETOPS validation.
  * @author Luke
- * @version 5.0
+ * @version 5.4
  * @since 4.1
  */
 
@@ -41,7 +41,7 @@ public final class ETOPSHelper {
 
 		@Override
 		public String getInfoBox() {
-			StringBuilder buf = new StringBuilder("<span class=\"mapInfoBox\">");
+			StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox\">");
 			buf.append(getHTMLTitle());
 			buf.append(getHTMLPosition());
 			if (!_closestAirports.isEmpty()) buf.append("<br />");
@@ -56,7 +56,7 @@ public final class ETOPSHelper {
 					buf.append("<br />");
 			}
 			
-			buf.append("</span>");
+			buf.append("</div>");
 			return buf.toString();
 		}
 

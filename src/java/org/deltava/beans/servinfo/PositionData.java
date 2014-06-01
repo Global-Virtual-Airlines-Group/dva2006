@@ -1,24 +1,23 @@
-// Copyright 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import java.util.Date;
 
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.*;
-
 import org.deltava.util.StringUtils;
 
 /**
  * A bean to store ServInfo data for historical purposes.
  * @author Luke
- * @version 3.4
+ * @version 5.4
  * @since 2.4
  */
 
 public class PositionData implements GeospaceLocation, MarkerMapEntry, Comparable<PositionData> {
 	
 	private GeoPosition _pos;
-	private Date _dt;
+	private final Date _dt;
 	private int _aSpeed;
 	private int _hdg;
 	
@@ -37,6 +36,7 @@ public class PositionData implements GeospaceLocation, MarkerMapEntry, Comparabl
 	/**
 	 * Returns the aircraft's altitude.
 	 */
+	@Override
 	public int getAltitude() {
 		return _pos.getAltitude();
 	}
@@ -44,6 +44,7 @@ public class PositionData implements GeospaceLocation, MarkerMapEntry, Comparabl
 	/**
 	 * Returns the aircraft's latitude.
 	 */
+	@Override
 	public double getLatitude() {
 		return _pos.getLatitude();
 	}
@@ -51,6 +52,7 @@ public class PositionData implements GeospaceLocation, MarkerMapEntry, Comparabl
 	/**
 	 * Returns the aircraft's longitude.
 	 */
+	@Override
 	public double getLongitude() {
 		return _pos.getLongitude();
 	}
@@ -102,8 +104,7 @@ public class PositionData implements GeospaceLocation, MarkerMapEntry, Comparabl
 	 * @param alt the altitude in feet MSL
 	 */
 	public void setPosition(double lat, double lng, int alt) {
-		_pos = new GeoPosition(lat, lng);
-		_pos.setAltitude(alt);
+		_pos = new GeoPosition(lat, lng, alt);
 	}
 	
 	/**
@@ -138,8 +139,9 @@ public class PositionData implements GeospaceLocation, MarkerMapEntry, Comparabl
 		_pirepID = Math.max(0, id);
 	}
 
+	@Override
 	public String getInfoBox() {
-		StringBuilder buf = new StringBuilder("<span class=\"mapInfoBox\"><span class=\"bld\">");
+		StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox\"><span class=\"bld\">");
 		buf.append(StringUtils.format(_dt, "MM/dd/yyyy HH:mm:ss"));
 		buf.append("</span><br /><br />Position: ");
 		buf.append(StringUtils.format(_pos, true, GeoLocation.ALL));
@@ -149,10 +151,11 @@ public class PositionData implements GeospaceLocation, MarkerMapEntry, Comparabl
 		buf.append(StringUtils.format(_aSpeed, "#,000"));
 		buf.append(" knots<br />Heading: ");
 		buf.append(StringUtils.format(_hdg, "000"));
-		buf.append(" degrees</span>");
+		buf.append(" degrees</div>");
 		return buf.toString();
 	}
 	
+	@Override
 	public String getIconColor() {
 		if ((_pos.getAltitude() < 10000) && (_aSpeed > 250))
 			return RED;
@@ -162,6 +165,7 @@ public class PositionData implements GeospaceLocation, MarkerMapEntry, Comparabl
 	/**
 	 * Compares two positions by comparing their date/time.
 	 */
+	@Override
 	public int compareTo(PositionData pd2) {
 		int tmpResult = _dt.compareTo(pd2._dt);
 		if (tmpResult == 0)
@@ -170,10 +174,12 @@ public class PositionData implements GeospaceLocation, MarkerMapEntry, Comparabl
 		return tmpResult;
 	}
 	
+	@Override
 	public int hashCode() {
 		return (String.valueOf(_pilotID) + _dt.toString()).hashCode(); 
 	}
 	
+	@Override
 	public boolean equals(Object o) {
 		return ((o instanceof PositionData) && (compareTo((PositionData) o) == 0));
 	}

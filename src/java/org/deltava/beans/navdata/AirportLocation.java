@@ -1,14 +1,13 @@
-// Copyright 2005, 2006, 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import org.deltava.beans.schedule.*;
-
 import org.deltava.util.StringUtils;
 
 /**
  * A class to store airport location data.
  * @author Luke
- * @version 5.0
+ * @version 5.4
  * @since 1.0
  */
 
@@ -43,6 +42,7 @@ public class AirportLocation extends NavigationDataBean implements ICAOAirport {
 	/**
 	 * Returns the Airport's ICAO code.
 	 */
+	@Override
 	public String getICAO() {
 		return getCode();
 	}
@@ -51,6 +51,7 @@ public class AirportLocation extends NavigationDataBean implements ICAOAirport {
 	 * Returns the Airport's altitude.
 	 * @return the altitude in feet above mean sea level
 	 */
+	@Override
 	public int getAltitude() {
 		return _altitude;
 	}
@@ -92,6 +93,7 @@ public class AirportLocation extends NavigationDataBean implements ICAOAirport {
 	 * Return the default Google Maps icon color.
 	 * @return MapEntry.GREEN
 	 */
+	@Override
 	public String getIconColor() {
 		return GREEN;
 	}
@@ -100,6 +102,7 @@ public class AirportLocation extends NavigationDataBean implements ICAOAirport {
 	 * Returns the Google Earth palette code.
 	 * @return 2
 	 */
+	@Override
 	public int getPaletteCode() {
 		return 2;
 	}
@@ -108,6 +111,7 @@ public class AirportLocation extends NavigationDataBean implements ICAOAirport {
 	 * Returns the Google Earth icon code.
 	 * @return 48
 	 */
+	@Override
 	public int getIconCode() {
 		return 48;
 	}
@@ -116,8 +120,9 @@ public class AirportLocation extends NavigationDataBean implements ICAOAirport {
 	 * Returns the default Google Maps infobox text.
 	 * @return an HTML String
 	 */
+	@Override
 	public String getInfoBox() {
-		StringBuilder buf = new StringBuilder("<span class=\"mapInfoBox\">");
+		StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox\">");
 		buf.append(getHTMLTitle());
 		buf.append(getHTMLPosition());
 		buf.append("Altitude: ");
@@ -129,7 +134,7 @@ public class AirportLocation extends NavigationDataBean implements ICAOAirport {
 			buf.append(" degrees");
 		}
 		
-		buf.append("</span>");
+		buf.append("</div>");
 		return buf.toString();
 	}
 }
