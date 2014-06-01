@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import org.deltava.beans.*;
@@ -9,7 +9,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store pilot locations for displaying on a Google Map.
  * @author Luke
- * @version 5.0
+ * @version 5.4
  * @since 1.0
  */
 
@@ -18,7 +18,6 @@ public class PilotLocation implements MarkerMapEntry {
 	private final Pilot _usr;
 	private final GeoLocation _position;
 	private IPBlock _addrInfo;
-	private int _minZoom;
 	private boolean _allowDelete;
 
 	/**
@@ -39,6 +38,7 @@ public class PilotLocation implements MarkerMapEntry {
 	 * @return the latitude in degrees
 	 * @see PilotLocation#getLongitude()
 	 */
+	@Override
 	public final double getLatitude() {
 		return _position.getLatitude();
 	}
@@ -48,6 +48,7 @@ public class PilotLocation implements MarkerMapEntry {
 	 * @return the longitude in degrees
 	 * @see PilotLocation#getLatitude()
 	 */
+	@Override
 	public final double getLongitude() {
 		return _position.getLongitude();
 	}
@@ -58,22 +59,6 @@ public class PilotLocation implements MarkerMapEntry {
 	 */
 	public Pilot getUser() {
 		return _usr;
-	}
-	
-	/**
-	 * Returns the minimum map zoom level to display the Pilot at.
-	 * @return the minimum zoom level
-	 */
-	public int getMinZoom() {
-		return _minZoom;
-	}
-	
-	/**
-	 * Updates the minimum map zoom level to display the Pilot at.
-	 * @param zoom the minimum zoom level
-	 */
-	public void setMinZoom(int zoom) {
-		_minZoom = Math.max(1, zoom);
 	}
 	
 	/**
@@ -88,6 +73,7 @@ public class PilotLocation implements MarkerMapEntry {
 	 * Display the Google Map icon color.
 	 * @return BLUE
 	 */
+	@Override
 	public String getIconColor() {
 		return MapEntry.BLUE;
 	}
@@ -96,6 +82,7 @@ public class PilotLocation implements MarkerMapEntry {
 	 * Returns the Google Map info box text.
 	 * @return the info box text
 	 */
+	@Override
 	public String getInfoBox() {
 		StringBuilder buf = new StringBuilder("<span class=\"mapInfoBox\"><span class=\"bld\">");
 		buf.append(_usr.getName());
