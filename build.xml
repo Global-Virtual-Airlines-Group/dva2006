@@ -10,7 +10,7 @@
         		<include name="src/java/**/*.java" />
         		<include name="../DVA ACARS/src/java/**/*.java" />
         	</fileset>
-            <link href="http://download.oracle.com/javase/7/docs/api/" />
+            <link href="http://download.oracle.com/javase/8/docs/api/" />
         	<link href="http://download.oracle.com/javaee/6/api/" />
         	<link href="http://www.jdom.org/docs/apidocs" />
         	<link href="http://logging.apache.org/log4j/1.2/apidocs/" />
@@ -23,7 +23,7 @@
    	    	</classpath>
         	
            	<doctitle><![CDATA[<h2>Golgotha API Documentation</h2>]]></doctitle>
-			<bottom><![CDATA[<i>Copyright &#169; 2004-2013 Global Virtual Airlines Group. All Rights Reserved.</i>]]></bottom>
+			<bottom><![CDATA[<i>Copyright &#169; 2004-2014 Global Virtual Airlines Group. All Rights Reserved.</i>]]></bottom>
         </javadoc>
     	
 		<!-- TAR up the JavaDoc -->
@@ -46,7 +46,7 @@
 
     	<!-- Clean out the JavaDoc -->
     	<sshexec keyfile="${javadoc.ssh.key}" username="${javadoc.ssh.user}" trust="yes"
-    		host="${javadoc.ssh.server}" timeout="25000" failonerror="no" port="${javadoc.ssh.port}"
+    		host="${javadoc.ssh.server}" timeout="37500" failonerror="no" port="${javadoc.ssh.port}"
     		command="rm -rf ${javadoc.ssh.path.javadoc}/*" />
 
     	<!-- Upload the JavaDoc archive -->
@@ -55,10 +55,10 @@
 
     	<!-- Explode the JavaDoc -->
     	<sshexec keyfile="${javadoc.ssh.key}" username="${javadoc.ssh.user}" trust="yes"
-    		host="${javadoc.ssh.server}" timeout="27500" failonerror="no" port="${javadoc.ssh.port}"
+    		host="${javadoc.ssh.server}" timeout="37500" failonerror="no" port="${javadoc.ssh.port}"
     		command="cd ${javadoc.ssh.path.javadoc} ; tar xvfj /tmp/golgotha_javadoc.tar.bz2" />
 		<sshexec keyfile="${javadoc.ssh.key}" username="${javadoc.ssh.user}" trust="yes"
-    	    host="${javadoc.ssh.server}" timeout="15000" failonerror="no" port="${javadoc.ssh.port}"
+    	    host="${javadoc.ssh.server}" timeout="12500" failonerror="no" port="${javadoc.ssh.port}"
     	    command="rm /tmp/golgotha_javadoc.tar.bz2" />
 
     	<!-- Clean out the temp folder -->
