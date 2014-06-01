@@ -1,8 +1,8 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2013, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.LongAdder;
 
 import javax.servlet.jsp.*;
 import javax.servlet.jsp.tagext.TagSupport;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP Tag to insert a JavaScript link to the Google Maps API.
  * @author Luke
- * @version 5.2
+ * @version 5.4
  * @since 1.0
  */
 
@@ -27,11 +27,11 @@ public class InsertGoogleAPITag extends TagSupport {
 	static final String API_VER_ATTR_NAME = "$googleMapAPIVersion$";
 	
 	private static final int MIN_API_VERSION = 3;
-	private static final String DEFAULT_V3_MINOR = "15";
+	private static final String DEFAULT_V3_MINOR = "17";
 	
 	private static final String V3_API_URL = "http://maps.googleapis.com/maps/api/js?sensor=false&amp;v=";
 	
-	private static final AtomicLong USAGE_COUNT = new AtomicLong();
+	private static final LongAdder USAGE_COUNT = new LongAdder();
 
 	private int _majorVersion = MIN_API_VERSION;
 	private String _minorVersion;
@@ -79,7 +79,8 @@ public class InsertGoogleAPITag extends TagSupport {
 	 */
 	@Override
 	public int doStartTag() throws JspException {
-		long value = USAGE_COUNT.incrementAndGet();
+		USAGE_COUNT.increment();
+		long value = USAGE_COUNT.sum();
 		if (value == 1)
 			pageContext.setAttribute(USAGE_ATTR_NAME, USAGE_COUNT, PageContext.APPLICATION_SCOPE);
 		
