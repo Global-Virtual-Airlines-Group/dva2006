@@ -1,10 +1,10 @@
-// Copyright 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 /**
  * A bean to store airport Gate information.
  * @author Luke
- * @version 5.1
+ * @version 5.4
  * @since 5.1
  */
 
@@ -101,10 +101,10 @@ public class Gate extends NavigationDataBean {
 	 */
 	@Override
 	public String getInfoBox() {
-		StringBuilder buf = new StringBuilder("<span class=\"mapInfoBox\">");
+		StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox\">");
 		buf.append(getHTMLTitle());
 		buf.append(getHTMLPosition());
-		buf.append("</span>");
+		buf.append("</div>");
 		return buf.toString();
 	}
 
