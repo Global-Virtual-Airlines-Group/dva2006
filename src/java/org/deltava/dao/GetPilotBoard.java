@@ -1,4 +1,4 @@
-// Copyright 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -6,11 +6,12 @@ import java.util.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.GeoPosition;
+import org.deltava.beans.stats.FuzzyPosition;
 
 /**
  * A Data Access Object to display pilot locations.
  * @author Luke
- * @version 4.1
+ * @version 5.4
  * @since 2.5
  */
 
@@ -32,12 +33,12 @@ public class GetPilotBoard extends DAO {
 	 */
 	public GeoLocation getLocation(int pilotID) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT LAT, LNG FROM PILOT_MAP WHERE (ID=?) LIMIT 1");
+			prepareStatementWithoutLimits("SELECT LAT, LNG, H FROM PILOT_MAP WHERE (ID=?) LIMIT 1");
 			_ps.setInt(1, pilotID);
 			GeoLocation gl = null;
 			try (ResultSet rs = _ps.executeQuery()) {
 				if (rs.next())
-					gl = new GeoPosition(rs.getDouble(1), rs.getDouble(2));
+					gl = new FuzzyPosition(new GeoPosition(rs.getDouble(1), rs.getDouble(2)), rs.getFloat(3));
 			}
 			
 			_ps.close();
@@ -59,7 +60,7 @@ public class GetPilotBoard extends DAO {
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
 					GeoPosition gp = new GeoPosition(rs.getDouble(2), rs.getDouble(3));
-					results.put(Integer.valueOf(rs.getInt(1)), gp);
+					results.put(Integer.valueOf(rs.getInt(1)), new FuzzyPosition(gp, rs.getFloat(4)));
 				}
 			}
 
@@ -87,7 +88,7 @@ public class GetPilotBoard extends DAO {
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
 					GeoPosition gp = new GeoPosition(rs.getDouble(2), rs.getDouble(3));
-					results.put(Integer.valueOf(rs.getInt(1)), gp);
+					results.put(Integer.valueOf(rs.getInt(1)), new FuzzyPosition(gp, rs.getFloat(4)));
 				}
 			}
 
@@ -109,7 +110,7 @@ public class GetPilotBoard extends DAO {
 			return Collections.emptyMap();
 		
 		// Build the SQL statement
-		StringBuilder buf = new StringBuilder("SELECT M.* FROM PILOT_MAP M WHERE M.ID IN (");
+		StringBuilder buf = new StringBuilder("SELECT * FROM PILOT_MAP WHERE ID IN (");
 		for (Iterator<Integer> i = ids.iterator(); i.hasNext(); ) {
 			Integer id = i.next();
 			buf.append(id.toString());
@@ -117,7 +118,7 @@ public class GetPilotBoard extends DAO {
 				buf.append(',');
 		}
 		
-		buf.append(')');
+		buf.append(") ORDER BY ID");
 		
 		try {
 			prepareStatementWithoutLimits(buf.toString());
@@ -125,7 +126,7 @@ public class GetPilotBoard extends DAO {
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
 					GeoPosition gp = new GeoPosition(rs.getDouble(2), rs.getDouble(3));
-					results.put(Integer.valueOf(rs.getInt(1)), gp);
+					results.put(Integer.valueOf(rs.getInt(1)), new FuzzyPosition(gp, rs.getFloat(4)));
 				}
 			}
 			

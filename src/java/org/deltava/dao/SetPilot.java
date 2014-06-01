@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to update Pilot profiles.
  * @author Luke
- * @version 5.2
+ * @version 5.4
  * @since 1.0
  */
 
@@ -121,7 +121,7 @@ public class SetPilot extends PilotWriteDAO {
 	 */
 	public void setLocation(int pilotID, GeoLocation loc) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("REPLACE INTO PILOT_MAP (ID, LAT, LNG) VALUES (?, ?, ?)");
+			prepareStatementWithoutLimits("REPLACE INTO PILOT_MAP (ID, LAT, LNG, H) VALUES (?, ?, ?, ((RAND() * 10) - 5))");
 			_ps.setInt(1, pilotID);
 			_ps.setDouble(2, loc.getLatitude());
 			_ps.setDouble(3, loc.getLongitude());
