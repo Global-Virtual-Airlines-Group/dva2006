@@ -5,7 +5,6 @@ import java.util.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.servinfo.Controller;
-
 import org.deltava.util.StringUtils;
 
 import static org.gvagroup.acars.ACARSFlags.*;
@@ -61,6 +60,7 @@ public class ACARSRouteEntry extends RouteEntry {
 	 * @return the altitude in feet AGL
 	 * @see ACARSRouteEntry#setRadarAltitude(int)
 	 */
+	@Override
 	public int getRadarAltitude() {
 		return _radarAlt;
 	}
@@ -410,6 +410,7 @@ public class ACARSRouteEntry extends RouteEntry {
 	 * Marks this route entry as having a notable flight parameter.
 	 * @return TRUE if the entry should be noted, otherwise FALSE
 	 */
+	@Override
 	public boolean isWarning() {
 		return (getWarning() != null);
 	}
@@ -434,39 +435,45 @@ public class ACARSRouteEntry extends RouteEntry {
 	 * Returns the warning message.
 	 * @return the warning
 	 */
+	@Override
 	public String getWarning() {
-		Collection<String> warnings = new ArrayList<String>();
+		StringBuilder buf = new StringBuilder();
 		if ((getAltitude() < 10000) && (getAirSpeed() > 250))
-			warnings.add("250 UNDER 10K");
+			buf.append("250 UNDER 10K ");
 		if ((_radarAlt < 1500) && (_vSpeed < -1500))
-			warnings.add("DESCENT RATE");
+			buf.append("DESCENT RATE ");
 		if (Math.abs(_bank) > 45)
-			warnings.add("BANK");
+			buf.append("BANK ");
 		if (Math.abs(_pitch) > 35)
-			warnings.add("PITCH");
+			buf.append("PITCH ");
 		if (Math.abs(1 - _gForce) >= 0.25)
-			warnings.add("G-FORCE");
+			buf.append("G-FORCE ");
 		if (getFuelRemaining() < 25)
-			warnings.add("NO FUEL");
+			buf.append("NO FUEL ");
 		if (isFlagSet(FLAG_STALL))
-			warnings.add("STALL");
+			buf.append("STALL ");
 		if (isFlagSet(FLAG_OVERSPEED))
-			warnings.add("OVERSPEED");
+			buf.append("OVERSPEED ");
 		if ((getAltitude() > 45000) && (getMach() < 1.05))
-			warnings.add("ALTITUDE");
+			buf.append("ALTITUDE ");
 		if (isFlagSet(FLAG_GEARDOWN) && (getAirSpeed() > 250))
-			warnings.add("GEAR SPEED");
+			buf.append("GEAR SPEED ");
 		if (!isFlagSet(FLAG_GEARDOWN) && isFlagSet(FLAG_ONGROUND))
-			warnings.add("GEAR UP");
+			buf.append("GEAR UP ");
 		if (isFlagSet(FLAG_CRASH))
-			warnings.add("CRASH");
+			buf.append("CRASH");
 		
-		return warnings.isEmpty() ? null : StringUtils.listConcat(warnings, " ");
+		if (buf.length() == 0)
+			return null;
+		
+		buf.setLength(buf.length() -1);
+		return buf.toString();
 	}
 
 	/**
 	 * Return the Google Maps icon color.
 	 */
+	@Override
 	public String getIconColor() {
 		if (isFlagSet(FLAG_TOUCHDOWN))
 			return PURPLE;
@@ -482,9 +489,10 @@ public class ACARSRouteEntry extends RouteEntry {
 	 * Returns the default Google Maps infobox text.
 	 * @return an HTML String
 	 */
+	@Override
 	public String getInfoBox() {
 		StringBuilder buf = new StringBuilder(192);
-		buf.append("<span class=\"mapInfoBox\">Position: <span class=\"bld\">");
+		buf.append("<div class=\"mapInfoBox\">Position: <span class=\"bld\">");
 		buf.append(StringUtils.format(_pos, true, GeoLocation.ALL));
 		buf.append("</span><br />Time: ");
 		buf.append(StringUtils.format(getDate(), "MM/dd/yyyy HH:mm:ss"));
@@ -606,7 +614,7 @@ public class ACARSRouteEntry extends RouteEntry {
 		if ((_atc1 != null) && (_atc2 != null)) buf.append("<br />");
 		buf.append(getATCData(2));
 
-		buf.append("</span>");
+		buf.append("</div>");
 		return buf.toString();
 	}
 }
