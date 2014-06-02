@@ -85,8 +85,20 @@ public class XInfoService extends XAService {
 			if ((fr != null) && usr.hasRating(fr.getEquipmentType())) {
 				GetAircraft adao = new GetAircraft(con);
 				Aircraft a = adao.get(fr.getEquipmentType());
-				if (a == null)
-					throw new InvalidDataException("Invalid equipment type");
+				if (a == null) {
+					Collection<Aircraft> allEQ = adao.getAircraftTypes();
+					Map<String, Aircraft> acIATA = new HashMap<String, Aircraft>();
+					for (Aircraft ac : allEQ) {
+						for (String iata : ac.getIATA())
+							acIATA.put(iata, ac);
+					}
+					
+					a = acIATA.get(fr.getEquipmentType()); 
+					if (a == null)
+						throw new InvalidDataException("Invalid equipment type - " + fr.getEquipmentType());
+					
+					log.info("Resolved " + fr.getEquipmentType() + " to " + a.getName());
+				}
 				
 				// Get load factor and passengers
 				EconomyInfo eInfo = (EconomyInfo) SystemData.getObject(SystemData.ECON_DATA);
