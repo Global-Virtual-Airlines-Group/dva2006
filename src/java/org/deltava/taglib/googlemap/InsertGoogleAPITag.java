@@ -29,7 +29,7 @@ public class InsertGoogleAPITag extends TagSupport {
 	private static final int MIN_API_VERSION = 3;
 	private static final String DEFAULT_V3_MINOR = "17";
 	
-	private static final String V3_API_URL = "http://maps.googleapis.com/maps/api/js?sensor=false&amp;v=";
+	private static final String V3_API_URL = "http://maps.googleapis.com/maps/api/js?v=";
 	
 	private static final LongAdder USAGE_COUNT = new LongAdder();
 
