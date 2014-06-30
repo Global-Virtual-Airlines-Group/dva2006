@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2013, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to handle writing Water Cooler message threads and posts.
  * @author Luke
- * @version 5.2
+ * @version 5.4
  * @since 1.0
  */
 
@@ -154,12 +154,21 @@ public class SetCoolerMessage extends DAO {
 	/**
 	 * Marks a Message Thread as being viewed.
 	 * @param id the Message Thread ID
+	 * @param userID the user ID
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void viewThread(int id) throws DAOException {
+	public void viewThread(int id, int userID) throws DAOException {
 		try {
 			startTransaction();
 			lockThreadRow(id);
+			
+			// Set the last read
+			if (userID != 0) {
+				prepareStatementWithoutLimits("REPLACE INTO common.COOLER_LASTREAD VALUES (?, ?, NOW())");
+				_ps.setInt(1, id);
+				_ps.setInt(2, userID);
+				executeUpdate(0);
+			}
 			
 			// Update the row
 			prepareStatementWithoutLimits("UPDATE common.COOLER_THREADS SET STICKY=IF(STICKY < NOW(), NULL, STICKY), "
@@ -172,7 +181,7 @@ public class SetCoolerMessage extends DAO {
 			throw new DAOException(se);
 		}
 	}
-
+	
 	/**
 	 * Changes the Channel for a Message Thread.
 	 * @param threadID the Message Thread ID
