@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -19,9 +19,9 @@ import org.deltava.security.command.GalleryAccessControl;
 import org.deltava.util.system.SystemData;
 
 /**
- * A web site command for viewing Water Cooler discussion threads.
+ * A Web Site Command for viewing Water Cooler discussion threads.
  * @author Luke
- * @version 5.0
+ * @version 5.4
  * @since 1.0
  */
 
@@ -213,7 +213,7 @@ public class ThreadCommand extends AbstractCommand {
 
 			// Mark the thread as being read
 			SetCoolerMessage wdao = new SetCoolerMessage(con);
-			wdao.viewThread(mt.getID());
+			wdao.viewThread(mt.getID(), ctx.isAuthenticated() ? ctx.getUser().getID() : 0);
 			mt.view();
 
 			// Save all channels in the thread for the move combobox
