@@ -11,15 +11,11 @@ golgotha.maps.ovLayers = [];
 golgotha.maps.styles = {};
 golgotha.maps.util = {isIE:golgotha.util.isIE, oldIE:golgotha.util.oldIE};
 golgotha.maps.util.isIE10 = (golgotha.maps.util.isIE && (navigator.appVersion.indexOf('IE 10.0') > 0));
+golgotha.maps.util.isIE11 = ((navigator.appname == 'Netscape') && (navigator.userAgent.contains('Trident/')));
 golgotha.maps.util.isIOS = (!golgotha.maps.util.isIE && ((navigator.platform == 'iPad') || (navigator.platform == 'iPhone')));
 
 // Cross-browser opacity set
-golgotha.maps.setOpacity = function(e, tx) { 
-	if (golgotha.maps.util.isIE && (!golgotha.maps.util.isIE10))
-		e.style.filter = 'alpha(opacity=' + (tx*100) + ')';
-	else
-		e.style.opacity = tx;
-};
+golgotha.maps.setOpacity = (golgotha.maps.util.isIE && (!golgotha.maps.util.isIE10) && (!golgotha.maps.util.isIE11)) ? function(e, tx) { e.style.filter = 'alpha(opacity=' + (tx*100) + ')'; } : function(e, tx) { e.style.opacity = tx; };
 
 // Calculate GMT offset in seconds from local
 golgotha.maps.GMTOffset = new Date().getTimezoneOffset() * 60000;
@@ -28,7 +24,7 @@ golgotha.maps.GMTOffset = new Date().getTimezoneOffset() * 60000;
 golgotha.maps.miles2Meter = function(mi) { return mi * 1609.344 };
 
 // Set best text color for map types
-golgotha.maps.TEXT_COLOR = {roadmap:'#002010', satellite:'#efefef', terrain:'#002010', hybrid:'#efefef', acars_trackmap:'#efefef'};
+golgotha.maps.TEXT_COLOR = {roadmap:'#002010', satellite:'#efefef', terrain:'#002010', hybrid:'#efefef', acars_trackmap:'#dfefef'};
 golgotha.maps.updateMapText = function () {
 	var newColor = golgotha.maps.TEXT_COLOR[this.getMapTypeId()];
 	var elements = getElementsByClass('mapTextLabel');
