@@ -1,24 +1,24 @@
-// Copyright 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.acars;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.LongAdder;
 import java.util.concurrent.locks.*;
 
-import org.deltava.util.tile.TileAddress;
+import org.deltava.util.tile.*;
 
 public class SparseGlobalTile {
 	
 	private final int _zoom;
 	
-	private final AtomicLong _hits = new AtomicLong();
-	private final AtomicLong _reqs = new AtomicLong();
+	private final LongAdder _hits = new LongAdder();
+	private final LongAdder _reqs = new LongAdder();
 	
 	private final ReentrantReadWriteLock _rw = new ReentrantReadWriteLock();
 	private final Lock _r = _rw.readLock();
 	private final Lock _w = _rw.writeLock();
 	
-	final TileL1Cache _l1;
+	private final TileL1Cache _l1;
 	final Map<TileAddress, TileData> _l2 = new LinkedHashMap<TileAddress, TileData>();
 
 	private class TileL1Cache extends LinkedHashMap<TileAddress, TileData> {
@@ -51,7 +51,6 @@ public class SparseGlobalTile {
 	public SparseGlobalTile(int zoom, int size) {
 		_zoom = zoom;
 		_l1 = new TileL1Cache(size);
-		
 	}
 
 	public int getZoom() {
@@ -130,12 +129,12 @@ public class SparseGlobalTile {
 	
 	TileData getTile(TileAddress addr, boolean makeNew) {
 		
-		_reqs.incrementAndGet();
+		_reqs.increment();
 		try {
 			_r.lock();
 			TileData td = _l1.get(addr);
 			if (td != null) {
-				_hits.incrementAndGet();
+				_hits.increment();
 				return td; 
 			}
 			
@@ -156,7 +155,7 @@ public class SparseGlobalTile {
 				}
 			} else if (makeNew) {
 				td = new TileData();
-				_hits.incrementAndGet();
+				_hits.increment();
 				try {
 					_r.unlock();
 					_w.lock();
