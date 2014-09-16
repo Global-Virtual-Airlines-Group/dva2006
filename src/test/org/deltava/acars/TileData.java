@@ -1,7 +1,6 @@
 package org.deltava.acars;
 
 import java.io.*;
-import java.util.zip.*;
 
 import org.apache.log4j.Logger;
 
@@ -34,11 +33,9 @@ class TileData {
 		if (_file == null) throw new IllegalStateException("Not Saved");
 		try {
 			_img = new RawTile();
-			try (BufferedInputStream bi = new BufferedInputStream(new FileInputStream(_file))) {
-				try (GZIPInputStream gi = new GZIPInputStream(bi)) {
-					try (ObjectInput oi = new ObjectInputStream(gi)) {
-						_img.readExternal(oi);
-					}
+			try (BufferedInputStream bi = new BufferedInputStream(new FileInputStream(_file), 65536)) {
+				try (ObjectInput oi = new ObjectInputStream(bi)) {
+					_img.readExternal(oi);
 				}
 			}
 			
@@ -56,11 +53,9 @@ class TileData {
 		intPath.mkdir();
 		try {
 			_file = File.createTempFile("img", ".bmp", intPath);
-			try (BufferedOutputStream bo = new BufferedOutputStream(new FileOutputStream(_file))) {
-				try (GZIPOutputStream go = new GZIPOutputStream(bo)) {
-					try (ObjectOutput oo = new ObjectOutputStream(go)) {
-						_img.writeExternal(oo);
-					}
+			try (BufferedOutputStream bo = new BufferedOutputStream(new FileOutputStream(_file), 65536)) {
+				try (ObjectOutput oo = new ObjectOutputStream(bo)) {
+					_img.writeExternal(oo);
 				}
 			}
 			
