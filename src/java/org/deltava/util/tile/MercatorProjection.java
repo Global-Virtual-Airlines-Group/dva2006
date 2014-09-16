@@ -1,4 +1,4 @@
-// Copyright 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.tile;
 
 import java.awt.Point;
@@ -10,22 +10,22 @@ import org.deltava.beans.schedule.GeoPosition;
  * A utility class for translating canvas coordinates to latitude and longitude using the Microsoft Virtual
  * Earth and Google Maps modified Mercator projection.
  * @author Luke
- * @version 5.0
+ * @version 5.4
  * @since 5.0
  */
 
 public class MercatorProjection implements Projection {
 	
 	public static final double MAX_LATITUDE = 85.051111;
-	public static final double MIN_LATITUDE = -84.90111;
+	public static final double MIN_LATITUDE = -MAX_LATITUDE;
 	
 	private static final double maxY = toMercator(MAX_LATITUDE);
 	private static final double minY = toMercator(MIN_LATITUDE);
 	private static final double dLat = maxY - minY;
 	
 	private final int _zoomLevel;
-	private final double _xScale;
-	private final double _yScale;
+	private final double _xScale; // width of entire map in pixels
+	private final double _yScale; // height of entire map in pixels
 
 	/**
 	 * Initializes the projection.
@@ -34,8 +34,8 @@ public class MercatorProjection implements Projection {
 	public MercatorProjection(int zoom) {
 		super();
 		_zoomLevel = Math.max(1,  zoom);
-		_xScale = (1 << _zoomLevel) * Tile.WIDTH;
-		_yScale = (1 << _zoomLevel) * Tile.HEIGHT;
+		_xScale = (1 << _zoomLevel) << 8;
+		_yScale = (1 << _zoomLevel) << 8;
 	}
 
 	/**
@@ -53,7 +53,7 @@ public class MercatorProjection implements Projection {
 	 */
 	public TileAddress getAddress(GeoLocation loc) {
 		Point p = getPixelAddress(loc);
-		return new TileAddress(p.x / Tile.WIDTH, p.y / Tile.HEIGHT, _zoomLevel);
+		return new TileAddress(p.x >> 8, p.y >> 8, _zoomLevel);
 	}
 	
     private static double fromMercator(double lat) {   
@@ -74,21 +74,18 @@ public class MercatorProjection implements Projection {
 	 * @return a Point with the pixel coordinates
 	 */
 	public Point getPixelAddress(GeoLocation loc) {
-		// Bounds-check the lat
-		double lat = Math.max(Math.min(loc.getLatitude(), MAX_LATITUDE), MIN_LATITUDE);
+		if ((loc.getLatitude() > MAX_LATITUDE) || (loc.getLatitude() < MIN_LATITUDE)) return null; 
 		
 		// Convert latitude to mercator
-		double pmY = toMercator(lat);
+		double pmY = toMercator(loc.getLatitude());
 		double pY = (pmY - minY) / dLat;
 		
-		double pX = ((loc.getLongitude() * -1) - 180) / 360;
+		double pX = (-loc.getLongitude() - 180) / 360;
 		int x = (int) StrictMath.floor(_xScale - (pX * _xScale));
 		int y = (int) StrictMath.floor(_yScale - (pY * _yScale));
-		if (y == _yScale)
-			y--;
 		
 		// Normalize
-		while (x >= _xScale)
+		while (x > _xScale)
 			x -= _xScale;
 		while (y > _yScale)
 			y -= _yScale;
@@ -105,7 +102,7 @@ public class MercatorProjection implements Projection {
 	public GeoLocation getGeoPosition(int x, int y) {
         double px = (_xScale - x ) / _xScale;
         double py = (_yScale - y ) / _yScale;
-        double lon = (180 + ( px * 360 )) * -1;
+        double lon = -(180 + (px * 360));
         while (lon < -180)
 			lon += 360;
         
