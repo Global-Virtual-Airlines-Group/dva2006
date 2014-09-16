@@ -1,4 +1,4 @@
-// Copyright 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2013, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.*;
@@ -20,7 +20,7 @@ import org.gvagroup.jdbc.*;
 /**
  * A servlet to display ACARS track tiles.
  * @author Luke
- * @version 5.2
+ * @version 5.4
  * @since 5.0
  */
 
@@ -49,7 +49,7 @@ public class TrackTileServlet extends TileServlet {
 		// Parse the URL and get the tile address
 		TileAddress addr = getTileAddress(req.getRequestURI(), false);
 		byte[] data = EMPTY;
-		if (addr.getLevel() < 13) {
+		if (addr.getLevel() < 14) {
 		
 			// Get the connection pool
 			ConnectionPool jdbcPool = getConnectionPool();
