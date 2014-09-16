@@ -6,7 +6,6 @@ import java.util.*;
 import java.util.concurrent.BlockingQueue;
 
 import org.apache.log4j.Logger;
-
 import org.deltava.beans.acars.RouteEntry;
 import org.deltava.dao.file.GetSerializedPosition;
 
@@ -47,31 +46,37 @@ class ReadWorker implements Runnable, Comparable<ReadWorker> {
 					ps.setInt(1, id.intValue());
 					try (ResultSet rs = ps.executeQuery()) {
 						if (rs.next()) {
-							InputStream in = new ByteArrayInputStream(rs.getBytes(1));
-							GetSerializedPosition psdao = new GetSerializedPosition(in);
-							Collection<? extends RouteEntry> entries = psdao.read();
-							for (RouteEntry re : entries) {
-								java.awt.Point pt = _filter.filter(re);
-								if (pt != null)
-									_gt.plot(pt.x, pt.y);
+							try (InputStream in = new ByteArrayInputStream(rs.getBytes(1))) {
+								GetSerializedPosition psdao = new GetSerializedPosition(in);
+								Collection<? extends RouteEntry> entries = psdao.read();
+								for (RouteEntry re : entries) {
+									java.awt.Point pt = _filter.filter(re);
+									if (pt != null)
+										_gt.plot(pt.x, pt.y);
+								}
 							}
 						}
 					}
 
 					cnt++;
-					if ((id.intValue() % 2500) == 0)
+					if ((cnt % 250) == 0)
 						log.info("Processed " + id);
 					
 					id = _work.poll();
 				}
 			}
 			
-			_c.close();
+			
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 			throw new RuntimeException(e);
 		} finally {
 			log.info("Completed - " + cnt + " flights");
+			try {
+				_c.close();
+			} catch (Exception e) { 
+				// empty
+			}
 		}
 	}
 }
