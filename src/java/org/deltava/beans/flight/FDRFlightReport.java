@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A bean to store FDR (ACARS/XACARS) submitted flight reports. 
  * @author Luke
- * @version 4.1
+ * @version 5.4
  * @since 1.0
  */
 
@@ -458,7 +458,7 @@ public abstract class FDRFlightReport extends FlightReport {
      * @see FDRFlightReport#getLandingVSpeed()
      */
     public void setLandingVSpeed(int s) {
-        _landingVspeed = (s > 0) ? s * -1 : s;
+        _landingVspeed = (s == 0) ? -1 : ((s > 0) ? -s : s);
     }
     
     /**
