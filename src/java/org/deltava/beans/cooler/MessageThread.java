@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.cooler;
 
 import java.util.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.*;
 /**
  * A class to store Water Cooler message threads.
  * @author Luke
- * @version 1.0
+ * @version 5.4
  * @since 1.0
  */
 
@@ -82,6 +82,21 @@ public class MessageThread extends DatabaseBean implements AuthoredBean, ViewEnt
 	 */
 	public int getLastUpdateID() {
 		return _lastUpdateID;
+	}
+	
+	/**
+	 * Returns the post ID of the first post created after a particular date/time.
+	 * @param dt the date/time to check
+	 * @return the post ID, or MAX_INTEGER if none
+	 */
+	public int getNextPostID(Date dt) {
+		if ((_posts == null) || (dt == null)) return Integer.MAX_VALUE;
+		for (Message msg : _posts) {
+			if (msg.getCreatedOn().after(dt))
+				return msg.getID();
+		}
+		
+		return Integer.MAX_VALUE;
 	}
 
 	/**

@@ -26,7 +26,6 @@
  <content:subitem><el:cmd url="channel" linkID="ALL">All Posts</el:cmd></content:subitem>
 <content:filter roles="Pilot">
  <content:subitem><el:cmd url="newthreads">New Threads</el:cmd></content:subitem>
- <content:subitem><el:cmd url="clearunread">Clear Unread</el:cmd></content:subitem>
  <content:subitem><el:cmd url="mythreads">My Threads</el:cmd></content:subitem>
  <content:subitem><el:cmd url="notifythreads">My Watched Threads</el:cmd></content:subitem>
  <content:subitem><el:cmd url="channel" linkID="SSHOTS">Screen Shots</el:cmd></content:subitem>

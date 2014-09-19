@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle new Water Cooler message threads.
  * @author Luke
- * @version 5.0
+ * @version 5.4
  * @since 1.0
  */
 
@@ -252,17 +252,6 @@ public class ThreadPostCommand extends AbstractCommand {
 					i.remove();
 			}
 			
-			// Mark this thread as read
-			@SuppressWarnings("unchecked")
-			Map<Integer, Date> threadIDs = (Map<Integer, Date>) ctx.getSession().getAttribute(CommandContext.THREADREAD_ATTR_NAME);
-			if (threadIDs == null) {
-				threadIDs = new HashMap<Integer, Date>();
-				ctx.setAttribute(CommandContext.THREADREAD_ATTR_NAME, threadIDs, SESSION);
-			}
-
-			// Add thread and save
-			threadIDs.put(Integer.valueOf(mt.getID()), new Date());
-
 			// Save the thread in the request
 			ctx.setAttribute("thread", mt, REQUEST);
 			ctx.setAttribute("isPosted", Boolean.TRUE, REQUEST);
