@@ -106,6 +106,12 @@ public class SetCoolerMessage extends DAO {
 			t.setID(getNewID());
 			msg.setThreadID(t.getID());
 			
+			// Mark thread as read by user
+			prepareStatementWithoutLimits("INSERT INTO common.COOLER_LASTREAD (ID, AUTHOR_ID, LASTREAD) VALUES (?, ?, NOW())");
+			_ps.setInt(1, t.getID());
+			_ps.setInt(2, t.getAuthorID());
+			executeUpdate(1);
+			
 			// If we have poll options, write them to the database
 			if (!t.getOptions().isEmpty()) {
 				prepareStatementWithoutLimits("INSERT INTO common.COOLER_POLLS (ID, OPT_ID, NAME) VALUES (?, ?, ?)");
@@ -152,25 +158,31 @@ public class SetCoolerMessage extends DAO {
 	}
 
 	/**
-	 * Marks a Message Thread as being viewed.
-	 * @param id the Message Thread ID
-	 * @param userID the user ID
+	 * Marks a Message Thread as being read by a particular user.
+	 * @param threadID the Message Thread ID
+	 * @param userID the User dataase ID
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void viewThread(int id, int userID) throws DAOException {
+	public void markRead(int threadID, int userID) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("REPLACE INTO common.COOLER_LASTREAD VALUES (?, ?, NOW())");
+			_ps.setInt(1, threadID);
+			_ps.setInt(2, userID);
+			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+
+	/**
+	 * Marks a Message Thread as being viewed.
+	 * @param id the Message Thread ID
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void viewThread(int id) throws DAOException {
 		try {
 			startTransaction();
 			lockThreadRow(id);
-			
-			// Set the last read
-			if (userID != 0) {
-				prepareStatementWithoutLimits("REPLACE INTO common.COOLER_LASTREAD VALUES (?, ?, NOW())");
-				_ps.setInt(1, id);
-				_ps.setInt(2, userID);
-				executeUpdate(0);
-			}
-			
-			// Update the row
 			prepareStatementWithoutLimits("UPDATE common.COOLER_THREADS SET STICKY=IF(STICKY < NOW(), NULL, STICKY), "
 					+ "VIEWS=VIEWS+1, SORTDATE=IFNULL(STICKY, LASTUPDATE) WHERE (ID=?) LIMIT 1");
 			_ps.setInt(1, id);

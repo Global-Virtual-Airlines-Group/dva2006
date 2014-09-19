@@ -63,6 +63,13 @@ public class ThreadCommand extends AbstractCommand {
 			mt = tdao.getThread(ctx.getID(), true);
 			if (mt == null)
 				throw notFoundException("Unknown Message Thread - " + ctx.getID());
+			
+			// Get lastRead
+			if (ctx.isAuthenticated()) {
+				GetCoolerLastRead lrdao = new GetCoolerLastRead(con);
+				Date lastRead = lrdao.getLastRead(mt.getID(), ctx.getUser().getID());
+				ctx.setAttribute("lastReadPostID", Integer.valueOf(mt.getNextPostID(lastRead)), REQUEST);
+			}
 
 			// Get the channel profile
 			GetCoolerChannels cdao = new GetCoolerChannels(con);
@@ -119,10 +126,8 @@ public class ThreadCommand extends AbstractCommand {
 			
 			// Get the locations of the pilots writing updates
 			Collection<Integer> updateIDs = new HashSet<Integer>();
-			for (Iterator<ThreadUpdate> ui = mt.getUpdates().iterator(); ui.hasNext(); ) {
-				ThreadUpdate upd = ui.next();
-				updateIDs.add(new Integer(upd.getAuthorID()));
-			}
+			for (ThreadUpdate upd : mt.getUpdates())
+				updateIDs.add(Integer.valueOf(upd.getAuthorID()));
 
 			// Get the location of all the Pilots reporting/updating/posting in the thread and load all cross
 			updateIDs.addAll(mt.getReportIDs());
@@ -147,9 +152,7 @@ public class ThreadCommand extends AbstractCommand {
 			GetAccomplishment accdao = new GetAccomplishment(con);
 			Map<Integer, Person> users = new HashMap<Integer, Person>();
 			Map<Integer, Collection<? extends Accomplishment>> accs = new HashMap<Integer, Collection<? extends Accomplishment>>();
-			for (Iterator<String> i = udm.getTableNames().iterator(); i.hasNext();) {
-				String dbTableName = i.next();
-
+			for (String dbTableName : udm.getTableNames()) {
 				// Get the pilots/applicants from each table and apply their online totals and certifications
 				if (UserData.isPilotTable(dbTableName)) {
 					Map<Integer, Pilot> pilots = pdao.getByID(udm.getByTable(dbTableName), dbTableName);
@@ -157,24 +160,20 @@ public class ThreadCommand extends AbstractCommand {
 					dspstdao.getDispatchTotals(pilots);
 					users.putAll(pilots);
 					accs.putAll(accdao.get(pilots, dbTableName));
-				} else {
-					Map<Integer, Applicant> applicants = adao.getByID(udm.getByTable(dbTableName), dbTableName);
-					users.putAll(applicants);
-				}
+				} else
+					users.putAll(adao.getByID(udm.getByTable(dbTableName), dbTableName));
 			}
 			
 			// Get Flight Academy certifications 
 			Map<Integer, Collection<String>> certs = acdao.getCertifications(udm.getAllIDs());
-			for (Iterator<Integer> ci = certs.keySet().iterator(); ci.hasNext(); ) {
-				Integer id = ci.next();
+			for (Integer id : certs.keySet()) {
 				Person cp = users.get(id);
 				if ((cp != null) && (cp instanceof Pilot))
 					((Pilot) cp).addCertifications(certs.get(id));
 			}
 			
 			// Aggregate totals for pilots
-			for (Iterator<Person> i = users.values().iterator(); i.hasNext(); ) {
-				Person p = i.next();
+			for (Person p : users.values()) {
 				if (p instanceof Pilot) {
 					Collection<Integer> ids = udm.get(p.getID()).getIDs();
 					Pilot usr = (Pilot) p;
@@ -212,9 +211,13 @@ public class ThreadCommand extends AbstractCommand {
 				ctx.setAttribute("doNotify", Boolean.valueOf(nt.contains(ctx.getUser().getID())), REQUEST);
 
 			// Mark the thread as being read
+			ctx.startTX(); mt.view();
 			SetCoolerMessage wdao = new SetCoolerMessage(con);
-			wdao.viewThread(mt.getID(), ctx.isAuthenticated() ? ctx.getUser().getID() : 0);
-			mt.view();
+			wdao.viewThread(mt.getID());
+			if (ctx.isAuthenticated())
+				wdao.markRead(mt.getID(), ctx.getUser().getID());
+			
+			ctx.commitTX();
 
 			// Save all channels in the thread for the move combobox
 			if (ctx.isUserInRole("Moderator") || ctx.isUserInRole("HR")) {
@@ -244,53 +247,10 @@ public class ThreadCommand extends AbstractCommand {
 			ctx.setAttribute("pilots", users, REQUEST);
 			ctx.setAttribute("accomplishments", accs, REQUEST);
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
-		}
-		
-		// Mark this thread as read
-		if (ctx.isAuthenticated() && ctx.isUserInRole("Pilot")) {
-			@SuppressWarnings("unchecked")
-			Map<Integer, Date> threadIDs = (Map<Integer, Date>) ctx.getSession().getAttribute(CommandContext.THREADREAD_ATTR_NAME);
-			if (threadIDs == null) {
-				threadIDs = new HashMap<Integer, Date>();
-				ctx.setAttribute(CommandContext.THREADREAD_ATTR_NAME, threadIDs, SESSION);
-			}
-			
-			// Determine the post to scroll to
-			Date cutoff = threadIDs.get(new Integer(ctx.getID()));
-			if (cutoff == null)
-				cutoff = (Date) ctx.getSession().getAttribute(CommandContext.THREADREADOV_ATTR_NAME);
-			if (cutoff == null)
-				cutoff = ctx.getUser().getLastLogoff();
-			if (cutoff == null)
-				cutoff = ctx.getUser().getLastLogin();
-			
-			// Save unread list
-			List<Boolean> unRead = new ArrayList<Boolean>(mt.getPostCount());
-			ctx.setAttribute("unread", unRead, REQUEST);
-			
-			// Find the first unread post if we've read some
-			boolean hasFirstUnread = false;
-			Message msg = mt.getPosts().get(0);
-			if (ctx.getUser().getShowNewPosts() && msg.getCreatedOn().before(cutoff)) {
-				for (Iterator<Message> i = mt.getPosts().iterator(); i.hasNext(); ) {
-					msg = i.next();
-					boolean isUnread = msg.getCreatedOn().after(cutoff);
-					unRead.add(Boolean.valueOf(isUnread));
-					if (isUnread && !hasFirstUnread) {
-						ctx.setAttribute("firstUnreadTime", msg.getCreatedOn(), REQUEST);
-						hasFirstUnread = true;
-					}
-				}
-			} else {
-				for (int x = 0; x < mt.getPostCount(); x++)
-					unRead.add(Boolean.FALSE);
-			}
-			
-			// Add thread and save
-			threadIDs.put(new Integer(ctx.getID()), new Date());
 		}
 		
 		// If the sticky date is in the past, clear it
