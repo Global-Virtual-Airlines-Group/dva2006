@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import javax.servlet.http.*;
@@ -8,7 +8,7 @@ import javax.servlet.http.*;
  * Connections, since by doing so we can easily return connections back to the pool in a <b>finally</b> block without
  * nasty scope issues.
  * @author Luke
- * @version 4.0
+ * @version 5.4
  * @since 1.0
  * @see Command
  */
@@ -19,8 +19,6 @@ public class CommandContext extends HTTPContext {
 	public static final String USRLISTENER_ATTR_NAME = "userSerializeListener";
 	public static final String SCREENX_ATTR_NAME = "screenXSize";
 	public static final String SCREENY_ATTR_NAME = "screenYSize";
-	public static final String THREADREAD_ATTR_NAME = "coolerThreadRead";
-	public static final String THREADREADOV_ATTR_NAME = "coolerThreadReadOverride";
 	public static final String INVALIDREQ_ATTR_NAME = "requestMapInvalid";
 	public static final String SYSMSG_ATTR_NAME ="system_message";
 

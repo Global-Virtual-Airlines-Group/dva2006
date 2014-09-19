@@ -156,16 +156,16 @@ return true;
 <content:attr attr="isModerator" value="true" roles="Moderator" />
 <c:forEach var="msg" items="${thread.posts}">
 <!-- Response ${msg.hexID} -->
+<c:set var="isUnread" value="${msg.ID > lastReadPostID}" scope="request" />
 <c:set var="pilot" value="${pilots[msg.authorID]}" scope="page" />
 <c:set var="ipInfo" value="${addrInfo[msg.remoteAddr]}" scope="page" />
-<c:set var="isUnread" value="${fn:get(unread, postIdx)}" scope="page" />
 <c:set var="isPilot" value="${fn:contains(pilot.roles, 'Pilot')}" scope="page" />
 <c:set var="isDispatcher" value="${fn:contains(pilot.roles, 'Dispatch')}" scope="page" />
 <c:set var="pilotLoc" value="${userData[msg.authorID]}" scope="page" />
 <c:set var="postIdx" value="${postIdx + 1}" scope="page" />
 <c:set var="canEdit" value="${access.canEdit && (postIdx == postCount)}" scope="page" />
 <c:set var="contentWarn" value="${contentWarn || msg.contentWarning}" scope="page" />
-<tr id="post${msg.createdOn.time}">
+<tr id="post${msg.ID}">
  <td rowspan="2" class="postInfo small">
 <c:if test="${isPilot}">
 <c:if test="${isHuman}"><el:profile location="${pilotLoc}">${pilot.name}</el:profile><br /></c:if>

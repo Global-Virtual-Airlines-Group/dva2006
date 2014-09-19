@@ -122,6 +122,7 @@ public class ThreadReplyCommand extends AbstractCommand {
 			
 			// Add the response to the thread
 			SetCoolerMessage wdao = new SetCoolerMessage(con);
+			wdao.markRead(mt.getID(), msg.getAuthorID());
 			if (!StringUtils.isEmpty(msg.getBody())) {
 				if (doEdit) {
 					ctx.setAttribute("isEdit", Boolean.TRUE, REQUEST);
@@ -147,17 +148,6 @@ public class ThreadReplyCommand extends AbstractCommand {
 			// Commit the transaction
 			ctx.commitTX();
 			
-			// Mark this thread as read
-			@SuppressWarnings("unchecked")
-			Map<Integer, Date> threadIDs = (Map<Integer, Date>) ctx.getSession().getAttribute(CommandContext.THREADREAD_ATTR_NAME);
-			if (threadIDs == null) {
-				threadIDs = new HashMap<Integer, Date>();
-				ctx.setAttribute(CommandContext.THREADREAD_ATTR_NAME, threadIDs, SESSION);
-			}
-
-			// Add thread and save
-			threadIDs.put(Integer.valueOf(mt.getID()), new Date());
-
 			// Save the thread in the request
 			mctxt.addData("thread", mt);
 			ctx.setAttribute("thread", mt, REQUEST);

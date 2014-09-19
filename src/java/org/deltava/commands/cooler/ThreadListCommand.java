@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A web site command to display Message Threads in a Water Cooler channel.
  * @author Luke
- * @version 5.0
+ * @version 5.4
  * @since 1.0
  */
 
@@ -67,7 +67,7 @@ public class ThreadListCommand extends AbstractViewCommand {
 			// Get the Message Threads for this channel - add by 10% for filtering
 			GetCoolerThreads tdao = new GetCoolerThreads(con);
 			tdao.setQueryStart(vc.getStart());
-			tdao.setQueryMax(Math.round(vc.getCount() * 1.5f));
+			tdao.setQueryMax(vc.getCount() * 2);
 
 			// Figure out what message threads to display
 			List<MessageThread> threads = null;
@@ -85,7 +85,7 @@ public class ThreadListCommand extends AbstractViewCommand {
 			// Initialize the access controller and the set to store pilot IDs
 			Collection<Integer> pilotIDs = new HashSet<Integer>();
 			CoolerThreadAccessControl ac = new CoolerThreadAccessControl(ctx);
-
+			
 			// Validate our access to each thread
 			for (Iterator<MessageThread> i = threads.iterator(); i.hasNext();) {
 				MessageThread thread = i.next();
@@ -102,6 +102,12 @@ public class ThreadListCommand extends AbstractViewCommand {
 				} else
 					i.remove();
 			}
+			
+			// Add the unread marks
+			if (ctx.isAuthenticated()) {
+				GetCoolerLastRead lrdao = new GetCoolerLastRead(con);
+				ctx.setAttribute("threadViews", lrdao.getLastRead(threads, p.getID()), REQUEST);
+			}
 
 			// Get the location of all the Pilots
 			UserDataMap udm = uddao.get(pilotIDs);
@@ -111,8 +117,7 @@ public class ThreadListCommand extends AbstractViewCommand {
 			Map<Integer, Person> authors = new HashMap<Integer, Person>();
 			GetPilot pdao = new GetPilot(con);
 			GetApplicant adao = new GetApplicant(con);
-			for (Iterator<String> i = udm.getTableNames().iterator(); i.hasNext();) {
-				String tableName = i.next();
+			for (String tableName : udm.getTableNames()) {
 				Collection<UserData> udd = udm.getByTable(tableName);
 				if (tableName.endsWith("APPLICANTS"))
 					authors.putAll(adao.getByID(udd, tableName));
@@ -129,12 +134,6 @@ public class ThreadListCommand extends AbstractViewCommand {
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
-		}
-		
-		// Add the thread map
-		if (ctx.isAuthenticated()) {
-			Map<?, ?> threadViews = (Map<?, ?>) ctx.getSession().getAttribute(CommandContext.THREADREAD_ATTR_NAME);
-			ctx.setAttribute("threadViews", threadViews, REQUEST);
 		}
 
 		// Forward to JSP

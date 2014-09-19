@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -7,18 +7,15 @@ import java.sql.Connection;
 import org.deltava.beans.*;
 import org.deltava.beans.cooler.*;
 import org.deltava.beans.system.*;
-
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-
 import org.deltava.security.command.CoolerThreadAccessControl;
-
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to display Water Cooler threads updated since a certain date/time.
  * @author Luke
- * @version 2.6
+ * @version 5.4
  * @since 1.0
  */
 
@@ -34,11 +31,6 @@ public class NewThreadListCommand extends AbstractViewCommand {
 		// Get the user/airline for the channel list
 		Person p = ctx.getUser();
 		AirlineInformation airline = SystemData.getApp(SystemData.get("airline.code"));
-
-		// Get the thread view map
-		Map<?, ?> threadViews = (Map<?, ?>) ctx.getSession().getAttribute(CommandContext.THREADREAD_ATTR_NAME);
-		if (threadViews == null)
-			threadViews = new HashMap<Object, Object>();
 
 		// Get/set start/count parameters
 		ViewContext vc = initView(ctx);
@@ -60,17 +52,19 @@ public class NewThreadListCommand extends AbstractViewCommand {
 			// Get the Message Threads for this channel
 			GetCoolerThreads dao2 = new GetCoolerThreads(con);
 			dao2.setQueryStart(vc.getStart());
-			dao2.setQueryMax(Math.round(vc.getCount() * 1.33f) + threadViews.size());
+			dao2.setQueryMax(Math.round(vc.getCount() * 1.5f));
 
 			// Initialize the access controller and the set to store pilot IDs
 			CoolerThreadAccessControl ac = new CoolerThreadAccessControl(ctx);
 
 			// Get either by channel or all; now filter by role
 			Collection<Integer> pilotIDs = new HashSet<Integer>();
+			GetCoolerLastRead lrdao = new GetCoolerLastRead(con);
 			List<MessageThread> threads = dao2.getSince(p.getLastLogoff(), true);
+			Map<Integer, Date> lastRead = lrdao.getLastRead(threads, p.getID());
 			for (Iterator<MessageThread> i = threads.iterator(); i.hasNext();) {
 				MessageThread thread = i.next();
-				Date lastView = (Date) threadViews.get(new Integer(thread.getID()));
+				Date lastView = lastRead.get(Integer.valueOf(thread.getID()));
 
 				// Get this thread's channel and see if we can read it
 				Channel c = dao.get(thread.getChannel());
@@ -78,13 +72,13 @@ public class NewThreadListCommand extends AbstractViewCommand {
 				ac.validate();
 
 				// If we cannot read the thread, remove it from the results and check if it's still unread
-				if (!ac.getCanRead()) {
+				if (!ac.getCanRead())
 					i.remove();
-				} else if ((lastView != null) && (lastView.after(thread.getLastUpdatedOn())))
+				else if ((lastView != null) && (lastView.after(thread.getLastUpdatedOn())))
 					i.remove();
 				else {
-					pilotIDs.add(new Integer(thread.getAuthorID()));
-					pilotIDs.add(new Integer(thread.getLastUpdateID()));
+					pilotIDs.add(Integer.valueOf(thread.getAuthorID()));
+					pilotIDs.add(Integer.valueOf(thread.getLastUpdateID()));
 				}
 			}
 
@@ -95,13 +89,12 @@ public class NewThreadListCommand extends AbstractViewCommand {
 			// Get the authors for the last post in each channel
 			Map<Integer, Pilot> authors = new HashMap<Integer, Pilot>();
 			GetPilot pdao = new GetPilot(con);
-			for (Iterator<String> i = udm.getTableNames().iterator(); i.hasNext();) {
-				String tableName = i.next();
+			for (String tableName : udm.getTableNames())
 				authors.putAll(pdao.getByID(udm.getByTable(tableName), tableName));
-			}
 
 			// Get the pilot IDs in the returned threads
 			ctx.setAttribute("pilots", authors, REQUEST);
+			ctx.setAttribute("lastRead", lastRead, REQUEST);
 			vc.setResults(threads);
 		} catch (DAOException de) {
 			throw new CommandException(de);
