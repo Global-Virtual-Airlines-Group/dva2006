@@ -7,16 +7,12 @@
 	<classpathentry kind="lib" path="lib/junit-4.1.jar"/>
 	<classpathentry kind="lib" path="lib/asm-all-3.0_RC1.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-httpclient-3.1.jar"/>
-	<classpathentry kind="lib" path="lib/jsp-api-2.1.jar"/>
 	<classpathentry kind="lib" path="lib/el-api.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/flightaware.jar" sourcepath="lib/src/flightaware.zip"/>
 	<classpathentry kind="lib" path="lib/deploy/jaxrpc-1.1.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/standard.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/axis-1.4.jar"/>
 	<classpathentry kind="lib" path="lib/jtar-2.5.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/jstl.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/json-1.00.jar"/>
-	<classpathentry kind="lib" path="lib/servlet-api-3.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/spymemcached-2.8.2.jar" sourcepath="lib/src/spymemcached-2.8.2-sources.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="jar:platform:/resource/DVA2006/lib/src/spymemcached-2.8.2-javadocs.jar!/"/>
@@ -32,8 +28,12 @@
 	<classpathentry kind="lib" path="lib/deploy/unidataCommon-4.2.20.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/slf4j-api-1.7.5.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/slf4j-simple-1.7.5.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-5.1.29-bin.jar"/>
+	<classpathentry kind="lib" path="lib/jsp-api-2.3.jar"/>
+	<classpathentry kind="lib" path="lib/servlet-api-3.1.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/jstl-api-1.2.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-1.92.jar" sourcepath="/IPC"/>
+	<classpathentry kind="lib" path="lib/deploy/jstl-1.2.3.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-5.1.32-bin.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
