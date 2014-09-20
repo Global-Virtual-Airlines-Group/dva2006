@@ -732,7 +732,7 @@
 	<!-- Help Desk Data -->
 	<helpdesk>
 		<enabled type="Boolean">true</enabled>
-		<assignto type="Integer">3698</assignto>
+		<assignto type="Integer">2887</assignto>
 		<list name="notify_roles" attr="role" unique="true">
 		</list>
 	</helpdesk>
