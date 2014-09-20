@@ -1,6 +1,6 @@
 #!/bin/bash
 # Database backup script
-# (c) 2005 - 2012 Global Virtual Airlines Group. All Rights Reserved.
+# (c) 2005 - 2014 Global Virtual Airlines Group. All Rights Reserved.
 
 # Set archiving/mysqldump options
 arc_util="pbzip2 -p4 -9 -b20 -c"
@@ -72,7 +72,7 @@ $mysqldump $dump_opt `cat /usr/local/etc/sqlbackup` exams | $arc_util > exams.sq
 
 # Dump Water Cooler
 echo `date +%H:%M:%S`' Writing Water Cooler'
-$mysqldump $dump_opt `cat /usr/local/etc/sqlbackup` common COOLER_CHANNELS COOLER_CHANNELINFO COOLER_THREADS COOLER_THREADHISTORY COOLER_POSTS COOLER_REPORTS COOLER_NOTIFY COOLER_POLLS COOLER_VOTES COOLER_IMGURLS | $arc_util > cooler.sql.bz2
+$mysqldump $dump_opt `cat /usr/local/etc/sqlbackup` common COOLER_CHANNELS COOLER_CHANNELINFO COOLER_THREADS COOLER_THREADHISTORY COOLER_POSTS COOLER_LASTREAD COOLER_REPORTS COOLER_NOTIFY COOLER_POLLS COOLER_VOTES COOLER_IMGURLS | $arc_util > cooler.sql.bz2
 
 # Dump Navigation Data if we're doing a full backup
 if [ "$1" = "full" ]
