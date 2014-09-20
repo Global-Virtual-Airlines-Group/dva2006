@@ -527,8 +527,9 @@ public class GetFlightReportStatistics extends DAO {
 			_ps.setInt(3, FlightReport.ATTR_IVAO);
 			_ps.setInt(4, FlightReport.ATTR_HISTORIC);
 			_ps.setInt(5, FlightReport.ATTR_DISPATCH);
-			_ps.setInt(6, FlightReport.OK);
-			_ps.setInt(7, FlightReport.ATTR_CHARTER);
+			_ps.setInt(6, FlightReport.ATTR_ONLINE_MASK);
+			_ps.setInt(7, FlightReport.OK);
+			_ps.setInt(8, FlightReport.ATTR_CHARTER);
 			
 			// Check the cache
 			String cacheKey = getCacheKey(_ps.toString());
