@@ -1,4 +1,4 @@
-// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display all members of all security roles.
  * @author Luke
- * @version 2.6
+ * @version 5.4
  * @since 1.0
  */
 
@@ -26,11 +26,10 @@ public class SecurityRoleMembersCommand extends AbstractCommand {
     * @param ctx the Command context
     * @throws CommandException if an error occurs
     */
+	@Override
    public void execute(CommandContext ctx) throws CommandException {
 
-      // Initialize the comparator and result map
       PilotComparator cmp = new PilotComparator(PilotComparator.RANK);
-      
       try {
          GetPilotDirectory dao = new GetPilotDirectory(ctx.getConnection());
 
@@ -40,14 +39,11 @@ public class SecurityRoleMembersCommand extends AbstractCommand {
          for (Iterator<?> i = roles.iterator(); i.hasNext(); ) {
             String roleName = (String) i.next();
             List<Pilot> pilots = new ArrayList<Pilot>();
-            pilots.addAll(dao.getByRole(roleName, SystemData.get("airline.db")));
+            pilots.addAll(dao.getByRole(roleName, SystemData.get("airline.db"), false));
             Collections.sort(pilots, cmp);
-            
-            // Add to results
             results.put(roleName, pilots);
          }
          
-         // Save the results
          ctx.setAttribute("roleMap", results, REQUEST);
       } catch (DAOException de) {
          throw new CommandException(de);

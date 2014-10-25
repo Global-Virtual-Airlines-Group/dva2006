@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to obtain user Directory information for Pilots.
  * @author Luke
- * @version 4.0
+ * @version 5.4
  * @since 1.0
  */
 
@@ -201,15 +201,27 @@ public class GetPilotDirectory extends GetPilot implements PersonUniquenessDAO {
 			throw new DAOException(se);
 		}
 	}
-
+	
 	/**
-	 * Returns all Pilots who have a particular security role.
+	 * Returns all active Pilots who have a particular security role.
 	 * @param roleName the role name
 	 * @param dbName the database name
 	 * @return a List of Pilots
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<Pilot> getByRole(String roleName, String dbName) throws DAOException {
+		return getByRole(roleName, dbName, true);
+	}
+
+	/**
+	 * Returns all Pilots who have a particular security role.
+	 * @param roleName the role name
+	 * @param dbName the database name
+	 * @param activeOnly TRUE to only include active Pilots, otherwise FALSE
+	 * @return a List of Pilots
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<Pilot> getByRole(String roleName, String dbName, boolean activeOnly) throws DAOException {
 
 		// Build the SQL statement
 		dbName = formatDBName(dbName);
@@ -217,11 +229,18 @@ public class GetPilotDirectory extends GetPilot implements PersonUniquenessDAO {
 		sqlBuf.append(dbName);
 		sqlBuf.append(".PILOTS P LEFT JOIN ");
 		sqlBuf.append(dbName);
-		sqlBuf.append(".ROLES R ON (P.ID=R.ID) WHERE (R.ROLE=?) GROUP BY P.ID");
+		sqlBuf.append(".ROLES R ON (P.ID=R.ID) WHERE (R.ROLE=?) ");
+		if (activeOnly)
+			sqlBuf.append("AND (P.STATUS=?) ");
+		
+		sqlBuf.append("GROUP BY P.ID");
 
 		try {
 			prepareStatement(sqlBuf.toString());
 			_ps.setString(1, roleName);
+			if (activeOnly)
+				_ps.setInt(2, Pilot.ACTIVE);
+			
 			return new ArrayList<Pilot>(getByID(executeIDs(), "PILOTS").values());
 		} catch (SQLException se) {
 			throw new DAOException(se);
