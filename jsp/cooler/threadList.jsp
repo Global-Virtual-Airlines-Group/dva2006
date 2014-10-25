@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
@@ -60,25 +61,25 @@ return true;
 </tr>
 
 <!-- Table Thread Data -->
-<c:set var="cutoffDate" value="${!empty sessionScope.coolerThreadReadOverride ? sessionScope.coolerThreadReadOverride : user.lastLogoff}" scope="page" />
 <c:forEach var="thread" items="${viewContext.results}">
 <c:set var="author" value="${pilots[thread.authorID]}" scope="page" />
 <c:set var="authorLoc" value="${userData[thread.authorID]}" scope="page" />
 <c:set var="lastPoster" value="${pilots[thread.lastUpdateID]}" scope="page" />
 <c:set var="myLastRead" value="${threadViews[thread.ID]}" scope="page" />
-<c:set var="isThreadNew" value="${(thread.lastUpdatedOn > cutoffDate) && ((empty myLastRead) || (myLastRead < thread.lastUpdatedOn))}" scope="page" />
+<c:set var="isThreadNew" value="${((empty myLastRead) || (myLastRead < thread.lastUpdatedOn))}" scope="page" />
+<c:set var="newPostID" value="${threadViewIDs[thread.ID]}" scope="page" />
+<c:set var="threadLinkID" value="${(empty newPostID) ? thread.ID : thread.hexID.concat('#').concat(newPostID)}" scope="page" />
 <view:row entry="${thread}" className="${isThreadNew ? 'opt1' : null}">
  <td class="left">
 <c:if test="${thread.image != 0}"><el:img caption="Image" x="20" y="20" src="cooler/icon_img.png" /></c:if>
 <c:if test="${thread.locked}"><el:img caption="Thread Locked" x="20" y="20" src="cooler/icon_lock.png" /></c:if>
 <c:if test="${thread.poll}"><el:img caption="Pilot Poll" x="20" y="20" src="cooler/icon_poll.png" /></c:if>
 <c:if test="${!empty thread.stickyUntil}">STICKY:</c:if>
- <el:cmd url="thread" link="${thread}"><fmt:text value="${thread.subject}" /></el:cmd></td>
+ <el:cmd url="thread" linkID="${threadLinkID}"><fmt:text value="${thread.subject}" /></el:cmd></td>
  <td><el:profile location="${authorLoc}" className="pri bld">${author.name}</el:profile></td>
  <td><fmt:int value="${thread.views}" /></td>
  <td><fmt:int value="${thread.postCount}" /></td>
- <td class="small right"><fmt:date date="${thread.lastUpdatedOn}" /> by 
- <span class="pri bld">${lastPoster.name}</span></td>
+ <td class="small right" <c:if test="${!empty myLastRead}">title="Last Viewed on ${myLastRead}"</c:if>><fmt:date date="${thread.lastUpdatedOn}" /> by <span class="pri bld">${lastPoster.name}</span></td>
 </view:row>
 </c:forEach>
 <tr class="title">
