@@ -1,7 +1,8 @@
-// Copyright 2006, 2007, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.help;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.deltava.beans.Pilot;
@@ -20,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Help Desk Issues.
  * @author Luke
- * @version 4.2
+ * @version 5.4
  * @since 1.0
  */
 
@@ -126,8 +127,10 @@ public class IssueCommand extends AbstractFormCommand {
 				// Create the message
 				Mailer mailer = new Mailer(ctx.getUser());
 				mailer.setContext(mctx);
-				for (Iterator<Pilot> cci = notifyPilots.iterator(); cci.hasNext(); )
-					mailer.setCC(cci.next());
+				for (Pilot p : notifyPilots) {
+					if (p.getStatus() == Pilot.ACTIVE)
+						mailer.setCC(p);
+				}
 				
 				// Send the message
 				mailer.send(usr);
@@ -208,7 +211,8 @@ public class IssueCommand extends AbstractFormCommand {
 			assignees.addAll(pdao.getByRole("Examination", SystemData.get("airline.db")));
 			assignees.addAll(pdao.getByRole("Signature", SystemData.get("airline.db")));
 			assignees.addAll(pdao.getByRole("HelpDesk", SystemData.get("airline.db")));
-			ctx.setAttribute("assignees", assignees, REQUEST);
+			List<Pilot> activeAssignees = assignees.stream().filter(p -> (p.getStatus() == Pilot.ACTIVE)).collect(Collectors.toList());
+			ctx.setAttribute("assignees", activeAssignees, REQUEST);
 			
 			// Get options for issue conversion
 			if (ac.getCanUpdateStatus() && !isNew) {
@@ -277,7 +281,7 @@ public class IssueCommand extends AbstractFormCommand {
 		result.setSuccess(true);
 	}
 	
-	/**
+	/*
 	 * Helper method to return all pilot IDs associated with a particular issue.
 	 */
 	private static Collection<Integer> getPilotIDs(Issue i) {
