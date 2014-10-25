@@ -106,7 +106,18 @@ public class ThreadListCommand extends AbstractViewCommand {
 			// Add the unread marks
 			if (ctx.isAuthenticated()) {
 				GetCoolerLastRead lrdao = new GetCoolerLastRead(con);
-				ctx.setAttribute("threadViews", lrdao.getLastRead(threads, p.getID()), REQUEST);
+				Map<Integer, Date> lr = lrdao.getLastRead(threads, p.getID());
+				Map<Integer, Integer> lrIDs = new HashMap<Integer, Integer>();
+				for (MessageThread thread : threads) {
+					Integer id = Integer.valueOf(thread.getID());
+					Date dt = lr.get(id);
+					int postID = thread.getNextPostID(dt);
+					if (postID < Integer.MAX_VALUE)
+						lrIDs.put(id, Integer.valueOf(postID));
+				}
+				
+				ctx.setAttribute("threadViews", lr, REQUEST);
+				ctx.setAttribute("threadViewIDs", lrIDs, REQUEST);
 			}
 
 			// Get the location of all the Pilots
@@ -130,6 +141,7 @@ public class ThreadListCommand extends AbstractViewCommand {
 
 			// Save in the view context - If threads is still larger than the max, then cut it off
 			vc.setResults((threads.size() > vc.getCount()) ? threads.subList(0, vc.getCount()) : threads);
+			ctx.setExpiry(10);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
