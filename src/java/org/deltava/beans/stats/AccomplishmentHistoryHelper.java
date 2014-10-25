@@ -1,4 +1,4 @@
- // Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+ // Copyright 2010, 2011, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to determine what Accomplishments a Pilot has achieved. 
  * @author Luke
- * @version 4.1
+ * @version 5.4
  * @since 3.2
  */
 
@@ -54,7 +54,7 @@ public class AccomplishmentHistoryHelper {
 
 		private int _legs;
 		private int _historicLegs;
-		private int _eventLegs;
+		private final Collection<Integer> _events = new HashSet<Integer>();
 		private int _onlineLegs;
 		private long _miles;
 		
@@ -80,7 +80,7 @@ public class AccomplishmentHistoryHelper {
 			add(fr.getAirportA());
 			if (fr.hasAttribute(FlightReport.ATTR_HISTORIC)) _historicLegs++;
 			if (fr.hasAttribute(FlightReport.ATTR_ONLINE_MASK)) _onlineLegs++;
-			if (fr.getDatabaseID(DatabaseID.EVENT) != 0) _eventLegs++;
+			if (fr.getDatabaseID(DatabaseID.EVENT) != 0) _events.add(Integer.valueOf(fr.getDatabaseID(DatabaseID.EVENT)));
 			MutableInteger eqLegs = _eqLegs.get(fr.getEquipmentType());
 			if (eqLegs == null)
 				_eqLegs.put(fr.getEquipmentType(), new MutableInteger(1));
@@ -146,7 +146,7 @@ public class AccomplishmentHistoryHelper {
 		}
 		
 		public int getEventLegs() {
-			return _eventLegs;
+			return _events.size();
 		}
 		
 		public int getOnlineLegs() {
@@ -220,7 +220,7 @@ public class AccomplishmentHistoryHelper {
 		return progress(a, _totals);
 	}
 
-	/**
+	/*
 	 * Returns how far a pilot is towards a particular Accomplishment.
 	 */
 	private long progress(Accomplishment a, AccomplishmentCounter cnt) {
@@ -267,7 +267,7 @@ public class AccomplishmentHistoryHelper {
 		}
 	}
 	
-	/**
+	/*
 	 * Determines whether a Pilot has achieved a particular Accomplishment using a specific set of totals.
 	 */
 	private Result has(Accomplishment a, AccomplishmentCounter cnt) {
