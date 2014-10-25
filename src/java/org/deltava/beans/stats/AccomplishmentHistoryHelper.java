@@ -145,7 +145,7 @@ public class AccomplishmentHistoryHelper {
 			return _historicLegs;
 		}
 		
-		public int getEventLegs() {
+		public int getEvents() {
 			return _events.size();
 		}
 		
@@ -236,7 +236,7 @@ public class AccomplishmentHistoryHelper {
 			case HLEGS:
 				return cnt.getHistoricLegs();
 			case ELEGS:
-				return cnt.getEventLegs();
+				return cnt.getEvents();
 			case AIRPORTS:
 				return AccomplishmentFilter.filter(cnt.getAirports(), a).size();
 			case AIRCRAFT:
