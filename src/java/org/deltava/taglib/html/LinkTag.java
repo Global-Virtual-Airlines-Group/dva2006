@@ -1,17 +1,21 @@
-// Copyright 2005, 2007, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2010, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import javax.servlet.jsp.JspException;
 
+import org.deltava.util.StringUtils;
+
 /**
  * A JSP tag to generate an HTML link.
  * @author Luke
- * @version 5.0
+ * @version 5.4
  * @since 1.0
  */
 
 public class LinkTag extends ElementTag {
-
+	
+	private String _anchor;
+	
     /**
      * Generates a new link tag.
      */
@@ -28,6 +32,9 @@ public class LinkTag extends ElementTag {
     	super.doStartTag();
         try {
             validateLink();
+            if (!StringUtils.isEmpty(_anchor))
+            	_data.setAttribute("href", _data.get("href") + "#" + _anchor);
+            
             _out.print(_data.open(true));
         } catch(Exception e) {
             throw new JspException(e);
@@ -70,6 +77,14 @@ public class LinkTag extends ElementTag {
     }
     
     /**
+     * Sets the anchor for this link.
+     * @param a the anchor
+     */
+    public void setAnchor(String a) {
+    	_anchor = a;
+    }
+    
+    /**
      * Sets the label for this link. This causes window.status to be set in the <b>onMouseOver</b> event,
      * and then cleared on the <b>onMouseOut</b> event.
      * @param label
@@ -104,5 +119,14 @@ public class LinkTag extends ElementTag {
         boolean isOK = (_data.has("href") || _data.has("onclick"));
         if (!isOK)
             throw new IllegalStateException("href or onClick must be set");
+    }
+    
+    /**
+     * Releases the tag's state variables.
+     */
+    @Override
+    public void release() {
+    	super.release();
+    	_anchor = null;
     }
 }
