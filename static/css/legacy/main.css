@@ -51,11 +51,18 @@ ul.menu, ul.menuitem {
 ul.menuitem li {
 	height: 15px;
 	font: 11px tahoma, verdana, helvetica, sans-serif;
-	background-color: #008080;
 	color: #ffffff;
 	margin: 1px;
 	padding: 1px;
 	display: block;
+}
+
+div.ipv4 ul.menuitem li {
+	background-color: #008080;
+}
+
+div.ipv6 ul.menuitem li {
+	background-color: #00a088;
 }
 
 ul.menu ul.submenu {
@@ -75,7 +82,7 @@ ul.menu li.submenuTitle {
 	display: block;
 }
 
-ul.menuitem li:hover {
+div ul.menuitem li:hover {
 	background-color: #0000c1;
 }
 
