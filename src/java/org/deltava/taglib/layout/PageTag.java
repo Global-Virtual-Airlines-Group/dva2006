@@ -14,7 +14,7 @@ import org.deltava.taglib.BrowserInfoTag;
 /**
  * A JSP tag to render page layouts in a user-specific way.
  * @author Luke
- * @version 5.3
+ * @version 5.4
  * @since 1.0
  */
 
@@ -72,6 +72,8 @@ public class PageTag extends BrowserInfoTag {
 			JspWriter out = pageContext.getOut();
 			out.print("<div class=\"");
 			out.print(_sideMenu ? "navside" : "navbar");
+			out.print(' ');
+			out.print(bctxt.isIPv6() ? " ipv6" : "ipv4");
 			out.print("\">");
 		} catch (Exception e) {
 			throw new JspException(e);
