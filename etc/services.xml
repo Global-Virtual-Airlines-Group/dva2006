@@ -45,6 +45,8 @@
 	<service id="allstats" class="org.deltava.service.stats.AllFlightsService" />
 	<service id="bwstats" class="org.deltava.service.stats.BandwidthInfoService" />
 	<service id="pirepstats" class="org.deltava.service.stats.FlightStatsService" />
+	<service id="myroutemap" class="org.deltava.service.stats.MyRouteMapService" />
+	<service id="mytracks" class="org.deltava.service.stats.MyTrackService" />
 
 	<!-- Pilot Data Services -->
 	<service id="pilotmap" class="org.deltava.service.PilotLocationService" />
@@ -103,5 +105,4 @@
 	<service id="metar" class="org.deltava.service.wx.METARService" />
 	<service id="taf" class="org.deltava.service.wx.TAFService" />
 	<service id="airportwx" class="org.deltava.service.wx.AirportWeatherService" />
-	<service id="wuserieslist" class="org.deltava.service.wx.WUImageService" />
 </services>
