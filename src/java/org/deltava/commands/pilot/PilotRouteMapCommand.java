@@ -1,12 +1,8 @@
 // Copyright 2007, 2009, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
-import java.util.*;
-import java.sql.Connection;
-
 import org.deltava.beans.Pilot;
 import org.deltava.beans.schedule.*;
-import org.deltava.beans.stats.RouteStats;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -16,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to disply all the routes the pilot has flown.
  * @author Luke
- * @version 5.2
+ * @version 5.4
  * @since 1.0
  */
 
@@ -36,39 +32,18 @@ public class PilotRouteMapCommand extends AbstractCommand {
 			userID = ctx.getID();
 		
 		try {
-			Connection con = ctx.getConnection();
-			
-			// Get the pilot
-			GetPilot pdao = new GetPilot(con);
+			GetPilot pdao = new GetPilot(ctx.getConnection());
 			Pilot usr = pdao.get(userID);
 			if (usr == null)
 				throw notFoundException("Unknown Pilot ID - " + userID);
 			
-			// Get the routes and sort them
-			List<RouteStats> routes = new ArrayList<RouteStats>();
-			GetFlightReports frdao = new GetFlightReports(con);
-			routes.addAll(frdao.getRoutePairs(userID));
-			Collections.sort(routes, Collections.reverseOrder());
-			
-			// Save the user's home airport and max flights
-			int maxFlights = routes.isEmpty() ? 1 : routes.get(0).getFlights();
+			// Save the user's home airport
 			Airport airportH = SystemData.getAirport(usr.getHomeAirport());
 			if (airportH == null)
 				airportH = SystemData.getAirport("LFPG");
 			
-			// Get the airports and maximum
-			Collection<Airport> airports = new LinkedHashSet<Airport>();
-			for (RoutePair rp : routes) {
-				airports.add(rp.getAirportD());
-				airports.add(rp.getAirportA());
-			}
-			
 			// Save in request
-			ctx.setAttribute("maxFlights", Integer.valueOf(maxFlights), REQUEST);
-			ctx.setAttribute("routes", routes, REQUEST);
 			ctx.setAttribute("home", airportH, REQUEST);
-			airports.remove(airportH);
-			ctx.setAttribute("airports", airports, REQUEST);
 			ctx.setAttribute("pilot", usr, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
