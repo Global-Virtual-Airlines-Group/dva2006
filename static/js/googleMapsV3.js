@@ -270,7 +270,7 @@ golgotha.maps.ShapeLayer = function(opts, name, imgClass) {
 golgotha.maps.Marker = function(opts, pt) {
 	if ((opts == null) || (opts.color == 'null')) return pt;
 	var hasLabel = (opts.label != null);
-	if (hasLabel && (MarkerWithLabel == null)) {
+	if (hasLabel && (typeof(MarkerWithLabel) == 'undefined')) {
 		console.log('MarkerWithLabel not loaded!');
 		hasLabel = false;
 	}
