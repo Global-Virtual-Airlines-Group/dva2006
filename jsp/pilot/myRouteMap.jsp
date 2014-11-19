@@ -12,20 +12,22 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
+<content:json />
 <map:api version="3" />
+<content:js name="markerWithLabel" />
+<content:js name="myRouteMap" />
 </head>
 <content:copyright visible="false" />
 <body>
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<content:getCookie name="acarsMapType" default="map" var="gMapType" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:table className="form">
 <tr class="title caps">
- <td colspan="2"><content:airline /> ROUTE HISTORY FOR ${pilot.name}</td>
+ <td colspan="2"><content:airline /> ROUTE HISTORY FOR ${pilot.name}<span id="isLoading"></span></td>
 </tr>
 <tr>
  <td class="label">Map Legend</td>
@@ -46,28 +48,16 @@ var mapOpts = {center:mapC, minZoom:2, zoom:3, scrollwheel:false, streetViewCont
 
 // Create the map
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
-<map:type map="map" type="${gMapType}" default="TERRAIN" />
+<map:type map="map" type="SATELLITE" />
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
-google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });
-
-// Create the routes
-var routes = [];
-<c:forEach var="route" items="${routes}">
-<c:set var="opacity" value="${(route.flights * 0.75 / maxFlights * 0.4) + 0.3}" scope="page" />
-<map:points var="rtPoints" items="${route.points}" />
-var route = new google.maps.Polyline({path:rtPoints, strokeColor:'#4080af', strokeWeight:1.25, strokeOpacity:${opacity}, geodesic:false, clickable:false, zIndex:golgotha.maps.z.POLYLINE});
-route.srcA = '${route.airportD.ICAO}';
-route.dstA = '${route.airportA.ICAO}';
-route.setMap(map);
-routes.push(route);
-</c:forEach>
-// Add the airports
-<map:markers var="airports" items="${airports}" color="blue" marker="true" />
-addMarkers(map, 'airports');
+google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); golgotha.routeMap.reset(); });
 
 // Add the home airport
 <map:marker var="airportH" point="${home}" color="white" marker="true" />
 airportH.setMap(map);
+
+golgotha.routeMap.id = '${pilot.hexID}';
+google.maps.event.addListenerOnce(map, 'tilesloaded', function() { golgotha.routeMap.load(); });
 </script>
 <content:googleAnalytics />
 </body>

@@ -1,0 +1,136 @@
+golgotha.routeMap = {airports:[], routes:[], trks:[], busy:false};
+golgotha.routeMap.dimAirports = function(icao) {
+	for (var x = 0; x < this.airports.length; x++) {
+		var a = this.airports[x];
+		if (a.icao != icao)
+			a.setOpacity((icao == null) ? 1.0 : 0.25);
+	}
+};
+
+golgotha.routeMap.hideRoutes = function(show, icao) {
+	for (var x = 0; x < this.routes.length; x++) {
+		var r = this.routes[x];
+		var myAP = ((r.src == icao) || (r.dst == icao));
+		var s =  myAP ? !show : show;
+		r.setVisible(s);
+		r.setOptions({strokeOpacity:((s && myAP) ? 1 : r.renderOpts.o), strokeColor:((s && myAP) ? '#e0e0ff' : r.renderOpts.c)});
+	}
+};
+
+golgotha.routeMap.hideTracks = function() {
+	for (var trk = this.trks.pop(); (trk != null); trk = this.trks.pop())
+		trk.setMap(null);
+};
+
+golgotha.routeMap.reset = function() {
+	this.hideTracks();
+	this.dimAirports(null);
+	this.hideRoutes(true);
+};
+
+golgotha.routeMap.getColor = function(ratio) {
+	var bC = {r:72, g:96, b:128}; var mxC = {r:192, g:232, b:255};
+	ratio = (ratio - (ratio % 10)) / 100;
+	return 'rgb(' + Math.round(bC.r + ((mxC.r - bC.r) * ratio)) + ',' +	Math.round(bC.g + ((mxC.g - bC.g) * ratio)) + ',' + Math.round(bC.b + ((mxC.b - bC.b) * ratio)) + ')';
+};
+
+golgotha.routeMap.showRoute = function() {
+	map.infoWindow.setContent(this.desc);
+	map.infoWindow.setPosition(this.ctr);
+	map.infoWindow.open(map);
+	if (!map.getBounds().contains(this.ctr)) map.panTo(this.ctr);
+	return true;
+};
+
+// Display airport info
+golgotha.routeMap.showAirport = function(a, isDST) {
+	map.infoWindow.setContent(a.desc);
+	map.infoWindow.setPosition(a.getPosition());
+	map.infoWindow.open(map);
+	golgotha.routeMap.hideRoutes(false);
+	golgotha.routeMap.dimAirports(a.icao);
+	golgotha.routeMap.loadTracks(a.icao, isDST);
+	if (!map.getBounds().contains(a.getPosition())) map.panTo(a.getPosition());
+	return true;
+};
+
+// Load airport/route data
+golgotha.routeMap.load = function() {
+	if (this.busy) return false;
+	var xmlreq = getXMLHttpRequest();
+	var isLoading = document.getElementById('isLoading');
+	isLoading.innerHTML = ' - LOADING...';
+	xmlreq.open('get', 'myroutemap.ws?id=' + this.id, true);
+	xmlreq.onreadystatechange = function() {
+		if (xmlreq.readyState != 4) return false;
+		if (xmlreq.status != 200) {
+			isLoading.innerHTML = ' - ERROR ' + xmlreq.status;
+			golgotha.routeMap.busy = false;
+			return false;
+		} else
+			isLoading.innerHTML = '';
+	
+		var jsData = JSON.parse(xmlreq.responseText);
+		var aa = jsData.airports;
+		for (var x = 0; x < aa.length; x++) {
+			var a = aa[x];
+			var mrk = new golgotha.maps.Marker({color:'blue', map:map, label:a.code, zIndex:golgotha.maps.z.POLYLINE+10}, a.ll);
+			mrk.icao = a.icao; mrk.desc = a.desc;
+			google.maps.event.addListener(mrk, 'rightclick', function() { golgotha.routeMap.showAirport(this, true); });
+			google.maps.event.addListener(mrk, 'click', function() { golgotha.routeMap.dimAirports(this.icao); golgotha.routeMap.hideRoutes(false, this.icao); });
+			golgotha.routeMap.airports.push(mrk);
+		}
+
+		var ra = jsData.routes;
+		for (var x = 0; x < ra.length; x++) {
+			var r = ra[x];
+			var z = golgotha.maps.z.POLYLINE + Math.round(r.ratio / 20);
+			var w = 1 + (r.ratio / 66);
+			var opts = {path:r.points, strokeColor:golgotha.routeMap.getColor(r.ratio), map:map, strokeWeight:w, strokeOpacity:0.65, clickable:true, geodesic:true, zIndex:z};
+			var rt = new google.maps.Polyline(opts);
+			rt.desc = r.desc; rt.ctr = r.ll; rt.src = r.src; rt.dst = r.dst;
+			rt.renderOpts = {o:opts.strokeOpacity, c:opts.strokeColor};
+			golgotha.routeMap.routes.push(rt);
+			google.maps.event.addListener(rt, 'click', golgotha.routeMap.showRoute);
+		}
+
+		golgotha.routeMap.busy = false;
+		return true;
+	};
+
+	xmlreq.send(null);
+	return true;
+};
+
+// Load tracks to/from airport
+golgotha.routeMap.loadTracks = function(icao, isDST) {
+	if (this.busy) return false;
+	var xmlreq = getXMLHttpRequest();
+	var isLoading = document.getElementById('isLoading');	
+	isLoading.innerHTML = ' - LOADING FLIGHT TRACKS...';
+	xmlreq.open('get', 'mytracks.ws?id=' + this.id + '&icao=' + icao + '&dst=' + isDST, true);	
+	xmlreq.onreadystatechange = function() {
+		if (xmlreq.readyState != 4) return false;
+		if (xmlreq.status != 200) {
+			isLoading.innerHTML = ' - ERROR ' + xmlreq.status;
+			golgotha.routeMap.busy = false;
+			return false;
+		} else
+			isLoading.innerHTML = '';
+
+		var jsData = JSON.parse(xmlreq.responseText);
+		var rts = jsData.routes; 
+		for (var x = 0; x < rts.length; x++) {
+			var rt = rts[x];
+			var c = rt.isDST ? '#80c0d8' : '#e0b080';
+			var rt = new google.maps.Polyline({path:rt.trk, strokeColor:c, map:map, strokeWeight:1, strokeOpacity:0.55, clickable:false, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
+			golgotha.routeMap.trks.push(rt);
+		}
+		
+		golgotha.routeMap.busy = false;
+		return true;
+	};
+	
+	xmlreq.send(null);
+	return true;
+};
