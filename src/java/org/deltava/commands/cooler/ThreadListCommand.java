@@ -33,11 +33,11 @@ public class ThreadListCommand extends AbstractViewCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the user for the channel list
-		Person p = ctx.getUser();
+		Pilot p = ctx.getUser();
 		AirlineInformation airline = SystemData.getApp(SystemData.get("airline.code"));
 
 		// Check if we want to display image threads
-		boolean showImgThreads = (p instanceof Pilot) ? ((Pilot) p).getShowSSThreads() : true;
+		boolean showImgThreads = ctx.isAuthenticated() ? p.getShowSSThreads() : true;
 
 		// Get/set start/count parameters and channel name
 		ViewContext vc = initView(ctx);
@@ -104,7 +104,7 @@ public class ThreadListCommand extends AbstractViewCommand {
 			}
 			
 			// Add the unread marks
-			if (ctx.isAuthenticated()) {
+			if (ctx.isAuthenticated() && p.getShowNewPosts()) {
 				GetCoolerLastRead lrdao = new GetCoolerLastRead(con);
 				Map<Integer, Date> lr = lrdao.getLastRead(threads, p.getID());
 				Map<Integer, Integer> lrIDs = new HashMap<Integer, Integer>();
