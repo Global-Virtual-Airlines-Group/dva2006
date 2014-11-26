@@ -68,7 +68,6 @@ return true;
 <content:authUser>
 <c:set var="myLastRead" value="${threadViews[thread.ID]}" scope="page" />
 <c:set var="isThreadNew" value="${((empty myLastRead) || (myLastRead < thread.lastUpdatedOn))}" scope="page" />
-<c:set var="newPostID" value="${threadViewIDs[thread.ID]}" scope="page" />
 </content:authUser>
 <view:row entry="${thread}" className="${isThreadNew ? 'opt1' : null}">
  <td class="left">
@@ -76,7 +75,7 @@ return true;
 <c:if test="${thread.locked}"><el:img caption="Thread Locked" x="20" y="20" src="cooler/icon_lock.png" /></c:if>
 <c:if test="${thread.poll}"><el:img caption="Pilot Poll" x="20" y="20" src="cooler/icon_poll.png" /></c:if>
 <c:if test="${!empty thread.stickyUntil}">STICKY:</c:if>
- <el:cmd url="thread" link="${thread}" anchor="${newPostID}"><fmt:text value="${thread.subject}" /></el:cmd></td>
+ <el:cmd url="thread" link="${thread}"><fmt:text value="${thread.subject}" /></el:cmd></td>
  <td><el:profile location="${authorLoc}" className="pri bld">${author.name}</el:profile></td>
  <td><fmt:int value="${thread.views}" /></td>
  <td><fmt:int value="${thread.postCount}" /></td>
