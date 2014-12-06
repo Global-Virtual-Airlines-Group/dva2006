@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
@@ -28,7 +28,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to display diagnostic infomration.
  * @author Luke
- * @version 5.0
+ * @version 5.4
  * @since 1.0
  */
 
@@ -73,6 +73,7 @@ public class DiagnosticCommand extends AbstractCommand {
 		if (SystemData.getBoolean("acars.enabled") && SharedData.getApplications().contains("ACARS")) {
 			// Get the ACARS Connection pool data and save in the request
 			ACARSAdminInfo<?> acarsPool = (ACARSAdminInfo<?>) SharedData.get(SharedData.ACARS_POOL);
+			ctx.setAttribute("acarsSelectCount", Integer.valueOf(acarsPool.getSelectCount()), REQUEST);
 			ctx.setAttribute("acarsPool", IPCUtils.deserialize(acarsPool.getPoolInfo(true)), REQUEST);
 
 			// Get the acars worker info data and save in the request
