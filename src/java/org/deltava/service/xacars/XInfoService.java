@@ -1,4 +1,4 @@
-// Copyright 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.xacars;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * The XACARS Flight Information Web Service.
  * @author Luke
- * @version 4.1
+ * @version 5.4
  * @since 4.1
  */
 
@@ -60,7 +60,7 @@ public class XInfoService extends XAService {
 			
 			// Load draft PIREPs, checking for the flight number
 			GetFlightReports frdao = new GetFlightReports(con);
-			Collection<FlightReport> flights = frdao.getDraftReports(usr.getID(), null, null, SystemData.get("airline.db"));
+			Collection<FlightReport> flights = frdao.getDraftReports(usr.getID(), null, SystemData.get("airline.db"));
 			for (Iterator<FlightReport> i = flights.iterator(); i.hasNext(); ) {
 				FlightReport dfr = i.next();
 				if (dfr.getAirline().equals(f.getAirline()) && (dfr.getFlightNumber() == f.getFlightNumber())) {

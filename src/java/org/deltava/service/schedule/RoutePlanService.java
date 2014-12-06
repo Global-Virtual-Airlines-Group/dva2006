@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.util.*;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to create flight plans.
  * @author Luke
- * @version 5.1
+ * @version 5.4
  * @since 2.2
  */
 
@@ -136,13 +136,14 @@ public class RoutePlanService extends WebService {
 				
 				GetSchedule sdao = new GetSchedule(con);
 				GetFlightReports frdao = new GetFlightReports(con);
-				List<FlightReport> dFlights = frdao.getDraftReports(ctx.getUser().getID(), aD, aA, SystemData.get("airline.db"));
+				ScheduleRoute rt = new ScheduleRoute(aD, aA);
+				List<FlightReport> dFlights = frdao.getDraftReports(ctx.getUser().getID(), rt, SystemData.get("airline.db"));
 				ctx.startTX();
 				
 				AssignmentInfo ai = null;
 				FlightReport dfr = dFlights.isEmpty() ? null : dFlights.get(0);
 				if (dfr == null) {
-					ScheduleEntry schedInfo = sdao.getFlightNumber(new ScheduleRoute(aD, aA), SystemData.get("airline.db"));
+					ScheduleEntry schedInfo = sdao.getFlightNumber(rt, SystemData.get("airline.db"));
 					if (schedInfo == null) {
 						dfr = new DraftFlightReport(SystemData.getAirline(SystemData.get("airline.code")), ctx.getUser().getPilotNumber(), 1);
 						dfr.setAirportD(aD);

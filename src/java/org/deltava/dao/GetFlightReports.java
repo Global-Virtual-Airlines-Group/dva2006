@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Flight Reports.
  * @author Luke
- * @version 5.1
+ * @version 5.4
  * @since 1.0
  */
 
@@ -475,13 +475,12 @@ public class GetFlightReports extends DAO {
 	/**
 	 * Returns Draft Flight Reports for a particular Pilot (with optional city pair).
 	 * @param pilotID the Pilot's Database ID
-	 * @param airportD the departure Airport
-	 * @param airportA the arrival Airport
+	 * @param rp the RoutePair, or null if none
 	 * @param dbName the database Name
 	 * @return a List of Draft FlightReports matching the above criteria
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<FlightReport> getDraftReports(int pilotID, Airport airportD, Airport airportA, String dbName) throws DAOException {
+	public List<FlightReport> getDraftReports(int pilotID, RoutePair rp, String dbName) throws DAOException {
 
 		// Build the prepared statement
 		dbName = formatDBName(dbName);
@@ -497,16 +496,16 @@ public class GetFlightReports extends DAO {
 				+ "(S.AIRPORT_D=PR.AIRPORT_D) AND (S.AIRPORT_A=PR.AIRPORT_A) WHERE (PR.PILOT_ID=?) AND (PR.STATUS=?)");
 
 		// Add departure/arrival airports if specified
-		if ((airportD != null) && (airportA != null))
+		if (rp != null)
 			sqlBuf.append(" AND (PR.AIRPORT_D=?) AND (PR.AIRPORT_A=?)");
 
 		try {
 			prepareStatement(sqlBuf.toString());
 			_ps.setInt(1, pilotID);
 			_ps.setInt(2, FlightReport.DRAFT);
-			if ((airportD != null) && (airportA != null)) {
-				_ps.setString(3, airportD.getIATA());
-				_ps.setString(4, airportA.getIATA());
+			if (rp != null) {
+				_ps.setString(3, rp.getAirportD().getIATA());
+				_ps.setString(4, rp.getAirportA().getIATA());
 			}
 
 			return execute();
@@ -722,7 +721,7 @@ public class GetFlightReports extends DAO {
 		}
 	}
 
-	/**
+	/*
 	 * Helper method to route data.
 	 */
 	private String getRoute(int id, String dbName) throws SQLException {
@@ -745,7 +744,7 @@ public class GetFlightReports extends DAO {
 		return rt;
 	}
 	
-	/**
+	/*
 	 * Helper method to load data for flights counting towards promotion.
 	 */
 	private Collection<String> getCaptEQType(int id, String dbName) throws SQLException {

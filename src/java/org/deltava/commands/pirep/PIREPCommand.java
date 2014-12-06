@@ -30,7 +30,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle editing/saving Flight Reports.
  * @author Luke
- * @version 5.3
+ * @version 5.4
  * @since 1.0
  */
 
@@ -120,7 +120,8 @@ public class PIREPCommand extends AbstractFormCommand {
 				throw notFoundException("Invalid Airport(s) - " + ctx.getParameter("airportDCode") + " / " 	+ ctx.getParameter("airportACode"));
 
 			// If we are creating a new PIREP, check if draft PIREP exists with a similar route pair
-			List<FlightReport> draftFlights = rdao.getDraftReports(ctx.getUser().getID(), ad, aa, SystemData.get("airline.db"));
+			ScheduleRoute rt = new ScheduleRoute(ad, aa);
+			List<FlightReport> draftFlights = rdao.getDraftReports(ctx.getUser().getID(), rt, SystemData.get("airline.db"));
 			if (doCreate && (!draftFlights.isEmpty()))
 				fr = draftFlights.get(0);
 
