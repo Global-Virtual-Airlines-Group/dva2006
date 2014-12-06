@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import java.io.*;
@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to allow users to submit Offline Flight Reports.
  * @author Luke
- * @version 5.1
+ * @version 5.4
  * @since 2.4
  */
 
@@ -203,7 +203,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 			
 			// Check for Draft PIREPs by this Pilot
 			GetFlightReports prdao = new GetFlightReports(con);
-			List<FlightReport> dFlights = prdao.getDraftReports(p.getID(), afr.getAirportD(), afr.getAirportA(), SystemData.get("airline.db"));
+			List<FlightReport> dFlights = prdao.getDraftReports(p.getID(), afr, SystemData.get("airline.db"));
 			if (!dFlights.isEmpty()) {
 				FlightReport fr = dFlights.get(0);
 				afr.setID(fr.getID());

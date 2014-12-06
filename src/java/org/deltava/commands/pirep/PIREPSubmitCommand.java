@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Fligt Report submissions.
  * @author Luke
- * @version 5.3
+ * @version 5.4
  * @since 1.0
  */
 
@@ -64,7 +64,7 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			Collection<String> comments = new ArrayList<String>();
 			
 			// If we found a draft flight report, save its database ID and copy its ID to the PIREP we will file
-			List<FlightReport> dFlights = frdao.getDraftReports(p.getID(), pirep.getAirportD(), pirep.getAirportA(), SystemData.get("airline.db"));
+			List<FlightReport> dFlights = frdao.getDraftReports(p.getID(), pirep, SystemData.get("airline.db"));
 			if (!dFlights.isEmpty()) {
 				FlightReport fr = dFlights.get(0);
 				if (pirep.getID() == 0)

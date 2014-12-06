@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * The XACARS Flight Report Web Service. 
  * @author Luke
- * @version 5.3
+ * @version 5.4
  * @since 4.1
  */
 
@@ -104,7 +104,7 @@ public class XPIREPService extends XAService {
 			xfr.setMajorVersion(fi.getClientBuild());
 			xfr.setMinorVersion(fi.getBeta());
 			GetFlightReports prdao = new GetFlightReports(con);
-			List<FlightReport> dFlights = prdao.getDraftReports(usr.getID(), xfr.getAirportD(), xfr.getAirportA(), SystemData.get("airline.db"));
+			List<FlightReport> dFlights = prdao.getDraftReports(usr.getID(), xfr, SystemData.get("airline.db"));
 			if (!dFlights.isEmpty()) {
 				FlightReport fr = dFlights.get(0);
 				xfr.setID(fr.getID());
