@@ -57,7 +57,7 @@ return true;
 <c:if test="${!empty acarsPool}">
 <el:table className="view">
 <tr class="title">
- <td class="left caps" colspan="6">ACARS CONNECTION POOL INFORMATION - ${fn:sizeof(acarsPool)} CONNECTIONS</td>
+ <td class="left caps" colspan="6">ACARS CONNECTION POOL INFORMATION - ${fn:sizeof(acarsPool)} CONNECTIONS / <fmt:int value="${acarsSelectCount}" /> SELECTS</td>
 </tr>
 
 <!-- Table Header Bar-->
