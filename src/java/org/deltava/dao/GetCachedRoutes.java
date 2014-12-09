@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -28,17 +28,16 @@ public class GetCachedRoutes extends DAO {
 	
 	/**
 	 * Retrieves the average age of cached routes between two airports. 
-	 * @param aD the departure Airport bean
-	 * @param aA the arrival Airport bean
+	 * @param rp the RoutePair
 	 * @return the average age in days, or -1 if none found
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public int getAverageAge(Airport aD, Airport aA) throws DAOException {
+	public int getAverageAge(RoutePair rp) throws DAOException {
 		try {
 			prepareStatement("SELECT IFNULL(ROUND(AVG(DATEDIFF(NOW(), CREATED))), -1) FROM common.ROUTE_CACHE "
 					+ "WHERE (AIRPORT_D=?) AND (AIRPORT_A=?)");
-			_ps.setString(1, aD.getICAO());
-			_ps.setString(2, aA.getICAO());
+			_ps.setString(1, rp.getAirportD().getICAO());
+			_ps.setString(2, rp.getAirportA().getICAO());
 
 			int avgAge = -1;
 			try (ResultSet rs = _ps.executeQuery()) {
@@ -55,18 +54,17 @@ public class GetCachedRoutes extends DAO {
 
 	/**
 	 * Loads all the cached routes between two airports.
-	 * @param aD the departure Airport bean
-	 * @param aA the arrival Airport bean
+	 * @param rp the RoutePair
 	 * @param includeInternal TRUE to include internal routes, otherwise FALSE
 	 * @return a Collection of FlightRoute beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<? extends FlightRoute> getRoutes(Airport aD, Airport aA, boolean includeInternal) throws DAOException {
+	public Collection<? extends FlightRoute> getRoutes(RoutePair rp, boolean includeInternal) throws DAOException {
 		try {
 			prepareStatement("SELECT * FROM common.ROUTE_CACHE WHERE (AIRPORT_D=?) AND (AIRPORT_A=?) "
 					+ "ORDER BY CREATED");
-			_ps.setString(1, aD.getICAO());
-			_ps.setString(2, aA.getICAO());
+			_ps.setString(1, rp.getAirportD().getICAO());
+			_ps.setString(2, rp.getAirportA().getICAO());
 			
 			// Execute the query
 			Collection<FlightRoute> results = new ArrayList<FlightRoute>();

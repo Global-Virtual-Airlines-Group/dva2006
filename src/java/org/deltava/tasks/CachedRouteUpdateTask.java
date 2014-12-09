@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled task to update cached FlightAware routes.
  * @author Luke
- * @version 4.1
+ * @version 5.4
  * @since 2.6
  */
 
@@ -66,7 +66,7 @@ public class CachedRouteUpdateTask extends Task {
 				}
 				
 				// Get the average age - if over three-quarters of the max age load new routes
-				int avgAge = rcdao.getAverageAge(rp.getAirportD(), rp.getAirportA());
+				int avgAge = rcdao.getAverageAge(rp);
 				boolean isExpired = (avgAge == -1) || (avgAge >= maxAge);
 				SetCachedRoutes rcwdao = new SetCachedRoutes(con);
 				if (SystemData.getBoolean("schedule.flightaware.enabled") && isExpired) {
@@ -74,7 +74,7 @@ public class CachedRouteUpdateTask extends Task {
 					
 					// Purge the routes and load new ones
 					routesLoaded++;
-					Collection<? extends FlightRoute> faroutes = fwdao.getRouteData(rp.getAirportD(), rp.getAirportA());
+					Collection<? extends FlightRoute> faroutes = fwdao.getRouteData(rp);
 					if (!faroutes.isEmpty()) {
 						log.warn("Loaded " + faroutes.size() + " routes between " + rp.getAirportD() + " and " + rp.getAirportA());
 						rcwdao.purge(rp);

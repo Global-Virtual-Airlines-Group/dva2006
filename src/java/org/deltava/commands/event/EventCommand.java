@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Web Site Command to display an Online Event.
  * @author Luke
- * @version 5.1
+ * @version 5.4
  * @since 1.0
  */
 
@@ -97,7 +97,7 @@ public class EventCommand extends AbstractCommand {
 			GetACARSRoute ardao = new GetACARSRoute(con);
 			for (Iterator<Route> i = e.getActiveRoutes().iterator(); i.hasNext(); ) {
 				Route r = i.next();
-				Collection<DispatchRoute> rts = ardao.getRoutes(r.getAirportD(), r.getAirportA(), true);
+				Collection<DispatchRoute> rts = ardao.getRoutes(r, true);
 				e.getDispatchRoutes().addAll(rts);
 			}
 			
