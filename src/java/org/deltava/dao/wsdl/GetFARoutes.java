@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.wsdl;
 
 import java.util.*;
@@ -12,24 +12,23 @@ import org.deltava.util.*;
 /**
  * Loads route data from FlightAware via SOAP. 
  * @author Luke
- * @version 5.0
+ * @version 5.4
  * @since 2.2
  */
 
 public class GetFARoutes extends FlightAwareDAO {
 	
 	/**
-	 * Retrieves routes between two airports.
-	 * @param aD the origin Airport
-	 * @param aA the destination Airport
+	 * Retrieves routes between two Aairports.
+	 * @param rp the RoutePair
 	 * @return a Collection of FlightRoute beans
 	 * @throws DAOException if an I/O error occurs
 	 */
-	public Collection<? extends FlightRoute> getRouteData(Airport aD, Airport aA) throws DAOException {
+	public Collection<? extends FlightRoute> getRouteData(RoutePair rp) throws DAOException {
 		Collection<ExternalRoute> results = new LinkedHashSet<ExternalRoute>();
 		try {
 			// Do the SOAP call
-			RoutesBetweenAirportsRequest req = new RoutesBetweenAirportsRequest(aD.getICAO(), aA.getICAO());
+			RoutesBetweenAirportsRequest req = new RoutesBetweenAirportsRequest(rp.getAirportD().getICAO(), rp.getAirportA().getICAO());
             RoutesBetweenAirportsResults rsp = getStub().routesBetweenAirports(req);
             RoutesBetweenAirportsStruct[] data = rsp.getRoutesBetweenAirportsResult();
             
@@ -38,8 +37,8 @@ public class GetFARoutes extends FlightAwareDAO {
             	RoutesBetweenAirportsStruct r = data[x];
             	int altitude = r.getFiledAltitude();
             	ExternalRoute rt = new ExternalRoute("FlightAware");
-            	rt.setAirportD(aD);
-            	rt.setAirportA(aA);
+            	rt.setAirportD(rp.getAirportD());
+            	rt.setAirportA(rp.getAirportA());
             	rt.setCreatedOn(new Date());
             	rt.setCruiseAltitude((altitude < 1000) ? "FL" + String.valueOf(altitude) : String.valueOf(altitude));
             	rt.setComments("Loaded from FlightAware on " + rt.getCreatedOn());

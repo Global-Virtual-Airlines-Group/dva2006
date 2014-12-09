@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load flight routes from approved Flight Reports. 
  * @author Luke
- * @version 4.1
+ * @version 5.4
  * @since 3.3
  */
 
@@ -30,24 +30,22 @@ public class GetFlightReportRoutes extends DAO {
 
 	/**
 	 * Loads Flight Routes from Flight Reports in the current database.
-	 * @param aD the departure Airport
-	 * @param aA the arrival Airport
+	 * @param rp the RoutePair
 	 * @return a Collection of FlightRoutes
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<? extends FlightRoute> getRoutes(Airport aD, Airport aA) throws DAOException {
-		return getRoutes(aD, aA, SystemData.get("airline.db"));
+	public Collection<? extends FlightRoute> getRoutes(RoutePair rp) throws DAOException {
+		return getRoutes(rp, SystemData.get("airline.db"));
 	}
 	
 	/**
 	 * Loads Flight Routes from Flight Reports.
-	 * @param aD the departure Airport
-	 * @param aA the arrival Airport
+	 * @param rp the RoutePair
 	 * @param dbName the database name
 	 * @return a Collection of FlightRoutes
 	 * @throws DAOException if a JDBC error occurs
 	 */	
-	public Collection<? extends FlightRoute> getRoutes(Airport aD, Airport aA, String dbName) throws DAOException {
+	public Collection<? extends FlightRoute> getRoutes(RoutePair rp, String dbName) throws DAOException {
 		
 		// Build the SQL statement
 		String db = formatDBName(dbName);
@@ -66,8 +64,8 @@ public class GetFlightReportRoutes extends DAO {
 		
 		try {
 			prepareStatement(sqlBuf.toString());
-			_ps.setString(1, aD.getIATA());
-			_ps.setString(2, aA.getIATA());
+			_ps.setString(1, rp.getAirportD().getIATA());
+			_ps.setString(2, rp.getAirportA().getIATA());
 			_ps.setInt(3, FlightReport.OK);
 			
 			// Execute the query
@@ -77,8 +75,8 @@ public class GetFlightReportRoutes extends DAO {
 				while (rs.next() && doMore) {
 					ExternalRoute rt = new ExternalRoute("ACARS");
 					rt.setID(++id);
-					rt.setAirportD(aD);
-					rt.setAirportA(aA);
+					rt.setAirportD(rp.getAirportD());
+					rt.setAirportA(rp.getAirportA());
 					rt.setCreatedOn(rs.getTimestamp(2));
 					rt.setCruiseAltitude(rs.getString(5));
 					int useCount = rs.getInt(6);

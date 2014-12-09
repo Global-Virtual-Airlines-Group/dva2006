@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2010, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.event;
 
 import org.deltava.beans.*;
@@ -7,11 +7,11 @@ import org.deltava.beans.schedule.*;
 /**
  * A class to store information about a Flight Route for an Online Event.
  * @author Luke
- * @version 3.1
+ * @version 5.4
  * @since 1.0
  */
 
-public class Route extends DatabaseBean implements ComboAlias, ViewEntry {
+public class Route extends DatabaseBean implements ComboAlias, ViewEntry, RoutePair {
 	
 	private int _routeID;
 	private Airport _airportD;
