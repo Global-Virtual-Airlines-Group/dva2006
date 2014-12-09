@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to load flight routes from the database.
  * @author Luke
- * @version 5.1
+ * @version 5.4
  * @since 3.4
  */
 
@@ -31,9 +31,8 @@ public final class RouteLoadHelper {
 	private static final Logger log = Logger.getLogger(RouteLoadHelper.class);
 	
 	private transient final Connection _c;
-
-	private final Airport _aD; private METAR _mD;
-	private final Airport _aA; private METAR _mA;
+	private final RoutePair _rp;
+	private METAR _mD; private METAR _mA;
 	private String _preferredRunway;
 	
 	private final Collection<FlightRoute> _routes = new ArrayList<FlightRoute>();
@@ -46,8 +45,7 @@ public final class RouteLoadHelper {
 	public RouteLoadHelper(Connection c, RoutePair rp) {
 		super();
 		_c = c;
-		_aD = rp.getAirportD();
-		_aA = rp.getAirportA();
+		_rp = rp;
 	}
 	
 	/**
@@ -82,8 +80,8 @@ public final class RouteLoadHelper {
 	 */
 	public void loadWeather() throws DAOException {
 		GetWeather wxdao = new GetWeather(_c);
-		_mD = wxdao.getMETAR(_aD.getICAO());
-		_mA = wxdao.getMETAR(_aA.getICAO());
+		_mD = wxdao.getMETAR(_rp.getAirportD().getICAO());
+		_mA = wxdao.getMETAR(_rp.getAirportA().getICAO());
 	}
 	
 	/**
@@ -92,7 +90,7 @@ public final class RouteLoadHelper {
 	 */
 	public void loadDispatchRoutes() throws DAOException {
 		GetACARSRoute rdao = new GetACARSRoute(_c);
-		Collection<? extends FlightRoute> routes = rdao.getRoutes(_aD, _aA, true);
+		Collection<? extends FlightRoute> routes = rdao.getRoutes(_rp, true);
 		_routes.addAll(routes);
 		log.info("Loaded " + routes.size() + " Dispatch Routes");
 	}
@@ -103,7 +101,7 @@ public final class RouteLoadHelper {
 	 */
 	public void loadCachedRoutes() throws DAOException {
 		GetCachedRoutes rcdao = new GetCachedRoutes(_c);
-		Collection<? extends FlightRoute> routes = rcdao.getRoutes(_aD, _aA, false);
+		Collection<? extends FlightRoute> routes = rcdao.getRoutes(_rp, false);
 		log.info("Loaded " + routes.size() + " Cached FlightAware Routes");
 		_routes.addAll(routes);
 	}
@@ -114,16 +112,16 @@ public final class RouteLoadHelper {
 	 * @throws DAOException if an I/O or JDBC error occurs
 	 */
 	public void loadFlightAwareRoutes(boolean saveRoutes) throws DAOException {
-		boolean isUS = (_aD.getCountry().equals("US")) || (_aA.getCountry().equals("US"));
+		boolean isUS = (_rp.getAirportD().getCountry().equals("US")) || (_rp.getAirportA().getCountry().equals("US"));
 		if (!isUS) {
-			log.info(_aD + " to " + _aA + " not a US route");
+			log.info(_rp.getAirportD() + " to " + _rp.getAirportA() + " not a US route");
 			return;
 		}
 		
 		GetFARoutes fwdao = new GetFARoutes();
 		fwdao.setUser(SystemData.get("schedule.flightaware.download.user"));
 		fwdao.setPassword(SystemData.get("schedule.flightaware.download.pwd"));
-		Collection<? extends FlightRoute> routes = fwdao.getRouteData(_aD, _aA);
+		Collection<? extends FlightRoute> routes = fwdao.getRouteData(_rp);
 		log.info("Loaded " + routes.size() + " FlightAware Routes");
 		_routes.addAll(routes);
 		
@@ -132,7 +130,7 @@ public final class RouteLoadHelper {
 			try {
 				_c.setAutoCommit(false);
 				SetCachedRoutes rcwdao = new SetCachedRoutes(_c);
-				rcwdao.purge(new ScheduleRoute(_aD, _aA));
+				rcwdao.purge(_rp);
 				if (!routes.isEmpty())
 					rcwdao.write(routes);
 				
@@ -159,17 +157,17 @@ public final class RouteLoadHelper {
 	 */
 	public void loadPIREPRoutes(String dbName) throws DAOException {
 		GetFlightReportRoutes frrdao = new GetFlightReportRoutes(_c);
-		Collection<? extends FlightRoute> routes = frrdao.getRoutes(_aD, _aA, dbName);
+		Collection<? extends FlightRoute> routes = frrdao.getRoutes(_rp, dbName);
 		log.info("Loaded " + routes.size() + " Flight Report Routes");
 		_routes.addAll(routes);
 	}
 	
-	/**
+	/*
 	 * Gets runway popularity for an aiport based on usage and weather.
 	 */
 	private List<Runway> getPopularRunways(boolean isTakeoff) throws DAOException {
 		GetACARSRunways ardao = new GetACARSRunways(_c);
-		List<Runway> rwys = ardao.getPopularRunways(_aD, _aA, isTakeoff);
+		List<Runway> rwys = ardao.getPopularRunways(_rp.getAirportD(), _rp.getAirportA(), isTakeoff);
 		METAR m = isTakeoff ? _mD : _mA;
 		if ((m != null) && (m.getWindSpeed() > 0))
 			Collections.sort(rwys, new RunwayComparator(m.getWindDirection()).reverse());
@@ -198,9 +196,9 @@ public final class RouteLoadHelper {
 				log.info("Searching for best SID for " + rt.getSID() + " runway " + dRwy);
 				List<String> tkns = StringUtils.split(rt.getSID(), ".");
 				String sidName = TerminalRoute.makeGeneric(tkns.get(0));
-				TerminalRoute sid = navdao.getBestRoute(_aD, TerminalRoute.Type.SID, sidName, tkns.get(1), _preferredRunway);
+				TerminalRoute sid = navdao.getBestRoute(_rp.getAirportD(), TerminalRoute.Type.SID, sidName, tkns.get(1), _preferredRunway);
 				if (sid == null)
-					sid = navdao.getBestRoute(_aD, TerminalRoute.Type.SID, sidName, tkns.get(1), dRwy);
+					sid = navdao.getBestRoute(_rp.getAirportD(), TerminalRoute.Type.SID, sidName, tkns.get(1), dRwy);
 				if (sid != null) {
 					log.info("Found " + sid.getCode());
 					rt.setSID(sid.getCode());
@@ -215,9 +213,9 @@ public final class RouteLoadHelper {
 
 				// Load the STAR - if we can't find based on the runway, try the most popular
 				String starName = TerminalRoute.makeGeneric(tkns.get(0));
-				TerminalRoute star = navdao.getBestRoute(_aA, TerminalRoute.Type.STAR, starName, tkns.get(1), arrRwy);
+				TerminalRoute star = navdao.getBestRoute(_rp.getAirportA(), TerminalRoute.Type.STAR, starName, tkns.get(1), arrRwy);
 				if (star == null)
-					star = navdao.getBestRoute(_aA, TerminalRoute.Type.STAR, starName, tkns.get(1), aRwy);
+					star = navdao.getBestRoute(_rp.getAirportA(), TerminalRoute.Type.STAR, starName, tkns.get(1), aRwy);
 				if (star != null) {
 					log.info("Found " + star.getCode()); 
 					rt.setSTAR(star.getCode());
@@ -232,7 +230,6 @@ public final class RouteLoadHelper {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void populateRoutes() throws DAOException {
-		
 		GetNavRoute navdao = new GetNavRoute(_c);
 		Collection<String> rts = new HashSet<String>();
 		Collection<PopulatedRoute> popRoutes = new ArrayList<PopulatedRoute>();

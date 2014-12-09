@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -6,7 +6,7 @@ import java.util.*;
 
 import org.deltava.beans.acars.DispatchRoute;
 import org.deltava.beans.navdata.*;
-import org.deltava.beans.schedule.Airport;
+import org.deltava.beans.schedule.*;
 
 import org.deltava.util.CollectionUtils;
 import org.deltava.util.system.SystemData;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load stored ACARS dispatch routes.
  * @author Luke
- * @version 5.0
+ * @version 5.4
  * @since 2.0
  */
 
@@ -149,20 +149,19 @@ public class GetACARSRoute extends DAO {
 
 	/**
 	 * Loads all saved routes between two Airports.
-	 * @param aD the departure Airport
-	 * @param aA the arrival Airport
+	 * @param rp the RoutePair - either airport can be null
 	 * @param activeOnly TRUE if only active routes should be returned, otherwise FALSE
 	 * @return a Collection of RoutePlan beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<DispatchRoute> getRoutes(Airport aD, Airport aA, boolean activeOnly) throws DAOException {
+	public Collection<DispatchRoute> getRoutes(RoutePair rp, boolean activeOnly) throws DAOException {
 		
 		// Build SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM acars.ROUTES WHERE ");
 		Collection<String> params = new ArrayList<String>();
-		if (aD != null)
+		if (rp.getAirportD() != null)
 			params.add("(AIRPORT_D=?)");
-		if (aA != null) 
+		if (rp.getAirportA() != null) 
 			params.add("(AIRPORT_A=?)");
 		if (activeOnly)
 			params.add("(ACTIVE=?)");
@@ -176,10 +175,10 @@ public class GetACARSRoute extends DAO {
 		try {
 			int param = 0;
 			prepareStatement(sqlBuf.toString());
-			if (aD != null)
-				_ps.setString(++param, aD.getIATA());
-			if (aA != null)
-				_ps.setString(++param, aA.getIATA());
+			if (rp.getAirportD() != null)
+				_ps.setString(++param, rp.getAirportD().getIATA());
+			if (rp.getAirportA() != null)
+				_ps.setString(++param, rp.getAirportA().getIATA());
 			if (activeOnly)
 				_ps.setBoolean(++param, true);
 			
@@ -194,20 +193,19 @@ public class GetACARSRoute extends DAO {
 	
 	/**
 	 * Searches for duplicate routes between two Airports.
-	 * @param aD the departure Airport
-	 * @param aA the arrival Airport
+	 * @param rp the RoutePair
 	 * @param route the route waypoints, separated by spaces
 	 * @return the route database ID, or zero if no duplicate found
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public int hasDuplicate(Airport aD, Airport aA, String route) throws DAOException {
+	public int hasDuplicate(RoutePair rp, String route) throws DAOException {
 		try {
 			prepareStatementWithoutLimits("SELECT R.ID, GROUP_CONCAT(RW.CODE ORDER BY RW.SEQ SEPARATOR ?) "
 					+ "AS WPS FROM acars.ROUTES R LEFT JOIN acars.ROUTE_WP RW ON (R.ID=RW.ID) WHERE "
 					+ "(R.AIRPORT_D=?) AND (R.AIRPORT_A=?) AND (R.ACTIVE=?) GROUP BY R.ID HAVING (WPS=?) LIMIT 1");
 			_ps.setString(1, " ");
-			_ps.setString(2, aD.getIATA());
-			_ps.setString(3, aA.getIATA());
+			_ps.setString(2, rp.getAirportD().getIATA());
+			_ps.setString(3, rp.getAirportA().getIATA());
 			_ps.setBoolean(4, true);
 			_ps.setString(5, route);
 			
@@ -224,7 +222,7 @@ public class GetACARSRoute extends DAO {
 		}
 	}
 	
-	/**
+	/*
 	 * Helper method to parse result sets.
 	 */
 	private List<DispatchRoute> execute() throws SQLException {
@@ -256,7 +254,7 @@ public class GetACARSRoute extends DAO {
 		return results;
 	}
 	
-	/**
+	/*
 	 * Helper method to load route waypoints.
 	 */
 	private void loadRoutes(Collection<DispatchRoute> routes) throws SQLException {

@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.dispatch;
 
 import java.util.*;
@@ -6,7 +6,7 @@ import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.acars.DispatchRoute;
-import org.deltava.beans.schedule.Airport;
+import org.deltava.beans.schedule.*;
 
 import org.deltava.comparators.*;
 import org.deltava.commands.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to search saved Dispatch routes. 
  * @author Luke
- * @version 2.5
+ * @version 5.4
  * @since 2.2
  */
 
@@ -30,6 +30,7 @@ public class RouteSearchCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		try {
 			Connection con = ctx.getConnection();
@@ -49,13 +50,13 @@ public class RouteSearchCommand extends AbstractCommand {
 				
 				// Do the search
 				Collection<Integer> IDs = new HashSet<Integer>();
-				Collection<DispatchRoute> results = dao.getRoutes(airportD, airportA, false);
+				Collection<DispatchRoute> results = dao.getRoutes(new ScheduleRoute(airportD, airportA), false);
 				for (Iterator<DispatchRoute> i = results.iterator(); i.hasNext(); ) {
 					DispatchRoute rt = i.next();
 					DispatchRouteAccessControl ac = new DispatchRouteAccessControl(ctx, rt);
 					ac.validate();
 					if (ac.getCanView())
-						IDs.add(new Integer(rt.getAuthorID()));
+						IDs.add(Integer.valueOf(rt.getAuthorID()));
 					else
 						i.remove();
 				}

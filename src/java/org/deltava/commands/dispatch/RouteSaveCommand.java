@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.dispatch;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to create a new ACARS Dispatcher route.
  * @author Luke
- * @version 5.1
+ * @version 5.4
  * @since 2.2
  */
 
@@ -88,7 +88,7 @@ public class RouteSaveCommand extends AbstractCommand {
 			
 			// Check for a duplicate
 			GetACARSRoute rdao = new GetACARSRoute(con);
-			int dupeID = rdao.hasDuplicate(rp.getAirportD(), rp.getAirportA(), rp.getRoute());
+			int dupeID = rdao.hasDuplicate(rp, rp.getRoute());
 			ctx.setAttribute("dupeID", Integer.valueOf(dupeID), REQUEST);
 			
 			// Save the route
