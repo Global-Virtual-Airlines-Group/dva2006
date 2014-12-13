@@ -13,7 +13,7 @@ class TileData {
 	private File _file;
 	
 	public TileData() {
-		this(new RawTile());
+		this(new SmallRawTile());
 	}
 	
 	public TileData(RawTile img) {
@@ -32,9 +32,10 @@ class TileData {
 	public void load() {
 		if (_file == null) throw new IllegalStateException("Not Saved");
 		try {
-			_img = new RawTile();
 			try (BufferedInputStream bi = new BufferedInputStream(new FileInputStream(_file), 65536)) {
 				try (ObjectInput oi = new ObjectInputStream(bi)) {
+					int tileType = oi.readInt();
+					_img = (tileType == 0) ? new SmallRawTile() : new LargeRawTile();
 					_img.readExternal(oi);
 				}
 			}
@@ -53,8 +54,10 @@ class TileData {
 		intPath.mkdir();
 		try {
 			_file = File.createTempFile("img", ".bmp", intPath);
+			int tileType = (_img instanceof SmallRawTile) ? 0 : 1;
 			try (BufferedOutputStream bo = new BufferedOutputStream(new FileOutputStream(_file), 65536)) {
 				try (ObjectOutput oo = new ObjectOutputStream(bo)) {
+					oo.writeInt(tileType);
 					_img.writeExternal(oo);
 				}
 			}
