@@ -1,37 +1,18 @@
 package org.deltava.acars;
 
-import java.io.*;
+public abstract class RawTile {
 
-public class RawTile {
+	public abstract void increment(int x, int y);
+	
+	public abstract void set(int x, int y, int cnt);
+	
+	public abstract int getCount(int x, int y);
 
-	private final byte[][] _data = new byte[256][256];
+	public abstract void writeExternal(java.io.ObjectOutput out) throws java.io.IOException;
 	
-	public synchronized void increment(int x, int y) {
-		byte cnt = _data[x][y];
-		if (cnt != -1)
-			_data[x][y] = ++cnt;
-	}
+	public abstract void readExternal(java.io.ObjectInput in) throws java.io.IOException;
 	
-	public synchronized void set(int x, int y, int cnt) {
-		_data[x][y] = (byte) Math.min(255, cnt);
-	}
-	
-	public short getCount(int x, int y) {
-		short b = _data[x][y];
-		return (short) ((b > -1) ? b : (b+256));
-	}
-
-	public void writeExternal(ObjectOutput out) throws IOException {
-		for (int x = 0; x < 256; x++) {
-			for (int y = 0; y < 256; y++)
-				out.writeByte(_data[x][y]);
-		}
-	}
-	
-	public void readExternal(ObjectInput in) throws IOException {
-		for (int x = 0; x < 256; x++) {
-			for (int y = 0; y < 256; y++)
-				_data[x][y] = in.readByte();
-		}
+	public static RawTile getTile(int max) {
+		return (max > 255) ? new LargeRawTile() : new SmallRawTile();
 	}
 }
