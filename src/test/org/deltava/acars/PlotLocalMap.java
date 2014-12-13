@@ -11,16 +11,16 @@ public class PlotLocalMap extends PlotMap {
 	
 	private static final int MIN_ZOOM = 10;
 	private static final int MAX_ZOOM = 13;
-	private static final int MAX_TILES = 321 * 1024;
+	private static final int MAX_TILES = 325 * 1024;
 	
-	private static final List<String> _airports = Arrays.asList("YYZ", "MIA", "NRT",  "DFW", "IAD", "HKX", "HKG", "HNL", "OGG", "YUL", "LHR", "ICN", "BDA", "YVR", "SYD", "ZRH", "PPT", "ANC", "GVA"); 
+	private static final List<String> _airports = Arrays.asList("ATL", "YYZ", "MIA", "NRT",  "DFW", "IAD", "HKX", "HKG", "HNL", "OGG", "YUL", "LHR", "ICN", "BDA", "YVR", "SYD", "ZRH", "PPT", "ANC", "GVA"); 
 	
 	protected void setUp() throws Exception {
 		super.setUp();
-		_zooms.put(Integer.valueOf(10), new ProjectInfo(10, 32, 3));
-		_zooms.put(Integer.valueOf(11), new ProjectInfo(11, 24, 3));
-		_zooms.put(Integer.valueOf(12), new ProjectInfo(12, 16, 2));
-		_zooms.put(Integer.valueOf(13), new ProjectInfo(13, 10, 2));
+		_zooms.put(Integer.valueOf(10), new ProjectInfo(10, 64, 10));
+		_zooms.put(Integer.valueOf(11), new ProjectInfo(11, 40, 8));
+		_zooms.put(Integer.valueOf(12), new ProjectInfo(12, 28, 6));
+		_zooms.put(Integer.valueOf(13), new ProjectInfo(13, 20, 4));
 	}
 	
 	protected Collection<String> getPopularAirports(int max) throws Exception {
@@ -82,8 +82,8 @@ public class PlotLocalMap extends PlotMap {
 		for (String iata : apCodes)
 			airports.add(SystemData.getAirport(iata));
 		
-		AirportEntryFilter f = new AirportEntryFilter(MAX_ZOOM, 120, airports);
-		f.setMaxAltitude(18900);
+		AirportEntryFilter f = new AirportEntryFilter(MAX_ZOOM, 110, airports);
+		f.setMaxAltitude(18500);
 		
 		// Load flight IDs
 		log.info("Loading Flight IDs");
@@ -92,6 +92,9 @@ public class PlotLocalMap extends PlotMap {
 		// Load flights - separate thread per flight
 		SparseGlobalTile gt = new SparseGlobalTile(MAX_ZOOM, MAX_TILES);
 		loadFlights(IDs, gt, f);
+		
+		// Truncate tracks
+		truncateTracks(MIN_ZOOM);
 		
 		while (gt.getZoom() >= MIN_ZOOM) {
 			SparseGlobalTile pgt = scale(gt);

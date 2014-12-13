@@ -26,6 +26,8 @@ public class WriteWorker implements Runnable, Comparable<WriteWorker> {
 	
 	private final ProjectInfo _ppp;
 	
+	//private static final int MAX_GREY = 160;
+	
 	public WriteWorker(int id, ProjectInfo ppp, Connection c, BlockingQueue<TileAddress> work, SparseGlobalTile in, SparseGlobalTile out) {
 		super();
 		_id = id;
@@ -58,7 +60,7 @@ public class WriteWorker implements Runnable, Comparable<WriteWorker> {
 			int px = addr.getPixelX() << 1; int py = addr.getPixelY() << 1;
 			Collection<TileAddress> addrs = addr.getChildren();
 
-			RawTile img = new RawTile();
+			RawTile img = RawTile.getTile(_ppp.getMax());
 			for (TileAddress ch : addrs) {
 				TileData td = _in.getTile(ch, false);
 				if (td == null)
@@ -78,7 +80,7 @@ public class WriteWorker implements Runnable, Comparable<WriteWorker> {
 						pxCnt += srcImg.getCount(x + 1, y + 1);
 
 						int pX = dX + (x >> 1); int pY = dY + (y >> 1);
-						img.set(pX, pY, pxCnt);
+						img.set(pX, pY, Math.min(pxCnt, _ppp.getMax()));
 					}
 				}
 				
@@ -112,11 +114,16 @@ public class WriteWorker implements Runnable, Comparable<WriteWorker> {
 				int cnt = Math.min(img.getCount(x, y), _ppp.getMax());
 				if (cnt >= _ppp.getMin()) {
 					hasData = true;
-					float value = Math.min(1.0f, (cnt *0.8f / _ppp.getMax()) + 0.2f);
-					int v = (int)(value*255);
-					
-					int rgb = (v << 16) + (v << 8) + v;
-					png.setRGB(x, y, rgb | 0xFF000000);
+					float value = (cnt *0.9f / _ppp.getMax()) + 0.105f;
+					int v = Math.min(255, (int)(value*255));
+					/* if (v > MAX_GREY) {
+						int dV = ((v - MAX_GREY) >> 3) + MAX_GREY;
+						int rgb = (dV << 16) + (dV << 8) + v;
+						png.setRGB(x, y, 0xFF000000 | rgb);
+					} else { */
+						int rgb = (v << 16) + (v << 8) + v;
+						png.setRGB(x, y, 0xFF000000 | rgb);
+					//}
 				}
 			}
 		}
@@ -133,7 +140,6 @@ public class WriteWorker implements Runnable, Comparable<WriteWorker> {
 					_ps.executeUpdate();
 				}
 			}
-			
 		} catch (IOException | SQLException ie) {
 			log.error("Error writing " + addr + " - " + ie.getMessage());
 		} finally {
