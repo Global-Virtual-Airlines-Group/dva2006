@@ -151,11 +151,14 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 		ThreadUtils.kill(t, 500);
 	}
 
-	/**
+	/*
 	 * A private helper method to get the command name from the URL.
 	 */
 	private Command getCommand(String rawURL) {
 		URLParser parser = new URLParser(rawURL);
+		if (parser.size() > 1)
+			return null;
+		
 		try {
 			String cmdName = parser.getName().toLowerCase();
 			if (cmdName.charAt(0) == '/')
