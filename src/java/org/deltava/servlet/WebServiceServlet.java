@@ -61,6 +61,7 @@ public class WebServiceServlet extends BasicAuthServlet {
 	/**
 	 * Shuts down the servlet. This just logs a message to the servlet log.
 	 */
+	@Override
 	public void destroy() {
 		log.info("Shutting Down");
 	}
@@ -76,6 +77,11 @@ public class WebServiceServlet extends BasicAuthServlet {
 
 		// Get the web service
 		URLParser parser = new URLParser(req.getRequestURI());
+		if (parser.size() > 1) {
+			rsp.sendError(HttpServletResponse.SC_NOT_FOUND, "Unknown Service - " + req.getRequestURI());
+			return;
+		}
+			
 		WebService svc = _svcs.get(parser.getName().toLowerCase());
 		if (svc == null) {
 			rsp.sendError(HttpServletResponse.SC_NOT_FOUND, "Unknown Service");
