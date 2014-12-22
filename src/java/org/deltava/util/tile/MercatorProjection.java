@@ -53,6 +53,13 @@ public class MercatorProjection implements Projection {
 	 */
 	public TileAddress getAddress(GeoLocation loc) {
 		Point p = getPixelAddress(loc);
+
+		// Normalize
+		while (p.x >= _xScale)
+			p.x -= _xScale;
+		while (p.y >= _yScale)
+			p.y -= _yScale;
+		
 		return new TileAddress(p.x >> 8, p.y >> 8, _zoomLevel);
 	}
 	
