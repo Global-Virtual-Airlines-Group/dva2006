@@ -6,14 +6,14 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.sql.Connection;
 
 import org.deltava.beans.GeoLocation;
+import org.deltava.beans.schedule.GeoPosition;
 import org.deltava.beans.wx.*;
 
 import org.deltava.dao.*;
+import org.deltava.dao.mc.*;
 import org.deltava.dao.file.GetWAFSData;
-import org.deltava.dao.mc.SetTiles;
 
 import org.deltava.taskman.*;
 
@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A scheduled task to download GFS global forecast data.
  * @author Luke
- * @version 5.3
+ * @version 5.4
  * @since 5.2
  */
 
@@ -80,8 +80,10 @@ public class GFSDownloadTask extends Task {
 							int g = (wd.getJetStreamSpeed() > 150) ? Math.min(255, c+32): c;
 							Color rgb = new Color(r,g,c);
 							img.setRGB(x, y, rgb.getRGB());
-						} else
-							img.setRGB(x, y, new Color(c, c, c).getRGB());
+						} else {
+							int rgb = (c << 16) + (c << 8) + c;
+							img.setRGB(x, y, rgb);
+						}
 						
 						hasData = true;
 					}
@@ -132,30 +134,23 @@ public class GFSDownloadTask extends Task {
 				}
 			}
 			
-			// Load the GFS data
+			// Save the winds
 			GetWAFSData dao = new GetWAFSData(outF.getAbsolutePath());
 			try {
+				
+				SetWinds wwdao = new SetWinds();
+				wwdao.setExpiry(18 * 3600);
 				for (PressureLevel lvl : PressureLevel.values()) {
-					Connection con = ctx.getConnection();
-					ctx.startTX();
-					
-					SetWeather wwdao = new SetWeather(con);
-					wwdao.setQueryTimeout(60);
-					wwdao.purgeWinds(5, lvl);
-					
-					log.info("Processing " + lvl.getPressure() + "mb data");
-					GRIBResult<WindData> data = dao.load(lvl);
-					wwdao.write(dt, data);	
-					ctx.commitTX();
-					ctx.release();
+					log.info("Loading " + lvl.getPressure() + "mb wind data");
+					GRIBResult<WindData> data = dao.load(lvl);		
+					wwdao.write(data);
 				}
-
+				
 				// Write GFS cycle data
 				SetMetadata mwdao = new SetMetadata(ctx.getConnection());
 				mwdao.write("gfs.cycle", String.valueOf(dt.getTime() / 1000));
 			} catch(DAOException de) {
 				log.error(de.getMessage(), de);
-				ctx.rollbackTX();
 			} finally {
 				ctx.release();
 			}
@@ -164,9 +159,12 @@ public class GFSDownloadTask extends Task {
 			BlockingQueue<TileAddress> work = new LinkedBlockingQueue<TileAddress>();
 			for (PressureLevel lvl : LEVELS) {
 				GRIBResult<WindData> data = dao.load(lvl);
+				GeoLocation rawNW = data.getNW(); GeoLocation rawSE = data.getSE();
+				GeoLocation nwLL = new GeoPosition(Math.min(MercatorProjection.MAX_LATITUDE - 0.2, rawNW.getLatitude()), rawNW.getLongitude() + 0.01);
+				GeoLocation seLL = new GeoPosition(Math.max(MercatorProjection.MIN_LATITUDE + 0.2, rawSE.getLatitude()), rawSE.getLongitude() - 0.01);
 				for (int zoom = 5; zoom > 1; zoom--) {
 					Projection p = new MercatorProjection(zoom);
-					TileAddress nw = p.getAddress(data.getNW()); TileAddress se = p.getAddress(data.getSE());
+					TileAddress nw = p.getAddress(nwLL); TileAddress se = p.getAddress(seLL);
 					for (int tx = nw.getX(); tx <= se.getX(); tx++) {
 						for (int ty = nw.getY(); ty <= se.getY(); ty++)
 							work.add(new TileAddress(tx, ty, zoom));
@@ -176,7 +174,7 @@ public class GFSDownloadTask extends Task {
 				// Plot the tiles
 				long startTime = System.currentTimeMillis(); ImageSeries is = new ImageSeries("wind-" + lvl.name().toLowerCase(), null);
 				Collection<TileWorker> workers = new ArrayList<TileWorker>();
-				int threads = Math.max(2, Runtime.getRuntime().availableProcessors());
+				int threads = Math.max(4, Runtime.getRuntime().availableProcessors());
 				for (int x = 0; x <= threads; x++) {
 					TileWorker tw = new TileWorker(x+1, work, data, is);
 					tw.setPriority(Thread.MIN_PRIORITY);
@@ -190,7 +188,7 @@ public class GFSDownloadTask extends Task {
 				// Save in memcached
 				SetTiles twdao = new SetTiles();
 				twdao.purge(is);
-				twdao.setExpiry(60 * 60 * 16);
+				twdao.setExpiry(3600 * 18);
 				twdao.write(is);
 			}
 		} catch (Exception e) {

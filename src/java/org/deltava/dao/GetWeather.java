@@ -180,6 +180,7 @@ public class GetWeather extends DAO {
 	 * @return the closest WindData data
 	 * @throws DAOException if a JDBC error occurs
 	 */
+	@Deprecated
 	public WindData getWinds(GeospaceLocation loc) throws DAOException {
 		PressureLevel lvl = PressureLevel.getClosest(loc.getAltitude());
 		try {
