@@ -1,16 +1,18 @@
-// Copyright 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2013, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.wx;
 
 import org.deltava.beans.GeospaceLocation;
 
+import org.deltava.util.cache.Cacheable;
+
 /**
  * A bean to store GFS winds aloft and tropopause data.
  * @author Luke
- * @version 5.2
+ * @version 5.4
  * @since 5.2
  */
 
-public class WindData implements GeospaceLocation {
+public class WindData implements GeospaceLocation, Cacheable {
 
 	private final double _lat;
 	private final double _lng;
@@ -89,5 +91,20 @@ public class WindData implements GeospaceLocation {
 	
 	public void setTemperature(int tmp) {
 		_tmp = tmp;
+	}
+	
+	@Override
+	public Object cacheKey() {
+		StringBuilder buf = new StringBuilder(_pl.toString());
+		buf.append('-');
+		buf.append(_lat);
+		buf.append('-');
+		buf.append(_lng);
+		return buf.toString();
+	}
+	
+	@Override
+	public int hashCode() {
+		return cacheKey().hashCode();
 	}
 }
