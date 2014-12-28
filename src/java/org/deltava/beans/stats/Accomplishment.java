@@ -9,7 +9,7 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * A bean to define Pilot accomplishments.
  * @author Luke
- * @version 5.4
+ * @version 5.5
  * @since 3.2
  */
 
@@ -19,27 +19,21 @@ public class Accomplishment extends DatabaseBean implements ComboAlias, ViewEntr
 	 * Enumeration to track Accomplishment Units.
 	 */
 	public enum Unit implements ComboAlias {
-		LEGS("Flight Legs", 0), MILES("Flight Miles", 1), OLEGS("Online Legs", 2), VLEGS("VATSIM Legs", 3),
-		ILEGS("IVAO Legs", 4), HLEGS("Historic Legs", 5), EVENTS("Events", 6), DLEGS("Dispatch Legs", 7),
-		ALEGS("ACARS Legs", 8), AIRPORTS("Airports Visited", 9), AIRCRAFT("Aircraft Used", 10), 
-		COUNTRIES("Countries Visited", 11), STATES("States Visited", 12), MEMBERDAYS("Days since joining", 13),
-		AIRLINES("Airlines", 14), DFLIGHTS("Flights Dispatched", 15), DHOURS("Dispatch Hours", 16),
-		EQLEGS("Legs in Aircraft", 17), CONTINENTS("Continents Visited", 18);
+		LEGS("Flight Legs"), MILES("Flight Miles"), OLEGS("Online Legs"), VLEGS("VATSIM Legs"),
+		ILEGS("IVAO Legs"), HLEGS("Historic Legs"), EVENTS("Events"), DLEGS("Dispatch Legs"),
+		ALEGS("ACARS Legs"), AIRPORTS("Airports Visited"), AIRCRAFT("Aircraft Used"), 
+		COUNTRIES("Countries Visited"), STATES("States Visited"), MEMBERDAYS("Days since joining"),
+		AIRLINES("Airlines"), DFLIGHTS("Flights Dispatched"), DHOURS("Dispatch Hours"),
+		EQLEGS("Legs in Aircraft"), CONTINENTS("Continents Visited"), PAX("Passengers Carried");
 			
 		private final String _name;
-		private final int _code;
 		
-		Unit(String name, int code) {
-			_code = code;
+		Unit(String name) {
 			_name = name;
 		}
 		
 		public String getName() {
 			return _name;
-		}
-		
-		public int getCode() {
-			return _code;
 		}
 		
 		public String getComboName() {

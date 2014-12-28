@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.util.cache.CacheManager;
 /**
  * A Data Access Object to save Accomplishment profiles.
  * @author Luke
- * @version 3.2
+ * @version 5.5
  * @since 3.2
  */
 
@@ -40,7 +40,7 @@ public class SetAccomplishment extends DAO {
 						+ "ACTIVE) VALUES (?, ?, ?, ?, ?, ?)");
 			
 			_ps.setString(1, a.getName());
-			_ps.setInt(2, a.getUnit().getCode());
+			_ps.setInt(2, a.getUnit().ordinal());
 			_ps.setInt(3, a.getValue());
 			_ps.setInt(4, a.getColor());
 			_ps.setString(5, a.getChoices().isEmpty() ? null : StringUtils.listConcat(a.getChoices(), ","));
