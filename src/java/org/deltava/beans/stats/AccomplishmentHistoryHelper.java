@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to determine what Accomplishments a Pilot has achieved. 
  * @author Luke
- * @version 5.4
+ * @version 5.5
  * @since 3.2
  */
 
@@ -57,6 +57,7 @@ public class AccomplishmentHistoryHelper {
 		private final Collection<Integer> _events = new HashSet<Integer>();
 		private int _onlineLegs;
 		private long _miles;
+		private long _pax;
 		
 		private int _dspFlights;
 		private double _dspHours;
@@ -75,6 +76,7 @@ public class AccomplishmentHistoryHelper {
 		public void add(FlightReport fr) {
 			_legs++;
 			_miles += fr.getDistance();
+			_pax += fr.getPassengers();
 			_airlines.add(fr.getAirline());
 			add(fr.getAirportD());
 			add(fr.getAirportA());
@@ -139,6 +141,10 @@ public class AccomplishmentHistoryHelper {
 		
 		public long getMiles() {
 			return _miles;
+		}
+		
+		public long getPassengers() {
+			return _pax;
 		}
 		
 		public int getHistoricLegs() {
@@ -231,6 +237,8 @@ public class AccomplishmentHistoryHelper {
 				return cnt.getLegs();
 			case MILES:
 				return cnt.getMiles();
+			case PAX:
+				return cnt.getPassengers();
 			case OLEGS:
 				return cnt.getOnlineLegs();
 			case HLEGS:
