@@ -1,10 +1,10 @@
-// Copyright 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2013, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.mc;
 
 import java.util.*;
+import java.util.concurrent.Future;
 
 import org.apache.log4j.Logger;
-
 import org.deltava.dao.DAOException;
 
 import net.spy.memcached.*;
@@ -12,7 +12,7 @@ import net.spy.memcached.*;
 /**
  * A Data Access Object to read and write from memcached. 
  * @author Luke
- * @version 5.2
+ * @version 5.5
  * @since 5.0
  */
 
@@ -35,6 +35,15 @@ public abstract class MemcachedDAO {
 	protected static void checkConnection() throws DAOException {
 		if (_client == null)
 			init();
+	}
+	
+	/**
+	 * Utility method to cancel a Future.
+	 * @param f the Future
+	 */
+	protected static void cancel(Future<?> f) {
+		if (f != null)
+			f.cancel(true);
 	}
 
 	private static synchronized void init() throws DAOException {
@@ -79,7 +88,7 @@ public abstract class MemcachedDAO {
 
 	/**
 	 * Sets the expiration date/time.
-	 * @param ed
+	 * @param ed the number of seconds in the future to expire
 	 */
 	public void setExpiry(int ed) {
 		_expiry = ed;
