@@ -53,18 +53,6 @@
 	</tag>
 
 	<tag>
-		<description>Weather Underground Fronts data Tag, for inserting Javascript front data</description>
-		<name>wxFronts</name>	
-		<tag-class>org.deltava.taglib.googlemap.InsertFrontsTag</tag-class>
-		<body-content>empty</body-content>
-		<attribute>
-			<name>function</name>
-			<required>false</required>
-			<rtexprvalue>false</rtexprvalue>
-		</attribute>
-	</tag>
-
-	<tag>
 		<description>MapDIV Tag, to generate a scalable DIV for a Map</description>
 		<name>div</name>
 		<tag-class>org.deltava.taglib.googlemap.MapDIVTag</tag-class>
