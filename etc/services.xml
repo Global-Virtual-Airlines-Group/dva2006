@@ -99,6 +99,7 @@
 	<service id="si_route" class="org.deltava.service.servinfo.MapRouteService" />
 	<service id="si_data" class="org.deltava.service.servinfo.MapService" />
 	<service id="fir" class="org.deltava.service.servinfo.FIRInfoService" />
+	<service id="firs" class="org.deltava.service.servinfo.FIRLayerService" />
 	<service id="vatsim_info" class="org.deltava.service.servinfo.PilotValidationService" />
 
 	<!-- Weather Services -->

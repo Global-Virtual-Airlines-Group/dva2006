@@ -1,17 +1,19 @@
-// Copyright 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
+import java.util.*;
 
 import org.deltava.beans.navdata.FIR;
 import org.deltava.beans.schedule.GeoPosition;
 
+import org.deltava.util.Tuple;
 import org.deltava.util.cache.*;
 
 /**
  * A Data Access Object to load FIR data.
  * @author Luke
- * @version 5.0
+ * @version 5.5
  * @since 3.2
  */
 
@@ -65,6 +67,7 @@ public class GetFIR extends DAO {
 					fir = new FIR(rs.getString(1));
 					fir.setName(rs.getString(2));
 					fir.setOceanic(rs.getBoolean(3));
+					fir.setAux(fir.getName().contains(" Aux"));
 				}
 			}
 				
@@ -101,5 +104,34 @@ public class GetFIR extends DAO {
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
+	}
+
+	/**
+	 * Returns all FIRs.
+	 * @return a Collection of FIR beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<FIR> getAll() throws DAOException {
+		Collection<Tuple<String, Boolean>> IDs = new ArrayList<Tuple<String,Boolean>>(400);
+		try {
+			prepareStatementWithoutLimits("SELECT ID, OCEANIC FROM common.FIR ORDER BY ID");
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+					IDs.add(Tuple.create(rs.getString(1), Boolean.valueOf(rs.getBoolean(2))));
+			}
+			
+			_ps.close();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+		
+		Collection<FIR> results = new LinkedHashSet<FIR>();
+		for (Tuple<String, Boolean> id : IDs) {
+			FIR f = get(id.getLeft(), id.getRight().booleanValue());
+			if (f != null)
+				results.add(f);
+		}
+		
+		return results;
 	}
 }
