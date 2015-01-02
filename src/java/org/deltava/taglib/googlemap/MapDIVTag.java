@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import javax.servlet.jsp.*;
@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP Tag to insert a DIV element to store a Google Map.
  * @author Luke
- * @version 1.0
+ * @version 5.5
  * @since 1.0
  */
 
@@ -27,7 +27,7 @@ public class MapDIVTag extends ElementTag {
    private boolean _fixedSize;
    
    /**
-    * Creates a new Form element Tag.
+    * Creates a new map DIV Tag.
     */
    public MapDIVTag() {
        super("div");
@@ -70,6 +70,7 @@ public class MapDIVTag extends ElementTag {
    /**
     * Releases the tag's state variables.
     */
+   @Override
    public void release() {
       super.release();
       _fixedSize = false;
@@ -82,6 +83,7 @@ public class MapDIVTag extends ElementTag {
     * @return TagSupport.SKIP_BODY
     * @throws JspException if the Google Maps JavaScript file is not included 
     */
+   @Override
    public int doStartTag() throws JspException {
       super.doStartTag();
       
@@ -102,13 +104,18 @@ public class MapDIVTag extends ElementTag {
          _mapY *= (screenY / 768.0);
       }
       
-      // Save the DIV size as a style
+      // Get the API version
+      Integer rawVersion = (Integer) pageContext.getAttribute(InsertGoogleAPITag.API_VER_ATTR_NAME, PageContext.REQUEST_SCOPE);
+      if (rawVersion == null)
+    	  rawVersion = Integer.valueOf(3);
+      
+      // Save the DIV size as a style and API version
+      _data.setAttribute("class", "googleMapV" + String.valueOf(rawVersion));
       if (_mapWidth > 0)
     	  _data.setAttribute("style", "height:" + _mapY + "px; width:" + _mapWidth + "%");
       else
     	  _data.setAttribute("style", "height:" + _mapY + "px; width:" + _mapX + "px");
       
-      // Skip Body
       return SKIP_BODY;
    }
 
@@ -117,6 +124,7 @@ public class MapDIVTag extends ElementTag {
     * @return TagSupport.EVAL_PAGE
     * @throws JspException if an error occurs
     */
+   @Override
    public int doEndTag() throws JspException {
       try {
          _out.print(_data.open(true, false));
