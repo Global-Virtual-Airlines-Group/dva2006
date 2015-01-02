@@ -1,4 +1,4 @@
-// Copyright 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -7,20 +7,24 @@ import java.util.*;
 import java.sql.Connection;
 
 import org.json.*;
+
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.acars.FlightInfo;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.*;
+
 import org.deltava.comparators.FlightReportComparator;
+
 import org.deltava.dao.*;
 import org.deltava.service.*;
+
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Service to display route tracks between airports.
  * @author Luke
- * @version 5.4
+ * @version 5.5
  * @since 5.4
  */
 
@@ -65,7 +69,7 @@ public class MyTrackService extends WebService {
 			flights.addAll(frdao.getByPilot(userID, ssa));
 			
 			// Filter out non-ACARS and sort
-			flights.stream().filter(fr -> (fr.hasAttribute(FlightReport.ATTR_ACARS) && (fr.getStatus() == FlightReport.OK)));
+			flights.removeIf(fr -> (!fr.hasAttribute(FlightReport.ATTR_ACARS) || (fr.getStatus() != FlightReport.OK)));
 			FlightReportComparator fc = new FlightReportComparator(0); fc.setReverseSort(true);
 			flights.sort(fc);
 			if (flights.size() > MAX_FLIGHTS)
