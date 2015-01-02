@@ -1,11 +1,10 @@
-// Copyright 2006, 2007, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2010, 2011, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.net.*;
 import java.util.*;
 import java.io.IOException;
 import java.sql.Connection;
-import java.security.cert.*;
 
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.navdata.*;
@@ -15,13 +14,12 @@ import org.deltava.dao.*;
 import org.deltava.dao.http.*;
 import org.deltava.taskman.*;
 
-import org.deltava.util.http.SSLUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Scheduled Task to download PACOT data.
  * @author Luke
- * @version 3.6
+ * @version 5.5
  * @since 1.0
  */
 
@@ -37,29 +35,18 @@ public class PACOTDownloadTask extends Task {
 	/**
 	 * Executes the task.
 	 */
+	@Override
 	protected void execute(TaskContext ctx) {
 		try {
-			
-			// Create the URL connection to the PACOT Download side
 			URL url = new URL(SystemData.get("config.pacot.url"));
 			
 			// Build the oceanic route bean
 			OceanicNOTAM or = new OceanicNOTAM(OceanicTrackInfo.Type.PACOT, new Date());
 			or.setSource(url.getHost());
 			
-			// Load a key store if necessary
-			String keyStore = SystemData.get("config.pacot.keystore");
-
-			// Get the DAO and the PACOT data
+			// Load waypoint data, retry up to 3 times
 			log.info("Loading PACOT track data from " + url.toString());
 			GetPACOTs dao = new GetPACOTs(url.toExternalForm());
-			if (("https".equals(url.getProtocol())) && (keyStore != null)) {
-				log.info("Loading custom SSL keystore " + keyStore);
-				X509Certificate cert = SSLUtils.load(keyStore);
-				dao.setSSLContext(SSLUtils.getContext(cert));
-			}
-			
-			// Load waypoint data, retry up to 3 times
 			int retryCount = 0; boolean isDownloaded = false;
 			while (!isDownloaded && (retryCount < 3)) {
 				try {
@@ -121,10 +108,7 @@ public class PACOTDownloadTask extends Task {
 			for (Iterator<OceanicTrack> i = oTracks.iterator(); i.hasNext(); )
 				wdao.write(i.next());
 			
-			// Commit
 			ctx.commitTX();
-		} catch (CertificateException ce) {
-			log.error("Cannot load SSL certificate - " + ce.getMessage());
 		} catch (IOException ie) {
 			log.error("Error downloading PACOT Tracks - " + ie.getMessage(), ie);
 		} catch (Exception e) {

@@ -1,11 +1,10 @@
-// Copyright 2006, 2007, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2010, 2011, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.net.*;
 import java.util.*;
 import java.io.IOException;
 import java.sql.Connection;
-import java.security.cert.*;
 
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.navdata.*;
@@ -15,13 +14,12 @@ import org.deltava.dao.*;
 import org.deltava.dao.http.*;
 import org.deltava.taskman.*;
 
-import org.deltava.util.http.SSLUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Scheduled Task to download AUSOT data.
  * @author Luke
- * @version 3.6
+ * @version 5.5
  * @since 2.7
  */
 
@@ -37,6 +35,7 @@ public class AUSOTDownloadTask extends Task {
 	/**
 	 * Executes the task.
 	 */
+	@Override
 	protected void execute(TaskContext ctx) {
 		try {
 			
@@ -47,17 +46,9 @@ public class AUSOTDownloadTask extends Task {
 			OceanicNOTAM or = new OceanicNOTAM(OceanicTrackInfo.Type.AUSOT, new Date());
 			or.setSource(url.getHost());
 			
-			// Load a key store if necessary
-			String keyStore = SystemData.get("config.ausot.keystore");
-
 			// Get the DAO and the AUSOT data
 			log.info("Loading AUSOT track data from " + url.toString());
 			GetAUSOTs dao = new GetAUSOTs(url.toExternalForm());
-			if (("https".equals(url.getProtocol())) && (keyStore != null)) {
-				log.info("Loading custom SSL keystore " + keyStore);
-				X509Certificate cert = SSLUtils.load(keyStore);
-				dao.setSSLContext(SSLUtils.getContext(cert));
-			}
 			
 			// Load waypoint data, retry up to 3 times
 			int retryCount = 0; boolean isDownloaded = false;
@@ -86,6 +77,7 @@ public class AUSOTDownloadTask extends Task {
 			Connection con = ctx.getConnection();
 			GetNavData nddao = new GetNavData(con);
 			NavigationDataMap ndmap = nddao.getByID(waypointIDs);
+			GeoPosition ctr = new GeoPosition(-26, 133);
 			
 			// Build the Route waypoints
 			log.info("Building AUSOT track waypoints");
@@ -96,11 +88,11 @@ public class AUSOTDownloadTask extends Task {
 				ot.setDate(or.getDate());
 				
 				// Calculate the location of the waypoint
-				GeoLocation lastLoc = new GeoPosition(-26, 133);
+				GeoLocation lastLoc = new GeoPosition(ctr);
 				for (Iterator<String> wi = e.getValue().iterator(); wi.hasNext(); ) {
 					String code = wi.next();
 					NavigationDataBean ndb = ndmap.get(code, lastLoc);
-					if (ndb != null) {
+					if ((ndb != null) && (ctr.distanceTo(ndb) < 2000)) {
 						NavigationDataBean nd = NavigationDataBean.create(ndb.getType(), ndb.getLatitude(), ndb.getLongitude());
 						nd.setCode(ndb.getCode());
 						nd.setRegion(ndb.getRegion());
@@ -118,13 +110,10 @@ public class AUSOTDownloadTask extends Task {
 			// Write the route data to the database
 			SetOceanic wdao = new SetOceanic(con);
 			wdao.write(or);
-			for (Iterator<OceanicTrack> i = oTracks.iterator(); i.hasNext(); )
-				wdao.write(i.next());
+			for (OceanicTrack ot : oTracks)
+				wdao.write(ot);
 			
-			// Commit
 			ctx.commitTX();
-		} catch (CertificateException ce) {
-			log.error("Cannot load SSL certificate - " + ce.getMessage());
 		} catch (IOException ie) {
 			log.error("Error downloading AUSOT Tracks - " + ie.getMessage(), ie);
 		} catch (Exception e) {
