@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008, 2009, 2010, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
@@ -11,13 +11,13 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to load Pacific Track data.
  * @author Luke
- * @version 5.0
+ * @version 5.5
  * @since 1.0
  */
 
 public class GetPACOTs extends TrackDAO {
 
-	private String _url;
+	private final String _url;
 	private String _notam;
 
 	/**
@@ -34,11 +34,12 @@ public class GetPACOTs extends TrackDAO {
 	 * @return a String with the formatted PACOT data
 	 * @throws DAOException if an I/O error occurs
 	 */
+	@Override
 	public String getTrackInfo() throws DAOException {
 		StringBuilder buf = new StringBuilder();
 		try {
 			init(_url);
-			try (BufferedReader br = new BufferedReader(new InputStreamReader(getIn()))) {
+			try (BufferedReader br = new BufferedReader(new InputStreamReader(getIn(), "UTF-8"))) {
 				String data = br.readLine();
 				while (data != null) {
 					buf.append(data);
@@ -67,7 +68,6 @@ public class GetPACOTs extends TrackDAO {
 				buf.append(CRLF);
 			}
 
-			// Find next occurrance
 			pos = notam.indexOf("<INPUT TYPE=\"CHECKBOX\"", endPos);
 		}
 
@@ -80,6 +80,7 @@ public class GetPACOTs extends TrackDAO {
 	 * @return a Map of waypoint codes, keyed by track code
 	 * @throws DAOException if an I/O error occurs
 	 */
+	@Override
 	public Map<String, Collection<String>> getWaypoints() throws DAOException {
 		if (_notam == null) getTrackInfo();
 
@@ -123,7 +124,6 @@ public class GetPACOTs extends TrackDAO {
 								data = br.readLine();
 							}
 
-							// Save the track
 							info.put(trackID, wps);
 						}
 					}

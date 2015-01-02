@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
@@ -10,13 +10,13 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to get Australian Track data.
  * @author Luke
- * @version 5.0
+ * @version 5.5
  * @since 2.7
  */
 
 public class GetAUSOTs extends TrackDAO {
 
-	private String _url;
+	private final String _url;
 	private String _notam;
 
 	/**
@@ -33,11 +33,12 @@ public class GetAUSOTs extends TrackDAO {
 	 * @return a String with the formatted AUSOT data
 	 * @throws DAOException if an I/O error occurs
 	 */
+	@Override
 	public String getTrackInfo() throws DAOException {
 		StringBuilder buf = new StringBuilder();
 		try {
 			init(_url);
-			try (BufferedReader br = new BufferedReader(new InputStreamReader(getIn()))) {
+			try (BufferedReader br = new BufferedReader(new InputStreamReader(getIn(), "UTF-8"))) {
 				String data = br.readLine();
 				while (data != null) {
 					buf.append(data.toUpperCase());
@@ -67,6 +68,7 @@ public class GetAUSOTs extends TrackDAO {
 	 * @return a Map of {@link org.deltava.beans.navdata.OceanicTrack} beans, keyed by track code
 	 * @throws DAOException if an I/O error occurs
 	 */
+	@Override
 	public Map<String, Collection<String>> getWaypoints() throws DAOException {
 		if (_notam == null) getTrackInfo();
 
@@ -84,6 +86,7 @@ public class GetAUSOTs extends TrackDAO {
 						if (data != null)
 							data = br.readLine();
 
+						boolean noTrack = (data.contains("NO TRACK"));
 						while ((data != null) && (!data.startsWith("RTS"))) {
 							data = data.replace("<BR />", "");
 							wps.addAll(StringUtils.split(data.trim(), " "));
@@ -91,7 +94,8 @@ public class GetAUSOTs extends TrackDAO {
 						}
 
 						// Save the track
-						results.put(trackID, wps);
+						if (!noTrack)
+							results.put(trackID, wps);
 					}
 
 					data = br.readLine();
