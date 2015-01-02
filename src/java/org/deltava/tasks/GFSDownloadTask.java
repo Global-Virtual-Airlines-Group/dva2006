@@ -137,14 +137,13 @@ public class GFSDownloadTask extends Task {
 			// Save the winds
 			GetWAFSData dao = new GetWAFSData(outF.getAbsolutePath());
 			try {
-				
-				SetWinds wwdao = new SetWinds();
+				/* SetWinds wwdao = new SetWinds();
 				wwdao.setExpiry(18 * 3600);
 				for (PressureLevel lvl : PressureLevel.values()) {
 					log.info("Loading " + lvl.getPressure() + "mb wind data");
 					GRIBResult<WindData> data = dao.load(lvl);		
 					wwdao.write(data);
-				}
+				} */
 				
 				// Write GFS cycle data
 				SetMetadata mwdao = new SetMetadata(ctx.getConnection());
