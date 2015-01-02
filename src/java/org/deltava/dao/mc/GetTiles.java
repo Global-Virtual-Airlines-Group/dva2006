@@ -1,4 +1,4 @@
-// Copyright 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2013, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.mc;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.util.tile.*;
 /**
  * A Data Access Object to read tiles from memcached. 
  * @author Luke
- * @version 5.2
+ * @version 5.5
  * @since 5.0
  */
 
@@ -33,9 +33,7 @@ public class GetTiles extends MemcachedDAO {
 			Collection<String> results = (Collection<String>) f.get(100, TimeUnit.MILLISECONDS);
 			return (results == null) ? new HashSet<String>() : results;
 		} catch (Exception e) {
-			if (f != null)
-				f.cancel(true);
-			
+			cancel(f);
 			throw new DAOException(e);
 		}
 	}
@@ -68,16 +66,14 @@ public class GetTiles extends MemcachedDAO {
 					if (o == null)
 						i.remove();
 				} catch (Exception e) {
-					f.cancel(true);
+					cancel(f);
 					i.remove();
 				}
 			}
 			
 			return dates;
 		} catch (Exception e) {
-			if (f != null)
-				f.cancel(true);
-			
+			cancel(f);
 			throw new DAOException(e);
 		}
 	}
@@ -107,9 +103,7 @@ public class GetTiles extends MemcachedDAO {
 			f = _client.asyncGet(createKey(addr.getName()));
 			return (PNGTile) f.get(150, TimeUnit.MILLISECONDS);
 		} catch (Exception e) {
-			if (f != null)
-				f.cancel(true);
-			
+			cancel(f);
 			throw new DAOException(e);
 		}
 	}
