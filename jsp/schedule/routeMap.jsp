@@ -17,7 +17,7 @@
 <content:googleAnalytics eventSupport="true" />
 </head>
 <content:copyright visible="false" />
-<body>
+<body onunload="void golgotha.maps.util.unload()">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -34,7 +34,7 @@
 </tr>
 <tr>
  <td class="label">Airline</td>
- <td class="data"><el:combo ID="airlineCode" name="airline" idx="*" size="1" options="${airlines}" value="${aCode}" firstEntry="[ SELECT AIRLINE ]" onChange="void updateAirports(this)" />
+ <td class="data"><el:combo ID="airlineCode" name="airline" idx="*" size="1" options="${airlines}" value="${aCode}" firstEntry="[ SELECT AIRLINE ]" onChange="void golgotha.routeMap.updateAirports(this)" />
  <el:box ID="showInfo" name="showInfo" idx="*" value="true" className="small" label="Show Airport Information" checked="true" /></td>
 </tr>
 <tr>
@@ -46,7 +46,7 @@
 <content:copyright />
 </content:region>
 </content:page>
-<script type="text/javascript">
+<script id="mapInit" defer>
 <map:point var="mapC" point="${mapCenter}" />
 
 // Create map options
@@ -57,16 +57,14 @@ var mapOpts = {center:mapC, zoom:${zoomLevel}, scrollwheel:false, streetViewCont
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
-google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); removeMarkers('routes'); });
+google.maps.event.addListener(map, 'click', function() { map.closeWindow(); removeMarkers('routes'); });
 google.maps.event.addListener(map.infoWindow, 'closeclick', function() { removeMarkers('routes'); });
+google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
+	golgotha.routeMap.updateAirports(document.forms[0].airlineCode);	
+});
 
-// Routes/airports placeholder
-var routes = [];
-var airports = [];
-var aps = [];
-
-// Load airports
-updateAirports(document.forms[0].airlineCode);
+// Routes/airports placeholders
+var routes = []; var airports = []; var aps = [];
 </script>
 </body>
 </html>

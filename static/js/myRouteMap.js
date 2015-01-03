@@ -1,4 +1,4 @@
-golgotha.routeMap = {airports:[], routes:[], trks:[], busy:false};
+golgotha.routeMap = golgotha.routeMap || {airports:[], routes:[], trks:[], busy:false};
 golgotha.routeMap.dimAirports = function(icao) {
 	for (var x = 0; x < this.airports.length; x++) {
 		var a = this.airports[x];
