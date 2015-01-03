@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.gvagroup.acars.ACARSFlags;
 /**
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
- * @version 4.1
+ * @version 5.5
  * @since 1.0
  */
 
@@ -124,7 +124,7 @@ public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 		List<String> results = new ArrayList<String>();
 
 		// Build Pilot information
-		StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox\"><span class=\"pri bld\">");
+		StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox acarsFlight\"><span class=\"pri bld\">");
 		buf.append(_usr.getName());
 		buf.append("</span>");
 		if (!StringUtils.isEmpty(_usr.getPilotCode())) {

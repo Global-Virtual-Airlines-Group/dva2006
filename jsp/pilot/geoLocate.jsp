@@ -92,7 +92,7 @@ f.lonDir.selectedIndex = (isWest) ? 1 : 0;
 usrLocation = new google.maps.Marker({position:p, icon:myIcon, draggable:true, shadow:golgotha.maps.DEFAULT_SHADOW});
 google.maps.event.addListener(usrLocation, 'dragend', setLatLon);
 usrLocation.setMap(map);
-map.infoWindow.close();
+map.closeWindow();
 return true;
 }
 
@@ -119,7 +119,7 @@ return true;
 <el:form action="geolocate.do" method="post" validate="return validate(this)">
 <el:table className="form">
 <tr class="title caps">
- <td colspan="2">PILOT LOCATION <span id="isLoading" /></td>
+ <td colspan="2">PILOT LOCATION <span id="isLoading"></span></td>
 </tr>
 <tr>
  <td class="label top">Map</td>
@@ -168,18 +168,18 @@ location within a 3 mile circle each time the Pilot Location Board is displayed.
 <content:copyright />
 </content:region>
 </content:page>
-<script type="text/javascript">
+<script id="mapInit" defer>
 <map:point var="mapC" point="${mapCenter}" />
 
 // Create map options
 var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
-var mapOpts = {center: mapC, zoom:getDefaultZoom(${!empty location ? 30 : 2000}), scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
+var mapOpts = {center: mapC, zoom:golgotha.maps.util.getDefaultZoom(${!empty location ? 30 : 2000}), scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
 
 // Build the map
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
-google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });
+google.maps.event.addListener(map, 'click', map.closeWindow);
 var geoCoder = new google.maps.Geocoder();
 var myIcon = new google.maps.MarkerImage('/' + golgotha.maps.IMG_PATH + '/maps/point_blue.png', null, null, null, golgotha.maps.PIN_SIZE);
 

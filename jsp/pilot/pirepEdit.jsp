@@ -76,6 +76,26 @@ f.doSubmit.value = 'true';
 return cmdPost(f.action);
 }
 
+function initDateCombos(mCombo, dCombo, d)
+{
+mCombo.selectedIndex = d.getMonth();
+setDaysInMonth(mCombo);
+dCombo.selectedIndex = (d.getDate() - 1);
+return true;
+}
+
+function setDaysInMonth(combo)
+{
+var daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+var month = parseInt(combo.options[combo.selectedIndex].value, 10);
+var dCombo = document.forms[0].dateD;
+dCombo.options.length = daysInMonth[month];
+for (var x = 1; x <= daysInMonth[month]; x++)
+	dCombo.options[x-1] = new Option(x);
+
+return true;
+}
+
 function loadAirports()
 {
 var f = document.forms[0];

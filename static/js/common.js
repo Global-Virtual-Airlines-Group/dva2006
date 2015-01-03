@@ -1,8 +1,9 @@
-var golgotha = { event:{}, util:{} };
+var golgotha = { event:{}, util:{}, form:{} };
 golgotha.util.isIE = (navigator.appName == 'Microsoft Internet Explorer');
 golgotha.util.oldIE = (golgotha.util.isIE && ((navigator.appVersion.indexOf('IE 7.0') > 0) || (navigator.appVersion.indexOf('IE 8.0') > 0)));
+golgotha.util.getTimestamp = function(ms) { var d = new Date(); return d.getTime() - (d.getTime() % ms); };
 golgotha.event.beacon = function() { return false; };
-golgotha.event.stop = function(e) {	e.stopPropagation(); e.preventDefault(); }; 
+golgotha.event.stop = function(e) { e.stopPropagation(); e.preventDefault(); return true; };
 
 function getElementsById(id, eName)
 {
@@ -67,9 +68,8 @@ function enableElement(eName, isEnabled)
 {
 var objs = getElementsById(eName);
 if (!objs) return false;
-for (var x = 0; x < objs.length; x++) {
+for (var x = 0; x < objs.length; x++)
 	enableObject(objs[x], isEnabled);
-}
 
 return true;
 }
@@ -134,9 +134,51 @@ combo.selectedIndex = -1;
 return false;
 }
 
-golgotha.isFunction = function(o) {
-	return !!(o && o.constructor && o.call && o.apply);
+golgotha.util.isFunction = function(o) { return !!(o && o.constructor && o.call && o.apply); };
+golgotha.util.createScript = function(opts)
+{
+var url = opts.url;
+if (url.indexOf("http") != 0)
+	url = self.location.protocol + "//" + golgotha.maps.wxHost + url;
+	
+if (url.indexOf(golgotha.maps.wxHost) > -1) {
+	var api = 'api=' + golgotha.maps.keys.api;
+	url += (url.indexOf('?') > 0) ? '&' : '?';
+	url += api;
 }
+	
+var sc = document.createElement('script');
+sc.type = 'text/javascript';
+sc.setAttribute('id', opts.id);
+sc.src = url;
+if (opts.async) sc.setAttribute('async', 'true');
+else if (opts.defer) sc.setAttribute('defer', 'true');
+
+var oldSC = document.getElementById(opts.id);
+if (oldSC != null)
+	oldSC.parentNode.replaceChild(sc, oldSC);
+else
+	document.body.appendChild(sc);
+
+return true;
+};
+
+golgotha.util.enable = function(n) {
+	n = (n instanceof Array) ? n : [n];
+	for (var x = 0; x < n.length; x++) {
+		var ci = n[x];
+		if (ci.charAt(0) == '#') {
+			var ee = getElementsByClass(ci.substring(1));
+			for (var e = ee.pop(); (e != null); e = ee.pop())
+				if (e.enable) e.enable();
+		} else {
+			var e = document.getElementById(ci); 
+			if ((e) && (e.enable)) e.enable();
+		}
+	}
+	
+	return true; 
+};
 
 golgotha.onDOMReady = function(f) {
 	if (golgotha.util.oldIE)
@@ -195,9 +237,7 @@ if (!Array.prototype.indexOf)
 	}
 }
 
-Array.prototype.contains = function(obj) {
-	return (this.indexOf(obj) != -1);
-}
+Array.prototype.contains = function(obj) { return (this.indexOf(obj) != -1); };
 
 Array.prototype.clone = function() {
 var result = [];	
@@ -257,10 +297,7 @@ self.location = '/' + url;
 return true;
 }
 
-function comboSet(combo)
-{
-return ((combo) && (combo.selectedIndex > 0));	
-}
+golgotha.util.comboSet = function(combo) { return ((combo) && (combo.selectedIndex > 0)); };
 
 function validateText(text, min, title)
 {
@@ -357,28 +394,6 @@ if (checkCount >= minSelected) return true;
 alert('At least ' + minSelected + ' ' + title + ' must be selected.');
 checkbox[0].focus();
 return false;
-}
-
-function setDaysInMonth(combo)
-{
-var daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-var month = parseInt(combo.options[combo.selectedIndex].value, 10);
-
-var dCombo = document.forms[0].dateD;
-dCombo.options.length = daysInMonth[month];
-for (var x = 1; x <= daysInMonth[month]; x++) {
-	dCombo.options[x-1] = new Option(x);
-}
-	
-return true;
-}
-
-function initDateCombos(mCombo, dCombo, d)
-{
-mCombo.selectedIndex = d.getMonth();
-setDaysInMonth(mCombo);
-dCombo.selectedIndex = (d.getDate() - 1);
-return true;
 }
 
 function getXMLHttpRequest()

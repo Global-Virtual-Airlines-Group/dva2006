@@ -33,12 +33,8 @@ return true;
 function resetTracks()
 {
 // Initialize map data arrays
-tracks['W'] = [];
-tracks['E'] = [];
-allTracks = [];
-points['W'] = [];
-points['E'] = [];
-allPoints = [];
+tracks = {W:[], E:[], C:[]};
+points = {W:[], E:[], C:[]};
 
 // Reset checkboxes
 var f = document.forms[0];
@@ -86,7 +82,7 @@ if (isLoading)
 
 // Generate an XMLHTTP request
 var xmlreq = getXMLHttpRequest();
-xmlreq.open('get', 'otrackinfo.ws?type=PACOT&date=' + dt.text, true);
+xmlreq.open('GET', 'otrackinfo.ws?type=PACOT&date=' + dt.text, true);
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
 	if (xmlreq.status != 200) {
@@ -94,8 +90,7 @@ xmlreq.onreadystatechange = function() {
 		return false;
 	}
 
-	removeMarkers('allPoints');
-	removeMarkers('allTracks');
+	map.clearOverlays();
 	resetTracks();
 
 	// Get the XML document
@@ -121,16 +116,12 @@ xmlreq.onreadystatechange = function() {
 			google.maps.event.addListener(mrk, 'click', function() { mrk.showTrack(this); });
 			mrk.setMap(map);
 			points[trackType].push(mrk);
-			allPoints.push(mrk);
 		}
 
 		// Draw the route
 		var trackLine = new google.maps.Polyline({path:trackPos, strokeColor:track.getAttribute('color'), strokeWeight:2, strokeOpacity:0.7, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
 		trackLine.setMap(map);
-		
-		// Save the route/points
 		tracks[trackType].push(trackLine);
-		allTracks.push(trackLine);
 	}
 
 	// Focus on the map
@@ -184,32 +175,33 @@ return true;
 <content:copyright />
 </content:region>
 </content:page>
-<script type="text/javascript">
+<script id="mapInit" defer>
 // Create map options
 var mapTypes = {mapTypeIds: [google.maps.MapTypeId.SATELLITE, google.maps.MapTypeId.TERRAIN]};
-var mapOpts = {center:new google.maps.LatLng(42.0, -165.0), zoom:4, minZoom:2, maxZoom:8, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
+var mapOpts = {center:{lat:42, lng:-165}, zoom:4, minZoom:2, maxZoom:8, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
 
 // Create the map
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
-google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });
+google.maps.event.addListener(map, 'click', map.closeWindow);
+google.maps.event.addListener(map.infoWindow, 'closeclick', map.closeWindow);
 google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
 
-// Create the jetstream layer
+// Create the jetstream layers
 var jsOpts = {maxZoom:8, nativeZoom:5, opacity:0.55, zIndex:golgotha.maps.z.OVERLAY};
 var hjsl = new golgotha.maps.ShapeLayer(jsOpts, 'High Jet', 'wind-jet');
 var ljsl = new golgotha.maps.ShapeLayer(jsOpts, 'Low Jet', 'wind-lojet');
 
-// Add clouds
-map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Clouds', new google.maps.weather.CloudLayer()));
-map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Lo Jetstream', hjsl));
-map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Hi Jetstream', ljsl));
-map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerClearControl(map));
+// Add clouds and jet stream layers
+var ctls = map.controls[google.maps.ControlPosition.BOTTOM_LEFT];
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Clouds'}, new google.maps.weather.CloudLayer()));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Lo Jetstream'}, ljsl));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Hi Jetstream'}, hjsl));
+ctls.push(new golgotha.maps.LayerClearControl(map));
 
 // Create the tracks/waypoints
-var tracks = [];
-var points = [];
+var tracks = []; var points = [];
 resetTracks();
 
 // Update text color

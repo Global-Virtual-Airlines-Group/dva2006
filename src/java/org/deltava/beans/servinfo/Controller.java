@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010, 2011, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import org.deltava.util.StringUtils;
@@ -6,7 +6,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store online Controller information.
  * @author Luke
- * @version 3.6
+ * @version 5.5
  * @since 1.0
  */
 
@@ -53,6 +53,7 @@ public class Controller extends ConnectedUser {
      * Sets the user name.
      * @param name the controller name
      */
+    @Override
     public final void setName(String name) {
     	int pos = name.lastIndexOf(' ');
     	if (pos == -1) {
@@ -70,6 +71,7 @@ public class Controller extends ConnectedUser {
      * @throws NullPointerException if cs is null
      * @see ConnectedUser#getCallsign()
      */
+    @Override
     public void setCallsign(String cs) {
     	super.setCallsign(cs);
     	if (getCallsign().endsWith("_ATIS"))
@@ -116,6 +118,7 @@ public class Controller extends ConnectedUser {
      * @return the color as defined by COLORS and faclity type
      * @see Controller#getFacility()
      */
+    @Override
     public String getIconColor() {
     	return _type.getColor();
     }
@@ -131,6 +134,7 @@ public class Controller extends ConnectedUser {
     /**
      * Checks equality by comparing network IDs and callsigns.
      */
+    @Override
     public final boolean equals(Object o2) {
     	if (o2 instanceof Controller)
     		return (compareTo((Controller) o2) == 0);
@@ -141,6 +145,7 @@ public class Controller extends ConnectedUser {
     /**
      * Returns the Network ID's hash code.
      */
+    @Override
     public int hashCode() {
     	return getCallsign().hashCode();
     }
@@ -149,8 +154,9 @@ public class Controller extends ConnectedUser {
 	 * Returns the Google Map Infobox text.
 	 * @return HTML text
 	 */
+    @Override
     public String getInfoBox() {
-		StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox\"><span class=\"bld\">");
+		StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox onlineATC\"><span class=\"bld\">");
 		buf.append(getCallsign());
 		buf.append("</span> (");
 		buf.append(StringUtils.stripInlineHTML(getName()));
