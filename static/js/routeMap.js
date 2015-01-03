@@ -1,4 +1,6 @@
-function updateAirports(combo)
+golgotha.routeMap = golgotha.routeMap || {};
+
+golgotha.routeMap.updateAirports = function(combo)
 {
 var isLoading = document.getElementById('isLoading');
 isLoading.innerHTML = ' - CLEARING...';
@@ -26,7 +28,7 @@ if (aps) {
 // Build the XML Requester
 isLoading.innerHTML = ' - LOADING...';
 var xmlreq = getXMLHttpRequest();
-xmlreq.open('get', 'rmap_airports.ws?airline=' + aCode, true);
+xmlreq.open('GET', 'rmap_airports.ws?airline=' + aCode, true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	var isLoading = document.getElementById('isLoading');
@@ -40,11 +42,10 @@ xmlreq.onreadystatechange = function() {
 	var els = wsdata.getElementsByTagName('airport');
 	for (var x = 0; x < els.length; x++) {
 		var a = els[x];
-		var p = new google.maps.LatLng(parseFloat(a.getAttribute('lat')), parseFloat(a.getAttribute('lng')));
-		var mrk = new golgotha.maps.Marker({color:a.getAttribute('color')}, p);
+		var mrk = new golgotha.maps.Marker({color:a.getAttribute('color')}, {lat:parseFloat(a.getAttribute('lat')), lng:parseFloat(a.getAttribute('lng'))});
 		mrk.icao = a.getAttribute('icao');
 		mrk.iata = a.getAttribute('iata');
-		mrk.infoShow = showRoutes;
+		mrk.infoShow = golgotha.routeMap.showRoutes;
 		for (var nidx = a.childNodes.length; nidx > 0; nidx--) {
 			var nd = a.childNodes[nidx - 1];
 			try {
@@ -68,12 +69,11 @@ xmlreq.onreadystatechange = function() {
 	return true;
 }
 
-// Send the XMLHTTP request
 xmlreq.send(null);
 return true;
 }
 
-function showRoutes()
+golgotha.routeMap.showRoutes = function()
 {
 // Update status
 var isLoading = document.getElementById('isLoading');
@@ -87,7 +87,7 @@ map.infoWindow.close();
 
 // Build the XML Requester
 var xmlreq = getXMLHttpRequest();
-xmlreq.open('get', 'rmap_routes.ws?icao=' + this.icao + '&airline=' + aCode, true);
+xmlreq.open('GET', 'rmap_routes.ws?icao=' + this.icao + '&airline=' + aCode, true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	var isLoading = document.getElementById('isLoading');
@@ -108,9 +108,8 @@ xmlreq.onreadystatechange = function() {
 			var pos = rt.getElementsByTagName('pos');
 			for (var i = 0; i < pos.length; i++) {
 				var pe = pos[i];
-				var p = new google.maps.LatLng(parseFloat(pe.getAttribute('lat')), parseFloat(pe.getAttribute('lng')));
-				positions.push(p);
-			} // for
+				positions.push({lat:parseFloat(pe.getAttribute('lat')), lng:parseFloat(pe.getAttribute('lng'))});
+			}
 
 			// Draw the line
 			var routeLine = new google.maps.Polyline({path:positions, strokeColor:'#4080af', strokeWeight:2, strokeOpacity:0.8, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
@@ -125,7 +124,6 @@ xmlreq.onreadystatechange = function() {
 	return true;
 }
 
-// Send the XMLHTTP request
 xmlreq.send(null);
 var showInfo = document.getElementById('showInfo');
 if ((showInfo) && (showInfo.checked)) {
