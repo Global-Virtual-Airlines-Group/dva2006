@@ -287,8 +287,8 @@
 			<path>/pub/data/nccf/com/gfs/prod</path>
 		</gfs>
 
-		<tileHost>g%.imwx.com</tileHost>
-		<multiHost type="Boolean">true</multiHost>
+		<tileHost>t.w-x.co</tileHost>
+		<apiHost>dsx.weather.com</apiHost>
 
 		<!-- Download locations -->
 		<url>
@@ -305,14 +305,12 @@
 		<tasks>/etc/tasks.xml</tasks>
 		<nat>
 			<url>https://www.notams.faa.gov/common/nat.html</url>
-			<!-- <keystore>/etc/jcs.notams.cer</keystore> -->
 		</nat>
 		<pacot>
 			<url>https://www.notams.faa.gov/dinsQueryWeb/advancedNotamMapAction.do?queryType=pacificTracks</url>
-			<!-- <keystore>/etc/jcs.notams.cer</keystore> -->
 		</pacot>
 		<ausot>
-			<url>http://www.airservicesaustralia.com/ausots/html.asp?/flextracks/text.asp?ver=1</url>
+			<url>http://www.airservicesaustralia.com/flextracks/text.asp?ver=1</url>
 		</ausot>
 	</config>
 
@@ -387,6 +385,8 @@
 		<key>
 			<analytics>UA-2066915-1</analytics>
 			<airCharts>***REMOVED***</airCharts>
+			<wunderground>***REMOVED***</wunderground>
+			<dsx>217b980f-be43-4148-8aa4-cd5da694980d</dsx>
 		</key>
 
 		<list name="roles" attr="role" sorted="true">
@@ -702,8 +702,6 @@
 			<lat type="Double">38.88</lat>
 			<lng type="Double">-93.25</lng>
 			<reload type="Integer">20000</reload>
-			<!-- <radar>http://www.deltava.org/prx/nexrad/n0r.cgi?</radar> -->
-			<tileHost>gima.weather.com</tileHost>
 		</livemap>
 
 		<!-- XACARS sim versions -->

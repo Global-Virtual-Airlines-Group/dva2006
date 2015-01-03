@@ -7,10 +7,8 @@ var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oc
 
 function updateMap(isAuto)
 {
-var d = new Date();
-var dtime = d.getTime() - (d.getTime() % 5000);
 var xmlreq = getXMLHttpRequest();
-xmlreq.open('get', 'si_data.ws?network=' + document.network + '&time=' + dtime + '&atc=true', true);
+xmlreq.open('get', 'si_data.ws?network=' + document.network + '&time=' + golgotha.util.getTimestamp(5000) + '&atc=true', true);
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
 	var isLoading = document.getElementById('isLoading');
@@ -35,12 +33,11 @@ xmlreq.onreadystatechange = function() {
 	var wps = re.getElementsByTagName('pilot'); pilots.length = 0;
 	for (var i = 0; i < wps.length; i++) {
 		var wp = wps[i];
-		var ll = new google.maps.LatLng(parseFloat(wp.getAttribute('lat')), parseFloat(wp.getAttribute('lng')));
+		var ll = {lat:parseFloat(wp.getAttribute('lat')), lng:parseFloat(wp.getAttribute('lng'))};
 		var mrk = new golgotha.maps.Marker({color:wp.getAttribute('color'), info:wp.firstChild.data, map:map}, ll);
 		mrk.networkID = wp.getAttribute('id');
 		mrk.callsign = wp.getAttribute('callsign');
 		google.maps.event.addListener(mrk, 'click', function() { infoClose(); showRoute(this.networkID); });
-		//mrk.setMap(map);
 		pilots[mrk.callsign] = mrk;		
 	}
 
@@ -48,7 +45,7 @@ xmlreq.onreadystatechange = function() {
 	var cps = re.getElementsByTagName('atc'); atc.length = 0;
 	for (var i = 0; i < cps.length; i++) {
 		var cp = cps[i];
-		var ll = new google.maps.LatLng(parseFloat(cp.getAttribute('lat')), parseFloat(cp.getAttribute('lng')));
+		var ll = {lat:parseFloat(cp.getAttribute('lat')), lng:parseFloat(cp.getAttribute('lng'))};
 		var mrk = new golgotha.maps.Marker({color:cp.getAttribute('color'), info:cp.firstChild.data, map:map}, ll);
 		mrk.networkID = cp.getAttribute('id');
 		mrk.callsign = cp.getAttribute('callsign');
@@ -60,7 +57,6 @@ xmlreq.onreadystatechange = function() {
 			google.maps.event.addListener(mrk, 'click', function() { infoClose(); showAPP(this); });
 		}
 		
-		//mrk.setMap(map);
 		atc[mrk.callsign] = mrk;
 		
 		// Add to ATC list
@@ -80,7 +76,7 @@ xmlreq.onreadystatechange = function() {
 		window.setTimeout('void updateMap()', 90000);
 
 	return true;
-} // function
+}
 
 xmlreq.send(null);
 return true;
@@ -106,7 +102,6 @@ function zoomTo(combo)
 var opt = combo.options[combo.selectedIndex];
 if ((!opt) || (opt.mrk == null)) return false;	
 
-//Pan to the marker
 map.panTo(opt.mrk.getPosition());
 google.maps.event.trigger(opt.mrk, 'click');
 return true;
@@ -141,13 +136,12 @@ xmlreq.onreadystatechange = function() {
 		var pts = fe.getElementsByTagName('pt');
 		for (var i = 0; i < pts.length; i++) {
 			var pt = pts[i];
-			bPts.push(new google.maps.LatLng(parseFloat(pt.getAttribute('lat')), parseFloat(pt.getAttribute('lng'))));
+			bPts.push({lat:parseFloat(pt.getAttribute('lat')), lng:parseFloat(pt.getAttribute('lng'))});
 		}
 
 		if (bPts.length > 0) {
 			bPts.push(bPts[0]);
-			selectedRoute = new google.maps.Polygon({paths:[bPts], strokeColor:'#efefff', strokeWeight:1, stokeOpacity:0.85, fillColor:'#7f7f80', fillOpacity:0.25, zIndex:golgotha.maps.z.POLYGON});
-			selectedRoute.setMap(map);
+			selectedRoute = new google.maps.Polygon({map:map, paths:[bPts], strokeColor:'#efefff', strokeWeight:1, stokeOpacity:0.85, fillColor:'#7f7f80', fillOpacity:0.25, zIndex:golgotha.maps.z.POLYGON});
 		}
 	}
 
@@ -160,10 +154,8 @@ return true;
 
 function showRoute(pilotID)
 {
-var d = new Date();
-var dtime = d.getTime() - (d.getTime() % 3000);
 var xmlreq = getXMLHttpRequest();
-xmlreq.open('get', 'si_route.ws?network=' + document.network + '&id=' + pilotID + '&time=' + dtime, true);
+xmlreq.open('get', 'si_route.ws?network=' + document.network + '&id=' + pilotID + '&time=' + golgotha.util.getTimestamp(5000), true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	var xdoc = xmlreq.responseXML;
@@ -175,7 +167,7 @@ xmlreq.onreadystatechange = function() {
 	var wps = re.getElementsByTagName('waypoint');
 	for (var i = 0; i < wps.length; i++) {
 		var wp = wps[i];
-		wpoints.push(new google.maps.LatLng(parseFloat(wp.getAttribute('lat')), parseFloat(wp.getAttribute('lng'))));
+		wpoints.push({lat:parseFloat(wp.getAttribute('lat')), lng:parseFloat(wp.getAttribute('lng'))});
 	}
 
 	// Display track
@@ -183,20 +175,17 @@ xmlreq.onreadystatechange = function() {
 	var tps = re.getElementsByTagName('track');
 	for (var i = 0; i < tps.length; i++) {
 		var wp = tps[i];
-		tpoints.push(new google.maps.LatLng(parseFloat(wp.getAttribute('lat')), parseFloat(wp.getAttribute('lng'))));
+		tpoints.push({lat:parseFloat(wp.getAttribute('lat')), lng:parseFloat(wp.getAttribute('lng'))});
 	}
 
-	if (wpoints.length > 0) {
-		selectedRoute = new google.maps.Polyline({path:wpoints, strokeColor:'#af8040', strokeWeight:2, strokeOpacity:0.85, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
-		selectedRoute.setMap(map);
-	}
-	if (tpoints.length > 0) {
-		selectedTrack = new google.maps.Polyline({path:tpoints, strokeColor:'#4080af', strokeWeight:2, strokeOpacity:0.75, geodesic:true, zIndex:(golgotha.maps.z.POLYLINE-1)});
-		selectedTrack.setMap(map);
-	}
+	if (wpoints.length > 0)
+		selectedRoute = new google.maps.Polyline({map:map, path:wpoints, strokeColor:'#af8040', strokeWeight:2, strokeOpacity:0.85, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
+
+	if (tpoints.length > 0)
+		selectedTrack = new google.maps.Polyline({map:map, path:tpoints, strokeColor:'#4080af', strokeWeight:2, strokeOpacity:0.75, geodesic:true, zIndex:(golgotha.maps.z.POLYLINE-1)});
 	
 	return true;
-} // function
+}
 
 xmlreq.send(null);
 return true;

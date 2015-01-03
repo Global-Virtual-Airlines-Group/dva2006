@@ -127,7 +127,7 @@ return true;
 </content:region>
 </content:page>
 <c:if test="${exam.routePlot}">
-<script type="text/javascript">
+<script id="mapInit" defer>
 var maps = [];
 <c:forEach var="q" items="${exam.questions}"><c:if test="${fn:isRoutePlot(q)}">
 <c:set var="answerRoute" value="${aRoutes[q.number]}" scope="page" />
@@ -136,11 +136,11 @@ var maps = [];
 
 // Create map
 var mapTypes = {mapTypeIds: [google.maps.MapTypeId.TERRAIN, google.maps.MapTypeId.SATELLITE]};
-var mapOpts = {center:mapC, zoom:getDefaultZoom(${q.distance}), scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
+var mapOpts = {center:mapC, zoom:golgotha.maps.util.getDefaultZoom(${q.distance}), scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
 var map = new google.maps.Map(document.getElementById('qMap${q.number}'), mapOpts);
 map.setMapTypeId(google.maps.MapTypeId.TERRAIN);
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
-google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });
+google.maps.event.addListener(map, 'click', map.closeWindow);
 <map:points var="crPoints" items="${correctRoute}" />
 <map:line var="crLine" src="crPoints" width="2" color="#af7f7f" transparency="0.6" geodesic="true" />
 crLine.setMap(map);

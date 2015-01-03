@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.wx;
 
 import java.util.Date;
@@ -11,7 +11,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store weather data for a particular location.
  * @author Luke
- * @version 5.4
+ * @version 5.5
  * @since 2.2
  */
 
@@ -156,7 +156,7 @@ public abstract class WeatherDataBean implements MarkerMapEntry, Cacheable, Comp
 		}
 		
 		// Append the weather data
-		buf.append("<div class=\"mapInfoBox\"><span class=\"bld\">");
+		buf.append("<div class=\"mapInfoBox wx\"><span class=\"bld\">");
 		buf.append(getType());
 		buf.append(" Data</span>:<br />");
 		buf.append(getData());

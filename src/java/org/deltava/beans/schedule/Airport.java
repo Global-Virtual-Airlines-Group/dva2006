@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012 Globa Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2015 Globa Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.util.*;
 /**
  * A class for storing airport information.
  * @author Luke
- * @version 5.1
+ * @version 5.5
  * @since 1.0
  */
 
@@ -199,6 +199,7 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 	 * Return this airport's ICAO Code.
 	 * @return The ICAO code
 	 */
+	@Override
 	public String getICAO() {
 		return _icao;
 	}
@@ -215,6 +216,7 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 	 * Return this airport's altitude.
 	 * @return the altitude in feet MSL
 	 */
+	@Override
 	public int getAltitude() {
 	   return _alt;
 	}
@@ -307,15 +309,18 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 	/**
 	 * Sort the airports by comparing their IATA codes.
 	 */
+	@Override
 	public int compareTo(Airport a2) {
 		int tmpResult = _iata.compareTo(a2._iata);
 		return (tmpResult == 0) ? _icao.compareTo(a2._icao) : tmpResult;
 	}
 
+	@Override
 	public String getComboAlias() {
 		return getIATA();
 	}
 
+	@Override
 	public String getComboName() {
 		StringBuilder buf = new StringBuilder(getName());
 		buf.append(" (");
@@ -393,6 +398,7 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
     * Return the default Google Maps icon color.
     * @return org.deltava.beans.MapEntry.GREEN
     */
+	@Override
    public String getIconColor() {
       return GREEN;
    }
@@ -401,6 +407,7 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 	 * Returns the Google Earth palette code.
 	 * @return 2
 	 */
+   @Override
 	public int getPaletteCode() {
 		return 2;
 	}
@@ -409,6 +416,7 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 	 * Returns the Google Earth icon code.
 	 * @return 48
 	 */
+   @Override
 	public int getIconCode() {
 		return 48;
 	}
@@ -417,8 +425,9 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
     * Returns the default Google Maps infobox text.
     * @return an HTML String
     */
+	@Override
    public String getInfoBox() {
-      StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox\"><span class=\"bld\">");
+      StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox navdata\"><span class=\"bld\">");
       buf.append(_name);
       buf.append("</span><br /><br />IATA Code: ");
       buf.append(_iata);
@@ -441,6 +450,7 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 	 * Compares airports by ensuring that both the IATA and ICAO code are the same. This leaves the possibility open of
 	 * airports having the same IATA code but different ICAO codes.
 	 */
+	@Override
 	public boolean equals(Object o2) {
 		if (o2 instanceof Airport) {
 			Airport a2 = (Airport) o2;
@@ -454,10 +464,12 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 	/**
 	 * Retrurns the hashcode of the IATA/ICAO values.
 	 */
+	@Override
 	public final int hashCode() {
 		return toString().hashCode();
 	}
 	
+	@Override
 	public String getRowClassName() {
 		return _aCodes.isEmpty() ? "warn" : null;
 	}
@@ -465,6 +477,7 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 	/**
 	 * Displays the airport name and IATA code.
 	 */
+	@Override
 	public String toString() {
 		StringBuilder buf = new StringBuilder(_name);
 		buf.append(" (").append(_iata).append(')');
@@ -474,6 +487,7 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 	/**
 	 * Clones the Airport object.
 	 */
+	@Override
 	public Object clone() {
 		Airport a2 = new Airport(_iata, _icao, _name);
 		a2._alt = _alt;

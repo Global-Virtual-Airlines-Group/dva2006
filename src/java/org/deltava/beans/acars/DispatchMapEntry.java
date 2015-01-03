@@ -1,4 +1,4 @@
-// Copyright 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2011, 2014 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import org.deltava.beans.*;
@@ -9,7 +9,7 @@ import org.deltava.util.StringUtils;
 /**
  * An ACARS Map entry bean to store a Dispatcher location and range.
  * @author Luke
- * @version 4.0
+ * @version 5.5
  * @since 2.2
  */
 
@@ -35,7 +35,7 @@ public class DispatchMapEntry extends GroundMapEntry {
 	}
 
 	public String getInfoBox() {
-		StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox\"><span class=\"pri bld\">");
+		StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox acarsDispatch\"><span class=\"pri bld\">");
 		buf.append(_usr.getName());
 		buf.append("</span><br />");
 		buf .append(_usr.getRank());

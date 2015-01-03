@@ -16,7 +16,7 @@ golgotha.airportLoad.config.URLParams = function() {
 	var params = [];
 	for (p in this) {
 		var v = this[p];
-		if (this.hasOwnProperty(p) && !golgotha.isFunction(v) && (v != null))
+		if (this.hasOwnProperty(p) && !golgotha.util.isFunction(v) && (v != null))
 			params.push(p + '=' + v);
 	}
 	

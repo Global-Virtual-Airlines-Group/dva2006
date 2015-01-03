@@ -2,29 +2,24 @@ function getAJAXParams()
 {
 var f = document.forms[0];
 var params = [];
-if (comboSet(f.airportD)) {
+if (golgotha.util.comboSet(f.airportD)) {
 	params['airportD'] = getValue(f.airportD);
 	f.airportDCode.value = getValue(f.airportD);
 }
-if (comboSet(f.airportA)) {
+if (golgotha.util.comboSet(f.airportA)) {
 	params['airportA'] = getValue(f.airportA);
 	f.airportACode.value = getValue(f.airportA);
 }
-if (comboSet(f.airportL)) {
+if (golgotha.util.comboSet(f.airportL)) {
 	params['airportL'] = getValue(f.airportL);
 	f.airportLCode.value = getValue(f.airportL);
 }
 
-if (comboSet(f.gateD))
-	params['gateD'] = getValue(f.gateD);
-if (comboSet(f.gateA))
-	params['gateA'] = getValue(f.gateA);
-if (comboSet(f.eqType))
-	params['eqType'] = getValue(f.eqType);
-if (comboSet(f.sid))
-	params['sid'] = getValue(f.sid);
-if (comboSet(f.star))
-	params['star'] = getValue(f.star);
+if (golgotha.util.comboSet(f.gateD)) params['gateD'] = getValue(f.gateD);
+if (golgotha.util.comboSet(f.gateA)) params['gateA'] = getValue(f.gateA);
+if (golgotha.util.comboSet(f.eqType)) params['eqType'] = getValue(f.eqType);
+if (golgotha.util.comboSet(f.sid)) params['sid'] = getValue(f.sid);
+if (golgotha.util.comboSet(f.star)) params['star'] = getValue(f.star);
 if ((f.route) && (f.route.value.length > 0))
 	params['route'] = f.route.value;
 if (getInactive)
@@ -138,17 +133,14 @@ xmlreq.onreadystatechange = function() {
 	var dst = xdoc.getAttribute('distance');
 	var mpp = mps[0];
 	if (mpp && dst && reCenter) {
-		var mp = new google.maps.LatLng(parseFloat(mpp.getAttribute('lat')), parseFloat(mpp.getAttribute('lng')));
-		map.setCenter(mp);
-		map.setZoom(getDefaultZoom(parseInt(dst)));
+		map.setCenter({lat:parseFloat(mpp.getAttribute('lat')), lng:parseFloat(mpp.getAttribute('lng'))});
+		map.setZoom(golgotha.maps.util.getDefaultZoom(parseInt(dst)));
 	}
 	
 	// Set departure location
 	var ade = golgotha.getChild(xdoc, 'airportD');
-	if (ade != null) {
-		var adp = new google.maps.LatLng(parseFloat(ade.getAttribute('lat')), parseFloat(ade.getAttribute('lng')));
-		dGates.mapCenter = adp;
-	}
+	if (ade != null)
+		dGates.mapCenter = {lat:parseFloat(ade.getAttribute('lat')), lng:parseFloat(ade.getAttribute('lng'))};
 
 	// Set the distance
 	var dstE = document.getElementById('rtDistance');

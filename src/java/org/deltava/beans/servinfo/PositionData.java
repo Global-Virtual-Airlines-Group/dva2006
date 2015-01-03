@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import java.util.Date;
@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store ServInfo data for historical purposes.
  * @author Luke
- * @version 5.4
+ * @version 5.5
  * @since 2.4
  */
 
@@ -141,7 +141,7 @@ public class PositionData implements GeospaceLocation, MarkerMapEntry, Comparabl
 
 	@Override
 	public String getInfoBox() {
-		StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox\"><span class=\"bld\">");
+		StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox onlinePilot\"><span class=\"bld\">");
 		buf.append(StringUtils.format(_dt, "MM/dd/yyyy HH:mm:ss"));
 		buf.append("</span><br /><br />Position: ");
 		buf.append(StringUtils.format(_pos, true, GeoLocation.ALL));

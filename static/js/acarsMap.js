@@ -1,10 +1,10 @@
-function generateXMLRequest()
+golgotha.maps.acars = golgotha.maps.acars || {};
+
+golgotha.maps.acars.generateXMLRequest = function()
 {
 // Build the XMLHTTPRequest
-var d = new Date();
-var dtime = d.getTime() - (d.getTime() % 3000);
 var xmlreq = getXMLHttpRequest();
-xmlreq.open('get', 'acars_map.ws?time=' + dtime, true);
+xmlreq.open('get', 'acars_map.ws?time=' + golgotha.util.getTimestamp(3000), true);
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
 	var isLoading = document.getElementById('isLoading');
@@ -32,10 +32,10 @@ xmlreq.onreadystatechange = function() {
 	var xml = xmlreq.responseXML;
 	var xe = xml.documentElement;
 	var ac = xe.getElementsByTagName('aircraft');
-	golgotha.event.beacon('ACARS', 'Aircraft Positions');
+	if (ac.length > 0) golgotha.event.beacon('ACARS', 'Aircraft Positions');
 	for (var i = 0; i < ac.length; i++) {
 		var a = ac[i]; var mrk = null;
-		var p = new google.maps.LatLng(parseFloat(a.getAttribute('lat')), parseFloat(a.getAttribute('lng')));
+		var p = {lat:parseFloat(a.getAttribute('lat')), lng:parseFloat(a.getAttribute('lng'))};
 		if (a.getAttribute('pal'))
 			mrk = new golgotha.maps.IconMarker({pal:a.getAttribute('pal'), icon:a.getAttribute('icon')}, p);
 		else if (a.getAttribute('color'))
@@ -78,17 +78,16 @@ xmlreq.onreadystatechange = function() {
 		}
 
 		// Set the the click handler
-		google.maps.event.addListener(mrk, 'click', clickAircraft);
+		google.maps.event.addListener(mrk, 'click', golgotha.maps.acars.clickAircraft);
 		acPositions.push(mrk);
 		mrk.setMap(map);
 	} // for
 
 	var dc = xe.getElementsByTagName('dispatch');
-	if (dc.length > 0)
-		golgotha.event.beacon('ACARS', 'Dispatch Positions');
+	if (dc.length > 0) golgotha.event.beacon('ACARS', 'Dispatch Positions');
 	for (var i = 0; i < dc.length; i++) {
 		var d = dc[i]; var mrk = null;
-		var p = new google.maps.LatLng(parseFloat(d.getAttribute('lat')), parseFloat(d.getAttribute('lng')));
+		var p = {lat:parseFloat(d.getAttribute('lat')), lng:parseFloat(d.getAttribute('lng'))};
 		if (d.getAttribute('pal'))
 			mrk = new golgotha.maps.IconMarker({pal:d.getAttribute('pal'), icon:d.getAttribute('icon')}, p);
 		else if (d.getAttribute('color'))
@@ -127,7 +126,7 @@ xmlreq.onreadystatechange = function() {
 		}
 
 		// Set the the click handler
-		google.maps.event.addListener(mrk, 'click', clickDispatch);
+		google.maps.event.addListener(mrk, 'click', golgotha.maps.acars.clickDispatch);
 		dcPositions.push(mrk);
 		mrk.setMap(map);
 	} // for
@@ -157,7 +156,7 @@ xmlreq.onreadystatechange = function() {
 return xmlreq;
 }
 
-function clickAircraft()
+golgotha.maps.acars.clickAircraft = function(e)
 {
 // Check what info we display
 var f = document.forms[0];
@@ -180,14 +179,14 @@ if (isInfo && (this.tabs)) {
 if (isProgress || isRoute) {
 	removeMarkers('routeData');
 	removeMarkers('routeWaypoints');
-	showFlightProgress(this, isProgress, isRoute);
+	golgotha.maps.acars.showFlightProgress(this, isProgress, isRoute);
 }
 
 document.pauseRefresh = true;
 return true;
 }
 
-function clickDispatch()
+golgotha.maps.acars.clickDispatch = function(e)
 {
 // Check what info we display
 var f = document.forms[0];
@@ -207,7 +206,7 @@ if (isInfo && (this.tabs)) {
 
 // Display flight progress / route
 if (!this.rangeCircle) {
-	this.rangeCircle = getServiceRange(this, this.range);
+	this.rangeCircle = golgotha.maps.acars.getServiceRange(this, this.range);
 	if (this.rangeCircle) {
 		golgotha.event.beacon('ACARS', 'Dispatch Service Range');
 		this.rangeCircle.setMap(map);
@@ -219,7 +218,7 @@ document.pauseRefresh = true;
 return true;
 }
 
-function infoClose()
+golgotha.maps.acars.infoClose = function()
 {
 document.pauseRefresh = false;
 if ((map.infoWindow.marker) && (map.infoWindow.marker.rangeCircle))
@@ -227,16 +226,15 @@ if ((map.infoWindow.marker) && (map.infoWindow.marker.rangeCircle))
 
 removeMarkers('routeData'); 
 removeMarkers('routeWaypoints');
-map.infoWindow.close();
+map.closeWindow();
 return true;	
 }
 
-function showFlightProgress(marker, doProgress, doRoute)
+golgotha.maps.acars.showFlightProgress = function(marker, doProgress, doRoute)
 {
 // Build the XML Requester
-var d = new Date();
 var xreq = getXMLHttpRequest();
-xreq.open('get', 'acars_progress.ws?id=' + marker.flight_id + '&time=' + d.getTime() + '&route=' + doRoute, true);
+xreq.open('GET', 'acars_progress.ws?id=' + marker.flight_id + '&time=' + golgotha.util.getTimestamp(3000) + '&route=' + doRoute, true);
 xreq.onreadystatechange = function() {
 	if ((xreq.readyState != 4) || (xreq.status != 200)) return false;
 
@@ -248,11 +246,8 @@ xreq.onreadystatechange = function() {
 	if (doRoute) {
 		var wps = wsdata.getElementsByTagName('route');
 		var waypoints = [];
-		for (var i = 0; i < wps.length; i++) {
-			var wp = wps[i];
-			var p = new google.maps.LatLng(parseFloat(wp.getAttribute('lat')), parseFloat(wp.getAttribute('lng')));
-			waypoints.push(p);
-		} // for
+		for (var wp = wps.pop(); (wp != null); wp = wps.pop())
+			waypoints.push({lat:parseFloat(wp.getAttribute('lat')), lng:parseFloat(wp.getAttribute('lng'))});
 
 		golgotha.event.beacon('ACARS', 'Flight Route Info');
 		routeWaypoints = new google.maps.Polyline({path:waypoints, strokeColor:'#af8040', strokeWeight:2, strokeOpacity:0.7, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
@@ -263,11 +258,8 @@ xreq.onreadystatechange = function() {
 	if (doProgress) {
 		var pos = wsdata.getElementsByTagName('pos');
 		var positions = [];
-		for (var i = 0; i < pos.length; i++) {
-			var pe = pos[i];
-			var p = new google.maps.LatLng(parseFloat(pe.getAttribute('lat')), parseFloat(pe.getAttribute('lng')));
-			positions.push(p);
-		} // for
+		for (var pe = pos.pop(); (pe != null); pe = pos.pop())
+			positions.push({lat:parseFloat(pe.getAttribute('lat')), lng:parseFloat(pe.getAttribute('lng'))});
 
 		// Draw the line
 		golgotha.event.beacon('ACARS', 'Flight Progress Info');
@@ -282,7 +274,7 @@ xreq.send(null);
 return true;
 }
 
-function getServiceRange(marker, range)
+golgotha.maps.acars.getServiceRange = function(marker, range)
 {
 var bC = marker.isBusy ? '#c02020' : '#20c060';
 var fC = marker.isBusy ? '#802020' : '#208040';
@@ -290,15 +282,14 @@ var fOp = marker.isBusy ? 0.1 : 0.2;
 return new google.maps.Circle({center:marker.getPosition(), radius:golgotha.maps.miles2Meter(range), strokeColor:bC, strokeWeight:1, strokeOpacity:0.65, fillColor:fC, fillOpacity:fOp, zIndex:golgotha.maps.z.POLYGON});
 }
 
-function zoomTo(combo)
+golgotha.maps.acars.zoomTo = function(combo)
 {
 var opt = combo.options[combo.selectedIndex];
 if ((!opt) || (opt.mrk == null)) return false;
 
 // Check if we zoom or just pan
 var f = document.forms[0];
-if (f.zoomToPilot.checked)
-	map.setZoom(9);
+if (f.zoomToPilot.checked) map.setZoom(9);
 
 // Pan to the marker
 map.panTo(opt.mrk.getPosition());
