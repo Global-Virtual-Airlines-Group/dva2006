@@ -18,16 +18,6 @@
 <map:api version="3" />
 <content:googleAnalytics eventSupport="true" />
 <content:js name="flightBoardMap" />
-<script type="text/javascript">
-document.network = '${network}';
-
-function setNetwork(combo)
-{
-var net = combo.options[combo.selectedIndex].text;
-location.href = '/flightboardmap.do?id=' + net + '&op=map';
-return true;
-}
-</script>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -44,8 +34,8 @@ return true;
 <tr class="title">
  <td style="width:40%" class="left caps"><content:airline /> ${network} ONLINE PILOTS<span id="isLoading"></span></td>
  <td style="width:15%" class="mid"><el:cmd url="flightboard" linkID="${network}">FLIGHT BOARD</el:cmd></td>
- <td class="right">SELECT NETWORK <el:combo name="networkName" size="1" idx="1" onChange="void setNetwork(this)" options="${networks}" value="${network}" />
-<span id="userSelect" style="display:none;"> ZOOM TO <el:combo ID="usrID" name="usrID" idx="*" options="${emptyList}" firstEntry="-" onChange="void zoomTo(this)" /></span></td>
+ <td class="right">SELECT NETWORK <el:combo name="networkName" size="1" idx="1" onChange="void golgotha.flightBoard.setNetwork(this)" options="${networks}" value="${network}" />
+<span id="userSelect" style="display:none;"> ZOOM TO <el:combo ID="usrID" name="usrID" idx="*" options="${emptyList}" firstEntry="-" onChange="void golgotha.flightBoard.zoomTo(this)" /></span></td>
 </tr>
 <tr>
  <td colspan="2"><span class="pri bld">PILOT LEGEND</span> <map:legend color="blue" className="small" legend="Member Pilot - Our Airline" />
@@ -62,7 +52,7 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar">
 <tr class="title">
- <td><el:button ID="RefreshButton" onClick="void updateMap(false)" label="REFRESH ${network} DATA" /></td>
+ <td><el:button ID="RefreshButton" onClick="void golgotha.flightBoard.updateMap(false)" label="REFRESH ${network} DATA" /></td>
 </tr>
 </el:table>
 </el:form>
@@ -71,15 +61,16 @@ return true;
 </content:region>
 </content:page>
 <script id="mapInit" defer>
+golgotha.flightBoard.network = '${network}';
 var mapOpts = {center:{lat:38.88, lng:-93.25}, zoom:4, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
 
 // Create the map
 var map = new google.maps.Map(document.getElementById("googleMap"), mapOpts);
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
-google.maps.event.addListener(map, 'click', function() { map.closeWindow(); infoClose(); });
-google.maps.event.addListener(map.infoWindow, 'closeclick', infoClose);
-google.maps.event.addListenerOnce(map, 'tilesloaded', function() { updateMap(true); });
+google.maps.event.addListener(map, 'click', function() { map.closeWindow(); golgotha.flightBoard.infoClose(); });
+google.maps.event.addListener(map.infoWindow, 'closeclick', golgotha.flightBoard.infoClose);
+google.maps.event.addListenerOnce(map, 'tilesloaded', function() { golgotha.flightBoard.updateMap(true); });
 </script>
 </body>
 </html>

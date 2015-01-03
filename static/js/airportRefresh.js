@@ -1,4 +1,4 @@
-golgotha.airportLoad = {};
+golgotha.airportLoad = golgotha.airportLoad || {};
 
 // Configuration / state object
 golgotha.airportLoad.config = {doICAO:false, notVisited:false, useSched:true, dst:false, myRated:false};
