@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import org.deltava.beans.*;
@@ -9,7 +9,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store pilot locations for displaying on a Google Map.
  * @author Luke
- * @version 5.4
+ * @version 5.5
  * @since 1.0
  */
 
@@ -84,7 +84,7 @@ public class PilotLocation implements MarkerMapEntry {
 	 */
 	@Override
 	public String getInfoBox() {
-		StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox\"><span class=\"bld\">");
+		StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox pilotBoard\"><span class=\"bld\">");
 		buf.append(_usr.getName());
 		buf.append("</span> (");
 		buf.append(_usr.getPilotCode());

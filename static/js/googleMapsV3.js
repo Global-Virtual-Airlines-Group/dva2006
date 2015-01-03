@@ -9,13 +9,44 @@ golgotha.maps.DEFAULT_TYPES = [google.maps.MapTypeId.ROADMAP, google.maps.MapTyp
 golgotha.maps.z = {INFOWINDOW:100, POLYLINE:25, POLYGON:35, MARKER:50, OVERLAY:10};
 golgotha.maps.ovLayers = [];
 golgotha.maps.styles = {};
+golgotha.maps.reload = 60000;
+golgotha.maps.masks = [0, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288];
 golgotha.maps.util = {isIE:golgotha.util.isIE, oldIE:golgotha.util.oldIE};
 golgotha.maps.util.isIE10 = (golgotha.maps.util.isIE && (navigator.appVersion.indexOf('IE 10.0') > 0));
 golgotha.maps.util.isIE11 = ((navigator.appname == 'Netscape') && (navigator.userAgent.contains('Trident/')));
 golgotha.maps.util.isIOS = (!golgotha.maps.util.isIE && ((navigator.platform == 'iPad') || (navigator.platform == 'iPhone')));
+golgotha.maps.util.unload = function(m) { google.maps.event.clearListeners(m); return true; };
 
 // Cross-browser opacity set
 golgotha.maps.setOpacity = (golgotha.maps.util.isIE && (!golgotha.maps.util.isIE10) && (!golgotha.maps.util.isIE11)) ? function(e, tx) { e.style.filter = 'alpha(opacity=' + (tx*100) + ')'; } : function(e, tx) { e.style.opacity = tx; };
+
+//Timer class
+golgotha.maps.util.Timer = function(doStart) { this.runTime = -1; if (doStart) this.start(); };
+golgotha.maps.util.Timer.prototype.start = function() {
+	if (this.startTime != null) return false;
+	this.startTime = new Date();
+	return true;
+};
+
+golgotha.maps.util.Timer.prototype.stop = function() {
+	if (this.startTime == null) return -1;	
+	var now = new Date();
+	this.runTime = (now.getTime() - this.startTime.getTime());
+	this.startTime = null;
+	return this.runTime;
+};
+
+// Calculate default zoom for flight distance
+golgotha.maps.util.getDefaultZoom = function(distance)
+{
+var zooms = [6100,2900,1600,780,390,195,90,50];
+for (var x = 0; x < zooms.length; x++) {
+	if (distance > zooms[x])
+		return (x+2);
+}
+
+return 10;
+};
 
 // Calculate GMT offset in seconds from local
 golgotha.maps.GMTOffset = new Date().getTimezoneOffset() * 60000;
@@ -89,6 +120,17 @@ google.maps.Map.prototype.closeWindow = function() {
 	return true;
 };
 
+// Disable zoom
+google.maps.Map.prototype.disableZoom = function() { 
+	map.setOptions({disableDoubleClickZoom:true, draggable:false, panControl:false, scaleControl:false});
+	return true;
+};
+
+google.maps.Map.prototype.enableZoom = function() {
+	map.setOptions({disableDoubleClickZoom:false, draggable:true, panControl:true, scaleControl:true});
+	return true;
+};
+
 // Clears all map overlay layers
 google.maps.Map.prototype.clearLayers = function() {
 	if (map.animator) {
@@ -104,6 +146,24 @@ google.maps.Map.prototype.clearLayers = function() {
 	return true;
 };
 
+// Clears all map selection controls
+google.maps.Map.prototype.clearSelects = function(cl) {
+	cl = (cl instanceof Array) ? cl : [cl];
+	this.clearLayers();
+	for (var x = 0; x < cl.length; x++) {
+		var lsc = getElementsByClass(cl[x], 'div', map.getDiv());
+		for (var idx = 0; idx < lsc.length; idx++) {
+			var dv = lsc[idx];
+			if (dv.isSelected) {
+				google.maps.event.trigger(dv, 'click');
+				google.maps.event.trigger(dv, 'stop');
+			}
+		}
+	}
+
+	return true;
+};
+
 // Sets a status message
 google.maps.Map.prototype.setStatus = function(msg) {
 	var sp = document.getElementById('mapStatus');
@@ -112,18 +172,19 @@ google.maps.Map.prototype.setStatus = function(msg) {
 };
 
 // Prototype to calculate visible tile addresses for map
-google.maps.Map.prototype.getVisibleTiles = function(zoom)
+google.maps.Map.prototype.getVisibleTiles = function(zoom, sz)
 {
 var bnds = this.getBounds();
 var nw = new google.maps.LatLng(bnds.getNorthEast().lat(), bnds.getSouthWest().lng());
 var se = new google.maps.LatLng(bnds.getSouthWest().lat(), bnds.getNorthEast().lng());
 
 // Get the pixel points of the tiles
+if (sz == null) sz = golgotha.maps.TILE_SIZE;
 var p = map.getProjection(); if (!zoom) zoom = map.getZoom();
 var nwp = p.fromLatLngToPoint(nw); nwp.x = Math.round(nwp.x << zoom); nwp.y = Math.round(nwp.y << zoom);
 var sep = p.fromLatLngToPoint(se); sep.x = Math.round(sep.x << zoom); sep.y = Math.round(sep.y << zoom);
-var nwAddr = new google.maps.Point((nwp.x >> 8), (nwp.y >> 8));
-var seAddr = new google.maps.Point((sep.x >> 8), (sep.y >> 8));
+var nwAddr = new google.maps.Point((nwp.x / sz.width), (nwp.y / sz.height));
+var seAddr = new google.maps.Point((sep.x / sz.width), (sep.y / sz.height));
 
 // Load the tile addresses
 var tiles = [];
@@ -169,12 +230,17 @@ golgotha.maps.SelectControl = function(title, onSelect, onClear, ctx) {
 	return container;
 };
 
-golgotha.maps.LayerSelectControl = function(map, title, layers) {
-	var container = document.createElement('div'); 
-	var btn = golgotha.maps.CreateButtonDiv(title);
+golgotha.maps.LayerSelectControl = function(opts, layers) {
+	var container = document.createElement('div');
+	var btn = golgotha.maps.CreateButtonDiv(opts.title);
 	container.appendChild(btn);
-	btn.ovLayers = (layers instanceof Array) ? layers : [layers];
+	container.enable = function() { btn.disabled = false; document.removeClass(btn, 'disabled'); };	
+	if (opts.disabled) { btn.disabled = true; document.addClass(btn, 'disabled'); }
+	if (opts.id != null) container.setAttribute('id', opts.id);
+	if (opts.c != null) document.addClass(container, opts.c);
+	btn.layerFunc = (golgotha.util.isFunction(layers)) ? layers : (function() { return layers; });
 	google.maps.event.addDomListener(btn, 'click', function() {
+		if (btn.disabled) return;
 		if (this.isSelected) {
 			document.removeClass(btn, 'displayed');
 			try { delete btn.isSelected; } catch (err) { btn.isSelected = false; }
@@ -183,19 +249,20 @@ golgotha.maps.LayerSelectControl = function(map, title, layers) {
 			btn.isSelected = true;
 		}
 
-		for (var x = 0; x < this.ovLayers.length; x++) {
-			var ov = this.ovLayers[x];
-			if ((ov.getMap != null) && (ov.getMap() != null) && (ov.getMap() != map))
+		var ovL = this.layerFunc(); if (!(ovL instanceof Array)) ovL = [ovL];
+		for (var x = 0; x < ovL.length; x++) {
+			var ov = ovL[x];
+			if ((ov.getMap != null) && (ov.getMap() != null) && (ov.getMap() != opts.map))
 				return true;
 
 			if (this.isSelected) {
-				ov.setMap(map);
-				if (ov.getCopyright) map.setCopyright(ov.getCopyright());
-				if (ov.getTextDate) map.setStatus(ov.getTextDate());
+				ov.setMap(opts.map); if (golgotha.util.isFunction(ov.display)) ov.display(true);
+				if (ov.getCopyright) opts.map.setCopyright(ov.getCopyright());
+				if (ov.getTextDate) opts.map.setStatus(ov.getTextDate());
 			} else {
 				ov.setMap(null);
-				if (ov.getCopyright) map.setCopyright('');
-				if (ov.getTextDate) map.setStatus('');
+				if (ov.getCopyright) opts.map.setCopyright('');
+				if (ov.getTextDate) opts.map.setStatus('');
 			}
 		}
 	});
@@ -203,25 +270,15 @@ golgotha.maps.LayerSelectControl = function(map, title, layers) {
 	return container;
 };
 
-golgotha.maps.LayerClearControl = function(map) {
+golgotha.maps.LayerClearControl = function(map, opts) {
+	opts = opts || {};
 	var container = document.createElement('div');
-	var btn = document.createElement('div');
+	var btn = golgotha.maps.CreateButtonDiv('None');
 	btn.className = 'layerClear';
-	btn.style.width = '6em';
 	container.appendChild(btn);
-	btn.appendChild(document.createTextNode('None'));
-	google.maps.event.addDomListener(btn, 'click', function() {
-		map.clearLayers();
-		var lsc = getElementsByClass('layerSelect', 'div', map.getDiv());
-		for (var x = 0; x < lsc.length; x++) {
-			var dv = lsc[x];
-			if (dv.isSelected) {
-				google.maps.event.trigger(dv, 'click');
-				google.maps.event.trigger(dv, 'stop');
-			}
-		}
-	});
-	
+	if (opts.id != null) container.setAttribute('id', opts.id);
+	if (opts.c != null) document.addClass(container, opts.c);
+	google.maps.event.addDomListener(btn, 'click', function() { map.clearSelects('layerSelect'); });
 	return container;
 };
 
@@ -229,15 +286,16 @@ golgotha.maps.LayerClearControl = function(map) {
 golgotha.maps.ShapeLayer = function(opts, name, imgClass) {
 	opts.name = name; opts.isPng = true;
 	if (opts.tileSize == null) opts.tileSize = golgotha.maps.TILE_SIZE;
+	if (opts.host == null) opts.host = self.location.host;
 	var ov = new google.maps.ImageMapType(opts);
 	ov.set('maxZoom', opts.maxZoom);
 	ov.set('nativeZoom', opts.nativeZoom);
-	ov.set('baseURL', 'http://' + self.location.host + '/tile/' + imgClass + '/');
-	ov.set('imgClass', imgClass);
 	ov.set('tileSize', opts.tileSize);
+	ov.set('baseURL', 'http://' + opts.host + '/tile/' + imgClass + '/');
+	ov.set('imgClass', imgClass); 
 	ov.getTileUrl = golgotha.maps.util.getTileUrl;
 	ov.getTile = golgotha.maps.util.buildTile;
-	ov.getMap = function() { return this.map; }
+	ov.getMap = function() { return this.map; };
 	ov.setMap = function(m) {
 		if ((this.map != null) && (m != null)) {
 			if (m == this.map) return false;
@@ -262,9 +320,28 @@ golgotha.maps.ShapeLayer = function(opts, name, imgClass) {
 		}
 
 		return true;
-	}
+	};
 
 	return ov;
+};
+
+// Arbitrary marker layer
+golgotha.maps.MarkerLayer = function(opts, name) {
+	var l = {opts:opts, name:name, mrks:[], map:null};
+	l.getMap = function() { return this.map; };
+	l.setMap = function(m) { this.map = m; for (var x = 0; x < this.mrks.length; x++) this.mrks[x].setMap(m); };
+	l.set = function(k, v) { this.opts[k] = v; };
+	l.get = function(k) { return this.opts[k]; };
+	l.add = function(m) { if (!this.mrks.contains(m)) this.mrks.push(m); };
+	l.remove = function(m) { this.mrks.remove(m); };
+	l.getTextDate = function() {
+		var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+		var d = this.get('timestamp'); if (d == null) return '';
+		return d.getDate() + '-' + months[d.getMonth()] + '-' + d.getFullYear() + '  ' 
+			+ d.getHours() + ':' + ((d.getMinutes() < 10) ? '0' + d.getMinutes() : d.getMinutes());	
+	};
+	
+	return l;
 };
 
 golgotha.maps.Marker = function(opts, pt) {
@@ -323,39 +400,86 @@ golgotha.maps.IconMarker = function(opts, pt) {
 	return mrk;
 };
 
-function googleMarker(color, point, label)
+// Async Loader results
+golgotha.maps.LoaderResults = function() { return {opts:{timestamp:new Date()}, mrks:[], fn:{}, success:false}; };
+
+// Generic async layer loader
+golgotha.maps.LayerLoader = function(name, parser) { this.onLoad = []; this.name = name; this.parser = parser; this.isLoaded = false; };
+golgotha.maps.LayerLoader.prototype.getLayer = function() { return this.ovLayer; };
+golgotha.maps.LayerLoader.prototype.onload = function(f) { this.onLoad.push(f); return true; };
+golgotha.maps.LayerLoader.prototype.isLoaded = function() { return (this.lastLoad != null); };
+golgotha.maps.LayerLoader.prototype.getAge = function() { if (this.lastLoad == null) return -1; return ((new Date().getTime() - this.lastLoad.getTime()) / 1000); };
+golgotha.maps.LayerLoader.prototype.load = function(data)
 {
-console.log('googleMarker deprecated');
-if (color == 'null') return point;
-var icn = new google.maps.MarkerImage('/' + golgotha.maps.IMG_PATH + '/maps/point_' + color + '.png', null, null, null, golgotha.maps.PIN_SIZE);
-var marker = new google.maps.Marker({position:point, icon:icn, shadow:golgotha.maps.DEFAULT_SHADOW, zIndex:golgotha.maps.z.MARKER});
-if (label != null) {
-	marker.info = label;
-	google.maps.event.addListener(marker, 'click', function() { map.infoWindow.setContent(this.info); map.infoWindow.open(map, this); });
+if (this.parser == null) {
+	alert('No custom parser defined!');
+	return;
+}
+	
+// Get layer data and add markers
+var l = new golgotha.maps.MarkerLayer({}, this.name); var ld = null;
+if (data != null) {
+	try {
+		ld = this.parser(data);
+	} catch (e) {
+		console.log('Parse error - ' + e);
+		ld = new golgotha.maps.LoaderResults();
+	}
+
+	if (!ld.success) return false;
+	for (var mrk = ld.mrks.pop(); (mrk != null); mrk = ld.mrks.pop())
+		l.add(mrk);
+
+	// Add custom functions to the layer
+	for (var fnName in ld.fn) {
+		if (!ld.fn.hasOwnProperty(fnName)) continue;
+		var fn = ld.fn[fnName];
+		if (golgotha.util.isFunction(fn)) l[fnName] = fn;
+	}
 }
 
-return marker;
+// If we're displaying the layer, refresh it
+if ((this.ovLayer != null) && (this.ovLayer.getMap() != null)) {
+	var ol = this.ovLayer;
+	l.setMap(ol.getMap());
+	window.setTimeout(function() { ol.setMap(null); }, 10);
 }
 
-function googleIconMarker(palCode, iconCode, point, label)
+// Fire event handlers
+this.ovLayer = l; this.lastLoad = new Date();
+for (var x = 0; x < this.onLoad.length; x++)
+	this.onLoad[x].call(this);
+
+return true;
+};
+
+// Generic async data loader
+golgotha.maps.DataLoader = function(parser) { this.onLoad = []; this.parser = parser; this.results = {}; this.reqLoad = 1; this.loadCount = 0; };
+golgotha.maps.DataLoader.prototype.getData = function() { return this.results; };
+golgotha.maps.DataLoader.prototype.onload = function(f) { this.onLoad.push(f); return true; };
+golgotha.maps.DataLoader.prototype.isLoaded = function() { return (this.lastLoad != null); };
+golgotha.maps.DataLoader.prototype.getAge = function() { if (this.lastLoad == null) return -1; return ((new Date().getTime() - this.lastLoad.getTime()) / 1000); };
+golgotha.maps.DataLoader.prototype.load = function(data)
 {
-console.log('googleIconMarker deprecated');
-var imgBase = null;
-if (palCode > 0)
-	imgBase = 'http://maps.google.com/mapfiles/kml/pal' + palCode + '/icon' + iconCode;
-else
-	imgBase = '/' + golgotha.maps.IMG_PATH + '/maps/pal' + palCode + '/icon' + iconCode;
-
-var icn = new google.maps.MarkerImage(imgBase + '.png', null, null, golgotha.maps.ICON_ANCHOR, golgotha.maps.S_ICON_SIZE);
-var shd = new google.maps.MarkerImage(imgBase + 's.png', null, null, golgotha.maps.ICON_ANCHOR, golgotha.maps.S_ICON_SHADOW_SIZE);
-var marker = new google.maps.Marker({position:point, icon:icn, shadow:shd, zIndex:golgotha.maps.z.MARKER});
-if (label != null) {
-	marker.info = label;
-	google.maps.event.addListener(marker, 'click', function() { map.infoWindow.setContent(this.info); map.infoWindow.open(map, this); });
+if (this.parser == null) {
+	alert('No custom parser defined!');
+	return;
+}
+	
+// Get data and fire event handlers
+try {
+	this.results = this.parser(data); this.lastLoad = new Date(); this.loadCount++;
+	if (this.loadCount == this.reqLoad) {
+		for (var x = 0; x < this.onLoad.length; x++)
+			this.onLoad[x].call(this);
+	}
+} catch (e) {
+	console.log('Parse error - ' + e);
 }
 
-return marker;
-}
+return true;
+};
+
 
 function addMarkers(map, arrayName)
 {
@@ -397,28 +521,6 @@ try {
 return true;
 }
 
-function getDefaultZoom(distance)
-{
-if (distance > 6100)
-	return 2;
-else if (distance > 2900)
-	return 3;
-else if (distance > 1600)
-	return 4;
-else if (distance > 780)
-	return 5;
-else if (distance > 390)
-	return 6;
-else if (distance > 195)
-	return 7;
-else if (distance > 90)
-	return 8
-else if (distance > 50)
-	return 9;
-
-return 10;
-}
-
 function toggleMarkers(map, arrayName, check)
 {
 if (map.infoWindow) map.infoWindow.close();
@@ -432,42 +534,31 @@ else
 return true;
 }
 
-function toggleObject(map, obj, check)
+golgotha.maps.util.updateTab = function(ofs, size)
 {
-if (map.infoWindow) map.infoWindow.close();	
-if (!check.checked)
-	obj.setMap(null);
-else
-	obj.setMap(map);
-	
-return true;
-}
-
-function updateTab(mrk, ofs, size)
-{
-if ((ofs < 0) || (ofs > mrk.tabs.length)) ofs = 0;
-var tab = mrk.tabs[ofs];
+if ((ofs < 0) || (ofs > this.tabs.length)) ofs = 0;
+var tab = this.tabs[ofs];
 var txt = '<div ';
-if (!size) size = mrk.tabSize;
+if (!size) size = this.tabSize;
 if (size) {
 	txt += ' style="width:';
 	txt += size.width;
 	txt += 'px; height:'
 	txt += size.height;
 	txt += 'px;"';
-	mrk.tabSize = size;
+	this.tabSize = size;
 }
 
 txt += '>';
 txt += tab.content;
 txt += '<br /><br />';
-txt += renderTabChoices(mrk.tabs, ofs);
+txt += golgotha.maps.util.renderTabChoices(this.tabs, ofs);
 txt += '</div>';
-map.infoWindow.setContent(txt);
+this.getMap().infoWindow.setContent(txt);
 return true;
 }
 
-function renderTabChoices(tabs, selectedOfs)
+golgotha.maps.util.renderTabChoices = function(tabs, selectedOfs)
 {
 var txt = '<span class="tabMenu">';
 for (var x = 0; x < tabs.length; x++) {
@@ -477,7 +568,7 @@ for (var x = 0; x < tabs.length; x++) {
 		txt += tab.name;
 		txt += '</a> ';
 	} else
-		txt += '<span class="bld">' + tab.name + '<span> '; 
+		txt += '<span class="selectedTab">' + tab.name + '<span> '; 
 }
 
 txt += '</span>';

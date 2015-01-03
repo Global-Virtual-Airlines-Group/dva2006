@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import org.deltava.beans.schedule.*;
@@ -7,7 +7,7 @@ import org.deltava.util.StringUtils;
 /**
  * A class to store airport location data.
  * @author Luke
- * @version 5.4
+ * @version 5.5
  * @since 1.0
  */
 
@@ -122,7 +122,7 @@ public class AirportLocation extends NavigationDataBean implements ICAOAirport {
 	 */
 	@Override
 	public String getInfoBox() {
-		StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox\">");
+		StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox navdata\">");
 		buf.append(getHTMLTitle());
 		buf.append(getHTMLPosition());
 		buf.append("Altitude: ");

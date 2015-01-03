@@ -1,9 +1,7 @@
 function getLikes(id)
 {
-var d = new Date();
-var dtime = d.getTime() - (d.getTime() % 3000);
 var xmlreq = getXMLHttpRequest();
-xmlreq.open('get', 'imglike.ws?id=' + id + '&time=' + dtime, true);
+xmlreq.open('get', 'imglike.ws?id=' + id + '&time=' + golgotha.util.getTimestamp(3000), true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	var xml = xmlreq.responseXML;

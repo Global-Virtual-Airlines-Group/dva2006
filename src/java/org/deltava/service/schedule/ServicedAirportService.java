@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to list all airports serviced by a particular Airline.
  * @author Luke
- * @version 4.2
+ * @version 5.5
  * @since 1.0
  */
 
@@ -57,8 +57,7 @@ public class ServicedAirportService extends WebService {
 		doc.setRootElement(re);
 
 		// Write the entries
-		for (Iterator<Airport> i = airports.iterator(); i.hasNext(); ) {
-			Airport a = i.next();
+		for (Airport a : airports) {
 			Element e = new Element("airport");
 			e.setAttribute("icao", a.getICAO());
 			e.setAttribute("iata", a.getIATA());
@@ -66,7 +65,7 @@ public class ServicedAirportService extends WebService {
 			e.setAttribute("lng", StringUtils.format(a.getLongitude(), "##0.00000"));
 			e.setAttribute("color", al.getColor());
 			StringBuffer info = new StringBuffer(a.getInfoBox());
-			info.append("<div class=\"mapInfoBox\"><br />Airlines:<br />");
+			info.append("<div class=\"mapInfoBox navdata\"><br />Airlines:<br />");
 			
 			// Add Airlines
 			for (Iterator<String> ai = a.getAirlineCodes().iterator(); ai.hasNext(); ) {
@@ -104,6 +103,7 @@ public class ServicedAirportService extends WebService {
 	 * Tells the Web Service Servlet not to log invocations of this service.
 	 * @return FALSE
 	 */
+	@Override
 	public final boolean isLogged() {
 		return false;
 	}

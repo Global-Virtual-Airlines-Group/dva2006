@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
  * @author Rahul
- * @version 5.4
+ * @version 5.5
  * @since 1.0
  */
 
@@ -491,8 +491,8 @@ public class ACARSRouteEntry extends RouteEntry {
 	 */
 	@Override
 	public String getInfoBox() {
-		StringBuilder buf = new StringBuilder(192);
-		buf.append("<div class=\"mapInfoBox\">Position: <span class=\"bld\">");
+		StringBuilder buf = new StringBuilder(224);
+		buf.append("<div class=\"mapInfoBox acarsFlight\">Position: <span class=\"bld\">");
 		buf.append(StringUtils.format(_pos, true, GeoLocation.ALL));
 		buf.append("</span><br />Time: ");
 		buf.append(StringUtils.format(getDate(), "MM/dd/yyyy HH:mm:ss"));

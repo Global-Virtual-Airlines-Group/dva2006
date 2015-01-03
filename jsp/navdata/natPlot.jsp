@@ -14,12 +14,13 @@
 <content:js name="common" />
 <map:api version="3" libraries="weather" />
 <content:js name="googleMapsWX" />
+<content:js name="wxParsers" />
 <content:js name="markerWithLabel" />
 <content:googleAnalytics eventSupport="true" />
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
 <script type="text/javascript">
-var frLoader;
-frLoader = new golgotha.maps.FrontLoader();
+var frLoad = new golgotha.maps.LayerLoader('Fronts', golgotha.maps.fronts.FrontParser);
+frLoad.onload(function() { golgotha.util.enable('selFronts'); });
 
 function showTrackInfo(marker)
 {
@@ -34,14 +35,8 @@ return true;
 function resetTracks()
 {
 // Initialize map data arrays
-tracks['W'] = [];
-tracks['E'] = [];
-tracks['C'] = [];
-allTracks = [];
-points['W'] = [];
-points['E'] = [];
-points['C'] = [];
-allPoints = [];
+tracks = {W:[], E:[], C:[]};
+points = {W:[], E:[], C:[]};
 
 // Reset checkboxes
 var f = document.forms[0];
@@ -91,16 +86,15 @@ if (isLoading)
 
 // Generate an XMLHTTP request
 var xmlreq = getXMLHttpRequest();
-xmlreq.open('get', 'otrackinfo.ws?type=NAT&date=' + dt.text, true);
+xmlreq.open('GET', 'otrackinfo.ws?type=NAT&date=' + dt.text, true);
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
 	if (xmlreq.status != 200) {
-		isLoading.innerHTML = ' - ERROR ' + xmlreq.statusText;		
+		isLoading.innerHTML = ' - ERROR ' + xmlreq.statusText;	
 		return false;
 	}
 
-	removeMarkers('allPoints');
-	removeMarkers('allTracks');
+	map.clearOverlays();
 	resetTracks();
 
 	// Get the XML document
@@ -114,7 +108,7 @@ xmlreq.onreadystatechange = function() {
 		for (var j = 0; j < waypoints.length; j++) {
 			var wp = waypoints[j];
 			var label = wp.firstChild;
-			var p = new google.maps.LatLng(parseFloat(wp.getAttribute('lat')), parseFloat(wp.getAttribute('lng')));
+			var p = {lat:parseFloat(wp.getAttribute('lat')), lng:parseFloat(wp.getAttribute('lng'))};
 			trackPos.push(p);
 
 			// Create the map marker
@@ -126,16 +120,12 @@ xmlreq.onreadystatechange = function() {
 			google.maps.event.addListener(mrk, 'click', function() { mrk.showTrack(this); });
 			mrk.setMap(map);
 			points[trackType].push(mrk);
-			allPoints.push(mrk);
 		}
 
-		// Draw the route
-		var trackLine = new google.maps.Polyline({path:trackPos, strokeColor:track.getAttribute('color'), strokeWeight:2, strokeOpacity:0.7, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
+		// Draw the route and save
+		var trackLine = new google.maps.Polyline({path:trackPos, strokeColor:track.getAttribute('color'), strokeWeight:2, strokeOpacity:0.67, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
 		trackLine.setMap(map);
-		
-		// Save the route/points
 		tracks[trackType].push(trackLine);
-		allTracks.push(trackLine);
 	}
 
 	// Focus on the map
@@ -149,7 +139,6 @@ xmlreq.send(null);
 return true;
 }
 </script>
-<map:wxFronts function="frLoader.load" />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -191,37 +180,44 @@ return true;
 <content:copyright />
 </content:region>
 </content:page>
-<script type="text/javascript">
+<div id="copyright" class="mapTextLabel"></div>
+<content:sysdata var="wuAPI" name="security.key.wunderground" />
+<script id="mapInit" defer>
 // Create map options
 var mapTypes = {mapTypeIds: [google.maps.MapTypeId.SATELLITE, google.maps.MapTypeId.TERRAIN]};
-var mapOpts = {center:new google.maps.LatLng(52.0, -35.0), zoom:4, minZoom:3, maxZoom:8, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
+var mapOpts = {center:{lat:52, lng:-35}, zoom:4, minZoom:3, maxZoom:8, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
 
 // Create the map
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
-google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });
+google.maps.event.addListener(map, 'click', map.closeWindow);
+google.maps.event.addListener(map.infoWindow, 'closeclick', map.closeWindow);
 google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
 
-// Create the jetstream layer
+// Create the jetstream layers
 var jsOpts = {maxZoom:8, nativeZoom:5, opacity:0.55, zIndex:golgotha.maps.z.OVERLAY};
 var hjsl = new golgotha.maps.ShapeLayer(jsOpts, 'High Jet', 'wind-jet');
 var ljsl = new golgotha.maps.ShapeLayer(jsOpts, 'Low Jet', 'wind-lojet');
 
-// Add layers
-map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Fronts', frLoader.getLayer()));
-map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Clouds', new google.maps.weather.CloudLayer()));
-map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Lo Jetstream', ljsl));
-map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Hi Jetstream', hjsl));
-map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerClearControl(map));
+// Add selection controls
+var ctls = map.controls[google.maps.ControlPosition.BOTTOM_LEFT];
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Fronts', disabled:true, id:'selFronts'}, function() { return frLoad.getLayer(); }));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Clouds'}, new google.maps.weather.CloudLayer()));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Lo Jetstream'}, ljsl));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Hi Jetstream'}, hjsl));
+ctls.push(new golgotha.maps.LayerClearControl(map));
+map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById('copyright'));
 
 // Create the tracks/waypoints
-var tracks = [];
-var points = [];
+var tracks = []; var points = [];
 resetTracks();
 
-// Update text color
-google.maps.event.trigger(map, 'maptypeid_changed');
+// Load data async once tiles are loaded
+google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
+	golgotha.util.createScript({id:'wuFronts', url:'http://api.wunderground.com/api/${wuAPI}/fronts/view.json?callback=frLoad.load', async:true});
+	google.maps.event.trigger(map, 'maptypeid_changed');
+});
 </script>
 </body>
 </html>

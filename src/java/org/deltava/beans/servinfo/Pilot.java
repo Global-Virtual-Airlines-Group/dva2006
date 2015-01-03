@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.*;
 /**
  * A bean to store online Pilot information.
  * @author Luke
- * @version 3.4
+ * @version 5.5
  * @since 1.0
  */
 
@@ -117,6 +117,7 @@ public class Pilot extends ConnectedUser {
 	 * Returns the User type.
 	 * @return NetworkUser.Type.PILOT
 	 */
+	@Override
 	public final Type getType() {
 		return Type.PILOT;
 	}
@@ -125,6 +126,7 @@ public class Pilot extends ConnectedUser {
      * Returns the Pilot's rating code.
      * @return Rating.OBS always
      */
+	@Override
     public final Rating getRating() {
        return Rating.OBS;
     }
@@ -273,6 +275,7 @@ public class Pilot extends ConnectedUser {
     /**
      * Sets the Pilot's rating code. This is overriden to OBS.
      */
+	@Override
     public final void setRating(Rating r) {
     	super.setRating(Rating.OBS);
     }
@@ -303,6 +306,7 @@ public class Pilot extends ConnectedUser {
 	 * @return BLUE if isMember() is TRUE, YELLOW if isHighlighted() is TRUE, otherwise WHITE
 	 * @see Pilot#isHighlighted()
 	 */
+	@Override
 	public String getIconColor() {
 		if (_isHighlighted && (getPilotID() != 0))
 			return BLUE;
@@ -316,8 +320,9 @@ public class Pilot extends ConnectedUser {
 	 * Returns the Google Map Infobox text.
 	 * @return HTML text
 	 */
+	@Override
 	public String getInfoBox() {
-		StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox\"><span class=\"bld\">");
+		StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox onlinePilot\"><span class=\"bld\">");
 		buf.append(getCallsign());
 		buf.append("</span> (");
 		buf.append(StringUtils.stripInlineHTML(getName()));

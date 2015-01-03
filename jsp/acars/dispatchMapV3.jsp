@@ -15,19 +15,16 @@
 <content:js name="progressBar" />
 <content:js name="googleMapsWX" />
 <content:googleAnalytics eventSupport="true" />
-<content:sysdata var="tileHost" name="weather.tileHost" />
-<c:if test="${!empty tileHost}">
 <script type="text/javascript">
-var gsLoader;
-gsLoader = new golgotha.maps.GinsuLoader(2);
-gsLoader.setData('radar', 0.45, 'wxRadar');
-gsLoader.setData('eurorad', 0.45, 'wxRadar');
-gsLoader.setData('temp', 0.275, 'wxTemp');
-gsLoader.setData('windspeed', 0.325, 'wxWind');
-</script>
-<map:wxList layers="radar,eurorad,temp,windspeed,future_radar_ff" function="gsLoader.load" max="8" />
-</c:if>
-<script type="text/javascript">
+var loaders = {};
+loaders.series = new golgotha.maps.SeriesLoader();
+loaders.series.setData('radar', 0.45, 'wxRadar', 1024);
+loaders.series.setData('eurorad', 0.45, 'wxRadar', 512);
+loaders.series.setData('aussieradar', 0.45, 'wxRadar', 512);
+loaders.series.setData('hirad_temp', 0.275, 'wxTemp');
+loaders.series.setData('hirad_windSpeed', 0.325, 'wxWind');
+loaders.series.onload(function() { golgotha.util.enable('#selImg'); });
+
 function clickIcon()
 {
 if (this.uniqueID) {
@@ -53,9 +50,7 @@ mrk.uniqueID = id;
 google.maps.event.addListener(mrk, 'click', clickIcon);
 return mrk;
 }
-</script>
 <c:if test="${isDispatch}">
-<script type="text/javascript">
 function mapZoom()
 {
 golgotha.event.beacon('Dispatch', 'Zoom/Pan');
@@ -77,37 +72,46 @@ for (var idx = 0; idx < mrks.length; idx++)
 }
 
 return true;
-}
-</script></c:if>
+}</c:if>
+</script>
 </head>
-<body>
+<body onunload="void golgotha.maps.util.unload(map)">
 <el:form action="dispatchMap.do" method="post" validate="return false">
 <map:div ID="googleMap" x="100%" y="625" /><div id="zoomLevel" class="small mapTextLabel"></div><div id="copyright" class="small mapTextLabel"></div>
 <div id="mapStatus" class="small mapTextLabel"></div>
 </el:form>
-<script type="text/javascript">
+<script id="mapInit" defer>
 var mapTypes = {mapTypeIds:golgotha.maps.DEFAULT_TYPES};
-var mapOpts = {center:new google.maps.LatLng(36.44, -100.14), zoom:6, minZoom:2, maxZoom:12, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
+var mapOpts = {center:{lat:36.44, lng:-100.14}, zoom:6, minZoom:2, maxZoom:12, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
 
 // Load the map
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
-google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });
+google.maps.event.addListener(map, 'click', map.closeWindow);
 google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
 google.maps.event.addListener(map, 'zoom_changed', golgotha.maps.updateZoom);
+
+// Create the jetstream layers
+var jsOpts = {maxZoom:8, nativeZoom:5, opacity:0.55, zIndex:golgotha.maps.z.OVERLAY};
+var hjsl = new golgotha.maps.ShapeLayer(jsOpts, 'High Jet', 'wind-jet');
+var ljsl = new golgotha.maps.ShapeLayer(jsOpts, 'Low Jet', 'wind-lojet');
+
+// Build the weather layer controls
+var ctls = map.controls[google.maps.ControlPosition.BOTTOM_LEFT];
+var worldRadar = function() { return [loaders.series.getLatest('radar'), loaders.series.getLatest('eurradar'), loaders.series.getLatest('aussieradar')]; };
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Radar', disabled:true, c:'selImg'}, worldRadar));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Temperature', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('hirad_temp'); }));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Wind Speed', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('hirad_windSpeed'); }));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Clouds'}, new google.maps.weather.CloudLayer()));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Lo Jetstream'}, ljsl));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Hi Jetstream'}, hjsl));
+ctls.push(new golgotha.maps.LayerClearControl(map));
+
+// Add controls
 map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById('copyright'));
 map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(document.getElementById('zoomLevel'));
 map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(document.getElementById('mapStatus'));
-<c:if test="${!empty tileHost}">
-// Build the layer controls
-map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Radar', [gsLoader.getLatest('radar'), gsLoader.getLatest('eurorad')]));
-map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Temperature', gsLoader.getLatest('temp')));
-map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Wind Speed', gsLoader.getLatest('windspeed')));
-</c:if>
-// Build the standard weather layers
-map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Clouds', new google.maps.weather.CloudLayer()));
-map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerClearControl(map));
 
 // Initialize arrays and collection
 var route = [];
@@ -120,8 +124,13 @@ var mrks_sid = [];
 var mrks_star = [];
 <c:if test="${isDispatch}">
 google.maps.event.addListener(map, 'dragend', mapZoom);</c:if>
-google.maps.event.trigger(map, 'maptypeid_changed');
-google.maps.event.trigger(map, 'zoom_changed');
+
+// Load data async once tiles are loaded
+google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
+	golgotha.util.createScript({id:'wxLoader', url:'/maps/i/series?jsonp=loaders.series.load', async:true});
+	google.maps.event.trigger(map, 'maptypeid_changed');
+	google.maps.event.trigger(map, 'zoom_changed');
+});
 </script>
 </body>
 </html>

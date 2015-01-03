@@ -70,20 +70,16 @@ return true;
 <content:copyright />
 </content:region>
 </content:page>
-<script type="text/javascript">
-//Create map options
-var mapTypes = {mapTypeIds:golgotha.maps.DEFAULT_TYPES};
-var mapOpts = {center: new google.maps.LatLng(38.88, -93.25), zoom:4, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
+<script id="mapInit" defer>
+var mapOpts = {center:{lat:38.88, lng:-93.25}, zoom:4, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
 
 // Create the map
 var map = new google.maps.Map(document.getElementById("googleMap"), mapOpts);
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
-google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });
+google.maps.event.addListener(map, 'click', function() { map.closeWindow(); infoClose(); });
 google.maps.event.addListener(map.infoWindow, 'closeclick', infoClose);
-
-// Add positions
-updateMap(true);
+google.maps.event.addListenerOnce(map, 'tilesloaded', function() { updateMap(true); });
 </script>
 </body>
 </html>

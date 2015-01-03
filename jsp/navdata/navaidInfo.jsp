@@ -72,7 +72,7 @@ xmlreq.onreadystatechange = function() {
 		var wp = wps[i];
 		var code = wp.getAttribute('code');
 		if (code != '${param.navaidCode}') {
-			var p = new google.maps.LatLng(parseFloat(wp.getAttribute('lat')), parseFloat(wp.getAttribute('lng')));
+			var p = {lat:parseFloat(wp.getAttribute('lat')), lng:parseFloat(wp.getAttribute('lng'))};
 			var mrk;
 			if (wp.getAttribute('pal'))
 				mrk = new golgotha.maps.IconMarker({pal:wp.getAttribute('pal'), icon:wp.getAttribute('icon'), info:wp.firstChild.data}, p);
@@ -160,18 +160,18 @@ return true;
 </content:region>
 </content:page>
 <c:if test="${!empty results}">
-<script type="text/javascript">
+<script id="mapInit" defer>
 <map:point var="mapC" point="${mapCenter}" />
 
 // Create map options
 var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
-var mapOpts = {center:mapC, minZoom:3, zoom: getDefaultZoom(110), scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
+var mapOpts = {center:mapC, minZoom:3, zoom:golgotha.maps.util.getDefaultZoom(110), scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
 
 // Build the map
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
-google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });
+google.maps.event.addListener(map, 'click', map.closeWindow);
 
 //Build the navaid list
 <map:markers var="navaids" items="${results}" />

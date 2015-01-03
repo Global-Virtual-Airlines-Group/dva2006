@@ -1,4 +1,4 @@
-// Copyright 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.util.GeoUtils;
 /**
  * A bean to store route frequency data.
  * @author Luke
- * @version 5.4
+ * @version 5.5
  * @since 4.1
  */
 
@@ -82,14 +82,9 @@ public abstract class AbstractRoute implements RoutePair, MapEntry {
 		return _frequency;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.deltava.beans.MapEntry#getInfoBox()
-	 */
 	@Override
 	public String getInfoBox() {
-		StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox\"><span class=\"bld\">");
+		StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox navdata\"><span class=\"bld\">");
 		buf.append(_aD.getName());
 		buf.append("</span> (");
 		buf.append(_aD.getIATA());

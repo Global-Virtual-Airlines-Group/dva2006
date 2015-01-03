@@ -259,7 +259,7 @@ return true;
 </content:page>
 <fmt:aptype var="useICAO" />
 <c:set var="mapDistance" value="${(empty question) ? 300 : question.distance}" scope="page" />
-<script type="text/javascript">
+<script id="mapInit" defer>
 var doRunways = false;
 var f = document.forms[0];
 golgotha.airportLoad.config.doICAO = '${useICAO}';
@@ -272,11 +272,11 @@ f.airportA.updateAirportCode();
 // Create map
 <map:point var="mapC" point="${mapCenter}" />
 var mapTypes = {mapTypeIds: [google.maps.MapTypeId.TERRAIN, google.maps.MapTypeId.SATELLITE]};
-var mapOpts = {center:mapC, zoom:getDefaultZoom(${mapDistance}), scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
+var mapOpts = {center:mapC, zoom:golgotha.maps.util.getDefaultZoom(${mapDistance}), scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
-google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });
+google.maps.event.addListener(map, 'click', map.closeWindow);
 </script>
 </body>
 </html>

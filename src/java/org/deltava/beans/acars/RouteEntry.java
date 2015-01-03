@@ -12,7 +12,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
- * @version 5.4
+ * @version 5.5
  * @since 1.0
  */
 
@@ -354,7 +354,7 @@ public abstract class RouteEntry extends ACARSMapEntry implements GeospaceLocati
 	@Override
 	public String getInfoBox() {
 		StringBuilder buf = new StringBuilder(192);
-		buf.append("<div class=\"mapInfoBox\">Position: <span class=\"bld\">");
+		buf.append("<div class=\"mapInfoBox acarsPosition\">Position: <span class=\"bld\">");
 		buf.append(StringUtils.format(_pos, true, GeoLocation.ALL));
 		buf.append("</span><br />Time: ");
 		buf.append(StringUtils.format(_date, "MM/dd/yyyy HH:mm:ss"));

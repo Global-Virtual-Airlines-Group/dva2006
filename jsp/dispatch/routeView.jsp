@@ -92,7 +92,7 @@
 </content:region>
 </content:page>
 <c:if test="${fn:sizeof(waypoints) > 0}">
-<script type="text/javascript">
+<script id="mapInit" defer>
 // Build the route line and map center
 <map:point var="mapC" point="${mapCenter}" />
 <map:points var="pnts" items="${waypoints}" />
@@ -101,13 +101,13 @@
 
 //Create map options
 var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
-var mapOpts = {center: mapC, zoom:getDefaultZoom(${distance}), scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
+var mapOpts = {center: mapC, zoom:golgotha.maps.util.getDefaultZoom(${distance}), scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
 
 //Build the map
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
-google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });
+google.maps.event.addListener(map, 'click', map.closeWindow);
 
 // Add the route and markers
 addMarkers(map, 'route');
