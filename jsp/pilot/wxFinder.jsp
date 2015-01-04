@@ -16,7 +16,6 @@
 <content:js name="googleMapsWX" />
 <content:js name="wxParsers" />
 <content:googleAnalytics eventSupport="true" />
-<content:sysdata var="tileHost" name="weather.tileHost" />
 <script type="text/javascript">
 var loaders = {};
 loaders.series = new golgotha.maps.SeriesLoader();

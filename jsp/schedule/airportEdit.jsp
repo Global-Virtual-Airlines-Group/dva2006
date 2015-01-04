@@ -58,7 +58,7 @@ golgotha.onDOMReady(function() {
 </script>
 </head>
 <content:copyright visible="false" />
-<body>
+<body onunload="void golgotha.maps.util.unload(map)">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -182,7 +182,7 @@ lack of scheduled flights in the <content:airline /> Flight Schedule.</span></td
 </content:region>
 </content:page>
 <c:if test="${googleMap}">
-<script type="text/javascript">
+<script id="mapInit" defer>
 <map:point var="mapC" point="${airport}" />
 <map:marker var="apMarker" point="${airport}" color="green" />
 
@@ -193,7 +193,7 @@ var mapOpts = {center:mapC, zoom:6, scrollwheel:false, streetViewControl:false, 
 // Build the map
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
-addMarkers(map, 'apMarker');
+apMarker.setMap(map);
 </script></c:if>
 </body>
 </html>

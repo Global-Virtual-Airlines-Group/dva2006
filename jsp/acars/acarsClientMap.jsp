@@ -55,7 +55,7 @@ return true;
 </script>
 </head>
 <content:copyright visible="false" />
-<body>
+<body onunload="void golgotha.maps.util.unload(map)">
 <content:empty var="emptyList" />
 <content:getCookie name="acarsMapZoomLevel" default="5" var="zoomLevel" />
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />

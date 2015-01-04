@@ -17,7 +17,7 @@
 <content:googleAnalytics eventSupport="true" />
 </head>
 <content:copyright visible="false" />
-<body onunload="void golgotha.maps.util.unload()">
+<body onunload="void golgotha.maps.util.unload(map)">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
