@@ -15,134 +15,12 @@
 <map:api version="3" libraries="weather" />
 <content:js name="googleMapsWX" />
 <content:js name="markerWithLabel" />
+<content:js name="oceanicPlot" />
 <content:googleAnalytics eventSupport="true" />
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
-<script type="text/javascript">
-function showTrackInfo(marker)
-{
-var label = document.getElementById('trackLabel');
-var data = document.getElementById('trackData');
-if ((!label) || (!data)) return false;
-label.innerHTML = "Track " + marker.title;
-data.innerHTML = marker.trackPoints;
-return true;
-}
-
-function resetTracks()
-{
-// Initialize map data arrays
-tracks = {W:[], E:[], C:[]};
-points = {W:[], E:[], C:[]};
-
-// Reset checkboxes
-var f = document.forms[0];
-for (var x = 0; x < f.showTracks.length; x++)
-	f.showTracks[x].checked = true;
-
-// Reset track data label
-var label = document.getElementById('trackLabel');
-var data = document.getElementById('trackData');
-if ((!label) || (!data))
-	return false;
-
-label.innerHTML = 'Track Data';
-data.innerHTML = 'N/A';
-return true;
-}
-
-function updateTracks(checkbox)
-{
-var xtracks = tracks[checkbox.value];
-var trackPoints = points[checkbox.value];
-
-// Toggle the points
-for (var x = 0; x < trackPoints.length; x++) {
-	if (checkbox.checked)
-		trackPoints[x].show();
-	else
-		trackPoints[x].hide();
-}
-
-// Toggle the tracks
-for (var x = 0; x < xtracks.length; x++) {
-	var xt = xtracks[x];
-	xt.setMap(checkbox.checked ? map : null);
-}
-
-return true;
-}
-
-function loadTracks()
-{
-// Check the combobox
-var f = document.forms[0];
-var dt = f.date.options[f.date.selectedIndex];
-if (f.date.selectedIndex == 0)
-	return;
-
-// Set map as loading
-var isLoading = document.getElementById('isLoading');
-if (isLoading)
-	isLoading.innerHTML = ' - LOADING...';
-
-// Generate an XMLHTTP request
-var xmlreq = getXMLHttpRequest();
-xmlreq.open('GET', 'otrackinfo.ws?type=AUSOT&date=' + dt.text, true);
-xmlreq.onreadystatechange = function() {
-	if (xmlreq.readyState != 4) return false;
-	if (xmlreq.status != 200) {
-		isLoading.innerHTML = ' - ERROR ' + xmlreq.statusText;		
-		return false;
-	}
-
-	map.clearOverlays();
-	resetTracks();
-
-	// Get the XML document
-	var xdoc = xmlreq.responseXML.documentElement;
-	var xtracks = xdoc.getElementsByTagName('track');
-	for (var i = 0; i < xtracks.length; i++) {
-		var trackPos = [];
-		var track = xtracks[i];
-		var trackType = track.getAttribute('type');
-		var waypoints = track.getElementsByTagName('waypoint');
-		for (var j = 0; j < waypoints.length; j++) {
-			var wp = waypoints[j];
-			var label = wp.firstChild;
-			var p = new google.maps.LatLng(parseFloat(wp.getAttribute('lat')), parseFloat(wp.getAttribute('lng')));
-			trackPos.push(p);
-
-			// Create the map marker
-			var code = wp.getAttribute('code'); var cl = wp.getAttribute('color');
-			var mrk = new golgotha.maps.Marker({color:cl, info:label.data, label:code}, p);
-			mrk.title = track.getAttribute('code');
-			mrk.trackPoints = track.getAttribute('track');
-			mrk.showTrack = showTrackInfo;
-			google.maps.event.addListener(mrk, 'click', function() { mrk.showTrack(this); });
-			mrk.setMap(map);
-			points[trackType].push(mrk);
-		}
-
-		// Draw the route
-		var trackLine = new google.maps.Polyline({path:trackPos, strokeColor:track.getAttribute('color'), strokeWeight:2, strokeOpacity:0.7, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
-		trackLine.setMap(map);
-		tracks[trackType].push(trackLine);
-	}
-
-	// Focus on the map
-	if (isLoading)
-		isLoading.innerHTML = '';
-
-	return true;
-}
-
-xmlreq.send(null);
-return true;
-}
-</script>
 </head>
 <content:copyright visible="false" />
-<body>
+<body onunload="void golgotha.maps.util.unload(map)">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -156,7 +34,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Date</td>
- <td class="data"><el:combo name="date" idx="*" firstEntry="-" options="${dates}" value="${param.date}" onChange="void loadTracks()" /></td>
+ <td class="data"><el:combo name="date" idx="*" firstEntry="-" options="${dates}" value="${param.date}" onChange="void golgotha.maps.oceanic.loadTracks('AUSOT')" /></td>
 </tr>
 <tr>
  <td class="label"><span id="trackLabel">Track Data</span></td>
@@ -168,7 +46,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Display Tracks</td>
- <td class="data"><el:check name="showTracks" idx="*" options="${trackTypes}" checked="${trackTypes}" width="100" cols="3" onChange="void updateTracks(this)" /></td>
+ <td class="data"><el:check name="showTracks" idx="*" options="${trackTypes}" checked="${trackTypes}" width="100" cols="3" onChange="void golgotha.maps.oceanic.updateTracks(this)" /></td>
 </tr>
 <tr>
  <td class="label top">Route Map</td>
@@ -205,12 +83,11 @@ ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Lo Jetstream'}, 
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Hi Jetstream'}, hjsl));
 ctls.push(new golgotha.maps.LayerClearControl(map));
 
-// Create the tracks/waypoints
-var tracks = []; var points = [];
-resetTracks();
-
-// Update text color
-google.maps.event.trigger(map, 'maptypeid_changed');
+// Load data async once tiles are loaded
+google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
+	golgotha.maps.oceanic.resetTracks();
+	google.maps.event.trigger(map, 'maptypeid_changed');
+});
 </script>
 </body>
 </html>
