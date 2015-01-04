@@ -18,7 +18,7 @@
 <content:js name="myRouteMap" />
 </head>
 <content:copyright visible="false" />
-<body>
+<body onunload="void golgotha.maps.util.unload(map)">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -41,7 +41,7 @@
 <content:copyright />
 </content:region>
 </content:page>
-<script type="text/javascript">
+<script id="mapInit" defer>
 <map:point var="mapC" point="${home}" />
 var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
 var mapOpts = {center:mapC, minZoom:2, zoom:3, scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
