@@ -1,11 +1,12 @@
-function getLikes(id)
+golgotha.like = golgotha.like || {};
+
+golgotha.like.get = function(id)
 {
 var xmlreq = getXMLHttpRequest();
-xmlreq.open('get', 'imglike.ws?id=' + id + '&time=' + golgotha.util.getTimestamp(3000), true);
+xmlreq.open('GET', 'imglike.ws?id=' + id + '&time=' + golgotha.util.getTimestamp(3000), true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
-	var xml = xmlreq.responseXML;
-	parseResponse(xml.documentElement);
+	golgotha.like.parseResponse(xmlreq.responseXML.documentElement);
 	return true;
 }
 	
@@ -13,15 +14,14 @@ xmlreq.send(null);
 return true;
 }
 
-function doLike(id)
+golgotha.like.exec = function(id)
 {
 var xmlreq = getXMLHttpRequest();
-xmlreq.open('post', 'imglike.ws?like=true&id=' + id, true);
+xmlreq.open('POST', 'imglike.ws?like=true&id=' + id, true);
 xmlreq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
-	var xml = xmlreq.responseXML;
-	parseResponse(xml.documentElement);
+	golgotha.like.parseResponse(xmlreq.responseXML.documentElement);
 	return true;
 }
 	
@@ -29,7 +29,7 @@ xmlreq.send(null);
 return true;	
 }
 
-function parseResponse(xe)
+golgotha.like.parseResponse =function(xe)
 {
 var total = parseInt(xe.getAttribute('likes'))
 var iLike = (xe.getAttribute('mine') == 'true');

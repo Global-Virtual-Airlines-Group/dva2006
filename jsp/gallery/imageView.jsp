@@ -16,7 +16,7 @@
 <content:js name="imgLike" />
 </head>
 <content:copyright visible="false" />
-<body onload="void getLikes(${img.hexID})">
+<body onload="void golgotha.like.get(${img.hexID})">
 <content:page>
 <%@ include file="/jsp/gallery/header.jspf" %> 
 <%@ include file="/jsp/gallery/sideMenu.jspf" %>
@@ -39,7 +39,7 @@
 </tr>
 <tr>
  <td class="label">Feedback</td>
- <td class="data"><span class="small" id="imgLikeTotal"></span><span class="small" id="imgLike"> <a onclick="javascript:void doLike(${img.hexID})">Like this Image</a></span></td>
+ <td class="data"><span class="small" id="imgLikeTotal"></span><span class="small" id="imgLike"> <a onclick="javascript:void golgotha.like.exec(${img.hexID})">Like this Image</a></span></td>
 </tr>
 <tr class="mid">
  <td colspan="2"><img width="${img.width}" height="${img.height}" src="/gallery/${db}/${img.hexID}.${img.typeName}" alt="${fn:escape(img.name)}, ${img.width}x${img.height} (<fmt:int value="${img.size}" /> bytes)" /></td>

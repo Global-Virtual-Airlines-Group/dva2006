@@ -120,7 +120,7 @@ return true;
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void initLinks();<c:if test="${!empty img}"> void getLikes(${img.hexID})</c:if>">
+<body onload="void initLinks();<c:if test="${!empty img}"> void golgotha.like.get(${img.hexID})</c:if>">
 <content:page>
 <%@ include file="/jsp/cooler/header.jspf" %> 
 <%@ include file="/jsp/cooler/sideMenu.jspf" %>
