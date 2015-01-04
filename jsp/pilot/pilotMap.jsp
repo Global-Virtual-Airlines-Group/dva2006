@@ -16,27 +16,19 @@
 <content:js name="pilotMap" />
 <content:googleAnalytics eventSupport="true" />
 <content:js name="progressBar" />
-<script type="text/javascript">
-function reloadMap()
-{
-var xmlreq = generateXMLRequest();
-xmlreq.send(null);
-return true;
-}
 <content:filter roles="HR">
-function deleteMarker(id)
+<script type="text/javascript">
+golgotha.pilotMap.deleteMarker = function(id)
 {
 var xmlreq = getXMLHttpRequest();
-xmlreq.open('post', 'pilotmapclear.ws', true);
+xmlreq.open('POST', 'pilotmapclear.ws', true);
 xmlreq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
-
-	// Find the marker and remove it
-	for (var x = 0; x < allMarkers.length; x++) {
+	for (var x = 0; x < golgotha.pilotMap.mrks.length; x++) {
 		var mrk = allMarkers[x];
 		if (mrk.ID == id) {
-			allMarkers.splice(x, 1);
+			golgotha.pilotMap.mrks.remove(mrk);
 			mrk.setMap(null);
 			return true;
 		}
@@ -49,8 +41,7 @@ golgotha.event.beacon('Pilot Map', 'Delete Invalid Marker');
 xmlreq.send('id=0x' + id.toString(16));
 return true;
 }
-</content:filter>
-</script>
+</script></content:filter>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -69,7 +60,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Map Type</td>
- <td class="data"><el:check name="mapOpts" type="radio" options="${mapOptions}" value="LOC" onChange="void updateMapOptions(this)" /></td>
+ <td class="data"><el:check name="mapOpts" type="radio" options="${mapOptions}" value="LOC" onChange="void golgotha.pilotMap.updateMapOptions(this)" /></td>
 </tr>
 <tr>
  <td class="data" colspan="2"><map:div ID="googleMap" x="100%" y="525" /></td>
@@ -79,11 +70,11 @@ return true;
 </tr>
 <tr class="locFilter">
  <td class="label">Equipment Program</td>
- <td class="data"><el:combo name="eqType" size="1" firstEntry="ALL" options="${eqTypes}" onChange="void updateMarkers()" /></td>
+ <td class="data"><el:combo name="eqType" size="1" firstEntry="ALL" options="${eqTypes}" onChange="void golgotha.pilotMap.updateMarkers()" /></td>
 </tr>
 <tr class="locFilter">
  <td class="label">Pilot Ranks</td>
- <td class="data"><el:combo name="rank" size="1" firstEntry="ALL" options="${ranks}" onChange="void updateMarkers()" /></td>
+ <td class="data"><el:combo name="rank" size="1" firstEntry="ALL" options="${ranks}" onChange="void golgotha.pilotMap.updateMarkers()" /></td>
 </tr>
 </el:table>
 
@@ -100,26 +91,25 @@ return true;
 <content:copyright />
 </content:region>
 </content:page>
-<script type="text/javascript">
+<script id="mapInit" defer>
 <map:point var="mapC" point="${mapCenter}" />
 <map:marker var="hq" point="${hq}" />
 var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
 var mapOpts = {center:mapC, zoom:6, minZoom:2, maxZoom:11, streetViewControl:false, scrollwheel:false, mapTypeControlOptions: mapTypes};
 
-var allMarkers = [];
-var heatMapData = [];
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
-google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });
-var hmap = new google.maps.visualization.HeatmapLayer({opacity:0.625, radius:2, dissipating:false});
-var pBar = progressBar(map, {strokeWidth:200, strokeColor:'#0000a1'});
-pBar.getDiv().style.right = '4px';
-pBar.getDiv().style.top = '30px';
+google.maps.event.addListener(map, 'click', map.closeWindow);
+golgotha.pilotMap.hmap = new google.maps.visualization.HeatmapLayer({opacity:0.625, radius:2, dissipating:false});
+golgotha.pilotMap.pBar = progressBar(map, {strokeWidth:200, strokeColor:'#0000a1'});
+golgotha.pilotMap.pBar.getDiv().style.right = '4px';
+golgotha.pilotMap.pBar.getDiv().style.top = '30px';
+map.controls[google.maps.ControlPosition.RIGHT_TOP].push(golgotha.pilotMap.pBar.getDiv());
 google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
 	hq.setMap(map);
-	map.controls[google.maps.ControlPosition.RIGHT_TOP].push(pBar.getDiv());
-	reloadMap();
+	var xmlreq = golgotha.pilotMap.generateXMLRequest();
+	xmlreq.send(null);	
 });
 </script>
 </body>

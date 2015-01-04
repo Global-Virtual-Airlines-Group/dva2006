@@ -15,7 +15,11 @@
 <map:api version="3" />
 <content:googleAnalytics eventSupport="true" />
 <script type="text/javascript">
-function updateLocation()
+golgotha.maps.geoLocate = golgotha.maps.geoLocate || {usrLocation:null};
+
+golgotha.maps.geoLocate.gpsOK = function(pos) { map.panTo({lat:pos.coords.latitude, lng:pos.coords.longitude}); map.setZoom(8); return true; }
+golgotha.maps.geoLocate.gpsError = function(err) { console.log('GPS Geolocation failed - ' + err.code); return false; }
+golgotha.maps.geoLocate.updateLocation = function()
 {
 // Calculate latitude/longitude
 var f = document.forms[0];
@@ -24,13 +28,13 @@ lat *= (f.latDir.selectedIndex * -1);
 var lng = parseInt(f.lonD.value) + (parseInt(f.lonM.value) / 60) + (parseInt(f.lonS.value) / 3600);
 lng *= (f.lonDir.selectedIndex * -1);
 
-usrLocation.setMap(null);
-usrLocation = new golgotha.maps.Marker({color:'blue', info:labelText, map:map}, new google.maps.LatLng(lat, lng));
+golgotha.maps.geoLocate.usrLocation.setMap(null);
+golgotha.maps.geoLocate.usrLocation = new golgotha.maps.Marker({color:'blue', info:labelText, map:map}, {lat:lat, lng:lng});
 golgotha.event.beacon('Pilot Map', 'Update Location');
 return true;
-}
+};
 
-function geoLocate(addr)
+golgotha.maps.geoLocate.geoLocate = function(addr)
 {
 if (addr.value.length < 3) return false;
 
@@ -38,11 +42,11 @@ if (addr.value.length < 3) return false;
 var isLoading = document.getElementById('isLoading');
 isLoading.innerHTML = ' - SEARCHING...';
 disableButton('SearchButton');
-geoCoder.geocode({address:addr.value}, showResponse);
+golgotha.maps.geoLocate.geoCoder.geocode({address:addr.value}, golgotha.maps.geoLocate.showResponse);
 return true;
-}
+};
 
-function showResponse(result, status)
+golgotha.maps.geoLocate.showResponse = function(result, status)
 {
 var f = document.forms[0];
 var isLoading = document.getElementById('isLoading');
@@ -57,19 +61,19 @@ if ((!result.geometry) || (status != google.maps.GeocoderStatus.OK)) {
 
 // Get the placemark
 var p = result.geometry.location;
-var lbl = '<span class="small"><b>' + result.address_components[0].long_name + '<\/b><br /><br /><a href="javascript:void setLatLon({latLng:new google.maps.LatLng('
+var lbl = '<span class="small"><b>' + result.address_components[0].long_name + '<\/b><br /><br /><a href="javascript:void golgotha.maps.geoLocate.setLatLon({latLng:new google.maps.LatLng('
 	+ p.toUrlValue() + ')});">SET LOCATION</a></span>';
 var mrk = new golgotha.maps.Marker({color:'white', info:lbl, map:map}, p);
 map.setCenter(p, 14);
 golgotha.event.beacon('Pilot Map', 'Geolocate');
 return true;
-}
+};
 
-function setLatLon(me)
+golgotha.maps.geoLocate.setLatLon = function(me)
 {
 var f = document.forms[0];
-if (usrLocation != null)
-	usrLocation.setMap(null);
+if (golgotha.maps.geoLocate.usrLocation != null)
+	golgotha.maps.geoLocate.usrLocation.setMap(null);
 
 // Update Latitude
 var p = me.latLng;
@@ -89,9 +93,8 @@ f.lonS.value = Math.floor((lonF % (1/60)) * 3600);
 f.lonDir.selectedIndex = (isWest) ? 1 : 0;
 
 // Build the marker
-usrLocation = new google.maps.Marker({position:p, icon:myIcon, draggable:true, shadow:golgotha.maps.DEFAULT_SHADOW});
-google.maps.event.addListener(usrLocation, 'dragend', setLatLon);
-usrLocation.setMap(map);
+golgotha.maps.geoLocate.usrLocation = new google.maps.Marker({map:map, position:p, icon:golgotha.maps.geoLocate.myIcon, draggable:true, shadow:golgotha.maps.DEFAULT_SHADOW});
+google.maps.event.addListener(golgotha.maps.geoLocate.usrLocation, 'dragend', golgotha.maps.geoLocate.setLatLon);
 map.closeWindow();
 return true;
 }
@@ -109,7 +112,7 @@ return true;
 </script>
 </head>
 <content:copyright visible="false" />
-<body>
+<body onunload="void golgotha.maps.util.unload()">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -122,8 +125,7 @@ return true;
  <td colspan="2">PILOT LOCATION <span id="isLoading"></span></td>
 </tr>
 <tr>
- <td class="label top">Map</td>
- <td class="data"><c:if test="${empty location}"><span class="small">You have not selected your 
+ <td colspan="2" class="data"><c:if test="${empty location}"><span class="small">You have not selected your 
 location. Please click on the map below to set your location. You can drag the map with your 
 mouse and zoom in and out.</span><br />
 <span class="small sec bld">To protect your privacy, the system will automatically randomize your 
@@ -180,19 +182,23 @@ var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'click', map.closeWindow);
-var geoCoder = new google.maps.Geocoder();
-var myIcon = new google.maps.MarkerImage('/' + golgotha.maps.IMG_PATH + '/maps/point_blue.png', null, null, null, golgotha.maps.PIN_SIZE);
+google.maps.event.addListener(map, 'dblclick', golgotha.maps.geoLocate.setLatLon);
+golgotha.maps.geoLocate.geoCoder = new google.maps.Geocoder();
+golgotha.maps.geoLocate.myIcon = new google.maps.MarkerImage('/' + golgotha.maps.IMG_PATH + '/maps/point_blue.png', null, null, null, golgotha.maps.PIN_SIZE);
 
 // Add user's location
-var usrLocation;
 var labelText = '${empty locationText ? pageContext.request.remoteUser : locationText}';
 <c:if test="${!empty location}">
 <map:point var="usrLoc" point="${location}" />
-usrLocation = new google.maps.Marker({position:usrLoc, icon:myIcon, draggable:true, shadow:golgotha.maps.DEFAULT_SHADOW});
-google.maps.event.addListener(usrLocation, "dragend", setLatLon);
-usrLocation.setMap(map);
+golgotha.maps.geoLocate.usrLocation = new google.maps.Marker({map:map, position:usrLoc, icon:golgotha.maps.geoLocate.myIcon, draggable:true, shadow:golgotha.maps.DEFAULT_SHADOW});
+google.maps.event.addListener(golgotha.maps.geoLocate.usrLocation, "dragend", golgotha.maps.geoLocate.setLatLon);
 </c:if>
-google.maps.event.addListener(map, 'dblclick', setLatLon);
+<c:if test="${empty location}">
+google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
+	if (navigator.geolocation)
+		window.setTimeout(function() { navigator.geolocation.getCurrentPosition(golgotha.maps.geoLocate.gpsOK, golgotha.maps.geoLocate.gpsError, {timeout:5000}); }, 150);
+});
+</c:if>
 </script>
 </body>
 </html>

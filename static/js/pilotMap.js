@@ -1,49 +1,45 @@
-var queue = [];
+golgotha.pilotMap = golgotha.pilotMap || {queue:[], mrks:[], heatMapData:[]};
 
-function generateXMLRequest()
+golgotha.pilotMap.generateXMLRequest = function()
 {
-// Build the XML Requester
-var f = document.forms[0];
 var xmlreq = getXMLHttpRequest();
 xmlreq.open('get', 'pilotmap.ws', true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
-
-	// Parse the XML
 	var xmlDoc = xmlreq.responseXML;
 	var ac = xmlDoc.documentElement.getElementsByTagName('pilot');
 	for (var x = 0; x < ac.length; x++) {
 		var a = ac[x];
-		var l = new google.maps.LatLng(parseFloat(a.getAttribute('lat')), parseFloat(a.getAttribute('lng')));
-		queue.push(a);
-		heatMapData.push(l);
+		a.ll = new google.maps.LatLng(parseFloat(a.getAttribute('lat')), parseFloat(a.getAttribute('lng')));
+		golgotha.pilotMap.queue.push(a);
+		golgotha.pilotMap.heatMapData.push(a.ll);
 	}
 
-	removeMarkers('allMarkers');
-	hmap.setData(heatMapData);
-	var batchSize = Math.round(queue.length / 50);
-	pBar.start(100);
-	setTimeout('mrkLoad(' + batchSize + ')', 2);
+	removeMarkers('golgotha.pilotMap.mrks');
+	golgotha.pilotMap.hmap.setData(golgotha.pilotMap.heatMapData);
+	var batchSize = Math.round(golgotha.pilotMap.queue.length / 50);
+	golgotha.pilotMap.pBar.start(100);
+	setTimeout('golgotha.pilotMap.load(' + batchSize + ')', 2);
 	return true;
-} // function
+};
 
+var f = document.forms[0];
 var isLoading = document.getElementById('isLoading');
 isLoading.innerHTML = ' - LOADING...';
 enableElement(f.noFilter, false);
 enableElement(f.eqType, false);
 enableElement(f.rank, false);
 return xmlreq;
-}
+};
 
-function mrkLoad(batchSize)
+golgotha.pilotMap.load = function(batchSize)
 {
 var cnt = 0;
-var a = queue.pop();
-pBar.updateBar(2);
+var a = golgotha.pilotMap.queue.pop();
+golgotha.pilotMap.pBar.updateBar(2);
 while ((cnt < batchSize) && (a != null)) {
 	var label = a.firstChild;
-	var p = new google.maps.LatLng(parseFloat(a.getAttribute('lat')), parseFloat(a.getAttribute('lng')));
-	var mrk = new golgotha.maps.Marker({color:a.getAttribute('color')}, p);
+	var mrk = new golgotha.maps.Marker({map:map, color:a.getAttribute('color')}, a.ll);
 	mrk.infoLabel = label.data;
 	mrk.rank = a.getAttribute('rank');
 	mrk.eqType = a.getAttribute('eqType');
@@ -51,15 +47,14 @@ while ((cnt < batchSize) && (a != null)) {
 
 	// Set the the click handler and add to the list
 	google.maps.event.addListener(mrk, 'click', function() { map.infoWindow.setContent(this.infoLabel); map.infoWindow.open(map, this); } );
-	allMarkers.push(mrk);
-	mrk.setMap(map);
+	golgotha.pilotMap.mrks.push(mrk);
 	cnt++;
 	if (cnt < batchSize)
-		a = queue.pop();
+		a = golgotha.pilotMap.queue.pop();
 }
 
 if (a != null)
-	setTimeout('mrkLoad(' + batchSize + ')', 2);
+	setTimeout('golgotha.pilotMap.load(' + batchSize + ')', 2);
 else {
 	var f = document.forms[0];
 	var isLoading = document.getElementById('isLoading');
@@ -67,14 +62,14 @@ else {
 	enableElement(f.noFilter, true);
 	enableElement(f.eqType, true);
 	enableElement(f.rank, true);
-	pBar.hide();
+	golgotha.pilotMap.pBar.hide();
 	golgotha.event.beacon('Pilot Map', 'Load');
 }
 
 return true;
-}
+};
 
-function updateMarkers()
+golgotha.pilotMap.updateMarkers = function()
 {
 // Get the rank/program values
 var f = document.forms[0];
@@ -84,18 +79,18 @@ var rank = checkRank ? f.rank.options[f.rank.selectedIndex].text : null;
 var eqType = checkEQ ? f.eqType.options[f.eqType.selectedIndex].text : null;
 
 // Build the queue
-var batchSize = Math.round(allMarkers.length / 50);
-pBar.start(100);
-queue = allMarkers.slice();
-setTimeout("mrkUpdate('" + rank + "','" + eqType + "'," + batchSize + ")", 2);
+var batchSize = Math.round(golgotha.pilotMap.mrks.length / 50);
+golgotha.pilotMap.pBar.start(100);
+golgotha.pilotMap.queue = golgotha.pilotMap.mrks.slice();
+setTimeout("golgotha.pilotMap.mrkUpdate('" + rank + "','" + eqType + "'," + batchSize + ")", 2);
 return true;
-}
+};
 
-function mrkUpdate(rank, eqType, batchSize)
+golgotha.pilotMap.mrkUpdate = function(rank, eqType, batchSize)
 {
 var cnt = 0;
-var mrk = queue.pop();
-pBar.updateBar(2);
+var mrk = golgotha.pilotMap.queue.pop();
+golgotha.pilotMap.pBar.updateBar(2);
 while ((cnt < batchSize) && (mrk != null)) {
 	var rankOK = (rank == 'null') || (mrk.rank == rank);
 	var eqOK = (eqType == 'null') || (mrk.eqType == eqType);
@@ -103,33 +98,31 @@ while ((cnt < batchSize) && (mrk != null)) {
 	mrk.setMap((rankOK && eqOK) ? map : null);
 	cnt++;
 	if (cnt < batchSize)
-		mrk = queue.pop();
+		mrk = golgotha.pilotMap.queue.pop();
 }
 
 if (mrk != null)
-	setTimeout("mrkUpdate('" + rank + "','" + eqType + "'," + batchSize +")", 2);
+	setTimeout("golgotha.pilotMap.mrkUpdate('" + rank + "','" + eqType + "'," + batchSize +")", 2);
 else {
 	pBar.hide();
 	golgotha.event.beacon('Pilot Map', 'Update');	
 }
 
 return true;
-}
+};
 
-function updateMapOptions(opt)
+golgotha.pilotMap.updateMapOptions = function(opt)
 {
 golgotha.event.beacon('Pilot Map', 'Switch Type');
 var toggleOpts = {checked:(opt.value != 'MAP')};
-toggleMarkers(map, 'allMarkers', toggleOpts);
-hmap.setMap(toggleOpts.checked ? null : map);
+toggleMarkers(map, 'golgotha.pilotMap.mrks', toggleOpts);
+golgotha.pilotMap.hmap.setMap(toggleOpts.checked ? null : map);
 hq.setMap(toggleOpts.checked ? map : null);
 
 // Toggle filter rows
 var rows = getElementsByClass('locFilter');
-for (var x = 0; x < rows.length; x++) {
-	var row = rows[x];
-	displayObject(row, toggleOpts.checked);
-}
+for (var x = 0; x < rows.length; x++)
+	displayObject(rows[x], toggleOpts.checked);
 
 return true;
-}
+};

@@ -126,7 +126,7 @@ public class PilotLocation implements MarkerMapEntry {
 		
 		// Add deletion link
 		if (_allowDelete) {
-			buf.append("<br /><br /><a href=\"javascript:void deleteMarker(");
+			buf.append("<br /><br /><a href=\"javascript:void golgotha.pilotMap.deleteMarker(");
 			buf.append(_usr.getID());
 			buf.append(")\" class=\"small sec bld\">DELETE MARKER</a>");
 		}
