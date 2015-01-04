@@ -6,7 +6,7 @@
 <!-- Linked Image(s) -->
 <tr class="mid">
 <td colspan="3"><c:forEach var="imgLink" items="${thread.imageURLs}">
-<img src="${imgLink.URL}" alt="${imgLink.description}" className="noborder" /><br />
+<img src="${imgLink.URL}" alt="${imgLink.description}" class="noborder" /><br />
 <span class="small">${imgLink.description}</span>
 <c:if test="${access.canDelete || access.canLock || access.canUnlock || access.canUnlinkImage}">
 &nbsp;<el:cmd url="linkedimgkill" link="${thread}" op="${imgLink.ID}" className="pri bld small">UNLINK IMAGE</el:cmd></c:if><br />
@@ -21,7 +21,7 @@
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data" colspan="2"><span class="small" id="imgLikeTotal"></span><span class="small" id="imgLike"> <a onclick="javascript:void doLike(${img.hexID})">Like this Image</a></span></td>
+ <td class="data" colspan="2"><span class="small" id="imgLikeTotal"></span><span class="small" id="imgLike"> <a onclick="javascript:void golgotha.like.exec(${img.hexID})">Like this Image</a></span></td>
 </tr>
 </c:when>
 </c:choose>
