@@ -226,6 +226,13 @@ div.layerSelect.displayed {
 	color: #b8c8c8;
 }
 
+div.layerSelect.disabled {
+	background-color:#dedede;
+	color:azure;
+	opacity: .700;
+	filter: alpha(opacity=70);
+}
+
 /* Default table formatting */
 table {
 	table-layout: auto;
@@ -278,8 +285,16 @@ a:hover {
 	text-decoration: underline;
 }
 
+div.googleMapV3 {
+	user-select: none;
+	-moz-user-select: none;
+	-khtml-user-select: none;
+    -webkit-user-select: none;
+}
+
 div.mapInfoBox {
 	white-space: nowrap;
+	user-select: none;
 	font-family: verdana, tahoma, sans-serif;
 	font-size: 8pt;
 	min-width:300px;

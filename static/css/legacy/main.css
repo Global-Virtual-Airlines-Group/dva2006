@@ -224,6 +224,13 @@ div.layerSelect.displayed {
 	color: #c8e8f8;
 }
 
+div.layerSelect.disabled {
+	background-color:#dedede;
+	color:azure;
+	opacity: .700;
+	filter: alpha(opacity=70);
+}
+
 /* Default table formatting */
 table {
 	table-layout: auto;
@@ -276,11 +283,20 @@ a:hover {
 	text-decoration: underline;
 }
 
+div.googleMapV3 {
+	user-select: none;
+	-moz-user-select: none;
+	-khtml-user-select: none;
+    -webkit-user-select: none;
+}
+
 /* Google Maps infobox font */
 div.mapInfoBox {
+	white-space: nowrap;
+	user-select: none;
 	font-family: tahoma, verdana, sans-serif;
 	font-size: 8pt;
-	white-space: nowrap;
+	min-width:300px;
 }
 
 div.mapMarkerLabel {
