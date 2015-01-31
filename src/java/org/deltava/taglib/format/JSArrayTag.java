@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.taglib.JSTag;
 /**
  * A JSP tag to add objects into a JavaScript array.
  * @author Luke
- * @version 4.2
+ * @version 5.5
  * @since 2.4
  */
 
@@ -37,7 +37,8 @@ public class JSArrayTag extends JSTag {
 		// Generate the output string
 		StringBuilder buf = new StringBuilder();
 		if (_jsVarName != null) {
-			buf.append("var ");
+			if (_jsVarName.indexOf('.') == -1)
+				buf.append("var ");
 			buf.append(_jsVarName);
 			buf.append(" = ");
 		}
@@ -61,7 +62,6 @@ public class JSArrayTag extends JSTag {
 			}
 		}
 
-		// Write the object
 		buf.append("];");
 		try {
 			pageContext.getOut().write(buf.toString());

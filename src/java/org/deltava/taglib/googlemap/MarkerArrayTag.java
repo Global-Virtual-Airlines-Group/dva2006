@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.taglib.ContentHelper;
 /**
  * A JSP Tag to generate a JavaScript array of Google Maps v2 GMarkers.
  * @author Luke
- * @version 2.2
+ * @version 5.5
  * @since 1.0
  */
 
@@ -49,6 +49,7 @@ public class MarkerArrayTag extends GoogleMapEntryTag {
 	/**
 	 * Releases the tag's state variables.
 	 */
+	@Override
 	public void release() {
 		_color = null;
 		_useMarker = false;
@@ -61,20 +62,23 @@ public class MarkerArrayTag extends GoogleMapEntryTag {
 	 * @return TagSupport.EVAL_PAGE always
 	 * @throws JspException if a network error occurs
 	 */
+	@Override
 	public int doEndTag() throws JspException {
 
 		// Create the JavaScript array definition
 		JspWriter out = pageContext.getOut();
 		try {
-			out.print("var ");
+			if (_jsVarName.indexOf('.') == -1)
+				out.print("var ");
 			out.print(_jsVarName);
 			out.println(" = [];");
 
 			// Create the markers
+			StringBuilder buf = new StringBuilder();
 			for (Iterator<GeoLocation> i = _entries.iterator(); i.hasNext();) {
 				GeoLocation entry = i.next();
 				if (entry instanceof MapEntry) {
-					StringBuilder buf = new StringBuilder(_jsVarName);
+					buf.append(_jsVarName);
 					buf.append(".push(");
 					
 					if ((entry instanceof IconMapEntry) && !_useMarker) {
@@ -88,6 +92,7 @@ public class MarkerArrayTag extends GoogleMapEntryTag {
 					
 					buf.append(");");
 					out.println(buf.toString());
+					buf.setLength(0);
 				}
 			}
 			
