@@ -1,4 +1,4 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.taglib.JSTag;
 /**
  * A JSP Tag to format a Date/Time object into a JavaScript date. 
  * @author Luke
- * @version 2.4
+ * @version 5.5
  * @since 2.4
  */
 
@@ -38,6 +38,7 @@ public class JSDateTag extends JSTag {
 	/**
 	 * Releases the tag's state variables.
 	 */
+	@Override
 	public void release() {
 		_doTime = false;
 		super.release();
@@ -48,12 +49,13 @@ public class JSDateTag extends JSTag {
 	 * @return EVAL_PAGE always
 	 * @throws JspException if an error occurs
 	 */
+	@Override
 	public int doEndTag() throws JspException {
 		
-        // Generate the output string
         StringBuilder buf = new StringBuilder();
         if (_jsVarName != null) {
-        	buf.append("var ");
+        	if (_jsVarName.indexOf('.') == -1)
+				buf.append("var ");
         	buf.append(_jsVarName);
         	buf.append(" = ");
         }
@@ -74,8 +76,6 @@ public class JSDateTag extends JSTag {
         }
         
         buf.append(");");
-
-        // Write the object
         try {
         	pageContext.getOut().write(buf.toString());
         } catch (Exception e) {

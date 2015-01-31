@@ -38,7 +38,8 @@ public class PointTag extends GoogleMapEntryTag {
 		try {
 			JspWriter out = pageContext.getOut();
 			if (_jsVarName != null) {
-				out.print("var ");
+				if (_jsVarName.indexOf('.') == -1)
+					out.print("var ");
 				out.print(_jsVarName);
 				out.print(" = ");
 			}
