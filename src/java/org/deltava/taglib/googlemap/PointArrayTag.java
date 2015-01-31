@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2010, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP Tag to generate a JavaScript array of Google Maps Lat/Lon objects.
  * @author Luke
- * @version 5.2
+ * @version 5.5
  * @since 1.0
  */
 
@@ -33,6 +33,7 @@ public class PointArrayTag extends GoogleMapEntryTag {
 	/**
 	 * Releases the tag's state variables.
 	 */
+	@Override
 	public void release() {
 		super.release();
 		_entries.clear();
@@ -43,29 +44,30 @@ public class PointArrayTag extends GoogleMapEntryTag {
 	 * @return TagSupport.EVAL_PAGE always
 	 * @throws JspException if a network error occurs
 	 */
+	@Override
 	public int doEndTag() throws JspException {
 
 		// Create the JavaScript array definition
 		JspWriter out = pageContext.getOut();
 		try {
-			out.print("var ");
+			if (_jsVarName.indexOf('.') == -1)
+				out.print("var ");
 			out.print(_jsVarName);
-			out.println(" = [];");
+			out.println(" = [;");
 
 			// Create the markers
 			for (Iterator<GeoLocation> i = _entries.iterator(); i.hasNext();) {
 				GeoLocation entry = i.next();
-
-				// Generate the google point and push it into the array
-				out.print(_jsVarName);
-				out.print(".push(new google.maps.LatLng(");
+				out.print("{lat:");
 				out.print(StringUtils.format(entry.getLatitude(), "##0.00000"));
-				out.print(',');
+				out.print(",lng:");
 				out.print(StringUtils.format(entry.getLongitude(), "##0.00000"));
-				out.println("));");
+				out.print('}');
+				if (i.hasNext())
+					out.print(',');
 			}
-			
-			// Mark the JavaScript variable as included
+
+			out.print("];");
 			ContentHelper.addContent(pageContext, API_JS_NAME, _jsVarName);
 		} catch (Exception e) {
 			throw new JspException(e);

@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2012, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import javax.servlet.jsp.*;
@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP Tag to generate a Google Maps GPolyline created out of GMarkers.
  * @author Luke
- * @version 5.2
+ * @version 5.5
  * @since 1.0
  */
 
@@ -66,6 +66,7 @@ public class LineTag extends GoogleMapEntryTag {
 	/**
 	 * Releases the tag's state variables.
 	 */
+	@Override
 	public void release() {
 		_width = 1;
 		_transparency = 1.0;
@@ -101,9 +102,9 @@ public class LineTag extends GoogleMapEntryTag {
 
 		JspWriter out = pageContext.getOut();
 		try {
-			// Assign to a variable if a name was provided, otherwise make an anonymous object
 			if (_jsVarName != null) {
-				out.print("var ");
+				if (_jsVarName.indexOf('.') == -1)
+					out.print("var ");
 				out.print(_jsVarName);
 				out.print(" = ");
 			}
@@ -111,14 +112,14 @@ public class LineTag extends GoogleMapEntryTag {
 			// Generate the line
 			out.print("new google.maps.Polyline({");
 			if (_useGC)
-				out.print("geodesic:true, ");
-			out.print("path:new google.maps.MVCArray(");
+				out.print("geodesic:true,");
+			out.print("path:");
 			out.print(_srcJsVarName);
-			out.print("), strokeColor:\'");
+			out.print(",strokeColor:\'");
 			out.print(_color);
-			out.print("\', strokeOpacity:");
+			out.print("\',strokeOpacity:");
 			out.print(StringUtils.format(_transparency, "0.00"));
-			out.print(", strokeWidth:");
+			out.print(",strokeWidth:");
 			out.print(String.valueOf(_width));
 			out.print("})");
 		} catch (Exception e) {

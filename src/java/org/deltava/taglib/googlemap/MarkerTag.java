@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2010, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2010, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import javax.servlet.jsp.*;
@@ -12,7 +12,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP Tag to generate a Google Maps Marker.
  * @author Luke
- * @version 5.2
+ * @version 5.5
  * @since 1.0
  */
 
@@ -71,6 +71,7 @@ public class MarkerTag extends GoogleMapEntryTag {
    /**
     * Resets the tag's state variables.
     */
+   @Override
    public void release() {
       _jsPointVarName = null;
       _label = null;
@@ -84,6 +85,7 @@ public class MarkerTag extends GoogleMapEntryTag {
     * @return TagSupport.EVAL_PAGE always
     * @throws JspException
     */
+   @Override
    public int doEndTag() throws JspException {
       
       // Calculate if color or label need to be overridden
@@ -98,7 +100,8 @@ public class MarkerTag extends GoogleMapEntryTag {
       try {
          // Assign to a variable if a name was provided, otherwise make an anonymous object
          if (_jsVarName != null) {
-            out.print("var ");
+        	 if (_jsVarName.indexOf('.') == -1)
+        		 out.print("var ");
             out.print(_jsVarName);
             out.print(" = ");
          }
@@ -116,11 +119,11 @@ public class MarkerTag extends GoogleMapEntryTag {
          if (_jsPointVarName != null) {
             out.print("\nvar ");
             out.print(_jsPointVarName);
-           	out.print(" = new google.maps.LatLng(");
+           	out.print(" = {lat:");
             out.print(StringUtils.format(_entry.getLatitude(), "##0.00000"));
-            out.print(',');
+            out.print(",lng:");
             out.print(StringUtils.format(_entry.getLongitude(), "##0.00000"));
-            out.print(");");
+            out.print("};");
          }
          
          // Mark the JavaScript point variable as included
