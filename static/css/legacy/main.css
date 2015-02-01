@@ -235,7 +235,7 @@ div.layerSelect.disabled {
 table {
 	table-layout: auto;
 	border-collapse: separate;
-	border-spacing: 3px 3px 3px 3px;
+	border-spacing: 3px;
 	font-family: tahoma, verdana, sans-serif;
 	color: #000000;
 	border-width: 4px 4px 4px 4px;
