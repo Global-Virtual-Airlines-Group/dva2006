@@ -9,7 +9,7 @@ import org.deltava.taglib.ContentHelper;
 /**
  * A JSP tag to render buttons that execute web site commands.
  * @author Luke
- * @version 5.5
+ * @version 6.0
  * @since 1.0 
  */
 

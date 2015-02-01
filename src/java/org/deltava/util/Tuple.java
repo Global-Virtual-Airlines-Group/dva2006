@@ -6,8 +6,8 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A utility class to create a tuple. 
  * @author Luke
- * @version 5.5
- * @since 5.5
+ * @version 6.0
+ * @since 6.0
  */
 
 public class Tuple<K, V> implements Cacheable {

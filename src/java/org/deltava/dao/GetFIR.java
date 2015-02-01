@@ -13,7 +13,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load FIR data.
  * @author Luke
- * @version 5.5
+ * @version 6.0
  * @since 3.2
  */
 

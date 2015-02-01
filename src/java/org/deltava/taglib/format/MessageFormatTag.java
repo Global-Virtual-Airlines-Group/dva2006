@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to support writing formatted text with URLs and emoticons.
  * @author Luke
- * @version 5.5
+ * @version 6.0
  * @since 1.0
  */
 
