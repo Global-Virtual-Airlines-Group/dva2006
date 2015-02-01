@@ -10,7 +10,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store data about a Flight Information Region or ARTCC.
  * @author Luke
- * @version 5.5
+ * @version 6.0
  * @since 3.2
  */
 

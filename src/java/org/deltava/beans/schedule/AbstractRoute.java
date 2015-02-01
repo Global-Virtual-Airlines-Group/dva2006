@@ -9,7 +9,7 @@ import org.deltava.util.GeoUtils;
 /**
  * A bean to store route frequency data.
  * @author Luke
- * @version 5.5
+ * @version 6.0
  * @since 4.1
  */
 

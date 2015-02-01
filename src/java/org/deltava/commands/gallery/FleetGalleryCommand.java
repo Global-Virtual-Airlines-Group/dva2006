@@ -16,7 +16,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to display the Fleet Gallery.
  * @author Luke
- * @version 5.5
+ * @version 6.0
  * @since 1.0
  */
 

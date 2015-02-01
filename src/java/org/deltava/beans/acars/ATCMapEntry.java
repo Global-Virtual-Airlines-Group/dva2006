@@ -6,7 +6,7 @@ import org.deltava.beans.*;
 /**
  * A Map entry bean to store an ATC location.
  * @author Luke
- * @version 5.5
+ * @version 6.0
  * @since 4.0
  */
 

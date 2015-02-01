@@ -6,7 +6,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store online Controller information.
  * @author Luke
- * @version 5.5
+ * @version 6.0
  * @since 1.0
  */
 
