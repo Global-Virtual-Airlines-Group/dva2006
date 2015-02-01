@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP Tag to generate a Google Maps GPolyline created out of GMarkers.
  * @author Luke
- * @version 5.5
+ * @version 6.0
  * @since 1.0
  */
 

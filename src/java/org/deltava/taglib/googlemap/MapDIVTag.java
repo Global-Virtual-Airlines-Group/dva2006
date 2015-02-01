@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP Tag to insert a DIV element to store a Google Map.
  * @author Luke
- * @version 5.5
+ * @version 6.0
  * @since 1.0
  */
 
