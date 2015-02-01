@@ -9,7 +9,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store pilot locations for displaying on a Google Map.
  * @author Luke
- * @version 5.5
+ * @version 6.0
  * @since 1.0
  */
 

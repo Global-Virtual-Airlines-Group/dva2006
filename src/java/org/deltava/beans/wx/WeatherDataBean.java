@@ -11,7 +11,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store weather data for a particular location.
  * @author Luke
- * @version 5.5
+ * @version 6.0
  * @since 2.2
  */
 

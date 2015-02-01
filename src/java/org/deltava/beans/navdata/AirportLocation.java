@@ -7,7 +7,7 @@ import org.deltava.util.StringUtils;
 /**
  * A class to store airport location data.
  * @author Luke
- * @version 5.5
+ * @version 6.0
  * @since 1.0
  */
 

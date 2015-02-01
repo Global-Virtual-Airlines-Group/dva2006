@@ -9,7 +9,7 @@ import org.deltava.util.StringUtils;
 /**
  * An ACARS Map entry bean to store a Dispatcher location and range.
  * @author Luke
- * @version 5.5
+ * @version 6.0
  * @since 2.2
  */
 

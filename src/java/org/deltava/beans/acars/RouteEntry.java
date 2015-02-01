@@ -12,7 +12,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
- * @version 5.5
+ * @version 6.0
  * @since 1.0
  */
 
