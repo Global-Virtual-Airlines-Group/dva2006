@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP Tag to generate a JavaScript array of Google Maps Lat/Lon objects.
  * @author Luke
- * @version 5.5
+ * @version 6.0
  * @since 1.0
  */
 

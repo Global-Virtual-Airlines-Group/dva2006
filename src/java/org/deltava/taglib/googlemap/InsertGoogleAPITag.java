@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP Tag to insert a JavaScript link to the Google Maps API.
  * @author Luke
- * @version 5.5
+ * @version 6.0
  * @since 1.0
  */
 
