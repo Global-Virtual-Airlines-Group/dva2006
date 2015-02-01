@@ -1,7 +1,4 @@
-golgotha.airportLoad = golgotha.airportLoad || {};
-
-// Configuration / state object
-golgotha.airportLoad.config = {doICAO:false, notVisited:false, useSched:true, dst:false, myRated:false};
+golgotha.airportLoad = golgotha.airportLoad || {config:{doICAO:false, notVisited:false, useSched:true, dst:false, myRated:false}};
 golgotha.airportLoad.config.clone = function() {
 	var o = {};
 	for (p in this) {
@@ -31,7 +28,7 @@ golgotha.airportLoad.setHelpers = function(combo, addSIDSTARHook) {
 	combo.updateAirportCode = golgotha.airportLoad.updateAirportCode;
 	combo.setAirport = golgotha.airportLoad.setAirport;
 	combo.massageSelects(); combo.notVisited = false;
-	if (addSIDSTARHook) combo.loadSIDSTAR = golgotha.airportLod.loadSIDSTAR;
+	if (addSIDSTARHook) combo.loadSIDSTAR = golgotha.airportLoad.loadSIDSTAR;
 	return true;
 };
 
@@ -41,15 +38,14 @@ golgotha.airportLoad.updateAirportCode = function() {
 	return true;
 };
 
-function updateOrigin(combo)
-{
-var f = document.forms[0];
-var cfg = golgotha.airportLoad.config.clone();
-cfg.useSched = true; cfg.notVisited = combo.notVisited; cfg.dst = true;
-cfg.airline = getValue(f.airline); cfg.code = getValue(combo);
-f.airportA.loadAirports(cfg);
-return true;
-}
+golgotha.airportLoad.updateOrigin = function(combo) {
+	var f = document.forms[0];
+	var cfg = golgotha.airportLoad.config.clone();
+	cfg.useSched = true; cfg.notVisited = combo.notVisited; cfg.dst = true;
+	cfg.airline = golgotha.form.getCombo(f.airline); cfg.code = golgotha.form.getCombo(combo);
+	f.airportA.loadAirports(cfg);
+	return true;
+};
 
 golgotha.airportLoad.setAirport = function(code, fireEvent)
 {
@@ -81,8 +77,7 @@ var codeAttr = (opts.doICAO) ? 'icao' : 'iata';
 for (var i = 0; i < data.length; i++) {
 	var a = data[i];
 	var apCode = a[codeAttr];
-	var apName = a.name + ' (' + apCode + ')';
-	var opt = new Option(apName, apCode);
+	var opt = new Option(a.name + ' (' + apCode + ')', apCode);
 	opt.airport = a;
 	combo.options[i+1] = opt;
 }
@@ -92,22 +87,21 @@ return true;
 
 golgotha.airportLoad.loadAirports = function(opts)
 {
-var oldCode = getValue(this); var combo = this;
-var xmlreq = getXMLHttpRequest();
-xmlreq.open('get', 'airports.ws?' + opts.URLParams(), true);
+var oldCode = golgotha.form.getCombo(this); var combo = this;
+var xmlreq = new XMLHttpRequest();
+xmlreq.open('GET', 'airports.ws?' + opts.URLParams(), true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	var o = combo.options[combo.selectedIndex];
 	var oldCodes = ((o) && (o.airport)) ? [o.airport.iata, o.airport.icao] : [null];
 	var isChanged = (oldCodes.indexOf(oldCode) < 0);
-	
 	var jsData = JSON.parse(xmlreq.responseText);
 	golgotha.airportLoad.setOptions(combo, jsData, opts);
 	combo.setAirport(oldCode, isChanged);
 	combo.disabled = false;
 	golgotha.event.beacon('Airports', 'Load Airport List');
 	return true;
-}
+};
 
 combo.disabled = true;
 xmlreq.send(null);
@@ -116,9 +110,9 @@ return true;
 
 golgotha.airportLoad.loadSIDSTAR = function(code, type)
 {
-var oldValue = getValue(this); var combo = this;
-var xmlreq = getXMLHttpRequest();
-xmlreq.open('get', 'troutes.ws?airportD=' + code + '&airportA=' + code, true);
+var oldValue = golgotha.form.getCombo(this); var combo = this;
+var xmlreq = new XMLHttpRequest();
+xmlreq.open('GET', 'troutes.ws?airportD=' + code + '&airportA=' + code, true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	var js = JSON.parse(xmlreq.responseText);
@@ -128,11 +122,11 @@ xmlreq.onreadystatechange = function() {
 	for (var i = 0; i < trs.length; i++)
 		combo.options[i+1] = new Option(trs[i].code, trs[i].code);
 
-	setCombo(combo, oldValue);
+	golgotha.form.setCombo(combo, oldValue);
 	this.disabled = false;
 	golgotha.event.beacon('Airports', 'Load SID/STAR List');
 	return true;
-}
+};
 
 combo.disabled = true;
 xmlreq.send(null);
@@ -148,12 +142,9 @@ golgotha.airportLoad.changeAirline = function(combos, opts) {
 };
 
 golgotha.airportLoad.massageSelects = function(root) {
-	var opts = getElementsByClass('airport', 'option', root);
-	for (var x = 0; x < opts.length; x++) {
-		var opt = opts[x];
-		var ap = {name:opt.text, iata:opt.getAttribute('iata'), icao:opt.getAttribute('icao')};
-		opt.airport = ap;
-	}
-	
+	var opts = golgotha.util.getElementsByClass('airport', 'option', root);
+	for (var op = opts.pop(); (op != null); op = opts.pop())
+		op.airport = {name:op.text, iata:op.getAttribute('iata'), icao:op.getAttribute('icao')};
+
 	return opts.length;
 };

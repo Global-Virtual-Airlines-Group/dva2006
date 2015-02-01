@@ -56,7 +56,7 @@ var isLoading = document.getElementById('isLoading');
 if (isLoading) isLoading.innerHTML = ' - LOADING...';
 
 // Generate an XMLHTTP request
-var xmlreq = getXMLHttpRequest();
+var xmlreq = new XMLHttpRequest();
 xmlreq.open('GET', 'otrackinfo.ws?type=' + type + '&date=' + dt.text, true);
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;

@@ -15,7 +15,7 @@ golgotha.maps.util = {isIE:golgotha.util.isIE, oldIE:golgotha.util.oldIE};
 golgotha.maps.util.isIE10 = (golgotha.maps.util.isIE && (navigator.appVersion.indexOf('IE 10.0') > 0));
 golgotha.maps.util.isIE11 = ((navigator.appname == 'Netscape') && (navigator.userAgent.contains('Trident/')));
 golgotha.maps.util.isIOS = (!golgotha.maps.util.isIE && ((navigator.platform == 'iPad') || (navigator.platform == 'iPhone')));
-golgotha.maps.util.unload = function(m) { google.maps.event.clearListeners(m); return true; };
+golgotha.maps.util.unload = function(m) { if (!m) return false; google.maps.event.clearListeners(m); return true; };
 
 // Cross-browser opacity set
 golgotha.maps.setOpacity = (golgotha.maps.util.isIE && (!golgotha.maps.util.isIE10) && (!golgotha.maps.util.isIE11)) ? function(e, tx) { e.style.filter = 'alpha(opacity=' + (tx*100) + ')'; } : function(e, tx) { e.style.opacity = tx; };
@@ -58,7 +58,7 @@ golgotha.maps.miles2Meter = function(mi) { return mi * 1609.344 };
 golgotha.maps.TEXT_COLOR = {roadmap:'#002010', satellite:'#efefef', terrain:'#002010', hybrid:'#efefef', acars_trackmap:'#dfefef'};
 golgotha.maps.updateMapText = function () {
 	var newColor = golgotha.maps.TEXT_COLOR[this.getMapTypeId()];
-	var elements = getElementsByClass('mapTextLabel');
+	var elements = golgotha.util.getElementsByClass('mapTextLabel');
 	for (var x = 0; x < elements.length; x++)
 		elements[x].style.color = newColor;
 
@@ -151,7 +151,7 @@ google.maps.Map.prototype.clearSelects = function(cl) {
 	cl = (cl instanceof Array) ? cl : [cl];
 	this.clearLayers();
 	for (var x = 0; x < cl.length; x++) {
-		var lsc = getElementsByClass(cl[x], 'div', map.getDiv());
+		var lsc = golgotha.util.getElementsByClass(cl[x], 'div', map.getDiv());
 		for (var idx = 0; idx < lsc.length; idx++) {
 			var dv = lsc[idx];
 			if (dv.isSelected) {
@@ -221,7 +221,7 @@ golgotha.maps.SelectControl = function(title, onSelect, onClear, ctx) {
 			try { delete btn.isSelected; } catch (err) { btn.isSelected = false; }
 			if (onClear != null) onClear.call(ctx);
 		} else {
-			document.addClass(btn, 'displayed');
+			golgotha.util.addClass(btn, 'displayed');
 			btn.isSelected = true;
 			if (onSelect != null) onSelect.call(ctx);
 		}
@@ -234,18 +234,18 @@ golgotha.maps.LayerSelectControl = function(opts, layers) {
 	var container = document.createElement('div');
 	var btn = golgotha.maps.CreateButtonDiv(opts.title);
 	container.appendChild(btn);
-	container.enable = function() { btn.disabled = false; document.removeClass(btn, 'disabled'); };	
-	if (opts.disabled) { btn.disabled = true; document.addClass(btn, 'disabled'); }
+	container.enable = function() { btn.disabled = false; golgotha.util.removeClass(btn, 'disabled'); };	
+	if (opts.disabled) { btn.disabled = true; golgotha.util.addClass(btn, 'disabled'); }
 	if (opts.id != null) container.setAttribute('id', opts.id);
-	if (opts.c != null) document.addClass(container, opts.c);
+	if (opts.c != null) golgotha.util.addClass(container, opts.c);
 	btn.layerFunc = (golgotha.util.isFunction(layers)) ? layers : (function() { return layers; });
 	google.maps.event.addDomListener(btn, 'click', function() {
 		if (btn.disabled) return;
 		if (this.isSelected) {
-			document.removeClass(btn, 'displayed');
+			golgotha.util.removeClass(btn, 'displayed');
 			try { delete btn.isSelected; } catch (err) { btn.isSelected = false; }
 		} else {
-			document.addClass(btn, 'displayed');
+			golgotha.util.addClass(btn, 'displayed');
 			btn.isSelected = true;
 		}
 
@@ -277,7 +277,7 @@ golgotha.maps.LayerClearControl = function(map, opts) {
 	btn.className = 'layerClear';
 	container.appendChild(btn);
 	if (opts.id != null) container.setAttribute('id', opts.id);
-	if (opts.c != null) document.addClass(container, opts.c);
+	if (opts.c != null) golgotha.util.addClass(container, opts.c);
 	google.maps.event.addDomListener(btn, 'click', function() { map.clearSelects('layerSelect'); });
 	return container;
 };

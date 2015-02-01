@@ -2,7 +2,7 @@ golgotha.flightBoard = golgotha.flightBoard || {atc:[], pilots:[], months:['Jan'
 
 golgotha.flightBoard.updateMap = function(isAuto)
 {
-var xmlreq = getXMLHttpRequest();
+var xmlreq = new XMLHttpRequest();
 xmlreq.open('GET', 'si_data.ws?network=' + golgotha.flightBoard.network + '&time=' + golgotha.util.getTimestamp(5000) + '&atc=true', true);
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
@@ -112,7 +112,7 @@ golgotha.flightBoard.showAPP = function(mrk) {
 
 golgotha.flightBoard.showFIR = function(code)
 {
-var xmlreq = getXMLHttpRequest();
+var xmlreq = new XMLHttpRequest();
 xmlreq.open('GET', 'fir.ws?id=' + code, true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
@@ -150,7 +150,7 @@ return true;
 
 golgotha.flightBoard.showRoute = function(pilotID)
 {
-var xmlreq = getXMLHttpRequest();
+var xmlreq = new XMLHttpRequest();
 xmlreq.open('GET', 'si_route.ws?network=' + golgotha.flightBoard.network + '&id=' + pilotID + '&time=' + golgotha.util.getTimestamp(5000), true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;

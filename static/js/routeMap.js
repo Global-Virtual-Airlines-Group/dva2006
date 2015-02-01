@@ -1,4 +1,4 @@
-golgotha.routeMap = golgotha.routeMap || {};
+golgotha.routeMap = golgotha.routeMap || {routes:[], airports:[], aps:[]};
 
 golgotha.routeMap.updateAirports = function(combo)
 {
@@ -6,8 +6,8 @@ var isLoading = document.getElementById('isLoading');
 isLoading.innerHTML = ' - CLEARING...';
 
 // Remove airports/routes from the map
-removeMarkers('aps');
-removeMarkers('routes');
+removeMarkers('golgotha.local.aps');
+removeMarkers('golgotha.local.routes');
 map.infoWindow.close();
 if (combo.selectedIndex == 0) {
 	isLoading.innerHTML = '';
@@ -18,22 +18,22 @@ if (combo.selectedIndex == 0) {
 var aCode = combo.options[combo.selectedIndex].value;
 
 // Check if we have cached airports
-aps = airports[aCode];
-if (aps) {
-	addMarkers(map, 'aps');
+golgotha.local.aps = golgotha.local.airports[aCode];
+if (golgotha.local.aps) {
+	addMarkers(map, 'golgotha.local.aps');
 	isLoading.innerHTML = '';
 	return true;
 }
 
 // Build the XML Requester
 isLoading.innerHTML = ' - LOADING...';
-var xmlreq = getXMLHttpRequest();
+var xmlreq = new XMLHttpRequest();
 xmlreq.open('GET', 'rmap_airports.ws?airline=' + aCode, true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	var isLoading = document.getElementById('isLoading');
 	isLoading.innerHTML = ' - REDRAWING...';
-	aps = [];
+	golgotha.local.aps = [];
 	var f = document.forms[0];
 
 	// Parse the XML
@@ -58,16 +58,16 @@ xmlreq.onreadystatechange = function() {
 
 		google.maps.event.addListener(mrk, 'click', mrk.infoShow);
 		document.lastAirport = a;
-		aps.push(mrk);
+		golgotha.local.aps.push(mrk);
 	}
 
 	// Save in the hashmap
-	addMarkers(map, 'aps');
-	airports[aCode] = aps;
+	addMarkers(map, 'golgotha.local.aps');
+	golgotha.local.airports[aCode] = golgotha.local.aps;
 	isLoading.innerHTML = '';
 	golgotha.event.beacon('Route Map', 'Airports', aCode);
 	return true;
-}
+};
 
 xmlreq.send(null);
 return true;
@@ -82,17 +82,17 @@ isLoading.innerHTML = ' - LOADING...';
 // Get the airline code
 var aCombo = document.getElementById('airlineCode');
 var aCode = aCombo.options[aCombo.selectedIndex].value;
-removeMarkers('routes');
-map.infoWindow.close();
+removeMarkers('golgotha.local.routes');
+map.closeWindow();
 
 // Build the XML Requester
-var xmlreq = getXMLHttpRequest();
+var xmlreq = new XMLHttpRequest();
 xmlreq.open('GET', 'rmap_routes.ws?icao=' + this.icao + '&airline=' + aCode, true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	var isLoading = document.getElementById('isLoading');
 	isLoading.innerHTML = ' - REDRAWING...';
-		routes.length = 0;
+	golgotha.local.routes.length = 0;
 
 	// Parse the XML
 	var xdoc = xmlreq.responseXML;
@@ -112,9 +112,8 @@ xmlreq.onreadystatechange = function() {
 			}
 
 			// Draw the line
-			var routeLine = new google.maps.Polyline({path:positions, strokeColor:'#4080af', strokeWeight:2, strokeOpacity:0.8, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
-			routeLine.setMap(map);
-			routes.push(routeLine);
+			var routeLine = new google.maps.Polyline({map:map, path:positions, strokeColor:'#4080af', strokeWeight:2, strokeOpacity:0.8, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
+			golgotha.local.routes.push(routeLine);
 		}
 	}
 
@@ -122,7 +121,7 @@ xmlreq.onreadystatechange = function() {
 	isLoading.innerHTML = '';
 	golgotha.event.beacon('Route Map', 'Routes', this.icao);
 	return true;
-}
+};
 
 xmlreq.send(null);
 var showInfo = document.getElementById('showInfo');
@@ -132,4 +131,4 @@ if ((showInfo) && (showInfo.checked)) {
 }
 
 return true;
-}
+};

@@ -2,7 +2,7 @@ golgotha.pilotMap = golgotha.pilotMap || {queue:[], mrks:[], heatMapData:[]};
 
 golgotha.pilotMap.generateXMLRequest = function()
 {
-var xmlreq = getXMLHttpRequest();
+var xmlreq = new XMLHttpRequest();
 xmlreq.open('get', 'pilotmap.ws', true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
@@ -120,7 +120,7 @@ golgotha.pilotMap.hmap.setMap(toggleOpts.checked ? null : map);
 hq.setMap(toggleOpts.checked ? map : null);
 
 // Toggle filter rows
-var rows = getElementsByClass('locFilter');
+var rows = golgotha.util.getElementsByClass('locFilter');
 for (var x = 0; x < rows.length; x++)
 	displayObject(rows[x], toggleOpts.checked);
 

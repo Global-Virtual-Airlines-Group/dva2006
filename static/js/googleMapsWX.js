@@ -351,6 +351,7 @@ return results;
 
 golgotha.maps.SeriesLoader.prototype.load = function(sd)
 {
+if ((!sd.body) || (!sd.body.pop)) return false;
 var displayedLayers = this.getDisplayed(); this.clear();
 for (var ldoc = sd.body.pop(); (ldoc != null); ldoc = sd.body.pop()) {
 	if (ldoc.status != 200) continue;
@@ -451,10 +452,10 @@ golgotha.maps.LayerAnimateControl = function(opts, layers) {
 	var btn = golgotha.maps.CreateButtonDiv(opts.title);
 	btn.className = 'layerAnimate layerSelect';
 	container.appendChild(btn);
-	container.enable = function() { btn.disabled = false; document.removeClass(btn, 'disabled'); };	
-	if (opts.disabled) { btn.disabled = true; document.addClass(btn, 'disabled'); }
+	container.enable = function() { btn.disabled = false; golgotha.util.removeClass(btn, 'disabled'); };	
+	if (opts.disabled) { btn.disabled = true; golgotha.util.addClass(btn, 'disabled'); }
 	if (opts.id != null) container.setAttribute('id', opts.id);
-	if (opts.c != null) document.addClass(container, opts.c);
+	if (opts.c != null) golgotha.util.addClass(container, opts.c);
 	container.layers = layers;
 	container.animator = new golgotha.maps.Animator(opts.refresh);
 	container.timer = new golgotha.maps.util.Timer();
@@ -514,7 +515,7 @@ golgotha.maps.LayerAnimateControl = function(opts, layers) {
 		
 		if (opts.map.preLoad) return false;
 		if (!this.isSelected)
-			document.addClass(this, 'displayed');
+			golgotha.util.addClass(this, 'displayed');
 
 		var ll = container.layers(); var lz = ll[0]; container.animator.animate(ll);
 		var nZ = Math.min(opts.map.getZoom(), lz.get('nativeZoom'));
