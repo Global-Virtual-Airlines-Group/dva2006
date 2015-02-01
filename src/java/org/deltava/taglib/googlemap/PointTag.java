@@ -12,7 +12,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP Tag to generate a Google LatLng literal.
  * @author Luke
- * @version 5.5
+ * @version 6.0
  * @since 1.0
  */
 
