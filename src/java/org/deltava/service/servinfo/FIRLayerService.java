@@ -17,8 +17,8 @@ import org.json.*;
 /**
  * A Web Service to display all FIR data as a Map layer.
  * @author Luke
- * @version 5.5
- * @since 5.5
+ * @version 6.0
+ * @since 6.0
  */
 
 public class FIRLayerService extends WebService {

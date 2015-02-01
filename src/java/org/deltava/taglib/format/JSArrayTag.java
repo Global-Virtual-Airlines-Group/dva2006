@@ -10,7 +10,7 @@ import org.deltava.taglib.JSTag;
 /**
  * A JSP tag to add objects into a JavaScript array.
  * @author Luke
- * @version 5.5
+ * @version 6.0
  * @since 2.4
  */
 

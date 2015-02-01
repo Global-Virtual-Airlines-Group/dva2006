@@ -11,7 +11,7 @@ import org.deltava.dao.DAOException;
 /**
  * A Data Access Object to load winds aloft data from memcached.
  * @author Luke
- * @version 5.5
+ * @version 6.0
  * @since 5.4
  */
 

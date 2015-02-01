@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP tag to generate HTML textbox elements.
  * @author Luke
- * @version 5.5
+ * @version 6.0
  * @since 1.0
  */
 

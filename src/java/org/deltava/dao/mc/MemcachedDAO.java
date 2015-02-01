@@ -12,7 +12,7 @@ import net.spy.memcached.*;
 /**
  * A Data Access Object to read and write from memcached. 
  * @author Luke
- * @version 5.5
+ * @version 6.0
  * @since 5.0
  */
 

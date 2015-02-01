@@ -11,7 +11,7 @@ import org.deltava.util.tile.*;
 /**
  * A Data Access Object to read tiles from memcached. 
  * @author Luke
- * @version 5.5
+ * @version 6.0
  * @since 5.0
  */
 
