@@ -14,23 +14,19 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-
+if (!golgotha.form.check()) return false;
 if (!confirm("Have you scored all Questions? Hit OK to submit.")) return false;
-setSubmit();
+golgotha.form.submit();
 disableButton('ScoreButton');
 return true;
-}
+};
 <c:if test="${hasQImages}">
-function viewImage(id, x, y)
-{
-var flags = 'height=' + (y+45) + ',width=' + (x+45) + ',menubar=no,toolbar=no,status=yes,scrollbars=yes';
-var w = window.open('/exam_rsrc/' + id, 'questionImage', flags);
-return true;
-}
-</c:if>
+golgotha.local.viewImage = function(id, x, y) {
+	var flags = 'height=' + (y+45) + ',width=' + (x+45) + ',menubar=no,toolbar=no,status=yes,scrollbars=yes';
+	return window.open('/exam_rsrc/' + id, 'questionImage', flags);
+};</c:if>
 </script>
 </head>
 <content:copyright visible="false" />
@@ -41,7 +37,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form method="post" action="qscore.do" link="${exam}" validate="return validate(this)">
+<el:form method="post" action="qscore.do" link="${exam}" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <!-- Exam Title Bar -->
 <tr class="title caps">
@@ -70,7 +66,7 @@ return true;
 <tr>
  <td class="data small"><span class="pri bld">${q.typeName}</span> image, <fmt:int value="${q.size}" />
  bytes <span class="sec">(<fmt:int value="${q.width}" /> x <fmt:int value="${q.height}" /> pixels)</span>
- <el:link className="pri bld" url="javascript:void viewImage('${q.hexID}', ${q.width}, ${q.height})">VIEW IMAGE</el:link></td>
+ <el:link className="pri bld" url="javascript:void golgotha.local.viewImage('${q.hexID}', ${q.width}, ${q.height})">VIEW IMAGE</el:link></td>
 </tr>
 </c:if>
 <tr>

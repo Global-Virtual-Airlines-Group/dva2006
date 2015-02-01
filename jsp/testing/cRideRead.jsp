@@ -14,7 +14,7 @@
 <content:js name="common" />
 <content:pics />
 <script type="text/javascript">
-function toggleBody(id)
+golgotha.local.toggleBody = function(id)
 {
 var row = document.getElementById(id);
 var linkDesc = document.getElementById('toggleC');
@@ -22,7 +22,7 @@ var visible = (row.style.display != 'none');
 displayObject(row, !visible);
 linkDesc.innerHTML = visible ? 'View' : 'Hide';
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -67,7 +67,7 @@ return true;
 </c:if>
 <tr>
  <td class="label">Assigned on</td>
- <td class="data"><fmt:date fmt="d" date="${checkRide.date}" /> - <a href="javascript:void toggleBody('crComments')"><span id="toggleC">View</span> Description</a></td>
+ <td class="data"><fmt:date fmt="d" date="${checkRide.date}" /> - <a href="javascript:void golgotha.local.toggleBody('crComments')"><span id="toggleC">View</span> Description</a></td>
 </tr>
 <c:if test="${!empty checkRide.submittedOn}">
 <tr>

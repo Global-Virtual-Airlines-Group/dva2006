@@ -13,23 +13,23 @@
 <content:js name="common" />
 <content:pics />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateText(form.url, 12, 'Resource URL')) return false;
-if (!validateText(form.title, 8, 'Resource Title')) return false;
-if (!validateText(form.desc, 8, 'Resource Description')) return false;
-if (!validateCombo(form.category, 'Resource Category')) return false;
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.url, l:12, t:'Resource URL'});
+golgotha.form.validate({f:f.title, l:8, t:'Resource Title'});
+golgotha.form.validate({f:f.desc, l:8, t:'Resource Description'});
+golgotha.form.validate({f:f.category, t:'Resource Category'});
 
 // Prepend a protocol to the URL
 var url = form.url;
 if (url.value.indexOf('://') == -1)
 	url.value = 'http://' + url.value;
 
-setSubmit();
+golgotha.form.submit();
 disableButton('SaveButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -41,7 +41,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="resource.do" link="${resource}" op="save" method="post" validate="return validate(this)">
+<el:form action="resource.do" link="${resource}" op="save" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2">${empty resource ? 'NEW ' : ''} <content:airline /> WEB RESOURCE</td>

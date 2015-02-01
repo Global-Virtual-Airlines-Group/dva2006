@@ -3,6 +3,7 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <html lang="en">
 <head>
 <title><content:airline /> Fleet Gallery</title>
@@ -12,23 +13,22 @@
 <content:js name="common" />
 <content:sysdata var="imgDB" name="airline.db" />
 <script type="text/javascript">
-function selectAircraft(combo)
+golgotha.local.selectAircraft = function(combo)
 {
-// Do nothing if nothing selected
-if (combo.selectedIndex == 0) return false;
+if (!golgotha.form.comboSet(combo)) return false;
 
 // Get the image object and its description object
 var img = document.getElementById('FleetPic');
 var desc = document.getElementById('FleetDesc');
 
 // Load the picture in its place, save the description
-img.src = '/gallery/${imgDB}/0x' + combo.options[combo.selectedIndex].value + '.jpg';
-desc.innerHTML = dList[combo.selectedIndex - 1];
-
-// Blur the combo box
+img.src = '/gallery/${imgDB}/0x' + escape(golgotha.form.getCombo(combo)) + '.jpg';
+desc.innerHTML = golgotha.local.dList[combo.selectedIndex - 1];
 desc.focus();
 return true;
-}
+};
+
+golgotha.local.dList = <fmt:jsarray items="${fleetGalleryDesc}" />;
 </script>
 </head>
 <content:copyright visible="false" />
@@ -46,7 +46,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Select Aircraft</td>
- <td><el:combo name="Aircraft" size="1" idx="1" options="${fleetGallery}" firstEntry="[ SELECT AIRCRAFT ]" onChange="void selectAircraft(this)" /></td>
+ <td><el:combo name="Aircraft" size="1" idx="1" options="${fleetGallery}" firstEntry="[ SELECT AIRCRAFT ]" onChange="void golgotha.local.selectAircraft(this)" /></td>
 </tr>
 <tr>
  <td class="label">Description</td>
@@ -59,14 +59,10 @@ return true;
  <td colspan="2">&nbsp;</td>
 </tr>
 </el:table>
-<el:text ID="fleetDescs" name="Descriptions" type="HIDDEN" value="${fleetGalleryDesc}" />
 </el:form>
 <content:copyright />
 </content:region>
 </content:page>
-<script type="text/javascript">
-var dList = document.getElementById('fleetDescs').value.split(',');
-</script>
 <content:googleAnalytics />
 </body>
 </html>

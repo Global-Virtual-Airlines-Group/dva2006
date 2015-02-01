@@ -14,28 +14,27 @@
 <content:js name="common" />
 <content:js name="jsColor" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateText(form.name, 6, 'Accomplishment Name')) return false;
-if (!validateCombo(form.units, 'Units of Measurement')) return false;
-if (!validateNumber(form.value, 0, 'Number of Units')) return false;
-if (!validateText(form.color, 6, 'Water Cooler label color')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.name, l:6, t:'Accomplishment Name'});
+golgotha.form.validate({f:f.units, t:'Units of Measurement'});
+golgotha.form.validate({f:f.value, min:0, t:'Number of Units'});
+golgotha.form.validate({f:f.color, l:6, t:'Water Cooler label color'});
+golgotha.form.submit();
 disableButton('SaveButton');
 disableButton('DeleteButton');
 return true;
-}
+};
 
-function showChoices()
+golgotha.local.showChoices = function()
 {
 var f = document.forms[0];
-var rows = getElementsByClass('valueRow');
+var rows = golgotha.util.getElementsByClass('valueRow');
 for (var x = 0; x < rows.length; x++)
 	displayObject(rows[x], false);
 
-var c = f.units.options[f.units.selectedIndex].value;
+var c = golgotha.form.getCombo(f.units);
 switch (c) {
 case 'COUNTRIES':
 	displayObject(document.getElementById('valueCountry'), true);
@@ -64,19 +63,18 @@ default:
 }
 
 return true;
-}
-
+};
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void showChoices()">
+<body onload="void golgotha.local.showChoices()">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="accomplishment.do" method="post" link="${ap}" op="save" validate="return validate(this)">
+<el:form action="accomplishment.do" method="post" link="${ap}" op="save" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2">PILOT ACCOMPLISHMENT PROFILE<c:if test="${!empty ap}"> - ${ap.name}</c:if></td>
@@ -87,7 +85,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Units</td>
- <td class="data"><el:combo name="units" idx="*" options="${units}" size="1" className="req" firstEntry="-" value="${ap.unit}" onChange="void showChoices()" /></td>
+ <td class="data"><el:combo name="units" idx="*" options="${units}" size="1" className="req" firstEntry="-" value="${ap.unit}" onChange="void golgotha.local.showChoices()" /></td>
 </tr>
 <tr>
  <td class="label">Number of Units</td>

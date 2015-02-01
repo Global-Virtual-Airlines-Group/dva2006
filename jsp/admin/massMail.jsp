@@ -11,18 +11,17 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function validate(form)
+golgotha.locall.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateText(form.subject, 7, 'Message Subject')) return false;
-if (!validateText(form.body, 25, 'Message Body')) return false;
-if (!validateCombo(form.eqType, 'Recipients Equipment Type')) return false;
-if (!validateFile(form.fAttach, 'pdf,txt', 'Attached File')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validateText({f:f.subject, l:7, t:'Message Subject'});
+golgotha.form.validateText({f:f.body, l:25, t:'Message Body'});
+golgotha.form.validateCombo({f:f.eqType, t:'Recipients Equipment Type'});
+golgotha.form.validateFile({f:f.fAttach, ext:['pdf,txt'], t:'Attached File'});
+golgotha.form.submit();
 disableButton('SaveButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -33,7 +32,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="massmail.do" method="post" allowUpload="true" validate="return validate(this)">
+<el:form action="massmail.do" method="post" allowUpload="true" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2">PILOT MASS E-MAIL MESSAGE</td>

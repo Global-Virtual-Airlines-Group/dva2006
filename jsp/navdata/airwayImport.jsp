@@ -12,26 +12,22 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-var dataFiles = ['pssawy.dat','pssawy.dat.gz','pssawy.dat.bz2'];
-function validate(form)
+golgotha.local.dataFiles = ['pssawy.dat','pssawy.dat.gz','pssawy.dat.bz2'];
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-
+if (!golgotha.form.check()) return false;
 var isOK = false;
-fName = form.navData.value.substring(form.navData.value.lastIndexOf('\\') + 1).toLowerCase();
-for (x = 0; x < dataFiles.length && !isOK; x++)
-	isOK |= (fName == dataFiles[x]);
+fName = f.navData.value.substring(f.navData.value.lastIndexOf('\\') + 1).toLowerCase();
+for (var x = 0; x < golgotha.local.dataFiles.length && !isOK; x++)
+	isOK |= (fName == golgotha.local.dataFiles[x]);
 	
-if (!isOK) {
-	alert('This does not appear to be a valid PSS AIRAC data file.');
-	form.navData.focus();
-	return false;
-}
+if (!isOK)
+	throw new golgotha.util.ValidationError('This does not appear to be a valid PSS AIRAC data file.', f.navData);
 
-setSubmit();
+golgotha.form.submit();
 disableButton('SaveButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -42,7 +38,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="awyimport.do" method="post" allowUpload="true" validate="return validate(this)">
+<el:form action="awyimport.do" method="post" allowUpload="true" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2">AIRAC NAVIGATION DATA UPLOAD</td>

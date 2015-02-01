@@ -14,15 +14,11 @@
 <content:css name="view" />
 <content:pics />
 <script type="text/javascript">
-function sort(combo)
-{
-if (combo.selectedIndex != -1) {
-	var sortKey = combo.options[combo.selectedIndex].value;
-	self.location = '/applicants.do?' + combo.name + '=' + sortKey;
-}
-
-return true;
-}
+golgotha.local.sort = function(combo) {
+	if (!golgotha.form.comboSet(combo)) return false;
+	self.location = '/applicants.do?' + combo.name + '=' + escape(golgotha.form.getCombo(combo));
+	return true;
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -43,9 +39,9 @@ return true;
 
 <!-- Sort Bar -->
 <tr class="title">
- <td colspan="2">STATUS <el:combo name="status" idx="*" size="1" firstEntry="" options="${statuses}" value="${param.status}" onChange="void sort(this)" /></td>
- <td colspan="3">EQUIPMENT PROGRAM <el:combo name="eqType" idx="*" size="1" firstEntry="" options="${eqTypes}" value="${param.eqType}" onChange="void sort(this)" /></td>
- <td>LETTER <el:combo name="letter" idx="*" size="1" firstEntry="" options="${letters}" value="${param.letter}" onChange="void sort(this)" /></td>
+ <td colspan="2">STATUS <el:combo name="status" idx="*" size="1" firstEntry="" options="${statuses}" value="${param.status}" onChange="void golgotha.local.sort(this)" /></td>
+ <td colspan="3">EQUIPMENT PROGRAM <el:combo name="eqType" idx="*" size="1" firstEntry="" options="${eqTypes}" value="${param.eqType}" onChange="void golgotha.local.sort(this)" /></td>
+ <td>LETTER <el:combo name="letter" idx="*" size="1" firstEntry="" options="${letters}" value="${param.letter}" onChange="void golgotha.local.sort(this)" /></td>
 </tr>
 
 <!-- Table Header Bar-->

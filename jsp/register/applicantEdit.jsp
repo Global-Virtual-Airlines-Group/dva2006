@@ -17,34 +17,32 @@
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateText(form.firstName, 3, 'First (given) Name')) return false;
-if (!validateText(form.lastName, 2, 'Last (family) Name')) return false;
-if (!validateEMail(form.email, 'E-Mail Address')) return false;
-if (!validateCombo(form.homeAirport, 'Home Airport')) return false;
-if (!validateCombo(form.tz, 'Time Zone')) return false;
-if (!validateText(form.df, 7, 'Date Format')) return false;
-if (!validateText(form.tf, 5, 'Time Format')) return false;
-if (!validateText(form.nf, 5, 'Number Format')) return false;
-if (!validateCheckBox(form.airportCodeType, 1, 'Airport Code type')) return false;
-if (!validateCombo(form.eqType, 'Equipment Program')) return false;
-if (!validateCombo(form.rank, 'Rank')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.local.validate({f:f.firstName, l:3, t:'First Name'});
+golgotha.local.validate({f:f.lastName, l:2, t:'Last Name'});
+golgotha.local.validate({f:f.email, addr:true, t:'E-Mail Address'});
+golgotha.local.validate({f:f.homeAirport, t:'Home Airport'});
+golgotha.local.validate({f:f.tz, t:'Time Zone'});
+golgotha.local.validate({f:f.df, l:7, t:'Date Format'});
+golgotha.local.validate({f:f.tf, l:5, t:'Time Format'});
+golgotha.local.validate({f:f.nf, l:5, t:'Number Format'});
+golgotha.local.validate({f:f.airportCodeType, min:1, t:'Airport Code type'});
+golgotha.local.validate({f:f.eqType, t:'Equipment Program'});
+golgotha.local.validate({f:f.rank, t:'Rank'});
+golgotha.form.submit();
 disableButton('SaveButton');
 disableButton('HireButton');
 disableButton('RejectButton');
 return true;
-}
+};
 
-function hireApplicant()
-{
-var f = document.forms[0];
-f.doHire.value = 'true';
-return cmdPost(f.action);
-}
+golgotha.local.hire = function() {
+	var f = document.forms[0];
+	f.doHire.value = 'true';
+	return cmdPost(f.action);
+};
 
 golgotha.onDOMReady(function() {
 	var f = document.forms[0];
@@ -72,7 +70,7 @@ golgotha.onDOMReady(function() {
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="applicant.do" link="${applicant}" op="save" method="post" validate="return validate(this)">
+<el:form action="applicant.do" link="${applicant}" op="save" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2"><content:airline /> PILOT APPLICATION</td>
@@ -247,7 +245,7 @@ correct out of <fmt:int value="${questionnaire.size}" /> questions</span>
 <tr>
  <td>
 <c:if test="${access.canApprove}">
-<el:button ID="HireButton" onClick="void hireApplicant()" label="HIRE APPLICANT" />
+<el:button ID="HireButton" onClick="void golgotha.local.hire()" label="HIRE APPLICANT" />
 </c:if> 
 <el:button ID="SaveButton" type="submit" label="UPDATE APPLICANT" />
 <c:if test="${access.canReject}">

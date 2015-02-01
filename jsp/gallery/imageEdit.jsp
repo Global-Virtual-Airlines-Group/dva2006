@@ -17,19 +17,18 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateText(form.title, 6, 'Image Title')) return false;
-if (!validateText(form.desc, 5, 'Image Description')) return false;
-if (!validateText(form.img, 6, 'Attached Image')) return false;
-if (!validateFile(form.img, 'jpg,png', 'Attached Image')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.title, l:6, t:'Image Title'});
+golgotha.form.validate({f:f.desc, l:5, t:'Image Description'});
+golgotha.form.validate({f:f.img, l:6, t:'Attached Image'});
+golgotha.form.validate({f:f.img, ext:['jpg','png'], t:'Attached Image'});
+golgotha.form.submit();
 disableButton('SaveButton');
 disableButton('DeleteButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -40,7 +39,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="image.do" method="post" op="save" link="${img}" allowUpload="true" validate="return validate(this)">
+<el:form action="image.do" method="post" op="save" link="${img}" allowUpload="true" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2" class="left"><content:airline /> IMAGE GALLERY ENTRY</td>

@@ -14,6 +14,7 @@
 <content:sysdata var="airlineURL" name="airline.url" />
 <content:sysdata var="desc" name="airline.meta.desc" />
 <content:sysdata var="keywords" name="airline.meta.keywords" />
+<link rel="canonical" href="http://${airlineURL}/" />
 <content:css name="main" />
 <content:css name="view" />
 <content:rss title="${airlineName} News" path="/news_rss.ws" />
@@ -31,7 +32,7 @@
 <meta property="og:country-name" content="USA" />
 </head>
 <content:copyright visible="false" />
-<body onload="void initLinks()">
+<body>
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -74,7 +75,7 @@ between!) we welcome your interest. <el:cmd url="register" className="pri bld">C
 <content:airline />.</el:cmd><br />
 <br />
 If you are interested in a virtual airline with primarily ${partnerLoc} operations, we encourage you to visit 
-our sister airline <a rel="external" href="http://${partnerURL}/" class="sec bld">${partnerName}</a>.<br />
+our sister airline <a rel="external" target="_new" href="http://${partnerURL}/" class="sec bld">${partnerName}</a>.<br />
 <br /></content:filter>
 <!-- Dynamic Content Type ${dynContentType} -->
 <c:if test="${noUpcomingEvents}"><!-- No upcoming Online Events, skipped --></c:if>
@@ -258,7 +259,7 @@ If you have questions or comments, please direct them to our Corporate Offices a
 </content:page>
 <content:ip IPv6="true">
 <content:googleAnalytics eventSupport="true" />
-<script>
+<script defer>
 golgotha.event.beacon('Network', 'IPv6');</script>
 </content:ip>
 <content:ip IPv4="true">

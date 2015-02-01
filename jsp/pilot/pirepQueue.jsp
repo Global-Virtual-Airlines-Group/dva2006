@@ -15,11 +15,7 @@
 <content:css name="view" />
 <content:pics />
 <script type="text/javascript">
-function sort()
-{
-document.forms[0].submit();
-return true;
-}
+golgotha.local.sort = function() { return document.forms[0].submit(); };
 </script>
 </head>
 <content:copyright visible="false" />
@@ -36,7 +32,7 @@ return true;
 <!-- Table Header Bar-->
 <tr class="title">
  <td colspan="4" class="left caps"><content:airline /> PENDING FLIGHT REPORT QUEUE</td>
- <td colspan="3" class="right">SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${viewContext.sortType}" onChange="void sort()" /></td>
+ <td colspan="3" class="right">SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${viewContext.sortType}" onChange="void golgotha.local.sort()" /></td>
 </tr>
 <tr class="title caps">
  <td style="width:9%">DATE</td>

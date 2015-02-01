@@ -14,35 +14,31 @@
 <content:pics />
 <content:sysdata var="badDomains" name="registration.reject_domain" />
 <script type="text/javascript">
-<fmt:jsarray var="invalidDomains" items="${badDomains}" />
-function validate(form)
+golgotha.local.invalidDomains = <fmt:jsarray items="${badDomains}" />
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-var act = form.action;
-if ((act.indexOf('resendvalidate.do') == -1) && (!validateText(form.code, 8, 'E-Mail Validation Code'))) return false;
-if (!validateEMail(form.email, 'E-Mail Address')) return false;
+if (!golgotha.form.check()) return false;
+var act = f.action;
+if ((act.indexOf('resendvalidate.do') == -1)
+		golgotha.form.validate({f:f.code, l:8, t:'E-Mail Validation Code'});
+golgotha.form.validate({f:f.email, addr:true, t:'E-Mail Address'});
 
 // Validate e-mail domain
-var eMail = form.email.value;
+var eMail = f.email.value;
 var usrDomain = eMail.substring(eMail.indexOf('@') + 1, eMail.length);
-for (var x = 0; x < invalidDomains.length; x++) {
-	if (usrDomain == invalidDomains[x]) {
-		alert('Your e-mail address (' + eMail + ') contains a forbidden domain - ' + invalidDomains[x]);
-		form.email.focus();
-		return false;
-	}
+for (var x = 0; x < golgotha.local.invalidDomains.length; x++) {
+	if (usrDomain == golgotha.local.invalidDomains[x])
+		throw new golgotha.util.ValidationError('Your e-mail address (' + eMail + ') contains a forbidden domain - ' + invalidDomains[x], f.email);
 }
 
-setSubmit();
+golgotha.form.submit();
 disableButton('SubmitButton');
 disableButton('ResendButton');
 return true;
-}
+};
 
-function updateAddress()
+golgotha.local.updateAddress = function(f)
 {
-// Allow edits to the field and redirect
-var f = document.forms[0];
 enableObject(f.email, true);
 f.email.readOnly = false;
 enableObject(f.code, false);
@@ -57,7 +53,7 @@ sb.value = 'UPDATE ADDRESS';
 var link = document.getElementById('updateAddrLink');
 link.innerHTML = '';
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -68,7 +64,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="validate.do" link="${person}" method="post" validate="return validate(this)">
+<el:form action="validate.do" link="${person}" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <c:choose>
 <c:when test="${validationFailure}">
@@ -103,7 +99,7 @@ space below.</td>
 <tr>
  <td class="label">E-Mail Address</td>
  <td class="data"><el:addr name="email" required="true" idx="*" readOnly="${addr.isValid}" size="40" max="80" value="${addr.isValid ? addr.address : ''}" />
-<c:if test="${addr.isValid}"> <el:link ID="updateAddrLink" url="javascript:void updateAddress()" className="pri bld small">This isn't my correct e-mail address.</el:link></c:if></td>
+<c:if test="${addr.isValid}"> <el:link ID="updateAddrLink" url="javascript:void golgotha.local.updateAddress(document.forms[0])" className="pri bld small">This isn't my correct e-mail address.</el:link></c:if></td>
 </tr>
 <c:if test="${!empty addr}">
 <tr>

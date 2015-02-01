@@ -21,13 +21,13 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateText(form.title, 10, 'Manual Title')) return false;
-if (!validateNumber(form.version, 1, 'Revision Number')) return false;
-if (!validateText(form.desc, 10, 'Description')) return false;
-if (!validateFile(form.file, 'pdf', 'Uploaded Manual')) return false;
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.title, l:10, t:'Manual Title'});
+golgotha.form.validate({f:f.version, min:1, t:'Revision Number'});
+golgotha.form.validate({f:f.desc, l:10, t:'Description'});
+golgotha.form.validate({f:f.file, ext:['pdf'], t:'Uploaded Manual'});
 <c:if test="${empty entry}">
 var fileParts = form.file.value.split('\\');
 var fName = fileParts[fileParts.length - 1].toLowerCase();
@@ -38,13 +38,13 @@ if (manualNames.indexOf(fName) != -1) {
 }
 </c:if>
 
-setSubmit();
+golgotha.form.submit();
 disableButton('SaveButton');
 disableButton('DeleteButton');
 return true;
-}
+};
 
-function updateSecurity(updatedField)
+golgotha.local.updateSecurity = function(updatedField)
 {
 var f = document.forms[0];
 if ((!f.showRegister) || (!f.showRegister.checked))
@@ -61,7 +61,7 @@ if ((updatedField == f.showRegister) && (f.security.selectedIndex > 0))
 } 
 
 return true;
-}
+};
 <c:if test="${empty entry}">
 <fmt:jsarray var="manualNames" items="${manualNames}" /></c:if>
 </script>
@@ -75,7 +75,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="doclib.do" linkID="${entry.fileName}" op="save" method="post" allowUpload="true" validate="return validate(this)">
+<el:form action="doclib.do" linkID="${entry.fileName}" op="save" method="post" allowUpload="true" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
 <c:choose>
@@ -125,7 +125,7 @@ return true;
 </content:filter>
 <tr>
  <td class="label">Document Security</td>
- <td class="data"><el:combo name="security" idx="*" size="1" required="true" value="${entry.security}" onChange="void updateSecurity(this)" options="${securityOptions}" /></td>
+ <td class="data"><el:combo name="security" idx="*" size="1" required="true" value="${entry.security}" onChange="void golgotha.local.updateSecurity(this)" options="${securityOptions}" /></td>
 </tr>
 <tr>
  <td class="label">Update File</td>
@@ -134,7 +134,7 @@ return true;
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="noNotify" idx="*" value="true" checked="true" label="Don't send notification e-mail" /><br />
-<el:box name="showRegister" idx="*" value="true" checked="${entry.showOnRegister}" onChange="void updateSecurity(this)" label="Show Manual on Pilot Registration page" /><br />
+<el:box name="showRegister" idx="*" value="true" checked="${entry.showOnRegister}" onChange="void golgotha.local.updateSecurity(this)" label="Show Manual on Pilot Registration page" /><br />
 <el:box name="ignoreCerts" idx="*" value="true" checked="${entry.ignoreCertifications}" label="Make visible to Pilots not enrolled in Flight Academy" /></td>
 </tr>
 </el:table>

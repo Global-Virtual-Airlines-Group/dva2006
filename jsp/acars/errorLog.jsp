@@ -15,28 +15,25 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateCombo(form.viewType, 'Filter Type')) return false;
-var filterType = (form.viewType) ? form.viewType.selectedIndex : 0;
-if (form.viewType == 1) {
- if (!validateCombo(form.author, 'Error Report Author')) return false;
-} else if (form.viewType == 2) {
- if (!validateCombo(form.build, 'ACARS Client Build')) return false;
-}
+if (!golgotha.form.check()) return false;
+var filterType = (f.viewType) ? f.viewType.selectedIndex : 0;
+golgotha.form.validate({f:f.viewType, t:'Filter Type'});
+if (filterType == 1)
+ 	golgotha.form.validate({f:f.author, t:'Error Report Author'});
+else if (filterType == 2)
+	golgotha.form.validate({f:f.build, t:'ACARS Client Build'});
 
-setSubmit();
+golgotha.form.submit();
 disableButton('SortButton');
 return true;
 }
 
-function setViewType(idx)
-{
-var f = document.forms[0];	
-f.viewType.selectedIndex = idx;
-return true;
-}
+golgotha.local.setViewType = function(idx) {
+	document.forms[0].viewType.selectedIndex = idx;
+	return true;
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -47,14 +44,14 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="acarserrors.do" method="post" validate="return validate(this)">
+<el:form action="acarserrors.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate,this)">
 <view:table cmd="acarserrors">
 <!-- View Header Bar -->
 <tr class="title">
  <td colspan="2" class="left">ACARS CLIENT ERROR LOGS</td>
- <td colspan="4" class="right">FILTER BY <el:combo name="viewType" idx="*" size="1" firstEntry="-" options="${filterOpts}" value="${param.viewType}" onChange="void switchType(this)" />
- BUILD <el:combo name="build" idx="*" size="1" firstEntry="-" options="${clientBuilds}" value="${param.build}" onChange="void setViewType(3)" />
- USER <el:combo name="author" idx="*" size="1" firstEntry="-" options="${authors}" value="${param.author}" onChange="void setViewType(2)" />
+ <td colspan="4" class="right">FILTER BY <el:combo name="viewType" idx="*" size="1" firstEntry="-" options="${filterOpts}" value="${param.viewType}" />
+ BUILD <el:combo name="build" idx="*" size="1" firstEntry="-" options="${clientBuilds}" value="${param.build}" onChange="void golgotha.local.setViewType(3)" />
+ USER <el:combo name="author" idx="*" size="1" firstEntry="-" options="${authors}" value="${param.author}" onChange="void golgotha.local.setViewType(2)" />
  <el:button ID="SortButton" type="submit" label="GO" /></td>
 </tr>
 

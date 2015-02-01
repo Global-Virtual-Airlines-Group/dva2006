@@ -11,15 +11,14 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateFile(form.routeData, 'csv', 'FAA Preferred Route Data')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.routeData, ext:['csv'], t:'FAA Preferred Route Data'});
+golgotha.form.submit();
 disableButton('SaveButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -30,7 +29,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="routeimport.do" method="post" allowUpload="true" validate="return validate(this)">
+<el:form action="routeimport.do" method="post" allowUpload="true" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2">FAA PREFERRED ROUTE DATA UPLOAD</td>

@@ -14,7 +14,7 @@
 <content:js name="common" />
 </head>
 <content:copyright visible="false" />
-<body onload="void initLinks()">
+<body>
 <content:page>
 <%@ include file="/jsp/academy/header.jspf" %> 
 <%@ include file="/jsp/academy/sideMenu.jspf" %>
@@ -56,7 +56,7 @@
  <td class="data"><span class="sec bld ita">To modify this list, please update the Documents in the 
 <content:airline /> Document Library.</span><br />
 <c:forEach var="doc" items="${docs}">
-<el:link url="/library/${doc.fileName}">${doc.name}</el:link><br />
+<el:link target="_new" url="/library/${doc.fileName}">${doc.name}</el:link><br />
 </c:forEach></td>
 </tr>
 </c:if>

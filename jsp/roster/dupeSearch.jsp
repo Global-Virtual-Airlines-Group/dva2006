@@ -16,29 +16,25 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-
-var act = form.action;
+if (!golgotha.form.check()) return false;
+var act = f.action;
 if (act.indexOf('dupemerge.do') != -1) {
-	if (!validateCombo(form.id, 'Pilot to merge into')) return false;
-	if (!validateCombo(form.code, 'new Pilot Code')) return false;
+	golgotha.form.validate({f:f.id, t:'Pilot to merge into'});
+	golgotha.form.validate({f:f.code, t:'new Pilot Code'});
 } else {
-	var hasFirst = (form.firstName.value.length > 2) || (form.firstName2.value.length > 2);
-	var hasLast = (form.lastName.value.length > 2) || (form.lastName2.value.length > 2);
-	if (!hasFirst && !hasLast) {
-		alert('Please provide at least one First or Last Name.');	
-		form.firstName.focus();	
-		return false;
-	}
+	var hasFirst = (f.firstName.value.length > 2) || (f.firstName2.value.length > 2);
+	var hasLast = (f.lastName.value.length > 2) || (f.lastName2.value.length > 2);
+	if (!hasFirst && !hasLast)
+		throw new golgotha.util.ValidationErorr('Please provide at least one First or Last Name.', f.firstName);	
 }
 
-setSubmit();
+golgotha.form.submit();
 disableButton('SearchButton');
 disableButton('MergeButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -49,7 +45,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="dupesearch.do" method="post" validate="return validate(this)">
+<el:form action="dupesearch.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <!-- Search Criteria -->
 <el:table className="form">
 <tr class="title caps">

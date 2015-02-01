@@ -18,25 +18,23 @@
 <content:js name="common" />
 <content:rss title="${airlineName} ${forumName}" path="/cooler_rss.ws" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if ((form.searchStr.value.length < 3) && (form.pilotName.value.length < 3)) {
-	if (!validateText(form.searchStr, 3, 'Search Term')) return false;
-	if (!validateText(form.pilotName, 3, 'Pilot Name')) return false;
+if (!golgotha.form.check()) return false;
+if ((f.searchStr.value.length < 3) && (f.pilotName.value.length < 3)) {
+	golgotha.form.validate({f:f.searchStr, l:3, t:'Search Term'});
+	golgotha.form.validate({f:f.pilotName, l:3, t:'Pilot Name'});
 }
 
-setSubmit();
+golgotha.form.submit();
 disableButton('SearchButton');
 return true;
-}
+};
 
-function setChannel(combo)
-{
-var channel = combo.options[combo.selectedIndex].value;
-self.location = '/channel.do?id=' + escape(channel);
-return true;
-}
+golgotha.local.setChannel = function(combo) {
+	self.location = '/channel.do?id=' + escape(golgotha.form.getValue(combo));
+	return true;
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -47,7 +45,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="coolersearch.do" method="post" validate="return validate(this)">
+<el:form action="coolersearch.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title">
  <td colspan="2" class="left caps">${forumName} Search</td>
@@ -88,7 +86,7 @@ return true;
 <!-- Table Sort Combo Bar -->
 <tr class="title">
  <td colspan="1" class="left caps">${forumName} SEARCH RESULTS</td>
- <td colspan="3" class="right">CHANNEL <el:combo name="sortType" size="1" options="${channels}" value="${channel}" onChange="void setChannel(this)" /></td>
+ <td colspan="3" class="right">CHANNEL <el:combo name="sortType" size="1" options="${channels}" value="${channel}" onChange="void golgotha.local.setChannel(this)" /></td>
 </tr>
 
 <!-- Table Header Bar-->

@@ -15,12 +15,10 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function setCategory(combo)
-{
-var catName = combo.options[combo.selectedIndex].text;
-self.location = '/newsletters.do?category=' + escape(catName);
-return true;
-}
+golgotha.local.setCategory = function(combo) {
+	self.location = '/newsletters.do?category=' + escape(golgotha.form.getCombo(combo));
+	return true;
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -49,7 +47,7 @@ return true;
 </c:otherwise>
 </c:choose>
  <td style="width:15%" class="left">DESCRIPTION</td>
- <td class="right">CATEGORY <el:combo name="category" idx="*" size="1" options="${cats}" firstEntry="ALL" value="${catName}" onChange="void setCategory(this)" /></td>
+ <td class="right">CATEGORY <el:combo name="category" idx="*" size="1" options="${cats}" firstEntry="ALL" value="${catName}" onChange="void golgotha.local.setCategory(this)" /></td>
 </tr>
 
 <!-- Table Data Section -->

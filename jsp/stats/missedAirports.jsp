@@ -33,7 +33,7 @@
 <c:set var="aps" value="${entry.value}" scope="page" />
 <tr class="title">
  <td colspan="5" class="left caps">${airline.name} - <fmt:int value="${fn:sizeof(aps)}" /> AIRPORTS</td>
- <td class="right"><span class="und" onclick="void toggleExpand(this, 'ap${airline.code}')">COLLAPSE</span></td>
+ <td class="right"><span class="und" onclick="void golgotha.util.toggleExpand(this, 'ap${airline.code}')">COLLAPSE</span></td>
 </tr>
 <tr class="title ap${airline.code}">
  <td style="width:20%">AIRPORT NAME</td>

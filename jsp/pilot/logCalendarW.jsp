@@ -15,12 +15,10 @@
 <content:css name="calendar" />
 <content:pics />
 <script type="text/javascript">
-function switchType(combo)
-{
-var cType = combo.options[combo.selectedIndex].value;
-self.location = '/logcalendar.do?op=' + cType + '&id=${pilot.hexID}&startDate=<fmt:date fmt="d" d="MM/dd/yyyy" date="${startDate}" />';
-return true;
-}
+golgotha.local.switchType = function(combo) {
+	self.location = '/logcalendar.do?op=' + escape(golgotha.form.getCombo(combo) + '&id=${pilot.hexID}&startDate=<fmt:date fmt="d" d="MM/dd/yyyy" date="${startDate}" />';
+	return true;
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -35,7 +33,7 @@ return true;
 <el:table className="form">
 <tr class="title">
  <td style="width:80%" class="caps">PILOT LOGBOOK FOR ${pilot.rank.name} ${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></td>
- <td class="right">CALENDAR TYPE <el:combo name="op" size="1" idx="*" options="${typeOptions}" value="30" onChange="void switchType(this)" /></td>
+ <td class="right">CALENDAR TYPE <el:combo name="op" size="1" idx="*" options="${typeOptions}" value="30" onChange="void golgotha.local.switchType(this)" /></td>
 </tr>
 </el:table>
 <div class="mid">

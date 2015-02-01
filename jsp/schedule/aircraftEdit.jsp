@@ -12,32 +12,31 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateText(form.name, 3, 'Aircraft Name')) return false;
-if (!validateText(form.fullName, 5, 'Aircraft Full Name')) return false;
-if (!validateText(form.family, 2, 'Aircraft Family Code')) return false;
-if (!validateNumber(form.range, 1, 'Aircraft Range')) return false;
-if (!validateNumber(form.seats, 0, 'Passenger Capacity')) return false;
-if (!validateNumber(form.maxWeight, 1, 'Maximum Weight')) return false;
-if (!validateNumber(form.maxZFW, 1, 'Maximum Zero Fuel Weight')) return false;
-if (!validateNumber(form.maxTWeight, 1, 'Maximum Takeoff Weight')) return false;
-if (!validateNumber(form.maxLWeight, 1, 'Maximum Landing Weight')) return false;
-if (!validateNumber(form.toRunwayLength, 0, 'Minimum Takeoff Runway Length')) return false;
-if (!validateNumber(form.lndRunwayLength, 0, 'Minimum Landing Runway Length')) return false;
-if (!validateNumber(form.engineCount, 1, 'Engine Count')) return false;
-if (!validateText(form.engineType, 4, 'Engine Count')) return false;
-if (!validateNumber(form.cruiseSpeed, 50, 'Cruise Speed')) return false;
-if (!validateNumber(form.fuelFlow, 100, 'Fuel Flow')) return false;
-if (!validateNumber(form.baseFuel, 0, 'Base Fuel Amount')) return false;
-if (!validateNumber(form.taxiFuel, 0, 'Taxi Fuel Amount')) return false;
-if (!validateCheckBox(form.pTanks, 1, 'Primary Fuel Tanks')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.name, l:3, t:'Aircraft Name'});
+golgotha.form.validate({f:f.fullName, l:5, t:'Aircraft Full Name'});
+golgotha.form.validate({f:f.family, l:2, t:'Aircraft Family Code'});
+golgotha.form.validate({f:f.range, min:1, t:'Aircraft Range'});
+golgotha.form.validate({f:f.seats, min:0, t:'Passenger Capacity'});
+golgotha.form.validate({f:f.maxWeight, min:1, t:'Maximum Weight'});
+golgotha.form.validate({f:f.maxZFW, min:1, t:'Maximum Zero Fuel Weight'});
+golgotha.form.validate({f:f.maxTWeight, min:1, t:'Maximum Takeoff Weight'});
+golgotha.form.validate({f:f.maxLWeight, min:1, t:'Maximum Landing Weight'});
+golgotha.form.validate({f:f.toRunwayLength, min:0, t:'Minimum Takeoff Runway Length'});
+golgotha.form.validate({f:f.lndRunwayLength, min:0, t:'Minimum Landing Runway Length'});
+golgotha.form.validate({f:f.engineCount, min:1, t:'Engine Count'});
+golgotha.form.validate({f:f.engineType, l:4, t:'Engine Type'});
+golgotha.form.validate({f:f.cruiseSpeed, min:50, t:'Cruise Speed'});
+golgotha.form.validate({f:f.fuelFlow, min:100, t:'Fuel Flow'});
+golgotha.form.validate({f:f.baseFuel, min:0, t:'Base Fuel Amount'});
+golgotha.form.validate({f:f.taxiFuel, min:0, t:'Taxi Fuel Amount'});
+golgotha.form.validate({f:f.pTanks, min:1, t:'Primary Fuel Tanks'});
+golgotha.form.submit();
 disableButton('SaveButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -50,7 +49,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="aircraft.do" method="post" linkID="${aircraft.name}" op="save" validate="return validate(this)">
+<el:form action="aircraft.do" method="post" linkID="${aircraft.name}" op="save" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2">AIRCRAFT PROFILE</td>

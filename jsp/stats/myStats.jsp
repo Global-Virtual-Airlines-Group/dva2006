@@ -18,19 +18,14 @@
 <content:googleJS />
 <content:pics />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.updateSort = function() { return document.forms[0].submit(); };
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.submit();
 disableButton('SearchButton');
 return true;
-}
-
-function update()
-{
-document.forms[0].submit();
-return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -41,13 +36,13 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="mystats.do" method="post" validate="return validate(this)">
+<el:form action="mystats.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <!-- All Flight Report statistics -->
 <view:table cmd="mystats">
 <tr class="title">
  <td colspan="6" class="left caps"><content:airline /> FLIGHT STATISTICS FOR ${pilot.name}</td>
- <td colspan="5" class="right">GROUP BY <el:combo name="groupType" size="1" idx="*" options="${groupTypes}" value="${param.groupType}" onChange="void update()" />
- SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${viewContext.sortType}" onChange="void update()" /></td>
+ <td colspan="5" class="right">GROUP BY <el:combo name="groupType" size="1" idx="*" options="${groupTypes}" value="${param.groupType}" onChange="void golgotha.local.updateSort()" />
+ SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${viewContext.sortType}" onChange="void golgotha.local.updateSort()" /></td>
 </tr>
 <%@ include file="/jsp/stats/pirepStats.jspf" %>
 </view:table>
@@ -118,11 +113,11 @@ return true;
 <content:copyright />
 </content:region>
 </content:page>
-<script type="text/javascript">
+<script type="text/javascript" defer>
 google.load('visualization','1.0',{'packages':['corechart']});
 google.setOnLoadCallback(function() {
-var xmlreq = getXMLHttpRequest();
-xmlreq.open('get', 'mystats.ws?id=${pilot.hexID}', true);
+var xmlreq = new XMLHttpRequest();
+xmlreq.open('GET', 'mystats.ws?id=${pilot.hexID}', true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	var statsData = JSON.parse(xmlreq.responseText);
@@ -168,7 +163,7 @@ xmlreq.onreadystatechange = function() {
 	data.addRows(statsData.landingQuality);
 	chart.draw(data,{title:'Landing Assessments',is3D:true,colors:['green','orange','red'],theme:'maximized'});	
 	return true;
-}
+};
 
 xmlreq.send(null);
 return true;

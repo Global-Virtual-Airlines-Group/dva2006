@@ -14,35 +14,33 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
+<content:js name="examTake" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateText(form.question, 20, 'Question Text')) return false;
-if (!validateText(form.correct, 3, 'Correct Answer to this Question')) return false;
-if (!validateFile(form.imgData, 'gif,jpg,png', 'Image Resource')) return false;
-if (!validateCombo(form.owner, 'Owner')) return false;
-if (!validateCheckBox(form.airline, 1, 'Airline')) return false;
+if (!golgotha.form.check()) return false;
+golgotha.form.validateText({f:f.question, l:20, 'Question Text'});
+golgotha.form.validateText({f:f.correct, l:3, t:'Correct Answer to this Question'});
+golgotha.form.validateFile({f:f.imgData, ext:['gif','jpg','png'], t:'Image Resource'});
+golgotha.form.validateCombo({f:f.owner, t:'Owner'});
+golgotha.form.validateCheckBox({f:f.airline, min:1, t:'Airline'});
 
 // Validate multiple choice
 <c:if test="${empty question}">
-if ((form.isMultiChoice) && (form.isMultiChoice.checked)) {
-	if (!validateCombo(form.correctChoice, 'Correct Answer to this Question')) return false;
-}
+if ((f.isMultiChoice) && (f.isMultiChoice.checked))
+	golgotha.form.validate({f:f.correctChoice, t:'Correct Answer to this Question'});
 </c:if>
 <c:if test="${!empty question && isMC}">
-if (!validateCombo(form.correctChoice, 'Correct Answer to this Question')) return false;
-</c:if>
-
-setSubmit();
+golgotha.form.validate({f:f.correctChoice, t:'Correct Answer to this Question'});</c:if>
+golgotha.form.submit();
 disableButton('SaveButton');
 return true;
-}
+};
 
-function toggleAnswerBox()
+golgotha.local.toggleAnswerBox = function()
 {
 var aRow = document.getElementById('answerRow');
-var mcRows = getElementsByClass('mcRow', 'tr');
+var mcRows = golgotha.util.getElementsByClass('mcRow', 'tr');
 var f = document.forms[0];
 if (f.isMultiChoice) {
 	if (f.correct) f.correct.disabled = f.isMultiChoice.checked;
@@ -54,15 +52,13 @@ if (f.isMultiChoice) {
 }
 
 return true;
-}
+};
 
-function updateAnswerCombo()
+golgotha.local.updateAnswerCombo = function()
 {
 var f = document.forms[0];
 if ((!f.answerChoices) || (!f.correctChoice)) return false;
-
-// Save the old answer
-var oldAnswer = f.correctChoice.options[f.correctChoice.selectedIndex].text;
+var oldAnswer = golgotha.form.getCombo(f.correctChoice);
 
 // Copy each line in the textbox to an answer choice
 var choices = f.answerChoices.value.split('\n');
@@ -76,19 +72,11 @@ for (var x = 0; x < choices.length; x++) {
 }
 
 return true;
-}
-<c:if test="${question.size > 0}">
-function viewImage(x, y)
-{
-var flags = 'height=' + (y+45) + ',width=' + (x+45) + ',menubar=no,toolbar=no,status=yes,scrollbars=yes';
-var w = window.open('/exam_rsrc/${question.hexID}', 'questionImage', flags);
-return true;
-}
-</c:if>
+};
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="updateAnswerCombo(); toggleAnswerBox()">
+<body onload="golgotha.local.updateAnswerCombo(); golgotha.local.toggleAnswerBox()">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -96,7 +84,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="qprofile.do" link="${question}" op="save" method="post" allowUpload="true" validate="return validate(this)">
+<el:form action="qprofile.do" link="${question}" op="save" method="post" allowUpload="true" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <!-- Question Title Bar -->
 <tr class="title caps">
@@ -141,7 +129,7 @@ return true;
  <td class="label">Image Information</td>
  <td class="data"><span class="pri bld">${question.typeName}</span> image, <fmt:int value="${question.size}" />
  bytes <span class="sec">(<fmt:int value="${question.width}" /> x <fmt:int value="${question.height}" />
- pixels)</span> <el:link className="pri bld small" url="javascript:void viewImage(${question.width},${question.height})">VIEW IMAGE</el:link></td>
+ pixels)</span> <el:link className="pri bld small" url="javascript:void golgotha.exam.viewImage(${question.width},${question.height})">VIEW IMAGE</el:link></td>
 </tr>
 </c:if>
 </c:if>
@@ -161,12 +149,12 @@ return true;
 <c:if test="${empty question}">
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="isMultiChoice" idx="*" value="true" label="This is a multiple choice question" checked="true" onChange="void toggleAnswerBox()" /></td>
+ <td class="data"><el:box name="isMultiChoice" idx="*" value="true" label="This is a multiple choice question" checked="true" onChange="void golgotha.local.toggleAnswerBox()" /></td>
 </tr>
 </c:if>
 <tr class="mcRow">
  <td class="label top">Answer Choices</td>
- <td class="data"><el:textbox name="answerChoices" idx="*" width="90%" height="5" onBlur="void updateAnswerCombo()">${qChoices}</el:textbox></td>
+ <td class="data"><el:textbox name="answerChoices" idx="*" width="90%" height="5" onBlur="void golgotha.local.updateAnswerCombo()">${qChoices}</el:textbox></td>
 </tr>
 <tr class="mcRow">
  <td class="label">Correct Answer</td>

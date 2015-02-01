@@ -11,26 +11,23 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-var dataFiles = ['pssstar.dat','psssid.dat','pssstar.dat.gz','psssid.dat.gz','pssstar.dat.bz2','psssid.dat.bz2'];
-function validate(form)
+golgotha.local.dataFiles = ['pssstar.dat','psssid.dat','pssstar.dat.gz','psssid.dat.gz','pssstar.dat.bz2','psssid.dat.bz2'];
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
+if (!golgotha.form.check()) return false;
 
-isOK = false;
-fName = form.navData.value.substring(form.navData.value.lastIndexOf('\\') + 1).toLowerCase();
-for (x = 0; x < dataFiles.length && !isOK; x++)
-	isOK |= (fName == dataFiles[x]);
-	
-if (!isOK) {
-	alert('This does not appear to be a valid PSS AIRAC data file.');
-	form.navData.focus();
-	return false;
-}
+var isOK = false;
+var fName = f.navData.value.substring(f.navData.value.lastIndexOf('\\') + 1).toLowerCase();
+for (x = 0; x < golgotha.local.dataFiles.length && !isOK; x++)
+	isOK |= (fName == golgotha.local.dataFiles[x]);
 
-setSubmit();
+if (!isOK)
+	throw new golgotha.util.ValidationError('This does not appear to be a valid PSS AIRAC data file.', f.navData);
+
+golgotha.form.submit();
 disableButton('SaveButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -41,7 +38,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="trouteimport.do" method="post" allowUpload="true" validate="return validate(this)">
+<el:form action="trouteimport.do" method="post" allowUpload="true" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2">PSS AIRAC SID / STAR DATA UPLOAD</td>

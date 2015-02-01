@@ -12,18 +12,17 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateText(form.name, 6, 'Virtual Server Name')) return false;
-if (!validateNumber(form.port, 1024, 'Virtual Server UDP Port')) return false;
-if (!validateNumber(form.maxUsers, 1, 'Virtual Server User Limit')) return false;
-if (!validateText(form.msg, 6, 'Virtual Server Welcome Message')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.name, l:6, t:'Virtual Server Name'});
+golgotha.form.validate({f:f.port, min:1024, t:'Virtual Server UDP Port'});
+golgotha.form.validate({f:f.maxUsers, min:1, t:'Virtual Server User Limit'});
+golgotha.form.validate({f:f.msg, l:6, t:'Virtual Server Welcome Message'});
+golgotha.form.submit();
 disableButton('SaveButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -34,7 +33,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form method="post" action="ts2server.do" op="save" link="${server}" validate="return validate(this)">
+<el:form method="post" action="ts2server.do" op="save" link="${server}" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2">TEAMSPEAK 2 VIRTUAL SERVER</td>

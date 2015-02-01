@@ -16,21 +16,18 @@
 <content:js name="common" />
 <content:js name="datePicker" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.submit();
 disableButton('CalendarButton');
 disableButton('SubmitButton');
 return true;	
-}
+};
 
-function setSort()
-{
-var f = document.forms[0];
-f.submit();
-return true;
-}
+golgotha.local.setSort = function() {
+	return document.forms[0].submit();
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -41,14 +38,14 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="imagegallery.do" method="post" validate="return validate(this)">
+<el:form action="imagegallery.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <view:table cmd="imagegallery">
 <!-- Table Sort Bar -->
 <tr class="title">
  <td colspan="2">BY DATE <el:text name="imgDate" idx="*" size="10" max="10" value="${param.imgDate}" />
  <el:button ID="CalendarButton" label="CALENDAR" onClick="void show_calendar('forms[0].imgDate')" /></td>
  <td colspan="2"><el:cmd url="fleetgallery" linkID="true">FLEET GALLERY</el:cmd></td>
- <td>SORT BY <el:combo name="sortType" idx="*" size="1" options="${sortOptions}" firstEntry="-" value="${param.sortType}" onChange="setSort()" />
+ <td>SORT BY <el:combo name="sortType" idx="*" size="1" options="${sortOptions}" firstEntry="-" value="${param.sortType}" onChange="golgotha.local.setSort()" />
  <el:button ID="SubmitButton" type="submit" label="GO" /></td>
 </tr>
 

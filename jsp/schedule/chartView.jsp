@@ -13,12 +13,10 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function setChart(combo)
-{
-var id = combo.options[combo.selectedIndex].value;
-self.location = '/chart.do?id=' + id;
-return true;
-}
+golgotha.local.setChart = function(combo) {
+	self.location = '/chart.do?id=' + golgotha.form.getCombo(combo);
+	return true;
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -34,7 +32,7 @@ return true;
 <el:table className="form">
 <tr class="title">
  <td style="width:50%" class="caps">${chart.name} AT ${chart.airport.name} (<fmt:airport airport="${chart.airport}" />)</td>
- <td class="right">SELECT CHART <el:combo name="chart" size="1" idx="1" options="${charts}" value="${chart}" onChange="void setChart(this)" /></td>
+ <td class="right">SELECT CHART <el:combo name="chart" size="1" idx="1" options="${charts}" value="${chart}" onChange="void golgotha.local.setChart(this)" /></td>
 </tr>
 <tr>
 <c:choose>

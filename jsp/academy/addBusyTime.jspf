@@ -2,11 +2,11 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <script type="text/javascript">
-function saveDay()
+golgotha.local.saveDay = function()
 {
-if (!checkSubmit()) return false;
+if (!golgotha.form.check()) return false;
 var f = document.forms[0];
-if (!validateCombo(f.busyDate, 'Busy Date')) return false;
+golgotha.form.validate({f:f.busyDate, t:'Busy Date'});
 
 // Set the fields
 f.startDate.value = f.busyDate.value;
@@ -15,7 +15,7 @@ f.endDate.value = f.busyDate.value;
 f.endTime.value = '23:59';
 f.submit();
 return true;
-}
+};
 </script>
 <el:table className="form">
 <tr class="title">
@@ -46,7 +46,7 @@ return true;
  <td class="label">Entire Day</td>
  <td class="data"><el:text name="busyDate" idx="*" size="10" max="10" value="" />
 &nbsp;<el:button label="CALENDAR" onClick="void show_calendar('forms[0].busyDate')" />
-&nbsp;<el:button ID="BusyDayButton" label="BOOK ENTIRE DAY" onClick="void saveDay()" />
+&nbsp;<el:button ID="BusyDayButton" label="BOOK ENTIRE DAY" onClick="void golgotha.local.saveDay()" />
 &nbsp;<span class="small">All dates/times are ${myTZ.name}.</span></td>
 </tr>
 <tr>

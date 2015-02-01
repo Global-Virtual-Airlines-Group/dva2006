@@ -17,17 +17,16 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateText(form.name, 6, 'Time Zone Name')) return false;
-if (!validateText(form.abbr, 2, 'Time Zone Code')) return false;
-if (!validateCombo(form.newID, 'JVM Time Zone ID')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.name, l:6, t:'Time Zone Name'});
+golgotha.form.validate({f:f.abbr, l:2, t:'Time Zone Code'})
+golgotha.form.validate({f:f.newID, t:'JVM Time Zone ID'});
+golgotha.form.submit();
 disableButton('SaveButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -38,7 +37,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="tz.do" method="post" linkID="${isNew ? '' : tz.ID}" op="save" validate="return validate(this)">
+<el:form action="tz.do" method="post" linkID="${isNew ? '' : tz.ID}" op="save" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2">TIME ZONE PROFILE</td>

@@ -15,7 +15,7 @@
 <content:js name="common" />
 <content:pics />
 <script type="text/javascript">
-function toggleCombo(opt)
+golgotha.local.toggleCombo = function(opt)
 {
 var lbl;
 if (!opt) {
@@ -38,34 +38,33 @@ if (lbl == 'Examinations') {
 }
 
 return true;	
-}
+};
 
-function validate(from)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.submit();
 disableButton('SearchButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void toggleCombo()">
+<body onload="void golgotha.local.toggleCombo()">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="examstats.do" method="post" validate="return validate(this)">
+<el:form action="examstats.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="4"><content:airline /> EXAMINATION / CHECK RIDE STATISTICS</td>
 </tr>
 <tr>
  <td class="label">Search Type</td>
- <td class="data"><el:check name="searchType" idx="*" type="radio" options="${searchTypes}" value="${param.searchType}" onChange="void toggleCombo(this)" /></td>
+ <td class="data"><el:check name="searchType" idx="*" type="radio" options="${searchTypes}" value="${param.searchType}" onChange="void golgotha.local.toggleCombo(this)" /></td>
  <td class="label">Flight Academy</td>
  <td class="data"><el:box name="academyOnly" idx="*" value="true" label="Flight Academy Only" checked="${param.academyOnly}" /></td>
 </tr>

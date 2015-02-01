@@ -15,21 +15,21 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function validate(form)
+golgotha.localvalidate = function(f)
 {
 <c:if test="${access.canComment || access.canUpdateProgress}">
-if (!checkSubmit()) return false;
+if (!golgotha.form.check()) return false;
 
 // Validate response
-var act = form.action;
+var act = f.action;
 if (act.indexOf('courseprogress.do') != -1) {
 
 } else if (act.indexOf('courseassign.do') != -1) {
 
 } else
-	if (!validateText(form.msgText, 5, 'Course Comments')) return false;
+	golgotha.form.validate({f:f.msgText, l:5, t:'Course Comments'});
 
-setSubmit();
+golgotha.form.submit();
 disableButton('EnrollButton');
 disableButton('CancelButton');
 disableButton('ReturnButton');
@@ -42,17 +42,14 @@ disableButton('CommentButton');</c:if>
 return ${access.canComment || access.canUpdateProgress};
 }
 <c:if test="${access.canCancel}">
-function validateCancel()
-{
-if (confirm('Are you sure you want to withdraw?'))
-	self.location = '/coursedispose.do?op=abandon&id=${course.hexID}';
-
-return true;
-}
+golgotha.local.validateCancel = function() {
+	if (confirm('Are you sure you want to withdraw?')) self.location = '/coursedispose.do?op=abandon&id=${course.hexID}';
+	return true;
+};
 </c:if></script>
 </head>
 <content:copyright visible="false" />
-<body onload="void initLinks()">
+<body>
 <content:page>
 <%@ include file="/jsp/academy/header.jspf" %> 
 <%@ include file="/jsp/academy/sideMenu.jspf" %>
@@ -62,7 +59,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="coursecomment.do" link="${course}" method="post" validate="return validate(this)">
+<el:form action="coursecomment.do" link="${course}" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="7">FLIGHT ACADEMY COURSE - ${course.name}</td>
@@ -112,7 +109,7 @@ return true;
 </c:if>
 <c:if test="${!empty cert.description}">
 <tr class="title caps">
- <td colspan="7">COURSE INSTRUCTIONS - <span class="und" onclick="void toggleExpand(this, 'courseDesc')">COLLAPSE</span></td>
+ <td colspan="7">COURSE INSTRUCTIONS - <span class="und" onclick="void golgotha.util.toggleExpand(this, 'courseDesc')">COLLAPSE</span></td>
 </tr>
 <tr class="courseDesc">
  <td class="label">&nbsp;</td>
@@ -127,7 +124,7 @@ return true;
 <tr>
  <td class="label top">Study Documents</td>
  <td colspan="6" class="data"><c:forEach var="doc" items="${docs}">
-<el:link url="/library/${doc.fileName}">${doc.name}</el:link><br />
+<el:link target="_new" url="/library/${doc.fileName}">${doc.name}</el:link><br />
 </c:forEach></td>
 </tr>
 </c:if>
@@ -246,7 +243,7 @@ Requires the <span class="pri bld">${progress.examName}</span> examination<c:if 
  <el:cmdbutton ID="EnrollButton" url="coursedispose" link="${course}" op="start" label="ENROLL STUDENT" />
 </c:if>
 <c:if test="${access.canCancel}">
- <el:button ID="CancelButton" onClick="validateCancel()" label="WITHDRAW" />
+ <el:button ID="CancelButton" onClick="golgotha.local.validateCancel()" label="WITHDRAW" />
 </c:if>
 <c:if test="${access.canRestart}">
  <el:cmdbutton ID="ReturnButton" url="coursedispose" link="${course}" op="restart" label="RETURN" />

@@ -18,35 +18,30 @@
 <c:if test="${exam.routePlot}">
 <map:api version="3" /></c:if>
 <content:googleAnalytics eventSupport="true" />
-<c:set var="onLoad" value="showRemaining(10)" scope="page" />
+<c:set var="onLoad" value="golgotha.exam.showRemaining(10)" scope="page" />
 <script type="text/javascript">
-var expiry = ${exam.expiryDate.time};
+golgotha.exam.expiry = ${exam.expiryDate.time};
 <c:if test="${exam.routePlot}">
-var rpInfo = [];
-var rpQuestions = ${rpQuestions};
-var doRunways = false;
-
-function initMaps()
+golgotha.exam.rpQuestions = ${rpQuestions};
+golgotha.exam.initMaps = function()
 {
-var mapTypes = {mapTypeIds: [google.maps.MapTypeId.TERRAIN, google.maps.MapTypeId.SATELLITE]};
-for (var x = 0; x < rpQuestions.length; x++) {
-	var idx = rpQuestions[x];
-	var info = rpInfo[idx];
-	var mapOpts = {center:info.mapCenter, zoom:golgotha.maps.util.getDefaultZoom(info.distance), scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
+var mapTypes = {mapTypeIds:[google.maps.MapTypeId.TERRAIN, google.maps.MapTypeId.SATELLITE]};
+for (var x = 0; x < golgotha.exam.rpQuestions.length; x++) {
+	var idx = golgotha.exam.rpQuestions[x];
+	var info = golgotha.exam.rpInfo[idx];
+	var mapOpts = {center:info.mapCenter, zoom:golgotha.maps.util.getDefaultZoom(info.distance), scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
 	info.map = new google.maps.Map(document.getElementById('qMap' + info.idx), mapOpts);
 	info.map.setMapTypeId(google.maps.MapTypeId.TERRAIN);
 	info.aD.setMap(info.map);
 	info.aA.setMap(info.map);
-	var rt = new google.maps.Polyline({path:[info.aD.getPosition(), info.aA.getPosition()], strokeColor:'#4080af', strokeWeight:1.75, strokeOpacity:0.65, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
-	rt.setMap(info.map);
+	var rt = new google.maps.Polyline({map:info.map, path:[info.aD.getPosition(), info.aA.getPosition()], strokeColor:'#4080af', strokeWeight:1.75, strokeOpacity:0.65, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
 }
 
 return true;
-}
-<c:set var="onLoad" value="initMaps(); ${onLoad}" scope="page" />
-</c:if>
+};
+<c:set var="onLoad" value="golgotha.exam.initMaps(); ${onLoad}" scope="page" /></c:if>
 // Time offset between server and client clock
-var timeOffset = (new Date().getTime() - ${currentTime});
+golgotha.exam.timeOffset = (new Date().getTime() - ${currentTime});
 </script>
 </head>
 <content:copyright visible="false" />
@@ -57,7 +52,7 @@ var timeOffset = (new Date().getTime() - ${currentTime});
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form method="post" action="examsubmit.do" link="${exam}" validate="return validate(this)">
+<el:form method="post" action="examsubmit.do" link="${exam}" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <!-- Exam Title Bar -->
 <tr class="title caps">
@@ -86,7 +81,7 @@ var timeOffset = (new Date().getTime() - ${currentTime});
 <tr>
  <td class="data small">RESOURCE - <span class="pri bld">${q.typeName}</span> image, <fmt:int value="${q.size}" />
  bytes <span class="sec">(<fmt:int value="${q.width}" /> x <fmt:int value="${q.height}" /> pixels)</span>
- <el:link className="pri bld" url="javascript:void viewImage('${q.hexID}', ${q.width}, ${q.height})">VIEW IMAGE</el:link></td>
+ <el:link className="pri bld" url="javascript:void golgotha.exam.viewImage('${q.hexID}', ${q.width}, ${q.height})">VIEW IMAGE</el:link></td>
 </tr>
 </c:if>
 <c:if test="${isRP}">
@@ -96,7 +91,7 @@ var info = { examID: '${exam.hexID}', exam: ${exam.ID}, idx: ${q.number}, distan
 info.mapCenter = <map:point point="${q.midPoint}" />
 info.aD = <map:marker point="${q.airportD}" />
 info.aA = <map:marker point="${q.airportA}" />
-rpInfo[${q.number}] = info;
+golgotha.exam.rpInfo[${q.number}] = info;
 </script>
 <tr>
  <td class="label top">Map #<fmt:int value="${q.number}" /></td>
@@ -109,13 +104,13 @@ rpInfo[${q.number}] = info;
  <td class="label top">Answer #<fmt:int value="${q.number}" /></td>
 <c:choose>
 <c:when test="${isRP}">
- <td class="data"><el:check ID="A${q.number}" onChange="void updateMap(rpInfo[${q.number}])" type="radio" idx="*" cols="1" width="500" separator="<br />" name="answer${q.number}" className="small" options="${q.choices}" value="${q.answer}" /></td>
+ <td class="data"><el:check ID="A${q.number}" onChange="void golgotha.exam.updateMap(golgotha.exam.rpInfo[${q.number}])" type="radio" idx="*" cols="1" width="500" separator="<br />" name="answer${q.number}" className="small" options="${q.choices}" value="${q.answer}" /></td>
 </c:when>
 <c:when test="${isMC}">
- <td class="data"><el:check ID="A${q.number}" onChange="void saveAnswer(${q.number}, ${exam.hexID})" type="radio" name="answer${q.number}" className="small" width="400" cols="1" options="${q.choices}" value="${q.answer}" /></td>
+ <td class="data"><el:check ID="A${q.number}" onChange="void golgotha.exam.saveAnswer(${q.number}, ${exam.hexID})" type="radio" name="answer${q.number}" className="small" width="400" cols="1" options="${q.choices}" value="${q.answer}" /></td>
 </c:when>
 <c:otherwise>
- <td class="data"><el:textbox ID="A${q.number}" onBlur="void saveAnswer(${q.number}, ${exam.hexID})" name="answer${q.number}" className="small" width="90%" height="3" resize="true">${q.answer}</el:textbox></td>
+ <td class="data"><el:textbox ID="A${q.number}" onBlur="void golgotha.exam.saveAnswer(${q.number}, ${exam.hexID})" name="answer${q.number}" className="small" width="90%" height="3" resize="true">${q.answer}</el:textbox></td>
 </c:otherwise>
 </c:choose>
 </tr>

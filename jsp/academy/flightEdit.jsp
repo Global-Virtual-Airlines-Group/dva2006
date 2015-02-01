@@ -16,19 +16,18 @@
 <content:js name="datePicker" />
 <content:js name="hourCalc" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateCombo(form.eqType, 'Equipment Type')) return false;
-if (!validateCombo(form.instructor, 'Instructor Pilot')) return false;
-if (!validateText(form.flightDate, 10, 'Flight Date')) return false;
-if (!validateCombo(form.flightTime, 'Logged Hours')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.eqType, t:'Equipment Type'});
+golgotha.form.validate({f:f.instructor, t:'Instructor Pilot'});
+golgotha.form.validate({f:f.flightDate, l:10, t:'Flight Date'});
+golgotha.form.validate({f:f.flightTime, t:'Logged Hours'});
+golgotha.form.submit();
 disableButton('SaveButton');
 disableButton('CalcButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -41,7 +40,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form method="post" action="insflight.do" link="${flight}" op="save" validate="return validate(this)">
+<el:form method="post" action="insflight.do" link="${flight}" op="save" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <!-- PIREP Title Bar -->
 <tr class="title caps">
@@ -77,7 +76,7 @@ return true;
  <td class="label">Logged Time</td>
  <td class="data"><el:combo name="flightTime" idx="*" size="1" className="req" firstEntry="[ HOURS ]" options="${flightTimes}" value="${flightTime}" />&nbsp;
 <el:text name="tmpHours" size="1" max="2" value="${tmpH}" /> hours, <el:text name="tmpMinutes" size="1" max="2" value="${tmpM}" /> minutes&nbsp;
-<el:button ID="CalcButton" label="CALCULATE" onClick="void hoursCalc()" /></td>
+<el:button ID="CalcButton" label="CALCULATE" onClick="void golgotha.form.wrap(golgotha.util.hoursCalc, document.forms[0])" /></td>
 </tr>
 <tr>
  <td class="label top">Remarks</td>

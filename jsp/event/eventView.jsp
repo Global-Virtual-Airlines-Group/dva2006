@@ -18,13 +18,12 @@
 <content:js name="common" />
 <content:rss title="${airlineName} Online Events" path="/event_rss.ws" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateCombo(form.eqType, 'Equipment Type')) return false;
-if (!validateCombo(form.route, 'Flight Route')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.eqType, t:'Equipment Type'});
+golgotha.form.validate({f:f.route, t:'Flight Route'});
+golgotha.form.submit();
 disableButton('SaveButton');
 disableButton('EditButton');
 disableButton('RouteButton');
@@ -33,19 +32,18 @@ disableButton('DeleteButton');
 disableButton('AssignButton');
 disableButton('BalanceButton');
 return true;
-}
+};
 
-function resizeBriefing(maxRows)
-{
-var txt = document.forms[0].briefing;
-resize(txt);
-if (txt.rows > maxRows) txt.rows = maxRows;
-return true;
-}
+golgotha.local.resizeBriefing = function(maxRows) {
+	var txt = document.forms[0].briefing;
+	golgotha.form.resize(txt);
+	if (txt.rows > maxRows) txt.rows = maxRows;
+	return true;
+};
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void resizeBriefing(20)">
+<body onload="void golgotha.local.resizeBriefing(20)">
 <content:page>
 <%@ include file="/jsp/event/header.jspf" %> 
 <%@ include file="/jsp/event/sideMenu.jspf" %>
@@ -56,7 +54,7 @@ return true;
 <content:region id="main">
 <c:if test="${access.canSignup}">
 <c:set var="formAction" value="eventsignup.do" scope="page" />
-<c:set var="formValidate" value="return validate(this)" scope="page" />
+<c:set var="formValidate" value="return golgotha.form.wrap(golgotha.local.validate, this)" scope="page" />
 </c:if>
 <c:if test="${!access.canSignup}">
 <c:set var="formAction" value="event.do" scope="page" />

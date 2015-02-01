@@ -12,16 +12,16 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateText(form.firstName, 2, 'First Name')) return false;
-if (!validateText(form.lastName, 2, 'Last Name')) return false;
-if (!validateText(form.pwd, 3, 'Password')) return false;
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.firstName, l:2, t:'First Name'});
+golgotha.form.validate({f:f.lastName, l:2, t:'Last Name'});
+golgotha.form.validate({f:f.pwd, l:3, t:'Password'});
 <c:if test="${!empty dupeUsers}">
-if (!validateCheckBox(form.pilotCode, 1, 'Pilot Code')) return false;</c:if>
-if (form.jsOK.value.length == 0) {
-	form.jsOK.value = 'true';
+golgotha.form.validate({f:f.pilotCode, min:1, t:'Pilot Code'});</c:if>
+if (f.jsOK.value.length == 0) {
+	f.jsOK.value = 'true';
 	try {
 		f.screenX.value = screen.width;
 		f.screenY.value = screen.height;
@@ -29,14 +29,13 @@ if (form.jsOK.value.length == 0) {
 	} catch (err) { }
 }
 
-setSubmit();
+golgotha.form.submit();
 disableButton('SubmitButton');
 return true;
-}
+};
 
-function setFocus()
+golgotha.local.setFocus = function(f)
 {
-var f = document.forms[0];
 if (f.firstName.value.length > 0)
 	f.pwd.focus();
 else
@@ -52,11 +51,11 @@ try {
 // Ensure javascript is working properly
 f.jsOK.value = 'true';
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void setFocus()">
+<body onload="void golgotha.local.setFocus(document.forms[0])">
 <content:page>
 <%@include file="/jsp/main/header.jspf" %> 
 <%@include file="/jsp/main/sideMenu.jspf" %>
@@ -68,7 +67,7 @@ Welcome to <content:airline />! In order to access the secure areas of our web s
 name <c:if test="${!empty dupeUsers}">or your User ID </c:if>and password. Your browser must be able to accept cookies 
 from <span class="sec bld">${domain}</span> in order to log into our web site.<br />
 <br />
-<el:form method="post" action="login.do" validate="return validate(this)">
+<el:form method="post" action="login.do" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2">USER LOGIN</td>

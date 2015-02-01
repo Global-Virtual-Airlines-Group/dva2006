@@ -15,7 +15,7 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function search(aD, aA)
+golgotha.local.search = function(aD, aA)
 {
 var f = document.forms[0];
 f.airportD.value = aD;
@@ -23,9 +23,9 @@ f.airportA.value = aA;
 f.action = '/dsprsearch.do';
 f.submit();
 return true;	
-}
+};
 <c:if test="${access.canCreate}">
-function plot(aD, aA)
+golgotha.local.plot = function(aD, aA)
 {
 var f = document.forms[0];
 f.airportD.value = aD;
@@ -33,7 +33,7 @@ f.airportA.value = aA;
 f.action = '/dsprouteplot.do';
 f.submit();
 return true;	
-}
+};
 </c:if>
 </script>
 </head>
@@ -74,7 +74,7 @@ return true;
  <td class="pri bld"><fmt:int value="${entryNumber}" /></td>
 <c:choose>
 <c:when test="${access.canCreate}">
- <td><el:button onClick="javascript:void plot('${route.airportD.ICAO}', '${route.airportA.ICAO}')" label="PLOT ROUTE" /></td>
+ <td><el:button onClick="javascript:void golgotha.local.plot('${route.airportD.ICAO}', '${route.airportA.ICAO}')" label="PLOT ROUTE" /></td>
  <td colspan="2">${route.airportD.name} (<fmt:airport airport="${route.airportD}" />) to ${route.airportA.name}
  (<fmt:airport airport="${route.airportA}" />)</td>
 </c:when>
@@ -87,8 +87,8 @@ return true;
  <td class="bld"><fmt:int value="${route.flights}" /> flights</td>
 <c:set var="allRoutes" value="${route.routes + route.inactiveRoutes}" scope="page" />
 <c:if test="${allRoutes > 0}">
- <td><el:link url="javascript:void search('${route.airportD.ICAO}', '${route.airportA.ICAO}')" className="sec bld"><fmt:int value="${route.routes}" /> routes</el:link></td>
- <td><el:link url="javascript:void search('${route.airportD.ICAO}', '${route.airportA.ICAO}')"><fmt:int value="${route.inactiveRoutes}" /> inactive</el:link></td>
+ <td><el:link url="javascript:void golgotha.local.search('${route.airportD.ICAO}', '${route.airportA.ICAO}')" className="sec bld"><fmt:int value="${route.routes}" /> routes</el:link></td>
+ <td><el:link url="javascript:void golgotha.local.search('${route.airportD.ICAO}', '${route.airportA.ICAO}')"><fmt:int value="${route.inactiveRoutes}" /> inactive</el:link></td>
 </c:if>
 <c:if test="${allRoutes == 0}">
  <td colspan="2" class="sec bld">NO ROUTES</td>

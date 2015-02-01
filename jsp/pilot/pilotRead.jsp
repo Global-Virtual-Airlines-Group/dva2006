@@ -16,7 +16,7 @@
 <content:js name="common" />
 <c:if test="${!empty loginAddrs}">
 <script type="text/javascript">
-function toggleLoginAddrs(lnk)
+golgotha.local.toggleLoginAddrs = function(lnk)
 {
 var addrDiv = document.getElementById('loginAddrs');
 if (!addrDiv) return false;
@@ -28,7 +28,7 @@ displayObject(addrDiv, isHidden);
 // Update the link
 lnk.innerHTML = (!isHidden) ? 'SHOW' : 'HIDE';
 return true;
-}
+};
 </script></c:if>
 </head>
 <content:copyright visible="false" />
@@ -181,7 +181,7 @@ return true;
  <td class="label top">Logins</td>
  <td colspan="${cspan}" class="data"><fmt:int value="${pilot.loginCount}" />, last on <fmt:date date="${pilot.lastLogin}" />
 <content:filter roles="HR"> from <el:cmd url="loginaddrs" linkID="${pilot.loginHost}" op="net">${pilot.loginHost}</el:cmd>.
-<c:if test="${!empty loginAddrs}"><a href="javascript:void toggleLoginAddrs(this)">SHOW</a></c:if></content:filter>
+<c:if test="${!empty loginAddrs}"><a href="javascript:void golgotha.local.toggleLoginAddrs(this)">SHOW</a></c:if></content:filter>
 </td>
 </tr>
 <content:filter roles="HR">

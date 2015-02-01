@@ -12,18 +12,17 @@
 <content:js name="common" />
 <content:pics />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateText(form.firstName, 3, 'First (given) Name')) return false;
-if (!validateText(form.lastName, 2, 'Last (family) Name')) return false;
-if (!validateText(form.email, 7, 'E-Mail Address')) return false;
-if (!validateText(form.msgText, 10, 'Message to Human Resources')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.firstName, l:3, t:'First (given) Name'});
+golgotha.form.validate({f:f.lastName, l:2, t:'Last (family) Name'});
+golgotha.form.validate({f:f.email, addr:true, t:'E-Mail Address'});
+golgotha.form.validate({f:f.msgText, l:10, t:'Message to Human Resources'});
+golgotha.form.submit();
 disableButton('SubmitButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -34,7 +33,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="dupeinfo.do" method="post" validate="return validate(this)">
+<el:form action="dupeinfo.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2">Duplicate Registration</td>

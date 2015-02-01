@@ -14,12 +14,10 @@
 <content:css name="form" />
 <content:pics />
 <script type="text/javascript">
-function sortBy(combo)
-{
-var sortType = combo.options[combo.selectedIndex].value;
-self.location = '/httpstats.do?sortType=' + sortType;
-return true;
-}
+golgotha.local.sortBy = function(combo) {
+	self.location = '/httpstats.do?sortType=' + escape(golgotha.form.getCombo(combo));
+	return true;
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -35,7 +33,7 @@ return true;
 <tr class="title">
  <td colspan="5" class="left">HTTP SERVER STATISTICS</td>
  <td colspan="2" class="right">SORT BY 
-<el:combo name="sortType" size="1" idx="1" options="${sortTypes}" value="${viewContext.sortType}" onChange="void sortBy(this)" /></td>
+<el:combo name="sortType" size="1" idx="1" options="${sortTypes}" value="${viewContext.sortType}" onChange="void golgotha.local.sortBy(this)" /></td>
 </tr>
 
 <!-- Table Header Bar-->

@@ -12,15 +12,14 @@
 <content:css name="form" />
 <content:pics />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
+if (!golgotha.form.check()) return false;
 if (!confirm("Are you sure you wish to continue?")) return false;
-
-setSubmit();
+golgotha.form.submit();
 disableButton('ReloadButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -31,7 +30,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form method="post" action="usvcairports.do" validate="return validate(this)">
+<el:form method="post" action="usvcairports.do" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2"><content:airline /> UNSERVICED AIRPORTS</td>

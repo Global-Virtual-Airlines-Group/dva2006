@@ -14,28 +14,25 @@
 <content:pics />
 <content:sysdata var="badDomains" name="registration.reject_domain" />
 <script type="text/javascript">
-<fmt:jsarray var="invalidDomains" items="${badDomains}" />
-function validate(form)
+golgotha.local.invalidDomains = <fmt:jsarray items="${badDomains}" />
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateText(form.code, 8, 'E-Mail Validation Code')) return false;
-if (!validateEMail(form.email, 'E-Mail Address')) return false;
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.code, l:8, t:'E-Mail Validation Code'});
+golgotha.form.validate({f:f.email, addr:true, t:'E-Mail Address'});
 
 // Validate e-mail domain
-var eMail = form.email.value;
+var eMail = f.email.value;
 var usrDomain = eMail.substring(eMail.indexOf('@') + 1, eMail.length);
 for (var x = 0; x < invalidDomains.length; x++) {
-	if (usrDomain == invalidDomains[x]) {
-		alert('Your e-mail address (' + eMail + ') contains a forbidden domain - ' + invalidDomains[x]);
-		form.email.focus();
-		return false;
-	}
+	if (usrDomain == golgotha.local.invalidDomains[x])
+		throw new golgotha.util.ValidationError('Your e-mail address (' + eMail + ') contains a forbidden domain - ' + golgotha.local.invalidDomains[x], f.email);
 }
 
-setSubmit();
+golgotha.form.submit();
 disableButton('SubmitButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -46,7 +43,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="emailupd.do" method="post" validate="return validate(this)">
+<el:form action="emailupd.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2" class="left">UPDATE E-MAIL ADDRESS</td>

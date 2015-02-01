@@ -34,7 +34,7 @@ loaders.series.onload(function() { golgotha.util.enable('#selImg'); });
 loaders.fr.onload(function() { golgotha.util.enable('selFronts'); });
 loaders.lg.onload(function() { golgotha.util.enable('selLG'); });
 
-function loadWX(code)
+golgotha.local.loadWX = function(code)
 {
 if (code.length < 4) {
 	alert('Please provide the Airport code.');
@@ -47,10 +47,9 @@ var useFA = false;
 var f = document.forms[0];
 useFA = f.useFA.checked;</content:filter>
 	
-//Build the XML Request
-var d = new Date();
-var xmlreq = getXMLHttpRequest();
-xmlreq.open('GET', 'airportWX.ws?fa=' + useFA + '&code=' + code + '&type=METAR,TAF&time=' + d.getTime(), true);
+// Build the XML Request
+var xmlreq = new XMLHttpRequest();
+xmlreq.open('GET', 'airportWX.ws?fa=' + useFA + '&code=' + code + '&type=METAR,TAF&time=' + golgotha.util.getTimestamp(30000), true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	var xdoc = xmlreq.responseXML.documentElement;
@@ -93,7 +92,7 @@ xmlreq.onreadystatechange = function() {
 		}
 
 		// Create the marker
-		var p = new google.maps.LatLng(parseFloat(wx.getAttribute('lat')), parseFloat(wx.getAttribute('lng')));
+		var p = {lat:parseFloat(wx.getAttribute('lat')), lng:parseFloat(wx.getAttribute('lng'))};
 		if (wx.getAttribute('pal'))
 			mrk = new golgotha.maps.IconMarker({pal:wx.getAttribute('pal'), icon:wx.getAttribute('icon')}, p);
 		else if (wx.getAttribute('color'))
@@ -122,7 +121,7 @@ xmlreq.onreadystatechange = function() {
 		}
 
 		// Set the the click handlers
-		google.maps.event.addListener(mrk, 'click', clickInfo);
+		google.maps.event.addListener(mrk, 'click', golgotha.local.clickInfo);
 
 		// Add the marker
 		wxMarkers[mrk.code] = mrk;
@@ -135,13 +134,13 @@ xmlreq.onreadystatechange = function() {
 
 	golgotha.event.beacon('WeatherMap', 'Fetch TAF/METAR', code);
 	return true;
-}
+};
 
 xmlreq.send(null);
 return true;
-}
+};
 
-function closeWindow()
+golgotha.local.closeWindow = function()
 {
 this.isOpen = false;
 var f = document.forms[0];
@@ -150,12 +149,12 @@ f.metarData.value = '';
 f.metarData.disabled = true;
 f.tafData.value = '';
 f.tafData.disabled = true;
+map.closeWindow();
 return true;
-}
+};
 
-function clickInfo()
+golgotha.local.clickInfo = function()
 {
-// Display the info
 if (this.tabs) {
 	this.updateTab(0, new google.maps.Size(325, 100));
 	map.infoWindow.marker = this;
@@ -173,7 +172,7 @@ f.tafData.value = this.TAF;
 f.tafData.disabled = false;
 this.isOpen = true;
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -192,13 +191,12 @@ return true;
  <td colspan="2" class="left"><content:airline /> WEATHER CENTER <c:if test="${!empty gfsCycle}"> - GFS DATA AS OF <fmt:date date="${gfsCycle}" t="HH:mm" /></c:if></td>
 </tr>
 <tr>
- <td class="data" colspan="2"><map:div ID="googleMap" x="100%" y="480" /><div id="copyright" class="small mapTextLabel"></div>
-<div id="mapStatus" class="small mapTextLabel"></div></td>
+ <td class="data" colspan="2"><map:div ID="googleMap" x="100%" y="480" /></td>
 </tr>
 <tr>
  <td class="label">Airport Code</td>
  <td class="data"><el:text name="wxID" idx="*" className="bld" size="3" max="4" /> 
-  <el:button ID="FetchButton" onClick="loadWX(document.forms[0].wxID.value)" label="FETCH WEATHER" />
+  <el:button ID="FetchButton" onClick="void golgotha.local.loadWX(document.forms[0].wxID.value)" label="FETCH WEATHER" />
 <content:filter roles="Route,Dispatch"> <el:box name="useFA" value="true" checked="false" label="Use FlightAware Weather" /></content:filter></td>
 </tr>
 <tr>
@@ -215,7 +213,7 @@ return true;
 </content:region>
 </content:page>
 <div id="copyright" class="mapTextLabel"></div>
-<div id="mapStatus" class="mapTextLabel"></div>
+<div id="mapStatus" class="small mapTextLabel"></div>
 <div id="zoomLevel" class="mapTextLabel"></div>
 <div id="seriesRefresh" class="mapTextLabel"></div>
 <content:sysdata var="wuAPI" name="security.key.wunderground" />
@@ -231,7 +229,7 @@ var wxMarkers = [];
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
-google.maps.event.addListener(map, 'click', map.closeWindow);
+google.maps.event.addListener(map, 'click', golgotha.local.closeWindow);
 google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
 google.maps.event.addListener(map, 'zoom_changed', golgotha.maps.updateZoom);
 
