@@ -13,36 +13,34 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
+if (!golgotha.form.check()) return false;
 
 // Validate response
-var act = form.action;
+var act = f.action;
 if (act.indexOf('hdissue.do') != -1) {
-	if (!validateText(form.subject, 10, 'Issue Title')) return false;
-	if (!validateText(form.body, 5, 'Issue Description')) return false;
-	if ((form.sendIssue) && (form.sendIssue.disabled))
-		form.sendIssue.checked = false;
+	golgotha.form.validate({f:f.subject, l:10, t:'Issue Title'});
+	golgotha.form.validate({f:f.body, l:5, t:'Issue Description'});
+	if ((f.sendIssue) && (f.sendIssue.disabled))
+		f.sendIssue.checked = false;
 } else {
-	if (!validateCombo(form.devAssignedTo, 'Development Issue Assignee')) return false;
-	if (!validateCombo(form.area, 'Development Issue Area')) return false;
-	if (!validateCombo(form.type, 'Development Issue Type')) return false;
-	if (!validateCombo(form.priority, 'Development Issue Priority')) return false;
+	golgotha.form.validateCombo({f:f.devAssignedTo, t:'Development Issue Assignee'});
+	golgotha.form.validateCombo({f:f.area, t:'Development Issue Area'});
+	golgotha.form.validateCombo({f:f.type, t:'Development Issue Type'});
+	golgotha.form.validateCombo({f:f.priority, t:'Development Issue Priority'});
 }
 
-setSubmit();
+golgotha.form.submit();
 disableButton('SaveButton');
 disableButton('ConvertButton');
 return true;
-}
+};
 <c:if test="${access.canUpdateStatus}">
-function checkAssignee(combo)
-{
-var f = document.forms[0];
-f.sendIssue.disabled = (combo.selectedIndex == document.originalAssignee);
-return true;
-}</c:if>
+golgotha.local.checkAssignee = function(combo) {
+	document.forms[0].sendIssue.disabled = (combo.selectedIndex == golgotha.local.originalAssignee);
+	return true;
+};</c:if>
 </script>
 </head>
 <content:copyright visible="false" />
@@ -53,7 +51,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form method="post" action="hdissue.do" op="save" link="${issue}" validate="return validate(this)">
+<el:form method="post" action="hdissue.do" op="save" link="${issue}" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title">
 <c:if test="${!empty issue}">
@@ -80,7 +78,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Assigned To</td>
- <td class="data"><el:combo name="assignedTo" size="1" idx="5" options="${assignees}" value="${issue.assignedTo}" onChange="void checkAssignee(this)" /></td>
+ <td class="data"><el:combo name="assignedTo" size="1" idx="5" options="${assignees}" value="${issue.assignedTo}" onChange="void golgotha.local.checkAssignee(this)" /></td>
 </tr>
 </c:if>
 </c:if>
@@ -159,10 +157,8 @@ return true;
 </content:region>
 </content:page>
 <c:if test="${access.canUpdateStatus}">
-<script type="text/javascript">
-// Set original assignee
-var f = document.forms[0];
-document.originalAssignee = f.assignedTo.selectedIndex;
+<script type="text/javascript" defer>
+golgotha.local.originalAssignee = document.forms[0].assignedTo.selectedIndex;
 </script></c:if>
 <content:googleAnalytics />
 </body>

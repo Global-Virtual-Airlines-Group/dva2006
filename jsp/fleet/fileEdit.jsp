@@ -20,18 +20,17 @@
 <content:css name="form" />
 <content:pics />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateText(form.title, 8, 'File Title')) return false;
-if (!validateCombo(form.category, 'File Category')) return false;
-if (!validateText(form.desc, 10, 'Description')) return false;
-if (!validateFile(form.file, 'pdf,exe,zip,xls,doc', 'Uploaded File')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.title, l:8, t:'File Title'});
+golgotha.form.validate({f:f.category, t:'File Category'});
+golgotha.form.validate({f:f.desc, l:10, t:'Description'});
+golgotha.form.validate({f:f.file, ext:['pdf','exe','zip','xls','doc'], t:'Uploaded File'});
+golgotha.form.submit();
 disableButton('SaveButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -44,7 +43,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="userfile.do" linkID="${entry.fileName}" op="save" method="post" allowUpload="true" validate="return validate(this)">
+<el:form action="userfile.do" linkID="${entry.fileName}" op="save" method="post" allowUpload="true" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
 <c:choose>

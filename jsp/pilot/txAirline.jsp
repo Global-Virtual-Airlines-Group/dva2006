@@ -12,16 +12,15 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateCombo(form.dbName, 'Airline Name')) return false;
-if (!validateCombo(form.eqType, 'Equipment Program')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validateCombo({f:f.dbName, t:'Airline Name'});
+golgotha.form.validateCombo({f:f.eqType, t:'Equipment Program'});
+golgotha.form.submit();
 disableButton('TransferButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -33,7 +32,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="txairline.do" method="post" link="${pilot}" validate="return validate(this)">
+<el:form action="txairline.do" method="post" link="${pilot}" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2">INTER-AIRLINE PILOT TRANSFER FOR ${pilot.name}</td>

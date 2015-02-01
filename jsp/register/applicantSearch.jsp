@@ -15,16 +15,15 @@
 <content:js name="common" />
 <content:pics />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateText(form.firstName, 2, 'First (given) Name')) return false;
-if (!validateText(form.lastName, 2, 'Last (family) Name')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.firstName, l:2, t:'First Name'});
+golgotha.form.validate({f:f.lastName, l:2, t:'Last Name'});
+golgotha.form.submit();
 disableButton('SearchButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -35,7 +34,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="appfind.do" method="post" validate="return validate(this)">
+<el:form action="appfind.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2">Applicant E-Mail Address Validation</td>

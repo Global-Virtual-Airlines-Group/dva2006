@@ -15,13 +15,11 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function refresh(combo)
-{
-enableElement(combo, false);
-var eqType = combo.options[combo.selectedIndex].text;
-self.location = '/txrequests.do?eqType=' + eqType;
-return true;
-}
+golgotha.local.refresh = function(combo) {
+	enableElement(combo, false);
+	self.location = '/txrequests.do?eqType=' + golgotha.form.getCombo(combo);
+	return true;
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -37,7 +35,7 @@ return true;
 <!-- Top Header Bar -->
 <tr class="title caps">
  <td colspan="3" class="left"><content:airline /> EQUIPMENT TRANSFER REQUESTS</td>
- <td colspan="3" class="right">EQUIPMENT PROGRAM <el:combo name="eqType" size="1" options="${activeEQ}" firstEntry="-" value="${param.eqType}" onChange="void refresh(this)" /></td>
+ <td colspan="3" class="right">EQUIPMENT PROGRAM <el:combo name="eqType" size="1" options="${activeEQ}" firstEntry="-" value="${param.eqType}" onChange="void golgotha.local.refresh(this)" /></td>
 </tr>
 
 <!-- Table Header Bar-->

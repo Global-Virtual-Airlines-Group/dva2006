@@ -18,19 +18,10 @@
 <content:pics />
 <fmt:aptype var="useICAO" />
 <script type="text/javascript">
-function updateAirport()
-{
-document.forms[0].submit();
-return true;
-}
+golgotha.local.updateAirport = function() { return document.forms[0].submit(); };
+golgotha.local.validate = function(f) { return (f.id.selectedIndex > 0); };
 
-function validate(form)
-{
-var f = document.forms[0];
-return (f.id.selectedIndex > 0);
-}
-
-function updateVisibility()
+golgotha.local.updateVisibility = function()
 {
 var f = document.forms[0];
 var chartTypes = [];
@@ -44,7 +35,7 @@ for (var x = 0; x < f.chartType.length; x++) {
 for (var x = 0; x < cTypes.length; x++) {
 	var chartClass = cTypes[x].toLowerCase();
 	var isDisplayed = ((chartTypes.length == 0) || (chartTypes.indexOf(chartClass) > -1));
-	var rows = getElementsByClass(chartClass);
+	var rows = golgotha.util.getElementsByClass(chartClass);
 	for (var y = 0; y < rows.length; y++) {
 		var row = rows[y];
 		row.style.display = isDisplayed ? '' : 'none';
@@ -52,7 +43,7 @@ for (var x = 0; x < cTypes.length; x++) {
 }
 
 return true;
-}
+};
 
 golgotha.onDOMReady(function() { return golgotha.airportLoad.setHelpers(document.forms[0].id); });
 </script>
@@ -66,7 +57,7 @@ golgotha.onDOMReady(function() { return golgotha.airportLoad.setHelpers(document
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="charts.do" method="post" validate="return validate(this)">
+<el:form action="charts.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <view:table cmd="charts">
 
 <!-- Table Header/Filter Bars-->
@@ -75,7 +66,7 @@ golgotha.onDOMReady(function() { return golgotha.airportLoad.setHelpers(document
 </tr>
 <tr>
  <td class="priB right">Filter Options</td>
- <td colspan="6" width="90%" class="left"><el:check name="chartType" className="small" idx="*" width="180" options="${chartTypes}" checked="${selectedTypes}" onChange="void updateVisibility()" /></td>
+ <td colspan="6" width="90%" class="left"><el:check name="chartType" className="small" idx="*" width="180" options="${chartTypes}" checked="${selectedTypes}" onChange="void golgotha.local.updateVisibility()" /></td>
 </tr>
 <c:if test="${!empty currentCycle}">
 <!-- Chart cycle data -->
@@ -89,7 +80,7 @@ golgotha.onDOMReady(function() { return golgotha.airportLoad.setHelpers(document
  <td style="width:20%">CHART TYPE</td>
  <td style="width:8%"><c:if test="${access.canCreate}"><el:cmdbutton url="chart" op="edit" label="NEW CHART" /></c:if> </td>
  <td style="width:6%">USED</td>
- <td colspan="2" class="right" width="35%">AIRPORT <el:combo name="id" onChange="void updateAirport()" size="1" idx="*" options="${airports}" value="${airport}" />
+ <td colspan="2" class="right" width="35%">AIRPORT <el:combo name="id" onChange="void golgotha.local.updateAirport()" size="1" idx="*" options="${airports}" value="${airport}" />
  <el:text name="idCode" idx="*" size="4" max="4" className="bld caps" value="${airport.ICAO}" onBlur="void document.forms[0].id.setAirport(this.value, true);" /></td>
 </tr>
 

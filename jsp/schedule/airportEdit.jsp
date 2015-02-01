@@ -20,26 +20,25 @@
 <map:api version="3" /></c:if>
 <content:googleAnalytics eventSupport="true" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateText(form.name, 6, 'Airport Name')) return false;
-if (!validateCombo(form.country, 'Country')) return false;
-if (!validateText(form.iata, 3, 'IATA Code')) return false;
-if (!validateText(form.icao, 4, 'ICAO Code')) return false;
-if (!validateCombo(form.tz, 'Time Zone')) return false;
-if (!validateNumber(form.latD, 0, 'Latitude Degrees')) return false;
-if (!validateNumber(form.latM, 0, 'Latitude Minutes')) return false;
-if (!validateNumber(form.latS, 0, 'Latitude Seconds')) return false;
-if (!validateNumber(form.lonD, 0, 'Longitude Degrees')) return false;
-if (!validateNumber(form.lonM, 0, 'Longitude Minutes')) return false;
-if (!validateNumber(form.lonS, 0, 'Longitude Seconds')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.name, l:6, t:'Airport Name'});
+golgotha.form.validate({f:f.country, t:'Country'});
+golgotha.form.validate({f:f.iata, l:3, t:'IATA Code'});
+golgotha.form.validate({f:f.icao, l:4, t:'ICAO Code'});
+golgotha.form.validate({f:f.tz, t:'Time Zone'});
+golgotha.form.validate({f:f.latD, min:0, t:'Latitude Degrees'});
+golgotha.form.validate({f:f.latM, min:0, t:'Latitude Minutes'});
+golgotha.form.validate({f:f.latS, min:0, t:'Latitude Seconds'});
+golgotha.form.validate({f:f.lonD, min:0, t:'Longitude Degrees'});
+golgotha.form.validate({f:f.lonM, min:0, t:'Longitude Minutes'});
+golgotha.form.validate({f:f.lonS, min:0, t:'Longitude Seconds'});
+golgotha.form.submit();
 disableButton('SaveButton');
 disableButton('DeleteButton');
 return true;
-}
+};
 
 golgotha.onDOMReady(function() {
 	var f = document.forms[0];
@@ -47,10 +46,9 @@ golgotha.onDOMReady(function() {
 	cfg.airline = 'all';
 
 	<c:if test="${empty airport}">
-	if (f.country.selectedIndex > 0) cfg.country = getValue(f.country);</c:if>
+	if (f.country.selectedIndex > 0) cfg.country = golgotha.form.getCombo(f.country);</c:if>
 	<c:if test="${!empty airport}">
 	cfg.airport = '${airport.ICAO}'; cfg.dist = 50;</c:if>
-
 	golgotha.airportLoad.setHelpers(f.oldAirport);
 	f.oldAirport.loadAirports(cfg);
 	return true;
@@ -68,7 +66,7 @@ golgotha.onDOMReady(function() {
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="airport.do" method="post" linkID="${isNew ? '' : airport.IATA}" op="save" validate="return validate(this)">
+<el:form action="airport.do" method="post" linkID="${isNew ? '' : airport.IATA}" op="save" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2">AIRPORT PROFILE</td>
@@ -186,11 +184,8 @@ lack of scheduled flights in the <content:airline /> Flight Schedule.</span></td
 <map:point var="mapC" point="${airport}" />
 <map:marker var="apMarker" point="${airport}" color="green" />
 
-// Create map options
-var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
-var mapOpts = {center:mapC, zoom:6, scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
-
 // Build the map
+var mapOpts = {center:mapC, zoom:6, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
 apMarker.setMap(map);

@@ -15,18 +15,15 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function sortBy(combo)
-{
-self.location = 'selcals.do?sortType=' + combo.options[combo.selectedIndex].value;
-return true;
-}
+golgotha.local.sortBy = function(combo) {
+	self.location = '/selcals.do?sortType=' + escape(golgotha.form.getCombo(combo));
+	return true;
+};
 
-function filterBy(combo)
-{
-if (combo.selectedIndex > 0)
-	self.location = 'selcals.do?eqType=' + combo.options[combo.selectedIndex].value;
-return true;
-}
+golgotha.local.filterBy = function(combo) {
+	if (combo.selectedIndex > 0) self.location = '/selcals.do?eqType=' + escape(golgotha.form.getCombo(combo));
+	return true;
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -41,8 +38,8 @@ return true;
 <view:table cmd="selcals">
 <tr class="title">
  <td class="left caps" colspan="4"><content:airline /> SELCAL CODES</td>
- <td class="right" colspan="3">AIRCRAFT <el:combo name="eqType" idx="*" size="1" options="${eqTypes}" firstEntry="-" value="${param.eqType}" onChange="void filterBy(this)" />
- SORT BY <el:combo name="sortType" idx="*" size="1" options="${sortOptions}" value="${param.sortType}" onChange="void sortBy(this)" /></td>
+ <td class="right" colspan="3">AIRCRAFT <el:combo name="eqType" idx="*" size="1" options="${eqTypes}" firstEntry="-" value="${param.eqType}" onChange="void golgotha.local.filterBy(this)" />
+ SORT BY <el:combo name="sortType" idx="*" size="1" options="${sortOptions}" value="${param.sortType}" onChange="void golgotha.local.sortBy(this)" /></td>
 </tr>
 
 <!-- Table Header Bar -->

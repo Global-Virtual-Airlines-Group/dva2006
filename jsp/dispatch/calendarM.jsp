@@ -17,26 +17,22 @@
 <content:js name="common" />
 <content:js name="datePicker" />
 <script type="text/javascript">
-function switchType(combo)
-{
-var cType = combo.options[combo.selectedIndex].value;
-self.location = '/dspcalendar.do?op=' + cType + '&startDate=<fmt:date fmt="d" d="MM/dd/yyyy" date="${startDate}" />';
-return true;
-}
+golgotha.local.switchType = function(combo) {
+	self.location = '/dspcalendar.do?op=' + escape(golgotha.form.getCombo(combo)) + '&startDate=<fmt:date fmt="d" d="MM/dd/yyyy" date="${startDate}" />';
+	return true;
+};
 
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!form.comments) return false;
-
-if (!validateCombo(form.startDate, 'Service Start Date')) return false;
-if (!validateCombo(form.startTime, 'Service Start Time')) return false;
-if (!validateCombo(form.endDate, 'Service End Date')) return false;
-if (!validateCombo(form.endTime, 'Service End Time')) return false;
-setSubmit();
+if ((!golgotha.form.check()) || (!f.comments)) return false;
+golgotha.form.validateCombo({f:f.startDate, t:'Service Start Date'});
+golgotha.form.validateCombo({f:f.startTime, t:'Service Start Time'});
+golgotha.form.validateCombo({f:f.endDate, t:'Service End Date'});
+golgotha.form.validateCombo({f:f.endTime, t:'Service End Time'});
+golgotha.form.submit();
 disableButton('SaveButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -47,11 +43,11 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="dspentry.do" op="save" method="post" validate="return validate(this)">
+<el:form action="dspentry.do" op="save" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title">
  <td style="width:80%" class="caps"><content:airline /> ACARS DISPATCHER SERVICE CALENDAR - <fmt:date fmt="d" date="${startDate}" d="MMMM yyyy" tzName="local" /></td>
- <td class="right">CALENDAR TYPE <el:combo name="op" size="1" idx="*" options="${typeOptions}" value="30" onChange="void switchType(this)" /></td>
+ <td class="right">CALENDAR TYPE <el:combo name="op" size="1" idx="*" options="${typeOptions}" value="30" onChange="void golgotha.local.switchType(this)" /></td>
 </tr>
 </el:table>
 <div class="mid">

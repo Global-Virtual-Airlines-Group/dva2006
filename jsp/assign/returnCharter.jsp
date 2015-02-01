@@ -15,19 +15,18 @@
 <content:js name="airportRefresh" />
 <fmt:aptype var="useICAO" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateCombo(form.eqType, 'Equipment Type')) return false;
-if (!validateNumber(form.flight, 1, 'Flight Number')) return false;
-if (!validateCombo(form.airline, 'Airline')) return false;
-if (!validateCombo(form.airportD, 'Departure Airport')) return false;
-if (!validateCombo(form.airportA, 'Arrival Airport')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.eqType, t:'Equipment Type'});
+golgotha.form.validate({f:f.flight, min:1, t:'Flight Number'});
+golgotha.form.validate({f:f.airline, t:'Airline'});
+golgotha.form.validate({f:f.airportD, t:'Departure Airport'});
+golgotha.form.validate({f:f.airportA, t:'Arrival Airport'});
+golgotha.form.submit();
 disableButton('SaveButton');
 return true;
-}
+};
 
 golgotha.onDOMReady(function() {
 	var f = document.forms[0];
@@ -47,7 +46,7 @@ golgotha.onDOMReady(function() {
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="rcharter.do" method="post" link="${assignPilot}" validate="return validate(this)">
+<el:form action="rcharter.do" method="post" link="${assignPilot}" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2">RETURN CHARTER FLIGHT APPROVAL - ${assignPilot.name} (${assignPilot.pilotCode})</td>

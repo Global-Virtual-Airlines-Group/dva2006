@@ -16,22 +16,16 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function setEQType(combo)
-{
-var f = document.forms[0];
-var st = f.status.options[f.status.selectedIndex].text;
-self.location = '/assignments.do?eqType=' + combo.options[combo.selectedIndex].text + '&status=' + st;
-return true;
-}
+golgotha.local.setEQType = function(combo) {
+	self.location = '/assignments.do?eqType=' + golgotha.form.getCombo(combo) + '&status=' + golgotha.form.getCombo(document.forms[0].status);
+	return true;
+};
 
-function setStatus(combo)
-{
-var f = document.forms[0];
-var eqCombo = f.eqType;
-var eq = (eqCombo.selectedIndex < 1) ? null : eqCombo.options[eqCombo.selectedIndex].text;
-self.location = '/assignments.do?status=' + combo.options[combo.selectedIndex].text + (eq == null ? '' : '&eqType=' + eq);
-return true;
-}
+golgotha.local.setStatus = function(combo) {
+	var eq = golgotha.form.getCombo(document.forms[0].eqType);
+	self.location = '/assignments.do?status=' + golgotha.form.getCombo(combo) + (eq == null ? '' : '&eqType=' + eq);
+	return true;
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -48,8 +42,8 @@ return true;
 <tr class="title">
  <td colspan="2" class="left caps"><content:airline /> FLIGHT ASSIGNMENTS</td>
  <td colspan="4" class="right"><el:cmd url="findflight">FIND FLIGHTS</el:cmd>&nbsp;|&nbsp;<el:cmd url="myassign">MY ASSIGNMENTS</el:cmd>&nbsp;|
-&nbsp;EQUIPMENT <el:combo name="eqType" idx="*" size="1" options="${eqTypes}" firstEntry="-" value="${param.eqType}" onChange="void setEQType(this)" />
-&nbsp;|&nbsp;STATUS <el:combo name="status" idx="*" size="1" options="${statuses}" firstEntry="-" value="${param.status}" onChange="void setStatus(this)" /></td>
+&nbsp;EQUIPMENT <el:combo name="eqType" idx="*" size="1" options="${eqTypes}" firstEntry="-" value="${param.eqType}" onChange="void golgotha.local.setEQType(this)" />
+&nbsp;|&nbsp;STATUS <el:combo name="status" idx="*" size="1" options="${statuses}" firstEntry="-" value="${param.status}" onChange="void golgotha.local.setStatus(this)" /></td>
 </tr>
 
 <!-- Table Header Bar -->

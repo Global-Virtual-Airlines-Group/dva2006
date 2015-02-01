@@ -14,11 +14,10 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function update(combo)
-{
-self.location = '/liveries.do?airline=' + combo.options[combo.selectedIndex].value;
-return true;	
-}
+golgotha.local.update = function(combo) {
+	self.location = '/liveries.do?airline=' + combo.options[combo.selectedIndex].value;
+	return true;	
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -33,7 +32,7 @@ return true;
 <view:table cmd="liveries">
 <tr class="title">
  <td colspan="2" class="caps">ACARS MULTI-PLAYER AIRCRAFT LIVERIES</td>
- <td colspan="2" class="right">AIRLINE <el:combo name="airline" idx="*" size="1" options="${airlines}" value="${param.airline}" firstEntry="All Airlines" onChange="void update(this)" /></td>
+ <td colspan="2" class="right">AIRLINE <el:combo name="airline" idx="*" size="1" options="${airlines}" value="${param.airline}" firstEntry="All Airlines" onChange="void golgotha.local.update(this)" /></td>
 </tr>
 
 <!-- Table Header Bar -->

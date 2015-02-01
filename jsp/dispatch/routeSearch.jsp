@@ -19,21 +19,19 @@
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-var hasAD = (form.airportD.selectedIndex > 0);
-var hasAA = (form.airportA.selectedIndex > 0);
-if (!hasAD && !hasAA) {
+if (!golgotha.form.check()) return false;
+if (!golgotha.form.comboSet(f.airportD) && !golgotha.form.comboSet(f.airportA)) {
 	alert('Please select a Departure or Arrival Airport.');
-	form.airportD.focus();
+	f.airportD.focus();
 	return false;
 }
 
-setSubmit();
+golgotha.form.submit();
 disableButton('SearchButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -44,7 +42,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="dsprsearch.do" method="post" validate="return validate(this)">
+<el:form action="dsprsearch.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <!-- Table Header Bar -->
 <tr class="title">
@@ -125,7 +123,7 @@ ${route.airportA.name} (<fmt:airport airport="${route.airportA}" />)</td>
 </content:region>
 </content:page>
 <fmt:aptype var="useICAO" />
-<script type="text/javascript">
+<script type="text/javascript" defer>
 var f = document.forms[0];
 golgotha.airportLoad.config.doICAO = '${useICAO}';
 golgotha.airportLoad.setHelpers(f.airportD);

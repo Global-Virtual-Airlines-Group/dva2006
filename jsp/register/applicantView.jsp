@@ -14,14 +14,13 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
 <c:if test="${access.canApprove}">
-if (!checkSubmit()) return false;
-if (!validateCombo(form.eqType, 'Equipment Program')) return false;
-if (!validateCombo(form.rank, 'Rank')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.eqType, t:'Equipment Program'});
+golgotha.form.validate({f:f.rank, t:'Rank'});
+golgotha.form.submit();
 disableButton('EditButton');
 disableButton('HireButton');
 disableButton('RejectButton');
@@ -32,11 +31,11 @@ disableButton('ResendButton');
 return ${access.canApprove};
 }
 <c:if test="${access.canApprove}">
-function checkVATSIMData(id, name)
+golgotha.local.checkVATSIMData = function(id, name)
 {
 disableButton('ValidateButton');
-var xmlreq = getXMLHttpRequest();
-xmlreq.open('get', 'vatsim_info.ws?id=' + id + '&name=' + name);
+var xmlreq = new XMLHttpRequest();
+xmlreq.open('GET', 'vatsim_info.ws?id=' + id + '&name=' + escape(name));
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
 	if ((xmlreq.status == 404) || (xmlreq.status == 500)) {
@@ -57,7 +56,7 @@ xmlreq.onreadystatechange = function() {
 	alert(infoStr);
 	enableElement('ValidateButton', true);
 	return true;
-} // function
+};
 
 xmlreq.send(null);
 return true;
@@ -65,7 +64,7 @@ return true;
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void initLinks()">
+<body>
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -73,7 +72,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="apphire.do" method="post" link="${applicant}" validate="return validate(this)">
+<el:form action="apphire.do" method="post" link="${applicant}" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2"><content:airline /> PILOT APPLICANT</td>
@@ -137,7 +136,7 @@ ${dupe.rank.name} <el:cmd url="profile" link="${dupe}" className="bld">${dupe.na
 <tr>
  <td class="label">VATSIM ID#</td>
  <td class="data">${VATSIM_ID}
-<c:if test="${access.canApprove}"> <el:button ID="ValidateButton" onClick="void checkVATSIMData(${VATSIM_ID}, '${applicant.name}')" label="VALIDATE" /></c:if>
+<c:if test="${access.canApprove}"> <el:button ID="ValidateButton" onClick="void golgotha.local.checkVATSIMData(${VATSIM_ID}, '${applicant.name}')" label="VALIDATE" /></c:if>
  </td>
 </tr>
 </c:if>
@@ -274,7 +273,7 @@ ${dupe.rank.name} <el:cmd url="profile" link="${dupe}" className="bld">${dupe.na
 </tr>
 <tr>
  <td class="label">Google Search</td>
- <td class="data"><a rel="external" href="http://www.google.com/search?q=${fn:escape(applicant.name)}">Click Here</a> to 
+ <td class="data"><a rel="external" target="applicantSearch" href="http://www.google.com/search?q=${fn:escape(applicant.name)}">Click Here</a> to 
 do a Google search on &quot;${applicant.name}&quot;.</td>
 </tr>
 <c:if test="${!empty applicant.HRComments}">

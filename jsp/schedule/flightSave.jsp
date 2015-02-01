@@ -12,14 +12,13 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.submit();
 disableButton('SaveButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -30,7 +29,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="schedsave.do" method="post" validate="return validate(this)">
+<el:form action="schedsave.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2">FLIGHT SCHEDULE DATA UPLOAD - STEP TWO</td>

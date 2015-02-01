@@ -18,16 +18,14 @@
 <content:js name="common" />
 <content:rss title="${airlineName} Online Events" path="/event_rss.ws" />
 <script type="text/javascript">
-function switchType(combo)
-{
-var cType = combo.options[combo.selectedIndex].value;
-self.location = '/eventcalendar.do?op=' + cType + '&startDate=<fmt:date fmt="d" d="MM/dd/yyyy" date="${startDate}" />';
-return true;
-}
+golgotha.local.switchType = function(combo) {
+	self.location = '/eventcalendar.do?op=' + escape(golgotha.form.getCombo(combo)) + '&startDate=<fmt:date fmt="d" d="MM/dd/yyyy" date="${startDate}" />';
+	return true;
+};
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void initLinks()">
+<body>
 <content:page>
 <%@ include file="/jsp/event/header.jspf" %> 
 <%@ include file="/jsp/event/sideMenu.jspf" %>
@@ -38,7 +36,7 @@ return true;
 <el:table className="form">
 <tr class="title">
  <td style="width:80%" class="caps"><content:airline /> ONLINE EVENT CALENDAR - <fmt:date fmt="d" date="${startDate}" d="MMMM yyyy" tzName="local" /></td>
- <td class="right">CALENDAR TYPE <el:combo name="op" size="1" idx="*" options="${typeOptions}" value="30" onChange="void switchType(this)" /></td>
+ <td class="right">CALENDAR TYPE <el:combo name="op" size="1" idx="*" options="${typeOptions}" value="30" onChange="void golgotha.local.switchType(this)" /></td>
 </tr>
 </el:table>
 <div class="mid">
@@ -55,7 +53,7 @@ return true;
 <c:set var="eventSize" value="${fn:sizeof(event.signups)}" scope="page" />
 <c:if test="${!event.canSignup}">
 <c:if test="${!empty event.signupURL}">
-<el:link external="true" url="${event.signupURL}" className="bld small">SIGNUP</el:link>
+<el:link external="true" url="${event.signupURL}" target="eventSignup" className="bld small">SIGNUP</el:link>
 </c:if>
 <c:if test="${empty event.signupURL}">
 <span class="small warn bld">SIGNUPS NOT AVAILABLE</span>

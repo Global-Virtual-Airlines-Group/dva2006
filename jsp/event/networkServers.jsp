@@ -15,12 +15,10 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function setNetwork(combo)
-{
-var net = combo.options[combo.selectedIndex].text;
-location.href = '/netservers.do?id=' + net;
-return true;
-}
+golgotha.local.setNetwork = function(combo) {
+	self.location = '/netservers.do?id=' + escape(golgotha.form.getCombo(combo));
+	return true;
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -36,7 +34,7 @@ return true;
 <view:table cmd="netservers">
 <tr class="title">
  <td colspan="3" class="left">NETWORK SERVERS - ${netInfo.network} - VALID AS OF <fmt:date date="${netInfo.validDate}" /></td>
- <td colspan="2" class="right">SELECT NETWORK <el:combo name="ID" size="1" idx="1" onChange="void setNetwork(this)" options="${networks}" value="${netInfo.network}" /></td>
+ <td colspan="2" class="right">SELECT NETWORK <el:combo name="ID" size="1" idx="1" onChange="void golgotha.local.setNetwork(this)" options="${networks}" value="${netInfo.network}" /></td>
 </tr>
 
 <!-- Server Title Bar -->

@@ -17,42 +17,39 @@
 <content:js name="scNominate" />
 <content:pics />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
+if (!golgotha.form.check()) return false;
 <content:filter roles="HR">
-var act = form.action;
+var act = f.action;
 if (act.indexOf('scnompurge.do') != -1) {
 	if (!confirm('Are you sure you wish to purge all Senior Captain nominations?')) return false;
-	setSubmit();
+	golgotha.form.submit();
 	disableButton('SaveButton');
 	disableButton('PurgeButton');
 	return true;
 }
 </content:filter>
-if (!form.id) return false;
-if (form.id.selectedIndex == 0) {
-	alert('Please select the Pilot you wish to nominate.');
-	form.id.focus();
-	return false;
-}
+if (!f.id) return false;
+if (f.id.selectedIndex == 0)
+	throw new golgotha.util.ValidationError('Please select the Pilot you wish to nominate.', f.id);
 
-if (!validateText(form.body, 30, 'Nomination Comments')) return false;
+golgotha.form.validate({f:f.body, l:30, t:'Nomination Comments'});
 
 // Confirm
-var pilotName = form.pilot.options[form.id.selectedIndex].text;
+var pilotName = f.pilot.options[form.id.selectedIndex].text;
 if (!confirm('Are you sure you wish to nominate ' + pilotName + ' for Senior Captain?')) return false;
 
-setSubmit();
+golgotha.form.submit();
 disableButton('SaveButton');
 disableButton('PurgeButton');
 disableButton('PostponeButton');
 return true;	
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void getPilots()">
+<body onload="void golgotha.sc.getPilots()">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -64,7 +61,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="scnominate.do" op="save" method="post" validate="return validate(this)">
+<el:form action="scnominate.do" op="save" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="view">
 
 <!-- Header Bar -->
@@ -110,12 +107,12 @@ We look forward to your help in recognizing those who make <content:airline /> a
 <c:set var="noms" value="${allNoms[nomStatus]}" scope="page" />
 <c:if test="${!empty noms}">
 <tr class="title caps">
- <td class="left" colspan="${cspan}"><fmt:int value="${fn:sizeof(noms)}" /> ${nomStatus} PILOTS - <a id="toggleAll" href="javascript:void toggleAll()">SHOW ALL COMMENTS</a></td>
+ <td class="left" colspan="${cspan}"><fmt:int value="${fn:sizeof(noms)}" /> ${nomStatus} PILOTS - <a id="toggleAll" href="javascript:void golgotha.sc.toggleAll()">SHOW ALL COMMENTS</a></td>
 </tr>
 <c:forEach var="nom" items="${noms}">
 <c:set var="pilot" value="${pilots[nom.ID]}" scope="page" />
 <view:row entry="${nom}">
- <td><a id="tc${nom.ID}" class="ncToggle plain" onclick="javascript:void toggleComments(${nom.ID})"> + </a><el:cmd url="scnominate" link="${nom}" className="pri bld">${pilot.name}</el:cmd></td>
+ <td><a id="tc${nom.ID}" class="ncToggle plain" onclick="javascript:void golgotha.sc.toggleComments(${nom.ID})"> + </a><el:cmd url="scnominate" link="${nom}" className="pri bld">${pilot.name}</el:cmd></td>
  <td class="sec bld">${pilot.equipmentType}</td>
  <td class="small"><fmt:date fmt="d" date="${pilot.createdOn}" /></td>
  <td class="bld"><fmt:int value="${pilot.legs}" /> legs, <fmt:dec value="${pilot.hours}" /> hours</td>
@@ -238,11 +235,11 @@ individuals, we limit the number of nomnations that can be made every quarter.<b
 <tr>
  <td class="label">Pilot</td>
  <td class="data">
-<div id="rowSelectPilot" style="display:none;"><el:combo ID="selectPilot" name="id" idx="*" size="1" className="req" firstEntry="[ SELECT PILOT ]" options="${emptyList}" onChange="void setPilot(this)" />
- <el:text name="pilotSearch" idx="*" size="12" max="24" value="" onChange="void search(this.value)" />
+<div id="rowSelectPilot" style="display:none;"><el:combo ID="selectPilot" name="id" idx="*" size="1" className="req" firstEntry="[ SELECT PILOT ]" options="${emptyList}" onChange="void golgotha.sc.setPilot(this)" />
+ <el:text name="pilotSearch" idx="*" size="12" max="24" value="" onChange="void golgotha.sc.search(this.value)" />
 <span class="small ita">(Type the first few letters of an eligible Pilot's name to jump to them in the list.)</span></div>
 <div id="rowLoading" class="bld caps">LOADING ELIGIBLE PILOT LIST, PLEASE WAIT...</div>
-<div id="rowError" class="bld error caps" style="display:none;">ERROR LOADING ELIGIBLE PILOT LIST <span id="errorCode"></span> <el:button ID="RefreshButton" label="RELOAD" onClick="void getPilots()" /></div>
+<div id="rowError" class="bld error caps" style="display:none;">ERROR LOADING ELIGIBLE PILOT LIST <span id="errorCode"></span> <el:button ID="RefreshButton" label="RELOAD" onClick="void golgotha.sc.getPilots()" /></div>
 </td>
 </tr>
 <tr id="rowComments" style="display:none;">

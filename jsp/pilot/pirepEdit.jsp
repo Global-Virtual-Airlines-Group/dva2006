@@ -25,66 +25,53 @@
 <content:sysdata var="minDays" name="users.pirep.minDays" />
 <fmt:aptype var="useICAO" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateNumber(form.flightNumber, 1, 'Flight Number')) return false;
-if (!validateNumber(form.flightLeg, 1, 'Flight Leg')) return false;
-if (!validateCombo(form.eq, 'Equipment Type')) return false;
-if (!validateCombo(form.flightTime, 'Logged Hours')) return false;
-if (!validateCheckBox(form.network, 1, 'Online Network')) return false;
-if (!validateCombo(form.fsVersion, 'Simulator Version')) return false;
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.flightNumber, min:1, t:'Flight Number'});
+golgotha.form.validate({f:f.flightLeg, min:1, t:'Flight Leg'});
+golgotha.form.validate({f:f.eq, t:'Equipment Type'});
+golgotha.form.validate({f:f.flightTime, t:'Logged Hours'});
+golgotha.form.validate({f:f.network, min:1, t:'Online Network'});
+golgotha.form.validate({f:f.fsVersion, t:'Simulator Version'});
 <c:if test="${!isAssign}">
-if (!validateCombo(form.airline, 'Airline')) return false;
-if (!validateCombo(form.airportD, 'Departure Airport')) return false;
-if (!validateCombo(form.airportA, 'Arrival Airport')) return false;
-</c:if>
-// Validate flight leg
-if (parseInt(form.flightLeg.value) > 8) {
-	alert('The Flight Leg must be equal to or less than 8.');
-	form.flightLeg.focus();
-	return false;
-}
+golgotha.form.validate({f:f.airline, t:'Airline'});
+golgotha.form.validate({f:f.airportD, t:'Departure Airport'});
+golgotha.form.validate({f:f.airportA, t:'Arrival Airport'});</c:if>
+if (parseInt(f.flightLeg.value) > 8)
+	throw new golgotha.event.ValidationError('The Flight Leg must be equal to or less than 8.', f.flightLeg);
 <content:browser html4="true">
 // Validate the date
 <content:filter roles="!PIREP">
 var pY = parseInt(f.dateY.options[f.dateY.selectedIndex].text);
 var pD = parseInt(f.dateD.options[f.dateD.selectedIndex].text);
 var pDate = new Date(pY, f.dateM.selectedIndex, pD);
-if (pDate > fwdLimit) {
-	alert(pDate + " " + fwdLimit);
-	alert('You cannot file a Flight Report for a flight in the future.');
-	f.dateM.focus();
-	return false;
-} else if (pDate < bwdLimit) {
-	alert('You cannot file a Flight Report for a flight flown more than ${minDays} days ago.');
-	f.dateD.focus();
-	return false;
-}
+if (pDate > fwdLimit)
+	throw new golgotha.event.ValidationError('You cannot file a Flight Report for a flight in the future.', f.dateM);
+if (pDate < bwdLimit)
+	throw new golgotha.event.ValidationError('You cannot file a Flight Report for a flight flown more than ${minDays} days ago.', f.dateD);
 </content:filter></content:browser>
-setSubmit();
+golgotha.form.submit();
 disableButton('SaveButton');
 disableButton('CalcButton');
 disableButton('SubmitButton');
 return true;
-}
+};
 
-function saveSubmit()
-{
-var f = document.forms[0];
-f.doSubmit.value = 'true';
-return cmdPost(f.action);
-}
+golgotha.local.saveSubmit = function() {
+	var f = document.forms[0];
+	f.doSubmit.value = 'true';
+	return golgotha.form.post(f.action);
+};
 
-function initDateCombos(mCombo, dCombo, d)
-{
-mCombo.selectedIndex = d.getMonth();
-setDaysInMonth(mCombo);
-dCombo.selectedIndex = (d.getDate() - 1);
-return true;
-}
+golgotha.local.initDateCombos = function(mCombo, dCombo, d) {
+	mCombo.selectedIndex = d.getMonth();
+	golgotha.local.setDaysInMonth(mCombo);
+	dCombo.selectedIndex = (d.getDate() - 1);
+	return true;
+};
 
-function setDaysInMonth(combo)
+golgotha.local.setDaysInMonth = function(combo)
 {
 var daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 var month = parseInt(combo.options[combo.selectedIndex].value, 10);
@@ -94,25 +81,25 @@ for (var x = 1; x <= daysInMonth[month]; x++)
 	dCombo.options[x-1] = new Option(x);
 
 return true;
-}
+};
 
-function loadAirports()
+golgotha.local.loadAirports = function()
 {
 var f = document.forms[0];
 if (f.airline.selectedIndex != 0) {
-	golgotha.airportLoad.config.airline = getValue(f.airline);
+	golgotha.airportLoad.config.airline = golgotha.form.getCombo(f.airline);
 	var cfg = golgotha.airportLoad.config.clone();
-	cfg.add = getValue(f.airportD); 
+	cfg.add = golgotha.form.getCombo(f.airportD); 
 	f.airportD.loadAirports(cfg);
 	cfg = golgotha.airportLoad.config.clone();
-	cfg.add = getValue(f.airportA);
+	cfg.add = golgotha.form.getCombo(f.airportA);
 	f.airportA.loadAirports(cfg);
 } else
 	delete golgotha.airportLoad.config.airline;
 
 f.airline.focus();	
 return true;
-}
+};
 
 golgotha.onDOMReady(function() {
 	var f = document.forms[0];
@@ -127,7 +114,7 @@ golgotha.onDOMReady(function() {
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void loadAirports()">
+<body onload="void golgotha.local.loadAirports()">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -137,7 +124,7 @@ golgotha.onDOMReady(function() {
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form method="post" action="pirep.do" link="${pirep}" op="save" validate="return validate(this)">
+<el:form method="post" action="pirep.do" link="${pirep}" op="save" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <!-- PIREP Title Bar -->
 <tr class="title caps">
@@ -162,7 +149,7 @@ golgotha.onDOMReady(function() {
 <c:when test="${!isAssign}">
 <tr>
  <td class="label">Airline Name</td>
- <td class="data"><el:combo name="airline" idx="*" size="1" options="${airlines}" value="${pirep.airline}" onChange="void loadAirports()" className="req" firstEntry="[ AIRLINE ]" /></td>
+ <td class="data"><el:combo name="airline" idx="*" size="1" options="${airlines}" value="${pirep.airline}" onChange="void golgotha.local.loadAirports()" className="req" firstEntry="[ AIRLINE ]" /></td>
 </tr>
 </c:when>
 <c:otherwise>
@@ -211,7 +198,7 @@ golgotha.onDOMReady(function() {
  <td class="data"><el:date name="date" idx="*" size="11" required="true" min="${backwardDateLimit}" max="${forwardDateLimit}" value="${pirep.date}" /></td>
 </content:browser>
 <content:browser html4="true">
- <td class="data"><el:combo name="dateM" idx="*" size="1" options="${months}" required="true" onChange="setDaysInMonth(this)" />
+ <td class="data"><el:combo name="dateM" idx="*" size="1" options="${months}" required="true" onChange="void golgotha.local.setDaysInMonth(this)" />
  <el:combo name="dateD" idx="*" size="1" required="true" options="${emptyList}" />&nbsp;
  <el:combo name="dateY" idx="*" size="1" value="${pirep.date.year + 1900}" required="true" options="${years}" /></td>
 </content:browser>
@@ -231,7 +218,7 @@ golgotha.onDOMReady(function() {
 <content:browser html4="true">
  <td class="data"><el:combo name="flightTime" idx="*" size="1"  required="true" firstEntry="[ HOURS ]" options="${flightTimes}" value="${flightTime}" />&nbsp;
 <el:text name="tmpHours" size="1" max="2" idx="*" value="${tmpH}" /> hours, <el:text name="tmpMinutes" size="1" max="2" idx="*" value="${tmpM}" />
- minutes&nbsp;<el:button ID="CalcButton" label="CALCULATE" onClick="void hoursCalc()" /></td>
+ minutes&nbsp;<el:button ID="CalcButton" label="CALCULATE" onClick="void golgotha.form.wrap(golgotha.util.hoursCalc, document.forms[0])" /></td>
 </content:browser>
 <content:browser html5="true">
  <td class="data"><el:float name="flightTime" idx="*" size="3" max="18.9" min="0" step="0.1" value="${flightTime}" required="true" /> hours</td>
@@ -256,7 +243,7 @@ golgotha.onDOMReady(function() {
 <tr>
  <td><el:button ID="SaveButton" type="submit" label="SAVE FLIGHT REPORT" />
 <c:if test="${access.canSubmitIfEdit}">
-&nbsp;<el:button ID="SubmitButton" onClick="void saveSubmit()" label="SUBMIT FLIGHT REPORT" />
+&nbsp;<el:button ID="SubmitButton" onClick="void golgotha.local.saveSubmit()" label="SUBMIT FLIGHT REPORT" />
 </c:if>
 </td>
 </tr>
@@ -268,10 +255,10 @@ golgotha.onDOMReady(function() {
 </content:region>
 </content:page>
 <content:browser html4="true">
-<script type="text/javascript">
+<script id="dateInit" defer>
 var f = document.forms[0];
 var d = new Date(${pirepYear},${pirepMonth},${pirepDay},0,0,0);
-initDateCombos(f.dateM, f.dateD, d);
+golgotha.local.initDateCombos(f.dateM, f.dateD, d);
 f.tmpHours.value = Math.round(f.tmpHours.value - 0.5);
 </script></content:browser>
 </body>

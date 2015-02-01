@@ -16,12 +16,10 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function setExam(combo)
-{
-var examName = combo.options[combo.selectedIndex].text;
-self.location = '/autoscoredexams.do?examName=' +examName;
-return true;
-}
+golgotha.local.setExam = function(combo) {
+	self.location = '/autoscoredexams.do?examName=' + escape(golgotha.form.getCombo(combo));
+	return true;
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -36,7 +34,7 @@ return true;
 <view:table cmd="autoscoredexams">
 <tr class="title">
  <td colspan="3" class="left caps">AUTOMATICALLY SCORED EXAMINATIONS</td>
- <td colspan="4" class="right">EXAMINATION <el:combo name="examName" size="1" idx="*" options="${examNames}" firstEntry="All Exams" value="${param.examName}" onChange="void setExam(this)" /></td>
+ <td colspan="4" class="right">EXAMINATION <el:combo name="examName" size="1" idx="*" options="${examNames}" firstEntry="All Exams" value="${param.examName}" onChange="void golgotha.local.setExam(this)" /></td>
 </tr>
 
 <!-- Table Header Bar -->

@@ -12,19 +12,18 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateCombo(form.server, 'TeamSpeak Server')) return false;
-if (!validateCombo(form.codec, 'Channel Bandwidth')) return false;
-if (!validateText(form.name, 6, 'Channel Name')) return false;
-if (!validateNumber(form.maxUsers, 1, 'Channel User Limit')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.server, t:'TeamSpeak Server'});
+golgotha.form.validate({f:f.codec, t:'Channel Bandwidth'});
+golgotha.form.validate({f:f.name, l:6, t:'Channel Name'});
+golgotha.form.validate({f:f.maxUsers, min:1, t:'Channel User Limit'});
+golgotha.form.submit();
 disableButton('SaveButton');
 disableButton('DeleteButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -35,7 +34,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form method="post" action="ts2channel.do" op="save" link="${channel}" validate="return validate(this)">
+<el:form method="post" action="ts2channel.do" op="save" link="${channel}" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title">
  <td class="caps" colspan="2">TEAMSPEAK 2 VOICE CHANNEL</td>

@@ -15,26 +15,25 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.submit();
 disableButton('SearchButton');
 disableButton('BuildButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void initLinks()">
+<body>
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form method="post" action="singleassign.do" validate="return validate(this)">
+<el:form method="post" action="singleassign.do" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="4"><content:airline /> FLIGHT ASSIGNMENT SEARCH FROM ${criteria.airportD.name} (<fmt:airport airport="${criteria.airportD}" />)</td>
@@ -99,9 +98,6 @@ return true;
 </el:table>
 </el:form>
 <br />
-<c:if test="${innovataLink}">
-<%@ include file="/jsp/schedule/innovataLink.jspf" %> 
-</c:if>
 <content:copyright />
 </content:region>
 </content:page>

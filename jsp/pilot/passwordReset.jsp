@@ -14,20 +14,19 @@
 <content:js name="common" />
 <content:attr roles="HR" attr="isHR" value="true" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
+if (!golgotha.form.check()) return false;
 <c:if test="${!empty dupeUsers}">
-if (!validateCheckBox(form.pilotCode, 1, 'Pilot Code')) return false;</c:if>
-if (!validateText(form.fName, 2, 'First Name')) return false;
-if (!validateText(form.lName, 2, 'Last Name')) return false;
+golgotha.form.validate({f:f.pilotCode, min:1, t:'Pilot Code'});</c:if>
+golgotha.form.validate({f:f.fName, l:2, t:'First Name'});
+golgotha.form.validate({f:f.lName, l:2, t:'Last Name'});
 <content:filter roles="!HR">
-if (!validateText(form.eMail, 10, 'E-Mail Address')) return false;</content:filter>
-
-setSubmit();
+golgotha.form.validate({f:f.eMail, l:10, t:'E-Mail Address'});</content:filter>
+golgotha.form.submit();
 disableButton('SaveButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -36,10 +35,9 @@ return true;
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 
-
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form method="post" action="pwdreset.do" validate="return validate(this)">
+<el:form method="post" action="pwdreset.do" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title">
  <td colspan="2" class="left">PASSWORD RESET</td>

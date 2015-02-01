@@ -13,15 +13,14 @@
 <content:css name="form" />
 <content:pics />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateFile(form.coolerImg, 'gif,jpg,png', 'Signature Image')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.coolerImg, ext:['gif','jpg','png'], t:'Signature Image'});
+golgotha.form.submit();
 disableButton('SaveButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -36,7 +35,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="sigupdate.do" method="post" link="${pilot}" allowUpload="true" validate="return validate(this)">
+<el:form action="sigupdate.do" method="post" link="${pilot}" allowUpload="true" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2" class="left">${forumName} SIGNATURE IMAGE UPDATE - ${pilot.name}</td>

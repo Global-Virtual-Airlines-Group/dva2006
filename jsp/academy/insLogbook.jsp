@@ -15,12 +15,10 @@
 <content:css name="view" />
 <content:pics />
 <script type="text/javascript">
-function sort(combo)
-{
-var sortType = combo.options[combo.selectedIndex].value;
-self.location = '/inslogbook.do?id=' + sortType;
-return true;
-}
+golgotha.local.sort = function(combo) {
+	self.location = '/inslogbook.do?id=' + golgotha.form.getCombo(combo);
+	return true;
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -45,7 +43,7 @@ return true;
  <td style="width:14%">INSTRUCTOR</td>
  <td style="width:9%">DURATION</td>
  <td class="left" width="10%">COMMENTS</td>
-<content:filter roles="HR"><td class="right">INSTRUCTOR <el:combo name="id" idx="*" size="1" options="${instructors}" value="${ins}" onChange="void sort(this)" /></td>
+<content:filter roles="HR"><td class="right">INSTRUCTOR <el:combo name="id" idx="*" size="1" options="${instructors}" value="${ins}" onChange="void golgotha.local.sort(this)" /></td>
 </content:filter>
 <content:filter roles="!HR">
  <td>${ins.name}</td>

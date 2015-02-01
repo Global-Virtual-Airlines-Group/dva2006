@@ -26,9 +26,9 @@
 <map:api version="3" /></c:if>
 <c:if test="${scoreCR || access.canDispose}">
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(form)
 {
-if (!checkSubmit()) return false;
+if (!golgotha.form.check()) return false;
 
 // Validate form
 var act = form.action;
@@ -38,34 +38,30 @@ if (isCR) {
 	if (!validateCheckBox(form.frApprove, 1, 'Flight Report status')) return false;
 }
 
-setSubmit();
+golgotha.form.submit();
 disableButton('CRButton');
 return true;
-}
+};
 </script></c:if>
 <c:if test="${isACARS}">
 <content:googleJS />
 <content:json />
 <content:js name="acarsFlightMap" />
 <script type="text/javascript">
-function zoomTo(lat, lng, zoom)
-{
-map.setZoom((zoom == null) ? 12 : zoom);
-map.panTo(new google.maps.LatLng(lat, lng));
-return true;
-}
+golgotha.local.zoomTo = function(lat, lng, zoom) {
+	map.setZoom((zoom == null) ? 12 : zoom);
+	map.panTo({lat:lat, lng:lng});
+	return true;
+};
 <content:filter roles="PIREP,HR,Developer,Operations">
-function showRunwayChoices()
-{
-var URLflags = 'height=330,width=690,menubar=no,toolbar=no,status=no,scrollbars=yes,resizable=no';
-window.open('/rwychoices.do?id=${pirep.hexID}', 'rwyChoices', URLflags);
-return true;
-}
+golgotha.local.showRunwayChoices = function() {
+	return window.open('/rwychoices.do?id=${pirep.hexID}', 'rwyChoices', 'height=330,width=690,menubar=no,toolbar=no,status=no,scrollbars=yes,resizable=no');
+};
 </content:filter> 
 </script></c:if>
 </head>
 <content:copyright visible="false" />
-<body onload="initLinks()">
+<body>
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -75,7 +71,7 @@ return true;
 <content:region id="main">
 <c:set var="act" value="pirep.do" scope="page" />
 <c:set var="lnk" value="${pirep}" scope="page" />
-<c:set var="validation" value="return validate(this)" scope="page" /> 
+<c:set var="validation" value="return golgotha.form.wrap(golgotha.local.validate, this)" scope="page" /> 
 <c:choose>
 <c:when test="${scoreCR && extPIREP}">
 <c:set var="act" value="extpirepscore.do" scope="page" />
@@ -113,7 +109,7 @@ return true;
 <tr>
  <td class="label">VATSIM ID</td>
  <td class="data"><span class="bld">${vatsimID}</span><c:if test="${empty onlineTrack}"> - View flight log at 
- <el:link url="http://www.vataware.com/pilot.cfm?cid=${fn:networkID(pilot,'VATSIM')}" external="true">
+ <el:link url="http://www.vataware.com/pilot.cfm?cid=${fn:networkID(pilot,'VATSIM')}" target="_new" external="true">
 <el:img src="vataware.png" className="noborder" x="50" y="16" caption="View VATAWARE Flight Log" /></el:link></c:if></td>
 </tr>
 </c:if>
@@ -284,12 +280,12 @@ return true;
  <td class="label">Route Map Data</td>
  <td class="data"><span class="bld">
 <c:if test="${isACARS || (!empty mapRoute)}"><el:box name="showRoute" idx="*" onChange="void toggleMarkers(map, 'gRoute', this)" label="Route" checked="${!isACARS}" /> </c:if>
-<c:if test="${isACARS}"><el:box name="showFDR" idx="*" onChange="void toggleMarkers(map, 'routeMarkers', this)" label="Flight Data" checked="false" /> </c:if>
+<c:if test="${isACARS}"><el:box name="showFDR" idx="*" onChange="void toggleMarkers(map, 'golgotha.maps.acarsFlight.routeMarkers', this)" label="Flight Data" checked="false" /> </c:if>
 <c:if test="${!empty filedRoute}"><el:box name="showFPlan" idx="*" onChange="void toggleMarkers(map, 'gfRoute', this)" label="Flight Plan" checked="true" /> </c:if>
 <el:box name="showFPMarkers" idx="*" onChange="void toggleMarkers(map, 'filedMarkers', this)" label="Navaid Markers" checked="true" />
 <c:if test="${!empty onlineTrack}"> <el:box name="showOTrack" idx="*" onChange="void toggleMarkers(map, 'otRoute', this)" label="Online Track" checked="false" />
  <el:box name="showOMarkers" idx="*" onChange="void toggleMarkers(map, 'otMarkers', this)" label="Online Data" checked="false" />
- <el:box name="showFIRs" idx="*" onChange="void toggleObject(map, firKML, this)" label="FIR Boundaries" checked="false" /></c:if>
+ <el:box name="showFIRs" idx="*" onChange="void golgotha.local.toggleObject(map, firKML, this)" label="FIR Boundaries" checked="false" /></c:if>
 </span></td>
 </tr>
 <tr>
@@ -306,7 +302,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 </c:if>
 <c:if test="${isACARS}">
 <tr class="title">
- <td colspan="2">SPEED / ALTITUDE DATA<span id="chartToggle" class="und" style="float:right" onclick="void toggleExpand(this, 'flightDataChart')">COLLAPSE</span></td>
+ <td colspan="2">SPEED / ALTITUDE DATA<span id="chartToggle" class="und" style="float:right" onclick="void golgotha.util.toggleExpand(this, 'flightDataChart')">COLLAPSE</span></td>
 </tr>
 <tr class="flightDataChart">
  <td class="label">&nbsp;</td>
@@ -381,7 +377,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 </content:page>
 <content:browser human="true">
 <c:if test="${googleMap}">
-<script type="text/javascript">
+<script id="mapInit" defer>
 <map:point var="mapC" point="${mapCenter}" />
 
 // Create map options
@@ -393,7 +389,7 @@ var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
-google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });
+google.maps.event.addListener(map, 'click', map.closeWindow);
 
 // Build the route line and map center
 <c:if test="${!empty mapRoute}">
@@ -402,9 +398,7 @@ google.maps.event.addListener(map, 'click', function() { map.infoWindow.close();
 </c:if>
 <c:if test="${empty mapRoute && isACARS}">
 var gRoute;
-var routePoints = [];
-var routeMarkers = [];
-getACARSData(${fn:ACARS_ID(pirep)}, ${access.canApprove});
+golgotha.maps.acarsFlight.getACARSData(${fn:ACARS_ID(pirep)}, ${access.canApprove});
 google.maps.event.addListener(map.infoWindow, 'closeclick', function() { removeMarkers('selectedFIRs'); });
 </c:if>
 <c:if test="${!empty filedRoute}">
@@ -436,12 +430,12 @@ addMarkers(map, 'filedMarkers');
 <c:if test="${isACARS}">
 google.load('visualization','1.0',{'packages':['corechart']});
 google.setOnLoadCallback(function() {
-var xmlreq = getXMLHttpRequest();
+var xmlreq = new XMLHttpRequest();
 xmlreq.open('get', 'pirepstats.ws?id=${pirep.hexID}', true);
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
 	if (xmlreq.status != 200) {
-		displayObject(document.getElementById('flightDataChart'),false);
+		displayObject(document.getElementById('flightDataChart'), false);
 		return false;
 	}
 
@@ -484,22 +478,20 @@ xmlreq.onreadystatechange = function() {
 	var va1 = {maxValue:statsData.maxSpeed,gridlines:{count:5},title:'Speed',textStyle:lgStyle};
 	var s = [{},{targetAxisIndex:1},{targetAxisIndex:1,type:'area',areaOpacity:0.7}];
 	chart.draw(data,{series:s,vAxes:[va1,va0],hAxis:ha,fontName:'Tahoma',fontSize:10,colors:[pr,sc,'#b8b8d8']});
-<c:if test="${access.canApprove}">toggleExpand(document.getElementById('chartToggle'), 'flightDataChart');</c:if>	
+<c:if test="${access.canApprove}">golgotha.util.toggleExpand(document.getElementById('chartToggle'), 'flightDataChart');</c:if>	
 	return true;
-}
+};
 
 xmlreq.send(null);
 return true;
 });
 </c:if>
 <c:if test="${!empty onlineTrack}">
-function toggleObject(map, obj, check)
-{
-map.closeWindow();	
-obj.setMap((check.checked) ? map : null);
-return true;
-}
-</c:if>
+golgotha.local.toggleObject = function(map, obj, check) {
+	map.closeWindow();	
+	obj.setMap((check.checked) ? map : null);
+	return true;
+};</c:if>
 // Update text color
 google.maps.event.trigger(map, 'maptypeid_changed');
 </script>

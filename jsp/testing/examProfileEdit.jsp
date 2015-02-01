@@ -13,22 +13,21 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateText(form.examName, 10, 'Examination Name')) return false;
-if (!validateNumber(form.stage, 1, 'Examination Stage')) return false;
-if (!validateNumber(form.minStage, 0, 'Examination Minimum Stage')) return false;
-if (!validateNumber(form.questions, 1, 'Examination Size')) return false;
-if (!validateNumber(form.passScore, 0, 'Passing Score')) return false;
-if (!validateNumber(form.time, 5, 'Examination Duration')) return false;
-if (!validateCombo(form.owner, 'Owner')) return false;
-if (!validateCheckBox(form.airline, 1, 'Airline')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.examName, l:10, t:'Examination Name'});
+golgotha.form.validate({f:f.stage, min:1, t:'Examination Stage'});
+golgotha.form.validate({f:f.minStage, min:0, t:'Examination Minimum Stage'});
+golgotha.form.validate({f:f.questions, min:1, t:'Examination Size'});
+golgotha.form.validate({f:f.passScore, min:0, t:'Passing Score'});
+golgotha.form.validate({f:f.time, min:5, t:'Examination Duration'});
+golgotha.form.validate({f:f.owner, t:'Owner'});
+golgotha.form.validate({f:f.airline, min:1, t:'Airline'});
+golgotha.form.submit();
 disableButton('SaveButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -40,7 +39,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="eprofile.do" linkID="${eProfile.name}" op="save" method="post" validate="return validate(this)">
+<el:form action="eprofile.do" linkID="${eProfile.name}" op="save" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <!-- Exam Title Bar -->
 <tr class="title caps">

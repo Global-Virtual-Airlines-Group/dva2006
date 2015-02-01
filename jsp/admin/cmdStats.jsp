@@ -14,22 +14,19 @@
 <content:css name="view" />
 <content:pics />
 <script type="text/javascript">
-function setSort(combo)
-{
-var sortOpt = combo.options[combo.selectedIndex].value;
-self.location = '/cmdstats.do?sortBy=' + sortOpt;
-return true;
-}
+golgotha.local.setSort = function(combo) {
+	self.location = '/cmdstats.do?sortBy=' + golgotha.form.getCombo(combo);
+	return true;
+};
 
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateNumber(form.purgeDays, 2, 'Days of Log Entries to keep')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validateNumber({f:f.purgeDays, min:2, t:'Days of Log Entries to keep'});
+golgotha.form.submit();
 disableButton('PurgeButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -40,12 +37,12 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="cmdstatpurge.do" method="post" validate="return validate(this)">
+<el:form action="cmdstatpurge.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="view">
 <!-- Table Header Bar -->
 <tr class="title">
  <td colspan="4" class="caps">COMMAND INVOCATION STATISTICS</td>
- <td colspan="4" class="right"><el:combo name="sortBy" idx="*" size="1" options="${sortOptions}" value="${sortType}" onChange="void setSort(this)" /></td>
+ <td colspan="4" class="right"><el:combo name="sortBy" idx="*" size="1" options="${sortOptions}" value="${sortType}" onChange="void golgotha.local.setSort(this)" /></td>
 </tr>
 
 <!-- Table Legend Bar -->

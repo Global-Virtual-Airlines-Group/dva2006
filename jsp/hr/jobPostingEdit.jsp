@@ -14,18 +14,17 @@
 <content:js name="datePicker" />
 <content:pics />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateText(form.title, 10, 'Job Title')) return false;
-if (!validateText(form.summary, 16, 'Job Summary')) return false;
-if (!validateText(form.body, 32, 'Job Description')) return false;
-if (!validateCombo(form.hireMgr, 'Hiring Manager')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.title, l:10, t:'Job Title'});
+golgotha.form.validate({f:f.summary, l:16, t:'Job Summary'});
+golgotha.form.validate({f:f.body, l:32, t:'Job Description'});
+golgotha.form.validate({f:f.hireMgr, t:'Hiring Manager'});
+golgotha.form.submit();
 disableButton('SaveButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -36,7 +35,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="job.do" op="save" link="${job}" method="post" validate="return validate(this)">
+<el:form action="job.do" op="save" link="${job}" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2"><content:airline /> VOLUNTEER STAFF POSTING</td>

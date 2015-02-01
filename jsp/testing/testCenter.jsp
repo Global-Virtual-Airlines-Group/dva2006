@@ -15,24 +15,18 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!form.examName) return false;
-if (form.examName.selectedIndex == 0) {
-	alert('Please select the Examination you wish to take.');
-	form.examName.focus();
-	return false;
-}
+if (!golgotha.form.check()) return false;
+if (!f.examName) return false;
+if (!golgotha.form.comboSet(f.examName))
+	throw new golgotha.util.ValidationError('Please select the Examination you wish to take.', f.examName);
 
-// Check if we're sure
-var testName = form.examName.options[form.examName.selectedIndex].text;
-if (!confirm('Are you sure you wish to take the ' + testName + ' Examination?')) return false;
-
-setSubmit();
+if (!confirm('Are you sure you wish to take the ' + golgotha.form.getCombo(f.examName) + ' Examination?')) return false;
+golgotha.form.submit();
 disableButton('ExamButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -44,7 +38,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="newexam.do" method="post" validate="return validate(this)">
+<el:form action="newexam.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="view">
 <!-- Examination Title Bar -->
 <tr class="title caps">

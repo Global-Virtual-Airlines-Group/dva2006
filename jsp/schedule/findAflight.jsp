@@ -18,19 +18,20 @@
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
 <fmt:aptype var="useICAO" />
-<script type="text/javascript">
-function validate(form)
+<script>
+golgotha.ff = golgotha.ff || {};
+golgotha.ff.validate = function(f)
 {
-if (!checkSubmit()) return false;
+if (!golgotha.form.check()) return false;
 
 // Check that at least one option was selected
-var eqOK = (form.eqType.selectedIndex > 0);
-var alOK = (form.airline.selectedIndex > 0);
-var adOK = (form.airportD.selectedIndex > 0);
-var aaOK = (form.airportA.selectedIndex > 0);
+var eqOK = golgotha.form.comboSet(f.eqType);
+var alOK = golgotha.form.comboSet(f.airline);
+var adOK = golgotha.form.comboSet(f.airportD);
+var aaOK = golgotha.form.comboSet(f.airportA);
 
 if (eqOK || adOK || aaOK || alOK) {
-	setSubmit();
+	golgotha.form.submit();
 	disableButton('SearchButton');
 	disableButton('BuildButton');
 	disableButton('BuildResetButton');
@@ -41,57 +42,56 @@ if (eqOK || adOK || aaOK || alOK) {
 
 alert('Please select at least an Airline, Aircraft Type or Departure/Arrival Airport.');
 return false;
-}
+};
 <c:if test="${!empty fafResults}">
-function buildValidate(form)
+golgotha.ff. buildValidate = function(f)
 {
-if (!checkSubmit()) return false;
+if (!golgotha.form.check()) return false;
 
 var isOK = false;
-if (form.addFA.length) {
-	for (var x = 0; x < form.addFA.length; x++)
-		isOK = isOK || form.addFA[x].checked;
-} else {
-	isOK = form.addFA.checked;
-}
+if (f.addFA.length) {
+	for (var x = 0; ((!isOK) && (x < f.addFA.length)); x++)
+		isOK = isOK || f.addFA[x].checked;
+} else
+	isOK = f.addFA.checked;
 
 if (!isOK) {
 	alert('Please select at least one Flight Leg to add.');
 	return false;
 }
 
-setSubmit();
+golgotha.form.submit();
 disableButton('SearchButton');
 disableButton('BuildButton');
 disableButton('BuildResetButton');
 disableButton('SaveButton');
 disableButton('ClearButton');
 return true;
-}
+};
 </c:if>
-function updateAirline(combo)
+golgotha.ff.updateAirline = function(cb)
 {
 var f = document.forms[0];
 var cfg = golgotha.airportLoad.config.clone();
-cfg.airline = getValue(combo);
-golgotha.airportLoad.changeAirline([f.airportD, f.airportA], cfg)
+cfg.airline = golgotha.form.getCombo(cb);
+golgotha.airportLoad.changeAirline([f.airportD, f.airportA], cfg);
 return true;
-}
+};
 
-function updateSort(combo) {
-	return enableElement('sortDesc', (combo.selectedIndex > 0));
-}
+golgotha.ff.updateSort = function(cb) {
+	return enableElement('sortDesc', golgotha.form.comboSet(cb));
+};
 
-function refreshAirports() {
+golgotha.ff.refreshAirports = function() {
 	updateAirline(document.forms[0].airline);
-}
+};
 
-function refreshNV(checkbox, cboName, isDest)
+golgotha.ff.refreshNV = function(checkbox, cboName, isDest)
 {
 var f = document.forms[0];
-var srcA = getValue(f.airportD);
+var srcA = golgotha.form.getCombo(f.airportD);
 var cfg = golgotha.airportLoad.config.clone();
-cfg.airline = getValue(f.airline); cfg.notVisited = checkbox.checked;
+cfg.airline = golgotha.form.getCombo(f.airline); cfg.notVisited = checkbox.checked;
 if (isDest && (srcA != null)) {
 	cfg.dst = true;	
 	cfg.code = srcA;
@@ -104,7 +104,7 @@ if (cbo) {
 }
 
 return true;
-}
+};
 
 golgotha.onDOMReady(function() {
 	var f = document.forms[0];
@@ -120,7 +120,7 @@ golgotha.onDOMReady(function() {
 	f.airline.onchange();</c:if>
 	f.airportD.notVisited = f.nVD.checked;
 	f.airportA.notVisited = f.nVA.checked;
-	updateSort(f.sortType);
+	golgotha.ff.updateSort(f.sortType);
 });
 </script>
 </head>
@@ -134,14 +134,14 @@ golgotha.onDOMReady(function() {
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form method="post" action="findflight.do" op="search" validate="return validate(this)">
+<el:form method="post" action="findflight.do" op="search" validate="return golgotha.form.wrap(golgotha.ff.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="4"><content:airline /> FLIGHT SCHEDULE SEARCH</td>
 </tr>
 <tr>
  <td class="label">Airline</td>
- <td class="data"><el:combo name="airline" size="1" idx="*" firstEntry="-" options="${airlines}" value="${empty fafCriteria ? aCode : fafCriteria.airline}" onChange="void updateAirline(this)" /></td>
+ <td class="data"><el:combo name="airline" size="1" idx="*" firstEntry="-" options="${airlines}" value="${empty fafCriteria ? aCode : fafCriteria.airline}" onChange="void golgotha.ff.updateAirline(this)" /></td>
  <td class="label">Equipment</td>
  <td class="data"><el:combo name="eqType" size="1" idx="*" firstEntry="-" options="${allEQ}" value="${param.myEQTypes ? '-' : fafCriteria.equipmentType}" /></td>
 </tr>
@@ -155,13 +155,13 @@ golgotha.onDOMReady(function() {
 </tr>
 <tr>
  <td class="label">Departing from</td>
- <td class="data"><el:combo name="airportD" idx="*" size="1" firstEntry="-" options="${airports}" value="${fafCriteria.airportD}" onChange="this.updateAirportCode(); updateOrigin(this)" />
+ <td class="data"><el:combo name="airportD" idx="*" size="1" firstEntry="-" options="${airports}" value="${fafCriteria.airportD}" onChange="this.updateAirportCode(); golgotha.airportLoad.updateOrigin(this)" />
  <el:text ID="airportDCode" name="airportDCode" idx="*" size="3" max="4" onBlur="void document.forms[0].airportD.setAirport(this.value, true)" />
- <el:box name="nVD" value="true" checked="${param.nVD}" label="Only include unvisited Airports" onChange="void refreshNV(this, 'airportD')" /></td>
+ <el:box name="nVD" value="true" checked="${param.nVD}" label="Only include unvisited Airports" onChange="void golgotha.ff.refreshNV(this, 'airportD')" /></td>
  <td class="label">Arriving at</td>
  <td class="data"><el:combo name="airportA" idx="*" size="1" firstEntry="-" options="${airportsA}" value="${fafCriteria.airportA}" onChange="void this.updateAirportCode()" />
  <el:text ID="airportACode" name="airportACode" idx="*" size="3" max="4" onBlur="void document.forms[0].airportA.setAirport(this.value, true)" />
- <el:box name="nVA" value="true" checked="${param.nVA}" label="Only include unvisited Airports" onChange="void refreshNV(this, 'airportA', true)" /></td>
+ <el:box name="nVA" value="true" checked="${param.nVA}" label="Only include unvisited Airports" onChange="void golgotha.ff.refreshNV(this, 'airportA', true)" /></td>
 </tr>
 <tr>
  <td class="label">Departure Time (+/- 2h)</td>
@@ -200,7 +200,7 @@ golgotha.onDOMReady(function() {
 </el:table>
 </el:form>
 <c:if test="${!empty fafResults}">
-<el:form method="post" action="buildassign.do" validate="return buildValidate(this)">
+<el:form method="post" action="buildassign.do" validate="return golgotha.form.wrap(golgotha.ff.buildValidate, this)">
 <el:table className="view">
 <!-- Search Results Data -->
 <tr class="title caps">

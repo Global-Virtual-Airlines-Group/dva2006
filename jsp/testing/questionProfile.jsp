@@ -14,17 +14,9 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
+<content:js name="examTake" />
 <c:if test="${fn:isRoutePlot(question)}">
 <map:api version="3" /></c:if>
-<c:if test="${question.size > 0}">
-<script type="text/javascript">
-function viewImage(x, y)
-{
-var flags = 'height=' + (y+45) + ',width=' + (x+45) + ',menubar=no,toolbar=no,status=yes,scrollbars=yes';
-var w = window.open('/exam_rsrc/${question.hexID}', 'questionImage', flags);
-return true;
-}
-</script></c:if>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -74,7 +66,7 @@ return true;
  <td class="label">Image Information</td>
  <td class="data"><span class="pri bld">${question.typeName}</span> image, <fmt:int value="${question.size}" />
  bytes <span class="sec">(<fmt:int value="${question.width}" /> x <fmt:int value="${question.height}" />
- pixels)</span> <el:link className="pri bld small" url="javascript:void viewImage(${question.width},${question.height})">VIEW IMAGE</el:link></td>
+ pixels)</span> <el:link className="pri bld small" url="javascript:void golgotha.exam.viewImage(${question.width},${question.height})">VIEW IMAGE</el:link></td>
 </tr>
 </c:if>
 <c:if test="${fn:isRoutePlot(question)}">
@@ -121,8 +113,8 @@ return true;
 <map:point var="mapC" point="${question.midPoint}" />
 
 // Create map
-var mapTypes = {mapTypeIds: [google.maps.MapTypeId.TERRAIN, google.maps.MapTypeId.SATELLITE]};
-var mapOpts = {center:mapC, zoom:golgotha.maps.util.getDefaultZoom(${q.distance} - 1), scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
+var mapTypes = {mapTypeIds:[google.maps.MapTypeId.TERRAIN, google.maps.MapTypeId.SATELLITE]};
+var mapOpts = {center:mapC, zoom:golgotha.maps.util.getDefaultZoom(${q.distance} - 1), scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});

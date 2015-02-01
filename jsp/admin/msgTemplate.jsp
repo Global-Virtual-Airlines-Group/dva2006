@@ -17,19 +17,18 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateText(form.name, 4, 'Template Name')) return false;
-if (!validateText(form.subject, 6, 'E-Mail Subject')) return false;
-if (!validateText(form.desc, 6, 'Template Description')) return false;
-if (!validateText(form.body, 15, 'E-Mail Text')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validateText({f:f.name, l:4, t:'Template Name'});
+golgotha.form.validateText({f:f.subject, l:6, t:'E-Mail Subject'});
+golgotha.form.validateText({f:f.desc, l:6, t:'Template Description'});
+golgotha.form.!validateText({f:f.body, l:15, t:'E-Mail Text'});
+golgotha.form.submit();
 disableButton('SaveButton');
 disableButton('DeleteButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -40,7 +39,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form method="post" action="msgtemplate.do" linkID="${empty template ? null : template.name}" op="save" validate="return validate(this)">
+<el:form method="post" action="msgtemplate.do" linkID="${empty template ? null : template.name}" op="save" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <!-- Template Title Bar -->
 <tr class="title caps">

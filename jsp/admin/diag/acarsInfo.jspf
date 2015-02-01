@@ -26,7 +26,7 @@
 <script type="text/javascript">
 google.load('visualization','1.0',{'packages':['corechart']});
 google.setOnLoadCallback(function() {
-var xmlreq = getXMLHttpRequest();
+var xmlreq = new XMLHttpRequest();
 xmlreq.open('get', 'bwstats.ws', true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;

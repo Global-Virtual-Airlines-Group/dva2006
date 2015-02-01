@@ -14,11 +14,7 @@
 <content:css name="view" />
 <content:pics />
 <script type="text/javascript">
-function sort()
-{
-document.forms[0].submit();
-return true;
-}
+golgotha.local.sort = function() { return document.forms[0].submit(); };
 </script>
 </head>
 <content:copyright visible="false" />
@@ -34,8 +30,8 @@ return true;
 <!-- Table Sort Combo Bar -->
 <tr class="title">
  <td colspan="3" class="left caps"><content:airline /> PILOT ROSTER</td>
- <td colspan="5" class="right">PROGRAM <el:combo name="eqType" size="1" idx="*" options="${eqTypes}" firstEntry="All Programs" value="${param.eqType}" onChange="void sort()" />
- SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${viewContext.sortType}" onChange="void sort()" /></td>
+ <td colspan="5" class="right">PROGRAM <el:combo name="eqType" size="1" idx="*" options="${eqTypes}" firstEntry="All Programs" value="${param.eqType}" onChange="void golgotha.local.sort()" />
+ SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${viewContext.sortType}" onChange="void golgotha.local.sort()" /></td>
 </tr>
 
 <!-- Table Header Bar-->

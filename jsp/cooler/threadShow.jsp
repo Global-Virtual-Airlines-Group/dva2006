@@ -27,26 +27,21 @@
 <content:filter roles="Moderator"><content:js name="datePicker" /></content:filter>
 <c:if test="${!empty img}"><content:js name="imgLike" /></c:if>
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-
-// Validate response
-var act = form.action;
+if (!golgotha.form.check()) return false;
+var act = f.action;
 if (act.indexOf('threadmove.do') != -1)
-	if (!validateCombo(form.newChannel, 'Channel Name')) return false;
+	golgotha.form.validate({f:f.newChannel, t:'Channel Name'});
 else if (act.indexOf('threadsubjectedit.do') != -1)
-	if (!validateText(form.newTitle, 5, 'New Discussion Thread Title')) return false;
+	golgotha.form.validate({f:f.newTitle, l:5, t:'New Discussion Thread Title'});
 else if (act.indexOf('linkimg.do') != -1) {
-	if (!validateText(form.imgURL, 12, 'URL of your Linked Image')) return false;
-	if (!validateText(form.desc, 8, 'Description of your Linked Image')) return false;
-} else {
-	var hasResponse = (form.msgText.value.length > 3);
-	if (!hasResponse)
-		if (!validateCheckBox(form.pollVote, 1, 'Poll Vote')) return false;
-}
+	golgotha.form.validate({f:f.imgURL, l:12, t:'URL of your Linked Image'});
+	golgotha.form.validate({f:f.desc, l:8, t:'Description of your Linked Image'});
+} else if (form.msgText.value.length < 4)
+	golgotha.form.validate({f:f.pollVote, min:1, t:'Poll Vote'});
 
-setSubmit();
+golgotha.form.submit();
 disableButton('SaveButton');
 disableButton('LockButton');
 disableButton('HideButton');
@@ -61,20 +56,16 @@ disableButton('MoveButton');
 disableButton('CalendarButton');
 disableButton('EmoticonButton');
 return true;
-}
+};
 
-function openEmoticons()
-{
-var w = window.open('emoticons.do', 'emoticonHelp', 'height=320,width=250,menubar=no,toolbar=no,status=no,scrollbars=yes');
-return true;
-}
+golgotha.local.openEmoticons = function() {
+	return window.open('emoticons.do', 'emoticonHelp', 'height=320,width=250,menubar=no,toolbar=no,status=no,scrollbars=yes');
+};
 <c:if test="${access.canReply && !doEdit}">
-function postQuote(postID)
+golgotha.local.postQuote = function(postID, f)
 {
-var f = document.forms[0];
-	
-var xmlreq = getXMLHttpRequest();
-xmlreq.open('get', 'quote.ws?id=${thread.hexID}&post=' + postID);
+var xmlreq = new XMLHttpRequest();
+xmlreq.open('GET', 'quote.ws?id=${thread.hexID}&post=' + postID);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 
@@ -97,30 +88,24 @@ xmlreq.onreadystatechange = function() {
 	quote += ']';
 
 	// Add the body
-	var be = bds[0];
-	var body = be.firstChild;
-	quote += body.data;
-	quote += '[/quote]'
-	quote += '\r\n\r\n';
+	quote += bds[0].firstChild.data;
+	quote += '[/quote]\r\n\r\n';
 
 	// Save in the field
-	var isEmpty = (f.msgText.value.length == 0);
-	if (!isEmpty)
-		f.msgText.value += '\r\n';
-
+	if (f.msgText.value.length > 0) f.msgText.value += '\r\n';
 	f.msgText.value += quote;
 	f.msgText.focus();
 	return true;
-} // function
+};
 
 xmlreq.send(null);
 return true;	
-}
+};
 </c:if>
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void initLinks();<c:if test="${!empty img}"> void golgotha.like.get(${img.hexID})</c:if>">
+<body<c:if test="${!empty img}"> onload="void golgotha.like.get(${img.hexID})"</c:if>>
 <content:page>
 <%@ include file="/jsp/cooler/header.jspf" %> 
 <%@ include file="/jsp/cooler/sideMenu.jspf" %>
@@ -131,7 +116,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="threadReply.do" link="${thread}" method="post" validate="return validate(this)">
+<el:form action="threadReply.do" link="${thread}" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="thread form">
 <!-- Thread Header -->
 <tr class="title">
@@ -237,7 +222,7 @@ APPLICANT<br />
 <c:if test="${showPostTools}">
 <td class="postEdit">
 <c:if test="${access.canReply && !doEdit}">
-<a href="javascript:void postQuote(${postIdx})">QUOTE</a>&nbsp;
+<a href="javascript:void golgotha.local.postQuote(${postIdx}, document.forms[0])">QUOTE</a>&nbsp;
 </c:if>
 <c:if test="${canEdit}">
 <el:cmd className="pri bld small" url="thread" link="${thread}" op="edit">EDIT</el:cmd>&nbsp; 
@@ -385,7 +370,7 @@ notification each time a reply is posted in this Thread.
 <c:if test="${access.canReply || access.canReport}">
 <tr class="buttons mid title">
  <td colspan="3"><c:if test="${access.canReply}"><el:button ID="SaveButton" label="SAVE RESPONSE" type="submit" />
-&nbsp;<el:button ID="EmoticonButton" onClick="void openEmoticons()" label="EMOTICONS" /></c:if></td>
+&nbsp;<el:button ID="EmoticonButton" onClick="void golgotha.local.openEmoticons()" label="EMOTICONS" /></c:if></td>
 </tr>
 </c:if>
 </el:table>
@@ -396,7 +381,7 @@ notification each time a reply is posted in this Thread.
 </content:region>
 </content:page>
 <c:if test="${!empty lastReadPostID}">
-<script type="text/javascript">
+<script type="text/javascript" defer>
 var postRow = document.getElementById('post${lastReadPostID}');
 if (postRow) postRow.scrollIntoView();
 </script></c:if>
