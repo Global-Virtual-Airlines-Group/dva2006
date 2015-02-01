@@ -463,12 +463,12 @@
 				<il>AirCharts</il>
 				<nz>AirCharts</nz>
 				<uk>AirCharts</uk>
-				<us>internal</us>
+				<us>AirCharts</us>
 				<za>internal</za>
 			</map>
 
 			<url>
-				<faa>http://155.178.201.160/d-tpp/${YY}${MM}</faa>
+				<faa>http://aeronav.faa.gov/d-tpp/${YY}${MM}</faa>
 			</url>
 
 			<default>AirCharts</default>
