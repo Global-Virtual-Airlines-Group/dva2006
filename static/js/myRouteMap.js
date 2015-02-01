@@ -57,7 +57,7 @@ golgotha.routeMap.showAirport = function(a, isDST) {
 // Load airport/route data
 golgotha.routeMap.load = function() {
 	if (this.busy) return false;
-	var xmlreq = getXMLHttpRequest();
+	var xmlreq = new XMLHttpRequest();
 	var isLoading = document.getElementById('isLoading');
 	isLoading.innerHTML = ' - LOADING...';
 	xmlreq.open('get', 'myroutemap.ws?id=' + this.id, true);
@@ -105,7 +105,7 @@ golgotha.routeMap.load = function() {
 // Load tracks to/from airport
 golgotha.routeMap.loadTracks = function(icao, isDST) {
 	if (this.busy) return false;
-	var xmlreq = getXMLHttpRequest();
+	var xmlreq = new XMLHttpRequest();
 	var isLoading = document.getElementById('isLoading');	
 	isLoading.innerHTML = ' - LOADING FLIGHT TRACKS...';
 	xmlreq.open('get', 'mytracks.ws?id=' + this.id + '&icao=' + icao + '&dst=' + isDST, true);	
