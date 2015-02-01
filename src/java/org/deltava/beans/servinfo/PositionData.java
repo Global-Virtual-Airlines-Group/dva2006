@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store ServInfo data for historical purposes.
  * @author Luke
- * @version 5.5
+ * @version 6.0
  * @since 2.4
  */
 

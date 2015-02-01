@@ -14,7 +14,7 @@ import org.deltava.util.GeoUtils;
 /**
  * A utility class to do ETOPS validation.
  * @author Luke
- * @version 5.5
+ * @version 6.0
  * @since 4.1
  */
 

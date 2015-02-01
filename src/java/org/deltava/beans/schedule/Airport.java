@@ -10,7 +10,7 @@ import org.deltava.util.*;
 /**
  * A class for storing airport information.
  * @author Luke
- * @version 5.5
+ * @version 6.0
  * @since 1.0
  */
 

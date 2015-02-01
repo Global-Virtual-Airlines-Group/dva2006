@@ -4,7 +4,7 @@ package org.deltava.beans.navdata;
 /**
  * A bean to store Intersection data.
  * @author Luke
- * @version 5.5
+ * @version 6.0
  * @since 1.0
  */
 
