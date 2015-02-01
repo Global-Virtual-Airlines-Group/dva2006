@@ -1,11 +1,13 @@
-var golgotha = { event:{}, util:{}, form:{} };
+var golgotha = {event:{}, util:{}, form:{isSubmitted:false}, local:{}};
 golgotha.util.isIE = (navigator.appName == 'Microsoft Internet Explorer');
 golgotha.util.oldIE = (golgotha.util.isIE && ((navigator.appVersion.indexOf('IE 7.0') > 0) || (navigator.appVersion.indexOf('IE 8.0') > 0)));
 golgotha.util.getTimestamp = function(ms) { var d = new Date(); return d.getTime() - (d.getTime() % ms); };
 golgotha.event.beacon = function() { return false; };
 golgotha.event.stop = function(e) { e.stopPropagation(); e.preventDefault(); return true; };
+golgotha.event.Error = function(msg, showAlert) { var e = new Error(msg); e.showAlert = showAlert; return e; };
+golgotha.event.ValidationError = function(msg, el) { var e = new golgotha.event.Error(msg, true); e.focusElement = el; return e; };
 
-function getElementsById(id, eName)
+golgotha.util.getElementsById = function(id, eName)
 {
 var elements = [];
 var all = document.getElementsByTagName((eName == null) ? '*' : eName);
@@ -15,9 +17,9 @@ for (var x = 0; x < all.length; x++) {
 }
 
 return elements;
-}
+};
 
-function getElementsByClass(cName, eName, parent)
+golgotha.util.getElementsByClass = function(cName, eName, parent)
 {
 if (parent == null) parent = document;
 var elements = [];
@@ -29,34 +31,27 @@ for (var x = 0; x < all.length; x++) {
 }
 
 return elements;
-}
+};
 
-document.addClass = function(e, cl)
+golgotha.util.addClass = function(e, cl)
 {
 if (!e) return false;
 var c = e.className.split(' ');
 if (c.indexOf(cl) < 0)
 	c.push(cl);
 
-e.className = c.join(' ');	
+e.className = c.join(' ');
 return true;
-}
+};
 
-document.containsClass = function(e, cl)
-{
-if (!e) return false;	
-var c = e.className.split(' ');
-return (c.indexOf(cl) > -1);
-}
-
-document.removeClass = function(e, cl)
+golgotha.util.removeClass = function(e, cl)
 {
 if (!e) return false;
 var c = e.className.split(' ');
 var hasClass = c.remove(cl);
 e.className = c.join(' ');
 return hasClass;
-}
+};
 
 function enableObject(e, isEnabled)
 {
@@ -66,10 +61,10 @@ return true;
 
 function enableElement(eName, isEnabled)
 {
-var objs = getElementsById(eName);
+var objs = golgotha.util.getElementsById(eName);
 if (!objs) return false;
 for (var x = 0; x < objs.length; x++)
-	enableObject(objs[x], isEnabled);
+	objs[x].disabled = (!isEnabled);
 
 return true;
 }
@@ -91,35 +86,24 @@ if (e) e.style.display = isVisible ? '' : 'none';
 return true;
 }
 
-function resizeAll()
+golgotha.form.resizeAll = function() {
+	var boxes = golgotha.util.getElementsByClass('resizable');
+	for (var x = 0; x < boxes.length; x++) golgotha.form.resize(boxes[x]);
+	return true;
+};
+
+golgotha.form.resize = function(textbox)
 {
-var boxes = getElementsByClass('resizable');
-for (var x = 0; x < boxes.length; x++)
-	resize(boxes[x]);
+if ((!textbox) || (textbox.clientHeight >= textbox.scrollHeight)) return false;
+textbox.style.height = textbox.scrollHeight + 'px';
+if (textbox.clientHeight < textbox.scrollHeight)
+	textbox.style.height = (textbox.scrollHeight * 2 - textbox.clientHeight) + 'px';
 
 return true;
-}
+};
 
-function resize(textbox)
-{
-if (!textbox) return false;
-if (!textbox.minRows) {
-	textbox.minRows = textbox.rows;
-	textbox.minCols = Math.max(textbox.cols, 80);
-}
-
-var data = textbox.value.split('\n');
-var lines = data.length;
-for (var x = 0; x < data.length; x++) {
-    if ((textbox.cols > 0) && (data[x].length >= textbox.minCols))
-        lines += Math.floor(data[x].length / textbox.minCols);
-}
-
-textbox.rows = Math.max(textbox.minRows, lines);
-return true;
-}
-
-function setCombo(combo, entryValue)
+golgotha.form.comboSet = function(combo) { return ((combo) && (combo.selectedIndex > 0)); };
+golgotha.form.setCombo = function(combo, entryValue)
 {
 if (!combo) return false;
 for (var x = 0; x < combo.options.length; x++) {
@@ -132,7 +116,12 @@ for (var x = 0; x < combo.options.length; x++) {
 
 combo.selectedIndex = -1;
 return false;
-}
+};
+
+golgotha.form.getCombo = function(combo) {
+	if ((!combo) || (combo.selectedIndex == -1)) return null;
+	return combo.options[combo.selectedIndex].value;
+};
 
 golgotha.util.isFunction = function(o) { return !!(o && o.constructor && o.call && o.apply); };
 golgotha.util.createScript = function(opts)
@@ -148,7 +137,6 @@ if (url.indexOf(golgotha.maps.wxHost) > -1) {
 }
 	
 var sc = document.createElement('script');
-sc.type = 'text/javascript';
 sc.setAttribute('id', opts.id);
 sc.src = url;
 if (opts.async) sc.setAttribute('async', 'true');
@@ -168,7 +156,7 @@ golgotha.util.enable = function(n) {
 	for (var x = 0; x < n.length; x++) {
 		var ci = n[x];
 		if (ci.charAt(0) == '#') {
-			var ee = getElementsByClass(ci.substring(1));
+			var ee = golgotha.util.getElementsByClass(ci.substring(1));
 			for (var e = ee.pop(); (e != null); e = ee.pop())
 				if (e.enable) e.enable();
 		} else {
@@ -185,19 +173,12 @@ golgotha.onDOMReady = function(f) {
 		return document.attachEvent('onreadystatechange', f); 
 	else
 		return document.addEventListener('DOMContentLoaded', f);
-}
+};
 
-function getValue(combo)
-{
-if (combo.selectedIndex == -1) return null;
-return combo.options[combo.selectedIndex].value;
-}
-
-golgotha.getChild = function(e, name)
-{
-var children = e.getElementsByTagName(name);
-return (children.length == 0) ? null : children[0];
-}
+golgotha.getChild = function(e, name) {
+	var children = e.getElementsByTagName(name);
+	return (children.length == 0) ? null : children[0];
+};
 
 if (window.Element != undefined)
 	Element.prototype.getChild = function(name) { return golgotha.getChild(this, name); };
@@ -209,7 +190,7 @@ while ((child != null) && (child.nodeType != 4))
 	child = child.nextSibling;
 
 return child;
-}
+};
 
 if (window.Element != undefined)
 	Element.prototype.getCDATA = function() { return golgotha.getCDATA(this); };
@@ -223,7 +204,7 @@ for (var x = 0; x < this.length; x++) {
 }
 
 return false;
-}
+};
 
 if (!Array.prototype.indexOf)
 {
@@ -238,206 +219,126 @@ if (!Array.prototype.indexOf)
 }
 
 Array.prototype.contains = function(obj) { return (this.indexOf(obj) != -1); };
-
 Array.prototype.clone = function() {
 var result = [];	
 for (var x = 0; x < this.length; x++)
 	result.push(this[x]);
 
 return result;
-}
+};
 
-function checkSubmit()
+golgotha.form.check = function() { return (golgotha.form.isSubmitted != true); };
+golgotha.form.submit = function() { golgotha.form.isSubmitted = true; return true; };
+golgotha.form.get = function(url) { golgotha.form.submit(); self.location = '/' + url; return true; };
+golgotha.form.post = function(url)
 {
-if (document.isSubmit) {
-	alert('This page is already being submitted. Please be patient.');
-	return false;
-}
- 
-return true;
-}
-
-function clearSubmit()
-{
-document.isSubmit = false;
-return true;
-}
-
-function setSubmit()
-{
-document.isSubmit = true;
-return true;
-}
-
-function cmdPost(url)
-{
-var form = document.forms[0];
-form.oldaction = form.action;
-form.action = url;
+var f = document.forms[0];
+f.oldaction = f.action;
+f.action = url;
  
 // Execute the form validation - if any
-if (form.onsubmit) {
-	var submitOK = form.onsubmit();
+if (f.onsubmit) {
+	var submitOK = f.onsubmit();
 	if (!submitOK) {
-		form.action = form.oldaction;
-		delete form.oldaction;
+		f.action = f.oldaction;
+		delete f.oldaction;
 		return false;
 	}
 }
   
-setSubmit();
-form.submit();
+golgotha.form.submit();
+f.submit();
 return true;
+};
+
+golgotha.form.wrap = function(func, f) {
+	try {	
+		return func(f); 
+	} catch (e) {
+		if (e.showAlert) alert(e.message);
+		else console.log(e);
+		if (e.focusElement) e.focusElement.focus();
+	}
+
+	return false;
+};
+
+golgotha.form.validate = function(opts)
+{
+if (!('f' in opts) || !('t' in opts)) throw new gologhta.util.ValidationError('Incomplete Validation Data');
+if ('ext' in opts) return golgotha.form.validateFile(opts.f, opts.ext, opts.t);
+if ('addr' in opts) return golgotha.form.validaateEMail(opts.f, opts.t);
+if ('l' in opts) return golgotha.form.validateText(opts.f, opts.l, opts.t);
+if ('min' in opts) {
+	var vf = (0 in opts.f) ? golgotha.form.validateCheckBox : golgotha.form.validateNumber;
+	return vf(opts.f, opts.min, opts.t);
 }
 
-function cmdGet(url)
+if (opts.f.options) return golgotha.form.validateCombo(opts.f, opts.t);
+throw new gologhta.util.ValidationError('Invalid Validation Data', opts.f);
+};
+
+golgotha.form.validateText = function(t, min, title) {
+	if ((!t) || (t.disabled)) return true;
+	if (t.value.length < min) throw new golgotha.event.ValidationError('Please provide the ' + title + '.', t);
+	return true;
+};
+
+golgotha.form.validateNumber = function(t, minValue, title)
 {
-setSubmit();
-self.location = '/' + url;
+if ((!t) || (t.disabled)) return true;
+var i = parseFloat(t.value);
+if ((t.value.length < 1) || (i == Number.NaN))
+	throw new golgotha.event.ValidationError('Please provide a numeric ' + title + '.', t);
+if (i < minValue)
+	throw new golgotha.event.ValidationError('The ' + title + ' must be greater than ' + minValue + '.', t);
+
 return true;
-}
+};
 
-golgotha.util.comboSet = function(combo) { return ((combo) && (combo.selectedIndex > 0)); };
-
-function validateText(text, min, title)
+golgotha.form.validateEMail = function(t, title)
 {
-if ((!text) || (text.disabled)) return true;
-if (text.value.length < min) {
-	alert('Please provide the ' + title + '.');
-	text.focus();
-	return false;
-}
-
-return true;
-}
-
-function validateNumber(text, minValue, title)
-{
-if ((!text) || (text.disabled)) return true;
-var intValue = parseFloat(text.value);
-if ((text.value.length < 1) || (intValue == Number.NaN)) {
-	alert('Please provide a numeric ' + title + '.');
-	text.focus();
-	return false;
-}
-
-if (intValue < minValue) {
-	alert('The ' + title + ' must be greater than ' + minValue + '.');
-	text.focus();
-	return false;
-}
-
-return true;
-}
-
-function validateEMail(text, title)
-{
-if ((!text) || (text.disabled)) return true;
-
-// Get the value
-if (text.value.length < 5) {
-	alert('Please provide a ' + title + '.');
-	text.focus();
-	return false;
-}
-
-// Test using regexp
+if (!golgotha.form.validateText(t, 6, title)) return false;
 var pattern = /^[\w](([_\.\-\+]?[\w]+)*)@([\w]+)(([\.-]?[\w]+)*)\.([A-Za-z]{2,})$/;
-if (!pattern.test(text.value)) {
-	alert('Please provide a valid ' + title + '.');
-	text.focus();
-	return false;
-}
+if (!pattern.test(t.value))
+	throw new golgotha.event.ValidationError('Please provide a valid ' + title + '.', t);
 
 return true;
-}
+};
 
-function validateCombo(combo, title)
+golgotha.form.validateCombo = function(c, title) {
+	if ((!c) || (c.disabled) || (c.selectedIndex > 0)) return true;
+	throw new golgotha.event.ValidationError('Please provide the ' + title + '.', c);
+};
+
+golgotha.form.validateFile = function(f, extTypes, title)
 {
-if ((!combo) || (combo.disabled)) return true;
-if (combo.selectedIndex === 0) {
-	alert('Please provide the ' + title + '.');
-	combo.focus();
-	return false;
-}
+if ((!f) || (f.disabled) || (f.value.length < 2)) return true;
+var ext = f.value.substring(f.value.lastIndexOf('.') + 1).toLowerCase();
+for (var e = extTypes.pop(); (e != null); e = extTypes.pop())
+	if (ext == e) return true;
 
-return true;
-}
+throw new golgotha.event.ValidationError('The ' + title + ' must be a ' + extType.toUpperCase() + ' file.', f);
+};
 
-function validateFile(fileName, extType, title)
+golgotha.form.validateCheckBox = function(cb, min, title)
 {
-if ((!fileName) || (fileName.disabled) || (fileName.value.length === 0)) return true;
-var extTypes = extType.toLowerCase().split(',');
+if ((!cb) || (!cb.length)) return true;
+var cnt = 0;
+for (var x = 0; ((x < cb.length) && (cnt < min)); x++)
+	if (cb[x].checked) cnt++;
 
-var fName = fileName.value;
-var ext = fName.substring(fName.lastIndexOf('.') + 1).toLowerCase();
-for (var x = 0; x < extTypes.length; x++) {
-	if (ext == extTypes[x])
-		return true;
-}
+if (cnt >= min) return true;
+throw new golgotha.event.ValidationError('At least ' + min + ' ' + title + ' must be selected.', cb[0]);
+};
 
-alert('The ' + title + ' must be a ' + extType.toUpperCase() + ' file.');
-fileName.focus();
-return false;
-}
-
-function validateCheckBox(checkbox, minSelected, title)
-{
-if ((!checkbox) || (!checkbox.length)) return true;
-var checkCount = 0;
-for (var x = 0; x < checkbox.length; x++) {
-	if (checkbox[x].checked)
-		checkCount++;
-}
-
-if (checkCount >= minSelected) return true;
-alert('At least ' + minSelected + ' ' + title + ' must be selected.');
-checkbox[0].focus();
-return false;
-}
-
-function getXMLHttpRequest()
-{
-var req;
-try {
-	req = new XMLHttpRequest();
-} catch (e) {
-	var MSXML_XMLHTTP_PROGIDS = ['MSXML2.XMLHTTP.6.0','MSXML2.XMLHTTP.4.0','MSXML2.XMLHTTP.3.0','MSXML2.XMLHTTP','Microsoft.XMLHTTP'];
-	for (var i = 0; i < MSXML_XMLHTTP_PROGIDS.length && (!req); i++) {
-		try {
-			req = new ActiveXObject(MSXML_XMLHTTP_PROGIDS[i]);
-		} catch (e) {}
-	}
-}
-
-return req;
-}
-
-function initLinks()
-{
-if (!document.getElementsByTagName) return false;
-var anchors = document.getElementsByTagName('a');
-for (var i = 0; i < anchors.length; i++) {
-	var anchor = anchors[i];
-	if (anchor.getAttribute('href')) {
-		var rel = anchor.getAttribute('rel');
-		if ((rel == 'external') || (rel == 'nofollow'))
-			anchor.target = '_blank';
-	}
-}
-
-return true;
-}
-
-function toggleExpand(lnk, className)
+golgotha.util.toggleExpand = function(lnk, className)
 {
 var isDisplayed = (lnk.innerHTML == 'COLLAPSE');
 lnk.innerHTML = isDisplayed ? 'EXPAND' : 'COLLAPSE';
-var rows = getElementsByClass(className);
-for (var y = 0; y < rows.length; y++) {
-	var row = rows[y];
-	row.style.display = isDisplayed ? 'none' : '';
-}
+var rows = golgotha.util.getElementsByClass(className);
+for (var r = rows.pop(); (r != null); r = rows.pop())
+	r.style.display = isDisplayed ? 'none' : '';
 
 return true;
-}
+};

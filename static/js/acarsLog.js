@@ -1,40 +1,40 @@
-function validate(form)
+function validate(f)
 {
-if (!checkSubmit()) return false;
+if (!golgotha.form.check()) return false;
 
 // Check the search type
 var sType;
-for (var x = 0; x < form.searchType.length; x++) {
-	if (form.searchType[x].checked)
-		sType = form.searchType[x].value;
+for (var x = 0; x < f.searchType.length; x++) {
+	if (f.searchType[x].checked)
+		sType = f.searchType[x].value;
 }
 
 // Do different validation depending on the search type
 switch (sType) {
 	case 'USR' :
-		if (!validateText(form.pilotCode, 4, 'Pilot Code')) return false;
+		if (!validateText(f.pilotCode, 4, 'Pilot Code')) return false;
 		break;
 	
 	case 'id' :
-		if (!validateNumber(form.pilotCode, 1000, 'Pilot Database ID')) return false;
+		if (!validateNumber(f.pilotCode, 1000, 'Pilot Database ID')) return false;
 		break;
 		
 	case 'DATE' :
-		if (!validateText(form.startDate, 10, 'Start Date')) return false;
-		if (!validateText(form.endDate, 10, 'End Date')) return false;
+		if (!validateText(f.startDate, 10, 'Start Date')) return false;
+		if (!validateText(f.endDate, 10, 'End Date')) return false;
 		break;
 		
 	case 'LATEST' :
-		if (!validateNumber(form.viewCount, 0, 'Maximum Results')) return false;
+		if (!validateNumber(f.viewCount, 0, 'Maximum Results')) return false;
 		break;
 	
 	default :
 		alert('Please select a Search Type.');
-		form.searchType[0].focus();
+		f.searchType[0].focus();
 		return false;
 }
 
-setSubmit();
+golgotha.form.submit();
 disableButton('SearchButton');
 return true;
 }
