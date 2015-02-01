@@ -1,24 +1,36 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.security.Principal;
 
-import javax.servlet.jsp.JspException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.*;
 
-import org.deltava.beans.DatabaseBean;
+import org.deltava.beans.*;
+
+import org.deltava.util.system.SystemData;
 
 /**
  * A JSP tag for generating HTML forms.
  * @author Luke
- * @version 5.0
+ * @version 6.0
  * @since 1.0
  */
 
 public class FormTag extends ElementTag {
+	
+	/*
+	 * Default CSS scheme name.
+	 */
+	private static final String DEFAULT_SCHEME = "legacy";
     
     private int _tabIndex;
     private boolean _allowUpload;
+    
+    private String _scheme;
+    private boolean _spinner = true;
     
     private String _id;
     private String _opName;
@@ -31,23 +43,32 @@ public class FormTag extends ElementTag {
         super("form");
     }
 
+	/**
+	 * Loads the UI scheme name from the user object, if present.
+	 * @param ctxt the JSP page context
+	 */
+    @Override
+    public void setPageContext(PageContext ctxt) {
+    	super.setPageContext(ctxt);
+		HttpServletRequest req = (HttpServletRequest) ctxt.getRequest();
+		Principal user = req.getUserPrincipal();
+		if (user instanceof Person) {
+			Person p = (Person) user;
+			_scheme = (p.getUIScheme() == null) ? null : p.getUIScheme().toLowerCase().replace(' ', '_');
+		}
+    }
+    
     /**
-     * Opens this FORM element by writing a &gt;FORM&lt; tag. This will also save the tag into the
-     * page Context as thisForm (so that the JSP EL can return it as ${thisForm}) so that child elements
-     * can get the tab index as ${thisForm.incTabIndex}.
+     * Opens this FORM element by writing a &gt;FORM&lt; tag.
      * @throws JspException if an I/O error occurs;  
      */
     @Override
     public int doStartTag() throws JspException {
     	super.doStartTag();
         
-        // Sets the tab index and marks this as a parent tag
-        _tabIndex = 0;
-        pageContext.setAttribute("thisForm", this);
-        
         // Set the ACTION URL
-        StringBuilder url = new StringBuilder(_action);
         try {
+        	StringBuilder url = new StringBuilder(_action);
             if (_id != null) {
                 url.append("?id=");
                 url.append(URLEncoder.encode(_id, "UTF-8"));
@@ -58,11 +79,11 @@ public class FormTag extends ElementTag {
                 url.append("op=");
                 url.append(URLEncoder.encode(_opName, "UTF-8"));
             }
+            
+            _data.setAttribute("action", url.toString());
         } catch (UnsupportedEncodingException uee) {
             throw new JspException("UTF-8 encoding not supported - Laws of Universe no longer apply");
         }
-        
-        _data.setAttribute("action", url.toString());
         
         // Update the encoding type if uploads are permitted
         if (_allowUpload)
@@ -84,6 +105,14 @@ public class FormTag extends ElementTag {
     @Override
     public int doEndTag() throws JspException {
         try {
+        	if (_spinner) {
+        		_out.print("<div id=\"spinner\" style=\"display:none;\"><img class=\"spinImg\" src=\"");
+        		_out.print(SystemData.get("path.img"));
+        		_out.print("/spinner_");
+        		_out.print((_scheme == null) ? DEFAULT_SCHEME : _scheme);
+        		_out.println(".gif\" /></div>");
+        	}
+        	
             _out.println(_data.close());
         } catch(Exception e) {
             throw new JspException(e);
@@ -195,6 +224,14 @@ public class FormTag extends ElementTag {
     }
     
     /**
+     * Sets whether to render the hidden spinner DIV.
+     * @param doSpinner TRUE if the spinner DIV should be rendered, otherwise FALSE
+     */
+    public void setSpinner(boolean doSpinner) {
+    	_spinner = doSpinner;
+    }
+    
+    /**
      * Releases the tag's state variables.
      */
     @Override
@@ -202,5 +239,7 @@ public class FormTag extends ElementTag {
         super.release();
         _id = null;
         _opName = null;
+        _tabIndex = 0;
+        _spinner = true;
     }
 }
