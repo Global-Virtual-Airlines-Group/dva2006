@@ -58,7 +58,7 @@ if (doRefresh && isAuto)
 	window.setTimeout('void golgotha.maps.acars.reloadData(true)', ${refreshInterval + 2000});
 
 return true;
-}
+};
 
 golgotha.maps.acars.saveSettings = function()
 {
@@ -80,11 +80,10 @@ document.cookie = 'acarsMapZoomLevel=' + myZoom + '; expires=' + expiryDate.toGM
 document.cookie = 'acarsMapType=' + myType + '; expires=' + expiryDate.toGMTString();
 alert('Your <content:airline /> ACARS Map preferences have been saved.');
 return true;
-}
+};
 
 golgotha.maps.acars.clearSettings = function()
 {
-// Clear cookies
 var expiryDate = new Date();
 document.cookie = 'acarsMapLat=; expires=' + expiryDate.toGMTString();
 document.cookie = 'acarsMapLng=; expires=' + expiryDate.toGMTString();
@@ -92,13 +91,12 @@ document.cookie = 'acarsMapZoomLevel=; expires=' + expiryDate.toGMTString();
 document.cookie = 'acarsMapType=; expires=' + expiryDate.toGMTString();
 alert('Your <content:airline /> ACARS Map preferences have been cleared.');
 return true;
-}
+};
 
-function showEarth()
-{
-self.location = '/acars_map_earth.ws';
-return true;
-}
+golgotha.maps.acars.showEarth = function() {
+	self.location = '/acars_map_earth.ws';
+	return true;
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -236,10 +234,6 @@ golgotha.maps.reloadData = function(isReload) {
 	golgotha.util.createScript({id:'lgAlert', url:'/wxd/LGRecord/CURRENT?jsonp=loaders.lg.load', async:true});
 	return true;
 };
-
-// Placeholders for route/positions
-var routeData; var routeWaypoints;
-var acPositions = []; var dcPositions = [];
 </script>
 </body>
 </html>

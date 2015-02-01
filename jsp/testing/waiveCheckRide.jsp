@@ -12,16 +12,15 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateCombo(form.eqType, 'Equipment Program')) return false;
-if (!validateText(form.comments, 15, 'Check Ride Waiver comments')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golglotha.form.validate({f:f.eqType, t:'Equipment Program'});
+golglotha.form.validate({f:f.comments, l:15, t:'Check Ride Waiver comments'});
+golgotha.form.submit();
 disableButton('SaveButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -32,7 +31,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="waivecr.do" method="post" link="${pilot}" validate="return validate(this)">
+<el:form action="waivecr.do" method="post" link="${pilot}" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2">NEW <content:airline /> CHECK RIDE WAIVER FOR ${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></td>

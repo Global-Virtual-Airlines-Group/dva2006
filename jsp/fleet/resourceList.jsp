@@ -15,11 +15,7 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function sort()
-{
-document.forms[0].submit();
-return true;
-}
+golgotha.local.sort = function() { return document.forms[0].submit(); };
 </script>
 </head>
 <content:copyright visible="false" />
@@ -37,8 +33,8 @@ return true;
 <tr class="title">
  <td class="left caps" colspan="2"><content:airline /> WEB RESOURCES</td>
  <td class="right" colspan="4"><c:if test="${access.canCreate}"><el:cmdbutton url="resource" op="edit" label="NEW RESOURCE" /></c:if>
- CATEGORY <el:combo name="cat" idx="*" size="1" options="${cats}" firstEntry="ALL" value="${param.cat}" onChange="void sort()" />
- SORT BY <el:combo name="sortType" idx="*" size="1" options="${sortOptions}" value="${viewContext.sortType}" onChange="void sort()" /></td>
+ CATEGORY <el:combo name="cat" idx="*" size="1" options="${cats}" firstEntry="ALL" value="${param.cat}" onChange="void golgotha.local.sort()" />
+ SORT BY <el:combo name="sortType" idx="*" size="1" options="${sortOptions}" value="${viewContext.sortType}" onChange="void golgotha.local.sort()" /></td>
 </tr>
 
 <!-- Table Header Bar -->

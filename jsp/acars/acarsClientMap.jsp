@@ -51,7 +51,7 @@ if (doRefresh && isAuto)
 	window.setTimeout('void golgotha.maps.acars.reloadData(true)', ${refreshInterval + 2000});
 
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -122,10 +122,6 @@ map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.Lay
 map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById('copyright'));
 map.controls[google.maps.ControlPosition.RIGHT_TOP].push(document.getElementById('mapStatus'));
 map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(document.getElementById('zoomLevel'));
-
-// Placeholders for route
-var routeData; var routeWaypoints;
-var acPositions = []; var dcPositions = [];
 
 // Load data async once tiles are loaded
 google.maps.event.addListenerOnce(map, 'tilesloaded', function() {

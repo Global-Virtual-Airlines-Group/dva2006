@@ -13,29 +13,27 @@
 <content:js name="common" />
 <content:pics />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
 <c:if test="${access.canComment}">
-if (!checkSubmit()) return false;
-if (!validateText(form.comment, 10, 'Issue Comments')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.comment, l:10, t:'Issue Comments'});
+golgotha.form.submit();
 disableButton('EditButton');
 disableButton('CommentButton');
 disableButton('ConvertButton');</c:if>
 return ${access.canComment};
-}
+};
 
-function toggleCheckbox()
-{
-var f = document.forms[0];
-f.emailAll.disabled = (!f.emailComment.checked);
-return true;
-}
+golgotha.local.toggleCheckbox = function() {
+	var f = document.forms[0];
+	f.emailAll.disabled = (!f.emailComment.checked);
+	return true;
+};
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void initLinks()">
+<body>
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -47,7 +45,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form method="post" action="issuecomment.do" link="${issue}" allowUpload="true" validate="return validate(this)">
+<el:form method="post" action="issuecomment.do" link="${issue}" allowUpload="true" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <!-- Title Bar -->
 <tr class="title">
@@ -130,7 +128,7 @@ Attached File: <span class="pri bld">${comment.name}</span> (<fmt:int value="${c
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="small sec"><el:box name="emailComment" value="true" idx="*" label="Send Comments via E-Mail" checked="true" onChange="void toggleCheckbox()" />
+ <td class="small sec"><el:box name="emailComment" value="true" idx="*" label="Send Comments via E-Mail" checked="true" onChange="void golgotha.local.toggleCheckbox()" />
  <el:box name="emailAll" value="true" idx="*" label="Send Comments to all Participants" checked="false" /></td>
 </tr>
 </c:if>

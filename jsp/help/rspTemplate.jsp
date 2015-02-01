@@ -12,17 +12,16 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateText(form.subject, 5, 'Template Title')) return false;
-if (!validateText(form.body, 5, 'Template Reseponse')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.subject, l:5, t:'Template Title'});
+golgotha.form.validate({f:f.body, l:5, t:'Template Reseponse'});
+golgotha.form.submit();
 disableButton('SaveButton');
 disableButton('DeleteButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -33,7 +32,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form method="post" action="rsptemplate.do" op="save" linkID="${template.title}" validate="return validate(this)">
+<el:form method="post" action="rsptemplate.do" op="save" linkID="${template.title}" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title">
  <td class="caps" colspan="2"><content:airline /> HELP DESK RESPONSE TEMPLATE</td>

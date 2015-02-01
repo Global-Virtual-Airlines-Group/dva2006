@@ -12,15 +12,14 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateCombo(form.id, 'Accomplishment')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.id, t:'Accomplishment'});
+golgotha.form.submit();
 disableButton('CalcButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -31,7 +30,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="accomplishrecalc.do" method="post" link="${accomplish}" op="save" validate="return validate(this)">
+<el:form action="accomplishrecalc.do" method="post" link="${accomplish}" op="save" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2">PILOT ACCOMPLISHMENT AWARD</td>

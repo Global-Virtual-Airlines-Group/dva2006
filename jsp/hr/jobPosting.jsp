@@ -18,58 +18,52 @@
 <c:when test="${access.canApply}">
 <c:set var="formURL" value="jobapply.do" scope="page" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateText(form.body, 32, 'Application Text')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.body, l:32, t:'Application Text'});
+golgotha.form.submit();
 disableButton('ApplyButton');
 return true;
-}
+};
 </script>
 </c:when>
 <c:when test="${access.canShortlist}">
 <c:set var="formURL" value="jobsl.do" scope="page" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateCheckBox(form.sl, 1, 'Short-listed Applicant')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.sl, min:1, t:'Short-listed Applicant'});
+golgotha.form.submit();
 disableButton('SLButton');
 disableButton('DeleteButton');
 return true;
-}
+};
 </script>
 </c:when>
 <c:when test="${access.canSelect}">
 <c:set var="formURL" value="jobapprove.do" scope="page" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateCheckBox(form.sl, 1, 'Approved Applicant')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validateCheckBox({f:f.sl, min:1, t:'Approved Applicant'});
+golgotha.form.submit();
 disableButton('SelectButton');
 disableButton('DeleteButton');
 return true;
-}
+};
 </script>
 </c:when>
 <c:otherwise>
 <script type="text/javascript">
-function validate(form)
-{
-return false;
-}
+golgotha.local.validate = function(f) { return false; };
 </script>
 </c:otherwise>
 </c:choose>
 <script type="text/javascript">
-function toggleBody(id)
+golgotha.local.toggleBody = function(id)
 {
 var row = document.getElementById('desc' + id);
 var linkDesc = document.getElementById('toggle' + id);
@@ -77,16 +71,16 @@ var visible = (row.style.display != 'none');
 displayObject(row, !visible);
 linkDesc.innerHTML = visible ? 'View' : 'Hide';
 return true;
-}
+};
 <c:if test="${access.canApply}">
-function clearBody()
+golgotha.local.clearBody = function()
 {
 var f = document.forms[0];
 if (confirm("Are you sure you want to clear what you've written?"))
 	f.body.value = '';
 	
 return true;	
-}</c:if>
+};</c:if>
 </script>
 </head>
 <content:copyright visible="false" />
@@ -97,7 +91,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="${formURL}" link="${job}" method="post" validate="return validate(this)">
+<el:form action="${formURL}" link="${job}" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2"><content:airline /> VOLUNTEER STAFF POSTING - ${job.title}</td>
@@ -160,7 +154,7 @@ return true;
  <td class="data top"><span class="bld">${pilot.rank.name}, ${pilot.equipmentType}</span>
  <fmt:int value="${pilot.legs}" /> legs, <fmt:dec value="${pilot.hours}" /> hours<br />
 Joined <content:airline /> on <fmt:date fmt="d" date="${pilot.createdOn}" />
-<a href="javascript:void toggleBody(${pilot.ID})">Click to <span id="toggle${pilot.ID}">View</span> Application</a>
+<a href="javascript:void golgotha.local.toggleBody(${pilot.ID})">Click to <span id="toggle${pilot.ID}">View</span> Application</a>
 <el:cmd url="profile" link="${pilot}">Click to view pilot profile.</el:cmd>
 <c:choose>
 <c:when test="${access.canShortlist}">
@@ -209,8 +203,8 @@ Joined <content:airline /> on <fmt:date fmt="d" date="${pilot.createdOn}" />
 <tr>
  <td class="label top">Application</td>
  <td class="data"><el:textbox style="float:left; margin-right:8px;" name="body" idx="*" width="75%" className="req" height="5" resize="true"></el:textbox>
-<span><c:if test="${!empty profile}"><a href="javascript:void useTemplate()">Use Saved Application</a><br /></c:if>
-<a href="javascript:void clearBody()">Clear Text</a></span>
+<span><c:if test="${!empty profile}"><a href="javascript:void golgotha.local.useTemplate()">Use Saved Application</a><br /></c:if>
+<a href="javascript:void golgotha.local.clearBody()">Clear Text</a></span>
 <div style="clear:both;"></div>
 <span class="small ita">Please provide any information about yourself that qualifies you for the position of ${job.title}.</span></td>
 </tr>
@@ -238,19 +232,18 @@ Joined <content:airline /> on <fmt:date fmt="d" date="${pilot.createdOn}" />
 </el:form>
 <c:if test="${access.canComment}">
 <script type="text/javascript">
-function commentValidate(form)
+golgotha.local.commentValidate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateText(form.body, 12, 'Comment Text')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.body, l:12, t:'Comment Text'});
+golgotha.form.submit();
 disableButton('CommentButton');
 disableButton('CloneButton');
 return true;
-}
+};
 </script>
 <br />
-<el:form action="jobcomment.do" link="${job}" method="post" validate="return commentValidate(this)">
+<el:form action="jobcomment.do" link="${job}" method="post" validate="return golgotha.form.wrap(golgotha.local.commentValidate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td>NEW <content:airline /> JOB POSTING COMMENT</td>

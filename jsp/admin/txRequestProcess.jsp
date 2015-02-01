@@ -13,21 +13,21 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
+if (!golgotha.form.check()) return false;
 
-var act = form.action;
+var act = f.action;
 if (act.indexOf('txreqdelete.do') != -1)
-	if (!validateText(form.rejectComments, 1, 'Rejection Comments')) return false;
+	golgotha.form.validateText({f:f.rejectComments, l:1, t:'Rejection Comments'});
 else {
-	if (!validateCombo(form.crType, 'Aircraft Type')) return false;
-	if (!validateCombo(form.eqType, 'Equimpment Program')) return false;
-	if (!validateCombo(form.rank, 'Rank in the new Equipment Program')) return false;
-	if (!validateText(form.comments, 25, 'Check Ride Comments')) return false;
+	golgotha.form.validateCombo({f:f.crType, t:'Aircraft Type'});
+	golgotha.form.validateCombo({f:f.eqType, t:'Equimpment Program'});
+	golgotha.form.validateCombo({f:f.rank, t:'Rank in the new Equipment Program'});
+	golgotha.form.validateText({f:f.comments, l:25, t:'Check Ride Comments'});
 }
 
-setSubmit();
+golgotha.form.submit();
 disableButton('ProfileButton');
 disableButton('CheckRideButton');
 disableButton('AssignButton');
@@ -36,9 +36,9 @@ disableButton('ToggleButton');
 disableButton('RejectButton');
 disableButton('DeleteButton');
 return true;
-}
+};
 
-function toggleBody(id, type)
+golgotha.local.toggleBody = function(id, type)
 {
 var row = document.getElementById('body' + type + id);
 var linkDesc = document.getElementById('toggle' + type + id);
@@ -46,7 +46,7 @@ var visible = (row.style.display != 'none');
 displayObject(row, !visible);
 linkDesc.innerHTML = visible ? 'View' : 'Hide';
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -59,7 +59,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="${cmdName}.do" method="post" link="${txReq}" validate="return validate(this)">
+<el:form action="${cmdName}.do" method="post" link="${txReq}" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2">EQUIPMENT TRANSFER REQUEST - ${pilot.name}</td>
@@ -96,9 +96,9 @@ return true;
 <tr>
  <td class="label top">Check Ride #<fmt:int value="${rideCount}" /></td>
  <td class="data">Assigned on <fmt:date fmt="d" date="${checkRide.date}" /> in ${checkRide.equipmentType}
- <a href="javascript:void toggleBody(${rideCount}, 'D')"><span id="toggleD${rideCount}">View</span> Description</a>
+ <a href="javascript:void golgotha.local.toggleBody(${rideCount}, 'D')"><span id="toggleD${rideCount}">View</span> Description</a>
 <c:if test="${hasComments}">
- <a href="javascript:void toggleBody(${rideCount}, 'C')"><span id="toggleC${rideCount}">View</span> Comments</a></c:if><br />
+ <a href="javascript:void golgotha.local.toggleBody(${rideCount}, 'C')"><span id="toggleC${rideCount}">View</span> Comments</a></c:if><br />
 <c:choose>
 <c:when test="${fn:passed(checkRide)}">
  <span class="ter bld caps">CHECK RIDE PASSED ON <fmt:date fmt="d" date="${checkRide.scoredOn}" /> by ${scorer.name}</span>

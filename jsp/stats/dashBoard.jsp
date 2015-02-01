@@ -13,11 +13,7 @@
 <content:css name="form" />
 <content:pics />
 <script type="text/javascript">
-function updateSort()
-{
-document.forms[0].submit();
-return true;
-}
+golgotha.local.updateSort = function() { return document.forms[0].submit(); };
 </script>
 </head>
 <content:copyright visible="false" />
@@ -32,7 +28,7 @@ return true;
 <el:table className="view">
 <tr class="title">
  <td colspan="2" class="left">STATISTICS DASHBOARD</td>
- <td colspan="2">SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortOptions}" value="${param.sortType}" onChange="void updateSort()" /></td>
+ <td colspan="2">SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortOptions}" value="${param.sortType}" onChange="void golgotha.local.updateSort()" /></td>
  <td colspan="2" class="right">FROM <el:text name="startDays" idx="*" size="2" max="3" value="${startDays}" /> TO
  <el:text name="endDays" idx="*" size="2" max="3" value="${endDays}" /> DAYS AGO</td>
 </tr>
@@ -44,7 +40,7 @@ return true;
 </tr>
 <tr class="title">
  <td style="width:15%" class="caps">${param.paGroup}</td>
- <td style="width:25%">ORDER BY <el:combo name="paGroup" size="1" idx="*" options="${pirepGroupOptions}" value="${param.paGroup}" onChange="void updateSort()" /></td>
+ <td style="width:25%">ORDER BY <el:combo name="paGroup" size="1" idx="*" options="${pirepGroupOptions}" value="${param.paGroup}" onChange="void golgotha.local.updateSort()" /></td>
  <td style="width:15%">AVERAGE</td>
  <td style="width:15%">MAXIMUM</td>
  <td style="width:15%">MINIMUM</td>
@@ -68,7 +64,7 @@ return true;
 </tr>
 <tr class="title">
  <td style="width:15%" class="caps">${param.examGroup}</td>
- <td style="width:25%">ORDER BY <el:combo name="examGroup" size="1" idx="*" options="${examGroupOptions}" value="${param.examGroup}" onChange="void updateSort()" /></td>
+ <td style="width:25%">ORDER BY <el:combo name="examGroup" size="1" idx="*" options="${examGroupOptions}" value="${param.examGroup}" onChange="void golgotha.local.updateSort()" /></td>
  <td style="width:15%">AVERAGE</td>
  <td style="width:15%">MAXIMUM</td>
  <td style="width:15%">MINIMUM</td>
@@ -92,7 +88,7 @@ return true;
 </tr>
 <tr class="title">
  <td style="width:15%" class="caps">${param.rideGroup}</td>
- <td style="width:25%">ORDER BY <el:combo name="rideGroup" size="1" idx="*" options="${rideGroupOptions}" value="${param.rideGroup}" onChange="void updateSort()" /></td>
+ <td style="width:25%">ORDER BY <el:combo name="rideGroup" size="1" idx="*" options="${rideGroupOptions}" value="${param.rideGroup}" onChange="void golgotha.local.updateSort()" /></td>
  <td style="width:15%">AVERAGE</td>
  <td style="width:15%">MAXIMUM</td>
  <td style="width:15%">MINIMUM</td>
@@ -116,7 +112,7 @@ return true;
 </tr>
 <tr class="title">
  <td style="width:15%" class="caps">${param.frGroup}</td>
- <td style="width:25%">ORDER BY <el:combo name="frGroup" size="1" idx="*" options="${pirepGroupOptions}" value="${param.frGroup}" onChange="void updateSort()" /></td>
+ <td style="width:25%">ORDER BY <el:combo name="frGroup" size="1" idx="*" options="${pirepGroupOptions}" value="${param.frGroup}" onChange="void golgotha.local.updateSort()" /></td>
  <td style="width:15%">AVERAGE</td>
  <td style="width:15%">MAXIMUM</td>
  <td style="width:15%">MINIMUM</td>
@@ -140,7 +136,7 @@ return true;
 </tr>
 <tr class="title">
  <td style="width:15%" class="caps">${param.afrGroup}</td>
- <td style="width:25%">ORDER BY <el:combo name="afrGroup" size="1" idx="*" options="${pirepGroupOptions}" value="${param.afrGroup}" onChange="void updateSort()" /></td>
+ <td style="width:25%">ORDER BY <el:combo name="afrGroup" size="1" idx="*" options="${pirepGroupOptions}" value="${param.afrGroup}" onChange="void golgotha.local.updateSort()" /></td>
  <td style="width:15%">AVERAGE</td>
  <td style="width:15%">MAXIMUM</td>
  <td style="width:15%">MINIMUM</td>

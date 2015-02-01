@@ -16,19 +16,18 @@
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateCombo(form.airport, 'Airport')) return false;
-if (!validateText(form.name, 4, 'Chart Name')) return false;
-if (!validateCombo(form.chartType, 'Chart Type')) return false;
-if (!validateFile(form.img, 'gif,jpg,png,pdf', 'Chart Image')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.airport, t:'Airport'});
+golgotha.form.validate({f:f.name, l:4, t:'Chart Name'});
+golgotha.form.validate({f:f.chartType, t:'Chart Type'});
+golgotha.form.validate({f:f.img, ext:['gif','jpg','png','pdf'], t:'Chart Image'});
+golgotha.form.submit();
 disableButton('SaveButton');
 disableButton('DeleteButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -40,7 +39,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="chart.do" method="post" link="${chart}" op="save" allowUpload="true" validate="return validate(this)">
+<el:form action="chart.do" method="post" link="${chart}" op="save" allowUpload="true" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
 <c:if test="${!empty chart}">

@@ -16,12 +16,7 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function update()
-{
-var f = document.forms[0];
-f.submit();
-return true;
-}
+golgotha.local.update = function() { return document.forms[0].submit(); };
 </script>
 </head>
 <content:copyright visible="false" />
@@ -42,7 +37,7 @@ return true;
  <td style="width:7%">&nbsp;</td>
  <td style="width:20%"><c:if test="${access.canCreate}"><el:cmdbutton url="qprofile" op="edit" label="NEW QUESTION" />
  <el:cmdbutton url="qprofile" op="edit&isRP=true" label="NEW ROUTE PLOT" /></c:if></td>
- <td class="right">SELECT <el:combo name="id" idx="*" size="1" options="${examNames}" value="${param.id}" onChange="void update()" />
+ <td class="right">SELECT <el:combo name="id" idx="*" size="1" options="${examNames}" value="${param.id}" onChange="void golgotha.local.update()" />
  MIN EXAMS <el:text name="minExams" idx="*" size="3" max="5" value="${minExams}" />
  <el:box name="isAcademy" value="true" checked="${academyOnly}" className="small" label="Academy Only" /> <el:button type="submit" label="GO" /></td>
 </tr>

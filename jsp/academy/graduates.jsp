@@ -14,11 +14,10 @@
 <content:css name="view" />
 <content:pics />
 <script type="text/javascript">
-function setType()
-{
-document.forms[0].submit();
-return true;
-}
+golgotha.local.setType = function() {
+	document.forms[0].submit();
+	return true;
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -30,11 +29,11 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="graduates.do" method="post" validate="return validate(this)">
+<el:form action="graduates.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <view:table cmd="graduates">
 <tr class="title">
  <td colspan="3" class="left caps"><content:airline /> FLIGHT ACADEMY GRADUATES</td>
- <td colspan="5" class="right">SELECT COURSE <el:combo name="cert" idx="*" size="1" options="${certs}" firstEntry="-" value="${param.cert}" onChange="void setType()" /></td>
+ <td colspan="5" class="right">SELECT COURSE <el:combo name="cert" idx="*" size="1" options="${certs}" firstEntry="-" value="${param.cert}" onChange="void golgotha.local.setType()" /></td>
 </tr>
 
 <!-- Table Header Bar -->

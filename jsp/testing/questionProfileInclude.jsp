@@ -13,22 +13,15 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
+<content:js name="examTake" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.submit();
 disableButton('SaveButton');
 return true;
-}
-<c:if test="${question.size > 0}">
-function viewImage(x, y)
-{
-var flags = 'height=' + (y+45) + ',width=' + (x+45) + ',menubar=no,toolbar=no,status=yes,scrollbars=yes';
-var w = window.open('/exam_rsrc/${question.hexID}', 'questionImage', flags);
-return true;
-}
-</c:if>
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -39,7 +32,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="qinclude.do" link="${question}" method="post" validate="return validate(this)">
+<el:form action="qinclude.do" link="${question}" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <!-- Question Title Bar -->
 <tr class="title caps">

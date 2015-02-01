@@ -20,13 +20,13 @@
 <script type="text/javascript">
 golgotha.pilotMap.deleteMarker = function(id)
 {
-var xmlreq = getXMLHttpRequest();
+var xmlreq = new XMLHttpRequest();
 xmlreq.open('POST', 'pilotmapclear.ws', true);
 xmlreq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	for (var x = 0; x < golgotha.pilotMap.mrks.length; x++) {
-		var mrk = allMarkers[x];
+		var mrk = golgotha.pilotMap.mrks.length[x];
 		if (mrk.ID == id) {
 			golgotha.pilotMap.mrks.remove(mrk);
 			mrk.setMap(null);

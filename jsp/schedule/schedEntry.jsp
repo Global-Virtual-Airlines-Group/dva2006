@@ -17,41 +17,31 @@
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateCombo(form.airline, 'Airline')) return false;
-if (!validateNumber(form.flightNumber, 1, 'Flight Number')) return false;
-if (!validateNumber(form.flightLeg, 1, 'Flight Leg')) return false;
-if (!validateCombo(form.eqType, 'Equipment Type')) return false;
-if (!validateCombo(form.airportD, 'Departure Airport')) return false;
-if (!validateCombo(form.airportA, 'Arrival Airport')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validateCombo({f:f.airline, t:'Airline'});
+golgotha.form.validateNumber({f:f.flightNumber, min:1, t:'Flight Number'});
+golgotha.form.validateNumber({f:f.flightLeg, min:1, t:'Flight Leg'});
+golgotha.form.validateCombo({f:f.eqType, t:'Equipment Type'});
+golgotha.form.validateCombo({f:f.airportD, t:'Departure Airport'});
+golgotha.form.validateCombo({f:f.airportA, t:'Arrival Airport'});
+golgotha.form.submit();
 disableButton('SaveButton');
 disableButton('DeleteButton');
 return true;
-}
+};
 <c:if test="${empty entry}">
-function getAvailableFlight()
+golgotha.local.getAvailableFlight = function(f)
 {
-var f = document.forms[0];
-if (!validateCombo(f.airline, 'Airline')) return false;
-var aCode = f.airline[f.airline.selectedIndex].value;
-
-// Get start/end ranges
-var startF = f.rangeStart.value;
-var endF = f.rangeEnd.value;
-
-// Create the XMLHTTP request
-var xmlreq = getXMLHttpRequest();
-xmlreq.open("GET", "next_flight.ws?start=" + startF + "&end=" + endF + "&airline=" + aCode, true);
+golgotha.form.validate({f:f.airline, t:'Airline'});
+var xmlreq = new XMLHttpRequest();
+xmlreq.open('GET', 'next_flight.ws?start=' + f.rangeStart.value + '&end=' + f.rangeEnd.value + '&airline=' + golgotha.form.getCombo(f.airline), true);
 xmlreq.onreadystatechange = function () {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	var e = xmlreq.responseXML.documentElement;
 
 	// Update the flight number and leg
-	var f = document.forms[0];
 	f.flightNumber.value = e.getAttribute("number");
 	f.flightLeg.value = e.getAttribute("leg");
 
@@ -59,29 +49,24 @@ xmlreq.onreadystatechange = function () {
 	enableElement('LegSearchButton', true);
 	enableElement('FlightSearchButton', true);
 	return true;
-}
+};
 
 disableButton('LegSearchButton');
 disableButton('FlightSearchButton');
 xmlreq.send(null);
 return true;
-}
+};
 
-function getAvailableLeg()
+golgotha.local.getAvailableLeg = function(f)
 {
-var f = document.forms[0];
-if (!validateCombo(f.airline, 'Airline')) return false;
-var aCode = f.airline[f.airline.selectedIndex].value;
-
-// Create the XMLHTTP Request
-var xmlreq = getXMLHttpRequest();
-xmlreq.open('get', 'next_leg.ws?flight=' + f.flightNumber.value + '&airline=' + aCode, true);
+golgotha.form.validate({f:f.airline, t:'Airline'});
+var xmlreq = new XMLHttpRequest();
+xmlreq.open('GET', 'next_leg.ws?flight=' + f.flightNumber.value + '&airline=' + golgotha.form.getCombo(f.airline), true);
 xmlreq.onreadystatechange = function () {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	var e = xmlreq.responseXML.documentElement;
 
 	// Update the flight number and leg
-	var f = document.forms[0];
 	f.flightNumber.value = e.getAttribute("number");
 	f.flightLeg.value = e.getAttribute("leg");
 
@@ -89,25 +74,24 @@ xmlreq.onreadystatechange = function () {
 	enableElement('LegSearchButton', true);
 	enableElement('FlightSearchButton', true);
 	return true;
-}
+};
 
 disableButton('LegSearchButton');
 disableButton('FlightSearchButton');
 xmlreq.send(null);
 return true;
-}
+};
 
-function changeAirline(combo)
+golgotha.local.changeAirline = function(combo)
 {
 var f = document.forms[0];
 golgotha.airportLoad.changeAirline([f.airportD, f.airportA], golgotha.airportLoad.config);
-var rows = getElementsByClass('airportRow');
+var rows = golgotha.util.getElementsByClass('airportRow');
 for (var x = 0; x < rows.length; x++)
 	displayObject(rows[x], (combo.selectedIndex > 0));
 
 return true;
-}
-</c:if>
+};</c:if>
 </script>
 </head>
 <content:copyright visible="false" />
@@ -120,7 +104,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="sched.do" method="post" linkID="${entry.flightCode}" op="save" validate="return validate(this)">
+<el:form action="sched.do" method="post" linkID="${entry.flightCode}" op="save" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
 <c:if test="${empty entry}"> <td colspan="2">NEW <content:airline /> SCHEDULE ENTRY</td></c:if>
@@ -128,7 +112,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Airline Name</td>
- <td class="data"><el:combo name="airline" idx="*" required="true" size="1" options="${airlines}" value="${entry.airline}" onChange="void changeAirline(this)" firstEntry="[ AIRLINE ]" /></td>
+ <td class="data"><el:combo name="airline" idx="*" required="true" size="1" options="${airlines}" value="${entry.airline}" onChange="void golgotha.local.changeAirline(this)" firstEntry="[ AIRLINE ]" /></td>
 </tr>
 <tr>
  <td class="label top">Flight Number / Leg</td>
@@ -139,8 +123,8 @@ return true;
 <span class="small">You can search for an available flight number between 
 <el:text name="rangeStart" idx="*" className="small" size="3" max="4" value="" /> and 
 <el:text name="rangeEnd" idx="*" className="small" size="3" max="4" value="" />
-<el:button ID="FlightSearchButton" onClick="void getAvailableFlight()" label="SEARCH" /><br />
-You can search for the next available Flight Leg. <el:button ID="LegSearchButton" onClick="void getAvailableLeg()" label="SEARCH" /></span></c:if></td>
+<el:button ID="FlightSearchButton" onClick="void golgotha.form.wrap(golgotha.local.getAvailableFlight, document.forms[0])" label="SEARCH" /><br />
+You can search for the next available Flight Leg. <el:button ID="LegSearchButton" onClick="void golgotha.form.wrap(golgotha.local.getAvailableLeg, document.forms[0])" label="SEARCH" /></span></c:if></td>
 </tr>
 <tr>
  <td class="label">Equipment Type</td>
@@ -186,13 +170,13 @@ You can search for the next available Flight Leg. <el:button ID="LegSearchButton
 </content:region>
 </content:page>
 <fmt:aptype var="useICAO" />
-<script type="text/javascript">
+<script type="text/javascript" defer>
 var f = document.forms[0];
 var cfg = golgotha.airportLoad.config; 
 cfg.doICAO = ${useICAO}; cfg.useSched = false;
 golgotha.airportLoad.setHelpers(f.airportD);
 golgotha.airportLoad.setHelpers(f.airportA);
-changeAirline(f.airline);
+golgotha.local.changeAirline(f.airline);
 </script>
 </body>
 </html>

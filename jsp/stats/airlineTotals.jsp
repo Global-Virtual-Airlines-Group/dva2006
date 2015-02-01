@@ -117,11 +117,11 @@
 <content:copyright />
 </content:region>
 </content:page>
-<script type="text/javascript">
+<script type="text/javascript" defer>
 google.load('visualization','1.0',{'packages':['corechart']});
 google.setOnLoadCallback(function() {
-var xmlreq = getXMLHttpRequest();
-xmlreq.open('get', 'allstats.ws', true);
+var xmlreq = new XMLHttpRequest();
+xmlreq.open('GET', 'allstats.ws', true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	var statsData = JSON.parse(xmlreq.responseText);
@@ -138,7 +138,7 @@ xmlreq.onreadystatechange = function() {
 	data.addRows(statsData);
 	chart.draw(data,{hAxis:{textStyle:lgStyle},legend:{textStyle:lgStyle}});
 	return true;
-}
+};
 
 xmlreq.send(null);
 return true;	

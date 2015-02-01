@@ -14,21 +14,21 @@
 <content:js name="common" />
 <content:pics />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateText(form.title, 10, 'Video Title')) return false;
-if (!validateCombo(form.category, 'Video Category')) return false;
-if (!validateText(form.desc, 10, 'Description')) return false;
-if ((form.file) && (form.file.value.length > 0))
-	if (!validateFile(form.file, 'avi,wmv,divx,mp3,mp4', 'Uploaded Video')) return false;
-else if ((form.fileName) && (form.fileName.value.length > 0))
-	if (!validateFile(form.file, 'avi,wmv,divx,mp3,mp4', 'Local Filesystem Video')) return false;
+if (!golgotha.form.check()) return false;
+golgotha.form.validateText({f:f.title, l:10, t:'Video Title'});
+golgotha.form.validateCombo({f:f.category, t:'Video Category'});
+golgotha.form.validateText({f:f.desc, l:10, t:'Description'});
+if ((f.file) && (f.file.value.length > 0))
+	golgotha.form.validate({f:f.file, ext:['avi','wmv','divx','mp3','mp4'], t:'Uploaded Video'});
+else if ((f.fileName) && (f.fileName.value.length > 0))
+	golgotha.form.validate({f:f.file, ext:['avi','wmv','divx','mp3','mp4'], t:'Local Filesystem Video'});
 
-setSubmit();
+golgotha.form.submit();
 disableButton('SaveButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -41,7 +41,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="tvideo.do" linkID="${video.fileName}" op="save" method="post" allowUpload="true" validate="return validate(this)">
+<el:form action="tvideo.do" linkID="${video.fileName}" op="save" method="post" allowUpload="true" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
 <c:choose>

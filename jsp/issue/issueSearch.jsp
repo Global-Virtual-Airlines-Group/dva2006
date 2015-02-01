@@ -15,15 +15,14 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateText(form.searchStr, 5, 'Search Term')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.searchStr, l:5, t:'Search Term'});
+golgotha.form.submit();
 disableButton('SearchButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -34,7 +33,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form method="post" action="isearch.do" validate="return validate(this)">
+<el:form method="post" action="isearch.do" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2"><content:airline /> DEVELOPMENT ISSUE SEARCH</td>

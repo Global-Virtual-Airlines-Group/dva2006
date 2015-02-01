@@ -36,42 +36,32 @@ loaders.series.setData('hirad_windSpeed', 0.325, 'wxWind');
 loaders.series.onload(function() { golgotha.util.enable('#selImg'); });
 loaders.fr.onload(function() { golgotha.util.enable('selFronts'); });
 
-var routeUpdated = false;
-var getInactive = false;
-
-function validate(form)
+golgotha.local.validate = function(f)
 {
 // Check if we're saving an existing route
-try {
-var f = document.forms[0];
 var routeID = parseInt(f.routeID.value);
 if (!isNaN(routeID) && (routeID > 0))
 	alert('Updating route #' + routeID);
 	
-if (!checkSubmit()) return false;
-if (!validateCombo(f.airportD, 'Departure Airport')) return false;
-if (!validateCombo(f.airportA, 'Arrival Airport')) return false;
-if (!validateText(f.route, 3, 'Flight Route')) return false;
-if (!validateText(f.cruiseAlt, 4, 'Cruising Altitude')) return false;
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.airportD, t:'Departure Airport'});
+golgotha.form.validate({f:f.airportA, t:'Arrival Airport'});
+golgotha.form.validate({f:f.route, l:3, t:'Flight Route'});
+golgotha.form.validate({f:f.cruiseAlt, l:4, t:'Cruising Altitude'});
 
-setSubmit();
+golgotha.form.submit();
 disableButton('SearchButton');
 disableButton('UpdateButton');
 disableButton('RouteSaveButton');
 golgotha.event.beacon('Route Plotter', 'Save Route');
 return true;
-} catch (err) {
-	alert(err.description)
-	return false;
-}
-}
+};
 
-function updateAirline(combo)
-{
-var f = document.forms[0];
-golgotha.airportLoad.changeAirline([f.airportD, f.airportA], golgotha.airportLoad.config);
-return true;
-}
+golgotha.routePlot.updateAirline = function(combo) {
+	var f = document.forms[0];
+	golgotha.airportLoad.changeAirline([f.airportD, f.airportA], golgotha.airportLoad.config);
+	return true;
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -84,38 +74,38 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="dsproutesave.do" method="post" validate="return validate(this)">
+<el:form action="dsproutesave.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2"><content:airline /> DISPATCH ROUTE PLOTTER</td>
 </tr>
 <tr>
  <td class="label">Airline</td>
- <td class="data"><el:combo name="airline" size="1" idx="*" options="${airlines}" value="${aCode}" onChange="void updateAirline(this)" /></td>
+ <td class="data"><el:combo name="airline" size="1" idx="*" options="${airlines}" value="${aCode}" onChange="void golgotha.routePlot.updateAirline(this)" /></td>
 </tr>
 <tr>
  <td class="label">Departing from</td>
- <td class="data"><el:combo name="airportD" size="1" idx="*" options="${airportsD}" firstEntry="-" value="${airportD}" onChange="void updateRoute(true, true)" />
- <el:text ID="airportDCode" name="airportDCode" idx="*" size="3" max="4" onChange="document.forms[0].airportD.setAirport(this.value); updateRoute(true)" />
-<span id="runways" style="visibility:hidden;"> departing <el:combo name="runway" idx="*" size="1" options="${emptyList}" firstEntry="-" onChange="void updateRoute(true, false)" /></span></td>
+ <td class="data"><el:combo name="airportD" size="1" idx="*" options="${airportsD}" firstEntry="-" value="${airportD}" onChange="void golgotha.routePlot.updateRoute(true, true)" />
+ <el:text ID="airportDCode" name="airportDCode" idx="*" size="3" max="4" onChange="document.forms[0].airportD.setAirport(this.value); golgotha.routePlot.updateRoute(true)" />
+<span id="runways" style="visibility:hidden;"> departing <el:combo name="runway" idx="*" size="1" options="${emptyList}" firstEntry="-" onChange="void golgotha.routePlot.updateRoute(true, false)" /></span></td>
 </tr>
 <tr>
  <td class="label">Arriving at</td>
- <td class="data"><el:combo name="airportA" size="1" idx="*" options="${airportsA}" firstEntry="-" value="${airportA}" onChange="void updateRoute(true)" />
+ <td class="data"><el:combo name="airportA" size="1" idx="*" options="${airportsA}" firstEntry="-" value="${airportA}" onChange="void golgotha.routePlot.updateRoute(true)" />
  <el:text ID="airportACode" name="airportACode" idx="*" size="3" max="4" onChange="void document.forms[0].airportA.setAirport(this.value, true)" /></td>
 </tr>
 <tr>
  <td class="label">Alternate</td>
- <td class="data"><el:combo name="airportL" size="1" idx="*" options="${emptyList}" firstEntry="-" onChange="updateRoute(); plotMap()" />
+ <td class="data"><el:combo name="airportL" size="1" idx="*" options="${emptyList}" firstEntry="-" onChange="golgotha.routePlot.updateRoute(); golgotha.routePlot.plotMap()" />
  <el:text ID="airportLCode" name="airportLCode" idx="*" size="3" max="4" onChange="void document.forms[0].airportL.setAirport(this.value, true)" /></td>
 </tr>
 <tr id="sids" style="display:none;">
  <td class="label">Standard Departure (SID)</td>
- <td class="data"><el:combo name="sid" size="1" idx="*" options="${emptyList}" firstEntry="-" onChange="updateRoute(); plotMap()" /></td>
+ <td class="data"><el:combo name="sid" size="1" idx="*" options="${emptyList}" firstEntry="-" onChange="golgotha.routePlot.updateRoute(); golgotha.routePlot.plotMap()" /></td>
 </tr>
 <tr id="stars" style="display:none;">
  <td class="label">Terminal Arrival (STAR)</td>
- <td class="data"><el:combo name="star" size="1" idx="*" options="${emptyList}" firstEntry="-" onChange="updateRoute(); plotMap()" /></td>
+ <td class="data"><el:combo name="star" size="1" idx="*" options="${emptyList}" firstEntry="-" onChange="golgotha.routePlot.updateRoute(); golgotha.routePlot.plotMap()" /></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
@@ -126,9 +116,9 @@ return true;
 </tr>
 <tr>
  <td class="label">Saved Routes</td>
- <td class="data"><el:combo name="routes" idx="*" size="1" className="small req" options="${emptyList}" firstEntry="No Routes Loaded" onChange="void setRoute(this)" />
+ <td class="data"><el:combo name="routes" idx="*" size="1" className="small req" options="${emptyList}" firstEntry="No Routes Loaded" onChange="void golgotha.routePlot.setRoute(this)" />
  <el:box name="external" value="true" className="small" label="Search FlightAware route database" />
- <el:button ID="SearchButton" onClick="void searchRoutes()" label="SEARCH" /></td>
+ <el:button ID="SearchButton" onClick="void golgotha.routePlot.searchRoutes()" label="SEARCH" /></td>
 </tr>
 <tr class="title caps">
  <td colspan="2" class="left">PLOTTED ROUTE<span id="rtDistance"></span></td>
@@ -139,15 +129,15 @@ return true;
 </tr>
 <tr>
  <td class="label">Waypoints</td>
- <td class="data"><el:text name="route" size="80" max="320" idx="*" value="" onChange="updateRoute(); plotMap()" /></td>
+ <td class="data"><el:text name="route" size="80" max="320" idx="*" value="" onChange="golgotha.routePlot.updateRoute(); golgotha.routePlot.plotMap()" /></td>
 </tr>
 <tr>
  <td class="label">Cruising Altitude</td>
- <td class="data"><el:text name="cruiseAlt" size="5" max="5" idx="*" value="35000" onChange="updateRoute();" /></td>
+ <td class="data"><el:text name="cruiseAlt" size="5" max="5" idx="*" value="35000" onChange="void golgotha.routePlot.updateRoute();" /></td>
 </tr>
 <tr>
  <td class="label top">Comments</td>
- <td class="data"><el:textbox name="comments" idx="*" width="80%" height="4" onChange="updateRoute();" /></td>
+ <td class="data"><el:textbox name="comments" idx="*" width="80%" height="4" onChange="void golgotha.routePlot.updateRoute();" /></td>
 </tr>
 </el:table>
 
@@ -179,7 +169,7 @@ golgotha.airportLoad.setHelpers(f.airportL);
 var newCfg = cfg.clone();
 
 <c:if test="${empty airportsD}">
-newCfg.airline = getValue(f.airline); 
+newCfg.airline = golgotha.form.getCombo(f.airline); 
 f.airportD.loadAirports(newCfg);</c:if>
 <c:if test="${empty airportsA}">
 window.setTimeout('f.airportA.loadAirports(newCfg)', 1050);</c:if>
@@ -213,12 +203,12 @@ ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Lo Jetstream'}, 
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Hi Jetstream'}, hjsl));
 ctls.push(new golgotha.maps.LayerClearControl(map));
 
-//Display the copyright notice and text boxes
+// Display the copyright notice and text boxes
 map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById('copyright'));
 map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(document.getElementById('mapStatus'));
 
-//Build departure gates marker manager
-var dGates = new MarkerManager(map, {maxZoom:18});
+// Build departure gates marker manager
+golgotha.routePlot.dGates = new MarkerManager(map, {maxZoom:11});
 
 // Load data async once tiles are loaded
 google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
@@ -226,9 +216,7 @@ google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
 	golgotha.util.createScript({id:'wuFronts', url:'http://api.wunderground.com/api/${wuAPI}/fronts/view.json?callback=loaders.fr.load', async:true});
 	google.maps.event.trigger(map, 'maptypeid_changed');
 });
-
-// Update text color
-<c:if test="${!empty airportD}">plotMap();</c:if>
+<c:if test="${!empty airportD}">golgotha.routePlot.plotMap();</c:if>
 </script>
 </body>
 </html>

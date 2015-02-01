@@ -14,11 +14,7 @@
 <content:css name="form" />
 <content:pics />
 <script type="text/javascript">
-function updateSort()
-{
-document.forms[0].submit();
-return true;
-}
+golgotha.local.updateSort = function() { return document.forms[0].submit(); };
 </script>
 </head>
 <content:copyright visible="false" />
@@ -33,8 +29,8 @@ return true;
 <view:table cmd="simversionstats">
 <tr class="title">
  <td colspan="5" class="left caps"><content:airline /> FLIGHT SIMULATOR VERSION STATISTICS</td>
- <td colspan="5" class="right">GROUP BY <el:combo name="groupType" size="1" idx="*" options="${groupTypes}" value="${param.groupType}" onChange="void updateSort()" />
- SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${viewContext.sortType}" onChange="void updateSort()" /></td>
+ <td colspan="5" class="right">GROUP BY <el:combo name="groupType" size="1" idx="*" options="${groupTypes}" value="${param.groupType}" onChange="void golgotha.local.updateSort()" />
+ SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${viewContext.sortType}" onChange="void golgotha.local.updateSort()" /></td>
 </tr>
 <!-- Table Header Bar-->
 <tr class="title caps">

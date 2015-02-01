@@ -19,12 +19,10 @@
 <content:js name="common" />
 <content:rss title="${airlineName} ${forumName}" path="/cooler_rss.ws" />
 <script type="text/javascript">
-function setChannel(combo)
-{
-var channel = combo.options[combo.selectedIndex].value;
-self.location = '/channel.do?id=' + escape(channel);
-return true;
-}
+golgotha.local.setChannel = function(combo) {
+	self.location = '/channel.do?id=' + escape(golgotha.form.getCombo(combo));
+	return true;
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -48,7 +46,7 @@ return true;
 <c:if test="${!channelAccess.canPost}">
  <td colspan="2" class="left caps">DISCUSSION THREADS - ${channelName}</td>
 </c:if>
- <td colspan="3" class="right">CHANNEL <el:combo name="sortType" size="1" options="${channels}" value="${channel}" onChange="void setChannel(this)" /></td>
+ <td colspan="3" class="right">CHANNEL <el:combo name="sortType" size="1" options="${channels}" value="${channel}" onChange="void golgotha.local.setChannel(this)" /></td>
 </tr>
 
 <!-- Table Header Bar-->

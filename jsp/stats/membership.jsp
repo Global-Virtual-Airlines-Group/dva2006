@@ -15,20 +15,13 @@
 <content:js name="common" />
 <content:pics />
 <script type="text/javascript">
-function updateSort()
+golgotha.local.validate = function(f)
 {
-document.forms[0].submit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.quantiles, min:1, t:'Quantile Number'});
+golgotha.form.submit();
 return true;
-}
-
-function validate(form)
-{
-if (!checkSubmit()) return false;
-if (!validateNumber(form.quantiles, 1, 'Quantile Number')) return false;
-
-setSubmit();
-return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -39,7 +32,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="memberstats.do" method="post" validate="return validate(this)">
+<el:form action="memberstats.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title">
  <td colspan="2" class="left caps"><content:airline /> FLIGHT STATISTICS</td>

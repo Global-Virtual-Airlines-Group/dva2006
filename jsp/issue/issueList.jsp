@@ -15,12 +15,7 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function doSort()
-{
-var f = document.forms[0];
-f.submit();
-return true;
-}
+golgotha.local.doSort = function() { return document.forms[0].submit(); };
 </script>
 </head>
 <content:copyright visible="false" />
@@ -36,9 +31,9 @@ return true;
 <!-- Table Sort Combo Bar -->
 <tr class="title">
  <td colspan="2" class="left caps"><content:airline /> DEVELOPMENT ISSUE LIST</td>
- <td colspan="7">STATUS <el:combo name="op" idx="*" size="1" options="${statusOpts}" firstEntry="[ ALL ]" value="${param.op}" onChange="void doSort()" />
- AREA <el:combo name="area" idx="*" size="1" options="${areaOpts}" firstEntry="[ ALL ]" value="${param.area}" onChange="void doSort()" />
- SORT BY <el:combo name="sortType" idx="*" size="1" options="${sortTypes}" value="${viewContext.sortType}" onChange="void doSort()" />
+ <td colspan="7">STATUS <el:combo name="op" idx="*" size="1" options="${statusOpts}" firstEntry="[ ALL ]" value="${param.op}" onChange="void golgotha.local.doSort()" />
+ AREA <el:combo name="area" idx="*" size="1" options="${areaOpts}" firstEntry="[ ALL ]" value="${param.area}" onChange="void golgotha.local.doSort()" />
+ SORT BY <el:combo name="sortType" idx="*" size="1" options="${sortTypes}" value="${viewContext.sortType}" onChange="void golgotha.local.doSort()" />
 &nbsp;&nbsp;<el:cmd url="isearch">SEARCH</el:cmd>
 <c:if test="${access.canCreate}"> | <el:cmd url="issue" op="edit">NEW ISSUE</el:cmd></c:if></td>
 </tr>

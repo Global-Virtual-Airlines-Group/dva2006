@@ -15,22 +15,16 @@
 <content:js name="common" />
 <content:pics />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateNumber(form.viewCount, 1, 'Number of Landings')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.viewCount, min:1, t:'Number of Landings'});
+golgotha.form.submit();
 disableButton('SearchButton');
 return true;
-}
+};
 
-function update()
-{
-var f = document.forms[0];
-f.submit();
-return true;
-}
+golgotha.local.update = function() { return document.forms[0].submit(); };
 </script>
 </head>
 <content:copyright visible="false" />
@@ -41,7 +35,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="landings.do" method="post" validate="return validate(this)">
+<el:form action="landings.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 The members of <content:airline /> are a skilled group - and they can prove it. Below is a list of the 
 smoothest landings, and the greaser pilots who made them:<br />
 <br />
@@ -50,8 +44,8 @@ smoothest landings, and the greaser pilots who made them:<br />
 <tr class="title">
  <td class="left caps" colspan="3"><content:airline /> GREASED LANDING CLUB</td>
  <td class="right" colspan="4"><el:text name="viewCount" idx="*" size="1" max="2" value="${viewCount}" /> 
-FLIGHTS WITHIN <el:combo name="days" idx="*" size="1" options="${dateFilter}" value="${param.days}" onChange="void update()" /> 
-IN <el:combo name="eqType" idx="*" size="1" options="${eqTypes}" value="${param.eqType}" onChange="void update()" />
+FLIGHTS WITHIN <el:combo name="days" idx="*" size="1" options="${dateFilter}" value="${param.days}" onChange="void golgotha.local.update()" /> 
+IN <el:combo name="eqType" idx="*" size="1" options="${eqTypes}" value="${param.eqType}" onChange="void golgotha.local.update()" />
 <el:button ID="SearchButton" type="submit" label="GO" /></td>
 </tr>
 

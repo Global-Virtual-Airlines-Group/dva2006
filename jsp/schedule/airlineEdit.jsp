@@ -12,17 +12,16 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateText(form.name, 6, 'Airline Name')) return false;
-if (!validateText(form.code, 2, 'Airline Code')) return false;
-if (!validateCombo(form.color, 'Airline Google Map Color')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.name, l:6, t:'Airline Name'});
+golgotha.form.validate({f:f.code, l:2, t:'Airline Code'});
+golgotha.form.validate({f:f.color, t:'Airline Google Map Color'});
+golgotha.form.submit();
 disableButton('SaveButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -34,7 +33,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="airline.do" method="post" linkID="${airline.code}" op="save" validate="return validate(this)">
+<el:form action="airline.do" method="post" linkID="${airline.code}" op="save" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2">AIRLINE PROFILE</td>

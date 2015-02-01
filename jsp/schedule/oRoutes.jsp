@@ -18,15 +18,14 @@
 <c:if test="${access.canDelete && (!empty viewContext.results)}">
 <content:js name="datePicker" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateText(form.purgeDate, 10, 'Purge Date')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.purgeDate, l:10, t:'Purge Date'});
+golgotha.form.submit();
 disableButton('PurgeButton');
 return true;
-}
+};
 </script>
 </c:if>
 </head>
@@ -38,7 +37,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="routes.do" method="post" validate="return validate(this)">
+<el:form action="routes.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <view:table cmd="routes">
 <!-- Table Header Bar -->
 <tr class="title caps">

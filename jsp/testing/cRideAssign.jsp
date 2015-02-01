@@ -11,23 +11,20 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateCombo(form.crType, 'Aircraft Type')) return false;
-if (!validateCombo(form.eqType, 'Equimpment Program')) return false;
-
-// Validate comments
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.crType, t:'Aircraft Type'});
+golgotha.form.validate({f:f.eqType, t:'Equimpment Program'});
 var hasScript = ((form.doScript) && (form.doScript.value == 'true'));
-if (!hasScript) {
-	if (!validateText(form.comments, 6, 'Check Ride Comments')) return false;
-}
+if (!hasScript)
+	golgotha.form.validateText({f:f.comments, l:6, t:'Check Ride Comments'});
 
-setSubmit();
+golgotha.form.submit();
 disableButton('ProfileButton');
 disableButton('AssignButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -38,7 +35,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="nakedassign.do" method="post" link="${pilot}" validate="return validate(this)">
+<el:form action="nakedassign.do" method="post" link="${pilot}" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2">CHECK RIDE - ${pilot.name}</td>

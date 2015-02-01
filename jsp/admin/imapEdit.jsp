@@ -18,17 +18,16 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateEMail(form.IMAPAddr, 'E-Mail Address')) return false;
-if (!validateNumber(form.IMAPQuota, 0, 'Mailbox Quota')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.IMAPAddr, addr:true, t:'E-Mail Address'});
+golgotha.form.validate({f:f.IMAPQuota, min:0, t:'Mailbox Quota'});
+golgotha.form.submit();
 disableButton('SaveButton');
 disableButton('DeleteButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -40,7 +39,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form method="post" action="imap.do" link="${mb}" op="save" validate="return validate(this)">
+<el:form method="post" action="imap.do" link="${mb}" op="save" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2">IMAP MAILBOX FOR ${pilot.name} at ${IMAPServer}</td>

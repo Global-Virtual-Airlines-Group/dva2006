@@ -10,24 +10,22 @@
 <style type="text/css">
 @media print 
 {
-.noPrint
-{
-display:none;
+.noPrint {
+	display:none;
 }
 
-.CHART
-{
-display:inline;
-text-align:center;
-position:absolute;
-top: -5px;
+.CHART {
+	display:inline;
+	text-align:center;
+	position:absolute;
+	top: -5px;
 }
 }
 </style>
 </head>
 <content:copyright visible="false" />
 <body>
-<span class="noPrint"><a href="javascript:window.print()">Print Chart</a><br /></span>
+<span class="noPrint"><a href="javascript:void window.print()">Print Chart</a><br /></span>
 <span class="CHART"><img alt="${chart.name}, ${chart.size} bytes" src="/charts/${chart.ID}" class="noborder" /></span>
 <div class="noPrint"><content:copyright /></div>
 <content:googleAnalytics />

@@ -17,22 +17,19 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function setChannel(combo)
-{
-var channel = combo.options[combo.selectedIndex].value;
-self.location = '/channel.do?id=' + escape(channel);
-return true;
-}
+golgotha.local.setChannel = function(combo) {
+	self.location = '/channel.do?id=' + escape(golgotha.form.getCombo(combo));
+	return true;
+};
 
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if ((!form) || (!checkSubmit())) return false;
-if (!validateCheckBox(form.threadID, 1, 'Message Thread')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.threadID, min:1, t:'Message Thread'});
+golgotha.form.submit();
 disableButton('UpdateButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -44,7 +41,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="notifyupdate.do" method="post" validate="return validate(this)">
+<el:form action="notifyupdate.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <view:table cmd="${viewCmdName}">
 <!-- Table Sort Combo Bar -->
 <tr class="title">
@@ -55,7 +52,7 @@ return true;
 <c:if test="${!channelAccess.canPost}">
  <td colspan="3" class="left caps">DISCUSSION THREADS - ${channelName}</td>
 </c:if>
- <td colspan="3" class="right">CHANNEL <el:combo name="sortType" size="1" options="${channels}" value="${channel}" onChange="void setChannel(this)" /></td>
+ <td colspan="3" class="right">CHANNEL <el:combo name="sortType" size="1" options="${channels}" value="${channel}" onChange="void golgotha.local.setChannel(this)" /></td>
 </tr>
 
 <!-- Table Header Bar-->

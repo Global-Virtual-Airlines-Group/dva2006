@@ -13,7 +13,7 @@
 <content:pics />
 <content:enum var="icons" className="org.deltava.beans.cooler.Emoticons" />
 <script type="text/javascript">
-function addEmoticon(name)
+golgotha.local.addEmoticon = function(name)
 {
 // Get the window opener
 var parent = window.opener;
@@ -31,7 +31,7 @@ if ((!f) || (!f.msgText)) return false;
 f.msgText.value = f.msgText.value + ' :' + name + ':';
 self.close();
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -51,7 +51,7 @@ return true;
 <c:forEach var="icon" items="${icons}">
 <c:set var="iconCode" value="${iconCodes[icon.name]}" scope="page" />
 <tr class="mid">
- <td><a href="javascript:void addEmoticon('${icon.name}')"><el:img className="noborder" src="cooler/emoticons/${icon.name}.gif" caption="${icon.name}" /></a></td>
+ <td><a href="javascript:void golgotha.local.addEmoticon('${icon.name}')"><el:img className="noborder" src="cooler/emoticons/${icon.name}.gif" caption="${icon.name}" /></a></td>
  <td class="bld">:${icon.name}:</td>
  <td class="sec bld">${empty iconCode ? '&nbsp;' : iconCode}</td>
 </tr>

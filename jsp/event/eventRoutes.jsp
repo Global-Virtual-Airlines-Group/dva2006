@@ -18,35 +18,33 @@
 <fmt:aptype var="useICAO" />
 <script type="text/javascript">
 <fmt:jsarray var="routeIDs" items="${routeIDs}" />
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
+if (!golgotha.form.check()) return false;
 
 // Validate existing routes
-for (var id in routeIDs) {
-	if (!validateNumber(eval('form.maxSignups' + id), 0, 'Maximum Signups for Route #' + id)) return false; 
-	if (!validateText(eval('form.route' + id), 6, 'Flight Route #' + id)) return false;
-	if (!validateText(eval('form.routeName' + id), 6, 'Flight Route Name #' + id)) return false;
+for (var id = routeIDs.pop(); (id != null); id = routeIDs.pop()) {
+	golgotha.form.validate({f:eval('f.maxSignups' + id), min:0, t:'Maximum Signups for Route #' + id}); 
+	golgotha.form.validate({f:eval('f.route' + id), l:6, t:'Flight Route #' + id});
+	golgotha.form.validate({f:eval('f.routeName' + id), l:6, t:'Flight Route Name #' + id});
 }
 
 // Check if we're adding a new route
-var hasNewRoute = ((form.route.value.length > 0) || (form.routeName.value.length > 0) ||
-		(form.airportD.selectedIndex > 0) || (form.airportA.selectedIndex > 0));
-if (hasNewRoute)
-{
-	if (!validateText(form.route, 6, 'Flight Route')) return false;
-	if (!validateText(form.routeName, 6, 'Flight Route Name')) return false;
-	if (!validateCombo(form.airportD, 'Departure Airport')) return false;
-	if (!validateCombo(form.airportA, 'Destination Airport')) return false;
-	if (!validateNumber(form.maxSignups, 0, 'Maximum Signups')) return false;
+var hasNewRoute = ((f.route.value.length > 0) || (f.routeName.value.length > 0) || golgotha.form.comboSet(f.airportD) || golgotha.form.comboSet(form.airportA));
+if (hasNewRoute) {
+	golgotha.form.validate({f:f.route, l:6, t:'Flight Route'});
+	golgotha.form.validate({f:f.routeName, l:6, t:'Flight Route Name'});
+	golgotha.form.validate({f:f.airportD, t:'Departure Airport'});
+	golgotha.form.validate({f:f.airportA, t:'Destination Airport'});
+	golgotha.form.validate({f:f.maxSignups, min:0, t:'Maximum Signups'});
 }
 
-setSubmit();
+golgotha.form.submit();
 disableButton('SaveButton');
 disableButton('ViewButton');
 disableButton('BalanceButton');
 return true;
-}
+};
 
 golgotha.onDOMReady(function() {
 	var f = document.forms[0];
@@ -64,7 +62,7 @@ golgotha.onDOMReady(function() {
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="eventroutes.do" link="${event}" op="save" method="post" validate="return validate(this)">
+<el:form action="eventroutes.do" link="${event}" op="save" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="4">FLIGHT ROUTES FOR ${event.name}</td>
@@ -109,7 +107,7 @@ golgotha.onDOMReady(function() {
 <el:text name="adCode" idx="*" size="3" max="4" onBlur="void document.forms[0].airportD.setAirport(this.value)" /></td>
  <td class="label">Arriving at</td>
  <td class="data"><el:combo name="airportA" idx="*" size="1" options="${airports}" firstEntry="-" />&nbsp;
-<el:text name="aaCode" idx="*" size="3" max="4" onBlur="void document.forms[0].airportAsetAirport(this.value)" /></td>
+<el:text name="aaCode" idx="*" size="3" max="4" onBlur="void document.forms[0].airportA.setAirport(this.value)" /></td>
 </tr>
 <tr>
  <td class="label">Maximum Signups</td>

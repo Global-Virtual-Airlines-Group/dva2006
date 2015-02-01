@@ -13,17 +13,16 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (form.zip.value.length > 0) {
-	if (!validateFile(form.zip, 'zip', 'Offline Flight ZIP data')) return false;
-} else {
-	if (!validateFile(form.xml, 'xml', 'Offline Flight XML data')) return false;
-	if (!validateFile(form.hashCode, 'sha', 'Offline Flight SHA-256 signature data')) return false;
-}
+if (!golgotha.form.check()) return false;
+if (f.zip.value.length == 0) {
+	golgotha.form.validate({f:f.xml, ext:['xml'], t:'Offline Flight XML data'});
+	golgotha.form.validate({f:f.hashCode, ext:['sha'], t:'Offline Flight SHA-256 signature data'});
+} else
+	golgotha.form.validateFile({f:f.zip, ext:['zip'], t:'Offline Flight ZIP data'});
 
-setSubmit();
+golgotha.form.submit();
 disableButton('SaveButton');
 return true;
 }
@@ -39,7 +38,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="acarsoffline.do" method="post" allowUpload="true" validate="return validate(this)">
+<el:form action="acarsoffline.do" method="post" allowUpload="true" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2"><content:airline /> ACARS OFFLINE FLIGHT REPORT SUBMISSION</td>

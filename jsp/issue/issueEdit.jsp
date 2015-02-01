@@ -13,16 +13,15 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateText(form.subject, 10, 'Issue Title')) return false;
-if (!validateText(form.desc, 5, 'Issue Description')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.subject, l:10, t:'Issue Title'});
+golgotha.form.validate({f:f.desc, l:5, t:'Issue Description'});
+golgotha.form.submit();
 disableButton('SaveButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -34,7 +33,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form method="post" action="issue.do" op="save" link="${issue}" validate="return validate(this)">
+<el:form method="post" action="issue.do" op="save" link="${issue}" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
 <c:if test="${!empty issue}">

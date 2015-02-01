@@ -10,14 +10,12 @@
 <content:css name="main" />
 <content:pics />
 <script type="text/javascript">
-function closeRefresh()
+golgotha.local.closeRefresh = function()
 {
-if (window.opener)
-	window.opener.location.reload();
-
+if (window.opener) window.opener.location.reload();
 window.close();
 return true;	
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -48,7 +46,7 @@ publish data to your Facebook news feed, or use Facebook to validate your e-mail
 </c:when>
 </c:choose>
 <br />
-<el:link url="javascript:void closeRefresh()" className="sec bld">Click Here</el:link> to close this window.<br />
+<el:link url="javascript:void golgotha.local.closeRefresh()" className="sec bld">Click Here</el:link> to close this window.<br />
 <br />
 <content:copyright />
 </content:region>

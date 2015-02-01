@@ -12,14 +12,13 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateCombo(form.airline, 'Airline')) return false;
-if (!validateText(form.code, 3, 'Livery Code')) return false;
-if (!validateText(form.desc, 10, 'Livery Description')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.airline, t:'Airline'});
+golgotha.form.validate({f:f.code, l:3, t:'Livery Code'});
+golgotha.form.validate({f:f.desc, l:10, t:'Livery Description'});
+golgotha.form.submit();
 disableButton('SaveButton');
 return true;
 }
@@ -33,7 +32,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="livery.do" method="post" linkID="${empty livery ? '' : livery}" op="save" validate="return validate(this)">
+<el:form action="livery.do" method="post" linkID="${empty livery ? '' : livery}" op="save" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2"><content:airline /> ACARS MULTI-PLAYER LIVERY PROFILE</td>

@@ -13,16 +13,15 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateText(form.subject, 10, 'Notice Title')) return false;
-if (!validateText(form.body, 15, 'NOTAM Text')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.subject, l:10, t:'Notice Title'});
+golgotha.form.validate({f:f.body, l:15, t:'NOTAM Text'});
+golgotha.form.submit();
 disableButton('SubmitButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -33,7 +32,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="notamsave.do" method="post" link="${entry}" validate="return validate(this)">
+<el:form action="notamsave.do" method="post" link="${entry}" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2"><content:airline /> NOTICE TO AIRMEN</td>

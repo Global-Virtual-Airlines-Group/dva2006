@@ -15,16 +15,16 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
 <c:if test="${access.canComment || access.canUpdateStatus}">
-if (!checkSubmit()) return false;
+if (!golgotha.form.check()) return false;
 
 // Get form action
-var act = form.action;
-if (act.indexOf('hdcomment.do') != -1) {
-	if (!validateText(form.body, 10, 'Issue Comments')) return false;
-} else if ((form.isFAQ) && (form.isFAQ.checked) && (form.faqIDs)) {
+var act = f.action;
+if (act.indexOf('hdcomment.do') != -1)
+	golgotha.form.validate({f:f.body, l:10, t:'Issue Comments'});
+else if ((f.isFAQ) && (f.isFAQ.checked) && (f.faqIDs)) {
 	var isChecked = 0;
 	for (x = 0; x < f.faqIDs.length; x++)
 		isChecked += ((f.faqIDs[x].checked) ? 1 : 0);
@@ -38,44 +38,37 @@ if (act.indexOf('hdcomment.do') != -1) {
 	}
 }
 
-setSubmit();
+golgotha.form.submit();
 disableButton('EditButton');
 disableButton('CommentButton');</c:if>
 return ${access.canComment};
 }
 <c:if test="${access.canUseTemplate}">
-function selectResponse()
+golgotha.local.selectResponse = function(f)
 {
-var f = document.forms[0];
-var combo = f.rspTemplate;
-if (combo.selectedIndex == 0) return false;
-var name = combo.options[combo.selectedIndex].value;
-var xmlreq = getXMLHttpRequest();
-xmlreq.open('get', 'hdrsptmp.ws?id=' + name);
+if (!golgotha.form.comboSet(f.rspTemplate)) return false;
+var xmlreq = new XMLHttpRequest();
+xmlreq.open('GET', 'hdrsptmp.ws?id=' + escape(golgotha.form.getCombo(f.rspTemplate)));
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
-
-	// Parse the XML
 	var xml = xmlreq.responseXML;
 	if (!xml) return false;
 	var xe = xml.documentElement;
 	var bds = xe.getElementsByTagName("body");
 	if (bds.length == 0) return false;
 	var body = bds[0].firstChild.data;
-
-	// Save in the box
 	f.body.value += body;
 	return true;
-} // function
+};
 
 xmlreq.send(null);
 return true;	
-}
+};
 </c:if>
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void initLinks()">
+<body>
 <content:page>
 <%@ include file="/jsp/help/header.jspf" %> 
 <%@ include file="/jsp/help/sideMenu.jspf" %>
@@ -84,7 +77,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form method="post" action="hdcomment.do" link="${issue}" validate="return validate(this)">
+<el:form method="post" action="hdcomment.do" link="${issue}" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title">
  <td class="caps" colspan="2">ISSUE #${issue.ID} - ${issue.subject}</td>
@@ -145,7 +138,7 @@ return true;
 <c:if test="${access.canUseTemplate && (!empty rspTemplates)}">
 <div id="rspTemplateSelect" style="width:25%; position:absolute; top:1px; right:1px;" class="pri small bld right">
 Template <el:combo name="rspTemplate" className="small" firstEntry="-" options="${rspTemplates}" />
-<el:button ID="TemplateButton" onClick="void selectResponse()" label="USE" /></div>
+<el:button ID="TemplateButton" onClick="void golgotha.local.selectResponse(document.forms[0])" label="USE" /></div>
 </c:if></div>
  </td>
 </tr>

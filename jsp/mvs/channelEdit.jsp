@@ -12,19 +12,18 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateCombo(form.rate, 'Channel Bandwidth')) return false;
-if (!validateText(form.name, 6, 'Channel Name')) return false;
-if (!validateText(form.desc, 3, 'Channel Description')) return false;
-if (!validateNumber(form.maxUsers, 0, 'Channel User Limit')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validateCombo({f:f.rate, t:'Channel Bandwidth'});
+golgotha.form.validateText({f:f.name, l:6, t:'Channel Name'});
+golgotha.form.validateText({f:f.desc, l:3, t:'Channel Description'});
+golgotha.form.validateNumber({f:f.maxUsers, min:0, t:'Channel User Limit'});
+golgotha.form.submit();
 disableButton('SaveButton');
 disableButton('DeleteButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -38,7 +37,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form method="post" action="mvschannel.do" op="save" link="${channel}" validate="return validate(this)">
+<el:form method="post" action="mvschannel.do" op="save" link="${channel}" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title">
  <td class="caps" colspan="2">MODERN VOICE SERVER PERSISTENT VOICE CHANNEL</td>

@@ -15,17 +15,17 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(form)
 {
-if (!checkSubmit()) return false;
+if (!golgotha.form.check()) return false;
 if (!validateText(form.newName, 5, 'Channel Name')) return false;
 if (!validateText(form.desc, 15, 'Channel Description')) return false;
 if (!validateCheckBox(form.airline, 1, 'Airline')) return false;
 
-setSubmit();
+golgotha.form.submit();
 disableButton('SaveButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -37,7 +37,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="chprofile.do" method="post" linkID="${channel.name}" op="save" validate="return validate(this)">
+<el:form action="chprofile.do" method="post" linkID="${channel.name}" op="save" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2">WATER COOLER CHANNEL PROFILE</td>

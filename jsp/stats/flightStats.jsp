@@ -13,11 +13,7 @@
 <content:css name="form" />
 <content:pics />
 <script type="text/javascript">
-function updateSort()
-{
-document.forms[0].submit();
-return true;
-}
+golgotha.local.updateSort = function() { return document.forms[0].submit(); };
 </script>
 </head>
 <content:copyright visible="false" />
@@ -32,8 +28,8 @@ return true;
 <view:table cmd="flightstats">
 <tr class="title">
  <td colspan="4" class="left caps"><content:airline /> <c:if test="${isCharter}">CHARTER </c:if>FLIGHT STATISTICS</td>
- <td colspan="7" class="right">GROUP BY <el:combo name="groupType" size="1" idx="*" options="${groupTypes}" value="${param.groupType}" onChange="void updateSort()" />
- SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${viewContext.sortType}" onChange="void updateSort()" />
+ <td colspan="7" class="right">GROUP BY <el:combo name="groupType" size="1" idx="*" options="${groupTypes}" value="${param.groupType}" onChange="void golgotha.local.updateSort()" />
+ SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${viewContext.sortType}" onChange="void golgotha.local.updateSort()" />
 <c:if test="${!isCharter}"> <el:box name="activeOnly" idx="*" value="true" checked="${param.activeOnly}" label="Active Pilots Only" /></c:if></td>
 </tr>
 <%@ include file="/jsp/stats/pirepStats.jspf" %>

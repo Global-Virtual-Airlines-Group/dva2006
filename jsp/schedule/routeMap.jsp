@@ -49,11 +49,8 @@
 <script id="mapInit" defer>
 <map:point var="mapC" point="${mapCenter}" />
 
-// Create map options
-var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
-var mapOpts = {center:mapC, zoom:${zoomLevel}, scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
-
 // Create the map
+var mapOpts = {center:mapC, zoom:${zoomLevel}, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds: golgotha.maps.DEFAULT_TYPES}};
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
@@ -62,9 +59,6 @@ google.maps.event.addListener(map.infoWindow, 'closeclick', function() { removeM
 google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
 	golgotha.routeMap.updateAirports(document.forms[0].airlineCode);	
 });
-
-// Routes/airports placeholders
-var routes = []; var airports = []; var aps = [];
 </script>
 </body>
 </html>

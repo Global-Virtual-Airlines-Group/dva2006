@@ -18,24 +18,23 @@
 <content:js name="airportRefresh" />
 <fmt:aptype var="useICAO" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateCombo(form.airportD, 'Departure Airport')) return false;
-if (!validateCombo(form.airportA, 'Arrival Airport')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.airportD, t:'Departure Airport'});
+golgotha.form.validate({f:f.airportA, t:'Arrival Airport'});
+golgotha.form.submit();
 disableButton('SearchButton');
 disableButton('BuildButton');
 return true;
-}
+};
 <c:if test="${!empty results}">
-function validateBuild(form)
+golgotha.local.validateBuild = function(f)
 {
-if (!checkSubmit()) return false;
-var legNum = form.legCount.value;
+if (!golgotha.form.check()) return false;
+var legNum = f.legCount.value;
 for (var x = 1; x <= legNum; x++) {
-	var radio = eval('form.leg' + x);
+	var radio = eval('f.leg' + x);
 	var isOK = false;
 	if (typeof radio.length != 'undefined') {
 		for (var y = 0; !isOK && (y < radio.length); y++)
@@ -49,11 +48,11 @@ for (var x = 1; x <= legNum; x++) {
 	}
 }
 
-setSubmit();
+golgotha.form.submit();
 disableButton('SearchButton');
 disableButton('BuildButton');
 return true;	
-}
+};
 </c:if>
 golgotha.onDOMReady(function() {
 	var f = document.forms[0];
@@ -74,7 +73,7 @@ golgotha.onDOMReady(function() {
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form method="post" action="routeassign.do" validate="return validate(this)">
+<el:form method="post" action="routeassign.do" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2"><content:airline /> FLIGHT ASSIGNMENT ROUTE SEARCH</td>
@@ -101,7 +100,7 @@ golgotha.onDOMReady(function() {
 <c:if test="${doSearch}">
 <c:if test="${!empty results}">
 <br />
-<el:form method="post" action="routebuild.do" validate="return validateBuild(this)">
+<el:form method="post" action="routebuild.do" validate="return golgotha.form.wrap(golgotha.local.validateBuild, this)">
 <el:table className="view">
 <tr class="title caps">
  <td colspan="8" class="left">SEARCH RESULTS FROM ${rp.airportD.name} (<fmt:airport airport="${rp.airportD}" />) to ${rp.airportA.name}

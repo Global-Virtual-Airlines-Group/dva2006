@@ -17,12 +17,12 @@
 <content:js name="common" />
 <content:js name="datePicker" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(form)
 {
-if (!checkSubmit()) return false;
+if (!golgotha.form.check()) return false;
 if (!validateCombo(form.searchType, 'Search Type')) return false;
 
-setSubmit();
+golgotha.form.submit();
 disableButton('MapButton');
 disableButton('SearchButton');
 return true;
@@ -30,7 +30,7 @@ return true;
 
 function showMap(form)
 {
-if (!checkSubmit()) return false;
+if (!golgotha.form.check()) return false;
 
 // Build the URL
 var isChecked = false;
@@ -70,7 +70,7 @@ return false;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="acarsprsearch.do" method="post" validate="return validate(this)">
+<el:form action="acarsprsearch.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="4">ACARS FLIGHT REPORTS</td>

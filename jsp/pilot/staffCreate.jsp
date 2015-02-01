@@ -11,18 +11,17 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateText(form.staffTitle, 10, 'Staff Title')) return false;
-if (!validateCombo(form.staffArea, 'Department Name')) return false;
-if (!validateText(form.staffBody, 30, 'Staff Biographical Profile')) return false;
-if (!validateNumber(form.staffSort, 1, 'Staff Profile Sort Order')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.staffTitle, l:10, t:'Staff Title'});
+golgotha.form.validate({f:f.staffArea, t:'Department Name'});
+golgotha.form.validate({f:f.staffBody, l:30, t:'Staff Biographical Profile'});
+golgotha.form.validate({f:f.staffSort, min:1, t:'Staff Profile Sort Order'});
+golgotha.form.submit();
 disableButton('SaveButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -34,7 +33,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="newstaff.do" link="${pilot}" method="post" validate="return validate(this)">
+<el:form action="newstaff.do" link="${pilot}" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <!-- Staff Profile Title Bar -->
 <tr class="title caps">

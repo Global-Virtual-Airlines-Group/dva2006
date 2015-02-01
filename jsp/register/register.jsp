@@ -19,53 +19,50 @@
 <content:sysdata var="badDomains" name="registration.reject_domain" />
 <c:set var="cspan" value="${!empty manuals ? 3 : 1}" scope="page" />
 <script type="text/javascript">
-<fmt:jsarray var="invalidDomains" items="${badDomains}" />
-function validate(form)
+golgotha.local.invalidDomains = <fmt:jsarray items="${badDomains}" />
+golgotha.local.validate = function(form)
 {
-if (!checkSubmit()) return false;
-if (!validateText(form.firstName, 2, 'First (given) Name')) return false;
-if (!validateText(form.lastName, 2, 'Last (family) Name')) return false;
-if (!validateEMail(form.email, 'E-Mail Address')) return false;
-if (!validateCombo(form.homeAirport, 'Home Airport')) return false;
-if (!validateCombo(form.location, 'Location')) return false;
-if (!validateCombo(form.tz, 'Time Zone')) return false;
-if (!validateText(form.df, 7, 'Date Format')) return false;
-if (!validateText(form.tf, 5, 'Time Format')) return false;
-if (!validateText(form.nf, 5, 'Number Format')) return false;
-if (!validateCheckBox(form.distanceUnits, 1, 'Distance Unit')) return false;
-if (!validateCheckBox(form.weightUnits, 1, 'Weight Unit')) return false;
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:form.firstName, l:2, t:'First (given) Name'});
+golgotha.form.validate({f:f.lastName, l:2, t:'Last (family) Name'});
+golgotha.form.validate({f:f.email, addr:true, t:'E-Mail Address'});
+golgotha.form.validate({f:f.homeAirport, t:'Home Airport'});
+golgotha.form.validate({f:f.location, t:'Location'});
+golgotha.form.validate({f:f.tz, t:'Time Zone'});
+golgotha.form.validate({f:f.df, l:7, t:'Date Format'});
+golgotha.form.validate({f:f.tf, l:5, t:'Time Format'});
+golgotha.form.validate({f:f.nf, l:5, t:'Number Format'});
+golgotha.form.validate({f:f.distanceUnits, min:1, t:'Distance Unit'});
+golgotha.form.validate({f:f.weightUnits, min:1, t:'Weight Unit'});
 
 // Validate e-mail domain
-var eMail = form.email.value;
+var eMail = f.email.value;
 var usrDomain = eMail.substring(eMail.indexOf('@') + 1, eMail.length);
-for (var x = 0; x < invalidDomains.length; x++) {
-	if (usrDomain == invalidDomains[x]) {
-		alert('Your e-mail address (' + eMail + ') contains a forbidden domain - ' + invalidDomains[x]);
-		form.email.focus();
-		return false;
-	}
+for (var x = 0; x < golgotha.local.invalidDomains.length; x++) {
+	if (usrDomain == golgotha.local.invalidDomains[x])
+		throw new golgotha.util.ValidationError('Your e-mail address (' + eMail + ') contains a forbidden domain - ' + invalidDomains[x], f.email);
 }
 
-setSubmit();
+golgotha.form.submit();
 disableButton('SaveButton');
 return true;
-}
+};
 
-function checkUnique()
+golgotha.local.checkUnique = function()
 {
 var f = document.forms[0];
 var fN = f.firstName.value;
 var lN = f.lastName.value;
 var eMail = f.email.value;
-if ((fN.length < 2) || (lN.length < 2) || (document.uniqueCheck)) return false;
+if ((fN.length < 2) || (lN.length < 2) || (golgotha.local.uniqueCheck)) return false;
 	
 // Create the AJAX request
-var xmlreq = getXMLHttpRequest();
-xmlreq.open('get', 'dupename.ws?fName=' + fN + '&lName=' + lN + "&eMail=" + eMail);
+var xmlreq = new XMLHttpRequest();
+xmlreq.open('GET', 'dupename.ws?fName=' + fN + '&lName=' + lN + "&eMail=" + escape(eMail));
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	var dupes = (parseInt(xmlreq.responseText) > 0);
-	var rows = getElementsByClass('dupeFound');
+	var rows = golgotha.util.getElementsByClass('dupeFound');
 	for (var x = 0; x < rows.length; x++) {
 		displayObject(rows[x], dupes);
 		rows[x].focus();
@@ -76,16 +73,16 @@ xmlreq.onreadystatechange = function() {
 		f.elements[x].disabled = dupes;
 
 	return true;
-}
+};
 
 xmlreq.send(null);
 return true;
-}
+};
 
-function resetUniqueCheck(isPermanent)
+golgotha.local.resetUniqueCheck = function(isPermanent)
 {
-document.uniqueCheck = isPermanent;
-var rows = getElementsByClass('dupeFound');
+golgotha.local.uniqueCheck = isPermanent;
+var rows = golgotha.util.getElementsByClass('dupeFound');
 for (var x = 0; x < rows.length; x++)
 	displayObject(rows[x], false);
 
@@ -94,16 +91,15 @@ for (var x = 0; x < f.elements.length; x++)
 	f.elements[x].disabled = false;
 
 return true;
-}
+};
 
-function sendDupeInfo()
+golgotha.local.sendDupeInfo = function()
 {
 var f = document.forms[0];
 var fN = f.firstName.value;
 var lN = f.lastName.value;
 var eMail = f.email.value;
-var loc = '/register.do?op=dupe&firstName=' + fN + '&lastName=' + lN + '&email=' + eMail;
-self.location = loc;
+self.location = '/register.do?op=dupe&firstName=' + fN + '&lastName=' + lN + '&email=' + eMail;
 return true;
 }
 
@@ -117,7 +113,7 @@ golgotha.onDOMReady(function() {
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void resetUniqueCheck(false)">
+<body onload="void golgotha.local.resetUniqueCheck(false)">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -133,7 +129,7 @@ golgotha.onDOMReady(function() {
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="register.do" method="post" validate="return validate(this)">
+<el:form action="register.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <c:if test="${!empty manuals}">
 <tr class="title caps">
@@ -171,16 +167,16 @@ This is also a good time to review <content:airline />'s <el:cmd url="privacy" c
 </tr>
 <tr>
  <td class="label">First / Last Name</td>
- <td class="data" colspan="${cspan}"><el:text name="firstName" className="pri bld" required="true" idx="*" size="14" max="24" value="${param.firstName}" onBlur="void checkUnique()" />
-&nbsp;<el:text name="lastName" className="pri bld" required="true" idx="*" size="18" max="32" value="${param.lastName}" onBlur="void checkUnique()" /></td>
+ <td class="data" colspan="${cspan}"><el:text name="firstName" className="pri bld" required="true" idx="*" size="14" max="24" value="${param.firstName}" onBlur="void golgotha.local.checkUnique()" />
+&nbsp;<el:text name="lastName" className="pri bld" required="true" idx="*" size="18" max="32" value="${param.lastName}" onBlur="void golgotha.local.checkUnique()" /></td>
 </tr>
 <tr class="dupeFound" style="display:none;">
  <td colspan="${cspan + 1}" class="mid"><span class="error bld">Another person with the same name has already registered at <content:airline />. If you have
  already registered with us, you can simply reactivate your old user account. This is a much faster and simpler process than re-registering.</span><br />
 <br />
-<a href="javascript:void sendDupeInfo()" class="pri bld">I'm already a <content:airline /> Pilot. Reactivate my Account.</a><br />
+<a href="javascript:void golgotha.local.sendDupeInfo()" class="pri bld">I'm already a <content:airline /> Pilot. Reactivate my Account.</a><br />
 <br />
-<a href="javascript:void resetUniqueCheck(true)" class="sec">I've never registered with <content:airline /> before.</a></td>
+<a href="javascript:void golgotha.local.resetUniqueCheck(true)" class="sec">I've never registered with <content:airline /> before.</a></td>
 </tr>
 <tr>
  <td class="label">Home Airport</td>
@@ -214,7 +210,7 @@ This is also a good time to review <content:airline />'s <el:cmd url="privacy" c
 </tr>
 <tr>
  <td class="label">E-Mail Address</td>
- <td class="data" colspan="${cspan}"><el:addr name="email" required="true" idx="*" size="48" max="64" value="${param.email}" onBlur="void checkUnique()" /> 
+ <td class="data" colspan="${cspan}"><el:addr name="email" required="true" idx="*" size="48" max="64" value="${param.email}" onBlur="void golgotha.local.checkUnique()" /> 
 <span class="small ita">Please ensure that your spam blockers are set to accept email from ${airlineDomain}.</span></td>
 </tr>
 <tr>

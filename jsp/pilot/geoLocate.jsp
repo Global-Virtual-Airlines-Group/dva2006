@@ -99,11 +99,11 @@ map.closeWindow();
 return true;
 }
 
-function validate(form)
+golgotha.local.validate = function(form)
 {
-if (!checkSubmit()) return false;
+if (!golgotha.form.check()) return false;
 
-setSubmit();
+golgotha.form.submit();
 disableButton('SaveButton');
 disableButton('SearchButton');
 disableButton('DeleteButton');
@@ -119,7 +119,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="geolocate.do" method="post" validate="return validate(this)">
+<el:form action="geolocate.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2">PILOT LOCATION <span id="isLoading"></span></td>

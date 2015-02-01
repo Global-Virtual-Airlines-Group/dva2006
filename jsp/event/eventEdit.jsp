@@ -20,10 +20,8 @@
 <content:googleAnalytics eventSupport="true" />
 <fmt:aptype var="useICAO" />
 <script type="text/javascript">
-function updateSignups()
+golgotha.local.updateSignups = function(f)
 {
-// Selectively enable fields if signups enabled
-var f = document.forms[0];
 enableObject(f.closeDate, f.canSignup.checked);
 enableObject(f.closeTime, f.canSignup.checked);
 enableObject(f.airportD, f.canSignup.checked);
@@ -34,27 +32,24 @@ enableObject(f.route, f.canSignup.checked);
 enableObject(f.routeName, f.canSignup.checked);
 enableObject(f.maxSignups, f.canSignup.checked);
 enableObject(f.signupURL, !f.canSignup.checked);
-
-// Get the calendar button
 enableElement('CloseCalendarButton', f.canSignup.checked);
 return true;
-}
+};
 
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateText(form.name, 5, 'Event Name')) return false;
-if (!validateCombo(form.airportD, 'Departure Airport')) return false;
-if (!validateCombo(form.airportA, 'Destination Airport')) return false;
-if (!validateText(form.route, 5, 'Default Route')) return false;
-if (!validateCheckBox(form.airline, 1, 'Participating Airline')) return false;
-if (!validateText(form.briefing, 15, 'Flight Briefing')) return false;
-if (!validateFile(form.bannerImg, 'jpg,png,gif', 'Banner Image')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.name, l:5, t:'Event Name'});
+golgotha.form.validate({f:f.airportD, t:'Departure Airport'});
+golgotha.form.validate({f:f.airportA, t:'Destination Airport'});
+golgotha.form.validate({f:f.route, l:5, t:'Default Route'});
+golgotha.form.validate({f:f.airline, min:1, t:'Participating Airline'});
+golgotha.form.validate({f:f.briefing, l:15, t:'Flight Briefing'});
+golgotha.form.validate({f:f.bannerImg, ext:['jpg','png','gif'], t:'Banner Image'});
+golgotha.form.submit();
 disableButton('SaveButton');
 return true;
-}
+};
 
 golgotha.onDOMReady(function() {
 	var f = document.forms[0];
@@ -79,7 +74,7 @@ golgotha.onDOMReady(function() {
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="eventsave.do" method="post" link="${event}" allowUpload="true" validate="return validate(this)">
+<el:form action="eventsave.do" method="post" link="${event}" allowUpload="true" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
 <c:if test="${empty event}">
@@ -113,7 +108,7 @@ golgotha.onDOMReady(function() {
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="canSignup" idx="*" value="true" checked="${empty event ? true : event.canSignup}" label="Allow Signups for this Online Event" onChange="void updateSignups()" /></td>
+ <td class="data"><el:box name="canSignup" idx="*" value="true" checked="${empty event ? true : event.canSignup}" label="Allow Signups for this Online Event" onChange="void golgotha.local.updateSignups()" /></td>
 </tr>
 <tr>
  <td class="label">Airlines</td>

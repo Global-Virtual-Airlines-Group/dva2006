@@ -12,15 +12,14 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateText(form.comment, 4, 'Status Comment')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.comment, l:4, t:'Status Comment'});
+golgotha.form.submit();
 disableButton('SaveButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -32,7 +31,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form method="post" action="statuscomment.do" link="${pilot}" validate="return validate(this)">
+<el:form method="post" action="statuscomment.do" link="${pilot}" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <%@ include file="/jsp/pilot/pilotStatusUpdate.jspf" %>
 <tr class="title">

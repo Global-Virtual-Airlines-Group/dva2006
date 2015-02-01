@@ -15,24 +15,21 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-
-hasFirst = (form.firstName.value.length > 2);
-hasLast = (form.lastName.value.length > 2);
-hasCode = (form.pilotCode.value.length > 1);
-hasEMail = (form.eMail.value.length > 5);
+if (!golgotha.form.check()) return false;
+var hasFirst = (f.firstName.value.length > 2);
+var hasLast = (f.lastName.value.length > 2);
+var hasCode = (f.pilotCode.value.length > 1);
+var hasEMail = ((f.eMail) && (f.eMail.value.length > 5));
 if (hasFirst || hasLast || hasCode || hasEMail) {
-	setSubmit();
+	golgotha.form.submit();
 	disableButton('SearchButton');
 	return true;
 }
 	
-alert('Please provide a First or Last Name, Pilot Code, or an e-mail address.');
-form.firstName.focus();
-return false;
-}
+throw new golgotha.util.VaidationError('Please provide a First or Last Name, Pilot Code, or an e-mail address.', f.firstName);
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -43,7 +40,7 @@ return false;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="pilotsearch.do" method="post" validate="return validate(this)">
+<el:form action="pilotsearch.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <!-- Search Criteria -->
 <el:table className="form">
 <tr class="title caps">

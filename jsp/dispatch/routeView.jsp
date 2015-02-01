@@ -99,11 +99,11 @@
 <map:markers var="mrks" items="${waypoints}" />
 <map:line var="route" src="pnts" color="#4080af" width="2" transparency="0.7" geodesic="true" />
 
-//Create map options
+// Create map options
 var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
 var mapOpts = {center: mapC, zoom:golgotha.maps.util.getDefaultZoom(${distance}), scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
 
-//Build the map
+// Build the map
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});

@@ -30,11 +30,11 @@ loaders.series.onload(function() { golgotha.util.enable('#selImg'); });
 loaders.fr.onload(function() { golgotha.util.enable('selFronts'); });
 loaders.lg.onload(function() { golgotha.util.enable('selLG'); });
 
-function filterTypes(combo)
+golgotha.local.filterTypes = function(combo)
 {
 var minIDX = Math.max(1, combo.selectedIndex + 1);
-for (var x = 0; x < wxAirports.length; x++) {
-	var mrk = wxAirports[x];
+for (var x = 0; x < golgotha.local.wxAirports.length; x++) {
+	var mrk = golgotha.local.wxAirports[x];
 	if ((mrk.ILS < minIDX) && mrk.getVisible())
 		mrk.setVisible(false);
 	else if ((mrk.ILS >= minIDX) && !mrk.getVisible())
@@ -42,7 +42,7 @@ for (var x = 0; x < wxAirports.length; x++) {
 }
 	
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -61,7 +61,7 @@ return true;
 </tr>
 <tr>
  <td class="label">ILS Category</td>
- <td class="data"><el:combo name="ils" size="1" idx="*" options="${ilsClasses}" onChange="void filterTypes(this)" /></td>
+ <td class="data"><el:combo name="ils" size="1" idx="*" options="${ilsClasses}" onChange="void golgotha.local.filterTypes(this)" /></td>
 </tr>
 <tr>
  <td class="label">Map Legend</td>
@@ -93,13 +93,13 @@ google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapT
 google.maps.event.addListener(map, 'zoom_changed', golgotha.maps.updateZoom);
 
 // Add airports -- don't use the standard TAG so we can add some info to the tags
-var wxAirports = [];
+golgotha.local.wxAirports = [];
 <c:forEach var="ap" items="${metars}">
 <map:marker var="mrk" marker="true" point="${ap}" color="${ap.iconColor}" label="${ap.infoBox}" />
 mrk.ILS = ${ap.ILS.ordinal()};
-wxAirports.push(mrk);
+golgotha.local.wxAirports.push(mrk);
 </c:forEach>
-addMarkers(map, 'wxAirports');
+addMarkers(map, 'golgotha.local.wxAirports');
 
 // Build the layer controls
 var ctls = map.controls[google.maps.ControlPosition.BOTTOM_LEFT];

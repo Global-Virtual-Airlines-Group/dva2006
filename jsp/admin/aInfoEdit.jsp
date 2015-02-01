@@ -12,16 +12,15 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateText(form.domain, 6, 'Domain Name')) return false;
-if (!validateText(form.db, 2, 'Database Name')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validateText({f:f.domain, l:6, t:'Domain Name'});
+golgotha.form.validateText({f:f.db, l:2, t:'Database Name'});
+golgotha.form.submit();
 disableButton('SaveButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -32,7 +31,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="ainfo.do" method="post" linkID="${aInfo.code}" op="save" validate="return validate(this)">
+<el:form action="ainfo.do" method="post" linkID="${aInfo.code}" op="save" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2">VIRTUAL AIRLINE PROFILE - ${aInfo.name}</td>

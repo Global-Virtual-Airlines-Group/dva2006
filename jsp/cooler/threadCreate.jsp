@@ -16,57 +16,51 @@
 <content:js name="common" />
 <content:js name="datePicker" />
 <script type="text/javascript">
-var imgData = {URLs: [], descs: [], maxSeq:0, seq:[]};
-imgData.add = function(url, desc) { this.URLs.push(url); this.descs.push(desc); this.maxSeq++; this.seq.push(this.maxSeq); }
-imgData.contains = function(url) { return (this.URLs.indexOf(url) > -1); }
-imgData.getIndex = function(seq) { return this.seq.indexOf(seq); }
-imgData.size = function() { return this.URLs.length; }
-imgData.remove = function(idx) { this.URLs.splice(idx, 1); this.descs.splice(idx, 1); this.seq.splice(idx, 1); }
+golgotha.local.imgData = {URLs: [], descs: [], maxSeq:0, seq:[]};
+golgotha.local.imgData.add = function(url, desc) { this.URLs.push(url); this.descs.push(desc); this.maxSeq++; this.seq.push(this.maxSeq); }
+golgotha.local.imgData.contains = function(url) { return (this.URLs.indexOf(url) > -1); }
+golgotha.local.imgData.getIndex = function(seq) { return this.seq.indexOf(seq); }
+golgotha.local.imgData.size = function() { return this.URLs.length; }
+golgotha.local.imgData.remove = function(idx) { this.URLs.splice(idx, 1); this.descs.splice(idx, 1); this.seq.splice(idx, 1); }
 
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if ((!form) || (!checkSubmit())) return false;
-if (!validateText(form.subject, 8, 'Title of your Thread')) return false;
-if (!validateText(form.msgText, 5, 'text of your Message')) return false;
-if (!validateFile(form.img, 'gif,jpg,png', 'Attached Image')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.subject, l:8, t:'Title of your Thread'});
+golgotha.form.validate({f:f.msgText, l:5, t:'Text of your Message'});
+golgotha.form.validate({f:f.img, ext:['gif,jpg,png'], t:'Attached Image'});
+golgotha.form.submit();
 disableButton('EmoticonButton');
 disableButton('LinkButton');
 disableButton('SaveButton');
 return true;
-}
+};
 
-function openEmoticons()
-{
-var flags = 'height=280,width=250,menubar=no,toolbar=no,status=no,scrollbars=yes';
-var w = window.open('emoticons.do', 'emoticonHelp', flags);
-return true;
-}
+golgotha.local.openEmoticons = function() {
+	return window.open('emoticons.do', 'emoticonHelp', 'height=280,width=250,menubar=no,toolbar=no,status=no,scrollbars=yes');
+};
 
-function enablePoll()
-{
-var f = document.forms[0];
-if (!f.hasPoll) return false;
-f.pollOptions.disabled = !f.hasPoll.checked;
-return true;
-}
+golgotha.local.enablePoll = function() {
+	var f = document.forms[0];
+	if (!f.hasPoll) return false;
+	f.pollOptions.disabled = !f.hasPoll.checked;
+	return true;
+};
 
-function removeLink(seq)
+golgotha.local.removeLink = function(seq)
 {
-var idx = imgData.getIndex(seq);
-imgData.remove(idx);
-document.forms[0].imgData.value = JSON.stringify(imgData);
+var idx = golgotha.local.imgData.getIndex(seq);
+golgotha.local.imgData.remove(idx);
+document.forms[0].imgData.value = JSON.stringify(golgotha.local.imgData);
 var r = document.getElementById('linkImg' + seq);
 r.parentNode.removeChild(r);
 return true;
-}
+};
 
-function submitImage()
+golgotha.local.submitImage = function(f)
 {
-var f = document.forms[0];
-if (!validateText(f.imgURL, 12, 'URL of your Linked Image')) return false;
-if (!validateText(f.imgDesc, 6, 'Description of your Linked Image')) return false;
+golgotha.form.validate({f:f.imgURL, l:12, t:'URL of your Linked Image'});
+golgotha.form.validate({f:f.imgDesc, l:6, t:'Description of your Linked Image'});
 
 // Check extensions
 var imgURL = f.imgURL.value;
@@ -78,19 +72,16 @@ var msgSpan = document.getElementById('imgLinkMsg');
 msgSpan.innerHTML = '';
 
 // Check the image has been added already
-if (imgData.contains(imgURL)) {
-	alert('This image has already been linked.');
-	return false;
-} else if (!allowedExts.contains(ext)) {
-	alert('This does not appear to be an image.');
-	return false;
-}
+if (golgotha.local.imgData.contains(imgURL))
+	throw new golgotha.util.ValidationError('This image has already been linked.', f.imgURL);
+if (!allowedExts.contains(ext))
+	throw new golgotha.util.ValidationError('This does not appear to be an image.', f.imgURL);
 
 // Check the image itself
 var img = new Image();
 img.onload = function() {
-	imgData.add(imgURL, f.imgDesc. value);
-	var imgIdx = imgData.maxSeq;
+	golgotha.local.imgData.add(imgURL, f.imgDesc. value);
+	var imgIdx = golgotha.local.imgData.maxSeq;
 
 	// Add the image
 	var r = document.createElement('tr');
@@ -107,7 +98,7 @@ img.onload = function() {
 	ld.appendChild(document.createTextNode(f.imgDesc.value + ' - '));
 	var rmvLink = document.createElement('a');
 	rmvLink.setAttribute('class', 'small caps');
-	rmvLink.setAttribute('onclick', 'javascript:void removeLink(' + imgIdx + ')');
+	rmvLink.setAttribute('onclick', 'javascript:void golgotha.local.removeLink(' + imgIdx + ')');
 	rmvLink.appendChild(document.createTextNode('Remove Linked Image'));
 	ld.appendChild(rmvLink);
 	r.appendChild(ld);
@@ -117,18 +108,18 @@ img.onload = function() {
 	ref.parentNode.insertBefore(r, ref);
 
 	// Convert to JSON
-	f.imgData.value = JSON.stringify(imgData);
+	f.imgData.value = JSON.stringify(golgotha.local.imgData);
 
 	// Clear the fields
 	f.imgURL.value = '';
 	f.imgDesc.value = '';
 	return true;	
-}
+};
 
 img.onerror = function() { msgSpan.innerHTML = 'Canot load image!'; return false; }
 img.src = imgURL;
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -142,7 +133,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="threadpost.do" method="post" allowUpload="true" validate="return validate(this)">
+<el:form action="threadpost.do" method="post" allowUpload="true" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title">
  <td colspan="2" class="left caps">New ${forumName} Discusion Thread</td>
@@ -166,11 +157,11 @@ return true;
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="updateNotify" idx="*" label="Send e-mail when responses are posted" value="true" />&nbsp;
-<el:button ID="EmoticonButton" onClick="void openEmoticons()" label="EMOTICONS" /></td>
+<el:button ID="EmoticonButton" onClick="void golgotha.local.openEmoticons()" label="EMOTICONS" /></td>
 </tr>
 <tr id="imgUpload">
  <td class="label">Upload Image</td>
- <td class="data"><el:file name="img" className="small" idx="*" size="64" max="144" onChange="void toggleImgOptions(this)" />
+ <td class="data"><el:file name="img" className="small" idx="*" size="64" max="144" onChange="void golgotha.local.toggleImgOptions(this)" />
 <c:if test="${imgBadSize}"><div class="error bld">Your attached image was too large (<fmt:int value="${imgSize}" /> bytes).</div></c:if>
 <c:if test="${imgBadDim}"><div class="error bld">Your attached image was too large (<fmt:int value="${imgX}" />
  by <fmt:int value="${imgY}" /> pixels).</div></c:if>
@@ -187,7 +178,7 @@ return true;
 <tr>
  <td class="label">Description</td>
  <td class="data"><el:text name="imgDesc" idx="*" size="64" max="192" value="" /> 
-<el:button ID="LinkButton" label="LINK IMAGE" onClick="void submitImage()" /></td>
+<el:button ID="LinkButton" label="LINK IMAGE" onClick="void golgotha.form.wrap(golgotha.local.submitImage, document.forms[0])" /></td>
 </tr>
 <content:filter roles="PIREP,HR,Instructor,Operations,Moderator">
 <!-- Pilot Poll -->
@@ -196,7 +187,7 @@ return true;
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="hasPoll" idx="*" value="true" onChange="void enablePoll()" label="Enable Pilot Poll in this Discussion Thread" /></td>
+ <td class="data"><el:box name="hasPoll" idx="*" value="true" onChange="void golgotha.local.enablePoll()" label="Enable Pilot Poll in this Discussion Thread" /></td>
 </tr>
 <tr>
  <td class="label top">Poll Options</td>

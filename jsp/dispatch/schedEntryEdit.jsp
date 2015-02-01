@@ -14,18 +14,17 @@
 <content:js name="common" />
 <content:js name="datePicker" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-
-if (!validateCombo(form.startDate, 'Service Start Date')) return false;
-if (!validateCombo(form.startTime, 'Service Start Time')) return false;
-if (!validateCombo(form.endDate, 'Service End Date')) return false;
-if (!validateCombo(form.endTime, 'Service End Time')) return false;
-setSubmit();
+if ((!golgotha.form.check()) || (!f.comments)) return false;
+golgotha.form.validate({f:f.startDate, t:'Service Start Date'});
+golgotha.form.validate({f:f.startTime, t:'Service Start Time'});
+golgotha.form.validate({f:f.endDate, t:'Service End Date'});
+golgotha.form.validate({f:f.endTime, t:'Service End Time'});
+golgotha.form.submit();
 disableButton('SaveButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -38,7 +37,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="dspentry.do" link="${entry}" op="save" method="post" validate="return validate(this)">
+<el:form action="dspentry.do" link="${entry}" op="save" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2"><content:airline /> ACARS DISPATCHER SERVICE SESSION</td>

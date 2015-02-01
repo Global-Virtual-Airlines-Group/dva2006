@@ -15,16 +15,11 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function update(combo)
-{
-combo.enabled = false;
-if (combo.selectedIndex == 0)
-	self.location = '/dsproutes.do';
-else
-	self.location = '/dsproutes.do?id=' + combo.options[combo.selectedIndex].value;
-
-return true;
-}
+golgotha.local.update = function(combo) {
+	combo.enabled = false;
+	self.location = golgotha.form.comboSet(combo) ? '/dsproutes.do?id=' + escape(golgotha.form.getCombo(combo)) : '/dsproutes.do';
+	return true;
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -41,7 +36,7 @@ return true;
 <tr class="title">
  <td colspan="4" class="left caps"><content:airline /> ACARS DISPATCHER ROUTES<c:if test="${!empty author}"> - ${author.name}</c:if></td>
  <td><el:cmd url="dsprsearch">SEARCH</el:cmd></td>
- <td colspan="2" class="right">DISPATCHER <el:combo name="id" idx="*" size="1" options="${authorNames}" firstEntry="-" value="${author}" onChange="update(this)" /></td>
+ <td colspan="2" class="right">DISPATCHER <el:combo name="id" idx="*" size="1" options="${authorNames}" firstEntry="-" value="${author}" onChange="golgotha.local.update(this)" /></td>
 </tr>
 <tr class="title caps">
  <td style="width:5%">ID</td>

@@ -15,7 +15,7 @@
 <content:js name="common" />
 </head>
 <content:copyright visible="false" />
-<body onload="void initLinks()">
+<body>
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>

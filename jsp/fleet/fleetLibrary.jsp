@@ -13,18 +13,17 @@
 <content:js name="common" />
 <content:sysdata var="imgPath" name="path.img" />
 <script type="text/javascript">
-function selectAC(combo)
+golgotha.local.selectAC = function(combo)
 {
-if (combo.selectedIndex < 1) {
-	document.fName = null;
+if (golgotha.form.comboSet(combo)) {
+	golgotha.local.fName = null;
 	showObject(document.getElementById('installerInfo'), false);
 	return false;
 }
 
 // Get the code
-var code = combo.options[combo.selectedIndex].value;
-var xmlreq = getXMLHttpRequest();
-xmlreq.open('get', 'fleetlib.ws?code=' + code, true);
+var xmlreq = new XMLHttpRequest();
+xmlreq.open('GET', 'fleetlib.ws?code=' + escape(golgotha.form.getCombo(combo)), true);
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
 	var xmlDoc = xmlreq.responseXML;
@@ -42,7 +41,7 @@ xmlreq.onreadystatechange = function() {
 	}
 
 	// Update the page
-	document.fName = info.getAttribute('filename');
+	golgotha.local.fName = info.getAttribute('filename');
 	document.getElementById('FleetPic').src = info.getAttribute('img');
 	document.getElementById('divName').innerHTML = info.getAttribute('title');
 	var dt = info.getAttribute('date');
@@ -57,19 +56,18 @@ xmlreq.onreadystatechange = function() {
 	combo.disabled = false;
 	showObject(document.getElementById('installerInfo'), true);
 	return true;
-}
+};
 
 combo.disabled = true;
 xmlreq.send(null);
 return true;
-}
+};'
 
-function download()
-{
-if (!document.fName) return false;
-self.location = '/fleet/' + document.fName;
-return true;
-}
+golgotha.local.download = function() {
+	if (!golgotha.local.fName) return false;
+	self.location = '/fleet/' + golgotha.local.fName;
+	return true;
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -84,7 +82,7 @@ return true;
 <el:table className="form">
 <tr class="title">
  <td class="caps"><content:airline /> FLEET LIBRARY</td>
- <td class="right">SELECT <el:combo name="instName" idx="1" size="1" firstEntry="[ INSTALLER ]" options="${fleet}" onChange="void selectAC(this)" /></td>
+ <td class="right">SELECT <el:combo name="instName" idx="1" size="1" firstEntry="[ INSTALLER ]" options="${fleet}" onChange="void golgotha.local.selectAC(this)" /></td>
 </tr>
 <tr>
  <td colspan="2"><el:img ID="FleetPic" style="float:left; margin:4px;" x="164" y="314" src="blank.png" caption="Fleet Library" />
@@ -104,7 +102,7 @@ Please select a <content:airline /> Fleet Installer from the list above.</span>
 <!-- Download Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="DownloadButton" label="DOWNLOAD INSTALLER" onClick="void download()" /></td>
+ <td><el:button ID="DownloadButton" label="DOWNLOAD INSTALLER" onClick="void golgotha.local.download()" /></td>
 </tr>
 </el:table>
 </el:form>

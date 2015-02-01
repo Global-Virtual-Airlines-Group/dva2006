@@ -14,19 +14,13 @@
 <content:js name="common" />
 <content:pics />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.updateSort = function() { return document.forms[0].submit(); };
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.submit();
 return true;	
-}
-
-function update()
-{
-document.forms[0].submit();
-return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -37,12 +31,12 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="dspstats.do" method="post" validate="return validate(this)">
+<el:form action="dspstats.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="view">
 <tr class="title">
  <td colspan="4" class="left caps"><content:airline /> TOP DISPATCHERS - <fmt:date date="${range.startDate}" tz="${utc}" fmt="d" /> - 
  <fmt:date date="${range.endDate}" tz="${utc}" fmt="d" /></td>
- <td colspan="2" class="right">SELECT <el:combo name="range" idx="*" size="1" firstEntry="[ SELECT ]" value="${range}" options="${ranges}" onChange="void update()" /></td>
+ <td colspan="2" class="right">SELECT <el:combo name="range" idx="*" size="1" firstEntry="[ SELECT ]" value="${range}" options="${ranges}" onChange="void golgotha.local.updateSort()" /></td>
 </tr>
 
 <!-- Table Header bar -->

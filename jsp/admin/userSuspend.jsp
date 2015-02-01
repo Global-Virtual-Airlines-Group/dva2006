@@ -12,15 +12,14 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateText(form.comment, 6, 'Reason for Suspension')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.comment, l:6, t:'Reason for Suspension'});
+golgotha.form.submit();
 disableButton('SaveButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -32,7 +31,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form method="post" action="suspend.do" link="${pilot}" validate="return validate(this)">
+<el:form method="post" action="suspend.do" link="${pilot}" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title">
  <td colspan="2" class="left caps">NEW STATUS COMMENT FOR ${pilot.name}</td>

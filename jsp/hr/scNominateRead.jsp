@@ -13,23 +13,22 @@
 <content:js name="common" />
 <content:pics />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-var act = form.action;
-if (act.indexOf('scnomdispose.do') != -1) {
+if (!golgotha.form.check()) return false;
+var act = f.action;
+if (act.indexOf('scnomdispose.do') != -1)
 	if (!confirm("Are you sure you wish to approve or reject ${pilot.name}'s nomination to Senior Captain?")) return false;
-} else {
-	if (!validateText(form.body, 30, 'Nomination Comments')) return false;
-}
+else
+	golgotha.form.validate({f:f.body, l:30, t:'Nomination Comments'});
 
-setSubmit();
+golgotha.form.submit();
 disableButton('SaveButton');
 disableButton('ApproveButton');
 disableButton('RejectButton');
 disableButton('ProfileButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -42,7 +41,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="scnominate.do" op="save" method="post" link="${nom}" validate="return validate(this)">
+<el:form action="scnominate.do" op="save" method="post" link="${nom}" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="${cspan + 1}"><content:airline /> SENIOR CAPTAIN NOMINATION - ${pilot.rank.name} ${pilot.name} (${pilot.pilotCode}) - ${nom.quarter}</td>

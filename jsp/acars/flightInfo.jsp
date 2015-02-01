@@ -20,7 +20,7 @@
 <content:googleAnalytics eventSupport="true" />
 </head>
 <content:copyright visible="false" />
-<body>
+<body onunload="void golgotha.maps.util.unload(map)">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -104,7 +104,7 @@
 <tr>
  <td class="label">Route Map Data</td>
  <td class="data" colspan="4"><span class="bld"><el:box name="showRoute" idx="*" onChange="void toggleMarkers(map, 'gRoute', this)" label="Route" checked="false" />
-<el:box name="showFDR" idx="*" onChange="void toggleMarkers(map, 'routeMarkers', this)" label="Flight Data" checked="false" /> 
+<el:box name="showFDR" idx="*" onChange="void toggleMarkers(map, 'golgotha.maps.acarsFlight.routeMarkers', this)" label="Flight Data" checked="false" /> 
 <el:box name="showFPlan" idx="*" onChange="void toggleMarkers(map, 'gfRoute', this)" label="Flight Plan" checked="true" /> 
 <el:box name="showFPMarkers" idx="*" onChange="void toggleMarkers(map, 'filedMarkers', this)" label="Navaid Markers" checked="true" /></span>
 <span id="routeProgress" class="small"></span></td>
@@ -132,8 +132,6 @@
 <c:if test="${fn:sizeof(mapRoute) > 0}">
 <script id="mapInit" defer>
 var gRoute;
-var routePoints = [];
-var routeMarkers = [];
 
 // Build the route line and map center
 <map:point var="mapC" point="${mapCenter}" />
@@ -148,7 +146,7 @@ var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'click', map.closeWindow);
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
-getACARSData(${info.ID});
+golgotha.maps.acarsFlight.getACARSData(${info.ID});
 
 // Add the filed route and markers
 addMarkers(map, 'gfRoute');

@@ -15,22 +15,20 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-isOK = (form.installerCode.selectedIndex > 0);
-osOK = (form.os.selectedIndex > 0);
-
-if (!isOK && !osOK && (form.userCode.value.length < 2)) {
+if (!golgotha.form.check()) return false;
+var isOK = golgotha.form.comboSet(f.installerCode) || golgotha.form.comboSet(f.os);
+if (!isOK && (f.userCode.value.length < 2)) {
 	alert('Please provide an Installer Code, Operating System or User Code.');
-	form.installerCode.focus();
+	f.installerCode.focus();
 	return false;
 }
 
-setSubmit();
+golgotha.form.submit();
 disableButton('SearchButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -41,7 +39,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="fleetlog.do" method="post" validate="return validate(this)">
+<el:form action="fleetlog.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2">BROWSE INSTALLER SYSTEM DATA</td>

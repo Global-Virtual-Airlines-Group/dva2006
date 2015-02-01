@@ -25,7 +25,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="acarslogf.do" method="post" validate="return validate(this)">
+<el:form action="acarslogf.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="4">ACARS FLIGHT INFORMATION LOG<c:if test="${!empty startDate}"> BETWEEN <fmt:date date="${startDate}" /> 

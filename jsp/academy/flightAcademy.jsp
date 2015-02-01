@@ -16,44 +16,26 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
+if (!golgotha.form.check()) return false;
 
 // Validate response
-var act = form.action;
+var act = f.action;
 if (act.indexOf('enroll.do') != -1)
 {
-	var c = form.courseName;
-	if (!c) return false;
-	if (c.selectedIndex == 0) {
-		alert('Please select the Course you wish to enroll in.');
-		c.focus();
-		return false;
-	}
-	
-	// Check if we're sure
-	var cName = c.options[c.selectedIndex].text;
-	if (!confirm('Are you sure you wish to enroll in the ' + cName + ' Flight Academy Course?')) return false;
+	golgotha.form.validate({f:f.courseName, t:'Please select the Course you wish to enroll in.'});
+	if (!confirm('Are you sure you wish to enroll in the ' + golgotha.form.getCombo(f.courseName) + ' Flight Academy Course?')) return false;
 } else {
-	var c = form.examName;
-	if (!c) return false;
-	if (c.selectedIndex == 0) {
-		alert('Please select the Examination you wish to take.');
-		c.focus();
-		return false;
-	}
-
-	// Check if we're sure
-	var tName = c.options[c.selectedIndex].text;
-	if (!confirm('Are you sure you wish to take the ' + tName + ' Examination?')) return false;
+	golgotha.form.validate({f:f.examName, t:'Please select the Examination you wish to take.'});
+	if (!confirm('Are you sure you wish to take the ' + golgotha.form.getCombo(f.examName) + ' Examination?')) return false;
 }
 
-setSubmit();
+golgotha.form.submit();
 disableButton('EnrollButton');
 disableButton('ExamButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -66,7 +48,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="enroll.do" method="post" validate="return validate(this)">
+<el:form action="enroll.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="view">
 <!-- Course History Title Bar -->
 <tr class="title caps">

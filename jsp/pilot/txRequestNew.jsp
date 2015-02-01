@@ -12,15 +12,14 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateCombo(form.eqType, 'Equipment Program to transfer into')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validateCombo({f:f.eqType, t:'Equipment Program to transfer into'});
+golgotha.form.submit();
 disableButton('SubmitButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -32,7 +31,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="txrequest.do" method="post" validate="return validate(this)">
+<el:form action="txrequest.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2">NEW ${reqType} REQUEST</td>

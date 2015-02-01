@@ -17,27 +17,25 @@
 <content:js name="common" />
 <content:js name="datePicker" />
 <script type="text/javascript">
-function switchType(combo)
-{
-var cType = combo.options[combo.selectedIndex].value;
-self.location = '/busycalendar.do?op=' + cType + '&startDate=<fmt:date fmt="d" d="MM/dd/yyyy" date="${startDate}" />';
-return true;
-}
+golgotha.local.switchType = function(combo) {
+	var cType = combo.options[combo.selectedIndex].value;
+	self.location = '/busycalendar.do?op=' + cType + '&startDate=<fmt:date fmt="d" d="MM/dd/yyyy" date="${startDate}" />';
+	return true;
+};
 
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!form.comments) return false;
-
-if (!validateCombo(form.instructor, 'Flight Instructor')) return false;
-if (!validateCombo(form.startDate, 'Busy Start Date')) return false;
-if (!validateCombo(form.startTime, 'Busy Start Time')) return false;
-if (!validateCombo(form.endDate, 'Busy End Date')) return false;
-if (!validateCombo(form.endTime, 'Busy End Time')) return false;
-setSubmit();
+if (!golgotha.form.check()) return false;
+if (!f.comments) return false;
+golgotha.form.validate({f:f.instructor, t:'Flight Instructor'});
+golgotha.form.validate({f:f.startDate, t:'Busy Start Date'});
+golgotha.form.validate({f:f.startTime, t:'Busy Start Time'});
+golgotha.form.validate({f:f.endDate, t:'Busy End Date'});
+golgotha.form.validate({f:f.endTime, t:'Busy End Time'});
+golgotha.form.submit();
 disableButton('SaveButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -49,7 +47,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="insbusysave.do" method="post" validate="return validate(this)">
+<el:form action="insbusysave.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title">
  <td style="width:60%" class="caps"><content:airline /> INSTRUCTOR BUSY TIME CALENDAR - <fmt:date fmt="d" date="${startDate}" d="MMMM yyyy" /></td>
@@ -59,7 +57,7 @@ return true;
 <c:if test="${!isMine && !empty user}">
  <td style="width:20%" class="mid"><el:cmd url="busycalendar" op="31" link="${user}" startDate="${startDate}">MY BUSY TIME</el:cmd></td>
 </c:if>
- <td class="right">CALENDAR TYPE <el:combo name="op" size="1" idx="*" options="${typeOptions}" value="30" onChange="void switchType(this)" /></td>
+ <td class="right">CALENDAR TYPE <el:combo name="op" size="1" idx="*" options="${typeOptions}" value="30" onChange="void golgotha.local.switchType(this)" /></td>
 </tr>
 </el:table>
 <div class="mid">

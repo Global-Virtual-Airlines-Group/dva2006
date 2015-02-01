@@ -21,21 +21,20 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateText(form.title, 6, 'Installer Title')) return false;
-if (!validateNumber(form.majorVersion, 0, 'Major Version Number')) return false;
-if (!validateNumber(form.minorVersion, 0, 'Minor Version Number')) return false;
-if (!validateNumber(form.subVersion, 0, 'Sub-Version Number')) return false;
-if (!validateText(form.desc, 10, 'Description')) return false;
-if (!validateText(form.code, 3, 'Installer Code')) return false;
-if (!validateText(form.fileName, 8, 'Installer Filename')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:form.title, l:6, t:'Installer Title'});
+golgotha.form.validate({f:f.majorVersion, min:0, t:'Major Version Number'});
+golgotha.form.validate({f:f.minorVersion, min:0, t:'Minor Version Number'});
+golgotha.form.validate({f:f.subVersion, min:0, t:'Sub-Version Number'});
+golgotha.form.validate({f:form.desc, l:10, t:'Description'});
+golgotha.form.validate({f:form.code, l:3, t:'Installer Code'});
+golgotha.form.validate({f:f.fileName, l:8, t:'Installer Filename'});
+golgotha.form.submit();
 disableButton('SaveButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -48,7 +47,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="fleetlib.do" linkID="${entry.fileName}" op="save" method="post" validate="return validate(this)">
+<el:form action="fleetlib.do" linkID="${entry.fileName}" op="save" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
 <c:choose>

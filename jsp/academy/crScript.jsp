@@ -14,30 +14,30 @@
 <content:js name="common" />
 <content:json />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateCombo(form.cert, 'Flight Academy Certification')) return false;
-if (!validateNumber(form.seq, 1, 'Check Ride Number')) return false;
-if (!validateText(form.body, 15, 'Check Ride content')) return false;
+if (!golgotha.form.check()) return false;
+golgotha.form.validateCombo({f:f.cert, t:'Flight Academy Certification'});
+golgotha.form.validateNumber({f:f.seq, min:1, t:'Check Ride Number'});
+golgotha.form.validateText({f:f.body, l:15, t:'Check Ride content'});
 
-setSubmit();
+golgotha.form.submit();
 disableButton('SaveButton');
 disableButton('DeleteButton');
 return true;
-}
+};
 
-function loadRideCount(combo)
+golgotha.local.loadRideCount = function(combo)
 {
 var f = document.forms[0]; var ic = f.seq;
-var xmlreq = getXMLHttpRequest();
 if (combo.selectedIndex < 1) {
 	ic.options.length = 1;
 	return false;
 }
 
+var xmlreq = new XMLHttpRequest();
 var id = combo.options[combo.selectedIndex].value;
-xmlreq.open('get', 'ridecount.ws?id=' + id, true);
+xmlreq.open('GET', 'ridecount.ws?id=' + id, true);
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
 	var jsData = (xmlreq.status == 200) ? JSON.parse(xmlreq.responseText) : [1];
@@ -52,11 +52,11 @@ xmlreq.onreadystatechange = function() {
 
 xmlreq.send(null);
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void resizeAll()">
+<body onload="void golgotha.form.resizeAll()">
 <content:page>
 <%@ include file="/jsp/academy/header.jspf" %> 
 <%@ include file="/jsp/academy/sideMenu.jspf" %>
@@ -64,7 +64,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="arscript.do" op="save" linkID="${sc.ID}" method="post" validate="return validate(this)">
+<el:form action="arscript.do" op="save" linkID="${sc.ID}" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <!-- Title Bar -->
 <tr class="title caps">
@@ -73,7 +73,7 @@ return true;
 <c:if test="${empty sc}">
 <tr>
  <td class="label">Certification</td>
- <td class="data"><el:combo name="cert" idx="*" size="1" required="true" options="${certs}" firstEntry="-" value="${sc.certificationName}" onChange="void loadRideCount(this)" /></td>
+ <td class="data"><el:combo name="cert" idx="*" size="1" required="true" options="${certs}" firstEntry="-" value="${sc.certificationName}" onChange="void golgotha.local.loadRideCount(this)" /></td>
 </tr>
 <tr>
  <td class="label">Check Ride #</td>

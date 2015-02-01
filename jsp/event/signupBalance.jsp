@@ -14,16 +14,15 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateCombo(form.routeID, 'Route to move Pilots to')) return false;
-if (!validateCheckBox(form.signupID, 1, 'Pilots to move')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.routeID, t:'Route to move Pilots to'});
+golgotha.form.validate({f:f.signupID, min:1, t:'Pilots to move'});
+golgotha.form.submit();
 disableButton('SaveButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -34,7 +33,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="eventbalance.do" link="${event}" method="post" validate="return validate(this)">
+<el:form action="eventbalance.do" link="${event}" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2">EVENT SIGNUP REBALANCING FOR ${event.name}</td>

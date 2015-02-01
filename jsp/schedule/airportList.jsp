@@ -15,26 +15,20 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function updateSort()
-{
-var f = document.forms[0];
-f.action = '/airports.do';
-f.submit();
-return true;
-}
+golgotha.local.updateSort = function() {
+	var f = document.forms[0];
+	f.action = '/airports.do';
+	return f.submit();
+};
 
-function validate(form)
+golgotha.local.validate = function(f)
 {
-var apCode = form.id;
-if (apCode.value.length < 3) {
-	alert('Please select a valid ICAO or IATA airport code.');
-	apCode.focus();
-	return false;
-}
+if (f.id.value.length < 3) {
+	throw new golgotha.util.ValidationError('Please select a valid ICAO or IATA airport code.', f.id);
 
-apCode.value = apCode.value.toUpperCase();
+f.id.value = f.id.value.toUpperCase();
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -45,7 +39,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="airport.do" method="post" validate="return validate(this)">
+<el:form action="airport.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <view:table cmd="airports">
 
 <!-- Table Header Bar -->
@@ -56,8 +50,8 @@ return true;
  <td style="width:6%">ICAO</td>
  <td style="width:14%">EDIT <el:text name="id" idx="*" size="3" max="4" value="" /> <el:button ID="EditButton" type="submit" label="GO" /></td>
  <td style="width:9%">TIME ZONE</td>
- <td colspan="3" class="right">SORT BY <el:combo name="sortType" idx="*" size="1" options="${sortOptions}" value="${param.sortType}" onChange="void updateSort()" /> 
- AIRLINE <el:combo name="airline" idx="*" size="1" options="${airlines}" value="${airline}" onChange="void updateSort()" /></td>
+ <td colspan="3" class="right">SORT BY <el:combo name="sortType" idx="*" size="1" options="${sortOptions}" value="${param.sortType}" onChange="void golgotha.local.updateSort()" /> 
+ AIRLINE <el:combo name="airline" idx="*" size="1" options="${airlines}" value="${airline}" onChange="void golgotha.local.updateSort()" /></td>
 </tr>
 
 <!-- Table Airport Data -->

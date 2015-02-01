@@ -17,34 +17,31 @@
 <content:googleAnalytics eventSupport="true" />
 <fmt:aptype var="useICAO" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateCombo(form.eqType, 'Equipment Type')) return false;
-if (!validateNumber(form.flight, 1, 'Flight Number')) return false;
-if (!validateNumber(form.leg, 1, 'Flight Leg')) return false;
-if (!validateCombo(form.airline, 'Airline')) return false;
-if (!validateCombo(form.airportD, 'Departure Airport')) return false;
-if (!validateCombo(form.airportA, 'Arrival Airport')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.eqType, t:'Equipment Type'});
+golgotha.form.validate({f:f.flight, min:1, t:'Flight Number'});
+golgotha.form.validate({f:f.leg, min:1, t:'Flight Leg'});
+golgotha.form.validate({f:f.airline, t:'Airline'});
+golgotha.form.validate({f:f.airportD, t:'Departure Airport'});
+golgotha.form.validate({f:f.airportA, t:'Arrival Airport'});
+golgotha.form.submit();
 disableButton('SaveButton');
 return true;
-}
+};
 
-function changeAirline(combo)
-{
-var f = document.forms[0];
-golgotha.airportLoad.config.airline = combo.options[combo.selectedIndex].value;
-return golgotha.airportLoad.changeAirline([f.airportD, f.airportA], golgotha.airportLoad.config);
-}
+golgotha.local.changeAirline = function(combo) {
+	var f = document.forms[0];
+	golgotha.airportLoad.config.airline = golgotha.form.getCombo(combo);
+	return golgotha.airportLoad.changeAirline([f.airportD, f.airportA], golgotha.airportLoad.config);
+};
 
-function changeEQ(combo)
-{
-var f = document.forms[0];
-golgotha.airportLoad.config.eqType = combo.options[combo.selectedIndex].value;	
-return golgotha.airportLoad.changeAirline([f.airportD, f.airportA], golgotha.airportLoad.config);
-}
+golgotha.local.changeEQ = function(combo) {
+	var f = document.forms[0];
+	golgotha.airportLoad.config.eqType = golgotha.form.getCombo(combo);	
+	return golgotha.airportLoad.changeAirline([f.airportD, f.airportA], golgotha.airportLoad.config);
+};
 
 golgotha.onDOMReady(function() {
 	var f = document.forms[0];
@@ -65,7 +62,7 @@ golgotha.onDOMReady(function() {
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="preapprove.do" method="post" linkID="${pilotID}" validate="return validate(this)">
+<el:form action="preapprove.do" method="post" linkID="${pilotID}" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2">UNSCHEDULED FLIGHT APPROVAL - ${assignPilot.name} (${assignPilot.pilotCode})</td>
@@ -79,11 +76,11 @@ golgotha.onDOMReady(function() {
 </c:if>
 <tr>
  <td class="label">Aircraft Type</td>
- <td class="data"><el:combo name="eqType" size="1" idx="*" className="req" options="${eqTypes}" onChange="void changeEQ(this)" firstEntry="-" /></td>
+ <td class="data"><el:combo name="eqType" size="1" idx="*" className="req" options="${eqTypes}" onChange="void golgotha.local.changeEQ(this)" firstEntry="-" /></td>
 </tr>
 <tr>
  <td class="label">Airline</td>
- <td class="data"><el:combo name="airline" size="1" idx="*" className="req" options="${airlines}" onChange="void changeAirline(this)" firstEntry="-" /></td>
+ <td class="data"><el:combo name="airline" size="1" idx="*" className="req" options="${airlines}" onChange="void golgotha.local.changeAirline(this)" firstEntry="-" /></td>
 </tr>
 <c:set var="flightNumber" value="${assignPilot.pilotNumber % 10000}" scope="request" />
 <tr>

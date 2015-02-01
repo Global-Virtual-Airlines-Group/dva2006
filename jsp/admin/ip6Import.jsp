@@ -11,26 +11,23 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-var dataFiles = ['geolitecityv6.csv'];
-function validate(form)
+golgotha.local.dataFiles = ['geolitecityv6.csv'];
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
+if (!golgotha.form.check()) return false;
 
 var isOK = false;
-fName = form.netblockData.value.substring(form.netblockData.value.lastIndexOf('\\') + 1).toLowerCase();
-for (x = 0; x < dataFiles.length && !isOK; x++)
-	isOK = isOK || (fName == dataFiles[x]) || (fName == (dataFiles[x] + '.gz')) || (fName == (dataFiles[x] + '.bz2'));
+var fName = f.netblockData.value.substring(f.netblockData.value.lastIndexOf('\\') + 1).toLowerCase();
+for (x = 0; x < golgotha.local.dataFiles.length && !isOK; x++)
+	isOK = isOK || (fName == golgotha.local.dataFiles[x]) || (fName == (golgotha.local.dataFiles[x] + '.gz')) || (fName == (golgotha.local.dataFiles[x] + '.bz2'));
 
-if (!isOK) {
-	alert('This does not appear to be a valid GeoLite IPv6 City data file.');
-	form.netblockData.focus();
-	return false;
-}
+if (!isOK)
+	throw new golgotha.util.ValidationError('This does not appear to be a valid GeoLite IPv6 City data file.', f.netblockData);
 
-setSubmit();
+golgotha.form.submit();
 disableButton('SaveButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -41,7 +38,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="ip6import.do" method="post" allowUpload="true" validate="return validate(this)">
+<el:form action="ip6import.do" method="post" allowUpload="true" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2">GEOLITE IPV6 CITY NETWORK BLOCK UPLOAD</td>

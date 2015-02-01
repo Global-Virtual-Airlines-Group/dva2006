@@ -14,15 +14,14 @@
 <content:js name="common" />
 <content:pics />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateNumber(form.legCount, 5, 'Minimum Number of Landings')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.legCount, min:5, t:'Minimum Number of Landings'});
+golgotha.form.submit();
 disableButton('SearchButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -33,7 +32,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="landingstats.do" method="post" validate="return validate(this)">
+<el:form action="landingstats.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 The members of <content:airline /> are a skilled group - and they can prove it. Below is a list of pilots 
 who consistently achieve the smoothest landings. This list is ordered by both average touchdown speed (which  
 counts for 30% of the ordering) and the standard deviation of those speeds (20%), the distance from the 

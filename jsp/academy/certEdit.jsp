@@ -13,34 +13,32 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function showReqCert(combo)
-{
-var opt = combo.options[combo.selectedIndex];
-displayObject(document.getElementById('reqCertRow'), (opt.text == 'Specific Certification'));
-return true;	
-}
+golgotha.local.showReqCert = function(combo) {
+	var opt = combo.options[combo.selectedIndex];
+	displayObject(document.getElementById('reqCertRow'), (opt.text == 'Specific Certification'));
+	return true;	
+};
 
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateText(form.name, 10, 'Certification Name')) return false;
-if (!validateNumber(form.stage, 1, 'Certification Stage')) return false;
-if (!validateCombo(form.preReqs, 'Examination Prerequisites')) return false;
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.name, l:10, t:'Certification Name'});
+golgotha.form.validate({f:f.stage, min:1, t:'Certification Stage'});
+golgotha.form.validate({f:f.preReqs, t:'Examination Prerequisites'});
 
 // Check specific cert
 var reqCertRow = document.getElementById('reqCertRow');
-if (reqCertRow.style.display != 'none') {
-	if (!validateCombo(form.preReqCert, 'Specific Certification Prerequisite')) return false;
-}
+if (reqCertRow.style.display != 'none')
+	golgotha.form.validateCombo({f:f.preReqCert, t:'Specific Certification Prerequisite'});
 
-setSubmit();
+golgotha.form.submit();
 disableButton('SaveButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="showReqCert(document.forms[0].preReqs)">
+<body onload="golgotha.local.showReqCert(document.forms[0].preReqs)">
 <content:page>
 <%@ include file="/jsp/academy/header.jspf" %> 
 <%@ include file="/jsp/academy/sideMenu.jspf" %>
@@ -49,7 +47,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="cert.do" linkID="${cert.name}" op="save" method="post" validate="return validate(this)">
+<el:form action="cert.do" linkID="${cert.name}" op="save" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2">FLIGHT ACADEMY CERTIFICATION - ${certName}</td>
@@ -68,7 +66,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Prerequisites</td>
- <td class="data"><el:combo name="preReqs" required="true" idx="*" size="1" value="${cert.reqName}" options="${preReqNames}" onChange="void showReqCert(this)" firstEntry="-" /></td>
+ <td class="data"><el:combo name="preReqs" required="true" idx="*" size="1" value="${cert.reqName}" options="${preReqNames}" onChange="void golgotha.local.showReqCert(this)" firstEntry="-" /></td>
 </tr>
 <tr id="reqCertRow" style="display:none;">
  <td class="label">Certification</td>

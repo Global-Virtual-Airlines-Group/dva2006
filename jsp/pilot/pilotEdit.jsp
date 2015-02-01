@@ -22,86 +22,75 @@
 <content:sysdata var="defaultDFormat" name="time.date_format" />
 <fmt:aptype var="useICAO" />
 <script type="text/javascript">
-var hasSignature = ${pilot.hasSignature};
-
-function validate(form)
+golgotha.local.hasSignature = ${pilot.hasSignature};
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateText(form.firstName, 2, 'First (given) Name')) return false;
-if (!validateText(form.lastName, 2, 'Last (family) Name')) return false;
-if (!validateCombo(form.homeAirport, 'Home Airport')) return false;
-if (!validateText(form.df, 7, 'Date Format')) return false;
-if (!validateText(form.tf, 5, 'Time Format')) return false;
-if (!validateText(form.nf, 5, 'Number Format')) return false;
-if (!validateNumber(form.viewCount, 20, 'View Size')) return false;
-if (!validateFile(form.coolerImg, 'jpg,png,gif', '${forumName} Cooler Signature Image')) return false;
-if (!validateText(form.staffTitle, 8, 'Staff Title')) return false;
-if (!validateCombo(form.staffArea, 'Department Name')) return false;
-if (!validateText(form.staffBody, 30, 'Staff Biographical Profile')) return false;
-if (!validateNumber(form.staffSort, 1, 'Staff Profile Sort Order')) return false;
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.firstName, l:2, t:'First (given) Name'});
+golgotha.form.validate({f:f.lastName, l:2, t:'Last (family) Name'});
+golgotha.form.validate({f:f.homeAirport, t:'Home Airport'});
+golgotha.form.validate({f:f.df, l:7, t:'Date Format'});
+golgotha.form.validate({f:f.tf, l:5, t:'Time Format'});
+golgotha.form.validate({f:f.nf, l:5, t:'Number Format'});
+golgotha.form.validate({f:f.viewCount, min:20, t:'View Size'});
+golgotha.form.validate({f:f.coolerImg, ext:['jpg','png','gif'], t:'${forumName} Cooler Signature Image'});
+golgotha.form.validate({f:f.staffTitle, l:8, t:'Staff Title'});
+golgotha.form.validate({f:f.staffArea, t:'Department Name'});
+golgotha.form.validate({f:f.staffBody, l:30, t:'Staff Biographical Profile'});
+golgotha.form.validate({f:f.staffSort, min:1, t:'Staff Profile Sort Order'});
 
 // Validate password
-if ((form.pwd1) && (form.pwd2)) {
-	if (form.pwd1.value != form.pwd2.value) {
-		alert('The specified passwords must match.');
-		form.pwd1.value = '';
-		form.pwd2.value = '';
-		form.pwd1.focus();
-		return false;
+if ((f.pwd1) && (f.pwd2)) {
+	if (f.pwd1.value != f.pwd2.value) {
+		f.pwd1.value = '';
+		f.pwd2.value = '';
+		throw new golgotha.util.ValidationError('The specified passwords must match.', f.pwd1);
 	}
 
-	// Validate length
-	if (form.pwd1.length < ${minPwd}) {
-		alert('Your new password must be at least ${minPwd} characters long.');
-		form.pwd1.focus();
-		return false;
-	}
+	golgotha.form.validate({f:f.pwd1, min:${minPwd}, t:'New Password'});
 }
 <content:filter roles="!HR">
 // Validate e-mail domain
-<fmt:jsarray var="invalidDomains" items="${badDomains}" />
-if (form.email) {
-	var eMail = form.email.value;
+golgotha.local.invalidDomains = <fmt:jsarray items="${badDomains}" />
+if (f.email) {
+	var eMail = f.email.value;
 	var usrDomain = eMail.substring(eMail.indexOf('@') + 1, eMail.length);
-	for (var x = 0; x < invalidDomains.length; x++) {
-		if (usrDomain == invalidDomains[x]) {
-			alert('Your e-mail address (' + eMail + ') contains a forbidden domain - ' + invalidDomains[x]);
-			form.email.focus();
-			return false;
-		}
+	for (var x = 0; x < golgotha.local.invalidDomains.length; x++) {
+		if (usrDomain == golgotha.local.invalidDomains[x])
+			throw new golgotha.util.ValidationError('Your e-mail address (' + eMail + ') contains a forbidden domain - ' + invalidDomains[x], f.email);
 	}
 }
 </content:filter>
 // Set disabled checkboxes
-form.useDefaultSig.checked = (form.useDefaultSig.checked && !(form.useDefaultSig.disabled));
-setSubmit();
+f.useDefaultSig.checked = (f.useDefaultSig.checked && !(f.useDefaultSig.disabled));
+golgotha.form.submit();
 disableButton('SaveButton');
 disableButton('DTDefaultButton');
 return true;
-}
+};
 
-function disableSigBoxes()
+golgotha.local.disableSigBoxes = function()
 {
 var f = document.forms[0];
 f.coolerImg.disabled = (f.useDefaultSig.checked);
-if (hasSignature)
+if (golgotha.local.hasSignature)
 	f.useDefaultSig.disabled = (!f.removeCoolerImg.checked);
 
 return true;
-}
+};
 
-function setDefaultFormats()
+golgotha.local.setDefaultFormats = function()
 {
 var f = document.forms[0];
 f.df.value = '${defaultDFormat}';
 f.tf.value = '${defaultTFormat}';
 return true;
-}
+};
 
 golgotha.onDOMReady(function() {
 	var f = document.forms[0];
 	var cfg = golgotha.airportLoad.config;
-	f.useDefaultSig.disabled = hasSignature;
+	f.useDefaultSig.disabled = golgotha.local.hasSignature;
 	cfg.doICAO = ${useICAO}; cfg.airline = 'all';
 	golgotha.airportLoad.setHelpers(f.homeAirport);
 	f.homeAirport.loadAirports(cfg);
@@ -109,7 +98,7 @@ golgotha.onDOMReady(function() {
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void disableSigBoxes()">
+<body onload="void golgotha.local.disableSigBoxes()">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -134,7 +123,7 @@ golgotha.onDOMReady(function() {
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="profile.do" link="${pilot}" op="save" method="post" allowUpload="true" validate="return validate(this)">
+<el:form action="profile.do" link="${pilot}" op="save" method="post" allowUpload="true" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <!-- Pilot Title Bar -->
 <tr class="title caps">
@@ -276,10 +265,10 @@ golgotha.onDOMReady(function() {
  <td class="label top">Signature Image</td>
  <td colspan="${cspan}" class="data"><c:if test="${pilot.hasSignature}">
 <img alt="${forumName} Signature" src="/sig/${db}/${pilot.hexID}" /><br />
-<el:box name="removeCoolerImg" value="true" label="Remove ${forumName} Signature Image" onChange="void disableSigBoxes()" /><br /></c:if>
+<el:box name="removeCoolerImg" value="true" label="Remove ${forumName} Signature Image" onChange="void golgotha.local.disableSigBoxes()" /><br /></c:if>
 <content:filter roles="HR,Signature"><c:if test="${!sigAuthorized}">
 <el:box name="isAuthSig" value="true" label="Authorized ${forumName} Signature Image" /><br /></c:if></content:filter>
-<el:box name="useDefaultSig" value="true" label="Use default Signature Image" checked="${pilot.hasDefaultSignature}" onChange="void disableSigBoxes()" /></td>
+<el:box name="useDefaultSig" value="true" label="Use default Signature Image" checked="${pilot.hasDefaultSignature}" onChange="void golgotha.local.disableSigBoxes()" /></td>
 </tr>
 <tr>
  <td class="label top">Update Signature Image</td>
@@ -306,7 +295,7 @@ pixels, and the maximum file size is <fmt:int value="${sigSize}" /> bytes.</span
  <td class="label">Date/Time Format</td>
  <td colspan="${cspan}" class="data"><el:text name="df" value="${pilot.dateFormat}"  required="true" size="15" max="25" />
  <el:text name="tf" value="${pilot.timeFormat}" required="true" size="9" max="9" />
- <el:button ID="DTDefaultButton" onClick="void setDefaultFormats()" label="RESET" /></td>
+ <el:button ID="DTDefaultButton" onClick="void golgotha.local.setDefaultFormats()" label="RESET" /></td>
 </tr>
 <tr>
  <td class="label">Number Format</td>

@@ -16,38 +16,23 @@
 <content:js name="common" />
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
-<content:sysdata var="innovataLink" name="schedule.innovata.enabled" />
 <fmt:aptype var="useICAO" />
 <script type="text/javascript">
-function setAirportD(combo)
-{
-var ad = combo.options[combo.selectedIndex].value;
-self.location = '/browse.do?airportD=' + ad;
-return true;
-}
+golgotha.local.setAirportD = function(combo) {
+	self.location = '/browse.do?airportD=' + escape(golgotha.form.getCombo(combo));
+	return true;
+};
 
-function setAirportDCode(code)
+golgotha.local.setAirportA = function(combo)
 {
 var f = document.forms[0];
-if (setAirport(f.airportD, code))
-	setAirportD(f.airportD);
+if (golgotha.form.comboSet(combo)) {
+	self.location = '/browse.do?airportD=' + escape(golgotha.form.getCombo(f.airportD)) + '&airportA=' + escape(golgotha.form.getCombo(combo));
+else
+	self.location = '/browse.do?airportD=' + escape(golgotha.form.getCombo(f.airportD));
 
 return true;
-}
-
-function setAirportA(combo)
-{
-var f = document.forms[0];
-var ad = f.airportD.options[f.airportD.selectedIndex].value;
-if (combo.selectedIndex == 0)
-	self.location = '/browse.do?airportD=' + ad;
-else {
-	var aa = combo.options[combo.selectedIndex].value;
-	self.location = '/browse.do?airportD=' + ad + '&airportA=' + aa;
-}
-
-return true;
-}
+};
 
 golgotha.onDOMReady(function() {
 	var f = document.forms[0];
@@ -58,7 +43,7 @@ golgotha.onDOMReady(function() {
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="initLinks()">
+<body>
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -74,9 +59,9 @@ golgotha.onDOMReady(function() {
  <td class="left caps" colspan="7"><content:airline /> FLIGHT SCHEDULE<c:if test="${!empty importDate}"> IMPORTED ON <fmt:date date="${importDate}" /></c:if></td>
 </tr>
 <tr class="title">
- <td class="right" colspan="7">FLIGHTS FROM <el:combo name="airportD" idx="*" size="1" className="small" options="${airportsD}" value="${airportD}" onChange="void setAirportD(this)" />
+ <td class="right" colspan="7">FLIGHTS FROM <el:combo name="airportD" idx="*" size="1" className="small" options="${airportsD}" value="${airportD}" onChange="void golgotha.local.setAirportD(this)" />
  <el:text name="airportDCode" idx="*" size="3" max="4" value="${useICAO ? airportD.ICAO : airportD.IATA}" onBlur="void document.forms[0].airportD.setAirport(this.value, true)" /> TO
- <el:combo name="airportA" idx="*" size="1" className="small" firstEntry="-" options="${airportsA}" value="${airportA}" onChange="void setAirportA(this)" />
+ <el:combo name="airportA" idx="*" size="1" className="small" firstEntry="-" options="${airportsA}" value="${airportA}" onChange="void golgotha.local.setAirportA(this)" />
  <el:text name="airportACode" idx="*" size="3" max="4" value="${useICAO ? airportA.ICAO : airportA.IATA}" onBlur="void document.forms[0].airportA.setAirport(this.value, true)" />
 <c:if test="${isSchedule}"><el:cmdbutton url="sched" op="edit" label="NEW FLIGHT SCHEDULE ENTRY" /></c:if></td>
 </tr>

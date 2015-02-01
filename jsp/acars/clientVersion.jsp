@@ -13,22 +13,22 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateNumber(form.latestBuild, 1, 'Latest Build')) return false;
-if (!validateNumber(form.latestDispatch, 1, 'Latest Dispatch Build')) return false;
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.latestBuild, min:1, t:'Latest Build'});
+golgotha.form.validate({f:f.latestDispatch, min:1, t:'Latest Dispatch Build'});
 <c:forEach var="ver" items="${fn:keys(versionInfo)}">
 <c:set var="versionCode" value="${fn:replace(ver, '.', '_')}" scope="page" />
-if (!validateNumber(form.min_${versionCode}_Build, 1, 'Minimum ${ver} Build')) return false;
+golgotha.form.validate({f:form.min_${versionCode}_Build, min:1, t:'Minimum ${ver} Build'});
 </c:forEach>
 <c:forEach var="build" items="${fn:keys(betaInfo)}">
-if (!validateNumber(form.min_${build}_beta, 0, 'Minimum Build ${build} beta version')) return false;
+golgotha.form.validate({f:form.min_${build}_beta, min:0, t:'Minimum Build ${build} beta version'});
 </c:forEach>
-setSubmit();
+golgotha.form.submit();
 disableButton('SaveButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -39,7 +39,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="acarsversion.do" method="post" validate="return validate(this)">
+<el:form action="acarsversion.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2">GLOBAL ACARS CLIENT VERSION CONTROL</td>

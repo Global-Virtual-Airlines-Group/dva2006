@@ -93,16 +93,13 @@ the <content:airline /> Pilot Board is viewed.</span></td>
 <c:if test="${!empty fbClientID}">
 <c:choose>
 <c:when test="${fn:hasIM(pilot, 'FBTOKEN')}">
-<script type="text/javascript">
-function fbDeauthorize()
-{
-var URLflags = 'height=320,width=860,menubar=no,toolbar=no,status=no,scrollbars=no,resizable=no';
-window.open('/fbdeauth.do', 'fbAuth', URLflags);
-return true;
-}
+<script type="text/javascript" defer>
+golgotha.local.fbDeauthorize = function() {
+	return window.open('/fbdeauth.do', 'fbAuth', 'height=320,width=860,menubar=no,toolbar=no,status=no,scrollbars=no,resizable=no');
+};
 </script>
 <tr>
- <td class="mid"><a class="bld" href="javascript:void fbDeauthorize()">Disable Facebook Publishing</a></td>
+ <td class="mid"><a class="bld" href="javascript:void golgotha.local.fbDeauthorize()">Disable Facebook Publishing</a></td>
  <td class="data"><content:airline /> can publish information to your Facebook news feed, including promotions and completion
 of Accomplishments.<c:if test="${acarsEnabled}"> Submitted flight reports using <content:airline /> ACARS will also be published
 to your Facebook news feed.</c:if></td>
@@ -112,16 +109,14 @@ to your Facebook news feed.</c:if></td>
 <c:set var="fbPermissions" value="${fn:splice(fbPerms, ',')}" scope="page" />
 <c:if test="${!empty fbPageID}"><content:filter roles="Facebook">
 <c:set var="fbPermissions" value="${fbPermissions},manage_pages" scope="page" /></content:filter></c:if>
-<script type="text/javascript">
-function fbAuthorize()
-{
-var URLflags = 'height=360,width=860,menubar=no,toolbar=no,status=no,scrollbars=no,resizable=no';
-window.open('${fbAuthURL}?client_id=${fbClientID}&redirect_uri=http://${req.serverName}/fbauth.do&scope=${fbPermissions}&display=popup', 'fbAuth', URLflags);
-return true;
-}
+<script type="text/javascript" defer>
+golgotha.local.fbAuthorize = function() {
+	var URLflags = 'height=360,width=860,menubar=no,toolbar=no,status=no,scrollbars=no,resizable=no';
+	return window.open('${fbAuthURL}?client_id=${fbClientID}&redirect_uri=http://${req.serverName}/fbauth.do&scope=${fbPermissions}&display=popup', 'fbAuth', URLflags);
+};
 </script>
 <tr>
- <td class="mid"><a class="bld" href="javascript:void fbAuthorize()">Authorize Us</a></td>
+ <td class="mid"><a class="bld" href="javascript:void golgotha.local.fbAuthorize()">Authorize Us</a></td>
 <c:choose>
 <c:when test="${fn:hasIM(pilot, 'FB')}">
  <td class="data"><span class="pri bld">The Facebook authorization token you have gven <content:airline /> has expired.</span> Further updates to your

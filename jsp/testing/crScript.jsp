@@ -12,29 +12,28 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateCombo(form.eqType, 'Aircraft Type')) return false;
-if (!validateCombo(form.programType, 'Equipment Program')) return false;
-if (!validateText(form.msgText, 15, 'Check Ride content')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.eqType, t:'Aircraft Type'});
+golgotha.form.validate({f:f.programType, t:'Equipment Program'});
+golgotha.form.validate({f:f.msgText, l:15, t:'Check Ride content'});
+golgotha.form.submit();
 disableButton('SaveButton');
 disableButton('DeleteButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void resizeAll()">
+<body onload="void golgotha.form.resizeAll()">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="crscript.do" op="save" linkID="${script.equipmentType}" method="post" validate="return validate(this)">
+<el:form action="crscript.do" op="save" linkID="${script.equipmentType}" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <!-- Title Bar -->
 <tr class="title caps">

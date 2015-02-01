@@ -14,12 +14,10 @@
 <content:css name="view" />
 <content:pics />
 <script type="text/javascript">
-function sortBy(combo)
-{
-var sortCode = combo.options[combo.selectedIndex].value;
-self.location = '/users.do?sortOpt=' + sortCode;
-return true;
-}
+golgotha.local.sortBy = function(combo) {
+	self.location = '/users.do?sortOpt=' + escape(golgotha.form.getCombo(combo));
+	return true;
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -37,7 +35,7 @@ return true;
  <td colspan="4" class="left caps"><fmt:int value="${fn:sizeof(pilots)}" /> CURRENTLY LOGGED IN USERS
 <c:if test="${!empty maxUserDate}"> - MAXIMUM <fmt:int value="${maxUsers}" /> on <fmt:date date="${maxUserDate}" /></c:if></td>
  <td><el:cmd url="users" op="map">VIEW MAP</el:cmd></td>
- <td class="right">SORT BY <el:combo name="sortOpt" idx="*" size="1" options="${sortOptions}" value="${sortOpt}" onChange="void sortBy(this)" /></td>
+ <td class="right">SORT BY <el:combo name="sortOpt" idx="*" size="1" options="${sortOptions}" value="${sortOpt}" onChange="void golgotha.local.sortBy(this)" /></td>
 </tr>
 
 <!-- Pilot Title Bar -->

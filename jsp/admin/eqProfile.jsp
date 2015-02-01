@@ -18,24 +18,23 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function validate(form)
+golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
-if (!validateCombo(form.eqType, 'Equipment Type')) return false;
-if (!validateCombo(form.cp, 'Chief Pilot')) return false;
-if (!validateNumber(form.stage, 1, 'Equipment Stage')) return false;
-if (!validateNumber(form.captLegs, 0, 'Flight Legs for Promotion')) return false;
-if (!validateNumber(form.captDistance, 0, 'Flight Distance for Promotion')) return false;
-if (!validateNumber(form.switchDistance, 0, 'Flight Distance for Time Acceleration')) return false;
-if (!validateNumber(form.maxAccel, 0, 'Flight Time with Time Acceleration')) return false;
-if (!validateNumber(form.min1X, 0, 'Flight time without Time Acceleration')) return false;
-if (!validateCheckBox(form.ranks, 2, 'Ranks')) return false;
-if (!validateCheckBox(form.pRatings, 1, 'Primary Rating')) return false;
-
-setSubmit();
+if (!golgotha.form.check()) return false;
+golgotha.form.validate({f:f.eqType, t:'Equipment Type'});
+golgotha.form.validate({f:f.cp, t:'Chief Pilot'});
+golgotha.form.validate({f:f.stage, min:1, t:'Equipment Stage'});
+golgotha.form.validate({f:f.captLegs, min:0, t:'Flight Legs for Promotion'});
+golgotha.form.validate({f:f.captDistance, min:0, t:'Flight Distance for Promotion'});
+golgotha.form.validate({f:f.switchDistance, min:0, t:'Flight Distance for Time Acceleration'});
+golgotha.form.validate({f:f.maxAccel, min:0, t:'Flight Time with Time Acceleration'});
+golgotha.form.validate({f:f.min1X, min:0, t:'Flight time without Time Acceleration'});
+golgotha.form.validate({f:f.ranks, min:2, t:'Ranks'});
+golgotha.form.validate({f:f.pRatings, min:1, t:'Primary Rating'});
+golgotha.form.submit();
 disableButton('SaveButton');
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -49,7 +48,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form method="post" action="eqtype.do" linkID="${eqType.name}" op="save" validate="return validate(this)">
+<el:form method="post" action="eqtype.do" linkID="${eqType.name}" op="save" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <!-- Equipment Profile Title Bar -->
 <tr class="title caps">
