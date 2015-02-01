@@ -10,7 +10,7 @@ import org.deltava.taglib.JSTag;
 /**
  * A JSP Tag to format a Date/Time object into a JavaScript date. 
  * @author Luke
- * @version 5.5
+ * @version 6.0
  * @since 2.4
  */
 

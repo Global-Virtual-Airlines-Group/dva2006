@@ -18,7 +18,7 @@ import org.deltava.util.StringUtils;
 /**
  * A servlet filter to support saving multi-part form upload data into the servlet request.
  * @author Luke
- * @version 5.5
+ * @version 6.0
  * @since 1.0
  */
 
