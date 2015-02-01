@@ -1,22 +1,26 @@
-// Copyright 2005, 2006, 2007, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
+
+import java.io.*;
+import java.util.*;
 
 import javax.servlet.jsp.*;
 import javax.servlet.jsp.tagext.TagSupport;
 
 import org.deltava.beans.system.VersionInfo;
-
+import org.deltava.util.ConfigLoader;
 import org.deltava.util.system.SystemData;
 
 /**
  * A JSP Tag to insert a copyright notice. This tag is a useful test to ensure that the tag libraries are being loaded.
  * @author Luke
- * @version 5.0
+ * @version 5.5
  * @since 1.0
  */
 
 public class CopyrightTag extends TagSupport {
 
+	private final Map<String, String> _props = new HashMap<String, String>();
 	private boolean _visible = true;
 
 	/**
@@ -37,6 +41,8 @@ public class CopyrightTag extends TagSupport {
 		jw.print(VersionInfo.TXT_COPYRIGHT);
 		jw.print(" (Build ");
 		jw.print(String.valueOf(VersionInfo.BUILD));
+		jw.print(" ");
+		jw.print(_props.get("build.date"));
 		jw.print(") -->");
 	}
 
@@ -60,6 +66,29 @@ public class CopyrightTag extends TagSupport {
 			jw.print(disclaimer);
 			jw.print("</span>");
 		}
+	}
+	
+	/**
+	 * Loads the build properties.
+	 * @return TagSupport#SKIP_BODY always
+	 */
+	@Override
+	public int doStartTag() throws JspException {
+		if (_props.isEmpty()) {
+			Properties p = new Properties(); p.put("build.date", "");
+			try (InputStream is = ConfigLoader.getStream("/golgotha_build.properties")) {
+				p.load(is);
+			} catch (Exception e) {
+				// 	empty
+			} finally {
+				for (Object n : p.keySet()) {
+					String k  = String.valueOf(n);
+					_props.put(k, p.getProperty(k));
+				}
+			}
+		}
+		
+		return SKIP_BODY;
 	}
 
 	/**

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright 2005, 2006, 2008, 2010, 2011, 2012, 2013, 2014 Global Virtual Airlines Group. All Rights Reserved. -->
+<!-- Copyright 2005, 2006, 2008, 2010, 2011, 2012, 2013, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved. -->
 <project default="deploy">
     <target name="javadoc" description="Build the Golgotha JavaDoc">
 		<mkdir dir="${java.io.tmpdir}/javadoc" />
@@ -23,7 +23,7 @@
    	    	</classpath>
         	
            	<doctitle><![CDATA[<h2>Golgotha API Documentation</h2>]]></doctitle>
-			<bottom><![CDATA[<i>Copyright &#169; 2004-2014 Global Virtual Airlines Group. All Rights Reserved.</i>]]></bottom>
+			<bottom><![CDATA[<i>Copyright &#169; 2004-2015 Global Virtual Airlines Group. All Rights Reserved.</i>]]></bottom>
         </javadoc>
     	
 		<!-- TAR up the JavaDoc -->
@@ -112,13 +112,8 @@
 	<target name="compile" description="Compile the Java classes">
 		<!-- Set build date/time -->
 		<tstamp>
-			<format property="build_utc" timezone="Etc/Greenwich" pattern="yyyyMMdd HHmmss" />
+			<format property="build_utc" timezone="Etc/Greenwich" pattern="yyyyMMdd HHmmss Z" />
 		</tstamp>
-		
-		<!-- Save VersionInfo.java -->
-		<property name="vInfo.path" value="src/java/org/deltava/beans/system" />
-		<!-- <copy file="${vInfo.path}/VersionInfo.java" todir="${java.io.tmpdir}" />
-		<replace file="${vInfo.path}/VersionInfo.java" token="$BUILD" value="${build_utc}" /> -->
 		
 		<!-- Compile the code -->
 		<mkdir dir="${java.io.tmpdir}/build/classes" />
@@ -133,8 +128,21 @@
 	    	</classpath>
 		</javac>
 		
+		<!-- Save Build date/time in property file -->
+		<propertyfile file="${java.io.tmpdir}/build/golgotha_build.properties" comment="Golgotha build properties">
+			<entry key="build.date" value="${build_utc}" />
+			<entry key="build.ant" value="${ant.version}" />
+			<entry key="build.jvm" value="${ant.java.version}" />
+			<entry key="build.os" value="${os.name} ${os.version} ${os.arch}" />
+		</propertyfile>
+		
+		<!-- Get the JAR file names and old checksums from build -->
+		<property name="jar.core" value="${java.io.tmpdir}/build/golgotha.jar" />
+		<property name="jar.web" value="${java.io.tmpdir}/build/golgotha_web.jar" />
+		<property name="jar.jsp" value="${java.io.tmpdir}/build/golgotha_jsp.jar" />
+		
 		<!-- Compress the base Java classes into a single JAR file -->
-		<jar basedir="${java.io.tmpdir}/build/classes" compress="true" index="true" destfile="${java.io.tmpdir}/build/golgotha.jar">
+		<jar basedir="${java.io.tmpdir}/build/classes" compress="true" index="true" destfile="${jar.core}">
 			<exclude name="org/deltava/commands/**/*.class" />
 			<exclude name="org/deltava/security/command/*.class" />
 			<exclude name="org/deltava/service/**/*.class" />
@@ -145,7 +153,7 @@
 		</jar>
 		
 		<!-- Compress the web-specific classes into another JAR file -->
-		<jar basedir="${java.io.tmpdir}/build/classes" compress="true" index="true" destfile="${java.io.tmpdir}/build/golgotha_web.jar">
+		<jar basedir="${java.io.tmpdir}/build/classes" compress="true" index="true" destfile="${jar.web}">
 			<include name="org/deltava/commands/**/*.class" />
 			<include name="org/deltava/security/command/*.class" />
 			<include name="org/deltava/service/**/*.class" />
@@ -154,9 +162,6 @@
 			<include name="org/deltava/taskman/*.class" />
 			<include name="org/deltava/tasks/*.class" />
 		</jar>
-		
-		<!-- Restore the old VersionInfo.java -->
-		<!-- <move file="${java.io.tmpdir}/VersionInfo.java" todir="${vInfo.path}" /> -->
 	</target>
 
 	<target name="jspc" depends="compile" description="Precompile the JSP pages">
@@ -177,10 +182,8 @@
 		<mkdir dir="${java.io.tmpdir}/src/jsp" />
 		<copy file="WEB-INF/web_core.xml" tofile="${basedir}/WEB-INF/web.xml" />
 		<echo message="Pre-compiling JSP files" />
-	    <jasper2 package="org.deltava" uriroot="${basedir}" verbose="0" poolingEnabled="true"
-	    	xpoweredBy="false" validateXml="false" webXmlFragment="${jspc.webXMLInc}"
-	    	compilerTargetVM="1.8" compilerSourceVM="1.8" trimSpaces="false"
-			outputDir="${java.io.tmpdir}/src/jsp" />
+	    <jasper2 package="org.deltava" uriroot="${basedir}" verbose="0" poolingEnabled="true" xpoweredBy="false" validateXml="false"
+	    	webXmlFragment="${jspc.webXMLInc}" compilerTargetVM="1.8" compilerSourceVM="1.8" trimSpaces="false" outputDir="${java.io.tmpdir}/src/jsp" />
 		<delete file="${basedir}/WEB-INF/web.xml" />
 
 		<!-- Compile the files -->
@@ -193,18 +196,30 @@
 		</javac>
 		
 		<!-- Compress the Java classes into a single JAR file -->
-		<jar basedir="${java.io.tmpdir}/build/jsp" compress="true" index="true" destfile="${java.io.tmpdir}/build/golgotha_jsp.jar" />
+		<jar basedir="${java.io.tmpdir}/build/jsp" compress="true" index="true" destfile="${jar.jsp}" />
 		 		 
-		<!-- Force all JSPs to load on startup -->
-		<!-- <replace file="${jspc.webXMLInc}" token="&lt;/servlet-class&gt;">
-			<replacevalue><![CDATA[</servlet-class>
-        <load-on-startup>2</load-on-startup>]]></replacevalue>
-		</replace> -->
-			
 		<!-- Merge the precompile definitions into web.xml -->
 		<loadfile property="webXmlFragment" srcFile="${jspc.webXMLInc}" />
 		<copy file="WEB-INF/web_core.xml" tofile="${java.io.tmpdir}/build/web.xml" />
-		<replace file="${java.io.tmpdir}/build/web.xml" token="&lt;!-- [INSERT FRAGMENT HERE] --&gt;" value="${webXmlFragment}" /> 
+		<replace file="${java.io.tmpdir}/build/web.xml" token="&lt;!-- [INSERT FRAGMENT HERE] --&gt;" value="${webXmlFragment}" />
+		
+		<!-- Check whether the files have changed -->
+		<checksum file="${jar.core}" algorithm="MD5" property="crc.new.core" />
+		<checksum file="${jar.web}" algorithm="MD5" property="crc.new.web" />
+		<checksum file="${jar.jsp}" algorithm="MD5" property="crc.new.jsp" />
+		<condition property="crc.update">
+			<and>
+				<equals arg1="${crc.old.core}" arg2="${crc.new.core}" />
+				<equals arg1="${crc.old.web}" arg2="${crc.new.web}" />
+				<equals arg1="${crc.old.jsp}" arg2="${crc.new.jsp}" />
+			</and>
+		</condition>
+		
+		<echoproperties prefix="crc." />
+	</target>
+	
+	<target name="update_build_date" if="crc.update" description="Conditional to update build date properties">
+		<jar compress="true" index="true" destfile="${jar.core}" includesfile="${java.io.tmpdir}/build/golgotha_build.properties" />
 	</target>
 
 	<target name="minify" description="Minify JS and CSS">
@@ -256,7 +271,7 @@
 		</move>
 	</target>
 
-	<target name="deploy" depends="jspc,minify" description="Deploy to development environment">
+	<target name="deploy" depends="jspc,minify,update_build_date" description="Deploy to development environment">
 		<loadproperties srcFile="data/build_deploy.properties" />
 		<property name="webapp.dev.port" value="22" />
 		<property name="webapp.dev.user" value="${user.name}" />
