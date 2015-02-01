@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import javax.servlet.jsp.JspException;
@@ -9,7 +9,7 @@ import org.deltava.taglib.ContentHelper;
 /**
  * A JSP tag to render buttons that execute web site commands.
  * @author Luke
- * @version 1.0
+ * @version 5.5
  * @since 1.0 
  */
 
@@ -23,6 +23,7 @@ public class CommandButtonTag extends ButtonTag {
    /**
     * Releases state and readies the tag for another invocation.
     */
+   @Override
    public void release() {
       super.release();
       _doPost = false;
@@ -74,6 +75,7 @@ public class CommandButtonTag extends ButtonTag {
     * Overrides the type property from the superclass. <i>NOT IMPLEMENTED </i>.
     * @throws UnsupportedOperationException
     */
+   @Override
    public final void setType(String btnType) {
       throw new UnsupportedOperationException();
    }
@@ -82,6 +84,7 @@ public class CommandButtonTag extends ButtonTag {
     * Overrides the onClick property from the superclass. <i>NOT IMPLEMENTED </i>.
     * @throws UnsupportedOperationException
     */
+   @Override
    public final void setOnClick(String js) {
       throw new UnsupportedOperationException();
    }
@@ -90,6 +93,7 @@ public class CommandButtonTag extends ButtonTag {
     * Overrides the className property from the superclass. <i>NOT IMPLEMENTED </i>.
     * @throws UnsupportedOperationException
     */
+   @Override
    public final void setClassName(String className) {
       throw new UnsupportedOperationException();
    }
@@ -100,6 +104,7 @@ public class CommandButtonTag extends ButtonTag {
     * @throws JspException if an error occurs
     * @throws IllegalStateException if common.js has not been added to the request
     */
+   @Override
    public int doEndTag() throws JspException {
 
       // Ensure that the common JS file has been included
@@ -120,13 +125,15 @@ public class CommandButtonTag extends ButtonTag {
       }
 
       // Sets the JavaScript get/post function
-      String jsFuncName = (_doPost) ? "cmdPost" : "cmdGet";
-      super.setOnClick("void " + jsFuncName + "(\'" + url.toString() + "\')");
+      String jsFuncName = (_doPost) ? "post" : "get";
+      super.setOnClick("void golgotha.form." + jsFuncName + "(\'" + url.toString() + "\')");
       super.setClassName("cmdButton");
 
       // Calls the superclass renderer
-      int result = super.doEndTag();
-      release();
-      return result;
+      try {
+    	  return super.doEndTag();
+      } finally {
+    	  release();
+      }
    }
 }
