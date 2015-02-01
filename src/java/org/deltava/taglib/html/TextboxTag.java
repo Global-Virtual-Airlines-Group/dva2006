@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2010, 2012 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010, 2012, 2015 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import javax.servlet.jsp.JspException;
@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP tag to generate HTML textbox elements.
  * @author Luke
- * @version 5.0
+ * @version 5.5
  * @since 1.0
  */
 
@@ -36,7 +36,7 @@ public class TextboxTag extends FormElementTag {
     	
     	// If resizing, enable the Javascript
     	if (_resize && ContentHelper.containsContent(pageContext, "JS", "common")) {
-    		_data.setAttribute("onkeyup", "void resize(this)");
+    		_data.setAttribute("onkeyup", "void golgotha.form.resize(this)");
     		StringBuilder buf = new StringBuilder();
     		if (_data.has("class")) {
     			buf.append(_data.get("class"));
