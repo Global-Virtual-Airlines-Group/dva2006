@@ -16,7 +16,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to display the Fleet Gallery.
  * @author Luke
- * @version 2.6
+ * @version 5.5
  * @since 1.0
  */
 
@@ -27,25 +27,24 @@ public class FleetGalleryCommand extends AbstractViewCommand {
      * @param ctx the Command context
      * @throws CommandException if an unhandled error occurs
      */
+	@Override
     public void execute(CommandContext ctx) throws CommandException {
     	
     	// Determining if we're opening the admin view
     	boolean doAdmin = Boolean.valueOf((String) ctx.getCmdParameter(ID, null)).booleanValue();
 
-        List<Image> results = null;
+        List<Image> results = new ArrayList<Image>();
         try {
             Connection con = ctx.getConnection();
 
             // Get the fleet gallery
             GetGallery dao = new GetGallery(con);
-            results = new ArrayList<Image>(dao.getFleetGallery());
+            results.addAll(dao.getFleetGallery());
             
 			// Get all the Author IDs
 			Collection<Integer> authorIDs = new HashSet<Integer>();
-			for (Iterator<Image> i = results.iterator(); i.hasNext();) {
-				Image img = i.next();
-				authorIDs.add(new Integer(img.getAuthorID()));
-			}
+			for (Image img : results)
+				authorIDs.add(Integer.valueOf(img.getAuthorID()));
 
 			// Load the Image Authors
 			GetPilot pdao = new GetPilot(con);
@@ -77,17 +76,13 @@ public class FleetGalleryCommand extends AbstractViewCommand {
         }
         
         // Build the description array
-        StringBuilder buf = new StringBuilder();
-        for (Iterator<Image> i = results.iterator(); i.hasNext(); ) {
-            Image img = i.next();
-            buf.append(StringUtils.stripInlineHTML(img.getDescription()));
-            if (i.hasNext())
-                buf.append(',');
-        }
+        List<String> descs = new ArrayList<String>();
+        for (Image img : results)
+            descs.add(StringUtils.stripInlineHTML(img.getDescription()));
         
         // Save the results and description array
         ctx.setAttribute("fleetGallery", results, REQUEST);
-        ctx.setAttribute("fleetGalleryDesc", buf.toString(), REQUEST);
+        ctx.setAttribute("fleetGalleryDesc", descs, REQUEST);
         
         // Redirect to the display page
         result.setURL("/jsp/gallery/fleet.jsp");
