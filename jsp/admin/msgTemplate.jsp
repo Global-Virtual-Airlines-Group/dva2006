@@ -24,9 +24,7 @@ golgotha.form.validateText({f:f.name, l:4, t:'Template Name'});
 golgotha.form.validateText({f:f.subject, l:6, t:'E-Mail Subject'});
 golgotha.form.validateText({f:f.desc, l:6, t:'Template Description'});
 golgotha.form.!validateText({f:f.body, l:15, t:'E-Mail Text'});
-golgotha.form.submit();
-disableButton('SaveButton');
-disableButton('DeleteButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

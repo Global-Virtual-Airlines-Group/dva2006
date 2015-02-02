@@ -26,8 +26,7 @@ if ((f.searchStr.value.length < 3) && (f.pilotName.value.length < 3)) {
 	golgotha.form.validate({f:f.pilotName, l:3, t:'Pilot Name'});
 }
 
-golgotha.form.submit();
-disableButton('SearchButton');
+golgotha.form.submit(f);
 return true;
 };
 

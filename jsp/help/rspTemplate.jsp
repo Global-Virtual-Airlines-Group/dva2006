@@ -17,9 +17,7 @@ golgotha.local.validate = function(f)
 if (!golgotha.form.check()) return false;
 golgotha.form.validate({f:f.subject, l:5, t:'Template Title'});
 golgotha.form.validate({f:f.body, l:5, t:'Template Reseponse'});
-golgotha.form.submit();
-disableButton('SaveButton');
-disableButton('DeleteButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

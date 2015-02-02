@@ -43,8 +43,7 @@ for (var x = 0; x < golgotha.local.invalidDomains.length; x++) {
 		throw new golgotha.util.ValidationError('Your e-mail address (' + eMail + ') contains a forbidden domain - ' + invalidDomains[x], f.email);
 }
 
-golgotha.form.submit();
-disableButton('SaveButton');
+golgotha.form.submit(f);
 return true;
 };
 
@@ -64,7 +63,7 @@ xmlreq.onreadystatechange = function() {
 	var dupes = (parseInt(xmlreq.responseText) > 0);
 	var rows = golgotha.util.getElementsByClass('dupeFound');
 	for (var x = 0; x < rows.length; x++) {
-		displayObject(rows[x], dupes);
+		golgotha.util.display(rows[x], dupes);
 		rows[x].focus();
 	}
 
@@ -84,7 +83,7 @@ golgotha.local.resetUniqueCheck = function(isPermanent)
 golgotha.local.uniqueCheck = isPermanent;
 var rows = golgotha.util.getElementsByClass('dupeFound');
 for (var x = 0; x < rows.length; x++)
-	displayObject(rows[x], false);
+	golgotha.util.display(rows[x], false);
 
 var f = document.forms[0];
 for (var x = 0; x < f.elements.length; x++)
@@ -101,7 +100,7 @@ var lN = f.lastName.value;
 var eMail = f.email.value;
 self.location = '/register.do?op=dupe&firstName=' + fN + '&lastName=' + lN + '&email=' + eMail;
 return true;
-}
+};
 
 golgotha.onDOMReady(function() {
 	var f = document.forms[0];

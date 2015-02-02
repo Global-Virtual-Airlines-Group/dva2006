@@ -22,8 +22,7 @@ golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
 golgotha.form.validate({f:f.body, l:32, t:'Application Text'});
-golgotha.form.submit();
-disableButton('ApplyButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>
@@ -35,9 +34,7 @@ golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
 golgotha.form.validate({f:f.sl, min:1, t:'Short-listed Applicant'});
-golgotha.form.submit();
-disableButton('SLButton');
-disableButton('DeleteButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>
@@ -49,9 +46,7 @@ golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
 golgotha.form.validateCheckBox({f:f.sl, min:1, t:'Approved Applicant'});
-golgotha.form.submit();
-disableButton('SelectButton');
-disableButton('DeleteButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>
@@ -68,7 +63,7 @@ golgotha.local.toggleBody = function(id)
 var row = document.getElementById('desc' + id);
 var linkDesc = document.getElementById('toggle' + id);
 var visible = (row.style.display != 'none');
-displayObject(row, !visible);
+golgotha.util.display(row, !visible);
 linkDesc.innerHTML = visible ? 'View' : 'Hide';
 return true;
 };
@@ -236,9 +231,7 @@ golgotha.local.commentValidate = function(f)
 {
 if (!golgotha.form.check()) return false;
 golgotha.form.validate({f:f.body, l:12, t:'Comment Text'});
-golgotha.form.submit();
-disableButton('CommentButton');
-disableButton('CloneButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

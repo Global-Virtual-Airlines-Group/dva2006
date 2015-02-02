@@ -29,8 +29,7 @@ if (f.jsOK.value.length == 0) {
 	} catch (err) { }
 }
 
-golgotha.form.submit();
-disableButton('SubmitButton');
+golgotha.form.submit(f);
 return true;
 };
 

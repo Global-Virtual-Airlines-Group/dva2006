@@ -63,9 +63,7 @@ if (f.email) {
 </content:filter>
 // Set disabled checkboxes
 f.useDefaultSig.checked = (f.useDefaultSig.checked && !(f.useDefaultSig.disabled));
-golgotha.form.submit();
-disableButton('SaveButton');
-disableButton('DTDefaultButton');
+golgotha.form.submit(f);
 return true;
 };
 

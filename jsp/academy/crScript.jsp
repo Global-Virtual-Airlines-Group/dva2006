@@ -21,9 +21,7 @@ golgotha.form.validateCombo({f:f.cert, t:'Flight Academy Certification'});
 golgotha.form.validateNumber({f:f.seq, min:1, t:'Check Ride Number'});
 golgotha.form.validateText({f:f.body, l:15, t:'Check Ride content'});
 
-golgotha.form.submit();
-disableButton('SaveButton');
-disableButton('DeleteButton');
+golgotha.form.submit(f);
 return true;
 };
 

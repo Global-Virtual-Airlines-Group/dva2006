@@ -23,8 +23,7 @@ var hasLast = (f.lastName.value.length > 2);
 var hasCode = (f.pilotCode.value.length > 1);
 var hasEMail = ((f.eMail) && (f.eMail.value.length > 5));
 if (hasFirst || hasLast || hasCode || hasEMail) {
-	golgotha.form.submit();
-	disableButton('SearchButton');
+	golgotha.form.submit(f);
 	return true;
 }
 	

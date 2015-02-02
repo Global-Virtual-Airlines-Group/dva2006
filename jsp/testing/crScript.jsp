@@ -18,9 +18,7 @@ if (!golgotha.form.check()) return false;
 golgotha.form.validate({f:f.eqType, t:'Aircraft Type'});
 golgotha.form.validate({f:f.programType, t:'Equipment Program'});
 golgotha.form.validate({f:f.msgText, l:15, t:'Check Ride content'});
-golgotha.form.submit();
-disableButton('SaveButton');
-disableButton('DeleteButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

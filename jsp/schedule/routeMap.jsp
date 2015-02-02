@@ -50,12 +50,12 @@
 <map:point var="mapC" point="${mapCenter}" />
 
 // Create the map
-var mapOpts = {center:mapC, zoom:${zoomLevel}, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds: golgotha.maps.DEFAULT_TYPES}};
+var mapOpts = {center:mapC, zoom:${zoomLevel}, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
-google.maps.event.addListener(map, 'click', function() { map.closeWindow(); removeMarkers('routes'); });
-google.maps.event.addListener(map.infoWindow, 'closeclick', function() { removeMarkers('routes'); });
+google.maps.event.addListener(map, 'click', function() { map.closeWindow(); map.removeMarkers(golgotha.routeMap.routes); });
+google.maps.event.addListener(map.infoWindow, 'closeclick', function() { map.removeMarkers(golgotha.routeMap.routes); });
 google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
 	golgotha.routeMap.updateAirports(document.forms[0].airlineCode);	
 });

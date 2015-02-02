@@ -31,9 +31,7 @@ if (act.indexOf('hdissue.do') != -1) {
 	golgotha.form.validateCombo({f:f.priority, t:'Development Issue Priority'});
 }
 
-golgotha.form.submit();
-disableButton('SaveButton');
-disableButton('ConvertButton');
+golgotha.form.submit(f);
 return true;
 };
 <c:if test="${access.canUpdateStatus}">

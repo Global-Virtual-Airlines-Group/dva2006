@@ -17,9 +17,8 @@ if (!golgotha.form.check()) return false;
 golgotha.form.validateText({f:f.subject, l:7, t:'Message Subject'});
 golgotha.form.validateText({f:f.body, l:25, t:'Message Body'});
 golgotha.form.validateCombo({f:f.eqType, t:'Recipients Equipment Type'});
-golgotha.form.validateFile({f:f.fAttach, ext:['pdf,txt'], t:'Attached File'});
-golgotha.form.submit();
-disableButton('SaveButton');
+golgotha.form.validateFile({f:f.fAttach, ext:['pdf','txt'], t:'Attached File'});
+golgotha.form.submit(f);
 return true;
 };
 </script>

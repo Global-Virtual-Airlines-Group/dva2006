@@ -30,11 +30,11 @@ if (!opt) {
 	lbl = opt.value;
 	
 if (lbl == 'Examinations') {
-	enableElement('crScorer', false);
-	enableElement('examScorer', true);
+	golgotha.util.disable('crScorer');
+	golgotha.util.disable('examScorer', false);
 } else {
-	enableElement('examScorer', false);
-	enableElement('crScorer', true);
+	golgotha.util.disable('examScorer');
+	golgotha.util.disable('crScorer', false);
 }
 
 return true;	
@@ -43,8 +43,7 @@ return true;
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
-golgotha.form.submit();
-disableButton('SearchButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

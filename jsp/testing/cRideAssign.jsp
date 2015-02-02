@@ -20,9 +20,7 @@ var hasScript = ((form.doScript) && (form.doScript.value == 'true'));
 if (!hasScript)
 	golgotha.form.validateText({f:f.comments, l:6, t:'Check Ride Comments'});
 
-golgotha.form.submit();
-disableButton('ProfileButton');
-disableButton('AssignButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

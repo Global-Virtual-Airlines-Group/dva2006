@@ -17,8 +17,7 @@ golgotha.local.validate = function(f)
 if (!golgotha.form.check()) return false;
 golglotha.form.validate({f:f.eqType, t:'Equipment Program'});
 golglotha.form.validate({f:f.comments, l:15, t:'Check Ride Waiver comments'});
-golgotha.form.submit();
-disableButton('SaveButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

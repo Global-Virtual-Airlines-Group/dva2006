@@ -27,8 +27,7 @@ golgotha.form.validate({f:f.title, l:8, t:'File Title'});
 golgotha.form.validate({f:f.category, t:'File Category'});
 golgotha.form.validate({f:f.desc, l:10, t:'Description'});
 golgotha.form.validate({f:f.file, ext:['pdf','exe','zip','xls','doc'], t:'Uploaded File'});
-golgotha.form.submit();
-disableButton('SaveButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

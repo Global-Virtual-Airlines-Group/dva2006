@@ -171,8 +171,8 @@ return true;
 <content:sysdata var="wuAPI" name="security.key.wunderground" />
 <script id="mapInit" defer>
 var f = document.forms[0];
-enableObject(f.routes, false);
-enableElement('SearchButton', false);
+golgotha.util.disable(f.routes);
+golgotha.util.disable('SearchButton');
 
 golgotha.airportLoad.config.doICAO = ${useICAO};
 golgotha.airportLoad.config.airline = 'all';
@@ -190,11 +190,8 @@ window.setTimeout('f.airportA.loadAirports(golgotha.airportLoad.config);', 750);
 golgotha.routePlot.updateRoute(true, false);
 </c:otherwise>
 </c:choose>
-// Create map options
-var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
-var mapOpts = {center:{lat:38.88, lng:-93.25}, zoom:4, minZoom:2, maxZoom:16, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
-
 // Create the map
+var mapOpts = {center:{lat:38.88, lng:-93.25}, zoom:4, minZoom:2, maxZoom:16, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds: golgotha.maps.DEFAULT_TYPES}};
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});

@@ -17,7 +17,7 @@ golgotha.local.selectAC = function(combo)
 {
 if (golgotha.form.comboSet(combo)) {
 	golgotha.local.fName = null;
-	showObject(document.getElementById('installerInfo'), false);
+	golgotha.util.show('installerInfo', false);
 	return false;
 }
 
@@ -54,7 +54,7 @@ xmlreq.onreadystatechange = function() {
 	var descE = info.getElementsByTagName('desc')[0].firstChild;
 	document.getElementById('divDesc').innerHTML = descE.data;
 	combo.disabled = false;
-	showObject(document.getElementById('installerInfo'), true);
+	golgotha.util.show('installerInfo', true);
 	return true;
 };
 

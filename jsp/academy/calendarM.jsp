@@ -32,8 +32,7 @@ golgotha.form.validate({f:f.startDate, t:'Busy Start Date'});
 golgotha.form.validate({f:f.startTime, t:'Busy Start Time'});
 golgotha.form.validate({f:f.endDate, t:'Busy End Date'});
 golgotha.form.validate({f:f.endTime, t:'Busy End Time'});
-golgotha.form.submit();
-disableButton('SaveButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

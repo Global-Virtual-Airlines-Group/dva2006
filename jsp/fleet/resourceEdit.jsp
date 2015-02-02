@@ -26,8 +26,7 @@ var url = form.url;
 if (url.value.indexOf('://') == -1)
 	url.value = 'http://' + url.value;
 
-golgotha.form.submit();
-disableButton('SaveButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

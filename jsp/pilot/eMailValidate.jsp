@@ -31,18 +31,16 @@ for (var x = 0; x < golgotha.local.invalidDomains.length; x++) {
 		throw new golgotha.util.ValidationError('Your e-mail address (' + eMail + ') contains a forbidden domain - ' + invalidDomains[x], f.email);
 }
 
-golgotha.form.submit();
-disableButton('SubmitButton');
-disableButton('ResendButton');
+golgotha.form.submit(f);
 return true;
 };
 
 golgotha.local.updateAddress = function(f)
 {
-enableObject(f.email, true);
+golgotha.util.disable(f.email, false);
 f.email.readOnly = false;
-enableObject(f.code, false);
-disableButton('ResendButton');
+golgotha.util.disable(f.code);
+golgotha.util.disable('ResendButton');
 f.action = '/resendvalidate.do';
 
 // Relabel the submit button

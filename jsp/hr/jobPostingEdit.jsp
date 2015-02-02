@@ -21,8 +21,7 @@ golgotha.form.validate({f:f.title, l:10, t:'Job Title'});
 golgotha.form.validate({f:f.summary, l:16, t:'Job Summary'});
 golgotha.form.validate({f:f.body, l:32, t:'Job Description'});
 golgotha.form.validate({f:f.hireMgr, t:'Hiring Manager'});
-golgotha.form.submit();
-disableButton('SaveButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

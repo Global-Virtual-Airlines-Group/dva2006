@@ -125,7 +125,7 @@ google.maps.event.addListener(map, 'click', map.closeWindow);
 <map:line var="rpLine" src="routePoints" color="#4080af" width="2" transparency="0.65" geodesic="true" />
 <map:markers var = "routeMarkers" items="${route}" />
 rpLine.setMap(map);
-addMarkers(map, 'routeMarkers');
+map.addMarkers(routeMarkers);
 aD.setMap(map);
 </script>
 </c:if>

@@ -26,9 +26,7 @@ golgotha.form.validateNumber({f:f.flightLeg, min:1, t:'Flight Leg'});
 golgotha.form.validateCombo({f:f.eqType, t:'Equipment Type'});
 golgotha.form.validateCombo({f:f.airportD, t:'Departure Airport'});
 golgotha.form.validateCombo({f:f.airportA, t:'Arrival Airport'});
-golgotha.form.submit();
-disableButton('SaveButton');
-disableButton('DeleteButton');
+golgotha.form.submit(f);
 return true;
 };
 <c:if test="${empty entry}">
@@ -46,13 +44,13 @@ xmlreq.onreadystatechange = function () {
 	f.flightLeg.value = e.getAttribute("leg");
 
 	// Enable the buttons
-	enableElement('LegSearchButton', true);
-	enableElement('FlightSearchButton', true);
+	golgotha.util.disable('LegSearchButton', flase);
+	golgotha.util.disable('FlightSearchButton', false);
 	return true;
 };
 
-disableButton('LegSearchButton');
-disableButton('FlightSearchButton');
+golgotha.util.disable('LegSearchButton');
+golgotha.util.disable('FlightSearchButton');
 xmlreq.send(null);
 return true;
 };
@@ -71,13 +69,13 @@ xmlreq.onreadystatechange = function () {
 	f.flightLeg.value = e.getAttribute("leg");
 
 	// Enable the button
-	enableElement('LegSearchButton', true);
-	enableElement('FlightSearchButton', true);
+	golgotha.util.disable('LegSearchButton', false);
+	golgotha.util.disable('FlightSearchButton', false);
 	return true;
 };
 
-disableButton('LegSearchButton');
-disableButton('FlightSearchButton');
+golgotha.util.disable('LegSearchButton');
+golgotha.util.disable('FlightSearchButton');
 xmlreq.send(null);
 return true;
 };
@@ -88,7 +86,7 @@ var f = document.forms[0];
 golgotha.airportLoad.changeAirline([f.airportD, f.airportA], golgotha.airportLoad.config);
 var rows = golgotha.util.getElementsByClass('airportRow');
 for (var x = 0; x < rows.length; x++)
-	displayObject(rows[x], (combo.selectedIndex > 0));
+	golgotha.util.display(rows[x], (combo.selectedIndex > 0));
 
 return true;
 };</c:if>

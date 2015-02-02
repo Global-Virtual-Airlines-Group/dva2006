@@ -70,11 +70,11 @@ return true;
 </tr>
 <tr class="locFilter">
  <td class="label">Equipment Program</td>
- <td class="data"><el:combo name="eqType" size="1" firstEntry="ALL" options="${eqTypes}" onChange="void golgotha.pilotMap.updateMarkers()" /></td>
+ <td class="data"><el:combo name="eqType" size="1" firstEntry="[ ALL PROGRAMS ]" options="${eqTypes}" onChange="void golgotha.pilotMap.updateMarkers()" /></td>
 </tr>
 <tr class="locFilter">
  <td class="label">Pilot Ranks</td>
- <td class="data"><el:combo name="rank" size="1" firstEntry="ALL" options="${ranks}" onChange="void golgotha.pilotMap.updateMarkers()" /></td>
+ <td class="data"><el:combo name="rank" size="1" firstEntry="[ ALL RANKS ]" options="${ranks}" onChange="void golgotha.pilotMap.updateMarkers()" /></td>
 </tr>
 </el:table>
 
@@ -94,9 +94,7 @@ return true;
 <script id="mapInit" defer>
 <map:point var="mapC" point="${mapCenter}" />
 <map:marker var="hq" point="${hq}" />
-var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
-var mapOpts = {center:mapC, zoom:6, minZoom:2, maxZoom:11, streetViewControl:false, scrollwheel:false, mapTypeControlOptions: mapTypes};
-
+var mapOpts = {center:mapC, zoom:6, minZoom:2, maxZoom:11, streetViewControl:false, scrollwheel:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});

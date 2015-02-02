@@ -19,8 +19,7 @@ golgotha.form.validate({f:f.name, l:6, t:'Virtual Server Name'});
 golgotha.form.validate({f:f.port, min:1024, t:'Virtual Server UDP Port'});
 golgotha.form.validate({f:f.maxUsers, min:1, t:'Virtual Server User Limit'});
 golgotha.form.validate({f:f.msg, l:6, t:'Virtual Server Welcome Message'});
-golgotha.form.submit();
-disableButton('SaveButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

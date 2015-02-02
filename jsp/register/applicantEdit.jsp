@@ -31,10 +31,7 @@ golgotha.local.validate({f:f.nf, l:5, t:'Number Format'});
 golgotha.local.validate({f:f.airportCodeType, min:1, t:'Airport Code type'});
 golgotha.local.validate({f:f.eqType, t:'Equipment Program'});
 golgotha.local.validate({f:f.rank, t:'Rank'});
-golgotha.form.submit();
-disableButton('SaveButton');
-disableButton('HireButton');
-disableButton('RejectButton');
+golgotha.form.submit(f);
 return true;
 };
 
