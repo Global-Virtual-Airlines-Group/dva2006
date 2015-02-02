@@ -114,3 +114,29 @@ select.req {
 	text-decoration: underline;
 	color: #efffff;
 }
+
+/* Form Spinner */
+div#spinnerBack {
+	position:fixed;
+	left: 0px;
+	top: 0px;
+	width:100%;
+	height: 100%;
+	background-color: #9191a1;
+	opacity: .667;
+	filter: alpha(opacity=67);
+	z-Index: 10001;
+}
+
+div#spinner {
+	position: fixed;
+	background-color: #fefefe;
+	border: 1px solid;
+	padding: 12px;
+	border-radius: 14px;
+	text-align: center;
+	vertical-align: middle;
+	opacity: 98;
+	filter: alpha(opacity=98);
+	z-Index: 10002;
+}
