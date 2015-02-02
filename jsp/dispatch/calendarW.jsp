@@ -29,8 +29,7 @@ golgotha.form.validateCombo({f:f.startDate, t:'Service Start Date'});
 golgotha.form.validateCombo({f:f.startTime, t:'Service Start Time'});
 golgotha.form.validateCombo({f:f.endDate, t:'Service End Date'});
 golgotha.form.validateCombo({f:f.endTime, t:'Service End Time'});
-golgotha.form.submit();
-disableButton('SaveButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

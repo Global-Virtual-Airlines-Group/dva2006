@@ -18,9 +18,7 @@ golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
 golgotha.form.validate({f:f.passFail, min:1, t:'Check Ride status'});
-golgotha.form.submit();
-disableButton('SubmitButton');
-disableButton('DeleteButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

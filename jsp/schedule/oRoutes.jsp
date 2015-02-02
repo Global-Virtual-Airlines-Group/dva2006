@@ -22,8 +22,7 @@ golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
 golgotha.form.validate({f:f.purgeDate, l:10, t:'Purge Date'});
-golgotha.form.submit();
-disableButton('PurgeButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

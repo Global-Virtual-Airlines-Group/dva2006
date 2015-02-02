@@ -38,8 +38,7 @@ if (isCR) {
 	if (!validateCheckBox(form.frApprove, 1, 'Flight Report status')) return false;
 }
 
-golgotha.form.submit();
-disableButton('CRButton');
+golgotha.form.submit(f);
 return true;
 };
 </script></c:if>
@@ -279,13 +278,12 @@ golgotha.local.showRunwayChoices = function() {
 <tr>
  <td class="label">Route Map Data</td>
  <td class="data"><span class="bld">
-<c:if test="${isACARS || (!empty mapRoute)}"><el:box name="showRoute" idx="*" onChange="void toggleMarkers(map, 'gRoute', this)" label="Route" checked="${!isACARS}" /> </c:if>
-<c:if test="${isACARS}"><el:box name="showFDR" idx="*" onChange="void toggleMarkers(map, 'golgotha.maps.acarsFlight.routeMarkers', this)" label="Flight Data" checked="false" /> </c:if>
-<c:if test="${!empty filedRoute}"><el:box name="showFPlan" idx="*" onChange="void toggleMarkers(map, 'gfRoute', this)" label="Flight Plan" checked="true" /> </c:if>
-<el:box name="showFPMarkers" idx="*" onChange="void toggleMarkers(map, 'filedMarkers', this)" label="Navaid Markers" checked="true" />
-<c:if test="${!empty onlineTrack}"> <el:box name="showOTrack" idx="*" onChange="void toggleMarkers(map, 'otRoute', this)" label="Online Track" checked="false" />
- <el:box name="showOMarkers" idx="*" onChange="void toggleMarkers(map, 'otMarkers', this)" label="Online Data" checked="false" />
- <el:box name="showFIRs" idx="*" onChange="void golgotha.local.toggleObject(map, firKML, this)" label="FIR Boundaries" checked="false" /></c:if>
+<c:if test="${isACARS || (!empty mapRoute)}"><el:box name="showRoute" idx="*" onChange="void map.toggle(gRoute, this.checked)" label="Route" checked="${!isACARS}" /> </c:if>
+<c:if test="${isACARS}"><el:box name="showFDR" idx="*" onChange="void map.toggle(golgotha.maps.acarsFlight.routeMarkers, this.checked)" label="Flight Data" checked="false" /> </c:if>
+<c:if test="${!empty filedRoute}"><el:box name="showFPlan" idx="*" onChange="void map.toggle(gfRoute, this.checked)" label="Flight Plan" checked="true" /> </c:if>
+<el:box name="showFPMarkers" idx="*" onChange="void map.toggle(filedMarkers, this.checked)" label="Navaid Markers" checked="true" />
+<c:if test="${!empty onlineTrack}"> <el:box name="showOTrack" idx="*" onChange="void map.toggle(otRoute, this.checked)" label="Online Track" checked="false" />
+ <el:box name="showOMarkers" idx="*" onChange="void map.toggle(otMarkers, this.checked)" label="Online Data" checked="false" /></c:if>
 </span></td>
 </tr>
 <tr>
@@ -399,7 +397,7 @@ google.maps.event.addListener(map, 'click', map.closeWindow);
 <c:if test="${empty mapRoute && isACARS}">
 var gRoute;
 golgotha.maps.acarsFlight.getACARSData(${fn:ACARS_ID(pirep)}, ${access.canApprove});
-google.maps.event.addListener(map.infoWindow, 'closeclick', function() { removeMarkers('selectedFIRs'); });
+google.maps.event.addListener(map.infoWindow, 'closeclick', function() { map.removeMarkers(selectedFIRs); });
 </c:if>
 <c:if test="${!empty filedRoute}">
 <map:points var="filedPoints" items="${filedRoute}" />
@@ -410,32 +408,31 @@ google.maps.event.addListener(map.infoWindow, 'closeclick', function() { removeM
 <map:points var="onlinePoints" items="${onlineTrack}" />
 <map:markers var="otMarkers" items="${onlineTrack}" />
 <map:line var="otRoute" src="onlinePoints" color="#f06f4f" width="3" transparency="0.55" geodesic="true" />
-var firKML = new google.maps.KmlLayer(self.location.protocol + '//' + self.location.host + '/servinfo/firs.kmz', {preserveViewport:true, clickable:false});
 </c:if>
 <c:if test="${!empty mapRoute}">
 // Add the route and markers
-addMarkers(map, 'gRoute');
+map.addMarkers(gRoute);
 </c:if>
 <c:if test="${!empty filedRoute}">
-addMarkers(map, 'gfRoute');
-addMarkers(map, 'filedMarkers');
+map.addMarkers(gfRoute);
+map.addMarkers(filedMarkers);
 </c:if>
 <c:if test="${empty filedRoute}">
 // Airport markers
 <map:marker var="gmA" point="${pirep.airportA}" />
 <map:marker var="gmD" point="${pirep.airportD}" />
 var filedMarkers = [gmA, gmD];
-addMarkers(map, 'filedMarkers');
+map.addMarkers(filedMarkers);
 </c:if>
 <c:if test="${isACARS}">
 google.load('visualization','1.0',{'packages':['corechart']});
 google.setOnLoadCallback(function() {
 var xmlreq = new XMLHttpRequest();
-xmlreq.open('get', 'pirepstats.ws?id=${pirep.hexID}', true);
+xmlreq.open('GET', 'pirepstats.ws?id=${pirep.hexID}', true);
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
 	if (xmlreq.status != 200) {
-		displayObject(document.getElementById('flightDataChart'), false);
+		golgotha.util.display('flightDataChart', false);
 		return false;
 	}
 

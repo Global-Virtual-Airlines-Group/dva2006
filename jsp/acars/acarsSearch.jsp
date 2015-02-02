@@ -21,33 +21,30 @@ golgotha.local.validate = function(form)
 {
 if (!golgotha.form.check()) return false;
 if (!validateCombo(form.searchType, 'Search Type')) return false;
-
-golgotha.form.submit();
-disableButton('MapButton');
-disableButton('SearchButton');
+golgotha.form.submit(f);
 return true;
-}
+};
 
-function showMap(form)
+function showMap(f)
 {
 if (!golgotha.form.check()) return false;
 
 // Build the URL
 var isChecked = false;
 var url = 'acars_earth.ws?showData=false&showRoute=' + form.showRoute.checked + '&id=';
-if (form.doMap.length) {
-	for (var x = 0; x < form.doMap.length; x++) {
-		isChecked = isChecked || form.doMap[x].checked;
-		if (form.doMap[x].checked)
-			url = url + form.doMap[x].value + ',';
+if (f.doMap.length) {
+	for (var x = 0; x < f.doMap.length; x++) {
+		isChecked = isChecked || f.doMap[x].checked;
+		if (f.doMap[x].checked)
+			url = url + f.doMap[x].value + ',';
 	}
 	
 	// Strip trailing comma
 	url = url.substring(0, url.length - 1);
 } else {
-	isChecked = form.doMap.checked;
-	if (form.doMap.checked)
-		url = url + form.doMap.value;
+	isChecked = f.doMap.checked;
+	if (f.doMap.checked)
+		url = url + f.doMap.value;
 }
 
 // Check if we've selected a single flight
@@ -59,7 +56,7 @@ if (!isChecked) {
 // Display the url
 self.location = url;
 return false;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />

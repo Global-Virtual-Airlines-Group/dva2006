@@ -16,7 +16,7 @@
 <content:js name="common" />
 <script type="text/javascript">
 golgotha.local.refresh = function(combo) {
-	enableElement(combo, false);
+	golgotha.util.disable(combo);
 	self.location = '/txrequests.do?eqType=' + golgotha.form.getCombo(combo);
 	return true;
 };

@@ -148,7 +148,7 @@ crLine.setMap(map);
 <map:line var="arLine" src="arPoints" width="2" color="#4080af" transparency="0.8" geodesic="true" />
 arLine.setMap(map);
 <map:markers var="arMarkers" items="${answerRoute}" />
-addMarkers(map, 'arMarkers');
+map.addMarkers(arMarkers);
 </c:if>
 golgotha.exam.maps.push(map);
 </c:if></c:forEach>

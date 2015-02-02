@@ -25,8 +25,7 @@ for (var x = 0; x < golgotha.local.dataFiles.length && !isOK; x++)
 if (!isOK)
 	throw new golgotha.util.ValidationError('This does not appear to be a valid PSS AIRAC data file.', f.navData);
 
-golgotha.form.submit();
-disableButton('SaveButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

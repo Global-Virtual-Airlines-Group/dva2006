@@ -22,9 +22,9 @@ golgotha.local.setType = function() {
 
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
-	enableElement('stCombo', false);
-	enableElement('ftCombo', false);
-	golgotha.form.submit();
+	golgotha.util.disable('stCombo');
+	golgotha.util.disable('ftCombo');
+	golgotha.form.submit(f);
 	return true;
 };
 </script>

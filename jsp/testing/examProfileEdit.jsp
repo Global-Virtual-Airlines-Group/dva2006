@@ -24,8 +24,7 @@ golgotha.form.validate({f:f.passScore, min:0, t:'Passing Score'});
 golgotha.form.validate({f:f.time, min:5, t:'Examination Duration'});
 golgotha.form.validate({f:f.owner, t:'Owner'});
 golgotha.form.validate({f:f.airline, min:1, t:'Airline'});
-golgotha.form.submit();
-disableButton('SaveButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

@@ -22,17 +22,18 @@
 <script type="text/javascript">
 golgotha.local.updateSignups = function(f)
 {
-enableObject(f.closeDate, f.canSignup.checked);
-enableObject(f.closeTime, f.canSignup.checked);
-enableObject(f.airportD, f.canSignup.checked);
-enableObject(f.airportA, f.canSignup.checked);
-enableObject(f.adCode, f.canSignup.checked);
-enableObject(f.aaCode, f.canSignup.checked);
-enableObject(f.route, f.canSignup.checked);
-enableObject(f.routeName, f.canSignup.checked);
-enableObject(f.maxSignups, f.canSignup.checked);
-enableObject(f.signupURL, !f.canSignup.checked);
-enableElement('CloseCalendarButton', f.canSignup.checked);
+var tg = !f.canSignup.checked;
+golgotha.util.disable(f.closeDate, tg);
+golgotha.util.disable(f.closeTime, tg);
+golgotha.util.disable(f.airportD, tg);
+golgotha.util.disable(f.airportA, tg);
+golgotha.util.disable(f.adCode, tg);
+golgotha.util.disable(f.aaCode, tg);
+golgotha.util.disable(f.route, tg);
+golgotha.util.disable(f.routeName, tg);
+golgotha.util.disable(f.maxSignups, tg);
+golgotha.util.disable(f.signupURL, tg);
+golgotha.util.disable('CloseCalendarButton', tg);
 return true;
 };
 
@@ -46,8 +47,7 @@ golgotha.form.validate({f:f.route, l:5, t:'Default Route'});
 golgotha.form.validate({f:f.airline, min:1, t:'Participating Airline'});
 golgotha.form.validate({f:f.briefing, l:15, t:'Flight Briefing'});
 golgotha.form.validate({f:f.bannerImg, ext:['jpg','png','gif'], t:'Banner Image'});
-golgotha.form.submit();
-disableButton('SaveButton');
+golgotha.form.submit(f);
 return true;
 };
 

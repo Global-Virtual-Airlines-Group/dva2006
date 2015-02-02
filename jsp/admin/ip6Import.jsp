@@ -24,8 +24,7 @@ for (x = 0; x < golgotha.local.dataFiles.length && !isOK; x++)
 if (!isOK)
 	throw new golgotha.util.ValidationError('This does not appear to be a valid GeoLite IPv6 City data file.', f.netblockData);
 
-golgotha.form.submit();
-disableButton('SaveButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

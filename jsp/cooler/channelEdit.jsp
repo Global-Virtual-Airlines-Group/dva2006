@@ -21,9 +21,7 @@ if (!golgotha.form.check()) return false;
 if (!validateText(form.newName, 5, 'Channel Name')) return false;
 if (!validateText(form.desc, 15, 'Channel Description')) return false;
 if (!validateCheckBox(form.airline, 1, 'Airline')) return false;
-
-golgotha.form.submit();
-disableButton('SaveButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

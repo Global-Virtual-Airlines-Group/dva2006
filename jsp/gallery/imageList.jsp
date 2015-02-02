@@ -19,9 +19,7 @@
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
-golgotha.form.submit();
-disableButton('CalendarButton');
-disableButton('SubmitButton');
+golgotha.form.submit(f);
 return true;	
 };
 

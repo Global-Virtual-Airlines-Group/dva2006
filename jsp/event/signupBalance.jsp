@@ -19,8 +19,7 @@ golgotha.local.validate = function(f)
 if (!golgotha.form.check()) return false;
 golgotha.form.validate({f:f.routeID, t:'Route to move Pilots to'});
 golgotha.form.validate({f:f.signupID, min:1, t:'Pilots to move'});
-golgotha.form.submit();
-disableButton('SaveButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

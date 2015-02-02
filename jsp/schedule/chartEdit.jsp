@@ -23,9 +23,7 @@ golgotha.form.validate({f:f.airport, t:'Airport'});
 golgotha.form.validate({f:f.name, l:4, t:'Chart Name'});
 golgotha.form.validate({f:f.chartType, t:'Chart Type'});
 golgotha.form.validate({f:f.img, ext:['gif','jpg','png','pdf'], t:'Chart Image'});
-golgotha.form.submit();
-disableButton('SaveButton');
-disableButton('DeleteButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

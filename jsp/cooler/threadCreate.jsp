@@ -28,11 +28,8 @@ golgotha.local.validate = function(f)
 if (!golgotha.form.check()) return false;
 golgotha.form.validate({f:f.subject, l:8, t:'Title of your Thread'});
 golgotha.form.validate({f:f.msgText, l:5, t:'Text of your Message'});
-golgotha.form.validate({f:f.img, ext:['gif,jpg,png'], t:'Attached Image'});
-golgotha.form.submit();
-disableButton('EmoticonButton');
-disableButton('LinkButton');
-disableButton('SaveButton');
+golgotha.form.validate({f:f.img, ext:['gif','jpg','png'], t:'Attached Image'});
+golgotha.form.submit(f);
 return true;
 };
 

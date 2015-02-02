@@ -16,8 +16,7 @@ golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
 if (!confirm("Are you sure you wish to continue?")) return false;
-golgotha.form.submit();
-disableButton('ReloadButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

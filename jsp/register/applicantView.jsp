@@ -20,27 +20,20 @@ golgotha.local.validate = function(f)
 if (!golgotha.form.check()) return false;
 golgotha.form.validate({f:f.eqType, t:'Equipment Program'});
 golgotha.form.validate({f:f.rank, t:'Rank'});
-golgotha.form.submit();
-disableButton('EditButton');
-disableButton('HireButton');
-disableButton('RejectButton');
-disableButton('DeleteButton');
-disableButton('QuestionnaireButton');
-disableButton('ResendButton');
-</c:if>
+golgotha.form.submit(f);</c:if>
 return ${access.canApprove};
 }
 <c:if test="${access.canApprove}">
 golgotha.local.checkVATSIMData = function(id, name)
 {
-disableButton('ValidateButton');
+golgotha.util.disable('ValidateButton');
 var xmlreq = new XMLHttpRequest();
 xmlreq.open('GET', 'vatsim_info.ws?id=' + id + '&name=' + escape(name));
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
 	if ((xmlreq.status == 404) || (xmlreq.status == 500)) {
 		alert('No records found!');
-		enableElement('ValidateButton', true);
+		golgotha.util.disable('ValidateButton', false);
 		return false;
 	}
 
@@ -54,7 +47,7 @@ xmlreq.onreadystatechange = function() {
 		+ ':\n\nPilot Name : ' + info.getAttribute('name') + '\nUser Status : '
 		+ info.getAttribute('status') + '\nE-Mail Domain : ' + info.getAttribute('domain');
 	alert(infoStr);
-	enableElement('ValidateButton', true);
+	golgotha.util.disable('ValidateButton', false);
 	return true;
 };
 

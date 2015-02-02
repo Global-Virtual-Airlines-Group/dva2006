@@ -23,9 +23,7 @@ golgotha.local.validate = function(f)
 if (!golgotha.form.check()) return false;
 golgotha.form.validate({f:f.airportD, t:'Departure Airport'});
 golgotha.form.validate({f:f.airportA, t:'Arrival Airport'});
-golgotha.form.submit();
-disableButton('SearchButton');
-disableButton('BuildButton');
+golgotha.form.submit(f);
 return true;
 };
 <c:if test="${!empty results}">
@@ -48,9 +46,7 @@ for (var x = 1; x <= legNum; x++) {
 	}
 }
 
-golgotha.form.submit();
-disableButton('SearchButton');
-disableButton('BuildButton');
+golgotha.form.submit(f);
 return true;	
 };
 </c:if>

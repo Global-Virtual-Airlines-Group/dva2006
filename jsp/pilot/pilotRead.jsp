@@ -23,7 +23,7 @@ if (!addrDiv) return false;
 
 // Toggle the visibility
 var isHidden = (addrDiv.style.display == 'none');
-displayObject(addrDiv, isHidden);
+golgotha.util.display(addrDiv, isHidden);
 
 // Update the link
 lnk.innerHTML = (!isHidden) ? 'SHOW' : 'HIDE';

@@ -18,10 +18,9 @@ if (!golgotha.form.check()) return false;
 golgotha.form.validate({f:f.airline, t:'Airline'});
 golgotha.form.validate({f:f.code, l:3, t:'Livery Code'});
 golgotha.form.validate({f:f.desc, l:10, t:'Livery Description'});
-golgotha.form.submit();
-disableButton('SaveButton');
+golgotha.form.submit(f);
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />

@@ -17,8 +17,7 @@ golgotha.local.validate = function(f)
 if (!golgotha.form.check()) return false;
 golgotha.form.validateText({f:f.domain, l:6, t:'Domain Name'});
 golgotha.form.validateText({f:f.db, l:2, t:'Database Name'});
-golgotha.form.submit();
-disableButton('SaveButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

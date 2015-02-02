@@ -42,19 +42,15 @@
 </content:region>
 </content:page>
 <script id="mapInit" defer>
-// Create map options
-var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
-var mapOpts = {center:{lat:38.88, lng:-93.25}, zoom:4, scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
-
-// Create the map
+var mapOpts = {center:{lat:38.88, lng:-93.25}, zoom:4, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
 var map = new google.maps.Map(document.getElementById("googleMap"), mapOpts);
 map.setMapTypeId(google.maps.MapTypeId.TERRAIN);
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'click', map.closeWindow);
 
 // Center the map and add positions
-<map:markers var="positions" items="${pilots}" />
-addMarkers(map, 'positions');
+<map:markers var="golgotha.local.positions" items="${pilots}" />
+map.addMarkers(golgotha.local.positions);
 </script>
 </body>
 </html>
