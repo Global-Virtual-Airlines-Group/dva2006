@@ -37,7 +37,7 @@ var canLike = (xe.getAttribute('canLike') == 'true');
 if (iLike) total--;
 
 // If we liked it, hide the link
-showObject(document.getElementById('imgLike'), canLike);
+golgotha.util.show('imgLike', canLike);
 var totalDiv = document.getElementById('imgLikeTotal');
 if (!totalDiv) return false;
 var msg = ''

@@ -1,3 +1,5 @@
+golgotha.dispatch = golgotha.dispatch || {};
+
 function mapZoom()
 {
 golgotha.event.beacon('Dispatch', 'Zoom/Pan');
