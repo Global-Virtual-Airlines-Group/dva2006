@@ -1,13 +1,23 @@
 golgotha.exam = golgotha.exam || {isExpired:false, rpInfo:[]};
+golgotha.exam.getElementsById = function(id, eName)
+{
+var elements = [];
+var all = document.getElementsByTagName((eName == null) ? '*' : eName);
+for (var x = 0; x < all.length; x++) {
+	if (all[x].id == id)
+		elements.push(all[x]);
+}
+
+return elements;
+};
 
 golgotha.local.validate = function(f)
 {
-if (!checkSubmit()) return false;
+if (!golgotha.form.check()) return false;
 
 // Check if all questions were answered
-var isOK = true;
-var qNum = 1;
-var a = golgotha.util.getElementsById('A' + qNum);
+var isOK = true; var qNum = 1;
+var a = golgotha.exam.getElementsById('A' + qNum);
 while (isOK && (a.length > 0)) {
 	if (a.length == 1)
 		isOK = (isOK && (a[0].value.length > 1));
@@ -22,15 +32,13 @@ while (isOK && (a.length > 0)) {
 	}
 
 	qNum++;
-	a = golgotha.util.getElementsById('A' + qNum);
+	a = golgotha.exam.getElementsById('A' + qNum);
 }
 
-if ((!isOK) && (!document.isExpired)) {
+if ((!isOK) && (!document.isExpired))
 	if (!confirm('You have not answered all Questions. Hit OK to submit.')) return false;
-}
 
-golgotha.form.submit();
-disableButton('SubmitButton');
+golgotha.form.submit(f);
 return true;
 };
 
@@ -77,7 +85,7 @@ return window.setTimeout('void golgotha.exam.showRemaining(' + interval + ')', i
 
 golgotha.exam.saveAnswer = function(qNum, id)
 {
-var txtbox = golgotha.util.getElementsById('A' + qNum);
+var txtbox = golgotha.exam.getElementsById('A' + qNum);
 if (!txtbox) return false;
 if (txtbox.length == 1) {
 	txtbox[0].oldBorder = txtbox[0].style.border;
@@ -121,7 +129,7 @@ golgotha.exam.updateMap = function(rpq)
 var xmlreq = new XMLHttpRequest();
 xmlreq.open('POST', 'examplot.ws?id=' + rpq.examID + '&q=' + rpq.idx + '&date=' + golgotha.util.getTimestamp(100), true);
 xmlreq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
-var txtbox = golgotha.util.getElementsById('A' + rpq.idx);
+var txtbox = golgotha.exam.getElementsById('A' + rpq.idx);
 if (!txtbox) return false;
 if (txtbox.length == 1) {
 	txtbox[0].oldBorder = txtbox[0].style.border;

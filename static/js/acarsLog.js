@@ -1,4 +1,4 @@
-function validate(f)
+golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
 
@@ -12,29 +12,26 @@ for (var x = 0; x < f.searchType.length; x++) {
 // Do different validation depending on the search type
 switch (sType) {
 	case 'USR' :
-		if (!validateText(f.pilotCode, 4, 'Pilot Code')) return false;
+		golgotha.form.validate({f:f.pilotCode, l:4, t:'Pilot Code'});
 		break;
 	
 	case 'id' :
-		if (!validateNumber(f.pilotCode, 1000, 'Pilot Database ID')) return false;
+		golgotha.form.validate({f:f.pilotCode, min:1000, t:'Pilot Database ID'});
 		break;
 		
 	case 'DATE' :
-		if (!validateText(f.startDate, 10, 'Start Date')) return false;
-		if (!validateText(f.endDate, 10, 'End Date')) return false;
+		golgotha.form.validate({f:f.startDate, l:10, t:'Start Date'});
+		golgotha.form.validate({f:f.endDate, l:10, t:'End Date'});
 		break;
 		
 	case 'LATEST' :
-		if (!validateNumber(f.viewCount, 0, 'Maximum Results')) return false;
+		golgotha.form.validate({f:f.viewCount, min:0, t:'Maximum Results'});
 		break;
 	
-	default :
-		alert('Please select a Search Type.');
-		f.searchType[0].focus();
-		return false;
+	default:
+		throw new golgotha.util.ValidationError('Please select a Search Type.', f.searchType[0]);
 }
 
-golgotha.form.submit();
-disableButton('SearchButton');
+golgotha.form.submit(f);
 return true;
-}
+};

@@ -6,8 +6,8 @@ xmlreq.open('GET', 'sceligible.ws');
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status == 0)) return false;
 	if (xmlreq.status != 200) {
-		displayObject(document.getElementById('rowError'), true);
-		displayObject(document.getElementById('rowLoading'), false);
+		golgotha.util.display('rowError', true);
+		golgotha.util.display('rowLoading', false);
 		var codeSpan = document.getElementById('errorCode');
 		codeSpan.innerHTML = '(' + xmlreq.status + ')';
 		return false;
@@ -33,8 +33,8 @@ xmlreq.onreadystatechange = function() {
 		}
 	}
 
-	displayObject(document.getElementById('rowSelectPilot'), true);
-	displayObject(document.getElementById('rowLoading'), false);
+	golgotha.util.display('rowSelectPilot', true);
+	golgotha.util.display('rowLoading', false);
 
 	// Initialize onkeyup
 	var txt = document.forms[0].pilotSearch;
@@ -42,8 +42,8 @@ xmlreq.onreadystatechange = function() {
 	return true;
 };
 	
-displayObject(document.getElementById('rowLoading'), true);
-displayObject(document.getElementById('rowError'), false);
+golgotha.util.display('rowLoading', true);
+golgotha.util.display('rowError', false);
 xmlreq.send(null);
 return true;
 };
@@ -57,11 +57,11 @@ for (var x = 1; x < combo.options.length; x++) {
 	var txt = opt.text.substring(0, searchStr.length).toLowerCase();
 	if (txt == searchStr) {
 		combo.selectedIndex = x;
-		displayObject(document.getElementById('rowComments'), true);
+		golgotha.util.display('rowComments', true);
 		return true;
 	} else if (txt > searchStr) {
 		combo.selectedIndex = x;
-		displayObject(document.getElementById('rowComments'), true);
+		golgotha.util.display('rowComments', true);
 		return false;
 	}
 }
@@ -73,7 +73,7 @@ golgotha.sc.setPilot = function(combo)
 {
 var f = document.forms[0];
 f.pilotSearch.value = '';
-displayObject(document.getElementById('rowComments'), (combo.selectedIndex > 0));
+golgotha.util.display('rowComments', (combo.selectedIndex > 0));
 return true;
 };
 
@@ -86,7 +86,7 @@ var rows = golgotha.util.getElementsByClass('nc-' + id);
 for (var x = 0; x < rows.length; x++) {
 	var row = rows[x];
 	visible = (row.style.display != 'none');
-	displayObject(row, !visible);
+	golgotha.util.display(row, !visible);
 }
 
 lnk.innerHTML = visible ? ' + ' : ' - ';
