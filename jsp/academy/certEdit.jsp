@@ -15,7 +15,7 @@
 <script type="text/javascript">
 golgotha.local.showReqCert = function(combo) {
 	var opt = combo.options[combo.selectedIndex];
-	displayObject(document.getElementById('reqCertRow'), (opt.text == 'Specific Certification'));
+	golgotha.util.display('reqCertRow', (opt.text == 'Specific Certification'));
 	return true;	
 };
 
@@ -31,8 +31,7 @@ var reqCertRow = document.getElementById('reqCertRow');
 if (reqCertRow.style.display != 'none')
 	golgotha.form.validateCombo({f:f.preReqCert, t:'Specific Certification Prerequisite'});
 
-golgotha.form.submit();
-disableButton('SaveButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

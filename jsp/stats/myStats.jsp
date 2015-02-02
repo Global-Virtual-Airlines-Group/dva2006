@@ -22,8 +22,7 @@ golgotha.local.updateSort = function() { return document.forms[0].submit(); };
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
-golgotha.form.submit();
-disableButton('SearchButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

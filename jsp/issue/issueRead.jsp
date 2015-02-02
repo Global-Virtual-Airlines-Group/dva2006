@@ -18,10 +18,7 @@ golgotha.local.validate = function(f)
 <c:if test="${access.canComment}">
 if (!golgotha.form.check()) return false;
 golgotha.form.validate({f:f.comment, l:10, t:'Issue Comments'});
-golgotha.form.submit();
-disableButton('EditButton');
-disableButton('CommentButton');
-disableButton('ConvertButton');</c:if>
+golgotha.form.submit(f);</c:if>
 return ${access.canComment};
 };
 

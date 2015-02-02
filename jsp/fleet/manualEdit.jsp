@@ -38,9 +38,7 @@ if (manualNames.indexOf(fName) != -1) {
 }
 </c:if>
 
-golgotha.form.submit();
-disableButton('SaveButton');
-disableButton('DeleteButton');
+golgotha.form.submit(f);
 return true;
 };
 

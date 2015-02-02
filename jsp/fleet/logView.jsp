@@ -25,8 +25,7 @@ if (!isOK && (f.userCode.value.length < 2)) {
 	return false;
 }
 
-golgotha.form.submit();
-disableButton('SearchButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

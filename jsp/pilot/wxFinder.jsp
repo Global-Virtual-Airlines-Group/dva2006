@@ -99,7 +99,7 @@ golgotha.local.wxAirports = [];
 mrk.ILS = ${ap.ILS.ordinal()};
 golgotha.local.wxAirports.push(mrk);
 </c:forEach>
-addMarkers(map, 'golgotha.local.wxAirports');
+map.addMarkers(golgotha.local.wxAirports);
 
 // Build the layer controls
 var ctls = map.controls[google.maps.ControlPosition.BOTTOM_LEFT];

@@ -34,9 +34,7 @@ golgotha.form.validate({f:f.latS, min:0, t:'Latitude Seconds'});
 golgotha.form.validate({f:f.lonD, min:0, t:'Longitude Degrees'});
 golgotha.form.validate({f:f.lonM, min:0, t:'Longitude Minutes'});
 golgotha.form.validate({f:f.lonS, min:0, t:'Longitude Seconds'});
-golgotha.form.submit();
-disableButton('SaveButton');
-disableButton('DeleteButton');
+golgotha.form.submit(f);
 return true;
 };
 
@@ -44,7 +42,6 @@ golgotha.onDOMReady(function() {
 	var f = document.forms[0];
 	var cfg = golgotha.airportLoad.config;
 	cfg.airline = 'all';
-
 	<c:if test="${empty airport}">
 	if (f.country.selectedIndex > 0) cfg.country = golgotha.form.getCombo(f.country);</c:if>
 	<c:if test="${!empty airport}">

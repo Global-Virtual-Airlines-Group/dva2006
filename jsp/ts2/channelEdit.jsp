@@ -19,9 +19,7 @@ golgotha.form.validate({f:f.server, t:'TeamSpeak Server'});
 golgotha.form.validate({f:f.codec, t:'Channel Bandwidth'});
 golgotha.form.validate({f:f.name, l:6, t:'Channel Name'});
 golgotha.form.validate({f:f.maxUsers, min:1, t:'Channel User Limit'});
-golgotha.form.submit();
-disableButton('SaveButton');
-disableButton('DeleteButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

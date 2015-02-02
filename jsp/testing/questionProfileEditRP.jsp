@@ -32,9 +32,7 @@ golglotha.form.validate({f:f.airline, min:1, t:'Airline'});
 golglotha.form.validate({f:f.airportD, t:'Departure Airport'});
 golglotha.form.validate({f:f.airportA, t:'Arrival Airport'});
 golglotha.form.validate({f:f.correctChoice, t:'Correct Answer to this Question'});
-golgotha.form.submit();
-disableButton('SaveButton');
-disableButton('DeleteButton');
+golgotha.form.submit(f);
 return true;
 };
 

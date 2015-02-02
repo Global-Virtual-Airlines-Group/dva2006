@@ -51,10 +51,7 @@ if (pDate > fwdLimit)
 if (pDate < bwdLimit)
 	throw new golgotha.event.ValidationError('You cannot file a Flight Report for a flight flown more than ${minDays} days ago.', f.dateD);
 </content:filter></content:browser>
-golgotha.form.submit();
-disableButton('SaveButton');
-disableButton('CalcButton');
-disableButton('SubmitButton');
+golgotha.form.submit(f);
 return true;
 };
 

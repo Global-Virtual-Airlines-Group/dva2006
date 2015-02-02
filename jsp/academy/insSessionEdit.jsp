@@ -19,10 +19,9 @@ golgotha.local.validate = function(form)
 if (!golgotha.form.check()) return false;
 if (!validateCombo(form.instructor, 'Instructor Name')) return false;
 
-golgotha.form.submit();
-disableButton('SaveButton');
+golgotha.form.submit(f);
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />

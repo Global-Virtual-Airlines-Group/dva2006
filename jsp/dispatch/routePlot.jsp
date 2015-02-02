@@ -49,10 +49,7 @@ golgotha.form.validate({f:f.airportA, t:'Arrival Airport'});
 golgotha.form.validate({f:f.route, l:3, t:'Flight Route'});
 golgotha.form.validate({f:f.cruiseAlt, l:4, t:'Cruising Altitude'});
 
-golgotha.form.submit();
-disableButton('SearchButton');
-disableButton('UpdateButton');
-disableButton('RouteSaveButton');
+golgotha.form.submit(f);
 golgotha.event.beacon('Route Plotter', 'Save Route');
 return true;
 };
@@ -65,7 +62,7 @@ golgotha.routePlot.updateAirline = function(combo) {
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="disableButton('RouteSaveButton')" onunload="void golgotha.maps.util.unload(map)">
+<body onload="void golgotha.util.disable('RouteSaveButton')" onunload="void golgotha.maps.util.unload(map)">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -157,8 +154,8 @@ golgotha.routePlot.updateAirline = function(combo) {
 <content:sysdata var="wuAPI" name="security.key.wunderground" />
 <script id="mapInit" defer>
 var f = document.forms[0];
-enableObject(f.routes, false);
-enableElement('SearchButton', (f.airportD.selectedIndex > 0) && (f.airportA.selectedIndex > 0));
+golgotha.util.disable(f.routes);
+golgotha.util.disable('SearchButton', (f.airportD.selectedIndex == 0) || (f.airportA.selectedIndex == 0));
 
 // Load the airports
 var cfg = golgotha.airportLoad.config; 
@@ -175,11 +172,8 @@ f.airportD.loadAirports(newCfg);</c:if>
 window.setTimeout('f.airportA.loadAirports(newCfg)', 1050);</c:if>
 window.setTimeout("newCfg.airline = 'all'; f.airportL.loadAirports(newCfg)", 1250);
 
-// Create map options
-var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
-var mapOpts = {center:{lat:38.88, lng:-93.25}, zoom:4, minZoom:2, maxZoom:10, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
-
 // Create the map
+var mapOpts = {center:{lat:38.88, lng:-93.25}, zoom:4, minZoom:2, maxZoom:10, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds: golgotha.maps.DEFAULT_TYPES}};
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});

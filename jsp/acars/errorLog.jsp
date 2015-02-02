@@ -25,10 +25,9 @@ if (filterType == 1)
 else if (filterType == 2)
 	golgotha.form.validate({f:f.build, t:'ACARS Client Build'});
 
-golgotha.form.submit();
-disableButton('SortButton');
+golgotha.form.submit(f);
 return true;
-}
+};
 
 golgotha.local.setViewType = function(idx) {
 	document.forms[0].viewType.selectedIndex = idx;

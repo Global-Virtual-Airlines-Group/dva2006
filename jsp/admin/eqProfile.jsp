@@ -31,8 +31,7 @@ golgotha.form.validate({f:f.maxAccel, min:0, t:'Flight Time with Time Accelerati
 golgotha.form.validate({f:f.min1X, min:0, t:'Flight time without Time Acceleration'});
 golgotha.form.validate({f:f.ranks, min:2, t:'Ranks'});
 golgotha.form.validate({f:f.pRatings, min:1, t:'Primary Rating'});
-golgotha.form.submit();
-disableButton('SaveButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

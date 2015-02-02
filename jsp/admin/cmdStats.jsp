@@ -23,8 +23,7 @@ golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
 golgotha.form.validateNumber({f:f.purgeDays, min:2, t:'Days of Log Entries to keep'});
-golgotha.form.submit();
-disableButton('PurgeButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

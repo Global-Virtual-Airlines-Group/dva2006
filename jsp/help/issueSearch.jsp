@@ -19,8 +19,7 @@ golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
 golgotha.form.validate({f:f.searchStr, l:5, t:'Search Term'});
-golgotha.form.submit();
-disableButton('SearchButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

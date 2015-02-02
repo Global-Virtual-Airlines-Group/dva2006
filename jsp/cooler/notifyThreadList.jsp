@@ -26,8 +26,7 @@ golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
 golgotha.form.validate({f:f.threadID, min:1, t:'Message Thread'});
-golgotha.form.submit();
-disableButton('UpdateButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

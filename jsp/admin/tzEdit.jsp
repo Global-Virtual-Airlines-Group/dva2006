@@ -23,8 +23,7 @@ if (!golgotha.form.check()) return false;
 golgotha.form.validate({f:f.name, l:6, t:'Time Zone Name'});
 golgotha.form.validate({f:f.abbr, l:2, t:'Time Zone Code'})
 golgotha.form.validate({f:f.newID, t:'JVM Time Zone ID'});
-golgotha.form.submit();
-disableButton('SaveButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

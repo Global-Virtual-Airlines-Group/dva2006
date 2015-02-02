@@ -16,8 +16,7 @@ golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
 golgotha.form.validate({f:f.id, t:'Accomplishment'});
-golgotha.form.submit();
-disableButton('CalcButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

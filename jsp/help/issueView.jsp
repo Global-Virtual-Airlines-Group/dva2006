@@ -38,9 +38,7 @@ else if ((f.isFAQ) && (f.isFAQ.checked) && (f.faqIDs)) {
 	}
 }
 
-golgotha.form.submit();
-disableButton('EditButton');
-disableButton('CommentButton');</c:if>
+golgotha.form.submit(f);</c:if>
 return ${access.canComment};
 }
 <c:if test="${access.canUseTemplate}">

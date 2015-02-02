@@ -24,8 +24,7 @@ golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
 if (!confirm('Have you scored all Questions? Hit OK to submit.')) return false;
-golgotha.form.submit();
-disableButton('ScoreButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>
@@ -142,7 +141,7 @@ crLine.setMap(map);
 <map:line var="arLine" src="arPoints" width="2" color="#4080AF" transparency="0.8" geodesic="true" />
 arLine.setMap(map);
 <map:markers var="arMarkers" items="${answerRoute}" />
-addMarkers(map, 'arMarkers');
+map.addMarkers(arMarkers);
 </c:if>
 golgotha.exam.maps.push(map);
 </c:if></c:forEach>

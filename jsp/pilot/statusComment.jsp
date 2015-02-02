@@ -16,8 +16,7 @@ golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
 golgotha.form.validate({f:f.comment, l:4, t:'Status Comment'});
-golgotha.form.submit();
-disableButton('SaveButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

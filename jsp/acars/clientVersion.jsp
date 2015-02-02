@@ -25,8 +25,7 @@ golgotha.form.validate({f:form.min_${versionCode}_Build, min:1, t:'Minimum ${ver
 <c:forEach var="build" items="${fn:keys(betaInfo)}">
 golgotha.form.validate({f:form.min_${build}_beta, min:0, t:'Minimum Build ${build} beta version'});
 </c:forEach>
-golgotha.form.submit();
-disableButton('SaveButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

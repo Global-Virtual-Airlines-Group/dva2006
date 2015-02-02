@@ -32,8 +32,7 @@ if ((f.isMultiChoice) && (f.isMultiChoice.checked))
 </c:if>
 <c:if test="${!empty question && isMC}">
 golgotha.form.validate({f:f.correctChoice, t:'Correct Answer to this Question'});</c:if>
-golgotha.form.submit();
-disableButton('SaveButton');
+golgotha.form.submit(f);
 return true;
 };
 

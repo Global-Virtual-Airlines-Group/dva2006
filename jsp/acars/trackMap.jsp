@@ -80,7 +80,7 @@ var trkLayer = new golgotha.maps.track.ShapeLayer(0.45, 3, ${maxZoomLevel});
 map.overlayMapTypes.insertAt(0, trkLayer);
 google.maps.event.addListener(map, 'zoom_changed', golgotha.maps.updateZoom);
 <c:if test="${!empty localAP}">
-google.maps.event.addListener(map, 'zoom_changed', function() { displayObject(document.getElementById('localAirports'), (this.getZoom() > 9)); });</c:if>
+google.maps.event.addListener(map, 'zoom_changed', function() { golgotha.util.display('localAirports', (this.getZoom() > 9)); });</c:if>
 google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
 	map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById('zoomLevel'));
 	map.controls[google.maps.ControlPosition.RIGHT_TOP].push(document.getElementById('localAirports'));

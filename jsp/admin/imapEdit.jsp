@@ -23,9 +23,7 @@ golgotha.local.validate = function(f)
 if (!golgotha.form.check()) return false;
 golgotha.form.validate({f:f.IMAPAddr, addr:true, t:'E-Mail Address'});
 golgotha.form.validate({f:f.IMAPQuota, min:0, t:'Mailbox Quota'});
-golgotha.form.submit();
-disableButton('SaveButton');
-disableButton('DeleteButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

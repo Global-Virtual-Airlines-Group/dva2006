@@ -23,8 +23,7 @@ golgotha.form.validate({f:f.fName, l:2, t:'First Name'});
 golgotha.form.validate({f:f.lName, l:2, t:'Last Name'});
 <content:filter roles="!HR">
 golgotha.form.validate({f:f.eMail, l:10, t:'E-Mail Address'});</content:filter>
-golgotha.form.submit();
-disableButton('SaveButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

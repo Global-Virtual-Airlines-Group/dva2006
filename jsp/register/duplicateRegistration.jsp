@@ -19,8 +19,7 @@ golgotha.form.validate({f:f.firstName, l:3, t:'First (given) Name'});
 golgotha.form.validate({f:f.lastName, l:2, t:'Last (family) Name'});
 golgotha.form.validate({f:f.email, addr:true, t:'E-Mail Address'});
 golgotha.form.validate({f:f.msgText, l:10, t:'Message to Human Resources'});
-golgotha.form.submit();
-disableButton('SubmitButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

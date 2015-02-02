@@ -19,11 +19,9 @@
 golgotha.local.validate = function(form)
 {
 if (!golgotha.form.check()) return false;
-
-golgotha.form.submit();
-disableButton('SearchButton');
+golgotha.form.submit(f);
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />

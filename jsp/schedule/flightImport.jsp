@@ -16,8 +16,7 @@ golgotha.local.validate = function(f)
 if (!golgotha.form.check()) return false;
 golgotha.form.validate({f:f.schedType, t:'Schedule Type'});
 golgotha.form.validate({f:f.csvData, ext:['csv'], t:'Flight Schedule data'});
-golgotha.form.submit();
-disableButton('SaveButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

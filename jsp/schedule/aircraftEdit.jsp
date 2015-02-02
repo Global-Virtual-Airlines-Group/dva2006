@@ -33,8 +33,7 @@ golgotha.form.validate({f:f.fuelFlow, min:100, t:'Fuel Flow'});
 golgotha.form.validate({f:f.baseFuel, min:0, t:'Base Fuel Amount'});
 golgotha.form.validate({f:f.taxiFuel, min:0, t:'Taxi Fuel Amount'});
 golgotha.form.validate({f:f.pTanks, min:1, t:'Primary Fuel Tanks'});
-golgotha.form.submit();
-disableButton('SaveButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

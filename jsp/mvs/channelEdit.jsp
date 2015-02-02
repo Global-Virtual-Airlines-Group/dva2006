@@ -19,9 +19,7 @@ golgotha.form.validateCombo({f:f.rate, t:'Channel Bandwidth'});
 golgotha.form.validateText({f:f.name, l:6, t:'Channel Name'});
 golgotha.form.validateText({f:f.desc, l:3, t:'Channel Description'});
 golgotha.form.validateNumber({f:f.maxUsers, min:0, t:'Channel User Limit'});
-golgotha.form.submit();
-disableButton('SaveButton');
-disableButton('DeleteButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

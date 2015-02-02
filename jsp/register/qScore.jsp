@@ -18,8 +18,7 @@ golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
 if (!confirm("Have you scored all Questions? Hit OK to submit.")) return false;
-golgotha.form.submit();
-disableButton('ScoreButton');
+golgotha.form.submit(f);
 return true;
 };
 <c:if test="${hasQImages}">

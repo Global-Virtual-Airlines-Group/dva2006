@@ -21,9 +21,7 @@ golgotha.form.validate({f:f.name, l:6, t:'Accomplishment Name'});
 golgotha.form.validate({f:f.units, t:'Units of Measurement'});
 golgotha.form.validate({f:f.value, min:0, t:'Number of Units'});
 golgotha.form.validate({f:f.color, l:6, t:'Water Cooler label color'});
-golgotha.form.submit();
-disableButton('SaveButton');
-disableButton('DeleteButton');
+golgotha.form.submit(f);
 return true;
 };
 
@@ -32,33 +30,33 @@ golgotha.local.showChoices = function()
 var f = document.forms[0];
 var rows = golgotha.util.getElementsByClass('valueRow');
 for (var x = 0; x < rows.length; x++)
-	displayObject(rows[x], false);
+	golgotha.util.display(rows[x], false);
 
 var c = golgotha.form.getCombo(f.units);
 switch (c) {
 case 'COUNTRIES':
-	displayObject(document.getElementById('valueCountry'), true);
+	golgotha.util.display('valueCountry', true);
 	break;
 
 case 'STATES':
-	displayObject(document.getElementById('valueState'), true);
+	golgotha.util.display(document.getElementById('valueState'), true);
 	break;
 
 case 'AIRLINES':
-	displayObject(document.getElementById('valueAirline'), true);
+	golgotha.util.display('valueAirline', true);
 	break;
 	
 case 'CONTINENTS':
-	displayObject(document.getElementById('valueCont'), true);
+	golgotha.util.display(document.getElementById('valueCont'), true);
 	break;
 
 case 'AIRCRAFT':
 case 'EQLEGS':
-	displayObject(document.getElementById('valueEQType'), true);
+	golgotha.util.display(document.getElementById('valueEQType'), true);
 	break;
 
 default:
-	displayObject(document.getElementById('valueBox'), true);
+	golgotha.util.display('valueBox', true);
 	break;
 }
 

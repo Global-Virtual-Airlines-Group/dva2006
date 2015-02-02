@@ -41,20 +41,7 @@ else if (act.indexOf('linkimg.do') != -1) {
 } else if (form.msgText.value.length < 4)
 	golgotha.form.validate({f:f.pollVote, min:1, t:'Poll Vote'});
 
-golgotha.form.submit();
-disableButton('SaveButton');
-disableButton('LockButton');
-disableButton('HideButton');
-disableButton('UnlockButton');
-disableButton('UnstickButton');
-disableButton('StickButton');
-disableButton('EditButton');
-disableButton('LinkButton');
-disableButton('ImgDeleteButton');
-disableButton('DeleteButton');
-disableButton('MoveButton');
-disableButton('CalendarButton');
-disableButton('EmoticonButton');
+golgotha.form.submit(f);
 return true;
 };
 

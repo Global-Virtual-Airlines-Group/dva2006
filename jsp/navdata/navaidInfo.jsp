@@ -21,8 +21,7 @@ golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
 golgotha.form.validate({f:f.navaidCode, t:'Navigation Aid Code'});
-golgotha.form.submit();
-disableButton('SearchButton');
+golgotha.form.submit(f);
 return true;
 };
 
@@ -161,7 +160,7 @@ return true;
 <map:point var="mapC" point="${mapCenter}" />
 
 // Create map options
-var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
+var mapTypes = {mapTypeIds:golgotha.maps.DEFAULT_TYPES};
 var mapOpts = {center:mapC, minZoom:3, zoom:golgotha.maps.util.getDefaultZoom(110), scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
 
 // Build the map
@@ -171,8 +170,8 @@ map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.
 google.maps.event.addListener(map, 'click', map.closeWindow);
 
 // Build the navaid list
-<map:markers var="navaids" items="${results}" />
-addMarkers(map, 'navaids');
+<map:markers var="golgotha.local.navaids" items="${results}" />
+map.addMarkers(golgotha.local.navaids);
 
 // Surrounding navads
 golgotha.local.sMarkers = new MarkerManager(map, {borderPadding:32});

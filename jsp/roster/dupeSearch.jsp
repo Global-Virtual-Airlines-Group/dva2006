@@ -30,9 +30,7 @@ if (act.indexOf('dupemerge.do') != -1) {
 		throw new golgotha.util.ValidationErorr('Please provide at least one First or Last Name.', f.firstName);	
 }
 
-golgotha.form.submit();
-disableButton('SearchButton');
-disableButton('MergeButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

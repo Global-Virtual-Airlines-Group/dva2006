@@ -29,19 +29,12 @@ var eqOK = golgotha.form.comboSet(f.eqType);
 var alOK = golgotha.form.comboSet(f.airline);
 var adOK = golgotha.form.comboSet(f.airportD);
 var aaOK = golgotha.form.comboSet(f.airportA);
-
 if (eqOK || adOK || aaOK || alOK) {
-	golgotha.form.submit();
-	disableButton('SearchButton');
-	disableButton('BuildButton');
-	disableButton('BuildResetButton');
-	disableButton('SaveButton');
-	disableButton('ClearButton');
+	golgotha.form.submit(f);
 	return true;
 }
 
-alert('Please select at least an Airline, Aircraft Type or Departure/Arrival Airport.');
-return false;
+throw new golgotha.util.ValidationError('Please select at least an Airline, Aircraft Type or Departure/Arrival Airport.', f.airline);
 };
 <c:if test="${!empty fafResults}">
 golgotha.ff. buildValidate = function(f)
@@ -60,12 +53,7 @@ if (!isOK) {
 	return false;
 }
 
-golgotha.form.submit();
-disableButton('SearchButton');
-disableButton('BuildButton');
-disableButton('BuildResetButton');
-disableButton('SaveButton');
-disableButton('ClearButton');
+golgotha.form.submit(f);
 return true;
 };
 </c:if>
@@ -79,7 +67,7 @@ return true;
 };
 
 golgotha.ff.updateSort = function(cb) {
-	return enableElement('sortDesc', golgotha.form.comboSet(cb));
+	return golgotha.util.disable('sortDesc', !golgotha.form.comboSet(cb));
 };
 
 golgotha.ff.refreshAirports = function() {

@@ -18,8 +18,7 @@ if (!golgotha.form.check()) return false;
 golgotha.form.validate({f:f.name, l:6, t:'Airline Name'});
 golgotha.form.validate({f:f.code, l:2, t:'Airline Code'});
 golgotha.form.validate({f:f.color, t:'Airline Google Map Color'});
-golgotha.form.submit();
-disableButton('SaveButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

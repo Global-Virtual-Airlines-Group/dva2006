@@ -23,14 +23,7 @@ golgotha.local.validate = function(f)
 if (!golgotha.form.check()) return false;
 golgotha.form.validate({f:f.eqType, t:'Equipment Type'});
 golgotha.form.validate({f:f.route, t:'Flight Route'});
-golgotha.form.submit();
-disableButton('SaveButton');
-disableButton('EditButton');
-disableButton('RouteButton');
-disableButton('CancelButton');
-disableButton('DeleteButton');
-disableButton('AssignButton');
-disableButton('BalanceButton');
+golgotha.form.submit(f);
 return true;
 };
 

@@ -16,7 +16,6 @@
 <content:googleAnalytics eventSupport="true" />
 <script type="text/javascript">
 golgotha.maps.geoLocate = golgotha.maps.geoLocate || {usrLocation:null};
-
 golgotha.maps.geoLocate.gpsOK = function(pos) { map.panTo({lat:pos.coords.latitude, lng:pos.coords.longitude}); map.setZoom(8); return true; }
 golgotha.maps.geoLocate.gpsError = function(err) { console.log('GPS Geolocation failed - ' + err.code); return false; }
 golgotha.maps.geoLocate.updateLocation = function()
@@ -41,7 +40,7 @@ if (addr.value.length < 3) return false;
 // Do the lookup
 var isLoading = document.getElementById('isLoading');
 isLoading.innerHTML = ' - SEARCHING...';
-disableButton('SearchButton');
+golgotha.util.disable('SearchButton');
 golgotha.maps.geoLocate.geoCoder.geocode({address:addr.value}, golgotha.maps.geoLocate.showResponse);
 return true;
 };
@@ -51,7 +50,7 @@ golgotha.maps.geoLocate.showResponse = function(result, status)
 var f = document.forms[0];
 var isLoading = document.getElementById('isLoading');
 isLoading.innerHTML = '';
-enableElement('SearchButton', true);
+golgotha.util.disable('SearchButton', false);
 
 // Check for failure
 if ((!result.geometry) || (status != google.maps.GeocoderStatus.OK)) {
@@ -97,18 +96,14 @@ golgotha.maps.geoLocate.usrLocation = new google.maps.Marker({map:map, position:
 google.maps.event.addListener(golgotha.maps.geoLocate.usrLocation, 'dragend', golgotha.maps.geoLocate.setLatLon);
 map.closeWindow();
 return true;
-}
+};
 
-golgotha.local.validate = function(form)
+golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
-
-golgotha.form.submit();
-disableButton('SaveButton');
-disableButton('SearchButton');
-disableButton('DeleteButton');
+golgotha.form.submit(f);
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -174,8 +169,8 @@ location within a 3 mile circle each time the Pilot Location Board is displayed.
 <map:point var="mapC" point="${mapCenter}" />
 
 // Create map options
-var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
-var mapOpts = {center: mapC, zoom:golgotha.maps.util.getDefaultZoom(${!empty location ? 30 : 2000}), scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
+var mapTypes = {mapTypeIds:golgotha.maps.DEFAULT_TYPES};
+var mapOpts = {center:mapC, zoom:golgotha.maps.util.getDefaultZoom(${!empty location ? 30 : 2000}), scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
 
 // Build the map
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
@@ -196,7 +191,7 @@ google.maps.event.addListener(golgotha.maps.geoLocate.usrLocation, "dragend", go
 <c:if test="${empty location}">
 google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
 	if (navigator.geolocation)
-		window.setTimeout(function() { navigator.geolocation.getCurrentPosition(golgotha.maps.geoLocate.gpsOK, golgotha.maps.geoLocate.gpsError, {timeout:5000}); }, 150);
+		window.setTimeout(function() { navigator.geolocation.getCurrentPosition(golgotha.maps.geoLocate.gpsOK, golgotha.maps.geoLocate.gpsError,{timeout:5000}); }, 50);
 });
 </c:if>
 </script>

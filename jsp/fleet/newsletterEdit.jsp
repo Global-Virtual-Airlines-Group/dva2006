@@ -31,8 +31,7 @@ golgotha.form.validate({f:f.category, t:'Newsletter Category'});
 golgotha.form.validate({f:f.desc, l:10, t:'Description'});
 golgotha.form.validate({f:f.newsDate, l:8, t:'Publishing Date'});
 golgotha.form.validate({f:f.file, ext:['pdf'], t:'Uploaded Newsletter'});
-golgotha.form.submit();
-disableButton('SaveButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

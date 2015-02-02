@@ -23,8 +23,7 @@ if (!golgotha.form.comboSet(f.examName))
 	throw new golgotha.util.ValidationError('Please select the Examination you wish to take.', f.examName);
 
 if (!confirm('Are you sure you wish to take the ' + golgotha.form.getCombo(f.examName) + ' Examination?')) return false;
-golgotha.form.submit();
-disableButton('ExamButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

@@ -18,8 +18,7 @@ golgotha.local.validate = function(f)
 if (!golgotha.form.check()) return false;
 golgotha.form.validate({f:f.subject, l:10, t:'Notice Title'});
 golgotha.form.validate({f:f.body, l:15, t:'NOTAM Text'});
-golgotha.form.submit();
-disableButton('SubmitButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

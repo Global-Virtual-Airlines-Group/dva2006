@@ -17,8 +17,7 @@ golgotha.local.validate = function(f)
 if (!golgotha.form.check()) return false;
 golgotha.form.validateCombo({f:f.dbName, t:'Airline Name'});
 golgotha.form.validateCombo({f:f.eqType, t:'Equipment Program'});
-golgotha.form.submit();
-disableButton('TransferButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

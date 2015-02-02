@@ -27,14 +27,7 @@ else {
 	golgotha.form.validateText({f:f.comments, l:25, t:'Check Ride Comments'});
 }
 
-golgotha.form.submit();
-disableButton('ProfileButton');
-disableButton('CheckRideButton');
-disableButton('AssignButton');
-disableButton('ApproveButton');
-disableButton('ToggleButton');
-disableButton('RejectButton');
-disableButton('DeleteButton');
+golgotha.form.submit(f);
 return true;
 };
 
@@ -43,7 +36,7 @@ golgotha.local.toggleBody = function(id, type)
 var row = document.getElementById('body' + type + id);
 var linkDesc = document.getElementById('toggle' + type + id);
 var visible = (row.style.display != 'none');
-displayObject(row, !visible);
+golgotha.util.display(row, !visible);
 linkDesc.innerHTML = visible ? 'View' : 'Hide';
 return true;
 };

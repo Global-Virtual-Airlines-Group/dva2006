@@ -22,10 +22,9 @@ if (f.zip.value.length == 0) {
 } else
 	golgotha.form.validateFile({f:f.zip, ext:['zip'], t:'Offline Flight ZIP data'});
 
-golgotha.form.submit();
-disableButton('SaveButton');
+golgotha.form.submit(f);
 return true;
-}
+};
 </script>
 </head>
 <content:copyright visible="false" />

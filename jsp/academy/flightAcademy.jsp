@@ -31,9 +31,7 @@ if (act.indexOf('enroll.do') != -1)
 	if (!confirm('Are you sure you wish to take the ' + golgotha.form.getCombo(f.examName) + ' Examination?')) return false;
 }
 
-golgotha.form.submit();
-disableButton('EnrollButton');
-disableButton('ExamButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

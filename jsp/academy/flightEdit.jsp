@@ -23,9 +23,7 @@ golgotha.form.validate({f:f.eqType, t:'Equipment Type'});
 golgotha.form.validate({f:f.instructor, t:'Instructor Pilot'});
 golgotha.form.validate({f:f.flightDate, l:10, t:'Flight Date'});
 golgotha.form.validate({f:f.flightTime, t:'Logged Hours'});
-golgotha.form.submit();
-disableButton('SaveButton');
-disableButton('CalcButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

@@ -28,8 +28,7 @@ if (!golgotha.form.comboSet(f.airportD) && !golgotha.form.comboSet(f.airportA)) 
 	return false;
 }
 
-golgotha.form.submit();
-disableButton('SearchButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

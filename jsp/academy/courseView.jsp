@@ -29,16 +29,7 @@ if (act.indexOf('courseprogress.do') != -1) {
 } else
 	golgotha.form.validate({f:f.msgText, l:5, t:'Course Comments'});
 
-golgotha.form.submit();
-disableButton('EnrollButton');
-disableButton('CancelButton');
-disableButton('ReturnButton');
-disableButton('ApproveButton');
-disableButton('DeleteButton');
-disableButton('SchedButton');
-disableButton('ProgressButton');
-disableButton('FlightLogButton');
-disableButton('CommentButton');</c:if>
+golgotha.form.submit(f);</c:if>
 return ${access.canComment || access.canUpdateProgress};
 }
 <c:if test="${access.canCancel}">

@@ -39,10 +39,7 @@ if (hasNewRoute) {
 	golgotha.form.validate({f:f.maxSignups, min:0, t:'Maximum Signups'});
 }
 
-golgotha.form.submit();
-disableButton('SaveButton');
-disableButton('ViewButton');
-disableButton('BalanceButton');
+golgotha.form.submit(f);
 return true;
 };
 

@@ -19,7 +19,7 @@ golgotha.local.toggleBody = function(id)
 var row = document.getElementById(id);
 var linkDesc = document.getElementById('toggleC');
 var visible = (row.style.display != 'none');
-displayObject(row, !visible);
+golgotha.util.display(row, !visible);
 linkDesc.innerHTML = visible ? 'View' : 'Hide';
 return true;
 };

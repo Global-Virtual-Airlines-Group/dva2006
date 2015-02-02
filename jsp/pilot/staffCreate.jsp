@@ -18,8 +18,7 @@ golgotha.form.validate({f:f.staffTitle, l:10, t:'Staff Title'});
 golgotha.form.validate({f:f.staffArea, t:'Department Name'});
 golgotha.form.validate({f:f.staffBody, l:30, t:'Staff Biographical Profile'});
 golgotha.form.validate({f:f.staffSort, min:1, t:'Staff Profile Sort Order'});
-golgotha.form.submit();
-disableButton('SaveButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

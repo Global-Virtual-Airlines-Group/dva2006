@@ -22,11 +22,7 @@ if (act.indexOf('scnomdispose.do') != -1)
 else
 	golgotha.form.validate({f:f.body, l:30, t:'Nomination Comments'});
 
-golgotha.form.submit();
-disableButton('SaveButton');
-disableButton('ApproveButton');
-disableButton('RejectButton');
-disableButton('ProfileButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

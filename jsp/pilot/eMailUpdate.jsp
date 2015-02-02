@@ -29,8 +29,7 @@ for (var x = 0; x < invalidDomains.length; x++) {
 		throw new golgotha.util.ValidationError('Your e-mail address (' + eMail + ') contains a forbidden domain - ' + golgotha.local.invalidDomains[x], f.email);
 }
 
-golgotha.form.submit();
-disableButton('SubmitButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

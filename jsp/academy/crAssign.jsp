@@ -18,10 +18,7 @@ if (!golgotha.form.check()) return false;
 golgotha.form.validate({f:f.crType, t:'Aircraft Type'});
 <c:if test="${!isMine}">golgotha.form.validate({f:f.comments, l:6, t:'Check Ride Comments'});</c:if>
 
-golgotha.form.submit();
-disableButton('CourseButton');
-disableButton('ProfileButton');
-disableButton('AssignButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

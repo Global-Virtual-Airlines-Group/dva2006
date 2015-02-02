@@ -16,8 +16,7 @@ golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
 golgotha.form.validateCombo({f:f.eqType, t:'Equipment Program to transfer into'});
-golgotha.form.submit();
-disableButton('SubmitButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

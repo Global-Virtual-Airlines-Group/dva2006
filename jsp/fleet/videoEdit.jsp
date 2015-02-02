@@ -25,8 +25,7 @@ if ((f.file) && (f.file.value.length > 0))
 else if ((f.fileName) && (f.fileName.value.length > 0))
 	golgotha.form.validate({f:f.file, ext:['avi','wmv','divx','mp3','mp4'], t:'Local Filesystem Video'});
 
-golgotha.form.submit();
-disableButton('SaveButton');
+golgotha.form.submit(f);
 return true;
 };
 </script>

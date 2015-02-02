@@ -24,9 +24,7 @@ if (!golgotha.form.check()) return false;
 var act = f.action;
 if (act.indexOf('scnompurge.do') != -1) {
 	if (!confirm('Are you sure you wish to purge all Senior Captain nominations?')) return false;
-	golgotha.form.submit();
-	disableButton('SaveButton');
-	disableButton('PurgeButton');
+	golgotha.form.submit(f);
 	return true;
 }
 </content:filter>
@@ -40,10 +38,7 @@ golgotha.form.validate({f:f.body, l:30, t:'Nomination Comments'});
 var pilotName = f.pilot.options[form.id.selectedIndex].text;
 if (!confirm('Are you sure you wish to nominate ' + pilotName + ' for Senior Captain?')) return false;
 
-golgotha.form.submit();
-disableButton('SaveButton');
-disableButton('PurgeButton');
-disableButton('PostponeButton');
+golgotha.form.submit(f);
 return true;	
 };
 </script>
