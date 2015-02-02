@@ -7,18 +7,6 @@ golgotha.event.stop = function(e) { e.stopPropagation(); e.preventDefault(); ret
 golgotha.event.Error = function(msg, showAlert) { var e = new Error(msg); e.showAlert = showAlert; return e; };
 golgotha.event.ValidationError = function(msg, el) { var e = new golgotha.event.Error(msg, true); e.focusElement = el; return e; };
 
-golgotha.util.getElementsById = function(id, eName)
-{
-var elements = [];
-var all = document.getElementsByTagName((eName == null) ? '*' : eName);
-for (var x = 0; x < all.length; x++) {
-	if (all[x].id == id)
-		elements.push(all[x]);
-}
-
-return elements;
-};
-
 golgotha.util.getElementsByClass = function(cName, eName, parent)
 {
 if (parent == null) parent = document;
@@ -35,56 +23,42 @@ return elements;
 
 golgotha.util.addClass = function(e, cl)
 {
-if (!e) return false;
-var c = e.className.split(' ');
-if (c.indexOf(cl) < 0)
-	c.push(cl);
-
-e.className = c.join(' ');
-return true;
+	if (!e) return false;
+	var c = e.className.split(' ');
+	if (c.indexOf(cl) < 0) c.push(cl);
+	e.className = c.join(' ');
+	return true;
 };
 
-golgotha.util.removeClass = function(e, cl)
-{
-if (!e) return false;
-var c = e.className.split(' ');
-var hasClass = c.remove(cl);
-e.className = c.join(' ');
-return hasClass;
+golgotha.util.removeClass = function(e, cl) {
+	if (!e) return false;
+	var c = e.className.split(' ');
+	var hasClass = c.remove(cl);
+	e.className = c.join(' ');
+	return hasClass;
 };
 
-function enableObject(e, isEnabled)
-{
-if (e) e.disabled = (!isEnabled);
-return true;
-}
+golgotha.util.disable = function(e, doDisable) {
+	if (!e) return false;
+	doDisable = ((doDisable == null) || doDisable);
+	if (!e.style) e = document.getElementById(e);
+	if (e) e.disabled = doDisable;
+	return (e != null);
+};
 
-function enableElement(eName, isEnabled)
-{
-var objs = golgotha.util.getElementsById(eName);
-if (!objs) return false;
-for (var x = 0; x < objs.length; x++)
-	objs[x].disabled = (!isEnabled);
+golgotha.util.show = function(e, isVisible) {
+	if (!e) return false;
+	if (!e.style) e = document.getElementById(e);
+	if (e) e.style.visibility = isVisible ? 'visible' : 'hidden';
+	return (e != null);
+};
 
-return true;
-}
-
-function disableButton(btnName)
-{
-return enableElement(btnName, false);
-}
-
-function showObject(e, isVisible)
-{
-if (e) e.style.visibility = isVisible ? 'visible' : 'hidden';
-return true;
-}
-
-function displayObject(e, isVisible)
-{
-if (e) e.style.display = isVisible ? '' : 'none';
-return true;
-}
+golgotha.util.display = function(e, isVisible) {
+	if (!e) return false;
+	if (!e.style) e = document.getElementById(e);
+	if (e) e.style.display = isVisible ? '' : 'none';
+	return (e != null);
+};
 
 golgotha.form.resizeAll = function() {
 	var boxes = golgotha.util.getElementsByClass('resizable');
@@ -155,7 +129,9 @@ golgotha.util.enable = function(n) {
 	n = (n instanceof Array) ? n : [n];
 	for (var x = 0; x < n.length; x++) {
 		var ci = n[x];
-		if (ci.charAt(0) == '#') {
+		if (ci.style) {
+			if (ci.enable) ci.enable();
+		} else if (ci.charAt(0) == '#') {
 			var ee = golgotha.util.getElementsByClass(ci.substring(1));
 			for (var e = ee.pop(); (e != null); e = ee.pop())
 				if (e.enable) e.enable();
@@ -228,25 +204,63 @@ return result;
 };
 
 golgotha.form.check = function() { return (golgotha.form.isSubmitted != true); };
-golgotha.form.submit = function() { golgotha.form.isSubmitted = true; return true; };
+golgotha.form.submit = function(f) {
+	golgotha.form.isSubmitted = true;
+	if (f != null) {
+		var ies = golgotha.util.getElementsByClass('button', 'input', f);
+		for (var e = ies.pop(); (e != null); e = ies.pop())
+			e.disabled = true;
+	}
+	
+	var dv = document.getElementById('spinner');
+	if (!dv) return true;
+	
+	// Add background
+	var sb = document.createElement('div');
+	sb.setAttribute('id', 'spinnerBack');
+	document.body.appendChild(sb);
+	
+	// Add spinner message
+	var w = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+	var h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+	dv.style.top = ((h - 160) / 2) + 'px';
+	dv.style.left = ((w - 185) / 2) + 'px';
+	dv.style.display = '';
+	return true;
+};
+
+golgotha.form.clear = function(f) {
+	golgotha.form.isSubmitted = false;
+	var sb = document.getElementById('spinnerBack');
+	if (sb) document.body.removeChild(sb);
+	var dv = document.getElementById('spinner');
+	if (dv) dv.style.display = 'none';
+	if (f != null) {
+		var ies = golgotha.util.getElementsByClass('button', 'input', f);
+		for (var e = ies.pop(); (e != null); e = ies.pop())
+			e.disabled = false;
+	}
+
+	return true;
+};
+
 golgotha.form.get = function(url) { golgotha.form.submit(); self.location = '/' + url; return true; };
 golgotha.form.post = function(url)
 {
 var f = document.forms[0];
-f.oldaction = f.action;
+var oldaction = f.action;
 f.action = url;
  
 // Execute the form validation - if any
 if (f.onsubmit) {
 	var submitOK = f.onsubmit();
 	if (!submitOK) {
-		f.action = f.oldaction;
-		delete f.oldaction;
+		f.action = oldaction;
 		return false;
 	}
 }
   
-golgotha.form.submit();
+golgotha.form.submit(f);
 f.submit();
 return true;
 };

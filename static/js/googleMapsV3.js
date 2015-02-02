@@ -120,6 +120,38 @@ google.maps.Map.prototype.closeWindow = function() {
 	return true;
 };
 
+google.maps.Map.prototype.addMarkers = function(mrks) {
+	if (!mrks) return false;
+	mrks = (mrks instanceof Array) ? mrks : [mrks];
+	for (var x = 0; x < markers.length; x++) {
+		var mrk = mrks[x];
+		if (mrk.setMap) mrk.setMap(this);
+	}
+
+	return true;
+};
+
+google.maps.Map.prototype.removeMarkers = function(mrks) {
+	if (!mrks) return false;
+	mrks = (mrks instanceof Array) ? mrks : [mrks];
+	for (var x = 0; x < mrks.length; x++) {
+		var mrk = mrks[x];
+		if ((mrk.getMap) && (mrk.setMap) && (mrk.getMap() == this)) mrk.setMap(null);
+	}
+	
+	return true;
+};
+
+google.maps.Map.prototype.toggle = function(mrks, show) {
+	if (!mrks) return false;
+	this.closeWindow();
+	mrks = (mrks instanceof Array) ? mrks : [mrks];
+	for (var x = 0; x < mrks.length; x++)
+		mrks[x].setMap(show ? this : null);
+	
+	return true;
+}
+
 // Disable zoom
 google.maps.Map.prototype.disableZoom = function() { 
 	map.setOptions({disableDoubleClickZoom:true, draggable:false, panControl:false, scaleControl:false});
@@ -167,7 +199,7 @@ google.maps.Map.prototype.clearSelects = function(cl) {
 // Sets a status message
 google.maps.Map.prototype.setStatus = function(msg) {
 	var sp = document.getElementById('mapStatus');
-	if (sp)	sp.innerHTML = msg;
+	if (sp) sp.innerHTML = msg;
 	return true;
 };
 
@@ -370,16 +402,13 @@ golgotha.maps.Marker = function(opts, pt) {
 		google.maps.event.addListener(mrk, 'click', function() { map.infoWindow.setContent(this.info); map.infoWindow.open(map, this); });	
 	}
 
-	if (opts.map != null)
-		mrk.setMap(map);
-
+	if (opts.map != null) mrk.setMap(map);
 	return mrk;
 };
 
 golgotha.maps.IconMarker = function(opts, pt) {
 	if (opts == null) opts = {pal:0, icon:0};
 	var hasLabel = (opts.label != null);
-
 	var imgBase = null;
 	if (opts.pal > 0)
 		imgBase = 'http://maps.google.com/mapfiles/kml/pal' + opts.pal + '/icon' + opts.icon;
@@ -394,9 +423,7 @@ golgotha.maps.IconMarker = function(opts, pt) {
 		google.maps.event.addListener(mrk, 'click', function() { map.infoWindow.setContent(this.info); map.infoWindow.open(map, this); });
 	}
 
-	if (opts.map != null)
-		mrk.setMap(map);
-
+	if (opts.map != null) mrk.setMap(map);
 	return mrk;
 };
 
@@ -480,60 +507,6 @@ try {
 return true;
 };
 
-
-function addMarkers(map, arrayName)
-{
-// Get the map data
-try {
-	var markers = eval(arrayName);
-	if (!markers) return false;
-
-	// Add the map data, either an array or a single element
-	if (markers instanceof Array) {
-		for (var x = 0; x < markers.length; x++)
-			markers[x].setMap(map);
-	} else if (markers.setMap)
-		markers.setMap(map);
-} catch (err) {
-	return false;
-}
-
-return true;
-}
-
-function removeMarkers(arrayName)
-{
-// Get the map data
-try {
-	var markers = eval(arrayName);
-	if (!markers) return false;
-
-	// Remove the map data, either an array or a single element
-	if (markers instanceof Array) {
-		for (var x = 0; x < markers.length; x++)
-			markers[x].setMap(null);
-	} else if (markers.setMap)
-		markers.setMap(null);
-} catch (err) {
-	return false;
-}
-
-return true;
-}
-
-function toggleMarkers(map, arrayName, check)
-{
-if (map.infoWindow) map.infoWindow.close();
-
-// Figure out if we add or remove the markers
-if (!check.checked)
-	removeMarkers(arrayName);
-else
-	addMarkers(map, arrayName);
-
-return true;
-}
-
 golgotha.maps.util.updateTab = function(ofs, size)
 {
 if ((ofs < 0) || (ofs > this.tabs.length)) ofs = 0;
@@ -564,7 +537,7 @@ var txt = '<span class="tabMenu">';
 for (var x = 0; x < tabs.length; x++) {
 	var tab = tabs[x];
 	if (x != selectedOfs) {
-		txt += '<a href="javascript:void updateTab(map.infoWindow.marker,' + x + ')">';
+		txt += '<a href="javascript:void golgotha.maps.util.updateTab(map.infoWindow.marker,' + x + ')">';
 		txt += tab.name;
 		txt += '</a> ';
 	} else

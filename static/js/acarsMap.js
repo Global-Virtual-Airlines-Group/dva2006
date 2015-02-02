@@ -14,13 +14,13 @@ xmlreq.onreadystatechange = function() {
 		isLoading.innerHTML = ' - REDRAWING...';
 		
 	// Clean up the map - don't strip out the weather layer
-	removeMarkers('golgotha.maps.acars.routeData');
-	removeMarkers('golgotha.maps.acars.routeWaypoints');
-	removeMarkers('golgotha.maps.acars.acPositions');
-	removeMarkers('golgotha.maps.acars.dcPositions');
+	map.removeMarkers(golgotha.maps.acars.routeData);
+	map.removeMarkers(golgotha.maps.acars.routeWaypoints);
+	map.removeMarkers(golgotha.maps.acars.acPositions);
+	map.removeMarkers(golgotha.maps.acars.dcPositions);
 	golgotha.maps.acars.acPositions.length = 0;
 	golgotha.maps.acars.dcPositions.length = 0;
-	displayObject(document.getElementById('userSelect'), false);
+	golgotha.util.display('userSelect', false);
 	var cbo = document.forms[0].usrID;
 	if (cbo != null) {
 		selectedPilot = cbo.options[cbo.selectedIndex].value;
@@ -131,7 +131,7 @@ xmlreq.onreadystatechange = function() {
 	} // for
 
 	// Enable the Google Earth button depending on if we have any aircraft
-	enableElement('EarthButton', (ac.length > 0));
+	golgotha.util.disable('EarthButton', (ac.length == 0));
 
 	// Display dispatch status
 	var de = document.getElementById('dispatchStatus');
@@ -145,7 +145,7 @@ xmlreq.onreadystatechange = function() {
 
 	// Focus on the map
 	if (cbo)
-		displayObject(document.getElementById('userSelect'), (cbo.options.length > 1));
+		golgotha.util.display('userSelect', (cbo.options.length > 1));
 	if (isLoading)
 		isLoading.innerHTML = ' - ' + (ac.length + dc.length) + ' CONNECTIONS';
 
@@ -176,8 +176,8 @@ if (isInfo && (this.tabs)) {
 
 // Display flight progress / route
 if (isProgress || isRoute) {
-	removeMarkers('golgotha.maps.acars.routeData');
-	removeMarkers('golgotha.maps.acars.routeWaypoints');
+	map.removeMarkers(golgotha.maps.acars.routeData);
+	map.removeMarkers(golgotha.maps.acars.routeWaypoints);
 	golgotha.maps.acars.showFlightProgress(this, isProgress, isRoute);
 }
 
@@ -223,8 +223,8 @@ document.pauseRefresh = false;
 if ((map.infoWindow.marker) && (map.infoWindow.marker.rangeCircle))
 	map.infoWindow.marker.rangeCircle.setMap(null);
 
-removeMarkers('golgotha.maps.acars.routeData'); 
-removeMarkers('golgotha.maps.acars.routeWaypoints');
+map.removeMarkers(golgotha.maps.acars.routeData);
+map.removeMarkers(golgotha.maps.acars.routeWaypoints);
 map.closeWindow();
 return true;	
 }

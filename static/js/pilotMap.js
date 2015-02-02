@@ -15,7 +15,7 @@ xmlreq.onreadystatechange = function() {
 		golgotha.pilotMap.heatMapData.push(a.ll);
 	}
 
-	removeMarkers('golgotha.pilotMap.mrks');
+	map.removeMarkers(golgotha.pilotMap.mrks);
 	golgotha.pilotMap.hmap.setData(golgotha.pilotMap.heatMapData);
 	var batchSize = Math.round(golgotha.pilotMap.queue.length / 50);
 	golgotha.pilotMap.pBar.start(100);
@@ -26,9 +26,9 @@ xmlreq.onreadystatechange = function() {
 var f = document.forms[0];
 var isLoading = document.getElementById('isLoading');
 isLoading.innerHTML = ' - LOADING...';
-enableElement(f.noFilter, false);
-enableElement(f.eqType, false);
-enableElement(f.rank, false);
+golgotha.util.disable(f.noFilter);
+golgotha.util.disable(f.eqType);
+golgotha.util.disable(f.rank);
 return xmlreq;
 };
 
@@ -59,9 +59,9 @@ else {
 	var f = document.forms[0];
 	var isLoading = document.getElementById('isLoading');
 	isLoading.innerHTML = '';
-	enableElement(f.noFilter, true);
-	enableElement(f.eqType, true);
-	enableElement(f.rank, true);
+	golgotha.util.disable(f.noFilter, false);
+	golgotha.util.disable(f.eqType, false);
+	golgotha.util.disable(f.rank, false);
 	golgotha.pilotMap.pBar.hide();
 	golgotha.event.beacon('Pilot Map', 'Load');
 }
@@ -104,7 +104,7 @@ while ((cnt < batchSize) && (mrk != null)) {
 if (mrk != null)
 	setTimeout("golgotha.pilotMap.mrkUpdate('" + rank + "','" + eqType + "'," + batchSize +")", 2);
 else {
-	pBar.hide();
+	golgotha.pilotMap.pBar.hide();
 	golgotha.event.beacon('Pilot Map', 'Update');	
 }
 
@@ -114,15 +114,14 @@ return true;
 golgotha.pilotMap.updateMapOptions = function(opt)
 {
 golgotha.event.beacon('Pilot Map', 'Switch Type');
-var toggleOpts = {checked:(opt.value != 'MAP')};
-toggleMarkers(map, 'golgotha.pilotMap.mrks', toggleOpts);
+map.toggle(golgotha.pilotMap.mrks, (opt.value != 'MAP'));
 golgotha.pilotMap.hmap.setMap(toggleOpts.checked ? null : map);
 hq.setMap(toggleOpts.checked ? map : null);
 
 // Toggle filter rows
 var rows = golgotha.util.getElementsByClass('locFilter');
 for (var x = 0; x < rows.length; x++)
-	displayObject(rows[x], toggleOpts.checked);
+	golgotha.util.display(rows[x], toggleOpts.checked);
 
 return true;
 };

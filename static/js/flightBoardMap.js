@@ -15,7 +15,7 @@ xmlreq.onreadystatechange = function() {
 	var xdoc = xmlreq.responseXML;
 	var re = xdoc.documentElement;
 	map.clearOverlays();
-	displayObject(document.getElementById('userSelect'), false);
+	golgotha.util.display('userSelect', false);
 	var cbo = document.getElementById('usrID');
 	var selectedATC = cbo.options[cbo.selectedIndex].value;
 	cbo.options.length = 1;
@@ -64,7 +64,7 @@ xmlreq.onreadystatechange = function() {
 			cbo.selectedIndex = (cbo.options.length - 1);
 	}
 
-	displayObject(document.getElementById('userSelect'), (cbo.options.length > 1));
+	golgotha.util.display('userSelect', (cbo.options.length > 1));
 	if (isAuto)
 		window.setTimeout('void golgotha.flightBoard.updateMap()', 90000);
 
@@ -78,12 +78,12 @@ return true;
 golgotha.flightBoard.infoClose = function()
 {
 if (golgotha.flightBoard.selectedRoute != null) {
-	removeMarkers('golgotha.flightBoard.selectedRoute');
+	map.removeMarkers(golgotha.flightBoard.selectedRoute);
 	delete golgotha.flightBoard.selectedRoute;
 }
 
 if (golgotha.flightBoard.selectedTrack != null) {
-	removeMarkers('golgotha.flightBoard.selectedTrack');
+	map.removeMarkers(golgotha.flightBoard.selectedTrack);
 	delete golgotha.flightBoard.selectedTrack;
 }
 
