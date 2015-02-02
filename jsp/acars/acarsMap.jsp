@@ -210,7 +210,6 @@ google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
 	google.maps.event.trigger(map, 'maptypeid_changed');
 	google.maps.event.trigger(map, 'zoom_changed');
 	document.dispatchOnline = false;
-	document.doRefresh = true;
 	golgotha.maps.acars.reloadData(true);
 });
 
