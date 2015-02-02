@@ -77,7 +77,7 @@ return true;
 </tr>
 </c:if>
 <tr>
- <td class="data"><map:div ID="googleMap" x="100%" y="510" /><div id="copyright" class="small mapTextLabel"></div>
+ <td class="data"><map:div ID="googleMap" x="100%" y="500" /><div id="copyright" class="small mapTextLabel"></div>
 <div id="mapStatus" class="small mapTextLabel"></div></td>
 </tr>
 </el:table>
@@ -86,8 +86,7 @@ return true;
 <content:sysdata var="wuAPI" name="security.key.wunderground" />
 <script id="mapInit" defer>
 <map:point var="mapC" point="${mapCenter}" />
-var mapTypes = {mapTypeIds:golgotha.maps.DEFAULT_TYPES};
-var mapOpts = {center:mapC, minZoom:2, zoom:${zoomLevel}, maxZoom:17, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
+var mapOpts = {center:mapC, minZoom:2, zoom:${zoomLevel}, maxZoom:17, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
 
 // Create the map
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
@@ -116,7 +115,7 @@ ctls.push(new golgotha.maps.LayerAnimateControl({map:map, title:'Radar Loop', re
 
 // Add other layers
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'FIRs', disabled:true, id:'selFIR'}, function() { return loaders.fir.getLayer(); }));
-map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerClearControl(map));
+ctls.push(new golgotha.maps.LayerClearControl(map));
 
 // Display the copyright notice and text boxes
 map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById('copyright'));
@@ -130,7 +129,6 @@ google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
 	golgotha.util.createScript({id:'wuFronts', url:'http://api.wunderground.com/api/${wuAPI}/fronts/view.json?callback=loaders.fr.load', async:true});
 	google.maps.event.trigger(map, 'maptypeid_changed');
 	google.maps.event.trigger(map, 'zoom_changed');
-	document.doRefresh = true;
 	golgotha.maps.acars.reloadData(true);
 });
 </script>
