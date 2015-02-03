@@ -278,12 +278,12 @@ golgotha.local.showRunwayChoices = function() {
 <tr>
  <td class="label">Route Map Data</td>
  <td class="data"><span class="bld">
-<c:if test="${isACARS || (!empty mapRoute)}"><el:box name="showRoute" idx="*" onChange="void map.toggle(gRoute, this.checked)" label="Route" checked="${!isACARS}" /> </c:if>
+<c:if test="${isACARS || (!empty mapRoute)}"><el:box name="showRoute" idx="*" onChange="void map.toggle(golgotha.maps.acarsFlight.gRoute, this.checked)" label="Route" checked="${!isACARS}" /> </c:if>
 <c:if test="${isACARS}"><el:box name="showFDR" idx="*" onChange="void map.toggle(golgotha.maps.acarsFlight.routeMarkers, this.checked)" label="Flight Data" checked="false" /> </c:if>
-<c:if test="${!empty filedRoute}"><el:box name="showFPlan" idx="*" onChange="void map.toggle(gfRoute, this.checked)" label="Flight Plan" checked="true" /> </c:if>
-<el:box name="showFPMarkers" idx="*" onChange="void map.toggle(filedMarkers, this.checked)" label="Navaid Markers" checked="true" />
-<c:if test="${!empty onlineTrack}"> <el:box name="showOTrack" idx="*" onChange="void map.toggle(otRoute, this.checked)" label="Online Track" checked="false" />
- <el:box name="showOMarkers" idx="*" onChange="void map.toggle(otMarkers, this.checked)" label="Online Data" checked="false" /></c:if>
+<c:if test="${!empty filedRoute}"><el:box name="showFPlan" idx="*" onChange="void map.toggle(golgotha.maps.acarsFlight.gfRoute, this.checked)" label="Flight Plan" checked="true" /> </c:if>
+<el:box name="showFPMarkers" idx="*" onChange="void map.toggle(golgotha.maps.acarsFlight.filedMarkers, this.checked)" label="Navaid Markers" checked="true" />
+<c:if test="${!empty onlineTrack}"> <el:box name="showOTrack" idx="*" onChange="void map.toggle(golgotha.maps.acarsFlight.otRoute, this.checked)" label="Online Track" checked="false" />
+ <el:box name="showOMarkers" idx="*" onChange="void map.toggle(golgotha.maps.acarsFlight.otMarkers, this.checked)" label="Online Data" checked="false" /></c:if>
 </span></td>
 </tr>
 <tr>
@@ -376,11 +376,11 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 <content:browser human="true">
 <c:if test="${googleMap}">
 <script id="mapInit" defer>
-<map:point var="mapC" point="${mapCenter}" />
+<map:point var="golgotha.local.mapC" point="${mapCenter}" />
 
 // Create map options
-var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
-var mapOpts = {center:mapC, minZoom:2, maxZoom:18, zoom:golgotha.maps.util.getDefaultZoom(${pirep.distance}), scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
+var mapTypes = {mapTypeIds:golgotha.maps.DEFAULT_TYPES};
+var mapOpts = {center:golgotha.local.mapC, minZoom:2, maxZoom:18, zoom:golgotha.maps.util.getDefaultZoom(${pirep.distance}), scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
 
 // Build the map
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
@@ -388,41 +388,42 @@ var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
 google.maps.event.addListener(map, 'click', map.closeWindow);
+google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
+	google.maps.event.trigger(map, 'maptypeid_changed');	
+});
 
 // Build the route line and map center
 <c:if test="${!empty mapRoute}">
-<map:points var="routePoints" items="${mapRoute}" />
-<map:line var="gRoute" src="routePoints" color="#4080af" width="3" transparency="0.75" geodesic="true" />
+<map:points var="golgotha.maps.acarsFlight.routePoints" items="${mapRoute}" />
+<map:line var="golgotha.maps.acarsFlight.gRoute" src="golgotha.maps.acarsFlight.routePoints" color="#4080af" width="3" transparency="0.75" geodesic="true" />
 </c:if>
 <c:if test="${empty mapRoute && isACARS}">
-var gRoute;
 golgotha.maps.acarsFlight.getACARSData(${fn:ACARS_ID(pirep)}, ${access.canApprove});
-google.maps.event.addListener(map.infoWindow, 'closeclick', function() { map.removeMarkers(selectedFIRs); });
 </c:if>
 <c:if test="${!empty filedRoute}">
-<map:points var="filedPoints" items="${filedRoute}" />
-<map:markers var="filedMarkers" items="${filedRoute}" />
-<map:line var="gfRoute" src="filedPoints" color="#80800f" width="2" transparency="0.5" geodesic="true" />
+<map:points var="golgotha.maps.acarsFlight.filedPoints" items="${filedRoute}" />
+<map:markers var="golgotha.maps.acarsFlight.filedMarkers" items="${filedRoute}" />
+<map:line var="golgotha.maps.acarsFlight.gfRoute" src="golgotha.maps.acarsFlight.filedPoints" color="#80800f" width="2" transparency="0.5" geodesic="true" />
 </c:if>
 <c:if test="${!empty onlineTrack}">
-<map:points var="onlinePoints" items="${onlineTrack}" />
-<map:markers var="otMarkers" items="${onlineTrack}" />
-<map:line var="otRoute" src="onlinePoints" color="#f06f4f" width="3" transparency="0.55" geodesic="true" />
+<map:points var="golgotha.maps.acarsFlight.onlinePoints" items="${onlineTrack}" />
+<map:markers var="golgotha.maps.acarsFlight.otMarkers" items="${onlineTrack}" />
+<map:line var="golgotha.maps.acarsFlight.otRoute" src="golgotha.maps.acarsFlight.onlinePoints" color="#f06f4f" width="3" transparency="0.55" geodesic="true" />
 </c:if>
 <c:if test="${!empty mapRoute}">
 // Add the route and markers
-map.addMarkers(gRoute);
+map.addMarkers(golgotha.maps.acarsFlight.gRoute);
 </c:if>
 <c:if test="${!empty filedRoute}">
-map.addMarkers(gfRoute);
-map.addMarkers(filedMarkers);
+map.addMarkers(golgotha.maps.acarsFlight.gfRoute);
+map.addMarkers(golgotha.maps.acarsFlight.filedMarkers);
 </c:if>
 <c:if test="${empty filedRoute}">
 // Airport markers
-<map:marker var="gmA" point="${pirep.airportA}" />
-<map:marker var="gmD" point="${pirep.airportD}" />
-var filedMarkers = [gmA, gmD];
-map.addMarkers(filedMarkers);
+<map:marker var="golgotha.maps.acarsFlight.gmA" point="${pirep.airportA}" />
+<map:marker var="golgotha.maps.acarsFlight.gmD" point="${pirep.airportD}" />
+golgotha.maps.acarsFlight.filedMarkers = [golgotha.maps.acarsFlight.gmA, golgotha.maps.acarsFlight.gmD];
+map.addMarkers(golgotha.maps.acarsFlight.filedMarkers);
 </c:if>
 <c:if test="${isACARS}">
 google.load('visualization','1.0',{'packages':['corechart']});
@@ -450,25 +451,11 @@ xmlreq.onreadystatechange = function() {
 	<c:if test="${!isXACARS}">
 	data.addColumn('number', 'Ground Elevation');</c:if>
 	data.addRows(sd);
-	
+
 	// Read CSS selectors for graph lines
-	var pr = '#0000a1'; var sc = '#008080';
-	if (!golgotha.util.oldIE) {
-		for (var x = 0; x < document.styleSheets.length; x++) {
-			var ss = document.styleSheets[x];
-			if ((ss.href == null) || (ss.href.indexOf('main.css') == -1)) continue;
-			for (var y = 0; y < ss.cssRules.length; y++) {
-				var cs = ss.cssRules[y];
-				if (cs.selectorText) {
-					if (cs.selectorText.indexOf('.pri') > -1)
-						pr = cs.style.color;
-					else if (cs.selectorText.indexOf('.sec') > -1)
-						sc = cs.style.color;
-				}
-			}
-		}
-	}
-	
+	var pr = golgotha.util.getStyle('main.css', '.pri') || '#0000a1'; 
+	var sc = golgotha.util.getStyle('main.css', '.sec') || '#008080';
+
 	// Create formatting options
 	var ha = {gridlines:{count:10},minorGridlines:{count:5},title:'Date/Time',textStyle:lgStyle};
 	var va0 = {maxValue:statsData.maxAlt,title:'Altitude',textStyle:lgStyle};
@@ -481,16 +468,7 @@ xmlreq.onreadystatechange = function() {
 
 xmlreq.send(null);
 return true;
-});
-</c:if>
-<c:if test="${!empty onlineTrack}">
-golgotha.local.toggleObject = function(map, obj, check) {
-	map.closeWindow();	
-	obj.setMap((check.checked) ? map : null);
-	return true;
-};</c:if>
-// Update text color
-google.maps.event.trigger(map, 'maptypeid_changed');
+});</c:if>
 </script>
 </c:if></content:browser>
 </body>

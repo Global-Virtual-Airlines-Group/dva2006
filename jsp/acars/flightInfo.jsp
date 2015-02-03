@@ -103,10 +103,10 @@
 <!-- Flight Map -->
 <tr>
  <td class="label">Route Map Data</td>
- <td class="data" colspan="4"><span class="bld"><el:box name="showRoute" idx="*" onChange="void map.toggle(gRoute, this.checked)" label="Route" checked="false" />
+ <td class="data" colspan="4"><span class="bld"><el:box name="showRoute" idx="*" onChange="void map.toggle(golgotha.maps.acarsFlight.gRoute, this.checked)" label="Route" checked="false" />
 <el:box name="showFDR" idx="*" onChange="void map.toggle(golgotha.maps.acarsFlight.routeMarkers, this.checked)" label="Flight Data" checked="false" /> 
-<el:box name="showFPlan" idx="*" onChange="void map.toggle(gfRoute, this.checked)" label="Flight Plan" checked="true" /> 
-<el:box name="showFPMarkers" idx="*" onChange="void map.toggle(filedMarkers, this.checked)" label="Navaid Markers" checked="true" /></span>
+<el:box name="showFPlan" idx="*" onChange="void map.toggle(golgotha.maps.acarsFlight.gfRoute, this.checked)" label="Flight Plan" checked="true" /> 
+<el:box name="showFPMarkers" idx="*" onChange="void map.toggle(golgotha.maps.acarsFlight.filedMarkers, this.checked)" label="Navaid Markers" checked="true" /></span>
 <span id="routeProgress" class="small"></span></td>
 </tr>
 <tr>
@@ -131,17 +131,15 @@
 </content:page>
 <c:if test="${fn:sizeof(mapRoute) > 0}">
 <script id="mapInit" defer>
-var gRoute;
-
 // Build the route line and map center
-<map:point var="mapC" point="${mapCenter}" />
-<map:points var="filedPoints" items="${filedRoute}" />
-<map:markers var="filedMarkers" items="${filedRoute}" />
-<map:line var="gfRoute" src="filedPoints" color="#a0400f" width="2" transparency="0.7" geodesic="true" />
+<map:point var="golgotha.local.mapC" point="${mapCenter}" />
+<map:points var="golgotha.maps.acarsFlight.filedPoints" items="${filedRoute}" />
+<map:markers var="golgotha.maps.acarsFlight.filedMarkers" items="${filedRoute}" />
+<map:line var="golgotha.maps.acarsFlight.gfRoute" src="filedPoints" color="#a0400f" width="2" transparency="0.7" geodesic="true" />
 
 // Build the map
 var mapTypes = {mapTypeIds:golgotha.maps.DEFAULT_TYPES};
-var mapOpts = {center: mapC, minZoom:2, zoom:golgotha.maps.util.getDefaultZoom(${pirep.distance}), scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
+var mapOpts = {center:golgotha.local.mapC, minZoom:2, zoom:golgotha.maps.util.getDefaultZoom(${pirep.distance}), scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'click', map.closeWindow);
@@ -149,8 +147,8 @@ google.maps.event.addListener(map, 'click', map.closeWindow);
 golgotha.maps.acarsFlight.getACARSData(${info.ID});
 
 // Add the filed route and markers
-map.addMarkers(gfRoute);
-map.addMarkers(filedMarkers);
+map.addMarkers(golgotha.maps.acarsFlight.gfRoute);
+map.addMarkers(golgotha.maps.acarsFlight.filedMarkers);
 </script></c:if>
 </body>
 </html>
