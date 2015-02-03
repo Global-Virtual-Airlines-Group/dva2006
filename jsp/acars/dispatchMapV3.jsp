@@ -25,45 +25,37 @@ loaders.series.setData('hirad_temp', 0.275, 'wxTemp');
 loaders.series.setData('hirad_windSpeed', 0.325, 'wxWind');
 loaders.series.onload(function() { golgotha.util.enable('#selImg'); });
 
-function clickIcon()
-{
-if (this.uniqueID) {
-	map.infoWindow.setContent(window.external.GetMarkerMessage(this.uniqueID));
-	map.infoWindow.open(map, this);
-}
+golgotha.local.clickIcon = function() {
+	if (this.uniqueID) {
+		map.infoWindow.setContent(window.external.GetMarkerMessage(this.uniqueID));
+		map.infoWindow.open(map, this);
+	}
 
-return true;
-}
+	return true;
+};
 
-function externalMarker(color, p, id)
-{
-var mrk = new golgotha.maps.Marker({color:color}, p);
-mrk.uniqueID = id;
-google.maps.event.addListener(mrk, 'click', clickIcon);
-return mrk;
-}
+golgotha.local.externalIconMarker = function(opts, p, id) {
+	var mrk = new golgotha.maps.IconMarker(opts, p);
+	mrk.uniqueID = id;
+	google.maps.event.addListener(mrk, 'click', golgotha.local.clickIcon);
+	return mrk;
+};
 
-function externalIconMarker(palCode, iconCode, p, id)
-{
-var mrk = new golgotha.maps.IconMarker({pal:palCode, icon:iconCode}, p);
-mrk.uniqueID = id;
-google.maps.event.addListener(mrk, 'click', clickIcon);
-return mrk;
-}
+externalIconMarker = function(palCode, iconCode, p, id) {
+	return new golgotha.local.externalIconMarker({pal:palCode,icon:iconCode}, p, id);
+};
 <c:if test="${isDispatch}">
-function mapZoom()
-{
-golgotha.event.beacon('Dispatch', 'Zoom/Pan');
-var b = map.getBounds();
-window.external.doPan(b.getNorthEast().lat(), b.getSouthWest().lng(), b.getSouthWest().lat(), b.getNorthEast().lng(), map.getZoom());
-return true;
-}
+golgotha.local.mapZoom = function() {
+	golgotha.event.beacon('Dispatch', 'Zoom/Pan');
+	var b = map.getBounds();
+	window.external.doPan(b.getNorthEast().lat(), b.getSouthWest().lng(), b.getSouthWest().lat(), b.getNorthEast().lng(), map.getZoom());
+	return true;
+};
 
-function toggleObjects(mrks, visible)
+golgotha.local.toggleObjects = function(mrks, visible)
 {
 if (mrks == null) return false;
-for (var idx = 0; idx < mrks.length; idx++)
-{
+for (var idx = 0; idx < mrks.length; idx++) {
 	var m = mrks[idx];
 	if (visible)
 		m.setMap(map);
@@ -72,7 +64,11 @@ for (var idx = 0; idx < mrks.length; idx++)
 }
 
 return true;
-}</c:if>
+};
+
+mapZoom = golgotha.local.mapZoom;
+toggleObjects = golgotha.local.toggleObjects;
+</c:if>
 </script>
 </head>
 <body onunload="void golgotha.maps.util.unload(map)">
@@ -81,10 +77,7 @@ return true;
 <div id="mapStatus" class="small mapTextLabel"></div>
 </el:form>
 <script id="mapInit" defer>
-var mapTypes = {mapTypeIds:golgotha.maps.DEFAULT_TYPES};
-var mapOpts = {center:{lat:36.44, lng:-100.14}, zoom:6, minZoom:2, maxZoom:12, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
-
-// Load the map
+var mapOpts = {center:{lat:36.44,lng:-100.14}, zoom:6, minZoom:2, maxZoom:12, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
@@ -123,7 +116,7 @@ var aL;
 var mrks_sid = [];
 var mrks_star = [];
 <c:if test="${isDispatch}">
-google.maps.event.addListener(map, 'dragend', mapZoom);</c:if>
+google.maps.event.addListener(map, 'dragend', golgotha.local.mapZoom);</c:if>
 
 // Load data async once tiles are loaded
 google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
