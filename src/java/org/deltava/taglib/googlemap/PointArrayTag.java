@@ -8,7 +8,6 @@ import javax.servlet.jsp.*;
 import org.deltava.beans.GeoLocation;
 
 import org.deltava.taglib.ContentHelper;
-
 import org.deltava.util.StringUtils;
 
 /**
@@ -46,14 +45,12 @@ public class PointArrayTag extends GoogleMapEntryTag {
 	 */
 	@Override
 	public int doEndTag() throws JspException {
-
-		// Create the JavaScript array definition
-		JspWriter out = pageContext.getOut();
 		try {
+			JspWriter out = pageContext.getOut();
 			if (_jsVarName.indexOf('.') == -1)
 				out.print("var ");
 			out.print(_jsVarName);
-			out.println(" = [;");
+			out.println(" = [");
 
 			// Create the markers
 			for (Iterator<GeoLocation> i = _entries.iterator(); i.hasNext();) {
