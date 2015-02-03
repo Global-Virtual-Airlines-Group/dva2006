@@ -50,7 +50,7 @@ public class PointArrayTag extends GoogleMapEntryTag {
 			if (_jsVarName.indexOf('.') == -1)
 				out.print("var ");
 			out.print(_jsVarName);
-			out.println(" = [");
+			out.print(" = [");
 
 			// Create the markers
 			for (Iterator<GeoLocation> i = _entries.iterator(); i.hasNext();) {
