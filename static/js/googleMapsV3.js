@@ -123,7 +123,7 @@ google.maps.Map.prototype.closeWindow = function() {
 google.maps.Map.prototype.addMarkers = function(mrks) {
 	if (!mrks) return false;
 	mrks = (mrks instanceof Array) ? mrks : [mrks];
-	for (var x = 0; x < markers.length; x++) {
+	for (var x = 0; x < mrks.length; x++) {
 		var mrk = mrks[x];
 		if (mrk.setMap) mrk.setMap(this);
 	}
