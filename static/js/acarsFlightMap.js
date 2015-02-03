@@ -18,13 +18,13 @@ xmlreq.onreadystatechange = function() {
 		var a = ac[x]; var mrk;
 		var label = golgotha.getCDATA(a);
 		var p = {lat:parseFloat(a.getAttribute('lat')), lng:parseFloat(a.getAttribute('lng'))};
-		routePoints.push(p);
+		golgotha.maps.acarsFlight.routePoints.push(p);
 		if (a.getAttribute('icon')) {
 			mrk = new golgotha.maps.IconMarker({pal:a.getAttribute('pal'), icon:a.getAttribute('icon'), info:label.data}, p);
-			routeMarkers.push(mrk);
+			golgotha.maps.acarsFlight.routeMarkers.push(mrk);
 		} else if (a.getAttribute('color')) {
 			mrk = new golgotha.maps.Marker({color:a.getAttribute('color'), info:label.data}, p);
-			routeMarkers.push(mrk);
+			golgotha.maps.acarsFlight.routeMarkers.push(mrk);
 		}	
 
 		// Add ATC data
@@ -40,18 +40,16 @@ xmlreq.onreadystatechange = function() {
 				google.maps.event.addListener(mrk, 'click', function() { golgotha.maps.acarsFlight.showFIR(this.atcID); });
 			}
 		} else if (mrk != null)
-			google.maps.event.addListener(mrk, 'click', hideATC);
+			google.maps.event.addListener(mrk, 'click', golgotha.maps.acarsFlight.hideATC);
 	}
 
-	gRoute = new google.maps.Polyline({path:routePoints, strokeColor:'#4080af', strokeWeight:3, strokeOpacity:0.85, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
+	golgotha.maps.acarsFlight.gRoute = new google.maps.Polyline({path:golgotha.maps.acarsFlight.routePoints, strokeColor:'#4080af', strokeWeight:3, strokeOpacity:0.85, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
 	golgotha.event.beacon('ACARS', 'Flight Data');
-	
-	// Enable checkboxes
-	f.showFDR.disabled = false;
-	f.showRoute.disabled = false;
-	if (doToggle)
-		f.showRoute.click();
 
+	// Enable checkboxes
+	golgotha.util.disable(f.showFDR, false);
+	golgotha.util.disable(f.showRoute, false);
+	if (doToggle) f.showRoute.click();
 	return true;
 };
 
@@ -59,23 +57,21 @@ xmlreq.send(null);
 return true;
 };
 
-golgotha.maps.acarsFlight.hideATC = function()
-{
-while (golgotha.maps.acarsFlight.selectedFIRs.length > 0) {
-	var mrk = golgotha.maps.acarsFlight.selectedFIRs.shift();
-	mrk.setMap(null);
-}
+golgotha.maps.acarsFlight.hideATC = function() {
+	while (golgotha.maps.acarsFlight.selectedFIRs.length > 0) {
+		var mrk = golgotha.maps.acarsFlight.selectedFIRs.shift();
+		mrk.setMap(null);
+	}
 
-return true;
+	return true;
 };
 
-golgotha.maps.acarsFlight.showAPP = function(ctr, range)
-{
-golgotha.maps.acarsFlight.hideATC();
-var c = new google.maps.Circle({map:map, center:ctr, radius:golgotha.maps.miles2Meter(range), strokeColor:'#efefff', strokeWeight:1, strokeOpacity:0.85, fillColor:'#7f7f80', fillOpacity:0.25, zIndex:golgotha.maps.z.POLYGON});
-golgotha.maps.acarsFlight.selectedFIRs.push(c);
-return true;
-}
+golgotha.maps.acarsFlight.showAPP = function(ctr, range) {
+	golgotha.maps.acarsFlight.hideATC();
+	var c = new google.maps.Circle({map:map, center:ctr, radius:golgotha.maps.miles2Meter(range), strokeColor:'#efefff', strokeWeight:1, strokeOpacity:0.85, fillColor:'#7f7f80', fillOpacity:0.25, zIndex:golgotha.maps.z.POLYGON});
+	golgotha.maps.acarsFlight.selectedFIRs.push(c);
+	return true;
+};
 
 golgotha.maps.acarsFlight.showFIR = function(code)
 {
