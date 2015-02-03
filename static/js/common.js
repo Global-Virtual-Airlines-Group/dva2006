@@ -60,6 +60,21 @@ golgotha.util.display = function(e, isVisible) {
 	return (e != null);
 };
 
+golgotha.util.getStyle = function(sheet, cl) {
+	if (golgotha.util.oldIE) return null;
+	for (var x = 0; x < document.styleSheets.length; x++) {
+		var ss = document.styleSheets[x];
+		if ((ss.href == null) || (ss.href.indexOf(sheet) == -1)) continue;
+		for (var y = 0; y < ss.cssRules.length; y++) {
+			var cs = ss.cssRules[y];
+			if ((cs.selectorText) && (cs.style) && (cs.selectorText.indexOf(cl) > -1))
+				return cs.style.color;
+		}
+	}
+	
+	return null;
+};
+
 golgotha.form.resizeAll = function() {
 	var boxes = golgotha.util.getElementsByClass('resizable');
 	for (var x = 0; x < boxes.length; x++) golgotha.form.resize(boxes[x]);
