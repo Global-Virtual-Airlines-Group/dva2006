@@ -31,7 +31,6 @@ public class MapDIVTag extends ElementTag {
     */
    public MapDIVTag() {
        super("div");
-       release();
    }
    
    /**
