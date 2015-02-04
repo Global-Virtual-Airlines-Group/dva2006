@@ -63,7 +63,7 @@ for (var lr = data.body.LGData.pop(); (lr != null); lr = data.body.LGData.pop())
 	var age = Math.max(0, (results.opts.timestamp.getTime() - Date.parse(lr.LGtm)) / 1000);
 	var lbl = lr.LGamp + ' - ' + age + ' seconds';
 	var iconURL = 'http://' + self.location.host + '/img/wx/lightning-' + ((lr.LGamp < 0) ? 'minus' : 'plus') + '.png';
-	results.mrks.push(new google.maps.Marker({ icon:{size:sz, url:iconURL}, position:{lat:lr.LGlat, lng:lr.LGlong}, opacity:0.85, title:lbl})); 
+	results.mrks.push(new google.maps.Marker({ icon:{size:sz,url:iconURL}, position:{lat:lr.LGlat,lng:lr.LGlong}, opacity:0.85, title:lbl})); 
 }
 
 console.log('Loaded ' + results.mrks.length + ' lightning markers in ' + tt.stop() + 'ms');
@@ -86,7 +86,7 @@ for (var f = data.pop(); (f != null); f = data.pop()) {
 	l.name = f.name;
 	google.maps.event.addListener(l, 'click', function(e) {
 		var dv = document.createElement('div'); dv.setAttribute('id', 'firInfo');
-		dv.setAttribute('class', 'mapInfoBox');
+		dv.setAttribute('class', 'mapInfoBox navdata');
 		dv.innerText = this.name;
 		map.infoWindow.setContent(dv); 
 		map.infoWindow.setPosition(e.latLng); 
