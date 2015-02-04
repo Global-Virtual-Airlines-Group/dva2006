@@ -1,22 +1,20 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.TagSupport;
 
-import static org.deltava.taglib.googlemap.InsertGoogleAPITag.USAGE_ATTR_NAME;
-
 /**
- * A JSP tag to store the number of times a Google Map has been displayed since the
- * web application was started.
+ * A JSP tag to store the number of times the Google Maps API has been requested since the web application was started.
  * @author Luke
- * @version 2.3
+ * @version 6.0
  * @since 2.2
  */
 
 public class APIUsageTag extends TagSupport {
 
 	private String _varName;
+	private APIUsage.Type _apiType;
 	
 	/**
 	 * Sets the request attribute name.
@@ -25,14 +23,27 @@ public class APIUsageTag extends TagSupport {
 	public void setVar(String name) {
 		_varName = name;
 	}
+
+	/**
+	 * Sets the Google Map API type to request usage for.
+	 * @param t the Google Maps API type
+	 */
+	public void setType(String t) {
+		try {
+			_apiType = APIUsage.Type.valueOf(t.toUpperCase());
+		} catch (Exception e) {
+			_apiType = APIUsage.Type.DYNAMIC;
+		}
+	}
 	
 	/**
 	 * Saves the Google Maps usage count in the request.
 	 * @return TagSupport.SKIP_BODY always
 	 */
+	@Override
 	public int doStartTag() {
-		Number useCount = (Number) pageContext.getServletContext().getAttribute(USAGE_ATTR_NAME);
-		pageContext.setAttribute(_varName, useCount, PageContext.REQUEST_SCOPE);
+		long useCount = APIUsage.get(_apiType);
+		pageContext.setAttribute(_varName, Long.valueOf(useCount), PageContext.REQUEST_SCOPE);
 		return SKIP_BODY;
 	}
 }
