@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010, 2012, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import javax.servlet.jsp.*;
@@ -9,7 +9,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP Tag to embed Google analytics data.
  * @author Luke
- * @version 5.1
+ * @version 6.0
  * @since 1.0
  */
 
@@ -52,17 +52,17 @@ public class GoogleAnalyticsTag extends TagSupport {
 		// Write the analytics script
 		out.println("<script type=\"text/javascript\">");
 		out.println("try { ");
-		out.print("var tracker = _gat._getTracker('");
+		out.print("golgotha.event.tracker = _gat._getTracker('");
 		out.print(accountID);
-		out.println("'); tracker._trackPageview();");
+		out.println("'); golgotha.event.tracker._trackPageview();");
 		out.println("} catch(err) { }");
 		
 		// Write event tracker function
 		if (_eventSupport) {
 			out.println();
 			out.println("golgotha.event.beacon = function(category, action, label, count) {");
-			out.print("if (tracker == null) return false; ");
-			out.print("tracker._trackEvent(category, action, label, count); ");
+			out.print("if (golgotha.event.tracker == null) return false; ");
+			out.print("golgotha.event.tracker._trackEvent(category, action, label, count); ");
 			out.print("return true; ");
 			out.println("};");
 		}
