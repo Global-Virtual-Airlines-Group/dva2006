@@ -30,29 +30,6 @@
 	</tag>
 
 	<tag>
-		<description>Weather.com TileServer series list Tag, for inserting a JavaScript series list</description>	
-		<name>wxList</name>
-		<tag-class>org.deltava.taglib.googlemap.InsertWeatherTag</tag-class>
-		<body-content>empty</body-content>
-		<attribute>
-			<name>function</name>
-			<required>false</required>
-			<rtexprvalue>false</rtexprvalue>
-		</attribute>
-		<attribute>
-			<name>max</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-			<type>java.lang.Integer</type>
-		</attribute>
-		<attribute>
-			<name>layers</name>
-			<required>true</required>
-			<rtexprvalue>false</rtexprvalue>
-		</attribute>
-	</tag>
-
-	<tag>
 		<description>MapDIV Tag, to generate a scalable DIV for a Map</description>
 		<name>div</name>
 		<tag-class>org.deltava.taglib.googlemap.MapDIVTag</tag-class>
@@ -83,6 +60,37 @@
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
 			<type>java.lang.Integer</type>
+		</attribute>
+	</tag>
+
+	<tag>
+		<description>Google static map Tag, to insert a Static Map image</description>
+		<name>static</name>
+		<tag-class>org.deltava.taglib.googlemap.StaticMapTag</tag-class>
+		<body-content>empty</body-content>	
+		<attribute>
+			<name>h</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Integer</type>
+		</attribute>
+		<attribute>
+			<name>w</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Integer</type>
+		</attribute>
+		<attribute>
+			<name>markers</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.util.Collection</type>
+		</attribute>
+		<attribute>
+			<name>path</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.util.Collection</type>
 		</attribute>
 	</tag>
 
@@ -281,6 +289,11 @@
 		<body-content>empty</body-content>
 		<attribute>
 			<name>var</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>type</name>
 			<required>true</required>
 			<rtexprvalue>false</rtexprvalue>
 		</attribute>
