@@ -72,18 +72,6 @@ return elements;
 // Tile URL generation functions
 golgotha.maps.util.S3OverlayLayer = function(name, ts, size) { return 'http://' + golgotha.maps.tileHost + '/tile/' + name + '/' + size.height + '/' + ts + '/'; };
 
-// Make cloud layer behave like our layers
-if (google.maps.weather.CloudLayer) {
-	google.maps.weather.CloudLayer.prototype.setMap_OLD = google.maps.weather.CloudLayer.prototype.setMap; 
-	google.maps.weather.CloudLayer.prototype.setMap = function(map) {
-		if ((map != null) && (golgotha.maps.ovLayers.indexOf(this) == -1))
-			golgotha.maps.ovLayers.push(this);
-
-		this.setMap_OLD(map);
-		return true;
-	}
-}
-
 // Create a weather overlay type
 golgotha.maps.WeatherLayer = function(opts, timestamp) {
 	if (opts.range == null) opts.range = [];
