@@ -25,7 +25,8 @@
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<map:usage var="mapsAPIUsage" />
+<map:usage var="s_APIuse" type="static" />
+<map:usage var="d_APIuse" type="dynamic" />
 <c:set var="startedOn" value="${applicationScope.startedOn}" scope="page" />
 <c:set var="execTime" value="${(systemTime - startedOn.time) / 1000}" scope="page" />
 
@@ -111,7 +112,7 @@ Free Memory: <fmt:int value="${freeMemory}" /> bytes</td>
 </tr>
 <tr>
  <td class="label">Google Maps API Usage</td>
- <td class="data"><fmt:int value="${mapsAPIUsage}" /> times since application start</td>
+ <td class="data"><fmt:int value="${d_APIuse}" /> dynamic, <fmt:int value="${s_APIuse}" /> static since application start</td>
 </tr>
 </el:table>
 <%@ include file="/jsp/admin/diag/jdbcPool.jspf" %>
