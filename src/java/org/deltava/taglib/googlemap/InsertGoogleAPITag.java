@@ -1,8 +1,7 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2013, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import java.util.*;
-import java.util.concurrent.atomic.LongAdder;
 
 import javax.servlet.jsp.*;
 import javax.servlet.jsp.tagext.TagSupport;
@@ -23,7 +22,6 @@ import org.deltava.util.system.SystemData;
 
 public class InsertGoogleAPITag extends TagSupport {
 
-	static final String USAGE_ATTR_NAME = "$googleMapUsage$";
 	static final String API_VER_ATTR_NAME = "$googleMapAPIVersion$";
 	
 	private static final int MIN_API_VERSION = 3;
@@ -31,8 +29,6 @@ public class InsertGoogleAPITag extends TagSupport {
 	
 	private static final String V3_API_URL = "maps.googleapis.com/maps/api/js?v=";
 	
-	private static final LongAdder USAGE_COUNT = new LongAdder();
-
 	private int _majorVersion = MIN_API_VERSION;
 	private String _minorVersion;
 	private final Collection<String> _libraries = new LinkedHashSet<String>();
@@ -73,25 +69,6 @@ public class InsertGoogleAPITag extends TagSupport {
 	}
 
 	/**
-	 * Increments and adds the usage count to the application context.
-	 * @return TagSupport.SKIP_BODY
-	 * @throws JspException if an error occurs
-	 */
-	@Override
-	public int doStartTag() throws JspException {
-		USAGE_COUNT.increment();
-		long value = USAGE_COUNT.sum();
-		if (value == 1)
-			pageContext.setAttribute(USAGE_ATTR_NAME, USAGE_COUNT, PageContext.APPLICATION_SCOPE);
-		
-		// Translate stable/release v3 to minor version
-		if ((_majorVersion == 3) && (_minorVersion == null))
-			_minorVersion = DEFAULT_V3_MINOR;
-		
-		return super.doStartTag();
-	}
-
-	/**
 	 * Renders the JSP tag.
 	 * @return TagSupport.EVAL_PAGE
 	 * @throws JspException if no Google Maps API key defined
@@ -102,6 +79,11 @@ public class InsertGoogleAPITag extends TagSupport {
 		// Check if we've already included the content
 		if (ContentHelper.containsContent(pageContext, "JS", GoogleMapEntryTag.API_JS_NAME))
 			return EVAL_PAGE;
+		
+		// Translate stable/release v3 to minor version
+		APIUsage.track(APIUsage.Type.DYNAMIC);
+		if ((_majorVersion == 3) && (_minorVersion == null))
+			_minorVersion = DEFAULT_V3_MINOR;
 		
 		// Insert the API version
 		pageContext.setAttribute(API_VER_ATTR_NAME, Integer.valueOf(_majorVersion), PageContext.REQUEST_SCOPE);
