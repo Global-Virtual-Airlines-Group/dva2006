@@ -294,10 +294,24 @@ div.googleMapV3 {
 
 div.mapInfoBox {
 	white-space: nowrap;
-	user-select: none;
 	font-family: verdana, tahoma, sans-serif;
 	font-size: 8pt;
-	min-width:300px;
+}
+
+div.mapInfoBox.navdata, div.mapInfoBox.pilotBoard {
+	min-width: 165px;
+}
+
+div.mapInfoBox.onlinePilot {
+	min-width: 240px;
+}
+
+div.mapInfoBox.acarsATC, div.mapInfoBox.onlineATC {
+	min-width: 200px;
+}
+
+div.mapInfoBox.acarsFlight, div.mapInfoBox.acarsPosition {
+	min-width: 260px;
 }
 
 div.mapMarkerLabel {
