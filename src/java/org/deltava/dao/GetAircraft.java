@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Aircraft data.
  * @author Luke
- * @version 5.0
+ * @version 6.0
  * @since 1.0
  */
 
@@ -83,15 +83,32 @@ public class GetAircraft extends DAO {
 	public Collection<Aircraft> getAircraftTypes(String airlineCode) throws DAOException {
 		try {
 			prepareStatement("SELECT A.* FROM common.AIRCRAFT A, common.AIRCRAFT_AIRLINE AA WHERE "
-					+ "(A.NAME=AA.NAME) AND (AA.AIRLINE=?)");
+				+ "(A.NAME=AA.NAME) AND (AA.AIRLINE=?)");
 			_ps.setString(1, airlineCode);
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 	}
-
+	
 	/**
+	 * Returns aircraft used by a particular pilot.
+	 * @param pilotID the Pilot database ID
+	 * @return a Collection of Aircraft beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Aircraft> getAircraftTypes(int pilotID) throws DAOException {
+		try {
+			prepareStatement("SELECT DISTINCT A.* FROM common.AIRCRAFT A, PIREPS PR WHERE (A.NAME=PR.EQTYPE) "
+				+ "AND (PR.PILOT_ID=?) ORDER BY A.NAME");
+			_ps.setInt(1, pilotID);
+			return execute();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+
+	/*
 	 * Helper method to process result sets.
 	 */
 	private List<Aircraft> execute() throws SQLException {
