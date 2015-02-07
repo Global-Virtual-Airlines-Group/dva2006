@@ -82,7 +82,7 @@ public class LogBookCommand extends AbstractViewCommand {
             
             // Load the Equipment types
             GetAircraft acdao = new GetAircraft(con);
-            ctx.setAttribute("eqTypes", acdao.getAircraftTypes(), REQUEST);
+            ctx.setAttribute("eqTypes", acdao.getAircraftTypes(id), REQUEST);
             
             // Load the airport options
             Collection<Airport> airports = new TreeSet<Airport>(new AirportComparator(AirportComparator.NAME));
