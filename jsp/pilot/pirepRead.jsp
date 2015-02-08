@@ -22,20 +22,17 @@
 <content:pics />
 <content:js name="common" />
 <content:googleAnalytics eventSupport="true" />
-<c:if test="${googleMap}">
-<map:api version="3" /></c:if>
+<content:browser human="true"><c:if test="${googleMap}">
+<map:api version="3" /></c:if></content:browser>
 <c:if test="${scoreCR || access.canDispose}">
 <script type="text/javascript">
-golgotha.local.validate = function(form)
+golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
-
-// Validate form
-var act = form.action;
-var isCR = (act.indexOf('release.do') == -1) && (act.indexOf('updrwy.do') == -1);
-if (isCR) {
-	if (!validateCheckBox(form.crApprove, 1, 'Check Ride status')) return false;
-	if (!validateCheckBox(form.frApprove, 1, 'Flight Report status')) return false;
+var act = f.action;
+if ((act.indexOf('release.do') == -1) && (act.indexOf('updrwy.do') == -1)) {
+	golgotha.form.validate({f:f.crApprove, min:1, t:'Check Ride status'});
+	golgotha.form.validate({f:f.frApprove, min:1, t:'Flight Report status'});
 }
 
 golgotha.form.submit(f);
