@@ -47,11 +47,12 @@ if ((f.pwd1) && (f.pwd2)) {
 		throw new golgotha.util.ValidationError('The specified passwords must match.', f.pwd1);
 	}
 
-	golgotha.form.validate({f:f.pwd1, min:${minPwd}, t:'New Password'});
+	if (f.pwd1.value.length > 0)
+		golgotha.form.validate({f:f.pwd1, l:${minPwd}, t:'New Password'});
 }
 <content:filter roles="!HR">
 // Validate e-mail domain
-golgotha.local.invalidDomains = <fmt:jsarray items="${badDomains}" />
+<fmt:jsarray var="golgotha.local.invalidDomains" items="${badDomains}" />
 if (f.email) {
 	var eMail = f.email.value;
 	var usrDomain = eMail.substring(eMail.indexOf('@') + 1, eMail.length);
@@ -77,12 +78,11 @@ if (golgotha.local.hasSignature)
 return true;
 };
 
-golgotha.local.setDefaultFormats = function()
-{
-var f = document.forms[0];
-f.df.value = '${defaultDFormat}';
-f.tf.value = '${defaultTFormat}';
-return true;
+golgotha.local.setDefaultFormats = function() {
+	var f = document.forms[0];
+	f.df.value = '${defaultDFormat}';
+	f.tf.value = '${defaultTFormat}';
+	return true;
 };
 
 golgotha.onDOMReady(function() {
