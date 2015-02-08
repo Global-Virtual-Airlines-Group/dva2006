@@ -298,6 +298,7 @@ if (!('f' in opts) || !('t' in opts)) throw new gologhta.util.ValidationError('I
 if ('ext' in opts) return golgotha.form.validateFile(opts.f, opts.ext, opts.t);
 if ('addr' in opts) return golgotha.form.validaateEMail(opts.f, opts.t);
 if ('l' in opts) return golgotha.form.validateText(opts.f, opts.l, opts.t);
+if (!opts.f) return true;
 if ('min' in opts) {
 	var vf = (0 in opts.f) ? golgotha.form.validateCheckBox : golgotha.form.validateNumber;
 	return vf(opts.f, opts.min, opts.t);
@@ -342,7 +343,7 @@ golgotha.form.validateCombo = function(c, title) {
 
 golgotha.form.validateFile = function(f, extTypes, title)
 {
-if ((!f) || (f.disabled) || (f.value.length < 2)) return true;
+if ((!f) || (f.disabled)) return true;
 var ext = f.value.substring(f.value.lastIndexOf('.') + 1).toLowerCase();
 for (var e = extTypes.pop(); (e != null); e = extTypes.pop())
 	if (ext == e) return true;
