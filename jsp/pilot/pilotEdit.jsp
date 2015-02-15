@@ -52,15 +52,9 @@ if ((f.pwd1) && (f.pwd2)) {
 }
 <content:filter roles="!HR">
 // Validate e-mail domain
-<fmt:jsarray var="golgotha.local.invalidDomains" items="${badDomains}" />
-if (f.email) {
-	var eMail = f.email.value;
-	var usrDomain = eMail.substring(eMail.indexOf('@') + 1, eMail.length);
-	for (var x = 0; x < golgotha.local.invalidDomains.length; x++) {
-		if (usrDomain == golgotha.local.invalidDomains[x])
-			throw new golgotha.util.ValidationError('Your e-mail address (' + eMail + ') contains a forbidden domain - ' + invalidDomains[x], f.email);
-	}
-}
+<fmt:jsarray var="golgotha.form.invalidDomains" items="${badDomains}" />
+if (f.email)
+	golgotha.form.validate({f:f.email, addr:true, t:'Email Address'});
 </content:filter>
 // Set disabled checkboxes
 f.useDefaultSig.checked = (f.useDefaultSig.checked && !(f.useDefaultSig.disabled));
