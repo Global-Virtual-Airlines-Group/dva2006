@@ -1,4 +1,4 @@
-var golgotha = {event:{}, util:{}, form:{isSubmitted:false}, local:{}};
+var golgotha = {event:{}, util:{}, form:{isSubmitted:false, invalidDomains:[]}, local:{}};
 golgotha.util.isIE = (navigator.appName == 'Microsoft Internet Explorer');
 golgotha.util.oldIE = (golgotha.util.isIE && ((navigator.appVersion.indexOf('IE 7.0') > 0) || (navigator.appVersion.indexOf('IE 8.0') > 0)));
 golgotha.util.getTimestamp = function(ms) { var d = new Date(); return d.getTime() - (d.getTime() % ms); };
@@ -296,7 +296,7 @@ golgotha.form.validate = function(opts)
 {
 if (!('f' in opts) || !('t' in opts)) throw new gologhta.util.ValidationError('Incomplete Validation Data');
 if ('ext' in opts) return golgotha.form.validateFile(opts.f, opts.ext, opts.t);
-if ('addr' in opts) return golgotha.form.validaateEMail(opts.f, opts.t);
+if ('addr' in opts) return golgotha.form.validateEMail(opts.f, opts.t);
 if ('l' in opts) return golgotha.form.validateText(opts.f, opts.l, opts.t);
 if (!opts.f) return true;
 if ('min' in opts) {
@@ -328,10 +328,18 @@ return true;
 
 golgotha.form.validateEMail = function(t, title)
 {
-if (!golgotha.form.validateText(t, 6, title)) return false;
+if (!golgotha.form.validateText(t, 5, title)) return false;
 var pattern = /^[\w](([_\.\-\+]?[\w]+)*)@([\w]+)(([\.-]?[\w]+)*)\.([A-Za-z]{2,})$/;
 if (!pattern.test(t.value))
 	throw new golgotha.event.ValidationError('Please provide a valid ' + title + '.', t);
+
+// Validate e-mail domain
+var addr = t.value;
+var usrDomain = addr.substring(addr.indexOf('@') + 1, addr.length);
+for (var x = 0; x < golgotha.form.invalidDomains.length; x++) {
+	if (usrDomain == golgotha.form.invalidDomains[x])
+		throw new golgotha.util.ValidationError('Your e-mail address (' + addr + ') contains a forbidden domain - ' + golgotha.form.invalidDomains[x], t);
+}
 
 return true;
 };
