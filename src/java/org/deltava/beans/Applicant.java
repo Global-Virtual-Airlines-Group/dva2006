@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -6,7 +6,7 @@ import java.util.*;
 /**
  * A class for storing Applicant entries.
  * @author Luke
- * @version 2.6
+ * @version 6.0
  * @since 1.0
  */
 
@@ -29,12 +29,12 @@ public class Applicant extends Person {
 	/**
 	 * Valid Flight Simulator version strings.
 	 */
-	public static final String FSVERSION[] = { "Unknown/Other", "X-Plane", "FS2002", "FS2004", "FS X" };
+	public static final String FSVERSION[] = { "Unknown/Other", "X-Plane", "FS2002", "FS2004", "FS X", "Prepar3D" };
 
 	/**
 	 * Valid Flight Simulator version values.
 	 */
-	public static final int FSVERSION_CODE[] = { 0, 100, 2002, 2004, 2006 };
+	public static final int FSVERSION_CODE[] = { 0, 100, 2002, 2004, 2006, 2008 };
     
     private int _pilotID;
     private String _legacyURL;
@@ -200,6 +200,7 @@ public class Applicant extends Person {
 	 * @see Applicant#getSimVersion()
 	 */
     public void setSimVersion(int version) {
+    	
 		for (int x = 0; x < FSVERSION_CODE.length; x++) {
 			if (version == FSVERSION_CODE[x]) {
 				_simVersion = version;
