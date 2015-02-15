@@ -14,21 +14,11 @@
 <content:pics />
 <content:sysdata var="badDomains" name="registration.reject_domain" />
 <script type="text/javascript">
-golgotha.local.invalidDomains = <fmt:jsarray items="${badDomains}" />
+<fmt:jsarray var="golgotha.form.invalidDomains" items="${badDomains}" />
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
-var act = f.action;
 golgotha.form.validate({f:f.email, addr:true, t:'E-Mail Address'});
-
-// Validate e-mail domain
-var eMail = f.email.value;
-var usrDomain = eMail.substring(eMail.indexOf('@') + 1, eMail.length);
-for (var x = 0; x < golgotha.local.invalidDomains.length; x++) {
-	if (usrDomain == golgotha.local.invalidDomains[x])
-		throw new golgotha.util.ValidationError('Your e-mail address (' + eMail + ') contains a forbidden domain - ' + invalidDomains[x], f.email);
-}
-
 golgotha.form.submit(f);
 return true;
 };
