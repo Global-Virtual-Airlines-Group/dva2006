@@ -922,6 +922,12 @@
 		<roles>Pilot</roles>
 	</command>
 
+	<command id="clearunread">
+		<name>Clear Water Cooler unread marks</name>
+		<class>org.deltava.commands.cooler.UnreadClearCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
 	<command id="emoticons">
 		<name>Water Cooler Emoticons</name>
 		<class>org.deltava.commands.cooler.EmoticonHelperCommand</class>
