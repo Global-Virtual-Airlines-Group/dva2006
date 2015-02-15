@@ -19,11 +19,11 @@
 <content:sysdata var="badDomains" name="registration.reject_domain" />
 <c:set var="cspan" value="${!empty manuals ? 3 : 1}" scope="page" />
 <script type="text/javascript">
-golgotha.local.invalidDomains = <fmt:jsarray items="${badDomains}" />
-golgotha.local.validate = function(form)
+<fmt:jsarray var="golgotha.form.invalidDomains" items="${badDomains}" />
+golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
-golgotha.form.validate({f:form.firstName, l:2, t:'First (given) Name'});
+golgotha.form.validate({f:f.firstName, l:2, t:'First (given) Name'});
 golgotha.form.validate({f:f.lastName, l:2, t:'Last (family) Name'});
 golgotha.form.validate({f:f.email, addr:true, t:'E-Mail Address'});
 golgotha.form.validate({f:f.homeAirport, t:'Home Airport'});
@@ -34,15 +34,6 @@ golgotha.form.validate({f:f.tf, l:5, t:'Time Format'});
 golgotha.form.validate({f:f.nf, l:5, t:'Number Format'});
 golgotha.form.validate({f:f.distanceUnits, min:1, t:'Distance Unit'});
 golgotha.form.validate({f:f.weightUnits, min:1, t:'Weight Unit'});
-
-// Validate e-mail domain
-var eMail = f.email.value;
-var usrDomain = eMail.substring(eMail.indexOf('@') + 1, eMail.length);
-for (var x = 0; x < golgotha.local.invalidDomains.length; x++) {
-	if (usrDomain == golgotha.local.invalidDomains[x])
-		throw new golgotha.util.ValidationError('Your e-mail address (' + eMail + ') contains a forbidden domain - ' + invalidDomains[x], f.email);
-}
-
 golgotha.form.submit(f);
 return true;
 };
@@ -92,14 +83,10 @@ for (var x = 0; x < f.elements.length; x++)
 return true;
 };
 
-golgotha.local.sendDupeInfo = function()
-{
-var f = document.forms[0];
-var fN = f.firstName.value;
-var lN = f.lastName.value;
-var eMail = f.email.value;
-self.location = '/register.do?op=dupe&firstName=' + fN + '&lastName=' + lN + '&email=' + eMail;
-return true;
+golgotha.local.sendDupeInfo = function() {
+	var f = document.forms[0];
+	self.location = '/register.do?op=dupe&firstName=' + f.firstName.value + '&lastName=' + f.lastName.value + '&email=' + f.email.value;
+	return true;
 };
 
 golgotha.onDOMReady(function() {
