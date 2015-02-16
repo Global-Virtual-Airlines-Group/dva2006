@@ -49,8 +49,8 @@ public class TestCommand extends TestCase {
     public void testErrorHandling() throws Exception {
         try {
             _cmd.init(null, null);
-            fail("CommandException expected");
-        } catch (CommandException ce) {
+            fail("Exception expected");
+        } catch (Exception ce) {
             assertNull(_cmd.getName());
         }
         
