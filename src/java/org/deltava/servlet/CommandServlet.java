@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.util.*;
@@ -11,23 +11,19 @@ import javax.servlet.http.*;
 import javax.servlet.annotation.MultipartConfig;
 
 import org.apache.log4j.*;
-
 import org.deltava.beans.servlet.*;
 import org.deltava.beans.system.*;
-
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-
 import org.deltava.util.*;
 import org.deltava.util.redirect.RequestStateHelper;
 import org.deltava.util.system.SystemData;
-
 import org.gvagroup.jdbc.*;
 
 /**
  * The main command controller. This is the application's brain stem.
  * @author Luke
- * @version 5.4
+ * @version 6.0
  * @since 1.0
  */
 
@@ -125,14 +121,10 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 		}
 
 		// Initialize the redirection command
-		try {
-			Command cmd = new RedirectCommand();
-			cmd.init("$redirect", "Request Redirection");
-			cmd.setRoles(Collections.singleton("*"));
-			_cmds.put(cmd.getID(), cmd);
-		} catch (CommandException ce) {
-			throw new ServletException(ce);
-		}
+		Command cmd = new RedirectCommand();
+		cmd.init("$redirect", "Request Redirection");
+		cmd.setRoles(Collections.singleton("*"));
+		_cmds.put(cmd.getID(), cmd);
 
 		// Save the max command log size
 		_maxCmdLogSize = SystemData.getInt("cache.cmdlog", 20);
@@ -208,6 +200,7 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 			RequestDispatcher rd = req.getRequestDispatcher(ERR_PAGE);
 			req.setAttribute("servlet_error", "Command not found");
 			log.warn("Command not found - " + req.getRequestURI() + referer);
+			rsp.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			rd.forward(req, rsp);
 			return;
 		}
@@ -216,6 +209,7 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 		if (req.getAttribute(CommandContext.INVALIDREQ_ATTR_NAME) != null) {
 			RequestDispatcher rd = req.getRequestDispatcher(ERR_PAGE);
 			req.setAttribute("servlet_error", "HTTP Upload Timed Out");
+			rsp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			rd.forward(req, rsp);
 			return;
 		}
@@ -228,6 +222,7 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 				ControllerException ce = new CommandException("Not Authorized to execute", false);
 				ce.setForwardURL("/jsp/error/securityViolation.jsp");
 				ce.setWarning(true);
+				ce.setStatusCode(HttpServletResponse.SC_FORBIDDEN);
 				throw ce;
 			}
 
@@ -247,6 +242,7 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 			if (result.getURL() == null) {
 				ControllerException ce = new CommandException("Null result URL from " + req.getRequestURI(), false);
 				ce.setForwardURL("/home.do");
+				ce.setStatusCode(HttpServletResponse.SC_OK);
 				ce.setWarning(true);
 				throw ce;
 			}
@@ -279,6 +275,7 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 			Level logLevel = Level.ERROR; boolean logStackDump = true;
 			if (e instanceof CommandException) {
 				CommandException ce = (CommandException) e;
+				rsp.setStatus(ce.getStatusCode());
 				if (ce.getForwardURL() != null)
 					errPage = ce.getForwardURL();
 

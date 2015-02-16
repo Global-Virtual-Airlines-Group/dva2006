@@ -1,5 +1,7 @@
-// Copyright 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.deltava.commands.CommandException;
 
@@ -7,7 +9,7 @@ import org.deltava.commands.CommandException;
  * An exception thrown by an access controller. By default, stack traces of access
  * control exceptions are not logged.
  * @author Luke
- * @version 2.3
+ * @version 6.0
  * @since 1.0
  */
 
@@ -18,7 +20,7 @@ public class AccessControlException extends CommandException {
 	 * @param msg the message
 	 */
 	AccessControlException(String msg) {
-		super(msg, false);
+		this(msg, false);
 	}
 	
 	/**
@@ -30,5 +32,6 @@ public class AccessControlException extends CommandException {
 	AccessControlException(String msg, boolean doWarn) {
 		super(msg, false);
 		setWarning(doWarn);
+		setStatusCode(HttpServletResponse.SC_FORBIDDEN);
 	}
 }

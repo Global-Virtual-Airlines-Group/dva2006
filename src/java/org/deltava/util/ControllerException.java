@@ -1,11 +1,13 @@
-// Copyright 2006, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
+
+import static javax.servlet.http.HttpServletResponse.*;
 
 /**
  * An exception class to define a common singure for exceptions handled by the Command
  * Controller servlet.
  * @author Luke
- * @version 5.0
+ * @version 6.0
  * @since 1.0
  */
 
@@ -13,6 +15,7 @@ public abstract class ControllerException extends Exception {
 
 	private boolean _logStackDump = true;
 	private boolean _isWarn;
+	private int _statusCode = SC_INTERNAL_SERVER_ERROR;
 	private String _fwdURL;
 	
     /**
@@ -69,6 +72,15 @@ public abstract class ControllerException extends Exception {
 	}
 	
 	/**
+	 * Returns the HTTP status code to set on the error page.
+	 * @return the HTTP status code
+	 * @see ControllerException#setStatusCode(int)
+	 */
+	public int getStatusCode() {
+		return _statusCode;
+	}
+	
+	/**
 	 * Updates whether the handling class should log this Exception's stack trace.
 	 * @param doLog TRUE if the stack trace should be logged, otherwise FALSE
 	 * @see ControllerException#getLogStackDump()
@@ -93,5 +105,14 @@ public abstract class ControllerException extends Exception {
 	 */
 	public void setWarning(boolean isWarn) {
 		_isWarn = isWarn;
+	}
+	
+	/**
+	 * Sets the HTTP status code to set on the error page.
+	 * @param code the HTTP status code
+	 * @see ControllerException#getStatusCode()
+	 */
+	public void setStatusCode(int code) {
+		_statusCode = code;
 	}
 }
