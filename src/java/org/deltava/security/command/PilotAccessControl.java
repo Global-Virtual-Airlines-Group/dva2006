@@ -81,7 +81,7 @@ public class PilotAccessControl extends AccessControl {
 
 		// Check Promotion access
 		boolean isSameProgram = _ctx.getUser().getEquipmentType().equals(_p.getEquipmentType());
-		_canPromote = (isHR || (_ctx.getUser().getRank().isCP() && isSameProgram));
+		_canPromote = (isHR || (_ctx.getUser().getRank().isCP() && isSameProgram && !_isOurs));
 
 		// Check if there is a staff profile in the request
 		Object sProfile = _ctx.getRequest().getAttribute("staff");
