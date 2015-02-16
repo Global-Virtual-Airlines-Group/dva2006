@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2008, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A class to support Web Site Commands.
  * @author Luke
- * @version 2.2
+ * @version 6.0
  * @since 1.0
  */
 
@@ -25,10 +25,9 @@ public abstract class AbstractCommand implements Command {
 	/**
 	 * Initializes this command.
 	 * @param cmdName the name of the command
-	 * @throws CommandException if the command name is null
 	 * @throws IllegalStateException if the command has already been initialized
 	 */
-	public void init(String id, String cmdName) throws CommandException {
+	public void init(String id, String cmdName) {
 		if (_name != null)
 			throw new IllegalStateException(_name + " Command already initialized");
 
@@ -36,7 +35,7 @@ public abstract class AbstractCommand implements Command {
 			_id = id.trim();
 			_name = cmdName.trim();
 		} catch (NullPointerException npe) {
-			throw new CommandException("Command ID/Name cannot be null");
+			throw new IllegalArgumentException("Command ID/Name cannot be null");
 		}
 	}
 	
