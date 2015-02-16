@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.io.*;
@@ -14,7 +14,7 @@ import org.deltava.util.*;
 /**
  * A factory class to initalize the web command map.
  * @author Luke
- * @version 4.2
+ * @version 6.0
  * @since 1.0
  */
 
@@ -26,7 +26,7 @@ public class CommandFactory {
 		super();
 	}
 
-	/**
+	/*
 	 * Helper method to parse comma-delimited list of roles.
 	 */
 	private static Collection<String> getRoles(String roleNames) {
@@ -93,8 +93,6 @@ public class CommandFactory {
 					results.put(cmdID.toLowerCase(), cmd);
 					if (log.isDebugEnabled())
 						log.debug("Initialized command " + cmdID);
-				} catch (CommandException ce) {
-					log.error("Error initializing " + cmdID + " - " + ce.getMessage());
 				} catch (ClassNotFoundException cnfe) {
 					log.error("Cannot find class " + cmdClassName + " for " + cmdID);
 				} catch (NoClassDefFoundError ncde) {
@@ -105,7 +103,6 @@ public class CommandFactory {
 			}
 		}
 
-		// Return the commands
 		log.info("Loaded " + results.size() + " commands");
 		return results;
 	}

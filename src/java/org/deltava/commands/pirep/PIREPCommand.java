@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -30,7 +30,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle editing/saving Flight Reports.
  * @author Luke
- * @version 5.4
+ * @version 6.0
  * @since 1.0
  */
 
@@ -56,7 +56,7 @@ public class PIREPCommand extends AbstractFormCommand {
 	 * @param cmdName the name of the Command
 	 */
 	@Override
-	public void init(String id, String cmdName) throws CommandException {
+	public void init(String id, String cmdName) {
 		super.init(id, cmdName);
 		for (int x = 2; x < 189; x++)
 			_flightTimes.add(String.valueOf(x / 10.0f));
