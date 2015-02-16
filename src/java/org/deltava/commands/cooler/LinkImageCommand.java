@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.net.*;
@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to link an Image to a Water Cooler discussion thread.
  * @author Luke
- * @version 2.6
+ * @version 6.0
  * @since 1.0
  */
 
@@ -35,10 +35,10 @@ public class LinkImageCommand extends AbstractCommand {
 	/**
 	 * Initializes this command.
 	 * @param cmdName the name of the command
-	 * @throws CommandException if the command name is null
 	 * @throws IllegalStateException if the command has already been initialized
 	 */
-	public void init(String id, String cmdName) throws CommandException {
+	@Override
+	public void init(String id, String cmdName) {
 		super.init(id, cmdName);
 		_imgMimeTypes = (Collection<?>) SystemData.getObject("cooler.imgurls.mime_types");
 	}
@@ -48,6 +48,7 @@ public class LinkImageCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Get the command results

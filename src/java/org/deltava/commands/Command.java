@@ -1,4 +1,4 @@
-// Copyright 2004, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2007, 2008, 2009, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.util.Collection;
@@ -8,12 +8,15 @@ import javax.servlet.jsp.PageContext;
 /**
  * A Web Command.
  * @author Luke
- * @version 2.4
+ * @version 6.0
  * @since 1.0
  */
 
 public interface Command {
     
+	/**
+	 * Scope helper enumeration.
+	 */
 	public enum Scope {
 		APP(PageContext.APPLICATION_SCOPE),
 		REQ(PageContext.REQUEST_SCOPE),
@@ -43,10 +46,9 @@ public interface Command {
      * Initialize the Command. Since commands are instantiated via reflection, the init method is used to run
      * data that would ordinarily be in the constructor.
      * @param cmdName the name of the command
-     * @throws CommandException if an error occurs during instantiation
      * @throws IllegalStateException if the command has already been initialized
      */
-    public void init(String id, String cmdName) throws CommandException;
+    public void init(String id, String cmdName);
 
     /**
      * Execute the web Command.
