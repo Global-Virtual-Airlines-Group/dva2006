@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to update Airline profiles.
  * @author Luke
- * @version 5.0
+ * @version 6.0
  * @since 1.0
  */
 
@@ -57,6 +57,8 @@ public class AirlineCommand extends AbstractFormCommand {
 			a.setApps(ctx.getParameters("airlines"));
 			a.setColor(ctx.getParameter("color"));
 			a.setCodes(StringUtils.split(ctx.getParameter("altCodes"), "\n"));
+			a.setScheduleSync(Boolean.valueOf(ctx.getParameter("sync")).booleanValue());
+			a.setHistoric(Boolean.valueOf(ctx.getParameter("historic")).booleanValue());
 			
 			// Get the DAO and update the database
 			SetSchedule wdao = new SetSchedule(con);

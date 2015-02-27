@@ -1,9 +1,10 @@
-// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
 
-import org.deltava.beans.ComboAlias;
+import org.deltava.beans.*;
+
 import static org.deltava.beans.MapEntry.COLORS;
 
 import org.deltava.util.StringUtils;
@@ -12,16 +13,18 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A class for storing Airline information.
  * @author Luke
- * @version 5.0
+ * @version 6.0
  * @since 1.0
  */
 
-public class Airline implements ComboAlias, Comparable<Airline>, Cacheable {
+public class Airline implements ComboAlias, Comparable<Airline>, Cacheable, ViewEntry {
 
 	private String _code;
 	private String _name;
 	private String _color;
 	private boolean _active = true;
+	private boolean _historic;
+	private boolean _schedSync;
 	
 	private final Collection<String> _apps = new TreeSet<String>();
 	private final Collection<String> _codes = new HashSet<String>();
@@ -98,6 +101,24 @@ public class Airline implements ComboAlias, Comparable<Airline>, Cacheable {
 	}
 	
 	/**
+	 * Returns whether this is a historic airline.
+	 * @return TRUE if historic, otherwise FALSE
+	 * @see Airline#setHistoric(boolean)
+	 */
+	public boolean getHistoric() {
+		return _historic;
+	}
+	
+	/**
+	 * Returns if the schedules should be synchronized.
+	 * @return TRUE if synchronized, otherwise FALSE
+	 * @see Airline#setScheduleSync(boolean)
+	 */
+	public boolean getScheduleSync() {
+		return _schedSync;
+	}
+	
+	/**
 	 * The color to use then displaying this Airline's destinations or routes in a Google Map.
 	 * @return the color name
 	 * @see Airline#setColor(String)
@@ -114,6 +135,24 @@ public class Airline implements ComboAlias, Comparable<Airline>, Cacheable {
 	 */
 	public void setActive(boolean active) {
 	    _active = active;
+	}
+	
+	/**
+	 * Updates whether this is a historic airline.
+	 * @param isHistoric TRUE if historic, otherwise FALSE
+	 * @see Airline#getHistoric()
+	 */
+	public void setHistoric(boolean isHistoric) {
+		_historic = isHistoric;
+	}
+	
+	/**
+	 * Updates whether the airline's schedules can be synchronized.
+	 * @param sync TRUE if the schedules can be synchronized, otherwise FALSE
+	 * @see Airline#getScheduleSync()
+	 */
+	public void setScheduleSync(boolean sync) {
+		_schedSync = sync;
 	}
 	
 	/**
@@ -211,14 +250,17 @@ public class Airline implements ComboAlias, Comparable<Airline>, Cacheable {
 	/**
 	 * Airline object comparator - compare the codes.
 	 */
+	@Override
 	public int compareTo(Airline a2) {
 		return _code.compareTo(a2._code);
 	}
 	
+	@Override
 	public final boolean equals(Object o2) {
 	    return (o2 instanceof Airline) ? (compareTo((Airline) o2) == 0) : false;
 	}
 	
+	@Override
 	public int hashCode() {
 		return _code.hashCode();
 	}
@@ -226,11 +268,18 @@ public class Airline implements ComboAlias, Comparable<Airline>, Cacheable {
 	/**
 	 * Returns the airline code.
 	 */
+	@Override
 	public String toString() {
 		return _code;
 	}
 	
 	public Object cacheKey() {
 	    return _code;
+	}
+
+	@Override
+	public String getRowClassName() {
+		if (!_active) return "warn";
+		return (_historic) ? "opt1" : null;
 	}
 }
