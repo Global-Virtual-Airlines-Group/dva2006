@@ -26,7 +26,7 @@ golgotha.local.setAirportD = function(combo) {
 golgotha.local.setAirportA = function(combo)
 {
 var f = document.forms[0];
-if (golgotha.form.comboSet(combo)) {
+if (golgotha.form.comboSet(combo))
 	self.location = '/browse.do?airportD=' + escape(golgotha.form.getCombo(f.airportD)) + '&airportA=' + escape(golgotha.form.getCombo(combo));
 else
 	self.location = '/browse.do?airportD=' + escape(golgotha.form.getCombo(f.airportD));

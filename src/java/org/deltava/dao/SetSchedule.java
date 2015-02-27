@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to update the Flight Schedule.
  * @author Luke
- * @version 5.0
+ * @version 6.0
  * @since 1.0
  */
 
@@ -38,11 +38,13 @@ public class SetSchedule extends DAO {
 			startTransaction();
 			
 			// Write the airline data
-			prepareStatement("INSERT INTO common.AIRLINES (CODE, NAME, COLOR, ACTIVE) VALUES (?, ?, ?, ?)");
+			prepareStatement("INSERT INTO common.AIRLINES (CODE, NAME, COLOR, ACTIVE, SYNC, HISTORIC) VALUES (?, ?, ?, ?, ?, ?)");
 			_ps.setString(1, al.getCode());
 			_ps.setString(2, al.getName());
 			_ps.setString(3, al.getColor());
 			_ps.setBoolean(4, al.getActive());
+			_ps.setBoolean(5, al.getScheduleSync());
+			_ps.setBoolean(6, al.getHistoric());
 			executeUpdate(1);
 			
 			// Write the alternate codes
@@ -99,12 +101,14 @@ public class SetSchedule extends DAO {
 			executeUpdate(0);
 			
 			// Write the airline data
-			prepareStatement("UPDATE common.AIRLINES SET NAME=?, COLOR=?, ACTIVE=?, CODE=? WHERE (CODE=?)");
+			prepareStatement("UPDATE common.AIRLINES SET NAME=?, COLOR=?, ACTIVE=?, CODE=?, SYNC=?, HISTORIC=? WHERE (CODE=?)");
 			_ps.setString(1, al.getName());
 			_ps.setString(2, al.getColor());
 			_ps.setBoolean(3, al.getActive());
 			_ps.setString(4, al.getCode());
-			_ps.setString(5, oldCode);
+			_ps.setBoolean(5, al.getScheduleSync());
+			_ps.setBoolean(6, al.getHistoric());
+			_ps.setString(7, oldCode);
 			executeUpdate(1);
 			
 			// Write the alternate codes
@@ -124,12 +128,11 @@ public class SetSchedule extends DAO {
 			// Write the webapp data
 			prepareStatement("INSERT INTO common.APP_AIRLINES (CODE, APPCODE) VALUES (?, ?)");
 			_ps.setString(1, al.getCode());
-			for (Iterator<String> i = al.getApplications().iterator(); i.hasNext(); ) {
-				_ps.setString(2, i.next());
+			for (String code : al.getApplications()) {
+				_ps.setString(2, code);
 				_ps.addBatch();
 			}
 
-			// Write and commit
 			_ps.executeBatch();
 			_ps.close();
 			commitTransaction();

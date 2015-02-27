@@ -31,21 +31,28 @@
  <td style="width:5%">&nbsp;</td>
  <td style="width:25%">AIRLINE NAME</td>
  <td style="width:20%">WEB APPLICATIONS</td>
- <td style="width:10%">AIRLINE CODE</td>
- <td style="width:10%">AIRPORTS</td>
+ <td style="width:8%">AIRLINE CODE</td>
+ <td style="width:10%">TYPE</td>
+ <td style="width:8%">AIRPORTS</td>
  <td><el:cmdbutton url="airline" op="edit" label="NEW AIRLINE" /></td>
 </tr>
 
 <!-- Table Airline Data -->
 <c:forEach var="airline" items="${airlines}">
 <c:set var="airportCount" value="${apCount[airline]}" scope="page" />
-<view:row entry="${airline}">
+<tr>
  <td><map:legend color="${airline.color}" legend="" /></td>
  <td class="pri bld"><el:cmd url="airline" linkID="${airline.code}" op="edit">${airline.name}</el:cmd></td>
  <td class="sec small"><c:forEach var="appCode" items="${airline.applications}" varStatus="aStatus">
 <c:set var="appName" value="${apps[appCode]}" scope="page" />
 ${appName.name}<c:if test="${!aStatus.last}"><br /></c:if></c:forEach></td>
  <td class="bld">${airline.code}</td>
+<c:if test="${airline.historic}">
+ <td class="sec bld caps">Historic</td>
+</c:if>
+<c:if test="${!airline.historic}">
+ <td class="caps">Current</td>
+</c:if>
  <td class="sec bld"><fmt:int value="${airportCount}" /></td>
 <c:if test="${airline.active}">
  <td class="ter bld">Airline is currently Active</td>
@@ -53,12 +60,12 @@ ${appName.name}<c:if test="${!aStatus.last}"><br /></c:if></c:forEach></td>
 <c:if test="${!airline.active}">
  <td class="warn bld">Airline is currently Inactive</td>
 </c:if>
-</view:row>
+</tr>
 </c:forEach>
 
 <!-- Scroll Bar -->
 <tr class="title">
- <td colspan="6">&nbsp;</td>
+ <td colspan="7">&nbsp;</td>
 </tr>
 </view:table>
 <content:copyright />
