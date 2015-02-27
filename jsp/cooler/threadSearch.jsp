@@ -47,7 +47,7 @@ golgotha.local.setChannel = function(combo) {
 <el:form action="coolersearch.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title">
- <td colspan="2" class="left caps">${forumName} Search</td>
+ <td colspan="2" class="left caps"><content:airline /> ${forumName} Search</td>
 </tr>
 <tr>
  <td class="label">Search String</td>
@@ -63,7 +63,7 @@ golgotha.local.setChannel = function(combo) {
 </tr>
 <tr>
  <td class="label">Last Post</td>
- <td class="data">Within the previous <el:combo name="daysBack" idx="*" size="1" value="${param.daysBack}" options="${days}" /> days</td>
+ <td class="data">Within the previous <el:combo name="daysBack" idx="*" size="1" value="${daysBack}" options="${days}" /> days</td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
