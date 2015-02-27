@@ -793,6 +793,11 @@ aircraft types, for easy reuse when assigning a Check Ride to a pilot.</td>
  <td class="data">You can import entries into the <content:airline /> Flight Schedule database from a CSV 
 data file. You may also export entries from the Flight Schedule into a CSV data file.</td>
 </tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="schedsync">Synchronize Flight Schedule</el:cmd></td>
+ <td class="data">You may synchronize flight schedules (on an airline by airline basis) with other virtual
+ airlines running on this server.</td>
+</tr>
 <c:if test="${!empty faaChartURL}">
 <tr>
  <td class="mid"><el:cmd className="bld" url="faachartdl">FAA Approach Chart Download</el:cmd></td>
