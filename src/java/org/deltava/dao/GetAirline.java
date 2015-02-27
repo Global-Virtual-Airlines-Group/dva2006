@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2011, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.schedule.Airline;
 /**
  * A Data Access Object to load Airline codes and names.
  * @author Luke
- * @version 4.1
+ * @version 6.0
  * @since 1.0
  */
 
@@ -72,17 +72,18 @@ public class GetAirline extends DAO {
 		}
 	}
 
-	/**
+	/*
 	 * Helper method to parse Airline result sets.
 	 */
 	private Map<String, Airline> execute() throws SQLException {
-
 		Map<String, Airline> results = new LinkedHashMap<String, Airline>();
 		try (ResultSet rs = _ps.executeQuery()) {
 			while (rs.next()) {
 				Airline a = new Airline(rs.getString(1), rs.getString(2));
 				a.setColor(rs.getString(3));
 				a.setActive(rs.getBoolean(4));
+				a.setScheduleSync(rs.getBoolean(5));
+				a.setHistoric(rs.getBoolean(6));
 				results.put(a.getCode(), a);
 			}
 		}

@@ -65,7 +65,9 @@ return true;
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="active" idx="*" value="true" label="Airline is Active" checked="${airline.active}" /></td>
+ <td class="data"><el:box name="active" idx="*" value="true" label="Airline is Active" checked="${airline.active}" /><br />
+ <el:box name="historic" idx="*" value="true" label="This is a Historic Airline" checked="${airline.historic}" /><br />
+ <el:box name="sync" idx="*" value="true" label="Synchronize schedule with other Web Applications" checked="${airline.scheduleSync}" /> </td>
 </tr>
 </el:table>
 
