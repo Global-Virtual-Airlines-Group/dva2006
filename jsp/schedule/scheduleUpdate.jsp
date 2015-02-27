@@ -70,6 +70,18 @@ To review this schedule entry, <el:cmd url="sched" op="edit" linkID="${scheduleE
 To view flights between ${scheduleEntry.airportD.name} (<fmt:airport airport="${scheduleEntry.airportD}" />) and ${scheduleEntry.airportA.name} (<fmt:airport airport="${scheduleEntry.airportA}" />),
  <el:link url="/browse.do?airportD=${scheduleEntry.airportD.ICAO}&airportA=${scheduleEntry.airportA.ICAO}" className="sec bld">Click Here</el:link>.<br />
 </c:when>
+<c:when test="${scheduleSync}">
+<div class="updateHdr">Flight Schedule Synchronized</div>
+<br />
+The <content:airline /> Flight Schedule has been updated by synchronizing <span class="sec bld">${airline.name}</span> schedule entries from 
+ the <span class="pri bld">${src.name}</span> Flight Schedule.<br />
+<br />
+<c:if test="${entriesPurged > 0}">
+<fmt:int value="${entriesPurged}" /> Flight Schedule entries were purged prior to the synchronization.<br /></c:if>
+<fmt:int value="${entriesCopied}" /> Flight Schedule entries were copied from the ${src.name} Flight Schedule.<br />
+<br />
+To synchronize another airline's schedule entries, please <el:cmd className="sec bld" url="schedsync">Click Here</el:cmd>.<br />
+</c:when>
 </c:choose>
 <c:if test="${isAirport}">
 <br />
