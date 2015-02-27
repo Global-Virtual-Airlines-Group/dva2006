@@ -45,6 +45,7 @@
  <content:subitem><el:cmd url="ivimport">Innovata Download</el:cmd></content:subitem>
  <content:subitem><el:cmd url="ivstatus">Innovata Status</el:cmd></content:subitem>
 </c:if>
+ <content:subitem><el:cmd url="schedsync">Synchronize Schedules</el:cmd></content:subitem>
  <content:subitem><el:cmd url="usvcairports">Unserviced Airports</el:cmd></content:subitem>
  <content:subitem><el:cmd url="navimport">Navigation Data</el:cmd></content:subitem>
 </content:submenu>
