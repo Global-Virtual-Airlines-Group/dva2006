@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to search the Water Cooler.
  * @author Luke
- * @version 5.1
+ * @version 6.0
  * @since 1.0
  */
 
@@ -41,6 +41,10 @@ public class CoolerSearchCommand extends AbstractViewCommand {
 		// Save days option
 		ctx.setAttribute("days", DAY_OPTS, REQUEST);
 		
+		// Get days to search
+		int daysBack = StringUtils.parse(ctx.getParameter("daysBack"), 180);
+		ctx.setAttribute("daysBack", Integer.valueOf(daysBack), REQUEST);
+		
 		// Get the command result and view context
 		CommandResult result = ctx.getResult();
 		ViewContext vc = initView(ctx);
@@ -61,8 +65,9 @@ public class CoolerSearchCommand extends AbstractViewCommand {
 			}
 			
 			// Check if we can get the lock
+			TaskTimer tt = new TaskTimer();
 			try {
-				if (!s.tryAcquire(250, TimeUnit.MILLISECONDS)) {
+				if (!s.tryAcquire(200, TimeUnit.MILLISECONDS)) {
 					ctx.release();
 					result.setURL("/jsp/error/tooBusy.jsp");
 					return;
@@ -74,7 +79,6 @@ public class CoolerSearchCommand extends AbstractViewCommand {
 			}
 			
 			// Get last update date
-			int daysBack = StringUtils.parse(ctx.getParameter("daysBack"), 90);
 			Date lud = CalendarUtils.getInstance(null, false, daysBack * -1).getTime();
 
 			// Build the search criteria
@@ -123,6 +127,7 @@ public class CoolerSearchCommand extends AbstractViewCommand {
 			// Save the threads in the request
 			vc.setResults(threads);
 			ctx.setAttribute("pilots", authors, REQUEST);
+			ctx.setAttribute("searchTime", Long.valueOf(tt.stop()), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
