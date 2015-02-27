@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.util.*;
@@ -13,14 +13,13 @@ import org.deltava.dao.DAOException;
 /**
  * An abstract class to store common methods for Flight Schedule import Data Access Objects.
  * @author Luke
- * @version 2.7
+ * @version 6.0
  * @since 1.0
  */
 
 public abstract class ScheduleLoadDAO extends DAO {
 
 	protected Map<String, Airline> _airlines;
-	protected final Collection<PartnerAirline> _partners = new ArrayList<PartnerAirline>();
 	protected final Collection<String> _errors = new ArrayList<String>();
 	
 	protected final Collection<String> _invalidEQ = new TreeSet<String>();
@@ -66,17 +65,6 @@ public abstract class ScheduleLoadDAO extends DAO {
 		}
 	}
 	
-	/**
-	 * Clears and initializes the list of partner airlines.
-	 * @param airlines a Collection of PartnerAirline beans
-	 */
-	public void setPartners(Collection<PartnerAirline> airlines) {
-		if (airlines != null) {
-			_partners.clear();
-			_partners.addAll(airlines);
-		}
-	}
-
 	/**
 	 * Returns back the loaded Flight Schedule entries.
 	 * @return a Collection of ScheduleEntry beans
@@ -124,34 +112,6 @@ public abstract class ScheduleLoadDAO extends DAO {
 	}
 
 	/**
-	 * Applies code share airline information to Schedule entries.
-	 * @param entries a Collection of ScheduleEntry beans
-	 */
-	protected void updateCodeshares(Collection<ScheduleEntry> entries) {
-		for (Iterator<ScheduleEntry> i = entries.iterator(); i.hasNext();) {
-			boolean isIgnore = false;
-
-			ScheduleEntry se = i.next();
-			for (Iterator<PartnerAirline> pi = _partners.iterator(); pi.hasNext();) {
-				PartnerAirline pa = pi.next();
-				if (pa.contains(se.getFlightNumber())) {
-					if (PartnerAirline.IGNORE.equals(pa)) {
-						isIgnore = true;
-						i.remove();
-					} else
-						se.setAirline(pa.getAirline());
-
-					break;
-				}
-			}
-
-			// Check that partner airline serves both airports
-			if (!isIgnore)
-				validateAirports(se);
-		}
-	}
-	
-	/**
 	 * Maps an IATA equipment code to an aircraft type.
 	 * @param iataCode the IATA code
 	 * @return the aircraft type, or null if not found
@@ -163,7 +123,7 @@ public abstract class ScheduleLoadDAO extends DAO {
 		return (a == null) ? null : a.getName();
 	}
 	
-	/**
+	/*
 	 * Helper function to return an invalid airport bucket.
 	 */
 	private Collection<Airport> getAirportBucket(Airline al) {
