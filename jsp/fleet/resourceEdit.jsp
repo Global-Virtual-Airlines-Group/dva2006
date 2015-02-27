@@ -22,9 +22,8 @@ golgotha.form.validate({f:f.desc, l:8, t:'Resource Description'});
 golgotha.form.validate({f:f.category, t:'Resource Category'});
 
 // Prepend a protocol to the URL
-var url = form.url;
-if (url.value.indexOf('://') == -1)
-	url.value = 'http://' + url.value;
+if (f.url.value.indexOf('://') == -1)
+	f.url.value = 'http://' + f.url.value;
 
 golgotha.form.submit(f);
 return true;
