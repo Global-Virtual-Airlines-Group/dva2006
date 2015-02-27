@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load an exported Flight Schedule.
  * @author Luke
- * @version 2.3
+ * @version 6.0
  * @since 1.0
  */
 
@@ -30,7 +30,7 @@ public class GetSchedule extends ScheduleLoadDAO {
 		super(is);
 	}
 
-	/**
+	/*
 	 * Helper method to load an airport bean.
 	 */
 	private Airport getAirport(String code, int line) {
@@ -49,13 +49,10 @@ public class GetSchedule extends ScheduleLoadDAO {
 	 * @return a Collection of ScheduleEntry beans
 	 * @throws DAOException if an I/O error occurs
 	 */
+	@Override
 	public Collection<ScheduleEntry> process() throws DAOException {
 		Collection<ScheduleEntry> results = new ArrayList<ScheduleEntry>();
-		
-		try {
-			LineNumberReader br = new LineNumberReader(getReader());
-			
-			// Iterate through the file
+		try (LineNumberReader br = new LineNumberReader(getReader())) {
 			while (br.ready()) {
 				String txtData = br.readLine();
 				if ((!txtData.startsWith(";")) && (txtData.length() > 5)) {
@@ -71,8 +68,7 @@ public class GetSchedule extends ScheduleLoadDAO {
 							throw new ParseException("Invalid Airline Code - " + aCode, 0);
 
 						// Build the flight number and equipment type
-						ScheduleEntry entry = new ScheduleEntry(a, Integer.parseInt(tkns.nextToken()), Integer
-								.parseInt(tkns.nextToken()));
+						ScheduleEntry entry = new ScheduleEntry(a, Integer.parseInt(tkns.nextToken()), Integer.parseInt(tkns.nextToken()));
 						entry.setEquipmentType(tkns.nextToken());
 
 						// Get the airports and times
@@ -97,14 +93,10 @@ public class GetSchedule extends ScheduleLoadDAO {
 					}
 				}
 			}
-			
-			br.close();
 		} catch (IOException ie) {
 			throw new DAOException(ie);
 		}
 		
-		// Update the codeshare airlines
-		updateCodeshares(results);
 		return results;
 	}
 }
