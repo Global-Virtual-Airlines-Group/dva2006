@@ -24,12 +24,12 @@
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
-golgotha.form.validate({f:form.title, l:6, t:'Installer Title'});
+golgotha.form.validate({f:f.title, l:6, t:'Installer Title'});
 golgotha.form.validate({f:f.majorVersion, min:0, t:'Major Version Number'});
 golgotha.form.validate({f:f.minorVersion, min:0, t:'Minor Version Number'});
 golgotha.form.validate({f:f.subVersion, min:0, t:'Sub-Version Number'});
-golgotha.form.validate({f:form.desc, l:10, t:'Description'});
-golgotha.form.validate({f:form.code, l:3, t:'Installer Code'});
+golgotha.form.validate({f:f.desc, l:10, t:'Description'});
+golgotha.form.validate({f:f.code, l:3, t:'Installer Code'});
 golgotha.form.validate({f:f.fileName, l:8, t:'Installer Filename'});
 golgotha.form.submit(f);
 return true;

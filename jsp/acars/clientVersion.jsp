@@ -20,10 +20,10 @@ golgotha.form.validate({f:f.latestBuild, min:1, t:'Latest Build'});
 golgotha.form.validate({f:f.latestDispatch, min:1, t:'Latest Dispatch Build'});
 <c:forEach var="ver" items="${fn:keys(versionInfo)}">
 <c:set var="versionCode" value="${fn:replace(ver, '.', '_')}" scope="page" />
-golgotha.form.validate({f:form.min_${versionCode}_Build, min:1, t:'Minimum ${ver} Build'});
+golgotha.form.validate({f:f.min_${versionCode}_Build, min:1, t:'Minimum ${ver} Build'});
 </c:forEach>
 <c:forEach var="build" items="${fn:keys(betaInfo)}">
-golgotha.form.validate({f:form.min_${build}_beta, min:0, t:'Minimum Build ${build} beta version'});
+golgotha.form.validate({f:f.min_${build}_beta, min:0, t:'Minimum Build ${build} beta version'});
 </c:forEach>
 golgotha.form.submit(f);
 return true;
