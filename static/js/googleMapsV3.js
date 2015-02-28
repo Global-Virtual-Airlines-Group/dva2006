@@ -411,7 +411,7 @@ golgotha.maps.IconMarker = function(opts, pt) {
 	var hasLabel = (opts.label != null);
 	var imgBase = null;
 	if (opts.pal > 0)
-		imgBase = 'http://maps.google.com/mapfiles/kml/pal' + opts.pal + '/icon' + opts.icon;
+		imgBase = self.location.protocol + '//maps.google.com/mapfiles/kml/pal' + opts.pal + '/icon' + opts.icon;
 	else
 		imgBase = '/' + golgotha.maps.IMG_PATH + '/maps/pal' + opts.pal + '/icon' + opts.icon;
 
