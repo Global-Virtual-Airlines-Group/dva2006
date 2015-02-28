@@ -1,22 +1,21 @@
-// Copyright 2005, 2007, 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2011, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.system.*;
-
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.mail.*;
-
 import org.deltava.security.command.IssueAccessControl;
 
 /**
  * A web site command to save new Issue Comments.
  * @author Luke
- * @version 4.1
+ * @version 6.0
  * @since 1.0
  */
 
@@ -85,16 +84,14 @@ public class IssueCommentCommand extends AbstractCommand {
 				// Check if we're sending to all commenters
 				boolean sendAll = Boolean.valueOf(ctx.getParameter("emailAll")).booleanValue();
 				if (sendAll) {
-					for (Iterator<IssueComment> ci = i.getComments().iterator(); ci.hasNext();) {
-						IssueComment c = ci.next();
-						pilotIDs.add(new Integer(c.getAuthorID()));
-					}
+					for (IssueComment c : i.getComments())
+						pilotIDs.add(Integer.valueOf(c.getAuthorID()));
 				}
 
 				// Get the Issue creator and assignee, and remove the current user
-				pilotIDs.add(new Integer(i.getAuthorID()));
-				pilotIDs.add(new Integer(i.getAssignedTo()));
-				pilotIDs.remove(new Integer(ctx.getUser().getID()));
+				pilotIDs.add(Integer.valueOf(i.getAuthorID()));
+				pilotIDs.add(Integer.valueOf(i.getAssignedTo()));
+				pilotIDs.remove(Integer.valueOf(ctx.getUser().getID()));
 
 				// Get the message template
 				GetMessageTemplate mtdao = new GetMessageTemplate(con);
@@ -107,6 +104,7 @@ public class IssueCommentCommand extends AbstractCommand {
 				// Get the pilot profiles
 				GetPilot pdao = new GetPilot(con);
 				Collection<Pilot> pilots = pdao.get(udm).values();
+				pilots = pilots.stream().filter(p -> (p.getStatus() == Pilot.ACTIVE)).collect(Collectors.toList());
 
 				// Create the e-mail message
 				Mailer mailer = new Mailer(ctx.getUser());
