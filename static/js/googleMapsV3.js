@@ -249,7 +249,7 @@ golgotha.maps.SelectControl = function(title, onSelect, onClear, ctx) {
 	if (ctx == null) ctx = window;
 	google.maps.event.addDomListener(btn, 'click', function() {
 		if (this.isSelected) {
-			document.removeClass(btn, 'displayed');
+			golgotha.util.removeClass(btn, 'displayed');
 			try { delete btn.isSelected; } catch (err) { btn.isSelected = false; }
 			if (onClear != null) onClear.call(ctx);
 		} else {

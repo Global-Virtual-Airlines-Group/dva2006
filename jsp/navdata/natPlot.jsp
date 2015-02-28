@@ -12,7 +12,7 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
-<map:api version="3" libraries="weather" />
+<map:api version="3" />
 <content:js name="googleMapsWX" />
 <content:js name="wxParsers" />
 <content:js name="markerWithLabel" />
@@ -64,7 +64,7 @@
 <script id="mapInit" defer>
 // Create map options
 var mapTypes = {mapTypeIds: [google.maps.MapTypeId.SATELLITE, google.maps.MapTypeId.TERRAIN]};
-var mapOpts = {center:{lat:52, lng:-35}, zoom:4, minZoom:3, maxZoom:8, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
+var mapOpts = {center:{lat:52,lng:-35}, zoom:4, minZoom:3, maxZoom:8, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
 
 // Create the map
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
@@ -75,8 +75,13 @@ google.maps.event.addListener(map.infoWindow, 'closeclick', map.closeWindow);
 google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
 
 // WU Front loader
-var frLoad = new golgotha.maps.LayerLoader('Fronts', golgotha.maps.fronts.FrontParser);
-frLoad.onload(function() { golgotha.util.enable('selFronts'); });
+golgotha.local.frLoad = new golgotha.maps.LayerLoader('Fronts', golgotha.maps.fronts.FrontParser);
+golgotha.local.frLoad.onload(function() { golgotha.util.enable('selFronts'); });
+
+// Weather layer loader
+golgotha.local.loader = new golgotha.maps.SeriesLoader();
+golgotha.local.loader.setData('sat', 0.325, 'wxSat');
+golgotha.local.loader.onload(function() { golgotha.util.enable('#selImg'); });
 
 // Create the jetstream layers
 var jsOpts = {maxZoom:8, nativeZoom:5, opacity:0.55, zIndex:golgotha.maps.z.OVERLAY};
@@ -85,8 +90,8 @@ var ljsl = new golgotha.maps.ShapeLayer(jsOpts, 'Low Jet', 'wind-lojet');
 
 // Add selection controls
 var ctls = map.controls[google.maps.ControlPosition.BOTTOM_LEFT];
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Fronts', disabled:true, id:'selFronts'}, function() { return frLoad.getLayer(); }));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Clouds'}, new google.maps.weather.CloudLayer()));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Fronts', disabled:true, id:'selFronts'}, function() { return golgotha.local.frLoad.getLayer(); }));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Clouds', disabled:true, c:'selImg'}, function() { return golgotha.local.loader.getLatest('sat'); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Lo Jetstream'}, ljsl));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Hi Jetstream'}, hjsl));
 ctls.push(new golgotha.maps.LayerClearControl(map));
@@ -95,7 +100,8 @@ map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementB
 // Load data async once tiles are loaded
 google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
 	golgotha.maps.oceanic.resetTracks();
-	golgotha.util.createScript({id:'wuFronts', url:'http://api.wunderground.com/api/${wuAPI}/fronts/view.json?callback=frLoad.load', async:true});
+	golgotha.util.createScript({id:'wxLoader', url:('//' + self.location.host + '/wx/serieslist.js?function=golgotha.local.loader.loadGinsu'), async:true});
+	golgotha.util.createScript({id:'wuFronts', url:'//api.wunderground.com/api/${wuAPI}/fronts/view.json?callback=golgotha.local.frLoad.load', async:true});
 	google.maps.event.trigger(map, 'maptypeid_changed');
 });
 </script>
