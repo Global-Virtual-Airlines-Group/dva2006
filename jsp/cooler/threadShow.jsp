@@ -195,9 +195,6 @@ APPLICANT<br />
 <el:showaddr user="${pilot}">
 <content:enum var="imAddr" className="org.deltava.beans.IMAddress" item="AIM" />
 <c:set var="aimAddr" value="${pilot.IMHandle[imAddr]}" scope="page" />
-<c:if test="${!empty aimAddr}">
-<a href="aim:goim?screenname=${aimAddr}"><img class="noborder" src="http://big.oscar.aol.com/${aimAddr}?on_url=http://${serverName}/${imgPath}/im/aimonline.png&off_url=http://${serverName}/${imgPath}/im/aimoffline.png" alt="AIM Status" /></a>
-</c:if>
 </el:showaddr></td>
 <c:set var="showPostTools" value="${(access.canReply && !doEdit) || canEdit || (access.canDelete && (postCount > 1))}" scope="page" />
  <td class="${isUnread ? 'unread_' : ''}postDate" colspan="${showPostTools ? '1' : '2'}">Post created on <fmt:date date="${msg.createdOn}" d="MMMM dd yyyy" />
