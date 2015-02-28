@@ -116,7 +116,9 @@ golgotha.util.isFunction = function(o) { return !!(o && o.constructor && o.call 
 golgotha.util.createScript = function(opts)
 {
 var url = opts.url;
-if (url.indexOf("http") != 0)
+if (url.startsWith('//'))
+	url = self.location.protocol + url;
+else if (url.indexOf('http') != 0)
 	url = self.location.protocol + "//" + golgotha.maps.wxHost + url;
 	
 if (url.indexOf(golgotha.maps.wxHost) > -1) {
