@@ -11,7 +11,7 @@
 <content:css name="dispatchMap" scheme="legacy" />
 <content:pics />
 <content:js name="common" />
-<map:api version="3" libraries="weather" />
+<map:api version="3" />
 <content:js name="progressBar" />
 <content:js name="googleMapsWX" />
 <content:googleAnalytics eventSupport="true" />
@@ -21,8 +21,8 @@ loaders.series = new golgotha.maps.SeriesLoader();
 loaders.series.setData('radar', 0.45, 'wxRadar', 1024);
 loaders.series.setData('eurorad', 0.45, 'wxRadar', 512);
 loaders.series.setData('aussieradar', 0.45, 'wxRadar', 512);
-loaders.series.setData('hirad_temp', 0.275, 'wxTemp');
-loaders.series.setData('hirad_windSpeed', 0.325, 'wxWind');
+loaders.series.setData('temp', 0.275, 'wxTemp');
+loaders.series.setData('windspeed', 0.325, 'wxWind');
 loaders.series.onload(function() { golgotha.util.enable('#selImg'); });
 
 golgotha.local.clickIcon = function() {
@@ -92,11 +92,10 @@ var ljsl = new golgotha.maps.ShapeLayer(jsOpts, 'Low Jet', 'wind-lojet');
 
 // Build the weather layer controls
 var ctls = map.controls[google.maps.ControlPosition.BOTTOM_LEFT];
-var worldRadar = function() { return [loaders.series.getLatest('radar'), loaders.series.getLatest('eurradar'), loaders.series.getLatest('aussieradar')]; };
+var worldRadar = function() { return [loaders.series.getLatest('radar'), loaders.series.getLatest('eurorad'), loaders.series.getLatest('aussieradar')]; };
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Radar', disabled:true, c:'selImg'}, worldRadar));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Temperature', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('hirad_temp'); }));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Wind Speed', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('hirad_windSpeed'); }));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Clouds'}, new google.maps.weather.CloudLayer()));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Temperature', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('temp'); }));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Wind Speed', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('windspeed'); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Lo Jetstream'}, ljsl));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Hi Jetstream'}, hjsl));
 ctls.push(new golgotha.maps.LayerClearControl(map));
@@ -120,7 +119,7 @@ google.maps.event.addListener(map, 'dragend', golgotha.local.mapZoom);</c:if>
 
 // Load data async once tiles are loaded
 google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
-	golgotha.util.createScript({id:'wxLoader', url:'/maps/i/series?jsonp=loaders.series.load', async:true});
+	golgotha.util.createScript({id:'wxLoader', url:('//' + self.location.host + '/wx/serieslist.js?function=loaders.series.loadGinsu'), async:true});
 	google.maps.event.trigger(map, 'maptypeid_changed');
 	google.maps.event.trigger(map, 'zoom_changed');
 });

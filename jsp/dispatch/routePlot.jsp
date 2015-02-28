@@ -15,7 +15,7 @@
 <content:js name="common" />
 <content:json />
 <content:js name="airportRefresh" />
-<map:api version="3" libraries="weather" />
+<map:api version="3" />
 <content:js name="markermanager" />
 <content:js name="progressBar" />
 <content:js name="googleMapsWX" />
@@ -31,8 +31,9 @@ loaders.fr = new golgotha.maps.LayerLoader('Fronts', golgotha.maps.fronts.FrontP
 loaders.series.setData('radar', 0.45, 'wxRadar', 1024);
 loaders.series.setData('eurorad', 0.45, 'wxRadar', 512);
 loaders.series.setData('aussieradar', 0.45, 'wxRadar', 512);
-loaders.series.setData('hirad_temp', 0.275, 'wxTemp');
-loaders.series.setData('hirad_windSpeed', 0.325, 'wxWind');
+loaders.series.setData('temp', 0.275, 'wxTemp');
+loaders.series.setData('windspeed', 0.325, 'wxWind');
+loaders.series.setData('sat', 0.325, 'wxSat');
 loaders.series.onload(function() { golgotha.util.enable('#selImg'); });
 loaders.fr.onload(function() { golgotha.util.enable('selFronts'); });
 
@@ -187,11 +188,11 @@ var ljsl = new golgotha.maps.ShapeLayer(jsOpts, 'Low Jet', 'wind-lojet');
 
 // Build the weather layer controls
 var ctls = map.controls[google.maps.ControlPosition.BOTTOM_LEFT];
-var worldRadar = function() { return [loaders.series.getLatest('radar'), loaders.series.getLatest('eurradar'), loaders.series.getLatest('aussieradar')]; };
+var worldRadar = function() { return [loaders.series.getLatest('radar'), loaders.series.getLatest('eurorad'), loaders.series.getLatest('aussieradar')]; };
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Radar', disabled:true, c:'selImg'}, worldRadar));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Temperature', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('hirad_temp'); }));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Wind Speed', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('hirad_windSpeed'); }));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Clouds'}, new google.maps.weather.CloudLayer()));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Temperature', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('temp'); }));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Wind Speed', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('windspeed'); }));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Clouds', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('sat'); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Fronts', disabled:true, id:'selFronts'}, function() { return loaders.fr.getLayer(); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Lo Jetstream'}, ljsl));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Hi Jetstream'}, hjsl));
@@ -206,8 +207,8 @@ golgotha.routePlot.dGates = new MarkerManager(map, {maxZoom:11});
 
 // Load data async once tiles are loaded
 google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
-	golgotha.util.createScript({id:'wxLoader', url:'/maps/i/series?jsonp=loaders.series.load', async:true});
-	golgotha.util.createScript({id:'wuFronts', url:'http://api.wunderground.com/api/${wuAPI}/fronts/view.json?callback=loaders.fr.load', async:true});
+	golgotha.util.createScript({id:'wxLoader', url:('//' + self.location.host + '/wx/serieslist.js?function=loaders.series.loadGinsu'), async:true});
+	golgotha.util.createScript({id:'wuFronts', url:'//api.wunderground.com/api/${wuAPI}/fronts/view.json?callback=loaders.fr.load', async:true});
 	google.maps.event.trigger(map, 'maptypeid_changed');
 });
 <c:if test="${!empty airportD}">golgotha.routePlot.plotMap();</c:if>
