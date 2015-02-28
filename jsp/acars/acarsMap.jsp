@@ -15,7 +15,7 @@
 <content:js name="common" />
 <content:googleAnalytics eventSupport="true" />
 <content:sysdata var="refreshInterval" name="acars.livemap.reload" />
-<map:api version="3" libraries="weather" />
+<map:api version="3" />
 <content:js name="acarsMap" />
 <content:js name="progressBar" />
 <content:js name="markerWithLabel" />
@@ -31,9 +31,9 @@ loaders.series = new golgotha.maps.SeriesLoader();
 loaders.series.setData('radar', 0.45, 'wxRadar', 1024);
 loaders.series.setData('eurorad', 0.45, 'wxRadar', 512);
 loaders.series.setData('aussieradar', 0.45, 'wxRadar', 512);
-loaders.series.setData('hirad_radar_ff', 0.45, 'wxRadar', 1024);
-loaders.series.setData('hirad_temp', 0.275, 'wxTemp');
-loaders.series.setData('hirad_windSpeed', 0.325, 'wxWind');
+loaders.series.setData('future_radar_ff', 0.45, 'wxRadar', 1024);
+loaders.series.setData('temp', 0.275, 'wxTemp');
+loaders.series.setData('windspeed', 0.325, 'wxWind');
 loaders.series.onload(function() { golgotha.util.enable('#selImg'); });
 loaders.fr.onload(function() { golgotha.util.enable('selFronts'); });
 loaders.lg.onload(function() { golgotha.util.enable('selLG'); });
@@ -159,9 +159,8 @@ golgotha.maps.acars.showEarth = function() {
 </content:page>
 <content:sysdata var="wuAPI" name="security.key.wunderground" />
 <script id="mapInit" defer>
-<map:point var="mapC" point="${mapCenter}" />
-var mapTypes = {mapTypeIds:golgotha.maps.DEFAULT_TYPES};
-var mapOpts = {center:mapC, minZoom:2, maxZoom:17, zoom:${zoomLevel}, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
+<map:point var="golgotha.local.mapC" point="${mapCenter}" />
+var mapOpts = {center:golgotha.local.mapC, minZoom:2, maxZoom:17, zoom:${zoomLevel}, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
 
 // Create the map
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
@@ -177,14 +176,14 @@ map.controls[google.maps.ControlPosition.TOP_CENTER].push(golgotha.maps.util.pro
 
 // Build the weather layer controls
 var ctls = map.controls[google.maps.ControlPosition.BOTTOM_LEFT];
-//var loop = function() { return loaders.series.combine(12, 'radar', 'hirad_radar_ff'); };
-var loop = function() { return loaders.series.getLayers('radar', 12); };
-var worldRadar = function() { return [loaders.series.getLatest('radar'), loaders.series.getLatest('eurradar'), loaders.series.getLatest('aussieradar')]; };
+var loop = function() { return loaders.series.combine(12, 'radar', 'future_radar_ff'); };
+//var loop = function() { return loaders.series.getLayers('radar', 12); };
+var worldRadar = function() { return [loaders.series.getLatest('radar'), loaders.series.getLatest('eurorad'), loaders.series.getLatest('aussieradar')]; };
 var hjsl = new golgotha.maps.ShapeLayer({maxZoom:8, nativeZoom:5, opacity:0.55, zIndex:golgotha.maps.z.OVERLAY}, 'High Jet', 'wind-jet');
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Radar', disabled:true, c:'selImg'}, worldRadar));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Temperature', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('hirad_temp'); }));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Wind Speed', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('hirad_windSpeed'); }));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Clouds'}, new google.maps.weather.CloudLayer()));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Temperature', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('temp'); }));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Wind Speed', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('windspeed'); }));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Clouds', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('sat'); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Fronts', disabled:true, id:'selFronts'}, function() { return loaders.fr.getLayer(); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Lightning', disabled:true, id:'selLG'}, function() { return loaders.lg.getLayer(); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Jet Stream'}, hjsl));
@@ -205,11 +204,10 @@ map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(document.getElementBy
 // Load data async once tiles are loaded
 google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
 	golgotha.maps.reloadData(true);
-	golgotha.util.createScript({id:'FIRs', url:(self.location.protocol + '//' + self.location.host + '/firs.ws?jsonp=loaders.fir.load'), async:true});
-	golgotha.util.createScript({id:'wuFronts', url:'http://api.wunderground.com/api/${wuAPI}/fronts/view.json?callback=loaders.fr.load', async:true});
+	golgotha.util.createScript({id:'FIRs', url:('//' + self.location.host + '/firs.ws?jsonp=loaders.fir.load'), async:true});
+	golgotha.util.createScript({id:'wuFronts', url:'//api.wunderground.com/api/${wuAPI}/fronts/view.json?callback=loaders.fr.load', async:true});
 	google.maps.event.trigger(map, 'maptypeid_changed');
 	google.maps.event.trigger(map, 'zoom_changed');
-	document.dispatchOnline = false;
 	golgotha.maps.acars.reloadData(true);
 });
 
@@ -229,7 +227,7 @@ golgotha.maps.reloadData = function(isReload) {
 		dv.innerHTML = txtDate.substring(0, txtDate.indexOf('('));
 	}
 
-	golgotha.util.createScript({id:'wxLoader', url:'/maps/i/series?jsonp=loaders.series.load', async:true});
+	golgotha.util.createScript({id:'wxLoader', url:('//' + self.location.host + '/wx/serieslist.js?function=loaders.series.loadGinsu'), async:true});
 	golgotha.util.createScript({id:'lgAlert', url:'/wxd/LGRecord/CURRENT?jsonp=loaders.lg.load', async:true});
 	return true;
 };

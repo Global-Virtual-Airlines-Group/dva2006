@@ -71,6 +71,7 @@ return elements;
 
 // Tile URL generation functions
 golgotha.maps.util.S3OverlayLayer = function(name, ts, size) { return 'http://' + golgotha.maps.tileHost + '/tile/' + name + '/' + size.height + '/' + ts + '/'; };
+golgotha.maps.util.GinsuOverlayLayer = function(name, ts, size) { return 'http://g.imwx.com/TileServer/imgs/' + name + '/u' + ts + '/'; };
 
 // Create a weather overlay type
 golgotha.maps.WeatherLayer = function(opts, timestamp) {
@@ -337,6 +338,79 @@ for (var x = 0; x < this.layers.names.length; x++) {
 return results;
 };
 
+golgotha.maps.SeriesLoader.prototype.loadGinsu = function(id, sd)
+{
+if ((!sd.seriesNames) || (!sd.seriesInfo)) return false;
+var displayedLayers = this.getDisplayed(); this.clear();
+for (var layerName = sd.seriesNames.pop(); (layerName != null); layerName = sd.seriesNames.pop()) {
+	var layerData = sd.seriesInfo[layerName];
+	if (layerData.nativeZoom == null) continue;
+	if (layerData.maxZoom == null) layerData.maxZoom = layerData.nativeZoom + 7;
+	if (layerData.sizes == null) layerData.sizes = [256];
+	var dl = displayedLayers[layerName] || {layers:[], data:[]};
+
+	// Peek inside the series data - if the first entry is FF, iterate through its timestamps
+	var isFF = (layerData.series[0].ff instanceof Array) && (layerData.series[0].ff.length > 0);
+	var timestamps = isFF ? layerData.series[0].ff : layerData.series;
+	var myLayerData = this.imgData[layerName];
+	if (myLayerData == null)
+		myLayerData = {opacity:0.5, imgClass:layerName, size:golgotha.maps.TILE_SIZE.width};
+
+	var slices = [];
+	for (var tsX = 0; tsX < timestamps.length; tsX++) {
+		var ts = timestamps[tsX];
+		var layerOpts = {minZoom:2, name:layerName, maxZoom:layerData.maxZoom, isPng:true, opacity:myLayerData.opacity, tileSize:golgotha.maps.TILE_SIZE, range:[], zIndex:golgotha.maps.z.OVERLAY};
+		layerOpts.tileURL = golgotha.maps.util.GinsuOverlayLayer;
+		var ovLayer = isFF ? new golgotha.maps.FFWeatherLayer(layerOpts, ts.unixDate, layerData.series[0].unixDate) : new golgotha.maps.WeatherLayer(layerOpts, ts.unixDate);
+		ovLayer.set('imgClass', myLayerData.imgClass);
+		ovLayer.set('nativeZoom', layerData.nativeZoom);
+		ovLayer.set('tileSize', golgotha.maps.TILE_SIZE);
+		ovLayer.latest = (tsX == 0);
+
+		// Determine whether we display it - it's either the latest or an arbitrary timeslice
+		for (var x = 0; x < dl.layers.length; x++) {
+			var dspL = dl.layers[x]; if (dspL == null) continue; 
+			var dt = dspL.get('date');
+			if (ovLayer.latest == true) { // If we're processing the latest
+				if (dt == ts.unixDate) {
+					ovLayer = dspL;
+					dl.layers[x] = null;
+					console.log('Keeping latest ' + layerName + ' ' + dspL.get('timestamp'));
+				} else if (dspL.latest) {
+					console.log('Replacing latest ' + layerName + ', replacing ' + dspL.get('timestamp') + ' with ' + ovLayer.get('timestamp'));
+					dspL.force = true;
+					ovLayer.setMap(dspL.getMap());
+				}
+			} else if (dt == ts.unixDate) {
+				if ((!dspL.latest) && (!dspL.force)) {
+					ovLayer = dspL;
+					dl.layers[x] = null;
+					console.log('Keeping ' + layerName + ' ' + dspL.get('timestamp'));
+				}
+			}
+		}
+
+		slices.push(ovLayer);
+	}
+
+	this.layers.names.push(layerName);
+	this.layers.data[layerName] = slices;
+}
+
+// Remove displayed layers
+for (var x = 0; x < dl.layers.length; x++) {
+	var ov = dl.layers[x];
+	if (ov != null)
+		ov.setMap(null);
+}
+
+// Fire event handlers
+for (var l = this.onLoad.pop(); (l != null); l = this.onLoad.pop())
+	l.call(this);
+	
+return true;
+};
+
 golgotha.maps.SeriesLoader.prototype.load = function(sd)
 {
 if ((!sd.body) || (!sd.body.pop)) return false;
@@ -418,14 +492,15 @@ for (var ldoc = sd.body.pop(); (ldoc != null); ldoc = sd.body.pop()) {
 		slices.push(ovLayer);
 	}
 	
-	for (var x = 0; x < dl.layers.length; x++) {
-		var ov = dl.layers[x];
-		if (ov != null)
-			ov.setMap(null);
-	}
-
 	this.layers.names.push(layerName);
 	this.layers.data[layerName] = slices;
+}
+
+// Remove displayed layers
+for (var x = 0; x < dl.layers.length; x++) {
+	var ov = dl.layers[x];
+	if (ov != null)
+		ov.setMap(null);
 }
 
 // Fire event handlers
@@ -530,7 +605,7 @@ golgotha.maps.LayerAnimateControl = function(opts, layers) {
 	google.maps.event.addDomListener(btn, 'stop', function() {
 		if ((!this.isSelected) || opts.map.preload) return false;
 		opts.map.setStatus('');
-		document.removeClass(this, 'displayed');
+		golgotha.util.removeClass(this, 'displayed');
 		try { delete this.isSelected; } catch (err) { this.isSelected = undefined; }
 		if (opts.map.animator) {
 			opts.map.animator.clear();
