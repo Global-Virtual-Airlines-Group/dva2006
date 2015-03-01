@@ -20,12 +20,12 @@
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
-golgotha.form.validateCombo({f:f.airline, t:'Airline'});
-golgotha.form.validateNumber({f:f.flightNumber, min:1, t:'Flight Number'});
-golgotha.form.validateNumber({f:f.flightLeg, min:1, t:'Flight Leg'});
-golgotha.form.validateCombo({f:f.eqType, t:'Equipment Type'});
-golgotha.form.validateCombo({f:f.airportD, t:'Departure Airport'});
-golgotha.form.validateCombo({f:f.airportA, t:'Arrival Airport'});
+golgotha.form.validate({f:f.airline, t:'Airline'});
+golgotha.form.validate({f:f.flightNumber, min:1, t:'Flight Number'});
+golgotha.form.validate({f:f.flightLeg, min:1, t:'Flight Leg'});
+golgotha.form.validate({f:f.eqType, t:'Equipment Type'});
+golgotha.form.validate({f:f.airportD, t:'Departure Airport'});
+golgotha.form.validate({f:f.airportA, t:'Arrival Airport'});
 golgotha.form.submit(f);
 return true;
 };
