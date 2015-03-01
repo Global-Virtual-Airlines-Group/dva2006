@@ -194,9 +194,9 @@ public class ScheduleEntry extends Flight implements ViewEntry {
 			cld.add(Calendar.DATE, 1);
 			_timeA = new DateTime(cld.getTime(), tz);
 			
-			// Check if the flight time is longer than 24 hours, if so go back a day
+			// Check if the flight time is longer than 20 hours, if so go back a day
 			long lengthS = _timeA.difference(_timeD);
-			if (lengthS > 86400)
+			if (lengthS > 72000)
 				_timeA = new DateTime(dt, tz);
 		} else {
 			_timeA = new DateTime(dt, tz);
