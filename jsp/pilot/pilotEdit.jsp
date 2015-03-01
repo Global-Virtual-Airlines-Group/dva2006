@@ -62,20 +62,28 @@ golgotha.form.submit(f);
 return true;
 };
 
-golgotha.local.disableSigBoxes = function()
-{
-var f = document.forms[0];
-f.coolerImg.disabled = (f.useDefaultSig.checked);
-if (golgotha.local.hasSignature)
-	f.useDefaultSig.disabled = (!f.removeCoolerImg.checked);
-
-return true;
+golgotha.local.disableSigBoxes = function() {
+	var f = document.forms[0];
+	f.coolerImg.disabled = (f.useDefaultSig.checked);
+	if (golgotha.local.hasSignature) f.useDefaultSig.disabled = (!f.removeCoolerImg.checked);
+	return true;
 };
 
 golgotha.local.setDefaultFormats = function() {
 	var f = document.forms[0];
 	f.df.value = '${defaultDFormat}';
 	f.tf.value = '${defaultTFormat}';
+	return true;
+};
+
+golgotha.local.checkPwd = function(t, noCascade) {
+	var f = document.forms[0];
+	var of = (t.name == 'pwd2' ? f.pwd1 : f.pwd2);
+	var isOK = (t.value.length > ${minPwd});
+	isOK &= ((t.value == of.value) || (of.value.length == 0));
+	golgotha.util.removeClass(t, isOK ? 'err' : 'ok');
+	golgotha.util.addClass(t, isOK ? 'ok' : 'err');
+	if (!noCascade) golgotha.local.checkPwd(of, true);
 	return true;
 };
 
@@ -148,8 +156,8 @@ golgotha.onDOMReady(function() {
 <c:if test="${pilot.ID == pageContext.request.userPrincipal.ID}">
 <tr>
  <td class="label">Password</td>
- <td colspan="${cspan}" class="data"><el:text type="password" autoComplete="false" name="pwd1" idx="*" size="16" max="32" value="" />, retype:
-<el:text type="password" autoComplete="false" name="pwd2" idx="*" size="16" max="32" value="" /></td>
+ <td colspan="${cspan}" class="data"><el:text type="password" autoComplete="false" name="pwd1" idx="*" size="16" max="32" onKeypress="void golgotha.local.checkPwd(this)" value="" />, retype:
+<el:text type="password" autoComplete="false" name="pwd2" idx="*" size="16" max="32" onKeypress="void golgotha.local.checkPwd(this)" value="" /></td>
 </tr>
 </c:if>
 <c:if test="${access.canChangeRoles}">
