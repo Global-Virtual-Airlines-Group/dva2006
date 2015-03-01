@@ -338,8 +338,7 @@ public class ProfileCommand extends AbstractFormCommand {
 
 			// Load the roles from the request and convert to a set to maintain uniqueness
 			String[] roles = ctx.getRequest().getParameterValues("securityRoles");
-			Collection<String> newRoles = p_access.getCanChangeRoles() ? CollectionUtils.loadList(roles,
-					new HashSet<String>()) : p.getRoles();
+			Collection<String> newRoles = p_access.getCanChangeRoles() ? CollectionUtils.loadList(roles, Collections.emptySet()) : p.getRoles();
 			newRoles.add("Pilot");
 
 			// Update LDAP name
@@ -470,6 +469,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			// Only allow e-mail updates if in HR
 			if (ctx.isUserInRole("HR") && (ctx.getUser().getID() != p.getID())) {
 				p.setEmail(ctx.getParameter("email"));
+				p.setEmailInvalid(false);
 				SetAddressValidation avwdao = new SetAddressValidation(con);
 				avwdao.delete(p.getID());
 			}
