@@ -1,4 +1,4 @@
-// Copyright 2005, 2008, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2008, 2009, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import javax.servlet.jsp.JspException;
@@ -8,7 +8,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP tag to generate HTML text field elements.
  * @author Luke
- * @version 5.0
+ * @version 6.0
  * @since 1.0
  */
 
@@ -145,10 +145,10 @@ public class InputTag extends FormElementTag {
     }
     
     /**
-     * Sets the JavaScript event for this element's onFocus() event.
+     * Sets the JavaScript event for this element's onKeyUp() event.
      * @param jsCode the JavaScript code
      */
-    public void setOnFocus(String jsCode) {
-    	_data.setAttribute("onfocus", jsCode);
+    public void setOnKeypress(String jsCode) {
+    	_data.setAttribute("onkeyup", jsCode);
     }
 }

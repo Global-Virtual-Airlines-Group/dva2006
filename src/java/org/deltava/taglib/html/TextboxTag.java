@@ -162,14 +162,6 @@ public class TextboxTag extends FormElementTag {
     }
     
     /**
-     * Sets the JavaScript event for this element's onFocus() event.
-     * @param jsCode the JavaScript code
-     */
-    public void setOnFocus(String jsCode) {
-    	_data.setAttribute("onfocus", jsCode);
-    }
-    
-    /**
      * Sets whether the textbox should have auto-resize code enabled.
      * @param doResize TRUE if auto-resize enabled, otherwise FALSE
      */
