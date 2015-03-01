@@ -298,7 +298,7 @@ Applicant profile for ${pilot.name}.</td>
 <c:if test="${canSigAuth}">
  <el:cmdbutton url="sigauth" link="${pilot}" label="APPROVE SIGNATURE" />
 </c:if>
-<c:if test="${!crossDB}">
+<c:if test="${!crossDB && !pilot.isInvalid()}">
 <content:filter roles="HR,PIREP,Examination">
  <el:cmdbutton url="invalidate" link="${pilot}" label="INVALIDATE E-MAIL" />
 </content:filter>
