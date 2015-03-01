@@ -87,9 +87,14 @@ select.req {
 	border: 1px solid #e00404;
 }
 
-input.req, textarea.req {
+input.req, textarea.req, input.err {
 	background: #fff8fa;
 	border: 1px solid #e00404;
+}
+
+input.ok {
+	background: #a0e4a0;
+	border: 1px solid #20a020;
 }
 
 *.label :link, *.label :visited {
