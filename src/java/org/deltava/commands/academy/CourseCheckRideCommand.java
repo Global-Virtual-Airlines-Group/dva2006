@@ -1,11 +1,13 @@
-// Copyright 2006, 2007, 2010, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2010, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.deltava.beans.Pilot;
 import org.deltava.beans.academy.*;
+import org.deltava.beans.schedule.Aircraft;
 import org.deltava.beans.testing.*;
 
 import org.deltava.commands.*;
@@ -14,12 +16,13 @@ import org.deltava.mail.*;
 
 import org.deltava.security.command.CourseAccessControl;
 
+import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to assign Check Rides linked to Flight Academy courses.
  * @author Luke
- * @version 5.3
+ * @version 6.0
  * @since 1.0
  */
 
@@ -100,16 +103,21 @@ public class CourseCheckRideCommand extends AbstractCommand {
 			boolean isOurs = (p.getID() == ctx.getUser().getID());
 			ctx.setAttribute("isMine", Boolean.valueOf(isOurs), REQUEST);
 			
-			// Get all aircraft types
-			GetAircraft acdao = new GetAircraft(con);
-			ctx.setAttribute("actypes", isOurs ? p.getRatings() : acdao.getAircraftTypes(), REQUEST);
-			
-			// Load the check ride script
+			// Load the check ride script and certification
 			GetAcademyCertifications crtdao = new GetAcademyCertifications(con);
+			Certification cert = crtdao.get(c.getName());
 			AcademyRideScript sc = crtdao.getScript(id);
 			ctx.setAttribute("rideScript", sc, REQUEST);
 			
-			// If we're new, forward to the JSP
+			// Get all available aircraft types
+			GetAircraft acdao = new GetAircraft(con);
+			Collection<String> allEQ = acdao.getAircraftTypes().stream().map(Aircraft::getName).collect(Collectors.toSet());
+			List<String> availableEQ = allEQ.stream().filter(eq -> (cert.getRideEQ().contains(eq))).collect(Collectors.toList());
+			if (availableEQ.isEmpty())
+				throw notFoundException("No available aircraft for Check Ride in " + StringUtils.listConcat(cert.getRideEQ(), ", "));
+			
+			ctx.setAttribute("actypes", isOurs ? availableEQ : acdao.getAircraftTypes(), REQUEST);
+			
 			if (ctx.getParameter("acType") == null) {
 				ctx.release();
 				result.setURL("/jsp/academy/crAssign.jsp");

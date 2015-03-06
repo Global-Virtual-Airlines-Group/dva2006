@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2010, 2011, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2010, 2011, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Flight Academy Certifications and Check Ride scripts. 
  * @author Luke
- * @version 5.4
+ * @version 6.0
  * @since 1.0
  */
 
@@ -49,6 +49,7 @@ public class GetAcademyCertifications extends DAO {
 			loadExams(cert);
 			loadRoles(cert);
 			loadAirlines(cert);
+			loadEQ(cert);
 			return cert;
 		} catch (SQLException se) { 
 			throw new DAOException(se);
@@ -71,6 +72,7 @@ public class GetAcademyCertifications extends DAO {
 				loadExams(c);
 				loadRoles(c);
 				loadAirlines(c);
+				loadEQ(c);
 			}
 			
 			return results;
@@ -94,6 +96,7 @@ public class GetAcademyCertifications extends DAO {
 				loadExams(c);
 				loadRoles(c);
 				loadAirlines(c);
+				loadEQ(c);
 			}
 			
 			return results;
@@ -118,6 +121,7 @@ public class GetAcademyCertifications extends DAO {
 				loadExams(c);
 				loadRoles(c);
 				loadAirlines(c);
+				loadEQ(c);
 			}
 
 			return results;
@@ -261,6 +265,20 @@ public class GetAcademyCertifications extends DAO {
 				cert.addAirline(SystemData.getApp(rs.getString(1)));
 		}
 		
+		_ps.close();
+	}
+
+	/*
+	 * Helper method to load check ride equipment types.
+	 */
+	private void loadEQ(Certification cert) throws SQLException {
+		prepareStatementWithoutLimits("SELECT EQTYPE FROM exams.CERTEQ WHERE (CERTNAME=?)");
+		_ps.setString(1, cert.getName());
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next())
+				cert.addRideEQ(rs.getString(1));
+		}
+
 		_ps.close();
 	}
 }
