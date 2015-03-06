@@ -1,4 +1,4 @@
-// Copyright 2006, 2009, 2010, 2011, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2010, 2011, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.academy;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * A bean to store Flight Academy certification data.
  * @author Luke
- * @version 5.3
+ * @version 6.0
  * @since 1.0
  */
 
@@ -40,6 +40,7 @@ public class Certification implements java.io.Serializable, ComboAlias, ViewEntr
 	private final Collection<CertificationRequirement> _reqs = new TreeSet<CertificationRequirement>();
 	private final Collection<String> _examNames = new TreeSet<String>();
 	private final Collection<String> _enrollRoles = new TreeSet<String>();
+	private final Collection<String> _checkRideEQ = new TreeSet<String>();
 	
 	/**
 	 * Creates a new Certification bean.
@@ -174,6 +175,16 @@ public class Certification implements java.io.Serializable, ComboAlias, ViewEntr
 	}
 	
 	/**
+	 * Returns the aircraft type suitable for the Check Ride.
+	 * @return a Collection of equipment types, or empty for any
+	 * @see Certification#addRideEQ(String)
+	 * @see Certification#setRideEQ(Collection)
+	 */
+	public Collection<String> getRideEQ() {
+		return _checkRideEQ;
+	}
+	
+	/**
 	 * Returns the security roles required to enroll for this Certification.
 	 * @return a Collection of role names
 	 * @see Certification#addRole(String)
@@ -267,7 +278,6 @@ public class Certification implements java.io.Serializable, ComboAlias, ViewEntr
 	 * @param name the Examination name
 	 * @see Certification#getExamNames()
 	 * @see Certification#setExams(Collection)
-	 * @throws NullPointerException if name is null
 	 */
 	public void addExamName(String name) {
 		_examNames.add(name.trim());
@@ -283,6 +293,28 @@ public class Certification implements java.io.Serializable, ComboAlias, ViewEntr
 		_examNames.clear();
 		if (exams != null)
 			_examNames.addAll(exams);
+	}
+	
+	/**
+	 * Adds an eligible Check Ride equipment type.
+	 * @param eqType the equipment type
+	 * @see Certification#setRideEQ(Collection)
+	 * @see Certification#getRideEQ()
+	 */
+	public void addRideEQ(String eqType) {
+		_checkRideEQ.add(eqType);
+	}
+	
+	/**
+	 * Clears and sets the Check Ride equipment types.
+	 * @param eqTypes a Collection of equipment types
+	 * @see Certification#addRideEQ(String)
+	 * @see Certification#getRideEQ()
+	 */
+	public void setRideEQ(Collection<String> eqTypes) {
+		_checkRideEQ.clear();
+		if (eqTypes != null)
+			_checkRideEQ.addAll(eqTypes);
 	}
 	
 	/**

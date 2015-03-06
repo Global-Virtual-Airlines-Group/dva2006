@@ -1,4 +1,4 @@
-// Copyright 2006, 2009, 2010, 2011, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2010, 2011, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to view and update Flight Academy certification profiles.
  * @author Luke
- * @version 5.3
+ * @version 6.0
  * @since 1.0
  */
 
@@ -69,6 +69,7 @@ public class CertificationCommand extends AbstractFormCommand {
 			cert.setDescription(ctx.getParameter("desc"));
 			cert.setRoles(ctx.getParameters("enrollRoles"));
 			cert.setExams(ctx.getParameters("reqExams"));
+			cert.setRideEQ(ctx.getParameters("rideEQ"));
 			
 			// Load apps
 			cert.getAirlines().clear();
@@ -76,8 +77,7 @@ public class CertificationCommand extends AbstractFormCommand {
 				cert.addAirline(SystemData.getApp(appName));
 			
 			// Make sure that each requirement with an exam remains valid
-			for (Iterator<CertificationRequirement> i = cert.getRequirements().iterator(); i.hasNext(); ) {
-				CertificationRequirement req = i.next();
+			for (CertificationRequirement req : cert.getRequirements()) {
 				if ((req.getExamName() != null) && !cert.getExamNames().contains(req.getExamName()))
 					req.setExamName(null);
 			}
@@ -144,6 +144,10 @@ public class CertificationCommand extends AbstractFormCommand {
 			
 			// Load all certification names
 			ctx.setAttribute("allCerts", new TreeSet<Certification>(allCerts.values()), REQUEST);
+			
+			// Get all equipment type profiles
+			GetAircraft acdao = new GetAircraft(con);
+			ctx.setAttribute("allEQ", acdao.getAll(), REQUEST);
 			
 			// Get available examinations
 			GetExamProfiles exdao = new GetExamProfiles(con);

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2011, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010, 2011, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object for Flight Academy Certifications and Check Ride Scripts.
  * @author Luke
- * @version 5.3
+ * @version 6.0
  * @since 3.4
  */
 
@@ -56,6 +56,7 @@ public class SetAcademyCertification extends DAO {
 			writeExams(c.getName(), c.getExamNames());
 			writeRoles(c.getName(), c.getRoles());
 			writeApps(c.getName(), c.getAirlines());
+			writeEQ(c.getName(), c.getRideEQ());
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -110,16 +111,21 @@ public class SetAcademyCertification extends DAO {
 			_ps.setString(1, c.getName());
 			executeUpdate(0);
 			
+			// Clear the check ride EQ
+			prepareStatementWithoutLimits("DELETE FROM exams.CERTEQ WHERE (CERTNAME=?)");
+			_ps.setString(1, c.getName());
+			executeUpdate(0);
+			
 			// Write the exams/roles
 			writeExams(c.getName(), c.getExamNames());
 			writeRoles(c.getName(), c.getRoles());
 			writeApps(c.getName(), c.getAirlines());
+			writeEQ(c.getName(), c.getRideEQ());
 			
 			// Write the requirements
 			prepareStatementWithoutLimits("INSERT INTO exams.CERTREQS (CERTNAME, SEQ, EXAMNAME, REQENTRY) VALUES (?, ?, ?, ?)");
 			_ps.setString(1, c.getName());
-			for (Iterator<CertificationRequirement> i = c.getRequirements().iterator(); i.hasNext(); ) {
-				CertificationRequirement req = i.next();
+			for (CertificationRequirement req : c.getRequirements()) {
 				_ps.setInt(2, req.getID());
 				_ps.setString(3, req.getExamName());
 				_ps.setString(4, req.getText());
@@ -237,6 +243,21 @@ public class SetAcademyCertification extends DAO {
 		_ps.setString(1, certName);
 		for (AirlineInformation ai : airlines) {
 			_ps.setString(2, ai.getCode());
+			_ps.addBatch();
+		}
+		
+		_ps.executeBatch();
+		_ps.close();
+	}
+	
+	/*
+	 * Helper method to write check ride equipment types.
+	 */
+	private void writeEQ(String certName, Collection<String> eqTypes) throws SQLException {
+		prepareStatementWithoutLimits("INSERT INTO exams.CERTEQ (CERTNAME, EQTYPE) VALUES (?, ?)");
+		_ps.setString(1, certName);
+		for (String eqType : eqTypes) {
+			_ps.setString(2, eqType);
 			_ps.addBatch();
 		}
 		

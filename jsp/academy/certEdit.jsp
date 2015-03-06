@@ -34,10 +34,17 @@ if (reqCertRow.style.display != 'none')
 golgotha.form.submit(f);
 return true;
 };
+
+golgotha.local.onload = function() {
+	var f = document.forms[0];
+	golgotha.form.resize(f.desc);
+	golgotha.local.showReqCert(f.preReqs);
+	return true;
+};
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="golgotha.local.showReqCert(document.forms[0].preReqs)">
+<body onload="void golgotha.local.onload()">
 <content:page>
 <%@ include file="/jsp/academy/header.jspf" %> 
 <%@ include file="/jsp/academy/sideMenu.jspf" %>
@@ -88,6 +95,11 @@ return true;
  <td class="label">Check Rides</td>
  <td class="data">This certification requires <el:int name="rideCount" idx="*" min="0" max="9" size="1" className="sec bld" value="${cert.rideCount}" />
  Check Rides</td>
+</tr>
+<tr>
+ <td class="label top">Check Ride Equipment Type(s)</td>
+ <td class="data"><el:check name="rideEQ" cols="8" width="95" className="small" newLine="true"  checked="${cert.rideEQ}" options="${allEQ}"  />
+<div style="clear:both"></div><span class="small ita">(Leave this blank to allow check rides in any of the pilot's rated aircraft.)</span></td> 
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
