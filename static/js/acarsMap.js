@@ -47,7 +47,7 @@ xmlreq.onreadystatechange = function() {
 			var label = a.firstChild;
 			mrk.infoLabel = label.data;
 		} else {
-			mrk.tabs = [];
+			mrk.tabs = []; mrk.updateTab = golgotha.maps.util.updateTab;
 			var tbs = a.getElementsByTagName('tab');
 			for (var x = 0; x < tbs.length; x++) {
 				var tab = tbs[x];
@@ -99,7 +99,7 @@ xmlreq.onreadystatechange = function() {
 			var le = d.getElementsByTagName('info');
 			mrk.infoLabel = le[0].firstChild.data;
 		} else {
-			mrk.tabs = [];
+			mrk.tabs = []; mrk.updateTab = golgotha.maps.util.updateTab;
 			var tbs = d.getElementsByTagName('tab');
 			for (var x = 0; x < tbs.length; x++) {
 				var tab = tbs[x];
@@ -166,7 +166,7 @@ golgotha.event.beacon('ACARS', 'Flight Info');
 
 // Display the info - show tab 0
 if (isInfo && (this.tabs)) {
-	updateTab(this, 0);
+	this.updateTab(0);
 	map.infoWindow.marker = this;
 	map.infoWindow.open(map, this);
 } else if (isInfo) {
@@ -194,7 +194,7 @@ golgotha.event.beacon('ACARS', 'Dispatch Info');
 
 // Display the info
 if (isInfo && (this.tabs)) {
-	updateTab(this, 0);
+	this.updateTab(0);
 	map.infoWindow.marker = this;
 	map.infoWindow.open(map, this);
 } else if (isInfo) {
