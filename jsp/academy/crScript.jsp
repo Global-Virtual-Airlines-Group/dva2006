@@ -17,10 +17,9 @@
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
-golgotha.form.validateCombo({f:f.cert, t:'Flight Academy Certification'});
-golgotha.form.validateNumber({f:f.seq, min:1, t:'Check Ride Number'});
-golgotha.form.validateText({f:f.body, l:15, t:'Check Ride content'});
-
+golgotha.form.validate({f:f.cert, t:'Flight Academy Certification'});
+golgotha.form.validate({f:f.seq, min:1, t:'Check Ride Number'});
+golgotha.form.validate({f:f.body, l:15, t:'Check Ride content'});
 golgotha.form.submit(f);
 return true;
 };

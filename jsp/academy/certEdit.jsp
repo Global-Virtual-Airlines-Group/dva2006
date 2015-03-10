@@ -29,7 +29,7 @@ golgotha.form.validate({f:f.preReqs, t:'Examination Prerequisites'});
 // Check specific cert
 var reqCertRow = document.getElementById('reqCertRow');
 if (reqCertRow.style.display != 'none')
-	golgotha.form.validateCombo({f:f.preReqCert, t:'Specific Certification Prerequisite'});
+	golgotha.form.validate({f:f.preReqCert, t:'Specific Certification Prerequisite'});
 
 golgotha.form.submit(f);
 return true;

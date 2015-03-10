@@ -45,7 +45,7 @@ return true;
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
-golgotha.form.validateCheckBox({f:f.sl, min:1, t:'Approved Applicant'});
+golgotha.form.validate({f:f.sl, min:1, t:'Approved Applicant'});
 golgotha.form.submit(f);
 return true;
 };

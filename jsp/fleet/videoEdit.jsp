@@ -17,9 +17,9 @@
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
-golgotha.form.validateText({f:f.title, l:10, t:'Video Title'});
-golgotha.form.validateCombo({f:f.category, t:'Video Category'});
-golgotha.form.validateText({f:f.desc, l:10, t:'Description'});
+golgotha.form.validate({f:f.title, l:10, t:'Video Title'});
+golgotha.form.validate({f:f.category, t:'Video Category'});
+golgotha.form.validate({f:f.desc, l:10, t:'Description'});
 if ((f.file) && (f.file.value.length > 0))
 	golgotha.form.validate({f:f.file, ext:['avi','wmv','divx','mp3','mp4'], t:'Uploaded Video'});
 else if ((f.fileName) && (f.fileName.value.length > 0))

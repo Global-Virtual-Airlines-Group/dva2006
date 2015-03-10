@@ -18,7 +18,7 @@ golgotha.form.validate({f:f.crType, t:'Aircraft Type'});
 golgotha.form.validate({f:f.eqType, t:'Equimpment Program'});
 var hasScript = ((form.doScript) && (form.doScript.value == 'true'));
 if (!hasScript)
-	golgotha.form.validateText({f:f.comments, l:6, t:'Check Ride Comments'});
+	golgotha.form.validate({f:f.comments, l:6, t:'Check Ride Comments'});
 
 golgotha.form.submit(f);
 return true;
