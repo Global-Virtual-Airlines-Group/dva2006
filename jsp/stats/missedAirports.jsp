@@ -24,9 +24,11 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<view:table cmd="newairports">
+<view:table cmd="mynewairports">
 <tr class="title">
- <td colspan="6" class="left caps"><content:airline /> UNVISITED AIRPORTS FOR ${pilot.name}</td>
+ <td colspan="4" class="left caps"><content:airline /> UNVISITED AIRPORTS FOR ${pilot.name}</td>
+ <td><el:cmd url="mynewairports" op="map">MAP</el:cmd>
+ <td>&nbsp;</td>
 </tr>
 <c:forEach var="entry" items="${airports}">
 <c:set var="airline" value="${allAirlines[entry.key]}" scope="page" />

@@ -1,4 +1,4 @@
-// Copyright 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display airports a Pilot has not flown to.
  * @author Luke
- * @version 4.1
+ * @version 6.0
  * @since 4.0
  */
 
@@ -57,12 +57,12 @@ public class NewAirportListCommand extends AbstractCommand {
 	 * @throws CommandException if an unhandled error occurs
 	 */
 	@Override
-	//TODO : Convert logic for getting visited airports into service.
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Get the default airline
 		String defaultCode = SystemData.get("airline.code");
 		Collection<Airport> myAirports = new HashSet<Airport>();
+		boolean doMap = "map".equals(ctx.getCmdParameter(OPERATION, null));
 		
 		// Get the user ID
 		int userID = ctx.getUser().getID();
@@ -79,6 +79,8 @@ public class NewAirportListCommand extends AbstractCommand {
 				throw notFoundException("Invalid Pilot ID - " + userID);
 			
 			ctx.setAttribute("pilot", p, REQUEST);
+			if (doMap)
+				ctx.setAttribute("mapCenter", SystemData.getAirport(p.getHomeAirport()), REQUEST);
 
 			// Load airports
 			GetFlightReports frdao = new GetFlightReports(con);
@@ -148,13 +150,19 @@ public class NewAirportListCommand extends AbstractCommand {
 			ctx.release();
 		}
 		
+		// Get active airlines
+		Collection<Airline> airlines = new TreeSet<Airline>();
+		for (String alCode : airports.keySet())
+			airlines.add(SystemData.getAirline(alCode));
+		
 		// Save request attributes
+		ctx.setAttribute("airlines", airlines, REQUEST);
 		ctx.setAttribute("airports", airports, REQUEST);
 		ctx.setAttribute("srcAirports", srcAirports, REQUEST);
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
-		result.setURL("/jsp/stats/missedAirports.jsp");
+		result.setURL("/jsp/stats/missedAirport" + (doMap ? "Map.jsp" : "s.jsp"));
 		result.setSuccess(true);
 	}
 }
