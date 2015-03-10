@@ -62,7 +62,7 @@ xmlreq.onreadystatechange = function() {
 		// Check for an existing marker
 		var code = wx.getAttribute('icao');
 		var wxType = wx.getAttribute('type');
-		var mrk = wxMarkers[code];
+		var mrk = golgotha.local.wxMarkers[code];
 		if (mrk) {
 			if (mrk.isOpen)
 				map.infoWindow.close();
@@ -124,11 +124,11 @@ xmlreq.onreadystatechange = function() {
 		google.maps.event.addListener(mrk, 'click', golgotha.local.clickInfo);
 
 		// Add the marker
-		wxMarkers[mrk.code] = mrk;
+		golgotha.local.wxMarkers[mrk.code] = mrk;
 		mrk.setMap(map);
 	}
 
-	var mrk = wxMarkers[code];
+	var mrk = golgotha.local.wxMarkers[code];
 	if (mrk)
 		google.maps.event.trigger(mrk, 'click');
 
@@ -218,12 +218,8 @@ return true;
 <div id="seriesRefresh" class="mapTextLabel"></div>
 <content:sysdata var="wuAPI" name="security.key.wunderground" />
 <script id="mapInit" defer>
-<map:point var="mapC" point="${homeAirport}" />
-var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
-var mapOpts = {center:mapC, zoom:5, minZoom:3, maxZoom:14, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
-
-// Map marker codes
-var wxMarkers = [];
+<map:point var="golgotha.local.mapC" point="${homeAirport}" />
+var mapOpts = {center:golgotha.local.mapC, zoom:5, minZoom:3, maxZoom:14, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
 
 // Create the map
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
@@ -250,7 +246,7 @@ ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Temperature', di
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Wind Speed', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('windspeed'); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Clouds', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('sat'); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Fronts', disabled:true, id:'selFronts'}, function() { return loaders.fr.getLayer(); }));
-ctls.push(new golgotha.imaps.LayerSelectControl({map:map, title:'Lightning', disabled:true, id:'selLG'}, function() { return loaders.lg.getLayer(); }));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Lightning', disabled:true, id:'selLG'}, function() { return loaders.lg.getLayer(); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Mid Levels'}, mjsl));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Lo Jetstream'}, ljsl));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Hi Jetstream'}, hjsl));
@@ -267,12 +263,12 @@ google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
 	golgotha.maps.reloadData(true);
 	golgotha.util.createScript({id:'wuFronts', url:'//api.wunderground.com/api/${wuAPI}/fronts/view.json?callback=loaders.fr.load', async:true});
 	google.maps.event.trigger(map, 'maptypeid_changed');
-	loadWX('${homeAirport.ICAO}');
+	golgotha.local.loadWX('${homeAirport.ICAO}');
 });
 
+golgotha.local.wxMarkers = [];
 golgotha.maps.reloadData = function(isReload) {
-	if (isReload) 
-		window.setInterval(golgotha.maps.reloadData, golgotha.maps.reload);
+	if (isReload) window.setInterval(golgotha.maps.reloadData, golgotha.maps.reload);
 	
 	// Check if we're loading/animating
 	if ((map.preLoad) || (map.animator)) {
