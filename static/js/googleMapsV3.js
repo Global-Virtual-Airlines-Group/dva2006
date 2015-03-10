@@ -529,7 +529,7 @@ txt += golgotha.maps.util.renderTabChoices(this.tabs, ofs);
 txt += '</div>';
 this.getMap().infoWindow.setContent(txt);
 return true;
-}
+};
 
 golgotha.maps.util.renderTabChoices = function(tabs, selectedOfs)
 {
@@ -537,7 +537,7 @@ var txt = '<span class="tabMenu">';
 for (var x = 0; x < tabs.length; x++) {
 	var tab = tabs[x];
 	if (x != selectedOfs) {
-		txt += '<a href="javascript:void golgotha.maps.util.updateTab(map.infoWindow.marker,' + x + ')">';
+		txt += '<a href="javascript:void map.infoWindow.marker.updateTab(' + x + ')">';
 		txt += tab.name;
 		txt += '</a> ';
 	} else
@@ -546,4 +546,4 @@ for (var x = 0; x < tabs.length; x++) {
 
 txt += '</span>';
 return txt;
-}
+};
