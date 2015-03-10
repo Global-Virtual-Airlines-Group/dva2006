@@ -13,6 +13,7 @@
 <content:css name="form" />
 <content:pics />
 <script type="text/javascript">
+golgotha = {local:{}};
 golgotha.local.updateSort = function() { return document.forms[0].submit(); };
 </script>
 </head>
