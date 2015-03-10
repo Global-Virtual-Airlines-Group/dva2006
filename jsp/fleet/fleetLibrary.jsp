@@ -61,7 +61,7 @@ xmlreq.onreadystatechange = function() {
 combo.disabled = true;
 xmlreq.send(null);
 return true;
-};'
+};
 
 golgotha.local.download = function() {
 	if (!golgotha.local.fName) return false;

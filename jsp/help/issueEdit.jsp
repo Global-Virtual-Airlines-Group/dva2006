@@ -25,10 +25,10 @@ if (act.indexOf('hdissue.do') != -1) {
 	if ((f.sendIssue) && (f.sendIssue.disabled))
 		f.sendIssue.checked = false;
 } else {
-	golgotha.form.validateCombo({f:f.devAssignedTo, t:'Development Issue Assignee'});
-	golgotha.form.validateCombo({f:f.area, t:'Development Issue Area'});
-	golgotha.form.validateCombo({f:f.type, t:'Development Issue Type'});
-	golgotha.form.validateCombo({f:f.priority, t:'Development Issue Priority'});
+	golgotha.form.validate({f:f.devAssignedTo, t:'Development Issue Assignee'});
+	golgotha.form.validate({f:f.area, t:'Development Issue Area'});
+	golgotha.form.validate({f:f.type, t:'Development Issue Type'});
+	golgotha.form.validate({f:f.priority, t:'Development Issue Priority'});
 }
 
 golgotha.form.submit(f);
