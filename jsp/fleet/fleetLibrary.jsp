@@ -15,7 +15,7 @@
 <script type="text/javascript">
 golgotha.local.selectAC = function(combo)
 {
-if (golgotha.form.comboSet(combo)) {
+if (!golgotha.form.comboSet(combo)) {
 	golgotha.local.fName = null;
 	golgotha.util.show('installerInfo', false);
 	return false;

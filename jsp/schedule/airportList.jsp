@@ -23,7 +23,7 @@ golgotha.local.updateSort = function() {
 
 golgotha.local.validate = function(f)
 {
-if (f.id.value.length < 3) {
+if (f.id.value.length < 3)
 	throw new golgotha.util.ValidationError('Please select a valid ICAO or IATA airport code.', f.id);
 
 f.id.value = f.id.value.toUpperCase();
