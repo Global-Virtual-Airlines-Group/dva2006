@@ -14,7 +14,7 @@
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
-golgotha.form.validateCombo({f:f.eMail, addr:true, t:'E-Mail Address'});
+golgotha.form.validate({f:f.eMail, addr:true, t:'E-Mail Address'});
 golgotha.form.submit(f);
 return true;
 };

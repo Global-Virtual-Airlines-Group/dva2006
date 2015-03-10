@@ -19,11 +19,11 @@
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
-golgotha.form.validateText({f:f.question, l:20, 'Question Text'});
-golgotha.form.validateText({f:f.correct, l:3, t:'Correct Answer to this Question'});
-golgotha.form.validateFile({f:f.imgData, ext:['gif','jpg','png'], t:'Image Resource'});
-golgotha.form.validateCombo({f:f.owner, t:'Owner'});
-golgotha.form.validateCheckBox({f:f.airline, min:1, t:'Airline'});
+golgotha.form.validate({f:f.question, l:20, 'Question Text'});
+golgotha.form.validate({f:f.correct, l:3, t:'Correct Answer to this Question'});
+golgotha.form.validate({f:f.imgData, ext:['gif','jpg','png'], t:'Image Resource'});
+golgotha.form.validate({f:f.owner, t:'Owner'});
+golgotha.form.validate({f:f.airline, min:1, t:'Airline'});
 
 // Validate multiple choice
 <c:if test="${empty question}">

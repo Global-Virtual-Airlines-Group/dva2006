@@ -17,15 +17,15 @@
 <content:js name="common" />
 <content:js name="datePicker" />
 <script type="text/javascript">
-golgotha.local.validate = function(form)
+golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
-if (!validateCombo(form.searchType, 'Search Type')) return false;
+golgotha.form.validate({f:f.searchType, t:'Search Type'});
 golgotha.form.submit(f);
 return true;
 };
 
-function showMap(f)
+golgotha.local.showMap = function(f)
 {
 if (!golgotha.form.check()) return false;
 
@@ -90,7 +90,7 @@ return false;
 </el:table>
 </el:form>
 <c:if test="${doSearch}">
-<el:form action="acarsprsearch.do" method="get" validate="return showMap(this)">
+<el:form action="acarsprsearch.do" method="get" validate="return golgotha.local.showMap(this)">
 <view:table cmd="acarsprsearch">
 <c:if test="${empty viewContext.results}">
 <!-- Search Results -->

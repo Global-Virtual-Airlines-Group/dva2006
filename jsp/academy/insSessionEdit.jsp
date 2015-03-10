@@ -14,11 +14,10 @@
 <content:js name="common" />
 <content:js name="datePicker" />
 <script type="text/javascript">
-golgotha.local.validate = function(form)
+golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
-if (!validateCombo(form.instructor, 'Instructor Name')) return false;
-
+golgotha.form.validate({f:f.instructor, t:'Instructor Name'});
 golgotha.form.submit(f);
 return true;
 };

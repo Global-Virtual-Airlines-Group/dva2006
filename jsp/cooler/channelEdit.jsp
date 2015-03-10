@@ -15,12 +15,12 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-golgotha.local.validate = function(form)
+golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
-if (!validateText(form.newName, 5, 'Channel Name')) return false;
-if (!validateText(form.desc, 15, 'Channel Description')) return false;
-if (!validateCheckBox(form.airline, 1, 'Airline')) return false;
+golgotha.form.validate({f:f.newName, l:5, t:'Channel Name'});
+golgotha.form.validate({f:f.desc, l:15, t:'Channel Description'});
+golgotha.form.validate({f:f.airline, min:1, t:'Airline'});
 golgotha.form.submit(f);
 return true;
 };
