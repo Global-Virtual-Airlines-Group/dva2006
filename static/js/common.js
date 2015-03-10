@@ -297,7 +297,7 @@ golgotha.form.wrap = function(func, f) {
 golgotha.form.validate = function(opts)
 {
 if (!('f' in opts) || !('t' in opts)) throw new gologhta.util.ValidationError('Incomplete Validation Data');
-if ('ext' in opts) return golgotha.form.validateFile(opts.f, opts.ext, opts.t);
+if ('ext' in opts) return golgotha.form.validateFile(opts.f, opts.ext, opts.t, opts.empty);
 if ('addr' in opts) return golgotha.form.validateEMail(opts.f, opts.t);
 if ('l' in opts) return golgotha.form.validateText(opts.f, opts.l, opts.t);
 if (!opts.f) return true;
@@ -351,14 +351,15 @@ golgotha.form.validateCombo = function(c, title) {
 	throw new golgotha.event.ValidationError('Please provide the ' + title + '.', c);
 };
 
-golgotha.form.validateFile = function(f, extTypes, title)
+golgotha.form.validateFile = function(f, extTypes, title, allowBlank)
 {
 if ((!f) || (f.disabled)) return true;
+if (allowBlank && (f.value.length == 0)) return true;
 var ext = f.value.substring(f.value.lastIndexOf('.') + 1).toLowerCase();
 for (var e = extTypes.pop(); (e != null); e = extTypes.pop())
 	if (ext == e) return true;
 
-throw new golgotha.event.ValidationError('The ' + title + ' must be a ' + extType.toUpperCase() + ' file.', f);
+throw new golgotha.event.ValidationError('The ' + title + ' must be a ' + ext.toUpperCase() + ' file.', f);
 };
 
 golgotha.form.validateCheckBox = function(cb, min, title)
