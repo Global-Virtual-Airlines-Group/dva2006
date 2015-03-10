@@ -22,7 +22,7 @@ golgotha.form.validate({f:f.pilotCode, min:1, t:'Pilot Code'});</c:if>
 golgotha.form.validate({f:f.fName, l:2, t:'First Name'});
 golgotha.form.validate({f:f.lName, l:2, t:'Last Name'});
 <content:filter roles="!HR">
-golgotha.form.validate({f:f.eMail, l:10, t:'E-Mail Address'});</content:filter>
+golgotha.form.validate({f:f.eMail, l:10, t:'E-Mail Address', addr:true});</content:filter>
 golgotha.form.submit(f);
 return true;
 };
@@ -46,11 +46,13 @@ return true;
  <td class="data"><el:text name="fName" required="true" idx="*" size="10" max="16" value="${param.fName}" />
  <el:text name="lName" required="true" idx="*" size="16" max="14" value="${param.lName}" /></td>
 </tr>
+<content:filter roles="!HR">
 <tr>
  <td class="label">E-Mail Address</td>
  <td class="data"><el:addr name="eMail" required="${isHR}" idx="*" size="32" max="80" /><br />
  <span class="small">(We need your e-mail address to verify it's really you.)</span></td>
 </tr>
+</content:filter>
 <c:if test="${!empty dupeUsers}">
 <tr class="title caps">
  <td colspan="2">MULTIPLE USERS NAMED ${userName} FOUND</td>
