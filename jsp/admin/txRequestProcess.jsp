@@ -19,12 +19,12 @@ if (!golgotha.form.check()) return false;
 
 var act = f.action;
 if (act.indexOf('txreqdelete.do') != -1)
-	golgotha.form.validateText({f:f.rejectComments, l:1, t:'Rejection Comments'});
+	golgotha.form.validate({f:f.rejectComments, l:1, t:'Rejection Comments'});
 else {
-	golgotha.form.validateCombo({f:f.crType, t:'Aircraft Type'});
-	golgotha.form.validateCombo({f:f.eqType, t:'Equimpment Program'});
-	golgotha.form.validateCombo({f:f.rank, t:'Rank in the new Equipment Program'});
-	golgotha.form.validateText({f:f.comments, l:25, t:'Check Ride Comments'});
+	golgotha.form.validate({f:f.crType, t:'Aircraft Type'});
+	golgotha.form.validate({f:f.eqType, t:'Equimpment Program'});
+	golgotha.form.validate({f:f.rank, t:'Rank in the new Equipment Program'});
+	golgotha.form.validate({f:f.comments, l:25, t:'Check Ride Comments'});
 }
 
 golgotha.form.submit(f);

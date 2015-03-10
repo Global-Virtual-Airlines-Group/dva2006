@@ -20,7 +20,7 @@ if (f.zip.value.length == 0) {
 	golgotha.form.validate({f:f.xml, ext:['xml'], t:'Offline Flight XML data'});
 	golgotha.form.validate({f:f.hashCode, ext:['sha'], t:'Offline Flight SHA-256 signature data'});
 } else
-	golgotha.form.validateFile({f:f.zip, ext:['zip'], t:'Offline Flight ZIP data'});
+	golgotha.form.validate({f:f.zip, ext:['zip'], t:'Offline Flight ZIP data'});
 
 golgotha.form.submit(f);
 return true;

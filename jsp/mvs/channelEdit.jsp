@@ -15,10 +15,10 @@
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
-golgotha.form.validateCombo({f:f.rate, t:'Channel Bandwidth'});
-golgotha.form.validateText({f:f.name, l:6, t:'Channel Name'});
-golgotha.form.validateText({f:f.desc, l:3, t:'Channel Description'});
-golgotha.form.validateNumber({f:f.maxUsers, min:0, t:'Channel User Limit'});
+golgotha.form.validate({f:f.rate, t:'Channel Bandwidth'});
+golgotha.form.validate({f:f.name, l:6, t:'Channel Name'});
+golgotha.form.validate({f:f.desc, l:3, t:'Channel Description'});
+golgotha.form.validate({f:f.maxUsers, min:0, t:'Channel User Limit'});
 golgotha.form.submit(f);
 return true;
 };
