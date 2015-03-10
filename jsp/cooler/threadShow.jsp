@@ -38,7 +38,7 @@ else if (act.indexOf('threadsubjectedit.do') != -1)
 else if (act.indexOf('linkimg.do') != -1) {
 	golgotha.form.validate({f:f.imgURL, l:12, t:'URL of your Linked Image'});
 	golgotha.form.validate({f:f.desc, l:8, t:'Description of your Linked Image'});
-} else if (form.msgText.value.length < 4)
+} else if (f.msgText.value.length < 4)
 	golgotha.form.validate({f:f.pollVote, min:1, t:'Poll Vote'});
 
 golgotha.form.submit(f);
