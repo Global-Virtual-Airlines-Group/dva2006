@@ -243,7 +243,7 @@ xreq.onreadystatechange = function() {
 
 	// Draw the flight route
 	if (doRoute) {
-		var wps = wsdata.getElementsByTagName('route');
+		var wps = [].slice.call(wsdata.getElementsByTagName('route'));
 		var waypoints = [];
 		for (var wp = wps.pop(); (wp != null); wp = wps.pop())
 			waypoints.push({lat:parseFloat(wp.getAttribute('lat')), lng:parseFloat(wp.getAttribute('lng'))});
@@ -254,7 +254,7 @@ xreq.onreadystatechange = function() {
 
 	// Draw the flight progress
 	if (doProgress) {
-		var pos = wsdata.getElementsByTagName('pos');
+		var pos = [].slice.call(wsdata.getElementsByTagName('pos'));
 		var positions = [];
 		for (var pe = pos.pop(); (pe != null); pe = pos.pop())
 			positions.push({lat:parseFloat(pe.getAttribute('lat')), lng:parseFloat(pe.getAttribute('lng'))});
