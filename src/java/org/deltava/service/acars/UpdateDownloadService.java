@@ -39,8 +39,13 @@ public class UpdateDownloadService extends DownloadService {
 
 		// Get the installer
 		File f = new File(SystemData.get("path.library"), buf.toString());
-		if (!f.exists())
+		if (!f.exists() && !isBeta)
 			return SC_NOT_FOUND;
+		else if (!f.exists()) {
+			f = new File(f.getParent(), f.getName().replace("Beta", ""));
+			if (!f.exists())
+				return SC_NOT_FOUND;
+		}
 		
 		// Download the file
 		ctx.getResponse().setHeader("Content-disposition", "attachment; filename=" + buf.toString());
