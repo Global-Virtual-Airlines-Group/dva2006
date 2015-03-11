@@ -16,15 +16,14 @@
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
-
-var act = f.action;
-if (act.indexOf('txreqdelete.do') != -1)
+if (f.action.indexOf('txreqdelete.do') != -1)
 	golgotha.form.validate({f:f.rejectComments, l:1, t:'Rejection Comments'});
 else {
 	golgotha.form.validate({f:f.crType, t:'Aircraft Type'});
-	golgotha.form.validate({f:f.eqType, t:'Equimpment Program'});
 	golgotha.form.validate({f:f.rank, t:'Rank in the new Equipment Program'});
 	golgotha.form.validate({f:f.comments, l:25, t:'Check Ride Comments'});
+	if ((f.eqType) && (f.eqType.options))
+		golgotha.form.validate({f:f.eqType, t:'Equimpment Program'});
 }
 
 golgotha.form.submit(f);
