@@ -42,7 +42,7 @@ var doRefresh = f.autoRefresh.checked;
 
 // Generate XMLHTTPRequest if we're not already viewing a flight
 if (!document.pauseRefresh) {
-	var xmlreq = generateXMLRequest();
+	var xmlreq = golgotha.maps.acars.generateXMLRequest();
 	xmlreq.send(null);
 }
 
@@ -85,8 +85,8 @@ return true;
 <content:copyright />
 <content:sysdata var="wuAPI" name="security.key.wunderground" />
 <script id="mapInit" defer>
-<map:point var="mapC" point="${mapCenter}" />
-var mapOpts = {center:mapC, minZoom:2, zoom:${zoomLevel}, maxZoom:17, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
+<map:point var="golgotha.local.mapC" point="${mapCenter}" />
+var mapOpts = {center:golgotha.local.mapC, minZoom:2, zoom:${zoomLevel}, maxZoom:17, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
 
 // Create the map
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
