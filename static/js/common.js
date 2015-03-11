@@ -296,7 +296,7 @@ golgotha.form.wrap = function(func, f) {
 
 golgotha.form.validate = function(opts)
 {
-if (!('f' in opts) || !('t' in opts)) throw new gologhta.util.ValidationError('Incomplete Validation Data');
+if (!('f' in opts) || !('t' in opts)) throw new golgotha.util.ValidationError('Incomplete Validation Data');
 if ('ext' in opts) return golgotha.form.validateFile(opts.f, opts.ext, opts.t, opts.empty);
 if ('addr' in opts) return golgotha.form.validateEMail(opts.f, opts.t);
 if ('l' in opts) return golgotha.form.validateText(opts.f, opts.l, opts.t);
