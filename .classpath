@@ -19,7 +19,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/deploy/log4j-1.2.17.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/jdom-2.0.5.jar" sourcepath="lib/src/jdom-2.0.5-sources.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/javamail-1.5.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-compress-1.5.jar" sourcepath="lib/src/commons-compress-1.5-sources.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/edtftpj-2.4.0.jar"/>
@@ -32,6 +31,7 @@
 	<classpathentry kind="lib" path="lib/servlet-api-3.1.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jstl-api-1.2.1.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-1.93.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/jdom-2.0.6.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/deploy/jstl-1.2.3.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-5.1.32-bin.jar"/>
