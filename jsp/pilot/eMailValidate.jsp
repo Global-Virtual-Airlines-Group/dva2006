@@ -18,8 +18,7 @@
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
-var act = f.action;
-if ((act.indexOf('resendvalidate.do') == -1)
+if (f.action.indexOf('resendvalidate.do') == -1)
 	golgotha.form.validate({f:f.code, l:8, t:'E-Mail Validation Code'});
 
 golgotha.form.validate({f:f.email, addr:true, t:'E-Mail Address'});
