@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.sql.Connection;
@@ -19,7 +19,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to reactivate a Pilot.
  * @author Luke
- * @version 4.0
+ * @version 6.0
  * @since 1.0
  */
 
@@ -96,6 +96,7 @@ public class PilotActivationCommand extends AbstractCommand {
 			p.setEmail(ctx.getParameter("eMail"));
 			p.setRank(Rank.fromName(ctx.getParameter("rank")));
 			p.setStatus(Pilot.ACTIVE);
+			p.setEmailInvalid(false);
 
 			// Reset the password
 			p.setPassword(PasswordGenerator.generate(8));
@@ -115,6 +116,10 @@ public class PilotActivationCommand extends AbstractCommand {
 			// Get the write DAO and save the pilot
 			SetPilot pwdao = new SetPilot(con);
 			pwdao.write(p);
+			
+			// Clear address validation
+			SetAddressValidation avwdao = new SetAddressValidation(con);
+			avwdao.delete(p.getID());
 
 			// Write the inactivity entry
 			SetInactivity iwdao = new SetInactivity(con);
@@ -156,10 +161,6 @@ public class PilotActivationCommand extends AbstractCommand {
 			
 			// Invalidate the Pilot cache across applications
 			EventDispatcher.send(new UserEvent(SystemEvent.Type.USER_INVALIDATE, p.getID()));
-
-			// Set JSP result
-			result.setType(ResultType.REQREDIRECT);
-			result.setURL("/jsp/admin/activatePilotComplete.jsp");
 		} catch (SecurityException se) {
 			ctx.rollbackTX();
 			throw new CommandException(se);
@@ -175,7 +176,9 @@ public class PilotActivationCommand extends AbstractCommand {
 		mailer.setContext(mctx);
 		mailer.send(p);
 
-		// Set success flag
+		// Forward to the JSP
+		result.setType(ResultType.REQREDIRECT);
+		result.setURL("/jsp/admin/activatePilotComplete.jsp");
 		result.setSuccess(true);
 	}
 }
