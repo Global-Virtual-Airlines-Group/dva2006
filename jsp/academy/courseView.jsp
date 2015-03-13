@@ -15,18 +15,13 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-golgotha.localvalidate = function(f)
+golgotha.local.validate = function(f)
 {
 <c:if test="${access.canComment || access.canUpdateProgress}">
 if (!golgotha.form.check()) return false;
 
 // Validate response
-var act = f.action;
-if (act.indexOf('courseprogress.do') != -1) {
-
-} else if (act.indexOf('courseassign.do') != -1) {
-
-} else
+if ((f.action.indexOf('courseprogress.do') == -1) && (f.action.indexOf('courseassign.do') == -1))
 	golgotha.form.validate({f:f.msgText, l:5, t:'Course Comments'});
 
 golgotha.form.submit(f);</c:if>
