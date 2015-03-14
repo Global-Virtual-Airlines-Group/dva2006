@@ -103,7 +103,7 @@ map.controls[google.maps.ControlPosition.TOP_CENTER].push(golgotha.maps.util.pro
 // Build the weather layer controls
 var ctls = map.controls[google.maps.ControlPosition.BOTTOM_LEFT];
 var loop = function() { return loaders.series.getLayers('radar', 12); };
-var hjsl = new golgotha.maps.ShapeLayer({maxZoom:8, nativeZoom:5, opacity:0.55, zIndex:golgotha.maps.z.OVERLAY}, 'High Jet', 'wind-jet');
+var hjsl = new golgotha.maps.ShapeLayer({maxZoom:8, nativeZoom:6, opacity:0.55, zIndex:golgotha.maps.z.OVERLAY}, 'High Jet', 'wind-jet');
 var worldRadar = function() { return [loaders.series.getLatest('radar'), loaders.series.getLatest('eurorad'), loaders.series.getLatest('aussieradar')]; };
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Radar', disabled:true, c:'selImg'}, worldRadar));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Temperature', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('temp'); }));
