@@ -233,10 +233,10 @@ google.maps.event.addListener(map, 'zoom_changed', golgotha.maps.updateZoom);
 map.controls[google.maps.ControlPosition.TOP_CENTER].push(golgotha.maps.util.progress.getDiv());
 
 // Create the jetstream layers
-var jsOpts = {maxZoom:8, nativeZoom:5, opacity:0.55, zIndex:golgotha.maps.z.OVERLAY};
-var hjsl = new golgotha.maps.ShapeLayer(jsOpts, 'High Jet', 'wind-jet');
+var jsOpts = {maxZoom:8, nativeZoom:6, opacity:0.55, zIndex:golgotha.maps.z.OVERLAY};
+var hjsl = new golgotha.maps.ShapeLayer(jsOpts, 'High Jet', 'wind-high');
+var jsl = new golgotha.maps.ShapeLayer(jsOpts, 'Jet', 'wind-jet');
 var ljsl = new golgotha.maps.ShapeLayer(jsOpts, 'Low Jet', 'wind-lojet');
-var mjsl = new golgotha.maps.ShapeLayer(jsOpts, 'Mid Level', 'wind-mid');
 
 // Build the layer controls
 var ctls = map.controls[google.maps.ControlPosition.BOTTOM_LEFT];
@@ -247,9 +247,9 @@ ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Wind Speed', dis
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Clouds', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('sat'); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Fronts', disabled:true, id:'selFronts'}, function() { return loaders.fr.getLayer(); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Lightning', disabled:true, id:'selLG'}, function() { return loaders.lg.getLayer(); }));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Mid Levels'}, mjsl));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Lo Jetstream'}, ljsl));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Hi Jetstream'}, hjsl));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Low Jet'}, ljsl));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Jet Stream'}, jsl));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'High Jet'}, hjsl));
 ctls.push(new golgotha.maps.LayerClearControl(map));
 
 // Display the copyright notice and text boxes
