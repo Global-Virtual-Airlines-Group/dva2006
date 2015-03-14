@@ -1,4 +1,4 @@
-// Copyright 2013, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2013, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.io.*;
@@ -25,13 +25,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A scheduled task to download GFS global forecast data.
  * @author Luke
- * @version 5.4
+ * @version 6.0
  * @since 5.2
  */
 
 public class GFSDownloadTask extends Task {
 	
-	private static final List<PressureLevel> LEVELS = Arrays.asList(PressureLevel.JET, PressureLevel.LOJET, PressureLevel.MID);
+	private static final List<PressureLevel> LEVELS = Arrays.asList(PressureLevel.JET, PressureLevel.LOJET, PressureLevel.HIGH);
 
 	/**
 	 * Initializes the Task.
@@ -71,13 +71,13 @@ public class GFSDownloadTask extends Task {
 							continue;
 
 						WindData wd = _data.getResult(loc);
-						if (wd.getJetStreamSpeed() < 40)
+						if (wd.getJetStreamSpeed() < 35)
 							continue;
 						
 						int c = Math.min(255, wd.getJetStreamSpeed() + 32);
 						if (wd.getJetStreamSpeed() > 99) {
 							int r = Math.min(c+30, 255);
-							int g = (wd.getJetStreamSpeed() > 150) ? Math.min(255, c+32): c;
+							int g = (wd.getJetStreamSpeed() > 125) ? Math.min(255, c+32): c;
 							Color rgb = new Color(r,g,c);
 							img.setRGB(x, y, rgb.getRGB());
 						} else {
@@ -118,7 +118,7 @@ public class GFSDownloadTask extends Task {
 				// Find the latest GFS run and get the latest GFS file
 				String basePath = SystemData.get("weather.gfs.path");
 				String dir = con.getNewestDirectory(basePath, FileUtils.fileFilter("gfs.", null));
-				String fName = con.getNewest(basePath + "/" + dir, FileUtils.fileFilter("gfs.", ".pgrb2f00"));
+				String fName = con.getNewest(basePath + "/" + dir, FileUtils.fileFilter("gfs.", ".pgrb2b.0p25.f000"));
 				Date lm = con.getTimestamp(basePath + "/" + dir, fName);
 				
 				// Calculate the effective date and download
@@ -161,7 +161,7 @@ public class GFSDownloadTask extends Task {
 				GeoLocation rawNW = data.getNW(); GeoLocation rawSE = data.getSE();
 				GeoLocation nwLL = new GeoPosition(Math.min(MercatorProjection.MAX_LATITUDE - 0.2, rawNW.getLatitude()), rawNW.getLongitude() + 0.01);
 				GeoLocation seLL = new GeoPosition(Math.max(MercatorProjection.MIN_LATITUDE + 0.2, rawSE.getLatitude()), rawSE.getLongitude() - 0.01);
-				for (int zoom = 5; zoom > 1; zoom--) {
+				for (int zoom = 6; zoom > 1; zoom--) {
 					Projection p = new MercatorProjection(zoom);
 					TileAddress nw = p.getAddress(nwLL); TileAddress se = p.getAddress(seLL);
 					for (int tx = nw.getX(); tx <= se.getX(); tx++) {

@@ -78,16 +78,18 @@ golgotha.local.loader.setData('aussieradar', 0.45, 'wxRadar', 512);
 golgotha.local.loader.onload(function() { golgotha.util.enable('#selImg'); });
 
 // Create the jetstream layers
-var jsOpts = {maxZoom:8, nativeZoom:5, opacity:0.55, zIndex:golgotha.maps.z.OVERLAY};
-var hjsl = new golgotha.maps.ShapeLayer(jsOpts, 'High Jet', 'wind-jet');
+var jsOpts = {maxZoom:8, nativeZoom:6, opacity:0.55, zIndex:golgotha.maps.z.OVERLAY};
+var hjsl = new golgotha.maps.ShapeLayer(jsOpts, 'High Jet', 'wind-high');
+var jsl = new golgotha.maps.ShapeLayer(jsOpts, 'Jet', 'wind-jet');
 var ljsl = new golgotha.maps.ShapeLayer(jsOpts, 'Low Jet', 'wind-lojet');
 
 // Add clouds and jet stream layers
 var ctls = map.controls[google.maps.ControlPosition.BOTTOM_LEFT];
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Radar', disabled:true, c:'selImg'}, function() { return golgotha.local.loader.getLatest('aussieradar'); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Clouds', disabled:true, c:'selImg'}, function() { return golgotha.local.loader.getLatest('sat'); }));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Lo Jetstream'}, ljsl));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Hi Jetstream'}, hjsl));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Low Jet'}, ljsl));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Jet Stream'}, jsl));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'High Jet'}, hjsl));
 ctls.push(new golgotha.maps.LayerClearControl(map));
 
 // Load data async once tiles are loaded
