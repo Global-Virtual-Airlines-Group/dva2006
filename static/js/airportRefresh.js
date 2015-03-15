@@ -148,3 +148,14 @@ golgotha.airportLoad.massageSelects = function(root) {
 
 	return opts.length;
 };
+
+golgotha.airportLoad.codeMassage = function() {
+	var e = window.event;
+	var c = e.which || e.keyCode;
+	if ((c > 64) && (c < 91))
+		return true;
+	else if ((c > 96) && (c < 123))
+		e.target.value += String.fromCharCode(c).toUpperCase(); 
+
+	return golgotha.event.stop(e);
+};
