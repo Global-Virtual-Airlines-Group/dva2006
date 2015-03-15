@@ -156,8 +156,8 @@ golgotha.onDOMReady(function() {
 <c:if test="${pilot.ID == pageContext.request.userPrincipal.ID}">
 <tr>
  <td class="label">Password</td>
- <td colspan="${cspan}" class="data"><el:text type="password" autoComplete="false" name="pwd1" idx="*" size="16" max="32" onKeypress="void golgotha.local.checkPwd(this)" value="" />, retype:
-<el:text type="password" autoComplete="false" name="pwd2" idx="*" size="16" max="32" onKeypress="void golgotha.local.checkPwd(this)" value="" /></td>
+ <td colspan="${cspan}" class="data"><el:text type="password" autoComplete="false" name="pwd1" idx="*" size="16" max="32" onKeyup="void golgotha.local.checkPwd(this)" value="" />, retype:
+<el:text type="password" autoComplete="false" name="pwd2" idx="*" size="16" max="32" onKeyup="void golgotha.local.checkPwd(this)" value="" /></td>
 </tr>
 </c:if>
 <c:if test="${access.canChangeRoles}">
