@@ -144,11 +144,11 @@ golgotha.onDOMReady(function() {
 <tr>
  <td class="label">Departing from</td>
  <td class="data"><el:combo name="airportD" idx="*" size="1" firstEntry="-" options="${airports}" value="${fafCriteria.airportD}" onChange="this.updateAirportCode(); golgotha.airportLoad.updateOrigin(this)" />
- <el:text ID="airportDCode" name="airportDCode" idx="*" size="3" max="4" onBlur="void document.forms[0].airportD.setAirport(this.value, true)" />
+ <el:text ID="airportDCode" name="airportDCode" idx="*" size="3" max="4" onBlur="void document.forms[0].airportD.setAirport(this.value, true)" onKeypress="void golgotha.airportLoad.codeMassage()"  />
  <el:box name="nVD" value="true" checked="${param.nVD}" label="Only include unvisited Airports" onChange="void golgotha.ff.refreshNV(this, 'airportD')" /></td>
  <td class="label">Arriving at</td>
  <td class="data"><el:combo name="airportA" idx="*" size="1" firstEntry="-" options="${airportsA}" value="${fafCriteria.airportA}" onChange="void this.updateAirportCode()" />
- <el:text ID="airportACode" name="airportACode" idx="*" size="3" max="4" onBlur="void document.forms[0].airportA.setAirport(this.value, true)" />
+ <el:text ID="airportACode" name="airportACode" idx="*" size="3" max="4" onBlur="void document.forms[0].airportA.setAirport(this.value, true)" onKeypress="void golgotha.airportLoad.codeMassage()"  />
  <el:box name="nVA" value="true" checked="${param.nVA}" label="Only include unvisited Airports" onChange="void golgotha.ff.refreshNV(this, 'airportA', true)" /></td>
 </tr>
 <tr>
