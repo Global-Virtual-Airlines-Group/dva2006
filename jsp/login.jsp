@@ -65,6 +65,11 @@ return true;
 Welcome to <content:airline />! In order to access the secure areas of our web site, please enter your first and last 
 name <c:if test="${!empty dupeUsers}">or your User ID </c:if>and password. Your browser must be able to accept cookies 
 from <span class="sec bld">${domain}</span> in order to log into our web site.<br />
+<content:secure secure="false">
+<br />
+You don't appear to be using an encrypted connection. In order to secure your user data, you may want to consider
+logging in to the <content:airline /> web site using our <a href="https://www.${domain}/login.do" class="pri bld">secure login page.</a><br />
+</content:secure>
 <br />
 <el:form method="post" action="login.do" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
