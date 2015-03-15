@@ -10,11 +10,11 @@
 <content:css name="main" />
 <content:pics />
 <script type="text/javascript">
-golgotha.local.closeRefresh = function()
-{
-if (window.opener) window.opener.location.reload();
-window.close();
-return true;	
+golgotha = {local:{}};
+golgotha.local.closeRefresh = function() {
+	if (window.opener) window.opener.location.reload();
+	window.close();
+	return true;	
 };
 </script>
 </head>
