@@ -148,7 +148,15 @@ public class InputTag extends FormElementTag {
      * Sets the JavaScript event for this element's onKeyUp() event.
      * @param jsCode the JavaScript code
      */
-    public void setOnKeypress(String jsCode) {
+    public void setOnKeyup(String jsCode) {
     	_data.setAttribute("onkeyup", jsCode);
+    }
+    
+    /**
+     * Sets the JavaScript event for this element's onKeyPress() event.
+     * @param jsCode the JavaScript code
+     */
+    public void setOnKeypress(String jsCode) {
+    	_data.setAttribute("onkeypress", jsCode);
     }
 }
