@@ -84,18 +84,18 @@ golgotha.routePlot.updateAirline = function(combo) {
 <tr>
  <td class="label">Departing from</td>
  <td class="data"><el:combo name="airportD" size="1" idx="*" options="${airportsD}" firstEntry="-" value="${airportD}" onChange="void golgotha.routePlot.updateRoute(true, true)" />
- <el:text ID="airportDCode" name="airportDCode" idx="*" size="3" max="4" onChange="document.forms[0].airportD.setAirport(this.value); golgotha.routePlot.updateRoute(true)" />
+ <el:text ID="airportDCode" name="airportDCode" idx="*" size="3" max="4" onChange="document.forms[0].airportD.setAirport(this.value); golgotha.routePlot.updateRoute(true)" onKeypress="void golgotha.airportLoad.codeMassage()"  />
 <span id="runways" style="visibility:hidden;"> departing <el:combo name="runway" idx="*" size="1" options="${emptyList}" firstEntry="-" onChange="void golgotha.routePlot.updateRoute(true, false)" /></span></td>
 </tr>
 <tr>
  <td class="label">Arriving at</td>
  <td class="data"><el:combo name="airportA" size="1" idx="*" options="${airportsA}" firstEntry="-" value="${airportA}" onChange="void golgotha.routePlot.updateRoute(true)" />
- <el:text ID="airportACode" name="airportACode" idx="*" size="3" max="4" onChange="void document.forms[0].airportA.setAirport(this.value, true)" /></td>
+ <el:text ID="airportACode" name="airportACode" idx="*" size="3" max="4" onChange="void document.forms[0].airportA.setAirport(this.value, true)" onKeypress="void golgotha.airportLoad.codeMassage()"  /></td>
 </tr>
 <tr>
  <td class="label">Alternate</td>
  <td class="data"><el:combo name="airportL" size="1" idx="*" options="${emptyList}" firstEntry="-" onChange="golgotha.routePlot.updateRoute(); golgotha.routePlot.plotMap()" />
- <el:text ID="airportLCode" name="airportLCode" idx="*" size="3" max="4" onChange="void document.forms[0].airportL.setAirport(this.value, true)" /></td>
+ <el:text ID="airportLCode" name="airportLCode" idx="*" size="3" max="4" onChange="void document.forms[0].airportL.setAirport(this.value, true)" onKeypress="void golgotha.airportLoad.codeMassage()"  /></td>
 </tr>
 <tr id="sids" style="display:none;">
  <td class="label">Standard Departure (SID)</td>
