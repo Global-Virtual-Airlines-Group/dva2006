@@ -546,6 +546,11 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
+			<name>onKeyup</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
 			<name>onKeypress</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
@@ -630,6 +635,11 @@
 		</attribute>
 		<attribute>
 			<name>onChange</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>onKeyup</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
@@ -729,6 +739,11 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
+			<name>onKeyup</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
 			<name>onKeypress</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
@@ -820,6 +835,11 @@
 		</attribute>
 		<attribute>
 			<name>onChange</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>onKeyup</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
@@ -919,6 +939,11 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
+			<name>onKeyup</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
 			<name>onKeypress</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
@@ -1010,6 +1035,11 @@
 		</attribute>
 		<attribute>
 			<name>onChange</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>onKeyup</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
