@@ -28,10 +28,10 @@ golgotha.local.validate = function(f)
 if (!golgotha.form.check()) return false;
 if (!f.comments) return false;
 golgotha.form.validate({f:f.instructor, t:'Flight Instructor'});
-golgotha.form.validate({f:f.startDate, t:'Busy Start Date'});
-golgotha.form.validate({f:f.startTime, t:'Busy Start Time'});
-golgotha.form.validate({f:f.endDate, t:'Busy End Date'});
-golgotha.form.validate({f:f.endTime, t:'Busy End Time'});
+golgotha.form.validate({f:f.startDate, l:8, t:'Busy Start Date'});
+golgotha.form.validate({f:f.startTime, l:5, t:'Busy Start Time'});
+golgotha.form.validate({f:f.endDate, l:8, t:'Busy End Date'});
+golgotha.form.validate({f:f.endTime, l:5, t:'Busy End Time'});
 golgotha.form.submit(f);
 return true;
 };

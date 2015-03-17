@@ -25,10 +25,10 @@ golgotha.local.switchType = function(combo) {
 golgotha.local.validate = function(f)
 {
 if ((!golgotha.form.check()) || (!f.comments)) return false;
-golgotha.form.validate({f:f.startDate, t:'Service Start Date'});
-golgotha.form.validate({f:f.startTime, t:'Service Start Time'});
-golgotha.form.validate({f:f.endDate, t:'Service End Date'});
-golgotha.form.validate({f:f.endTime, t:'Service End Time'});
+golgotha.form.validate({f:f.startDate, l:8, t:'Service Start Date'});
+golgotha.form.validate({f:f.startTime, l:5, t:'Service Start Time'});
+golgotha.form.validate({f:f.endDate, l:8, t:'Service End Date'});
+golgotha.form.validate({f:f.endTime, l:5, t:'Service End Time'});
 golgotha.form.submit(f);
 return true;
 };
