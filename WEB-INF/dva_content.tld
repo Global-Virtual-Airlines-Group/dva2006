@@ -402,6 +402,24 @@
 	</tag>
 
 	<tag>
+		<description>Canonical Link tag</description>
+		<name>canonical</name>
+		<tag-class>org.deltava.taglib.content.CanonicalLinkTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<name>url</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>convertID</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Boolean</type>		
+		</attribute>
+	</tag>
+
+	<tag>
 		<description>GetCookie tag, for reading cookie data</description>
 		<name>getCookie</name>
 		<tag-class>org.deltava.taglib.content.GetCookieTag</tag-class>
