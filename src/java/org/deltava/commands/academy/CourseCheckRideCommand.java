@@ -110,13 +110,20 @@ public class CourseCheckRideCommand extends AbstractCommand {
 			ctx.setAttribute("rideScript", sc, REQUEST);
 			
 			// Get all available aircraft types
-			GetAircraft acdao = new GetAircraft(con);
-			Collection<String> allEQ = acdao.getAircraftTypes().stream().map(Aircraft::getName).collect(Collectors.toSet());
-			List<String> availableEQ = allEQ.stream().filter(eq -> (cert.getRideEQ().contains(eq))).collect(Collectors.toList());
-			if (availableEQ.isEmpty())
-				throw notFoundException("No available aircraft for Check Ride in " + StringUtils.listConcat(cert.getRideEQ(), ", "));
+			if (!cert.getRideEQ().isEmpty() && isOurs) {
+				Collection<String> availableEQ = p.getRatings().stream().filter(eq -> (cert.getRideEQ().contains(eq))).collect(Collectors.toList());
+				if (availableEQ.isEmpty())
+					throw notFoundException("No available aircraft for Check Ride in " + StringUtils.listConcat(cert.getRideEQ(), ", "));
 			
-			ctx.setAttribute("actypes", isOurs ? availableEQ : acdao.getAircraftTypes(), REQUEST);
+				ctx.setAttribute("actypes", availableEQ, REQUEST);
+			} else if (isOurs)
+				ctx.setAttribute("actypes", p.getRatings(), REQUEST);
+			else {
+				GetAircraft acdao = new GetAircraft(con);
+				List<String> allEQ = acdao.getAircraftTypes().stream().map(Aircraft::getName).collect(Collectors.toList());
+				allEQ = allEQ.stream().filter(eq -> (cert.getRideEQ().isEmpty() || cert.getRideEQ().contains(eq))).collect(Collectors.toList());
+				ctx.setAttribute("actypes", allEQ, REQUEST);
+			}
 			
 			if (ctx.getParameter("acType") == null) {
 				ctx.release();

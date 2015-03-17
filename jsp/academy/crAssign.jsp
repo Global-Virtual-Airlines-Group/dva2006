@@ -39,7 +39,7 @@ return true;
 <tr>
  <td class="label">Aircraft Type</td>
  <td class="data"><el:combo name="acType" idx="*" size="1" className="req" options="${actypes}" value="${param.acType}" firstEntry="-" />
-<c:if test="${isMine}"><br /><span class="pri bld ita">It is critical that you fly the Check Ride with this aircraft. Flights flown in other
+<c:if test="${isMine}"> <span class="pri bld ita small">It is critical that you fly the Check Ride with this aircraft. Flights flown in other
 aircraft will not be recognized as Check Rides!</span></c:if></td>
 </tr>
 <tr>
