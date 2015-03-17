@@ -10,6 +10,7 @@
 <html lang="en">
 <head>
 <title><content:airline /> ${forumName} - <fmt:text value="${thread.subject}" /></title>
+<content:canonical convertID="true" />
 <content:css name="main" />
 <content:css name="cooler" />
 <content:css name="form" />

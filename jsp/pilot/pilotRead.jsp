@@ -9,6 +9,7 @@
 <html lang="en">
 <head>
 <title>${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></title>
+<content:canonical convertID="true" />
 <content:css name="main" />
 <content:css name="form" />
 <content:css name="view" />

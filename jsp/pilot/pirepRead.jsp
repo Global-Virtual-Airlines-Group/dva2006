@@ -11,6 +11,7 @@
 <html lang="en">
 <head>
 <title><content:airline /> Flight Report - ${pirep.flightCode}</title>
+<content:canonical convertID="true" />
 <content:css name="main" />
 <content:css name="form" />
 <content:sysdata var="airlineURL" name="airline.url" />
