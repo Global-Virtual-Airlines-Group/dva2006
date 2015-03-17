@@ -307,7 +307,7 @@ if ('min' in opts) {
 }
 
 if (opts.f.options) return golgotha.form.validateCombo(opts.f, opts.t);
-throw new gologhta.util.ValidationError('Invalid Validation Data', opts.f);
+throw new golgotha.util.ValidationError('Invalid Validation Data', opts.f);
 };
 
 golgotha.form.validateText = function(t, min, title) {
