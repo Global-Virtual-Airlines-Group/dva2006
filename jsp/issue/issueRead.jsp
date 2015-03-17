@@ -8,6 +8,7 @@
 <html lang="en">
 <head>
 <title><content:airline /> Issue Report #<fmt:int value="${issue.ID}" /></title>
+<content:canonical convertID="true" />
 <content:css name="main" />
 <content:css name="form" />
 <content:js name="common" />

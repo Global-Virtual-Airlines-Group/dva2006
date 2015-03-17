@@ -14,7 +14,7 @@
 <content:sysdata var="airlineURL" name="airline.url" />
 <content:sysdata var="desc" name="airline.meta.desc" />
 <content:sysdata var="keywords" name="airline.meta.keywords" />
-<link rel="canonical" href="http://${airlineURL}/" />
+<content:canonical url="https://${airlineURL}/" />
 <content:css name="main" />
 <content:css name="view" />
 <content:rss title="${airlineName} News" path="/news_rss.ws" />

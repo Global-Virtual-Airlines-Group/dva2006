@@ -10,6 +10,7 @@
 <html lang="en">
 <head>
 <title><content:airline /> Online Event - ${event.name}</title>
+<content:canonical convertID="true" />
 <content:sysdata var="airlineName" name="airline.name" />
 <content:css name="main" />
 <content:css name="form" />
