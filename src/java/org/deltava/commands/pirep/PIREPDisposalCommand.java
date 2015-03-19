@@ -1,7 +1,8 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.apache.log4j.Logger;
@@ -16,6 +17,7 @@ import org.deltava.beans.stats.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.dao.http.SetFacebookData;
+
 import org.deltava.mail.*;
 
 import org.deltava.security.command.PIREPAccessControl;
@@ -27,7 +29,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Flight Report status changes.
  * @author Luke
- * @version 5.4
+ * @version 6.0
  * @since 1.0
  */
 
@@ -149,16 +151,9 @@ public class PIREPDisposalCommand extends AbstractCommand {
 				for (FlightReport pirep : pireps)
 					acchelper.add(pirep);
 				
-				// Load accomplishments
+				// Load accomplishments - only save the ones we don't meet yet
 				GetAccomplishment accdao = new GetAccomplishment(con);
-				Collection<Accomplishment> accs = accdao.getAll();
-				
-				// Loop through each accomplishment and only save the ones we don't meet yet
-				for (Iterator<Accomplishment> i = accs.iterator(); i.hasNext(); ) {
-					Accomplishment a = i.next();
-					if (acchelper.has(a) != AccomplishmentHistoryHelper.Result.NOTYET)
-						i.remove();
-				}
+				Collection<Accomplishment> accs = accdao.getAll().stream().filter(a -> (acchelper.has(a) == AccomplishmentHistoryHelper.Result.NOTYET)).collect(Collectors.toList());
 				
 				// Add the approved PIREP
 				acchelper.add(fr);
@@ -167,7 +162,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 				SetAccomplishment acwdao = new SetAccomplishment(con);
 				for (Iterator<Accomplishment> i = accs.iterator(); i.hasNext(); ) {
 					Accomplishment a = i.next();
-					if (acchelper.has(a) == AccomplishmentHistoryHelper.Result.MEET) {
+					if (acchelper.has(a) != AccomplishmentHistoryHelper.Result.NOTYET) {
 						acwdao.achieve(p.getID(), a);
 						StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.RECOGNITION);
 						upd.setAuthorID(ctx.getUser().getID());
