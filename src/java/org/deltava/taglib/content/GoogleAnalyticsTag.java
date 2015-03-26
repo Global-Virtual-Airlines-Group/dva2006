@@ -50,7 +50,7 @@ public class GoogleAnalyticsTag extends TagSupport {
 		out.println(".google-analytics.com/ga.js\"></script>");
 		
 		// Write the analytics script
-		out.println("<script type=\"text/javascript\">");
+		out.println("<script>");
 		out.println("try { ");
 		out.print("golgotha.event.tracker = _gat._getTracker('");
 		out.print(accountID);
@@ -75,7 +75,7 @@ public class GoogleAnalyticsTag extends TagSupport {
 	 */
 	private void writeAsync(String accountID) throws Exception {
 		JspWriter out = pageContext.getOut();
-		out.println("<script>");
+		out.println("<script async>");
 		out.println("var _gaq = _gaq || [];");
 		out.println("_gaq.push(['_setAccount', '" + accountID + "']);");
 		out.println("_gaq.push(['_trackPageview']);");
