@@ -15,10 +15,7 @@
 <content:pics />
 <script type="text/javascript">
 golgotha = {local:{}};
-golgotha.local.setType = function() {
-	document.forms[0].submit();
-	return true;
-};
+golgotha.local.setType = function() { return document.forms[0].submit(); };
 </script>
 </head>
 <content:copyright visible="false" />
