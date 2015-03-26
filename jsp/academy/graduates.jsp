@@ -14,6 +14,7 @@
 <content:css name="view" />
 <content:pics />
 <script type="text/javascript">
+golgotha = {local:{}};
 golgotha.local.setType = function() {
 	document.forms[0].submit();
 	return true;
