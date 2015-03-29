@@ -16,10 +16,10 @@ import org.deltava.util.tile.TileAddress;
 abstract class PlotMap extends TestCase {
 	
 	protected Logger log;
-	protected static final String URL = "jdbc:mysql://polaris.sce.net/acars?user=luke&password=test";
+	protected static final String URL = "jdbc:mysql://sirius.sce.net/acars?user=luke&password=test";
 	
-	private static final int READ_THREADS = 18;
-	private static final int WRITE_THREADS = 12;
+	private static final int READ_THREADS = 12;
+	private static final int WRITE_THREADS = 10;
 	
 	protected final Map<Integer, ProjectInfo> _zooms = new HashMap<Integer, ProjectInfo>();
 	
@@ -31,7 +31,7 @@ abstract class PlotMap extends TestCase {
 		log = Logger.getLogger(PlotMap.class);
 		
 		SystemData.init();
-		TileData.init("E:\\temp\\swap");
+		TileData.init("D:\\temp\\swap");
 		
 		// Connect to the database
 		Class<?> drv = Class.forName("com.mysql.jdbc.Driver");
@@ -78,6 +78,15 @@ abstract class PlotMap extends TestCase {
 		try (Connection c = DriverManager.getConnection(URL)) {
 			try (Statement s = c.createStatement()) {
 				s.executeUpdate("TRUNCATE acars.TRACKS");
+			}
+		}
+	}
+	
+	protected void truncateTracks(int minZoom) throws SQLException {
+		try (Connection c = DriverManager.getConnection(URL)) {
+			try (PreparedStatement ps = c.prepareStatement("DELETE FROM acars.TRACKS WHERE (Z>=?)")) {
+				ps.setInt(1,  minZoom);
+				ps.executeUpdate();
 			}
 		}
 	}
