@@ -20,17 +20,17 @@
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
-golgotha.local.validate({f:f.firstName, l:3, t:'First Name'});
-golgotha.local.validate({f:f.lastName, l:2, t:'Last Name'});
-golgotha.local.validate({f:f.email, addr:true, t:'E-Mail Address'});
-golgotha.local.validate({f:f.homeAirport, t:'Home Airport'});
-golgotha.local.validate({f:f.tz, t:'Time Zone'});
-golgotha.local.validate({f:f.df, l:7, t:'Date Format'});
-golgotha.local.validate({f:f.tf, l:5, t:'Time Format'});
-golgotha.local.validate({f:f.nf, l:5, t:'Number Format'});
-golgotha.local.validate({f:f.airportCodeType, min:1, t:'Airport Code type'});
-golgotha.local.validate({f:f.eqType, t:'Equipment Program'});
-golgotha.local.validate({f:f.rank, t:'Rank'});
+golgotha.form.validate({f:f.firstName, l:3, t:'First Name'});
+golgotha.form.validate({f:f.lastName, l:2, t:'Last Name'});
+golgotha.form.validate({f:f.email, addr:true, t:'E-Mail Address'});
+golgotha.form.validate({f:f.homeAirport, t:'Home Airport'});
+golgotha.form.validate({f:f.tz, t:'Time Zone'});
+golgotha.form.validate({f:f.df, l:7, t:'Date Format'});
+golgotha.form.validate({f:f.tf, l:5, t:'Time Format'});
+golgotha.form.validate({f:f.nf, l:5, t:'Number Format'});
+golgotha.form.validate({f:f.airportCodeType, min:1, t:'Airport Code type'});
+golgotha.form.validate({f:f.eqType, t:'Equipment Program'});
+golgotha.form.validate({f:f.rank, t:'Rank'});
 golgotha.form.submit(f);
 return true;
 };
@@ -80,7 +80,7 @@ golgotha.onDOMReady(function() {
 <tr>
  <td class="label">Home Airport</td>
  <td class="data"><el:combo name="homeAirport" size="1" idx="*" options="${airports}" required="true" value="${homeAirport}" onChange="void this.updateAirportCode()" />
- <el:text name="homeAirportCode" ID="homeAirportCode" size="3" max="4" onBlur="void document.forms[0].homeAirport.setAirport(this.value)" /></td>
+ <el:text name="homeAirportCode" ID="homeAirportCode" size="3" max="4" onBlur="void document.forms[0].homeAirport.setAirport(this.value)" onKeypress="void golgotha.airportLoad.codeMassage()" /></td>
 </tr>
 <tr>
  <td class="label">Location</td>
