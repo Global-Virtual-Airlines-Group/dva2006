@@ -1,8 +1,10 @@
-// Copyright 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.util.*;
 import java.sql.Connection;
+
+import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
 import org.deltava.beans.fb.*;
@@ -20,11 +22,13 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to handle Facebook authorization commands.
  * @author Luke
- * @version 4.2
+ * @version 6.0
  * @since 3.4
  */
 
 public class FacebookAuthCommand extends AbstractCommand {
+	
+	private static final Logger log = Logger.getLogger(FacebookAuthCommand.class);
 
 	/**
 	 * Executes the command.
@@ -67,6 +71,10 @@ public class FacebookAuthCommand extends AbstractCommand {
 			String token = fadao.getAccessToken(code, ctx.getRequest().getRequestURL().toString());
 			if (ctx.isUserInRole("Facebook"))
 				ctx.setAttribute("fbToken", token, REQUEST);
+			
+			// If the token is really big, log it
+			if (token.length() > 220)
+				log.warn("Long FB token for " + p.getName() + " - " + token);
 			
 			// Get the user's information
 			GetFacebookData fbdao = new GetFacebookData();
