@@ -99,12 +99,12 @@ one of our volunteer staff will answer it soon.</td>
 </c:otherwise>
 </c:choose>
 
-<c:if test="${!empty activeIssues}">
+<c:if test="${!empty viewContext.results}">
 <!-- All Active Issues -->
 <tr class="title caps">
  <td colspan="6" class="left">ACTIVE ISSUES</td>
 </tr>
-<c:forEach var="issue" items="${activeIssues}">
+<c:forEach var="issue" items="${viewContext.results}">
 <c:set var="author" value="${pilots[issue.authorID]}" scope="page" />
 <c:set var="assignee" value="${pilots[issue.assignedTo]}" scope="page" />
 <view:row entry="${issue}">
@@ -119,10 +119,11 @@ one of our volunteer staff will answer it soon.</td>
 </c:forEach>
 </c:if>
 
-<c:if test="${(!empty myIssues) || (!empty activeIssues)}">
+<c:if test="${(!empty myIssues) || (!empty viewContext.results)}">
 <!-- Legend Bar -->
 <tr class="title">
- <td colspan="6"><view:legend width="95" labels="Open,Assigned,Resolved,FAQ Entry" classes=" ,opt2,opt1,opt3" /></td>
+ <td colspan="6"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br /></view:scrollbar>
+<view:legend width="95" labels="Open,Assigned,Resolved,FAQ Entry" classes=" ,opt2,opt1,opt3" /></td>
 </tr>
 </c:if>
 </el:table>
