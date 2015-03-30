@@ -1,25 +1,24 @@
-// Copyright 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.help;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.deltava.beans.help.Issue;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-
 import org.deltava.security.command.HelpDeskAccessControl;
-
 import org.deltava.util.RoleUtils;
 
 /**
  * A Web Site Command to display the Help Desk.
  * @author Luke
- * @version 2.6
+ * @version 6.0
  * @since 1.0
  */
 
-public class HelpDeskCommand extends AbstractCommand {
+public class HelpDeskCommand extends AbstractViewCommand {
 	
 	private static final List<String> ADMIN_ROLES = Arrays.asList("HR", "PIREP", "Examination", "Instrutor", "AcademyAdmin", "HelpDesk");
 
@@ -28,6 +27,7 @@ public class HelpDeskCommand extends AbstractCommand {
      * @param ctx the Command context
      * @throws CommandException if an unhandled error occurs
      */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		int myID = ctx.getUser().getID();
 		try {
@@ -35,29 +35,26 @@ public class HelpDeskCommand extends AbstractCommand {
 			
 			// Get the DAO and my issue list
 			GetHelp idao = new GetHelp(con);
-			Collection<Issue> myIssues = idao.getByPilot(myID, myID, false, true); 
-			for (Iterator<Issue> i = myIssues.iterator(); i.hasNext(); ) {
-				Issue is = i.next();
-				if (is.getStatus() == Issue.CLOSED)
-					i.remove();
-			}
+			Collection<Issue> myIssues = idao.getByPilot(myID, myID, false, true);
+			myIssues = myIssues.stream().filter(i -> (i.getStatus() != Issue.CLOSED)).collect(Collectors.toList());
 			
 			// Add Active issues
 			Collection<Issue> allIssues = new HashSet<Issue>(myIssues);
 			if (RoleUtils.hasAccess(ctx.getRoles(), ADMIN_ROLES)) {
-				idao.setQueryMax(30);
+				ViewContext vctx = initView(ctx);
+				idao.setQueryStart(vctx.getStart());
+				idao.setQueryMax(vctx.getCount());
 				Collection<Issue> activeIssues = idao.getActive();
 				allIssues.addAll(activeIssues);
-				ctx.setAttribute("activeIssues", activeIssues, REQUEST);
+				vctx.setResults(activeIssues);
 			}
 			
 			// Get Author IDs
 			Collection<Integer> IDs = new HashSet<Integer>();
-			for (Iterator<Issue> i = allIssues.iterator(); i.hasNext(); ) {
-				Issue is = i.next();
-				IDs.add(new Integer(is.getAuthorID()));
-				IDs.add(new Integer(is.getAssignedTo()));
-				IDs.add(new Integer(is.getLastCommentAuthorID()));
+			for (Issue is : allIssues) {
+				IDs.add(Integer.valueOf(is.getAuthorID()));
+				IDs.add(Integer.valueOf(is.getAssignedTo()));
+				IDs.add(Integer.valueOf(is.getLastCommentAuthorID()));
 			}
 
 			// Calculate access rights
