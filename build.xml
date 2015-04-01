@@ -294,7 +294,6 @@
 		<scp todir="${webapp.dev.user}@${webapp.dev.server}:${webapp.dev.path.common}"
 			port="${webapp.dev.port}" verbose="yes" trust="yes" keyfile="${webapp.dev.key}">
 			<fileset dir="lib/deploy" includes="*.jar">
-				<exclude name="log4j*.jar" />
 				<exclude name="spymemcached*.jar" />
 				<modified seldirs="false" algorithm="digest" update="true" delayupdate="false">
 					<param name="algorithm.algorithm" value="MD5" />
@@ -316,7 +315,6 @@
 				</modified>
 			</fileset>
 			<fileset dir="lib/deploy">
-				<include name="log4j*.jar" />
 				<include name="spymemcached*.jar" />
 				<modified seldirs="false" algorithm="digest" update="true" delayupdate="false">
 					<param name="algorithm.algorithm" value="MD5" />
@@ -442,7 +440,6 @@
 		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:${webapp.ssh.path.common}"
 			port="${webapp.ssh.port}" verbose="yes" trust="yes" keyfile="${webapp.ssh.key}">
 			<fileset dir="lib/deploy" includes="*.jar">
-				<exclude name="log4j*.jar" />
 				<exclude name="spymemcached*.jar" />
 				<modified seldirs="false" algorithm="digest" update="true" delayupdate="false">
 					<param name="algorithm.algorithm" value="MD5" />
@@ -464,7 +461,6 @@
 				</modified>
 			</fileset>
 			<fileset dir="lib/deploy">
-				<include name="log4j*.jar" />
 				<include name="spymemcached*.jar" />
 				<modified seldirs="false" algorithm="digest" update="true" delayupdate="false">
 					<param name="algorithm.algorithm" value="MD5" />
