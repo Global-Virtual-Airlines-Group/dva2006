@@ -72,8 +72,9 @@ public class PageTag extends BrowserInfoTag {
 			JspWriter out = pageContext.getOut();
 			out.print("<div class=\"");
 			out.print(_sideMenu ? "navside" : "navbar");
-			out.print(' ');
-			out.print(bctxt.isIPv6() ? " ipv6" : "ipv4");
+			out.print(bctxt.isIPv6() ? " ipv6" : " ipv4");
+			if (hreq.isSecure())
+				out.print(" ssl");
 			out.print("\">");
 		} catch (Exception e) {
 			throw new JspException(e);
