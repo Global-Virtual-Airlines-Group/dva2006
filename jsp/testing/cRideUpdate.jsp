@@ -48,7 +48,7 @@ be assigned while one is currently pending.<br />
 <br />
 To return to the list of pending equipment program transfer requests, <el:cmd url="txrequests" className="sec bld">Click Here</el:cmd>.<br />
 </c:when>
-<c:when test="${!empty txt}">
+<c:when test="${!empty tx}">
 <div class="updateHdr">Transfer Request Pending</div>
 <br />
 An Equipment Program Transfer Request to the ${tx.equipmentType} is currently pending for ${pilot.name}. No new
