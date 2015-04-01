@@ -56,12 +56,4 @@ public abstract class SQLAuthenticator implements Authenticator {
 	protected Connection getConnection() {
 		return _con.get();
 	}
-	
-	/**
-	 * Helper method to close the JDBC connection if not provided by external code.
-	 * @param c the Connection to release
-	 */
-	protected void closeConnection(Connection c) {
-		_con.remove();
-	}
 }
