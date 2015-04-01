@@ -175,7 +175,8 @@ public class Airline implements ComboAlias, Comparable<Airline>, Cacheable, View
 	 */
 	public void setApps(Collection<String> apps) {
 		_apps.clear();
-		_apps.addAll(apps);
+		if (apps != null)
+			_apps.addAll(apps);
 	}
 	
 	/**
