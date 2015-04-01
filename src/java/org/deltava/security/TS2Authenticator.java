@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.sql.*;
@@ -13,15 +13,13 @@ import org.deltava.dao.*;
 import org.deltava.util.*;
 
 /**
- * An Authenticator to authenticate against a TeamSpeak 2 user database. This differs from the standard
- * {@link JDBCAuthenticator} by virtue of its using the standard ConnectionPool loaded via the SystemData object. Since
- * this implements {@link SQLAuthenticator}, this behavior can be overriden by providing a JDBC Connection to use.
+ * An Authenticator to authenticate against a TeamSpeak 2 user database.
  * @author Luke
- * @version 5.0
+ * @version 6.0
  * @since 1.0
  */
 
-public class TS2Authenticator extends ConnectionPoolAuthenticator {
+public class TS2Authenticator extends SQLAuthenticator {
 
 	private static final Logger log = Logger.getLogger(TS2Authenticator.class);
 

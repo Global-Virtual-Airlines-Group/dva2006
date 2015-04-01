@@ -1,28 +1,67 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009, 2010, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
-import java.sql.Connection;
+import java.sql.*;
+import java.util.Properties;
+import java.io.IOException;
+
+import org.deltava.util.ConfigLoader;
 
 /**
- * This interface marks a {@link Authenticator} that uses a JDBC Connection to perform operations. Since some
- * operations may need to be performed as part of a single database transaction, this allows us to pass an existing
- * JDBC Connection to the authenticator which is in the middle of a transaction. Otherwise, if we use a new JDBC
- * connection, we may encounter a deadlock between the two transactions.
+ * An abstract class to support Authenticators that use a JDBC Connection Pool.
  * @author Luke
- * @version 1.0
+ * @version 6.0
  * @since 1.0
  */
 
-public interface SQLAuthenticator extends Authenticator {
+public abstract class SQLAuthenticator implements Authenticator {
+	
+	protected final Properties _props = new Properties();
+	private final ThreadLocal<Connection> _con = new ThreadLocal<Connection>();
 
 	/**
 	 * Provides the JDBC connection for this Authenticator to use.
 	 * @param c the Connection to use
 	 */
-	public void setConnection(Connection c);
+	public void setConnection(Connection c) {
+		_con.set(c);
+	}
 	
 	/**
-	 * Clears the explicit JDBC connection for an Authenticator to use, reverting to default behavior.
+	 * Clears the JDBC connection for an Authenticator to use.
 	 */
-	public void clearConnection();
+	public void clearConnection() {
+		_con.remove();
+	}
+
+	/**
+	 * Initializes the Authenticator.
+	 * @param propsFile the property file
+	 * @throws SecurityException if the properties cannot be loaded
+	 */
+	@Override
+	public void init(String propsFile) throws SecurityException {
+		_props.clear();
+		try {
+			_props.load(ConfigLoader.getStream(propsFile));
+		} catch (IOException ie) {
+			throw new SecurityException(ie.getMessage());
+		}
+	}
+
+	/**
+	 * Helper method to return a JDBC connection to the data source.
+	 * @return a JDBC connection
+	 */
+	protected Connection getConnection() {
+		return _con.get();
+	}
+	
+	/**
+	 * Helper method to close the JDBC connection if not provided by external code.
+	 * @param c the Connection to release
+	 */
+	protected void closeConnection(Connection c) {
+		_con.remove();
+	}
 }

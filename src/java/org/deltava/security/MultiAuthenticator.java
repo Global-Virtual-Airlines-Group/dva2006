@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007, 2010, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.util.*;
@@ -6,19 +6,17 @@ import java.io.IOException;
 import java.sql.Connection;
 
 import org.apache.log4j.Logger;
-
 import org.deltava.beans.Person;
-
 import org.deltava.util.*;
 
 /**
  * An abstract Authenticator that supports multiple authenticators.
  * @author Luke
- * @version 3.0
+ * @version 6.0
  * @since 1.0
  */
 
-public abstract class MultiAuthenticator implements SQLAuthenticator {
+public abstract class MultiAuthenticator extends SQLAuthenticator {
 
 	/**
 	 * The &quot;source&quot; authenticator.
@@ -31,15 +29,9 @@ public abstract class MultiAuthenticator implements SQLAuthenticator {
 	protected final Collection<Authenticator> _dst = new LinkedHashSet<Authenticator>();
 
 	/**
-	 * If either authenticator is a {@link SQLAuthenticator}, an explict connection can be passed down the
-	 * authenticator chain to preserve transaction atomicity.
-	 */
-	protected final ThreadLocal<Connection> _cons = new ThreadLocal<Connection>();
-
-	/**
 	 * The log4j logger.
 	 */
-	protected Logger log;
+	protected final Logger log;
 
 	/**
 	 * Initializes the Authentiactor.
@@ -61,7 +53,6 @@ public abstract class MultiAuthenticator implements SQLAuthenticator {
 		try {
 			props.load(ConfigLoader.getStream(propsFile));
 		} catch (IOException ie) {
-			log.error("Error loading " + propsFile + " - " + ie.getMessage());
 			throw new SecurityException(ie.getMessage());
 		}
 
@@ -71,15 +62,12 @@ public abstract class MultiAuthenticator implements SQLAuthenticator {
 			_src = (Authenticator) sc.newInstance();
 			_src.init(props.getProperty(authPrefix + ".src.properties"));
 		} catch (Exception e) {
-			SecurityException se = new SecurityException("Error loading Source - " + e.getMessage());
-			se.initCause(e);
-			throw se;
+			throw new SecurityException("Error loading Source - " + e.getMessage(), e);
 		}
 
 		// Initialize the destination authenticators
 		List<String> classes = StringUtils.split(props.getProperty(authPrefix + ".dst"), ",");
-		for (Iterator<String> i = classes.iterator(); i.hasNext();) {
-			String cName = i.next();
+		for (String cName : classes) {
 			try {
 				Class<?> dc = Class.forName(cName);
 				Authenticator auth = (Authenticator) dc.newInstance();
@@ -89,21 +77,6 @@ public abstract class MultiAuthenticator implements SQLAuthenticator {
 				throw new SecurityException("Error loading Destination - " + e.getMessage(), e);
 			}
 		}
-	}
-
-	/**
-	 * Provides the JDBC connection for this Authenticator and its children to use.
-	 * @param c the Connection to use
-	 */
-	public void setConnection(Connection c) {
-		_cons.set(c);
-	}
-
-	/**
-	 * Clears the explicit JDBC connection for an Authenticator to use, reverting to default behavior.
-	 */
-	public void clearConnection() {
-		_cons.set(null);
 	}
 
 	/**
@@ -129,7 +102,7 @@ public abstract class MultiAuthenticator implements SQLAuthenticator {
 	protected void setConnection(Authenticator... auths) {
 		for (int x = 0; x < auths.length; x++) {
 			Authenticator auth = auths[x];
-			Connection con = _cons.get();
+			Connection con = getConnection();
 			if ((auth instanceof SQLAuthenticator) && (con != null))
 				((SQLAuthenticator) auth).setConnection(con);
 		}
@@ -198,8 +171,7 @@ public abstract class MultiAuthenticator implements SQLAuthenticator {
 	 * @throws SecurityException if the user does not exist
 	 */
 	public void removeDestination(Person usr) throws SecurityException {
-		for (Iterator<Authenticator> i = _dst.iterator(); i.hasNext(); ) {
-			Authenticator auth = i.next();
+		for (Authenticator auth : _dst) {
 			setConnection(auth);
 			if (auth.contains(usr))
 				auth.remove(usr);
@@ -213,6 +185,7 @@ public abstract class MultiAuthenticator implements SQLAuthenticator {
 	 * this default.
 	 * @return TRUE always
 	 */
+	@Override
 	public boolean accepts(Person usr) {
 		return true;
 	}

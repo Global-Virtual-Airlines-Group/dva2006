@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.sql.*;
@@ -8,18 +8,15 @@ import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
 import org.deltava.crypt.MessageDigester;
-import org.gvagroup.jdbc.*;
 
 /**
- * An Authenticator to authenticate users against Apache2-style database tables. Unlike the {@link JDBCAuthenticator}
- * class, this uses the existing JDBC Connection Pool. Since this implements {@link SQLAuthenticator}, this behavior can
- * be overriden by providing a JDBC Connection to use.
+ * An Authenticator to authenticate users against Apache2-style database tables.
  * @author Luke
- * @version 5.4
+ * @version 6.0
  * @since 1.0
  */
 
-public class ApacheSQLAuthenticator extends ConnectionPoolAuthenticator {
+public class ApacheSQLAuthenticator extends SQLAuthenticator {
 
 	private static final Logger log = Logger.getLogger(ApacheSQLAuthenticator.class);
 
@@ -29,6 +26,7 @@ public class ApacheSQLAuthenticator extends ConnectionPoolAuthenticator {
 	 * @param pwd the supplied password
 	 * @throws SecurityException if a JDBC error occurs
 	 */
+	@Override
 	public void authenticate(Person usr, String pwd) throws SecurityException {
 
 		// Generate the password hash
@@ -58,8 +56,6 @@ public class ApacheSQLAuthenticator extends ConnectionPoolAuthenticator {
 				throw new SecurityException("Unknown User ID - " + usr.getName() + " (" + usr.getID() + ")");
 			if (!isOK)
 				throw new SecurityException("Cannot authenticate " + usr.getName() + " (" + usr.getID() + ") - Invalid Credentials");
-		} catch (ConnectionPoolException cpe) {
-			throw new SecurityException(cpe);
 		} catch (SQLException se) {
 			throw new SecurityException(se);
 		} finally {
@@ -71,6 +67,7 @@ public class ApacheSQLAuthenticator extends ConnectionPoolAuthenticator {
 	 * This Authenticator will accept all users.
 	 * @param usr the user bean 
 	 */
+	@Override
 	public boolean accepts(Person usr) {
 		return true;
 	}
@@ -81,6 +78,7 @@ public class ApacheSQLAuthenticator extends ConnectionPoolAuthenticator {
 	 * @return TRUE if the user exists, otherwise FALSE
 	 * @throws SecurityException if a JDBC error occurs
 	 */
+	@Override
 	public boolean contains(Person usr) throws SecurityException {
 
 		// Build the SQL statement
@@ -113,6 +111,7 @@ public class ApacheSQLAuthenticator extends ConnectionPoolAuthenticator {
 	 * @param pwd the new password
 	 * @throws SecurityException if a JDBC error occurs
 	 */
+	@Override
 	public void updatePassword(Person usr, String pwd) throws SecurityException {
 		if (log.isDebugEnabled())
 			log.debug("Updating password for " + usr.getDN() + " in Directory");
@@ -149,6 +148,7 @@ public class ApacheSQLAuthenticator extends ConnectionPoolAuthenticator {
 	 * @param pwd the User's password
 	 * @throws SecurityException if a JDBC error occurs
 	 */
+	@Override
 	public void add(Person usr, String pwd) throws SecurityException {
 		if (log.isDebugEnabled())
 			log.debug("Adding user " + usr.getDN() + " to Directory");
@@ -211,6 +211,7 @@ public class ApacheSQLAuthenticator extends ConnectionPoolAuthenticator {
 	 * @param newName the new fully-qualified directory
 	 * @throws SecurityException if an error occurs
 	 */
+	@Override
 	public void rename(Person usr, String newName) throws SecurityException {
 		// empty
 	}
@@ -220,6 +221,7 @@ public class ApacheSQLAuthenticator extends ConnectionPoolAuthenticator {
 	 * @param usr the user bean
 	 * @throws SecurityException if an error occurs
 	 */
+	@Override
 	public void disable(Person usr) throws SecurityException {
 		log.debug("Disabling user " + usr.getName());
 		
@@ -248,6 +250,7 @@ public class ApacheSQLAuthenticator extends ConnectionPoolAuthenticator {
 	 * @param usr the user bean
 	 * @throws SecurityException if a JDBC error occurs
 	 */
+	@Override
 	public void remove(Person usr) throws SecurityException {
 		if (log.isDebugEnabled())
 			log.debug("Removing user " + usr.getName() + " from Directory");
