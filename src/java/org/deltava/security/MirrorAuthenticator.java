@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.Person;
  * the first (&quot;source&quot;) authenticator, the directory name and password are written into the second
  * (&quot;destination&quot;) authenticator.
  * @author Luke
- * @version 1.0
+ * @version 6.0
  * @since 1.0
  */
 
@@ -28,6 +28,7 @@ public class MirrorAuthenticator extends MultiAuthenticator {
 	 * @param propsFile the name of the proeprties file to load
 	 * @throws SecurityException if an error occurs
 	 */
+	@Override
 	public void init(String propsFile) throws SecurityException {
 		init(propsFile, "mirror");
 	}
@@ -41,8 +42,11 @@ public class MirrorAuthenticator extends MultiAuthenticator {
 	 * @see Authenticator#authenticate(Person, String)
 	 * @see MultiAuthenticator#sync(Person, String)
 	 */
+	@Override
 	public void authenticate(Person usr, String pwd) throws SecurityException {
+		setConnection(_src);
 		_src.authenticate(usr, pwd);
+		clearConnection(_src);
 		sync(usr, pwd);
 	}
 
@@ -52,8 +56,12 @@ public class MirrorAuthenticator extends MultiAuthenticator {
 	 * @return TRUE if the source authenticator contains the user, otherwise FALSE
 	 * @see org.deltava.security.Authenticator#contains(Person)
 	 */
+	@Override
 	public boolean contains(Person usr) throws SecurityException {
-		return _src.contains(usr);
+		setConnection(_src);
+		boolean hasUser = _src.contains(usr);
+		clearConnection(_src);
+		return hasUser;
 	}
 
 	/**
@@ -64,6 +72,7 @@ public class MirrorAuthenticator extends MultiAuthenticator {
 	 * @throws SecurityException if either update operation fails
 	 * @see Authenticator#updatePassword(Person, String)
 	 */
+	@Override
 	public void updatePassword(Person usr, String pwd) throws SecurityException {
 		setConnection(_src);
 		_src.updatePassword(usr, pwd);
@@ -129,14 +138,15 @@ public class MirrorAuthenticator extends MultiAuthenticator {
 	}
 	
 	/**
-	 * Disables a Userus account in all authenticators. If this operation fails, no guarantee of transaction
+	 * Disables a User's account in all authenticators. If this operation fails, no guarantee of transaction
 	 * atomicity is given.
 	 * @param usr the user bean
 	 * @see Authenticator#disable(Person)
 	 */
+	@Override
 	public void disable(Person usr) throws SecurityException {
+		setConnection(_src);
 		if (_src.contains(usr)) {
-			setConnection(_src);
 			try {
 				_src.disable(usr);
 			} catch (SecurityException se) {
@@ -144,7 +154,8 @@ public class MirrorAuthenticator extends MultiAuthenticator {
 			} finally {
 				clearConnection(_src);
 			}
-		}
+		} else
+			clearConnection(_src);
 		
 		// Remove from destinations
 		for (Iterator<Authenticator> i = _dst.iterator(); i.hasNext();) {
@@ -168,9 +179,10 @@ public class MirrorAuthenticator extends MultiAuthenticator {
 	 * @param usr the user bean
 	 * @see Authenticator#remove(Person)
 	 */
+	@Override
 	public void remove(Person usr) throws SecurityException {
+		setConnection(_src);
 		if (_src.contains(usr)) {
-			setConnection(_src);
 			try {
 				_src.remove(usr);
 			} catch (SecurityException se) {
@@ -178,7 +190,8 @@ public class MirrorAuthenticator extends MultiAuthenticator {
 			} finally {
 				clearConnection(_src);
 			}
-		}
+		} else
+			clearConnection(_src);
 
 		// Remove from destinations
 		for (Iterator<Authenticator> i = _dst.iterator(); i.hasNext();) {

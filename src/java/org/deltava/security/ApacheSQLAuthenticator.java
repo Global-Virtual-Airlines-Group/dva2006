@@ -58,8 +58,6 @@ public class ApacheSQLAuthenticator extends SQLAuthenticator {
 				throw new SecurityException("Cannot authenticate " + usr.getName() + " (" + usr.getID() + ") - Invalid Credentials");
 		} catch (SQLException se) {
 			throw new SecurityException(se);
-		} finally {
-			closeConnection(con);
 		}
 	}
 
@@ -100,8 +98,6 @@ public class ApacheSQLAuthenticator extends SQLAuthenticator {
 			return hasUser;
 		} catch (Exception e) {
 			throw new SecurityException(e);
-		} finally {
-			closeConnection(con);
 		}
 	}
 
@@ -137,8 +133,6 @@ public class ApacheSQLAuthenticator extends SQLAuthenticator {
 			}
 		} catch (Exception e) {
 			throw new SecurityException(e);
-		} finally {
-			closeConnection(con);
 		}
 	}
 
@@ -199,8 +193,6 @@ public class ApacheSQLAuthenticator extends SQLAuthenticator {
 			}
 		} catch (Exception e) {
 			throw new SecurityException(e);
-		} finally {
-			closeConnection(con);
 		}
 	}
 
@@ -240,8 +232,6 @@ public class ApacheSQLAuthenticator extends SQLAuthenticator {
 			}
 		} catch (Exception e) {
 			throw new SecurityException(e);
-		} finally {
-			closeConnection(con);
 		}
 	}
 
@@ -269,8 +259,6 @@ public class ApacheSQLAuthenticator extends SQLAuthenticator {
 			}
 		} catch (Exception e) {
 			throw new SecurityException(e);
-		} finally {
-			closeConnection(con);
 		}
 	}
 }
