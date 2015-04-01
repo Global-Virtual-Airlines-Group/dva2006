@@ -62,9 +62,7 @@ public class TS2Authenticator extends SQLAuthenticator {
 				}
 			}
 		} catch (Exception e) {
-			throw new SecurityException(e.getMessage(), e);
-		} finally {
-			closeConnection(c);
+			throw new SecurityException(e);
 		}
 
 		// If we haven't authenticated, throw an execption
@@ -102,9 +100,7 @@ public class TS2Authenticator extends SQLAuthenticator {
 				}
 			}
 		} catch (Exception e) {
-			throw new SecurityException(e.getMessage(), e);
-		} finally {
-			closeConnection(c);
+			throw new SecurityException(e);
 		}
 
 		return hasUser;
@@ -150,9 +146,7 @@ public class TS2Authenticator extends SQLAuthenticator {
 				ps.executeUpdate();
 			}
 		} catch (Exception e) {
-			throw new SecurityException(e.getMessage(), e);
-		} finally {
-			closeConnection(c);
+			throw new SecurityException(e);
 		}
 	}
 
@@ -185,9 +179,7 @@ public class TS2Authenticator extends SQLAuthenticator {
 				isOK = RoleUtils.hasAccess(usr.getRoles(), srv.getRoles().get(ServerAccess.ACCESS));
 			}
 		} catch (Exception e) {
-			throw new SecurityException(e.getMessage(), e);
-		} finally {
-			closeConnection(con);
+			throw new SecurityException(e);
 		}
 
 		return isOK;
@@ -255,10 +247,8 @@ public class TS2Authenticator extends SQLAuthenticator {
 			}
 
 			// If no accessible servers, abort
-			if (usrs.isEmpty()) {
-				closeConnection(con);
+			if (usrs.isEmpty())
 				return;
-			}
 
 			// Log addition
 			log.warn("Adding " + p.getName() + " to " + StringUtils.listConcat(srvs, ", "));
@@ -274,9 +264,7 @@ public class TS2Authenticator extends SQLAuthenticator {
 				ps.executeUpdate();
 			}
 		} catch (Exception e) {
-			throw new SecurityException(e.getMessage(), e);
-		} finally {
-			closeConnection(con);
+			throw new SecurityException(e);
 		}
 	}
 
@@ -316,9 +304,7 @@ public class TS2Authenticator extends SQLAuthenticator {
 				ps.executeUpdate();
 			}
 		} catch (Exception e) {
-			throw new SecurityException(e.getMessage(), e);
-		} finally {
-			closeConnection(c);
+			throw new SecurityException(e);
 		}
 	}
 
@@ -343,9 +329,7 @@ public class TS2Authenticator extends SQLAuthenticator {
 				ps.executeUpdate();
 			}
 		} catch (Exception e) {
-			throw new SecurityException(e.getMessage(), e);
-		} finally {
-			closeConnection(c);
+			throw new SecurityException(e);
 		}
 	}
 }
