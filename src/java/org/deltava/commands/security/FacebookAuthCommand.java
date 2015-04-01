@@ -73,7 +73,7 @@ public class FacebookAuthCommand extends AbstractCommand {
 				ctx.setAttribute("fbToken", token, REQUEST);
 			
 			// If the token is really big, log it
-			if (token.length() > 220)
+			if (token.length() > 240)
 				log.warn("Long FB token for " + p.getName() + " - " + token);
 			
 			// Get the user's information
