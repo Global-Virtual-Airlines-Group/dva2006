@@ -44,10 +44,13 @@ public class MirrorAuthenticator extends MultiAuthenticator {
 	 */
 	@Override
 	public void authenticate(Person usr, String pwd) throws SecurityException {
-		setConnection(_src);
-		_src.authenticate(usr, pwd);
-		clearConnection(_src);
-		sync(usr, pwd);
+		try {
+			setConnection(_src);
+			_src.authenticate(usr, pwd);
+			sync(usr, pwd);
+		} finally {
+			clearConnection(_src);
+		}
 	}
 
 	/**
@@ -59,18 +62,18 @@ public class MirrorAuthenticator extends MultiAuthenticator {
 	@Override
 	public boolean contains(Person usr) throws SecurityException {
 		setConnection(_src);
-		boolean hasUser = _src.contains(usr);
-		clearConnection(_src);
-		return hasUser;
+		try {
+			return _src.contains(usr);
+		} finally {
+			clearConnection(_src);
+		}
 	}
 
 	/**
-	 * Updates the user's password in all authenticators. If this operation fails, no guarantee of transaction atomicity
-	 * is given.
+	 * Updates the user's password in all authenticators. If this operation fails, no guarantee of transaction atomicity is given.
 	 * @param usr the user bean
 	 * @param pwd the user's new password
 	 * @throws SecurityException if either update operation fails
-	 * @see Authenticator#updatePassword(Person, String)
 	 */
 	@Override
 	public void updatePassword(Person usr, String pwd) throws SecurityException {
@@ -96,8 +99,8 @@ public class MirrorAuthenticator extends MultiAuthenticator {
 	 * @param usr the User bean
 	 * @param pwd the user's password
 	 * @throws SecurityException if either add operation fails
-	 * @see Authenticator#add(Person, String)
 	 */
+	@Override
 	public void add(Person usr, String pwd) throws SecurityException {
 		setConnection(_src);
 		_src.add(usr, pwd);
@@ -121,19 +124,19 @@ public class MirrorAuthenticator extends MultiAuthenticator {
 	 * Renames the user in all authenticators. If this operation fails, no guarantee of transaction atomicity is given.
 	 * @param usr the user bean
 	 * @param newName the new directory name
-	 * @see org.deltava.security.Authenticator#rename(Person, java.lang.String)
 	 */
+	@Override
 	public void rename(Person usr, String newName) throws SecurityException {
 		setConnection(_src);
 		_src.rename(usr, newName);
 		clearConnection(_src);
 		for (Iterator<Authenticator> i = _dst.iterator(); i.hasNext();) {
 			Authenticator dst = i.next();
-			if (dst.accepts(usr)) {
-				setConnection(dst);
+			setConnection(dst);
+			if (dst.accepts(usr))
 				dst.rename(usr, newName);
-				clearConnection(dst);
-			}
+				
+			clearConnection(dst);
 		}
 	}
 	
@@ -141,7 +144,6 @@ public class MirrorAuthenticator extends MultiAuthenticator {
 	 * Disables a User's account in all authenticators. If this operation fails, no guarantee of transaction
 	 * atomicity is given.
 	 * @param usr the user bean
-	 * @see Authenticator#disable(Person)
 	 */
 	@Override
 	public void disable(Person usr) throws SecurityException {
@@ -149,8 +151,6 @@ public class MirrorAuthenticator extends MultiAuthenticator {
 		if (_src.contains(usr)) {
 			try {
 				_src.disable(usr);
-			} catch (SecurityException se) {
-				throw se;
 			} finally {
 				clearConnection(_src);
 			}
@@ -174,10 +174,8 @@ public class MirrorAuthenticator extends MultiAuthenticator {
 	}
 
 	/**
-	 * Removes the user from all authenticators. If this operation fails, no guarantee of transaction atomicity is
-	 * given.
+	 * Removes the user from all authenticators. If this operation fails, no guarantee of transaction atomicity is given.
 	 * @param usr the user bean
-	 * @see Authenticator#remove(Person)
 	 */
 	@Override
 	public void remove(Person usr) throws SecurityException {
@@ -185,8 +183,6 @@ public class MirrorAuthenticator extends MultiAuthenticator {
 		if (_src.contains(usr)) {
 			try {
 				_src.remove(usr);
-			} catch (SecurityException se) {
-				throw se;
 			} finally {
 				clearConnection(_src);
 			}
