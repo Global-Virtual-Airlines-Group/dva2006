@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -16,11 +16,10 @@ import org.deltava.beans.testing.Test;
 import org.deltava.beans.system.*;
 import org.deltava.beans.ts2.*;
 
-import org.deltava.comparators.RankComparator;
-
+import org.deltava.comparators.*;
 import org.deltava.commands.*;
-
 import org.deltava.dao.*;
+
 import org.deltava.dao.http.GetVATSIMData;
 
 import org.deltava.security.*;
@@ -34,7 +33,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to handle editing/saving Pilot Profiles.
  * @author Luke
- * @version 5.2
+ * @version 6.0
  * @since 1.0
  */
 
@@ -812,7 +811,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			// Check if we can view examinations
 			if (access.getCanViewExams()) {
 				GetExam exdao = new GetExam(con);
-				Collection<Test> exams = new ArrayList<Test>();
+				List<Test> exams = new ArrayList<Test>();
 				for (Integer id : usrInfo.getIDs()) {
 					int dbID = id.intValue();
 					Collection<Test> aExams = exdao.getExams(dbID);
@@ -838,6 +837,7 @@ public class ProfileCommand extends AbstractFormCommand {
 				}
 
 				// Save remaining exams
+				Collections.sort(exams, new TestComparator(TestComparator.DATE));
 				ctx.setAttribute("exams", exams, REQUEST);
 			}
 
