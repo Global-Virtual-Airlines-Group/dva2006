@@ -51,9 +51,8 @@ public class TS2Authenticator extends SQLAuthenticator {
 		sqlBuf.append("(?)) AND (i_client_server_id > 0) LIMIT 1");
 
 		boolean isAuth = false;
-		Connection c = null;
 		try {
-			c = getConnection();
+			Connection c = getConnection();
 			try (PreparedStatement ps = c.prepareStatement(sqlBuf.toString())) {
 				ps.setString(1, p.getPilotCode());
 				ps.setString(2, pwd);
@@ -88,10 +87,9 @@ public class TS2Authenticator extends SQLAuthenticator {
 		sqlBuf.append(_props.getProperty("ts2.db", "teamspeak"));
 		sqlBuf.append(".ts2_clients WHERE (s_client_name=?) AND (i_client_server_id > 0)");
 
-		Connection c = null;
-		boolean hasUser = false;
 		try {
-			c = getConnection();
+			boolean hasUser = false;
+			Connection c = getConnection();
 			try (PreparedStatement ps = c.prepareStatement(sqlBuf.toString())) {
 				ps.setString(1, ((Pilot) usr).getPilotCode());
 				try (ResultSet rs = ps.executeQuery()) {
@@ -99,11 +97,11 @@ public class TS2Authenticator extends SQLAuthenticator {
 					hasUser = rs.next() ? (rs.getInt(1) > 0) : false;
 				}
 			}
+			
+			return hasUser;
 		} catch (Exception e) {
 			throw new SecurityException(e);
 		}
-
-		return hasUser;
 	}
 
 	/**
@@ -136,9 +134,8 @@ public class TS2Authenticator extends SQLAuthenticator {
 		sqlBuf.append(_props.getProperty("ts2.cryptFunc", ""));
 		sqlBuf.append("(?), b_enabled=? WHERE (s_client_name=?)");
 
-		Connection c = null;
 		try {
-			c = getConnection();
+			Connection c = getConnection();
 			try (PreparedStatement ps = c.prepareStatement(sqlBuf.toString())) {
 				ps.setString(1, pwd);
 				ps.setBoolean(2, true);
@@ -167,22 +164,19 @@ public class TS2Authenticator extends SQLAuthenticator {
 			return false;
 
 		// Check the servers
-		Connection con = null; boolean isOK = false;
 		try {
-			con = getConnection();
-
-			// Get the DAO and the active server
-			GetTS2Data dao = new GetTS2Data(con);
+			boolean isOK = false;
+			GetTS2Data dao = new GetTS2Data(getConnection());
 			Collection<Server> srvs = dao.getServers(usr.getRoles());
 			for (Iterator<Server> i = srvs.iterator(); !isOK && i.hasNext();) {
 				Server srv = i.next();
 				isOK = RoleUtils.hasAccess(usr.getRoles(), srv.getRoles().get(ServerAccess.ACCESS));
 			}
+			
+			return isOK;
 		} catch (Exception e) {
 			throw new SecurityException(e);
 		}
-
-		return isOK;
 	}
 
 	/**
@@ -219,9 +213,8 @@ public class TS2Authenticator extends SQLAuthenticator {
 		sqlBuf.append(_props.getProperty("ts2.cryptFunc", ""));
 		sqlBuf.append("(?) WHERE (s_client_name=?)");
 
-		Connection con = null;
 		try {
-			con = getConnection();
+			Connection con = getConnection();
 
 			// Get the servers that this person may access
 			GetTS2Data dao = new GetTS2Data(con);
@@ -295,9 +288,8 @@ public class TS2Authenticator extends SQLAuthenticator {
 		sqlBuf.append(_props.getProperty("ts2.db", "teamspeak"));
 		sqlBuf.append(".ts2_clients SET b_enabled=? WHERE (s_client_name=?)");
 		
-		Connection c = null;
 		try {
-			c = getConnection();
+			Connection c = getConnection();
 			try (PreparedStatement ps = c.prepareStatement(sqlBuf.toString())) {
 				ps.setBoolean(1, false);
 				ps.setString(2, ((Pilot) usr).getPilotCode());
@@ -321,9 +313,8 @@ public class TS2Authenticator extends SQLAuthenticator {
 		sqlBuf.append(_props.getProperty("ts2.db", "teamspeak"));
 		sqlBuf.append(".ts2_clients WHERE (UCASE(s_client_name)=?)");
 
-		Connection c = null;
 		try {
-			c = getConnection();
+			Connection c = getConnection();
 			try (PreparedStatement ps = c.prepareStatement(sqlBuf.toString())) {
 				ps.setString(1, ((Pilot) usr).getPilotCode().toUpperCase());
 				ps.executeUpdate();
