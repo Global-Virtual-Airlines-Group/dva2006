@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.io.*;
@@ -19,7 +19,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to provide XML-formatted ACARS position data for Google Maps.
  * @author Luke
- * @version 4.2
+ * @version 6.0
  * @since 1.0
  */
 
@@ -53,6 +53,10 @@ public class MapService extends WebService {
 			e.setAttribute("lng", StringUtils.format(entry.getLongitude(), "##0.00000"));
 			e.setAttribute("color", entry.getIconColor());
 			e.setAttribute("busy", String.valueOf(entry.isBusy()));
+			
+			// Display heading if available
+			if (entry instanceof RouteEntry)
+				e.setAttribute("hdg", String.valueOf(((RouteEntry) entry).getHeading()));
 			
 			if (entry instanceof GroundMapEntry) {
 				GroundMapEntry gme = (GroundMapEntry) entry;
