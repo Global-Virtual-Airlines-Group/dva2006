@@ -1,4 +1,4 @@
-// Copyright 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to load ACARS build data. 
  * @author Luke
- * @version 5.1
+ * @version 6.0
  * @since 4.1
  */
 
@@ -143,15 +143,15 @@ public class GetACARSBuilds extends DAO {
 			// Check the beta version
 			_ps.close();
 			if (isOK && inf.isBeta() && !inf.isDispatch()) {
-				prepareStatement("SELECT DATA FROM acars.VERSION_INFO WHERE (NAME=?) AND (VER=?) AND (DATA LIKE ?)");
+				prepareStatement("SELECT DATA FROM acars.VERSION_INFO WHERE (NAME=?) AND (VER=?)");
 				_ps.setString(1, (role == AccessRole.CONNECT) ? "minBeta" : "minUploadBeta");
 				_ps.setInt(2, inf.getVersion());
-				_ps.setString(3, String.valueOf(inf.getClientBuild()) + ".%");
 				try (ResultSet rs = _ps.executeQuery()) {
 					if (rs.next()) {
 						String info = rs.getString(1);
+						int bld = StringUtils.parse(info.substring(0, info.indexOf('.')), Integer.MAX_VALUE);
 						int beta = StringUtils.parse(info.substring(info.indexOf('.') + 1), 0);
-						isOK = (inf.getBeta() >= beta);
+						isOK = (inf.getClientBuild() >= bld) || ((inf.getClientBuild() == bld) && (inf.getBeta() >= beta));
 					} else
 						isOK = false;
 				}
@@ -184,7 +184,7 @@ public class GetACARSBuilds extends DAO {
 					for (Iterator<String> i = builds.iterator(); isOK && i.hasNext(); ) {
 						int build = StringUtils.parse(i.next(), 0);
 						if (build == inf.getClientBuild())
-							isOK =false;
+							isOK = false;
 					}
 				}
 			}
