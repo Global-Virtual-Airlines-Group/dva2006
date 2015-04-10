@@ -149,6 +149,18 @@
 	</tag>
 
 	<tag>
+		<description>Protocol tag, for saving the request protocol into a request variable</description>
+		<name>protocol</name>
+		<tag-class>org.deltava.taglib.content.RequestProtocolTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<name>var</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+	</tag>
+
+	<tag>
 		<description>Role Attribute tag, for adding request attributes based on security role</description>
 		<name>attr</name>
 		<tag-class>org.deltava.taglib.content.RoleAttributeTag</tag-class>
