@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2013, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2013, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.main;
 
 import java.util.*;
@@ -23,7 +23,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to display the home page.
  * @author Luke
- * @version 5.3
+ * @version 6.0
  * @since 1.0
  */
 
@@ -52,7 +52,7 @@ public class HomeCommand extends AbstractCommand {
 		HTTPContextData reqctx = (HTTPContextData) ctx.getRequest().getAttribute(HTTPContext.HTTPCTXT_ATTR_NAME);
 		if (!reqctx.isIPv6() && !ctx.getRequest().getServerName().equals(myHost)) {
 			result.setType(ResultType.REDIRECT);
-			result.setURL("http://" + myHost + "/");
+			result.setURL(ctx.getRequest().getScheme() + "://" + myHost + "/");
 			result.setSuccess(true);
 			return;
 		}
