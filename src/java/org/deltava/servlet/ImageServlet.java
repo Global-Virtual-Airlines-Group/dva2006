@@ -1,8 +1,9 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.*;
 import java.sql.*;
+
 import javax.servlet.http.*;
 
 import org.apache.log4j.Logger;
@@ -17,6 +18,8 @@ import org.deltava.security.command.*;
 
 import org.deltava.dao.*;
 import org.deltava.util.*;
+
+import org.deltava.util.system.SystemData;
 
 import org.gvagroup.jdbc.*;
 
@@ -57,7 +60,7 @@ public class ImageServlet extends BasicAuthServlet {
 		return "Database Image Servlet " + VersionInfo.TXT_COPYRIGHT;
 	}
 
-	/**
+	/*
 	 * A helper method to get the image type from the URL.
 	 */
 	private static ImageType getImageType(URLParser up) {
@@ -156,6 +159,12 @@ public class ImageServlet extends BasicAuthServlet {
 					break;
 
 				case GALLERY:
+					AirlineInformation ai = SystemData.getApp(url.getLastPath());
+					if (ai == null) {
+						rsp.sendError(HttpServletResponse.SC_NOT_FOUND);
+						break;
+					}
+					
 					// Validate that we can view the image
 					GetGallery gdao = new GetGallery(c);
 					Image img = gdao.getImageData(imgID, url.getLastPath());
@@ -176,7 +185,7 @@ public class ImageServlet extends BasicAuthServlet {
 					}
 					
 					// Serve the image
-					imgBuffer = dao.getGalleryImage(imgID, url.getLastPath());
+					imgBuffer = dao.getGalleryImage(imgID, ai.getDB());
 					rsp.setHeader("Cache-Control", "public");
 					rsp.setIntHeader("max-age", 3600);
 					break;

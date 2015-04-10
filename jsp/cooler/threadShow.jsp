@@ -100,6 +100,7 @@ return true;
 <content:browser human="true"><c:set var="isHuman" value="true" scope="page" /></content:browser>
 <c:set var="serverName" value="${pageContext.request.serverName}" scope="page" />
 <content:sysdata var="imgPath" name="path.img" />
+<content:protocol var="reqProtocol" />
 <c:set var="postCount" value="${fn:sizeof(thread.posts)}" scope="page" />
 
 <!-- Main Body Frame -->
@@ -226,14 +227,14 @@ APPLICANT<br />
 <c:when test="${pilot.hasSignature}">
 <!-- Signature Image for ${pilot.name} -->
 <br />
-<el:sig user="${pilot}" db="${pilotLoc.DB}" caption="${pilot.name} (${pilot.pilotCode})" /><br />
+<el:sig user="${pilot}" code="${pilotLoc.airlineCode}" caption="${pilot.name} (${pilot.pilotCode})" /><br />
 </c:when>
 <c:when test="${pilot.hasDefaultSignature}">
 <!-- Default Signature Image -->
 <c:set var="sigImgHost" value="${(pilotLoc.domain == ourDomain) ? pageContext.request.serverName : pilotLoc.domain}" scope="page" />
 <c:if test="${pilotLoc.domain != ourDomain}"><c:set var="sigImgHost" value="www.${sigImgHost}" scope="page" /></c:if>
 <el:table className="${pilotLoc.airlineCode}_defaultSig"><tr>
- <td valign="bottom" class="sig" style="background-image: url(http://${sigImgHost}/${imgPath}/sig/${fn:lower(pilot.equipmentType)}.png);">
+ <td valign="bottom" class="sig" style="background-image: url(${reqProtocol}://${sigImgHost}/${imgPath}/sig/${fn:lower(pilot.equipmentType)}.png);">
  <div class="${pilotLoc.airlineCode}_defaultSigText"><h2>${pilot.name}</h2><span class="pri bld ${pilotLoc.airlineCode}_defaultSig caps">${pilot.rank.name}, ${pilot.equipmentType}</span></div>
  </td>
 </tr></el:table>
