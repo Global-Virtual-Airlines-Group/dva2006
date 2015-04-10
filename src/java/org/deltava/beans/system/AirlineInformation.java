@@ -1,13 +1,13 @@
-// Copyright 2005, 2007, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2010, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 import org.deltava.beans.ComboAlias;
 import org.deltava.util.cache.Cacheable;
 
 /**
- * A bean to store information about other virtual airline databases.
+ * A bean to store information about other virtual airlines.
  * @author Luke
- * @version 5.0
+ * @version 6.0
  * @since 1.0
  */
 
@@ -19,6 +19,7 @@ public class AirlineInformation implements Comparable<AirlineInformation>, Combo
    private String _domain;
    private boolean _canTransfer;
    private boolean _histRestricted;
+   private boolean _hasSSL;
 
    /**
     * Creates a new Airline Information bean.
@@ -78,12 +79,21 @@ public class AirlineInformation implements Comparable<AirlineInformation>, Combo
    }
    
    /**
-    * Returns whether historic routes are restricted to historic requirement.
+    * Returns whether historic routes are restricted to historic equipment.
     * @return TRUE if routes restricted, otherwise FALSE
     * @see AirlineInformation#setHistoricRestricted(boolean)
     */
    public boolean getHistoricRestricted() {
 	   return _histRestricted;
+   }
+   
+   /**
+    * Returns whether the Airline has an SSL-enabled web site.
+    * @return TRUE if SSL enabled, otherwise FALSE
+    * @see AirlineInformation#setSSL(boolean)
+    */
+   public boolean getSSL() {
+	   return _hasSSL;
    }
    
    /**
@@ -116,7 +126,7 @@ public class AirlineInformation implements Comparable<AirlineInformation>, Combo
    }
    
    /**
-    * Updates whether historic routes are restricted to historic requirement.
+    * Updates whether historic routes are restricted to historic equipment.
     * @param isRestricted TRUE if routes restricted, otherwise FALSE
     * @see AirlineInformation#getHistoricRestricted()
     */
@@ -124,14 +134,26 @@ public class AirlineInformation implements Comparable<AirlineInformation>, Combo
 	   _histRestricted = isRestricted;
    }
    
+   /**
+    * Updates whether this Airline has an SSL-enabled web site. 
+    * @param hasSSL TRUE if the Airline has SSL, otherwise FALSE
+    * @see AirlineInformation#getSSL()
+    */
+   public void setSSL(boolean hasSSL) {
+	   _hasSSL = hasSSL;
+   }
+   
+   @Override
    public String getComboName() {
       return getName();
    }
    
+   @Override
    public String getComboAlias() {
       return getCode();
    }
    
+   @Override
    public Object cacheKey() {
       return _code;
    }
@@ -139,10 +161,12 @@ public class AirlineInformation implements Comparable<AirlineInformation>, Combo
    /**
     * Compares two Airline Information beans by comparing their codes.
     */
+   @Override
    public int compareTo(AirlineInformation ai2) {
       return _code.compareTo(ai2._code);
    }
    
+   @Override
    public boolean equals(Object o) {
 	   if (o instanceof AirlineInformation)
 		   return (compareTo((AirlineInformation) o) == 0);
@@ -155,6 +179,7 @@ public class AirlineInformation implements Comparable<AirlineInformation>, Combo
    /**
     * Returns the airline code.
     */
+   @Override
    public String toString() {
 	   return _code;
    }
@@ -162,6 +187,7 @@ public class AirlineInformation implements Comparable<AirlineInformation>, Combo
    /**
     * Returns the airline code's hashcode.
     */
+   @Override
    public int hashCode() {
       return _code.hashCode();
    }
