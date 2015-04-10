@@ -1,4 +1,4 @@
-// Copyright 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.*;
@@ -13,7 +13,7 @@ import org.deltava.util.tile.*;
 /**
  * A servlet to display Quad-tree tiles.
  * @author Luke
- * @version 5.2
+ * @version 6.0
  * @since 5.0
  */
 
@@ -97,7 +97,7 @@ abstract class TileServlet extends GenericServlet {
 	 * @param rsp the HttpServletResponse
 	 * @param data the tile image data
 	 */
-	protected void writeTile(HttpServletResponse rsp, byte[] data) {
+	protected static void writeTile(HttpServletResponse rsp, byte[] data) {
 		
 		// Set headers
 		rsp.setHeader("Cache-Control", "public");

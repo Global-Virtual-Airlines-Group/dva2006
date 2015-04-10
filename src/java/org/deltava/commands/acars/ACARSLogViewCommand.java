@@ -1,4 +1,4 @@
-// Copyright 2005, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A helper class for viewing ACARS logs.
  * @author Luke
- * @version 4.2
+ * @version 6.0
  * @since 1.0
  */
 
@@ -28,7 +28,7 @@ public abstract class ACARSLogViewCommand extends AbstractViewCommand {
 	 * @param ctx the Command context
 	 * @return a search type constant
 	 */
-	protected LogSearchCriteria getSearchCriteria(CommandContext ctx, Connection con) throws DAOException {
+	protected static LogSearchCriteria getSearchCriteria(CommandContext ctx, Connection con) throws DAOException {
 		
 		// Get the start/end dates
 		Date sd = parseDateTime(ctx, "start", "MM/dd/yyyy", "HH:mm");
@@ -54,7 +54,7 @@ public abstract class ACARSLogViewCommand extends AbstractViewCommand {
 	 * @param viewEntries the view result entries
 	 * @return a Collection of Pilot IDs
 	 */
-	protected Collection<Integer> getPilotIDs(Collection<?> viewEntries) {
+	protected static Collection<Integer> getPilotIDs(Collection<?> viewEntries) {
 		Collection<Integer> results = new HashSet<Integer>();
 		for (Iterator<?> i = viewEntries.iterator(); i.hasNext();) {
 			Object o = i.next();

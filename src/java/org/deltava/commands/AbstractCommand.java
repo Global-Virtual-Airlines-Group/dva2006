@@ -44,7 +44,7 @@ public abstract class AbstractCommand implements Command {
 	 * @param msg the exception message
 	 * @return a CommandException
 	 */
-	protected CommandException securityException(String msg) {
+	protected static CommandException securityException(String msg) {
 		CommandException ce = new CommandException("Security Error - " + msg, false);
 		ce.setForwardURL("/jsp/error/securityViolation.jsp");
 		ce.setWarning(true);
@@ -56,7 +56,7 @@ public abstract class AbstractCommand implements Command {
 	 * @param msg the exception message
 	 * @return a CommandException
 	 */
-	protected CommandException notFoundException(String msg) {
+	protected static CommandException notFoundException(String msg) {
 		return new CommandException(msg, false);
 	}
 
@@ -117,7 +117,7 @@ public abstract class AbstractCommand implements Command {
 	 * @return a date/time value, or null if not found or unparseable
 	 * @see DateFormat#parse(java.lang.String)
 	 */
-	protected Date parseDateTime(CommandContext ctx, String paramHdr, String dfmt, String tfmt) {
+	protected static Date parseDateTime(CommandContext ctx, String paramHdr, String dfmt, String tfmt) {
 	   
 	   Date dt = null;
 		try {
@@ -161,7 +161,7 @@ public abstract class AbstractCommand implements Command {
 	 * @return a date/time value, or null if not found or unparseable
 	 * @see AbstractCommand#parseDateTime(CommandContext, String, String, String)
 	 */
-	protected Date parseDateTime(CommandContext ctx, String paramHdr) {
+	protected static Date parseDateTime(CommandContext ctx, String paramHdr) {
 		String dfmt = (ctx.getUser() == null) ? SystemData.get("time.date_format") : ctx.getUser().getDateFormat();
 		String tfmt = (ctx.getUser() == null) ? SystemData.get("time.time_format") : ctx.getUser().getTimeFormat();
 		return parseDateTime(ctx, paramHdr, dfmt, tfmt);

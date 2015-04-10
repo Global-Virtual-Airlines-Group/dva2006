@@ -1,4 +1,4 @@
-// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.util.*;
@@ -21,9 +21,8 @@ public abstract class AbstractLibraryCommand extends AbstractCommand {
 	 * @param entries a Collection of LibraryEntry beans
 	 * @param dbName the database name to append
 	 */
-	protected void appendDB(Collection<? extends LibraryEntry> entries, String dbName) {
-		for (Iterator<? extends LibraryEntry> i = entries.iterator(); i.hasNext();) {
-			LibraryEntry entry = i.next();
+	protected static void appendDB(Collection<? extends LibraryEntry> entries, String dbName) {
+		for (LibraryEntry entry : entries) {
 			entry.setName(entry.getName() + " - " + dbName.toUpperCase());
 			if (entry instanceof Installer) {
 				Installer in = (Installer) entry;

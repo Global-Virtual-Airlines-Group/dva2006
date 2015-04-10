@@ -114,7 +114,7 @@ public abstract class MultiAuthenticator extends SQLAuthenticator {
 	 * Checks if authenticators are a {@link SQLAuthenticator} and if so clears the an explicit Connection to use.
 	 * @param auths the Authenticators to check and update
 	 */
-	protected void clearConnection(Authenticator... auths) {
+	protected static void clearConnection(Authenticator... auths) {
 		for (int x = 0; x < auths.length; x++) {
 			Authenticator auth = auths[x];
 			if (auth instanceof SQLAuthenticator)

@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2010, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2010, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.sql.Connection;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A servlet that supports basic HTTP authentication.
  * @author Luke
- * @version 5.4
+ * @version 6.0
  * @since 1.0
  */
 
@@ -32,7 +32,7 @@ public abstract class BasicAuthServlet extends GenericServlet {
 	 * @param req the current HTTP servlet request
 	 * @return the authenticated Pilot's databse record, or null if not logged in
 	 */
-	protected Pilot authenticate(HttpServletRequest req) {
+	protected static Pilot authenticate(HttpServletRequest req) {
 
 		// Check for Authentication header
 		String authHdr = req.getHeader("Authorization");
@@ -95,7 +95,7 @@ public abstract class BasicAuthServlet extends GenericServlet {
 	 * @param realm the realm name to present to the browser
 	 * @throws IOException if a network error occurs
 	 */
-	protected void challenge(HttpServletResponse rsp, String realm) throws IOException {
+	protected static void challenge(HttpServletResponse rsp, String realm) throws IOException {
 		rsp.setHeader("WWW-Authenticate", "Basic realm=" + realm);
 		rsp.sendError(HttpServletResponse.SC_UNAUTHORIZED, "");
 	}

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2011, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.CalendarUtils;
 /**
  * A JDBC Data Access Object. DAOs are used to read and write persistent data to JDBC data sources.
  * @author Luke
- * @version 5.4
+ * @version 6.0
  * @since 1.0
  */
 
@@ -69,7 +69,7 @@ public abstract class DAO {
 	 * @param dt a JDBC Date
 	 * @return a Java date/time
 	 */
-	protected java.util.Date expandDate(Date dt) {
+	protected static java.util.Date expandDate(Date dt) {
 		if (dt == null)
 			return null;
 
@@ -168,7 +168,7 @@ public abstract class DAO {
 	 * @param dt the date/time
 	 * @return the JDBC timestamp, or null if dt is null
 	 */
-	protected Timestamp createTimestamp(java.util.Date dt) {
+	protected static Timestamp createTimestamp(java.util.Date dt) {
 		return (dt == null) ? null : new Timestamp(dt.getTime());
 	}
 
@@ -211,7 +211,7 @@ public abstract class DAO {
 	 * @param db the database/table name
 	 * @return the converted database name
 	 */
-	protected String formatDBName(String db) {
+	protected static String formatDBName(String db) {
 		int ofs = db.indexOf('.');
 		if (ofs == -1)
 			return db.toLowerCase();

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import org.deltava.util.StringUtils;
@@ -7,7 +7,7 @@ import org.deltava.util.StringUtils;
  * Web Services are designed to be light-weight objects that are instantiated using a no-argument constructor
  * and then passed a request and a response.
  * @author Luke
- * @version 2.3
+ * @version 6.0
  * @since 1.0
  */
 
@@ -46,7 +46,7 @@ public abstract class WebService {
     * @return ServiceException the newly-created ServiceException
     * @see ServiceException#ServiceException(int, String)
     */
-   protected ServiceException error(int code, String msg) {
+   protected static ServiceException error(int code, String msg) {
 	   return new ServiceException(code, msg, true);
    }
    
@@ -59,7 +59,7 @@ public abstract class WebService {
     * @return ServiceException the newly-created ServiceException
     * @see ServiceException#ServiceException(int, String)
     */
-   protected ServiceException error(int code, String msg, boolean dumpStack) {
+   protected static ServiceException error(int code, String msg, boolean dumpStack) {
 	   return new ServiceException(code, msg, dumpStack);
    }
 
@@ -72,7 +72,7 @@ public abstract class WebService {
     * @return ServiceException the newly-created ServiceException
     * @see ServiceException#ServiceException(int, String, Throwable)
     */
-   protected ServiceException error(int code, String msg, Throwable t) {
+   protected static ServiceException error(int code, String msg, Throwable t) {
 	   return new ServiceException(code, msg, t);
    }
    
@@ -82,7 +82,7 @@ public abstract class WebService {
 	 * @param defaultValue the default number of entries
 	 * @return the value of the count parameter, or defaultVlue
 	 */
-	protected int getCount(ServiceContext sctxt, int defaultValue) {
+	protected static int getCount(ServiceContext sctxt, int defaultValue) {
 		return StringUtils.parse(sctxt.getRequest().getParameter("count"), defaultValue);
 	}
 }

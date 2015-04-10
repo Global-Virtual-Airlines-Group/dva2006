@@ -1,4 +1,4 @@
-// Copyright 2005, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2010, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.view;
 
 import java.util.Iterator;
@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
 /**
  * A class to support tag to handle Page Up/Down links at the bottom of a view page.
  * @author Luke
- * @version 3.0
+ * @version 6.0
  * @since 1.0
  */
 
@@ -55,7 +55,7 @@ public abstract class ScrollTag extends LinkTag {
      * @param params a Map of paramater name/value pairs
      * @return the Query String
      */
-    protected String buildParameters(Map<String, Object> params) {
+    protected static String buildParameters(Map<String, Object> params) {
         StringBuilder url = new StringBuilder();
         
         // Loop through the parameters
@@ -69,7 +69,6 @@ public abstract class ScrollTag extends LinkTag {
                 url.append("&amp;");
         }
         
-        // Return the string
         return url.toString();
     }
 
