@@ -53,7 +53,11 @@ public class PilotBoardCommand extends AbstractCommand {
 			buf.append(SystemData.get("airline.name"));
 			buf.append("</span><br /><br />Position: ");
 			buf.append(StringUtils.format(_gPos, true, GeoLocation.ALL));
-			buf.append("<br /><a href=\"http://");
+			buf.append("<br /><a href=\"http");
+			if (SystemData.getBoolean("security.ssl"))
+				buf.append('s');
+			
+			buf.append("://");
 			buf.append(SystemData.get("airline.url"));
 			buf.append("/\">http://");
 			buf.append(SystemData.get("airline.url"));
