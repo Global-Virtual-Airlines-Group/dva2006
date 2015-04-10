@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import javax.servlet.jsp.JspException;
@@ -15,7 +15,7 @@ import org.deltava.util.StringUtils;
 /**
  * An abstract class to support Google Maps JSP tags.
  * @author Luke
- * @version 5.2
+ * @version 6.0
  * @since 1.0
  */
 
@@ -34,6 +34,7 @@ abstract class GoogleMapEntryTag extends JSTag {
 	 * @return TagSupport.SKIP_BODY always
 	 * @throws IllegalStateException if the Google Maps API or googleMaps.js not included in request
 	 */
+	@Override
 	public int doStartTag() throws JspException {
 		super.doStartTag();
 
@@ -69,7 +70,7 @@ abstract class GoogleMapEntryTag extends JSTag {
 	 * @param label the label HTML text, or null if none
 	 * @return a JavaScript function call definition
 	 */
-	protected String generateMarker(GeoLocation loc, String color, String label) {
+	protected static String generateMarker(GeoLocation loc, String color, String label) {
 
 		// Build the JS call
 		JSONObject jo = new JSONObject();
@@ -102,7 +103,7 @@ abstract class GoogleMapEntryTag extends JSTag {
 	 * @param label the label HTML text, or null if none
 	 * @return a JavaScript function call definition
 	 */
-	protected String generateIconMarker(GeoLocation loc, int paletteCode, int iconCode, String label) {
+	protected static String generateIconMarker(GeoLocation loc, int paletteCode, int iconCode, String label) {
 
 		// Build the options
 		JSONObject jo = new JSONObject();

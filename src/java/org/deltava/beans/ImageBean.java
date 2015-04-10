@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.io.*;
@@ -8,7 +8,7 @@ import org.deltava.util.ImageInfo;
 /**
  * An abstract bean class to store common image code.
  * @author Luke
- * @version 5.0
+ * @version 6.0
  * @since 1.0
  */
 
@@ -68,6 +68,7 @@ public abstract class ImageBean extends DatabaseBlobBean {
      * @see ImageBean#setSize(int)
      * @see ImageBean#load(InputStream)
      */
+    @Override
     public int getSize() {
         return (_buffer == null) ? _imgSize : super.getSize();
     }
@@ -99,6 +100,7 @@ public abstract class ImageBean extends DatabaseBlobBean {
      * @throws IOException if an error occurs loading the data
      * @throws UnsupportedOperationException if ImageInfo cannot identify the image format
      */
+    @Override
     public final void load(InputStream is) throws IOException {
         super.load(is);
         getImageData();
@@ -109,6 +111,7 @@ public abstract class ImageBean extends DatabaseBlobBean {
      * @param buffer an array containing the image data
      * @throws UnsupportedOperationException if ImageInfo cannot identify the image format
      */
+    @Override
     public final void load(byte[] buffer) {
        super.load(buffer);
        getImageData();
@@ -120,7 +123,7 @@ public abstract class ImageBean extends DatabaseBlobBean {
      * @param msg the field description
      * @throws IllegalArgumentException if param is negative 
      */
-    protected void checkParam(int param, String msg) throws IllegalArgumentException {
+    protected static void checkParam(int param, String msg) throws IllegalArgumentException {
         if (param < 0)
             throw new IllegalArgumentException(msg + " cannot be negative");
     }

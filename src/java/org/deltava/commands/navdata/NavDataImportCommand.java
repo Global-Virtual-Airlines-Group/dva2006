@@ -1,4 +1,4 @@
-// Copyright 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.sql.Connection;
@@ -11,7 +11,7 @@ import org.deltava.dao.*;
 /**
  * An abstract Command to help loading Navigation Data.
  * @author Luke
- * @version 5.1
+ * @version 6.0
  * @since 5.1
  */
 
@@ -23,7 +23,7 @@ abstract class NavDataImportCommand extends AbstractCommand {
 	 * @return a CycleInfo bean, or null if none
 	 * @throws CommandException if a JDBC error occurs
 	 */
-	protected CycleInfo getCurrrentCycle(CommandContext ctx) throws CommandException {
+	protected static CycleInfo getCurrrentCycle(CommandContext ctx) throws CommandException {
 		try {
 			Connection con = ctx.getConnection();
 			

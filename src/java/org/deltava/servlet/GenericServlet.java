@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2010, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.IOException;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A class storing common servlet helper methods.
  * @author Luke
- * @version 3.1
+ * @version 6.0
  * @since 1.0
  */
 
@@ -29,25 +29,29 @@ public abstract class GenericServlet extends HttpServlet {
 
 		private final List<String> ANONYMOUS_ROLES = Arrays.asList("Anonymous");
 
-		private HttpServletRequest _req;
+		private final HttpServletRequest _req;
 
 		public ServletSecurityContext(HttpServletRequest req) {
 			super();
 			_req = req;
 		}
 
+		@Override
 		public Person getUser() {
 			return (Person) _req.getUserPrincipal();
 		}
 
+		@Override
 		public boolean isAuthenticated() {
 			return (getUser() != null);
 		}
 
+		@Override
 		public Collection<String> getRoles() {
 			return isAuthenticated() ? getUser().getRoles() : ANONYMOUS_ROLES;
 		}
 
+		@Override
 		public boolean isUserInRole(String roleName) {
 			if ("*".equals(roleName))
 				return true;
@@ -55,13 +59,13 @@ public abstract class GenericServlet extends HttpServlet {
 			return isAuthenticated() ? getUser().isInRole(roleName) : ANONYMOUS_ROLES.contains(roleName);
 		}
 
+		@Override
 		public HttpServletRequest getRequest() {
 			return _req;
 		}
 	}
 
 	protected class NotFoundException extends ControllerException {
-
 		public NotFoundException(String msg) {
 			super(msg);
 			setWarning(true);
@@ -72,7 +76,7 @@ public abstract class GenericServlet extends HttpServlet {
 	 * A helper method to get the JDBC Connection Pool.
 	 * @return the JDBC Connection Pool
 	 */
-	protected ConnectionPool getConnectionPool() {
+	protected static ConnectionPool getConnectionPool() {
 		return (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
 	}
 
@@ -83,6 +87,7 @@ public abstract class GenericServlet extends HttpServlet {
 	 * @throws ServletException if a Servlet error occurs
 	 * @throws IOException if a network error occurs
 	 */
+	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse rsp) throws ServletException, IOException {
 		ServletScoreboard.add(req);
 		try {
