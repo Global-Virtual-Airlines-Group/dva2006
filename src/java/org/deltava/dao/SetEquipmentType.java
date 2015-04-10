@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to write Equipment Profiles.
  * @author Luke
- * @version 5.1
+ * @version 6.0
  * @since 1.0
  */
 
@@ -44,22 +44,27 @@ public class SetEquipmentType extends DAO {
 			_ps.setInt(3, eq.getStage());
 			executeUpdate(1);
 			
+			// Clear old default type
+			if (eq.getIsDefault())
+				clearDefaultType();
+			
 			// Write to the local database
-			prepareStatement("INSERT INTO EQTYPES (EQTYPE, CP_ID, RANKS, ACTIVE, NEWHIRES, C_LEGS, C_HOURS, "
-				+ "C_LEGS_ACARS, C_LEGS_DISTANCE, C_SWITCH_DISTANCE, C_MIN_1X, C_MAX_ACCEL) VALUES "
-				+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			prepareStatement("INSERT INTO EQTYPES (EQTYPE, CP_ID, RANKS, ACTIVE, NEWHIRES, ISDEFAULT, C_LEGS, "
+				+ "C_HOURS, C_LEGS_ACARS, C_LEGS_DISTANCE, C_SWITCH_DISTANCE, C_MIN_1X, C_MAX_ACCEL) VALUES "
+				+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setString(1, eq.getName());
 			_ps.setInt(2, eq.getCPID());
 			_ps.setString(3, StringUtils.listConcat(eq.getRanks(), ","));
 			_ps.setBoolean(4, eq.getActive());
 			_ps.setBoolean(5, eq.getNewHires());
-			_ps.setInt(6, eq.getPromotionLegs());
-			_ps.setDouble(7, eq.getPromotionHours());
-			_ps.setBoolean(8, eq.getACARSPromotionLegs());
-			_ps.setInt(9, eq.getPromotionMinLength());
-			_ps.setInt(10, eq.getPromotionSwitchLength());
-			_ps.setInt(11, eq.getMinimum1XTime());
-			_ps.setInt(12, eq.getMaximumAccelTime());
+			_ps.setBoolean(6, eq.getIsDefault());
+			_ps.setInt(7, eq.getPromotionLegs());
+			_ps.setDouble(8, eq.getPromotionHours());
+			_ps.setBoolean(9, eq.getACARSPromotionLegs());
+			_ps.setInt(10, eq.getPromotionMinLength());
+			_ps.setInt(11, eq.getPromotionSwitchLength());
+			_ps.setInt(12, eq.getMinimum1XTime());
+			_ps.setInt(13, eq.getMaximumAccelTime());
 			executeUpdate(1);
 			
 			// Write the exams/ratings and commit
@@ -94,22 +99,28 @@ public class SetEquipmentType extends DAO {
 				executeUpdate(1);
 			}
 			
-			prepareStatementWithoutLimits("UPDATE EQTYPES SET CP_ID=?, RANKS=?, ACTIVE=?, NEWHIRES=?, C_LEGS=?, C_HOURS=?, "
-					+ "C_LEGS_ACARS=?, C_LEGS_DISTANCE=?, C_SWITCH_DISTANCE=?, C_MIN_1X=?, C_MAX_ACCEL=?, EQTYPE=? "
-					+ "WHERE (EQTYPE=?)");
+			// Clear default program if necessary
+			if (eq.getIsDefault())
+				clearDefaultType();
+			
+			// Update the program
+			prepareStatementWithoutLimits("UPDATE EQTYPES SET CP_ID=?, RANKS=?, ACTIVE=?, NEWHIRES=?, ISDEFAULT=?, C_LEGS=?, "
+				+ "C_HOURS=?, C_LEGS_ACARS=?, C_LEGS_DISTANCE=?, C_SWITCH_DISTANCE=?, C_MIN_1X=?, C_MAX_ACCEL=?, EQTYPE=? "
+				+ "WHERE (EQTYPE=?)");
 			_ps.setInt(1, eq.getCPID());
 			_ps.setString(2, StringUtils.listConcat(eq.getRanks(), ","));
 			_ps.setBoolean(3, eq.getActive());
 			_ps.setBoolean(4, eq.getNewHires());
-			_ps.setInt(5, eq.getPromotionLegs());
-			_ps.setDouble(6, eq.getPromotionHours());
-			_ps.setBoolean(7, eq.getACARSPromotionLegs());
-			_ps.setInt(8, eq.getPromotionMinLength());
-			_ps.setInt(9, eq.getPromotionSwitchLength());
-			_ps.setInt(10, eq.getMinimum1XTime());
-			_ps.setInt(11, eq.getMaximumAccelTime());
-			_ps.setString(12, (newName == null) ? eq.getName() : newName);
-			_ps.setString(13, eq.getName());
+			_ps.setBoolean(5, eq.getIsDefault());
+			_ps.setInt(6, eq.getPromotionLegs());
+			_ps.setDouble(7, eq.getPromotionHours());
+			_ps.setBoolean(8, eq.getACARSPromotionLegs());
+			_ps.setInt(9, eq.getPromotionMinLength());
+			_ps.setInt(10, eq.getPromotionSwitchLength());
+			_ps.setInt(11, eq.getMinimum1XTime());
+			_ps.setInt(12, eq.getMaximumAccelTime());
+			_ps.setString(13, (newName == null) ? eq.getName() : newName);
+			_ps.setString(14, eq.getName());
 			executeUpdate(1);
 			
 			// Update the name if neccessary
@@ -158,6 +169,16 @@ public class SetEquipmentType extends DAO {
 		
 		_ps.executeBatch();
 		_ps.close();
+	}
+	
+	/*
+	 * Helper method to clear default equipment type as part of a transaction. 
+	 */
+	private void clearDefaultType() throws SQLException {
+		prepareStatementWithoutLimits("UPDATE EQTYPES SET ISDEFAULT=? WHERE (ISDEFAULT=?)");
+		_ps.setBoolean(1, false);
+		_ps.setBoolean(2, true);
+		executeUpdate(0);
 	}
 	
 	/*

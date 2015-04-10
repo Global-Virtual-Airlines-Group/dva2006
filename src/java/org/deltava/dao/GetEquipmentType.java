@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to retrieve equipment type profiles.
  * @author Luke
- * @version 5.1
+ * @version 6.0
  * @since 1.0
  */
 
@@ -98,6 +98,35 @@ public class GetEquipmentType extends DAO {
 			loadSize(results, dbName);
 			_cache.addAll(results);
 			return results.get(0);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns the default equipment type name for an Airline.
+	 * @param dbName the airline's database name
+	 * @return the EquipmentType
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public String getDefault(String dbName) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT EQTYPE FROM ");
+		sqlBuf.append(formatDBName(dbName));
+		sqlBuf.append(" WHERE (ISDEFAULT=?) LIMIT 1");
+		
+		try {
+			prepareStatementWithoutLimits(sqlBuf.toString());
+			_ps.setBoolean(1, true);
+			String eqName = null;
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next())
+					eqName = rs.getString(1);
+			}
+			
+			_ps.close();
+			return eqName;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -369,7 +398,7 @@ public class GetEquipmentType extends DAO {
 		_ps.close();
 	}
 	
-	/**
+	/*
 	 * Helper method to load airlines for equipment type program.
 	 */
 	private void loadAirlines(Collection<EquipmentType> eTypes) throws SQLException {
@@ -387,7 +416,7 @@ public class GetEquipmentType extends DAO {
 		_ps.close();
 	}
 	
-	/**
+	/*
 	 * Helper method to load program sizes.
 	 */
 	private void loadSize(Collection<EquipmentType> eTypes, String db) throws SQLException {
@@ -420,17 +449,18 @@ public class GetEquipmentType extends DAO {
 				eq.addRanks(rs.getString(3), ",");
 				eq.setActive(rs.getBoolean(4));
 				eq.setNewHires(rs.getBoolean(5));
-				eq.setPromotionLegs(rs.getInt(6));
-				eq.setPromotionHours(rs.getInt(7));
-				eq.setACARSPromotionLegs(rs.getBoolean(8));
-				eq.setPromotionMinLength(rs.getInt(9));
-				eq.setPromotionSwitchLength(rs.getInt(10));
-				eq.setMinimum1XTime(rs.getInt(11));
-				eq.setMaximumAccelTime(rs.getInt(12));
-				eq.setOwner(SystemData.getApp(rs.getString(13)));
-				eq.setStage(rs.getInt(14));
-				eq.setCPName(rs.getString(15));
-				eq.setCPEmail(rs.getString(16));
+				eq.setIsDefault(rs.getBoolean(6));
+				eq.setPromotionLegs(rs.getInt(7));
+				eq.setPromotionHours(rs.getInt(8));
+				eq.setACARSPromotionLegs(rs.getBoolean(9));
+				eq.setPromotionMinLength(rs.getInt(10));
+				eq.setPromotionSwitchLength(rs.getInt(11));
+				eq.setMinimum1XTime(rs.getInt(12));
+				eq.setMaximumAccelTime(rs.getInt(13));
+				eq.setOwner(SystemData.getApp(rs.getString(14)));
+				eq.setStage(rs.getInt(15));
+				eq.setCPName(rs.getString(16));
+				eq.setCPEmail(rs.getString(17));
 				results.add(eq);
 			}
 		}
