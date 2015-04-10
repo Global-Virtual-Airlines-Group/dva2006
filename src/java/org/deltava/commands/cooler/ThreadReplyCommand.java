@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to handle Water Cooler response posting and editing.
  * @author Luke
- * @version 4.1
+ * @version 6.0
  * @since 1.0
  */
 
@@ -165,7 +165,7 @@ public class ThreadReplyCommand extends AbstractCommand {
 			
 				// Create the mailer
 				Mailer mailer = new Mailer(null);
-				mctxt.addData("url", "http://" + me.getKey().getDomain() + "/");
+				mctxt.addData("url", ctx.getRequest().getScheme() + "://" + me.getKey().getDomain() + "/");
 				mailer.setContext(mctxt);
 				mailer.send(me.getValue());
 			}
