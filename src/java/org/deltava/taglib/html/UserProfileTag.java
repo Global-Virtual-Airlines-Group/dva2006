@@ -1,4 +1,4 @@
-// Copyright 2005, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import javax.servlet.jsp.JspException;
@@ -9,7 +9,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP Tag to display a User profile across applications.
  * @author Luke
- * @version 5.4
+ * @version 6.0
  * @since 1.0
  */
 
@@ -34,7 +34,8 @@ public class UserProfileTag extends ElementTag {
 
 		// Determine the URL
 		boolean isApplicant = "APPLICANTS".equals(ud.getTable());
-		StringBuilder urlBuf = new StringBuilder("http://");
+		StringBuilder urlBuf = new StringBuilder(pageContext.getRequest().getScheme());
+		urlBuf.append("://");
 		urlBuf.append(_hostName);
 		urlBuf.append(ud.getDomain());
 		urlBuf.append('/');

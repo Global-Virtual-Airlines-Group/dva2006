@@ -20,6 +20,8 @@ import org.deltava.util.StringUtils;
  */
 
 public class CommandLinkTag extends LinkTag {
+	
+	private final DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
 
 	private String _domain;
 	private String _cmdName;
@@ -74,8 +76,9 @@ public class CommandLinkTag extends LinkTag {
 	 * Sets the command name.
 	 * @param url the command name
 	 */
+	@Override
 	public void setUrl(String url) {
-		_cmdName = url.toLowerCase() + ".do";
+		_cmdName = url.toLowerCase();
 	}
 	
 	/**
@@ -83,13 +86,13 @@ public class CommandLinkTag extends LinkTag {
 	 * @param dt the calendar start date/time
 	 */
 	public void setStartDate(Date dt) {
-		DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
 		_cmdParams.put("startDate", df.format(dt));
 	}
 	
 	/**
 	 * Releases the tag's state variables.
 	 */
+	@Override
 	public void release() {
 		super.release();
 		_disableLink = false;
@@ -103,6 +106,7 @@ public class CommandLinkTag extends LinkTag {
 	 * @return TagSupport.EVAL_BODY_INCLUDE
 	 * @throws JspException if an error occurs 
 	 */
+	@Override
 	public final int doStartTag() throws JspException {
 		// Do nothing if disable flag set
 		if (_disableLink)
@@ -110,12 +114,14 @@ public class CommandLinkTag extends LinkTag {
 		
 		StringBuilder url = new StringBuilder(64);
 		if (!StringUtils.isEmpty(_domain)) {
-			url.append(pageContext.getRequest().isSecure() ? "https://www." : "http://www.");
+			url.append(pageContext.getRequest().getScheme());
+			url.append("://www.");
 			url.append(_domain);
-			url.append('/');
 		}
 		
+		url.append('/');
 		url.append(_cmdName);
+		url.append(".do");
 		if (!_cmdParams.isEmpty())
 			url.append('?');
 		
@@ -144,6 +150,7 @@ public class CommandLinkTag extends LinkTag {
 	 * @return TagSupport.EVAL_PAGE
 	 * @throws JspException if an error occurs
 	 */
+	@Override
 	public int doEndTag() throws JspException {
 		try {
 			if (!_disableLink)
