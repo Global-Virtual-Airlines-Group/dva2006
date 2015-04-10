@@ -347,6 +347,7 @@
 	</online>
 	
 	<security>
+		<ssl type="Boolean">true</ssl>
 		<desKey>super-secret extra-special 3DeS key</desKey>
 		<hash>
 			<salt>hashcode salt</salt>
