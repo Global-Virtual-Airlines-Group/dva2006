@@ -109,10 +109,11 @@ to your Facebook news feed.</c:if></td>
 <c:set var="fbPermissions" value="${fn:splice(fbPerms, ',')}" scope="page" />
 <c:if test="${!empty fbPageID}"><content:filter roles="Facebook">
 <c:set var="fbPermissions" value="${fbPermissions},manage_pages" scope="page" /></content:filter></c:if>
+<content:protocol var="reqProtocol" />
 <script type="text/javascript" defer>
 golgotha.local.fbAuthorize = function() {
 	var URLflags = 'height=360,width=860,menubar=no,toolbar=no,status=no,scrollbars=no,resizable=no';
-	return window.open('${fbAuthURL}?client_id=${fbClientID}&redirect_uri=http://${req.serverName}/fbauth.do&scope=${fbPermissions}&display=popup', 'fbAuth', URLflags);
+	return window.open('${fbAuthURL}?client_id=${fbClientID}&redirect_uri=${reqProtocol}://${req.serverName}/fbauth.do&scope=${fbPermissions}&display=popup', 'fbAuth', URLflags);
 };
 </script>
 <tr>
