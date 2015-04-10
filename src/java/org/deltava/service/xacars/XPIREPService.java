@@ -310,7 +310,8 @@ public class XPIREPService extends XAService {
 			
 			// Post Facebook notification
 			if (usr.hasIM(IMAddress.FBTOKEN)) {
-				String baseURL = "http://" + SystemData.get("airline.url") + "/";
+				String proto = SystemData.getBoolean("security.ssl") ? "https" : "http";
+				String baseURL = proto + "://" + SystemData.get("airline.url") + "/";
 				MessageContext mctxt = new MessageContext();
 				mctxt.addData("user", usr);
 				mctxt.addData("pirep", xfr);
