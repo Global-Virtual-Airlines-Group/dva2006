@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load cross-application User data.
  * @author Luke
- * @version 5.0
+ * @version 6.0
  * @since 1.0
  */
 
@@ -251,6 +251,7 @@ public class GetUserData extends DAO {
 				info.setDomain(rs.getString(4));
 				info.setCanTransfer(rs.getBoolean(5));
 				info.setHistoricRestricted(rs.getBoolean(6));
+				info.setSSL(rs.getBoolean(7));
 				results.add(info);
 			}
 		}
