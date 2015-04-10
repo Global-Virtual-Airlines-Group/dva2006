@@ -55,8 +55,11 @@ public class MapService extends WebService {
 			e.setAttribute("busy", String.valueOf(entry.isBusy()));
 			
 			// Display heading if available
-			if (entry instanceof RouteEntry)
-				e.setAttribute("hdg", String.valueOf(((RouteEntry) entry).getHeading()));
+			if (entry instanceof RouteEntry) {
+				RouteEntry rte = (RouteEntry) entry;
+				e.setAttribute("hdg", String.valueOf(rte.getHeading()));
+				e.setAttribute("gs", String.valueOf(rte.getGroundSpeed()));
+			}
 			
 			if (entry instanceof GroundMapEntry) {
 				GroundMapEntry gme = (GroundMapEntry) entry;
