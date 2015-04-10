@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,12 +8,13 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to retrieve image data from the database.
  * @author Luke
- * @version 5.0
+ * @version 6.0
  * @since 1.0
  */
 
 public class GetImage extends DAO {
 	
+	private static final Cache<CacheableBlob> _imgCache = CacheManager.get(CacheableBlob.class, "Image");
 	private static final Cache<CacheableLong> _sigCache = CacheManager.get(CacheableLong.class,  "Signature");
 
     /**
@@ -132,10 +133,19 @@ public class GetImage extends DAO {
      * @throws DAOException if a JDBC error occurs
      */
     public byte[] getGalleryImage(int id, String dbName) throws DAOException {
+    	String cacheKey = "gallery-" + dbName + "-" + String.valueOf(id);
+    	CacheableBlob imgData = _imgCache.get(cacheKey);
+    	if (imgData != null)
+    		return imgData.getData();
+    	
     	StringBuilder sqlBuf = new StringBuilder("SELECT IMG FROM ");
     	sqlBuf.append(formatDBName(dbName));
     	sqlBuf.append(".GALLERY WHERE (ID=?) LIMIT 1");
-        return execute(id, sqlBuf.toString());
+        byte[] data = execute(id, sqlBuf.toString());
+        if (data != null)
+        	_imgCache.add(new CacheableBlob(cacheKey, data));
+        
+        return data;
     }
 
     /**
@@ -187,7 +197,6 @@ public class GetImage extends DAO {
     		prepareStatementWithoutLimits("SELECT ISAPPROVED FROM SIGNATURES WHERE (ID=?) LIMIT 1");
     		_ps.setInt(1, id);
     		
-    		// Execute the query
     		boolean isOK = false;
     		try (ResultSet rs = _ps.executeQuery()) {
     			if (rs.next())
