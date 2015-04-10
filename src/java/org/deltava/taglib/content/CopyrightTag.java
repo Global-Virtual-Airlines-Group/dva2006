@@ -54,7 +54,7 @@ public class CopyrightTag extends TagSupport {
 		jw.print(' ');
 		jw.print(VersionInfo.APPNAME );
 		jw.print(' ');
-		jw.print(VersionInfo.HTML_COPYRIGHT );
+		jw.print(VersionInfo.HTML_COPYRIGHT .replace("http", pageContext.getRequest().getScheme()));
 		jw.print(" (Build ");
 		jw.print(VersionInfo.BUILD);
 		jw.print(")</div>");
