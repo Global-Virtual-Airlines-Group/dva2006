@@ -68,7 +68,7 @@ from <span class="sec bld">${domain}</span> in order to log into our web site.<b
 <content:secure secure="false">
 <br />
 You don't appear to be using an encrypted connection. In order to secure your user data, you may want to consider
-logging in to the <content:airline /> web site using our <a href="https://www.${domain}/login.do" class="pri bld">secure login page.</a><br />
+logging in to the <content:airline /> web site using our <a href="https://${pageContext.request.serverName}/login.do" class="pri bld">secure login page.</a><br />
 </content:secure>
 <br />
 <el:form method="post" action="login.do" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
