@@ -246,8 +246,9 @@ If you have questions or comments, please direct them to our Corporate Offices a
 <div class="mid"><a rel="nofollow" href="http://www.vatsim.net/"><el:img src="network/vatsim_button.png" caption="VATSIM Partner Airline" className="noborder" /></a></div>
 </c:when>
 <c:otherwise>
+<content:protocol var="reqProtocol" />
 <div style="float:right; margin-right:70px;">
-<iframe src="https://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.deltava.org%2F&amp;send=false&amp;layout=standard&amp;width=300&amp;show_faces=false&amp;font=tahoma&amp;colorscheme=light&amp;action=recommend&amp;height=62&amp;appId=${fbClientID}" style="border:none; overflow:hidden; width:350px; height:62px;"></iframe>
+<iframe src="${reqProtocol}://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.deltava.org%2F&amp;send=false&amp;layout=standard&amp;width=300&amp;show_faces=false&amp;font=tahoma&amp;colorscheme=light&amp;action=recommend&amp;height=62&amp;appId=${fbClientID}" style="border:none; overflow:hidden; width:350px; height:62px;"></iframe>
 </div>
 <div style="float:left; margin-left:70px;"><a rel="nofollow" href="http://www.vatsim.net/"><el:img src="network/vatsim_button.png" caption="VATSIM Partner Airline" className="noborder" /></a></div>
 <div style="clear:both;"></div>
