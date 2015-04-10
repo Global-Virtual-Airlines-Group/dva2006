@@ -1,4 +1,4 @@
-// Copyright 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.xacars;
 
 import java.sql.Connection;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to support XACARS HTTP requests.
  * @author Luke
- * @version 4.1
+ * @version 6.0
  * @since 4.1
  */
 
@@ -38,7 +38,7 @@ public abstract class XAService extends WebService {
 	 * Logs XACARS request parameters.
 	 * @param ctx the ServiceContext
 	 */
-	protected void log(ServiceContext ctx) {
+	protected static void log(ServiceContext ctx) {
 		log.info(ctx.getRequest().getRequestURI());
 		for (int x = 1; x <= 4; x++) {
 			String data = ctx.getParameter("DATA" + x);
@@ -50,7 +50,7 @@ public abstract class XAService extends WebService {
 	/**
 	 * Returns the XACARS protocol version.
 	 */
-	protected String getProtocolVersion(ServiceContext ctx) {
+	protected static String getProtocolVersion(ServiceContext ctx) {
 		String data = ctx.getParameter("DATA1");
 		if ((data == null) || (data.indexOf('|') == -1))
 			return "1.1";
@@ -65,7 +65,7 @@ public abstract class XAService extends WebService {
 	/**
 	 * Returns the simulator.
 	 */
-	protected String getSimulator(ServiceContext ctx) {
+	protected static String getSimulator(ServiceContext ctx) {
 		String data = ctx.getParameter("DATA1");
 		if ((data == null) || (data.indexOf('_') == -1))
 			return "UNKNOWN";
@@ -82,7 +82,7 @@ public abstract class XAService extends WebService {
 	 * @return the Pilot if authenticated
 	 * @throws SecurityException if authentication failed
 	 */
-	protected Pilot authenticate(ServiceContext ctx, String userID, String pwd) throws SecurityException {
+	protected static Pilot authenticate(ServiceContext ctx, String userID, String pwd) throws SecurityException {
 		try {
 			Connection con = ctx.getConnection();
 			

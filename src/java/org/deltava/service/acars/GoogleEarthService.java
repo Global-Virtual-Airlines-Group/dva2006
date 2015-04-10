@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -34,7 +34,7 @@ public abstract class GoogleEarthService extends org.deltava.service.WebService 
 	 * @param desc the placemark description
 	 * @return a KML Placemark element
 	 */
-	protected Element createAirport(Airport a, String desc) {
+	protected static Element createAirport(Airport a, String desc) {
 		
 		// Create the elemnet
 		Element ade = new Element("Placemark");
@@ -60,7 +60,7 @@ public abstract class GoogleEarthService extends org.deltava.service.WebService 
 	 * @param entry the position/flight data
 	 * @return a KML Placemark element
 	 */
-	protected Element createAircraft(String name, RouteEntry entry) {
+	protected static Element createAircraft(String name, RouteEntry entry) {
 		
 		// Create the elemnet
 		Element ae = new Element("Placemark");
@@ -107,7 +107,7 @@ public abstract class GoogleEarthService extends org.deltava.service.WebService 
 	 * @param routeColor the line/fill color
 	 * @return a KML Placemark element containing the flight progress
 	 */
-	protected Element createProgress(Collection<RouteEntry> positions, GoogleEarthColor routeColor) {
+	protected static Element createProgress(Collection<RouteEntry> positions, GoogleEarthColor routeColor) {
 		
 		// Set the placemark options
 		Element le = new Element("Placemark");
@@ -144,7 +144,7 @@ public abstract class GoogleEarthService extends org.deltava.service.WebService 
 	 * @param isVisible TRUE if the data points should be visible, otherwise FALSE 
 	 * @return a KML Folder element
 	 */
-	protected Element createPositionData(Collection<RouteEntry> positions, boolean isVisible) {
+	protected static Element createPositionData(Collection<RouteEntry> positions, boolean isVisible) {
 		
 		// Create the folder
 		Element fe = new Element("Folder");
@@ -195,7 +195,7 @@ public abstract class GoogleEarthService extends org.deltava.service.WebService 
 	 * @param isVisible TRUE if the element is visible, otherwise FALSE
 	 * @return a KML Folder element containing the flight plan route
 	 */
-	protected Element createFlightRoute(String name, Collection<NavigationDataBean> waypoints, boolean isVisible) {
+	protected static Element createFlightRoute(String name, Collection<NavigationDataBean> waypoints, boolean isVisible) {
 
 		// Create the route folder
 		Element fe = new Element("Folder");

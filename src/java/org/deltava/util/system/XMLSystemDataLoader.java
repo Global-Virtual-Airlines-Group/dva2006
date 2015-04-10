@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2007, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007, 2009, 2010, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.system;
 
 import org.jdom2.*;
@@ -15,7 +15,7 @@ import org.deltava.util.ConfigLoader;
 /**
  * A SystemData loader that parses an XML file.
  * @author Luke
- * @version 4.2
+ * @version 6.0
  * @since 1.0
  */
 
@@ -31,6 +31,7 @@ public class XMLSystemDataLoader implements SystemDataLoader {
      * @throws FileNotFoundException if the file cannot be found
      * @throws IOException if an error occurs reading the file
      */
+    @Override
     public Map<String, Object> load() throws IOException {
 
         // Create the builder and load the file into an XML in-memory document
@@ -66,7 +67,7 @@ public class XMLSystemDataLoader implements SystemDataLoader {
      * @return the value of the element, primitives are wrapped within their object
      * @see String#valueOf(java.lang.Object)
      */
-    protected Object getElementWithType(Element e) {
+    protected static Object getElementWithType(Element e) {
         // Get the elemnt type, default is a string
         String eType = e.getAttributeValue("type", "java.lang.String");
         if (eType.indexOf('.') == -1)
@@ -97,17 +98,16 @@ public class XMLSystemDataLoader implements SystemDataLoader {
      * @see XMLSystemDataLoader#getElementWithType(Element)
      */
     @SuppressWarnings("unchecked")
-    protected List<? extends Object> processList(Element root) {
+    protected static List<? extends Object> processList(Element root) {
         boolean isSorted = Boolean.valueOf(root.getAttributeValue("sorted", "false")).booleanValue();
         boolean isUnique = Boolean.valueOf(root.getAttributeValue("unique", "false")).booleanValue();
         
         // Figure out the type of collection to return
         String className = "java.util.ArrayList";
-        if (isSorted) {
+        if (isSorted)
         	className = "java.util.TreeSet";
-        } else if (isUnique) {
+        else if (isUnique)
         	className = "java.util.LinkedHashSet";
-        }
         
         // If we're a sorted set, return a TreeSet instead of a HashSet
         Collection<Object> results = null;
@@ -118,10 +118,8 @@ public class XMLSystemDataLoader implements SystemDataLoader {
         }
 
         // Get all elements with the given attribute name
-        for (Iterator<Element> i = root.getChildren(root.getAttributeValue("attr")).iterator(); i.hasNext();) {
-            Element e = i.next();
+        for (Element e : root.getChildren(root.getAttributeValue("attr")))
             results.add(getElementWithType(e));
-        }
 
         return new ArrayList<Object>(results);
     }
@@ -135,7 +133,7 @@ public class XMLSystemDataLoader implements SystemDataLoader {
      * @return a Map of child values
      * @see XMLSystemDataLoader#getElementWithType(Element)
      */
-    protected Map<String, Object> processMap(Element root) {
+    protected static Map<String, Object> processMap(Element root) {
         Map<String, Object> results = new HashMap<String, Object>();
 
         // Iterate through the child elements

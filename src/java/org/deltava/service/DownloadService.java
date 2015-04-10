@@ -1,4 +1,4 @@
-// Copyright 2008, 2011, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2011, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import java.io.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service supporting file downloads.
  * @author Luke
- * @version 5.1
+ * @version 6.0
  * @since 2.2
  */
 
@@ -25,7 +25,7 @@ public abstract class DownloadService extends WebService {
 	 * @param f the file to send
 	 * @param rsp the HTTP Servlet response
 	 */
-	protected void sendFile(File f, HttpServletResponse rsp) {
+	protected static void sendFile(File f, HttpServletResponse rsp) {
 		if (!f.exists() || !f.isFile())
 			throw new IllegalStateException(f.getAbsolutePath() + " does not exist");
 		
