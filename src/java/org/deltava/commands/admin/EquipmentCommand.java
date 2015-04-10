@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to edit Equipment Type profiles. 
  * @author Luke
- * @version 5.1
+ * @version 6.0
  * @since 1.0
  */
 
@@ -105,7 +105,6 @@ public class EquipmentCommand extends AbstractFormCommand {
 			// Update the equipment type profile from the request
 			eq.setCPID(StringUtils.parse(ctx.getParameter("cp"), 0));
 			eq.setStage(StringUtils.parse(ctx.getParameter("stage"), 1));
-			eq.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
 			eq.setPromotionLegs(StringUtils.parse(ctx.getParameter("captLegs"), 10));
 			eq.setPromotionMinLength(StringUtils.parse(ctx.getParameter("captDistance"), 0));
 			eq.setPromotionSwitchLength(StringUtils.parse(ctx.getParameter("switchDistance"), 0));
@@ -115,6 +114,10 @@ public class EquipmentCommand extends AbstractFormCommand {
 			eq.setACARSPromotionLegs(Boolean.valueOf(ctx.getParameter("acarsPromote")).booleanValue());
 			eq.setRanks(ctx.getParameters("ranks"));
 			eq.setRatings(ctx.getParameters("pRatings"), ctx.getParameters("sRatings"));
+			if (eq.getIsDefault())
+				eq.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
+			else
+				eq.setIsDefault(Boolean.valueOf(ctx.getParameter("makeDefault")).booleanValue());
 			
 			// Update airlines
 			Collection<String> aCodes = ctx.getParameters("airline");
