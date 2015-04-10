@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.util.*;
@@ -8,24 +8,30 @@ import java.sql.Connection;
 import javax.servlet.http.*;
 
 import org.apache.log4j.Logger;
+
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.Airport;
 import org.deltava.beans.servinfo.Certificate;
 import org.deltava.beans.system.*;
 import org.deltava.beans.testing.*;
+
 import org.deltava.comparators.GeoComparator;
+
 import org.deltava.commands.*;
+
 import org.deltava.dao.*;
 import org.deltava.dao.http.GetVATSIMData;
+
 import org.deltava.mail.*;
 import org.deltava.security.AddressValidationHelper;
+
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to register a new Applicant.
  * @author Luke
- * @version 5.4
+ * @version 6.0
  * @since 1.0
  */
 
@@ -304,6 +310,10 @@ public class RegisterCommand extends AbstractCommand {
 					}
 				}
 			}
+			
+			// Set the default equipment type
+			GetEquipmentType eqdao = new GetEquipmentType(con);
+			a.setEquipmentType(eqdao.getDefault(SystemData.get("airline.db")));
 
 			// Get the e-mail originator
 			eMailFrom = pdao.getByCode(SystemData.get("registration.from"));
@@ -320,8 +330,8 @@ public class RegisterCommand extends AbstractCommand {
 				throw notFoundException("Invalid Examination - " + examName);
 
 			// Load the question pool for the questionnaire
-			GetExamQuestions eqdao = new GetExamQuestions(con);
-			Collection<QuestionProfile> qPool = eqdao.getQuestionPool(ep, true);
+			GetExamQuestions exqdao = new GetExamQuestions(con);
+			Collection<QuestionProfile> qPool = exqdao.getQuestionPool(ep, true);
 			if (qPool.isEmpty())
 				throw notFoundException("Empty Question Pool for " + examName);
 
