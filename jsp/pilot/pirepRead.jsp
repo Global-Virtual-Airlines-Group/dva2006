@@ -17,7 +17,7 @@
 <content:sysdata var="airlineURL" name="airline.url" />
 <meta property="og:title" content="<content:airline /> Flight Report - ${pirep.flightCode}" />
 <meta property="og:type" content="game.achievement" />
-<meta property="og:url" content="http://${airlineURL}/pirep.do?id=${pirep.hexID}" />
+<meta property="og:url" content="https://${airlineURL}/pirep.do?id=${pirep.hexID}" />
 <meta property="og:site_name" content="<content:airline />" />
 <meta property="game:points" content="1" />
 <content:pics />

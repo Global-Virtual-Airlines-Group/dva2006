@@ -24,7 +24,7 @@
 <meta name="Keywords" content="<fmt:list value="${keywords}" delim="," />" />
 <meta property="og:title" content="<content:airline />" />
 <meta property="og:type" content="website" />
-<meta property="og:url" content="http://${airlineURL}" />
+<meta property="og:url" content="https://${airlineURL}" />
 <meta property="og:description" content="${desc}" />
 <meta property="og:site_name" content="<content:airline />" />
 <meta property="og:locality" content="Atlanta" />
@@ -36,6 +36,7 @@
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:protocol var="reqProtocol" />
 <content:sysdata var="infoEmail" name="airline.mail.info" />
 <content:sysdata var="partnerName" name="airline.partner.name" />
 <content:sysdata var="partnerURL" name="airline.partner.url" />
@@ -75,7 +76,7 @@ between!) we welcome your interest. <el:cmd url="register" className="pri bld">C
 <content:airline />.</el:cmd><br />
 <br />
 If you are interested in a virtual airline with primarily ${partnerLoc} operations, we encourage you to visit 
-our sister airline <a rel="external" target="_new" href="http://${partnerURL}/" class="sec bld">${partnerName}</a>.<br />
+our sister airline <a rel="external" target="_new" href="${reqProtocol}://${partnerURL}/" class="sec bld">${partnerName}</a>.<br />
 <br /></content:filter>
 <!-- Dynamic Content Type ${dynContentType} -->
 <c:if test="${noUpcomingEvents}"><!-- No upcoming Online Events, skipped --></c:if>
@@ -246,9 +247,8 @@ If you have questions or comments, please direct them to our Corporate Offices a
 <div class="mid"><a rel="nofollow" href="http://www.vatsim.net/"><el:img src="network/vatsim_button.png" caption="VATSIM Partner Airline" className="noborder" /></a></div>
 </c:when>
 <c:otherwise>
-<content:protocol var="reqProtocol" />
 <div style="float:right; margin-right:70px;">
-<iframe src="${reqProtocol}://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.deltava.org%2F&amp;send=false&amp;layout=standard&amp;width=300&amp;show_faces=false&amp;font=tahoma&amp;colorscheme=light&amp;action=recommend&amp;height=62&amp;appId=${fbClientID}" style="border:none; overflow:hidden; width:350px; height:62px;"></iframe>
+<iframe src="${reqProtocol}://www.facebook.com/plugins/like.php?href=${reqProtocol}%3A%2F%2Fwww.deltava.org%2F&amp;send=false&amp;layout=standard&amp;width=300&amp;show_faces=false&amp;font=tahoma&amp;colorscheme=light&amp;action=recommend&amp;height=62&amp;appId=${fbClientID}" style="border:none; overflow:hidden; width:350px; height:62px;"></iframe>
 </div>
 <div style="float:left; margin-left:70px;"><a rel="nofollow" href="http://www.vatsim.net/"><el:img src="network/vatsim_button.png" caption="VATSIM Partner Airline" className="noborder" /></a></div>
 <div style="clear:both;"></div>
