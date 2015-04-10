@@ -114,7 +114,7 @@ public class GetEquipmentType extends DAO {
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT EQTYPE FROM ");
 		sqlBuf.append(formatDBName(dbName));
-		sqlBuf.append(" WHERE (ISDEFAULT=?) LIMIT 1");
+		sqlBuf.append(".EQTYPES WHERE (ISDEFAULT=?) LIMIT 1");
 		
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
