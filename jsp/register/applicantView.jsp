@@ -266,7 +266,7 @@ ${dupe.rank.name} <el:cmd url="profile" link="${dupe}" className="bld">${dupe.na
 </tr>
 <tr>
  <td class="label">Google Search</td>
- <td class="data"><a rel="external" target="applicantSearch" href="http://www.google.com/search?q=${fn:escape(applicant.name)}">Click Here</a> to 
+ <td class="data"><a rel="external" target="applicantSearch" href="https://www.google.com/search?q=${fn:escape(applicant.name)}">Click Here</a> to 
 do a Google search on &quot;${applicant.name}&quot;.</td>
 </tr>
 <c:if test="${!empty applicant.HRComments}">

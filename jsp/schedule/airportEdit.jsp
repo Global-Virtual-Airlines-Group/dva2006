@@ -152,6 +152,7 @@ lack of scheduled flights in the <content:airline /> Flight Schedule.</span></td
  <td colspan="2"><map:div ID="googleMap" x="100%" y="550" /></td>
 </tr>
 </c:if>
+<content:secure secure="false">
 <c:if test="${isNew && (!empty param.id)}">
 <c:set var="apCode" value="${empty airport ? param.id : airport.ICAO}" scope="page" />
 <tr class="title caps">
@@ -161,6 +162,7 @@ lack of scheduled flights in the <content:airline /> Flight Schedule.</span></td
  <td colspan="2" class="mid"><iframe id="airportLookup" style="width:97%; height:680px; scrolling:auto;" src="http://www.theairdb.com/airport/${apCode}.html"></iframe></td>
 </tr>
 </c:if>
+</content:secure>
 </c:if>
 </el:table>
 
@@ -178,11 +180,11 @@ lack of scheduled flights in the <content:airline /> Flight Schedule.</span></td
 </content:page>
 <c:if test="${googleMap}">
 <script id="mapInit" defer>
-<map:point var="mapC" point="${airport}" />
+<map:point var="golgotha.local.mapC" point="${airport}" />
 <map:marker var="apMarker" point="${airport}" color="green" />
 
 // Build the map
-var mapOpts = {center:mapC, zoom:6, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
+var mapOpts = {center:golgotha.local.mapC, zoom:6, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
 apMarker.setMap(map);
