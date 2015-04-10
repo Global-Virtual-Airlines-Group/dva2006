@@ -5,7 +5,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.sql.Connection;
 
-import org.deltava.beans.Pilot;
+import org.deltava.beans.*;
 import org.deltava.beans.academy.*;
 import org.deltava.beans.schedule.Aircraft;
 import org.deltava.beans.testing.*;
@@ -56,7 +56,8 @@ public class CourseCheckRideCommand extends AbstractCommand {
 			// Load the Pilot object
 			GetUserData uddao = new GetUserData(con);
 			GetPilot pdao = new GetPilot(con);
-			p = pdao.get(uddao.get(c.getPilotID()));
+			UserData ud = uddao.get(c.getPilotID());
+			p = pdao.get(ud);
 			if (p == null)
 				throw notFoundException("Invalid Pilot ID - " + c.getPilotID());
 			
@@ -142,9 +143,12 @@ public class CourseCheckRideCommand extends AbstractCommand {
 			cr.setStatus(TestStatus.NEW);
 			cr.setComments(isOurs && (sc != null) ? sc.getDescription() : ctx.getParameter("comments"));
 			cr.setStage(c.getStage());
-			cr.setEquipmentType(SystemData.get("academy.eqType"));
 			cr.setAircraftType(ctx.getParameter("acType"));
 			cr.setCourseID(c.getID());
+			
+			// Set the equipment type
+			GetEquipmentType eqdao = new GetEquipmentType(con);
+			cr.setEquipmentType(eqdao.getDefault(ud.getDB()));
 			
 			// Get the message template
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
