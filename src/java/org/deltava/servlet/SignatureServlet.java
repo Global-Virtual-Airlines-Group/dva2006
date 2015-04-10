@@ -1,23 +1,24 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.*;
 import java.sql.*;
+
 import javax.servlet.http.*;
 
 import org.apache.log4j.Logger;
 
-import org.deltava.beans.system.VersionInfo;
-
+import org.deltava.beans.system.*;
 import org.deltava.dao.*;
 import org.deltava.util.*;
+import org.deltava.util.system.SystemData;
 
 import org.gvagroup.jdbc.*;
 
 /**
  * The Signature Image serving Servlet. This serves Water Cooler signature images.
  * @author Luke
- * @version 3.2
+ * @version 6.0
  * @since 2.6
  */
 
@@ -29,6 +30,7 @@ public class SignatureServlet extends GenericServlet {
 	 * Returns the servlet description.
 	 * @return name, author and copyright info for this servlet
 	 */
+	@Override
 	public String getServletInfo() {
 		return "Signature Image Servlet " + VersionInfo.TXT_COPYRIGHT;
 	}
@@ -43,6 +45,9 @@ public class SignatureServlet extends GenericServlet {
 		
 		// Parse the URL to figure out what kind of image we want
 		URLParser url = new URLParser(req.getRequestURI());
+		AirlineInformation ai = SystemData.getApp(url.getLastPath());
+		if (ai == null)
+			return -1;
 
 		// Get the image ID
 		int imgID = 0;
@@ -58,6 +63,7 @@ public class SignatureServlet extends GenericServlet {
 		}
 		
 		// Get the connection pool
+		
 		ConnectionPool jdbcPool = getConnectionPool();
 		java.util.Date lastMod = null; Connection c = null;
 		try {
@@ -65,7 +71,7 @@ public class SignatureServlet extends GenericServlet {
 
 			// Get the retrieve image DAO
 			GetImage dao = new GetImage(c);
-			lastMod = dao.getSigModified(imgID, url.getLastPath());
+			lastMod = dao.getSigModified(imgID, ai.getDB());
 		} catch (ConnectionPoolException cpe) {
 			log.warn("Connection pool error - " + cpe.getMessage());
 		} catch (ControllerException ce) {
@@ -91,6 +97,11 @@ public class SignatureServlet extends GenericServlet {
 
 		// Parse the URL to figure out what kind of image we want
 		URLParser url = new URLParser(req.getRequestURI());
+		AirlineInformation ai = SystemData.getApp(url.getLastPath());
+		if (ai == null) {
+			rsp.sendError(HttpServletResponse.SC_NOT_FOUND);
+			return;
+		}
 
 		// Get the image ID
 		int imgID = 0;
@@ -119,7 +130,7 @@ public class SignatureServlet extends GenericServlet {
 
 			// Get the retrieve image DAO
 			GetImage dao = new GetImage(c);
-			imgBuffer = dao.getSignatureImage(imgID, url.getLastPath());
+			imgBuffer = dao.getSignatureImage(imgID, ai.getDB());
 		} catch (ConnectionPoolException cpe) {
 			log.warn("Connection pool error - " + cpe.getMessage());
 		} catch (ControllerException ce) {

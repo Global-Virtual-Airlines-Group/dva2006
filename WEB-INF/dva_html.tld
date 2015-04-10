@@ -95,7 +95,7 @@
 			<type>org.deltava.beans.Pilot</type>
 		</attribute>
 		<attribute>
-			<name>db</name>
+			<name>code</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
