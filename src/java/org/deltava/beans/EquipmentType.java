@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A class for storing equipment program information.
  * @author Luke
- * @version 5.1
+ * @version 6.0
  * @since 1.0
  */
 
@@ -23,6 +23,7 @@ public class EquipmentType implements Cacheable, Comparable<EquipmentType>, Comb
     private String _name;
     private int _stage = 1;
     private boolean _active = true;
+    private boolean _default;
     private boolean _acarsPromotion;
     private boolean _newHires;
     
@@ -264,6 +265,16 @@ public class EquipmentType implements Cacheable, Comparable<EquipmentType>, Comb
     }
     
     /**
+     * Returns whether this is default equipment program for Flight Academy and Applicant
+     * hire purposes.
+     * @return TRUE if default program, otherwise FALSE
+     * @see EquipmentType#setIsDefault(boolean)
+     */
+    public boolean getIsDefault() {
+    	return _default;
+    }
+    
+    /**
      * Returns whether this equipment program accepts new hires.
      * @return TRUE if new hires are accepted, otherwise FALSE
      */
@@ -376,6 +387,16 @@ public class EquipmentType implements Cacheable, Comparable<EquipmentType>, Comb
      */
     public void setActive(boolean active) {
         _active = active;
+    }
+    
+    /**
+     * Marks this equipment program as the default program for new hires and
+     * the Flight Academy.
+     * @param isDefault TRUE if the default program, otherwise FALSE
+     * @see EquipmentType#getIsDefault()
+     */
+    public void setIsDefault(boolean isDefault) {
+    	_default = isDefault;
     }
     
     /**
