@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.rss;
 
 import java.util.*;
@@ -8,21 +8,17 @@ import java.io.IOException;
 import static javax.servlet.http.HttpServletResponse.*;
 
 import org.jdom2.*;
-
 import org.deltava.beans.News;
 import org.deltava.beans.system.VersionInfo;
-
 import org.deltava.dao.*;
 import org.deltava.service.*;
-
 import org.deltava.util.*;
-import org.deltava.util.XMLUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Service to display a System News RSS feed.
  * @author Luke
- * @version 4.2
+ * @version 6.0
  * @since 1.0
  */
 
@@ -37,7 +33,7 @@ public class NewsSyndicationService extends WebService {
 	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 
-		List<?> entries = null;
+		List<? extends News> entries = null;
 		try {
 			GetNews dao = new GetNews(ctx.getConnection());
 			dao.setQueryMax(getCount(ctx, 10));
@@ -55,9 +51,10 @@ public class NewsSyndicationService extends WebService {
 		doc.setRootElement(re);
 		
 		// Create the RSS channel
+		String proto = ctx.getRequest().getScheme();
 		Element ch = new Element("channel");
 		ch.addContent(XMLUtils.createElement("title", SystemData.get("airline.name") + " Airline News"));
-		ch.addContent(XMLUtils.createElement("link", "http://" + ctx.getRequest().getServerName() + "/news.do", true));
+		ch.addContent(XMLUtils.createElement("link", proto + "://" + ctx.getRequest().getServerName() + "/news.do", true));
 		ch.addContent(XMLUtils.createElement("description", "What's New at " + SystemData.get("airline.name")));
 		ch.addContent(XMLUtils.createElement("language", "en"));
 		ch.addContent(XMLUtils.createElement("copyright", VersionInfo.TXT_COPYRIGHT));
@@ -69,10 +66,9 @@ public class NewsSyndicationService extends WebService {
 		re.addContent(ch);
 		
 		// Convert the entries to RSS items
-		for (Iterator<?> i = entries.iterator(); i.hasNext(); ) {
-			News n = (News) i.next();
+		for (News n : entries) {
 			try {
-				URL url = new URL("http", ctx.getRequest().getServerName(), "/news.do?id=" + StringUtils.formatHex(n.getID()));
+				URL url = new URL(proto, ctx.getRequest().getServerName(), "/news.do?id=" + StringUtils.formatHex(n.getID()));
 			
 				// Create the RSS item element
 				Element item = new Element("item");
