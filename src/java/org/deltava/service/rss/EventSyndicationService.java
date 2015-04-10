@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.rss;
 
 import java.net.*;
@@ -8,21 +8,17 @@ import java.io.IOException;
 import static javax.servlet.http.HttpServletResponse.*;
 
 import org.jdom2.*;
-
 import org.deltava.beans.event.Event;
 import org.deltava.beans.system.VersionInfo;
-
 import org.deltava.dao.*;
 import org.deltava.service.*;
-
 import org.deltava.util.*;
-import org.deltava.util.XMLUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Service to display an Online Event RSS feed.
  * @author Luke
- * @version 4.2
+ * @version 6.0
  * @since 1.0
  */
 
@@ -55,9 +51,10 @@ public class EventSyndicationService extends WebService {
 		doc.setRootElement(re);
 		
 		// Create the RSS channel
+		String proto = ctx.getRequest().getScheme();
 		Element ch = new Element("channel");
 		ch.addContent(XMLUtils.createElement("title", SystemData.get("airline.name") + " Online Events"));
-		ch.addContent(XMLUtils.createElement("link", "http://" + ctx.getRequest().getServerName() + "/event.do", true));
+		ch.addContent(XMLUtils.createElement("link", proto + "://" + ctx.getRequest().getServerName() + "/event.do", true));
 		ch.addContent(XMLUtils.createElement("description", "Online Events at " + SystemData.get("airline.name")));
 		ch.addContent(XMLUtils.createElement("language", "en"));
 		ch.addContent(XMLUtils.createElement("copyright", VersionInfo.TXT_COPYRIGHT));
@@ -67,10 +64,9 @@ public class EventSyndicationService extends WebService {
 		re.addContent(ch);
 		
 		// Convert the entries to RSS items
-		for (Iterator<Event> i = entries.iterator(); i.hasNext(); ) {
-			Event e = i.next();
+		for (Event e : entries) {
 			try {
-				URL url = new URL("http", ctx.getRequest().getServerName(), "/event.do?id=" + StringUtils.formatHex(e.getID()));
+				URL url = new URL(proto, ctx.getRequest().getServerName(), "/event.do?id=" + StringUtils.formatHex(e.getID()));
 				
 				// Create the RSS item element
 				Element item = new Element("item");

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.rss;
 
 import java.util.*;
@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display a Discussion Forum RSS feed.
  * @author Luke
- * @version 4.2
+ * @version 6.0
  * @since 1.0
  */
 
@@ -96,10 +96,11 @@ public class CoolerSyndicationService extends WebService {
 		doc.setRootElement(re);
 
 		// Create the RSS channel
+		String proto = ctx.getRequest().getScheme();
 		Element ch = new Element("channel");
 		ch.addContent(XMLUtils.createElement("title", SystemData.get("airline.name") + " " + forumName));
 		ch.addContent(XMLUtils.createElement("description", SystemData.get("airline.name") + " " + forumName + " Message Threads"));
-		ch.addContent(XMLUtils.createElement("link", "http://" + ctx.getRequest().getServerName() + "/channel.do?id=ALL", true));
+		ch.addContent(XMLUtils.createElement("link", proto + "://" + ctx.getRequest().getServerName() + "/channel.do?id=ALL", true));
 		ch.addContent(XMLUtils.createElement("language", "en"));
 		ch.addContent(XMLUtils.createElement("copyright", VersionInfo.TXT_COPYRIGHT));
 		ch.addContent(XMLUtils.createElement("webMaster", SystemData.get("airline.mail.webmaster")));
@@ -110,10 +111,9 @@ public class CoolerSyndicationService extends WebService {
 		re.addContent(ch);
 
 		// Convert the threads into RSS items
-		for (Iterator<MessageThread> i = threads.iterator(); i.hasNext(); ) {
-			MessageThread mt = i.next();
+		for (MessageThread mt : threads) {
 			try {
-				URL url = new URL("http", ctx.getRequest().getServerName(), "/thread.do?id=" + StringUtils.formatHex(mt.getID()));
+				URL url = new URL(proto, ctx.getRequest().getServerName(), "/thread.do?id=" + StringUtils.formatHex(mt.getID()));
 			
 				// Create the RSS item element
 				Element item = new Element("item");
