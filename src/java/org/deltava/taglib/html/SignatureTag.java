@@ -1,7 +1,8 @@
-// Copyright 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2010, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import java.text.*;
+
 import javax.servlet.jsp.JspException;
 
 import org.deltava.beans.Pilot;
@@ -11,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to embed a Water Cooler signature tag.
  * @author Luke
- * @version 3.2
+ * @version 6.0
  * @since 2.3
  */
 
@@ -20,7 +21,7 @@ public class SignatureTag extends ImageTag {
 	private final DateFormat _df = new SimpleDateFormat("yyyyMMddHHmm");
 	
 	private Pilot _usr;
-	private String _db;
+	private String _aCode;
 	private boolean _noCache;
 
 	/**
@@ -47,18 +48,19 @@ public class SignatureTag extends ImageTag {
 	}
 	
 	/**
-	 * Sets the database to pull the signature from.
-	 * @param dbName the database name
+	 * Sets the Airline to pull the signature from.
+	 * @param c the Airline code
 	 */
-	public void setDb(String dbName) {
-		_db = dbName;
+	public void setCode(String c) {
+		_aCode = c;
 	}
 	
 	/**
 	 * Releases the tag's state variables.
 	 */
+	@Override
 	public void release() {
-		_db = null;
+		_aCode = null;
 		_noCache = false;
 		super.release();
 	}
@@ -67,6 +69,7 @@ public class SignatureTag extends ImageTag {
      * Generates this image's HTML.
      * @throws JspException if an error occurs
      */
+	@Override
 	public int doEndTag() throws JspException {
 		if (!_usr.getHasSignature())
 			return EVAL_PAGE;
@@ -75,7 +78,7 @@ public class SignatureTag extends ImageTag {
 		StringBuilder buf = new StringBuilder("/sig/");
 		buf.append(_df.format(_usr.getSignatureModified()));
 		buf.append('/');
-		buf.append((_db == null) ? SystemData.get("airline.db") : _db);
+		buf.append((_aCode == null) ? SystemData.get("airline.code") : _aCode);
 		buf.append('/');
 		buf.append(_usr.getHexID());
 		buf.append('.');

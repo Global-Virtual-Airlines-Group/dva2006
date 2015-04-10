@@ -106,12 +106,12 @@ public class ThreadCommand extends AbstractCommand {
 			if (mt.getImage() >= MIN_GALLERY_ID) {
 				// Figure out who started the thread, since the image will be in their gallery
 				UserData aUsrData = uddao.get(mt.getAuthorID());
-				String imgDB = (aUsrData == null) ? SystemData.get("airline.db") : aUsrData.getDB();
+				AirlineInformation ai = SystemData.getApp((aUsrData == null) ? null : aUsrData.getAirlineCode());
 
 				GetGallery irdao = new GetGallery(con);
-				Image img = irdao.getImageData(mt.getImage(), imgDB);
+				Image img = irdao.getImageData(mt.getImage(), ai.getDB());
 				ctx.setAttribute("img", img, REQUEST);
-				ctx.setAttribute("imgDB", imgDB, REQUEST);
+				ctx.setAttribute("imgApp", ai, REQUEST);
 
 				// Get our access to the image
 				GalleryAccessControl imgAccess = new GalleryAccessControl(ctx, img);
