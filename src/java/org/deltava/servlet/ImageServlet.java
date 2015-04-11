@@ -238,7 +238,7 @@ public class ImageServlet extends BasicAuthServlet {
 
 		// If we got nothing, then throw an error
 		if (imgBuffer == null) {
-			log.error("Cannot find image " + url.getLastPath() + "/" + imgID);
+			log.info("Cannot find image " + url.getLastPath() + "/" + imgID);
 			try {
 				rsp.sendError(HttpServletResponse.SC_NOT_FOUND);
 			} catch (IllegalStateException ise) {
