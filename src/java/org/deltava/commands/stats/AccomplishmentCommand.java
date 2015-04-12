@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Accomplishment profiles. 
  * @author Luke
- * @version 4.1
+ * @version 6.0
  * @since 3.2
  */
 
@@ -84,6 +84,18 @@ public class AccomplishmentCommand extends AbstractFormCommand {
 			case AIRCRAFT:
 			case EQLEGS:
 				a.setChoices(StringUtils.nullTrim(ctx.getParameters("eqTypes")));
+				break;
+				
+			case AIRPORTS:
+				Collection<String> apCodes = StringUtils.nullTrim(StringUtils.split(ctx.getParameter("choices"), ","));
+				Collection<String> iataCodes = new TreeSet<String>();
+				for (String code : apCodes) {
+					Airport ap = SystemData.getAirport(code);
+					if (ap != null)
+						iataCodes.add(ap.getIATA());
+				}
+				
+				a.setChoices(iataCodes);
 				break;
 				
 			default:
