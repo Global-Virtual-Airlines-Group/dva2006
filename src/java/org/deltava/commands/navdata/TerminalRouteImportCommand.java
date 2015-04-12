@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2012, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.io.*;
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to import Terminal Routes in PSS format.
  * @author Luke
- * @version 5.1
+ * @version 6.0
  * @since 2.0
  */
 
@@ -155,6 +155,7 @@ public class TerminalRouteImportCommand extends NavDataImportCommand {
 			}
 			
 			// Update the waypoint types
+			dao.setQueryTimeout(75);
 			int regionCount = dao.updateTRWaypoints();
 			ctx.setAttribute("regionCount", Integer.valueOf(regionCount), REQUEST);
 			
