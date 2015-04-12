@@ -71,7 +71,7 @@ public class ScheduleSyncCommand extends AbstractCommand {
 			ctx.setAttribute("entriesPurged", Integer.valueOf(swdao.purge(al)), REQUEST);
 			if (!purgeOnly)
 				ctx.setAttribute("entriesCopied", Integer.valueOf(swdao.copy(al, ai.getDB())), REQUEST);
-			//ctx.commitTX();
+			ctx.commitTX();
 		} catch (DAOException de) {
 			ctx.rollbackTX();
 			throw new CommandException(de);
