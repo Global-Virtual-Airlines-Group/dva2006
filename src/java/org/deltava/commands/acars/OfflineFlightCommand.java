@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import java.io.*;
@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to allow users to submit Offline Flight Reports.
  * @author Luke
- * @version 5.4
+ * @version 6.0
  * @since 2.4
  */
 
@@ -88,7 +88,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 		
 		// Check for SHA
 		if ((shaF == null) && (sha == null)) {
-			ctx.setMessage("No SHA-256 signature");
+			ctx.setMessage("No Cryptographic signature");
 			result.setSuccess(true);
 			return;
 		}
@@ -109,11 +109,17 @@ public class OfflineFlightCommand extends AbstractCommand {
 			// Validate the SHA
 			if (!noValidate) {
 				xml = xml.substring(0, xml.length() - 2);
-				MessageDigester md = new MessageDigester(SystemData.get("security.hash.acars.algorithm"));
+				String algo = SystemData.get("security.hash.acars.algorithm"); int pos = sha.indexOf(':');
+				if (pos != -1) {
+					algo = sha.substring(0, pos);
+					sha = sha.substring(pos + 1);
+				}
+				
+				MessageDigester md = new MessageDigester(algo);
 				md.salt(SystemData.get("security.hash.acars.salt"));
 				String calcHash = MessageDigester.convert(md.digest(xml.getBytes()));
 				if (!calcHash.equals(sha)) {
-					log.warn("ACARS Hash mismatch - expected " + sha + ", calculated " + calcHash);
+					log.warn("ACARS Signature mismatch - expected " + sha + ", calculated " + calcHash);
 					ctx.setAttribute("hashFailure", Boolean.TRUE, REQUEST);
 					return;
 				}
