@@ -1,26 +1,23 @@
-// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.util.List;
 import java.sql.Connection;
 
 import org.apache.log4j.Logger;
-
 import org.deltava.beans.Pilot;
-
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.mail.*;
-
 import org.deltava.security.Authenticator;
-
+import org.deltava.security.SQLAuthenticator;
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to reset users' passwords.
  * @author Luke
- * @version 2.3
+ * @version 6.0
  * @since 1.0
  */
 
@@ -130,7 +127,11 @@ public class PasswordResetCommand extends AbstractCommand {
 
 		// Get the authenticator and update the password
 		try {
+			Connection con = ctx.getConnection();
 			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
+			if (auth instanceof SQLAuthenticator)
+				((SQLAuthenticator)auth).setConnection(con);
+			
 			if (auth.contains(usr))
 				auth.updatePassword(usr, newPwd);
 			else {
@@ -140,13 +141,15 @@ public class PasswordResetCommand extends AbstractCommand {
 			
 			// Validate the password
 			auth.authenticate(usr, newPwd);
-		} catch (SecurityException se) {
-			ctx.setMessage("Error updating password for " + usr.getDN() + " - " + se.getMessage());
+			if (auth instanceof SQLAuthenticator)
+				((SQLAuthenticator)auth).clearConnection();
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+			ctx.setMessage("Error updating password for " + usr.getDN() + " - " + e.getMessage());
 			return;
+		} finally {
+			ctx.release();
 		}
-
-		// Generate an HTTP session if one doesn't exist
-		ctx.getRequest().getSession(true);
 
 		// Send a notification message
 		Mailer mailer = new Mailer(ctx.getUser());
