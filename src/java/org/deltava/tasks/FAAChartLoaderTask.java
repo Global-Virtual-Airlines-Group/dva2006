@@ -1,4 +1,4 @@
-// Copyright 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.io.File;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to download FAA approach charts.
  * @author Luke
- * @version 5.1
+ * @version 6.0
  * @since 5.0
  */
 
@@ -101,8 +101,8 @@ public class FAAChartLoaderTask extends Task {
 		}
 		
 		// Calculate URL and local file name
-		String baseURL = SystemData.get("schedule.chart.url.faa");
-		baseURL = baseURL.replace("${YY}", StringUtils.format(year, "00")).replace("${MM}", StringUtils.format(month, "00"));
+		String metaURL = SystemData.get("schedule.chart.url.faa.meta");
+		metaURL = metaURL.replace("${YY}", StringUtils.format(year, "00")).replace("${MM}", StringUtils.format(month, "00"));
 		String localName = "faaChartMetadata-${YY}${MM}.xml".replace("${MM}", StringUtils.format(month, "00")).replace("${YY}", StringUtils.format(year, "00"));
 		boolean noDL = SystemData.getBoolean("schedule.chart.noDownload");
 
@@ -110,7 +110,7 @@ public class FAAChartLoaderTask extends Task {
 		Map<Airport, AirportCharts<Chart>> oldCharts = new HashMap<Airport, AirportCharts<Chart>>();
 		try {
 			File f = new File(SystemData.get("schedule.cache"), localName);
-			GetURL dldao = new GetURL(baseURL + "/xml_data/d-TPP_Metafile.xml", f.getAbsolutePath());
+			GetURL dldao = new GetURL(metaURL, f.getAbsolutePath());
 			File ff = dldao.download();
 			
 			GetFAACharts mddao = new GetFAACharts();
@@ -144,6 +144,8 @@ public class FAAChartLoaderTask extends Task {
 		}
 			
 		// Go through the remaining FAA airports, adding and removing as needed
+		String baseURL = SystemData.get("schedule.chart.url.faa.chartBase");
+		baseURL = baseURL.replace("${YY}", StringUtils.format(year, "00")).replace("${MM}", StringUtils.format(month, "00"));
 		int addCnt = 0; int updCnt = 0; int delCnt = 0;
 		for (AirportCharts<ExternalChart> ac : newCharts.values()) {
 			log.info("Processing " + ac.getAirport());
