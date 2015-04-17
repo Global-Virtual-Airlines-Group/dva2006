@@ -90,7 +90,7 @@ public class ApplicantApproveCommand extends AbstractCommand {
 			mctxt.addData("eqType", eq);
 
 			// Calculate the DN and password
-			a.setDN("cn=" + a.getName() + "," + SystemData.get("security.baseDN"));
+			a.setDN("cn=" + a.getName() + ",o=" + SystemData.get("airline.code"));
 			a.setPassword(PasswordGenerator.generate(SystemData.getInt("security.password.default", 8)));
 
 			// Turn off autocommits on the connection
