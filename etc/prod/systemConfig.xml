@@ -481,7 +481,10 @@
 			</map>
 
 			<url>
-				<faa>http://155.178.201.160/d-tpp/${YY}${MM}</faa>
+				<faa>
+					<meta>https://nfdc.faa.gov/webContent/dtpp/${YY}${MM}.xml</meta>
+					<chartBase>http://aeronav.faa.gov/d-tpp/${YY}${MM}</chartBase>
+				</faa>
 			</url>
 
 			<default>AirCharts</default>

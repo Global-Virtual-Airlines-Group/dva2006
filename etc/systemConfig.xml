@@ -465,12 +465,15 @@
 				<il>AirCharts</il>
 				<nz>AirCharts</nz>
 				<uk>AirCharts</uk>
-				<us>AirCharts</us>
+				<us>internal</us>
 				<za>internal</za>
 			</map>
 
 			<url>
-				<faa>http://aeronav.faa.gov/d-tpp/${YY}${MM}</faa>
+				<faa>
+					<meta>https://nfdc.faa.gov/webContent/dtpp/${YY}${MM}.xml</meta>
+					<chartBase>http://aeronav.faa.gov/d-tpp/${YY}${MM}</chartBase>
+				</faa>
 			</url>
 
 			<default>AirCharts</default>

@@ -46,7 +46,7 @@
 <content:sysdata var="fbAuthURL" name="users.facebook.url.authorize" />
 <content:sysdata var="fbClientID" name="users.facebook.id" />
 <content:sysdata var="fbPageID" name="users.facebook.pageID" />
-<content:sysdata var="faaChartURL" name="schedule.chart.url.faa" />
+<content:sysdata var="faaChartURL" name="schedule.chart.url.faa.meta" />
 <content:attr attr="hasDispatchAccess" value="true" roles="HR,Route,Dispatch" />
 
 <!-- Main Body Frame -->
