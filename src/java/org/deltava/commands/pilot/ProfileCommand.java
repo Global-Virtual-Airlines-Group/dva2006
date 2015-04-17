@@ -506,7 +506,7 @@ public class ProfileCommand extends AbstractFormCommand {
 
 				// If we're unique, continue the update
 				if (dupeResults.isEmpty() || ctx.isUserInRole("HR")) {
-					String newDN = "cn=" + p2.getName() + "," + SystemData.get("security.baseDN");
+					String newDN = "cn=" + p2.getName() + ",o=" + SystemData.get("airline.code");
 
 					// Create the status update
 					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.STATUS_CHANGE);
