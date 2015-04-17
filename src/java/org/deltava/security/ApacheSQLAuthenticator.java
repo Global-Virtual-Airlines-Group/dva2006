@@ -39,9 +39,8 @@ public class ApacheSQLAuthenticator extends SQLAuthenticator {
 		sqlBuf.append(_props.getProperty("apachesql.table", "AUTH"));
 		sqlBuf.append(" WHERE (ID=?)");
 
-		Connection con = null;
 		try {
-			String goodPwd = null; con = getConnection(); 
+			String goodPwd = null; Connection con = getConnection(); 
 			try (PreparedStatement ps = con.prepareStatement(sqlBuf.toString())) {
 				ps.setInt(1, usr.getID());
 				try (ResultSet rs = ps.executeQuery()) {
@@ -84,9 +83,8 @@ public class ApacheSQLAuthenticator extends SQLAuthenticator {
 		sqlBuf.append(_props.getProperty("apachesql.table", "AUTH"));
 		sqlBuf.append(" WHERE (ID=?)");
 
-		Connection con = null;
 		try {
-			boolean hasUser = false; con = getConnection();
+			boolean hasUser = false; Connection con = getConnection();
 			try (PreparedStatement ps = con.prepareStatement(sqlBuf.toString())) {
 				ps.setInt(1, usr.getID());
 				try (ResultSet rs = ps.executeQuery()) {
@@ -122,9 +120,8 @@ public class ApacheSQLAuthenticator extends SQLAuthenticator {
 		Base64.Encoder b64e = Base64.getEncoder();
 		String pwdHash = "{SHA}" + b64e.encodeToString(md.digest(pwd.getBytes()));
 
-		Connection con = null;
 		try {
-			con = getConnection();
+			Connection con = getConnection();
 			try (PreparedStatement ps = con.prepareStatement(sqlBuf.toString())) {
 				ps.setString(1, pwdHash);
 				ps.setBoolean(2, true);
@@ -160,9 +157,8 @@ public class ApacheSQLAuthenticator extends SQLAuthenticator {
 		Base64.Encoder b64e = Base64.getEncoder();
 		String pwdHash = "{SHA}" + b64e.encodeToString(md.digest(pwd.getBytes()));
 
-		Connection con = null;
 		try {
-			con = getConnection();
+			Connection con = getConnection();
 			boolean isAutoCommit = con.getAutoCommit();
 			if (isAutoCommit)
 				con.setAutoCommit(false);
@@ -222,9 +218,8 @@ public class ApacheSQLAuthenticator extends SQLAuthenticator {
 		sqlBuf.append(_props.getProperty("apachesql.table", "AUTH"));
 		sqlBuf.append(" SET ENABLED=? WHERE (ID=?)");
 		
-		Connection con = null;
 		try {
-			con = getConnection();
+			Connection con = getConnection();
 			try (PreparedStatement ps = con.prepareStatement(sqlBuf.toString())) {
 				ps.setBoolean(1, false);
 				ps.setInt(2, usr.getID());
@@ -250,9 +245,8 @@ public class ApacheSQLAuthenticator extends SQLAuthenticator {
 		sqlBuf.append(_props.getProperty("apachesql.table", "AUTH"));
 		sqlBuf.append(" WHERE (ID=?)");
 
-		Connection con = null;
 		try {
-			con = getConnection();
+			Connection con = getConnection();
 			try (PreparedStatement ps = con.prepareStatement(sqlBuf.toString())) {
 				ps.setInt(1, usr.getID());
 				ps.executeUpdate();
