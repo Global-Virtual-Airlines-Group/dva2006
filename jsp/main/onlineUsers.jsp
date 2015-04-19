@@ -4,8 +4,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html lang="en">
 <head>
 <title><content:airline /> Online Users</title>
@@ -33,7 +33,7 @@ golgotha.local.sortBy = function(combo) {
 <el:form action="users.do" method="get" validate="return false">
 <el:table className="view">
 <tr class="title">
- <td colspan="4" class="left caps"><fmt:int value="${fn:sizeof(pilots)}" /> CURRENTLY LOGGED IN USERS
+ <td colspan="4" class="left caps"><fmt:int value="${pilots.size()}" /> CURRENTLY LOGGED IN USERS
 <c:if test="${!empty maxUserDate}"> - MAXIMUM <fmt:int value="${maxUsers}" /> on <fmt:date date="${maxUserDate}" /></c:if></td>
  <td><el:cmd url="users" op="map">VIEW MAP</el:cmd></td>
  <td class="right">SORT BY <el:combo name="sortOpt" idx="*" size="1" options="${sortOptions}" value="${sortOpt}" onChange="void golgotha.local.sortBy(this)" /></td>
@@ -68,10 +68,10 @@ golgotha.local.sortBy = function(combo) {
  <td class="small"><fmt:date date="${pilot.createdOn}" fmt="d" d="EEEE MMMM dd, yyyy" /></td>
 </tr>
 <c:if test="${isHR}">
-<tr>
+<view:row entry="${session}">
  <td colspan="6">Logged in since <fmt:date date="${pilot.lastLogin}" />, from <b>${pilot.loginHost}</b><br />
 <span class="small">${session.userAgent}</span></td>
-</tr>
+</view:row>
 </c:if>
 </c:forEach>
 <c:if test="${empty pilots}">
