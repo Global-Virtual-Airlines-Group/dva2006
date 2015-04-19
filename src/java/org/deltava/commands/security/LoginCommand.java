@@ -256,6 +256,7 @@ public class LoginCommand extends AbstractCommand {
 			s.setAttribute(HTTPContext.USER_ATTR_NAME, p);
 			s.setAttribute(HTTPContext.ADDRINFO_ATTR_NAME, addrInfo);
 			s.setAttribute(HTTPContext.USERAGENT_ATTR_NAME, userAgent);
+			s.setAttribute(HTTPContext.SSL_ATTR_NAME, Boolean.valueOf(ctx.getRequest().isSecure()));
 			s.setAttribute(CommandContext.AUTH_COOKIE_NAME, cData);
 			s.setAttribute(CommandContext.SCREENX_ATTR_NAME, Integer.valueOf(cData.getScreenX()));
 			s.setAttribute(CommandContext.SCREENY_ATTR_NAME, Integer.valueOf(cData.getScreenY()));
@@ -271,7 +272,7 @@ public class LoginCommand extends AbstractCommand {
 				s.setAttribute("next_url", "home.do");
 
 			// Add the user to the User pool
-			UserPool.add(p, s.getId(), addrInfo, userAgent);
+			UserPool.add(p, s.getId(), addrInfo, userAgent, ctx.getRequest().isSecure());
 			
 			// Check if we need to save maximum users
 			if (UserPool.getMaxSizeDate().after(maxUserDate)) {

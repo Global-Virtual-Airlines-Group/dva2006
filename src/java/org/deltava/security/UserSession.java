@@ -1,22 +1,23 @@
-// Copyright 2004, 2005, 2006, 2007, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007, 2009, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
-import org.deltava.beans.Pilot;
+import org.deltava.beans.*;
 import org.deltava.beans.system.*;
 
 /**
  * A bean to store data about a User session.
  * @author Luke
- * @version 5.0
+ * @version 6.0
  * @since 1.0
  */
 
-public class UserSession implements java.io.Serializable, Comparable<UserSession> {
+public class UserSession implements java.io.Serializable, ViewEntry, Comparable<UserSession> {
 
 	private final String _sessionID;
 	private final String _userAgent;
 	private final Pilot _p;
 	private final IPBlock _addrInfo;
+	private final boolean _isSSL;
 
 	/**
 	 * Creates a new User session bean.
@@ -25,12 +26,13 @@ public class UserSession implements java.io.Serializable, Comparable<UserSession
 	 * @param addrInfo the IP block info
 	 * @param userAgent the user-agent header
 	 */
-	public UserSession(Pilot p, String sessionID, IPBlock addrInfo, String userAgent) {
+	public UserSession(Pilot p, String sessionID, IPBlock addrInfo, String userAgent, boolean isSSL) {
 		super();
 		_p = p;
 		_sessionID = sessionID;
 		_userAgent = userAgent;
 		_addrInfo = addrInfo;
+		_isSSL = isSSL;
 	}
 
 	/**
@@ -65,10 +67,20 @@ public class UserSession implements java.io.Serializable, Comparable<UserSession
 		return _userAgent;
 	}
 	
+	/**
+	 * Returns whether the session uses SSL.
+	 * @return TRUE if using SSL, otherwise FALSE
+	 */
+	public boolean isSSL() {
+		return _isSSL;
+	}
+
+	@Override
 	public int hashCode() {
 		return _p.hashCode();
 	}
 	
+	@Override
 	public String toString() {
 		return _p.getName();
 	}
@@ -76,7 +88,13 @@ public class UserSession implements java.io.Serializable, Comparable<UserSession
 	/**
 	 * Compares two user sessions by comparing their users.
 	 */
+	@Override
 	public int compareTo(UserSession usr2) {
 		return _p.compareTo(usr2._p);
+	}
+
+	@Override
+	public String getRowClassName() {
+		return _isSSL ? "opt2" : null;
 	}
 }
