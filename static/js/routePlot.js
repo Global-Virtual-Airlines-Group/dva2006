@@ -3,18 +3,12 @@ golgotha.routePlot.getAJAXParams = function()
 {
 var f = document.forms[0];
 var params = [];
-if (golgotha.form.comboSet(f.airportD)) {
+if (golgotha.form.comboSet(f.airportD))
 	params['airportD'] = golgotha.form.getCombo(f.airportD);
-	f.airportDCode.value = golgotha.form.getCombo(f.airportD);
-}
-if (golgotha.form.comboSet(f.airportA)) {
+if (golgotha.form.comboSet(f.airportA))
 	params['airportA'] = golgotha.form.getCombo(f.airportA);
-	f.airportACode.value = golgotha.form.getCombo(f.airportA);
-}
-if (golgotha.form.comboSet(f.airportL)) {
+if (golgotha.form.comboSet(f.airportL))
 	params['airportL'] = golgotha.form.getCombo(f.airportL);
-	f.airportLCode.value = golgotha.form.getCombo(f.airportL);
-}
 
 if (golgotha.form.comboSet(f.gateD)) params['gateD'] = golgotha.form.getCombo(f.gateD);
 if (golgotha.form.comboSet(f.gateA)) params['gateA'] = golgotha.form.getCombo(f.gateA);
