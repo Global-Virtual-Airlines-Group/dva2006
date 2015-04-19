@@ -20,6 +20,12 @@ golgotha.airportLoad.config.URLParams = function() {
 	return params.join('&');
 };
 
+// Get Airport code out of select option
+golgotha.airportLoad.config.getCode = function(opt) {
+	if (!opt.airport) return opt.value.toUpperCase();
+	return this.doICAO ? opt.airport.icao : opt.airport.iata;
+};
+
 // Helper functions to attach to airport/airline comboboxen
 golgotha.airportLoad.setHelpers = function(combo, addSIDSTARHook) {
 	if (combo == null) return false;
@@ -33,8 +39,10 @@ golgotha.airportLoad.setHelpers = function(combo, addSIDSTARHook) {
 };
 
 golgotha.airportLoad.updateAirportCode = function() {
-	var text = document.getElementById(this.name + 'Code');
-	if (text) text.value = this.options[this.selectedIndex].value.toUpperCase();
+	var txt = this.form[this.name + 'Code'];
+	if (!txt) return false;
+	var o = this.options[this.selectedIndex];
+	txt.value = golgotha.airportLoad.config.getCode(o);
 	return true;
 };
 
@@ -47,7 +55,7 @@ golgotha.airportLoad.updateOrigin = function(combo) {
 	return true;
 };
 
-golgotha.airportLoad.setAirport = function(code, fireEvent)
+golgotha.airportLoad.setAirport = function(code, fireEvent, sender)
 {
 if (code == null) return false;
 if (code.length < 2) {
@@ -66,6 +74,7 @@ for (var x = 0; x < this.options.length; x++) {
 	}
 }
 
+if (sender != null) sender.value = '';
 return false;
 };
 
@@ -152,10 +161,8 @@ golgotha.airportLoad.massageSelects = function(root) {
 golgotha.airportLoad.codeMassage = function() {
 	var e = window.event;
 	var c = e.which || e.keyCode;
-	if ((c > 64) && (c < 91))
+	if (((c > 64) && (c < 91)) || ((c > 96) && (c < 123)))
 		return true;
-	else if ((c > 96) && (c < 123))
-		e.target.value += String.fromCharCode(c).toUpperCase(); 
 
 	return golgotha.event.stop(e);
 };
