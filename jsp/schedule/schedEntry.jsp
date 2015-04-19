@@ -131,7 +131,7 @@ You can search for the next available Flight Leg. <el:button ID="LegSearchButton
 <tr class="airportRow">
  <td class="label">Departing From</td>
  <td class="data"><el:combo name="airportD" size="1" options="${airports}" required="true" value="${entry.airportD}" onChange="void this.updateAirportCode()" />
- <el:text ID="airportDCode" name="airportDCode" idx="*" size="3" max="4" value="${entry.airportD.ICAO}" onBlur="void document.forms[0].airportD.setAirport(this.value)" onKeypress="void golgotha.airportLoad.codeMassage()" />
+ <el:airportCode combo="airportD" idx="*" airport="${entry.airportD}" />
  at <el:text name="timeD" idx="*" size="4" max="5" value="${fn:dateFmt(entry.timeD, 'HH:mm')}" /> <span class="small">(Format: HH:mm)</span></td>
 </tr>
 <content:hasmsg>
@@ -143,7 +143,7 @@ You can search for the next available Flight Leg. <el:button ID="LegSearchButton
 <tr class="airportRow">
  <td class="label">Arriving At</td>
  <td class="data"><el:combo name="airportA" size="1" options="${airports}" required="true" value="${entry.airportA}" onChange="void this.updateAirportCode()" />
- <el:text ID="airportACode" name="airportACode" idx="*" size="3" max="4" value="${entry.airportA.ICAO}" onBlur="void document.forms[0].airportA.setAirport(this.value)" onKeypress="void golgotha.airportLoad.codeMassage()" />
+ <el:airportCode combo="airportA" idx="*" airport="${entry.airportA}" />
  at <el:text name="timeA" idx="*" size="4" max="5" value="${fn:dateFmt(entry.timeA, 'HH:mm')}" /> <span class="small">(Format: HH:mm)</span></td>
 </tr>
 <tr>

@@ -65,12 +65,12 @@ golgotha.onDOMReady(function() {
 <tr>
  <td class="label">Departing from</td>
  <td class="data"><el:combo name="airportD" size="1" idx="*" className="req" options="${aD}" value="${lastFlight.airportA}" firstEntry="-" onChange="void this.updateAirportCode()" />
- <el:text name="airportDCode" size="4" max="4" idx="*" value="" onKeypress="void golgotha.airportLoad.codeMassage()" /></td>
+ <el:airportCode combo="airportD" airport="${lastFlight.airportD}" /></td>
 </tr>
 <tr>
  <td class="label">Arriving at</td>
  <td class="data"><el:combo name="airportA" size="1" idx="*" className="req" options="${aA}" value="${lastFlight.airportD}" firstEntry="-" onChange="void this.updateAirportCode()" />
- <el:text name="airportACode" size="4" max="4" idx="*" value="" onKeypress="void golgotha.airportLoad.codeMassage()" /></td>
+ <el:airportCode combo="airportA" airport="${lastFlight.airportA}" /></td>
 </tr>
 </el:table>
 
