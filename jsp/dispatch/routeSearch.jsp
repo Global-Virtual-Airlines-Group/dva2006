@@ -50,10 +50,10 @@ return true;
 <tr>
  <td class="label">Departing from</td>
  <td class="data"><el:combo name="airportD" idx="*" size="1" options="${airports}" firstEntry="-" value="${airportD}" onChange="void this.updateAirportCode()" />
- <el:text name="airportDCode" idx="*" size="3" max="4" value="${airportD.IATA}" onBlur="void document.forms[0].airportD.setAirport(this.value)" onKeypress="void golgotha.airportLoad.codeMassage()" /></td>
+ <el:airportCode combo="airportD" idx="*" airport="${airportD}" /></td>
  <td class="label">Arriving at</td>
  <td class="data"><el:combo name="airportA" idx="*" size="1" options="${airports}" firstEntry="-" value="${airportA}" onChange="void this.updateAirportCode()" />
- <el:text name="airportACode" idx="*" size="3" max="4" value="${airportA.IATA}" onBlur="void document.forms[0].airportA.setAirport(this.value)" onKeypress="void golgotha.airportLoad.codeMassage()" /></td>
+ <el:airportCode combo="airportA" idx="*" airport="${airportA}" /></td>
 </tr>
 </el:table>
 
