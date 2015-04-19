@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.filter;
 
 import java.io.IOException;
@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A servlet filter to handle persistent authentication cookies.
  * @author Luke
- * @version 5.4
+ * @version 6.0
  * @since 1.0
  * @see SecurityCookieData
  * @see SecurityCookieGenerator
@@ -218,7 +218,7 @@ public class SecurityCookieFilter implements Filter {
 							
 						// Check if we are a superUser impersonating someone
 						Pilot su = (Pilot) s.getAttribute(SU_ATTR_NAME);
-						UserPool.add((su != null) ? su : p, s.getId(), addrInfo, userAgent);
+						UserPool.add((su != null) ? su : p, s.getId(), addrInfo, userAgent, req.isSecure());
 					} else
 						throw new SecurityException(p.getName() + " status = " + p.getStatusName());
 				} catch (SecurityException se) {
