@@ -89,13 +89,11 @@ golgotha.onDOMReady(function() {
 </tr>
 <tr>
  <td class="label">Departing from</td>
- <td class="data"><el:combo name="airportD" size="1" idx="*" className="req" options="${emptyList}" firstEntry="-" onChange="void this.updateAirportCode()" />
- <el:text name="airportDCode" size="4" max="4" idx="*" value="" onBlur="void document.forms[0].airportD.setAirport(this.value)" onKeypress="void golgotha.airportLoad.codeMassage()" /></td>
+ <td class="data"><el:combo name="airportD" size="1" idx="*" className="req" options="${emptyList}" firstEntry="-" onChange="void this.updateAirportCode()" /> <el:airportCode combo="airportD" /></td>
 </tr>
 <tr>
  <td class="label">Arriving at</td>
- <td class="data"><el:combo name="airportA" size="1" idx="*" className="req" options="${emptyList}" firstEntry="-" onChange="void this.updateAirportCode()" />
- <el:text name="airportACode" size="4" max="4" idx="*" value="" onBlur="void document.forms[0].airportA.setAirport(this.value)" onKeypress="void golgotha.airportLoad.codeMassage()" /></td>
+ <td class="data"><el:combo name="airportA" size="1" idx="*" className="req" options="${emptyList}" firstEntry="-" onChange="void this.updateAirportCode()" /> <el:airportCode combo="airportA" /></td>
 </tr>
 </el:table>
 

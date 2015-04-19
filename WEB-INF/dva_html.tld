@@ -562,6 +562,39 @@
 			<type>java.lang.Boolean</type>
 		</attribute>
 	</tag>
+	
+	<!-- Field tag, for defining airport codes -->
+	<tag>
+		<name>airportCode</name>
+		<tag-class>org.deltava.taglib.html.AirportCodeTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<name>combo</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>className</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>ID</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>idx</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>airport</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>org.deltava.beans.schedule.Airport</type>
+		</attribute>
+	</tag>
 
 	<!-- Field tag, for defining HTML5 e-mail fields -->
 	<tag>

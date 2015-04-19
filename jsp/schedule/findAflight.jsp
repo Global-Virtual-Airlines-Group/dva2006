@@ -76,7 +76,7 @@ golgotha.ff.refreshAirports = function() {
 
 golgotha.ff.refreshNV = function(checkbox, cboName, isDest)
 {
-var f = document.forms[0];
+var f = checkbox.form;
 var srcA = golgotha.form.getCombo(f.airportD);
 var cfg = golgotha.airportLoad.config.clone();
 cfg.airline = golgotha.form.getCombo(f.airline); cfg.notVisited = checkbox.checked;
@@ -144,12 +144,12 @@ golgotha.onDOMReady(function() {
 <tr>
  <td class="label">Departing from</td>
  <td class="data"><el:combo name="airportD" idx="*" size="1" firstEntry="-" options="${airports}" value="${fafCriteria.airportD}" onChange="this.updateAirportCode(); golgotha.airportLoad.updateOrigin(this)" />
- <el:text ID="airportDCode" name="airportDCode" idx="*" size="3" max="4" onBlur="void document.forms[0].airportD.setAirport(this.value, true)" onKeypress="void golgotha.airportLoad.codeMassage()"  />
- <el:box name="nVD" value="true" checked="${param.nVD}" label="Only include unvisited Airports" onChange="void golgotha.ff.refreshNV(this, 'airportD')" /></td>
+ <el:airportCode combo="airportD" idx="*" airport="${fafCriteria.airportD}" />
+ <el:box name="nVD" value="true" className="small" checked="${param.nVD}" label="Only include unvisited Airports" onChange="void golgotha.ff.refreshNV(this, 'airportD')" /></td>
  <td class="label">Arriving at</td>
  <td class="data"><el:combo name="airportA" idx="*" size="1" firstEntry="-" options="${airportsA}" value="${fafCriteria.airportA}" onChange="void this.updateAirportCode()" />
- <el:text ID="airportACode" name="airportACode" idx="*" size="3" max="4" onBlur="void document.forms[0].airportA.setAirport(this.value, true)" onKeypress="void golgotha.airportLoad.codeMassage()"  />
- <el:box name="nVA" value="true" checked="${param.nVA}" label="Only include unvisited Airports" onChange="void golgotha.ff.refreshNV(this, 'airportA', true)" /></td>
+ <el:airportCode combo="airportA" idx="*" airport="${fafCriteria.airportA}" />
+ <el:box name="nVA" value="true" className="small" checked="${param.nVA}" label="Only include unvisited Airports" onChange="void golgotha.ff.refreshNV(this, 'airportA', true)" /></td>
 </tr>
 <tr>
  <td class="label">Departure Time (+/- 2h)</td>

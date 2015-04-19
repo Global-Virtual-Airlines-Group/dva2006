@@ -60,9 +60,9 @@ golgotha.onDOMReady(function() {
 </tr>
 <tr class="title">
  <td class="right" colspan="7">FLIGHTS FROM <el:combo name="airportD" idx="*" size="1" className="small" options="${airportsD}" value="${airportD}" onChange="void golgotha.local.setAirportD(this)" />
- <el:text name="airportDCode" idx="*" size="3" max="4" value="${useICAO ? airportD.ICAO : airportD.IATA}" onBlur="void document.forms[0].airportD.setAirport(this.value, true)" /> TO
+ <el:airportCode combo="airportD" airport="${airportD}" idx="*" /> TO
  <el:combo name="airportA" idx="*" size="1" className="small" firstEntry="-" options="${airportsA}" value="${airportA}" onChange="void golgotha.local.setAirportA(this)" />
- <el:text name="airportACode" idx="*" size="3" max="4" value="${useICAO ? airportA.ICAO : airportA.IATA}" onBlur="void document.forms[0].airportA.setAirport(this.value, true)" />
+ <el:airportCode combo="airportA" airport="${airportA}" idx="*" />
 <c:if test="${isSchedule}"><el:cmdbutton url="sched" op="edit" label="NEW FLIGHT SCHEDULE ENTRY" /></c:if></td>
 </tr>
 <tr class="title caps">

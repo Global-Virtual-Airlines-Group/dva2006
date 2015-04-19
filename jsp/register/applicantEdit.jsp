@@ -80,7 +80,7 @@ golgotha.onDOMReady(function() {
 <tr>
  <td class="label">Home Airport</td>
  <td class="data"><el:combo name="homeAirport" size="1" idx="*" options="${airports}" required="true" value="${homeAirport}" onChange="void this.updateAirportCode()" />
- <el:text name="homeAirportCode" ID="homeAirportCode" size="3" max="4" onBlur="void document.forms[0].homeAirport.setAirport(this.value)" onKeypress="void golgotha.airportLoad.codeMassage()" /></td>
+ <el:text name="homeAirportCode" ID="homeAirportCode" size="3" max="4" onBlur="void document.forms[0].homeAirport.setAirport(this.value)" /></td>
 </tr>
 <tr>
  <td class="label">Location</td>
