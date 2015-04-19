@@ -2,15 +2,14 @@
 package org.deltava.commands.cooler;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.net.*;
 import java.sql.Connection;
 
 import org.deltava.beans.cooler.MessageThread;
-
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -33,14 +32,16 @@ public class UnreadClearCommand extends AbstractCommand {
 			Connection con = ctx.getConnection();
 			GetCoolerThreads mtdao = new GetCoolerThreads(con);
 			List<MessageThread> threads = mtdao.getSince(ctx.getUser().getLastLogoff(), true);
+			threads.addAll(mtdao.getSince(CalendarUtils.adjust(null, -60), true));
+			Collection<Integer> threadIDs = threads.stream().map(mt -> Integer.valueOf(mt.getID())).collect(Collectors.toSet());
 
 			// Mark as read
 			ctx.startTX();
 			SetCoolerMessage lrdao = new SetCoolerMessage(con);
-			for (MessageThread mt : threads)
-				lrdao.markRead(mt.getID(), ctx.getUser().getID());
+			for (Integer id : threadIDs)
+				lrdao.markRead(id.intValue(), ctx.getUser().getID());
 
-			ctx.commitTX();
+			//ctx.commitTX();
 		} catch (DAOException de) {
 			ctx.rollbackTX();
 			throw new CommandException(de);
@@ -54,8 +55,12 @@ public class UnreadClearCommand extends AbstractCommand {
 		if (!StringUtils.isEmpty(referer) && (!referer.contains("login"))) {
 			try {
 				URL url = new URL(referer);
-				if (SystemData.get("airline.url").equalsIgnoreCase(url.getHost()))
-					result.setURL(referer);
+				if (SystemData.get("airline.url").equalsIgnoreCase(url.getHost())) {
+					if (referer.indexOf('?') > 0)
+						result.setURL(referer + "&noCache=true");
+					else
+						result.setURL(referer + "?noCache=true");
+				}
 			} catch (MalformedURLException mue) {
 				// empty
 			}
