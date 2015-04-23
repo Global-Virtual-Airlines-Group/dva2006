@@ -107,16 +107,17 @@ public class MirrorAuthenticator extends MultiAuthenticator {
 		clearConnection(_src);
 		for (Iterator<Authenticator> i = _dst.iterator(); i.hasNext();) {
 			Authenticator dst = i.next();
+			setConnection(dst);
 			if (dst.accepts(usr)) {
-				setConnection(dst);
 				try {
 					dst.add(usr, pwd);
 				} catch (SecurityException se) {
-					throw se;
-				} finally {
 					clearConnection(dst);
+					throw se;
 				}
 			}
+			
+			clearConnection(dst);
 		}
 	}
 
