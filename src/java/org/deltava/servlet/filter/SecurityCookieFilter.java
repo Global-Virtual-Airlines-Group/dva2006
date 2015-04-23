@@ -90,7 +90,6 @@ public class SecurityCookieFilter implements Filter {
 		// Cast the request/response since we are doing stuff with them
 		HttpServletRequest hreq = (HttpServletRequest) req;
 		HttpServletResponse hrsp = (HttpServletResponse) rsp;
-		String remoteAddr = req.getRemoteAddr();
 
 		// Check for the authentication cookie
 		String authCookie = getCookie(hreq, AUTH_COOKIE_NAME);
@@ -101,11 +100,12 @@ public class SecurityCookieFilter implements Filter {
 
 		// Decrypt the cookie
 		HttpSession s = hreq.getSession(true);
+		String remoteAddr = req.getRemoteAddr();
 		SecurityCookieData cData = (SecurityCookieData) s.getAttribute(AUTH_COOKIE_NAME);
 		if (cData == null) {
 			try {
 				cData = SecurityCookieGenerator.readCookie(authCookie);
-				if (SystemData.getBoolean("security.cookie.checkIP")) {
+				if (!hreq.isSecure() && SystemData.getBoolean("security.cookie.checkIP")) {
 					if ((cData != null) && (!remoteAddr.equals(cData.getRemoteAddr())))
 						throw new SecurityException(remoteAddr + " != " + cData.getRemoteAddr());
 				}
@@ -128,11 +128,11 @@ public class SecurityCookieFilter implements Filter {
 			cData = null;
 			p = null;
 		} else if (cData != null) {
-			long timeUntilExpiry = (cData.getExpiryDate() - System.currentTimeMillis()) / 1000;
+			long timeUntilExpiry = (cData.getExpiryDate() - System.currentTimeMillis());
 			
 			// Renew the cookie if it's about to expire
-			if (timeUntilExpiry < 600) {
-				cData.setExpiryDate(cData.getExpiryDate() + (1800 * 1000));
+			if (timeUntilExpiry < 600_000) {
+				cData.setExpiryDate(cData.getExpiryDate() + 3600_000);
 				String newCookie = SecurityCookieGenerator.getCookieData(cData);
 				hrsp.addCookie(new Cookie(AUTH_COOKIE_NAME, newCookie));	
 			}
