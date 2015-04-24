@@ -41,7 +41,7 @@ public class UnreadClearCommand extends AbstractCommand {
 			for (Integer id : threadIDs)
 				lrdao.markRead(id.intValue(), ctx.getUser().getID());
 
-			//ctx.commitTX();
+			ctx.commitTX();
 		} catch (DAOException de) {
 			ctx.rollbackTX();
 			throw new CommandException(de);
@@ -56,10 +56,11 @@ public class UnreadClearCommand extends AbstractCommand {
 			try {
 				URL url = new URL(referer);
 				if (SystemData.get("airline.url").equalsIgnoreCase(url.getHost())) {
+					long now = System.currentTimeMillis() / 1000;
 					if (referer.indexOf('?') > 0)
-						result.setURL(referer + "&noCache=true");
+						result.setURL(referer + "&noCache=" + now);
 					else
-						result.setURL(referer + "?noCache=true");
+						result.setURL(referer + "?noCache=" + now);
 				}
 			} catch (MalformedURLException mue) {
 				// empty
