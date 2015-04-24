@@ -39,10 +39,18 @@ public class LoginCommand extends AbstractCommand {
 
 		// Get the command result
 		CommandResult result = ctx.getResult();
+		boolean isSecure = ctx.getRequest().isSecure();
 
 		// If we're already logged in, just redirect to home
+		boolean hasSSL = SystemData.getApp(SystemData.get("airline.code")).getSSL();
 		if (ctx.isAuthenticated()) {
 			result.setURL("home.do");
+			result.setType(ResultType.REDIRECT);
+			result.setSuccess(true);
+			return;
+		} else if (hasSSL && !isSecure && (ctx.getCookie("secureLogin") != null)) {
+			HttpServletRequest req = ctx.getRequest();
+			result.setURL("https://" + req.getServerName() + req.getRequestURI());
 			result.setType(ResultType.REDIRECT);
 			result.setSuccess(true);
 			return;
@@ -53,8 +61,12 @@ public class LoginCommand extends AbstractCommand {
 		if (!StringUtils.isEmpty(referer) && (!referer.contains("login"))) {
 			try {
 				URL url = new URL(referer);
-				if (SystemData.get("airline.url").equalsIgnoreCase(url.getHost()))
-					ctx.setAttribute("referTo", referer, REQUEST);
+				if (SystemData.get("airline.url").equalsIgnoreCase(url.getHost())) {
+					if (isSecure && !"https".equals(url.getProtocol()))
+						ctx.setAttribute("referTo", referer.replace("http:", "https:"), REQUEST);
+					else
+						ctx.setAttribute("referTo", referer, REQUEST);
+				}
 			} catch (MalformedURLException mue) {
 				log.warn("Invalid HTTP referer - " + referer);
 			}
@@ -202,9 +214,23 @@ public class LoginCommand extends AbstractCommand {
 			Cookie c = new Cookie(CommandContext.AUTH_COOKIE_NAME, SecurityCookieGenerator.getCookieData(cData));
 			c.setMaxAge(-1);
 			c.setHttpOnly(true);
-			c.setSecure(ctx.getRequest().isSecure());
+			c.setSecure(isSecure);
 			c.setPath("/");
 			ctx.getResponse().addCookie(c);
+			
+			// Set secure only cookie if requested
+			boolean doSecureLogin = Boolean.valueOf(ctx.getParameter("secureLogin")).booleanValue();
+			if (doSecureLogin) {
+				c = new Cookie("secureLogin", "1");
+				c.setHttpOnly(true);
+				c.setPath(ctx.getRequest().getRequestURI());
+				c.setMaxAge(365 * 86400);
+				ctx.getResponse().addCookie(c);
+			} else if (isSecure) {
+				c = new Cookie("secureLogin", "");
+				c.setMaxAge(0);
+				ctx.getResponse().addCookie(c);
+			}
 
 			// Check if we have an address validation entry outstanding
 			GetAddressValidation avdao = new GetAddressValidation(con);
