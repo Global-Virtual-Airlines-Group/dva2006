@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.lifecycle;
 
 import java.sql.*;
@@ -20,7 +20,7 @@ import org.gvagroup.jdbc.ConnectionPoolException;
 /**
  * A servlet lifecycle event listener to handle user logins and logouts.
  * @author Luke
- * @version 3.1
+ * @version 6.0
  * @since 1.0
  */
 
@@ -32,9 +32,10 @@ public class UserListener implements HttpSessionListener {
 	 * Called on the creation of a new HTTP session.
 	 * @param e the lifecycle event
 	 */
+	@Override
 	public void sessionCreated(HttpSessionEvent e) {
 		HttpSession s = e.getSession();
-		s.setAttribute(CommandContext.USRLISTENER_ATTR_NAME, new UserStartupListener());
+		s.setAttribute(CommandContext.USRLISTENER_ATTR_NAME, UserStartupListener.INSTANCE);
 		if (log.isDebugEnabled())
 			log.debug("Created Session " + s.getId());
 	}
@@ -43,6 +44,7 @@ public class UserListener implements HttpSessionListener {
 	 * Called on the termination of an HTTP session.
 	 * @param e the lifecycle event
 	 */
+	@Override
 	public void sessionDestroyed(HttpSessionEvent e) {
 		HttpSession s = e.getSession();
 		if (log.isDebugEnabled())
