@@ -22,11 +22,11 @@ import static org.deltava.commands.HTTPContext.*;
 public class UserStartupListener implements java.io.Serializable, HttpSessionActivationListener {
 
 	private transient static final Logger log = Logger.getLogger(UserStartupListener.class);
+	
+	static transient final UserStartupListener INSTANCE = new UserStartupListener();
 
-	/**
-	 * Package-private constructor.
-	 */
-	UserStartupListener() {
+	// singleton
+	private UserStartupListener() {
 		super();
 	}
 
@@ -74,5 +74,10 @@ public class UserStartupListener implements java.io.Serializable, HttpSessionAct
 		} catch (IllegalStateException ise) {
 			log.error("Attempting to restore invalid Session");
 		}
+	}
+	
+	@Override
+	public String toString() {
+		return getClass().getName();
 	}
 }
