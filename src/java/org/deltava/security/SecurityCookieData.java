@@ -1,18 +1,18 @@
-// Copyright 2005, 2006, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2011, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 /**
  * A bean containing data stored in the security cookie.
  * @author Luke
- * @version 3.6
+ * @version 6.0
  * @since 1.0
  */
 
 public class SecurityCookieData implements java.io.Serializable {
     
-    private static final long DEFAULT_EXPIRY = 360 * 60000; // 6 hours
+    private transient static final long DEFAULT_EXPIRY = 360 * 60000; // 6 hours
     
- 	private String _userID;
+ 	private final String _userID;
 	private String _remoteAddr;
 	private long _loginDate;
 	private long _expiryDate;
@@ -27,7 +27,7 @@ public class SecurityCookieData implements java.io.Serializable {
     public SecurityCookieData(String userID) {
         super();
         _userID = userID;
-        setExpiryDate(System.currentTimeMillis() + SecurityCookieData.DEFAULT_EXPIRY);
+        setExpiryDate(System.currentTimeMillis() + DEFAULT_EXPIRY);
     }
     
     /**
@@ -118,5 +118,13 @@ public class SecurityCookieData implements java.io.Serializable {
  	public void setScreenSize(int width, int height) {
  	   _screenX = width;
  	   _screenY = height;
+ 	}
+ 	
+ 	@Override
+ 	public String toString() {
+ 		StringBuilder buf = new StringBuilder(_userID);
+ 		buf.append('@');
+ 		buf.append(_remoteAddr);
+ 		return buf.toString();
  	}
 }

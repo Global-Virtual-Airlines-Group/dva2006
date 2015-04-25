@@ -279,6 +279,7 @@ public class LoginCommand extends AbstractCommand {
 			// Create the session and stuff in the pilot data
 			String userAgent = ctx.getRequest().getHeader("user-agent");
 			HttpSession s = ctx.getRequest().getSession(true);
+			s.setAttribute("java.util.Locale", Locale.US);
 			s.setAttribute(HTTPContext.USER_ATTR_NAME, p);
 			s.setAttribute(HTTPContext.ADDRINFO_ATTR_NAME, addrInfo);
 			s.setAttribute(HTTPContext.USERAGENT_ATTR_NAME, userAgent);
