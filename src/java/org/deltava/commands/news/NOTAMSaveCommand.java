@@ -1,20 +1,23 @@
-// Copyright 2005, 2006, 2007, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2011, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.news;
 
 import java.util.Collection;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
+import org.deltava.beans.fb.NewsEntry;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+import org.deltava.dao.http.SetFacebookData;
 import org.deltava.mail.*;
-
 import org.deltava.security.command.NewsAccessControl;
+import org.deltava.util.StringUtils;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to save NOTAM entries.
  * @author Luke
- * @version 3.6
+ * @version 6.0
  * @since 1.0
  */
 
@@ -25,6 +28,7 @@ public class NOTAMSaveCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Check if we're creating a new System News entry
@@ -84,6 +88,19 @@ public class NOTAMSaveCommand extends AbstractCommand {
 			// Get the write DAO and save the entry
 			SetNews wdao = new SetNews(con);
 			wdao.write(nws);
+			
+			// Write Facebook updates
+			if (isNew && !StringUtils.isEmpty(SystemData.get("users.facebook.id"))) {
+				NewsEntry fbnws = new NewsEntry(mctxt.getBody());
+				
+				// Write to user feed or app page
+				SetFacebookData fbwdao = new SetFacebookData();
+				fbwdao.setWarnMode(true);
+				fbwdao.setAppID(SystemData.get("users.facebook.pageID"));
+				fbwdao.setToken(SystemData.get("users.facebook.pageToken"));
+				fbwdao.writeApp(fbnws);
+				ctx.setAttribute("isFBPost", Boolean.TRUE, REQUEST);
+			}
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
@@ -95,7 +112,7 @@ public class NOTAMSaveCommand extends AbstractCommand {
 			Mailer mailer = new Mailer(ctx.getUser());
 			mailer.setContext(mctxt);
 			mailer.send(pilots);
-			ctx.setAttribute("notifyUsers", new Integer(pilots.size()), REQUEST);
+			ctx.setAttribute("notifyUsers", Integer.valueOf(pilots.size()), REQUEST);
 		}
 
 		// Set status attributes
