@@ -9,12 +9,7 @@
 <c:set var="opName" value="${isCreate ? 'created' : 'updated'}" scope="page" />
 <html lang="en">
 <head>
-<c:if test="${isNews}">
-<title><content:airline /> System News Updated</title>
-</c:if>
-<c:if test="${isNOTAM}">
-<title><content:airline /> NOTAM Updated</title>
-</c:if>
+<title><content:airline /> ${entryType} Updated</title>
 <content:css name="main" />
 <content:pics />
 </head>
@@ -31,10 +26,11 @@
 <c:if test="${!isDelete}">
 This ${entryType} has been successfully ${opName} in the database.<br />
 <c:if test="${!empty notifyUsers}">
-<fmt:int value="${notifyUsers}" /> <content:airline /> Pilots have been notified via e-mail.<br />
-</c:if>
+<fmt:int value="${notifyUsers}" /> <content:airline /> Pilots have been notified via e-mail.<br /></c:if>
+<c:if test="${!empty isFBPost}">
+This ${entryType } has been successfully posted to the <content:airline /> Facebook page.<br /></c:if>
 <br />
-To view it, please <el:cmd url="${isNews ? 'news' : 'notams'}">Click Here</el:cmd>.<br />
+To view it, please <el:cmd className="sec bld" url="${isNews ? 'news' : 'notams'}">Click Here</el:cmd>.<br />
 </c:if>
 <c:if test="${isDelete}">
 This ${entryType} has been successfully removed from the database.<br />
