@@ -1,4 +1,4 @@
-// Copyright 2008, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2012, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display the SIDs and STARs for a particular Airport pair.
  * @author Luke
- * @version 5.1
+ * @version 6.0
  * @since 2.2
  */
 
@@ -69,8 +69,6 @@ public class TerminalRouteService extends WebService {
 			ctx.setContentType("text/javascript", "UTF-8");
 			ctx.println(ro.toString());
 			ctx.commit();
-		} catch (JSONException je) { 
-			throw error(SC_INTERNAL_SERVER_ERROR, "Data Error", je);
 		} catch (IOException ie) {
 			throw error(SC_CONFLICT, "I/O Error");
 		}

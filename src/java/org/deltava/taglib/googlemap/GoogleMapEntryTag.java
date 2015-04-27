@@ -74,13 +74,9 @@ abstract class GoogleMapEntryTag extends JSTag {
 
 		// Build the JS call
 		JSONObject jo = new JSONObject();
-		try {
-			jo.put("color", color);
-			if (label != null)
-				jo.put("info", label);
-		} catch (JSONException je) {
-			// empty
-		}
+		jo.put("color", color);
+		if (label != null)
+			jo.put("info", label);
 		
 		StringBuilder buf = new StringBuilder();
 		buf.append("new golgotha.maps.Marker(");
@@ -107,14 +103,10 @@ abstract class GoogleMapEntryTag extends JSTag {
 
 		// Build the options
 		JSONObject jo = new JSONObject();
-		try {
-			jo.put("pal", paletteCode);
-			jo.put("icon", iconCode);
-			if (label != null)
-				jo.put("info", label);
-		} catch (JSONException je) {
-			// empty
-		}
+		jo.put("pal", paletteCode);
+		jo.put("icon", iconCode);
+		if (label != null)
+			jo.put("info", label);
 
 		// Build the JS call
 		StringBuilder buf = new StringBuilder("new golgotha.maps.IconMarker(");

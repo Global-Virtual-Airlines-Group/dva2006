@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.util.*;
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
  * A Web Service to process Airport List AJAX requests.
  * @author Luke
  * @author Rahul
- * @version 5.3
+ * @version 6.0
  * @since 1.0
  */
 
@@ -165,8 +165,6 @@ public class AirportListService extends WebService {
 			ctx.setExpiry(3600);
 			ctx.println(ja.toString());
 			ctx.commit();
-		} catch (JSONException je) {
-			throw error(SC_INTERNAL_SERVER_ERROR, "Data Error", je);
 		} catch (IOException ie) {
 			throw error(SC_CONFLICT, "I/O Error", false);
 		}
