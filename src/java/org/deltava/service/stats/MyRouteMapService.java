@@ -1,4 +1,4 @@
-// Copyright 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -18,7 +18,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display a Pilot's Flight Report routes to a Google map.
  * @author Luke
- * @version 5.4
+ * @version 6.0
  * @since 5.4
  */
 
@@ -62,42 +62,39 @@ public class MyRouteMapService extends WebService {
 		Collections.sort(routes, Collections.reverseOrder());
 		int max = Math.max(1, routes.get(0).getFlights());
 		JSONObject jo = new JSONObject();
-		try {
-			// Add airports
-			JSONArray aa = new JSONArray();
-			for (Airport a : airports) {
-				JSONObject ao = new JSONObject();
-				ao.put("ll", GeoUtils.toJSON(a));
-				ao.put("icao", a.getICAO());
-				ao.put("code", (ac == Airport.Code.ICAO) ? a.getICAO() : a.getIATA());
-				ao.put("name", a.getName());
-				ao.put("desc", a.getInfoBox());
-				aa.put(ao);
-			}
-		
-			// Add route data
-			JSONArray ra = new JSONArray();
-			for (RouteStats r : routes) {
-				JSONObject ro = new JSONObject();
-				ro.put("ll", GeoUtils.toJSON(r));
-				ro.put("desc", r.getInfoBox());
-				ro.put("ratio", Math.max(1, r.getFlights() * 100 / max));
-				JSONArray pa = new JSONArray();
-				for (GeoLocation loc : r.getPoints())
-					pa.put(GeoUtils.toJSON(loc));
-				
-				ro.put("src", r.getAirportD().getICAO());
-				ro.put("dst", r.getAirportA().getICAO());
-				ro.put("points", pa);
-				ra.put(ro);
-			}
-			
-			// Aggregate
-			jo.put("airports", aa);
-			jo.put("routes", ra);
-		} catch (JSONException je) {
-			throw error(SC_INTERNAL_SERVER_ERROR, je.getMessage(), je);
+
+		// Add airports
+		JSONArray aa = new JSONArray();
+		for (Airport a : airports) {
+			JSONObject ao = new JSONObject();
+			ao.put("ll", GeoUtils.toJSON(a));
+			ao.put("icao", a.getICAO());
+			ao.put("code", (ac == Airport.Code.ICAO) ? a.getICAO() : a.getIATA());
+			ao.put("name", a.getName());
+			ao.put("desc", a.getInfoBox());
+			aa.put(ao);
 		}
+		
+		// Add route data
+		JSONArray ra = new JSONArray();
+		for (RouteStats r : routes) {
+			JSONObject ro = new JSONObject();
+			ro.put("ll", GeoUtils.toJSON(r));
+			ro.put("desc", r.getInfoBox());
+			ro.put("ratio", Math.max(1, r.getFlights() * 100 / max));
+			JSONArray pa = new JSONArray();
+			for (GeoLocation loc : r.getPoints())
+				pa.put(GeoUtils.toJSON(loc));
+				
+			ro.put("src", r.getAirportD().getICAO());
+			ro.put("dst", r.getAirportA().getICAO());
+			ro.put("points", pa);
+			ra.put(ro);
+		}
+			
+		// Aggregate
+		jo.put("airports", aa);
+		jo.put("routes", ra);
 		
 		// Dump the JSON to the output stream
 		try {
