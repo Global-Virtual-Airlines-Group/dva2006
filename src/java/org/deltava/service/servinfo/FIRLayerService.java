@@ -1,4 +1,4 @@
-// Copyright 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.servinfo;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -44,22 +44,18 @@ public class FIRLayerService extends WebService {
 		
 		// Format the data
 		JSONArray ja = new JSONArray();
-		try {
-			for (FIR f : results) {
-				JSONObject fo = new JSONObject();
-				fo.put("id", f.getID());
-				fo.put("name", f.toString());
-				fo.put("oceanic", f.isOceanic());
-				fo.put("aux", f.isAux());
-				JSONArray co = new JSONArray();
-				for (GeoLocation loc : f.getBorder())
+		for (FIR f : results) {
+			JSONObject fo = new JSONObject();
+			fo.put("id", f.getID());
+			fo.put("name", f.toString());
+			fo.put("oceanic", f.isOceanic());
+			fo.put("aux", f.isAux());
+			JSONArray co = new JSONArray();
+			for (GeoLocation loc : f.getBorder())
 				co.put(GeoUtils.toJSON(loc));
 			
-				fo.put("border", co);
-				ja.put(fo);
-			}
-		} catch (JSONException je) {
-			throw error(SC_INTERNAL_SERVER_ERROR, je.getMessage(), je);
+			fo.put("border", co);
+			ja.put(fo);
 		}
 		 
 		// Dump to the output stream
