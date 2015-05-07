@@ -8,7 +8,6 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 import org.apache.log4j.Logger;
-
 import org.deltava.beans.*;
 import org.deltava.beans.system.IPBlock;
 import org.deltava.crypt.*;
@@ -19,7 +18,6 @@ import static org.deltava.commands.CommandContext.*;
 
 import org.deltava.dao.*;
 import org.gvagroup.jdbc.*;
-
 import org.deltava.util.*;
 import org.deltava.util.NetworkUtils.AddressType;
 import org.deltava.util.system.SystemData;
@@ -90,6 +88,22 @@ public class SecurityCookieFilter implements Filter {
 		// Cast the request/response since we are doing stuff with them
 		HttpServletRequest hreq = (HttpServletRequest) req;
 		HttpServletResponse hrsp = (HttpServletResponse) rsp;
+		
+		// Check if we are logged in via SSL but not using secure right now
+		if (!hreq.isSecure()) {
+			boolean isLoggedIn = Boolean.valueOf(getCookie(hreq, HAS_SECURE_LOGIN_COOKIE_NAME)).booleanValue(); 
+			if (isLoggedIn) {
+				StringBuilder buf = new StringBuilder("https://");
+				buf.append(hreq.getServerName());
+				buf.append(hreq.getRequestURI());
+				String q = hreq.getQueryString();
+				if (q != null)
+					buf.append('?').append(q);
+					
+				hrsp.sendRedirect(buf.toString());
+				return;
+			}
+		}
 
 		// Check for the authentication cookie
 		String authCookie = getCookie(hreq, AUTH_COOKIE_NAME);
