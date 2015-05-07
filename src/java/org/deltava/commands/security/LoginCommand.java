@@ -221,10 +221,15 @@ public class LoginCommand extends AbstractCommand {
 			// Set secure only cookie if requested
 			boolean doSecureLogin = Boolean.valueOf(ctx.getParameter("secureLogin")).booleanValue();
 			if (doSecureLogin) {
-				c = new Cookie("secureLogin", "1");
+				c = new Cookie("secureLogin", "true");
 				c.setHttpOnly(true);
 				c.setPath(ctx.getRequest().getRequestURI());
 				c.setMaxAge(365 * 86400);
+				ctx.getResponse().addCookie(c);
+				c = new Cookie(CommandContext.HAS_SECURE_LOGIN_COOKIE_NAME, "true");
+				c.setHttpOnly(true);
+				c.setMaxAge(-1);
+				c.setPath("/");
 				ctx.getResponse().addCookie(c);
 			} else if (isSecure) {
 				c = new Cookie("secureLogin", "");
