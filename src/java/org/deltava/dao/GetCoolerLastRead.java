@@ -1,4 +1,4 @@
-// Copyright 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.DatabaseBean;
 /**
  * A Data Access Object to read Water Cooler last read marks.
  * @author Luke
- * @version 5.4
+ * @version 6.0
  * @since 5.4
  */
 
@@ -44,6 +44,8 @@ public class GetCoolerLastRead extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Map<Integer, java.util.Date> getLastRead(Collection<?> ids, int userID) throws DAOException {
+		if (ids.isEmpty())
+			return Collections.emptyMap();
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT ID, LASTREAD FROM common.COOLER_LASTREAD WHERE "
