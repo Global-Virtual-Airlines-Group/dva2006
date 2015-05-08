@@ -108,8 +108,8 @@
 		<delete dir="${java.io.tmpdir}/junit" />
 		<delete dir="${java.io.tmpdir}/junit_report" />
 	</target>
-
-	<target name="compile" description="Compile the Java classes">
+	
+	<target name="compile" unless="task.compile" description="Compile the Java classes">
 		<!-- Set build date/time -->
 		<tstamp>
 			<format property="build_utc" timezone="Etc/Greenwich" pattern="yyyyMMdd HHmmss Z" />
@@ -118,7 +118,7 @@
 		<!-- Compile the code -->
 		<mkdir dir="${java.io.tmpdir}/build/classes" />
 		<javac srcdir="src/java" destdir="${java.io.tmpdir}/build/classes" debug="true" includeantruntime="false"
-		 debuglevel="lines,vars,source" source="1.8" target="1.8" compiler="modern">
+		 debuglevel="lines,vars,source" source="1.8" target="1.8" compiler="modern" fork="true">
 			<compilerarg value="-Xlint:unchecked,deprecation,finally" />
 	    	<classpath id="javac.classpath">
 				<pathelement path="${classpath}" />
@@ -135,11 +135,6 @@
 			<entry key="build.jvm" value="${ant.java.version}" />
 			<entry key="build.os" value="${os.name} ${os.version} ${os.arch}" />
 		</propertyfile>
-		
-		<!-- Get the JAR file names and old checksums from build -->
-		<property name="jar.core" value="${java.io.tmpdir}/build/golgotha.jar" />
-		<property name="jar.web" value="${java.io.tmpdir}/build/golgotha_web.jar" />
-		<property name="jar.jsp" value="${java.io.tmpdir}/build/golgotha_jsp.jar" />
 		
 		<!-- Compress the base Java classes into a single JAR file -->
 		<jar basedir="${java.io.tmpdir}/build/classes" compress="true" index="true" destfile="${jar.core}">
@@ -162,9 +157,11 @@
 			<include name="org/deltava/taskman/*.class" />
 			<include name="org/deltava/tasks/*.class" />
 		</jar>
+		
+		<property name="task.compile" value="true" />
 	</target>
 
-	<target name="jspc" depends="compile" description="Precompile the JSP pages">
+	<target name="jspc" depends="compile" unless="task.jspc" description="Precompile the JSP pages">
 		<property name="jspc.webXMLInc" value="${java.io.tmpdir}/src/jsp/include.xml" />
 		<taskdef classname="org.apache.jasper.JspC" name="jasper2">
 			<classpath id="jspc.classpath"> 
@@ -181,15 +178,13 @@
 		<!-- Precompile the files -->
 		<mkdir dir="${java.io.tmpdir}/src/jsp" />
 		<copy file="WEB-INF/web_core.xml" tofile="${basedir}/WEB-INF/web.xml" />
-		<echo message="Pre-compiling JSP files" />
 	    <jasper2 package="org.deltava" uriroot="${basedir}" verbose="0" poolingEnabled="true" xpoweredBy="false" validateXml="false"
 	    	webXmlFragment="${jspc.webXMLInc}" compilerTargetVM="1.8" compilerSourceVM="1.8" trimSpaces="false" outputDir="${java.io.tmpdir}/src/jsp" />
 		<delete file="${basedir}/WEB-INF/web.xml" />
 
 		<!-- Compile the files -->
 		<mkdir dir="${java.io.tmpdir}/build/jsp" />
-		<javac srcdir="${java.io.tmpdir}/src/jsp" destdir="${java.io.tmpdir}/build/jsp" compiler="modern"
-			debug="on" debuglevel="source" target="1.8" source="1.8" includeantruntime="false">
+		<javac srcdir="${java.io.tmpdir}/src/jsp" destdir="${java.io.tmpdir}/build/jsp" compiler="modern" debug="on" debuglevel="source" target="1.8" source="1.8" includeantruntime="false" fork="true">
 			<compilerarg value="-Xlint:deprecation,finally" />
 			<classpath refid="jspc.classpath" />
 			<include name="org/deltava/jsp/**/*.java" />
@@ -203,26 +198,10 @@
 		<copy file="WEB-INF/web_core.xml" tofile="${java.io.tmpdir}/build/web.xml" />
 		<replace file="${java.io.tmpdir}/build/web.xml" token="&lt;!-- [INSERT FRAGMENT HERE] --&gt;" value="${webXmlFragment}" />
 		
-		<!-- Check whether the files have changed -->
-		<checksum file="${jar.core}" algorithm="MD5" property="crc.new.core" />
-		<checksum file="${jar.web}" algorithm="MD5" property="crc.new.web" />
-		<checksum file="${jar.jsp}" algorithm="MD5" property="crc.new.jsp" />
-		<condition property="crc.update">
-			<and>
-				<equals arg1="${crc.old.core}" arg2="${crc.new.core}" />
-				<equals arg1="${crc.old.web}" arg2="${crc.new.web}" />
-				<equals arg1="${crc.old.jsp}" arg2="${crc.new.jsp}" />
-			</and>
-		</condition>
-		
-		<echoproperties prefix="crc." />
-	</target>
-	
-	<target name="update_build_date" if="crc.update" description="Conditional to update build date properties">
-		<jar compress="true" index="true" destfile="${jar.core}" includesfile="${java.io.tmpdir}/build/golgotha_build.properties" />
+		<property name="task.compile" value="true" />
 	</target>
 
-	<target name="minify" description="Minify JS and CSS">
+	<target name="minify" unless="task.minify" description="Minify JS and CSS">
 		<available file="lib/YUIAnt.jar" property="YUIANT_AVAILABLE" />
 		<fail unless="YUIANT_AVAILABLE" message="Run jar target to generate the required task" />
 		<taskdef name="yuicompress" classname="com.yahoo.platform.yui.compressor.YUICompressTask">
@@ -269,9 +248,11 @@
 			</fileset>
 			<mapper type="glob" from="*.css" to="*-min.css"/>
 		</move>
+		
+		<property name="task.minify" value="true" />
 	</target>
 
-	<target name="deploy" depends="jspc,minify,update_build_date" description="Deploy to development environment">
+	<target name="deploy" depends="jspc,minify" description="Deploy to development environment">
 		<loadproperties srcFile="data/build_deploy.properties" />
 		<property name="webapp.dev.port" value="22" />
 		<property name="webapp.dev.user" value="${user.name}" />
