@@ -24,7 +24,8 @@ public class Accomplishment extends DatabaseBean implements ComboAlias, ViewEntr
 		ALEGS("ACARS Legs"), AIRPORTS("Airports Visited"), AIRCRAFT("Aircraft Used"), 
 		COUNTRIES("Countries Visited"), STATES("States Visited"), MEMBERDAYS("Days since joining"),
 		AIRLINES("Airlines"), DFLIGHTS("Flights Dispatched"), DHOURS("Dispatch Hours"),
-		EQLEGS("Legs in Aircraft"), CONTINENTS("Continents Visited"), PAX("Passengers Carried");
+		EQLEGS("Legs in Aircraft"), CONTINENTS("Continents Visited"), PAX("Passengers Carried"),
+		AIRPORTD("Departure Airport"), AIRPORTA("Arrival Airport");
 			
 		private final String _name;
 		
@@ -36,10 +37,12 @@ public class Accomplishment extends DatabaseBean implements ComboAlias, ViewEntr
 			return _name;
 		}
 		
+		@Override
 		public String getComboName() {
 			return _name;
 		}
 		
+		@Override
 		public String getComboAlias() {
 			return name();
 		}
@@ -234,10 +237,12 @@ public class Accomplishment extends DatabaseBean implements ComboAlias, ViewEntr
 			_choices.addAll(choices);
 	}
 
+	@Override
 	public int hashCode() {
 		return _name.hashCode();
 	}
 	
+	@Override
 	public String toString() {
 		return _name;
 	}
@@ -247,14 +252,17 @@ public class Accomplishment extends DatabaseBean implements ComboAlias, ViewEntr
 		return _owner.getDB() + "!!" + String.valueOf(getID());
 	}
 	
+	@Override
 	public boolean equals(Object o) {
 		return ((o instanceof Accomplishment) && (compareTo(o) == 0));
 	}
 	
+	@Override
 	public String getRowClassName() {
 		return _active ? null : "warn";
 	}
 	
+	@Override
 	public int compareTo(Object o) {
 		Accomplishment a2 = (Accomplishment) o;
 		int tmpResult = _unit.compareTo(a2._unit);
