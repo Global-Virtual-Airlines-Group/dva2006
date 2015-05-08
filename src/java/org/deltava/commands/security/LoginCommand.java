@@ -187,8 +187,8 @@ public class LoginCommand extends AbstractCommand {
 					log.warn(p.getName() + " status = Suspended, setting cookie");
 					Cookie wc = new Cookie("dvaAuthStatus", StringUtils.formatHex(p.getID()));
 					wc.setPath("/");
-					wc.setMaxAge(86400);
-					ctx.getResponse().addCookie(wc);
+					wc.setMaxAge(86400 * 180);
+					ctx.addCookie(wc);
 				} else
 					log.warn(p.getName() + " status = " + p.getStatusName());
 				
@@ -216,7 +216,7 @@ public class LoginCommand extends AbstractCommand {
 			c.setHttpOnly(true);
 			c.setSecure(isSecure);
 			c.setPath("/");
-			ctx.getResponse().addCookie(c);
+			ctx.addCookie(c);
 			
 			// Set secure only cookie if requested
 			boolean doSecureLogin = Boolean.valueOf(ctx.getParameter("secureLogin")).booleanValue();
@@ -225,18 +225,13 @@ public class LoginCommand extends AbstractCommand {
 				c.setHttpOnly(true);
 				c.setPath(ctx.getRequest().getRequestURI());
 				c.setMaxAge(365 * 86400);
-				ctx.getResponse().addCookie(c);
-				c = new Cookie(CommandContext.HAS_SECURE_LOGIN_COOKIE_NAME, "true");
-				c.setHttpOnly(true);
-				c.setMaxAge(-1);
-				c.setPath("/");
-				ctx.getResponse().addCookie(c);
-			} else if (isSecure) {
+				ctx.addCookie(c);
+			} else if (!isSecure) {
 				c = new Cookie("secureLogin", "");
 				c.setMaxAge(0);
-				ctx.getResponse().addCookie(c);
+				ctx.addCookie(c);
 			}
-
+			
 			// Check if we have an address validation entry outstanding
 			GetAddressValidation avdao = new GetAddressValidation(con);
 			AddressValidation av = avdao.get(p.getID());
@@ -336,27 +331,27 @@ public class LoginCommand extends AbstractCommand {
 
 			fnc = new Cookie("dva_fname64", b64e.encodeToString(p.getFirstName().getBytes(StandardCharsets.UTF_8)));
 			fnc.setMaxAge(cookieAge);
-			ctx.getResponse().addCookie(fnc);
+			ctx.addCookie(fnc);
 
 			lnc = new Cookie("dva_lname64", b64e.encodeToString(p.getLastName().getBytes(StandardCharsets.UTF_8)));
 			lnc.setMaxAge(cookieAge);
-			ctx.getResponse().addCookie(lnc);
+			ctx.addCookie(lnc);
 			
 			pcc = new Cookie("dva_pCode", p.getHexID());
 			pcc.setMaxAge(cookieAge);
-			ctx.getResponse().addCookie(pcc);
+			ctx.addCookie(pcc);
 		} else {
 			fnc = new Cookie("dva_fname64", "");
 			fnc.setMaxAge(0);
-			ctx.getResponse().addCookie(fnc);
+			ctx.addCookie(fnc);
 
 			lnc = new Cookie("dva_lname64", "");
 			lnc.setMaxAge(0);
-			ctx.getResponse().addCookie(lnc);
+			ctx.addCookie(lnc);
 			
 			pcc = new Cookie("dva_pCode", "");
 			pcc.setMaxAge(0);
-			ctx.getResponse().addCookie(pcc);
+			ctx.addCookie(pcc);
 		}
 		
 		// Clear warning cookie if valid
@@ -364,7 +359,7 @@ public class LoginCommand extends AbstractCommand {
 			log.warn("Resetting Suspended warning cookie for " + p.getName());
 			Cookie wc = new Cookie("dvaAuthStatus", "");
 			wc.setMaxAge(0);
-			ctx.getResponse().addCookie(wc);
+			ctx.addCookie(wc);
 		}
 		
 		// Mark us as complete
