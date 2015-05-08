@@ -8,7 +8,7 @@ import javax.servlet.http.*;
 /**
  * An invocation/security context object for Web Services.
  * @author Luke
- * @version 5.0
+ * @version 6.0
  * @since 1.0
  */
 
@@ -33,6 +33,7 @@ public class ServiceContext extends org.deltava.commands.HTTPContext {
 			return _buffer.length();
 		}
 
+		@Override
 		public String toString() {
 			return _buffer.toString();
 		}
@@ -43,7 +44,6 @@ public class ServiceContext extends org.deltava.commands.HTTPContext {
 	 * @param req the HTTP servlet request
 	 * @param rsp the HTTP servlet response
 	 * @see ServiceContext#getRequest()
-	 * @see ServiceContext#getResponse()
 	 */
 	public ServiceContext(HttpServletRequest req, HttpServletResponse rsp) {
 		super(req, rsp);
@@ -76,11 +76,10 @@ public class ServiceContext extends org.deltava.commands.HTTPContext {
 	 * @see ServiceContext#println(String)
 	 */
 	public void commit() throws IOException {
-		HttpServletResponse rsp = getResponse();
-		rsp.setBufferSize(Math.min(32768,  _buf.length() + 16));
-		rsp.setContentLength(_buf.length());
-		rsp.getWriter().print(_buf);
-		rsp.flushBuffer();
+		_rsp.setBufferSize(Math.min(32768,  _buf.length() + 16));
+		_rsp.setContentLength(_buf.length());
+		_rsp.getWriter().print(_buf);
+		_rsp.flushBuffer();
 	}
 
 	/**
@@ -89,8 +88,7 @@ public class ServiceContext extends org.deltava.commands.HTTPContext {
 	 * @param encoding the encoding
 	 */
 	public void setContentType(String contentType, String encoding) {
-		HttpServletResponse rsp = getResponse();
-		rsp.setContentType(contentType);
-		rsp.setCharacterEncoding(encoding);
+		_rsp.setContentType(contentType);
+		_rsp.setCharacterEncoding(encoding);
 	}
 }
