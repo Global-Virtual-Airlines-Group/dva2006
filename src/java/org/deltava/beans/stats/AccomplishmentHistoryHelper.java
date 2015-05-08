@@ -1,4 +1,4 @@
- // Copyright 2010, 2011, 2014 Global Virtual Airlines Group. All Rights Reserved.
+ // Copyright 2010, 2011, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import java.util.*;
@@ -63,6 +63,8 @@ public class AccomplishmentHistoryHelper {
 		private double _dspHours;
 
 		private final Collection<Airport> _airports = new HashSet<Airport>();
+		private final Collection<Airport> _airportD = new HashSet<Airport>();
+		private final Collection<Airport> _airportA = new HashSet<Airport>();
 		private final Collection<Airline> _airlines = new HashSet<Airline>();
 		private final Collection<Country> _countries = new TreeSet<Country>();
 		private final Collection<String> _conts = new TreeSet<String>();
@@ -79,7 +81,9 @@ public class AccomplishmentHistoryHelper {
 			_pax += fr.getPassengers();
 			_airlines.add(fr.getAirline());
 			add(fr.getAirportD());
+			_airportD.add(fr.getAirportD());
 			add(fr.getAirportA());
+			_airportA.add(fr.getAirportA());
 			if (fr.hasAttribute(FlightReport.ATTR_HISTORIC)) _historicLegs++;
 			if (fr.hasAttribute(FlightReport.ATTR_ONLINE_MASK)) _onlineLegs++;
 			if (fr.getDatabaseID(DatabaseID.EVENT) != 0) _events.add(Integer.valueOf(fr.getDatabaseID(DatabaseID.EVENT)));
@@ -113,6 +117,14 @@ public class AccomplishmentHistoryHelper {
 		
 		public Collection<Airport> getAirports() {
 			return _airports;
+		}
+		
+		public Collection<Airport> getDepartureAirports() {
+			return _airportD;
+		}
+		
+		public Collection<Airport> getArrivalAirports() {
+			return _airportA;
 		}
 		
 		public Collection<Country> getCountries() {
@@ -247,6 +259,10 @@ public class AccomplishmentHistoryHelper {
 				return cnt.getEvents();
 			case AIRPORTS:
 				return AccomplishmentFilter.filter(cnt.getAirports(), a).size();
+			case AIRPORTA:
+				return AccomplishmentFilter.filter(cnt.getArrivalAirports(), a).size();
+			case AIRPORTD:
+				return AccomplishmentFilter.filter(cnt.getDepartureAirports(), a).size();
 			case AIRCRAFT:
 				return AccomplishmentFilter.filter(cnt.getEquipmentTypes(), a).size();
 			case COUNTRIES:
@@ -268,7 +284,7 @@ public class AccomplishmentHistoryHelper {
 				
 				return totalLegs;
 			case MEMBERDAYS:
-				long days = (System.currentTimeMillis() - _usr.getCreatedOn().getTime()) / 86400000;
+				long days = (System.currentTimeMillis() - _usr.getCreatedOn().getTime()) / 86400_000;
 				return days;
 			default:
 				return 0;
@@ -304,8 +320,17 @@ public class AccomplishmentHistoryHelper {
 		switch (a.getUnit()) {
 			case AIRPORTS:
 				codes.addAll(AccomplishmentFilter.missing(_totals.getAirports(), a));
-				for (String code : codes)
-					results.add(SystemData.getAirport(code));
+				codes.forEach(code -> results.add(SystemData.getAirport(code)));
+				break;
+				
+			case AIRPORTD:
+				codes.addAll(AccomplishmentFilter.missing(_totals.getDepartureAirports(), a));
+				codes.forEach(code -> results.add(SystemData.getAirport(code)));
+				break;
+				
+			case AIRPORTA:
+				codes.addAll(AccomplishmentFilter.missing(_totals.getArrivalAirports(), a));
+				codes.forEach(code -> results.add(SystemData.getAirport(code)));
 				break;
 			
 			case CONTINENTS:
@@ -314,14 +339,12 @@ public class AccomplishmentHistoryHelper {
 				
 			case COUNTRIES:
 				codes.addAll(AccomplishmentFilter.missing(_totals.getCountries(), a));
-				for (String code : codes)
-					results.add(Country.get(code));
+				codes.forEach(code -> results.add(Country.get(code)));
 				break;
 			
 			case STATES:
 				codes.addAll(AccomplishmentFilter.missing(_totals.getStates(), a));
-				for (String code : codes)
-					results.add(State.valueOf(code.toUpperCase()));
+				codes.forEach(code -> results.add(State.valueOf(code.toUpperCase())));
 				break;
 				
 			case AIRCRAFT:
@@ -330,8 +353,7 @@ public class AccomplishmentHistoryHelper {
 				
 			case AIRLINES:
 				codes.addAll(AccomplishmentFilter.missing(_totals.getAirlines(), a));
-				for (String code : codes)
-					results.add(SystemData.getAirline(code));
+				codes.forEach(code -> results.add(SystemData.getAirline(code)));
 				break;
 		
 			default:
