@@ -38,6 +38,7 @@ public class SecurityCookieFilter implements Filter {
 	private static final String OTHERADDR_ATTR_NAME = "otherIPTypeAddr";
 	
 	private ConnectionPool _jdbcPool;
+	private boolean _forceSSL;
 	
 	/**
 	 * Called by the servlet container when the filter is started. Logs a message and saves the servlet context.
@@ -57,6 +58,9 @@ public class SecurityCookieFilter implements Filter {
 		// Initialize the JDBC Connection pool
 		_jdbcPool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
 		log.info("Started");
+		
+		// Check if we need SSL - filters are notified after context listeners per spec
+		_forceSSL = SystemData.getApp(SystemData.get("airline.code")).getSSL();
 	}
 
 	/*
@@ -88,23 +92,9 @@ public class SecurityCookieFilter implements Filter {
 		// Cast the request/response since we are doing stuff with them
 		HttpServletRequest hreq = (HttpServletRequest) req;
 		HttpServletResponse hrsp = (HttpServletResponse) rsp;
+		if (_forceSSL && hreq.isSecure())
+			hrsp.setHeader("strict-transport-security", "max-age=86400;");
 		
-		// Check if we are logged in via SSL but not using secure right now
-		if (!hreq.isSecure()) {
-			boolean isLoggedIn = Boolean.valueOf(getCookie(hreq, HAS_SECURE_LOGIN_COOKIE_NAME)).booleanValue(); 
-			if (isLoggedIn) {
-				StringBuilder buf = new StringBuilder("https://");
-				buf.append(hreq.getServerName());
-				buf.append(hreq.getRequestURI());
-				String q = hreq.getQueryString();
-				if (q != null)
-					buf.append('?').append(q);
-					
-				hrsp.sendRedirect(buf.toString());
-				return;
-			}
-		}
-
 		// Check for the authentication cookie
 		String authCookie = getCookie(hreq, AUTH_COOKIE_NAME);
 		if (StringUtils.isEmpty(authCookie)) {
