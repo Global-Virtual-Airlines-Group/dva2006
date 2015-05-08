@@ -30,7 +30,11 @@ public abstract class HTTPContext extends ConnectionContext implements SecurityC
 	public static final String SSL_ATTR_NAME = "isSSL";
 
 	private final HttpServletRequest _req;
-	private final HttpServletResponse _rsp;
+	
+	/**
+	 * The HTTP response.
+	 */
+	protected final HttpServletResponse _rsp;
 
 	private Pilot _usr;
 
@@ -200,6 +204,14 @@ public abstract class HTTPContext extends ConnectionContext implements SecurityC
 	public void setExpiry(int expireInterval) {
 		long expires = System.currentTimeMillis() + (expireInterval * 1000);
 		_rsp.setDateHeader("Expires", expires);
+	}
+	
+	/**
+	 * Adds a Cookie to the response.
+	 * @param c the Cookie
+	 */
+	public void addCookie(Cookie c) {
+		_rsp.addCookie(c);
 	}
 
 	/**
