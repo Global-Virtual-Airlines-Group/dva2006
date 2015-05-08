@@ -16,7 +16,6 @@ import javax.servlet.http.*;
 public class CommandContext extends HTTPContext {
 	
 	public static final String AUTH_COOKIE_NAME = "authToken";
-	public static final String HAS_SECURE_LOGIN_COOKIE_NAME = "secureAuth";
 
 	public static final String USRLISTENER_ATTR_NAME = "userSerializeListener";
 	public static final String SCREENX_ATTR_NAME = "screenXSize";
