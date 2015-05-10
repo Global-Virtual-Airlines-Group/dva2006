@@ -115,6 +115,11 @@
 			<format property="build_utc" timezone="Etc/Greenwich" pattern="yyyyMMdd HHmmss Z" />
 		</tstamp>
 		
+		<mkdir dir="${java.io.tmpdir}/build" />
+	    <property name="jar.core" value="${java.io.tmpdir}/build/golgotha.jar" />
+	    <property name="jar.web" value="${java.io.tmpdir}/build/golgotha_web.jar" />
+	    <property name="jar.jsp" value="${java.io.tmpdir}/build/golgotha_jsp.jar" />
+		
 		<!-- Compile the code -->
 		<mkdir dir="${java.io.tmpdir}/build/classes" />
 		<javac srcdir="src/java" destdir="${java.io.tmpdir}/build/classes" debug="true" includeantruntime="false"
