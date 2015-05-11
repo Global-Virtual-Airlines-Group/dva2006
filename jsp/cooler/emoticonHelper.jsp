@@ -13,6 +13,7 @@
 <content:pics />
 <content:enum var="icons" className="org.deltava.beans.cooler.Emoticons" />
 <script type="text/javascript">
+golgotha = {local:{}};
 golgotha.local.addEmoticon = function(name)
 {
 // Get the window opener
