@@ -121,6 +121,7 @@ map.controls[google.maps.ControlPosition.RIGHT_TOP].push(document.getElementById
 google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
 	golgotha.maps.reloadData(true);
 	golgotha.util.createScript({id:'wuFronts', url:'//api.wunderground.com/api/${wuAPI}/fronts/view.json?callback=loaders.fr.load', async:true});
+	google.maps.event.trigger(map, 'zoom_changed');
 	google.maps.event.trigger(map, 'maptypeid_changed');
 });
 
