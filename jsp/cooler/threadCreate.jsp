@@ -70,9 +70,9 @@ msgSpan.innerHTML = '';
 
 // Check the image has been added already
 if (golgotha.local.imgData.contains(imgURL))
-	throw new golgotha.util.ValidationError('This image has already been linked.', f.imgURL);
+	throw new golgotha.event.ValidationError('This image has already been linked.', f.imgURL);
 if (!allowedExts.contains(ext))
-	throw new golgotha.util.ValidationError('This does not appear to be an image.', f.imgURL);
+	throw new golgotha.event.ValidationError('This does not appear to be an image.', f.imgURL);
 
 // Check the image itself
 var img = new Image();

@@ -21,13 +21,10 @@ golgotha.local.updateSort = function() {
 	return f.submit();
 };
 
-golgotha.local.validate = function(f)
-{
-if (f.id.value.length < 3)
-	throw new golgotha.util.ValidationError('Please select a valid ICAO or IATA airport code.', f.id);
-
-f.id.value = f.id.value.toUpperCase();
-return true;
+golgotha.local.validate = function(f) {
+    if (f.id.value.length < 3) throw new golgotha.event.ValidationError('Please select a valid ICAO or IATA airport code.', f.id);
+    f.id.value = f.id.value.toUpperCase();
+    return true;
 };
 </script>
 </head>

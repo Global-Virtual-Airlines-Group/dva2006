@@ -29,7 +29,7 @@ switch (sType) {
 		break;
 	
 	default:
-		throw new golgotha.util.ValidationError('Please select a Search Type.', f.searchType[0]);
+		throw new golgotha.event.ValidationError('Please select a Search Type.', f.searchType[0]);
 }
 
 golgotha.form.submit(f);
