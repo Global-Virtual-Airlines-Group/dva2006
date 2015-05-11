@@ -20,7 +20,7 @@
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
-golgotha.form.validate({f:f.navaidCode, t:'Navigation Aid Code'});
+golgotha.form.validate({f:f.navaidCode, l:2, t:'Navigation Aid Code'});
 golgotha.form.submit(f);
 return true;
 };
@@ -28,11 +28,12 @@ return true;
 golgotha.local.zoomTo = function(combo)
 {
 var idx = combo.selectedIndex;
-if ((idx < 0) || (idx >= navaids.length)) return false;
+if ((idx < 0) || (idx >= golgotha.local.navaids.length)) return false;
 
 // Pan the map
-var mrk = navaids[idx];
+var mrk = golgotha.local.navaids[idx];
 map.panTo(mrk.getPosition());
+golgotha.local.mapC = mrk.getPosition();
 golgotha.local.loadWaypoints();
 google.maps.event.trigger(mrk, 'click');
 return true;
@@ -43,34 +44,30 @@ golgotha.local.loadWaypoints = function()
 // Get the lat/long
 var lat = map.getCenter().lat();
 var lng = map.getCenter().lng();
-var range = (map.getBounds().getNorthEast().lat() - map.getBounds().getSouthWest().lat()) * 69.16;
+var range = golgotha.maps.degreesToMiles(map.getBounds().getNorthEast().lng() - map.getBounds().getSouthWest().lng());
 golgotha.local.sMarkers.clearMarkers();
 
 // Check if we don't select
 var f = document.forms[0];
-if (!f.showAll.checked || (map.getZoom() < 5))
-	return true;
+if (!f.showAll.checked) return true;
 
 // Status message
 var isLoading = document.getElementById('isLoading');
 isLoading.innerHTML = ' - LOADING...';
 
-//Build the XML Requester
+// Build the XML Requester
 var xmlreq = new XMLHttpRequest();
-xmlreq.open('GET', 'navaidsearch.ws?airports=true&lat=' + lat + '&lng=' + lng + '&range=' + Math.round(range), true);
+xmlreq.open('get', 'navaidsearch.ws?airports=true&lat=' + lat + '&lng=' + lng + '&range=' + Math.min(1000, Math.round(range)), true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 
-	// Parse the XML
 	var xml = xmlreq.responseXML;
 	var xe = xml.documentElement;
 	var wps = xe.getElementsByTagName('waypoint');
 	for (var i = 0; i < wps.length; i++) {
 		var wp = wps[i];
 		var code = wp.getAttribute('code');
-		if (code == '${param.navaidCode}')
-			continue;
-
+		if (code == '${param.navaidCode}') continue;
 		var p = {lat:parseFloat(wp.getAttribute('lat')), lng:parseFloat(wp.getAttribute('lng'))};
 		var mrk;
 		if (wp.getAttribute('pal'))
@@ -78,12 +75,10 @@ xmlreq.onreadystatechange = function() {
 		else
 			mrk = new golgotha.maps.Marker({color:wp.getAttribute('color'), info:wp.firstChild.data, label:code}, p);
 
-		mrk.minZoom = 4; mrk.code = code;
+		mrk.minZoom = 6; mrk.code = code;
 		var type = wp.getAttribute('type');
-		if (type == 'NDB')
-			mrk.minZoom = 5;
-		else if (type == 'Airport')
-			mrk.minZoom = 9;
+		if (type == 'Airport')
+			mrk.minZoom = 7;
 		else if (type == 'Intersection')
 			mrk.minZoom = 8;
 
@@ -155,19 +150,20 @@ return true;
 <content:copyright />
 </content:region>
 </content:page>
+<div id="zoomLevel" class="mapTextLabel"></div>
 <c:if test="${!empty results}">
 <script id="mapInit" defer>
-<map:point var="mapC" point="${mapCenter}" />
-
-// Create map options
-var mapTypes = {mapTypeIds:golgotha.maps.DEFAULT_TYPES};
-var mapOpts = {center:mapC, minZoom:3, zoom:golgotha.maps.util.getDefaultZoom(110), scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
+<map:point var="golgotha.local.mapC" point="${mapCenter}" />
 
 // Build the map
+var mapOpts = {center:golgotha.local.mapC, minZoom:6, zoom:8, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'click', map.closeWindow);
+google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
+google.maps.event.addListener(map, 'zoom_changed', golgotha.maps.updateZoom);
+map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(document.getElementById('zoomLevel'));
 
 // Build the navaid list
 <map:markers var="golgotha.local.navaids" items="${results}" />
@@ -176,7 +172,11 @@ map.addMarkers(golgotha.local.navaids);
 // Surrounding navads
 golgotha.local.sMarkers = new MarkerManager(map, {borderPadding:32});
 document.forms[0].navaid.selectedIndex = 0;
-google.maps.event.addListenerOnce(map, 'tilesloaded', function() { golgotha.local.zoomTo(document.forms[0].navaid); });
+google.maps.event.addListenerOnce(map, 'tilesloaded', function() { 
+	golgotha.local.zoomTo(document.forms[0].navaid);
+	google.maps.event.trigger(map, 'zoom_changed');
+	google.maps.event.trigger(map, 'maptypeid_changed');
+});
 </script></c:if>
 </body>
 </html>

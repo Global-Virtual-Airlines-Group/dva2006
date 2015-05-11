@@ -1,14 +1,14 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.Simulator;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
-
 import org.deltava.util.*;
 import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to read Navigation data.
  * @author Luke
- * @version 5.1
+ * @version 6.0
  * @since 1.0
  */
 
@@ -294,7 +294,7 @@ public class GetNavData extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 * @throws IllegalArgumentException if distance is negative or > 1000
 	 */
-	public Map<String, NavigationDataBean> getIntersections(GeoLocation loc, int distance) throws DAOException {
+	public Collection<NavigationDataBean> getIntersections(GeoLocation loc, int distance) throws DAOException {
 		if ((distance < 0) || (distance > 1000))
 			throw new IllegalArgumentException("Invalid distance -  " + distance);
 
@@ -316,21 +316,20 @@ public class GetNavData extends DAO {
 			throw new DAOException(se);
 		}
 
-		// Ensure that we are within the correct distance and convert to a Map for easy lookup
-		distanceFilter(results, loc, distance);
-		return CollectionUtils.createMap(results, "code");
+		// Ensure that we are within the correct distance
+		return results.stream().filter(nd -> nd.distanceTo(loc) < distance).collect(Collectors.toList());
 	}
 
 	/**
-	 * Returns all Navigation objects (except Intersections/Runways) within a set number of miles from a point.
+	 * Returns all Navigation objects (except Intersections/Runways/Gates) within a set number of miles from a point.
 	 * @param loc the central location
 	 * @param distance the distance in miles
 	 * @return a Map of NavigationDataBeans, with the code as the key
 	 * @throws DAOException if a JDBC error occurs
 	 * @throws IllegalArgumentException if distance is negative or > 1000
 	 */
-	public Map<String, NavigationDataBean> getObjects(GeoLocation loc, int distance) throws DAOException {
-		if ((distance < 0) || (distance > 1000))
+	public Collection<NavigationDataBean> getObjects(GeoLocation loc, int distance) throws DAOException {
+		if ((distance < 0) || (distance > 1500))
 			throw new IllegalArgumentException("Invalid distance -  " + distance);
 
 		// Calculate the height/width of the square in degrees (use 85% of the value of a lon degree)
@@ -339,25 +338,23 @@ public class GetNavData extends DAO {
 
 		Collection<NavigationDataBean> results = null;
 		try {
-			prepareStatement("SELECT * FROM common.NAVDATA WHERE (ITEMTYPE <> ?) AND (ITEMTYPE <> ?) AND "
-					+ "((LATITUDE > ?) AND (LATITUDE < ?)) AND ((LONGITUDE > ?) AND (LONGITUDE < ?)) ORDER BY ITEMTYPE");
-			_ps.setInt(1, Navaid.INT.ordinal());
-			_ps.setInt(2, Navaid.RUNWAY.ordinal());
-			_ps.setDouble(3, loc.getLatitude() - height);
-			_ps.setDouble(4, loc.getLatitude() + height);
-			_ps.setDouble(5, loc.getLongitude() - width);
-			_ps.setDouble(6, loc.getLongitude() + width);
+			prepareStatement("SELECT * FROM common.NAVDATA WHERE (ITEMTYPE<=?) AND ((LATITUDE>?) AND (LATITUDE<?)) "
+				+ "AND ((LONGITUDE>?) AND (LONGITUDE<?)) ORDER BY ITEMTYPE DESC");
+			_ps.setInt(1, Navaid.NDB.ordinal());
+			_ps.setDouble(2, loc.getLatitude() - height);
+			_ps.setDouble(3, loc.getLatitude() + height);
+			_ps.setDouble(4, loc.getLongitude() - width);
+			_ps.setDouble(5, loc.getLongitude() + width);
 			results = execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 
-		// Ensure that we are within the correct distance and convert to a Map for easy lookup
-		distanceFilter(results, loc, distance);
-		return CollectionUtils.createMap(results, "code");
+		// Ensure that we are within the correct distance
+		return results.stream().filter(nd -> nd.distanceTo(loc) < distance).collect(Collectors.toList());
 	}
 
-	/**
+	/*
 	 * Helper method to iterate through a NAVDATA result set.
 	 */
 	private List<NavigationDataBean> execute() throws SQLException {
@@ -413,7 +410,7 @@ public class GetNavData extends DAO {
 						rwy.setRegion(rs.getString(9));
 						obj = rwy;
 						break;
-
+						
 					default:
 				}
 
@@ -423,16 +420,5 @@ public class GetNavData extends DAO {
 
 		_ps.close();
 		return results;
-	}
-
-	/*
-	 * Helper method to filter objects based on distance from a certain point.
-	 */
-	private static void distanceFilter(Collection<NavigationDataBean> entries, GeoLocation loc, int distance) {
-		for (Iterator<NavigationDataBean> i = entries.iterator(); i.hasNext();) {
-			NavigationDataBean ndb = i.next();
-			if (ndb.getPosition().distanceTo(loc) > distance)
-				i.remove();
-		}
 	}
 }
