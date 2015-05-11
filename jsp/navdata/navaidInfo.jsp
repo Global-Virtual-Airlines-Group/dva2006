@@ -42,8 +42,8 @@ return true;
 golgotha.local.loadWaypoints = function()
 {
 // Get the lat/long
-var lat = map.getCenter().lat();
-var lng = map.getCenter().lng();
+var lat = golgotha.local.mapC.lat();
+var lng = golgotha.local.mapC.lng();
 var range = golgotha.maps.degreesToMiles(map.getBounds().getNorthEast().lng() - map.getBounds().getSouthWest().lng());
 golgotha.local.sMarkers.clearMarkers();
 
@@ -52,8 +52,7 @@ var f = document.forms[0];
 if (!f.showAll.checked) return true;
 
 // Status message
-var isLoading = document.getElementById('isLoading');
-isLoading.innerHTML = ' - LOADING...';
+golgotha.form.submit();
 
 // Build the XML Requester
 var xmlreq = new XMLHttpRequest();
@@ -85,7 +84,7 @@ xmlreq.onreadystatechange = function() {
 		golgotha.local.sMarkers.addMarker(mrk, mrk.minZoom);
 	}
 
-	isLoading.innerHTML = '';
+	golgotha.form.clear();
 	return true;
 };
 
