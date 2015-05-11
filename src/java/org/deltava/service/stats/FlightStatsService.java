@@ -1,4 +1,4 @@
-// Copyright 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -20,7 +20,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to display flight data in JSON format. 
  * @author Luke
- * @version 5.0
+ * @version 6.0
  * @since 5.0
  */
 
@@ -50,7 +50,7 @@ public class FlightStatsService extends WebService {
 			FlightInfo info = dao.getInfo(fr.getDatabaseID(DatabaseID.ACARS));
 			if (info == null)
 				routePoints = Collections.emptyList();
-			else if (info.isXACARS())
+			else if (info.isXACARS() && !info.getArchived())
 				routePoints = dao.getXACARSEntries(info.getID());
 			else
 				routePoints = dao.getRouteEntries(info.getID(), true, info.getArchived());
