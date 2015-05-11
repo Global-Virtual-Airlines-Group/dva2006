@@ -22,7 +22,7 @@ for (x = 0; x < golgotha.local.dataFiles.length && !isOK; x++)
 	isOK = isOK || (fName == golgotha.local.dataFiles[x]) || (fName == (golgotha.local.dataFiles[x] + '.gz')) || (fName == (golgotha.local.dataFiles[x] + '.bz2'));
 
 if (!isOK)
-	throw new golgotha.util.ValidationError('This does not appear to be a valid GeoLite IPv6 City data file.', f.netblockData);
+	throw new golgotha.event.ValidationError('This does not appear to be a valid GeoLite IPv6 City data file.', f.netblockData);
 
 golgotha.form.submit(f);
 return true;

@@ -20,7 +20,7 @@ golgotha.local.validate = function(f)
 if (!golgotha.form.check()) return false;
 if (!f.examName) return false;
 if (!golgotha.form.comboSet(f.examName))
-	throw new golgotha.util.ValidationError('Please select the Examination you wish to take.', f.examName);
+	throw new golgotha.event.ValidationError('Please select the Examination you wish to take.', f.examName);
 
 if (!confirm('Are you sure you wish to take the ' + golgotha.form.getCombo(f.examName) + ' Examination?')) return false;
 golgotha.form.submit(f);
