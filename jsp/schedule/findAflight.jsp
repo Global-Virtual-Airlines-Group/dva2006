@@ -34,7 +34,7 @@ if (eqOK || adOK || aaOK || alOK) {
 	return true;
 }
 
-throw new golgotha.util.ValidationError('Please select at least an Airline, Aircraft Type or Departure/Arrival Airport.', f.airline);
+throw new golgotha.event.ValidationError('Please select at least an Airline, Aircraft Type or Departure/Arrival Airport.', f.airline);
 };
 <c:if test="${!empty fafResults}">
 golgotha.ff. buildValidate = function(f)

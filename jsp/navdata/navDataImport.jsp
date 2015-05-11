@@ -23,7 +23,7 @@ for (var x = 0; x < golgotha.local.dataFiles.length && !isOK; x++)
 	isOK = isOK || (fName == golgotha.local.dataFiles[x]) || (fName == (golgotha.local.dataFiles[x] + '.gz')) || (fName == (golgotha.local.dataFiles[x] + '.bz2'));
 	
 if (!isOK)
-	throw new golgotha.util.ValidationError('This does not appear to be a valid PSS AIRAC data file.', f.navData);
+	throw new golgotha.event.ValidationError('This does not appear to be a valid PSS AIRAC data file.', f.navData);
 
 golgotha.form.submit(f);
 return true;

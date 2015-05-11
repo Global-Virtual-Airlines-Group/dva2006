@@ -296,7 +296,7 @@ golgotha.form.wrap = function(func, f) {
 
 golgotha.form.validate = function(opts)
 {
-if (!('f' in opts) || !('t' in opts)) throw new golgotha.util.ValidationError('Incomplete Validation Data');
+if (!('f' in opts) || !('t' in opts)) throw new golgotha.event.ValidationError('Incomplete Validation Data');
 if ('ext' in opts) return golgotha.form.validateFile(opts.f, opts.ext, opts.t, opts.empty);
 if ('addr' in opts) return golgotha.form.validateEMail(opts.f, opts.t);
 if ('l' in opts) return golgotha.form.validateText(opts.f, opts.l, opts.t);
@@ -307,7 +307,7 @@ if ('min' in opts) {
 }
 
 if (opts.f.options) return golgotha.form.validateCombo(opts.f, opts.t);
-throw new golgotha.util.ValidationError('Invalid Validation Data', opts.f);
+throw new golgotha.event.ValidationError('Invalid Validation Data', opts.f);
 };
 
 golgotha.form.validateText = function(t, min, title) {
@@ -340,7 +340,7 @@ var addr = t.value;
 var usrDomain = addr.substring(addr.indexOf('@') + 1, addr.length);
 for (var x = 0; x < golgotha.form.invalidDomains.length; x++) {
 	if (usrDomain == golgotha.form.invalidDomains[x])
-		throw new golgotha.util.ValidationError('Your e-mail address (' + addr + ') contains a forbidden domain - ' + golgotha.form.invalidDomains[x], t);
+		throw new golgotha.event.ValidationError('Your e-mail address (' + addr + ') contains a forbidden domain - ' + golgotha.form.invalidDomains[x], t);
 }
 
 return true;

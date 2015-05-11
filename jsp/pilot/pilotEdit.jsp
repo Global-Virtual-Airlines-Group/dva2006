@@ -44,7 +44,7 @@ if ((f.pwd1) && (f.pwd2)) {
 	if (f.pwd1.value != f.pwd2.value) {
 		f.pwd1.value = '';
 		f.pwd2.value = '';
-		throw new golgotha.util.ValidationError('The specified passwords must match.', f.pwd1);
+		throw new golgotha.event.ValidationError('The specified passwords must match.', f.pwd1);
 	}
 
 	if (f.pwd1.value.length > 0)

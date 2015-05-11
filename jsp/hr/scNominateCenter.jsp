@@ -30,7 +30,7 @@ if (act.indexOf('scnompurge.do') != -1) {
 </content:filter>
 if (!f.id) return false;
 if (f.id.selectedIndex == 0)
-	throw new golgotha.util.ValidationError('Please select the Pilot you wish to nominate.', f.id);
+	throw new golgotha.event.ValidationError('Please select the Pilot you wish to nominate.', f.id);
 
 golgotha.form.validate({f:f.body, l:30, t:'Nomination Comments'});
 
