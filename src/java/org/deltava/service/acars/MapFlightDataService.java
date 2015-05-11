@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display ACARS Flight Report data.
  * @author Luke
- * @version 5.4
+ * @version 6.0
  * @since 1.0
  */
 
@@ -34,17 +34,15 @@ public class MapFlightDataService extends WebService {
 	@Override
    public int execute(ServiceContext ctx) throws ServiceException {
       
-		// Get the Flight ID
-		int id = StringUtils.parse(ctx.getParameter("id"), 0);
-		
 		// Get the DAO and the route data
+		int id = StringUtils.parse(ctx.getParameter("id"), 0);
 		Collection<? extends GeoLocation> routePoints = null;
 		try {
 			GetACARSPositions dao = new GetACARSPositions(ctx.getConnection());
 			FlightInfo info = dao.getInfo(id);
 			if (info == null)
 				routePoints = Collections.emptyList();
-			else if (info.isXACARS())
+			else if (info.isXACARS() && !info.getArchived())
 				routePoints = dao.getXACARSEntries(id);
 			else
 				routePoints = dao.getRouteEntries(id, false, info.getArchived());
@@ -116,6 +114,7 @@ public class MapFlightDataService extends WebService {
 	 * Tells the Web Service Servlet not to log invocations of this service.
 	 * @return FALSE
 	 */
+	@Override
 	public final boolean isLogged() {
 		return false;
 	}
