@@ -51,16 +51,17 @@ return 10;
 // Calculate GMT offset in seconds from local
 golgotha.maps.GMTOffset = new Date().getTimezoneOffset() * 60000;
 
-// Convert miles to meters
+// Distance conversion functions
 golgotha.maps.miles2Meter = function(mi) { return mi * 1609.344 };
+golgotha.maps.degreesToMiles = function(d) { return d * 69.172 };
 
 // Set best text color for map types
 golgotha.maps.TEXT_COLOR = {roadmap:'#002010', satellite:'#efefef', terrain:'#002010', hybrid:'#efefef', acars_trackmap:'#dfefef'};
 golgotha.maps.updateMapText = function () {
 	var newColor = golgotha.maps.TEXT_COLOR[this.getMapTypeId()];
 	var elements = golgotha.util.getElementsByClass('mapTextLabel');
-	for (var x = 0; x < elements.length; x++)
-		elements[x].style.color = newColor;
+	for (var e = elements.pop(); (e != null); e = elements.pop())
+		e.style.color = newColor;
 
 	return true;
 };
