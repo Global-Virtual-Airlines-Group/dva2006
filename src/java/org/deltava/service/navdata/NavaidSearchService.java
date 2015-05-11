@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.navdata;
 
 import java.text.*;
@@ -20,7 +20,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to search for navigation aids in a particular area.
  * @author Luke
- * @version 5.0
+ * @version 6.0
  * @since 2.1
  */
 
@@ -38,17 +38,17 @@ public class NavaidSearchService extends WebService {
 		// Get the navaid to search for
 		double lat = StringUtils.parse(ctx.getParameter("lat"), 0.0);
 		double lng = StringUtils.parse(ctx.getParameter("lng"), 0.0);
-		int range = Math.max(1000, StringUtils.parse(ctx.getParameter("range"), 150));
+		int range = Math.min(1000, StringUtils.parse(ctx.getParameter("range"), 150));
 		boolean includeAirports = Boolean.valueOf(ctx.getParameter("airports")).booleanValue();
 		
 		// Build the location
 		GeoLocation loc = new GeoPosition(lat, lng);
-		Map<String, NavigationDataBean> results = new HashMap<String, NavigationDataBean>();
+		Collection<NavigationDataBean> results = new ArrayList<NavigationDataBean>();
 		try {
 			GetNavData dao = new GetNavData(ctx.getConnection());
-			dao.setQueryMax(1000);
-          	results.putAll(dao.getObjects(loc, range));
-          	results.putAll(dao.getIntersections(loc, range / 2));
+			dao.setQueryMax(1250);
+          	results.addAll(dao.getObjects(loc, range * 3 / 2));
+          	results.addAll(dao.getIntersections(loc, range));
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		} finally {
@@ -62,7 +62,7 @@ public class NavaidSearchService extends WebService {
 		
 		// Format navaids
 		final NumberFormat df = new DecimalFormat("#0.000000");
-		for (NavigationDataBean nd : results.values()) {
+		for (NavigationDataBean nd : results) {
 			if (includeAirports || (nd.getType() != Navaid.AIRPORT)) {
 				Element we = new Element("waypoint");
 				we.setAttribute("lat", df.format(nd.getLatitude()));
@@ -94,6 +94,7 @@ public class NavaidSearchService extends WebService {
 	 * Returns whether this web service requires authentication.
 	 * @return TRUE always
 	 */
+	@Override
 	public boolean isSecure() {
 		return true;
 	}
