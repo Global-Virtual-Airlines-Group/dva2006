@@ -46,27 +46,18 @@ public class AirportCodeTag extends InputTag {
 	@Override
 	public void setPageContext(PageContext ctxt) {
 		super.setPageContext(ctxt);
-		HttpServletRequest req = (HttpServletRequest) ctxt.getRequest();
-		Principal user = req.getUserPrincipal();
+		Principal user = ((HttpServletRequest) ctxt.getRequest()).getUserPrincipal();
 		Person p = (user instanceof Person) ? (Person)user : null;
 		_codeType = (p == null) ? Code.IATA : p.getAirportCodeType();
 	}
 
-	/**
-	 * Sets the CSS class name(s) to use. 
-	 * @param c the class name(s)
-	 */
-	@Override
-	public void setClassName(String c) {
-		super.setClassName ("caps " + c);
-	}
-	
 	/**
 	 * Releases the tag's state variables.
 	 */
 	@Override
 	public void release() {
 		_a = null;
+		_value = null; // Parent assumes this is mandatory, but for this tag it is not
 		super.release();
 	}
 	
@@ -77,14 +68,12 @@ public class AirportCodeTag extends InputTag {
 	 */
 	@Override
 	public int doStartTag() throws JspException {
-		if (!_data.has("class"))
-			_data.setAttribute("class", "caps");
-			
+		_classes.add("caps");
 		setName(_comboName + "Code");
 		setMax((_codeType == Code.IATA) ? 3 : 4);
 		setSize(3);
 		if (_a != null)
-			setValue((_codeType == Code.IATA) ? _a.getIATA() : _a.getICAO());
+			_value = (_codeType == Code.IATA) ? _a.getIATA() : _a.getICAO();
 		
 		// Set default events and render the tag
 		setOnChange("void this.form." + _comboName + ".setAirport(this.value, true, this)");
