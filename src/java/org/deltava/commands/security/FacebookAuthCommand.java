@@ -80,10 +80,15 @@ public class FacebookAuthCommand extends AbstractCommand {
 			GetFacebookData fbdao = new GetFacebookData();
 			fbdao.setToken(token);
 			ProfileInfo info = fbdao.getUserInfo();
+			fbdao.reset();
+			fbdao.setReturnErrorStream(true);
+			
+			// Exchange the short-term token for a long-term token
+			String longToken = fbdao.getLongLifeToken();
 			
 			// Update the user
 			p.setIMHandle(IMAddress.FB, info.getID());
-			p.setIMHandle(IMAddress.FBTOKEN, token);
+			p.setIMHandle(IMAddress.FBTOKEN, longToken);
 			
 			// Create status update
 			Collection<StatusUpdate> upds = new ArrayList<StatusUpdate>();
