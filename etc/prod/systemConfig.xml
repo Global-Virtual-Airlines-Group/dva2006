@@ -653,14 +653,13 @@
 			<url>
 				<accessToken>https://graph.facebook.com/oauth/access_token</accessToken>
 				<authorize>https://graph.facebook.com/oauth/authorize</authorize>
-				<userInfo>https://graph.facebook.com/me</userInfo>
-				<feed>https://graph.facebook.com/me/feed</feed>
+				<userInfo>https://graph.facebook.com/v2.3/me</userInfo>
+				<feed>https://graph.facebook.com/v2.3/me/feed</feed>
 			</url>
 			<list name="permissions" attr="perm" unique="true">
-				<perm>user_about_me</perm>
-				<perm>publish_stream</perm>
-				<perm>offline_access</perm>
-				<perm>email</perm>
+			    <perm>public_profile</perm>
+                <perm>publish_actions</perm>
+                <perm>email</perm>
 			</list>
 		</facebook>
 
