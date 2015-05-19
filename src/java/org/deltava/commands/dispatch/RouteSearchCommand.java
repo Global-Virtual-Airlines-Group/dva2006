@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
  */
 
 public class RouteSearchCommand extends AbstractCommand {
-
+	
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
@@ -48,9 +48,14 @@ public class RouteSearchCommand extends AbstractCommand {
 				ctx.setAttribute("airportD", airportD, REQUEST);
 				ctx.setAttribute("airportA", airportA, REQUEST);
 				
+				// Build the criteria, allowing for one airport to be null
+				ScheduleSearchCriteria ssc = new ScheduleSearchCriteria(null);
+				ssc.setAirportD(airportD);
+				ssc.setAirportA(airportA);
+				
 				// Do the search
 				Collection<Integer> IDs = new HashSet<Integer>();
-				Collection<DispatchRoute> results = dao.getRoutes(new ScheduleRoute(airportD, airportA), false);
+				Collection<DispatchRoute> results = dao.getRoutes(ssc, false);
 				for (Iterator<DispatchRoute> i = results.iterator(); i.hasNext(); ) {
 					DispatchRoute rt = i.next();
 					DispatchRouteAccessControl ac = new DispatchRouteAccessControl(ctx, rt);
