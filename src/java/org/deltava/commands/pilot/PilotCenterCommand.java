@@ -303,6 +303,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			List<String> perms = (List<String>) SystemData.getObject("users.facebook.permissions");
 			if (ctx.isUserInRole("Admin")) {
 				perms.add("manage_pages");
+				perms.add("publish_pages");
 				ctx.setAttribute("fbPerms", perms, REQUEST);
 			} else if (!ctx.isSuperUser())
 				ctx.setAttribute("fbPerms", perms, REQUEST);
