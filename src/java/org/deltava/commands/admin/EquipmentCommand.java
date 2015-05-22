@@ -114,10 +114,11 @@ public class EquipmentCommand extends AbstractFormCommand {
 			eq.setACARSPromotionLegs(Boolean.valueOf(ctx.getParameter("acarsPromote")).booleanValue());
 			eq.setRanks(ctx.getParameters("ranks"));
 			eq.setRatings(ctx.getParameters("pRatings"), ctx.getParameters("sRatings"));
-			if (eq.getIsDefault())
-				eq.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
-			else
+			if (eq.getIsDefault()) {
 				eq.setIsDefault(Boolean.valueOf(ctx.getParameter("makeDefault")).booleanValue());
+				eq.setActive(true);
+			} else
+				eq.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
 			
 			// Update airlines
 			Collection<String> aCodes = ctx.getParameters("airline");
@@ -187,10 +188,8 @@ public class EquipmentCommand extends AbstractFormCommand {
 				ctx.setAttribute("updatedRatings", updatedRatings, REQUEST);
 			}
 			
-			// Commit the transaction
+			// Commit the transaction and save in request
 			ctx.commitTX();
-			
-			// Save the equipment program in the request
 			ctx.setAttribute("eqType", eq, REQUEST);
 		} catch (DAOException de) {
 			ctx.rollbackTX();
