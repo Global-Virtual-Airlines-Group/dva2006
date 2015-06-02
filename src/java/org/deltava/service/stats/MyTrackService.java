@@ -92,25 +92,20 @@ public class MyTrackService extends WebService {
 		// Generate the output
 		JSONObject jo = new JSONObject();
 		try {
-			JSONArray apts = new JSONArray();
 			for (Map.Entry<FlightInfo, Collection<GeoLocation>> me : rts.entrySet()) {
 				JSONObject fo = new JSONObject();
 				fo.put("isDST", (me.getKey().getAirportA().equals(a)));
-				JSONArray pts = new JSONArray();
 				GeoLocation last = null;
 				for (GeoLocation loc : me.getValue()) {
 					int dst = GeoUtils.distance(loc, last);
 					if ((last == null) || (dst > 20)) {
 						last = loc;
-						pts.put(GeoUtils.toJSON(loc));
+						fo.append("trk", GeoUtils.toJSON(loc));
 					}
 				}
 				
-				fo.put("trk", pts);
-				apts.put(fo);
+				jo.append("routes", fo);
 			}
-		
-			jo.put("routes", apts);
 		} catch (Exception e) { /* empty */ }
 		
 		// Dump the JSON to the output stream
