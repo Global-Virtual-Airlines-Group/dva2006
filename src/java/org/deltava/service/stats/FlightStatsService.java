@@ -61,7 +61,7 @@ public class FlightStatsService extends WebService {
 		}
 		
 		// Go through the rows
-		JSONArray ja = new JSONArray();
+		JSONObject jo = new JSONObject();
 		int maxSpeed = 0; int maxAlt = 0;
 		for (GeoLocation loc : routePoints) {
 			if (loc instanceof RouteEntry) {
@@ -75,7 +75,7 @@ public class FlightStatsService extends WebService {
 					je.put(Math.max(0, ae.getAltitude() - ae.getRadarAltitude()));
 				}
 					
-				ja.put(je);
+				jo.append("data", je);
 				maxSpeed = Math.max(maxSpeed, re.getGroundSpeed());
 				maxAlt = Math.max(maxAlt, re.getAltitude());
 			}
@@ -84,13 +84,11 @@ public class FlightStatsService extends WebService {
 		// Adjust maximum speed and altitude
 		maxAlt = (maxAlt + 10000 - (maxAlt % 10000));
 		maxSpeed = (maxSpeed + 100 - (maxSpeed % 100));
+		jo.put("maxAlt", maxAlt);
+		jo.put("maxSpeed", maxSpeed);
 		
 		// Dump to the output stream
 		try {
-			JSONObject jo = new JSONObject();
-			jo.put("data", ja);
-			jo.put("maxAlt", maxAlt);
-			jo.put("maxSpeed", maxSpeed);
 			ctx.setContentType("text/javascript", "UTF-8");
 			ctx.setExpiry(3600);
 			ctx.println(jo.toString());
