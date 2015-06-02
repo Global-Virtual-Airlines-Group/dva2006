@@ -114,11 +114,11 @@ public class EquipmentCommand extends AbstractFormCommand {
 			eq.setACARSPromotionLegs(Boolean.valueOf(ctx.getParameter("acarsPromote")).booleanValue());
 			eq.setRanks(ctx.getParameters("ranks"));
 			eq.setRatings(ctx.getParameters("pRatings"), ctx.getParameters("sRatings"));
-			if (eq.getIsDefault()) {
+			if (!eq.getIsDefault()) {
 				eq.setIsDefault(Boolean.valueOf(ctx.getParameter("makeDefault")).booleanValue());
-				eq.setActive(true);
-			} else
 				eq.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
+			} else
+				eq.setActive(true);
 			
 			// Update airlines
 			Collection<String> aCodes = ctx.getParameters("airline");
