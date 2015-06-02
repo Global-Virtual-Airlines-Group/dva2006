@@ -147,20 +147,20 @@ public class AirportListService extends WebService {
 			}
 		}
 
-		// Generate the XML document
+		// Generate the JSON document
+		JSONArray ja = new JSONArray();
+		for (Airport a : airports) {
+			JSONObject ao = new JSONObject();
+			ao.put("iata", a.getIATA());
+			ao.put("icao", a.getICAO());
+			ao.put("lat", a.getLatitude());
+			ao.put("lng", a.getLongitude());
+			ao.put("name", a.getName());
+			ja.put(ao);
+		}
+		
+		// Dump the JSON to the output stream
 		try {
-			JSONArray ja = new JSONArray();
-			for (Airport a : airports) {
-				JSONObject ao = new JSONObject();
-				ao.put("iata", a.getIATA());
-				ao.put("icao", a.getICAO());
-				ao.put("lat", a.getLatitude());
-				ao.put("lng", a.getLongitude());
-				ao.put("name", a.getName());
-				ja.put(ao);
-			}
-
-			// Dump the XML to the output stream
 			ctx.setContentType("text/javascript", "UTF-8");
 			ctx.setExpiry(3600);
 			ctx.println(ja.toString());

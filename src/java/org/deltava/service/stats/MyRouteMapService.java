@@ -7,7 +7,6 @@ import java.util.*;
 
 import org.json.*;
 
-import org.deltava.beans.GeoLocation;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.stats.RouteStats;
 
@@ -64,7 +63,6 @@ public class MyRouteMapService extends WebService {
 		JSONObject jo = new JSONObject();
 
 		// Add airports
-		JSONArray aa = new JSONArray();
 		for (Airport a : airports) {
 			JSONObject ao = new JSONObject();
 			ao.put("ll", GeoUtils.toJSON(a));
@@ -72,34 +70,25 @@ public class MyRouteMapService extends WebService {
 			ao.put("code", (ac == Airport.Code.ICAO) ? a.getICAO() : a.getIATA());
 			ao.put("name", a.getName());
 			ao.put("desc", a.getInfoBox());
-			aa.put(ao);
+			jo.append("airports", ao);
 		}
 		
 		// Add route data
-		JSONArray ra = new JSONArray();
 		for (RouteStats r : routes) {
 			JSONObject ro = new JSONObject();
 			ro.put("ll", GeoUtils.toJSON(r));
 			ro.put("desc", r.getInfoBox());
 			ro.put("ratio", Math.max(1, r.getFlights() * 100 / max));
-			JSONArray pa = new JSONArray();
-			for (GeoLocation loc : r.getPoints())
-				pa.put(GeoUtils.toJSON(loc));
-				
 			ro.put("src", r.getAirportD().getICAO());
 			ro.put("dst", r.getAirportA().getICAO());
-			ro.put("points", pa);
-			ra.put(ro);
+			r.getPoints().forEach(loc -> ro.append("points", GeoUtils.toJSON(loc)));
+			jo.append("routes", ro);
 		}
 			
-		// Aggregate
-		jo.put("airports", aa);
-		jo.put("routes", ra);
-		
 		// Dump the JSON to the output stream
 		try {
 			ctx.setContentType("application/json", "UTF-8");
-			ctx.setExpiry(900);
+			ctx.setExpiry(1800);
 			ctx.println(jo.toString());
 			ctx.commit();
 		} catch (Exception e) {

@@ -52,20 +52,17 @@ public class TerminalRouteService extends WebService {
 		}
 		
 		// Add SID/STARs to JSON document
-		try {
-			JSONObject ro = new JSONObject();
-			JSONArray sids = new JSONArray(); JSONArray stars = new JSONArray();
-			for (TerminalRoute tr : tRoutes) {
-				JSONObject jo = new JSONObject();
-				jo.put("name", tr.getName());
-				jo.put("transition", tr.getTransition());
-				jo.put("code", tr.getCode());
-				JSONArray dst = (tr.getType() == TerminalRoute.Type.SID) ? sids : stars; 
-				dst.put(jo);
-			}
+		JSONObject ro = new JSONObject();
+		for (TerminalRoute tr : tRoutes) {
+			JSONObject jo = new JSONObject();
+			jo.put("name", tr.getName());
+			jo.put("transition", tr.getTransition());
+			jo.put("code", tr.getCode());
+			ro.append(tr.getType().toString().toLowerCase(), jo);
+		}
 		
-			// Dump the JSON to the output stream
-			ro.put("sid", sids); ro.put("star", stars);
+		// Dump the JSON to the output stream
+		try {
 			ctx.setContentType("text/javascript", "UTF-8");
 			ctx.println(ro.toString());
 			ctx.commit();
