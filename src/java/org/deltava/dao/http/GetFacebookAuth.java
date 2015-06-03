@@ -1,4 +1,4 @@
-// Copyright 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
@@ -6,15 +6,13 @@ import java.net.HttpURLConnection;
 import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
-
 import org.deltava.dao.DAOException;
-
 import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to fetch authentication data from Facebook via the Graph API. 
  * @author Luke
- * @version 4.2
+ * @version 6.0
  * @since 3.4
  */
 
@@ -42,12 +40,12 @@ public class GetFacebookAuth extends FacebookDAO {
 		buf.append(code);
 		
 		try {
-			init(buf.toString());
-			InputStream is = getIn();
-			BufferedReader br = new BufferedReader(new InputStreamReader(is));
-			String rawToken = br.readLine();
-			br.close();
-			is.close();
+			init(buf.toString()); String rawToken = null;
+			try (InputStream is = getIn()) {
+				try (BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
+					rawToken = br.readLine();
+				}
+			}
 			
 			// Parse the token
 			StringTokenizer tkns = new StringTokenizer(rawToken, "&");
@@ -68,6 +66,47 @@ public class GetFacebookAuth extends FacebookDAO {
 	}
 	
 	/**
+	 * Exchanges a Facebook short-term token for a long-term token.
+	 * @return a long-term token, or null
+	 * @throws DAOException if an error occurs
+	 */
+	public String getLongLifeToken() throws DAOException {
+
+		// Build the URL
+		StringBuilder buf = new StringBuilder(SystemData.get("users.facebook.url.accessToken"));
+		buf.append("?grant_type=fb_exchange_token&client_id=");
+		buf.append(SystemData.get("users.facebook.id"));
+		buf.append("&client_secret=");
+		buf.append(SystemData.get("users.facebook.secret"));
+		buf.append("&fb_exchange_token=");
+		buf.append(_token);
+
+		try {
+			init(buf.toString()); String token = null;
+			try (BufferedReader br = new BufferedReader(new InputStreamReader(getIn()))) {
+				String data = br.readLine();
+				
+				StringTokenizer tkns = new StringTokenizer(data, "&");
+				while ((token == null) && tkns.hasMoreTokens()) {
+					StringTokenizer tkn = new StringTokenizer(tkns.nextToken(), "=");
+					String name = tkn.nextToken();
+					if ("access_token".equals(name))
+						token = tkn.nextToken();
+				}
+			}
+
+			return token;
+		} catch (Exception e) {
+			if (_warnMode) {
+				log.error(e.getClass().getName() + " - " + e.getMessage());
+				return null;
+			}
+			
+			throw new DAOException(e);
+		}
+	}
+	
+	/**
 	 * Retrieves an application access token.
 	 * @return the token
 	 * @throws DAOException if an error occurs
@@ -85,10 +124,10 @@ public class GetFacebookAuth extends FacebookDAO {
 			init(SystemData.get("users.facebook.url.accessToken"));
 			
 			// Send the data
-			DataOutputStream out = new DataOutputStream(getOut());
-			out.writeBytes(postData.getBody());
-			out.flush();
-			out.close();
+			try (DataOutputStream out = new DataOutputStream(getOut())) {
+				out.writeBytes(postData.getBody());
+				out.flush();
+			}
 			
 			// Get the response code
 			int resultCode = getResponseCode();
@@ -96,11 +135,12 @@ public class GetFacebookAuth extends FacebookDAO {
 				throw new DAOException("Error Code " + resultCode);
 			
 			// Parse the return value
-			InputStream is = getIn();
-			BufferedReader br = new BufferedReader(new InputStreamReader(is));
-			String rawToken = br.readLine();
-			br.close();
-			is.close();
+			String rawToken = null;
+			try (InputStream is = getIn()) {
+				try (BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
+					rawToken = br.readLine();
+				}
+			}
 			
 			// Parse the token
 			StringTokenizer tkns = new StringTokenizer(rawToken, "&");
