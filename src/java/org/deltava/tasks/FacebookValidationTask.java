@@ -1,4 +1,4 @@
-// Copyright 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -23,7 +23,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Scheduled Task to validate Facebook security tokens.
  * @author Luke
- * @version 4.2
+ * @version 6.0
  * @since 3.6
  */
 
@@ -51,6 +51,7 @@ public class FacebookValidationTask extends Task {
 				GetFacebookData fbdao = new GetFacebookData();
 				fbdao.setToken(p.getIMHandle(IMAddress.FBTOKEN));
 				fbdao.setWarnMode(true);
+				fbdao.setReturnErrorStream(true);
 				
 				int retryCount = 0; ProfileInfo info = null;
 				while ((info == null) && (retryCount < 3)) {
