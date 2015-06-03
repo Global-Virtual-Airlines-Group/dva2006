@@ -51,7 +51,7 @@ public class SetEquipmentType extends DAO {
 			// Write to the local database
 			prepareStatement("INSERT INTO EQTYPES (EQTYPE, CP_ID, RANKS, ACTIVE, NEWHIRES, ISDEFAULT, C_LEGS, "
 				+ "C_HOURS, C_LEGS_ACARS, C_LEGS_DISTANCE, C_SWITCH_DISTANCE, C_MIN_1X, C_MAX_ACCEL) VALUES "
-				+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+				+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setString(1, eq.getName());
 			_ps.setInt(2, eq.getCPID());
 			_ps.setString(3, StringUtils.listConcat(eq.getRanks(), ","));
