@@ -10,11 +10,11 @@
 
 	<!-- Water Cooler caches -->
 	<cache id="CoolerChannels" max="48" expires="1800" />
-	<cache id="CoolerThreads" max="512" expires="900" />
+	<cache id="CoolerThreads" max="1024" expires="900" />
 
 	<!-- Navigation Data caches -->
-	<cache id="NavData" max="3072" />
-	<cache id="NavAirway" max="1280" />
+	<cache id="NavData" max="4096" />
+	<cache id="NavAirway" max="1536" />
 	<cache id="NavRunway" max="512" />
 	<cache id="NavSIDSTAR" max="1536" />
 	<cache id="NavRoute" max="1024" />
@@ -42,13 +42,13 @@
 	<cache id="ServInfoData" max="3" expires="30" />
 
 	<!-- System caches -->
-	<cache id="AircraftInfo" max="64" expires="3600" />
+	<cache id="AircraftInfo" max="80" expires="3600" />
 	<cache id="EquipmentTypes" max="24" expires="3600" />
-	<cache id="Accomplishments" max="96" expires="3600" />
+	<cache id="Accomplishments" max="128" expires="3600" />
 	<cache id="Metadata" max="24" expires="1800" />
 
 	<cache id="MessageTemplate" max="32" />
-	<cache id="LibraryDLCount" max="64" expires="1800" />
+	<cache id="LibraryDLCount" max="96" expires="1800" />
 
 	<cache id="IPInfo" max="512" expires="345600" />
 	<cache id="IPBlock" max="1024" expires="345600" />
