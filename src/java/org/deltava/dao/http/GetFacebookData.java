@@ -119,40 +119,4 @@ public class GetFacebookData extends FacebookDAO {
 			throw new DAOException(e);
 		}
 	}
-
-	/**
-	 * Exchanges a Facebook short-term token for a long-term token.
-	 * @return a long-term token, or null
-	 * @throws DAOException if an error occurs
-	 */
-	public String getLongLifeToken() throws DAOException {
-
-		// Build the URL
-		StringBuilder buf = new StringBuilder(SystemData.get("users.facebook.url.accessToken"));
-		buf.append("?grant_type=fb_exchange_token&client_id=");
-		buf.append(SystemData.get("users.facebook.id"));
-		buf.append("&client_secret=");
-		buf.append(SystemData.get("users.facebook.secret"));
-		buf.append("&fb_exchange_token=");
-		buf.append(_token);
-
-		try {
-			init(buf.toString());
-			try (BufferedReader br = new BufferedReader(new InputStreamReader(getIn()))) {
-				String data = br.readLine();
-				int pos = data.indexOf("_token=");
-				if (pos > 0)
-					return data.substring(pos + 7);
-			}
-
-			return null;
-		} catch (Exception e) {
-			if (_warnMode) {
-				log.error(e.getClass().getName() + " - " + e.getMessage());
-				return null;
-			}
-			
-			throw new DAOException(e);
-		}
-	}
 }

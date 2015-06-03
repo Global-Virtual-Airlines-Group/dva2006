@@ -120,7 +120,7 @@ golgotha.local.fbAuthorize = function() {
  <td class="mid"><a class="bld" href="javascript:void golgotha.local.fbAuthorize()">Authorize Us</a></td>
 <c:choose>
 <c:when test="${fn:hasIM(pilot, 'FB')}">
- <td class="data"><span class="pri bld">The Facebook authorization token you have gven <content:airline /> has expired.</span> Further updates to your
+ <td class="data"><span class="pri bld">The Facebook authorization token you have given <content:airline /> has expired.</span> Further updates to your
  Facebook wall cannot be made until <content:airline /> has been authorized to publish to Facebook.</td>
 </c:when>
 <c:otherwise>
