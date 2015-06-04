@@ -1,4 +1,4 @@
-// Copyright 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to calculate what Pilots are eligible for an Accomplishment.
  * @author Luke
- * @version 4.2
+ * @version 6.0
  * @since 3.6
  */
 
@@ -56,6 +56,7 @@ public class AccomplishmentUpdateCommand extends AbstractCommand {
 			GetPilot pdao = new GetPilot(con);
 			GetFlightReports frdao = new GetFlightReports(con);
 			GetACARSLog acdao = new GetACARSLog(con);
+			GetDispatchCalendar dcdao = new GetDispatchCalendar(con);
 			SetAccomplishment awdao = new SetAccomplishment(con);
 			long lastUse = System.currentTimeMillis();
 			
@@ -71,13 +72,16 @@ public class AccomplishmentUpdateCommand extends AbstractCommand {
 				AccomplishmentHistoryHelper helper = new AccomplishmentHistoryHelper(p);
 				boolean isDispatch = (a.getUnit() == Unit.DFLIGHTS) || (a.getUnit() == Unit.DHOURS);
 				if (isDispatch) {
-					Collection<ConnectionEntry> cons = acdao.getConnections(new LogSearchCriteria(p.getID()));
-					for (ConnectionEntry ce : cons)
-						helper.add(ce);
+					List<ConnectionEntry> cons = acdao.getConnections(new LogSearchCriteria(p.getID()));
+					for (ConnectionEntry ce : cons) {
+						DispatchConnectionEntry dce = (DispatchConnectionEntry) ce;
+						Collection<FlightInfo> flights = dcdao.getDispatchedFlights(dce);
+						flights.forEach(fi -> dce.addFlight(fi));
+						helper.add(dce);
+					}
 				} else {
 					Collection<FlightReport> pireps = frdao.getByPilot(p.getID(), null);
-					for (FlightReport fr : pireps)
-						helper.add(fr);
+					pireps.forEach(fr -> helper.add(fr));
 				}
 				
 				// Check accomplishment eligibility
