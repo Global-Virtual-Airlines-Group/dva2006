@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2011, 2012, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.acars.*;
 /**
  * A Data Access Object to read the ACARS Dispatcher service calendar.
  * @author Luke
- * @version 5.2
+ * @version 6.0
  * @since 2.2
  */
 
@@ -74,8 +74,8 @@ public class GetDispatchCalendar extends GetACARSData {
 	 */
 	public List<FlightInfo> getDispatchedFlights(int id, DateRange dr) throws DAOException {
 		try {
-			prepareStatement("SELECT F.*, INET6_NTOA(F.REMOTE_ADDR),FD.ROUTE_ID, FDR.DISPATCHER_ID FROM "
-				+ "acars.FLIGHTS F, acars.FLIGHT_DISPATCHER FDR LEFT JOIN acars.FLIGHT_DISPATCH FD ON (F.ID=FD.ID) "
+			prepareStatement("SELECT F.*, INET6_NTOA(F.REMOTE_ADDR), FD.ROUTE_ID, FDR.DISPATCHER_ID FROM "
+				+ "acars.FLIGHT_DISPATCHER FDR, acars.FLIGHTS F LEFT JOIN acars.FLIGHT_DISPATCH FD ON (F.ID=FD.ID) "
 				+ "WHERE (F.ID=FDR.ID) AND (FDR.DISPATCHER_ID=?) AND (F.CREATED >= ?) AND (F.CREATED < ?)");
 			_ps.setInt(1, id);
 			_ps.setTimestamp(2, createTimestamp(dr.getStartDate()));
