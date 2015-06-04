@@ -304,7 +304,7 @@ do
 		sleep 10
 		kill -9 `cat /var/run/tomcat60.pid`
 		sleep 2
-		pbzip2 -9 /var/log/catalina.log
+		pbzip2 -9 /var/log/tomcat/catalina.log
 		/etc/init.d/tomcat start
 		sleep 10
 	fi
