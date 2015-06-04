@@ -188,6 +188,9 @@ public class FAAChartDownloadCommand extends AbstractCommand {
 			ctx.release();
 		}
 		
+		// Calculate base URL
+		final String baseURL = SystemData.get("schedule.chart.url.faa.chartBase").replace("${YY}", StringUtils.format(y, "00")).replace("${MM}", ctx.getParameter("month"));
+		
 		// Collections of charts to update
 		Collection<Integer> chartsToDelete = new LinkedHashSet<Integer>();
 		Collection<ExternalChart> chartsToLoad = new ArrayList<ExternalChart>();
@@ -196,15 +199,17 @@ public class FAAChartDownloadCommand extends AbstractCommand {
 		// If there are new FAA airports, queue them
 		Collection<Airport> newAirports = CollectionUtils.getDelta(newCharts.keySet(), oldCharts.keySet());
 		for (Airport a : newAirports) {
-			msgs.add(new LogMessage("pri bld", "Loading charts for new Airport " + a));
-			AirportCharts<ExternalChart> charts = newCharts.get(a);
-			chartsToLoad.addAll(charts.getCharts());
+			msgs.add(new LogMessage("pri bld", "Processing new Airport " + a));
+			Collection<ExternalChart> charts = newCharts.get(a).getCharts();
+			chartsToLoad.addAll(charts);
 			newCharts.remove(a);
+			for (ExternalChart ec : charts) {
+				ec.setURL(baseURL + "/" + ec.getExternalID()); 
+				msgs.add(new LogMessage("Adding chart " + ec.getName())); 
+			}
 		}
 		
 		// Go through the remaining FAA airports, adding and removing as needed
-		String baseURL = SystemData.get("schedule.chart.url.faa.chartBase");
-		baseURL = baseURL.replace("${YY}", StringUtils.format(y, "00")).replace("${MM}", ctx.getParameter("month"));
 		int addCnt = 0; int updCnt = 0; int delCnt = 0;
 		for (AirportCharts<ExternalChart> ac : newCharts.values()) {
 			msgs.add(new LogMessage("pri bld", "Processing " + ac.getAirport()));

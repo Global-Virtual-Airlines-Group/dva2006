@@ -130,6 +130,9 @@ public class FAAChartLoaderTask extends Task {
 			ctx.release();
 		}
 		
+		// Get base URL
+		String baseURL = SystemData.get("schedule.chart.url.faa.chartBase").replace("${YY}", StringUtils.format(year, "00")).replace("${MM}", StringUtils.format(month, "00"));
+		
 		// Collections of charts to update
 		Collection<Integer> chartsToDelete = new HashSet<Integer>();
 		BlockingQueue<ExternalChart> chartsToLoad = new LinkedBlockingQueue<ExternalChart>();
@@ -138,14 +141,13 @@ public class FAAChartLoaderTask extends Task {
 		Collection<Airport> newAirports = CollectionUtils.getDelta(newCharts.keySet(), oldCharts.keySet());
 		for (Airport a : newAirports) {
 			log.info("Loading charts for new Airport " + a);
-			AirportCharts<ExternalChart> charts = newCharts.get(a);
-			chartsToLoad.addAll(charts.getCharts());
+			Collection<ExternalChart> charts = newCharts.get(a).getCharts();
+			chartsToLoad.addAll(charts);
 			newCharts.remove(a);
+			charts.forEach(ec -> ec.setURL(baseURL + "/" + ec.getExternalID()));
 		}
 			
 		// Go through the remaining FAA airports, adding and removing as needed
-		String baseURL = SystemData.get("schedule.chart.url.faa.chartBase");
-		baseURL = baseURL.replace("${YY}", StringUtils.format(year, "00")).replace("${MM}", StringUtils.format(month, "00"));
 		int addCnt = 0; int updCnt = 0; int delCnt = 0;
 		for (AirportCharts<ExternalChart> ac : newCharts.values()) {
 			log.info("Processing " + ac.getAirport());
