@@ -233,6 +233,57 @@ public class GetSchedule extends DAO {
 	}
 	
 	/**
+	 * Returns the most appropriate flight/leg number between two airports. 
+	 * @param sr the ScheduleRoute
+	 * @param dbName the database name
+	 * @return a ScheduleEntry bean with the Airline, Flight and Leg number or null if none found
+	 * @throws DAOException if a JDBC error occurs
+	 * @throws NullPointerException if airportD or airportA are null
+	 */
+	public ScheduleEntry getFlightNumber(ScheduleRoute sr, int hourOfDay, String dbName) throws DAOException {
+
+		// Build the SQL Statement
+		String db = formatDBName(dbName);
+		StringBuilder sqlBuf = new StringBuilder("SELECT S.AIRLINE, S.FLIGHT, S.LEG, S.EQTYPE, S.TIME_D, S.TIME_A, A.HISTORIC FROM ");
+		sqlBuf.append(db);
+		sqlBuf.append(".SCHEDULE S, common.AIRLINES A, common.AIRLINEINFO AI WHERE (AI.DBNAME=?) AND (S.AIRLINE=A.CODE) "
+			+ "AND ((S.AIRPORT_D=?) OR (S.AIRPORT_D=?)) AND ((S.AIRPORT_A=?) OR (S.AIRPORT_A=?)) AND (S.ACADEMY=0) "
+			+ "ORDER BY IF(S.AIRPORT_D=?,0,1), IF(S.AIRPORT_A=?,0,1), IF(S.AIRLINE=?,0,IF(S.AIRLINE=AI.CODE,1,2)), "
+			+ "IF(A.HISTORIC=1,0,1), ABS(HOUR(S.TIME_D)-?), S.FLIGHT LIMIT 1");
+
+		try {
+			prepareStatementWithoutLimits(sqlBuf.toString());
+			_ps.setString(1, db);
+			_ps.setString(2, sr.getAirportD().getIATA());
+			_ps.setString(3, sr.getAirportD().getSupercededAirport());
+			_ps.setString(4, sr.getAirportA().getIATA());
+			_ps.setString(5, sr.getAirportA().getSupercededAirport());
+			_ps.setString(6, sr.getAirportD().getIATA());
+			_ps.setString(7, sr.getAirportA().getIATA());
+			_ps.setString(8, sr.getAirline().getCode());
+			_ps.setInt(9, hourOfDay);
+			
+			// Execute the query
+			ScheduleEntry se = null;
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next()) {
+					se = new ScheduleEntry(SystemData.getAirline(rs.getString(1)), rs.getInt(2), rs.getInt(3));
+					se.setEquipmentType(rs.getString(4));
+					se.setAirportD(sr.getAirportD());
+					se.setAirportA(sr.getAirportA());
+					se.setTimeD(rs.getTimestamp(5));
+					se.setTimeA(rs.getTimestamp(6));
+				}
+			}
+
+			_ps.close();
+			return se;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Returns the lowest flight/leg number between two airports. 
 	 * @param rp the RoutePair
 	 * @param dbName the database name
@@ -244,11 +295,11 @@ public class GetSchedule extends DAO {
 		
 		// Build the SQL Statement
 		String db = formatDBName(dbName);
-		StringBuilder sqlBuf = new StringBuilder("SELECT S.AIRLINE, S.FLIGHT, S.LEG, S.EQTYPE, AI.CODE FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT S.AIRLINE, S.FLIGHT, S.LEG, S.EQTYPE, A.HISTORIC, AI.CODE FROM ");
 		sqlBuf.append(db);
-		sqlBuf.append(".SCHEDULE S, common.AIRLINEINFO AI WHERE (AI.DBNAME=?) AND ((S.AIRPORT_D=?) OR "
-			+ "(S.AIRPORT_D=?)) AND ((S.AIRPORT_A=?) OR (S.AIRPORT_A=?)) AND (S.ACADEMY=?) ORDER BY "
-			+ "IF(S.AIRPORT_D=?, 0, 1), IF(S.AIRPORT_A=?, 0, 1), IF (S.AIRLINE=AI.CODE, 0, 1), FLIGHT LIMIT 1");
+		sqlBuf.append(".SCHEDULE S, common.AIRLINES A, common.AIRLINEINFO AI WHERE (AI.DBNAME=?) AND (S.AIRLINE=A.CODE) "
+			+ "AND ((S.AIRPORT_D=?) OR (S.AIRPORT_D=?)) AND ((S.AIRPORT_A=?) OR (S.AIRPORT_A=?)) AND (S.ACADEMY=?) "
+			+ "ORDER BY IF(S.AIRPORT_D=?,0,1), IF(S.AIRPORT_A=?,0,1), IF(S.AIRLINE=AI.CODE,1,0), IF(A.HISTORIC=1,0,1), S.FLIGHT LIMIT 1");
 		
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
