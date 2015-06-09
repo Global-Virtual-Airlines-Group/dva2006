@@ -35,9 +35,8 @@ if (f.id.selectedIndex == 0)
 golgotha.form.validate({f:f.body, l:30, t:'Nomination Comments'});
 
 // Confirm
-var pilotName = f.pilot.options[form.id.selectedIndex].text;
+var pilotName = f.id.options[f.id.selectedIndex].pilotName;
 if (!confirm('Are you sure you wish to nominate ' + pilotName + ' for Senior Captain?')) return false;
-
 golgotha.form.submit(f);
 return true;	
 };
@@ -92,7 +91,7 @@ We look forward to your help in recognizing those who make <content:airline /> a
  <td style="width:15%">ACARS</td>
 <c:if test="${canSeeScore}">
  <td>NOMINATED ON</td>
- <td style="width:5%"">SCORE</td>
+ <td style="width:5%">SCORE</td>
 </c:if>
 </tr>
 </c:if>

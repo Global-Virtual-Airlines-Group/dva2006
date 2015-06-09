@@ -22,10 +22,11 @@ xmlreq.onreadystatechange = function() {
 	for (var x = 0; x < pe.length; x++) {
 		var p = pe[x];
 		var id = p.getAttribute('id');
-		var code = p.getAttribute('code');
-		var o = new Option(p.getAttribute('name') + ' (' + code + ')', id);
+		var code = p.getAttribute('code'); var name = p.getAttribute('name');
+		var o = new Option(name + ' (' + code + ')', id);
 		o.pilotID = id;
 		o.pilotCode = code;
+		o.pilotName = name;
 		try {
 			cbo.add(o, null);
 		} catch (err) {
