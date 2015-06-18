@@ -22,6 +22,12 @@ golgotha.local.switchType = function(combo) {
 	self.location = '/eventcalendar.do?op=' + escape(golgotha.form.getCombo(combo)) + '&startDate=<fmt:date fmt="d" d="MM/dd/yyyy" date="${startDate}" />';
 	return true;
 };
+
+golgotha.local.expandSection = function(id) {
+    var s = document.getElementById(id);
+    if (s) s.style.display = (s.style.display == 'none') ? '' : 'none';
+    return true;
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -43,6 +49,8 @@ golgotha.local.switchType = function(combo) {
 <calendar:week date="cDate" startDate="${startDate}" entries="${events}" topBarClass="dayHdr" 
 	dayBarClass="dayHdr" tableClass="calendar" contentClass="contentW" scrollClass="scroll" cmd="eventcalendar">
 <calendar:entry name="event">
+<c:set var="eventSize" value="${fn:sizeof(event.signups)}" scope="page" />
+<c:set var="eventLargeSignup" value="${eventSize > 20}" scope="page" />
 <el:cmd url="event" link="${event}" className="pri bld">${event.name}</el:cmd><br />
 <span class="sec small bld">${event.network}</span> <span class="small"><fmt:date fmt="t" t="HH:mm" date="${event.startTime}" /> 
 - <fmt:date fmt="t" t="HH:mm" date="${event.endTime}" /></span><br />
@@ -50,7 +58,6 @@ golgotha.local.switchType = function(combo) {
 <c:if test="${((route.maxSignups == 0) || (route.signups < route.maxSignups))}">
 <div class="small">${route.airportD.name} - ${route.airportA.name}<br />
 <span class="sec"><fmt:distance longUnits="true" value="${route.distance}" /></span></div></c:if></c:forEach>
-<c:set var="eventSize" value="${fn:sizeof(event.signups)}" scope="page" />
 <c:if test="${!event.canSignup}">
 <c:if test="${!empty event.signupURL}">
 <el:link external="true" url="${event.signupURL}" target="eventSignup" className="bld small">SIGNUP</el:link>
@@ -63,14 +70,20 @@ golgotha.local.switchType = function(combo) {
 <span class="small bld">NO SIGNUPS YET</span>
 </c:if>
 <c:if test="${eventSize > 0}">
-<div class="small ter bld"><fmt:int value="${eventSize}" /> Participant<c:if test="${eventSize > 1}">s</c:if></div>
-<c:set var="eventSignups" value="${fn:subset(event.signups, 15)}" scope="page" />
-<span class="small">
-<c:forEach var="signup" items="${eventSignups}">
+<br />
+<c:if test="${eventLargeSignup}">
+<a href="javascript:golgotha.local.expandSection('eSignup${event.hexID}')" class="small ter bld"><fmt:int value="${eventSize}" /> Participants</a>
+</c:if>
+<c:if test="${!eventLargeSignup}">
+<span class="small ter bld"><fmt:int value="${eventSize}" /> Participant<c:if test="${eventSize > 1}">s</c:if></span>
+</c:if>
+<br />
+<div id="eSignup${event.hexID}" class="small"<c:if test="${eventLargeSignup}"> style="display:none;"</c:if>>
+<c:forEach var="signup" items="${event.signups}">
 <c:set var="pilot" value="${pilots[signup.pilotID]}" scope="page" />
 ${pilot.name} <c:if test="${!empty pilot.pilotCode}">(${pilot.pilotCode})<br /></c:if>
 </c:forEach>
-</span>
+</div>
 </c:if>
 <calendar:spacer><hr /></calendar:spacer>
 </calendar:entry>
