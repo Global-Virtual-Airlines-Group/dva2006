@@ -19,13 +19,12 @@
 <content:js name="common" />
 <content:rss title="${airlineName} Online Events" path="/event_rss.ws" />
 <script type="text/javascript">
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-golgotha.form.validate({f:f.eqType, t:'Equipment Type'});
-golgotha.form.validate({f:f.route, t:'Flight Route'});
-golgotha.form.submit(f);
-return true;
+golgotha.local.validate = function(f) {
+    if (!golgotha.form.check()) return false;
+    golgotha.form.validate({f:f.eqType, t:'Equipment Type'});
+    golgotha.form.validate({f:f.route, t:'Flight Route'});
+    golgotha.form.submit(f);
+    return true;
 };
 
 golgotha.local.resizeBriefing = function(maxRows) {
@@ -269,8 +268,18 @@ golgotha.local.resizeBriefing = function(maxRows) {
 </tr>
 </c:if>
 
-<!-- Signup Section -->
+<content:authUser var="user">
+<c:if test="${!access.canSignup && event.canSignup && fn:isEventOpen(event) && (empty fn:networkID(user, event.network))}">
+<!-- No Online ID Notice -->
+<tr>
+ <td colspan="6" class="mid"><span class="pri bld">You cannot sign up for this Online Event because you have not provided your ${event.network} ID.</span><br />
+<br />
+<el:cmd className="sec bld" url="profile" link="${user}" op="edit">Click Here</el:cmd> to update your <content:airline /> pilot profile.</td>
+</tr>
+</c:if>
+</content:authUser>
 <c:if test="${access.canSignup || (!event.canSignup)}">
+<!-- Signup Section -->
 <tr class="title caps">
  <td colspan="6" class="left">SIGN UP FOR THIS EVENT</td>
 </tr>
@@ -288,8 +297,7 @@ golgotha.local.resizeBriefing = function(maxRows) {
 </c:if>
 <c:if test="${!event.canSignup}">
 <tr>
- <td colspan="6" class="pri bld">This Online Event is posted for informational purposes only, and signups
- are not currently available.</td>
+ <td colspan="6" class="pri bld">This Online Event is posted for informational purposes only, and signups are not currently available.</td>
 </tr>
 </c:if>
 </c:if>
