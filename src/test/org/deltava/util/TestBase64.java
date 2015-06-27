@@ -78,8 +78,8 @@ public class TestBase64 extends TestCase {
 	public void testJDK8() throws Exception {
 		try {
 			Class<?> c = Class.forName("java.util.Base64");
-			Method m = c.getDeclaredMethod("getEncoder", null);
-			Object encoder = m.invoke(null, null);
+			Method m = c.getDeclaredMethod("getEncoder", (Class<?>) null);
+			Object encoder = m.invoke(null, (Object) null);
 			assertNotNull(encoder);
 			
 			c = encoder.getClass();
