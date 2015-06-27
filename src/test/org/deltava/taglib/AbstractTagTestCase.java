@@ -75,15 +75,15 @@ public class AbstractTagTestCase extends TestCase {
       s.setAttribute(HTTPContext.USER_ATTR_NAME, p);
    }
 
-   protected void assertSkipBody(int resultCode) {
+   protected static void assertSkipBody(int resultCode) {
       assertEquals(Tag.SKIP_BODY, resultCode);
    }
 
-   protected void assertEvalBody(int resultCode) {
+   protected static void assertEvalBody(int resultCode) {
       assertEquals(Tag.EVAL_BODY_INCLUDE, resultCode);
    }
 
-   protected void assertEvalPage(int resultCode) {
+   protected static void assertEvalPage(int resultCode) {
       assertEquals(Tag.EVAL_PAGE, resultCode);
    }
 
