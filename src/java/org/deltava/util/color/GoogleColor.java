@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.color;
 
 import org.deltava.util.StringUtils;
@@ -6,7 +6,7 @@ import org.deltava.util.StringUtils;
 /**
  * An abstract class to render RGB values as Google product colors. 
  * @author Luke
- * @version 1.0
+ * @version 6.0
  * @since 1.0
  */
 
@@ -95,7 +95,7 @@ public abstract class GoogleColor {
 	 * @param value the RGB value
 	 * @return the hex representation of the value, with a leading zero if required
 	 */
-	protected String formatHex(int value) {
+	protected static String formatHex(int value) {
 		String tmp = StringUtils.formatHex(value).substring(2);
 		return (tmp.length() == 1) ? "0" + tmp : tmp;
 	}
