@@ -529,7 +529,10 @@
 		<files>/home/www/userfiles</files>
 		<httplog>/var/log/www</httplog>
 		<newsletter>/home/www/nws</newsletter>
-		<video>/home/www/videos</video>
+		<video>
+            <live>/home/www/video</live>
+            <stage>/home/video</stage>
+        </video>
 	</path>
 	
 	<smtp>
