@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2011, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.io.File;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Videos.
  * @author Luke
- * @version 4.1
+ * @version 6.0
  * @since 1.0
  */
 
@@ -66,18 +66,18 @@ public class GetVideos extends GetLibrary {
 	 */
 	private List<Video> loadVideos() throws SQLException {
 		List<Video> results = new ArrayList<Video>();
-		String path = SystemData.get("path.video");
+		File p = new File(SystemData.get("path.video.live"));
 		try (ResultSet rs = _ps.executeQuery()) {
 			while (rs.next()) {
 				Video entry = null;
-				File f = new File(path, rs.getString(1)); 
+				File f = new File(p, rs.getString(1)); 
 				Collection<String> certs = StringUtils.split(rs.getString(8), ",");
 				if (!CollectionUtils.isEmpty(certs)) {
-					TrainingVideo tv = new TrainingVideo(f.getPath());
+					TrainingVideo tv = new TrainingVideo(f);
 					tv.setCertifications(certs);
 					entry = tv;
 				} else
-					entry = new Video(f.getPath());
+					entry = new Video(f);
 			
 				entry.setName(rs.getString(2));
 				entry.setCategory(rs.getString(3));

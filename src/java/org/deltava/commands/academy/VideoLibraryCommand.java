@@ -1,10 +1,9 @@
-// Copyright 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.Connection;
-
-import org.apache.log4j.Logger;
 
 import org.deltava.beans.UserDataMap;
 import org.deltava.beans.fleet.Video;
@@ -17,19 +16,18 @@ import org.deltava.security.command.*;
 /**
  * A Web Site Command to display Fleet Academy training videos.
  * @author Luke
- * @version 2.2
+ * @version 6.0
  * @since 1.0
  */
 
 public class VideoLibraryCommand extends AbstractViewCommand {
-
-	private static final Logger log = Logger.getLogger(VideoLibraryCommand.class);
 
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the view start/end
@@ -52,11 +50,7 @@ public class VideoLibraryCommand extends AbstractViewCommand {
 			results = dao.getVideos();
 
 			// Get the authors
-			Collection<Integer> IDs = new HashSet<Integer>();
-			for (Iterator<Video> i = results.iterator(); i.hasNext();) {
-				Video v = i.next();
-				IDs.add(new Integer(v.getAuthorID()));
-			}
+			Collection<Integer> IDs = results.stream().map(v -> Integer.valueOf(v.getAuthorID())).collect(Collectors.toSet());
 
 			// Get the author data
 			GetPilot pdao = new GetPilot(con);
@@ -80,10 +74,8 @@ public class VideoLibraryCommand extends AbstractViewCommand {
 			vAccess.validate();
 			
 			// Check that the resource exists
-			if (video.getSize() == 0) {
-				log.warn(video.getFullName() + " not found in file system!");
-				if (!access.getCanEditVideo())
-					i.remove();
+			if ((video.getSize() == 0) && (!access.getCanEditVideo())) {
+				i.remove();
 			} else if (!vAccess.getCanRead())
 				i.remove();
 		}

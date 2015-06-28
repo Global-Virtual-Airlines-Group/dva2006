@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2011, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.io.File;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load metadata from the Fleet/Document Libraries.
  * @author Luke
- * @version 5.3
+ * @version 6.0
  * @since 1.0
  */
 
@@ -220,13 +220,13 @@ public class GetLibrary extends DAO {
 	private List<FileEntry> loadFiles(boolean isVideo) throws SQLException {
 		
 		// Determine the path
-		String path = SystemData.get(isVideo ? "path.video" : "path.userfiles");
+		File p = new File(SystemData.get(isVideo ? "path.video.live" : "path.userfiles"));
 		List<FileEntry> results = new ArrayList<FileEntry>();
 		try (ResultSet rs = _ps.executeQuery()) {
 			boolean hasTotals = (rs.getMetaData().getColumnCount() > 7);
 			while (rs.next()) {
-				File f = new File(path, rs.getString(1));
-				FileEntry entry = isVideo ? new Video(f.getPath()) : new FileEntry(f.getPath());
+				File f = new File(p, rs.getString(1));
+				FileEntry entry = isVideo ? new Video(f) : new FileEntry(f);
 				entry.setName(rs.getString(2));
 				entry.setCategory(rs.getString(3));
 				entry.setSecurity(Security.values()[rs.getInt(5)]);
@@ -252,7 +252,7 @@ public class GetLibrary extends DAO {
 			boolean hasTotals = (rs.getMetaData().getColumnCount() > 11);
 			while (rs.next()) {
 				File f = new File(SystemData.get("path.library"), rs.getString(1));
-				Installer entry = new Installer(f.getPath());
+				Installer entry = new Installer(f);
 				entry.setName(rs.getString(2));
 				entry.setImage(rs.getString(3));
 				entry.setVersion(rs.getInt(5), rs.getInt(6), rs.getInt(7));

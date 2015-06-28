@@ -1,7 +1,8 @@
-// Copyright 2006, 2010, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.io.File;
 import java.sql.Connection;
 
@@ -11,7 +12,6 @@ import org.deltava.beans.academy.TrainingVideo;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-import org.deltava.dao.file.WriteBuffer;
 import org.deltava.mail.*;
 
 import org.deltava.security.command.CertificationAccessControl;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to view and update Flight Academy Training videos.
  * @author Luke
- * @version 5.3
+ * @version 6.0
  * @since 1.0
  */
 
@@ -47,16 +47,12 @@ public class VideoCommand extends AbstractFormCommand {
 			throw securityException("Cannot create/edit Training Video");
 		
 		// Get the uploaded file - look for a file
-		FileUpload mFile = ctx.getFile("file");
-		if (isNew && (mFile == null)) {
-			File f = new File(SystemData.get("path.video"), ctx.getParameter("fileName"));
+		if (isNew) {
+			File f = new File(SystemData.get("path.video.stage"), ctx.getParameter("baseFile"));
 			if (f.exists())
 				fName = f.getName();
-			
 			if (fName == null)
-				throw notFoundException("No Training Video Uploaded/Specified");
-		} else if (isNew && (mFile != null)) {
-			fName = mFile.getName();
+				throw notFoundException("No Training Video Specified");
 		}
 
 		// Check if we notify people
@@ -77,12 +73,11 @@ public class VideoCommand extends AbstractFormCommand {
 
 			// Check if we're uploading to ensure that the file does not already exist
 			if (isNew && (v != null)) {
-				throw new CommandException("Document " + fName + " already exists");
+				throw new CommandException("Video " + fName + " already exists");
 			} else if (isNew || (v == null)) {
-				File f = new File(SystemData.get("path.video"), fName);
-				video = new TrainingVideo(f.getPath());
+				File f = new File(SystemData.get("path.video.stage"), fName);
+				video = new TrainingVideo(f);
 				video.setAuthorID(ctx.getUser().getID());
-				video.setSize(f.length());
 				ctx.setAttribute("fileAdded", Boolean.TRUE, REQUEST);
 			} else {
 				video = new TrainingVideo(v);
@@ -95,21 +90,18 @@ public class VideoCommand extends AbstractFormCommand {
 			video.setName(ctx.getParameter("title"));
 			video.setCertifications(ctx.getParameters("certNames"));
 			video.setSecurity(Security.valueOf(ctx.getParameter("security")));
-			if (mFile != null)
-				video.setSize(mFile.getSize());
 
-			// Get the message template
+			// Get the message template and pilots to notify
 			if (!noNotify) {
 				GetMessageTemplate mtdao = new GetMessageTemplate(con);
 				mctxt.setTemplate(mtdao.get("TVLIBUPDATE"));
 				mctxt.addData("video", video);
+
+				GetPilotDirectory pdao = new GetPilotDirectory(con);
+				pilots.addAll(pdao.getByRole("HR", SystemData.get("airline.db")));
+				pilots.addAll(pdao.getByRole("Instructor", SystemData.get("airline.db")));
+				pilots.addAll(pdao.getByRole("AcademyAdmin", SystemData.get("airline.db")));
 			}
-			
-			// Get the pilots to notify
-			GetPilotDirectory pdao = new GetPilotDirectory(con);
-			pilots.addAll(pdao.getByRole("HR", SystemData.get("airline.db")));
-			pilots.addAll(pdao.getByRole("Instructor", SystemData.get("airline.db")));
-			pilots.addAll(pdao.getByRole("AcademyAdmin", SystemData.get("airline.db")));
 
 			// Start the transaction
 			ctx.startTX();
@@ -122,11 +114,9 @@ public class VideoCommand extends AbstractFormCommand {
 			SetAcademy awdao = new SetAcademy(con);
 			awdao.writeCertifications(video);
 
-			// Dump the uploaded file to the filesystem
-			if (mFile != null) {
-				WriteBuffer fsdao = new WriteBuffer(video.file());
-				fsdao.write(mFile.getBuffer());
-			}
+			// Move the files
+			if (isNew)
+				video.file().renameTo(new File(SystemData.get("path.video.live"), video.getFileName()));
 
 			// Commit the transaction
 			ctx.commitTX();
@@ -193,6 +183,11 @@ public class VideoCommand extends AbstractFormCommand {
 				
 				// Save the video in the request 
 				ctx.setAttribute("video", video, REQUEST);
+			} else {
+				File p = new File(SystemData.get("path.video.stage"));
+				Collection<File> files = Arrays.asList(p.listFiles());
+				Collection<String> videos = files.stream().filter(f -> f.isFile() && Video.isValidFormat(f.getName())).map(f -> f.getName()).collect(Collectors.toSet());
+				ctx.setAttribute("availableFiles", videos, REQUEST);
 			}
 			
 			// Get the certification options
