@@ -13,6 +13,28 @@
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
+<script type="text/javascript">
+golgotha.local.play = function(id, name) {
+	var tbody = golgotha.util.getElementsByClass('', 'tbody', document.getElementById('videoList'))[0];
+	if (golgotha.local.video != null) {
+		golgotha.local.video.vid.pause();
+		tbody.removeChild(golgotha.local.video.row);
+	}
+	
+	var r = document.createElement('tr');
+	var c = document.createElement('td'); c.setAttribute('colspan', '5');
+
+	// Create the video element
+	var v = document.createElement('video'); v.setAttribute('controls', 'true');
+	var src = document.createElement('source');
+	src.type = 'video/mp4; codecs="avc1.4D401E, mp4a.40.2"'; src.src='/video/' + name;
+	v.appendChild(src); c.appendChild(v); r.appendChild(c);
+	golgotha.local.video = {vid:v, row:r};
+	tbody.insertBefore(r, document.getElementById('video-' + (id+1)));
+	v.play();
+	return true;
+};
+</script>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -22,7 +44,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<view:table cmd="tvlibrary">
+<view:table cmd="tvlibrary" ID="videoList">
 <!-- Table Header Bar -->
 <tr class="title caps">
  <td style="width:25%">TITLE</td>
@@ -40,28 +62,27 @@
 </tr>
 
 <!-- Table Data Section -->
+<c:set var="rowID" value="0" scope="page" />
 <c:forEach var="video" items="${viewContext.results}">
-<view:row entry="${video}">
+<c:set var="hasFile" value="${video.file().exists()}" scope="page" />
+<c:set var="rowID" value="${rowID + 1}" scope="page" />
+<view:row entry="${video}" ID="video-${rowID}">
 <c:if test="${access.canEditVideo}">
  <td class="pri bld"><el:cmd url="tvideo" linkID="${video.fileName}" op="edit">${video.name}</el:cmd></td>
 </c:if>
 <c:if test="${!access.canEditVideo}">
  <td class="pri bld"><el:link url="/video/${video.fileName}">${video.name}</el:link></td>
 </c:if>
- <td><el:link url="/video/${video.fileName}"><el:img src="library/${video.iconName}.png" caption="Download ${video.type} Video" x="32" y="32" className="noborder" /></el:link></td>
- <td class="sec bld"><fmt:int value="${video.size}" /></td>
+<c:if test="${hasFile}">
+ <td><a href="javascript:void golgotha.local.play(${rowID}, '${video.fileName}')"><el:img src="library/play.png" caption="View Video" x="48" y="48" className="noborder" /></a></td>
+</c:if>
+<c:if test="${!hasFile}">
+ <td><el:img src="library/${video.iconName}.png" caption="View Video" x="32" y="32" /></td>
+</c:if>
+ <td class="sec bld"><fmt:int value="${video.size / 1024}" />K</td>
  <td class="small left" colspan="2"><fmt:text value="${video.description}" /></td>
 </view:row>
 </c:forEach>
-
-<!-- Download DiVX -->
-<tr valign="middle">
- <td><a href="http://www.divx.com/divx/play/download/" rel="external"><el:img src="library/divx.png" className="noborder" caption="Download DivX Player" /></a></td>
- <td colspan="4">Some videos within the <content:airline /> Video Library require the 
-<span class="pri bld">DiVX Player</span> in order to be viewed. If you are having difficulties viewing 
-our videos, please click on the link to the left to download the latest version of the DiVX Player.<br />
-This is a free download.</td>
-</tr>
 
 <!-- Scroll Bar row -->
 <tr class="title">
