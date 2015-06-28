@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2011, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.util.*;
@@ -19,14 +19,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update Fleet Library entries.
  * @author Luke
- * @version 5.3
+ * @version 6.0
  * @since 1.0
  */
 
 public class InstallerCommand extends LibraryEditCommand {
 	
-	private static final List<Simulator> SIMS = Arrays.asList(Simulator.FS2002, Simulator.FS9, Simulator.FSX, Simulator.P3D, 
-			Simulator.XP9, Simulator.XP10);
+	private static final List<Simulator> SIMS = Arrays.asList(Simulator.FS2002, Simulator.FS9, Simulator.FSX, Simulator.P3D, Simulator.XP9, Simulator.XP10);
 
 	/**
 	 * Method called when editing the form.
@@ -80,7 +79,7 @@ public class InstallerCommand extends LibraryEditCommand {
 				throw notFoundException("Installer " + fName + " already exists");
 			} else if (isNew) {
 				File f = new File(SystemData.get("path.library"), fName);
-				entry = new Installer(f.getAbsolutePath());
+				entry = new Installer(f);
 				ctx.setAttribute("fileAdded", Boolean.TRUE, REQUEST);
 			}
 

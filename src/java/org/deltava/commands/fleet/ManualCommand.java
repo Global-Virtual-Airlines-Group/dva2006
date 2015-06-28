@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.io.File;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update Document Library entries.
  * @author Luke
- * @version 5.3
+ * @version 6.0
  * @since 1.0
  */
 
@@ -82,7 +82,7 @@ public class ManualCommand extends LibraryEditCommand {
 				throw new CommandException("Document " + fName + " already exists");
 			else if (isNew) {
 				File f = new File(SystemData.get("path.library"), fName);
-				entry = new Manual(f.getPath());
+				entry = new Manual(f);
 				ctx.setAttribute("fileAdded", Boolean.TRUE, REQUEST);
 			}
 

@@ -1,12 +1,13 @@
-// Copyright 2005, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.fleet;
 
+import java.io.File;
 import java.util.Date;
 
 /**
  * A bean to store information about Fleet Library entries.
  * @author Luke
- * @version 5.0
+ * @version 6.0
  * @since 1.0
  */
 
@@ -18,13 +19,12 @@ public abstract class FleetEntry extends LibraryEntry {
     private int _minorSubVersion;
     
     /**
-     * Create the entry for a given filename.
-     * @param fName the full file name
-     * @throws NullPointerException if fName is null
+     * Create the entry for a given File.
+     * @param f the File
      * @see LibraryEntry#getFileName()
      */
-    public FleetEntry(String fName) {
-        super(fName);
+    public FleetEntry(File f) {
+        super(f);
     }
     
     /**

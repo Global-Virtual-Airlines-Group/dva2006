@@ -1,30 +1,32 @@
-// Copyright 2006, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.fleet;
+
+import java.io.File;
 
 /**
  * A bean to store video data.
  * @author Luke
- * @version 5.2
+ * @version 6.0
  * @since 1.0
  */
 
 public class Video extends FileEntry {
 	
 	public enum Type {
-		WMV, AVI, DIVX, MP3, MP4
+		WMV, MP4, OGV
 	}
 	
 	private Type _type;
 
 	/**
 	 * Creates a new video bean. 
-	 * @param fName the file name
+	 * @param f the File
 	 * @throws NullPointerException if fName is null
 	 * @throws IllegalArgumentException if fName has an unknown extension
 	 */
-	public Video(String fName) {
-		super(fName);
-		setType(fName);
+	public Video(File f) {
+		super(f);
+		setType(f.getName());
 	}
 
 	/**
@@ -35,12 +37,13 @@ public class Video extends FileEntry {
 		return _type;
 	}
 	
-	/**
-	 * Returns the icon name to display.
-	 * @return the icon name, minus extension
-	 */
-	public String getIconName() {
-		return (_type == Type.DIVX) ? "divx" : "wmp";
+	private static Type getType(String fName) {
+		try {
+			String ext = fName.substring(fName.lastIndexOf('.') + 1);
+			return Type.valueOf(ext.toUpperCase());
+		} catch (IllegalArgumentException iae) {
+			return null;
+		}
 	}
 	
 	/**
@@ -49,14 +52,19 @@ public class Video extends FileEntry {
 	 * @throws IllegalArgumentException if fName has an unknown extension
 	 */
 	public void setType(String fName) {
-		if (fName.indexOf('.') == -1)
-			throw new IllegalArgumentException("Invalid file name - " + fName);
+		Type t = getType(fName);
+		if (t == null)
+			throw new IllegalArgumentException("Invalid file type - " + fName);
 		
-		String ext = fName.substring(fName.lastIndexOf('.') + 1);
-		try {
-			_type = Type.valueOf(ext.toUpperCase());
-		} catch (IllegalArgumentException iae) {
-			throw new IllegalArgumentException("Invalid extension - " + ext);
-		}
+		_type = t;
+	}
+
+	/**
+	 * Returns whether this video is in a supported format.
+	 * @param fName the video file name
+	 * @return TRUE if supported, otherwise FALSE
+	 */
+	public static boolean isValidFormat(String fName) {
+		return (getType(fName) != null);
 	}
 }

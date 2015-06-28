@@ -1,12 +1,13 @@
-// Copyright 2005, 2006, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.fleet;
 
+import java.io.File;
 import java.util.*;
 
 /**
  * A bean to store information about Manuals.
  * @author Luke
- * @version 3.4
+ * @version 6.0
  * @since 1.0
  */
 
@@ -19,16 +20,17 @@ public class Manual extends FleetEntry {
    
     /**
      * Creates a new Manual bean.
-     * @param fName the file name of the manual
+     * @param f the File
      */
-    public Manual(String fName) {
-        super(fName);
+    public Manual(File f) {
+        super(f);
     }
 
     /**
      * Returns this manual's version number. Manuals only have a major version number.
      * @see FleetEntry#getVersion()
      */
+    @Override
     public String getVersion() {
         return String.valueOf(getMajorVersion());
     }
@@ -109,6 +111,7 @@ public class Manual extends FleetEntry {
         super.setVersion(major, 0, 0);
     }
 
+    @Override
     public final void setVersion(int major, int minor, int subVersion) {
         super.setVersion(major, 0, 0);
     }

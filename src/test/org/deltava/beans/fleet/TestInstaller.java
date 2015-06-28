@@ -17,7 +17,7 @@ public class TestInstaller extends AbstractBeanTestCase {
     
     protected void setUp() throws Exception {
         super.setUp();
-        _i = new Installer("data/users.txt");
+        _i = new Installer(new File("data/users.txt"));
         setBean(_i);
     }
 
@@ -91,7 +91,7 @@ public class TestInstaller extends AbstractBeanTestCase {
     
     public void testComparator() {
        _i.setName("Installer");
-       Installer i2 = new Installer("data/dummyFile.txt");
+       Installer i2 = new Installer(new File("data/dummyFile.txt"));
        i2.setName("H Installer");
        
        assertTrue(_i.compareTo(i2) > 0);
@@ -101,7 +101,7 @@ public class TestInstaller extends AbstractBeanTestCase {
     public void testInvalidFile() {
         File f = new File("data/dummyFile.txt");
         assertFalse(f.exists());
-        Installer i2 = new Installer("data/dummyFile.txt");
+        Installer i2 = new Installer(new File("data/dummyFile.txt"));
         assertEquals("dummyFile.txt", i2.getFileName());
         assertEquals(0, i2.getSize());
         assertEquals("warn", i2.getRowClassName());

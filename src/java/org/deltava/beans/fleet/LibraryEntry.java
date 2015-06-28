@@ -1,4 +1,4 @@
-// Copyright 2005, 2009, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.fleet;
 
 import java.io.*;
@@ -9,7 +9,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * An abstract bean to store information about Library entries.
  * @author Luke
- * @version 5.3
+ * @version 6.0
  * @since 1.0
  */
 
@@ -24,11 +24,11 @@ public abstract class LibraryEntry implements Comparable<LibraryEntry>, Cacheabl
    
    /**
     * Creates a new Library entry.
-    * @param fName the file name 
+    * @param f the File
     */
-   protected LibraryEntry(String fName) {
+   protected LibraryEntry(File f) {
       super();
-      _file = new File(fName.trim());
+      _file = f;
       _fileSize = (int) _file.length();
    }
    
@@ -37,8 +37,8 @@ public abstract class LibraryEntry implements Comparable<LibraryEntry>, Cacheabl
     * @return the name
     * @see LibraryEntry#setName(String)
     */
-   public String getName() {
-   	return _name;
+   public final String getName() {
+   		return _name;
    }
 
    /**
@@ -83,7 +83,7 @@ public abstract class LibraryEntry implements Comparable<LibraryEntry>, Cacheabl
     * @see LibraryEntry#setSecurity(Security)
     */
    public Security getSecurity() {
-   	return _securityLevel;
+   		return _securityLevel;
    }
    
    /**
@@ -153,6 +153,7 @@ public abstract class LibraryEntry implements Comparable<LibraryEntry>, Cacheabl
    /**
     * Compares two Library entries by comparing their names.
     */
+   @Override
    public int compareTo(LibraryEntry e2) {
     	return _name.compareTo(e2._name);
    }
@@ -161,6 +162,7 @@ public abstract class LibraryEntry implements Comparable<LibraryEntry>, Cacheabl
     * Returns the hashcode of the entry name.
     * @return the name's hashcode
     */
+   @Override
    public int hashCode() {
       return _name.hashCode();
    }
@@ -168,6 +170,7 @@ public abstract class LibraryEntry implements Comparable<LibraryEntry>, Cacheabl
    /**
     * Returns the entry's table row CSS class name. 
     */
+   @Override
    public String getRowClassName() {
       return _file.exists() ? null : "warn";
    }
@@ -176,6 +179,7 @@ public abstract class LibraryEntry implements Comparable<LibraryEntry>, Cacheabl
     * Returns the object's cache key.
     * @return the entry name
     */
+   @Override
    public final Object cacheKey() {
       return getName();
    }

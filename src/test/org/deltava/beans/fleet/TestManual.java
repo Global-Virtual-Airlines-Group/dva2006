@@ -3,6 +3,8 @@ package org.deltava.beans.fleet;
 import junit.framework.Test;
 import org.hansel.CoverageDecorator;
 
+import java.io.File;
+
 import org.deltava.beans.AbstractBeanTestCase;
 
 public class TestManual extends AbstractBeanTestCase {
@@ -15,7 +17,7 @@ public class TestManual extends AbstractBeanTestCase {
     
     protected void setUp() throws Exception {
         super.setUp();
-        _m = new Manual("data/test.pdf");
+        _m = new Manual(new File("data/test.pdf"));
         setBean(_m);
     }
 

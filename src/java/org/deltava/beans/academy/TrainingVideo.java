@@ -1,6 +1,7 @@
-// Copyright 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.academy;
 
+import java.io.File;
 import java.util.*;
 
 import org.deltava.beans.fleet.Video;
@@ -8,7 +9,7 @@ import org.deltava.beans.fleet.Video;
 /**
  * A bean to store Flight Academy training video metadata.
  * @author Luke
- * @version 2.2
+ * @version 6.0
  * @since 1.0
  */
 
@@ -18,10 +19,10 @@ public class TrainingVideo extends Video {
 
 	/**
 	 * Creates a new Training Video bean.
-	 * @param fName the file name
+	 * @param f the File
 	 */
-	public TrainingVideo(String fName) {
-		super(fName);
+	public TrainingVideo(File f) {
+		super(f);
 	}
 	
 	/**
@@ -29,7 +30,7 @@ public class TrainingVideo extends Video {
 	 * @param v the existing Video bean
 	 */
 	public TrainingVideo(Video v) {
-		super(v.getFileName());
+		super(v.file());
 		setName(v.getName());
 		setSecurity(v.getSecurity());
 		setSize(v.getSize());

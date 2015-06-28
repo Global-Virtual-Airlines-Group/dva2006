@@ -3,6 +3,8 @@ package org.deltava.security.command;
 import junit.framework.Test;
 import org.hansel.CoverageDecorator;
 
+import java.io.File;
+
 import org.deltava.beans.fleet.*;
 
 public class TestFleetEntryAccessControl extends AccessControlTestCase {
@@ -17,7 +19,7 @@ public class TestFleetEntryAccessControl extends AccessControlTestCase {
    
    protected void setUp() throws Exception {
       super.setUp();
-      _m = new Manual("manual.pdf");
+      _m = new Manual(new File("manual.pdf"));
       _ac = new FleetEntryAccessControl(_ctxt, _m);
    }
 

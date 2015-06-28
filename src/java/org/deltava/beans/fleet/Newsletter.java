@@ -1,12 +1,13 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.fleet;
 
+import java.io.File;
 import java.util.Date;
 
 /**
  * A bean to store Newsletter information.
  * @author Luke
- * @version 1.0
+ * @version 6.0
  * @since 1.0
  */
 
@@ -17,10 +18,10 @@ public class Newsletter extends LibraryEntry {
 
 	/**
 	 * Creates a new Newsletter.
-	 * @param fName the File name
+	 * @param f the File
 	 */
-	public Newsletter(String fName) {
-		super(fName);
+	public Newsletter(File f) {
+		super(f);
 	}
 
 	/**

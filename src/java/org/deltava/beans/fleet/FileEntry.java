@@ -1,12 +1,14 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.fleet;
+
+import java.io.File;
 
 import org.deltava.beans.*;
 
 /**
  * A bean to store information about File Library entries.
  * @author Luke
- * @version 1.0
+ * @version 6.0
  * @since 1.0
  */
 
@@ -17,10 +19,10 @@ public class FileEntry extends LibraryEntry implements AuthoredBean {
 
    /**
     * Creates a new File Library bean.
-    * @param fName the file name
+    * @param f the File
     */
-   public FileEntry(String fName) {
-      super(fName);
+   public FileEntry(File f) {
+      super(f);
    }
    
    /**
@@ -28,6 +30,7 @@ public class FileEntry extends LibraryEntry implements AuthoredBean {
     * @return the contributor's database ID
     * @see FileEntry#setAuthorID(int)
     */
+   @Override
    public int getAuthorID() {
       return _authorID;
    }
@@ -46,6 +49,7 @@ public class FileEntry extends LibraryEntry implements AuthoredBean {
     * @param id the contributor's database ID
     * @throws IllegalArgumentException if id is zero or negative
     */
+	@Override
    public void setAuthorID(int id) {
       DatabaseBean.validateID(_authorID, id);
       _authorID = id;
