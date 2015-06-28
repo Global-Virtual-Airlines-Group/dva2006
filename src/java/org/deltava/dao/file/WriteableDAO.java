@@ -1,4 +1,4 @@
-// Copyright 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.OutputStream;
@@ -6,13 +6,13 @@ import java.io.OutputStream;
 /**
  * A Data Access Object to write to streams.
  * @author Luke
- * @version 4.1
+ * @version 6.0
  * @since 4.1
  */
 
 abstract class WriteableDAO extends DAO {
 	
-	protected OutputStream _os;
+	protected final OutputStream _os;
 
 	/**
 	 * Initializes the Data Access Object.
