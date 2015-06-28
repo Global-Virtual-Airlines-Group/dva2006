@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.io.File;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to support editing the User File Library.
  * @author Luke
- * @version 5.3
+ * @version 6.0
  * @since 1.0
  */
 
@@ -37,7 +37,7 @@ public class UserFileCommand extends AbstractFormCommand {
 		FileUpload fu = ctx.getFile("file");
 		if (fu != null) {
 			File f = new File(SystemData.get("path.userfiles"), fu.getName());
-			FileEntry entry = new FileEntry(f.getPath());
+			FileEntry entry = new FileEntry(f);
 			if (entry.getSize() != 0)
 				throw securityException(fu.getName() + " already exists");
 		}
@@ -61,8 +61,7 @@ public class UserFileCommand extends AbstractFormCommand {
 			// Create a new bean if we need to
 			if (entry == null) {
 				File f = new File(SystemData.get("path.userfiles"), fName);
-				entry = new FileEntry(f.getPath());
-				entry.setSize(fu.getSize());
+				entry = new FileEntry(f);
 				entry.setAuthorID(ctx.getUser().getID());
 				ctx.setAttribute("fileAdded", Boolean.TRUE, REQUEST);
 			}

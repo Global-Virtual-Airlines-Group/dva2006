@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -7,12 +7,12 @@ import java.util.*;
 import org.deltava.beans.*;
 import org.deltava.beans.flight.FlightReport;
 
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 
 /**
  * A Data Access Object to get Pilots from the database, for use in roster operations.
  * @author Luke
- * @version 5.2
+ * @version 6.0
  * @since 1.0
  */
 
@@ -231,26 +231,49 @@ public class GetPilot extends PilotReadDAO {
 			throw new DAOException(se);
 		}
 	}
+	
+	/**
+	 * Searches for Pilots matching certain name criteria, using a SQL LIKE search.
+	 * @param dbName the database name
+	 * @param fName the Pilot's First Name, containing wildcards accepted by the JDBC implementation's LIKE operator
+	 * @param lName the Pilot's Last Name, containing wildcards accepted by the JDBC implementation's LIKE operator
+	 * @return a List of Pilots
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<Pilot> search(String dbName, String fName, String lName) throws DAOException {
+		return search(dbName, fName, lName, null, null);
+	}
 
 	/**
 	 * Searches for Pilots matching certain search criteria, using a SQL LIKE search.
 	 * @param dbName the database name
 	 * @param fName the Pilot's First Name, containing wildcards accepted by the JDBC implementation's LIKE operator
 	 * @param lName the Pilot's Last Name, containing wildcards accepted by the JDBC implementation's LIKE operator
-	 * @param eMail the Pilot's e-mail Address, , containing wildcards accepted by the JDBC implementation's LIKE
-	 * operator
+	 * @param eMail the Pilot's e-mail Address, , containing wildcards accepted by the JDBC implementation's LIKE operator
+	 * @param ratings a Collection of Ratings which the Pilots need to have
 	 * @return a List of Pilots
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<Pilot> search(String dbName, String fName, String lName, String eMail) throws DAOException {
+	public List<Pilot> search(String dbName, String fName, String lName, String eMail, Collection<String> ratings) throws DAOException {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), "
 				+ "ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE) FROM ");
 		sqlBuf.append(formatDBName(dbName));
 		sqlBuf.append(".PILOTS P LEFT JOIN ");
-		sqlBuf.append(formatDBName(dbName));
-		sqlBuf.append(".PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) WHERE ");
+		if (!CollectionUtils.isEmpty(ratings)) {
+			sqlBuf.append(formatDBName(dbName));
+			sqlBuf.append(".RATINGS R ON ((P.ID=R.ID) AND ");
+			for (Iterator<String> ri = ratings.iterator(); ri.hasNext(); ) {
+				sqlBuf.append("(R.RATING=?)");
+				if (ri.hasNext())
+					sqlBuf.append(") AND ");
+			}
+			
+			sqlBuf.append(") LEFT JOIN ");
+		}
+		
+		sqlBuf.append(".PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?))");
 
 		// Add parameters if they are non-null
 		List<String> searchTerms = new ArrayList<String>();
@@ -260,29 +283,34 @@ public class GetPilot extends PilotReadDAO {
 			searchTerms.add("(P.LASTNAME LIKE ?)");
 		if (eMail != null)
 			searchTerms.add("(P.EMAIL LIKE ?)");
-        
+		
         // If no search terms specified, return an empty list
-        if (searchTerms.isEmpty())
+        if (searchTerms.isEmpty() && CollectionUtils.isEmpty(ratings))
            return Collections.emptyList();
         
         // Aggregate the search terms
-		for (Iterator<String> i = searchTerms.iterator(); i.hasNext();) {
-			String srchTerm = i.next();
-			sqlBuf.append(srchTerm);
-			if (i.hasNext())
-				sqlBuf.append(" AND ");
-		}
+        if (!searchTerms.isEmpty()) {
+        	sqlBuf.append(" WHERE ");
+        	for (Iterator<String> i = searchTerms.iterator(); i.hasNext();) {
+        		String srchTerm = i.next();
+        		sqlBuf.append(srchTerm);
+        		if (i.hasNext())
+        			sqlBuf.append(" AND ");
+        	}
+        }
 
 		// Complete the SQL statement
 		sqlBuf.append(" GROUP BY P.ID");
 
 		List<Pilot> results = null;
 		try {
-			prepareStatement(sqlBuf.toString());
-			_ps.setInt(1, FlightReport.OK);
-
-			// Init the statements
-			int idx = 1;
+			prepareStatement(sqlBuf.toString()); int idx = 0;
+			if (!CollectionUtils.isEmpty(ratings)) {
+				for (String rating : ratings)
+					_ps.setString(++idx, rating);
+			}
+			
+			_ps.setInt(++idx, FlightReport.OK);
 			if (fName != null)
 				_ps.setString(++idx, fName);
 			if (lName != null)

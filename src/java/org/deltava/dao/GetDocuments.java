@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.io.File;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Documents from the Libraries.
  * @author Luke
- * @version 5.3
+ * @version 6.0
  * @since 1.0
  */
 
@@ -238,7 +238,7 @@ public class GetDocuments extends GetLibrary {
 			boolean hasTotals = (rs.getMetaData().getColumnCount() > 8);
 			while (rs.next()) {
 				File f = new File(SystemData.get("path.library"), rs.getString(1));
-				Manual doc = new Manual(f.getPath());
+				Manual doc = new Manual(f);
 				doc.setName(rs.getString(2));
 				doc.setVersion(rs.getInt(4));
 				doc.setSecurity(Security.values()[rs.getInt(5)]);
@@ -266,8 +266,7 @@ public class GetDocuments extends GetLibrary {
 		try (ResultSet rs = _ps.executeQuery()) {
 			boolean hasTotals = (rs.getMetaData().getColumnCount() > 7);
 			while (rs.next()) {
-				File f = new File(SystemData.get("path.newsletter"), rs.getString(1));
-				Newsletter nws = new Newsletter(f.getPath());
+				Newsletter nws = new Newsletter(new File(SystemData.get("path.newsletter"), rs.getString(1)));
 				nws.setName(rs.getString(2));
 				nws.setCategory(rs.getString(3));
 				nws.setSecurity(Security.values()[rs.getInt(5)]);
