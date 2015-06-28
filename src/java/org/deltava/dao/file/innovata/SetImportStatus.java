@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file.innovata;
 
 import java.io.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to save Innovata Schedule import status.
  * @author Luke
- * @version 2.7
+ * @version 6.0
  * @since 1.0
  */
 
@@ -36,26 +36,11 @@ public class SetImportStatus extends WriteBuffer {
 	 * @throws DAOException if an I/O error occurs
 	 */
 	public void write(Collection<String> al, Collection<String> airports, Collection<String> eq, Collection<String> msgs) throws DAOException {
-		try {
-			PrintWriter out = new PrintWriter(new FileWriter(_f));
-			
-			// Write messages
-			for (String msg : msgs)
-				out.println(msg);
-			
-			// Write airlines
-			for (String a : al)
-				out.println("airline=" + a);
-			
-			// Write airports
-			for (String ap : airports)
-				out.println("airport=" + ap);
-			
-			// Write equipment
-			for (String eqType : eq)
-				out.println("eq=" + eqType);
-			
-			out.close();
+		try (PrintWriter out = new PrintWriter(_f)) {
+			msgs.forEach(msg -> out.println(msg));			// messages
+			al.forEach(a -> out.println("airline=" + a));		// airlines
+			airports.forEach(a -> out.println("airport=" + a)); // airports
+			eq.forEach(eqType -> out.println("eq=" + eqType)); // equipment
 		} catch (IOException ie) {
 			throw new DAOException(ie);
 		}
