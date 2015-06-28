@@ -18,13 +18,9 @@ golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
 golgotha.form.validate({f:f.title, l:10, t:'Video Title'});
+golgotha.form.validate({f:f.baseFile, t:'Video File'});
 golgotha.form.validate({f:f.category, t:'Video Category'});
 golgotha.form.validate({f:f.desc, l:10, t:'Description'});
-if ((f.file) && (f.file.value.length > 0))
-	golgotha.form.validate({f:f.file, ext:['avi','wmv','divx','mp3','mp4'], t:'Uploaded Video'});
-else if ((f.fileName) && (f.fileName.value.length > 0))
-	golgotha.form.validate({f:f.file, ext:['avi','wmv','divx','mp3','mp4'], t:'Local Filesystem Video'});
-
 golgotha.form.submit(f);
 return true;
 };
@@ -45,30 +41,36 @@ return true;
 <tr class="title caps">
 <c:choose>
 <c:when test="${!empty video}">
- <td colspan="2">FLIGHT ACADEMY VIDEO LIBRARY - ${video.name}</td>
+ <td colspan="2"><content:airline /> VIDEO LIBRARY - ${video.name}</td>
 </c:when>
 <c:otherwise>
- <td colspan="2">NEW FLIGHT ACADEMY VIDEO LIBRARY ENTRY</td>
+ <td colspan="2">NEW <content:airline /> VIDEO LIBRARY ENTRY</td>
 </c:otherwise>
 </c:choose>
 </tr>
+<c:if test="${empty video}">
+<tr>
+ <td class="label">Local File</td>
+ <td class="data"><el:combo name="baseFile" idx="*" required="true" size="1" options="${availableFiles}" firstEntry="[ VIDEO FILE ]" /></td>
+</tr>
+</c:if>
 <tr>
  <td class="label">Video Title</td>
- <td class="data"><el:text name="title" className="pri bld req" idx="*" size="48" max="80" value="${video.name}" /></td>
+ <td class="data"><el:text name="title" className="pri bld" required="true" idx="*" size="48" max="80" value="${video.name}" /></td>
 </tr>
 <tr>
  <td class="label">Category</td>
- <td class="data"><el:combo name="category" idx="*" size="1" className="req" options="${cats}" value="${video.category}" firstEntry="[ CATEGORY ]" /></td>
+ <td class="data"><el:combo name="category" idx="*" size="1" required="true" options="${cats}" value="${video.category}" firstEntry="[ CATEGORY ]" /></td>
 </tr>
 <tr>
  <td class="label top">Description</td>
- <td class="data"><el:textbox name="desc" idx="*" width="80%" height="3" className="req">${video.description}</el:textbox></td>
+ <td class="data"><el:textbox name="desc" idx="*" width="80%" height="3" required="true" resize="true">${video.description}</el:textbox></td>
 </tr>
 <c:if test="${!empty video}">
 <tr>
- <td class="label">Video Size</td>
+ <td class="label">Video Information</td>
 <c:if test="${video.size > 0}">
- <td class="data sec bld"><fmt:int value="${video.size}" /> bytes</td>
+ <td class="data"><span class="pri bld">${video.type}</span>, <span class="sec bld"><fmt:int value="${video.size}" /> bytes</span></td>
 </c:if>
 <c:if test="${video.size == 0}">
  <td class="data warning bld caps">FILE NOT PRESENT ON FILESYSTEM</td>
@@ -82,23 +84,13 @@ return true;
 <content:filter roles="HR,AcademyAdmin">
 <tr>
  <td class="label top">Flight Academy Certifications</td>
- <td class="data"><el:check name="certNames" width="150" cols="3" className="small" newLine="true" checked="${video.certifications}" options="${certs}" /></td>
+ <td class="data"><el:check name="certNames" width="185" cols="3" className="small" newLine="true" checked="${video.certifications}" options="${certs}" /></td>
 </tr>
 </content:filter>
 <tr>
  <td class="label">Document Security</td>
  <td class="data"><el:combo name="security" idx="*" size="1" required="true" value="${entry.security}" options="${securityOptions}" /></td>
 </tr>
-<tr>
- <td class="label">Upload File</td>
- <td class="data"><el:file name="file" className="small req" size="96" max="192" /></td>
-</tr>
-<c:if test="${empty video}">
-<tr>
- <td class="label">Local File</td>
- <td class="data"><el:text name="fileName" className="small req" size="96" max="192" value="" /></td>
-</tr>
-</c:if>
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="noNotify" idx="*" value="true" label="Don't send notification e-mail" /></td>
