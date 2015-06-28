@@ -1,40 +1,28 @@
-// Copyright 2005, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2010, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.view;
 
 import javax.servlet.jsp.*;
-import javax.servlet.jsp.tagext.TagSupport;
 
 import org.deltava.beans.ViewEntry;
-import org.deltava.util.StringUtils;
+
+import org.deltava.taglib.html.ElementTag;
 
 /**
  * A JSP Tag to render view table rows with a specified CSS class.
  * @author Luke
- * @version 3.3
+ * @version 6.0
  * @since 1.0
  */
 
-public class RowTag extends TagSupport {
+public class RowTag extends ElementTag {
 
 	private Object _entry;
 	
-	private String _className;
-	private String _style;
-	
 	/**
-	 * Overrides the CSS class name for the table row. 
-	 * @param cName the CSS class name
+	 * Creates the tag.
 	 */
-	public void setClassName(String cName) {
-		_className = cName;
-	}
-	
-	/**
-	 * Adds a CSS style for the table row.
-	 * @param css the style
-	 */
-	public void setStyle(String css) {
-		_style = css;
+	public RowTag() {
+		super("tr");
 	}
 	
 	/**
@@ -46,15 +34,6 @@ public class RowTag extends TagSupport {
 	}
 	
 	/**
-	 * Resets the tag's state variables.
-	 */
-	public void release() {
-		super.release();
-		_className = null;
-		_style = null;
-	}
-	
-	/**
 	 * Opens the table row by rendering a &lt;TR&gt; tag to the JSP output stream. If a CSS class name has
 	 * been specified, then this will be set as the CLASS for the row. If the entry implements the
 	 * {@link ViewEntry} interface, then the tableRowClassName property will be used as the class name. If
@@ -62,28 +41,16 @@ public class RowTag extends TagSupport {
 	 * @return TagSupport.EVAL_BODY_INCLUDE
 	 * @throws JspException if an I/O error occurs
 	 */
+	@Override
 	public int doStartTag() throws JspException {
-		JspWriter out = pageContext.getOut();
+
+		// Determine the CSS class name
+		if (_classes.isEmpty() && (_entry instanceof ViewEntry))
+			setClassName(((ViewEntry) _entry).getRowClassName());
+		
+		super.doStartTag();
 		try {
-			// Determine the CSS class name
-			if ((_className == null) && (_entry instanceof ViewEntry))
-				_className = ((ViewEntry) _entry).getRowClassName();
-			
-			// Render the opening tag
-			out.print("<tr");
-			if (!StringUtils.isEmpty(_className)) {
-				out.print(" class=\"");
-				out.print(_className);
-				out.print('\"');
-			}
-			
-			if (!StringUtils.isEmpty(_style)) {
-				out.print(" style=\"");
-				out.print(_style);
-				out.print('\"');
-			}
-			
-			out.print('>');
+			_out.print(_data.open(true));
 		} catch (Exception e) {
 			throw new JspException(e);
 		}
@@ -96,9 +63,10 @@ public class RowTag extends TagSupport {
 	 * @return TagSupport.EVAL_PAGE
 	 * @throws JspException if an I/O error occurs 
 	 */
+	@Override
 	public int doEndTag() throws JspException {
 		try {
-			pageContext.getOut().write("</tr>");
+			_out.print(_data.close());
 		} catch (Exception e) {
 			throw new JspException(e);
 		} finally {
