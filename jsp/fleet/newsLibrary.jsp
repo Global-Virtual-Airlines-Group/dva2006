@@ -52,7 +52,7 @@ golgotha.local.setCategory = function(combo) {
 
 <!-- Table Data Section -->
 <c:forEach var="doc" items="${docs}">
-<tr>
+<view:row entry="${doc}">
 <c:if test="${isFleetMgr}">
  <td class="pri bld"><el:cmd url="newsletter" linkID="${doc.fileName}" op="edit">${doc.name}</el:cmd></td>
 </c:if>
@@ -62,14 +62,13 @@ golgotha.local.setCategory = function(combo) {
  <td><el:link url="/newsletter/${doc.fileName}"><el:img src="library/adobe.png" caption="Download PDF manual" x="32" y="32" className="noborder" /></el:link></td>
  <td class="sec bld"><fmt:int value="${doc.size}" /></td>
  <td class="small left" colspan="3"><fmt:text value="${doc.description}" /></td>
-</tr>
+</view:row>
 </c:forEach>
 
 <!-- Download Acrobat -->
 <tr valign="middle">
  <td><a href="http://www.adobe.com/products/acrobat/readstep2.html"><el:img src="library/getacro.png" className="noborder" caption="Download Adobe Acrobat Reader" /></a></td>
- <td colspan="5">All <content:airline /> newsletters require <span class="pri bld">Adobe Acrobat Reader 5</span> or
- newer in order to be viewed. If you are having difficulties viewing our newsletters, please click on the link to
+ <td colspan="5">All <content:airline /> newsletters require <span class="pri bld">Adobe Acrobat Reader</span> in order to be viewed. If you are having difficulties viewing our newsletters, please click on the link to
  the left to download the latest version of Adobe Acrobat Reader.<br />
 This is a free download.</td>
 </tr>
