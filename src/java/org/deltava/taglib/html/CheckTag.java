@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A JSP tag to support the generation of HTML multi-option checkboxes and radio buttons.
  * @author Luke
- * @version 4.2
+ * @version 6.0
  * @since 1.0
  */
 
@@ -20,7 +20,7 @@ public class CheckTag extends FormElementTag {
 	private String _fieldName;
 	private String _labelClassName;
 	private int _width;
-	private int _cols;
+	private int _cols = Integer.MAX_VALUE;
 
 	private Collection<?> _options;
 
@@ -80,7 +80,7 @@ public class CheckTag extends FormElementTag {
 		_data.setAttribute("onchange", jsEvent);
 	}
 
-	/**
+	/*
 	 * Open the formatting SPAN and set the width.
 	 */
 	private void openSpanTag() throws Exception {
@@ -106,7 +106,7 @@ public class CheckTag extends FormElementTag {
 		_out.print("\">");
 	}
 
-	/**
+	/*
 	 * Helper method to check if an option value is selected.
 	 */
 	private static boolean checkOption(Object optValue, Object setValue) {
@@ -121,7 +121,7 @@ public class CheckTag extends FormElementTag {
 			return String.valueOf(optValue).equals(String.valueOf(setValue));
 	}
 
-	/**
+	/*
 	 * Helper method to determine if a particular option is selected.
 	 */
 	private void renderOption(Object opt) throws Exception {
@@ -158,6 +158,12 @@ public class CheckTag extends FormElementTag {
 		_out.println("</span>");
 	}
 
+	/**
+	 * Renders the checkbox tags.
+	 * @return EVAL_PAGE always
+	 * @throws JspException if an error occurs
+	 */
+	@Override
 	public int doEndTag() throws JspException {
 		try {
 			validateState();
@@ -201,9 +207,11 @@ public class CheckTag extends FormElementTag {
 	/**
 	 * Releases the tag's state data.
 	 */
+	@Override
 	public void release() {
-		_firstEntry = null;
 		super.release();
+		_firstEntry = null;
+		_cols = Integer.MAX_VALUE;
 		setType("checkbox");
 	}
 
@@ -212,6 +220,7 @@ public class CheckTag extends FormElementTag {
 	 * @param cName the CSS class name(s)
 	 * @see ElementTag#setClassName(String)
 	 */
+	@Override
 	public final void setClassName(String cName) {
 		_labelClassName = cName;
 	}
