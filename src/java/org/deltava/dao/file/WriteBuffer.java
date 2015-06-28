@@ -40,11 +40,8 @@ public class WriteBuffer extends WriteableDAO {
     * @throws DAOException if an I/O error occurs
     */
    public void write(byte[] buffer) throws DAOException {
-      try {
-         _os = new FileOutputStream(_f);
-         _os.write(buffer);
-         _os.flush();
-         _os.close();
+      try (OutputStream os = new FileOutputStream(_f)) {
+         os.write(buffer);
       } catch (IOException ie) {
          throw new DAOException(ie);
       }
