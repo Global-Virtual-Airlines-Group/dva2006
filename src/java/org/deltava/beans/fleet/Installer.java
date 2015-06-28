@@ -1,6 +1,7 @@
-// Copyright 2004, 2005, 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2007, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.fleet;
 
+import java.io.File;
 import java.util.*;
 
 import org.deltava.beans.*;
@@ -9,7 +10,7 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * A bean to store information about Fleet Library installers.
  * @author Luke
- * @version 5.1
+ * @version 6.0
  * @since 1.0
  */
 
@@ -23,10 +24,10 @@ public class Installer extends FleetEntry implements ComboAlias {
     
     /**
      * Creates a new Fleet Installer entry for a given file.
-     * @param fName the installer filename.
+     * @param f the File
      */
-    public Installer(String fName) {
-        super(fName);
+    public Installer(File f) {
+        super(f);
     }
     
     /**
@@ -60,6 +61,7 @@ public class Installer extends FleetEntry implements ComboAlias {
      * Returns a string representation of the version (MAJOR.MINOR.SUB).
      * @return a version string
      */
+    @Override
     public String getVersion() {
         StringBuilder buf = new StringBuilder(String.valueOf(getMajorVersion())).append('.');
         buf.append(String.valueOf(getMinorVersion())).append('.');
@@ -124,10 +126,12 @@ public class Installer extends FleetEntry implements ComboAlias {
     	_imgName = imgName;
     }
 
+    @Override
     public String getComboName() {
     	return getName();
     }
     
+    @Override
     public String getComboAlias() {
     	return getCode();
     }
