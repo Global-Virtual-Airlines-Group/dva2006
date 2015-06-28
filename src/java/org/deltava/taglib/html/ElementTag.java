@@ -1,4 +1,4 @@
-// Copyright 2005, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2010, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A class for supporting JSP Tags that render HTML elements.
  * @author Luke
- * @version 5.0
+ * @version 6.0
  * @since 1.0
  */
 
@@ -61,7 +61,8 @@ public abstract class ElementTag extends BrowserInfoTag {
 	 * @param cName the class name as refered to in a CSS file.
 	 */
 	public void setClassName(String cName) {
-		_classes.addAll(StringUtils.split(cName, " "));
+		if (cName != null)
+			_classes.addAll(StringUtils.split(cName, " "));
 	}
 	
     /**
