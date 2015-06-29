@@ -50,8 +50,8 @@
 	<cache id="MessageTemplate" max="32" />
 	<cache id="LibraryDLCount" max="96" expires="1800" />
 
-	<cache id="IPInfo" max="512" expires="345600" />
-	<cache id="IPBlock" max="1024" expires="345600" />
+	<cache id="IPInfo" max="1024" expires="345600" />
+	<cache id="IPBlock" max="6144" expires="345600" />
 	<cache id="HTTPTotals" max="2" expires="7200" />
 	<cache id="TableStats" max="12" expires="1800" />
 </caches>
