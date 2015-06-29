@@ -16,11 +16,8 @@
 <script type="text/javascript">
 golgotha.local.play = function(id, name) {
 	var tbody = golgotha.util.getElementsByClass('', 'tbody', document.getElementById('videoList'))[0];
-	if (golgotha.local.video != null) {
-		golgotha.local.video.vid.pause();
-		tbody.removeChild(golgotha.local.video.row);
-	}
-	
+	golgotha.local.stop();
+
 	var r = document.createElement('tr');
 	var c = document.createElement('td'); c.setAttribute('colspan', '5');
 
@@ -29,9 +26,20 @@ golgotha.local.play = function(id, name) {
 	var src = document.createElement('source');
 	src.type = 'video/mp4; codecs="avc1.4D401E, mp4a.40.2"'; src.src='/video/' + name;
 	v.appendChild(src); c.appendChild(v); r.appendChild(c);
-	golgotha.local.video = {vid:v, row:r};
+	golgotha.local.video = {vid:v, row:r, ofs:id};
 	tbody.insertBefore(r, document.getElementById('video-' + (id+1)));
 	v.play();
+	return true;
+};
+
+golgotha.local.stop = function() {
+	var tbody = golgotha.util.getElementsByClass('', 'tbody', document.getElementById('videoList'))[0];
+	if (golgotha.local.video != null) {
+        golgotha.local.video.vid.pause();
+        tbody.removeChild(golgotha.local.video.row);
+        delete golgotha.local.video;
+    }
+
 	return true;
 };
 </script>
@@ -77,7 +85,7 @@ golgotha.local.play = function(id, name) {
  <td><a href="javascript:void golgotha.local.play(${rowID}, '${video.fileName}')"><el:img src="library/play.png" caption="View Video" x="48" y="48" className="noborder" /></a></td>
 </c:if>
 <c:if test="${!hasFile}">
- <td><el:img src="library/${video.iconName}.png" caption="View Video" x="32" y="32" /></td>
+ <td><a href="javascript:void golgotha.local.stop()"><el:img src="library/error.png" caption="No Video" x="48" y="48" className="noborder" /></a></td>
 </c:if>
  <td class="sec bld"><fmt:int value="${video.size / 1024}" />K</td>
  <td class="small left" colspan="2"><fmt:text value="${video.description}" /></td>
