@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.net.*;
@@ -12,14 +12,15 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to geo-locate IP addresses.
  * @author Luke
- * @version 5.2
+ * @version 6.0
  * @since 2.5
  */
 
 public class GetIPLocation extends DAO {
 	
 	private static final Cache<IPBlock> _cache = CacheManager.get(IPBlock.class, "IPInfo");
-	private static final Cache<CacheableLong> _blockCache = CacheManager.get(CacheableLong.class, "IPBlock"); 
+	@SuppressWarnings("rawtypes")
+	private static final Cache<CacheWrapper> _blockCache = CacheManager.get(CacheWrapper.class, "IPBlock"); 
 
 	/**
 	 * Initializes the Data Access Object.
@@ -38,10 +39,7 @@ public class GetIPLocation extends DAO {
 	public IPBlock get(String addr) throws DAOException {
 		try {
 			InetAddress a = InetAddress.getByName(addr);
-			if (a instanceof Inet4Address)
-				return getIP4(a);
-
-			return getIP6(a);
+			return (a instanceof Inet4Address) ? getIP4(a) : getIP6(a);
 		} catch (UnknownHostException uhe) {
 			throw new DAOException(uhe);
 		}
@@ -51,9 +49,9 @@ public class GetIPLocation extends DAO {
 		
 		// Check the cache
 		IPBlock result = null;
-		CacheableLong id = _blockCache.get(addr.getHostAddress());
+		CacheWrapper<?> id = _blockCache.get(addr.getHostAddress());
 		if (id != null) {
-			result = _cache.get(Long.valueOf(id.getValue()));
+			result = _cache.get(id.getValue());
 			if (result != null)
 				return result;
 		}
@@ -72,7 +70,7 @@ public class GetIPLocation extends DAO {
 					result.setCity(rs.getString(4));
 					result.setLocation(rs.getDouble(6), rs.getDouble(7));
 					_cache.add(result);
-					_blockCache.add(new CacheableLong(addr, result.getID()));
+					_blockCache.add(new CacheWrapper<Object>(addr.getHostAddress(), result.cacheKey()));
 				}
 			}
 			
@@ -87,9 +85,9 @@ public class GetIPLocation extends DAO {
 
 		// Check the cache
 		IPBlock result = null;
-		CacheableLong id = _blockCache.get(addr.getHostAddress());
+		CacheWrapper<?> id = _blockCache.get(addr.getHostAddress());
 		if (id != null) {
-			result = _cache.get(Long.valueOf(id.getValue() << 32));
+			result = _cache.get(id.getValue());
 			if (result != null)
 				return result;
 		}
@@ -105,7 +103,7 @@ public class GetIPLocation extends DAO {
 					result.setCountry(Country.get(rs.getString(5)));
 					result.setLocation(rs.getDouble(6), rs.getDouble(7));
 					_cache.add(result);
-					_blockCache.add(new CacheableLong(addr, result.getID() << 32));					
+					_blockCache.add(new CacheWrapper<Object>(addr.getHostAddress(), result.cacheKey()));					
 				}
 			}
 			
