@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to search for duplicate Pilots.
  * @author Luke
- * @version 4.2
+ * @version 6.0
  * @since 1.0
  */
 
@@ -59,8 +59,8 @@ public class DuplicatePilotSearchCommand extends AbstractCommand {
 		try {
 			GetPilot dao = new GetPilot(ctx.getConnection());
 			dao.setQueryMax(maxResults);
-			results.addAll(dao.search(SystemData.get("airline.db"), fName1, lName1, null));
-			results.addAll(dao.search(SystemData.get("airline.db"), fName2, lName2, null));
+			results.addAll(dao.search(SystemData.get("airline.db"), fName1, lName1));
+			results.addAll(dao.search(SystemData.get("airline.db"), fName2, lName2));
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
@@ -70,8 +70,7 @@ public class DuplicatePilotSearchCommand extends AbstractCommand {
 		// Build the possible IDs
 		Collection<ComboAlias> pilotInfo = new LinkedHashSet<ComboAlias>(); 
 		Collection<String> pilotIDs = new LinkedHashSet<String>();
-		for (Iterator<Pilot> i = results.iterator(); i.hasNext();) {
-			Pilot usr = i.next();
+		for (Pilot usr : results) {
 			StringBuilder buf = new StringBuilder(usr.getName());
 			if (!StringUtils.isEmpty(usr.getPilotCode())) {
 				pilotIDs.add(usr.getPilotCode());
@@ -100,8 +99,7 @@ public class DuplicatePilotSearchCommand extends AbstractCommand {
 	 * Helper method to take a parameter and add LIKE wildcards.
 	 */
 	private static String buildParameter(String pValue, boolean exMatch) {
-		if (StringUtils.isEmpty(pValue))
-			return null;
+		if (StringUtils.isEmpty(pValue)) return null;
 		return exMatch ? pValue : "%" + pValue + "%";
 	}
 }
