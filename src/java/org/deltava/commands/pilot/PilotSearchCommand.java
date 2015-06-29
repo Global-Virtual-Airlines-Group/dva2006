@@ -1,7 +1,8 @@
-// Copyright 2005, 2007, 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.deltava.beans.Pilot;
@@ -20,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to search for Pilots.
  * @author Luke
- * @version 4.2
+ * @version 6.0
  * @since 1.0
  */
 
@@ -38,7 +39,17 @@ public class PilotSearchCommand extends AbstractCommand {
 
 		// Get the command results
 		CommandResult result = ctx.getResult();
-
+		
+		// Load all equipment types
+		try {
+			GetAircraft acdao = new GetAircraft(ctx.getConnection());
+			ctx.setAttribute("allEQ", acdao.getAircraftTypes(), REQUEST);
+		} catch (DAOException de) {
+			throw new CommandException(de);
+		} finally {
+			ctx.release();
+		}
+		
 		// Check if we're doing a GET
 		if (ctx.getParameter("firstName") == null) {
 			ctx.setAttribute("noResults", Boolean.TRUE, REQUEST);
@@ -55,6 +66,7 @@ public class PilotSearchCommand extends AbstractCommand {
 		String fName = buildParameter(ctx.getParameter("firstName"), exactMatch);
 		String lName = buildParameter(ctx.getParameter("lastName"), exactMatch);
 		String eMail = buildParameter(ctx.getParameter("eMail"), exactMatch);
+		Collection<String> ratings = ctx.getParameters("ratings");
 		UserID id = new UserID(ctx.getParameter("pilotCode"));
 
 		// Set the result size
@@ -87,12 +99,12 @@ public class PilotSearchCommand extends AbstractCommand {
 				
 				// Load the profile
 				if ((app != null) && isCrossSearch && ctx.isUserInRole("HR")) {
-					sizes.put(app.getCode(), new Integer(stdao.getActivePilots(app.getDB())));
+					sizes.put(app.getCode(), Integer.valueOf(stdao.getActivePilots(app.getDB())));
 					Pilot p = dao.getPilotByCode(id.getUserID(), app.getDB());
 					if (p != null)
 						results.add(p);
 				} else {
-					sizes.put(SystemData.get("airline.code"), new Integer(stdao.getActivePilots(SystemData.get("airline.db"))));
+					sizes.put(SystemData.get("airline.code"), Integer.valueOf(stdao.getActivePilots(SystemData.get("airline.db"))));
 					Pilot p = dao.getPilotByCode(id.getUserID(), SystemData.get("airline.db"));
 					if (p != null)
 						results.add(p);
@@ -100,26 +112,21 @@ public class PilotSearchCommand extends AbstractCommand {
 			} else {
 				boolean isCrossSearch = crossAirlineSearch && ctx.isUserInRole("HR");
 				if (isCrossSearch) {
-					for (Iterator<AirlineInformation> i = apps.values().iterator(); i.hasNext(); ) {
-						AirlineInformation app = i.next();
-						results.addAll(dao.search(app.getDB(), fName, lName, eMail));
-						sizes.put(app.getCode(), new Integer(stdao.getActivePilots(app.getDB())));
+					for (AirlineInformation app : apps.values()) {
+						results.addAll(dao.search(app.getDB(), fName, lName, eMail, ratings));
+						sizes.put(app.getCode(), Integer.valueOf(stdao.getActivePilots(app.getDB())));
 					}
 				} else {
-					results.addAll(dao.search(SystemData.get("airline.db"), fName, lName, eMail));
-					sizes.put(SystemData.get("airline.code"), new Integer(stdao.getActivePilots(SystemData.get("airline.db"))));
+					results.addAll(dao.search(SystemData.get("airline.db"), fName, lName, eMail, ratings));
+					sizes.put(SystemData.get("airline.code"), Integer.valueOf(stdao.getActivePilots(SystemData.get("airline.db"))));
 				}
 			}
 			
 			// Save the airline sizes
 			ctx.setAttribute("airlineSizes", sizes, REQUEST);
 			
-			// Load the pilot IDs
-			Collection<Integer> IDs = new HashSet<Integer>();
-			for (Pilot p : results)
-				IDs.add(Integer.valueOf(p.getID()));
-			
-			// Load the user locations
+			// Load the pilot IDs and user locations
+			Collection<Integer> IDs = results.stream().map(Pilot::getID).collect(Collectors.toSet());
 			udmap = uddao.get(IDs);
 		} catch (DAOException de) {
 			throw new CommandException(de);
@@ -129,20 +136,19 @@ public class PilotSearchCommand extends AbstractCommand {
 
 		// Calculate access to each search result
 		Map<Integer, PilotAccessControl> accessMap = new HashMap<Integer, PilotAccessControl>();
-		for (Iterator<Pilot> i = results.iterator(); i.hasNext();) {
-			Pilot p = i.next();
+		for (Pilot p : results) {
 			UserData usrInfo = udmap.get(p.getID());
 
 			// Calculate the access level
-			PilotAccessControl access = SystemData.get("airline.db").equals(usrInfo.getDB()) ? new PilotAccessControl(ctx, p) : 
-				new CrossAppPilotAccessControl(ctx, p);
+			PilotAccessControl access = SystemData.get("airline.db").equals(usrInfo.getDB()) ? new PilotAccessControl(ctx, p) : new CrossAppPilotAccessControl(ctx, p);
 			access.validate();
 
 			// Save the access level in the map, indexed by pilot ID
-			accessMap.put(new Integer(p.getID()), access);
+			accessMap.put(Integer.valueOf(p.getID()), access);
 		}
 
 		// Save the results and access level in the request
+		ctx.setAttribute("ratings", ratings, REQUEST);
 		ctx.setAttribute("results", results, REQUEST);
 		ctx.setAttribute("accessMap", accessMap, REQUEST);
 		ctx.setAttribute("maxResults", Integer.valueOf(maxResults), REQUEST);
@@ -156,9 +162,7 @@ public class PilotSearchCommand extends AbstractCommand {
 	 * Helper method to take a parameter and add LIKE wildcards.
 	 */
 	private static String buildParameter(String pValue, boolean exMatch) {
-		if (StringUtils.isEmpty(pValue))
-			return null;
-
+		if (StringUtils.isEmpty(pValue)) return null;
 		return exMatch ? pValue : "%" + pValue + "%";
 	}
 }

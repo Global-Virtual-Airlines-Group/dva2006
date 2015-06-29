@@ -18,16 +18,22 @@
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
-var hasFirst = (f.firstName.value.length > 2);
-var hasLast = (f.lastName.value.length > 2);
+var hasName = (f.firstName.value.length > 2) || (f.lastName.value.length > 2);
 var hasCode = (f.pilotCode.value.length > 1);
 var hasEMail = ((f.eMail) && (f.eMail.value.length > 5));
-if (hasFirst || hasLast || hasCode || hasEMail) {
+var hasRating = true;
+try {
+	golgotha.form.validate({f:f.ratings, min:1, t:''});
+} catch (e) {
+	hasRating = false;
+}
+
+if (hasName || hasCode || hasEMail || hasRating) {
 	golgotha.form.submit(f);
 	return true;
 }
 	
-throw new golgotha.util.VaidationError('Please provide a First or Last Name, Pilot Code, or an e-mail address.', f.firstName);
+throw new golgotha.event.ValidationError('Please provide a First or Last Name, Pilot Code, or an e-mail address.', f.firstName);
 };
 </script>
 </head>
@@ -55,11 +61,17 @@ throw new golgotha.util.VaidationError('Please provide a First or Last Name, Pil
  <td class="data"><el:text name="firstName" idx="*" size="12" max="24" value="${param.firstName}" />
 &nbsp;<el:text name="lastName" idx="*" size="18" max="36" value="${param.lastName}" /></td>
 </tr>
-<content:filter roles="HR,Examination,PIREP">
+<content:filter roles="HR,Operations,Examination,PIREP">
 <tr>
  <td class="label">E-Mail Address</td>
  <td class="data"><el:addr name="eMail" idx="*" size="24" max="64" value="${param.eMail}" /></td>
 </tr>
+<content:filter roles="HR,Operations">
+<tr>
+ <td class="label top">Equipment Ratings</td>
+ <td class="data"><el:check name="ratings" idx="*" width="95" newLine="true" className="small" checked="${ratings}" options="${allEQ}" /></td>
+ </tr>
+</content:filter>
 </content:filter>
 <tr>
  <td class="label">Maximum Results</td>
@@ -86,7 +98,6 @@ throw new golgotha.util.VaidationError('Please provide a First or Last Name, Pil
 <tr class="title caps">
  <td colspan="8" class="left">SEARCH RESULTS</td>
 </tr>
-
 <c:choose>
 <c:when test="${empty results}">
 <!-- No Pilots Found -->

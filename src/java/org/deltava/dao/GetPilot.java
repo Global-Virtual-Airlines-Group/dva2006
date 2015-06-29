@@ -255,26 +255,8 @@ public class GetPilot extends PilotReadDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<Pilot> search(String dbName, String fName, String lName, String eMail, Collection<String> ratings) throws DAOException {
-
-		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), "
-				+ "ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE) FROM ");
-		sqlBuf.append(formatDBName(dbName));
-		sqlBuf.append(".PILOTS P LEFT JOIN ");
-		if (!CollectionUtils.isEmpty(ratings)) {
-			sqlBuf.append(formatDBName(dbName));
-			sqlBuf.append(".RATINGS R ON ((P.ID=R.ID) AND ");
-			for (Iterator<String> ri = ratings.iterator(); ri.hasNext(); ) {
-				sqlBuf.append("(R.RATING=?)");
-				if (ri.hasNext())
-					sqlBuf.append(") AND ");
-			}
-			
-			sqlBuf.append(") LEFT JOIN ");
-		}
+		String db = formatDBName(dbName);
 		
-		sqlBuf.append(".PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?))");
-
 		// Add parameters if they are non-null
 		List<String> searchTerms = new ArrayList<String>();
 		if (fName != null)
@@ -288,9 +270,31 @@ public class GetPilot extends PilotReadDAO {
         if (searchTerms.isEmpty() && CollectionUtils.isEmpty(ratings))
            return Collections.emptyList();
         
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), "
+				+ "ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE), COUNT(DISTINCT R.RATING) AS RTGS FROM ");
+		sqlBuf.append(db);
+		sqlBuf.append(".RATINGS R, ");
+		sqlBuf.append(db);	
+		sqlBuf.append(".PILOTS P LEFT JOIN ");
+		sqlBuf.append(db);
+		sqlBuf.append(".PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) WHERE ");
+		
         // Aggregate the search terms
+        if (!CollectionUtils.isEmpty(ratings)) {
+        	sqlBuf.append("((P.ID=R.ID) AND (");
+			for (Iterator<String> ri = ratings.iterator(); ri.hasNext(); ) {
+				ri.next();
+				sqlBuf.append("(R.RATING=?)");
+				if (ri.hasNext())
+					sqlBuf.append(" OR ");
+			}
+        	
+        	sqlBuf.append("))");
+        }
+        
         if (!searchTerms.isEmpty()) {
-        	sqlBuf.append(" WHERE ");
+        	sqlBuf.append(" AND ");
         	for (Iterator<String> i = searchTerms.iterator(); i.hasNext();) {
         		String srchTerm = i.next();
         		sqlBuf.append(srchTerm);
@@ -299,24 +303,28 @@ public class GetPilot extends PilotReadDAO {
         	}
         }
 
-		// Complete the SQL statement
+		// Complete the SQL statement and include ratings
 		sqlBuf.append(" GROUP BY P.ID");
+		if (!CollectionUtils.isEmpty(ratings))
+			sqlBuf.append(" HAVING (RTGS=?)");
 
 		List<Pilot> results = null;
 		try {
 			prepareStatement(sqlBuf.toString()); int idx = 0;
+			_ps.setInt(++idx, FlightReport.OK);
 			if (!CollectionUtils.isEmpty(ratings)) {
 				for (String rating : ratings)
 					_ps.setString(++idx, rating);
 			}
-			
-			_ps.setInt(++idx, FlightReport.OK);
+
 			if (fName != null)
 				_ps.setString(++idx, fName);
 			if (lName != null)
 				_ps.setString(++idx, lName);
 			if (eMail != null)
 				_ps.setString(++idx, eMail);
+			if (!CollectionUtils.isEmpty(ratings))
+				_ps.setInt(++idx, ratings.size());
 
 			results = execute();
 		} catch (SQLException se) {
