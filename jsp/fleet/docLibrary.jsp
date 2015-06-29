@@ -56,7 +56,7 @@
 <c:if test="${!ac.canEdit}">
  <td class="pri bld"><el:link url="/library/${doc.fileName}">${doc.name}</el:link></td>
 </c:if>
- <td><el:link url="/library/${doc.fileName}"><el:img src="library/adobe.png" className="noborder" caption="Download PDF manual" x="32" y="32" /></el:link></td>
+ <td><el:link url="/library/${doc.fileName}"><el:img src="library/adobe.png" className="noborder" caption="Download PDF manual" x="36" y="36" /></el:link></td>
  <td class="sec bld"><fmt:int value="${doc.size / 1024}" />K</td>
  <td class="small"><fmt:date fmt="d" default="N/A" date="${doc.lastModified}" /></td>
  <td class="bld"><fmt:int value="${doc.version}" /></td>
@@ -67,8 +67,7 @@
 <!-- Download Adobe Acrobat Reader -->
 <tr valign="middle">
  <td><a href="http://www.adobe.com/products/acrobat/readstep2.html" rel="external" target="_new"><el:img src="library/getacro.png" className="noborder" caption="Download Adobe Acrobat Reader" /></a></td>
- <td colspan="6">All manuals within the <content:airline /> Document Library require <span class="pri bld">Adobe 
-Acrobat Reader 6</span> or newer in order to be viewed. If you are having difficulties viewing our 
+ <td colspan="6">All manuals within the <content:airline /> Document Library require <span class="pri bld">Adobe Acrobat Reader</span> in order to be viewed. If you are having difficulties viewing our 
 manuals, please click on the link to the left to download the latest version of Adobe Acrobat Reader.<br /> 
 This is a free download.</td>
 </tr>
