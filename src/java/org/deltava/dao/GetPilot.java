@@ -278,32 +278,24 @@ public class GetPilot extends PilotReadDAO {
 		sqlBuf.append(db);	
 		sqlBuf.append(".PILOTS P LEFT JOIN ");
 		sqlBuf.append(db);
-		sqlBuf.append(".PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) WHERE ");
+		sqlBuf.append(".PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) WHERE (P.ID=R.ID) AND ");
 		
         // Aggregate the search terms
         if (!CollectionUtils.isEmpty(ratings)) {
-        	sqlBuf.append("((P.ID=R.ID) AND (");
+        	StringBuilder rBuf = new StringBuilder("(");
 			for (Iterator<String> ri = ratings.iterator(); ri.hasNext(); ) {
 				ri.next();
-				sqlBuf.append("(R.RATING=?)");
+				rBuf.append("(R.RATING=?)");
 				if (ri.hasNext())
-					sqlBuf.append(" OR ");
+					rBuf.append(" OR ");
 			}
         	
-        	sqlBuf.append("))");
+        	rBuf.append(")");
+        	searchTerms.add(rBuf.toString());
         }
         
-        if (!searchTerms.isEmpty()) {
-        	sqlBuf.append(" AND ");
-        	for (Iterator<String> i = searchTerms.iterator(); i.hasNext();) {
-        		String srchTerm = i.next();
-        		sqlBuf.append(srchTerm);
-        		if (i.hasNext())
-        			sqlBuf.append(" AND ");
-        	}
-        }
-
 		// Complete the SQL statement and include ratings
+        sqlBuf.append(StringUtils.listConcat(searchTerms, " AND "));
 		sqlBuf.append(" GROUP BY P.ID");
 		if (!CollectionUtils.isEmpty(ratings))
 			sqlBuf.append(" HAVING (RTGS=?)");
@@ -312,19 +304,18 @@ public class GetPilot extends PilotReadDAO {
 		try {
 			prepareStatement(sqlBuf.toString()); int idx = 0;
 			_ps.setInt(++idx, FlightReport.OK);
-			if (!CollectionUtils.isEmpty(ratings)) {
-				for (String rating : ratings)
-					_ps.setString(++idx, rating);
-			}
-
 			if (fName != null)
 				_ps.setString(++idx, fName);
 			if (lName != null)
 				_ps.setString(++idx, lName);
 			if (eMail != null)
 				_ps.setString(++idx, eMail);
-			if (!CollectionUtils.isEmpty(ratings))
+			if (!CollectionUtils.isEmpty(ratings)) {
+				for (String rating : ratings)
+					_ps.setString(++idx, rating);
+				
 				_ps.setInt(++idx, ratings.size());
+			}
 
 			results = execute();
 		} catch (SQLException se) {
