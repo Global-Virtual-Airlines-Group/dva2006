@@ -71,13 +71,13 @@ public class GFSDownloadTask extends Task {
 							continue;
 
 						WindData wd = _data.getResult(loc);
-						if (wd.getJetStreamSpeed() < 35)
+						if (wd.getJetStreamSpeed() < 25)
 							continue;
 						
-						int c = Math.min(255, wd.getJetStreamSpeed() + 32);
-						if (wd.getJetStreamSpeed() > 99) {
-							int r = Math.min(c+30, 255);
-							int g = (wd.getJetStreamSpeed() > 125) ? Math.min(255, c+32): c;
+						int c = Math.min(255, wd.getJetStreamSpeed() + 48);
+						if (wd.getJetStreamSpeed() > 80) {
+							int r = Math.min(255, c+30);
+							int g = (wd.getJetStreamSpeed() > 120) ? Math.min(255, c+32): c;
 							Color rgb = new Color(r,g,c);
 							img.setRGB(x, y, rgb.getRGB());
 						} else {
