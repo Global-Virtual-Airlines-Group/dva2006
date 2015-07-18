@@ -160,10 +160,12 @@ golgotha.local.showRunwayChoices = function() {
  <td class="data">${flightInfo.airportL.name} (<fmt:airport airport="${flightInfo.airportL}" />)</td>
 </tr>
 </c:if>
+<c:if test="${!fn:isDraft(pirep)}">
 <tr>
  <td class="label">Simulator</td>
  <td class="data sec bld">${pirep.FSVersion.name}</td>
 </tr>
+</c:if>
 <c:if test="${access.canDispose && fn:isOnline(pirep)}">
 <tr>
  <td class="label">Online Flight</td>
