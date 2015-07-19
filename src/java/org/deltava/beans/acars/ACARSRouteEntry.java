@@ -590,6 +590,8 @@ public class ACARSRouteEntry extends RouteEntry {
 		// Add Autothrottle flags if set
 		if (isFlagSet(FLAG_AT_VNAV))
 			buf.append("Autothrottle: VNAV<br />");
+		else if (isFlagSet(FLAG_AT_FLCH))
+			buf.append("Autothrottle: FLCH<br />");
 		else if (isFlagSet(FLAG_AT_IAS))
 			buf.append("Autothrottle: IAS<br />");
 		else if (isFlagSet(FLAG_AT_MACH))
