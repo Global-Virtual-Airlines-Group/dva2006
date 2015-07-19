@@ -1,11 +1,11 @@
-// Copyright 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
 import org.deltava.beans.acars.ClientInfo;
 import org.deltava.beans.acars.ClientType;
-
+import org.deltava.beans.acars.UpdateChannel;
 import org.deltava.dao.*;
 import org.deltava.service.*;
 
@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to determine whether a new ACARS client is available.
  * @author Luke
- * @version 5.1
+ * @version 6.1
  * @since 4.1
  */
 
@@ -36,6 +36,17 @@ public class UpdateAvailableService extends WebService {
 			cInfo.setClientType(ClientType.DISPATCH);
 		else if (Boolean.valueOf(ctx.getParameter("atc")).booleanValue())
 			cInfo.setClientType(ClientType.ATC);
+		
+		// Get channel
+		UpdateChannel ch = UpdateChannel.RELEASE;
+		if (cInfo.getClientType() == ClientType.PILOT) {
+			try {
+				ch = UpdateChannel.valueOf(ctx.getParameter("channel").toUpperCase());
+			} catch (Exception e) {
+				if (cInfo.isBeta())
+					ch = UpdateChannel.BETA;
+			}
+		}
 
 		ClientInfo latest = null;
 		try {
@@ -43,9 +54,9 @@ public class UpdateAvailableService extends WebService {
 			latest = abdao.getLatestBuild(cInfo);
 			
 			// If we're a beta, check the beta release
-			if (cInfo.isBeta()) {
+			if (ch == UpdateChannel.BETA) {
 				ClientInfo beta = abdao.getLatestBeta(cInfo);
-				if ((beta != null) && (beta.getClientBuild() == cInfo.getClientBuild()) && (beta.compareTo(latest) > 0))
+				if ((beta != null) && (beta.getClientBuild() >= cInfo.getClientBuild()) && (beta.compareTo(latest) > 0))
 					latest = beta;
 			}
 		} catch (DAOException de) {
