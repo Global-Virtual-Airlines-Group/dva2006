@@ -104,10 +104,10 @@ xmlreq.onreadystatechange = function() {
 	var waypoints = xdoc.getElementsByTagName('pos');
 	for (var i = 0; i < waypoints.length; i++) {
 		var wp = waypoints[i];
-		var label = wp.firstChild;
+		var label = wp.firstChild; var c = wp.getAttribute('code'); 
 		var p = new google.maps.LatLng(parseFloat(wp.getAttribute('lat')), parseFloat(wp.getAttribute('lng')));
 		positions.push(p);
-		codes.push(wp.getAttribute('code'));
+		if (!codes.contains(c)) codes.push(c);
 		var mrk = null;
 		if (wp.getAttribute('pal'))
 			mrk = new golgotha.maps.IconMarker({pal:wp.getAttribute('pal'), icon:wp.getAttribute('icon'), info:label.data, map:map}, p);
