@@ -97,7 +97,7 @@ xmlreq.onreadystatechange = function() {
 
 		if (bPts.length > 0) {
 			bPts.push(bPts[0]);
-			var rt = new google.maps.Polygon({path:[bPts], strokeColor:'#efefff', strokeWeight:1, strokeOpacity:0.85, fillColor:'#7f7f80', fillOpacity:0.25, zIndex:golgotha.maps.z.POLYGON});
+			var rt = new google.maps.Polygon({path:bPts, strokeColor:'#efefff', strokeWeight:1, strokeOpacity:0.85, fillColor:'#7f7f80', fillOpacity:0.25, zIndex:golgotha.maps.z.POLYGON});
 			golgotha.maps.acarsFlight.selectedFIRs.push(rt);
 			rt.setMap(map);
 		}
