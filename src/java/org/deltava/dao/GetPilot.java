@@ -271,14 +271,11 @@ public class GetPilot extends PilotReadDAO {
            return Collections.emptyList();
         
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), "
-				+ "ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE), COUNT(DISTINCT R.RATING) AS RTGS FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT P.ID, COUNT(DISTINCT R.RATING) AS RTGS FROM ");
 		sqlBuf.append(db);
 		sqlBuf.append(".RATINGS R, ");
 		sqlBuf.append(db);	
-		sqlBuf.append(".PILOTS P LEFT JOIN ");
-		sqlBuf.append(db);
-		sqlBuf.append(".PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) WHERE (P.ID=R.ID) AND ");
+		sqlBuf.append(".PILOTS P WHERE (P.ID=R.ID) AND ");
 		
         // Aggregate the search terms
         if (!CollectionUtils.isEmpty(ratings)) {
@@ -290,7 +287,7 @@ public class GetPilot extends PilotReadDAO {
 					rBuf.append(" OR ");
 			}
         	
-        	rBuf.append(")");
+        	rBuf.append(')');
         	searchTerms.add(rBuf.toString());
         }
         
@@ -300,10 +297,9 @@ public class GetPilot extends PilotReadDAO {
 		if (!CollectionUtils.isEmpty(ratings))
 			sqlBuf.append(" HAVING (RTGS=?)");
 
-		List<Pilot> results = null;
+		Collection<Integer> IDs = new HashSet<Integer>();
 		try {
 			prepareStatement(sqlBuf.toString()); int idx = 0;
-			_ps.setInt(++idx, FlightReport.OK);
 			if (fName != null)
 				_ps.setString(++idx, fName);
 			if (lName != null)
@@ -317,13 +313,15 @@ public class GetPilot extends PilotReadDAO {
 				_ps.setInt(++idx, ratings.size());
 			}
 
-			results = execute();
+			// Load IDs
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+					IDs.add(Integer.valueOf(rs.getInt(1)));
+			}
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 		
-		// Update pilot codes and return
-		updatePilotCodes(results, dbName);
-		return results;
+		return new ArrayList<Pilot>(getByID(IDs, db + ".PILOTS").values());
 	}
 }
