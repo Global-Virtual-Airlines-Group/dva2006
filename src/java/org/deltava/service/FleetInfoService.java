@@ -1,4 +1,4 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import java.io.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display Fleet Library Information.
  * @author Luke
- * @version 1.0
+ * @version 6.1
  * @since 1.0
  */
 
@@ -27,6 +27,7 @@ public class FleetInfoService extends WebService {
 	 * @return the HTTP status code
 	 * @throws ServiceException if an error occurs
 	 */
+	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 
 		Collection<Installer> entries = null;
@@ -56,8 +57,7 @@ public class FleetInfoService extends WebService {
 		
 		// Write installer version info
 		ctx.println("\n[versionInfo]");
-		for (Iterator<Installer> i = entries.iterator(); i.hasNext();) {
-			Installer fe = i.next();
+		for (Installer fe : entries) {
 			if (fe.getCode() != null) {
 				ctx.print(fe.getCode());
 				ctx.print("=");
@@ -67,15 +67,13 @@ public class FleetInfoService extends WebService {
 			}
 		}
 
-		// Set the content type and length, and flush
 		try {
-		   ctx.getResponse().setContentType("text/plain");
+		   ctx.setContentType("text/plain", "utf-8");
 		   ctx.commit();
 		} catch (IOException ie) {
 			throw new ServiceException(SC_CONFLICT, "I/O Error");
 		}
 
-		// Return success code
 		return SC_OK;
 	}
 }
