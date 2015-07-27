@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2011, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.util.*;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to create flight plans.
  * @author Luke
- * @version 5.4
+ * @version 6.1
  * @since 2.2
  */
 
@@ -49,9 +49,9 @@ public class RoutePlanService extends WebService {
 		// Validate the airports
 		Simulator sim = Simulator.fromName(ctx.getParameter("simVersion"), Simulator.FS9);
 		if (aD == null)
-			throw error(SC_BAD_REQUEST, "Invalid Departure Airport - " + ctx.getParameter("airportD"), true);
+			throw error(SC_BAD_REQUEST, "Invalid Departure Airport - " + ctx.getParameter("airportD"), false);
 		else if (aA == null)
-			throw error(SC_BAD_REQUEST, "Invalid Arrival Airport - " + ctx.getParameter("airportA"), true);
+			throw error(SC_BAD_REQUEST, "Invalid Arrival Airport - " + ctx.getParameter("airportA"), false);
 
 		// Get the Flight Plan generator
 		FlightPlanGenerator fpgen = null;
