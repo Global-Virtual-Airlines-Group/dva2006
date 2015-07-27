@@ -1,4 +1,4 @@
-// Copyright 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -18,7 +18,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to export a Pilot's log book in CSV format. 
  * @author Luke
- * @version 3.6
+ * @version 6.1
  * @since 3.6
  */
 
@@ -106,7 +106,7 @@ public class LogbookService extends WebService {
 		
 		// Write the response
 		try {
-			ctx.getResponse().setContentType("text/csv");
+			ctx.setContentType("text/csv", "utf-8");
 			ctx.getResponse().setHeader("Content-disposition", "attachment; filename=logbook.csv");
 			ctx.commit();
 		} catch (IOException ie) {
@@ -120,6 +120,7 @@ public class LogbookService extends WebService {
 	 * Returns whether this web service requires authentication.
 	 * @return TRUE always
 	 */
+	@Override
 	public final boolean isSecure() {
 		return true;
 	}

@@ -1,4 +1,4 @@
-// Copyright 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -19,7 +19,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to allow Water Cooler quoting.
  * @author Luke
- * @version 4.2
+ * @version 6.1
  * @since 2.7
  */
 
@@ -86,15 +86,13 @@ public class CoolerQuoteService extends WebService {
 		
 		// Dump the XML to the output stream
 		try {
-			ctx.getResponse().setContentType("text/xml");
-			ctx.getResponse().setCharacterEncoding("UTF-8");
+			ctx.setContentType("text/xml", "utf-8");
 			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (IOException ie) {
 			throw error(SC_CONFLICT, "I/O Error", false);
 		}
 		
-		// Return success code
 		return SC_OK;
 	}
 	
@@ -102,6 +100,7 @@ public class CoolerQuoteService extends WebService {
 	 * Returns if the Web Service requires authentication.
 	 * @return TRUE
 	 */
+	@Override
 	public final boolean isSecure() {
 		return true;
 	}
