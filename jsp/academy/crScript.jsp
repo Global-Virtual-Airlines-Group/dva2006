@@ -18,7 +18,7 @@ golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
 golgotha.form.validate({f:f.cert, t:'Flight Academy Certification'});
-golgotha.form.validate({f:f.seq, min:1, t:'Check Ride Number'});
+golgotha.form.validate({f:f.seq, t:'Check Ride Number'});
 golgotha.form.validate({f:f.body, l:15, t:'Check Ride content'});
 golgotha.form.submit(f);
 return true;
@@ -33,8 +33,7 @@ if (combo.selectedIndex < 1) {
 }
 
 var xmlreq = new XMLHttpRequest();
-var id = combo.options[combo.selectedIndex].value;
-xmlreq.open('GET', 'ridecount.ws?id=' + id, true);
+xmlreq.open('GET', 'ridecount.ws?id=' + golgotha.form.getCombo(combo), true);
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
 	var jsData = (xmlreq.status == 200) ? JSON.parse(xmlreq.responseText) : [1];
@@ -44,6 +43,8 @@ xmlreq.onreadystatechange = function() {
 	for (var x = 0; x < jsData.length; x++)
 		ic.options[x+1] = new Option(jsData[x], jsData[x]);
 
+	golgotha.util.display('noNewRides', (jsData.length == 0));
+	golgotha.util.display('bodyRow', (jsData.length > 0));
 	return true;
 };
 
@@ -75,8 +76,12 @@ return true;
 <tr>
  <td class="label">Check Ride #</td>
  <td class="data"><el:combo name="seq" idx="*" size="1" required="true" options="${emptyList}" firstEntry="-" value="${sc.idx}" /></td>
+</tr>
+<tr id="noNewRides" style="display:none;">
+ <td class="error mid bld caps" colspan="2">All Check Ride Scripts for this Flight Academy Course have been created. You must edit or delete an existing Check Ride Script.</td>
+</tr>
 </c:if>
-<tr>
+<tr id="bodyRow"<c:if test="${empty sc}"> style="display:none;"</c:if>>
  <td class="label top">Script Text</td>
  <td class="data"><el:textbox name="body" idx="*" width="90%" height="5" resize="true" className="req">${sc.description}</el:textbox></td>
 </tr>
