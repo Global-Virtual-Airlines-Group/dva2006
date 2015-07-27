@@ -1,4 +1,4 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import java.io.*;
@@ -6,30 +6,26 @@ import java.util.Date;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
-import org.apache.log4j.Logger;
-
 import org.deltava.beans.fleet.SystemInformation;
 
-import org.deltava.dao.SetLibrary;
-import org.deltava.dao.DAOException;
+import org.deltava.dao.*;
 
 /**
  * A Web Service to save System Data sent by a Fleet Installer.
  * @author Luke
- * @version 1.0
+ * @version 6.1
  * @since 1.0
  */
 
 public class SystemInfoService extends WebService {
 	
-	private static final Logger log = Logger.getLogger(SystemInfoService.class);
-
 	/**
 	 * Executes the Web Service, saving local system data.
 	 * @param ctx the Web Service context
 	 * @return the HTTP status code
 	 * @throws ServiceException if an error occurs
 	 */
+	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 
 		// Calculate the ID
@@ -67,8 +63,7 @@ public class SystemInfoService extends WebService {
 			SetLibrary dao = new SetLibrary(ctx.getConnection());
 			dao.write(si);
 		} catch (DAOException de) {
-			log.error(de.getMessage(), de);
-			throw new ServiceException(SC_INTERNAL_SERVER_ERROR, de.getMessage());
+			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		} finally {
 			ctx.release();
 		}
@@ -80,13 +75,12 @@ public class SystemInfoService extends WebService {
 		ctx.println("");
 		
 		try {
-			ctx.getResponse().setContentType("text/plain");
-		   ctx.commit();
+			ctx.setContentType("text/plain", "utf-8");
+			ctx.commit();
 		} catch (IOException ie) {
-			throw new ServiceException(SC_CONFLICT, "I/O Error");
+			throw error(SC_CONFLICT, "I/O Error");
 		}
 
-		// Write result code
 		return SC_OK;
 	}
 }
