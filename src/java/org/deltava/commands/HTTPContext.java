@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
 /**
  * An abstract class to share command data between different HTTP command contexts.
  * @author Luke
- * @version 6.0
+ * @version 6.1
  * @since 2.4
  */
 
@@ -204,6 +204,24 @@ public abstract class HTTPContext extends ConnectionContext implements SecurityC
 	public void setExpiry(int expireInterval) {
 		long expires = System.currentTimeMillis() + (expireInterval * 1000);
 		_rsp.setDateHeader("Expires", expires);
+	}
+	
+	/**
+	 * Helper method to set a response header.
+	 * @param name the header name
+	 * @param value the header value
+	 */
+	public void setHeader(String name, String value) {
+		_rsp.setHeader(name, value);
+	}
+	
+	/**
+	 * Helper method to set a numeric response header.
+	 * @param name the header name
+	 * @param value the header value
+	 */
+	public void setHeader(String name, int value) {
+		_rsp.setIntHeader(name, value);
 	}
 	
 	/**
