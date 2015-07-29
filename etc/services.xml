@@ -38,6 +38,7 @@
 	<service id="dsproutes" class="org.deltava.service.schedule.DispatchRouteListService" />
 	<service id="dsproute" class="org.deltava.service.schedule.DispatchRouteMapService" />
 	<service id="troutes" class="org.deltava.service.schedule.TerminalRouteService" />
+	<service id="pfpxsched" class="org.deltava.service.schedule.PFPXScheduleService" />
 
 	<!-- Flight Statistics Services -->
 	<service id="mystats" class="org.deltava.service.stats.MyFlightsService" />

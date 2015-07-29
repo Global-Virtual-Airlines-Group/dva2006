@@ -371,8 +371,7 @@ contributions from our community that will enhance your flight simulation experi
 <tr>
  <td class="mid bld"><el:cmd url="fleetlog">Fleet Installer Logs</el:cmd><br />
 <el:cmd url="fleetstats">Fleet Installer Statistics</el:cmd></td>
- <td class="data">You can view user System Information and statistics from the <content:airline /> Fleet 
-Installer log entries.</td>
+ <td class="data">You can view user System Information and statistics from the <content:airline /> Fleet Installer log entries.</td>
 </tr>
 </content:filter>
 
@@ -392,8 +391,11 @@ Installer log entries.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="routemap">Route Map</el:cmd></td>
- <td class="data">You can view a map of all the destinations that <content:airline /> and its codeshare 
-partners currently serve.</td>
+ <td class="data">You can view a map of all the destinations that <content:airline /> and its codeshare partners currently serve.</td>
+</tr>
+<tr>
+ <td class="mid"><el:link url="/pfpxsched.ws" className="bld">PFPX Flight Schedule</el:link></td>
+ <td class="data">You can export the <content:airline /> Flight Schedule in format to be loaded by Aerosoft Professional Flight Planner X.</td>
 </tr>
 
 <!-- Flight Planning Section -->
