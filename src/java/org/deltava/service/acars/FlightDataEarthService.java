@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -24,7 +24,7 @@ import org.deltava.util.XMLUtils;
 /**
  * A Web Service to format ACARS flight data for Google Earth.
  * @author Luke
- * @version 4.2
+ * @version 6.1
  * @since 1.0
  */
 
@@ -171,13 +171,13 @@ public class FlightDataEarthService extends GoogleEarthService {
 		boolean noCompress = Boolean.valueOf(ctx.getParameter("noCompress")).booleanValue();
 		try {
 			if (noCompress) {
-				ctx.getResponse().setContentType("application/vnd.google-earth.kml+xml");
-				ctx.getResponse().setHeader("Content-disposition", "attachment; filename=" + prefix + ".kml");
+				ctx.setContentType("application/vnd.google-earth.kml+xml");
+				ctx.setHeader("Content-disposition", "attachment; filename=" + prefix + ".kml");
 				ctx.print(XMLUtils.format(doc, "UTF-8"));
 				ctx.commit();
 			} else {
-				ctx.getResponse().setHeader("Content-disposition", "attachment; filename=" + prefix + ".kmz");
-				ctx.getResponse().setContentType("application/vnd.google-earth.kmz kmz");
+				ctx.setHeader("Content-disposition", "attachment; filename=" + prefix + ".kmz");
+				ctx.setContentType("application/vnd.google-earth.kmz kmz");
 			
 				// Create the ZIP output stream
 				ZipOutputStream zout = new ZipOutputStream(ctx.getResponse().getOutputStream());

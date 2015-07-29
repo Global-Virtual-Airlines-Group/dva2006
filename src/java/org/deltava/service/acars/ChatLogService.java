@@ -1,4 +1,4 @@
-// Copyright 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to display aggregated ACARS chat logs.
  * @author Luke
- * @version 5.0
+ * @version 6.1
  * @since 2.2
  */
 
@@ -90,8 +90,8 @@ public class ChatLogService extends WebService {
 		
 		// Write the response
 		try {
-			ctx.setContentType("text/csv", "UTF-8");
-			ctx.getResponse().setHeader("Content-disposition", "attachment; filename=acarsChatLog.csv");
+			ctx.setContentType("text/csv", "utf-8");
+			ctx.setHeader("Content-disposition", "attachment; filename=acarsChatLog.csv");
 			ctx.commit();
 		} catch (IOException ie) {
 			throw error(SC_CONFLICT, "I/O Error", false);
@@ -104,6 +104,7 @@ public class ChatLogService extends WebService {
 	 * Returns if the Web Service requires authentication.
 	 * @return TRUE
 	 */
+	@Override
 	public final boolean isSecure() {
 		return true;
 	}

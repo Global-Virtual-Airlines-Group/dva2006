@@ -148,20 +148,20 @@ public class EarthMapService extends GoogleEarthService {
 		boolean noCompress = Boolean.valueOf(ctx.getParameter("noCompress")).booleanValue();
 		try {
 			if (noCompress) {
-				ctx.setContentType("application/vnd.google-earth.kml+xml", "UTF-8");
-				ctx.getResponse().setHeader("Content-disposition", "attachment; filename=acarsMap.kml");
+				ctx.setContentType("application/vnd.google-earth.kml+xml", "utf-8");
+				ctx.setHeader("Content-disposition", "attachment; filename=acarsMap.kml");
 				ctx.print(XMLUtils.format(doc, "UTF-8"));
 				ctx.commit();
 			} else {
-				ctx.getResponse().setContentType("application/vnd.google-earth.kmz");
-				ctx.getResponse().setHeader("Content-disposition", "attachment; filename=acarsMap.kmz");
+				ctx.setContentType("application/vnd.google-earth.kmz");
+				ctx.setHeader("Content-disposition", "attachment; filename=acarsMap.kmz");
 
 				// Create the ZIP output stream
-				ZipOutputStream zout = new ZipOutputStream(ctx.getResponse().getOutputStream());
-				zout.putNextEntry(new ZipEntry("acarsMap.kml"));
-				zout.write(XMLUtils.format(doc, "UTF-8").getBytes("UTF-8"));
-				zout.closeEntry();
-				zout.close();
+				try (ZipOutputStream zout = new ZipOutputStream(ctx.getResponse().getOutputStream())) {
+					zout.putNextEntry(new ZipEntry("acarsMap.kml"));
+					zout.write(XMLUtils.format(doc, "UTF-8").getBytes("UTF-8"));
+					zout.closeEntry();
+				}
 			}
 
 			// Flush the buffer
@@ -177,6 +177,7 @@ public class EarthMapService extends GoogleEarthService {
 	 * Tells the Web Service Servlet not to log invocations of this service.
 	 * @return FALSE
 	 */
+	@Override
 	public final boolean isLogged() {
 		return false;
 	}
