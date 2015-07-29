@@ -189,8 +189,8 @@ public class RoutePlanService extends WebService {
 
 		// Flush the output buffer
 		try {
-			ctx.setContentType(fpgen.getMimeType(), "UTF-8");
-			ctx.getResponse().setHeader("Content-disposition", "attachment; filename=" + aD.getICAO() + "-" + aA.getICAO() + "." + fpgen.getExtension());
+			ctx.setContentType(fpgen.getMimeType(), "utf-8");
+			ctx.setHeader("Content-disposition", "attachment; filename=" + aD.getICAO() + "-" + aA.getICAO() + "." + fpgen.getExtension());
 			ctx.println(fpgen.generate(routePoints));
 			ctx.commit();
 		} catch (Exception e) {

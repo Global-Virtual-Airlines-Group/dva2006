@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * A Web Service to return ACARS flight data parameters.
  * @author Luke
- * @version 5.4
+ * @version 6.1
  * @since 1.0
  */
 
@@ -73,8 +73,8 @@ public class FlightDataExportService extends WebService {
 
 		// Write the response
 		try {
-			ctx.setContentType("text/csv", "UTF-8");
-			ctx.getResponse().setHeader("Content-disposition", "attachment; filename=acars" + id + ".csv");
+			ctx.setContentType("text/csv", "utf-8");
+			ctx.setHeader("Content-disposition", "attachment; filename=acars" + id + ".csv");
 			ctx.commit();
 		} catch (IOException ie) {
 			throw error(SC_CONFLICT, "I/O Error", false);

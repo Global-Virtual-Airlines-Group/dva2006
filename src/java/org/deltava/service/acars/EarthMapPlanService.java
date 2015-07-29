@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -23,7 +23,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display ACARS flight plan data in Google Earth.
  * @author Luke
- * @version 4.2
+ * @version 6.1
  * @since 1.0
  */
 
@@ -98,15 +98,15 @@ public class EarthMapPlanService extends GoogleEarthService {
 		
 		// Write the XML
 		try {
-			ctx.getResponse().setHeader("Content-disposition", "attachment; filename=acarsMapPlans.kmz");
-			ctx.getResponse().setContentType("application/vnd.google-earth.kmz kmz");
+			ctx.setHeader("Content-disposition", "attachment; filename=acarsMapPlans.kmz");
+			ctx.setContentType("application/vnd.google-earth.kmz kmz");
 			
 			// Create the ZIP output stream
-			ZipOutputStream zout = new ZipOutputStream(ctx.getResponse().getOutputStream());
-			zout.putNextEntry(new ZipEntry("acarsMapPlans.kml"));
-			zout.write(XMLUtils.format(doc, "UTF-8").getBytes("UTF-8"));
-			zout.closeEntry();
-			zout.close();
+			try (ZipOutputStream zout = new ZipOutputStream(ctx.getResponse().getOutputStream())) {
+				zout.putNextEntry(new ZipEntry("acarsMapPlans.kml"));
+				zout.write(XMLUtils.format(doc, "UTF-8").getBytes("UTF-8"));
+				zout.closeEntry();
+			}
 
 			// Flush the buffer
 			ctx.getResponse().flushBuffer();
