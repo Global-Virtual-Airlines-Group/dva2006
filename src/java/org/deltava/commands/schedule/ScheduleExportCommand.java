@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2010 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2010, 2015 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.io.*;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site command to export Flight Schedule data in CSV format.
  * @author Luke
- * @version 3.2
+ * @version 6.1
  * @since 1.0
  */
 
@@ -33,6 +33,7 @@ public class ScheduleExportCommand extends AbstractCommand {
     * @param ctx the Command context
     * @throws CommandException if an unhandled error occurs
     */
+	@Override
    public void execute(CommandContext ctx) throws CommandException {
 
       // Check our access level
@@ -43,7 +44,6 @@ public class ScheduleExportCommand extends AbstractCommand {
 
       Collection<ScheduleEntry> results = null;
       try {
-         // Get the DAO and export the schedule
          GetSchedule dao = new GetSchedule(ctx.getConnection());
          results = dao.export();
       } catch (DAOException de) {
@@ -52,17 +52,13 @@ public class ScheduleExportCommand extends AbstractCommand {
          ctx.release();
       }
       
-      // Get the airline code
-      String aCode = SystemData.get("airline.code");
-
       // Set the content type and force Save As
-      ctx.getResponse().setBufferSize(40960);
+      String aCode = SystemData.get("airline.code");
       ctx.getResponse().setContentType("text/csv");
-      ctx.getResponse().setHeader("Content-disposition", "attachment; filename=" + aCode.toLowerCase() + "_schedule.csv");
+      ctx.setHeader("Content-disposition", "attachment; filename=" + aCode.toLowerCase() + "_schedule.csv");
 
       // Get the airport code type
       boolean doICAO = (ctx.getUser().getAirportCodeType() == Airport.Code.ICAO);
-
       try {
          // Write the header
          PrintWriter out = ctx.getResponse().getWriter();
@@ -70,8 +66,7 @@ public class ScheduleExportCommand extends AbstractCommand {
          out.println("AIRLINE,NUMBER,LEG,EQTYPE,FROM,DTIME,TO,ATIME,DISTANCE,HISTORIC,PURGE");
 
          // Loop through the results
-         for (Iterator<ScheduleEntry> i = results.iterator(); i.hasNext();) {
-            ScheduleEntry entry = i.next();
+         for (ScheduleEntry entry : results) {
             StringBuilder buf = new StringBuilder(entry.getAirline().getCode());
             buf.append(',');
             buf.append(StringUtils.format(entry.getFlightNumber(), "#000"));
@@ -93,8 +88,6 @@ public class ScheduleExportCommand extends AbstractCommand {
             buf.append(String.valueOf(entry.getHistoric()));
             buf.append(',');
             buf.append(String.valueOf(entry.getCanPurge()));
-
-            // Write the entry
             out.println(buf.toString());
          }
       } catch (IOException ie) {

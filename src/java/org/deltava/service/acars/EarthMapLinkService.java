@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.io.IOException;
@@ -13,7 +13,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to generate a link to the Google Earth live ACARS map.
  * @author Luke
- * @version 4.2
+ * @version 6.1
  * @since 1.0
  */
 
@@ -56,8 +56,8 @@ public class EarthMapLinkService extends WebService {
 		
 		// Write the XML
 		try {
-			ctx.getResponse().setHeader("Content-disposition", "attachment; filename=acarsMapLink.kml");
-			ctx.setContentType("application/vnd.google-earth.kml+xml", "UTF-8");
+			ctx.setHeader("Content-disposition", "attachment; filename=acarsMapLink.kml");
+			ctx.setContentType("application/vnd.google-earth.kml+xml", "utf-8");
 			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (IOException ie) {
@@ -67,7 +67,7 @@ public class EarthMapLinkService extends WebService {
 		return SC_OK;
 	}
 	
-	/**
+	/*
 	 * Helper method to generate the Url element.
 	 */
 	private static Element createLink(String name, String url, int refreshSeconds, boolean isVisible) {

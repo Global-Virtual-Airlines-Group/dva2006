@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.navdata;
 
 import java.io.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display Terminal Route data to ACARS clients.
  * @author Luke
- * @version 5.1
+ * @version 6.1
  * @since 2.4
  */
 
@@ -47,9 +47,9 @@ public class XMLTerminalRouteService extends DownloadService {
 
 		// Check the cache
 		if ((age < 3600_000) && (f.length() > 10240)) {
-			ctx.getResponse().setHeader("Content-disposition", "attachment; filename=xmlsidstar.zip");
-			ctx.getResponse().setContentType("application/zip");
-			ctx.getResponse().setIntHeader("max-age", 1800);
+			ctx.setHeader("Content-disposition", "attachment; filename=xmlsidstar.zip");
+			ctx.setContentType("application/zip");
+			ctx.setHeader("max-age", 1800);
 			sendFile(f, ctx.getResponse());
 			return SC_OK;
 		}
@@ -127,10 +127,10 @@ public class XMLTerminalRouteService extends DownloadService {
 			}
 
 			// Format and write
-			ctx.getResponse().setHeader("Content-disposition", "attachment; filename=xmlsidstar.zip");
-			ctx.getResponse().setContentType("application/zip");
-			ctx.getResponse().setIntHeader("max-age", 1800);
-			ctx.getResponse().setIntHeader("airportCount", apCount);
+			ctx.setHeader("Content-disposition", "attachment; filename=xmlsidstar.zip");
+			ctx.setContentType("application/zip");
+			ctx.setHeader("max-age", 1800);
+			ctx.setHeader("airportCount", apCount);
 			sendFile(f, ctx.getResponse());
 		} catch (Exception e) {
 			throw error(SC_INTERNAL_SERVER_ERROR, "I/O Error", false);
@@ -143,6 +143,7 @@ public class XMLTerminalRouteService extends DownloadService {
 	 * Returns whether this web service requires authentication.
 	 * @return TRUE always
 	 */
+	@Override
 	public boolean isSecure() {
 		return true;
 	}

@@ -107,7 +107,7 @@ public class LogbookService extends WebService {
 		// Write the response
 		try {
 			ctx.setContentType("text/csv", "utf-8");
-			ctx.getResponse().setHeader("Content-disposition", "attachment; filename=logbook.csv");
+			ctx.setHeader("Content-disposition", "attachment; filename=logbook.csv");
 			ctx.commit();
 		} catch (IOException ie) {
 			throw error(SC_CONFLICT, "I/O Error", false);
