@@ -37,7 +37,7 @@ public class PFPXScheduleService extends DownloadService {
 		
 		// Check if the file exists
 		File cacheDir = new File(SystemData.get("schedule.cache"));
-		File f = new File(cacheDir, "pfpxsched.xml");
+		File f = new File(cacheDir, SystemData.get("airline.code").toLowerCase() + "_pfpxsched.xml");
 		
 		// Check if the schedule has been updated
 		boolean isInvalid = true;
@@ -85,6 +85,7 @@ public class PFPXScheduleService extends DownloadService {
 		String today = String.valueOf(cld.get(Calendar.DAY_OF_WEEK));
 		Document doc = new Document();
 		Element re = new Element("PFPX_FLIGHT_LIST");
+		re.setAttribute("airline", SystemData.get("airline.code"));
 		doc.setRootElement(re);
 		for (ScheduleEntry se : sched) {
 			Aircraft ac = acInfo.get(se.getEquipmentType());
