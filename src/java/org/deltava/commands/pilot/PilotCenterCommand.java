@@ -1,10 +1,8 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
 import java.sql.Connection;
-
-import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
 import org.deltava.beans.testing.*;
@@ -26,14 +24,12 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display the Pilot Center.
  * @author Luke
- * @version 5.2
+ * @version 6.1
  * @since 1.0
  */
 
 public class PilotCenterCommand extends AbstractTestHistoryCommand {
 	
-	private static final Logger log = Logger.getLogger(PilotCenterCommand.class);
-
 	/**
 	 * Executes the command
 	 * @param ctx the Command context
@@ -242,18 +238,6 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 					testHistory.canWrite(ep);
 				} catch (IneligibilityException ie) {
 					i.remove();
-				}
-			}
-			
-			// If we have an e-mail box and mail is enabled, check for new mail
-			if (SystemData.getBoolean("smtp.imap.enabled")) {
-				GetPilotEMail pedao = new GetPilotEMail(con);
-				IMAPConfiguration mcfg = pedao.getEMailInfo(p.getID());
-				try {
-					if ((mcfg != null) && (!StringUtils.isEmpty(SystemData.get("smtp.imap.newmail"))))
-						ctx.setAttribute("newMsgs", Integer.valueOf(pedao.hasNewMail(mcfg.getMailDirectory())), REQUEST);
-				} catch (DAOException de) {
-					log.error(de.getMessage());
 				}
 			}
 			

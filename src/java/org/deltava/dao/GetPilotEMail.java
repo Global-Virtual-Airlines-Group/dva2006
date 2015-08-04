@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2010, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Pilot IMAP mailbox information.
  * @author Luke
- * @version 5.0
+ * @version 6.1
  * @since 1.0
  */
 
@@ -67,6 +67,7 @@ public class GetPilotEMail extends DAO {
     * @return the number of messages waiting
     * @throws DAOException if an error occurs
     */
+   @Deprecated
    public int hasNewMail(String path) throws DAOException {
 	   try {
 		   ProcessBuilder pBuilder = new ProcessBuilder(SystemData.get("smtp.imap.newmail"), path);
@@ -90,7 +91,7 @@ public class GetPilotEMail extends DAO {
 	   }
    }
    
-   /**
+   /*
     * Helper method to load EMail information.
     */
    private List<IMAPConfiguration> execute() throws SQLException {
