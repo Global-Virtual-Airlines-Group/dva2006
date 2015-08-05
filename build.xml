@@ -387,19 +387,30 @@
 	<target name="put_scripts" description="Deploy bash scripts to production">
 		<loadproperties srcFile="data/build_deploy.properties" />
 		<property name="webapp.ssh.port" value="22" />
+		<property name="mail.ssh.port" value="22" />
 		<property name="webapp.ssh.user" value="${user.name}" />
+		<property name="mail.ssh.user" value="${user.name}" />
 		<mkdir dir="../.local_data" />
 
-		<!-- Upload the scripts -->
-		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:/usr/local/sbin/www"
-			port="${webapp.ssh.port}" verbose="yes" trust="yes" keyfile="${webapp.ssh.key}">
-			<fileset dir="scripts/${webapp.ssh.os}">
+		<!-- Upload the scripts to web server -->
+		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:/usr/local/sbin/www" port="${webapp.ssh.port}" verbose="yes" trust="yes" keyfile="${webapp.ssh.key}">
+			<fileset dir="scripts/pri">
 				<modified seldirs="false" algorithm="digest" update="true" delayupdate="false">
 					<param name="algorithm.algorithm" value="MD5" />
-					<param name="cache.cachefile" value="../.local_data/static.cache.txt" />
+					<param name="cache.cachefile" value="../.local_data/sh.cache.txt" />
 				</modified>
 			</fileset>
 		</scp>
+
+		<!-- Upload the scripts to services server -->
+        <scp todir="${mail.ssh.user}@${mail.ssh.server}:/usr/local/sbin/www" port="${mail.ssh.port}" verbose="yes" trust="yes" keyfile="${mail.ssh.key}">
+            <fileset dir="scripts/sec">
+                <modified seldirs="false" algorithm="digest" update="true" delayupdate="false">
+                    <param name="algorithm.algorithm" value="MD5" />
+                    <param name="cache.cachefile" value="../.local_data/sh.cache.txt" />
+                </modified>
+            </fileset>
+        </scp>
 	</target>
 	
 	<!-- Production Deployment via SSH -->
@@ -412,8 +423,7 @@
 		<mkdir dir="../.local_data" />
 
 		<!-- Upload the web configuration -->
-		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:${webapp.ssh.path}"
-			port="${webapp.ssh.port}" verbose="yes" trust="yes" keyfile="${webapp.ssh.key}">
+		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:${webapp.ssh.path}" port="${webapp.ssh.port}" verbose="yes" trust="yes" keyfile="${webapp.ssh.key}">
 			<fileset file="${java.io.tmpdir}/build/web.xml">
 				<modified seldirs="false" algorithm="digest" update="true" delayupdate="false">
 					<param name="algorithm.algorithm" value="MD5" />
