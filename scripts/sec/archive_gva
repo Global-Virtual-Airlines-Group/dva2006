@@ -1,0 +1,30 @@
+#!/bin/bash
+#
+# GVA Log archive script
+# Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+#
+
+logarc="/home/backup/logs/gva"
+arc_cmd="pbzip2 -p2 -9"
+
+# Calculate yesterday's date
+now=`date +%s`
+rem=`expr $now % 86400`
+basedate=`expr $now - $rem - 86400`
+
+# Check for the log file
+logfile="/var/log/www/httpd-access.gva.log.$basedate"
+if [ ! -f $logfile ]; then
+        echo $logfile" not found!"
+        exit 1
+fi
+
+# Get the log file
+logdate=`stat $logfile --format=%x`
+yesterday=`date -d "$logdate" +%Y-%b-%d`
+
+# Rename the log
+mv $logfile $logarc/$yesterday
+chown root:backup $logarc/$yesterday
+$arc_cmd $logarc/$yesterday
+exit 0

@@ -1,0 +1,23 @@
+#!/bin/sh
+# AWStats Monthly Archive Script
+# (c) 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+
+# Check for the directory
+if [ ! -d "/home/www/deltava.org/www/stats/`date +%b``date +%y`" ]
+then
+ mkdir /home/www/deltava.org/www/stats/`date +%b``date +%y`
+fi
+
+# Aggregate DVA statistics
+/usr/local/awstats/tools/awstats_buildstaticpages.pl -config=deltava.org \
+ -dir=/home/www/deltava.org/www/stats/`date +%b``date +%y` -Month=`date +%m` -Year=`date +%Y`
+
+# Check for the directory
+if [ ! -d "/home/www/afva.net/www/stats/`date +%b``date +%y`" ]
+then
+ mkdir /home/www/afva.net/www/stats/`date +%b``date +%y`
+fi
+
+# Aggregate AFV statistics
+/usr/local/awstats/tools/awstats_buildstaticpages.pl -config=afva.net \
+ -dir=/home/www/afva.net/www/stats/`date +%b``date +%y` -Month=`date +%m` -Year=`date +%Y`

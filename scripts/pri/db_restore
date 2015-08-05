@@ -1,0 +1,67 @@
+#!/bin/bash
+# Database restore script
+# (c) 2005, 2006, 2012 Global Virtual Airlines Group. All Rights Reserved.
+
+# Set environment
+MYSQL_CLIENT="/usr/local/mysql/bin/mysql --socket=/var/run/mysql/mysql.sock"
+DBDIR="/backup/dva/db"
+
+# Build TEMP directory
+mkdir /tmp/dbrestore
+cd /tmp/dbrestore
+
+# Rebuild tables
+echo 'Recreating Tables'
+cp /backup/dva/db/create_tables.tar.bz2 .
+tar xvfj create_tables.tar.bz2
+$MYSQL_CLIENT -p$1 common < common.sql
+$MYSQL_CLIENT -p$1 acars < acars.sql
+$MYSQL_CLIENT -p$1 events < event.sql
+$MYSQL_CLIENT -p$1 exams < exams.sql
+$MYSQL_CLIENT -p$1 afv < afv.sql
+$MYSQL_CLIENT -p$1 dva < dva.sql
+$MYSQL_CLIENT -p$1 xacars < xacars.sql
+cd ..
+rm -r /tmp/dbrestore
+
+# Rebuild databases
+echo 'Loading Common Data'
+bzcat $DBDIR/common.sql.bz2 | $MYSQL_CLIENT -p$1 common
+bzcat $DBDIR/events.sql.bz2 | $MYSQL_CLIENT -p$1 events
+bzcat $DBDIR/exams.sql.bz2 | $MYSQL_CLIENT -p$1 exams
+bzcat $DBDIR/geoip.sql.bz2 | $MYSQL_CLIENT -p$1 geoip
+bzcat $DBDIR/issues.sql.bz2 | $MYSQL_CLIENT -p$1 common
+bzcat $DBDIR/weather.sql.bz2 | $MYSQL_CLIENT -p$1 common
+
+echo 'Restoring Water Cooler'
+bzcat $DBDIR/cooler.sql.bz2 | $MYSQL_CLIENT -p$1 common
+
+echo 'Restoring Navigation Data'
+bzcat $DBDIR/navdata.sql.bz2 | $MYSQL_CLIENT -p$1 common
+bzcat $DBDIR/charts.sql.bz2 | $MYSQL_CLIENT -p$1 common
+
+echo 'Restoring Postfix/Teampseak Data'
+bzcat $DBDIR/postfix.sql.bz2 | $MYSQL_CLIENT -p$1 postfix
+bzcat $DBDIR/teamspeak.sql.bz2 | $MYSQL_CLIENT -p$1 teamspeak
+
+echo 'Restoring DVA data'
+bzcat $DBDIR/dva.sql.bz2 | $MYSQL_CLIENT -p$1 dva
+
+echo 'Restoring AFV data'
+bzcat $DBDIR/afv.sql.bz2 | $MYSQL_CLIENT -p$1 afv
+
+echo 'Restoring Online track Data'
+bzcat $DBDIR/online.sql.bz2 | $MYSQL_CLIENT -p$1 online
+
+echo 'Restoring ACARS data'
+bzcat $DBDIR/acars.sql.bz2 | $MYSQL_CLIENT -p$1 acars
+bzcat $DBDIR/xacars.sql.bz2 | $MYSQL_CLIENT -p$1 xacars
+
+echo 'Restoring ACARS position archive'
+bzcat $DBDIR/acars_pos.sql.bz2 | $MYSQL_CLIENT -p$1 acars
+bzcat $DBDIR/acars_pos_inc.sql.bz2 | $MYSQL_CLIENT -p$1 acars
+bzcat $DBDIR/acars_tracks.sql.bz2 | $MYSQL_CLIENT -p$1 acars
+
+echo 'Restoring Image Galleries'
+bzcat $DBDIR/dva_gallery.sql.bz2 | $MYSQL_CLIENT -p$1 dva
+bzcat $DBDIR/afv_gallery.sql.bz2 | $MYSQL_CLIENT -p$1 afv
