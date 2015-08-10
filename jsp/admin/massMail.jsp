@@ -17,7 +17,7 @@ if (!golgotha.form.check()) return false;
 golgotha.form.validate({f:f.subject, l:7, t:'Message Subject'});
 golgotha.form.validate({f:f.body, l:25, t:'Message Body'});
 golgotha.form.validate({f:f.eqType, t:'Recipients Equipment Type'});
-golgotha.form.validate({f:f.fAttach, ext:['pdf','txt'], t:'Attached File'});
+golgotha.form.validate({f:f.fAttach, ext:['pdf','txt'], t:'Attached File', empty:true});
 golgotha.form.submit(f);
 return true;
 };
