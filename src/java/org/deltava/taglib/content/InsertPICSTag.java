@@ -1,4 +1,4 @@
-// Copyright 2005, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import javax.servlet.jsp.*;
@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to insert an PICS-1.1 content rating.
  * @author Luke
- * @version 5.0
+ * @version 6.1
  * @since 1.0
  */
 
@@ -56,8 +56,7 @@ public class InsertPICSTag extends TagSupport {
 	}
 
 	/**
-	 * Renders the PICS-1.1 content to the JSP output stream. No content will be written if no rating data is found or
-	 * selected.
+	 * Renders the PICS-1.1 content to the JSP output stream. No content will be written if no rating data is found or selected.
 	 * @return TagSupport.EVAL_PAGE
 	 * @throws JspException if an I/O error occurs
 	 */
@@ -69,9 +68,7 @@ public class InsertPICSTag extends TagSupport {
 			return EVAL_PAGE;
 
 		// Build the site URL
-		String url = pageContext.getRequest().getProtocol();
-		url = url.substring(0, url.indexOf('/')).toLowerCase() + "://" + pageContext.getRequest().getServerName();
-
+		String url = (pageContext.getRequest().isSecure() ? "https" : "http") + "://" + pageContext.getRequest().getServerName();
 		try {
 			JspWriter out = pageContext.getOut();
 			if (_doICRA) {
