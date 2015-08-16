@@ -1,12 +1,11 @@
 #!/bin/bash
-#
 # Spam auto-learn script
-# (c) 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
+# (c) 2009, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 #
 
 mail_root='/home/mail'
 spam_folder='.!SPAM'
-spamd_db='/var/lib/nobody/.spamassassin/'
+spamd_db='/home/vscan/'
 
 for maildir in `ls -AD1 $mail_root`
 do
@@ -38,6 +37,6 @@ done
 sa-learn --sync --dbpath $spamd_db
 
 # Ensure permissions are correct
-chown postfix:postfix $spamd_db/*
+chown vscan:postfix $spamd_db/*
 chmod 660 $spamd_db/*
 exit 0
