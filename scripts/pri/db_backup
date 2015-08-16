@@ -40,7 +40,6 @@ rm *.sql
 # Dump e-mail data
 echo `date +%H:%M:%S`' Writing e-mail configuration'
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` postfix | $arc_util > postfix.sql.bz2
-$mysqldump $dump_opt `cat /etc/sqlbackup.conf` rcmail | $arc_util > rcmail.sql.bz2
 
 # Dump TeamSpeak data
 echo `date +%H:%M:%S`' Writing TeamSpeak configuration'
@@ -96,7 +95,7 @@ fi
 
 # Dump ACARS data
 echo `date +%H:%M:%S`' Writing ACARS data'
-$mysqldump $dump_opt `cat /etc/sqlbackup.conf` --ignore=table=acars.TRACKS --ignore-table=acars.POS_ARCHIVE acars | $arc_util > acars.sql.bz2
+$mysqldump $dump_opt `cat /etc/sqlbackup.conf` --ignore-table=acars.TRACKS --ignore-table=acars.POS_ARCHIVE acars | $arc_util > acars.sql.bz2
 
 # Dump DVA database
 echo `date +%H:%M:%S`' Writing DVA database'
@@ -126,7 +125,7 @@ $mysqldump $dump_opt `cat /etc/sqlbackup.conf` vatsim | $arc_util > vatsim.sql.b
 
 # Change file permissions
 echo `date +%H:%M:%S`' Setting file permissions'
-chown -R backup:gva *
+chown -R backup:users *
 chmod 640 *
 
 # Log Completion
