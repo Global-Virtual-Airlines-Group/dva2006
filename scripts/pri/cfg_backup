@@ -8,13 +8,13 @@ cd /home/backup/cfg
 # Copy configuration files
 tar vcfz awstats.tar.gz /usr/local/etc/awstats
 tar vcfz httpd.tar.gz /usr/local/apache24/conf
-tar vcfz tomcat.tar.gz /usr/local/tomcat/conf /usr/local/tomcat/bin
+tar vcfz tomcat.tar.gz /usr/local/tomcat/conf
 tar vcfz mysql.tar.gz /etc/my.cnf
 tar vcfz crontabs.tar.gz /var/spool/cron/tabs
 
 # Update permissions
 chmod 660 *.tar.gz
-chown backup:gva *.tar.gz
+chown backup:users *.tar.gz
 
 # Copy data directories
 cd /home/www/deltava.org
@@ -30,5 +30,5 @@ gzip -f7 /home/backup/sites/*.tar
 # Update permissions
 cd /home/backup/sites
 chmod 660 *.tar.gz
-chown backup:gva *.tar.gz
+chown backup:users *.tar.gz
 exit 0
