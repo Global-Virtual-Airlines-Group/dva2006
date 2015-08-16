@@ -13,6 +13,7 @@
 <content:pics />
 <content:js name="common" />
 <content:js name="jsColor" />
+<content:sysdata var="forumName" name="airline.forum" />
 <script type="text/javascript">
 golgotha.local.validate = function(f)
 {
@@ -20,7 +21,7 @@ if (!golgotha.form.check()) return false;
 golgotha.form.validate({f:f.name, l:6, t:'Accomplishment Name'});
 golgotha.form.validate({f:f.units, t:'Units of Measurement'});
 golgotha.form.validate({f:f.value, min:0, t:'Number of Units'});
-golgotha.form.validate({f:f.color, l:6, t:'Water Cooler label color'});
+golgotha.form.validate({f:f.color, l:6, t:'${forumName} label color'});
 golgotha.form.submit(f);
 return true;
 };
@@ -132,7 +133,8 @@ return true;
 </c:if>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="active" idx="*" value="true" className="bld" checked="${ap.active}" label="Accomplishment is Active" /></td>
+ <td class="data"><el:box name="alwaysDisplay" idx="*" value="true" checked="${ap.alwaysDisplay}"  label="Always display Accomplishment completion" /><br />
+<el:box name="active" idx="*" value="true" className="bld" checked="${ap.active}" label="Accomplishment is Active" /></td>
 </tr>
 </el:table>
 
