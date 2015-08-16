@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * A bean to define Pilot accomplishments.
  * @author Luke
- * @version 6.0
+ * @version 6.1
  * @since 3.2
  */
 
@@ -56,6 +56,7 @@ public class Accomplishment extends DatabaseBean implements ComboAlias, ViewEntr
 	private AirlineInformation _owner;
 	
 	private boolean _active;
+	private boolean _alwaysDisplay;
 	private int _color;
 	
 	private int _pilots;
@@ -126,6 +127,15 @@ public class Accomplishment extends DatabaseBean implements ComboAlias, ViewEntr
 	 */
 	public boolean getActive() {
 		return _active;
+	}
+	
+	/**
+	 * Returns whether the Accomplishment should always display, even if the Pilot has achieved an
+	 * accomplishment with the same Unit and a higher count.
+	 * @return TRUE if the accomplishment should always be displayed if achieved, otherwise FALSE
+	 */
+	public boolean getAlwaysDisplay() {
+		return _alwaysDisplay;
 	}
 	
 	/**
@@ -207,6 +217,15 @@ public class Accomplishment extends DatabaseBean implements ComboAlias, ViewEntr
 	 */
 	public void setActive(boolean isActive) {
 		_active = isActive;
+	}
+	
+	/**
+	 * Sets the Accomplishment to always display, even if the Pilot has achieved an accomplishment
+	 * with the same Unit and a higher count.
+	 * @param show TRUE if the accomplishment should always be displayed if achieved, otherwise FALSE
+	 */
+	public void setAlwaysDisplay(boolean show) {
+		_alwaysDisplay = show;
 	}
 	
 	/**

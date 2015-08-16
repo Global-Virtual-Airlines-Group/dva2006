@@ -1,4 +1,4 @@
-// Copyright 2010, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.util.cache.CacheManager;
 /**
  * A Data Access Object to save Accomplishment profiles.
  * @author Luke
- * @version 6.0
+ * @version 6.1
  * @since 3.2
  */
 
@@ -33,11 +33,11 @@ public class SetAccomplishment extends DAO {
 		try {
 			if (a.getID() != 0) {
 				prepareStatementWithoutLimits("UPDATE ACCOMPLISHMENTS SET NAME=?, UNIT=?, VAL=?, COLOR=?, "
-						+ "CHOICES=?, ACTIVE=? WHERE (ID=?)");
-				_ps.setInt(7, a.getID());
+						+ "CHOICES=?, ACTIVE=?, ALWAYS_SHOW=? WHERE (ID=?)");
+				_ps.setInt(8, a.getID());
 			} else
 				prepareStatementWithoutLimits("INSERT INTO ACCOMPLISHMENTS (NAME, UNIT, VAL, COLOR, CHOICES, "
-						+ "ACTIVE) VALUES (?, ?, ?, ?, ?, ?)");
+						+ "ACTIVE, ALWAYS_SHOW) VALUES (?, ?, ?, ?, ?, ?, ?)");
 			
 			_ps.setString(1, a.getName());
 			_ps.setInt(2, a.getUnit().ordinal());
@@ -45,6 +45,7 @@ public class SetAccomplishment extends DAO {
 			_ps.setInt(4, a.getColor());
 			_ps.setString(5, a.getChoices().isEmpty() ? null : StringUtils.listConcat(a.getChoices(), ","));
 			_ps.setBoolean(6, a.getActive());
+			_ps.setBoolean(7, a.getAlwaysDisplay());
 			executeUpdate(1);
 			if (a.getID() == 0)
 				a.setID(getNewID());
@@ -53,16 +54,6 @@ public class SetAccomplishment extends DAO {
 		} finally {
 			CacheManager.invalidate("Accomplishments");
 		}
-	}
-	
-	/**
-	 * Records a Pilot accomplishment on the current date.
-	 * @param pilotID the Pilot's database ID
-	 * @param a the Accomplishment
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public void achieve(int pilotID, Accomplishment a) throws DAOException {
-		achieve(pilotID, a, new java.util.Date());
 	}
 	
 	/**

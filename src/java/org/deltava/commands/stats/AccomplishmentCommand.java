@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Accomplishment profiles. 
  * @author Luke
- * @version 6.0
+ * @version 6.1
  * @since 3.2
  */
 
@@ -60,6 +60,7 @@ public class AccomplishmentCommand extends AbstractFormCommand {
 			// Update fields
 			a.setValue(StringUtils.parse(ctx.getParameter("value"), 0));
 			a.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
+			a.setAlwaysDisplay(Boolean.valueOf(ctx.getParameter("alwaysDisplay")).booleanValue());
 			a.setUnit(Accomplishment.Unit.valueOf(ctx.getParameter("units")));
 			a.setColor(StringUtils.parse("0x" + ctx.getParameter("color"), 0));
 			

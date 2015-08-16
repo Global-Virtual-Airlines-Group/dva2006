@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Accomplishment profiles.
  * @author Luke
- * @version 5.0
+ * @version 6.1
  * @since 3.2
  */
 
@@ -68,7 +68,6 @@ public class GetAccomplishment extends DAO {
 			prepareStatementWithoutLimits(sqlBuf.toString());
 			_ps.setInt(1, id);
 			_ps.setString(2, db);
-			
 			try (ResultSet rs = _ps.executeQuery()) {
 				if (rs.next()) {
 					a = new Accomplishment(rs.getString(2));
@@ -78,8 +77,9 @@ public class GetAccomplishment extends DAO {
 					a.setColor(rs.getInt(5));
 					a.setChoices(StringUtils.split(rs.getString(6), ","));
 					a.setActive(rs.getBoolean(7));
-					a.setOwner(SystemData.getApp(rs.getString(8)));
-					a.setPilots(rs.getInt(9));
+					a.setAlwaysDisplay(rs.getBoolean(8));
+					a.setOwner(SystemData.getApp(rs.getString(9)));
+					a.setPilots(rs.getInt(10));
 					_cache.add(a);
 				}
 			}
@@ -113,8 +113,7 @@ public class GetAccomplishment extends DAO {
 			
 			// Load the accomplishments 
 			List<Accomplishment> results = new ArrayList<Accomplishment>();
-			for (Iterator<Integer> i = IDs.iterator(); i.hasNext(); ) {
-				Integer id = i.next();
+			for (Integer id : IDs) {
 				Accomplishment a = get(id.intValue());
 				if (a != null)
 					results.add(a);
@@ -146,7 +145,8 @@ public class GetAccomplishment extends DAO {
 					a.setColor(rs.getInt(5));
 					a.setChoices(StringUtils.split(rs.getString(6), ","));
 					a.setActive(rs.getBoolean(7));
-					a.setPilots(rs.getInt(8));
+					a.setAlwaysDisplay(rs.getBoolean(8));
+					a.setPilots(rs.getInt(9));
 					a.setOwner(ai);
 					results.add(a);
 					_cache.add(a);
