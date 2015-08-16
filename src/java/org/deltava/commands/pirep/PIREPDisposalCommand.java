@@ -163,7 +163,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 				for (Iterator<Accomplishment> i = accs.iterator(); i.hasNext(); ) {
 					Accomplishment a = i.next();
 					if (acchelper.has(a) != AccomplishmentHistoryHelper.Result.NOTYET) {
-						acwdao.achieve(p.getID(), a);
+						acwdao.achieve(p.getID(), a, new Date());
 						StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.RECOGNITION);
 						upd.setAuthorID(ctx.getUser().getID());
 						upd.setDescription("Joined " + a.getName());
