@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to view and update Flight Academy certification profiles.
  * @author Luke
- * @version 6.0
+ * @version 6.1
  * @since 1.0
  */
 
@@ -64,6 +64,7 @@ public class CertificationCommand extends AbstractFormCommand {
 			cert.setReqs(StringUtils.arrayIndexOf(Certification.REQ_NAMES, ctx.getParameter("preReqs")));
 			cert.setActive(Boolean.valueOf(ctx.getParameter("isActive")).booleanValue());
 			cert.setAutoEnroll(Boolean.valueOf(ctx.getParameter("autoEnroll")).booleanValue());
+			cert.setVisible(Boolean.valueOf(ctx.getParameter("visible")).booleanValue());
 			cert.setRideCount(StringUtils.parse(ctx.getParameter("rideCount"), 0));
 			cert.setReqCert((cert.getReqs() != Certification.REQ_SPECIFIC) ? null : ctx.getParameter("reqCert"));
 			cert.setDescription(ctx.getParameter("desc"));

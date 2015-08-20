@@ -9,7 +9,7 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * A bean to store Flight Academy certification data.
  * @author Luke
- * @version 6.0
+ * @version 6.1
  * @since 1.0
  */
 
@@ -31,6 +31,7 @@ public class Certification implements java.io.Serializable, ComboAlias, ViewEntr
 	private int _rideCount;
 	
 	private boolean _active;
+	private boolean _visible;
 	private boolean _autoEnroll;
 	
 	private String _desc;
@@ -77,6 +78,15 @@ public class Certification implements java.io.Serializable, ComboAlias, ViewEntr
 	 */
 	public boolean getActive() {
 		return _active;
+	}
+
+	/**
+	 * Returns whether the achievement of this Certification is publicly visible.
+	 * @return TRUE if visible, otherwise FALSE
+	 * @see Certification#setVisible(boolean)
+	 */
+	public boolean getVisible() {
+		return _visible;
 	}
 	
 	/**
@@ -359,6 +369,15 @@ public class Certification implements java.io.Serializable, ComboAlias, ViewEntr
 	 */
 	public void setActive(boolean isActive) {
 		_active = isActive;
+	}
+	
+	/**
+	 * Updates whether this achievement of this certification is publicly visible.
+	 * @param isVisible TRUE if visible, otherwise FALSE
+	 * @see Certification#getVisible()
+	 */
+	public void setVisible(boolean isVisible) {
+		_visible = isVisible;
 	}
 	
 	/**

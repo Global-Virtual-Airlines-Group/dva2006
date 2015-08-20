@@ -1,7 +1,8 @@
-// Copyright 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.deltava.beans.UserDataMap;
@@ -13,7 +14,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to list individuals who have passed Flight Academy Certifications.
  * @author Luke
- * @version 5.4
+ * @version 6.1
  * @since 3.6
  */
 
@@ -26,12 +27,13 @@ public class GraduatesCommand extends AbstractViewCommand {
 	 */
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
+		boolean showAll = ctx.isUserInRole("HR") || ctx.isUserInRole("Instructor") || ctx.isUserInRole("AcademyAdmin") || ctx.isUserInRole("AcademyAudit");
 		try {
 			Connection con = ctx.getConnection();
 			
 			// Load Certifications
 			GetAcademyCertifications crdao = new GetAcademyCertifications(con);
-			ctx.setAttribute("certs", crdao.getWithGraduates(), REQUEST);
+			ctx.setAttribute("certs", crdao.getWithGraduates(!showAll), REQUEST);
 			
 			// Get our certification
 			Certification cert = crdao.get(ctx.getParameter("cert"));
@@ -47,9 +49,7 @@ public class GraduatesCommand extends AbstractViewCommand {
 				vc.setResults(courses);
 					
 				// Load the Pilot IDs
-				Collection<Integer> IDs = new HashSet<Integer>();
-				for (Course c : courses)
-					IDs.add(Integer.valueOf(c.getPilotID()));
+				Collection<Integer> IDs = courses.stream().map(Course::getPilotID).collect(Collectors.toSet());
 				
 				// Load the Pilots
 				GetUserData uddao = new GetUserData(con);
