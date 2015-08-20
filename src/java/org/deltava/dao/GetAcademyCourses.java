@@ -227,10 +227,11 @@ public class GetAcademyCourses extends DAO {
 	/**
 	 * Loads all Certifications obtained by a group of Pilots.
 	 * @param ids a Collection of database IDs
+	 * @param visibleOnly TRUE if only visible certifications should be returned, otherwise FALSE
 	 * @return a Map of comma-delimited certifications, indexed by database ID
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Map<Integer, Collection<String>> getCertifications(Collection<?> ids) throws DAOException {
+	public Map<Integer, Collection<String>> getCertifications(Collection<?> ids, boolean visibleOnly) throws DAOException {
 		if (ids.isEmpty())
 			return Collections.emptyMap();
 		
@@ -257,7 +258,10 @@ public class GetAcademyCourses extends DAO {
 				sqlBuf.append(',');
 		}
 		
-		sqlBuf.append(")) ORDER BY C.PILOT_ID, CR.STAGE");
+		sqlBuf.append(")) ");
+		if (visibleOnly)
+			sqlBuf.append("AND (CR.VISIBLE=1) ");
+		sqlBuf.append("ORDER BY C.PILOT_ID, CR.STAGE");
 		
 		Map<Integer, Collection<String>> results = new HashMap<Integer, Collection<String>>();
 		try {

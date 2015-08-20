@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command for viewing Water Cooler discussion threads.
  * @author Luke
- * @version 5.4
+ * @version 6.1
  * @since 1.0
  */
 
@@ -164,8 +164,9 @@ public class ThreadCommand extends AbstractCommand {
 					users.putAll(adao.getByID(udm.getByTable(dbTableName), dbTableName));
 			}
 			
-			// Get Flight Academy certifications 
-			Map<Integer, Collection<String>> certs = acdao.getCertifications(udm.getAllIDs());
+			// Get Flight Academy certifications
+			boolean showAll = ctx.isUserInRole("HR") || ctx.isUserInRole("Instructor") || ctx.isUserInRole("AcademyAdmin") || ctx.isUserInRole("AcademyAudit");
+			Map<Integer, Collection<String>> certs = acdao.getCertifications(udm.getAllIDs(), !showAll);
 			for (Integer id : certs.keySet()) {
 				Person cp = users.get(id);
 				if ((cp != null) && (cp instanceof Pilot))

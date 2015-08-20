@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Flight Academy Certifications and Check Ride scripts. 
  * @author Luke
- * @version 6.0
+ * @version 6.1
  * @since 1.0
  */
 
@@ -107,17 +107,24 @@ public class GetAcademyCertifications extends DAO {
 
 	/**
 	 * Loads all Flight Academy Certification profiles with at least one Graduate.
+	 * @param visibleOnly TRUE to only list visible Certifications, otherwise FALSE
 	 * @return a Collection of Certification beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<Certification> getWithGraduates() throws DAOException {
+	public Collection<Certification> getWithGraduates(boolean visibleOnly) throws DAOException {
 		try {
 			prepareStatement("SELECT C.*, CPR.ABBR, COUNT(CR.SEQ) FROM exams.COURSES CS, exams.CERTS C LEFT JOIN exams.CERTPREREQ CPR "
 				+ "ON (C.NAME=CPR.NAME) LEFT JOIN exams.CERTREQS CR ON (C.NAME=CR.CERTNAME) WHERE (C.NAME=CS.CERTNAME) AND "
 				+ "(CS.STATUS=?) GROUP BY C.NAME ORDER BY C.STAGE, C.NAME;");
 			_ps.setInt(1, Status.COMPLETE.ordinal());
 			Collection<Certification> results = execute();
-			for (Certification c : results) {
+			for (Iterator<Certification> i = results.iterator(); i.hasNext(); ) {
+				Certification c = i.next();
+				if (visibleOnly && !c.getVisible()) {
+					i.remove();
+					continue;
+				}
+				
 				loadExams(c);
 				loadRoles(c);
 				loadAirlines(c);
@@ -185,7 +192,7 @@ public class GetAcademyCertifications extends DAO {
 	private List<Certification> execute() throws SQLException {
 		List<Certification> results = new ArrayList<Certification>();
 		try (ResultSet rs = _ps.executeQuery()) {
-			boolean hasReqCount = (rs.getMetaData().getColumnCount() > 9);
+			boolean hasReqCount = (rs.getMetaData().getColumnCount() > 10);
 			while (rs.next()) {
 				Certification cert = new Certification(rs.getString(1));
 				cert.setCode(rs.getString(2));
@@ -193,12 +200,13 @@ public class GetAcademyCertifications extends DAO {
 				cert.setReqs(rs.getInt(4));
 				cert.setActive(rs.getBoolean(5));
 				cert.setAutoEnroll(rs.getBoolean(6));
-				cert.setRideCount(rs.getInt(7));
-				cert.setDescription(rs.getString(8));
+				cert.setVisible(rs.getBoolean(7));
+				cert.setRideCount(rs.getInt(8));
+				cert.setDescription(rs.getString(9));
 				if (cert.getReqs() == Certification.REQ_SPECIFIC)
-					cert.setReqCert(rs.getString(9));
+					cert.setReqCert(rs.getString(10));
 				if (hasReqCount)
-					cert.setReqCount(rs.getInt(10));
+					cert.setReqCount(rs.getInt(11));
 			
 				results.add(cert);
 			}
