@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Acccess Object to read Pilots that have achieved certain accomplishments.
  * @author Luke
- * @version 3.4
+ * @version 6.1
  * @since 1.0
  */
 
@@ -90,16 +90,16 @@ public class GetPilotRecognition extends GetPilot {
     public Collection<Integer> getPromotionQueue(String eqType) throws DAOException {
     	
     	// Build the SQL statement
-        StringBuilder buf = new StringBuilder("SELECT P.ID, (SELECT COUNT(DISTINCT F.ID) FROM PIREPS F, "
+        StringBuilder buf = new StringBuilder("SELECT P.ID, P.EQTYPE, (SELECT COUNT(DISTINCT F.ID) FROM PIREPS F, "
         		+ "PROMO_EQ PEQ WHERE (F.PILOT_ID=P.ID) AND (F.ID=PEQ.ID) AND (PEQ.EQTYPE=P.EQTYPE) "
         		+ "AND (F.STATUS=?)) AS CLEGS, EQ.C_LEGS, COUNT(DISTINCT EQE.EXAM) AS CREQ_EXAMS, "
         		+ "COUNT(DISTINCT EX.ID) as C_EXAMS FROM (PILOTS P, EQTYPES EQ) LEFT JOIN EQEXAMS EQE "
         		+ "ON (EQE.EQTYPE=P.EQTYPE) LEFT JOIN exams.EXAMS EX ON ((EX.PILOT_ID=P.ID) AND "
         		+ "(EX.NAME=EQE.EXAM) AND (EQE.EXAMTYPE=?) AND (EX.PASS=?)) WHERE (P.STATUS=?) AND "
-        		+ "(P.RANK=?) AND ((P.EQTYPE=EQ.EQTYPE) AND (EQ.EQTYPE=EQE.EQTYPE) AND (EQE.EXAMTYPE=?)) ");
+        		+ "(P.RANK=?) AND ((P.EQTYPE=EQ.EQTYPE) AND (EQ.EQTYPE=EQE.EQTYPE) AND (EQE.EXAMTYPE=?)) "
+        		+ "GROUP BY P.ID HAVING (CLEGS >= EQ.C_LEGS) AND (C_EXAMS>=CREQ_EXAMS)");
         if (eqType != null)
-        	buf.append("AND (P.EQTYPE=?) ");
-        buf.append("GROUP BY P.ID HAVING (CLEGS >= EQ.C_LEGS) AND (C_EXAMS>=CREQ_EXAMS)");
+        	buf.append(" AND (P.EQTYPE=?)");
     	
        try {
     	   prepareStatement(buf.toString());
