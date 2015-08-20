@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import java.sql.Connection;
@@ -12,7 +12,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to display an ACARS client error report.
  * @author Luke
- * @version 5.1
+ * @version 6.1
  * @since 1.0
  */
 
@@ -38,6 +38,7 @@ public class ErrorLogEntryCommand extends AbstractCommand {
 			GetPilot pdao = new GetPilot(con);
 			GetUserData uddao = new GetUserData(con);
 			UserData ud = uddao.get(err.getUserID());
+			ctx.setAttribute("userData", ud, REQUEST);
 			ctx.setAttribute("author", pdao.get(ud), REQUEST);
 			
 			// Load the address data

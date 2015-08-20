@@ -31,7 +31,7 @@
 </tr>
 <tr>
  <td class="label">Logged on</td>
- <td class="data"><b><fmt:date date="${err.createdOn}" /></b> by ${author.name}</td>
+ <td class="data"><fmt:date date="${err.createdOn}" /> by <el:profile location="${userData}"  className="pri bld">${author.name}</el:profile></td>
 </tr>
 <tr>
  <td class="label">Client Build</td>
