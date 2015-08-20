@@ -71,7 +71,8 @@
  <td class="label">&nbsp;</td>
  <td class="data bld"><c:if test="${cert.active}"><span class="ter caps">CERTIFICATION IS AVAILABLE</span></c:if>
 <c:if test="${!cert.active}"><span class="warn caps">CERTIFICATION IS NOT AVAILABLE</span></c:if>
-<c:if test="${cert.autoEnroll}"><br /><span class="bld caps">AUTOMATICALLY ENROLL STUDENTS IN COURSE</span></c:if></td>
+<c:if test="${cert.autoEnroll}"><br /><span class="bld caps">AUTOMATICALLY ENROLL STUDENTS IN COURSE</span></c:if>
+<c:if test="${!cert.visible}"><br /><span class="ter caps">CERTIFICATE COMPLETION IS NOT PUBLICLY VISIBLE</span></c:if></td>
 </tr>
 <c:if test="${!empty cert.description}">
 <tr>

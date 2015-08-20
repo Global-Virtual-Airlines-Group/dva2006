@@ -103,8 +103,9 @@ golgotha.local.onload = function() {
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="isActive" idx="*" value="true" label="Certification is Active" checked="${cert.active}" /><br />
-<el:box name="autoEnroll" idx="*" value="true" label="Auto-Enroll students in Course" checked="${cert.autoEnroll}" /></td>
+ <td class="data"><el:box name="isActive" idx="*" className="bld" value="true" label="Certification is Active" checked="${cert.active}" /><br />
+<el:box name="autoEnroll" idx="*" value="true" label="Auto-Enroll students in Course" checked="${cert.autoEnroll}" /><br />
+<el:box name="visible" idx="*" value="true" label="Certificate Completion is not publicly visible" checked="${cert.visible}" /></td>
 </tr>
 <tr>
  <td class="label top">Instructions</td>

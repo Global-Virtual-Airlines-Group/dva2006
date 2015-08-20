@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to change a Flight Academy Course's status.
  * @author Luke
- * @version 5.0
+ * @version 6.1
  * @since 1.0
  */
 
@@ -60,6 +60,12 @@ public class CourseDisposalCommand extends AbstractCommand {
 			Course c = dao.get(ctx.getID());
 			if (c == null)
 				throw notFoundException("Invalid Course - " + ctx.getID());
+			
+			// Get the certification
+			GetAcademyCertifications cdao = new GetAcademyCertifications(con);
+			Certification crt = cdao.get(c.getCode());
+			if (crt == null)
+				throw notFoundException("Invalid Certification - " + c.getCode());
 			
 			// Get the Pilot
 			GetUserData uddao = new GetUserData(con);
@@ -106,10 +112,12 @@ public class CourseDisposalCommand extends AbstractCommand {
 					
 				case COMPLETE :
 					upd.setType(StatusUpdate.CERT_ADD);
-					upd.setDescription("Obtained " + c.getName() + " Flight Academy certification");
+					if (crt.getVisible())
+						upd.setDescription("Obtained " + c.getName() + " Flight Academy certification");
+					else
+						upd.setDescription("Completed " + c.getName() + " Flight Academy course");
 					
 					// Get our exams and init the academy helper
-					GetAcademyCertifications cdao = new GetAcademyCertifications(con);
 					AcademyHistoryHelper helper = new AcademyHistoryHelper(usr, dao.getByPilot(c.getPilotID()), cdao.getAll());
 					helper.addExams(exdao.getExams(c.getPilotID()));
 					
@@ -139,15 +147,14 @@ public class CourseDisposalCommand extends AbstractCommand {
 			
 			// If we're canceling, cancel all Instruction Sessions
 			if (op == Status.ABANDONED) {
-				GetAcademyCalendar cdao = new GetAcademyCalendar(con);
+				GetAcademyCalendar cldao = new GetAcademyCalendar(con);
 				SetAcademyCalendar cwdao = new SetAcademyCalendar(con);
 				
 				// Cancel the sessions
 				Collection<Integer> IDs = new HashSet<Integer>();
-				Collection<InstructionSession> sessions = cdao.getSessions(c.getID());
-				for (Iterator<InstructionSession> i = sessions.iterator(); i.hasNext(); ) {
-					InstructionSession is = i.next();
-					IDs.add(new Integer(is.getInstructorID()));
+				Collection<InstructionSession> sessions = cldao.getSessions(c.getID());
+				for (InstructionSession is : sessions) {
+					IDs.add(Integer.valueOf(is.getInstructorID()));
 					is.setStatus(InstructionSession.CANCELED);
 					cwdao.write(is);
 				}
@@ -169,7 +176,7 @@ public class CourseDisposalCommand extends AbstractCommand {
 			uwdao.write(ud.getDB(), upd);
 			
 			// Write Facebook update
-			if (!StringUtils.isEmpty(SystemData.get("users.facebook.id")) && (op == Status.COMPLETE)) {
+			if (!StringUtils.isEmpty(SystemData.get("users.facebook.id")) && (op == Status.COMPLETE) && crt.getVisible()) {
 				MessageContext fbctxt = new MessageContext();
 				fbctxt.addData("user", usr);
 				fbctxt.addData("course", c);
@@ -179,14 +186,9 @@ public class CourseDisposalCommand extends AbstractCommand {
 				// Write to user feed or app page
 				SetFacebookData fbwdao = new SetFacebookData();
 				fbwdao.setWarnMode(true);
-				if (usr.hasIM(IMAddress.FBTOKEN)) {
-					fbwdao.setToken(usr.getIMHandle(IMAddress.FBTOKEN));
-					fbwdao.write(nws);
-				} else {
-					fbwdao.setAppID(SystemData.get("users.facebook.pageID"));
-					fbwdao.setToken(SystemData.get("users.facebook.pageToken"));
-					fbwdao.writeApp(nws);
-				}
+				fbwdao.setAppID(SystemData.get("users.facebook.pageID"));
+				fbwdao.setToken(SystemData.get("users.facebook.pageToken"));
+				fbwdao.writeApp(nws);
 			}
 			
 			// Commit the transaction

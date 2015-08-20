@@ -12,7 +12,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object for Flight Academy Certifications and Check Ride Scripts.
  * @author Luke
- * @version 6.0
+ * @version 6.1
  * @since 3.4
  */
 
@@ -37,15 +37,16 @@ public class SetAcademyCertification extends DAO {
 			
 			// Write the certification entry
 			prepareStatementWithoutLimits("INSERT INTO exams.CERTS (NAME, ABBR, STAGE, PREREQ, ACTIVE, "
-				+ "AUTO_ENROLL, CHECKRIDES, DESCRIPTION) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+				+ "AUTO_ENROLL, VISIBLE, CHECKRIDES, DESCRIPTION) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setString(1, c.getName());
 			_ps.setString(2, c.getCode());
 			_ps.setInt(3, c.getStage());
 			_ps.setInt(4, c.getReqs());
 			_ps.setBoolean(5, c.getActive());
 			_ps.setBoolean(6, c.getAutoEnroll());
-			_ps.setInt(7, c.getRideCount());
-			_ps.setString(8, c.getDescription());
+			_ps.setBoolean(7, c.getVisible());
+			_ps.setInt(8, c.getRideCount());
+			_ps.setString(9, c.getDescription());
 			executeUpdate(1);
 			
 			// If we've got a pre-req, write it
@@ -76,16 +77,17 @@ public class SetAcademyCertification extends DAO {
 			
 			// Write the profile
 			prepareStatementWithoutLimits("UPDATE exams.CERTS SET NAME=?, ABBR=?, STAGE=?, PREREQ=?, ACTIVE=?, "
-				+ "AUTO_ENROLL=?, CHECKRIDES=?, DESCRIPTION=? WHERE (NAME=?)");
+				+ "AUTO_ENROLL=?, VISIBLE=?, CHECKRIDES=?, DESCRIPTION=? WHERE (NAME=?)");
 			_ps.setString(1, c.getName());
 			_ps.setString(2, c.getCode());
 			_ps.setInt(3, c.getStage());
 			_ps.setInt(4, c.getReqs());
 			_ps.setBoolean(5, c.getActive());
 			_ps.setBoolean(6, c.getAutoEnroll());
-			_ps.setInt(7, c.getRideCount());
-			_ps.setString(8, c.getDescription());
-			_ps.setString(9, name);
+			_ps.setBoolean(7, c.getVisible());
+			_ps.setInt(8, c.getRideCount());
+			_ps.setString(9, c.getDescription());
+			_ps.setString(10, name);
 			executeUpdate(1);
 			
 			// Write the pre-requisite
