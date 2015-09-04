@@ -158,7 +158,7 @@ public class PasswordResetCommand extends AbstractCommand {
 
 		// Forward to JSP
 		result.setURL("/jsp/pilot/passwordResetComplete.jsp");
-		result.setType(ResultType.REQREDIRECT);
+		result.setType((ctx.getSession() == null) ? ResultType.FORWARD : ResultType.REQREDIRECT);
 		result.setSuccess(true);
 	}
 }
