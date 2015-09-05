@@ -312,6 +312,8 @@
 	</config>
 	
 	<online>
+	    <log_all type="Boolean">false</log_all>
+	    <default_network>VATSIM</default_network>
 		<list name="networks" attr="network" unique="true">
 			<network>VATSIM</network>
 			<network>IVAO</network>
