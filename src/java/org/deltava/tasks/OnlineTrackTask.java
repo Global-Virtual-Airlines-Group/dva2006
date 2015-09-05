@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to download Online Tracks via the ServInfo feed from all Online networks.
  * @author Luke
- * @version 5.4
+ * @version 6.1
  * @since 3.1
  */
 
@@ -36,6 +36,7 @@ public class OnlineTrackTask extends Task {
 		
 		// Loop through the networks
 		Collection<?> networkNames = (Collection<?>) SystemData.getObject("online.networks");
+		boolean logAll = SystemData.getBoolean("online.log_all");
 		for (Iterator<?> i = networkNames.iterator(); i.hasNext(); ) {
 			OnlineNetwork network = OnlineNetwork.valueOf(String.valueOf(i.next()));
 			log.info("Loading " + network + " information for " + SystemData.get("airline.code"));
@@ -53,12 +54,23 @@ public class OnlineTrackTask extends Task {
 				if (log.isDebugEnabled())
 					log.debug("Loaded " + networkIDs.size() + " " + network + " IDs");
 				
+				// Aggregate the data for VATSIM
+				if (logAll && ((ctx.getLastRun() == null) || (info.getValidDate().after(ctx.getLastRun())))) {
+					Collection<ConnectedUser> users = new ArrayList<ConnectedUser>(info.getPilots());
+					users.addAll(info.getControllers());
+					int timeDelta = (int) ((ctx.getLastRun() == null) ? 2 : Math.max(10, (System.currentTimeMillis() - ctx.getLastRun().getTime()) / 60000L));
+
+					SetOnlineTime otwdao = new SetOnlineTime(con);
+					otwdao.write(network, users, timeDelta);
+					if (log.isDebugEnabled())
+						log.debug("Wrote " + users.size() + " stats records for " + network);
+				}
+				
 				// Loop through the pilots
 				int flightCount = 0;
 				GetOnlineTrack otdao = new GetOnlineTrack(con);
 				SetOnlineTrack otwdao = new SetOnlineTrack(con);
-				for (Iterator<Pilot> pi = info.getPilots().iterator(); pi.hasNext(); ) {
-					Pilot p = pi.next();
+				for (Pilot p : info.getPilots()) {
 					if (!networkIDs.containsKey(String.valueOf(p.getID())))
 						continue;
 					else if ((p.getAirportD().getICAO().length() != 4) || (p.getAirportA().getICAO().length() != 4))
