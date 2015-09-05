@@ -12,7 +12,7 @@ import org.deltava.util.*;
 /**
  * A bean to store online Pilot information.
  * @author Luke
- * @version 6.0
+ * @version 6.1
  * @since 1.0
  */
 
@@ -30,8 +30,6 @@ public class Pilot extends ConnectedUser {
 	private String _route;
 	private final Collection<NavigationDataBean> _wps = new LinkedHashSet<NavigationDataBean>();
 	
-	private String _rawData;
-
 	/**
 	 * Initializes the bean with a given user ID.
 	 * @param id the user ID
@@ -101,16 +99,6 @@ public class Pilot extends ConnectedUser {
 	 */
 	public int getHeading() {
 		return _hdg;
-	}
-
-	/**
-	 * Returns the raw data from the FSD feed. This is used when aggregating this information into a combined ServInfo
-	 * data feed.
-	 * @return the raw data
-	 * @see Pilot#setRawData(String)
-	 */
-	public String getRawData() {
-		return _rawData;
 	}
 
 	/**
@@ -254,15 +242,6 @@ public class Pilot extends ConnectedUser {
 		_wps.addAll(nds);
 	}
 
-	/**
-	 * Saves the raw data from the FSD feed.
-	 * @param data the raw data
-	 * @see Pilot#getRawData()
-	 */
-	public void setRawData(String data) {
-		_rawData = data;
-	}
-	
 	/**
 	 * Marks this online Pilot as highlighted.
 	 * @param isHighlighted TRUE if the Pilot is highlighted, otherwise FALSE

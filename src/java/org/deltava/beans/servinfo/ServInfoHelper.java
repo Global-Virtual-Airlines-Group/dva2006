@@ -1,4 +1,4 @@
-// Copyright 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import java.io.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A helper class to encapsulate fetching online network data. 
  * @author Luke
- * @version 5.4
+ * @version 6.1
  * @since 5.4
  */
 
@@ -47,10 +47,12 @@ public class ServInfoHelper {
 		try {
 			File f = new File(SystemData.get("online." + net.toString().toLowerCase() + ".local.info"));
 			if (f.exists()) {
-				GetServInfo sidao = new GetServInfo(new FileInputStream(f));
-				info = sidao.getInfo(net);
-				if (info != null)
-					_iCache.add(info);
+				try (FileInputStream fi = new FileInputStream(f)) {
+					GetServInfo sidao = new GetServInfo(new FileInputStream(f));
+					info = sidao.getInfo(net);
+					if (info != null)
+						_iCache.add(info);	
+				}
 			} else
 				throw new FileNotFoundException(f.getAbsolutePath());
 		} catch (Exception e) {

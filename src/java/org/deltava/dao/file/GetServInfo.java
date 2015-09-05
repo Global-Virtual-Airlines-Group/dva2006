@@ -1,9 +1,10 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
 import java.util.*;
 import java.text.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.log4j.Logger;
 
@@ -20,16 +21,17 @@ import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
- * A Data Acces Object to fetch VATSIM/IVAO ServInfo data. ServInfo data for pilots and controllers is in a colon (:)
- * delimited format, with the following tokens: 00 callsign 01 cid 02 realname 03 clienttype 04 frequency 05latitude 06
- * longitude 07 altitude 08 groundspeed 09 planned_aircraft 10 planned_tascruise 11 planned_depairport 12
- * planned_altitude 13 planned_destairport 14 server 15 protrevision 16 rating 17 transponder 18 facilitytype 19
- * visualrange 20 planned_revision 21 planned_flighttype 22 planned_deptime 23 planned_actdeptime 24 planned_hrsenroute
- * 25 planned_minenroute 26 planned_hrsfuel 27 planned_minfuel 28 planned_altairport 29 planned_remarks 30 planned_route
- * 31 planned_depairport_lat 32 planned_depairport_lon 33 planned_destairport_lat 34 planned_destairport_lon 35
- * atis_message 36 time_last_atis_received 37 time_logon 38 heading 39 QNH_iHg 40 QNH_Mb
+ * A Data Acces Object to fetch VATSIM/IVAO ServInfo data.
+ * ServInfo data for pilots and controllers is in a colon (:) delimited format, with the following tokens:
+ * 00 callsign 01 cid 02 realname 03 clienttype 04 frequency 05 latitude 06 longitude 07 altitude 08 groundspeed
+ * 09 planned_aircraft 10 planned_tascruise 11 planned_depairport 12 planned_altitude 13 planned_destairport
+ * 14 server 15 protrevision 16 rating 17 transponder 18 facilitytype 19 visualrange 20 planned_revision 
+ * 21 planned_flighttype 22 planned_deptime 23 planned_actdeptime 24 planned_hrsenroute
+ * 25 planned_minenroute 26 planned_hrsfuel 27 planned_minfuel 28 planned_altairport 29 planned_remarks
+ * 30 planned_route 31 planned_depairport_lat 32 planned_depairport_lon 33 planned_destairport_lat
+ * 34 planned_destairport_lon 35 atis_message 36 time_last_atis_received 37 time_logon 38 heading 39 QNH_iHg 40 QNH_Mb
  * @author Luke
- * @version 5.4
+ * @version 6.1
  * @since 1.0
  */
 
@@ -45,30 +47,10 @@ public class GetServInfo extends DAO {
 		super(is);
 	}
 	
-	/*
-	 * Mutable integer class.
-	 */
-	private class MutableInteger {
-		private int _value;
-		
-		MutableInteger(int value) {
-			super();
-			_value = value;
-		}
-		
-		public void inc() {
-			_value++;
-		}
-		
-		public int getValue() {
-			return _value;
-		}
-	}
-
 	/**
 	 * Private helper class to parse ServInfo CLIENT data.
 	 */
-	class SITokens {
+	class SITokens extends ArrayList<String> {
 
 		public static final int CALLSIGN = 0;
 		public static final int ID = 1;
@@ -96,19 +78,9 @@ public class GetServInfo extends DAO {
 		public static final int ARR_LON = 34;
 		public static final int HDG = 38;
 
-		private final List<String> _tkns = new ArrayList<String>();
-
 		public SITokens(String data) {
-			super();
-			_tkns.addAll(StringUtils.split(data, ":"));
-		}
-
-		public String get(int idx) {
-			return _tkns.get(idx);
-		}
-
-		public int size() {
-			return _tkns.size();
+			super(42);
+			StringUtils.split(data, ":").forEach(s -> add(s.trim()));
 		}
 	}
 
@@ -129,7 +101,7 @@ public class GetServInfo extends DAO {
 
 			// Initialize date formatter
 			SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
-			Map<String, MutableInteger> serverCons = new HashMap<String, MutableInteger>();
+			Map<String, AtomicInteger> serverCons = new HashMap<String, AtomicInteger>();
 			String iData = br.readLine();
 			while (iData != null) {
 				if ((iData.length() > 7) && (iData.charAt(0) == '!')) {
@@ -198,15 +170,15 @@ public class GetServInfo extends DAO {
 										}
 										
 										// Set server
-										MutableInteger srvCnt = serverCons.get(c.getServer());
+										AtomicInteger srvCnt = serverCons.get(c.getServer());
 										if (srvCnt == null)
-											serverCons.put(c.getServer(), new MutableInteger(1));
+											serverCons.put(c.getServer(), new AtomicInteger(1));
 										else
-											srvCnt.inc();
+											srvCnt.incrementAndGet();
 										
 										info.add(c);
 									} catch (Exception e) {
-										log.info("Error parsing data for " + si.get(SITokens.CALLSIGN) + " - " + e.getMessage());
+										log.info("Error parsing controller data for " + si.get(SITokens.CALLSIGN) + " - " + e.getMessage());
 									}
 									
 									break;
@@ -253,23 +225,19 @@ public class GetServInfo extends DAO {
 										}
 										
 										// Set server
-										MutableInteger srvCnt = serverCons.get(p.getServer());
+										AtomicInteger srvCnt = serverCons.get(p.getServer());
 										if (srvCnt == null)
-											serverCons.put(p.getServer(), new MutableInteger(1));
+											serverCons.put(p.getServer(), new AtomicInteger(1));
 										else
-											srvCnt.inc();
-
-										// Save raw data if we are calling this from the ServInfo web service
-										p.setRawData(iData);
+											srvCnt.incrementAndGet();
 
 										// Add to results
 										info.add(p);
 									} catch (Exception e) {
-										log.info("Error parsing data for " + si.get(SITokens.CALLSIGN) + " - " + e.getMessage());
+										log.info("Error parsing pilot data for " + si.get(SITokens.CALLSIGN) + " - " + e.getMessage());
 									}
 							}
 
-							// Read next line
 							iData = br.readLine();
 						}
 					} else if ("SERVERS".equals(sectionName)) {
@@ -282,14 +250,13 @@ public class GetServInfo extends DAO {
 								srv.setAddress(tk.nextToken());
 								srv.setLocation(tk.nextToken());
 								srv.setComment(tk.nextToken());
-								MutableInteger srvCnt = serverCons.get(srv.getName());
-								srv.setConnections((srvCnt ==  null) ? 0 : srvCnt.getValue());
+								AtomicInteger srvCnt = serverCons.get(srv.getName());
+								srv.setConnections((srvCnt ==  null) ? 0 : srvCnt.intValue());
 								info.add(srv);
 							} catch (Exception e) {
-								log.info("Error parsing data for " + name + " - " + e.getMessage());
+								log.info("Error parsing server data for " + name + " - " + e.getMessage());
 							}
 
-							// Read next line
 							iData = br.readLine();
 						}
 					} else

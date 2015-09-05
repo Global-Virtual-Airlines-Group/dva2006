@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import org.deltava.util.*;
@@ -6,7 +6,7 @@ import org.deltava.util.*;
 /**
  * A bean to store Online Network user information.
  * @author Luke
- * @version 3.6
+ * @version 6.1
  * @since 1.0
  */
 
@@ -160,7 +160,8 @@ public abstract class NetworkUser implements java.io.Serializable, Comparable<Ne
     	// Split the data
     	pos = name.lastIndexOf(' ');
     	setLastName(name.substring(pos + 1));
-    	setFirstName(name.substring(0, pos));
+    	if (pos > -1)
+    		setFirstName(name.substring(0, pos));
     }
     
     /**
