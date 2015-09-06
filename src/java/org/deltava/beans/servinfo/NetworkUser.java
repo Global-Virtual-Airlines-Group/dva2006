@@ -65,8 +65,7 @@ public abstract class NetworkUser implements java.io.Serializable, Comparable<Ne
      * @see NetworkUser#getLastName()
      */
     public String getName() {
-    	StringBuilder buf = new StringBuilder(_firstName);
-    	buf.append(' ');
+    	StringBuilder buf = (_firstName == null) ? new StringBuilder() : new StringBuilder(_firstName).append(' ');
     	buf.append(_lastName);
         return buf.toString();
     }
