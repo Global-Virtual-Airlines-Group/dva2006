@@ -143,7 +143,14 @@
 		<date_format>MM/dd/yyyy</date_format>
 		<time_format>HH:mm</time_format>
 	</time>
-	
+
+	<!-- Memcached server info -->
+	<memcached>
+	    <list name="addrs" attr="addr" unique="true">
+	        <addr>localhost:11211</addr>
+	    </list>
+	</memcached>
+
 	<!-- pilot ranks -->
 	<list name="ranks" attr="rank" unique="true">
 		<rank>First Officer</rank>
