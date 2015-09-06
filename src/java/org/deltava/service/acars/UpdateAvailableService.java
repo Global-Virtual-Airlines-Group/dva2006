@@ -65,6 +65,11 @@ public class UpdateAvailableService extends WebService {
 			ctx.release();
 		}
 		
+		// Set header with latest data
+		ctx.setHeader("X-update-channel", ch.toString().toLowerCase());
+		if (latest != null)
+			ctx.setHeader("X-update-latest", latest.toString());
+		
 		// See if anything is available
 		return ((latest == null) || (latest.compareTo(cInfo) < 1)) ? SC_NOT_MODIFIED : SC_OK;
 	}
