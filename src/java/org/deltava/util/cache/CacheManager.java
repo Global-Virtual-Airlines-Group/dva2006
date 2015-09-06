@@ -86,7 +86,7 @@ public class CacheManager {
 	static <T extends Cacheable> Cache<T> register(Class<T> c, String id, int maxSize, int expiryTime, boolean isRemote) {
 		Cache<T> cache = get(id);
 		if (cache != null) {
-			log.info("Duplicate registration attempted for cache " + id + "!");
+			log.warn("Duplicate registration attempted for cache " + id + "!");
 			return cache;
 		}
 		
@@ -95,8 +95,8 @@ public class CacheManager {
 			cache = new NullCache<T>();
 			log.info("Registered cache " + id + ", null cache");
 		} else if (isRemote && (expiryTime > 0)) {
-			cache = new MemcachedCache<T>(id, expiryTime);
-			log.info("Registered memcached cache " + id + ", expiry=" + expiryTime + "s");
+			cache = new MemcachedCache<T>("cache:" + id, maxSize, expiryTime);
+			log.info("Registered memcached cache " + id + ", size=" + maxSize + ", expiry=" + expiryTime + "s");
 		} else if (expiryTime > 0) {
 			cache = new ExpiringCache<T>(maxSize, expiryTime);
 			log.info("Registered cache " + id + ", size=" + maxSize + ", expiry=" + expiryTime + "s");

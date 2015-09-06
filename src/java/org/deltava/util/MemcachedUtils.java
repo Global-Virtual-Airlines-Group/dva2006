@@ -100,7 +100,7 @@ public class MemcachedUtils {
 	 */
 	public static void write(String key, int expiry, Object value) {
 		checkConnection();
-		_client.add(key, expiry, value);
+		_client.set(key, expiry, value);
 	}
 
 	/**
