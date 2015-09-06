@@ -19,12 +19,6 @@ public class TestSystemData extends TestCase {
         Map<?, ?> jdbcProps = (Map<?, ?>) SystemData.getObject("jdbc.connectProperties");
         assertNotNull(jdbcProps);
         assertTrue(jdbcProps.containsKey("useNewIO"));
-        
-        // Test that ranks are in the proper order
-        List<?> ranks = (List<?>) SystemData.getObject("ranks");
-        assertNotNull(ranks);
-        assertTrue(ranks.contains("First Officer"));
-        assertTrue(ranks.indexOf("First Officer") < ranks.indexOf("Captain"));
     }
     
     public void testCustomLoader() {
