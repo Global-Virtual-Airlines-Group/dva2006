@@ -37,9 +37,7 @@ public abstract class Cache<T extends Cacheable> {
 	 * @param entries a Collection of Cacheable entries
 	 */
 	public void addAll(Collection<? extends T> entries) {
-		for (Iterator<? extends T> i = entries.iterator(); i.hasNext();)
-			addEntry(i.next());
-		
+		entries.forEach(e -> addEntry(e));
 		checkOverflow();
 	}
 

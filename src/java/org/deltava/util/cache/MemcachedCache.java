@@ -1,6 +1,8 @@
 // Copyright 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
+import java.util.Collection;
+
 import org.deltava.util.MemcachedUtils;
 
 /**
@@ -10,25 +12,19 @@ import org.deltava.util.MemcachedUtils;
  * @since 6.1
  */
 
-public class MemcachedCache<T extends Cacheable> extends Cache<T> {
+public class MemcachedCache<T extends Cacheable> extends ExpiringCache<T> {
 	
 	private final String _bucket;
 	private final int _expiryTime;
 	
-	/*
-	 * Null cache entry.
-	 */
-	private static class NullEntry implements java.io.Serializable {
-		static final NullEntry INSTANCE = new NullEntry();
-	}
-	
 	/**
 	 * Creates a new Cache.
 	 * @param bucket the mecmached bucket to use
+	 * @param maxSize the maximum size of the cache
 	 * @param expiry the expiration time in seconds
 	 */
-	public MemcachedCache(String bucket, int expiry) {
-		super(1);
+	public MemcachedCache(String bucket, int maxSize, int expiry) {
+		super(maxSize, expiry);
 		_bucket = bucket;
 		_expiryTime = Math.min(3600 * 24 * 30, Math.max(1, expiry));
 	}
@@ -56,39 +52,9 @@ public class MemcachedCache<T extends Cacheable> extends Cache<T> {
 		
 		try {
 			MemcachedUtils.write(createKey(entry.cacheKey()), expTime, entry);
+			super.addNullEntry(entry.cacheKey());
 		} catch (Exception e) {
 			// empty
-		}
-	}
-
-	/**
-	 * Adds a null entry to the cache.
-	 * @param key the cache key
-	 */
-	@Override
-	protected void addNullEntry(Object key) {
-		if (key == null) return;
-		try {
-			MemcachedUtils.write(createKey(key), _expiryTime, NullEntry.INSTANCE);
-		} catch (Exception e) {
-			// empty
-		}
-	}
-	
-	/**
-	 * Checks whether the cache contains a given key. This will require a remote network call.
-	 * @param key the cache key
-	 * @return TRUE if the key exists in the cache, otherwise FALSE
-	 */
-	@Override
-	public boolean contains(Object key) {
-		request();
-		try {
-			Object o = MemcachedUtils.get(createKey(key), 100);
-			if (o != null) hit();
-			return (o != null);
-		} catch (Exception e) {
-			return false;
 		}
 	}
 
@@ -102,19 +68,41 @@ public class MemcachedCache<T extends Cacheable> extends Cache<T> {
 	public T get(Object key) {
 		request();
 		try {
+			CacheEntry<T> entry = _cache.get(key);
+			if (entry == null) return null;
+			
 			Object o = MemcachedUtils.get(createKey(key), 125);
-			if (o != null) hit();
-			return (o instanceof NullEntry) ? null : (T) o;
+			if (o != null) 
+				hit();
+			else
+				super.remove(key);
+			
+			return (T) o;
 		} catch (Exception e) {
 			return null;	
 		}
 	}
 	
 	/**
-	 * Since memcached handles expiration, this is a no-op.
+	 * Removes an object from the cache.
+	 * @param key the cache key
 	 */
 	@Override
-	protected void checkOverflow() {
-		// empty
+	public void remove(Object key) {
+		try {
+			MemcachedUtils.delete(createKey(key));
+		} finally {
+			super.remove(key);	
+		}
+	}
+	
+	/** 
+	 * Clears the cache.
+	 */
+	@Override
+	public void clear() {
+		Collection<Object> keys = _cache.keySet();
+		keys.forEach(k -> MemcachedUtils.delete(createKey(k)));
+		super.clear();
 	}
 }
