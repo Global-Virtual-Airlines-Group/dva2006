@@ -1,4 +1,4 @@
-// Copyright 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.apache.log4j.*;
 /**
  * A utility class to handle centralized cache registration and invalidation.
  * @author Luke
- * @version 5.0
+ * @version 6.1
  * @since 5.0
  */
 
@@ -36,10 +36,8 @@ public class CacheManager {
 		try {
 			_r.lock();
 			Collection<Map.Entry<String, Cache<?>>> entries = new ArrayList<>(_caches.entrySet());
-			Collection<CacheInfo> results = new ArrayList<CacheInfo>();
-			for (Map.Entry<String, Cache<?>> me : entries)
-				results.add(new CacheInfo(me.getKey(), me.getValue()));
-
+			Collection<CacheInfo> results = new ArrayList<CacheInfo>(entries.size() + 2);
+			entries.forEach(me -> results.add(new CacheInfo(me.getKey(), me.getValue())));
 			return results;
 		} finally {
 			_r.unlock();
@@ -85,7 +83,7 @@ public class CacheManager {
 	 * @see ExpiringCache
 	 * @see AgingCache
 	 */
-	static <T extends Cacheable> Cache<T> register(Class<T> c, String id, int maxSize, int expiryTime) {
+	static <T extends Cacheable> Cache<T> register(Class<T> c, String id, int maxSize, int expiryTime, boolean isRemote) {
 		Cache<T> cache = get(id);
 		if (cache != null) {
 			log.info("Duplicate registration attempted for cache " + id + "!");
@@ -96,6 +94,9 @@ public class CacheManager {
 		if (maxSize < 1) {
 			cache = new NullCache<T>();
 			log.info("Registered cache " + id + ", null cache");
+		} else if (isRemote && (expiryTime > 0)) {
+			cache = new MemcachedCache<T>(id, expiryTime);
+			log.info("Registered memcached cache " + id + ", expiry=" + expiryTime + "s");
 		} else if (expiryTime > 0) {
 			cache = new ExpiringCache<T>(maxSize, expiryTime);
 			log.info("Registered cache " + id + ", size=" + maxSize + ", expiry=" + expiryTime + "s");
@@ -122,7 +123,7 @@ public class CacheManager {
 	 */
 	public static <T extends Cacheable> Cache<T> get(Class<T> c, String id) {
 		Cache<T> cache = get(id);
-		return (cache != null) ? cache : register(c, id, -1, 0);
+		return (cache != null) ? cache : register(c, id, -1, 0, false);
 	}
 
 	/**
