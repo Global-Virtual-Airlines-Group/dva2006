@@ -1,17 +1,17 @@
-// Copyright 2012, 2013, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2013, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.mc;
 
 import java.util.*;
-import java.util.concurrent.*;
 
 import org.deltava.dao.DAOException;
 
+import org.deltava.util.MemcachedUtils;
 import org.deltava.util.tile.*;
 
 /**
  * A Data Access Object to read tiles from memcached. 
  * @author Luke
- * @version 6.0
+ * @version 6.1
  * @since 5.0
  */
 
@@ -23,17 +23,12 @@ public class GetTiles extends MemcachedDAO {
 	 * @throws DAOException if an error occurs
 	 */
 	public Collection<String> getTypes() throws DAOException {
-		
 		setBucket("mapTiles");
-		Future<Object> f = null;
 		try {
-			checkConnection();
-			f = _client.asyncGet(createKey("types"));
 			@SuppressWarnings("unchecked")
-			Collection<String> results = (Collection<String>) f.get(100, TimeUnit.MILLISECONDS);
+			Collection<String> results = (Collection<String>) MemcachedUtils.get(createKey("types"), 100);
 			return (results == null) ? new HashSet<String>() : results;
 		} catch (Exception e) {
-			cancel(f);
 			throw new DAOException(e);
 		}
 	}
@@ -45,14 +40,10 @@ public class GetTiles extends MemcachedDAO {
 	 * @throws DAOException if a timeout or I/O error occurs
 	 */
 	public Collection<Date> getDates(String type) throws DAOException {
-		
 		setBucket("mapTiles", type);
-		Future<Object> f = null;
 		try {
-			checkConnection();
-			f  =_client.asyncGet(createKey("dates"));
 			@SuppressWarnings("unchecked")
-			Collection<Date> dates = (Collection<Date>) f.get(100, TimeUnit.MILLISECONDS);
+			Collection<Date> dates = (Collection<Date>) MemcachedUtils.get(createKey("dates"), 100);
 			if (dates == null)
 				return new HashSet<Date>();
 			
@@ -61,19 +52,15 @@ public class GetTiles extends MemcachedDAO {
 				Date dt = i.next();
 				setBucket("mapTiles", type, String.valueOf(dt.getTime()));
 				try {
-					f = _client.asyncGet(createKey("$ME"));
-					Object o = f.get(100, TimeUnit.MILLISECONDS);
-					if (o == null)
-						i.remove();
+					Object o = MemcachedUtils.get(createKey("$ME"), 100);
+					if (o == null) i.remove();
 				} catch (Exception e) {
-					cancel(f);
 					i.remove();
 				}
 			}
 			
 			return dates;
 		} catch (Exception e) {
-			cancel(f);
 			throw new DAOException(e);
 		}
 	}
@@ -95,15 +82,10 @@ public class GetTiles extends MemcachedDAO {
 	 * @throws DAOException if a timeout or I/O error occurs
 	 */
 	public PNGTile getTile(String imgType, Date effDate, TileAddress addr) throws DAOException {
-
 		setBucket("mapTiles", imgType, (effDate == null) ? null : Long.valueOf(effDate.getTime()));
-		Future<Object> f = null;
 		try {
-			checkConnection();
-			f = _client.asyncGet(createKey(addr.getName()));
-			return (PNGTile) f.get(150, TimeUnit.MILLISECONDS);
+			return (PNGTile) MemcachedUtils.get(createKey(addr.getName()), 150);
 		} catch (Exception e) {
-			cancel(f);
 			throw new DAOException(e);
 		}
 	}

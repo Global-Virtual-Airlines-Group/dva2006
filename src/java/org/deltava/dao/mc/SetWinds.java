@@ -1,4 +1,4 @@
-// Copyright 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.mc;
 
 import java.util.*;
@@ -6,11 +6,12 @@ import java.util.*;
 import org.deltava.beans.wx.*;
 import org.deltava.dao.DAOException;
 import org.deltava.util.CollectionUtils;
+import org.deltava.util.MemcachedUtils;
 
 /**
  * A Data Access Object to write wind data to memcached.
  * @author Luke
- * @version 5.4
+ * @version 6.1
  * @since 5.4
  */
 
@@ -22,7 +23,6 @@ public class SetWinds extends MemcachedDAO {
 	 * @throws DAOException if an error occured
 	 */
 	public void write(java.util.Collection<WindData> data) throws DAOException {
-		checkConnection();
 
 		// Bucketize into seperate collections per pressure level
 		Map<PressureLevel, Collection<WindData>> sd = new TreeMap<PressureLevel, Collection<WindData>>();
@@ -33,15 +33,15 @@ public class SetWinds extends MemcachedDAO {
 			setBucket("winds", me.getKey().toString());
 			Collection<WindData> wd = me.getValue();
 			Collection<Object> keys = new ArrayList<Object>();
-			_client.add(createKey("$ME"), _expiry, Boolean.TRUE);
+			MemcachedUtils.write(createKey("$ME"), _expiry, Boolean.TRUE);
 			for (WindData w : wd) {
 				Object key = w.cacheKey();
-				_client.add(createKey(key), _expiry, w);
+				MemcachedUtils.write(createKey(key), _expiry, w);
 				keys.add(key);
 			}
 			
-			_client.add(createKey("$KEYS"), _expiry, keys);
-			_client.add(createKey("$SIZE"), _expiry, Integer.valueOf(keys.size()));
+			MemcachedUtils.write(createKey("$KEYS"), _expiry, keys);
+			MemcachedUtils.write(createKey("$SIZE"), _expiry, Integer.valueOf(keys.size()));
 		}
 	}
 }
