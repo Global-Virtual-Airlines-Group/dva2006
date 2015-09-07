@@ -1,17 +1,17 @@
-// Copyright 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.mc;
-
-import java.util.concurrent.*;
 
 import org.deltava.beans.GeospaceLocation;
 import org.deltava.beans.wx.*;
 
 import org.deltava.dao.DAOException;
 
+import org.deltava.util.MemcachedUtils;
+
 /**
  * A Data Access Object to load winds aloft data from memcached.
  * @author Luke
- * @version 6.0
+ * @version 6.1
  * @since 5.4
  */
 
@@ -31,16 +31,11 @@ public class GetWinds extends MemcachedDAO {
 		WindData keygen = new WindData(lvl, rLat, rLng);
 		String key = String.valueOf(keygen.cacheKey());
 		
-		Future<Object> f = null;
 		try {
-			checkConnection();
 			setBucket("winds", lvl.toString());
-			f = _client.asyncGet(createKey(key));
-			return (WindData) f.get(100, TimeUnit.MILLISECONDS);
+			return (WindData) MemcachedUtils.get(createKey(key), 100);
 		} catch (Exception e) {
-			cancel(f);
+			throw new DAOException(e);
 		}
-		
-		throw new UnsupportedOperationException();
 	}
 }
