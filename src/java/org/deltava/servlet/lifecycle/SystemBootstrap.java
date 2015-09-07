@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.lifecycle;
 
 import java.io.*;
@@ -16,7 +16,6 @@ import org.deltava.beans.schedule.Airport;
 import org.deltava.beans.stats.AirlineTotals;
 
 import org.deltava.dao.*;
-import org.deltava.dao.mc.MemcachedDAO;
 
 import org.deltava.mail.MailerDaemon;
 import org.deltava.security.*;
@@ -33,7 +32,7 @@ import org.gvagroup.jdbc.*;
 /**
  * The System bootstrap loader, that fires when the servlet container is started or stopped.
  * @author Luke
- * @version 5.2
+ * @version 6.1
  * @since 1.0
  */
 
@@ -94,6 +93,14 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 		// Save the connection pool in the SystemData
 		SystemData.add(SystemData.JDBC_POOL, _jdbcPool);
 		SharedData.addData(SharedData.JDBC_POOL + SystemData.get("airline.code"), _jdbcPool);
+		
+		// Init memcached
+		Collection<?> rawAddrs = (Collection<?>) SystemData.getObject("memcached.addrs");
+		if (rawAddrs != null) {
+			List<String> addrs = rawAddrs.stream().map(Object::toString).collect(java.util.stream.Collectors.toList());
+			MemcachedUtils.init(addrs);
+		} else
+			MemcachedUtils.init(Collections.singletonList("localhost:11211"));
 
 		// Get and load the authenticator
 		String authClass = SystemData.get("security.auth");
@@ -252,7 +259,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 		}
 		
 		// Shut down memcached clients and JDBC connection pool
-		MemcachedDAO.shutdown();
+		MemcachedUtils.shutdown();
 		_jdbcPool.close();
 		
 		// Clear shared data
