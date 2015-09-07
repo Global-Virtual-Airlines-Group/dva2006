@@ -1,4 +1,4 @@
-// Copyright 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.mc;
 
 import java.util.*;
@@ -6,12 +6,13 @@ import java.util.*;
 import net.spy.memcached.*;
 
 import org.deltava.dao.DAOException;
+import org.deltava.util.MemcachedUtils;
 import org.deltava.util.tile.*;
 
 /**
- * A Data Access Object to write tiles to memcached. 
+ * A Data Access Object to write map tiles to memcached. 
  * @author Luke
- * @version 5.2
+ * @version 6.1
  * @since 5.0
  */
 
@@ -24,7 +25,6 @@ public class SetTiles extends MemcachedDAO implements SeriesWriter {
 	 */
 	@Override
 	public void write(ImageSeries is) throws DAOException {
-		checkConnection();
 		Long seriesDate = (is.getDate() == null) ? null : Long.valueOf(is.getDate().getTime());
 		
 		addImageType(is.getType());
@@ -32,13 +32,10 @@ public class SetTiles extends MemcachedDAO implements SeriesWriter {
 		
 		// Write the Tiles
 		setBucket("mapTiles", is.getType(), seriesDate);
-		_client.add(createKey("$ME"), _expiry, Boolean.TRUE);
-		_client.add(createKey("$SIZE"), _expiry, Integer.valueOf(is.size()));
-		_client.add(createKey("$KEYS"), _expiry, new ArrayList<TileAddress>(is.keySet()));
-		for (Map.Entry<TileAddress, PNGTile> me : is.entrySet()) {
-			String key = createKey(me.getKey().getName());
-			_client.add(key, _expiry, me.getValue());
-		}
+		MemcachedUtils.write(createKey("$ME"), _expiry, Boolean.TRUE);
+		MemcachedUtils.write(createKey("$SIZE"), _expiry, Integer.valueOf(is.size()));
+		MemcachedUtils.write(createKey("$KEYS"), _expiry, new ArrayList<TileAddress>(is.keySet()));
+		is.entrySet().forEach(me -> MemcachedUtils.write(createKey(me.getKey().getName()), _expiry, me.getValue()));
 	}
 	
 	/**
@@ -47,20 +44,18 @@ public class SetTiles extends MemcachedDAO implements SeriesWriter {
 	 * @throws DAOException if an error occured
 	 */
 	public void purge(ImageSeries is) throws DAOException {
-		checkConnection();
 		Long seriesDate = (is.getDate() == null) ? null : Long.valueOf(is.getDate().getTime());
+		try {
+			setBucket("mapTiles", is.getType(), seriesDate);
+			boolean hasSeries = (MemcachedUtils.get(createKey("$ME"), 1000) != null);
+			if (!hasSeries) return;
 		
-		setBucket("mapTiles", is.getType(), seriesDate);
-		boolean hasSeries = (_client.get(createKey("$ME")) != null);
-		if (!hasSeries) return;
-		
-		@SuppressWarnings("unchecked")
-		Collection<TileAddress> keys = (Collection<TileAddress>) _client.get(createKey("$KEYS"));
-		if (keys != null) {
-			for (TileAddress addr : keys) {
-				String k = createKey(addr.getName());
-				_client.delete(k);
-			}
+			@SuppressWarnings("unchecked")
+			Collection<TileAddress> keys = (Collection<TileAddress>) MemcachedUtils.get(createKey("$KEYS"), 1000);
+			if (keys != null)
+				keys.forEach(k -> MemcachedUtils.delete(createKey(k.getName())));
+		} catch (Exception e) {
+			throw new DAOException(e);
 		}
 	}
 	
@@ -81,7 +76,7 @@ public class SetTiles extends MemcachedDAO implements SeriesWriter {
 	    };
 
 	    try {
-	    	CASMutator<Object> m = new CASMutator<Object>(_client, _client.getTranscoder());
+	    	CASMutator<Object> m = MemcachedUtils.getMutator();
 	    	m.cas(createKey("types"), Collections.singletonList(type), 86400, mutation);
 	    } catch (Exception e) {
 	    	throw new DAOException(e);
@@ -109,7 +104,7 @@ public class SetTiles extends MemcachedDAO implements SeriesWriter {
 	    };
 
 	    try {
-	    	CASMutator<Object> m = new CASMutator<Object>(_client, _client.getTranscoder());
+	    	CASMutator<Object> m = MemcachedUtils.getMutator();
 	    	m.cas(createKey("dates"), Collections.singletonList(effDate), 3600, mutation);
 	    } catch (Exception e) {
 	    	throw new DAOException(e);
