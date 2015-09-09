@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <caches>
 	<!-- Pilot data caches -->
-	<cache id="UserData" max="2048" />
-	<cache id="Pilots" max="1536" expires="14400" />
+	<cache id="UserData" remote="true" />
+	<cache id="Pilots" remote="true" />
 
 	<!-- Image caches -->
 	<cache id="Signature" max="640" />
 	<cache id="Image" max="32" expires="600" />
 
 	<!-- Water Cooler caches -->
-	<cache id="CoolerChannels" max="48" expires="1800" />
+	<cache id="CoolerChannels" max="64" expires="1800" />
 	<cache id="CoolerThreads" max="1024" expires="900" />
 
 	<!-- Navigation Data caches -->
-	<cache id="NavData" max="4096" />
-	<cache id="NavAirway" max="1536" />
-	<cache id="NavRunway" max="512" />
-	<cache id="NavSIDSTAR" max="1536" />
-	<cache id="NavRoute" max="1024" />
-	<cache id="FIRs" max="128" />
+    <cache id="NavData" expires="86400" remote="true" />
+    <cache id="NavAirway" expires="86400" remote="true" />
+    <cache id="NavRunway" expires="86400" remote="true" />
+    <cache id="NavSIDSTAR" expires="86400" remote="true" />
+    <cache id="NavRoute" expires="86400" remote="true" />
+	<cache id="FIRs" max="256" />
 	<cache id="FIRIDs" max="256" />
 
 	<!-- ACARS caches -->
@@ -42,9 +42,9 @@
 	<cache id="ServInfoData" max="3" expires="30" />
 
 	<!-- System caches -->
-	<cache id="AircraftInfo" max="80" expires="3600" />
+	<cache id="AircraftInfo" max="96" expires="3600" />
 	<cache id="EquipmentTypes" max="24" expires="3600" />
-	<cache id="Accomplishments" max="128" expires="3600" />
+	<cache id="Accomplishments" max="144" expires="3600" />
 	<cache id="Metadata" max="24" expires="1800" />
 
 	<cache id="MessageTemplate" max="32" />
