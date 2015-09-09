@@ -40,7 +40,7 @@ public class CacheLoader {
 		
 		// Parse the entries
 		for (Element ce : doc.getRootElement().getChildren("cache")) {
-			int maxSize = StringUtils.parse(ce.getAttributeValue("max", "10"), 10);
+			int maxSize = StringUtils.parse(ce.getAttributeValue("max", "0"), 10);
 			int expires = StringUtils.parse(ce.getAttributeValue("expires", "0"), 0);
 			boolean isRemote = Boolean.valueOf(ce.getAttributeValue("remote", "false")).booleanValue();
 			CacheManager.register(Cacheable.class, ce.getAttributeValue("id"), maxSize, expires, isRemote);

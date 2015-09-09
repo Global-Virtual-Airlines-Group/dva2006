@@ -23,6 +23,11 @@ public class MemcachedUtils {
 	private static final Logger log = Logger.getLogger(MemcachedUtils.class);
 	
 	/**
+	 * Key used for round-trip latency tests.
+	 */
+	public static final String LATENCY_KEY = "$LATENCYTEST";
+	
+	/**
 	 * The spymemcached client.
 	 */
 	protected static MemcachedClient _client;
@@ -45,6 +50,7 @@ public class MemcachedUtils {
 	        systemProperties.put("net.spy.log.LoggerImpl", "net.spy.memcached.compat.log.Log4JLogger");
 	        System.setProperties(systemProperties);
 			_client = new MemcachedClient(new BinaryConnectionFactory(), AddrUtil.getAddresses(addrs));
+			_client.set(LATENCY_KEY, (int)((System.currentTimeMillis() / 1000) + (3600 * 24 * 365)), Boolean.TRUE);
 			log.warn("Initialized");
 		} catch (Exception e) {
 			throw new IllegalStateException(e);
