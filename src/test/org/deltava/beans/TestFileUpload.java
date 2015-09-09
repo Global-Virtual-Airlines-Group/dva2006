@@ -6,7 +6,6 @@ import java.util.zip.*;
 import junit.framework.*;
 
 import org.hansel.CoverageDecorator;
-import org.apache.commons.compress.compressors.bzip2.*;
 
 public class TestFileUpload extends TestCase {
 	
@@ -58,53 +57,6 @@ public class TestFileUpload extends TestCase {
 				assertEquals("Line 1", br.readLine());
 				assertEquals("Line 2", br.readLine());
 				assertFalse(br.ready());
-			}
-		}
-	}
-	
-	public void testBZ2Stream() throws IOException {
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		try (BZip2CompressorOutputStream bzout = new BZip2CompressorOutputStream(out, 4)) {
-			try (PrintWriter pw = new PrintWriter(bzout)) {
-				for (int x = 1; x <= 150000; x++) {
-					pw.print("Line " + x);
-					pw.println(" ABCDEFGHIJKLMNOPQRSTUVWXYZ");
-				}
-			}
-		}
-		
-		ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-		try (BZip2CompressorInputStream bzin = new BZip2CompressorInputStream(in)) {
-			try (LineNumberReader br = new LineNumberReader(new InputStreamReader(bzin))) {
-				for (int x = 1 ; x<= 150000; x++) {
-					String data = br.readLine();
-					assertNotNull(data);
-					String lineNumber = data.substring(data.indexOf(' ') + 1, data.lastIndexOf(' '));
-					assertEquals(x, Integer.parseInt(lineNumber));
-				}
-			}
-		}
-	}
-	
-	public void testBZ2File() throws IOException {
-		
-		File f = new File("data/test.txt.bz2");
-		assertTrue(f.exists());
-		try (BZip2CompressorInputStream bzin = new BZip2CompressorInputStream(new BufferedInputStream(new FileInputStream(f)), true)) {
-			try (LineNumberReader br = new LineNumberReader(new InputStreamReader(bzin))) {
-				assertEquals("Line 1", br.readLine());
-				assertEquals("Line 2", br.readLine());
-			}
-		}
-		
-		FileUpload fu = new FileUpload("test.txt.bz2");
-		fu.load(new FileInputStream(f));
-		
-		try (InputStream is = fu.getInputStream()) {
-			assertTrue(is instanceof BZip2CompressorInputStream);
-			try (BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
-				assertEquals("Line 1", br.readLine());
-				assertEquals("Line 2", br.readLine());
 			}
 		}
 	}
