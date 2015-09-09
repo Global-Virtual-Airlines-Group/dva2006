@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to disable Users who have not logged in within a period of time.
  * @author Luke
- * @version 5.0
+ * @version 6.1
  * @since 1.0
  */
 
@@ -62,6 +62,7 @@ public class InactivityUpdateTask extends Task {
 			SetExam exwdao = new SetExam(con);
 			SetStatusUpdate sudao = new SetStatusUpdate(con);
 			SetPilot pwdao = new SetPilot(con);
+			SetPilotEMail pewdao = new SetPilotEMail(con);
 			SetInactivity iwdao = new SetInactivity(con);
 			
 			// Load pending flight academy users
@@ -157,9 +158,10 @@ public class InactivityUpdateTask extends Task {
 						cwdao.write(c);
 					}
 
-					// Deactivate the Pilot
+					// Deactivate the Pilot and the email box
 					p.setStatus(Pilot.INACTIVE);
 					pwdao.write(p);
+					pewdao.disable(p.getID());
 					
 					// Remove the user from any destination directories
 					if (auth instanceof MultiAuthenticator) {

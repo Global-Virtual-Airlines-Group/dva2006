@@ -1,4 +1,4 @@
-// Copyright 2008, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2010, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.mail;
 
 import java.io.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle IMAP mailbox profiles.
  * @author Luke
- * @version 5.1
+ * @version 6.1
  * @since 2.2
  */
 
@@ -45,6 +45,7 @@ public class IMAPMailboxCommand extends AbstractFormCommand {
 			if (cfg == null) {
 				cfg = new IMAPConfiguration(p.getID(), "");
 				cfg.setMailDirectory(String.valueOf(p.getID()) + "/");
+				cfg.setAllowSMTP(true);
 				cfg.setActive(true);
 			}
 
@@ -105,6 +106,7 @@ public class IMAPMailboxCommand extends AbstractFormCommand {
 			cfg.setMailDirectory(ctx.getParameter("IMAPPath"));
 			cfg.setQuota(StringUtils.parse(ctx.getParameter("IMAPQuota"), 0));
 			cfg.setActive(Boolean.valueOf(ctx.getParameter("IMAPActive")).booleanValue());
+			cfg.setAllowSMTP(Boolean.valueOf(ctx.getParameter("IMAPAllowSMTP")).booleanValue());
 			cfg.setAliases(StringUtils.split(ctx.getParameter("IMAPAliases"), "\n"));
 
 			// Start a transaction

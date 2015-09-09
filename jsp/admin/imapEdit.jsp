@@ -60,7 +60,8 @@ return true;
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="IMAPActive" idx="*" value="true" checked="${mb.active}" label="Mailbox is Active" /></td>
+ <td class="data"><el:box name="IMAPAllowSMTP" idx="*" value="true" checked="${mb.allowSMTP}" label="Allow direct connections from third-party mail clients" /><br />
+ <el:box name="IMAPActive" idx="*" value="true" checked="${mb.active}" label="Mailbox is Active" /></td>
 </tr>
 </el:table>
 

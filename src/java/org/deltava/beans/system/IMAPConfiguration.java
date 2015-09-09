@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2010, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store IMAP mailbox data. 
  * @author Luke
- * @version 3.2
+ * @version 6.1
  * @since 1.0
  */
 
@@ -20,6 +20,7 @@ public class IMAPConfiguration extends DatabaseBean implements ViewEntry {
 	private String _mailDir;
 	private int _quota;
 	private boolean _active;
+	private boolean _allowSMTP;
 	
 	private final Collection<String> _aliases = new TreeSet<String>();
 
@@ -70,6 +71,15 @@ public class IMAPConfiguration extends DatabaseBean implements ViewEntry {
      */
 	public boolean getActive() {
 		return _active;
+	}
+	
+	/**
+	 * Returns if this mailbox allows direct SMTP connetions.
+	 * @return TRUE if SMTP connections allowed, otherwise FALSE
+	 * @see IMAPConfiguration#setAllowSMTP(boolean)
+	 */
+	public boolean getAllowSMTP() {
+		return _allowSMTP;
 	}
 	
     /**
@@ -148,11 +158,21 @@ public class IMAPConfiguration extends DatabaseBean implements ViewEntry {
 	public void setActive(boolean active) {
 		_active = active;
 	}
+	
+	/**
+	 * Marks this mailbox as allowing direct SMTP access.
+	 * @param allowSMTP TRUE if direct SMTP connections allowed, otherwise FALSE
+	 * @see IMAPConfiguration#getAllowSMTP() 
+	 */
+	public void setAllowSMTP(boolean allowSMTP) {
+		_allowSMTP = allowSMTP;
+	}
     
     /**
      * Returns the CSS row class name if in a view table.
      * @return the CSS class name
      */
+	@Override
     public String getRowClassName() {
        return _active ? null : "warn";
     }
