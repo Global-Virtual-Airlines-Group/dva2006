@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.sql.Connection;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to retire a User. 
  * @author Luke
- * @version 3.0
+ * @version 6.1
  * @since 3.0
  */
 
@@ -28,14 +28,12 @@ public class RetireUserCommand extends AbstractCommand {
 	 */
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
-		
-		Pilot usr = null;
 		try {
 			Connection con = ctx.getConnection();
 			
 			// Get the User
 			GetPilot dao = new GetPilot(con);
-			usr = dao.get(ctx.getID());
+			Pilot usr = dao.get(ctx.getID());
 			if (usr == null)
 				throw notFoundException("Invalid User ID - " + ctx.getID());
 			
@@ -61,7 +59,9 @@ public class RetireUserCommand extends AbstractCommand {
 			
 			// Update the pilot profile
 			SetPilot pwdao = new SetPilot(con);
+			SetPilotEMail pewdao = new SetPilotEMail(con);
 			pwdao.write(usr);
+			pewdao.disable(usr.getID());
 			
 			// Write the status update entry
 			SetStatusUpdate sudao = new SetStatusUpdate(con);
