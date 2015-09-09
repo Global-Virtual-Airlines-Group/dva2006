@@ -11,7 +11,7 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-golgotha.local.dataFiles = ['pssstar.dat','psssid.dat','pssstar.dat.gz','psssid.dat.gz','pssstar.dat.bz2','psssid.dat.bz2'];
+golgotha.local.dataFiles = ['pssstar.dat','psssid.dat','pssstar.dat.gz','psssid.dat.gz'];
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
