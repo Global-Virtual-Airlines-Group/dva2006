@@ -27,8 +27,13 @@
  <td class="pri bld">${cacheInfo.ID}</td>
  <td>${cacheInfo.type}</td>
  <td><fmt:int value="${cacheInfo.size}" /></td>
+<c:if test="${cacheInfo.isRemote}">
+ <td colspan="2"><fmt:dec value="${cacheInfo.maxSize / 1000000}" /> ms</td>
+</c:if>
+<c:if test="${!cacheInfo.isRemote}">
  <td><fmt:int value="${cacheInfo.maxSize}" /></td>
  <td class="sec"><fmt:dec value="${(cacheInfo.size * 100.0) / cacheInfo.maxSize}" fmt="##0.0" />%</td>
+</c:if>
  <td><fmt:int value="${cacheInfo.requests}" /></td>
  <td><fmt:int value="${cacheInfo.hits}" /></td>
 <c:if test="${cacheInfo.requests > 0}">
