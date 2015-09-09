@@ -3,12 +3,8 @@ package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
-import java.io.IOException;
 
 import org.deltava.beans.system.IMAPConfiguration;
-
-import org.deltava.util.ThreadUtils;
-import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to load Pilot IMAP mailbox information.
@@ -35,8 +31,7 @@ public class GetPilotEMail extends DAO {
     */
    public IMAPConfiguration getEMailInfo(int id) throws DAOException {
        try {
-           prepareStatementWithoutLimits("SELECT ID, username, maildir, quota, active FROM postfix.mailbox "
-        		   + "WHERE (ID=?) LIMIT 1");
+           prepareStatementWithoutLimits("SELECT ID, username, maildir, quota, allow_stmp, active FROM postfix.mailbox WHERE (ID=?) LIMIT 1");
            _ps.setInt(1, id);
            
            // Execute the query, return null if not found
@@ -54,41 +49,11 @@ public class GetPilotEMail extends DAO {
     */
    public Collection<IMAPConfiguration> getAll() throws DAOException {
       try {
-         prepareStatement("SELECT ID, username, maildir, quota, active FROM postfix.mailbox WHERE (ID>0) ORDER BY ID");
+         prepareStatement("SELECT ID, username, maildir, quota, allow_stmp, active FROM postfix.mailbox WHERE (ID>0) ORDER BY ID");
          return execute();
       } catch (SQLException se) {
          throw new DAOException(se); 
       }
-   }
-   
-   /**
-    * Checks whether a particular mailbox has new mail in it. This call executes a script that checks a maildir
-    * @param path the user's mail database path
-    * @return the number of messages waiting
-    * @throws DAOException if an error occurs
-    */
-   @Deprecated
-   public int hasNewMail(String path) throws DAOException {
-	   try {
-		   ProcessBuilder pBuilder = new ProcessBuilder(SystemData.get("smtp.imap.newmail"), path);
-		   pBuilder.redirectErrorStream(true);
-		   Process p = pBuilder.start();
-		   
-			// Wait for the process to complete
-			int runTime = 0;
-			while (runTime < 1250) {
-				ThreadUtils.sleep(100);
-				try {
-					return p.exitValue();
-				} catch (IllegalThreadStateException itse) {
-					runTime += 100;            			
-				}
-			}
-			
-			return 0;
-	   } catch (IOException ie) {
-		   throw new DAOException(ie);
-	   }
    }
    
    /*
@@ -101,7 +66,8 @@ public class GetPilotEMail extends DAO {
     		  IMAPConfiguration result = new IMAPConfiguration(rs.getInt(1), rs.getString(2));
     		  result.setMailDirectory(rs.getString(3));
     		  result.setQuota(rs.getInt(4));
-    		  result.setActive(rs.getBoolean(5));
+    		  result.setAllowSMTP(rs.getBoolean(5));
+    		  result.setActive(rs.getBoolean(6));
     		  results.put(result.getAddress(), result);
     	  }
       }
