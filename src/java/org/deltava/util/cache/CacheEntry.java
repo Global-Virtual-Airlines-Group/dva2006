@@ -8,7 +8,7 @@ package org.deltava.util.cache;
  * @since 1.0
  */
 
-abstract class CacheEntry<T extends Cacheable> implements Comparable<CacheEntry<T>> {
+abstract class CacheEntry<T extends Cacheable> implements java.io.Serializable, Comparable<CacheEntry<T>> {
 	
 	private final Object _key;
 	private final T _entry;
