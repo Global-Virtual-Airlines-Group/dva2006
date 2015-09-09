@@ -6,6 +6,8 @@ import java.util.concurrent.locks.*;
 
 import org.apache.log4j.*;
 
+import org.gvagroup.common.*;
+
 /**
  * A utility class to handle centralized cache registration and invalidation.
  * @author Luke
@@ -59,8 +61,24 @@ public class CacheManager {
 	 * @param id the cache ID
 	 */
 	public static void invalidate(String id) {
+		invalidate(id, true);
+	}
+	
+	/**
+	 * Invalidates a cache.
+	 * @param id the cache ID
+	 * @param sendEvent sends a system Event to other webapps if TRUE and remote 
+	 */
+	public static void invalidate(String id, boolean sendEvent) {
 		Cache<?> cache = get(id);
-		if (cache != null) cache.clear();
+		if (cache == null) {
+			log.warn("Unknown cache - " + id);
+			return;
+		}
+		
+		cache.clear();
+		if (sendEvent && (cache instanceof MemcachedCache))
+			EventDispatcher.send(new IDEvent(SystemEvent.Type.CACHE_FLUSH, id));
 	}
 	
 	/**
@@ -91,12 +109,13 @@ public class CacheManager {
 		}
 		
 		// Create the cache
-		if (maxSize < 1) {
+		if (isRemote) {
+			if (expiryTime < 5) expiryTime = 86400 * 4;
+			cache = new MemcachedCache<T>("cache:" + id, expiryTime);
+			log.info("Registered memcached cache " + id + ", expiry=" + expiryTime + "s");
+		} else if (maxSize < 1) {
 			cache = new NullCache<T>();
 			log.info("Registered cache " + id + ", null cache");
-		} else if (isRemote && (expiryTime > 0)) {
-			cache = new MemcachedCache<T>("cache:" + id, maxSize, expiryTime);
-			log.info("Registered memcached cache " + id + ", size=" + maxSize + ", expiry=" + expiryTime + "s");
 		} else if (expiryTime > 0) {
 			cache = new ExpiringCache<T>(maxSize, expiryTime);
 			log.info("Registered cache " + id + ", size=" + maxSize + ", expiry=" + expiryTime + "s");

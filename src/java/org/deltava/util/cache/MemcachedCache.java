@@ -1,8 +1,6 @@
 // Copyright 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
-import java.util.Collection;
-
 import org.deltava.util.MemcachedUtils;
 
 /**
@@ -12,19 +10,19 @@ import org.deltava.util.MemcachedUtils;
  * @since 6.1
  */
 
-public class MemcachedCache<T extends Cacheable> extends ExpiringCache<T> {
+public class MemcachedCache<T extends Cacheable> extends Cache<T> {
 	
 	private final String _bucket;
 	private final int _expiryTime;
+	private long _lastFlushTime;
 	
 	/**
 	 * Creates a new Cache.
 	 * @param bucket the mecmached bucket to use
-	 * @param maxSize the maximum size of the cache
 	 * @param expiry the expiration time in seconds
 	 */
-	public MemcachedCache(String bucket, int maxSize, int expiry) {
-		super(maxSize, expiry);
+	public MemcachedCache(String bucket, int expiry) {
+		super(1);
 		_bucket = bucket;
 		_expiryTime = Math.min(3600 * 24 * 30, Math.max(1, expiry));
 	}
@@ -51,10 +49,46 @@ public class MemcachedCache<T extends Cacheable> extends ExpiringCache<T> {
 		}
 		
 		try {
-			MemcachedUtils.write(createKey(entry.cacheKey()), expTime, entry);
-			super.addNullEntry(entry.cacheKey());
+			MemcachedUtils.write(createKey(entry.cacheKey()), expTime, new MemcachedCacheEntry<T>(entry));
 		} catch (Exception e) {
 			// empty
+		}
+	}
+	
+	/**
+	 * Writes a null entry to the cache.
+	 * @param key the cache key
+	 */
+	@Override
+	protected void addNullEntry(Object key) {
+		if (key == null) return;
+		try {
+			MemcachedUtils.write(createKey(key), _expiryTime, new MemcachedCacheEntry<T>(null));
+		} catch (Exception e) {
+			// empty
+		}
+	}
+	
+	/**
+	 * Checks whether the cache contains a given key.
+	 * @param key the cache key
+	 * @return TRUE if the cache contains the key and is not expired, otherwsie FALSE
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	public boolean contains(Object key) {
+		try {
+			String mcKey = createKey(key);
+			MemcachedCacheEntry<T> e = (MemcachedCacheEntry<T>) MemcachedUtils.get(mcKey, 100);
+			if ((e != null) && (e.getCreatedOn() < _lastFlushTime)) {
+				MemcachedUtils.delete(mcKey);
+				return false;
+			} else if (e == null)
+				return false;
+			
+			return true;
+		} catch (Exception e) {
+			return false;
 		}
 	}
 
@@ -68,16 +102,15 @@ public class MemcachedCache<T extends Cacheable> extends ExpiringCache<T> {
 	public T get(Object key) {
 		request();
 		try {
-			CacheEntry<T> entry = _cache.get(key);
-			if (entry == null) return null;
+			String mcKey = createKey(key);
+			MemcachedCacheEntry<T> e = (MemcachedCacheEntry<T>) MemcachedUtils.get(mcKey, 125);
+			if (e == null)
+				return null;
+			else if (e.getCreatedOn() < _lastFlushTime)
+				MemcachedUtils.delete(mcKey);
 			
-			Object o = MemcachedUtils.get(createKey(key), 125);
-			if (o != null) 
-				hit();
-			else
-				super.remove(key);
-			
-			return (T) o;
+			hit();
+			return e.get();
 		} catch (Exception e) {
 			return null;	
 		}
@@ -92,17 +125,31 @@ public class MemcachedCache<T extends Cacheable> extends ExpiringCache<T> {
 		try {
 			MemcachedUtils.delete(createKey(key));
 		} finally {
-			super.remove(key);	
+			// empty
 		}
 	}
-	
-	/** 
-	 * Clears the cache.
+
+	/**
+	 * Clears the cache. This does not expire any memcached objects, but simply causes
+	 * them to be discarded when fetched.
 	 */
 	@Override
 	public void clear() {
-		Collection<Object> keys = _cache.keySet();
-		keys.forEach(k -> MemcachedUtils.delete(createKey(k)));
-		super.clear();
+		_lastFlushTime = System.currentTimeMillis();
+	}
+	
+	/**
+	 * This method is repurposed to deliver the round-trip latency to the cache server.
+	 * @return the latency in nanoseconds
+	 */
+	@Override
+	public int getMaxSize() {
+		try {
+			long startTime = System.nanoTime();
+			MemcachedUtils.get(MemcachedUtils.LATENCY_KEY, 4500);
+			return (int)(System.nanoTime() - startTime);
+		} catch (Exception e) {
+			return 0;
+		}
 	}
 }
