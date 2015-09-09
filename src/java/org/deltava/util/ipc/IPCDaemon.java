@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.ipc;
 
 import java.util.*;
@@ -7,7 +7,7 @@ import java.sql.Connection;
 import org.apache.log4j.Logger;
 
 import org.deltava.dao.*;
-
+import org.deltava.util.cache.CacheManager;
 import org.deltava.util.system.SystemData;
 
 import org.gvagroup.common.*;
@@ -16,7 +16,7 @@ import org.gvagroup.jdbc.*;
 /**
  * A daemon to listen for inter-process events.
  * @author Luke
- * @version 4.1
+ * @version 6.1
  * @since 1.0
  */
 
@@ -28,6 +28,7 @@ public class IPCDaemon implements Runnable {
 	 * Returns the thread name.
 	 * @return the tread name
 	 */
+	@Override
 	public String toString() {
 		return SystemData.get("airline.code") + " IPC Daemon";
 	}
@@ -35,6 +36,7 @@ public class IPCDaemon implements Runnable {
 	/**
 	 * Executes the thread.
 	 */
+	@Override
 	public void run() {
 		log.info("Starting");
 		ConnectionPool cPool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
@@ -45,8 +47,7 @@ public class IPCDaemon implements Runnable {
 				Collection<SystemEvent> events = EventDispatcher.getEvents();
 				Connection con = null;
 				try {
-					for (Iterator<SystemEvent> i = events.iterator(); i.hasNext(); ) {
-						SystemEvent event = i.next();
+					for (SystemEvent event : events) {
 						switch (event.getCode()) {
 							case AIRLINE_RELOAD:
 								log.warn(SystemData.get("airline.code") + " Reloading Airlines");
@@ -67,6 +68,12 @@ public class IPCDaemon implements Runnable {
 								con = cPool.getConnection();
 								GetAirport apdao = new GetAirport(con);
 								SystemData.add("airports", apdao.getAll());
+								break;
+								
+							case CACHE_FLUSH:
+								IDEvent ie = (IDEvent) event;
+								CacheManager.invalidate(ie.getID(), false);
+								log.warn(SystemData.get("airline.code") + " Flushing cache " + ie.getID());
 								break;
 								
 							default:
