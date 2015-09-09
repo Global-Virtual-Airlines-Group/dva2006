@@ -12,7 +12,7 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-golgotha.local.dataFiles = ['pssawy.dat','pssawy.dat.gz','pssawy.dat.bz2'];
+golgotha.local.dataFiles = ['pssawy.dat','pssawy.dat.gz'];
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;

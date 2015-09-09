@@ -19,7 +19,7 @@ if (!golgotha.form.check()) return false;
 var isOK = false;
 var fName = f.netblockData.value.substring(f.netblockData.value.lastIndexOf('\\') + 1).toLowerCase();
 for (x = 0; x < golgotha.local.dataFiles.length && !isOK; x++)
-	isOK = isOK || (fName == golgotha.local.dataFiles[x]) || (fName == (golgotha.local.dataFiles[x] + '.gz')) || (fName == (golgotha.local.dataFiles[x] + '.bz2'));
+	isOK = isOK || (fName == golgotha.local.dataFiles[x]) || (fName == (golgotha.local.dataFiles[x] + '.gz'));
 
 if (!isOK)
 	throw new golgotha.event.ValidationError('This does not appear to be a valid GeoLite IPv6 City data file.', f.netblockData);

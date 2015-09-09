@@ -4,11 +4,9 @@ package org.deltava.beans;
 import java.io.*;
 import java.util.zip.*;
 
-import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
-
 /**
  * A bean to store File Upload data in an HTTP servlet request. This bean can automatically
- * detect compressed (GZIP/BZ2) content and creates the appropriate decompresser
+ * detect compressed (GZIP) content and creates the appropriate decompresser
  * output stream. This allows reduced memory usage when uploading large files.
  * @author Luke
  * @version 5.1
@@ -57,9 +55,8 @@ public class FileUpload {
     
     /**
      * Returns an input stream backed by the buffer. This will automatically generate a
-     * {@link GZIPInputStream} if the data is already in GZIP format, or a {@link BZip2CompressorInputStream}
-     * if the data is already in BZip2 format. If the raw data needs to be obtained, wrapping a
-     * {@link ByteArrayInputStream} around the buffer should be used.
+     * {@link GZIPInputStream} if the data is already in GZIP format. If the raw data needs to be
+     * obtained, wrapping a {@link ByteArrayInputStream} around the buffer should be used.
      * @return an input stream
      * @see FileUpload#getBuffer()
      */
@@ -68,8 +65,6 @@ public class FileUpload {
     	try {
     		if (_name.endsWith(".gz"))
     			return new GZIPInputStream(is);
-    		else if (_name.endsWith(".bz2"))
-    			return new BZip2CompressorInputStream(is);
     	} catch (Exception e) {
     		return is;
     	}
