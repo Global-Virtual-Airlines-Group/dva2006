@@ -14,9 +14,7 @@
 	<classpathentry kind="lib" path="lib/jtar-2.5.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/log4j-1.2.17.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/javamail-1.5.0.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/commons-compress-1.5.jar" sourcepath="lib/src/commons-compress-1.5-sources.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/edtftpj-2.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/commons-codec-1.8.jar" sourcepath="lib/src/commons-codec-1.8-sources.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/grib-8.0.29.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/unidataCommon-4.2.20.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/slf4j-api-1.7.5.jar"/>
@@ -28,8 +26,9 @@
 	<classpathentry kind="lib" path="lib/deploy/json-1.01.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-5.1.36-bin.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/spymemcached-2.12.0.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-1.95.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/commons-codec-1.10.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/deploy/jstl-1.2.3.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-1.94.jar" sourcepath="/IPC"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
