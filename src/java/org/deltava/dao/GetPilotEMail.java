@@ -31,7 +31,7 @@ public class GetPilotEMail extends DAO {
     */
    public IMAPConfiguration getEMailInfo(int id) throws DAOException {
        try {
-           prepareStatementWithoutLimits("SELECT ID, username, maildir, quota, allow_stmp, active FROM postfix.mailbox WHERE (ID=?) LIMIT 1");
+           prepareStatementWithoutLimits("SELECT ID, username, maildir, quota, allow_smtp, active FROM postfix.mailbox WHERE (ID=?) LIMIT 1");
            _ps.setInt(1, id);
            
            // Execute the query, return null if not found
@@ -49,7 +49,7 @@ public class GetPilotEMail extends DAO {
     */
    public Collection<IMAPConfiguration> getAll() throws DAOException {
       try {
-         prepareStatement("SELECT ID, username, maildir, quota, allow_stmp, active FROM postfix.mailbox WHERE (ID>0) ORDER BY ID");
+         prepareStatement("SELECT ID, username, maildir, quota, allow_smtp, active FROM postfix.mailbox WHERE (ID>0) ORDER BY ID");
          return execute();
       } catch (SQLException se) {
          throw new DAOException(se); 
@@ -77,18 +77,9 @@ public class GetPilotEMail extends DAO {
       // If we've retrieved nothing, exit
       if (results.isEmpty())
     	  return Collections.emptyList();
-
-      // Build SQL statement
-      StringBuilder sqlBuf = new StringBuilder("SELECT goto, address FROM postfix.alias WHERE (goto IN (");
-      for (Iterator<String> i = results.keySet().iterator(); i.hasNext(); ) {
-         String addr = i.next();
-         sqlBuf.append('\'');
-         sqlBuf.append(addr);
-         sqlBuf.append(i.hasNext() ? "\'," : "\'))");
-      }
       
       // Fetch aliases
-      prepareStatementWithoutLimits(sqlBuf.toString());
+      prepareStatementWithoutLimits("SELECT a.goto, a.address FROM postfix.alias a, postfix.mailbox m WHERE (a.goto=m.username) AND (m.ID > 0)");
       try (ResultSet rs = _ps.executeQuery()) {
     	  while (rs.next()) {
     		  IMAPConfiguration cfg = results.get(rs.getString(1));
@@ -97,7 +88,6 @@ public class GetPilotEMail extends DAO {
     	  }
       }
       
-      // Clean up and return
       _ps.close();
       return new ArrayList<IMAPConfiguration>(results.values());
    }

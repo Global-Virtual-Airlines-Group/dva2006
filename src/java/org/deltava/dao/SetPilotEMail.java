@@ -67,7 +67,7 @@ public class SetPilotEMail extends DAO {
 			startTransaction();
 			
 			// Write the record
-        	prepareStatement("INSERT INTO postfix.mailbox (username, name, maildir, quota, allow_stmp, active, ID) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        	prepareStatement("INSERT INTO postfix.mailbox (username, name, maildir, quota, allow_smtp, active, ID) VALUES (?, ?, ?, ?, ?, ?, ?)");
 			_ps.setString(1, cfg.getAddress());
 			_ps.setString(2, name);
 			_ps.setString(3, cfg.getMailDirectory());
