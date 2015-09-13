@@ -1,21 +1,20 @@
-// Copyright 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.util.Date;
 
 import org.deltava.beans.*;
-import org.deltava.beans.schedule.Airline;
-import org.deltava.beans.schedule.ScheduleEntry;
+import org.deltava.beans.schedule.*;
 import org.deltava.util.StringUtils;
 
 /**
  * A class to store draft Flight Report data, with scheduled departure/arrival times. 
  * @author Luke
- * @version 4.1
+ * @version 6.1
  * @since 2.8
  */
 
-public class DraftFlightReport extends FlightReport {
+public class DraftFlightReport extends FlightReport implements FlightTimes {
 	
 	private DateTime _timeD;
 	private DateTime _timeA;
@@ -46,6 +45,7 @@ public class DraftFlightReport extends FlightReport {
 	 * should be ignored.
 	 * @return the departure date/time
 	 */
+	@Override
 	public Date getTimeD() {
 		return (_timeD == null) ? null : _timeD.getDate();
 	}
@@ -56,6 +56,7 @@ public class DraftFlightReport extends FlightReport {
 	 * @return the full departure time of the flight
 	 * @see ScheduleEntry#getDateTimeA()
 	 */
+	@Override
 	public DateTime getDateTimeD() {
 		return _timeD;
 	}
@@ -66,6 +67,7 @@ public class DraftFlightReport extends FlightReport {
 	 * @return the full arrival time of the flight
 	 * @see ScheduleEntry#getDateTimeD()
 	 */
+	@Override
 	public DateTime getDateTimeA() {
 		return _timeA;
 	}
@@ -75,6 +77,7 @@ public class DraftFlightReport extends FlightReport {
 	 * should be ignored.
 	 * @return the arrival date/time
 	 */
+	@Override
 	public Date getTimeA() {
 		return (_timeA == null) ? null : _timeA.getDate();
 	}

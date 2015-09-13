@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -9,11 +9,11 @@ import org.deltava.util.*;
 /**
  * A class to store Schedule Entry information.
  * @author Luke
- * @version 2.6
+ * @version 6.1
  * @since 1.0
  */
 
-public class ScheduleEntry extends Flight implements ViewEntry {
+public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
 	
 	private static final String[] SST = {"Concorde", "TU-144"};
 	
@@ -48,6 +48,7 @@ public class ScheduleEntry extends Flight implements ViewEntry {
 	 * @throws IllegalStateException if departure or arrival times are not set
 	 * @see DateTime#difference(DateTime)
 	 */
+	@Override
 	public final int getLength() {
 		if (_length > 0)
 			return _length;
@@ -68,6 +69,7 @@ public class ScheduleEntry extends Flight implements ViewEntry {
 	 * @return the full departure time of the flight
 	 * @see ScheduleEntry#getDateTimeA()
 	 */
+	@Override
 	public DateTime getDateTimeD() {
 		return _timeD;
 	}
@@ -78,6 +80,7 @@ public class ScheduleEntry extends Flight implements ViewEntry {
 	 * @return the full arrival time of the flight
 	 * @see ScheduleEntry#getDateTimeD()
 	 */
+	@Override
 	public DateTime getDateTimeA() {
 		return _timeA;
 	}
@@ -90,6 +93,7 @@ public class ScheduleEntry extends Flight implements ViewEntry {
 	 * @see ScheduleEntry#getTimeA()
 	 * @see ScheduleEntry#getDateTimeD()
 	 */
+	@Override
 	public Date getTimeD() {
 		return _timeD.getDate();
 	}
@@ -102,6 +106,7 @@ public class ScheduleEntry extends Flight implements ViewEntry {
 	 * @see ScheduleEntry#getTimeD()
 	 * @see ScheduleEntry#getDateTimeA()
 	 */
+	@Override
 	public Date getTimeA() {
 		return _timeA.getDate();
 	}
@@ -110,6 +115,7 @@ public class ScheduleEntry extends Flight implements ViewEntry {
 	 * Returns the database ID of the schedule entry. <i>NOT IMPLEMENTED</i>
 	 * @throws UnsupportedOperationException always
 	 */
+	@Override
 	public final int getID() {
 		throw new UnsupportedOperationException();
 	}
@@ -145,11 +151,12 @@ public class ScheduleEntry extends Flight implements ViewEntry {
 	 * Sets the database ID of this schedule entry. <i>NOT IMPLEMENTED</i>
 	 * @throws UnsupportedOperationException always
 	 */
+	@Override
 	public final void setID(int id) {
 		throw new UnsupportedOperationException();
 	}
 	
-	/**
+	/*
 	 * Ensures each time has a date component of the current date if the year is less than 2001.
 	 */
 	private Date updateDate(Date dt) {
@@ -249,6 +256,7 @@ public class ScheduleEntry extends Flight implements ViewEntry {
 	 * Returns the row CSS class name if displayed in a view table.
 	 * @return the CSS class name
 	 */
+	@Override
 	public String getRowClassName() {
 		if (_academy)
 			return "opt3";
@@ -261,6 +269,7 @@ public class ScheduleEntry extends Flight implements ViewEntry {
 	/**
 	 * Returns the hash code of the flight code.
 	 */
+	@Override
 	public int hashCode() {
 		return getFlightCode().hashCode();
 	}
