@@ -1,9 +1,13 @@
-// Copyright 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 
+import com.vividsolutions.jts.io.*;
+import com.vividsolutions.jts.geom.Geometry;
+
+import org.deltava.beans.GeoLocation;
 import org.deltava.beans.navdata.FIR;
 import org.deltava.beans.schedule.GeoPosition;
 
@@ -13,7 +17,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load FIR data.
  * @author Luke
- * @version 6.0
+ * @version 6.1
  * @since 3.2
  */
 
@@ -21,6 +25,8 @@ public class GetFIR extends DAO {
 	
 	private static final Cache<FIR> _cache = CacheManager.get(FIR.class, "FIRs");
 	private static final Cache<CacheableString> _idCache = CacheManager.get(CacheableString.class, "FIRIDs");
+	
+	private static final int SRID = 3587;
 
 	/**
 	 * Initializes the Data Access Object.
@@ -35,7 +41,7 @@ public class GetFIR extends DAO {
 	 * @param id the FIR ID.
 	 * @param isOceanic TRUE if an Oceanic FIR, otherwise FALSE
 	 * @return an FIR bean, or null if not found
-	 * @throws DAOException if a JDBC error occurs
+	 * @throws DAOException if a JDBC or WKT error occurs
 	 */
 	public FIR get(String id, boolean isOceanic) throws DAOException {
 		
@@ -55,36 +61,32 @@ public class GetFIR extends DAO {
 			return fir;
 		
 		try {
-			prepareStatementWithoutLimits("SELECT F.ID, F.NAME, F.OCEANIC FROM common.FIR F LEFT JOIN common.FIRALIAS FA "
+			prepareStatementWithoutLimits("SELECT F.ID, F.NAME, F.OCEANIC, ST_AsWKT(F.DATA) FROM common.FIR F LEFT JOIN common.FIRALIAS FA "
 				+ "ON (F.ID=FA.ID) WHERE (F.ID=?) OR (FA.ALIAS=?) ORDER BY IF(F.OCEANIC=?, 0, 1) LIMIT 1");
 			_ps.setString(1, id);
 			_ps.setString(2, id);
 			_ps.setBoolean(3, isOceanic);
 			
 			// Execute the query
+			Geometry geo = null;
 			try (ResultSet rs = _ps.executeQuery()) {
 				if (rs.next()) {
+					WKTReader wr = new WKTReader();
 					fir = new FIR(rs.getString(1));
 					fir.setName(rs.getString(2));
 					fir.setOceanic(rs.getBoolean(3));
 					fir.setAux(fir.getName().contains(" Aux"));
+					geo = wr.read(rs.getString(4));
 				}
 			}
 				
 			_ps.close();
 			if (fir == null)
 				return null;
-				
-			// Load border coordinates
-			prepareStatementWithoutLimits("SELECT LAT, LNG FROM common.FIRDATA WHERE (ID=?) AND (OCEANIC=?) ORDER BY SEQ");
-			_ps.setString(1, fir.getID());
-			_ps.setBoolean(2, fir.isOceanic());				
-			try (ResultSet rs = _ps.executeQuery()) {
-				while (rs.next())
-					fir.addBorderPoint(new GeoPosition(rs.getDouble(1), rs.getDouble(2)));
-			}
-				
-			_ps.close();
+			
+			// Parse border coordinates
+			final FIR f = fir;
+			Arrays.asList(geo.getCoordinates()).forEach(c -> f.addBorderPoint(new GeoPosition(c.x, c.y)));
 				
 			// Load aliases
 			prepareStatementWithoutLimits("SELECT ALIAS FROM common.FIRALIAS WHERE (ID=?) AND (OCEANIC=?)");
@@ -101,7 +103,7 @@ public class GetFIR extends DAO {
 			_ps.close();
 			_cache.add(fir);
 			return fir;
-		} catch (SQLException se) {
+		} catch (SQLException | ParseException se) {
 			throw new DAOException(se);
 		}
 	}
@@ -133,5 +135,47 @@ public class GetFIR extends DAO {
 		}
 		
 		return results;
+	}
+
+	/**
+	 * Deternines the FIR for a given point.
+	 * @param loc the point
+	 * @return an FIR object, or null if unknown
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public FIR search(GeoLocation loc) throws DAOException {
+		String pt = "POINT(" + String.valueOf(loc.getLatitude()) + " " + String.valueOf(loc.getLongitude()) + ")";
+		try {
+			prepareStatement("SELECT ID, OCEANIC FROM common.FIR WHERE WHERE ST_Contains(data, ST_PointFromText(?,?))");
+			_ps.setString(1, pt);
+			_ps.setInt(2, SRID);
+			
+			String id = null; boolean isOceanic = false;
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next()) {
+					id = rs.getString(1);
+					isOceanic = rs.getBoolean(2);
+				}
+			}
+			
+			_ps.close();
+			if (id != null)
+				return get(id, isOceanic);
+			
+			prepareStatement("SELECT ID, OCEANIC FROM common.FIR WHERE WHERE ST_Intersects(data, ST_PointFromText(?,?))");
+			_ps.setString(1, pt);
+			_ps.setInt(2, SRID);
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next()) {
+					id = rs.getString(1);
+					isOceanic = rs.getBoolean(2);
+				}
+			}
+
+			_ps.close();
+			return (id == null) ? null : get(id, isOceanic);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
 	}
 }
