@@ -146,7 +146,7 @@ public class GetFIR extends DAO {
 	public FIR search(GeoLocation loc) throws DAOException {
 		String pt = "POINT(" + String.valueOf(loc.getLatitude()) + " " + String.valueOf(loc.getLongitude()) + ")";
 		try {
-			prepareStatement("SELECT ID, OCEANIC FROM common.FIR WHERE WHERE ST_Contains(data, ST_PointFromText(?,?))");
+			prepareStatement("SELECT ID, OCEANIC FROM common.FIR WHERE ST_Contains(data, ST_PointFromText(?,?))");
 			_ps.setString(1, pt);
 			_ps.setInt(2, SRID);
 			
@@ -162,7 +162,7 @@ public class GetFIR extends DAO {
 			if (id != null)
 				return get(id, isOceanic);
 			
-			prepareStatement("SELECT ID, OCEANIC FROM common.FIR WHERE WHERE ST_Intersects(data, ST_PointFromText(?,?))");
+			prepareStatement("SELECT ID, OCEANIC FROM common.FIR WHERE ST_Intersects(data, ST_PointFromText(?,?))");
 			_ps.setString(1, pt);
 			_ps.setInt(2, SRID);
 			try (ResultSet rs = _ps.executeQuery()) {
