@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.acars.*;
 /**
  * A Data Access Object used to get information for purging the ACARS data tables. 
  * @author Luke
- * @version 4.2
+ * @version 6.1
  * @since 3.2
  */
 
@@ -113,6 +113,27 @@ public class GetACARSPurge extends GetACARSData {
 					IDs.add(Integer.valueOf(rs.getInt(1)));
 			}
 
+			_ps.close();
+			return IDs;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+
+	/**
+	 * Returns the IDs of all ACARS flights that have not been archived to the file system.
+	 * @return a Collection of flight IDs
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Integer> getDatabaseFlights() throws DAOException {
+		try {
+			prepareStatement("SELECT DISTINCT ID FROM acars.POS_ARCHIVE WHERE DATA IS NOT NULL");
+			Collection<Integer> IDs = new LinkedHashSet<Integer>();
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+					IDs.add(Integer.valueOf(rs.getInt(1)));
+			}
+			
 			_ps.close();
 			return IDs;
 		} catch (SQLException se) {
