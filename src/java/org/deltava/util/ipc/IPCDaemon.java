@@ -47,25 +47,23 @@ public class IPCDaemon implements Runnable {
 				Collection<SystemEvent> events = EventDispatcher.getEvents();
 				Connection con = null;
 				try {
+					con = cPool.getConnection();
 					for (SystemEvent event : events) {
 						switch (event.getCode()) {
 							case AIRLINE_RELOAD:
 								log.warn(SystemData.get("airline.code") + " Reloading Airlines");
-								con = cPool.getConnection();
 								GetAirline aldao = new GetAirline(con);
 								SystemData.add("airlines", aldao.getAll());
 								break;
 								
 							case TZ_RELOAD:
 								log.warn(SystemData.get("airline.code") + " Reloading Time Zones");
-								con = cPool.getConnection();
 								GetTimeZone tzdao = new GetTimeZone(con);
 								tzdao.initAll();
 								break;
 								
 							case AIRPORT_RELOAD:
 								log.warn(SystemData.get("airline.code") + " Reloading Airports");
-								con = cPool.getConnection();
 								GetAirport apdao = new GetAirport(con);
 								SystemData.add("airports", apdao.getAll());
 								break;
