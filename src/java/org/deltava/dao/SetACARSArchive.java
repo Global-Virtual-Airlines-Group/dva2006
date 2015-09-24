@@ -1,4 +1,4 @@
-// Copyright 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.io.*;
@@ -11,7 +11,7 @@ import org.deltava.dao.file.SetSerializedPosition;
 /**
  * A Data Access Object to write to the ACARS position archive.
  * @author Luke
- * @version 4.2
+ * @version 6.1
  * @since 4.1
  */
 
@@ -31,8 +31,7 @@ public class SetACARSArchive extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void archive(int flightID, Collection<? extends RouteEntry> positions) throws DAOException {
-		try {
-			ByteArrayOutputStream out = new ByteArrayOutputStream(20480);
+		try (ByteArrayOutputStream out = new ByteArrayOutputStream(20480)) {
 			SetSerializedPosition psdao = new SetSerializedPosition(out);
 			psdao.archivePositions(flightID, positions);
 			startTransaction();
@@ -69,10 +68,24 @@ public class SetACARSArchive extends DAO {
 			_ps.setInt(3, flightID);
 			executeUpdate(0);
 			
-			// Commit the transaction
 			commitTransaction();
-		} catch (SQLException se) {
+		} catch (SQLException | IOException se) {
 			rollbackTransaction();
+			throw new DAOException(se);
+		}
+	}
+
+	/**
+	 * Clears serialized data from the archive (assuming it has been persisted to disk).
+	 * @param flightID the ACARS Flight ID
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void clear(int flightID) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("UPDATE acars.POS_ARCHIVE SET DATA=NULL WHERE (ID=?)");
+			_ps.setInt(1, flightID);
+			executeUpdate(0);
+		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 	}
