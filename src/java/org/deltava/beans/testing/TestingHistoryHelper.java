@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A helper class to extract information from a user's examination/check ride history.
  * @author Luke
- * @version 5.4
+ * @version 6.1
  * @since 1.0
  */
 
@@ -25,7 +25,6 @@ public final class TestingHistoryHelper {
 
 	// Arbitrary max exam stage used for Chief Pilots and Assistants
 	private static final int CP_STAGE = 5;
-	private static final List<Rank> CAPT_RANKS = Arrays.asList(Rank.C, Rank.SC, Rank.ACP, Rank.CP);
 	
 	private final String _qName = SystemData.get("airline.code") + " " + Examination.QUESTIONNAIRE_NAME;
 
@@ -91,19 +90,6 @@ public final class TestingHistoryHelper {
 	}
 
 	/**
-	 * Helper method to retrieve all equipment types for a given stage.
-	 */
-	private Collection<EquipmentType> getTypes(int stage) {
-		Collection<EquipmentType> results = new HashSet<EquipmentType>();
-		for (EquipmentType eq : _allEQ) {
-			if (eq.getStage() == stage)
-				results.add(eq);
-		}
-
-		return results;
-	}
-
-	/**
 	 * Returns whether a Pilot qualifies for Captain's rank in a particular stage.
 	 * @return TRUE if the Pilot has passed the Captain's exam and flown the necessary legs
 	 * in <i>ANY</i> equipment program in a particular stage.
@@ -115,12 +101,12 @@ public final class TestingHistoryHelper {
 			return true;
 
 		// Check if we're already a captain
-		if ((CAPT_RANKS.contains(_usr.getRank())) && (stage == _myEQ.getStage()))
+		if ((_usr.getRank() != Rank.FO) && (stage == _myEQ.getStage()))
 			return true;
 
 		// Iterate through the equipment types in a stage
-		for (EquipmentType eq : getTypes(stage)) {
-			if (promotionEligible(eq))
+		for (EquipmentType eq : _allEQ) {
+			if ((eq.getStage() == stage) && promotionEligible(eq))
 				return true;
 		}
 
@@ -186,7 +172,6 @@ public final class TestingHistoryHelper {
 			}
 		}
 
-		// Return results
 		return result;
 	}
 
@@ -398,7 +383,7 @@ public final class TestingHistoryHelper {
 	public boolean hasCheckRide(EquipmentType eq, RideType rt) {
 		Date now = new Date();
 		for (Test t : _tests) {
-			if ((t instanceof CheckRide) && (t.getPassFail())) {
+			if ((t instanceof CheckRide) && t.getPassFail() && !t.getAcademy()) {
 				CheckRide cr = (CheckRide) t;
 				if (!cr.getEquipmentType().equals(eq.getName()))
 					continue;
