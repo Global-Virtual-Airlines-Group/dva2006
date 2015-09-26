@@ -537,6 +537,7 @@
 		    <stage>/home/video</stage>
 	    </video>
 		<httplog>/var/log/www</httplog>
+		<archive>/home/www/pos_archive</archive>
 	</path>
 	
 	<!-- SMTP Server configuration -->
