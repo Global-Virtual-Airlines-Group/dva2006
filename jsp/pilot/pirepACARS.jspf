@@ -37,13 +37,21 @@
 <c:if test="${!empty ipInfo}"> <el:flag countryCode="${ipInfo.country.code}" caption="${ipInfo.location}" /> ${ipInfo.location}</c:if></content:filter></c:if></td>
 </tr>
 </c:if>
+<c:if test="${!isXACARS}">
 <content:filter roles="HR,Examination,PIREP,Dispatch,Instructor,AcademyAdmin,AcademyAudit">
-<c:if test="${!isXACARS && !empty pirep.FDE}">
+<c:if test="${!empty pirep.FDE}">
 <tr>
  <td class="label">FDE File</td>
  <td class="data" colspan="${cspan}">${pirep.FDE}<c:if test="${!empty pirep.aircraftCode}"> ${pirep.aircraftCode}</c:if></td>
 </tr>
 </c:if></content:filter>
+<c:if test="${!empty pirep.SDK && (pirep.SDK != 'Generic')}">
+<tr>
+ <td class="label">Aircraft SDK</td>
+ <td class="data" colspan="${cspan}">${pirep.SDK}</td>
+</tr>
+</c:if>
+</c:if>
 <c:if test="${fn:isDispatch(pirep)}">
 <tr>
  <td class="label">Dispatcher</td>

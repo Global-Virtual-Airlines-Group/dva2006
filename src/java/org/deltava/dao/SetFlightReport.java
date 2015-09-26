@@ -364,9 +364,9 @@ public class SetFlightReport extends DAO {
 			+ "TAKEOFF_LNG, TAKEOFF_ALT, TAKEOFF_WEIGHT, TAKEOFF_FUEL, LANDING_TIME, LANDING_DISTANCE, "
 			+ "LANDING_SPEED, LANDING_VSPEED, LANDING_N1, LANDING_HDG, LANDING_LAT, LANDING_LNG, "
 			+ "LANDING_ALT, LANDING_WEIGHT, LANDING_FUEL, END_TIME, GATE_WEIGHT, GATE_FUEL, TOTAL_FUEL, "
-			+ "TIME_0X, TIME_1X, TIME_2X, TIME_4X, FDE, CODE, RELOAD, CLIENT_BUILD, BETA_BUILD, LANDING_G, "
+			+ "TIME_0X, TIME_1X, TIME_2X, TIME_4X, FDE, CODE, SDK, RELOAD, CLIENT_BUILD, BETA_BUILD, LANDING_G, "
 			+ "LANDING_CAT, FRAMERATE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
-			+ "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			+ "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		try {
 			startTransaction();
@@ -419,12 +419,13 @@ public class SetFlightReport extends DAO {
 				_ps.setInt(35, afr.getTime(4));
 				_ps.setString(36, afr.getFDE());
 				_ps.setString(37, afr.getAircraftCode());
-				_ps.setBoolean(38, afr.getHasReload());
-				_ps.setInt(39, afr.getClientBuild());
-				_ps.setInt(40, afr.getBeta());
-				_ps.setDouble(41, afr.getLandingG());
-				_ps.setInt(42, afr.getLandingCategory().ordinal());
-				_ps.setInt(43, (int)(afr.getAverageFrameRate() * 10));
+				_ps.setString(38, afr.getSDK());
+				_ps.setBoolean(39, afr.getHasReload());
+				_ps.setInt(40, afr.getClientBuild());
+				_ps.setInt(41, afr.getBeta());
+				_ps.setDouble(42, afr.getLandingG());
+				_ps.setInt(43, afr.getLandingCategory().ordinal());
+				_ps.setInt(44, (int)(afr.getAverageFrameRate() * 10));
 			} else if (fr instanceof XACARSFlightReport) {
 				XACARSFlightReport xfr = (XACARSFlightReport) fr;
 				_ps.setInt(32, 0);
@@ -433,12 +434,13 @@ public class SetFlightReport extends DAO {
 				_ps.setInt(35, 0);
 				_ps.setString(36, null);
 				_ps.setString(37, null);
-				_ps.setBoolean(38, false);
-				_ps.setInt(39, xfr.getMajorVersion());
-				_ps.setInt(40, xfr.getMinorVersion());
-				_ps.setDouble(41, 0);
-				_ps.setInt(42, 0);
+				_ps.setString(38, null);
+				_ps.setBoolean(39, false);
+				_ps.setInt(40, xfr.getMajorVersion());
+				_ps.setInt(41, xfr.getMinorVersion());
+				_ps.setDouble(42, 0);
 				_ps.setInt(43, 0);
+				_ps.setInt(44, 0);
 			}
 
 			// Commit the transaction
