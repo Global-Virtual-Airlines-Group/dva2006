@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to parse XML-format offline Flight Reports.
  * @author Luke
- * @version 5.4
+ * @version 6.1
  * @since 2.4
  */
 
@@ -27,15 +27,14 @@ import org.deltava.util.system.SystemData;
 public final class OfflineFlightParser {
 	
 	private static final Logger log = Logger.getLogger(OfflineFlightParser.class);
-	
+
+	// singleton
 	private OfflineFlightParser() {
 		super();
 	}
 	
 	private static double parse(String xml) {
-		if (xml.contains(","))
-			xml = xml.replace(',', '.');
-		
+		if (xml.contains(",")) xml = xml.replace(',', '.');
 		return Double.parseDouble(xml);
 	}
 	
@@ -168,6 +167,7 @@ public final class OfflineFlightParser {
 		inf.setFlightCode(afr.getFlightCode());
 		afr.setAircraftCode(ie.getChildTextTrim("code"));
 		afr.setFDE(ae.getChildTextTrim("airFile"));
+		afr.setSDK(ae.getChildTextTrim("sdk"));
 		afr.setClientBuild(inf.getClientBuild());
 		afr.setBeta(inf.getBeta());
 		
@@ -219,8 +219,7 @@ public final class OfflineFlightParser {
 		if (afr.getTakeoffHeading() > -1) {
 			double lat = parse(ie.getChildTextTrim("takeoffLatitude"));
 			double lng = parse(ie.getChildTextTrim("takeoffLongitude"));
-			GeoPosition loc = new GeoPosition(lat, lng, StringUtils.parse(ie.getChildTextTrim("takeoffAltitude"), 0));
-			afr.setTakeoffLocation(loc);
+			afr.setTakeoffLocation(new GeoPosition(lat, lng, StringUtils.parse(ie.getChildTextTrim("takeoffAltitude"), 0)));
 		}
 		
 		// Set the landing position if present
@@ -228,8 +227,7 @@ public final class OfflineFlightParser {
 		if (afr.getLandingHeading() > -1) {
 			double lat = parse(ie.getChildTextTrim("landingLatitude"));
 			double lng = parse(ie.getChildTextTrim("landingLongitude"));
-			GeoPosition loc = new GeoPosition(lat, lng, StringUtils.parse(ie.getChildTextTrim("landingAltitude"), 0));
-			afr.setLandingLocation(loc);
+			afr.setLandingLocation(new GeoPosition(lat, lng, StringUtils.parse(ie.getChildTextTrim("landingAltitude"), 0)));
 		}
 
 		// Load the 0X/1X/2X/4X times
