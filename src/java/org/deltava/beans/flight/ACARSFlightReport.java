@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A class for storing ACARS-submitted Flight Reports.
  * @author Luke
- * @version 4.1
+ * @version 6.1
  * @since 1.0
  */
 
@@ -22,6 +22,7 @@ public class ACARSFlightReport extends FDRFlightReport {
     
     private String _fde;
     private String _code;
+    private String _sdk;
     
     private double _avgFrames;
     
@@ -84,6 +85,7 @@ public class ACARSFlightReport extends FDRFlightReport {
      * @see FlightReport#getLength()
      * @see ACARSFlightReport#getTime(int)
      */
+    @Override
     public final int getLength() {
     	return (super.getLength() != 0) ? super.getLength() : (getTime(1) + getTime(2) + getTime(4)) / 360;
     }
@@ -98,6 +100,15 @@ public class ACARSFlightReport extends FDRFlightReport {
     }
     
     /**
+     * Returns the aircraft SDK used for this flight.
+     * @return the SDK code, or null
+     * @see ACARSFlightReport#setSDK(String)
+     */
+    public String getSDK() {
+    	return _sdk;
+    }
+    
+    /**
      * Returns the aircraft code used for this flight.
      * @return the aircraft code
      * @see ACARSFlightReport#setAircraftCode(String)
@@ -106,6 +117,7 @@ public class ACARSFlightReport extends FDRFlightReport {
     	return _code;
     }
     
+    @Override
 	public double getAverageFrameRate() {
 		return _avgFrames;
 	}
@@ -229,5 +241,13 @@ public class ACARSFlightReport extends FDRFlightReport {
 	 */
 	public void setLandingCategory(ILSCategory ilscat) {
 		_ils = ilscat;
+	}
+	
+	/**
+	 * Sets the aircraft SDK used.
+	 * @param sdk the SDK code
+	 */
+	public void setSDK(String sdk) {
+		_sdk = sdk;
 	}
 }
