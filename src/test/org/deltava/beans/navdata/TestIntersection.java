@@ -38,8 +38,6 @@ public class TestIntersection extends AbstractBeanTestCase {
    }
    
    public void testValidation() {
-      validateInput("type", Integer.valueOf(-1), IllegalArgumentException.class);
-      validateInput("type", Integer.valueOf(11), IllegalArgumentException.class);
       validateInput("name", "TEST", UnsupportedOperationException.class);
       try {
          _int.getName();
@@ -58,6 +56,7 @@ public class TestIntersection extends AbstractBeanTestCase {
 	   assertEquals(CodeType.FULL, NavigationDataBean.isCoordinates("50N52E"));
 	   assertEquals(CodeType.FULL, NavigationDataBean.isCoordinates("50S52W"));
 	   assertEquals(CodeType.FULL, NavigationDataBean.isCoordinates("50S52E"));
+	   assertEquals(CodeType.FULL, NavigationDataBean.isCoordinates("48N030W"));
 	   assertEquals(CodeType.CODE, NavigationDataBean.isCoordinates("FOO"));
 	   assertEquals(CodeType.CODE, NavigationDataBean.isCoordinates("VASA1"));
    }
@@ -92,5 +91,11 @@ public class TestIntersection extends AbstractBeanTestCase {
 	   assertEquals(Navaid.INT, i.getType());
 	   assertEquals(35.0, i.getLatitude(), 0.001);
 	   assertEquals(160.0, i.getLongitude(), 0.001);
+	   
+	   i = Intersection.parse("48N030W");
+	   assertNotNull(i);
+	   assertEquals(Navaid.INT, i.getType());
+	   assertEquals(48.0, i.getLatitude(), 0.001);
+	   assertEquals(-30.0, i.getLongitude(), 0.001);
    }
 }
