@@ -5,10 +5,10 @@ import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import org.deltava.beans.GeoLocation;
-import org.deltava.beans.Simulator;
+import org.deltava.beans.*;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
+
 import org.deltava.util.*;
 import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
@@ -64,7 +64,6 @@ public class GetNavData extends DAO {
 			prepareStatement("SELECT * FROM common.NAVDATA WHERE (CODE=?) ORDER BY ITEMTYPE");
 			_ps.setString(1, code.toUpperCase());
 			ndmap.addAll(execute());
-			_cache.add(ndmap);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -79,6 +78,7 @@ public class GetNavData extends DAO {
 			}
 		}
 		
+		_cache.add(ndmap);
 		return ndmap;
 	}
 	
