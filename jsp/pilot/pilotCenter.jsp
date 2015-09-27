@@ -276,7 +276,7 @@ To view airports you have yet to visit, <el:cmd className="sec bld" url="mynewai
  <td class="mid"><el:cmd className="bld" url="pirepqueue">Submitted Flight Reports</el:cmd></td>
  <td class="data">You can Approve, Reject or Hold submitted pilot Flight Reports here.<c:if test="${pirepQueueStats.size > 0}"><span class="${queueClass}"><br />
 There <fmt:is value="${pirepQueueStats.size}" />  currently <fmt:quantity value="${pirepQueueStats.size}" single="Flight Report" /> awaiting review.
-<content:filter roles="Operations,HR"> The average age of eaching pending flight report is <fmt:dec value="${pirepQueueStats.averageAge}" /> hours.</content:filter></span></c:if>
+<content:filter roles="Operations,HR"> The average age of each pending flight report is <fmt:dec value="${pirepQueueStats.averageAge}" /> hours.</content:filter></span></c:if>
 <c:set var="myPirepQueueSize" value="${pirepQueueStats.counts[pilot.equipmentType]}" scope="page" />
 <c:if test="${myPirepQueueSize > 0}"><br /><span class="${queueClass}">There are currently <fmt:quantity value="${myPirepQueueSize}" single="Flight Report" /> awaiting 
 review flown using equipment in the ${pilot.equipmentType} program.</span></c:if>
