@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2010, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -7,7 +7,7 @@ import java.text.*;
 /**
  * A class for dealing with Time Zones.
  * @author Luke
- * @version 3.0
+ * @version 6.2
  * @since 1.0
  */
 
@@ -16,15 +16,14 @@ public class TZInfo implements java.io.Serializable, ComboAlias, Comparable<TZIn
 	/**
 	 * Time Zone for GMT/UTC.
 	 */
-	public static final TZInfo UTC = new TZInfo("Etc/Greenwich", null, null);
+	public static final TZInfo UTC = new TZInfo("Etc/Universal", "Coordinated Universal Time", "UTC");
 	private static final TZInfo _local = new TZInfo(TimeZone.getDefault().getID(), null, null);
 
 	private static final Map<String, TZInfo> _timeZones = new HashMap<String, TZInfo>();
-	private final NumberFormat _df = new DecimalFormat("00");
 
-	private TimeZone _tz;
-	private String _displayName;
-	private String _abbr;
+	private final TimeZone _tz;
+	private final String _displayName;
+	private final String _abbr;
 	
 	// Init default time zones
 	static {
@@ -36,8 +35,7 @@ public class TZInfo implements java.io.Serializable, ComboAlias, Comparable<TZIn
 		super();
 		_tz = TimeZone.getTimeZone(tzName);
 		_displayName = dName;
-		if (abbr != null)
-			_abbr = abbr.toUpperCase().trim();
+		_abbr = (abbr != null) ? abbr.toUpperCase().trim() : null;
 	}
 
 	/**
@@ -73,10 +71,12 @@ public class TZInfo implements java.io.Serializable, ComboAlias, Comparable<TZIn
 		return _local;
 	}
 
+	@Override
 	public String getComboAlias() {
 		return getID();
 	}
 
+	@Override
 	public String getComboName() {
 		return toString();
 	}
@@ -127,6 +127,7 @@ public class TZInfo implements java.io.Serializable, ComboAlias, Comparable<TZIn
 	 * @return This displays name, UTC offset and DST usage in the following format: <br>
 	 * Name (ABBR) [GMT{+/-}hh:mm{/DST}]
 	 */
+	@Override
 	public String toString() {
 		int ofs = _tz.getRawOffset() / 60000;
 
@@ -138,14 +139,14 @@ public class TZInfo implements java.io.Serializable, ComboAlias, Comparable<TZIn
 			msg.append(')');
 		}
 
-		msg.append(" [GMT");
+		msg.append(" [UTC");
 		if (ofs >= 0)
 			msg.append('+');
 
 		// Append hours & formatted minutes to include leading zeroes
-		msg.append(String.valueOf(ofs / 60));
-		msg.append(':');
-		msg.append(_df.format(Math.abs(ofs % 60)));
+		NumberFormat df = new DecimalFormat("00");
+		msg.append(String.valueOf(ofs / 60)).append(':');
+		msg.append(df.format(Math.abs(ofs % 60)));
 
 		// Display DST flag
 		if (_tz.useDaylightTime())
@@ -180,10 +181,12 @@ public class TZInfo implements java.io.Serializable, ComboAlias, Comparable<TZIn
 	/**
 	 * Compares this Time Zone to another TimeZone by comparing the JVM time zone ID.
 	 */
+	@Override
 	public boolean equals(Object o2) {
 		return (o2 instanceof TZInfo) && (_tz.getID().equals(((TZInfo) o2)._tz.getID()));
 	}
 	
+	@Override
 	public int hashCode() {
 		return _tz.getID().hashCode();
 	}
@@ -196,6 +199,7 @@ public class TZInfo implements java.io.Serializable, ComboAlias, Comparable<TZIn
 	 * Returns the CSS class name when displayed in a view table.
 	 * @return the CSS class name
 	 */
+	@Override
 	public String getRowClassName() {
 		return _tz.useDaylightTime() ? "opt1" : null;
 	}
