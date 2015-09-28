@@ -1,4 +1,4 @@
-// Copyright 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
  * A Scheduled Task to send e-mail notifications when the Flight Report disposal queue 
  * exceeds a certain size.
  * @author Luke
- * @version 5.0
+ * @version 6.1
  * @since 5.0
  */
 
@@ -44,13 +44,12 @@ public class PIREPQueueWarningTask extends Task {
 			
 			// Get the queue size
 			GetFlightReportQueue frqdao = new GetFlightReportQueue(con);
-			DisposalQueueStats dqs = frqdao.getDisposalQueueStats();
+			DisposalQueueStats dqs = frqdao.getDisposalQueueStats(null);
 			mctxt.addData("queueStats", dqs);
 			String msg = "Queue has " + dqs.getSize() + " entries, average age " + StringUtils.format(dqs.getAverageAge(), "#0.00") + " hours";
 			
 			// If too big, load the users
-			if ((dqs.getSize() > SystemData.getInt("users.pirep.warn.minSize", 25)) || (dqs.getAverageAge() > SystemData.getInt("users.pirep.warn.minAge", 18))) {
-				log.warn(msg);
+			if ((dqs.getSize() > SystemData.getInt("users.pirep.warn.minSize", 25)) || (dqs.getAdjustedAge() > SystemData.getInt("users.pirep.warn.minAge", 18))) {
 				GetMessageTemplate mtdao = new GetMessageTemplate(con);
 				mctxt.setTemplate(mtdao.get("PIREPQUEUEWARN"));
 				
