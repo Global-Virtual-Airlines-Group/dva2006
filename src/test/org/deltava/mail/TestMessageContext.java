@@ -1,5 +1,11 @@
 package org.deltava.mail;
 
+import org.deltava.beans.DistanceUnit;
+import org.deltava.beans.Pilot;
+import org.deltava.beans.TZInfo;
+import org.deltava.beans.schedule.Airport;
+import org.deltava.util.StringUtils;
+
 import junit.framework.TestCase;
 
 public class TestMessageContext extends TestCase {
@@ -48,5 +54,45 @@ public class TestMessageContext extends TestCase {
         assertTrue(_ctxt.hasData("name"));
         assertEquals("ContextName", _ctxt.execute("name"));
         assertEquals("java.lang.String", _ctxt.execute("name.getClass.getName"));
+    }
+    
+    public void testFormatting() {
+    	Pilot p = new Pilot("Test", "User");
+    	p.setDateFormat("MM%dd%yyyy");
+    	p.setTimeFormat("HH$mm:ss");
+    	p.setNumberFormat("#,##0.0000");
+    	p.setDistanceType(DistanceUnit.KM);
+    	p.setTZ(TZInfo.UTC);
+    	p.setAirportCodeType(Airport.Code.ICAO);
+    	
+    	_ctxt.setRecipient(p);
+    	_ctxt.addData("name", "ContextName");
+    	_ctxt.addData("birthday", StringUtils.parseDate("12/29/1902 23:59:01", "MM/dd/yyyy HH:mm:ss"));
+    	_ctxt.addData("distance", Integer.valueOf(300));
+    	_ctxt.addData("longNumber", Long.valueOf(3008123));
+    	_ctxt.addData("pi", Double.valueOf(Math.PI));
+    	_ctxt.addData("ap", new Airport("ATL", "KATL", "Atlanta GA"));
+    	
+    	// Test raw and inferred formatting
+    	assertEquals("ContextName", _ctxt.execute("name"));
+        assertEquals("java.lang.String", _ctxt.execute("name.getClass.getName"));
+        assertEquals("300", _ctxt.execute("distance"));
+        assertEquals("java.lang.Integer", _ctxt.execute("distance.getClass.getName"));
+        assertEquals("3,008,123", _ctxt.execute("longNumber"));
+        assertEquals("java.lang.Long", _ctxt.execute("longNumber.getClass.getName"));
+        assertEquals("3.1416", _ctxt.execute("pi"));
+        assertEquals("java.lang.Double", _ctxt.execute("pi.getClass.getName"));
+        assertEquals("KATL", _ctxt.execute("ap"));
+        assertEquals("org.deltava.beans.schedule.Airport", _ctxt.execute("ap.getClass.getName"));
+        assertEquals("12%30%1902 04$59:01 UTC", _ctxt.execute("birthday"));
+        assertEquals("java.util.Date", _ctxt.execute("birthday.getClass.getName"));
+        
+        // Test explicit formatting
+        assertEquals("483 Kilometers", _ctxt.execute("distance$L"));
+        assertEquals("300", _ctxt.execute("distance$!"));
+        assertEquals("12%30%1902", _ctxt.execute("birthday$D"));
+        assertEquals("04$59:01 UTC", _ctxt.execute("birthday$T"));
+        assertEquals("12%30%1902 04$59:01 UTC", _ctxt.execute("birthday$DT"));
+        assertEquals("12%30%1902 04$59:01 UTC", _ctxt.execute("birthday$!"));
     }
 }
