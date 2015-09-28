@@ -184,7 +184,7 @@ golgotha.airportLoad.setHelpers(f.airportL);
 <c:choose>
 <c:when test="${empty flight}">
 f.airportD.loadAirports(golgotha.airportLoad.config);
-window.setTimeout('f.airportA.loadAirports(golgotha.airportLoad.config);', 750);
+window.setTimeout(f.airportA.loadAirports, 725, golgotha.airportLoad.config);
 </c:when>
 <c:otherwise>
 golgotha.routePlot.updateRoute(true, false);

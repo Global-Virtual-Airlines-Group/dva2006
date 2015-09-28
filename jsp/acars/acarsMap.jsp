@@ -55,7 +55,7 @@ if (!document.pauseRefresh) {
 
 // Set timer to reload the data
 if (doRefresh && isAuto)
-	window.setTimeout('void golgotha.maps.acars.reloadData(true)', ${refreshInterval + 2000});
+	window.setTimeout(golgotha.maps.acars.reloadData, ${refreshInterval + 2000}, true);
 
 return true;
 };
