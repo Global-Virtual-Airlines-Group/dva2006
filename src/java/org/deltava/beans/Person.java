@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2013, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2013, 2014 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -11,11 +11,11 @@ import org.deltava.util.StringUtils;
 /**
  * An abstract class storing information about a Person.
  * @author Luke
- * @version 5.2
+ * @version 6.2
  * @since 1.0
  */
 
-public abstract class Person extends DatabaseBlobBean implements Principal, EMailAddress, ViewEntry {
+public abstract class Person extends DatabaseBlobBean implements Principal, FormattedEMailRecipient, ViewEntry {
 
 	/**
 	 * Hide e-mail address from all non-staff users.
