@@ -122,7 +122,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			if (lastFlight != null) {
 				GetSchedule schdao = new GetSchedule(con);
 				FlightTime ft = schdao.getFlightTime(lastFlight);
-				boolean rCharter = ((ft.getFlightTime() == 0) && !lastFlight.hasAttribute(FlightReport.ATTR_ROUTEWARN)); 
+				boolean rCharter = ((ft.getFlightTime() > 0) && !lastFlight.hasAttribute(FlightReport.ATTR_ROUTEWARN)); 
 				ctx.setAttribute("needReturnCharter", Boolean.valueOf(rCharter), REQUEST);
 			}
 			
@@ -146,9 +146,9 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 
 			// Get the PIREP disposal queue sizes
 			if (ctx.isUserInRole("PIREP")) {
-				GetFlightReportQueue frqdao = new GetFlightReportQueue(con);
-				ctx.setAttribute("pirepQueueStats", frqdao.getDisposalQueueStats(), REQUEST);
 				String eqType = ctx.isUserInRole("HR") ? null : p.getEquipmentType();
+				GetFlightReportQueue frqdao = new GetFlightReportQueue(con);
+				ctx.setAttribute("pirepQueueStats", frqdao.getDisposalQueueStats(eqType), REQUEST);
 				ctx.setAttribute("checkRideQueueSize", Integer.valueOf(prdao.getCheckRideQueueSize(eqType)), REQUEST);
 			}
 			
