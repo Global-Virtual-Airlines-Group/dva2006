@@ -188,6 +188,18 @@ return child;
 if (window.Element != undefined)
 	Element.prototype.getCDATA = function() { return golgotha.getCDATA(this); };
 
+// IE9 hack for setTimeout
+if (document.all && !window.setTimeout.isPolyfill)
+{
+	var __nativeST__ = window.setTimeout;
+	window.setTimeout = function (vCallback, nDelay /*, argumentToPass1, argumentToPass2, etc. */) {
+		var aArgs = Array.prototype.slice.call(arguments, 2);
+	    return __nativeST__(vCallback instanceof Function ? function () { vCallback.apply(null, aArgs); } : vCallback, nDelay);
+	};
+
+	window.setTimeout.isPolyfill = true;
+}
+
 Array.prototype.remove = function(obj) {
 for (var x = 0; x < this.length; x++) {
 	if (this[x] == obj) {
