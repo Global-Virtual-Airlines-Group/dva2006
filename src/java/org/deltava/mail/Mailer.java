@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2010, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.mail;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to send e-mail messages.
  * @author Luke
- * @version 5.2
+ * @version 6.2
  * @since 1.0
  */
 
@@ -22,7 +22,7 @@ public class Mailer {
 
 	private static final Logger log = Logger.getLogger(Mailer.class);
 
-	private SMTPEnvelope _env;
+	private final SMTPEnvelope _env;
 	private final Collection<EMailAddress> _msgTo = new LinkedHashSet<EMailAddress>();
 	private MessageContext _ctx;
 
@@ -37,22 +37,27 @@ public class Mailer {
 			_addr = addr;
 		}
 
+		@Override
 		public String getEmail() {
 			return _addr;
 		}
 
+		@Override
 		public String getName() {
 			return _name;
 		}
 
+		@Override
 		public boolean isInvalid() {
 			return false;
 		}
 		
+		@Override
 		public String toString() {
 			return _name + " (" + _addr + ")";
 		}
 		
+		@Override
 		public int hashCode() {
 			return toString().hashCode();
 		}
@@ -137,7 +142,7 @@ public class Mailer {
 		send();
 	}
 
-	/**
+	/*
 	 * Generates and sends the e-mail message. The recipient object is added to the messaging context under the name
 	 * &quot;recipient&quot;.
 	 */
@@ -159,14 +164,11 @@ public class Mailer {
 		}
 
 		// Loop through the recipients
-		for (Iterator<EMailAddress> i = _msgTo.iterator(); i.hasNext();) {
-			EMailAddress addr = i.next();
-
-			// Add the recipient to the messaging context and calculate the body
+		for (EMailAddress addr : _msgTo) {
 			_env.setRecipient(addr);
-			_ctx.addData("recipient", addr);
-			_env.setBody(_ctx.getBody());
+			_ctx.setRecipient(addr);
 			_env.setSubject(_ctx.getSubject());
+			_env.setBody(_ctx.getBody()); // calculate body and subject
 
 			// Determine the content type
 			_env.setContentType((_ctx.getTemplate() != null) && _ctx.getTemplate().getIsHTML() ? "text/html" : "text/plain");
