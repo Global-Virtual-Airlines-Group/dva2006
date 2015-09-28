@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
@@ -17,7 +17,6 @@ import org.deltava.dao.file.*;
 import org.deltava.taskman.TaskScheduler;
 
 import org.deltava.util.*;
-import org.deltava.util.cache.CacheManager;
 import org.deltava.util.system.SystemData;
 
 import org.gvagroup.acars.ACARSAdminInfo;
@@ -28,7 +27,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to display diagnostic infomration.
  * @author Luke
- * @version 5.4
+ * @version 6.2
  * @since 1.0
  */
 
@@ -108,15 +107,12 @@ public class DiagnosticCommand extends AbstractCommand {
 			ctx.setAttribute("jdbcPools", pools, REQUEST);
 		}
 		
-		// Get DAO cache properties
-		ctx.setAttribute("daoCaches", CacheManager.getCacheInfo(), REQUEST);
-		
 		// Get Virtual Machine properties
 		Runtime rt = Runtime.getRuntime();
 		ctx.setAttribute("cpuCount", Integer.valueOf(rt.availableProcessors()), REQUEST);
-		ctx.setAttribute("totalMemory", new Long(rt.totalMemory()), REQUEST);
-		ctx.setAttribute("maxMemory", new Long(rt.maxMemory()), REQUEST);
-		ctx.setAttribute("freeMemory", new Long(rt.freeMemory()), REQUEST);
+		ctx.setAttribute("totalMemory", Long.valueOf(rt.totalMemory()), REQUEST);
+		ctx.setAttribute("maxMemory", Long.valueOf(rt.maxMemory()), REQUEST);
+		ctx.setAttribute("freeMemory", Long.valueOf(rt.freeMemory()), REQUEST);
 		ctx.setAttribute("pctMemory", new Double(100 - (Math.round(rt.freeMemory() * 100.0 / rt.totalMemory()))), REQUEST);
 
 		// Get time zone info
@@ -125,7 +121,7 @@ public class DiagnosticCommand extends AbstractCommand {
 		ctx.setAttribute("tzName", tz.getDisplayName(tz.inDaylightTime(new Date()), TimeZone.LONG), REQUEST);
 
 		// Get current time
-		ctx.setAttribute("systemTime", new Long(System.currentTimeMillis()), REQUEST);
+		ctx.setAttribute("systemTime", Long.valueOf(System.currentTimeMillis()), REQUEST);
 		
 		// Calculate DAO usage count
 		ctx.setAttribute("daoUsageCount", Long.valueOf(org.deltava.dao.DAO.getQueryCount()), REQUEST);
