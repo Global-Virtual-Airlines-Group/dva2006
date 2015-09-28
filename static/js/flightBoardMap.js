@@ -66,7 +66,7 @@ xmlreq.onreadystatechange = function() {
 
 	golgotha.util.display('userSelect', (cbo.options.length > 1));
 	if (isAuto)
-		window.setTimeout('void golgotha.flightBoard.updateMap()', 90000);
+		window.setTimeout(golgotha.flightBoard.updateMap, 90000);
 
 	return true;
 };
