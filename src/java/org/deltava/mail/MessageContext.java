@@ -7,6 +7,8 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 
+import org.deltava.beans.*;
+import org.deltava.beans.schedule.Airport;
 import org.deltava.beans.system.MessageTemplate;
 
 import org.deltava.util.StringUtils;
@@ -15,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A class to store and retrieve message context data.
  * @author Luke
- * @version 6.0
+ * @version 6.2
  * @since 1.0
  */
 
@@ -26,8 +28,9 @@ public class MessageContext {
     private MessageTemplate _mt;
     private String _subject;
     private String _body;
+    private EMailAddress _recipient;
     private final Map<String, Object> _data = new HashMap<String, Object>();
-  
+    
     /**
      * Initializes the Message Context, and sets any pre-defined context elements.
      */
@@ -62,19 +65,35 @@ public class MessageContext {
     	_subject = subj;
     }
     
+    private String eval(StringBuilder buf) {
+        int spos = buf.indexOf("${");
+        while (spos != -1) {
+           int epos = buf.indexOf("}", spos);
+
+           // Only format if the end token can be found
+           if (epos > spos) {
+              String token = buf.substring(spos + 2, epos);
+              buf.replace(spos, epos + 1, execute(token));
+              spos = buf.indexOf("${");
+           } else
+              spos = buf.indexOf("${", spos);
+        }
+        
+        return buf.toString();
+    }
+    
     /**
      * Returns the message subject.
      * @return the subject prepended by the Airline Name
      */
     public String getSubject() {
-       StringBuilder buf = new StringBuilder(SystemData.get("airline.name"));
-       buf.append(' ');
+       StringBuilder buf = new StringBuilder(SystemData.get("airline.name")).append(' ');
        if (_subject != null)
     	   buf.append(_subject);
        else
     	   buf.append((_mt == null) ? "" : _mt.getSubject());
        
-       return buf.toString();
+       return eval(buf);
     }
     
     /**
@@ -86,25 +105,9 @@ public class MessageContext {
        if ((_mt == null) && (_body == null))
           throw new IllegalStateException("Message Template or Body not loaded");
 
-       // Load the Message template
+       // Load the Message template and eval
        StringBuilder buf = new StringBuilder((_mt != null) ? _mt.getBody() : _body);
-
-       // Parse the message template with data from the MessageContext
-       int spos = buf.indexOf("${");
-       while (spos != -1) {
-          int epos = buf.indexOf("}", spos);
-
-          // Only format if the end token can be found
-          if (epos > spos) {
-             String token = buf.substring(spos + 2, epos);
-             buf.replace(spos, epos + 1, execute(token));
-             spos = buf.indexOf("${");
-          } else
-             spos = buf.indexOf("${", spos);
-       }
-
-       // Return the message body
-       return buf.toString();
+       return eval(buf);
     }
     
     /**
@@ -115,6 +118,15 @@ public class MessageContext {
      */
     boolean hasData(String name) {
         return _data.containsKey(name.trim());
+    }
+    
+    /**
+     * Sets the recipient of this email message.
+     * @param to an EMailAddress
+     */
+    public void setRecipient(EMailAddress to) {
+    	_recipient = to;
+    	addData("recipient", to);
     }
     
     /**
@@ -188,10 +200,16 @@ public class MessageContext {
     	if (log.isDebugEnabled())
     		log.debug("Evaluating " + arg);
     	
+    	FormatType fmtType = FormatType.RAW;
         StringTokenizer tkns = new StringTokenizer(arg, ".");
         
         // Get the object name
         String objName = tkns.nextToken();
+        if (!tkns.hasMoreTokens() && (objName.indexOf('$') > -1)) {
+        	fmtType = FormatType.getType(objName);
+        	objName = objName.substring(0, objName.lastIndexOf('$'));
+        }
+
         if (!hasData(objName)) {
         	if (_mt == null)
         		log.warn("Cannot evaluate " + objName);
@@ -206,6 +224,13 @@ public class MessageContext {
         Object objValue = _data.get(objName);
         while (tkns.hasMoreTokens()) {
             String methodName = tkns.nextToken();
+            
+            // Determine format options
+            if (!tkns.hasMoreTokens() && (methodName.indexOf('$') > -1)) {
+            	fmtType = FormatType.getType(methodName);
+            	methodName = methodName.substring(0, methodName.lastIndexOf('$'));
+            }
+            
             if (hasProperty(objValue, methodName)) {
                 try {
                     Method m = objValue.getClass().getMethod(StringUtils.getPropertyMethod(methodName), (Class []) null);
@@ -241,6 +266,63 @@ public class MessageContext {
             
             // If we're going to invoke again, then save the last method name as the object name
             objName = methodName;
+        }
+        
+        // If we have a recipient that supports formatting, do so
+        if (_recipient instanceof FormattedEMailRecipient) {
+        	FormattedEMailRecipient to = (FormattedEMailRecipient) _recipient;
+        	switch (objValue.getClass().getSimpleName()) {
+        	case "Long":
+        	case "Integer":
+        		String fmt = to.getNumberFormat();
+        		if (fmt.indexOf('.') > -1)
+        			fmt = fmt.substring(0, fmt.indexOf('.'));
+        		
+        		long value = ((Number) objValue).longValue();
+        		if (fmtType == FormatType.DISTANCE) {
+        			double cv = value * to.getDistanceType().getFactor();
+        			StringBuilder buf = new StringBuilder(StringUtils.format(cv, fmt));
+        			buf.append(' ').append(to.getDistanceType().getUnitName());
+        			if (cv >= 2)
+        				buf.append('s');
+        			
+        			objValue = buf.toString(); 		
+        		} else
+        			objValue = StringUtils.format(value, fmt);
+        		
+        		break;
+        		
+        	case "Double":
+        		objValue = StringUtils.format(((Double) objValue).doubleValue(), to.getNumberFormat());
+        		break;
+        		
+        	case "Date":
+        		Date ldt = DateTime.convert((Date) objValue, to.getTZ());
+        		StringBuilder buf = new StringBuilder();
+        		switch (fmtType) {
+        		case TIME:
+        			buf.append(StringUtils.format(ldt, to.getTimeFormat()));
+        			buf.append(' ').append(to.getTZ().getAbbr());
+        			objValue = buf.toString();
+        			break;
+
+        		case DATE:
+        			objValue = StringUtils.format(ldt, to.getDateFormat());
+        			break;
+        			
+        		default:
+        			buf.append(StringUtils.format(ldt, to.getDateFormat() + " " + to.getTimeFormat()));
+        			buf.append(' ').append(to.getTZ().getAbbr());
+        			objValue = buf.toString();
+        		}
+        		
+        		break;
+        		
+        	case "Airport":
+        		Airport a = (Airport) objValue;
+        		objValue = (to.getAirportCodeType() == Airport.Code.IATA) ? a.getIATA() : a.getICAO();
+        		break;
+        	}
         }
 
         // Get the last object value, convert to a String and return
