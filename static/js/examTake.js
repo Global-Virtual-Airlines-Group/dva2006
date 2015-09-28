@@ -80,7 +80,7 @@ if (secondsLeft <= interval) {
 	return true;
 }
 
-return window.setTimeout('void golgotha.exam.showRemaining(' + interval + ')', interval * 1000);
+return window.setTimeout(golgotha.exam.showRemaining, interval * 1000, interval);
 };
 
 golgotha.exam.saveAnswer = function(qNum, id)
