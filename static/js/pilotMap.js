@@ -19,7 +19,7 @@ xmlreq.onreadystatechange = function() {
 	golgotha.pilotMap.hmap.setData(golgotha.pilotMap.heatMapData);
 	var batchSize = Math.round(golgotha.pilotMap.queue.length / 50);
 	golgotha.pilotMap.pBar.start(100);
-	setTimeout('golgotha.pilotMap.load(' + batchSize + ')', 2);
+	window.setTimeout(golgotha.pilotMap.load, 2, batchSize);
 	return true;
 };
 
@@ -54,7 +54,7 @@ while ((cnt < batchSize) && (a != null)) {
 }
 
 if (a != null)
-	setTimeout('golgotha.pilotMap.load(' + batchSize + ')', 2);
+	window.setTimeout(golgotha.pilotMap.load, 2, batchSize);
 else {
 	var f = document.forms[0];
 	var isLoading = document.getElementById('isLoading');
@@ -82,7 +82,7 @@ var eqType = checkEQ ? f.eqType.options[f.eqType.selectedIndex].text : null;
 var batchSize = Math.round(golgotha.pilotMap.mrks.length / 50);
 golgotha.pilotMap.pBar.start(100);
 golgotha.pilotMap.queue = golgotha.pilotMap.mrks.slice();
-setTimeout("golgotha.pilotMap.mrkUpdate('" + rank + "','" + eqType + "'," + batchSize + ")", 2);
+window.setTimeout(golgotha.pilotMap.mrkUpdate, 2, rank, eqType, batchSize);
 return true;
 };
 
@@ -102,7 +102,7 @@ while ((cnt < batchSize) && (mrk != null)) {
 }
 
 if (mrk != null)
-	setTimeout("golgotha.pilotMap.mrkUpdate('" + rank + "','" + eqType + "'," + batchSize +")", 2);
+	window.setTimeout(golgotha.pilotMap.mrkUpdate, 2, rank, eqType, batchSize);
 else {
 	golgotha.pilotMap.pBar.hide();
 	golgotha.event.beacon('Pilot Map', 'Update');	
