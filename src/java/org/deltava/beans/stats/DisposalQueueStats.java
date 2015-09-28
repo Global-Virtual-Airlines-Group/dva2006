@@ -1,4 +1,4 @@
-// Copyright 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import java.util.*;
@@ -6,42 +6,20 @@ import java.util.*;
 /**
  * A bean to store Flight Report disposal queue statistics.
  * @author Luke
- * @version 5.0
+ * @version 6.1
  * @since 5.0
  */
 
-public class DisposalQueueStats {
+public class DisposalQueueStats implements java.io.Serializable {
 
 	private final Date _dt;
 	private final int _size;
 	private final double _avgAge;
+	private double _minAge;
+	private double _maxAge;
 	
-	private final Collection<EquipmentCount> _cnts = new TreeSet<EquipmentCount>();
+	private Map<String, Integer> _cnts = new TreeMap<String, Integer>();
 	
-	private class EquipmentCount implements Comparable<EquipmentCount> {
-		private final String _eqType;
-		private final int _count;
-		
-		EquipmentCount(String eqType, int count) {
-			super();
-			_eqType = eqType;
-			_count = Math.max(0, count);
-		}
-		
-		public String getEquipmentType() {
-			return _eqType;
-		}
-		
-		public int getCount() {
-			return _count;
-		}
-		
-		public int compareTo(EquipmentCount ec2) {
-			int tmpResult = Integer.valueOf(_count).compareTo(Integer.valueOf(ec2._count));
-			return (tmpResult == 0) ? _eqType.compareTo(ec2._eqType) : tmpResult;
-		}
-	}
-
 	/**
 	 * Creates the bean.
 	 * @param dt the effective date/time
@@ -80,12 +58,47 @@ public class DisposalQueueStats {
 	}
 	
 	/**
+	 * Returns the maximum age of a non-held flight report.
+	 * @return the age in hours
+	 */
+	public double getMaxAge() {
+		return _maxAge;
+	}
+	
+	/**
+	 * Returns the minimum age of a non-held flight report.
+	 * @return the age in hours
+	 */
+	public double getMinAge() {
+		return _minAge;
+	}
+	
+	/**
+	 * Returns the average age of a non-held flight report, excluding the outliers.
+	 * @return the adjusted average age in hours, or zero if less than two flight reports
+	 */
+	public double getAdjustedAge() {
+		double totalAge = (_maxAge * _size) - _minAge - _maxAge;
+		return (totalAge <= 0) ? 0 : totalAge / (_size - 2); 
+	}
+	
+	/**
+	 * Sets the minimum and maximum age of non-held flight reports.
+	 * @param min the minimum age in hours
+	 * @param max the maximum age in hours
+	 */
+	public void setMinMax(double min, double max) {
+		_minAge = Math.max(0, min);
+		_maxAge = Math.max(_minAge, max);
+	}
+	
+	/**
 	 * Adds an equipment-specific pending flight report count.
 	 * @param eqType the equipment type
 	 * @param cnt the number of pending flight reports
 	 */
 	public void addCount(String eqType, int cnt) {
-		_cnts.add(new EquipmentCount(eqType, cnt));
+		_cnts.put(eqType, Integer.valueOf(cnt));
 	}
 	
 	/**
@@ -93,10 +106,6 @@ public class DisposalQueueStats {
 	 * @return a Map of pending counts, keyed by equipment type
 	 */
 	public Map<String, Integer> getCounts() {
-		Map<String, Integer> results = new LinkedHashMap<String, Integer>();
-		for (EquipmentCount ec : _cnts)
-			results.put(ec.getEquipmentType(), Integer.valueOf(ec.getCount()));
-		
-		return results;
+		return new LinkedHashMap<String, Integer>(_cnts);
 	}
 }
