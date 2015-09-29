@@ -170,7 +170,7 @@ var newCfg = cfg.clone();
 newCfg.airline = golgotha.form.getCombo(f.airline); 
 f.airportD.loadAirports(newCfg);</c:if>
 <c:if test="${empty airportsA}">
-window.setTimeout(f.airportA.loadAirports, 1050, newCfg);</c:if>
+window.setTimeout(function() { f.airportA.loadAirports(newCfg); }, 1050);</c:if>
 window.setTimeout(function() { newCfg.airline = 'all'; f.airportL.loadAirports(newCfg); }, 1250);
 
 // Create the map
