@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import static org.gvagroup.acars.ACARSFlags.*;
@@ -6,22 +6,27 @@ import static org.gvagroup.acars.ACARSFlags.*;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
+import java.util.zip.GZIPInputStream;
 
+import org.apache.log4j.Logger;
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.schedule.GeoPosition;
 import org.deltava.beans.servinfo.*;
 
 import org.deltava.dao.file.GetSerializedPosition;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to load ACARS position data.
  * @author Luke
- * @version 5.4
+ * @version 6.2
  * @since 4.1
  */
 
 public class GetACARSPositions extends GetACARSData {
+	
+	private static final Logger log = Logger.getLogger(GetACARSPositions.class);
 
 	/**
 	 * Initializes the Data Access Object.
@@ -154,6 +159,34 @@ public class GetACARSPositions extends GetACARSData {
 	}
 	
 	private List<GeoLocation> getArchivedEntries(int flightID, boolean includeOnGround) throws DAOException {
+		
+		// Load from file system if present
+		String hash = Integer.toHexString(flightID % 2048);
+		File path = new File(SystemData.get("path.archive"), hash);
+		File f = new File(path, Integer.toHexString(flightID) + ".dat");
+		if (f.exists()) {
+			Collection<? extends RouteEntry> entries = null;
+			try (InputStream in = new FileInputStream(f)) {
+				try (InputStream gi = new GZIPInputStream(in, (int) (f.length() + 512))) {
+					GetSerializedPosition psdao = new GetSerializedPosition(in);	
+					entries = psdao.read();
+				}
+				
+				// Deserialize
+				List<GeoLocation> results = new ArrayList<GeoLocation>();
+				for (RouteEntry entry : entries) {
+					if (entry.isFlagSet(FLAG_ONGROUND) && !entry.isFlagSet(FLAG_TOUCHDOWN) && !includeOnGround)
+						results.add(new GeoPosition(entry));
+					else
+						results.add(entry);
+				}
+
+				return results;
+			} catch (IOException ie) {
+				log.warn("Error reading " + f.getAbsolutePath() + " - " + ie.getMessage());
+			}
+		}
+		
 		try {
 			prepareStatementWithoutLimits("SELECT DATA FROM acars.POS_ARCHIVE WHERE (ID=?) LIMIT 1");
 			_ps.setInt(1, flightID);
