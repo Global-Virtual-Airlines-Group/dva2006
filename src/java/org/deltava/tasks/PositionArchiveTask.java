@@ -3,6 +3,7 @@ package org.deltava.tasks;
 
 import java.io.*;
 import java.util.Collection;
+import java.util.zip.GZIPOutputStream;
 import java.sql.Connection;
 
 import org.deltava.beans.acars.RouteEntry;
@@ -16,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to copy ACARS position data to the file system.  
  * @author Luke
- * @version 6.1
+ * @version 6.2
  * @since 6.1
  */
 
@@ -49,10 +50,10 @@ public class PositionArchiveTask extends Task {
 			SetACARSArchive awdao = new SetACARSArchive(con);
 			for (Integer ID : IDs) {
 				String hash = Integer.toHexString(ID.intValue() % 2048);
-				File path = new File(SystemData.get("path.pos_archive"), hash); path.mkdirs();
+				File path = new File(SystemData.get("path.archive"), hash); path.mkdirs();
 				Collection<? extends RouteEntry> entries = prdao.getRouteEntries(ID.intValue(), true);
 				try (OutputStream os = new FileOutputStream(new File(path, Integer.toHexString(ID.intValue()) + ".dat"))) {
-					try (OutputStream bos = new BufferedOutputStream(os, 20480)) {
+					try (OutputStream bos = new GZIPOutputStream(os, 8192)) {
 						SetSerializedPosition pwdao = new SetSerializedPosition(bos);
 						pwdao.archivePositions(ID.intValue(), entries);	
 					}
