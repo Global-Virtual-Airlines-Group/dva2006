@@ -11,7 +11,7 @@ import org.deltava.dao.file.SetSerializedPosition;
 /**
  * A Data Access Object to write to the ACARS position archive.
  * @author Luke
- * @version 6.1
+ * @version 6.2
  * @since 4.1
  */
 
@@ -82,8 +82,9 @@ public class SetACARSArchive extends DAO {
 	 */
 	public void clear(int flightID) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("UPDATE acars.POS_ARCHIVE SET DATA=NULL WHERE (ID=?)");
-			_ps.setInt(1, flightID);
+			prepareStatementWithoutLimits("UPDATE acars.POS_ARCHIVE SET CNT=? WHERE (ID=?)");
+			_ps.setInt(1, 0);
+			_ps.setInt(2, flightID);
 			executeUpdate(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
