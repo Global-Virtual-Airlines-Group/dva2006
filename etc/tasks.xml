@@ -137,7 +137,7 @@
 	   <class>org.deltava.tasks.PositionArchiveTask</class>
 	   <time>
 	       <min>50</min>
-	       <hour>1,4,7,10,13,16,19,22,</hour>
+	       <hour>1,4,7,10,13,16,19,22</hour>
 	       <mday>*</mday>
 	       <month>*</month>
 	       <wday>*</wday>
