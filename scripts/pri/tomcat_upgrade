@@ -1,6 +1,6 @@
 #!/bin/bash
 # Tomcat upgrade script
-# (c) 2006, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+# (c) 2006, 2010, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 
 # Check the version argument is preset
 if [ "$1" == "" ]
@@ -52,12 +52,17 @@ mkdir conf/Catalina
 chown root:www conf/Catalina
 chmod 775 conf/Catalina
 
+# Copy over jsvc
+echo "Copying java service daemon"
+cp /usr/local/tomcat/bin/jsvc bin
+
 # Change permissions
 echo "Changing file permissions"
 chgrp www temp work
-chgrp gva lib
+chgrp users lib
 chmod 775 lib temp work
 
 # Switch to /usr/local
 cd /usr/local
 echo "Tomcat Upgrade complete"
+exit 0
