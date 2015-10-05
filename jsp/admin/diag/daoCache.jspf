@@ -45,7 +45,11 @@ golgotha.local.cacheUpdate = function(updateInterval) {
 			r.appendChild(golgotha.local.createCell(c.type));
 			r.appendChild(golgotha.local.createCell(c.size));
 			if (c.remote) {
-				var cc = r.appendChild(golgotha.local.createCell(c.latency + 'ms latency'));
+				var msg = c.latency + 'ms latency';
+				if (c.errors > 0)
+					msg += ' (' + c.errors + ' errors)';
+
+				var cc = r.appendChild(golgotha.local.createCell(msg));
 				cc.setAttribute('colspan', '2');
 				r.appendChild(cc);
 			} else {
@@ -81,7 +85,7 @@ golgotha.local.cacheClear = function(id) {
 	xmlreq.open('POST', 'cacheclear.ws?id=' + id, true);
 	xmlreq.onreadystatechange = function() {
 		if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
-		console.log('Cleared ' + id + ' cache');
+		alert('Cleared "' + id + '" cache');
 		return true;
 	};
 	

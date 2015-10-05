@@ -6,7 +6,7 @@ import org.deltava.beans.ViewEntry;
 /**
  * A bean to store information about a cache.
  * @author Luke
- * @version 6.1
+ * @version 6.2
  * @since 2.6
  */
 
@@ -18,6 +18,7 @@ public class CacheInfo implements java.io.Serializable, ViewEntry, Comparable<Ca
 	private final long _reqs;
 	private final long _size;
 	private final long _capacity;
+	private final long _errors;
 	private final boolean _isRemote;
 
 	/**
@@ -34,6 +35,7 @@ public class CacheInfo implements java.io.Serializable, ViewEntry, Comparable<Ca
 		_size = c.size();
 		_capacity = c.getMaxSize();
 		_isRemote = (c instanceof MemcachedCache);
+		_errors = c.getErrors();
 	}
 
 	/**
@@ -50,6 +52,14 @@ public class CacheInfo implements java.io.Serializable, ViewEntry, Comparable<Ca
 	 */
 	public long getHits() {
 		return _hits;
+	}
+	
+	/**
+	 * Returns the number of cache errors. This is typically only used in remote caches.
+	 * @return the number of errors
+	 */
+	public long getErrors() {
+		return _errors;
 	}
 	
 	/**

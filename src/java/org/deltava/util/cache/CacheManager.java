@@ -11,7 +11,7 @@ import org.gvagroup.common.*;
 /**
  * A utility class to handle centralized cache registration and invalidation.
  * @author Luke
- * @version 6.1
+ * @version 6.2
  * @since 5.0
  */
 
@@ -38,8 +38,9 @@ public class CacheManager {
 		try {
 			_r.lock();
 			Collection<Map.Entry<String, Cache<?>>> entries = new ArrayList<>(_caches.entrySet());
-			Collection<CacheInfo> results = new ArrayList<CacheInfo>(entries.size() + 2);
+			List<CacheInfo> results = new ArrayList<CacheInfo>(entries.size() + 2);
 			entries.forEach(me -> results.add(new CacheInfo(me.getKey(), me.getValue())));
+			Collections.reverse(results);
 			return results;
 		} finally {
 			_r.unlock();

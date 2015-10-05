@@ -3,6 +3,8 @@ package org.deltava.util.cache;
 
 import java.io.InvalidClassException;
 
+import java.util.concurrent.atomic.LongAdder;
+
 import org.deltava.util.MemcachedUtils;
 
 /**
@@ -17,6 +19,7 @@ public class MemcachedCache<T extends Cacheable> extends Cache<T> {
 	private final String _bucket;
 	private final int _expiryTime;
 	private long _lastFlushTime;
+	private final LongAdder _errors = new LongAdder();
 	
 	/**
 	 * Creates a new Cache.
@@ -35,6 +38,15 @@ public class MemcachedCache<T extends Cacheable> extends Cache<T> {
 	private String createKey(Object key) {
 		StringBuilder buf = new StringBuilder(_bucket).append(':');
 		return buf.append(String.valueOf(key)).toString();
+	}
+	
+	/**
+	 * Returns the number of cache errors.
+	 * @return the number of errors
+	 */
+	@Override
+	public long getErrors() {
+		return _errors.longValue();
 	}
 
 	/**
@@ -90,9 +102,11 @@ public class MemcachedCache<T extends Cacheable> extends Cache<T> {
 			
 			return true;
 		} catch (InvalidClassException ice) {
+			_errors.increment();
 			MemcachedUtils.delete(mcKey);
 			return false;
 		} catch (Exception e) {
+			_errors.increment();
 			return false;
 		}
 	}
@@ -118,9 +132,11 @@ public class MemcachedCache<T extends Cacheable> extends Cache<T> {
 			hit();
 			return data;
 		} catch (InvalidClassException ice) {
+			_errors.increment();
 			MemcachedUtils.delete(mcKey);
 			return null;
 		} catch (Exception e) {
+			_errors.increment();
 			return null;	
 		}
 	}
@@ -158,6 +174,7 @@ public class MemcachedCache<T extends Cacheable> extends Cache<T> {
 			MemcachedUtils.get(MemcachedUtils.LATENCY_KEY, 3500);
 			return (int)(System.nanoTime() - startTime);
 		} catch (Exception e) {
+			_errors.increment();
 			return 0;
 		}
 	}

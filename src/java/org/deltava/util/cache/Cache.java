@@ -148,6 +148,14 @@ public abstract class Cache<T extends Cacheable> {
 	}
 	
 	/**
+	 * Returns the total number of cache errors.
+	 * @return the number of errors
+	 */
+	public long getErrors() {
+		return 0;
+	}
+	
+	/**
 	 * Adds an entry to the cache. Subclasses need to implement this method
 	 * to handle cache additions, the public method forces an overflow check. 
 	 * @param entry the entry to add

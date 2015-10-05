@@ -43,6 +43,7 @@ public class CacheInfoService extends WebService {
 			co.put("reqs", c.getRequests());
 			co.put("hits", c.getHits());
 			co.put("size", c.getSize());
+			co.put("errors",c.getErrors());
 			if (c.getRequests() > 0) co.put("hitRate", StringUtils.format(c.getHits() * 100d / c.getRequests(), fmt)  + "%");
 			if (!c.getIsRemote()) {
 				co.put("maxSize", c.getMaxSize());
