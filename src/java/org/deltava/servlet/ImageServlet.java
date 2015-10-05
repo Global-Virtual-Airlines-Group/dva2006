@@ -26,7 +26,7 @@ import org.gvagroup.jdbc.*;
 /**
  * The Image serving Servlet. This serves all database-contained images.
  * @author Luke
- * @version 4.2
+ * @version 6.2
  * @since 1.0
  */
 
@@ -205,6 +205,9 @@ public class ImageServlet extends BasicAuthServlet {
 					
 					// Serve the file
 					IssueComment iFile = idao.getFile(imgID);
+					if (iFile == null)
+						rsp.sendError(HttpServletResponse.SC_NOT_FOUND);
+					
 					imgBuffer = iFile.getBuffer();
 					rsp.setHeader("Content-disposition", "attachment; filename=" + iFile.getName());
 					rsp.setHeader("Cache-Control", "private");
