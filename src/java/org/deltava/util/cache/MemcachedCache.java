@@ -1,12 +1,14 @@
 // Copyright 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
+import java.io.InvalidClassException;
+
 import org.deltava.util.MemcachedUtils;
 
 /**
  * An object cache using memcached as its backing store.
  * @author Luke
- * @version 6.1
+ * @version 6.2
  * @since 6.1
  */
 
@@ -77,8 +79,8 @@ public class MemcachedCache<T extends Cacheable> extends Cache<T> {
 	@Override
 	@SuppressWarnings("unchecked")
 	public boolean contains(Object key) {
+		String mcKey = createKey(key);
 		try {
-			String mcKey = createKey(key);
 			MemcachedCacheEntry<T> e = (MemcachedCacheEntry<T>) MemcachedUtils.get(mcKey, 100);
 			if ((e != null) && (e.getCreatedOn() < _lastFlushTime)) {
 				MemcachedUtils.delete(mcKey);
@@ -87,6 +89,9 @@ public class MemcachedCache<T extends Cacheable> extends Cache<T> {
 				return false;
 			
 			return true;
+		} catch (InvalidClassException ice) {
+			MemcachedUtils.delete(mcKey);
+			return false;
 		} catch (Exception e) {
 			return false;
 		}
@@ -101,16 +106,20 @@ public class MemcachedCache<T extends Cacheable> extends Cache<T> {
 	@SuppressWarnings("unchecked")
 	public T get(Object key) {
 		request();
+		String mcKey = createKey(key);
 		try {
-			String mcKey = createKey(key);
 			MemcachedCacheEntry<T> e = (MemcachedCacheEntry<T>) MemcachedUtils.get(mcKey, 125);
 			if (e == null)
 				return null;
 			else if (e.getCreatedOn() < _lastFlushTime)
 				MemcachedUtils.delete(mcKey);
 			
+			T data = e.get();
 			hit();
-			return e.get();
+			return data;
+		} catch (InvalidClassException ice) {
+			MemcachedUtils.delete(mcKey);
+			return null;
 		} catch (Exception e) {
 			return null;	
 		}
@@ -146,7 +155,7 @@ public class MemcachedCache<T extends Cacheable> extends Cache<T> {
 	public int getMaxSize() {
 		try {
 			long startTime = System.nanoTime();
-			MemcachedUtils.get(MemcachedUtils.LATENCY_KEY, 4500);
+			MemcachedUtils.get(MemcachedUtils.LATENCY_KEY, 3500);
 			return (int)(System.nanoTime() - startTime);
 		} catch (Exception e) {
 			return 0;
