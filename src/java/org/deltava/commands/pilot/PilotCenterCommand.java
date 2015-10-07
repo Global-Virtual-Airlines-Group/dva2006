@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display the Pilot Center.
  * @author Luke
- * @version 6.1
+ * @version 6.2
  * @since 1.0
  */
 
@@ -121,8 +121,8 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			// Check if we can request a backout charter
 			if (lastFlight != null) {
 				GetSchedule schdao = new GetSchedule(con);
-				FlightTime ft = schdao.getFlightTime(lastFlight);
-				boolean rCharter = ((ft.getFlightTime() > 0) && !lastFlight.hasAttribute(FlightReport.ATTR_ROUTEWARN)); 
+				int outFlightCount = schdao.getFlights(lastFlight.getAirportA()).size();
+				boolean rCharter = ((outFlightCount == 0) && !lastFlight.hasAttribute(FlightReport.ATTR_ROUTEWARN)); 
 				ctx.setAttribute("needReturnCharter", Boolean.valueOf(rCharter), REQUEST);
 			}
 			
