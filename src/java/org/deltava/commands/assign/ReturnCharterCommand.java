@@ -1,4 +1,4 @@
-// Copyright 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to pre-Approve a return flight charter when no schulede entry exists. 
  * @author Luke
- * @version 5.2
+ * @version 6.2
  * @since 5.2
  */
 public class ReturnCharterCommand extends AbstractCommand {
@@ -59,8 +59,8 @@ public class ReturnCharterCommand extends AbstractCommand {
 			boolean hasFlight = true;
 			if (lf != null) {
 				GetSchedule sdao = new GetSchedule(con);
-				FlightTime ft = sdao.getFlightTime(lf);
-				hasFlight = (ft.getFlightTime() > 0);
+				int outFlightCount = sdao.getFlights(lf.getAirportA()).size();
+				hasFlight = (outFlightCount > 0);
 				ctx.setAttribute("hasFlight", Boolean.valueOf(hasFlight), REQUEST);
 			}
 			
