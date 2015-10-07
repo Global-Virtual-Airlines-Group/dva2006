@@ -133,7 +133,7 @@
 	</task>
 
 	<!-- Write position archive to file system -->
-	<task id="fsposarchive" enabled="false">
+	<task id="fsposarchive" enabled="true">
 	   <class>org.deltava.tasks.PositionArchiveTask</class>
 	   <time>
 	       <min>50</min>
