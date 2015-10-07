@@ -127,7 +127,8 @@ public class GetACARSPurge extends GetACARSData {
 	 */
 	public Collection<Integer> getDatabaseFlights() throws DAOException {
 		try {
-			prepareStatement("SELECT DISTINCT ID FROM acars.POS_ARCHIVE WHERE DATA IS NOT NULL");
+			prepareStatement("SELECT DISTINCT ID FROM acars.POS_ARCHIVE WHERE (CNT>?)");
+			_ps.setInt(1,  0);
 			Collection<Integer> IDs = new LinkedHashSet<Integer>();
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next())
