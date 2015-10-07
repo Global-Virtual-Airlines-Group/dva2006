@@ -537,6 +537,7 @@
 		<files>/home/www/userfiles</files>
 		<httplog>/var/log/www</httplog>
 		<newsletter>/home/www/nws</newsletter>
+		<archive>/home/www/pos_archive</archive>
 		<video>
             <live>/home/www/video</live>
             <stage>/home/video</stage>
