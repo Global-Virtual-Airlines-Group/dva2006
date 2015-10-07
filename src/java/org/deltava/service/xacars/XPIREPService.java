@@ -1,4 +1,4 @@
-// Copyright 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.xacars;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * The XACARS Flight Report Web Service. 
  * @author Luke
- * @version 5.4
+ * @version 6.2
  * @since 4.1
  */
 
@@ -216,7 +216,7 @@ public class XPIREPService extends XAService {
 			
 			// Check the schedule database and check the route pair
 			FlightTime avgHours = sdao.getFlightTime(xfr);
-			if (avgHours.getFlightTime() == 0)
+			if (!avgHours.hasCurrent() && !avgHours.hasHistoric())
 				xfr.setAttribute(FlightReport.ATTR_ROUTEWARN, true);
 			else {
 				int minHours = (int) ((avgHours.getFlightTime() * 0.75) - (SystemData.getDouble("users.pirep.pad_hours", 0) * 10));
