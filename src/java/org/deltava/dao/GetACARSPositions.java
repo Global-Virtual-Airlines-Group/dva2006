@@ -167,7 +167,7 @@ public class GetACARSPositions extends GetACARSData {
 		if (f.exists()) {
 			Collection<? extends RouteEntry> entries = null;
 			try (InputStream in = new FileInputStream(f)) {
-				try (InputStream gi = new GZIPInputStream(in, (int) (f.length() + 512))) {
+				try (InputStream gi = new GZIPInputStream(in, 8192)) {
 					GetSerializedPosition psdao = new GetSerializedPosition(in);	
 					entries = psdao.read();
 				}

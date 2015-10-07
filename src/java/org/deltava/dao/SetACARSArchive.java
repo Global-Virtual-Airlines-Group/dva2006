@@ -38,10 +38,13 @@ public class SetACARSArchive extends DAO {
 			
 			// Write serialized data
 			if (positions.size() > 0) {
-				prepareStatementWithoutLimits("REPLACE INTO acars.POS_ARCHIVE (ID, CNT, ARCHIVED, DATA) "
-					+ "VALUES (?, ?, NOW(), ?)");
+				prepareStatementWithoutLimits("REPLACE INTO acars.archive (ID, CNT, ARCHIVED) VALUES (?, ?, NOW())");
 				_ps.setInt(1, flightID);
 				_ps.setInt(2, positions.size());
+				executeUpdate(1);
+				prepareStatementWithoutLimits("REPLACE INTO acars.POS_ARCHIVE (ID, CNT, ARCHIVED, DATA) VALUES (?, ?, NOW(), ?)");
+				_ps.setInt(1, flightID);
+				_ps.setInt(2, 0);
 				_ps.setBytes(3, out.toByteArray());
 				executeUpdate(1);
 			}
@@ -82,11 +85,17 @@ public class SetACARSArchive extends DAO {
 	 */
 	public void clear(int flightID) throws DAOException {
 		try {
+			startTransaction();
+			prepareStatementWithoutLimits("REPLACE INTO acars.ARCHIVE (SELECT ID, CNT, ARCHIVED FROM acars.POS_ARCHIVE WHERE (ID=?))");
+			_ps.setInt(1, flightID);
+			executeUpdate(0);
 			prepareStatementWithoutLimits("UPDATE acars.POS_ARCHIVE SET CNT=? WHERE (ID=?)");
 			_ps.setInt(1, 0);
 			_ps.setInt(2, flightID);
 			executeUpdate(0);
+			commitTransaction();
 		} catch (SQLException se) {
+			rollbackTransaction();
 			throw new DAOException(se);
 		}
 	}
