@@ -25,9 +25,8 @@
 You cannot request a Return Charter flight since you have not completed a flight at <content:airline />.<br />
 </c:when>
 <c:when test="${hasFlight}">
-There is currently a flight available between ${lastFlight.airportA.name} (<fmt:airport airport="${lastFlight.airportA}" />) and
-${lastFlight.airportD.name} (<fmt:airport airport="${lastFlight.airportD}" />) in the <content:airline /> Flight Schedule. You
-do not need to request a return Charter flight.<br />
+There is currently at least one flight available from ${lastFlight.airportA.name} (<fmt:airport airport="${lastFlight.airportA}" />) in
+ the <content:airline /> Flight Schedule. You do not need to request a return Charter flight.<br />
 </c:when>
 <c:when test="${rangeWarning}">
 You cannot request a Return Charter flight from ${lastFlight.airportA.name} (<fmt:airport airport="${lastFlight.airportA}" />) and 

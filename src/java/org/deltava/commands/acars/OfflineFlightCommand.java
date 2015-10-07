@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to allow users to submit Offline Flight Reports.
  * @author Luke
- * @version 6.0
+ * @version 6.2
  * @since 2.4
  */
 
@@ -338,7 +338,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 			FlightTime avgHours = sdao.getFlightTime(afr);
 			boolean isAssignment = (afr.getDatabaseID(DatabaseID.ASSIGN) != 0);
 			boolean isEvent = (afr.getDatabaseID(DatabaseID.EVENT) != 0);
-			if ((avgHours.getFlightTime() == 0) && !inf.isScheduleValidated() && !isAssignment && !isEvent)
+			if (!avgHours.hasHistoric() && !avgHours.hasCurrent() && !inf.isScheduleValidated() && !isAssignment && !isEvent)
 				afr.setAttribute(FlightReport.ATTR_ROUTEWARN, true);
 			else if (avgHours.getFlightTime() > 0) {
 				int minHours = (int) ((avgHours.getFlightTime() * 0.75) - (SystemData.getDouble("users.pirep.pad_hours", 0) * 10));
