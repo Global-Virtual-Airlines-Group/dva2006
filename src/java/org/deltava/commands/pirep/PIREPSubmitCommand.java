@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Fligt Report submissions.
  * @author Luke
- * @version 5.4
+ * @version 6.2
  * @since 1.0
  */
 
@@ -184,7 +184,7 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			// Check the schedule database and check the route pair
 			boolean isAssignment = (pirep.getDatabaseID(DatabaseID.ASSIGN) != 0);
 			FlightTime avgHours = sdao.getFlightTime(pirep);
-			if ((avgHours.getFlightTime() == 0) && (!isAcademy) && (!isAssignment)) {
+			if (!avgHours.hasCurrent() && !avgHours.hasHistoric() && !isAcademy && !isAssignment) {
 				pirep.setAttribute(FlightReport.ATTR_ROUTEWARN, true);
 				ctx.setAttribute("unknownRoute", Boolean.TRUE, REQUEST);
 			} else {
