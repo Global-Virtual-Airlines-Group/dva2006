@@ -15,6 +15,7 @@
 <content:css name="view" />
 <content:pics />
 <script type="text/javascript">
+golgotha = {local:{}};
 golgotha.local.sort = function() { return document.forms[0].submit(); };
 </script>
 </head>
