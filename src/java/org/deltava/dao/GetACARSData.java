@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.io.*;
@@ -19,7 +19,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * A Data Access Object to load ACARS information.
  * @author Luke
- * @version 5.2
+ * @version 6.2
  * @since 1.0
  */
 
@@ -249,7 +249,7 @@ public class GetACARSData extends DAO {
 			// Count the number of position records
 			String sql = null;
 			if (info.getArchived())
-				sql = "SELECT CNT FROM acars.POS_ARCHIVE WHERE (ID=?)";
+				sql = "SELECT CNT FROM acars.ARCHIVE WHERE (ID=?)";
 			else if (!info.isXACARS())
 				sql = "SELECT COUNT(*) FROM acars.POSITIONS WHERE (FLIGHT_ID=?)";
 			else
