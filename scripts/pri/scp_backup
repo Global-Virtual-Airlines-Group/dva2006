@@ -1,6 +1,6 @@
 #!/bin/bash
 # SCP database backup script
-# Copyright 2007, 2008, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+# Copyright 2007, 2008, 2009, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 #
 # To get automated SSH working, create an SSH key for the user and then copy id_rsa.pub to the
 # remote user's home directory ~/.ssh/authorized_keys
@@ -18,6 +18,7 @@ cd /home/backup
 rsync $OPTS cfg/*.tar.gz $USER@$1:cfg 
 rsync $OPTS db/*.bz2 $USER@$1:db
 rsync $OPTS sites/*.tar.gz $USER@$1:sites
+rsync $OPTS /home/www/pos_archive/* $USER@$1:archive
 
 # Backup logs via rsync
 rsync $OPTS logs/* $USER@$1:httplogs
