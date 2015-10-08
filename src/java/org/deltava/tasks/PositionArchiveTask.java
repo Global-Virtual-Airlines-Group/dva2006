@@ -41,7 +41,7 @@ public class PositionArchiveTask extends Task {
 			
 			// Get the IDs
 			GetACARSPurge pdao = new GetACARSPurge(con);
-			pdao.setQueryMax(2500);
+			pdao.setQueryMax(5000);
 			Collection<Integer> IDs = pdao.getDatabaseFlights();
 			
 			// Write each flight entry to the database
