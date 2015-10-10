@@ -1,7 +1,11 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
+import java.util.stream.Collectors;
+
+import javax.servlet.http.HttpSession;
+
 import java.sql.Connection;
 
 import org.deltava.beans.*;
@@ -17,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to build a Flight Assignment.
  * @author Luke
- * @version 4.1
+ * @version 6.2
  * @since 1.0
  */
 
@@ -33,9 +37,10 @@ public class BuildCommand extends AbstractCommand {
 
 		// Get the command results and set the default return operation
 		CommandResult result = ctx.getResult();
+		HttpSession s = ctx.getSession();
 
 		// If we're adding flights to the in-session assignment
-		List<?> results = (List<?>) ctx.getSession().getAttribute("fafResults");
+		List<?> results = (List<?>) s.getAttribute("fafResults");
 		Collection<String> ids = ctx.getParameters("addFA");
 		if ((ids == null) || (results == null)) {
 			result.setURL("findflight", null, 0);
@@ -54,10 +59,10 @@ public class BuildCommand extends AbstractCommand {
 		}
 
 		// Build the flight assignment and save in the session
+		AssignmentInfo info = (AssignmentInfo) s.getAttribute("buildAssign");
 		if (!fList.isEmpty()) {
 			// Get the first flight for the eq type
 			Flight ff = fList.get(0);
-			AssignmentInfo info = (AssignmentInfo) ctx.getSession().getAttribute("buildAssign");
 
 			// Create the assignment if it doesn't exist
 			if (info == null) {
@@ -100,6 +105,20 @@ public class BuildCommand extends AbstractCommand {
 		ScheduleSearchCriteria criteria = (ScheduleSearchCriteria) ctx.getSession().getAttribute("fafCriteria");
 		try {
 			Connection con = ctx.getConnection();
+			
+			// Get the equipment types
+			GetAircraft acdao = new GetAircraft(con);
+			ctx.setAttribute("allEQ", acdao.getAircraftTypes(), REQUEST);
+			
+			// If we have a leg, find the last one and update airline and src airport
+			if ((info != null) && (criteria != null)) {
+				AssignmentLeg lastLeg = null;
+				for (AssignmentLeg al : info.getAssignments())
+					lastLeg = al;
+		
+				criteria.setAirline(lastLeg.getAirline());
+				criteria.setAirportD(lastLeg.getAirportA());
+			}
 				
 			// Get departure/arrival airports
 			if (criteria != null) {
@@ -108,9 +127,6 @@ public class BuildCommand extends AbstractCommand {
 				ctx.setAttribute("airportsA", adao.getConnectingAirports(criteria.getAirportD(), true, null), REQUEST);
 			}
 				
-			// Get the equipment types
-			GetAircraft acdao = new GetAircraft(con);
-			ctx.setAttribute("allEQ", acdao.getAircraftTypes(), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
@@ -118,12 +134,7 @@ public class BuildCommand extends AbstractCommand {
 		}
 
 		// Get Airlines
-		Collection<Airline> airlines = new LinkedHashSet<Airline>(SystemData.getAirlines().values());
-		for (Iterator<Airline> i = airlines.iterator(); i.hasNext();) {
-			Airline al = i.next();
-			if (!al.getActive())
-				i.remove();
-		}
+		Collection<Airline> airlines = SystemData.getAirlines().values().stream().filter(Airline::getActive).collect(Collectors.toSet()); 
 
 		// Save airlines and combo variables for JSP
 		ctx.setAttribute("airlines", airlines, REQUEST);
