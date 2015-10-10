@@ -213,7 +213,6 @@ ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Clouds', disable
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Lo Jetstream'}, ljsl));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Hi Jetstream'}, hjsl));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Fronts', disabled:true, id:'selFronts'}, function() { return loaders.fr.getLayer(); }));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Lightning', disabled:true, id:'selLG'}, function() { return loaders.lg.getLayer(); }));
 ctls.push(new golgotha.maps.LayerClearControl(map));
 
 // Display the copyright notice and text boxes
