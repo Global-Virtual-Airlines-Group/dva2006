@@ -62,7 +62,12 @@ golgotha.ff.updateAirline = function(cb)
 var f = document.forms[0];
 var cfg = golgotha.airportLoad.config.clone();
 cfg.airline = golgotha.form.getCombo(cb);
-golgotha.airportLoad.changeAirline([f.airportD, f.airportA], cfg);
+golgotha.airportLoad.changeAirline([f.airportD], cfg);
+window.setTimeout(function() {
+	var cfg2 = cfg.clone();
+    cfg2.dst = true;
+    golgotha.airportLoad.changeAirline([f.airportA], cfg2);
+}, 250);
 return true;
 };
 
