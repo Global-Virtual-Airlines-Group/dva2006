@@ -41,7 +41,7 @@ public class PositionArchiveTask extends Task {
 			
 			// Get the IDs
 			GetACARSPurge pdao = new GetACARSPurge(con);
-			pdao.setQueryMax(5000);
+			pdao.setQueryMax(6500);
 			Collection<Integer> IDs = pdao.getDatabaseFlights();
 			
 			// Write each flight entry to the database
@@ -53,8 +53,10 @@ public class PositionArchiveTask extends Task {
 				File path = new File(SystemData.get("path.archive"), hash); path.mkdirs();
 				Collection<? extends RouteEntry> entries = prdao.getRouteEntries(ID.intValue(), true);
 				File dt = new File(path, Integer.toHexString(ID.intValue()) + ".dat");
-				if (dt.exists())
+				if (dt.exists() && (dt.length() > 0)) {
 					log.warn(dt.getAbsolutePath() + " already exists!");
+					continue;
+				}
 
 				// Write to the file system
 				try (OutputStream os = new FileOutputStream(dt)) {
