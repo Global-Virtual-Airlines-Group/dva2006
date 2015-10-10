@@ -246,7 +246,6 @@ ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Temperature', di
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Wind Speed', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('windspeed'); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Clouds', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('sat'); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Fronts', disabled:true, id:'selFronts'}, function() { return loaders.fr.getLayer(); }));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Lightning', disabled:true, id:'selLG'}, function() { return loaders.lg.getLayer(); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Low Jet'}, ljsl));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Jet Stream'}, jsl));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'High Jet'}, hjsl));
