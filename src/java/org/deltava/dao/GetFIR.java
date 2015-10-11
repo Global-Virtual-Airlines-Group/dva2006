@@ -17,7 +17,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load FIR data.
  * @author Luke
- * @version 6.1
+ * @version 6.2
  * @since 3.2
  */
 
@@ -26,8 +26,6 @@ public class GetFIR extends DAO {
 	private static final Cache<FIR> _cache = CacheManager.get(FIR.class, "FIRs");
 	private static final Cache<CacheableString> _idCache = CacheManager.get(CacheableString.class, "FIRIDs");
 	
-	private static final int SRID = 3587;
-
 	/**
 	 * Initializes the Data Access Object.
 	 * @param c the JDBC connection to use
@@ -144,11 +142,12 @@ public class GetFIR extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public FIR search(GeoLocation loc) throws DAOException {
-		String pt = "POINT(" + String.valueOf(loc.getLatitude()) + " " + String.valueOf(loc.getLongitude()) + ")";
+		String pt = formatLocation(loc);
+		//String pt = "POINT(" + String.valueOf(loc.getLatitude()) + " " + String.valueOf(loc.getLongitude()) + ")";
 		try {
-			prepareStatement("SELECT ID, OCEANIC FROM common.FIR WHERE ST_Contains(data, ST_PointFromText(?,?))");
+			prepareStatementWithoutLimits("SELECT ID, OCEANIC FROM common.FIR WHERE ST_Contains(data, ST_PointFromText(?,?))");
 			_ps.setString(1, pt);
-			_ps.setInt(2, SRID);
+			_ps.setInt(2, GEO_SRID);
 			
 			String id = null; boolean isOceanic = false;
 			try (ResultSet rs = _ps.executeQuery()) {
@@ -162,9 +161,9 @@ public class GetFIR extends DAO {
 			if (id != null)
 				return get(id, isOceanic);
 			
-			prepareStatement("SELECT ID, OCEANIC FROM common.FIR WHERE ST_Intersects(data, ST_PointFromText(?,?))");
+			prepareStatementWithoutLimits("SELECT ID, OCEANIC FROM common.FIR WHERE ST_Intersects(data, ST_PointFromText(?,?))");
 			_ps.setString(1, pt);
-			_ps.setInt(2, SRID);
+			_ps.setInt(2, GEO_SRID);
 			try (ResultSet rs = _ps.executeQuery()) {
 				if (rs.next()) {
 					id = rs.getString(1);
