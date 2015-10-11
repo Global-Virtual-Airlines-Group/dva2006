@@ -29,9 +29,9 @@ golgotha.form.validate({f:f.version, min:1, t:'Revision Number'});
 golgotha.form.validate({f:f.desc, l:10, t:'Description'});
 golgotha.form.validate({f:f.file, ext:['pdf'], t:'Uploaded Manual', empty:${!empty entry}});
 <c:if test="${empty entry}">
-var fileParts = form.file.value.split('\\');
+var fileParts = f.file.value.split('\\');
 var fName = fileParts[fileParts.length - 1].toLowerCase();
-if (manualNames.indexOf(fName) != -1) {
+if (golgotha.local.manualNames.indexOf(fName) != -1) {
 	alert('A Manual named ' + fName + ' already exists.');
 	form.file.focus();
 	return false;
@@ -60,7 +60,7 @@ if ((updatedField == f.showRegister) && (f.security.selectedIndex > 0))
 return true;
 };
 <c:if test="${empty entry}">
-<fmt:jsarray var="manualNames" items="${manualNames}" /></c:if>
+<fmt:jsarray var="golgotha.local.manualNames" items="${manualNames}" /></c:if>
 </script>
 </head>
 <content:copyright visible="false" />
