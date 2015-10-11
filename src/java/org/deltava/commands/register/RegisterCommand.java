@@ -88,9 +88,15 @@ public class RegisterCommand extends AbstractCommand {
 				GetIPLocation ipdao = new GetIPLocation(con);
 				IPBlock ip = ipdao.get(remoteAddr);
 				if (ip != null) {
-					List<Airport> aps = new ArrayList<Airport>(SystemData.getAirports().values());
-					Collections.sort(aps, new GeoComparator(ip));
-					ctx.setAttribute("myTZ", aps.get(0).getTZ(), REQUEST);
+					GetTimeZone tzdao = new GetTimeZone(con);
+					TZInfo tz = tzdao.locate(ip);
+					if (tz == null) {
+						List<Airport> aps = new ArrayList<Airport>(SystemData.getAirports().values());
+						Collections.sort(aps, new GeoComparator(ip));
+						tz = aps.get(0).getTZ();
+					}
+						
+					ctx.setAttribute("myTZ", tz, REQUEST);
 					ctx.setAttribute("ipInfo", ip, REQUEST);
 				}
 				
