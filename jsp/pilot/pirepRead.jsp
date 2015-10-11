@@ -357,7 +357,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 </c:if> </c:if>
 <content:filter roles="PIREP,HR,Developer,Operations">
 <c:if test="${isACARS}">
- <el:button label="RUNWAY CHOICES" key="R" onClick="void showRunwayChoices()" />
+ <el:button label="RUNWAY CHOICES" key="R" onClick="void golgotha.local.showRunwayChoices()" />
  <el:cmdbutton url="gaterecalc" link="${pirep}" label="LOAD GATES" />
 </c:if>
 </content:filter>
