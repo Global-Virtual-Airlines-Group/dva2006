@@ -4,9 +4,11 @@ package org.deltava.dao;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
+import java.util.zip.GZIPOutputStream;
 
 import org.deltava.beans.acars.RouteEntry;
 import org.deltava.dao.file.SetSerializedPosition;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to write to the ACARS position archive.
@@ -31,23 +33,8 @@ public class SetACARSArchive extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void archive(int flightID, Collection<? extends RouteEntry> positions) throws DAOException {
-		try (ByteArrayOutputStream out = new ByteArrayOutputStream(20480)) {
-			SetSerializedPosition psdao = new SetSerializedPosition(out);
-			psdao.archivePositions(flightID, positions);
+		try {
 			startTransaction();
-			
-			// Write serialized data
-			if (positions.size() > 0) {
-				prepareStatementWithoutLimits("REPLACE INTO acars.ARCHIVE (ID, CNT, ARCHIVED) VALUES (?, ?, NOW())");
-				_ps.setInt(1, flightID);
-				_ps.setInt(2, positions.size());
-				executeUpdate(1);
-				prepareStatementWithoutLimits("REPLACE INTO acars.POS_ARCHIVE (ID, CNT, ARCHIVED, DATA) VALUES (?, ?, NOW(), ?)");
-				_ps.setInt(1, flightID);
-				_ps.setInt(2, 0);
-				_ps.setBytes(3, out.toByteArray());
-				executeUpdate(1);
-			}
 			
 			// Delete the existing flight data
 			prepareStatementWithoutLimits("DELETE FROM acars.POSITIONS WHERE (FLIGHT_ID=?)");
@@ -70,6 +57,26 @@ public class SetACARSArchive extends DAO {
 			_ps.setBoolean(2, true);
 			_ps.setInt(3, flightID);
 			executeUpdate(0);
+
+			// Write the serialized data
+			if (positions.size() > 0) {
+				prepareStatementWithoutLimits("REPLACE INTO acars.ARCHIVE (ID, CNT, ARCHIVED) VALUES (?, ?, NOW())");
+				_ps.setInt(1, flightID);
+				_ps.setInt(2, positions.size());
+				executeUpdate(1);
+				
+				String hash = Integer.toHexString(flightID % 2048);
+				File path = new File(SystemData.get("path.archive"), hash); path.mkdirs();
+				File dt = new File(path, Integer.toHexString(flightID) + ".dat");
+				
+				// Write to the file system
+				try (OutputStream os = new FileOutputStream(dt)) {
+					try (OutputStream bos = new GZIPOutputStream(os, 8192)) {
+						SetSerializedPosition psdao = new SetSerializedPosition(bos);
+						psdao.archivePositions(flightID, positions);
+					}
+				}
+			}
 			
 			commitTransaction();
 		} catch (SQLException | IOException se) {
