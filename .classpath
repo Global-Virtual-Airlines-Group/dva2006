@@ -28,6 +28,8 @@
 	<classpathentry kind="lib" path="lib/deploy/spymemcached-2.12.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-codec-1.10.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jts-1.8.jar"/>
+	<classpathentry kind="lib" path="lib/shapefilereader-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/jdbf-1.2.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/deploy/jstl-1.2.3.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-1.96.jar"/>
