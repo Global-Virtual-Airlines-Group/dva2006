@@ -118,6 +118,7 @@ public class BuildCommand extends AbstractCommand {
 		
 				criteria.setAirline(lastLeg.getAirline());
 				criteria.setAirportD(lastLeg.getAirportA());
+				results.clear();
 			}
 				
 			// Get departure/arrival airports
@@ -126,7 +127,6 @@ public class BuildCommand extends AbstractCommand {
 				ctx.setAttribute("airports", adao.getOriginAirports(criteria.getAirline()), REQUEST);
 				ctx.setAttribute("airportsA", adao.getConnectingAirports(criteria.getAirportD(), true, null), REQUEST);
 			}
-				
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
