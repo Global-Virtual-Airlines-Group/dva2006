@@ -7,12 +7,14 @@ import java.util.concurrent.atomic.LongAdder;
 
 import org.apache.log4j.Logger;
 
+import org.deltava.beans.GeoLocation;
+
 import org.deltava.util.CalendarUtils;
 
 /**
  * A JDBC Data Access Object. DAOs are used to read and write persistent data to JDBC data sources.
  * @author Luke
- * @version 6.0
+ * @version 6.2
  * @since 1.0
  */
 
@@ -44,6 +46,11 @@ public abstract class DAO {
 	 * A prepared statement that can be used to perform SQL queries.
 	 */
 	protected transient PreparedStatement _ps;
+	
+	/**
+	 * The SRID used for geolocation queries.
+	 */
+	protected static final int GEO_SRID = 3587;
 
 	/**
 	 * Creates a Data Access Object with access to a particular connection. <i>If the autoCommit property for the JDBC
@@ -79,6 +86,15 @@ public abstract class DAO {
 			cld.add(Calendar.HOUR, 12);
 
 		return cld.getTime();
+	}
+	
+	/**
+	 * Converts a geographic location into a MySQL WKT formatted point.
+	 * @param loc the GeoLocation
+	 * @return the WKT point
+	 */
+	protected static String formatLocation(GeoLocation loc) {
+		return String.format("POINT(%1$,.4f %2$,.4f)", new Double(loc.getLatitude()), new Double(loc.getLongitude()));
 	}
 
 	/**
