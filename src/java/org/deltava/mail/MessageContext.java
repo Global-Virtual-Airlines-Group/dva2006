@@ -269,7 +269,7 @@ public class MessageContext {
         }
         
         // If we have a recipient that supports formatting, do so
-        if (_recipient instanceof FormattedEMailRecipient) {
+        if ((objValue != null) && (_recipient instanceof FormattedEMailRecipient)) {
         	FormattedEMailRecipient to = (FormattedEMailRecipient) _recipient;
         	switch (objValue.getClass().getSimpleName()) {
         	case "Long":
