@@ -21,7 +21,7 @@ rsync $OPTS sites/*.tar.gz $USER@$1:sites
 rsync $OPTS archive/* $USER@$1:archive
 
 # Backup logs via rsync
-rsync $OPTS logs/* $USER@$1:httplogs
+rsync $OPTS httplogs/* $USER@$1:httplogs
 rsync $OPTS --exclude=svn.revision_base svn $USER@$1:
 
 # Backup mail
