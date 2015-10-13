@@ -62,6 +62,32 @@ public class GetACARSPositions extends GetACARSData {
 	public List<GeoLocation> getRouteEntries(int flightID, boolean includeOnGround, boolean isArchived) throws DAOException {
 		return isArchived ? getArchivedEntries(flightID, includeOnGround) : getLiveEntries(flightID, includeOnGround);
 	}
+
+	/**
+	 * Retrieves raw serialized position data from the database.
+	 * @param flightID the ACARS flight ID
+	 * @return a byte array with the serialized data, or null if not found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	@Deprecated
+	public byte[] getRawArchive(int flightID) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("SELECT DATA FROM acars.POS_ARCHIVE WHERE (ID=?) LIMIT 1");
+			_ps.setInt(1, flightID);
+
+			// Load the data
+			byte[] data = null;
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next())
+					data = rs.getBytes(1);
+			}
+
+			_ps.close();
+			return data;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
 	
 	private List<GeoLocation> getLiveEntries(int flightID, boolean includeOnGround) throws DAOException {
 		try {
@@ -182,43 +208,32 @@ public class GetACARSPositions extends GetACARSData {
 				}
 
 				return results;
-			} catch (IOException ie) {
-				log.warn("Error reading " + f.getAbsolutePath() + " - " + ie.getMessage());
+			} catch (DAOException | IOException xe) {
+				log.warn("Error reading " + f.getAbsolutePath() + " - " + xe.getMessage());
 			}
 		}
 		
-		try {
-			prepareStatementWithoutLimits("SELECT DATA FROM acars.POS_ARCHIVE WHERE (ID=?) LIMIT 1");
-			_ps.setInt(1, flightID);
-			
-			// Load the data
-			InputStream in = null;
-			try (ResultSet rs = _ps.executeQuery()) {
-				if (rs.next())
-					in = new ByteArrayInputStream(rs.getBytes(1));
-			}
-			
-			_ps.close();
-			if (in == null)
-				return Collections.emptyList();
-			
-			// Deserialize and validate
-			GetSerializedPosition psdao = new GetSerializedPosition(in);
-			Collection<? extends RouteEntry> entries = psdao.read();
+		// Load from the database
+		byte[] data = getRawArchive(flightID);
+		if (data == null)
+			return Collections.emptyList();
 
-			// Deserialize
-			List<GeoLocation> results = new ArrayList<GeoLocation>();
+		// Deserialize and validate
+		List<GeoLocation> results = new ArrayList<GeoLocation>();
+		try (InputStream is = new ByteArrayInputStream(data)) {
+			GetSerializedPosition psdao = new GetSerializedPosition(is);
+			Collection<? extends RouteEntry> entries = psdao.read();
 			for (RouteEntry entry : entries) {
 				if (entry.isFlagSet(FLAG_ONGROUND) && !entry.isFlagSet(FLAG_TOUCHDOWN) && !includeOnGround)
 					results.add(new GeoPosition(entry));
 				else
 					results.add(entry);
 			}
-			
-			return results;
-		} catch (SQLException se) {
-			throw new DAOException(se);
+		} catch (IOException ie) {
+			throw new DAOException(ie);
 		}
+
+		return results;
 	}
 
 	/**

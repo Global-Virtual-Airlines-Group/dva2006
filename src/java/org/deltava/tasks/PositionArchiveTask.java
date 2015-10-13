@@ -6,10 +6,8 @@ import java.util.Collection;
 import java.util.zip.GZIPOutputStream;
 import java.sql.Connection;
 
-import org.deltava.beans.acars.RouteEntry;
 
 import org.deltava.dao.*;
-import org.deltava.dao.file.SetSerializedPosition;
 import org.deltava.taskman.*;
 
 import org.deltava.util.system.SystemData;
@@ -51,7 +49,7 @@ public class PositionArchiveTask extends Task {
 			for (Integer ID : IDs) {
 				String hash = Integer.toHexString(ID.intValue() % 2048);
 				File path = new File(SystemData.get("path.archive"), hash); path.mkdirs();
-				Collection<? extends RouteEntry> entries = prdao.getRouteEntries(ID.intValue(), true);
+				byte[] data = prdao.getRawArchive(ID.intValue());
 				File dt = new File(path, Integer.toHexString(ID.intValue()) + ".dat");
 				if (dt.exists() && (dt.length() > 0)) {
 					log.warn(dt.getAbsolutePath() + " already exists!");
@@ -61,8 +59,7 @@ public class PositionArchiveTask extends Task {
 				// Write to the file system
 				try (OutputStream os = new FileOutputStream(dt)) {
 					try (OutputStream bos = new GZIPOutputStream(os, 8192)) {
-						SetSerializedPosition pwdao = new SetSerializedPosition(bos);
-						pwdao.archivePositions(ID.intValue(), entries);	
+						bos.write(data);
 					}
 					
 					awdao.clear(ID.intValue());
