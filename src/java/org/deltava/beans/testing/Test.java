@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import java.util.Date;
@@ -9,7 +9,7 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * An class to implement commonalities between user examinations and flight videos.
  * @author Luke
- * @version 5.0
+ * @version 6.2
  * @since 1.0
  */
 
@@ -73,16 +73,7 @@ public abstract class Test extends DatabaseBean implements AuthoredBean, ViewEnt
         return _lastName;
     }
     
-    /**
-     * Returns the Pilot's Database ID. This corresponds to the key in the <i>PILOTS</i> for the entry of the Pilot.
-     * @return the database ID
-     * @see Test#setPilotID(int)
-     */
-    @Deprecated
-    public int getPilotID() {
-        return _pilotID;
-    }
-    
+    @Override
     public int getAuthorID() {
     	return _pilotID;
     }
@@ -211,19 +202,7 @@ public abstract class Test extends DatabaseBean implements AuthoredBean, ViewEnt
         _lastName = name.trim();
     }
     
-    /**
-     * Updates the database ID for the Pilot. <i>This will typically be called by a DAO</i>.
-     * @param id the new database ID
-     * @throws IllegalArgumentException if id is zero or negative
-     * @see Test#getPilotID()
-     * @see DatabaseBean#validateID(int, int)
-     */
-    @Deprecated
-    public void setPilotID(int id) {
-        validateID(_pilotID, id);
-        _pilotID = id;
-    }
-    
+    @Override
     public void setAuthorID(int id) {
         validateID(_pilotID, id);
         _pilotID = id;

@@ -1,16 +1,13 @@
-// Copyright 2009, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2011, 2012, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 
-import org.deltava.beans.GeospaceLocation;
 import org.deltava.beans.flight.ILSCategory;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.wx.*;
-
-import org.deltava.comparators.GeoComparator;
 
 import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
@@ -18,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load weather data from the database.
  * @author Luke
- * @version 5.2
+ * @version 6.2
  * @since 2.7
  */
 
@@ -169,39 +166,6 @@ public class GetWeather extends DAO {
 			
 			_ps.close();
 			return results;
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-	
-	/**
-	 * Retrieves the winds for a particular location.
-	 * @param loc the GeospaceLocation
-	 * @return the closest WindData data
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	@Deprecated
-	public WindData getWinds(GeospaceLocation loc) throws DAOException {
-		PressureLevel lvl = PressureLevel.getClosest(loc.getAltitude());
-		try {
-			prepareStatement("SELECT * FROM common.WINDS WHERE (MB=?) AND (LAT>?) AND (LAT<?) AND (LNG>?) AND (LNG<?)");
-			_ps.setInt(1, lvl.getPressure());
-			_ps.setDouble(2, loc.getLatitude() - 1.1);
-			_ps.setDouble(3, loc.getLatitude() + 1.1);
-			_ps.setDouble(4, loc.getLongitude() - 1.1);
-			_ps.setDouble(5, loc.getLongitude() + 1.1);
-			
-			SortedSet<WindData> data = new TreeSet<WindData>(new GeoComparator(loc));
-			try (ResultSet rs = _ps.executeQuery()) {
-				while (rs.next()) {
-					WindData wd = new WindData(lvl, rs.getDouble(1), rs.getDouble(2));
-					wd.setAltitude(rs.getInt(3));
-					data.add(wd);
-				}
-			}
-			
-			_ps.close();
-			return data.isEmpty() ? null : data.first();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
