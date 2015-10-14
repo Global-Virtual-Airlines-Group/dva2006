@@ -28,8 +28,7 @@ rsync $OPTS --exclude=svn.revision_base svn $USER@$1:
 rsync $OPTS mail/* $USER@$1:mail
 
 # Backup library
-cd /home/www/library
-rsync $OPTS ./* $USER@$1:library
+rsync $OPTS library/* $USER@$1:library
 
 # Exit with success
 exit 0
