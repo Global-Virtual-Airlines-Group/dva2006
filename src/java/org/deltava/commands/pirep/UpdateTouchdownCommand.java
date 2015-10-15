@@ -1,7 +1,10 @@
-// Copyright 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
+import java.io.*;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.zip.GZIPInputStream;
 import java.sql.Connection;
 
 import org.apache.log4j.Logger;
@@ -12,15 +15,18 @@ import org.deltava.beans.schedule.GeoPosition;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+import org.deltava.dao.file.GetSerializedPosition;
 
 import org.deltava.security.command.PIREPAccessControl;
 
 import org.deltava.util.system.SystemData;
 
+import org.gvagroup.acars.ACARSFlags;
+
 /**
  * A Web Site Command to recalculate takeoff and touchdown points. 
  * @author Luke
- * @version 4.2
+ * @version 6.2
  * @since 3.1
  */
 
@@ -58,8 +64,20 @@ public class UpdateTouchdownCommand extends AbstractCommand {
 				throw securityException("Cannot modify takeoff/touchdown points");
 			
 			// Load the takeoff/touchdown data
-			pirepID = afr.getID();
-			List<? extends RouteEntry> tdEntries = fddao.getTakeoffLanding(info.getID(), info.getArchived());
+			pirepID = afr.getID(); List<? extends RouteEntry> tdEntries = null;
+			if (!info.getArchived())
+				tdEntries = fddao.getTakeoffLanding(info.getID());
+			else {
+				try (InputStream in = new FileInputStream(ArchiveHelper.getFile(info.getID()))) {
+					try (InputStream gi = new GZIPInputStream(in, 8192)) {
+						GetSerializedPosition psdao = new GetSerializedPosition(gi);
+						tdEntries = psdao.read().stream().filter(re -> re.isFlagSet(ACARSFlags.FLAG_TOUCHDOWN)).collect(Collectors.toList());
+					}
+				} catch (IOException ie) {
+					throw new DAOException(ie);
+				}
+			}
+			
 			if (tdEntries.size() > 2) {
 				int ofs = 0;
 				ACARSRouteEntry entry = (ACARSRouteEntry) tdEntries.get(0);

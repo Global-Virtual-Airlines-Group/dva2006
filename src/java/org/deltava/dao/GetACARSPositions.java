@@ -6,16 +6,14 @@ import static org.gvagroup.acars.ACARSFlags.*;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
-import java.util.zip.GZIPInputStream;
+import java.util.zip.*;
 
-import org.apache.log4j.Logger;
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.schedule.GeoPosition;
 import org.deltava.beans.servinfo.*;
 
 import org.deltava.dao.file.GetSerializedPosition;
-import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to load ACARS position data.
@@ -26,8 +24,6 @@ import org.deltava.util.system.SystemData;
 
 public class GetACARSPositions extends GetACARSData {
 	
-	private static final Logger log = Logger.getLogger(GetACARSPositions.class);
-
 	/**
 	 * Initializes the Data Access Object.
 	 * @param c the JDBC connection to use
@@ -61,32 +57,6 @@ public class GetACARSPositions extends GetACARSData {
 	 */
 	public List<GeoLocation> getRouteEntries(int flightID, boolean includeOnGround, boolean isArchived) throws DAOException {
 		return isArchived ? getArchivedEntries(flightID, includeOnGround) : getLiveEntries(flightID, includeOnGround);
-	}
-
-	/**
-	 * Retrieves raw serialized position data from the database.
-	 * @param flightID the ACARS flight ID
-	 * @return a byte array with the serialized data, or null if not found
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	@Deprecated
-	public byte[] getRawArchive(int flightID) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT DATA FROM acars.POS_ARCHIVE WHERE (ID=?) LIMIT 1");
-			_ps.setInt(1, flightID);
-
-			// Load the data
-			byte[] data = null;
-			try (ResultSet rs = _ps.executeQuery()) {
-				if (rs.next())
-					data = rs.getBytes(1);
-			}
-
-			_ps.close();
-			return data;
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
 	}
 	
 	private List<GeoLocation> getLiveEntries(int flightID, boolean includeOnGround) throws DAOException {
@@ -186,42 +156,41 @@ public class GetACARSPositions extends GetACARSData {
 	
 	private List<GeoLocation> getArchivedEntries(int flightID, boolean includeOnGround) throws DAOException {
 		
-		// Load from file system if present
-		String hash = Integer.toHexString(flightID % 2048);
-		File path = new File(SystemData.get("path.archive"), hash);
-		File f = new File(path, Integer.toHexString(flightID) + ".dat");
-		if (f.exists()) {
-			Collection<? extends RouteEntry> entries = null;
-			try (InputStream in = new FileInputStream(f)) {
-				try (InputStream gi = new GZIPInputStream(in, 8192)) {
-					GetSerializedPosition psdao = new GetSerializedPosition(gi);	
-					entries = psdao.read();
+		// Get archive metadata and file pointer
+		ArchiveMetadata md = getArchiveInfo(flightID);
+		File f = ArchiveHelper.getFile(flightID);
+		if ((md == null) || !f.exists())
+			return Collections.emptyList();
+		
+		// Validate size
+		if ((md.getSize() > 0) && (f.length() != md.getSize()))
+			throw new DAOException("Flight " + flightID + " Invalid file size, expected " + md.getSize() + ", got " + f.length() + " bytes");
+		
+		// Validate CRC-32
+		byte[] rawData = null; CRC32 crc = new CRC32();
+		try (InputStream is = new FileInputStream(f)) {
+			try (ByteArrayOutputStream out = new ByteArrayOutputStream(8192)) {
+				byte[] buffer = new byte[8192];
+				int bytesRead = is.read(buffer);
+				while (bytesRead > 0) {
+					crc.update(buffer, 0, bytesRead);
+					out.write(buffer, 0, bytesRead);
+					bytesRead = is.read(buffer);
 				}
 				
-				// Deserialize
-				List<GeoLocation> results = new ArrayList<GeoLocation>();
-				for (RouteEntry entry : entries) {
-					if (entry.isFlagSet(FLAG_ONGROUND) && !entry.isFlagSet(FLAG_TOUCHDOWN) && !includeOnGround)
-						results.add(new GeoPosition(entry));
-					else
-						results.add(entry);
-				}
-
-				return results;
-			} catch (DAOException | IOException xe) {
-				log.warn("Error reading " + f.getAbsolutePath() + " - " + xe.getMessage());
+				rawData = out.toByteArray();
 			}
+		} catch (IOException ie) {
+			throw new DAOException(ie);
 		}
 		
-		// Load from the database
-		byte[] data = getRawArchive(flightID);
-		if (data == null)
-			return Collections.emptyList();
-
+		if ((md.getCRC32() != 0) && (md.getCRC32() != crc.getValue()))
+			throw new DAOException("Flight " + flightID + " Invalid CRC32, expected " + Long.toHexString(md.getCRC32()) + ", got " + Long.toHexString(crc.getValue()));
+		
 		// Deserialize and validate
 		List<GeoLocation> results = new ArrayList<GeoLocation>();
-		try (InputStream is = new ByteArrayInputStream(data)) {
-			GetSerializedPosition psdao = new GetSerializedPosition(is);
+		try (GZIPInputStream gi = new GZIPInputStream(new ByteArrayInputStream(rawData))) {
+			GetSerializedPosition psdao = new GetSerializedPosition(gi);
 			Collection<? extends RouteEntry> entries = psdao.read();
 			for (RouteEntry entry : entries) {
 				if (entry.isFlagSet(FLAG_ONGROUND) && !entry.isFlagSet(FLAG_TOUCHDOWN) && !includeOnGround)
