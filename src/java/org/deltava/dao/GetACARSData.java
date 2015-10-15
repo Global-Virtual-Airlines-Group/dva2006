@@ -1,7 +1,6 @@
 // Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
-import java.io.*;
 import java.sql.*;
 import java.util.*;
 
@@ -9,10 +8,8 @@ import org.deltava.beans.Simulator;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
-import org.deltava.dao.file.GetSerializedPosition;
 
 import org.deltava.util.system.SystemData;
-import org.gvagroup.acars.ACARSFlags;
 
 import static org.gvagroup.acars.ACARSFlags.*;
 
@@ -34,51 +31,42 @@ public class GetACARSData extends DAO {
 	}
 
 	/**
-	 * Retrieves the takeoff and landing coordinates for a particular flight. More than two results may be returned, if
-	 * the aircraft bounced on takeoff and/or landing.
+	 * Retrieves position archive metadata about a flight.
 	 * @param flightID the flight ID
-	 * @param isArchived TRUE if the flight data is archived, otherwise FALSE 
-	 * @return a List of RouteEntry beans, ordered by time
+	 * @return an ArchiveMetadata bean, or null if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<? extends RouteEntry> getTakeoffLanding(int flightID, boolean isArchived) throws DAOException {
-		return isArchived ? getArchivedTakeoffLanding(flightID) : getTakeoffLanding(flightID);
-	}
-		
-	private List<? extends RouteEntry> getArchivedTakeoffLanding(int flightID) throws DAOException {
+	public ArchiveMetadata getArchiveInfo(int flightID) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT DATA FROM acars.POS_ARCHIVE WHERE (ID=?) LIMIT 1");
+			prepareStatementWithoutLimits("SELECT CNT, SIZE, CRC, ARCHIVED FROM acars.ARCHIVE WHERE (ID=?) LIMIT 1");
 			_ps.setInt(1, flightID);
 			
-			// Load the data
-			InputStream in = null;
+			ArchiveMetadata md = null;
 			try (ResultSet rs = _ps.executeQuery()) {
-				if (rs.next())
-					in = new ByteArrayInputStream(rs.getBytes(1));
+				if (rs.next()) {
+					md = new ArchiveMetadata(flightID);
+					md.setPositionCount(rs.getInt(1));
+					md.setSize(rs.getInt(2));
+					md.setCRC32(rs.getLong(3));
+					md.setArchivedOn(rs.getTimestamp(4));
+				}
 			}
 			
 			_ps.close();
-			if (in == null)
-				return Collections.emptyList();
-
-			// Deserialize and validate
-			GetSerializedPosition psdao = new GetSerializedPosition(in);
-			Collection<? extends RouteEntry> entries = psdao.read();
-
-			// Deserialize
-			List<RouteEntry> results = new ArrayList<RouteEntry>();
-			for (RouteEntry entry : entries) {
-				if (entry.isFlagSet(FLAG_TOUCHDOWN))
-					results.add(entry);
-			}
-
-			return results;
+			return md;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 	}
-	
-	private List<? extends RouteEntry> getTakeoffLanding(int flightID) throws DAOException {
+
+	/**
+	 * Retrieves the takeoff and landing coordinates for a particular flight. More than two results may be returned, if
+	 * the aircraft bounced on takeoff and/or landing.
+	 * @param flightID the flight ID
+	 * @return a List of RouteEntry beans, ordered by time
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<? extends RouteEntry> getTakeoffLanding(int flightID) throws DAOException {
 		try {
 			prepareStatement("SELECT REPORT_TIME, LAT, LNG, B_ALT, HEADING, VSPEED FROM acars.POSITIONS WHERE "
 				+ "(FLIGHT_ID=?) AND ((FLAGS & ?) > 0) ORDER BY REPORT_TIME");
@@ -124,7 +112,7 @@ public class GetACARSData extends DAO {
 					 if (lastFuel != 0) {
 						 int fuelDelta = (lastFuel - fuel); 
 						 if (fuelDelta < -FuelUse.MAX_DELTA) {
-							 boolean isAirborne = ((rs.getInt(2) & ACARSFlags.FLAG_ONGROUND) != 0);
+							 boolean isAirborne = ((rs.getInt(2) & FLAG_ONGROUND) != 0);
 							 if (!isAirborne)
 								 use.setRefuel(true);
 						 } else if (fuelDelta > 0)
