@@ -82,7 +82,7 @@ public class RunwayPIREPLoader extends TestCase {
 					continue;
 				}
 				
-				List<? extends RouteEntry> tdEntries = fddao.getTakeoffLanding(info.getID(), info.getArchived());
+				List<? extends RouteEntry> tdEntries = fddao.getTakeoffLanding(info.getID()); // won't work with serialized archive
 				if (tdEntries.size() > 2) {
 					int ofs = 0;
 					ACARSRouteEntry entry = (ACARSRouteEntry) tdEntries.get(0);
