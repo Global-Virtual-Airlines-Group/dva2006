@@ -4,11 +4,11 @@ package org.deltava.dao;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
-import java.util.zip.GZIPOutputStream;
+import java.util.zip.*;
 
-import org.deltava.beans.acars.RouteEntry;
+import org.deltava.beans.acars.*;
+
 import org.deltava.dao.file.SetSerializedPosition;
-import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to write to the ACARS position archive.
@@ -60,21 +60,27 @@ public class SetACARSArchive extends DAO {
 
 			// Write the serialized data
 			if (positions.size() > 0) {
-				prepareStatementWithoutLimits("REPLACE INTO acars.ARCHIVE (ID, CNT, ARCHIVED) VALUES (?, ?, NOW())");
-				_ps.setInt(1, flightID);
-				_ps.setInt(2, positions.size());
-				executeUpdate(1);
-				
-				String hash = Integer.toHexString(flightID % 2048);
-				File path = new File(SystemData.get("path.archive"), hash); path.mkdirs();
-				File dt = new File(path, Integer.toHexString(flightID) + ".dat");
-				
-				// Write to the file system
-				try (OutputStream os = new FileOutputStream(dt)) {
+				ArchiveMetadata md = new ArchiveMetadata(flightID);
+				byte[] data = null; CRC32 crc = new CRC32();
+				try (ByteArrayOutputStream os = new ByteArrayOutputStream(10240)) {
 					try (OutputStream bos = new GZIPOutputStream(os, 8192)) {
 						SetSerializedPosition psdao = new SetSerializedPosition(bos);
 						psdao.archivePositions(flightID, positions);
+						data = os.toByteArray();
 					}
+					
+					crc.update(data);
+					md.setArchivedOn(new java.util.Date());
+					md.setCRC32(crc.getValue());
+					md.setPositionCount(positions.size());
+					md.setSize(data.length);
+				}
+				
+				update(md);
+				
+				// Write to the file system
+				try (OutputStream os = new FileOutputStream(ArchiveHelper.getFile(flightID))) {
+					os.write(data);
 				}
 			}
 			
@@ -86,23 +92,35 @@ public class SetACARSArchive extends DAO {
 	}
 
 	/**
-	 * Clears serialized data from the archive (assuming it has been persisted to disk).
-	 * @param flightID the ACARS Flight ID
+	 * Updates Position Archive metadata.
+	 * @param md an ArchiveMetadata bean
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void clear(int flightID) throws DAOException {
+	public void update(ArchiveMetadata md) throws DAOException {
 		try {
-			startTransaction();
-			prepareStatementWithoutLimits("REPLACE INTO acars.ARCHIVE (SELECT ID, CNT, ARCHIVED FROM acars.POS_ARCHIVE WHERE (ID=?))");
+			prepareStatementWithoutLimits("REPLACE INTO acars.ARCHIVE (ID, CNT, SIZE, CRC, ARCHIVED) VALUES (?, ?, ?, ?, ?)");
+			_ps.setInt(1, md.getID());
+			_ps.setInt(2, md.getPositionCount());
+			_ps.setInt(3, md.getSize());
+			_ps.setLong(4, md.getCRC32());
+			_ps.setTimestamp(5, createTimestamp(md.getArchivedOn()));
+			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Deletes Position Archive metadata.
+	 * @param flightID the flight ID
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void delete(int flightID) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("DELETE FROM acars.ARCHIVE WHERE (ID=?)");
 			_ps.setInt(1, flightID);
 			executeUpdate(0);
-			prepareStatementWithoutLimits("UPDATE acars.POS_ARCHIVE SET CNT=? WHERE (ID=?)");
-			_ps.setInt(1, 0);
-			_ps.setInt(2, flightID);
-			executeUpdate(0);
-			commitTransaction();
 		} catch (SQLException se) {
-			rollbackTransaction();
 			throw new DAOException(se);
 		}
 	}
