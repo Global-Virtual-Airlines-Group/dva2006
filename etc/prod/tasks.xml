@@ -132,18 +132,6 @@
 		</time>
 	</task>
 
-    <!-- Write position archive to file system -->
-    <task id="fsposarchive" enabled="true">
-       <class>org.deltava.tasks.PositionArchiveTask</class>
-       <time>
-           <min>50</min>
-           <hour>1,3,5,7,9,11,13,15,17,19,21,23</hour>
-           <mday>*</mday>
-           <month>*</month>
-           <wday>*</wday>
-       </time>
-    </task>
-
 	<!-- Purge Command statistics -->
 	<task id="cmdlogpurge" enabled="true">
 		<class>org.deltava.tasks.CommandLogPurgeTask</class>
