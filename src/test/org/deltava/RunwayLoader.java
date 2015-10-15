@@ -90,7 +90,7 @@ public class RunwayLoader extends TestCase {
 				continue;
 			
 			// Get the runway data
-			List<? extends RouteEntry> tdEntries = addao.getTakeoffLanding(info.getID(), info.getArchived());
+			List<? extends RouteEntry> tdEntries = addao.getTakeoffLanding(info.getID()); // won't work with serialized archive
 			if (tdEntries.size() > 2) {
 				int ofs = 0; ACARSRouteEntry entry = (ACARSRouteEntry) tdEntries.get(0);
 				GeoPosition adPos = new GeoPosition(info.getAirportD());
