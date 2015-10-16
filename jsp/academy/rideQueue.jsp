@@ -40,8 +40,8 @@
 <!-- Table View data -->
 <c:forEach var="ride" items="${viewContext.results}">
 <c:set var="course" value="${courses[ride.courseID]}" scope="page" />
-<c:set var="pilot" value="${pilots[ride.pilotID]}" scope="page" />
-<c:set var="pirep" value="${pireps[ride.pilotID]}" scope="page" />
+<c:set var="pilot" value="${pilots[ride.authorID]}" scope="page" />
+<c:set var="pirep" value="${pireps[ride.authorID]}" scope="page" />
 <tr>
  <td><el:cmd url="checkride" link="${ride}"><fmt:date date="${ride.submittedOn}" fmt="d" /></el:cmd></td>
  <td><el:cmdbutton url="crview" linkID="${ride.hexID}" label="SCORE" /></td>
