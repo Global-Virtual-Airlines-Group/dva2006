@@ -50,7 +50,8 @@ golgotha.airportLoad.updateOrigin = function(combo) {
 	var f = document.forms[0];
 	var cfg = golgotha.airportLoad.config.clone();
 	cfg.useSched = true; cfg.notVisited = combo.notVisited; cfg.dst = true;
-	cfg.airline = golgotha.form.getCombo(f.airline); cfg.code = golgotha.form.getCombo(combo);
+	cfg.airline = golgotha.form.getCombo(f.airline); 
+	cfg.code = (combo.selectedIndex > 0) ? golgotha.form.getCombo(combo) : null;
 	f.airportA.loadAirports(cfg);
 	return true;
 };
