@@ -31,6 +31,7 @@ $mysqldump -e -K -d --single-transaction --skip-triggers `cat /etc/sqlbackup.con
 $mysqldump -e -K -d --single-transaction `cat /etc/sqlbackup.conf` events > event.sql
 $mysqldump -e -K -d --single-transaction `cat /etc/sqlbackup.conf` acars > acars.sql
 $mysqldump -e -K -d --single-transaction `cat /etc/sqlbackup.conf` xacars > xacars.sql
+$mysqldump -e -K -d --single-transaction `cat /etc/sqlbackup.conf` online > online.sql
 $mysqldump -e -K -d --single-transaction `cat /etc/sqlbackup.conf` exams > exams.sql
 $mysqldump -e -K -d --single-transaction `cat /etc/sqlbackup.conf` dva > dva.sql
 $mysqldump -e -K -d --single-transaction `cat /etc/sqlbackup.conf` afv > afv.sql
@@ -83,19 +84,14 @@ then
   echo `date +%H:%M:%S`' Write last backup time'
   echo 'SELECT UNIX_TIMESTAMP(NOW())' | $mysql `cat /etc/sqlbackup.conf` acars > lastbackuptime
 
-  echo `date +%H:%M:%S`' Writing ACARS Position Archive'
-  $mysqldump $dump_opt `cat /etc/sqlbackup.conf` acars POS_ARCHIVE | $arc_util > acars_pos.sql.bz2
-  
   echo `date +%H:%M:%S`' Writing ACARS Track Images'
   $mysqldump $dump_opt `cat /etc/sqlbackup.conf` acars TRACKS | $arc_util > acars_tracks.sql.bz2
-else
-  echo `date +%H:%M:%S`' Writing Incremental ACARS Positions'
-  $mysqldump $dump_create_opt -t `cat /etc/sqlbackup.conf` --where="ARCHIVED > FROM_UNIXTIME(`cat lastbackuptime`)" acars POS_ARCHIVE  | $arc_util > acars_pos_inc.sql.bz2
 fi
 
 # Dump ACARS data
 echo `date +%H:%M:%S`' Writing ACARS data'
-$mysqldump $dump_opt `cat /etc/sqlbackup.conf` --ignore-table=acars.TRACKS --ignore-table=acars.POS_ARCHIVE acars | $arc_util > acars.sql.bz2
+$mysqldump $dump_opt `cat /etc/sqlbackup.conf` --ignore-table=acars.TRACKS --ignore-table=acars.MESSAGES acars | $arc_util > acars.sql.bz2
+$mysqldump $dump_opt `cat /etc/sqlbackup.conf` acars MESSAGES | $arc_util > acars_msgs.sql.bz2
 
 # Dump DVA database
 echo `date +%H:%M:%S`' Writing DVA database'
@@ -119,9 +115,12 @@ else
   $mysqldump $dump_opt -t `cat /etc/sqlbackup.conf` --where="DATE > FROM_UNIXTIME(`cat lastbackuptime`)" afv GALLERY | $arc_util > afv_gallery_inc.sql.bz2
 fi
 
-# Dump VATSIM data
-echo `date +%H:%M:%S`' Writing VATSIM stats database'
-$mysqldump $dump_opt `cat /etc/sqlbackup.conf` vatsim | $arc_util > vatsim.sql.bz2
+# Dump VATSIM data if we're doing a full backup
+if [ "$1" = "full" ]
+then
+    echo `date +%H:%M:%S`' Writing VATSIM/IVAO stats database'
+    $mysqldump $dump_opt `cat /etc/sqlbackup.conf` stats | $arc_util > stats.sql.bz2
+fi
 
 # Change file permissions
 echo `date +%H:%M:%S`' Setting file permissions'
