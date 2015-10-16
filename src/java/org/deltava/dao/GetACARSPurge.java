@@ -119,26 +119,4 @@ public class GetACARSPurge extends GetACARSData {
 			throw new DAOException(se);
 		}
 	}
-
-	/**
-	 * Returns the IDs of all ACARS flights that have not been archived to the file system.
-	 * @return a Collection of flight IDs
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public Collection<Integer> getDatabaseFlights() throws DAOException {
-		try {
-			prepareStatement("SELECT DISTINCT ID FROM acars.POS_ARCHIVE WHERE (CNT>?)");
-			_ps.setInt(1,  0);
-			Collection<Integer> IDs = new LinkedHashSet<Integer>();
-			try (ResultSet rs = _ps.executeQuery()) {
-				while (rs.next())
-					IDs.add(Integer.valueOf(rs.getInt(1)));
-			}
-			
-			_ps.close();
-			return IDs;
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
 }
