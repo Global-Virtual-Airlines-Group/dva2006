@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.sql.Connection;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to assign Check Rides.
  * @author Luke
- * @version 5.0
+ * @version 6.2
  * @since 1.0
  */
 
@@ -78,13 +78,13 @@ public class CheckRideAssignCommand extends AbstractCommand {
 			mctxt.addData("eqType", eq);
 
 			// Check if we are using the script
-			String comments = ctx.getParameter("comments");
+			String comments = ctx.getParameter("comments"); String rawComments = comments;
 			boolean useScript = Boolean.valueOf(ctx.getParameter("useScript")).booleanValue();
 			if (useScript) {
 				GetExamProfiles epdao = new GetExamProfiles(con);
 				CheckRideScript sc = epdao.getScript(ctx.getParameter("crType"));
 				if (sc != null) {
-					String desc = sc.getDescription();
+					String desc = sc.getDescription(); rawComments = rawComments + "\n\n" + desc;
 					boolean hasBBCode = ((desc.indexOf('[') > -1) && (desc.indexOf(']') > -1));
 					if (hasBBCode) {
 						mctxt.getTemplate().setIsHTML(true);
@@ -108,7 +108,7 @@ public class CheckRideAssignCommand extends AbstractCommand {
 			cr.setScorerID(ctx.getUser().getID());
 			cr.setStatus(TestStatus.NEW);
 			cr.setStage(eq.getStage());
-			cr.setComments(comments);
+			cr.setComments(rawComments);
 
 			// Use a SQL Transaction
 			ctx.startTX();
