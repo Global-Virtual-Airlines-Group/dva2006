@@ -2,15 +2,11 @@ package org.deltava.dao.file;
 
 import java.util.*;
 
-import javax.net.ssl.*;
-import java.security.cert.X509Certificate;
-
 import junit.framework.TestCase;
 
 import org.apache.log4j.PropertyConfigurator;
 
 import org.deltava.dao.http.*;
-import org.deltava.util.http.SSLUtils;
 
 public class TestTrackDAO extends TestCase {
 
@@ -20,12 +16,6 @@ public class TestTrackDAO extends TestCase {
 	}
 	
 	public void testValidKeyNAT() throws Exception {
-		
-		// Load the certificate Init the SSL context
-		X509Certificate cert = SSLUtils.load("/etc/jcs.notams.cer");
-		assertNotNull(cert);
-		SSLContext ctx = SSLUtils.getContext(cert);
-		assertNotNull(ctx);
 		
 		// Pull down the data
 		GetNATs dao = new GetNATs("https://www.notams.faa.gov/common/nat.html");
@@ -40,12 +30,6 @@ public class TestTrackDAO extends TestCase {
 	}
 	
 	public void testValidKeyPACOT() throws Exception {
-		
-		// Load the certificate Init the SSL context
-		X509Certificate cert = SSLUtils.load("/etc/jcs.notams.cer");
-		assertNotNull(cert);
-		SSLContext ctx = SSLUtils.getContext(cert);
-		assertNotNull(ctx);
 		
 		// Pull down the data
 		GetPACOTs dao = new GetPACOTs("https://www.notams.faa.gov/dinsQueryWeb/advancedNotamMapAction.do?queryType=pacificTracks");
