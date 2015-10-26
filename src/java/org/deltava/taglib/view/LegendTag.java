@@ -1,4 +1,4 @@
-// Copyright 2005 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.view;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import javax.servlet.jsp.tagext.TagSupport;
  * A JSP Tag to display view row color legends. These are rendered as a single row HTML table, and the class
  * names used for each row entry are used to set the background colors for each legend entry.
  * @author Luke
- * @version 1.0
+ * @version 6.2
  * @since 1.0
  */
 
@@ -83,9 +83,9 @@ public class LegendTag extends TagSupport {
 		if (_labels.size() != _classNames.size())
 			throw new JspException("Invalid list sizes - " + _labels.size() + " != " + _classNames.size());
 		
-		JspWriter out = pageContext.getOut();
 		try {
-			out.println("<center><table cellspacing=\"2\" cellpadding=\"2\"><tr class=\"legend\">");
+			JspWriter out = pageContext.getOut();
+			out.println("<table class=\"mid legend\"><tr class=\"legend\">");
 			
 			// Write the legend cells
 			for (int x = 0; x < _labels.size(); x++) {
@@ -97,8 +97,11 @@ public class LegendTag extends TagSupport {
 					out.print(" " + _textClass);
 				
 				out.print('\"');
-				if (_boxWidth != 0)
-					out.print(" width=\"" + String.valueOf(_boxWidth) + "\"");
+				if (_boxWidth != 0) {
+					out.print(" style=\"width:");
+					out.print(String.valueOf(_boxWidth));
+					out.print("px;\"");
+				}
 				
 				out.print('>');
 				out.print(_labels.get(x));
@@ -106,12 +109,13 @@ public class LegendTag extends TagSupport {
 			}
 			
 			// Close the table
-			out.print("</tr></table></center>");
+			out.print("</tr></table>");
 		} catch (IOException ie) {
 			throw new JspException(ie);
+		} finally {
+			release();
 		}
 		
-		release();
 		return SKIP_BODY;
 	}
 }
