@@ -18,7 +18,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * A Web Service to return ACARS flight data parameters.
  * @author Luke
- * @version 6.1
+ * @version 6.2
  * @since 1.0
  */
 
@@ -59,7 +59,7 @@ public class FlightDataExportService extends WebService {
 		// Write the CSV header
 		if (!info.isXACARS()) {
 			ctx.println("Date/Time,Latitude,Longitude,Altitude,Heading,Air Speed,Ground Speed,Mach,Vertical Speed,N1,N2,Bank,Pitch,Flaps,"
-				+ "WindSpeed,WindHdg,Visibility,FuelFlow,Fuel,Gs,AOA,NAV,HDG,APR,ALT,AT,FrameRate,NAV1,NAV2,COM1,ATC1,COM2,ATC2,WARN");
+				+ "WindSpeed,WindHdg,Visibility,FuelFlow,Fuel,Gs,AOA,AP,ALT,AT,FrameRate,NAV1,NAV2,COM1,ATC1,COM2,ATC2,WARN");
 		} else
 			ctx.println("Date/Time,Latitude,Longitude,Altitude,Heading,Air Speed,Ground Speed,Mach,WindSpeed,WindHdg,Fuel");
 
@@ -159,14 +159,25 @@ public class FlightDataExportService extends WebService {
 		buf.append(',');
 		buf.append(StringUtils.format(entry.getAOA(), "##0.000"));
 		buf.append(',');
-		buf.append(entry.isFlagSet(FLAG_AP_NAV) ? "NAV," : ",");
-		buf.append(entry.isFlagSet(FLAG_AP_HDG) ? "HDG," : ",");
-		buf.append(entry.isFlagSet(FLAG_AP_APR) ? "APR," : ",");
+		if (entry.isFlagSet(FLAG_AP_NAV))
+			buf.append("NAV");
+		else if (entry.isFlagSet(FLAG_AP_HDG))
+			buf.append("HDG");
+		else if (entry.isFlagSet(FLAG_AP_APR))
+			buf.append("APR");
+		else if (entry.isFlagSet(FLAG_AP_LNAV))
+			buf.append("LNAV");
+		
+		buf.append(',');
 		buf.append(entry.isFlagSet(FLAG_AP_ALT) ? "ALT," : ",");
 		if (entry.isFlagSet(FLAG_AT_IAS))
 			buf.append("IAS");
 		else if (entry.isFlagSet(FLAG_AT_MACH))
 			buf.append("MACH");
+		else if (entry.isFlagSet(FLAG_AT_FLCH))
+			buf.append("FLCH");
+		else if (entry.isFlagSet(FLAG_AT_VNAV))
+			buf.append("VNAV");
 		
 		buf.append(',');
 		buf.append(String.valueOf(entry.getFrameRate()));
