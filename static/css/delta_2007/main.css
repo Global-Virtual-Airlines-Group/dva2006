@@ -1,14 +1,5 @@
 /* DVA2007 Main Cascading Style Sheet (C) 2005, 2006, 2007, 2009, 2010, 2012 Global Virtual Airlines Group. */
 
-/* ------------------------------------------------------------------ */
-/* Controls the sizing and formatting of the top header image section */
-div#header {
-	height: 104px;
-	right: 0px;
-	margin: 0px;
-	border: 1px solid #ffffff;
-}
-
 /* Formatting for header title caption */
 h1.header {
 	font-family: Trebuchet MS, verdana, tahoma, sans-serif;
@@ -24,6 +15,10 @@ h1.header {
     img.header {
         float: right;
         border: none;
+    }
+
+    div#header {
+        height: 104px;
     }
 }
 
