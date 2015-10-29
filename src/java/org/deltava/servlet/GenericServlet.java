@@ -19,11 +19,11 @@ import org.deltava.util.system.SystemData;
 /**
  * A class storing common servlet helper methods.
  * @author Luke
- * @version 6.0
+ * @version 6.2
  * @since 1.0
  */
 
-public abstract class GenericServlet extends HttpServlet {
+abstract class GenericServlet extends HttpServlet {
 
 	protected class ServletSecurityContext implements SecurityContext {
 
@@ -69,6 +69,7 @@ public abstract class GenericServlet extends HttpServlet {
 		public NotFoundException(String msg) {
 			super(msg);
 			setWarning(true);
+			setStatusCode(404);
 		}
 	}
 
