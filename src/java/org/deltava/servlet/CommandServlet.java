@@ -23,7 +23,7 @@ import org.gvagroup.jdbc.*;
 /**
  * The main command controller. This is the application's brain stem.
  * @author Luke
- * @version 6.0
+ * @version 6.2
  * @since 1.0
  */
 
@@ -286,6 +286,7 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 			
 			// Don't log bot notfound/SecurityErrors
 			if (!logStackDump && isSpider) logLevel = Level.INFO;
+			req.setAttribute("logStackDump", Boolean.valueOf(logStackDump));
 
 			// Log the error
 			String usrName = null;
