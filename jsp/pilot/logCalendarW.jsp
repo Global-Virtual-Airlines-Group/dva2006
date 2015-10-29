@@ -14,6 +14,7 @@
 <content:css name="form" />
 <content:css name="calendar" />
 <content:pics />
+<meta name="viewport" content="width=device-width, initiall-scale=1" />
 <script type="text/javascript">
 golgotha.local.switchType = function(combo) {
 	self.location = '/logcalendar.do?op=' + escape(golgotha.form.getCombo(combo) + '&id=${pilot.hexID}&startDate=<fmt:date fmt="d" d="MM/dd/yyyy" date="${startDate}" />';
