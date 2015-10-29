@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A class to support Web Site Commands.
  * @author Luke
- * @version 6.0
+ * @version 6.2
  * @since 1.0
  */
 
@@ -27,6 +27,7 @@ public abstract class AbstractCommand implements Command {
 	 * @param cmdName the name of the command
 	 * @throws IllegalStateException if the command has already been initialized
 	 */
+	@Override
 	public void init(String id, String cmdName) {
 		if (_name != null)
 			throw new IllegalStateException(_name + " Command already initialized");
@@ -48,6 +49,8 @@ public abstract class AbstractCommand implements Command {
 		CommandException ce = new CommandException("Security Error - " + msg, false);
 		ce.setForwardURL("/jsp/error/securityViolation.jsp");
 		ce.setWarning(true);
+		ce.setLogStackDump(false);
+		ce.setStatusCode(403);
 		return ce;
 	}
 	
@@ -57,13 +60,18 @@ public abstract class AbstractCommand implements Command {
 	 * @return a CommandException
 	 */
 	protected static CommandException notFoundException(String msg) {
-		return new CommandException(msg, false);
+		CommandException ce = new CommandException(msg, false);
+		ce.setWarning(true);
+		ce.setLogStackDump(false);
+		ce.setStatusCode(404);
+		return ce;
 	}
 
 	/**
 	 * Returns the Command name.
 	 * @return the name of the command
 	 */
+	@Override
 	public final String getName() {
 		return _name;
 	}
@@ -72,6 +80,7 @@ public abstract class AbstractCommand implements Command {
 	 * Returns the Command ID.
 	 * @return the command ID
 	 */
+	@Override
 	public final String getID() {
 		return _id;
 	}
@@ -82,6 +91,7 @@ public abstract class AbstractCommand implements Command {
 	 * @return a Collection of role names
 	 * @see AbstractCommand#setRoles(Collection)
 	 */
+	@Override
 	public final Collection<String> getRoles() {
 		Collection<String> results = new HashSet<String>();
 		if (_roles != null)
@@ -97,6 +107,7 @@ public abstract class AbstractCommand implements Command {
 	 * @throws IllegalStateException if setRoles() has already been called
 	 * @see AbstractCommand#getRoles()
 	 */
+	@Override
 	public final void setRoles(Collection<String> roles) {
 		if (!_roles.isEmpty())
 			throw new IllegalStateException("Roles for " + getName() + " already set");
