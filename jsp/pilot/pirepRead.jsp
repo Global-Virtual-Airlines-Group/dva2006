@@ -21,6 +21,7 @@
 <meta property="og:site_name" content="<content:airline />" />
 <meta property="game:points" content="1" />
 <content:pics />
+<meta name="viewport" content="width=device-width, initiall-scale=1" />
 <content:js name="common" />
 <content:googleAnalytics eventSupport="true" />
 <content:browser human="true"><c:if test="${googleMap}">

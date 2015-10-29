@@ -16,6 +16,7 @@
 <content:css name="form" />
 <content:css name="view" />
 <content:pics />
+<meta name="viewport" content="width=device-width, initiall-scale=1" />
 <content:js name="common" />
 <content:rss title="${airlineName} Online Events" path="/event_rss.ws" />
 <script type="text/javascript">
