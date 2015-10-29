@@ -13,7 +13,7 @@
 <content:css name="main" />
 <content:css name="form" />
 <content:pics />
-<meta name="viewport" content="width=device-width, initiall-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <c:if test="${exam.routePlot}">
 <map:api version="3" /></c:if>

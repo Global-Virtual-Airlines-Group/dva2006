@@ -9,7 +9,7 @@
 <title>Welcome to <content:airline /></title>
 <content:css name="main" />
 <content:pics />
-<meta name="viewport" content="width=device-width, initiall-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <content:copyright visible="false" />
 <body>
