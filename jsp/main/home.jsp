@@ -20,6 +20,7 @@
 <content:rss title="${airlineName} News" path="/news_rss.ws" />
 <content:js name="common" />
 <content:pics />
+<meta name="viewport" content="width=device-width, initiall-scale=1" />
 <meta name="Description" content="${desc}" />
 <meta name="Keywords" content="<fmt:list value="${keywords}" delim="," />" />
 <meta property="og:title" content="<content:airline />" />

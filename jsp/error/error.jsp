@@ -26,7 +26,7 @@ Oops. Something bad happened. Really, really bad - and I have no idea what to do
 <br />
 This is the message: <b>${servlet_error}</b><br />
 <br />
-<c:if test="${!empty ex}">
+<c:if test="${logStackDump && (!empty ex)}">
 <b>${ex.getClass().name}</b><br />
 <pre><fmt:stack exception="${ex}" /></pre>
 <br />

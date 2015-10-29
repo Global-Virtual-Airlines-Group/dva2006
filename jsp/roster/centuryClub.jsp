@@ -12,6 +12,7 @@
 <content:css name="main" />
 <content:css name="view" />
 <content:pics />
+<meta name="viewport" content="width=device-width, initiall-scale=1" />
 </head>
 <content:copyright visible="false" />
 <body>

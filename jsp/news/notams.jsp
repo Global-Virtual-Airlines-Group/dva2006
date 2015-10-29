@@ -15,6 +15,7 @@
 <content:js name="common" />
 <content:rss title="${airlineName} NOTAMs" path="/notams_rss.ws" />
 <content:pics />
+<meta name="viewport" content="width=device-width, initiall-scale=1" />
 </head>
 <content:copyright visible="false" />
 <body>

@@ -12,6 +12,7 @@
 <content:css name="view" />
 <content:css name="form" />
 <content:pics />
+<meta name="viewport" content="width=device-width, initiall-scale=1" />
 <script type="text/javascript">
 golgotha = {local:{}};
 golgotha.local.updateSort = function() { return document.forms[0].submit(); };

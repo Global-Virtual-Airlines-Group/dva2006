@@ -10,6 +10,7 @@
 <content:css name="main" />
 <content:css name="form" />
 <content:pics />
+<meta name="viewport" content="width=device-width, initiall-scale=1" />
 <content:js name="common" />
 <content:sysdata var="imgDB" name="airline.db" />
 <script type="text/javascript">

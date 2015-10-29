@@ -14,6 +14,7 @@
 <content:css name="view" />
 <content:js name="common" />
 <content:pics />
+<meta name="viewport" content="width=device-width, initiall-scale=1" />
 <script type="text/javascript">
 golgotha.local.sortBy = function(combo) {
 	self.location = '/users.do?sortOpt=' + escape(golgotha.form.getCombo(combo));
