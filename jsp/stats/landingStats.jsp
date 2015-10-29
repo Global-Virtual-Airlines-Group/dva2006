@@ -13,7 +13,7 @@
 <content:css name="view" />
 <content:js name="common" />
 <content:pics />
-<meta name="viewport" content="width=device-width, initiall-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <script type="text/javascript">
 golgotha.local.validate = function(f)
 {

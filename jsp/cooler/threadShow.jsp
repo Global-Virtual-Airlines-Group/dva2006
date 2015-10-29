@@ -24,7 +24,7 @@
 </c:if>
 </c:forEach>
 <content:pics />
-<meta name="viewport" content="width=device-width, initiall-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <content:filter roles="Moderator"><content:js name="datePicker" /></content:filter>
 <c:if test="${!empty img}"><content:js name="imgLike" /></c:if>
