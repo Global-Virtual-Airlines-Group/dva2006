@@ -13,7 +13,7 @@
 <content:css name="form" />
 <content:css name="view" />
 <content:pics />
-<meta name="viewport" content="width=device-width, initiall-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <script type="text/javascript">
 golgotha = {local:{}};
 golgotha.local.sort = function() { return document.forms[0].submit(); };

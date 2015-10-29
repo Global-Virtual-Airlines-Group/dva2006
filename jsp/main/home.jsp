@@ -20,7 +20,7 @@
 <content:rss title="${airlineName} News" path="/news_rss.ws" />
 <content:js name="common" />
 <content:pics />
-<meta name="viewport" content="width=device-width, initiall-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="Description" content="${desc}" />
 <meta name="Keywords" content="<fmt:list value="${keywords}" delim="," />" />
 <meta property="og:title" content="<content:airline />" />
@@ -151,7 +151,7 @@ our sister airline <a rel="external" target="_new" href="${reqProtocol}://${part
 </c:if>
 <c:if test="${!empty centuryClub}">
 <!-- Latest Century Club members -->
-<el:table className="view mid" style="width:510px;">
+<el:table className="view mid" style="width:100%; max-width:510px;">
 <tr class="title caps left">
  <td colspan="2">OUR NEWEST CENTURY CLUB MEMBERS</td>
 </tr>
@@ -166,7 +166,7 @@ our sister airline <a rel="external" target="_new" href="${reqProtocol}://${part
 </c:if>
 <c:if test="${!empty promotions}">
 <!-- Latest Pilot Promotions -->
-<el:table className="view mid" style="width:510px;">
+<el:table className="view mid" style="width:100%; max-width:510px;">
 <tr class="title caps left">
  <td colspan="2"><content:airline /> CONGRATULATES</td>
 </tr>
@@ -181,7 +181,7 @@ our sister airline <a rel="external" target="_new" href="${reqProtocol}://${part
 </c:if>
 <c:if test="${!empty futureEvents}">
 <!-- Future Online Events -->
-<el:table className="view">
+<el:table className="view mid" style="max-width:790px;">
 <tr class="title caps left">
  <td colspan="4">UPCOMING <content:airline /> ONLINE EVENTS</td>
 </tr>
@@ -204,7 +204,7 @@ ${eRoute.airportA.name} (<fmt:airport airport="${eRoute.airportA}" />)</td>
 </c:if>
 <c:if test="${!empty toLand}">
 <!-- Latest Takeoffs/Landings -->
-<el:table className="view mid" style="width:790px;">
+<el:table className="view mid" style="width:100%; max-width:790px;">
 <tr class="title caps left">
  <td colspan="3">LATEST <content:airline /> ACARS FLIGHT DEPARTURES AND ARRIVALS</td>
 </tr>
@@ -227,7 +227,7 @@ ${eRoute.airportA.name} (<fmt:airport airport="${eRoute.airportA}" />)</td>
 </c:if>
 <c:if test="${!empty latestPilots}">
 <!-- Latest Pilot Hires -->
-<el:table className="view mid" style="width:530px;">
+<el:table className="view mid" style="width:100%; max-width:530px;">
 <tr class="title caps left">
  <td colspan="2"><content:airline /> WELCOMES OUR NEWEST PILOTS</td>
 </tr>

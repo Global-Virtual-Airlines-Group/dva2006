@@ -13,7 +13,7 @@
 <content:css name="view" />
 <content:css name="form" />
 <content:pics />
-<meta name="viewport" content="width=device-width, initiall-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <script type="text/javascript">
 golgotha.local.setNetwork = function(combo) {
