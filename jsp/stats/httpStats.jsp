@@ -13,7 +13,9 @@
 <content:css name="view" />
 <content:css name="form" />
 <content:pics />
+<meta name="viewport" content="width=device-width, initiall-scale=1" />
 <script type="text/javascript">
+golgotha = {local:{}};
 golgotha.local.sortBy = function(combo) {
 	self.location = '/httpstats.do?sortType=' + escape(golgotha.form.getCombo(combo));
 	return true;
