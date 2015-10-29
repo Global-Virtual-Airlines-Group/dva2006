@@ -1,6 +1,5 @@
 /* DVA Main Cascading Style Sheet (C) 2005, 2006, 2007, 2009, 2010, 2012 Global Virtual Airlines Group. */
 
-/* ------------------------------------------------------------------ */
 /* Controls the sizing and formatting of the top header image section */
 div#header {
 	height: 104px;
@@ -20,14 +19,20 @@ h1.header {
 }
 
 /* Formatting for header image */
-img.header {
-	float: right;
-	border: none;
+@media (min-width: 801px) {
+    img.header {
+        float: right;
+        border: none;
+    }
 }
 
-/* ------------------------------------------------------------------ */
-/* Controls the sizing and formatting of the top menu display section */
+@media (max-width: 800px) {
+    img.header {
+        display:none;
+    }
+}
 
+/* Controls the sizing and formatting of the top menu display section */
 div.navside div#navmenu {
 	width: 155px;
 }
@@ -126,9 +131,7 @@ ul.menu li ul {
 }
 
 
-/* ------------------------------------------------------------------ */
 /* Controls the sizing and formatting of side navigation elements     */
-
 table.nav {
 	table-layout: fixed;
 	width: 154px;
@@ -177,9 +180,7 @@ table.nav *.submenu :link:hover, table.nav *.submenu :hover {
 }
 
 
-/* ------------------------------------------------------------------ */
 /* Controls the sizing and formatting of the main display section     */
-
 .navbar div#main {
 	margin: 4px;
 	padding: 8px;
