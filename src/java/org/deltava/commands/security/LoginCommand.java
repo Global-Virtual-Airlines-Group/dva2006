@@ -40,11 +40,28 @@ public class LoginCommand extends AbstractCommand {
 		// Get the command result
 		CommandResult result = ctx.getResult();
 		boolean isSecure = ctx.getRequest().isSecure();
+		
+		// Determine where we are referring from, if on the site return back there
+		String referer = ctx.getRequest().getHeader("Referer");
+		if (!StringUtils.isEmpty(referer) && (!referer.contains("login"))) {
+			try {
+				URL url = new URL(referer);
+				if (SystemData.get("airline.url").equalsIgnoreCase(url.getHost())) {
+					if (isSecure && !"https".equals(url.getProtocol()))
+						referer = referer.replace("http:", "https:");
+					
+					ctx.setAttribute("referTo", referer, REQUEST);
+				}
+			} catch (MalformedURLException mue) {
+				log.warn("Invalid HTTP referer - " + referer);
+				referer = null;
+			}
+		}
 
 		// If we're already logged in, just redirect to home
 		boolean hasSSL = SystemData.getApp(SystemData.get("airline.code")).getSSL();
 		if (ctx.isAuthenticated()) {
-			result.setURL("home.do");
+			result.setURL(StringUtils.isEmpty(referer) ? "home.do" : referer);
 			result.setType(ResultType.REDIRECT);
 			result.setSuccess(true);
 			return;
@@ -54,22 +71,6 @@ public class LoginCommand extends AbstractCommand {
 			result.setType(ResultType.REDIRECT);
 			result.setSuccess(true);
 			return;
-		}
-
-		// Determine where we are referring from, if on the site return back there
-		String referer = ctx.getRequest().getHeader("Referer");
-		if (!StringUtils.isEmpty(referer) && (!referer.contains("login"))) {
-			try {
-				URL url = new URL(referer);
-				if (SystemData.get("airline.url").equalsIgnoreCase(url.getHost())) {
-					if (isSecure && !"https".equals(url.getProtocol()))
-						ctx.setAttribute("referTo", referer.replace("http:", "https:"), REQUEST);
-					else
-						ctx.setAttribute("referTo", referer, REQUEST);
-				}
-			} catch (MalformedURLException mue) {
-				log.warn("Invalid HTTP referer - " + referer);
-			}
 		}
 
 		// Get the names
