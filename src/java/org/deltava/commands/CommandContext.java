@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import javax.servlet.http.*;
@@ -8,7 +8,7 @@ import javax.servlet.http.*;
  * Connections, since by doing so we can easily return connections back to the pool in a <b>finally</b> block without
  * nasty scope issues.
  * @author Luke
- * @version 6.0
+ * @version 6.2
  * @since 1.0
  * @see Command
  */
@@ -37,6 +37,7 @@ public class CommandContext extends HTTPContext {
 	/**
 	 * Returns a JDBC Connection to the connection pool.
 	 */
+	@Override
 	public long release() {
 		long time = super.release();
 		_result.setBackEndTime(time);
@@ -68,26 +69,19 @@ public class CommandContext extends HTTPContext {
 		Object obj = getCmdParameter(Command.ID, Integer.valueOf(0));
 		if (obj instanceof Integer)
 			return ((Integer) obj).intValue();
-		else if (obj == null)
-			throw new CommandException("Invalid Database ID - null", false);
-		
-		// Remove anything other than digit or letter "x"
-		String s = obj.toString().toLowerCase(); int radix = 10;
-		StringBuilder buf = new StringBuilder();
-		for (int x = 0; x < s.length(); x++) {
-			char c = s.charAt(x);
-			if (c == 'x') {
-				radix = 16;
-				buf.append('x');
-			} else if (Character.isDigit(c) || ((c >= 'a') && (c <= 'f')))
-				buf.append(c);
+		else if (obj == null) {
+			CommandException ce = new CommandException("Invalid Database ID - " + obj, false);
+			ce.setStatusCode(400);
+			throw ce;
 		}
-
+		
 		// Try and convert into an integer
 		try {
-			return Integer.parseInt(buf.toString(), radix);
+			return Integer.decode(String.valueOf(obj)).intValue();
 		} catch (Exception e) {
-			throw new CommandException("Invalid Database ID - " + obj, false);
+			CommandException ce = new CommandException("Invalid Database ID - " + obj, false);
+			ce.setStatusCode(400);
+			throw ce;
 		}
 	}
 }
