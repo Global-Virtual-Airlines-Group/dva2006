@@ -42,6 +42,7 @@ public class AirlineTotalsCommand extends AbstractCommand {
 			tableStatus.addAll(tsdao.getStatus("exams"));
 			tableStatus.addAll(tsdao.getStatus("events"));
 			tableStatus.addAll(tsdao.getStatus("acars"));
+			tableStatus.addAll(tsdao.getStatus("weather"));
 			tableStatus.addAll(tsdao.getStatus("xacars"));
 			tableStatus.addAll(tsdao.getStatus("geoip"));
 			tableStatus.addAll(tsdao.getStatus("postfix"));

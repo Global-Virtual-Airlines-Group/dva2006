@@ -16,7 +16,7 @@ import org.deltava.service.*;
 /**
  * A Web Service to display Flight Report statistics to an Amline Flash chart.
  * @author Luke
- * @version 5.0
+ * @version 6.2
  * @since 2.1
  */
 
@@ -37,8 +37,8 @@ public class AllFlightsService extends WebService {
 		// Get the Flight Report statistics - remove the last entry
 		List<FlightStatsEntry> results = new ArrayList<FlightStatsEntry>();
 		try {
-			GetFlightReportStatistics stdao = new GetFlightReportStatistics(ctx.getConnection());
-			results.addAll(stdao.getPIREPStatistics(0, AbstractStatsCommand.MONTH_SQL, "F.DATE", false, false));
+			GetAggregateStatistics stdao = new GetAggregateStatistics(ctx.getConnection());
+			results.addAll(stdao.getPIREPStatistics(AbstractStatsCommand.MONTH_SQL, "DATE"));
 			if (!results.isEmpty())
 				results.remove(results.size() - 1);
 		} catch (DAOException de) {
@@ -74,6 +74,7 @@ public class AllFlightsService extends WebService {
 	 * Tells the Web Service Servlet not to log invocations of this service.
 	 * @return FALSE
 	 */
+	@Override
 	public final boolean isLogged() {
 		return false;
 	}
