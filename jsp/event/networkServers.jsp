@@ -34,16 +34,16 @@ golgotha.local.setNetwork = function(combo) {
 <view:table cmd="netservers">
 <tr class="title">
  <td colspan="3" class="left">NETWORK SERVERS - ${netInfo.network} - VALID AS OF <fmt:date date="${netInfo.validDate}" /></td>
- <td colspan="2" class="right">SELECT NETWORK <el:combo name="ID" size="1" idx="1" onChange="void golgotha.local.setNetwork(this)" options="${networks}" value="${netInfo.network}" /></td>
+ <td colspan="2" class="right nophone">SELECT NETWORK <el:combo name="ID" size="1" idx="1" onChange="void golgotha.local.setNetwork(this)" options="${networks}" value="${netInfo.network}" /></td>
 </tr>
 
 <!-- Server Title Bar -->
 <tr class="title caps">
  <td style="width:20%">NAME</td>
  <td style="width:15%">IP ADDRESS</td>
- <td style="width:25%">LOCATION</td>
+ <td class="nophone" style="width:25%">LOCATION</td>
  <td style="width:10%">USERS</td>
- <td>COMMENT</td>
+ <td class="nophone" >COMMENT</td>
 </tr>
 
 <!-- Table Server Data -->
@@ -53,13 +53,13 @@ golgotha.local.setNetwork = function(combo) {
  <td class="pri bld">${srv.name}</td>
  <td class="bld">${srv.address}</td>
 <c:if test="${!empty ipInfo}">
- <td><el:flag countryCode="${ipInfo.country.code}" caption="${ipInfo.location}" /> ${ipInfo.location}</td>
+ <td class="nophone" ><el:flag countryCode="${ipInfo.country.code}" caption="${ipInfo.location}" /> ${ipInfo.location}</td>
 </c:if>
 <c:if test="${empty ipInfo}">
  <td>${srv.location}</td>
 </c:if>
  <td class="sec bld"><fmt:int value="${srv.connections}" /></td>
- <td class="left">${srv.comment}</td>
+ <td class="left nophone">${srv.comment}</td>
 </tr>
 </c:forEach>
 <tr class="title">

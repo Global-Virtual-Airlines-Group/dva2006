@@ -20,11 +20,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <script type="text/javascript">
 golgotha.local.updateSort = function() { return document.forms[0].submit(); };
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-golgotha.form.submit(f);
-return true;
+golgotha.local.validate = function(f) {
+    if (!golgotha.form.check()) return false;
+    golgotha.form.submit(f);
+    return true;
 };
 </script>
 </head>
@@ -40,8 +39,8 @@ return true;
 <!-- All Flight Report statistics -->
 <view:table cmd="mystats">
 <tr class="title">
- <td colspan="6" class="left caps"><content:airline /> FLIGHT STATISTICS FOR ${pilot.name}</td>
- <td colspan="5" class="right">GROUP BY <el:combo name="groupType" size="1" idx="*" options="${groupTypes}" value="${param.groupType}" onChange="void golgotha.local.updateSort()" />
+ <td colspan="6" class="left caps"><span class="nophone"><content:airline /> </span>FLIGHT STATISTICS FOR ${pilot.name}</td>
+ <td colspan="6" class="right">GROUP BY <el:combo name="groupType" size="1" idx="*" options="${groupTypes}" value="${param.groupType}" onChange="void golgotha.local.updateSort()" />
  SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${viewContext.sortType}" onChange="void golgotha.local.updateSort()" /></td>
 </tr>
 <%@ include file="/jsp/stats/pirepStats.jspf" %>
@@ -58,7 +57,7 @@ return true;
  <td>#</td>
  <td style="width:15%">EQUIPMENT</td>
  <td style="width:10%">FLIGHTS</td>
- <td style="width:10%">HOURS</td>
+ <td class="nophone" style="width:10%">HOURS</td>
  <td style="width:15%">AVERAGE SPEED</td>
  <td style="width:12%">STD. DEVIATION</td>
  <td style="width:15%">AVERAGE DISTANCE</td>
@@ -73,7 +72,7 @@ return true;
  <td class="sec bld"><fmt:int value="${entryNumber}" /></td>
  <td class="pri bld">${entry.equipmentType}</td>
  <td><fmt:int value="${entry.legs}" /></td>
- <td><fmt:dec value="${entry.hours}" /></td>
+ <td class="nophone" ><fmt:dec value="${entry.hours}" /></td>
  <td class="pri bld"><fmt:dec value="${entry.averageSpeed}" fmt="#0.00" /> ft/min</td>
  <td class="sec"><fmt:dec value="${entry.stdDeviation}" fmt="#0.00" /> ft/min</td>
 <c:choose>
@@ -90,7 +89,7 @@ return true;
 </el:table>
 
 <!-- Charts -->
-<el:table className="form">
+<el:table className="form nophone">
 <tr class="title">
  <td colspan="2" class="left">FLIGHT DATA VISUALIZATION</td>
 </tr>

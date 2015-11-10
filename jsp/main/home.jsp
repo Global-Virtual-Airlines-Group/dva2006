@@ -132,8 +132,8 @@ our sister airline <a rel="external" target="_new" href="${reqProtocol}://${part
 <c:choose>
 <c:when test="${!empty con.flightInfo.flightCode}">
  <td class="sec bld">${con.flightInfo.flightCode}</td>
- <td class="small bld">${con.flightInfo.equipmentType}</td>
- <td class="small sec">${con.flightPhase}</td>
+ <td class="nophone small bld">${con.flightInfo.equipmentType}</td>
+ <td class="nophone small sec">${con.flightPhase}</td>
  <td class="small">${con.flightInfo.airportD.name} (<fmt:airport airport="${con.flightInfo.airportD}" />) 
 - ${con.flightInfo.airportA.name} (<fmt:airport airport="${con.flightInfo.airportA}" />)</td>
 </c:when>
@@ -192,10 +192,10 @@ our sister airline <a rel="external" target="_new" href="${reqProtocol}://${part
  <td class="sec bld">${event.network}</td>
  <td class="small bld"><fmt:date t="HH:mm" date="${event.startTime}" /> - <fmt:date t="HH:mm" date="${event.endTime}" /></td>
 <c:if test="${empty eRoute}">
- <td class="small caps">NO AVAILABLE ROUTES</td>
+ <td class="nophone small caps">NO AVAILABLE ROUTES</td>
 </c:if>
 <c:if test="${!empty eRoute}">
- <td class="left small">${eRoute.airportD.name} (<fmt:airport airport="${eRoute.airportD}" />) - 
+ <td class="nophone left small">${eRoute.airportD.name} (<fmt:airport airport="${eRoute.airportD}" />) - 
 ${eRoute.airportA.name} (<fmt:airport airport="${eRoute.airportA}" />)</td>
 </c:if>
 </tr>
@@ -212,7 +212,7 @@ ${eRoute.airportA.name} (<fmt:airport airport="${eRoute.airportA}" />)</td>
 <c:set var="info" value="${toLand[tl]}" scope="page" />
 <tr>
  <td class="priB" style="width:115px;">${info.flightCode}</td>
- <td class="secB" style="width:145px;">${info.equipmentType}</td>
+ <td class="secB nophone" style="width:145px;">${info.equipmentType}</td>
 <c:if test="${tl.isTakeoff}">
  <td class="left">Departed from ${info.airportD.name} (<fmt:airport airport="${info.airportD}" />)
  at <fmt:date date="${tl.date}" t="HH:mm" /></td>
@@ -245,10 +245,10 @@ If you have questions or comments, please direct them to our Corporate Offices a
 <br />
 <c:choose>
 <c:when test="${empty fbClientID}">
-<div class="mid"><a rel="nofollow" href="http://www.vatsim.net/"><el:img src="network/vatsim_button.png" caption="VATSIM Partner Airline" className="noborder" /></a></div>
+<div class="mid nophone"><a rel="nofollow" href="http://www.vatsim.net/"><el:img src="network/vatsim_button.png" caption="VATSIM Partner Airline" className="noborder" /></a></div>
 </c:when>
 <c:otherwise>
-<div style="float:right; margin-right:70px;">
+<div class="nophone" style="float:right; margin-right:70px;">
 <iframe src="${reqProtocol}://www.facebook.com/plugins/like.php?href=${reqProtocol}%3A%2F%2Fwww.deltava.org%2F&amp;send=false&amp;layout=standard&amp;width=300&amp;show_faces=false&amp;font=tahoma&amp;colorscheme=light&amp;action=recommend&amp;height=62&amp;appId=${fbClientID}" style="border:none; overflow:hidden; width:350px; height:62px;"></iframe>
 </div>
 <div style="float:left; margin-left:70px;"><a rel="nofollow" href="http://www.vatsim.net/"><el:img src="network/vatsim_button.png" caption="VATSIM Partner Airline" className="noborder" /></a></div>

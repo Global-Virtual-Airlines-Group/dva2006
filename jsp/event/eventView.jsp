@@ -61,7 +61,7 @@ golgotha.local.resizeBriefing = function(maxRows) {
  <fmt:date date="${event.endTime}" fmt="t" t="HH:mm" /></td>
 </tr>
 <c:if test="${event.hasBanner}">
-<tr>
+<tr class="nophone">
  <td colspan="6" class="mid"><img alt="${event.name} Banner" src="/event/${event.hexID}" /></td>
 </tr>
 </c:if>
@@ -100,7 +100,7 @@ golgotha.local.resizeBriefing = function(maxRows) {
 </view:row>
 </c:forEach>
 </c:if>
-<tr>
+<tr class="nophone">
  <td class="label top">Flight Briefing</td>
  <td colspan="5" class="data"><el:textbox name="briefing" readOnly="true" width="90%" height="2">${event.briefing}</el:textbox></td>
 </tr>
@@ -135,8 +135,8 @@ golgotha.local.resizeBriefing = function(maxRows) {
 <tr class="title caps">
  <td colspan="2">CHART NAME</td>
  <td colspan="2">AIRPORT</td>
- <td>IMAGE TYPE</td>
- <td>CHART TYPE</td>
+ <td class="nophone">IMAGE TYPE</td>
+ <td class="nophone">CHART TYPE</td>
 </tr>
 <c:forEach var="chart" items="${event.charts}">
 <c:set var="hasPDF" value="${chart.imgType == 'PDF'}" scope="page" />
@@ -146,14 +146,14 @@ golgotha.local.resizeBriefing = function(maxRows) {
 <c:when test="${hasPDF}">
  <td colspan="2"><el:link url="/charts/${chart.hexID}.pdf" className="bld" target="chartView">${chart.name}</el:link></td>
  <td colspan="2">${cAirport.name} (<fmt:airport airport="${cAirport}" />)</td>
- <td>Adobe PDF</td>
- <td class="sec">${chart.type}</td>
+ <td class="nophone">Adobe PDF</td>
+ <td class="sec nophone">${chart.type}</td>
 </c:when>
 <c:otherwise>
  <td colspan="2" class="pri bld"><el:cmd url="chart" link="${chart}">${chart.name}</el:cmd></td>
  <td colspan="2">${cAirport.name} (<fmt:airport airport="${cAirport}" />)</td>
- <td>${chart.imgType}</td> 
- <td class="sec">${chart.type}</td>
+ <td class="nophone">${chart.imgType}</td> 
+ <td class="sec nophone">${chart.type}</td>
 </c:otherwise>
 </c:choose>
 </view:row>
@@ -187,15 +187,15 @@ golgotha.local.resizeBriefing = function(maxRows) {
 <!-- Signups Section -->
 <tr class="title caps">
  <td colspan="6" class="left">PARTICIPATING PILOT LIST - <fmt:int value="${fn:sizeof(event.signups)}" /> PILOTS
-<c:if test="${!empty signupPredict}"> (EXPECTED TURNOUT - <fmt:int value="${signupPredict}" /> PILOTS)</c:if></td>
+<c:if test="${!empty signupPredict}"><span class="nophone"> (EXPECTED TURNOUT - <fmt:int value="${signupPredict}" /> PILOTS)</span></c:if></td>
 </tr>
 <tr class="title caps mid">
- <td style="width:10%">ID</td>
- <td style="width:30%">PILOT NAME</td>
- <td style="width:10%">EQUIPMENT</td>
- <td style="width:10%">${event.network} ID</td>
+ <td>ID</td>
+ <td style="max-width:30%">PILOT NAME</td>
+ <td class="nophone">EQUIPMENT</td>
+ <td>${event.network} ID</td>
 <c:if test="${showStats}">
- <td>STATISTICS</td>
+ <td class="nophone">STATISTICS</td>
  <td>FLIGHT ROUTE</td>
 </c:if>
 <c:if test="${!showStats}">
@@ -218,11 +218,11 @@ golgotha.local.resizeBriefing = function(maxRows) {
  <td class="pri bld">${pilot.pilotCode}</td>
 </c:if>
  <td><el:profile location="${pilotLoc}">${pilot.name}</el:profile>
-<c:if test="${!empty pilotCerts}"><span class="ter bld"><fmt:list value="${pilotCerts}" delim=", " /></span></c:if></td>
- <td class="sec bld">${signup.equipmentType}</td>
+<c:if test="${!empty pilotCerts}"><span class="ter bld nophone"><fmt:list value="${pilotCerts}" delim=", " /></span></c:if></td>
+ <td class="sec bld nophone">${signup.equipmentType}</td>
  <td class="pri bld">${fn:networkID(pilot, event.network)}</td>
 <c:if test="${showPilotStats}">
- <td class="small"><fmt:int value="${pilot.eventSignups}" /> signups, <fmt:int value="${pilot.eventLegs}" /> legs
+ <td class="small nophone"><fmt:int value="${pilot.eventSignups}" /> signups, <fmt:int value="${pilot.eventLegs}" /> legs
  (<fmt:dec value="${(pilot.eventLegs * 100.0) / pilot.eventSignups}" fmt="##0.0" />%)</td>
 </c:if>
  <td<c:if test="${!showPilotStats}"> colspan="2"</c:if> class="small">${signup.airportD.name} (<fmt:airport airport="${signup.airportD}" />) - ${signup.airportA.name}
@@ -244,9 +244,9 @@ golgotha.local.resizeBriefing = function(maxRows) {
 <tr class="title caps">
  <td>DATE</td>
  <td>PILOT NAME</td>
- <td>EQUIPMENT</td>
- <td>FLIGHT NUMBER</td>
- <td colspan="2">FLIGHT ROUTE</td>
+ <td class="nophone">EQUIPMENT</td>
+ <td class="nophone">FLIGHT NUMBER</td>
+ <td class="nophone" colspan="2">FLIGHT ROUTE</td>
 </tr>
 
 <!-- Flight Report data -->
@@ -254,11 +254,11 @@ golgotha.local.resizeBriefing = function(maxRows) {
 <c:set var="pilotLoc" value="${userData[fn:PilotID(pirep)]}" scope="page" />
 <c:set var="pilot" value="${pilots[fn:PilotID(pirep)]}" scope="page" />
 <view:row entry="${pirep}">
- <td class="bld"><el:cmd domain="${pilotLoc.domain}" url="pirep" link="${pirep}"><fmt:date fmt="d" date="${pirep.date}" default="NOT FLOWN" /></el:cmd></td>
+ <td class="bld "><el:cmd domain="${pilotLoc.domain}" url="pirep" link="${pirep}"><fmt:date fmt="d" date="${pirep.date}" default="NOT FLOWN" /></el:cmd></td>
  <td><el:profile location="${pilotLoc}">${pilot.name}</el:profile></td>
- <td class="sec bld">${pirep.equipmentType}</td>
- <td>${pirep.flightCode}</td>
- <td colspan="2" class="small">${pirep.airportD.name} (<fmt:airport airport="${pirep.airportD}" />) - ${pirep.airportA.name}
+ <td class="sec bld nophone">${pirep.equipmentType}</td>
+ <td class="nophone">${pirep.flightCode}</td>
+ <td colspan="2" class="small nophone">${pirep.airportD.name} (<fmt:airport airport="${pirep.airportD}" />) - ${pirep.airportA.name}
  (<fmt:airport airport="${pirep.airportA}" />)</td>
 </view:row>
 </c:forEach>

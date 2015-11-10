@@ -22,22 +22,20 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-The <content:airline /> &quot;Century Club&quot; recognizes those pilots who over
-the course of their career with our airline have demonstrated a superior level of commitment
-and dedication, demonstrated by over one hundred logged flight legs. Over the years, the
-&quot;Century Club&quot; has expanded into a number of levels as our pilots have logged more
-flights.<br />
+The <content:airline /> &quot;Century Club&quot; recognizes those pilots who over the course of their career with our airline have demonstrated a superior level of commitment
+ and dedication, demonstrated by over one hundred logged flight legs. Over the years, the &quot;Century Club&quot; has expanded into a number of levels as our pilots have logged more
+ flights.<br />
 <br />
 <view:table cmd="centuryclub">
 <!-- Table Header Bar-->
 <tr class="title">
- <td style="width:5%">#</td>
+ <td>#</td>
  <td style="width:10%">PILOT CODE</td>
  <td style="width:25%">PILOT NAME</td>
- <td style="width:10%">EQUIPMENT</td>
- <td style="width:16%">RANK</td>
+ <td class="nophone" style="width:10%">EQUIPMENT</td>
+ <td class="nophone" style="width:16%">RANK</td>
  <td style="width:8%">FLIGHTS</td>
- <td style="width:8%">HOURS</td>
+ <td class="nophone" style="width:8%">HOURS</td>
  <td>LAST FLIGHT</td>
 </tr>
 
@@ -57,10 +55,10 @@ flights.<br />
  <td class="sec bld"><fmt:int value="${entryNumber}" /></td>
  <td class="pri bld">${pilot.pilotCode}</td>
  <td><el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></td>
- <td class="sec bld">${pilot.equipmentType}</td>
- <td class="pri bld">${pilot.rank.name}</td>
+ <td class="sec bld nophone">${pilot.equipmentType}</td>
+ <td class="pri bld nophone">${pilot.rank.name}</td>
  <td><fmt:int value="${pilot.legs}" /></td>
- <td><fmt:dec value="${pilot.hours}" /></td>
+ <td class="nophone" ><fmt:dec value="${pilot.hours}" /></td>
  <td><fmt:date fmt="d" date="${pilot.lastFlight}" /></td>
 </tr>
 </c:forEach>

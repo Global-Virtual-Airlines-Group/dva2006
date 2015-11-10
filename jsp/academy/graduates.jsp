@@ -30,20 +30,20 @@ golgotha.local.setType = function() { return document.forms[0].submit(); };
 <el:form action="graduates.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <view:table cmd="graduates">
 <tr class="title">
- <td colspan="3" class="left caps"><content:airline /> FLIGHT ACADEMY GRADUATES</td>
+ <td colspan="3" class="left caps"><span class="nophone"><content:airline /> </span>FLIGHT ACADEMY GRADUATES</td>
  <td colspan="5" class="right">SELECT COURSE <el:combo name="cert" idx="*" size="1" options="${certs}" firstEntry="-" value="${param.cert}" onChange="void golgotha.local.setType()" /></td>
 </tr>
 
 <!-- Table Header Bar -->
 <tr class="title caps">
- <td style="width:10%">PILOT CODE</td>
- <td style="width:30%">PILOT NAME</td>
+ <td>PILOT CODE</td>
+ <td style="max-width:30%">PILOT NAME</td>
  <td style="width:20%">RANK</td>
- <td style="width:10%">STARTED</td>
- <td style="width:10%">COMPLETED</td>
- <td style="width:7%">FLIGHTS</td>
- <td style="width:7%">HOURS</td>
- <td>LAST FLIGHT</td>
+ <td class="nophone">STARTED</td>
+ <td>COMPLETED</td>
+ <td class="nophone">FLIGHTS</td>
+ <td class="nophone">HOURS</td>
+ <td class="nophone">LAST FLIGHT</td>
 </tr>
 
 <!-- Table View data -->
@@ -55,15 +55,15 @@ golgotha.local.setType = function() { return document.forms[0].submit(); };
  <td><el:profile location="${pilotLoc}" className="sec bld plain">${pilot.name}</el:profile></td>
  <td>${pilot.rank.name}, ${pilot.equipmentType}</td>
 <c:if test="${canView}">
- <td><el:cmd url="course" link="${course}"><fmt:date fmt="d" date="${course.startDate}" /></el:cmd></td>
+ <td class="nophone"><el:cmd url="course" link="${course}"><fmt:date fmt="d" date="${course.startDate}" /></el:cmd></td>
 </c:if>
 <c:if test="${!canView}">
- <td><fmt:date fmt="d" date="${course.startDate}" /></td>
+ <td class="nophone"><fmt:date fmt="d" date="${course.startDate}" /></td>
 </c:if>
  <td class="bld"><fmt:date fmt="d" date="${course.endDate}" /></td>
- <td class="sec bld small"><fmt:int value="${pilot.legs}" /></td>
- <td class="small"><fmt:dec value="${pilot.hours}" /></td>
- <td class="small"><fmt:date fmt="d" date="${pilot.lastFlight}" default="-" /></td>
+ <td class="sec bld small nophone"><fmt:int value="${pilot.legs}" /></td>
+ <td class="small nophone"><fmt:dec value="${pilot.hours}" /></td>
+ <td class="small nophone"><fmt:date fmt="d" date="${pilot.lastFlight}" default="-" /></td>
 </view:row>
 </c:forEach>
 

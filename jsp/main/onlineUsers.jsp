@@ -35,19 +35,19 @@ golgotha.local.sortBy = function(combo) {
 <el:table className="view">
 <tr class="title">
  <td colspan="4" class="left caps"><fmt:int value="${pilots.size()}" /> CURRENTLY LOGGED IN USERS
-<c:if test="${!empty maxUserDate}"> - MAXIMUM <fmt:int value="${maxUsers}" /> on <fmt:date date="${maxUserDate}" /></c:if></td>
- <td><el:cmd url="users" op="map">VIEW MAP</el:cmd></td>
- <td class="right">SORT BY <el:combo name="sortOpt" idx="*" size="1" options="${sortOptions}" value="${sortOpt}" onChange="void golgotha.local.sortBy(this)" /></td>
+<c:if test="${!empty maxUserDate}"><span class="nophone"> - MAXIMUM <fmt:int value="${maxUsers}" /> on <fmt:date date="${maxUserDate}" /></span></c:if></td>
+ <td class="nophone"><el:cmd url="users" op="map">VIEW MAP</el:cmd></td>
+ <td class="right nophone">SORT BY <el:combo name="sortOpt" idx="*" size="1" options="${sortOptions}" value="${sortOpt}" onChange="void golgotha.local.sortBy(this)" /></td>
 </tr>
 
 <!-- Pilot Title Bar -->
 <tr class="title caps">
- <td style="width:10%">PILOT ID</td>
- <td style="width:20%">PILOT NAME</td>
- <td style="width:12%">RANK</td>
- <td style="width:13%">EQUIPMENT TYPE</td>
- <td style="width:20%">LOCATION</td>
- <td>JOINED ON</td>
+ <td>PILOT ID</td>
+ <td style="max-width:30%">PILOT NAME</td>
+ <td class="nophone">RANK</td>
+ <td>EQUIPMENT TYPE</td>
+ <td>LOCATION</td>
+ <td class="nophone">JOINED ON</td>
 </tr>
 
 <!-- Pilot Data Bar -->
@@ -56,7 +56,7 @@ golgotha.local.sortBy = function(combo) {
 <tr>
  <td class="pri bld">${pilot.pilotCode}</td>
  <td class="bld"><el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></td>
- <td class="pri">${pilot.rank.name}</td>
+ <td class="pri nophone">${pilot.rank.name}</td>
  <td class="sec">${pilot.equipmentType}</td>
 <c:choose>
 <c:when test="${isHR && (!empty session.addressInfo)}">
@@ -66,7 +66,7 @@ golgotha.local.sortBy = function(combo) {
  <td>${pilot.location}</td>
 </c:otherwise>
 </c:choose>
- <td class="small"><fmt:date date="${pilot.createdOn}" fmt="d" d="EEEE MMMM dd, yyyy" /></td>
+ <td class="small nophone"><fmt:date date="${pilot.createdOn}" fmt="d" d="EEEE MMMM dd, yyyy" /></td>
 </tr>
 <c:if test="${isHR}">
 <view:row entry="${session}">
@@ -77,7 +77,7 @@ golgotha.local.sortBy = function(combo) {
 </c:forEach>
 <c:if test="${empty pilots}">
 <tr>
- <td colspan="6" class="pri bld caps">NO CURRENTLY LOGGED IN <content:airline /> USERS</td>
+ <td colspan="6" class="pri bld caps">NO CURRENTLY LOGGED IN <span class="nophone"><content:airline /> </span>USERS</td>
 </tr>
 </c:if>
 <tr class="title">

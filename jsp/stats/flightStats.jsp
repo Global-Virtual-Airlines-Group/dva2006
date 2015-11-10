@@ -29,7 +29,7 @@ golgotha.local.updateSort = function() { return document.forms[0].submit(); };
 <el:form action="${isCharter ? 'charter' : 'flight'}stats.do" method="post" validate="return true">
 <view:table cmd="flightstats">
 <tr class="title">
- <td colspan="4" class="left caps"><content:airline /> <c:if test="${isCharter}">CHARTER </c:if>FLIGHT STATISTICS</td>
+ <td colspan="5" class="left caps"><span class="nophone"><content:airline /> </span><c:if test="${isCharter}">CHARTER </c:if>FLIGHT STATISTICS</td>
  <td colspan="7" class="right">GROUP BY <el:combo name="groupType" size="1" idx="*" options="${groupTypes}" value="${param.groupType}" onChange="void golgotha.local.updateSort()" />
  SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${viewContext.sortType}" onChange="void golgotha.local.updateSort()" /></td>
 </tr>

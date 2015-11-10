@@ -104,7 +104,7 @@ golgotha.local.toggleCheckbox = function() {
 <c:forEach var="comment" items="${issue.comments}">
 <c:set var="author" value="${pilots[comment.authorID]}" scope="page" />
 <tr>
- <td class="label top">${author.name} (${author.pilotCode})<br />
+ <td class="label top">${author.name}<span class="nophone"> (${author.pilotCode})</span><br />
  <fmt:date date="${comment.createdOn}" t="HH:mm" /></td>
  <td class="data top"><fmt:msg value="${comment.comments}" bbCode="true" />
 <c:if test="${!empty comment.name}">
