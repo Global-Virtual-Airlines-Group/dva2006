@@ -12,8 +12,9 @@
 <title>Questionnaire - ${applicant.name}</title>
 <content:css name="main" />
 <content:css name="form" />
-<content:pics />
 <content:js name="common" />
+<content:pics />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="examTake" />
 <script type="text/javascript">
 golgotha.local.validate = function(f)
