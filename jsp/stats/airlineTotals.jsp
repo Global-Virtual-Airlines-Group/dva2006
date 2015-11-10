@@ -94,7 +94,7 @@
  <td style="width:35%">TABLE NAME</td>
  <td style="width:15%">ROWS</td>
  <td style="width:15%">TABLE SIZE</td>
- <td style="width:15%">INDEX SIZE</td>
+ <td class="nophone" style="width:15%">INDEX SIZE</td>
  <td>AVG. ROW SIZE</td>
 </tr>
 
@@ -104,7 +104,7 @@
  <td class="pri bld caps">${tableInfo.name}</td>
  <td class="sec bld"><fmt:int value="${tableInfo.rows}" /></td>
  <td class="bld"><fmt:int value="${tableInfo.size}" /> bytes</td>
- <td class="sec bld"><fmt:int value="${tableInfo.indexSize}" /> bytes</td>
+ <td class="sec bld nophone"><fmt:int value="${tableInfo.indexSize}" /> bytes</td>
  <td><fmt:int value="${tableInfo.averageRowLength}" /> bytes/row</td>
 </tr>
 </c:forEach>

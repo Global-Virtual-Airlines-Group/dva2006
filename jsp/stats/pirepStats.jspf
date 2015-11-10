@@ -9,10 +9,10 @@
  <td style="width:6%">LEGS</td>
  <td style="width:9%">ACARS</td>
  <td style="width:9%">VATSIM</td>
- <td style="width:8%">IVAO</td>
- <td style="width:9%">HISTORIC</td>
- <td style="width:9%">DISPATCH</td>
- <td style="width:7%">${hasPilotID ? 'PILOTS' : 'DISTANCE'}</td>
+ <td class="nophone" style="width:8%">IVAO</td>
+ <td class="nophone" style="width:9%">HISTORIC</td>
+ <td class="nophone" style="width:9%">DISPATCH</td>
+ <td class="nophone" style="width:7%">${hasPilotID ? 'PILOTS' : 'DISTANCE'}</td>
  <td>AVERAGE</td>
 </tr>
 
@@ -27,17 +27,16 @@
  <td class="pri bld"><fmt:int value="${stat.legs}" /></td>
  <td class="sec bld small"><fmt:int value="${stat.ACARSLegs}" /> (<fmt:dec value="${stat.ACARSPercent * 100}" fmt="##0.0" />%)</td>
  <td class="small"><fmt:int value="${stat.VATSIMLegs}" /> (<fmt:dec value="${(stat.VATSIMLegs * 100.0) / stat.legs}" fmt="##0.0" />%)</td>
- <td class="small"><fmt:int value="${stat.IVAOLegs}" /> (<fmt:dec value="${(stat.IVAOLegs * 100.0) / stat.legs}" fmt="##0.0" />%)</td>
- <td class="sec small"><fmt:int value="${stat.historicLegs}" /> (<fmt:dec value="${(stat.historicLegs * 100.0) / stat.legs}" fmt="##0.0" />%)</td>
- <td class="bld small"><fmt:int value="${stat.dispatchLegs}" /> (<fmt:dec value="${(stat.dispatchLegs * 100.0) / stat.legs}" fmt="##0.0" />%)</td>
+ <td class="small nophone"><fmt:int value="${stat.IVAOLegs}" /> (<fmt:dec value="${(stat.IVAOLegs * 100.0) / stat.legs}" fmt="##0.0" />%)</td>
+ <td class="sec small nophone"><fmt:int value="${stat.historicLegs}" /> (<fmt:dec value="${(stat.historicLegs * 100.0) / stat.legs}" fmt="##0.0" />%)</td>
+ <td class="bld small nophone"><fmt:int value="${stat.dispatchLegs}" /> (<fmt:dec value="${(stat.dispatchLegs * 100.0) / stat.legs}" fmt="##0.0" />%)</td>
 <c:if test="${hasPilotID}">
- <td class="small"><fmt:int value="${stat.pilotIDs}" /></td>
+ <td class="small nophone"><fmt:int value="${stat.pilotIDs}" /></td>
 </c:if>
 <c:if test="${!hasPilotID}">
- <td class="small"><fmt:distance value="${stat.miles}" /></td>
+ <td class="small nophone"><fmt:distance value="${stat.miles}" /></td>
 </c:if>
- <td class="small"><fmt:dec value="${stat.avgHours}" fmt="#,##0.00" /> hours, 
-<fmt:distance value="${stat.avgMiles}" /></td>
+ <td class="small"><fmt:dec value="${stat.avgHours}" fmt="#,##0.00" /> hours, <fmt:distance value="${stat.avgMiles}" /></td>
 </view:row>
 </c:forEach>
 
