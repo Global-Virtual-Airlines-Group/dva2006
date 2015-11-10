@@ -10,8 +10,9 @@
 <title><content:airline /> Applicant Questionnaires</title>
 <content:css name="main" />
 <content:css name="view" />
-<content:pics />
 <content:js name="common" />
+<content:pics />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -26,10 +27,10 @@
 <tr class="title">
  <td style="width:10%">&nbsp;</td>
  <td style="width:20%">APPLICANT NAME</td>
- <td style="width:20%">E-MAIL ADDRESS</td>
- <td style="width:10%">APPLIED ON</td>
+ <td class="nophone" style="width:20%">E-MAIL ADDRESS</td>
+ <td class="nophone" style="width:10%">APPLIED ON</td>
  <td style="width:10%">SUBMITTED ON</td>
- <td>REMOTE HOST NAME</td>
+ <td class="nophone">REMOTE HOST NAME</td>
 </tr>
 
 <!-- Table Questionnaire Data -->
@@ -38,10 +39,10 @@
 <tr>
  <td><el:cmdbutton url="questionnaire" link="${exam}" label="SCORE" /></td>
  <td class="pri bld"><el:cmd url="applicant" link="${applicant}">${applicant.name}</el:cmd></td>
- <td><a href="mailto:${applicant.email}">${applicant.email}</a></td>
- <td class="sec bld"><fmt:date fmt="d" date="${applicant.createdOn}" /></td>
+ <td class="nophone"><a href="mailto:${applicant.email}">${applicant.email}</a></td>
+ <td class="sec bld nophone"><fmt:date fmt="d" date="${applicant.createdOn}" /></td>
  <td class="bld"><fmt:date fmt="d" date="${exam.submittedOn}" /></td>
- <td class="small">${applicant.registerHostName}</td>
+ <td class="small nophone">${applicant.registerHostName}</td>
 </tr>
 </c:forEach>
 
