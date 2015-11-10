@@ -30,7 +30,7 @@
 <el:table className="form">
 <tr class="title">
  <td class="caps"><fmt:int value="${fn:sizeof(pilots)}" /> CURRENTLY LOGGED IN USERS
-<c:if test="${!empty maxUserDate}"> - MAXIMUM <fmt:int value="${maxUsers}" /> on <fmt:date date="${maxUserDate}" /></c:if></td>
+<c:if test="${!empty maxUserDate}"><span class="nophone"> - MAXIMUM <fmt:int value="${maxUsers}" /> on <fmt:date date="${maxUserDate}" /></span></c:if></td>
  <td style="width:15%" class="mid"><el:cmd url="users">VIEW LIST</el:cmd></td>
 </tr>
 <tr>

@@ -31,9 +31,9 @@ golgotha.local.sort = function() { return document.forms[0].submit(); };
 <view:table cmd="roster">
 <!-- Table Sort Combo Bar -->
 <tr class="title">
- <td colspan="3" class="left caps"><content:airline /> PILOT ROSTER</td>
+ <td colspan="3" class="left caps"><span class="nophone"><content:airline /> </span>PILOT ROSTER</td>
  <td colspan="5" class="right">PROGRAM <el:combo name="eqType" size="1" idx="*" options="${eqTypes}" firstEntry="All Programs" value="${param.eqType}" onChange="void golgotha.local.sort()" />
- SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${viewContext.sortType}" onChange="void golgotha.local.sort()" /></td>
+<span class="nophone"> SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${viewContext.sortType}" onChange="void golgotha.local.sort()" /></span></td>
 </tr>
 
 <!-- Table Header Bar-->
@@ -42,9 +42,9 @@ golgotha.local.sort = function() { return document.forms[0].submit(); };
  <td style="width:30%">PILOT NAME</td>
  <td style="width:10%">EQUIPMENT</td>
  <td style="width:16%">RANK</td>
- <td style="width:6%">HOME</td>
+ <td class="nophone" style="width:6%">HOME</td>
  <td style="width:8%">FLIGHTS</td>
- <td style="width:8%">HOURS</td>
+ <td class="nophone" style="width:8%">HOURS</td>
  <td>LAST FLIGHT</td>
 </tr>
 
@@ -55,9 +55,9 @@ golgotha.local.sort = function() { return document.forms[0].submit(); };
  <td><el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></td>
  <td class="sec bld">${pilot.equipmentType}</td>
  <td class="pri bld">${pilot.rank.name}</td>
- <td class="sec">${pilot.homeAirport}</td>
+ <td class="sec nophone">${pilot.homeAirport}</td>
  <td><fmt:int value="${pilot.legs}" /></td>
- <td><fmt:dec value="${pilot.hours}" /></td>
+ <td class="nophone"><fmt:dec value="${pilot.hours}" /></td>
  <td><fmt:date fmt="d" date="${pilot.lastFlight}" default="-" /></td>
 </tr>
 </c:forEach>

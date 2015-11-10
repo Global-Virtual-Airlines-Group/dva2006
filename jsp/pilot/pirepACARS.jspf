@@ -13,8 +13,8 @@
 <tr>
  <td class="label">ACARS Flight ID</td>
  <td class="data" colspan="${cspan}"><fmt:int value="${fn:ACARS_ID(pirep)}" /> (<fmt:int value="${flightInfo.positionCount}" /> position records)
- Download ACARS data into <a href="acars_data.ws?id=${fn:ACARS_ID(pirep)}">Microsoft Excel</a>
- <a href="acars_earth.ws?id=${fn:ACARS_ID(pirep)}&amp;showData=true&amp;showRoute=true">Google Earth</a></td>
+<span class="nophone"> Download ACARS data into <a href="acars_data.ws?id=${fn:ACARS_ID(pirep)}">Microsoft Excel</a>
+ | <a href="acars_earth.ws?id=${fn:ACARS_ID(pirep)}&amp;showData=true&amp;showRoute=true">Google Earth</a></span></td>
 </tr>
 </c:if>
 <c:if test="${!isXACARS && (pirep.clientBuild > 0)}">
@@ -96,9 +96,9 @@
 <c:if test="${empty rwy}">
 <span class="error bld">UNKNOWN</span></c:if>
  <a href="javascript:void golgotha.local.zoomTo(${pirep.takeoffLocation.latitude}, ${pirep.takeoffLocation.longitude})">Zoom to Takeoff</a>
-<c:if test="${access.canDispose && (!empty dRunways)}"> <span class="ita">Change Runway to</span> 
+<c:if test="${access.canDispose && (!empty dRunways)}"><span class="nophone"> <span class="ita">Change Runway to</span> 
  <el:combo name="newRwyD" size="1" idx="*" options="${dRunways}" value="${rwy}" /> 
- <el:cmdbutton url="updrwy" post="true" link="${flightInfo}" label="UPDATE" />
+ <el:cmdbutton url="updrwy" post="true" link="${flightInfo}" label="UPDATE" /></span>
 <c:if test="${access.canDispose && (empty rwy)}"> | <el:cmd url="rwyrecalc" link="${pirep}">RECALCULATE RUNWAY</el:cmd></c:if></c:if></td>
 </tr>
 </c:if>
@@ -147,9 +147,9 @@
 <c:if test="${empty rwy}">
 <span class="error bld">UNKNOWN</span></c:if>
  <a href="javascript:void golgotha.local.zoomTo(${pirep.landingLocation.latitude}, ${pirep.landingLocation.longitude})">Zoom to Landing</a>
-<c:if test="${access.canDispose && (!empty aRunways)}"> <span class="ita">Change Runway to</span> 
+<c:if test="${access.canDispose && (!empty aRunways)}"><span class="nophone"> <span class="ita">Change Runway to</span> 
  <el:combo name="newRwyA" size="1" idx="*" options="${aRunways}" value="${rwy}" /> 
- <el:cmdbutton url="updrwy" post="true" link="${flightInfo}" label="UPDATE" />
+ <el:cmdbutton url="updrwy" post="true" link="${flightInfo}" label="UPDATE" /></span>
 <c:if test="${access.canDispose && (empty rwy)}"> | <el:cmd url="rwyrecalc" link="${pirep}">RECALCULATE RUNWAY</el:cmd></c:if></c:if></td>
 </tr>
 </c:if>
