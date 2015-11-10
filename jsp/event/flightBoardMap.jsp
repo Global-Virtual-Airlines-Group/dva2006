@@ -33,16 +33,16 @@
 <el:form action="flightboard.do" method="get" validate="return false">
 <el:table className="form">
 <tr class="title">
- <td style="width:40%" class="left caps"><content:airline /> ${network} ONLINE PILOTS<span id="isLoading"></span></td>
+ <td style="width:40%" class="left caps"><span class="nophone"><content:airline /> ${network} </span>ONLINE PILOTS<span id="isLoading"></span></td>
  <td style="width:15%" class="mid"><el:cmd url="flightboard" linkID="${network}">FLIGHT BOARD</el:cmd></td>
  <td class="right">SELECT NETWORK <el:combo name="networkName" size="1" idx="1" onChange="void golgotha.flightBoard.setNetwork(this)" options="${networks}" value="${network}" />
-<span id="userSelect" style="display:none;"> ZOOM TO <el:combo ID="usrID" name="usrID" idx="*" options="${emptyList}" firstEntry="-" onChange="void golgotha.flightBoard.zoomTo(this)" /></span></td>
+<span id="userSelect" class="nophone" style="display:none;"> ZOOM TO <el:combo ID="usrID" name="usrID" idx="*" options="${emptyList}" firstEntry="-" onChange="void golgotha.flightBoard.zoomTo(this)" /></span></td>
 </tr>
 <tr>
- <td colspan="2"><span class="pri bld">PILOT LEGEND</span> <map:legend color="blue" className="small" legend="Member Pilot - Our Airline" />
+ <td colspan="2"><span class="pri bld nophone">PILOT LEGEND</span> <map:legend color="blue" className="small" legend="Member Pilot - Our Airline" />
  <map:legend color="yellow" className="small" legend="Our Airline" />
  <map:legend color="white" className="small" legend="${netInfo.network} Pilot" /></td>
- <td><span class="pri bld">ATC LEGEND</span> <map:legend color="purple" className="small" legend="Oceanic" />
+ <td><span class="pri bld nophone">ATC LEGEND</span> <map:legend color="purple" className="small" legend="Oceanic" />
  <map:legend color="red" className="small" legend="Center" /> <map:legend color="green" className="small" legend="Approach / Departure" /></td>
 </tr>
 <tr>
