@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display statistics about a Pilot's landings.
  * @author Luke
- * @version 5.0
+ * @version 6.2
  * @since 2.1
  */
 
@@ -68,7 +68,7 @@ public class MyFlightStatsCommand extends AbstractStatsCommand {
 			
 			// Get the Flight Report statistics
 			GetFlightReportStatistics stdao = new GetFlightReportStatistics(con);
-			vc.setResults(stdao.getPIREPStatistics(userID, labelType, vc.getSortType(), true, false));
+			vc.setResults(stdao.getPIREPStatistics(userID, labelType, vc.getSortType(), true));
 			
 			// Get the DAO and the landing statistics
 			stdao.setDayFilter(daysBack);

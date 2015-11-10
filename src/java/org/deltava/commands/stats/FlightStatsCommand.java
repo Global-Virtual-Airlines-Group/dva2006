@@ -1,9 +1,5 @@
-// Copyright 2005, 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
-
-import java.util.Collection;
-
-import org.deltava.beans.stats.FlightStatsEntry;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -13,7 +9,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to display sorted Flight Report statistics.
  * @author Luke
- * @version 3.0
+ * @version 6.2
  * @since 1.0
  */
 
@@ -24,6 +20,7 @@ public class FlightStatsCommand extends AbstractStatsCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the view context
@@ -32,25 +29,22 @@ public class FlightStatsCommand extends AbstractStatsCommand {
 		   vc.setSortType(SORT_CODE[0]);
 
 		// Get grouping type
-		String labelType = ctx.getParameter("groupType");
-		if (StringUtils.arrayIndexOf(GROUP_CODE, labelType) == -1)
+		String labelType = ctx.getParameter("groupType"); int ofs = StringUtils.arrayIndexOf(GROUP_CODE, labelType);
+		if (ofs < 0)
 			labelType = GROUP_CODE[0];
-		else if (GROUP_CODE[6].equals(labelType))
+		else if (ofs == 6)
 			labelType = MONTH_SQL;
 		
-		boolean activeOnly = Boolean.valueOf(ctx.getParameter("activeOnly")).booleanValue();
 		try {
-			GetFlightReportStatistics dao = new GetFlightReportStatistics(ctx.getConnection());
+			GetAggregateStatistics dao = new GetAggregateStatistics(ctx.getConnection());
 			dao.setQueryStart(vc.getStart());
 			dao.setQueryMax(vc.getCount());
 
 			// Save the statistics in the request
-			Collection<FlightStatsEntry> results = dao.getPIREPStatistics(0, labelType, vc.getSortType(), true, activeOnly); 
-			vc.setResults(results);
-			
-			// Save pilot ID flag
-			boolean hasID = !results.isEmpty() && (results.iterator().next().getPilotIDs() > 0);
-			ctx.setAttribute("hasPilotID", Boolean.valueOf(hasID), REQUEST);
+			if (labelType.contains("AP."))
+				vc.setResults(dao.getAirportStatistics(vc.getSortType(), (ofs - 3)));
+			else
+				vc.setResults(dao.getPIREPStatistics(labelType, vc.getSortType()));
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
@@ -60,6 +54,7 @@ public class FlightStatsCommand extends AbstractStatsCommand {
 		// Save the sorter types in the request
 		ctx.setAttribute("sortTypes", SORT_OPTIONS, REQUEST);
 		ctx.setAttribute("groupTypes", GROUP_OPTIONS, REQUEST);
+		ctx.setAttribute("hasPilotID", Boolean.valueOf(labelType.contains("P.")), REQUEST);
 
 		// Set the result page and return
 		CommandResult result = ctx.getResult();

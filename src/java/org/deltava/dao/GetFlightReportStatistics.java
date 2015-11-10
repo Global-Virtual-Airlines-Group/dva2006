@@ -373,72 +373,6 @@ public class GetFlightReportStatistics extends DAO {
 	}
 
 	/**
-	 * Retrieves aggregated approved Flight Report statistics.
-	 * @param groupBy the &quot;GROUP BY&quot; column name
-	 * @param orderBy the &quot;ORDER BY&quot; column name
-	 * @return a Collection of FlightStatsEntry beans
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public Collection<FlightStatsEntry> getSimStatistics(String groupBy, String orderBy) throws DAOException {
-		
-		// Get the SQL statement to use
-		boolean isPilot = groupBy.contains("P.");
-		StringBuilder sqlBuf = new StringBuilder("SELECT ");
-		sqlBuf.append(groupBy);
-		sqlBuf.append(" AS LABEL, COUNT(F.FSVERSION) AS LEGS, SUM(F.DISTANCE) AS MILES, ROUND(SUM(F.FLIGHT_TIME), 1) "
-				+ "AS HOURS, SUM(IF(F.FSVERSION=?,1,0)) AS FSX, SUM(IF(F.FSVERSION=?,1,0)) AS FS9, "
-				+ "SUM(IF(F.FSVERSION=?,1,0)) AS FS8, SUM(IF(FSVERSION=?,1,0)) AS FS7, SUM(IF(FSVERSION<?,1,0)) AS FSO, "
-				+ "SUM(IF(F.FSVERSION=?,1,0)) AS P3D FROM PIREPS F");
-		if (isPilot)
-			sqlBuf.append(", PILOTS P");
-		sqlBuf.append(" WHERE (F.STATUS=?)");
-		if (isPilot)
-			sqlBuf.append(" AND (P.ID=F.PILOT_ID)");
-		sqlBuf.append(" GROUP BY LABEL ORDER BY ");
-		sqlBuf.append(orderBy);
-		
-		try {
-			prepareStatement(sqlBuf.toString());
-			_ps.setInt(1, 2006);
-			_ps.setInt(2, 2004);
-			_ps.setInt(3, 2002);
-			_ps.setInt(4, 2000);
-			_ps.setInt(5, 2000);
-			_ps.setInt(6, 2008);
-			_ps.setInt(7, FlightReport.OK);
-			
-			// Check the cache
-			String cacheKey = getCacheKey(_ps.toString());
-			CacheableCollection<FlightStatsEntry> results = _statCache.get(cacheKey);
-			if (results != null) {
-				_ps.close();
-				return results.clone();
-			}
-			
-			// Execute the query
-			results = new CacheableList<FlightStatsEntry>(cacheKey);
-			try (ResultSet rs = _ps.executeQuery()) {
-				while (rs.next()) {
-					FlightStatsEntry entry = new FlightStatsEntry(rs.getString(1), rs.getInt(2), rs.getDouble(4), rs.getInt(3));
-					entry.setFSVersionLegs(10, rs.getInt(5));
-					entry.setFSVersionLegs(9, rs.getInt(6));
-					entry.setFSVersionLegs(8, rs.getInt(7));
-					entry.setFSVersionLegs(7, rs.getInt(8));
-					entry.setFSVersionLegs(0, rs.getInt(9));
-					entry.setFSVersionLegs(11, rs.getInt(10));
-					results.add(entry);
-				}
-			}
-
-			_ps.close();
-			_statCache.add(results);
-			return results.clone();
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-	
-	/**
 	 * Retrieves aggregated approved Flight Report statistics for Flights flown using aircraft that are Primary Ratings for
 	 * a particular Equipment Type program.
 	 * @param eqType the Equipment type name
@@ -615,11 +549,10 @@ public class GetFlightReportStatistics extends DAO {
 	 * @param groupBy the &quot;GROUP BY&quot; column name
 	 * @param orderBy the &quot;ORDER BY&quot; column name
 	 * @param descSort TRUE if a descending sort, otherwise FALSE
-	 * @param activeOnly TRUE if active pilots only, otherwise FALSE
 	 * @return a Collection of FlightStatsEntry beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<FlightStatsEntry> getPIREPStatistics(int pilotID, String groupBy, String orderBy, boolean descSort, boolean activeOnly) throws DAOException {
+	public Collection<FlightStatsEntry> getPIREPStatistics(int pilotID, String groupBy, String orderBy, boolean descSort) throws DAOException {
 
 		// Get the SQL statement to use
 		StringBuilder sqlBuf = new StringBuilder("SELECT ");
@@ -639,10 +572,6 @@ public class GetFlightReportStatistics extends DAO {
 		
 		if (pilotID != 0)
 			sqlBuf.append("AND (F.PILOT_ID=?) ");
-		if (activeOnly && sqlBuf.toString().contains(" P."))
-			sqlBuf.append("AND (P.STATUS=?) ");
-		else
-			activeOnly = false;
 		
 		sqlBuf.append("GROUP BY LABEL ORDER BY ");
 		sqlBuf.append(orderBy);
@@ -661,8 +590,6 @@ public class GetFlightReportStatistics extends DAO {
 			_ps.setInt(++param, FlightReport.OK);
 			if (pilotID != 0)
 				_ps.setInt(++param, pilotID);
-			if (activeOnly)
-				_ps.setInt(++param, Pilot.ACTIVE);
 			
 			// Check the cache
 			String cacheKey = getCacheKey(_ps.toString());
