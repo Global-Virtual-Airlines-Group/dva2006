@@ -407,3 +407,9 @@ a.plain {
        display:none;
     }
 }
+
+@media (min-width: 801px) {
+    .phone {
+        display:none;
+    }	
+}
