@@ -110,9 +110,9 @@ return true;
 <el:table className="thread form">
 <!-- Thread Header -->
 <tr class="title">
- <td colspan="3" class="left caps"><el:cmd className="title" url="channels"><content:airline />
+ <td colspan="3" class="left caps"><span class="nophone"><el:cmd className="title" url="channels"><content:airline />
  ${forumName}</el:cmd> | <el:cmd className="title" url="channel" linkID="${thread.channel}">${thread.channel}</el:cmd> |
- <fmt:text value="${thread.subject}" /><c:if test="${access.canReport}">
+ </span><fmt:text value="${thread.subject}" /><c:if test="${access.canReport}">
  ( <el:cmd url="threadreport" link="${thread}" className="small">WARN MODERATORS</el:cmd> )</c:if></td>
 </tr>
 <c:if test="${!empty thread.stickyUntil}">
@@ -141,7 +141,7 @@ return true;
 <c:set var="canEdit" value="${access.canEdit && (postIdx == postCount)}" scope="page" />
 <c:set var="contentWarn" value="${contentWarn || msg.contentWarning}" scope="page" />
 <tr id="post${msg.ID}">
- <td rowspan="2" class="postInfo small">
+ <td rowspan="2" class="postInfo small nophone">
 <c:if test="${isPilot}">
 <c:if test="${isHuman}"><el:profile location="${pilotLoc}">${pilot.name}</el:profile><br /></c:if>
 <c:if test="${!empty pilot.pilotCode}"><span class="sec bld caps">${pilot.pilotCode}</span></c:if>
@@ -201,11 +201,12 @@ APPLICANT<br />
 </el:showaddr></td>
 <c:set var="showPostTools" value="${(access.canReply && !doEdit) || canEdit || (access.canDelete && (postCount > 1))}" scope="page" />
  <td class="${isUnread ? 'unread_' : ''}postDate" colspan="${showPostTools ? '1' : '2'}">Post created on <fmt:date date="${msg.createdOn}" d="MMMM dd yyyy" />
-<content:filter roles="Moderator,HR">
+<span class="phone"> by <span class="pri bld">${pilot.name}</span></span>
+<content:filter roles="Moderator,HR"><span class="nophone">
  from ${msg.remoteHost} (${msg.remoteAddr}
 <c:if test="${!empty ipInfo}"> <el:flag countryCode="${ipInfo.country.code}" caption="${ipInfo.location}" /> ${ipInfo.location}</c:if>)
 <c:if test="${msg.contentWarning}"> <span class="error bld">CONTENT WARNING</span></c:if>
-</content:filter></td>
+</span></content:filter></td>
 <c:if test="${showPostTools}">
 <td class="postEdit">
 <c:if test="${access.canReply && !doEdit}">
@@ -234,7 +235,7 @@ APPLICANT<br />
 <!-- Default Signature Image -->
 <c:set var="sigImgHost" value="${(pilotLoc.domain == ourDomain) ? pageContext.request.serverName : pilotLoc.domain}" scope="page" />
 <c:if test="${pilotLoc.domain != ourDomain}"><c:set var="sigImgHost" value="www.${sigImgHost}" scope="page" /></c:if>
-<el:table className="${pilotLoc.airlineCode}_defaultSig"><tr>
+<el:table className="${pilotLoc.airlineCode}_defaultSig nophone"><tr>
  <td valign="bottom" class="sig" style="background-image: url(${reqProtocol}://${sigImgHost}/${imgPath}/sig/${fn:lower(pilot.equipmentType)}.png);">
  <div class="${pilotLoc.airlineCode}_defaultSigText"><h2>${pilot.name}</h2><span class="pri bld ${pilotLoc.airlineCode}_defaultSig caps">${pilot.rank.name}, ${pilot.equipmentType}</span></div>
  </td>
@@ -260,10 +261,10 @@ APPLICANT<br />
 </c:if></content:filter>
 <c:if test="${access.canLock || access.canUnlock || access.canDelete || access.canUnstick}">
 <!-- Moderator Tools -->
-<tr class="title caps">
+<tr class="title caps nophone">
  <td colspan="3">MODERATOR TOOLS</td>
 </tr>
-<tr class="pri bld mid">
+<tr class="pri bld mid nophone">
  <td colspan="3">
 <c:if test="${access.canLock}">
  <el:cmdbutton ID="LockButton" label="LOCK" url="threadlock" link="${thread}" op="lock" />
@@ -291,7 +292,7 @@ APPLICANT<br />
 </content:filter></td>
 </tr>
 <content:filter roles="Moderator">
-<tr>
+<tr class="nophone">
 <td class="pri mid bld" colspan="3">MARK THIS THREAD STICKY UNTIL
 &nbsp;<el:text name="stickyDate" idx="*" size="10" max="10" value="${fn:dateFmt(stickyDate, dateFmt)}" />
  at <el:text name="stickyTime" idx="*" size="4" max="5" value="${fn:dateFmt(stickyDate, 'HH:mm')}" />
@@ -305,10 +306,10 @@ APPLICANT<br />
 </c:if>
 <content:filter roles="Pilot">
 <!-- Message Thread Update notification -->
-<tr class="title caps">
+<tr class="title caps nophone">
  <td colspan="3">UPDATE NOTIFICATIONS</td>
 </tr>
-<tr class="pri bld mid">
+<tr class="pri bld mid nophone">
  <td colspan="3">You will <c:if test="${!doNotify}"><span class="bld ita">NOT</span> </c:if>receive an e-mail 
 notification each time a reply is posted in this Thread.
 <el:cmdbutton url="notifytoggle" link="${thread}" label="${doNotify ? 'DISABLE' : 'ENABLE'} NOTIFICATIONS" /> 
@@ -319,34 +320,33 @@ notification each time a reply is posted in this Thread.
 </content:filter>
 <c:if test="${access.canEditTitle}">
 <!-- Update Thread Title -->
-<tr class="title caps">
+<tr class="title caps nophone">
  <td colspan="3">UPDATE DISCUSSION THREAD TITLE</td>
 </tr>
-<tr class="pri bld mid">
+<tr class="pri bld mid nophone">
  <td colspan="3">Update to <el:text name="newTitle" idx="*" size="64" max="96" value="${thread.subject}" />
  <el:cmdbutton ID="EditButton" url="threadsubjectedit" link="${thread}" post="true" label="UPDATE" /></td>
 </tr>
 </c:if>
 <c:if test="${access.canAddImage}">
 <!-- Add Linked Image -->
-<tr class="title caps">
+<tr class="title caps nophone">
  <td colspan="3">ADD LINKED IMAGE</td>
 </tr>
-<tr class="pri bld mid">
+<tr class="pri bld mid nophone">
  <td colspan="3">Add Linked Image at this URL <el:text name="imgURL" idx="*" size="64" max="192" value="${param.imgURL}" />
 <content:hasmsg><span class="small error bld"><content:sysmsg /></span></content:hasmsg></td>
 </tr>
-<tr class="pri bld mid">
+<tr class="pri bld mid nophone">
  <td colspan="3">Image Description <el:text name="desc" idx="*" size="64" max="192" value="${param.desc}" /> <el:cmdbutton ID="LinkButton" url="imglink" link="${thread}" post="true" label="LINK IMAGE" /></td>
 </tr>
 </c:if>
 <c:if test="${access.canReply}">
 <!-- Message Thread Response -->
 <tr class="title caps">
- <td>${doEdit ? 'EDIT MY POST' : 'NEW RESPONSE'}</td>
- <td colspan="2" class="right"><el:cmd className="title" url="channels"><content:airline /> WATER COOLER</el:cmd> |
- <el:cmd className="title" url="channel" linkID="${thread.channel}">${thread.channel}</el:cmd> |
- <fmt:text value="${thread.subject}" /></td>
+ <td>${doEdit ? 'EDIT POST' : 'NEW RESPONSE'}</td>
+ <td colspan="2" class="right"><span class="nophone"><el:cmd className="title" url="channels"><content:airline /> WATER COOLER</el:cmd> |
+ <el:cmd className="title" url="channel" linkID="${thread.channel}">${thread.channel}</el:cmd> | </span><fmt:text value="${thread.subject}" /></td>
 </tr>
 <tr class="mid">
  <td colspan="3"><el:textbox name="msgText" width="90%" height="5" resize="true" spellcheck="true">${lastPost.body}</el:textbox></td>

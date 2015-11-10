@@ -28,11 +28,11 @@
 <view:table cmd="events">
 <!-- Table Header Bar -->
 <tr class="title caps">
- <td style="width:10%">DATE</td>
- <td style="width:30%">EVENT NAME</td>
- <td style="width:8%">NETWORK</td>
- <td style="width:9%">STATUS</td>
- <td>AVAILABLE ROUTES</td>
+ <td>DATE</td>
+ <td style="max-width:30%">EVENT NAME</td>
+ <td>NETWORK</td>
+ <td class="nophone">STATUS</td>
+ <td class="nophone">AVAILABLE ROUTES</td>
 </tr>
 
 <!-- Table Event Data -->
@@ -41,8 +41,8 @@
  <td class="pri bld"><fmt:date fmt="d" date="${event.startTime}" /></td>
  <td><el:cmd url="event" link="${event}">${event.name}</el:cmd></td>
  <td class="pri bld">${event.network}</td>
- <td class="sec">${event.status.name}</td>
- <td class="small"><c:forEach var="route" items="${event.routes}">
+ <td class="sec nophone">${event.status.name}</td>
+ <td class="small nophone"><c:forEach var="route" items="${event.routes}">
 ${route.airportD.name} (<fmt:airport airport="${route.airportD}" />) - ${route.airportA.name} (<fmt:airport airport="${route.airportA}" />)<br />
 </c:forEach></td>
 </view:row>
