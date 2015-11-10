@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to embed a Water Cooler signature tag.
  * @author Luke
- * @version 6.0
+ * @version 6.2
  * @since 2.3
  */
 
@@ -29,6 +29,7 @@ public class SignatureTag extends ImageTag {
 	 */
 	public SignatureTag() {
 		super();
+		_classes.add("nophone");
 	}
 
 	/**
@@ -60,9 +61,10 @@ public class SignatureTag extends ImageTag {
 	 */
 	@Override
 	public void release() {
+		super.release();
 		_aCode = null;
 		_noCache = false;
-		super.release();
+		_classes.add("nophone");
 	}
 	
 	/**
