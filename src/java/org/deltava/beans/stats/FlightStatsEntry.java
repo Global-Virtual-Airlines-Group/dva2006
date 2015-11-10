@@ -1,16 +1,18 @@
-// Copyright 2005, 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved. 
+// Copyright 2005, 2006, 2007, 2008, 2010, 2015 Global Virtual Airlines Group. All Rights Reserved. 
 package org.deltava.beans.stats;
 
 import java.util.*;
 
+import org.deltava.beans.Simulator;
+
 /**
  * A bean to store Flight statistics entries.
  * @author Luke
- * @version 3.1
+ * @version 6.2
  * @since 1.0
  */
 
-public class FlightStatsEntry implements Comparable<FlightStatsEntry> {
+public class FlightStatsEntry implements java.io.Serializable, Comparable<FlightStatsEntry> {
 
 	private String _label;
 	
@@ -23,8 +25,10 @@ public class FlightStatsEntry implements Comparable<FlightStatsEntry> {
 	private double _hours;
 	private int _miles;
 	private int _pilotIDs;
+	private double _loadFactor;
+	private int _pax;
 
-	private final Map<Long, Integer> _verLegs = new TreeMap<Long, Integer>();
+	private final Map<Simulator, Integer> _verLegs = new TreeMap<Simulator, Integer>();
 	
 	/**
 	 * Creates a new statistics entry.
@@ -129,12 +133,28 @@ public class FlightStatsEntry implements Comparable<FlightStatsEntry> {
 	}
 	
 	/**
-	 * Returns the number of miles linked to this entry.
-	 * @return the number of miles
-	 * @see FlightStatsEntry#getAvgMiles()
+	 * Returns the distance linked to this entry.
+	 * @return the distance in statute miles
+	 * @see FlightStatsEntry#getAvgDistance()
 	 */
-	public int getMiles() {
+	public int getDistance() {
 		return _miles;
+	}
+	
+	/**
+	 * Returns the number of passengers linked to this entry.
+	 * @return the number of passengers
+	 */
+	public int getPax() {
+		return _pax;
+	}
+	
+	/**
+	 * Returns the average load factor linked to this entry.
+	 * @return the average load factor
+	 */
+	public double getLoadFactor() {
+		return _loadFactor;
 	}
 	
 	/**
@@ -147,11 +167,11 @@ public class FlightStatsEntry implements Comparable<FlightStatsEntry> {
 	}
 	
 	/**
-	 * Returns the average number of miles per leg for this entry.
-	 * @return the average miles per leg
-	 * @see FlightStatsEntry#getMiles()
+	 * Returns the average distance for this entry.
+	 * @return the average distance in statute miles per leg
+	 * @see FlightStatsEntry#getDistance()
 	 */
-	public double getAvgMiles() {
+	public double getAvgDistance() {
 		return (_legs == 0) ? 0 : _miles * 1.0 / _legs;
 	}
 	
@@ -169,22 +189,22 @@ public class FlightStatsEntry implements Comparable<FlightStatsEntry> {
 	 * Returns the Map displaying flight legs by Flight Simulator verison.
 	 * @return a Map of legs, keyed by version
 	 */
-	public Map<Long, Integer> getVersionLegs() {
-		return _verLegs;
+	public Map<String, Integer> getVersionLegs() {
+		Map<String, Integer> results = new HashMap<String, Integer>();
+		for (Map.Entry<Simulator, Integer> me : _verLegs.entrySet())
+			results.put(me.getKey().name(), me.getValue());
+		
+		return results;
 	}
 	
 	/**
 	 * Sets the legs for a specific Flight Simulator version. Version should be set to
-	 * 7 through 10 for FS2000 through FSX, and 0 for other.
-	 * @param version the version code
+	 * 7 through 110 for FS2000 through FSX, and 0 for other.
+	 * @param s the Simulator value
 	 * @param legs the number of legs
 	 */
-	public void setFSVersionLegs(int version, int legs) {
-		_verLegs.put(Long.valueOf(version), Integer.valueOf(legs));
-	}
-	
-	public void setVersionLegs(Map<Long, Integer> legs) {
-		_verLegs.putAll(legs);
+	public void setFSVersionLegs(Simulator s, int legs) {
+		_verLegs.put(s, Integer.valueOf(legs));
 	}
 	
 	/**
@@ -242,15 +262,29 @@ public class FlightStatsEntry implements Comparable<FlightStatsEntry> {
 	}
 	
 	/**
-	 * Returns the entry label.
+	 * Updates the number of passengers linked to this entry.
+	 * @param pax the number of passeengers
+	 * @see FlightStatsEntry#getPax()
 	 */
+	public void setPax(int pax) {
+		_pax = Math.max(0, pax);
+	}
+	
+	/**
+	 * Updates the average load factor linked to this entry.
+	 * @param lf the average load factor
+	 * @see FlightStatsEntry#getLoadFactor()
+	 */
+	public void setLoadFactor(double lf) {
+		_loadFactor = Math.max(0, Math.min(1, lf));
+	}
+	
+	@Override
 	public String toString() {
 		return _label;
 	}
 	
-	/**
-	 * Returns the label's hash code.
-	 */
+	@Override
 	public int hashCode() {
 		return _label.hashCode();
 	}
@@ -259,6 +293,7 @@ public class FlightStatsEntry implements Comparable<FlightStatsEntry> {
 	 * Compares the entries by using the natural sort order of the labels.
 	 * @see Comparable#compareTo(Object)
 	 */
+	@Override
 	public int compareTo(FlightStatsEntry e2) {
 		return (_label.compareTo(e2._label));
 	}
