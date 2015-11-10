@@ -5,6 +5,6 @@
 <!-- Header Frame -->
 <content:region id="header">
 <el:link url="/"><el:img className="header" src="${airlineBanner}" caption="${airlineName}" /></el:link>
-<h1 class="header caps"><content:airline /><br />
+<h1 id="hdrLink" class="header caps"><content:airline /><br />
 IMAGE GALLERY</h1>
 </content:region>
