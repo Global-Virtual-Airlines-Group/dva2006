@@ -228,7 +228,6 @@ golgotha.maps.reloadData = function(isReload) {
 	}
 
 	golgotha.util.createScript({id:'wxLoader', url:('//' + self.location.host + '/wx/serieslist.js?function=loaders.series.loadGinsu'), async:true});
-	golgotha.util.createScript({id:'lgAlert', url:'/wxd/LGRecord/CURRENT?jsonp=loaders.lg.load', async:true});
 	return true;
 };
 </script>
