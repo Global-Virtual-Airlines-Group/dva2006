@@ -13,14 +13,14 @@
 <content:css name="form" />
 <content:css name="view" />
 <content:pics />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <content:js name="datePicker" />
 <script type="text/javascript">
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-golgotha.form.submit(f);
-return true;	
+golgotha.local.validate = function(f) {
+    if (!golgotha.form.check()) return false;
+    golgotha.form.submit(f);
+    return true;	
 };
 
 golgotha.local.setSort = function() {
@@ -43,16 +43,16 @@ golgotha.local.setSort = function() {
  <td colspan="2">BY DATE <el:text name="imgDate" idx="*" size="10" max="10" value="${param.imgDate}" />
  <el:button ID="CalendarButton" label="CALENDAR" onClick="void show_calendar('forms[0].imgDate')" /></td>
  <td colspan="2"><el:cmd url="fleetgallery" linkID="true">FLEET GALLERY</el:cmd></td>
- <td>SORT BY <el:combo name="sortType" idx="*" size="1" options="${sortOptions}" firstEntry="-" value="${param.sortType}" onChange="golgotha.local.setSort()" />
+ <td class="nophone">SORT BY <el:combo name="sortType" idx="*" size="1" options="${sortOptions}" firstEntry="-" value="${param.sortType}" onChange="golgotha.local.setSort()" />
  <el:button ID="SubmitButton" type="submit" label="GO" /></td>
 </tr>
 
 <!-- Table Header Bar -->
 <tr class="title caps">
  <td style="width:25%">IMAGE TITLE</td>
- <td style="width:10%">SIZE</td>
+ <td class="nophone" style="width:10%">SIZE</td>
  <td style="width:20%">AUTHOR</td>
- <td style="width:5%">LIKES</td>
+ <td class="nophone" style="width:5%">LIKES</td>
  <td>DESCRIPTION</td>
 </tr>
 
@@ -61,13 +61,13 @@ golgotha.local.setSort = function() {
 <c:set var="author" value="${pilots[img.authorID]}" scope="page" />
 <tr>
  <td class="pri bld"><el:cmd url="image" link="${img}">${img.name}</el:cmd></td>
- <td class="small"><span class="sec bld">${img.width}x${img.height}</span>, <fmt:int value="${img.size / 1024}" />K</td>
+ <td class="small nophone"><span class="sec bld">${img.width}x${img.height}</span>, <fmt:int value="${img.size / 1024}" />K</td>
  <td class="bld"><el:cmd url="profile" link="${author}">${author.name}</el:cmd></td>
 <c:if test="${img.likeCount == 0}">
- <td class="small bld">-</td>
+ <td class="small bld nophone">-</td>
 </c:if>
 <c:if test="${img.likeCount > 0}">
- <td class="bld"><fmt:int value="${img.likeCount}" /></td>
+ <td class="bld nophone"><fmt:int value="${img.likeCount}" /></td>
 </c:if>
  <td class="small left"><fmt:text value="${img.description}" /></td>
 </tr>
