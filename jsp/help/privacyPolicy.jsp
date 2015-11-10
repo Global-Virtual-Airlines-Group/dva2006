@@ -7,12 +7,14 @@
 <head>
 <title><content:airline /> Privacy Policy</title>
 <content:css name="main" />
+<content:js name="common" />
+<content:pics />
 </head>
 <content:copyright visible="false" />
 <body>
 <content:page>
-<%@ include file="/jsp/help/header.jspf" %> 
-<%@ include file="/jsp/help/sideMenu.jspf" %>
+<%@ include file="/jsp/main/header.jspf" %> 
+<%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:sysdata var="fbClientID" name="users.facebook.id" />
 
 <!-- Main Body Frame -->
