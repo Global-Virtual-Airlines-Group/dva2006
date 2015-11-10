@@ -43,8 +43,8 @@ golgotha.local.setNetwork = function(combo) {
  <td style="width:10%">CALLSIGN</td>
  <td style="width:10%">${netInfo.network} ID</td>
  <td style="width:20%">PILOT NAME</td>
- <td style="width:25%">CURRENTLY FLYING</td>
- <td style="width:10%">EQUIPMENT</td>
+ <td class="nophone" style="width:25%">CURRENTLY FLYING</td>
+ <td class="nophone" style="width:10%">EQUIPMENT</td>
  <td style="width:10%">ALTITUDE</td>
  <td>GROUND SPEED</td>
 </tr>
@@ -55,8 +55,8 @@ golgotha.local.setNetwork = function(combo) {
  <td class="pri bld">${pilot.callsign}</td>
  <td>${pilot.ID}</td>
  <td class="bld">${pilot.name}</td>
- <td class="small">${pilot.airportD.name} - ${pilot.airportA.name}</td>
- <td class="sec">${pilot.equipmentCode}</td>
+ <td class="small nophone">${pilot.airportD.name} - ${pilot.airportA.name}</td>
+ <td class="sec nophone">${pilot.equipmentCode}</td>
  <td class="small bld"><fmt:int fmt="##,###" value="${pilot.altitude}" /> feet</td>
  <td class="small bld">${pilot.groundSpeed} knots</td>
 </view:row>
@@ -73,7 +73,7 @@ golgotha.local.setNetwork = function(combo) {
  <td class="bld">${ctr.name}</td>
  <td class="sec">${ctr.facility.name}</td>
  <td class="bld">${ctr.frequency}</td>
- <td colspan="2">${ctr.rating.name} (${ctr.rating})</td>
+ <td class="nophone" colspan="2">${ctr.rating.name} (${ctr.rating})</td>
 </view:row>
 </c:forEach>
 </view:table>
