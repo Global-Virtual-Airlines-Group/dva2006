@@ -390,3 +390,9 @@ a.plain {
 	color: inherit;
 	text-decoration: none;
 }
+
+@media (max-width: 800px) {
+    .nophone {
+	   display:none;
+    }
+}
