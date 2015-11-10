@@ -38,10 +38,10 @@ h1.header {
 @media (max-width: 800px) {
 	div.navside div#navmenu {
         width: 100%;
-        position:fixed;
+        position: absolute;
+        top: 48px;
         z-index: 500;
-        opacity: .855;
-        filter: alpha(opacity=85);
+        opacity: .825;
         visibility:hidden;
     }
     
@@ -213,7 +213,8 @@ table.nav *.submenu :link:hover, table.nav *.submenu :hover {
 @media (max-width: 800px) {
     div.navside div#main.hide {
         opacity: .333;
-        filter: alpha(opacity=33);
+        overflow:hidden;
+        position:fixed;
     }
 }
 
