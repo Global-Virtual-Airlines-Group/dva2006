@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
@@ -12,6 +13,7 @@
 <title><content:airline /> ${forumName}</title>
 <content:css name="main" />
 <content:css name="view" />
+<content:js name="common" />
 <content:pics />
 </head>
 <content:copyright visible="false" />
@@ -29,10 +31,10 @@
 
 <!-- Table Header Bar-->
 <tr class="title caps">
- <td style="width:35%">CHANNEL NAME / DESCRIPTION</td>
- <td style="width:8%">THREADS</td>
- <td style="width:8%">POSTS</td>
- <td style="width:8%">VIEWS</td>
+ <td style="width:35%">CHANNEL NAME<span class="nophone"> / DESCRIPTION</span></td>
+ <td>THREADS</td>
+ <td class="nophone">POSTS</td>
+ <td class="nophone">VIEWS</td>
  <td>LAST POST INFORMATION</td>
 </tr>
 
@@ -49,12 +51,12 @@
  <span class="small">${channel.description}</span></td>
 <c:if test="${channel.lastThreadID != 0}">
  <td class="bld"><fmt:int value="${channel.threadCount}" /></td>
- <td><fmt:int value="${channel.postCount}" /></td>
- <td><fmt:int value="${channel.viewCount}" /></td>
+ <td class="nophone"><fmt:int value="${channel.postCount}" /></td>
+ <td class="nophone"><fmt:int value="${channel.viewCount}" /></td>
 <c:set var="post" value="${posts[channel.lastThreadID]}" scope="page" />
 <c:set var="author" value="${authors[post.authorID]}" scope="page" />
- <td class="right"><span class="small">${author.rank.name}</span> <span class="pri bld small">${author.name}</span>
- <span class="small"><c:if test="${!empty author.pilotCode}">(${author.pilotCode}) </c:if>at
+ <td class="right"><span class="small nophone">${author.rank.name} </span><span class="pri bld small">${author.name}</span>
+ <span class="small nophone"><c:if test="${!empty author.pilotCode}">(${author.pilotCode}) </c:if>at
  <fmt:date date="${post.createdOn}" /></span><br />
  in <el:cmd url="thread" linkID="${post.threadID}" className="bld">${post.subject}</el:cmd></td>
 </c:if>

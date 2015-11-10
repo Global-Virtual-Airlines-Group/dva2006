@@ -13,9 +13,9 @@
 <content:css name="main" />
 <content:css name="form" />
 <content:css name="view" />
+<content:js name="common" />
 <content:pics />
 <script type="text/javascript">
-golgotha = {local:{}};
 golgotha.local.sort = function() { return document.forms[0].submit(); };
 </script>
 </head>
@@ -36,13 +36,13 @@ golgotha.local.sort = function() { return document.forms[0].submit(); };
  <td colspan="3" class="right">SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${viewContext.sortType}" onChange="void golgotha.local.sort()" /></td>
 </tr>
 <tr class="title caps">
- <td style="width:9%">DATE</td>
- <td style="width:12%">INFO</td>
+ <td>DATE</td>
+ <td class="nophone">INFO</td>
  <td style="width:12%">FLIGHT NUMBER</td>
  <td style="width:15%">PILOT NAME</td>
- <td style="width:30%">AIRPORTS</td>
- <td>EQUIPMENT</td>
- <td style="width:10%">DURATION</td>
+ <td class="nophone" style="width:30%">AIRPORTS</td>
+ <td class="nophone">EQUIPMENT</td>
+ <td class="nophone">DURATION</td>
 </tr>
 <c:if test="${!empty myHeld}">
 <!-- Flight Reports held by ${user.name} -->
@@ -53,7 +53,7 @@ golgotha.local.sort = function() { return document.forms[0].submit(); };
 <c:set var="pilot" value="${pilots[fn:PilotID(pirep)]}" scope="page" />
 <view:row entry="${pirep}">
  <td><fmt:date fmt="d" date="${pirep.date}" /></td>
- <td><c:if test="${fn:EventID(pirep) != 0}"><el:img src="network/event.png" caption="Online Event" /></c:if> 
+ <td class="nophone"><c:if test="${fn:EventID(pirep) != 0}"><el:img src="network/event.png" caption="Online Event" /></c:if> 
 <c:if test="${fn:isACARS(pirep)}"><el:img src="acars.png" caption="ACARS Logged" /></c:if> 
 <c:if test="${fn:isOnline(pirep)}"><el:img src="network/icon_${fn:lower(fn:network(pirep))}.png" caption="Online Flight on ${fn:network(pirep)}" /></c:if>
 <c:if test="${fn:isDispatch(pirep)}"><el:img src="dispatch.png" caption="ACARS Dispatch Services" /></c:if>
@@ -61,9 +61,9 @@ golgotha.local.sort = function() { return document.forms[0].submit(); };
 <c:if test="${fn:isPromoLeg(pirep)}"><el:img src="promote.png" caption="Counts for Promotion in the ${fn:promoEQTypes(pirep)}" /></c:if></td>
  <td><el:cmd className="bld" url="pirep" link="${pirep}">${pirep.flightCode}</el:cmd></td>
  <td class="small">${pilot.name}</td>
- <td class="small">${pirep.airportD.name} - ${pirep.airportA.name}</td>
- <td class="sec">${pirep.equipmentType}</td>
- <td><fmt:dec fmt="#0.0" value="${pirep.length / 10}" /> hours</td>
+ <td class="small nophone">${pirep.airportD.name} - ${pirep.airportA.name}</td>
+ <td class="sec nophone">${pirep.equipmentType}</td>
+ <td class="nophone"><fmt:dec fmt="#0.0" value="${pirep.length / 10}" /> hours</td>
 </view:row>
 </c:forEach>
 </c:if>
@@ -76,7 +76,7 @@ golgotha.local.sort = function() { return document.forms[0].submit(); };
 <c:set var="pilot" value="${pilots[fn:PilotID(pirep)]}" scope="page" />
 <view:row entry="${pirep}">
  <td><fmt:date fmt="d" date="${pirep.date}" /></td>
- <td><c:if test="${fn:EventID(pirep) != 0}"><el:img src="network/event.png" caption="Online Event" /></c:if> 
+ <td class="nophone"><c:if test="${fn:EventID(pirep) != 0}"><el:img src="network/event.png" caption="Online Event" /></c:if> 
 <c:if test="${fn:isACARS(pirep)}"><el:img src="acars.png" caption="ACARS Logged" /></c:if> 
 <c:if test="${fn:isCheckFlight(pirep)}"><el:img src="checkride.png" caption="Check Ride" /></c:if>
 <c:if test="${fn:isOnline(pirep)}"><el:img src="network/icon_${fn:lower(fn:network(pirep))}.png" caption="Online Flight on ${fn:network(pirep)}" /></c:if>
@@ -85,9 +85,9 @@ golgotha.local.sort = function() { return document.forms[0].submit(); };
 <c:if test="${fn:isPromoLeg(pirep)}"><el:img src="promote.png" caption="Counts for Promotion in the ${fn:promoEQTypes(pirep)}" /></c:if></td>
  <td><el:cmd className="bld" url="pirep" link="${pirep}">${pirep.flightCode}</el:cmd></td>
  <td class="small">${pilot.name}</td>
- <td class="small">${pirep.airportD.name} - ${pirep.airportA.name}</td>
- <td class="sec">${pirep.equipmentType}</td>
- <td><fmt:dec fmt="#0.0" value="${pirep.length / 10}" /> hours</td>
+ <td class="small nophone">${pirep.airportD.name} - ${pirep.airportA.name}</td>
+ <td class="sec nophone">${pirep.equipmentType}</td>
+ <td class="nophone"><fmt:dec fmt="#0.0" value="${pirep.length / 10}" /> hours</td>
 </view:row>
 </c:forEach>
 </c:if>
@@ -101,7 +101,7 @@ golgotha.local.sort = function() { return document.forms[0].submit(); };
 <c:set var="pilot" value="${pilots[fn:PilotID(pirep)]}" scope="page" />
 <view:row entry="${pirep}">
  <td><fmt:date fmt="d" date="${pirep.date}" /></td>
- <td><c:if test="${fn:EventID(pirep) != 0}"><el:img src="network/event.png" caption="Online Event" /></c:if> 
+ <td class="nophone"><c:if test="${fn:EventID(pirep) != 0}"><el:img src="network/event.png" caption="Online Event" /></c:if> 
 <c:if test="${fn:isACARS(pirep)}"><el:img src="acars.png" caption="ACARS Logged" /></c:if>
 <c:if test="${fn:isCheckFlight(pirep)}"><el:img src="checkride.png" caption="Check Ride" /></c:if>
 <c:if test="${fn:isOnline(pirep)}"><el:img src="network/icon_${fn:lower(fn:network(pirep))}.png" caption="Online Flight on ${fn:network(pirep)}" /></c:if>
@@ -109,10 +109,10 @@ golgotha.local.sort = function() { return document.forms[0].submit(); };
 <c:if test="${fn:anyWarn(pirep)}"><el:img src="warning.png" caption="Flight Report Warning" /></c:if>
 <c:if test="${fn:isPromoLeg(pirep)}"><el:img src="promote.png" caption="Counts for Promotion in the ${fn:promoEQTypes(pirep)}" /></c:if></td>
  <td><el:cmd className="bld" url="pirep" link="${pirep}">${pirep.flightCode}</el:cmd></td>
-<td class="small">${pilot.name}</td>
- <td class="small"><fmt:text value="${pirep.airportD.name} - ${pirep.airportA.name}" /></td>
- <td class="sec">${pirep.equipmentType}</td>
- <td><fmt:dec fmt="#0.0" value="${pirep.length / 10}" /> hours</td>
+ <td class="small">${pilot.name}</td>
+ <td class="small nophone"><fmt:text value="${pirep.airportD.name} - ${pirep.airportA.name}" /></td>
+ <td class="sec nophone">${pirep.equipmentType}</td>
+ <td class="nophone"><fmt:dec fmt="#0.0" value="${pirep.length / 10}" /> hours</td>
 </view:row>
 </c:forEach>
 

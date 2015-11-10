@@ -200,8 +200,8 @@ APPLICANT<br />
 <c:set var="aimAddr" value="${pilot.IMHandle[imAddr]}" scope="page" />
 </el:showaddr></td>
 <c:set var="showPostTools" value="${(access.canReply && !doEdit) || canEdit || (access.canDelete && (postCount > 1))}" scope="page" />
- <td class="${isUnread ? 'unread_' : ''}postDate" colspan="${showPostTools ? '1' : '2'}">Post created on <fmt:date date="${msg.createdOn}" d="MMMM dd yyyy" />
-<span class="phone"> by <span class="pri bld">${pilot.name}</span></span>
+ <td class="${isUnread ? 'unread_' : ''}postDate" colspan="${showPostTools ? '1' : '2'}"><span class="phone">Posted on</span><span class="nophone">Post created on</span>
+ <fmt:date date="${msg.createdOn}" d="MMMM dd yyyy" /><span class="phone"> by <span class="pri bld">${pilot.name}</span></span>
 <content:filter roles="Moderator,HR"><span class="nophone">
  from ${msg.remoteHost} (${msg.remoteAddr}
 <c:if test="${!empty ipInfo}"> <el:flag countryCode="${ipInfo.country.code}" caption="${ipInfo.location}" /> ${ipInfo.location}</c:if>)

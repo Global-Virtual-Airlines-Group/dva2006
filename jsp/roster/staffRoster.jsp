@@ -11,6 +11,7 @@
 <title><content:airline /> Staff Roster</title>
 <content:css name="main" />
 <content:css name="view" />
+<content:js name="common" />
 <content:pics />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
@@ -37,9 +38,9 @@
 </tr>
 </c:if>
 <tr>
- <td class="bld" width="25%"><span class="pri">${staff.name}</span><br />
+ <td class="bld" style="max-width:25%;"><span class="pri">${staff.name}</span><br />
 <span class="sec small"><fmt:text value="${staff.title}" /></span></td>
- <td style="width:15%"><el:link className="small" url="mailto:${staff.email}">${staff.email}</el:link></td>
+ <td class="nophone"><el:link className="small" url="mailto:${staff.email}">${staff.email}</el:link></td>
  <td class="small left"><fmt:text value="${staff.body}" /></td>
 </tr>
 </c:forEach>

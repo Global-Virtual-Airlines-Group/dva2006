@@ -45,17 +45,17 @@ golgotha.local.setChannel = function(combo) {
  <td><el:cmdbutton url="threadpost" linkID="${channel.name}" label="NEW THREAD" /></td>
 </c:if>
 <c:if test="${!channelAccess.canPost}">
- <td colspan="2" class="left caps">DISCUSSION THREADS - ${channelName}</td>
+ <td colspan="2" class="left caps"><span class="nophone">DISCUSSION THREADS - </span>${channelName}</td>
 </c:if>
- <td colspan="3" class="right">CHANNEL <el:combo name="sortType" size="1" options="${channels}" value="${channel}" onChange="void golgotha.local.setChannel(this)" /></td>
+ <td colspan="3" class="right nophone">CHANNEL <el:combo name="sortType" size="1" options="${channels}" value="${channel}" onChange="void golgotha.local.setChannel(this)" /></td>
 </tr>
 
 <!-- Table Header Bar-->
 <tr class="title">
  <td style="width:35%">THREAD TITLE</td>
- <td style="width:15%">STARTED BY</td>
- <td style="width:8%">VIEWS</td>
- <td style="width:8%">POSTS</td>
+ <td class="nophone" style="width:15%">STARTED BY</td>
+ <td class="nophone" style="width:8%">VIEWS</td>
+ <td class="nophone" style="width:8%">POSTS</td>
  <td>LAST POST</td>
 </tr>
 
@@ -75,9 +75,9 @@ golgotha.local.setChannel = function(combo) {
 <c:if test="${thread.poll}"><el:img caption="Pilot Poll" x="20" y="20" src="cooler/icon_poll.png" /></c:if>
 <c:if test="${!empty thread.stickyUntil}">STICKY:</c:if>
  <el:cmd url="thread" link="${thread}"><fmt:text value="${thread.subject}" /></el:cmd></td>
- <td><el:profile location="${authorLoc}" className="pri bld">${author.name}</el:profile></td>
- <td><fmt:int value="${thread.views}" /></td>
- <td><fmt:int value="${thread.postCount}" /></td>
+ <td class="nophone"><el:profile location="${authorLoc}" className="pri bld">${author.name}</el:profile></td>
+ <td class="nophone"><fmt:int value="${thread.views}" /></td>
+ <td class="nophone"><fmt:int value="${thread.postCount}" /></td>
  <td class="small right" <c:if test="${!empty myLastRead}">title="Last Viewed on ${myLastRead}"</c:if>><fmt:date date="${thread.lastUpdatedOn}" /> by <span class="pri bld">${lastPoster.name}</span></td>
 </view:row>
 </c:forEach>
