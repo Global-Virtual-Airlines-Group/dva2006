@@ -10,6 +10,7 @@
 <head>
 <title><content:airline /> Flight Report Updated</title>
 <content:css name="main" />
+<content:js name="common" />
 <content:pics />
 </head>
 <content:copyright visible="false" />
