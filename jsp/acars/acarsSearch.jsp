@@ -14,6 +14,7 @@
 <content:css name="form" />
 <content:css name="view" />
 <content:pics />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <content:js name="datePicker" />
 <script type="text/javascript">
@@ -104,8 +105,8 @@ return false;
 <c:if test="${!empty viewContext.results}">
 <!-- Search Results -->
 <tr class="title">
- <td colspan="4" class="left caps">SEARCH RESULTS</td>
- <td colspan="2" class="right"><el:box name="showRoute" idx="*" value="true" label="Show Filed Route" /></td>
+ <td colspan="3" class="left caps">SEARCH RESULTS</td>
+ <td colspan="3" class="right"><el:box name="showRoute" idx="*" value="true" label="Show Filed Route" /></td>
 </tr>
 
 <!-- Table Header Data -->
@@ -113,9 +114,9 @@ return false;
  <td style="width:10%">DATE</td>
  <td style="width:5%">MAP</td>
  <td style="width:15%">FLIGHT NUMBER</td>
- <td style="width:45%">AIRPORT NAMES</td>
+ <td class="nophone" style="width:45%">AIRPORT NAMES</td>
  <td style="width:10%">EQUIPMENT</td>
- <td>DURATION</td>
+ <td class="nophone">DURATION</td>
 </tr>
 
 <!-- Table Flight Report Data -->
@@ -124,10 +125,10 @@ return false;
  <td class="title"><fmt:date date="${pirep.date}" fmt="d" default="-" /></td>
  <td><el:box name="doMap" value="${fn:ACARS_ID(pirep)}" idx="*" label="" /></td>
  <td><el:cmd className="bld" url="pirep" link="${pirep}">${pirep.flightCode}</el:cmd></td>
- <td class="small">${pirep.airportD.name} (<fmt:airport airport="${pirep.airportD}" />) - 
+ <td class="small nophone">${pirep.airportD.name} (<fmt:airport airport="${pirep.airportD}" />) - 
  ${pirep.airportA.name} (<fmt:airport airport="${pirep.airportA}" />)</td>
  <td class="sec">${pirep.equipmentType}</td>
- <td><fmt:dec fmt="#0.0" value="${pirep.length / 10}" /> hours</td>
+ <td class="nophone"><fmt:dec fmt="#0.0" value="${pirep.length / 10}" /> hours</td>
 </view:row>
 </c:forEach>
 
