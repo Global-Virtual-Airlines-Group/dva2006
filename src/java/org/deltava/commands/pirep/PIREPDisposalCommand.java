@@ -29,7 +29,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Flight Report status changes.
  * @author Luke
- * @version 6.0
+ * @version 6.2
  * @since 1.0
  */
 
@@ -267,6 +267,16 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			   }
 			}
 			
+			// Update PIREP statistics
+			if ((opCode == FlightReport.OK) || (opCode == FlightReport.REJECTED)) {
+				SetAggregateStatistics fstdao = new SetAggregateStatistics(con);
+				fstdao.update(fr);
+			}
+			
+			// Write status updates (if any)
+			SetStatusUpdate swdao = new SetStatusUpdate(con);
+			swdao.write(upds);
+			
 			// If we're approving an ACARS PIREP, archive the position data
 			if ((opCode == FlightReport.OK) || (opCode == FlightReport.REJECTED)) {
 				int acarsID = fr.getDatabaseID(DatabaseID.ACARS);
@@ -282,10 +292,6 @@ public class PIREPDisposalCommand extends AbstractCommand {
 				
 				ctx.setAttribute("acarsArchive", Boolean.TRUE, REQUEST);
 			}
-			
-			// Write status updates (if any)
-			SetStatusUpdate swdao = new SetStatusUpdate(con);
-			swdao.write(upds);
 			
 			// Commit the transaction
 			ctx.commitTX();
