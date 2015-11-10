@@ -132,18 +132,6 @@
 		</time>
 	</task>
 
-	<!-- Write position archive to file system -->
-	<task id="fsposarchive" enabled="false">
-	   <class>org.deltava.tasks.PositionArchiveTask</class>
-	   <time>
-	       <min>50</min>
-	       <hour>1,4,7,10,13,16,19,22</hour>
-	       <mday>*</mday>
-	       <month>*</month>
-	       <wday>*</wday>
-	   </time>
-	</task>
-
 	<!-- Create Online Event Flight Assignments -->
 	<task id="eventassign" enabled="false">
 		<class>org.deltava.tasks.EventAssignTask</class>
