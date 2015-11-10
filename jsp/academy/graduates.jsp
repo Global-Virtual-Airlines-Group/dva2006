@@ -12,9 +12,9 @@
 <content:css name="main" />
 <content:css name="form" />
 <content:css name="view" />
+<content:js name="common" />
 <content:pics />
 <script type="text/javascript">
-golgotha = {local:{}};
 golgotha.local.setType = function() { return document.forms[0].submit(); };
 </script>
 </head>

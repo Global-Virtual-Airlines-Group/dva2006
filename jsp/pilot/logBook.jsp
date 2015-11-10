@@ -13,6 +13,7 @@
 <content:css name="main" />
 <content:css name="form" />
 <content:css name="view" />
+<content:js name="common" />
 <content:pics />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
@@ -32,8 +33,8 @@
 <!-- Title Header Bar -->
 <tr class="title">
 <c:set var="cspan" value="${access.canPreApprove ? 4 : 6}" scope="page" />
- <td colspan="${cspan}" class="caps left">PILOT LOGBOOK FOR ${pilot.rank.name} ${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if>
-<c:if test="${showCSV}"> - <a href="mylogbook.ws?id=${pilot.hexID}">CSV Download</a></c:if></td>
+ <td colspan="${cspan}" class="caps left"><span class="nophone">PILOT LOGBOOK FOR </span>${pilot.rank.name} ${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if>
+<c:if test="${showCSV}"><span class="nophone"> - <a href="mylogbook.ws?id=${pilot.hexID}">CSV Download</a></span></c:if></td>
 <c:if test="${access.canPreApprove}">
  <td colspan="2"><el:cmd url="preapprove" link="${pilot}" className="title">PRE-APPROVE FLIGHT</el:cmd></td>
 </c:if>
@@ -54,28 +55,28 @@
 <!-- Table Header Bar-->
 <tr class="title">
  <td style="width:10%">DATE</td>
- <td style="width:10%">INFO</td>
+ <td class="nophone" style="width:10%">INFO</td>
  <td style="width:15%">FLIGHT NUMBER</td>
- <td style="width:40%">AIRPORT NAMES</td>
+ <td class="nophone" style="width:40%">AIRPORT NAMES</td>
  <td style="width:10%">EQUIPMENT</td>
- <td>DURATION</td>
+ <td class="nophone">DURATION</td>
 </tr>
 
 <!-- Table Flight Report Data -->
 <c:forEach var="pirep" items="${viewContext.results}">
 <view:row entry="${pirep}">
  <td class="title"><fmt:date date="${pirep.date}" fmt="d" default="-" /></td>
- <td><c:if test="${fn:EventID(pirep) != 0}"><el:img src="network/event.png" caption="Online Event" /></c:if> 
+ <td class="nophone"><c:if test="${fn:EventID(pirep) != 0}"><el:img src="network/event.png" caption="Online Event" /></c:if> 
 <c:if test="${fn:isACARS(pirep)}"><el:img src="acars.png" caption="ACARS Logged" /></c:if>
 <c:if test="${fn:isCheckFlight(pirep)}"><el:img src="checkride.png" caption="Check Ride" /></c:if>
 <c:if test="${fn:isOnline(pirep)}"><el:img src="network/icon_${fn:lower(fn:network(pirep))}.png" caption="Online Flight on ${fn:network(pirep)}" /></c:if>
 <c:if test="${fn:isDispatch(pirep)}"><el:img src="dispatch.png" caption="ACARS Dispatch Services" /></c:if>
 <c:if test="${fn:isPromoLeg(pirep)}"><el:img src="promote.png" caption="Counts for Promotion in the ${fn:promoEQTypes(pirep)}" /></c:if></td>
  <td><el:cmd className="bld" url="pirep" link="${pirep}">${pirep.flightCode}</el:cmd></td>
- <td class="small">${pirep.airportD.name} (<fmt:airport airport="${pirep.airportD}" />) - 
+ <td class="small nophone">${pirep.airportD.name} (<fmt:airport airport="${pirep.airportD}" />) - 
  ${pirep.airportA.name} (<fmt:airport airport="${pirep.airportA}" />)</td>
  <td class="sec">${pirep.equipmentType}</td>
- <td><fmt:dec fmt="#0.0" value="${pirep.length / 10}" /> hours</td>
+ <td class="nophone"><fmt:dec fmt="#0.0" value="${pirep.length / 10}" /> hours</td>
 </view:row>
 <c:if test="${(comments && (!empty pirep.remarks))}">
 <view:row entry="${pirep}">

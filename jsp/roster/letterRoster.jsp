@@ -12,6 +12,7 @@
 <content:css name="main" />
 <content:css name="form" />
 <content:css name="view" />
+<content:js name="common" />
 <content:pics />
 </head>
 <content:copyright visible="false" />
@@ -26,8 +27,8 @@
 <view:table cmd="lroster">
 <!-- Table Letter Bar -->
 <tr class="title">
- <td class="left">PILOT LOGBOOKS</td>
- <td colspan="6" class="right">
+ <td colspan="2" class="left">PILOT LOGBOOKS</td>
+ <td colspan="5" class="right">
 <c:forEach var="letter" items="${letters}">
  <el:cmd url="lroster" op="${letter}">${letter}</el:cmd>&nbsp;
 </c:forEach>
@@ -36,21 +37,20 @@
 
 <!-- Table Header Bar-->
 <tr class="title">
- <td style="width:30%">PILOT NAME</td>
- <td style="width:10%">PILOT ID</td>
- <td style="width:10%">JOINED ON</td>
- <td style="width:15%">LAST FLIGHT</td>
- <td style="width:10%">FLIGHTS</td>
- <td style="width:10%">HOURS</td>
- <td>TRANSFERRED HOURS</td>
+ <td style="width:40%;">PILOT NAME</td>
+ <td style="max-width:10%">PILOT ID</td>
+ <td class="nophone">JOINED ON</td>
+ <td class="nophone">LAST FLIGHT</td>
+ <td style="max-width:10%">FLIGHTS</td>
+ <td style="max-width:10%">HOURS</td>
+ <td class="nophone">TRANSFERRED HOURS</td>
 </tr>
 
 <!-- Table Pilot Data -->
 <c:choose>
-<c:when test="${empty viewContext}">
+<c:when test="${empty viewContext.results}">
 <tr>
- <td colspan="7" class="pri bld">Please select a letter to display all the Delta 
- Virtual Airlines pilots whose last name begins with this letter.</td>
+ <td colspan="7" class="pri bld">Please select a letter to display all the <content:airline /> pilots whose last name begins with this letter.</td>
 </tr>
 </c:when>
 <c:otherwise>
@@ -65,16 +65,16 @@
 </c:otherwise>
 </c:choose>
  <td class="pri bld">${pilot.pilotCode}</td>
- <td><fmt:date fmt="d" date="${pilot.createdOn}" /></td>
+ <td class="nophone"><fmt:date fmt="d" date="${pilot.createdOn}" /></td>
 <c:if test="${pilot.legs > 0}">
- <td><fmt:date fmt="d" date="${pilot.lastFlight}" /></td>
+ <td class="nophone"><fmt:date fmt="d" date="${pilot.lastFlight}" /></td>
  <td class="sec bld"><fmt:int value="${pilot.legs}" /></td>
  <td class="pri bld"><fmt:dec value="${pilot.hours}" /></td>
 </c:if>
 <c:if test="${pilot.legs == 0}">
  <td colspan="3" class="bld">NO FLIGHTS LOGGED</td>
 </c:if>
- <td><fmt:dec value="${pilot.legacyHours}" /></td>
+ <td class="nophone"><fmt:dec value="${pilot.legacyHours}" /></td>
 </view:row>
 </c:forEach>
 </c:otherwise>
