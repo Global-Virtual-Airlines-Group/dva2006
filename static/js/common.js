@@ -38,6 +38,12 @@ golgotha.util.removeClass = function(e, cl) {
 	return hasClass;
 };
 
+golgotha.util.hasClass = function(e, cl) {
+	if (!e) return false;
+	var c = e.className.split(' ');
+	return c.remove(cl);
+};
+
 golgotha.util.disable = function(e, doDisable) {
 	if (!e) return false;
 	doDisable = ((doDisable == null) || doDisable);
@@ -166,6 +172,9 @@ golgotha.onDOMReady = function(f) {
 		return document.attachEvent('onreadystatechange', f); 
 	else
 		return document.addEventListener('DOMContentLoaded', f);
+};
+
+golgotha.attach = function(f, name) {
 };
 
 golgotha.getChild = function(e, name) {
@@ -395,3 +404,39 @@ for (var r = rows.pop(); (r != null); r = rows.pop())
 
 return true;
 };
+
+golgotha.toggleMenu = function(e, force)
+{
+var nv = document.getElementById('nav');
+if (!golgotha.util.hasClass(nv, 'navside')) return false;
+var sm = document.getElementById('navmenu');
+var m = document.getElementById('main');
+var showMenu = (force != null) ? force : !golgotha.util.hasClass(sm, 'show');
+if (showMenu) {
+	golgotha.util.addClass(sm, 'show');
+	golgotha.util.addClass(m, 'hide');
+} else {
+	golgotha.util.removeClass(sm, 'show');
+	golgotha.util.removeClass(m, 'hide');
+}
+
+return showMenu;
+};
+
+golgotha.createHeaderLink = function() {
+	if (!golgotha.sideMenu) return false;
+	var hdr = document.getElementById('hdrLink');
+    var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0)
+    if ((w <= 800) && !hdr.hasMenu) {
+    	hdr.hasMenu = true;
+    	hdr.addEventListener('click', golgotha.toggleMenu);
+    } else if (w > 800) {
+    	hdr.removeEventListener('click', golgotha.toggleMenu);
+    	delete hdr.hasMenu;
+    }
+    
+    return true;
+};
+
+golgotha.onDOMReady(function() { golgotha.createHeaderLink(); golgotha.toggleMenu(null, false); });
+window.addEventListener('resize', golgotha.createHeaderLink);
