@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2011, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.layout;
 
 import java.util.*;
@@ -9,19 +9,19 @@ import javax.servlet.jsp.tagext.*;
 /**
  * A JSP tag to render page layouts in a user-specific way.
  * @author Luke
- * @version 3.6
+ * @version 6.3
  * @since 1.0
  */
 
 public class RegionTag extends TagSupport {
 
 	private final Map<String, String> _attrs = new HashMap<String, String>();
-	private PageTag _parent;
 
 	/**
 	 * Sets the DOM ID of the Region element.
 	 * @param id the ID
 	 */
+	@Override
 	public void setId(String id) {
 		_attrs.put("id", id);
 	}
@@ -37,6 +37,7 @@ public class RegionTag extends TagSupport {
 	/**
 	 * Releases the tag's state variables.
 	 */
+	@Override
 	public void release() {
 		_attrs.clear();
 		super.release();
@@ -47,11 +48,12 @@ public class RegionTag extends TagSupport {
 	 * @return TagSuppport.EVAL_BODY_INCLUDE always
 	 * @throws JspException if an error occurs
 	 */
+	@Override
 	public int doStartTag() throws JspException {
 		
 		// Make sure the parent page tag has been set
-		_parent = (PageTag) TagSupport.findAncestorWithClass(this, PageTag.class);
-		if (_parent == null)
+		Object parent = TagSupport.findAncestorWithClass(this, PageTag.class);
+		if (parent == null)
 			throw new JspException("Must be contained within a PAGE ELEMENT tag");
 
 		JspWriter out = pageContext.getOut();
@@ -67,7 +69,6 @@ public class RegionTag extends TagSupport {
 				out.print(i.hasNext() ? "\" " : "\"");
 			}
 
-			// Close the element opening tag
 			out.print('>');
 		} catch (Exception e) {
 			throw new JspException(e);
@@ -81,15 +82,16 @@ public class RegionTag extends TagSupport {
 	 * @return TagSuppport.EVAL_PAGE always
 	 * @throws JspException if an error occurs
 	 */
+	@Override
 	public int doEndTag() throws JspException {
 		try {
 			pageContext.getOut().print("</div>");
 		} catch (Exception e) {
 			throw new JspException(e);
+		} finally {
+			release();
 		}
 		
-		// Release state and return
-		release();
 		return EVAL_PAGE;
 	}
 }

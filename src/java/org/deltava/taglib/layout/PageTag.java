@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2011, 2013, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2011, 2013, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.layout;
 
 import javax.servlet.http.*;
@@ -14,7 +14,7 @@ import org.deltava.taglib.BrowserInfoTag;
 /**
  * A JSP tag to render page layouts in a user-specific way.
  * @author Luke
- * @version 5.4
+ * @version 6.3
  * @since 1.0
  */
 
@@ -52,6 +52,9 @@ public class PageTag extends BrowserInfoTag {
 		logReason("Non-desktop device");
 		_sideMenu |= ((bctxt.getBrowserType() == BrowserType.IE) && (bctxt.getMajor() < 9));
 		logReason("Internet Explorer < 9");
+		
+		// FIXME: Remove when not testing!
+		_sideMenu = true;
 
 		// Check if our screen size is big enough
 		HttpServletRequest hreq = (HttpServletRequest) pageContext.getRequest();
@@ -70,14 +73,17 @@ public class PageTag extends BrowserInfoTag {
 
 		try {
 			JspWriter out = pageContext.getOut();
-			out.print("<div class=\"");
+			out.print("<div id=\"nav\" class=\"");
 			out.print(_sideMenu ? "navside" : "navbar");
-			out.print(bctxt.isIPv6() ? " ipv6" : " ipv4");
+			out.print(bctxt.isIPv6() ? " ipv6 " : " ipv4 ");
+			out.print(bctxt.getDeviceType().name().toLowerCase());
 			if (hreq.isSecure())
 				out.print(" ssl");
 			out.print("\">");
 		} catch (Exception e) {
 			throw new JspException(e);
+		} finally {
+			release();
 		}
 
 		return EVAL_BODY_INCLUDE;

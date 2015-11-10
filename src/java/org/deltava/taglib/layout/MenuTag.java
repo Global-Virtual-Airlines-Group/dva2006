@@ -1,4 +1,4 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.layout;
 
 import javax.servlet.jsp.*;
@@ -6,7 +6,7 @@ import javax.servlet.jsp.*;
 /**
  * A JSP tag to display a navigation menu.
  * @author Luke
- * @version 2.6
+ * @version 6.3
  * @since 2.6
  */
 
@@ -25,6 +25,7 @@ public class MenuTag extends MenuElementTag {
 	/**
 	 * Releases the tag's state variables.
 	 */
+	@Override
 	public void release() {
 		super.release();
 		_attrName = null;
@@ -37,11 +38,14 @@ public class MenuTag extends MenuElementTag {
 	 * @return EVAL_BODY_INCLUDE always
 	 * @throws JspException if an error occurs
 	 */
+	@Override
 	public int doStartTag() throws JspException {
 		super.doStartTag();
 		if (_renderTable) {
 			try {
-				pageContext.getOut().println("<table class=\"nav\"><tbody>");
+				JspWriter out = pageContext.getOut();
+				out.println("<script type=\"text/javascript\" defer>golgotha.sideMenu = true;</script>");
+				out.print("<table class=\"nav\"><tbody>");
 			} catch (Exception e) {
 				throw new JspException(e);
 			}
@@ -59,10 +63,11 @@ public class MenuTag extends MenuElementTag {
 	 * @return EVAL_PAGE always
 	 * @throws JspException if an error occured
 	 */
+	@Override
 	public int doEndTag() throws JspException {
 		try {
 			if (_renderTable)
-				pageContext.getOut().println("</tbody></table>");
+				pageContext.getOut().print("</tbody></table>");
 		} catch (Exception e) {
 			throw new JspException(e);
 		} finally {
