@@ -11,6 +11,9 @@
 <title><content:airline /> Career Opportunities</title>
 <content:css name="main" />
 <content:css name="view" />
+<content:js name="common" />
+<content:pics />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -57,8 +60,8 @@ regularly as new volunteer opportunities are posted on a regular basis.</td>
 <!-- Table Header Bar-->
 <tr class="title">
  <td style="width:20%">TITLE</td>
- <td style="width:10%">CREATED ON</td>
- <td style="width:10%">CLOSES ON</td>
+ <td class="nophone" style="width:10%">CREATED ON</td>
+ <td class="nophone" style="width:10%">CLOSES ON</td>
  <td class="left">SUMMARY</td>
 </tr>
 
@@ -66,8 +69,8 @@ regularly as new volunteer opportunities are posted on a regular basis.</td>
 <c:forEach var="job" items="${viewContext.results}">
 <view:row entry="${job}">
  <td><el:cmd className="pri bld" url="job" link="${job}">${job.title}</el:cmd></td>
- <td class="small"><fmt:date date="${job.createdOn}" fmt="d" /></td>
- <td class="small bld"><fmt:date date="${job.closesOn}" fmt="d" /></td>
+ <td class="small nophone"><fmt:date date="${job.createdOn}" fmt="d" /></td>
+ <td class="small nophone bld"><fmt:date date="${job.closesOn}" fmt="d" /></td>
  <td class="left">${job.summary}</td>
 </view:row>
 </c:forEach>
