@@ -1,4 +1,4 @@
-/* DVA Main Cascading Style Sheet (C) 2005, 2006, 2007, 2009, 2010, 2012 Global Virtual Airlines Group. */
+/* DVA Main Cascading Style Sheet (C) 2005, 2006, 2007, 2009, 2010, 2012, 2015 Global Virtual Airlines Group. */
 
 /* Formatting for header title caption */
 h1.header {
@@ -11,7 +11,7 @@ h1.header {
 }
 
 /* Formatting for header image */
-@media (min-width: 801px) {
+@media (min-width: 941px) {
     img.header {
         float: right;
         border: none;
@@ -22,15 +22,32 @@ h1.header {
 	}
 }
 
-@media (max-width: 800px) {
+@media (max-width: 940px) {
     img.header {
         display:none;
     }
 }
 
 /* Controls the sizing and formatting of the top menu display section */
-div.navside div#navmenu {
-	width: 155px;
+@media (min-width: 801px) {
+	div.navside div#navmenu {
+        width: 155px;
+    }
+}
+
+@media (max-width: 800px) {
+	div.navside div#navmenu {
+        width: 100%;
+        position:fixed;
+        z-index: 500;
+        opacity: .855;
+        filter: alpha(opacity=85);
+        visibility:hidden;
+    }
+    
+    div.navside div#navmenu.show {
+        visibility:visible;
+    }
 }
 
 div.navbar div#navmenu {
@@ -130,7 +147,7 @@ ul.menu li ul {
 /* Controls the sizing and formatting of side navigation elements     */
 table.nav {
 	table-layout: fixed;
-	width: 154px;
+	width: 100%;
 	border-collapse: separate;
 	text-align: center;
 	vertical-align: middle;
@@ -182,13 +199,22 @@ table.nav *.submenu :link:hover, table.nav *.submenu :hover {
 	padding: 8px;
 }
 
-.navside div#main {
-	position: absolute;
-	top: 107px;
-	left: 156px;
-	right: 1px;
-	padding: 8px;
-	padding-top: 5px;
+@media (min-width: 801px) {
+    div.navside div#main {
+    	position: absolute;
+    	top: 107px;
+    	left: 156px;
+    	right: 1px;
+    	padding: 8px;
+    	padding-top: 5px;
+    }
+}
+
+@media (max-width: 800px) {
+    div.navside div#main.hide {
+        opacity: .333;
+        filter: alpha(opacity=33);
+    }
 }
 
 /* Result page Header */
@@ -394,6 +420,10 @@ a.plain {
 @media (max-width: 800px) {
     .nophone {
 	   display:none;
+    }
+    
+    a {
+        margin: 10px;
     }
 }
 
