@@ -133,18 +133,18 @@ This is also a good time to review <content:airline />'s <el:cmd url="privacy" c
 
 <!-- Table Header Bar -->
 <tr class="title caps mid">
- <td>&nbsp;</td>
+ <td class="nophone">&nbsp;</td>
  <td style="width:23%">TITLE</td>
- <td style="width:12%">SIZE</td>
+ <td class="nophone" style="width:12%">SIZE</td>
  <td class="left">DESCRIPTION</td>
 </tr>
 
 <!-- Table Data Section -->
 <c:forEach var="doc" items="${manuals}">
 <view:row entry="${doc}">
- <td class="mid"><el:link url="/library/${doc.fileName}"><el:img src="library/adobe.png" className="noborder" caption="Download PDF manual" x="32" y="32" /></el:link></td>
+ <td class="mid nophone"><el:link url="/library/${doc.fileName}"><el:img src="library/adobe.png" className="noborder" caption="Download PDF manual" x="32" y="32" /></el:link></td>
  <td class="pri bld mid"><el:link url="/library/${doc.fileName}">${doc.name}</el:link></td>
- <td class="sec bld mid"><fmt:int value="${doc.size}" /> bytes</td>
+ <td class="sec bld mid nophone"><fmt:int value="${doc.size}" /> bytes</td>
  <td class="small"><fmt:text value="${doc.description}" /></td>
 </view:row>
 </c:forEach>
@@ -216,7 +216,7 @@ This is also a good time to review <content:airline />'s <el:cmd url="privacy" c
 <tr>
  <td class="label">Time Zone</td>
  <td class="data" colspan="${cspan}"><el:combo name="tz" idx="*" size="1" options="${timeZones}" className="req" firstEntry="[ TIME ZONE ]" value="${(!empty myTZ) ? myTZ : param.tz}" />
-<c:if test="${!empty ipInfo}"> <span class="small">( <el:flag countryCode="${ipInfo.country.code}" caption="${ipInfo.location}" /> ${ipInfo.location} )</span></c:if></td>
+<c:if test="${!empty ipInfo}"> <span class="nophone small">( <el:flag countryCode="${ipInfo.country.code}" caption="${ipInfo.location}" /> ${ipInfo.location} )</span></c:if></td>
 </tr>
 <tr>
  <td class="label">Date/Time Format</td>
@@ -254,7 +254,7 @@ This is also a good time to review <content:airline />'s <el:cmd url="privacy" c
 </tr>
 <tr>
  <td class="label">Verification URL</td>
- <td class="data" colspan="${cspan}"><el:text name="legacyURL" idx="*" size="64" max="128" value="${param.legacyURL}" /></td>
+ <td class="data" colspan="${cspan}"><el:text name="legacyURL" idx="*" size="56" max="128" value="${param.legacyURL}" /></td>
 </tr>
 
 <!-- Equipment Type preferences -->

@@ -115,7 +115,7 @@ golgotha.maps.acars.showEarth = function() {
 <el:table className="form">
 <tr class="title">
  <td colspan="2" class="caps"><content:airline /> LIVE ACARS MAP<span id="isLoading"></span></td>
- <td colspan="2" class="right"><span id="userSelect" style="display:none;"> ZOOM TO <el:combo ID="usrID" name="usrID" idx="*" options="${emptyList}" firstEntry="-" onChange="void golgotha.maps.acars.zoomTo(this)" /></span></td>
+ <td colspan="2" class="right nophone"><span id="userSelect" style="display:none;"> ZOOM TO <el:combo ID="usrID" name="usrID" idx="*" options="${emptyList}" firstEntry="-" onChange="void golgotha.maps.acars.zoomTo(this)" /></span></td>
 </tr>
 <tr>
  <td class="label">Map Options</td>
@@ -129,14 +129,14 @@ golgotha.maps.acars.showEarth = function() {
  <td class="label">Aircraft Legend</td>
  <td class="data" style="width:45%;"><map:legend color="blue" legend="Cruising" /> <map:legend color="white" legend="On Ground" />
  <map:legend color="orange" legend="Climbing" /> <map:legend color="yellow" legend="Descending" /></td>
- <td class="label">Dispatcher Legend</td>
- <td class="data"><map:legend color="green" legend="Available" /> <map:legend color="purple" legend="Busy" /></td>
+ <td class="label nophone">Dispatcher Legend</td>
+ <td class="data nophone"><map:legend color="green" legend="Available" /> <map:legend color="purple" legend="Busy" /></td>
 </tr>
 <tr>
  <td class="label">Dispatch Service</td>
  <td class="data"><span id="dispatchStatus" class="bld caps">DISPATCH CURRENTLY OFFLINE</span></td>
- <td class="label">Weather Layer</td>
- <td class="data"><span id="wxLoading" class="small" style="width:150px;">None</span></td>
+ <td class="label nophone">Weather Layer</td>
+ <td class="data nophone"><span id="wxLoading" class="small" style="width:150px;">None</span></td>
 </tr>
 <tr>
  <td class="data" colspan="4"><map:div ID="googleMap" x="100%" y="550" /><div id="copyright" class="small mapTextLabel"></div>
