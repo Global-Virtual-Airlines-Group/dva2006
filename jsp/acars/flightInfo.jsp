@@ -135,7 +135,7 @@
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
 <map:points var="golgotha.maps.acarsFlight.filedPoints" items="${filedRoute}" />
 <map:markers var="golgotha.maps.acarsFlight.filedMarkers" items="${filedRoute}" />
-<map:line var="golgotha.maps.acarsFlight.gfRoute" src="filedPoints" color="#a0400f" width="2" transparency="0.7" geodesic="true" />
+<map:line var="golgotha.maps.acarsFlight.gfRoute" src="golgotha.maps.acarsFlight.filedPoints" color="#a0400f" width="2" transparency="0.7" geodesic="true" />
 
 // Build the map
 var mapTypes = {mapTypeIds:golgotha.maps.DEFAULT_TYPES};
