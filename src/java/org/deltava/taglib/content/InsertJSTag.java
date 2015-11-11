@@ -1,4 +1,4 @@
-// Copyright 2005, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2010, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import javax.servlet.jsp.JspWriter;
@@ -16,6 +16,24 @@ import org.deltava.util.system.SystemData;
 
 public class InsertJSTag extends InsertMinifiedContentTag {
 
+	private boolean _async;
+
+	/**
+	 * Sets whether the script should be loaded asynchronously.
+	 * @param isAsync TRUE if loaded asynchronously, otherwise FALSE
+	 */
+	public void setAsync(boolean isAsync) {
+		_async = isAsync;
+	}
+	
+	/**
+	 * Releases the tag's state variables.
+	 */
+	public void release() {
+		super.release();
+		_async = false;
+	}
+	
 	/**
 	 * Renders the tag.
 	 * @return TagSupport.EVAL_PAGE
@@ -42,6 +60,9 @@ public class InsertJSTag extends InsertMinifiedContentTag {
 			else
 				out.print(_resourceName);
 
+			if (_async)
+				out.print(" async");
+			
 			out.print("\"></script>");
 		} catch (Exception e) {
 			throw new JspException(e);
@@ -49,7 +70,6 @@ public class InsertJSTag extends InsertMinifiedContentTag {
 			release();
 		}
 
-		// Mark the content as added and return
 		ContentHelper.addContent(pageContext, "JS", _resourceName);
 		return EVAL_PAGE;
 	}
