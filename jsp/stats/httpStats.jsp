@@ -33,18 +33,18 @@ golgotha.local.sortBy = function(combo) {
 <el:form action="httpstats.do" method="get" validate="return false">
 <view:table cmd="httpstats">
 <tr class="title">
- <td colspan="5" class="left">HTTP SERVER STATISTICS</td>
- <td colspan="2" class="right">SORT BY 
+ <td colspan="3" class="left"><span class="nophone"><content:airline /> </span>HTTP SERVER STATISTICS</td>
+ <td colspan="3" class="right">SORT BY 
 <el:combo name="sortType" size="1" idx="1" options="${sortTypes}" value="${viewContext.sortType}" onChange="void golgotha.local.sortBy(this)" /></td>
 </tr>
 
 <!-- Table Header Bar-->
 <tr class="title caps">
  <td style="width:10%">#</td>
- <td style="width:15%">DATE</td>
+ <td>DATE</td>
  <td style="width:15%">REQUESTS</td>
- <td style="width:15%">HOME PAGE HITS</td>
- <td style="width:15%">SERVER TIME</td>
+ <td class="nophone" style="width:15%">HOME PAGE HITS</td>
+ <td class="nophone" style="width:15%">SERVER TIME</td>
  <td>TOTAL BANDWIDTH</td>
 </tr>
 
@@ -56,8 +56,8 @@ golgotha.local.sortBy = function(combo) {
  <td class="sec bld">${entryNumber}</td>
  <td class="pri bld"><fmt:date fmt="d" date="${stat.date}" /></td>
  <td class="bld"><fmt:int value="${stat.requests}" /></td>
- <td class="pri bld"><fmt:int value="${stat.homePageHits}" /></td>
- <td class="bld"><fmt:int value="${stat.executionTime / 1000}" /> s</td>
+ <td class="pri bld nophone"><fmt:int value="${stat.homePageHits}" /></td>
+ <td class="bld nophone"><fmt:int value="${stat.executionTime / 1000}" /> s</td>
  <td class="bld"><fmt:int value="${stat.bandwidth}" /> bytes</td>
 </tr>
 </c:forEach>
