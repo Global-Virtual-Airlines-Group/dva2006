@@ -53,9 +53,6 @@ public class PageTag extends BrowserInfoTag {
 		_sideMenu |= ((bctxt.getBrowserType() == BrowserType.IE) && (bctxt.getMajor() < 9));
 		logReason("Internet Explorer < 9");
 		
-		// FIXME: Remove when not testing!
-		_sideMenu = true;
-
 		// Check if our screen size is big enough
 		HttpServletRequest hreq = (HttpServletRequest) pageContext.getRequest();
 		HttpSession s = hreq.getSession(false);
