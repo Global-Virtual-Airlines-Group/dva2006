@@ -1,21 +1,16 @@
-// Copyright 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
-import java.util.Collection;
 import java.util.List;
-
-import org.deltava.beans.stats.FlightStatsEntry;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-
-import org.deltava.util.ComboUtils;
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 
 /**
  * A Web Site Command to display Charter Flight statistics.
  * @author Luke
- * @version 3.6
+ * @version 6.3
  * @since 3.6
  */
 
@@ -44,7 +39,7 @@ public class CharterStatsCommand extends AbstractStatsCommand {
 		// Get the view context
 		ViewContext vc = initView(ctx);
 		if (StringUtils.arrayIndexOf(SORT_CODE, vc.getSortType()) == -1)
-		   vc.setSortType(SORT_CODE[5]);
+		   vc.setSortType(SORT_CODE[0]);
 		
 		// Get grouping type
 		String labelType = CH_GROUP_CODE[StringUtils.arrayIndexOf(CH_GROUP_CODE, ctx.getParameter("groupType"), 0)];
@@ -55,14 +50,7 @@ public class CharterStatsCommand extends AbstractStatsCommand {
 			GetFlightReportStatistics dao = new GetFlightReportStatistics(ctx.getConnection());
 			dao.setQueryStart(vc.getStart());
 			dao.setQueryMax(vc.getCount());
-			
-			// Save the statistics in the request
-			Collection<FlightStatsEntry> results = dao.getCharterStatistics(labelType, vc.getSortType(), true); 
-			vc.setResults(results);
-			
-			// Save pilot ID flag
-			boolean hasID = !results.isEmpty() && (results.iterator().next().getPilotIDs() > 0);
-			ctx.setAttribute("hasPilotID", Boolean.valueOf(hasID), REQUEST);
+			vc.setResults(dao.getCharterStatistics(labelType, vc.getSortType()));
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
@@ -73,6 +61,7 @@ public class CharterStatsCommand extends AbstractStatsCommand {
 		ctx.setAttribute("sortTypes", SORT_OPTIONS, REQUEST);
 		ctx.setAttribute("groupTypes", CH_GROUP_OPTS, REQUEST);
 		ctx.setAttribute("isCharter", Boolean.TRUE, REQUEST);
+		ctx.setAttribute("hasPilotID", Boolean.valueOf(labelType.contains("P.")), REQUEST);
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
