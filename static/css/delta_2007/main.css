@@ -37,7 +37,7 @@ h1.header {
 
 @media (max-width: 800px) {
     div.navside div#navmenu {
-        width: 100%;
+        width: 98%;
         position: absolute;
         top: 48px;
         z-index: 500;
