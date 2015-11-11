@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to display a Pilot's Flight Report statistics to a Google chart.
  * @author Luke
- * @version 5.1
+ * @version 6.3
  * @since 2.1
  */
 
@@ -47,7 +47,7 @@ public class MyFlightsService extends WebService {
 		Map<Integer, Integer> vsStats = null;
 		try {
 			GetFlightReportStatistics stdao = new GetFlightReportStatistics(ctx.getConnection());
-			results = stdao.getPIREPStatistics(userID, "EQTYPE", "LEGS", true);
+			results = stdao.getPIREPStatistics(userID, "EQTYPE", "SL", true);
 			vsStats = stdao.getLandingCounts(userID, 50);
 			landings = stdao.getLandingData(userID);
 		} catch (DAOException de) {
@@ -124,13 +124,15 @@ public class MyFlightsService extends WebService {
 			qja.put(ea);
 		}
 		
+		// Slap together
+		JSONObject jo = new JSONObject();
+		jo.put("eqCount", ja);
+		jo.put("landingSpd", lja);
+		jo.put("landingSct", sja);
+		jo.put("landingQuality", qja);
+		
 		// Dump the JSON to the output stream
 		try {
-			JSONObject jo = new JSONObject();
-			jo.put("eqCount", ja);
-			jo.put("landingSpd", lja);
-			jo.put("landingSct", sja);
-			jo.put("landingQuality", qja);
 			ctx.setContentType("text/javascript", "UTF-8");
 			ctx.setExpiry(600);
 			ctx.println(jo.toString());
