@@ -14,6 +14,7 @@
 <content:js name="common" />
 <map:api version="3" />
 <content:js name="routeMap" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:googleAnalytics eventSupport="true" />
 </head>
 <content:copyright visible="false" />
@@ -46,7 +47,7 @@
 <content:copyright />
 </content:region>
 </content:page>
-<script id="mapInit" defer>
+<script id="mapInit">
 <map:point var="mapC" point="${mapCenter}" />
 
 // Create the map

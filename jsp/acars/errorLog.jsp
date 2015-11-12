@@ -47,8 +47,8 @@ golgotha.local.setViewType = function(idx) {
 <view:table cmd="acarserrors">
 <!-- View Header Bar -->
 <tr class="title">
- <td colspan="2" class="left">ACARS CLIENT ERROR LOGS</td>
- <td colspan="4" class="right">FILTER BY <el:combo name="viewType" idx="*" size="1" firstEntry="-" options="${filterOpts}" value="${param.viewType}" />
+ <td colspan="3" class="left">ACARS CLIENT ERROR LOGS</td>
+ <td colspan="3" class="right">FILTER BY <el:combo name="viewType" idx="*" size="1" firstEntry="-" options="${filterOpts}" value="${param.viewType}" />
  BUILD <el:combo name="build" idx="*" size="1" firstEntry="-" options="${clientBuilds}" value="${param.build}" onChange="void golgotha.local.setViewType(3)" />
  USER <el:combo name="author" idx="*" size="1" firstEntry="-" options="${authors}" value="${param.author}" onChange="void golgotha.local.setViewType(2)" />
  <el:button ID="SortButton" type="submit" label="GO" /></td>
@@ -56,11 +56,11 @@ golgotha.local.setViewType = function(idx) {
 
 <!-- View Legend Bar -->
 <tr class="title caps">
- <td style="width:5%">#</td>
+ <td>#</td>
  <td style="width:14%">DATE/TIME</td>
- <td style="width:14%">PILOT NAME</td>
+ <td class="nophone">PILOT NAME</td>
  <td style="width:6%">BUILD</td>
- <td style="width:5%">FS</td>
+ <td class="nophone">FS</td>
  <td class="left">ERROR MESSAGE</td>
 </tr>
 
@@ -72,9 +72,9 @@ golgotha.local.setViewType = function(idx) {
 <view:row entry="${err}">
  <td class="sec bld"><fmt:int value="${err.ID}" /></td>
  <td class="small bld"><el:cmd url="acarserror" link="${err}"><fmt:date date="${err.createdOn}" t="HH:mm" /></el:cmd></td>
- <td class="pri bld"><el:profile location="${pilotLoc}">${pilot.name}</el:profile></td>
+ <td class="pri bld nophone"><el:profile location="${pilotLoc}">${pilot.name}</el:profile></td>
  <td class="sec bld"><fmt:int value="${err.clientBuild}" /><c:if test="${err.beta > 0}">b${err.beta}</c:if></td>
- <td class="small">${err.simulator}</td>
+ <td class="small nophone">${err.simulator}</td>
  <td class="left"><fmt:text value="${err.message}" /></td>
 </view:row>
 </c:forEach>

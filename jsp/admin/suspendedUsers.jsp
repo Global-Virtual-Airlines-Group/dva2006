@@ -11,7 +11,9 @@
 <title>Suspended <content:airline /> Pilots</title>
 <content:css name="main" />
 <content:css name="view" />
+<content:js name="common" />
 <content:pics />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -30,9 +32,9 @@
 <tr class="title">
  <td style="width:24%">PILOT NAME</td>
  <td style="width:10%">PILOT ID</td>
- <td style="width:12%">JOINED ON</td>
- <td style="width:12%">LAST FLIGHT</td>
- <td style="width:8%">FLIGHTS</td>
+ <td class="nophone" style="width:12%">JOINED ON</td>
+ <td class="nophone" style="width:12%">LAST FLIGHT</td>
+ <td class="nophone" style="width:8%">FLIGHTS</td>
  <td style="width:15%">SUSPENDED ON</td>
  <td>DURATION</td>
 </tr>
@@ -43,9 +45,9 @@
 <tr>
  <td><el:cmd url="profile" link="${pilot}" className="bld">${pilot.name}</el:cmd></td>
  <td class="pri bld">${pilot.pilotCode}</td>
- <td><fmt:date fmt="d" date="${pilot.createdOn}" default="N/A" /></td>
- <td><fmt:date fmt="d" date="${pilot.lastFlight}" default="N/A" /></td>
- <td><fmt:int value="${pilot.legs}" /></td>
+ <td class="nophone"><fmt:date fmt="d" date="${pilot.createdOn}" default="N/A" /></td>
+ <td class="nophone"><fmt:date fmt="d" date="${pilot.lastFlight}" default="N/A" /></td>
+ <td class="nophone"><fmt:int value="${pilot.legs}" /></td>
 <c:if test="${!empty upd}">
 <c:set var="duration" value="${(now.time - upd.createdOn.time) / 86400000}" scope="page" />
  <td class="bld"><fmt:date fmt="d" date="${upd.createdOn}" /></td>

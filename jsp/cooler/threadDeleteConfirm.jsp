@@ -8,7 +8,9 @@
 <head>
 <title>Confirm ${forumName} Discussion Thread Deletion</title>
 <content:css name="main" />
+<content:js name="common" />
 <content:pics />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <content:copyright visible="false" />
 <body>

@@ -16,6 +16,7 @@
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <script type="text/javascript">
 golgotha.local.setChannel = function(combo) {
 	self.location = '/channel.do?id=' + escape(golgotha.form.getCombo(combo));
@@ -56,11 +57,11 @@ return true;
 
 <!-- Table Header Bar-->
 <tr class="title">
- <td style="width:4%">&nbsp;</td>
+ <td style="max-width:5%">&nbsp;</td>
  <td style="width:31%">THREAD TITLE</td>
- <td style="width:15%">STARTED BY</td>
- <td style="width:8%">VIEWS</td>
- <td style="width:8%">POSTS</td>
+ <td class="nophone" style="width:15%">STARTED BY</td>
+ <td class="nophone" style="max-width:8%">VIEWS</td>
+ <td class="nphone" style="max-width:8%">POSTS</td>
  <td>LAST POST</td>
 </tr>
 
@@ -80,11 +81,10 @@ return true;
 <c:if test="${thread.poll}"><el:img caption="Pilot Poll" x="20" y="20" src="cooler/icon_poll.png" /></c:if>
 <c:if test="${!empty thread.stickyUntil}">STICKY:</c:if>
  <el:cmd url="thread" link="${thread}"><fmt:text value="${thread.subject}" /></el:cmd></td>
- <td><el:profile location="${authorLoc}" className="pri bld">${author.name}</el:profile></td>
- <td><fmt:int value="${thread.views}" /></td>
- <td><fmt:int value="${thread.postCount}" /></td>
- <td class="small right"><fmt:date date="${thread.lastUpdatedOn}" /> by 
- <span class="pri bld">${lastPoster.name}</span></td>
+ <td class="nophone"><el:profile location="${authorLoc}" className="pri bld">${author.name}</el:profile></td>
+ <td class="nophone"><fmt:int value="${thread.views}" /></td>
+ <td class="nophone"><fmt:int value="${thread.postCount}" /></td>
+ <td class="small right"><fmt:date date="${thread.lastUpdatedOn}" /> by <span class="pri bld">${lastPoster.name}</span></td>
 </view:row>
 </c:forEach>
 <tr class="title">

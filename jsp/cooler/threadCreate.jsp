@@ -15,6 +15,7 @@
 <content:json />
 <content:js name="common" />
 <content:js name="datePicker" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <script type="text/javascript">
 golgotha.local.imgData = {URLs: [], descs: [], maxSeq:0, seq:[]};
 golgotha.local.imgData.add = function(url, desc) { this.URLs.push(url); this.descs.push(desc); this.maxSeq++; this.seq.push(this.maxSeq); }
@@ -23,14 +24,13 @@ golgotha.local.imgData.getIndex = function(seq) { return this.seq.indexOf(seq); 
 golgotha.local.imgData.size = function() { return this.URLs.length; }
 golgotha.local.imgData.remove = function(idx) { this.URLs.splice(idx, 1); this.descs.splice(idx, 1); this.seq.splice(idx, 1); }
 
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-golgotha.form.validate({f:f.subject, l:8, t:'Title of your Thread'});
-golgotha.form.validate({f:f.msgText, l:5, t:'Text of your Message'});
-golgotha.form.validate({f:f.img, ext:['gif','jpg','jpeg','png'], t:'Attached Image', empty:true});
-golgotha.form.submit(f);
-return true;
+golgotha.local.validate = function(f) {
+    if (!golgotha.form.check()) return false;
+    golgotha.form.validate({f:f.subject, l:8, t:'Title of your Thread'});
+    golgotha.form.validate({f:f.msgText, l:5, t:'Text of your Message'});
+    golgotha.form.validate({f:f.img, ext:['gif','jpg','jpeg','png'], t:'Attached Image', empty:true});
+    golgotha.form.submit(f);
+    return true;
 };
 
 golgotha.local.openEmoticons = function() {
@@ -44,14 +44,13 @@ golgotha.local.enablePoll = function() {
 	return true;
 };
 
-golgotha.local.removeLink = function(seq)
-{
-var idx = golgotha.local.imgData.getIndex(seq);
-golgotha.local.imgData.remove(idx);
-document.forms[0].imgData.value = JSON.stringify(golgotha.local.imgData);
-var r = document.getElementById('linkImg' + seq);
-r.parentNode.removeChild(r);
-return true;
+golgotha.local.removeLink = function(seq) {
+    var idx = golgotha.local.imgData.getIndex(seq);
+    golgotha.local.imgData.remove(idx);
+    document.forms[0].imgData.value = JSON.stringify(golgotha.local.imgData);
+    var r = document.getElementById('linkImg' + seq);
+    r.parentNode.removeChild(r);
+    return true;
 };
 
 golgotha.local.submitImage = function(f)

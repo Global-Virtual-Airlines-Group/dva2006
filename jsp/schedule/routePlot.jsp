@@ -13,6 +13,7 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:json />
 <content:js name="airportRefresh" />
 <map:api version="3" />
@@ -27,7 +28,6 @@
 <script type="text/javascript">
 var loaders = {};
 loaders.series = new golgotha.maps.SeriesLoader();
-loaders.lg = new golgotha.maps.LayerLoader('Lightning', golgotha.maps.LightningParser);
 loaders.fr = new golgotha.maps.LayerLoader('Fronts', golgotha.maps.fronts.FrontParser);
 loaders.series.setData('radar', 0.45, 'wxRadar', 1024);
 loaders.series.setData('eurorad', 0.45, 'wxRadar', 512);
@@ -225,7 +225,6 @@ golgotha.routePlot.dGates = new MarkerManager(map,{maxZoom:17});
 // Load data async once tiles are loaded
 google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
 	golgotha.util.createScript({id:'wxLoader', url:('//' + self.location.host + '/wx/serieslist.js?function=loaders.series.loadGinsu'), async:true});
-	golgotha.util.createScript({id:'lgAlert', url:'/wxd/LGRecord/CURRENT?jsonp=loaders.lg.load', async:true});
 	golgotha.util.createScript({id:'wuFronts', url:'//api.wunderground.com/api/${wuAPI}/fronts/view.json?callback=loaders.fr.load', async:true});
 	google.maps.event.trigger(map, 'maptypeid_changed');
 });
