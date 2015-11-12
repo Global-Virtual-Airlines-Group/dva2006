@@ -11,10 +11,9 @@ golgotha.maps.ovLayers = [];
 golgotha.maps.styles = {};
 golgotha.maps.reload = 60000;
 golgotha.maps.masks = [0, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288];
-golgotha.maps.util = {isIE:golgotha.util.isIE, oldIE:golgotha.util.oldIE};
+golgotha.maps.util = {isIE:golgotha.util.isIE, oldIE:golgotha.util.oldIE, isIOS:golgotha.util.isIOS};
 golgotha.maps.util.isIE10 = (golgotha.maps.util.isIE && (navigator.appVersion.indexOf('IE 10.0') > 0));
 golgotha.maps.util.isIE11 = ((navigator.appname == 'Netscape') && (navigator.userAgent.contains('Trident/')));
-golgotha.maps.util.isIOS = (!golgotha.maps.util.isIE && ((navigator.platform == 'iPad') || (navigator.platform == 'iPhone')));
 golgotha.maps.util.unload = function(m) { if (!m) return false; google.maps.event.clearListeners(m); return true; };
 
 // Cross-browser opacity set

@@ -3,6 +3,8 @@ package org.deltava.taglib.layout;
 
 import javax.servlet.jsp.*;
 
+import org.deltava.taglib.ContentHelper;
+
 /**
  * A JSP tag to display a navigation menu.
  * @author Luke
@@ -44,7 +46,9 @@ public class MenuTag extends MenuElementTag {
 		if (_renderTable) {
 			try {
 				JspWriter out = pageContext.getOut();
-				out.println("<script type=\"text/javascript\" defer>golgotha.sideMenu = true;</script>");
+				if (ContentHelper.containsContent(pageContext, "JS", "common"))
+					out.println("<script type=\"text/javascript\" defer>golgotha.nav.sideMenu = true;</script>");
+				
 				out.print("<table class=\"nav\"><tbody>");
 			} catch (Exception e) {
 				throw new JspException(e);

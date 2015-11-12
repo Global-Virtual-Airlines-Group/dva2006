@@ -1,6 +1,9 @@
-var golgotha = {event:{}, util:{}, form:{isSubmitted:false, invalidDomains:[]}, local:{}};
+var golgotha = {event:{}, util:{}, form:{isSubmitted:false, invalidDomains:[]}, local:{}, nav:{sideMenu:false}};
 golgotha.util.isIE = (navigator.appName == 'Microsoft Internet Explorer');
 golgotha.util.oldIE = (golgotha.util.isIE && ((navigator.appVersion.indexOf('IE 7.0') > 0) || (navigator.appVersion.indexOf('IE 8.0') > 0)));
+golgotha.util.isIOS = (!golgotha.util.isIE && ((navigator.platform == 'iPad') || (navigator.platform == 'iPhone')));
+golgotha.util.isAndroid = (!golgotha.util.isIE && (navigator.platform.indexOf('Android') > -1));
+golgotha.nav.touch = (golgotha.util.isIOS || golgotha.util.isAndroid); 
 golgotha.util.getTimestamp = function(ms) { var d = new Date(); return d.getTime() - (d.getTime() % ms); };
 golgotha.event.beacon = function() { return false; };
 golgotha.event.stop = function(e) { if (e) { e.stopPropagation(); e.preventDefault(); } return false; };
@@ -26,7 +29,7 @@ golgotha.util.addClass = function(e, cl)
 	if (!e) return false;
 	var c = e.className.split(' ');
 	if (c.indexOf(cl) < 0) c.push(cl);
-	e.className = c.join(' ');
+	e.className = (c.length == 0) ? '' : c.join(' ');
 	return true;
 };
 
@@ -34,7 +37,7 @@ golgotha.util.removeClass = function(e, cl) {
 	if (!e) return false;
 	var c = e.className.split(' ');
 	var hasClass = c.remove(cl);
-	e.className = c.join(' ');
+	e.className = (c.length == 0) ? '' : c.join(' ');
 	return hasClass;
 };
 
@@ -405,38 +408,63 @@ for (var r = rows.pop(); (r != null); r = rows.pop())
 return true;
 };
 
-golgotha.toggleMenu = function(e, force)
-{
-var nv = document.getElementById('nav');
-if (!golgotha.util.hasClass(nv, 'navside')) return false;
-var sm = document.getElementById('navmenu');
-var m = document.getElementById('main');
-var showMenu = (force != null) ? force : !golgotha.util.hasClass(sm, 'show');
-if (showMenu) {
-	golgotha.util.addClass(sm, 'show');
-	golgotha.util.addClass(m, 'hide');
-} else {
-	golgotha.util.removeClass(sm, 'show');
-	golgotha.util.removeClass(m, 'hide');
-}
+golgotha.nav.toggleMenu = function(e, force) {
+	var nv = document.getElementById('nav');
+	if (!golgotha.util.hasClass(nv, 'navside')) return false;
+	var sm = document.getElementById('navmenu');
+	var m = document.getElementById('main');
+	var showMenu = (force != null) ? force : !golgotha.util.hasClass(sm, 'show');
+	if (showMenu) {
+		golgotha.util.addClass(sm, 'show');
+		golgotha.util.addClass(m, 'hide');
+	} else {
+		golgotha.util.removeClass(sm, 'show');
+		golgotha.util.removeClass(m, 'hide');
+	}
 
-return showMenu;
+	return showMenu;
 };
 
-golgotha.createHeaderLink = function() {
-	if (!golgotha.sideMenu) return false;
+golgotha.nav.toggleBar = function(e) {
+	var nv = document.getElementById('nav');
+	if (!golgotha.util.hasClass(nv, 'navbar')) return false;
+	var hdrs = golgotha.util.getElementsByClass('submenuTitle', 'li', document.getElementById('navmenu'));
+	for (var h = hdrs.pop(); (h != null); h = hdrs.pop())
+		golgotha.util.removeClass(h, 'show');
+
+	return golgotha.util.addClass(e.target, 'show');
+}
+
+golgotha.nav.initMenu = function() {
+	if (!golgotha.nav.sideMenu) return false;
 	var hdr = document.getElementById('hdrLink');
     var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0)
     if ((w <= 800) && !hdr.hasMenu) {
     	hdr.hasMenu = true;
-    	hdr.addEventListener('click', golgotha.toggleMenu);
+    	hdr.addEventListener('click', golgotha.nav.toggleMenu);
     } else if (w > 800) {
-    	hdr.removeEventListener('click', golgotha.toggleMenu);
+    	hdr.removeEventListener('click', golgotha.nav.toggleMenu);
     	delete hdr.hasMenu;
     }
     
     return true;
 };
 
-golgotha.onDOMReady(function() { golgotha.createHeaderLink(); golgotha.toggleMenu(null, false); });
-window.addEventListener('resize', golgotha.createHeaderLink);
+golgotha.nav.initBar = function() {
+	var nv = document.getElementById('nav');
+	if (!golgotha.util.hasClass(nv, 'navbar')) return false;
+	var hdrs = golgotha.util.getElementsByClass('submenuTitle', 'li', document.getElementById('navmenu'));
+	for (var h = hdrs.pop(); (h != null); h = hdrs.pop())
+		h.addEventListener('click', golgotha.nav.toggleBar);
+
+	return true;
+};
+
+golgotha.nav.init = function() {
+	if (golgotha.nav.sideMenu) return golgotha.nav.initMenu();
+	if (golgotha.nav.touch) return golgotha.nav.initBar();
+	return false;
+};
+
+golgotha.onDOMReady(golgotha.nav.init);
+if (golgotha.nav.sideMenu) window.addEventListener('resize', golgotha.nav.initMenu);
