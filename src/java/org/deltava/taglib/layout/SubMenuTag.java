@@ -1,14 +1,16 @@
-// Copyright 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.layout;
 
 import java.io.IOException;
 
 import javax.servlet.jsp.*;
 
+import org.deltava.beans.system.DeviceType;
+
 /**
  * A JSP tag to render a top level menu item in a JSP tag.
  * @author Luke
- * @version 3.3
+ * @version 6.3
  * @since 2.6
  */
 
@@ -55,6 +57,7 @@ public class SubMenuTag extends MenuElementTag {
 	/**
 	 * Releases the tag's state variables.
 	 */
+	@Override
 	public void release() {
 		super.release();
 		_hasSubMenu = false;
@@ -65,6 +68,7 @@ public class SubMenuTag extends MenuElementTag {
 	 * @return TagSuppport.EVAL_BODY_INCLUDE always
 	 * @throws JspException if an error occurs
 	 */
+	@Override
 	public int doStartTag() throws JspException {
 		super.doStartTag();
 		try {
@@ -74,8 +78,17 @@ public class SubMenuTag extends MenuElementTag {
 			else {
 				out.print("<ul class=\"menu\"");
 				if (_width > 0) {
+					
+					// Shrink if we're on a table
+					int w = _width;
+					if (getBrowserContext().getDeviceType() == DeviceType.TABLET) {
+						w -= 24;
+						w = Math.max(w, (_width * 4 / 5));
+						_width -= 5;
+					}
+					
 					out.print(" style=\"width:");
-					out.print(String.valueOf(_width));
+					out.print(w);
 					out.print("px;\"");
 				}
 				
@@ -99,6 +112,7 @@ public class SubMenuTag extends MenuElementTag {
 	 * 	@return TagSuppport.EVAL_PAGE always
 	 * @throws JspException if an error occurs
 	 */
+	@Override
 	public int doEndTag() throws JspException {
 		try {
 			if (!_renderTable) {

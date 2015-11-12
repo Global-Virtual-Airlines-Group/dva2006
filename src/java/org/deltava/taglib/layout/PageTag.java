@@ -48,8 +48,8 @@ public class PageTag extends BrowserInfoTag {
 
 		// Check for IE6 and phones/tablets
 		HTTPContextData bctxt = getBrowserContext();
-		_sideMenu = (bctxt == null) || (bctxt.getDeviceType() != DeviceType.DESKTOP);
-		logReason("Non-desktop device");
+		_sideMenu = (bctxt == null) || (bctxt.getDeviceType() == DeviceType.PHONE) || (bctxt.getDeviceType() == DeviceType.UNKNOWN);
+		logReason("Non-desktop/tablet device");
 		_sideMenu |= ((bctxt.getBrowserType() == BrowserType.IE) && (bctxt.getMajor() < 9));
 		logReason("Internet Explorer < 9");
 		
@@ -60,7 +60,7 @@ public class PageTag extends BrowserInfoTag {
 			Pilot usr = (Pilot) hreq.getUserPrincipal();
 			if (usr == null) {
 				Number sX = (Number) s.getAttribute(CommandContext.SCREENX_ATTR_NAME);
-				_sideMenu = (sX != null) && (sX.intValue() < 1155);
+				_sideMenu = (sX != null) && (sX.intValue() < 1022);
 				logReason("Screen Width = " + String.valueOf(sX));
 			} else {
 				_sideMenu = !usr.getShowNavBar();
