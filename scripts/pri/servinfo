@@ -1,6 +1,6 @@
 #!/bin/bash
 # ServInfo download script
-# (c) 2006, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+# (c) 2006, 2009, 2010, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 
 # Set the file to download to
 if [ -z "$2" ]; then
@@ -20,7 +20,7 @@ if [ "IVAO" == "$1" ]; then
  StatusURL="http://www.ivao.aero/whazzup/status.txt"
  network="ivao"
 else
- StatusURL="http://stats.vatsim.net/status.txt"
+ StatusURL="https://status.vatsim.net/status.txt"
  network="vatsim"
 fi
 
