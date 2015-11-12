@@ -1,17 +1,19 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.layout;
 
 import javax.servlet.jsp.*;
 import javax.servlet.jsp.tagext.TagSupport;
 
+import org.deltava.taglib.BrowserInfoTag;
+
 /**
  * An abstract clas to JSP tags that display navigation menu elements. 
  * @author Luke
- * @version 2.6
+ * @version 6.3
  * @since 2.6
  */
 
-abstract class MenuElementTag extends TagSupport {
+abstract class MenuElementTag extends BrowserInfoTag {
 	
 	/**
 	 * Stores whether elements are rendered via tables or lists.
@@ -24,6 +26,7 @@ abstract class MenuElementTag extends TagSupport {
 	 * rather than &lt;UL&gt;  and &lt;LI&gt; elements.
 	 * @return EVAL_BODY_INCLUDE always
 	 */
+	@Override
 	public int doStartTag() throws JspException {
 		
 		// Check parent for side menu rendering
