@@ -149,12 +149,12 @@ golgotha.onDOMReady(function() {
 <tr>
  <td class="label">Departing from</td>
  <td class="data"><el:combo name="airportD" idx="*" size="1" firstEntry="-" options="${airports}" value="${fafCriteria.airportD}" onChange="this.updateAirportCode(); golgotha.airportLoad.updateOrigin(this)" />
- <el:airportCode combo="airportD" idx="*" airport="${fafCriteria.airportD}" />
- <el:box name="nVD" value="true" className="small" checked="${param.nVD}" label="Only include unvisited Airports" onChange="void golgotha.ff.refreshNV(this, 'airportD')" /></td>
+<span class="nophone"> <el:airportCode combo="airportD" idx="*" airport="${fafCriteria.airportD}" />
+ <el:box name="nVD" value="true" className="small" checked="${param.nVD}" label="Only include unvisited Airports" onChange="void golgotha.ff.refreshNV(this, 'airportD')" /></span></td>
  <td class="label">Arriving at</td>
  <td class="data"><el:combo name="airportA" idx="*" size="1" firstEntry="-" options="${airportsA}" value="${fafCriteria.airportA}" onChange="void this.updateAirportCode()" />
- <el:airportCode combo="airportA" idx="*" airport="${fafCriteria.airportA}" />
- <el:box name="nVA" value="true" className="small" checked="${param.nVA}" label="Only include unvisited Airports" onChange="void golgotha.ff.refreshNV(this, 'airportA', true)" /></td>
+<span class="nophone"> <el:airportCode combo="airportA" idx="*" airport="${fafCriteria.airportA}" />
+ <el:box name="nVA" value="true" className="small" checked="${param.nVA}" label="Only include unvisited Airports" onChange="void golgotha.ff.refreshNV(this, 'airportA', true)" /></span></td>
 </tr>
 <tr>
  <td class="label">Departure Time (+/- 2h)</td>
@@ -202,15 +202,15 @@ golgotha.onDOMReady(function() {
 
 <!-- Search Results Header Bar -->
 <tr class="caps title">
- <td style="width:5%">ADD</td>
+ <td>ADD</td>
  <td style="width:12%">FLIGHT NUMBER</td>
  <td style="width:10%">EQUIPMENT</td>
- <td style="width:35%">AIRPORTS</td>
- <td style="width:8%">DEPARTS</td>
- <td style="width:8%">ARRIVES</td>
+ <td>AIRPORTS</td>
+ <td class="nophone" style="width:8%">DEPARTS</td>
+ <td class="nophone" style="width:8%">ARRIVES</td>
  <td style="width:8%">LENGTH</td>
- <td style="width:5%">ROUTES</td>
- <td>DISTANCE</td>
+ <td class="nophone" style="width:5%">ROUTES</td>
+ <td class="nophone">DISTANCE</td>
 </tr>
 
 <!-- Search Results -->
@@ -219,23 +219,23 @@ golgotha.onDOMReady(function() {
  <td><el:box name="addFA" value="${flight.flightCode}" label="" /></td>
  <td class="pri bld">${flight.flightCode}</td>
  <td class="sec bld">${flight.equipmentType}</td>
- <td class="small">${flight.airportD.name} (<fmt:airport airport="${flight.airportD}" />) to
- ${flight.airportA.name} (<fmt:airport airport="${flight.airportA}" />)</td>
+ <td class="small">${flight.airportD.name} <span class="nophone">(<fmt:airport airport="${flight.airportD}" />)</span> to
+ ${flight.airportA.name} <span class="nophone">(<fmt:airport airport="${flight.airportA}" />)</span></td>
 <c:if test="${param.showUTCTimes}">
- <td><fmt:date fmt="t" t="HH:mm" tz="${utc}" date="${flight.dateTimeD.UTC}" /> UTC</td>
- <td><fmt:date fmt="t" t="HH:mm" tz="${utc}" date="${flight.dateTimeA.UTC}" /> UTC</td>
+ <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${utc}" date="${flight.dateTimeD.UTC}" /> UTC</td>
+ <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${utc}" date="${flight.dateTimeA.UTC}" /> UTC</td>
 </c:if>
 <c:if test="${!param.showUTCTimes}"> 
- <td><fmt:date fmt="t" t="HH:mm" tz="${flight.airportD.TZ}" date="${flight.dateTimeD.UTC}" /></td>
- <td><fmt:date fmt="t" t="HH:mm" tz="${flight.airportA.TZ}" date="${flight.dateTimeA.UTC}" /></td>
+ <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${flight.airportD.TZ}" date="${flight.dateTimeD.UTC}" /></td>
+ <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${flight.airportA.TZ}" date="${flight.dateTimeA.UTC}" /></td>
 </c:if>
  <td class="small"><fmt:int value="${flight.length / 10}" />:<fmt:int value="${(flight.length * 6) % 60}" fmt="00" /></td>
 <c:if test="${fn:isSearchEntry(flight)}">
- <td class="small bld"><fmt:int value="${flight.dispatchRoutes}" /></td>
- <td class="sec"><fmt:distance value="${flight.distance}" /></td>
+ <td class="small bld nophone"><fmt:int value="${flight.dispatchRoutes}" /></td>
+ <td class="sec nophone"><fmt:distance value="${flight.distance}" /></td>
 </c:if>
 <c:if test="${!fn:isSearchEntry(flight)}">
- <td class="sec" colspan="2"><fmt:distance value="${flight.distance}" /></td>
+ <td class="sec nophone" colspan="2"><fmt:distance value="${flight.distance}" /></td>
 </c:if>
 </view:row>
 </c:forEach>
@@ -265,10 +265,10 @@ golgotha.onDOMReady(function() {
  <td style="width:15%">FLIGHT NUMBER</td>
  <td style="width:10%">EQUIPMENT</td>
  <td>AIRPORTS</td>
- <td style="width:10%">DEPARTS</td>
- <td style="width:10%">ARRIVES</td>
+ <td class="nophone" style="width:10%">DEPARTS</td>
+ <td class="nophone" style="width:10%">ARRIVES</td>
  <td style="width:10%">LENGTH</td>
- <td style="width:10%">DISTANCE</td>
+ <td class="nophone" style="width:10%">DISTANCE</td>
 </tr>
 
 <!-- Flighrt Assignment Legs -->
@@ -279,15 +279,15 @@ golgotha.onDOMReady(function() {
  <td class="small">${flight.airportD.name} (<fmt:airport airport="${flight.airportD}" />) to
  ${flight.airportA.name} (<fmt:airport airport="${flight.airportA}" />)</td>
 <c:if test="${param.showUTCTimes}">
- <td><fmt:date fmt="t" t="HH:mm" tz="${utc}" date="${flight.dateTimeD.UTC}" /> UTC</td>
- <td><fmt:date fmt="t" t="HH:mm" tz="${utc}" date="${flight.dateTimeA.UTC}" /> UTC</td>
+ <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${utc}" date="${flight.dateTimeD.UTC}" /> UTC</td>
+ <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${utc}" date="${flight.dateTimeA.UTC}" /> UTC</td>
 </c:if>
 <c:if test="${!param.showUTCTimes}"> 
- <td><fmt:date fmt="t" t="HH:mm" tz="${flight.airportD.TZ}" date="${flight.dateTimeD.UTC}" /></td>
- <td><fmt:date fmt="t" t="HH:mm" tz="${flight.airportA.TZ}" date="${flight.dateTimeA.UTC}" /></td>
+ <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${flight.airportD.TZ}" date="${flight.dateTimeD.UTC}" /></td>
+ <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${flight.airportA.TZ}" date="${flight.dateTimeA.UTC}" /></td>
 </c:if>
  <td class="small"><fmt:int value="${flight.length / 10}" />:<fmt:int value="${(flight.length * 6) % 60}" fmt="00" /></td>
- <td class="sec"><fmt:distance value="${flight.distance}" /></td>
+ <td class="sec nophone"><fmt:distance value="${flight.distance}" /></td>
 </tr>
 </c:forEach>
 

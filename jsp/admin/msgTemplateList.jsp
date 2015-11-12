@@ -12,6 +12,7 @@
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -25,9 +26,9 @@
 <!-- Table Header Bar-->
 <tr class="title caps">
  <td style="width:20%">TEMPLATE NAME</td>
- <td style="width:5%">&nbsp;</td>
- <td style="width:30%">MESSAGE SUBJECT</td>
- <td style="width:30%">DESCRIPTION</td>
+ <td class="nophone" style="max-width:5%;">&nbsp;</td>
+ <td class="nophone" style="width:30%">MESSAGE SUBJECT</td>
+ <td>DESCRIPTION</td>
  <td><c:if test="${access.canCreate}">
 <el:cmdbutton url="msgtemplate" op="edit" label="NEW MESSAGE TEMPLATE" /> 
 </c:if>&nbsp;</td>
@@ -37,8 +38,8 @@
 <c:forEach var="template" items="${templates}">
 <view:row entry="${template}">
  <td><el:cmd url="msgtemplate" className="pri bld" linkID="${template.name}" op="edit">${template.name}</el:cmd></td>
- <td class="sec bld">${template.isHTML ? 'HTML' : '&nbsp;'}</td>
- <td class="sec">${template.subject}</td>
+ <td class="sec bld nophone">${template.isHTML ? 'HTML' : '&nbsp;'}</td>
+ <td class="sec nophone">${template.subject}</td>
  <td colspan="2" class="left">${template.description}</td>
 </view:row>
 </c:forEach>

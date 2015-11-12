@@ -12,7 +12,9 @@
 <title><content:airline /> Security Roles</title>
 <content:css name="main" />
 <content:css name="view" />
+<content:js name="common" />
 <content:pics />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -26,7 +28,7 @@
 <el:table className="view">
 <!-- View Header Bar -->
 <tr class="title caps">
- <td style="width:10%">ID</td>
+ <td style="max-width:10%">ID</td>
  <td style="width:20%">PILOT NAME</td>
  <td style="width:15%">RANK</td>
  <td style="width:10%">EQUIPMENT</td>

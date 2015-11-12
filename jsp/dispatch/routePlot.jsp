@@ -13,6 +13,7 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:json />
 <content:js name="airportRefresh" />
 <map:api version="3" />

@@ -12,7 +12,9 @@
 <title><content:airline /> Online Events</title>
 <content:css name="main" />
 <content:css name="view" />
+<content:js name="common" />
 <content:pics />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -28,8 +30,7 @@
 </tr>
 <tr>
  <td class="pri bld left" colspan="6"><fmt:int value="${fn:sizeof(futureEvents)}" /> <content:airline /> 
-Online Events have currently been scheduled, and are listed below. Please click on one of these
-Online Event profiles to learn more about this <content:airline /> Event.</td>
+Online Events have currently been scheduled, and are listed below. Please click on one of these Online Event profiles to learn more about this <content:airline /> Event.</td>
 </tr>
 
 <!-- Table Header Bar -->

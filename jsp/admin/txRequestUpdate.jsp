@@ -9,9 +9,11 @@
 <head>
 <title><content:airline /> Transfer Request</title>
 <content:css name="main" />
+<content:js name="common" />
 <content:pics />
-<content:copyright visible="false" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
+<content:copyright visible="false" />
 <body>
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 

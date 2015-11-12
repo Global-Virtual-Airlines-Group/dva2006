@@ -70,11 +70,11 @@ return true;
  <td colspan="2">PILOT LOCATION FILTERING</td>
 </tr>
 <tr class="locFilter">
- <td class="label">Equipment Program</td>
+ <td class="label nophone">Equipment Program</td>
  <td class="data"><el:combo name="eqType" size="1" firstEntry="[ ALL PROGRAMS ]" options="${eqTypes}" onChange="void golgotha.pilotMap.updateMarkers()" /></td>
 </tr>
 <tr class="locFilter">
- <td class="label">Pilot Ranks</td>
+ <td class="label nophone">Pilot Ranks</td>
  <td class="data"><el:combo name="rank" size="1" firstEntry="[ ALL RANKS ]" options="${ranks}" onChange="void golgotha.pilotMap.updateMarkers()" /></td>
 </tr>
 </el:table>

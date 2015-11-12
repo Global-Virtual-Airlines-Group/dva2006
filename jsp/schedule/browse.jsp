@@ -17,6 +17,7 @@
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
 <fmt:aptype var="useICAO" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <script type="text/javascript">
 golgotha.local.setAirportD = function(combo) {
 	self.location = '/browse.do?airportD=' + escape(golgotha.form.getCombo(combo));
@@ -69,9 +70,9 @@ golgotha.onDOMReady(function() {
  <td style="width:15%">FLIGHT NUMBER</td>
  <td>EQUIPMENT</td>
  <td style="width:35%">AIRPORTS</td>
- <td style="width:9%">DEPARTS</td>
- <td style="width:9%">ARRIVES</td>
- <td style="width:10%">DISTANCE</td>
+ <td class="nophone" style="width:9%">DEPARTS</td>
+ <td class="nophone" style="width:9%">ARRIVES</td>
+ <td class="nophone" style="width:10%">DISTANCE</td>
  <td style="width:10%">DURATION</td>
 </tr>
 
@@ -83,9 +84,9 @@ golgotha.onDOMReady(function() {
  <td class="sec bld">${entry.equipmentType}</td>
  <td class="small">${entry.airportD.name} (<fmt:airport airport="${entry.airportD}" />) to
  ${entry.airportA.name} (<fmt:airport airport="${entry.airportA}" />)</td>
- <td><fmt:date fmt="t" t="HH:mm" tz="${entry.airportD.TZ}" date="${entry.dateTimeD.UTC}" /></td>
- <td><fmt:date fmt="t" t="HH:mm" tz="${entry.airportA.TZ}" date="${entry.dateTimeA.UTC}" /></td>
- <td class="sec"><fmt:distance value="${entry.distance}" /></td>
+ <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${entry.airportD.TZ}" date="${entry.dateTimeD.UTC}" /></td>
+ <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${entry.airportA.TZ}" date="${entry.dateTimeA.UTC}" /></td>
+ <td class="sec nophone"><fmt:distance value="${entry.distance}" /></td>
  <td><fmt:dec value="${entry.length / 10}" /> hours</td>
 </view:row>
 </c:forEach>
