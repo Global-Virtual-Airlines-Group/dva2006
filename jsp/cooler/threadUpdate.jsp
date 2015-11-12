@@ -10,10 +10,11 @@
 <head>
 <title><content:airline /> ${forumName} Thread</title>
 <content:css name="main" />
+<content:js name="common" />
 <content:pics />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <c:if test="${!isDelete}">
-<meta http-equiv="refresh" content="3;url=/thread.do?id=${thread.hexID}" />
-</c:if>
+<meta http-equiv="refresh" content="3;url=/thread.do?id=${thread.hexID}" /></c:if>
 </head>
 <content:copyright visible="false" />
 <body>

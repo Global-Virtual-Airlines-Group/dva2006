@@ -14,6 +14,7 @@
 <content:css name="view" />
 <content:js name="common" />
 <content:pics />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -32,8 +33,8 @@
 <tr class="title caps">
  <td style="width:30%">CHANNEL NAME / DESCRIPTION</td>
  <td style="width:10%">THREADS</td>
- <td style="width:10%">POSTS</td>
- <td style="width:10%">AIRLINES</td>
+ <td class="nophone" style="max-width:10%">POSTS</td>
+ <td class="nophone" style="max-width:15%">AIRLINES</td>
  <td style="width:10%"><el:cmdbutton url="chprofile" op="edit" label="ADD CHANNEL" /></td>
  <td>READ ACCESS ROLES</td>
 </tr>
@@ -45,8 +46,8 @@
  <el:cmd url="chprofile" linkID="${channel.name}" op="edit" className="pri bld">${channel.name}</el:cmd><br />
  <span class="small">${channel.description}</span></td>
  <td><fmt:int value="${channel.threadCount}" /></td>
- <td><fmt:int value="${channel.postCount}" /></td>
- <td class="sec bld"><fmt:list value="${channel.airlines}" delim=", " /></td>
+ <td class="nophone"><fmt:int value="${channel.postCount}" /></td>
+ <td class="sec bld nophone"><fmt:list value="${channel.airlines}" delim=", " /></td>
  <td class="bld right" colspan="2"><fmt:list value="${channel.readRoles}" delim=", " /></td>
 </view:row>
 </c:forEach>
