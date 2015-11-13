@@ -154,7 +154,7 @@ golgotha.routePlot.updateAirline = function(combo) {
 </content:region>
 </content:page>
 <content:sysdata var="wuAPI" name="security.key.wunderground" />
-<script id="mapInit" defer>
+<script id="mapInit">
 var f = document.forms[0];
 golgotha.util.disable(f.routes);
 golgotha.util.disable('SearchButton', (f.airportD.selectedIndex == 0) || (f.airportA.selectedIndex == 0));
