@@ -29,6 +29,10 @@ h1.header {
 }
 
 /* Controls the sizing and formatting of the top menu display section */
+div#nav.phone {
+    display:block;
+}
+
 @media (min-width: 801px) {
     div.navside div#navmenu {
         width: 155px;
