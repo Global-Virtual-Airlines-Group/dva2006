@@ -36,16 +36,14 @@ loaders.series.setData('temp', 0.275, 'wxTemp');
 loaders.series.setData('windspeed', 0.325, 'wxWind');
 loaders.series.onload(function() { golgotha.util.enable('#selImg'); });
 loaders.fr.onload(function() { golgotha.util.enable('selFronts'); });
-loaders.lg.onload(function() { golgotha.util.enable('selLG'); });
 
-golgotha.local.validate = function(f)
-{
-golgotha.form.validate({f:f.eqType, t:'EquipmentType'});
-golgotha.form.validate({f:f.airportD, t:'Departure Airport'});
-golgotha.form.validate({f:f.airportA, t:'Arrival Airport'});
-golgotha.form.validate({f:f.route, l:3, t:'Flight Route'});
-return true;
-}
+golgotha.local.validate = function(f) {
+    golgotha.form.validate({f:f.eqType, t:'EquipmentType'});
+    golgotha.form.validate({f:f.airportD, t:'Departure Airport'});
+    golgotha.form.validate({f:f.airportA, t:'Arrival Airport'});
+    golgotha.form.validate({f:f.route, l:3, t:'Flight Route'});
+    return true;
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -169,7 +167,7 @@ return true;
 </content:page>
 <fmt:aptype var="useICAO" />
 <content:sysdata var="wuAPI" name="security.key.wunderground" />
-<script id="mapInit" defer>
+<script id="mapInit">
 var f = document.forms[0];
 golgotha.util.disable(f.routes);
 golgotha.util.disable('SearchButton');
