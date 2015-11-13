@@ -53,14 +53,17 @@ public class GetFlightReportStatistics extends DAO {
 			_minCount = minCount;
 		}
 		
+		@Override
 		public String toString() {
 			return _eqType + "$" + _minCount;
 		}
 		
+		@Override
 		public int hashCode() {
 			return toString().hashCode();
 		}
 		
+		@Override
 		public boolean equals(Object o) {
 			return ((o instanceof StatsCacheKey) && (toString().equals(String.valueOf(o))));
 		}
@@ -378,43 +381,37 @@ public class GetFlightReportStatistics extends DAO {
 	 * @param eqType the Equipment type name
 	 * @param groupBy the &quot;GROUP BY&quot; column name
 	 * @param orderBy the &quot;ORDER BY&quot; column name
-	 * @param descSort TRUE if a descending sort, otherwise FALSE
 	 * @return a Collection of FlightStatsEntry beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<FlightStatsEntry> getEQPIREPStatistics(String eqType, String groupBy, String orderBy, boolean descSort) throws DAOException {
+	public Collection<FlightStatsEntry> getEQPIREPStatistics(String eqType, String groupBy, String orderBy) throws DAOException {
 		
 		// Build the SQL statemnet
-		boolean isPilot = groupBy.startsWith("P.");
 		StringBuilder sqlBuf = new StringBuilder("SELECT ");
 		sqlBuf.append(groupBy);
-		sqlBuf.append(" AS LABEL, COUNT(F.DISTANCE) AS LEGS, SUM(F.DISTANCE) AS MILES, ROUND(SUM(F.FLIGHT_TIME), 1) AS HOURS, "
-				+ "AVG(F.FLIGHT_TIME) AS AVGHOURS, AVG(F.DISTANCE) AS AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS ACARSLEGS, "
-				+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS HISTLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) "
-				+ "AS DSPLEGS, ");
-		sqlBuf.append(isPilot ? "1 AS PIDS" : "COUNT(DISTINCT F.PILOT_ID) AS PIDS");
-		sqlBuf.append(" FROM EQRATINGS EQR, PIREPS F");
-		if (isPilot)
-			sqlBuf.append(" LEFT JOIN PILOTS P ON (P.ID=F.PILOT_ID)");
-		sqlBuf.append(" WHERE (F.STATUS=?) AND ((EQR.EQTYPE=?) AND (EQR.RATING_TYPE=?) AND (EQR.RATED_EQ=F.EQTYPE))");
+		sqlBuf.append(" AS LABEL, COUNT(F.DISTANCE) AS SL, SUM(F.DISTANCE) AS SM, ROUND(SUM(F.FLIGHT_TIME), 1) AS SH, "
+			+ "AVG(F.FLIGHT_TIME) AS AVGHOURS, AVG(F.DISTANCE) AS AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SAL, "
+			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OVLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OILEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SHL, "
+			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SDL, COUNT(DISTINCT F.PILOT_ID) AS PIDS, SUM(PAX), SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OLEGS "
+			+ "FROM EQRATINGS EQR, PIREPS F WHERE (F.STATUS=?) AND ((EQR.EQTYPE=?) AND (EQR.RATING_TYPE=?) AND (EQR.RATED_EQ=F.EQTYPE))");
 		if (_dayFilter > 0)
 			sqlBuf.append("AND (F.DATE > DATE_SUB(NOW(), INTERVAL ? DAY)) ");
 		sqlBuf.append(" GROUP BY LABEL ORDER BY ");
 		sqlBuf.append(orderBy);
-		if (descSort)
-			sqlBuf.append(" DESC");
 		
 		try {
 			prepareStatement(sqlBuf.toString());
 			_ps.setInt(1, FlightReport.ATTR_ACARS);
-			_ps.setInt(2, FlightReport.ATTR_ONLINE_MASK);
-			_ps.setInt(3, FlightReport.ATTR_HISTORIC);
-			_ps.setInt(4, FlightReport.ATTR_DISPATCH);
-			_ps.setInt(5, FlightReport.OK);
-			_ps.setString(6, eqType);
-			_ps.setInt(7, EquipmentType.Rating.PRIMARY.ordinal());
+			_ps.setInt(2, FlightReport.ATTR_VATSIM);
+			_ps.setInt(3, FlightReport.ATTR_IVAO);
+			_ps.setInt(4, FlightReport.ATTR_HISTORIC);
+			_ps.setInt(5, FlightReport.ATTR_DISPATCH);
+			_ps.setInt(6, FlightReport.ATTR_ONLINE_MASK);
+			_ps.setInt(7, FlightReport.OK);
+			_ps.setString(8, eqType);
+			_ps.setInt(9, EquipmentType.Rating.PRIMARY.ordinal());
 			if (_dayFilter > 0)
-				_ps.setInt(8, _dayFilter);
+				_ps.setInt(10, _dayFilter);
 			
 			// Check the cache
 			String cacheKey = getCacheKey(_ps.toString());
@@ -620,7 +617,7 @@ public class GetFlightReportStatistics extends DAO {
 				entry.setIVAOLegs(rs.getInt(9));
 				entry.setHistoricLegs(rs.getInt(10));
 				entry.setDispatchLegs(rs.getInt(11));
-				entry.setPilotIDs(rs.getInt(13));
+				entry.setPilotIDs(rs.getInt(12));
 				entry.setPax(rs.getInt(14));
 				results.add(entry);
 			}
