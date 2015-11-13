@@ -10,7 +10,7 @@ import org.deltava.util.ComboUtils;
 /**
  * An Abstract Command used to store options for Flight Report statistics.
  * @author Luke
- * @version 6.2
+ * @version 6.3
  * @since 2.1
  */
 
@@ -19,21 +19,21 @@ public abstract class AbstractStatsCommand extends AbstractViewCommand {
 	/**
 	 * Sort option SQL.
 	 */
-	public static final String[] SORT_CODE = {"SL DESC", "SM DESC", "SH DESC", "AVGHOURS", "AVGMILES", "DATE DESC", "SAL DESC",
-		"OLEGS", "SHL DESC", "PIDS"};
+	public static final String[] SORT_CODE = {"SL DESC", "SM DESC", "SH DESC", "AVGHOURS DESC", "AVGMILES DESC", "DATE DESC", "SAL DESC",
+		"OLEGS DESC", "OVL DESC", "OIL DESC", "SHL DESC", "SDL DESC", "PIDS DESC", "SP DESC"};
 	
 	/**
 	 * Sort option labels.
 	 */
 	public static final List<?> SORT_OPTIONS = ComboUtils.fromArray(new String[] {"Flight Legs", "Miles Flown", "Flight Hours", 
-			"Avg. Hours", "Avg. Miles", "Flight Date", "ACARS Legs", "Online Legs", "Historic Legs", "Distinct Pilots"}, SORT_CODE);
+		"Avg. Hours", "Avg. Miles", "Flight Date", "ACARS Legs", "Online Legs", "VATSIM Legs", "IVAO Legs", "Historic Legs", "Dispatch Legs", 
+		"Distinct Pilots", "Passengers"}, SORT_CODE);
 
 	/**
 	 * Group option SQL.
 	 */
-	public static final String[] GROUP_CODE = {"CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME)", "F.DATE", "F.EQTYPE",
-			"AP.NAME", "AP.AIRPORT_D", "AP.AIRPORT_A", "$MONTH", "DATE_SUB(F.DATE, INTERVAL WEEKDAY(F.DATE) DAY)",
-			"YEAR(F.DATE)"};
+	public static final String[] GROUP_CODE = {"CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME)", "F.DATE", "F.EQTYPE", "AP.NAME",
+		"AP.AIRPORT_D", "AP.AIRPORT_A", "$MONTH", "DATE_SUB(F.DATE, INTERVAL WEEKDAY(F.DATE) DAY)", "YEAR(F.DATE)"};
 	
 	/**
 	 * Group option labels.
