@@ -31,10 +31,10 @@
 <tr class="title">
  <td colspan="3" class="left caps"><content:airline /> ${eqtype.name} PROGRAM METRICS</td>
  <td colspan="4" class="right">SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${param.sortType}" />
-<content:filter roles="HR">
+<span class="nophone"><content:filter roles="HR">
  PROGRAM <el:combo name="eqType" size="1" idx="*" options="${eqTypes}" value="${eqType.name}" />
  RANK <el:combo name="rank" size="1" idx="*" options="${ranks}" firstEntry="All Pilots" value="${param.rank}" /></content:filter>
- <el:box name="isDesc" idx="*" value="true" label="Descending" checked="${param.isDesc}" /> <el:button type="submit" label="UPDATE" /></td>
+ <el:box name="isDesc" idx="*" value="true" label="Descending" checked="${param.isDesc}" /></span> <el:button type="submit" label="UPDATE" /></td>
 </tr>
 <tr class="title">
  <td colspan="7" class="left caps">PROGRAM ROSTER - <fmt:int value="${viewContext.start+1}" /> TO <fmt:int value="${viewContext.end}" /> OF
@@ -44,11 +44,11 @@
 <!-- Table Header Bar -->
 <tr class="title caps prgRoster">
  <td style="width:10%">PILOT CODE</td>
- <td style="width:18%">PILOT NAME</td>
+ <td style="max-width:25%">PILOT NAME</td>
  <td style="width:12%">RANK</td>
- <td style="width:15%">TOTAL</td>
- <td style="width:15%">ACARS</td>
- <td style="width:15%">ONLINE</td>
+ <td>TOTAL</td>
+ <td class="nophone" style="width:15%">ACARS</td>
+ <td class="nophone" style="width:15%">ONLINE</td>
  <td>LAST FLIGHT</td>
 </tr>
 
@@ -59,8 +59,8 @@
  <td>${pilot.name}</td>
  <td class="sec bld">${pilot.rank.name}</td>
  <td class="small"><fmt:int value="${pilot.legs}" /> legs, <fmt:dec value="${pilot.hours}" /> hours</td>
- <td class="pri small"><fmt:int value="${pilot.ACARSLegs}" /> legs, <fmt:dec value="${pilot.ACARSHours}" /> hours</td>
- <td class="sec small"><fmt:int value="${pilot.onlineLegs}" /> legs, <fmt:dec value="${pilot.onlineHours}" /> hours</td>
+ <td class="pri small nophone"><fmt:int value="${pilot.ACARSLegs}" /> legs, <fmt:dec value="${pilot.ACARSHours}" /> hours</td>
+ <td class="sec small nophone"><fmt:int value="${pilot.onlineLegs}" /> legs, <fmt:dec value="${pilot.onlineHours}" /> hours</td>
  <td class="pri bld"><fmt:date fmt="d" date="${pilot.lastFlight}" default="-" /></td>
 </tr>
 </c:forEach>
@@ -81,9 +81,9 @@
  <td style="width:25%">EXAMINATION NAME</td>
  <td style="width:20%">PILOT NAME</td>
  <td style="width:20%">RANK / EQUIPMENT</td>
- <td style="width:15%">CREATED ON</td>
- <td style="width:10%">QUESTIONS</td>
- <td>STAGE</td>
+ <td class="nophone" style="width:15%">CREATED ON</td>
+ <td class="nophone" style="width:10%">QUESTIONS</td>
+ <td class="nophone">STAGE</td>
 </tr>
 
 <!-- Table Data -->
@@ -93,9 +93,9 @@
  <td class="pri bld"><el:cmd url="exam" link="${exam}">${exam.name}</el:cmd></td>
  <td class="bld"><el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></td>
  <td>${pilot.rank.name}, ${pilot.equipmentType}</td>
- <td class="sec"><fmt:date t="HH:mm" date="${exam.date}" /></td>
- <td><fmt:int value="${exam.size}" /></td>
- <td class="sec"><fmt:int value="${exam.stage}" /></td>
+ <td class="sec nophone"><fmt:date t="HH:mm" date="${exam.date}" /></td>
+ <td class="nophone"><fmt:int value="${exam.size}" /></td>
+ <td class="sec nophone"><fmt:int value="${exam.stage}" /></td>
 </tr>
 </c:forEach>
 </el:table>
@@ -112,7 +112,7 @@
  <td style="width:7%">&nbsp;</td>
  <td style="width:20%">PILOT NAME</td>
  <td style="width:10%">AIRCRAFT</td>
- <td class="left">COMMENTS</td>
+ <td class="left nophone">COMMENTS</td>
 </tr>
 
 <!-- Table View data -->
@@ -128,7 +128,7 @@
 </c:if>
  <td><el:cmd url="profile" link="${pilot}" className="pri bld">${pilot.name}</el:cmd></td>
  <td class="sec">${ride.aircraftType}</td>
- <td class="small left">${ride.comments}</td>
+ <td class="small left nophone">${ride.comments}</td>
 </tr>
 </c:forEach>
 </el:table>
@@ -144,8 +144,8 @@
 <tr class="title caps prgTxQueue">
  <td style="width:35%"><el:cmd url="txrequests" className="title" sort="P.LASTNAME">PILOT NAME</el:cmd></td>
  <td style="width:10%">PILOT ID</td>
- <td style="width:20%">CURRENT RANK</td>
- <td style="width:15%">CURRENT PROGRAM</td>
+ <td class="nophone" style="width:20%">CURRENT RANK</td>
+ <td class="nophone" style="width:15%">CURRENT PROGRAM</td>
  <td>REQUESTED ON</td>
 </tr>
 
@@ -155,8 +155,8 @@
 <view:row entry="${txreq}" className="prgTxQueue">
  <td class="bld"><el:cmd url="txreqview" link="${txreq}">${pilot.name}</el:cmd></td>
  <td class="pri bld"><el:cmd url="profile" link="${pilot}">${pilot.pilotCode}</el:cmd></td>
- <td class="sec bld">${pilot.rank.name}</td>
- <td>${pilot.equipmentType}</td>
+ <td class="sec bld nophone">${pilot.rank.name}</td>
+ <td class="nophone">${pilot.equipmentType}</td>
  <td class="sec"><fmt:date fmt="d" date="${txreq.date}" /></td>
 </view:row>
 </c:forEach>
@@ -179,8 +179,8 @@
  <td style="width:10%">PILOT CODE</td>
  <td style="width:30%">PILOT NAME</td>
  <td style="width:10%">TOTAL</td>
- <td style="width:10%">ACARS</td>
- <td style="width:10%">ONLINE</td>
+ <td class="nophone" >ACARS</td>
+ <td class="nophone" >ONLINE</td>
  <td>LAST FLIGHT</td>
 </tr>
 
@@ -197,8 +197,8 @@
  <td class="pri bld">${pilot.pilotCode}</td>
  <td><el:cmd url="profile" link="${pilot}" className="bld">${pilot.name}</el:cmd></td>
  <td class="small"><fmt:int value="${pilot.legs}" /> legs, <fmt:dec value="${pilot.hours}" /> hours</td>
- <td class="pri small"><fmt:int value="${pilot.ACARSLegs}" /> legs, <fmt:dec value="${pilot.ACARSHours}" /> hours</td>
- <td class="sec small"><fmt:int value="${pilot.onlineLegs}" /> legs, <fmt:dec value="${pilot.onlineHours}" /> hours</td>
+ <td class="pri small nophone"><fmt:int value="${pilot.ACARSLegs}" /> legs, <fmt:dec value="${pilot.ACARSHours}" /> hours</td>
+ <td class="sec small nophone"><fmt:int value="${pilot.onlineLegs}" /> legs, <fmt:dec value="${pilot.onlineHours}" /> hours</td>
  <td><fmt:date fmt="d" date="${pilot.lastFlight}" default="-" /></td>
 </view:row>
 </c:forEach>
@@ -218,7 +218,7 @@
  <td style="width:10%">PASSED</td>
  <td style="width:10%">TOTAL</td>
  <td style="width:15%">PASS RATE</td>
- <td style="width:10%">PILOTS</td>
+ <td class="nophone" >PILOTS</td>
  <td>AVG. TRIES</td>
 </tr>
 
@@ -230,12 +230,13 @@
  <td class="sec bld"><fmt:int value="${crStat.passed}" /></td>
  <td><fmt:int value="${crStat.total}" /></td>
  <td class="pri bld"><fmt:dec value="${crStat.passed * 100.0 / crStat.total}" />%</td>
- <td class="sec"><fmt:int value="${crStat.users}" /></td>
+ <td class="sec nophone"><fmt:int value="${crStat.users}" /></td>
  <td class="bld"><fmt:dec value="${crStat.total / crStat.users}" /></td>
 </tr>
 </c:forEach>
 </view:table>
 </c:if>
+<c:if test="${!empty pirepStats}">
 <!-- Flight Report Statistics -->
 <el:table className="view">
 <tr class="title caps">
@@ -250,10 +251,10 @@
  <td style="width:7%">LEGS</td>
  <td style="width:10%">ACARS</td>
  <td style="width:9%">ONLINE</td>
- <td style="width:9%">HISTORIC</td>
- <td style="width:9%">DISPATCH</td>
- <td style="width:9%">${hasPilotID ? 'PILOTS' : 'DISTANCE'}</td>
- <td>AVERAGE</td>
+ <td class="nophone" style="width:9%">HISTORIC</td>
+ <td class="nophone" style="width:9%">DISPATCH</td>
+ <td class="nophone" style="width:9%">${hasPilotID ? 'PILOTS' : 'DISTANCE'}</td>
+ <td class="nophone" >AVERAGE</td>
 </tr>
 
 <!-- Table Statistics Data -->
@@ -267,16 +268,15 @@
  <td class="pri bld"><fmt:int value="${stat.legs}" /></td>
  <td class="sec bld small"><fmt:int value="${stat.ACARSLegs}" /> (<fmt:dec value="${stat.ACARSPercent * 100}" fmt="##0.0" />%)</td>
  <td class="small"><fmt:int value="${stat.onlineLegs}" /> (<fmt:dec value="${(stat.onlineLegs * 100.0) / stat.legs}" fmt="##0.0" />%)</td>
- <td class="sec small"><fmt:int value="${stat.historicLegs}" /> (<fmt:dec value="${(stat.historicLegs * 100.0) / stat.legs}" fmt="##0.0" />%)</td>
- <td class="bld small"><fmt:int value="${stat.dispatchLegs}" /> (<fmt:dec value="${(stat.dispatchLegs * 100.0) / stat.legs}" fmt="##0.0" />%)</td>
+ <td class="sec small nophone"><fmt:int value="${stat.historicLegs}" /> (<fmt:dec value="${(stat.historicLegs * 100.0) / stat.legs}" fmt="##0.0" />%)</td>
+ <td class="bld small nophone"><fmt:int value="${stat.dispatchLegs}" /> (<fmt:dec value="${(stat.dispatchLegs * 100.0) / stat.legs}" fmt="##0.0" />%)</td>
 <c:if test="${hasPilotID}">
- <td class="small"><fmt:int value="${stat.pilotIDs}" /></td>
+ <td class="small nophone"><fmt:int value="${stat.pilotIDs}" /></td>
 </c:if>
 <c:if test="${!hasPilotID}">
- <td class="small"><fmt:distance value="${stat.miles}" /></td>
+ <td class="small nophone"><fmt:distance value="${stat.miles}" /></td>
 </c:if>
- <td class="small"><fmt:dec value="${stat.avgHours}" fmt="#,##0.00" /> hours, 
-<fmt:distance value="${stat.avgMiles}" /></td>
+ <td class="small nophone"><fmt:dec value="${stat.avgHours}" fmt="#,##0.00" /> hours, <fmt:distance value="${stat.avgMiles}" /></td>
 </view:row>
 </c:forEach>
 
@@ -285,9 +285,10 @@
  <td colspan="10">&nbsp;</td>
 </tr>
 </el:table>
+</c:if>
 
 <!-- Membership Statistics -->
-<el:table className="form">
+<el:table className="form nophone">
 <tr class="title caps">
  <td class="left" colspan="2">STATUS TOTALS - <fmt:int value="${metrics.size}" /> PILOTS</td>
 </tr>
