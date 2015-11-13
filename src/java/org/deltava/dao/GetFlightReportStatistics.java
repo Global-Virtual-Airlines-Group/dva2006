@@ -391,7 +391,7 @@ public class GetFlightReportStatistics extends DAO {
 		sqlBuf.append(groupBy);
 		sqlBuf.append(" AS LABEL, COUNT(F.DISTANCE) AS SL, SUM(F.DISTANCE) AS SM, ROUND(SUM(F.FLIGHT_TIME), 1) AS SH, "
 			+ "AVG(F.FLIGHT_TIME) AS AVGHOURS, AVG(F.DISTANCE) AS AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SAL, "
-			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OVLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OILEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SHL, "
+			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OVL, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OIL, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SHL, "
 			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SDL, COUNT(DISTINCT F.PILOT_ID) AS PIDS, SUM(PAX), SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OLEGS "
 			+ "FROM EQRATINGS EQR, PIREPS F WHERE (F.STATUS=?) AND ((EQR.EQTYPE=?) AND (EQR.RATING_TYPE=?) AND (EQR.RATED_EQ=F.EQTYPE))");
 		if (_dayFilter > 0)
@@ -633,7 +633,7 @@ public class GetFlightReportStatistics extends DAO {
 	private static String getSQL() {
 		return " AS LABEL, COUNT(F.DISTANCE) AS SL, SUM(F.DISTANCE) AS SM, ROUND(SUM(F.FLIGHT_TIME), 1) "
 			+ "AS SH, AVG(F.FLIGHT_TIME) AS AVGHOURS, AVG(DISTANCE) AS AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) "
-			+ "AS SAL, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OVLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OILEGS, "
+			+ "AS SAL, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OVL, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OIL, "
 			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SHL, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SDL, "
 			+ "COUNT(DISTINCT F.PILOT_ID) AS PIDS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OLEGS, SUM(F.PAX) "
 			+ "FROM PIREPS F WHERE (F.STATUS=?) ";
@@ -645,8 +645,8 @@ public class GetFlightReportStatistics extends DAO {
 	private static String getPilotJoinSQL() {
 		return " AS LABEL, COUNT(F.DISTANCE) AS SL, SUM(F.DISTANCE) AS SM, "
 			+ "ROUND(SUM(F.FLIGHT_TIME), 1) AS SH, AVG(F.FLIGHT_TIME) AS AVGHOURS, AVG(F.DISTANCE) AS "
-			+ "AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SAL, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OVLEGS, "
-			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OILEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SHL, "
+			+ "AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SAL, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OVL, "
+			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OIL, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SHL, "
 			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SDL, 1 AS PIDS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OLEGS,"
 			+ "SUM(F.PAX) FROM PILOTS P, PIREPS F WHERE (P.ID=F.PILOT_ID) AND (F.STATUS=?) ";
 	}
@@ -657,8 +657,8 @@ public class GetFlightReportStatistics extends DAO {
 	private static String getAirlineJoinSQL() {
 		return " AS LABEL, COUNT(F.DISTANCE) AS SL, SUM(F.DISTANCE) AS SM, "
 			+ "ROUND(SUM(F.FLIGHT_TIME), 1) AS SH, AVG(F.FLIGHT_TIME) AS AVGHOURS, AVG(F.DISTANCE) AS "
-			+ "AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SAL, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OVLEGS, "
-			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OILEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SHL, "
+			+ "AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SAL, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OVL, "
+			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OIL, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SHL, "
 			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SDL, COUNT(DISTINCT F.PILOT_ID) AS PIDS, "
 			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OLEGS, SUM(F.PAX) FROM common.AIRLINES AL, PIREPS F WHERE "
 			+ "(AL.CODE=F.AIRLINE) AND (F.STATUS=?) ";
@@ -670,8 +670,8 @@ public class GetFlightReportStatistics extends DAO {
 	private static String getAirportJoinSQL(String apColumn) {
 		return " AS LABEL, COUNT(F.DISTANCE) AS SL, SUM(F.DISTANCE) AS SM, "
 			+ "ROUND(SUM(F.FLIGHT_TIME), 1) AS SH, AVG(F.FLIGHT_TIME) AS AVGHOURS, AVG(F.DISTANCE) AS "
-			+ "AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS ACARSLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OVLEGS, "
-			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OILEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SHL, "
+			+ "AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SAL, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OVL, "
+			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OIL, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SHL, "
 			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SDL, COUNT(DISTINCT F.PILOT_ID) AS PIDS, "
 			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OLEGS, SUM(F.PAX) FROM common.AIRPORTS AP, PIREPS F WHERE (AP.IATA=" 
 			+ apColumn + ") AND (F.STATUS=?) ";
