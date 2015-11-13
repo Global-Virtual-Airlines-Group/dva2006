@@ -47,7 +47,7 @@ public class MenuTag extends MenuElementTag {
 			try {
 				JspWriter out = pageContext.getOut();
 				if (ContentHelper.containsContent(pageContext, "JS", "common"))
-					out.println("<script type=\"text/javascript\" defer>golgotha.nav.sideMenu = true;</script>");
+					out.println("<script type=\"text/javascript\">golgotha.nav.sideMenu = true;</script>");
 				
 				out.print("<table class=\"nav\"><tbody>");
 			} catch (Exception e) {

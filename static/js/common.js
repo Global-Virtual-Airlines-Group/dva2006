@@ -433,7 +433,7 @@ golgotha.nav.toggleBar = function(e) {
 		golgotha.util.removeClass(h, 'show');
 
 	return golgotha.util.addClass(e.target, 'show');
-}
+};
 
 golgotha.nav.initMenu = function() {
 	if (!golgotha.nav.sideMenu) return false;
@@ -442,7 +442,7 @@ golgotha.nav.initMenu = function() {
     if ((w <= 800) && !hdr.hasMenu) {
     	hdr.hasMenu = true;
     	hdr.addEventListener('click', golgotha.nav.toggleMenu);
-    } else if (w > 800) {
+    } else if ((w > 800) && hdr.hasMenu) {
     	hdr.removeEventListener('click', golgotha.nav.toggleMenu);
     	delete hdr.hasMenu;
     }
@@ -466,5 +466,8 @@ golgotha.nav.init = function() {
 	return false;
 };
 
-golgotha.onDOMReady(golgotha.nav.init);
-if (golgotha.nav.sideMenu) window.addEventListener('resize', golgotha.nav.initMenu);
+golgotha.onDOMReady(function() {
+	golgotha.nav.init();
+	if (golgotha.nav.sideMenu) 
+		window.addEventListener('resize', golgotha.nav.initMenu);
+});
