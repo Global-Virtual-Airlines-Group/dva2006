@@ -173,7 +173,7 @@ table.nav tr.submenu, table.nav tr.menuitem {
 	font-family: tahoma, verdana, sans-serif;
 	background-color: #efefef;
 	text-decoration: none;
-	font-size: 7pt;
+	font-size: 8pt;
 }
 
 table.nav td {
@@ -183,14 +183,14 @@ table.nav td {
 /* Side menu hyperlinks */
 table.nav *.submenu :link, table.nav *.submenu :visited {
 	text-decoration: none;
-	font-size: 7pt;
+	font-size: 8pt;
 	color: #000000;
 }
 
 /* Side menu hyperlinks */
 table.nav *.submenu :link:hover, table.nav *.submenu :hover {
 	text-decoration: none;
-	font-size: 7pt;
+	font-size: 8pt;
 	color: #0080d1;
 }
 
