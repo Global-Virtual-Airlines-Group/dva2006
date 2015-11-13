@@ -10,7 +10,7 @@ import org.deltava.beans.stats.FlightStatsEntry;
 /**
  * A Data Access Object to read aggregated Flight Report statistics. 
  * @author Luke
- * @version 6.2
+ * @version 6.3
  * @since 6.2
  */
 
@@ -84,8 +84,9 @@ public class GetAggregateStatistics extends DAO {
 		// Get the SQL statement to use
 		StringBuilder sqlBuf = new StringBuilder("SELECT AP.NAME, SUM(LEGS) AS SL, SUM(HOURS) AS SH, SUM(MILES) AS SM, SUM(HISTORIC) AS SHL, "
 			+ "SUM(DISPATCH) AS SDL, SUM(ACARS) AS SAL, SUM(VATSIM) AS OVL, SUM(IVAO) AS OIL, SUM(FS2000), SUM(FS2002), SUM(FS2004) AS SFS9, "
-			+ "SUM(FSX) AS SFSX, SUM(P3D) AS SP3D, SUM(XP10) AS SXP, SUM(OTHER_SIM), AVG(LOADFACTOR), SUM(PAX), COUNT(DISTINCT PILOTS) AS PIDS "
-			+ "FROM FLIGHTSTATS_AIRPORT F, common.AIRPORTS AP WHERE (F.IATA=AP.IATA) ");
+			+ "SUM(FSX) AS SFSX, SUM(P3D) AS SP3D, SUM(XP10) AS SXP, SUM(OTHER_SIM), AVG(LOADFACTOR), SUM(PAX) AS SP, COUNT(DISTINCT PILOTS) AS PIDS, "
+			+ "SUM(IVAO+VATSIM) AS OLEGS, SUM(MILES)/SUM(LEGS) AS AVGMILES, SUM(HOURS)/SUM(LEGS) AS AVGHOURS FROM FLIGHTSTATS_AIRPORT F, common.AIRPORTS AP "
+			+ "WHERE (F.IATA=AP.IATA) ");
 		if (apType == 1)
 			sqlBuf.append("AND (IS_DEPARTURE=1) ");
 		else if (apType == 2)
@@ -116,7 +117,8 @@ public class GetAggregateStatistics extends DAO {
 		sqlBuf.append(groupBy);
 		sqlBuf.append(" AS LABEL, SUM(LEGS) AS SL, SUM(HOURS) AS SH, SUM(MILES) AS SM, SUM(HISTORIC) AS SHL, SUM(DISPATCH) AS SDL, "
 			+ "SUM(ACARS) AS SAL, SUM(VATSIM) AS OVL, SUM(IVAO) AS OIL, SUM(FS2000), SUM(FS2002), SUM(FS2004) AS SFS9, SUM(FSX) AS SFSX, "
-			+ "SUM(P3D) AS SP3D, SUM(XP10) AS SXP, SUM(OTHER_SIM), AVG(LOADFACTOR), SUM(PAX), COUNT(DISTINCT PILOTS) AS PIDS FROM ");
+			+ "SUM(P3D) AS SP3D, SUM(XP10) AS SXP, SUM(OTHER_SIM), AVG(LOADFACTOR), SUM(PAX) AS SP, COUNT(DISTINCT PILOTS) AS PIDS, "
+			+ "SUM(IVAO+VATSIM) AS OLEGS, SUM(MILES)/SUM(LEGS) AS AVGMILES, SUM(HOURS)/SUM(LEGS) AS AVGHOURS FROM ");
 		if (groupBy.contains("P."))
 			sqlBuf.append("FLIGHTSTATS_PILOT F, PILOTS P WHERE (P.ID=F.PILOT_ID)");
 		else if (groupBy.contains("EQTYPE"))
