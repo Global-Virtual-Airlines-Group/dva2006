@@ -149,9 +149,9 @@ ul.menu li ul {
 }
 
 /* Controls the sizing and formatting of side navigation elements     */
-table#nav {
+table.nav {
 	table-layout: fixed;
-	width: 99%;
+	width: 100%;
 	border-collapse: separate;
 	vertical-align: middle;
 	color: #000000;
@@ -174,7 +174,7 @@ table.nav tr.submenu, table.nav tr.menuitem {
 	text-align: center;
 	background-color: #f8f8f8;
 	text-decoration: none;
-	font-size: 7pt;
+	font-size: 8pt;
 }
  
 table.nav td {
@@ -184,14 +184,14 @@ table.nav td {
 /* Side menu hyperlinks */
 table.nav *.submenu :link, table.nav *.submenu :visited {
 	text-decoration: none;
-	font-size: 7pt;
+	font-size: 8pt;
 	color: #000000;
 }
 
 /* Side menu hyperlinks */
 table.nav *.submenu :link:hover, table.nav *.submenu :hover {
 	text-decoration: none;
-	font-size: 7pt;
+	font-size: 8pt;
 	color: #c01933;
 }
 
