@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display program-specific statistics and data.
  * @author Luke
- * @version 5.0
+ * @version 6.3
  * @since 2.1
  */
 
@@ -143,7 +143,7 @@ public class ProgramRosterCommand extends AbstractViewCommand {
 			GetFlightReportStatistics psdao = new GetFlightReportStatistics(con);
 			psdao.setDayFilter(14);
 			ctx.setAttribute("flightStatsInterval", Integer.valueOf(14), REQUEST);
-			ctx.setAttribute("pirepStats", psdao.getEQPIREPStatistics(eqType, "F.EQTYPE", "LEGS DESC, HOURS", true), REQUEST);
+			ctx.setAttribute("pirepStats", psdao.getEQPIREPStatistics(eqType, "F.EQTYPE", "SL DESC, SH DESC"), REQUEST);
 			
 			// Load the Pilot names
 			GetUserData uddao = new GetUserData(con);
