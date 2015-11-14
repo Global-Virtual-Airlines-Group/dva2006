@@ -19,12 +19,15 @@ import org.deltava.util.system.SystemData;
 /**
  * A class storing common servlet helper methods.
  * @author Luke
- * @version 6.2
+ * @version 6.3
  * @since 1.0
  */
 
 abstract class GenericServlet extends HttpServlet {
 
+	/**
+	 * Security Context for use within servlets.
+	 */
 	protected class ServletSecurityContext implements SecurityContext {
 
 		private final List<String> ANONYMOUS_ROLES = Arrays.asList("Anonymous");
@@ -65,11 +68,25 @@ abstract class GenericServlet extends HttpServlet {
 		}
 	}
 
+	/**
+	 * Controller exception to handle 404s.
+	 */
 	protected class NotFoundException extends ControllerException {
 		public NotFoundException(String msg) {
 			super(msg);
 			setWarning(true);
 			setStatusCode(404);
+		}
+	}
+
+	/**
+	 * Controller exception to handle 403s.
+	 */
+	protected class ForbiddenException extends ControllerException {
+		public ForbiddenException(String msg) {
+			super(msg);
+			setWarning(true);
+			setStatusCode(403);
 		}
 	}
 

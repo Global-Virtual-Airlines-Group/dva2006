@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.*;
@@ -27,7 +27,7 @@ import org.gvagroup.jdbc.*;
 /**
  * A servlet to serve Fleet/Document/File/Video Library files.
  * @author Luke
- * @version 3.1
+ * @version 6.3
  * @since 1.0
  */
 
@@ -40,6 +40,7 @@ public class LibraryServlet extends GenericServlet {
 	 * Returns the servlet description.
 	 * @return name, author and copyright info for this servlet
 	 */
+	@Override
 	public String getServletInfo() {
 		return "Fleet Library Servlet " + VersionInfo.TXT_COPYRIGHT;
 	}
@@ -49,6 +50,7 @@ public class LibraryServlet extends GenericServlet {
 	 * @param req the HTTP request
 	 * @param rsp the HTTP response
 	 */
+	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse rsp) throws IOException {
 
 		// Get the resource we want
@@ -91,6 +93,8 @@ public class LibraryServlet extends GenericServlet {
 			SecurityContext sctxt = new ServletSecurityContext(req);
 			FleetEntryAccessControl access = new FleetEntryAccessControl(sctxt, entry);
 			access.validate();
+			if (!access.getCanView())
+				throw new ForbiddenException("Cannot view " + url.getFileName());
 
 			// Get the DAO and log the download
 			if (sctxt.isAuthenticated()) {
@@ -108,7 +112,7 @@ public class LibraryServlet extends GenericServlet {
 				log.error(msg, ce.getLogStackDump() ? ce : null);
 
 			entry = null;
-			rsp.sendError(HttpServletResponse.SC_NOT_FOUND);
+			rsp.sendError(ce.getStatusCode());
 		} finally {
 			jdbcPool.release(c);
 		}

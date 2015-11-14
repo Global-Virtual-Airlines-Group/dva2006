@@ -26,7 +26,7 @@ import org.gvagroup.jdbc.*;
 /**
  * The Image serving Servlet. This serves all database-contained images.
  * @author Luke
- * @version 6.2
+ * @version 6.3
  * @since 1.0
  */
 
@@ -154,6 +154,9 @@ public class ImageServlet extends BasicAuthServlet {
 					}
 
 					imgBuffer = dao.getChart(imgID);
+					if (imgBuffer == null)
+						throw new NotFoundException("Cannot find chart " + imgID);
+					
 					rsp.setHeader("Cache-Control", "private");
 					rsp.setIntHeader("max-age", 3600);
 					break;
@@ -169,8 +172,9 @@ public class ImageServlet extends BasicAuthServlet {
 					GetGallery gdao = new GetGallery(c);
 					Image img = gdao.getImageData(imgID, url.getLastPath());
 					if (img == null)
-						rsp.sendError(HttpServletResponse.SC_NOT_FOUND);
-					else if (img.getThreadID() != 0) {
+						throw new NotFoundException("Invalid Image - " + imgID);
+					
+					if (img.getThreadID() != 0) {
 						GetCoolerChannels chdao = new GetCoolerChannels(c);
 						GetCoolerThreads tdao = new GetCoolerThreads(c);
 						MessageThread mt = tdao.getThread(img.getThreadID(), false);
@@ -181,11 +185,14 @@ public class ImageServlet extends BasicAuthServlet {
 						access.updateContext(mt, ch);
 						access.validate();
 						if (!access.getCanRead())
-							throw new NotFoundException("Cannot view Image - Cannot read Message Thread " + mt.getID());
+							throw new ForbiddenException("Cannot view Image - Cannot read Message Thread " + mt.getID());
 					}
 					
 					// Serve the image
 					imgBuffer = dao.getGalleryImage(imgID, ai.getDB());
+					if (imgBuffer == null)
+						throw new NotFoundException("Cannot find image " + url.getLastPath() + "/" + imgID);
+					
 					rsp.setHeader("Cache-Control", "public");
 					rsp.setIntHeader("max-age", 3600);
 					break;
@@ -195,18 +202,18 @@ public class ImageServlet extends BasicAuthServlet {
 					GetIssue idao = new GetIssue(c);
 					Issue i = idao.get(StringUtils.parse(url.getLastPath(), -1));
 					if (i == null)
-						rsp.sendError(HttpServletResponse.SC_NOT_FOUND);
+						throw new NotFoundException("Invalid Issue - " + url.getLastPath());
 					
 					// Validate access to the thread
 					IssueAccessControl access = new IssueAccessControl(new ServletSecurityContext(req), i);
 					access.validate();
 					if (!access.getCanRead())
-						throw new NotFoundException("Cannot view Image - Cannot read Issue " + i.getID());
+						throw new ForbiddenException("Cannot view Image - Cannot read Issue " + i.getID());
 					
 					// Serve the file
 					IssueComment iFile = idao.getFile(imgID);
 					if (iFile == null)
-						rsp.sendError(HttpServletResponse.SC_NOT_FOUND);
+						throw new NotFoundException("Cannot find image " + url.getLastPath() + "/" + imgID);
 					
 					imgBuffer = iFile.getBuffer();
 					rsp.setHeader("Content-disposition", "attachment; filename=" + iFile.getName());
@@ -215,18 +222,24 @@ public class ImageServlet extends BasicAuthServlet {
 
 				case EXAM:
 					imgBuffer = dao.getExamResource(imgID);
+					if (imgBuffer == null)
+						throw new NotFoundException("Cannot find image " + url.getLastPath() + "/" + imgID);
+					
 					rsp.setHeader("Cache-Control", "private");
 					rsp.setIntHeader("max-age", 60);
 					break;
 					
 				case EVENT:
 					imgBuffer = dao.getEventBanner(imgID);
+					if (imgBuffer == null)
+						throw new NotFoundException("Cannot find image " + url.getLastPath() + "/" + imgID);
+					
 					rsp.setHeader("Cache-Control", "public");
 					rsp.setIntHeader("max-age", 3600);
 					break;
 
 				default:
-					log.warn("Unknown image type - " + req.getRequestURI());
+					throw new NotFoundException("Unknown image type - " + req.getRequestURI());
 			}
 		} catch (ConnectionPoolException cpe) {
 			log.error(cpe.getMessage());
@@ -235,21 +248,15 @@ public class ImageServlet extends BasicAuthServlet {
 				log.warn("Error retrieving image - " + ce.getMessage());
 			else
 				log.error("Error retrieving image - " + ce.getMessage(), ce.getLogStackDump() ? ce : null);
+			
+			rsp.sendError(ce.getStatusCode());
 		} finally {
 			jdbcPool.release(c);
 		}
 
-		// If we got nothing, then throw an error
-		if (imgBuffer == null) {
-			log.info("Cannot find image " + url.getLastPath() + "/" + imgID);
-			try {
-				rsp.sendError(HttpServletResponse.SC_NOT_FOUND);
-			} catch (IllegalStateException ise) {
-				// empty
-			}
-			
+		// If we got nothing, abort
+		if (imgBuffer == null)
 			return;
-		}
 
 		// Check for PDF
 		if (imgType != ImageType.ISSUE) {
@@ -277,10 +284,10 @@ public class ImageServlet extends BasicAuthServlet {
 		rsp.setBufferSize(Math.min(65536, imgBuffer.length + 16));
 
 		// Dump the data to the output stream
-		try {
-			rsp.getOutputStream().write(imgBuffer);
+		try (OutputStream os = rsp.getOutputStream()) {
+			os.write(imgBuffer);
 			rsp.flushBuffer();
-		} catch (IOException ie) {
+		} catch (Exception e) {
 			// NOOP
 		}
 	}
