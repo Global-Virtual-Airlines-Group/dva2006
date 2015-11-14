@@ -1,4 +1,4 @@
-// Copyright 2004, 2008, 2009, 2011, 2013, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2008, 2009, 2011, 2013, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.crypt.*;
  * signature of the above string encoded in Base64. The password is converted into hex bytes, and the entire
  * string is encrypted using a SecretKeyEncryptor.
  * @author Luke
- * @version 5.4
+ * @version 6.3
  * @since 1.0
  */
 
@@ -72,10 +72,6 @@ public final class SecurityCookieGenerator {
 		buf.append(cookieData.get("login"));
 		buf.append("@expiry:");
 		buf.append(cookieData.get("expiry"));
-		buf.append("@x:");
-		buf.append(cookieData.get("x"));
-		buf.append("@y:");
-		buf.append(cookieData.get("y"));
 		
 		// Get the message digest for the token
 		Base64.Encoder b64e = Base64.getEncoder();
@@ -92,7 +88,6 @@ public final class SecurityCookieGenerator {
 		try {
 			scData.setLoginDate(Long.parseLong(cookieData.get("login"), 16));
 		    scData.setExpiryDate(Long.parseLong(cookieData.get("expiry"), 16));
-		    scData.setScreenSize(Integer.parseInt(cookieData.get("x"), 16), Integer.parseInt(cookieData.get("y"), 16));
 		} catch (NumberFormatException nfe) {
 			throw new SecurityException("Invalid Security Cookie Data");
 		}
@@ -116,10 +111,6 @@ public final class SecurityCookieGenerator {
 		buf.append(Long.toHexString(scData.getLoginDate()));
 		buf.append("@expiry:");
 		buf.append(Long.toHexString(scData.getExpiryDate()));
-		buf.append("@x:");
-		buf.append(Integer.toHexString(scData.getScreenX()));
-		buf.append("@y:");
-		buf.append(Integer.toHexString(scData.getScreenY()));
 		
 		// Get the message digest for the token
 		Base64.Encoder b64e = Base64.getEncoder();

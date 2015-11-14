@@ -117,13 +117,6 @@ public class LoginCommand extends AbstractCommand {
 			return;
 		}
 		
-		// Calculate screen size
-		int screenX = StringUtils.parse(ctx.getParameter("screenX"), 1024);
-		int screenY = StringUtils.parse(ctx.getParameter("screenY"), 768);
-		int bodyX = StringUtils.parse(ctx.getParameter("bodyX"), 0);
-		if ((bodyX > 800) && (bodyX < screenX))
-			screenX = bodyX;
-
 		// Build the full name
 		StringBuilder fullName = new StringBuilder(fName.trim());
 		fullName.append(' ');
@@ -209,7 +202,6 @@ public class LoginCommand extends AbstractCommand {
 			SecurityCookieData cData = new SecurityCookieData(p.getHexID());
 			cData.setLoginDate(System.currentTimeMillis());
 			cData.setRemoteAddr(remoteAddr);
-			cData.setScreenSize(screenX, screenY);
 			
 			// Encode the encrypted data via Base64
 			Cookie c = new Cookie(CommandContext.AUTH_COOKIE_NAME, SecurityCookieGenerator.getCookieData(cData));
@@ -286,8 +278,6 @@ public class LoginCommand extends AbstractCommand {
 			s.setAttribute(HTTPContext.USERAGENT_ATTR_NAME, userAgent);
 			s.setAttribute(HTTPContext.SSL_ATTR_NAME, Boolean.valueOf(ctx.getRequest().isSecure()));
 			s.setAttribute(CommandContext.AUTH_COOKIE_NAME, cData);
-			s.setAttribute(CommandContext.SCREENX_ATTR_NAME, Integer.valueOf(cData.getScreenX()));
-			s.setAttribute(CommandContext.SCREENY_ATTR_NAME, Integer.valueOf(cData.getScreenY()));
 			
 			// Determine where we are referring from, if on the site return back there
 			if (av != null) {
