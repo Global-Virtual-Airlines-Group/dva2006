@@ -19,7 +19,7 @@ golgotha.maps.util.unload = function(m) { if (!m) return false; google.maps.even
 // Cross-browser opacity set
 golgotha.maps.setOpacity = (golgotha.maps.util.isIE && (!golgotha.maps.util.isIE10) && (!golgotha.maps.util.isIE11)) ? function(e, tx) { e.style.filter = 'alpha(opacity=' + (tx*100) + ')'; } : function(e, tx) { e.style.opacity = tx; };
 
-//Timer class
+// Timer class
 golgotha.maps.util.Timer = function(doStart) { this.runTime = -1; if (doStart) this.start(); };
 golgotha.maps.util.Timer.prototype.start = function() {
 	if (this.startTime != null) return false;
@@ -34,6 +34,23 @@ golgotha.maps.util.Timer.prototype.stop = function() {
 	this.startTime = null;
 	return this.runTime;
 };
+
+// Resize map based on window size
+golgotha.maps.util.resize = function() {
+	var wh = window.innerHeight	|| document.documentElement.clientHeight || document.body.clientHeight;
+	var ratio = wh / 800;
+	var divs = golgotha.util.getElementsByClass('googleMapV3', 'div');
+	for (var d = divs.pop(); (d != null); d = divs.pop()) {
+		var h = d.getAttribute('w');
+		if (h != null)
+			d.style.height = Math.max(200, Math.floor(h * ratio)) + 'px';
+	}
+
+	return true;
+};
+
+golgotha.onDOMReady(golgotha.maps.util.resize);
+window.addEventListener('resize', golgotha.maps.util.resize);
 
 // Calculate default zoom for flight distance
 golgotha.maps.util.getDefaultZoom = function(distance)
