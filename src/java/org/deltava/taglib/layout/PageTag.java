@@ -7,8 +7,6 @@ import javax.servlet.jsp.*;
 import org.deltava.beans.Pilot;
 import org.deltava.beans.system.*;
 
-import org.deltava.commands.CommandContext;
-
 import org.deltava.taglib.BrowserInfoTag;
 
 /**
@@ -58,11 +56,7 @@ public class PageTag extends BrowserInfoTag {
 		HttpSession s = hreq.getSession(false);
 		if (!_sideMenu && (s != null) && !s.isNew()) {
 			Pilot usr = (Pilot) hreq.getUserPrincipal();
-			if (usr == null) {
-				Number sX = (Number) s.getAttribute(CommandContext.SCREENX_ATTR_NAME);
-				_sideMenu = (sX != null) && (sX.intValue() < 1022);
-				logReason("Screen Width = " + String.valueOf(sX));
-			} else {
+			if (usr != null) {
 				_sideMenu = !usr.getShowNavBar();
 				logReason(usr.getName() + " ShowNavBar = " + String.valueOf(usr.getShowNavBar()));
 			}
