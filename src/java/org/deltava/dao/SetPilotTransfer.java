@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.*;
 /**
  * A Data Access Object to transfer pilots between Airlines.
  * @author Luke
- * @version 5.0
+ * @version 6.3
  * @since 1.0
  */
 
@@ -39,8 +39,8 @@ public class SetPilotTransfer extends SetPilot {
 		sqlBuf.append(formatDBName(dbName));
 		sqlBuf.append(".PILOTS (FIRSTNAME, LASTNAME, STATUS, LDAP_DN, EMAIL, LOCATION, LEGACY_HOURS, HOME_AIRPORT, "
 			+ "EQTYPE, RANK, VATSIM_ID, IVAO_ID, CREATED, LOGINS, LAST_LOGIN, LAST_LOGOFF, TZ, NOTIFY, SHOW_EMAIL, "
-			+ "UISCHEME, VIEWSIZE, LOGINHOSTNAME, DFORMAT, TFORMAT, NFORMAT, AIRPORTCODE, DISTANCEUNITS, ID) "
-			+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			+ "UISCHEME, VIEWSIZE, LOGINHOSTNAME, DFORMAT, TFORMAT, NFORMAT, AIRPORTCODE, DISTANCEUNITS, NAVBAR, ID) "
+			+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		try {
 			startTransaction();
@@ -74,14 +74,13 @@ public class SetPilotTransfer extends SetPilot {
 			_ps.setString(25, p.getNumberFormat());
 			_ps.setInt(26, p.getAirportCodeType().ordinal());
 			_ps.setInt(27, p.getDistanceType().ordinal());
-			_ps.setInt(28, id);
+			_ps.setBoolean(28, (p instanceof Applicant) ? true : ((Pilot) p).getShowNavBar());
+			_ps.setInt(29, id);
 			executeUpdate(1);
 
 			// Write the ratings - don't bother writing roles
 			writeRatings(id, ratings, dbName, false);
 			writeIMAddrs(id, p.getIMHandle(), dbName, false);
-
-			// Commit the transaction
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
