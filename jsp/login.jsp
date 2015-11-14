@@ -21,14 +21,8 @@ golgotha.form.validate({f:f.lastName, l:2, t:'Last Name'});
 golgotha.form.validate({f:f.pwd, l:3, t:'Password'});
 <c:if test="${!empty dupeUsers}">
 golgotha.form.validate({f:f.pilotCode, min:1, t:'Pilot Code'});</c:if>
-if (f.jsOK.value.length == 0) {
+if (f.jsOK.value.length == 0)
 	f.jsOK.value = 'true';
-	try {
-		f.screenX.value = screen.width;
-		f.screenY.value = screen.height;
-		f.bodyX.value = document.body.clientWidth;
-	} catch (err) { }
-}
 
 golgotha.form.submit(f);
 return true;
@@ -40,13 +34,6 @@ if (f.firstName.value.length > 0)
 	f.pwd.focus();
 else
 	f.firstName.focus();
-
-// Save screen resolution
-try {
-	f.screenX.value = screen.width;
-	f.screenY.value = screen.height;
-	f.bodyX.value = document.body.clientWidth;
-} catch (err) { }
 
 // Ensure javascript is working properly
 f.jsOK.value = 'true';
@@ -115,9 +102,6 @@ logging in to the <content:airline /> web site using our <a href="https://${page
 </tr>
 </el:table>
 <el:text name="jsOK" type="hidden" value="" />
-<el:text name="screenX" type="hidden" value="1024" />
-<el:text name="screenY" type="hidden" value="768" />
-<el:text name="bodyX" type="hidden" value="0" />
 <el:text name="redirectTo" type="hidden" value="${(empty referTo) ? param.redirectTo : referTo}" />
 <c:if test="${empty dupeUsers}"><el:text name="pilotCode" type="hidden" value="${pilotCode}" /></c:if>
 </el:form>
