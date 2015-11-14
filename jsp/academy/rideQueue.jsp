@@ -13,6 +13,7 @@
 <content:css name="view" />
 <content:js name="common" />
 <content:pics />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -32,9 +33,9 @@
  <td style="width:8%">DATE</td>
  <td style="width:7%">&nbsp;</td>
  <td style="width:20%">PILOT NAME</td>
- <td style="width:15%">COURSE NAME</td>
- <td style="width:10%">AIRCRAFT</td>
- <td>FLIGHT ROUTE</td>
+ <td class='"nophone" style="width:15%">COURSE NAME</td>
+ <td class="nophone" style="width:10%">AIRCRAFT</td>
+ <td class="nophone">FLIGHT ROUTE</td>
 </tr>
  
 <!-- Table View data -->
@@ -46,9 +47,9 @@
  <td><el:cmd url="checkride" link="${ride}"><fmt:date date="${ride.submittedOn}" fmt="d" /></el:cmd></td>
  <td><el:cmdbutton url="crview" linkID="${ride.hexID}" label="SCORE" /></td>
  <td><el:cmd url="profile" link="${pilot}" className="pri bld">${pilot.name}</el:cmd></td>
- <td><el:cmd url="course" link="${course}">${course.name}</el:cmd></td>
- <td class="sec">${ride.aircraftType}</td>
- <td class="small">${pirep.airportD.name} - ${pirep.airportA.name}</td>
+ <td class="nophone"><el:cmd url="course" link="${course}">${course.name}</el:cmd></td>
+ <td class="sec nophone">${ride.aircraftType}</td>
+ <td class="small nophone">${pirep.airportD.name} - ${pirep.airportA.name}</td>
 </tr>
 </c:forEach>
 

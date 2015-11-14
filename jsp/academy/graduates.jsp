@@ -8,12 +8,13 @@
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <html lang="en">
 <head>
-<title><content:airline /> Flight Academy Roster</title>
+<title><content:airline /> Flight Academy Graduates</title>
 <content:css name="main" />
 <content:css name="form" />
 <content:css name="view" />
 <content:js name="common" />
 <content:pics />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <script type="text/javascript">
 golgotha.local.setType = function() { return document.forms[0].submit(); };
 </script>
