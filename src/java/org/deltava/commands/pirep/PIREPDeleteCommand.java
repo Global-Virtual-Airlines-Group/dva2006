@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.sql.Connection;
@@ -12,7 +12,7 @@ import org.deltava.security.command.PIREPAccessControl;
 /**
  * A Web Site Command to delete Flight Reports.
  * @author Luke
- * @version 3.2
+ * @version 6.3
  * @since 1.0
  */
 
@@ -23,6 +23,7 @@ public class PIREPDeleteCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		CommandResult result = ctx.getResult();
@@ -66,6 +67,12 @@ public class PIREPDeleteCommand extends AbstractCommand {
 			if (fr instanceof ACARSFlightReport) {
 				SetACARSLog awdao = new SetACARSLog(con);
 				awdao.deleteInfo(fr.getDatabaseID(DatabaseID.ACARS));
+			}
+			
+			// Update statistics
+			if (fr.getStatus() == FlightReport.OK) {
+				SetAggregateStatistics stwdao = new SetAggregateStatistics(con);
+				stwdao.update(fr);
 			}
 
 			// Commit the transaction
