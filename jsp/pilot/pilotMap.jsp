@@ -64,7 +64,7 @@ return true;
  <td class="data"><el:check name="mapOpts" type="radio" options="${mapOptions}" value="LOC" onChange="void golgotha.pilotMap.updateMapOptions(this)" /></td>
 </tr>
 <tr>
- <td class="data" colspan="2"><map:div ID="googleMap" x="100%" y="525" /></td>
+ <td class="data" colspan="2"><map:div ID="googleMap" height="525" /></td>
 </tr>
 <tr class="title caps locFilter">
  <td colspan="2">PILOT LOCATION FILTERING</td>

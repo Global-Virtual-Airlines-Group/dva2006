@@ -34,7 +34,7 @@
  <td style="width:15%" class="mid"><el:cmd url="users">VIEW LIST</el:cmd></td>
 </tr>
 <tr>
- <td colspan="2"><map:div ID="googleMap" x="100%" y="520" /></td>
+ <td colspan="2"><map:div ID="googleMap" height="520" /></td>
 </tr>
 </el:table>
 </el:form>

@@ -55,7 +55,7 @@ return new google.maps.ImageMapType(layerOpts);
  <td class="caps"><content:airline /> ACARS TRACK MAP</td>
 </tr>
 <tr>
- <td class="data"><map:div ID="googleMap" x="100%" y="620" /></td>
+ <td class="data"><map:div ID="googleMap" height="620" /></td>
 </tr>
 </el:table>
 <div id="localAirports" style="display:none;"><el:combo name="localAP" size="1" firstEntry="[ SELECT AIRPORT ]" options="${localAP}" className="small localAP" onChange="void golgotha.maps.track.selectLocal(this)" /></div>

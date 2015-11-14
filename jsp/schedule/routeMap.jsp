@@ -39,7 +39,7 @@
  <el:box ID="showInfo" name="showInfo" idx="*" value="true" className="small" label="Show Airport Information" checked="true" /></td>
 </tr>
 <tr>
- <td class="data" colspan="2"><map:div ID="googleMap" x="100%" y="530" /></td>
+ <td class="data" colspan="2"><map:div ID="googleMap" height="530" /></td>
 </tr>
 </el:table>
 </el:form>

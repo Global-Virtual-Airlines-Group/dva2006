@@ -191,7 +191,7 @@ return true;
  <td colspan="2" class="left"><content:airline /> WEATHER CENTER <c:if test="${!empty gfsCycle}"> - GFS DATA AS OF <fmt:date date="${gfsCycle}" t="HH:mm" /></c:if></td>
 </tr>
 <tr>
- <td class="data" colspan="2"><map:div ID="googleMap" x="100%" y="480" /></td>
+ <td class="data" colspan="2"><map:div ID="googleMap" height="480" /></td>
 </tr>
 <tr>
  <td class="label">Airport Code</td>

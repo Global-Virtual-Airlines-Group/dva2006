@@ -75,7 +75,7 @@
 </tr>
 <c:if test="${fn:sizeof(waypoints) > 0}">
 <tr>
- <td class="data" colspan="4"><map:div ID="googleMap" x="100%" y="500" /></td>
+ <td class="data" colspan="4"><map:div ID="googleMap" height="500" /></td>
 </tr>
 </c:if>
 </el:table>

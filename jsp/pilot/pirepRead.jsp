@@ -289,7 +289,7 @@ golgotha.local.showRunwayChoices = function() {
 </tr>
 <tr>
  <td class="label top">Route Map</td>
- <td class="data"><map:div ID="googleMap" x="100%" y="550" /></td>
+ <td class="data"><map:div ID="googleMap" height="550" /></td>
 </tr>
 </c:if>
 <c:if test="${!googleMap}">

@@ -61,7 +61,7 @@ return true;
  <td class="right">AIRLINE <el:combo name="airline" idx="*" firstEntry="[ ALL ]"  options="${airlines}" onChange="void golgotha.local.filter(this)"  /></td>
 </tr>
 <tr>
- <td class="data" colspan="3"><map:div ID="googleMap" x="100%" y="425" /></td>
+ <td class="data" colspan="3"><map:div ID="googleMap" height="425" /></td>
 </tr>
 </el:table>
 </el:form>

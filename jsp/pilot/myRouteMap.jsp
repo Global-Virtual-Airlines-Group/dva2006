@@ -34,7 +34,7 @@
  <td class="data"><map:legend color="blue" legend="Airports" /> <map:legend color="white" legend="Home Airport" /></td>
 </tr>
 <tr>
- <td colspan="2"><map:div ID="googleMap" x="100%" y="510" /></td>
+ <td colspan="2"><map:div ID="googleMap" height="510" /></td>
 </tr>
 </el:table>
 <br />

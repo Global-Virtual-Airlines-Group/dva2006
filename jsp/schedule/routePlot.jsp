@@ -131,7 +131,7 @@ golgotha.local.validate = function(f) {
  <td colspan="2" class="left">PLOTTED ROUTE<span id="rtDistance"></span></td>
 </tr>
 <tr>
- <td colspan="2" class="data"><map:div ID="googleMap" x="100%" y="580" /><div id="copyright" class="small mapTextLabel"></div>
+ <td colspan="2" class="data"><map:div ID="googleMap" height="580" /><div id="copyright" class="small mapTextLabel"></div>
 <div id="mapStatus" class="small mapTextLabel"></div></td>
 </tr>
 <tr>

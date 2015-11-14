@@ -227,7 +227,7 @@ return true;
 </tr>
 <tr>
  <td class="label top">Route Map</td>
- <td class="data"><map:div ID="googleMap" x="100%" y="480" /></td>
+ <td class="data"><map:div ID="googleMap" height="480" /></td>
 </tr>
 </el:table>
 

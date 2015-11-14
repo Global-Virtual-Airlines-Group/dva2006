@@ -111,7 +111,7 @@
 </tr>
 <tr>
  <td class="label top">Route Map</td>
- <td class="data" colspan="4"><map:div ID="googleMap" x="100%" y="530" /></td>
+ <td class="data" colspan="4"><map:div ID="googleMap" height="530" /></td>
 </tr>
 </c:if>
 </el:table>
