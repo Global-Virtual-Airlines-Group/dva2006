@@ -139,7 +139,7 @@ golgotha.maps.acars.showEarth = function() {
  <td class="data nophone"><span id="wxLoading" class="small" style="width:150px;">None</span></td>
 </tr>
 <tr>
- <td class="data" colspan="4"><map:div ID="googleMap" x="100%" y="550" /><div id="copyright" class="small mapTextLabel"></div>
+ <td class="data" colspan="4"><map:div ID="googleMap" height="550" /><div id="copyright" class="small mapTextLabel"></div>
 <div id="mapStatus" class="small mapTextLabel"></div><div id="zoomLevel" class="small mapTextLabel"></div><div id="seriesRefresh" class="small mapTextLabel"></div></td>
 </tr>
 </el:table>

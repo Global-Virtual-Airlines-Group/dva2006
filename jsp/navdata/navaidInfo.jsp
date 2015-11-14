@@ -116,7 +116,7 @@ return true;
 </tr>
 <tr>
  <td class="label top">Map</td>
- <td class="data"><map:div ID="googleMap" x="100%" y="450" /></td>
+ <td class="data"><map:div ID="googleMap" height="450" /></td>
 </tr>
 </c:if>
 <c:if test="${empty results}">

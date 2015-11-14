@@ -80,7 +80,7 @@
 <c:if test="${fn:isRoutePlot(q)}">
 <tr>
  <td class="label top">Map #<fmt:int value="${q.number}" /></td>
- <td class="data"><map:div ID="qMap${q.number}" x="100%" y="320" /></td>
+ <td class="data"><map:div ID="qMap${q.number}" height="320" /></td>
 </tr>
 </c:if>
 

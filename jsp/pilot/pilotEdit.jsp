@@ -12,6 +12,7 @@
 <content:css name="main" />
 <content:css name="form" />
 <content:pics />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <content:json />
 <content:js name="airportRefresh" />
@@ -325,7 +326,7 @@ pixels, and the maximum file size is <fmt:int value="${sigSize}" /> bytes.</span
  <td class="label">User Interface</td>
  <td colspan="${cspan}" class="data"><el:combo name="uiScheme" size="1" options="${schemes}" value="${pilot.UIScheme}" />
 <el:box name="showNavBar" value="true" label="Show Horizontal Navigation Menu" checked="${pilot.showNavBar}" />
- <span class="small">(Navigation Bar is not displayed at screen widths below 1280 pixels.)</span></td>
+ <span class="small nophone">(Navigation Bar is not displayed at screen widths below 1024 pixels.)</span></td>
 </tr>
 <%@ include file="/jsp/pilot/staffEdit.jspf" %>
 <%@ include file="/jsp/pilot/eMailEdit.jspf" %>
