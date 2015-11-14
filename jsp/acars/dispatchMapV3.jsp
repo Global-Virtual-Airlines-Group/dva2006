@@ -73,7 +73,7 @@ toggleObjects = golgotha.local.toggleObjects;
 </head>
 <body onunload="void golgotha.maps.util.unload(map)">
 <el:form action="dispatchMap.do" method="post" validate="return false">
-<map:div ID="googleMap" x="100%" y="625" /><div id="zoomLevel" class="small mapTextLabel"></div><div id="copyright" class="small mapTextLabel"></div>
+<map:div ID="googleMap" height="625" /><div id="zoomLevel" class="small mapTextLabel"></div><div id="copyright" class="small mapTextLabel"></div>
 <div id="mapStatus" class="small mapTextLabel"></div>
 </el:form>
 <script id="mapInit" defer>

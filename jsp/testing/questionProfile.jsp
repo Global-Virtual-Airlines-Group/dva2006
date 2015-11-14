@@ -80,7 +80,7 @@
 </tr>
 <tr>
  <td class="label top">Route Map</td>
- <td class="data"><map:div ID="googleMap" x="100%" y="400" /></td>
+ <td class="data"><map:div ID="googleMap" height="400" /></td>
 </tr>
 </c:if>
 <tr>

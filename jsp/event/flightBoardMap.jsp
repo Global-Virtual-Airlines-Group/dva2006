@@ -46,7 +46,7 @@
  <map:legend color="red" className="small" legend="Center" /> <map:legend color="green" className="small" legend="Approach / Departure" /></td>
 </tr>
 <tr>
- <td colspan="3"><map:div ID="googleMap" x="100%" y="600" /></td>
+ <td colspan="3"><map:div ID="googleMap" height="600" /></td>
 </tr>
 </el:table>
 

@@ -70,7 +70,7 @@ return true;
  <map:legend color="purple" legend="CATIIIb" /> <map:legend color="red" legend="CATIIIc" /></td>
 </tr>
 <tr>
- <td class="data" colspan="2"><map:div ID="googleMap" x="100%" y="480" /><div id="copyright" class="small mapTextLabel"></div>
+ <td class="data" colspan="2"><map:div ID="googleMap" height="480" /><div id="copyright" class="small mapTextLabel"></div>
 <div id="mapStatus" class="small mapTextLabel"></div><div id="zoomLevel" class="mapTextLabel"></div></td>
 </tr>
 </el:table>

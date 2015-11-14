@@ -77,7 +77,7 @@ return true;
 </tr>
 </c:if>
 <tr>
- <td class="data"><map:div ID="googleMap" x="100%" y="500" /><div id="copyright" class="small mapTextLabel"></div>
+ <td class="data"><map:div ID="googleMap" /><div id="copyright" class="small mapTextLabel"></div>
 <div id="mapStatus" class="small mapTextLabel"></div></td>
 </tr>
 </el:table>

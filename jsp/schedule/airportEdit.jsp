@@ -149,7 +149,7 @@ lack of scheduled flights in the <content:airline /> Flight Schedule.</span></td
  <td colspan="2">AIRPORT LOCATION</td>
 </tr>
 <tr>
- <td colspan="2"><map:div ID="googleMap" x="100%" y="550" /></td>
+ <td colspan="2"><map:div ID="googleMap" height="550" /></td>
 </tr>
 </c:if>
 <content:secure secure="false">

@@ -96,7 +96,7 @@ golgotha.exam.rpInfo[${q.number}] = info;
 </script>
 <tr>
  <td class="label top">Map #<fmt:int value="${q.number}" /></td>
- <td class="data"><map:div ID="qMap${q.number}" x="100%" y="360" /></td>
+ <td class="data"><map:div ID="qMap${q.number}" height="360" /></td>
 </tr>
 </c:if>
 
