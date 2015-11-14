@@ -181,8 +181,6 @@ public class SecurityCookieFilter implements Filter {
 			
 		// Load the user
 		if ((p == null) && (cData != null)) {
-			s.setAttribute(SCREENX_ATTR_NAME, Integer.valueOf(cData.getScreenX()));
-			s.setAttribute(SCREENY_ATTR_NAME, Integer.valueOf(cData.getScreenY()));
 			IPBlock addrInfo = null;
 			
 			// Load the person and the IP Address data

@@ -8,7 +8,7 @@ import javax.servlet.http.*;
  * Connections, since by doing so we can easily return connections back to the pool in a <b>finally</b> block without
  * nasty scope issues.
  * @author Luke
- * @version 6.2
+ * @version 6.3
  * @since 1.0
  * @see Command
  */
@@ -18,8 +18,6 @@ public class CommandContext extends HTTPContext {
 	public static final String AUTH_COOKIE_NAME = "authToken";
 
 	public static final String USRLISTENER_ATTR_NAME = "userSerializeListener";
-	public static final String SCREENX_ATTR_NAME = "screenXSize";
-	public static final String SCREENY_ATTR_NAME = "screenYSize";
 	public static final String INVALIDREQ_ATTR_NAME = "requestMapInvalid";
 	public static final String SYSMSG_ATTR_NAME ="system_message";
 

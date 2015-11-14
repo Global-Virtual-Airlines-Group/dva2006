@@ -4,7 +4,7 @@ package org.deltava.security;
 /**
  * A bean containing data stored in the security cookie.
  * @author Luke
- * @version 6.0
+ * @version 6.3
  * @since 1.0
  */
 
@@ -17,9 +17,6 @@ public class SecurityCookieData implements java.io.Serializable {
 	private long _loginDate;
 	private long _expiryDate;
 	
-	private int _screenX = 1024;
-	private int _screenY = 768;
-
 	/**
 	 * Creates security cookie data for a given user ID.
 	 * @param userID the user ID
@@ -44,22 +41,6 @@ public class SecurityCookieData implements java.io.Serializable {
      */
     public long getLoginDate() {
     	return _loginDate;
-    }
-    
-    /**
-     * Returns the user's screen width.
-     * @return the width in pixels
-     */
-    public int getScreenX() {
-       return _screenX;
-    }
-    
-    /**
-     * Returns the user's screen height.
-     * @return the height in pixels
-     */
-    public int getScreenY() {
-       return _screenY;
     }
     
  	/**
@@ -108,16 +89,6 @@ public class SecurityCookieData implements java.io.Serializable {
  	 */
  	public void setRemoteAddr(String remoteAddr) {
  		_remoteAddr = remoteAddr;
- 	}
- 	
- 	/**
- 	 * Updates the user's screen size.
- 	 * @param width the width in pixels
- 	 * @param height the height in pixels
- 	 */
- 	public void setScreenSize(int width, int height) {
- 	   _screenX = width;
- 	   _screenY = height;
  	}
  	
  	@Override
