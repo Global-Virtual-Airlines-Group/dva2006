@@ -15,6 +15,7 @@
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <script type="text/javascript">
 golgotha.local.validate = function(f)
 {
@@ -51,8 +52,8 @@ return true;
 <!-- Course History Title Bar -->
 <tr class="title caps">
  <td style="width:40%">COURSE NAME</td>
- <td style="width:15%">INSTRUCTOR</td>
- <td style="width:8%">STAGE</td>
+ <td class="nophone" style="width:15%">INSTRUCTOR</td>
+ <td class="nophone" style="width:8%">STAGE</td>
  <td style="width:14%">STATUS</td>
  <td style="width:14%">STARTED ON</td>
  <td>COMPLETED ON</td>
@@ -64,8 +65,8 @@ return true;
 <c:set var="ins" value="${pilots[course.instructorID]}" scope="page" />
 <view:row entry="${course}">
  <td><el:cmd url="course" link="${course}" className="pri bld">${course.name}</el:cmd></td>
- <td class="sec bld">${(empty ins) ? 'Self-Directed' : ins.name}</td>
- <td class="bld"><fmt:int value="${course.stage}" /></td>
+ <td class="sec bld nophone">${(empty ins) ? 'Self-Directed' : ins.name}</td>
+ <td class="bld nophone"><fmt:int value="${course.stage}" /></td>
  <td class="pri bld">${course.status.name}</td>
  <td><fmt:date fmt="d" date="${course.startDate}" /></td>
 <c:if test="${!empty course.endDate}">
