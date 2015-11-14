@@ -16,6 +16,7 @@
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
 <content:pics />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <fmt:aptype var="useICAO" />
 <script type="text/javascript">
 golgotha.local.updateAirport = function() { return document.forms[0].submit(); };
@@ -65,8 +66,8 @@ golgotha.onDOMReady(function() { return golgotha.airportLoad.setHelpers(document
  <td colspan="7" class="left"><content:airline /> AIRPORT / APPROACH / PROCEDURE CHARTS</td>
 </tr>
 <tr>
- <td class="priB right">Filter Options</td>
- <td colspan="6" width="90%" class="left"><el:check name="chartType" className="small" idx="*" width="180" options="${chartTypes}" checked="${selectedTypes}" onChange="void golgotha.local.updateVisibility()" /></td>
+ <td class="priB right" style="width:10%;">Filter Options</td>
+ <td colspan="6"  class="left"><el:check name="chartType" className="small" idx="*" width="180" cols="4" options="${chartTypes}" checked="${selectedTypes}" onChange="void golgotha.local.updateVisibility()" /></td>
 </tr>
 <c:if test="${!empty currentCycle}">
 <!-- Chart cycle data -->
@@ -76,12 +77,12 @@ golgotha.onDOMReady(function() { return golgotha.airportLoad.setHelpers(document
 </tr>
 </c:if>
 <tr class="title">
- <td colspan="2">CHART NAME</td>
- <td style="width:20%">CHART TYPE</td>
- <td style="width:8%"><c:if test="${access.canCreate}"><el:cmdbutton url="chart" op="edit" label="NEW CHART" /></c:if> </td>
- <td style="width:6%">USED</td>
- <td colspan="2" class="right" width="35%">AIRPORT <el:combo name="id" onChange="void golgotha.local.updateAirport()" size="1" idx="*" options="${airports}" value="${airport}" />
- <el:text name="idCode" idx="*" size="4" max="4" className="bld caps" value="${airport.ICAO}" onBlur="void document.forms[0].id.setAirport(this.value, true);" /></td>
+ <td colspan="2" style="width:35%;">CHART NAME</td>
+ <td class="nophone" style="width:15%">CHART TYPE</td>
+ <td class="nophone" style="max-width:10%;"><c:if test="${access.canCreate}"><el:cmdbutton url="chart" op="edit" label="NEW CHART" /></c:if> </td>
+ <td class="nophone" style="max-width:10%;">USED</td>
+ <td colspan="2" class="right" style="width:35%;">AIRPORT <el:combo name="id" onChange="void golgotha.local.updateAirport()" size="1" idx="*" options="${airports}" value="${airport}" />
+<span class="nophone"> <el:text name="idCode" idx="*" size="4" max="4" className="bld caps" value="${airport.ICAO}" onBlur="void document.forms[0].id.setAirport(this.value, true);" /></span></td>
 </tr>
 
 <!-- Table Chart Data -->
@@ -93,21 +94,21 @@ golgotha.onDOMReady(function() { return golgotha.airportLoad.setHelpers(document
 <c:choose>
 <c:when test="${hasPDF}">
  <td colspan="2"><el:link url="/charts/${chart.hexID}.pdf" className="bld" target="chartView">${chart.name}</el:link></td>
- <td class="sec">${chart.type.description}</td>
-<c:if test="${access.canEdit}"><td><el:cmd url="chart" link="${chart}" op="edit" className="small bld">EDIT</el:cmd></td></c:if>
- <td class="small sec bld"><fmt:int value="${chart.useCount}" /></td>
+ <td class="sec nophone">${chart.type.description}</td>
+<c:if test="${access.canEdit}"><td class="nophone"><el:cmd url="chart" link="${chart}" op="edit" className="small bld">EDIT</el:cmd></td></c:if>
+ <td class="small sec bld nophone"><fmt:int value="${chart.useCount}" /></td>
  <td class="small" width="10%"><fmt:date date="${chart.lastModified}" fmt="d" /></td>
  <td colspan="${cspan}">Adobe PDF document<c:if test="${chart.size > 0}">, <fmt:int fmt="#,##0" value="${chart.size / 1024}" />K</c:if>
-<c:if test="${chart.isExternal}"><span class="small"> (${chart.source})</span></c:if></td>
+<c:if test="${chart.isExternal}"><span class="small nophone"> (${chart.source})</span></c:if></td>
 </c:when>
 <c:otherwise>
  <td colspan="2"><el:cmd className="bld" url="chart" link="${chart}">${chart.name}</el:cmd></td>
- <td class="sec">${chart.type.description}</td>
-<c:if test="${access.canEdit}"><td><el:cmd url="chart" link="${chart}" op="edit" className="small bld">EDIT</el:cmd></td></c:if>
- <td class="small sec bld"><fmt:int value="${chart.useCount}" /></td>
+ <td class="sec nophone">${chart.type.description}</td>
+<c:if test="${access.canEdit}"><td class="nophone"><el:cmd url="chart" link="${chart}" op="edit" className="small bld">EDIT</el:cmd></td></c:if>
+ <td class="small sec bld nophone"><fmt:int value="${chart.useCount}" /></td>
  <td class="small"><fmt:date date="${chart.lastModified}" fmt="d" /></td>
  <td colspan="${cspan}">${chart.imgType} image, <fmt:int fmt="#,##0" value="${chart.size / 1024}" />K
-<c:if test="${chart.isExternal}"><span class="small"> (${chart.source})</span></c:if></td>
+<c:if test="${chart.isExternal}"><span class="small nophone"> (${chart.source})</span></c:if></td>
 </c:otherwise>
 </c:choose>
 </view:row>
@@ -116,8 +117,8 @@ golgotha.onDOMReady(function() { return golgotha.airportLoad.setHelpers(document
 <!-- Download Acrobat link -->
 <tr>
  <td><a href="http://www.adobe.com/products/acrobat/readstep2.html" rel="external"><el:img src="library/getacro.png" className="noborder" caption="Download Adobe Acrobat Reader" /></a></td>
- <td colspan="6">Some approach charts require <span class="pri bld">Adobe Acrobat Reader 11</span> or newer in order to be viewed. If you are having difficulties 
- viewing our charts, please click on the link to the left to download the latest version of Adobe Acrobat Reader. This is a free download.</td>
+ <td colspan="6">Some approach charts require <span class="pri bld">Adobe Acrobat Reader</span> to be viewed. If you are having difficulties viewing our charts, please click on the link to the left
+ to download the latest version of Adobe Acrobat Reader. This is a free download.</td>
 </tr>
 </c:if>
 
