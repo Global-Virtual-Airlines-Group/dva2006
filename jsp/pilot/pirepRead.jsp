@@ -376,7 +376,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 </content:page>
 <content:browser human="true">
 <c:if test="${googleMap}">
-<script id="mapInit" defer>
+<script id="mapInit">
 <c:if test="${!isACARS}">
 golgotha.maps.acarsFlight = golgotha.maps.acarsFlight || {};</c:if>
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
