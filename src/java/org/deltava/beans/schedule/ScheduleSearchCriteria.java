@@ -9,16 +9,16 @@ import org.deltava.util.ComboUtils;
 /**
  * A bean to store search criteria for the Flight Schedule.
  * @author Luke
- * @version 6.0
+ * @version 6.3
  * @since 1.0
  */
 
 public class ScheduleSearchCriteria extends Flight {
 
 	private static final String[] SORT_NAMES = {"Random", "Flight Number", "Equipment Type", "Origin", "Destination",
-			"Departure Time", "Arrival Time", "Length", "Distance"};
+			"Departure Time", "Arrival Time", "Length", "Distance", "Flight Count", "Last Flown"};
 	public static final String[] SORT_CODES = {"RAND()", "FLIGHT", "EQTYPE", "AIRPORT_D", "AIRPORT_A", "TIME_D",
-			"TIME_A", "FLIGHT_TIME", "DISTANCE"};
+			"TIME_A", "FLIGHT_TIME", "DISTANCE", "FCNT", "LF"};
 	public static final List<?> SORT_OPTIONS = ComboUtils.fromArray(SORT_NAMES, SORT_CODES);
 
 	public static final List<?> HOURS = ComboUtils.fromArray(new String[] { "-", "Midnight", "1 AM", "2 AM", "3 AM",
@@ -42,6 +42,9 @@ public class ScheduleSearchCriteria extends Flight {
 
 	private int _hourD = -1;
 	private int _hourA = -1;
+	
+	private int _routeLegs;
+	private int _lastFlownInterval;
 
 	private String _sortBy;
 	private String _dbName;
@@ -72,6 +75,7 @@ public class ScheduleSearchCriteria extends Flight {
 		return _sortBy;
 	}
 
+	@Override
 	public final int getDistance() {
 		return _distance;
 	}
@@ -107,6 +111,14 @@ public class ScheduleSearchCriteria extends Flight {
 	public int getFlightsPerRoute() {
 		return _maxPerRoute;
 	}
+	
+	public int getRouteLegs() {
+		return _routeLegs;
+	}
+	
+	public int getLastFlownInterval() {
+		return _lastFlownInterval;
+	}
 
 	public Date getTimeD() {
 		Calendar cld = Calendar.getInstance();
@@ -132,6 +144,7 @@ public class ScheduleSearchCriteria extends Flight {
 		return _hourA;
 	}
 
+	@Override
 	public final int getLength() {
 		return _length;
 	}
@@ -234,6 +247,7 @@ public class ScheduleSearchCriteria extends Flight {
 	 * Returns the equipment type.
 	 * @return the first equipment type
 	 */
+	@Override
 	public final String getEquipmentType() {
 		return (_eqTypes.isEmpty()) ? null : _eqTypes.iterator().next();
 	}
@@ -243,6 +257,7 @@ public class ScheduleSearchCriteria extends Flight {
 	 * @param eqType the equipment type
 	 * @see ScheduleSearchCriteria#addEquipmentType(String)
 	 */
+	@Override
 	public final void setEquipmentType(String eqType) {
 		addEquipmentType(eqType);
 	}
@@ -287,5 +302,21 @@ public class ScheduleSearchCriteria extends Flight {
 	 */
 	public void setNotVisitedA(boolean nv) {
 		_notVisitedA = nv;		
+	}
+	
+	/**
+	 * Sets the number of route legs flown by the pilot.
+	 * @param legs the number of legs 
+	 */
+	public void setRouteLegs(int legs) {
+		_routeLegs = Math.max(-1, legs);
+	}
+	
+	/**
+	 * Sets the interval since the last time the route was flown.
+	 * @param days the number of days
+	 */
+	public void setLastFlownInterval(int days) {
+		_lastFlownInterval = Math.max(-1, days);
 	}
 }
