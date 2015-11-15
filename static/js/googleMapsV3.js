@@ -41,7 +41,7 @@ golgotha.maps.util.resize = function() {
 	var ratio = wh / 800;
 	var divs = golgotha.util.getElementsByClass('googleMapV3', 'div');
 	for (var d = divs.pop(); (d != null); d = divs.pop()) {
-		var h = d.getAttribute('w');
+		var h = d.getAttribute('h');
 		if (h != null)
 			d.style.height = Math.max(200, Math.floor(h * ratio)) + 'px';
 	}
