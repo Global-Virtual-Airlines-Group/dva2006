@@ -1,4 +1,4 @@
-/* Cascading Style Sheet for HTML Forms (C) 2005, 2006, 2007, 2009, 2010 Global Virtual Airlines Group. */
+/* Cascading Style Sheet for HTML Forms (C) 2005, 2006, 2007, 2009, 2010, 2015 Global Virtual Airlines Group. */
 
 table.form, table.bar {
 	table-layout: auto;
@@ -29,16 +29,58 @@ table.form tr {
 	background-color: #f8f8f8;
 }
 
-table.form td {
-	padding: 3px 3px 3px 3px;
-}
-
 table.form td.label {
 	background-color: #003366;
 	text-align: right;
 	color: #ffffff;
-	font-size: 10px;
-	width: 128px;
+}
+
+@media (min-width: 941px) {
+    table.form td.label {
+        width: 30%;
+        max-width: 128px;
+        font-size: 10px;
+    }
+
+    *.label :link, *.label :visited {
+        font-size: 10px;
+    }
+    
+    table.form tr.title {
+        font-size: 11px;
+    }
+    
+    *.title a {
+        font-size: 11px;
+    }
+
+    table.form td {
+        padding: 3px 3px 3px 3px;
+    }
+}
+
+@media (max-width: 940px) {
+    table.form td.label {
+        width: 30%;
+        min-width: 100px;
+        font-size: 9px;
+    }
+
+    *.label :link, *.label :visited {
+        font-size: 9px;
+    }
+
+    table.form tr.title {
+        font-size: 10px;
+    }
+
+    *.title a {
+        font-size: 10px;
+    }
+
+    table.form td {
+        padding: 1px 3px 2px 2px;
+    }
 }
 
 table.form td.top {
@@ -105,14 +147,12 @@ select.req {
 }
 
 *.label :link, *.label :visited {
-	font-size: 11px;	
 	font-family: verdana, tahoma, sans-serif;
 	text-decoration: underline;
 	color: #efffff;
 }
 
 *.title a {
-	font-size: 11px;
 	text-transform: uppercase;
 	font-weight: bold;
 	font-family: verdana, tahoma, sans-serif;
@@ -141,7 +181,7 @@ div#spinner {
 	border-radius: 14px;
 	text-align: center;
 	vertical-align: middle;
-	opacity: 98;
-	filter: alpha(opacity=98);
+	opacity: .925;
+	filter: alpha(opacity=93);
 	z-Index: 10002;
 }
