@@ -1,12 +1,12 @@
-// Copyright 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
-import org.deltava.beans.schedule.ScheduleEntry;
+import org.deltava.beans.schedule.*;
 
 /**
  * A comparator for Schedule entries.
  * @author Luke
- * @version 4.1
+ * @version 6.3
  * @since 4.1
  */
 
@@ -20,9 +20,11 @@ public class ScheduleEntryComparator extends AbstractComparator<ScheduleEntry> {
 	public static final int ATIME = 6;
 	public static final int LENGTH = 7;
 	public static final int DISTANCE = 8;
+	public static final int FLCOUNT = 9;
+	public static final int LASTFLT = 10;
 	
-	private static final String[] TYPES = {"???", "Flight Number", "Equipment Type", "Origin", "Destination",
-		"Departure Time", "Arrival Time", "Length", "Distance"};
+	private static final String[] TYPES = {"???", "Flight Number", "Equipment Type", "Origin", "Destination", "Departure Time", "Arrival Time", 
+			"Length", "Distance", "Flight Count", "Last Flown"};
 	
     /**
      * Creates a new comparator with a given comparison type.
@@ -38,6 +40,7 @@ public class ScheduleEntryComparator extends AbstractComparator<ScheduleEntry> {
     /**
      * Compares two schedule entries by the designated criteria.
      */
+	@Override
 	protected int compareImpl(ScheduleEntry se1, ScheduleEntry se2) {
 		switch (_comparisonType) {
 			case EQTYPE:
@@ -60,13 +63,31 @@ public class ScheduleEntryComparator extends AbstractComparator<ScheduleEntry> {
 				
 			case DISTANCE:
 				return Integer.valueOf(se1.getDistance()).compareTo(Integer.valueOf(se2.getDistance()));
+				
+			case FLCOUNT:
+				if ((se1 instanceof ScheduleSearchEntry) && (se2 instanceof ScheduleSearchEntry)) {
+					ScheduleSearchEntry sse1 = (ScheduleSearchEntry) se1;
+					ScheduleSearchEntry sse2 = (ScheduleSearchEntry) se2;
+					return Integer.valueOf(sse1.getFlightCount()).compareTo(Integer.valueOf(sse2.getFlightCount()));
+				}
+				
+				return se1.compareTo(se2);
+				
+			case LASTFLT:
+				if ((se1 instanceof ScheduleSearchEntry) && (se2 instanceof ScheduleSearchEntry)) {
+					ScheduleSearchEntry sse1 = (ScheduleSearchEntry) se1;
+					ScheduleSearchEntry sse2 = (ScheduleSearchEntry) se2;
+					if (sse2.getLastFlownOn() == null)
+						return (sse1.getLastFlownOn() == null) ? 0 : -1;
+					
+					return (sse1.getLastFlownOn() == null) ? -1 : sse1.getLastFlownOn().compareTo(sse2.getLastFlownOn());
+				}
+				
+				return se1.compareTo(se2);
 
 			case FLIGHT:
 			default:
-				int tmpResult = se1.getAirline().compareTo(se2.getAirline());
-				if (tmpResult  == 0)
-					tmpResult = Integer.valueOf(se1.getFlightNumber()).compareTo(Integer.valueOf(se2.getFlightNumber()));
-				return (tmpResult == 0) ? Integer.valueOf(se1.getLeg()).compareTo(Integer.valueOf(se2.getLeg())) : tmpResult;
+				return se1.compareTo(se2);
 		}
 	}
 }
