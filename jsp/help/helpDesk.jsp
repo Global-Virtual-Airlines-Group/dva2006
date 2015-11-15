@@ -91,7 +91,7 @@ one of our volunteer staff will answer it soon.</td>
  <td class="sec bld"><fmt:int value="${issue.ID}" /></td>
  <td class="pri bld"><el:cmd url="hdissue" link="${issue}" className="pri bld">${issue.subject}</el:cmd></td>
  <td class="sec bld small">${issue.statusName}</td>
- <td class="nophone"><el:cmd url="profile" link="${author}" className="bld">${author.name}</el:cmd> on <fmt:date date="${issue.createdOn}" t="HH:mm"/></td>
+ <td class="nophone"><el:cmd url="profile" link="${author}" className="bld">${author.name}</el:cmd><span class="nophone"> on <fmt:date date="${issue.createdOn}" t="HH:mm"/></span></td>
  <td><el:cmd url="profile" link="${assignee}" className="sec bld">${assignee.name}</el:cmd></td>
  <td><fmt:int value="${issue.commentCount}" /></td>
 </view:row>
@@ -111,7 +111,7 @@ one of our volunteer staff will answer it soon.</td>
  <td class="sec bld"><fmt:int value="${issue.ID}" /></td>
  <td class="pri bld"><el:cmd url="hdissue" link="${issue}" className="pri bld">${issue.subject}</el:cmd></td>
  <td class="sec bld small">${issue.statusName}</td>
- <td class="nophone"><el:cmd url="profile" link="${author}" className="bld">${author.name}</el:cmd> on <fmt:date date="${issue.createdOn}" t="HH:mm" /></td>
+ <td class="nophone"><el:cmd url="profile" link="${author}" className="bld">${author.name}</el:cmd><span class="nophone"> on <fmt:date date="${issue.createdOn}" t="HH:mm" /></span></td>
  <td class="sec bld"><el:cmd url="profile" link="${assignee}" className="sec bld">${assignee.name}</el:cmd></td>
  <td><fmt:int value="${issue.commentCount}" /></td>
 </view:row>
