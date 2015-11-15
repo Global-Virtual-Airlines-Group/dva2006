@@ -135,7 +135,7 @@ return true;
  <td class="label top">New Comment</td>
  <td><div id="newComment" style="position:relative;"><el:textbox name="body" width="70%" height="4" idx="*" className="req" resize="true"></el:textbox>
 <c:if test="${access.canUseTemplate && (!empty rspTemplates)}">
-<div id="rspTemplateSelect" style="width:25%; position:absolute; top:1px; right:1px;" class="pri small bld right">
+<div id="rspTemplateSelect" style="width:25%; position:absolute; top:1px; right:1px;" class="pri small bld right nophone">
 Template <el:combo name="rspTemplate" className="small" firstEntry="-" options="${rspTemplates}" />
 <el:button ID="TemplateButton" onClick="void golgotha.local.selectResponse(document.forms[0])" label="USE" /></div>
 </c:if></div>
