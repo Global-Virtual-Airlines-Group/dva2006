@@ -11,6 +11,7 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:sysdata var="imgPath" name="path.img" />
 <script type="text/javascript">
 golgotha.local.selectAC = function(combo)
@@ -81,8 +82,8 @@ golgotha.local.download = function() {
 <el:form action="fleetlibrary.do" method="get" validate="return false">
 <el:table className="form">
 <tr class="title">
- <td class="caps"><content:airline /> FLEET LIBRARY</td>
- <td class="right">SELECT <el:combo name="instName" idx="1" size="1" firstEntry="[ INSTALLER ]" options="${fleet}" onChange="void golgotha.local.selectAC(this)" /></td>
+ <td class="caps"><span class="nophone"><content:airline /> </span>FLEET LIBRARY</td>
+ <td class="right"><span class="nophone">SELECT </span><el:combo name="instName" idx="1" size="1" firstEntry="[ INSTALLER ]" options="${fleet}" onChange="void golgotha.local.selectAC(this)" /></td>
 </tr>
 <tr>
  <td colspan="2"><el:img ID="FleetPic" style="float:left; margin:4px;" x="164" y="314" src="blank.png" caption="Fleet Library" />

@@ -14,6 +14,7 @@
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <script type="text/javascript">
 golgotha.local.setCategory = function(combo) {
 	self.location = '/newsletters.do?category=' + escape(golgotha.form.getCombo(combo));
@@ -37,7 +38,7 @@ golgotha.local.setCategory = function(combo) {
 <tr class="title">
  <td style="width:30%">TITLE</td>
  <td style="width:5%">&nbsp;</td>
- <td style="width:10%">SIZE</td>
+ <td class="nophone" style="width:10%">SIZE</td>
 <c:choose>
 <c:when test="${access.canCreate}">
  <td style="width:10%"><el:cmdbutton url="newsletter" op="edit" label="NEW NEWSLETTER" /></td>
@@ -60,7 +61,7 @@ golgotha.local.setCategory = function(combo) {
  <td class="pri bld"><el:link url="/newsletter/${doc.fileName}">${doc.name}</el:link></td>
 </c:if>
  <td><el:link url="/newsletter/${doc.fileName}"><el:img src="library/adobe.png" caption="Download PDF manual" x="32" y="32" className="noborder" /></el:link></td>
- <td class="sec bld"><fmt:int value="${doc.size}" /></td>
+ <td class="sec bld nophone"><fmt:int value="${doc.size}" /></td>
  <td class="small left" colspan="3"><fmt:text value="${doc.description}" /></td>
 </view:row>
 </c:forEach>
