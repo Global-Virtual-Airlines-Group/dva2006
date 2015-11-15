@@ -1,7 +1,8 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
@@ -17,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to search the Flight Schedule.
  * @author Luke
- * @version 5.3
+ * @version 6.3
  * @since 1.0
  */
 
@@ -56,16 +57,8 @@ public class FindFlightCommand extends AbstractCommand {
 			ctx.release();
 		}
 		
-		// Get Airlines
-		Collection<Airline> airlines = new LinkedHashSet<Airline>(SystemData.getAirlines().values());
-		for (Iterator<Airline> i = airlines.iterator(); i.hasNext(); ) {
-			Airline al = i.next();
-			if (!al.getActive())
-				i.remove();
-		}
-		
 		// Save airlines and ratings
-		ctx.setAttribute("airlines", airlines, REQUEST);
+		ctx.setAttribute("airlines", SystemData.getAirlines().values().stream().filter(Airline::getActive).collect(Collectors.toList()), REQUEST);
 		ctx.setAttribute("myEQ", ctx.getUser().getRatings(), REQUEST);
 		
 		// Get the result JSP and redirect if we're not posting
@@ -92,6 +85,8 @@ public class FindFlightCommand extends AbstractCommand {
 		criteria.setFlightsPerRoute(StringUtils.parse(ctx.getParameter("maxFlights"), 0));
 		criteria.setIncludeAcademy(ctx.isUserInRole("Instructor") || ctx.isUserInRole("Schedule") || ctx.isUserInRole("HR") || ctx.isUserInRole("Operations"));
 		criteria.setPilotID(ctx.getUser().getID());
+		criteria.setLastFlownInterval(StringUtils.parse(ctx.getParameter("maxLastFlown"), -1));
+		criteria.setRouteLegs(StringUtils.parse(ctx.getParameter("maxRouteLegs"), -1));
 		criteria.setNotVisitedD(Boolean.valueOf(ctx.getParameter("nVD")).booleanValue());
 		criteria.setNotVisitedA(Boolean.valueOf(ctx.getParameter("nVA")).booleanValue());
 		if ((criteria.getMaxResults() < 1) || (criteria.getMaxResults() > 150))

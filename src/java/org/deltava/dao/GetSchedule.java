@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to search the Flight Schedule.
  * @author Luke
- * @version 5.0
+ * @version 6.3
  * @since 1.0
  */
 
@@ -351,11 +351,17 @@ public class GetSchedule extends DAO {
 		List<ScheduleEntry> results = new ArrayList<ScheduleEntry>();
 		try (ResultSet rs = _ps.executeQuery()) {
 			boolean hasDispatch = (rs.getMetaData().getColumnCount() > 13);
+			boolean hasRouteCounts = (rs.getMetaData().getColumnCount() > 15);
 			while (rs.next()) {
 				ScheduleEntry entry = null;
 				if (hasDispatch) {
 					ScheduleSearchEntry sse = new ScheduleSearchEntry(SystemData.getAirline(rs.getString(1)), rs.getInt(2), rs.getInt(3));
 					sse.setDispatchRoutes(rs.getInt(14));
+					if (hasRouteCounts) {
+						sse.setFlightCount(rs.getInt(15));
+						sse.setLastFlownOn(rs.getTimestamp(16));
+					}
+					
 					entry = sse;
 				} else
 					entry = new ScheduleEntry(SystemData.getAirline(rs.getString(1)), rs.getInt(2), rs.getInt(3));

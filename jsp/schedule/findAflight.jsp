@@ -13,6 +13,7 @@
 <content:css name="form" />
 <content:css name="view" />
 <content:pics />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <content:json />
 <content:js name="airportRefresh" />
@@ -170,6 +171,12 @@ golgotha.onDOMReady(function() {
  <td class="data"><el:text name="maxResults" idx="*" size="2" max="3" value="${empty fafCriteria ? 25 : fafCriteria.maxResults}" />
  total, <el:text name="maxFlights" idx="*" size="2" max="2" value="${fafCriteria.flightsPerRoute}" /> preferred between airports</td>
 </tr>
+<tr>
+ <td class="label">Frequency</td>
+ <td class="data">Show Routes flown no more than <el:text name="maxRouteLegs" size="2" max="3" value="${(empty fafCriteria || (fafCriteria.routeLegs < 0)) ? '' : fafCriteria.routeLegs}" /> times</td>
+ <td class="label">Recent Routes</td>
+ <td class="data">Show Routes flown at least <el:text name="maxLastFlown" size="2" max="4" value="${(empty fafCriteria || (fafCriteria.lastFlownInterval < 0)) ? '' : fafCriteria.lastFlownInterval}" /> days ago</td>
+</tr>
 <c:if test="${acarsEnabled}">
 <tr>
  <td class="label top">Search Options</td>
@@ -197,7 +204,7 @@ golgotha.onDOMReady(function() {
 <el:table className="view">
 <!-- Search Results Data -->
 <tr class="title caps">
- <td colspan="9" class="left">FLIGHT SCHEDULE SEARCH RESULTS<c:if test="${!empty importDate}"> - IMPORTED ON <fmt:date date="${importDate}" /></c:if></td>
+ <td colspan="9" class="left">FLIGHT SCHEDULE SEARCH RESULTS<c:if test="${!empty importDate}"> - IMPORTED ON <fmt:date date="${importDate}" t="HH:mm" /></c:if></td>
 </tr>
 
 <!-- Search Results Header Bar -->
@@ -208,7 +215,7 @@ golgotha.onDOMReady(function() {
  <td>AIRPORTS</td>
  <td class="nophone" style="width:8%">DEPARTS</td>
  <td class="nophone" style="width:8%">ARRIVES</td>
- <td style="width:8%">LENGTH</td>
+ <td style="width:6%">LENGTH</td>
  <td class="nophone" style="width:5%">ROUTES</td>
  <td class="nophone">DISTANCE</td>
 </tr>
@@ -230,13 +237,8 @@ golgotha.onDOMReady(function() {
  <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${flight.airportA.TZ}" date="${flight.dateTimeA.UTC}" /></td>
 </c:if>
  <td class="small"><fmt:int value="${flight.length / 10}" />:<fmt:int value="${(flight.length * 6) % 60}" fmt="00" /></td>
-<c:if test="${fn:isSearchEntry(flight)}">
  <td class="small bld nophone"><fmt:int value="${flight.dispatchRoutes}" /></td>
  <td class="sec nophone"><fmt:distance value="${flight.distance}" /></td>
-</c:if>
-<c:if test="${!fn:isSearchEntry(flight)}">
- <td class="sec nophone" colspan="2"><fmt:distance value="${flight.distance}" /></td>
-</c:if>
 </view:row>
 </c:forEach>
 

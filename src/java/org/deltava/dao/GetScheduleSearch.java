@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to search the Flight Schedule.
  * @author Luke
- * @version 5.3
+ * @version 6.3
  * @since 1.0
  */
 
@@ -125,6 +125,11 @@ public class GetScheduleSearch extends GetSchedule {
 			params.add("0");
 		}
 		
+		if (criteria.getRouteLegs() > -1)
+			params.add(String.valueOf(criteria.getRouteLegs()));
+		if (criteria.getLastFlownInterval() > -1)
+			params.add(String.valueOf(criteria.getLastFlownInterval()));
+		
 		// Check to include unvisited airports only
 		if (criteria.getPilotID() > 0) {
 			if (criteria.getNotVisitedD()) {
@@ -185,20 +190,37 @@ public class GetScheduleSearch extends GetSchedule {
 		
 		// Load all of the flights that match the criteria
 		SearchParams spm = build(ssc);
-		StringBuilder buf = new StringBuilder("SELECT S.*, COUNT(R.ID) AS RCNT FROM ");
+		Collection<String> havingParams = new ArrayList<String>();
+		if (ssc.getDispatchOnly())
+			havingParams.add(" (RCNT>0)");
+		if (ssc.getRouteLegs() > -1)
+			havingParams.add(" (FCNT<=?)");
+		if (ssc.getLastFlownInterval() > -1)
+			havingParams.add(" (LF > DATE_SUB(CURDATE(), INTERVAL ? DAY))");
+		
+		StringBuilder buf = new StringBuilder("SELECT S.*, COUNT(R.ID) AS RCNT, IFNULL(FSR.CNT,0) AS FCNT, MAX(FSR.LASTFLIGHT) AS LF FROM ");
 		buf.append(formatDBName(ssc.getDBName()));
-		buf.append(".SCHEDULE S LEFT JOIN acars.ROUTES R ON ((S.AIRPORT_D=R.AIRPORT_D) AND (S.AIRPORT_A=R.AIRPORT_A) AND (R.ACTIVE=1)) WHERE ");
+		buf.append(".SCHEDULE S LEFT JOIN acars.ROUTES R ON ((S.AIRPORT_D=R.AIRPORT_D) AND (S.AIRPORT_A=R.AIRPORT_A) AND (R.ACTIVE=1)) LEFT JOIN ");
+		buf.append(formatDBName(ssc.getDBName()));
+		buf.append(".FLIGHTSTATS_ROUTES FSR ON ((FSR.PILOT_ID=?) AND (FSR.AIRPORT_D=S.AIRPORT_D) AND (FSR.AIRPORT_A=S.AIRPORT_A)) WHERE ");
 		buf.append(spm.getSQL());
 		buf.append(" GROUP BY S.AIRLINE, S.FLIGHT, S.LEG ");
-		if (ssc.getDispatchOnly())
-			buf.append(" HAVING (RCNT>0)");
+		if (havingParams.size() > 0)
+			buf.append(" HAVING");
+		for (Iterator<String> i = havingParams.iterator(); i.hasNext(); ) {
+			buf.append(i.next());
+			if (i.hasNext())
+				buf.append(" AND");
+		}
+		
 		buf.append(" ORDER BY ");
 		buf.append(ssc.getSortBy());
 		
 		try {
 			prepareStatement(buf.toString());
+			_ps.setInt(1, ssc.getPilotID());
 			for (int x = 1; x <= spm.size(); x++)
-				_ps.setString(x, spm.getParameter(x - 1));
+				_ps.setString(x + 1, spm.getParameter(x - 1));
 			
 			return execute();
 		} catch (SQLException se) {
@@ -212,24 +234,40 @@ public class GetScheduleSearch extends GetSchedule {
 		
 		// Get route pairs
 		SearchParams spm = build(ssc);
+		Collection<String> havingParams = new ArrayList<String>();
 		Collection<RoutePair> rts = new LinkedHashSet<RoutePair>();
+		if (ssc.getDispatchOnly())
+			havingParams.add(" (RCNT>0)");
+		if (ssc.getRouteLegs() > -1)
+			havingParams.add(" (FCNT<=?)");
+		if (ssc.getLastFlownInterval() > -1)
+			havingParams.add(" (LF > DATE_SUB(CURDATE(), INTERVAL ? DAY))");
 		
 		// Load the route pairs that match the criteria
 		String db = formatDBName(ssc.getDBName());
-		StringBuilder buf = new StringBuilder("SELECT DISTINCT S.AIRPORT_D, S.AIRPORT_A, COUNT(R.ID) AS RCNT FROM ");
+		StringBuilder buf = new StringBuilder("SELECT DISTINCT S.AIRPORT_D, S.AIRPORT_A, COUNT(R.ID) AS RCNT, IFNULL(FSR.CNT,0) AS FCNT, MAX(FSR.LASTFLIGHT) AS LF FROM ");
 		buf.append(db);
-		buf.append(".SCHEDULE S LEFT JOIN acars.ROUTES R ON ((S.AIRPORT_D=R.AIRPORT_D) AND (S.AIRPORT_A=R.AIRPORT_A) AND (R.ACTIVE=1)) WHERE ");
+		buf.append(".SCHEDULE S LEFT JOIN acars.ROUTES R ON ((S.AIRPORT_D=R.AIRPORT_D) AND (S.AIRPORT_A=R.AIRPORT_A) AND (R.ACTIVE=1)) LEFT JOIN ");
+		buf.append(db);		
+		buf.append(".FLIGHTSTATS_ROUTES FSR ON ((FSR.PILOT_ID=?) AND (FSR.AIRPORT_D=S.AIRPORT_D) AND (FSR.AIRPORT_A=S.AIRPORT_A)) WHERE ");		
 		buf.append(spm.getSQL());
 		buf.append(" GROUP BY S.AIRPORT_D, S.AIRPORT_A");
-		if (ssc.getDispatchOnly())
-			buf.append(" HAVING (RCNT>0)");
+		if (havingParams.size() > 0)
+			buf.append(" HAVING");
+		for (Iterator<String> i = havingParams.iterator(); i.hasNext(); ) {
+			buf.append(i.next());
+			if (i.hasNext())
+				buf.append(" AND");
+		}
+		
 		buf.append(" ORDER BY ");
 		buf.append(ssc.getSortBy());
 		
 		try {
-			prepareStatementWithoutLimits(buf.toString());
+			prepareStatement(buf.toString());
+			_ps.setInt(1, ssc.getPilotID());
 			for (int x = 1; x <= spm.size(); x++)
-				_ps.setString(x, spm.getParameter(x - 1));
+				_ps.setString(x + 1, spm.getParameter(x - 1));
 			
 			// Execute the query
 			Airline al = SystemData.getAirline(SystemData.get("airline.code"));
@@ -246,9 +284,11 @@ public class GetScheduleSearch extends GetSchedule {
 		}
 		
 		// Load all of the flights that match each route pair and the criteria
-		buf = new StringBuilder("SELECT S.*, COUNT(R.ID) AS RCNT FROM ");
+		buf = new StringBuilder("SELECT S.*, COUNT(R.ID) AS RCNT, IFNULL(FSR.CNT,0) AS FCNT, MAX(FSR.LASTFLIGHT) AS LF FROM ");
 		buf.append(db);
-		buf.append(".SCHEDULE S LEFT JOIN acars.ROUTES R ON ((S.AIRPORT_D=R.AIRPORT_D) AND (S.AIRPORT_A=R.AIRPORT_A) AND (R.ACTIVE=1)) WHERE ");
+		buf.append(".SCHEDULE S LEFT JOIN acars.ROUTES R ON ((S.AIRPORT_D=R.AIRPORT_D) AND (S.AIRPORT_A=R.AIRPORT_A) AND (R.ACTIVE=1)) LEFT JOIN ");
+		buf.append(db);
+		buf.append(".FLIGHTSTATS_ROUTES FSR ON ((FSR.PILOT_ID=?) AND (FSR.AIRPORT_D=S.AIRPORT_D) AND (FSR.AIRPORT_A=S.AIRPORT_A)) WHERE ");
 		buf.append(spm.getSQL());
 		buf.append(" AND (S.AIRPORT_D=?) AND (S.AIRPORT_A=?) GROUP BY S.AIRLINE, S.FLIGHT, S.LEG ");
 		if (ssc.getDispatchOnly())
@@ -259,11 +299,12 @@ public class GetScheduleSearch extends GetSchedule {
 		try {
 			for (RoutePair fr : rts) {
 				prepareStatement(buf.toString());
+				_ps.setInt(1, ssc.getPilotID());
 				for (int x = 1; x <= spm.size(); x++)
-					_ps.setString(x, spm.getParameter(x - 1));
+					_ps.setString(x + 1, spm.getParameter(x - 1));
 					
-				_ps.setString(spm.size() + 1, fr.getAirportD().getIATA());
-				_ps.setString(spm.size() + 2, fr.getAirportA().getIATA());
+				_ps.setString(spm.size() + 2, fr.getAirportD().getIATA());
+				_ps.setString(spm.size() + 3, fr.getAirportA().getIATA());
 				entries.put(fr, execute());
 			}
 		} catch (SQLException se) {
@@ -288,12 +329,15 @@ public class GetScheduleSearch extends GetSchedule {
 			}
 		}
 
-		// Do a sort
-		int sortType = StringUtils.arrayIndexOf(ScheduleSearchCriteria.SORT_CODES, ssc.getSortBy(), 0);
-		if (sortType == 0)
+		// Do a sort - check for descending sort
+		String sort = ssc.getSortBy().replace(" DESC", "");
+		int sortType = StringUtils.arrayIndexOf(ScheduleSearchCriteria.SORT_CODES, sort, 0);
+		if (sortType > 0) {
+			ScheduleEntryComparator cmp = new ScheduleEntryComparator(sortType);
+			cmp.setReverseSort(ssc.getSortBy().endsWith(" DESC"));
+			Collections.sort(results, cmp);
+		} else
 			Collections.shuffle(results);
-		else
-			Collections.sort(results, new ScheduleEntryComparator(sortType));
 			
 		return results;
 	}
