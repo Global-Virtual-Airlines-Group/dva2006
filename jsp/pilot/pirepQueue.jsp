@@ -14,6 +14,7 @@
 <content:css name="form" />
 <content:css name="view" />
 <content:js name="common" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:pics />
 <script type="text/javascript">
 golgotha.local.sort = function() { return document.forms[0].submit(); };
@@ -32,11 +33,11 @@ golgotha.local.sort = function() { return document.forms[0].submit(); };
 <view:table cmd="pirepqueue">
 <!-- Table Header Bar-->
 <tr class="title">
- <td colspan="4" class="left caps"><content:airline /> PENDING FLIGHT REPORT QUEUE</td>
- <td colspan="3" class="right">SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${viewContext.sortType}" onChange="void golgotha.local.sort()" /></td>
+ <td colspan="4" class="left caps"><span class="nophone"><content:airline /> </span>PENDING FLIGHT REPORT QUEUE</td>
+ <td colspan="3" class="right nophone">SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${viewContext.sortType}" onChange="void golgotha.local.sort()" /></td>
 </tr>
 <tr class="title caps">
- <td>DATE</td>
+ <td style="max-width:104px;">DATE</td>
  <td class="nophone">INFO</td>
  <td style="width:12%">FLIGHT NUMBER</td>
  <td style="width:15%">PILOT NAME</td>
