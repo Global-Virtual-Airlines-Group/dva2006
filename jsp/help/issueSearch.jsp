@@ -14,6 +14,7 @@
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <script type="text/javascript">
 golgotha.local.validate = function(f)
 {
@@ -68,11 +69,11 @@ return true;
 <c:if test="${!empty results}">
 <!-- Table Header Bar-->
 <tr class="title">
- <td style="width:5%">#</td>
+ <td>#</td>
  <td>TITLE</td>
- <td style="width:10%">STATUS</td>
- <td style="width:30%">CREATED BY</td>
- <td style="width:15%">ASSIGNED TO</td>
+ <td class="nophone" style="width:10%">STATUS</td>
+ <td class="nophone" style="width:30%">CREATED BY</td>
+ <td class="nophone" style="width:15%">ASSIGNED TO</td>
  <td style="width:5%">COMMENTS</td>
 </tr>
 
@@ -83,10 +84,9 @@ return true;
 <view:row entry="${issue}">
  <td class="sec bld"><fmt:int value="${issue.ID}" /></td>
  <td class="pri bld"><el:cmd url="hdissue" link="${issue}" className="pri bld">${issue.subject}</el:cmd></td>
- <td class="sec bld small">${issue.statusName}</td>
- <td><el:cmd url="profile" link="${author}" className="bld">${author.name}</el:cmd> on
- <fmt:date date="${issue.createdOn}" /></td>
- <td><el:cmd url="profile" link="${assignee}" className="sec bld">${assignee.name}</el:cmd></td>
+ <td class="sec bld small nophone">${issue.statusName}</td>
+ <td class="nophone"><el:cmd url="profile" link="${author}" className="bld">${author.name}</el:cmd> on <fmt:date date="${issue.createdOn}" t="HH:mm" /></td>
+ <td class="nophone"><el:cmd url="profile" link="${assignee}" className="sec bld">${assignee.name}</el:cmd></td>
  <td><fmt:int value="${issue.commentCount}" /></td>
 </view:row>
 </c:forEach>

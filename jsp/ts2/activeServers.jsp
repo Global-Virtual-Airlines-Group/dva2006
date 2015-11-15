@@ -13,6 +13,7 @@
 <content:css name="view" />
 <content:js name="common" />
 <content:pics />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -36,9 +37,9 @@
 <tr class="title caps">
  <td style="width:30%">SERVER NAME</td>
  <td style="width:12%">USER ID</td>
- <td style="width:8%">MAX USERS</td>
- <td style="width:20%">ATTRIBUTES</td>
- <td>DESCRIPTION</td>
+ <td class="nophone" style="width:8%">MAX USERS</td>
+ <td class="nophone" style="width:20%">ATTRIBUTES</td>
+ <td class="nophone">DESCRIPTION</td>
 </tr>
 
 <!-- Table Data -->
@@ -54,11 +55,11 @@
  <td class="pri bld">${srv.name}</td>
 </c:if>
  <td class="sec bld">${client.userID}</td>
- <td><fmt:int value="${srv.maxUsers}" /></td>
- <td><c:if test="${client.autoVoice}"> <span class="ter small bld">AUTO-VOICE</span></c:if>
+ <td class="nophone"><fmt:int value="${srv.maxUsers}" /></td>
+ <td class="nophone"><c:if test="${client.autoVoice}"> <span class="ter small bld">AUTO-VOICE</span></c:if>
 <c:if test="${client.serverOperator}"> <span class="sec small bld">SERVER OPERATOR</span></c:if>
 <c:if test="${client.serverAdmin}"> <span class="pri small bld">SERVER ADMINISTRATOR</span></c:if></td>
- <td class="small left">${srv.description}</td>
+ <td class="small left nophone">${srv.description}</td>
 </view:row>
 </c:forEach>
 

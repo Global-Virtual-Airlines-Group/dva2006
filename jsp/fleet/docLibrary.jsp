@@ -14,6 +14,7 @@
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -28,9 +29,9 @@
 <tr class="title caps">
  <td style="width:25%">TITLE</td>
  <td style="width:5%">&nbsp;</td>
- <td style="width:7%">SIZE</td>
- <td style="width:8%">UPDATED</td>
- <td style="width:5%">VERSION</td>
+ <td class="nophone" style="width:7%">SIZE</td>
+ <td class="nophone" style="width:8%">UPDATED</td>
+ <td class="nophone" style="width:5%">VERSION</td>
 <c:choose>
 <c:when test="${access.canCreate}">
  <td style="width:10%"><el:cmdbutton url="doclib" op="edit" label="NEW MANUAL" /></td>
@@ -57,9 +58,9 @@
  <td class="pri bld"><el:link url="/library/${doc.fileName}">${doc.name}</el:link></td>
 </c:if>
  <td><el:link url="/library/${doc.fileName}"><el:img src="library/adobe.png" className="noborder" caption="Download PDF manual" x="36" y="36" /></el:link></td>
- <td class="sec bld"><fmt:int value="${doc.size / 1024}" />K</td>
- <td class="small"><fmt:date fmt="d" default="N/A" date="${doc.lastModified}" /></td>
- <td class="bld"><fmt:int value="${doc.version}" /></td>
+ <td class="sec bld nophone"><fmt:int value="${doc.size / 1024}" />K</td>
+ <td class="small nophone"><fmt:date fmt="d" default="N/A" date="${doc.lastModified}" /></td>
+ <td class="bld nophone"><fmt:int value="${doc.version}" /></td>
  <td class="small left" colspan="2"><fmt:text value="${doc.description}" /></td>
 </view:row>
 </c:forEach>

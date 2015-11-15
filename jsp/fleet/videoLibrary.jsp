@@ -13,6 +13,7 @@
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <script type="text/javascript">
 golgotha.local.play = function(id, name) {
 	var tbody = golgotha.util.getElementsByClass('', 'tbody', document.getElementById('videoList'))[0];
@@ -57,16 +58,16 @@ golgotha.local.stop = function() {
 <tr class="title caps">
  <td style="width:25%">TITLE</td>
  <td style="width:7%">&nbsp;</td>
- <td style="width:10%">SIZE</td>
+ <td class="nophone" style="width:10%">SIZE</td>
 <c:choose>
 <c:when test="${access.canCreateVideo}">
- <td style="width:10%"><el:cmdbutton url="tvideo" op="edit" label="NEW VIDEO" /></td>
+ <td class="nophone" style="width:10%"><el:cmdbutton url="tvideo" op="edit" label="NEW VIDEO" /></td>
 </c:when>
 <c:otherwise>
- <td style="width:10%">&nbsp;</td>
+ <td class="nophone" style="width:10%">&nbsp;</td>
 </c:otherwise>
 </c:choose>
- <td>VIDEO DESCRIPTION</td>
+ <td class="nophone">VIDEO DESCRIPTION</td>
 </tr>
 
 <!-- Table Data Section -->
@@ -87,8 +88,8 @@ golgotha.local.stop = function() {
 <c:if test="${!hasFile}">
  <td><a href="javascript:void golgotha.local.stop()"><el:img src="library/error.png" caption="No Video" x="48" y="48" className="noborder" /></a></td>
 </c:if>
- <td class="sec bld"><fmt:int value="${video.size / 1024}" />K</td>
- <td class="small left" colspan="2"><fmt:text value="${video.description}" /></td>
+ <td class="sec bld nophone"><fmt:int value="${video.size / 1024}" />K</td>
+ <td class="small left nophone" colspan="2"><fmt:text value="${video.description}" /></td>
 </view:row>
 </c:forEach>
 

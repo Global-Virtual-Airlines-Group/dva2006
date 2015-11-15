@@ -13,6 +13,7 @@
 <content:css name="view" />
 <content:js name="common" />
 <content:pics />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -29,11 +30,11 @@
 
 <!-- Table Header Bar -->
 <tr class="title caps">
- <td style="width:8%">#</td>
+ <td>#</td>
  <td style="width:30%">SUBJECT</td>
- <td style="width:12%">STARTED BY</td>
- <td style="width:12%">ASSIGNED TO</td>
- <td style="width:5%">COMMENTS</td>
+ <td class="nophone" style="width:12%">STARTED BY</td>
+ <td class="nophone" style="width:12%">ASSIGNED TO</td>
+ <td class="nophone" style="width:5%">COMMENTS</td>
  <td class="left">LAST COMMENT BY</td>
 </tr>
 
@@ -45,11 +46,11 @@
 <view:row entry="${issue}">
  <td class="sec bld"><fmt:int value="${issue.ID}" /></td>
  <td><el:cmd url="hdissue" link="${issue}"><fmt:text value="${issue.subject}" /></el:cmd></td>
- <td><el:cmd url="profile" link="${author}" className="pri bld">${author.name}</el:cmd></td>
- <td><el:cmd url="profile" link="${assignedTo}" className="bld">${assignedTo.name}</el:cmd></td>
+ <td class="nophone"><el:cmd url="profile" link="${author}" className="pri bld">${author.name}</el:cmd></td>
+ <td class="nophone"><el:cmd url="profile" link="${assignedTo}" className="bld">${assignedTo.name}</el:cmd></td>
 <c:choose>
 <c:when test="${!empty cAuthor}">
- <td><fmt:int value="${issue.commentCount}" /></td>
+ <td class="nophone"><fmt:int value="${issue.commentCount}" /></td>
  <td class="right"><fmt:date date="${issue.lastComment}" /> by <span class="pri bld">${cAuthor.name}</span></td>
 </c:when>
 <c:otherwise>

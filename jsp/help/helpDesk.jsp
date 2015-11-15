@@ -13,6 +13,7 @@
 <content:css name="view" />
 <content:js name="common" />
 <content:pics />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -79,7 +80,7 @@ one of our volunteer staff will answer it soon.</td>
  <td style="width:5%">#</td>
  <td>TITLE</td>
  <td style="width:10%">STATUS</td>
- <td style="width:30%">CREATED BY</td>
+ <td class="nophone" style="width:30%">CREATED BY</td>
  <td style="width:15%">ASSIGNED TO</td>
  <td style="width:5%">COMMENTS</td>
 </tr>
@@ -90,8 +91,7 @@ one of our volunteer staff will answer it soon.</td>
  <td class="sec bld"><fmt:int value="${issue.ID}" /></td>
  <td class="pri bld"><el:cmd url="hdissue" link="${issue}" className="pri bld">${issue.subject}</el:cmd></td>
  <td class="sec bld small">${issue.statusName}</td>
- <td><el:cmd url="profile" link="${author}" className="bld">${author.name}</el:cmd> on
- <fmt:date date="${issue.createdOn}" /></td>
+ <td class="nophone"><el:cmd url="profile" link="${author}" className="bld">${author.name}</el:cmd> on <fmt:date date="${issue.createdOn}" t="HH:mm"/></td>
  <td><el:cmd url="profile" link="${assignee}" className="sec bld">${assignee.name}</el:cmd></td>
  <td><fmt:int value="${issue.commentCount}" /></td>
 </view:row>
@@ -111,8 +111,7 @@ one of our volunteer staff will answer it soon.</td>
  <td class="sec bld"><fmt:int value="${issue.ID}" /></td>
  <td class="pri bld"><el:cmd url="hdissue" link="${issue}" className="pri bld">${issue.subject}</el:cmd></td>
  <td class="sec bld small">${issue.statusName}</td>
- <td><el:cmd url="profile" link="${author}" className="bld">${author.name}</el:cmd> on
- <fmt:date date="${issue.createdOn}" /></td>
+ <td class="nophone"><el:cmd url="profile" link="${author}" className="bld">${author.name}</el:cmd> on <fmt:date date="${issue.createdOn}" t="HH:mm" /></td>
  <td class="sec bld"><el:cmd url="profile" link="${assignee}" className="sec bld">${assignee.name}</el:cmd></td>
  <td><fmt:int value="${issue.commentCount}" /></td>
 </view:row>

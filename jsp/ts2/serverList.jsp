@@ -13,6 +13,7 @@
 <content:css name="view" />
 <content:js name="common" />
 <content:pics />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -26,9 +27,9 @@
 <!-- Table Header Bar -->
 <tr class="title">
  <td style="width:20%">NAME</td>
- <td style="width:5%">PORT</td>
- <td style="width:5%">USERS</td>
- <td style="width:25%">ROLES</td>
+ <td class="nophone" style="width:5%">PORT</td>
+ <td class="nophone" style="width:5%">USERS</td>
+ <td class="nophone" style="width:25%">ROLES</td>
  <td style="width:10%"><el:cmdbutton url="ts2server" op="edit" label="NEW SERVER" /></td>
  <td class="left">DESCRIPTION</td>
 </tr>
@@ -38,9 +39,9 @@
 <c:set var="accessRoles" value="${server.roles['access']}" scope="page" />
 <view:row entry="${server}">
  <td><el:cmd url="ts2server" op="edit" link="${server}" className="pri bld">${server.name}</el:cmd></td>
- <td class="sec bld">${server.port}</td>
- <td><fmt:int value="${server.maxUsers}" /></td>
- <td class="sec"><c:if test="${empty accessRoles}">ALL</c:if><fmt:list value="${accessRoles}" delim=", " /></td>
+ <td class="sec bld nophone">${server.port}</td>
+ <td class="nophone"><fmt:int value="${server.maxUsers}" /></td>
+ <td class="sec nophone"><c:if test="${empty accessRoles}">ALL</c:if><fmt:list value="${accessRoles}" delim=", " /></td>
  <td colspan="2" class="left small">${server.description}</td>
 </view:row>
 </c:forEach>
