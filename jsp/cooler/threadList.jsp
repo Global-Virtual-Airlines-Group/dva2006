@@ -41,7 +41,7 @@ golgotha.local.setChannel = function(combo) {
 <!-- Table Sort Combo Bar -->
 <tr class="title">
 <c:if test="${channelAccess.canPost}">
- <td class="left caps">DISCUSSION THREADS - ${channelName}</td>
+ <td class="left caps"><span class="nophone">DISCUSSION THREADS - </span>${channelName}</td>
  <td><el:cmdbutton url="threadpost" linkID="${channel.name}" label="NEW THREAD" /></td>
 </c:if>
 <c:if test="${!channelAccess.canPost}">
