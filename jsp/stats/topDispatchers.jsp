@@ -35,16 +35,16 @@ return true;
 <el:form action="dspstats.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="view">
 <tr class="title">
- <td colspan="4" class="left caps"><content:airline /> TOP DISPATCHERS - <fmt:date date="${range.startDate}" tz="${utc}" fmt="d" /> - 
+ <td colspan="4" class="left caps"><span class="nophone"><content:airline /> </span>TOP DISPATCHERS - <fmt:date date="${range.startDate}" tz="${utc}" fmt="d" /> - 
  <fmt:date date="${range.endDate}" tz="${utc}" fmt="d" /></td>
- <td colspan="2" class="right">SELECT <el:combo name="range" idx="*" size="1" firstEntry="[ SELECT ]" value="${range}" options="${ranges}" onChange="void golgotha.local.updateSort()" /></td>
+ <td colspan="2" class="right"><span class="nophone">SELECT </span><el:combo name="range" idx="*" size="1" firstEntry="[ SELECT ]" value="${range}" options="${ranges}" onChange="void golgotha.local.updateSort()" /></td>
 </tr>
 
 <!-- Table Header bar -->
 <tr class="title caps">
  <td style="width:7%">#</td>
  <td style="width:40%">DISPATCHER</td>
- <td style="width:15%">PILOT CODE</td>
+ <td class="nophone" style="width:15%">PILOT CODE</td>
  <td style="width:10%">FLIGHTS</td>
  <td style="width:10%">HOURS</td>
  <td>PERCENT</td>
@@ -59,7 +59,7 @@ return true;
 <tr>
  <td class="sec bld"><fmt:int value="${idx}" /></td>
  <td><el:profile className="bld plain" location="${userLoc}">${pilot.name}</el:profile></td>
- <td class="pri bld">${pilot.pilotCode}</td>
+ <td class="pri bld nophone">${pilot.pilotCode}</td>
  <td><fmt:int value="${stat.legs}" /></td>
  <td><fmt:dec value="${stat.hours}" fmt="##0.00" /></td>
  <td class="sec"><fmt:dec value="${stat.hours * 100.0 / totalHours}" fmt="##0.00" />%</td>

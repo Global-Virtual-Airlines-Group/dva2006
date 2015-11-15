@@ -13,6 +13,7 @@
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -34,9 +35,9 @@
 </c:if>
  <td style="width:12%">UNITS</td>
  <td style="width:8%">VALUE</td>
- <td style="width:7%">PILOTS</td>
- <td style="width:30%">CHOICES</td>
- <td>COLOR</td>
+ <td class="nophone" style="width:7%">PILOTS</td>
+ <td class="nophone" style="width:30%">CHOICES</td>
+ <td class="nophone">COLOR</td>
 </tr>
 
 <!-- Table Accomplishment Data -->
@@ -51,9 +52,9 @@
 </c:if>
  <td class="sec bld">${a.unit.name}</td>
  <td class="bld"><fmt:int value="${a.value}" /></td>
- <td><fmt:int value="${a.pilots}" /></td>
- <td class="small"><fmt:list value="${a.choices}" delim=", " empty="No Restrctions" /></td>
- <td><div class="mid" style="width:90%; background-color:#${a.hexColor};">&nbsp;</div></td>
+ <td class="nophone"><fmt:int value="${a.pilots}" /></td>
+ <td class="small nophone"><fmt:list value="${a.choices}" delim=", " empty="No Restrctions" /></td>
+ <td class="nophone"><div class="mid" style="width:90%; background-color:#${a.hexColor};">&nbsp;</div></td>
 </view:row>
 </c:forEach>
 

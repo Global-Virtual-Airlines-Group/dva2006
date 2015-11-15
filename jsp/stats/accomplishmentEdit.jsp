@@ -14,6 +14,7 @@
 <content:js name="common" />
 <content:js name="jsColor" />
 <content:sysdata var="forumName" name="airline.forum" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <script type="text/javascript">
 golgotha.local.validate = function(f)
 {

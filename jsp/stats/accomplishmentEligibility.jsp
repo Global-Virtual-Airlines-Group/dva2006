@@ -13,6 +13,7 @@
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -25,12 +26,12 @@
 <content:region id="main">
 <el:table className="view">
 <tr class="title caps">
- <td colspan="3" class="left"><content:airline /> ACCOMPLISHMENT ELIGIBILITY FOR ${pilot.name} <c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></td>
+ <td colspan="3" class="left"><span class="nophone"><content:airline /> </span>ACCOMPLISHMENT ELIGIBILITY FOR <span class="nophone">${pilot.name} </span><c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></td>
 </tr>
 <!-- Table Header Bar -->
 <tr class="title caps">
  <td style="width:20%">ACCOMPLISHMENT</td>
- <td style="width:20%">REQUIREMENT</td>
+ <td class="nophone" style="width:20%">REQUIREMENT</td>
  <td>PROMOTION ELIGIBILITY</td>
 </tr>
 
@@ -39,7 +40,7 @@
 <c:set var="msg" value="${accs[acc]}" scope="page" />
 <view:row entry="${msg}">
  <td class="bld"><fmt:accomplish accomplish="${acc}" /></td>
- <td class="sec"><fmt:int value="${acc.value}" /> ${acc.unit.name}</td>
+ <td class="sec nophone"><fmt:int value="${acc.value}" /> ${acc.unit.name}</td>
 <c:choose>
 <c:when test="${msg.achieved}">
  <td class="pri bld left">${pilotName} achieved this Accomplishment on <fmt:date fmt="d" date="${acc.date}" />.</td>
