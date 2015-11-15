@@ -37,7 +37,7 @@ table.form td.label {
 @media (min-width: 941px) {
     table.form td.label {
         width: 126px;
-        min-width:106px;
+        min-width:110px;
         font-size: 8pt;
     }
 
@@ -60,7 +60,7 @@ table.form td.label {
 
 @media (max-width: 940px) {
     table.form td.label {
-        width: 30%;
+        width: 110px;
         min-width: 90px;
         font-size: 10px;
 	}
