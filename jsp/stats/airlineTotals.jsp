@@ -95,7 +95,7 @@
  <td style="width:15%">ROWS</td>
  <td style="width:15%">TABLE SIZE</td>
  <td class="nophone" style="width:15%">INDEX SIZE</td>
- <td>AVG. ROW SIZE</td>
+ <td class="nophone">AVG. ROW SIZE</td>
 </tr>
 
 <!-- Database Information Data -->
@@ -105,7 +105,7 @@
  <td class="sec bld"><fmt:int value="${tableInfo.rows}" /></td>
  <td class="bld"><fmt:int value="${tableInfo.size}" /> bytes</td>
  <td class="sec bld nophone"><fmt:int value="${tableInfo.indexSize}" /> bytes</td>
- <td><fmt:int value="${tableInfo.averageRowLength}" /> bytes/row</td>
+ <td class="nophone"><fmt:int value="${tableInfo.averageRowLength}" /> bytes/row</td>
 </tr>
 </c:forEach>
 
@@ -118,7 +118,7 @@
 <content:copyright />
 </content:region>
 </content:page>
-<script type="text/javascript" defer>
+<script type="text/javascript">
 google.load('visualization','1.0',{'packages':['corechart']});
 google.setOnLoadCallback(function() {
 var xmlreq = new XMLHttpRequest();

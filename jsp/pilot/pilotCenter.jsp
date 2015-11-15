@@ -14,6 +14,14 @@
 <content:js name="common" />
 <content:pics />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<style type="text/css">
+@media (min-width: 801px) {
+    table#pilotCenter td.sideLabel { width: 35%; max-width: 350px; }
+}
+@media (max-width: 800px) {
+    table#pilotCenter td.sideLabel { width: 30%; min-width: 120px; }
+}
+</style>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -59,7 +67,7 @@
  <td colspan="2">PILOT CENTER - ${pilot.rank.name} ${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></td>
 </tr>
 <tr>
- <td style="width:350px" class="mid"><el:cmd className="bld" url="profile" link="${pilot}" op="edit">Edit My Profile</el:cmd></td>
+ <td class="sideLabel mid"><el:cmd className="bld" url="profile" link="${pilot}" op="edit">Edit My Profile</el:cmd></td>
  <td class="data">Welcome back to <span class="pri bld"><content:airline /></span>, ${pilot.firstName}.
 <c:if test="${!empty pilot.pilotCode}"> Your pilot code is <span class="pri bld">${pilot.pilotCode}</span>.</c:if><br />
  You signed up on <fmt:date date="${pilot.createdOn}" fmt="d" /> (<fmt:int value="${pilotAge}" /> days ago) and have visited 
@@ -141,7 +149,7 @@ golgotha.local.fbAuthorize = function() {
 </c:if>
 <tr>
  <td class="mid">&nbsp;
-<c:if test="${!empty acImage}"><el:img src="${acImage}" caption="${pilot.equipmentType}" /></c:if>
+<c:if test="${!empty acImage}"><el:img src="${acImage}" className="nophone" caption="${pilot.equipmentType}" /></c:if>
  </td>
  <td class="data">You are a <span class="pri bld">${pilot.rank.name}</span> in the <span class="sec bld">${pilot.equipmentType}</span>
  program. <span class="pri bld">(Stage ${eqType.stage})</span><br />

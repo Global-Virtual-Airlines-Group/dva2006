@@ -14,6 +14,7 @@
 <content:css name="view" />
 <content:js name="common" />
 <content:pics />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -26,7 +27,7 @@
 <content:region id="main">
 <view:table cmd="mynewairports">
 <tr class="title">
- <td colspan="4" class="left caps"><content:airline /> UNVISITED AIRPORTS FOR ${pilot.name}</td>
+ <td colspan="4" class="left caps"><span class="nophone"><content:airline /> </span>UNVISITED AIRPORTS FOR ${pilot.name}</td>
  <td><el:cmd url="mynewairports" op="map">MAP</el:cmd>
  <td>&nbsp;</td>
 </tr>
@@ -39,33 +40,33 @@
 </tr>
 <tr class="title ap${airline.code}">
  <td style="width:20%">AIRPORT NAME</td>
- <td style="width:7%">ICAO</td>
+ <td class="nophone" style="width:7%">ICAO</td>
  <td style="width:6%">IATA</td>
- <td style="width:15%">COUNTRY</td>
+ <td class="nophone" style="width:15%">COUNTRY</td>
  <td style="width:7%">AIRLINES</td>
- <td class="left">SOURCE / DESTINATION AIRPORTS</td>
+ <td class="left nophone">SOURCE / DESTINATION AIRPORTS</td>
 </tr>
 <c:forEach var="ap" items="${aps}">
 <c:set var="srcList" value="${srcAirports[ap]}" scope="page" />
 <c:set var="srcSize" value="${fn:sizeof(srcList)}" scope="page" />
 <tr class="ap${airline.code}">
  <td class="pri bld">${ap.name}</td>
- <td class="bld">${ap.ICAO}</td>
+ <td class="bld nophone">${ap.ICAO}</td>
  <td class="sec">${ap.IATA}</td>
- <td class="small">${ap.country.name} <el:flag countryCode="${ap.country.code}" caption="${ap.country.name}" /></td>
+ <td class="small nophone">${ap.country.name} <el:flag countryCode="${ap.country.code}" caption="${ap.country.name}" /></td>
  <td class="bld"><fmt:int value="${fn:sizeof(ap.airlineCodes)}" /></td>
 <c:choose>
 <c:when test="${srcSize == 0}">
- <td class="left error bld">NO FLIGHTS TO/FROM THIS AIRPORT</td>
+ <td class="left error bld nophone">NO FLIGHTS TO/FROM THIS AIRPORT</td>
 </c:when>
 <c:when test="${srcSize < 3}">
- <td class="left small">
+ <td class="left small nophone">
 <c:forEach var="srcAp" items="${srcList}" varStatus="srcStatus">
 ${srcAp.name} (<fmt:airport airport="${srcAp}" />)<c:if test="${!srcStatus.last}">, </c:if></c:forEach>
  </td>
 </c:when>
 <c:otherwise>
- <td class="left" title="${srcList}">Flights ${srcList.isSource() ? 'from' : 'to'} this Airport from <fmt:int value="${srcSize}" /> different Airports</td>
+ <td class="left nophone" title="${srcList}">Flights ${srcList.isSource() ? 'from' : 'to'} this Airport from <fmt:int value="${srcSize}" /> different Airports</td>
 </c:otherwise>
 </c:choose>
 </tr>
