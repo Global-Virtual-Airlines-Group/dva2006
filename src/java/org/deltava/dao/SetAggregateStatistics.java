@@ -6,11 +6,12 @@ import java.sql.*;
 import org.deltava.beans.Simulator;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.Airport;
+import org.deltava.beans.schedule.RoutePair;
 
 /**
  * A Data Access Object to update Flight Statistics. 
  * @author Luke
- * @version 6.2
+ * @version 6.3
  * @since 6.2
  */
 
@@ -35,6 +36,7 @@ public class SetAggregateStatistics extends DAO {
 			updatePilot(fr.getDatabaseID(DatabaseID.PILOT));
 			updateAirport(fr.getAirportD(), true);
 			updateAirport(fr.getAirportA(), false);
+			updateRoute(fr.getDatabaseID(DatabaseID.PILOT), fr);
 			updateEQ(fr.getEquipmentType());
 			updateDate(fr.getDate());
 			commitTransaction();
@@ -67,6 +69,27 @@ public class SetAggregateStatistics extends DAO {
 		_ps.setInt(12, Simulator.XP10.getCode());
 		_ps.setInt(13, FlightReport.OK);
 		_ps.setInt(14, pilotID);
+		executeUpdate(1);
+	}
+
+	/*
+	 * Updates flight statistics for a particular route pair.
+	 */
+	private void updateRoute(int pilotID, RoutePair rp) throws SQLException {
+		
+		// Clean up in case we are deleting
+		prepareStatementWithoutLimits("DELETE FROM FLIGHTSTATS_ROUTES WHERE (PILOT_ID=?) AND (AIRPORT_D=?) AND (AIRPORT_A=?)");
+		_ps.setInt(1, pilotID);
+		_ps.setString(2, rp.getAirportD().getIATA());
+		_ps.setString(3, rp.getAirportA().getIATA());
+		executeUpdate(0);
+		
+		prepareStatementWithoutLimits("INSERT INTO FLIGHTSTATS_ROUTES (SELECT PILOT_ID, AIRPORT_D, AIRPORT_A, COUNT(ID), MAX(DATE) FROM "
+			+ "PIREPS WHERE (STATUS=?) AND (PILOT_ID=?) AND (AIRPORT_D=?) AND (AIRPORT_A=?)");
+		_ps.setInt(1, FlightReport.OK);
+		_ps.setInt(2, pilotID);
+		_ps.setString(3, rp.getAirportD().getIATA());
+		_ps.setString(4, rp.getAirportA().getIATA());
 		executeUpdate(1);
 	}
 	
