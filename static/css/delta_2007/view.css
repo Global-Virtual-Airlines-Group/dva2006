@@ -1,4 +1,4 @@
-/* Cascading Style Sheet for Table Views (C) 2005 - 2011 Global Virtual Airlines Group. */
+/* Cascading Style Sheet for Table Views (C) 2005 - 2015 Global Virtual Airlines Group. */
 
 table.view {
 	width: 100%;
@@ -11,7 +11,6 @@ table.mid {
 }
 
 table.view tr.title {
-	font-size: 11px;
 	background-color: #003366;
 	font-family: verdana, tahoma, sans-serif;
 	vertical-align: middle;
@@ -20,15 +19,38 @@ table.view tr.title {
 }
 
 table.view tr {
-	font-size: 11px;
 	background-color: #f0f0f0;
 	font-family: verdana, tahoma, sans-serif;
 	vertical-align: middle;
 	text-align: center;
 }
 
-table.view td {
-	padding: 3px 3px 3px 3px;
+@media (min-width: 941px) {
+    table.view tr {
+       font-size: 11px;
+    }
+
+    *.title :link, *.title :visited, *.title a {
+        font-size: 11px;
+    }
+
+    table.view td {
+        padding: 3px 3px 3px 3px;
+    }   
+}
+
+@media (max-width: 940px) {
+    table.view tr {
+       font-size: 10px;
+    }
+
+    *.title :link, *.title :visited, *.title a {
+        font-size: 10px; 
+    }
+
+    table.view td {
+        padding: 2px 2px 2px 2px;
+    }   
 }
 
 td.priB {
@@ -74,7 +96,6 @@ table.view *.err {
 }
 
 *.title :link, *.title :visited, *.title a {
-	font-size: 11px;	
 	font-family: verdana, tahoma, sans-serif;
 	font-weight: bold;
 	text-decoration: underline;
