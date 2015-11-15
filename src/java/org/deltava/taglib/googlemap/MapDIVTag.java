@@ -72,7 +72,7 @@ public class MapDIVTag extends ElementTag {
       _data.setAttribute("class", "googleMapV" + String.valueOf(rawVersion));
       _data.setAttribute("style", buf.toString());
       if (_mapHeight > 0)
-    	  _data.setAttribute("w", String.valueOf(_mapHeight));
+    	  _data.setAttribute("h", String.valueOf(_mapHeight));
       
       return SKIP_BODY;
    }
