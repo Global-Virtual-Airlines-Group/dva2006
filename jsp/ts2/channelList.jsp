@@ -13,6 +13,7 @@
 <content:css name="view" />
 <content:js name="common" />
 <content:pics />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -26,8 +27,8 @@
 <!-- Table Header Bar -->
 <tr class="title">
  <td style="width:20%">CHANNEL NAME</td>
- <td style="width:25%">CHANNEL TOPIC</td>
- <td style="width:5%">USERS</td>
+ <td class="nophone" style="width:25%">CHANNEL TOPIC</td>
+ <td class="nophone" style="width:5%">USERS</td>
  <td style="width:15%"><el:cmdbutton url="ts2channel" op="edit" label="NEW CHANNEL" /></td>
  <td class="left">DESCRIPTION</td>
 </tr>
@@ -44,8 +45,8 @@
 </c:if>
 <view:row entry="${channel}">
  <td><el:cmd url="ts2channel" op="edit" link="${channel}" className="pri bld">${channel.name}</el:cmd></td>
- <td>${channel.topic}</td>
- <td class="sec bld"><fmt:int value="${channel.maxUsers}" /></td>
+ <td class="nophone">${channel.topic}</td>
+ <td class="sec bld nophone"><fmt:int value="${channel.maxUsers}" /></td>
  <td colspan="2" class="left small">${channel.description}</td>
 </view:row>
 </c:forEach>

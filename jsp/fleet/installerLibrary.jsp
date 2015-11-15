@@ -13,6 +13,7 @@
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -26,9 +27,9 @@
 <!-- Table Header Bar -->
 <tr class="title caps">
  <td style="width:25%">TITLE</td>
- <td style="width:10%">CODE</td>
- <td style="width:10%">SIZE</td>
- <td style="width:10%">VERSION</td>
+ <td class="nophone" style="width:10%">CODE</td>
+ <td class="nophone" style="width:10%">SIZE</td>
+ <td class="nophone" style="width:10%">VERSION</td>
  <td style="width:15%"><el:cmdbutton url="fleetlib" op="edit" label="NEW INSTALLER" /></td>
  <td>DESCRIPTION</td>
 </tr>
@@ -37,9 +38,9 @@
 <c:forEach var="installer" items="${fleet}">
 <view:row entry="${installer}">
  <td class="pri bld"><el:cmd url="fleetlib" linkID="${installer.fileName}" op="edit">${installer.name}</el:cmd></td>
- <td>${installer.code}</td>
- <td class="sec small"><fmt:int value="${installer.size}" /> bytes</td>
- <td class="bld">${installer.version}</td>
+ <td class="nophone">${installer.code}</td>
+ <td class="sec small nopgone"><fmt:int value="${installer.size}" /> bytes</td>
+ <td class="bld nophone">${installer.version}</td>
  <td class="small left" colspan="2"><fmt:text value="${installer.description}" /></td>
 </view:row>
 </c:forEach>
