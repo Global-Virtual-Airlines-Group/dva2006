@@ -39,8 +39,8 @@ golgotha.local.sort = function() { return document.forms[0].submit(); };
 <tr class="title caps">
  <td style="max-width:104px;">DATE</td>
  <td class="nophone">INFO</td>
- <td style="width:12%">FLIGHT NUMBER</td>
- <td style="width:15%">PILOT NAME</td>
+ <td>FLIGHT NUMBER</td>
+ <td>PILOT NAME</td>
  <td class="nophone" style="width:30%">AIRPORTS</td>
  <td class="nophone">EQUIPMENT</td>
  <td class="nophone">DURATION</td>
@@ -120,7 +120,7 @@ golgotha.local.sort = function() { return document.forms[0].submit(); };
 <!-- Scroll Bar -->
 <tr class="title">
  <td colspan="7"><view:scrollbar force="${doScroll}"><view:pgUp />&nbsp;<view:pgDn /><br /></view:scrollbar>
-<view:legend width="120" labels="Submitted,Held,Check Ride,Flight Academy" classes="opt1,warn,opt3,opt4" /></td>
+<view:legend width="116" labels="Submitted,Held,Check Ride,Flight Academy" classes="opt1,warn,opt3,opt4" /></td>
 </tr>
 </view:table>
 <br />

@@ -46,7 +46,7 @@
 <!-- Table Data Section -->
 <c:forEach var="airline" items="${fn:keys(docs)}">
 <tr class="title caps">
- <td colspan="7" class="left">${airline.name}</td>
+ <td colspan="7" class="left">DOCUMENT LIBRARY - ${airline.name}</td>
 </tr>
 <c:forEach var="doc" items="${docs[airline]}">
 <c:set var="ac" value="${accessMap[doc]}" scope="page" />
@@ -69,8 +69,7 @@
 <tr valign="middle">
  <td><a href="http://www.adobe.com/products/acrobat/readstep2.html" rel="external" target="_new"><el:img src="library/getacro.png" className="noborder" caption="Download Adobe Acrobat Reader" /></a></td>
  <td colspan="6">All manuals within the <content:airline /> Document Library require <span class="pri bld">Adobe Acrobat Reader</span> in order to be viewed. If you are having difficulties viewing our 
-manuals, please click on the link to the left to download the latest version of Adobe Acrobat Reader.<br /> 
-This is a free download.</td>
+manuals, please click on the link to the left to download the latest version of Adobe Acrobat Reader. This is a free download.</td>
 </tr>
 <tr class="title">
  <td colspan="7">&nbsp;</td>
