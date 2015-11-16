@@ -85,7 +85,7 @@ public class SetAggregateStatistics extends DAO {
 		executeUpdate(0);
 		
 		prepareStatementWithoutLimits("INSERT INTO FLIGHTSTATS_ROUTES (SELECT PILOT_ID, AIRPORT_D, AIRPORT_A, COUNT(ID), MAX(DATE) FROM "
-			+ "PIREPS WHERE (STATUS=?) AND (PILOT_ID=?) AND (AIRPORT_D=?) AND (AIRPORT_A=?)");
+			+ "PIREPS WHERE (STATUS=?) AND (PILOT_ID=?) AND (AIRPORT_D=?) AND (AIRPORT_A=?))");
 		_ps.setInt(1, FlightReport.OK);
 		_ps.setInt(2, pilotID);
 		_ps.setString(3, rp.getAirportD().getIATA());
