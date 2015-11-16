@@ -18,7 +18,7 @@
 <content:googleAnalytics eventSupport="true" />
 </head>
 <content:copyright visible="false" />
-<body onunload="void golgotha.maps.util.unload(map)">
+<body onunload="void golgotha.maps.util.unload()">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -48,11 +48,11 @@
 </content:region>
 </content:page>
 <script id="mapInit">
-<map:point var="mapC" point="${mapCenter}" />
+<map:point var="golgotha.local.mapC" point="${mapCenter}" />
 
 // Create the map
-var mapOpts = {center:mapC, zoom:${zoomLevel}, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
-var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
+var mapOpts = {center:golgotha.local.mapC, zoom:${zoomLevel}, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
+var map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'click', function() { map.closeWindow(); map.removeMarkers(golgotha.routeMap.routes); });

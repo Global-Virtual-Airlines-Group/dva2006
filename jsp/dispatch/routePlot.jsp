@@ -64,7 +64,7 @@ golgotha.routePlot.updateAirline = function(combo) {
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void golgotha.util.disable('RouteSaveButton')" onunload="void golgotha.maps.util.unload(map)">
+<body onload="void golgotha.util.disable('RouteSaveButton')" onunload="void golgotha.maps.util.unload()">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -176,7 +176,7 @@ window.setTimeout(function() { newCfg.airline = 'all'; f.airportL.loadAirports(n
 
 // Create the map
 var mapOpts = {center:{lat:38.88, lng:-93.25}, zoom:4, minZoom:2, maxZoom:10, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds: golgotha.maps.DEFAULT_TYPES}};
-var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
+var map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'click', map.closeWindow);

@@ -59,7 +59,7 @@ golgotha.local.showRunwayChoices = function() {
 </script></c:if>
 </head>
 <content:copyright visible="false" />
-<body>
+<body onunload="void golgotha.maps.util.unload()">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -386,7 +386,7 @@ var mapTypes = {mapTypeIds:golgotha.maps.DEFAULT_TYPES};
 var mapOpts = {center:golgotha.local.mapC, minZoom:2, maxZoom:18, zoom:golgotha.maps.util.getDefaultZoom(${pirep.distance}), scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
 
 // Build the map
-var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
+var map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);

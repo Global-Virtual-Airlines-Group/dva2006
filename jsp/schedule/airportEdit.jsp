@@ -53,7 +53,7 @@ golgotha.onDOMReady(function() {
 </script>
 </head>
 <content:copyright visible="false" />
-<body onunload="void golgotha.maps.util.unload(map)">
+<body onunload="void golgotha.maps.util.unload()">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -179,13 +179,13 @@ lack of scheduled flights in the <content:airline /> Flight Schedule.</span></td
 </content:region>
 </content:page>
 <c:if test="${googleMap}">
-<script id="mapInit" defer>
+<script id="mapInit">
 <map:point var="golgotha.local.mapC" point="${airport}" />
 <map:marker var="apMarker" point="${airport}" color="green" />
 
 // Build the map
 var mapOpts = {center:golgotha.local.mapC, zoom:6, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
-var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
+var map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
 map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
 apMarker.setMap(map);
 </script></c:if>

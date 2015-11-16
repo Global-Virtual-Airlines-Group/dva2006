@@ -119,7 +119,7 @@ return true;
 </content:region>
 </content:page>
 <c:if test="${exam.routePlot}">
-<script id="mapInit" defer>
+<script id="mapInit">
 golgotha.exam.maps = [];
 <c:forEach var="q" items="${exam.questions}"><c:if test="${fn:isRoutePlot(q)}">
 <c:set var="answerRoute" value="${aRoutes[q.number]}" scope="page" />
@@ -129,7 +129,7 @@ golgotha.exam.maps = [];
 // Create map
 var mapTypes = {mapTypeIds:[google.maps.MapTypeId.TERRAIN, google.maps.MapTypeId.SATELLITE]};
 var mapOpts = {center:mapC, zoom:golgotha.maps.util.getDefaultZoom(${q.distance}), scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
-var map = new google.maps.Map(document.getElementById('qMap${q.number}'), mapOpts);
+var map = new golgotha.maps.Map(document.getElementById('qMap${q.number}'), mapOpts);
 map.setMapTypeId(google.maps.MapTypeId.TERRAIN);
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'click', map.closeWindow);

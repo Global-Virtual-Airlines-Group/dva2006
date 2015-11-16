@@ -31,7 +31,7 @@ for (var x = 0; x < golgotha.exam.rpQuestions.length; x++) {
 	var idx = golgotha.exam.rpQuestions[x];
 	var info = golgotha.exam.rpInfo[idx];
 	var mapOpts = {center:info.mapCenter, zoom:golgotha.maps.util.getDefaultZoom(info.distance), scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
-	info.map = new google.maps.Map(document.getElementById('qMap' + info.idx), mapOpts);
+	info.map = new golgotha.maps.Map(document.getElementById('qMap' + info.idx), mapOpts);
 	info.map.setMapTypeId(google.maps.MapTypeId.TERRAIN);
 	info.aD.setMap(info.map);
 	info.aA.setMap(info.map);
