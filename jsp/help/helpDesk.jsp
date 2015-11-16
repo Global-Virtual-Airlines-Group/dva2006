@@ -25,44 +25,38 @@
 <content:region id="main">
 <el:table className="view">
 <tr class="title caps">
- <td class="left" colspan="6"><content:airline /> HELP DESK</td>
+ <td class="left" colspan="2"><span class="nophone"><content:airline /> </span>HELP DESK</td>
 </tr>
-<tr class="left">
- <td colspan="6">Welcome to the <content:airline /> Help Desk. This is designed as your single point of 
+<tr>
+ <td colspan="2">Welcome to the <content:airline /> Help Desk. This is designed as your single point of 
 contact for questions and answers regarding our virtual airline community. We have collection a number 
 of sources of information to allow you to discover more about our airline. If you still have questions, 
 please feel free to <el:cmd url="hdissue" op="edit" className="sec bld">ask a new Question</el:cmd> and 
 one of our volunteer staff will answer it soon.</td>
 </tr>
-
-<!-- Document Library -->
 <tr>
- <td class="left" colspan="4">The <content:airline /> Document Library is a valuable resource for learning
+<td style="min-width:156px;"><el:cmd url="doclibrary" className="pri bld">Document Library</el:cmd></td>
+ <td class="left">The <content:airline /> Document Library is a valuable resource for learning
  more about all aspects of our operations. All documents require Adobe Acrobat Reader 6.0 or above.</td>
- <td colspan="2"><el:cmdbutton url="doclibrary" label="DOCUMENT LIBRARY" /></td>
 </tr>
-
-<!-- Frequently Asked Questions -->
 <tr>
- <td class="left" colspan="4">This is a collection of most frequently asked questions about
- <content:airline />.</td>
- <td colspan="2"><el:cmdbutton url="faq" label="FREQUENTLY ASKED QUESTIONS" /></td>
+<td><el:cmd url="faq" className="pri bld">Frequently Asked Questions</el:cmd></td>
+ <td class="left" >This is a collection of most frequently asked questions about <content:airline />.</td>
 </tr>
-
-<!-- Help Desk Search -->
 <tr>
- <td class="left" colspan="4">Have a question or a problem? Chances are you're not the first person to need help.
+ <td><el:cmd url="hdsearch" className="pri bld">Help Desk Search</el:cmd></td>
+ <td class="left">Have a question or a problem? Chances are you're not the first person to need help.
  You can search the Help Desk to see if other people have had the same Issue, and how it was resolved.</td>
- <td colspan="2"><el:cmdbutton url="hdsearch" label="HELP DESK SEARCH" /></td>
 </tr>
 <content:filter roles="HR">
-<!-- Response Templates -->
 <tr>
- <td class="left" colspan="4">You can create and modify response templates to easily answer some of the more
- commonly asked Help Desk questions.</td>
- <td colspan="2"><el:cmdbutton url="rsptemplates" label="RESPONSE TEMPLATES" /></td>
+ <td><el:cmd url="rsptemplates" className="pri bld">Response Templates</el:cmd></td>
+ <td class="left">You can create and modify response templates to easily answer some of the more commonly asked Help Desk questions.</td>
 </tr>
 </content:filter>
+</el:table>
+
+<el:table className="view">
 <!-- My Issues -->
 <tr class="title caps">
  <td class="left" colspan="6">MY ISSUES</td>
