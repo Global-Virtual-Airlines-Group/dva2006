@@ -71,14 +71,14 @@ toggleObjects = golgotha.local.toggleObjects;
 </c:if>
 </script>
 </head>
-<body onunload="void golgotha.maps.util.unload(map)">
+<body onunload="void golgotha.maps.util.unload()">
 <el:form action="dispatchMap.do" method="post" validate="return false">
 <map:div ID="googleMap" height="625" /><div id="zoomLevel" class="small mapTextLabel"></div><div id="copyright" class="small mapTextLabel"></div>
 <div id="mapStatus" class="small mapTextLabel"></div>
 </el:form>
-<script id="mapInit" defer>
+<script id="mapInit">
 var mapOpts = {center:{lat:36.44,lng:-100.14}, zoom:6, minZoom:2, maxZoom:12, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
-var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
+var map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'click', map.closeWindow);

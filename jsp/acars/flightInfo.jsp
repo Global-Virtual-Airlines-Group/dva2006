@@ -20,7 +20,7 @@
 <content:googleAnalytics eventSupport="true" />
 </head>
 <content:copyright visible="false" />
-<body onunload="void golgotha.maps.util.unload(map)">
+<body onunload="void golgotha.maps.util.unload()">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -130,7 +130,7 @@
 </content:region>
 </content:page>
 <c:if test="${fn:sizeof(mapRoute) > 0}">
-<script id="mapInit" defer>
+<script id="mapInit">
 // Build the route line and map center
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
 <map:points var="golgotha.maps.acarsFlight.filedPoints" items="${filedRoute}" />
@@ -140,7 +140,7 @@
 // Build the map
 var mapTypes = {mapTypeIds:golgotha.maps.DEFAULT_TYPES};
 var mapOpts = {center:golgotha.local.mapC, minZoom:2, zoom:golgotha.maps.util.getDefaultZoom(${pirep.distance}), scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
-var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
+var map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'click', map.closeWindow);
 <map:type map="map" type="${gMapType}" default="TERRAIN" />

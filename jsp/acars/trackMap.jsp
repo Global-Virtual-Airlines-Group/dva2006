@@ -23,7 +23,7 @@ select.localAP { background-color:#000810; }
 golgotha.maps.track = golgotha.maps.track || {};
 golgotha.maps.track.ShapeLayer = function(tx, minZ, maxZ)
 {
-var layerOpts = {minZoom:minZ, maxZoom:maxZ, isPng:true, opacity:tx, tileSize:golgotha.maps.TILE_SIZE};
+var layerOpts = {minZoom:minZ, maxZoom:maxZ, opacity:tx, tileSize:golgotha.maps.TILE_SIZE};
 layerOpts.myBaseURL = location.protocol + '//' + location.host + '/track/';
 layerOpts.getTileUrl = function(pnt, zoom) {
 	if (zoom > this.maxZoom) return '';
@@ -42,7 +42,7 @@ return new google.maps.ImageMapType(layerOpts);
 </script>
 </head>
 <content:copyright visible="false" />
-<body onunload="void golgotha.maps.util.unload(map)">
+<body onunload="void golgotha.maps.util.unload()">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -66,13 +66,13 @@ return new google.maps.ImageMapType(layerOpts);
 </content:page>
 <c:set var="maxZoomLevel"  value="${(empty localAP) ? 9 : 13}" scope="request" />
 <div id="zoomLevel" class="small bld mapTextLabel"></div>
-<script id="mapInit" defer>
+<script id="mapInit">
 <map:point var="mapC" point="${mapCenter}" />
 var mapTypes = {mapTypeIds: ['acars_trackmap', google.maps.MapTypeId.SATELLITE]};
 var mapOpts = {center:mapC, minZoom:3, maxZoom:${maxZoomLevel}, zoom:6, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
 
 // Create the map
-var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
+var map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
 var tmStyledMap = new google.maps.StyledMapType(golgotha.maps.styles.TRACKMAP, {name:'Track Map'});
 map.mapTypes.set('acars_trackmap', tmStyledMap);
 map.setMapTypeId('acars_trackmap');

@@ -77,6 +77,7 @@ golgotha.maps.util.GinsuOverlayLayer = function(name, ts, size) { return 'http:/
 golgotha.maps.WeatherLayer = function(opts, timestamp) {
 	if (opts.range == null) opts.range = [];
 	var tileURLFunc = (opts.tileURL) ? opts.tileURL : golgotha.maps.util.S3OverlayLayer;
+	opts.getTileUrl = golgotha.maps.util.getTileUrl;
 	var ov = new google.maps.ImageMapType(opts);
 	ov.set('maxZoom', opts.maxZoom);
 	ov.set('baseURL', tileURLFunc(opts.name, timestamp, opts.tileSize));
@@ -84,7 +85,7 @@ golgotha.maps.WeatherLayer = function(opts, timestamp) {
 	ov.set('range', opts.range);
 	ov.set('timestamp', new Date(timestamp));
 	ov.set('tileSize', opts.tileSize);
-	ov.getTileUrl = golgotha.maps.util.getTileUrl;
+	ov.getTileUrl = opts.getTileUrl;
 	ov.getTile = golgotha.maps.util.buildTile;
 	ov.isPreloaded = function(l) { if (this.pl == null) { this.pl = []; return false; } else return (this.pl.indexOf(l) > -1); };
 	ov.getMap = function() { return this.map; }
@@ -359,7 +360,7 @@ for (var layerName = sd.seriesNames.pop(); (layerName != null); layerName = sd.s
 	var slices = [];
 	for (var tsX = 0; tsX < timestamps.length; tsX++) {
 		var ts = timestamps[tsX];
-		var layerOpts = {minZoom:2, name:layerName, maxZoom:layerData.maxZoom, isPng:true, opacity:myLayerData.opacity, tileSize:golgotha.maps.TILE_SIZE, range:[], zIndex:golgotha.maps.z.OVERLAY};
+		var layerOpts = {minZoom:2, name:layerName, maxZoom:layerData.maxZoom, opacity:myLayerData.opacity, tileSize:golgotha.maps.TILE_SIZE, range:[], zIndex:golgotha.maps.z.OVERLAY};
 		layerOpts.tileURL = golgotha.maps.util.GinsuOverlayLayer;
 		var ovLayer = isFF ? new golgotha.maps.FFWeatherLayer(layerOpts, ts.unixDate, layerData.series[0].unixDate) : new golgotha.maps.WeatherLayer(layerOpts, ts.unixDate);
 		ovLayer.set('imgClass', myLayerData.imgClass);
