@@ -18,7 +18,7 @@
 <content:js name="myRouteMap" />
 </head>
 <content:copyright visible="false" />
-<body onunload="void golgotha.maps.util.unload(map)">
+<body onunload="void golgotha.maps.util.unload()">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -41,13 +41,13 @@
 <content:copyright />
 </content:region>
 </content:page>
-<script id="mapInit" defer>
-<map:point var="mapC" point="${home}" />
+<script id="mapInit">
+<map:point var="golgotha.local.mapC" point="${home}" />
 var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
-var mapOpts = {center:mapC, minZoom:2, zoom:3, scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
+var mapOpts = {center:golgotha.local.mapC, minZoom:2, zoom:3, scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
 
 // Create the map
-var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
+var map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
 <map:type map="map" type="SATELLITE" />
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); golgotha.routeMap.reset(); });

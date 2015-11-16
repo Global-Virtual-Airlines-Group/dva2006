@@ -137,7 +137,7 @@ golgotha.exam.maps = [];
 // Create map
 var mapTypes = {mapTypeIds:[google.maps.MapTypeId.TERRAIN, google.maps.MapTypeId.SATELLITE]};
 var mapOpts = {center:mapC, zoom:golgotha.maps.util.getDefaultZoom(${q.distance}), scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
-var map = new google.maps.Map(document.getElementById('qMap${q.number}'), mapOpts);
+var map = new golgotha.maps.Map(document.getElementById('qMap${q.number}'), mapOpts);
 map.setMapTypeId(google.maps.MapTypeId.TERRAIN);
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'click', map.closeWindow);

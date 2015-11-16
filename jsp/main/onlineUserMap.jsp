@@ -19,7 +19,7 @@
 <content:googleAnalytics eventSupport="true" />
 </head>
 <content:copyright visible="false" />
-<body onunload="void golgotha.maps.util.unload(map)">
+<body onunload="void golgotha.maps.util.unload()">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -42,9 +42,9 @@
 <content:copyright />
 </content:region>
 </content:page>
-<script id="mapInit" defer>
+<script id="mapInit">
 var mapOpts = {center:{lat:38.88, lng:-93.25}, zoom:4, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
-var map = new google.maps.Map(document.getElementById("googleMap"), mapOpts);
+var map = new golgotha.maps.Map(document.getElementById("googleMap"), mapOpts);
 map.setMapTypeId(google.maps.MapTypeId.TERRAIN);
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'click', map.closeWindow);

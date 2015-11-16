@@ -7,6 +7,7 @@ golgotha.maps.S_ICON_SHADOW_SIZE = new google.maps.Size(24 * (59 / 32), 24);
 golgotha.maps.ICON_ANCHOR = new google.maps.Point(12, 12);
 golgotha.maps.DEFAULT_TYPES = [google.maps.MapTypeId.ROADMAP, google.maps.MapTypeId.SATELLITE, google.maps.MapTypeId.TERRAIN];
 golgotha.maps.z = {INFOWINDOW:100, POLYLINE:25, POLYGON:35, MARKER:50, OVERLAY:10};
+golgotha.maps.instances = [];
 golgotha.maps.ovLayers = [];
 golgotha.maps.styles = {};
 golgotha.maps.reload = 60000;
@@ -14,7 +15,12 @@ golgotha.maps.masks = [0, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 409
 golgotha.maps.util = {isIE:golgotha.util.isIE, oldIE:golgotha.util.oldIE, isIOS:golgotha.util.isIOS};
 golgotha.maps.util.isIE10 = (golgotha.maps.util.isIE && (navigator.appVersion.indexOf('IE 10.0') > 0));
 golgotha.maps.util.isIE11 = ((navigator.appname == 'Netscape') && (navigator.userAgent.contains('Trident/')));
-golgotha.maps.util.unload = function(m) { if (!m) return false; google.maps.event.clearListeners(m); return true; };
+golgotha.maps.util.unload = function() { 
+	for (m = golgotha.maps.instances.pop(); (m != null); m = golgotha.maps.instances.pop())
+		google.maps.event.clearListeners(m);
+
+	return true;
+};
 
 // Cross-browser opacity set
 golgotha.maps.setOpacity = (golgotha.maps.util.isIE && (!golgotha.maps.util.isIE10) && (!golgotha.maps.util.isIE11)) ? function(e, tx) { e.style.filter = 'alpha(opacity=' + (tx*100) + ')'; } : function(e, tx) { e.style.opacity = tx; };
@@ -44,6 +50,11 @@ golgotha.maps.util.resize = function() {
 		var h = d.getAttribute('h');
 		if (h != null)
 			d.style.height = Math.max(200, Math.floor(h * ratio)) + 'px';
+	}
+
+	for (var x = 0; x < golgotha.maps.instances.length; x++) {
+		var m = golgotha.maps.instances[x];
+		google.maps.event.trigger(m, 'resize');
 	}
 
 	return true;
@@ -98,6 +109,9 @@ golgotha.maps.setMap = function(map) {
 	this.setMap_OLD(map);
 	return true;
 };
+
+// Track instances
+golgotha.maps.Map = function(div, opts) { var m = new google.maps.Map(div, opts); golgotha.maps.instances.push(m); return m; };
 
 // Track overlays
 google.maps.Marker.prototype.setMap_OLD = google.maps.Marker.prototype.setMap;
@@ -333,16 +347,17 @@ golgotha.maps.LayerClearControl = function(map, opts) {
 
 // Create an arbitrary overlay layer
 golgotha.maps.ShapeLayer = function(opts, name, imgClass) {
-	opts.name = name; opts.isPng = true;
+	opts.name = name;
 	if (opts.tileSize == null) opts.tileSize = golgotha.maps.TILE_SIZE;
 	if (opts.host == null) opts.host = self.location.host;
+	opts.getTileUrl = golgotha.maps.util.getTileUrl;
 	var ov = new google.maps.ImageMapType(opts);
 	ov.set('maxZoom', opts.maxZoom);
 	ov.set('nativeZoom', opts.nativeZoom);
 	ov.set('tileSize', opts.tileSize);
 	ov.set('baseURL', 'http://' + opts.host + '/tile/' + imgClass + '/');
 	ov.set('imgClass', imgClass); 
-	ov.getTileUrl = golgotha.maps.util.getTileUrl;
+	ov.getTileUrl = opts.getTileUrl;
 	ov.getTile = golgotha.maps.util.buildTile;
 	ov.getMap = function() { return this.map; };
 	ov.setMap = function(m) {
