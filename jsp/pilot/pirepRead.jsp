@@ -276,8 +276,11 @@ golgotha.local.showRunwayChoices = function() {
 </c:if>
 <content:browser human="true">
 <c:if test="${googleMap}">
+<tr class="title">
+ <td colspan="2">ROUTE MAP</td>
+</tr>
 <tr>
- <td class="label">Route Map Data</td>
+ <td class="label">Map Data</td>
  <td class="data"><span class="bld">
 <c:if test="${isACARS || (!empty mapRoute)}"><el:box name="showRoute" idx="*" onChange="void map.toggle(golgotha.maps.acarsFlight.gRoute, this.checked)" label="Route" checked="${!isACARS}" /> </c:if>
 <c:if test="${isACARS}"><el:box name="showFDR" idx="*" onChange="void map.toggle(golgotha.maps.acarsFlight.routeMarkers, this.checked)" label="Flight Data" checked="false" /> </c:if>
@@ -288,14 +291,12 @@ golgotha.local.showRunwayChoices = function() {
 </span></td>
 </tr>
 <tr>
- <td class="label top">Route Map</td>
- <td class="data"><map:div ID="googleMap" height="550" /></td>
+ <td colspan="2"><map:div ID="googleMap" height="575" /></td>
 </tr>
 </c:if>
 <c:if test="${!googleMap}">
 <tr>
- <td class="label top">Route Map</td>
- <td class="data"><img src="http://maps.fallingrain.com/perl/map.cgi?x=620&y=365&kind=topo&lat=${pirep.airportD.latitude}&long=${pirep.airportD.longitude}&name=${pirep.airportD.name}&c=1&lat=${pirep.airportA.latitude}&long=${pirep.airportA.longitude}&name=${pirep.airportA.name}&c=1"
+ <td colspan="2"><img src="http://maps.fallingrain.com/perl/map.cgi?x=620&y=365&kind=topo&lat=${pirep.airportD.latitude}&long=${pirep.airportD.longitude}&name=${pirep.airportD.name}&c=1&lat=${pirep.airportA.latitude}&long=${pirep.airportA.longitude}&name=${pirep.airportA.name}&c=1"
 alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" /></td>
 </tr>
 </c:if>
@@ -304,8 +305,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
  <td colspan="2">SPEED / ALTITUDE DATA<span id="chartToggle" class="und" style="float:right" onclick="void golgotha.util.toggleExpand(this, 'flightDataChart')">COLLAPSE</span></td>
 </tr>
 <tr class="flightDataChart">
- <td class="label">&nbsp;</td>
- <td class="data" colspan="${cspan}"><div id="flightChart" style="height:275px"></div></td>
+ <td colspan="2"><div id="flightChart" style="height:285px"></div></td>
 </tr>
 </c:if>
 </content:browser>

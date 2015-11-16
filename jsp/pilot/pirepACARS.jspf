@@ -67,7 +67,7 @@
 <tr>
  <td class="label">Start Time</td>
  <td class="data" colspan="${cspan}"><c:if test="${!empty gate}"><span class="sec bld">${gate.name}</span>, </c:if>
-<fmt:date className="bld" date="${pirep.startTime}" /><c:if test="${!empty gate}"> <a href="javascript:void golgotha.local.zoomTo(${gate.latitude}, ${gate.longitude}, 15)">Zoom to Gate</a></c:if></td>
+<fmt:date className="bld" date="${pirep.startTime}" /><c:if test="${!empty gate}"> <a href="javascript:void golgotha.local.zoomTo(${gate.latitude}, ${gate.longitude}, 15)">Zoom<span class="nophone"> to Gate</span></a></c:if></td>
 </tr>
 <tr>
  <td class="label">Taxi from Gate</td>
@@ -95,7 +95,7 @@
 </c:choose></c:if>
 <c:if test="${empty rwy}">
 <span class="error bld">UNKNOWN</span></c:if>
- <a href="javascript:void golgotha.local.zoomTo(${pirep.takeoffLocation.latitude}, ${pirep.takeoffLocation.longitude})">Zoom to Takeoff</a>
+ <a href="javascript:void golgotha.local.zoomTo(${pirep.takeoffLocation.latitude}, ${pirep.takeoffLocation.longitude})">Zoom <span class="nophone">to Takeoff</span></a>
 <c:if test="${access.canDispose && (!empty dRunways)}"><span class="nophone"> <span class="ita">Change Runway to</span> 
  <el:combo name="newRwyD" size="1" idx="*" options="${dRunways}" value="${rwy}" /> 
  <el:cmdbutton url="updrwy" post="true" link="${flightInfo}" label="UPDATE" /></span>
@@ -146,7 +146,7 @@
 </c:choose></c:if>
 <c:if test="${empty rwy}">
 <span class="error bld">UNKNOWN</span></c:if>
- <a href="javascript:void golgotha.local.zoomTo(${pirep.landingLocation.latitude}, ${pirep.landingLocation.longitude})">Zoom to Landing</a>
+ <a href="javascript:void golgotha.local.zoomTo(${pirep.landingLocation.latitude}, ${pirep.landingLocation.longitude})">Zoom<span class="nophone"> to Landing</span></a>
 <c:if test="${access.canDispose && (!empty aRunways)}"><span class="nophone"> <span class="ita">Change Runway to</span> 
  <el:combo name="newRwyA" size="1" idx="*" options="${aRunways}" value="${rwy}" /> 
  <el:cmdbutton url="updrwy" post="true" link="${flightInfo}" label="UPDATE" /></span>
@@ -184,7 +184,7 @@
  <td class="label">Arrival Information</td>
  <td class="data" colspan="${cspan}"><c:if test="${!empty gate}"><span class="sec bld">${gate.name}</span>, </c:if>
 <fmt:weight value="${pirep.gateWeight}" /> total, <fmt:weight value="${pirep.gateFuel}" /> fuel
-<c:if test="${!empty gate}"> <a href="javascript:void golgotha.local.zoomTo(${gate.latitude}, ${gate.longitude}, 15)">Zoom to Gate</a></c:if></td>
+<c:if test="${!empty gate}"> <a href="javascript:void golgotha.local.zoomTo(${gate.latitude}, ${gate.longitude}, 15)">Zoom <span class="nophone">to Gate</span></a></c:if></td>
 </tr>
 </c:if>
 <c:if test="${pirep.totalFuel > 0}">
