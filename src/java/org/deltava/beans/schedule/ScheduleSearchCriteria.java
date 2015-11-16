@@ -43,8 +43,8 @@ public class ScheduleSearchCriteria extends Flight {
 	private int _hourD = -1;
 	private int _hourA = -1;
 	
-	private int _routeLegs;
-	private int _lastFlownInterval;
+	private int _routeLegs = -1;
+	private int _lastFlownInterval = -1;
 
 	private String _sortBy;
 	private String _dbName;
