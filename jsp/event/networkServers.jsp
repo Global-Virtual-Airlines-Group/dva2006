@@ -33,7 +33,7 @@ golgotha.local.setNetwork = function(combo) {
 <el:form action="netservers.do" method="get" validate="return false">
 <view:table cmd="netservers">
 <tr class="title">
- <td colspan="3" class="left">NETWORK SERVERS - ${netInfo.network} - VALID AS OF <fmt:date date="${netInfo.validDate}" /></td>
+ <td colspan="3" class="left">NETWORK SERVERS - ${netInfo.network} - VALID AS OF <fmt:date date="${netInfo.validDate}" t="HH:mm" /></td>
  <td colspan="2" class="right nophone">SELECT NETWORK <el:combo name="ID" size="1" idx="1" onChange="void golgotha.local.setNetwork(this)" options="${networks}" value="${netInfo.network}" /></td>
 </tr>
 
