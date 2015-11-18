@@ -14,6 +14,7 @@
 <content:css name="view" />
 <content:js name="common" />
 <content:pics />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <script type="text/javascript">
 golgotha.local.sort = function(combo) {
 	if (!golgotha.form.comboSet(combo)) return false;
@@ -34,24 +35,24 @@ golgotha.local.sort = function(combo) {
 <el:form action="applicants.do" method="get" validate="return false">
 <view:table cmd="applicants">
 <tr class="title caps">
- <td class="left" colspan="3"><content:airline /> PILOT APPLICATIONS</td>
- <td class="right" colspan="3">AIRLINE SIZE - <fmt:int value="${airlineSize}" /> PILOTS, MAX <fmt:int value="${maxSize}" /></td>
+ <td class="left" colspan="3"><span class="nophone"><content:airline /> </span>PILOT APPLICATIONS</td>
+ <td class="right" colspan="3">AIRLINE SIZE - <fmt:int value="${airlineSize}" /> PILOTS<span class="nophone">, MAX <fmt:int value="${maxSize}" /></span></td>
 </tr>
 
 <!-- Sort Bar -->
 <tr class="title">
  <td colspan="2">STATUS <el:combo name="status" idx="*" size="1" firstEntry="" options="${statuses}" value="${param.status}" onChange="void golgotha.local.sort(this)" /></td>
  <td colspan="3">EQUIPMENT PROGRAM <el:combo name="eqType" idx="*" size="1" firstEntry="" options="${eqTypes}" value="${param.eqType}" onChange="void golgotha.local.sort(this)" /></td>
- <td>LETTER <el:combo name="letter" idx="*" size="1" firstEntry="" options="${letters}" value="${param.letter}" onChange="void golgotha.local.sort(this)" /></td>
+ <td class="nophone">LETTER <el:combo name="letter" idx="*" size="1" firstEntry="" options="${letters}" value="${param.letter}" onChange="void golgotha.local.sort(this)" /></td>
 </tr>
 
 <!-- Table Header Bar-->
 <tr class="title">
  <td style="width:20%">APPLICANT NAME</td>
  <td style="width:10%">REGISTERED ON</td>
- <td style="width:18%">HIRED AS</td>
+ <td class="nohphone">HIRED AS</td>
  <td style="width:17%">LOCATION</td>
- <td style="width:10%">SCORE</td>
+ <td>SCORE</td>
  <td>E-MAIL ADDRESS</td>
 </tr>
 
