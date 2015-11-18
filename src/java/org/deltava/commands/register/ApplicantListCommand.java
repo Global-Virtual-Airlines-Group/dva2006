@@ -2,6 +2,7 @@
 package org.deltava.commands.register;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.deltava.beans.Applicant;
@@ -15,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display applicants.
  * @author Luke
- * @version 1.0
+ * @version 6.3
  * @since 1.0
  */
 
@@ -66,14 +67,8 @@ public class ApplicantListCommand extends AbstractViewCommand {
 			}
 			
 			// Get the applicant/pilot IDs
-			Collection<Integer> IDs = new HashSet<Integer>();
-			Collection<Integer> pIDs = new HashSet<Integer>();
-			for (Iterator<Applicant> i = results.iterator(); i.hasNext(); ) {
-				Applicant a = i.next();
-				IDs.add(new Integer(a.getID()));
-				if (a.getPilotID() != 0)
-					pIDs.add(new Integer(a.getPilotID()));
-			}
+			Collection<Integer> IDs = results.stream().map(Applicant::getID).collect(Collectors.toSet());
+			Collection<Integer> pIDs = results.stream().filter(a -> (a.getPilotID() > 0)).map(Applicant::getPilotID).collect(Collectors.toSet());
 			
 			// Load the questionnaires
 			GetExam exdao = new GetExam(con);
@@ -85,20 +80,16 @@ public class ApplicantListCommand extends AbstractViewCommand {
 			if (isQueue) {
 				Map<Integer, Boolean> addrOK = new HashMap<Integer, Boolean>();
 				GetAddressValidation avdao = new GetAddressValidation(con);
-				for (Iterator<Integer> i = IDs.iterator(); i.hasNext(); ) {
-					Integer id = i.next();
+				for (Integer id : IDs)
 					addrOK.put(id, Boolean.valueOf(avdao.isValid(id.intValue())));
-				}
 			
-				// Save address validation
 				ctx.setAttribute("addrValid", addrOK, REQUEST);
 			}
 			
 			// Load the airline size
 			GetStatistics stdao = new GetStatistics(con);
-			ctx.setAttribute("airlineSize", new Integer(stdao.getActivePilots(SystemData.get("airline.db"))), REQUEST);
+			ctx.setAttribute("airlineSize", Integer.valueOf(stdao.getActivePilots(SystemData.get("airline.db"))), REQUEST);
 
-			// Save the results
 			vc.setResults(results);
 		} catch (DAOException de) {
 			throw new CommandException(de);
