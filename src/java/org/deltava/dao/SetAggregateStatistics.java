@@ -5,8 +5,7 @@ import java.sql.*;
 
 import org.deltava.beans.Simulator;
 import org.deltava.beans.flight.*;
-import org.deltava.beans.schedule.Airport;
-import org.deltava.beans.schedule.RoutePair;
+import org.deltava.beans.schedule.*;
 
 /**
  * A Data Access Object to update Flight Statistics. 
@@ -85,12 +84,12 @@ public class SetAggregateStatistics extends DAO {
 		executeUpdate(0);
 		
 		prepareStatementWithoutLimits("INSERT INTO FLIGHTSTATS_ROUTES (SELECT PILOT_ID, AIRPORT_D, AIRPORT_A, COUNT(ID), MAX(DATE) FROM "
-			+ "PIREPS WHERE (STATUS=?) AND (PILOT_ID=?) AND (AIRPORT_D=?) AND (AIRPORT_A=?))");
+			+ "PIREPS WHERE (STATUS=?) AND (PILOT_ID=?) AND (AIRPORT_D=?) AND (AIRPORT_A=?) HAVING (PILOT_ID<>NULL))");
 		_ps.setInt(1, FlightReport.OK);
 		_ps.setInt(2, pilotID);
 		_ps.setString(3, rp.getAirportD().getIATA());
 		_ps.setString(4, rp.getAirportA().getIATA());
-		executeUpdate(1);
+		executeUpdate(0);
 	}
 	
 	/*
