@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Applicant Questionaires.
  * @author Luke
- * @version 5.0
+ * @version 6.3
  * @since 1.0
  */
 
@@ -173,13 +173,13 @@ public class GetQuestionnaire extends DAO {
 		
 		try {
 			prepareStatement(sqlBuf.toString());
-			return CollectionUtils.createMap(execute(), "pilotID");
+			return CollectionUtils.createMap(execute(), "authorID");
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 	}
 
-	/**
+	/*
 	 * Helper method to iterate through the result set.
 	 */
 	private List<Examination> execute() throws SQLException {
@@ -201,8 +201,6 @@ public class GetQuestionnaire extends DAO {
 				e.setComments(rs.getString(10));
 				e.setSize(rs.getInt(11));
 				e.setScore(rs.getInt(12));
-
-				// Add name data if present
 				if (hasName) {
 					e.setFirstName(rs.getString(13));
 					e.setLastName(rs.getString(14));
