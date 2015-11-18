@@ -274,7 +274,7 @@
  <td class="small nophone"><fmt:int value="${stat.pilotIDs}" /></td>
 </c:if>
 <c:if test="${!hasPilotID}">
- <td class="small nophone"><fmt:distance value="${stat.miles}" /></td>
+ <td class="small nophone"><fmt:distance value="${stat.distance}" /></td>
 </c:if>
  <td class="small nophone"><fmt:dec value="${stat.avgHours}" fmt="#,##0.00" /> hours, <fmt:distance value="${stat.avgMiles}" /></td>
 </view:row>
