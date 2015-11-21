@@ -34,7 +34,7 @@ do
 done
 
 # Resync the spamd database
-sa-learn --sync --dbpath $spamd_db
+sa-learn --sync --force-expire --dbpath $spamd_db
 
 # Ensure permissions are correct
 chown vscan:postfix $spamd_db/*
