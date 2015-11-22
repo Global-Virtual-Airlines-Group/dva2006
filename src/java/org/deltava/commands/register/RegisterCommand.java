@@ -31,7 +31,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to register a new Applicant.
  * @author Luke
- * @version 6.0
+ * @version 6.3
  * @since 1.0
  */
 
@@ -147,6 +147,7 @@ public class RegisterCommand extends AbstractCommand {
 			// Forward to the JSP - redirect to seperate page if we're full
 			if (!isSession) {
 				ctx.setAttribute("newSession", Boolean.TRUE, SESSION);
+				ctx.setAttribute("java.util.Locale", Locale.US, SESSION);
 				result.setURL("/jsp/register/initSession.jsp");
 			} else
 				result.setURL("/jsp/register/" + ((ignoreFull || (!isFull)) ? "register.jsp" : "regFullWarn.jsp"));
