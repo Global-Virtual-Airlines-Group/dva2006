@@ -5,9 +5,9 @@ Disallow: /roster.do
 Disallow: /logbook.do
 Disallow: /profile.do
 Disallow: /pwdreset.do
-Disallow: /airlinestats.do
 Disallow: /acars_data.ws
 Disallow: /acars_earth.ws
 Disallow: /thread.do?id=0xc981
 Disallow: /tracks
+Disallow: /luke
 Disallow: /http:/
