@@ -54,7 +54,7 @@ public class SetAggregateStatistics extends DAO {
 			+ "SUM(DISTANCE) AS MILES, SUM(FLIGHT_TIME) AS HOURS, 1 AS PIDS, AVG(LOADFACTOR), SUM(PAX), SUM(IF(FSVERSION=?,1,0)) AS FS7, "
 			+ "SUM(IF(FSVERSION=?,1,0)) AS FS8, SUM(IF(FSVERSION=?,1,0)) AS FS9, SUM(IF(FSVERSION=?,1,0)) AS FSX, SUM(IF(FSVERSION=?,1,0)) AS P3D, "
 			+ "SUM(IF(FSVERSION=?,1,IF(FSVERSION=?,1,0))) AS XP, SUM(IF(FSVERSION=0,1,0)) AS FSO FROM PIREPS WHERE (STATUS=?) AND (PILOT_ID=?) "
-			+ "HAVING (PILIOT_ID<>NULL))");
+			+ "HAVING (PILOT_ID<>NULL))");
 		_ps.setInt(1, FlightReport.ATTR_ACARS);
 		_ps.setInt(2, FlightReport.ATTR_VATSIM);
 		_ps.setInt(3, FlightReport.ATTR_IVAO);
@@ -69,7 +69,7 @@ public class SetAggregateStatistics extends DAO {
 		_ps.setInt(12, Simulator.XP10.getCode());
 		_ps.setInt(13, FlightReport.OK);
 		_ps.setInt(14, pilotID);
-		executeUpdate(1);
+		executeUpdate(0);
 	}
 
 	/*
