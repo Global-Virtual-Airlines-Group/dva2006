@@ -38,9 +38,35 @@ public class SetAggregateStatistics extends DAO {
 			updateRoute(fr.getDatabaseID(DatabaseID.PILOT), fr);
 			updateEQ(fr.getEquipmentType());
 			updateDate(fr.getDate());
+			if (fr.hasAttribute(FlightReport.ATTR_ACARS))
+				updateLanding(fr);
+			
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
+			throw new DAOException(se);
+		}
+	}
+	
+	/*
+	 * Updates ACARS landing statistics for a particular flight.
+	 */
+	private void updateLanding(FlightReport fr) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("DELETE FROM FLIGHTSTATS_LANDING WHERE (ID=?)");
+			_ps.setInt(1, fr.getID());
+			executeUpdate(0);
+			if (fr.getStatus() != FlightReport.OK)
+				return;
+			
+			prepareStatementWithoutLimits("INSERT INTO FLIGHTSTATS_LANDING (SELECT PR.ID, PR.PILOT_ID, PR.EQTYPE, PR.AIRPORT_A, "
+				+ "APR.LANDING_VSPEED, CAST(R.DISTANCE AS SIGNED) FROM PIREPS PR, ACARS_PIREPS_APR, acars.RWYDATA R WHERE "
+				+ "(APR.ID=PR.ID) AND (APR.ACARS_ID=R.ID) AND (R.ISTAKEOFF=?) AND (R.DISTANCE<?) AND (PR.ID=?))");
+			_ps.setBoolean(1, false);
+			_ps.setInt(2, 22500);
+			_ps.setInt(3, fr.getID());
+			executeUpdate(0);
+		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 	}
