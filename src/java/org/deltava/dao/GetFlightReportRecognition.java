@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,18 +9,18 @@ import org.deltava.beans.flight.FlightReport;
 import org.deltava.util.cache.*;
 
 /**
- * A Data Access Object to get Flight Reports for Pilot recognition.
+ * A Data Access Object to get Flight Report IDs for Pilot recognition.
  * @author Luke
- * @version 5.0
+ * @version 6.3
  * @since 1.0
  */
 
-public class GetFlightReportRecognition extends GetFlightReports {
+public class GetFlightReportRecognition extends DAO {
 	
-	private static final Cache<CacheableList<FlightReport>> _cache = CacheManager.getCollection(FlightReport.class, "GreasedLandings"); 
+	private static final Cache<CacheableList<Integer>> _cache = CacheManager.getCollection(Integer.class, "GreasedLandings"); 
 	
-	private static final double RUNWAY_LDG_ZONE_RATIO = 0.35;
-	private static final int TD_ZONE = 1500;
+	private static final int OPT_VSPEED = -250;
+	private static final int OPT_DISTANCE = 1250;
 	
 	private int _dayFilter;
 
@@ -46,35 +46,29 @@ public class GetFlightReportRecognition extends GetFlightReports {
 	 * @return a List of ACARSFlightReports
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<FlightReport> getGreasedLandings() throws DAOException {
+	public List<Integer> getGreasedLandings() throws DAOException {
 		
 		// Check the cache
-		CacheableList<FlightReport> results = _cache.get("ALL" + _dayFilter);
+		CacheableList<Integer> results = _cache.get("ALL" + _dayFilter);
 		if (results != null)
 			return results;
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, NULL, NULL, APR.* FROM PIREPS PR, ACARS_PIREPS APR, "
-			+ "acars.RWYDATA R WHERE (R.ID=APR.ACARS_ID) AND (R.ISTAKEOFF=?) AND (PR.ID=APR.ID) AND "
-			+ "(APR.CLIENT_BUILD >= ?) AND (PR.STATUS=?) AND (APR.LANDING_VSPEED < 0) AND "
-			+ "((R.DISTANCE/R.LENGTH) <= ?)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT ID, (((ABS(?-VSPEED) * 3) + (ABS(?-RWYDISTANCE) * 2)) / 5) AS FACT "
+			+ "FROM FLIGHTSTATS_LANDING ");
 		if (_dayFilter > 0)
-			sqlBuf.append(" AND (PR.DATE > DATE_SUB(NOW(), INTERVAL ? DAY))");
-		sqlBuf.append(" ORDER BY APR.LANDING_VSPEED DESC, ABS(?-CAST(R.DISTANCE AS SIGNED)), PR.DATE DESC");
+			sqlBuf.append(" WHERE (DATE > DATE_SUB(NOW(), INTERVAL ? DAY))");
+		sqlBuf.append(" ORDER BY FACT, DATE DESC");
 
 		try {
-			int pos = 0;
 			prepareStatement(sqlBuf.toString());
-			_ps.setBoolean(++pos, false);
-			_ps.setInt(++pos, FlightReport.MIN_ACARS_CLIENT);
-			_ps.setInt(++pos, FlightReport.OK);
-			_ps.setDouble(++pos, RUNWAY_LDG_ZONE_RATIO);
+			_ps.setInt(1, OPT_VSPEED);
+			_ps.setInt(2, OPT_DISTANCE);
 			if (_dayFilter > 0)
-				_ps.setInt(++pos, _dayFilter);
-			_ps.setInt(++pos, TD_ZONE);
+				_ps.setInt(3, _dayFilter);
 
 			// Add to the cache
-			results = new CacheableList<FlightReport>("ALL" + _dayFilter);
+			results = new CacheableList<Integer>("ALL" + _dayFilter);
 			results.addAll(execute());
 			_cache.add(results);
 			return results;
@@ -88,35 +82,29 @@ public class GetFlightReportRecognition extends GetFlightReports {
 	 * @return a List of ACARSFlightReport beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<FlightReport> getStaffReports() throws DAOException {
+	public List<Integer> getStaffReports() throws DAOException {
 		
 		// Check the cache
-		CacheableList<FlightReport> results = _cache.get("STAFF" + _dayFilter);
+		CacheableList<Integer> results = _cache.get("STAFF" + _dayFilter);
 		if (results != null)
 			return results;
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, NULL, NULL, APR.* FROM STAFF S LEFT JOIN (PIREPS PR, "
-			+ "ACARS_PIREPS APR, acars.RWYDATA R) ON (PR.PILOT_ID=S.ID) WHERE (PR.ID=APR.ID) AND (R.ID=APR.ACARS_ID) "
-			+ "AND (APR.CLIENT_BUILD >= ?) AND (PR.STATUS=?) AND (R.ISTAKEOFF=?) AND (APR.LANDING_VSPEED < 0) "
-			+ "AND ((R.DISTANCE/R.LENGTH) <= ?)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT L.ID, (((ABS(?-L.VSPEED) * 3) + (ABS(?-L.RWYDISTANCE) * 2)) / 5) AS FACT "
+			+ "FROM STAFF S LEFT JOIN FLIGHTSTATS_LANDING L ON (L.PILOT_ID=S.ID)"); 
 		if (_dayFilter > 0)
-			sqlBuf.append(" AND (PR.DATE > DATE_SUB(NOW(), INTERVAL ? DAY))");
-		sqlBuf.append(" ORDER BY APR.LANDING_VSPEED DESC, ABS(?-CAST(R.DISTANCE AS SIGNED)), PR.DATE DESC");
+			sqlBuf.append(" WHERE (L.DATE > DATE_SUB(NOW(), INTERVAL ? DAY))");
+		sqlBuf.append(" ORDER BY FACT, L.DATE DESC");
 
 		try {
-			int pos = 0;
 			prepareStatement(sqlBuf.toString());
-			_ps.setInt(++pos, FlightReport.MIN_ACARS_CLIENT);
-			_ps.setInt(++pos, FlightReport.OK);
-			_ps.setBoolean(++pos, false);
-			_ps.setDouble(++pos, RUNWAY_LDG_ZONE_RATIO);
+			_ps.setInt(1, OPT_VSPEED);
+			_ps.setInt(2, OPT_DISTANCE);
 			if (_dayFilter > 0)
-				_ps.setInt(++pos, _dayFilter);
-			_ps.setInt(++pos, TD_ZONE);
+				_ps.setInt(3, _dayFilter);
 
 			// Add to the cache
-			results = new CacheableList<FlightReport>("STAFF" + _dayFilter);
+			results = new CacheableList<Integer>("STAFF" + _dayFilter);
 			results.addAll(execute());
 			_cache.add(results);
 			return results;
@@ -131,36 +119,30 @@ public class GetFlightReportRecognition extends GetFlightReports {
 	 * @return a List of ACARSFlightReport beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<FlightReport> getGreasedLandings(String eqType) throws DAOException {
+	public List<Integer> getGreasedLandings(String eqType) throws DAOException {
 		
 		// Check the cache
-		CacheableList<FlightReport> results = _cache.get("EQ" + eqType + "$" + _dayFilter);
+		CacheableList<Integer> results = _cache.get("EQ" + eqType + "$" + _dayFilter);
 		if (results != null)
 			return results;
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, NULL, NULL, APR.* FROM PIREPS PR, ACARS_PIREPS APR, "
-			+ "acars.RWYDATA R WHERE (PR.ID=APR.ID) AND (PR.EQTYPE=?) AND (APR.ACARS_ID=R.ID) AND (PR.STATUS=?) "
-			+ "AND (R.ISTAKEOFF=?) AND (APR.CLIENT_BUILD >= ?) AND (APR.LANDING_VSPEED < 0) AND "
-			+ "((R.DISTANCE/R.LENGTH) <= ?)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT ID, (((ABS(?-VSPEED) * 3) + (ABS(?-RWYDISTANCE) * 2)) / 5) AS FACT "
+			+ "FROM FLIGHTSTATS_LANDING WHERE (EQTYPE=?)");
 		if (_dayFilter > 0)
-			sqlBuf.append(" AND (PR.DATE > DATE_SUB(NOW(), INTERVAL ? DAY))");
-		sqlBuf.append(" ORDER BY APR.LANDING_VSPEED DESC, ABS(?-CAST(R.DISTANCE AS SIGNED)), PR.DATE DESC");
+			sqlBuf.append("AND (DATE > DATE_SUB(NOW(), INTERVAL ? DAY))");
+		sqlBuf.append(" ORDER BY FACT, DATE DESC");
 		
 		try {
-			int pos = 0;
 			prepareStatement(sqlBuf.toString());
-			_ps.setString(++pos, eqType);
-			_ps.setInt(++pos, FlightReport.OK);
-			_ps.setBoolean(++pos, false);
-			_ps.setInt(++pos, FlightReport.MIN_ACARS_CLIENT);
-			_ps.setDouble(++pos, RUNWAY_LDG_ZONE_RATIO);
+			_ps.setInt(1, OPT_VSPEED);
+			_ps.setInt(2, OPT_DISTANCE);
+			_ps.setString(3, eqType);
 			if (_dayFilter > 0)
-				_ps.setInt(++pos, _dayFilter);
-			_ps.setInt(++pos, TD_ZONE);
+				_ps.setInt(4, _dayFilter);
 			
 			// Add to the cache
-			results = new CacheableList<FlightReport>("EQ" + eqType + "$" + _dayFilter);
+			results = new CacheableList<Integer>("EQ" + eqType + "$" + _dayFilter);
 			results.addAll(execute());
 			_cache.add(results);
 			return results;
@@ -178,33 +160,27 @@ public class GetFlightReportRecognition extends GetFlightReports {
 	public List<String> getACARSEquipmentTypes(int minLegs) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder buf = new StringBuilder("SELECT P.EQTYPE, COUNT(P.ID) AS CNT FROM PIREPS P, ACARS_PIREPS APR, "
-			+ "acars.RWYDATA R WHERE (P.ID=APR.ID) AND (APR.ACARS_ID=R.ID) AND (P.STATUS=?) AND (R.ISTAKEOFF=?) "
-			+ "AND (APR.CLIENT_BUILD >= ?) AND (APR.LANDING_VSPEED < 0) AND ((R.DISTANCE/R.LENGTH) <= ?)");
+		StringBuilder buf = new StringBuilder("SELECT EQTYPE, COUNT(ID) AS CNT FROM FLIGHTSTATS_LANDING");
 		if (_dayFilter > 0)
-			buf.append(" AND (P.DATE > DATE_SUB(NOW(), INTERVAL ? DAY))");
-		buf.append(" GROUP BY P.EQTYPE HAVING (CNT >= ?) ORDER BY CNT DESC");
+			buf.append(" WHERE (DATE > DATE_SUB(NOW(), INTERVAL ? DAY))");
+		buf.append(" GROUP BY EQTYPE HAVING (CNT >= ?) ORDER BY CNT DESC");
 		
 		try {
 			int pos = 0;
 			prepareStatement(buf.toString());
-			_ps.setInt(++pos, FlightReport.OK);
-			_ps.setBoolean(++pos, false);
-			_ps.setInt(++pos, FlightReport.MIN_ACARS_CLIENT);
-			_ps.setDouble(++pos, RUNWAY_LDG_ZONE_RATIO);
 			if (_dayFilter > 0)
 				_ps.setInt(++pos, _dayFilter);
 			_ps.setInt(++pos, minLegs);
 
 			// Execute the query
-			Collection<String> results = new LinkedHashSet<String>();
+			List<String> results = new ArrayList<String>();
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next())
 					results.add(rs.getString(1));
 			}
 
 			_ps.close();
-			return new ArrayList<String>(results);
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -237,5 +213,18 @@ public class GetFlightReportRecognition extends GetFlightReports {
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
+	}
+	
+	/*
+	 * Helper method to load Flight Report IDs.
+	 */
+	private List<Integer> execute() throws SQLException {
+		List<Integer> results = new ArrayList<Integer>();
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next())
+				results.add(Integer.valueOf(rs.getInt(1)));
+		}
+		
+		return results;
 	}
 }

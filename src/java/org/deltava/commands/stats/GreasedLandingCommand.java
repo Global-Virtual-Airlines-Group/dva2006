@@ -1,10 +1,11 @@
-// Copyright 2005, 2006, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.flight.*;
+import org.deltava.beans.acars.RunwayDistance;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -13,20 +14,21 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to display the smoothest landings.
  * @author Luke
- * @version 3.1
+ * @version 6.3
  * @since 1.0
  */
 
 public class GreasedLandingCommand extends AbstractViewCommand {
 
-	private static final List<?> DATE_FILTER = ComboUtils.fromArray(new String[] { "All Landings", "30 Days", "60 Days", "90 Days" },
-			new String[] { "0", "30", "60", "90" });
+	private static final List<?> DATE_FILTER = ComboUtils.fromArray(new String[] { "30 Days", "60 Days", "90 Days", "180 Days", "1 Year" },
+			new String[] { "30", "60", "90", "180", "365" });
 
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Load the view context
@@ -34,7 +36,8 @@ public class GreasedLandingCommand extends AbstractViewCommand {
 
 		// Check equipment type and how many days back to search
 		String eqType = ctx.getParameter("eqType");
-		int daysBack = StringUtils.parse(ctx.getParameter("days"), 30);
+		int daysBack = StringUtils.parse(ctx.getParameter("days"), 90);
+		ctx.setAttribute("daysBack", Integer.valueOf(daysBack), REQUEST);
 		try {
 			Connection con = ctx.getConnection();
 
@@ -45,29 +48,39 @@ public class GreasedLandingCommand extends AbstractViewCommand {
 			List<Object> eqTypes = new ArrayList<Object>();
 			eqTypes.add(ComboUtils.fromString("All Aircraft", ""));
 			eqTypes.add(ComboUtils.fromString("Staff Members", "staff"));
-			eqTypes.addAll(dao.getACARSEquipmentTypes(25));
+			eqTypes.addAll(dao.getACARSEquipmentTypes(20));
 			ctx.setAttribute("eqTypes", eqTypes, REQUEST);
 			
 			// Get the results
 			dao.setQueryMax(vc.getCount());
 			dao.setDayFilter(daysBack);
+			List<Integer> results = null;
 			if (StringUtils.isEmpty(eqType))
-				vc.setResults(dao.getGreasedLandings());
+				results = dao.getGreasedLandings();
 			else if ("staff".equals(eqType))
-				vc.setResults(dao.getStaffReports());
+				results = dao.getStaffReports();
 			else
-				vc.setResults(dao.getGreasedLandings(eqType));
+				results = dao.getGreasedLandings(eqType);
 			
-			// Get the Pilot IDs
-			Collection<Integer> IDs = new HashSet<Integer>();
-			for (Iterator<?> i = vc.getResults().iterator(); i.hasNext(); ) {
-				FlightReport fr = (FlightReport) i.next();
-				IDs.add(new Integer(fr.getDatabaseID(DatabaseID.PILOT)));
+			// Load the PIREPs and runways
+			GetFlightReports frdao = new GetFlightReports(con);
+			GetACARSData acdao = new GetACARSData(con);
+			Collection<Integer> pilotIDs = new HashSet<Integer>();
+			Collection<FlightReport> pireps = new ArrayList<FlightReport>();
+			Map<Integer, RunwayDistance> runways = new HashMap<Integer, RunwayDistance>();
+			for (Integer pirepID : results) {
+				FlightReport fr = frdao.get(pirepID.intValue());
+				pilotIDs.add(Integer.valueOf(fr.getDatabaseID(DatabaseID.PILOT)));
+				pireps.add(fr);
+				RunwayDistance rd = acdao.getLandingRunway(fr.getDatabaseID(DatabaseID.ACARS));
+				if (rd != null) runways.put(pirepID, rd);
 			}
 			
 			// Load the Pilots
 			GetPilot pdao = new GetPilot(con);
-			ctx.setAttribute("pilots", pdao.getByID(IDs, "PILOTS"), REQUEST);
+			ctx.setAttribute("pilots", pdao.getByID(pilotIDs, "PILOTS"), REQUEST);
+			ctx.setAttribute("rwys", runways, REQUEST);
+			vc.setResults(pireps);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

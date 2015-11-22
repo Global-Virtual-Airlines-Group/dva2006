@@ -283,27 +283,22 @@ public class GetFlightReportStatistics extends DAO {
 			return results.clone();
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT PR.EQTYPE, COUNT(APR.ID) AS CNT, "
-				+ "ROUND(SUM(PR.FLIGHT_TIME),1) AS HRS, AVG(APR.LANDING_VSPEED) AS VS, "
-				+ "STDDEV_POP(APR.LANDING_VSPEED) AS SD, AVG(RD.DISTANCE) AS DST, "
-				+ "STDDEV_POP(RD.DISTANCE) AS DSD, (ABS(AVG(ABS(? - APR.LANDING_VSPEED))*3)+"
-				+ "STDDEV_POP(APR.LANDING_VSPEED)*2) AS FACT FROM PIREPS PR, ACARS_PIREPS APR "
-				+ "LEFT JOIN acars.RWYDATA RD ON (APR.ACARS_ID=RD.ID) AND (RD.ISTAKEOFF=?) "
-				+ "WHERE (APR.CLIENT_BUILD>?) AND (APR.ID=PR.ID) AND (APR.LANDING_VSPEED<0) "
-				+ "AND (PR.PILOT_ID=?) AND (PR.STATUS=?) ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT L.EQTYPE, COUNT(L.ID) AS CNT, "
+				+ "ROUND(SUM(PR.FLIGHT_TIME),1) AS HRS, AVG(L.VSPEED) AS VS, "
+				+ "STDDEV_POP(L.VSPEED) AS SD, AVG(L.RWYDISTANCE) AS DST, "
+				+ "STDDEV_POP(L.RWYDISTANCE) AS DSD, (ABS(AVG(ABS(?-L.VSPEED))*3)+"
+				+ "STDDEV_POP(L.VSPEED)*2) AS FACT FROM PIREPS PR, FLIGHTSTATS_LANDING L "
+				+ "WHERE (PR.ID=L.ID) AND (L.PILOT_ID=?) ");
 		if (_dayFilter > 0)
 			sqlBuf.append("AND (PR.DATE > DATE_SUB(NOW(), INTERVAL ? DAY)) ");
-		sqlBuf.append("GROUP BY PR.EQTYPE HAVING (CNT>2) ORDER BY FACT");
+		sqlBuf.append("GROUP BY L.EQTYPE HAVING (CNT>2) ORDER BY FACT");
 		
 		try {
 			prepareStatement(sqlBuf.toString());
 			_ps.setInt(1, OPT_VSPEED);
-			_ps.setBoolean(2, false);
-			_ps.setInt(3, FlightReport.MIN_ACARS_CLIENT);
-			_ps.setInt(4, pilotID);
-			_ps.setInt(5, FlightReport.OK);
+			_ps.setInt(2, pilotID);
 			if (_dayFilter > 0)
-				_ps.setInt(6, _dayFilter);
+				_ps.setInt(3, _dayFilter);
 			
 			// Execute the query
 			results = new CacheableList<LandingStatistics>(key);
@@ -349,14 +344,12 @@ public class GetFlightReportStatistics extends DAO {
 			results.put(Integer.valueOf(x), ZERO);
 		
 		try {
-			prepareStatementWithoutLimits("SELECT DISTINCT ROUND(APR.LANDING_VSPEED / ?) * ? AS RNG, "
-				+ "COUNT(APR.ACARS_ID) FROM ACARS_PIREPS APR, PIREPS PR WHERE (APR.ID=PR.ID) AND "
-				+ "(PR.STATUS=?) AND (PR.PILOT_ID=?) AND (APR.LANDING_VSPEED>?) GROUP BY RNG");
+			prepareStatementWithoutLimits("SELECT DISTINCT ROUND(VSPEED / ?) * ? AS RNG, COUNT(ID) "
+				+ "FROM FLIGHTSTATS_LANDING WHERE (PILOT_ID=?) AND (VSPEED>?) GROUP BY RNG");
 			_ps.setInt(1, range);
 			_ps.setInt(2, range);
-			_ps.setInt(3, FlightReport.OK);
-			_ps.setInt(4, pilotID);
-			_ps.setInt(5, MAX_VSPEED);
+			_ps.setInt(3, pilotID);
+			_ps.setInt(4, MAX_VSPEED);
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next())
 					results.put(Integer.valueOf(rs.getInt(1)), Integer.valueOf(rs.getInt(2)));
