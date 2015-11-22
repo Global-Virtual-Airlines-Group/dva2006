@@ -22,6 +22,7 @@ import org.deltava.util.system.SystemData;
 public class GetFlightReportStatistics extends DAO {
 	
 	private static final int MAX_VSPEED = -2500;
+	private static final int OPT_VSPEED = -225;
 	private static final Cache<CacheableCollection<LandingStatistics>> _cache = CacheManager.getCollection(LandingStatistics.class, "LandingStats");
 	private static final Cache<CacheableCollection<FlightStatsEntry>> _statCache = CacheManager.getCollection(FlightStatsEntry.class, "FlightStats");
 	
@@ -170,7 +171,7 @@ public class GetFlightReportStatistics extends DAO {
 				+ "COUNT(PR.ID) AS CNT, ROUND(SUM(PR.FLIGHT_TIME),1) AS HRS, AVG(APR.LANDING_VSPEED) AS VS, "
 				+ "STDDEV_POP(APR.LANDING_VSPEED) AS SD, AVG(RD.DISTANCE) AS DST, STDDEV_POP(RD.DISTANCE) AS DSD, "
 				+ "IFNULL(IF(STDDEV_POP(RD.DISTANCE) < 20, NULL, (ABS(AVG(RD.DISTANCE))*3+STDDEV_POP(RD.DISTANCE)*2)/15), 650) "
-				+ "+ (ABS(AVG(APR.LANDING_VSPEED)*3) + STDDEV_POP(APR.LANDING_VSPEED)*2) AS FACT FROM PILOTS P, PIREPS PR, "
+				+ "+ (ABS(AVG(ABS(? - APR.LANDING_VSPEED))*3) + STDDEV_POP(APR.LANDING_VSPEED)*2) AS FACT FROM PILOTS P, PIREPS PR, "
 				+ "ACARS_PIREPS APR LEFT JOIN acars.RWYDATA RD ON (APR.ACARS_ID=RD.ID) AND (RD.ISTAKEOFF=?) WHERE "
 				+ "(APR.CLIENT_BUILD>?) AND (APR.ID=PR.ID) AND (APR.LANDING_VSPEED < 0) AND (PR.PILOT_ID=P.ID) AND (PR.STATUS=?) ");
 		if (eqType != null)
@@ -182,6 +183,7 @@ public class GetFlightReportStatistics extends DAO {
 		try {
 			int pos = 0;
 			prepareStatement(buf.toString());
+			_ps.setInt(++pos, OPT_VSPEED);
 			_ps.setBoolean(++pos, false);
 			_ps.setInt(++pos, FlightReport.MIN_ACARS_CLIENT);
 			_ps.setInt(++pos, FlightReport.OK);
@@ -237,11 +239,12 @@ public class GetFlightReportStatistics extends DAO {
 			prepareStatement("SELECT PR.EQTYPE, APR.LANDING_VSPEED, RD.DISTANCE, RD.LENGTH FROM PIREPS PR, "
 				+ "ACARS_PIREPS APR, acars.RWYDATA RD WHERE (APR.ACARS_ID=RD.ID) AND (RD.ISTAKEOFF=?) AND "
 				+ "(APR.CLIENT_BUILD>?) AND (RD.DISTANCE<RD.LENGTH) AND (APR.ID=PR.ID) AND (APR.LANDING_VSPEED<0) "
-				+ "AND (PR.PILOT_ID=?) AND (PR.STATUS=?) ORDER BY APR.LANDING_VSPEED");
+				+ "AND (PR.PILOT_ID=?) AND (PR.STATUS=?) ORDER BY ABS(? - APR.LANDING_VSPEED)");
 			_ps.setBoolean(1, false);
 			_ps.setInt(2, FlightReport.MIN_ACARS_CLIENT);
 			_ps.setInt(3, pilotID);
 			_ps.setInt(4, FlightReport.OK);
+			_ps.setInt(5, OPT_VSPEED);
 
 			// Execute the query
 			results = new CacheableList<LandingStatistics>(key);
@@ -283,7 +286,7 @@ public class GetFlightReportStatistics extends DAO {
 		StringBuilder sqlBuf = new StringBuilder("SELECT PR.EQTYPE, COUNT(APR.ID) AS CNT, "
 				+ "ROUND(SUM(PR.FLIGHT_TIME),1) AS HRS, AVG(APR.LANDING_VSPEED) AS VS, "
 				+ "STDDEV_POP(APR.LANDING_VSPEED) AS SD, AVG(RD.DISTANCE) AS DST, "
-				+ "STDDEV_POP(RD.DISTANCE) AS DSD, (ABS(AVG(APR.LANDING_VSPEED)*3)+"
+				+ "STDDEV_POP(RD.DISTANCE) AS DSD, (ABS(AVG(ABS(? - APR.LANDING_VSPEED))*3)+"
 				+ "STDDEV_POP(APR.LANDING_VSPEED)*2) AS FACT FROM PIREPS PR, ACARS_PIREPS APR "
 				+ "LEFT JOIN acars.RWYDATA RD ON (APR.ACARS_ID=RD.ID) AND (RD.ISTAKEOFF=?) "
 				+ "WHERE (APR.CLIENT_BUILD>?) AND (APR.ID=PR.ID) AND (APR.LANDING_VSPEED<0) "
@@ -294,12 +297,13 @@ public class GetFlightReportStatistics extends DAO {
 		
 		try {
 			prepareStatement(sqlBuf.toString());
-			_ps.setBoolean(1, false);
-			_ps.setInt(2, FlightReport.MIN_ACARS_CLIENT);
-			_ps.setInt(3, pilotID);
-			_ps.setInt(4, FlightReport.OK);
+			_ps.setInt(1, OPT_VSPEED);
+			_ps.setBoolean(2, false);
+			_ps.setInt(3, FlightReport.MIN_ACARS_CLIENT);
+			_ps.setInt(4, pilotID);
+			_ps.setInt(5, FlightReport.OK);
 			if (_dayFilter > 0)
-				_ps.setInt(5, _dayFilter);
+				_ps.setInt(6, _dayFilter);
 			
 			// Execute the query
 			results = new CacheableList<LandingStatistics>(key);
