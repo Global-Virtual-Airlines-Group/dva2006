@@ -16,12 +16,12 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * A Data Access Object to load ACARS information.
  * @author Luke
- * @version 6.2
+ * @version 6.3
  * @since 1.0
  */
 
 public class GetACARSData extends DAO {
-
+	
 	/**
 	 * Initializes the Data Access Object.
 	 * @param c the JDBC connection to use
@@ -87,6 +87,42 @@ public class GetACARSData extends DAO {
 			
 			_ps.close();
 			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns landing runway distance for a particular flight.
+	 * @param flightID the ACARS flight ID
+	 * @return a RunwayDistance bean, or null if not found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public RunwayDistance getLandingRunway(int flightID) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("SELECT R.*, IFNULL(ND.HDG, 0), ND.FREQ FROM acars.RWYDATA R LEFT JOIN "
+				+ "common.NAVDATA ND ON (R.ICAO=ND.CODE) AND (R.RUNWAY=ND.NAME) AND (ND.ITEMTYPE=?) AND "
+				+ "(R.ISTAKEOFF=?) WHERE (ID=?) LIMIT 1");
+			_ps.setInt(1, Navaid.RUNWAY.ordinal());
+			_ps.setBoolean(2, false);
+			_ps.setInt(3, flightID);
+			
+			// Execute the query
+			RunwayDistance rd = null;
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next()) {
+					Runway r = new Runway(rs.getDouble(4), rs.getDouble(5));
+					r.setCode(rs.getString(2));
+					r.setName(rs.getString(3));
+					r.setLength(rs.getInt(6));
+					r.setHeading(rs.getInt(9));
+					r.setFrequency(rs.getString(10));
+					rd = new RunwayDistance(r, rs.getInt(7));
+				}
+			}
+
+			_ps.close();
+			return rd;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
