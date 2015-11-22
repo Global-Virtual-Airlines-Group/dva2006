@@ -127,7 +127,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			}
 			
 			// Get online hours
-			GetFlightReportRecognition prdao = new GetFlightReportRecognition(con);
+			GetFlightReports prdao = new GetFlightReports(con);
 			prdao.getOnlineTotals(p, SystemData.get("airline.db"));
 			
 			// If we're a dispatcher, load dispatch totals
@@ -165,7 +165,8 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			ctx.setAttribute("captPromote", Boolean.valueOf(testHistory.canPromote(testHistory.getEquipmentType())), REQUEST);
 
 			// Count how many legs completed towards Promtion
-			int promoLegs = prdao.getPromotionCount(p.getID(), p.getEquipmentType());
+			GetFlightReportRecognition pcdao = new GetFlightReportRecognition(con);
+			int promoLegs = pcdao.getPromotionCount(p.getID(), p.getEquipmentType());
 			ctx.setAttribute("isFO", Boolean.valueOf(Rank.FO == p.getRank()), REQUEST);
 			ctx.setAttribute("promoteLegs", Integer.valueOf(promoLegs), REQUEST);
 
