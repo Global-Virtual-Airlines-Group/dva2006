@@ -44,7 +44,7 @@ The members of <content:airline /> are a skilled group - and they can prove it. 
 <!-- Table top Header bar -->
 <tr class="title">
  <td class="left caps" colspan="3"><span class="nophone"><content:airline /> </span>OPTIMAL LANDINGS</td>
- <td class="right" colspan="5"><el:text name="viewCount" idx="*" size="1" max="2" value="${viewCount}" /> 
+ <td class="right" colspan="5">TOP <el:text name="viewCount" idx="*" size="1" max="2" value="${viewCount}" /> 
 FLIGHTS <span class="nophone">WITHIN <el:combo name="days" idx="*" size="1" options="${dateFilter}" value="${daysBack}" onChange="void golgotha.local.update()" /></span> 
 IN <el:combo name="eqType" idx="*" size="1" options="${eqTypes}" value="${param.eqType}" onChange="void golgotha.local.update()" />
 <span class="nophone"><el:button ID="SearchButton" type="submit" label="GO" /></span></td>
@@ -52,7 +52,7 @@ IN <el:combo name="eqType" idx="*" size="1" options="${eqTypes}" value="${param.
 
 <!-- Table Header Bar-->
 <tr class="title caps">
- <td style="width:5%">#</td>
+ <td>#</td>
  <td style="width:20%">PILOT NAME</td>
  <td class="nophone">DATE</td>
  <td>FLIGHT</td>
@@ -71,12 +71,12 @@ IN <el:combo name="eqType" idx="*" size="1" options="${eqTypes}" value="${param.
 <tr>
  <td class="sec bld">${entryNumber}</td>
  <td>${pilot.name}</td>
- <td class="pri"><fmt:date fmt="d" date="${pirep.date}" /></td>
+ <td class="pri nophone"><fmt:date fmt="d" date="${pirep.date}" /></td>
  <td><el:cmd className="small bld" url="pirep" link="${pirep}">${pirep.flightCode}</el:cmd></td>
  <td class="sec small">${pirep.equipmentType}</td>
  <td class="bld"><fmt:int value="${pirep.landingVSpeed}" /> ft/min</td>
  <td class="sec bld"><fmt:int value="${rwy.distance}" /> ft</td>
- <td class="small nophone">${pirep.airportA.name} Runway ${rwy.name}</td>
+ <td class="nophone"><span class="small">${pirep.airportA.name}</span> Runway ${rwy.name}</td>
 </tr>
 </c:forEach>
 
