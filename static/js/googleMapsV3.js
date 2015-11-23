@@ -61,7 +61,10 @@ golgotha.maps.util.resize = function() {
 };
 
 golgotha.onDOMReady(golgotha.maps.util.resize);
-window.addEventListener('resize', golgotha.maps.util.resize);
+if (golgotha.util.oldIE)
+	document.attachEvent('onresize', golgotha.maps.util.resize); 
+else
+	window.addEventListener('resize', golgotha.maps.util.resize);
 
 // Calculate default zoom for flight distance
 golgotha.maps.util.getDefaultZoom = function(distance)

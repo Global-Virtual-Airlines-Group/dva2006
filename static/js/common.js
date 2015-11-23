@@ -468,6 +468,10 @@ golgotha.nav.init = function() {
 
 golgotha.onDOMReady(function() {
 	golgotha.nav.init();
-	if (golgotha.nav.sideMenu) 
-		window.addEventListener('resize', golgotha.nav.initMenu);
+	if (golgotha.nav.sideMenu) {
+		if (golgotha.util.oldIE)
+			document.attachEvent('onresize', golgotha.nav.initMenu);
+		else
+			window.addEventListener('resize', golgotha.nav.initMenu);
+	}
 });
