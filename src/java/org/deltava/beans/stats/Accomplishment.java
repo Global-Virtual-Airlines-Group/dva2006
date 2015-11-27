@@ -9,7 +9,7 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * A bean to define Pilot accomplishments.
  * @author Luke
- * @version 6.1
+ * @version 6.3
  * @since 3.2
  */
 
@@ -25,7 +25,7 @@ public class Accomplishment extends DatabaseBean implements ComboAlias, ViewEntr
 		COUNTRIES("Countries Visited"), STATES("States Visited"), MEMBERDAYS("Days since joining"),
 		AIRLINES("Airlines"), DFLIGHTS("Flights Dispatched"), DHOURS("Dispatch Hours"),
 		EQLEGS("Legs in Aircraft"), CONTINENTS("Continents Visited"), PAX("Passengers Carried"),
-		AIRPORTD("Departure Airport"), AIRPORTA("Arrival Airport");
+		AIRPORTD("Departure Airport"), AIRPORTA("Arrival Airport"), PROMOLEGS("Promotion Legs");
 			
 		private final String _name;
 		
