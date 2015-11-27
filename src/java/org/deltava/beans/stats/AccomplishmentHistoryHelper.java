@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to determine what Accomplishments a Pilot has achieved. 
  * @author Luke
- * @version 6.0
+ * @version 6.3
  * @since 3.2
  */
 
@@ -48,6 +48,16 @@ public class AccomplishmentHistoryHelper {
 		public int getValue() {
 			return _value;
 		}
+		
+		@Override
+		public String toString() {
+			return String.valueOf(_value);
+		}
+		
+		@Override
+		public int hashCode() {
+			return _value;
+		}
 	}
 	
 	private static class AccomplishmentCounter {
@@ -70,6 +80,7 @@ public class AccomplishmentHistoryHelper {
 		private final Collection<String> _conts = new TreeSet<String>();
 		private final Collection<State> _states = new TreeSet<State>();
 		private final Map<String, MutableInteger> _eqLegs = new TreeMap<String, MutableInteger>();
+		private final Map<String, MutableInteger> _pLegs = new TreeMap<String, MutableInteger>();
 
 		AccomplishmentCounter() {
 			super();
@@ -87,14 +98,19 @@ public class AccomplishmentHistoryHelper {
 			if (fr.hasAttribute(FlightReport.ATTR_HISTORIC)) _historicLegs++;
 			if (fr.hasAttribute(FlightReport.ATTR_ONLINE_MASK)) _onlineLegs++;
 			if (fr.getDatabaseID(DatabaseID.EVENT) != 0) _events.add(Integer.valueOf(fr.getDatabaseID(DatabaseID.EVENT)));
-			MutableInteger eqLegs = _eqLegs.get(fr.getEquipmentType());
-			if (eqLegs == null)
-				_eqLegs.put(fr.getEquipmentType(), new MutableInteger(1));
-			else
-				eqLegs.inc();
+			incLeg(_eqLegs, fr.getEquipmentType());
+			fr.getCaptEQType().forEach(eq -> incLeg(_pLegs, eq));
 		}
 		
-		public void add(DispatchConnectionEntry dce) {
+		void incLeg(Map<String, MutableInteger> map, String key) {
+			MutableInteger i = map.get(key);
+			if (i == null)
+				map.put(key, new MutableInteger(1));
+			else
+				i.inc();
+		}
+		
+		void add(DispatchConnectionEntry dce) {
 			_dspHours += (dce.getTime() / 3600.0d);
 			_dspFlights += dce.getFlights().size();
 		}
@@ -182,6 +198,10 @@ public class AccomplishmentHistoryHelper {
 		public int getEquipmentLegs(String eqType) {
 			return _eqLegs.containsKey(eqType) ? _eqLegs.get(eqType).getValue() : 0;
 		}
+		
+		public int getPromotionLegs(String eqType) {
+			return _pLegs.containsKey(eqType) ? _pLegs.get(eqType).getValue() : 0;
+		}
 	}
 	
 	// Cache counters so we don't need to iterate through PIREPs for everything.
@@ -244,6 +264,7 @@ public class AccomplishmentHistoryHelper {
 	private long progress(Accomplishment a, AccomplishmentCounter cnt) {
 		
 		// Big switch based on types
+		int totalLegs = 0;
 		switch (a.getUnit()) {
 			case LEGS:
 				return cnt.getLegs();
@@ -278,11 +299,17 @@ public class AccomplishmentHistoryHelper {
 			case DHOURS:
 				return (long) cnt.getDispatchHours();
 			case EQLEGS:
-				int totalLegs = 0;
 				for (String eqType : a.getChoices())
 					totalLegs += cnt.getEquipmentLegs(eqType);
 				
 				return totalLegs;
+
+			case PROMOLEGS:
+				for (String eqType : a.getChoices())
+					totalLegs += cnt.getPromotionLegs(eqType);
+				
+				return totalLegs;
+				
 			case MEMBERDAYS:
 				long days = (System.currentTimeMillis() - _usr.getCreatedOn().getTime()) / 86400_000;
 				return days;

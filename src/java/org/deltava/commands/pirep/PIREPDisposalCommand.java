@@ -147,9 +147,9 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			// Load the flights for accomplishment purposes
 			if (opCode == FlightReport.OK) {
 				Collection<FlightReport> pireps = rdao.getByPilot(p.getID(), null);
+				rdao.getCaptEQType(pireps);
 				AccomplishmentHistoryHelper acchelper = new AccomplishmentHistoryHelper(p);
-				for (FlightReport pirep : pireps)
-					acchelper.add(pirep);
+				pireps.forEach(pr -> acchelper.add(pr));
 				
 				// Load accomplishments - only save the ones we don't meet yet
 				GetAccomplishment accdao = new GetAccomplishment(con);

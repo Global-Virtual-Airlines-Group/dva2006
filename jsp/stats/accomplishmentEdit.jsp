@@ -31,8 +31,8 @@ golgotha.local.showChoices = function()
 {
 var f = document.forms[0];
 var rows = golgotha.util.getElementsByClass('valueRow');
-for (var x = 0; x < rows.length; x++)
-	golgotha.util.display(rows[x], false);
+for (var r = rows.pop(); (r != null); r = rows.pop())
+	golgotha.util.display(r, false);
 
 var c = golgotha.form.getCombo(f.units);
 switch (c) {
@@ -41,7 +41,7 @@ case 'COUNTRIES':
 	break;
 
 case 'STATES':
-	golgotha.util.display(document.getElementById('valueState'), true);
+	golgotha.util.display('valueState', true);
 	break;
 
 case 'AIRLINES':
@@ -49,12 +49,16 @@ case 'AIRLINES':
 	break;
 	
 case 'CONTINENTS':
-	golgotha.util.display(document.getElementById('valueCont'), true);
+	golgotha.util.display('valueCont', true);
 	break;
 
 case 'AIRCRAFT':
 case 'EQLEGS':
-	golgotha.util.display(document.getElementById('valueEQType'), true);
+	golgotha.util.display('valueEQType', true);
+	break;
+	
+case 'PROMOLEGS':
+	golgotha.util.display('valueEQProgram', true);
 	break;
 
 default:
@@ -119,8 +123,12 @@ return true;
  <td class="data"><el:check name="airlines" idx="*" width="200" cols="4" newLine="true" checked="${ap.choices}" options="${airlines}" /></td>
 </tr>
 <tr id="valueEQType" style="display:none;" class="valueRow">
- <td class="label top">Valid Equipment</td>
+ <td class="label top">Valid Aircraft</td>
  <td class="data"><el:check name="eqTypes" idx="*" width="105" cols="7" newLine="true" checked="${ap.choices}" options="${allEQ}" /></td>
+</tr>
+<tr id="valueEQProgram" style="display:none;" class="valueRow">
+ <td class="label top">Valid Equipment Program</td>
+ <td class="data"><el:check name="eqPrograms" idx="*" width="105" cols="5" newLine="true" checked="${ap.choices}" options="${eqPrograms}" /></td>
 </tr>
 <c:if test="${!empty ap}">
 <tr>

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2012, 2013, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2012, 2013, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -26,7 +26,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to approve Flight Reports and Check Rides.
  * @author Luke
- * @version 5.3
+ * @version 6.3
  * @since 1.0
  */
 
@@ -127,9 +127,9 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 			Collection<StatusUpdate> upds = new ArrayList<StatusUpdate>();
 			if (fr.getStatus() == FlightReport.OK) {
 				Collection<FlightReport> flights = rdao.getByPilot(p.getID(), null);
+				rdao.getCaptEQType(flights);
 				AccomplishmentHistoryHelper acchelper = new AccomplishmentHistoryHelper(p);
-				for (FlightReport pirep : flights)
-					acchelper.add(pirep);
+				flights.forEach(pirep -> acchelper.add(pirep));
 			
 				// Load accomplishments
 				GetAccomplishment accdao = new GetAccomplishment(con);

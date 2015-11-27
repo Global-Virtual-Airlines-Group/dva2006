@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Accomplishment profiles. 
  * @author Luke
- * @version 6.1
+ * @version 6.3
  * @since 3.2
  */
 
@@ -87,15 +87,14 @@ public class AccomplishmentCommand extends AbstractFormCommand {
 				a.setChoices(StringUtils.nullTrim(ctx.getParameters("eqTypes")));
 				break;
 				
+			case PROMOLEGS:
+				a.setChoices(StringUtils.nullTrim(ctx.getParameters("eqPrograms")));
+				break;
+				
 			case AIRPORTS:
 				Collection<String> apCodes = StringUtils.nullTrim(StringUtils.split(ctx.getParameter("choices"), ","));
 				Collection<String> iataCodes = new TreeSet<String>();
-				for (String code : apCodes) {
-					Airport ap = SystemData.getAirport(code);
-					if (ap != null)
-						iataCodes.add(ap.getIATA());
-				}
-				
+				apCodes.forEach(c -> { Airport ap = SystemData.getAirport(c); if (ap != null) iataCodes.add(ap.getIATA()); });
 				a.setChoices(iataCodes);
 				break;
 				
@@ -162,6 +161,10 @@ public class AccomplishmentCommand extends AbstractFormCommand {
 			GetAircraft acdao = new GetAircraft(con);
 			ctx.setAttribute("allEQ", acdao.getAircraftTypes(), REQUEST);
 			
+			// Get equipment programs
+			GetEquipmentType eqdao = new GetEquipmentType(con);
+			ctx.setAttribute("eqPrograms", eqdao.getAll(), REQUEST);
+			
 			// Load all countries
 			GetScheduleInfo sdao = new GetScheduleInfo(con);
 			Comparator<Country> ccmp = new CountryComparator(CountryComparator.NAME);
@@ -172,6 +175,7 @@ public class AccomplishmentCommand extends AbstractFormCommand {
 			
 			// Save in request
 			ctx.setAttribute("ap", a, REQUEST);
+			ctx.setAttribute("access", ac, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
