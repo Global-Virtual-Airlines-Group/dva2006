@@ -16,7 +16,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to calculate what Pilots are eligible for an Accomplishment.
  * @author Luke
- * @version 6.0
+ * @version 6.3
  * @since 3.6
  */
 
@@ -81,6 +81,7 @@ public class AccomplishmentUpdateCommand extends AbstractCommand {
 					}
 				} else {
 					Collection<FlightReport> pireps = frdao.getByPilot(p.getID(), null);
+					frdao.getCaptEQType(pireps);
 					pireps.forEach(fr -> helper.add(fr));
 				}
 				
