@@ -92,8 +92,8 @@ public class AccomplishmentEligibilityCommand extends AbstractCommand {
 			// Load the Pilot's Flight Reports
 			GetFlightReports frdao = new GetFlightReports(con);
 			Collection<FlightReport> flights = frdao.getByPilot(p.getID(), null);
-			for (FlightReport fr : flights)
-				helper.add(fr);
+			frdao.getCaptEQType(flights);
+			flights.forEach(fr -> helper.add(fr));
 			
 			// Load the Pilot's dispatch connections
 			GetACARSLog acdao = new GetACARSLog(con);
