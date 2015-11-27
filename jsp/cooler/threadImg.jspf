@@ -15,9 +15,16 @@
 </tr>
 </c:when>
 <c:when test="${!empty img}">
+<style type="text/css">
+@media (max-width: 1022px) {
+    img.gallery {
+        max-width:98%;    
+    }
+}
+</style>
 <!-- Attached Image -->
 <tr class="mid">
- <td colspan="3"><img class="gallery" height="${img.height}" alt="${thread.subject}" src="/gallery/${imgApp.code}/0x<fmt:hex value="${thread.image}" />.${img.typeName}" /></td>
+ <td colspan="3"><img class="gallery"  alt="${thread.subject}" src="/gallery/${imgApp.code}/${img.hexID}.${img.typeName}" /></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
