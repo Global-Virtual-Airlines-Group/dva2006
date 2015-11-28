@@ -1,4 +1,4 @@
-// Copyright 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to retrieve app-specific metadata.
  * @author Luke
- * @version 5.1
+ * @version 6.3
  * @since 5.1
  */
 
@@ -64,6 +64,23 @@ public class GetMetadata extends DAO {
 			return result;
 		} catch (SQLException se) {
 			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns a metadata item converted to a Date.
+	 * @param key the key
+	 * @return the date/time value, or null if not found or unparseable
+	 * @throws DAOException if a JDBC error occurs
+	 * @see SetMetadata#write(String, java.util.Date)
+	 */
+	public java.util.Date getDate(String key) throws DAOException {
+		String dt = get(key);
+		if (dt == null) return null;
+		try {
+			return new java.util.Date(Long.parseLong(dt) * 1000);
+		} catch (Exception e) {
+			return null;
 		}
 	}
 	
