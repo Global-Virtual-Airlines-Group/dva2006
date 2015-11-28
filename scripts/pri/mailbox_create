@@ -5,7 +5,7 @@
 HOST=$3
 if [ "$HOST" == "" ]
 then
- $HOST='nephele.gvagroup.org'
+ HOST="nephele.gvagroup.org"
 fi
 
 # Run the mailbox create command on another server
