@@ -1,7 +1,6 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
-import java.util.Date;
 import java.sql.Connection;
 
 import org.deltava.beans.schedule.*;
@@ -12,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to browse the Flight Schedule.
  * @author Luke
- * @version 5.2
+ * @version 6.3
  * @since 1.0
  */
 
@@ -66,9 +65,9 @@ public class ScheduleBrowseCommand extends AbstractViewCommand {
 
 			// Load schedule import data
 			GetMetadata mddao = new GetMetadata(con);
-			String lastImport = mddao.get(SystemData.get("airline.code").toLowerCase() + ".schedule.import");
-			if (lastImport != null)
-				ctx.setAttribute("importDate", new Date(Long.parseLong(lastImport) * 1000), REQUEST);
+			String aCode = SystemData.get("airline.code").toLowerCase();
+			ctx.setAttribute("importDate", mddao.getDate(aCode + ".schedule.import"), REQUEST);
+			ctx.setAttribute("effectiveDate", mddao.getDate(aCode + ".schedule.effDate"), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

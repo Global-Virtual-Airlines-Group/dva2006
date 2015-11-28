@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A scheduled task to download GFS global forecast data.
  * @author Luke
- * @version 6.0
+ * @version 6.3
  * @since 5.2
  */
 
@@ -147,7 +147,7 @@ public class GFSDownloadTask extends Task {
 				
 				// Write GFS cycle data
 				SetMetadata mwdao = new SetMetadata(ctx.getConnection());
-				mwdao.write("gfs.cycle", String.valueOf(dt.getTime() / 1000));
+				mwdao.write("gfs.cycle", dt);
 			} catch(DAOException de) {
 				log.error(de.getMessage(), de);
 			} finally {

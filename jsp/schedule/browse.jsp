@@ -57,7 +57,8 @@ golgotha.onDOMReady(function() {
 
 <!-- Table Header Bars -->
 <tr class="title">
- <td class="left caps" colspan="7"><content:airline /> FLIGHT SCHEDULE<c:if test="${!empty importDate}"> IMPORTED ON <fmt:date date="${importDate}" /></c:if></td>
+ <td class="left caps" colspan="7"><span class="nophone"><content:airline /> FLIGHT </span>SCHEDULE<c:if test="${!empty importDate}"> IMPORTED ON <fmt:date date="${importDate}" /></c:if>
+<c:if test="${!empty effectiveDate}"> REPLAY OF <fmt:date date="${effectiveDate}" fmt="d" /></c:if></td>
 </tr>
 <tr class="title">
  <td class="right" colspan="7">FLIGHTS FROM <el:combo name="airportD" idx="*" size="1" className="small" options="${airportsD}" value="${airportD}" onChange="void golgotha.local.setAirportD(this)" />

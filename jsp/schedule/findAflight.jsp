@@ -204,7 +204,8 @@ golgotha.onDOMReady(function() {
 <el:table className="view">
 <!-- Search Results Data -->
 <tr class="title caps">
- <td colspan="9" class="left">FLIGHT SCHEDULE SEARCH RESULTS<c:if test="${!empty importDate}"> - IMPORTED ON <fmt:date date="${importDate}" t="HH:mm" /></c:if></td>
+ <td colspan="9" class="left"><span class="nophone">FLIGHT SCHEDULE </span>SEARCH RESULTS<c:if test="${!empty importDate}"> - IMPORTED ON <fmt:date date="${importDate}" t="HH:mm" /></c:if>
+<c:if test="${!empty effectiveDate}"> REPLAY OF <fmt:date date="${effectiveDate}" fmt="d" /></c:if></td>
 </tr>
 
 <!-- Search Results Header Bar -->
