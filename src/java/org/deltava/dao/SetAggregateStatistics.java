@@ -59,8 +59,8 @@ public class SetAggregateStatistics extends DAO {
 			if (fr.getStatus() != FlightReport.OK)
 				return;
 			
-			prepareStatementWithoutLimits("INSERT INTO FLIGHTSTATS_LANDING (SELECT PR.ID, PR.PILOT_ID, PR.EQTYPE, PR.AIRPORT_A, "
-				+ "APR.LANDING_VSPEED, CAST(R.DISTANCE AS SIGNED) FROM PIREPS PR, ACARS_PIREPS APR, acars.RWYDATA R WHERE "
+			prepareStatementWithoutLimits("INSERT INTO FLIGHTSTATS_LANDING (SELECT PR.ID, PR.PILOT_ID, PR.EQTYPE, DATE(APR.LANDING_TIME), "
+				+ "PR.AIRPORT_A, APR.LANDING_VSPEED, CAST(R.DISTANCE AS SIGNED) FROM PIREPS PR, ACARS_PIREPS APR, acars.RWYDATA R WHERE "
 				+ "(APR.ID=PR.ID) AND (APR.ACARS_ID=R.ID) AND (R.ISTAKEOFF=?) AND (R.DISTANCE<?) AND (PR.ID=?))");
 			_ps.setBoolean(1, false);
 			_ps.setInt(2, 22500);
