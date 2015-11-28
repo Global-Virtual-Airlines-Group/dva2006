@@ -141,9 +141,9 @@ public class FindFlightCommand extends AbstractCommand {
 				
 		         // Load schedule import data
 		    	 GetMetadata mddao = new GetMetadata(con);
-		    	 String lastImport = mddao.get(SystemData.get("airline.code").toLowerCase() + ".schedule.import");
-		    	 if (lastImport != null)
-		    		 ctx.setAttribute("importDate", new Date(Long.parseLong(lastImport) * 1000), REQUEST);
+		    	 String aCode = SystemData.get("airline.code").toLowerCase();
+		    	 ctx.setAttribute("importDate", mddao.getDate(aCode + ".schedule.import"), REQUEST);
+		    	 ctx.setAttribute("effectiveDate", mddao.getDate(aCode + ".schedule.effDate"), REQUEST);
 
 				// Save results in the session - since other commands may reference these
 				ctx.setAttribute("fafResults", dao.search(criteria), SESSION);
