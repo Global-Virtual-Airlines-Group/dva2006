@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2010, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.io.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to download and import Innovata LLC schedule data.
  * @author Luke
- * @version 4.2
+ * @version 6.3
  * @since 1.0
  */
 
@@ -39,6 +39,16 @@ public class InnovataDownloadCommand extends ScheduleImportCommand {
 		cache.setHost(SystemData.get("schedule.innovata.download.host"));
 		cache.setCredentials(SystemData.get("schedule.innovata.download.user"), SystemData.get("schedule.innovata.download.pwd"));
 
+		// Calculate replay date
+		String dt = SystemData.get("schedule.innovata.import.replayDate");
+		Date replayDate = StringUtils.isEmpty(dt) ? null : StringUtils.parseDate(dt, "MM/dd/yyyy");
+		if (replayDate != null) {
+			Calendar now = CalendarUtils.getInstance(null, true);
+			int daysToAdjust = now.get(Calendar.DAY_OF_WEEK) - 1;
+			Calendar rd = CalendarUtils.getInstance(replayDate, true, daysToAdjust);
+			replayDate = rd.getTime();
+		}
+		
 		// Connect to the FTP server and download the files as needed
 		try {
 			Collection<String> msgs = new ArrayList<String>();
@@ -68,7 +78,7 @@ public class InnovataDownloadCommand extends ScheduleImportCommand {
 			GetAirline adao = new GetAirline(con);
 			GetAircraft acdao = new GetAircraft(con);
 			GetFullSchedule dao = new GetFullSchedule(is);
-			dao.setEffectiveDate(CalendarUtils.getInstance(null, true).getTime());
+			dao.setEffectiveDate(CalendarUtils.getInstance(replayDate, true).getTime());
 			dao.setAircraft(acdao.getAircraftTypes());
 			dao.setAirlines(adao.getActive().values());
 			dao.setMainlineCodes((List<String>) SystemData.getObject("schedule.innovata.primary_codes"));
@@ -94,6 +104,15 @@ public class InnovataDownloadCommand extends ScheduleImportCommand {
 			// Save the status
 			SetImportStatus swdao = new SetImportStatus(SystemData.get("schedule.innovata.cache"), "import.status.txt");
 			swdao.write(dao.getInvalidAirlines(), dao.getInvalidAirports(), dao.getInvalidEQ(), msgs);
+			
+			// Save schedule metadata
+			SetMetadata mdwdao = new SetMetadata(con);
+			String aCode = SystemData.get("airline.code").toLowerCase();
+			mdwdao.write(aCode + ".schedule.import", new Date());
+			if (replayDate != null)
+				mdwdao.write(aCode + ".schedule.effDate", replayDate);
+			else
+				mdwdao.delete(aCode + ".schedule.effDate");
 
 			// Save the cache status
 			ctx.setAttribute("innovataCache", Boolean.valueOf(isCached), REQUEST);
