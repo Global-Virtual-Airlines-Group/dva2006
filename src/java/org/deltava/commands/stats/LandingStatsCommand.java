@@ -1,7 +1,8 @@
-// Copyright 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.deltava.beans.stats.LandingStatistics;
@@ -13,25 +14,26 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to display landing statistics.
  * @author Luke
- * @version 2.6
+ * @version 6.3
  * @since 2.1
  */
 
 public class LandingStatsCommand extends AbstractViewCommand {
 	
 	private static final List<?> DATE_FILTER = ComboUtils.fromArray(new String[] { "All Landings", "30 Days", "60 Days",
-		"90 Days" }, new String[] { "0", "30", "60", "90" });
+		"90 Days", "180 Days", "365 Days" }, new String[] { "0", "30", "60", "90", "180", "365" });
 
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Load the view context and minimum landings
-		ViewContext vc = initView(ctx, 25);
-		int minLegs = Math.max(1, StringUtils.parse(ctx.getParameter("legCount"), 20));
+		ViewContext vc = initView(ctx, 50);
+		int minLegs = Math.max(0, StringUtils.parse(ctx.getParameter("legCount"), 20));
 		ctx.setAttribute("legCount", Integer.valueOf(minLegs), REQUEST);
 		
 		// Check equipment type
@@ -44,16 +46,13 @@ public class LandingStatsCommand extends AbstractViewCommand {
 			// Get the DAO and the results
 			GetFlightReportStatistics dao = new GetFlightReportStatistics(con);
 			dao.setDayFilter(StringUtils.parse(ctx.getParameter("days"), 30));
+			dao.setQueryStart(vc.getStart());
 			dao.setQueryMax(vc.getCount());
 			Collection<LandingStatistics> stats = dao.getLandings(eqType, minLegs);
 			vc.setResults(stats);
 			
-			// Get the Pilot IDs
-			Collection<Integer> IDs = new HashSet<Integer>();
-			for (LandingStatistics ls : stats)
-				IDs.add(new Integer(ls.getID()));
-			
 			// Load the Pilots
+			Collection<Integer>IDs = stats.stream().map(LandingStatistics::getID).collect(Collectors.toSet());
 			GetPilot pdao = new GetPilot(con);
 			ctx.setAttribute("pilots", pdao.getByID(IDs, "PILOTS"), REQUEST);
 			
