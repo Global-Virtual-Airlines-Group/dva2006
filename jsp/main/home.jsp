@@ -181,7 +181,7 @@ our sister airline <a rel="external" target="_new" href="${reqProtocol}://${part
 </c:if>
 <c:if test="${!empty futureEvents}">
 <!-- Future Online Events -->
-<el:table className="view mid" style="max-width:790px;">
+<el:table className="view mid" style="width:90%; max-width:980px;">
 <tr class="title caps left">
  <td colspan="4">UPCOMING <content:airline /> ONLINE EVENTS</td>
 </tr>
