@@ -160,32 +160,22 @@ public class GetFlightReportStatistics extends DAO {
 	 */
 	public Collection<LandingStatistics> getLandings(String eqType, int minLandings) throws DAOException {
 		
-		// Check the cache
-		StatsCacheKey key = new StatsCacheKey(eqType, minLandings);
-		CacheableCollection<LandingStatistics> results = _cache.get(key);
-		if (results != null)
-			return results.clone();
-		
 		// Build the SQL statement
-		StringBuilder buf = new StringBuilder("SELECT P.ID, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME) AS PNAME, "
-				+ "COUNT(PR.ID) AS CNT, ROUND(SUM(PR.FLIGHT_TIME),1) AS HRS, AVG(APR.LANDING_VSPEED) AS VS, "
-				+ "STDDEV_POP(APR.LANDING_VSPEED) AS SD, AVG(RD.DISTANCE) AS DST, STDDEV_POP(RD.DISTANCE) AS DSD, "
-				+ "IFNULL(IF(STDDEV_POP(RD.DISTANCE) < 20, NULL, (ABS(AVG(RD.DISTANCE))*3+STDDEV_POP(RD.DISTANCE)*2)/15), 650) "
-				+ "+ (ABS(AVG(ABS(? - APR.LANDING_VSPEED))*3) + STDDEV_POP(APR.LANDING_VSPEED)*2) AS FACT FROM PILOTS P, PIREPS PR, "
-				+ "ACARS_PIREPS APR LEFT JOIN acars.RWYDATA RD ON (APR.ACARS_ID=RD.ID) AND (RD.ISTAKEOFF=?) WHERE "
-				+ "(APR.CLIENT_BUILD>?) AND (APR.ID=PR.ID) AND (APR.LANDING_VSPEED < 0) AND (PR.PILOT_ID=P.ID) AND (PR.STATUS=?) ");
+		StringBuilder buf = new StringBuilder("SELECT P.ID, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME) AS PNAME, COUNT(L.ID) AS CNT, "
+			+ "ROUND(SUM(PR.FLIGHT_TIME),1) AS HRS, AVG(L.VSPEED) AS VS, STDDEV_POP(L.VSPEED) AS SD, AVG(L.RWYDISTANCE) AS DST, "
+			+ "STDDEV_POP(L.RWYDISTANCE) AS DSD, IFNULL(IF(STDDEV_POP(L.RWYDISTANCE) < 20, NULL, (ABS(AVG(L.RWYDISTANCE))*3 + "
+			+ "STDDEV_POP(L.RWYDISTANCE)*2)/15), 650) + (ABS(AVG(ABS(? - L.VSPEED))*3) + STDDEV_POP(L.VSPEED)*2) AS FACT FROM "
+			+ "PILOTS P, PIREPS PR, FLIGHTSTATS_LANDING L WHERE (PR.ID=L.ID) AND (PR.PILOT_ID=P.ID) AND (PR.STATUS=?) ");
 		if (eqType != null)
 			buf.append("AND (PR.EQTYPE=?) ");
 		if (_dayFilter > 0)
-			buf.append(" AND (PR.DATE > DATE_SUB(NOW(), INTERVAL ? DAY))");
+			buf.append("AND (PR.DATE > DATE_SUB(NOW(), INTERVAL ? DAY)) ");
 		buf.append("GROUP BY P.ID HAVING (CNT>=?) ORDER BY FACT");
 		
 		try {
 			int pos = 0;
 			prepareStatement(buf.toString());
 			_ps.setInt(++pos, OPT_VSPEED);
-			_ps.setBoolean(++pos, false);
-			_ps.setInt(++pos, FlightReport.MIN_ACARS_CLIENT);
 			_ps.setInt(++pos, FlightReport.OK);
 			if (eqType != null)
 				_ps.setString(++pos, eqType);
@@ -194,7 +184,7 @@ public class GetFlightReportStatistics extends DAO {
 			_ps.setInt(++pos, minLandings);
 			
 			// Execute the query
-			results = new CacheableList<LandingStatistics>(key);
+			List<LandingStatistics> results = new ArrayList<LandingStatistics>(32);
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
 					LandingStatistics ls = new LandingStatistics(rs.getString(2), null);
@@ -214,8 +204,7 @@ public class GetFlightReportStatistics extends DAO {
 			}
 			
 			_ps.close();
-			_cache.add(results);
-			return results.clone();
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -238,8 +227,8 @@ public class GetFlightReportStatistics extends DAO {
 		try {
 			prepareStatement("SELECT PR.EQTYPE, APR.LANDING_VSPEED, RD.DISTANCE, RD.LENGTH FROM PIREPS PR, "
 				+ "ACARS_PIREPS APR, acars.RWYDATA RD WHERE (APR.ACARS_ID=RD.ID) AND (RD.ISTAKEOFF=?) AND "
-				+ "(APR.CLIENT_BUILD>?) AND (RD.DISTANCE<RD.LENGTH) AND (APR.ID=PR.ID) AND (APR.LANDING_VSPEED<0) "
-				+ "AND (PR.PILOT_ID=?) AND (PR.STATUS=?) ORDER BY ABS(? - APR.LANDING_VSPEED)");
+				+ "(APR.CLIENT_BUILD>?) AND (RD.DISTANCE<RD.LENGTH) AND (APR.ID=PR.ID) AND (PR.PILOT_ID=?) "
+				+ "AND (PR.STATUS=?) ORDER BY ABS(? - APR.LANDING_VSPEED)");
 			_ps.setBoolean(1, false);
 			_ps.setInt(2, FlightReport.MIN_ACARS_CLIENT);
 			_ps.setInt(3, pilotID);
@@ -283,12 +272,9 @@ public class GetFlightReportStatistics extends DAO {
 			return results.clone();
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT L.EQTYPE, COUNT(L.ID) AS CNT, "
-				+ "ROUND(SUM(PR.FLIGHT_TIME),1) AS HRS, AVG(L.VSPEED) AS VS, "
-				+ "STDDEV_POP(L.VSPEED) AS SD, AVG(L.RWYDISTANCE) AS DST, "
-				+ "STDDEV_POP(L.RWYDISTANCE) AS DSD, (ABS(AVG(ABS(?-L.VSPEED))*3)+"
-				+ "STDDEV_POP(L.VSPEED)*2) AS FACT FROM PIREPS PR, FLIGHTSTATS_LANDING L "
-				+ "WHERE (PR.ID=L.ID) AND (L.PILOT_ID=?) ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT L.EQTYPE, COUNT(L.ID) AS CNT, ROUND(SUM(PR.FLIGHT_TIME),1) AS HRS, AVG(L.VSPEED) AS VS, "
+			+ "STDDEV_POP(L.VSPEED) AS SD, AVG(L.RWYDISTANCE) AS DST, STDDEV_POP(L.RWYDISTANCE) AS DSD, (ABS(AVG(ABS(?-L.VSPEED))*3)+"
+			+ "STDDEV_POP(L.VSPEED)*2) AS FACT FROM PIREPS PR, FLIGHTSTATS_LANDING L WHERE (PR.ID=L.ID) AND (L.PILOT_ID=?) ");
 		if (_dayFilter > 0)
 			sqlBuf.append("AND (PR.DATE > DATE_SUB(NOW(), INTERVAL ? DAY)) ");
 		sqlBuf.append("GROUP BY L.EQTYPE HAVING (CNT>2) ORDER BY FACT");

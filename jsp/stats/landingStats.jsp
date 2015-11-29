@@ -36,8 +36,7 @@ return true;
 The members of <content:airline /> are a skilled group - and they can prove it. Below is a list of pilots 
 who consistently achieve the smoothest landings. This list is ordered by both average touchdown speed (which  
 counts for 30% of the ordering) and the standard deviation of those speeds (20%), the distance from the 
-runway threshold (30% if available) and the standard deviation of those distances (the remaining 20%). If no 
-threshold displacement data is available <br />
+runway threshold (30% if available) and the standard deviation of those distances (the remaining 20%).<br />
 <br />
 <el:table className="view">
 <!-- Table top Header bar -->
@@ -48,7 +47,7 @@ FLIGHTS WITHIN <el:combo name="days" idx="*" size="1" options="${dateFilter}" va
 IN <el:combo name="eqType" idx="*" size="1" options="${eqTypes}" value="${param.eqType}" />
 <el:button ID="SearchButton" type="submit" label="GO" /></td>
 </tr>
-
+<c:if test="${!empty viewContext.results}">
 <!-- Table Header Bar-->
 <tr class="title caps">
  <td style="width:5%">#</td>
@@ -86,6 +85,12 @@ IN <el:combo name="eqType" idx="*" size="1" options="${eqTypes}" value="${param.
 </c:choose>
 </tr>
 </c:forEach>
+</c:if>
+<c:if test="${empty viewContext.results}">
+<tr>
+ <td colspan="9" class="pri bld mid caps">No <content:airline /> Pilots meeting your criteria were found</td>
+</tr>
+</c:if>
 
 <!-- Bottom Bar -->
 <tr class="title">

@@ -163,7 +163,7 @@ public class GetFlightReportRecognition extends DAO {
 		StringBuilder buf = new StringBuilder("SELECT EQTYPE, COUNT(ID) AS CNT FROM FLIGHTSTATS_LANDING");
 		if (_dayFilter > 0)
 			buf.append(" WHERE (DATE > DATE_SUB(NOW(), INTERVAL ? DAY))");
-		buf.append(" GROUP BY EQTYPE HAVING (CNT >= ?) ORDER BY CNT DESC");
+		buf.append(" GROUP BY EQTYPE HAVING (CNT >= ?)");
 		
 		try {
 			int pos = 0;
