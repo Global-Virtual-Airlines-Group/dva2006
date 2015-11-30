@@ -1,8 +1,10 @@
-// Copyright 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2011, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
+import java.sql.Connection;
 
+import org.deltava.beans.navdata.AirportLocation;
 import org.deltava.beans.wx.*;
 
 import org.deltava.dao.*;
@@ -14,7 +16,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Scheduled Task to download METAR data.
  * @author Luke
- * @version 4.1
+ * @version 6.3
  * @since 2.7
  */
 
@@ -40,10 +42,12 @@ public class METARDownloadTask extends Task {
 			log.info("Loading METAR cycle for " + StringUtils.format(hour, "00") + "00Z");
 			Map<String, METAR> data = wxdao.getMETARCycle(hour);
 			for (METAR m : data.values())
-				m.setILS(WeatherUtils.getILS( m));
+				m.setILS(WeatherUtils.getILS(m));
 			
-			// Get the DAO
-			SetWeather wxwdao = new SetWeather(ctx.getConnection());
+			// Get the DAOs
+			Connection con = ctx.getConnection();
+			GetNavData nddao = new GetNavData(con);
+			SetWeather wxwdao = new SetWeather(con);
 			ctx.startTX();
 			
 			// Purge the data
@@ -51,8 +55,11 @@ public class METARDownloadTask extends Task {
 			
 			// Save the METARs
 			log.info("Saving METAR cycle - " + data.size() + " entries");
-			for (Iterator<METAR> i = data.values().iterator(); i.hasNext(); ) {
-				METAR m = i.next();
+			for (METAR m : data.values()) {
+				AirportLocation al = nddao.getAirport(m.getCode());
+				if (al != null)
+					m.setAirport(al);
+					
 				wxwdao.write(m);
 			}
 			
