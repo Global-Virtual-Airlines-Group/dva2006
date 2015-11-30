@@ -1,4 +1,4 @@
-// Copyright 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A Data Access Object to load Airport gate information. 
  * @author Luke
- * @version 5.1
+ * @version 6.3
  * @since 5.1
  */
 
@@ -46,6 +46,50 @@ public class GetGates extends DAO {
 	}
 	
 	/**
+	 * Returns popular Gates for a particular Airport.
+	 * @param a the Airport
+	 * @param sim the Simulator
+	 * @return a List of Gates, ordered by popularity
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<Gate> getPopularGates(ICAOAirport a, Simulator sim) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("SELECT G.*, ND.REGION, COUNT(GD.ID) AS CNT FROM acars.GATEDATA GD, "
+			+ "common.GATES G LEFT JOIN common.NAVDATA ND ON (G.ICAO=ND.CODE) AND (ND.ITEMTYPE=?) WHERE "
+			+ "(GD.ICAO=?) AND (G.ICAO=GD.ICAO) AND (G.NAME=GD.GATE) AND (G.SIMVERSION=?) GROUP BY G.NAME "
+			+ "ORDER BY CNT DESC");
+			_ps.setInt(1, Navaid.AIRPORT.ordinal());
+			_ps.setString(2, a.getICAO());
+			_ps.setInt(3, sim.getCode());
+			
+			// Execute the query
+			int max = 0;
+			List<Gate> results = new ArrayList<Gate>();
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					Gate g = new Gate(rs.getDouble(4), rs.getDouble(5));
+					g.setCode(rs.getString(1));
+					g.setName(rs.getString(2));
+					g.setHeading(rs.getInt(6));
+					g.setRegion(rs.getString(7));
+					int useCount = rs.getInt(8);
+					g.setUseCount(useCount);
+					max = Math.max(max, useCount);
+					if ((useCount > (max / 10)) || (max < 20))
+						results.add(g);
+					else
+						break;
+				}
+			}
+			
+			_ps.close();
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Returns popular Gates for a particular Route.
 	 * @param rp the RoutePair
 	 * @param sim the Simulator
@@ -59,20 +103,23 @@ public class GetGates extends DAO {
 		StringBuilder sqlBuf = new StringBuilder("SELECT G.*, ND.REGION, COUNT(GD.ID) AS CNT FROM acars.FLIGHTS F, "
 			+ "acars.GATEDATA GD, common.GATES G LEFT JOIN common.NAVDATA ND ON (G.ICAO=ND.CODE) AND "
 			+ "(ND.ITEMTYPE=?) WHERE (GD.ID=F.ID) AND (GD.ICAO=?) AND (GD.ISDEPARTURE=?) AND (G.ICAO=GD.ICAO) "
-			+ "AND (G.NAME=GD.GATE) AND (G.SIMVERSION=?) AND (F.AIRPORT_D=?) ");
+			+ "AND (G.NAME=GD.GATE) AND (G.SIMVERSION=?) ");
+		if (rp.getAirportD() != null)
+			sqlBuf.append("AND (F.AIRPORT_D=?) ");
 		if (rp.getAirportA() != null)
 			sqlBuf.append("AND (F.AIRPORT_A=?) ");
 		sqlBuf.append("GROUP BY G.NAME ORDER BY CNT DESC");
 		
 		try {
+			int pos = 0;
 			prepareStatement(sqlBuf.toString());
-			_ps.setInt(1, Navaid.AIRPORT.ordinal());
-			_ps.setString(2, (isDeparture ? rp.getAirportD() : rp.getAirportA()).getICAO());
-			_ps.setBoolean(3, isDeparture);
-			_ps.setInt(4, sim.getCode());
-			_ps.setString(5, rp.getAirportD().getIATA());
+			_ps.setInt(++pos, Navaid.AIRPORT.ordinal());
+			_ps.setString(++pos, (isDeparture ? rp.getAirportD() : rp.getAirportA()).getICAO());
+			_ps.setBoolean(++pos, isDeparture);
+			_ps.setInt(++pos, sim.getCode());
+			_ps.setString(++pos, rp.getAirportD().getIATA());
 			if (rp.getAirportA() != null)
-				_ps.setString(6, rp.getAirportA().getIATA());
+				_ps.setString(++pos, rp.getAirportA().getIATA());
 			
 			// Execute the Query
 			int max = 0;
@@ -86,8 +133,10 @@ public class GetGates extends DAO {
 					g.setRegion(rs.getString(7));
 					int useCount = rs.getInt(8);
 					max = Math.max(max, useCount);
-					if (useCount > (max / 10))
+					if ((useCount > (max / 10)) || (max < 20))
 						results.add(g);
+					else
+						break;
 				}
 			}
 			
