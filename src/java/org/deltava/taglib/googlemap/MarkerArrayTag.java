@@ -11,7 +11,7 @@ import org.deltava.taglib.ContentHelper;
 /**
  * A JSP Tag to generate a JavaScript array of Google Maps v2 GMarkers.
  * @author Luke
- * @version 6.0
+ * @version 6.3
  * @since 1.0
  */
 
@@ -20,6 +20,8 @@ public class MarkerArrayTag extends GoogleMapEntryTag {
 	private Collection<GeoLocation> _entries;
 	private String _color;
 	private boolean _useMarker;
+	private int _palCode = -1;
+	private int _iconCode = -1;
 
 	/**
 	 * Sets the icon color for these markers. This overrides any color provided by the points.
@@ -37,6 +39,22 @@ public class MarkerArrayTag extends GoogleMapEntryTag {
 	public void setMarker(boolean useMarker) {
 		_useMarker = useMarker;
 	}
+	
+	/**
+	 * Sets the Google Earth palette code for this marker, overriding any code provided by the point.
+	 * @param code the Google Earth palette code
+	 */
+	public void setPalette(int code) {
+		_palCode = code;
+	}
+
+	/**
+	 * Sets the Google Earth icon code for this marker, overriding any code provided by the point.
+	 * @param code the Google Earth icon code
+	 */
+	public void setIcon(int code) {
+		_iconCode = code;
+	}
 
 	/**
 	 * Sets the points used to generate the array.
@@ -53,6 +71,8 @@ public class MarkerArrayTag extends GoogleMapEntryTag {
 	public void release() {
 		_color = null;
 		_useMarker = false;
+		_palCode = -1;
+		_iconCode = -1;
 		super.release();
 	}
 
@@ -83,7 +103,7 @@ public class MarkerArrayTag extends GoogleMapEntryTag {
 					
 					if ((entry instanceof IconMapEntry) && !_useMarker) {
 						IconMapEntry me = (IconMapEntry) entry;
-						buf.append(generateIconMarker(entry, me.getPaletteCode(), me.getIconCode(), me.getInfoBox()));
+						buf.append(generateIconMarker(entry, (_palCode == -1) ? me.getPaletteCode() : _palCode, (_iconCode == -1) ? me.getIconCode() : _iconCode, me.getInfoBox()));
 					} else {
 						MarkerMapEntry me = (MarkerMapEntry) entry;
 						String entryColor = (_color == null) ? me.getIconColor() : _color; 
