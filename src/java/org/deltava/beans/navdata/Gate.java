@@ -4,7 +4,7 @@ package org.deltava.beans.navdata;
 /**
  * A bean to store airport Gate information.
  * @author Luke
- * @version 6.0
+ * @version 6.3
  * @since 5.1
  */
 
@@ -17,6 +17,7 @@ public class Gate extends NavigationDataBean {
 	private int _heading;
 	private int _number;
 	private Type _type = Type.GATE;
+	private int _useCount;
 
 	/**
 	 * Creates the bean.
@@ -49,6 +50,22 @@ public class Gate extends NavigationDataBean {
 	 */
 	public int getGateNumber() {
 		return _number;
+	}
+	
+	/**
+	 * Returns the number of times this Gate was used in a flight.
+	 * @return the number of flights
+	 */
+	public int getUseCount() {
+		return _useCount;
+	}
+	
+	/**
+	 * Updates the number of times this gate has been used.
+	 * @param cnt the number of flights
+	 */
+	public void setUseCount(int cnt) {
+		_useCount = Math.max(0, cnt);
 	}
 	
 	/**
@@ -104,6 +121,14 @@ public class Gate extends NavigationDataBean {
 		StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox navdata\">");
 		buf.append(getHTMLTitle());
 		buf.append(getHTMLPosition());
+		if (_useCount > 0) {
+			buf.append("<br />Used for ");
+			buf.append(_useCount);
+			buf.append(" Flight");
+			if (_useCount > 1)
+				buf.append('s');
+		}
+		
 		buf.append("</div>");
 		return buf.toString();
 	}
@@ -128,5 +153,14 @@ public class Gate extends NavigationDataBean {
 	@Override
 	public boolean equals(Object o) {
 		return ((o instanceof Gate) && (hashCode() == o.hashCode()));
+	}
+	
+	@Override
+	public int compareTo(NavigationDataBean ndb2) {
+		if ((ndb2.getType() != Navaid.GATE) || (_useCount == 0))
+			return super.compareTo(ndb2);
+		
+		Gate g2 = (Gate) ndb2;
+		return Integer.valueOf(_useCount).compareTo(Integer.valueOf(g2._useCount));
 	}
 }
