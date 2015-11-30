@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.beans.schedule.GeoPosition;
 /**
  * A utility class for performing geocoding operations.
  * @author Luke
- * @version 5.4
+ * @version 6.3
  * @since 1.0
  */
 
@@ -175,6 +175,23 @@ public class GeoUtils {
 	public static double delta(double hdg1, double hdg2) {
 		double delta = Math.abs(normalize(hdg1) - normalize(hdg2));
 		return (delta > 180) ? (360 - delta) : delta;
+	}
+	
+	/**
+	 * Returns a bounding box that contains all of the specified locations.
+	 * @param locs a Collection of GeoLocations
+	 * @return a Tuple with the northeast and southwest limits of the box
+	 */
+	public static Tuple<GeoLocation, GeoLocation> getBoundingBox(Collection<? extends GeoLocation> locs) {
+		double maxLat = -90; double minLat = 90; double maxLng = -180; double minLng = 180;
+		for (GeoLocation loc : locs) {
+			maxLat = Math.max(maxLat, loc.getLatitude());
+			minLat = Math.min(minLat, loc.getLatitude());
+			maxLng = Math.max(maxLng, loc.getLongitude());
+			minLng = Math.min(minLng, loc.getLongitude());
+		}
+		
+		return Tuple.create(new GeoPosition(maxLat, maxLng), new GeoPosition(minLat, minLng));
 	}
 
 	/**
