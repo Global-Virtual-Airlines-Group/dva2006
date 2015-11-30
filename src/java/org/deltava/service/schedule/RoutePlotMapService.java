@@ -26,7 +26,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display plotted flight routes with SID/STAR/Airway data.
  * @author Luke
- * @version 5.1
+ * @version 6.3
  * @since 1.0
  */
 
@@ -111,7 +111,7 @@ public class RoutePlotMapService extends MapPlotService {
 					
 					// Sort runways based on wind heading
 					if ((wxD != null) && (wxD.getWindSpeed() > 0))
-						runways = CollectionUtils.sort(runways, new RunwayComparator(wxD.getWindDirection()).reverse());
+						runways = CollectionUtils.sort(runways, new RunwayComparator(wxD.getWindDirection(), wxD.getWindSpeed()));
 				}
 			}
 

@@ -30,7 +30,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle editing/saving Flight Reports.
  * @author Luke
- * @version 6.0
+ * @version 6.3
  * @since 1.0
  */
 
@@ -565,11 +565,11 @@ public class PIREPCommand extends AbstractFormCommand {
 					if (ac.getCanDispose()) {
 						Collection<Runway> dRwys = navdao.getRunways(info.getAirportD());
 						if (info.getRunwayD() != null)
-							dRwys = CollectionUtils.sort(dRwys, new RunwayComparator(info.getRunwayD().getHeading()).reverse());	
+							dRwys = CollectionUtils.sort(dRwys, new RunwayComparator(info.getRunwayD().getHeading(), 5));	
 					
 						Collection<Runway> aRwys = navdao.getRunways(info.getAirportA());
 						if (info.getRunwayA() != null)
-							aRwys = CollectionUtils.sort(aRwys, new RunwayComparator(info.getRunwayA().getHeading()).reverse());	
+							aRwys = CollectionUtils.sort(aRwys, new RunwayComparator(info.getRunwayA().getHeading(), 5));	
 					
 						// Save runway choices
 						ctx.setAttribute("dRunways", dRwys, REQUEST);

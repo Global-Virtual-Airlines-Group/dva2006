@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to load flight routes from the database.
  * @author Luke
- * @version 5.4
+ * @version 6.3
  * @since 3.4
  */
 
@@ -170,7 +170,7 @@ public final class RouteLoadHelper {
 		List<Runway> rwys = ardao.getPopularRunways(_rp.getAirportD(), _rp.getAirportA(), isTakeoff);
 		METAR m = isTakeoff ? _mD : _mA;
 		if ((m != null) && (m.getWindSpeed() > 0))
-			Collections.sort(rwys, new RunwayComparator(m.getWindDirection()).reverse());
+			rwys.sort(new RunwayComparator(m.getWindDirection(), m.getWindSpeed()));
 		
 		return rwys;
 	}
