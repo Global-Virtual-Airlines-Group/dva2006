@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to read Navigation data.
  * @author Luke
- * @version 6.0
+ * @version 6.3
  * @since 1.0
  */
 
@@ -199,7 +199,7 @@ public class GetNavData extends DAO {
 	 * @return a Collection Runway beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<Runway> getRunways(ICAOAirport a) throws DAOException {
+	public List<Runway> getRunways(ICAOAirport a) throws DAOException {
 		try {
 			prepareStatement("SELECT * FROM common.NAVDATA WHERE (ITEMTYPE=?) AND (CODE=?)");
 			_ps.setInt(1, Navaid.RUNWAY.ordinal());
