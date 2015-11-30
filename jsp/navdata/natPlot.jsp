@@ -51,8 +51,7 @@
  <td class="data"><el:check name="showTracks" idx="*" options="${trackTypes}" checked="${trackTypes}" width="100" cols="3" onChange="void golgotha.maps.oceanic.updateTracks(this)" /></td>
 </tr>
 <tr>
- <td class="label top">Route Map</td>
- <td class="data"><map:div ID="googleMap" height="550" /></td>
+ <td colspan="2" class="data"><map:div ID="googleMap" height="550" /></td>
 </tr>
 </el:table>
 </el:form>
