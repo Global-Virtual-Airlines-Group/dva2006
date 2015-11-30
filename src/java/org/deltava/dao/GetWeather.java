@@ -4,6 +4,7 @@ package org.deltava.dao;
 import java.sql.*;
 import java.util.*;
 
+import org.deltava.beans.GeoLocation;
 import org.deltava.beans.flight.ILSCategory;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
@@ -15,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load weather data from the database.
  * @author Luke
- * @version 6.2
+ * @version 6.3
  * @since 2.7
  */
 
@@ -58,6 +59,47 @@ public class GetWeather extends DAO {
 	 */
 	public METAR getMETAR(ICAOAirport a) throws DAOException {
 		return (a == null) ? null : getMETAR(a.getICAO());
+	}
+	
+	/**
+	 * Returns the closest METAR to a given point within a specific radius.
+	 * @param loc the GeoLocation
+	 * @param distance the maximum distance in miles
+	 * @return a METAR or null if not found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public METAR getMETAR(GeoLocation loc, int distance) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("SELECT M.DATE, M.DATA, M.ILS, M.AIRPORT, ND.LATITUDE, ND.LONGITUDE, ND.ALTITUDE "
+				+ "FROM common.METARS M LEFT JOIN common.NAVDATA ND ON (M.AIRPORT=ND.CODE) AND (ND.ITEMTYPE=?) ORDER BY "
+				+ "ST_Distance(LOC, ST_PointFromText(?, ?)) LIMIT 1");
+			_ps.setInt(1, Navaid.AIRPORT.ordinal());
+			_ps.setString(2, formatLocation(loc));
+			_ps.setInt(3, GEO_SRID);
+			
+			// Load the METAR
+			METAR m = null;
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next()) {
+					AirportLocation a = new AirportLocation(rs.getDouble(5), rs.getDouble(6));
+					if (a.distanceTo(loc) <= distance) {
+						a.setCode(rs.getString(4));
+						a.setAltitude(rs.getInt(7));
+						String data = rs.getString(2);
+						m = MetarParser.parse(data);
+						m.setDate(rs.getTimestamp(1));
+						m.setILS(ILSCategory.values()[rs.getInt(3)]);
+						m.setData(data);
+						m.setAirport(a);
+					}
+				}
+			}
+				
+			_ps.close();
+			return m;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
 	}
 	
 	/**
