@@ -1,6 +1,8 @@
 // Copyright 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
+import org.deltava.beans.UseCount;
+
 /**
  * A bean to store airport Gate information.
  * @author Luke
@@ -8,7 +10,7 @@ package org.deltava.beans.navdata;
  * @since 5.1
  */
 
-public class Gate extends NavigationDataBean {
+public class Gate extends NavigationDataBean implements UseCount {
 
 	public enum Type {
 		GATE, PARKING, DOCK;
@@ -56,6 +58,7 @@ public class Gate extends NavigationDataBean {
 	 * Returns the number of times this Gate was used in a flight.
 	 * @return the number of flights
 	 */
+	@Override
 	public int getUseCount() {
 		return _useCount;
 	}
