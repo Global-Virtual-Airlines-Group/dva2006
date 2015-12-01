@@ -1,9 +1,10 @@
-// Copyright 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 
+import org.deltava.beans.UseCount;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.Airport;
 
@@ -12,7 +13,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load popular runways for takeoff and landing.
  * @author Luke
- * @version 5.0
+ * @version 6.3
  * @since 2.6
  */
 
@@ -25,30 +26,35 @@ public class GetACARSRunways extends DAO {
 		
 		RunwayCacheKey(Airport aD, Airport aA, boolean isTakeoff) {
 			super();
+			String aDCode = (aD == null) ? "null" : aD.getICAO();
 			String aACode = (aA == null) ? "null" : aA.getICAO();
-			_key = aD.getICAO() + "$" + aACode + "$" + String.valueOf(isTakeoff);
+			_key = aDCode + "$" + aACode + "$" + String.valueOf(isTakeoff);
 		}
 		
+		@Override
 		public int hashCode() {
 			return _key.hashCode();
 		}
 		
+		@Override
 		public String toString() {
 			return _key;
 		}
 		
+		@Override
 		public boolean equals(Object o) {
 			return (_key.equals(String.valueOf(o)));
 		}
 	}
 	
-	private static class SelectableRunway extends Runway {
+	public static class SelectableRunway extends Runway implements UseCount {
 		private int _useCount;
 		
 		SelectableRunway(double lat, double lng) {
 			super(lat, lng);
 		}
 		
+		@Override
 		public int getUseCount() {
 			return _useCount;
 		}
@@ -57,14 +63,17 @@ public class GetACARSRunways extends DAO {
 			_useCount = uses;
 		}
 		
+		@Override
 		public int hashCode() {
 			return getComboAlias().hashCode();
 		}
 		
+		@Override
 		public boolean equals(Object o) {
 			return (o instanceof SelectableRunway) && (hashCode() == o.hashCode());
 		}
 		
+		@Override
 		public int compareTo(NavigationDataBean nd2) {
 			if (!(nd2 instanceof SelectableRunway))
 				return super.compareTo(nd2);
@@ -107,19 +116,23 @@ public class GetACARSRunways extends DAO {
 		StringBuilder sqlBuf = new StringBuilder("SELECT R.RUNWAY, R.ICAO, ND.LATITUDE, ND.LONGITUDE, ND.ALTITUDE, ND.HDG, "
 				+ "IF(ND.FREQ=?,NULL, ND.FREQ) AS FREQ, COUNT(R.ID) AS CNT FROM acars.FLIGHTS F, acars.RWYDATA R LEFT JOIN "
 				+ "common.NAVDATA ND ON (ND.CODE=R.ICAO) AND (ND.NAME=R.RUNWAY) AND (ND.ITEMTYPE=?) WHERE (F.ID=R.ID) "
-				+ "AND (R.ISTAKEOFF=?) AND (F.AIRPORT_D=?) ");
+				+ "AND (R.ISTAKEOFF=?) ");
+		if (aD != null)
+			sqlBuf.append("AND (F.AIRPORT_D=?) ");
 		if (aA != null)
-			sqlBuf.append(" AND (F.AIRPORT_A=?)");
+			sqlBuf.append("AND (F.AIRPORT_A=?) ");
 		sqlBuf.append("GROUP BY R.RUNWAY ORDER BY CNT DESC");
 		
 		try {
+			int pos = 0;
 			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setString(1, "-");
-			_ps.setInt(2, Navaid.RUNWAY.ordinal());
-			_ps.setBoolean(3, isTakeoff);
-			_ps.setString(4, aD.getIATA());
+			_ps.setString(++pos, "-");
+			_ps.setInt(++pos, Navaid.RUNWAY.ordinal());
+			_ps.setBoolean(++pos, isTakeoff);
+			if (aD != null)
+				_ps.setString(++pos, aD.getIATA());
 			if (aA != null)
-				_ps.setString(5, aA.getIATA());
+				_ps.setString(++pos, aA.getIATA());
 			
 			// Execute the Query
 			int max = 0;
@@ -134,8 +147,13 @@ public class GetACARSRunways extends DAO {
 					r.setFrequency(rs.getString(7));
 					r.setUseCount(rs.getInt(8));
 					max = Math.max(max, r.getUseCount());
-					if (r.getUseCount() > (max / 10))
+					
+					// Determine percentage - default to 10%, if we have more than 10,000 flights use 20%
+					int maxRatio = (max > 5000) ? 4 : 10;
+					if ((r.getUseCount() > (max / maxRatio)) || (max < 20))
 						results.add(r);
+					else
+						break;
 				}
 			}
 				
