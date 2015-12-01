@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2007, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007, 2009, 2010, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.Date;
@@ -8,11 +8,11 @@ import org.deltava.beans.*;
 /**
  * A class for storing approach/procedure chart data.
  * @author Luke
- * @version 5.0
+ * @version 6.3
  * @since 1.0
  */
 
-public class Chart extends DatabaseBlobBean implements ComboAlias, ViewEntry {
+public class Chart extends DatabaseBlobBean implements ComboAlias, UseCount, ViewEntry {
 
 	/**
 	 * Chart type enumeration.
@@ -32,10 +32,12 @@ public class Chart extends DatabaseBlobBean implements ComboAlias, ViewEntry {
 			return _desc;
 		}
 
+		@Override
 		public String getComboAlias() {
 			return name();
 		}
 
+		@Override
 		public String getComboName() {
 			return _desc;
 		}
@@ -123,6 +125,7 @@ public class Chart extends DatabaseBlobBean implements ComboAlias, ViewEntry {
 	 * @return the size of the image in bytes
 	 * @see Chart#setSize(int)
 	 */
+	@Override
 	public int getSize() {
 		return (_buffer == null) ? _size : _buffer.length;
 	}
@@ -132,6 +135,7 @@ public class Chart extends DatabaseBlobBean implements ComboAlias, ViewEntry {
 	 * @return the number of views
 	 * @see Chart#setUseCount(int)
 	 */
+	@Override
 	public int getUseCount() {
 		return _useCount;
 	}
@@ -208,31 +212,34 @@ public class Chart extends DatabaseBlobBean implements ComboAlias, ViewEntry {
 	/**
 	 * Compares two Charts by comparing their Airports, then their names.
 	 */
+	@Override
 	public int compareTo(Object o2) {
 		Chart c2 = (Chart) o2;
 		int tmp = _airport.compareTo(c2._airport);
 		return (tmp == 0) ? _name.compareTo(c2._name) : tmp;
 	}
-	
+
+	@Override
 	public String getRowClassName() {
 		return (_type == Type.UNKNOWN) ? null : _type.name().toLowerCase();
 	}
 
-	/**
-	 * Determine equality by calling compareTo().
-	 */
+	@Override
 	public boolean equals(Object o) {
 		return (o instanceof Chart) && (compareTo(o) == 0);
 	}
 	
+	@Override
 	public String getComboName() {
 		return getName();
 	}
 
+	@Override
 	public String getComboAlias() {
 		return getHexID();
 	}
-	
+
+	@Override
 	public String toString() {
 		return getName();
 	}
