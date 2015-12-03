@@ -50,7 +50,7 @@ golgotha.onDOMReady(function() { return golgotha.airportLoad.setHelpers(document
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void updateVisibility()">
+<body onload="void golgotha.local.updateVisibility()">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
