@@ -12,7 +12,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP Tag to generate a Google LatLng literal.
  * @author Luke
- * @version 6.0
+ * @version 6.3
  * @since 1.0
  */
 
@@ -37,13 +37,7 @@ public class PointTag extends GoogleMapEntryTag {
 	public int doEndTag() throws JspException {
 		try {
 			JspWriter out = pageContext.getOut();
-			if (_jsVarName != null) {
-				if (_jsVarName.indexOf('.') == -1)
-					out.print("var ");
-				out.print(_jsVarName);
-				out.print(" = ");
-			}
-
+			writeVariableName();
 			out.print("{lat:");
 			out.print(StringUtils.format(_entry.getLatitude(), "##0.00000"));
 			out.print(",lng:");

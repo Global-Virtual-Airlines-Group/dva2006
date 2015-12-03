@@ -116,15 +116,9 @@ public class MarkerTag extends GoogleMapEntryTag {
 				_color = ((MarkerMapEntry) mapInfo).getIconColor();
 		}
 
-		JspWriter out = pageContext.getOut();
 		try {
-			// Assign to a variable if a name was provided, otherwise make an anonymous object
-			if (_jsVarName != null) {
-				if (_jsVarName.indexOf('.') == -1)
-					out.print("var ");
-				out.print(_jsVarName);
-				out.print(" = ");
-			}
+			JspWriter out = pageContext.getOut();
+			writeVariableName();
 
 			// Call the googleMarker function
 			if ((_entry instanceof IconMapEntry) && !_useMarker) {
