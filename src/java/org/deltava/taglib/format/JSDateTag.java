@@ -10,7 +10,7 @@ import org.deltava.taglib.JSTag;
 /**
  * A JSP Tag to format a Date/Time object into a JavaScript date. 
  * @author Luke
- * @version 6.0
+ * @version 6.3
  * @since 2.4
  */
 
@@ -52,15 +52,7 @@ public class JSDateTag extends JSTag {
 	@Override
 	public int doEndTag() throws JspException {
 		
-        StringBuilder buf = new StringBuilder();
-        if (_jsVarName != null) {
-        	if (_jsVarName.indexOf('.') == -1)
-				buf.append("var ");
-        	buf.append(_jsVarName);
-        	buf.append(" = ");
-        }
-        
-        buf.append("new Date(");
+        StringBuilder buf = new StringBuilder("new Date(");
         buf.append(_cld.get(Calendar.YEAR));
         buf.append(',');
         buf.append(_cld.get(Calendar.MONTH));
@@ -77,6 +69,7 @@ public class JSDateTag extends JSTag {
         
         buf.append(");");
         try {
+        	writeVariableName();
         	pageContext.getOut().write(buf.toString());
         } catch (Exception e) {
         	throw new JspException(e);
