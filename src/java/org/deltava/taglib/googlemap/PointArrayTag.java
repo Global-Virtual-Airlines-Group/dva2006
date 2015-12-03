@@ -13,7 +13,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP Tag to generate a JavaScript array of Google Maps Lat/Lon objects.
  * @author Luke
- * @version 6.0
+ * @version 6.3
  * @since 1.0
  */
 
@@ -47,10 +47,7 @@ public class PointArrayTag extends GoogleMapEntryTag {
 	public int doEndTag() throws JspException {
 		try {
 			JspWriter out = pageContext.getOut();
-			if (_jsVarName.indexOf('.') == -1)
-				out.print("var ");
-			out.print(_jsVarName);
-			out.print(" = [");
+			writeVariableName();
 
 			// Create the markers
 			for (Iterator<GeoLocation> i = _entries.iterator(); i.hasNext();) {

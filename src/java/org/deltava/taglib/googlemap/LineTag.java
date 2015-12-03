@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP Tag to generate a Google Maps GPolyline created out of GMarkers.
  * @author Luke
- * @version 6.0
+ * @version 6.3
  * @since 1.0
  */
 
@@ -99,15 +99,9 @@ public class LineTag extends GoogleMapEntryTag {
 	 */
 	@Override
 	public int doEndTag() throws JspException {
-
-		JspWriter out = pageContext.getOut();
 		try {
-			if (_jsVarName != null) {
-				if (_jsVarName.indexOf('.') == -1)
-					out.print("var ");
-				out.print(_jsVarName);
-				out.print(" = ");
-			}
+			JspWriter out = pageContext.getOut();
+			writeVariableName();
 
 			// Generate the line
 			out.print("new google.maps.Polyline({");
