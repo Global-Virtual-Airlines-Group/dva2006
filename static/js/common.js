@@ -237,11 +237,27 @@ if (!Array.prototype.indexOf)
 
 Array.prototype.contains = function(obj) { return (this.indexOf(obj) != -1); };
 Array.prototype.clone = function() {
-var result = [];	
-for (var x = 0; x < this.length; x++)
-	result.push(this[x]);
+	var result = [];	
+	for (var x = 0; x < this.length; x++)
+		result.push(this[x]);
 
-return result;
+	return result;
+};
+
+Array.prototype.keys = function() {
+	var result = [];
+	for (p in this) {
+		var v = this[p];
+		if (this.hasOwnProperty(p) && !golgotha.util.isFunction(v) && (v != null))
+			result.push(p);
+	}
+	
+	return result;
+};
+
+Array.prototype.forEach = function(f) {
+	for (var x = 0; x < this.length; x++)
+		f(this[x]);
 };
 
 golgotha.form.check = function() { return (golgotha.form.isSubmitted != true); };
