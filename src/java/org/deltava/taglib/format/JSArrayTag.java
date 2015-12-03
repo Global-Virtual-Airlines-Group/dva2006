@@ -10,7 +10,7 @@ import org.deltava.taglib.JSTag;
 /**
  * A JSP tag to add objects into a JavaScript array.
  * @author Luke
- * @version 6.0
+ * @version 6.3
  * @since 2.4
  */
 
@@ -34,16 +34,7 @@ public class JSArrayTag extends JSTag {
 	@Override
 	public int doEndTag() throws JspException {
 
-		// Generate the output string
-		StringBuilder buf = new StringBuilder();
-		if (_jsVarName != null) {
-			if (_jsVarName.indexOf('.') == -1)
-				buf.append("var ");
-			buf.append(_jsVarName);
-			buf.append(" = ");
-		}
-
-		buf.append('[');
+		StringBuilder buf = new StringBuilder("[");
 		if (_data != null) {
 			for (Iterator<Object> i = _data.iterator(); i.hasNext();) {
 				Object obj = i.next();
@@ -64,6 +55,7 @@ public class JSArrayTag extends JSTag {
 
 		buf.append("];");
 		try {
+			writeVariableName();
 			pageContext.getOut().write(buf.toString());
 		} catch (Exception e) {
 			throw new JspException(e);
