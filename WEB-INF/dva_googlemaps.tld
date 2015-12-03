@@ -296,6 +296,23 @@
 	</tag>
 
 	<tag>
+        <description>Bounds tag, to create a bounding box</description>    	  
+	    <name>bounds</name>
+	    <tag-class>org.deltava.taglib.googlemap.BoundsTag</tag-class>
+	    <body-content>empty</body-content>
+	    <attribute>
+            <name>var</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+	    </attribute>
+	    <attribute>
+            <name>items</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+	    </attribute>
+	</tag>
+
+	<tag>
 		<description>Map Usage tag, to display the number of times the Google Maps API has been used</description>
 		<name>usage</name>
 		<tag-class>org.deltava.taglib.googlemap.APIUsageTag</tag-class>
