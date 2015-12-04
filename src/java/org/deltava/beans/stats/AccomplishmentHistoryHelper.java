@@ -9,7 +9,7 @@ import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.comparators.FlightReportComparator;
-
+import org.deltava.util.CalendarUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -398,6 +398,10 @@ public class AccomplishmentHistoryHelper {
 	public Date achieved(Accomplishment a) {
 		if (has(a) == Result.NOTYET)
 			return null;
+		
+		// Check join date
+		if ((a.getUnit() == Accomplishment.Unit.MEMBERDAYS) && (has(a) != Result.NOTYET))
+			return CalendarUtils.adjust(_usr.getCreatedOn(), a.getValue());
 		
 		// Loop through the Flight Reports
 		AccomplishmentCounter cnt = new AccomplishmentCounter();
