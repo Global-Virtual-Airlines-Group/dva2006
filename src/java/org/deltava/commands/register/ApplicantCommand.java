@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command for processing Applicant Profiles.
  * @author Luke
- * @version 5.2
+ * @version 6.3
  * @since 1.0
  */
 
@@ -331,10 +331,9 @@ public class ApplicantCommand extends AbstractFormCommand {
 		}
 
 		// Save the persons in the request
-		AbstractComparator<Person> cmp = new PersonComparator<Person>(PersonComparator.CREATED);
-		cmp.setReverseSort(true);
-		Collection<Person> users = new TreeSet<Person>(cmp);
-		users.addAll(persons.values());
+		Comparator<Person> cmp = new PersonComparator<Person>(PersonComparator.CREATED).reversed();
+		List<Person> users = new ArrayList<Person>(persons.values());
+		users.sort(cmp);
 		ctx.setAttribute("soundexUsers", users, REQUEST);
 	}
 }

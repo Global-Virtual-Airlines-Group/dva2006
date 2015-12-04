@@ -1,7 +1,6 @@
-// Copyright 2005, 2006, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2010, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
-import java.io.Serializable;
 import java.util.Comparator;
 
 import org.deltava.util.StringUtils;
@@ -10,17 +9,12 @@ import org.deltava.util.StringUtils;
  * Implements common comparator functions.
  * NOTE: Most comparators in this package <b>impose orderings that are inconsistent with equals</b>.
  * @author Luke
- * @version 3.0
+ * @version 6.3
  * @since 1.0
  */
 
-public abstract class AbstractComparator<T> implements Comparator<T>, Serializable {
+public abstract class AbstractComparator<T> implements Comparator<T>, java.io.Serializable {
 
-    /**
-     * Are we doing a reverse sort?
-     */
-    protected boolean _reverseSort = false;
-    
     /**
      * The criteria by which to compare objects.
      */
@@ -91,15 +85,6 @@ public abstract class AbstractComparator<T> implements Comparator<T>, Serializab
     }
     
     /**
-     * Return if we are performing a reverse sort.
-     * @return TRUE if a reverse sort
-     * @see AbstractComparator#setReverseSort(boolean)
-     */
-    public boolean isReverseSort() {
-        return _reverseSort;
-    }
-    
-    /**
      * Return the comparison type.
      * @return The comparison type in use
      * @see AbstractComparator#setComparisonType(int)
@@ -107,15 +92,6 @@ public abstract class AbstractComparator<T> implements Comparator<T>, Serializab
      */
     public int getComparisonType() {
         return _comparisonType;
-    }
-    
-    /**
-     * Updates the reverse sort parameter to sort in descending order.
-     * @param rSort TRUE if sorting in descending order, otherwise FALSE
-     * @see AbstractComparator#isReverseSort()
-     */
-    public final void setReverseSort(boolean rSort) {
-        _reverseSort = rSort;
     }
     
     /**
@@ -127,8 +103,8 @@ public abstract class AbstractComparator<T> implements Comparator<T>, Serializab
      * @see AbstractComparator#compareImpl(Object, Object)
      * @see Comparator#compare(java.lang.Object, java.lang.Object)
      */
+    @Override
     public final int compare(T o1, T o2) {
-        int tmpResult = compareImpl(o1, o2);
-        return _reverseSort ? (tmpResult * -1) : tmpResult;
+        return compareImpl(o1, o2);
     }
 }

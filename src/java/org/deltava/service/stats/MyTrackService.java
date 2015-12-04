@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display route tracks between airports.
  * @author Luke
- * @version 6.0
+ * @version 6.3
  * @since 5.4
  */
 
@@ -70,7 +70,7 @@ public class MyTrackService extends WebService {
 			
 			// Filter out non-ACARS and sort
 			flights.removeIf(fr -> (!fr.hasAttribute(FlightReport.ATTR_ACARS) || (fr.getStatus() != FlightReport.OK)));
-			FlightReportComparator fc = new FlightReportComparator(0); fc.setReverseSort(true);
+			Comparator<FlightReport> fc = new FlightReportComparator(0).reversed();
 			flights.sort(fc);
 			if (flights.size() > MAX_FLIGHTS)
 				flights = flights.subList(0, MAX_FLIGHTS);
@@ -91,22 +91,20 @@ public class MyTrackService extends WebService {
 		
 		// Generate the output
 		JSONObject jo = new JSONObject();
-		try {
-			for (Map.Entry<FlightInfo, Collection<GeoLocation>> me : rts.entrySet()) {
-				JSONObject fo = new JSONObject();
-				fo.put("isDST", (me.getKey().getAirportA().equals(a)));
-				GeoLocation last = null;
-				for (GeoLocation loc : me.getValue()) {
-					int dst = GeoUtils.distance(loc, last);
-					if ((last == null) || (dst > 20)) {
-						last = loc;
-						fo.append("trk", GeoUtils.toJSON(loc));
-					}
+		for (Map.Entry<FlightInfo, Collection<GeoLocation>> me : rts.entrySet()) {
+			JSONObject fo = new JSONObject();
+			fo.put("isDST", (me.getKey().getAirportA().equals(a)));
+			GeoLocation last = null;
+			for (GeoLocation loc : me.getValue()) {
+				int dst = GeoUtils.distance(loc, last);
+				if ((last == null) || (dst > 20)) {
+					last = loc;
+					fo.append("trk", GeoUtils.toJSON(loc));
 				}
-				
-				jo.append("routes", fo);
 			}
-		} catch (Exception e) { /* empty */ }
+			
+			jo.append("routes", fo);
+		}
 		
 		// Dump the JSON to the output stream
 		try {
