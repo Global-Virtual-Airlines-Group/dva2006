@@ -7,7 +7,7 @@ import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.*;
-
+import org.deltava.beans.stats.AccomplishUnit.Data;
 import org.deltava.comparators.FlightReportComparator;
 import org.deltava.util.CalendarUtils;
 import org.deltava.util.system.SystemData;
@@ -400,28 +400,30 @@ public class AccomplishmentHistoryHelper {
 			return null;
 		
 		// Check join date
-		if ((a.getUnit() == Accomplishment.Unit.MEMBERDAYS) && (has(a) != Result.NOTYET))
+		if (a.getUnit() == AccomplishUnit.MEMBERDAYS)
 			return CalendarUtils.adjust(_usr.getCreatedOn(), a.getValue());
 		
 		// Loop through the Flight Reports
 		AccomplishmentCounter cnt = new AccomplishmentCounter();
-		for (FlightReport fr : _pireps) {
-			Date dt = (fr.getSubmittedOn() == null) ? fr.getDate() : fr.getSubmittedOn();
-			cnt.add(fr);
-			
-			// If we meet the criteria, return the date
-			if (has(a, cnt) != Result.NOTYET)
-				return dt;
+		if (a.getUnit().getDataRequired() == Data.FLIGHTS) {
+			for (FlightReport fr : _pireps) {
+				Date dt = (fr.getSubmittedOn() == null) ? fr.getDate() : fr.getSubmittedOn();
+				cnt.add(fr);
+				
+				// If we meet the criteria, return the date
+				if (has(a, cnt) != Result.NOTYET)
+					return dt;
+			}
 		}
 		
 		// Loop through the connection entries
-		for (DispatchConnectionEntry dce : _cons) {
-			Date dt = dce.getEndTime();
-			cnt.add(dce);
-			
-			// If we meet the criteria, return the date
-			if (has(a, cnt) != Result.NOTYET)
-				return dt;
+		if (a.getUnit().getDataRequired() == Data.DISPATCH) {
+			for (DispatchConnectionEntry dce : _cons) {
+				Date dt = dce.getEndTime();
+				cnt.add(dce);
+				if (has(a, cnt) != Result.NOTYET)
+					return dt;
+			}
 		}
 		
 		return null;

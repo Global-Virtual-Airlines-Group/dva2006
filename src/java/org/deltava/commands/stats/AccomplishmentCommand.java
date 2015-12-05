@@ -5,7 +5,7 @@ import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.schedule.*;
-import org.deltava.beans.stats.Accomplishment;
+import org.deltava.beans.stats.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -61,7 +61,7 @@ public class AccomplishmentCommand extends AbstractFormCommand {
 			a.setValue(StringUtils.parse(ctx.getParameter("value"), 0));
 			a.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
 			a.setAlwaysDisplay(Boolean.valueOf(ctx.getParameter("alwaysDisplay")).booleanValue());
-			a.setUnit(Accomplishment.Unit.valueOf(ctx.getParameter("units")));
+			a.setUnit(AccomplishUnit.valueOf(ctx.getParameter("units")));
 			a.setColor(StringUtils.parse("0x" + ctx.getParameter("color"), 0));
 			
 			// Get choices
@@ -133,7 +133,7 @@ public class AccomplishmentCommand extends AbstractFormCommand {
 		// Get the command results
 		CommandResult result = ctx.getResult();
 		ctx.setAttribute("airlines", SystemData.getAirlines().values(), REQUEST);
-		ctx.setAttribute("units", Arrays.asList(Accomplishment.Unit.values()), REQUEST);
+		ctx.setAttribute("units", Arrays.asList(AccomplishUnit.values()), REQUEST);
 		ctx.setAttribute("states", Arrays.asList(State.values()), REQUEST);
 		ctx.setAttribute("continents", Country.getContinents(), REQUEST);
 		

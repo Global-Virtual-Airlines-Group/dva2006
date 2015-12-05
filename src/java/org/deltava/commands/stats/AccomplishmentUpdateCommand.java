@@ -8,7 +8,6 @@ import org.deltava.beans.Pilot;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.flight.FlightReport;
 import org.deltava.beans.stats.*;
-import org.deltava.beans.stats.Accomplishment.Unit;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -70,8 +69,7 @@ public class AccomplishmentUpdateCommand extends AbstractCommand {
 
 				// Load Dispatch/Flight Report statistics
 				AccomplishmentHistoryHelper helper = new AccomplishmentHistoryHelper(p);
-				boolean isDispatch = (a.getUnit() == Unit.DFLIGHTS) || (a.getUnit() == Unit.DHOURS);
-				if (isDispatch) {
+				if (a.getUnit().getDataRequired() == AccomplishUnit.Data.DISPATCH) {
 					List<ConnectionEntry> cons = acdao.getConnections(new LogSearchCriteria(p.getID()));
 					for (ConnectionEntry ce : cons) {
 						DispatchConnectionEntry dce = (DispatchConnectionEntry) ce;
@@ -79,7 +77,7 @@ public class AccomplishmentUpdateCommand extends AbstractCommand {
 						flights.forEach(fi -> dce.addFlight(fi));
 						helper.add(dce);
 					}
-				} else {
+				} else if (a.getUnit().getDataRequired() == AccomplishUnit.Data.FLIGHTS) {
 					Collection<FlightReport> pireps = frdao.getByPilot(p.getID(), null);
 					frdao.getCaptEQType(pireps);
 					pireps.forEach(fr -> helper.add(fr));

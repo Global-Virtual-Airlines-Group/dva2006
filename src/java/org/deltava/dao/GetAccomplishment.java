@@ -6,7 +6,6 @@ import java.util.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.stats.*;
-import org.deltava.beans.stats.Accomplishment.Unit;
 import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.util.StringUtils;
@@ -16,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Accomplishment profiles.
  * @author Luke
- * @version 6.1
+ * @version 6.3
  * @since 3.2
  */
 
@@ -72,7 +71,7 @@ public class GetAccomplishment extends DAO {
 				if (rs.next()) {
 					a = new Accomplishment(rs.getString(2));
 					a.setID(rs.getInt(1));
-					a.setUnit(Accomplishment.Unit.values()[rs.getInt(3)]);
+					a.setUnit(AccomplishUnit.values()[rs.getInt(3)]);
 					a.setValue(rs.getInt(4));
 					a.setColor(rs.getInt(5));
 					a.setChoices(StringUtils.split(rs.getString(6), ","));
@@ -93,11 +92,11 @@ public class GetAccomplishment extends DAO {
 	
 	/**
 	 * Returns all Accomplishments involving a particular Unit of measure, order by value.
-	 * @param u the Unit
+	 * @param u the AccomplishUnit
 	 * @return a List of Accomplishment beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<Accomplishment> getByUnit(Unit u) throws DAOException {
+	public List<Accomplishment> getByUnit(AccomplishUnit u) throws DAOException {
 		try {
 			prepareStatement("SELECT ID FROM ACCOMPLISHMENTS WHERE (UNIT=?) ORDER BY VAL");
 			_ps.setInt(1, u.ordinal());
@@ -140,7 +139,7 @@ public class GetAccomplishment extends DAO {
 				while (rs.next()) {
 					Accomplishment a = new Accomplishment(rs.getString(2));
 					a.setID(rs.getInt(1));
-					a.setUnit(Accomplishment.Unit.values()[rs.getInt(3)]);
+					a.setUnit(AccomplishUnit.values()[rs.getInt(3)]);
 					a.setValue(rs.getInt(4));
 					a.setColor(rs.getInt(5));
 					a.setChoices(StringUtils.split(rs.getString(6), ","));
