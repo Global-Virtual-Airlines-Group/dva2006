@@ -15,41 +15,8 @@ import org.deltava.beans.system.AirlineInformation;
 
 public class Accomplishment extends DatabaseBean implements ComboAlias, ViewEntry {
 
-	/**
-	 * Enumeration to track Accomplishment Units.
-	 */
-	public enum Unit implements ComboAlias {
-		LEGS("Flight Legs"), MILES("Flight Miles"), OLEGS("Online Legs"), VLEGS("VATSIM Legs"),
-		ILEGS("IVAO Legs"), HLEGS("Historic Legs"), EVENTS("Events"), DLEGS("Dispatch Legs"),
-		ALEGS("ACARS Legs"), AIRPORTS("Airports Visited"), AIRCRAFT("Aircraft Used"), 
-		COUNTRIES("Countries Visited"), STATES("States Visited"), MEMBERDAYS("Days since joining"),
-		AIRLINES("Airlines"), DFLIGHTS("Flights Dispatched"), DHOURS("Dispatch Hours"),
-		EQLEGS("Legs in Aircraft"), CONTINENTS("Continents Visited"), PAX("Passengers Carried"),
-		AIRPORTD("Departure Airport"), AIRPORTA("Arrival Airport"), PROMOLEGS("Promotion Legs");
-			
-		private final String _name;
-		
-		Unit(String name) {
-			_name = name;
-		}
-		
-		public String getName() {
-			return _name;
-		}
-		
-		@Override
-		public String getComboName() {
-			return _name;
-		}
-		
-		@Override
-		public String getComboAlias() {
-			return name();
-		}
-	}
-	
 	private String _name;
-	private Unit _unit;
+	private AccomplishUnit _unit;
 	private int _value;
 	private final Collection<String> _choices = new TreeSet<String>();
 	
@@ -84,9 +51,9 @@ public class Accomplishment extends DatabaseBean implements ComboAlias, ViewEntr
 	/**
 	 * Returns the Accomplishment unit.
 	 * @return the unit
-	 * @see Accomplishment#setUnit(Unit)
+	 * @see Accomplishment#setUnit(AccomplishUnit)
 	 */
-	public Unit getUnit() {
+	public AccomplishUnit getUnit() {
 		return _unit;
 	}
 	
@@ -185,10 +152,10 @@ public class Accomplishment extends DatabaseBean implements ComboAlias, ViewEntr
 	
 	/**
 	 * Updates the unit of measurement.
-	 * @param u the Unit
+	 * @param u the AccomplishUnit
 	 * @see Accomplishment#getUnit()
 	 */
-	public void setUnit(Unit u) {
+	public void setUnit(AccomplishUnit u) {
 		_unit = u;
 	}
 	
