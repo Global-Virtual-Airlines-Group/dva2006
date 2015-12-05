@@ -333,9 +333,8 @@ public class GetScheduleSearch extends GetSchedule {
 		String sort = ssc.getSortBy().replace(" DESC", "");
 		int sortType = StringUtils.arrayIndexOf(ScheduleSearchCriteria.SORT_CODES, sort, 0);
 		if (sortType > 0) {
-			ScheduleEntryComparator cmp = new ScheduleEntryComparator(sortType);
-			cmp.setReverseSort(ssc.getSortBy().endsWith(" DESC"));
-			Collections.sort(results, cmp);
+			Comparator<ScheduleEntry> cmp = new ScheduleEntryComparator(sortType).reversed();
+			results.sort(cmp);
 		} else
 			Collections.shuffle(results);
 			
