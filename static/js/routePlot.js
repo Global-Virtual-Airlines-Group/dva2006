@@ -1,24 +1,21 @@
 golgotha.routePlot = golgotha.routePlot || {routeUpdated:false, getInactive:false};
+golgotha.routePlot.gateIcons = {ours:{pal:2,icon:56},intl:{pal:2,icon:48},pop:{pal:3,icon:52},other:{pal:3,icon:60}};
+golgotha.routePlot.gatesVisible = function () { return (this.dGates.visible() || this.aGates.visible()); };
 golgotha.routePlot.getAJAXParams = function()
 {
 var f = document.forms[0];
 var params = [];
-if (golgotha.form.comboSet(f.airportD))
-	params['airportD'] = golgotha.form.getCombo(f.airportD);
-if (golgotha.form.comboSet(f.airportA))
-	params['airportA'] = golgotha.form.getCombo(f.airportA);
-if (golgotha.form.comboSet(f.airportL))
-	params['airportL'] = golgotha.form.getCombo(f.airportL);
-
+if (golgotha.form.comboSet(f.airportD))	params['airportD'] = golgotha.form.getCombo(f.airportD);
+if (golgotha.form.comboSet(f.airportA))	params['airportA'] = golgotha.form.getCombo(f.airportA);
+if (golgotha.form.comboSet(f.airportL)) params['airportL'] = golgotha.form.getCombo(f.airportL);
+if (golgotha.form.comboSet(f.airline)) params['airline'] = golgotha.form.getCombo(f.airline);
 if (golgotha.form.comboSet(f.gateD)) params['gateD'] = golgotha.form.getCombo(f.gateD);
 if (golgotha.form.comboSet(f.gateA)) params['gateA'] = golgotha.form.getCombo(f.gateA);
 if (golgotha.form.comboSet(f.eqType)) params['eqType'] = golgotha.form.getCombo(f.eqType);
 if (golgotha.form.comboSet(f.sid)) params['sid'] = golgotha.form.getCombo(f.sid);
 if (golgotha.form.comboSet(f.star)) params['star'] = golgotha.form.getCombo(f.star);
-if ((f.route) && (f.route.value.length > 0))
-	params['route'] = f.route.value;
-if (golgotha.routePlot.getInactive)
-	params['getInactive'] = 'true';
+if ((f.route) && (f.route.value.length > 0)) params['route'] = f.route.value;
+if (golgotha.routePlot.getInactive) params['getInactive'] = 'true';
 for (var j = 0; ((f.simVersion) && (j < f.simVersion.length)); j++) {
 	if (f.simVersion[j].checked)
 		params['simVersion'] = f.simVersion[j].value;
@@ -34,10 +31,10 @@ golgotha.routePlot.formatAJAXParams = function(params, sep)
 var results = [];
 for (k in params) {
 	var v = params[k]; 
-	if (Object.prototype.toString.call(v) != '[object Function]')
+	if (!golgotha.util.isFunction(v))
 		results.push(k + '=' + escape(v));
 }
-	
+
 return results.join(sep);
 };
 
@@ -88,7 +85,7 @@ golgotha.routePlot.plotMap = function(myParams)
 {
 if (!golgotha.form.check()) return false;	
 var xmlreq = new XMLHttpRequest();
-xmlreq.open('POST', 'routeplot.ws', true);
+xmlreq.open('post', 'routeplot.ws', true);
 xmlreq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) {
@@ -131,11 +128,18 @@ xmlreq.onreadystatechange = function() {
 		map.setCenter({lat:parseFloat(mpp.getAttribute('lat')), lng:parseFloat(mpp.getAttribute('lng'))});
 		map.setZoom(golgotha.maps.util.getDefaultZoom(parseInt(dst)));
 	}
-	
-	// Set departure location
+
+	// Get airline code
+	var ale = golgotha.getChild(xdoc, 'airline');
+	var airlineCode = (ale != null) ? ale.getAttribute('code') : null; 
+
+	// Set departure/arrival gate locations
 	var ade = golgotha.getChild(xdoc, 'airportD');
 	if (ade != null)
 		golgotha.routePlot.dGates.mapCenter = {lat:parseFloat(ade.getAttribute('lat')), lng:parseFloat(ade.getAttribute('lng'))};
+	var aae = golgotha.getChild(xdoc, 'airportA');
+	if (aae != null)
+		golgotha.routePlot.aGates.mapCenter = {lat:parseFloat(ade.getAttribute('lat')), lng:parseFloat(ade.getAttribute('lng'))};
 
 	// Set the distance
 	var dstE = document.getElementById('rtDistance');
@@ -202,12 +206,21 @@ xmlreq.onreadystatechange = function() {
 	golgotha.util.display('gatesA', (aGts.length > 0));
 	golgotha.routePlot.updateGates(f.gateD, dGts);
 	golgotha.routePlot.updateGates(f.gateA, aGts);
-	golgotha.routePlot.dGates.clearMarkers();
-	golgotha.routePlot.dGates.hide();
+	golgotha.routePlot.dGates.clearMarkers(); golgotha.routePlot.aGates.clearMarkers();
+	golgotha.routePlot.dGates.hide(); golgotha.routePlot.aGates.hide();
 	for (var i = 0; i < dGts.length; i++) {
-		var gt = dGts[i];
+		var gt = dGts[i]; var alCodes = gt.getAttribute('airlines').split(','); var useCount = parseInt(gt.getAttribute('useCount'));
+		var isOurs = alCodes.contains(airlineCode); var isIntl = (gt.getAttribute('isIntl') == 'true');
+		var opts = golgotha.routePlot.gateIcons.other;
+		if (isOurs && isIntl)
+			opts = golgotha.routePlot.gateIcons.intl;
+		else if (isOurs)
+			opts = golgotha.routePlot.gateIcons.ours;
+		else if (useCount > 0)
+			opts = golgotha.routePlot.gateIcons.pop;
+
 		var p = {lat:parseFloat(gt.getAttribute('lat')), lng:parseFloat(gt.getAttribute('lng'))};
-		var gmrk = new golgotha.maps.IconMarker({pal:2, icon:56}, p);
+		var gmrk = new golgotha.maps.IconMarker(opts, p);
 		gmrk.gate = gt.getAttribute('name');
 		google.maps.event.addListener(gmrk, 'dblclick', function(e) { golgotha.form.setCombo(f.gateD, this.gate); alert('Departure Gate set to ' + this.gate); plotMap(); });
 		golgotha.routePlot.dGates.addMarker(gmrk, 10);
@@ -237,9 +250,10 @@ xmlreq.onreadystatechange = function() {
 				tafSpan.innerHTML = golgotha.getCDATA(wx).data;
 		}
 	}
-	
+
 	// Show departure gates if required
-	if ((f.showGaes) && f.showGates.checked) golgotha.routePlot.toggleGates(golgotha.routePlot.dGates);
+	if ((f.showGates) && f.showGates.checked) golgotha.routePlot.toggleGates(golgotha.routePlot.dGates);
+	if ((f.showAGates) && f.showAGates.checked) golgotha.routePlot.toggleGates(golgotha.routePlot.aGates);
 	golgotha.form.clear();
 	return true;
 };
@@ -298,9 +312,11 @@ xmlreq.onreadystatechange = function() {
 			opt.comments = c.data;
 	}
 
+	golgotha.form.clear();
 	return true;
 };
 
+golgotha.form.submit();
 xmlreq.send(null);
 if (faReload) f.forceFAReload.checked = false;
 golgotha.event.beacon('Route Plotter', 'Route Search', aD + '-' + aA, ext ? 1 : 0);
@@ -366,10 +382,10 @@ golgotha.util.disable('RouteSaveButton', (f.route.value.length <= 2));
 return true;
 };
 
-golgotha.routePlot.toggleGates = function(gts)
-{
-gts.toggle();
-if (gts.visible() && map.getZoom() < 14) map.setZoom(14);
-if (gts.mapCenter) map.setCenter(gts.mapCenter);
-return true;
+golgotha.routePlot.toggleGates = function(gts) {
+	gts.toggle();
+	if (gts.visible() && map.getZoom() < 14) map.setZoom(14);
+	if (gts.mapCenter) map.setCenter(gts.mapCenter);
+	golgotha.util.display('gateLegendRow', golgotha.routePlot.gatesVisible());
+	return true;
 };

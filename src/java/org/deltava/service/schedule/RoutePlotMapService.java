@@ -2,6 +2,7 @@
 package org.deltava.service.schedule;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.io.IOException;
 import java.sql.Connection;
 
@@ -49,9 +50,17 @@ public class RoutePlotMapService extends MapPlotService {
 		Collection<Runway> runways = new LinkedHashSet<Runway>();
 		Collection<WeatherDataBean> wxs = new ArrayList<WeatherDataBean>();
 		List<Airport> alternates = new ArrayList<Airport>();
-		DispatchRoute dr = new DispatchRoute();
-		Collection<Gate> gates = new TreeSet<Gate>(new GateComparator(GateComparator.TYPENUMBER)); 
+		Collection<Gate> gates = new TreeSet<Gate>(new GateComparator(GateComparator.USAGE)); 
 		Collection<NavigationDataBean> routePoints = new LinkedHashSet<NavigationDataBean>();
+		
+		// Get the departure/arrival airports
+		DispatchRoute dr = new DispatchRoute();
+		dr.setAirline(SystemData.getAirline(ctx.getParameter("airline")));
+		dr.setAirportD(SystemData.getAirport(ctx.getParameter("airportD")));
+		dr.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
+		dr.setAirportL(SystemData.getAirport(ctx.getParameter("airportL")));
+		boolean isIntl = (dr.getAirportD() != null) && (dr.getAirportA() != null) && (!dr.getAirportD().getCountry().equals(dr.getAirportA().getCountry()));
+
 		Aircraft a = null;
 		try {
 			Connection con = ctx.getConnection();
@@ -60,10 +69,6 @@ public class RoutePlotMapService extends MapPlotService {
 			GetGates gdao = new GetGates(con);
 			GetWeather wxdao = new GetWeather(con);
 			
-			// Get the departure/arrival airports
-			dr.setAirportD(SystemData.getAirport(ctx.getParameter("airportD")));
-			dr.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
-			dr.setAirportL(SystemData.getAirport(ctx.getParameter("airportL")));
 			String route = ctx.getParameter("route");
 			
 			// Load Aircraft
@@ -84,8 +89,27 @@ public class RoutePlotMapService extends MapPlotService {
 
 			// Add the departure airport
 			if (dr.getAirportD() != null) {
-				gates.addAll(gdao.getPopularGates(dr, sim, true));
-				Set<TerminalRoute> sids = new TreeSet<TerminalRoute>(dao.getRoutes(dr.getAirportD(), TerminalRoute.Type.SID));
+				Collection<Gate> dGates = gdao.getPopularGates(dr, sim, true);
+				if (dr.getAirline() != null) {
+					List<Gate> fdGates = dGates.stream().filter(g -> g.getAirlines().contains(dr.getAirline())).collect(Collectors.toList());
+					if (!fdGates.isEmpty()) {
+						dGates = fdGates;
+						if (isIntl)
+							fdGates = fdGates.stream().filter(g -> g.isInternational()).collect(Collectors.toList());
+						if (fdGates.isEmpty())
+							dGates = fdGates;
+					}
+				}
+
+				gates.addAll(dGates);
+				if (dGates.size() < 3)
+					gates.addAll(gdao.getGates(dr.getAirportD(), sim));
+				
+				String rwyD = ctx.getParameter("runway");
+				Collection<TerminalRoute> sids = new TreeSet<TerminalRoute>(dao.getRoutes(dr.getAirportD(), TerminalRoute.Type.SID));
+				if (!StringUtils.isEmpty(rwyD))
+					sids = sids.stream().filter(sid -> sid.getRunway().equals("ALL") || sid.getRunway().equals(rwyD)).collect(Collectors.toCollection(TreeSet::new));
+				
 				tRoutes.addAll(sids);
 				
 				// Get the departure gate
@@ -154,9 +178,22 @@ public class RoutePlotMapService extends MapPlotService {
 			// Add the arrival airport
 			if (dr.getAirportA() != null) {
 				routePoints.add(new AirportLocation(dr.getAirportA()));
-				gdao.setQueryMax(25);
-				if (dr.getAirportD() != null)
-					gates.addAll(gdao.getPopularGates(dr, sim, false));
+				Collection<Gate> aGates = gdao.getPopularGates(dr, sim, false);
+				if (dr.getAirline() != null) {
+					List<Gate> adGates = aGates.stream().filter(g -> g.getAirlines().contains(dr.getAirline())).collect(Collectors.toList());
+					if (!adGates.isEmpty()) {
+						aGates = adGates;
+						if (isIntl)
+							adGates = adGates.stream().filter(g -> g.isInternational()).collect(Collectors.toList());
+						if (!adGates.isEmpty())
+							aGates= adGates;
+					}
+				}
+				
+				gates.addAll(aGates);
+				if (aGates.size() < 3)
+					gates.addAll(gdao.getGates(dr.getAirportD(), sim));
+				
 				Set<TerminalRoute> stars = new TreeSet<TerminalRoute>(dao.getRoutes(dr.getAirportA(), TerminalRoute.Type.STAR));
 				tRoutes.addAll(stars);
 				
@@ -197,6 +234,14 @@ public class RoutePlotMapService extends MapPlotService {
 		// Convert points to an XML document
 		Document doc = formatPoints(points, true);
 		Element re = doc.getRootElement();
+		re.setAttribute("intl", String.valueOf(isIntl));
+		if (dr.getAirline() != null) {
+			Element ae = new Element("airline");
+			ae.setAttribute("name", dr.getAirline().getName());
+			ae.setAttribute("code", dr.getAirline().getCode());
+			re.addContent(ae);
+		}
+		
 		if (dr.getAirportD() != null) {
 			Element ade = new Element("airportD");
 			ade.setAttribute("lat", StringUtils.format(dr.getAirportD().getLatitude(), "#0.00000"));
@@ -239,6 +284,10 @@ public class RoutePlotMapService extends MapPlotService {
 			e.setAttribute("lng", StringUtils.format(g.getLongitude(), "##0.00000"));
 			e.setAttribute("pal", String.valueOf(g.getPaletteCode()));
 			e.setAttribute("icon", String.valueOf(g.getIconCode()));
+			Collection<String> alCodes = g.getAirlines().stream().map(Airline::getCode).collect(Collectors.toSet());
+			e.setAttribute("airlines", StringUtils.listConcat(alCodes, ","));
+			e.setAttribute("isIntl", String.valueOf(g.isInternational()));
+			e.setAttribute("useCount", String.valueOf(g.getUseCount()));
 			re.addContent(e);
 		}
 		

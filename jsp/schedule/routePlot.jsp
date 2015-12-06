@@ -25,6 +25,7 @@
 <content:googleAnalytics eventSupport="true" />
 <content:getCookie name="acarsMapZoomLevel" default="12" var="zoomLevel" />
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
+<content:protocol var="proto" />
 <script type="text/javascript">
 var loaders = {};
 loaders.series = new golgotha.maps.SeriesLoader();
@@ -66,6 +67,10 @@ golgotha.local.validate = function(f) {
  <td class="data"><el:combo name="eqType" className="req" size="1" idx="*" options="${eqTypes}" firstEntry="[ AIRCRAFT ]" value="${flight.equipmentType}" onChange="void golgotha.routePlot.updateRoute(false)" /></td>
 </tr>
 <tr>
+ <td class="label">Airline</td>
+ <td class="data"><el:combo name="airline" size="1" idx="*" options="${airlines}" firstEntry="[ AIRLINE ]" value="${flight.airline}" /></td>
+</tr>
+<tr>
  <td class="label">Departing from</td>
  <td class="data"><el:combo name="airportD" className="req" size="1" idx="*" options="${airportsD}" firstEntry="-" value="${flight.airportD}" onChange="void golgotha.routePlot.updateRoute(true, true)" />
  <el:airportCode combo="airportD" airport="${flight.airportD}" idx="*" />
@@ -73,7 +78,7 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr id="gatesD" style="display:none;">
  <td class="label">Departure Gate</td>
- <td class="data"><el:combo name="gateD" size="1" idx="*" options="${emptyList}" firstEntry="-" onChange="golgotha.routePlot.plotMap()" /></td>
+ <td class="data"><el:combo name="gateD" size="1" idx="*" options="${emptyList}" firstEntry="[ GATE ]" onChange="golgotha.routePlot.plotMap()" /></td>
 </tr>
 <tr id="wxDr" style="display:none;">
  <td class="label">Origin Weather</td>
@@ -86,7 +91,7 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr id="gatesA" style="display:none;">
  <td class="label">Arrival Gate</td>
- <td class="data"><el:combo name="gateA" size="1" idx="*" options="${emptyList}" firstEntry="-" onChange="golgotha.routePlot.updateRoute(); golgotha.routePlot.plotMap()" /></td>
+ <td class="data"><el:combo name="gateA" size="1" idx="*" options="${emptyList}" firstEntry="[ GATE ]" onChange="golgotha.routePlot.updateRoute(); golgotha.routePlot.plotMap()" /></td>
 </tr>
 <tr id="wxAr" style="display:none;">
  <td class="label top">Destination Weather</td>
@@ -112,7 +117,8 @@ golgotha.local.validate = function(f) {
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="noRecenter" value="true" label="Do not move Map center on Route updates" /><br />
-<el:box name="showGates" value="true" label="Show Departure Gates" onChange="void golgotha.routePlot.toggleGates(golgotha.routePlot.dGates)" /></td>
+<el:box name="showGates" value="true" label="Show Departure Gates" onChange="void golgotha.routePlot.toggleGates(golgotha.routePlot.dGates)" /><br />
+<el:box name="showAGates" value="true" label="Show Arrival Gates" onChange="void golgotha.routePlot.toggleGates(golgotha.routePlot.aGates)" /></td>
 </tr>
 <tr class="title caps">
  <td colspan="2" class="left">ROUTE SEARCH</td>
@@ -129,6 +135,13 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr class="title caps">
  <td colspan="2" class="left">PLOTTED ROUTE<span id="rtDistance"></span></td>
+</tr>
+<tr id="gateLegendRow" style="display:none;">
+ <td class="label">Gate Legend</td>
+ <td class="data"><span class="small"><img src="${proto}://maps.google.com/mapfiles/kml/pal2/icon56.png" alt="Our Gate"  width="16" height="16" />Domestic Gates
+ | <img src="${proto}://maps.google.com/mapfiles/kml/pal2/icon48.png" alt="International Gate"  width="16" height="16" />International Gates
+ | <img src="${proto}://maps.google.com/mapfiles/kml/pal3/icon52.png" alt="Frequently Used Gate"  width="16" height="16" /> Frequently Used Gates
+ | <img src="${proto}://maps.google.com/mapfiles/kml/pal3/icon60.png" alt="Other Gate"  width="16" height="16" /> Other Gates</span></td>
 </tr>
 <tr>
  <td colspan="2" class="data"><map:div ID="googleMap" height="580" /><div id="copyright" class="small mapTextLabel"></div>
@@ -217,8 +230,9 @@ ctls.push(new golgotha.maps.LayerClearControl(map));
 map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById('copyright'));
 map.controls[google.maps.ControlPosition.RIGHT_TOP].push(document.getElementById('mapStatus'));
 
-// Build departure gates marker manager
-golgotha.routePlot.dGates = new MarkerManager(map,{maxZoom:17});
+// Build gates marker managers
+golgotha.routePlot.dGates = new MarkerManager(map, {maxZoom:17});
+golgotha.routePlot.aGates = new MarkerManager(map, {maxZoom:17});
 
 // Load data async once tiles are loaded
 google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
