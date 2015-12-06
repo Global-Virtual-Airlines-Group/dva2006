@@ -119,16 +119,9 @@ public class AccomplishmentHistoryHelper {
 			_airports.add(a);
 			_countries.add(a.getCountry());
 			_conts.add(a.getCountry().getContinent());
-			if ("US".equals(a.getCountry().getCode())) {
-				String state = a.getName().substring(a.getName().lastIndexOf(' ') + 1);
-				if (state.length() == 2) {
-					try {
-						_states.add(State.valueOf(state));	
-					} catch (Exception e) {
-						// empty
-					}
-				}
-			}
+			State s = a.getState();
+			if (s != null)
+				_states.add(s);
 		}
 		
 		public Collection<Airport> getAirports() {
