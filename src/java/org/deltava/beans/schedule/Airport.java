@@ -10,7 +10,7 @@ import org.deltava.util.*;
 /**
  * A class for storing airport information.
  * @author Luke
- * @version 6.0
+ * @version 6.3
  * @since 1.0
  */
 
@@ -28,6 +28,7 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 	 * Special airport object for "All Airports".
 	 */
 	public static final Airport ALL = new Airport("$AL", "$ALL", "All Airports") {
+		@Override
 		public String getComboName() {
 			return getName();
 		}
@@ -246,9 +247,29 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 	}
 	
 	/**
+	 * Returns the State this airport is located in.
+	 * @return a US State, or null
+	 */
+	public State getState() {
+		if ("US".equals(_country.getCode())) {
+			String state = _name.substring(_name.lastIndexOf(' ') + 1);
+			if (state.length() == 2) {
+				try {
+					return State.valueOf(state);	
+				} catch (Exception e) {
+					// empty
+				}
+			}
+		}
+
+		return null;
+	}
+	
+	/**
 	 * Returns this airport's magnetic variation.
 	 * @return the magnetic variation in degrees 
 	 */
+	@Override
 	public double getMagVar() {
 		return _magVar;
 	}
@@ -284,6 +305,7 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 	 * @return this airport's latitude in degrees (and some fraction thereof)
 	 * @see GeoPosition#getLatitude()
 	 */
+	@Override
 	public final double getLatitude() {
 		return _position.getLatitude();
 	}
@@ -293,6 +315,7 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 	 * @return This airport's longitude in degrees (and some fraction thereof)
 	 * @see GeoPosition#getLongitude()
 	 */
+	@Override
 	public final double getLongitude() {
 		return _position.getLongitude();
 	}
