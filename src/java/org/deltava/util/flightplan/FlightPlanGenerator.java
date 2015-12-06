@@ -1,19 +1,21 @@
-// Copyright 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.flightplan;
 
 import java.util.Collection;
 
 import org.deltava.beans.navdata.*;
-import org.deltava.beans.schedule.Airport;
+import org.deltava.beans.schedule.*;
 
 /**
  * An abstract class to describe flight plan generators for simulators and payware aircraft. 
  * @author Luke
- * @version 5.0
+ * @version 6.3
  * @since 2.4
  */
 
 public abstract class FlightPlanGenerator {
+	
+	protected Airline _al;
 	
 	/**
 	 * The departure airport.
@@ -44,6 +46,14 @@ public abstract class FlightPlanGenerator {
 	 * The route waypoints as rendered in the flight plan for ACARS.
 	 */
 	protected String _route;
+	
+	/**
+	 * Sets the Airline for the flight.
+	 * @param al the Airline
+	 */
+	public void setAirline(Airline al) {
+		_al = al;
+	}
 	
 	/**
 	 * Sets the departure and arrival Airports for the flight.

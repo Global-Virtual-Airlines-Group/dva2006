@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.flightplan;
 
 import java.io.*;
@@ -11,7 +11,7 @@ import org.deltava.util.*;
 /**
  * A Flight Plan Generator for Microsoft Flight Simulator 2004.
  * @author Luke
- * @version 5.1
+ * @version 6.3
  * @since 2.4
  */
 
@@ -45,6 +45,8 @@ public class FS9Generator extends MSFSGenerator {
 			
 			ctx.println("destination_id=" + _aA.getICAO() + ", " + GeoUtils.formatFS9(_aA) + ", +000000.00,");
 			ctx.println("destination_name=" + _aA.getName());
+			if (_al != null)
+				ctx.println("airline=" + _al.getCode());
 			if (_sid != null)
 				ctx.println("sid=" + _sid.getCode());
 			if (_star != null)
