@@ -11,7 +11,7 @@ import org.deltava.util.*;
 /**
  * A Flight Plan Generator for Microsoft Flight Simulator X.
  * @author Luke
- * @version 5.1
+ * @version 6.3
  * @since 2.4
  */
 
@@ -44,6 +44,8 @@ public class FSXGenerator extends MSFSGenerator {
 				ctx.println("departure_position=GATE ?");
 			
 			ctx.println("destination_name=" + _aA.getName());
+			if (_al != null)
+				ctx.println("airline=" + _al.getCode());
 			if (_sid != null)
 				ctx.println("sid=" + _sid.getCode());
 			if (_star != null)

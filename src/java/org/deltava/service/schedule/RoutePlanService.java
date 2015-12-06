@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to create flight plans.
  * @author Luke
- * @version 6.2
+ * @version 6.3
  * @since 2.2
  */
 
@@ -47,7 +47,7 @@ public class RoutePlanService extends WebService {
 			alt = "35000";
 
 		// Validate the airports
-		Simulator sim = Simulator.fromName(ctx.getParameter("simVersion"), Simulator.FS9);
+		Simulator sim = Simulator.fromName(ctx.getParameter("simVersion"), Simulator.FSX);
 		if (aD == null)
 			throw error(SC_BAD_REQUEST, "Invalid Departure Airport - " + ctx.getParameter("airportD"), false);
 		else if (aA == null)
@@ -72,6 +72,7 @@ public class RoutePlanService extends WebService {
 		}
 
 		// Update the flight plan
+		fpgen.setAirline(SystemData.getAirline(ctx.getParameter("airline")));
 		fpgen.setAirports(aD, aA);
 		fpgen.setCruiseAltitude(alt);
 
