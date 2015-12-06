@@ -93,13 +93,28 @@ echo `date +%H:%M:%S`' Writing ACARS data'
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` --ignore-table=acars.TRACKS --ignore-table=acars.MESSAGES acars | $arc_util > acars.sql.bz2
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` acars MESSAGES | $arc_util > acars_msgs.sql.bz2
 
+# Write flight statistics
+echo `date +%H:%M:%S`' Writing flight statistics'
+$mysqldump $dump_opt `cat /etc/sqlbackup.conf` dva FLIGHTSTATS_AIRPORT FLIGHTSTATS_DATE FLIGHTSTATS_EQTYPE \
+ FLIGHTSTATS_LANDING FLIGHTSTATS_PILOT FLIGHTSTATS_ROUTES | $arc_util > dva_stats.sql.bz2
+$mysqldump $dump_opt `cat /etc/sqlbackup.conf` afv FLIGHTSTATS_AIRPORT FLIGHTSTATS_DATE FLIGHTSTATS_EQTYPE \
+ FLIGHTSTATS_LANDING FLIGHTSTATS_PILOT FLIGHTSTATS_ROUTES | $arc_util > afv_stats.sql.bz2
+
 # Dump DVA database
 echo `date +%H:%M:%S`' Writing DVA database'
-$mysqldump $dump_opt `cat /etc/sqlbackup.conf` --ignore-table=dva.GALLERY dva | $arc_util > dva.sql.bz2
+$mysqldump $dump_opt `cat /etc/sqlbackup.conf` --ignore-table=dva.GALLERY --ignore-table=dva.GALLERYSCORE \
+ --ignore-table=dva.FLIGHTSTATS_AIRPORT --ignore-table=dva.FLIGHTSTATS_DATE --ignore-table=dva.FLIGHTSTATS_EQTYPE \
+ --ignore-table=dva.FLIGHTSTATS_LANDING --ignore-table=dva.FLIGHTSTATS_PILOT --ignore-table=dva.FLIGHTSTATS_ROUTES \
+ dva | $arc_util > dva.sql.bz2
+$mysqldump $dump_top `cat /etc/sqlbackup.conf` dva GALLERYSCORE | $arc_util > dva_gscore.sql.bz2
 
 # Dump AFV database
 echo `date +%H:%M:%S`' Writing AFV database'
-$mysqldump $dump_opt `cat /etc/sqlbackup.conf` --ignore-table=afv.GALLERY afv | $arc_util > afv.sql.bz2
+$mysqldump $dump_opt `cat /etc/sqlbackup.conf` --ignore-table=afv.GALLERY --ignore-table=afv.GALLERYSCORE \
+ --ignore-table=afv.FLIGHTSTATS_AIRPORT --ignore-table=afv.FLIGHTSTATS_DATE --ignore-table=afv.FLIGHTSTATS_EQTYPE \
+ --ignore-table=afv.FLIGHTSTATS_LANDING --ignore-table=afv.FLIGHTSTATS_PILOT --ignore-table=afv.FLIGHTSTATS_ROUTES \
+ afv | $arc_util > afv.sql.bz2
+$mysqldump $dump_top `cat /etc/sqlbackup.conf` afv GALLERYSCORE | $arc_util > afv_gscore.sql.bz2
 
 # Dump Galleries if we're doing a full backup
 if [ "$1" = "full" ]
