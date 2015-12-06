@@ -630,6 +630,12 @@
 		<class>org.deltava.commands.schedule.AUSOTPlotCommand</class>
 		<roles>Pilot</roles>
 	</command>
+	
+	<command id="airportinfo">
+        <name>Airport Information</name>
+        <class>org.deltava.commands.navdata.AirportInformationCommand</class>
+        <roles>Pilot</roles>
+	</command>
 
 	<command id="navcycles">
 		<name>Navigation Cycle Release Dates</name>

@@ -1,7 +1,10 @@
 // Copyright 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
+import java.util.*;
+
 import org.deltava.beans.UseCount;
+import org.deltava.beans.schedule.Airline;
 
 /**
  * A bean to store airport Gate information.
@@ -20,6 +23,9 @@ public class Gate extends NavigationDataBean implements UseCount {
 	private int _number;
 	private Type _type = Type.GATE;
 	private int _useCount;
+	
+	private boolean _isInternational;
+	private final Collection<Airline> _airlines = new TreeSet<Airline>();
 
 	/**
 	 * Creates the bean.
@@ -52,6 +58,22 @@ public class Gate extends NavigationDataBean implements UseCount {
 	 */
 	public int getGateNumber() {
 		return _number;
+	}
+	
+	/**
+	 * Returns what Airlines use this Gate.
+	 * @return a Collection of Airline beans
+	 */
+	public Collection<Airline> getAirlines() {
+		return _airlines;
+	}
+	
+	/**
+	 * Returns whether this Gate is used for international flights.
+	 * @return TRUE if used for international flights, otherwise FALSE
+	 */
+	public boolean isInternational() {
+		return _isInternational;
 	}
 	
 	/**
@@ -105,6 +127,30 @@ public class Gate extends NavigationDataBean implements UseCount {
 			_number = Integer.parseInt(buf.toString());
 		super.setName(n);
 	}
+
+	/**
+	 * Marks this gate as being used by an Airline.
+	 * @param a the Airline bean
+	 */
+	public void addAirline(Airline a) {
+		if (a != null)
+			_airlines.add(a);
+	}
+	
+	/**
+	 * Clears all Airlines associated with this Gate.
+	 */
+	public void clearAirlines() {
+		_airlines.clear();
+	}
+	
+	/**
+	 * Marks this gate as used for international flights.
+	 * @param isIntl TRUE if used for international flights, otherwise FALSE
+	 */
+	public void setIntl(boolean isIntl) {
+		_isInternational = isIntl;
+	}
 	
 	/**
 	 * Return the default Google Maps icon color.
@@ -131,6 +177,20 @@ public class Gate extends NavigationDataBean implements UseCount {
 			if (_useCount > 1)
 				buf.append('s');
 		}
+		
+		if (_airlines.size() > 0) {
+			buf.append("<br /><br />");
+			buf.append("Airline");
+			if (_airlines.size() > 1)
+				buf.append('s');
+			
+			buf.append(":<br />");
+			for (Airline a : _airlines)
+				buf.append(a.getName()).append("<br />");
+		}
+		
+		if (_isInternational)
+			buf.append("<br /><span class=\"sec bld ita\">INTERNATIONAL FLIGHTS</span>");
 		
 		buf.append("</div>");
 		return buf.toString();
