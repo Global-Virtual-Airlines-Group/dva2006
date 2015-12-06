@@ -5,10 +5,12 @@ import java.util.*;
 
 import javax.servlet.jsp.*;
 
+import org.json.JSONArray;
+
 import org.deltava.beans.GeoLocation;
 
 import org.deltava.taglib.ContentHelper;
-import org.deltava.util.StringUtils;
+import org.deltava.util.GeoUtils;
 
 /**
  * A JSP Tag to generate a JavaScript array of Google Maps Lat/Lon objects.
@@ -50,18 +52,10 @@ public class PointArrayTag extends GoogleMapEntryTag {
 			writeVariableName();
 
 			// Create the markers
-			for (Iterator<GeoLocation> i = _entries.iterator(); i.hasNext();) {
-				GeoLocation entry = i.next();
-				out.print("{lat:");
-				out.print(StringUtils.format(entry.getLatitude(), "##0.00000"));
-				out.print(",lng:");
-				out.print(StringUtils.format(entry.getLongitude(), "##0.00000"));
-				out.print('}');
-				if (i.hasNext())
-					out.print(',');
-			}
-
-			out.print("];");
+			JSONArray ja = new JSONArray();
+			_entries.forEach(loc -> ja.put(GeoUtils.toJSON(loc)));
+			out.print(ja.toString());
+			out.print(';');
 			ContentHelper.addContent(pageContext, API_JS_NAME, _jsVarName);
 		} catch (Exception e) {
 			throw new JspException(e);
