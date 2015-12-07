@@ -34,7 +34,7 @@ public class SetGates extends DAO {
 			startTransaction();
 			
 			// Clear gates
-			prepareStatementWithoutLimits("DELETE FROM GATE_AIRLINES WHERE (ICAO=?) AND (NAME=?)");
+			prepareStatementWithoutLimits("DELETE FROM common.GATE_AIRLINES WHERE (ICAO=?) AND (NAME=?)");
 			for (Gate g : gates) {
 				_ps.setString(1, g.getCode());
 				_ps.setString(2, g.getName());
@@ -45,7 +45,7 @@ public class SetGates extends DAO {
 			_ps.close();
 			
 			// Write gate data
-			prepareStatement("INSERT INTO GATE_AIRLINES (ICAO, NAME, AIRLINE, INTL) VALUES (?, ?, ?, ?)");
+			prepareStatement("INSERT INTO common.GATE_AIRLINES (ICAO, NAME, AIRLINE, INTL) VALUES (?, ?, ?, ?)");
 			for (Gate g : gates) {
 				_ps.setString(1, g.getCode());
 				_ps.setString(2, g.getName());
