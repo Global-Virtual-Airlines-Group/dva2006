@@ -185,6 +185,7 @@ public class GeoUtils {
 	public static Tuple<GeoLocation, GeoLocation> getBoundingBox(Collection<? extends GeoLocation> locs) {
 		double maxLat = -90; double minLat = 90; double maxLng = -180; double minLng = 180;
 		for (GeoLocation loc : locs) {
+			if (!isValid(loc)) continue;
 			maxLat = Math.max(maxLat, loc.getLatitude());
 			minLat = Math.min(minLat, loc.getLatitude());
 			maxLng = Math.max(maxLng, loc.getLongitude());
