@@ -36,7 +36,7 @@ public class GetGates extends DAO {
 	public List<Gate> get(int flightID) throws DAOException {
 		try {
 			prepareStatement("SELECT G.*, IFNULL(GROUP_CONCAT(GA.AIRLINE),''), GA.INTL, ND.REGION FROM acars.FLIGHTS F, acars.GATEDATA FG, "
-				+ "common.GATES G LEFT JOIN GATE_AIRLINES GA ON (G.ICAO=GA.ICAO) AND (G.NAME=GA.NAME) LEFT JOIN common.NAVDATA ND "
+				+ "common.GATES G LEFT JOIN common.GATE_AIRLINES GA ON (G.ICAO=GA.ICAO) AND (G.NAME=GA.NAME) LEFT JOIN common.NAVDATA ND "
 				+ "ON (G.ICAO=ND.CODE) AND (ND.ITEMTYPE=?) WHERE (F.ID=?) AND (F.ID=FG.ID) AND (G.SIMVERSION=F.FSVERSION) AND "
 				+ "(G.ICAO=FG.ICAO) AND (G.NAME=FG.GATE) GROUP BY G.NAME ORDER BY FG.ISDEPARTURE");
 			_ps.setInt(1, Navaid.AIRPORT.ordinal());
@@ -57,7 +57,7 @@ public class GetGates extends DAO {
 	public List<Gate> getPopularGates(ICAOAirport a, Simulator sim) throws DAOException {
 		try {
 			prepareStatementWithoutLimits("SELECT G.*, IFNULL(GROUP_CONCAT(GA.AIRLINE),''), GA.INTL, ND.REGION, COUNT(GD.ID) AS CNT "
-				+ "FROM acars.GATEDATA GD, common.GATES G LEFT JOIN GATE_AIRLINES GA ON (G.ICAO=GA.ICAO) AND (G.NAME=GA.NAME) "
+				+ "FROM acars.GATEDATA GD, common.GATES G LEFT JOIN common.GATE_AIRLINES GA ON (G.ICAO=GA.ICAO) AND (G.NAME=GA.NAME) "
 				+ "LEFT JOIN common.NAVDATA ND ON (G.ICAO=ND.CODE) AND (ND.ITEMTYPE=?) WHERE (GD.ICAO=?) AND (G.ICAO=GD.ICAO) "
 				+ "AND (G.NAME=GD.GATE) AND (G.SIMVERSION=?) GROUP BY G.NAME ORDER BY CNT DESC");
 			_ps.setInt(1, Navaid.AIRPORT.ordinal());
@@ -81,7 +81,7 @@ public class GetGates extends DAO {
 					int useCount = rs.getInt(10);
 					g.setUseCount(useCount);
 					max = Math.max(max, useCount);
-					if ((useCount > (max / 10)) || (max < 20))
+					if ((useCount > (max / 8)) || (max < 20))
 						results.add(g);
 					else
 						break;
@@ -107,7 +107,7 @@ public class GetGates extends DAO {
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT G.*, IFNULL(GROUP_CONCAT(GA.AIRLINE),''), GA.INTL, ND.REGION, COUNT(GD.ID) AS CNT FROM "
-			+ "acars.FLIGHTS F, acars.GATEDATA GD, common.GATES G LEFT JOIN GATE_AIRLINES GA ON (G.ICAO=GA.ICAO) AND (G.NAME=GA.NAME) "
+			+ "acars.FLIGHTS F, acars.GATEDATA GD, common.GATES G LEFT JOIN common.GATE_AIRLINES GA ON (G.ICAO=GA.ICAO) AND (G.NAME=GA.NAME) "
 			+ "LEFT JOIN common.NAVDATA ND ON (G.ICAO=ND.CODE) AND (ND.ITEMTYPE=?) WHERE (GD.ID=F.ID) AND (GD.ICAO=?) AND "
 			+ "(GD.ISDEPARTURE=?) AND (G.ICAO=GD.ICAO) AND (G.NAME=GD.GATE) AND (G.SIMVERSION=?) ");
 		if (rp.getAirportD() != null)
@@ -144,7 +144,7 @@ public class GetGates extends DAO {
 					int useCount = rs.getInt(10);
 					g.setUseCount(useCount);
 					max = Math.max(max, useCount);
-					if ((useCount > (max / 10)) || (max < 20))
+					if ((useCount > (max / 8)) || (max < 20))
 						results.add(g);
 					else
 						break;
@@ -169,7 +169,7 @@ public class GetGates extends DAO {
 	public Gate getGate(ICAOAirport a, Simulator sim, String code) throws DAOException {
 		try {
 			prepareStatementWithoutLimits("SELECT G.*, IFNULL(GROUP_CONCAT(GA.AIRLINE),''), GA.INTL, ND.REGION FROM common.GATES G "
-				+ "LEFT JOIN GATE_AIRLINES GA ON (G.ICAO=GA.ICAO) AND (G.NAME=GA.NAME) LEFT JOIN common.NAVDATA ND ON "
+				+ "LEFT JOIN common.GATE_AIRLINES GA ON (G.ICAO=GA.ICAO) AND (G.NAME=GA.NAME) LEFT JOIN common.NAVDATA ND ON "
 				+ "(G.ICAO=ND.CODE) AND (ND.ITEMTYPE=?) WHERE (G.ICAO=?) AND (G.NAME=?) AND (G.SIMVERSION>=?) GROUP BY "
 				+ "G.NAME ORDER BY G.SIMVERSION");
 			_ps.setInt(1, Navaid.AIRPORT.ordinal());
@@ -210,7 +210,7 @@ public class GetGates extends DAO {
 	public List<Gate> getGates(ICAOAirport a, Simulator sim) throws DAOException {
 		try {
 			prepareStatementWithoutLimits("SELECT G.*, IFNULL(GROUP_CONCAT(GA.AIRLINE),''), GA.INTL, ND.REGION FROM common.GATES G "
-				+ "LEFT JOIN GATE_AIRLINES GA ON (G.ICAO=GA.ICAO) AND (G.NAME=GA.NAME) LEFT JOIN common.NAVDATA ND ON "
+				+ "LEFT JOIN common.GATE_AIRLINES GA ON (G.ICAO=GA.ICAO) AND (G.NAME=GA.NAME) LEFT JOIN common.NAVDATA ND ON "
 				+ "(G.ICAO=ND.CODE) AND (ND.ITEMTYPE=?) WHERE (G.ICAO=?) AND (G.SIMVERSION=?) GROUP BY G.NAME");
 			_ps.setInt(1, Navaid.AIRPORT.ordinal());
 			_ps.setString(2, a.getICAO());
