@@ -54,14 +54,23 @@ public class AirportInformationCommand extends AbstractCommand {
 			Map<String, Runway> allRwys = CollectionUtils.createMap(nddao.getRunways(a), "name");
 			
 			// Build airport bounding box
-			ctx.setAttribute("bbox", GeoUtils.getBoundingBox(allRwys.values()), REQUEST);
+			ctx.setAttribute("rwys", new ArrayList<Runway>(allRwys.values()), REQUEST);
 			
 			// Load takeoff/landing runways
 			GetACARSRunways rwdao = new GetACARSRunways(con);
 			List<Runway> toRwys = rwdao.getPopularRunways(a, null, true); toRwys.sort(rC);
 			List<Runway> ldgRwys = rwdao.getPopularRunways(null, a, false); ldgRwys.sort(rC);
+			
+			// Check for invalid runways
+			Collection<Runway> invalidRwys = new LinkedHashSet<Runway>();
+			toRwys.stream().filter(r -> !GeoUtils.isValid(r)).forEach(r -> invalidRwys.add(r));
+			ldgRwys.stream().filter(r -> !GeoUtils.isValid(r)).forEach(r -> invalidRwys.add(r));
+			toRwys.removeAll(invalidRwys); ldgRwys.removeAll(invalidRwys);
+			
+			// Save runways
 			ctx.setAttribute("toRwys", toRwys, REQUEST);
 			ctx.setAttribute("ldgRwys", ldgRwys, REQUEST);
+			ctx.setAttribute("invalidRwys", invalidRwys, REQUEST);
 
 			// Determine valid runways for winds
 			Collection<String> validRunwayIDs = new HashSet<String>();
