@@ -429,47 +429,45 @@ golgotha.maps.acarsFlight.filedMarkers = [golgotha.maps.acarsFlight.gmA, golgoth
 map.addMarkers(golgotha.maps.acarsFlight.filedMarkers);
 </c:if>
 <c:if test="${isACARS}">
-google.load('visualization','1.0',{'packages':['corechart']});
+google.load('visualization','1.1',{'packages':['corechart']});
 google.setOnLoadCallback(function() {
-var xmlreq = new XMLHttpRequest();
-xmlreq.open('GET', 'pirepstats.ws?id=${pirep.hexID}', true);
-xmlreq.onreadystatechange = function() {
-	if (xmlreq.readyState != 4) return false;
-	if (xmlreq.status != 200) {
+var xreq = new XMLHttpRequest();
+xreq.open('get', 'pirepstats.ws?id=${pirep.hexID}', true);
+xreq.onreadystatechange = function() {
+	if (xreq.readyState != 4) return false;
+	if (xreq.status != 200) {
 		golgotha.util.display('flightDataChart', false);
 		return false;
 	}
 
-	var lgStyle = {color:'black',fontName:'Verdana',fontSize:8};
-	var statsData = JSON.parse(xmlreq.responseText); var sd = statsData.data;
-	for (var x = 0; x < sd.length; x++)
-		sd[x][0] = new Date(sd[x][0]);
+	var statsData = JSON.parse(xreq.responseText);
+	statsData.data.forEach(function(e) { e[0] = new Date(e[0]); });
 
-	// Build the chart
-	var chart = new google.visualization.ComboChart(document.getElementById('flightChart'));
+	// Build the Data
 	var data = new google.visualization.DataTable();
 	data.addColumn('datetime', 'Date/Time');
 	data.addColumn('number', 'Ground Speed');
 	data.addColumn('number', 'Altitude');
-	<c:if test="${!isXACARS}">
-	data.addColumn('number', 'Ground Elevation');</c:if>
-	data.addRows(sd);
+<c:if test="${!isXACARS}">   data.addColumn('number', 'Ground Elevation');</c:if>
+    data.addRows(statsData.data);
 
 	// Read CSS selectors for graph lines
-	var pr = golgotha.util.getStyle('main.css', '.pri') || '#0000a1'; 
+    var pr = golgotha.util.getStyle('main.css', '.pri') || '#0000a1'; 
 	var sc = golgotha.util.getStyle('main.css', '.sec') || '#008080';
 
 	// Create formatting options
+	var lgStyle = {color:'black',fontName:'Verdana',fontSize:8};
 	var ha = {gridlines:{count:10},minorGridlines:{count:5},title:'Date/Time',textStyle:lgStyle};
-	var va0 = {maxValue:statsData.maxAlt,title:'Altitude',textStyle:lgStyle};
-	var va1 = {maxValue:statsData.maxSpeed,gridlines:{count:5},title:'Speed',textStyle:lgStyle};
+    var va0 = {maxValue:statsData.maxAlt,title:'Altitude',textStyle:lgStyle};
+    var va1 = {maxValue:statsData.maxSpeed,gridlines:{count:5},title:'Speed',textStyle:lgStyle};
 	var s = [{},{targetAxisIndex:1},{targetAxisIndex:1,type:'area',areaOpacity:0.7}];
+    var chart = new google.visualization.ComboChart(document.getElementById('flightChart'));
 	chart.draw(data,{series:s,vAxes:[va1,va0],hAxis:ha,fontName:'Tahoma',fontSize:10,colors:[pr,sc,'#b8b8d8']});
 <c:if test="${access.canApprove}">golgotha.util.toggleExpand(document.getElementById('chartToggle'), 'flightDataChart');</c:if>	
 	return true;
 };
 
-xmlreq.send(null);
+xreq.send(null);
 return true;
 });</c:if>
 </script>
