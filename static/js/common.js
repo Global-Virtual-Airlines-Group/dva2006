@@ -244,19 +244,6 @@ Array.prototype.clone = function() {
 	return result;
 };
 
-if (!Array.prototype.keys) {
-	Array.prototype.keys = function() {
-		var result = [];
-		for (p in this) {
-			var v = this[p];
-			if (this.hasOwnProperty(p) && !golgotha.util.isFunction(v) && (v != null))
-				result.push(p);
-		}
-	
-		return result;
-	};
-}
-
 if (!Array.prototype.forEach) {
 	Array.prototype.forEach = function(f) {
 		for (var x = 0; x < this.length; x++)
