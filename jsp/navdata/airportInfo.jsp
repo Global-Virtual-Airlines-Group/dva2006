@@ -82,15 +82,24 @@ golgotha.local.update = function(combo) {
 </c:forEach></td>
 </tr>
 </c:if>
+<content:filter roles="Schedule,Operations">
+<c:if test="${!empty invalidRwys}">
+<tr>
+ <td class="label top">Obsolete Runways</td>
+ <td class="data" colspan="2"><c:forEach var="rwy" items="${invalidRwys}">
+<div>Runway ${rwy.name}</div></c:forEach></td>
+</tr>
+</c:if>
+</content:filter>
 <tr>
  <td class="label">Gate Legend</td>
  <td class="data"><span class="small"><img src="${proto}://maps.google.com/mapfiles/kml/pal2/icon56.png" alt="Our Gate"  width="16" height="16" /><content:airline /> Domestic Gates
  | <img src="${proto}://maps.google.com/mapfiles/kml/pal2/icon48.png" alt="International Gate"  width="16" height="16" /><content:airline /> International Gates
  | <img src="${proto}://maps.google.com/mapfiles/kml/pal3/icon52.png" alt="Frequently Used Gate"  width="16" height="16" /> Frequently Used Gates
  | <img src="${proto}://maps.google.com/mapfiles/kml/pal3/icon60.png" alt="Other Gate"  width="16" height="16" /> Other Gates</span></td>
- <td class="mid">&nbsp;<content:filter roles="Schedule,Operations"><c:if test="${!empty airlines}"><a id="editLink" href="javascript:golgotha.gate.edit()">EDIT GATE DATA</a>
+ <td class="mid">&nbsp;<content:filter roles="Schedule,Operations"><c:if test="${!empty airlines}"><a id="editLink" href="javascript:void golgotha.gate.edit()">EDIT GATE DATA</a>
 <el:combo ID="airlineCombo" name="airline"  size="1" idx="*" options="${airlines}" firstEntry="[ AIRLINE ]"  style="display:none;" onChange="void golgotha.gate.updateAirline(this)" />
-<a id="saveLink" style="display:none;" href="javascript:golgotha.gate.save()">SAVE GATE DATA</a>
+<a id="saveLink" style="display:none;" href="javascript:void golgotha.gate.save()">SAVE GATE DATA</a>
 <span id="helpText" style="display:none;" class="small"><br />Double-click to associate a gate with <span id="airlineName"></span>, right-click to mark a gate as International</span></c:if></content:filter></td>
 </tr>
 <tr>
@@ -104,7 +113,7 @@ golgotha.local.update = function(combo) {
 </content:page>
 <script id="mapInit">
 <map:point var="golgotha.local.mapC" point="${airport}" />
-<map:bounds var="golgotha.local.mapBounds" items="${ldgRwys}" />
+<map:bounds var="golgotha.local.mapBounds" items="${rwys}" />
 
 // Create the map
 var mapOpts = {center:golgotha.local.mapC, zoom:15, minZoom:12, maxZoom:19, scrollwheel:false, streetViewControl:false};
