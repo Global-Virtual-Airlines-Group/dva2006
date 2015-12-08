@@ -24,7 +24,7 @@
 </tr>
 </el:table>
 <script type="text/javascript">
-google.load('visualization','1.0',{'packages':['corechart']});
+google.load('visualization','1.1',{'packages':['corechart']});
 google.setOnLoadCallback(function() {
 var xmlreq = new XMLHttpRequest();
 xmlreq.open('get', 'bwstats.ws', true);
@@ -34,7 +34,6 @@ xmlreq.onreadystatechange = function() {
 	var lgStyle = {color:'black',fontName:'Verdana',fontSize:8};
 
 	// Display the chart
-	var chart = new google.visualization.LineChart(document.getElementById('bwChart'));
 	var data = new google.visualization.DataTable();
 	data.addColumn('string','Date/Time');
 	data.addColumn('number','Connections');
@@ -46,9 +45,10 @@ xmlreq.onreadystatechange = function() {
 	data.addColumn('number','Max Messages (1000)');
 	data.addColumn('number','Max Bytes (MB)');
 	data.addRows(statsData);
+	var chart = new google.visualization.LineChart(document.getElementById('bwChart'));
 	chart.draw(data,{hAxis:{textStyle:lgStyle},legend:{textStyle:lgStyle}});
 	return true;
-}
+};
 
 xmlreq.send(null);
 return true;	
