@@ -35,11 +35,15 @@ public class GateUpdateService extends WebService {
 	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 		
+		// Check access
+		if (!ctx.isUserInRole("Schedule") && !ctx.isUserInRole("Operations"))
+			return SC_FORBIDDEN;
+		
 		// Get the airport
 		Airport a = SystemData.getAirport(ctx.getParameter("id"));
 		if (a == null)
 			return SC_NOT_FOUND;
-
+		
 		JSONTokener jt = new JSONTokener(ctx.getParameter("data"));
 		JSONArray ja = new JSONArray(jt);
 		Simulator sim = Simulator.fromName(ctx.getParameter("sim"), Simulator.FSX);
