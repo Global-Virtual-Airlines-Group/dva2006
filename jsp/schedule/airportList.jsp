@@ -53,15 +53,15 @@ golgotha.local.validate = function(f) {
 
 <!-- Table Airport Data -->
 <c:forEach var="airport" items="${viewContext.results}">
-<tr>
+<view:row entry="${airport}">
  <td class="pri bld" colspan="2"><el:cmd url="airport" linkID="${airport.IATA}" op="edit">${airport.name}</el:cmd></td>
  <td class="bld">${airport.IATA}</td>
  <td class="bld">${airport.ICAO}</td>
  <td class="sec small" colspan="2">${airport.TZ}</td>
- <td class="small">${airport.country}</td>
+ <td class="small nophone">${airport.country}</td>
  <td class="small"><fmt:int value="${airport.maximumRunwayLength}" /> ft</td>
- <td class="small"><fmt:geo pos="${airport.position}" /></td>
-</tr>
+ <td class="small nophone"><fmt:geo pos="${airport.position}" /></td>
+</view:row>
 </c:forEach>
 
 <!-- Scroll Bar -->

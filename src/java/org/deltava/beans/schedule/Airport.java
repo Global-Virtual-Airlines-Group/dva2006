@@ -43,6 +43,7 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 	private String _region;
 	private String _supercededAirport;
 	private boolean _adseX;
+	private boolean _hasGateData;
 	
 	private final GeoPosition _position = new GeoPosition(0d, 0d);
 	private TZInfo _tz = TZInfo.local();
@@ -127,9 +128,19 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 	/**
 	 * Sets whether this airport has ADSE-X radar.
 	 * @param hasADSE TRUE if ADSE-X present, otherwise FALSE
+	 * @see Airport#getADSE()
 	 */
 	public void setADSE(boolean hasADSE) {
 		_adseX = hasADSE;
+	}
+	
+	/**
+	 * Sets whether this airport has gate data configured.
+	 * @param hasData TRUE if gate data configured, otherwise FALSE
+	 * @see Airport#getGateData()
+	 */
+	public void setGateData(boolean hasData) {
+		_hasGateData = hasData;
 	}
 
 	/**
@@ -330,6 +341,15 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 	}
 	
 	/**
+	 * Returns whether this Airport has gate data configured
+	 * @return TRUE if gate data configured, otherwise FALSE
+	 * @see Airport#setGateData(boolean)
+	 */
+	public boolean getGateData() {
+		return _hasGateData;
+	}
+	
+	/**
 	 * Sort the airports by comparing their IATA codes.
 	 */
 	@Override
@@ -494,7 +514,10 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 	
 	@Override
 	public String getRowClassName() {
-		return _aCodes.isEmpty() ? "warn" : null;
+		if (_aCodes.isEmpty())
+			return "warn";
+		
+		return _hasGateData ? null : "opt1";
 	}
 
 	/**
@@ -520,6 +543,7 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 		a2._adseX = _adseX;
 		a2._tz = _tz;
 		a2._maxRunwayLength = _maxRunwayLength;
+		a2._hasGateData = _hasGateData;
 		a2._country = _country;
 		a2.setLocation(_position.getLatitude(), _position.getLongitude());
 		a2._aCodes.addAll(_aCodes);
