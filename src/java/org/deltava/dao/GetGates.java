@@ -123,7 +123,8 @@ public class GetGates extends DAO {
 			_ps.setString(++pos, (isDeparture ? rp.getAirportD() : rp.getAirportA()).getICAO());
 			_ps.setBoolean(++pos, isDeparture);
 			_ps.setInt(++pos, sim.getCode());
-			_ps.setString(++pos, rp.getAirportD().getIATA());
+			if (rp.getAirportD() != null)
+				_ps.setString(++pos, rp.getAirportD().getIATA());
 			if (rp.getAirportA() != null)
 				_ps.setString(++pos, rp.getAirportA().getIATA());
 			
