@@ -113,6 +113,14 @@ Airports outside the United States or Canada with multiple airports, use &lt;Cit
  <td class="data"><fmt:int value="${airport.maximumRunwayLength}" /> feet</td>
 </tr>
 </c:if>
+<c:if test="${!isNew}">
+<content:filter roles="Schedule,Operations">
+<tr>
+ <td class="label">Information</td>
+ <td class="data"><c:if test="${!airport.gateData}"><span class="warn bld caps">No Gate / Airline data defined</span> </c:if><el:cmd url="airportInfo" linkID="${airport.ICAO}" className="pri bld">Click Here</el:cmd> to view Airport, Runway and Gate information.</td>
+</tr>
+</content:filter>
+</c:if>
 <tr>
  <td class="label">Time Zone</td>
  <td class="data"><el:combo name="tz" size="1" idx="*" required="true" options="${timeZones}" firstEntry="-" value="${airport.TZ}" /></td>
@@ -125,8 +133,7 @@ Airports outside the United States or Canada with multiple airports, use &lt;Cit
  <td class="label top">Prior Airport</td>
  <td class="data"><el:combo name="oldAirport" idx="*" size="1" options="${emptyList}" firstEntry="-" onChange="void changeAirport(this)" />&nbsp;
 <el:text ID="oldAirportCode" name="oldAirportCode" size="4" max="4" value="${airport.supercededAirport}" onBlur="void setAirport(document.forms[0].oldAirport, this.value, true)" /><br />
-<span class="small ita">Prior airports exist in older simulator versions and can be substitued for this Airport despite the
-lack of scheduled flights in the <content:airline /> Flight Schedule.</span></td>
+<span class="small ita">Prior airports exist in older simulator versions and can be substitued for this Airport despite the lack of scheduled flights in the <content:airline /> Flight Schedule.</span></td>
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="hasADSE" idx="*" className="small" value="true" checked="${airport.ADSE}" label="This Airport has ADSE-X Ground Radar" /></td>
