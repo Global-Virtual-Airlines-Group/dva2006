@@ -38,7 +38,7 @@
 </tr>
 </c:if>
 <tr>
- <td class="bld" style="max-width:25%;"><span class="pri">${staff.name}</span><br />
+ <td class="bld" style="width:25%; min-width:90px;"><span class="pri">${staff.name}</span><br />
 <span class="sec small"><fmt:text value="${staff.title}" /></span></td>
  <td class="nophone"><el:link className="small" url="mailto:${staff.email}">${staff.email}</el:link></td>
  <td class="small left"><fmt:text value="${staff.body}" /></td>
