@@ -618,7 +618,7 @@ public class GetFlightReportStatistics extends DAO {
 			+ "AS SH, AVG(F.FLIGHT_TIME) AS AVGHOURS, AVG(DISTANCE) AS AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) "
 			+ "AS SAL, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OVL, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OIL, "
 			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SHL, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SDL, "
-			+ "COUNT(DISTINCT F.PILOT_ID) AS PIDS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OLEGS, SUM(F.PAX) "
+			+ "COUNT(DISTINCT F.PILOT_ID) AS PIDS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OLEGS, SUM(F.PAX) AS SP "
 			+ "FROM PIREPS F WHERE (F.STATUS=?) ";
 	}
 	
@@ -631,7 +631,7 @@ public class GetFlightReportStatistics extends DAO {
 			+ "AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SAL, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OVL, "
 			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OIL, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SHL, "
 			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SDL, 1 AS PIDS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OLEGS,"
-			+ "SUM(F.PAX) FROM PILOTS P, PIREPS F WHERE (P.ID=F.PILOT_ID) AND (F.STATUS=?) ";
+			+ "SUM(F.PAX) AS SP FROM PILOTS P, PIREPS F WHERE (P.ID=F.PILOT_ID) AND (F.STATUS=?) ";
 	}
 	
 	/*
@@ -643,8 +643,8 @@ public class GetFlightReportStatistics extends DAO {
 			+ "AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SAL, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OVL, "
 			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OIL, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SHL, "
 			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SDL, COUNT(DISTINCT F.PILOT_ID) AS PIDS, "
-			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OLEGS, SUM(F.PAX) FROM common.AIRLINES AL, PIREPS F WHERE "
-			+ "(AL.CODE=F.AIRLINE) AND (F.STATUS=?) ";
+			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OLEGS, SUM(F.PAX) AS SP FROM common.AIRLINES AL, PIREPS F "
+			+ "WHERE (AL.CODE=F.AIRLINE) AND (F.STATUS=?) ";
 	}
 
 	/*
@@ -656,7 +656,7 @@ public class GetFlightReportStatistics extends DAO {
 			+ "AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SAL, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OVL, "
 			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OIL, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SHL, "
 			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SDL, COUNT(DISTINCT F.PILOT_ID) AS PIDS, "
-			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OLEGS, SUM(F.PAX) FROM common.AIRPORTS AP, PIREPS F WHERE (AP.IATA=" 
-			+ apColumn + ") AND (F.STATUS=?) ";
+			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OLEGS, SUM(F.PAX) AS SP FROM common.AIRPORTS AP, PIREPS F "
+			+ "WHERE (AP.IATA=" + apColumn + ") AND (F.STATUS=?) ";
 	}
 }
