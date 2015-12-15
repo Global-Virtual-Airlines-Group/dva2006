@@ -44,7 +44,7 @@ public class ErrorLogService extends WebService {
 		err.setStackDump(ctx.getParameter("stackDump"));
 		err.setClientBuild(StringUtils.parse(ctx.getParameter("clientBuild"), 1));
 		err.setBeta(StringUtils.parse(ctx.getParameter("beta"), 0));
-		err.setSimulator(Simulator.fromName(ctx.getParameter("fsVersion"), Simulator.FSX));
+		err.setSimulator(Simulator.fromName(ctx.getParameter("fsVersion"), Simulator.UNKNOWN));
 		err.setFSUIPCVersion(ctx.getParameter("fsuipcVersion"));
 		err.setRemoteAddr(ctx.getRequest().getRemoteAddr());
 		err.setRemoteHost(ctx.getRequest().getRemoteHost());
