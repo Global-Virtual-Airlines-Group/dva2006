@@ -5,7 +5,7 @@ import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.Simulator;
-import org.deltava.beans.stats.FlightStatsEntry;
+import org.deltava.beans.stats.*;
 
 /**
  * A Data Access Object to read aggregated Flight Report statistics. 
@@ -26,28 +26,27 @@ public class GetAggregateStatistics extends DAO {
 
 	/**
 	 * Retrieves aggregated approved Flight Report statistics.
-	 * @param groupBy the &quot;GROUP BY&quot; column name
-	 * @param orderBy the &quot;ORDER BY&quot; column name
+	 * @param s the statistics sorting option
+	 * @param grp the statistics grouping option
 	 * @return a Collection of FlightStatsEntry beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<FlightStatsEntry> getSimStatistics(String groupBy, String orderBy) throws DAOException {
+	public Collection<FlightStatsEntry> getSimStatistics(FlightStatsSort s, FlightStatsGroup grp) throws DAOException {
 		
 		// Get the SQL statement to use
-		boolean isPilot = groupBy.contains("P.");
 		StringBuilder sqlBuf = new StringBuilder("SELECT ");
-		sqlBuf.append(groupBy);
+		sqlBuf.append(grp.getSQL());
 		sqlBuf.append(" AS LABEL, SUM(LEGS) AS SL, SUM(HOURS) AS SH, SUM(MILES) AS SM, SUM(FS2000), SUM(FS2002), SUM(FS2004) AS SFS9, SUM(FSX) AS SFSX, "
-				+ "SUM(P3D) AS SP3D, SUM(XP10) AS SXP, SUM(OTHER_SIM) FROM ");
-		if ("EQTYPE".equals(groupBy))
+				+ "SUM(P3D) AS SP3D, SUM(XP10) AS SXP, SUM(OTHER_SIM), AVG(MILES) AS AVGMILES, AVG(HOURS) AS AVGHOURS FROM ");
+		if ("F.EQTYPE".equals(grp.getSQL()))
 			sqlBuf.append("FLIGHTSTATS_EQTYPE F");
-		else if (isPilot)
+		else if (grp.isPilotGroup())
 			sqlBuf.append("FLIGHTSTATS_PILOT F, PILOTS P WHERE (P.ID=F.PILOT_ID)");
 		else
 			sqlBuf.append("FLIGHTSTATS_DATE F");
 		
 		sqlBuf.append(" GROUP BY LABEL ORDER BY ");
-		sqlBuf.append(orderBy);
+		sqlBuf.append(s.getSQL());
 		
 		try {
 			prepareStatement(sqlBuf.toString());
@@ -75,11 +74,11 @@ public class GetAggregateStatistics extends DAO {
 	
 	/**
 	 * Retrieves aggregated approved Flight Report statistics.
-	 * @param orderBy the &quot;ORDER BY&quot; column name
+	 * @param s the sorting option
 	 * @return a Collection of FlightStatsEntry beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<FlightStatsEntry> getAirportStatistics(String orderBy, int apType) throws DAOException {
+	public Collection<FlightStatsEntry> getAirportStatistics(FlightStatsSort s, int apType) throws DAOException {
 
 		// Get the SQL statement to use
 		StringBuilder sqlBuf = new StringBuilder("SELECT AP.NAME, SUM(LEGS) AS SL, SUM(HOURS) AS SH, SUM(MILES) AS SM, SUM(HISTORIC) AS SHL, "
@@ -93,7 +92,7 @@ public class GetAggregateStatistics extends DAO {
 			sqlBuf.append("AND (IS_DEPARTURE=0) ");
 		
 		sqlBuf.append("GROUP BY AP.NAME ORDER BY ");
-		sqlBuf.append(orderBy);
+		sqlBuf.append(s.getSQL());
 		
 		try {
 			prepareStatement(sqlBuf.toString());
@@ -105,28 +104,28 @@ public class GetAggregateStatistics extends DAO {
 	
 	/**
 	 * Retrieves aggregated Flight Report statistics.
-	 * @param groupBy the &quot;GROUP BY&quot; column name
-	 * @param orderBy the &quot;ORDER BY&quot; column name
+	 * @param s the statistics sorting option
+	 * @param grp the statistics grouping option
 	 * @return a Collection of FlightStatsEntry beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<FlightStatsEntry> getPIREPStatistics(String groupBy, String orderBy) throws DAOException {
+	public Collection<FlightStatsEntry> getPIREPStatistics(FlightStatsSort s, FlightStatsGroup grp) throws DAOException {
 
 		// Get the SQL statement to use
 		StringBuilder sqlBuf = new StringBuilder("SELECT ");
-		sqlBuf.append(groupBy);
+		sqlBuf.append(grp.getSQL());
 		sqlBuf.append(" AS LABEL, SUM(LEGS) AS SL, SUM(HOURS) AS SH, SUM(MILES) AS SM, SUM(HISTORIC) AS SHL, SUM(DISPATCH) AS SDL, "
 			+ "SUM(ACARS) AS SAL, SUM(VATSIM) AS OVL, SUM(IVAO) AS OIL, SUM(FS2000), SUM(FS2002), SUM(FS2004) AS SFS9, SUM(FSX) AS SFSX, "
 			+ "SUM(P3D) AS SP3D, SUM(XP10) AS SXP, SUM(OTHER_SIM), AVG(LOADFACTOR), SUM(PAX) AS SP, COUNT(DISTINCT PILOTS) AS PIDS, "
 			+ "SUM(IVAO+VATSIM) AS OLEGS, SUM(MILES)/SUM(LEGS) AS AVGMILES, SUM(HOURS)/SUM(LEGS) AS AVGHOURS FROM ");
-		if (groupBy.contains("P."))
+		if (grp.isPilotGroup())
 			sqlBuf.append("FLIGHTSTATS_PILOT F, PILOTS P WHERE (P.ID=F.PILOT_ID)");
-		else if (groupBy.contains("EQTYPE"))
+		else if (grp.getSQL().contains("EQTYPE"))
 			sqlBuf.append("FLIGHTSTATS_EQTYPE F");
 		else
 			sqlBuf.append("FLIGHTSTATS_DATE F");
 		sqlBuf.append(" GROUP BY LABEL ORDER BY ");
-		sqlBuf.append(orderBy);
+		sqlBuf.append(s.getSQL());
 
 		try {
 			prepareStatement(sqlBuf.toString());

@@ -47,7 +47,7 @@ public class MyFlightsService extends WebService {
 		Map<Integer, Integer> vsStats = null;
 		try {
 			GetFlightReportStatistics stdao = new GetFlightReportStatistics(ctx.getConnection());
-			results = stdao.getPIREPStatistics(userID, "EQTYPE", "SL", true);
+			results = stdao.getPIREPStatistics(userID, FlightStatsSort.LEGS, FlightStatsGroup.EQ);
 			vsStats = stdao.getLandingCounts(userID, 50);
 			landings = stdao.getLandingData(userID);
 		} catch (DAOException de) {
