@@ -1,15 +1,18 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
-import java.util.Arrays;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.servlet.jsp.*;
 import javax.servlet.jsp.tagext.TagSupport;
 
+import org.deltava.util.StringUtils;
+
 /**
  * A JSP tag to insert an Enumeration's values into a page attribute.
  * @author Luke
- * @version 3.4
+ * @version 6.3
  * @since 3.2
  */
 
@@ -18,6 +21,8 @@ public class EnumTag extends TagSupport {
 	private String _varName;
 	private String _className;
 	private String _itemName;
+	
+	private final Collection<String> _filterNames = new HashSet<String>();
 	
 	/**
 	 * Sets the page attribute name.
@@ -44,11 +49,21 @@ public class EnumTag extends TagSupport {
 	}
 	
 	/**
+	 * Sets the name of the enumeration entries to exclude.
+	 * @param names a comma-seprated list of enumeration names
+	 */
+	public void setExclude(String names) {
+		_filterNames.addAll(StringUtils.split(names, ","));
+	}
+	
+	/**
 	 * Releases the tag's state variables.
 	 */
+	@Override
 	public void release() {
 		super.release();
 		_itemName = null;
+		_filterNames.clear();
 	}
 	
 	/**
@@ -56,6 +71,7 @@ public class EnumTag extends TagSupport {
 	 * @return EVAL_PAGE always
 	 * @throws JspException if an error occurs or the className cannot be loaded
 	 */
+	@Override
 	public int doEndTag() throws JspException {
 		try {
 			Class<?> c = Class.forName(_className);
@@ -66,12 +82,15 @@ public class EnumTag extends TagSupport {
 			Object[] values = c.getEnumConstants();
 			if (_itemName != null) {
 				for (int x = 0; x < values.length; x++) {
-					Object value = values[x];
-					if (_itemName.equals(value.toString())) {
-						pageContext.setAttribute(_varName, value, PageContext.PAGE_SCOPE);
+					Object e = values[x];
+					if (_itemName.equals(e.toString())) {
+						pageContext.setAttribute(_varName, e, PageContext.PAGE_SCOPE);
 						break;
 					}
 				}
+			} else if (_filterNames.size() > 0) {
+				Collection<Object> objs = Arrays.asList(values).stream().filter(e -> !_filterNames.contains(e.toString())).collect(Collectors.toList());
+				pageContext.setAttribute(_varName, objs, PageContext.PAGE_SCOPE);
 			} else
 				pageContext.setAttribute(_varName, Arrays.asList(values), PageContext.PAGE_SCOPE);
 		} catch (Exception e) {
