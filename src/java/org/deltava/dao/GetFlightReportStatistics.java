@@ -416,20 +416,19 @@ public class GetFlightReportStatistics extends DAO {
 	
 	/**
 	 * Retrieves aggregated Charter Flight Report statistics.
-	 * @param groupBy the &quot;GROUP BY&quot; column name
-	 * @param orderBy the &quot;ORDER BY&quot; column name
+	 * @param s the statistics sorting option
+	 * @param grp the statistics grouping option
 	 * @return a Collection of FlightStatsEntry beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<FlightStatsEntry> getCharterStatistics(String groupBy, String orderBy) throws DAOException {
-		boolean hasPilot = groupBy.contains("P.");
+	public Collection<FlightStatsEntry> getCharterStatistics(FlightStatsSort s, FlightStatsGroup grp) throws DAOException {
 		
 		// Get the SQL statement to use
 		StringBuilder sqlBuf = new StringBuilder("SELECT ");
-		sqlBuf.append(groupBy);
-		sqlBuf.append(hasPilot ? getPilotJoinSQL() : getSQL());
+		sqlBuf.append(grp.getSQL());
+		sqlBuf.append(grp.isPilotGroup() ? getPilotJoinSQL() : getSQL());
 		sqlBuf.append("AND ((F.ATTR & ?) > 0) GROUP BY LABEL ORDER BY ");
-		sqlBuf.append(orderBy);
+		sqlBuf.append(s.getSQL());
 		
 		try {
 			prepareStatement(sqlBuf.toString());
@@ -523,37 +522,28 @@ public class GetFlightReportStatistics extends DAO {
 	/**
 	 * Retrieves aggregated approved Flight Report statistics.
 	 * @param pilotID the Pilot's database ID, or zero if airline-wide
-	 * @param groupBy the &quot;GROUP BY&quot; column name
-	 * @param orderBy the &quot;ORDER BY&quot; column name
-	 * @param descSort TRUE if a descending sort, otherwise FALSE
+	 * @param s the statistics sorting option
+	 * @param grp the statistics grouping option
 	 * @return a Collection of FlightStatsEntry beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<FlightStatsEntry> getPIREPStatistics(int pilotID, String groupBy, String orderBy, boolean descSort) throws DAOException {
+	public Collection<FlightStatsEntry> getPIREPStatistics(int pilotID, FlightStatsSort s, FlightStatsGroup grp) throws DAOException {
 
 		// Get the SQL statement to use
 		StringBuilder sqlBuf = new StringBuilder("SELECT ");
-		if (groupBy.contains("AP.")) {
+		if (grp.isAirportGroup()) {
 			sqlBuf.append("AP.NAME");
-			sqlBuf.append(getAirportJoinSQL(groupBy.replace("AP.", "F.")));
-		} else if (groupBy.contains("P.")) {
-			sqlBuf.append(groupBy);
-			sqlBuf.append(getPilotJoinSQL());
-		} else if (groupBy.contains("AL.")) {
-			sqlBuf.append(groupBy);
-			sqlBuf.append(getAirlineJoinSQL());
+			sqlBuf.append(getAirportJoinSQL(grp.getSQL().replace("AP.", "F.")));
 		} else {
-			sqlBuf.append(groupBy);
-			sqlBuf.append(getSQL());
+			sqlBuf.append(grp.getSQL());
+			sqlBuf.append(grp.isPilotGroup() ? getPilotJoinSQL() : getSQL());
 		}
 		
 		if (pilotID != 0)
 			sqlBuf.append("AND (F.PILOT_ID=?) ");
 		
 		sqlBuf.append("GROUP BY LABEL ORDER BY ");
-		sqlBuf.append(orderBy);
-		if (descSort)
-			sqlBuf.append(" DESC");
+		sqlBuf.append(s.getSQL());
 
 		try {
 			prepareStatement(sqlBuf.toString());
@@ -634,19 +624,6 @@ public class GetFlightReportStatistics extends DAO {
 			+ "SUM(F.PAX) AS SP FROM PILOTS P, PIREPS F WHERE (P.ID=F.PILOT_ID) AND (F.STATUS=?) ";
 	}
 	
-	/*
-	 * Private helper method to return SQL statement that involves a join on the <i>AIRLINES</i> table.
-	 */
-	private static String getAirlineJoinSQL() {
-		return " AS LABEL, COUNT(F.DISTANCE) AS SL, SUM(F.DISTANCE) AS SM, "
-			+ "ROUND(SUM(F.FLIGHT_TIME), 1) AS SH, AVG(F.FLIGHT_TIME) AS AVGHOURS, AVG(F.DISTANCE) AS "
-			+ "AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SAL, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OVL, "
-			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OIL, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SHL, "
-			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SDL, COUNT(DISTINCT F.PILOT_ID) AS PIDS, "
-			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OLEGS, SUM(F.PAX) AS SP FROM common.AIRLINES AL, PIREPS F "
-			+ "WHERE (AL.CODE=F.AIRLINE) AND (F.STATUS=?) ";
-	}
-
 	/*
 	 * Private helper method to return SQL statement that involves a join on the <i>AIRPORTS</i> table.
 	 */

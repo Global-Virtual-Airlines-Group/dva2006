@@ -24,7 +24,7 @@
 <c:set var="entryNumber" value="${entryNumber + 1}" scope="page" />
  <td class="sec bld small">${entryNumber}</td>
  <td class="pri bld">${stat.label}</td>
- <td class="bld"><fmt:dec value="${stat.hours}" /></td>
+ <td class="bld" title="<fmt:distance value="${stat.distance}" longUnits="true" />"><fmt:dec value="${stat.hours}" /></td>
  <td class="pri bld"><fmt:int value="${stat.legs}" /></td>
  <td class="sec small nophone"><fmt:int value="${stat.pax}" /></td>
  <td class="sec bld small"><fmt:int value="${stat.ACARSLegs}" /> (<fmt:dec value="${stat.ACARSPercent * 100}" fmt="##0.0" />%)</td>

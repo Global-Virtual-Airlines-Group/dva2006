@@ -32,6 +32,8 @@ golgotha.local.validate = function(f) {
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:enum var="sortTypes" className="org.deltava.beans.stats.FlightStatsSort" exclude="PIDS" />
+<content:enum var="groupTypes" className="org.deltava.beans.stats.FlightStatsGroup" exclude="PILOT,AP" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -40,7 +42,7 @@ golgotha.local.validate = function(f) {
 <view:table cmd="mystats">
 <tr class="title">
  <td colspan="6" class="left caps"><span class="nophone"><content:airline /> </span>FLIGHT STATISTICS FOR ${pilot.name}</td>
- <td colspan="6" class="right">GROUP BY <el:combo name="groupType" size="1" idx="*" options="${groupTypes}" value="${param.groupType}" onChange="void golgotha.local.updateSort()" />
+ <td colspan="6" class="right">GROUP BY <el:combo name="groupType" size="1" idx="*" options="${groupTypes}" value="${groupType}" onChange="void golgotha.local.updateSort()" />
  SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${viewContext.sortType}" onChange="void golgotha.local.updateSort()" /></td>
 </tr>
 <%@ include file="/jsp/stats/pirepStats.jspf" %>

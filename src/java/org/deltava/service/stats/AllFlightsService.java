@@ -7,16 +7,15 @@ import java.util.*;
 
 import org.json.*;
 
-import org.deltava.beans.stats.FlightStatsEntry;
-import org.deltava.commands.stats.AbstractStatsCommand;
+import org.deltava.beans.stats.*;
 
 import org.deltava.dao.*;
 import org.deltava.service.*;
 
 /**
- * A Web Service to display Flight Report statistics to an Amline Flash chart.
+ * A Web Service to display Flight Report statistics to an Google chart.
  * @author Luke
- * @version 6.2
+ * @version 6.3
  * @since 2.1
  */
 
@@ -38,7 +37,7 @@ public class AllFlightsService extends WebService {
 		List<FlightStatsEntry> results = new ArrayList<FlightStatsEntry>();
 		try {
 			GetAggregateStatistics stdao = new GetAggregateStatistics(ctx.getConnection());
-			results.addAll(stdao.getPIREPStatistics(AbstractStatsCommand.MONTH_SQL, "DATE"));
+			results.addAll(stdao.getPIREPStatistics(FlightStatsSort.DATE, FlightStatsGroup.MONTH));
 			if (!results.isEmpty())
 				results.remove(results.size() - 1);
 		} catch (DAOException de) {
