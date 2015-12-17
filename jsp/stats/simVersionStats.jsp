@@ -24,6 +24,8 @@ golgotha.local.updateSort = function() { return document.forms[0].submit(); };
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:enum var="sortTypes" className="org.deltava.beans.stats.FlightStatsSort" exclude="PIDS,ALEGS,OLEGS,OVLEGS,OILEGS,HLEGS,DSPLEGS,PAX" />
+<content:enum var="groupTypes" className="org.deltava.beans.stats.FlightStatsGroup" exclude="AP,AA,AD" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -31,7 +33,7 @@ golgotha.local.updateSort = function() { return document.forms[0].submit(); };
 <view:table cmd="simversionstats">
 <tr class="title">
  <td colspan="5" class="left caps"><content:airline /> FLIGHT SIMULATOR VERSION STATISTICS</td>
- <td colspan="7" class="right">GROUP BY <el:combo name="groupType" size="1" idx="*" options="${groupTypes}" value="${param.groupType}" onChange="void golgotha.local.updateSort()" />
+ <td colspan="7" class="right">GROUP BY <el:combo name="groupType" size="1" idx="*" options="${groupTypes}" value="${groupType}" onChange="void golgotha.local.updateSort()" />
  SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${viewContext.sortType}" onChange="void golgotha.local.updateSort()" /></td>
 </tr>
 <!-- Table Header Bar-->
