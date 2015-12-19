@@ -20,9 +20,9 @@ golgotha.local.validate = function(f)
 if (!golgotha.form.check()) return false;
 var filterType = (f.viewType) ? f.viewType.selectedIndex : 0;
 golgotha.form.validate({f:f.viewType, t:'Filter Type'});
-if (filterType == 1)
+if (filterType == 2)
  	golgotha.form.validate({f:f.author, t:'Error Report Author'});
-else if (filterType == 2)
+else if (filterType == 3)
 	golgotha.form.validate({f:f.build, t:'ACARS Client Build'});
 
 golgotha.form.submit(f);
