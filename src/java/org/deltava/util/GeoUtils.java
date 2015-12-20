@@ -102,14 +102,12 @@ public class GeoUtils {
 		buf.append((loc.getLatitude() >= 0) ? 'N' : 'S');
 		buf.append(StringUtils.format(Math.abs(GeoPosition.getDegrees(loc.getLatitude())), "#0"));
 		buf.append("* ");
-		buf.append(StringUtils.format(Math.abs((loc.getLatitude() - GeoPosition.getDegrees(loc.getLatitude())) * 60),
-				"#0.00"));
+		buf.append(StringUtils.format(Math.abs((loc.getLatitude() - GeoPosition.getDegrees(loc.getLatitude())) * 60), "#0.00"));
 		buf.append("', ");
 		buf.append((loc.getLongitude() >= 0) ? 'E' : 'W');
 		buf.append(StringUtils.format(Math.abs(GeoPosition.getDegrees(loc.getLongitude())), "##0"));
 		buf.append("* ");
-		buf.append(StringUtils.format(Math.abs((loc.getLongitude() - GeoPosition.getDegrees(loc.getLongitude())) * 60),
-				"#0.00"));
+		buf.append(StringUtils.format(Math.abs((loc.getLongitude() - GeoPosition.getDegrees(loc.getLongitude())) * 60), "#0.00"));
 		buf.append('\'');
 		return buf.toString();
 	}
@@ -128,7 +126,7 @@ public class GeoUtils {
 		buf.append(' ');
 		buf.append(GeoPosition.getMinutes(loc.getLatitude()));
 		buf.append("' ");
-		buf.append(StringUtils.format(GeoPosition.getSeconds(loc.getLatitude()), "#.00"));
+		buf.append(StringUtils.format(GeoPosition.getSeconds(loc.getLatitude()), "#0.00"));
 		buf.append("\",");
 		buf.append((loc.getLongitude() >= 0) ? 'E' : 'W');
 		buf.append(StringUtils.format(Math.abs(GeoPosition.getDegrees(loc.getLongitude())), "##0"));
@@ -136,7 +134,7 @@ public class GeoUtils {
 		buf.append(' ');
 		buf.append(GeoPosition.getMinutes(loc.getLongitude()));
 		buf.append("' ");
-		buf.append(StringUtils.format(GeoPosition.getSeconds(loc.getLongitude()), "#.00"));
+		buf.append(StringUtils.format(GeoPosition.getSeconds(loc.getLongitude()), "#0.00"));
 		buf.append('\"');
 		return buf.toString();
 	}
@@ -469,13 +467,8 @@ public class GeoUtils {
 	 */
 	public static JSONObject toJSON(GeoLocation loc) {
 		JSONObject jo = new JSONObject();
-		try {
-			jo.put("lat", loc.getLatitude());
-			jo.put("lng", loc.getLongitude());
-		} catch (Exception e) {
-			// empty
-		}
-		
+		jo.put("lat", loc.getLatitude());
+		jo.put("lng", loc.getLongitude());
 		return jo;
 	}
 }
