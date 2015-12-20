@@ -14,6 +14,7 @@
 <content:css name="view" />
 <content:js name="common" />
 <content:pics />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -23,7 +24,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="lroster.do" method="GET" validate="return false;">
+<el:form action="lroster.do" method="get" validate="return false;">
 <view:table cmd="lroster">
 <!-- Table Letter Bar -->
 <tr class="title">
