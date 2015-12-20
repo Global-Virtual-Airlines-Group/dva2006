@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009,, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to write status updates for a Pilot to the database.
  * @author Luke
- * @version 3.4
+ * @version 6.3
  * @since 1.0
  */
 
@@ -46,10 +46,9 @@ public class SetStatusUpdate extends DAO {
 	   StringBuilder sqlBuf = new StringBuilder("INSERT INTO ");
 	   sqlBuf.append(formatDBName(dbName));
 	   sqlBuf.append(".STATUS_UPDATES (PILOT_ID, AUTHOR_ID, CREATED, TYPE, REMARKS) VALUES (?, ?, ?, ?, ?) ON "
-			   +"DUPLICATE KEY UPDATE CREATED=DATE_ADD(CREATED, INTERVAL 1 SECOND)");
+			   +"DUPLICATE KEY UPDATE CREATED=DATE_ADD(CREATED, INTERVAL 1000 MICROSECOND)");
 	   
 		try {
-			// Prepare the statement and write
 			prepareStatementWithoutLimits(sqlBuf.toString());
 			_ps.setInt(1, update.getID());
 			_ps.setInt(2, update.getAuthorID());
@@ -72,14 +71,14 @@ public class SetStatusUpdate extends DAO {
 			return;
 		
 		try {
+			startTransaction();
 			prepareStatementWithoutLimits("INSERT INTO STATUS_UPDATES (PILOT_ID, AUTHOR_ID, CREATED, TYPE, REMARKS) "
-				+ "VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE CREATED=DATE_ADD(CREATED, INTERVAL 1 SECOND)");
+				+ "VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE CREATED=DATE_ADD(CREATED, INTERVAL 1000 MICROSECOND)");
 			
 			long lastUpdateTime = 0;
-			for (Iterator<StatusUpdate> i = updates.iterator(); i.hasNext();) {
-				StatusUpdate upd = i.next();
+			for (StatusUpdate upd : updates) {
 				if (upd.getCreatedOn().getTime() <= lastUpdateTime)
-					upd.setCreatedOn(new java.util.Date(lastUpdateTime + 1000));
+					upd.setCreatedOn(new java.util.Date(lastUpdateTime + 2));
 					
 				lastUpdateTime = upd.getCreatedOn().getTime();
 				
@@ -94,10 +93,11 @@ public class SetStatusUpdate extends DAO {
 
 			_ps.executeBatch();
 			_ps.close();
+			commitTransaction();
 		} catch (SQLException se) {
+			rollbackTransaction();
 			throw new DAOException(se);
 		}
-		
 	}
 	
 	/**
@@ -108,8 +108,7 @@ public class SetStatusUpdate extends DAO {
 	 */
 	public void clearLOA(int id) throws DAOException {
 		try {
-			prepareStatement("DELETE FROM STATUS_UPDATES WHERE (PILOT_ID=?) AND (TYPE=?) AND "
-				+ "(CREATED > DATE_SUB(NOW(), INTERVAL 24 HOUR))");
+			prepareStatement("DELETE FROM STATUS_UPDATES WHERE (PILOT_ID=?) AND (TYPE=?) AND (CREATED > DATE_SUB(NOW(), INTERVAL 24 HOUR))");
 			_ps.setInt(1, id);
 			_ps.setInt(2, StatusUpdate.LOA);
 			executeUpdate(0);
