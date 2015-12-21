@@ -13,14 +13,14 @@
 <content:css name="form" />
 <content:css name="view" />
 <content:pics />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <content:js name="datePicker" />
 <script type="text/javascript">
-golgotha.local.validate = function(form)
-{
-if (!golgotha.form.check()) return false;
-golgotha.form.submit(f);
-return true;
+golgotha.local.validate = function(f) {
+    if (!golgotha.form.check()) return false;
+    golgotha.form.submit(f);
+    return true;
 };
 </script>
 </head>
@@ -70,10 +70,10 @@ return true;
  <td style="width:10%">ID</td>
  <td style="width:15%">DATE/TIME</td>
  <td style="width:10%">PILOT CODE</td>
- <td style="width:25%">PILOT NAME</td>
+ <td style="width:25%" class="nophone">PILOT NAME</td>
  <td style="width:5%">BUILD</td>
- <td style="width:5%">TEXT</td>
- <td>HOST NAME</td>
+ <td style="width:5%" class="nophone">TEXT</td>
+ <td class="nophone">HOST NAME</td>
 </tr>
 
 <!-- Log Entries -->
@@ -81,13 +81,13 @@ return true;
 <c:set var="pilot" value="${pilots[entry.pilotID]}" scope="page" />
 <c:set var="pilotLoc" value="${userData[entry.pilotID]}" scope="page" />
 <view:row entry="${entry}">
- <td class="pri bld"><fmt:hex value="${entry.ID}" /></td>
+ <td class="pri bld"><fmt:hex value="${entry.connectionID}" /></td>
  <td class="small"><fmt:date date="${entry.startTime}" /></td>
  <td class="sec bld">${pilot.pilotCode}</td>
- <td class="pri bld"><el:profile location="${pilotLoc}">${pilot.name}</el:profile></td>
+ <td class="pri bld nophone"><el:profile location="${pilotLoc}">${pilot.name}</el:profile></td>
  <td class="sec small bld"><fmt:int value="${entry.clientBuild}" /></td>
- <td><fmt:int value="${entry.messageCount}" /></td>
- <td class="small">${entry.remoteHost} (${entry.remoteAddr})</td>
+ <td class="nophone"><fmt:int value="${entry.messageCount}" /></td>
+ <td class="small nophone">${entry.remoteHost} (${entry.remoteAddr})</td>
 </view:row>
 </c:forEach>
 
