@@ -9,7 +9,7 @@ import org.deltava.util.*;
 /**
  * A class to store Schedule Entry information.
  * @author Luke
- * @version 6.1
+ * @version 6.3
  * @since 1.0
  */
 
@@ -17,7 +17,7 @@ public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
 	
 	private static final String[] SST = {"Concorde", "TU-144"};
 	
-	private final Calendar today = CalendarUtils.getInstance(null, true);
+	private Calendar today = CalendarUtils.getInstance(null, true);
 
 	private DateTime _timeD;
 	private DateTime _timeA;
@@ -168,6 +168,14 @@ public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
 		}
 		
 		return cld.getTime();
+	}
+	
+	/**
+	 * Sets the effective date of the flight, if replaying an old schedule.
+	 * @param dt the effective date
+	 */
+	public void setDate(Date dt) {
+		today = CalendarUtils.getInstance(dt, true);
 	}
 
 	/**
