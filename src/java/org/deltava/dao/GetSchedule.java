@@ -7,6 +7,7 @@ import java.util.*;
 import org.deltava.beans.Flight;
 import org.deltava.beans.schedule.*;
 
+import org.deltava.util.CalendarUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -18,12 +19,22 @@ import org.deltava.util.system.SystemData;
 
 public class GetSchedule extends DAO {
 	
+	private java.util.Date _effDate = CalendarUtils.getInstance(null, true).getTime();
+	
 	/**
 	 * Initialize the Data Access Object.
 	 * @param c the JDBC connection to use
 	 */
 	public GetSchedule(Connection c) {
 		super(c);
+	}
+	
+	/**
+	 * Sets the effective date of the Schedule, for DST calculations.
+	 * @param dt the effective date/time or null for today
+	 */
+	public void setEffectiveDate(java.util.Date dt) {
+		_effDate = CalendarUtils.getInstance(dt, true).getTime();
 	}
 
 	/**
@@ -268,6 +279,7 @@ public class GetSchedule extends DAO {
 			try (ResultSet rs = _ps.executeQuery()) {
 				if (rs.next()) {
 					se = new ScheduleEntry(SystemData.getAirline(rs.getString(1)), rs.getInt(2), rs.getInt(3));
+					se.setDate(_effDate);
 					se.setEquipmentType(rs.getString(4));
 					se.setAirportD(sr.getAirportD());
 					se.setAirportA(sr.getAirportA());
@@ -366,6 +378,7 @@ public class GetSchedule extends DAO {
 				} else
 					entry = new ScheduleEntry(SystemData.getAirline(rs.getString(1)), rs.getInt(2), rs.getInt(3));
 			
+				entry.setDate(_effDate);
 				entry.setAirportD(SystemData.getAirport(rs.getString(4)));
 				entry.setAirportA(SystemData.getAirport(rs.getString(5)));
 				entry.setEquipmentType(rs.getString(7));
