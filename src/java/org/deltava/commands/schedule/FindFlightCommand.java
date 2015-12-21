@@ -117,9 +117,17 @@ public class FindFlightCommand extends AbstractCommand {
 			try {
 				Connection con = ctx.getConnection();
 				
+		         // Load schedule import metadata
+		    	 GetMetadata mddao = new GetMetadata(con);
+		    	 String aCode = SystemData.get("airline.code").toLowerCase();
+		    	 ctx.setAttribute("importDate", mddao.getDate(aCode + ".schedule.import"), REQUEST);
+		    	 Date effDate = mddao.getDate(aCode + ".schedule.effDate");
+		    	 ctx.setAttribute("effectiveDate", effDate, REQUEST);
+
 				// Get the DAO and execute
 				GetScheduleSearch dao = new GetScheduleSearch(con);
 				dao.setQueryMax(criteria.getMaxResults());
+				dao.setEffectiveDate(effDate);
 				
 				// Get destination airports
 				GetScheduleAirport adao = new GetScheduleAirport(con);
@@ -138,12 +146,6 @@ public class FindFlightCommand extends AbstractCommand {
 					ctx.setAttribute("airportsA", fl.filter(dsts), REQUEST);
 				} else
 					ctx.setAttribute("airportsA", dsts, REQUEST);
-				
-		         // Load schedule import data
-		    	 GetMetadata mddao = new GetMetadata(con);
-		    	 String aCode = SystemData.get("airline.code").toLowerCase();
-		    	 ctx.setAttribute("importDate", mddao.getDate(aCode + ".schedule.import"), REQUEST);
-		    	 ctx.setAttribute("effectiveDate", mddao.getDate(aCode + ".schedule.effDate"), REQUEST);
 
 				// Save results in the session - since other commands may reference these
 				ctx.setAttribute("fafResults", dao.search(criteria), SESSION);

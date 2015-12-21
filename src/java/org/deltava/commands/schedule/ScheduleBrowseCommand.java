@@ -2,6 +2,7 @@
 package org.deltava.commands.schedule;
 
 import java.sql.Connection;
+import java.util.Date;
 
 import org.deltava.beans.schedule.*;
 import org.deltava.commands.*;
@@ -45,12 +46,16 @@ public class ScheduleBrowseCommand extends AbstractViewCommand {
 		// Save the search criteria
 		ctx.setAttribute("airportD", aD, REQUEST);
 		ctx.setAttribute("airportA", criteria.getAirportA(), REQUEST);
-		if (ctx.isAuthenticated())
-			ctx.setAttribute("useICAO", Boolean.valueOf(ctx.getUser().getAirportCodeType() == Airport.Code.ICAO), REQUEST);
 
-		// Do the search
 		try {
 			Connection con = ctx.getConnection();
+			
+	         // Load schedule import metadata
+	    	 GetMetadata mddao = new GetMetadata(con);
+	    	 String aCode = SystemData.get("airline.code").toLowerCase();
+	    	 ctx.setAttribute("importDate", mddao.getDate(aCode + ".schedule.import"), REQUEST);
+	    	 Date effDate = mddao.getDate(aCode + ".schedule.effDate");
+	    	 ctx.setAttribute("effectiveDate", effDate, REQUEST);
 			
 			// Load airports
 			GetScheduleAirport dao = new GetScheduleAirport(con);
@@ -61,13 +66,8 @@ public class ScheduleBrowseCommand extends AbstractViewCommand {
 			GetScheduleSearch sdao = new GetScheduleSearch(con);
 			sdao.setQueryStart(vc.getStart());
 			sdao.setQueryMax(vc.getCount());
+			sdao.setEffectiveDate(effDate);
 			vc.setResults(sdao.search(criteria));
-
-			// Load schedule import data
-			GetMetadata mddao = new GetMetadata(con);
-			String aCode = SystemData.get("airline.code").toLowerCase();
-			ctx.setAttribute("importDate", mddao.getDate(aCode + ".schedule.import"), REQUEST);
-			ctx.setAttribute("effectiveDate", mddao.getDate(aCode + ".schedule.effDate"), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
