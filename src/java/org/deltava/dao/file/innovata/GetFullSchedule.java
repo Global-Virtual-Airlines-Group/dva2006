@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load CSV-format flight schedules from Innovata LLC.
  * @author Luke
- * @version 4.1
+ * @version 6.3
  * @since 1.0
  */
 
@@ -31,7 +31,7 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 
 	private static final List<String> GROUND_EQ = Arrays.asList("TRN", "BUS", "LMO", "RFS");
 
-	private long _effDate = System.currentTimeMillis();
+	private Date _effDate = new Date();
 
 	private final Collection<CSVTokens> _data = new ArrayList<CSVTokens>();
 	private final Collection<String> _aCodes = new HashSet<String>();
@@ -91,7 +91,7 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 		try {
 			long sd = _df.parse(entries.get(5) + " 00:00").getTime();
 			long ed = _df.parse(entries.get(6) + " 23:59").getTime();
-			if ((_effDate < sd) || (_effDate >= ed))
+			if ((_effDate.getTime() < sd) || (_effDate.getTime() >= ed))
 				return false;
 		} catch (Exception e) {
 			log.warn("Invalid start/end date - " + e.getMessage());
@@ -132,7 +132,7 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 	 */
 	public void setEffectiveDate(Date dt) {
 		if (dt != null)
-			_effDate = dt.getTime();
+			_effDate = dt;
 	}
 
 	/**
@@ -239,6 +239,7 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 				entry.setEquipmentType(eqType);
 				entry.setLength(Integer.parseInt(entries.get(42)) / 6);
 				entry.setDays(dayBuf.toString());
+				entry.setDate(_effDate);
 				try {
 					entry.setTimeD(_tf.parse(entries.get(18)));
 					entry.setTimeA(_tf.parse(entries.get(23)));
