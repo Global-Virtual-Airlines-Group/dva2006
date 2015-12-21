@@ -13,6 +13,7 @@
 <content:css name="form" />
 <content:css name="view" />
 <content:pics />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <content:js name="datePicker" />
 <content:js name="acarsLog" />
@@ -66,10 +67,9 @@
  <td style="width:8%">ID</td>
  <td style="width:15%">START/END TIME</td>
  <td style="width:10%">PILOT CODE</td>
- <td style="width:20%">PILOT NAME</td>
- <td style="width:10%">FLIGHT NUMBER</td>
- <td style="width:12%">ORIGIN</td>
- <td style="width:12%">DESTINATION</td>
+ <td style="width:20%" class="nophone">PILOT NAME</td>
+ <td>FLIGHT NUMBER</td>
+ <td style="width:25%" class="nophone">AIRPORTS</td>
  <td>FS VERSION</td>
 </tr>
 
@@ -85,20 +85,19 @@
 </c:if>
 </td>
  <td class="sec bld">${pilot.pilotCode}</td>
- <td class="pri bld"><el:profile location="${pilotLoc}">${pilot.name}</el:profile></td>
+ <td class="pri bld nophone"><el:profile location="${pilotLoc}">${pilot.name}</el:profile></td>
  <td class="bld">${flight.flightCode}</td>
- <td class="small">${flight.airportD.name} (<fmt:airport airport="${flight.airportD}" />)</td>
- <td class="small">${flight.airportA.name} (<fmt:airport airport="${flight.airportA}" />)</td>
+ <td class="small nophone">${flight.airportD.name} (<fmt:airport airport="${flight.airportD}" />) - ${flight.airportA.name} (<fmt:airport airport="${flight.airportA}" />)</td>
  <td class="sec">${flight.FSVersion}</td>
 </view:row>
 <view:row entry="${entry}">
- <td colspan="8" class="left">Route: ${flight.route}</td>
+ <td colspan="7" class="left">Route: ${flight.route}</td>
 </view:row>
 </c:forEach>
 
 <!-- Scroll Bar -->
 <tr class="title">
- <td colspan="8"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
+ <td colspan="7"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
 </tr>
 </view:table>
 </c:when>

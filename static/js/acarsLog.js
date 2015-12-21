@@ -4,7 +4,7 @@ if (!golgotha.form.check()) return false;
 
 // Do different validation depending on the search type
 var isOK = false;
-if (f.pilotCode.length > 0) { 
+if (f.pilotCode.value.length > 0) { 
 	golgotha.form.validate({f:f.pilotCode, l:4, t:'Pilot Code'});
 	isOK = true;
 }
@@ -15,7 +15,7 @@ if ((f.startDate.value.length > 0) || (f.endDate.value.length > 0)) {
 	isOK = true;
 }
 	
-if ((f.viewCount) && (f.viewCount.value.length > 0)) {
+if (f.viewCount.value.length > 0) {
 	golgotha.form.validate({f:f.viewCount, min:0, t:'Maximum Results'});
 	isOK = true;
 }
