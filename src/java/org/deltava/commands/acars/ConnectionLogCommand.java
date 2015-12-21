@@ -25,31 +25,26 @@ public class ConnectionLogCommand extends ACARSLogViewCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error (typically database) occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
-		// Get the view context and the search type
-		ViewContext vc = initView(ctx);
-
-		// Get the command result
-		CommandResult result = ctx.getResult();
-
 		// If we're not displaying anything, redirect to the result page
+		CommandResult result = ctx.getResult();
 		if (ctx.getParameter("pilotCode") == null) {
 			result.setURL("/jsp/acars/connectionLog.jsp");
 			result.setSuccess(true);
 			return;
 		}
 
+		ViewContext vc = initView(ctx);
 		try {
 			Connection con = ctx.getConnection();
 			LogSearchCriteria criteria = getSearchCriteria(ctx, con);
 
-			// Get the DAO and set start/count parameters
+			// Get the DAO and do the search
 			GetACARSLog dao = new GetACARSLog(con);
 			dao.setQueryStart(vc.getStart());
 			dao.setQueryMax(vc.getCount());
-
-			// Do the search
 			vc.setResults(dao.getConnections(criteria));
 
 			// Load the Pilot data
@@ -60,10 +55,8 @@ public class ConnectionLogCommand extends ACARSLogViewCommand {
 			// Get the users for each connection
 			Map<Integer, Pilot> pilots = new HashMap<Integer, Pilot>();
 			GetPilot pdao = new GetPilot(con);
-			for (Iterator<String> i = udm.getTableNames().iterator(); i.hasNext();) {
-				String dbTableName = i.next();
-				pilots.putAll(pdao.getByID(udm.getByTable(dbTableName), dbTableName));
-			}
+			for (String dbTable : udm.getTableNames())
+				pilots.putAll(pdao.getByID(udm.getByTable(dbTable), dbTable));
 
 			// Save the pilots in the request
 			ctx.setAttribute("pilots", pilots, REQUEST);
