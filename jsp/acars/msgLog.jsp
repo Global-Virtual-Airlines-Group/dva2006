@@ -13,6 +13,7 @@
 <content:css name="form" />
 <content:css name="view" />
 <content:pics />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <content:js name="datePicker" />
 <content:js name="acarsLog" />
@@ -56,7 +57,7 @@
 </tr>
 </content:hasmsg>
 <content:filter roles="HR"><c:if test="${doSearch && (!empty rangeStart)}">
-<tr class="mid">
+<tr class="mid nophone">
  <td colspan="4">To view all ACARS Message Log entries in Microsoft Excel, <el:link url="acars_chat_log.ws?start=${rangeStart}&end=${rangeEnd}" className="sec bld">Click Here</el:link>.</td>
 </tr>
 </c:if></content:filter>
