@@ -67,7 +67,7 @@ return true;
 </tr>
  
  <!-- Table Route Data -->
-<c:set var="entryNumber" value="${viewStart}" scope="page" />
+<c:set var="entryNumber" value="${viewContext.start}" scope="page" />
 <c:forEach var="route" items="${viewContext.results}">
 <c:set var="entryNumber" value="${entryNumber + 1}" scope="page" />
 <view:row entry="${route}">
