@@ -6,14 +6,14 @@ import org.deltava.util.system.SystemData;
 /**
  * A class to support web site commands for pageable table views.
  * @author Luke
- * @version 6.0
+ * @version 6.3
  * @since 1.0
  */
 
 public abstract class AbstractViewCommand extends AbstractCommand {
 
 	/**
-	 * Initializes the view context for a command invocation.
+	 * Initializes the view context for a command invocation and saves it in the request.
 	 * @param ctx the Command context
 	 * @param defaultSize the default view page size if not specified
 	 * @return the view context
@@ -22,15 +22,7 @@ public abstract class AbstractViewCommand extends AbstractCommand {
         
         // Get start/count/sortType
         ViewContext vctx = new ViewContext(ctx.getRequest(), defaultSize);
-        
-        // Save the start/end values
-        ctx.setAttribute("viewStart", Integer.valueOf(vctx.getStart()), REQUEST);
-        ctx.setAttribute("viewCount", Integer.valueOf(vctx.getCount()), REQUEST);
-        
-        // Save the view context in the request
         ctx.setAttribute(ViewContext.VIEW_CONTEXT, vctx, REQUEST);
-        
-        // Return the view context
         return vctx;
     }
     
