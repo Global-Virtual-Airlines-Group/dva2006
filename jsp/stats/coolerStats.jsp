@@ -44,7 +44,7 @@ golgotha.local.updateSort = function() { return document.forms[0].submit(); };
 </tr>
 
 <!-- Table Statistics Data -->
-<c:set var="entryNumber" value="${viewStart}" scope="page" />
+<c:set var="entryNumber" value="${viewContext.start}" scope="page" />
 <c:forEach var="stat" items="${viewContext.results}">
 <view:row entry="${stat}">
 <c:set var="entryNumber" value="${entryNumber + 1}" scope="page" />
