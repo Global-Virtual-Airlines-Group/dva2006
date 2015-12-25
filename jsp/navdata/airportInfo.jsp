@@ -51,6 +51,12 @@ golgotha.local.update = function(combo) {
  <td class="label">Time Zone</td>
  <td class="data" colspan="2">${airport.TZ} <span class="small ita">(Current local time: <fmt:date date="${localTime}" tz="${airport.TZ}" t="HH:mm" />)</span>
 </tr>
+<c:if test="${!empty airlines}">
+<tr>
+ <td class="label">Airlines Served</td>
+ <td class="data" colspan="2"><fmt:list value="${airlines}" delim=", " /></td>
+</tr>
+</c:if>
 <c:if test="${!empty wx}">
 <tr>
  <td class="label top">Current Weather</td>
