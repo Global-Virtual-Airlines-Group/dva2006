@@ -13,6 +13,7 @@
 <content:css name="form" />
 <content:css name="view" />
 <content:pics />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <content:json />
 <content:js name="airportRefresh" />
@@ -72,17 +73,17 @@ golgotha.onDOMReady(function() {
 <el:form method="post" action="routeassign.do" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
- <td colspan="2"><content:airline /> FLIGHT ASSIGNMENT ROUTE SEARCH</td>
+ <td colspan="2"><span class="nophone"><content:airline /> </span>FLIGHT ASSIGNMENT ROUTE SEARCH</td>
 </tr>
 <tr>
  <td class="label">Departing from</td>
- <td class="data"><el:combo name="airportD" size="1" idx="*" options="${aD}" firstEntry="-" value="${rp.airportD}" />
- <el:text name="airportDCode" idx="*" size="3" max="4" value="${param.airportDCode}" onChange="void document.forms[0].airportD.setAirport(this.value)" /></td>
+ <td class="data"><el:combo name="airportD" size="1" idx="*" options="${aD}" firstEntry="-" value="${rp.airportD}" onChange="void this.updateAirportCode()" />
+ <el:airportCode combo="airportD" idx="*" airport="${rp.airportD}" /></td>
 </tr>
 <tr>
  <td class="label">Arriving at</td>
- <td class="data"><el:combo name="airportA" size="1" idx="*" options="${aA}" firstEntry="-" value="${rp.airportA}" />
- <el:text name="airportACode" idx="*" size="3" max="4" value="${param.airportACode}" onChange="void document.forms[0].airportA.setAirport(this.value)" /></td>
+ <td class="data"><el:combo name="airportA" size="1" idx="*" options="${aA}" firstEntry="-" value="${rp.airportA}" onChange="void this.updateAirportCode()" />
+ <el:airportCode combo="airportA" idx="*" airport="${rp.airportA}" /></td>
 </tr>
 
 <!-- Button Bar -->
@@ -99,7 +100,7 @@ golgotha.onDOMReady(function() {
 <el:form method="post" action="routebuild.do" validate="return golgotha.form.wrap(golgotha.local.validateBuild, this)">
 <el:table className="view">
 <tr class="title caps">
- <td colspan="8" class="left">SEARCH RESULTS FROM ${rp.airportD.name} (<fmt:airport airport="${rp.airportD}" />) to ${rp.airportA.name}
+ <td colspan="8" class="left"><span class="nophone">SEARCH RESULTS FROM </span>${rp.airportD.name} (<fmt:airport airport="${rp.airportD}" />) to ${rp.airportA.name}
  (<fmt:airport airport="${rp.airportA}" />)</td>
 </tr>
 <!-- Schedule Entry Header Bar -->
@@ -107,10 +108,10 @@ golgotha.onDOMReady(function() {
  <td style="width:5%">&nbsp;</td>
  <td style="width:20%">FLIGHT NUMBER</td>
  <td style="width:15%">EQUIPMENT</td>
- <td style="width:15%">DEPARTS</td>
- <td style="width:15%">ARRIVES</td>
- <td>DISPATCH ROUTES</td>
- <td style="width:10%">LENGTH</td>
+ <td class="nophone" style="width:15%">DEPARTS</td>
+ <td class="nophone" style="width:15%">ARRIVES</td>
+ <td class="nophone">DISPATCH ROUTES</td>
+ <td class="nophone" style="width:10%">LENGTH</td>
  <td style="width:10%">DISTANCE</td>
 </tr>
 
@@ -121,18 +122,18 @@ golgotha.onDOMReady(function() {
 <c:set var="flightCount" value="${fn:sizeof(flights)}" scope="page" />
 <c:set var="legNum" value="${legNum + 1}" scope="page" />
 <tr class="title caps">
- <td colspan="8" class="left">LEG <fmt:int value="${legNum}" /> - <fmt:quantity value="${flightCount}" single="flight" /> FROM
- ${lastAirport.name} (<fmt:airport airport="${lastAirport}" />) TO ${aA.name} (<fmt:airport airport="${aA}" />)</td>
+ <td colspan="8" class="left">LEG <fmt:int value="${legNum}" /> - <span class="nophone"><fmt:quantity value="${flightCount}" single="flight" /> FROM
+ </span>${lastAirport.name} (<fmt:airport airport="${lastAirport}" />) TO ${aA.name} (<fmt:airport airport="${aA}" />)</td>
 </tr>
 <c:forEach var="flight" items="${flights}">
 <view:row entry="${flight}">
  <td><el:radio name="leg${legNum}" value="${flight.flightCode}" label="" /></td>
  <td class="pri bld">${flight.flightCode}</td>
  <td class="sec bld">${flight.equipmentType}</td>
- <td><fmt:date fmt="t" t="HH:mm" tz="${flight.airportD.TZ}" date="${flight.dateTimeD.UTC}" /></td>
- <td><fmt:date fmt="t" t="HH:mm" tz="${flight.airportA.TZ}" date="${flight.dateTimeA.UTC}" /></td>
- <td class="pri bld"><fmt:int value="${flight.dispatchRoutes}" /></td>
- <td><fmt:int value="${flight.length / 10}" />:<fmt:int value="${(flight.length * 6) % 60}" fmt="00" /></td>
+ <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${flight.airportD.TZ}" date="${flight.dateTimeD.UTC}" /></td>
+ <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${flight.airportA.TZ}" date="${flight.dateTimeA.UTC}" /></td>
+ <td class="pri bld nophone"><fmt:int value="${flight.dispatchRoutes}" /></td>
+ <td class="nophone"><fmt:int value="${flight.length / 10}" />:<fmt:int value="${(flight.length * 6) % 60}" fmt="00" /></td>
  <td class="sec"><fmt:distance value="${flight.distance}" /></td>
 </view:row>
 </c:forEach>
