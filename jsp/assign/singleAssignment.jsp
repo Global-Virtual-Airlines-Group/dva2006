@@ -12,6 +12,7 @@
 <content:css name="main" />
 <content:css name="form" />
 <content:css name="view" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
@@ -60,11 +61,11 @@ return true;
 <!-- Search Results Header Bar -->
 <tr class="caps title">
  <td style="width:15%">FLIGHT NUMBER</td>
- <td style="width:10%">EQUIPMENT</td>
+ <td>EQUIPMENT</td>
  <td style="width:35%">AIRPORTS</td>
- <td style="width:10%">DEPARTS</td>
- <td style="width:10%">ARRIVES</td>
- <td>DISTANCE</td>
+ <td class="nophone" style="width:10%">DEPARTS</td>
+ <td class="nophone" style="width:10%">ARRIVES</td>
+ <td class="nophone">DISTANCE</td>
 </tr>
 
 <c:forEach var="flight" items="${entries}">
@@ -73,9 +74,9 @@ return true;
  <td class="sec bld">${flight.equipmentType}</td>
  <td class="small">${flight.airportD.name} (<fmt:airport airport="${flight.airportD}" />) to
  ${flight.airportA.name} (<fmt:airport airport="${flight.airportA}" />)</td>
- <td><fmt:date fmt="t" t="HH:mm" tz="${flight.airportD.TZ}" date="${flight.dateTimeD.UTC}" /></td>
- <td><fmt:date fmt="t" t="HH:mm" tz="${flight.airportA.TZ}" date="${flight.dateTimeA.UTC}" /></td>
- <td class="sec"><fmt:distance value="${flight.distance}" /></td>
+ <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${flight.airportD.TZ}" date="${flight.dateTimeD.UTC}" /></td>
+ <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${flight.airportA.TZ}" date="${flight.dateTimeA.UTC}" /></td>
+ <td class="sec nophone"><fmt:distance value="${flight.distance}" /></td>
 </view:row>
 </c:forEach>
 </c:if>
