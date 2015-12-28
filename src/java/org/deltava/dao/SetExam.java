@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.testing.*;
 /**
  * A Data Access Object to write Pilot Examinations and Check Rides to the database.
  * @author Luke
- * @version 5.4
+ * @version 6.3
  * @since 1.0
  */
 
@@ -286,6 +286,22 @@ public class SetExam extends DAO {
 			
 			_ps.executeBatch();
 			_ps.close();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Deletes unflown Check Rides from a Flight Academy Course.
+	 * @param courseID the database ID of the Course
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void deleteCheckRides(int courseID) throws DAOException {
+		try {
+			prepareStatement("DELETE CR FROM exams.CHECKRIDES CR, exams.COURSERIDES CCR WHERE (CR.ID=CCR.CHECKRIDE) AND (CCR.COURSE=?) AND (CR.STATUS=?)");
+			_ps.setInt(1, courseID);
+			_ps.setInt(2, TestStatus.NEW.ordinal());
+			executeUpdate(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
