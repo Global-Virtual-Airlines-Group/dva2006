@@ -8,7 +8,6 @@ import java.sql.Connection;
 import org.deltava.beans.*;
 import org.deltava.beans.academy.*;
 import org.deltava.beans.system.*;
-import org.deltava.beans.testing.*;
 
 import org.deltava.dao.*;
 import org.deltava.mail.*;
@@ -21,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to disable Users who have not logged in within a period of time.
  * @author Luke
- * @version 6.1
+ * @version 6.3
  * @since 1.0
  */
 
@@ -56,7 +55,6 @@ public class InactivityUpdateTask extends Task {
 			
 			// Initialize the DAOs
 			GetInactivity dao = new GetInactivity(con);
-			GetExam exdao = new GetExam(con);
 			GetAcademyCourses cdao = new GetAcademyCourses(con);
 			SetAcademy cwdao = new SetAcademy(con);
 			SetExam exwdao = new SetExam(con);
@@ -140,21 +138,17 @@ public class InactivityUpdateTask extends Task {
 					Course c = courses.get(id);
 					if (c != null) {
 						c = cdao.get(c.getID());
+						c.setStatus(Status.ABANDONED);
+						
+						// Create comment
 						CourseComment cc = new CourseComment(c.getID(), upd.getAuthorID());
 						cc.setCreatedOn(upd.getCreatedOn());
 						cc.setText(upd.getDescription());
 						log.warn("Removing " + p.getName() + " from " + c.getName() + " Flight Academy Course");
 						
-						// Delete a check ride if there is one
-						List<CheckRide> rides = exdao.getAcademyCheckRides(c.getID());
-						for (CheckRide cr : rides) {
-							if (cr.getStatus() == TestStatus.NEW)
-								exwdao.delete(cr);
-						}
-						
-						// Mark as abandoned and save comment
-						c.setStatus(Status.ABANDONED);
+						// Write
 						cwdao.comment(cc);
+						exwdao.deleteCheckRides(c.getID());
 						cwdao.write(c);
 					}
 
