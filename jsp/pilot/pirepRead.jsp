@@ -10,7 +10,7 @@
 <%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
 <html lang="en">
 <head>
-<title><content:airline /> Flight Report - ${pirep.flightCode}</title>
+<title><content:airline /> Flight Report - ${pirep.flightCode} (<fmt:date date="${pirep.date}" fmt="d" />)</title>
 <content:canonical convertID="true" />
 <content:css name="main" />
 <content:css name="form" />
