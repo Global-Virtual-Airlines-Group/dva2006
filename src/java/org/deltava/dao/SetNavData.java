@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2011, 2012, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.navdata.*;
 /**
  * A Data Access Object to update Navigation data.
  * @author Luke
- * @version 5.1
+ * @version 6.3
  * @since 1.0
  */
 
@@ -165,8 +165,8 @@ public class SetNavData extends DAO {
 	public int updateAirwayWaypoints() throws DAOException {
 		try {
 			prepareStatementWithoutLimits("UPDATE common.AIRWAYS A, common.NAVDATA ND SET A.WPTYPE=ND.ITEMTYPE, "
-					+ "A.REGION=ND.REGION WHERE (A.WAYPOINT=ND.CODE) AND (ABS(A.LATITUDE-ND.LATITUDE)<0.0001) AND "
-					+ "(ABS(A.LONGITUDE-ND.LONGITUDE)<0.0001)");
+				+ " A.FREQ=ND.FREQ, A.REGION=ND.REGION WHERE (A.WAYPOINT=ND.CODE) AND (ABS(A.LATITUDE-ND.LATITUDE)<0.0001) AND "
+				+ "(ABS(A.LONGITUDE-ND.LONGITUDE)<0.0001)");
 			return executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -182,8 +182,8 @@ public class SetNavData extends DAO {
 	public int updateTRWaypoints() throws DAOException {
 		try {
 			prepareStatementWithoutLimits("UPDATE common.SID_STAR TR, common.NAVDATA ND SET TR.WPTYPE=ND.ITEMTYPE, "
-					+ "TR.REGION=ND.REGION WHERE (TR.WAYPOINT=ND.CODE) AND (ABS(TR.LATITUDE-ND.LATITUDE) < 0.001) AND "
-					+ "(ABS(TR.LONGITUDE-ND.LONGITUDE) < 0.001)");
+				+ "TR.REGION=ND.REGION WHERE (TR.WAYPOINT=ND.CODE) AND (ABS(TR.LATITUDE-ND.LATITUDE)<0.001) AND "
+				+ "(ABS(TR.LONGITUDE-ND.LONGITUDE)<0.001)");
 			return executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);

@@ -336,8 +336,8 @@ public class GetNavAirway extends GetNavData {
 
 		results = new CacheableList<Airway>(name);
 		try {
-			prepareStatement("SELECT ID, WAYPOINT, WPTYPE, LATITUDE, LONGITUDE, REGION, HIGH, LOW "
-					+ "FROM common.AIRWAYS WHERE (NAME=?) ORDER BY ID, SEQ");
+			prepareStatement("SELECT ID, WAYPOINT, WPTYPE, LATITUDE, LONGITUDE, REGION, FREQ, HIGH, LOW "
+				+ "FROM common.AIRWAYS WHERE (NAME=?) ORDER BY ID, SEQ");
 			_ps.setString(1, name.toUpperCase());
 
 			// Execute the query
@@ -348,15 +348,18 @@ public class GetNavAirway extends GetNavData {
 					if (id != lastID) {
 						lastID = id;
 						a = new Airway(name, id);
-						a.setHighLevel(rs.getBoolean(7));
-						a.setLowLevel(rs.getBoolean(8));
+						a.setHighLevel(rs.getBoolean(8));
+						a.setLowLevel(rs.getBoolean(9));
 						results.add(a);
 					}
 				
-					Navaid nt = Navaid.values()[rs.getInt(3)];
+					Navaid nt = Navaid.values()[rs.getInt(3)]; String freq = rs.getString(7);
 					NavigationDataBean nd = NavigationDataBean.create(nt, rs.getDouble(4), rs.getDouble(5));
 					nd.setCode(rs.getString(2));
 					nd.setRegion(rs.getString(6));
+					if ((nd instanceof NavigationFrequencyBean) && (freq != null))
+						((NavigationFrequencyBean) nd).setFrequency(freq);
+						
 					a.addWaypoint(nd);
 				}
 			}
@@ -366,49 +369,8 @@ public class GetNavAirway extends GetNavData {
 			throw new DAOException(se);
 		}
 
-		// Add to cache and return
 		_aCache.add(results);
 		return results;
-	}
-	
-	/**
-	 * Loads all Airways from the database.
-	 * @return a Collection of Airways
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public Collection<Airway> getAirways() throws DAOException {
-		try {
-			Collection<Airway> results = new ArrayList<Airway>();
-			prepareStatementWithoutLimits("SELECT * FROM common.AIRWAYS ORDER BY NAME, ID, SEQ");
-			
-			// Execute the query
-			Airway a = null; int lastID = -1; String lastCode = "";
-			try (ResultSet rs = _ps.executeQuery()) {
-				while (rs.next()) {
-					int id = rs.getInt(2);
-					String code = rs.getString(1).toUpperCase();
-					if ((lastID != id) || (!lastCode.equals(code))) {
-						lastID = id;
-						lastCode = code;
-						a = new Airway(code, id);
-						a.setHighLevel(rs.getBoolean(9));
-						a.setLowLevel(rs.getBoolean(10));
-						results.add(a);
-					}
-				
-					Navaid nt = Navaid.values()[rs.getInt(5)];
-					NavigationDataBean nd = NavigationDataBean.create(nt, rs.getDouble(6), rs.getDouble(7));
-					nd.setCode(rs.getString(4));
-					nd.setRegion(rs.getString(8));
-					a.addWaypoint(nd);
-				}
-			}
-			
-			_ps.close();
-			return results;
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
 	}
 	
 	/*
