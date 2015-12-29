@@ -738,6 +738,7 @@
 		<enabled type="Boolean">true</enabled>
 		<minFlights type="Integer">1</minFlights>
 		<ato type="Boolean">true</ato>
+        <coursePurge type="Integer">180</coursePurge>
 	</academy>
 
 	<!-- Help Desk Data -->
