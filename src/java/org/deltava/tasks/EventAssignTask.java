@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to automatically assign flghts to Online Event participants.
  * @author Luke
- * @version 5.3
+ * @version 6.3
  * @since 1.0
  */
 
@@ -33,17 +33,18 @@ public class EventAssignTask extends Task {
 		super("Event Assignment", EventAssignTask.class);
 	}
 	
+	/*
+	 * Checks whether flight reports hav been assigned for this event.
+	 */
 	private static boolean hasFlightReports(Connection c, int eventID, UserDataMap udmap) throws DAOException {
 		
-		// Load the flight reports
 		GetFlightReports frdao = new GetFlightReports(c);
-		Collection<FlightReport> pireps = new ArrayList<FlightReport>();
-		for (Iterator<String> i = udmap.getTableNames().iterator(); pireps.isEmpty() && i.hasNext(); ) {
-			String tableName = i.next();
-			pireps.addAll(frdao.getByEvent(eventID, tableName));
+		for (String tableName : udmap.getTableNames()) {
+			if (frdao.getByEvent(eventID, tableName).size() > 0)
+				return true;
 		}
 		
-		return !pireps.isEmpty();
+		return false;
 	}
 
 	/**
@@ -58,6 +59,7 @@ public class EventAssignTask extends Task {
 			
 			// Determining who we are operating as
 			EMailAddress from = Mailer.makeAddress(SystemData.get("airline.mail.events"), SystemData.get("airline.name") + " Events");
+			String aCode = SystemData.get("airline.code");
 			
 			// Get the DAOs
 			GetEvent dao = new GetEvent(con);
@@ -69,9 +71,15 @@ public class EventAssignTask extends Task {
 			
 			// Get the events to check
 			Collection<Event> events = dao.getAssignableEvents();
-			for (Iterator<Event> i = events.iterator(); i.hasNext(); ) {
-				Event e = i.next();
+			for (Event e : events) {
 				UserDataMap usrmap = usrdao.getByEvent(e.getID());
+				
+				// Filter out other airlines
+				for (Iterator<UserData> i = usrmap.values().iterator(); i.hasNext(); ) {
+					UserData ud = i.next();
+					if (!ud.getAirlineCode().equals(aCode))
+						i.remove();
+				}
 				
 				// Determine if we need to asign flights
 				if ((!e.getSignups().isEmpty()) && (!hasFlightReports(con, e.getID(), usrmap))) {
@@ -87,10 +95,7 @@ public class EventAssignTask extends Task {
 					
 					// Get the signups for this event
 					log.info("Assigning flights for Event " + e.getName());
-					for (Iterator<Signup> si = e.getSignups().iterator(); si.hasNext(); ) {
-						Signup s = si.next();
-
-						// Get the Pilot
+					for (Signup s : e.getSignups()) {
 						UserData usrData = usrmap.get(s.getPilotID());
 						Pilot usr = pdao.get(usrData);
 						mctxt.addData("pilot", usr);
@@ -108,7 +113,7 @@ public class EventAssignTask extends Task {
 						// Get the airline
 						Airline a = SystemData.getAirline(usrData.getAirlineCode());
 						if (a == null)
-							a = SystemData.getAirline(SystemData.get("airline.code"));
+							a = SystemData.getAirline(aCode);
 						
 						// Calculate the flight number
 						int flightID = usr.getPilotNumber();
@@ -154,7 +159,7 @@ public class EventAssignTask extends Task {
 					ctx.commitTX();
 					
 					// Send ATC notification
-					if (!e.getContactAddrs().isEmpty()) {
+					if (!e.getContactAddrs().isEmpty() && e.getOwner().equals(aCode)) {
 						mctxt = new MessageContext();
 						
 						// Get the template
