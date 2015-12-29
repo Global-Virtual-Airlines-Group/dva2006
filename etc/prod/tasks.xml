@@ -322,4 +322,15 @@
 			<wday>*</wday>
 		</time>
 	</task>
+	
+	<task id="coursepurge" enabled="false">
+	   <class>org.deltava.tasks.CoursePurgeTask</class>
+        <time>
+            <min>30</min>
+            <hour>11</hour>
+            <mday>*</mday>
+            <month>*</month>
+            <wday>*</wday>
+        </time>	
+	</task>
 </tasks>

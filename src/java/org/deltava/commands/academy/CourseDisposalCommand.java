@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to change a Flight Academy Course's status.
  * @author Luke
- * @version 6.1
+ * @version 6.3
  * @since 1.0
  */
 
@@ -169,6 +169,11 @@ public class CourseDisposalCommand extends AbstractCommand {
 				// Load the pilots
 				UserDataMap udm = uddao.get(IDs);
 				usrs.addAll(pdao.get(udm).values());
+			} else if (op == Status.STARTED) {
+				CourseComment cc = new CourseComment(c.getID(), ctx.getUser().getID());
+				cc.setCreatedOn(new Date());
+				cc.setText("Returned to Course");
+				wdao.comment(cc);
 			}
 			
 			// Write the Status Update
