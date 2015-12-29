@@ -20,7 +20,7 @@ import org.gvagroup.jdbc.ConnectionPoolException;
 /**
  * A servlet lifecycle event listener to handle user logins and logouts.
  * @author Luke
- * @version 6.0
+ * @version 6.3
  * @since 1.0
  */
 
@@ -70,7 +70,7 @@ public class UserListener implements HttpSessionListener {
 		} catch (ConnectionPoolException cpe) {
 			log.warn(cpe.getMessage());
 		} catch (Exception ex) {
-			log.error("Error logging session close - " + ex.getMessage(), ex);
+			log.error("Error logging session close for " + p.getID() + " - " + ex.getMessage(), ex);
 		} finally {
 			jdbcPool.release(con);
 		}
