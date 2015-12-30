@@ -35,7 +35,7 @@
 	<command id="landings">
 		<name>Greased Landings</name>
 		<class>org.deltava.commands.stats.GreasedLandingCommand</class>
-		<roles>HR,Operations,PIREP</roles>
+		<roles>*</roles>
 	</command>
 
 	<command id="landingstats">
