@@ -13,7 +13,6 @@
 	<classpathentry kind="lib" path="lib/deploy/axis-1.4.jar"/>
 	<classpathentry kind="lib" path="lib/jtar-2.5.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/log4j-1.2.17.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/javamail-1.5.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/edtftpj-2.4.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/grib-8.0.29.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/unidataCommon-4.2.20.jar"/>
@@ -24,12 +23,13 @@
 	<classpathentry kind="lib" path="lib/deploy/jstl-api-1.2.1.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jdom-2.0.6.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/json-1.01.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-5.1.36-bin.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/spymemcached-2.12.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-codec-1.10.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jts-1.8.jar"/>
 	<classpathentry kind="lib" path="lib/shapefilereader-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/jdbf-1.2.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-5.1.38-bin.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/javax.mail-1.5.5.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/deploy/jstl-1.2.3.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-1.96.jar"/>
