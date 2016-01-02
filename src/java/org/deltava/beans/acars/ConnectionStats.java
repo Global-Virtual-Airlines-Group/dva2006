@@ -1,10 +1,10 @@
-// Copyright 2008, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 /**
  * An abstract class to for objects that can return ACARS connection statistics.
  * @author Luke
- * @version 4.0
+ * @version 6.4
  * @since 2.1
  */
 
@@ -20,6 +20,7 @@ public abstract class ConnectionStats implements java.io.Serializable {
 	
 	protected long _bytesIn;
 	protected long _bytesOut;
+	protected long _bytesSaved;
 	
 	protected int _writeErrors;
 	
@@ -40,6 +41,7 @@ public abstract class ConnectionStats implements java.io.Serializable {
 		_bufferWrites = cs._bufferWrites;
 		_bytesIn = cs._bytesIn;
 		_bytesOut = cs._bytesOut;
+		_bytesSaved = cs._bytesSaved;
 		_writeErrors = cs._writeErrors;
 	}
 	
@@ -98,6 +100,14 @@ public abstract class ConnectionStats implements java.io.Serializable {
 	public long getBytesOut() {
 		return _bytesOut;
 	}
+	
+	/**
+	 * Returns the number of bytes saved via compression.
+	 * @return the number of bytes
+	 */
+	public long getBytesSaved() {
+		return _bytesSaved;
+	}
 
 	/**
 	 * Returns the number of write errors on this connection.
@@ -107,6 +117,7 @@ public abstract class ConnectionStats implements java.io.Serializable {
 		return _writeErrors;
 	}
 
+	@Override
 	public int hashCode() {
 		return _id.hashCode();
 	}

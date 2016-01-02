@@ -3,7 +3,6 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <c:if test="${!empty acarsBW}">
 <el:table className="form">
 <tr class="title caps">
@@ -23,7 +22,7 @@
  <td class="data"><div id="bwChart" style="height:350px;"></div></td>
 </tr>
 </el:table>
-<script type="text/javascript">
+<script>
 google.load('visualization','1.1',{'packages':['corechart']});
 google.setOnLoadCallback(function() {
 var xmlreq = new XMLHttpRequest();
@@ -44,6 +43,7 @@ xmlreq.onreadystatechange = function() {
 	data.addColumn('number','Max Connections');
 	data.addColumn('number','Max Messages (1000)');
 	data.addColumn('number','Max Bytes (MB)');
+	data.addColumn('number','Bytes Saved (MB)');
 	data.addRows(statsData);
 	var chart = new google.visualization.LineChart(document.getElementById('bwChart'));
 	chart.draw(data,{hAxis:{textStyle:lgStyle},legend:{textStyle:lgStyle}});
@@ -57,7 +57,7 @@ return true;
 <c:if test="${!empty acarsPool}">
 <el:table className="view">
 <tr class="title">
- <td class="left caps" colspan="6">ACARS CONNECTION POOL INFORMATION - ${fn:sizeof(acarsPool)} CONNECTIONS / <fmt:int value="${acarsSelectCount}" /> SELECTS</td>
+ <td class="left caps" colspan="6">ACARS CONNECTION POOL INFORMATION - ${acarsPool.size()} CONNECTIONS / <fmt:int value="${acarsSelectCount}" /> SELECTS</td>
 </tr>
 
 <!-- Table Header Bar-->
@@ -90,11 +90,13 @@ return true;
 </view:row>
 <view:row entry="${con}">
  <td class="small"><fmt:int value="${tcp.msgsIn}" /> in, <fmt:int value="${tcp.msgsOut}" /> out</td>
- <td class="small"><fmt:int value="${tcp.bytesIn / 1024}" />K in, <fmt:int value="${tcp.bytesOut / 1024}" />K out</td>
- <td colspan="4" class="small">Buffer: <fmt:int value="${tcp.bufferReads}" /> reads, 
-<fmt:dec value="${tcp.bytesIn / tcp.bufferReads}" fmt="###0.0" /> bytes / read, 
-<fmt:int value="${tcp.bufferWrites}" /> writes, <fmt:dec value="${tcp.bufferWrites / tcp.msgsOut}" fmt="#0.00" /> 
-writes / message, <fmt:dec value="${tcp.bytesOut / tcp.bufferWrites}" fmt="###0.0" /> bytes / write
+ <td class="small"><fmt:int value="${tcp.bytesIn / 1024}" />K in, <fmt:int value="${tcp.bytesOut / 1024}" />K out
+<c:if test="${tcp.bytesSaved != 0}">, <span class="ita"><fmt:int value="${tcp.bytesSaved / 1024}" />K saved</span></c:if></td>
+ <td colspan="4" class="small"><c:if test="${con.compressed}"><span class="sec bld">COMPRESSED</span> </c:if>
+Buffer: <fmt:int value="${tcp.bufferReads}" /> reads, <fmt:dec value="${tcp.bytesIn / tcp.bufferReads}" fmt="###0.0" /> bytes / read, 
+ <fmt:int value="${tcp.bufferWrites}" /> writes, <fmt:dec value="${tcp.bufferWrites / tcp.msgsOut}" fmt="#0.00" /> writes / message,
+ <fmt:dec value="${tcp.bytesOut / tcp.bufferWrites}" fmt="###0.0" /> bytes / write
+<c:if test="${tcp.bytesSaved > 0}">, <fmt:dec value="${1 - (1.0 * (tcp.bytesIn + tcp.bytesOut) / (tcp.bytesIn + tcp.bytesOut + tcp.bytesSaved))}"  fmt="#0.00%" /> Compression</c:if> 
 <c:if test="${tcp.writeErrors > 0}">, <span class="error bld"><fmt:int value="${tcp.writeErrors}" /> errors</span></c:if>
 </td>
 </view:row>

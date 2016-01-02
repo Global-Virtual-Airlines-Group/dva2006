@@ -1,4 +1,4 @@
-// Copyright 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -17,7 +17,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to display ACARS bandwidth statistics to a Google chart.
  * @author Luke
- * @version 5.0
+ * @version 6.4
  * @since 2.1
  */
 
@@ -34,11 +34,11 @@ public class BandwidthInfoService extends WebService {
 		
 		// Get hourly or daily
 		boolean isDaily = Boolean.valueOf(ctx.getParameter("daily")).booleanValue();
-		Collection<Bandwidth> stats = new TreeSet<Bandwidth>();
+		List<Bandwidth> stats = null;
 		try {
 			GetACARSBandwidth bwdao = new GetACARSBandwidth(ctx.getConnection());
 			bwdao.setQueryMax(isDaily ? 30 : 24);
-			stats.addAll(isDaily ? bwdao.getDaily() : bwdao.getHourly());
+			stats = isDaily ? bwdao.getDaily() : bwdao.getHourly();
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
 		} finally {
@@ -46,23 +46,20 @@ public class BandwidthInfoService extends WebService {
 		}
 		
 		// Generate the JSON document
+		Collections.reverse(stats);
 		JSONArray ja = new JSONArray();
 		for (Bandwidth bw : stats) {
 			JSONArray ea = new JSONArray();
-			if (isDaily)
-				ea.put(StringUtils.format(bw.getDate(), "MMMM dd yyyy"));
-			else
-				ea.put(StringUtils.format(bw.getDate(), "MMMM dd yyyy HH") + ":00");
-			
-			// Add Data
+			ea.put(StringUtils.format(bw.getDate(), isDaily ? "MMM dd yyyy" : "MMM dd yyyy HH:00"));
 			ea.put(bw.getConnections());
-			ea.put(bw.getMsgsIn() / 1000);
-			ea.put(bw.getMsgsOut() / 1000);
-			ea.put(bw.getBytesIn() / 1000000);
-			ea.put(bw.getBytesOut() / 1000000);
+			ea.put(bw.getMsgsIn() / 1000.0);
+			ea.put(bw.getMsgsOut() / 1000.0);
+			ea.put(Math.round(bw.getBytesIn() / 1048.576) / 1000.0) ;
+			ea.put(Math.round(bw.getBytesOut() / 1048.576) / 1000.0);
 			ea.put(bw.getMaxConnections());
-			ea.put(bw.getMaxMsgs() / 1000);
-			ea.put(bw.getMaxBytes() / 1000000);
+			ea.put(bw.getMaxMsgs() / 1000.0);
+			ea.put(Math.round(bw.getMaxBytes() / 1048.576) / 1000.0);
+			ea.put(Math.round(bw.getBytesSaved() / 1048.576) / 1000.0);
 			ja.put(ea);
 		}
 		
