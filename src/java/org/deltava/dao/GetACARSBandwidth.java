@@ -1,4 +1,4 @@
-// Copyright 2008, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.acars.Bandwidth;
 /**
  * A Data Access Object to load ACARS bandwidth statistics. 
  * @author Luke
- * @version 4.1
+ * @version 6.4
  * @since 2.1
  */
 
@@ -30,8 +30,7 @@ public class GetACARSBandwidth extends DAO {
 	 */
 	public Bandwidth getLatest() throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT * FROM acars.BANDWIDTH WHERE (DURATION=?) "
-					+ "ORDER BY PERIOD DESC LIMIT 1");
+			prepareStatementWithoutLimits("SELECT * FROM acars.BANDWIDTH WHERE (DURATION=?) ORDER BY PERIOD DESC LIMIT 1");
 			_ps.setInt(1, 1);
 			List<Bandwidth> results = execute();
 			return results.isEmpty() ? null : results.get(0);
@@ -62,16 +61,15 @@ public class GetACARSBandwidth extends DAO {
 	 */
 	public List<Bandwidth> getDaily() throws DAOException {
 		try {
-			prepareStatement("SELECT DATE(PERIOD) AS DT, 1440, AVG(CONS), SUM(BYTES_IN), "
-					+ "SUM(BYTES_OUT), SUM(MSGS_IN), SUM(MSGS_OUT), MAX(PEAK_CONS), MAX(PEAK_BYTES), "
-					+ "MAX(PEAK_MSGS) FROM acars.BANDWIDTH GROUP BY DT DESC");
+			prepareStatement("SELECT DATE(PERIOD) AS DT, 1440, AVG(CONS), SUM(BYTES_IN), SUM(BYTES_OUT), SUM(MSGS_IN), SUM(MSGS_OUT), "
+				+ "MAX(PEAK_CONS), MAX(PEAK_BYTES), MAX(PEAK_MSGS), SUM(ERRORS), SUM(BYTES_SAVED) FROM acars.BANDWIDTH GROUP BY DT DESC");
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 	}
 	
-	/**
+	/*
 	 * Helper method to parse result sets.
 	 */
 	private List<Bandwidth> execute() throws SQLException {
@@ -87,6 +85,7 @@ public class GetACARSBandwidth extends DAO {
 				bw.setMaxBytes(rs.getLong(9));
 				bw.setMaxMsgs(rs.getInt(10));
 				bw.setErrors(rs.getInt(11));
+				bw.setBytesSaved(rs.getLong(12));
 				results.add(bw);
 			}
 		}
