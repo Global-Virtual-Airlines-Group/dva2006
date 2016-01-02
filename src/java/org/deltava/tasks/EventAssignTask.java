@@ -99,6 +99,8 @@ public class EventAssignTask extends Task {
 						UserData usrData = usrmap.get(s.getPilotID());
 						Pilot usr = pdao.get(usrData);
 						mctxt.addData("pilot", usr);
+						if (usr == null)
+							continue;
 						
 						// Log assignment creation
 						log.info("Assigning Event flight for " + usr.getName());
