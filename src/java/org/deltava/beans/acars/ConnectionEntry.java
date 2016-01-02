@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.Date;
@@ -8,7 +8,7 @@ import org.deltava.beans.*;
 /**
  * A bean to store an ACARS Connection record.
  * @author Luke
- * @version 4.2
+ * @version 6.4
  * @since 1.0
  */
 
@@ -21,6 +21,7 @@ public class ConnectionEntry extends ACARSLogEntry implements TimeSpan {
    private Date _et;
    
    private int _msgCount;
+   private boolean _isCompressed;
    
    private ConnectionStats _tcpStats;
    private ConnectionStats _udpStats;
@@ -53,6 +54,7 @@ public class ConnectionEntry extends ACARSLogEntry implements TimeSpan {
     * @see ConnectionEntry#setStartTime(Date)
     * @see ConnectionEntry#getEndTime()
     */
+   @Override
    public Date getStartTime() {
       return _st;
    }
@@ -63,6 +65,7 @@ public class ConnectionEntry extends ACARSLogEntry implements TimeSpan {
     * @see ConnectionEntry#setEndTime(Date)
     * @see ConnectionEntry#getStartTime()
     */
+   @Override
    public Date getEndTime() {
 	   return _et;
    }
@@ -78,6 +81,7 @@ public class ConnectionEntry extends ACARSLogEntry implements TimeSpan {
 	   return (_et.getTime() - _st.getTime()) / 1000;
    }
    
+   @Override
    public Date getDate() {
 	   return _st;
    }
@@ -102,6 +106,7 @@ public class ConnectionEntry extends ACARSLogEntry implements TimeSpan {
       return (_usr != null) ? _usr.getID() : _pilotID;
    }
    
+   @Override
    public int getAuthorID() {
 	   return getPilotID();
    }
@@ -134,12 +139,21 @@ public class ConnectionEntry extends ACARSLogEntry implements TimeSpan {
    }
    
    /**
-    * Returns if voice is enabled.
+    * Returns whether voice is enabled.
     * @return TRUE if voice enabled, otherwise FALSE
     * @see ConnectionEntry#setVoice(boolean)
     */
    public boolean getVoice() {
 	   return _isVoice;
+   }
+   
+   /**
+    * Returns whether data compression is enabled.
+    * @return TRUE if data compression enabled, otherwise FALSE
+    * @see ConnectionEntry#setCompressed(boolean)
+    */
+   public boolean getCompressed() {
+	   return _isCompressed;
    }
    
    /**
@@ -269,6 +283,15 @@ public class ConnectionEntry extends ACARSLogEntry implements TimeSpan {
    }
    
    /**
+    * Marks this connection as compressed.
+    * @param isCompressed TRUE if data compression enabled, otherwise FALSE
+    * @see ConnectionEntry#getCompressed()
+    */
+   public void setCompressed(boolean isCompressed) {
+	   _isCompressed = isCompressed;
+   }
+   
+   /**
     * Updates the number of text messages sent by this connection.
     * @param msgs the number of messages
     * @see ConnectionEntry#getMessageCount()
@@ -285,6 +308,7 @@ public class ConnectionEntry extends ACARSLogEntry implements TimeSpan {
     * @see ConnectionEntry#getPilotID()
     * @see ConnectionEntry#setUser(Pilot)
     */
+   @Override
    public void setAuthorID(int id) {
       if (_usr != null)
          throw new IllegalStateException("User bean already set");
@@ -296,6 +320,7 @@ public class ConnectionEntry extends ACARSLogEntry implements TimeSpan {
    /**
     * Compares two connections by comparing their date/times.
     */
+   @Override
    public int compareTo(Object o2) {
 	   CalendarEntry c2 = (CalendarEntry) o2;
 	   return _st.compareTo(c2.getDate());

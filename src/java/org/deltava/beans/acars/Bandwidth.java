@@ -1,4 +1,4 @@
-// Copyright 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -6,7 +6,7 @@ import java.util.*;
 /**
  * A bean to store ACARS bandwidth statistics. 
  * @author Luke
- * @version 3.0
+ * @version 6.4
  * @since 2.1
  */
 
@@ -21,6 +21,7 @@ public class Bandwidth implements Comparable<Bandwidth> {
 	private int _msgsOut;
 	private long _bytesIn;
 	private long _bytesOut;
+	private long _bytesSaved;
 	
 	private int _peakCons;
 	private int _peakMsgs;
@@ -105,6 +106,14 @@ public class Bandwidth implements Comparable<Bandwidth> {
 	}
 	
 	/**
+	 * Returns the number of bytes saved by data compression during the window.
+	 * @return the number of bytes
+	 */
+	public long getBytesSaved() {
+		return _bytesSaved;
+	}
+	
+	/**
 	 * Returns the number of write errors during the window.
 	 * @return the number of errors
 	 */
@@ -173,6 +182,14 @@ public class Bandwidth implements Comparable<Bandwidth> {
 	}
 	
 	/**
+	 * Updates the number of bytes saved by data compession
+	 * @param bytesSaved the number of bytes
+	 */
+	public void setBytesSaved(long bytesSaved) {
+		_bytesSaved = bytesSaved;
+	}
+	
+	/**
 	 * Updates the maximum number of connections for the period. <i>This is only populated
 	 * if the window is greater than one minute.</i>
 	 * @param cons the maximum number of connections
@@ -207,10 +224,12 @@ public class Bandwidth implements Comparable<Bandwidth> {
 		_interval = Math.max(1, interval);
 	}
 	
+	@Override
 	public int hashCode() {
 		return _startDate.hashCode();
 	}
 	
+	@Override
 	public String toString() {
 		return _startDate.toString() + "-" + getEndDate().toString();
 	}
@@ -218,6 +237,7 @@ public class Bandwidth implements Comparable<Bandwidth> {
 	/**
 	 * Compares two beans by comparing their start dates and intervals.
 	 */
+	@Override
 	public int compareTo(Bandwidth bw2) {
 		int tmpResult = _startDate.compareTo(bw2._startDate);
 		return (tmpResult == 0)  ? Integer.valueOf(_interval).compareTo(Integer.valueOf(bw2._interval)) : tmpResult;
