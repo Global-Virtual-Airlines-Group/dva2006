@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command for processing Applicant Profiles.
  * @author Luke
- * @version 6.3
+ * @version 6.4
  * @since 1.0
  */
 
@@ -68,6 +68,7 @@ public class ApplicantCommand extends AbstractFormCommand {
 			a.setDateFormat(ctx.getParameter("df"));
 			a.setTimeFormat(ctx.getParameter("tf"));
 			a.setNumberFormat(ctx.getParameter("nf"));
+			a.setSimVersion(Simulator.fromName(ctx.getParameter("fsVersion"), Simulator.FSX));
 			a.setAirportCodeType(Airport.Code.valueOf(ctx.getParameter("airportCodeType")));
 			a.setDistanceType(DistanceUnit.valueOf(ctx.getParameter("distanceUnits")));
 			a.setWeightType(WeightUnit.valueOf(ctx.getParameter("weightUnits")));
@@ -159,9 +160,6 @@ public class ApplicantCommand extends AbstractFormCommand {
 			ctx.release();
 		}
 		
-		// Save FS Versions
-		ctx.setAttribute("fsVersions", ComboUtils.fromArray(Applicant.FSVERSION), REQUEST);
-
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
 		result.setURL("/jsp/register/applicantEdit.jsp");

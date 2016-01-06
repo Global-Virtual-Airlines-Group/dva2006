@@ -141,9 +141,6 @@ public class RegisterCommand extends AbstractCommand {
 			HttpSession s = ctx.getSession();
 			boolean isSession = (s != null) && (s.getAttribute("newSession") != null);
 			
-			// Save FS Versions
-			ctx.setAttribute("fsVersions", ComboUtils.fromArray(Applicant.FSVERSION), REQUEST);
-			
 			// Forward to the JSP - redirect to seperate page if we're full
 			if (!isSession) {
 				ctx.setAttribute("newSession", Boolean.TRUE, SESSION);
@@ -176,7 +173,7 @@ public class RegisterCommand extends AbstractCommand {
 		a.setDateFormat(ctx.getParameter("df"));
 		a.setTimeFormat(ctx.getParameter("tf"));
 		a.setNumberFormat(ctx.getParameter("nf"));
-		a.setSimVersion(ctx.getParameter("fsVersion"));
+		a.setSimVersion(Simulator.fromName(ctx.getParameter("fsVersion"), Simulator.FSX));
 		a.setLegacyHours(StringUtils.parse(ctx.getParameter("legacyHours"), 0.0));
 
 		// Save the registration host name
