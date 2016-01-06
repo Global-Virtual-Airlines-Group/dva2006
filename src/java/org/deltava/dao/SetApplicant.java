@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to write Applicants to the database.
  * @author Luke
- * @version 5.2
+ * @version 6.4
  * @since 1.0
  */
 
@@ -109,7 +109,7 @@ public class SetApplicant extends PilotWriteDAO {
 			_ps.setString(21, a.getNumberFormat());
 			_ps.setInt(22, a.getAirportCodeType().ordinal());
 			_ps.setInt(23, a.getDistanceType().ordinal());
-			_ps.setInt(24, a.getSimVersion());
+			_ps.setInt(24, a.getSimVersion().ordinal());
 			_ps.setString(25, a.getTZ().getID());
 			_ps.setString(26, a.getUIScheme());
 			_ps.setString(27, a.getComments());
@@ -141,7 +141,6 @@ public class SetApplicant extends PilotWriteDAO {
 	 */
 	public void hire(Applicant a) throws DAOException {
 		try {
-			// Update the applicant status
 			prepareStatement("UPDATE APPLICANTS SET STATUS=?, PILOT_ID=?, RANK=?, EQTYPE=? WHERE (ID=?)");
 			_ps.setInt(1, Applicant.APPROVED);
 			_ps.setInt(2, a.getPilotID());
@@ -166,7 +165,6 @@ public class SetApplicant extends PilotWriteDAO {
 			_ps.setInt(1, id);
 			executeUpdate(1);
 		} catch (SQLException se) {
-			rollbackTransaction();
 			throw new DAOException(se);
 		}
 	}

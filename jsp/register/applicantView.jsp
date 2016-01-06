@@ -183,7 +183,7 @@ ${dupe.rank.name} <el:cmd url="profile" link="${dupe}" className="bld">${dupe.na
 </tr>
 <tr>
  <td class="label">Flight Simulator</td>
- <td class="data bld">${applicant.simVersionCode}</td>
+ <td class="data bld">${applicant.simVersion.name}</td>
 </tr>
 <tr>
  <td class="label">Time Zone</td>

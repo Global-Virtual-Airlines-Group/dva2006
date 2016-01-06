@@ -113,6 +113,7 @@ golgotha.onDOMReady(function() {
 <content:enum var="distanceUnits" className="org.deltava.beans.DistanceUnit" />
 <content:enum var="weightUnits" className="org.deltava.beans.WeightUnit" />
 <content:enum var="acTypes" className="org.deltava.beans.schedule.Airport$Code" />
+<content:enum var="fsVersions" className="org.deltava.beans.Simulator" exclude="FS98,FS2000,FS2002,XP9" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -250,7 +251,7 @@ This is also a good time to review <content:airline />'s <el:cmd url="privacy" c
 </tr>
 <tr>
  <td class="label">Legacy Flight Hours</td>
- <td class="data" colspan="${cspan}"><el:text name="legacyHours" idx="*" size="4" max="7" value="${param.legacyHours}" /></td>
+ <td class="data" colspan="${cspan}"><el:text name="legacyHours" idx="*" size="4" max="7" value="${param.legacyHours}" /> <span class="ita">For reference only.</span></td>
 </tr>
 <tr>
  <td class="label">Verification URL</td>
