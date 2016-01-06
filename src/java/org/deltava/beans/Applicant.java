@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2009, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -6,7 +6,7 @@ import java.util.*;
 /**
  * A class for storing Applicant entries.
  * @author Luke
- * @version 6.0
+ * @version 6.4
  * @since 1.0
  */
 
@@ -17,30 +17,20 @@ public class Applicant extends Person {
     public static final int REJECTED = 2;
     
     /**
-     * Valid applicant statuses
+     * Valid applicant statuses.
      */
     public static final String[] STATUS = {"Pending", "Approved", "Rejected"}; 
     
     /**
-     * The only security role an Applicant can belong to 
+     * The only security role an Applicant can belong to.
      */
     public static final String ROLE = "Applicant";
-    
-	/**
-	 * Valid Flight Simulator version strings.
-	 */
-	public static final String FSVERSION[] = { "Unknown/Other", "X-Plane", "FS2002", "FS2004", "FS X", "Prepar3D" };
-
-	/**
-	 * Valid Flight Simulator version values.
-	 */
-	public static final int FSVERSION_CODE[] = { 0, 100, 2002, 2004, 2006, 2008 };
     
     private int _pilotID;
     private String _legacyURL;
     private boolean _legacyVerified;
     
-    private int _simVersion;
+    private Simulator _simVersion;
     
     private String _registerHostName;
     private String _registerAddress;
@@ -64,6 +54,7 @@ public class Applicant extends Person {
      * Returns the status name.
      * @return &quot;Applicant&quot;
      */
+    @Override
     public String getStatusName() {
     	return ROLE;
     }
@@ -136,32 +127,14 @@ public class Applicant extends Person {
     }
     
 	/**
-	 * The Flight Simulator version preferred by this Applicant.
-	 * @return the version number
-	 * @see Applicant#getSimVersionCode()
-	 * @see Applicant#setSimVersion(int)
-	 * @see Applicant#setSimVersion(String)
+	 * The Flight Simulator preferred by this Applicant.
+	 * @return the Simulator
+	 * @see Applicant#setSimVersion(Simulator)
 	 */
-	public int getSimVersion() {
+	public Simulator getSimVersion() {
 		return _simVersion;
 	}
 
-	/**
-	 * The Flight Simulator version code preferred by this Applicant.
-	 * @return the version code
-	 * @see Applicant#getSimVersion()
-	 * @see Applicant#setSimVersion(String)
-	 * @see Applicant#setSimVersion(int)
-	 */
-	public String getSimVersionCode() {
-		for (int x = 0; x < FSVERSION_CODE.length; x++) {
-			if (_simVersion == FSVERSION_CODE[x])
-				return FSVERSION[x];
-		}
-
-		return FSVERSION[0];
-	}
-    
     /**
      * Sets the URL for legacy hours verification
      * @param url the URL for legacy hours verification
@@ -193,41 +166,13 @@ public class Applicant extends Person {
     }
     
 	/**
-	 * Set the Flight Simulator version used by this Applicant.
-	 * @param version the Flight Simulator version as found in {@link Applicant#FSVERSION}
-	 * @throws IllegalArgumentException if the version cannot be found
-	 * @see Applicant#setSimVersion(String)
+	 * Set the Simulator used by this Applicant.
+	 * @param s the Simulator
 	 * @see Applicant#getSimVersion()
 	 */
-    public void setSimVersion(int version) {
-    	
-		for (int x = 0; x < FSVERSION_CODE.length; x++) {
-			if (version == FSVERSION_CODE[x]) {
-				_simVersion = version;
-				return;
-			}
-		}
-
-		throw new IllegalArgumentException("Invalid Flight Simulator version - " + version);
+    public void setSimVersion(Simulator s) {
+    	_simVersion = s;
     }
-    
-	/**
-	 * Set the Flight Simulator version used by this Applicant.
-	 * @param version the Flight Simulator version as found in {@link Applicant#FSVERSION}
-	 * @throws IllegalArgumentException if the version cannot be found
-	 * @see Applicant#setSimVersion(int)
-	 * @see Applicant#getSimVersion()
-	 */
-	public void setSimVersion(String version) {
-		for (int x = 0; x < FSVERSION.length; x++) {
-			if (FSVERSION[x].equals(version)) {
-				_simVersion = FSVERSION_CODE[x];
-				return;
-			}
-		}
-
-		throw new IllegalArgumentException("Invalid Flight Simulator version - " + version);
-	}
     
     /**
      * Sets the host name this Applicant registered from.
@@ -293,6 +238,7 @@ public class Applicant extends Person {
      * @see Person#setStatus(int)
      * @see Person#getStatus()
      */
+    @Override
     public final void setStatus(int status) {
        if (status >= Applicant.STATUS.length)
           throw new IllegalArgumentException("Invalid Applicant Status - " + status);
@@ -307,6 +253,7 @@ public class Applicant extends Person {
      * @see Applicant#getRoles()
      * @see Applicant#isInRole(String)
      */
+    @Override
     public void addRole(String roleName) {
         throw new UnsupportedOperationException("Applicants cannot be added to Security Roles");
     }
@@ -316,6 +263,7 @@ public class Applicant extends Person {
      * @return TRUE if the queried role is "Applicant", otherwise FALSE
      * @see Applicant#getRoles()
      */
+    @Override
     public boolean isInRole(String roleName) {
         return (Applicant.ROLE.equals(roleName) || "*".equals(roleName));
     }
@@ -325,6 +273,7 @@ public class Applicant extends Person {
      * @return a Collection with a single string - Applicant.ROLE.
      * @see Applicant#isInRole(String) 
      */
+    @Override
     public Collection<String> getRoles() {
     	return Collections.singleton(ROLE);
     }
@@ -341,6 +290,7 @@ public class Applicant extends Person {
      * Selects a table row class based upon the Applicant's status.
      * @return the row CSS class name
      */
+    @Override
     public String getRowClassName() {
     	final String[] ROW_CLASSES = {"opt1", null, "err"};
     	return ROW_CLASSES[getStatus()];

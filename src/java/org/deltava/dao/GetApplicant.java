@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.*;
 /**
  * A Data Access Object to read Applicant data.
  * @author Luke
- * @version 5.2
+ * @version 6.4
  * @since 1.0
  */
 
@@ -65,8 +65,7 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 	 */
 	public Collection<Applicant> getByName(String fName, String lName) throws DAOException {
 		try {
-			prepareStatement("SELECT *, INET6_NTOA(REGADDR) FROM APPLICANTS WHERE (STATUS=?) AND "
-					+ "(FIRSTNAME LIKE ?) AND (LASTNAME LIKE ?)");
+			prepareStatement("SELECT *, INET6_NTOA(REGADDR) FROM APPLICANTS WHERE (STATUS=?) AND (FIRSTNAME LIKE ?) AND (LASTNAME LIKE ?)");
 			_ps.setInt(1, Applicant.PENDING);
 			_ps.setString(2, fName);
 			_ps.setString(3, lName);
@@ -170,6 +169,7 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 	 * @return a Map of Pilots indexed by database ID
 	 * @throws DAOException if a JDBC error occurs
 	 */
+	@Override
 	public Map<Integer, Applicant> get(UserDataMap udm) throws DAOException {
 		Map<Integer, Applicant> results = new HashMap<Integer, Applicant>();
 		for (Iterator<String> i = udm.getTableNames().iterator(); i.hasNext(); ) {
@@ -302,6 +302,7 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 	 * @return a Collection of database IDs
 	 * @throws DAOException if a JDBC error occurs
 	 */
+	@Override
 	public Collection<Integer> checkUnique(Person p, String dbName) throws DAOException {
 		return checkUnique(p, dbName, -1);
 	}
@@ -464,7 +465,7 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 				a.setAirportCodeType(Airport.Code.values()[rs.getInt(26)]);
 				a.setDistanceType(DistanceUnit.values()[rs.getInt(27)]);
 				a.setWeightType(WeightUnit.values()[rs.getInt(28)]);
-				a.setSimVersion(rs.getInt(29));
+				a.setSimVersion(Simulator.values()[rs.getInt(29)]);
 				a.setTZ(TZInfo.get(rs.getString(30)));
 				a.setUIScheme(rs.getString(31));
 				a.setComments(rs.getString(32));

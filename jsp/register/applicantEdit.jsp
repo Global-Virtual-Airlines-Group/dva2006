@@ -64,6 +64,7 @@ golgotha.onDOMReady(function() {
 <content:enum var="distanceUnits" className="org.deltava.beans.DistanceUnit" />
 <content:enum var="weightUnits" className="org.deltava.beans.WeightUnit" />
 <content:enum var="acTypes" className="org.deltava.beans.schedule.Airport$Code" />
+<content:enum var="fsVersions" className="org.deltava.beans.Simulator" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -133,7 +134,7 @@ golgotha.onDOMReady(function() {
 </tr>
 <tr>
  <td class="label">Flight Simulator</td>
- <td class="data"><el:check type="radio" name="fsVersion" idx="*" width="70" options="${fsVersions}" value="${applicant.simVersionCode}" /></td>
+ <td class="data"><el:check type="radio" name="fsVersion" idx="*" width="70" options="${fsVersions}" value="${applicant.simVersion}" /></td>
 </tr>
 <tr>
  <td class="label">Time Zone</td>
