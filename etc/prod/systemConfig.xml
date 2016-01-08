@@ -227,6 +227,8 @@
 		
 		<map name="connectProperties">
 			<useCompression>false</useCompression>
+			<useSSL>false</useSSL>
+			<characterEncoding>utf-8</characterEncoding>
 			<connectTimeout>1000</connectTimeout>
 			<autoReconnect>true</autoReconnect>
 			<cachePrepStmts>true</cachePrepStmts>
