@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.*;
@@ -10,18 +10,21 @@ import org.deltava.beans.schedule.GeoPosition;
  * A bean to store Airway names and waypoint data. Since there can be multiple Airways across the world with the
  * same code, each intersection can be flagged as "end of sequence" deliniating the end of a particular airway sequence.
  * @author Luke
- * @version 4.2
+ * @version 6.4
  * @since 1.0
  */
 
 public class Airway implements Comparable<Airway>, Route, GeoLocation {
 
 	private String _code;
-	private int _awseq;
+	protected int _awseq;
 	private GeoPosition _pos;
 	private boolean _highLevel;
 	private boolean _lowLevel;
 	
+	/**
+	 * Waypoints.
+	 */
 	protected final LinkedList<NavigationDataBean> _waypoints = new LinkedList<NavigationDataBean>();
 	
 	/**
@@ -56,6 +59,7 @@ public class Airway implements Comparable<Airway>, Route, GeoLocation {
 	 * Returns the number of waypoints in the airway.
 	 * @return the number of waypoints
 	 */
+	@Override
 	public int getSize() {
 		return _waypoints.size();
 	}
@@ -82,6 +86,7 @@ public class Airway implements Comparable<Airway>, Route, GeoLocation {
 	 * @see Airway#getRoute()
 	 * @see Airway#addWaypoint(NavigationDataBean)
 	 */
+	@Override
 	public LinkedList<NavigationDataBean> getWaypoints() {
 		return new LinkedList<NavigationDataBean>(_waypoints);
 	}
@@ -89,6 +94,7 @@ public class Airway implements Comparable<Airway>, Route, GeoLocation {
 	/**
 	 * Returns the latitude of the middle of the Airway.
 	 */
+	@Override
 	public double getLatitude() {
 		if (_pos == null)
 			calcLocation();
@@ -99,6 +105,7 @@ public class Airway implements Comparable<Airway>, Route, GeoLocation {
 	/**
 	 * Returns the longitude of the middle of the Airway.
 	 */
+	@Override
 	public double getLongitude() {
 		if (_pos == null)
 			calcLocation();
@@ -108,8 +115,7 @@ public class Airway implements Comparable<Airway>, Route, GeoLocation {
 	
 	private void calcLocation() {
 		double lat = 0; double lng = 0;
-		for (Iterator<? extends GeoLocation> i = _waypoints.iterator(); i.hasNext(); ) {
-			GeoLocation loc = i.next();
+		for (GeoLocation loc : _waypoints) {
 			lat += loc.getLatitude();
 			lng += loc.getLongitude();
 		}
@@ -170,6 +176,7 @@ public class Airway implements Comparable<Airway>, Route, GeoLocation {
 	 * Returns the Airway route.
 	 * @return a space-delimited list of waypoint codes
 	 */
+	@Override
 	public String getRoute() {
 		StringBuilder buf = new StringBuilder();
 		for (Iterator<NavigationDataBean> i = _waypoints.iterator(); i.hasNext();) {
@@ -186,6 +193,7 @@ public class Airway implements Comparable<Airway>, Route, GeoLocation {
 	 * @param nd the waypoint
 	 * @see Airway#getWaypoints()
 	 */
+	@Override
 	public void addWaypoint(NavigationDataBean nd) {
 		_waypoints.add(nd);
 		nd.setAirway(_code);
@@ -220,30 +228,28 @@ public class Airway implements Comparable<Airway>, Route, GeoLocation {
 	/**
 	 * Compares two airways by comparing their names and sequence numbers.
 	 */
+	@Override
 	public int compareTo(Airway a2) {
 		int tmpResult = _code.compareTo(a2._code);
 		return (tmpResult == 0) ? Integer.valueOf(_awseq).compareTo(Integer.valueOf(_awseq)) : tmpResult;
 	}
 	
+	@Override
 	public boolean equals(Object o2) {
 		return (o2 instanceof Airway) ? (compareTo((Airway) o2) == 0) : false;
 	}
 	
+	@Override
 	public int hashCode() {
 		return (_code + "-" + String.valueOf(_awseq)).hashCode();
 	}
 
-	/**
-	 * Returns the airway code.
-	 */
+	@Override
 	public String toString() {
 		return getCode();
 	}
 
-	/**
-	 * Returns the cache key.
-	 * @return the airway/route code
-	 */
+	@Override
 	public Object cacheKey() {
 		return getCode();
 	}

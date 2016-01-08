@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -15,7 +15,7 @@ import com.enterprisedt.util.debug.Logger;
 /**
  * A Data Access Object to load navigation route and airway data.
  * @author Luke
- * @version 5.1
+ * @version 6.4
  * @since 1.0
  */
 
@@ -55,7 +55,7 @@ public class GetNavAirway extends GetNavData {
 			return null;
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM common.SID_STAR WHERE ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM common.SIDSTAR_META WHERE ");
 		if (name.contains("%"))
 			sqlBuf.append("(NAME LIKE ?)");
 		else
@@ -66,7 +66,6 @@ public class GetNavAirway extends GetNavData {
 			sqlBuf.append(" AND (RUNWAY=?)");
 		if (tkCount > 3)
 			sqlBuf.append(" AND (ICAO=?)");
-		sqlBuf.append(" ORDER BY SEQ");
 
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
@@ -85,6 +84,7 @@ public class GetNavAirway extends GetNavData {
 			// Execute the query
 			List<TerminalRoute> results = executeSIDSTAR();
 			result = results.isEmpty() ? null : results.get(0);
+			loadWaypoints(result);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -140,7 +140,7 @@ public class GetNavAirway extends GetNavData {
 		}
 			
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM common.SID_STAR WHERE (ICAO=?) AND (NAME");
+		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM common.SIDSTAR_META WHERE (ICAO=?) AND (NAME");
 		sqlBuf.append(parts.get(0).contains("%") ? " LIKE " : "=");
 		sqlBuf.append("?) AND (TRANSITION=?) AND (RUNWAY=?) ORDER BY SEQ");
 
@@ -154,6 +154,7 @@ public class GetNavAirway extends GetNavData {
 			// Execute the query
 			List<TerminalRoute> results = executeSIDSTAR();
 			tr = results.isEmpty() ? null : results.get(0);
+			loadWaypoints(tr);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -170,8 +171,7 @@ public class GetNavAirway extends GetNavData {
 	 */
 	public Collection<TerminalRoute> getRouteNames() throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT DISTINCT ICAO, TYPE, NAME, TRANSITION, RUNWAY FROM common.SID_STAR "
-					+ "ORDER BY ICAO, NAME, TRANSITION");
+			prepareStatementWithoutLimits("SELECT ICAO, TYPE, NAME, TRANSITION, RUNWAY FROM common.SIDSTAR_META ORDER BY ICAO, NAME, TRANSITION");
 			List<TerminalRoute> results = executeSIDSTAR();
 			return results;
 		} catch (SQLException se) {
@@ -205,14 +205,15 @@ public class GetNavAirway extends GetNavData {
 	public TerminalRoute getBestRoute(ICAOAirport a, TerminalRoute.Type t, String name, String wp, String rwy) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder buf = new StringBuilder("SELECT DISTINCT CONCAT_WS('.', NAME, TRANSITION, RUNWAY), IF(RUNWAY=?, 0, 1) "
-					+ "AS PRF FROM common.SID_STAR WHERE (ICAO=?) AND (TYPE=?) AND ");
-		buf.append(name.contains("%") ? "(NAME LIKE ?)" : "(NAME=?)");
+		StringBuilder buf = new StringBuilder("SELECT DISTINCT CONCAT_WS('.', SS.NAME, SS.TRANSITION, SS.RUNWAY), IF(SS.RUNWAY=?, 0, 1) AS PRF "
+			+ "FROM common.SIDSTAR_META SS LEFT JOIN common.SIDSTAR_WAYPOINTS SW ON (SS.ICAO=SW.ICAO) AND (SS.ID=SW.ID) WHERE (SS.ICAO=?) "
+			+ "AND (SS.TYPE=?) AND ");
+		buf.append(name.contains("%") ? "(SS.NAME LIKE ?)" : "(SS.NAME=?)");
 		if (wp != null)
-			buf.append(" AND (WAYPOINT=?) ");
+			buf.append(" AND (SW.WAYPOINT=?) ");
 		if (rwy != null)
-			buf.append("AND ((RUNWAY=?) OR (RUNWAY=?))");
-		buf.append(" ORDER BY PRF, SEQ");
+			buf.append("AND ((SS.RUNWAY=?) OR (SS.RUNWAY=?))");
+		buf.append(" ORDER BY PRF, SW.SEQ");
 		
 		try {
 			int pos = 0;
@@ -259,8 +260,7 @@ public class GetNavAirway extends GetNavData {
 			return results;
 		
 		try {
-			prepareStatementWithoutLimits("SELECT DISTINCT RUNWAY FROM common.SID_STAR WHERE (ICAO=?) AND "
-					+ "(TYPE=?) ORDER BY RUNWAY");
+			prepareStatementWithoutLimits("SELECT DISTINCT RUNWAY FROM common.SIDSTAR_META WHERE (ICAO=?) AND (TYPE=?) ORDER BY RUNWAY");
 			_ps.setString(1, a.getICAO());
 			_ps.setInt(2, TerminalRoute.Type.SID.ordinal());
 			
@@ -289,9 +289,12 @@ public class GetNavAirway extends GetNavData {
 	 */
 	public Collection<TerminalRoute> getAll() throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT * FROM common.SID_STAR ORDER BY ICAO, NAME, TRANSITION, RUNWAY, SEQ");
+			prepareStatementWithoutLimits("SELECT * FROM common.SIDSTAR_META ORDER BY ICAO, NAME, TRANSITION, RUNWAY");
 			_ps.setFetchSize(2500);
-			List<TerminalRoute> results = executeSIDSTAR();
+			Collection<TerminalRoute> results = executeSIDSTAR();
+			for (TerminalRoute tr : results)
+				loadWaypoints(tr);
+			
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -308,10 +311,12 @@ public class GetNavAirway extends GetNavData {
 	public Collection<TerminalRoute> getRoutes(ICAOAirport a, TerminalRoute.Type t) throws DAOException {
 		List<TerminalRoute> results = null;
 		try {
-			prepareStatementWithoutLimits("SELECT * FROM common.SID_STAR WHERE (ICAO=?) AND (TYPE=?) ORDER BY NAME, TRANSITION, RUNWAY, SEQ");
+			prepareStatementWithoutLimits("SELECT * FROM common.SIDSTAR_META WHERE (ICAO=?) AND (TYPE=?) ORDER BY NAME, TRANSITION, RUNWAY");
 			_ps.setString(1, a.getICAO());
 			_ps.setInt(2, t.ordinal());
 			results = executeSIDSTAR();
+			for (TerminalRoute tr : results)
+				loadWaypoints(tr);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -369,38 +374,47 @@ public class GetNavAirway extends GetNavData {
 			throw new DAOException(se);
 		}
 
+		// Add to the cache
 		_aCache.add(results);
 		return results;
 	}
 	
 	/*
-	 * Helper method to iterate through a SID_STAR result set.
+	 * Helper method to iterate through a SIDSTAR_WAYPOINTS result set.
+	 */
+	private void loadWaypoints(TerminalRoute tr) throws SQLException {
+		if (tr == null) return;
+		prepareStatementWithoutLimits("SELECT * FROM common.SIDSTAR_WAYPOINTS WHERE (ICAO=?) AND (TYPE=?) AND (ID=?) ORDER BY SEQ");
+		_ps.setString(1,  tr.getICAO());
+		_ps.setInt(2, tr.getType().ordinal());
+		_ps.setInt(3, tr.getSequence());
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				Navaid nt = Navaid.values()[rs.getInt(6)];
+				NavigationDataBean nd = NavigationDataBean.create(nt, rs.getDouble(7), rs.getDouble(8));
+				nd.setCode(rs.getString(5));
+				nd.setRegion(rs.getString(9));
+				tr.addWaypoint(nd);
+			}
+		}
+		
+		_ps.close();
+	}
+	
+	/*
+	 * Helper method to iterate through a SIDSTAR_META result set.
 	 */
 	private List<TerminalRoute> executeSIDSTAR() throws SQLException {
 		List<TerminalRoute> results = new ArrayList<TerminalRoute>();
 		try (ResultSet rs = _ps.executeQuery()) {
-			int columnCount = rs.getMetaData().getColumnCount();
-			TerminalRoute tr = null;
 			while (rs.next()) {
-				TerminalRoute.Type rt = TerminalRoute.Type.values()[rs.getInt(2)];
-				TerminalRoute tr2 = new TerminalRoute(rs.getString(1), rs.getString(3), rt);
-				tr2.setTransition(rs.getString(4));
-				tr2.setRunway(rs.getString(5));
-				if (columnCount > 10)
-					tr2.setCanPurge(rs.getBoolean(11));
-				if ((tr == null) || (tr2.hashCode() != tr.hashCode())) {
-					results.add(tr2);
-					tr = tr2;
-				}
-				
-				// Add the waypoint if present
-				if (columnCount > 10) {
-					Navaid nt = Navaid.values()[rs.getInt(8)];
-					NavigationDataBean nd = NavigationDataBean.create(nt, rs.getDouble(9), rs.getDouble(10));
-					nd.setCode(rs.getString(7));
-					nd.setRegion(rs.getString(11));
-					tr.addWaypoint(nd);
-				}
+				TerminalRoute.Type rt = TerminalRoute.Type.values()[rs.getInt(5)];
+				TerminalRoute tr = new TerminalRoute(rs.getString(1), rs.getString(2), rt);
+				tr.setTransition(rs.getString(3));
+				tr.setRunway(rs.getString(4));
+				tr.setSequence(rs.getInt(6));
+				tr.setCanPurge(rs.getBoolean(7));
+				results.add(tr);
 			}
 		}
 		
