@@ -215,10 +215,11 @@
 		
 		<map name="connectProperties">
 			<useCompression>false</useCompression>
-			<useUnicode>true</useUnicode>
+			<useSSL>false</useSSL>
 			<characterEncoding>UTF-8</characterEncoding>
 			<connectTimeout>1000</connectTimeout>
 			<autoReconnect>false</autoReconnect>
+			<sendFractionalSeconds>true</sendFractionalSeconds>
 			<cachePrepStmts>true</cachePrepStmts>
 			<cacheResultSetMetadata>false</cacheResultSetMetadata>
 			<continueBatchOnError>true</continueBatchOnError>
