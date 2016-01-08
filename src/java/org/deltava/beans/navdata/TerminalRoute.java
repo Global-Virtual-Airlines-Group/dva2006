@@ -137,10 +137,12 @@ public class TerminalRoute extends Airway implements ComboAlias {
       return _type;
    }
    
+   @Override
    public String getComboName() {
 	   return getCode();
    }
    
+   @Override
    public String getComboAlias() {
 	   return getCode();
    }
@@ -183,6 +185,14 @@ public class TerminalRoute extends Airway implements ComboAlias {
    }
    
    /**
+    * Updates the internal ID used to map Terminal Routes to waypoints.
+    * @param seq the sequence ID
+    */
+   public void setSequence(int seq) {
+	   _awseq = Math.max(0, seq);
+   }
+   
+   /**
     * Updates whether this route can be purged from the database.
     * @param canPurge TRUE if the route can be purged, otherwise FALSE
     */
@@ -211,6 +221,7 @@ public class TerminalRoute extends Airway implements ComboAlias {
     * Compares two terminal routes by comparing their names and transition waypoints.
     * @see Comparable#compareTo(Object)
     */
+   @Override
    public final int compareTo(Airway a2) {
       int tmpResult = super.compareTo(a2);
       if (tmpResult == 0) {
@@ -226,6 +237,7 @@ public class TerminalRoute extends Airway implements ComboAlias {
    /**
     * Checks for equality by comparing names.
     */
+   @Override
    public boolean equals(Object o) {
       return (o instanceof TerminalRoute) ? (compareTo((TerminalRoute) o) == 0) : false;
    }
@@ -233,6 +245,7 @@ public class TerminalRoute extends Airway implements ComboAlias {
    /**
     * Returns the hash code.
     */
+   @Override
    public int hashCode() {
 	   return toString().hashCode();
    }
@@ -240,6 +253,7 @@ public class TerminalRoute extends Airway implements ComboAlias {
    /**
     * Returns the name, transition and runway.
     */
+   @Override
    public String toString() {
 	   StringBuilder buf = new StringBuilder(_airport);
 	   buf.append('.');

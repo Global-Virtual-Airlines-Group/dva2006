@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2012, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2012, 2013, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.io.*;
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to import Terminal Routes in PSS format.
  * @author Luke
- * @version 6.0
+ * @version 6.4
  * @since 2.0
  */
 
@@ -84,7 +84,7 @@ public class TerminalRouteImportCommand extends NavDataImportCommand {
 			Collection<String> IDs = new HashSet<String>();
 			Collection<String> trIDs = new HashSet<String>();
 			Collection<TerminalRoute> results = new ArrayList<TerminalRoute>();
-			String txtData = br.readLine();
+			String txtData = br.readLine(); String lastAirport = null; int seq = 0;
 			while (txtData != null) {
 				if (txtData.startsWith("[")) {
 					IDs.clear();
@@ -92,8 +92,15 @@ public class TerminalRouteImportCommand extends NavDataImportCommand {
 					List<String> idParts = StringUtils.split(id, "/");
 					Airport a = SystemData.getAirport(idParts.get(0));
 					if (a != null) {
+						if (!a.getICAO().equals(lastAirport)) {
+							lastAirport = a.getICAO();
+							seq = 0;
+						} else
+							seq++;
+							
 						tr = new TerminalRoute(a, idParts.get(1), rt);
 						tr.setRunway(idParts.get(2));
+						tr.setSequence(seq);
 						tr.setCanPurge(true);
 						if (idParts.size() > 3)
 							tr.setTransition(idParts.get(3));
