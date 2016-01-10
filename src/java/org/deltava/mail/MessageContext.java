@@ -1,4 +1,4 @@
-// Copyright 2004, 2007, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2007, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.mail;
 
 import java.lang.reflect.*;
@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.Airport;
-import org.deltava.beans.system.MessageTemplate;
+import org.deltava.beans.system.*;
 
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A class to store and retrieve message context data.
  * @author Luke
- * @version 6.2
+ * @version 6.4
  * @since 1.0
  */
 
@@ -25,6 +25,8 @@ public class MessageContext {
     
     private static final Logger log = Logger.getLogger(MessageContext.class);
 
+    private final AirlineInformation _aInfo;
+    
     private MessageTemplate _mt;
     private String _subject;
     private String _body;
@@ -35,16 +37,21 @@ public class MessageContext {
      * Initializes the Message Context, and sets any pre-defined context elements.
      */
     public MessageContext() {
+    	this(SystemData.get("airline.code"));
+    }
+    
+    /**
+     * Initializes the Message Context, and sets any pre-defined context elements.
+     * @param aCode the airline code
+     */
+    public MessageContext(String aCode) {
     	super();
     	
     	// Initialize predefined variables
-    	_data.put("airline", SystemData.get("airline.name"));
-    	String url = SystemData.get("airline.url");
-    	String proto = SystemData.getBoolean("security.ssl") ? "https" : "http";
-    	if (url == null)
-    		_data.put("url", proto + "://www." + SystemData.get("airline.domain") + "/");
-    	else
-    		_data.put("url", proto + "://" + url + "/");
+    	_aInfo = SystemData.getApp(aCode);
+    	_data.put("airline", _aInfo.getName());
+    	String proto = _aInfo.getSSL() ? "https" : "http";
+   		_data.put("url", proto + "://www." + _aInfo.getDomain() + "/");
     }
     
     /**
@@ -87,7 +94,7 @@ public class MessageContext {
      * @return the subject prepended by the Airline Name
      */
     public String getSubject() {
-       StringBuilder buf = new StringBuilder(SystemData.get("airline.name")).append(' ');
+       StringBuilder buf = new StringBuilder(_aInfo.getName()).append(' ');
        if (_subject != null)
     	   buf.append(_subject);
        else
@@ -155,7 +162,7 @@ public class MessageContext {
     	return _mt;
     }
     
-    /**
+    /*
      * Helper method to determine if an object contains a particuar field.
      */
     private static boolean hasField(Object obj, String fieldName) {
@@ -167,7 +174,7 @@ public class MessageContext {
         }
     }
 
-    /**
+    /*
      * Helper method to determine if an object contains a particular method.
      */
     private static boolean hasMethod(Object obj, String methodName) {
@@ -179,7 +186,7 @@ public class MessageContext {
         }
     }
     
-    /**
+    /*
      * Helper method to determine if an object contains a particular property.
      */
     private static boolean hasProperty(Object obj, String propertyName) {
