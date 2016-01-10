@@ -142,7 +142,7 @@ public class GetNavAirway extends GetNavData {
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM common.SIDSTAR_META WHERE (ICAO=?) AND (NAME");
 		sqlBuf.append(parts.get(0).contains("%") ? " LIKE " : "=");
-		sqlBuf.append("?) AND (TRANSITION=?) AND (RUNWAY=?) ORDER BY SEQ");
+		sqlBuf.append("?) AND (TRANSITION=?) AND (RUNWAY=?)");
 
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
