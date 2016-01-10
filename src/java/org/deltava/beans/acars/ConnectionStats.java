@@ -8,7 +8,7 @@ package org.deltava.beans.acars;
  * @since 2.1
  */
 
-public abstract class ConnectionStats implements java.io.Serializable {
+public abstract class ConnectionStats implements java.io.Serializable, Comparable<ConnectionStats> {
 	
 	private String _id;
 	
@@ -120,5 +120,11 @@ public abstract class ConnectionStats implements java.io.Serializable {
 	@Override
 	public int hashCode() {
 		return _id.hashCode();
+	}
+	
+	@Override
+	public int compareTo(ConnectionStats cs2) {
+		int tmpResult = _id.compareTo(cs2._id);
+		return (tmpResult == 0) ? getClass().getSimpleName().compareTo(cs2.getClass().getSimpleName()) : tmpResult;
 	}
 }
