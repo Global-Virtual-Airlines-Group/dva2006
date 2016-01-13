@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.sql.Connection;
@@ -19,7 +19,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to reactivate a Pilot.
  * @author Luke
- * @version 6.0
+ * @version 6.4
  * @since 1.0
  */
 
@@ -68,6 +68,10 @@ public class PilotActivationCommand extends AbstractCommand {
 			access.validate();
 			if (!access.getCanActivate())
 				throw securityException("Cannot activate Pilot");
+			
+			// Load our internally hosted domains
+			GetPilotEMail pedao = new GetPilotEMail(con);
+			ctx.setAttribute("ourDomains", pedao.getDomains(), REQUEST);
 
 			// Get the equipment program
 			GetEquipmentType eqdao = new GetEquipmentType(con);

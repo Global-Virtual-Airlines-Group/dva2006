@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2010, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2010, 2011, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.system.IMAPConfiguration;
 /**
  * A Data Access Object to load Pilot IMAP mailbox information.
  * @author Luke
- * @version 6.1
+ * @version 6.4
  * @since 1.0
  */
 
@@ -54,6 +54,28 @@ public class GetPilotEMail extends DAO {
       } catch (SQLException se) {
          throw new DAOException(se); 
       }
+   }
+   
+   /**
+    * Returns all hosted email domains.
+    * @return a Collection of domain names
+    * @throws DAOException if a JDBC error occurs
+    */
+   public Collection<String> getDomains() throws DAOException {
+	   try {
+		   prepareStatement("SELECT domain FROM postfix.domain WHERE (active=?)");
+		   _ps.setBoolean(1, true);
+		   Collection<String> results = new ArrayList<String>();
+		   try (ResultSet rs = _ps.executeQuery()) {
+			   while (rs.next())
+			   	results.add(rs.getString(1));
+		   }
+		   
+		   _ps.close();
+		   return results;
+	   } catch (SQLException se) {
+		   throw new DAOException(se);
+	   }
    }
    
    /*
