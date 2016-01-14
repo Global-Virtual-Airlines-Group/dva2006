@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A class for storing Pilot entries.
  * @author Luke
- * @version 5.2
+ * @version 6.4
  * @since 1.0
  */
 
@@ -79,6 +79,7 @@ public class Pilot extends Person implements ComboAlias, Cloneable {
 	private Date _sigModified;
 
 	private boolean _showNavBar;
+	private boolean _isPermanent;
 
 	/**
 	 * Creates a Pilot object with a given first and last name, converted to "proper case".
@@ -96,6 +97,7 @@ public class Pilot extends Person implements ComboAlias, Cloneable {
 	 * Returns the list of security roles this Pilot belongs to.
 	 * @return a sorted List of role Names for this Pilot
 	 */
+	@Override
 	public Collection<String> getRoles() {
 		return _roles;
 	}
@@ -126,10 +128,12 @@ public class Pilot extends Person implements ComboAlias, Cloneable {
 		return _pCodeId;
 	}
 
+	@Override
 	public String getComboName() {
 		return getName();
 	}
 
+	@Override
 	public String getComboAlias() {
 		return String.valueOf(getID());
 	}
@@ -222,8 +226,18 @@ public class Pilot extends Person implements ComboAlias, Cloneable {
 	 * @see Pilot#setStatus(int)
 	 * @see Pilot#setStatus(String)
 	 */
+	@Override
 	public String getStatusName() {
 		return Pilot.STATUS[getStatus()];
+	}
+	
+	/**
+	 * Returns whether this Pilot cannot be marked Inactive.
+	 * @return TRUE if a permanent account, otherwise FALSE
+	 * @see Pilot#setIsPermanent(boolean)
+	 */
+	public boolean getIsPermanent() {
+		return _isPermanent;
 	}
 
 	/**
@@ -493,6 +507,7 @@ public class Pilot extends Person implements ComboAlias, Cloneable {
 	 * @param roleName the name of the role
 	 * @return TRUE if the Pilot is a member of this role, otherwise FALSE
 	 */
+	@Override
 	public boolean isInRole(String roleName) {
 		return ("*".equals(roleName) || _roles.contains(roleName) || _roles.contains("Admin"));
 	}
@@ -503,11 +518,21 @@ public class Pilot extends Person implements ComboAlias, Cloneable {
 	 * @throws IllegalArgumentException if the new status is not contained within PilotStatus, or is negative
 	 * @see Person#setStatus(int)
 	 */
+	@Override
 	public final void setStatus(int status) {
 		if (status >= Pilot.STATUS.length)
 			throw new IllegalArgumentException("Invalid Pilot Status - " + status);
 
 		super.setStatus(status);
+	}
+	
+	/**
+	 * Marks this account as being unable to be marked Inactive.
+	 * @param isPerm TRUE if permanent, otherwise FALSE
+	 * @see Pilot#getIsPermanent()
+	 */
+	public void setIsPermanent(boolean isPerm) {
+		_isPermanent = isPerm;
 	}
 
 	/**
@@ -864,6 +889,7 @@ public class Pilot extends Person implements ComboAlias, Cloneable {
 	 * Add membership in a security role to this Pilot.
 	 * @param roleName the name of the role
 	 */
+	@Override
 	public void addRole(String roleName) {
 		_roles.add(roleName);
 	}
@@ -970,6 +996,7 @@ public class Pilot extends Person implements ComboAlias, Cloneable {
 	 * Selects a table row class based upon the Pilot's status.
 	 * @return the row CSS class name
 	 */
+	@Override
 	public String getRowClassName() {
 		return ROW_CLASSES[getStatus()];
 	}
@@ -1021,6 +1048,8 @@ public class Pilot extends Person implements ComboAlias, Cloneable {
 		p2._totalLegs = _totalLegs;
 		p2._showSigs = _showSigs;
 		p2._showSSThreads = _showSSThreads;
+		p2._showNavBar = _showNavBar;
+		p2._showNewPosts = _showNewPosts;
 		p2._networkIDs.putAll(_networkIDs);
 		if (!StringUtils.isEmpty(getPilotCode()))
 			p2.setPilotCode(getPilotCode());
@@ -1037,6 +1066,7 @@ public class Pilot extends Person implements ComboAlias, Cloneable {
 	 * @return a copy of the current Pilot bean
 	 * @see Pilot#cloneExceptID()
 	 */
+	@Override
 	public Object clone() {
 		Pilot p2 = cloneExceptID();
 		p2.setID(getID());

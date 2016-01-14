@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to update Pilot profiles.
  * @author Luke
- * @version 5.4
+ * @version 6.4
  * @since 1.0
  */
 
@@ -52,7 +52,7 @@ public class SetPilot extends PilotWriteDAO {
 			+ "SHOW_DEF_SIG=?, SHOW_NEW_POSTS=?, UISCHEME=?, NAVBAR=?, VIEWSIZE=?, DFORMAT=?, "
 			+ "TFORMAT=?, NFORMAT=?, AIRPORTCODE=?, DISTANCEUNITS=?, WEIGHTUNITS=?, MAPTYPE=?, "
 			+ "RANK=?, EQTYPE=?, STATUS=?, NOEXAMS=?, NOVOICE=?, NOCOOLER=?, NOTIMECOMPRESS=?, "
-			+ "ACARS_RESTRICT=?, EMAIL_INVALID=?, UID=?, MOTTO=?, FIRSTNAME=?, LASTNAME=? WHERE (ID=?)");
+			+ "ACARS_RESTRICT=?, EMAIL_INVALID=?, UID=?, MOTTO=?, PERMANENT=?, FIRSTNAME=?, LASTNAME=? WHERE (ID=?)");
 
 		try {
 			// This involves a lot of reads and writes, so its written as a single transaction
@@ -92,9 +92,10 @@ public class SetPilot extends PilotWriteDAO {
 			_ps.setBoolean(32, p.isInvalid());
 			_ps.setString(33, p.getLDAPName());
 			_ps.setString(34, p.getMotto());
-			_ps.setString(35, p.getFirstName());
-			_ps.setString(36, p.getLastName());
-			_ps.setInt(37, p.getID());
+			_ps.setBoolean(35, p.getIsPermanent());
+			_ps.setString(36, p.getFirstName());
+			_ps.setString(37, p.getLastName());
+			_ps.setInt(38, p.getID());
 			executeUpdate(1);
 
 			// Update the roles/ratings
