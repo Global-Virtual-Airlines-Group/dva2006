@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
  * A DAO to support reading Pilot object(s) from the database. This class contains methods to read an individual Pilot
  * from the database; implementing subclasses typically add methods to retrieve Lists of pilots based on particular criteria.
  * @author Luke
- * @version 5.2
+ * @version 6.4
  * @since 1.0
  */
 
@@ -290,44 +290,45 @@ abstract class PilotReadDAO extends DAO {
 				p.setShowSSThreads(rs.getBoolean(23));
 				p.setHasDefaultSignature(rs.getBoolean(24));
 				p.setShowNewPosts(rs.getBoolean(25));
-				p.setUIScheme(rs.getString(26));
-				p.setShowNavBar(rs.getBoolean(27));
-				p.setViewCount(rs.getInt(28));
-				p.setLoginHost(rs.getString(29));
-				p.setDateFormat(rs.getString(30));
-				p.setTimeFormat(rs.getString(31));
-				p.setNumberFormat(rs.getString(32));
-				p.setAirportCodeType(Airport.Code.values()[rs.getInt(33)]);
-				p.setDistanceType(DistanceUnit.values()[rs.getInt(34)]);
-				p.setWeightType(WeightUnit.values()[rs.getInt(35)]);
-				p.setMapType(MapType.values()[rs.getInt(36)]);
-				p.setNoExams(rs.getBoolean(37));
-				p.setNoVoice(rs.getBoolean(38));
-				p.setNoCooler(rs.getBoolean(39));
-				p.setNoTimeCompression(rs.getBoolean(40));
-				p.setACARSRestriction(Restriction.values()[rs.getInt(41)]);
-				p.setEmailInvalid(rs.getBoolean(42));
-				p.setLDAPName(rs.getString(43));
-				p.setMotto(rs.getString(44));
+				p.setIsPermanent(rs.getBoolean(26));
+				p.setUIScheme(rs.getString(27));
+				p.setShowNavBar(rs.getBoolean(28));
+				p.setViewCount(rs.getInt(29));
+				p.setLoginHost(rs.getString(30));
+				p.setDateFormat(rs.getString(31));
+				p.setTimeFormat(rs.getString(32));
+				p.setNumberFormat(rs.getString(33));
+				p.setAirportCodeType(Airport.Code.values()[rs.getInt(34)]);
+				p.setDistanceType(DistanceUnit.values()[rs.getInt(35)]);
+				p.setWeightType(WeightUnit.values()[rs.getInt(36)]);
+				p.setMapType(MapType.values()[rs.getInt(37)]);
+				p.setNoExams(rs.getBoolean(38));
+				p.setNoVoice(rs.getBoolean(39));
+				p.setNoCooler(rs.getBoolean(40));
+				p.setNoTimeCompression(rs.getBoolean(41));
+				p.setACARSRestriction(Restriction.values()[rs.getInt(42)]);
+				p.setEmailInvalid(rs.getBoolean(43));
+				p.setLDAPName(rs.getString(44));
+				p.setMotto(rs.getString(45));
 
-				// Check if this result set has columns 45-48, which is the PIREP totals
-				if (columnCount > 47) {
-					p.setLegs(rs.getInt(45));
-					p.setMiles(rs.getLong(46));
-					p.setHours(rs.getDouble(47));
-					p.setLastFlight(expandDate(rs.getDate(48)));
+				// Check if this result set has columns 46-49, which is the PIREP totals
+				if (columnCount > 48) {
+					p.setLegs(rs.getInt(46));
+					p.setMiles(rs.getLong(47));
+					p.setHours(rs.getDouble(48));
+					p.setLastFlight(expandDate(rs.getDate(49)));
 				}
 
-				// Check if this result set has columns 49/50, which is the signature extension
-				if (columnCount > 49) {
-					p.setSignatureExtension(rs.getString(49));
-					p.setSignatureModified(rs.getTimestamp(50));
+				// Check if this result set has columns 50/51, which is the signature extension
+				if (columnCount > 50) {
+					p.setSignatureExtension(rs.getString(50));
+					p.setSignatureModified(rs.getTimestamp(51));
 				}
 
-				// Check if this result set has columns 51/52, which are online legs/hours
-				if (columnCount > 51) {
-					p.setOnlineLegs(rs.getInt(51));
-					p.setOnlineHours(rs.getDouble(52));
+				// Check if this result set has columns 52/53, which are online legs/hours
+				if (columnCount > 52) {
+					p.setOnlineLegs(rs.getInt(52));
+					p.setOnlineHours(rs.getDouble(53));
 				}
 
 				results.add(p);

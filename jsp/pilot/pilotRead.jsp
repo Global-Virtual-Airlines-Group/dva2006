@@ -76,11 +76,19 @@ return true;
  <td colspan="${cspan}" class="data"><span class="ita">No Pilot ID assigned.</span> Use <span class="bld">${pilot.ID}</span> as a temporary ACARS User ID.</td>
 </tr>
 </c:if>
-<c:if test="${access.canChangeRoles && (!empty pilot.roles)}">
+<c:if test="${access.canChangeRoles}">
+<c:if test="${!empty pilot.roles}">
 <tr>
  <td class="label">Security Roles</td>
  <td colspan="${cspan}" class="data"><fmt:list value="${pilot.roles}" delim=", " /></td>
 </tr>
+</c:if>
+<c:if test="${pilot.isPermanent}">
+<tr>
+ <td class="label">&nbsp;</td>
+ <td colspan="${cspan}" class="data"><span class="sec bld caps" >Permanent Account</span></td>
+</tr>
+</c:if>
 </c:if>
 <tr>
  <td class="label">Equipment Type</td>
