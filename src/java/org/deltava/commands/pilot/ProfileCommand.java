@@ -1,7 +1,8 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.apache.log4j.Logger;
@@ -33,7 +34,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to handle editing/saving Pilot Profiles.
  * @author Luke
- * @version 6.0
+ * @version 6.4
  * @since 1.0
  */
 
@@ -42,8 +43,7 @@ public class ProfileCommand extends AbstractFormCommand {
 	private static final Logger log = Logger.getLogger(ProfileCommand.class);
 
 	private static final String[] PRIVACY_ALIASES = { "0", "1", "2" };
-	private static final String[] PRIVACY_NAMES = { "Show address to Staff Members only",
-			"Show address to Authenticated Users", "Show address to All Visitors" };
+	private static final String[] PRIVACY_NAMES = { "Show address to Staff Members only", "Show address to Authenticated Users", "Show address to All Visitors" };
 
 	/**
 	 * Callback method called when saving the profile.
@@ -234,6 +234,17 @@ public class ProfileCommand extends AbstractFormCommand {
 					upd.setDescription(compressLocked ? "Time Compression locked out" : "Time Compression enabled");
 					updates.add(upd);
 					log.info(p.getName() + " " + upd.getDescription());
+				}
+				
+				// Check permanent account status
+				boolean newPermAccount = Boolean.valueOf(ctx.getParameter("permAccount")).booleanValue();
+				if (newPermAccount != p.getIsPermanent()) {
+					p.setIsPermanent(newPermAccount);
+					
+					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.STATUS_CHANGE);
+					upd.setAuthorID(ctx.getUser().getID());
+					upd.setDescription("Permanent account flag " + (newPermAccount ? "Set" : "Cleared"));
+					updates.add(upd);
 				}
 			}
 
@@ -556,20 +567,16 @@ public class ProfileCommand extends AbstractFormCommand {
 				// Determine what TeamSpeak servers to remove us from
 				SetTS2Data ts2wdao = new SetTS2Data(con);
 				Collection<Server> rmvServers = CollectionUtils.getDelta(srvs, newSrvs);
-				for (Iterator<Server> i = rmvServers.iterator(); i.hasNext();) {
-					Server srv = i.next();
+				for (Server srv : rmvServers) {
 					log.info("Removed " + p.getPilotCode() + " from TeamSpeak server " + srv.getName());
-					Collection<Integer> ids = new HashSet<Integer>();
-					ids.add(new Integer(p.getID()));
-					ts2wdao.removeUsers(srv, ids);
+					ts2wdao.removeUsers(srv, Collections.singleton(Integer.valueOf(p.getID())));
 				}
 
 				// Determine what servers to add us to
 				Collection<Server> addServers = CollectionUtils.getDelta(newSrvs, srvs);
 				if (!addServers.isEmpty()) {
 					Collection<Client> ts2usrs = new HashSet<Client>();
-					for (Iterator<Server> i = addServers.iterator(); i.hasNext();) {
-						Server srv = i.next();
+					for (Server srv : addServers) {
 						log.info("Added " + p.getPilotCode() + " to TeamSpeak server " + srv.getName());
 
 						// Build the client record
@@ -747,11 +754,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			ctx.setAttribute("statusUpdates", upds, REQUEST);
 			
 			// Get Author IDs from Status Updates
-			Collection<Integer> IDs = new HashSet<Integer>();
-			for (Iterator<StatusUpdate> i = upds.iterator(); i.hasNext(); ) {
-				StatusUpdate upd = i.next();
-				IDs.add(new Integer(upd.getAuthorID()));
-			}
+			Collection<Integer> IDs = upds.stream().map(StatusUpdate::getAuthorID).collect(Collectors.toSet());
 			
 			// Load authors
 			GetUserData uddao = new GetUserData(con);
@@ -867,9 +870,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			ctx.setAttribute("accs", acdao.getByPilot(p, SystemData.get("airline.db")), REQUEST);
 			
 			// Load instructor IDs
-			Collection<Integer> IDs = new HashSet<Integer>();
-			for (Course c : courses)
-				IDs.add(new Integer(c.getInstructorID()));
+			Collection<Integer> IDs = courses.stream().map(Course::getInstructorID).collect(Collectors.toSet());
 
 			// Get status updates
 			GetStatusUpdate updao = new GetStatusUpdate(con);
@@ -877,8 +878,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			ctx.setAttribute("statusUpdates", upds, REQUEST);
 			
 			// Get Author IDs from Status Updates
-			for (StatusUpdate upd : upds)
-				IDs.add(new Integer(upd.getAuthorID()));
+			IDs.addAll(upds.stream().map(StatusUpdate::getAuthorID).collect(Collectors.toSet()));
 			
 			// Load authors
 			UserDataMap udm = uddao.get(IDs);
@@ -895,7 +895,7 @@ public class ProfileCommand extends AbstractFormCommand {
 				GetStatistics stdao = new GetStatistics(con);
 				Map<Integer, Long> wcStats = stdao.getCoolerStatistics(Collections.singleton(Integer.valueOf(p.getID())));
 				if (!wcStats.isEmpty())
-					ctx.setAttribute("wcPosts", wcStats.get(new Integer(p.getID())), REQUEST);
+					ctx.setAttribute("wcPosts", wcStats.get(Integer.valueOf(p.getID())), REQUEST);
 			}
 
 			// Get TeamSpeak2 data
