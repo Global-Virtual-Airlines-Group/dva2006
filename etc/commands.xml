@@ -1753,6 +1753,12 @@
 		<roles>Admin</roles>
 	</command>
 
+	<command id="permusers">
+        <name>Permanent Users</name>
+        <class>org.deltava.commands.admin.PermanentUsersCommand</class>
+        <roles>HR</roles>	
+	</command>
+
 	<command id="dashboard">
 		<name>Management Dashboard</name>
 		<class>org.deltava.commands.stats.DashboardCommand</class>

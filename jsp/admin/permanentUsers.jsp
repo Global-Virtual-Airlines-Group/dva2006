@@ -8,7 +8,7 @@
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <html lang="en">
 <head>
-<title>Suspended <content:airline /> Pilots</title>
+<title>Permanent <content:airline /> Pilots</title>
 <content:css name="main" />
 <content:css name="view" />
 <content:js name="common" />
@@ -23,40 +23,33 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<view:table cmd="suspendedusers">
+<view:table cmd="permusers">
 <tr class="title">
- <td colspan="7" class="left caps"><content:airline /> SUSPENDED PILOT LIST</td>
+ <td colspan="7" class="left caps"><content:airline /> PERMANENT PILOT LIST</td>
 </tr>
 
 <!-- Table Header Bar-->
 <tr class="title">
- <td style="width:24%">PILOT NAME</td>
- <td style="width:10%">PILOT ID</td>
- <td class="nophone" style="width:12%">JOINED ON</td>
- <td class="nophone" style="width:12%">LAST FLIGHT</td>
- <td class="nophone" style="width:8%">FLIGHTS</td>
- <td style="width:15%">SUSPENDED ON</td>
- <td>DURATION</td>
+ <td style="width:25%">PILOT NAME</td>
+ <td>PILOT ID</td>
+ <td style="width:20%" class="nophone">RANK / PROGRAM</td>
+ <td class="nophone">JOINED ON</td>
+ <td class="nophone">FLIGHTS</td>
+ <td>LAST FLIGHT</td>
+ <td>LAST LOGIN</td>
 </tr>
 
 <!-- Table Pilot Data -->
 <c:forEach var="pilot" items="${viewContext.results}">
-<c:set var="upd" value="${updates[pilot.ID]}" scope="page" />
-<tr>
+<view:row entry="${pilot}">
  <td><el:cmd url="profile" link="${pilot}" className="bld">${pilot.name}</el:cmd></td>
  <td class="pri bld">${pilot.pilotCode}</td>
- <td class="nophone"><fmt:date fmt="d" date="${pilot.createdOn}" default="N/A" /></td>
- <td class="nophone"><fmt:date fmt="d" date="${pilot.lastFlight}" default="N/A" /></td>
+ <td class="sec bld small nophone">${pilot.rank.name}, ${pilot.equipmentType}</td>
+ <td class="bld nophone"><fmt:date fmt="d" date="${pilot.createdOn}" /></td>
  <td class="nophone"><fmt:int value="${pilot.legs}" /></td>
-<c:if test="${!empty upd}">
-<c:set var="duration" value="${(now.time - upd.createdOn.time) / 86400000}" scope="page" />
- <td class="bld"><fmt:date fmt="d" date="${upd.createdOn}" /></td>
- <td class="pri bld"><fmt:int value="${duration}" /> DAYS</td>
-</c:if>
-<c:if test="${empty upd}">
- <td colspan="2" class="bld">UNKNOWN</td>
-</c:if>
-</tr>
+ <td class="sec bld"><fmt:date fmt="d" date="${pilot.lastFlight}"  default="N/A" /></td>
+ <td class="pri bld"><fmt:date fmt="d" date="${pilot.lastLogin}" default="N/A" /></td>
+</view:row>
 </c:forEach>
 
 <!-- Scroll Bar -->
