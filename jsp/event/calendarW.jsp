@@ -43,7 +43,7 @@ golgotha.local.expandSection = function(id) {
 <el:table className="form">
 <tr class="title">
  <td style="width:80%" class="caps"><content:airline /> ONLINE EVENT CALENDAR - WEEK OF <fmt:date fmt="d" date="${startDate}" d="MMMM dd, yyyy" tzName="local" /></td>
- <td class="right">CALENDAR TYPE <el:combo name="op" size="1" idx="*" options="${typeOptions}" value="7" onChange="void golgotha.local.switchType(this)" /></td>
+ <td class="right">&nbsp;<span class="nophone">CALENDAR TYPE <el:combo name="op" size="1" idx="*" options="${typeOptions}" value="7" onChange="void golgotha.local.switchType(this)" /></span></td>
 </tr>
 </el:table>
 <div class="mid">

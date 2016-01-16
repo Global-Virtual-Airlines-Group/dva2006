@@ -14,6 +14,7 @@
 <content:css name="form" />
 <content:css name="calendar" />
 <content:pics />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <content:js name="datePicker" />
 <script type="text/javascript">
