@@ -966,6 +966,10 @@ scoring delays, discussion forum participation rates and Flight Report logging.<
  <td class="mid"><el:cmd className="bld" url="rejectedpireps">Rejected Flight Reports</el:cmd></td>
  <td class="data">You can view rejected <content:airline /> Flight Reports.</td>
 </tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="permusers">Permanent User Accounts</el:cmd></td>
+ <td class="data">You can view a list of <content:airline /> Pilots with permanent user accounts.</td>
+</tr>
 </content:filter>
 <content:filter roles="Admin">
 <tr>
@@ -978,8 +982,7 @@ scoring delays, discussion forum participation rates and Flight Report logging.<
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="securityroles">Security Roles</el:cmd></td>
- <td class="data">You can view all <content:airline /> Pilots who have one or more web application security
-roles.</td>
+ <td class="data">You can view all <content:airline /> Pilots who have one or more web application security roles.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="cmdstats">Command Statistics</el:cmd></td>
