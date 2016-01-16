@@ -1,9 +1,10 @@
-// Copyright 2006, 2007, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2011, 2012, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.util.*;
 
 import org.deltava.beans.*;
+import org.deltava.beans.system.*;
 
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
@@ -11,14 +12,13 @@ import org.deltava.util.system.SystemData;
 /**
  * An abstract Command class to support Calendar views.
  * @author Luke
- * @version 5.1
+ * @version 6.4
  * @since 1.0
  */
 
 public abstract class AbstractCalendarCommand extends AbstractCommand {
 
-	private static final List<ComboAlias> TYPE_OPTIONS = ComboUtils.fromArray(new String[] {"Month", "Week"}, 
-			new String[] { "31", "7"});
+	private static final List<ComboAlias> TYPE_OPTIONS = ComboUtils.fromArray(new String[] {"Month", "Week"}, new String[] { "31", "7"});
 	
 	protected static final class CalendarContext {
 		
@@ -44,7 +44,7 @@ public abstract class AbstractCalendarCommand extends AbstractCommand {
 		}
 	}
 	
-	/**
+	/*
 	 * Helper method to get the start of the month.
 	 */
 	private static Date getStartOfMonth(Date dt) {
@@ -53,7 +53,7 @@ public abstract class AbstractCalendarCommand extends AbstractCommand {
 		return cld.getTime();
 	}
 
-	/**
+	/*
 	 * Helper method to get the start of the week.
 	 */
 	private static Date getStartOfWeek(Date dt) {
@@ -69,8 +69,12 @@ public abstract class AbstractCalendarCommand extends AbstractCommand {
 	 */
 	protected static CalendarContext initCalendar(CommandContext ctx) {
 		
+		// Get the browser context and check for mobile
+		HTTPContextData httpCtx = (HTTPContextData) ctx.getRequest().getAttribute(HTTPContext.HTTPCTXT_ATTR_NAME);
+		boolean isMobile = (httpCtx != null) && (httpCtx.getDeviceType() == DeviceType.PHONE);
+		
 		// Get the number of days and start date
-		int days = StringUtils.parse((String) ctx.getCmdParameter(OPERATION, null), 31);
+		int days = StringUtils.parse((String) ctx.getCmdParameter(OPERATION, null), isMobile ? 7 : 31);
 		Date startDate = null;
 		try {
 			startDate = StringUtils.parseDate(ctx.getParameter("startDate"), "MM/dd/yyyy");
