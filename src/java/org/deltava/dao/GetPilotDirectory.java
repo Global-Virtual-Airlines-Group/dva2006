@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to obtain user Directory information for Pilots.
  * @author Luke
- * @version 5.4
+ * @version 6.4
  * @since 1.0
  */
 
@@ -25,37 +25,6 @@ public class GetPilotDirectory extends GetPilot implements PersonUniquenessDAO {
 	 */
 	public GetPilotDirectory(Connection c) {
 		super(c);
-	}
-
-	/**
-	 * Gets a Pilot based on the directory name. <i>This populates roles/ratings.</i>
-	 * @param directoryName the JNDI directory name to search for (eg. cn=Luke Kolin,ou=DVA,o=SCE)
-	 * @return the Pilot object, or null if the pilot code was not found
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public final Pilot getFromDirectory(String directoryName) throws DAOException {
-		try {
-			prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), "
-				+ "MAX(F.DATE), S.EXT, S.MODIFIED FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) "
-				+ "LEFT JOIN SIGNATURES S ON (P.ID=S.ID) WHERE (UPPER(P.LDAP_DN)=?) GROUP BY P.ID");
-			_ps.setInt(1, FlightReport.OK);
-			_ps.setString(2, directoryName.toUpperCase());
-
-			// Execute the query and get the result
-			List<Pilot> results = execute();
-			Pilot result = (results.size() == 0) ? null : results.get(0);
-			if (result == null)
-				return null;
-
-			// Add roles/ratings
-			loadChildRows(result, SystemData.get("airline.db"));
-
-			// Add the result to the cache and return
-			_cache.add(result);
-			return result;
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
 	}
 
 	/**
@@ -106,6 +75,7 @@ public class GetPilotDirectory extends GetPilot implements PersonUniquenessDAO {
 	 * @return a Collection of database IDs
 	 * @throws DAOException if a JDBC error occurs
 	 */
+	@Override
 	public Collection<Integer> checkUnique(Person p, String dbName) throws DAOException {
 		return checkUnique(p, dbName, -1);
 	}
@@ -118,6 +88,7 @@ public class GetPilotDirectory extends GetPilot implements PersonUniquenessDAO {
 	 * @return a Collection of database IDs
 	 * @throws DAOException if a JDBC error occurs
 	 */
+	@Override
 	public Collection<Integer> checkUnique(Person p, String dbName, int days) throws DAOException {
 
 		// Build the SQL statement
@@ -181,6 +152,21 @@ public class GetPilotDirectory extends GetPilot implements PersonUniquenessDAO {
 			prepareStatement("SELECT ID FROM PILOT_IMADDR WHERE (ADDR=?)");
 			_ps.setString(1, addr);
 			return getByID(executeIDs(), "PILOTS");
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns all Pilots with permanent accounts.
+	 * @return a Collection of Pilots
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Pilot> getPermanent() throws DAOException {
+		try {
+			prepareStatement("SELECT ID FROM PILOTS WHERE (PERMANENT=?)");
+			_ps.setBoolean(1, true);
+			return getByID(executeIDs(), "PILOTS").values();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -255,6 +241,7 @@ public class GetPilotDirectory extends GetPilot implements PersonUniquenessDAO {
 	 * @param dbName the database name
 	 * @return a Collection of Database IDs as Integers
 	 */
+	@Override
 	public Collection<Integer> checkSoundex(Person usr, String dbName) throws DAOException {
 
 		// Build the SQL statement
