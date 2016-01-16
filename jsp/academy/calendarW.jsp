@@ -14,6 +14,7 @@
 <content:css name="form" />
 <content:css name="calendar" />
 <content:pics />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <content:js name="datePicker" />
 <script type="text/javascript">
@@ -55,7 +56,7 @@ return true;
 <c:if test="${!isMine && !empty user}">
  <td style="width:10%" class="mid"><el:cmd url="academycalendar" op="7" link="${user}" startDate="${startDate}">MY SESSIONS</el:cmd></td>
 </c:if>
- <td class="right">CALENDAR TYPE <el:combo name="op" size="1" idx="*" options="${typeOptions}" value="7" onChange="void golgotha.local.switchType(this)" /></td>
+ <td class="right">&nbsp;<span class="nophone">CALENDAR TYPE <el:combo name="op" size="1" idx="*" options="${typeOptions}" value="7" onChange="void golgotha.local.switchType(this)" /></span></td>
 </tr>
 </el:table>
 <div class="mid">
