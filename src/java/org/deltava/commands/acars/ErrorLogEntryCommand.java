@@ -1,6 +1,7 @@
-// Copyright 2006, 2007, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
+import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.UserData;
@@ -9,10 +10,12 @@ import org.deltava.beans.acars.ACARSError;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
+import org.deltava.util.StringUtils;
+
 /**
  * A Web Site Command to display an ACARS client error report.
  * @author Luke
- * @version 6.1
+ * @version 6.4
  * @since 1.0
  */
 
@@ -40,6 +43,19 @@ public class ErrorLogEntryCommand extends AbstractCommand {
 			UserData ud = uddao.get(err.getUserID());
 			ctx.setAttribute("userData", ud, REQUEST);
 			ctx.setAttribute("author", pdao.get(ud), REQUEST);
+			
+			// Convert the state data
+			if (!StringUtils.isEmpty(err.getStateData())) {
+				String[] state = err.getStateData().split("[||]");
+				Map<String, String> stateData = new LinkedHashMap<String, String>();
+				for (String s : state) {
+					int pos = s.indexOf('=');
+					if (pos > -1)
+						stateData.put(s.substring(0, pos), s.substring(pos + 1));
+				}
+				
+				ctx.setAttribute("stateData", stateData, REQUEST);
+			}
 			
 			// Load the address data
 			GetIPLocation ipdao = new GetIPLocation(con);

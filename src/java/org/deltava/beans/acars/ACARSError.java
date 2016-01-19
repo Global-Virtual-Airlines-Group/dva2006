@@ -1,4 +1,4 @@
-// Copyright 2006, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.Date;
@@ -8,7 +8,7 @@ import org.deltava.beans.*;
 /**
  * A bean to store ACARS error dumps.
  * @author Luke
- * @version 5.1
+ * @version 6.4
  * @since 1.0
  */
 
@@ -30,7 +30,14 @@ public class ACARSError extends DatabaseBean implements ClientVersion {
 	private String _msg;
 	private String _stackDump;
 	private String _stateData;
-
+	
+	private String _osVersion;
+	private boolean _is64Bit;
+	
+	private String _clrVersion;
+	private String _locale;
+	private String _tz;
+	
 	/**
 	 * Creates a new error data bean.
 	 * @param userID the User's database ID
@@ -80,10 +87,56 @@ public class ACARSError extends DatabaseBean implements ClientVersion {
 	}
 	
 	/**
+	 * Returns the operating system version.
+	 * @return the OS version
+	 * @see ACARSError#setOSVersion(String)
+	 */
+	public String getOSVersion() {
+		return _osVersion;
+	}
+	
+	/**
+	 * Returns the .NET Common Language Runtime version.
+	 * @return the CLR version
+	 * @see ACARSError#setCLRVersion(String)
+	 */
+	public String getCLRVersion() {
+		return _clrVersion;
+	}
+	
+	/**
+	 * Returns whether the ACARS client was running on a 64-bit operating system.
+	 * @return TRUE if 64-bit, otherwise FALSE
+	 * @see ACARSError#setIs64Bit(boolean)
+	 */
+	public boolean getIs64Bit() {
+		return _is64Bit;
+	}
+	
+	/**
+	 * Returns the user's locale.
+	 * @return the locale name
+	 * @see ACARSError#setLocale(String)
+	 */
+	public String getLocale() {
+		return _locale;
+	}
+	
+	/**
+	 * Returns the user's time zone name.
+	 * @return the <i>OS-specific</i> time zone name
+	 * @see ACARSError#setTimeZone(String)
+	 */
+	public String getTimeZone() {
+		return _tz;
+	}
+	
+	/**
 	 * Returns the ACARS Client build that generated this error.
 	 * @return the client build number
 	 * @see ACARSError#setClientBuild(int)
 	 */
+	@Override
 	public int getClientBuild() {
 		return _clientBuild;
 	}
@@ -93,6 +146,7 @@ public class ACARSError extends DatabaseBean implements ClientVersion {
 	 * @return the beta number
 	 * @see ACARSError#setBeta(int) 
 	 */
+	@Override
 	public int getBeta() {
 		return _beta;
 	}
@@ -102,6 +156,7 @@ public class ACARSError extends DatabaseBean implements ClientVersion {
 	 * @return the ClienTtype
 	 * @see ACARSError#setClientType(ClientType)
 	 */
+	@Override
 	public ClientType getClientType() {
 		return _type;
 	}
@@ -111,6 +166,7 @@ public class ACARSError extends DatabaseBean implements ClientVersion {
 	 * @return the major version number
 	 * @see ACARSError#setVersion(int)
 	 */
+	@Override
 	public int getVersion() {
 		return _version;
 	}
@@ -250,6 +306,51 @@ public class ACARSError extends DatabaseBean implements ClientVersion {
 	 */
 	public void setVersion(int ver) {
 		_version = ver;
+	}
+	
+	/**
+	 * Sets the operating system version.
+	 * @param v the version
+	 * @see ACARSError#getOSVersion()
+	 */
+	public void setOSVersion(String v) {
+		_osVersion = v;
+	}
+	
+	/**
+	 * Sets whether the operating system is 64-bit.
+	 * @param is64 TRUE if 64-bit, otherwsie FALSE
+	 * @see ACARSError#getIs64Bit()
+	 */
+	public void setIs64Bit(boolean is64) {
+		_is64Bit = is64;
+	}
+	
+	/**
+	 * Sets the .NET CLR version.
+	 * @param v the version
+	 * @see ACARSError#getCLRVersion()
+	 */
+	public void setCLRVersion(String v) {
+		_clrVersion = v;
+	}
+	
+	/**
+	 * Sets the client locale name.
+	 * @param l the locale
+	 * @see ACARSError#getLocale()
+	 */
+	public void setLocale(String l) {
+		_locale = l;
+	}
+	
+	/**
+	 * Updates the client time zone.
+	 * @param tz the <i>OS-specific</i> time zone name
+	 * @see ACARSError#getTimeZone()
+	 */
+	public void setTimeZone(String tz) {
+		_tz = tz;
 	}
 	
 	/**
