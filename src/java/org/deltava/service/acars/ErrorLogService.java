@@ -1,11 +1,9 @@
-// Copyright 2006, 2007, 2009, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.Date;
 
 import static javax.servlet.http.HttpServletResponse.*;
-
-import org.apache.log4j.Logger;
 
 import org.deltava.beans.Simulator;
 import org.deltava.beans.acars.*;
@@ -17,13 +15,11 @@ import org.deltava.util.*;
 /**
  * A Web Service to log ACARS client errors.
  * @author Luke
- * @version 6.3
+ * @version 6.4
  * @since 1.0
  */
 
 public class ErrorLogService extends WebService {
-
-	private static final Logger log = Logger.getLogger(ErrorLogService.class);
 
 	/**
 	 * Executes the Web Service.
@@ -34,9 +30,9 @@ public class ErrorLogService extends WebService {
 	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 
-		// If this isn't a post, just return a 200
+		// If this isn't a post, just return a 400
 		if (!ctx.getRequest().getMethod().equalsIgnoreCase("post"))
-			return SC_OK;
+			return SC_BAD_REQUEST;
 		
 		// Create the error bean
 		ACARSError err = new ACARSError(ctx.getUser().getID(), ctx.getParameter("msg"));
@@ -48,6 +44,11 @@ public class ErrorLogService extends WebService {
 		err.setFSUIPCVersion(ctx.getParameter("fsuipcVersion"));
 		err.setRemoteAddr(ctx.getRequest().getRemoteAddr());
 		err.setRemoteHost(ctx.getRequest().getRemoteHost());
+		err.setOSVersion(ctx.getParameter("os"));
+		err.setIs64Bit(Boolean.valueOf(ctx.getParameter("is64")).booleanValue());
+		err.setCLRVersion(ctx.getParameter("clr"));
+		err.setLocale(ctx.getParameter("locale"));
+		err.setTimeZone(ctx.getParameter("tz"));
 		err.setStateData(ctx.getParameter("stateData"));
 		err.setClientType(ClientType.PILOT);
 		if (err.getClientBuild() < 75) {
@@ -68,8 +69,7 @@ public class ErrorLogService extends WebService {
 			SetACARSLog dao = new SetACARSLog(ctx.getConnection());
 			dao.logError(err);
 		} catch (DAOException de) {
-			log.error(de.getMessage(), de);
-			return SC_INTERNAL_SERVER_ERROR;
+			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
 		} finally {
 			ctx.release();
 		}
