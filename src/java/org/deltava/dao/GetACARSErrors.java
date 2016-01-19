@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2011, 2012, 2013, 2106 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.acars.ACARSError;
 /**
  * A Data Access Object to load ACARS client error logs.
  * @author Luke
- * @version 5.2
+ * @version 6.4
  * @since 1.0
  */
 
@@ -136,7 +136,7 @@ public class GetACARSErrors extends DAO {
 		List<ACARSError> results = new ArrayList<ACARSError>();
 		try (ResultSet rs = _ps.executeQuery()) {
 			while (rs.next()) {
-				ACARSError err = new ACARSError(rs.getInt(2), rs.getString(10));
+				ACARSError err = new ACARSError(rs.getInt(2), rs.getString(15));
 				err.setID(rs.getInt(1));
 				err.setCreatedOn(rs.getTimestamp(3));
 				// skip #4, raw remote_addr
@@ -145,9 +145,14 @@ public class GetACARSErrors extends DAO {
 				err.setBeta(rs.getInt(7));
 				err.setSimulator(Simulator.fromVersion(rs.getInt(8)));
 				err.setFSUIPCVersion(rs.getString(9));
-				err.setStackDump(rs.getString(11));
-				err.setStateData(rs.getString(12));
-				err.setRemoteAddr(rs.getString(13));
+				err.setOSVersion(rs.getString(10));
+				err.setCLRVersion(rs.getString(11));
+				err.setIs64Bit(rs.getBoolean(12));
+				err.setLocale(rs.getString(13));
+				err.setTimeZone(rs.getString(14));
+				err.setStackDump(rs.getString(16));
+				err.setStateData(rs.getString(17));
+				err.setRemoteAddr(rs.getString(18));
 				results.add(err);
 			}
 		}
