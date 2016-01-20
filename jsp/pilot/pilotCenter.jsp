@@ -374,11 +374,6 @@ contributions from our community that will enhance your flight simulation experi
  <td class="mid"><el:cmd className="bld" url="fleetlibrary" op="admin">Fleet Library Administration</el:cmd></td>
  <td class="data">You can add or update entries in the <content:airline /> Fleet Library.</td>
 </tr>
-<tr>
- <td class="mid bld"><el:cmd url="fleetlog">Fleet Installer Logs</el:cmd><br />
-<el:cmd url="fleetstats">Fleet Installer Statistics</el:cmd></td>
- <td class="data">You can view user System Information and statistics from the <content:airline /> Fleet Installer log entries.</td>
-</tr>
 </content:filter>
 
 <!-- Flight Schedule Section -->
