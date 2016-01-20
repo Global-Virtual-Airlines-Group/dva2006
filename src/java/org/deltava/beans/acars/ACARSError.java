@@ -12,7 +12,7 @@ import org.deltava.beans.*;
  * @since 1.0
  */
 
-public class ACARSError extends DatabaseBean implements ClientVersion {
+public class ACARSError extends DatabaseBean implements ClientVersion, AuthoredBean {
 	
 	private int _userID;
 	private Date _createdOn;
@@ -46,7 +46,7 @@ public class ACARSError extends DatabaseBean implements ClientVersion {
 	 */
 	public ACARSError(int userID, String msg) {
 		super();
-		setUserID(userID);
+		setAuthorID(userID);
 		setMessage(msg);
 	}
 	
@@ -59,12 +59,8 @@ public class ACARSError extends DatabaseBean implements ClientVersion {
 		return _createdOn;
 	}
 	
-	/**
-	 * Returns the User who logged this error message. 
-	 * @return the User's database ID
-	 * @see ACARSError#setUserID(int)
-	 */
-	public int getUserID() {
+	@Override
+	public int getAuthorID() {
 		return _userID;
 	}
 	
@@ -216,13 +212,8 @@ public class ACARSError extends DatabaseBean implements ClientVersion {
 		return _stateData;
 	}
 
-	/**
-	 * Updates the User who logged this error message. 
-	 * @param id the User's database ID
-	 * @throws IllegalArgumentException if id is zero or negative
-	 * @see ACARSError#getUserID()
-	 */
-	public void setUserID(int id) {
+	@Override
+	public void setAuthorID(int id) {
 		validateID(_userID, id);
 		_userID = id;
 	}
