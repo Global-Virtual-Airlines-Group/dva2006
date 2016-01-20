@@ -40,7 +40,7 @@ public class ErrorLogEntryCommand extends AbstractCommand {
 			// Load the author
 			GetPilot pdao = new GetPilot(con);
 			GetUserData uddao = new GetUserData(con);
-			UserData ud = uddao.get(err.getUserID());
+			UserData ud = uddao.get(err.getAuthorID());
 			ctx.setAttribute("userData", ud, REQUEST);
 			ctx.setAttribute("author", pdao.get(ud), REQUEST);
 			
