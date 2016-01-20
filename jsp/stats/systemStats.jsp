@@ -8,18 +8,19 @@
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <html lang="en">
 <head>
-<title><content:airline /> Installer Log</title>
+<title><content:airline /> ACARS Client System Statistics</title>
 <content:css name="main" />
 <content:css name="form" />
 <content:css name="view" />
 <content:pics />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <script type="text/javascript">
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-golgotha.form.submit(f);
-return true;
+golgotha.local.updateSort = function() { return document.forms[0].submit(); };
+golgotha.local.validate = function(f) {
+    if (!golgotha.form.check()) return false;
+    golgotha.form.submit(f);
+    return true;
 };
 </script>
 </head>
@@ -34,22 +35,22 @@ return true;
 <el:form action="fleetstats.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
- <td colspan="2">FLEET INSTALLER SYSTEM DATA STATISTICS</td>
+ <td colspan="2"><content:airline /> ACARS CLIENT SYSTEM STATISTICS</td>
 </tr>
 <tr>
  <td class="label">Sort Options</td>
- <td class="data"><el:combo name="orderBy" idx="*" size="1" options="${sortOptions}" value="${param.orderBy}" /></td>
+ <td class="data"><el:combo name="orderBy" idx="*" size="1" options="${sortOptions}" value="${labelCode}" onChange="void golgotha.local.updateSort()" /></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="sortLabel" idx="*" className="sec small" value="1" label="Sort Labels instead of Totals" checked="${param.sortLabel == '1'}" /></td>
+ <td class="data"><el:box name="sortLabel" idx="*" className="sec small" value="true" label="Sort Labels instead of Totals" checked="${param.sortLabel}" /></td>
 </tr>
 </el:table>
 
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SearchButton" type="submit" label="SEARCH FLEET INSTALLER STATISTICS" /></td>
+ <td><el:button ID="SearchButton" type="submit" label="SEARCH ACARS CLIENT SYSTEM STATISTICS" /></td>
 </tr>
 </el:table>
 </el:form>
@@ -58,21 +59,24 @@ return true;
 <el:table className="view">
 <!-- Table Header Bar -->
 <tr class="title caps">
- <td style="width:65%">STATISTICS LABEL</td>
- <td>TOTAL INSTANCES</td>
+ <td style="width:60%">${labelCode}</td>
+ <td>TOTAL USERS</td>
+ <td>PERCENT</td>
 </tr>
 
 <!-- Table Statistics Data -->
 <c:forEach var="stat" items="${stats}">
+<c:set var="pct" value="${stat.count * 100.0 / total}" scope="page" />
 <view:row entry="${stat}">
  <td class="pri bld">${stat.label}</td>
  <td class="bld"><fmt:int value="${stat.count}" /></td>
+ <td class="sec bld"><fmt:dec value="${pct}" />%</td>
 </view:row>
 </c:forEach>
 
 <!-- Bottom Bar -->
 <tr class="title">
- <td colspan="2">&nbsp;</td>
+ <td colspan="3"><view:scrollbar><view:pgUp /> <view:pgDn /></view:scrollbar>&nbsp;</td>
 </tr>
 </el:table>
 </c:if>

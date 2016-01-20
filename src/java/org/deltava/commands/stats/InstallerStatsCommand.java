@@ -1,57 +1,59 @@
-// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
-import java.sql.Connection;
 
 import org.deltava.commands.*;
 
-import org.deltava.dao.GetInstallerSystemInfo;
-import org.deltava.dao.DAOException;
+import org.deltava.dao.*;
 
 import org.deltava.util.ComboUtils;
+import org.deltava.util.StringUtils;
 
 /**
  * A Web Site Command to retrieve Fleet Installer statistics.
  * @author Luke
- * @version 2.6
+ * @version 6.4
  * @since 1.0
  */
 
 public class InstallerStatsCommand extends AbstractCommand {
 	
-	private static final List<?> _sortOptions = ComboUtils.fromArray(new String[] {"Installer Code", "Operating System", "Memory Size", 
-		"Flight Simulator Version"}, new String[] {"INSTALLER", "OS", "MEMORY", "FSVERSION"});
+	private static final String[] SORT_CODES = {"OS_VERSION", "NET_VERSION", "CPU", "CPU_CORE", "CPU_PROC", "GPU", "RAM", "VRAM", "LOCALE", "X", "Y"};
+	private static final String[] SORT_LABELS = {"Operating System", ".NET Version", "CPU Type", "CPU Cores", "CPU Processors",
+		"GPU Type", "Memory Size", "Video Memory", "Locale", "Screen Width", "Screen Height"};
+	private static final List<?> SORT_OPTIONS = ComboUtils.fromArray(SORT_LABELS, SORT_CODES); 
 
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Save combobox choices
-		ctx.setAttribute("sortOptions", _sortOptions, REQUEST);
+		String labelCode = ctx.getParameter("orderBy");
+		ctx.setAttribute("sortOptions", SORT_OPTIONS, REQUEST);
 		
-		// Get the Command Result
-		CommandResult result = ctx.getResult();
-
 		// If we're doing a GET, redirect to the JSP
-		if (ctx.getParameter("orderBy") == null) {
-			result.setURL("/jsp/fleet/logStats.jsp");
+		CommandResult result = ctx.getResult();
+		if (labelCode == null) {
+			result.setURL("/jsp/stats/systemStats.jsp");
 			result.setSuccess(true);
 			return;
 		}
+		
+		// Sanitize input
+		int ofs = Math.max(0, StringUtils.arrayIndexOf(SORT_CODES, labelCode));
+		ctx.setAttribute("labelCode", SORT_LABELS[ofs], REQUEST);
 
 		// Check if we're sorting by label or results
-		boolean sortLabel = "1".equals(ctx.getParameter("sortLabel"));
-
+		boolean sortLabel = Boolean.valueOf(ctx.getParameter("sortLabel")).booleanValue();
 		try {
-			Connection con = ctx.getConnection();
-
-			// Get the DAO and the statistics
-			GetInstallerSystemInfo dao = new GetInstallerSystemInfo(con);
-			ctx.setAttribute("stats", dao.getStatistics(ctx.getParameter("orderBy"), sortLabel), REQUEST);
+			GetSystemInfo dao = new GetSystemInfo(ctx.getConnection());
+			ctx.setAttribute("total", Integer.valueOf(dao.getTotals()), REQUEST);
+			ctx.setAttribute("stats", dao.getStatistics(SORT_CODES[ofs], sortLabel), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
@@ -59,7 +61,7 @@ public class InstallerStatsCommand extends AbstractCommand {
 		}
 
 		// Forward to the JSP
-		result.setURL("/jsp/fleet/logStats.jsp");
+		result.setURL("/jsp/stats/systemStats.jsp");
 		result.setSuccess(true);
 	}
 }
