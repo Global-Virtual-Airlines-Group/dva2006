@@ -113,7 +113,7 @@
  <content:subitem><el:cmd url="landingstats">Landing Statistics</el:cmd></content:subitem>
  <content:subitem><el:cmd url="landings">Optimal Landings</el:cmd></content:subitem>
 <content:filter roles="Operations,Fleet,HR"> 
- <content:subitem><el:cmd url="fleetstats">Fleet Totals</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="fleetstats">Client Configurations</el:cmd></content:subitem>
 </content:filter>
  <content:subitem><el:cmd url="httpstats">Server Statistics</el:cmd></content:subitem>
 </content:submenu>
