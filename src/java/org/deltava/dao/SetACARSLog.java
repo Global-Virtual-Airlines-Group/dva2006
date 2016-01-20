@@ -63,7 +63,7 @@ public class SetACARSLog extends DAO {
 			prepareStatementWithoutLimits("INSERT INTO acars.ERRORS (USERID, CREATED_ON, REMOTE_ADDR, REMOTE_HOST, "
 				+ "CLIENT_BUILD, BETA, FS_VERSION, FSUIPC_VERSION, OS_VERSION, IS64BIT, CLR_VERSION, LOCALE, TZ, ERROR_MSG, "
 				+ "STACKDUMP, STATEDATA) VALUES (?, ?, INET6_ATON(?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-			_ps.setInt(1, err.getUserID());
+			_ps.setInt(1, err.getAuthorID());
 			_ps.setTimestamp(2, createTimestamp(err.getCreatedOn()));
 			_ps.setString(3, err.getRemoteAddr());
 			_ps.setString(4, err.getRemoteHost());
