@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2012, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to write and update Fleet/Document Library metadata.
  * @author Luke
- * @version 5.3
+ * @version 6.4
  * @since 1.0
  */
 
@@ -273,30 +273,6 @@ public class SetLibrary extends DAO {
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
-			throw new DAOException(se);
-		}
-	}
-
-	/**
-	 * Writes Fleet Installer local System Information to the database.
-	 * @param si the SystemInformation bean
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public void write(SystemInformation si) throws DAOException {
-		try {
-			prepareStatement("REPLACE INTO common.SYSINFODATA (ID, OS, GPU, CPU, DIRECTX, MEMORY, "
-					+ "FSVERSION, INSTALLER, CREATED) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-			_ps.setString(1, si.getID());
-			_ps.setString(2, si.getOS());
-			_ps.setString(3, si.getGPU());
-			_ps.setString(4, si.getCPU());
-			_ps.setString(5, si.getDirectX());
-			_ps.setInt(6, si.getRAM());
-			_ps.setInt(7, si.getFSVersion());
-			_ps.setString(8, si.getCode());
-			_ps.setTimestamp(9, createTimestamp(si.getDate()));
-			executeUpdate(1);
-		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 	}
