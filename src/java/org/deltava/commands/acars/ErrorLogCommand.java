@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2012, 2106 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to display ACARS client error reports.
  * @author Luke
- * @version 4.2
+ * @version 6.4
  * @since 1.0
  */
 
@@ -66,7 +66,7 @@ public class ErrorLogCommand extends AbstractViewCommand {
 			Collection<Integer> IDs = new HashSet<Integer>(authorIDs);
 			for (Iterator<?> i = vc.getResults().iterator(); i.hasNext(); ) {
 				ACARSError err = (ACARSError) i.next();
-				IDs.add(Integer.valueOf(err.getUserID()));
+				IDs.add(Integer.valueOf(err.getAuthorID()));
 			}
 			
 			// Load the User IDs
