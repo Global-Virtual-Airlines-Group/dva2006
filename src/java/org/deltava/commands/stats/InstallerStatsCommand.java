@@ -19,9 +19,8 @@ import org.deltava.util.StringUtils;
 
 public class InstallerStatsCommand extends AbstractCommand {
 	
-	private static final String[] SORT_CODES = {"OS_VERSION", "NET_VERSION", "CPU", "CPU_CORE", "CPU_PROC", "GPU", "RAM", "VRAM", "LOCALE", "X", "Y"};
-	private static final String[] SORT_LABELS = {"Operating System", ".NET Version", "CPU Type", "CPU Cores", "CPU Processors",
-		"GPU Type", "Memory Size", "Video Memory", "Locale", "Screen Width", "Screen Height"};
+	private static final String[] SORT_CODES = {"OS_VERSION", "NET_VERSION", "CPU", "CPU_CORE", "CPU_PROC", "GPU", "MEMORY", "VRAM", "LOCALE", "CONCAT_WS('x', X, Y)"};
+	private static final String[] SORT_LABELS = {"Operating System", ".NET Version", "CPU Type", "CPU Cores", "CPU Processors", "GPU Type", "Memory Size", "Video Memory", "Locale", "Screen Size"};
 	private static final List<?> SORT_OPTIONS = ComboUtils.fromArray(SORT_LABELS, SORT_CODES); 
 
 	/**
