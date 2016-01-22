@@ -30,8 +30,8 @@
 	<classpathentry kind="lib" path="lib/jdbf-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-5.1.38-bin.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/javax.mail-1.5.5.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-1.97.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/deploy/jstl-1.2.3.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-1.96.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
