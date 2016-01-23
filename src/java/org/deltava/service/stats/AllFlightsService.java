@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2010, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -15,7 +15,7 @@ import org.deltava.service.*;
 /**
  * A Web Service to display Flight Report statistics to an Google chart.
  * @author Luke
- * @version 6.3
+ * @version 6.4
  * @since 2.1
  */
 
@@ -39,7 +39,7 @@ public class AllFlightsService extends WebService {
 			GetAggregateStatistics stdao = new GetAggregateStatistics(ctx.getConnection());
 			results.addAll(stdao.getPIREPStatistics(FlightStatsSort.DATE, FlightStatsGroup.MONTH));
 			if (!results.isEmpty())
-				results.remove(results.size() - 1);
+				results.remove(0);
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
 		} finally {
@@ -47,6 +47,7 @@ public class AllFlightsService extends WebService {
 		}
 		
 		// Generate the JSON document
+		Collections.reverse(results);
 		JSONArray ja = new JSONArray();
 		for (FlightStatsEntry entry : results) {
 			JSONArray ea = new JSONArray();
@@ -59,7 +60,8 @@ public class AllFlightsService extends WebService {
 		}
 		
 		try {
-			ctx.setContentType("text/javascript", "UTF-8");
+			ctx.setContentType("application/json", "UTF-8");
+			ctx.setExpiry(1800);
 			ctx.println(ja.toString());
 			ctx.commit();
 		} catch (Exception e) {
