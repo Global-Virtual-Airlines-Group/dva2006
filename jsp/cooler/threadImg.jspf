@@ -1,12 +1,20 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<c:if test="${!empty img || !empty thread.imageURLs }">
+<style type="text/css">
+@media (max-width: 1022px) {
+    img.gallery {
+        max-width:98%;    
+    }
+}
+</style></c:if>
 <c:choose>
 <c:when test="${!empty thread.imageURLs}">
 <!-- Linked Image(s) -->
 <tr class="mid">
 <td colspan="3"><c:forEach var="imgLink" items="${thread.imageURLs}">
-<img src="${imgLink.URL}" alt="${imgLink.description}" class="noborder" /><br />
+<img class="gallery" src="${imgLink.URL}" alt="${imgLink.description}" class="noborder" /><br />
 <span class="small">${imgLink.description}</span>
 <c:if test="${access.canDelete || access.canLock || access.canUnlock || access.canUnlinkImage}">
 &nbsp;<el:cmd url="linkedimgkill" link="${thread}" op="${imgLink.ID}" className="pri bld small">UNLINK IMAGE</el:cmd></c:if><br />
@@ -15,13 +23,6 @@
 </tr>
 </c:when>
 <c:when test="${!empty img}">
-<style type="text/css">
-@media (max-width: 1022px) {
-    img.gallery {
-        max-width:98%;    
-    }
-}
-</style>
 <!-- Attached Image -->
 <tr class="mid">
  <td colspan="3"><img class="gallery"  alt="${thread.subject}" src="/gallery/${imgApp.code}/${img.hexID}.${img.typeName}" /></td>
