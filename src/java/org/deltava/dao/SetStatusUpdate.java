@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to write status updates for a Pilot to the database.
  * @author Luke
- * @version 6.3
+ * @version 6.4
  * @since 1.0
  */
 
@@ -45,8 +45,7 @@ public class SetStatusUpdate extends DAO {
 	   // Build the SQL statement
 	   StringBuilder sqlBuf = new StringBuilder("INSERT INTO ");
 	   sqlBuf.append(formatDBName(dbName));
-	   sqlBuf.append(".STATUS_UPDATES (PILOT_ID, AUTHOR_ID, CREATED, TYPE, REMARKS) VALUES (?, ?, ?, ?, ?) ON "
-			   +"DUPLICATE KEY UPDATE CREATED=DATE_ADD(CREATED, INTERVAL 1000 MICROSECOND)");
+	   sqlBuf.append(".STATUS_UPDATES (PILOT_ID, AUTHOR_ID, CREATED, TYPE, REMARKS) VALUES (?, ?, ?, ?, ?)");
 	   
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
@@ -72,8 +71,7 @@ public class SetStatusUpdate extends DAO {
 		
 		try {
 			startTransaction();
-			prepareStatementWithoutLimits("INSERT INTO STATUS_UPDATES (PILOT_ID, AUTHOR_ID, CREATED, TYPE, REMARKS) "
-				+ "VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE CREATED=DATE_ADD(CREATED, INTERVAL 1000 MICROSECOND)");
+			prepareStatementWithoutLimits("INSERT INTO STATUS_UPDATES (PILOT_ID, AUTHOR_ID, CREATED, TYPE, REMARKS) VALUES (?, ?, ?, ?, ?)");
 			
 			long lastUpdateTime = 0;
 			for (StatusUpdate upd : updates) {
