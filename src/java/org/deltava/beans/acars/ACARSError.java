@@ -305,7 +305,7 @@ public class ACARSError extends DatabaseBean implements ClientVersion, AuthoredB
 	 * @see ACARSError#getOSVersion()
 	 */
 	public void setOSVersion(String v) {
-		_osVersion = v;
+		_osVersion = String.valueOf(v);
 	}
 	
 	/**
@@ -323,7 +323,7 @@ public class ACARSError extends DatabaseBean implements ClientVersion, AuthoredB
 	 * @see ACARSError#getCLRVersion()
 	 */
 	public void setCLRVersion(String v) {
-		_clrVersion = v;
+		_clrVersion = String.valueOf(v);
 	}
 	
 	/**
@@ -332,7 +332,7 @@ public class ACARSError extends DatabaseBean implements ClientVersion, AuthoredB
 	 * @see ACARSError#getLocale()
 	 */
 	public void setLocale(String l) {
-		_locale = l;
+		_locale = String.valueOf(l);
 	}
 	
 	/**
@@ -341,7 +341,7 @@ public class ACARSError extends DatabaseBean implements ClientVersion, AuthoredB
 	 * @see ACARSError#getTimeZone()
 	 */
 	public void setTimeZone(String tz) {
-		_tz = tz;
+		_tz = String.valueOf(tz);
 	}
 	
 	/**
