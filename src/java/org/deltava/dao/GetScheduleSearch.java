@@ -1,8 +1,10 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
+
+import org.apache.log4j.Logger;
 
 import org.deltava.beans.schedule.*;
 
@@ -14,11 +16,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to search the Flight Schedule.
  * @author Luke
- * @version 6.3
+ * @version 6.4
  * @since 1.0
  */
 
 public class GetScheduleSearch extends GetSchedule {
+	
+	private static final Logger log = Logger.getLogger(GetScheduleSearch.class);
 	
 	private class SearchParams {
 		private final String _sql;
@@ -292,13 +296,15 @@ public class GetScheduleSearch extends GetSchedule {
 		buf.append(spm.getSQL());
 		buf.append(" AND (S.AIRPORT_D=?) AND (S.AIRPORT_A=?) GROUP BY S.AIRLINE, S.FLIGHT, S.LEG ");
 		if (ssc.getDispatchOnly())
-			buf.append(" HAVING (RCNT>0)");
+			buf.append("HAVING (RCNT>0) ");
+		buf.append("LIMIT ");
+		buf.append(ssc.getFlightsPerRoute());
 
 		// Prepare the satement and execute the query
 		Map<RoutePair, List<ScheduleEntry>> entries = new LinkedHashMap<>();
 		try {
 			for (RoutePair fr : rts) {
-				prepareStatement(buf.toString());
+				prepareStatementWithoutLimits(buf.toString());
 				_ps.setInt(1, ssc.getPilotID());
 				for (int x = 1; x <= spm.size(); x++)
 					_ps.setString(x + 1, spm.getParameter(x - 1));
@@ -308,34 +314,27 @@ public class GetScheduleSearch extends GetSchedule {
 				entries.put(fr, execute());
 			}
 		} catch (SQLException se) {
+			log.error(spm.size() + " " + spm);
 			throw new DAOException(se);
 		}
 		
 		// Iterate through each collection of route pairs, adding flights until we hit the max
-		List<ScheduleEntry> results = new ArrayList<ScheduleEntry>();
-		while ((results.size() < _queryMax) && !entries.isEmpty()) {
-			for (Iterator<List<ScheduleEntry>> i = entries.values().iterator(); i.hasNext() && (results.size() < _queryMax); ) {
-				List<ScheduleEntry> entryList = i.next();
-				int flightsAdded = 0;
-				while ((entryList.size() > 0) && (flightsAdded < ssc.getFlightsPerRoute())) {
-					ScheduleEntry se = entryList.get(0);
-					results.add(se);
-					entryList.remove(0);
-					flightsAdded++;
-				}
-				
-				if (entryList.isEmpty())
-					i.remove();
+		List<ScheduleEntry> results = new ArrayList<ScheduleEntry>(_queryMax + 2);
+		for (Iterator<List<ScheduleEntry>> i = entries.values().iterator(); i.hasNext() && (results.size() < _queryMax); ) {
+			List<ScheduleEntry> entryList = i.next();
+			int flightsAdded = 0;
+			for (Iterator<ScheduleEntry> ei = entryList.iterator(); ei.hasNext() && (flightsAdded < ssc.getFlightsPerRoute()); ) {
+				results.add(ei.next());
+				flightsAdded++;
 			}
 		}
 
 		// Do a sort - check for descending sort
 		String sort = ssc.getSortBy().replace(" DESC", "");
 		int sortType = StringUtils.arrayIndexOf(ScheduleSearchCriteria.SORT_CODES, sort, 0);
-		if (sortType > 0) {
-			Comparator<ScheduleEntry> cmp = new ScheduleEntryComparator(sortType).reversed();
-			results.sort(cmp);
-		} else
+		if (sortType > 0)
+			results.sort(new ScheduleEntryComparator(sortType).reversed());
+		else
 			Collections.shuffle(results);
 			
 		return results;
