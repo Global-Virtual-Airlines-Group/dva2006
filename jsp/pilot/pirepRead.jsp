@@ -315,7 +315,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 <c:if test="${access.canDispose || access.canUpdateComments}">
  <td class="data"><el:textbox name="dComments" width="100" height="5">${pirep.comments}</el:textbox></td>
 </c:if>
-<c:if test="${!access.canDispose && access.canViewComments}">
+<c:if test="${!access.canDispose && !access.canUpdateComments && access.canViewComments}">
  <td class="data"><fmt:msg value="${pirep.comments}" bbCode="true" /></td>
 </c:if>
 </tr>
