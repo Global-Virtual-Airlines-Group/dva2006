@@ -34,16 +34,16 @@ public class TestSecretKeyEncryptors extends TestCase {
         assertEquals(_msg, result);
     }
     
+    public void testAES() {
+        _crypt = new AESEncryptor("Extra-Super Secret AES Key 123456");
+        byte[] code = _crypt.encrypt(_msg.getBytes());
+        String result = new String(_crypt.decrypt(code));
+        assertEquals(_msg, result);
+    }
+    
     public void testInvalidKeys() {
         try {
             _crypt = new DESEncryptor("2short");
-            fail("CryptoException expected");
-        } catch (CryptoException ce) {
-        	// empty
-        }
-        
-        try {
-            _crypt = new BlowfishEncryptor("2short");
             fail("CryptoException expected");
         } catch (CryptoException ce) {
         	// empty
