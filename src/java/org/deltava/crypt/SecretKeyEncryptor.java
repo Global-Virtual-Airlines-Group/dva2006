@@ -1,4 +1,4 @@
-// Copyright 2004, 2008, 2011 Global Virtual Airlines Grouup. All Rights Reserved.
+// Copyright 2004, 2008, 2011, 2016 Global Virtual Airlines Grouup. All Rights Reserved.
 package org.deltava.crypt;
 
 import java.security.spec.KeySpec;
@@ -8,7 +8,7 @@ import javax.crypto.*;
 /**
  * A class to support encrypting/decrypting data using a symetric secret key. 
  * @author Luke
- * @version 4.1
+ * @version 6.4
  * @since 1.0
  */
 
@@ -93,5 +93,17 @@ public abstract class SecretKeyEncryptor {
         } catch (Exception e) {
             throw new CryptoException("Cannot decrypt data", e, data);
         }
+    }
+    
+    /**
+     * Helper method to trim a key if it is longer than a particular size.
+     * @param rawKey the raw key data
+     * @param maxSize the maximum size in bytes
+     * @return the trimmed key
+     */
+    protected static byte[] trimKeySize(byte[] rawKey, int maxSize) {
+        byte[] result = new byte[maxSize];
+        System.arraycopy(rawKey, 0, result, 0, Math.min(8, rawKey.length));
+        return result;
     }
 }
