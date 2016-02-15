@@ -1,4 +1,4 @@
-// Copyright 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A Data Access Object to update Flight Statistics. 
  * @author Luke
- * @version 6.3
+ * @version 6.4
  * @since 6.2
  */
 
@@ -32,12 +32,13 @@ public class SetAggregateStatistics extends DAO {
 	public void update(FlightReport fr) throws DAOException {
 		try {
 			startTransaction();
-			updatePilot(fr.getDatabaseID(DatabaseID.PILOT));
+			updatePilot(fr.getAuthorID());
 			updateAirport(fr.getAirportD(), true);
 			updateAirport(fr.getAirportA(), false);
-			updateRoute(fr.getDatabaseID(DatabaseID.PILOT), fr);
+			updateRoute(fr.getAuthorID(), fr);
 			updateEQ(fr.getEquipmentType());
 			updateDate(fr.getDate());
+			updatePilotDay(fr);
 			if (fr.hasAttribute(FlightReport.ATTR_ACARS))
 				updateLanding(fr);
 			
@@ -96,6 +97,22 @@ public class SetAggregateStatistics extends DAO {
 		_ps.setInt(13, FlightReport.OK);
 		_ps.setInt(14, pilotID);
 		executeUpdate(0);
+	}
+	
+	private void updatePilotDay(FlightReport fr) throws SQLException {
+		
+		// Clean up in case we delete
+		prepareStatementWithoutLimits("DELETE FROM FLIGHTSTATS_PILOT_DAY WHERE (DATE=?) AND (PILOT_ID=?)");
+		_ps.setTimestamp(1, createTimestamp(fr.getDate()));
+		_ps.setInt(2, fr.getAuthorID());
+		executeUpdate(0);
+		
+		if (fr.getStatus() == FlightReport.OK) {
+			prepareStatementWithoutLimits("REPLACE INTO FLIGHTSTATS_PILOT_DAY (DATE, PILOT_ID) VALUES (?, ?)");
+			_ps.setTimestamp(1, createTimestamp(fr.getDate()));
+			_ps.setInt(2, fr.getAuthorID());
+			executeUpdate(1);
+		}
 	}
 
 	/*
