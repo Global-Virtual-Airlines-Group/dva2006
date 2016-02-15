@@ -13,7 +13,7 @@ import org.deltava.beans.ComboAlias;
 public enum FlightStatsSort implements ComboAlias {
 
 	LEGS("Flight Legs", "SL DESC"), MILES ("Miles Flown", "SM DESC"), HOURS("Flight Hours", "SH DESC"), AVGHOURS("Average Hours", "AVGHOURS DESC"),
-	AVGMILES("Average Miles", "AVGMILES DESC"), DATE("Flight Date", "DATE DESC"), ALEGS("ACARS Flights", "SAL DESC"), OLEGS("Online Flights", "OLEGS DESC"),
+	AVGMILES("Average Miles", "AVGMILES DESC"), DATE("Flight Date", "F.DATE DESC"), ALEGS("ACARS Flights", "SAL DESC"), OLEGS("Online Flights", "OLEGS DESC"),
 	OVLEGS("VATSIM Flights", "OVL DESC"), OILEGS("IVAO Flights", "OIL DESC"), HLEGS("Historic Flights", "SHL DESC"), DSPLEGS("Dispatched Flights", "SDL DESC"),
 	PIDS("Distinct Pilots", "PIDS DESC"), PAX("Passengers", "SP DESC");
 	
