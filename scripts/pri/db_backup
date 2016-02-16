@@ -96,7 +96,7 @@ $mysqldump $dump_opt `cat /etc/sqlbackup.conf` acars MESSAGES | $arc_util > acar
 # Write flight statistics
 echo `date +%H:%M:%S`' Writing flight statistics'
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` dva FLIGHTSTATS_AIRPORT FLIGHTSTATS_DATE FLIGHTSTATS_EQTYPE \
- FLIGHTSTATS_LANDING FLIGHTSTATS_PILOT FLIGHTSTATS_ROUTES | $arc_util > dva_stats.sql.bz2
+ FLIGHTSTATS_LANDING FLIGHTSTATS_PILOT FLIGHTSTATS_ROUTES FLIGHTSTATS_PILOT_DAY | $arc_util > dva_stats.sql.bz2
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` afv FLIGHTSTATS_AIRPORT FLIGHTSTATS_DATE FLIGHTSTATS_EQTYPE \
  FLIGHTSTATS_LANDING FLIGHTSTATS_PILOT FLIGHTSTATS_ROUTES FLIGHTSTATS_PILOT_DAY | $arc_util > afv_stats.sql.bz2
 
