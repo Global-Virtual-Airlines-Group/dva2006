@@ -217,7 +217,7 @@
 	</task>
 
 	<!-- Facebook credential validation -->
-	<task id="fbvalidate" enabled="true">
+	<task id="fbvalidate" enabled="false">
 		<class>org.deltava.tasks.FacebookValidationTask</class>
 		<time>
 			<min>0</min>

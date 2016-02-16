@@ -323,7 +323,7 @@
 		</time>
 	</task>
 	
-	<task id="coursepurge" enabled="false">
+	<task id="coursepurge" enabled="true">
 	   <class>org.deltava.tasks.CoursePurgeTask</class>
         <time>
             <min>30</min>
