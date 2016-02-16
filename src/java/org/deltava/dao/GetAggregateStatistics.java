@@ -1,4 +1,4 @@
-// Copyright 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.stats.*;
 /**
  * A Data Access Object to read aggregated Flight Report statistics. 
  * @author Luke
- * @version 6.3
+ * @version 6.4
  * @since 6.2
  */
 
@@ -117,14 +117,18 @@ public class GetAggregateStatistics extends DAO {
 		sqlBuf.append(" AS LABEL, SUM(LEGS) AS SL, SUM(HOURS) AS SH, SUM(MILES) AS SM, SUM(HISTORIC) AS SHL, SUM(DISPATCH) AS SDL, "
 			+ "SUM(ACARS) AS SAL, SUM(VATSIM) AS OVL, SUM(IVAO) AS OIL, SUM(FS2000), SUM(FS2002), SUM(FS2004) AS SFS9, SUM(FSX) AS SFSX, "
 			+ "SUM(P3D) AS SP3D, SUM(XP10) AS SXP, SUM(OTHER_SIM), AVG(LOADFACTOR), SUM(PAX) AS SP, ");
-		sqlBuf.append(grp.isDateGroup() ? "COUNT(DISTINCT PD.PILOT_ID) AS PIDS" : "SUM(PILOTS) AS PIDS");
+		if (grp.isDateGroup() && (grp != FlightStatsGroup.DATE))
+			sqlBuf.append("0 AS PIDS");
+		else
+			sqlBuf.append("SUM(PILOTS) AS PIDS");
+		
 		sqlBuf.append(", SUM(IVAO+VATSIM) AS OLEGS, SUM(MILES)/SUM(LEGS) AS AVGMILES, SUM(HOURS)/SUM(LEGS) AS AVGHOURS FROM ");
 		if (grp.isPilotGroup())
-			sqlBuf.append("FLIGHTSTATS_PILOT F, PILOTS P WHERE (P.ID=F.PILOT_ID)");
+			sqlBuf.append("FLIGHTSTATS_PILOT F");
 		else if (grp.getSQL().contains("EQTYPE"))
 			sqlBuf.append("FLIGHTSTATS_EQTYPE F");
 		else
-			sqlBuf.append("FLIGHTSTATS_DATE F, FLIGHTSTATS_PILOT_DAY PD WHERE (F.DATE=PD.DATE)" );
+			sqlBuf.append("FLIGHTSTATS_DATE F");
 		sqlBuf.append(" GROUP BY LABEL ORDER BY ");
 		sqlBuf.append(s.getSQL());
 
