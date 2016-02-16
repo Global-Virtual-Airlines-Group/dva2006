@@ -23,7 +23,7 @@ golgotha.local.updateSort = function() { return document.forms[0].submit(); };
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<c:set var="sortExclude" value="${isCharter ? 'AVGHOURS,AVGMILES,OLEGS' : ''}" scope="page" />
+<c:set var="sortExclude" value="${isCharter ? 'AVGHOURS,AVGMILES,OLEGS' : 'PIDS'}" scope="page" />
 <content:enum var="sortTypes" className="org.deltava.beans.stats.FlightStatsSort" exclude="${sortExclude}" />
 <content:enum var="groupTypes" className="org.deltava.beans.stats.FlightStatsGroup" />
 
