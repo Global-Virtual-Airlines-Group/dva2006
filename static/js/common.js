@@ -444,16 +444,18 @@ golgotha.nav.toggleBar = function(e) {
 
 golgotha.nav.initMenu = function() {
 	if (!golgotha.nav.sideMenu) return false;
-	var hdr = document.getElementById('hdrLink');
+	var hdrs = golgotha.util.getElementsByClass('mm', null, document.getElementById('header'));
     var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0)
-    if ((w <= 800) && !hdr.hasMenu) {
-    	hdr.hasMenu = true;
-    	hdr.addEventListener('click', golgotha.nav.toggleMenu);
-    } else if ((w > 800) && hdr.hasMenu) {
-    	hdr.removeEventListener('click', golgotha.nav.toggleMenu);
-    	delete hdr.hasMenu;
+    for (var hdr = hdrs.pop(); (hdr != null); hdr = hdrs.pop()) {
+    	if ((w <= 800) && !hdr.hasMenu) {
+    		hdr.hasMenu = true;
+    		hdr.addEventListener('click', golgotha.nav.toggleMenu);
+    	} else if ((w > 800) && hdr.hasMenu) {
+    		hdr.removeEventListener('click', golgotha.nav.toggleMenu);
+    		delete hdr.hasMenu;
+    	}
     }
-    
+
     return true;
 };
 

@@ -1,4 +1,4 @@
-/* DVA2007 Main Cascading Style Sheet (C) 2005, 2006, 2007, 2009, 2010, 2012, 2015 Global Virtual Airlines Group. */
+/* DVA2007 Main Cascading Style Sheet (C) 2005, 2006, 2007, 2009, 2010, 2012, 2015, 2016 Global Virtual Airlines Group. */
 
 /* Formatting for header title caption */
 h1.header {
@@ -18,11 +18,48 @@ h1.header {
     div#header {
         height: 104px;
     }
+
+    div#mobileMenu {
+        display:none;
+    }
 }
 
 @media (max-width: 940px) {
+    div#header {
+        position:relative;
+        height: 48px;
+    }
+
     img.header {
         display:none;
+    }
+
+    #hdrLink {
+        z-index: 20;
+        position:absolute;
+        top: -6px;
+        right: 42px;
+    }
+
+    div#mobileMenu {
+        margin-top: 2px;
+        margin-left: 2px;
+        border: 2px solid #1a4876;
+        border-radius: 6px; 
+        height: 36px;
+        width: 36px;
+        position:relative;
+    }
+
+    #mobileMenu:before { 
+        border-bottom: 17px double #1a4876;
+        border-top: 6px solid #1a4876;    
+        content:"";
+        height: 5px; 
+        position: absolute; 
+        right:3px;  
+        top: 4px; 
+        width:30px;
     }
 }
 

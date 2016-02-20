@@ -4,6 +4,7 @@
 <content:banner var="airlineBanner" />
 <!-- Header Frame -->
 <content:region id="header">
+<div id="mobileMenu" class="mm"></div>
 <el:link url="/"><el:img className="header" src="${airlineBanner}" caption="${airlineName}" /></el:link>
-<h1 id="hdrLink" class="header caps"><content:airline /></h1>
+<h1 id="hdrLink" class="mm header caps"><content:airline /></h1>
 </content:region>
