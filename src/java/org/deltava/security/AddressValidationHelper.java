@@ -1,8 +1,9 @@
-// Copyright 2005, 2007, 2009, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009, 2011, 2012, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.util.Base64;
 import java.util.zip.CRC32;
+import java.nio.charset.StandardCharsets;
 
 import org.deltava.crypt.*;
 
@@ -13,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A helper class to calculate hash code values for e-mail address validation.
  * @author Luke
- * @version 5.4
+ * @version 6.5
  * @since 1.0
  */
 
@@ -35,7 +36,7 @@ public final class AddressValidationHelper {
       Base64.Encoder b64e = Base64.getEncoder();
       MessageDigester md = new MessageDigester(SystemData.get("security.hash.algorithm"));
       md.salt(SystemData.get("security.hash.salt"));
-      return b64e.encodeToString(md.digest(addr.getBytes()));
+      return b64e.encodeToString(md.digest(addr.getBytes(StandardCharsets.UTF_8)));
    }
    
    /**
@@ -46,7 +47,7 @@ public final class AddressValidationHelper {
     */
    public static String calculateCRC32(String addr) {
 	   CRC32 crc = new CRC32();
-	   crc.update(SystemData.get("security.hash.salt").getBytes());
+	   crc.update(SystemData.get("security.hash.salt").getBytes(StandardCharsets.UTF_8));
 	   crc.update(addr.getBytes());
 	   
 	   // Return the CRC32 plus an equals to match the Base64 encoded hashcode
