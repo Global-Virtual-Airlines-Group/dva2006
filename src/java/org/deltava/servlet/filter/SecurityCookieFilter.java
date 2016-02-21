@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.filter;
 
 import java.io.IOException;
@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A servlet filter to handle persistent authentication cookies.
  * @author Luke
- * @version 6.0
+ * @version 6.4
  * @since 1.0
  * @see SecurityCookieData
  * @see SecurityCookieGenerator
@@ -38,7 +38,6 @@ public class SecurityCookieFilter implements Filter {
 	private static final String OTHERADDR_ATTR_NAME = "otherIPTypeAddr";
 	
 	private ConnectionPool _jdbcPool;
-	private boolean _forceSSL;
 	
 	/**
 	 * Called by the servlet container when the filter is started. Logs a message and saves the servlet context.
@@ -47,10 +46,10 @@ public class SecurityCookieFilter implements Filter {
 	@Override
 	public void init(FilterConfig cfg) throws ServletException {
 		try {
-			SecretKeyEncryptor enc = new DESEncryptor(SystemData.get("security.desKey"));
+			SecretKeyEncryptor enc = new AESEncryptor(SystemData.get("security.aesKey"));
 			SecurityCookieGenerator.init(enc);
 		} catch (NullPointerException npe) {
-			throw new ServletException("No 3DES Key provided");
+			throw new ServletException("No AES Key provided");
 		} catch (CryptoException ce) {
 			throw new ServletException("Error Initializing Security Cookie key", ce);
 		}
@@ -58,9 +57,6 @@ public class SecurityCookieFilter implements Filter {
 		// Initialize the JDBC Connection pool
 		_jdbcPool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
 		log.info("Started");
-		
-		// Check if we need SSL - filters are notified after context listeners per spec
-		_forceSSL = SystemData.getApp(SystemData.get("airline.code")).getSSL();
 	}
 
 	/*
@@ -92,8 +88,6 @@ public class SecurityCookieFilter implements Filter {
 		// Cast the request/response since we are doing stuff with them
 		HttpServletRequest hreq = (HttpServletRequest) req;
 		HttpServletResponse hrsp = (HttpServletResponse) rsp;
-		if (_forceSSL && hreq.isSecure())
-			hrsp.setHeader("strict-transport-security", "max-age=86400;");
 		
 		// Check for the authentication cookie
 		String authCookie = getCookie(hreq, AUTH_COOKIE_NAME);
