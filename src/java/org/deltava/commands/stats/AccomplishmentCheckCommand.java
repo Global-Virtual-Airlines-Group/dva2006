@@ -1,4 +1,4 @@
-// Copyright 2010, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to recalculate what Accomplishments a Pilot has achieved.
  * @author Luke
- * @version 6.3
+ * @version 6.4
  * @since 3.2
  */
 
@@ -69,7 +69,7 @@ public class AccomplishmentCheckCommand extends AbstractCommand {
 			for (ConnectionEntry ce : cons) {
 				DispatchConnectionEntry dce = (DispatchConnectionEntry) ce;
 				Collection<FlightInfo> dspFlights = dcdao.getDispatchedFlights(dce);
-				dspFlights.forEach(fi -> dce.addFlight(fi));
+				dce.addFlights(dspFlights);
 				helper.add(ce);
 			}
 

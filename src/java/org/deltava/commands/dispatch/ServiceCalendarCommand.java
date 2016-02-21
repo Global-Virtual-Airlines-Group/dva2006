@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.dispatch;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.security.command.DispatchScheduleAccessControl;
 /**
  * A Web Site Command to display the ACARS Dispatch service calendar.
  * @author Luke
- * @version 3.6
+ * @version 6.4
  * @since 2.2
  */
 
@@ -28,6 +28,7 @@ public class ServiceCalendarCommand extends AbstractCalendarCommand {
 			super();
 		}
 		
+		@Override
 		public int compare(DispatchConnectionEntry dce1, DispatchConnectionEntry dce2) {
 			int tmpResult = Integer.valueOf(dce1.getAuthorID()).compareTo(Integer.valueOf(dce2.getAuthorID()));
 			if (tmpResult == 0)
@@ -42,6 +43,7 @@ public class ServiceCalendarCommand extends AbstractCalendarCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Check if we load history
@@ -74,7 +76,7 @@ public class ServiceCalendarCommand extends AbstractCalendarCommand {
 			Collection<Integer> IDs = new HashSet<Integer>();
 			for (Iterator<DispatchScheduleEntry> i = schedEntries.iterator(); i.hasNext(); ) {
 				DispatchScheduleEntry e = i.next();
-				IDs.add(new Integer(e.getAuthorID()));
+				IDs.add(Integer.valueOf(e.getAuthorID()));
 				
 				// Get access
 				DispatchScheduleAccessControl access = new DispatchScheduleAccessControl(ctx, e);
@@ -91,12 +93,11 @@ public class ServiceCalendarCommand extends AbstractCalendarCommand {
 				Collection<Integer> conIDs = new HashSet<Integer>();
 				for (Iterator<ConnectionEntry> i = cons.iterator(); i.hasNext(); ) {
 					DispatchConnectionEntry ce = (DispatchConnectionEntry) i.next();
-					conIDs.add(new Integer(ce.getPilotID()));
+					conIDs.add(Integer.valueOf(ce.getPilotID()));
 					
 					// Load the flights
 					Collection<FlightInfo> flights = dcdao.getDispatchedFlights(ce);
-					for (FlightInfo fi : flights)
-						ce.addFlight(fi);
+					ce.addFlights(flights);
 					
 					// Prune out any entries with no flights and less than 2 minutes long
 					if (ce.getEndTime() != null) {
@@ -137,8 +138,7 @@ public class ServiceCalendarCommand extends AbstractCalendarCommand {
 				long timeDiff = (ce.getStartTime().getTime() - lastEntry.getEndTime().getTime()) / 1000;
 				if (timeDiff < 900) {
 					lastEntry.setEndTime(ce.getEndTime());
-					for (FlightInfo inf : ce.getFlights())
-						lastEntry.addFlight(inf);
+					lastEntry.addFlights(ce.getFlights());
 				} else {
 					lastEntry = ce;
 					entries.add(ce);	

@@ -1,4 +1,4 @@
-// Copyright 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to calculate what Pilots are eligible for an Accomplishment.
  * @author Luke
- * @version 6.3
+ * @version 6.4
  * @since 3.6
  */
 
@@ -74,7 +74,7 @@ public class AccomplishmentUpdateCommand extends AbstractCommand {
 					for (ConnectionEntry ce : cons) {
 						DispatchConnectionEntry dce = (DispatchConnectionEntry) ce;
 						Collection<FlightInfo> flights = dcdao.getDispatchedFlights(dce);
-						flights.forEach(fi -> dce.addFlight(fi));
+						dce.addFlights(flights);
 						helper.add(dce);
 					}
 				} else if (a.getUnit().getDataRequired() == AccomplishUnit.Data.FLIGHTS) {
