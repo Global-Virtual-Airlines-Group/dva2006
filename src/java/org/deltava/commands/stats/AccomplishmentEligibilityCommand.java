@@ -1,4 +1,4 @@
-// Copyright 2010, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to check eligibility for particular Accomplishments.
  * @author Luke
- * @version 6.0
+ * @version 6.4
  * @since 3.2
  */
 
@@ -37,6 +37,7 @@ public class AccomplishmentEligibilityCommand extends AbstractCommand {
 			_progress = progress;
 		}
 		
+		@Override
 		public String getRowClassName() {
 			return _isOK ? null : "opt2";
 		}
@@ -102,18 +103,24 @@ public class AccomplishmentEligibilityCommand extends AbstractCommand {
 			for (ConnectionEntry ce : cons) {
 				DispatchConnectionEntry dce = (DispatchConnectionEntry) ce;
 				Collection<FlightInfo> dspFlights = dcdao.getDispatchedFlights(dce);
-				dspFlights.forEach(fi -> dce.addFlight(fi));
+				dce.addFlights(dspFlights);
 				helper.add(ce);
 			}
-
-			// Loop through accomplishments
+			
+			// Filter the accomplishments - we include only achieved or the lowest unachieved accomplishment per unit
+			Map<AccomplishUnit, Accomplishment> accFilter = new HashMap<AccomplishUnit, Accomplishment>();
 			Map<Accomplishment, EligibilityMessage> accData = new LinkedHashMap<Accomplishment, EligibilityMessage>();
 			for (Accomplishment a : accs) {
 				Date dt = helper.achieved(a);
 				if (dt == null) {
-					Collection<?> missing = helper.missing(a);
-					long progress = helper.getProgress(a);
-					accData.put(a, new EligibilityMessage(progress, missing));
+					Accomplishment fa = accFilter.get(a.getUnit());
+					if ((fa == null) || a.getAlwaysDisplay() || (a.getValue() < fa.getValue())) {
+						Collection<?> missing = helper.missing(a);	
+						long progress = helper.getProgress(a);
+						accData.put(a, new EligibilityMessage(progress, missing));
+						if (!a.getAlwaysDisplay())
+							accFilter.put(a.getUnit(), a);
+					}
 				} else
 					accData.put(new DatedAccomplishment(dt, a), new EligibilityMessage(true));
 			}
