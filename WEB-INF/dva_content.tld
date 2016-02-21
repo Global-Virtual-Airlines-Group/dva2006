@@ -167,6 +167,18 @@
 	</tag>
 
 	<tag>
+	   <description>Server Name tag, for saving the URL host into a request variable</description>
+	   <name>serverName</name>
+	   <tag-class>org.deltava.taglib.content.ServerNameTag</tag-class>
+	   <body-content>empty</body-content>
+	   <attribute>
+            <name>var</name>
+            <required>true</required>
+            <rtexprvalue>false</rtexprvalue>
+        </attribute>
+	</tag>
+
+	<tag>
 		<description>Role Attribute tag, for adding request attributes based on security role</description>
 		<name>attr</name>
 		<tag-class>org.deltava.taglib.content.RoleAttributeTag</tag-class>

@@ -99,7 +99,7 @@ return true;
 <%@ include file="/jsp/cooler/header.jspf" %> 
 <%@ include file="/jsp/cooler/sideMenu.jspf" %>
 <content:browser human="true"><c:set var="isHuman" value="true" scope="page" /></content:browser>
-<c:set var="serverName" value="${pageContext.request.serverName}" scope="page" />
+<content:serverName var="serverName" />
 <content:sysdata var="imgPath" name="path.img" />
 <content:protocol var="reqProtocol" />
 <c:set var="postCount" value="${fn:sizeof(thread.posts)}" scope="page" />
@@ -233,7 +233,7 @@ APPLICANT<br />
 </c:when>
 <c:when test="${pilot.hasDefaultSignature}">
 <!-- Default Signature Image -->
-<c:set var="sigImgHost" value="${(pilotLoc.domain == ourDomain) ? pageContext.request.serverName : pilotLoc.domain}" scope="page" />
+<c:set var="sigImgHost" value="${(pilotLoc.domain == ourDomain) ? serverName : pilotLoc.domain}" scope="page" />
 <c:if test="${pilotLoc.domain != ourDomain}"><c:set var="sigImgHost" value="www.${sigImgHost}" scope="page" /></c:if>
 <el:table className="${pilotLoc.airlineCode}_defaultSig nophone"><tr>
  <td valign="bottom" class="sig" style="background-image: url(${reqProtocol}://${sigImgHost}/${imgPath}/sig/${fn:lower(pilot.equipmentType)}.png);">
