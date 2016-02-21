@@ -75,11 +75,11 @@ public final class SecurityCookieGenerator {
 		
 		// Get the message digest for the token
 		Base64.Encoder b64e = Base64.getEncoder();
-		MessageDigester md = new MessageDigester("MD5");
+		MessageDigester md = new MessageDigester("SHA-1");
 		String digest = b64e.encodeToString(md.digest(buf.toString().getBytes(StandardCharsets.UTF_8)));
 		
 		// Validate the token signature against what we calculated
-		if (!digest.equals(cookieData.get("md5")))
+		if (!digest.equals(cookieData.get("sha1")))
 			throw new SecurityException("Security Cookie decryption failure - " + buf.toString());
 		
 		// Initalize the cookie data
@@ -114,11 +114,11 @@ public final class SecurityCookieGenerator {
 		
 		// Get the message digest for the token
 		Base64.Encoder b64e = Base64.getEncoder();
-		MessageDigester md = new MessageDigester("MD5");
+		MessageDigester md = new MessageDigester("SHA-1");
 		String digest = b64e.encodeToString(md.digest(buf.toString().getBytes(StandardCharsets.UTF_8)));
 		
 		// Append the message digest
-		buf.append("@md5:");
+		buf.append("@sha1:");
 		buf.append(digest);
 		
 		// Encrypt the token

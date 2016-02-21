@@ -366,7 +366,7 @@
 	
 	<security>
 		<ssl type="Boolean">true</ssl>
-		<desKey>super-secret extra-special 3DeS key</desKey>
+		<aesKey>DeltaVA super-secret AES cookie key</aesKey>
 		<hash>
 			<salt>hashcode salt</salt>
 			<algorithm>SHA-1</algorithm>
