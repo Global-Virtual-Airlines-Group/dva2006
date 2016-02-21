@@ -371,7 +371,7 @@
 
 	<security>
 		<ssl type="Boolean">true</ssl>
-		<desKey>super-secret extra-special 3DeS key</desKey>
+		<aesKey>DeltaVA super-secret AES cookie key</aesKey>
 		<hash>
 			<salt>hash!!salt</salt>
 			<algorithm>SHA-1</algorithm>
@@ -558,12 +558,13 @@
 	</smtp>
 
 	<registration>
-		<list name="reject_domain" attr="domain">
+		<list name="reject_domain" attr="domain" unique="true">
 			<domain>hotmail.com</domain>
 			<domain>hotmail.co.uk</domain>
 			<domain>outlook.com</domain>
 			<domain>live.com</domain>
 			<domain>msn.com</domain>
+			<domain>live.co.uk</domain>
 		</list>
 
 		<auto_reject type="Integer">5</auto_reject>
@@ -585,11 +586,8 @@
 		<show type="Boolean">true</show>
 		<list name="versions" attr="version" sorted="true">
 			<version>2.2</version>
-			<version>3.0</version>
-			<version>4.0</version>
-			<version>4.1</version>
-			<version>5.1</version>
-			<version>5.2</version>
+			<version>3.1</version>
+			<version>6.4</version>
 		</list>
 		
 		<assignto>
