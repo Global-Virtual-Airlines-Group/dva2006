@@ -300,7 +300,7 @@ public class ApplicantCommand extends AbstractFormCommand {
 		}
 		
 		// If we have too many, abort
-		if (soundexIDs.size() > 1500)
+		if (soundexIDs.size() > 500)
 			soundexIDs.clear();
 
 		// Load the locations of all these matches
@@ -319,13 +319,30 @@ public class ApplicantCommand extends AbstractFormCommand {
 		}
 
 		// Filter out applicants where the pilot already matches
+		Collection<UserData> addUsers = new HashSet<UserData>();
 		for (Iterator<Person> i = persons.values().iterator(); i.hasNext();) {
 			Person p = i.next();
 			if (p instanceof Applicant) {
 				Applicant ap = (Applicant) p;
-				if (persons.containsKey(new Integer(ap.getPilotID())))
+				if (persons.containsKey(Integer.valueOf(ap.getPilotID())))
 					i.remove();
+				else if ((ap.getStatus() == Applicant.APPROVED) && (ap.getPilotID() != 0)) {
+					UserData ud = uddao.get(ap.getPilotID());
+					if (ud != null) {
+						addUsers.add(ud);
+						i.remove();
+					}
+				}
 			}
+		}
+		
+		// Load additional users
+		for (UserData ud : addUsers) {
+			Integer id = Integer.valueOf(ud.getID());
+			udmap.put(id, ud);
+			Pilot p = pdao.get(ud);
+			if (p != null)
+				persons.put(id, p);
 		}
 
 		// Save the persons in the request
@@ -333,5 +350,6 @@ public class ApplicantCommand extends AbstractFormCommand {
 		List<Person> users = new ArrayList<Person>(persons.values());
 		users.sort(cmp);
 		ctx.setAttribute("soundexUsers", users, REQUEST);
+		ctx.setAttribute("userData", udmap, REQUEST);
 	}
 }
