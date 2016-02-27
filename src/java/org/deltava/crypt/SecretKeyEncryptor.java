@@ -103,7 +103,7 @@ public abstract class SecretKeyEncryptor {
      */
     protected static byte[] trimKeySize(byte[] rawKey, int maxSize) {
         byte[] result = new byte[maxSize];
-        System.arraycopy(rawKey, 0, result, 0, Math.min(8, rawKey.length));
+        System.arraycopy(rawKey, 0, result, 0, Math.min(maxSize, rawKey.length));
         return result;
     }
 }
