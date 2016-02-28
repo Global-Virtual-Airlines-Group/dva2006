@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2011, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Aircraft data.
  * @author Luke
- * @version 6.0
+ * @version 6.4
  * @since 1.0
  */
 
@@ -82,8 +82,7 @@ public class GetAircraft extends DAO {
 	 */
 	public Collection<Aircraft> getAircraftTypes(String airlineCode) throws DAOException {
 		try {
-			prepareStatement("SELECT A.* FROM common.AIRCRAFT A, common.AIRCRAFT_AIRLINE AA WHERE "
-				+ "(A.NAME=AA.NAME) AND (AA.AIRLINE=?)");
+			prepareStatement("SELECT A.* FROM common.AIRCRAFT A, common.AIRCRAFT_AIRLINE AA WHERE (A.NAME=AA.NAME) AND (AA.AIRLINE=?)");
 			_ps.setString(1, airlineCode);
 			return execute();
 		} catch (SQLException se) {
@@ -140,6 +139,7 @@ public class GetAircraft extends DAO {
 				a.setMaxZeroFuelWeight(rs.getInt(23));
 				a.setTakeoffRunwayLength(rs.getInt(24));
 				a.setLandingRunwayLength(rs.getInt(25));
+				a.setUseSoftRunways(rs.getBoolean(26));
 				results.put(a.getName(), a);
 			}
 		}

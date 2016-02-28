@@ -32,8 +32,7 @@ public class SetACARSRunway extends SetACARSData {
 	 */
 	public void writeRunways(int flightID, Runway rwyD, Runway rwyA) throws DAOException {
 		try {
-			prepareStatement("REPLACE INTO acars.RWYDATA (ID, ICAO, RUNWAY, LATITUDE, LONGITUDE, LENGTH, DISTANCE, "
-				+ "ISTAKEOFF) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+			prepareStatement("REPLACE INTO acars.RWYDATA (ID, ICAO, RUNWAY, LATITUDE, LONGITUDE, LENGTH, DISTANCE, ISTAKEOFF) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setInt(1, flightID);
 			if (rwyD != null) {
 				int dist = (rwyD instanceof RunwayDistance) ? ((RunwayDistance) rwyD).getDistance() : 0;

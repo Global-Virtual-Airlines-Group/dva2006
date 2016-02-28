@@ -1,23 +1,21 @@
-// Copyright 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.*;
 
 import org.deltava.beans.GeoLocation;
-import org.deltava.beans.schedule.ICAOAirport;
 
 import org.deltava.util.GeoUtils;
 
 /**
  * A bean to store runway selection results. 
  * @author Luke
- * @version 5.1
+ * @version 6.4
  * @since 4.2
  */
 
 public class LandingRunways {
 	
-	private final ICAOAirport _ap;
 	private final GeoLocation _loc;
 	private final int _hdg;
 	
@@ -60,6 +58,7 @@ public class LandingRunways {
 			return _xBrgDiff;
 		}
 		
+		@Override
 		public String toString() {
 			StringBuilder buf = new StringBuilder(_r.getName());
 			buf.append(",hD=");
@@ -71,10 +70,12 @@ public class LandingRunways {
 			return buf.toString();
 		}
 		
+		@Override
 		public int hashCode() {
 			return _r.hashCode();
 		}
 		
+		@Override
 		public int compareTo(PossibleRunway pr) {
 			int tmpResult = Integer.valueOf((int) _hdgDiff / 45).compareTo(Integer.valueOf((int) pr._hdgDiff / 45));
 			if (tmpResult == 0)
@@ -85,13 +86,11 @@ public class LandingRunways {
 
 	/**
 	 * Initializes the bean.
-	 * @param a the ICAOAirport
 	 * @param loc the touchdown location
 	 * @param hdg the true heading at touchdown
 	 */
-	public LandingRunways(ICAOAirport a, GeoLocation loc, int hdg) {
+	public LandingRunways(GeoLocation loc, int hdg) {
 		super();
-		_ap = a;
 		_loc = loc;
 		_hdg = hdg;
 	}
@@ -103,7 +102,7 @@ public class LandingRunways {
 	public void addAll(Collection<Runway> rwys) {
 		for (Runway r : rwys) {
 			double bearing = GeoUtils.course(r, _loc);
-			double hdgDiff = GeoUtils.delta(r.getHeading() + _ap.getMagVar(), _hdg);
+			double hdgDiff = GeoUtils.delta(r.getHeading() + r.getMagVar(), _hdg);
 			double brgDiff = GeoUtils.delta(r.getHeading(), bearing);
 			_rwys.add(new PossibleRunway(r, hdgDiff, brgDiff, bearing));
 		}
@@ -127,7 +126,8 @@ public class LandingRunways {
 	public Collection<PossibleRunway> getRunways() {
 		return new ArrayList<PossibleRunway>(_rwys);
 	}
-	
+
+	@Override
 	public String toString() {
 		return _rwys.toString();
 	}

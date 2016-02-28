@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2015 Globa Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2015, 2016 Globa Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.util.*;
 /**
  * A class for storing airport information.
  * @author Luke
- * @version 6.3
+ * @version 6.4
  * @since 1.0
  */
 
@@ -39,7 +39,6 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 	private String _name;
 	private int _alt;
 	private int _maxRunwayLength;
-	private double _magVar;
 	private String _region;
 	private String _supercededAirport;
 	private boolean _adseX;
@@ -106,14 +105,6 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 	 */
 	public void setTZ(String tzID) {
 		_tz = TZInfo.get(tzID);
-	}
-	
-	/**
-	 * Sets this airport's magnetic variation.
-	 * @param mv the magnetic variation in degrees
-	 */
-	public void setMagVar(double mv) {
-		_magVar = mv;
 	}
 	
 	/**
@@ -274,15 +265,6 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 		}
 
 		return null;
-	}
-	
-	/**
-	 * Returns this airport's magnetic variation.
-	 * @return the magnetic variation in degrees 
-	 */
-	@Override
-	public double getMagVar() {
-		return _magVar;
 	}
 	
 	/**
@@ -537,7 +519,6 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 	public Object clone() {
 		Airport a2 = new Airport(_iata, _icao, _name);
 		a2._alt = _alt;
-		a2._magVar = _magVar;
 		a2._region = _region;
 		a2._supercededAirport = _supercededAirport;
 		a2._adseX = _adseX;

@@ -1,11 +1,10 @@
-// Copyright 2006, 2007, 2008, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.schedule.Aircraft;
-import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -18,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Aircraft profiles.
  * @author Luke
- * @version 5.0
+ * @version 6.4
  * @since 1.0
  */
 
@@ -69,6 +68,7 @@ public class AircraftCommand extends AbstractFormCommand {
 			a.setIATA(StringUtils.split(ctx.getParameter("iataCodes"), "\n"));
 			a.setHistoric(Boolean.valueOf(ctx.getParameter("isHistoric")).booleanValue());
 			a.setETOPS(Boolean.valueOf(ctx.getParameter("isETOPS")).booleanValue());
+			a.setUseSoftRunways(Boolean.valueOf(ctx.getParameter("useSoftRwy")).booleanValue());
 			a.setSeats(StringUtils.parse(ctx.getParameter("seats"), 0));
 			a.setTakeoffRunwayLength(StringUtils.parse(ctx.getParameter("toRunwayLength"), 0));
 			a.setLandingRunwayLength(StringUtils.parse(ctx.getParameter("lndRunwayLength"), 0));
@@ -88,10 +88,8 @@ public class AircraftCommand extends AbstractFormCommand {
 			a.clearApps();
 			Collection<String> apps = ctx.getParameters("airlines");
 			if (apps != null) {
-				for (Iterator<String> i = apps.iterator(); i.hasNext(); ) {
-					AirlineInformation ai = SystemData.getApp(i.next());
-					a.addApp(ai);
-				}
+				for (Iterator<String> i = apps.iterator(); i.hasNext(); )
+					a.addApp(SystemData.getApp(i.next()));
 			}
 			
 			// Get the DAO and update the database

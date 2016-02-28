@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to update the Flight Schedule.
  * @author Luke
- * @version 6.0
+ * @version 6.4
  * @since 1.0
  */
 
@@ -334,8 +334,8 @@ public class SetSchedule extends DAO {
 			startTransaction();
 			prepareStatement("INSERT INTO common.AIRCRAFT (NAME, FULLNAME, FAMILY, ACRANGE, IATA, HISTORIC, ETOPS, SEATS, "
 				+ "ENGINES, ENGINE_TYPE, CRUISE_SPEED, FUEL_FLOW, BASE_FUEL, TAXI_FUEL, PRI_TANKS, PRI_PCT, SEC_TANKS, "
-				+ "SEC_PCT, OTHER_TANKS, MAX_WEIGHT, MAX_TWEIGHT, MAX_LWEIGHT, MAX_ZFW, TO_RWLENGTH, LN_RWLENGTH) "
-				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+				+ "SEC_PCT, OTHER_TANKS, MAX_WEIGHT, MAX_TWEIGHT, MAX_LWEIGHT, MAX_ZFW, TO_RWLENGTH, LN_RWLENGTH, "
+				+ "SOFT_RWY) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setString(1, a.getName());
 			_ps.setString(2, a.getFullName());
 			_ps.setString(3, a.getFamily());
@@ -361,6 +361,7 @@ public class SetSchedule extends DAO {
 			_ps.setInt(23, a.getMaxZeroFuelWeight());
 			_ps.setInt(24, a.getTakeoffRunwayLength());
 			_ps.setInt(25, a.getLandingRunwayLength());
+			_ps.setBoolean(26, a.getUseSoftRunways());
 			executeUpdate(1);
 			
 			// Add the webapps
@@ -393,7 +394,7 @@ public class SetSchedule extends DAO {
 			prepareStatement("UPDATE common.AIRCRAFT SET ACRANGE=?, IATA=?, HISTORIC=?, ENGINES=?, ENGINE_TYPE=?, "
 				+ "CRUISE_SPEED=?, FUEL_FLOW=?, BASE_FUEL=?, TAXI_FUEL=?, PRI_TANKS=?, PRI_PCT=?, SEC_TANKS=?, "
 				+ "SEC_PCT=?, OTHER_TANKS=?, ETOPS=?, MAX_WEIGHT=?, MAX_TWEIGHT=?, MAX_LWEIGHT=?, MAX_ZFW=?, "
-				+ "SEATS=?, TO_RWLENGTH=?, LN_RWLENGTH=?, FULLNAME=?, FAMILY=?, NAME=? WHERE (NAME=?)");
+				+ "SEATS=?, TO_RWLENGTH=?, LN_RWLENGTH=?, FULLNAME=?, FAMILY=?, SOFT_RWY=?, NAME=? WHERE (NAME=?)");
 			_ps.setInt(1, a.getRange());
 			_ps.setString(2, StringUtils.listConcat(a.getIATA(), ",").replace("\r", ""));
 			_ps.setBoolean(3, a.getHistoric());
@@ -418,8 +419,9 @@ public class SetSchedule extends DAO {
 			_ps.setInt(22, a.getLandingRunwayLength());
 			_ps.setString(23, a.getFullName());
 			_ps.setString(24, a.getFamily());
-			_ps.setString(25, a.getName());
-			_ps.setString(26, oldName);
+			_ps.setBoolean(25, a.getUseSoftRunways());
+			_ps.setString(26, a.getName());
+			_ps.setString(27, oldName);
 			executeUpdate(1);
 
 			// Clean out the webapps
@@ -476,13 +478,11 @@ public class SetSchedule extends DAO {
 			_ps.setString(1, SystemData.get("airline.code"));
 			executeUpdate(0);
 			
-			prepareStatementWithoutLimits("INSERT INTO common.AIRPORT_AIRLINE (SELECT DISTINCT AIRLINE, AIRPORT_D, ? "
-				+ "FROM SCHEDULE)");
+			prepareStatementWithoutLimits("INSERT INTO common.AIRPORT_AIRLINE (SELECT DISTINCT AIRLINE, AIRPORT_D, ? FROM SCHEDULE)");
 			_ps.setString(1, SystemData.get("airline.code"));
 			executeUpdate(0);
 			
-			prepareStatementWithoutLimits("REPLACE INTO common.AIRPORT_AIRLINE (SELECT DISTINCT AIRLINE, AIRPORT_D, ? "
-					+ "FROM SCHEDULE)");
+			prepareStatementWithoutLimits("REPLACE INTO common.AIRPORT_AIRLINE (SELECT DISTINCT AIRLINE, AIRPORT_D, ? FROM SCHEDULE)");
 			_ps.setString(1, SystemData.get("airline.code"));
 			executeUpdate(0);
 			commitTransaction();

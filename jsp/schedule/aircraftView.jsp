@@ -65,12 +65,13 @@
  <td class="data"><fmt:list value="${aircraft.IATA}" delim=", " /></td>
 </tr>
 </c:if>
-<c:if test="${aircraft.historic || aircraft.ETOPS}">
+<c:if test="${aircraft.historic || aircraft.ETOPS || aircraft.useSoftRunways}">
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data"><c:if test="${aircraft.historic}"><span class="sec bld caps">This is a Historic Aircraft</span>
-<c:if test="${aircraft.ETOPS}"><br /></c:if></c:if>
-<c:if test="${aircraft.ETOPS}"><span class="ter bld caps">This Aircraft is ETOPS-rated</span></c:if></td>
+<c:if test="${aircraft.ETOPS || aircraft.useSoftRunways}"><br /></c:if></c:if>
+<c:if test="${aircraft.ETOPS}"><span class="ter bld caps">This Aircraft is ETOPS-rated</span>
+<c:if test="${aircraft.useSoftRunways}"><span class="bld caps">This Aircraft is authroized for soft runway operation</span></c:if></c:if></td>
 </tr>
 </c:if>
 <tr class="title caps">
