@@ -88,7 +88,8 @@ return true;
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="isHistoric" idx="*" value="true" checked="${aircraft.historic}" label="This is a Historic Aircraft" /><br />
-<el:box name="isETOPS" idx="*" value="true" checked="${aircraft.ETOPS}" label="This Aircraft is ETOPS-rated" /></td>
+<el:box name="isETOPS" idx="*" value="true" checked="${aircraft.ETOPS}" label="This Aircraft is ETOPS-rated" /><br />
+<el:box name="useSoftRwy" idx="*" value="true" checked="${aicraft.useSoftRunways}" label="This Aircraft can use unpaved runways" /></td>
 </tr>
 <tr>
  <td class="label top">Web Applications</td>

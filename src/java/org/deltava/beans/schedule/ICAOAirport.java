@@ -1,4 +1,4 @@
-// Copyright 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import org.deltava.beans.GeospaceLocation;
@@ -6,7 +6,7 @@ import org.deltava.beans.GeospaceLocation;
 /**
  * An interface to mark airport beans with an ICAO code. 
  * @author Luke
- * @version 4.2
+ * @version 6.4
  * @since 2.7
  */
 
@@ -17,10 +17,4 @@ public interface ICAOAirport extends GeospaceLocation {
 	 * @return the ICAO code
 	 */
 	public String getICAO();
-	
-	/**
-	 * Returns the magnetic variation at this airport.
-	 * @return the variation in degrees
-	 */
-	public double getMagVar();
 }

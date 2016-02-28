@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -10,11 +10,10 @@ import org.deltava.util.*;
 import org.deltava.util.cache.Cacheable;
 
 /**
- * A bean to store Aircraft type information and ACARS fuel profiles. Fuel is loaded in ACARS in the order of primary,
- * secondary and other tanks, and each Microsoft Flight Simulator fuel tank can be assigned to one of these three tank
- * types.
+ * A bean to store Aircraft type information and ACARS fuel profiles. Fuel is loaded in ACARS in the order of primary, secondary
+ * and other tanks, and each Microsoft Flight Simulator fuel tank can be assigned to one of these three tank types.
  * @author Luke
- * @version 5.0
+ * @version 6.4
  * @since 1.0
  */
 
@@ -30,6 +29,7 @@ public class Aircraft implements Comparable<Aircraft>, Cacheable, ViewEntry {
 			return toString();
 		}
 		
+		@Override
 		public String toString() {
 			return name().substring(0, 1) + name().substring(1).toLowerCase();
 		}
@@ -39,6 +39,7 @@ public class Aircraft implements Comparable<Aircraft>, Cacheable, ViewEntry {
 	private String _fullName;
 	private boolean _historic;
 	private boolean _etops;
+	private boolean _useSoftRunway;
 	
 	private String _family;
 
@@ -121,6 +122,15 @@ public class Aircraft implements Comparable<Aircraft>, Cacheable, ViewEntry {
 	 */
 	public boolean getHistoric() {
 		return _historic;
+	}
+	
+	/**
+	 * Returns whether this aircraft can use soft runways.
+	 * @return TRUE if soft runways available, otherwise FALSE
+	 * @see Aircraft#setUseSoftRunways(boolean)
+	 */
+	public boolean getUseSoftRunways() {
+		return _useSoftRunway;
 	}
 	
 	/**
@@ -409,6 +419,15 @@ public class Aircraft implements Comparable<Aircraft>, Cacheable, ViewEntry {
 	}
 	
 	/**
+	 * Updates whether this aircraft can use soft runways.
+	 * @param sr TRUE if soft runways available, otherwise FALSE
+	 * @see Aircraft#getUseSoftRunways()
+	 */
+	public void setUseSoftRunways(boolean sr) {
+		_useSoftRunway = sr;
+	}
+	
+	/**
 	 * Updates whether this aircraft is ETOPS-rated.
 	 * @param isETOPS TRUE if ETOPS-rated, otherwise FALSE
 	 */
@@ -608,42 +627,32 @@ public class Aircraft implements Comparable<Aircraft>, Cacheable, ViewEntry {
 		}
 	}
 
-	/**
-	 * Compares two aircraft by comparing their names.
-	 */
+	@Override
 	public int compareTo(Aircraft a2) {
 		return _name.compareTo(a2._name);
 	}
 
+	@Override
 	public boolean equals(Object o) {
 		return (o instanceof Aircraft) ? (compareTo((Aircraft) o) == 0) : false;
 	}
 
-	/**
-	 * Returns the aircraft name.
-	 */
+	@Override
 	public String toString() {
 		return _name;
 	}
 
-	/**
-	 * Returns the aircraft name hash code.
-	 */
+	@Override
 	public int hashCode() {
 		return _name.hashCode();
 	}
 
-	/**
-	 * Returns the aircrat name.
-	 */
+	@Override
 	public Object cacheKey() {
 		return _name;
 	}
 
-	/**
-	 * Returns the CSS class name to use if displaying in a view table.
-	 * @return the CSS class name
-	 */
+	@Override
 	public String getRowClassName() {
 		if (_fuelFlow == 0)
 			return "warn";

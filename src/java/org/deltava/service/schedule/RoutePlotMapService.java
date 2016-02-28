@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.util.*;
@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display plotted flight routes with SID/STAR/Airway data.
  * @author Luke
- * @version 6.3
+ * @version 6.4
  * @since 1.0
  */
 
@@ -143,7 +143,7 @@ public class RoutePlotMapService extends MapPlotService {
 			List<String> wps = StringUtils.split(route, " ");
 			TerminalRoute sid = dao.getRoute(dr.getAirportD(), TerminalRoute.Type.SID, ctx.getParameter("sid"));
 			if (sid != null) {
-				Runway r = dao.getRunway(dr.getAirportD(), sid.getRunway());
+				Runway r = dao.getRunway(dr.getAirportD(), sid.getRunway(), sim);
 				if (r != null)
 					routePoints.add(r);
 				if (!CollectionUtils.isEmpty(wps))
@@ -151,7 +151,7 @@ public class RoutePlotMapService extends MapPlotService {
 				else
 					routePoints.addAll(sid.getWaypoints());
 			} else if (dr.getAirportD() != null) {
-				Runway r = dao.getRunway(dr.getAirportD(), ctx.getParameter("runway"));
+				Runway r = dao.getRunway(dr.getAirportD(), ctx.getParameter("runway"), sim);
 				if (r != null)
 					routePoints.add(r);
 			}
@@ -170,7 +170,7 @@ public class RoutePlotMapService extends MapPlotService {
 				else
 					routePoints.addAll(star.getWaypoints());
 				
-				Runway r = dao.getRunway(dr.getAirportA(), star.getRunway());
+				Runway r = dao.getRunway(dr.getAirportA(), star.getRunway(), sim);
 				if (r != null)
 					routePoints.add(r);
 			}

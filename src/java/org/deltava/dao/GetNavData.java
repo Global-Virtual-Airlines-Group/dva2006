@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,12 +11,11 @@ import org.deltava.beans.schedule.*;
 
 import org.deltava.util.*;
 import org.deltava.util.cache.*;
-import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to read Navigation data.
  * @author Luke
- * @version 6.3
+ * @version 6.4
  * @since 1.0
  */
 
@@ -174,18 +173,22 @@ public class GetNavData extends DAO {
 	 * Returns information about a particular airport Runway.
 	 * @param a the ICAOAirport
 	 * @param rwyCode the runway name/number
+	 * @sim the Simulator to select
 	 * @return a Runway bean, or null if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Runway getRunway(ICAOAirport a, String rwyCode) throws DAOException {
+	public Runway getRunway(ICAOAirport a, String rwyCode, Simulator sim) throws DAOException {
+		Simulator s = (sim == null) ? Simulator.FSX : sim;
 		if ((rwyCode != null) && rwyCode.startsWith("RW"))
 			rwyCode = rwyCode.substring(2);
 		
 		try {
-			prepareStatement("SELECT * FROM common.NAVDATA WHERE (ITEMTYPE=?) AND (CODE=?) AND (NAME=?)");
-			_ps.setInt(1, Navaid.RUNWAY.ordinal());
-			_ps.setString(2, a.getICAO());
-			_ps.setString(3, rwyCode.toUpperCase());
+			prepareStatement("SELECT N.*, R.MAGVAR, R.SURFACE FROM common.NAVDATA N LEFT JOIN common.RUNWAYS ON ((N.CODE=R.ICAO) "
+				+ "AND (N.NAME=R.NAME) AND (R.SIMVERSION=?)) WHERE (N.ITEMTYPE=?) AND (N.CODE=?) AND (N.NAME=?)");
+			_ps.setInt(1, s.ordinal());
+			_ps.setInt(2, Navaid.RUNWAY.ordinal());
+			_ps.setString(3, a.getICAO());
+			_ps.setString(4, rwyCode.toUpperCase());
 			List<NavigationDataBean> results = execute();
 			return results.isEmpty() ? null : (Runway) results.get(0);
 		} catch (SQLException se) {
@@ -199,11 +202,14 @@ public class GetNavData extends DAO {
 	 * @return a Collection Runway beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<Runway> getRunways(ICAOAirport a) throws DAOException {
+	public List<Runway> getRunways(ICAOAirport a, Simulator sim) throws DAOException {
+		Simulator s = (sim == null) ? Simulator.FSX : sim;
 		try {
-			prepareStatement("SELECT * FROM common.NAVDATA WHERE (ITEMTYPE=?) AND (CODE=?)");
-			_ps.setInt(1, Navaid.RUNWAY.ordinal());
-			_ps.setString(2, a.getICAO());
+			prepareStatement("SELECT N.*, R.MAGVAR, R.SURFACE FROM common.NAVDATA N LEFT JOIN common.RUNWAYS R ON ((N.CODE=R.ICAO) "
+				+ " AND (N.NAME=R.NAME) AND (R.SIMVERSION=?)) WHERE (N.ITEMTYPE=?) AND (N.CODE=?)");
+			_ps.setInt(1, s.ordinal());
+			_ps.setInt(2, Navaid.RUNWAY.ordinal());
+			_ps.setString(3, a.getICAO());
 			List<NavigationDataBean> results = execute();
 			List<Runway> runways = new ArrayList<Runway>();
 			for (NavigationDataBean nd : results) {
@@ -233,7 +239,6 @@ public class GetNavData extends DAO {
 				prepareStatement("SELECT * FROM common.RUNWAYS WHERE (ICAO=?) AND (SIMVERSION=?)");	
 				_ps.setString(1, a.getICAO());
 				_ps.setInt(2, Math.max(2004, sim.getCode()));
-				
 				try (ResultSet rs = _ps.executeQuery()) {
 					while (rs.next()) {
 						Runway r = new Runway(rs.getDouble(4), rs.getDouble(5));
@@ -241,6 +246,8 @@ public class GetNavData extends DAO {
 						r.setName(rs.getString(2));
 						r.setHeading(rs.getInt(6));
 						r.setLength(rs.getInt(7));
+						r.setMagVar(rs.getDouble(8));
+						r.setSurface(Surface.values()[rs.getInt(9)]);
 						results.add(r);
 					}
 				}
@@ -262,7 +269,7 @@ public class GetNavData extends DAO {
 		}
 		
 		// Iterate through the list
-		LandingRunways lr = new LandingRunways(a, loc, hdg);
+		LandingRunways lr = new LandingRunways(loc, hdg);
 		lr.addAll(results);
 		return lr;
 	}
@@ -360,6 +367,7 @@ public class GetNavData extends DAO {
 	private List<NavigationDataBean> execute() throws SQLException {
 		List<NavigationDataBean> results = new ArrayList<NavigationDataBean>();
 		try (ResultSet rs = _ps.executeQuery()) {
+			ResultSetMetaData md = rs.getMetaData();
 			while (rs.next()) {
 				NavigationDataBean obj = null;
 				Navaid nt = Navaid.values()[rs.getInt(1)];
@@ -370,10 +378,6 @@ public class GetNavData extends DAO {
 						a.setAltitude(rs.getInt(6));
 						a.setName(rs.getString(7));
 						a.setRegion(rs.getString(9));
-						Airport ap = SystemData.getAirport(a.getCode());
-						if (ap != null)
-							a.setMagVar(ap.getMagVar());
-						
 						obj = a;
 						break;
 
@@ -408,6 +412,11 @@ public class GetNavData extends DAO {
 						rwy.setName(rs.getString(7));
 						rwy.setHeading(rs.getInt(8));
 						rwy.setRegion(rs.getString(9));
+						if (md.getColumnCount() > 10) {
+							rwy.setMagVar(rs.getDouble(10));
+							rwy.setSurface(Surface.values()[rs.getInt(11)]);
+						}
+						
 						obj = rwy;
 						break;
 						

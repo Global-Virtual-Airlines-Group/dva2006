@@ -78,7 +78,8 @@
 <tr>
  <td class="label">Takeoff Time</td>
  <td class="data" colspan="${cspan}"><fmt:date className="bld" date="${pirep.takeoffTime}" />, 
-(<fmt:int value="${fn:delta(pirep.startTime, pirep.takeoffTime) / 60}" /> minutes after start)</td>
+(<fmt:int value="${fn:delta(pirep.startTime, pirep.takeoffTime) / 60}" /> minutes after start)
+ <a href="javascript:void golgotha.local.zoomTo(${pirep.takeoffLocation.latitude}, ${pirep.takeoffLocation.longitude})">Zoom <span class="nophone">to Takeoff</span></a></td>
 </tr>
 <c:if test="${(pirep.takeoffLocation.latitude != 0.0) && (pirep.takeoffLocation.longitude != 0.0)}">
 <c:set var="rwy" value="${flightInfo.runwayD}" scope="page" />
@@ -87,7 +88,7 @@
  <td class="data">
 <c:if test="${!empty rwy}">
 <c:set var="fromEnd" value="${rwy.length - rwy.distance}" scope="page" /> 
-<span class="pri bld">${rwy.name}</span> (<fmt:int value="${rwy.length}" /> feet,
+<span class="pri bld">${rwy.name}</span> (${rwy.surface.name} - <fmt:int value="${rwy.length}" /> feet,
 <c:choose>
 <c:when test="${fromEnd < 1}"> <span class="bld error"><fmt:int value="${fromEnd * -1}" /> feet past end</span>)</c:when>
 <c:when test="${fromEnd < 1000}"> <span class="bld"><fmt:int value="${fromEnd}" /> feet from end</span>)</c:when>
@@ -95,7 +96,6 @@
 </c:choose></c:if>
 <c:if test="${empty rwy}">
 <span class="error bld">UNKNOWN</span></c:if>
- <a href="javascript:void golgotha.local.zoomTo(${pirep.takeoffLocation.latitude}, ${pirep.takeoffLocation.longitude})">Zoom <span class="nophone">to Takeoff</span></a>
 <c:if test="${access.canDispose && (!empty dRunways)}"><span class="nophone"> <span class="ita">Change Runway to</span> 
  <el:combo name="newRwyD" size="1" idx="*" options="${dRunways}" value="${rwy}" /> 
  <el:cmdbutton url="updrwy" post="true" link="${flightInfo}" label="UPDATE" /></span>
@@ -128,7 +128,8 @@
 <tr>
  <td class="label">Landing Time</td>
  <td class="data" colspan="${cspan}"><fmt:date className="bld" date="${pirep.landingTime}" />, 
-(<fmt:int value="${fn:delta(pirep.startTime, pirep.landingTime) / 60}" /> minutes after start)</td>
+(<fmt:int value="${fn:delta(pirep.startTime, pirep.landingTime) / 60}" /> minutes after start)
+ <a href="javascript:void golgotha.local.zoomTo(${pirep.landingLocation.latitude}, ${pirep.landingLocation.longitude})">Zoom<span class="nophone"> to Landing</span></a></td>
 </tr>
 <c:if test="${(pirep.landingLocation.latitude != 0.0) && (pirep.landingLocation.longitude != 0.0)}">
 <c:set var="rwy" value="${flightInfo.runwayA}" scope="page" />
@@ -137,7 +138,7 @@
  <td class="data">
 <c:if test="${!empty rwy}">
 <c:set var="fromEnd" value="${rwy.length - rwy.distance}" scope="page" />
- <span class="pri bld">${rwy.name}</span> (<fmt:int value="${rwy.length}" /> feet,
+ <span class="pri bld">${rwy.name}</span> (${rwy.surface.name} - <fmt:int value="${rwy.length}" /> feet,
 <c:choose>
 <c:when test="${fromEnd < 1}"> <span class="bld error"><fmt:int value="${fromEnd * -1}" /> feet past end</span>)</c:when>
 <c:when test="${fromEnd < 2500}"> <span class="pri bld"><fmt:int value="${fromEnd}" /> feet from end</span>)</c:when>
@@ -146,7 +147,6 @@
 </c:choose></c:if>
 <c:if test="${empty rwy}">
 <span class="error bld">UNKNOWN</span></c:if>
- <a href="javascript:void golgotha.local.zoomTo(${pirep.landingLocation.latitude}, ${pirep.landingLocation.longitude})">Zoom<span class="nophone"> to Landing</span></a>
 <c:if test="${access.canDispose && (!empty aRunways)}"><span class="nophone"> <span class="ita">Change Runway to</span> 
  <el:combo name="newRwyA" size="1" idx="*" options="${aRunways}" value="${rwy}" /> 
  <el:cmdbutton url="updrwy" post="true" link="${flightInfo}" label="UPDATE" /></span>

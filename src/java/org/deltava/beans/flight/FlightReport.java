@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.schedule.Airline;
 /**
  * A class for dealing with PIREP data.
  * @author Luke
- * @version 5.1
+ * @version 6.4
  * @since 1.0
  */
 
@@ -116,11 +116,16 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 	 * Flight flown using a too-short takeoff or landing runway.
 	 */
 	public static final int ATTR_RWYWARN = 0x20000;
+	
+	/**
+	 * Flight flown using an inappropriate runway surface.
+	 */
+	public static final int ATTR_RWYSFCWARN = 0x40000;
 
 	/**
 	 * Attribute mask for all warnings.
 	 */
-	public static final int ATTR_WARN_MASK = 0x2B861;
+	public static final int ATTR_WARN_MASK = 0x6B861;
 	
 	/**
 	 * Attribute mask for VATSIM/IVAO/FPI online flights.
