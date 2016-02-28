@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Airport data.
  * @author Luke
- * @version 6.3
+ * @version 6.4
  * @since 1.0
  */
 
@@ -48,12 +48,11 @@ public class GetAirport extends DAO {
 	 */
 	public Airport get(String code) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT A.*, ND.ALTITUDE, ND.REGION, MV.MAGVAR, IFNULL(MAX(R.LENGTH), "
-				+ "MAX(RND.ALTITUDE)), COUNT(DISTINCT GA.NAME) AS GCNT FROM common.AIRPORTS A LEFT JOIN "
-				+ "common.NAVDATA ND ON ((ND.CODE=A.ICAO) AND (ND.ITEMTYPE=?)) LEFT JOIN common.MAGVAR MV ON "
-				+ "(A.ICAO=MV.ICAO) LEFT JOIN common.RUNWAYS R ON (A.ICAO=R.ICAO) LEFT JOIN common.NAVDATA RND "
-				+ "ON ((RND.CODE=A.ICAO) AND (RND.ITEMTYPE=?)) LEFT JOIN common.GATE_AIRLINES GA ON (GA.ICAO=A.ICAO) "
-				+ "WHERE ((A.ICAO=?) OR (A.IATA=?)) GROUP BY A.IATA LIMIT 1");
+			prepareStatementWithoutLimits("SELECT A.*, ND.ALTITUDE, ND.REGION, IFNULL(MAX(R.LENGTH), MAX(RND.ALTITUDE)), "
+				+ "COUNT(DISTINCT GA.NAME) AS GCNT FROM common.AIRPORTS A LEFT JOIN common.NAVDATA ND ON "
+				+ "((ND.CODE=A.ICAO) AND (ND.ITEMTYPE=?)) LEFT JOIN common.RUNWAYS R ON (A.ICAO=R.ICAO) LEFT JOIN "
+				+ "common.NAVDATA RND ON ((RND.CODE=A.ICAO) AND (RND.ITEMTYPE=?)) LEFT JOIN common.GATE_AIRLINES GA "
+				+ "ON (GA.ICAO=A.ICAO) WHERE ((A.ICAO=?) OR (A.IATA=?)) GROUP BY A.IATA LIMIT 1");
 			_ps.setInt(1, Navaid.AIRPORT.ordinal());
 			_ps.setInt(2, Navaid.RUNWAY.ordinal());
 			_ps.setString(3, code.toUpperCase());
@@ -70,9 +69,8 @@ public class GetAirport extends DAO {
 					a.setSupercededAirport(rs.getString(9));
 					a.setAltitude(rs.getInt(10));
 					a.setRegion(rs.getString(11));
-					a.setMagVar(rs.getDouble(12));
-					a.setGateData(rs.getInt(14) > 0);
-					int maxRunway = rs.getInt(13);
+					a.setGateData(rs.getInt(13) > 0);
+					int maxRunway = rs.getInt(12);
 					a.setMaximumRunwayLength((maxRunway == 0) ? 2500 : maxRunway);
 				}
 			}
@@ -108,11 +106,11 @@ public class GetAirport extends DAO {
 	public Collection<Airport> getByAirline(Airline al, String sortBy) throws DAOException {
 		
 		// Build SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT A.*, ND.ALTITUDE, ND.REGION, MV.MAGVAR, IFNULL(MAX(R.LENGTH), MAX(RND.ALTITUDE)), "
+		StringBuilder sqlBuf = new StringBuilder("SELECT A.*, ND.ALTITUDE, ND.REGION, IFNULL(MAX(R.LENGTH), MAX(RND.ALTITUDE)), "
 			+ "COUNT(DISTINCT GA.NAME) AS GCNT FROM common.AIRPORTS A LEFT JOIN common.AIRPORT_AIRLINE AA ON ((AA.APPCODE=?) AND "
-			+ "(A.IATA=AA.IATA)) LEFT JOIN common.NAVDATA ND ON ((ND.CODE=A.ICAO) AND (ND.ITEMTYPE=?)) LEFT JOIN common.MAGVAR MV ON "
-			+ "(A.ICAO=MV.ICAO) LEFT JOIN common.RUNWAYS R ON (A.ICAO=R.ICAO) LEFT JOIN common.NAVDATA RND ON ((RND.CODE=A.ICAO) AND "
-			+ "(RND.ITEMTYPE=?)) LEFT JOIN common.GATE_AIRLINES GA ON (A.ICAO=GA.ICAO) WHERE ");
+			+ "(A.IATA=AA.IATA)) LEFT JOIN common.NAVDATA ND ON ((ND.CODE=A.ICAO) AND (ND.ITEMTYPE=?)) LEFT JOIN common.RUNWAYS R "
+			+ "ON (A.ICAO=R.ICAO) LEFT JOIN common.NAVDATA RND ON ((RND.CODE=A.ICAO) AND (RND.ITEMTYPE=?)) LEFT JOIN "
+			+ "common.GATE_AIRLINES GA ON (A.ICAO=GA.ICAO) WHERE ");
 		sqlBuf.append((al == null) ? "(AA.CODE IS NULL)" : "(AA.CODE=?)");
 		sqlBuf.append(" GROUP BY A.IATA");
 		if (!StringUtils.isEmpty(sortBy)) {
@@ -140,9 +138,8 @@ public class GetAirport extends DAO {
 					a.setSupercededAirport(rs.getString(9));
 					a.setAltitude(rs.getInt(10));
 					a.setRegion(rs.getString(11));
-					a.setMagVar(rs.getDouble(12));
-					a.setGateData(rs.getInt(14) > 0);
-					int maxRunway = rs.getInt(13);
+					a.setGateData(rs.getInt(13) > 0);
+					int maxRunway = rs.getInt(12);
 					a.setMaximumRunwayLength((maxRunway == 0) ? 2500 : maxRunway);
 					if (al != null)
 						a.addAirlineCode(al.getCode());
@@ -247,11 +244,11 @@ public class GetAirport extends DAO {
 	public Map<String, Airport> getAll() throws DAOException {
 		Map<String, Airport> results = new HashMap<String, Airport>();
 		try {
-			prepareStatementWithoutLimits("SELECT A.*, ND.ALTITUDE, ND.REGION, MV.MAGVAR, IFNULL(MAX(R.LENGTH), "
-				+ "MAX(RND.ALTITUDE)), COUNT(DISTINCT GA.NAME) AS GCNT FROM common.AIRPORTS A LEFT JOIN common.NAVDATA ND "
-				+ "ON ((ND.CODE=A.ICAO) AND (ND.ITEMTYPE=?)) LEFT JOIN common.NAVDATA RND ON ((RND.CODE=A.ICAO) AND "
-				+ "(RND.ITEMTYPE=?)) LEFT JOIN common.MAGVAR MV ON (MV.ICAO=A.ICAO) LEFT JOIN common.RUNWAYS R ON "
-				+ "(A.ICAO=R.ICAO) LEFT JOIN common.GATE_AIRLINES GA ON (GA.ICAO=A.ICAO) GROUP BY A.IATA");
+			prepareStatementWithoutLimits("SELECT A.*, ND.ALTITUDE, ND.REGION, IFNULL(MAX(R.LENGTH), MAX(RND.ALTITUDE)), "
+				+ "COUNT(DISTINCT GA.NAME) AS GCNT FROM common.AIRPORTS A LEFT JOIN common.NAVDATA ND ON "
+				+ "((ND.CODE=A.ICAO) AND (ND.ITEMTYPE=?)) LEFT JOIN common.NAVDATA RND ON ((RND.CODE=A.ICAO) AND "
+				+ "(RND.ITEMTYPE=?)) LEFT JOIN common.RUNWAYS R ON (A.ICAO=R.ICAO) LEFT JOIN common.GATE_AIRLINES GA "
+				+ "ON (GA.ICAO=A.ICAO) GROUP BY A.IATA");
 			_ps.setInt(1, Navaid.AIRPORT.ordinal());
 			_ps.setInt(2, Navaid.RUNWAY.ordinal());
 			
@@ -265,9 +262,8 @@ public class GetAirport extends DAO {
 					a.setSupercededAirport(rs.getString(9));
 					a.setAltitude(rs.getInt(10));
 					a.setRegion(rs.getString(11));
-					a.setMagVar(rs.getDouble(12));
-					a.setGateData(rs.getInt(14) > 0);
-					int maxRunway = rs.getInt(13);
+					a.setGateData(rs.getInt(13) > 0);
+					int maxRunway = rs.getInt(12);
 					a.setMaximumRunwayLength((maxRunway == 0) ? 2500 : maxRunway);
 					
 					// Save in the map

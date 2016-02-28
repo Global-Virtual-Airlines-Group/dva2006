@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import org.deltava.beans.ComboAlias;
@@ -7,7 +7,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store Runway information.
  * @author Luke
- * @version 6.0
+ * @version 6.4
  * @since 1.0
  */
 
@@ -15,6 +15,9 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 
 	private int _length;
 	private int _heading;
+	
+	private Surface _sfc;
+	private double _magVar;
 
 	/**
 	 * Creates a new Runway bean.
@@ -42,6 +45,24 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 	public int getHeading() {
 		return _heading;
 	}
+	
+	/**
+	 * Returns the runway surface type.
+	 * @return the Surface
+	 * @see Runway#setSurface(Surface)
+	 */
+	public Surface getSurface() {
+		return _sfc;
+	}
+	
+	/**
+	 * Returns the magnetic variation at the runway location.
+	 * @return the variation in degrees
+	 * @see Runway#setMagVar(double)
+	 */
+	public double getMagVar() {
+		return _magVar;
+	}
 
 	/**
 	 * Updates the length of the runway.
@@ -65,7 +86,25 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 
 		_heading = hdg;
 	}
-
+	
+	/**
+	 * Updates the runway surface type.
+	 * @param s the Surface
+	 * @see Runway#getSurface()
+	 */
+	public void setSurface(Surface s) {
+		_sfc = s;
+	}
+	
+	/**
+	 * Updates the magnetic variation at the runway location.
+	 * @param mv the variation in degrees
+	 * @see Runway#getMagVar()
+	 */
+	public void setMagVar(double mv) {
+		_magVar = mv;
+	}
+ 
 	/**
 	 * Return the default Google Maps icon color.
 	 * @return org.deltava.beans.MapEntry.YELLOW

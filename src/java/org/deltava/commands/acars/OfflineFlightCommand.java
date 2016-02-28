@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import java.io.*;
@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to allow users to submit Offline Flight Reports.
  * @author Luke
- * @version 6.2
+ * @version 6.4
  * @since 2.4
  */
 
@@ -371,6 +371,8 @@ public class OfflineFlightCommand extends AbstractCommand {
 					rD = new RunwayDistance(r, dist);
 					if (r.getLength() < a.getTakeoffRunwayLength())
 						afr.setAttribute(FlightReport.ATTR_RWYWARN, true);
+					if (!r.getSurface().isHard() && !a.getUseSoftRunways())
+						afr.setAttribute(FlightReport.ATTR_RWYSFCWARN, true);
 				}
 			}
 
@@ -384,6 +386,8 @@ public class OfflineFlightCommand extends AbstractCommand {
 					rA = new RunwayDistance(r, dist);
 					if (r.getLength() < a.getLandingRunwayLength())
 						afr.setAttribute(FlightReport.ATTR_RWYWARN, true);
+					if (!r.getSurface().isHard() && !a.getUseSoftRunways())
+						afr.setAttribute(FlightReport.ATTR_RWYSFCWARN, true);
 				}
 			}
 			
