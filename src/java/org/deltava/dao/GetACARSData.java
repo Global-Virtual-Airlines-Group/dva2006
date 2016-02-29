@@ -245,12 +245,13 @@ public class GetACARSData extends DAO {
 			
 			// Fetch the takeoff and landing runways
 			if (info.getHasPIREP()) {
-				prepareStatementWithoutLimits("SELECT R.*, IFNULL(ND.HDG, 0), ND.FREQ, RW.MAGVAR, RW.SURFACE FROM acars.RWYDATA R LEFT JOIN "
+				prepareStatementWithoutLimits("SELECT R.*, IFNULL(ND.HDG, 0), ND.FREQ, RW.MAGVAR, IFNULL(RW.SURFACE, ?) FROM acars.RWYDATA R LEFT JOIN "
 					+ "common.NAVDATA ND ON ((R.ICAO=ND.CODE) AND (R.RUNWAY=ND.NAME) AND (ND.ITEMTYPE=?)) LEFT JOIN common.RUNWAYS RW "
 					+ "ON ((RW.ICAO=ND.CODE) AND (RW.NAME=ND.NAME) AND (RW.SIMVERSION=?)) WHERE (R.ID=?) LIMIT 2");
-				_ps.setInt(1, Navaid.RUNWAY.ordinal());
-				_ps.setInt(2, Math.max(2004, info.getFSVersion().getCode()));
-				_ps.setInt(3, flightID);
+				_ps.setInt(1, Surface.UNKNOWN.ordinal());
+				_ps.setInt(2, Navaid.RUNWAY.ordinal());
+				_ps.setInt(3, Math.max(2004, info.getFSVersion().getCode()));
+				_ps.setInt(4, flightID);
 				try (ResultSet rs = _ps.executeQuery()) {
 					while (rs.next()) {
 						Runway r = new Runway(rs.getDouble(4), rs.getDouble(5));

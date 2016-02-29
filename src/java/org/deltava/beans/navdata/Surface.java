@@ -12,7 +12,7 @@ import org.deltava.util.StringUtils;
 
 public enum Surface {
 	ASPHALT(true), BITUMINOUS(true), BRICK, CLAY, CEMENT(true), CONCRETE(true), CORAL, DIRT,	 GRASS, GRAVEL, ICE, MACADAM, OIL_TREATED, 
-	PLANKS, SAND, SHALE, SNOW, STEEL_MATS, TARMAC(true), UNKNOWN, WATER;
+	PLANKS, SAND, SHALE, SNOW, STEEL_MATS, TARMAC(true), UNKNOWN(true), WATER;
 	
 	private final boolean _hard;
 	
