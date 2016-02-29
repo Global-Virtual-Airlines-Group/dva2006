@@ -183,7 +183,7 @@ public class GetNavData extends DAO {
 			rwyCode = rwyCode.substring(2);
 		
 		try {
-			prepareStatement("SELECT N.*, R.MAGVAR, IFNULL(R.SURFACE, ?) FROM common.NAVDATA N LEFT JOIN common.RUNWAYS ON "
+			prepareStatement("SELECT N.*, R.MAGVAR, IFNULL(R.SURFACE, ?) FROM common.NAVDATA N LEFT JOIN common.RUNWAYS R ON "
 				+ "((N.CODE=R.ICAO) AND (N.NAME=R.NAME) AND (R.SIMVERSION=?)) WHERE (N.ITEMTYPE=?) AND (N.CODE=?) AND (N.NAME=?)");
 			_ps.setInt(1, Surface.UNKNOWN.ordinal());
 			_ps.setInt(2, s.ordinal());
