@@ -66,7 +66,7 @@
  <td class="label">Image Information</td>
  <td class="data"><span class="pri bld">${question.typeName}</span> image, <fmt:int value="${question.size}" />
  bytes <span class="sec">(<fmt:int value="${question.width}" /> x <fmt:int value="${question.height}" />
- pixels)</span> <el:link className="pri bld small" url="javascript:void golgotha.exam.viewImage(${question.width},${question.height})">VIEW IMAGE</el:link></td>
+ pixels)</span> <el:link className="pri bld small" url="javascript:void golgotha.exam.viewImage('${question.hexID}',${question.width},${question.height})">VIEW IMAGE</el:link></td>
 </tr>
 </c:if>
 <c:if test="${fn:isRoutePlot(question)}">
