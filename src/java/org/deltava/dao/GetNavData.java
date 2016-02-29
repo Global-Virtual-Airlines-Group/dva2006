@@ -183,12 +183,13 @@ public class GetNavData extends DAO {
 			rwyCode = rwyCode.substring(2);
 		
 		try {
-			prepareStatement("SELECT N.*, R.MAGVAR, R.SURFACE FROM common.NAVDATA N LEFT JOIN common.RUNWAYS ON ((N.CODE=R.ICAO) "
-				+ "AND (N.NAME=R.NAME) AND (R.SIMVERSION=?)) WHERE (N.ITEMTYPE=?) AND (N.CODE=?) AND (N.NAME=?)");
-			_ps.setInt(1, s.ordinal());
-			_ps.setInt(2, Navaid.RUNWAY.ordinal());
-			_ps.setString(3, a.getICAO());
-			_ps.setString(4, rwyCode.toUpperCase());
+			prepareStatement("SELECT N.*, R.MAGVAR, IFNULL(R.SURFACE, ?) FROM common.NAVDATA N LEFT JOIN common.RUNWAYS ON "
+				+ "((N.CODE=R.ICAO) AND (N.NAME=R.NAME) AND (R.SIMVERSION=?)) WHERE (N.ITEMTYPE=?) AND (N.CODE=?) AND (N.NAME=?)");
+			_ps.setInt(1, Surface.UNKNOWN.ordinal());
+			_ps.setInt(2, s.ordinal());
+			_ps.setInt(3, Navaid.RUNWAY.ordinal());
+			_ps.setString(4, a.getICAO());
+			_ps.setString(5, rwyCode.toUpperCase());
 			List<NavigationDataBean> results = execute();
 			return results.isEmpty() ? null : (Runway) results.get(0);
 		} catch (SQLException se) {
@@ -205,11 +206,12 @@ public class GetNavData extends DAO {
 	public List<Runway> getRunways(ICAOAirport a, Simulator sim) throws DAOException {
 		Simulator s = (sim == null) ? Simulator.FSX : sim;
 		try {
-			prepareStatement("SELECT N.*, R.MAGVAR, R.SURFACE FROM common.NAVDATA N LEFT JOIN common.RUNWAYS R ON ((N.CODE=R.ICAO) "
-				+ " AND (N.NAME=R.NAME) AND (R.SIMVERSION=?)) WHERE (N.ITEMTYPE=?) AND (N.CODE=?)");
-			_ps.setInt(1, s.ordinal());
-			_ps.setInt(2, Navaid.RUNWAY.ordinal());
-			_ps.setString(3, a.getICAO());
+			prepareStatement("SELECT N.*, R.MAGVAR, IFNULL(R.SURFACE, ?) FROM common.NAVDATA N LEFT JOIN common.RUNWAYS R ON "
+				+ "((N.CODE=R.ICAO) AND (N.NAME=R.NAME) AND (R.SIMVERSION=?)) WHERE (N.ITEMTYPE=?) AND (N.CODE=?)");
+			_ps.setInt(1, Surface.UNKNOWN.ordinal());
+			_ps.setInt(2, s.ordinal());
+			_ps.setInt(3, Navaid.RUNWAY.ordinal());
+			_ps.setString(4, a.getICAO());
 			List<NavigationDataBean> results = execute();
 			List<Runway> runways = new ArrayList<Runway>();
 			for (NavigationDataBean nd : results) {
