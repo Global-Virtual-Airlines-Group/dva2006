@@ -15,8 +15,7 @@
 <body style="margin:8px">
 <div class="updateHdr">Runway Choices for ${pirep.airportD.name} (<fmt:airport airport="${pirep.airportD}" />)</div>
 <br />
-Takeoff Heading = <fmt:int value="${pirep.takeoffHeading}" />&deg;, Magnetic Variation at Airport: 
-<fmt:dec value="${pirep.airportD.magVar}" />&deg;<br />
+Takeoff Heading = <fmt:int value="${pirep.takeoffHeading}" />&deg;, Magnetic Variation at Airport: <fmt:dec value="${rwysD.magVar}" />&deg;<br />
 <br />
 <c:forEach var="rc" items="${rwysD.runways}">
 <span class="pri bld">Runway ${rc.runway.name}</span> (<fmt:int value="${rc.runway.length}" /> feet) - Heading =
@@ -27,8 +26,7 @@ ${rc.runway.heading}&deg; &Delta;Heading = <fmt:dec value="${rc.headingDelta}" /
 <br />
 <div class="updateHdr">Runway Choices for ${pirep.airportA.name} (<fmt:airport airport="${pirep.airportA}" />)</div>
 <br />
-Landing Heading = <fmt:int value="${pirep.landingHeading}" />&deg;, Magnetic Variation at Airport: 
-<fmt:dec value="${pirep.airportA.magVar}" />&deg;<br />
+Landing Heading = <fmt:int value="${pirep.landingHeading}" />&deg;, Magnetic Variation at Airport: <fmt:dec value="${rwysA.magVar}" />&deg;<br />
 <br />
 <c:forEach var="rc" items="${rwysA.runways}">
 <span class="pri bld">Runway ${rc.runway.name}</span> (<fmt:int value="${rc.runway.length}" /> feet) - Heading =

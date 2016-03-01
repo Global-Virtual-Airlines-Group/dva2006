@@ -18,6 +18,7 @@ public class LandingRunways {
 	
 	private final GeoLocation _loc;
 	private final int _hdg;
+	private double _magVar;
 	
 	private final List<PossibleRunway> _rwys = new ArrayList<PossibleRunway>();
 	
@@ -101,6 +102,7 @@ public class LandingRunways {
 	 */
 	public void addAll(Collection<Runway> rwys) {
 		for (Runway r : rwys) {
+			if ((Math.abs(r.getMagVar()) > _magVar) && (r.getMagVar() != 0.0)) _magVar = r.getMagVar();
 			double bearing = GeoUtils.course(r, _loc);
 			double hdgDiff = GeoUtils.delta(r.getHeading() + r.getMagVar(), _hdg);
 			double brgDiff = GeoUtils.delta(r.getHeading(), bearing);
@@ -116,6 +118,14 @@ public class LandingRunways {
 	 */
 	public Runway getBestRunway() {
 		return _rwys.isEmpty() ? null : _rwys.get(0).getRunway();
+	}
+	
+	/**
+	 * Returns the greatest magnetic variation of all the runways.
+	 * @return the variation in degrees
+	 */
+	public double getMagVar() {
+		return _magVar;
 	}
 	
 	/**
