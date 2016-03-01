@@ -16,11 +16,11 @@ import org.jdom2.filter.ElementFilter;
 
 public class SimRunwayLoader extends SceneryLoaderTestCase {
 	
-	private static final String JDBC_URL ="jdbc:mysql://polaris.sce.net/common";
+	private static final String JDBC_URL ="jdbc:mysql://dev.gvagroup.org/common?rewriteBatchedStatements=true&useSSL=false";
 	private Connection _c;
 
 	private static final String SCENERY_ROOT = "D:\\Program Files\\FS9\\Scenery";
-	private static final String XML_PATH = "E:\\temp\\bgxml_fs9";
+	private static final String XML_PATH = "D:\\temp\\bgxml_fs9";
 	
 	private static final String BGLXML = "data/bglxml/bglxml.exe";
 	private static final Simulator SIM = Simulator.FS9;
@@ -57,6 +57,7 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 	}
 
 	public void testConvertBGLs() throws Exception {
+		assertFalse(true);
 		
 		// Check that we're running Windows and the file exists
 		assertTrue(System.getProperty("os.name").contains("Windows"));
@@ -115,7 +116,7 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 		// Load ICAO codes
 		Collection<String> codes = new HashSet<String>();
 		PreparedStatement ps = _c.prepareStatement("SELECT DISTINCT CODE FROM common.NAVDATA WHERE (ITEMTYPE=?)");
-		ps.setInt(1, Navaid.RUNWAY.ordinal());
+		ps.setInt(1, Navaid.AIRPORT.ordinal());
 		ps.setFetchSize(1000);
 		ResultSet rs = ps.executeQuery();
 		while (rs.next())
@@ -131,8 +132,7 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 		ps.close();
 		
 		// Init the prepared statement
-		ps = _c.prepareStatement("REPLACE INTO common.RUNWAYS (ICAO, NAME, SIMVERSION, LATITUDE, LONGITUDE, HDG, "
-				+ "LENGTH, MAGVAR) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+		ps = _c.prepareStatement("REPLACE INTO common.RUNWAYS (ICAO, NAME, SIMVERSION, LATITUDE, LONGITUDE, HDG, LENGTH, MAGVAR, SURFACE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 		ps.setInt(3, SIM.getCode());
 
 		// Load the XML files
@@ -150,7 +150,7 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 				if (!codes.contains(apCode))
 					continue;
 
-				log.info("Processing " + apCode + " from " + xmls[x]);
+				//log.info("Processing " + apCode + " from " + xmls[x]);
 				
 				float magVar = Float.parseFloat(ae.getAttributeValue("magvar", "0.0"));
 				Map<String, Runway> runways = new HashMap<String, Runway>();
@@ -189,6 +189,8 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 					rwy.setName(number);
 					rwy.setHeading(Math.round(hdg));
 					rwy.setLength(Math.round(length));
+					rwy.setMagVar(magVar);
+					rwy.setSurface(Surface.valueOf(re.getAttributeValue("surface")));
 					runways.put(number, rwy);
 				}
 				
@@ -234,6 +236,8 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 								newCode += "R";
 							if (code.equals("R"))
 								newCode += "L";
+							if (code.equals("C"))
+								newCode += "C";
 							
 							r = runways.get(newCode);
 							if (r == null)
@@ -262,6 +266,7 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 						ps.setInt(6, Math.round(hdg));
 						ps.setInt(7, r.getLength());
 						ps.setDouble(8, magVar);
+						ps.setInt(9, r.getSurface().ordinal());
 						ps.addBatch();
 						hasData = true;
 					} else
@@ -271,6 +276,7 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 				// Save the entries
 				if (hasData) {
 					ps.executeBatch();
+					//_c.rollback();
 					_c.commit();
 				}
 			}
