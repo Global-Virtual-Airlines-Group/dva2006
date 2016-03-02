@@ -16,7 +16,7 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 	private int _length;
 	private int _heading;
 	
-	private Surface _sfc;
+	private Surface _sfc = Surface.UNKNOWN;
 	private double _magVar;
 
 	/**

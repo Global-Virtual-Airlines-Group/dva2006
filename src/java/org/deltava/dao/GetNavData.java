@@ -235,6 +235,7 @@ public class GetNavData extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public LandingRunways getBestRunway(ICAOAirport a, Simulator sim, GeoLocation loc, int hdg) throws DAOException {
+		
 		Collection<Runway> results = new HashSet<Runway>();
 		try {
 			if (sim != Simulator.UNKNOWN) {
@@ -270,7 +271,6 @@ public class GetNavData extends DAO {
 			throw new DAOException(se);
 		}
 		
-		// Iterate through the list
 		LandingRunways lr = new LandingRunways(loc, hdg);
 		lr.addAll(results);
 		return lr;
