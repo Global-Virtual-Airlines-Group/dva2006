@@ -186,7 +186,7 @@ public class GetNavData extends DAO {
 			prepareStatement("SELECT N.*, R.MAGVAR, IFNULL(R.SURFACE, ?) FROM common.NAVDATA N LEFT JOIN common.RUNWAYS R ON "
 				+ "((N.CODE=R.ICAO) AND (N.NAME=R.NAME) AND (R.SIMVERSION=?)) WHERE (N.ITEMTYPE=?) AND (N.CODE=?) AND (N.NAME=?)");
 			_ps.setInt(1, Surface.UNKNOWN.ordinal());
-			_ps.setInt(2, s.ordinal());
+			_ps.setInt(2, s.getCode());
 			_ps.setInt(3, Navaid.RUNWAY.ordinal());
 			_ps.setString(4, a.getICAO());
 			_ps.setString(5, rwyCode.toUpperCase());
@@ -209,7 +209,7 @@ public class GetNavData extends DAO {
 			prepareStatement("SELECT N.*, R.MAGVAR, IFNULL(R.SURFACE, ?) FROM common.NAVDATA N LEFT JOIN common.RUNWAYS R ON "
 				+ "((N.CODE=R.ICAO) AND (N.NAME=R.NAME) AND (R.SIMVERSION=?)) WHERE (N.ITEMTYPE=?) AND (N.CODE=?)");
 			_ps.setInt(1, Surface.UNKNOWN.ordinal());
-			_ps.setInt(2, s.ordinal());
+			_ps.setInt(2, s.getCode());
 			_ps.setInt(3, Navaid.RUNWAY.ordinal());
 			_ps.setString(4, a.getICAO());
 			List<NavigationDataBean> results = execute();
