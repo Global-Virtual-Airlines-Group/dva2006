@@ -1,20 +1,21 @@
-// Copyright 2005, 2006, 2007, 2008, 2011, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
-import java.util.Calendar;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.temporal.*;
 import java.util.concurrent.atomic.LongAdder;
 
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.GeoLocation;
 
-import org.deltava.util.CalendarUtils;
-
 /**
  * A JDBC Data Access Object. DAOs are used to read and write persistent data to JDBC data sources.
  * @author Luke
- * @version 6.2
+ * @version 7.0
  * @since 1.0
  */
 
@@ -33,7 +34,7 @@ public abstract class DAO {
 	 */
 	protected int _queryStart;
 
-	private transient Connection _c;
+	private transient final Connection _c;
 	private boolean _commitLevel;
 	private boolean _manualCommit = false;
 
@@ -76,16 +77,16 @@ public abstract class DAO {
 	 * @param dt a JDBC Date
 	 * @return a Java date/time
 	 */
+	@Deprecated
 	protected static java.util.Date expandDate(Date dt) {
-		if (dt == null)
-			return null;
+		if (dt == null) return null;
 
 		// Convert to a calendar - if the hour value is zero, adjust forward by 12 hours
-		Calendar cld = CalendarUtils.getInstance(dt);
-		if (cld.get(Calendar.HOUR_OF_DAY) == 0)
-			cld.add(Calendar.HOUR, 12);
+		ZonedDateTime zdt = ZonedDateTime.ofInstant(Instant.ofEpochMilli(dt.getTime()), ZoneOffset.UTC);
+		if (zdt.get(ChronoField.HOUR_OF_DAY) == 0)
+			zdt.plus(12, ChronoUnit.HOURS);
 
-		return cld.getTime();
+		return new Date(zdt.toEpochSecond() * 1000);
 	}
 	
 	/**
@@ -144,24 +145,14 @@ public abstract class DAO {
 		// Build the SQL statement with the limits if we are doing a select
 		if (sql.startsWith("SELECT")) {
 			StringBuilder buf = new StringBuilder(sql);
-			if (_queryMax > 0) {
-				buf.append(" LIMIT ");
-				buf.append(String.valueOf(_queryMax));
-			}
-
-			if (_queryStart > 0) {
-				buf.append(" OFFSET ");
-				buf.append(String.valueOf(_queryStart));
-			}
-
-			_ps = _c.prepareStatement(buf.toString());
+			if (_queryMax > 0)
+				buf.append(" LIMIT ").append(String.valueOf(_queryMax));
+			if (_queryStart > 0)
+				buf.append(" OFFSET ").append(String.valueOf(_queryStart));
+			
+			prepareStatementWithoutLimits(buf.toString());
 		} else
-			_ps = _c.prepareStatement(sql);
-
-		// Set the query timeout and fetch size
-		_ps.setQueryTimeout(_queryTimeout);
-		_ps.setFetchSize(Math.min(250, _queryMax + 10));
-		_queryCount.increment();
+			prepareStatementWithoutLimits(sql);
 	}
 
 	/**
@@ -175,7 +166,7 @@ public abstract class DAO {
 	protected void prepareStatementWithoutLimits(String sql) throws SQLException {
 		_ps = _c.prepareStatement(sql);
 		_ps.setQueryTimeout(_queryTimeout);
-		_ps.setFetchSize(500);
+		_ps.setFetchSize((_queryMax == 0) ? 500 : Math.min(250, _queryMax + 10));
 		_queryCount.increment();
 	}
 
@@ -186,6 +177,24 @@ public abstract class DAO {
 	 */
 	protected static Timestamp createTimestamp(java.util.Date dt) {
 		return (dt == null) ? null : new Timestamp(dt.getTime());
+	}
+	
+	/**
+	 * Null-safe conversion of a Timestamp to an Instant.
+	 * @param dt the Timestamp
+	 * @return an Instant, or null
+	 */
+	protected static Instant toInstant(Timestamp dt) {
+		return (dt == null) ? null : dt.toInstant();
+	}
+
+	/**
+	 * Null-safe conversion of an Instant to a Timestamp.
+	 * @param i the Instant
+	 * @return a Timestamp, or null
+	 */
+	protected static Timestamp createTimestamp(Instant i) {
+		return (i == null) ? null : new Timestamp(i.toEpochMilli());
 	}
 
 	/**
