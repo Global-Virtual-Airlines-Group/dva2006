@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2013, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.filter;
 
 import java.net.*;
@@ -17,7 +17,7 @@ import org.deltava.util.StringUtils;
 /**
  * A servlet filter to detect the browser type.
  * @author Luke
- * @version 5.3
+ * @version 7.0
  * @since 1.0
  */
 
@@ -73,7 +73,7 @@ public class BrowserTypeFilter implements Filter {
     	// If we're using IE, set the compatability header
     	if (ver.getType() == BrowserType.IE) {
     		HttpServletResponse hrsp = (HttpServletResponse) rsp;
-    		hrsp.setHeader("X-UA-Compatible", "IE=10, IE=edge");
+    		hrsp.setHeader("X-UA-Compatible", "IE=11, IE=edge");
     		ctxt.setJSON(ctxt.getMajor() > 7);
     		ctxt.setHTML5(ctxt.getMajor() > 10);
     	}
