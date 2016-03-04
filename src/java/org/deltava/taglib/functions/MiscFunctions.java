@@ -1,15 +1,16 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.functions;
 
 import java.util.*;
 import java.text.*;
+import java.time.Instant;
 
 import org.deltava.util.*;
 
 /**
  * A JSP Function Library to store miscellaneous functions.
  * @author Luke
- * @version 4.2
+ * @version 7.0
  * @since 1.0
  */
 
@@ -182,5 +183,14 @@ public class MiscFunctions {
 			return 0;
 
 		return (int) ((d2.getTime() - d1.getTime()) / 1000);
+	}
+	
+	/**
+	 * Converts an Instant into a Date.
+	 * @param d the Date
+	 * @return the Instant, or null
+	 */
+	public static Instant toInstant(Date d) {
+		return (d == null) ? null : Instant.ofEpochMilli(d.getTime());
 	}
 }
