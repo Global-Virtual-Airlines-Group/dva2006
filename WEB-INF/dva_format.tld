@@ -284,6 +284,34 @@
 		</attribute>
 	</tag>
 
+    <tag>
+       <description>Duration Format tag, for formatting time intervals</description>
+       <name>duration</name>
+       <tag-class>org.deltava.taglib.format.DurationFormatTag</tag-class>
+       <body-content>empty</body-content>
+       <attribute>
+            <name>t</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+       <attribute>
+            <name>duration</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.time.Duration</type>
+        </attribute>
+        <attribute>
+            <name>className</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>default</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+        </attribute>
+    </tag>
+
 	<tag>
 		<description>JS Array tag, used to put objects into a JavaScript array</description>
 		<name>jsarray</name>
