@@ -11,8 +11,7 @@ public class TestSecretKeyEncryptors extends TestCase {
     private static final String _msg = "The Quick Brown Fox jumped over the Lazy Dog";
     
     public static Test suite() {
-        return new CoverageDecorator(TestSecretKeyEncryptors.class, new Class[] { DESEncryptor.class,
-                BlowfishEncryptor.class } );
+        return new CoverageDecorator(TestSecretKeyEncryptors.class, new Class[] { DESEncryptor.class, AESEncryptor.class } );
     }    
     
     protected void tearDown() throws Exception {
@@ -22,13 +21,6 @@ public class TestSecretKeyEncryptors extends TestCase {
 
     public void testDES() {
         _crypt = new DESEncryptor("Extra-Super Secret TripleDES Key 123456");
-        byte[] code = _crypt.encrypt(_msg.getBytes());
-        String result = new String(_crypt.decrypt(code));
-        assertEquals(_msg, result);
-    }
-    
-    public void testBlowfish() {
-        _crypt = new BlowfishEncryptor("Extra-Super Secret Blowfish Key 123456");
         byte[] code = _crypt.encrypt(_msg.getBytes());
         String result = new String(_crypt.decrypt(code));
         assertEquals(_msg, result);
