@@ -12,7 +12,6 @@ import org.deltava.crypt.*;
 public class TestSecurityCookieGenerator extends TestCase {
 
 	private static final String _desKey = "SuperSecret 24-byte 3DESKey";
-	private static final String _bfKey = "SuperSecret 24-byte BlowFishKey";
 	private static final String _aesKey = "SuperSecret 24-byte AESKey";
 	
     public static Test suite() {
@@ -35,24 +34,6 @@ public class TestSecurityCookieGenerator extends TestCase {
 		assertEquals(-1, c.getMaxAge());
 		assertNull(c.getPath());
 		
-		SecurityCookieData d2 = SecurityCookieGenerator.readCookie(c.getValue());
-		assertEquals(d1.getUserID(), d2.getUserID());
-		assertEquals(d1.getRemoteAddr(), d2.getRemoteAddr());
-	}
-	
-	public void testBlowfish() {
-	    SecurityCookieGenerator.init(new BlowfishEncryptor(_bfKey));
-	    
-	    long now = System.currentTimeMillis();
-	    
-	    SecurityCookieData d1 = new SecurityCookieData("cn=Luke,ou=dva,o=sce");
-	    d1.setRemoteAddr("127.0.0.1");
-	    d1.setExpiryDate(now);
-	    
-	    Cookie c = new Cookie(CommandContext.AUTH_COOKIE_NAME, SecurityCookieGenerator.getCookieData(d1));
-		assertEquals(CommandContext.AUTH_COOKIE_NAME, c.getName());
-		assertNotNull(c.getValue());
-
 		SecurityCookieData d2 = SecurityCookieGenerator.readCookie(c.getValue());
 		assertEquals(d1.getUserID(), d2.getUserID());
 		assertEquals(d1.getRemoteAddr(), d2.getRemoteAddr());
