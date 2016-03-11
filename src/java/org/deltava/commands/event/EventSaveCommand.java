@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to save Online Events.
  * @author Luke
- * @version 3.6
+ * @version 7.0
  * @since 1.0
  */
 
@@ -33,6 +33,7 @@ public class EventSaveCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Check if this is a new event
@@ -80,7 +81,7 @@ public class EventSaveCommand extends AbstractCommand {
 			ctx.setAttribute("access", access, REQUEST);
 
 			// Populate fields from the request
-			e.setNetwork(OnlineNetwork.valueOf(ctx.getParameter("network").toUpperCase()));
+			e.setNetwork(OnlineNetwork.fromName(ctx.getParameter("network")));
 			e.setBriefing(ctx.getParameter("briefing"));
 			e.setCanSignup(Boolean.valueOf(ctx.getParameter("canSignup")).booleanValue());
 			if (!e.getCanSignup() && !StringUtils.isEmpty(ctx.getParameter("signupURL")))
