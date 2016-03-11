@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.jdom2.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.acars.FlightInfo;
-
+import org.deltava.beans.flight.Recorder;
 import org.deltava.dao.*;
 import org.deltava.service.*;
 import org.deltava.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to provide XML-formatted ACARS progress data for Google Maps.
  * @author Luke
- * @version 4.2
+ * @version 7.0
  * @since 1.0
  */
 
@@ -49,9 +49,9 @@ public class MapProgressService extends WebService {
 			Connection con = ctx.getConnection();
 			GetACARSPositions dao = new GetACARSPositions(con);
 			FlightInfo info = dao.getInfo(id);
-			if ((info != null) && info.isXACARS())
+			if ((info != null) && (info.getFDR() == Recorder.XACARS))
 				routePoints.addAll(dao.getXACARSEntries(id));
-			else
+			else if (info != null)
 				routePoints.addAll(dao.getRouteEntries(id, false, false));
 
 			// Load the route and the route waypoints
@@ -94,8 +94,7 @@ public class MapProgressService extends WebService {
 		}
 
 		// Write the route
-		for (Iterator<? extends MapEntry> i = routeWaypoints.iterator(); i.hasNext();) {
-			MapEntry entry = i.next();
+		for (MapEntry entry : routeWaypoints) {
 			Element e = XMLUtils.createElement("route", entry.getInfoBox(), true);
 			e.setAttribute("lat", StringUtils.format(entry.getLatitude(), "##0.00000"));
 			e.setAttribute("lng", StringUtils.format(entry.getLongitude(), "##0.00000"));
@@ -126,6 +125,7 @@ public class MapProgressService extends WebService {
 	 * Tells the Web Service Servlet not to log invocations of this service.
 	 * @return FALSE
 	 */
+	@Override
 	public final boolean isLogged() {
 		return false;
 	}
