@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -7,7 +7,7 @@ import java.io.IOException;
 import static javax.servlet.http.HttpServletResponse.*;
 
 import org.deltava.beans.acars.*;
-
+import org.deltava.beans.flight.Recorder;
 import org.deltava.dao.*;
 import org.deltava.service.*;
 
@@ -18,7 +18,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * A Web Service to return ACARS flight data parameters.
  * @author Luke
- * @version 6.2
+ * @version 7.0
  * @since 1.0
  */
 
@@ -46,7 +46,7 @@ public class FlightDataExportService extends WebService {
 			info = dao.getInfo(id);
 			if (info == null)
 				return SC_NOT_FOUND;
-			else if (info.isXACARS())
+			else if ((info.getFDR() == Recorder.XACARS) && !info.getArchived())
 				routeData.addAll(dao.getXACARSEntries(id));
 			else
 				routeData.addAll(dao.getRouteEntries(id, info.getArchived()));
@@ -57,7 +57,7 @@ public class FlightDataExportService extends WebService {
 		}
 
 		// Write the CSV header
-		if (!info.isXACARS()) {
+		if (info.getFDR() != Recorder.XACARS) {
 			ctx.println("Date/Time,Latitude,Longitude,Altitude,Heading,Air Speed,Ground Speed,Mach,Vertical Speed,N1,N2,Bank,Pitch,Flaps,"
 				+ "WindSpeed,WindHdg,Visibility,FuelFlow,Fuel,Gs,AOA,AP,ALT,AT,FrameRate,NAV1,NAV2,COM1,ATC1,COM2,ATC2,WARN");
 		} else

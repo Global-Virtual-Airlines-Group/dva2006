@@ -19,18 +19,18 @@
 </c:if>
 <c:if test="${!isXACARS && (pirep.clientBuild > 0)}">
 <tr>
- <td class="label">ACARS Client</td>
- <td class="data" colspan="${cspan}"><c:if test="${pirep.clientBuild > 0}">Build <fmt:int value="${pirep.clientBuild}" />
+ <td class="label">Data Recorder</td>
+ <td class="data" colspan="${cspan}">${flightInfo.FDR} <c:if test="${pirep.clientBuild > 0}">Build <fmt:int value="${pirep.clientBuild}" />
 <c:if test="${pirep.beta > 0}"> (Beta <fmt:int value="${pirep.beta}" />)</c:if></c:if>
 <c:if test="${!empty flightInfo}"> 
 <content:filter roles="HR"><span class="nophone"> from ${flightInfo.remoteHost}
 <c:if test="${!empty ipInfo}"> <el:flag countryCode="${ipInfo.country.code}" caption="${ipInfo.location}" /> ${ipInfo.location}</c:if></span></content:filter></c:if>
-<c:if test="${pirep.hasReload}"> <span class="small ita bld">(ACARS Flight Restore)</span></c:if></td>
+<c:if test="${pirep.hasReload}"> <span class="small ita bld">(Flight Restore)</span></c:if></td>
 </tr>
 </c:if>
 <c:if test="${isXACARS}">
 <tr>
- <td class="label">ACARS Client</td>
+ <td class="label">Data Recorder</td>
  <td class="data" colspan="${cspan}">XACARS ${pirep.majorVersion}.${pirep.minorVersion}
 <c:if test="${!empty flightInfo}"> 
 <content:filter roles="HR"><span class="nophone"> from ${flightInfo.remoteHost}
