@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to display a Pilot's Flight Report statistics to a Google chart.
  * @author Luke
- * @version 6.3
+ * @version 7.0
  * @since 2.1
  */
 
@@ -133,7 +133,7 @@ public class MyFlightsService extends WebService {
 		
 		// Dump the JSON to the output stream
 		try {
-			ctx.setContentType("text/javascript", "UTF-8");
+			ctx.setContentType("application/json", "UTF-8");
 			ctx.setExpiry(600);
 			ctx.println(jo.toString());
 			ctx.commit();

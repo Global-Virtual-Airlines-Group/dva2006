@@ -461,10 +461,11 @@ public class PIREPCommand extends AbstractFormCommand {
 			// Check if this is an ACARS flight - search for an open checkride, and load the ACARS data
 			boolean isACARS = (fr instanceof FDRFlightReport);
 			if (isACARS) {
+				FDRFlightReport afr = (FDRFlightReport) fr;
 				mapType = MapType.GOOGLE;
 				ctx.setAttribute("isACARS", Boolean.TRUE, REQUEST);
-				ctx.setAttribute("isXACARS", Boolean.valueOf(fr.hasAttribute(FlightReport.ATTR_XACARS)), REQUEST);
-				FDRFlightReport afr = (FDRFlightReport) fr;
+				ctx.setAttribute("simFDR", Boolean.valueOf(afr.getFDR() == Recorder.SIMFDR), REQUEST);
+				ctx.setAttribute("isXACARS", Boolean.valueOf(afr.getFDR() == Recorder.XACARS), REQUEST);
 				int flightID = afr.getDatabaseID(DatabaseID.ACARS);
 
 				// Get the route data from the DAFIF database

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -6,6 +6,7 @@ import java.util.*;
 
 import org.deltava.beans.Simulator;
 import org.deltava.beans.acars.*;
+import org.deltava.beans.flight.Recorder;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
 
@@ -16,7 +17,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * A Data Access Object to load ACARS information.
  * @author Luke
- * @version 6.3
+ * @version 7.0
  * @since 1.0
  */
 
@@ -276,7 +277,7 @@ public class GetACARSData extends DAO {
 			String sql = null;
 			if (info.getArchived())
 				sql = "SELECT CNT FROM acars.ARCHIVE WHERE (ID=?)";
-			else if (!info.isXACARS())
+			else if (info.getFDR() == Recorder.ACARS)
 				sql = "SELECT COUNT(*) FROM acars.POSITIONS WHERE (FLIGHT_ID=?)";
 			else
 				sql = "SELECT COUNT(*) FROM acars.POSITION_XARCHIVE WHERE (FLIGHT_ID=?)";
@@ -326,8 +327,7 @@ public class GetACARSData extends DAO {
 	 */
 	protected Map<TerminalRoute.Type, TerminalRoute> getTerminalRoutes(int id) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT IF(FS.TYPE=?, F.AIRPORT_D, F.AIRPORT_A), FS.* FROM acars.FLIGHTS F, "
-					+ "acars.FLIGHT_SIDSTAR FS WHERE (F.ID=?) AND (F.ID=FS.ID)");
+			prepareStatementWithoutLimits("SELECT IF(FS.TYPE=?, F.AIRPORT_D, F.AIRPORT_A), FS.* FROM acars.FLIGHTS F, acars.FLIGHT_SIDSTAR FS WHERE (F.ID=?) AND (F.ID=FS.ID)");
 			_ps.setInt(1, TerminalRoute.Type.SID.ordinal());
 			_ps.setInt(2, id);
 
@@ -346,8 +346,7 @@ public class GetACARSData extends DAO {
 			_ps.close();
 
 			// Load the waypoint data
-			prepareStatementWithoutLimits("SELECT TYPE, CODE, WPTYPE, LATITUDE, LONGITUDE, REGION "
-				+ "FROM acars.FLIGHT_SIDSTAR_WP WHERE (ID=?) ORDER BY TYPE, SEQ");
+			prepareStatementWithoutLimits("SELECT TYPE, CODE, WPTYPE, LATITUDE, LONGITUDE, REGION FROM acars.FLIGHT_SIDSTAR_WP WHERE (ID=?) ORDER BY TYPE, SEQ");
 			_ps.setInt(1, id);
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
@@ -398,7 +397,7 @@ public class GetACARSData extends DAO {
 				info.setScheduleValidated(rs.getBoolean(19));
 				info.setDispatchPlan(rs.getBoolean(20));
 				info.setIsMP(rs.getBoolean(21));
-				info.setXACARS(rs.getBoolean(22));
+				info.setFDR(Recorder.values()[rs.getInt(22)]);
 				info.setClientBuild(rs.getInt(23));
 				info.setBeta(rs.getInt(24));
 				info.setRemoteAddr(rs.getString(25));
