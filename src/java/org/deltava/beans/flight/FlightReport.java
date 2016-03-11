@@ -9,7 +9,7 @@ import org.deltava.beans.schedule.Airline;
 /**
  * A class for dealing with PIREP data.
  * @author Luke
- * @version 6.4
+ * @version 7.0
  * @since 1.0
  */
 
@@ -108,7 +108,7 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 	public static final int ATTR_WEIGHTWARN = 0x8000;
 	
 	/**
-	 * Flight flown using XACARS.
+	 * Flight logged using XACARS.
 	 */
 	public static final int ATTR_XACARS = 0x10000;
 	
@@ -121,7 +121,12 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 	 * Flight flown using an inappropriate runway surface.
 	 */
 	public static final int ATTR_RWYSFCWARN = 0x40000;
-
+	
+	/**
+	 * Flight logged using simFDR.
+	 */
+	public static final int ATTR_SIMFDR = 0x80000;
+	
 	/**
 	 * Attribute mask for all warnings.
 	 */
@@ -199,6 +204,7 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 	 * @see FlightReport#setLength(int)
 	 * @see ACARSFlightReport#getLength()
 	 */
+	@Override
 	public int getLength() {
 		return _length;
 	}
@@ -245,6 +251,7 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 	 * @return the date of this flight; the time component is undefined
 	 * @see FlightReport#setDate(Date)
 	 */
+	@Override
 	public Date getDate() {
 		return _date;
 	}
@@ -280,6 +287,7 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 		return (dbID == null) ? 0 : dbID.intValue();
 	}
 	
+	@Override
 	public int getAuthorID() {
 		return getDatabaseID(DatabaseID.PILOT);
 	}
@@ -444,6 +452,7 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 	 * @param leg the Flight Leg
 	 * @throws IllegalArgumentException if leg is zero or negative
 	 */
+	@Override
 	public final void setLeg(int leg) {
 		if (leg == 0)
 			throw new IllegalArgumentException("Flight Leg cannot be zero or negative");
@@ -584,6 +593,7 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 		_dbIds.put(idType, Integer.valueOf(id));
 	}
 	
+	@Override
 	public void setAuthorID(int id) {
 		setDatabaseID(DatabaseID.PILOT, id);
 	}
@@ -592,6 +602,7 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 	 * Compare two Flight Reports by comparing their date/time.
 	 * @see Comparable#compareTo(Object)
 	 */
+	@Override
 	public int compareTo(Object o) {
 		FlightReport fr2 = (FlightReport) o;
 		int tmpResult = Integer.valueOf(getID()).compareTo(Integer.valueOf(fr2.getID()));
@@ -604,6 +615,7 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 	 * Selects a table row class based upon the Flight Report status.
 	 * @return the row CSS class name
 	 */
+	@Override
 	public String getRowClassName() {
 		if (hasAttribute(ATTR_ACADEMY))
 			return "opt4";

@@ -1,4 +1,4 @@
-// Copyright 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import org.deltava.beans.flight.*;
@@ -7,7 +7,7 @@ import org.deltava.beans.schedule.*;
 /**
  * An XACARS Flight Information object. 
  * @author Luke
- * @version 4.1
+ * @version 7.0
  * @since 4.1
  */
 
@@ -42,6 +42,11 @@ public class XAFlightInfo extends FDRFlightReport {
 	 */
 	public XAFlightInfo(Airline a, int leg) {
 		super(a, leg, 1);
+	}
+	
+	@Override
+	public Recorder getFDR() {
+		return Recorder.XACARS;
 	}
 	
 	/**
