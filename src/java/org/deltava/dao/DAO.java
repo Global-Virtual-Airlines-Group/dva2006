@@ -77,7 +77,6 @@ public abstract class DAO {
 	 * @param dt a JDBC Date
 	 * @return a Java date/time
 	 */
-	@Deprecated
 	protected static java.util.Date expandDate(Date dt) {
 		if (dt == null) return null;
 
