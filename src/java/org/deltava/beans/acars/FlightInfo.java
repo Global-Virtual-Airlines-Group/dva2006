@@ -1,9 +1,10 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
 
 import org.deltava.beans.*;
+import org.deltava.beans.flight.Recorder;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
 
@@ -12,7 +13,7 @@ import org.deltava.util.*;
 /**
  * A bean to store ACARS Flight Information records.
  * @author Luke
- * @version 5.1
+ * @version 7.0
  * @since 1.0
  */
 
@@ -50,7 +51,7 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 	private boolean _hasPIREP;
 	private boolean _archived;
 	private boolean _isMP;
-	private boolean _isXACARS;
+	private Recorder _fdr;
 
 	private int _dispatcherID;
 	private int _routeID;
@@ -70,6 +71,7 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 			setID(id);
 	}
 
+	@Override
 	public int getAuthorID() {
 		return _pilotID;
 	}
@@ -91,14 +93,17 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 		return _routeID;
 	}
 
+	@Override
 	public Date getDate() {
 		return _startTime;
 	}
 	
+	@Override
 	public Date getStartTime() {
 		return _startTime;
 	}
 
+	@Override
 	public Date getEndTime() {
 		return _endTime;
 	}
@@ -136,6 +141,7 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 	 * @see FlightInfo#setAirportA(Airport)
 	 * @see FlightInfo#getAirportD()
 	 */
+	@Override
 	public Airport getAirportA() {
 		return _airportA;
 	}
@@ -166,6 +172,7 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 	 * @see FlightInfo#setAirportD(Airport)
 	 * @see FlightInfo#getAirportA()
 	 */
+	@Override
 	public Airport getAirportD() {
 		return _airportD;
 	}
@@ -222,6 +229,7 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 	/**
 	 * Returns the distance between the Airports.
 	 */
+	@Override
 	public int getDistance() {
 		return GeoUtils.distance(_airportD, _airportA);
 	}
@@ -376,17 +384,18 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 	}
 
 	/**
-	 * Returns whether this flight was logged using XACARS.
-	 * @return TRUE if using XACARS, otherwise FALSE
+	 * Returns the Flight Data Recorder used.
+	 * @return a Recorder
 	 */
-	public boolean isXACARS() {
-		return _isXACARS;
+	public Recorder getFDR() {
+		return _fdr;
 	}
 
 	/**
 	 * Updates the Pilot ID for the flight.
 	 * @param id the database ID of the pilot flying this flight
 	 */
+	@Override
 	public void setAuthorID(int id) {
 		_pilotID = Math.max(0, id);
 	}
@@ -595,7 +604,8 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 	 */
 	public void setFSVersion(Simulator sim) {
 		_fsVersion = sim;
-		_isXACARS |= ((sim == Simulator.XP9) || (sim == Simulator.XP10));
+		if ((sim == Simulator.XP9) || (sim == Simulator.XP10))
+			_fdr = Recorder.XACARS;
 	}
 
 	/**
@@ -609,11 +619,11 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 	}
 
 	/**
-	 * Marks this flight as logged using XACARS.
-	 * @param isXACARS TRUE if logged using XACARS, otherwise FALSE
+	 * Sets the Flight Data Recorder used on this Flight.
+	 * @param r the Recorder
 	 */
-	public void setXACARS(boolean isXACARS) {
-		_isXACARS = isXACARS;
+	public void setFDR(Recorder r) {
+		_fdr = r;
 	}
 
 	/**
@@ -675,6 +685,7 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 	 * Displays the CSS class name for this table row.
 	 * @return the CSS class name
 	 */
+	@Override
 	public String getRowClassName() {
 		return ((_endTime != null) && !_hasPIREP) ? "warn" : null;
 	}

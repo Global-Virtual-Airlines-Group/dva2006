@@ -46,6 +46,11 @@ public class ACARSFlightReport extends FDRFlightReport {
         super(a, flightNumber, leg);
     }
     
+	@Override
+	public Recorder getFDR() {
+		return Recorder.ACARS;
+	}
+    
     /**
      * Returns the G-Forces at touchdown.
      * @return the G-Forces in G

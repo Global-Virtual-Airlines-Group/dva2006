@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.util.*;
@@ -7,9 +7,9 @@ import org.deltava.beans.GeospaceLocation;
 import org.deltava.beans.schedule.*;
 
 /**
- * A bean to store FDR (ACARS/XACARS) submitted flight reports. 
+ * A bean to store FDR (ACARS/XACARS/simFDR) submitted flight reports. 
  * @author Luke
- * @version 5.4
+ * @version 7.0
  * @since 1.0
  */
 
@@ -48,6 +48,12 @@ public abstract class FDRFlightReport extends FlightReport {
 	public FDRFlightReport(Airline a, int flightNumber, int leg) {
 		super(a, flightNumber, leg);
 	}
+	
+	/**
+	 * Returns the software used to record this Flight.
+	 * @return a Recorder
+	 */
+	public abstract Recorder getFDR();
 
     /**
      * Returns the start time of this flight.
