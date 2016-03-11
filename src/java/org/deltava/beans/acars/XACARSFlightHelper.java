@@ -1,4 +1,4 @@
-// Copyright 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.Date;
@@ -9,7 +9,7 @@ import org.deltava.beans.flight.*;
 /**
  * A utility class to convert XACARS Flight Information records into Flight Reports.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 4.1
  */
 
@@ -38,7 +38,7 @@ public final class XACARSFlightHelper {
 		fi.setEndTime(inf.getEndTime());
 		fi.setRoute(inf.getRoute());
 		fi.setAuthorID(inf.getAuthorID());
-		fi.setXACARS(true);
+		fi.setFDR(Recorder.XACARS);
 		
 		// Basic PIREP fields
 		XACARSFlightReport xfr = new XACARSFlightReport(inf.getAirline(), inf.getFlightNumber(), inf.getLeg());

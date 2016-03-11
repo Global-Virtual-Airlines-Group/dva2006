@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to parse XML-format offline Flight Reports.
  * @author Luke
- * @version 6.1
+ * @version 7.0
  * @since 2.4
  */
 
@@ -170,18 +170,11 @@ public final class OfflineFlightParser {
 		afr.setSDK(ae.getChildTextTrim("sdk"));
 		afr.setClientBuild(inf.getClientBuild());
 		afr.setBeta(inf.getBeta());
+		afr.setNetwork(OnlineNetwork.fromName(ie.getChildTextTrim("network")));
 		
 		// Check if it's a checkride
 		afr.setAttribute(FlightReport.ATTR_CHECKRIDE, Boolean.valueOf(ie.getChildTextTrim("checkRide")).booleanValue());
 
-		// Get the online network
-		try {
-			String network = ie.getChildTextTrim("network").toUpperCase();
-			afr.setNetwork(OnlineNetwork.valueOf(network));
-		} catch (Exception ex) {
-			afr.setNetwork(null);
-		}
-		
 		// Set the times
 		afr.setStartTime(StringUtils.parseDate(ie.getChildTextTrim("startTime"), "MM/dd/yyyy HH:mm:ss"));
 		afr.setTaxiTime(StringUtils.parseDate(ie.getChildTextTrim("taxiOutTime"), "MM/dd/yyyy HH:mm:ss"));
