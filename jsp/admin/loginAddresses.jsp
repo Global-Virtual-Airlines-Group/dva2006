@@ -16,12 +16,11 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-golgotha.form.validate({f:f.id, l:4, t:'Host name or IP Address'));
-golgotha.form.submit(f);
-return true;
+golgotha.local.validate = function(f) {
+    if (!golgotha.form.check()) return false;
+    golgotha.form.validate({f:f.id, l:4, t:'Host name or IP Address'});
+    golgotha.form.submit(f);
+    return true;
 };
 </script>
 </head>
