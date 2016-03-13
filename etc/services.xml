@@ -70,7 +70,7 @@
 	<service id="ridecount" class="org.deltava.service.exam.AcademyRideCountService" />
 	
 	<!-- simFDR PIREP Services -->
-	<service id="simfdr_users" class="org.deltava.service.simfdr.UserListService" />
+	<service id="simfdr_user" class="org.deltava.service.simfdr.UserListService" />
 	<service id="simfdr_eq" class="org.deltava.service.simfdr.AvailableEquipmentService" />
 	<service id="simfdr" class="org.deltava.service.simfdr.FlightSubmitService" />
 
