@@ -1,8 +1,9 @@
-// Copyright 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
 import java.net.*;
+import java.util.Base64;
 
 import javax.net.ssl.*;
 
@@ -14,7 +15,7 @@ import org.deltava.beans.system.VersionInfo;
  * DAOs create their own stream to a URL. This is used in situations where
  * request-specific data is encoded into the URL. 
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 2.4
  */
 
@@ -109,6 +110,19 @@ public abstract class DAO {
      */
     protected void setRequestHeader(String name, String value) {
     	_urlcon.setRequestProperty(name, value);
+    }
+    
+    /**
+     * Sets an authentication request header.
+     * @param userID the user ID
+     * @param pwd the password
+     */
+    protected void setAuthentication(String userID, String pwd) {
+    	String up = userID + ":" + pwd;
+    	Base64.Encoder enc = Base64.getEncoder();
+    	StringBuilder buf = new StringBuilder("BASIC ");
+    	buf.append(enc.encodeToString(up.getBytes()));
+    	setRequestHeader("Authorization", buf.toString());
     }
     
     /**
