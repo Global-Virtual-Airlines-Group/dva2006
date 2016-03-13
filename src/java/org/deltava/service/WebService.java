@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import org.deltava.util.StringUtils;
@@ -7,7 +7,7 @@ import org.deltava.util.StringUtils;
  * Web Services are designed to be light-weight objects that are instantiated using a no-argument constructor
  * and then passed a request and a response.
  * @author Luke
- * @version 6.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -36,6 +36,14 @@ public abstract class WebService {
     */
    public boolean isLogged() {
 	   return true;
+   }
+   
+   /**
+    * Returns whether the service requires an SSL connection.
+    * @return TRUE if SSL required, otherwise FALSE
+    */
+   public boolean requiresSSL() {
+	   return false;
    }
    
    /**
