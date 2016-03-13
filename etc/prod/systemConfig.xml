@@ -371,6 +371,7 @@
 
 	<security>
 		<ssl type="Boolean">true</ssl>
+		<simFDR>202a9e802bf2e36ee19be32e6811f779</simFDR>
 		<aesKey>DeltaVA super-secret AES cookie key</aesKey>
 		<hash>
 			<salt>hash!!salt</salt>
