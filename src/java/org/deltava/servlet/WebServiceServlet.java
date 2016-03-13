@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2011, 2012, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A servlet to handle Web Service data requests.
  * @author Luke
- * @version 5.4
+ * @version 7.0
  * @since 1.0
  */
 
@@ -29,7 +29,7 @@ import org.deltava.util.system.SystemData;
 public class WebServiceServlet extends BasicAuthServlet {
 
 	// Web services realm
-	private static final String WS_REALM = "\"GVA Web Services\"";
+	private static final String WS_REALM = "\"%A Web Services\"";
 
 	private static final Logger log = Logger.getLogger(WebServiceServlet.class);
 	private final Map<String, WebService> _svcs = new HashMap<String, WebService>();
@@ -87,13 +87,20 @@ public class WebServiceServlet extends BasicAuthServlet {
 			rsp.sendError(HttpServletResponse.SC_NOT_FOUND, "Unknown Service");
 			return;
 		}
+		
+		// Check if we need SSL
+		if (!req.isSecure() && svc.requiresSSL()) {
+			log.info("Redirecting " + req.getRequestURI() + " to secure connection");
+			rsp.sendRedirect("https://" + req.getServerName() + req.getRequestURI());
+			return;
+		}
 
 		// Check if we need to be authenticated
 		Pilot usr = (Pilot) req.getUserPrincipal();
 		if (svc.isSecure() && (usr == null)) {
 			usr = authenticate(req);
 			if (usr == null) {
-				challenge(rsp, WS_REALM);
+				challenge(rsp, WS_REALM.replace("%A", SystemData.get("airline.name")));
 				return;
 			}
 		}
@@ -126,7 +133,6 @@ public class WebServiceServlet extends BasicAuthServlet {
 				// empty
 			}
 		} finally {
-			rsp.setHeader("Cache-Control", "no-cache");
 			tt.stop();
 		}
 		
