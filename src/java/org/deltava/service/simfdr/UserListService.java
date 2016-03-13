@@ -10,6 +10,8 @@ import org.jdom2.*;
 
 import org.deltava.beans.Pilot;
 
+import org.deltava.crypt.MessageDigester;
+
 import org.deltava.dao.*;
 import org.deltava.service.*;
 
@@ -48,11 +50,19 @@ public class UserListService extends SimFDRService {
 		Document doc = new Document();
 		Element re = new Element("users");
 		doc.setRootElement(re);
+		
+		MessageDigester md = new MessageDigester("MD5");
 		for (Iterator<Pilot> i = users.iterator(); i.hasNext(); ) {
 			Pilot p = i.next(); i.remove();
 			if (p.getPilotNumber() == 0) continue;
 			Element pe = new Element("user");
 			pe.setAttribute("id", p.getPilotCode());
+			if (!p.isInvalid()) {
+				pe.setAttribute("email", MessageDigester.convert(md.digest(p.getEmail().getBytes())));
+				pe.setAttribute("hash", "MD5");
+				md.reset();
+			}
+				
 			re.addContent(pe);
 		}
 		
