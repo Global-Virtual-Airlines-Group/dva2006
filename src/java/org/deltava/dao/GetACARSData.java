@@ -397,9 +397,9 @@ public class GetACARSData extends DAO {
 				info.setScheduleValidated(rs.getBoolean(19));
 				info.setDispatchPlan(rs.getBoolean(20));
 				info.setIsMP(rs.getBoolean(21));
-				info.setFDR(Recorder.values()[rs.getInt(22)]);
-				info.setClientBuild(rs.getInt(23));
-				info.setBeta(rs.getInt(24));
+				info.setClientBuild(rs.getInt(22));
+				info.setBeta(rs.getInt(23));
+				info.setFDR(Recorder.values()[rs.getInt(24)]);
 				info.setRemoteAddr(rs.getString(25));
 				info.setRouteID(rs.getInt(26));
 				info.setDispatcherID(rs.getInt(27));
