@@ -36,12 +36,12 @@ public class SetACARSData extends DAO {
 			if (info.getID() == 0)
 				prepareStatement("INSERT INTO acars.FLIGHTS (FLIGHT_NUM, CREATED, END_TIME, EQTYPE, "
 					+ "CRUISE_ALT, AIRPORT_D, AIRPORT_A, AIRPORT_L, ROUTE, REMARKS, FSVERSION, OFFLINE, "
-					+ "PIREP, XACARS, REMOTE_HOST, REMOTE_ADDR, CLIENT_BUILD, BETA_BUILD, PILOT_ID) "
+					+ "PIREP, FDR, REMOTE_HOST, REMOTE_ADDR, CLIENT_BUILD, BETA_BUILD, PILOT_ID) "
 					+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, INET6_ATON(?), ?, ?, ?)");
 			else
 				prepareStatement("UPDATE acars.FLIGHTS SET FLIGHT_NUM=?, CREATED=?, END_TIME=?, "
 					+ "EQTYPE=?, CRUISE_ALT=?, AIRPORT_D=?, AIRPORT_A=?, AIRPORT_L=?, ROUTE=?, REMARKS=?, "
-					+ "FSVERSION=?, OFFLINE=?, PIREP=?, XACARS=?, REMOTE_HOST=?, REMOTE_ADDR=INET6_ATON(?), "
+					+ "FSVERSION=?, OFFLINE=?, PIREP=?, FDR=?, REMOTE_HOST=?, REMOTE_ADDR=INET6_ATON(?), "
 					+ "CLIENT_BUILD=?, BETA_BUILD=?, PILOT_ID=? WHERE (ID=?)");
 			
 			// Write the flight info record
