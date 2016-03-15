@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import java.io.*;
@@ -8,7 +8,7 @@ import javax.servlet.http.*;
 /**
  * An invocation/security context object for Web Services.
  * @author Luke
- * @version 6.1
+ * @version 7.0
  * @since 1.0
  */
 
@@ -17,7 +17,6 @@ public class ServiceContext extends org.deltava.commands.HTTPContext {
 	private final OutputBuffer _buf = new OutputBuffer();
 
 	protected class OutputBuffer {
-
 		private final StringBuilder _buffer = new StringBuilder(512);
 
 		public void print(CharSequence value) {
@@ -47,6 +46,26 @@ public class ServiceContext extends org.deltava.commands.HTTPContext {
 	 */
 	public ServiceContext(HttpServletRequest req, HttpServletResponse rsp) {
 		super(req, rsp);
+	}
+	
+	/**
+	 * Retrieves the POST body.
+	 * @return the body
+	 */
+	public String getBody() {
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(_req.getInputStream()))) {
+			StringBuilder buf = new StringBuilder();	
+			String data = br.readLine();
+			while (data != null) {
+				buf.append(data);
+				buf.append(System.getProperty("line.separator"));
+				data = br.readLine();
+			}
+			
+			return buf.toString();
+		} catch (IOException ie) {
+			return null;
+		}
 	}
 
 	/**
