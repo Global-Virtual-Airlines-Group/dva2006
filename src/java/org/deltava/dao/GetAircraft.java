@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Aircraft data.
  * @author Luke
- * @version 6.4
+ * @version 7.0
  * @since 1.0
  */
 
@@ -44,6 +44,23 @@ public class GetAircraft extends DAO {
 		try {
 			prepareStatementWithoutLimits("SELECT * FROM common.AIRCRAFT WHERE (NAME=?) LIMIT 1");
 			_ps.setString(1, name);
+			List<Aircraft> results = execute();
+			return results.isEmpty() ? null : results.get(0);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Loads a particular aircraft by IATA code.
+	 * @param iataCode the IATA code
+	 * @return the Aircraft bean, or null if not found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Aircraft getIATA(String iataCode) throws DAOException {
+		try {
+			prepareStatement("SELECT * FROM common.AIRCRAFT WHERE (INSTR(IATA, ?) > 0)");
+			_ps.setString(1, iataCode);
 			List<Aircraft> results = execute();
 			return results.isEmpty() ? null : results.get(0);
 		} catch (SQLException se) {
@@ -98,15 +115,14 @@ public class GetAircraft extends DAO {
 	 */
 	public Collection<Aircraft> getAircraftTypes(int pilotID) throws DAOException {
 		try {
-			prepareStatement("SELECT DISTINCT A.* FROM common.AIRCRAFT A, PIREPS PR WHERE (A.NAME=PR.EQTYPE) "
-				+ "AND (PR.PILOT_ID=?) ORDER BY A.NAME");
+			prepareStatement("SELECT DISTINCT A.* FROM common.AIRCRAFT A, PIREPS PR WHERE (A.NAME=PR.EQTYPE) AND (PR.PILOT_ID=?) ORDER BY A.NAME");
 			_ps.setInt(1, pilotID);
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 	}
-
+	
 	/*
 	 * Helper method to process result sets.
 	 */
