@@ -20,8 +20,7 @@
 <c:if test="${!isXACARS && (pirep.clientBuild > 0)}">
 <tr>
  <td class="label">Data Recorder</td>
- <td class="data" colspan="${cspan}">${flightInfo.FDR} <c:if test="${pirep.clientBuild > 0}">Build <fmt:int value="${pirep.clientBuild}" />
-<c:if test="${pirep.beta > 0}"> (Beta <fmt:int value="${pirep.beta}" />)</c:if></c:if>
+ <td class="data" colspan="${cspan}">${flightInfo.FDR.toString()} Build <fmt:int value="${pirep.clientBuild}" /><c:if test="${pirep.beta > 0}"> (Beta <fmt:int value="${pirep.beta}" />)</c:if>
 <c:if test="${!empty flightInfo}"> 
 <content:filter roles="HR"><span class="nophone"> from ${flightInfo.remoteHost}
 <c:if test="${!empty ipInfo}"> <el:flag countryCode="${ipInfo.country.code}" caption="${ipInfo.location}" /> ${ipInfo.location}</c:if></span></content:filter></c:if>

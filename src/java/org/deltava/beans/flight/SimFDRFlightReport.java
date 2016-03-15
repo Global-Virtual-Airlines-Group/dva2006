@@ -12,6 +12,8 @@ import org.deltava.beans.schedule.Airline;
 
 public class SimFDRFlightReport extends ACARSFlightReport {
 
+	private String _iataCodes;
+	
     /**
      * Creates a new ACARS Flight Report object with a given flight.
      * @param a the Airline
@@ -28,5 +30,21 @@ public class SimFDRFlightReport extends ACARSFlightReport {
 	@Override
 	public Recorder getFDR() {
 		return Recorder.SIMFDR;
+	}
+	
+	/**
+	 * Returns the IATA codes as submitted by simFDR.
+	 * @return a comma-delimited list of IATA codes
+	 */
+	public String getIATACodes() {
+		return _iataCodes;
+	}
+	
+	/**
+	 * Updates the IATA codes as sbumitted by simFDR.
+	 * @param codes a comma-delimted list of IATA codes
+	 */
+	public void setIATACodes(String codes) {
+		_iataCodes = codes;
 	}
 }

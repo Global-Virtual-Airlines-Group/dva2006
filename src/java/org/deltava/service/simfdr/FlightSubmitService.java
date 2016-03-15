@@ -49,7 +49,7 @@ public class FlightSubmitService extends SimFDRService {
 		authenticate(ctx);
 		
 		// Get the XML
-		String xml = ctx.getParameter("xml");
+		String xml = ctx.getBody();
 		OfflineFlight<SimFDRFlightReport, ACARSRouteEntry> ofr = OfflineFlightParser.create(xml);
 		SimFDRFlightReport fr = ofr.getFlightReport();
 		try {
@@ -65,8 +65,13 @@ public class FlightSubmitService extends SimFDRService {
 			if (p == null)
 				throw error(SC_NOT_FOUND, "Unknown Pilot - " + id, false);
 			
+			// Save user ID
+			ofr.getInfo().setAuthorID(p.getID());
+			fr.setAuthorID(p.getID()); fr.setRank(p.getRank());
+			
 			// Create comments field
 			Collection<String> comments = new LinkedHashSet<String>();
+			comments.add("SYSTEM: Submitted for " + p.getName() + " by simFDR");
 			
 			// Check for Draft PIREPs by this Pilot
 			GetFlightReports prdao = new GetFlightReports(con);
@@ -81,7 +86,22 @@ public class FlightSubmitService extends SimFDRService {
 					comments.add(dfr.getComments());
 			}
 			
+			// Load the aircraft type
+			GetAircraft acdao = new GetAircraft(con);
+			Aircraft a = acdao.getIATA(fr.getAircraftCode());
+			Collection<String> iataCodes = StringUtils.split(fr.getIATACodes(), ",");
+			for (Iterator<String> i = iataCodes.iterator(); (i.hasNext() && (a == null)); )
+				a = acdao.getIATA(i.next());
+			
+			// If we don't have an aircraft type
+			if (a == null) {
+				String acTypes = "ICAO=" +  fr.getAircraftCode() + ", IATA=" + iataCodes;
+				log.warn("Unknown aircraft types, " + acTypes);
+				throw error(SC_BAD_REQUEST, "Unknown Aircraft - " + acTypes, false);
+			}
+			
 			// Check if this Flight Report counts for promotion
+			fr.setEquipmentType(a.getName()); ofr.getInfo().setEquipmentType(a.getName());
 			GetEquipmentType eqdao = new GetEquipmentType(con);
 			Collection<String> promoEQ = eqdao.getPrimaryTypes(SystemData.get("airline.db"), fr.getEquipmentType());
 
@@ -135,12 +155,6 @@ public class FlightSubmitService extends SimFDRService {
 				} else
 					fr.setDatabaseID(DatabaseID.EVENT, 0);
 			}
-			
-			// Check for historic aircraft
-			GetAircraft acdao = new GetAircraft(con);
-			Aircraft a = acdao.get(fr.getEquipmentType());
-			if (a == null)
-				throw error(SC_BAD_REQUEST, "Invalid equipment type - " + fr.getEquipmentType(), false);
 			
 			// Check if the user is rated to fly the aircraft
 			fr.setAttribute(FlightReport.ATTR_HISTORIC, a.getHistoric());
