@@ -277,21 +277,18 @@ public class GetACARSData extends DAO {
 			String sql = null;
 			if (info.getArchived())
 				sql = "SELECT CNT FROM acars.ARCHIVE WHERE (ID=?)";
-			else if (info.getFDR() == Recorder.ACARS)
-				sql = "SELECT COUNT(*) FROM acars.POSITIONS WHERE (FLIGHT_ID=?)";
-			else
+			else if (info.getFDR() == Recorder.XACARS)
 				sql = "SELECT COUNT(*) FROM acars.POSITION_XARCHIVE WHERE (FLIGHT_ID=?)";
+			else
+				sql = "SELECT COUNT(*) FROM acars.POSITIONS WHERE (FLIGHT_ID=?)";
 			
 			prepareStatement(sql);
 			_ps.setInt(1, flightID);
-
-			// Execute the query
 			try (ResultSet rs = _ps.executeQuery()) {
 				if (rs.next())
 					info.setPositionCount(rs.getInt(1));
 			}
 			
-			// Clean up and return
 			_ps.close();
 			return info;
 		} catch (SQLException se) {
