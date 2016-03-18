@@ -1,4 +1,4 @@
-// Copyright 2006, 2010, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to view and update Flight Academy Training videos.
  * @author Luke
- * @version 6.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -184,8 +184,8 @@ public class VideoCommand extends AbstractFormCommand {
 				// Save the video in the request 
 				ctx.setAttribute("video", video, REQUEST);
 			} else {
-				File p = new File(SystemData.get("path.video.stage"));
-				Collection<File> files = Arrays.asList(p.listFiles());
+				File p = new File(SystemData.get("path.video.stage")); File[] pl = p.listFiles();
+				Collection<File> files = (pl == null) ? Collections.emptyList() : Arrays.asList(pl);
 				Collection<String> videos = files.stream().filter(f -> f.isFile() && Video.isValidFormat(f.getName())).map(f -> f.getName()).collect(Collectors.toSet());
 				ctx.setAttribute("availableFiles", videos, REQUEST);
 			}
