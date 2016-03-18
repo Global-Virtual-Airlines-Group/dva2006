@@ -76,7 +76,10 @@ final class OfflineFlightParser {
 		of.setInfo(inf);
 		
 		// Build a flight data entry
-		Flight f = FlightCodeParser.parse(cs);
+		Flight f = FlightCodeParser.parse(cs); 
+		if (f.getAirline() == null) 
+			f.setAirline(SystemData.getAirline(SystemData.get("airline.code")));
+
 		SimFDRFlightReport afr = new SimFDRFlightReport(f.getAirline(), f.getFlightNumber(), f.getLeg());
 		afr.setStatus(FlightReport.SUBMITTED);
 		afr.setBeta(StringUtils.parse(re.getAttributeValue("beta"), 0));
