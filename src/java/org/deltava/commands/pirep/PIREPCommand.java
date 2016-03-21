@@ -464,7 +464,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				FDRFlightReport afr = (FDRFlightReport) fr;
 				mapType = MapType.GOOGLE;
 				ctx.setAttribute("isACARS", Boolean.TRUE, REQUEST);
-				ctx.setAttribute("simFDR", Boolean.valueOf(afr.getFDR() == Recorder.SIMFDR), REQUEST);
+				ctx.setAttribute("isSimFDR", Boolean.valueOf(afr.getFDR() == Recorder.SIMFDR), REQUEST);
 				ctx.setAttribute("isXACARS", Boolean.valueOf(afr.getFDR() == Recorder.XACARS), REQUEST);
 				int flightID = afr.getDatabaseID(DatabaseID.ACARS);
 
