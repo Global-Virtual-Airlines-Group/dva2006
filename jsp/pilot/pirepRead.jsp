@@ -190,7 +190,7 @@ golgotha.local.showRunwayChoices = function() {
 <div class="ok bld caps">Flight Leg data logged using XACARS</div>
 </c:if>
 <c:if test="${isSimFDR}">
-<div class="ok bld">FLIGHT LEGT DATA LOGGED USING simFDR</div>
+<div class="ok bld">FLIGHT LEG DATA LOGGED USING simFDR</div>
 </c:if>
 <c:if test="${fn:isDispatch(pirep)}">
 <div class="pri bld caps">Flight Leg planned using <content:airline /> Dispatch</div>
