@@ -183,11 +183,14 @@ golgotha.local.showRunwayChoices = function() {
 <tr>
  <td class="label top">Other Information</td>
  <td class="data"><c:if test="${fn:isOnline(pirep) && !access.canDispose}">Flight Leg flown online using the ${fn:network(pirep)} network<br /></c:if>
-<c:if test="${isACARS && !isXACARS}">
+<c:if test="${isACARS && !isXACARS && !isSimFDR}">
 <div class="ok bld caps">Flight Leg data logged using <content:airline /> ACARS</div>
 </c:if>
 <c:if test="${isXACARS}">
 <div class="ok bld caps">Flight Leg data logged using XACARS</div>
+</c:if>
+<c:if test="${isSimFDR}">
+<div class="ok bld">FLIGHT LEGT DATA LOGGED USING simFDR</div>
 </c:if>
 <c:if test="${fn:isDispatch(pirep)}">
 <div class="pri bld caps">Flight Leg planned using <content:airline /> Dispatch</div>
