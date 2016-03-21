@@ -567,13 +567,16 @@ public class GetFlightReports extends DAO {
 				int attr = rs.getInt(13);
 				boolean isACARS = (hasACARS && (rs.getInt(26) != 0));
 				boolean isXACARS = isACARS && ((attr & FlightReport.ATTR_XACARS) != 0);
+				boolean isSimFDR = isACARS && ((attr & FlightReport.ATTR_SIMFDR) != 0);
 				boolean isDraft = (hasSchedTimes && (status == FlightReport.DRAFT));
 
 				// Build the PIREP as a standard one, or an ACARS pirep
 				Airline a = SystemData.getAirline(rs.getString(6));
 				int flight = rs.getInt(7); int leg = rs.getInt(8);
 				FlightReport p = null;
-				if (isXACARS)
+				if (isSimFDR)
+					p = new SimFDRFlightReport(a, flight, leg);
+				else if (isXACARS)
 					p = new XACARSFlightReport(a, flight, leg);
 				else if (isACARS)
 					p = new ACARSFlightReport(a, flight, leg);

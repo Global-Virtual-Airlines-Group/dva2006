@@ -81,6 +81,7 @@ final class OfflineFlightParser {
 			f.setAirline(SystemData.getAirline(SystemData.get("airline.code")));
 
 		SimFDRFlightReport afr = new SimFDRFlightReport(f.getAirline(), f.getFlightNumber(), f.getLeg());
+		afr.setAttribute(FlightReport.ATTR_SIMFDR, true);
 		afr.setStatus(FlightReport.SUBMITTED);
 		afr.setBeta(StringUtils.parse(re.getAttributeValue("beta"), 0));
 		afr.setStartTime(StringUtils.parseEpoch(ie.getChildTextTrim("startTime")));
