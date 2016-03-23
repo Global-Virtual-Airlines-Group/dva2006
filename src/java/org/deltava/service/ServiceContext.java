@@ -96,8 +96,9 @@ public class ServiceContext extends org.deltava.commands.HTTPContext {
 	 */
 	public void commit() throws IOException {
 		_rsp.setBufferSize(Math.min(32768,  _buf.length() + 16));
-		_rsp.setContentLength(_buf.length());
-		_rsp.getWriter().print(_buf);
+		String buf = _buf.toString();
+		_rsp.setContentLength(buf.getBytes("UTF-8").length);
+		_rsp.getWriter().print(buf);
 		_rsp.flushBuffer();
 	}
 
