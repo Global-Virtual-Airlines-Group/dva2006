@@ -381,6 +381,7 @@ for (var layerName = sd.seriesNames.pop(); (layerName != null); layerName = sd.s
 					console.log('Replacing latest ' + layerName + ', replacing ' + dspL.get('timestamp') + ' with ' + ovLayer.get('timestamp'));
 					dspL.force = true;
 					ovLayer.setMap(dspL.getMap());
+					dspL.setMap(null);
 				}
 			} else if (dt == ts.unixDate) {
 				if ((!dspL.latest) && (!dspL.force)) {
