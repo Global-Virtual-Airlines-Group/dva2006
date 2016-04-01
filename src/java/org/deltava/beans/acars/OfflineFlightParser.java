@@ -87,6 +87,7 @@ public final class OfflineFlightParser {
 		inf.setVersion(clientVersion);
 		inf.setClientBuild(clientBuild);
 		inf.setOffline(true);
+		inf.setFDR(Recorder.ACARS);
 		inf.setBeta(StringUtils.parse(re.getAttributeValue("beta"), 0));
 		inf.setEquipmentType(ie.getChildTextTrim("equipment"));
 		inf.setStartTime(StringUtils.parseDate(ie.getChildTextTrim("startTime"), "MM/dd/yyyy HH:mm:ss"));
