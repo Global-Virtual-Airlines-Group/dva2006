@@ -85,4 +85,13 @@ public class TestMetarParser extends TestCase {
 		ILSCategory ils = WeatherUtils.getILS(m3);
 		assertEquals(ILSCategory.CATI, ils);
 	}
+	
+	public void testBadMETARs()  {
+		
+		METAR m = MetarParser.parse("UBEE 041600Z 23008KT CAVOK 13/03 Q1019 R30CLRD// NOSIG");
+		assertNotNull(m);
+		
+		m = MetarParser.parse("LUKK 041600Z 23004KT CAVOK 19/04 Q1012 R08/D NOSIG");
+		assertNotNull(m);
+	}
 }

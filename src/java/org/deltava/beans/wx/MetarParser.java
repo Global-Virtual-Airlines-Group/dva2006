@@ -431,6 +431,6 @@ public class MetarParser {
 	}
 	
 	private static boolean isRVR(String tkn) {
-		return (tkn.startsWith("R") && tkn.contains("/") && (tkn.length() > 4) && !tkn.endsWith("FT"));
+		return (tkn.startsWith("R") && tkn.contains("/") && (tkn.length() > 4) && !tkn.endsWith("FT") && (tkn.indexOf('/') < (tkn.length()-2)));
 	}
 }
