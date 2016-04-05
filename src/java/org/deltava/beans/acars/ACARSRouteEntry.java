@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
  * @author Rahul
- * @version 6.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -573,6 +573,11 @@ public class ACARSRouteEntry extends RouteEntry {
 			buf.append("<span class=\"bld ita\">AFTERBURNER</span><br />");
 		if (isFlagSet(FLAG_GEARDOWN) && !isFlagSet(FLAG_ONGROUND))
 			buf.append("<span class=\"ita\">GEAR DOWN</span><br />");
+		if (isFlagSet(FLAG_SPARMED)) {
+			buf.append("<span class=\"ita\">");
+			buf.append(isFlagSet(FLAG_ONGROUND) ? "SPOILERS" : "SPEED BRAKES");
+			buf.append("</span><br />");
+		}
 
 		// Add Autopilot flags if set
 		if (isFlagSet(FLAG_AP_ANY)) {
@@ -607,8 +612,8 @@ public class ACARSRouteEntry extends RouteEntry {
 			buf.append("</span><br />");
 		}
 		
-		// Add Thrust Reverser flags if set.
-		if (isFlagSet(FLAG_REVERSETHRUST))
+		// Add Thrust Reverser flags if set
+		if (isFlagSet(FLAG_REVERSETHRUST) && isFlagSet(FLAG_ONGROUND))
 			buf.append("<span class=\"ita\">THRUST REVERSERS</span><br />");
 		
 		// Add ATC info
