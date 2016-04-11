@@ -216,7 +216,7 @@ public class XPIREPService extends XAService {
 			
 			// Check the schedule database and check the route pair
 			FlightTime avgHours = sdao.getFlightTime(xfr);
-			if (!avgHours.hasCurrent() && !avgHours.hasHistoric())
+			if (!avgHours.hasCurrent() && !avgHours.hasHistoric() && !xfr.hasAttribute(FlightReport.ATTR_CHARTER))
 				xfr.setAttribute(FlightReport.ATTR_ROUTEWARN, true);
 			else {
 				int minHours = (int) ((avgHours.getFlightTime() * 0.75) - (SystemData.getDouble("users.pirep.pad_hours", 0) * 10));
