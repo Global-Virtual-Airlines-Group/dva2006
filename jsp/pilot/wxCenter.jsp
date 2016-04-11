@@ -32,7 +32,6 @@ loaders.series.setData('temp', 0.275, 'wxTemp');
 loaders.series.setData('windspeed', 0.325, 'wxWind');
 loaders.series.onload(function() { golgotha.util.enable('#selImg'); });
 loaders.fr.onload(function() { golgotha.util.enable('selFronts'); });
-loaders.lg.onload(function() { golgotha.util.enable('selLG'); });
 
 golgotha.local.loadWX = function(code)
 {
