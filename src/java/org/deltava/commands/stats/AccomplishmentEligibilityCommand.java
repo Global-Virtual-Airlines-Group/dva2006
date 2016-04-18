@@ -113,14 +113,11 @@ public class AccomplishmentEligibilityCommand extends AbstractCommand {
 			for (Accomplishment a : accs) {
 				Date dt = helper.achieved(a);
 				if (dt == null) {
-					Accomplishment fa = accFilter.get(a.getUnit());
-					if ((fa == null) || a.getAlwaysDisplay() || (a.getValue() < fa.getValue())) {
-						Collection<?> missing = helper.missing(a);	
-						long progress = helper.getProgress(a);
-						accData.put(a, new EligibilityMessage(progress, missing));
-						if (!a.getAlwaysDisplay())
-							accFilter.put(a.getUnit(), a);
-					}
+					Collection<?> missing = helper.missing(a);	
+					long progress = helper.getProgress(a);
+					accData.put(a, new EligibilityMessage(progress, missing));
+					if (!a.getAlwaysDisplay())
+						accFilter.put(a.getUnit(), a);
 				} else
 					accData.put(new DatedAccomplishment(dt, a), new EligibilityMessage(true));
 			}
