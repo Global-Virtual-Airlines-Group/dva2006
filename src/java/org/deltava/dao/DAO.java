@@ -3,9 +3,6 @@ package org.deltava.dao;
 
 import java.sql.*;
 import java.time.Instant;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.time.temporal.*;
 import java.util.concurrent.atomic.LongAdder;
 
 import org.apache.log4j.Logger;
@@ -79,13 +76,8 @@ public abstract class DAO {
 	 */
 	protected static java.util.Date expandDate(Date dt) {
 		if (dt == null) return null;
-
-		// Convert to a calendar - if the hour value is zero, adjust forward by 12 hours
-		ZonedDateTime zdt = ZonedDateTime.ofInstant(Instant.ofEpochMilli(dt.getTime()), ZoneOffset.UTC);
-		if (zdt.get(ChronoField.HOUR_OF_DAY) == 0)
-			zdt.plus(12, ChronoUnit.HOURS);
-
-		return new Date(zdt.toEpochSecond() * 1000);
+		Instant i = Instant.ofEpochMilli(dt.getTime()).plusSeconds(12 * 3600);
+		return new Date(i.toEpochMilli());
 	}
 	
 	/**
