@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to load Flight Academy course data. 
  * @author Luke
- * @version 5.3
+ * @version 7.0
  * @since 1.0
  */
 
@@ -321,13 +321,13 @@ public class GetAcademyCourses extends DAO {
 				c.setID(rs.getInt(1));
 				c.setInstructorID(rs.getInt(4));
 				c.setStatus(Status.values()[rs.getInt(5)]);
-				c.setStartDate(rs.getTimestamp(6));
-				c.setEndDate(rs.getTimestamp(7));
+				c.setStartDate(toInstant(rs.getTimestamp(6)));
+				c.setEndDate(toInstant(rs.getTimestamp(7)));
 				c.setRideCount(rs.getInt(8));
 				c.setStage(rs.getInt(9));
 				c.setCode(rs.getString(10));
 				if (hasLastChat)
-					c.setLastComment(rs.getTimestamp(11));
+					c.setLastComment(toInstant(rs.getTimestamp(11)));
 			
 				results.add(c);
 			}
@@ -346,7 +346,7 @@ public class GetAcademyCourses extends DAO {
 		try (ResultSet rs = _ps.executeQuery()) {
 			while (rs.next()) {
 				CourseComment cc = new CourseComment(c.getID(), rs.getInt(2));
-				cc.setCreatedOn(rs.getTimestamp(3));
+				cc.setCreatedOn(rs.getTimestamp(3).toInstant());
 				cc.setText(rs.getString(4));
 				c.addComment(cc);
 			}
@@ -368,7 +368,7 @@ public class GetAcademyCourses extends DAO {
 				cp.setText(rs.getString(4));
 				cp.setExamName(rs.getString(5));
 				cp.setComplete(rs.getBoolean(6));
-				cp.setCompletedOn(rs.getTimestamp(7));
+				cp.setCompletedOn(toInstant(rs.getTimestamp(7)));
 				c.addProgress(cp);
 			}
 		}

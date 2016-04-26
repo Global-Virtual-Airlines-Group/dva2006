@@ -1,7 +1,11 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taskman;
 
 import java.util.*;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoField;
 import java.sql.Connection;
 
 import org.apache.log4j.Logger;
@@ -16,7 +20,7 @@ import org.deltava.util.system.SystemData;
  * A class to support Scheduled Tasks. Scheduled Tasks are similar to UNIX cron jobs, and are scheduled for
  * execution in much the same way.
  * @author Luke
- * @version 4.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -26,8 +30,7 @@ public abstract class Task implements Runnable, Comparable<Task>, Thread.Uncaugh
 	 * Time interval options.
 	 */
 	public static final String[] TIME_OPTS = {"min", "hour", "mday", "month", "wday"};
-	private static final int[] TIME_FIELDS = {Calendar.MINUTE, Calendar.HOUR_OF_DAY, Calendar.DAY_OF_MONTH,
-		Calendar.MONTH, Calendar.DAY_OF_WEEK};
+	private static final ChronoField[] TIME_FIELDS = {ChronoField.MINUTE_OF_HOUR, ChronoField.HOUR_OF_DAY, ChronoField.DAY_OF_MONTH, ChronoField.MONTH_OF_YEAR, ChronoField.DAY_OF_WEEK};
 	
 	/**
 	 * Wildcard for &quot;All Intervals&quot;
@@ -38,10 +41,10 @@ public abstract class Task implements Runnable, Comparable<Task>, Thread.Uncaugh
     protected final Logger log;
     
     private String _id;
-    private String _name;
+    private final String _name;
     
     private long _lastRunTime;
-    private Date _lastStartTime;
+    private Instant _lastStartTime;
     
     private boolean _enabled;
     private int _runCount;
@@ -95,7 +98,7 @@ public abstract class Task implements Runnable, Comparable<Task>, Thread.Uncaugh
      * Returns the when this Task was last started on.
      * @return the date/time the Task was last started, or null if the Task has never been executed
      */
-    public Date getStartTime() {
+    public Instant getStartTime() {
         return _lastStartTime;
     }
 
@@ -120,11 +123,11 @@ public abstract class Task implements Runnable, Comparable<Task>, Thread.Uncaugh
     /**
      * Returns whether the Scheduled Task can be executed at the present time.
      * @return TRUE if the Task can be executed, otherwise FALSE
-     * @see Task#isRunnable(Calendar)
+     * @see Task#isRunnable(Instant)
      * @see Task#setRunTimes(String, String)
      */
     public boolean isRunnable() {
-    	return isRunnable(CalendarUtils.getInstance(null));
+    	return isRunnable(Instant.now());
     }
     
     /**
@@ -135,19 +138,20 @@ public abstract class Task implements Runnable, Comparable<Task>, Thread.Uncaugh
      * @see Task#isRunnable()
      * @see Task#setRunTimes(String, String)
      */
-    boolean isRunnable(Calendar dt) {
-    	if ((!_enabled) || _runTimes.isEmpty())
+    boolean isRunnable(Instant dt) {
+    	if (!_enabled || _runTimes.isEmpty())
     		return false;
     	
     	// Check the time options
+    	ZonedDateTime zdt = ZonedDateTime.ofInstant(dt, ZoneOffset.UTC);
     	for (int x = 0; x < TIME_OPTS.length; x++) {
     		Collection<Integer> runTimes = _runTimes.get(TIME_OPTS[x]);
-    		int timeField = dt.get(TIME_FIELDS[x]);
+    		int timeField = zdt.get(TIME_FIELDS[x]);
     		if (log.isDebugEnabled())
     			log.debug(TIME_OPTS[x] + ", now = " + timeField + ", allowed = " + runTimes);
     		
     		// Make sure we qualify to run
-    		if ((runTimes != null) && (!runTimes.contains(ANY)) && (!runTimes.contains(new Integer(timeField))))
+    		if ((runTimes != null) && (!runTimes.contains(ANY)) && (!runTimes.contains(Integer.valueOf(timeField))))
     			return false;
     	}
     	
@@ -219,7 +223,7 @@ public abstract class Task implements Runnable, Comparable<Task>, Thread.Uncaugh
      * @param dt the date/time this Task last executed
      * @see Task#getStartTime()
      */
-    public void setStartTime(Date dt) {
+    public void setStartTime(Instant dt) {
        if (dt != null)
           _lastStartTime = dt;
     }
@@ -237,6 +241,7 @@ public abstract class Task implements Runnable, Comparable<Task>, Thread.Uncaugh
      * Executes the Task. This logs execution start/stop times and calls each Task implementation's
      * {@link Task#execute(TaskContext)} method.
      */
+    @Override
     public void run() {
     	run(null);
     }
@@ -247,7 +252,7 @@ public abstract class Task implements Runnable, Comparable<Task>, Thread.Uncaugh
      * @param usr overrides the user executing the Task if not null
      */
     public void run(Pilot usr) {
-    	setStartTime(new Date());
+    	setStartTime(Instant.now());
     	_runCount++;
     	log.info(_name + " starting ");
     	
@@ -272,7 +277,7 @@ public abstract class Task implements Runnable, Comparable<Task>, Thread.Uncaugh
 
     	// Execute the task
         execute(ctxt);
-        _lastRunTime = (System.currentTimeMillis() - _lastStartTime.getTime());
+        _lastRunTime = (System.currentTimeMillis() - _lastStartTime.toEpochMilli());
         log.info(getName() + " completed - " + getLastRunTime() + " ms");
         
         // Log execution time
@@ -289,10 +294,12 @@ public abstract class Task implements Runnable, Comparable<Task>, Thread.Uncaugh
     /**
      * Compares two Tasks by comparing their names.
      */
+    @Override
     public int compareTo(Task t2) {
     	return _name.compareTo(t2._name);
     }
     
+    @Override
     public int hashCode() {
     	return _name.hashCode();
     }
@@ -300,6 +307,7 @@ public abstract class Task implements Runnable, Comparable<Task>, Thread.Uncaugh
     /**
      * Uncaught exception logger for child threads.
      */
+    @Override
     public void uncaughtException(Thread t, Throwable e) {
     	log.error("Error in child thread " + t.getName(), e);
     }

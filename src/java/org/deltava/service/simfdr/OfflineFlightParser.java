@@ -1,6 +1,7 @@
 // Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.simfdr;
 
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -91,7 +92,7 @@ final class OfflineFlightParser {
 		afr.setRoute(ie.getChildTextTrim("route"));
 		afr.setRemarks(ie.getChildTextTrim("remarks"));
 		afr.setFSVersion(inf.getFSVersion());
-		afr.setDate(new Date());
+		afr.setDate(Instant.now());
 		afr.setSubmittedOn(afr.getDate());
 		afr.setHasReload(Boolean.valueOf(ie.getChildTextTrim("hasRestore")).booleanValue());
 		afr.setFDE(ie.getChildTextTrim("airFile"));

@@ -1,10 +1,10 @@
-// Copyright 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.academy;
 
 /**
  * A bean to store Flight Academy Check Ride Script IDs. 
  * @author Luke
- * @version 5.3
+ * @version 7.0
  * @since 5.3
  */
 
@@ -49,10 +49,12 @@ public class AcademyRideID {
 		return _idx;
 	}
 	
+	@Override
 	public int hashCode() {
 		return toString().hashCode();
 	}
 	
+	@Override
 	public String toString() {
 		StringBuilder buf = new StringBuilder(_name);
 		buf.append('-');

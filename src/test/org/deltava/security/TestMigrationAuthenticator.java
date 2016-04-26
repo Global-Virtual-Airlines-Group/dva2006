@@ -10,14 +10,16 @@ public class TestMigrationAuthenticator extends TestCase {
 
     private MigrationAuthenticator _auth;
     
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
         PropertyConfigurator.configure("data/log4j.test.properties");
         _auth = new MigrationAuthenticator();
         _auth.init(Authenticator.DEFAULT_PROPS_FILE);
     }
 
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         _auth = null;
         super.tearDown();
     }

@@ -1,4 +1,4 @@
-// Copyright 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import static java.net.HttpURLConnection.*;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to load external approach charts.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 4.0
  */
 
@@ -159,8 +159,10 @@ public class ExternalChartLoadTask extends Task {
 		
 		// Get countries
 		Map<?, ?> chartCountries = (Map<?, ?>) SystemData.getObject("schedule.chart.sources");
-		if ((chartCountries == null) || chartCountries.isEmpty())
+		if ((chartCountries == null) || chartCountries.isEmpty()) {
 			log.warn("No Chart Sources defined");
+			chartCountries = Collections.emptyMap();
+		}
 		
 		int maxAge = SystemData.getInt("schedule.chart.maxAge", 31);
 		try {

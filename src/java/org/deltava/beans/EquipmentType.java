@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A class for storing equipment program information.
  * @author Luke
- * @version 6.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -614,6 +614,7 @@ public class EquipmentType implements Cacheable, Comparable<EquipmentType>, Comb
     /**
      * Compares programs by comparing stage values, then the name.
      */
+    @Override
     public int compareTo(EquipmentType et2) {
         int tmp = Integer.valueOf(_stage).compareTo(Integer.valueOf(et2._stage));
         return (tmp == 0) ? _name.compareTo(et2._name) : tmp;
@@ -623,6 +624,7 @@ public class EquipmentType implements Cacheable, Comparable<EquipmentType>, Comb
      * Determine equality by comparing the program names.
      * @see String#equals(Object)
      */
+    @Override
     public boolean equals(Object o2) {
        return (o2 != null) ? _name.equals(o2.toString()) : false;
     }
@@ -630,6 +632,7 @@ public class EquipmentType implements Cacheable, Comparable<EquipmentType>, Comb
     /**
      * Returns the name's hashcode.
      */
+    @Override
     public int hashCode() {
     	return _name.hashCode();
     }
@@ -638,22 +641,27 @@ public class EquipmentType implements Cacheable, Comparable<EquipmentType>, Comb
      * When converting to a string, just return the name.
      * @see Object#toString()
      */
+    @Override
     public String toString() {
        return getName();
     }
 
+    @Override
     public String getComboAlias() {
         return getName();
     }
 
+    @Override
     public String getComboName() {
         return getName();
     }
     
+    @Override
     public Object cacheKey() {
     	return _owner.getDB() + "!!" + _name;
     }
     
+    @Override
     public String getRowClassName() {
     	return _active ? null : "opt2";
     }

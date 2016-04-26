@@ -1,9 +1,11 @@
-// Copyright 2005, 2007, 2008, 2009, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
 import java.util.concurrent.*;
 import java.sql.Connection;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 import org.deltava.beans.*;
 import org.deltava.beans.cooler.*;
@@ -19,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to search the Water Cooler.
  * @author Luke
- * @version 6.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -27,7 +29,7 @@ public class CoolerSearchCommand extends AbstractViewCommand {
 	
 	private static final Collection<String> DAY_OPTS = Arrays.asList("15", "30", "60", "90", "180", "365", "720");
 	
-	private static final Semaphore _usrLock = new Semaphore(3, true);
+	private static final Semaphore _usrLock = new Semaphore(5, true);
 	private static final Semaphore _anonLock = new Semaphore(1, false);
 
 	/**
@@ -79,7 +81,7 @@ public class CoolerSearchCommand extends AbstractViewCommand {
 			}
 			
 			// Get last update date
-			Date lud = CalendarUtils.getInstance(null, false, daysBack * -1).getTime();
+			LocalDateTime lud = LocalDateTime.now().minusDays(daysBack);
 
 			// Build the search criteria
 			SearchCriteria criteria = new SearchCriteria(ctx.getParameter("searchStr"));
@@ -87,7 +89,7 @@ public class CoolerSearchCommand extends AbstractViewCommand {
 			criteria.setAuthorName(ctx.getParameter("pilotName"));
 			criteria.setSearchSubject(Boolean.valueOf(ctx.getParameter("checkSubject")).booleanValue());
 			criteria.setSearchNameFragment(Boolean.valueOf(ctx.getParameter("nameMatch")).booleanValue());
-			criteria.setMinimumDate(lud);
+			criteria.setMinimumDate(lud.toInstant(ZoneOffset.UTC));
 			
 			// Get the DAO and search
 			GetCoolerThreads dao = new GetCoolerThreads(con);

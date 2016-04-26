@@ -12,14 +12,16 @@ public class TestStaff extends AbstractBeanTestCase {
         return new CoverageDecorator(TestStaff.class, new Class[] { Staff.class } );
     }
     
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
         _s = new Staff("John", "Smith");
         setBean(_s);
         _s.setSortOrder(5);
     }
     
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         _s = null;
         super.tearDown();
     }

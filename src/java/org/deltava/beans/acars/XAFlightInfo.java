@@ -89,10 +89,12 @@ public class XAFlightInfo extends FDRFlightReport {
 		return _zfw;
 	}
 	
+	@Override
     public final int getLength() {
-    	return (int)((getStartTime().getTime() - getEndTime().getTime()) / 3_600_000);
+    	return (int)((getStartTime().toEpochMilli() - getEndTime().toEpochMilli()) / 3_600_000);
     }
     
+    @Override
     public double getAverageFrameRate() {
     	return 0;
     }

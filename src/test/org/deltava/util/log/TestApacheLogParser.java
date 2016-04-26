@@ -24,6 +24,7 @@ public class TestApacheLogParser extends TestCase {
 		return new CoverageDecorator(TestApacheLogParser.class, new Class[] { ApacheLogParser.class });
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		PropertyConfigurator.configure("data/log4j.test.properties");
@@ -32,6 +33,7 @@ public class TestApacheLogParser extends TestCase {
 		assertTrue(_log.exists());
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		_parser = null;
 		_log = null;
@@ -42,7 +44,7 @@ public class TestApacheLogParser extends TestCase {
 		HTTPStatistics stats = _parser.parseLog(_log);
 		assertNotNull(stats);
 		assertNotNull(stats.getDate());
-		assertEquals(1124409600000L, stats.getDate().getTime());
+		assertEquals(1124409600000L, stats.getDate().toEpochMilli());
 		assertEquals(18, stats.getRequests());
 		assertEquals(3, stats.getHomePageHits());
 		assertEquals(7854, stats.getExecutionTime());
@@ -63,7 +65,7 @@ public class TestApacheLogParser extends TestCase {
 		HTTPStatistics stats = _parser.parseLog(_log);
 		assertNotNull(stats);
 		assertNotNull(stats.getDate());
-		assertEquals(1124409600000L, stats.getDate().getTime());
+		assertEquals(1124409600000L, stats.getDate().toEpochMilli());
 		log.debug("Date = " + stats.getDate());
 	}
 }

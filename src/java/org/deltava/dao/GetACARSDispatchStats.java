@@ -1,7 +1,9 @@
-// Copyright 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
+import java.time.*;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 import org.deltava.beans.*;
@@ -10,7 +12,7 @@ import org.deltava.beans.stats.DispatchStatistics;
 /**
  * A Data Access Object to load Dispatcher Activity statistics. 
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 3.2
  */
 
@@ -111,22 +113,19 @@ public class GetACARSDispatchStats extends DAO {
 	 */
 	public Collection<DateRange> getDispatchRanges() throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT DISTINCT MONTH(F.CREATED), YEAR(F.CREATED) FROM acars.FLIGHTS F, "
-				+ "acars.FLIGHT_DISPATCHER FD WHERE (F.ID=FD.ID) ORDER BY F.CREATED");
+			prepareStatementWithoutLimits("SELECT DISTINCT MONTH(F.CREATED), YEAR(F.CREATED) FROM acars.FLIGHTS F, acars.FLIGHT_DISPATCHER FD WHERE (F.ID=FD.ID) ORDER BY F.CREATED");
 			
 			// Execute the query
-			Calendar cld = Calendar.getInstance();
-			cld.set(Calendar.DAY_OF_MONTH, 1);
+			ZonedDateTime zdt = ZonedDateTime.ofInstant(Instant.now(), ZoneOffset.UTC).truncatedTo(ChronoUnit.MONTHS);
 			
 			Collection<DateRange> years = new TreeSet<DateRange>(Collections.reverseOrder());
 			List<DateRange> results = new ArrayList<DateRange>();
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
-					cld.set(Calendar.MONTH, rs.getInt(1) - 1);
-					cld.set(Calendar.YEAR, rs.getInt(2));
-					results.add(DateRange.createMonth(cld.getTime()));
-					cld.set(Calendar.MONTH, 0);
-					years.add(DateRange.createYear(cld.getTime()));
+					zdt = zdt.withMonth(rs.getInt(1) - 1).withYear(rs.getInt(2));
+					results.add(DateRange.createMonth(zdt.toInstant()));
+					zdt = zdt.withMonth(1);
+					years.add(DateRange.createYear(zdt.toInstant()));
 				}
 			}
 			

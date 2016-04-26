@@ -58,22 +58,12 @@ public abstract class NavigationDataBean implements java.io.Serializable, Clonea
 		return _name;
 	}
 
-	/**
-	 * Returns the object's latitude.
-	 * @return the latitude in degrees
-	 * @see NavigationDataBean#getLongitude()
-	 * @see NavigationDataBean#getPosition()
-	 */
+	@Override
 	public final double getLatitude() {
 		return _gp.getLatitude();
 	}
 
-	/**
-	 * Returns the object's longitude.
-	 * @return the longitude in degrees
-	 * @see NavigationDataBean#getLatitude()
-	 * @see NavigationDataBean#getPosition()
-	 */
+	@Override
 	public final double getLongitude() {
 		return _gp.getLongitude();
 	}
@@ -171,6 +161,7 @@ public abstract class NavigationDataBean implements java.io.Serializable, Clonea
 	 * Compares two objects by comparing their codes. If the codes are equal, then their item types and then 
 	 * distances from point 0,0 are compared.
 	 */
+	@Override
 	public int compareTo(NavigationDataBean nb2) {
 		int tmpResult = _code.compareTo(nb2._code);
 		if (tmpResult == 0) tmpResult = _type.compareTo(nb2._type);
@@ -233,6 +224,7 @@ public abstract class NavigationDataBean implements java.io.Serializable, Clonea
 	/**
 	 * Returns the code's hash code.
 	 */
+	@Override
 	public int hashCode() {
 		return toString().hashCode();
 	}
@@ -240,6 +232,7 @@ public abstract class NavigationDataBean implements java.io.Serializable, Clonea
 	/**
 	 * Checks for equality by comparing the codes.
 	 */
+	@Override
 	public boolean equals(Object o2) {
 		return (o2 instanceof NavigationDataBean) ? (compareTo((NavigationDataBean) o2) == 0) : false;
 	}
@@ -255,6 +248,7 @@ public abstract class NavigationDataBean implements java.io.Serializable, Clonea
 	 * Returns this navigation aid's unique ID in a format that matches the ACARS dispatch client. <i>Changing
 	 * this format will probably break the dispatch client!</i>
 	 */
+	@Override
 	public final String toString() {
 		StringBuilder buf = new StringBuilder(_code);
 		buf.append('!');
@@ -271,6 +265,7 @@ public abstract class NavigationDataBean implements java.io.Serializable, Clonea
 		return buf.toString();
 	}
 	
+	@Override
 	public Object clone() throws CloneNotSupportedException {
 		NavigationDataBean nd2 = (NavigationDataBean) super.clone();
 		nd2._gp = new GeoPosition(nd2._gp);

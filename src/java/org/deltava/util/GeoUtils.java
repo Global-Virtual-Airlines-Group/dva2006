@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.beans.schedule.GeoPosition;
 /**
  * A utility class for performing geocoding operations.
  * @author Luke
- * @version 6.3
+ * @version 7.0
  * @since 1.0
  */
 
@@ -157,11 +157,11 @@ public class GeoUtils {
 	 * @return the normalized angle
 	 */
 	public static double normalize(double degrees) {
-		int amt = (degrees < 0) ? 360 : -360;
-		while ((degrees < 0) || (degrees > 360))
-			degrees += amt;
+		int amt = (degrees < 0) ? 360 : -360; double d = degrees;
+		while ((d < 0) || (d > 360))
+			d += amt;
 
-		return degrees;
+		return d;
 	}
 	
 	/**
@@ -201,24 +201,18 @@ public class GeoUtils {
 	 * @return the normalized location
 	 */
 	public static GeoLocation normalize(double lat, double lng) {
-		
-		// Sanity check
-		if (Math.abs(lat) > 500)
-			lat = 0;
-		if (Math.abs(lng) > 1000)
-			lng = 0;
 
 		// Normalize latitude
-		int amt = (lat < -90) ? 90 : -90;
-		while ((lat < -90) || (lat > 90))
-			lat += amt;
+		int amt = (lat < -90) ? 90 : -90; double lt = lat;
+		while ((lt < -90) || (lt > 90))
+			lt += amt;
 
 		// Normalize longitude
-		amt = (lng < -180) ? 180 : -180;
-		while ((lng < -180) || (lng > 180))
-			lng += amt;
+		amt = (lng < -180) ? 180 : -180; double ln = lng;
+		while ((ln < -180) || (ln > 180))
+			ln += amt;
 
-		return new GeoPosition(lat, lng);
+		return new GeoPosition(lt, ln);
 	}
 
 	/**
@@ -232,12 +226,12 @@ public class GeoUtils {
 	public static GeoLocation bearingPoint(GeoLocation p1, double distance, double angle) {
 
 		// Convert the miles to degrees of latitude, and the angle to radians
-		distance /= GeoLocation.DEGREE_MILES;
-		angle = StrictMath.toRadians(angle);
+		double dst = distance / GeoLocation.DEGREE_MILES;
+		double angrad = StrictMath.toRadians(angle);
 
 		// These are coordinates RELATIVE to the origin
-		double lat2 = distance * StrictMath.cos(angle);
-		double lng2 = distance * StrictMath.sin(angle);
+		double lat2 = dst * StrictMath.cos(angrad);
+		double lng2 = dst * StrictMath.sin(angrad);
 		return normalize(p1.getLatitude() + lat2, p1.getLongitude() + lng2);
 	}
 

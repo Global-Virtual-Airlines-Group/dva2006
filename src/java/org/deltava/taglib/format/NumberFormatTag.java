@@ -1,4 +1,4 @@
-// Copyright 2004, 2007, 2009, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2007, 2009, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import java.text.*;
@@ -8,7 +8,7 @@ import javax.servlet.jsp.*;
 /**
  * A JSP tag to support the rendering of formatted numeric values.
  * @author Luke
- * @version 5.2
+ * @version 7.0
  * @since 1.0
  */
 
@@ -65,7 +65,8 @@ public abstract class NumberFormatTag extends UserSettingsTag {
      * Updates this tag's page context and loads the user object from the request.
      * @param ctxt the new JSP page context
      */
-    public void setPageContext(PageContext ctxt) {
+    @Override
+	public void setPageContext(PageContext ctxt) {
         super.setPageContext(ctxt);
         if (_user != null)
             _nF.applyPattern(_user.getNumberFormat());
@@ -76,7 +77,8 @@ public abstract class NumberFormatTag extends UserSettingsTag {
      * @return SKIP_BODY always
      * @throws JspException never
      */
-    public int doStartTag() throws JspException {
+    @Override
+	public int doStartTag() throws JspException {
     	if (_value == null)
     		_value = Integer.valueOf(0);
     	
@@ -88,7 +90,8 @@ public abstract class NumberFormatTag extends UserSettingsTag {
      * @return TagSupport.EVAL_PAGE
      * @throws JspException if an error occurs
      */
-    public int doEndTag() throws JspException {
+    @Override
+	public int doEndTag() throws JspException {
         JspWriter out = pageContext.getOut();
         try {
             if (_className != null) {

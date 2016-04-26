@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to clear invalid Pilot Locations from the map.
  * @author Luke
- * @version 2.5
+ * @version 7.0
  * @since 2.3
  */
 
@@ -26,6 +26,7 @@ public class PilotLocationClearService extends WebService {
 	 * @return the HTTP status code
 	 * @throws ServiceException if an error occurs
 	 */
+	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 		if (!ctx.isUserInRole("HR"))
 			throw error(SC_UNAUTHORIZED, "Not in HR role", false);
@@ -60,6 +61,7 @@ public class PilotLocationClearService extends WebService {
 	 * Returns if the Web Service invocation is logged.
 	 * @return FALSE
 	 */
+	@Override
 	public boolean isLogged() {
 		return false;
 	}
@@ -68,6 +70,7 @@ public class PilotLocationClearService extends WebService {
 	 * Returns whether this web service requires authentication.
 	 * @return TRUE if authentication is required, otherwise FALSE
 	 */
+	@Override
 	public boolean isSecure() {
 		return true;
 	}

@@ -2,6 +2,7 @@ package org.deltava.beans.system;
 
 import junit.framework.TestCase;
 
+@SuppressWarnings("static-method")
 public class TestIPBlock extends TestCase {
 
 	public void testProperties() {

@@ -6,13 +6,15 @@ public class TestTableTag extends AbstractTagTestCase {
 
     private TableTag _tag;
     
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
         _tag = new TableTag();
         _tag.setPageContext(_ctx);
     }
     
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         _tag = null;
         super.tearDown();
     }

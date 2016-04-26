@@ -1,4 +1,4 @@
-// Copyright 2011, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
 import org.deltava.beans.schedule.*;
@@ -6,7 +6,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A comparator for Schedule entries.
  * @author Luke
- * @version 6.3
+ * @version 7.0
  * @since 4.1
  */
 
@@ -23,8 +23,7 @@ public class ScheduleEntryComparator extends AbstractComparator<ScheduleEntry> {
 	public static final int FLCOUNT = 9;
 	public static final int LASTFLT = 10;
 	
-	private static final String[] TYPES = {"???", "Flight Number", "Equipment Type", "Origin", "Destination", "Departure Time", "Arrival Time", 
-			"Length", "Distance", "Flight Count", "Last Flown"};
+	private static final String[] TYPES = {"???", "Flight Number", "Equipment Type", "Origin", "Destination", "Departure Time", "Arrival Time", "Length", "Distance", "Flight Count", "Last Flown"};
 	
     /**
      * Creates a new comparator with a given comparison type.

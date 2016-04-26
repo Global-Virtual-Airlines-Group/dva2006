@@ -1,7 +1,8 @@
-// Copyright 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
+import java.time.Instant;
 import java.util.*;
 
 import org.deltava.beans.acars.*;
@@ -15,7 +16,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to deserialize ACARS/XACARS position records.  
  * @author Luke
- * @version 5.4
+ * @version 7.0
  * @since 4.1
  */
 
@@ -54,7 +55,7 @@ public class GetSerializedPosition extends DAO {
 		Collection<ACARSRouteEntry> results = new ArrayList<ACARSRouteEntry>(size + 2);
 		for (int x = 0; x < size; x++) {
 			GeoPosition gp = new GeoPosition(in.readDouble(), in.readDouble());
-			ACARSRouteEntry re = new ACARSRouteEntry(new Date(in.readLong()), gp);
+			ACARSRouteEntry re = new ACARSRouteEntry(Instant.ofEpochMilli(in.readLong()), gp);
 			re.setPhase(in.readShort());
 			re.setFlags(in.readInt());
 			re.setAltitude(in.readInt());
@@ -120,7 +121,7 @@ public class GetSerializedPosition extends DAO {
 		Collection<XARouteEntry> results = new ArrayList<XARouteEntry>(size + 2);
 		for (int x = 0; x < size; x++) {
 			GeoPosition gp = new GeoPosition(in.readDouble(), in.readDouble());
-			XARouteEntry re = new XARouteEntry(gp, new Date(in.readLong()));
+			XARouteEntry re = new XARouteEntry(gp, Instant.ofEpochMilli(in.readLong()));
 			re.setPhase(in.readShort());
 			re.setFlags(in.readInt());
 			re.setAltitude(in.readInt());

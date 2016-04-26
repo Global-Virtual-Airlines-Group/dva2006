@@ -1,9 +1,10 @@
-// Copyright 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import static java.net.HttpURLConnection.HTTP_OK;
 
 import java.io.*;
+import java.time.Instant;
 import java.util.*;
 
 import org.jdom2.*;
@@ -22,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to fetch Air Charts data.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 4.0
  */
 
@@ -30,8 +31,7 @@ public class GetAirCharts extends DAO {
 	
 	private static final Logger log = Logger.getLogger(GetAirCharts.class);
 	
-	private static final Chart.Type[] CAT_TYPE_MAP = {Chart.Type.UNKNOWN, Chart.Type.GROUND, 
-		Chart.Type.SID, Chart.Type.STAR, Chart.Type.APR, Chart.Type.ILS};
+	private static final Chart.Type[] CAT_TYPE_MAP = {Chart.Type.UNKNOWN, Chart.Type.GROUND, Chart.Type.SID, Chart.Type.STAR, Chart.Type.APR, Chart.Type.ILS};
 	
 	/*
 	 * Helper method to parse XML from remote HTTP host.
@@ -153,7 +153,7 @@ public class GetAirCharts extends DAO {
 						if ((c.getType() == Chart.Type.ILS) && (!c.getName().contains("ILS")))
 							c.setType(Chart.Type.APR);
 						
-						c.setLastModified(new Date());
+						c.setLastModified(Instant.now());
 						c.setURL(url);
 						c.setExternalID(params.get("id"));
 						results.add(c);

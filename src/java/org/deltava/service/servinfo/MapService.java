@@ -1,4 +1,4 @@
-// Copyright 2010, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2012, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.servinfo;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display an online network map. 
  * @author Luke
- * @version 5.4
+ * @version 7.0
  * @since 3.2
  */
 
@@ -61,7 +61,7 @@ public class MapService extends WebService {
 		// Generate the XML document
 		Document doc = new Document();
 		Element re = new Element("wsdata");
-		re.setAttribute("date", String.valueOf(info.getValidDate().getTime()));
+		re.setAttribute("date", String.valueOf(info.getValidDate().toEpochMilli()));
 		doc.setRootElement(re);
 		
 		// Display the pilots

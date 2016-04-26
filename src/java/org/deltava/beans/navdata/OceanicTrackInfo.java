@@ -1,12 +1,12 @@
-// Copyright 2004, 2005, 2009, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2009, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
-import java.util.Date;
+import java.time.Instant;
 
 /**
  * An interface to describe Oceanic track airways and NOTAMs.
  * @author Luke
- * @version 5.1
+ * @version 7.0
  * @since 1.0
  */
 
@@ -30,7 +30,7 @@ public interface OceanicTrackInfo {
      * Returns the effective date of the Oceanic.
      * @return the route date
      */
-    public Date getDate();
+    public Instant getDate();
     
     /**
      * Returns the route type code.

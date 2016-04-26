@@ -1,7 +1,8 @@
-// Copyright 2005, 2006, 2007, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2011, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 import org.deltava.beans.testing.*;
@@ -19,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to assign Check Rides.
  * @author Luke
- * @version 6.2
+ * @version 7.0
  * @since 1.0
  */
 
@@ -101,7 +102,7 @@ public class CheckRideAssignCommand extends AbstractCommand {
 			// Generate the checkride
 			cr = new CheckRide(ctx.getParameter("crType") + " Check Ride");
 			cr.setOwner(SystemData.getApp(SystemData.get("airline.code")));
-			cr.setDate(new java.util.Date());
+			cr.setDate(Instant.now());
 			cr.setAircraftType(ctx.getParameter("crType"));
 			cr.setEquipmentType(txreq.getEquipmentType());
 			cr.setAuthorID(ctx.getID());

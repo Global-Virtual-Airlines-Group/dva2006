@@ -1,14 +1,13 @@
-// Copyright 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.econ;
 
-import java.util.*;
-
-import org.deltava.util.CalendarUtils;
+import java.time.*;
+import java.time.temporal.ChronoUnit;
 
 /**
  * A bean to store information about simulated economic cycles.
  * @author Luke
- * @version 3.7
+ * @version 7.0
  * @since 3.7
  */
 
@@ -22,7 +21,7 @@ public class EconomyInfo implements java.io.Serializable {
 	private double _yearHZ;
 	private double _hourHZ;
 	
-	private final Calendar _startDate = new GregorianCalendar(2001, 6, 10);
+	private Instant _startDate = ZonedDateTime.of(2001, 6, 10, 0, 0, 0, 0, ZoneOffset.UTC).toInstant();
 
 	/**
 	 * Initializes the economy. The amplitude cannot exceed one half of the difference
@@ -73,7 +72,7 @@ public class EconomyInfo implements java.io.Serializable {
 	 * Returns the airline start date.
 	 * @return the start date
 	 */
-	public Calendar getStartDate() {
+	public Instant getStartDate() {
 		return _startDate;
 	}
 	
@@ -97,8 +96,8 @@ public class EconomyInfo implements java.io.Serializable {
 	 * Updates the airline start date. The time component will be cleared.
 	 * @param dt the start date/time
 	 */
-	public void setStartDate(Date dt) {
-		_startDate.setTime(CalendarUtils.getInstance(dt, true).getTime());
+	public void setStartDate(Instant dt) {
+		_startDate = dt.truncatedTo(ChronoUnit.DAYS);
 	}
 
 	/**

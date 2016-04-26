@@ -1,4 +1,4 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.diag;
 
 import javax.servlet.jsp.*;
@@ -8,7 +8,7 @@ import javax.servlet.jsp.tagext.TagSupport;
 /**
  * A JSP tag to display the Servlet API version.
  * @author Luke
- * @version 2.2
+ * @version 7.0
  * @since 2.2
  */
 
@@ -19,6 +19,7 @@ public class ServletVersionTag extends TagSupport {
 	 * @return TagSupport.EVAL_PAGE always
 	 * @throws JspException if an I/O error occurs
 	 */
+	@Override
 	public int doEndTag() throws JspException {
 		
 		JspWriter out = pageContext.getOut();

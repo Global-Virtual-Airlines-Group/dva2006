@@ -12,16 +12,17 @@ public class TestIssueAccessControl extends AccessControlTestCase {
 	private Issue _i;
 
 	public static Test suite() {
-		return new CoverageDecorator(TestIssueAccessControl.class, new Class[] { AccessControl.class,
-				IssueAccessControl.class });
+		return new CoverageDecorator(TestIssueAccessControl.class, new Class[] { AccessControl.class, IssueAccessControl.class });
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		_i = new Issue(1, "Issue");
 		_ac = new IssueAccessControl(_ctxt, _i);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		_ac = null;
 		_i = null;

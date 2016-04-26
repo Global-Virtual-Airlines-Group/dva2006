@@ -1,15 +1,16 @@
-// Copyright 2005, 2006, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2012, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.deltava.beans.EquipmentType;
+
 import org.deltava.util.StringUtils;
 
 /**
  * A class to store Check Ride data.
  * @author Luke
- * @version 5.4
+ * @version 7.0
  * @since 1.0
  */
 
@@ -21,7 +22,7 @@ public class CheckRide extends Test {
 	
 	private String _eqType;
 	private String _acType;
-	private Date _expiryDate;
+	private Instant _expiryDate;
 	
 	private int _acarsID;
 	private int _courseID;
@@ -59,6 +60,7 @@ public class CheckRide extends Test {
      * @return 1 if passed, otherwise 0
      * @see CheckRide#setScore(boolean)
      */
+    @Override
     public final int getScore() {
     	return getPassFail() ? 1 : 0;
     }
@@ -85,17 +87,17 @@ public class CheckRide extends Test {
     /**
      * Returns the expiration of this check ride.
      * @return the expiry date/time, or null if never
-     * @see CheckRide#setExpirationDate(Date)
+     * @see CheckRide#setExpirationDate(Instant)
      */
-    public Date getExpirationDate() {
+    public Instant getExpirationDate() {
     	return _expiryDate;
     }
     
     /**
      * Returns the size of the Test. <i>Not Implemented</i>
      * @return 1
-     * @see CheckRide#setSize(int)
      */
+    @Override
     public int getSize() {
        return 1;
     }
@@ -151,6 +153,7 @@ public class CheckRide extends Test {
      * Sets the size of the Test. <i>NOT IMPLEMENTED</i>
      * @throws UnsupportedOperationException
      */
+    @Override
     public void setSize(int size) {
        throw new UnsupportedOperationException();
     }
@@ -172,6 +175,7 @@ public class CheckRide extends Test {
      * @throws IllegalArgumentException if the score is not 0 or 1
      * @see CheckRide#setScore(boolean)
      */
+    @Override
     public final void setScore(int score) {
         if ((score != 0) && (score != 1))
             throw new IllegalArgumentException("Score must be 0 or 1");
@@ -214,7 +218,7 @@ public class CheckRide extends Test {
      * @param dt the expiration date/time, or null if never
      * @see CheckRide#getExpirationDate()
      */
-    public void setExpirationDate(Date dt) {
+    public void setExpirationDate(Instant dt) {
     	_expiryDate = dt;
     }
     
@@ -232,6 +236,7 @@ public class CheckRide extends Test {
      * @param academy TRUE if the Test is part of the Flight Academy, otherwise FALSE
      * @see Test#getAcademy()
      */
+    @Override
     public void setAcademy(boolean academy) {
     	super.setAcademy(academy);
     	if (academy) {
@@ -245,6 +250,7 @@ public class CheckRide extends Test {
      * Returns the CSS class name for a view table row.
      * @return the CSS class name 
      */
+    @Override
     public String getRowClassName() {
  	   return CLASS_NAMES[getStatus().ordinal()];
     }

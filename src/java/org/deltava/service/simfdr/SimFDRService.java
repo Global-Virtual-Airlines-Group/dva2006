@@ -22,7 +22,7 @@ abstract class SimFDRService extends WebService {
 	 * Authenticates the simFDR User.
 	 * @param ctx the ServiceContext
 	 */
-	protected void authenticate(ServiceContext ctx) throws ServiceException {
+	protected static void authenticate(ServiceContext ctx) throws ServiceException {
 		
 		// Check for Authentication header
 		String authHdr = ctx.getRequest().getHeader("Authorization");

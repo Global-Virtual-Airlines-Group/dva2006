@@ -3,6 +3,7 @@ package org.deltava.beans.acars;
 
 import java.util.*;
 import java.io.StringReader;
+import java.time.Instant;
 
 import org.apache.log4j.Logger;
 
@@ -34,8 +35,8 @@ public final class OfflineFlightParser {
 	}
 	
 	private static double parse(String xml) {
-		if (xml.contains(",")) xml = xml.replace(',', '.');
-		return Double.parseDouble(xml);
+		String x = xml.contains(",") ? xml.replace(',', '.') : xml;
+		return Double.parseDouble(x);
 	}
 	
 	/**
@@ -90,8 +91,8 @@ public final class OfflineFlightParser {
 		inf.setFDR(Recorder.ACARS);
 		inf.setBeta(StringUtils.parse(re.getAttributeValue("beta"), 0));
 		inf.setEquipmentType(ie.getChildTextTrim("equipment"));
-		inf.setStartTime(StringUtils.parseDate(ie.getChildTextTrim("startTime"), "MM/dd/yyyy HH:mm:ss"));
-		inf.setEndTime(StringUtils.parseDate(ie.getChildTextTrim("shutdownTime"), "MM/dd/yyyy HH:mm:ss"));
+		inf.setStartTime(StringUtils.parseInstant(ie.getChildTextTrim("startTime"), "MM/dd/yyyy HH:mm:ss"));
+		inf.setEndTime(StringUtils.parseInstant(ie.getChildTextTrim("shutdownTime"), "MM/dd/yyyy HH:mm:ss"));
 		inf.setAirportD(SystemData.getAirport(ie.getChildTextTrim("airportD")));
 		inf.setAirportA(SystemData.getAirport(ie.getChildTextTrim("airportA")));
 		inf.setAltitude(ie.getChildTextTrim("altitude"));
@@ -109,7 +110,7 @@ public final class OfflineFlightParser {
 		// Build the position entries
 		Element ppe = re.getChild("positions");
 		List<Element> pL = (ppe != null) ? ppe.getChildren("position") : null;
-		if (!CollectionUtils.isEmpty(pL)) {
+		if (pL != null) {
 			for (Iterator<Element> i = pL.iterator(); i.hasNext();) {
 				Element pe = i.next();
 				String dt = pe.getChildTextTrim("date");
@@ -119,7 +120,7 @@ public final class OfflineFlightParser {
 				// Build a position entry
 				try {
 					GeoLocation loc = new GeoPosition(parse(pe.getChildTextTrim("lat")), parse(pe.getChildTextTrim("lon")));
-					ACARSRouteEntry pos = new ACARSRouteEntry(StringUtils.parseDate(dt, "MM/dd/yyyy HH:mm:ss.SSS"), loc);
+					ACARSRouteEntry pos = new ACARSRouteEntry(StringUtils.parseInstant(dt, "MM/dd/yyyy HH:mm:ss.SSS"), loc);
 					pos.setAltitude(StringUtils.parse(pe.getChildTextTrim("msl"), 0));
 					pos.setRadarAltitude(StringUtils.parse(pe.getChildTextTrim("agl"), 0));
 					pos.setHeading(StringUtils.parse(pe.getChildTextTrim("hdg"), 0));
@@ -159,7 +160,7 @@ public final class OfflineFlightParser {
 		afr.setAttribute(FlightReport.ATTR_DISPATCH, inf.isDispatchPlan());
 		afr.setFSVersion(inf.getFSVersion());
 		afr.setStatus(FlightReport.SUBMITTED);
-		afr.setSubmittedOn(new Date());
+		afr.setSubmittedOn(Instant.now());
 		afr.setAirportD(inf.getAirportD());
 		afr.setAirportA(inf.getAirportA());
 		afr.setHasReload(Boolean.valueOf(ie.getChildTextTrim("hasRestore")).booleanValue());
@@ -177,11 +178,11 @@ public final class OfflineFlightParser {
 		afr.setAttribute(FlightReport.ATTR_CHECKRIDE, Boolean.valueOf(ie.getChildTextTrim("checkRide")).booleanValue());
 
 		// Set the times
-		afr.setStartTime(StringUtils.parseDate(ie.getChildTextTrim("startTime"), "MM/dd/yyyy HH:mm:ss"));
-		afr.setTaxiTime(StringUtils.parseDate(ie.getChildTextTrim("taxiOutTime"), "MM/dd/yyyy HH:mm:ss"));
-		afr.setTakeoffTime(StringUtils.parseDate(ie.getChildTextTrim("takeoffTime"), "MM/dd/yyyy HH:mm:ss"));
-		afr.setLandingTime(StringUtils.parseDate(ie.getChildTextTrim("landingTime"), "MM/dd/yyyy HH:mm:ss"));
-		afr.setEndTime(StringUtils.parseDate(ie.getChildTextTrim("gateTime"), "MM/dd/yyyy HH:mm:ss"));
+		afr.setStartTime(StringUtils.parseInstant(ie.getChildTextTrim("startTime"), "MM/dd/yyyy HH:mm:ss"));
+		afr.setTaxiTime(StringUtils.parseInstant(ie.getChildTextTrim("taxiOutTime"), "MM/dd/yyyy HH:mm:ss"));
+		afr.setTakeoffTime(StringUtils.parseInstant(ie.getChildTextTrim("takeoffTime"), "MM/dd/yyyy HH:mm:ss"));
+		afr.setLandingTime(StringUtils.parseInstant(ie.getChildTextTrim("landingTime"), "MM/dd/yyyy HH:mm:ss"));
+		afr.setEndTime(StringUtils.parseInstant(ie.getChildTextTrim("gateTime"), "MM/dd/yyyy HH:mm:ss"));
 
 		// Set the weights/speeds
 		afr.setTaxiFuel(StringUtils.parse(ie.getChildTextTrim("taxiFuel"), 0));

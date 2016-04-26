@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load Water Cooler channel profiles.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -263,7 +263,7 @@ public class GetCoolerChannels extends DAO {
 					msg.setThreadID(rs.getInt(1));
 					msg.setID(msg.getThreadID());
 					msg.setSubject(rs.getString(2));
-					msg.setCreatedOn(rs.getTimestamp(12));
+					msg.setCreatedOn(rs.getTimestamp(12).toInstant());
 					results.add(msg);
 				}
 			}

@@ -1,4 +1,4 @@
-// Copyright 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.mvs;
 
 import java.util.*;
@@ -9,13 +9,13 @@ import org.deltava.beans.Pilot;
  * A bean to store user/warning/channel mappings. This class is unsynchronized and callers
  * should perform their own synchronization to ensure thread safety.
  * @author Luke
- * @version 4.0
+ * @version 7.0
  * @since 4.0
  */
 
 public class PopulatedChannel implements java.io.Serializable {
 	
-	private Channel _c;
+	private final Channel _c;
 	private final Map<Long, Pilot> _users = new HashMap<Long, Pilot>();
 
 	/**
@@ -108,14 +108,17 @@ public class PopulatedChannel implements java.io.Serializable {
 		return results;
 	}
 	
+	@Override
 	public int hashCode() {
 		return _c.getName().hashCode();
 	}
 	
+	@Override
 	public String toString() {
 		return _c.getName();
 	}
 	
+	@Override
 	public boolean equals(Object o) {
 		return (o instanceof PopulatedChannel) ? (hashCode() == o.hashCode()) : false;
 	}

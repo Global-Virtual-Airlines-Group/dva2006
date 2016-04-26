@@ -1,7 +1,7 @@
-// Copyright 2005, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servlet;
 
-import java.util.Date;
+import java.time.Instant;
 import java.io.Serializable;
 
 import org.deltava.beans.ViewEntry;
@@ -10,13 +10,13 @@ import org.deltava.commands.CommandResult;
 /**
  * A bean to log Web Site Command invocations.
  * @author Luke
- * @version 2.2
+ * @version 7.0
  * @since 1.0
  */
 
 public class CommandLog implements Serializable, Comparable<CommandLog>, ViewEntry {
 
-	private Date _d;
+	private final Instant _d;
 	private String _cmdName;
 	private String _remoteAddr;
 	private String _remoteHost;
@@ -32,7 +32,7 @@ public class CommandLog implements Serializable, Comparable<CommandLog>, ViewEnt
 	 * @param d the date/time of the command invocation.
 	 * @see CommandLog#getDate()
 	 */
-	public CommandLog(Date d) {
+	public CommandLog(Instant d) {
 		super();
 		_d = d;
 	}
@@ -43,7 +43,7 @@ public class CommandLog implements Serializable, Comparable<CommandLog>, ViewEnt
 	 * @param cr the CommandResult bean
 	 */
 	public CommandLog(String cmdName, CommandResult cr) {
-		this(new Date());
+		this(Instant.now());
 		_cmdName = cmdName;
 		if (cr != null) {
 			_success = cr.getSuccess();
@@ -56,7 +56,7 @@ public class CommandLog implements Serializable, Comparable<CommandLog>, ViewEnt
 	 * Returns the date the Command was executed.
 	 * @return the execution date/time
 	 */
-	public Date getDate() {
+	public Instant getDate() {
 		return _d;
 	}
 
@@ -217,6 +217,7 @@ public class CommandLog implements Serializable, Comparable<CommandLog>, ViewEnt
 	/**
 	 * Compares two log entries by comparing their dates.
 	 */
+	@Override
 	public int compareTo(CommandLog cl2) {
 		return _d.compareTo(cl2._d);
 	}
@@ -226,6 +227,7 @@ public class CommandLog implements Serializable, Comparable<CommandLog>, ViewEnt
 	 * @return null or &quot;warn&quot; if execution not successful
 	 * @see CommandLog#getSuccess()
 	 */
+	@Override
 	public String getRowClassName() {
 		return _success ? null : "warn";
 	}

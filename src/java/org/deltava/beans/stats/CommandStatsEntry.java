@@ -1,16 +1,16 @@
-// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 /**
  * A bean to store Web Site Command statistics.
  * @author Luke
- * @version 2.6
+ * @version 7.0
  * @since 1.0
  */
 
 public class CommandStatsEntry implements java.io.Serializable, Comparable<CommandStatsEntry> {
 
-   private String _name;
+   private final String _name;
    private int _count;
    private int _successCount;
    
@@ -201,6 +201,7 @@ public class CommandStatsEntry implements java.io.Serializable, Comparable<Comma
    /**
     * Compares two statistics beans by comparing their command names.
     */
+   @Override
    public int compareTo(CommandStatsEntry cse2) {
       return _name.compareTo(cse2._name);
    }

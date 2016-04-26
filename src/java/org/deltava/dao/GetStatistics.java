@@ -1,20 +1,21 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
 import java.sql.*;
+import java.time.*;
+import java.time.temporal.ChronoUnit;
 
 import org.deltava.beans.*;
 import org.deltava.beans.flight.FlightReport;
 import org.deltava.beans.stats.*;
 
-import org.deltava.util.CalendarUtils;
 import org.deltava.util.cache.*;
 
 /**
  * A Data Access Object to retrieve Airline statistics.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -78,23 +79,21 @@ public class GetStatistics extends DAO  {
 				_ps.close();
 
 				// Get MTD/YTD start dates
-				Calendar c = CalendarUtils.getInstance(null, true);
-				c.set(Calendar.DAY_OF_MONTH, 1);
-				Calendar yc = CalendarUtils.getInstance(null, true);
-				yc.set(Calendar.DAY_OF_YEAR, 1);
+				Instant mc = ZonedDateTime.now().truncatedTo(ChronoUnit.MONTHS).toInstant();
+				Instant yc = ZonedDateTime.now().truncatedTo(ChronoUnit.YEARS).toInstant();
 
 				// Count MTD/YTD totals
 				prepareStatement("SELECT SUM(IF((DATE >= ?), 1, 0)), ROUND(SUM(IF((DATE >= ?), FLIGHT_TIME, 0))), "
 						+ "SUM(IF((DATE >= ?), DISTANCE, 0)), SUM(IF((DATE >= ?), 1, 0)), ROUND(SUM(IF((DATE >= ?), FLIGHT_TIME, 0))), "
 						+ "SUM(IF((DATE >= ?), DISTANCE, 0)) FROM PIREPS WHERE (DATE >= ?) AND (STATUS=?)");
 				_ps.setQueryTimeout(10);
-				_ps.setTimestamp(1, new Timestamp(c.getTimeInMillis()));
-				_ps.setTimestamp(2, new Timestamp(c.getTimeInMillis()));
-				_ps.setTimestamp(3, new Timestamp(c.getTimeInMillis()));
-				_ps.setTimestamp(4, new Timestamp(yc.getTimeInMillis()));
-				_ps.setTimestamp(5, new Timestamp(yc.getTimeInMillis()));
-				_ps.setTimestamp(6, new Timestamp(yc.getTimeInMillis()));
-				_ps.setTimestamp(7, new Timestamp(yc.getTimeInMillis()));
+				_ps.setTimestamp(1, new Timestamp(mc.toEpochMilli()));
+				_ps.setTimestamp(2, new Timestamp(mc.toEpochMilli()));
+				_ps.setTimestamp(3, new Timestamp(mc.toEpochMilli()));
+				_ps.setTimestamp(4, new Timestamp(yc.toEpochMilli()));
+				_ps.setTimestamp(5, new Timestamp(yc.toEpochMilli()));
+				_ps.setTimestamp(6, new Timestamp(yc.toEpochMilli()));
+				_ps.setTimestamp(7, new Timestamp(yc.toEpochMilli()));
 				_ps.setInt(8, FlightReport.OK);
 
 				// Do the query
@@ -336,7 +335,6 @@ public class GetStatistics extends DAO  {
 					results.add(new CoolerStatsEntry<String>(rs.getString(1), rs.getInt(2), rs.getInt(3)));
 			}
 
-			// Clean up and return
 			_ps.close();
 			return results;
 		} catch (SQLException se) {
@@ -361,8 +359,6 @@ public class GetStatistics extends DAO  {
 			prepareStatementWithoutLimits("SELECT COUNT(*) FROM common.COOLER_POSTS "
 					+ "WHERE (CREATED > DATE_SUB(NOW(), INTERVAL ? DAY)) LIMIT 1");
 			_ps.setInt(1, days);
-
-			// Execute the query
 			try (ResultSet rs = _ps.executeQuery()) {
 				result = new CacheableLong(Integer.valueOf(days), rs.next() ? rs.getInt(1) : 0);
 			}
@@ -372,7 +368,6 @@ public class GetStatistics extends DAO  {
 			throw new DAOException(se);
 		}
 
-		// Return the result
 		_cache.add(result);
 		return result.getValue();
 	}

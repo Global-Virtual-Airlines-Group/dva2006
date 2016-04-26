@@ -1,4 +1,4 @@
-// Copyright 2005, 2008, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2008, 2010, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.cache.Cacheable;
  * A &quot;map-like&quot; class to support multiple navigation data objects with the same code, and
  * return back a single bean based on distance from an arbitrary point. 
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -170,6 +170,7 @@ public class NavigationDataMap implements Cacheable {
    /**
     * Returns this bean's cache key.
     */
+   @Override
    public Object cacheKey() {
 	   return _key;
    }

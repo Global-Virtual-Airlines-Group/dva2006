@@ -1,11 +1,13 @@
-// Copyright 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.wx;
+
+import java.time.*;
+import java.time.temporal.*;
+import java.time.format.DateTimeFormatterBuilder;
 
 import java.util.*;
 
 import org.apache.log4j.Logger;
-
-import static org.deltava.beans.wx.CloudLayer.Amount.*;
 
 import org.deltava.beans.navdata.AirportLocation;
 import org.deltava.beans.wx.CloudLayer.Amount;
@@ -17,7 +19,7 @@ import org.deltava.util.*;
 /**
  * A parser for METAR data. 
  * @author Luke
- * @version 4.2
+ * @version 7.0
  * @since 2.6
  */
 
@@ -76,15 +78,12 @@ public class MetarParser {
 			// Parse date
 			} else if (isDate(token)) {
 				int endOfs = token.endsWith("Z") ? 1 : 0;
-				Calendar cld = CalendarUtils.getInstance(null, true, 0);
-				Calendar mc = CalendarUtils.getInstance(StringUtils.parseDate(token.substring(0, token.length() - endOfs), "ddHHmm"));
-				cld.set(Calendar.HOUR_OF_DAY, mc.get(Calendar.HOUR_OF_DAY));
-				cld.set(Calendar.MINUTE, mc.get(Calendar.MINUTE));
-				if (cld.get(Calendar.DAY_OF_MONTH) < mc.get(Calendar.DAY_OF_MONTH))
-					cld.add(Calendar.MONTH, -1);
-				
-				cld.set(Calendar.DAY_OF_MONTH, mc.get(Calendar.DAY_OF_MONTH));
-				result.setDate(cld.getTime());
+				ZonedDateTime zdt = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.DAYS).withDayOfMonth(1);
+				DateTimeFormatterBuilder dfb = new DateTimeFormatterBuilder().appendPattern("ddHHmm");
+				dfb.parseDefaulting(ChronoField.MONTH_OF_YEAR, zdt.get(ChronoField.MONTH_OF_YEAR));
+				dfb.parseDefaulting(ChronoField.YEAR, zdt.get(ChronoField.YEAR));
+				LocalDateTime ldt = LocalDateTime.parse(token.substring(0, token.length() - endOfs), dfb.toFormatter());
+				result.setDate(ldt.toInstant(ZoneOffset.UTC));
 			} else if (isWind(token)) {
 				isRemark = false;
 				if (token.charAt(0) == 'V')
@@ -156,9 +155,9 @@ public class MetarParser {
 					result.add(c);
 			} else if (isCloud(token)) {
 				isRemark = false;
-				CloudLayer.Amount a = VV;
+				Amount a = Amount.VV;
 				int pos = 2;
-				if (!token.startsWith(VV.toString())) {
+				if (!token.startsWith(Amount.VV.toString())) {
 					a = Amount.valueOf(token.substring(0, 3));
 				    pos++;
 				}
@@ -342,10 +341,10 @@ public class MetarParser {
 			return true;
 		
 		int pos = 0;
-		if (tkn.startsWith(VV.toString()))
+		if (tkn.startsWith(Amount.VV.toString()))
 			pos = 2;
-		else if (tkn.startsWith(FEW.toString()) || tkn.startsWith(SCT.toString()) ||
-			    tkn.startsWith(BKN.toString()) || tkn.startsWith(OVC.toString()))
+		else if (tkn.startsWith(Amount.FEW.toString()) || tkn.startsWith(Amount.SCT.toString()) ||
+			    tkn.startsWith(Amount.BKN.toString()) || tkn.startsWith(Amount.OVC.toString()))
 			pos = 3;
 		else
 			return false;

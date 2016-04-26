@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -17,7 +17,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load FIR data.
  * @author Luke
- * @version 6.2
+ * @version 7.0
  * @since 3.2
  */
 
@@ -79,7 +79,7 @@ public class GetFIR extends DAO {
 			}
 				
 			_ps.close();
-			if (fir == null)
+			if ((fir == null) || (geo == null))
 				return null;
 			
 			// Parse border coordinates

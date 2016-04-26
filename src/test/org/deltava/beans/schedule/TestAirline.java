@@ -13,6 +13,7 @@ public class TestAirline extends TestCase {
        return new CoverageDecorator(TestAirline.class, new Class[] { Airline.class } );
    }
 	
+	@Override
 	protected void tearDown() throws Exception {
 		_a = null;
 		super.tearDown();

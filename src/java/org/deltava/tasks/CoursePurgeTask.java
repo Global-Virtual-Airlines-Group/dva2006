@@ -1,8 +1,9 @@
-// Copyright 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.deltava.beans.academy.*;
 
@@ -14,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to suspend inactive Flight Academy Courses. 
  * @author Luke
- * @version 6.3
+ * @version 7.0
  * @since 6.3
  */
 
@@ -55,7 +56,7 @@ public class CoursePurgeTask extends Task {
 				
 				// Create a status entry
 				CourseComment cc = new CourseComment(c.getID(), ctx.getUser().getID());
-				cc.setCreatedOn(new Date());
+				cc.setCreatedOn(Instant.now());
 				cc.setText("Automatically abandoned after no activity in " + me.getValue() + " days");
 				
 				// Update the course and comments

@@ -1,4 +1,4 @@
-// Copyright 2005, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.view;
 
 import java.util.Map;
@@ -10,7 +10,7 @@ import org.deltava.commands.ViewContext;
 /**
  * A JSP tag to handle Page Down links at the bottom of a view page.
  * @author Luke
- * @version 2.1
+ * @version 7.0
  * @since 1.0
  */
 
@@ -28,7 +28,8 @@ public class PageDownTag extends ScrollTag {
      * @return TagSupport.SKIP_BODY
      * @throws JspException if an error occurs
      */
-    public int doStartTag() throws JspException {
+    @Override
+	public int doStartTag() throws JspException {
         validateTag();
         
         // Check if we're at the end of the view; if so render nothing
@@ -63,7 +64,8 @@ public class PageDownTag extends ScrollTag {
      * @return TagSupport.EVAL_PAGE
      * @throws JspException if an error occurs
      */
-    public int doEndTag() throws JspException {
+    @Override
+	public int doEndTag() throws JspException {
 
         // Check if we're at the start of the view; if so render nothing
         if (!_scrollBarTag.isViewEnd())

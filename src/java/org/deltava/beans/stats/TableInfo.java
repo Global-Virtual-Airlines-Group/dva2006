@@ -1,10 +1,10 @@
-// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 /**
  * A system bean to store JDBC table data.
  * @author Luke
- * @version 2.7
+ * @version 7.0
  * @since 1.0
  */
 
@@ -99,6 +99,7 @@ public class TableInfo implements java.io.Serializable, Comparable<TableInfo> {
     /**
      * Returns the table name's hash code.
      */
+    @Override
     public int hashCode() {
        return _tableName.hashCode();
     }
@@ -106,6 +107,7 @@ public class TableInfo implements java.io.Serializable, Comparable<TableInfo> {
     /**
      * Compares two TableInfo objects by comparing the table names.
      */
+    @Override
     public int compareTo(TableInfo ti2) {
     	return _tableName.compareTo(ti2._tableName);
     }
@@ -113,6 +115,7 @@ public class TableInfo implements java.io.Serializable, Comparable<TableInfo> {
     /**
      * Overrides equality by using the compareTo method.
      */
+    @Override
     public boolean equals(Object o2) {
        return (o2 instanceof TableInfo) ? (compareTo((TableInfo) o2) == 0) : false;
     }

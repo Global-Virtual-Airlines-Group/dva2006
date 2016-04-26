@@ -1,8 +1,8 @@
-// Copyright 2005, 2006, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
-import java.util.Date;
 import java.sql.Connection;
+import java.time.ZonedDateTime;
 
 import org.deltava.beans.*;
 import org.deltava.commands.*;
@@ -10,14 +10,13 @@ import org.deltava.dao.*;
 
 import org.deltava.security.command.PilotAccessControl;
 
-import org.deltava.util.CalendarUtils;
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command for Pilots to take a Leave of Absence.
  * @author Luke
- * @version 3.1
+ * @version 7.0
  * @since 1.0
  */
 
@@ -28,6 +27,7 @@ public class LeaveCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occrurs.
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the pilot ID
@@ -48,8 +48,8 @@ public class LeaveCommand extends AbstractCommand {
 				throw securityException("Insufficient Access to place Pilot On Leave");
 			
 			// Calculate the LOA expiry date
-			Date loaExpiry = CalendarUtils.adjust(null, SystemData.getInt("users.inactive_leave_days", 180));
-			ctx.setAttribute("loaExpires", loaExpiry, REQUEST);
+			ZonedDateTime loaExpiry = ZonedDateTime.now(ctx.getUser().getTZ().getZone()).plusDays(SystemData.getInt("users.inactive_leave_days", 180));
+			ctx.setAttribute("loaExpires", loaExpiry.toInstant(), REQUEST);
 			
 			// Create status update record
 			StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.LOA); 

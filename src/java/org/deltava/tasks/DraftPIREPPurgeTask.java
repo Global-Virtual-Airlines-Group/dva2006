@@ -1,7 +1,9 @@
-// Copyright 2006, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.time.*;
 import java.sql.Connection;
 
 import org.deltava.beans.flight.FlightReport;
@@ -14,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to purge Draft Flight Reports from the database.
  * @author Luke
- * @version 2.8
+ * @version 7.0
  * @since 1.0
  */
 
@@ -32,30 +34,24 @@ public class DraftPIREPPurgeTask extends Task {
 	/**
 	 * Executes the Task.
 	 */
+	@Override
 	protected void execute(TaskContext ctx) {
 
 		// Determine how many days to purge
 		int purgeDays = SystemData.getInt("users.pirep.draft_purge", 30);
-		Calendar cld = Calendar.getInstance();
-		cld.add(Calendar.DAY_OF_MONTH, (purgeDays * -1));
-		log.warn("Purging draft Flight Reports before " + cld.getTime());
+		Instant pd = ZonedDateTime.now(ZoneOffset.UTC).minusDays(purgeDays).toInstant();
+		log.warn("Purging draft Flight Reports before " + pd);
 
 		try {
 			Connection con = ctx.getConnection();
 			
 			// Get the DAO and the Flight Reports - remove based on date
 			GetFlightReports dao = new GetFlightReports(con);
-			Collection<FlightReport> pireps = dao.getByStatus(DRAFT);
-			for (Iterator<FlightReport> i = pireps.iterator(); i.hasNext();) {
-				FlightReport fr = i.next();
-				if (fr.getDate().after(cld.getTime()))
-					i.remove();
-			}
+			Collection<FlightReport> pireps = dao.getByStatus(DRAFT).stream().filter(fr -> fr.getDate().isBefore(pd)).collect(Collectors.toList());
 
 			// Get the write DAO and purge
 			SetFlightReport wdao = new SetFlightReport(con);
-			for (Iterator<FlightReport> i = pireps.iterator(); i.hasNext();) {
-				FlightReport fr = i.next();
+			for (FlightReport fr : pireps) {
 				log.warn("Deleting flight " + fr.getFlightCode() + " Date=" + fr.getDate());
 				wdao.delete(fr.getID());
 			}
@@ -65,7 +61,6 @@ public class DraftPIREPPurgeTask extends Task {
 			ctx.release();
 		}
 
-		// Log completion
 		log.info("Processing Complete");
 	}
 }

@@ -1,15 +1,14 @@
-// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
-import java.util.Date;
+import java.time.Instant;
 
-import org.deltava.beans.DatabaseBean;
-import org.deltava.beans.ViewEntry;
+import org.deltava.beans.*;
 
 /**
  * A bean to store Aircraft SELCAL data and reservations.
  * @author Luke
- * @version 2.6
+ * @version 7.0
  * @since 1.0
  */
 
@@ -20,7 +19,7 @@ public class SelectCall implements java.io.Serializable, Comparable<SelectCall>,
 	private String _eqType;
 
 	private int _reservedBy;
-	private Date _reserveDate;
+	private Instant _reserveDate;
 
 	/**
 	 * Creates a new SELCAL bean.
@@ -74,9 +73,9 @@ public class SelectCall implements java.io.Serializable, Comparable<SelectCall>,
 	/**
 	 * Returns the date this aircraft's SELCAL code was reserved.
 	 * @return the date/time the SELCAL code was reserved.
-	 * @see SelectCall#setReservedOn(Date)
+	 * @see SelectCall#setReservedOn(Instant)
 	 */
-	public Date getReservedOn() {
+	public Instant getReservedOn() {
 		return _reserveDate;
 	}
 	
@@ -106,18 +105,17 @@ public class SelectCall implements java.io.Serializable, Comparable<SelectCall>,
 	 * @see SelectCall#getCode()
 	 */
 	public void setCode(String code) {
-		code = code.trim().toUpperCase();
-		if ((code.length() < 4) || (code.length() > 5))
-			throw new IllegalArgumentException("Invalid SELCAL code - " + code);
+		String c = code.trim().toUpperCase();
+		if ((c.length() < 4) || (c.length() > 5))
+			throw new IllegalArgumentException("Invalid SELCAL code - " + c);
 		
-		if (code.length() == 4) {
-			StringBuilder buf = new StringBuilder(code.substring(0, 2));
+		if (c.length() == 4) {
+			StringBuilder buf = new StringBuilder(c.substring(0, 2));
 			buf.append('-');
-			buf.append(code.substring(2));
+			buf.append(c.substring(2));
 			_selcalCode = buf.toString();
-		} else {
+		} else
 			_selcalCode = code;
-		}
 	}
 	
 	/**
@@ -147,13 +145,14 @@ public class SelectCall implements java.io.Serializable, Comparable<SelectCall>,
 	 * @param dt the date/time the aircraft code was reserved
 	 * @see SelectCall#getReservedOn()
 	 */
-	public void setReservedOn(Date dt) {
+	public void setReservedOn(Instant dt) {
 		_reserveDate = dt;
 	}
 	
 	/**
 	 * Displays the SELCAL code.
 	 */
+	@Override
 	public String toString() {
 		return _selcalCode;
 	}
@@ -161,6 +160,7 @@ public class SelectCall implements java.io.Serializable, Comparable<SelectCall>,
 	/**
 	 * Compares two beans by comparing the SELCAL codes.
 	 */
+	@Override
 	public int compareTo(SelectCall sc2) {
 		return _selcalCode.compareTo(sc2._selcalCode);
 	}
@@ -169,6 +169,7 @@ public class SelectCall implements java.io.Serializable, Comparable<SelectCall>,
 	 * Returns the CSS row class name if in a table view.
 	 * @return the CSS class name
 	 */
+	@Override
 	public String getRowClassName() {
 		return (_reservedBy == 0) ? null : "opt2";
 	}

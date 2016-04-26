@@ -32,22 +32,27 @@ public class DuplicateNameService extends WebService {
 			super(fName, lName);
 		}
 		
+		@Override
 		public String getStatusName() {
 			return "Invalid";
 		}
 		
+		@Override
 		public void addRole(String role) {
 			// empty;
 		}
 		
+		@Override
 		public boolean isInRole(String roleName) {
 			return false;
 		}
 		
+		@Override
 		public Collection<String> getRoles() {
 			return Collections.emptySet();
 		}
 		
+		@Override
 		public String getRowClassName() {
 			return null;
 		}
@@ -80,10 +85,7 @@ public class DuplicateNameService extends WebService {
 			// Check for unique name
 			GetApplicant adao = new GetApplicant(con);
 			GetPilotDirectory pdao = new GetPilotDirectory(con);
-			for (Iterator<AirlineInformation> i = airlines.iterator(); i.hasNext();) {
-				AirlineInformation info = i.next();
-
-				// Check Pilots & Applicants
+			for (AirlineInformation info : airlines) {
 				dupeResults.addAll(pdao.checkUnique(usr, info.getDB()));
 				dupeResults.addAll(adao.checkUnique(usr, info.getDB()));
 			}

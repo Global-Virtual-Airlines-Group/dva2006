@@ -1,8 +1,8 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.hr;
 
-import java.util.Date;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.deltava.beans.hr.*;
 
@@ -14,7 +14,7 @@ import org.deltava.security.command.JobPostingAccessControl;
 /**
  * A Web Site Command to apply to a Job Posting.
  * @author Luke
- * @version 3.4
+ * @version 7.0
  * @since 3.4
  */
 
@@ -44,7 +44,7 @@ public class ApplicationCommand extends AbstractCommand {
 			
 			// Create the application
 			Application a = new Application(jp.getID(), ctx.getUser().getID());
-			a.setCreatedOn(new Date());
+			a.setCreatedOn(Instant.now());
 			a.setBody(ctx.getParameter("body"));
 			
 			// Check if we're saving a profile

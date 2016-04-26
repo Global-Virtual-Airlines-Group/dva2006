@@ -5,7 +5,8 @@ import java.util.Map;
 
 public class MockSystemDataLoader implements SystemDataLoader {
     
-    public Map<String, Object> load() {
+    @Override
+	public Map<String, Object> load() {
         Map<String, Object> results = new HashMap<String, Object>();
         results.put(SystemData.LOADER_NAME, getClass().getName());
         results.put(SystemData.CFG_NAME, "test");

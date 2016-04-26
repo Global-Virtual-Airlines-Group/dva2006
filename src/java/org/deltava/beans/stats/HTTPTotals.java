@@ -1,4 +1,4 @@
-// Copyright 2005, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import org.deltava.util.cache.Cacheable;
@@ -6,7 +6,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A class to store HTTP aggregate statistics.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -56,6 +56,7 @@ public class HTTPTotals implements Cacheable {
 	/**
 	 * Returns the cache key - the class.
 	 */
+	@Override
 	public Object cacheKey() {
 	   return getClass();
 	}

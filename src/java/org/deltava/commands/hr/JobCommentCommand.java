@@ -1,8 +1,9 @@
-// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.hr;
 
 import java.util.*;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.deltava.beans.Pilot;
 import org.deltava.beans.hr.*;
@@ -18,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to create a Job Posting comment.
  * @author Luke
- * @version 3.7
+ * @version 7.0
  * @since 3.4
  */
 
@@ -48,7 +49,7 @@ public class JobCommentCommand extends AbstractCommand {
 			
 			// Create the comment
 			Comment c = new Comment(jp.getID(), ctx.getUser().getID());
-			c.setCreatedOn(new Date());
+			c.setCreatedOn(Instant.now());
 			c.setBody(ctx.getParameter("body"));
 			
 			// Create the context

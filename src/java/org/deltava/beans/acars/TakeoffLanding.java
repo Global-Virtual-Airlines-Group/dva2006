@@ -1,4 +1,4 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.Date;
@@ -8,7 +8,7 @@ import org.deltava.beans.DatabaseBean;
 /**
  * A bean to store ACARS takeoff/landing data.
  * @author Luke
- * @version 2.8
+ * @version 7.0
  * @since 2.8
  */
 
@@ -52,10 +52,12 @@ public class TakeoffLanding extends DatabaseBean {
 		_eventTime = dt;
 	}
 	
+	@Override
     public int hashCode() {
     	return (getHexID() + _isTakeoff).hashCode();
     }
-    
+  
+    @Override
     public boolean equals(Object o) {
     	return (o instanceof TakeoffLanding) && (compareTo(o) == 0) && (_isTakeoff == (((TakeoffLanding) o)._isTakeoff)); 
     }

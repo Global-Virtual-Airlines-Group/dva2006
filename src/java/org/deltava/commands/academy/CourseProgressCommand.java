@@ -1,8 +1,9 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.deltava.beans.academy.*;
 import org.deltava.commands.*;
@@ -14,7 +15,7 @@ import org.deltava.security.command.CourseAccessControl;
 /**
  * A Web Site Command to track Flight Academy course progress.
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -25,6 +26,7 @@ public class CourseProgressCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Initialize the Message Context
@@ -59,7 +61,7 @@ public class CourseProgressCommand extends AbstractCommand {
 				if (isComplete != cp.getComplete()) {
 					cp.setAuthorID(ctx.getUser().getID());
 					cp.setComplete(isComplete);
-					cp.setCompletedOn(isComplete ? new Date() : null);
+					cp.setCompletedOn(isComplete ? Instant.now() : null);
 					wdao.updateProgress(cp);
 				}
 			}

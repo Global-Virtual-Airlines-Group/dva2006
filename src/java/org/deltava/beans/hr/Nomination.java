@@ -1,7 +1,8 @@
-// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.hr;
 
 import java.util.*;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 
@@ -19,7 +20,7 @@ public class Nomination extends DatabaseBean implements ViewEntry {
 		PENDING, APPROVED, REJECTED;
 	}
 
-	private Date _created;
+	private Instant _created;
 	private Quarter _q;
 	private Status _status = Status.PENDING;
 	
@@ -43,7 +44,7 @@ public class Nomination extends DatabaseBean implements ViewEntry {
 	 * Returns the date of the nomination.
 	 * @return the nomination date/time
 	 */
-	public Date getCreatedOn() {
+	public Instant getCreatedOn() {
 		return _created;
 	}
 	
@@ -112,7 +113,7 @@ public class Nomination extends DatabaseBean implements ViewEntry {
 	 */
 	public void addComment(NominationComment nc) {
 		_comments.add(nc);
-		if ((_created == null) || nc.getCreatedOn().before(_created))
+		if ((_created == null) || nc.getCreatedOn().isBefore(_created))
 			_created = nc.getCreatedOn();
 	}
 	
@@ -139,7 +140,7 @@ public class Nomination extends DatabaseBean implements ViewEntry {
 	 * @throws IllegalStateException if comments have been added
 	 * @see Nomination#getCreatedOn()
 	 */
-	public void setCreatedOn(Date dt) {
+	public void setCreatedOn(Instant dt) {
 		if (!_comments.isEmpty())
 			throw new IllegalStateException("Comments already populated");
 		
@@ -169,6 +170,7 @@ public class Nomination extends DatabaseBean implements ViewEntry {
 		_score = Math.max(0, score);
 	}
 
+	@Override
 	public String toString() {
 		return "Nomination-" + getID();
 	}
@@ -176,6 +178,7 @@ public class Nomination extends DatabaseBean implements ViewEntry {
 	/**
 	 * Returns the CSS class for this item if rendered in a view table.
 	 */
+	@Override
 	public String getRowClassName() {
 		if (_status == Status.PENDING)
 			return _q.equals(new Quarter(_created)) ? null : "opt1";

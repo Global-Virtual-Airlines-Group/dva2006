@@ -2,6 +2,7 @@
 package org.deltava.beans.acars;
 
 import java.util.*;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 import org.deltava.beans.flight.Recorder;
@@ -22,8 +23,8 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 	private int _pilotID;
 	private int _positionCount;
 
-	private Date _startTime;
-	private Date _endTime;
+	private Instant _startTime;
+	private Instant _endTime;
 
 	private String _flightCode;
 	private String _eqType;
@@ -94,17 +95,17 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 	}
 
 	@Override
-	public Date getDate() {
+	public Instant getDate() {
 		return _startTime;
 	}
 	
 	@Override
-	public Date getStartTime() {
+	public Instant getStartTime() {
 		return _startTime;
 	}
 
 	@Override
-	public Date getEndTime() {
+	public Instant getEndTime() {
 		return _endTime;
 	}
 
@@ -474,9 +475,9 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 	 * Updates the start date/time for this flight.
 	 * @param dt the date/time the flight started
 	 * @see FlightInfo#getStartTime()
-	 * @see FlightInfo#setEndTime(Date)
+	 * @see FlightInfo#setEndTime(Instant)
 	 */
-	public void setStartTime(Date dt) {
+	public void setStartTime(Instant dt) {
 		_startTime = dt;
 	}
 
@@ -484,10 +485,10 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 	 * Updates the end date/time for this flight.
 	 * @param dt the date/time the flight ended
 	 * @see FlightInfo#getEndTime()
-	 * @see FlightInfo#setStartTime(Date)
+	 * @see FlightInfo#setStartTime(Instant)
 	 */
-	public void setEndTime(Date dt) {
-		_endTime = ((dt != null) && (dt.before(_startTime))) ? _startTime : dt;
+	public void setEndTime(Instant dt) {
+		_endTime = ((dt != null) && dt.isBefore(_startTime)) ? _startTime : dt;
 	}
 
 	/**

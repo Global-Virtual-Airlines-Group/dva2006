@@ -1,5 +1,6 @@
 package org.deltava.beans.testing;
 
+import java.time.Instant;
 import java.util.*;
 
 import junit.framework.Test;
@@ -15,13 +16,15 @@ public class TestExamination extends AbstractBeanTestCase {
         return new CoverageDecorator(TestExamination.class, new Class[] { Examination.class } );
     }
     
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
         _exam = new Examination("737 First Officer");
         setBean(_exam);
     }
     
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         _exam = null;
         super.tearDown();
     }
@@ -94,11 +97,10 @@ public class TestExamination extends AbstractBeanTestCase {
     }
     
     public void testComparator() {
-        long now = System.currentTimeMillis();
-        _exam.setDate(new Date(now));
+        _exam.setDate(Instant.now());
         
         Examination e2 = new Examination("737 Captain");
-        e2.setDate(new Date(now - 864000));
+        e2.setDate(_exam.getDate().minusSeconds(86400));
         
         assertTrue(_exam.compareTo(e2) > 0);
         assertTrue(e2.compareTo(_exam) < 0);

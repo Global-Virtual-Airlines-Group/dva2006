@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import java.io.IOException;
@@ -9,7 +9,7 @@ import javax.servlet.jsp.tagext.TagSupport;
 /**
  * A class to support the rendering of numbers in hexadecimal.
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -19,8 +19,7 @@ public class HexFormatTag extends TagSupport {
     private long _value;
 
     /**
-     * Updates the CSS class for this formatted number. This will automatically enclose the output in a
-     * &lt;SPAN&gt; tag.
+     * Updates the CSS class for this formatted number. This will automatically enclose the output in a &lt;SPAN&gt; tag.
      * @param cName the class Name(s)
      */
     public final void setClassName(String cName) {
@@ -40,10 +39,10 @@ public class HexFormatTag extends TagSupport {
      * @return TagSupport.EVAL_PAGE
      * @throws JspException if an error occurs
      */
-    public int doEndTag() throws JspException {
-      
-        JspWriter out = pageContext.getOut();
+    @Override
+	public int doEndTag() throws JspException {
         try {
+        	JspWriter out = pageContext.getOut();
             if (_className != null) {
                 out.print("<span class=\"");
                 out.print(_className);
@@ -59,12 +58,11 @@ public class HexFormatTag extends TagSupport {
             if (_className != null)
                 out.print("</span>");
         } catch (IOException ie) {
-            JspException je = new JspException(ie.getMessage());
-            je.initCause(ie);
-            throw je;
+            throw new JspException(ie);
+        } finally {
+        	release();
         }
 
-        release();
         return EVAL_PAGE;
     }
 }

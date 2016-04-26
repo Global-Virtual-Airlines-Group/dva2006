@@ -1,4 +1,4 @@
-// Copyright 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.DatabaseBean;
 /**
  * A Data Access Object to read Water Cooler last read marks.
  * @author Luke
- * @version 6.0
+ * @version 7.0
  * @since 5.4
  */
 
@@ -30,9 +30,9 @@ public class GetCoolerLastRead extends DAO {
 	 * @return the last read date/time or null if never
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public java.util.Date getLastRead(int threadID, int userID) throws DAOException {
+	public java.time.Instant getLastRead(int threadID, int userID) throws DAOException {
 		Integer ID = Integer.valueOf(threadID);
-		Map<Integer, java.util.Date> results = getLastRead(Collections.singleton(ID), userID);
+		Map<Integer, java.time.Instant> results = getLastRead(Collections.singleton(ID), userID);
 		return results.get(ID);
 	}
 
@@ -43,7 +43,7 @@ public class GetCoolerLastRead extends DAO {
 	 * @return a Map of last read date/times, keyed by message thread ID
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Map<Integer, java.util.Date> getLastRead(Collection<?> ids, int userID) throws DAOException {
+	public Map<Integer, java.time.Instant> getLastRead(Collection<?> ids, int userID) throws DAOException {
 		if (ids.isEmpty())
 			return Collections.emptyMap();
 		
@@ -63,10 +63,10 @@ public class GetCoolerLastRead extends DAO {
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
 			_ps.setInt(1, userID);
-			Map<Integer, java.util.Date> results = new HashMap<Integer, java.util.Date>();
+			Map<Integer, java.time.Instant> results = new HashMap<Integer, java.time.Instant>();
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next())
-					results.put(Integer.valueOf(rs.getInt(1)), rs.getTimestamp(2));
+					results.put(Integer.valueOf(rs.getInt(1)), rs.getTimestamp(2).toInstant());
 			}
 			
 			_ps.close();

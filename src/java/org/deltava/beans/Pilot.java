@@ -2,6 +2,7 @@
 package org.deltava.beans;
 
 import java.util.*;
+import java.time.Instant;
 
 import org.deltava.beans.acars.Restriction;
 import org.deltava.beans.stats.DatedAccomplishmentID;
@@ -11,7 +12,7 @@ import org.deltava.util.StringUtils;
 /**
  * A class for storing Pilot entries.
  * @author Luke
- * @version 6.4
+ * @version 7.0
  * @since 1.0
  */
 
@@ -45,7 +46,7 @@ public class Pilot extends Person implements ComboAlias, Cloneable {
 	private final Collection<DatedAccomplishmentID> _accIDs = new TreeSet<DatedAccomplishmentID>();
 
 	private long _miles;
-	private Date _lastFlight;
+	private Instant _lastFlight;
 
 	private String _motto;
 
@@ -76,7 +77,7 @@ public class Pilot extends Person implements ComboAlias, Cloneable {
 	private MapType _mapType;
 	
 	private String _sigExt;
-	private Date _sigModified;
+	private Instant _sigModified;
 
 	private boolean _showNavBar;
 	private boolean _isPermanent;
@@ -437,9 +438,9 @@ public class Pilot extends Person implements ComboAlias, Cloneable {
 	 * @see Pilot#getHours()
 	 * @see Pilot#getOnlineHours()
 	 * @see Pilot#getOnlineLegs()
-	 * @see Pilot#setLastFlight(Date)
+	 * @see Pilot#setLastFlight(Instant)
 	 */
-	public Date getLastFlight() {
+	public Instant getLastFlight() {
 		return _lastFlight;
 	}
 
@@ -476,9 +477,9 @@ public class Pilot extends Person implements ComboAlias, Cloneable {
 	/**
 	 * Returns the last modification date of the Signature Image.
 	 * @return the last modified date/time, or null if none
-	 * @see Pilot#setSignatureModified(Date)
+	 * @see Pilot#setSignatureModified(Instant)
 	 */
-	public Date getSignatureModified() {
+	public Instant getSignatureModified() {
 		return _sigModified;
 	}
 
@@ -625,7 +626,7 @@ public class Pilot extends Person implements ComboAlias, Cloneable {
 	 * @see Pilot#getSignatureModified()
 	 * @see Pilot#getHasSignature()
 	 */
-	public void setSignatureModified(Date dt) {
+	public void setSignatureModified(Instant dt) {
 		_sigModified = dt;
 	}
 
@@ -755,7 +756,7 @@ public class Pilot extends Person implements ComboAlias, Cloneable {
 	 * @see Pilot#setHours(double)
 	 * @see Pilot#setOnlineHours(double)
 	 */
-	public void setLastFlight(Date dt) {
+	public void setLastFlight(Instant dt) {
 		_lastFlight = dt;
 	}
 

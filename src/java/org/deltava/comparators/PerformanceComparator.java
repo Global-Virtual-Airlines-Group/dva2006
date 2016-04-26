@@ -1,4 +1,4 @@
-// Copyright 2006, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
 import org.deltava.beans.stats.PerformanceMetrics;
@@ -6,7 +6,7 @@ import org.deltava.beans.stats.PerformanceMetrics;
 /**
  * A Comparator to sort Performance Metrics beans.
  * @author Luke
- * @version 3.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -47,6 +47,7 @@ public class PerformanceComparator extends AbstractComparator<PerformanceMetrics
 	 * @throws ClassCastException if either object is not a PerformanceMetrics bean
 	 * @see java.util.Comparator#compare(Object, Object)
 	 */
+	@Override
 	protected int compareImpl(PerformanceMetrics m1, PerformanceMetrics m2) {
 		switch (_comparisonType) {
 			case NAME:

@@ -1,7 +1,7 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
-import java.util.Date;
+import java.time.Instant;
 
 /**
  * A bean to combine an Accomplishment with an Achievement date. 
@@ -12,14 +12,14 @@ import java.util.Date;
 
 public class DatedAccomplishment extends Accomplishment {
 	
-	private Date _dt;
+	private final Instant _dt;
 
 	/**
 	 * Creates the bean.
 	 * @param dt the date/time the Accomplishment was achieved.
 	 * @param a the Accomplishment
 	 */
-	public DatedAccomplishment(Date dt, Accomplishment a) {
+	public DatedAccomplishment(Instant dt, Accomplishment a) {
 		super(a.getName());
 		setID(a.getID());
 		setUnit(a.getUnit());
@@ -35,10 +35,11 @@ public class DatedAccomplishment extends Accomplishment {
 	 * Returns the date the Accomplishment was achieved.
 	 * @return the date/time of the Accomplishment
 	 */
-	public Date getDate() {
+	public Instant getDate() {
 		return _dt;
 	}
 	
+	@Override
 	public String toString() {
 		StringBuilder buf = new StringBuilder(_dt.toString());
 		buf.append('-');
@@ -50,6 +51,7 @@ public class DatedAccomplishment extends Accomplishment {
 	 * Compares two DatedAccomplishments by comparing their accomplishment date/times. If they
 	 * are equal, it sorts using Accomplishment's native comparator.
 	 */
+	@Override
 	public int compareTo(Object o) {
 		DatedAccomplishment da2 = (DatedAccomplishment) o;
 		int tmpResult = _dt.compareTo(da2._dt);

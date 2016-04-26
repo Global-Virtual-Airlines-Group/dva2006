@@ -8,13 +8,15 @@ public class TestGetPilot extends AbstractDAOTestCase {
 
     private GetPilot _dao;
     
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
         SystemData.init();
         _dao = new GetPilot(_con);
     }
 
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         _dao = null;
         super.tearDown();
     }
@@ -34,5 +36,4 @@ public class TestGetPilot extends AbstractDAOTestCase {
         assertEquals("Terry", p2.getFirstName());
         assertEquals("Eshenour", p2.getLastName());
     }
-    
 }

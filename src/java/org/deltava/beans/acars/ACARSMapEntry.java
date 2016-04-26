@@ -1,4 +1,4 @@
-// Copyright 2008, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import org.deltava.beans.*;
@@ -7,7 +7,7 @@ import org.deltava.beans.schedule.GeoPosition;
 /**
  * An abstract class to describe ACARS map entries.
  * @author Luke
- * @version 4.0
+ * @version 7.0
  * @since 2.2
  */
 
@@ -43,10 +43,12 @@ public abstract class ACARSMapEntry extends DatabaseBean implements MarkerMapEnt
 		return _pos;
 	}
 	
+	@Override
 	public final double getLatitude() {
 		return _pos.getLatitude();
 	}
 
+	@Override
 	public final double getLongitude() {
 		return _pos.getLongitude();
 	}

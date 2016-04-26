@@ -11,6 +11,7 @@ public class TestServInfo extends AbstractURLConnectionTestCase {
 	
 	private GetServInfo _dao;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp("data/satnet-data.txt");
 		SystemData.init("org.deltava.util.system.TagTestSystemDataLoader", true);
@@ -18,6 +19,7 @@ public class TestServInfo extends AbstractURLConnectionTestCase {
 		_dao = new GetServInfo(_is);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		_dao = null;
 		super.tearDown();

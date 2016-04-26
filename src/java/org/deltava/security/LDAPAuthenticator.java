@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.*;
 /**
  * An authenticator to validate users against an LDAP server.
  * @author Luke
- * @version 2.6
+ * @version 7.0
  * @since 1.0
  */
 
@@ -33,6 +33,7 @@ public class LDAPAuthenticator implements Authenticator {
 	 * @param propsFile the properties file to use
 	 * @throws SecurityException if an error occurs
 	 */
+	@Override
 	public void init(String propsFile) throws SecurityException {
 
 		Properties props = new Properties();
@@ -65,6 +66,7 @@ public class LDAPAuthenticator implements Authenticator {
 	 * @throws SecurityException if authentication fails for any reason, contained within the cause of the exception.
 	 * @see org.deltava.security.Authenticator#authenticate(Person, String)
 	 */
+	@Override
 	public void authenticate(Person usr, String pwd) throws SecurityException {
 		// Create a new environment to connect to the LDAP server
 		Hashtable<String, String> userEnv = new Hashtable<String, String>(_env);
@@ -88,6 +90,7 @@ public class LDAPAuthenticator implements Authenticator {
 	 * @param pwd the new password
 	 * @throws SecurityException if an error occurs
 	 */
+	@Override
 	public void updatePassword(Person usr, String pwd) throws SecurityException {
 		log.debug("Updating password for " + usr.getName() + " in Directory");
 
@@ -121,6 +124,7 @@ public class LDAPAuthenticator implements Authenticator {
 	 * @param pwd the User's password
 	 * @throws SecurityException if an error occurs
 	 */
+	@Override
 	public void add(Person usr, String pwd) throws SecurityException {
 		log.debug("Adding user " + usr.getDN() + " to Directory");
 
@@ -152,6 +156,7 @@ public class LDAPAuthenticator implements Authenticator {
      * @return TRUE if the user exists, otherwise FALSE
      * @throws SecurityException if an error occurs
      */
+	@Override
 	public boolean contains(Person usr) throws SecurityException {
 		try {
 			DirContext ctxt = new InitialDirContext(_env);
@@ -176,6 +181,7 @@ public class LDAPAuthenticator implements Authenticator {
 	 * This Authenticator accepts all users with a valid Directory Name.
 	 * @return TRUE if the user's DN property is not empty
 	 */
+	@Override
 	public boolean accepts(Person usr) {
 		return ((usr != null) && (!StringUtils.isEmpty(usr.getDN())));
 	}
@@ -185,6 +191,7 @@ public class LDAPAuthenticator implements Authenticator {
 	 * @param usr the user bean
 	 * @throws SecurityException if an error occurs
 	 */
+	@Override
 	public void disable(Person usr) throws SecurityException {
 		remove(usr);
 	}
@@ -194,6 +201,7 @@ public class LDAPAuthenticator implements Authenticator {
 	 * @param usr the user bean
 	 * @throws SecurityException if an error occurs
 	 */
+	@Override
 	public void remove(Person usr) throws SecurityException {
 		log.debug("Removing user " + usr.getDN() + " from Directory");
 		if (!contains(usr))
@@ -215,6 +223,7 @@ public class LDAPAuthenticator implements Authenticator {
     * @param newName the new fully-qualified directory 
     * @throws SecurityException if an error occurs
     */
+	@Override
 	public void rename(Person usr, String newName) throws SecurityException {
 		if (usr.getDN().equalsIgnoreCase(newName))
 		   return;

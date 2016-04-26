@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.util.*;
 /**
  * An abstract Web Service to store common map plotting code. 
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 2.3
  */
 
@@ -77,6 +77,7 @@ public abstract class MapPlotService extends WebService {
 	 * Returns if the Web Service invocation is logged.
 	 * @return FALSE
 	 */
+	@Override
 	public boolean isLogged() {
 		return false;
 	}

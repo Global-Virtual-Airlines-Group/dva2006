@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.system.*;
 /**
  * A Data Access object to retrieve Issues and Issue Comments.
  * @author Luke
- * @version 4.1
+ * @version 7.0
  * @since 1.0
  */
 
@@ -196,7 +196,7 @@ public class GetIssue extends DAO {
 		}
 	}
 	
-	/**
+	/*
 	 * Helper method to return all comments for a particular issue.
 	 */
 	private void loadComments(Issue i) throws SQLException {
@@ -211,7 +211,7 @@ public class GetIssue extends DAO {
 				IssueComment ic = new IssueComment(rs.getInt(1), rs.getString(4));
 				ic.setIssueID(i.getID());
 				ic.setAuthorID(rs.getInt(2));
-				ic.setCreatedOn(rs.getTimestamp(3));
+				ic.setCreatedOn(rs.getTimestamp(3).toInstant());
 				int size = rs.getInt(5);
 				if (size > 0) {
 					ic.setSize(size);
@@ -225,7 +225,7 @@ public class GetIssue extends DAO {
 		_ps.close();
 	}
 	
-	/**
+	/*
 	 * Helper method to parse Issue result sets.
 	 */
 	private List<Issue> execute() throws SQLException {
@@ -236,8 +236,8 @@ public class GetIssue extends DAO {
 				Issue i = new Issue(rs.getInt(1), rs.getString(6));
 				i.setAuthorID(rs.getInt(2));
 				i.setAssignedTo(rs.getInt(3));
-				i.setCreatedOn(rs.getTimestamp(4));
-				i.setResolvedOn(rs.getTimestamp(5));
+				i.setCreatedOn(rs.getTimestamp(4).toInstant());
+				i.setResolvedOn(toInstant(rs.getTimestamp(5)));
 				i.setDescription(rs.getString(7));
 				i.setArea(rs.getInt(8));
 				i.setPriority(rs.getInt(9));
@@ -247,7 +247,7 @@ public class GetIssue extends DAO {
 				i.setMinorVersion(rs.getInt(13));
 				i.setSecurity(rs.getInt(14));
 				if (hasCommentCount) {
-					i.setLastCommentOn(rs.getTimestamp(15));
+					i.setLastCommentOn(toInstant(rs.getTimestamp(15)));
 					i.setCommentCount(rs.getInt(16));
 				}
 

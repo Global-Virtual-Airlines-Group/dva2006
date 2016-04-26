@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import javax.servlet.jsp.*;
@@ -9,7 +9,7 @@ import org.deltava.util.*;
 /**
  * A JSP tag to support writing formatted text. 
  * @author Luke
- * @version 2.5
+ * @version 7.0
  * @since 1.0
  */
 
@@ -47,7 +47,8 @@ public class TextFormatTag extends TagSupport {
     /**
      * Releases the tag's state variables. 
      */
-    public void release() {
+    @Override
+	public void release() {
         super.release();
         _className = null;
     }
@@ -58,7 +59,8 @@ public class TextFormatTag extends TagSupport {
      * @throws JspException if an error occurs
      * @see StringUtils#stripInlineHTML(String)
      */
-    public int doEndTag() throws JspException {
+    @Override
+	public int doEndTag() throws JspException {
     	
         JspWriter out = pageContext.getOut();
         try {

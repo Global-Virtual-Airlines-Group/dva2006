@@ -10,12 +10,14 @@ public class TestFileAuthenticator extends TestCase {
 
     private Authenticator _auth;
     
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
         PropertyConfigurator.configure("etc/log4j.test.properties");
     }
     
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         _auth = null;
         super.tearDown();
     }

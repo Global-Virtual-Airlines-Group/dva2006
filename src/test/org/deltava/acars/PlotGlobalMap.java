@@ -10,6 +10,7 @@ public class PlotGlobalMap extends PlotMap {
 	
 	private final RouteEntryFilter _f = new AllFilter(MAX_ZOOM);
 	
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		_zooms.put(Integer.valueOf(2), new ProjectInfo(2, 3072, 96));

@@ -1,7 +1,7 @@
-// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.deltava.beans.navdata.OceanicTrackInfo;
 
@@ -15,7 +15,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to display Oceanic Route data.
  * @author Luke
- * @version 2.7
+ * @version 7.0
  * @since 1.0
  */
 
@@ -26,14 +26,15 @@ public class RouteCommand extends AbstractCommand {
      * @param ctx the Command context
      * @throws CommandException if an unhandled error occurs
      */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Get the route type and date
 		OceanicTrackInfo.Type rType;
-		Date vd = new Date();
+		Instant vd = Instant.now();
 		try {
 			rType = OceanicTrackInfo.Type.valueOf((String) ctx.getCmdParameter(OPERATION, "NAT"));
-			vd = StringUtils.parseDate((String) ctx.getCmdParameter(ID, null), "MMddyyyy");
+			vd = StringUtils.parseInstant((String) ctx.getCmdParameter(ID, null), "MMddyyyy");
 		} catch (Exception e) {
 			rType = OceanicTrackInfo.Type.NAT;
 		}
@@ -41,16 +42,16 @@ public class RouteCommand extends AbstractCommand {
 		try {
 			GetOceanicRoute dao = new GetOceanicRoute(ctx.getConnection());
 			ctx.setAttribute("route", dao.get(rType, vd), REQUEST);
-			
-			// Get our access level
-			ScheduleAccessControl access = new ScheduleAccessControl(ctx);
-			access.validate();
-			ctx.setAttribute("access", access, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
 		}
+		
+		// Get our access level
+		ScheduleAccessControl access = new ScheduleAccessControl(ctx);
+		access.validate();
+		ctx.setAttribute("access", access, REQUEST);
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

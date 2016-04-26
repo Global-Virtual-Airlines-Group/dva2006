@@ -1,7 +1,8 @@
-// Copyright 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
-import java.util.*;
+import java.time.*;
+import java.time.temporal.ChronoField;
 
 import org.deltava.beans.ViewEntry;
 import org.deltava.util.cache.Cacheable;
@@ -9,7 +10,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store Navigation Data cycle information.
  * @author Luke
- * @version 5.2
+ * @version 7.0
  * @since 5.1
  */
 
@@ -18,7 +19,7 @@ public class CycleInfo implements Cacheable, ViewEntry, Comparable<CycleInfo> {
 	private final String _id;
 	private final int _year;
 	private final int _seq;
-	private Date _releasedOn;
+	private Instant _releasedOn;
 	private boolean _isLoaded;
 	
 	/**
@@ -34,7 +35,7 @@ public class CycleInfo implements Cacheable, ViewEntry, Comparable<CycleInfo> {
 	 * @param cycleID the navigqation cycle ID
 	 * @param releaseDate the cycle release datae
 	 */
-	public CycleInfo(String cycleID, Date releaseDate) {
+	public CycleInfo(String cycleID, Instant releaseDate) {
 		super();
 		_id = cycleID;
 		_year = Integer.parseInt(_id.substring(0, 2)) + 2000;
@@ -70,7 +71,7 @@ public class CycleInfo implements Cacheable, ViewEntry, Comparable<CycleInfo> {
 	 * Returns the cycle release date.
 	 * @return the release date
 	 */
-	public Date getReleasedOn() {
+	public Instant getReleasedOn() {
 		return _releasedOn;
 	}
 	
@@ -86,7 +87,7 @@ public class CycleInfo implements Cacheable, ViewEntry, Comparable<CycleInfo> {
 	 * Updates the cycle release datae.
 	 * @param dt the release date
 	 */
-	public void setReleasedOn(Date dt) {
+	public void setReleasedOn(Instant dt) {
 		_releasedOn = dt;
 	}
 	
@@ -114,10 +115,12 @@ public class CycleInfo implements Cacheable, ViewEntry, Comparable<CycleInfo> {
 		return _id;
 	}
 
+	@Override
 	public String toString() {
 		return _id;
 	}
-	
+
+	@Override
 	public int hashCode() {
 		return _id.hashCode();
 	}
@@ -127,8 +130,8 @@ public class CycleInfo implements Cacheable, ViewEntry, Comparable<CycleInfo> {
 	 * @return a CycleInfo bean
 	 */
 	public static CycleInfo getCurrent() {
-		Calendar cld = Calendar.getInstance();
-		String id = String.valueOf(cld.get(Calendar.YEAR) - 2000) + String.format("00", Integer.valueOf(cld.get(Calendar.MONTH) + 1));
+		ZonedDateTime zdt = ZonedDateTime.ofInstant(Instant.now(), ZoneOffset.UTC);
+		String id = String.valueOf(zdt.get(ChronoField.YEAR) - 2000) + String.format("00", Integer.valueOf(zdt.get(ChronoField.MONTH_OF_YEAR) + 1));
 		return new CycleInfo(id);
 	}
 }

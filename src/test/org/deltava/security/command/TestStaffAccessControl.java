@@ -16,13 +16,15 @@ public class TestStaffAccessControl extends AccessControlTestCase {
             StaffAccessControl.class });
    }
 
-   protected void setUp() throws Exception {
+   @Override
+protected void setUp() throws Exception {
       super.setUp();
       _s = new Staff(_user.getFirstName(), _user.getLastName());
       _ac = new StaffAccessControl(_ctxt, _s);
    }
 
-   protected void tearDown() throws Exception {
+   @Override
+protected void tearDown() throws Exception {
       _ac = null;
       _s = null;
       super.tearDown();

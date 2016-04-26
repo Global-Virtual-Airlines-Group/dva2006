@@ -1,8 +1,9 @@
-// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.hr;
 
 import java.util.*;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 import org.deltava.beans.hr.*;
@@ -18,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Senior Captain nominations.
  * @author Luke
- * @version 3.6
+ * @version 7.0
  * @since 3.3
  */
 
@@ -82,7 +83,7 @@ public class NominationCommand extends AbstractFormCommand {
 			// Add comment
 			NominationComment nc = new NominationComment(ctx.getUser().getID(), body);
 			nc.setAuthorID(ctx.getUser().getID());
-			nc.setCreatedOn(new Date());
+			nc.setCreatedOn(Instant.now());
 			if (!isNew && access.getCanObject())
 				nc.setSupport(Boolean.valueOf(ctx.getParameter("support")).booleanValue());
 			n.addComment(nc);

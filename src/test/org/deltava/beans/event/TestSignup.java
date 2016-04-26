@@ -14,13 +14,15 @@ public class TestSignup extends AbstractBeanTestCase {
         return new CoverageDecorator(TestSignup.class, new Class[] { Signup.class } );
     }
     
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
         _s = new Signup(123, 1234);
         setBean(_s);
     }
 
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         _s = null;
         super.tearDown();
     }

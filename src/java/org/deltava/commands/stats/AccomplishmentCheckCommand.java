@@ -2,6 +2,7 @@
 package org.deltava.commands.stats;
 
 import java.util.*;
+import java.time.Instant;
 import java.sql.Connection;
 
 import org.deltava.beans.Pilot;
@@ -21,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to recalculate what Accomplishments a Pilot has achieved.
  * @author Luke
- * @version 6.4
+ * @version 7.0
  * @since 3.2
  */
 
@@ -85,12 +86,12 @@ public class AccomplishmentCheckCommand extends AbstractCommand {
 			// Loop through accomplishments
 			Collection<DatedAccomplishment> newAccs = new TreeSet<DatedAccomplishment>();
 			for (Accomplishment a : accs) {
-				Date dt = helper.achieved(a);
+				Instant dt = helper.achieved(a);
 				if (dt != null) {
 					DatedAccomplishment da = new DatedAccomplishment(dt, a);
 					DatedAccomplishment da2 = pAccs.get(Integer.valueOf(a.getID()));
 					if (da2 != null) {
-						long timeDiff = Math.abs(dt.getTime() - da2.getDate().getTime()) / 1000;
+						long timeDiff = Math.abs(dt.toEpochMilli() - da2.getDate().toEpochMilli()) / 1000;
 						if (timeDiff > 86400)
 							newAccs.add(da);	
 					} else

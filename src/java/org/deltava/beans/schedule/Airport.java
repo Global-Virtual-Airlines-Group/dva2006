@@ -10,7 +10,7 @@ import org.deltava.util.*;
 /**
  * A class for storing airport information.
  * @author Luke
- * @version 6.4
+ * @version 7.0
  * @since 1.0
  */
 
@@ -45,7 +45,7 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 	private boolean _hasGateData;
 	
 	private final GeoPosition _position = new GeoPosition(0d, 0d);
-	private TZInfo _tz = TZInfo.local();
+	private TZInfo _tz = TZInfo.UTC;
 	private Country _country;
 	private final Collection<String> _aCodes = new TreeSet<String>();
 
@@ -99,14 +99,6 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 		_country = c;
 	}
 
-	/**
-	 * Sets this airport's Time Zone.
-	 * @param tzID A valid JVM time zone ID
-	 */
-	public void setTZ(String tzID) {
-		_tz = TZInfo.get(tzID);
-	}
-	
 	/**
 	 * Updates the length of the longest runway at this Airport.
 	 * @param len the length in feet

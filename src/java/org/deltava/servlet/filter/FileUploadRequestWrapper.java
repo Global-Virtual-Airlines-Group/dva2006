@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.filter;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
  * request; file parts are stored within the request, and this wrapper is used to access the parameter parts by the
  * standard method calls contained within the Java Servlet API.
  * @author Luke
- * @version 2.6
+ * @version 7.0
  * @since 1.0
  */
 
@@ -54,6 +54,7 @@ public class FileUploadRequestWrapper extends HttpServletRequestWrapper {
 		}
 	}
 
+	@Override
 	public final String getParameter(String pName) {
 		String[] values = getParameterValues(pName);
 		return (values == null) ? null : values[0];
@@ -63,6 +64,7 @@ public class FileUploadRequestWrapper extends HttpServletRequestWrapper {
 	 * Returns the value(s) of a request parameter.
 	 * @return the parameter value(s)
 	 */
+	@Override
 	public final String[] getParameterValues(String pName) {
 		return _params.get(pName);
 	}
@@ -71,6 +73,7 @@ public class FileUploadRequestWrapper extends HttpServletRequestWrapper {
 	 * Returns the parameters as a map of String arrays.
 	 * @return a Map of String[] arrays
 	 */
+	@Override
 	public final Map<String, String[]> getParameterMap() {
 		return _params;
 	}
@@ -79,6 +82,7 @@ public class FileUploadRequestWrapper extends HttpServletRequestWrapper {
 	 * Returns all parameter names.
 	 * @return an Enumeration of parameter names
 	 */
+	@Override
 	public final Enumeration<String> getParameterNames() {
 		return Collections.enumeration(_params.keySet());
 	}

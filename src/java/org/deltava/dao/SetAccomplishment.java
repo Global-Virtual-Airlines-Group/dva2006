@@ -63,7 +63,7 @@ public class SetAccomplishment extends DAO {
 	 * @param dt the date/time of the accomplishment
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void achieve(int pilotID, Accomplishment a, java.util.Date dt) throws DAOException {
+	public void achieve(int pilotID, Accomplishment a, java.time.Instant dt) throws DAOException {
 		try {
 			prepareStatement("REPLACE INTO PILOT_ACCOMPLISHMENTS (PILOT_ID, AC_ID, DATE) VALUES (?, ?, ?)");
 			_ps.setInt(1, pilotID);

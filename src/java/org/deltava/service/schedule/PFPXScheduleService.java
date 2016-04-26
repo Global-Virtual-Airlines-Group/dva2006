@@ -1,4 +1,4 @@
-// Copyright 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -6,6 +6,8 @@ import static javax.servlet.http.HttpServletResponse.*;
 import java.io.*;
 import java.util.*;
 import java.sql.Connection;
+import java.time.LocalDateTime;
+import java.time.temporal.*;
 
 import org.jdom2.*;
 
@@ -20,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Serivce to export the Flight Schedule in PFPX format. 
  * @author Luke
- * @version 6.1
+ * @version 7.0
  * @since 6.1
  */
 
@@ -81,8 +83,8 @@ public class PFPXScheduleService extends DownloadService {
 		}
 		
 		// Add to XML
-		Calendar cld = CalendarUtils.getInstance(null, true);
-		String today = String.valueOf(cld.get(Calendar.DAY_OF_WEEK));
+		LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.DAYS);
+		String today = String.valueOf(now.get(ChronoField.DAY_OF_WEEK));
 		Document doc = new Document();
 		Element re = new Element("PFPX_FLIGHT_LIST");
 		re.setAttribute("airline", SystemData.get("airline.code"));
@@ -99,8 +101,8 @@ public class PFPXScheduleService extends DownloadService {
 			fe.addContent(XMLUtils.createElement("InitAlt", "OPT"));
 			fe.addContent(XMLUtils.createElement("MTOW", String.valueOf(ac.getMaxTakeoffWeight())));
 			fe.addContent(XMLUtils.createElement("MLW", String.valueOf(ac.getMaxLandingWeight())));
-			fe.addContent(XMLUtils.createElement("STD", StringUtils.format(se.getDateTimeD().getDate(), "MM/dd/yyyy HH:mm")));
-			fe.addContent(XMLUtils.createElement("STA", StringUtils.format(se.getDateTimeA().getDate(), "MM/dd/yyyy HH:mm")));
+			fe.addContent(XMLUtils.createElement("STD", StringUtils.format(se.getTimeD(), "MM/dd/yyyy HH:mm")));
+			fe.addContent(XMLUtils.createElement("STA", StringUtils.format(se.getTimeA(), "MM/dd/yyyy HH:mm")));
 			fe.addContent(XMLUtils.createElement("MaxPax", String.valueOf(ac.getSeats())));
 			fe.addContent(XMLUtils.createElement("MaxCargo", "-1"));
 			fe.addContent(XMLUtils.createElement("Type", "1"));

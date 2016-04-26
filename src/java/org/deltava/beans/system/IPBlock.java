@@ -1,4 +1,4 @@
-// Copyright 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 import org.deltava.beans.GeoLocation;
@@ -9,7 +9,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store IP address block information.
  * @author Luke
- * @version 5.2
+ * @version 7.0
  * @since 2.5
  */
 
@@ -184,10 +184,12 @@ public abstract class IPBlock implements Cacheable, GeoLocation, Comparable<IPBl
 		_loc.setLongitude(lng);
 	}
 	
+	@Override
 	public Object cacheKey() {
 		return Long.valueOf(_id);
 	}
 
+	@Override
 	public int hashCode() {
 		return toString().hashCode();
 	}

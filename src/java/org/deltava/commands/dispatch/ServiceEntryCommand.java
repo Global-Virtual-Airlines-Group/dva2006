@@ -1,7 +1,8 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.dispatch;
 
 import java.sql.Connection;
+import java.time.ZonedDateTime;
 
 import org.deltava.beans.*;
 import org.deltava.beans.acars.DispatchScheduleEntry;
@@ -15,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle ACARS Dispatcher schedule entries.
  * @author Luke
- * @version 2.2
+ * @version 7.0
  * @since 2.2
  */
 
@@ -26,6 +27,7 @@ public class ServiceEntryCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	protected void execEdit(CommandContext ctx) throws CommandException {
 		
 		boolean isNew = (ctx.getID() == 0);
@@ -44,8 +46,8 @@ public class ServiceEntryCommand extends AbstractFormCommand {
 				TZInfo tz = ctx.getUser().getTZ();
 				
 				// Convert the dates to local time for the input fields
-				ctx.setAttribute("startTime", DateTime.convert(dse.getStartTime(), tz), REQUEST);
-				ctx.setAttribute("endTime", DateTime.convert(dse.getEndTime(), tz), REQUEST);
+				ctx.setAttribute("startTime", ZonedDateTime.ofInstant(dse.getStartTime(), tz.getZone()), REQUEST);
+				ctx.setAttribute("endTime", ZonedDateTime.ofInstant(dse.getEndTime(), tz.getZone()), REQUEST);
 				
 				// Get the Dispatcher
 				GetPilot pdao = new GetPilot(con);
@@ -79,6 +81,7 @@ public class ServiceEntryCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	protected void execRead(CommandContext ctx) throws CommandException {
 		execEdit(ctx);
 	}
@@ -88,6 +91,7 @@ public class ServiceEntryCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	protected void execSave(CommandContext ctx) throws CommandException {
 		boolean isNew = (ctx.getID() == 0);
 		try {

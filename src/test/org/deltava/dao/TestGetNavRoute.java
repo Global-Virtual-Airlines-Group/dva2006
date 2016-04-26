@@ -10,11 +10,13 @@ public class TestGetNavRoute extends AbstractDAOTestCase {
 	
 	private GetNavRoute _dao;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		_dao = new GetNavRoute(_con);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		_dao = null;
 		super.tearDown();

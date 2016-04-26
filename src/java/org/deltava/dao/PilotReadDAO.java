@@ -279,10 +279,10 @@ abstract class PilotReadDAO extends DAO {
 				p.setRank(Rank.fromName(rs.getString(12)));
 				p.setNetworkID(OnlineNetwork.VATSIM, rs.getString(13));
 				p.setNetworkID(OnlineNetwork.IVAO, rs.getString(14));
-				p.setCreatedOn(rs.getTimestamp(15));
+				p.setCreatedOn(toInstant(rs.getTimestamp(15)));
 				p.setLoginCount(rs.getInt(16));
-				p.setLastLogin(rs.getTimestamp(17));
-				p.setLastLogoff(rs.getTimestamp(18));
+				p.setLastLogin(toInstant(rs.getTimestamp(17)));
+				p.setLastLogoff(toInstant(rs.getTimestamp(18)));
 				p.setTZ(TZInfo.get(rs.getString(19)));
 				p.setNotificationCode(rs.getInt(20));
 				p.setEmailAccess(rs.getInt(21));
@@ -322,7 +322,7 @@ abstract class PilotReadDAO extends DAO {
 				// Check if this result set has columns 50/51, which is the signature extension
 				if (columnCount > 50) {
 					p.setSignatureExtension(rs.getString(50));
-					p.setSignatureModified(rs.getTimestamp(51));
+					p.setSignatureModified(toInstant(rs.getTimestamp(51)));
 				}
 
 				// Check if this result set has columns 52/53, which are online legs/hours
@@ -383,7 +383,7 @@ abstract class PilotReadDAO extends DAO {
 			while (rs.next()) {
 				Pilot p = pilots.get(Integer.valueOf(rs.getInt(1)));
 				if (p != null)
-					p.addAccomplishmentID(new DatedAccomplishmentID(rs.getTimestamp(3), rs.getInt(2)));
+					p.addAccomplishmentID(new DatedAccomplishmentID(toInstant(rs.getTimestamp(3)), rs.getInt(2)));
 			}
 		}
 		

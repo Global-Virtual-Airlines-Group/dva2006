@@ -1,8 +1,9 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.help;
 
 import java.util.*;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.deltava.beans.help.*;
 import org.deltava.commands.*;
@@ -15,7 +16,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Web Site Command to update a Help Desk Issue.
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -26,8 +27,8 @@ public class IssueUpdateCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
-
 		try {
 			Connection con = ctx.getConnection();
 
@@ -44,10 +45,10 @@ public class IssueUpdateCommand extends AbstractCommand {
 				throw securityException("Cannot update Comments/FAQ status");
 
 			// Build a map of comments
-			Map<Long, IssueComment> comments = new HashMap<Long, IssueComment>();
+			Map<Instant, IssueComment> comments = new HashMap<Instant, IssueComment>();
 			for (Iterator<IssueComment> ici = i.getComments().iterator(); ici.hasNext();) {
 				IssueComment ic = ici.next();
-				comments.put(new Long(ic.getCreatedOn().getTime()), ic);
+				comments.put(ic.getCreatedOn(), ic);
 			}
 
 			// Update FAQ attribute from the request
@@ -67,7 +68,7 @@ public class IssueUpdateCommand extends AbstractCommand {
 					Long commentID = Long.valueOf(di.next());
 					if (comments.containsKey(commentID)) {
 						comments.remove(commentID);
-						wdao.deleteComment(i.getID(), new Date(commentID.longValue()));
+						wdao.deleteComment(i.getID(), Instant.ofEpochMilli(commentID.longValue()));
 					}
 				}
 			}
@@ -81,10 +82,9 @@ public class IssueUpdateCommand extends AbstractCommand {
 			} else {
 				Long commentID = Long.valueOf(faqIDs.iterator().next());
 				if (comments.containsKey(commentID))
-					wdao.markFAQ(i.getID(), new Date(commentID.longValue()));
+					wdao.markFAQ(i.getID(), Instant.ofEpochMilli(commentID.longValue()));
 			}
 
-			// Commit the transaction
 			ctx.commitTX();
 		} catch (DAOException de) {
 			ctx.rollbackTX();

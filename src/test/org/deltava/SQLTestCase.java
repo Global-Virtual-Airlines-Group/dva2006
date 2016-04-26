@@ -17,6 +17,7 @@ public abstract class SQLTestCase extends TestCase {
 
 	private ConnectionPool _jdbcPool;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		PropertyConfigurator.configure("data/log4j.test.properties");
@@ -42,6 +43,7 @@ public abstract class SQLTestCase extends TestCase {
 		executeSQL("USE test");
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		executeSQL("DROP DATABASE IF EXISTS test");
 		executeSQL("CREATE DATABASE IF NOT EXISTS test");
@@ -100,7 +102,7 @@ public abstract class SQLTestCase extends TestCase {
 		_jdbcPool.release(c);
 	}
 
-	protected void insertRow(Connection c, String table, String csvEntry) throws SQLException {
+	protected static void insertRow(Connection c, String table, String csvEntry) throws SQLException {
 		StringBuilder buf = new StringBuilder("INSERT INTO ");
 		buf.append(table);
 		buf.append(" VALUES (");

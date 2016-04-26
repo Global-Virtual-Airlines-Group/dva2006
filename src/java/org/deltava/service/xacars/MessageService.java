@@ -1,10 +1,11 @@
-// Copyright 2011, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.xacars;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
 import java.util.*;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.apache.log4j.Logger;
 
@@ -20,7 +21,7 @@ import org.gvagroup.acars.ACARSFlags;
 /**
  * The XACARS status message Web Service. 
  * @author Luke
- * @version 5.4
+ * @version 7.0
  * @since 4.1
  */
 
@@ -124,7 +125,7 @@ public class MessageService extends XAService {
 			EngineInfo nX = new EngineInfo();
 
 			// Parse the position data
-			XARouteEntry re = new XARouteEntry(null, new Date());
+			XARouteEntry re = new XARouteEntry(null, Instant.now());
 			re.setFlightID(inf.getID());
 			re.setFlag(ACARSFlags.FLAG_ONGROUND, (inf.getPhase() != FlightPhase.AIRBORNE));
 			List<String > data = StringUtils.split(msgData.substring(pos + 9) , "/");
@@ -259,6 +260,7 @@ public class MessageService extends XAService {
 					
 				case CM:
 				case WX:
+				default:
 					break;
 			}
 			

@@ -1,9 +1,10 @@
-// Copyright 2013, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2013, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.*;
+import java.time.Instant;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 
@@ -25,7 +26,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A scheduled task to download GFS global forecast data.
  * @author Luke
- * @version 6.3
+ * @version 7.0
  * @since 5.2
  */
 
@@ -110,7 +111,7 @@ public class GFSDownloadTask extends Task {
 	protected void execute(TaskContext ctx) {
 		try {
 			File outF = new File(SystemData.get("weather.cache"), "gfs.grib");
-			String host = SystemData.get("weather.gfs.host"); Date dt = null;
+			String host = SystemData.get("weather.gfs.host"); Instant dt = null;
 			try (FTPConnection con = new FTPConnection(host)) {
 				con.connect("anonymous", SystemData.get("airline.mail.webmaster"));
 				log.info("Connected to " + host);
@@ -119,16 +120,16 @@ public class GFSDownloadTask extends Task {
 				String basePath = SystemData.get("weather.gfs.path");
 				String dir = con.getNewestDirectory(basePath, FileUtils.fileFilter("gfs.", null));
 				String fName = con.getNewest(basePath + "/" + dir, FileUtils.fileFilter("gfs.", ".pgrb2b.0p25.f000"));
-				Date lm = con.getTimestamp(basePath + "/" + dir, fName);
+				Instant lm = con.getTimestamp(basePath + "/" + dir, fName);
 				
 				// Calculate the effective date and download
-				dt = StringUtils.parseDate(dir.substring(dir.lastIndexOf('.') + 1), "yyyyMMddHH");
-				if (!outF.exists() || (lm.getTime() > outF.lastModified())) {
+				dt = StringUtils.parseInstant(dir.substring(dir.lastIndexOf('.') + 1), "yyyyMMddHH");
+				if (!outF.exists() || (lm.toEpochMilli() > outF.lastModified())) {
 					log.info("Downloading updated GFS data");
 					long startTime = System.currentTimeMillis(); 
 					try (InputStream in = con.get(basePath + "/" + dir + "/" + fName, outF)) {
 						log.info("Downloaded GFS data - " + outF.length());
-						outF.setLastModified(lm.getTime());
+						outF.setLastModified(lm.toEpochMilli());
 						log.info("Download completed in " + (System.currentTimeMillis() - startTime) + "ms");
 					}
 				}

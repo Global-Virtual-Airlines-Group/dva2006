@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2012, 2106 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.navdata.*;
 /**
  * A Flight Route that has its waypoints populated.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 2.6
  */
 
@@ -27,6 +27,7 @@ public class PopulatedRoute extends FlightRoute implements Route {
 	 * Returns the waypoints on this route.
 	 * @return a Collection of NavigationDataBeans
 	 */
+	@Override
 	public LinkedList<NavigationDataBean> getWaypoints() {
 		return new LinkedList<NavigationDataBean>(_route.keySet());
 	}
@@ -43,6 +44,7 @@ public class PopulatedRoute extends FlightRoute implements Route {
 	/**
 	 * Returns the number of waypoints.
 	 */
+	@Override
 	public int getSize() {
 		return _route.size();
 	}
@@ -60,6 +62,7 @@ public class PopulatedRoute extends FlightRoute implements Route {
 	 * Adds a waypoint to the route.
 	 * @param nd the waypoint
 	 */
+	@Override
 	public void addWaypoint(NavigationDataBean nd) {
 		addWaypoint(nd, null);
 	}
@@ -102,6 +105,7 @@ public class PopulatedRoute extends FlightRoute implements Route {
 	 * Returns the route.
 	 * @return a space-separated list of waypoints and airways
 	 */
+	@Override
 	public String getRoute() {
 		String rt = super.getRoute();
 		if (rt != null)
@@ -118,14 +122,17 @@ public class PopulatedRoute extends FlightRoute implements Route {
 		return buf.toString();
 	}
 
+	@Override
 	public String getComboAlias() {
 		return getRoute();
 	}
 
+	@Override
 	public String getComboName() {
 		return toString();
 	}
 	
+	@Override
 	public int hashCode() {
 		return toString().hashCode();
 	}

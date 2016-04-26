@@ -1,4 +1,4 @@
-// Copyright 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.filter;
 
 import org.deltava.beans.schedule.*;
@@ -6,7 +6,7 @@ import org.deltava.beans.schedule.*;
 /**
  * An Airport Filter to filter by Country. 
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 5.0
  */
 
@@ -23,6 +23,7 @@ public class CountryFilter extends AirportFilter {
 		_c = c;
 	}
 	
+	@Override
 	public boolean accept(Airport a) {
 		return (a == null) ? false : (a.getCountry() == _c);
 	}

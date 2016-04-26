@@ -1,31 +1,33 @@
-// Copyright 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
-import java.util.*;
+import java.time.*;
+import java.time.temporal.*;
 
 import org.deltava.util.*;
 
 /**
  * A bean to store date/time ranges.
  * @author Luke
- * @version 4.2
+ * @version 7.0
  * @since 3.6
  */
 
 public class DateRange implements java.io.Serializable, Comparable<DateRange>, ComboAlias {
 
 	private final String _label;
-	private final Date _startDate;
-	private final Date _endDate;
+	private final Instant _startDate;
+	private final Instant _endDate;
 
 	/**
 	 * Creates a date range for a specific day.
 	 * @param dt a date/time within that day
 	 * @return a DateRange
 	 */
-	public static DateRange createDay(Date dt) {
-		Date sd = CalendarUtils.getInstance(dt, true).getTime();
-		return new DateRange(sd, CalendarUtils.adjust(sd, 1), StringUtils.format(sd, "MMM dd yyyy"));
+	public static DateRange createDay(Instant dt) {
+		Instant sd = dt.truncatedTo(ChronoUnit.DAYS);
+		Instant ed = sd.plus(1, ChronoUnit.DAYS);
+		return new DateRange(sd, ed, StringUtils.format(sd, "MMM dd yyyy"));
 	}
 	
 	/**
@@ -33,9 +35,10 @@ public class DateRange implements java.io.Serializable, Comparable<DateRange>, C
 	 * @param dt a date/time within that day
 	 * @return a DateRange
 	 */
-	public static DateRange createWeek(Date dt) {
-		Calendar sc = CalendarUtils.getInstance(dt, true);
-		return new DateRange(sc.getTime(), CalendarUtils.adjust(sc.getTime(), 7), StringUtils.format(sc.getTime(), "MMM dd yyyy"));
+	public static DateRange createWeek(Instant dt) {
+		Instant sd = dt.truncatedTo(ChronoUnit.DAYS);
+		Instant ed = sd.plus(7, ChronoUnit.DAYS);
+		return new DateRange(sd, ed, StringUtils.format(sd, "MMM dd yyyy"));
 	}
 	
 	/**
@@ -43,11 +46,11 @@ public class DateRange implements java.io.Serializable, Comparable<DateRange>, C
 	 * @param dt a date/time within that month
 	 * @return a DateRange
 	 */
-	public static DateRange createMonth(Date dt) {
-		Calendar sc = CalendarUtils.getInstance(dt, true);
-		Calendar ec = CalendarUtils.getInstance(sc.getTime());
-		ec.add(Calendar.MONTH, 1);
-		return new DateRange(sc.getTime(), ec.getTime(), StringUtils.format(sc.getTime(), "MMMM yyyy"));
+	public static DateRange createMonth(Instant dt) {
+		ZonedDateTime zdt = ZonedDateTime.ofInstant(dt, ZoneOffset.UTC).truncatedTo(ChronoUnit.DAYS);
+		ZonedDateTime sd = zdt.minusDays(zdt.get(ChronoField.DAY_OF_MONTH) - 1);
+		ZonedDateTime ed = sd.plus(1, ChronoUnit.MONTHS);
+		return new DateRange(sd.toInstant(), ed.toInstant(), StringUtils.format(sd, "MMMM yyyy"));
 	}
 	
 	/**
@@ -55,11 +58,11 @@ public class DateRange implements java.io.Serializable, Comparable<DateRange>, C
 	 * @param dt a date/time within that year
 	 * @return a DateRange
 	 */
-	public static DateRange createYear(Date dt) {
-		Calendar sc = CalendarUtils.getInstance(dt, true);
-		Calendar ec = CalendarUtils.getInstance(sc.getTime());
-		ec.add(Calendar.YEAR, 1);
-		return new DateRange(sc.getTime(), ec.getTime(), String.valueOf(sc.get(Calendar.YEAR)));
+	public static DateRange createYear(Instant dt) {
+		ZonedDateTime zdt = ZonedDateTime.ofInstant(dt, ZoneOffset.UTC).truncatedTo(ChronoUnit.DAYS);
+		ZonedDateTime sd = zdt.minusDays(zdt.get(ChronoField.DAY_OF_YEAR) - 1);
+		ZonedDateTime ed = sd.plus(1, ChronoUnit.YEARS);
+		return new DateRange(sd.toInstant(), ed.toInstant(), StringUtils.format(sd, "MMMM yyyy"));
 	}
 	
 	/**
@@ -77,7 +80,7 @@ public class DateRange implements java.io.Serializable, Comparable<DateRange>, C
 		try {
 			long st = Long.parseLong(alias.substring(0, pos));
 			long len = Long.parseLong(alias.substring(pos + 1));
-			return new DateRange(new Date(st), new Date(st + len));
+			return new DateRange(Instant.ofEpochMilli(st), Instant.ofEpochMilli(st + len));
 		} catch (NumberFormatException nfe) {
 			return null;
 		}
@@ -88,7 +91,7 @@ public class DateRange implements java.io.Serializable, Comparable<DateRange>, C
 	 * @param startDate the start date/time
 	 * @param endDate the end date/time
 	 */
-	public DateRange(Date startDate, Date endDate) {
+	public DateRange(Instant startDate, Instant endDate) {
 		this(startDate, endDate, null);
 	}
 	
@@ -98,7 +101,7 @@ public class DateRange implements java.io.Serializable, Comparable<DateRange>, C
 	 * @param endDate the end date/time
 	 * @param label the label override
 	 */
-	private DateRange(Date startDate, Date endDate, String label) {
+	private DateRange(Instant startDate, Instant endDate, String label) {
 		super();
 		_startDate = startDate;
 		_endDate = endDate;
@@ -109,7 +112,7 @@ public class DateRange implements java.io.Serializable, Comparable<DateRange>, C
 	 * Returns the start of the range.
 	 * @return the start date/time
 	 */
-	public Date getStartDate() {
+	public Instant getStartDate() {
 		return _startDate;
 	}
 	
@@ -117,7 +120,7 @@ public class DateRange implements java.io.Serializable, Comparable<DateRange>, C
 	 * Returns the end of the range.
 	 * @return the end date/time
 	 */
-	public Date getEndDate() {
+	public Instant getEndDate() {
 		return _endDate;
 	}
 	
@@ -134,11 +137,11 @@ public class DateRange implements java.io.Serializable, Comparable<DateRange>, C
 	 * @param dt the date/time
 	 * @return TRUE if contained, otherwise FALSE
 	 */
-	public boolean contains(Date dt) {
+	public boolean contains(Instant dt) {
 		if (dt == null)
 			return false;
 		
-		return (dt.getTime() >= _startDate.getTime()) && (dt.getTime() <= _endDate.getTime()); 
+		return (!dt.isBefore(_startDate) && !dt.isAfter(_endDate));
 	}
 	
 	/**
@@ -146,25 +149,29 @@ public class DateRange implements java.io.Serializable, Comparable<DateRange>, C
 	 * @return the size in milliseconds
 	 */
 	public long getLength() {
-		return (_endDate.getTime() - _startDate.getTime());
+		return (_endDate.toEpochMilli() - _startDate.toEpochMilli());
 	}
 	
+	@Override
 	public String getComboName() {
 		return _label;
 	}
 	
+	@Override
 	public String getComboAlias() {
 		StringBuilder buf = new StringBuilder();
-		buf.append(_startDate.getTime());
+		buf.append(_startDate.toEpochMilli());
 		buf.append('-');
 		buf.append(getLength());
 		return buf.toString();
 	}
 	
+	@Override
 	public int hashCode() {
 		return toString().hashCode();
 	}
 	
+	@Override
 	public String toString() {
 		StringBuilder buf = new StringBuilder(_startDate.toString());
 		buf.append('-');
@@ -175,6 +182,7 @@ public class DateRange implements java.io.Serializable, Comparable<DateRange>, C
 	/**
 	 * Compares two date ranges by comparing their start and end date/times.
 	 */
+	@Override
 	public int compareTo(DateRange dr2) {
 		int tmpResult = _startDate.compareTo(dr2._startDate);
 		if (tmpResult == 0)
@@ -183,6 +191,7 @@ public class DateRange implements java.io.Serializable, Comparable<DateRange>, C
 		return tmpResult;
 	}
 	
+	@Override
 	public boolean equals(Object o) {
 		return (o instanceof DateRange) ? (compareTo((DateRange) o) == 0) : false;
 	}

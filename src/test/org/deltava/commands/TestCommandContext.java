@@ -30,7 +30,8 @@ public class TestCommandContext extends TestCase {
         return new CoverageDecorator(TestCommandContext.class, new Class[] { CommandContext.class } );
     }    
     
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
     	super.setUp();
     	_rootReq = new HttpServletRequestSimulator();
     	_req = new CustomRequestWrapper(_rootReq);
@@ -38,7 +39,8 @@ public class TestCommandContext extends TestCase {
     	_ctxt = new CommandContext(_req, _rsp);
     }
     
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         _ctxt = null;
         _req = null;
         _rootReq = null;

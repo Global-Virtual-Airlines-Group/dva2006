@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import javax.servlet.jsp.*;
@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP Tag to format geographic coordinates.
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -40,9 +40,10 @@ public class GeoFormatTag extends TagSupport {
 	/**
 	 * Releases the tag's state data.
 	 */
+	@Override
 	public void release() {
-		_className = null;
 		super.release();
+		_className = null;
 	}
 	
     /**
@@ -50,10 +51,10 @@ public class GeoFormatTag extends TagSupport {
      * @return TagSupport.EVAL_PAGE
      * @throws JspException if an error occurs
      */
+	@Override
 	public int doEndTag() throws JspException {
-		
-		JspWriter out = pageContext.getOut();
 		try {
+			JspWriter out = pageContext.getOut();
             if (_className != null) {
                 out.print("<span class=\"");
                 out.print(_className);
@@ -67,10 +68,10 @@ public class GeoFormatTag extends TagSupport {
                 out.print("</span>");
         } catch (Exception e) {
             throw new JspException(e);
+		} finally {
+			release();
 		}
         
-        // Release state and return
-        release();
         return EVAL_PAGE;
 	}
 }

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.academy.*;
 /**
  * A Data Access Object to load Flight Academy calendars.
  * @author Luke
- * @version 4.1
+ * @version 7.0
  * @since 1.0
  */
 
@@ -259,8 +259,8 @@ public class GetAcademyCalendar extends DAO {
 				s.setName(rs.getString(1));
 				s.setPilotID(rs.getInt(2));
 				s.setInstructorID(rs.getInt(5));
-				s.setStartTime(rs.getTimestamp(6));
-				s.setEndTime(rs.getTimestamp(7));
+				s.setStartTime(toInstant(rs.getTimestamp(6)));
+				s.setEndTime(toInstant(rs.getTimestamp(7)));
 				s.setStatus(rs.getInt(8));
 				s.setNoShow(rs.getBoolean(9));
 				s.setComments(rs.getString(10));
@@ -277,7 +277,6 @@ public class GetAcademyCalendar extends DAO {
 	 * Helper method to parse InstructionFlight result sets.
 	 */
 	private List<InstructionFlight> executeFlightCalendar() throws SQLException {
-
 		List<InstructionFlight> results = new ArrayList<InstructionFlight>();
 		try (ResultSet rs = _ps.executeQuery()) {
 			boolean hasCourseInfo = (rs.getMetaData().getColumnCount() > 7);
@@ -297,7 +296,6 @@ public class GetAcademyCalendar extends DAO {
 			}
 		}
 
-		// Clean up and return
 		_ps.close();
 		return results;
 	}
@@ -306,20 +304,17 @@ public class GetAcademyCalendar extends DAO {
 	 * Helper method to parse InstructionBusy result sets.
 	 */
 	private List<InstructionBusy> executeBusy() throws SQLException {
-
-		
 		List<InstructionBusy> results = new ArrayList<InstructionBusy>();
 		try (ResultSet rs = _ps.executeQuery()) {
 			while (rs.next()) {
 				InstructionBusy ib = new InstructionBusy(rs.getInt(1));
-				ib.setStartTime(rs.getTimestamp(2));
-				ib.setEndTime(rs.getTimestamp(3));
+				ib.setStartTime(toInstant(rs.getTimestamp(2)));
+				ib.setEndTime(toInstant(rs.getTimestamp(3)));
 				ib.setComments(rs.getString(4));
 				results.add(ib);
 			}
 		}
 		
-		// Clean up and return
 		_ps.close();
 		return results;
 	}

@@ -1,7 +1,8 @@
-// Copyright 2005, 2006, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
+import java.time.Instant;
 import java.sql.Connection;
 
 import org.deltava.beans.assign.*;
@@ -16,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to reserve a Flight Assignment.
  * @author Luke
- * @version 3.1
+ * @version 7.0
  * @since 1.0
  */
 
@@ -27,6 +28,7 @@ public class AssignmentReserveCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		CommandResult result = ctx.getResult();
@@ -79,7 +81,7 @@ public class AssignmentReserveCommand extends AbstractCommand {
 				fr.setDatabaseID(DatabaseID.PILOT, ctx.getUser().getID());
 				fr.setDatabaseID(DatabaseID.ASSIGN, assign.getID());
 				fr.setEquipmentType(assign.getEquipmentType());
-				fr.setDate(new Date());
+				fr.setDate(Instant.now());
 
 				// Save the flight report
 				fwdao.write(fr);

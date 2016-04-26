@@ -1,4 +1,4 @@
-// Copyright 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.cooler;
 
 import java.io.*;
@@ -12,7 +12,7 @@ import org.deltava.beans.DatabaseBlobBean;
 /**
  * A bean to store Signature Images for processing.
  * @author Luke
- * @version 4.0
+ * @version 7.0
  * @since 2.3
  */
 
@@ -54,6 +54,7 @@ public class SignatureImage extends DatabaseBlobBean {
 	 * @param buffer the image buffer
 	 * @throws IllegalArgumentException if the image cannot be parsed
 	 */
+	@Override
 	public void load(byte[] buffer) {
 		super.load(buffer);
 		try {
@@ -66,6 +67,7 @@ public class SignatureImage extends DatabaseBlobBean {
 	/**
 	 * Loads the image from a stream.
 	 */
+	@Override
 	public void load(InputStream is) throws IOException {
 		super.load(is);
 		updateImage();

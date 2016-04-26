@@ -13,13 +13,15 @@ public class TestTableInfo extends AbstractBeanTestCase {
         return new CoverageDecorator(TestTableInfo.class, new Class[] { TableInfo.class } );
     }
 
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
         _info = new TableInfo("TABLE");
         setBean(_info);
     }
 
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         _info = null;
         super.tearDown();
     }

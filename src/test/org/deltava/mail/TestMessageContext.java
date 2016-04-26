@@ -25,12 +25,14 @@ public class TestMessageContext extends TestCase {
         }
     }
     
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
         _ctxt = new MessageContext();
     }
 
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         _ctxt = null;
         super.tearDown();
     }
@@ -67,7 +69,7 @@ public class TestMessageContext extends TestCase {
     	
     	_ctxt.setRecipient(p);
     	_ctxt.addData("name", "ContextName");
-    	_ctxt.addData("birthday", StringUtils.parseDate("12/29/1902 23:59:01", "MM/dd/yyyy HH:mm:ss"));
+    	_ctxt.addData("birthday", StringUtils.parseInstant("12/29/1902 23:59:01", "MM/dd/yyyy HH:mm:ss"));
     	_ctxt.addData("distance", Integer.valueOf(300));
     	_ctxt.addData("longNumber", Long.valueOf(3008123));
     	_ctxt.addData("pi", Double.valueOf(Math.PI));

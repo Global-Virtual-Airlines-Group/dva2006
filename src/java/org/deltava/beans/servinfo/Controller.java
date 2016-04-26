@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2010, 2011, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010, 2011, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import org.deltava.util.StringUtils;
@@ -6,7 +6,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store online Controller information.
  * @author Luke
- * @version 6.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -27,6 +27,7 @@ public class Controller extends ConnectedUser {
      * Returns the user type.
      * @return NetworkUser.Type.ATC
      */
+    @Override
     public final Type getType() {
         return Type.ATC;
     }

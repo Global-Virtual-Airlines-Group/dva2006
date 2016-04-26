@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to read VATSIM CERT data.
  * @author Luke
- * @version 4.2
+ * @version 7.0
  * @since 1.0
  */
 
@@ -74,7 +74,7 @@ public class GetVATSIMData extends DAO {
 			c.setFirstName(ue.getChildTextTrim("name_first"));
 			c.setLastName(ue.getChildTextTrim("name_last"));
 			c.setEmailDomain(ue.getChildTextTrim("email"));
-			c.setRegistrationDate(StringUtils.parseDate(ue.getChildTextTrim("regdate"), "yyyy-MM-dd HH:mm:ss"));
+			c.setRegistrationDate(StringUtils.parseInstant(ue.getChildTextTrim("regdate"), "yyyy-MM-dd HH:mm:ss"));
 			c.setActive(!isInactive);
 			
 			// Load Pilot ratings

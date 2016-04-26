@@ -1,7 +1,7 @@
-// Copyright 2005, 2007, 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 import org.deltava.beans.system.IPBlock;
@@ -9,7 +9,7 @@ import org.deltava.beans.system.IPBlock;
 /**
  * An abstract class for common ACRS log entry functions.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -28,7 +28,7 @@ public abstract class ACARSLogEntry extends DatabaseBean implements ClientVersio
 	 * Returns the date/time of this entry.
 	 * @return the entry date/time
 	 */
-	public abstract Date getStartTime();
+	public abstract Instant getStartTime();
 
 	/**
 	 * Returns the IP address for this connection.
@@ -59,18 +59,22 @@ public abstract class ACARSLogEntry extends DatabaseBean implements ClientVersio
 		return _addrInfo;
 	}
 
+	@Override
 	public int getVersion() {
 		return _clientVersion;
 	}
 
+	@Override
 	public int getClientBuild() {
 		return _clientBuild;
 	}
 
+	@Override
 	public int getBeta() {
 		return _beta;
 	}
 
+	@Override
 	public ClientType getClientType() {
 		return ClientType.PILOT;
 	}

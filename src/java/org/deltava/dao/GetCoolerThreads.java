@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2013, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -17,7 +17,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to retrieve Water Cooler threads and thread notifications.
  * @author Luke
- * @version 6.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -127,7 +127,7 @@ public class GetCoolerThreads extends DAO {
 	 * @return a List of MessageThreads
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<MessageThread> getSince(java.util.Date sd, boolean showImgs) throws DAOException {
+	public List<MessageThread> getSince(java.time.Instant sd, boolean showImgs) throws DAOException {
 		if (sd == null)
 			return getByChannel(null, showImgs);
 
@@ -194,7 +194,7 @@ public class GetCoolerThreads extends DAO {
 					Message msg = new Message(rs.getInt(2));
 					msg.setThreadID(id);
 					msg.setID(rs.getInt(1));
-					msg.setCreatedOn(rs.getTimestamp(3));
+					msg.setCreatedOn(rs.getTimestamp(3).toInstant());
 					msg.setRemoteAddr(rs.getString(4));
 					msg.setRemoteHost(rs.getString(5));
 					msg.setBody(rs.getString(6));
@@ -211,7 +211,7 @@ public class GetCoolerThreads extends DAO {
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
 					ThreadUpdate upd = new ThreadUpdate(id);
-					upd.setDate(rs.getTimestamp(1));
+					upd.setDate(rs.getTimestamp(1).toInstant());
 					upd.setAuthorID(rs.getInt(2));
 					upd.setMessage(rs.getString(3));
 					mt.addUpdate(upd);
@@ -397,20 +397,20 @@ public class GetCoolerThreads extends DAO {
 				t.setID(rs.getInt(1));
 				t.setChannel(rs.getString(3));
 				t.setImage(rs.getInt(hasImgCount ? 18 : 4));
-				t.setStickyUntil(rs.getTimestamp(5));
+				t.setStickyUntil(toInstant(rs.getTimestamp(5)));
 				t.setHidden(rs.getBoolean(6));
 				t.setLocked(rs.getBoolean(7));
 				t.setStickyInChannelOnly(rs.getBoolean(8));
 				t.setViews(rs.getInt(9));
 				t.setPostCount(rs.getInt(10));
 				t.setAuthorID(rs.getInt(11));
-				t.setLastUpdatedOn(rs.getTimestamp(12));
+				t.setLastUpdatedOn(toInstant(rs.getTimestamp(12)));
 				t.setLastUpdateID(rs.getInt(13));
 				t.setReportCount(rs.getInt(15));
 				t.setPoll(rs.getInt(17) > 0);
 
 				// Clean out sticky if less than SD column
-				if ((t.getStickyUntil() != null) && (t.getLastUpdatedOn().after(t.getStickyUntil())))
+				if ((t.getStickyUntil() != null) && (t.getLastUpdatedOn().isAfter(t.getStickyUntil())))
 					t.setStickyUntil(null);
 
 				results.add(t);

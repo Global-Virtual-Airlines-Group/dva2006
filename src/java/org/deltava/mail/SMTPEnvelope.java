@@ -1,7 +1,8 @@
-// Copyright 2005, 2006, 2008, 2009, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.mail;
 
 import java.io.UnsupportedEncodingException;
+import java.time.Instant;
 import java.util.*;
 
 import javax.activation.DataSource;
@@ -13,7 +14,7 @@ import org.deltava.beans.EMailAddress;
 /**
  * A bean to aggregate SMTP message information.
  * @author Luke
- * @version 5.2
+ * @version 7.0
  * @since 1.0
  */
 
@@ -23,7 +24,7 @@ class SMTPEnvelope implements java.io.Serializable, Cloneable, Comparable<SMTPEn
 	private final Collection<Address> _msgTo = new LinkedHashSet<Address>();
 	private final Collection<Address> _copyTo = new LinkedHashSet<Address>();
 	
-	private Date _createdOn = new Date();
+	private Instant _createdOn = Instant.now();
 
 	private String _subject;
 	private String _body;
@@ -62,7 +63,7 @@ class SMTPEnvelope implements java.io.Serializable, Cloneable, Comparable<SMTPEn
 	 * Returns the creation date.
 	 * @return the date/time the envelope was created
 	 */
-	public Date getCreatedOn() {
+	public Instant getCreatedOn() {
 		return _createdOn;
 	}
 
@@ -229,11 +230,12 @@ class SMTPEnvelope implements java.io.Serializable, Cloneable, Comparable<SMTPEn
 	 * @return a copy of the envelope
 	 * @see Cloneable
 	 */
+	@Override
 	public Object clone() {
 		SMTPEnvelope result = new SMTPEnvelope(_msgFrom);
 		result._msgTo.addAll(_msgTo);
 		result._copyTo.addAll(_copyTo);
-		result._createdOn = new Date(_createdOn.getTime());
+		result._createdOn = _createdOn;
 		result.setContentType(_contentType);
 		result.setAttachment(_attach);
 		result.setSubject(_subject);
@@ -245,6 +247,7 @@ class SMTPEnvelope implements java.io.Serializable, Cloneable, Comparable<SMTPEn
 	 * Returns a string representation of the envelope.
 	 * @return the recipient name/address
 	 */
+	@Override
 	public String toString() {
 		if (_msgTo.isEmpty())
 			return "UNKNOWN";
@@ -257,6 +260,7 @@ class SMTPEnvelope implements java.io.Serializable, Cloneable, Comparable<SMTPEn
 	/**
 	 * Compares two envelopes by comparing their creation date/times and recipients.
 	 */
+	@Override
 	public int compareTo(SMTPEnvelope e2) {
 		int tmpResult = _createdOn.compareTo(e2._createdOn);
 		return (tmpResult == 0) ? toString().compareTo(e2.toString()) : tmpResult;

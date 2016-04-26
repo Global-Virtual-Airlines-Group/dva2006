@@ -1,4 +1,4 @@
-// Copyright 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2013, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -16,7 +16,7 @@ import ucar.unidata.io.RandomAccessFile;
 /**
  * A Data Access Object to load WAFS GRIB2 winds aloft data. 
  * @author Luke
- * @version 6.0
+ * @version 7.0
  * @since 5.2
  */
 
@@ -115,16 +115,17 @@ public class GetWAFSData extends DAO {
 					WindData wd = results[x];
 					
 					switch (l) {
-					case 0:
-						wd.setTemperature(Math.round(v));
-						break;
-						
 					case 1:
 						wd.setJetStreamU(v);
 						break;
 						
 					case 2:
 						wd.setJetStreamV(v);
+						break;
+						
+					case 0:
+					default:
+						wd.setTemperature(Math.round(v));
 						break;
 					}
 				}

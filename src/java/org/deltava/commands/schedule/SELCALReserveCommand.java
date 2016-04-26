@@ -1,21 +1,21 @@
-// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
 import java.sql.Connection;
+import java.time.ZonedDateTime;
 
 import org.deltava.beans.schedule.SelectCall;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
-import org.deltava.util.CalendarUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to reserve and free SELCAL codes.
  * @author Luke
- * @version 2.3
+ * @version 7.0
  * @since 1.0
  */
 
@@ -26,6 +26,7 @@ public class SELCALReserveCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the SELCAL code
@@ -50,14 +51,14 @@ public class SELCALReserveCommand extends AbstractCommand {
 					throw new CommandException("Cannot reserve more than " + maxCodes + " SELCAL codes", false);
 
 				// Reserve the code
-				sc.setReservedOn(new Date());
+				ZonedDateTime zdt = ZonedDateTime.now();
+				sc.setReservedOn(zdt.toInstant());
 				wdao.reserve(code, ctx.getUser().getID());
 
 				// Save and calculate the release date
-				Date releaseDate = CalendarUtils.adjust(sc.getReservedOn(), SystemData.getInt("users.selcal.reserve"));
-				ctx.setAttribute("releaseDate", releaseDate, REQUEST);
+				ctx.setAttribute("releaseDate", zdt.plusDays(SystemData.getInt("users.selcal.reserve", 7)).toInstant(), REQUEST);
 				ctx.setAttribute("isReserve", Boolean.TRUE, REQUEST);
-				ctx.setAttribute("codes", new Integer(rSC.size() + 1), REQUEST);
+				ctx.setAttribute("codes", Integer.valueOf(rSC.size() + 1), REQUEST);
 			} else {
 				if ((sc.getReservedBy() != ctx.getUser().getID()) && !ctx.isUserInRole("HR"))
 					throw new CommandException(sc.getAircraftCode() + " not reserved by " + ctx.getUser().getName(), false);

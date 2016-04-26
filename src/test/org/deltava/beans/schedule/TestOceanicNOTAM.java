@@ -1,6 +1,6 @@
 package org.deltava.beans.schedule;
 
-import java.util.Date;
+import java.time.Instant;
 
 import junit.framework.Test;
 import org.hansel.CoverageDecorator;
@@ -16,20 +16,22 @@ public class TestOceanicNOTAM extends AbstractBeanTestCase {
         return new CoverageDecorator(TestOceanicNOTAM.class, new Class[] { OceanicNOTAM.class } );
     }
     
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
-        _or = new OceanicNOTAM(OceanicTrackInfo.Type.NAT, new Date());
+        _or = new OceanicNOTAM(OceanicTrackInfo.Type.NAT, Instant.now());
         setBean(_or);
     }
 
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         _or = null;
         super.tearDown();
     }
     
     public void testProperties() {
         assertEquals(OceanicTrackInfo.Type.NAT, _or.getType());
-        checkProperty("date", new Date());
+        checkProperty("date", Instant.now());
         checkProperty("source", "localhost");
         checkProperty("route", "!@# SADJSAKD");
         checkProperty("type", OceanicTrackInfo.Type.PACOT);
@@ -44,8 +46,8 @@ public class TestOceanicNOTAM extends AbstractBeanTestCase {
     }
     
     public void testComparator() {
-        Date d = new Date();
-        Date d2 = new Date(d.getTime() + 100);
+        Instant d = Instant.now();
+        Instant d2 = d.plusMillis(100);
         _or.setDate(d);
         OceanicNOTAM or2 = new OceanicNOTAM(OceanicTrackInfo.Type.NAT, d2);
         OceanicNOTAM or3 = new OceanicNOTAM(OceanicTrackInfo.Type.PACOT, d);

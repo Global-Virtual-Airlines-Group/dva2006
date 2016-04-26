@@ -1,17 +1,18 @@
-// Copyright 2006, 2007, 2008, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2012, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.ftp;
 
 import java.io.*;
-import java.util.Date;
+import java.time.Instant;
 import java.util.zip.*;
 
 import org.apache.log4j.Logger;
+
 import org.deltava.util.*;
 
 /**
  * A utility class to provide cached access to a remote FTP server.
  * @author Luke
- * @version 5.1
+ * @version 7.0
  * @since 1.0
  */
 
@@ -103,7 +104,7 @@ public class FTPCache {
 
 		// Get the local file information
 		File cf = new File(_cachePath, fileName);
-		Date ldt = cf.isFile() ? new Date(cf.lastModified()) : null;
+		Instant ldt = cf.isFile() ? Instant.ofEpochMilli(cf.lastModified()) : null;
 
 		// Init the FTPConnection object
 		FTPConnection con = new FTPConnection(_host);
@@ -111,23 +112,23 @@ public class FTPCache {
 		log.info("Connected to " + _host);
 
 		// Check the remote file date
-		Date rdt = con.getTimestamp("", fileName);
+		Instant rdt = con.getTimestamp("", fileName);
 		if (rdt == null) {
 			if (!cf.exists()) {
 				con.close();	
 				throw new FTPClientException("Cannot find " + fileName + " on local or " + _host);
 			}
 			
-			rdt = new Date(0);
+			rdt = Instant.EPOCH;
 		}
 
 		InputStream is = null;
 		try {
-			if ((ldt == null) || (ldt.before(rdt))) {
+			if ((ldt == null) || (ldt.isBefore(rdt))) {
 				TaskTimer tt = new TaskTimer();
 				log.info("Downloading " + cf.getName() + ", local=" + ldt + ", remote=" + rdt);
 				is = con.get(fileName, cf);
-				cf.setLastModified(rdt.getTime());
+				cf.setLastModified(rdt.toEpochMilli());
 				long time = tt.stop();
 				log.info("Download Complete. " + is.available() + " bytes, " + time + " ms");
 				_fileInfo = new FTPDownloadData(fileName, is.available(), time);

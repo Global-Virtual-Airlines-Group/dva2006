@@ -1,13 +1,15 @@
-// Copyright 2011, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.xacars;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
 import java.util.*;
+import java.time.*;
 import java.sql.Connection;
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
+
 import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.event.Event;
@@ -16,10 +18,14 @@ import org.deltava.beans.flight.*;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.testing.*;
+
 import org.deltava.dao.*;
 import org.deltava.dao.http.SetFacebookData;
+
 import org.deltava.mail.MessageContext;
+
 import org.deltava.service.*;
+
 import org.deltava.util.*;
 import org.deltava.util.cache.CacheManager;
 import org.deltava.util.system.SystemData;
@@ -27,7 +33,7 @@ import org.deltava.util.system.SystemData;
 /**
  * The XACARS Flight Report Web Service. 
  * @author Luke
- * @version 6.2
+ * @version 7.0
  * @since 4.1
  */
 
@@ -115,15 +121,15 @@ public class XPIREPService extends XAService {
 					comments.add(fr.getComments());
 			}
 			
-			long timeS = (inf.getEndTime().getTime() - inf.getStartTime().getTime()) / 1000;
-			xfr.setLength((int)(timeS / 360));
+			Duration timeS = Duration.between(inf.getStartTime(), inf.getEndTime());
+			xfr.setLength((int)(timeS.getSeconds() / 360));
 			
 			// Check for a check ride
 			GetExam exdao = new GetExam(con);
 			CheckRide cr = exdao.getCheckRide(usr.getID(), xfr.getEquipmentType(), TestStatus.NEW);
 			if (cr != null) {
 				cr.setStatus(TestStatus.SUBMITTED);
-				cr.setSubmittedOn(new Date());
+				cr.setSubmittedOn(Instant.now());
 				xfr.setAttribute(FlightReport.ATTR_CHECKRIDE, true);
 			}
 			
@@ -173,7 +179,7 @@ public class XPIREPService extends XAService {
 			if (xfr.getDatabaseID(DatabaseID.EVENT) != 0) {
 				Event e = evdao.get(xfr.getDatabaseID(DatabaseID.EVENT));
 				if (e != null) {
-					long timeSinceEnd = (System.currentTimeMillis() - e.getEndTime().getTime()) / 3600_000;
+					long timeSinceEnd = (System.currentTimeMillis() - e.getEndTime().toEpochMilli()) / 3600_000;
 					if (timeSinceEnd > 24) {
 						log.warn("Flight logged over 24 hours after Event completion");
 						comments.add("SYSTEM: Flight logged over 24 hours after Event completion");

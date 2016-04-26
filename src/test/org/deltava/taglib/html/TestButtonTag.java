@@ -6,13 +6,15 @@ public class TestButtonTag extends AbstractTagTestCase {
 
     private ButtonTag _tag;
 
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
         _tag = new ButtonTag();
         _tag.setPageContext(_ctx);
     }
 
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         _tag.release();
         _tag = null;
         super.tearDown();

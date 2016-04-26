@@ -1,8 +1,8 @@
-// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
-import java.util.Date;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.deltava.beans.navdata.OceanicTrackInfo;
 
@@ -16,7 +16,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to delete Route data.
  * @author Luke
- * @version 2.7
+ * @version 7.0
  * @since 1.0
  */
 
@@ -27,6 +27,7 @@ public class RouteDeleteCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Check our access level
@@ -36,7 +37,7 @@ public class RouteDeleteCommand extends AbstractCommand {
 			throw securityException("Cannot delete Oceanic Route");
 		
 		// Get the date/type
-		Date vd = StringUtils.parseDate((String) ctx.getCmdParameter(ID, null), "MMddyyyy");
+		Instant vd = StringUtils.parseInstant((String) ctx.getCmdParameter(ID, null), "MMddyyyy");
 		OceanicTrackInfo.Type rType = OceanicTrackInfo.Type.valueOf((String) ctx.getCmdParameter(OPERATION, "NAT"));
 		try {
 			Connection con = ctx.getConnection();

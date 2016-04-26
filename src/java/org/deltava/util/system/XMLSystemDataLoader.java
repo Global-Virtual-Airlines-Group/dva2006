@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2007, 2009, 2010, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007, 2009, 2010, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.system;
 
 import org.jdom2.*;
@@ -15,7 +15,7 @@ import org.deltava.util.ConfigLoader;
 /**
  * A SystemData loader that parses an XML file.
  * @author Luke
- * @version 6.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -148,12 +148,11 @@ public class XMLSystemDataLoader implements SystemDataLoader {
 
     /**
      * Recusrively process an XML entry that may have child entries.
-     * @param rootName the hierarchical root entry name
+     * @param rName the hierarchical root entry name
      * @param re the XML element to process
      */
-    protected void process(String rootName, Element re) {
-        if (rootName.length() > 0)
-            rootName = rootName + ".";
+    protected void process(String rName, Element re) {
+    	String rootName = (rName.length() > 0) ? rName + "." : rName;
 
         // Iterate through this entry's children
         for (Iterator<Element> i = re.getChildren().iterator(); i.hasNext();) {

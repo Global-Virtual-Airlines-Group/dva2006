@@ -16,12 +16,14 @@ public class MagVarLoader extends BGLLoaderTestCase {
 	private Connection _c;
 	
 	final class SceneryFilter implements FileFilter {
+		@Override
 		public boolean accept(File f) {
 			String fn = f.getName().toLowerCase();
 			return (f.isFile() && (fn.startsWith("ap")));
 		}
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		log = Logger.getLogger(NavRegionLoader.class);
@@ -33,6 +35,7 @@ public class MagVarLoader extends BGLLoaderTestCase {
 		_c.setAutoCommit(false);
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		_c.close();
 		super.tearDown();

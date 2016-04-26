@@ -1,10 +1,10 @@
-// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.wx;
 
 /**
  * A bean to store Terminal Area Forecast data.
  * @author Luke
- * @version 2.7
+ * @version 7.0
  * @since 2.2
  */
 
@@ -12,14 +12,17 @@ public class TAF extends WeatherDataBean {
 	
 	private boolean _amended;
 
+	@Override
 	public String getIconColor() {
 		return BLUE;
 	}
 
+	@Override
 	public Type getType() {
 		return Type.TAF;
 	}
 
+	@Override
 	public int hashCode() {
 		return cacheKey().hashCode();
 	}

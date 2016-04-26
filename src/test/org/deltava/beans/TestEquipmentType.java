@@ -6,13 +6,15 @@ public class TestEquipmentType extends AbstractBeanTestCase {
 
     private EquipmentType _eq;
     
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
         _eq = new EquipmentType("CRJ-200");
         setBean(_eq);
     }
 
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         _eq = null;
         super.tearDown();
     }

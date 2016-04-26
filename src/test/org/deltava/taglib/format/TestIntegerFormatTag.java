@@ -11,12 +11,14 @@ public class TestIntegerFormatTag extends AbstractTagTestCase {
 
     private IntegerFormatTag _tag;
     
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
         _tag = new IntegerFormatTag();
     }
 
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         _tag.release();
         _tag = null;
         super.tearDown();

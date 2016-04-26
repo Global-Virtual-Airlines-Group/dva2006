@@ -1,7 +1,8 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.help;
 
 import java.util.*;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 import org.deltava.util.StringUtils;
@@ -9,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store Help Desk Issues.
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -30,9 +31,9 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	private boolean _public;
 	private boolean _faq;
 	
-	private Date _createdOn;
-	private Date _lastComment;
-	private Date _resolvedOn;
+	private Instant _createdOn;
+	private Instant _lastComment;
+	private Instant _resolvedOn;
 	private String _subject;
 	private String _body;
 	
@@ -48,12 +49,7 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 		setSubject(subj);
 	}
 
-	/**
-	 * Returns the database ID of the Issue author.
-	 * @return the author's database ID
-	 * @see Issue#setAuthorID(int)
-	 * @see Issue#getLastCommentAuthorID()
-	 */
+	@Override
 	public int getAuthorID() {
 		return _authorID;
 	}
@@ -138,27 +134,27 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	/**
 	 * Returns the date/time the Issue was created on.
 	 * @return the Issue creation date/time
-	 * @see Issue#setCreatedOn(Date)
+	 * @see Issue#setCreatedOn(Instant)
 	 */
-	public Date getCreatedOn() {
+	public Instant getCreatedOn() {
 		return _createdOn;
 	}
 	
 	/**
 	 * Returns the date/time the Issue was resolved on.
 	 * @return the Issue resolution date/time
-	 * @see Issue#setResolvedOn(Date)
+	 * @see Issue#setResolvedOn(Instant)
 	 */
-	public Date getResolvedOn() {
+	public Instant getResolvedOn() {
 		return _resolvedOn;
 	}
 	
 	/**
 	 * Returns the date of the last comment. This may be null if no comments have been entered.
 	 * @return the date/time of the last comment
-	 * @see Issue#setLastComment(Date)
+	 * @see Issue#setLastComment(Instant)
 	 */
-	public Date getLastComment() {
+	public Instant getLastComment() {
 		return _lastComment;
 	}
 	
@@ -213,14 +209,8 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	public void setBody(String body) {
 		_body = body;
 	}
-	
-	/**
-	 * Updates the database ID of the Issue author.
-	 * @param id the author's database ID
-	 * @throws IllegalArgumentException if id is zero or negative
-	 * @see Issue#getAuthorID()
-	 * @see Issue#setLastCommentAuthorID(int)
-	 */
+
+	@Override
 	public void setAuthorID(int id) {
 		validateID(_authorID, id);
 		_authorID = id;
@@ -257,7 +247,7 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	 * @param dt the date/time the Issue was created
 	 * @see Issue#getCreatedOn()
 	 */
-	public void setCreatedOn(Date dt) {
+	public void setCreatedOn(Instant dt) {
 		_createdOn = dt;
 	}
 	
@@ -266,7 +256,7 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	 * @param dt the date/time of the last comment
 	 * @see Issue#getLastComment()
 	 */
-	public void setLastComment(Date dt) {
+	public void setLastComment(Instant dt) {
 		_lastComment = dt;
 	}
 	
@@ -275,7 +265,7 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	 * @param dt the date/time the Issue was resolved
 	 * @see Issue#getResolvedOn()
 	 */
-	public void setResolvedOn(Date dt) {
+	public void setResolvedOn(Instant dt) {
 		_resolvedOn = dt;
 	}
 	
@@ -339,10 +329,7 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 		_commentCount = comments;
 	}
 
-	/**
-	 * Returns the CSS class name to use if displayed in a view table.
-	 * @return the CSS class name
-	 */
+	@Override
 	public String getRowClassName() {
 		final String[] ROW_CLASSES = {null, "opt2", "opt1"};
 		return _faq ? "opt3" : ROW_CLASSES[_status];

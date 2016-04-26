@@ -1,10 +1,11 @@
-// Copyright 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.xacars;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
 import java.util.*;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.deltava.beans.Pilot;
 import org.deltava.beans.Simulator;
@@ -19,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * The XACARS Start Flight service.
  * @author Luke
- * @version 5.1
+ * @version 7.0
  * @since 4.1
  */
 
@@ -63,7 +64,7 @@ public class StartFlightService extends XAService {
 		info.setEquipmentType(data.get(3));
 		info.setAirportD(SystemData.getAirport(rte.get(0)));
 		info.setAirportA(SystemData.getAirport(rte.get(rte.size() - 1)));
-		info.setStartTime(new Date());
+		info.setStartTime(Instant.now());
 		if (rte.size() > 2)
 			info.setRoute(StringUtils.listConcat(rte.subList(1, rte.size() - 1), " "));
 		else
@@ -77,7 +78,7 @@ public class StartFlightService extends XAService {
 			info.setFSVersion(Simulator.XP9);
 		
 		// Parse the position data
-		XARouteEntry pos = new XARouteEntry(GeoUtils.parseXACARS(data.get(6)), new Date());
+		XARouteEntry pos = new XARouteEntry(GeoUtils.parseXACARS(data.get(6)), info.getStartTime());
 		pos.setHeading(StringUtils.parse(data.get(12), 0));
 		pos.setAltitude(StringUtils.parse(data.get(7), 0));
 		pos.setFuelRemaining(StringUtils.parse(data.get(11), 0));

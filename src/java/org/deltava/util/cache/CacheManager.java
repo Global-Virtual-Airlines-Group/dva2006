@@ -1,4 +1,4 @@
-// Copyright 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.gvagroup.common.*;
 /**
  * A utility class to handle centralized cache registration and invalidation.
  * @author Luke
- * @version 6.2
+ * @version 7.0
  * @since 5.0
  */
 
@@ -111,8 +111,7 @@ public class CacheManager {
 		
 		// Create the cache
 		if (isRemote) {
-			if (expiryTime < 5) expiryTime = 86400 * 4;
-			cache = new MemcachedCache<T>("cache:" + id, expiryTime);
+			cache = new MemcachedCache<T>("cache:" + id, (expiryTime < 5) ? 86400 * 4 : expiryTime);
 			log.info("Registered memcached cache " + id + ", expiry=" + expiryTime + "s");
 		} else if (maxSize < 1) {
 			cache = new NullCache<T>();

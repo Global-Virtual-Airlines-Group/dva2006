@@ -1,29 +1,29 @@
-// Copyright 2005, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2010, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.deltava.beans.DatabaseBean;
 
 /**
  * A bean to store ACARS log search criteria.
  * @author Luke
- * @version 4.2
+ * @version 7.0
  * @since 1.0
  */
 
 public class LogSearchCriteria implements java.io.Serializable {
 
 	private int _pilotID;
-	private final Date _startDate;
-	private final Date _endDate;
+	private final Instant _startDate;
+	private final Instant _endDate;
 	
 	/**
 	 * Creates a new search criteria bean.
 	 * @param sd the start date/time
 	 * @param ed the end date/time
 	 */
-	public LogSearchCriteria(Date sd, Date ed) {
+	public LogSearchCriteria(Instant sd, Instant ed) {
 		super();
 		_startDate = sd;
 		_endDate = ed;
@@ -51,7 +51,7 @@ public class LogSearchCriteria implements java.io.Serializable {
 	 * Returns the start date.
 	 * @return the start date/time
 	 */
-	public Date getStartDate() {
+	public Instant getStartDate() {
 		return _startDate;
 	}
 	
@@ -59,7 +59,7 @@ public class LogSearchCriteria implements java.io.Serializable {
 	 * Returns the end date.
 	 * @return the end date/time
 	 */
-	public Date getEndDate() {
+	public Instant getEndDate() {
 		return _endDate;
 	}
 	

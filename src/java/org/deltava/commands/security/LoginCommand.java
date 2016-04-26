@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2013, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2013, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.util.*;
@@ -6,6 +6,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
+import java.time.Instant;
 
 import javax.servlet.http.*;
 
@@ -21,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to Authenticate users.
  * @author Luke
- * @version 6.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -123,7 +124,7 @@ public class LoginCommand extends AbstractCommand {
 		fullName.append(lName.trim());
 
 		Pilot p = null;
-		Date maxUserDate = UserPool.getMaxSizeDate();
+		Instant maxUserDate = UserPool.getMaxSizeDate();
 		try {
 			Connection con = ctx.getConnection();
 
@@ -237,7 +238,7 @@ public class LoginCommand extends AbstractCommand {
 
 			// Save login time and hostname
 			SetPilotLogin wdao = new SetPilotLogin(con);
-			p.setLastLogin(new Date());
+			p.setLastLogin(Instant.now());
 			p.setLoginHost(ctx.getRequest().getRemoteHost());
 			wdao.login(p.getID(), p.getLoginHost());
 			
@@ -252,7 +253,7 @@ public class LoginCommand extends AbstractCommand {
 
 			// Check if we've surpassed the notificaton interval
 			if (returnToActive) {
-				long interval = (System.currentTimeMillis() - p.getLastLogin().getTime()) / 1000;
+				long interval = (System.currentTimeMillis() - p.getLastLogin().toEpochMilli()) / 1000;
 				if ((interval / 86400) < SystemData.getInt("users.notify_days", 30))
 					returnToActive = false;
 			}
@@ -293,7 +294,7 @@ public class LoginCommand extends AbstractCommand {
 			UserPool.add(p, s.getId(), addrInfo, userAgent, ctx.getRequest().isSecure());
 			
 			// Check if we need to save maximum users
-			if (UserPool.getMaxSizeDate().after(maxUserDate)) {
+			if (UserPool.getMaxSizeDate().isAfter(maxUserDate)) {
 				String prefix = SystemData.get("airline.code").toLowerCase();
 				SetMetadata mdwdao = new SetMetadata(con);
 				mdwdao.write(prefix + ".users.max.count", String.valueOf(UserPool.getMaxSize()));

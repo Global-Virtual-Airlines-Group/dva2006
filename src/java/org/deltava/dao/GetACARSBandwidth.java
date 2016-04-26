@@ -9,7 +9,7 @@ import org.deltava.beans.acars.Bandwidth;
 /**
  * A Data Access Object to load ACARS bandwidth statistics. 
  * @author Luke
- * @version 6.4
+ * @version 7.0
  * @since 2.1
  */
 
@@ -76,7 +76,7 @@ public class GetACARSBandwidth extends DAO {
 		List<Bandwidth> results = new ArrayList<Bandwidth>();
 		try (ResultSet rs = _ps.executeQuery()) {
 			while (rs.next()) {
-				Bandwidth bw = new Bandwidth(rs.getTimestamp(1));
+				Bandwidth bw = new Bandwidth(toInstant(rs.getTimestamp(1)));
 				bw.setInterval(rs.getInt(2));
 				bw.setConnections(rs.getInt(3));
 				bw.setBytes(rs.getLong(4), rs.getLong(5));

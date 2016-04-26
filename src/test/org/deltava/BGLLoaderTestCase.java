@@ -14,6 +14,7 @@ public abstract class BGLLoaderTestCase extends SceneryLoaderTestCase {
 	private static final String BGLXML = "data/bglxml/bglxml.exe";
 	protected static final File EXE = new File(BGLXML);
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		

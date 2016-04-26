@@ -1,34 +1,37 @@
-// Copyright 2012, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2013, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.io.File;
 import java.util.*;
 import java.util.concurrent.*;
 import java.sql.Connection;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoField;
 
 import org.apache.log4j.Logger;
+
 import org.deltava.beans.ComboAlias;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.navdata.CycleInfo;
+
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.dao.http.*;
+
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to manually download FAA approach charts.
  * @author Luke
- * @version 6.0
+ * @version 7.0
  * @since 5.0
  */
 
 public class FAAChartDownloadCommand extends AbstractCommand {
 	
-	private static final String[] MONTH_NAMES = {"January", "February", "March", "April", "May", "June", "July", "August",
-		"September", "October", "November", "December", "Extra Cycle" };
-	private static final List<ComboAlias> MONTHS = ComboUtils.fromArray(MONTH_NAMES, new String[] {"01", "02", "03", "04",
-		"05", "06", "07", "08", "09", "10", "11", "12", "13"});
+	private static final String[] MONTH_NAMES = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December", "Extra Cycle" };
+	private static final List<ComboAlias> MONTHS = ComboUtils.fromArray(MONTH_NAMES, new String[] {"01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13"});
 	
 	private class ChartLoader implements Runnable {
 		protected final Logger log = Logger.getLogger(ChartLoader.class);
@@ -90,6 +93,7 @@ public class FAAChartDownloadCommand extends AbstractCommand {
 			_msg = msg;
 		}
 		
+		@Override
 		public String toString() {
 			StringBuilder buf = new StringBuilder(128);
 			if (_class != null) {
@@ -115,13 +119,13 @@ public class FAAChartDownloadCommand extends AbstractCommand {
 		
 		// Calculate cycle
 		CycleInfo cycleInfo = null;
-		Calendar cld = Calendar.getInstance();
+		ZonedDateTime zdt = ZonedDateTime.now();
 		try {
 			Connection con = ctx.getConnection();
 			
 			// Get cycle to download
 			GetNavCycle ncdao = new GetNavCycle(con);
-			cycleInfo = ncdao.getCycle(cld.getTime());
+			cycleInfo = ncdao.getCycle(zdt.toInstant());
 			if (cycleInfo == null)
 				cycleInfo = CycleInfo.getCurrent();
 			
@@ -138,7 +142,7 @@ public class FAAChartDownloadCommand extends AbstractCommand {
 		
 		// Set request attributes
 		Collection<Integer> yrs = new TreeSet<Integer>();
-		yrs.add(Integer.valueOf(cld.get(Calendar.YEAR)));
+		yrs.add(Integer.valueOf(zdt.get(ChronoField.YEAR)));
 		yrs.add(Integer.valueOf(cycleInfo.getYear()));
 		ctx.setAttribute("months", MONTHS, REQUEST);
 		ctx.setAttribute("years", yrs, REQUEST);

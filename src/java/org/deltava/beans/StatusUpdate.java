@@ -1,12 +1,12 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2106 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
-import java.util.Date;
+import java.time.Instant;
 
 /**
  * A bean to track pilot promotions and general comments.
  * @author Luke
- * @version 4.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -39,7 +39,7 @@ public class StatusUpdate extends DatabaseBean implements AuthoredBean {
 
 	private int _type;
 	private int _authorID;
-	private Date _createdOn = new Date();
+	private Instant _createdOn = Instant.now();
 	private String _desc;
 	
 	/**
@@ -73,11 +73,7 @@ public class StatusUpdate extends DatabaseBean implements AuthoredBean {
 		return TYPES[getType()];
 	}
 	
-	/**
-	 * Returns the database ID of the Pilot creating this Status Update.
-	 * @return the database ID
-	 * @see StatusUpdate#setAuthorID(int)
-	 */
+	@Override
 	public int getAuthorID() {
 		return _authorID;
 	}
@@ -85,9 +81,9 @@ public class StatusUpdate extends DatabaseBean implements AuthoredBean {
 	/**
 	 * Returns the creation date of this update.
 	 * @return the date/time this update was created on
-	 * @see StatusUpdate#setCreatedOn(Date)
+	 * @see StatusUpdate#setCreatedOn(Instant)
 	 */
-	public Date getCreatedOn() {
+	public Instant getCreatedOn() {
 		return _createdOn;
 	}
 	
@@ -119,16 +115,11 @@ public class StatusUpdate extends DatabaseBean implements AuthoredBean {
 	 * @param dt the date/time this update was created on
 	 * @see StatusUpdate#getCreatedOn()
 	 */
-	public void setCreatedOn(Date dt) {
+	public void setCreatedOn(Instant dt) {
 		_createdOn = dt;
 	}
 	
-	/**
-	 * Sets the database ID of the author of this Status Update.
-	 * @param id the database ID
-	 * @throws IllegalArgumentException if id is zero or negative
-	 * @see StatusUpdate#getAuthorID()
-	 */
+	@Override
 	public void setAuthorID(int id) {
 		validateID(_authorID, id);
 		_authorID = id;
@@ -147,6 +138,7 @@ public class StatusUpdate extends DatabaseBean implements AuthoredBean {
 	 * Compares this to another status update by comparing the creation date/times.
 	 * @see Comparable#compareTo(Object)
 	 */
+	@Override
 	public int compareTo(Object o2) {
 		StatusUpdate su2 = (StatusUpdate) o2;
 		return _createdOn.compareTo(su2.getCreatedOn());

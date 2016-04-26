@@ -1,4 +1,4 @@
-// Copyright 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.security.command.PIREPAccessControl;
 /**
  * A Web Site Command to recalculate the gates used.
  * @author Luke
- * @version 5.1
+ * @version 7.0
  * @since 5.1
  */
 
@@ -67,13 +67,13 @@ public class GateCalculateCommand extends AbstractCommand {
 			SortedSet<Gate> dGates = new TreeSet<Gate>(dgc);
 			dGates.addAll(gdao.getAllGates(afr.getAirportD(), info.getFSVersion()));
 			Gate gD = dGates.isEmpty() ? null : dGates.first();
-			boolean isUpdated = !gD.equals(info.getGateD());
+			boolean isUpdated = (gD != null) && !gD.equals(info.getGateD());
 			
 			// Get the closest arrival gate
 			SortedSet<Gate> aGates = new TreeSet<Gate>(agc);
 			aGates.addAll(gdao.getAllGates(afr.getAirportA(), info.getFSVersion()));
 			Gate gA = aGates.isEmpty() ? null : aGates.first();
-			isUpdated |= !gA.equals(info.getGateA());
+			isUpdated |= ((gA != null) && !gA.equals(info.getGateA()));
 			
 			// Save the gates
 			if (isUpdated) {

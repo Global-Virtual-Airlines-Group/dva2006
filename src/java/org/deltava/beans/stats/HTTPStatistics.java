@@ -1,18 +1,18 @@
-// Copyright 2005, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
-import java.util.Date;
+import java.time.Instant;
 
 /**
  * A class for storing daily HTTP server statistics.
  * @author Luke
- * @version 3.6
+ * @version 7.0
  * @since 1.0
  */
 
 public class HTTPStatistics implements java.io.Serializable, Comparable<HTTPStatistics> {
 
-	private Date _date;
+	private final Instant _date;
 	private int _reqs;
 	private int _homeHits;
 	private long _execTime;
@@ -24,7 +24,7 @@ public class HTTPStatistics implements java.io.Serializable, Comparable<HTTPStat
 	 * @param dt the Date
 	 * @see HTTPStatistics#getDate()
 	 */
-	public HTTPStatistics(Date dt) {
+	public HTTPStatistics(Instant dt) {
 		super();
 		_date = dt;
 	}
@@ -32,9 +32,8 @@ public class HTTPStatistics implements java.io.Serializable, Comparable<HTTPStat
 	/**
 	 * Returns the date of these HTTP statistics.
 	 * @return the Date of the statistics
-	 * @see HTTPStatistics#HTTPStatistics(Date)
 	 */
-	public Date getDate() {
+	public Instant getDate() {
 		return _date;
 	}
 
@@ -128,6 +127,7 @@ public class HTTPStatistics implements java.io.Serializable, Comparable<HTTPStat
 		_bandwidth = bytes;
 	}
 	
+	@Override
 	public int hashCode() {
 		return _date.hashCode();
 	}
@@ -135,6 +135,7 @@ public class HTTPStatistics implements java.io.Serializable, Comparable<HTTPStat
 	/**
 	 * Compares two statistics objects by comparing their date.
 	 */
+	@Override
 	public int compareTo(HTTPStatistics s2) {
 		return _date.compareTo(s2._date);
 	}

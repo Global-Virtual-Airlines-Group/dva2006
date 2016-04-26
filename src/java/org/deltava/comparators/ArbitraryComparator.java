@@ -1,4 +1,4 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.DatabaseBean;
  * list of IDs. Database beans with IDs not in the list will be added at the end of
  * the Collection. 
  * @author Luke
- * @version 2.1
+ * @version 7.0
  * @since 2.1
  */
 
@@ -30,6 +30,7 @@ public class ArbitraryComparator implements Comparator<DatabaseBean> {
 	/**
 	 * Compares two database beans.
 	 */
+	@Override
 	public int compare(DatabaseBean db1, DatabaseBean db2) {
 		
 		// Get the two offsets

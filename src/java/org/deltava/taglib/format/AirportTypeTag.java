@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import javax.servlet.jsp.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.Airport;
  * A JSP tag to determine whether the user wants to display ICAO or IATA airport codes, and saves the result in a page
  * attribute.
  * @author Luke
- * @version 5.2
+ * @version 7.0
  * @since 2.7
  */
 
@@ -32,6 +32,7 @@ public class AirportTypeTag extends UserSettingsTag {
 	 * @param ctxt the JSP context
 	 * @see Person#getAirportCodeType()
 	 */
+	@Override
 	public final void setPageContext(PageContext ctxt) {
 		super.setPageContext(ctxt);
 		_useICAO = (_user != null) ? (_user.getAirportCodeType() == Airport.Code.ICAO) : false;
@@ -42,6 +43,7 @@ public class AirportTypeTag extends UserSettingsTag {
 	 * @return TagSupport.EVAL_PAGE
 	 * @throws JspException if an error occurs
 	 */
+	@Override
 	public int doEndTag() throws JspException {
 		pageContext.setAttribute(_varName, Boolean.valueOf(_useICAO), PageContext.PAGE_SCOPE);
 		release();

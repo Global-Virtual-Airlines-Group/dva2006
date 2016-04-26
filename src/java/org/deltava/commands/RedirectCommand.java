@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import org.deltava.util.redirect.*;
@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
 /**
  * An internal Web Site Command to preserve request state across HTTP redirects.
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -21,6 +21,7 @@ public class RedirectCommand extends AbstractCommand {
     * @param ctx the Command context
     * @throws CommandException if an unhandled error occurs
     */
+	@Override
    public void execute(CommandContext ctx) throws CommandException {
 	   
 	   // Get the command results

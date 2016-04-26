@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.Pilot;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * An Access Controller for Online Events.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -78,7 +78,7 @@ public class EventAccessControl extends AccessControl {
 		_canAssignFlights = ((_ev.getStatus() == Status.CLOSED) || (_ev.getStatus() == Status.ACTIVE)) && hasSignups
 				&& isEvent;
 		_canCancel = _canEdit;
-		_canDelete = isEvent && !hasSignups && (_ev.getStartTime() != null) && (_ev.getStartTime().getTime() > System.currentTimeMillis());
+		_canDelete = isEvent && !hasSignups && (_ev.getStartTime() != null) && (_ev.getStartTime().toEpochMilli() > System.currentTimeMillis());
 	}
 
 	/**

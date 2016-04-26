@@ -13,13 +13,15 @@ public class TestCommandResult extends AbstractBeanTestCase {
         return new CoverageDecorator(TestCommandResult.class, new Class[] { CommandResult.class } );
     }
     
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
         _cr = new CommandResult("URL");
         setBean(_cr);
     }
     
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         _cr = null;
         super.tearDown();
     }

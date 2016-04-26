@@ -1,7 +1,7 @@
 // Copyright 2007, 2008, 2009, 2015 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
-import java.util.*;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.*;
@@ -16,7 +16,7 @@ import org.deltava.beans.schedule.*;
 public class DispatchRoute extends PopulatedRoute implements AuthoredBean, UseCount, ViewEntry {
 	
 	private int _authorID;
-	private Date _lastUsed;
+	private Instant _lastUsed;
 	
 	private Airline _a;
 	private Airport _airportL;
@@ -62,6 +62,7 @@ public class DispatchRoute extends PopulatedRoute implements AuthoredBean, UseCo
 		}
 	}
 	
+	@Override
 	public int getAuthorID() {
 		return _authorID;
 	}
@@ -79,7 +80,7 @@ public class DispatchRoute extends PopulatedRoute implements AuthoredBean, UseCo
 	 * Returns the last use date of this route.
 	 * @return the last use date/time
 	 */
-	public Date getLastUsed() {
+	public Instant getLastUsed() {
 		return _lastUsed;
 	}
 	
@@ -111,7 +112,7 @@ public class DispatchRoute extends PopulatedRoute implements AuthoredBean, UseCo
 	 * Updates the last use date of this route.
 	 * @param dt the last use date/time
 	 */
-	public void setLastUsed(Date dt) {
+	public void setLastUsed(Instant dt) {
 		_lastUsed = dt;
 	}
 	

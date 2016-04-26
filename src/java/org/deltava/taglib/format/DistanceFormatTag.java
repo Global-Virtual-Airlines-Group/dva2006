@@ -1,4 +1,4 @@
-// Copyright 2009, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2012, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import javax.servlet.jsp.PageContext;
@@ -8,7 +8,7 @@ import org.deltava.beans.*;
 /**
  * A JSP tag to convert and format distances. 
  * @author Luke
- * @version 5.2
+ * @version 7.0
  * @since 2.4
  */
 
@@ -28,6 +28,7 @@ public class DistanceFormatTag extends UnitFormatTag {
 	 * Overrides the units to display the distance in.
 	 * @param units the unit abbreviation
 	 */
+	@Override
 	public void setUnits(String units) {
 		_unit = DistanceUnit.valueOf(units.toUpperCase());
 	}

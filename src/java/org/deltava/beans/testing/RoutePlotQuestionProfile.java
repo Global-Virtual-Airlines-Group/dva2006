@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A bean to store route plotting question data.
  * @author Luke
- * @version 2.3
+ * @version 7.0
  * @since 2.3
  */
 
@@ -29,59 +29,42 @@ public class RoutePlotQuestionProfile extends MultiChoiceQuestionProfile impleme
 		super(text);
 	}
 
-	/**
-	 * Returns the arrival airport.
-	 */
+	@Override
 	public Airport getAirportA() {
 		return _airportA;
 	}
 
-	/**
-	 * Returns the departure airport.
-	 */
+	@Override
 	public Airport getAirportD() {
 		return _airportD;
 	}
-	
-	/**
-	 * Returns the midpoint between the airports.
-	 */
+
+	@Override
 	public GeoLocation getMidPoint() {
 		return new GeoPosition(_airportD).midPoint(_airportA);
 	}
-	
-	/**
-	 * Returns the distance between the airports.
-	 */
+
+	@Override
 	public int getDistance() {
 		return new GeoPosition(_airportD).distanceTo(_airportA);
 	}
 
-	/**
-	 * Updates the arrival airport.
-	 */
+	@Override
 	public void setAirportA(Airport a) {
 		_airportA = a;
 	}
 
-	/**
-	 * Updates the departure airport.
-	 */
+	@Override
 	public void setAirportD(Airport a) {
 		_airportD = a;
 	}
-	
-	/**
-	 * Returns the CSS row class name if included in a view table.
-	 * @return the CSS class name
-	 */
+
+	@Override
 	public String getRowClassName() {
 		return getActive() ? "opt1" : "warn";
 	}
-	
-	/**
-	 * Converts this profile into a {@link RoutePlotQuestion} bean.
-	 */
+
+	@Override
 	public Question toQuestion() {
 		RoutePlotQuestion q = new RoutePlotQuestion(getQuestion());
 		q.setID(getID());

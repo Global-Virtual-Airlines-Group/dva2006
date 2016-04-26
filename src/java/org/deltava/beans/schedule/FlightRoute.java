@@ -1,7 +1,7 @@
-// Copyright 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 import org.deltava.util.GeoUtils;
@@ -9,13 +9,13 @@ import org.deltava.util.GeoUtils;
 /**
  * An abstract class to store common Flight Route information.
  * @author Luke
- * @version 4.1
+ * @version 7.0
  * @since 2.2
  */
 
 public abstract class FlightRoute extends DatabaseBean implements RoutePair, ComboAlias {
 	
-	private Date _createdOn;
+	private Instant _createdOn;
 	
 	private Airport _airportD;
 	private Airport _airportA;
@@ -31,22 +31,16 @@ public abstract class FlightRoute extends DatabaseBean implements RoutePair, Com
 	 * Returns the creation date of this route.
 	 * @return the creation date/time
 	 */
-	public Date getCreatedOn() {
+	public Instant getCreatedOn() {
 		return _createdOn;
 	}
-	
-	/**
-	 * Returns the departure Airport.
-	 * @return the Airport
-	 */
+
+	@Override
 	public Airport getAirportD() {
 		return _airportD;
 	}
 	
-	/**
-	 * Returns the arrival Airport.
-	 * @return the Airport
-	 */
+	@Override	
 	public Airport getAirportA() {
 		return _airportA;
 	}
@@ -70,6 +64,7 @@ public abstract class FlightRoute extends DatabaseBean implements RoutePair, Com
 	/**
 	 * Returns the distance between the airports.
 	 */
+	@Override
 	public int getDistance() {
 		return GeoUtils.distance(_airportD, _airportA);
 	}
@@ -102,7 +97,7 @@ public abstract class FlightRoute extends DatabaseBean implements RoutePair, Com
 	 * Updates the creation date of this route.
 	 * @param dt the creation date/time
 	 */
-	public void setCreatedOn(Date dt) {
+	public void setCreatedOn(Instant dt) {
 		_createdOn = dt;
 	}
 	
@@ -184,14 +179,17 @@ public abstract class FlightRoute extends DatabaseBean implements RoutePair, Com
 		return buf.toString();
 	}
 	
+	@Override
 	public String toString() {
 		return getFullRoute();
 	}
 	
+	@Override
 	public int hashCode() {
 		return toString().hashCode();
 	}
 	
+	@Override
 	public boolean equals(Object o) {
 		if (!(o instanceof FlightRoute))
 			return false;

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.security.SecurityContext;
@@ -9,7 +9,7 @@ import org.deltava.beans.Applicant;
 /**
  * An Access Controller to support Applicant profile operations.
  * @author Luke
- * @version 4.2
+ * @version 7.0
  * @since 1.0
  */
 
@@ -38,6 +38,7 @@ public final class ApplicantAccessControl extends AccessControl {
 	 * Calculates access rights.
 	 * @throws AccessControlException if the user cannot even read the profile
 	 */
+	@Override
 	public void validate() throws AccessControlException {
 		validateContext();
 		

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
 import org.deltava.beans.testing.*;
@@ -6,7 +6,7 @@ import org.deltava.beans.testing.*;
 /**
  * A comparator for sorting Examination and Check Ride objects.
  * @author Luke
- * @version 3.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -43,8 +43,8 @@ public class TestComparator extends AbstractComparator<Test> {
 
 	/**
      * Compares two examinations/checkrides by the designated criteria.
-     * @throws ClassCastException if either object is not a Test 
      */
+	@Override
 	protected int compareImpl(Test t1, Test t2) {
 		switch (_comparisonType) {
 			case DATE:

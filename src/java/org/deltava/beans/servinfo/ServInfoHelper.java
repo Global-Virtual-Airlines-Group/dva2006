@@ -1,8 +1,8 @@
-// Copyright 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import java.io.*;
-import java.util.Date;
+import java.time.Instant;
 
 import org.apache.log4j.Logger;
 
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A helper class to encapsulate fetching online network data. 
  * @author Luke
- * @version 6.1
+ * @version 7.0
  * @since 5.4
  */
 
@@ -24,7 +24,6 @@ import org.deltava.util.system.SystemData;
 public class ServInfoHelper {
 	
 	private static final Logger log = Logger.getLogger(ServInfoHelper.class);
-
 	private static final Cache<NetworkInfo> _iCache = CacheManager.get(NetworkInfo.class, "ServInfoData");	
 	
 	// singleton
@@ -58,7 +57,7 @@ public class ServInfoHelper {
 		} catch (Exception e) {
 			log.error("Cannot load " + net + " ServInfo feed - " + e.getMessage(), e);
 			info = new NetworkInfo(net);
-			info.setValidDate(new Date());
+			info.setValidDate(Instant.now());
 			info.setExpired();
 		}
 		

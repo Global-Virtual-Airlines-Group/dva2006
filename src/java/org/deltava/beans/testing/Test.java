@@ -1,7 +1,7 @@
-// Copyright 2005, 2006, 2007, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 import org.deltava.beans.system.AirlineInformation;
@@ -9,7 +9,7 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * An class to implement commonalities between user examinations and flight videos.
  * @author Luke
- * @version 6.2
+ * @version 7.0
  * @since 1.0
  */
 
@@ -20,9 +20,9 @@ public abstract class Test extends DatabaseBean implements AuthoredBean, ViewEnt
     private int _pilotID;
     private int _scorerID;
     
-    private Date _createdOn = new Date();
-    private Date _submittedOn;
-    private Date _scoredOn;
+    private Instant _createdOn = Instant.now();
+    private Instant _submittedOn;
+    private Instant _scoredOn;
     
     private String _firstName;
     private String _lastName;
@@ -160,27 +160,27 @@ public abstract class Test extends DatabaseBean implements AuthoredBean, ViewEnt
     /**
      * Returns the date this Examination was created/performed on.
      * @return the creation Date
-     * @see Test#setDate(Date)
+     * @see Test#setDate(Instant)
      */
-    public Date getDate() {
+    public Instant getDate() {
         return _createdOn;
     }
     
     /**
      * Returns the date/time this Examination was submitted on.
      * @return the submission Date
-     * @see Test#setSubmittedOn(Date)
+     * @see Test#setSubmittedOn(Instant)
      */
-    public Date getSubmittedOn() {
+    public Instant getSubmittedOn() {
         return _submittedOn;
     }
     
     /**
      * Returns the date/time this Examination was scored on
      * @return the scoring Date
-     * @see Test#setScoredOn(Date)
+     * @see Test#setScoredOn(Instant)
      */
-    public Date getScoredOn() {
+    public Instant getScoredOn() {
         return _scoredOn;
     }
     
@@ -290,7 +290,7 @@ public abstract class Test extends DatabaseBean implements AuthoredBean, ViewEnt
      * @param dt the new date/time
      * @see Test#getDate()
      */
-    public void setDate(Date dt) {
+    public void setDate(Instant dt) {
         _createdOn = dt;
     }
     
@@ -299,7 +299,7 @@ public abstract class Test extends DatabaseBean implements AuthoredBean, ViewEnt
      * @param dt the new submission date/time
      * @see Test#getSubmittedOn()
      */
-    public void setSubmittedOn(Date dt) {
+    public void setSubmittedOn(Instant dt) {
         _submittedOn = dt;
     }
     
@@ -308,7 +308,7 @@ public abstract class Test extends DatabaseBean implements AuthoredBean, ViewEnt
      * @param dt the new date/time this Examination was graded on
      * @see Test#getScoredOn()
      */
-    public void setScoredOn(Date dt) {
+    public void setScoredOn(Instant dt) {
         _scoredOn = dt;
     }
     
@@ -324,6 +324,7 @@ public abstract class Test extends DatabaseBean implements AuthoredBean, ViewEnt
     /**
      * Compares examinations/checkrides by comparing their date.
      */
+    @Override
     public int compareTo(Object o2) {
         Test t2 = (Test) o2;
         int tmpResult = _createdOn.compareTo(t2.getDate());

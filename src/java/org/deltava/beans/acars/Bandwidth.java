@@ -1,18 +1,19 @@
 // Copyright 2008, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
-import java.util.*;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 /**
  * A bean to store ACARS bandwidth statistics. 
  * @author Luke
- * @version 6.4
+ * @version 7.0
  * @since 2.1
  */
 
 public class Bandwidth implements Comparable<Bandwidth> {
 
-	private Date _startDate;
+	private final Instant _startDate;
 	private int _interval = 1;
 	
 	private int _cons;
@@ -32,20 +33,16 @@ public class Bandwidth implements Comparable<Bandwidth> {
 	 * @param dt the start/date of this window
 	 * @throws NullPointerException if dt is null
 	 */
-	public Bandwidth(Date dt) {
+	public Bandwidth(Instant dt) {
 		super();
-		Calendar cld = Calendar.getInstance();
-		cld.setTime(dt);
-		cld.set(Calendar.SECOND, 0);
-		cld.set(Calendar.MILLISECOND, 0);
-		_startDate = cld.getTime();
+		_startDate = dt.truncatedTo(ChronoUnit.MINUTES);
 	}
 	
 	/**
 	 * Returns the start date of the window.
 	 * @return the window start date/time
 	 */
-	public Date getDate() {
+	public Instant getDate() {
 		return _startDate;
 	}
 	
@@ -53,8 +50,8 @@ public class Bandwidth implements Comparable<Bandwidth> {
 	 * Returns the end date of the window.
 	 * @return the window end date/time
 	 */
-	public Date getEndDate() {
-		return new Date(_startDate.getTime() + (_interval * 60000L));
+	public Instant getEndDate() {
+		return _startDate.plusSeconds(_interval * 60);
 	}
 	
 	/**

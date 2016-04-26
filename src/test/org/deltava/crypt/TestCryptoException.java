@@ -10,9 +10,9 @@ public class TestCryptoException extends TestCase {
         return new CoverageDecorator(TestCryptoException.class, new Class[] { CryptoException.class } );
     }    
     
-    public void testCause() {
+    @SuppressWarnings("static-method")
+	public void testCause() {
         Exception e = new NullPointerException();
-        
         try {
             throw new CryptoException("MSG", e);
         } catch (CryptoException ce) {

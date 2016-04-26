@@ -1,8 +1,9 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 import org.deltava.beans.cooler.*;
@@ -21,16 +22,15 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command for viewing Water Cooler discussion threads.
  * @author Luke
- * @version 6.1
+ * @version 7.0
  * @since 1.0
  */
 
 public class ThreadCommand extends AbstractCommand {
 
 	private static final List<String> SCORES = Arrays.asList("1", "2", "3", "4", "5", "6", "7", "8", "9", "10");
-	private static final List<String> COLORS = Arrays.asList("blue", "black", "green", "red", "purple", "grey", 
-			"brown", "orange", "pink", "yellow");
-	
+	private static final List<String> COLORS = Arrays.asList("blue", "black", "green", "red", "purple", "grey", "brown", "orange", "pink", "yellow");
+
 	private static final int MIN_GALLERY_ID = 100;
 
 	/**
@@ -67,7 +67,7 @@ public class ThreadCommand extends AbstractCommand {
 			// Get lastRead
 			if (ctx.isAuthenticated()) {
 				GetCoolerLastRead lrdao = new GetCoolerLastRead(con);
-				Date lastRead = lrdao.getLastRead(mt.getID(), ctx.getUser().getID());
+				Instant lastRead = lrdao.getLastRead(mt.getID(), ctx.getUser().getID());
 				ctx.setAttribute("lastReadPostID", Integer.valueOf(mt.getNextPostID(lastRead)), REQUEST);
 			}
 
@@ -255,15 +255,12 @@ public class ThreadCommand extends AbstractCommand {
 		}
 		
 		// If the sticky date is in the past, clear it
-		if ((mt.getStickyUntil() != null) && (mt.getStickyUntil().getTime() < System.currentTimeMillis()))
+		if ((mt.getStickyUntil() != null) && (mt.getStickyUntil().toEpochMilli() < System.currentTimeMillis()))
 			mt.setStickyUntil(null);
 		
 		// Save the sticky date in the user's time zone
-		if (ctx.isUserInRole("Moderator") && (mt.getStickyUntil() != null)) {
-			DateTime sdt = new DateTime(mt.getStickyUntil());
-			sdt.convertTo(ctx.getUser().getTZ());
-			ctx.setAttribute("stickyDate", sdt.getDate(), REQUEST);
-		}
+		if (ctx.isUserInRole("Moderator") && (mt.getStickyUntil() != null))
+			ctx.setAttribute("stickyDate", mt.getStickyUntil(), REQUEST);
 
 		// Save scores choices and if we are editing
 		ctx.setAttribute("doEdit", Boolean.valueOf(doEdit), REQUEST);

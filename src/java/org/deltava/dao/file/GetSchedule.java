@@ -1,9 +1,10 @@
-// Copyright 2005, 2006, 2007, 2008, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
 import java.util.*;
-import java.text.*;
+import java.time.LocalDateTime;
+import java.time.format.*;
 
 import org.deltava.beans.schedule.*;
 
@@ -14,13 +15,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load an exported Flight Schedule.
  * @author Luke
- * @version 6.0
+ * @version 7.0
  * @since 1.0
  */
 
 public class GetSchedule extends ScheduleLoadDAO {
 	
-	private final DateFormat _df = new SimpleDateFormat("HH:mm");
+	private final DateTimeFormatter _df = new DateTimeFormatterBuilder().appendPattern("HH:mm").parseLenient().toFormatter();
 	
 	/**
 	 * Initializes the Data Access Object.
@@ -59,13 +60,13 @@ public class GetSchedule extends ScheduleLoadDAO {
 					try {
 						StringTokenizer tkns = new StringTokenizer(txtData, ",");
 						if (tkns.countTokens() != 11)
-							throw new ParseException("Invalid number of tokens, count=" + tkns.countTokens(), 0);
+							throw new IllegalArgumentException("Invalid number of tokens, count=" + tkns.countTokens());
 						
 						// Get the airline
 						String aCode = tkns.nextToken();
 						Airline a = SystemData.getAirline(aCode);
 						if (a == null)
-							throw new ParseException("Invalid Airline Code - " + aCode, 0);
+							throw new IllegalArgumentException("Invalid Airline Code - " + aCode);
 
 						// Build the flight number and equipment type
 						ScheduleEntry entry = new ScheduleEntry(a, Integer.parseInt(tkns.nextToken()), Integer.parseInt(tkns.nextToken()));
@@ -73,11 +74,11 @@ public class GetSchedule extends ScheduleLoadDAO {
 
 						// Get the airports and times
 						entry.setAirportD(getAirport(tkns.nextToken(), br.getLineNumber()));
-						entry.setTimeD(_df.parse(tkns.nextToken()));
+						entry.setTimeD(LocalDateTime.parse(tkns.nextToken(), _df));
 						entry.setAirportA(getAirport(tkns.nextToken(), br.getLineNumber()));
-						entry.setTimeA(_df.parse(tkns.nextToken()));
+						entry.setTimeA(LocalDateTime.parse(tkns.nextToken(), _df));
 						if ((entry.getAirportD() == null) || (entry.getAirportA() == null))
-							throw new ParseException("Invalid Airport Code", 0);
+							throw new IllegalArgumentException("Invalid Airport Code");
 
 						// Discard distance
 						tkns.nextToken();

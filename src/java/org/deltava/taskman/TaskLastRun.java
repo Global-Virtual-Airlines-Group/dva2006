@@ -1,20 +1,20 @@
-// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taskman;
 
-import java.util.Date;
+import java.time.Instant;
 
 /**
  * A bean to store last execution data for a Scheduled Task.
  * @author Luke
- * @version 2.6
+ * @version 7.0
  * @since 1.0
  */
 
 public class TaskLastRun implements java.io.Serializable, Comparable<TaskLastRun> {
    
-   private String _name;
-   private Date _lastRun;
-   private long _execTime;
+   private final String _name;
+   private final Instant _lastRun;
+   private final long _execTime;
 
    /**
     * Creates a new Task execution data bean.
@@ -25,7 +25,7 @@ public class TaskLastRun implements java.io.Serializable, Comparable<TaskLastRun
     * @see TaskLastRun#getName()
     * @see TaskLastRun#getLastRun()
     */
-   public TaskLastRun(String name, Date dt, long execTime) {
+   public TaskLastRun(String name, Instant dt, long execTime) {
       super();
       _name = name.trim();
       _lastRun = dt;
@@ -44,7 +44,7 @@ public class TaskLastRun implements java.io.Serializable, Comparable<TaskLastRun
     * Returns the last execution time for the Scheduled Task.
     * @return the date/time the task last started, or null if never run
     */
-   public Date getLastRun() {
+   public Instant getLastRun() {
       return _lastRun;
    }
    
@@ -59,6 +59,7 @@ public class TaskLastRun implements java.io.Serializable, Comparable<TaskLastRun
    /**
     * Compares two task execution beans by comparing their names and last run date/times.
     */
+   @Override
    public int compareTo(TaskLastRun tlr2) {
       int tmpResult = _name.compareTo(tlr2._name);
       if ((tmpResult == 0) && (_lastRun == null))

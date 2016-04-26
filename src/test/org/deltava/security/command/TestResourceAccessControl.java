@@ -16,11 +16,13 @@ public class TestResourceAccessControl extends AccessControlTestCase {
 				ResourceAccessControl.class });
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		_r = new Resource("http://localhost/test");
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		_r = null;
 		_ac = null;

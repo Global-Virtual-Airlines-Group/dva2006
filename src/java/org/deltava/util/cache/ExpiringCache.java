@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 import java.util.Iterator;
@@ -7,7 +7,7 @@ import java.util.concurrent.Semaphore;
 /**
  * An object cache that supports expiration dates.
  * @author Luke
- * @version 4.2
+ * @version 7.0
  * @since 1.0
  */
 
@@ -25,7 +25,7 @@ public class ExpiringCache<T extends Cacheable> extends Cache<T> {
 			long createdOn = (now <= _lastCreationTime) ? ++_lastCreationTime : now;
 			_lastCreationTime = createdOn;
 			if (entryData instanceof ExpiringCacheable)
-				_createExpire = ((ExpiringCacheable) entryData).getExpiryDate().getTime();
+				_createExpire = ((ExpiringCacheable) entryData).getExpiryDate().toEpochMilli();
 			else
 				_createExpire = createdOn + _expiry;
 		}
@@ -44,10 +44,12 @@ public class ExpiringCache<T extends Cacheable> extends Cache<T> {
 			_createExpire = createdOn + _expiry;
 		}
 		
+		@Override
 		public String toString() {
 			return getKey().toString();
 		}
 		
+		@Override
 		public int hashCode() {
 			return getKey().hashCode();
 		}
@@ -80,6 +82,7 @@ public class ExpiringCache<T extends Cacheable> extends Cache<T> {
 	 * @return the cache entry, or null if not present or expired
 	 * @see ExpiringCache#get(Object, boolean)
 	 */
+	@Override
 	public T get(Object key) {
 		return get(key, false);
 	}
@@ -89,6 +92,7 @@ public class ExpiringCache<T extends Cacheable> extends Cache<T> {
 	 * @param key the cache key
 	 * @return TRUE if the cache contains the key, otherwise FALSE
 	 */
+	@Override
 	public boolean contains(Object key) {
 		ExpiringCacheEntry<?> entry = (ExpiringCacheEntry<?>) _cache.get(key);
 		return (entry != null) && (!entry.isExpired());

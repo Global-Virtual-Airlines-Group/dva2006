@@ -22,6 +22,7 @@ public class TestThreadUtils extends TestCase {
 			_sleepTime = sleepTime;
 		}
 		
+		@Override
 		public void run() {
 			try {
 				Thread.sleep(_sleepTime);
@@ -31,6 +32,7 @@ public class TestThreadUtils extends TestCase {
 		}
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		if ((_st != null) && (_st.isAlive()))
 			_st.join();
@@ -53,6 +55,7 @@ public class TestThreadUtils extends TestCase {
 		assertFalse(ThreadUtils.isAlive(_st));
 	}
 	
+	@SuppressWarnings("static-method")
 	public void testSleep() {
 		long now = System.currentTimeMillis();
 		ThreadUtils.sleep(50);

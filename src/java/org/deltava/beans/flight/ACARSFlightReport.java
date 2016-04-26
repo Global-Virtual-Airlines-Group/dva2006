@@ -1,6 +1,7 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
+import java.time.Duration;
 import java.util.*;
 
 import org.deltava.beans.*;
@@ -9,7 +10,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A class for storing ACARS-submitted Flight Reports.
  * @author Luke
- * @version 6.1
+ * @version 7.0
  * @since 1.0
  */
 
@@ -49,6 +50,11 @@ public class ACARSFlightReport extends FDRFlightReport {
 	@Override
 	public Recorder getFDR() {
 		return Recorder.ACARS;
+	}
+
+	@Override
+	public Duration getBlockTime() {
+		return Duration.ofSeconds(getTime(1) + getTime(2) + getTime(4));
 	}
     
     /**

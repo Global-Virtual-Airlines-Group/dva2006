@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2011, 2013, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2011, 2013, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.layout;
 
 import javax.servlet.http.*;
@@ -12,7 +12,7 @@ import org.deltava.taglib.BrowserInfoTag;
 /**
  * A JSP tag to render page layouts in a user-specific way.
  * @author Luke
- * @version 6.3
+ * @version 7.0
  * @since 1.0
  */
 
@@ -41,6 +41,7 @@ public class PageTag extends BrowserInfoTag {
 	 * @return TagSuppport.EVAL_BODY_INCLUDE always
 	 * @throws JspException if an error occurs
 	 */
+	@SuppressWarnings("null")
 	@Override
 	public int doStartTag() throws JspException {
 

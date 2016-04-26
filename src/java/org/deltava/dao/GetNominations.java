@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.hr.*;
 /**
  * A Data Access Object to load Senior Captain nominations.
  * @author Luke
- * @version 4.1
+ * @version 7.0
  * @since 3.3
  */
 
@@ -147,7 +147,7 @@ public class GetNominations extends DAO {
 					n.setQuarter(new Quarter(rs.getInt(2)));
 					n.setScore(rs.getInt(3));
 					n.setStatus(Nomination.Status.values()[rs.getInt(4)]);
-					n.setCreatedOn(rs.getTimestamp(5));
+					n.setCreatedOn(rs.getTimestamp(5).toInstant());
 				}
 			}
 				
@@ -190,7 +190,7 @@ public class GetNominations extends DAO {
 				n.setQuarter(new Quarter(rs.getInt(2)));
 				n.setScore(rs.getInt(3));
 				n.setStatus(Nomination.Status.values()[rs.getInt(4)]);
-				n.setCreatedOn(rs.getTimestamp(5));
+				n.setCreatedOn(rs.getTimestamp(5).toInstant());
 				n.setCommentCount(rs.getInt(6));
 				results.add(n);
 			}
@@ -212,7 +212,7 @@ public class GetNominations extends DAO {
 			while (rs.next()) {
 				NominationComment nc = new NominationComment(rs.getInt(1), rs.getString(4));
 				nc.setSupport(rs.getBoolean(2));
-				nc.setCreatedOn(rs.getTimestamp(3));
+				nc.setCreatedOn(rs.getTimestamp(3).toInstant());
 				n.addComment(nc);
 			}
 		}

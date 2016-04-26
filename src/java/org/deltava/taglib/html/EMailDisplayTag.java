@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import javax.servlet.http.HttpServletRequest;
@@ -11,7 +11,7 @@ import org.deltava.beans.Person;
 /**
  * A JSP Tag to display a Pilot's e-mail address.
  * @author Luke
- * @version 2.4
+ * @version 7.0
  * @since 1.0
  */
 
@@ -34,6 +34,7 @@ public class EMailDisplayTag extends TagSupport {
 	 * @return TagSupport.EVAL_PAGE
 	 * @throws JspException if an error occurs
 	 */
+	@Override
 	public int doStartTag() throws JspException {
 		
 		// Get the HTTP servlet request

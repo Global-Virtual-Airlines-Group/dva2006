@@ -13,6 +13,7 @@ public class TestResource extends AbstractBeanTestCase {
         return new CoverageDecorator(TestResource.class, new Class[] { Resource.class });
     }
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		_r = new Resource("http://localhost/test");
@@ -20,6 +21,7 @@ public class TestResource extends AbstractBeanTestCase {
 		setBean(_r);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		_r = null;
 		super.tearDown();

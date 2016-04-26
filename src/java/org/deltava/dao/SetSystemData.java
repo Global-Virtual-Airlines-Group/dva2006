@@ -1,8 +1,10 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
+import java.time.Instant;
+import java.time.zone.ZoneRules;
 
 import org.deltava.beans.TZInfo;
 import org.deltava.beans.servlet.CommandLog;
@@ -10,7 +12,7 @@ import org.deltava.beans.servlet.CommandLog;
 /**
  * A Data Access Object to write system logging (user commands, tasks) entries.
  * @author Luke
- * @version 5.2
+ * @version 7.0
  * @since 1.0
  */
 
@@ -113,20 +115,19 @@ public class SetSystemData extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void login(String dbName, int id, String addr, String host) throws DAOException {
-		if (host == null) host = addr;
+		String h = (host == null) ? addr : host;
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("INSERT INTO ");
 		sqlBuf.append(formatDBName(dbName));
-		sqlBuf.append(".SYS_LOGINS (ID, REMOTE_ADDR, REMOTE_HOST, LOGINS) VALUES (?, INET6_ATON(?), ?, 1) "
-				+ "ON DUPLICATE KEY UPDATE LOGINS=LOGINS+1, REMOTE_HOST=?");
+		sqlBuf.append(".SYS_LOGINS (ID, REMOTE_ADDR, REMOTE_HOST, LOGINS) VALUES (?, INET6_ATON(?), ?, 1) ON DUPLICATE KEY UPDATE LOGINS=LOGINS+1, REMOTE_HOST=?");
 		
 		try {
 			prepareStatement(sqlBuf.toString());
 			_ps.setInt(1, id);
 			_ps.setString(2, addr);
 			_ps.setString(3, host);
-			_ps.setString(4, host);
+			_ps.setString(4, h);
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -139,13 +140,14 @@ public class SetSystemData extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(TZInfo tz) throws DAOException {
+		ZoneRules zr = tz.getZone().getRules(); Instant now = Instant.now();
 		try {
 			prepareStatement("INSERT INTO common.TZ (CODE, NAME, ABBR, GMT_OFFSET, DST) VALUES (?, ?, ?, ?, ?)");
 			_ps.setString(1, tz.getID());
 			_ps.setString(2, tz.getName());
 			_ps.setString(3, tz.getAbbr());
-			_ps.setInt(4, (tz.getTimeZone().getRawOffset() / 60000));
-			_ps.setBoolean(5, tz.getTimeZone().useDaylightTime());
+			_ps.setInt(4, zr.getStandardOffset(now).getTotalSeconds());
+			_ps.setBoolean(5, (zr.nextTransition(now) != null));
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -159,13 +161,14 @@ public class SetSystemData extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void update(String oldID, TZInfo tz) throws DAOException {
+		ZoneRules zr = tz.getZone().getRules(); Instant now = Instant.now();
 		try {
 			prepareStatement("UPDATE common.TZ SET CODE=?, NAME=?, ABBR=?, GMT_OFFSET=?, DST=? WHERE (CODE=?)");
 			_ps.setString(1, tz.getID());
 			_ps.setString(2, tz.getName());
 			_ps.setString(3, tz.getAbbr());
-			_ps.setInt(4, (tz.getTimeZone().getRawOffset() / 60000));
-			_ps.setBoolean(5, tz.getTimeZone().useDaylightTime());
+			_ps.setInt(4, zr.getStandardOffset(now).getTotalSeconds());
+			_ps.setBoolean(5, (zr.nextTransition(now) != null));
 			_ps.setString(6, oldID);
 			executeUpdate(1);
 		} catch (SQLException se) {

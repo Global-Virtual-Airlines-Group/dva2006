@@ -1,8 +1,9 @@
-// Copyright 2008, 2009, 2010, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2011, 2012, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 import org.deltava.beans.assign.*;
@@ -20,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to allow staff members to pre-approve non-standard flight routes.
  * @author Luke
- * @version 5.1
+ * @version 7.0
  * @since 2.1
  */
 
@@ -92,7 +93,7 @@ public class FlightPreapproveCommand extends AbstractCommand {
 
 		// Build the assignment information
 		AssignmentInfo info = new AssignmentInfo(ctx.getParameter("eqType"));
-		info.setAssignDate(new Date());
+		info.setAssignDate(Instant.now());
 		info.setStatus(AssignmentInfo.RESERVED);
 		info.setPurgeable(true);
 		info.setRandom(true);

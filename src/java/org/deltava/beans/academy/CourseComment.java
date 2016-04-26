@@ -1,21 +1,21 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.academy;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 
 /**
  * A bean to store comments between Instructors and Students. 
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
 public class CourseComment extends DatabaseBean implements AuthoredBean {
 	
 	private int _authorID;
-	private Date _createdOn;
+	private Instant _createdOn;
 	private String _text;
 
 	/**
@@ -30,11 +30,7 @@ public class CourseComment extends DatabaseBean implements AuthoredBean {
 		setAuthorID(authorID);
 	}
 	
-	/**
-	 * Returns the ID of the Comment author.
-	 * @return the Author's database ID
-	 * @see CourseComment#setAuthorID(int)
-	 */
+	@Override
 	public int getAuthorID() {
 		return _authorID;
 	}
@@ -42,9 +38,9 @@ public class CourseComment extends DatabaseBean implements AuthoredBean {
 	/**
 	 * Returns the Date the comment was created on.
 	 * @return the date/time of the Comment
-	 * @see CourseComment#getCreatedOn()
+	 * @see CourseComment#setCreatedOn(Instant)
 	 */
-	public Date getCreatedOn() {
+	public Instant getCreatedOn() {
 		return _createdOn;
 	}
 	
@@ -57,11 +53,7 @@ public class CourseComment extends DatabaseBean implements AuthoredBean {
 		return _text;
 	}
 	
-	/**
-	 * Updates the Author of the Comment.
-	 * @param id the author's database ID
-	 * @see CourseComment#getAuthorID()
-	 */
+	@Override
 	public void setAuthorID(int id) {
 		validateID(_authorID, id);
 		_authorID = id;
@@ -72,7 +64,7 @@ public class CourseComment extends DatabaseBean implements AuthoredBean {
 	 * @param dt the date/time the Comment was written
 	 * @see CourseComment#getCreatedOn()
 	 */
-	public void setCreatedOn(Date dt) {
+	public void setCreatedOn(Instant dt) {
 		_createdOn = dt;
 	}
 	
@@ -87,8 +79,8 @@ public class CourseComment extends DatabaseBean implements AuthoredBean {
 
 	/**
 	 * Compares two Comments by comparing their creation dates.
-	 * @see Comparable#compareTo(Object)
 	 */
+	@Override
 	public int compareTo(Object o) {
 		CourseComment c2 = (CourseComment) o;
 		return _createdOn.compareTo(c2._createdOn);

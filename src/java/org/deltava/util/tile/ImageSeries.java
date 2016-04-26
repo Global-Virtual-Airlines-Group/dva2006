@@ -1,7 +1,8 @@
-// Copyright 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.tile;
 
-import java.util.*;
+import java.util.HashMap;
+import java.time.Instant;
 
 /**
  * A bean to store all tile imagery for a particular date/time.  
@@ -13,14 +14,14 @@ import java.util.*;
 public class ImageSeries extends HashMap<TileAddress, PNGTile> implements Comparable<ImageSeries> {
 
 	private final String _type;
-	private final Date _effDate;
+	private final Instant _effDate;
 	
 	/**
 	 * Creates the object.
 	 * @param type the image type
 	 * @param effDate the effective date/time
 	 */
-	public ImageSeries(String type, Date effDate) {
+	public ImageSeries(String type, Instant effDate) {
 		super();
 		_type = type;
 		_effDate = effDate;
@@ -38,7 +39,7 @@ public class ImageSeries extends HashMap<TileAddress, PNGTile> implements Compar
 	 * Returns the effective date/time
 	 * @return the effective date/time
 	 */
-	public Date getDate() {
+	public Instant getDate() {
 		return _effDate;
 	}
 	
@@ -53,6 +54,7 @@ public class ImageSeries extends HashMap<TileAddress, PNGTile> implements Compar
 		return buf.append(_effDate).toString();
 	}
 	
+	@Override
 	public int compareTo(ImageSeries is2) {
 		int tmpResult = _effDate.compareTo(is2._effDate);
 		return (tmpResult == 0) ? _type.compareTo(is2._type) : tmpResult;

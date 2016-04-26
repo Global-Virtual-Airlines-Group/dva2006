@@ -1,4 +1,4 @@
-// Copyright 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import org.deltava.beans.DatabaseBean;
@@ -6,7 +6,7 @@ import org.deltava.beans.DatabaseBean;
 /**
  * A bean used to track average landing speeds.
  * @author Luke
- * @version 2.6
+ * @version 7.0
  * @since 2.1
  */
 
@@ -151,6 +151,7 @@ public class LandingStatistics extends DatabaseBean {
 	/**
 	 * Compares two beans by comparing their average touchdown speeds.
 	 */
+	@Override
 	public int compareTo(Object o) {
 		LandingStatistics ls2 = (LandingStatistics) o;
 		return new Double(_vSpeed).compareTo(new Double(ls2._vSpeed));
@@ -159,6 +160,7 @@ public class LandingStatistics extends DatabaseBean {
 	/**
 	 * Returns the pilot and equipment type.
 	 */
+	@Override
 	public String toString() {
 		StringBuilder buf = new StringBuilder(_name);
 		buf.append('-');
@@ -166,6 +168,7 @@ public class LandingStatistics extends DatabaseBean {
 		return buf.toString();
 	}
 	
+	@Override
 	public int hashCode() {
 		return toString().hashCode();
 	}

@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -17,7 +17,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load routes. 
  * @author Luke
- * @version 5.1
+ * @version 7.0
  * @since 2.6
  */
 
@@ -25,7 +25,7 @@ public class GetNavRoute extends GetOceanicRoute {
 	
 	private static final Cache<Route> _rCache = CacheManager.get(Route.class, "NavRoute");
 	
-	private java.util.Date _effectiveDate;
+	private java.time.Instant _effectiveDate;
 
 	private class CacheableRoute implements Route {
 		private final String _route;
@@ -37,34 +37,42 @@ public class GetNavRoute extends GetOceanicRoute {
 			_waypoints.addAll(waypoints);
 		}
 		
+		@Override
 		public void addWaypoint(NavigationDataBean nd) {
 			_waypoints.add(nd);
 		}
 
+		@Override
 		public LinkedList<NavigationDataBean> getWaypoints() {
 			return new LinkedList<NavigationDataBean>(_waypoints);
 		}
 		
+		@Override
 		public String getRoute() {
 			return _route;
 		}
 		
+		@Override
 		public int getSize() {
 			return _waypoints.size();
 		}
 
+		@Override
 		public Object cacheKey() {
 			return new Integer(_route.hashCode());
 		}
 		
+		@Override
 		public String toString() {
 			return _route;
 		}
 		
+		@Override
 		public int hashCode() {
 			return _route.hashCode();
 		}
 		
+		@Override
 		public boolean equals(Object o) {
 			return (o != null) && (_route.equals(o.toString()));
 		}
@@ -78,10 +86,12 @@ public class GetNavRoute extends GetOceanicRoute {
 			super();
 		}
 
+		@Override
 		public String getSource() {
 			return _source;
 		}
 		
+		@Override
 		public void setSource(String src) {
 			_source = src;
 		}
@@ -99,7 +109,7 @@ public class GetNavRoute extends GetOceanicRoute {
 	 * Sets the effective date when looking up Oceanic Tracks.
 	 * @param dt the effective date/time
 	 */
-	public void setEffectiveDate(java.util.Date dt) {
+	public void setEffectiveDate(java.time.Instant dt) {
 		_effectiveDate = dt;
 	}
 	

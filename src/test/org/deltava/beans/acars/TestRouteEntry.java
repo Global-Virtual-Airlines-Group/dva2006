@@ -1,6 +1,6 @@
 package org.deltava.beans.acars;
 
-import java.util.Date;
+import java.time.Instant;
 
 import junit.framework.Test;
 import org.hansel.CoverageDecorator;
@@ -11,20 +11,22 @@ import org.deltava.beans.schedule.GeoPosition;
 public class TestRouteEntry extends AbstractBeanTestCase {
    
    private RouteEntry _entry;
-   private Date _dt;
+   private Instant _dt;
    
    public static Test suite() {
       return new CoverageDecorator(TestRouteEntry.class, new Class[] { RouteEntry.class } );
   }
    
-   protected void setUp() throws Exception {
+   @Override
+protected void setUp() throws Exception {
       super.setUp();
-      _dt = new Date();
+      _dt = Instant.now();
       _entry = new ACARSRouteEntry(_dt, new GeoPosition(45.6789, -112.2334));
       setBean(_entry);
    }
 
-   protected void tearDown() throws Exception {
+   @Override
+protected void tearDown() throws Exception {
       _entry = null;
       _dt = null;
       super.tearDown();
@@ -62,8 +64,8 @@ public class TestRouteEntry extends AbstractBeanTestCase {
    }
    
    public void testComparator() {
-      RouteEntry e2 = new ACARSRouteEntry(new Date(_dt.getTime() + 5), new GeoPosition(1, 1));
-      assertTrue(e2.getDate().getTime() > _entry.getDate().getTime());
+      RouteEntry e2 = new ACARSRouteEntry(_dt.plusSeconds(1), new GeoPosition(1, 1));
+      assertTrue(e2.getDate().toEpochMilli() > _entry.getDate().toEpochMilli());
       assertTrue(e2.compareTo(_entry) > 0);
    }
 }

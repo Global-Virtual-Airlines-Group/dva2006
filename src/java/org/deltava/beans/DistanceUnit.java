@@ -1,10 +1,10 @@
-// Copyright 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 /**
  * An enumeration to store units of distance. 
  * @author Luke
- * @version 5.2
+ * @version 6.0
  * @since 5.0
  */
 
@@ -24,6 +24,7 @@ public enum DistanceUnit implements Unit {
 	 * Returns the unit name.
 	 * @return the full name
 	 */
+	@Override
 	public String getUnitName() {
 		return _name;
 	}
@@ -32,14 +33,17 @@ public enum DistanceUnit implements Unit {
 	 * Returns the ratio of this distance unit to statute miles.
 	 * @return the ratio
 	 */
+	@Override
 	public double getFactor() {
 		return _factor;
 	}
 	
+	@Override
 	public String getComboName() {
 		return _name;
 	}
 	
+	@Override
 	public String getComboAlias() {
 		return name();
 	}

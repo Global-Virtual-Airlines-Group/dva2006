@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * A class to store Exam Question profiles.
  * @author Luke
- * @version 3.5
+ * @version 7.0
  * @since 1.0
  */
 
@@ -92,6 +92,7 @@ public class QuestionProfile extends Question implements ViewEntry {
 	 * Sets the Question Number. <i>DISABLED</i>
 	 * @throws UnsupportedOperationException always
 	 */
+	@Override
 	public final void setNumber(int number) {
 		throw new UnsupportedOperationException();
 	}
@@ -189,6 +190,7 @@ public class QuestionProfile extends Question implements ViewEntry {
 	 * Compares this to another Question Profile by comparing their texts.
 	 * @see Comparable#compareTo(Object)
 	 */
+    @Override
 	public final int compareTo(Object o2) {
 		QuestionProfile qp2 = (QuestionProfile) o2;
 		return getQuestion().compareTo(qp2.getQuestion());
@@ -198,6 +200,7 @@ public class QuestionProfile extends Question implements ViewEntry {
 	 * Returns the CSS row class name if included in a view table.
 	 * @return the CSS class name
 	 */
+	@Override
 	public String getRowClassName() {
 		return _active ? null : "warn";
 	}

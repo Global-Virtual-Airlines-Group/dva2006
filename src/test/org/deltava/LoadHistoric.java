@@ -1,10 +1,10 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava;
 
 import java.io.*;
 import java.sql.*;
 import java.util.*;
-import java.text.*;
+import java.time.LocalDateTime;
+import java.time.format.*;
 
 import org.apache.log4j.*;
 
@@ -19,12 +19,13 @@ public class LoadHistoric extends TestCase {
 	private static Logger log;
 	
 	private static final String JDBC_URL ="jdbc:mysql://pollux.gvagroup.org/dva";
-	private final DateFormat TF = new SimpleDateFormat("HHmm");
+	private final DateTimeFormatter TF = new DateTimeFormatterBuilder().appendPattern("HHmm").parseLenient().toFormatter();
 	
 	private Connection _c;
 	private final Map<String, Airline> _airlines = new HashMap<String, Airline>();
 	private final Map<String, Airport> _airports = new HashMap<String, Airport>();
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		
@@ -47,6 +48,7 @@ public class LoadHistoric extends TestCase {
 		_airports.putAll(apdao.getAll());
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		_c.close();
 		LogManager.shutdown();
@@ -89,8 +91,8 @@ public class LoadHistoric extends TestCase {
 			se.setEquipmentType(tkns.nextToken());
 			
 			// Strip off the time zones from the airports
-			se.setTimeD(TF.parse(timeD.substring(0, timeD.indexOf(' '))));
-			se.setTimeA(TF.parse(timeA.substring(0, timeA.indexOf(' '))));
+			se.setTimeD(LocalDateTime.parse(timeD.substring(0, timeD.indexOf(' ')), TF));
+			se.setTimeA(LocalDateTime.parse(timeA.substring(0, timeA.indexOf(' ')), TF));
 			
 			// Set flags
 			se.setCanPurge(false);

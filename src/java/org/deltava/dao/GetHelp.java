@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Data Access Object to load Online Help and Help Desk entries.
  * @author Luke
- * @version 4.1
+ * @version 7.0
  * @since 1.0
  */
 
@@ -50,7 +50,7 @@ public class GetHelp extends DAO {
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
 					IssueComment ic = new IssueComment(rs.getInt(2));
-					ic.setCreatedOn(rs.getTimestamp(3));
+					ic.setCreatedOn(rs.getTimestamp(3).toInstant());
 					ic.setFAQ(rs.getBoolean(4));
 					ic.setBody(rs.getString(5));
 					i.addComment(ic);
@@ -208,7 +208,7 @@ public class GetHelp extends DAO {
 					while (rs.next()) {
 						IssueComment ic = new IssueComment(rs.getInt(2));
 						ic.setID(rs.getInt(1));
-						ic.setCreatedOn(rs.getTimestamp(3));
+						ic.setCreatedOn(rs.getTimestamp(3).toInstant());
 						ic.setFAQ(rs.getBoolean(4));
 						ic.setBody(rs.getString(5));
 
@@ -258,7 +258,7 @@ public class GetHelp extends DAO {
 		}
 	}
 
-	/**
+	/*
 	 * Helper method to parse Issue result sets.
 	 */
 	private List<Issue> executeIssue() throws SQLException {
@@ -270,15 +270,15 @@ public class GetHelp extends DAO {
 				i.setID(rs.getInt(1));
 				i.setAuthorID(rs.getInt(2));
 				i.setAssignedTo(rs.getInt(3));
-				i.setCreatedOn(rs.getTimestamp(4));
-				i.setResolvedOn(rs.getTimestamp(5));
+				i.setCreatedOn(rs.getTimestamp(4).toInstant());
+				i.setResolvedOn(toInstant(rs.getTimestamp(5)));
 				i.setStatus(rs.getInt(6));
 				i.setPublic(rs.getBoolean(7));
 				i.setFAQ(rs.getBoolean(8));
 				i.setBody(rs.getString(10));
 				if (hasCount) {
 					i.setCommentCount(rs.getInt(11));
-					i.setLastComment(rs.getTimestamp(12));
+					i.setLastComment(toInstant(rs.getTimestamp(12)));
 					i.setLastCommentAuthorID(rs.getInt(13));
 				}
 

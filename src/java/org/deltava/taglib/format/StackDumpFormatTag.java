@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import javax.servlet.jsp.*;
@@ -7,7 +7,7 @@ import javax.servlet.jsp.tagext.TagSupport;
 /**
  * A JSP tag to support writing exception Stack Traces. 
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -28,10 +28,10 @@ public class StackDumpFormatTag extends TagSupport {
 	 * @return TagSupport.EVAL_PAGE
 	 * @throws JspException if an I/O error occurs
 	 */
+	@Override
 	public int doEndTag() throws JspException {
-		
-		JspWriter out = pageContext.getOut();
 		try {
+			JspWriter out = pageContext.getOut();
 			StackTraceElement[] traces = _ex.getStackTrace();
 			for (int x = 0; x < traces.length; x++)
 				out.println(traces[x]);

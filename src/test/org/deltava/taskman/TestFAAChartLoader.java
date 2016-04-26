@@ -26,6 +26,7 @@ public class TestFAAChartLoader extends TestCase {
 		}
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		
@@ -65,6 +66,7 @@ public class TestFAAChartLoader extends TestCase {
 		jdbcPool.release(c);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		LogManager.shutdown();
 		super.tearDown();

@@ -1,9 +1,10 @@
-// Copyright 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
 import java.net.*;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.deltava.beans.Pilot;
 import org.deltava.beans.system.*;
@@ -19,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to convert a devlopemnt Issue into a Help Desk Issue.
  * @author Luke
- * @version 4.1
+ * @version 7.0
  * @since 3.6
  */
 
@@ -65,7 +66,7 @@ public class IssueConvertCommand extends AbstractCommand {
 			mctx.addData("assignee", p);
 
 			// Mark resolved
-			i.setResolvedOn(new Date());
+			i.setResolvedOn(Instant.now());
 			i.setStatus(Issue.STATUS_WONTFIX);
 
 			// Start transaction

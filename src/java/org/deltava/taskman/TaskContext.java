@@ -1,21 +1,21 @@
-// Copyright 2007, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taskman;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.deltava.beans.Pilot;
 
 /**
  * The execution context for a scheduled task.
  * @author Luke
- * @version 3.6
+ * @version 7.0
  * @since 1.0
  */
 
 public class TaskContext extends org.deltava.jdbc.ConnectionContext {
 	
 	private Pilot _user;
-	private Date _lastRun;
+	private Instant _lastRun;
 
 	/**
 	 * Initializes the task context.
@@ -28,7 +28,7 @@ public class TaskContext extends org.deltava.jdbc.ConnectionContext {
 	 * Returns the date/time the Task was previously executed.
 	 * @return the last execution date/time, or null if never
 	 */
-	public Date getLastRun() {
+	public Instant getLastRun() {
 		return _lastRun;
 	}
 	
@@ -44,7 +44,7 @@ public class TaskContext extends org.deltava.jdbc.ConnectionContext {
 	 * Updates the date/time the Task was previously executed.
 	 * @param lastRun the last execution date/time, or null if never
 	 */
-	public void setLastRun(Date lastRun) {
+	public void setLastRun(Instant lastRun) {
 		_lastRun = lastRun;
 	}
 

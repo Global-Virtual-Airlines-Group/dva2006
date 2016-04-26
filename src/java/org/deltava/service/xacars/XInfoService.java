@@ -1,4 +1,4 @@
-// Copyright 2011, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.xacars;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * The XACARS Flight Information Web Service.
  * @author Luke
- * @version 5.4
+ * @version 7.0
  * @since 4.1
  */
 
@@ -104,7 +104,7 @@ public class XInfoService extends XAService {
 				EconomyInfo eInfo = (EconomyInfo) SystemData.getObject(SystemData.ECON_DATA);
 				if (eInfo != null) {
 					LoadFactor lf = new LoadFactor(eInfo);
-					double loadFactor = lf.generate(new Date());
+					double loadFactor = lf.generate();
 					fr.setPassengers((int) Math.round(a.getSeats() * loadFactor));
 					fr.setLoadFactor(loadFactor);
 				}

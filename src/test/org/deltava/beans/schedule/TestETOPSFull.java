@@ -21,6 +21,7 @@ public class TestETOPSFull extends TestCase {
 	
 	private Connection _c;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		Class<?> c = Class.forName("com.mysql.jdbc.Driver");
@@ -42,11 +43,13 @@ public class TestETOPSFull extends TestCase {
 		ETOPSHelper.init(airports.values());
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		_c.close();
 		super.tearDown();
 	}
 
+	@SuppressWarnings("static-method")
 	public void testAtlantic() throws Exception {
 		
 		Airport jfk = SystemData.getAirport("KJFK");

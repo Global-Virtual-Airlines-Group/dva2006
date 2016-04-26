@@ -1,4 +1,4 @@
-// Copyright 2006, 2009, 2010, 2011, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2010, 2011, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.academy;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * A bean to store Flight Academy certification data.
  * @author Luke
- * @version 6.1
+ * @version 7.0
  * @since 1.0
  */
 
@@ -441,10 +441,12 @@ public class Certification implements java.io.Serializable, ComboAlias, ViewEntr
 		_desc = desc;
 	}
 	
+	@Override
 	public String getComboName() {
 		return _name;
 	}
 	
+	@Override
 	public String getComboAlias() {
 		return _code;
 	}
@@ -453,6 +455,7 @@ public class Certification implements java.io.Serializable, ComboAlias, ViewEntr
 	 * Returns the CSS class name if displayed in a view table.
 	 * @return the CSS class name
 	 */
+	@Override
 	public String getRowClassName() {
 		return _active ? null : "opt1";
 	}
@@ -460,11 +463,13 @@ public class Certification implements java.io.Serializable, ComboAlias, ViewEntr
 	/**
 	 * Compares two certifications by comparing their stage and name.
 	 */
+	@Override
 	public int compareTo(Certification c2) {
 		int tmpResult = Integer.valueOf(_stage).compareTo(Integer.valueOf(c2._stage));
 		return (tmpResult == 0) ? _name.compareTo(c2._name) : tmpResult;
 	}
 	
+	@Override
 	public int hashCode() {
 		return _code.hashCode();
 	}
@@ -472,6 +477,7 @@ public class Certification implements java.io.Serializable, ComboAlias, ViewEntr
 	/**
 	 * Returns the Certification name.
 	 */
+	@Override
 	public String toString() {
 		return _name;
 	}

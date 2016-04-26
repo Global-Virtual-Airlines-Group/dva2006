@@ -1,4 +1,4 @@
-// Copyright 2007, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009, 2010, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.io.*;
@@ -14,7 +14,7 @@ import org.deltava.util.*;
 /**
  * An Authenticator to read/write from FSD certificate files.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -28,8 +28,7 @@ public class FSDAuthenticator implements Authenticator {
 	private final Map<String, Rating> _roleLevels = new HashMap<String, Rating>();
 
 	private static final String[] LEVEL_NAMES = { "Disabled", "Pilot", "Student 1", "Student 2", "Student 3",
-			"Controller 1", "Controller 2", "Controller 3", "Instructor 1", "Instructor 2", "Instructor 3",
-			"Supervisor", "Administrator" };
+			"Controller 1", "Controller 2", "Controller 3", "Instructor 1", "Instructor 2", "Instructor 3", "Supervisor", "Administrator" };
 
 	private class FSDCert extends DatabaseBean {
 
@@ -60,10 +59,12 @@ public class FSDAuthenticator implements Authenticator {
 			_pwd = pwd;
 		}
 
+		@Override
 		public int hashCode() {
 			return _userID.hashCode();
 		}
 
+		@Override
 		public String toString() {
 			StringBuilder buf = new StringBuilder(getUserID());
 			buf.append(' ');
@@ -84,6 +85,7 @@ public class FSDAuthenticator implements Authenticator {
 	 * @param propsFile the properties file to use
 	 * @throws SecurityException if an error occurs
 	 */
+	@Override
 	public void init(String propsFile) throws SecurityException {
 
 		// Load properties file
@@ -148,6 +150,7 @@ public class FSDAuthenticator implements Authenticator {
 	 * @param pwd the user's password
 	 * @throws SecurityException if authentication fails
 	 */
+	@Override
 	public void authenticate(Person usr, String pwd) throws SecurityException {
 
 		// Validate the roles
@@ -170,6 +173,7 @@ public class FSDAuthenticator implements Authenticator {
 	 * @param usr the user bean
 	 * @return TRUE if the User is a member of a Role mapping to at least Level 1, otherwise FALSE
 	 */
+	@Override
 	public boolean accepts(Person usr) {
 		return (getUserLevel(usr) != Rating.DISABLED) && (usr.getStatus() == Pilot.ACTIVE);
 	}
@@ -179,6 +183,7 @@ public class FSDAuthenticator implements Authenticator {
 	 * @param usr the User bean
 	 * @return TRUE if the user exists, otherwise FALSE
 	 */
+	@Override
 	public boolean contains(Person usr) throws SecurityException {
 		return _certs.containsKey(Integer.valueOf(usr.getID()));
 	}
@@ -189,6 +194,7 @@ public class FSDAuthenticator implements Authenticator {
 	 * @param pwd the new password
 	 * @throws SecurityException if an error occurs
 	 */
+	@Override
 	public void updatePassword(Person usr, String pwd) throws SecurityException {
 		FSDCert cert = _certs.get(Integer.valueOf(usr.getID()));
 		if (cert == null)
@@ -205,6 +211,7 @@ public class FSDAuthenticator implements Authenticator {
 	 * @param pwd the User's password
 	 * @throws SecurityException if an error occurs
 	 */
+	@Override
 	public void add(Person usr, String pwd) throws SecurityException {
 
 		// Get the user's level; abort if they do not have access
@@ -227,6 +234,7 @@ public class FSDAuthenticator implements Authenticator {
 	 * @param newName the new fully-qualified directory
 	 * @throws SecurityException if an error occurs
 	 */
+	@Override
 	public void rename(Person usr, String newName) throws SecurityException {
 		if (!contains(usr))
 			throw new SecurityException(usr.getName() + " not found");
@@ -237,6 +245,7 @@ public class FSDAuthenticator implements Authenticator {
 	 * @param usr the User bean
 	 * @throws SecurityException if an error occurs
 	 */
+	@Override
 	public void remove(Person usr) throws SecurityException {
 		if (_certs.remove(Integer.valueOf(usr.getID())) != null)
 			save();
@@ -247,6 +256,7 @@ public class FSDAuthenticator implements Authenticator {
 	 * @param usr the user bean
 	 * @throws SecurityException if an error occurs
 	 */
+	@Override
 	public void disable(Person usr) throws SecurityException {
 		remove(usr);
 	}

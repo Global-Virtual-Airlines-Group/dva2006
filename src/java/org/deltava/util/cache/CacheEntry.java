@@ -1,10 +1,10 @@
-// Copyright 2007, 2008, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 /**
  * An abstract class to handle cache entries.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -53,14 +53,17 @@ abstract class CacheEntry<T extends Cacheable> implements java.io.Serializable, 
 	/**
 	 * Returns the string representation of the cache key.
 	 */
+	@Override
 	public String toString() {
 		return _key.toString();
 	}
 	
+	@Override
 	public int hashCode() {
 		return _key.hashCode();
 	}
-	
+
+	@Override
 	public int compareTo(CacheEntry<T> e2) {
 		return Long.valueOf(_createExpire).compareTo(Long.valueOf(e2._createExpire));
 	}

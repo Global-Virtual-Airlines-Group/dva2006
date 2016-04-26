@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import org.deltava.util.*;
@@ -6,7 +6,7 @@ import org.deltava.util.*;
 /**
  * A bean to store Online Network user information.
  * @author Luke
- * @version 6.1
+ * @version 7.0
  * @since 1.0
  */
 
@@ -175,6 +175,7 @@ public abstract class NetworkUser implements java.io.Serializable, Comparable<Ne
     /**
      * Compares this user to another network user by comparing the Network IDs.
      */
+    @Override
     public int compareTo(NetworkUser usr2) {
         return Integer.valueOf(_id).compareTo(Integer.valueOf(usr2._id));
     }
@@ -182,6 +183,7 @@ public abstract class NetworkUser implements java.io.Serializable, Comparable<Ne
     /**
      * Checks equality by comparing network IDs.
      */
+    @Override
     public boolean equals(Object o2) {
     	return (o2 instanceof NetworkUser) ? (compareTo((NetworkUser) o2) == 0) : false;
     }
@@ -189,6 +191,7 @@ public abstract class NetworkUser implements java.io.Serializable, Comparable<Ne
     /**
      * Returns the Network ID's hash code.
      */
+    @Override
     public int hashCode() {
     	return Integer.valueOf(_id).hashCode();
     }

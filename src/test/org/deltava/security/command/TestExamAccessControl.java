@@ -16,13 +16,15 @@ public class TestExamAccessControl extends AccessControlTestCase {
             new Class[] { AccessControl.class, ExamAccessControl.class } );
   }
 
-   protected void setUp() throws Exception {
+   @Override
+protected void setUp() throws Exception {
       super.setUp();
       _exam = new Examination("Dummy");
       _ac = new ExamAccessControl(_ctxt, _exam, null);
    }
 
-   protected void tearDown() throws Exception {
+   @Override
+protected void tearDown() throws Exception {
       _ac = null;
       _exam = null;
       super.tearDown();

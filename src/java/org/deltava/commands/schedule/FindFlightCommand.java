@@ -1,24 +1,24 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
+import java.time.*;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.sql.Connection;
 
-import org.deltava.beans.*;
 import org.deltava.beans.schedule.*;
+
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-import org.deltava.filter.AirportFilter;
-import org.deltava.filter.IATAFilter;
-import org.deltava.filter.NOTFilter;
+import org.deltava.filter.*;
+
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to search the Flight Schedule.
  * @author Luke
- * @version 6.3
+ * @version 7.0
  * @since 1.0
  */
 
@@ -121,7 +121,7 @@ public class FindFlightCommand extends AbstractCommand {
 		    	 GetMetadata mddao = new GetMetadata(con);
 		    	 String aCode = SystemData.get("airline.code").toLowerCase();
 		    	 ctx.setAttribute("importDate", mddao.getDate(aCode + ".schedule.import"), REQUEST);
-		    	 Date effDate = mddao.getDate(aCode + ".schedule.effDate");
+		    	 Instant effDate = mddao.getDate(aCode + ".schedule.effDate");
 		    	 ctx.setAttribute("effectiveDate", effDate, REQUEST);
 
 				// Get the DAO and execute
@@ -158,7 +158,7 @@ public class FindFlightCommand extends AbstractCommand {
 		}
 		
 		// Save UTC time zone and forward
-		ctx.setAttribute("utc", TZInfo.UTC, REQUEST);
+		ctx.setAttribute("utc", ZoneOffset.UTC, REQUEST);
 		result.setSuccess(true);
 	}
 }

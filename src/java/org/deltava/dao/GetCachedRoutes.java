@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load cached external routes from the database.
  * @author Luke
- * @version 4.1
+ * @version 7.0
  * @since 2.6
  */
 
@@ -73,7 +73,7 @@ public class GetCachedRoutes extends DAO {
 					ExternalRoute rt = new ExternalRoute(rs.getString(5));
 					rt.setAirportD(SystemData.getAirport(rs.getString(1)));
 					rt.setAirportA(SystemData.getAirport(rs.getString(2)));
-					rt.setCreatedOn(rs.getTimestamp(3));
+					rt.setCreatedOn(rs.getTimestamp(3).toInstant());
 					rt.setCruiseAltitude(rs.getString(4));
 					rt.setComments(rs.getString(6));
 				

@@ -754,7 +754,8 @@ public class ImageInfo {
 	}
 
 	private static boolean equals(byte[] a1, int offs1, byte[] a2, int offs2, int num) {
-		while (num-- > 0) {
+		int n = num;
+		while (n-- > 0) {
 			if (a1[offs1++] != a2[offs2++]) {
 				return false;
 			}

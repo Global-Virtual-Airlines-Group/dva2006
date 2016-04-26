@@ -14,13 +14,15 @@ public class TestSecurityCookieData extends AbstractBeanTestCase {
         return new CoverageDecorator(TestSecurityCookieData.class, new Class[] { SecurityCookieData.class } );
     }
     
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
         _cData = new SecurityCookieData("cn=Luke,ou=dva,o=sce");
         setBean(_cData);
     }
 
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         _cData = null;
         super.tearDown();
     }

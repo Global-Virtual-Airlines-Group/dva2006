@@ -1,7 +1,9 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
+import java.time.*;
+import java.time.temporal.ChronoField;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
@@ -20,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to assign Flights for an Online Event.
  * @author Luke
- * @version 5.3
+ * @version 7.0
  * @since 1.0
  */
 
@@ -81,17 +83,16 @@ public class EventAssignCommand extends AbstractCommand {
 				
 				// Create a Flight Assignment
 				AssignmentInfo ai = new AssignmentInfo(s.getEquipmentType());
-				ai.setAssignDate(new Date());
+				ai.setAssignDate(Instant.now());
 				ai.setPilotID(s.getPilotID());
 				ai.setEventID(e.getID());
 				ai.setStatus(AssignmentInfo.RESERVED);
 				
 				// Calculate the flight number
 				int flightID = usr.getPilotNumber();
-				if (flightID == 0) {
-					Calendar cld = Calendar.getInstance();
-					flightID = cld.get(Calendar.YEAR) + cld.get(Calendar.DAY_OF_YEAR);
-				} else if (flightID > 10000)
+				if (flightID == 0)
+					flightID = LocalDateTime.now().get(ChronoField.DAY_OF_YEAR);
+				else if (flightID > 10000)
 					flightID %= 10000;
 				
 				// Create an Assignment Leg

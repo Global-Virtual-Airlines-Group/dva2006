@@ -1,10 +1,11 @@
-// Copyright 2006, 2007, 2009, 2010, 2011, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2010, 2011, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.net.*;
 import java.util.*;
 import java.io.IOException;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.navdata.*;
@@ -19,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to download PACOT data.
  * @author Luke
- * @version 6.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -41,7 +42,7 @@ public class PACOTDownloadTask extends Task {
 			URL url = new URL(SystemData.get("config.pacot.url"));
 			
 			// Build the oceanic route bean
-			OceanicNOTAM or = new OceanicNOTAM(OceanicTrackInfo.Type.PACOT, new Date());
+			OceanicNOTAM or = new OceanicNOTAM(OceanicTrackInfo.Type.PACOT, Instant.now());
 			or.setSource(url.getHost());
 			
 			// Load waypoint data, retry up to 3 times

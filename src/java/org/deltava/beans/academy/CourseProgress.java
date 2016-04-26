@@ -1,7 +1,7 @@
-// Copyright 2006, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.academy;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 
@@ -9,7 +9,7 @@ import org.deltava.beans.*;
  * A bean to track Flight Academy Course requirements. Each Certification has a number of
  * requirements that need to be completed before the Course is done.
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -18,7 +18,7 @@ public class CourseProgress extends CertificationRequirement implements Authored
 	private int _courseID;
 	private int _authorID;
 	private boolean _complete;
-	private Date _completedOn;
+	private Instant _completedOn;
 
 	/**
 	 * Creates a new Course Progress entry.
@@ -43,9 +43,9 @@ public class CourseProgress extends CertificationRequirement implements Authored
 	/**
 	 * Returns the completion date for this entry.
 	 * @return the date/time this was marked complete, otherwise FALSE
-	 * @see CourseProgress#setCompletedOn(Date)
+	 * @see CourseProgress#setCompletedOn(Instant)
 	 */
-	public Date getCompletedOn() {
+	public Instant getCompletedOn() {
 		return _completedOn;
 	}
 	
@@ -58,11 +58,7 @@ public class CourseProgress extends CertificationRequirement implements Authored
 		return _courseID;
 	}
 	
-	/**
-	 * Returns the Author of this Progress entry.
-	 * @return the database ID of the last Updater of this entry
-	 * @see CourseProgress#setAuthorID(int)
-	 */
+	@Override
 	public int getAuthorID() {
 		return _authorID;
 	}
@@ -79,13 +75,8 @@ public class CourseProgress extends CertificationRequirement implements Authored
 		
 		_courseID = id;
 	}
-	
-	/**
-	 * Updates the last Updated of this Progress entry.
-	 * @param id the database ID of the user updating this entry
-	 * @throws IllegalArgumentException if id is negative
-	 * @see CourseProgress#setAuthorID(int)
-	 */
+
+	@Override
 	public void setAuthorID(int id) {
 		if (id < 0)
 			throw new IllegalArgumentException("Invalid Author ID - " + id);
@@ -107,7 +98,7 @@ public class CourseProgress extends CertificationRequirement implements Authored
 	 * @param dt the date/time it was completed or null if incomplete
 	 * @see CourseProgress#getCompletedOn()
 	 */
-	public void setCompletedOn(Date dt) {
+	public void setCompletedOn(Instant dt) {
 		_completedOn = dt;
 		_complete = (dt != null);
 	}
@@ -116,6 +107,7 @@ public class CourseProgress extends CertificationRequirement implements Authored
 	 * Returns the CSS row class name if rendered in a view table.
 	 * @return the CSS class name
 	 */
+	@Override
 	public String getRowClassName() {
 		return _complete ? "opt3" : null;
 	}
@@ -123,6 +115,7 @@ public class CourseProgress extends CertificationRequirement implements Authored
 	/**
 	 * Checks for equality by comparing sequence numbers.
 	 */
+	@Override
 	public boolean equals(Object o) {
 		return (o instanceof CourseProgress) ? (compareTo(o) == 0) : false;
 	}

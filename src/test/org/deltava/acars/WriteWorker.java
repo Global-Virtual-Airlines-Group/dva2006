@@ -44,10 +44,12 @@ public class WriteWorker implements Runnable, Comparable<WriteWorker> {
 		}
 	}
 
+	@Override
 	public String toString() {
 		return "WriteWorker-" + _id;
 	}
 
+	@Override
 	public int compareTo(WriteWorker ww2) {
 		return Integer.valueOf(_id).compareTo(Integer.valueOf(ww2._id));
 	}

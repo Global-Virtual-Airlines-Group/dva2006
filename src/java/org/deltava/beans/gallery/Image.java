@@ -1,14 +1,15 @@
-// Copyright 2004, 2005, 2006, 2007, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007, 2010, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.gallery;
 
 import java.util.*;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 
 /**
  * A class to store Image Gallery images.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -20,7 +21,7 @@ public class Image extends ImageBean implements AuthoredBean, ComboAlias {
 	private String _name;
 	private String _desc;
 	private boolean _fleet;
-	private Date _created = new Date();
+	private Instant _created = Instant.now();
 
 	private final Collection<Integer> _likes = new LinkedHashSet<Integer>();
 	private int _likeCount;
@@ -51,6 +52,7 @@ public class Image extends ImageBean implements AuthoredBean, ComboAlias {
 	 * @return the Database ID of the Person who created this Image
 	 * @see Image#setAuthorID(int)
 	 */
+	@Override
 	public int getAuthorID() {
 		return _authorID;
 	}
@@ -73,10 +75,12 @@ public class Image extends ImageBean implements AuthoredBean, ComboAlias {
 		return _desc;
 	}
 
+	@Override
 	public String getComboName() {
 		return getName();
 	}
 
+	@Override
 	public String getComboAlias() {
 		return Integer.toHexString(getID());
 	}
@@ -84,9 +88,9 @@ public class Image extends ImageBean implements AuthoredBean, ComboAlias {
 	/**
 	 * Returns the date this Image was created.
 	 * @return the date/time this Image was created on
-	 * @see Image#setCreatedOn(Date)
+	 * @see Image#setCreatedOn(Instant)
 	 */
-	public Date getCreatedOn() {
+	public Instant getCreatedOn() {
 		return _created;
 	}
 
@@ -104,7 +108,7 @@ public class Image extends ImageBean implements AuthoredBean, ComboAlias {
 	 * @param dt the date/time this Image was created on
 	 * @see Image#getCreatedOn()
 	 */
-	public void setCreatedOn(Date dt) {
+	public void setCreatedOn(Instant dt) {
 		_created = dt;
 	}
 
@@ -114,6 +118,7 @@ public class Image extends ImageBean implements AuthoredBean, ComboAlias {
 	 * @throws IllegalArgumentException if id is zero or negative
 	 * @see Image#getAuthorID()
 	 */
+	@Override
 	public void setAuthorID(int id) {
 		validateID(_authorID, id);
 		_authorID = id;

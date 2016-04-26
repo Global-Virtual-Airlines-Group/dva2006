@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Acces Object for loading Examination/Check Ride data.
  * @author Luke
- * @version 6.3
+ * @version 7.0
  * @since 1.0
  */
 
@@ -459,10 +459,10 @@ public class GetExam extends DAO {
 				e.setID(rs.getInt(1));
 				e.setAuthorID(rs.getInt(3));
 				e.setStatus(TestStatus.values()[rs.getInt(4)]);
-				e.setDate(rs.getTimestamp(5));
-				e.setExpiryDate(rs.getTimestamp(6));
-				e.setSubmittedOn(rs.getTimestamp(7));
-				e.setScoredOn(rs.getTimestamp(8));
+				e.setDate(toInstant(rs.getTimestamp(5)));
+				e.setExpiryDate(toInstant(rs.getTimestamp(6)));
+				e.setSubmittedOn(toInstant(rs.getTimestamp(7)));
+				e.setScoredOn(toInstant(rs.getTimestamp(8)));
 				e.setScorerID(rs.getInt(9));
 				e.setPassFail(rs.getBoolean(10));
 				e.setEmpty(rs.getBoolean(11));
@@ -498,13 +498,13 @@ public class GetExam extends DAO {
 				cr.setID(rs.getInt(1));
 				cr.setAuthorID(rs.getInt(3));
 				cr.setStatus(TestStatus.values()[rs.getInt(4)]);
-				cr.setDate(rs.getTimestamp(5));
-				cr.setSubmittedOn(rs.getTimestamp(6));
-				cr.setScoredOn(rs.getTimestamp(7));
+				cr.setDate(toInstant(rs.getTimestamp(5)));
+				cr.setSubmittedOn(toInstant(rs.getTimestamp(6)));
+				cr.setScoredOn(toInstant(rs.getTimestamp(7)));
 				cr.setScorerID(rs.getInt(8));
 				cr.setPassFail(rs.getBoolean(9));
 				cr.setType(RideType.values()[rs.getInt(10)]);
-				cr.setExpirationDate(rs.getTimestamp(11));
+				cr.setExpirationDate(toInstant(rs.getTimestamp(11)));
 				cr.setComments(rs.getString(12));
 				cr.setAircraftType(rs.getString(13));
 				cr.setEquipmentType(rs.getString(14));

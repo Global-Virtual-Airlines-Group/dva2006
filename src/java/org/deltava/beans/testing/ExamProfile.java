@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A class to store Examination profile information.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -304,6 +304,7 @@ public class ExamProfile implements Comparable<ExamProfile>, Cacheable, ViewEntr
     /**
      * Compares two examinations by comparing their stage and name.
      */
+    @Override
     public int compareTo(ExamProfile e2) {
         int tmpResult = Integer.valueOf(_stage).compareTo(Integer.valueOf(e2._stage));
         return (tmpResult != 0) ? tmpResult : _name.compareTo(e2._name); 
@@ -313,10 +314,12 @@ public class ExamProfile implements Comparable<ExamProfile>, Cacheable, ViewEntr
      * Returns the Examination name for cache purposes.
      * @return the Examination name
      */
+    @Override
     public Object cacheKey() {
         return _name;
     }
     
+    @Override
     public int hashCode() {
     	return _name.hashCode();
     }
@@ -324,6 +327,7 @@ public class ExamProfile implements Comparable<ExamProfile>, Cacheable, ViewEntr
     /**
      * Returns the Examination name.
      */
+    @Override
     public String toString() {
     	return _name;
     }
@@ -332,6 +336,7 @@ public class ExamProfile implements Comparable<ExamProfile>, Cacheable, ViewEntr
      * Returns the CSS class name if displayed in a view table.
      * @return the CSS class name
      */
+    @Override
     public String getRowClassName() {
     	return !_active ? "warn" : (_flightAcademy ? "opt2" : null); 
     }

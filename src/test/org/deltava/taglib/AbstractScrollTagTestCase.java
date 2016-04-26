@@ -10,7 +10,8 @@ public abstract class AbstractScrollTagTestCase extends AbstractTagTestCase {
 	protected ViewContext _vctx;
     protected TableTag _tableTag;
     
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
         _tableTag = new TableTag();
         _tableTag.setPageContext(_ctx);
@@ -18,7 +19,8 @@ public abstract class AbstractScrollTagTestCase extends AbstractTagTestCase {
         _tableTag.setSize(60);
     }
     
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         _tableTag.release();
         _tableTag = null;
         super.tearDown();
@@ -29,7 +31,8 @@ public abstract class AbstractScrollTagTestCase extends AbstractTagTestCase {
     	_ctx.setAttribute(ViewContext.VIEW_CONTEXT, _vctx, PageContext.REQUEST_SCOPE);
     }
     
-    protected void testParentValidation(ScrollTag sTag) {
+    @SuppressWarnings("static-method")
+	protected void testParentValidation(ScrollTag sTag) {
         try {
             assertSkipBody(sTag.doStartTag());
             fail("JspException expected");

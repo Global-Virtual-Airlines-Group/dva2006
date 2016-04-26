@@ -1,8 +1,9 @@
-// Copyright 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.io.*;
 import java.sql.*;
+import java.time.Instant;
 import java.util.*;
 import java.util.zip.*;
 
@@ -13,7 +14,7 @@ import org.deltava.dao.file.SetSerializedPosition;
 /**
  * A Data Access Object to write to the ACARS position archive.
  * @author Luke
- * @version 6.2
+ * @version 7.0
  * @since 4.1
  */
 
@@ -70,7 +71,7 @@ public class SetACARSArchive extends DAO {
 					}
 					
 					crc.update(data);
-					md.setArchivedOn(new java.util.Date());
+					md.setArchivedOn(Instant.now());
 					md.setCRC32(crc.getValue());
 					md.setPositionCount(positions.size());
 					md.setSize(data.length);

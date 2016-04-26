@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.lifecycle;
 
 import java.io.*;
@@ -32,7 +32,7 @@ import org.gvagroup.jdbc.*;
 /**
  * The System bootstrap loader, that fires when the servlet container is started or stopped.
  * @author Luke
- * @version 6.1
+ * @version 7.0
  * @since 1.0
  */
 
@@ -61,7 +61,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 		SharedData.addApp(code);
 		
 		// Set start date
-		AirlineTotals.BIRTHDATE.setTime(StringUtils.parseDate(SystemData.get("airline.birthdate"), "MM/dd/yyyy"));
+		AirlineTotals.BIRTHDATE = StringUtils.parseInstant(SystemData.get("airline.birthdate"), "MM/dd/yyyy");
 		
 		// Initialize caches
 		try (InputStream is = ConfigLoader.getStream("/etc/cacheInfo.xml")) {
@@ -178,7 +178,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 			// Load User Pool max values
 			String prefix = SystemData.get("airline.code").toLowerCase();
 			GetMetadata mddao = new GetMetadata(c);
-			UserPool.init(StringUtils.parse(mddao.get(prefix + ".users.max.count"), 0), StringUtils.parseDate(mddao.get(prefix + ".users.max.date"), "MM/dd/yyyy HH:mm"));
+			UserPool.init(StringUtils.parse(mddao.get(prefix + ".users.max.count"), 0), StringUtils.parseInstant(mddao.get(prefix + ".users.max.date"), "MM/dd/yyyy HH:mm"));
 			
 			// Load facebook credentials
 			if (!StringUtils.isEmpty(SystemData.get("users.facebook.id"))) {
@@ -214,7 +214,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 		if (!StringUtils.isEmpty(SystemData.get("econ.targetLoad"))) {
 			EconomyInfo econInfo = new EconomyInfo(SystemData.getDouble("econ.targetLoad", 0.8d), SystemData.getDouble("econ.targetAmplitude", 0.125));
 			econInfo.setMinimumLoad(SystemData.getDouble("econ.minimumLoad", 0.25));
-			econInfo.setStartDate(AirlineTotals.BIRTHDATE.getTime());
+			econInfo.setStartDate(AirlineTotals.BIRTHDATE);
 			econInfo.setHourlyFactor(SystemData.getDouble("econ.hourlyFactor", 0.0));
 			econInfo.setYearlyCycleLength(SystemData.getInt("econ.yearlyCycleLength", 365));
 			econInfo.setHourlyCycleLength(SystemData.getInt("econ.hourlyCycleLength", 24));

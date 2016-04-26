@@ -15,13 +15,15 @@ public class TestInstaller extends AbstractBeanTestCase {
         return new CoverageDecorator(TestInstaller.class, new Class[] { FleetEntry.class, Installer.class });
     }
     
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
         _i = new Installer(new File("data/users.txt"));
         setBean(_i);
     }
 
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         _i = null;
         super.tearDown();
     }

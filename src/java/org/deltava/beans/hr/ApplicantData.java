@@ -1,14 +1,14 @@
-// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.hr;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 
 /**
  * A bean to store job applicant information.
  * @author Luke
- * @version 3.6
+ * @version 7.0
  * @since 3.4
  */
 
@@ -17,7 +17,7 @@ public abstract class ApplicantData extends DatabaseBean implements AuthoredBean
 	private String _firstName;
 	private String _lastName;
 
-	private Date _createdOn;
+	private Instant _createdOn;
 	private String _body;
 	
 	/**
@@ -33,7 +33,7 @@ public abstract class ApplicantData extends DatabaseBean implements AuthoredBean
 	 * Returns the creation date of this profile.
 	 * @return the creation date/time
 	 */
-	public Date getCreatedOn() {
+	public Instant getCreatedOn() {
 		return _createdOn;
 	}
 	
@@ -96,7 +96,7 @@ public abstract class ApplicantData extends DatabaseBean implements AuthoredBean
 	 * Updates the date this profile was updated.
 	 * @param dt the creation date/time
 	 */
-	public void setCreatedOn(Date dt) {
+	public void setCreatedOn(Instant dt) {
 		_createdOn = dt;
 	}
 

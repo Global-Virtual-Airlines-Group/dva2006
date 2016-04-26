@@ -1,8 +1,9 @@
-// Copyright 2005, 2009, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import java.util.*;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
@@ -17,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A helper class for viewing ACARS logs.
  * @author Luke
- * @version 6.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -31,8 +32,8 @@ public abstract class ACARSLogViewCommand extends AbstractViewCommand {
 	protected static LogSearchCriteria getSearchCriteria(CommandContext ctx, Connection con) throws DAOException {
 		
 		// Get the start/end dates
-		Date sd = parseDateTime(ctx, "start", "MM/dd/yyyy", "HH:mm");
-		Date ed = parseDateTime(ctx, "end", "MM/dd/yyyy", "HH:mm");
+		Instant sd = parseDateTime(ctx, "start", "MM/dd/yyyy", "HH:mm");
+		Instant ed = parseDateTime(ctx, "end", "MM/dd/yyyy", "HH:mm");
 
 		// Create the criteria bean
 		LogSearchCriteria result = new LogSearchCriteria(sd, ed);

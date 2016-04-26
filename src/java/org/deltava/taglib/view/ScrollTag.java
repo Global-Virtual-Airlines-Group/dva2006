@@ -1,4 +1,4 @@
-// Copyright 2005, 2010, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2010, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.view;
 
 import java.util.Iterator;
@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
 /**
  * A class to support tag to handle Page Up/Down links at the bottom of a view page.
  * @author Luke
- * @version 6.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -38,7 +38,8 @@ public abstract class ScrollTag extends LinkTag {
      * Updates the URL for this tag. </i>NOT IMPLEMENTED</i>
      * @throws UnsupportedOperationException
      */
-    public final void setUrl(String cmd) {
+    @Override
+	public final void setUrl(String cmd) {
         throw new UnsupportedOperationException();
     }
 
@@ -46,7 +47,8 @@ public abstract class ScrollTag extends LinkTag {
      * Updates the target frame for this tag. </i>NOT IMPLEMENTED</i>
      * @throws UnsupportedOperationException
      */
-    public final void setTarget(String targetFrame) {
+    @Override
+	public final void setTarget(String targetFrame) {
         throw new UnsupportedOperationException();
     }
     

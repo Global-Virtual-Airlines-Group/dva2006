@@ -1,6 +1,7 @@
-// Copyright 2008, 2009, 2010, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2012, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.wsdl;
 
+import java.time.Instant;
 import java.util.*;
 
 import com.flightaware.flightxml.soap.FlightXML2.*;
@@ -12,7 +13,7 @@ import org.deltava.util.*;
 /**
  * Loads route data from FlightAware via SOAP. 
  * @author Luke
- * @version 5.4
+ * @version 7.0
  * @since 2.2
  */
 
@@ -39,7 +40,7 @@ public class GetFARoutes extends FlightAwareDAO {
             	ExternalRoute rt = new ExternalRoute("FlightAware");
             	rt.setAirportD(rp.getAirportD());
             	rt.setAirportA(rp.getAirportA());
-            	rt.setCreatedOn(new Date());
+            	rt.setCreatedOn(Instant.now());
             	rt.setCruiseAltitude((altitude < 1000) ? "FL" + String.valueOf(altitude) : String.valueOf(altitude));
             	rt.setComments("Loaded from FlightAware on " + rt.getCreatedOn());
             	

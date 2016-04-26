@@ -24,6 +24,7 @@ public class TestCustomRequestWrapper extends TestCase {
 			super();
 		}
 		
+		@Override
 		public HttpSession getSession(boolean force) {
 			if (force)
 				_s = super.getSession(true);
@@ -36,12 +37,14 @@ public class TestCustomRequestWrapper extends TestCase {
 		return new CoverageDecorator(TestCustomRequestWrapper.class, new Class[] { CustomRequestWrapper.class } );
    }
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		_req = new HttpServletRequestSimulatorHelper();
 		_wreq = new CustomRequestWrapper(_req);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		_wreq = null;
 		_req = null;

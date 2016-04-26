@@ -17,13 +17,15 @@ public class TestPilotAccessControl extends AccessControlTestCase {
             PilotAccessControl.class });
    }
 
-   protected void setUp() throws Exception {
+   @Override
+protected void setUp() throws Exception {
       super.setUp();
       _p = new Pilot("John", "Smith");
       _ac = new PilotAccessControl(_ctxt, _p);
    }
 
-   protected void tearDown() throws Exception {
+   @Override
+protected void tearDown() throws Exception {
       _ac = null;
       _p = null;
       super.tearDown();

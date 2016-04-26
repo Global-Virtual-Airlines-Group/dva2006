@@ -1,4 +1,4 @@
-// Copyright 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file.innovata;
 
 import java.util.*;
@@ -6,7 +6,7 @@ import java.util.*;
 /**
  * A utility class to parse CSV data.
  * @author Luke
- * @version 2.7
+ * @version 7.0
  * @since 1.0
  */
 
@@ -65,6 +65,7 @@ class CSVTokens implements Comparable<CSVTokens> {
 		return _tkns.size();
 	}
 	
+	@Override
 	public int compareTo(CSVTokens t2) {
 		int tmpResult = _tkns.get(7).compareTo(t2.get(7)); // flight number
 		if (tmpResult == 0)
@@ -77,6 +78,7 @@ class CSVTokens implements Comparable<CSVTokens> {
 		return (tmpResult == 0) ? _tkns.get(1).compareTo(t2.get(1)) : tmpResult; // end date 
 	}
 	
+	@Override
 	public String toString() {
 		StringBuilder buf = new StringBuilder();
 		for (Iterator<String> i = _tkns.iterator(); i.hasNext(); ) {

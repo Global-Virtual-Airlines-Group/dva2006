@@ -11,7 +11,8 @@ public class TestLDAPAuthenticator extends TestCase {
     private LDAPAuthenticator _auth;
     private Person _usr;
     
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
         PropertyConfigurator.configure("data/log4j.test.properties");
         _auth = new LDAPAuthenticator();
@@ -19,7 +20,8 @@ public class TestLDAPAuthenticator extends TestCase {
         _usr = new AuthPerson("Luke", "Kolin", "cn=Luke Kolin,ou=dva,o=sce");
     }
 
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         _auth = null;
         _usr = null;
         super.tearDown();

@@ -1,4 +1,4 @@
-// Copyright 2012, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2013, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.*;
@@ -13,7 +13,7 @@ import org.deltava.util.tile.*;
 /**
  * A servlet to display Quad-tree tiles.
  * @author Luke
- * @version 6.0
+ * @version 7.0
  * @since 5.0
  */
 
@@ -50,10 +50,12 @@ abstract class TileServlet extends GenericServlet {
 			return _dt;
 		}
 		
+		@Override
 		public int hashCode() {
 			return toString().hashCode();
 		}
 		
+		@Override
 		public String toString() {
 			StringBuilder buf = new StringBuilder(_name).append(':');
 			buf.append((_dt == null) ? 0 : _dt.getTime() / 1000).append(':');

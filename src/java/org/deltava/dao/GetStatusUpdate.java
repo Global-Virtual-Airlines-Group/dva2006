@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.StatusUpdate;
 /**
  * A Data Access Object to read Status Update log entries.
  * @author Luke
- * @version 4.1
+ * @version 7.0
  * @since 1.0
  */
 
@@ -111,7 +111,7 @@ public class GetStatusUpdate extends DAO {
 		}
 	}
 
-	/**
+	/*
 	 * Private helper method to load data from the table.
 	 */
 	private List<StatusUpdate> execute() throws SQLException {
@@ -119,7 +119,7 @@ public class GetStatusUpdate extends DAO {
 		try (ResultSet rs = _ps.executeQuery()) {
 			while (rs.next()) {
 				StatusUpdate upd = new StatusUpdate(rs.getInt(1), rs.getInt(4));
-				upd.setCreatedOn(rs.getTimestamp(2));
+				upd.setCreatedOn(rs.getTimestamp(2).toInstant());
 				upd.setAuthorID(rs.getInt(3));
 				upd.setDescription(rs.getString(5));
 				results.add(upd);

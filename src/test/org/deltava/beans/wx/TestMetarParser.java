@@ -10,6 +10,7 @@ import org.deltava.beans.flight.ILSCategory;
 
 import junit.framework.TestCase;
 
+@SuppressWarnings("static-method")
 public class TestMetarParser extends TestCase {
 	
 	private Logger log;
@@ -17,6 +18,7 @@ public class TestMetarParser extends TestCase {
 	private final DateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm");
 	private LineNumberReader lr;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		PropertyConfigurator.configure("data/log4j.test.properties");
@@ -29,6 +31,7 @@ public class TestMetarParser extends TestCase {
 		assertNotNull(lr);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		log.info("Processed to Line #" + lr.getLineNumber());
 		lr.close();

@@ -1,18 +1,18 @@
-// Copyright 2004, 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
-import java.util.Date;
+import java.time.Instant;
 
 /**
  * A class for storing System News entries.
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
 public class News extends DatabaseBean implements AuthoredBean {
 
-    private Date _date;
+    private Instant _date = Instant.now();
     private String _subject;
     private String _body;
 
@@ -28,7 +28,6 @@ public class News extends DatabaseBean implements AuthoredBean {
      */
     public News(String sbj, String aN, String body) {
         super();
-        _date = new Date();
         setSubject(sbj);
         setBody(body);
         _author = aN;
@@ -38,7 +37,7 @@ public class News extends DatabaseBean implements AuthoredBean {
      * Return the date/entry this entry was created
      * @return The date/time this System News entry was created
      */
-    public Date getDate() {
+    public Instant getDate() {
         return _date;
     }
 
@@ -59,12 +58,7 @@ public class News extends DatabaseBean implements AuthoredBean {
         return _author;
     }
 
-    /**
-     * Return the database row ID of this entry's author. <i>This typically will only be called by a DAO </i>
-     * @return The primary key of the entry in the <b>PILOTS </b> table in the database that corresponds to
-     * this System News entry's author.
-     * @see News#setAuthorID(int)
-     */
+    @Override
     public int getAuthorID() {
         return _authorID;
     }
@@ -82,18 +76,13 @@ public class News extends DatabaseBean implements AuthoredBean {
      * Compare two System News entries by comparing their date.
      * @see Comparable#compareTo(Object)
      */
+    @Override
     public int compareTo(Object o2) {
         News n2 = (News) o2;
         return (_date.compareTo(n2.getDate()) * -1);
     }
 
-    /**
-     * Update the database row ID of this entry's author. <i>This typically will only be called by a DAO </i>
-     * @param id The primary key of the entry in the <b>PILOTS </b> table in the database that corresponds to
-     * this System News entry's author.
-     * @throws IllegalArgumentException if the database ID is zero or negative
-     * @see News#getAuthorID()
-     */
+    @Override
     public void setAuthorID(int id) {
        validateID(_authorID, id);
         _authorID = id;
@@ -104,7 +93,7 @@ public class News extends DatabaseBean implements AuthoredBean {
      * @param d The new date/time for this System News entry
      * @see News#getDate()
      */
-    public void setDate(Date d) {
+    public void setDate(Instant d) {
         _date = d;
     }
     

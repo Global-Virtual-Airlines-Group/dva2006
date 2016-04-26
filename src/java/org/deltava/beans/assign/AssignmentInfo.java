@@ -1,7 +1,8 @@
-// Copyright 2004, 2005, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2008, 2009, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.assign;
 
 import java.util.*;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 import org.deltava.beans.flight.*;
@@ -9,7 +10,7 @@ import org.deltava.beans.flight.*;
 /**
  * A class to store Flight Assignments.
  * @author Luke
- * @version 3.1
+ * @version 7.0
  * @since 1.0
  */
 
@@ -24,13 +25,13 @@ public class AssignmentInfo extends DatabaseBean implements ViewEntry {
      */
     public static final String[] STATUS = {"Available", "Assigned", "Complete"};
 
-    private String _eqType;
+    private final String _eqType;
     private int _pilotID;
     private int _eventID;
     private int _status;
     
-    private Date _assignedOn;
-    private Date _completedOn;
+    private Instant _assignedOn;
+    private Instant _completedOn;
     
     private boolean _random;
     private boolean _repeating;
@@ -107,18 +108,18 @@ public class AssignmentInfo extends DatabaseBean implements ViewEntry {
     /**
      * Returns the date/time this Assignment was assigned to the Pilot.
      * @return the date/time assignment was made
-     * @see AssignmentInfo#setAssignDate(Date)
+     * @see AssignmentInfo#setAssignDate(Instant)
      */
-    public Date getAssignDate() {
+    public Instant getAssignDate() {
         return _assignedOn;
     }
     
     /**
      * Returns the date/time this Assignment was completed by the Pilot.
      * @return the date/time assignment was completed
-     * @see AssignmentInfo#setCompletionDate(Date)
+     * @see AssignmentInfo#setCompletionDate(Instant)
      */
-    public Date getCompletionDate() {
+    public Instant getCompletionDate() {
         return _completedOn;
     }
     
@@ -284,7 +285,7 @@ public class AssignmentInfo extends DatabaseBean implements ViewEntry {
      * @param dt the date/time this Assignment was assigned
      * @see AssignmentInfo#getAssignDate()
      */
-    public void setAssignDate(Date dt) {
+    public void setAssignDate(Instant dt) {
         _assignedOn = dt;
     }
     
@@ -293,7 +294,7 @@ public class AssignmentInfo extends DatabaseBean implements ViewEntry {
      * @param dt the date/time this Assignment was completed
      * @see AssignmentInfo#getCompletionDate()
      */
-    public void setCompletionDate(Date dt) {
+    public void setCompletionDate(Instant dt) {
         _completedOn = dt;
     }
     
@@ -301,6 +302,7 @@ public class AssignmentInfo extends DatabaseBean implements ViewEntry {
      * Returns the CSS class name for this assignment when displayed in a view.
      * @return the CSS class name
      */
+    @Override
     public String getRowClassName() {
     	final String[] ROW_CLASSES = {null, "opt2", "opt3"};
     	return ROW_CLASSES[_status];

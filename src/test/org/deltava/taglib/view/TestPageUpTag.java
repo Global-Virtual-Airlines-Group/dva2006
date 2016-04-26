@@ -6,14 +6,16 @@ public class TestPageUpTag extends AbstractScrollTagTestCase {
 
     private PageUpTag _tag;
     
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
         _tag = new PageUpTag();
         _tag.setPageContext(_ctx);
         _tag.setParent(_tableTag);
     }
 
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         _tag = null;
         super.tearDown();
     }

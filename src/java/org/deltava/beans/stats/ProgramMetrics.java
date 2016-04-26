@@ -1,26 +1,27 @@
-// Copyright 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import java.util.*;
+import java.time.*;
+import java.time.temporal.ChronoUnit;
 
 import org.deltava.beans.*;
 
-import org.deltava.util.CalendarUtils;
 import org.deltava.util.cache.Cacheable;
 
 /**
  * A bean to store equipment program-specific statistics.
  * @author Luke
- * @version 3.3
+ * @version 7.0
  * @since 2.1
  */
 
 public class ProgramMetrics implements Cacheable, Comparable<ProgramMetrics> {
 
-	private EquipmentType _eq;
+	private final EquipmentType _eq;
 	
 	private final Map<Rank, Integer> _rankCounts = new TreeMap<Rank, Integer>();
-	private final Map<Date, Integer> _hireCounts = new LinkedHashMap<Date, Integer>();
+	private final Map<Instant, Integer> _hireCounts = new LinkedHashMap<Instant, Integer>();
 	private final Map<String, Integer> _statusCounts = new TreeMap<String, Integer>();
 	
 	private int _size;
@@ -71,21 +72,20 @@ public class ProgramMetrics implements Cacheable, Comparable<ProgramMetrics> {
 			_rankCounts.put(rank, Integer.valueOf(1));
 	}
 	
-	/**
+	/*
 	 * Helper method to increment hire date count.
 	 */
-	private void addHireDate(Date dt) {
-		Calendar cld = CalendarUtils.getInstance(dt, true);
-		cld.set(Calendar.DAY_OF_MONTH, 1);
-		Integer cnt = _hireCounts.get(cld.getTime());
+	private void addHireDate(Instant dt) {
+		Instant i = ZonedDateTime.ofInstant(dt, ZoneOffset.UTC).truncatedTo(ChronoUnit.MONTHS).toInstant();
+		Integer cnt = _hireCounts.get(i);
 		if (cnt != null) {
-			_hireCounts.put(cld.getTime(), Integer.valueOf(cnt.intValue() + 1));
+			_hireCounts.put(i, Integer.valueOf(cnt.intValue() + 1));
 			_maxHireCount = Math.max(_maxHireCount, cnt.intValue() + 1);
 		} else
-			_hireCounts.put(cld.getTime(), Integer.valueOf(1));
+			_hireCounts.put(i, Integer.valueOf(1));
 	}
 	
-	/**
+	/*
 	 * Helper method to increment status count.
 	 */
 	private void addStatus(String status) {
@@ -113,7 +113,7 @@ public class ProgramMetrics implements Cacheable, Comparable<ProgramMetrics> {
 		return _maxRankCount;
 	}
 	
-	public Map<Date, Integer> getHireCounts() {
+	public Map<Instant, Integer> getHireCounts() {
 		return _hireCounts;
 	}
 	
@@ -129,14 +129,17 @@ public class ProgramMetrics implements Cacheable, Comparable<ProgramMetrics> {
 		return _maxStatusCount;
 	}
 	
+	@Override
 	public int hashCode() {
 		return _eq.hashCode();
 	}
 	
+	@Override
 	public String toString() {
 		return _eq.getName();
 	}
 	
+	@Override
 	public Object cacheKey() {
 		return _eq.getName();
 	}
@@ -144,6 +147,7 @@ public class ProgramMetrics implements Cacheable, Comparable<ProgramMetrics> {
 	/**
 	 * Compares two beans by comparing their equipment program beans.
 	 */
+	@Override
 	public int compareTo(ProgramMetrics pm2) {
 		return _eq.compareTo(pm2._eq);
 	}

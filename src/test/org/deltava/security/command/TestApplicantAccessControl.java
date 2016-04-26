@@ -16,13 +16,15 @@ public class TestApplicantAccessControl extends AccessControlTestCase {
             new Class[] { AccessControl.class, ApplicantAccessControl.class } );
   }
 
-   protected void setUp() throws Exception {
+   @Override
+protected void setUp() throws Exception {
       super.setUp();
       _a = new Applicant("Test", "User");
       _ac = new ApplicantAccessControl(_ctxt, _a);
    }
 
-   protected void tearDown() throws Exception {
+   @Override
+protected void tearDown() throws Exception {
       _a = null;
       _ac = null;
       super.tearDown();

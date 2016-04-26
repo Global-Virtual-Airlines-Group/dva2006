@@ -1,7 +1,10 @@
-// Copyright 2004, 2005, 2006, 2010, 2011, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2010, 2011, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.zone.ZoneRules;
 import java.util.*;
 
 import org.deltava.beans.*;
@@ -9,7 +12,7 @@ import org.deltava.beans.*;
 /**
  * A Data Access Object for loading Time Zones.
  * @author Luke
- * @version 6.2
+ * @version 7.0
  * @since 1.0
  */
 
@@ -55,12 +58,12 @@ public class GetTimeZone extends DAO {
     public TZInfo locate(GeoLocation loc) throws DAOException {
     	String pt = formatLocation(loc); 
     	try {
-    		TimeZone tz = null;
+    		ZoneId tz = null;
     		prepareStatementWithoutLimits("SELECT NAME FROM geoip.TZ WHERE ST_Contains(DATA, ST_PointFromText(?,?))");
     		_ps.setString(1, pt);
     		_ps.setInt(2, GEO_SRID);
     		try (ResultSet rs = _ps.executeQuery()) {
-    			if (rs.next()) tz = TimeZone.getTimeZone(rs.getString(1));
+    			if (rs.next()) tz = ZoneId.of(rs.getString(1));
     		}
     		
     		if (tz == null) {
@@ -68,20 +71,26 @@ public class GetTimeZone extends DAO {
     			_ps.setString(1, pt);
         		_ps.setInt(2, GEO_SRID);
         		try (ResultSet rs = _ps.executeQuery()) {
-        			if (rs.next()) tz = TimeZone.getTimeZone(rs.getString(1));
+        			if (rs.next()) tz = ZoneId.of(rs.getString(1));
         		}
     		}
     		
     		if (tz == null)
     			return null;
     		
+    		// Get zone info
+    		Instant now = Instant.now();
+    		boolean hasDST = (tz.getRules().nextTransition(now) != null);
+    		
     		// Converrt into our time zone
     		Collection<TZInfo> allTZ = TZInfo.getAll();
     		for (TZInfo zoneInfo : allTZ) {
-    			TimeZone zi = zoneInfo.getTimeZone();
-    			if (zi.getID().equals(tz.getID()) || zi.hasSameRules(tz))
+    			ZoneId zi = zoneInfo.getZone();
+    			if (zi.getId().equals(tz.getId()) || zi.getRules().equals(tz.getRules()))
     				return zoneInfo;
-    			else if ((zi.getRawOffset() == tz.getRawOffset()) && (zi.observesDaylightTime() == tz.observesDaylightTime()))
+    			
+    			ZoneRules zr = zi.getRules();
+    			if ((zr.getOffset(now) == tz.getRules().getOffset(now)) && (hasDST == (zr.nextTransition(now) != null)))
     				return zoneInfo;
     		}
     		

@@ -1,9 +1,10 @@
-// Copyright 2006, 2007, 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2010, 2011, 2012, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.help;
 
 import java.util.*;
 import java.util.stream.Collectors;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.deltava.beans.Pilot;
 import org.deltava.beans.help.*;
@@ -21,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Help Desk Issues.
  * @author Luke
- * @version 5.4
+ * @version 7.0
  * @since 1.0
  */
 
@@ -66,7 +67,7 @@ public class IssueCommand extends AbstractFormCommand {
 				i.setSubject(ctx.getParameter("subject"));
 				i.setStatus(ctx.getParameter("status"));
 				if ((i.getStatus() != Issue.OPEN) && (i.getResolvedOn() == null))
-					i.setResolvedOn(new Date());
+					i.setResolvedOn(Instant.now());
 				else if ((i.getStatus() == Issue.OPEN) && (i.getResolvedOn() != null))
 					i.setResolvedOn(null);
 			} else {
@@ -79,7 +80,7 @@ public class IssueCommand extends AbstractFormCommand {
 				// Build the issue
 				i = new Issue(ctx.getParameter("subject"));
 				i.setAuthorID(ctx.getUser().getID());
-				i.setCreatedOn(new Date());
+				i.setCreatedOn(Instant.now());
 				i.setStatus(Issue.OPEN);
 				
 				// Set default assignee

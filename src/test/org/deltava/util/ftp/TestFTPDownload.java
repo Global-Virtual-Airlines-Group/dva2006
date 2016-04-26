@@ -9,12 +9,14 @@ import com.enterprisedt.net.ftp.*;
 
 public class TestFTPDownload extends TestCase {
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		PropertyConfigurator.configure("data/log4j.test.properties");
 		SystemData.init("org.deltava.util.system.XMLSystemDataLoader", true);
 	}
 
+	@SuppressWarnings("static-method")
 	public void testDownload() throws Exception {
 		assertNotNull(SystemData.get("schedule.innovata.download.host"));
 		assertNotNull(SystemData.get("schedule.innovata.download.user"));

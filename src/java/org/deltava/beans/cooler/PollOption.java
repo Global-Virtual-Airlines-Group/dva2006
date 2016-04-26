@@ -1,4 +1,4 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.cooler;
 
 import org.deltava.beans.*;
@@ -8,7 +8,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store Water Cooler poll options.
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -43,10 +43,12 @@ public class PollOption extends DatabaseBean implements ComboAlias {
 		return _votes;
 	}
 	
+	@Override
 	public String getComboName() {
 		return _name;
 	}
 	
+	@Override
 	public String getComboAlias() {
 		return StringUtils.formatHex(_optID);
 	}
@@ -69,16 +71,19 @@ public class PollOption extends DatabaseBean implements ComboAlias {
 		_votes = voteCount;
 	}
 	
+	@Override
 	public int compareTo(Object o2) {
 		PollOption po2 = (PollOption) o2;
 		int tmpResult = Integer.valueOf(getID()).compareTo(Integer.valueOf(po2.getID()));
 		return (tmpResult == 0) ? Integer.valueOf(_optID).compareTo(Integer.valueOf(po2._optID)) : tmpResult;
 	}
 	
+	@Override
 	public int hashCode() {
 		return _name.hashCode();
 	}
 	
+	@Override
 	public String toString() {
 		return _name;
 	}

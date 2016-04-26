@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.sql.Connection;
@@ -17,7 +17,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to update Check Ride scripts.
  * @author Luke
- * @version 3.4
+ * @version 7.0
  * @since 1.0
  */
 
@@ -28,6 +28,7 @@ public class CheckRideScriptCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	protected void execSave(CommandContext ctx) throws CommandException {
 		
 		// Get the equipment type
@@ -82,6 +83,7 @@ public class CheckRideScriptCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	protected void execEdit(CommandContext ctx) throws CommandException {
 
 		String id = (String) ctx.getCmdParameter(ID, null);
@@ -148,6 +150,7 @@ public class CheckRideScriptCommand extends AbstractFormCommand {
 	 * Callback method called when reading the script.
 	 * @param ctx the Command context
 	 */
+	@Override
 	protected void execRead(CommandContext ctx) throws CommandException {
 		execEdit(ctx);
 	}

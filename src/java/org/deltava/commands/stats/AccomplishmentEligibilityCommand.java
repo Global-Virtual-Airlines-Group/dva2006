@@ -3,6 +3,7 @@ package org.deltava.commands.stats;
 
 import java.util.*;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
@@ -15,7 +16,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to check eligibility for particular Accomplishments.
  * @author Luke
- * @version 6.4
+ * @version 7.0
  * @since 3.2
  */
 
@@ -111,7 +112,7 @@ public class AccomplishmentEligibilityCommand extends AbstractCommand {
 			Map<AccomplishUnit, Accomplishment> accFilter = new HashMap<AccomplishUnit, Accomplishment>();
 			Map<Accomplishment, EligibilityMessage> accData = new LinkedHashMap<Accomplishment, EligibilityMessage>();
 			for (Accomplishment a : accs) {
-				Date dt = helper.achieved(a);
+				Instant dt = helper.achieved(a);
 				if (dt == null) {
 					Collection<?> missing = helper.missing(a);	
 					long progress = helper.getProgress(a);

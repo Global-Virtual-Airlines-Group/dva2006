@@ -1,6 +1,7 @@
-// Copyright 2005, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
+import java.time.*;
 import java.util.*;
 import java.sql.Connection;
 
@@ -17,21 +18,21 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display aircraft SELCAL codes.
  * @author Luke
- * @version 2.1
+ * @version 7.0
  * @since 1.0
  */
 
 public class SELCALCodeCommand extends AbstractViewCommand {
 	
 	private static final String[] SORT_CODES = {"SC.CODE", "SC.EQTYPE", "SC.AIRCRAFT", "PNAME DESC", "RESERVED"}; 
-	private static final List<?> SORT_OPTIONS = ComboUtils.fromArray(new String[] {"SELCAL Code", "Equipment Type",
-			"Registration Code", "Pilot Name", "My Reserved Codes"}, SORT_CODES);
+	private static final List<?> SORT_OPTIONS = ComboUtils.fromArray(new String[] {"SELCAL Code", "Equipment Type", "Registration Code", "Pilot Name", "My Reserved Codes"}, SORT_CODES);
 
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the view context
@@ -69,12 +70,11 @@ public class SELCALCodeCommand extends AbstractViewCommand {
 			
 			// Get the release dates
 			int releaseDays = SystemData.getInt("users.selcal.reserve", 10);
-			Map<String, Date> releaseDates = new HashMap<String, Date>();
+			Map<String, Instant> releaseDates = new HashMap<String, Instant>();
 			
 			// Calculate the access control
 			Map<String, SELCALAccessControl> access = new HashMap<String, SELCALAccessControl>();
-			for (Iterator<SelectCall> i = codes.iterator(); i.hasNext(); ) {
-				SelectCall sc = i.next();
+			for (SelectCall sc : codes) {
 				SELCALAccessControl ac = new SELCALAccessControl(ctx, sc);
 				if (usrCodes >= maxCodes)
 					ac.markUnavailable();
@@ -84,7 +84,7 @@ public class SELCALCodeCommand extends AbstractViewCommand {
 				
 				// Get the release dates
 				if (sc.getReservedOn() != null)
-					releaseDates.put(sc.getCode(), CalendarUtils.adjust(sc.getReservedOn(), releaseDays));
+					releaseDates.put(sc.getCode(), ZonedDateTime.ofInstant(sc.getReservedOn(),  ZoneOffset.UTC).plusDays(releaseDays).toInstant());
 			}
 			
 			// Save the access control map

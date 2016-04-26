@@ -1,8 +1,9 @@
-// Copyright 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012,2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
+import java.time.Instant;
 
 import org.deltava.beans.Flight;
 import org.deltava.beans.Simulator;
@@ -14,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object for reading XACARS data from the database.
  * @author Luke
- * @version 5.1
+ * @version 7.0
  * @since 4.1
  */
 
@@ -108,7 +109,7 @@ public class GetXACARS extends DAO {
 			Collection<XARouteEntry> results = new ArrayList<XARouteEntry>();
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
-					java.util.Date dt = new java.util.Date(rs.getTimestamp(2).getTime() + rs.getInt(3));
+					Instant dt = Instant.ofEpochMilli(rs.getTimestamp(2).getTime() + rs.getInt(3));
 					XARouteEntry pos = new XARouteEntry(new GeoPosition(rs.getDouble(4), rs.getDouble(5), rs.getInt(6)), dt);
 					pos.setFlightID(rs.getInt(1));
 					pos.setHeading(rs.getInt(7));
@@ -131,7 +132,7 @@ public class GetXACARS extends DAO {
 		}
 	}
 	
-	/**
+	/*
 	 * Helper method to parse Flight Info result sets.
 	 */
 	private List<XAFlightInfo> execute() throws SQLException {
@@ -146,11 +147,11 @@ public class GetXACARS extends DAO {
 				inf.setAirportA(SystemData.getAirport(rs.getString(6)));
 				inf.setAirportL(SystemData.getAirport(rs.getString(7)));
 				inf.setEquipmentType(rs.getString(8));
-				inf.setStartTime(rs.getTimestamp(9));
-				inf.setTaxiTime(rs.getTimestamp(10));
+				inf.setStartTime(toInstant(rs.getTimestamp(9)));
+				inf.setTaxiTime(toInstant(rs.getTimestamp(10)));
 				inf.setTaxiWeight(rs.getInt(11));
 				inf.setTaxiFuel(rs.getInt(12));
-				inf.setTakeoffTime(rs.getTimestamp(13));
+				inf.setTakeoffTime(toInstant(rs.getTimestamp(13)));
 				inf.setTakeoffDistance(rs.getInt(14));
 				inf.setTakeoffSpeed(rs.getInt(15));
 				inf.setTakeoffN1(rs.getDouble(16));
@@ -158,7 +159,7 @@ public class GetXACARS extends DAO {
 				inf.setTakeoffLocation(new GeoPosition(rs.getDouble(18), rs.getDouble(19), rs.getInt(20)));
 				inf.setTakeoffWeight(rs.getInt(21));
 				inf.setTakeoffFuel(rs.getInt(22));
-				inf.setLandingTime(rs.getTimestamp(23));
+				inf.setLandingTime(toInstant(rs.getTimestamp(23)));
 				inf.setLandingDistance(rs.getInt(24));
 				inf.setLandingSpeed(rs.getInt(25));
 				inf.setLandingN1(rs.getDouble(26));
@@ -166,7 +167,7 @@ public class GetXACARS extends DAO {
 				inf.setLandingLocation(new GeoPosition(rs.getDouble(28), rs.getDouble(29), rs.getInt(30)));
 				inf.setLandingWeight(rs.getInt(31));
 				inf.setLandingFuel(rs.getInt(32));
-				inf.setEndTime(rs.getTimestamp(33));
+				inf.setEndTime(toInstant(rs.getTimestamp(33)));
 				inf.setPhase(FlightPhase.values()[rs.getInt(34)]);
 				inf.setClimbPhase(XAFlightInfo.ClimbPhase.values()[rs.getInt(35)]);
 				inf.setZeroFuelWeight(rs.getInt(36));

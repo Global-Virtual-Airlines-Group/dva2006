@@ -1,9 +1,10 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.servinfo;
 
 import java.io.*;
 import java.util.*;
 import java.sql.Connection;
+import java.time.Instant;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
@@ -24,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to download ServInfo route data for Google Maps.
  * @author Luke
- * @version 5.4
+ * @version 7.0
  * @since 1.0
  */
 
@@ -70,7 +71,7 @@ public class MapRouteService extends WebService {
 			// Load the online track
 			if (p.getPilotID() != 0) {
 				GetOnlineTrack otdao = new GetOnlineTrack(con);
-				int trackID = otdao.getTrackID(p.getPilotID(), net, new Date(), p.getAirportD(), p.getAirportA());
+				int trackID = otdao.getTrackID(p.getPilotID(), net, Instant.now(), p.getAirportD(), p.getAirportA());
 				if (trackID != 0)
 					trackInfo.addAll(otdao.getRaw(trackID));
 			}

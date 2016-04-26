@@ -1,4 +1,4 @@
-// Copyright 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -8,7 +8,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store mappings of IATA aircraft codes.
  * @author Luke
- * @version 5.1
+ * @version 7.0
  * @since 5.1
  */
 
@@ -33,6 +33,7 @@ public class IATACodes extends LinkedHashMap<String, Integer> implements Cacheab
 		return _eqType;
 	}
 	
+	@Override
 	public String toString() {
 		StringBuilder buf = new StringBuilder(_eqType);
 		buf.append(' ');
@@ -40,14 +41,17 @@ public class IATACodes extends LinkedHashMap<String, Integer> implements Cacheab
 		return buf.toString();
 	}
 	
+	@Override
 	public Object cacheKey() {
 		return _eqType;
 	}
 	
+	@Override
 	public int hashCode() {
 		return _eqType.hashCode();
 	}
 	
+	@Override
 	public int compareTo(IATACodes c2) {
 		return _eqType.compareTo(c2._eqType);
 	}

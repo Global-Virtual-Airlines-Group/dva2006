@@ -2,6 +2,7 @@
 package org.deltava.beans.flight;
 
 import java.util.*;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.Airline;
@@ -142,9 +143,9 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 	 */
 	public static final int MIN_ACARS_CLIENT = 61;
 
-	private Date _date;
-	private Date _submittedOn;
-	private Date _disposedOn;
+	private Instant _date;
+	private Instant _submittedOn;
+	private Instant _disposedOn;
 	private int _length;
 	private int _status = FlightReport.DRAFT;
 	private Simulator _fsVersion = Simulator.UNKNOWN;
@@ -249,28 +250,28 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 	/**
 	 * Returns the date this flight was flown.
 	 * @return the date of this flight; the time component is undefined
-	 * @see FlightReport#setDate(Date)
+	 * @see FlightReport#setDate(Instant)
 	 */
 	@Override
-	public Date getDate() {
+	public Instant getDate() {
 		return _date;
 	}
 
 	/**
 	 * The date/time this Flight Report was submitted for approval.
 	 * @return the submission date/time of this PIREP, null if never submitted.
-	 * @see FlightReport#setSubmittedOn(Date)
+	 * @see FlightReport#setSubmittedOn(Instant)
 	 */
-	public Date getSubmittedOn() {
+	public Instant getSubmittedOn() {
 		return _submittedOn;
 	}
 
 	/**
 	 * The date/time this Flight Report was disposed on. (approved or rejected)
 	 * @return the approval/rejected date/time of this PIREP, null if not disposed of
-	 * @see FlightReport#setDisposedOn(Date)
+	 * @see FlightReport#setDisposedOn(Instant)
 	 */
-	public Date getDisposedOn() {
+	public Instant getDisposedOn() {
 		return _disposedOn;
 	}
 
@@ -466,9 +467,9 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 	 */
 	public void setLength(int length) {
 		if ((length < 0) || (length > 195))
-			length = 195;
-
-		_length = length;
+			_length = 195;
+		else
+			_length = length;
 	}
 
 	/**
@@ -538,7 +539,7 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 	 * @param dt when this flight was flown. The time component is undefined.
 	 * @see FlightReport#getDate()
 	 */
-	public void setDate(Date dt) {
+	public void setDate(Instant dt) {
 		_date = dt;
 	}
 
@@ -547,7 +548,7 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 	 * @param sd this Flight Report was submitted for approval.
 	 * @see FlightReport#getSubmittedOn()
 	 */
-	public void setSubmittedOn(Date sd) {
+	public void setSubmittedOn(Instant sd) {
 		_submittedOn = sd;
 	}
 
@@ -556,7 +557,7 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 	 * @param dd when this Flight Report was approved or rejected.
 	 * @see FlightReport#getDisposedOn()
 	 */
-	public void setDisposedOn(Date dd) {
+	public void setDisposedOn(Instant dd) {
 		_disposedOn = dd;
 	}
 	

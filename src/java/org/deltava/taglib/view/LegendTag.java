@@ -1,4 +1,4 @@
-// Copyright 2005, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.view;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import javax.servlet.jsp.tagext.TagSupport;
  * A JSP Tag to display view row color legends. These are rendered as a single row HTML table, and the class
  * names used for each row entry are used to set the background colors for each legend entry.
  * @author Luke
- * @version 6.2
+ * @version 7.0
  * @since 1.0
  */
 
@@ -64,6 +64,7 @@ public class LegendTag extends TagSupport {
 	/**
 	 * Resets the tag's state variables. 
 	 */
+	@Override
 	public void release() {
 		super.release();
 		_textClass = null;
@@ -77,6 +78,7 @@ public class LegendTag extends TagSupport {
 	 * @return TagSupport.SKIP_BODY
 	 * @throws JspException if an I/O error occurs, or the number of classNames != the number of labels
 	 */
+	@Override
 	public int doStartTag() throws JspException {
 		
 		// Validate that classNames and labels sizes are the same

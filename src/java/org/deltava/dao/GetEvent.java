@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Online Event data.
  * @author Luke
- * @version 5.3
+ * @version 7.0
  * @since 1.0
  */
 
@@ -93,7 +93,7 @@ public class GetEvent extends DAO {
 	 * @return the Online Event database ID, or zero if none found
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public int getPossibleEvent(RoutePair fr, OnlineNetwork net, java.util.Date dt) throws DAOException {
+	public int getPossibleEvent(RoutePair fr, OnlineNetwork net, java.time.Instant dt) throws DAOException {
 		if (net == null) return 0;
 		try {
 			prepareStatementWithoutLimits("SELECT E.ID FROM events.EVENTS E, events.EVENT_AIRPORTS EA, events.AIRLINES EAL "
@@ -286,7 +286,7 @@ public class GetEvent extends DAO {
 		_ps.close();
 	}
 
-	/**
+	/*
 	 * Helper method to load events.
 	 */
 	private List<Event> execute() throws SQLException {
@@ -298,9 +298,9 @@ public class GetEvent extends DAO {
 				e.setID(rs.getInt(1));
 				e.setStatus(Status.values()[rs.getInt(3)]);
 				e.setNetwork(OnlineNetwork.values()[rs.getInt(4)]);
-				e.setStartTime(rs.getTimestamp(5));
-				e.setEndTime(rs.getTimestamp(6));
-				e.setSignupDeadline(rs.getTimestamp(7));
+				e.setStartTime(rs.getTimestamp(5).toInstant());
+				e.setEndTime(toInstant(rs.getTimestamp(6)));
+				e.setSignupDeadline(toInstant(rs.getTimestamp(7)));
 				e.setBriefing(rs.getString(8));
 				e.setCanSignup(rs.getBoolean(9));
 				e.setSignupURL(rs.getString(10));
@@ -316,7 +316,7 @@ public class GetEvent extends DAO {
 		return results;
 	}
 
-	/**
+	/*
 	 * Helper method to load signups for an event.
 	 */
 	private void loadSignups(Map<Integer, Event> events) throws SQLException {

@@ -2,6 +2,7 @@
 package org.deltava.beans.flight;
 
 import java.util.*;
+import java.time.*;
 
 import org.deltava.beans.GeospaceLocation;
 import org.deltava.beans.schedule.*;
@@ -15,7 +16,7 @@ import org.deltava.beans.schedule.*;
 
 public abstract class FDRFlightReport extends FlightReport {
 	
-	private final Map<StateChange, Date> _stateChangeTimes = new HashMap<StateChange, Date>();
+	private final Map<StateChange, Instant> _stateChangeTimes = new HashMap<StateChange, Instant>();
 	
     private int _taxiWeight;
     private int _taxiFuel;
@@ -58,18 +59,18 @@ public abstract class FDRFlightReport extends FlightReport {
     /**
      * Returns the start time of this flight.
      * @return the start date/time
-     * @see FDRFlightReport#setStartTime(Date)
+     * @see FDRFlightReport#setStartTime(Instant)
      */
-    public Date getStartTime() {
+    public Instant getStartTime() {
         return _stateChangeTimes.get(StateChange.START);
     }
     
     /**
      * Returns the date/time of pushback.
      * @return the date/time the aircraft was pushed back
-     * @see FDRFlightReport#setTaxiTime(Date)
+     * @see FDRFlightReport#setTaxiTime(Instant)
      */
-    public Date getTaxiTime() {
+    public Instant getTaxiTime() {
         return _stateChangeTimes.get(StateChange.TAXI_OUT);
     }
     
@@ -94,9 +95,9 @@ public abstract class FDRFlightReport extends FlightReport {
     /**
      * Returns the date/time of takeoff.
      * @return the date/time the aircraft left the ground
-     * @see FDRFlightReport#setTakeoffTime(Date)
+     * @see FDRFlightReport#setTakeoffTime(Instant)
      */
-    public Date getTakeoffTime() {
+    public Instant getTakeoffTime() {
         return _stateChangeTimes.get(StateChange.TAKEOFF);
     }
     
@@ -169,9 +170,9 @@ public abstract class FDRFlightReport extends FlightReport {
     /**
      * Returns the date/time that the aircraft touched down.
      * @return the date/time of touchdown
-     * @see FDRFlightReport#setLandingTime(Date)
+     * @see FDRFlightReport#setLandingTime(Instant)
      */
-    public Date getLandingTime() {
+    public Instant getLandingTime() {
         return _stateChangeTimes.get(StateChange.LAND);
     }
     
@@ -254,7 +255,7 @@ public abstract class FDRFlightReport extends FlightReport {
      * Returns the end date/time of the flight.
      * @return the date/time the flight ended at the gate
      */
-    public Date getEndTime() {
+    public Instant getEndTime() {
         return _stateChangeTimes.get(StateChange.END);
     }
 
@@ -287,32 +288,24 @@ public abstract class FDRFlightReport extends FlightReport {
 
     /**
      * Returns the time that the aircraft was airborne for this flight.
-     * @return the time the aircraft was airborne, in milliseconds
+     * @return the Duration the aircraft was airborne
      * @throws IllegalStateException if either the landing or takeoff time are not set
-     * @see FDRFlightReport#setTakeoffTime(Date)
-     * @see FDRFlightReport#setLandingTime(Date)
+     * @see FDRFlightReport#setTakeoffTime(Instant)
+     * @see FDRFlightReport#setLandingTime(Instant)
      */
-    public Date getAirborneTime() {
-        try {
-            return new Date(getLandingTime().getTime() - getTakeoffTime().getTime()); 
-        } catch (NullPointerException npe) {
-            throw new IllegalStateException("Landing or Takeoff time not set");
-        }
+    public Duration getAirborneTime() {
+       	return Duration.between(getTakeoffTime(), getLandingTime());
     }
     
     /**
      * Returns the total time of the flight.
-     * @return the total time, in milliseconds
+     * @return the total Duration
      * @throws IllegalStateException if either the start or end time are not set
-     * @see FDRFlightReport#setStartTime(Date)
-     * @see FDRFlightReport#setEndTime(Date)
+     * @see FDRFlightReport#setStartTime(Instant)
+     * @see FDRFlightReport#setEndTime(Instant)
      */
-    public Date getBlockTime() {
-        try {
-            return new Date(getEndTime().getTime() - getStartTime().getTime()); 
-        } catch (NullPointerException npe) {
-            throw new IllegalStateException("End or Start time not set");
-        }
+    public Duration getBlockTime() {
+       	return Duration.between(getStartTime(), getEndTime());
     }
 
     /**
@@ -326,7 +319,7 @@ public abstract class FDRFlightReport extends FlightReport {
      * @param dt the date/time the flight started
      * @see FDRFlightReport#getEndTime()
      */
-    public void setStartTime(Date dt) {
+    public void setStartTime(Instant dt) {
         _stateChangeTimes.put(StateChange.START, dt);
     }
     
@@ -335,7 +328,7 @@ public abstract class FDRFlightReport extends FlightReport {
      * @param dt the date/time of pushback
      * @see FDRFlightReport#getTaxiTime()
      */
-    public void setTaxiTime(Date dt) {
+    public void setTaxiTime(Instant dt) {
         _stateChangeTimes.put(StateChange.TAXI_OUT, dt);
     }
 
@@ -362,7 +355,7 @@ public abstract class FDRFlightReport extends FlightReport {
      * @param dt the date/time at takeoff
      * @see FDRFlightReport#getTakeoffTime()
      */
-    public void setTakeoffTime(Date dt) {
+    public void setTakeoffTime(Instant dt) {
         _stateChangeTimes.put(StateChange.TAKEOFF, dt);
     }
 
@@ -436,7 +429,7 @@ public abstract class FDRFlightReport extends FlightReport {
      * @param dt the date/time the aircraft touched down
      * @see FDRFlightReport#getLandingTime()
      */
-    public void setLandingTime(Date dt) {
+    public void setLandingTime(Instant dt) {
         _stateChangeTimes.put(StateChange.LAND, dt);
     }
     
@@ -519,7 +512,7 @@ public abstract class FDRFlightReport extends FlightReport {
      * @param dt the date/time the flight ended
      * @see FDRFlightReport#getEndTime()
      */
-    public void setEndTime(Date dt) {
+    public void setEndTime(Instant dt) {
         _stateChangeTimes.put(StateChange.END, dt);
     }
     

@@ -1,21 +1,21 @@
-// Copyright 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.mvs;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 
 /**
  * A bean to store MVS warnings.
  * @author Luke
- * @version 4.0
+ * @version 7.0
  * @since 4.0
  */
 
 public class Warning extends DatabaseBean implements AuthoredBean, CalendarEntry {
 	
 	private int _authorID;
-	private Date _dt;
+	private Instant _dt;
 
 	/**
 	 * Creates the bean.
@@ -29,7 +29,7 @@ public class Warning extends DatabaseBean implements AuthoredBean, CalendarEntry
 	}
 	
 	@Override
-	public Date getDate() {
+	public Instant getDate() {
 		return _dt;
 	}
 
@@ -48,13 +48,14 @@ public class Warning extends DatabaseBean implements AuthoredBean, CalendarEntry
 	 * Updates the date of the warning.
 	 * @param dt the date/time the user was warned
 	 */
-	public void setDate(Date dt) {
+	public void setDate(Instant dt) {
 		_dt = dt;
 	}
 	
     /**
      * Returns the cache key.
      */
+	@Override
     public Object cacheKey() {
     	StringBuilder buf = new StringBuilder(getID());
     	buf.append('-');
@@ -65,6 +66,7 @@ public class Warning extends DatabaseBean implements AuthoredBean, CalendarEntry
     /**
      * Returns the hash code of the database ID/author ID.
      */
+	@Override
     public int hashCode() {
     	return cacheKey().hashCode();
     }

@@ -1,14 +1,15 @@
-// Copyright 2006, 2007, 2009, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2012, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.ftp;
 
 import java.io.*;
+import java.time.Instant;
 
 import com.enterprisedt.net.ftp.*;
 
 /**
  * A utility class to encapsulate FTP operations.
  * @author Luke
- * @version 5.2
+ * @version 7.0
  * @since 1.0
  */
 
@@ -28,6 +29,7 @@ public class FTPConnection implements Closeable {
 		/**
 		 * Deletes the temporary file on close.
 		 */
+		@Override
 		public void close() throws IOException {
 			super.close();
 			_f.delete();
@@ -82,6 +84,7 @@ public class FTPConnection implements Closeable {
 	/**
 	 * Closes the connection. This swallows any exceptions.
 	 */
+	@Override
 	public void close() {
 		try {
 			if (_client.connected())
@@ -166,13 +169,13 @@ public class FTPConnection implements Closeable {
 	 * @return the last modified date/time, or null if the file does not exist on the remote server
 	 * @throws FTPClientException if an error occurs
 	 */
-	public java.util.Date getTimestamp(String dirName, String fName) throws FTPClientException {
+	public java.time.Instant getTimestamp(String dirName, String fName) throws FTPClientException {
 		try {
 			FTPFile[] files = _client.dirDetails(dirName);
 			for (int x = 0; x < files.length; x++) {
 				FTPFile f = files[x];
 				if (f.getName().equals(fName) && !f.isDir())
-					return f.lastModified();
+					return Instant.ofEpochMilli(f.lastModified().getTime());
 			}
 		} catch (Exception e) {
 			throw new FTPClientException(e);

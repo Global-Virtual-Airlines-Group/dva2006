@@ -1,7 +1,8 @@
-// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.hr;
 
 import java.util.*;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 
@@ -10,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store information about a job posting.
  * @author Luke
- * @version 3.7
+ * @version 7.0
  * @since 3.4
  */
 
@@ -21,8 +22,8 @@ public class JobPosting extends DatabaseBean implements ViewEntry {
 	
 	private int _hireManagerID;
 	
-	private Date _createdOn;
-	private Date _closeDate;
+	private Instant _createdOn;
+	private Instant _closeDate;
 	
 	private int _minLegs;
 	private int _minAge;
@@ -89,7 +90,7 @@ public class JobPosting extends DatabaseBean implements ViewEntry {
 	 * Returns the date the job posting was created on.
 	 * @return the creation date/time
 	 */
-	public Date getCreatedOn() {
+	public Instant getCreatedOn() {
 		return _createdOn;
 	}
 	
@@ -97,7 +98,7 @@ public class JobPosting extends DatabaseBean implements ViewEntry {
 	 * Returns the date the job posting is closed to applications.
 	 * @return the closing date/time
 	 */
-	public Date getClosesOn() {
+	public Instant getClosesOn() {
 		return _closeDate;
 	}
 	
@@ -200,7 +201,7 @@ public class JobPosting extends DatabaseBean implements ViewEntry {
 	 * Sets the date this posting was created.
 	 * @param dt the creation date/time
 	 */
-	public void setCreatedOn(Date dt) {
+	public void setCreatedOn(Instant dt) {
 		_createdOn = dt;
 	}
 	
@@ -208,8 +209,8 @@ public class JobPosting extends DatabaseBean implements ViewEntry {
 	 * Sets the date this posting closes.
 	 * @param dt the closing date/time
 	 */
-	public void setClosesOn(Date dt) {
-		if ((dt != null) && dt.before(_createdOn))
+	public void setClosesOn(Instant dt) {
+		if ((dt != null) && dt.isBefore(_createdOn))
 			throw new IllegalArgumentException("Close date before creation date");
 		
 		_closeDate = dt;

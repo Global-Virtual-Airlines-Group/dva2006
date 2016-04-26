@@ -1,7 +1,7 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
-import java.util.*;
+import java.time.Instant;
 
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.schedule.GeoPosition;
@@ -14,14 +14,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display a live ACARS Map.
  * @author Luke
- * @version 4.2
+ * @version 7.0
  * @since 1.0
  */
 
 public class MapCommand extends AbstractCommand {
 	
-	private static final GeoLocation DEFAULT_CTR = 
-		new GeoPosition(SystemData.getDouble("acars.livemap.lat", 40), SystemData.getDouble("acars.livemap.lng", -85));
+	private static final GeoLocation DEFAULT_CTR = new GeoPosition(SystemData.getDouble("acars.livemap.lat", 40), SystemData.getDouble("acars.livemap.lng", -85));
 
 	/**
 	 * Executes the command.
@@ -32,8 +31,8 @@ public class MapCommand extends AbstractCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Calcualte the settings cookie expiry date
-		Date expiryDate = CalendarUtils.adjust(new Date(), 180);
-		ctx.setAttribute("cookieExpiry", StringUtils.format(expiryDate, "yyyy, M, d"), REQUEST);
+		Instant expDate = Instant.now().plusSeconds(86400 * 180);
+		ctx.setAttribute("cookieExpiry", StringUtils.format(expDate, "yyyy, M, d"), REQUEST);
 		
 		// Create the map center
 		GeoPosition ctr = new GeoPosition(StringUtils.parse(ctx.getParameter("lat"), DEFAULT_CTR.getLatitude()), 

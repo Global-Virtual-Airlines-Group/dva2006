@@ -29,8 +29,7 @@ public class SetInactivity extends DAO {
 	 */
 	public void setInactivity(int pilotID, int days, boolean isNotified) throws DAOException {
 		try {
-			prepareStatement("REPLACE INTO INACTIVITY (ID, NOTIFY, PURGE_DATE, PURGE_DAYS) VALUES (?, ?, "
-					+ "DATE_ADD(CURDATE(), INTERVAL ? DAY), ?)");
+			prepareStatement("REPLACE INTO INACTIVITY (ID, NOTIFY, PURGE_DATE, PURGE_DAYS) VALUES (?, ?, DATE_ADD(CURDATE(), INTERVAL ? DAY), ?)");
 			_ps.setInt(1, pilotID);
 			_ps.setBoolean(2, isNotified);
 			_ps.setInt(3, days);

@@ -1,6 +1,7 @@
 // Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.beans.acars;
 
+import java.time.Instant;
 import java.util.Date;
 
 import junit.framework.Test;
@@ -18,13 +19,15 @@ public class TestFlightInfo extends AbstractBeanTestCase {
       return new CoverageDecorator(TestFlightInfo.class, new Class[] { FlightInfo.class } );
   }
    
-   protected void setUp() throws Exception {
+   @Override
+protected void setUp() throws Exception {
       super.setUp();
       _info = new FlightInfo(1);
       setBean(_info);
    }
 
-   protected void tearDown() throws Exception {
+   @Override
+protected void tearDown() throws Exception {
       _info = null;
       super.tearDown();
    }
@@ -60,20 +63,14 @@ public class TestFlightInfo extends AbstractBeanTestCase {
       validateInput("pilotID", Integer.valueOf(-1), IllegalArgumentException.class);
       validateInput("FSVersion", Integer.valueOf(-1), IllegalArgumentException.class);
       validateInput("FSVersion", Integer.valueOf(2010), IllegalArgumentException.class);
-      
-      long now = System.currentTimeMillis();
-      _info.setStartTime(new Date(now));
-      _info.setEndTime(new Date(now - 1));
-      assertEquals(_info.getStartTime(), _info.getEndTime());
    }
    
    public void testComparator() {
-      long now = System.currentTimeMillis();
-      _info.setStartTime(new Date(now));
+      _info.setStartTime(Instant.now());
       
       FlightInfo i2 = new FlightInfo(2);
-      i2.setStartTime(new Date(now + 1));
-      assertTrue(_info.getStartTime().before(i2.getStartTime()));
+      i2.setStartTime(Instant.now().minusMillis(2));
+      assertTrue(_info.getStartTime().isBefore(i2.getStartTime()));
       assertTrue(_info.compareTo(i2) < 0);
       assertTrue(i2.compareTo(_info) > 0);
    }

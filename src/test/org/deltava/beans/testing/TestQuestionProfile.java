@@ -15,13 +15,15 @@ public class TestQuestionProfile extends AbstractBeanTestCase {
         return new CoverageDecorator(TestQuestionProfile.class, new Class[] { QuestionProfile.class } );
     }
 
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
         _q = new QuestionProfile("Why?");
         setBean(_q);
     }
 
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         _q = null;
         super.tearDown();
     }

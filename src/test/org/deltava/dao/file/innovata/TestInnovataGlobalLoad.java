@@ -5,6 +5,8 @@ import java.sql.*;
 import java.util.*;
 import java.util.zip.*;
 import java.text.*;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import junit.framework.TestCase;
@@ -32,6 +34,7 @@ public class TestInnovataGlobalLoad extends TestCase {
 
 	private final DateFormat _df = new SimpleDateFormat("dd/MM/yyyy");
 
+	@Override
 	@SuppressWarnings("unchecked")
 	protected void setUp() throws Exception {
 		PropertyConfigurator.configure("data/log4j.test.properties");
@@ -81,6 +84,7 @@ public class TestInnovataGlobalLoad extends TestCase {
 		SystemData.add("apps", uddao.getAirlines(true));
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		_c.close();
 		log.info("Disconnected");
@@ -93,7 +97,7 @@ public class TestInnovataGlobalLoad extends TestCase {
 	public void testLoadCSV() throws IOException, ParseException {
 
 		// Build the file name
-		java.util.Date d = new java.util.Date();
+		java.time.Instant d = java.time.Instant.now();
 		File f = new File("c:\\temp\\deltava - " + StringUtils.format(d, "MMM dd") + ".zip");
 		assertTrue(f.exists());
 		ZipFile zip = new ZipFile(f);
@@ -190,7 +194,7 @@ public class TestInnovataGlobalLoad extends TestCase {
 	public void testParseCSV() throws Exception {
 
 		// Build the file name
-		java.util.Date d = new java.util.Date();
+		java.time.Instant d = java.time.Instant.now();
 		File f = new File("c:\\temp\\deltava - " + StringUtils.format(d, "MMM dd") + ".zip");
 		assertTrue(f.exists());
 		ZipFile zip = new ZipFile(f);
@@ -201,7 +205,7 @@ public class TestInnovataGlobalLoad extends TestCase {
 		// Get the DAO
 		GetAircraft acdao = new GetAircraft(_c);
 		GetFullSchedule dao = new GetFullSchedule(zip.getInputStream(ze));
-		dao.setEffectiveDate(new java.util.Date());
+		dao.setEffectiveDate(LocalDateTime.ofInstant(d, ZoneOffset.UTC));
 		dao.setAircraft(acdao.getAircraftTypes());
 		dao.setMainlineCodes(CODES);
 		dao.setCodeshareCodes(CS_CODES);
@@ -223,7 +227,8 @@ public class TestInnovataGlobalLoad extends TestCase {
 
 	public void testLoadDAO() throws Exception {
 
-		File f = new File("c:/temp/" + StringUtils.format(new java.util.Date(), "MMMyy") + ".csv");
+		java.time.Instant d = java.time.Instant.now();
+		File f = new File("c:/temp/" + StringUtils.format(d, "MMMyy") + ".csv");
 		assertTrue(f.exists());
 
 		// Load Airports
@@ -235,7 +240,7 @@ public class TestInnovataGlobalLoad extends TestCase {
 		// Get the DAO
 		GetAircraft acdao = new GetAircraft(_c);
 		GetFullSchedule dao = new GetFullSchedule(new FileInputStream(f));
-		dao.setEffectiveDate(new java.util.Date());
+		dao.setEffectiveDate(LocalDateTime.ofInstant(d, ZoneOffset.UTC));
 		dao.setAircraft(acdao.getAircraftTypes());
 		dao.setMainlineCodes(CODES);
 		dao.setCodeshareCodes(CS_CODES);

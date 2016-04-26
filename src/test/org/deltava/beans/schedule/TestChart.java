@@ -15,14 +15,16 @@ public class TestChart extends AbstractBeanTestCase {
         return new CoverageDecorator(TestChart.class, new Class[] { Chart.class });
     }
     
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
         Airport a = new Airport("ATL", "KATL", "Atlanta GA");
         _c = new Chart("MACEY TWO ARRIVAL", a);
         setBean(_c);
     }
     
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         _c = null;
         super.tearDown();
     }

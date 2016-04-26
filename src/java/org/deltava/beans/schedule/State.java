@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import org.deltava.beans.ComboAlias;
@@ -6,7 +6,7 @@ import org.deltava.beans.ComboAlias;
 /**
  * An Enumeration of US States.
  * @author Luke
- * @version 3.2
+ * @version 7.0
  * @since 3.2
  */
 
@@ -37,10 +37,12 @@ public enum State implements ComboAlias {
 		return _name;
 	}
 	
+	@Override
 	public String getComboName() {
 		return _name;
 	}
 
+	@Override
 	public String getComboAlias() {
 		return name();
 	}

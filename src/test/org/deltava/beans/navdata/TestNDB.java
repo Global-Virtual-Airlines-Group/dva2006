@@ -14,13 +14,15 @@ public class TestNDB extends AbstractBeanTestCase {
       return new CoverageDecorator(TestNDB.class, new Class[] { NDB.class, NavigationDataBean.class });
   }
    
-   protected void setUp() throws Exception {
+   @Override
+protected void setUp() throws Exception {
       super.setUp();
       _ndb = new NDB(12.345, -23.456);
       setBean(_ndb);
    }
 
-   protected void tearDown() throws Exception {
+   @Override
+protected void tearDown() throws Exception {
       _ndb = null;
       super.tearDown();
    }

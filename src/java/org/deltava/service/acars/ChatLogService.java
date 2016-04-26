@@ -1,8 +1,8 @@
-// Copyright 2008, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
-import java.io.IOException;
+import java.time.Instant;
 import java.sql.Connection;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -18,7 +18,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to display aggregated ACARS chat logs.
  * @author Luke
- * @version 6.1
+ * @version 7.0
  * @since 2.2
  */
 
@@ -38,8 +38,8 @@ public class ChatLogService extends WebService {
 			throw error(SC_UNAUTHORIZED, "Not in HR Role", false);
 		
 		// Get the start/end dates
-		Date sd = StringUtils.parseDate(ctx.getParameter("start"), "MM/dd/yyyy HH:mm");
-		Date ed = StringUtils.parseDate(ctx.getParameter("end"), "MM/dd/yyyy HH:mm");
+		Instant sd = StringUtils.parseInstant(ctx.getParameter("start"), "MM/dd/yyyy HH:mm");
+		Instant ed = StringUtils.parseInstant(ctx.getParameter("end"), "MM/dd/yyyy HH:mm");
 		
 		// Build the criteria
 		LogSearchCriteria criteria = new LogSearchCriteria(sd, ed);
@@ -93,7 +93,7 @@ public class ChatLogService extends WebService {
 			ctx.setContentType("text/csv", "utf-8");
 			ctx.setHeader("Content-disposition", "attachment; filename=acarsChatLog.csv");
 			ctx.commit();
-		} catch (IOException ie) {
+		} catch (Exception ie) {
 			throw error(SC_CONFLICT, "I/O Error", false);
 		}
 		

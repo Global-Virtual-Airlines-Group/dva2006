@@ -1,8 +1,10 @@
-// Copyright 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
+import java.time.*;
 import java.sql.Connection;
+import java.util.stream.Collectors;
 
 import org.deltava.beans.*;
 import org.deltava.beans.stats.DispatchStatistics;
@@ -10,12 +12,10 @@ import org.deltava.beans.stats.DispatchStatistics;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
-import org.deltava.util.CalendarUtils;
-
 /**
  * A Web Site Command to display ACARS Dispatcher statistics.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 3.6
  */
 
@@ -31,11 +31,8 @@ public class DispatcherStatsCommand extends AbstractCommand {
 		
 		// Get the date
 		DateRange dr = DateRange.parse(ctx.getParameter("range"));
-		if (dr == null) {
-			Calendar cld = CalendarUtils.getInstance(null, true);
-			cld.set(Calendar.DAY_OF_MONTH, 1);
-			dr = DateRange.createMonth(cld.getTime());
-		}
+		if (dr == null)
+			dr = DateRange.createMonth(Instant.now());
 		
 		try {
 			Connection con = ctx.getConnection();
@@ -47,9 +44,7 @@ public class DispatcherStatsCommand extends AbstractCommand {
 			ctx.setAttribute("ranges", sdao.getDispatchRanges(), REQUEST);
 			
 			// Get the User IDs
-			Collection<Integer> IDs = new HashSet<Integer>();
-			for (DispatchStatistics st : stats)
-				IDs.add(Integer.valueOf(st.getID()));
+			Collection<Integer> IDs = stats.stream().map(DispatchStatistics::getID).collect(Collectors.toSet());
 			
 			// Load the users
 			GetUserData uddao = new GetUserData(con);
@@ -64,12 +59,12 @@ public class DispatcherStatsCommand extends AbstractCommand {
 		}
 		
 		// Calculate the length - if it's the current time period adjust accordingly
-		Date now = new Date();
-		if (dr.getEndDate().after(now))
+		Instant now = Instant.now();
+		if (dr.getEndDate().isAfter(now))
 			dr = new DateRange(dr.getStartDate(), now);
 		
 		// Display dates
-		ctx.setAttribute("utc", TZInfo.UTC, REQUEST);
+		ctx.setAttribute("utc", ZoneOffset.UTC, REQUEST);
 		ctx.setAttribute("range", dr, REQUEST);
 		ctx.setAttribute("totalHours", new Double(dr.getLength() / 3600000.0), REQUEST);
 		

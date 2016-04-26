@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.academy.*;
 /**
  * A Data Access Object to update Flight Academy Flight reports.
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -123,7 +123,7 @@ public class SetAcademyCalendar extends DAO {
 	 * @param startTime the start time
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void deleteBusy(int instructorID, java.util.Date startTime) throws DAOException {
+	public void deleteBusy(int instructorID, java.time.Instant startTime) throws DAOException {
 		try {
 			prepareStatement("DELETE FROM exams.INSBUSY WHERE (INSTRUCTOR_ID=?) AND (STARTTIME=?)");
 			_ps.setInt(1, instructorID);

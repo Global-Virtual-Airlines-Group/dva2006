@@ -8,13 +8,15 @@ public class TestInsertCSSTag extends AbstractTagTestCase {
     
     private static final String CSS_START = "<link rel=\"STYLESHEET\" type=\"text/css\" href=\"";
     
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
         _tag = new InsertCSSTag();
         _tag.setPageContext(_ctx);
     }
     
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         _tag.release();
         _tag = null;
         super.tearDown();

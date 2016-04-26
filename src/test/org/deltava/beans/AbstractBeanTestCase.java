@@ -18,7 +18,8 @@ public abstract class AbstractBeanTestCase extends TestCase {
         _bean = bean;
     }
     
-    protected void toDo() {
+    @SuppressWarnings("static-method")
+	protected void toDo() {
         fail("Test Not Implemented");
     }
     
@@ -51,7 +52,8 @@ public abstract class AbstractBeanTestCase extends TestCase {
         }
     }
 
-    protected void checkProperty(String pName, Object testValue) {
+    @SuppressWarnings("null")
+	protected void checkProperty(String pName, Object testValue) {
         
         // Validate we can get/set the property
         Method setProperty = null;
@@ -82,7 +84,8 @@ public abstract class AbstractBeanTestCase extends TestCase {
         }
     }
     
-    protected void validateInput(String pName, Object testValue, Class<?>[] exClasses) {
+    @SuppressWarnings("null")
+	protected void validateInput(String pName, Object testValue, Class<?>[] exClasses) {
 
         Method setProperty = null;
         try {

@@ -1,7 +1,8 @@
-// Copyright 2005, 2006, 2007, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.hr;
 
 import java.util.*;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 
@@ -9,7 +10,7 @@ import org.deltava.beans.*;
  * A class to store Equipment Program transfer requests. Since a checkride may be required for switches to
  * additional equipment programs, this bean may also be used to track check ride workflows.
  * @author Luke
- * @version 3.7
+ * @version 7.0
  * @since 1.0
  */
 
@@ -26,7 +27,7 @@ public class TransferRequest extends DatabaseBean implements ViewEntry {
 	
 	private int _status;
 	private String _eqType;
-	private Date _date;
+	private Instant _date;
 	private boolean _ratingOnly;
 
 	/**
@@ -53,9 +54,9 @@ public class TransferRequest extends DatabaseBean implements ViewEntry {
 	/**
 	 * Returns the creation date of this Transfer Request.
 	 * @return the date/time this request was created
-	 * @see TransferRequest#setDate(Date)
+	 * @see TransferRequest#setDate(Instant)
 	 */
-	public Date getDate() {
+	public Instant getDate() {
 		return _date;
 	}
 
@@ -122,7 +123,7 @@ public class TransferRequest extends DatabaseBean implements ViewEntry {
 	 * @param dt the date/time this request was created
 	 * @see TransferRequest#getDate()
 	 */
-	public void setDate(Date dt) {
+	public void setDate(Instant dt) {
 		_date = dt;
 	}
 
@@ -177,6 +178,7 @@ public class TransferRequest extends DatabaseBean implements ViewEntry {
 	 * Compares two Transfer Requests by comparing their dates.
 	 * @see Comparable#compareTo(Object)
 	 */
+	@Override
 	public int compareTo(Object o2) {
 		TransferRequest tr2 = (TransferRequest) o2;
 		return _date.compareTo(tr2.getDate());
@@ -186,6 +188,7 @@ public class TransferRequest extends DatabaseBean implements ViewEntry {
 	 * Returns the CSS class name used to display this in a view table.
 	 * @return the CSS class name
 	 */
+	@Override
 	public String getRowClassName() {
 		if (getStatus() == ASSIGNED)
 			return _crSubmitted ? "opt3" : "opt1";

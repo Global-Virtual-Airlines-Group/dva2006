@@ -1,6 +1,7 @@
 // Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
+import java.time.Instant;
 import java.util.Date;
 
 import org.junit.*;
@@ -21,13 +22,15 @@ public class TestACARSFlightReport extends AbstractBeanTestCase {
     	return new junit.framework.JUnit4TestAdapter(TestACARSFlightReport.class);
     }
     
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
         _fr = new ACARSFlightReport(new Airline("DVA", "Delta Virtual Airlines"), 43, 1);
         setBean(_fr);
     }
 
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         _fr = null;
         super.tearDown();
     }
@@ -65,14 +68,13 @@ public class TestACARSFlightReport extends AbstractBeanTestCase {
     }
     
     @Test public void testTimeCalculation() {
-        long ts = System.currentTimeMillis() - 86400000;
-        _fr.setStartTime(new Date(ts));
-        _fr.setTakeoffTime(new Date(ts + 35000));
-        _fr.setLandingTime(new Date(ts + 3600000));
-        _fr.setEndTime(new Date(ts + 3610000));
+        _fr.setStartTime(Instant.now());
+        _fr.setTakeoffTime(_fr.getStartTime().plusSeconds(35));
+        _fr.setLandingTime(_fr.getStartTime().plusSeconds(3600));
+        _fr.setEndTime(_fr.getStartTime().plusSeconds(3610));
         
-        assertEquals(3610000, _fr.getBlockTime().getTime());
-        assertEquals(3565000, _fr.getAirborneTime().getTime());
+        assertEquals(3610, _fr.getBlockTime().getSeconds());
+        assertEquals(3565, _fr.getAirborneTime().getSeconds());
     }
     
     @Test public void testValidation() {

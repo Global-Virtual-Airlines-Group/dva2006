@@ -13,13 +13,15 @@ public class TestExamProfile extends AbstractBeanTestCase {
         return new CoverageDecorator(TestExamProfile.class, new Class[] { ExamProfile.class } );
     }
     
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
         _exam = new ExamProfile("737 Captain");
         setBean(_exam);
     }
 
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         _exam = null;
         super.tearDown();
     }

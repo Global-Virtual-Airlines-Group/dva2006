@@ -1,8 +1,9 @@
-// Copyright 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.deltava.beans.navdata.CycleInfo;
 
@@ -12,7 +13,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to display navigation cycle publish dates.
  * @author Luke
- * @version 5.2
+ * @version 7.0
  * @since 5.2
  */
 
@@ -50,7 +51,7 @@ public class NavigationCycleCommand extends AbstractCommand {
 			}
 
 			// Get what we should be loading
-			CycleInfo now = ncdao.getCycle(new Date());
+			CycleInfo now = ncdao.getCycle(Instant.now());
 			ctx.setAttribute("nowCycle", (now == null) ? CycleInfo.getCurrent() : now, REQUEST);
 
 			// Get all future cycles

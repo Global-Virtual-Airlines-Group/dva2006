@@ -1,4 +1,4 @@
-// Copyright 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.navdata.CycleInfo;
 /**
  * A Data Access Object to load chart/navigation data cycle update dates. 
  * @author Luke
- * @version 5.1
+ * @version 7.0
  * @since 5.1
  */
 
@@ -37,7 +37,7 @@ public class GetNavCycle extends DAO {
 			CycleInfo cycle = null;
 			try (ResultSet rs = _ps.executeQuery()) {
 				if (rs.next())
-					cycle = new CycleInfo(rs.getString(1), rs.getTimestamp(2));
+					cycle = new CycleInfo(rs.getString(1), rs.getTimestamp(2).toInstant());
 			}
 
 			_ps.close();
@@ -53,7 +53,7 @@ public class GetNavCycle extends DAO {
 	 * @return the CycleInfo
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public CycleInfo getCycle(java.util.Date dt) throws DAOException {
+	public CycleInfo getCycle(java.time.Instant dt) throws DAOException {
 		try {
 			prepareStatementWithoutLimits("SELECT ID, RELEASED FROM common.NAVCYCLE WHERE (RELEASED<?) ORDER BY RELEASED DESC LIMIT 1");
 			_ps.setTimestamp(1, createTimestamp(dt));
@@ -61,7 +61,7 @@ public class GetNavCycle extends DAO {
 			CycleInfo cycle = null;
 			try (ResultSet rs = _ps.executeQuery()) {
 				if (rs.next())
-					cycle = new CycleInfo(rs.getString(1), rs.getTimestamp(2));
+					cycle = new CycleInfo(rs.getString(1), rs.getTimestamp(2).toInstant());
 			}
 			
 			_ps.close();
@@ -82,7 +82,7 @@ public class GetNavCycle extends DAO {
 			Collection<CycleInfo> results = new ArrayList<CycleInfo>();
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next())
-					results.add(new CycleInfo(rs.getString(1), rs.getTimestamp(2)));
+					results.add(new CycleInfo(rs.getString(1), rs.getTimestamp(2).toInstant()));
 			}
 			
 			_ps.close();

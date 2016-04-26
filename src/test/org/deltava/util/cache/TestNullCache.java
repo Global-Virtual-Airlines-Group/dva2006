@@ -18,12 +18,14 @@ public class TestNullCache extends TestCase {
       return new CoverageDecorator(TestNullCache.class, new Class[] { NullCache.class } );
   }
    
-   protected void setUp() throws Exception {
+   @Override
+protected void setUp() throws Exception {
       super.setUp();
       _cache = new NullCache<Cacheable>();
    }
 
-   protected void tearDown() throws Exception {
+   @Override
+protected void tearDown() throws Exception {
       _cache = null;
       super.tearDown();
    }

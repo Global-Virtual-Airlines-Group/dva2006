@@ -16,13 +16,15 @@ public class TestAssignmentAccessControl extends AccessControlTestCase {
             AssignmentAccessControl.class });
    }
 
-   protected void setUp() throws Exception {
+   @Override
+protected void setUp() throws Exception {
       super.setUp();
       _a = new AssignmentInfo("B737-800");
       _ac = new AssignmentAccessControl(_ctxt, _a);
    }
 
-   protected void tearDown() throws Exception {
+   @Override
+protected void tearDown() throws Exception {
       _ac = null;
       _a = null;
       super.tearDown();
@@ -39,7 +41,6 @@ public class TestAssignmentAccessControl extends AccessControlTestCase {
       //_user.addRole("Pilot");
       //_ac.validate();
    }
-   
    
    public void testContextValidation() {
       doContextValidation(new AssignmentAccessControl(null, _a));

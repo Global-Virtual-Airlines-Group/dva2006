@@ -1,4 +1,4 @@
-// Copyright 2008, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import org.deltava.beans.system.*;
@@ -8,7 +8,7 @@ import org.deltava.taglib.BrowserInfoTag;
 /**
  * A JSP tag to filter content based on the client operating system.
  * @author Luke
- * @version 3.7
+ * @version 7.0
  * @since 2.2
  * @see org.deltava.servlet.filter.BrowserTypeFilter
  */
@@ -55,6 +55,7 @@ public class OSFilterTag extends BrowserInfoTag {
     /**
      * Clears state by reseting the display list.
      */
+	@Override
 	public void release() {
 		super.release();
 		_doWindows = false;
@@ -67,6 +68,7 @@ public class OSFilterTag extends BrowserInfoTag {
 	 * Determines whether the enclosed content should be rendered to the JSP output stream.
 	 * @return TagSupport.EVAL_BODY_INCLUDE or TagSupport.SKIP_BODY
 	 */
+	@Override
 	public int doStartTag() {
 		HTTPContextData ctxt = getBrowserContext();
 		if (ctxt == null)
@@ -88,6 +90,7 @@ public class OSFilterTag extends BrowserInfoTag {
      * Closes the JSP, and releases state.
      * @return EVAL_PAGE
      */
+	@Override
 	public int doEndTag() {
 		release();
     	return EVAL_PAGE;

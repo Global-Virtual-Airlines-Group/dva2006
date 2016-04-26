@@ -1,8 +1,9 @@
-// Copyright 2006, 2007, 2008, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.deltava.beans.academy.AcademyHistoryHelper;
 import org.deltava.beans.testing.*;
@@ -16,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to create new Flight Academy Examinations.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -91,10 +92,9 @@ public class ExamCreateCommand extends AbstractAcademyHistoryCommand {
 			ex.setAcademy(true);
 			
 			// Set the creation/expiration date/times
-			Calendar cld = Calendar.getInstance();
-			ex.setDate(cld.getTime());
-			cld.add(Calendar.MINUTE, ep.getTime());
-			ex.setExpiryDate(cld.getTime());
+			Instant now = Instant.now();
+			ex.setDate(now);
+			ex.setExpiryDate(now.plusSeconds(60 * ep.getTime()));
 
 			// Load the question pool for this examination
 			GetExamQuestions eqdao = new GetExamQuestions(con);

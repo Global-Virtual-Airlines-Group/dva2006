@@ -3,6 +3,7 @@ package org.deltava.commands.dispatch;
 
 import java.util.*;
 import java.sql.Connection;
+import java.time.Duration;
 
 import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
@@ -16,7 +17,7 @@ import org.deltava.security.command.DispatchScheduleAccessControl;
 /**
  * A Web Site Command to display the ACARS Dispatch service calendar.
  * @author Luke
- * @version 6.4
+ * @version 7.0
  * @since 2.2
  */
 
@@ -62,7 +63,7 @@ public class ServiceCalendarCommand extends AbstractCalendarCommand {
 			Collection<DispatchScheduleEntry> schedEntries = dcdao.getCalendar(ctx.getID(), cctx.getRange());
 			for (Iterator<DispatchScheduleEntry> i = schedEntries.iterator(); i.hasNext(); ) {
 				DispatchScheduleEntry se = i.next();
-				if (se.getEndTime().getTime() >= now)
+				if (se.getEndTime().toEpochMilli() >= now)
 					entries.add(se);		
 				else
 					i.remove();
@@ -101,8 +102,8 @@ public class ServiceCalendarCommand extends AbstractCalendarCommand {
 					
 					// Prune out any entries with no flights and less than 2 minutes long
 					if (ce.getEndTime() != null) {
-						long conTime = (ce.getEndTime().getTime() - ce.getStartTime().getTime()) / 1000;
-						if (!flights.isEmpty() || (conTime > 120))
+						Duration conTime = Duration.between(ce.getStartTime(), ce.getEndTime());
+						if (!flights.isEmpty() || (conTime.getSeconds() > 120))
 							conEntries.add(ce);
 					} else
 						conEntries.add(ce);
@@ -135,7 +136,7 @@ public class ServiceCalendarCommand extends AbstractCalendarCommand {
 				lastEntry = ce;
 				entries.add(ce);
 			} else {
-				long timeDiff = (ce.getStartTime().getTime() - lastEntry.getEndTime().getTime()) / 1000;
+				long timeDiff = Duration.between(ce.getStartTime(), ce.getEndTime()).getSeconds();
 				if (timeDiff < 900) {
 					lastEntry.setEndTime(ce.getEndTime());
 					lastEntry.addFlights(ce.getFlights());

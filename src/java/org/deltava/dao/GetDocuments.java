@@ -1,8 +1,9 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.io.File;
 import java.sql.*;
+import java.time.Instant;
 import java.util.*;
 
 import org.deltava.beans.fleet.*;
@@ -12,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Documents from the Libraries.
  * @author Luke
- * @version 6.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -36,11 +37,11 @@ public class GetDocuments extends GetLibrary {
 	public Manual getManual(String fName, String dbName) throws DAOException {
 
 		// Build the SQL statement
-		dbName = formatDBName(dbName);
+		String db = formatDBName(dbName);
 		StringBuilder sqlBuf = new StringBuilder("SELECT D.*, COUNT(L.FILENAME) FROM ");
-		sqlBuf.append(dbName);
+		sqlBuf.append(db);
 		sqlBuf.append(".DOCS D LEFT JOIN ");
-		sqlBuf.append(dbName);
+		sqlBuf.append(db);
 		sqlBuf.append(".DOWNLOADS L ON (D.FILENAME=L.FILENAME) WHERE (D.FILENAME=?) GROUP BY D.NAME");
 
 		try {
@@ -69,11 +70,11 @@ public class GetDocuments extends GetLibrary {
 	public Newsletter getNewsletter(String fName, String dbName) throws DAOException {
 
 		// Build the SQL statement
-		dbName = formatDBName(dbName);
+		String db = formatDBName(dbName);
 		StringBuilder sqlBuf = new StringBuilder("SELECT N.*, COUNT(L.FILENAME) FROM ");
-		sqlBuf.append(dbName);
+		sqlBuf.append(db);
 		sqlBuf.append(".NEWSLETTERS N LEFT JOIN ");
-		sqlBuf.append(dbName);
+		sqlBuf.append(db);
 		sqlBuf.append(".DOWNLOADS L ON (N.FILENAME=L.FILENAME) WHERE (N.FILENAME=?) GROUP BY N.NAME");
 
 		try {
@@ -95,11 +96,11 @@ public class GetDocuments extends GetLibrary {
 	public Collection<Newsletter> getNewsletters(String dbName) throws DAOException {
 
 		// Build the SQL statement
-		dbName = formatDBName(dbName);
+		String db = formatDBName(dbName);
 		StringBuilder sqlBuf = new StringBuilder("SELECT N.*, COUNT(L.FILENAME) FROM ");
-		sqlBuf.append(dbName);
+		sqlBuf.append(db);
 		sqlBuf.append(".NEWSLETTERS N LEFT JOIN ");
-		sqlBuf.append(dbName);
+		sqlBuf.append(db);
 		sqlBuf.append(".DOWNLOADS L ON (N.FILENAME=L.FILENAME) GROUP BY N.NAME ORDER BY "
 				+ "N.CATEGORY, N.PUBLISHED DESC");
 
@@ -246,7 +247,7 @@ public class GetDocuments extends GetLibrary {
 				doc.setIgnoreCertifcations(rs.getBoolean(7));
 				doc.setDescription(rs.getString(8));
 				if (f.exists())
-					doc.setLastModified(new java.util.Date(f.lastModified()));
+					doc.setLastModified(Instant.ofEpochMilli(f.lastModified()));
 				if (hasTotals)
 					doc.setDownloadCount(rs.getInt(9));
 

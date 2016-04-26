@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.net.*;
@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.io.IOException;
 
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.apache.log4j.Logger;
 
@@ -24,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to validate the integrity of Water Cooler Image URLs.
  * @author Luke
- * @version 4.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -33,10 +34,10 @@ public class ImageLinkTestTask extends Task {
 	protected Collection<?> _mimeTypes;
 	
 	private class ImageLinkWorker extends Thread {
-		private Logger tLog;
-		private Queue<LinkedImage> _work;
-		private Collection<String> _invalidHosts;
-		private Queue<LinkedImage> _output;
+		private final Logger tLog;
+		private final Queue<LinkedImage> _work;
+		private final Collection<String> _invalidHosts;
+		private final Queue<LinkedImage> _output;
 		
 		ImageLinkWorker(int id, Queue<LinkedImage> work, Collection<String> badHosts, Queue<LinkedImage> out) {
 			super("ImageLinkWorker-" + String.valueOf(id));
@@ -53,8 +54,8 @@ public class ImageLinkTestTask extends Task {
 			hc.getParams().setParameter("http.protocol.version", HttpVersion.HTTP_1_1);
 			hc.getParams().setParameter("http.useragent",  VersionInfo.USERAGENT);
 			hc.getParams().setParameter("http.tcp.nodelay", Boolean.TRUE);
-			hc.getParams().setParameter("http.socket.timeout", new Integer(8250));
-			hc.getParams().setParameter("http.connection.timeout", new Integer(8250));
+			hc.getParams().setParameter("http.socket.timeout", Integer.valueOf(8250));
+			hc.getParams().setParameter("http.connection.timeout", Integer.valueOf(8250));
 			
 			// Go through each image
 			LinkedImage img = _work.poll();
@@ -114,6 +115,7 @@ public class ImageLinkTestTask extends Task {
 	/**
 	 * Executes the Task.
 	 */
+	@Override
 	protected void execute(TaskContext ctx) {
 		try {
 			Connection con = ctx.getConnection();
@@ -163,15 +165,15 @@ public class ImageLinkTestTask extends Task {
 				upd.setAuthorID(ctx.getUser().getID());
 
 				// Get the update time
-				Integer id = new Integer(img.getThreadID());
+				Integer id = Integer.valueOf(img.getThreadID());
 				if (updTimes.containsKey(id)) {
 					long time = updTimes.get(id).longValue();
 					time = Math.max(System.currentTimeMillis(), time + 1000);
 					updTimes.put(id, new Long(time));
-					upd.setDate(new Date(time));
+					upd.setDate(Instant.ofEpochMilli(time));
 				} else {
 					updTimes.put(id, new Long(System.currentTimeMillis()));
-					upd.setDate(new Date());
+					upd.setDate(Instant.now());
 				}
 				
 				// Write a thread update and delete the link

@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import java.util.*;
@@ -6,7 +6,7 @@ import java.util.*;
 /**
  * A bean to track ServInfo data locations and their reliability.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -124,6 +124,7 @@ public class NetworkDataURL implements Comparable<NetworkDataURL> {
 	 * @see Comparable#compareTo(Object)
 	 * @see NetworkDataURL#getSuccessPercentage()
 	 */
+	@Override
 	public int compareTo(NetworkDataURL nd2) {
 		int tmpResult = Integer.valueOf(getRecentSuccessPercentage()).compareTo(Integer.valueOf(nd2.getRecentSuccessPercentage()));
 		if (tmpResult == 0)
@@ -135,6 +136,7 @@ public class NetworkDataURL implements Comparable<NetworkDataURL> {
 	/**
 	 * Returns a String representation of the bean for debugging.
 	 */
+	@Override
 	public String toString() {
 		StringBuilder buf = new StringBuilder(_url);
 		buf.append(", uses=");

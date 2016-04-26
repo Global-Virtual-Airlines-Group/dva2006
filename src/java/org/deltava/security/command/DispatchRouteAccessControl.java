@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.acars.DispatchRoute;
@@ -8,13 +8,13 @@ import org.deltava.security.SecurityContext;
 /**
  * An Access controller for dispatch data.
  * @author Luke
- * @version 2.5
+ * @version 7.0
  * @since 2.1
  */
 
 public class DispatchRouteAccessControl extends AccessControl {
 	
-	private DispatchRoute _rt;
+	private final DispatchRoute _rt;
 	
 	private boolean _canCreate;
 	private boolean _canView;
@@ -34,6 +34,7 @@ public class DispatchRouteAccessControl extends AccessControl {
 	/**
 	 * Calculates access rights.
 	 */
+	@Override
 	public void validate() {
 		validateContext();
 		

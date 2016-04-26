@@ -1,14 +1,14 @@
-// Copyright 2006, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.academy;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 
 /**
  * A bean used to store Flight Academy instruction session information. 
  * @author Luke
- * @version 3.1
+ * @version 7.0
  * @since 1.0
  */
 
@@ -25,8 +25,8 @@ public class InstructionSession extends DatabaseBean implements ViewEntry, Instr
 	private int _pilotID;
 	private int _courseID;
 	
-	private Date _startTime;
-	private Date _endTime;
+	private Instant _startTime;
+	private Instant _endTime;
 	
 	private int _status;
 	private boolean _noShow;
@@ -61,6 +61,7 @@ public class InstructionSession extends DatabaseBean implements ViewEntry, Instr
 	 * @see InstructionSession#setInstructorID(int)
 	 * @see InstructionSession#getPilotID()
 	 */
+	@Override
 	public int getInstructorID() {
 		return _instructorID;
 	}
@@ -71,6 +72,7 @@ public class InstructionSession extends DatabaseBean implements ViewEntry, Instr
 	 * @see InstructionSession#setPilotID(int)
 	 * @see InstructionSession#getInstructorID()
 	 */
+	@Override
 	public int getPilotID() {
 		return _pilotID;
 	}
@@ -80,6 +82,7 @@ public class InstructionSession extends DatabaseBean implements ViewEntry, Instr
 	 * @return the database ID of the Course
 	 * @see InstructionSession#setCourseID(int)
 	 */
+	@Override
 	public int getCourseID() {
 		return _courseID; 
 	}
@@ -107,21 +110,23 @@ public class InstructionSession extends DatabaseBean implements ViewEntry, Instr
 	/**
 	 * Returns the start time of this Session.
 	 * @return the start date/time
-	 * @see InstructionSession#setStartTime(Date)
+	 * @see InstructionSession#setStartTime(Instant)
 	 * @see CalendarEntry#getDate()
 	 * @see InstructionSession#getEndTime()
 	 */
-	public Date getStartTime() {
+	@Override
+	public Instant getStartTime() {
 		return _startTime;
 	}
 	
 	/**
 	 * Returns the end time of this Session.
 	 * @return the end date/time
-	 * @see InstructionSession#setEndTime(Date)
+	 * @see InstructionSession#setEndTime(Instant)
 	 * @see InstructionSession#getStartTime()
 	 */
-	public Date getEndTime() {
+	@Override
+	public Instant getEndTime() {
 		return _endTime;
 	}
 	
@@ -139,6 +144,7 @@ public class InstructionSession extends DatabaseBean implements ViewEntry, Instr
 	 * @return the remarks
 	 * @see InstructionSession#setComments(String)
 	 */
+	@Override
 	public String getComments() {
 		return _remarks;
 	}
@@ -218,9 +224,9 @@ public class InstructionSession extends DatabaseBean implements ViewEntry, Instr
 	 * @param dt the start date/time
 	 * @see InstructionSession#getStartTime()
 	 * @see CalendarEntry#getDate()
-	 * @see InstructionSession#setEndTime(Date)
+	 * @see InstructionSession#setEndTime(Instant)
 	 */
-	public void setStartTime(Date dt) {
+	public void setStartTime(Instant dt) {
 		_startTime = dt;
 	}
 	
@@ -229,10 +235,10 @@ public class InstructionSession extends DatabaseBean implements ViewEntry, Instr
 	 * @param dt the end date/time
 	 * @throws IllegalArgumentException if dt is before startDate
 	 * @see InstructionSession#getEndTime()
-	 * @see InstructionSession#setStartTime(Date)
+	 * @see InstructionSession#setStartTime(Instant)
 	 */
-	public void setEndTime(Date dt) {
-		if ((dt != null) && (dt.before(_startTime)))
+	public void setEndTime(Instant dt) {
+		if ((dt != null) && dt.isBefore(_startTime))
 			throw new IllegalArgumentException("Invalid End Time - " + dt);
 		
 		_endTime = dt;
@@ -251,6 +257,7 @@ public class InstructionSession extends DatabaseBean implements ViewEntry, Instr
 	 * Comapres two sessions by comparing their start times.
 	 * @see Comparable#compareTo(Object)
 	 */
+	@Override
 	public int compareTo(Object o) {
 		InstructionSession is2 = (InstructionSession) o;
 		int tmpResult = _startTime.compareTo(is2._startTime);
@@ -261,6 +268,7 @@ public class InstructionSession extends DatabaseBean implements ViewEntry, Instr
 	 * Returns the CSS row class name if displayed in a view table.
 	 * @return the CSS class name
 	 */
+	@Override
 	public String getRowClassName() {
 		return _noShow ? "warn" : ((_status == CANCELED) ? "opt1" : null);
 	}
@@ -270,7 +278,8 @@ public class InstructionSession extends DatabaseBean implements ViewEntry, Instr
 	 * @return the start date/time
 	 * @see InstructionSession#getStartTime()
 	 */
-	public Date getDate() {
+	@Override
+	public Instant getDate() {
 		return _startTime;
 	}
 }

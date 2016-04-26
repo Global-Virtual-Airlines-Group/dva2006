@@ -1,8 +1,8 @@
-// Copyright 2005, 2006, 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
-import java.util.*;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.deltava.beans.testing.*;
 import org.deltava.commands.*;
@@ -13,7 +13,7 @@ import org.deltava.security.command.QuestionnaireAccessControl;
 /**
  * A Web Site Command for scoring Applicant Questionnaires.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -52,8 +52,7 @@ public class QuestionnaireScoreCommand extends AbstractCommand {
          }
          
          // Update examination
-         Calendar cld = Calendar.getInstance();
-         ex.setScoredOn(cld.getTime());
+         ex.setScoredOn(Instant.now());
          ex.setStatus(TestStatus.SCORED);
          ex.setScore(score);
          ex.setScorerID(ctx.getUser().getID());

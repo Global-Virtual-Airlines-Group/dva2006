@@ -14,12 +14,14 @@ public class TestRankComparator extends TestCase {
       return new CoverageDecorator(TestRankComparator.class, new Class[] { RankComparator.class } );
   }    
 
-   protected void setUp() throws Exception {
+   @Override
+protected void setUp() throws Exception {
       super.setUp();
       _rc = new RankComparator();
    }
 
-   protected void tearDown() throws Exception {
+   @Override
+protected void tearDown() throws Exception {
       _rc = null;
       super.tearDown();
    }

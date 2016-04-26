@@ -1,4 +1,4 @@
-// Copyright 2008, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load equipment program metrics.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 2.1
  */
 
@@ -51,7 +51,7 @@ public class GetProgramStatistics extends DAO {
 					p.setEquipmentType(eqType.getName());
 					p.setRank(Rank.fromName(rs.getString(2)));
 					p.setStatus(rs.getInt(3));
-					p.setCreatedOn(rs.getTimestamp(4));
+					p.setCreatedOn(rs.getTimestamp(4).toInstant());
 					pm.addPilot(p);
 				}
 			}

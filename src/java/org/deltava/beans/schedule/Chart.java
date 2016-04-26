@@ -1,14 +1,14 @@
-// Copyright 2004, 2005, 2006, 2007, 2009, 2010, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007, 2009, 2010, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 
 /**
  * A class for storing approach/procedure chart data.
  * @author Luke
- * @version 6.3
+ * @version 7.0
  * @since 1.0
  */
 
@@ -62,7 +62,7 @@ public class Chart extends DatabaseBlobBean implements ComboAlias, UseCount, Vie
 	private int _useCount;
 
 	private Airport _airport;
-	private Date _lastMod;
+	private Instant _lastMod;
 
 	/**
 	 * Create a new Chart with a name and an Airport.
@@ -116,6 +116,7 @@ public class Chart extends DatabaseBlobBean implements ComboAlias, UseCount, Vie
 	 * Returns whether this is an external chart.
 	 * @return FALSE
 	 */
+	@SuppressWarnings("static-method")
 	public boolean getIsExternal() {
 		return false;
 	}
@@ -144,7 +145,7 @@ public class Chart extends DatabaseBlobBean implements ComboAlias, UseCount, Vie
 	 * Returns the last modification date of the chart.
 	 * @return the modification date/time
 	 */
-	public Date getLastModified() {
+	public Instant getLastModified() {
 		return _lastMod;
 	}
 	
@@ -152,7 +153,7 @@ public class Chart extends DatabaseBlobBean implements ComboAlias, UseCount, Vie
 	 * Updates the last modification date of the chart.
 	 * @param dt the modification date/time
 	 */
-	public void setLastModified(Date dt) {
+	public void setLastModified(Instant dt) {
 		_lastMod = dt;
 	}
 

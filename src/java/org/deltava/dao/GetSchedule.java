@@ -1,25 +1,27 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
+import java.time.*;
+import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
 
 import org.deltava.beans.Flight;
 import org.deltava.beans.schedule.*;
 
-import org.deltava.util.CalendarUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to search the Flight Schedule.
  * @author Luke
- * @version 6.3
+ * @version 7.0
  * @since 1.0
  */
 
 public class GetSchedule extends DAO {
 	
-	private java.util.Date _effDate = CalendarUtils.getInstance(null, true).getTime();
+	private java.time.Instant _effDate = LocalDateTime.now().truncatedTo(ChronoUnit.DAYS).toInstant(ZoneOffset.UTC);
 	
 	/**
 	 * Initialize the Data Access Object.
@@ -33,8 +35,8 @@ public class GetSchedule extends DAO {
 	 * Sets the effective date of the Schedule, for DST calculations.
 	 * @param dt the effective date/time or null for today
 	 */
-	public void setEffectiveDate(java.util.Date dt) {
-		_effDate = CalendarUtils.getInstance(dt, true).getTime();
+	public void setEffectiveDate(Instant dt) {
+		_effDate = dt.minusSeconds(dt.get(ChronoField.SECOND_OF_DAY));
 	}
 
 	/**
@@ -279,12 +281,13 @@ public class GetSchedule extends DAO {
 			try (ResultSet rs = _ps.executeQuery()) {
 				if (rs.next()) {
 					se = new ScheduleEntry(SystemData.getAirline(rs.getString(1)), rs.getInt(2), rs.getInt(3));
-					se.setDate(_effDate);
 					se.setEquipmentType(rs.getString(4));
 					se.setAirportD(sr.getAirportD());
 					se.setAirportA(sr.getAirportA());
-					se.setTimeD(rs.getTimestamp(5));
-					se.setTimeA(rs.getTimestamp(6));
+					
+					// TODO: convert into effective date
+					se.setTimeD(rs.getTimestamp(5).toLocalDateTime());
+					se.setTimeA(rs.getTimestamp(6).toLocalDateTime());
 				}
 			}
 
@@ -378,13 +381,13 @@ public class GetSchedule extends DAO {
 				} else
 					entry = new ScheduleEntry(SystemData.getAirline(rs.getString(1)), rs.getInt(2), rs.getInt(3));
 			
-				entry.setDate(_effDate);
 				entry.setAirportD(SystemData.getAirport(rs.getString(4)));
 				entry.setAirportA(SystemData.getAirport(rs.getString(5)));
 				entry.setEquipmentType(rs.getString(7));
 				entry.setLength(rs.getInt(8));
-				entry.setTimeD(rs.getTimestamp(9));
-				entry.setTimeA(rs.getTimestamp(10));
+				// TODO: convert into effective date
+				entry.setTimeD(rs.getTimestamp(9).toLocalDateTime());
+				entry.setTimeA(rs.getTimestamp(10).toLocalDateTime());
 				entry.setHistoric(rs.getBoolean(11));
 				entry.setCanPurge(rs.getBoolean(12));
 				entry.setAcademy(rs.getBoolean(13));

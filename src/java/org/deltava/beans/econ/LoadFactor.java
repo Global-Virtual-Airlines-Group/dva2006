@@ -1,7 +1,8 @@
-// Copyright 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.econ;
 
-import java.util.*;
+import java.util.Random;
+import java.time.Instant;
 
 /**
  * A utility class to calculate flight passenger load factors.
@@ -12,7 +13,7 @@ import java.util.*;
  * factor which moves in 360-minute cycles.
  *  
  * @author Luke
- * @version 3.7
+ * @version 7.0
  * @since 3.7
  */
 
@@ -39,10 +40,10 @@ public class LoadFactor {
 	 * @param dt the date/time 
 	 * @return a load factor between 0 and 1
 	 */
-	public double getTargetLoad(Date dt) {
+	public double getTargetLoad(Instant dt) {
 		
 		// Calculate days/hours since airline start
-		long hoursSinceStart = (dt.getTime() - _info.getStartDate().getTimeInMillis()) / MS_PER_HOUR;
+		long hoursSinceStart = (dt.toEpochMilli() - _info.getStartDate().toEpochMilli()) / MS_PER_HOUR;
 		long daysSinceStart = hoursSinceStart / 24;
 		
 		// Calculate the factor per day/hour
@@ -64,7 +65,7 @@ public class LoadFactor {
 	 * @return a load factor between 0 and 1
 	 */
 	public double generate() {
-		return generate(new Date());
+		return generate(Instant.now());
 	}
 	
 	/**
@@ -72,7 +73,7 @@ public class LoadFactor {
 	 *  @param dt the flight date/time
 	 * @return a load factor between 0 and 1
 	 */
-	public double generate(Date dt) {
+	public double generate(Instant dt) {
 		double avgLoad = getTargetLoad(dt);
 		double maxAdjustAmt = Math.min(avgLoad, (1.05 -  avgLoad));
 		

@@ -1,5 +1,6 @@
 package org.deltava.beans.system;
 
+import java.time.Instant;
 import java.util.Date;
 
 import junit.framework.Test;
@@ -15,12 +16,14 @@ public class TestIssueComment extends AbstractBeanTestCase {
         return new CoverageDecorator(TestIssueComment.class, new Class[] { IssueComment.class } );
     }
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		_ic = new IssueComment(1, "Comments");
 		setBean(_ic);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		_ic = null;
 		super.tearDown();
@@ -45,9 +48,9 @@ public class TestIssueComment extends AbstractBeanTestCase {
 	}
 
 	public void testComparator() {
-		_ic.setCreatedOn(new Date(System.currentTimeMillis() - 100));
+		_ic.setCreatedOn(Instant.now().minusMillis(100));
 		IssueComment ic2 = new IssueComment(2, "Comments");
-		ic2.setCreatedOn(new Date());
+		ic2.setCreatedOn(Instant.now());
 		
 		assertTrue(_ic.compareTo(ic2) < 0);
 		assertTrue(ic2.compareTo(_ic) > 0);

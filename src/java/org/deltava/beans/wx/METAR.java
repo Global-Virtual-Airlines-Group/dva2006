@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.wx;
 
 import java.util.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.flight.ILSCategory;
 /**
  * A bean to store airport METAR data.
  * @author Luke
- * @version 4.1
+ * @version 7.0
  * @since 2.2
  */
 
@@ -290,6 +290,7 @@ public class METAR extends WeatherDataBean {
 			_ils = ilscat;
 	}
 	
+	@Override
 	public String getIconColor() {
 		switch (_ils) {
 			case CATI:
@@ -313,10 +314,12 @@ public class METAR extends WeatherDataBean {
 		}
 	}
 	
+	@Override
 	public Type getType() {
 		return Type.METAR;
 	}
-	
+
+	@Override
 	public int hashCode() {
 		return cacheKey().hashCode();
 	}

@@ -1,14 +1,14 @@
-// Copyright 2005, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
-import java.util.*;
+import java.time.*;
 
 import org.deltava.util.cache.Cacheable;
 
 /**
  * A bean to store Airline-wide statistics.
  * @author Luke
- * @version 3.7
+ * @version 7.0
  * @since 1.0
  */
 
@@ -17,7 +17,7 @@ public class AirlineTotals implements Comparable<AirlineTotals>, Cacheable {
 	/**
 	 * Date the airline statistics commenced.
 	 */
-	public static final Calendar BIRTHDATE = new GregorianCalendar(2001, 6, 10);
+	public static Instant BIRTHDATE = LocalDateTime.of(2001, 6, 10, 6, 0).toInstant(ZoneOffset.UTC);
 
 	private long _effectiveDate;
 	
@@ -62,7 +62,7 @@ public class AirlineTotals implements Comparable<AirlineTotals>, Cacheable {
 	 * @return the age of the airline in days, including the birthdate and today
 	 */
 	public int getAge() {
-		return (int) ((_effectiveDate - BIRTHDATE.getTimeInMillis()) / 86400000); 
+		return (int) ((_effectiveDate - BIRTHDATE.toEpochMilli()) / 86400_000); 
 	}
 	
 	/**
@@ -418,6 +418,7 @@ public class AirlineTotals implements Comparable<AirlineTotals>, Cacheable {
 	/**
 	 * Compares the effective date/times.
 	 */
+	@Override
 	public int compareTo(AirlineTotals at2) {
 		return new Long(_effectiveDate).compareTo(new Long(at2._effectiveDate));
 	}
@@ -426,6 +427,7 @@ public class AirlineTotals implements Comparable<AirlineTotals>, Cacheable {
 	 * Returns the cache key for this object.
 	 * @return the class object
 	 */
+	@Override
 	public Object cacheKey() {
 		return AirlineTotals.class;
 	}

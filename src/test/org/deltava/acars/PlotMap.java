@@ -23,6 +23,7 @@ abstract class PlotMap extends TestCase {
 	
 	protected final Map<Integer, ProjectInfo> _zooms = new HashMap<Integer, ProjectInfo>();
 	
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		
@@ -49,12 +50,13 @@ abstract class PlotMap extends TestCase {
 		log.info("Loaded System Data");
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		LogManager.shutdown();
 		super.tearDown();
 	}
 	
-	protected BlockingQueue<Integer> getIDs(int max) throws Exception {
+	protected static BlockingQueue<Integer> getIDs(int max) throws Exception {
 		try (Connection c = DriverManager.getConnection(URL)) {
 			GetFlightIDs iddao = new GetFlightIDs(c);
 			if (max > 0)
@@ -64,7 +66,7 @@ abstract class PlotMap extends TestCase {
 		}
 	}
 	
-	protected BlockingQueue<Integer> getIDs(int max, Collection<String> aps) throws Exception {
+	protected static BlockingQueue<Integer> getIDs(int max, Collection<String> aps) throws Exception {
 		try (Connection c = DriverManager.getConnection(URL)) {
 			GetFlightIDs iddao = new GetFlightIDs(c);
 			if (max > 0)
@@ -74,7 +76,7 @@ abstract class PlotMap extends TestCase {
 		}
 	}
 	
-	protected void truncateTracks() throws SQLException {
+	protected static void truncateTracks() throws SQLException {
 		try (Connection c = DriverManager.getConnection(URL)) {
 			try (Statement s = c.createStatement()) {
 				s.executeUpdate("TRUNCATE acars.TRACKS");
@@ -82,7 +84,7 @@ abstract class PlotMap extends TestCase {
 		}
 	}
 	
-	protected void truncateTracks(int minZoom) throws SQLException {
+	protected static void truncateTracks(int minZoom) throws SQLException {
 		try (Connection c = DriverManager.getConnection(URL)) {
 			try (PreparedStatement ps = c.prepareStatement("DELETE FROM acars.TRACKS WHERE (Z>=?)")) {
 				ps.setInt(1,  minZoom);

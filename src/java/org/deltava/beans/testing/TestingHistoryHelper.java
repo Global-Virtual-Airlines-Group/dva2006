@@ -1,7 +1,8 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import java.util.*;
+import java.time.Instant;
 
 import org.apache.log4j.Logger;
 
@@ -14,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A helper class to extract information from a user's examination/check ride history.
  * @author Luke
- * @version 6.1
+ * @version 7.0
  * @since 1.0
  */
 
@@ -142,7 +143,7 @@ public final class TestingHistoryHelper {
 	 * @see EquipmentType#getStage()
 	 */
 	public int getMaxCheckRideStage() {
-		int maxStage = _myEQ.getStage(); Date now = new Date();
+		int maxStage = _myEQ.getStage(); Instant now = Instant.now();
 		for (Test t : _tests) {
 			if (t.getAcademy() || !t.getPassFail() || (!(t instanceof CheckRide)))
 				continue;
@@ -150,7 +151,7 @@ public final class TestingHistoryHelper {
 				continue;
 			
 			CheckRide cr = (CheckRide) t;
-			if ((cr.getExpirationDate() == null) || (now.before(cr.getExpirationDate())))
+			if ((cr.getExpirationDate() == null) || (now.isBefore(cr.getExpirationDate())))
 				maxStage = Math.max(maxStage, t.getStage());
 		}
 
@@ -381,13 +382,13 @@ public final class TestingHistoryHelper {
 	 * @return TRUE if the user passed the check ride, otherwise FALSE
 	 */
 	public boolean hasCheckRide(EquipmentType eq, RideType rt) {
-		Date now = new Date();
+		Instant now = Instant.now();
 		for (Test t : _tests) {
 			if ((t instanceof CheckRide) && t.getPassFail() && !t.getAcademy()) {
 				CheckRide cr = (CheckRide) t;
 				if (!cr.getEquipmentType().equals(eq.getName()))
 					continue;
-				if ((cr.getExpirationDate() == null) || (now.before(cr.getExpirationDate())))
+				if ((cr.getExpirationDate() == null) || (now.isBefore(cr.getExpirationDate())))
 					return (rt == null) || (cr.getType() == rt);
 			}
 		}
@@ -416,7 +417,7 @@ public final class TestingHistoryHelper {
 			return false;
 
 		// Check the time from the scoring
-		long timeInterval = (System.currentTimeMillis() - t.getScoredOn().getTime()) / 1000;
+		long timeInterval = (System.currentTimeMillis() - t.getScoredOn().toEpochMilli()) / 1000;
 		log.info("Exam Lockout: interval = " + timeInterval + "s, period = " + (lockoutHours * 3600) + "s");
 		return (timeInterval < (lockoutHours * 3600L));
 	}

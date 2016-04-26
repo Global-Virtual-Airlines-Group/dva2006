@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import org.deltava.beans.GeoLocation;
@@ -7,7 +7,7 @@ import org.deltava.beans.schedule.GeoPosition;
 /**
  * A bean to store Google Geocoding results. 
  * @author Luke
- * @version 4.1
+ * @version 7.0
  * @since 2.3
  */
 
@@ -23,10 +23,12 @@ public class GeocodeResult implements GeoLocation {
 	private String _countryCode;
 	private String _postalCode;
 
+	@Override
 	public double getLatitude() {
 		return _loc.getLatitude();
 	}
 	
+	@Override
 	public double getLongitude() {
 		return _loc.getLongitude();
 	}
@@ -191,7 +193,8 @@ public class GeocodeResult implements GeoLocation {
 		
 		return buf.toString();
 	}
-	
+
+	@Override
 	public String toString() {
 		return getCityState();
 	}

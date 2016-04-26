@@ -1,4 +1,4 @@
-// Copyright 2006, 2010, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to log Flight Academy instruction flights.
  * @author Luke
- * @version 6.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -116,12 +116,6 @@ public class InstructionFlightCommand extends AbstractFormCommand {
 		
 		// Check if we're creating a new entry
 		boolean isNew = (ctx.getID() == 0);
-		
-		// Get the current date/time in the user's local zone
-		Calendar cld = Calendar.getInstance();
-		TZInfo tz = ctx.isAuthenticated() ? ctx.getUser().getTZ() : TZInfo.get(SystemData.get("time.timezone"));
-		cld.setTime(DateTime.convert(cld.getTime(), tz));
-		
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -171,14 +165,13 @@ public class InstructionFlightCommand extends AbstractFormCommand {
 					throw securityException("Cannot update other Instructor's flight log");
 			}
 			
-			// Set PIREP date and length
-			cld.setTime(DateTime.convert((flight.getDate() == null) ? new Date() : flight.getDate(), ctx.getUser().getTZ()));
+			// Set PIREP length
 			ctx.setAttribute("flightTime", StringUtils.format(flight.getLength() / 10.0, "#0.0"), REQUEST);
 			
 			// Load the Instructor/Course data
 			Collection<Integer> IDs = new HashSet<Integer>();
-			IDs.add(new Integer(flight.getInstructorID()));
-			IDs.add(new Integer(c.getPilotID()));
+			IDs.add(Integer.valueOf(flight.getInstructorID()));
+			IDs.add(Integer.valueOf(c.getPilotID()));
 			GetPilotDirectory pdao = new GetPilotDirectory(con);
 			ctx.setAttribute("pilots", pdao.getByID(IDs, "PILOTS"), REQUEST);
 			
@@ -187,11 +180,8 @@ public class InstructionFlightCommand extends AbstractFormCommand {
 				List<Pilot> insList = pdao.getByRole("Instructor", SystemData.get("airline.db"));
 				insList.addAll(pdao.getByRole("HR", SystemData.get("airline.db")));
 				ctx.setAttribute("instructors", insList, REQUEST);	
-			} else {
-				Collection<Person> instructors = new HashSet<Person>();
-				instructors.add(ctx.getUser());
-				ctx.setAttribute("instructors", instructors, REQUEST);
-			}
+			} else
+				ctx.setAttribute("instructors", Collections.singleton(ctx.getUser()), REQUEST);
 			
 			// Save aircraft types
 			GetAircraft acdao = new GetAircraft(con);
@@ -244,8 +234,8 @@ public class InstructionFlightCommand extends AbstractFormCommand {
 
 			// Load the Instructor/Course data
 			Collection<Integer> IDs = new HashSet<Integer>();
-			IDs.add(new Integer(flight.getInstructorID()));
-			IDs.add(new Integer(c.getPilotID()));
+			IDs.add(Integer.valueOf(flight.getInstructorID()));
+			IDs.add(Integer.valueOf(c.getPilotID()));
 			GetUserData uddao = new GetUserData(con);
 			GetPilot pdao = new GetPilot(con);
 			ctx.setAttribute("pilots", pdao.get(uddao.get(IDs)), REQUEST);

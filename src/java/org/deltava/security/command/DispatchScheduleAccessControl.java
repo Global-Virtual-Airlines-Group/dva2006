@@ -1,4 +1,4 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.acars.DispatchScheduleEntry;
@@ -8,13 +8,13 @@ import org.deltava.security.SecurityContext;
 /**
  * An access controller for ACARS Dispatcher service entries.
  * @author Luke
- * @version 2.2
+ * @version 7.0
  * @since 2.2
  */
 
 public class DispatchScheduleAccessControl extends AccessControl {
 
-	private DispatchScheduleEntry _dse;
+	private final DispatchScheduleEntry _dse;
 	
 	private boolean _canCreate;
 	private boolean _canDelete;
@@ -33,6 +33,7 @@ public class DispatchScheduleAccessControl extends AccessControl {
 	/**
 	 * Calculates access rights.
 	 */
+	@Override
 	public void validate() {
 		validateContext();
 		
@@ -41,7 +42,7 @@ public class DispatchScheduleAccessControl extends AccessControl {
 		boolean isOurs = (_dse != null) && _ctx.isAuthenticated() && (_dse.getAuthorID() == _ctx.getUser().getID());
 		_canCreate = _ctx.isUserInRole("Dispatch") || _ctx.isUserInRole("HR");
 		_canEdit = (isOurs && isDispatch) || _ctx.isUserInRole("HR");
-		_canDelete = (isOurs && isDispatch && (_dse.getEndTime().getTime() > System.currentTimeMillis())) || _ctx.isUserInRole("HR");
+		_canDelete = (isOurs && isDispatch && (_dse.getEndTime().toEpochMilli() > System.currentTimeMillis())) || _ctx.isUserInRole("HR");
 	}
 
 	/**

@@ -1,20 +1,20 @@
-// Copyright 2005, 2006, 2007, 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 
 /**
  * A bean to store saved ACARS text messages.
  * @author Luke
- * @version 4.2
+ * @version 7.0
  * @since 1.0
  */
 
 public class TextMessage implements AuthoredBean, Comparable<TextMessage> {
 
-   private final Date _date;
+   private final Instant _date;
    private String _msg;
    private int _authorID;
    private int _recipientID;
@@ -25,7 +25,7 @@ public class TextMessage implements AuthoredBean, Comparable<TextMessage> {
     * @throws NullPointerException if msg is null
     * @see TextMessage#getDate()
     */
-   public TextMessage(Date dt) {
+   public TextMessage(Instant dt) {
       super();
       _date = dt;
    }
@@ -34,17 +34,11 @@ public class TextMessage implements AuthoredBean, Comparable<TextMessage> {
     * Returns the date the message was sent.
     * @return the date/time of the message
     */
-   public Date getDate() {
+   public Instant getDate() {
       return _date;
    }
    
-   /**
-    * Returns the database ID of the message author.
-    * @return the database ID
-    * @see TextMessage#setAuthorID(int)
-    * @see TextMessage#getRecipientID()
-    * @see org.deltava.beans.Person#getID()
-    */
+   @Override
    public int getAuthorID() {
       return _authorID;
    }
@@ -69,13 +63,7 @@ public class TextMessage implements AuthoredBean, Comparable<TextMessage> {
       return _msg;
    }
 
-   /**
-    * Updates the Author of the message.
-    * @param id the Author's database ID
-    * @throws IllegalArgumentException if id is zero or negative
-    * @see TextMessage#getAuthorID()
-    * @see TextMessage#setRecipientID(int)
-    */
+   @Override
    public void setAuthorID(int id) {
       DatabaseBean.validateID(_authorID, id);
       _authorID = id;
@@ -108,6 +96,7 @@ public class TextMessage implements AuthoredBean, Comparable<TextMessage> {
    /**
     * Compares two messages by comparing their dates.
     */
+   @Override
    public int compareTo(TextMessage m2) {
       return _date.compareTo(m2._date);
    }

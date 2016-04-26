@@ -9,13 +9,15 @@ public class TestInsertJSTag extends AbstractTagTestCase {
    private static final String JS_START = "<script language=\"JavaScript\" type=\"text/javascript\" src=\"";
    private static final String GOOGLE_JS = "http://maps.google.com/maps?file=api&v=1&key=abcdefg";
 
-   protected void setUp() throws Exception {
+   @Override
+protected void setUp() throws Exception {
       super.setUp();
       _tag = new InsertJSTag();
       _tag.setPageContext(_ctx);
    }
 
-   protected void tearDown() throws Exception {
+   @Override
+protected void tearDown() throws Exception {
       _tag.release();
       _tag = null;
       super.tearDown();

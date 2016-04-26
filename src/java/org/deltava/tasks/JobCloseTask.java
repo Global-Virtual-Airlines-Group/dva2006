@@ -1,8 +1,9 @@
-// Copyright 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.deltava.beans.hr.JobPosting;
 
@@ -12,7 +13,7 @@ import org.deltava.taskman.*;
 /**
  * A Scheduled Task to automatically close Job Postings.
  * @author Luke
- * @version 3.6
+ * @version 7.0
  * @since 3.6
  */
 
@@ -36,13 +37,13 @@ public class JobCloseTask extends Task {
 			// Get all jobs
 			GetJobs jdao = new GetJobs(con);
 			List<JobPosting> openJobs = jdao.getOpen();
-			Date now = new Date();
+			Instant now = Instant.now();
 			
 			// Close them if required
 			SetJobs jwdao = new SetJobs(con);
 			for (Iterator<JobPosting> i = openJobs.iterator(); i.hasNext(); ) {
 				JobPosting jp = i.next();
-				if (jp.getClosesOn().before(now)) {
+				if (jp.getClosesOn().isBefore(now)) {
 					log.info("Closing Job " + jp.getTitle());
 					jp.setStatus(JobPosting.CLOSED);
 					jwdao.write(jp);

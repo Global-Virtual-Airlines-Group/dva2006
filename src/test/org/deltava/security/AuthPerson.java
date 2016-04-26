@@ -15,22 +15,27 @@ class AuthPerson extends Person {
 		setDN(dn);
 	}
 	
+	@Override
 	public String getStatusName() {
 		return "MockPerson";
 	}
 	
+	@Override
 	public void addRole(String role) {
 		_roles.add(role);
 	}
 	
+	@Override
 	public Collection<String> getRoles() {
 		return _roles;
 	}
 	
+	@Override
 	public boolean isInRole(String role) {
 		return _roles.contains(role);
 	}
 	
+	@Override
 	public String getRowClassName() {
 		return null;
 	}

@@ -1,20 +1,20 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.deltava.beans.DatabaseBean;
 
 /**
  * A system bean to store User Inactivity Purge data.
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
 public class InactivityPurge extends DatabaseBean {
 
-	private Date _purgeDate;
+	private Instant _purgeDate;
 	private int _interval;
 	private boolean _notified;
 	
@@ -30,9 +30,9 @@ public class InactivityPurge extends DatabaseBean {
 	/**
 	 * Returns the date the user will be marked Inactive.
 	 * @return the date/time
-	 * @see InactivityPurge#setPurgeDate(Date)
+	 * @see InactivityPurge#setPurgeDate(Instant)
 	 */
-	public Date getPurgeDate() {
+	public Instant getPurgeDate() {
 		return _purgeDate;
 	}
 	
@@ -79,7 +79,7 @@ public class InactivityPurge extends DatabaseBean {
 	 * @param dt the date/time the Pilot will be marked inactive
 	 * @see InactivityPurge#getPurgeDate()
 	 */
-	public void setPurgeDate(Date dt) {
+	public void setPurgeDate(Instant dt) {
 		_purgeDate = dt;
 	}
 	
@@ -87,6 +87,7 @@ public class InactivityPurge extends DatabaseBean {
 	 * Compares two InactivityPurge beans by comparing their Purge Dates.
 	 * @see Comparable#compareTo(Object)
 	 */
+	@Override
 	public int compareTo(Object o2) {
 		InactivityPurge ip2 = (InactivityPurge) o2;
 		int tmpResult = _purgeDate.compareTo(ip2.getPurgeDate());

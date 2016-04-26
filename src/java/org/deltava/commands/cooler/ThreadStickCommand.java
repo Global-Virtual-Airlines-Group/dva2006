@@ -1,8 +1,8 @@
-// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
-import java.util.Date;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.deltava.beans.cooler.*;
 import org.deltava.commands.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update the sticky date of a Water Cooler thread.
  * @author Luke
- * @version 2.2
+ * @version 7.0
  * @since 1.0
  */
 
@@ -27,10 +27,11 @@ public class ThreadStickCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the sticky date
-		Date stickyDate = null;
+		Instant stickyDate = null;
 		try {
 			stickyDate = parseDateTime(ctx, "sticky", SystemData.get("time.date_format"), "HH:mm");
 		} catch (IllegalArgumentException iae) {

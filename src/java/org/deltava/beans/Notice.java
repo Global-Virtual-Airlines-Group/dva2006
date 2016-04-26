@@ -1,10 +1,10 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 /**
  * A class for storing Notice to Airmen (NOTAM) entries.
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -64,6 +64,7 @@ public class Notice extends News implements ViewEntry {
    /**
     * Returns the CSS class name if displayed in a view.
     */
+   @Override
    public String getRowClassName() {
       return _active ? null : "opt1";
    }

@@ -19,11 +19,13 @@ public class TestExpiringCache extends TestCase {
 				ExpiringCacheEntry.class });
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		_cache = new ExpiringCache<Cacheable>(2, 1);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		_cache = null;
 		super.tearDown();

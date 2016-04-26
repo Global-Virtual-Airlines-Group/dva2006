@@ -1,20 +1,20 @@
 // Copyright 2005, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 
 /**
  * A bean to store system information.
  * @author Luke
- * @version 6.4
+ * @version 7.0
  * @since 6.4
  */
 
 public class SystemInformation extends DatabaseBean {
 	
-	private Date _created;
+	private Instant _created;
 	
 	private String _os;
 	private String _clr;
@@ -53,7 +53,7 @@ public class SystemInformation extends DatabaseBean {
 	 * Returns the Installation date.
 	 * @return the date/time the installer was run
 	 */
-	public Date getDate() {
+	public Instant getDate() {
 		return _created;
 	}
 	
@@ -238,7 +238,7 @@ public class SystemInformation extends DatabaseBean {
 	 * Updates the Installation Date.
 	 * @param dt the date/time the Installer was executed
 	 */
-	public void setDate(Date dt) {
+	public void setDate(Instant dt) {
 		_created = dt;
 	}
 	

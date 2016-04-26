@@ -1,9 +1,11 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2010, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.io.*;
 import java.util.*;
 import java.sql.Connection;
+import java.time.*;
+import java.time.temporal.ChronoField;
 
 import org.deltava.beans.schedule.*;
 import org.deltava.commands.*;
@@ -18,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to download and import Innovata LLC schedule data.
  * @author Luke
- * @version 6.3
+ * @version 7.0
  * @since 1.0
  */
 
@@ -41,12 +43,11 @@ public class InnovataDownloadCommand extends ScheduleImportCommand {
 
 		// Calculate replay date
 		String dt = SystemData.get("schedule.innovata.import.replayDate");
-		Date replayDate = StringUtils.isEmpty(dt) ? null : StringUtils.parseDate(dt, "MM/dd/yyyy");
+		LocalDateTime replayDate = StringUtils.isEmpty(dt) ? null : LocalDateTime.ofInstant(StringUtils.parseInstant(dt, "MM/dd/yyyy"), ZoneOffset.UTC);
 		if (replayDate != null) {
-			Calendar now = CalendarUtils.getInstance(null, true);
-			int daysToAdjust = now.get(Calendar.DAY_OF_WEEK) - 1;
-			Calendar rd = CalendarUtils.getInstance(replayDate, true, daysToAdjust);
-			replayDate = rd.getTime();
+			LocalDateTime now = LocalDateTime.now();
+			int daysToAdjust = now.get(ChronoField.DAY_OF_WEEK) - 1;
+			replayDate = replayDate.plusDays(daysToAdjust);
 		}
 		
 		// Connect to the FTP server and download the files as needed
@@ -78,7 +79,7 @@ public class InnovataDownloadCommand extends ScheduleImportCommand {
 			GetAirline adao = new GetAirline(con);
 			GetAircraft acdao = new GetAircraft(con);
 			GetFullSchedule dao = new GetFullSchedule(is);
-			dao.setEffectiveDate(CalendarUtils.getInstance(replayDate, true).getTime());
+			dao.setEffectiveDate(replayDate);
 			dao.setAircraft(acdao.getAircraftTypes());
 			dao.setAirlines(adao.getActive().values());
 			dao.setMainlineCodes((List<String>) SystemData.getObject("schedule.innovata.primary_codes"));

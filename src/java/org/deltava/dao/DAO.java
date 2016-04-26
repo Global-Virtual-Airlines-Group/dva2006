@@ -74,10 +74,9 @@ public abstract class DAO {
 	 * @param dt a JDBC Date
 	 * @return a Java date/time
 	 */
-	protected static java.util.Date expandDate(Date dt) {
+	protected static java.time.Instant expandDate(Date dt) {
 		if (dt == null) return null;
-		Instant i = Instant.ofEpochMilli(dt.getTime()).plusSeconds(12 * 3600);
-		return new Date(i.toEpochMilli());
+		return Instant.ofEpochMilli(dt.getTime()).plusSeconds(12 * 3600);
 	}
 	
 	/**
@@ -159,15 +158,6 @@ public abstract class DAO {
 		_ps.setQueryTimeout(_queryTimeout);
 		_ps.setFetchSize((_queryMax == 0) ? 500 : Math.min(250, _queryMax + 10));
 		_queryCount.increment();
-	}
-
-	/**
-	 * Converts a Java date/time value into a JDBC timestamp. This method is null-safe.
-	 * @param dt the date/time
-	 * @return the JDBC timestamp, or null if dt is null
-	 */
-	protected static Timestamp createTimestamp(java.util.Date dt) {
-		return (dt == null) ? null : new Timestamp(dt.getTime());
 	}
 	
 	/**

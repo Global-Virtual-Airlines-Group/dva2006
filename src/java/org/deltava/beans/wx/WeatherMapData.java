@@ -1,7 +1,8 @@
-// Copyright 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.wx;
 
 import java.util.*;
+import java.time.Instant;
 
 import org.deltava.util.cache.ExpiringCacheable;
 
@@ -14,8 +15,8 @@ import org.deltava.util.cache.ExpiringCacheable;
 
 public class WeatherMapData implements ExpiringCacheable, Comparable<WeatherMapData> {
 
-	private final Date _dt;
-	private final Date _expiryDate;
+	private final Instant _dt;
+	private final Instant _expiryDate;
 	
 	private final List<WeatherLine> _fronts = new ArrayList<WeatherLine>();
 	private final List<Cyclone> _cyclones = new ArrayList<Cyclone>();
@@ -24,13 +25,13 @@ public class WeatherMapData implements ExpiringCacheable, Comparable<WeatherMapD
 	 * Creates the bean.
 	 * @param dt the effective date/time in UTC
 	 */
-	public WeatherMapData(Date dt) {
+	public WeatherMapData(Instant dt) {
 		super();
 		_dt = dt;
 		
 		// Calculate expiry - typically three hours from generation or 2 minutes
-		long expDT = Math.max(_dt.getTime() + (3600_000 * 3), System.currentTimeMillis() + 120_000);
-		_expiryDate = new Date(expDT);
+		long expDT = Math.max(_dt.toEpochMilli() + (3600_000 * 3), System.currentTimeMillis() + 120_000);
+		_expiryDate = Instant.ofEpochMilli(expDT);
 	}
 	
 	/**
@@ -49,7 +50,7 @@ public class WeatherMapData implements ExpiringCacheable, Comparable<WeatherMapD
 		_cyclones.add(c);
 	}
 	
-	public Date getDate() {
+	public Instant getDate() {
 		return _dt;
 	}
 	
@@ -67,7 +68,7 @@ public class WeatherMapData implements ExpiringCacheable, Comparable<WeatherMapD
 	}
 
 	@Override
-	public Date getExpiryDate() {
+	public Instant getExpiryDate() {
 		return _expiryDate;
 	}
 

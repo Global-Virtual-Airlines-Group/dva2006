@@ -1,8 +1,9 @@
-// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.hr;
 
 import java.util.*;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 import org.deltava.beans.fb.NewsEntry;
@@ -23,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Job Postings.
  * @author Luke
- * @version 3.6
+ * @version 7.0
  * @since 3.4
  */
 
@@ -54,7 +55,7 @@ public class JobPostingCommand extends AbstractFormCommand {
 				jp.setTitle(ctx.getParameter("title"));
 			} else {
 				jp = new JobPosting(ctx.getParameter("title"));
-				jp.setCreatedOn(new Date());
+				jp.setCreatedOn(Instant.now());
 			}
 			
 			// Validate our access
@@ -164,15 +165,16 @@ public class JobPostingCommand extends AbstractFormCommand {
 			JobPostingAccessControl access = new JobPostingAccessControl(ctx, jp);
 			access.validate();
 			if (!access.getCanEdit())
-				throw securityException("Cannot edit Job Posting " + jp.getID());
+				throw securityException("Cannot edit Job Posting");
 			
 			// Load applicant IDs
 			Collection<Integer> IDs = new HashSet<Integer>();
-			if (jp != null)
-				IDs.add(new Integer(jp.getHireManagerID()));
-			if (access.getCanViewApplicants()) {
-				for (Application a : jp.getApplications())
-					IDs.add(new Integer(a.getAuthorID()));
+			if (jp != null) {
+				IDs.add(Integer.valueOf(jp.getHireManagerID()));
+				if (access.getCanViewApplicants()) {
+					for (Application a : jp.getApplications())
+						IDs.add(Integer.valueOf(a.getAuthorID()));
+				}
 			}
 			
 			// Get Pilots

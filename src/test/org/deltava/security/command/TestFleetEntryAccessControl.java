@@ -17,13 +17,15 @@ public class TestFleetEntryAccessControl extends AccessControlTestCase {
             FleetEntryAccessControl.class });
    }
    
-   protected void setUp() throws Exception {
+   @Override
+protected void setUp() throws Exception {
       super.setUp();
       _m = new Manual(new File("manual.pdf"));
       _ac = new FleetEntryAccessControl(_ctxt, _m);
    }
 
-   protected void tearDown() throws Exception {
+   @Override
+protected void tearDown() throws Exception {
       _m = null;
       _ac = null;
       super.tearDown();

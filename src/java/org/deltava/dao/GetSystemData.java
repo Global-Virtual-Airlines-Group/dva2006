@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Data Access Object for loading system data (Session/Command/HTTP log tables) and Registration blocks.
  * @author Luke
- * @version 5.2
+ * @version 7.0
  * @since 1.0
  */
 
@@ -140,15 +140,14 @@ public class GetSystemData extends DAO {
 		}
 	}
 
-	/**
+	/*
 	 * Helper method to retrieve command log entries.
 	 */
 	private List<CommandLog> executeCommandLog() throws SQLException {
-
 		List<CommandLog> results = new ArrayList<CommandLog>();
 		try (ResultSet rs = _ps.executeQuery()) {
 			while (rs.next()) {
-				CommandLog cmd = new CommandLog(rs.getTimestamp(1));
+				CommandLog cmd = new CommandLog(rs.getTimestamp(1).toInstant());
 				cmd.setPilotID(rs.getInt(2));
 				cmd.setRemoteAddr(rs.getString(3));
 				cmd.setRemoteHost(rs.getString(4));
@@ -213,7 +212,7 @@ public class GetSystemData extends DAO {
 			prepareStatementWithoutLimits("SELECT * FROM SYS_TASKS");
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next())
-					results.add(new TaskLastRun(rs.getString(1), rs.getTimestamp(2), rs.getLong(3)));
+					results.add(new TaskLastRun(rs.getString(1), toInstant(rs.getTimestamp(2)), rs.getLong(3)));
 			}
 
 			_ps.close();
@@ -229,16 +228,14 @@ public class GetSystemData extends DAO {
 	 * @return the last execution date/time, or null if never
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public java.util.Date getLastRun(String taskID) throws DAOException {
+	public java.time.Instant getLastRun(String taskID) throws DAOException {
 		try {
 			prepareStatementWithoutLimits("SELECT LASTRUN FROM SYS_TASKS WHERE (ID=?) LIMIT 1");
 			_ps.setString(1, taskID);
-			
-			// Execute the query
-			Timestamp lastRun = null;
+			java.time.Instant lastRun = null;
 			try (ResultSet rs = _ps.executeQuery()) { 
 				if (rs.next())
-					lastRun = rs.getTimestamp(1);
+					lastRun = toInstant(rs.getTimestamp(1));
 			}
 			
 			_ps.close();

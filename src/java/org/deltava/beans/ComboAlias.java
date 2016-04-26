@@ -1,3 +1,4 @@
+// Copyright 2004, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 /**

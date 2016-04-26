@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import javax.servlet.jsp.*;
@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP tag to display a Pilot Accomplishment.
  * @author Luke
- * @version 3.2
+ * @version 7.0
  * @since 3.2
  */
 
@@ -38,6 +38,7 @@ public class AccomplishmentFormatTag extends TagSupport {
 	/**
 	 * Releases the tag's state variables.
 	 */
+	@Override
 	public void release() {
 		super.release();
 		_class = null;
@@ -47,6 +48,7 @@ public class AccomplishmentFormatTag extends TagSupport {
 	 * Renders the Accomplishment to the JSP output stream.
 	 * @return EVAL_PAGE always
 	 */
+	@Override
 	public int doEndTag() throws JspException {
 		JspWriter out = pageContext.getOut();
 		try {

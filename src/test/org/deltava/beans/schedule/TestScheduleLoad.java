@@ -3,7 +3,8 @@ package org.deltava.beans.schedule;
 
 import java.io.*;
 import java.util.*;
-import java.text.*;
+import java.time.LocalDateTime;
+import java.time.format.*;
 
 import junit.framework.TestCase;
 
@@ -21,6 +22,7 @@ public class TestScheduleLoad extends TestCase {
    private static Map<String, Airline> _alMap = new TreeMap<String, Airline>();
    private static Set<Airport> _airports;
 
+   @Override
    protected void setUp() throws Exception {
       super.setUp();
       PropertyConfigurator.configure("data/log4j.test.properties");
@@ -124,9 +126,9 @@ public class TestScheduleLoad extends TestCase {
       }
    }
    
-   public void testTimes() throws IOException, ParseException {
+   public void testTimes() throws IOException {
       List<List<String>> sched = loadScheduleCSV("afv_schedule.csv");
-      DateFormat df = new SimpleDateFormat("hh:mm aa");
+      DateTimeFormatter df = new DateTimeFormatterBuilder().appendPattern("hh:mm aa").parseLenient().toFormatter();
       for (Iterator<List<String>> i = sched.iterator(); i.hasNext(); ) {
          List<String> l = i.next();
          assertEquals(9, l.size());
@@ -136,9 +138,9 @@ public class TestScheduleLoad extends TestCase {
          ScheduleEntry se = new ScheduleEntry(_alMap.get(entry[0]), Integer.parseInt(entry[1]), Integer.parseInt(entry[2]));
          se.setEquipmentType(entry[3]);
          se.setAirportD( _apMap.get(entry[4]));
-         se.setTimeD(df.parse(entry[5]));
+         se.setTimeD(LocalDateTime.parse(entry[5], df));
          se.setAirportA(_apMap.get(entry[6]));
-         se.setTimeA(df.parse(entry[7]));
+         se.setTimeA(LocalDateTime.parse(entry[7], df));
          
          // Compare the times
          int schedTime = Integer.parseInt(entry[8]);

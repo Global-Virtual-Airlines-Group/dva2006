@@ -1,7 +1,7 @@
-// Copyright 2008, 2009, 2010, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2012, 2014, 2015, 2106 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.wx;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.*;
@@ -11,15 +11,15 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store weather data for a particular location.
  * @author Luke
- * @version 6.0
+ * @version 7.0
  * @since 2.2
  */
 
 public abstract class WeatherDataBean implements MarkerMapEntry, Cacheable, Comparable<WeatherDataBean> {
 
 	private AirportLocation _pos;
-	private Date _createdOn;
-	private Date _obsDate;
+	private Instant _createdOn = Instant.now();
+	private Instant _obsDate;
 	private String _wxData;
 	
 	/**
@@ -44,19 +44,10 @@ public abstract class WeatherDataBean implements MarkerMapEntry, Cacheable, Comp
 	}
 	
 	/**
-	 * Initializes the bean.
-	 * @throws NullPointerException if code is null
-	 */
-	public WeatherDataBean() {
-		super();
-		_createdOn = new Date();
-	}
-
-	/**
 	 * Returns the effective date of this weather data.
 	 * @return the effective date/time
 	 */
-	public Date getDate() {
+	public Instant getDate() {
 		return _obsDate;
 	}
 	
@@ -80,7 +71,7 @@ public abstract class WeatherDataBean implements MarkerMapEntry, Cacheable, Comp
 	 * Returns the creation date of this weather object.
 	 * @return the creation date/time
 	 */
-	public Date getCreatedOn() {
+	public Instant getCreatedOn() {
 		return _createdOn;
 	}
 	
@@ -118,7 +109,7 @@ public abstract class WeatherDataBean implements MarkerMapEntry, Cacheable, Comp
 	 * Sets the effective date of this weather data.
 	 * @param dt the effective date/time
 	 */
-	public void setDate(Date dt) {
+	public void setDate(Instant dt) {
 		_obsDate = dt;
 	}
 	

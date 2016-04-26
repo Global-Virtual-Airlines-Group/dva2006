@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2011, 2012, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.acars.*;
 /**
  * A Data Access Object to read the ACARS Dispatcher service calendar.
  * @author Luke
- * @version 6.0
+ * @version 7.0
  * @since 2.2
  */
 
@@ -152,8 +152,8 @@ public class GetDispatchCalendar extends GetACARSData {
 		try (ResultSet rs = _ps.executeQuery()) {
 			while (rs.next()) {
 				DispatchScheduleEntry e = new DispatchScheduleEntry(rs.getInt(2));
-				e.setStartTime(rs.getTimestamp(3));
-				e.setEndTime(rs.getTimestamp(4));
+				e.setStartTime(toInstant(rs.getTimestamp(3)));
+				e.setEndTime(toInstant(rs.getTimestamp(4)));
 				e.setID(rs.getInt(1));
 				e.setComments(rs.getString(5));
 				results.add(e);

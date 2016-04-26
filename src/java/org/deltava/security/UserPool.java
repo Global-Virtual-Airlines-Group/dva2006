@@ -1,7 +1,8 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.util.*;
+import java.time.Instant;
 import java.util.concurrent.*;
 
 import org.deltava.beans.*;
@@ -10,7 +11,7 @@ import org.deltava.beans.system.IPBlock;
 /**
  * A singleton class for tracking connected and blocked users.
  * @author Luke
- * @version 6.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -21,7 +22,7 @@ public class UserPool {
 	private static final Collection<Integer> _blockedUsers = Collections.synchronizedSet(new HashSet<Integer>());
 	
 	private static int _maxSize;
-	private static Date _maxSizeDate;
+	private static Instant _maxSizeDate;
 
 	// We're a singleton, alone and lonely
 	private UserPool() {
@@ -43,7 +44,7 @@ public class UserPool {
 			_users.put(Integer.valueOf(p.getID()), uw);
 			if (_users.size() >= _maxSize) {
 				_maxSize = _users.size();
-				_maxSizeDate = new Date();
+				_maxSizeDate = Instant.now();
 			}
 		}
 	}
@@ -133,7 +134,7 @@ public class UserPool {
 	 * @return the date/time when the maximum user count was reached
 	 * @see UserPool#getMaxSize()
 	 */
-	public static Date getMaxSizeDate() {
+	public static Instant getMaxSizeDate() {
 		return _maxSizeDate;
 	}
 	
@@ -142,7 +143,7 @@ public class UserPool {
 	 * @param maxSize the maximum number of users
 	 * @param maxSizeDate the date the maximum concurrent users was reached
 	 */
-	public static void init(int maxSize, Date maxSizeDate) {
+	public static void init(int maxSize, Instant maxSizeDate) {
 		_maxSize = maxSize;
 		_maxSizeDate = maxSizeDate;
 	}

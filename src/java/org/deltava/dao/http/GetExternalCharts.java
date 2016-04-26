@@ -1,8 +1,8 @@
-// Copyright 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.net.*;
-import java.util.Date;
+import java.time.Instant;
 import java.io.IOException;
 
 import org.deltava.beans.schedule.ExternalChart;
@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to handle external chart redirects.
  * @author Luke
- * @version 4.1
+ * @version 7.0
  * @since 4.0
  */
 
@@ -41,7 +41,7 @@ public class GetExternalCharts extends DAO {
 				throw new HTTPDAOException("Unknown Response Code", rspCode);
 
 			// Get size and modification date
-			c.setLastModified(new Date());
+			c.setLastModified(Instant.now());
 			int length = urlCon.getContentLength();
 			if (length > 0)
 				c.setSize(length);
@@ -64,7 +64,7 @@ public class GetExternalCharts extends DAO {
 		try {
 			init(c.getURL());
 			c.load(getIn());
-			c.setLastModified(new Date());
+			c.setLastModified(Instant.now());
 		} catch (IOException ie) {
 			throw new DAOException(ie);
 		} finally {

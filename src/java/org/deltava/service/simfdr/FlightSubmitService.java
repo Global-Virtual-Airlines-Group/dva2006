@@ -147,7 +147,7 @@ public class FlightSubmitService extends SimFDRService {
 			if (fr.getDatabaseID(DatabaseID.EVENT) != 0) {
 				Event e = evdao.get(fr.getDatabaseID(DatabaseID.EVENT));
 				if (e != null) {
-					long timeSinceEnd = (System.currentTimeMillis() - e.getEndTime().getTime()) / 3600_000;
+					long timeSinceEnd = (System.currentTimeMillis() - e.getEndTime().toEpochMilli()) / 3600_000;
 					if (timeSinceEnd > 6) {
 						comments.add("SYSTEM: Flight logged " + timeSinceEnd + " hours after '" + e.getName() + "' completion");
 						fr.setDatabaseID(DatabaseID.EVENT, 0);

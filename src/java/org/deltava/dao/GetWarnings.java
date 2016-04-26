@@ -1,4 +1,4 @@
-// Copyright 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.mvs.Warning;
 /**
  * A Data Access Object to load MVS warnings.
  * @author Luke
- * @version 4.1
+ * @version 7.0
  * @since 4.0
  */
 
@@ -39,7 +39,7 @@ public class GetWarnings extends DAO {
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
 					Warning w = new Warning(rs.getInt(1), rs.getInt(2));
-					w.setDate(rs.getTimestamp(3));
+					w.setDate(rs.getTimestamp(3).toInstant());
 					results.add(w);
 				}
 			}

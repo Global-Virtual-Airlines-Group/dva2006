@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A Data Access Object to write Oceanic Routes.
  * @author Luke
- * @version 3.6
+ * @version 7.0
  * @since 1.0
  */
 
@@ -30,7 +30,7 @@ public class SetOceanic extends DAO {
 	 * @return the number of routes deleted
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public int purgeOceanic(java.util.Date sd) throws DAOException {
+	public int purgeOceanic(java.time.Instant sd) throws DAOException {
 		try {
 			if (sd != null) {
 				prepareStatement("DELETE FROM common.OCEANIC WHERE (VAILID_DATE<?)");
@@ -50,7 +50,7 @@ public class SetOceanic extends DAO {
 	 * @param vd the validity date of the route
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void deleteOceanic(OceanicTrackInfo.Type routeType, java.util.Date vd) throws DAOException {
+	public void deleteOceanic(OceanicTrackInfo.Type routeType, java.time.Instant vd) throws DAOException {
 		try {
 			prepareStatement("DELETE FROM common.OCEANIC WHERE (ROUTETYPE=?) AND (VALID_DATE=?)");
 			_ps.setInt(1, routeType.ordinal());

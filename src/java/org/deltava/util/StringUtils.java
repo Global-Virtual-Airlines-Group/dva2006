@@ -3,6 +3,9 @@ package org.deltava.util;
 
 import java.util.*;
 import java.text.*;
+import java.time.*;
+import java.time.format.*;
+import java.time.temporal.ChronoField;
 
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.schedule.GeoPosition;
@@ -191,12 +194,22 @@ public final class StringUtils {
 	 * @throws IllegalArgumentException if the date cannot be parsed
 	 * @see DateFormat#parse(java.lang.String)
 	 */
-	public static Date parseDate(String dt, String fmt) {
-		try {
-			return new SimpleDateFormat(fmt).parse(dt);
-		} catch (ParseException pe) {
-			throw new IllegalArgumentException(pe);
-		}
+	public static Instant parseInstant(String dt, String fmt) {
+		DateTimeFormatterBuilder dfb = new DateTimeFormatterBuilder().appendPattern(fmt);
+		dfb.parseDefaulting(ChronoField.HOUR_OF_DAY, 0);
+		dfb.parseDefaulting(ChronoField.MINUTE_OF_HOUR, 0);
+		dfb.parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0);
+		LocalDateTime ldt = LocalDateTime.parse(dt, dfb.toFormatter());
+		return ldt.toInstant(ZoneOffset.UTC);
+	}
+	
+	public static ZonedDateTime parseLocal(String dt, String fmt, ZoneId tz) {
+		DateTimeFormatterBuilder dfb = new DateTimeFormatterBuilder().appendPattern(fmt);
+		dfb.parseDefaulting(ChronoField.HOUR_OF_DAY, 0);
+		dfb.parseDefaulting(ChronoField.MINUTE_OF_HOUR, 0);
+		dfb.parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0);
+		LocalDateTime ldt = LocalDateTime.parse(dt, dfb.toFormatter());
+		return ZonedDateTime.of(ldt, tz);
 	}
 	
 	/**
@@ -204,9 +217,9 @@ public final class StringUtils {
 	 * @param dt the date in milliseconds since Epoch
 	 * @return a Date, or null
 	 */
-	public static Date parseEpoch(String dt) {
+	public static Instant parseEpoch(String dt) {
 		try {
-			return new Date(Long.parseLong(dt));
+			return Instant.ofEpochMilli(Long.parseLong(dt));
 		} catch (Exception e) {
 			return null;
 		}
@@ -218,8 +231,8 @@ public final class StringUtils {
 	 * @return a Date
 	 * @throws IllegalArgumentException if the date/time is not in RFC3339 format
 	 */
-	public static Date parseRFC3339Date(String dt) {
-		return parseDate(dt, "yyyy-MM-dd'T'HH:mm:ssZ");
+	public static Instant parseRFC3339Date(String dt) {
+		return parseInstant(dt, "yyyy-MM-dd'T'HH:mm:ssZ");
 	}
 	
 	/**
@@ -358,8 +371,19 @@ public final class StringUtils {
 	 * @return the formatted date/time
 	 * @see DateFormat#format(Date)
 	 */
-	public static String format(Date dt, String fmtPattern) {
-		return new SimpleDateFormat(fmtPattern).format(dt);
+	public static String format(Instant dt, String fmtPattern) {
+		return format(ZonedDateTime.ofInstant(dt, ZoneOffset.UTC), fmtPattern);
+	}
+
+	/**
+	 * Formats a date/time into a string using a particular pattern.
+	 * @param dt the date/time
+	 * @param fmtPattern the formatter pattern
+	 * @return the formatted date/time
+	 * @see DateFormat#format(Date)
+	 */
+	public static String format(ZonedDateTime dt, String fmtPattern) {
+		return DateTimeFormatter.ofPattern(fmtPattern).format(dt);
 	}
 
 	/**

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import java.util.*;
@@ -8,7 +8,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store multiple-choice question data.
  * @author Luke
- * @version 3.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -31,6 +31,7 @@ public class MultiChoiceQuestionProfile extends QuestionProfile implements Multi
 	 * @see MultiChoiceQuestionProfile#addChoice(String)
 	 * @see MultiChoiceQuestionProfile#setChoices(Collection)
 	 */
+	@Override
 	public List<String> getChoices() {
 		return new ArrayList<String>(_choices);
 	}
@@ -41,6 +42,7 @@ public class MultiChoiceQuestionProfile extends QuestionProfile implements Multi
 	 * @see MultiChoiceQuestionProfile#setChoices(Collection)
 	 * @see MultiChoiceQuestionProfile#getChoices()
 	 */
+	@Override
 	public void addChoice(String choice) {
 		if (!StringUtils.isEmpty(choice)) {
 			String tmp = choice.trim().replace("\n", "");
@@ -64,6 +66,7 @@ public class MultiChoiceQuestionProfile extends QuestionProfile implements Multi
 	 * Sets the correct answer to this question.
 	 * @param answer the correct answer
 	 */
+	@Override
 	public void setCorrectAnswer(String answer) {
 		if (!StringUtils.isEmpty(answer)) {
 			String tmp = answer.trim().replace("\n", "");
@@ -75,6 +78,7 @@ public class MultiChoiceQuestionProfile extends QuestionProfile implements Multi
 	 * Converts this profile into a {@link MultiChoiceQuestion} bean. The choices
 	 * will be rearranged in random order.
 	 */
+	@Override
 	public Question toQuestion() {
 		MultiChoiceQuestion q = new MultiChoiceQuestion(getQuestion());
 		q.setID(getID());

@@ -1,8 +1,9 @@
-// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import java.util.*;
 import java.sql.Connection;
+import java.time.ZonedDateTime;
 
 import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
@@ -15,7 +16,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to view the ACARS Text Message log.
  * @author Luke
- * @version 2.2
+ * @version 7.0
  * @since 1.0
  */
 
@@ -26,7 +27,8 @@ public class MessageLogCommand extends ACARSLogViewCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error (typically database) occurs
 	 */
-public void execute(CommandContext ctx) throws CommandException {
+	@Override
+	public void execute(CommandContext ctx) throws CommandException {
 
 		// If we're not displaying anything, redirect to the result page
 		CommandResult result = ctx.getResult();
@@ -72,9 +74,8 @@ public void execute(CommandContext ctx) throws CommandException {
 			Collection<String> txtResults = new ArrayList<String>();
 			for (Iterator<TextMessage> i = results.iterator(); i.hasNext(); ) {
 				TextMessage msg = i.next();
-				DateTime dt = new DateTime(msg.getDate());
-				dt.convertTo(ctx.getUser().getTZ());
-				StringBuilder buf = new StringBuilder(StringUtils.format(dt.getDate(), "MM/dd/yyyy HH:mm:ss"));
+				ZonedDateTime dt = ZonedDateTime.ofInstant(msg.getDate(), ctx.getUser().getTZ().getZone());
+				StringBuilder buf = new StringBuilder(StringUtils.format(dt, "MM/dd/yyyy HH:mm:ss"));
 				buf.append(" <");
 				Pilot msgFrom = pilots.get(new Integer(msg.getAuthorID()));
 				buf.append((msgFrom == null) ? String.valueOf(msg.getAuthorID()) : msgFrom.getName());

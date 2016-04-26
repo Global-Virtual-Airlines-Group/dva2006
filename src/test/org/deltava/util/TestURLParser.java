@@ -9,7 +9,8 @@ public class TestURLParser extends TestCase {
 
     private URLParser _parser;
 
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         _parser = null;
         super.tearDown();
     }

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Image Gallery data.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -46,10 +46,9 @@ public class GetGallery extends DAO {
 	public Image getImageData(int id, String dbName) throws DAOException {
 		
 		// Build the SQL statement
-		dbName = formatDBName(dbName);
-		StringBuilder sqlBuf = new StringBuilder("SELECT G.NAME, G.DESCRIPTION, G.TYPE, G.X, G.Y, G.SIZE, G.DATE, G.FLEET, "
-				+ "G.PILOT_ID, T.ID FROM ");
-		sqlBuf.append(dbName);
+		String db = formatDBName(dbName);
+		StringBuilder sqlBuf = new StringBuilder("SELECT G.NAME, G.DESCRIPTION, G.TYPE, G.X, G.Y, G.SIZE, G.DATE, G.FLEET, G.PILOT_ID, T.ID FROM ");
+		sqlBuf.append(db);
 		sqlBuf.append(".GALLERY G LEFT JOIN common.COOLER_THREADS T ON (G.ID=T.IMAGE_ID) WHERE (G.ID=?) LIMIT 1");
 		
 		try {
@@ -66,7 +65,7 @@ public class GetGallery extends DAO {
 					img.setWidth(rs.getInt(4));
 					img.setHeight(rs.getInt(5));
 					img.setSize(rs.getInt(6));
-					img.setCreatedOn(rs.getTimestamp(7));
+					img.setCreatedOn(rs.getTimestamp(7).toInstant());
 					img.setFleet(rs.getBoolean(8));
 					img.setAuthorID(rs.getInt(9));
 					img.setThreadID(rs.getInt(10));
@@ -79,7 +78,7 @@ public class GetGallery extends DAO {
 
 			// Load gallery image votes
 			sqlBuf = new StringBuilder("SELECT PILOT_ID FROM ");
-			sqlBuf.append(dbName);
+			sqlBuf.append(db);
 			sqlBuf.append(".GALLERYSCORE WHERE (IMG_ID=?)");
 			prepareStatementWithoutLimits(sqlBuf.toString());
 			_ps.setInt(1, id);
@@ -118,7 +117,7 @@ public class GetGallery extends DAO {
 	 * @return a List of Image beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<Image> getPictureGallery(java.util.Date dt) throws DAOException {
+	public List<Image> getPictureGallery(java.time.Instant dt) throws DAOException {
 		try {
 			prepareStatement("SELECT I.NAME, I.DESCRIPTION, I.ID, I.PILOT_ID, I.DATE, I.FLEET, I.TYPE, I.X, "
 				+ "I.Y, I.SIZE, (SELECT COUNT(PILOT_ID) FROM GALLERYSCORE WHERE (IMG_ID=I.ID)) AS LC FROM "
@@ -186,7 +185,7 @@ public class GetGallery extends DAO {
 		}
 	}
 
-	/**
+	/*
 	 * Helper method to parse Image result sets.
 	 */
 	private List<Image> execute() throws SQLException {
@@ -198,7 +197,7 @@ public class GetGallery extends DAO {
 				Image img = new Image(rs.getString(1), rs.getString(2));
 				img.setID(rs.getInt(3));
 				img.setAuthorID(rs.getInt(4));
-				img.setCreatedOn(rs.getTimestamp(5));
+				img.setCreatedOn(rs.getTimestamp(5).toInstant());
 				img.setFleet(rs.getBoolean(6));
 				img.setType(rs.getInt(7));
 				img.setWidth(rs.getInt(8));

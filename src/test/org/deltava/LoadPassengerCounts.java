@@ -23,6 +23,7 @@ public class LoadPassengerCounts extends TestCase {
 	private Connection _c;
 	private EconomyInfo _econ;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		
@@ -33,7 +34,7 @@ public class LoadPassengerCounts extends TestCase {
 		// Load economy data
 		_econ = new EconomyInfo(SystemData.getDouble("econ.targetLoad", 0.8d), SystemData.getDouble("econ.targetAmplitude", 0.125));
 		_econ.setMinimumLoad(SystemData.getDouble("econ.minimumLoad", 0.25));
-		_econ.setStartDate(AirlineTotals.BIRTHDATE.getTime());
+		_econ.setStartDate(AirlineTotals.BIRTHDATE);
 		_econ.setHourlyFactor(SystemData.getDouble("econ.hourlyFactor", 0.0));
 		_econ.setYearlyCycleLength(SystemData.getInt("econ.yearlyCycleLength", 365));
 		_econ.setHourlyCycleLength(SystemData.getInt("econ.hourlyCycleLength", 24));
@@ -56,6 +57,7 @@ public class LoadPassengerCounts extends TestCase {
 		SystemData.add("airlines", aldao.getAll());
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		_c.close();
 		LogManager.shutdown();
@@ -88,7 +90,7 @@ public class LoadPassengerCounts extends TestCase {
 			}
 
 			// Calculate passengers/load factor
-			double loadFactor = lf.generate(rs.getTimestamp(2));
+			double loadFactor = lf.generate(rs.getTimestamp(2).toInstant());
 			int pax = (int) Math.round(a.getSeats() * loadFactor);
 			
 			// Update

@@ -1,4 +1,4 @@
-// Copyright 2005, 2009, 2010, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2010, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import javax.servlet.jsp.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.schedule.Airport;
 /**
  * A JSP tag to selectively display airport codes.
  * @author Luke
- * @version 5.2
+ * @version 7.0
  * @since 1.0 
  */
 
@@ -43,6 +43,7 @@ public class AirportFormatTag extends UserSettingsTag {
     * @param ctxt the JSP context
     * @see Person#getAirportCodeType()
     */
+   @Override
    public final void setPageContext(PageContext ctxt) {
       super.setPageContext(ctxt);
       _codeType = (_user != null) ? _user.getAirportCodeType() : Airport.Code.IATA;
@@ -53,6 +54,7 @@ public class AirportFormatTag extends UserSettingsTag {
     * @return TagSupport.EVAL_PAGE
     * @throws JspException if an error occurs
     */
+   @Override
    public int doEndTag() throws JspException {
 
       // Check that an airport has been set

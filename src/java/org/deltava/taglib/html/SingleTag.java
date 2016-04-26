@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2011 Global Virtual Airlines Group. All Rights Reserved. 
+// Copyright 2005, 2006, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved. 
 package org.deltava.taglib.html;
 
 import javax.servlet.jsp.*;
@@ -8,14 +8,14 @@ import org.deltava.beans.system.*;
 /**
  * An abstract JSP tag to support the generation of HTML single-option checkboxes or radio buttons.
  * @author Luke
- * @version 3.7
+ * @version 7.0
  * @since 1.0
  */
 
 public abstract class SingleTag extends FormElementTag {
 
-	private String _type;
-	private String _className;
+	private final String _type;
+	private final String _className;
 	
 	private String _label;
 	private String _labelClassName;
@@ -36,6 +36,7 @@ public abstract class SingleTag extends FormElementTag {
 	 * @param cName the CSS class name(s)
 	 * @see ElementTag#setClassName(String)
 	 */
+	@Override
 	public final void setClassName(String cName) {
 		_labelClassName = cName;
 	}
@@ -52,6 +53,7 @@ public abstract class SingleTag extends FormElementTag {
 	 * Sets the checkbox value/alias.
 	 * @param objValue the alias
 	 */
+	@Override
 	public final void setValue(Object objValue) {
 		_data.setAttribute("value", String.valueOf(objValue));
 	}
@@ -78,6 +80,7 @@ public abstract class SingleTag extends FormElementTag {
 	/**
 	 * Releases the tag's state data.
 	 */
+	@Override
 	public void release() {
 		super.release();
 		_data.setAttribute("type", _type);
@@ -89,6 +92,7 @@ public abstract class SingleTag extends FormElementTag {
 	 * @return TagSupport.EVAL_PAGE
 	 * @throws JspException if an I/O error occurs
 	 */
+	@Override
 	public int doEndTag() throws JspException {
 		try {
 			validateState();

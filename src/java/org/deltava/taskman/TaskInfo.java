@@ -1,24 +1,25 @@
-// Copyright 2005, 2006, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taskman;
 
 import java.util.*;
+import java.time.Instant;
 
 /**
  * A bean to store information about a scheduled task. 
  * @author Luke
- * @version 3.1
+ * @version 7.0
  * @since 1.0
  */
 
 public class TaskInfo implements java.io.Serializable, Comparable<TaskInfo> {
    
-   private String _id;
-   private String _name;
-   private String _className;
-   private Date _lastStart;
-   private long _lastRunTime;
-   private int _runCount;
-   private boolean _enabled;
+   private final String _id;
+   private final String _name;
+   private final String _className;
+   private final Instant _lastStart;
+   private final long _lastRunTime;
+   private final int _runCount;
+   private final boolean _enabled;
    
    private final Map<String, Collection<Integer>> _runTimes = new LinkedHashMap<String, Collection<Integer>>();
 
@@ -83,7 +84,7 @@ public class TaskInfo implements java.io.Serializable, Comparable<TaskInfo> {
     * @return the date/time the Task was last run, or null if never
     * @see Task#getStartTime()
     */
-   public Date getLastStartTime() {
+   public Instant getLastStartTime() {
       return _lastStart;
    }
    
@@ -115,6 +116,7 @@ public class TaskInfo implements java.io.Serializable, Comparable<TaskInfo> {
    /**
     * Compares two TaskInfo beans by comparing their next execution times and IDs.
     */
+   @Override
    public int compareTo(TaskInfo ti2) {
       int tmpResult = _lastStart.compareTo(ti2._lastStart);
       if (tmpResult == 0)

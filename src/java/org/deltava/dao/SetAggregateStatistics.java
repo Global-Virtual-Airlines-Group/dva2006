@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A Data Access Object to update Flight Statistics. 
  * @author Luke
- * @version 6.4
+ * @version 7.0
  * @since 6.2
  */
 
@@ -168,7 +168,7 @@ public class SetAggregateStatistics extends DAO {
 	/*
 	 * Updates flight statistics for a particular Date.
 	 */
-	private void updateDate(java.util.Date dt) throws SQLException {
+	private void updateDate(java.time.Instant dt) throws SQLException {
 		prepareStatementWithoutLimits("REPLACE INTO FLIGHTSTATS_DATE (SELECT DATE, COUNT(DISTANCE) AS LEGS, SUM(IF((ATTR & ?) > 0, 1, 0)) AS ACARS, "
 			+ "SUM(IF((ATTR & ?) > 0, 1, 0)) AS VATSIM, SUM(IF((ATTR & ?) > 0, 1, 0)) AS IVAO, SUM(IF((ATTR & ?) > 0, 1, 0)) AS HIST, SUM(IF((ATTR & ?) > 0, 1, 0)) AS DSP, "
 			+ "SUM(DISTANCE) AS MILES, SUM(FLIGHT_TIME) AS HOURS, COUNT(DISTINCT PILOT_ID) AS PIDS, AVG(LOADFACTOR), SUM(PAX), SUM(IF(FSVERSION=?,1,0)) AS FS7, "

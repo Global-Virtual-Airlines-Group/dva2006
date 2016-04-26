@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2009, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009, 2011, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Applicant Questionaires.
  * @author Luke
- * @version 6.3
+ * @version 7.0
  * @since 1.0
  */
 
@@ -192,10 +192,10 @@ public class GetQuestionnaire extends DAO {
 				e.setID(rs.getInt(1));
 				e.setAuthorID(rs.getInt(2));
 				e.setStatus(TestStatus.values()[rs.getInt(3)]);
-				e.setDate(rs.getTimestamp(4));
-				e.setExpiryDate(rs.getTimestamp(5));
-				e.setSubmittedOn(rs.getTimestamp(6));
-				e.setScoredOn(rs.getTimestamp(7));
+				e.setDate(rs.getTimestamp(4).toInstant());
+				e.setExpiryDate(toInstant(rs.getTimestamp(5)));
+				e.setSubmittedOn(toInstant(rs.getTimestamp(6)));
+				e.setScoredOn(toInstant(rs.getTimestamp(7)));
 				e.setScorerID(rs.getInt(8));
 				e.setAutoScored(rs.getBoolean(9));
 				e.setComments(rs.getString(10));

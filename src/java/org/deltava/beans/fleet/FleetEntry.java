@@ -1,19 +1,19 @@
-// Copyright 2005, 2009, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.fleet;
 
 import java.io.File;
-import java.util.Date;
+import java.time.Instant;
 
 /**
  * A bean to store information about Fleet Library entries.
  * @author Luke
- * @version 6.0
+ * @version 7.0
  * @since 1.0
  */
 
 public abstract class FleetEntry extends LibraryEntry {
 	
-	private Date _lastModified;
+	private Instant _lastModified;
     private int _majorVersion;
     private int _minorVersion;
     private int _minorSubVersion;
@@ -57,9 +57,9 @@ public abstract class FleetEntry extends LibraryEntry {
     /**
      * Updates the date this entry was last modified.
      * @return the last modification date/time
-     * @see FleetEntry#setLastModified(Date)
+     * @see FleetEntry#setLastModified(Instant)
      */
-    public Date getLastModified() {
+    public Instant getLastModified() {
     	return _lastModified;
     }
     
@@ -83,7 +83,7 @@ public abstract class FleetEntry extends LibraryEntry {
      * @param dt the last modified date/time
      * @see FleetEntry#getLastModified()
      */
-    public void setLastModified(Date dt) {
+    public void setLastModified(Instant dt) {
     	_lastModified = dt;
     }
     

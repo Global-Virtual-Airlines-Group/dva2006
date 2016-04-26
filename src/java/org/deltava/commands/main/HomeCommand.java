@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2013, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2013, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.main;
 
 import java.util.*;
@@ -23,7 +23,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to display the home page.
  * @author Luke
- * @version 6.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -111,7 +111,7 @@ public class HomeCommand extends AbstractCommand {
 				Collection<?> notams = nwdao.getActiveNOTAMs();
 				for (Iterator<?> i = notams.iterator(); i.hasNext();) {
 					Notice ntm = (Notice) i.next();
-					if (ntm.getDate().before(usr.getLastLogin()))
+					if (ntm.getDate().isBefore(usr.getLastLogin()))
 						i.remove();
 				}
 

@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.academy.*;
 /**
  * A Data Access Object for Flight Academy Course progress beans.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 3.4
  */
 
@@ -46,7 +46,7 @@ public class GetAcademyProgress extends DAO {
 					cp.setText(rs.getString(4));
 					cp.setExamName(rs.getString(5));
 					cp.setComplete(rs.getBoolean(6));
-					cp.setCompletedOn(rs.getTimestamp(7));
+					cp.setCompletedOn(toInstant(rs.getTimestamp(7)));
 					results.add(cp);
 				}
 			}

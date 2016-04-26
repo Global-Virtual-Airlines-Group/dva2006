@@ -4,6 +4,7 @@ package org.deltava.dao;
 import java.util.*;
 import java.sql.*;
 
+import org.deltava.beans.TZInfo;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
 
@@ -13,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Airport data.
  * @author Luke
- * @version 6.4
+ * @version 7.0
  * @since 1.0
  */
 
@@ -63,7 +64,7 @@ public class GetAirport extends DAO {
 				if (rs.next()) {
 					a = new Airport(rs.getString(1), rs.getString(2), rs.getString(4));
 					a.setCountry(Country.get(rs.getString(5)));
-					a.setTZ(rs.getString(3));
+					a.setTZ(TZInfo.get(rs.getString(3)));
 					a.setLocation(rs.getDouble(6), rs.getDouble(7));
 					a.setADSE(rs.getBoolean(8));
 					a.setSupercededAirport(rs.getString(9));
@@ -132,7 +133,7 @@ public class GetAirport extends DAO {
 				while (rs.next()) {
 					Airport a = new Airport(rs.getString(1), rs.getString(2), rs.getString(4));
 					a.setCountry(Country.get(rs.getString(5)));
-					a.setTZ(rs.getString(3));
+					a.setTZ(TZInfo.get(rs.getString(3)));
 					a.setLocation(rs.getDouble(6), rs.getDouble(7));
 					a.setADSE(rs.getBoolean(8));
 					a.setSupercededAirport(rs.getString(9));
@@ -255,7 +256,7 @@ public class GetAirport extends DAO {
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
 					Airport a = new Airport(rs.getString(1), rs.getString(2), rs.getString(4));
-					a.setTZ(rs.getString(3));
+					a.setTZ(TZInfo.get(rs.getString(3)));
 					a.setCountry(Country.get(rs.getString(5)));
 					a.setLocation(rs.getDouble(6), rs.getDouble(7));
 					a.setADSE(rs.getBoolean(8));

@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.wx;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to fetch Terminal Area Forecast data.
  * @author Luke
- * @version 4.2
+ * @version 7.0
  * @since 2.3
  */
 
@@ -77,7 +77,7 @@ public class TAFService extends WebService {
 		e.setAttribute("color", data.getIconColor());
 		e.setAttribute("type", data.getType().toString());
 		e.setAttribute("icao", data.getCode());
-		e.setAttribute("date", String.valueOf(data.getDate().getTime() / 1000));
+		e.setAttribute("date", String.valueOf(data.getDate().toEpochMilli() / 1000));
 		re.addContent(e);
 
 		// Dump the XML to the output stream
@@ -96,6 +96,7 @@ public class TAFService extends WebService {
 	 * Returns whether this web service requires authentication.
 	 * @return TRUE always
 	 */
+	@Override
 	public final boolean isSecure() {
 		return true;
 	}

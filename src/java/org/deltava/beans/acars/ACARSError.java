@@ -1,21 +1,21 @@
 // Copyright 2006, 2009, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 
 /**
  * A bean to store ACARS error dumps.
  * @author Luke
- * @version 6.4
+ * @version 7.0
  * @since 1.0
  */
 
 public class ACARSError extends DatabaseBean implements ClientVersion, AuthoredBean {
 	
 	private int _userID;
-	private Date _createdOn;
+	private Instant _createdOn;
 	private String _remoteAddr;
 	private String _remoteHost;
 	private int _version;
@@ -53,9 +53,9 @@ public class ACARSError extends DatabaseBean implements ClientVersion, AuthoredB
 	/**
 	 * Returns the creation date of this error.
 	 * @return the error date/time
-	 * @see ACARSError#setCreatedOn(Date)
+	 * @see ACARSError#setCreatedOn(Instant)
 	 */
-	public Date getCreatedOn() {
+	public Instant getCreatedOn() {
 		return _createdOn;
 	}
 	
@@ -223,7 +223,7 @@ public class ACARSError extends DatabaseBean implements ClientVersion, AuthoredB
 	 * @param dt the error date/time
 	 * @see ACARSError#getCreatedOn()
 	 */
-	public void setCreatedOn(Date dt) {
+	public void setCreatedOn(Instant dt) {
 		_createdOn = dt;
 	}
 	

@@ -1,10 +1,12 @@
-// Copyright 2012, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2013, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.io.File;
 import java.util.*;
 import java.util.concurrent.*;
 import java.sql.Connection;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoField;
 
 import org.deltava.beans.navdata.CycleInfo;
 import org.deltava.beans.schedule.*;
@@ -19,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to download FAA approach charts.
  * @author Luke
- * @version 6.0
+ * @version 7.0
  * @since 5.0
  */
 
@@ -85,11 +87,11 @@ public class FAAChartLoaderTask extends Task {
 	protected void execute(TaskContext ctx) {
 		
 		// Fetch the chart URL with month in it
-		Calendar cld = Calendar.getInstance();
-		int month = cld.get(Calendar.MONTH); int year = cld.get(Calendar.YEAR);
+		ZonedDateTime zdt = ZonedDateTime.now();
+		int month = zdt.get(ChronoField.MONTH_OF_YEAR); int year = zdt.get(ChronoField.YEAR);
 		try {
 			GetNavCycle ncdao = new GetNavCycle(ctx.getConnection());
-			CycleInfo cycleInfo = ncdao.getCycle(cld.getTime());
+			CycleInfo cycleInfo = ncdao.getCycle(zdt.toInstant());
 			if (cycleInfo != null) {
 				year = cycleInfo.getYear();
 				month = cycleInfo.getSequence();

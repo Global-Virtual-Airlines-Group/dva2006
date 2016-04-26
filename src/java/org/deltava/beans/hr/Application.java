@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.hr;
 
 import org.deltava.beans.ViewEntry;
@@ -6,7 +6,7 @@ import org.deltava.beans.ViewEntry;
 /**
  * A bean to store job posting application data.
  * @author Luke
- * @version 3.4
+ * @version 7.0
  * @since 3.4
  */
 
@@ -85,6 +85,7 @@ public class Application extends ApplicantData implements ViewEntry {
 		_status = status;
 	}
 	
+	@Override
 	public String getRowClassName() {
 		if (_status == NEW)
 			return null;

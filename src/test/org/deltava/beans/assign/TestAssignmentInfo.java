@@ -1,7 +1,7 @@
 package org.deltava.beans.assign;
 
 import java.util.Date;
-import java.sql.Timestamp;
+import java.time.Instant;
 
 import junit.framework.Test;
 import org.hansel.CoverageDecorator;
@@ -18,13 +18,15 @@ public class TestAssignmentInfo extends AbstractBeanTestCase {
         return new CoverageDecorator(TestAssignmentInfo.class, new Class[] { AssignmentInfo.class } );
     }
     
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
         _info = new AssignmentInfo("B737-300");
         setBean(_info);
     }
 
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         _info = null;
         super.tearDown();
     }
@@ -62,14 +64,14 @@ public class TestAssignmentInfo extends AbstractBeanTestCase {
     }
     
     public void testTimestamp() {
-        long now = System.currentTimeMillis();
-        _info.setAssignDate(new Timestamp(now));
-        assertEquals(now, _info.getAssignDate().getTime());
-        _info.setCompletionDate(new Timestamp(now));
-        assertEquals(now, _info.getCompletionDate().getTime());
-        _info.setAssignDate((Timestamp) null);
+    	Instant now = Instant.now();
+        _info.setAssignDate(now);
+        assertEquals(now, _info.getAssignDate());
+        _info.setCompletionDate(now);
+        assertEquals(now, _info.getCompletionDate());
+        _info.setAssignDate(null);
         assertNull(_info.getAssignDate());
-        _info.setCompletionDate((Timestamp) null);
+        _info.setCompletionDate(null);
         assertNull(_info.getCompletionDate());
     }
     

@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.mvs;
 
 import org.deltava.beans.ComboAlias;
@@ -6,7 +6,7 @@ import org.deltava.beans.ComboAlias;
 /**
  * Valid MVS data compression schemes.
  * @author Luke
- * @version 4.2
+ * @version 7.0
  * @since 4.0
  */
 
@@ -31,10 +31,12 @@ public enum VoiceCompression implements ComboAlias {
 		return _name;
 	}
 	
+	@Override
 	public String getComboName() {
 		return _name;
 	}
 	
+	@Override
 	public String getComboAlias() {
 		return name();
 	}

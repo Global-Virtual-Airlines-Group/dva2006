@@ -13,12 +13,14 @@ public class TestEquipmentAccessControl extends AccessControlTestCase {
             new Class[] { AccessControl.class, EquipmentAccessControl.class } );
   }
    
-   protected void setUp() throws Exception {
+   @Override
+protected void setUp() throws Exception {
       super.setUp();
       _ac = new EquipmentAccessControl(_ctxt);
    }
 
-   protected void tearDown() throws Exception {
+   @Override
+protected void tearDown() throws Exception {
       _ac = null;
       super.tearDown();
    }
@@ -53,7 +55,8 @@ public class TestEquipmentAccessControl extends AccessControlTestCase {
       assertFalse(_ac.getCanRename());
    }
 
-   public void testContextValidation() {
+   @SuppressWarnings("static-method")
+public void testContextValidation() {
       doContextValidation(new EquipmentAccessControl(null));
    }
 }

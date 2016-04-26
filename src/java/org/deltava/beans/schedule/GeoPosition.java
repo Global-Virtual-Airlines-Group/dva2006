@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import org.deltava.beans.*;
@@ -6,7 +6,7 @@ import org.deltava.beans.*;
 /**
  * A class for working with latitude/longitude pairs.
  * @author Luke
- * @version 4.1
+ * @version 7.0
  * @since 1.0
  */
 
@@ -78,9 +78,9 @@ public class GeoPosition implements GeospaceLocation, java.io.Serializable {
 	 * @return The minutes component of the position
 	 */
 	public static int getMinutes(double latlon) {
-		latlon = Math.abs(latlon); // Strip out sign since minutes are always positive
-		latlon -= StrictMath.floor(latlon); // Strip out degrees
-		return (int) StrictMath.floor(latlon * 60); // multiply by 60 so we get minutes
+		double ll = Math.abs(latlon); // Strip out sign since minutes are always positive
+		ll -= StrictMath.floor(ll); // Strip out degrees
+		return (int) StrictMath.floor(ll * 60); // multiply by 60 so we get minutes
 	}
 
 	/**
@@ -89,17 +89,18 @@ public class GeoPosition implements GeospaceLocation, java.io.Serializable {
 	 * @return The seconds component of the position
 	 */
 	public static double getSeconds(double latlon) {
-		latlon = Math.abs(latlon); // Strip out sign since seconds are always positive
-		latlon -= StrictMath.floor(latlon); // Strip out degrees
-		latlon *= 60; // multiply by 60 so we get minutes
-		latlon -= StrictMath.floor(latlon); // Strip out minutes
-		return (int) (latlon * 60);
+		double ll = Math.abs(latlon); // Strip out sign since seconds are always positive
+		ll -= StrictMath.floor(ll); // Strip out degrees
+		ll *= 60; // multiply by 60 so we get minutes
+		ll -= StrictMath.floor(ll); // Strip out minutes
+		return (int) (ll * 60);
 	}
 	
 	/**
 	 * Get the latitude of this position.
 	 * @return the latitude in degrees (and some fraction thereof) (values < 0 are South of the Equator)
 	 */
+	@Override
 	public double getLatitude() {
 		return _lat;
 	}
@@ -108,6 +109,7 @@ public class GeoPosition implements GeospaceLocation, java.io.Serializable {
 	 * Get the longitude of this position.
 	 * @return the longitude in degrees (and some fraction thereof) (values < 0 are West of the Greenwich Meridian)
 	 */
+	@Override
 	public double getLongitude() {
 		return _lon;
 	}
@@ -116,6 +118,7 @@ public class GeoPosition implements GeospaceLocation, java.io.Serializable {
 	 * Returns the altitude of this position.
 	 * @return the altitude in feet above mean sea level, or 0 if undefined
 	 */
+	@Override
 	public int getAltitude() {
 		return _alt;
 	}
@@ -236,10 +239,12 @@ public class GeoPosition implements GeospaceLocation, java.io.Serializable {
 	 * Calculates equality by determining if the two positions are within 1 mile of each other.
 	 * @see GeoPosition#distanceTo(GeoLocation)
 	 */
+	@Override
 	public boolean equals(Object o2) {
 		return (o2 instanceof GeoPosition) ? (distanceTo((GeoPosition) o2) < 1) : false;
 	}
 	
+	@Override
 	public int hashCode() {
 		return toString().hashCode();
 	}
@@ -247,6 +252,7 @@ public class GeoPosition implements GeospaceLocation, java.io.Serializable {
 	/**
 	 * Returns the latitude/longitude of the point.
 	 */
+	@Override
 	public String toString() {
 		StringBuilder buf = new StringBuilder(String.valueOf(_lat));
 		buf.append(',');

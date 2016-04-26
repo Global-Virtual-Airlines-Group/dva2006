@@ -13,6 +13,7 @@ public class TestFlightStatsEntry extends TestCase {
 		return new CoverageDecorator(TestFlightStatsEntry.class, new Class[] { FlightStatsEntry.class });
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		_e = null;
 		super.tearDown();

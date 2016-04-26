@@ -1,4 +1,4 @@
- // Copyright 2006, 2007, 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
+ // Copyright 2006, 2007, 2008, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to report Water Cooler threads with questionable content.
  * @author Luke
- * @version 3.6
+ * @version 7.0
  * @since 1.0
  */
 
@@ -34,6 +34,7 @@ public class ContentReportCommand extends AbstractCommand {
      * @param ctx the Command context
      * @throws CommandException if an unhandled error occurs
      */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Initialize the Message Context
@@ -92,7 +93,7 @@ public class ContentReportCommand extends AbstractCommand {
 				
 				// Mark the thread as locked
 				ThreadUpdate upd2 = new ThreadUpdate(mt.getID());
-				upd2.setDate(new Date(upd.getDate().getTime() + 1000));
+				upd2.setDate(upd.getDate().plusSeconds(1));
 				upd2.setAuthorID(ctx.getUser().getID());
 				upd2.setMessage("Discussion Thread automatically locked/hidden after " + maxWarns + " content reports");
 				wdao.write(upd2);

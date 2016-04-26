@@ -18,6 +18,7 @@ public class NavRegionLoader extends BGLLoaderTestCase {
 	private static final List<String> XML_ENAMES = Arrays.asList("Waypoint", "Vor", "Ndb");
 
 	final class SceneryFilter implements FileFilter {
+		@Override
 		public boolean accept(File f) {
 			String fn = f.getName().toLowerCase();
 			return (f.isFile() && (fn.startsWith("at") || fn.startsWith("nv")) && fn.endsWith(".bgl")
@@ -25,6 +26,7 @@ public class NavRegionLoader extends BGLLoaderTestCase {
 		}
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		log = Logger.getLogger(NavRegionLoader.class);
@@ -36,6 +38,7 @@ public class NavRegionLoader extends BGLLoaderTestCase {
 		_c.setAutoCommit(false);
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		_c.close();
 		super.tearDown();

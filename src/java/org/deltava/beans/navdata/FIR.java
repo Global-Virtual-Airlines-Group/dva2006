@@ -135,6 +135,7 @@ public class FIR implements Comparable<FIR>, Cacheable {
 		_aliases.add(code.trim().toUpperCase());
 	}
 	
+	@Override
 	public String toString() {
 		StringBuilder buf = new StringBuilder(_id);
 		if (_oceanic)
@@ -143,10 +144,12 @@ public class FIR implements Comparable<FIR>, Cacheable {
 		return buf.toString();
 	}
 	
+	@Override
 	public int hashCode() {
 		return toString().hashCode();
 	}
 	
+	@Override
 	public Object cacheKey() {
 		return toString();
 	}
@@ -154,6 +157,7 @@ public class FIR implements Comparable<FIR>, Cacheable {
 	/**
 	 * Compares two FIRs by comparing their IDs.
 	 */
+	@Override
 	public int compareTo(FIR f2) {
 		int tmpResult = _id.compareTo(f2._id);
 		return (tmpResult == 0) ? Boolean.valueOf(_oceanic).compareTo(Boolean.valueOf(f2._oceanic)) : tmpResult;

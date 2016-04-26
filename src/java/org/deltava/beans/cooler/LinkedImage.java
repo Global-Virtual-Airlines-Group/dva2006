@@ -1,4 +1,4 @@
-// Copyright 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.cooler;
 
 import java.net.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.DatabaseBean;
 /**
  * A bean to store Water Cooler Linked Images and their descriptions.
  * @author Luke
- * @version 2.3
+ * @version 7.0
  * @since 1.0
  */
 
@@ -94,6 +94,7 @@ public class LinkedImage extends DatabaseBean {
 	/**
 	 * Returns the url's hash code.
 	 */
+	@Override
 	public int hashCode() {
 		return _url.hashCode();
 	}
@@ -101,6 +102,7 @@ public class LinkedImage extends DatabaseBean {
 	/**
 	 * Tests for equality by comparing the URLs.
 	 */
+	@Override
 	public boolean equals(Object o) {
 		return (o instanceof LinkedImage) ? _url.equals(o.toString()) : false;
 	}
@@ -108,6 +110,7 @@ public class LinkedImage extends DatabaseBean {
 	/**
 	 * Returns the URL.
 	 */
+	@Override
 	public String toString() {
 		return _url;
 	}

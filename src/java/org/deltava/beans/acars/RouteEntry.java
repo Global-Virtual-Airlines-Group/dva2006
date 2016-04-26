@@ -1,7 +1,7 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
-import java.util.*;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 
@@ -12,13 +12,13 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
- * @version 6.0
+ * @version 7.0
  * @since 1.0
  */
 
 public abstract class RouteEntry extends ACARSMapEntry implements GeospaceLocation, CalendarEntry {
 
-	private Date _date;
+	private Instant _date;
 	private FlightPhase _phase;
 
 	private int _alt;
@@ -39,7 +39,7 @@ public abstract class RouteEntry extends ACARSMapEntry implements GeospaceLocati
 	 * @see RouteEntry#getDate()
 	 * @see RouteEntry#getLocation()
 	 */
-	protected RouteEntry(GeoLocation loc, Date dt) {
+	protected RouteEntry(GeoLocation loc, Instant dt) {
 		super(loc);
 		_date = dt;
 	}
@@ -84,10 +84,10 @@ public abstract class RouteEntry extends ACARSMapEntry implements GeospaceLocati
 	/**
 	 * Returns the date/time of this entry.
 	 * @return the date/time of this entry
-	 * @see RouteEntry#RouteEntry(GeoLocation, Date)
+	 * @see RouteEntry#RouteEntry(GeoLocation, Instant)
 	 */
 	@Override
-	public Date getDate() {
+	public Instant getDate() {
 		return _date;
 	}
 

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A class for storing Airline information.
  * @author Luke
- * @version 6.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -227,10 +227,12 @@ public class Airline implements ComboAlias, Comparable<Airline>, Cacheable, View
 			addCode(i.next());
 	}
 
+	@Override
 	public String getComboAlias() {
 		return _code;
 	}
 
+	@Override
 	public String getComboName() {
 		StringBuilder buf = new StringBuilder(getCode());
 		buf.append(" - ");
@@ -273,7 +275,8 @@ public class Airline implements ComboAlias, Comparable<Airline>, Cacheable, View
 	public String toString() {
 		return _code;
 	}
-	
+
+	@Override
 	public Object cacheKey() {
 	    return _code;
 	}

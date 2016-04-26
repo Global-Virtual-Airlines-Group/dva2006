@@ -1,8 +1,9 @@
-// Copyright 2005, 2006, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.io.*;
-import java.text.*;
+import java.time.*;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.zip.*;
 
@@ -18,27 +19,21 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to aggregate HTTP log statistics.
  * @author Luke
- * @version 3.0
+ * @version 7.0
  * @since 1.0
  */
 
 public class HTTPLogStatisticsTask extends Task {
 
-	private final DateFormat _df = new SimpleDateFormat("yyyy-MMM-dd");
-
 	private static class HTTPLogFilter implements FileFilter {
 
-		private Calendar _startTime;
+		private final Instant _startTime = LocalDateTime.now().truncatedTo(ChronoUnit.DAYS).minusSeconds(1).toInstant(ZoneOffset.UTC);
 
 		HTTPLogFilter() {
 			super();
-			_startTime = Calendar.getInstance();
-			_startTime.set(Calendar.HOUR_OF_DAY, 0);
-			_startTime.set(Calendar.MINUTE, 0);
-			_startTime.set(Calendar.SECOND, 0);
-			_startTime.add(Calendar.SECOND, -1);
 		}
 
+		@Override
 		public boolean accept(File f) {
 
 			// Ensure that we start with httpd-access
@@ -48,8 +43,8 @@ public class HTTPLogStatisticsTask extends Task {
 
 			try {
 				String ext = name.substring(name.lastIndexOf('.') + 1);
-				Date d = new Date(Long.parseLong(ext) * 1000);
-				return d.before(_startTime.getTime());
+				Instant d = Instant.ofEpochMilli(Long.parseLong(ext) * 1000);
+				return d.isBefore(_startTime);
 			} catch (Exception e) {
 				return false;
 			}
@@ -66,6 +61,7 @@ public class HTTPLogStatisticsTask extends Task {
 	/**
 	 * Executes the Task. This will parse through HTTP server log entries and aggregate the statistics.
 	 */
+	@Override
 	protected void execute(TaskContext ctx) {
 
 		// Get the HTTP log path
@@ -92,28 +88,25 @@ public class HTTPLogStatisticsTask extends Task {
 					dao.write(stats);
 					
 					// Convert to a GZIP'd file
-					File gzf = new File(SystemData.get("log.http.archive"), _df.format(stats.getDate()) + ".gz");
-					try {
-						InputStream in = new FileInputStream(f);
-						GZIPOutputStream out = new GZIPOutputStream(new FileOutputStream(gzf), 32768);
-						byte[] buf = new byte[65536];
-						int bytesRead = in.read(buf);
-						while (bytesRead != -1) {
-							out.write(buf, 0, bytesRead);
-							bytesRead = in.read(buf);
+					File gzf = new File(SystemData.get("log.http.archive"), StringUtils.format(stats.getDate(), "yyyy-MMM-dd") + ".gz");
+					try (InputStream in = new FileInputStream(f)) {
+						try (GZIPOutputStream out = new GZIPOutputStream(new FileOutputStream(gzf), 32768)) {
+							byte[] buf = new byte[65536];
+							int bytesRead = in.read(buf);
+							while (bytesRead != -1) {
+								out.write(buf, 0, bytesRead);
+								bytesRead = in.read(buf);
+							}
 						}
 						
-						// Close stuff and delete the raw log file
-						in.close();
-						out.close();
+						// Delete the raw log file
 						if  (!f.delete())
 							log.warn("Cannot delete " + f.getName());
 					} catch (IOException ie) {
 						log.error("Error compressing " + f.getName(), ie);
 					}
 				} catch (DAOException de) {
-					log.error("Error saving statistics for " + StringUtils.format(stats.getDate(), "MM/dd/yyyy")
-							+ " - " + de.getMessage(), de);
+					log.error("Error saving statistics for " + StringUtils.format(stats.getDate(), "MM/dd/yyyy") + " - " + de.getMessage(), de);
 				} finally {
 					ctx.release();
 				}
@@ -124,7 +117,7 @@ public class HTTPLogStatisticsTask extends Task {
 		log.info("Processing Complete");
 	}
 
-	/**
+	/*
 	 * Helper method to init the log parser.
 	 */
 	private LogParser initParser(String className) {

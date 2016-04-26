@@ -1,9 +1,10 @@
-// Copyright 2006, 2007, 2010, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2010, 2012, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
 import java.util.stream.Collectors;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 import org.deltava.beans.academy.*;
@@ -24,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to assign Check Rides linked to Flight Academy courses.
  * @author Luke
- * @version 6.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -138,7 +139,7 @@ public class CourseCheckRideCommand extends AbstractCommand {
 			// Create a new Check Ride bean
 			CheckRide cr = new CheckRide(c.getName() + " " + id.getIndex());
 			cr.setOwner(SystemData.getApp(SystemData.get("airline.code")));
-			cr.setDate(new Date());
+			cr.setDate(Instant.now());
 			cr.setAcademy(true);
 			cr.setAuthorID(p.getID());
 			cr.setScorerID(ctx.getUser().getID());

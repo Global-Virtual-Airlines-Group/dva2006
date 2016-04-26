@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to automatically purge old Transfer Requests.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -66,7 +66,7 @@ public class TransferPurgeTask extends Task {
 				
 				// Get the check ride (if any) and then delete
 				CheckRide cr = exdao.getCheckRide(tx.getLatestCheckRideID());
-				int crAge = (cr == null) ? 0 : (int) ((System.currentTimeMillis() - cr.getDate().getTime()) / 86400);
+				int crAge = (cr == null) ? 0 : (int) ((System.currentTimeMillis() - cr.getDate().toEpochMilli()) / 86400);
 				if ((cr == null) || ((cr.getStatus() == TestStatus.NEW) && (crAge > 7))) {
 					ctx.startTX();
 					

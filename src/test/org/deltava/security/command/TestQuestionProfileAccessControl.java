@@ -13,12 +13,14 @@ public class TestQuestionProfileAccessControl extends AccessControlTestCase {
             QuestionProfileAccessControl.class });
    }
    
-   protected void setUp() throws Exception {
+   @Override
+protected void setUp() throws Exception {
       super.setUp();
       _ac = new QuestionProfileAccessControl(_ctxt, null);
    }
 
-   protected void tearDown() throws Exception {
+   @Override
+protected void tearDown() throws Exception {
       _ac = null;
       super.tearDown();
    }
@@ -58,7 +60,8 @@ public class TestQuestionProfileAccessControl extends AccessControlTestCase {
       assertFalse(_ac.getCanDelete());
    }
    
-   public void testContextValidation() {
+   @SuppressWarnings("static-method")
+public void testContextValidation() {
       doContextValidation(new QuestionProfileAccessControl(null, null));
    }
 }

@@ -18,6 +18,7 @@ public class TestCoolerChannelAccessControl extends AccessControlTestCase {
 				CoolerChannelAccessControl.class });
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		SystemData.init(MockSystemDataLoader.class.getName(), true);
@@ -26,6 +27,7 @@ public class TestCoolerChannelAccessControl extends AccessControlTestCase {
 		_ac = new CoolerChannelAccessControl(_ctxt, _c);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		_c = null;
 		_ac = null;

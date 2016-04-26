@@ -1,4 +1,4 @@
-// Copyright 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import java.util.Collections;
@@ -9,7 +9,7 @@ import javax.servlet.jsp.tagext.SimpleTagSupport;
 /**
  * A JSP tag to add an empty list to the request. 
  * @author Luke
- * @version 4.2
+ * @version 7.0
  * @since 4.2
  */
 
@@ -28,7 +28,8 @@ public class EmptyListTag extends SimpleTagSupport {
 	/**
 	 * Saves the empty list in the request.  
 	 */
-	public void doTag() throws JspException {
+	@Override
+	public void doTag() {
 		JspContext ctx = getJspContext();
 		ctx.setAttribute(_var, Collections.emptyList(), PageContext.PAGE_SCOPE);
 	}
