@@ -114,6 +114,8 @@ public class DateFormatTag extends UserSettingsTag {
 			_dt = Instant.ofEpochMilli(ld.toEpochDay() * ChronoUnit.DAYS.getDuration().getSeconds());
 		} else if (i instanceof LocalDateTime)
 			_dt = ((LocalDateTime) i).toInstant(ZoneOffset.UTC);
+		else
+			throw new IllegalArgumentException("Invalid temporal type - " + i.getClass().getSimpleName());
 	}
 
 	/**
@@ -195,8 +197,10 @@ public class DateFormatTag extends UserSettingsTag {
 				DateTimeFormatter df = DateTimeFormatter.ofPattern(fmtPattern.toString());
 				ZonedDateTime zdt = ZonedDateTime.ofInstant(_dt, _tz.getZone());
 				out.print(df.format(zdt));
-				if (_showZone)
+				if (_showZone) {
+					out.print(' ');
 					out.print(_tz.getAbbr());
+				}
 			} else
 				out.print(_nullData);
 			

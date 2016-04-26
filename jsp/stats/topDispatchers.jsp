@@ -35,8 +35,8 @@ return true;
 <el:form action="dspstats.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="view">
 <tr class="title">
- <td colspan="4" class="left caps"><span class="nophone"><content:airline /> </span>TOP DISPATCHERS - <fmt:date date="${range.startDate}" tz="${utc}" fmt="d" /> - 
- <fmt:date date="${range.endDate}" tz="${utc}" fmt="d" /></td>
+ <td colspan="4" class="left caps"><span class="nophone"><content:airline /> </span>TOP DISPATCHERS - <fmt:date date="${range.startDate}" tzName="UTC" fmt="d" /> - 
+ <fmt:date date="${range.endDate}" tzName="UTC" fmt="d" /></td>
  <td colspan="2" class="right"><span class="nophone">SELECT </span><el:combo name="range" idx="*" size="1" firstEntry="[ SELECT ]" value="${range}" options="${ranges}" onChange="void golgotha.local.updateSort()" /></td>
 </tr>
 

@@ -83,10 +83,9 @@ golgotha.onDOMReady(function() {
 <c:if test="${!isSchedule}"> <td class="pri bld">${entry.flightCode}</td></c:if>
 <c:if test="${isSchedule}"> <td><el:cmd className="bld" url="sched" op="edit" linkID="${entry.flightCode}">${entry.flightCode}</el:cmd></td></c:if>
  <td class="sec bld">${entry.equipmentType}</td>
- <td class="small">${entry.airportD.name} (<fmt:airport airport="${entry.airportD}" />) to
- ${entry.airportA.name} (<fmt:airport airport="${entry.airportA}" />)</td>
- <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${entry.airportD.TZ}" date="${entry.dateTimeD.UTC}" /></td>
- <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${entry.airportA.TZ}" date="${entry.dateTimeA.UTC}" /></td>
+ <td class="small">${entry.airportD.name} (<fmt:airport airport="${entry.airportD}" />) to ${entry.airportA.name} (<fmt:airport airport="${entry.airportA}" />)</td>
+ <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${entry.airportD.TZ}" date="${entry.timeD}" showZone="true" /></td>
+ <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${entry.airportA.TZ}" date="${entry.timeA}" showZone="true" /></td>
  <td class="sec nophone"><fmt:distance value="${entry.distance}" /></td>
  <td><fmt:dec value="${entry.length / 10}" /> hours</td>
 </view:row>

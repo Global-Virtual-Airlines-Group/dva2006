@@ -230,12 +230,12 @@ golgotha.onDOMReady(function() {
  <td class="small">${flight.airportD.name} <span class="nophone">(<fmt:airport airport="${flight.airportD}" />)</span> to
  ${flight.airportA.name} <span class="nophone">(<fmt:airport airport="${flight.airportA}" />)</span></td>
 <c:if test="${param.showUTCTimes}">
- <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${utc}" date="${flight.dateTimeD.UTC}" /> UTC</td>
- <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${utc}" date="${flight.dateTimeA.UTC}" /> UTC</td>
+ <td class="nophone"><fmt:date fmt="t" t="HH:mm" tzName="UTC" date="${flight.timeD}" /> UTC</td>
+ <td class="nophone"><fmt:date fmt="t" t="HH:mm" tzName="UTC" date="${flight.timeA}" /> UTC</td>
 </c:if>
 <c:if test="${!param.showUTCTimes}"> 
- <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${flight.airportD.TZ}" date="${flight.dateTimeD.UTC}" /></td>
- <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${flight.airportA.TZ}" date="${flight.dateTimeA.UTC}" /></td>
+ <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${flight.airportD.TZ}" date="${flight.timeD}" showZone="true" /></td>
+ <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${flight.airportA.TZ}" date="${flight.timeA}" showZone="true" /></td>
 </c:if>
  <td class="small"><fmt:int value="${flight.length / 10}" />:<fmt:int value="${(flight.length * 6) % 60}" fmt="00" /></td>
  <td class="small bld nophone"><fmt:int value="${flight.dispatchRoutes}" /></td>
@@ -282,12 +282,12 @@ golgotha.onDOMReady(function() {
  <td class="small">${flight.airportD.name} (<fmt:airport airport="${flight.airportD}" />) to
  ${flight.airportA.name} (<fmt:airport airport="${flight.airportA}" />)</td>
 <c:if test="${param.showUTCTimes}">
- <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${utc}" date="${flight.dateTimeD.UTC}" /> UTC</td>
- <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${utc}" date="${flight.dateTimeA.UTC}" /> UTC</td>
+ <td class="nophone"><fmt:date fmt="t" t="HH:mm" tzName="UTC" date="${flight.timeD}" /> UTC</td>
+ <td class="nophone"><fmt:date fmt="t" t="HH:mm" tzName="UTC" date="${flight.timeA}" /> UTC</td>
 </c:if>
 <c:if test="${!param.showUTCTimes}"> 
- <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${flight.airportD.TZ}" date="${flight.dateTimeD.UTC}" /></td>
- <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${flight.airportA.TZ}" date="${flight.dateTimeA.UTC}" /></td>
+ <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${flight.airportD.TZ}" date="${flight.timeD}" showZone="true" /></td>
+ <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${flight.airportA.TZ}" date="${flight.timeA}" showZone="true" /></td>
 </c:if>
  <td class="small"><fmt:int value="${flight.length / 10}" />:<fmt:int value="${(flight.length * 6) % 60}" fmt="00" /></td>
  <td class="sec nophone"><fmt:distance value="${flight.distance}" /></td>
