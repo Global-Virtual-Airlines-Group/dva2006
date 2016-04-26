@@ -1,8 +1,8 @@
-// Copyright 2005, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.log;
 
 import java.io.*;
-import java.util.Date;
+import java.time.Instant;
 
 import org.apache.log4j.Logger;
 
@@ -12,7 +12,7 @@ import org.deltava.beans.stats.HTTPStatistics;
  * A Log Parser for Apache 2.0 common access logs. <i>This requires that the log be in the Apache 2.x 
  * format &quot;%h %u %t \"%r\" %>s %B %D&quot;.</i>
  * @author Luke
- * @version 3.6
+ * @version 7.0
  * @since 1.0
  */
 
@@ -79,6 +79,7 @@ public class ApacheLogParser implements LogParser {
     * @param f the log file
     * @return the HTTP statistics for that log period
     */
+   @Override
    public HTTPStatistics parseLog(File f) {
       
       // Init counters
@@ -134,7 +135,7 @@ public class ApacheLogParser implements LogParser {
       
       // Get the date of the log file
       String ext = f.getName().substring(f.getName().lastIndexOf('.') + 1);
-      HTTPStatistics results = new HTTPStatistics(new Date(Long.parseLong(ext) * 1000));
+      HTTPStatistics results = new HTTPStatistics(Instant.ofEpochSecond(Long.parseLong(ext)));
       results.setExecutionTime(execTime);
       results.setBackEndTime(beTime);
       results.setBandwidth(bandwidth);

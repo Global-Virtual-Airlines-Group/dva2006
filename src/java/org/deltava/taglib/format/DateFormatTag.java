@@ -1,19 +1,19 @@
-// Copyright 2005, 2010, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2010, 2012, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
-import java.util.Date;
-import java.text.SimpleDateFormat;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.*;
 
 import javax.servlet.jsp.*;
 
-import org.deltava.beans.*;
-
+import org.deltava.beans.TZInfo;
 import org.deltava.util.system.SystemData;
 
 /**
  * A JSP tag to support the display of formatted date/time values.
  * @author Luke
- * @version 5.2
+ * @version 7.0
  * @since 1.0
  */
 
@@ -21,7 +21,6 @@ public class DateFormatTag extends UserSettingsTag {
 	
 	private final String DEFAULT_D_FMT = SystemData.get("time.date_format");
 	private final String DEFAULT_T_FMT = SystemData.get("time.time_format");
-	private final TZInfo DEFAULT_TZ = TZInfo.get(SystemData.get("time.timezone"));
 
 	private enum Format {
 		DT, D, T
@@ -30,8 +29,9 @@ public class DateFormatTag extends UserSettingsTag {
 	private Format _dtInclude = Format.DT;
 	private String _dateFormat = DEFAULT_D_FMT;
 	private String _timeFormat = DEFAULT_T_FMT;
-	private TZInfo _tz = DEFAULT_TZ;
-	private DateTime _dt;
+	private TZInfo _tz = TZInfo.local();
+	private Instant _dt;
+	private boolean _showZone;
 
 	private String _className;
 	private String _nullData;
@@ -62,11 +62,11 @@ public class DateFormatTag extends UserSettingsTag {
 	 * Updates the date format pattern.
 	 * @param pattern the pattern string
 	 * @throws IllegalArgumentException if SimpleDateFormat cannot interpret the pattern
-	 * @see SimpleDateFormat#applyPattern(String)
 	 */
 	public void setD(String pattern) {
-		SimpleDateFormat df = new SimpleDateFormat(pattern); // validate pattern
-		_dateFormat = df.toPattern();
+		DateTimeFormatter df = DateTimeFormatter.ofPattern(pattern); // validate pattern
+		if (df != null)
+			_dateFormat = pattern;
 	}
 
 	/**
@@ -81,11 +81,11 @@ public class DateFormatTag extends UserSettingsTag {
 	 * Updates the time format pattern.
 	 * @param pattern the pattern string
 	 * @throws IllegalArgumentException if SimpleDateFormat cannot interpret the pattern
-	 * @see SimpleDateFormat#applyPattern(String)
 	 */
 	public void setT(String pattern) {
-		SimpleDateFormat df = new SimpleDateFormat(pattern); // validate pattern
-		_timeFormat = df.toPattern();
+		DateTimeFormatter df = DateTimeFormatter.ofPattern(pattern); // validate pattern
+		if (df != null)
+			_timeFormat = pattern;
 	}
 
 	/**
@@ -102,11 +102,18 @@ public class DateFormatTag extends UserSettingsTag {
 
 	/**
 	 * Sets the date/time to display.
-	 * @param d the date/time
+	 * @param i the date/time
 	 */
-	public void setDate(Date d) {
-		if (d != null)
-			_dt = new DateTime(d);
+	public void setDate(Temporal i) {
+		if (i instanceof Instant)
+			_dt = (Instant) i;
+		else if (i instanceof ZonedDateTime)
+			_dt = ((ZonedDateTime) i).toInstant();
+		else if (i instanceof LocalDate) {
+			LocalDate ld = (LocalDate) i;
+			_dt = Instant.ofEpochMilli(ld.toEpochDay() * ChronoUnit.DAYS.getDuration().getSeconds());
+		} else if (i instanceof LocalDateTime)
+			_dt = ((LocalDateTime) i).toInstant(ZoneOffset.UTC);
 	}
 
 	/**
@@ -128,10 +135,9 @@ public class DateFormatTag extends UserSettingsTag {
 	/**
 	 * Overrides whether the time zone should be displayed.
 	 * @param showZone TRUE if the time zone should be displayed, otherwise FALSE
-	 * @see DateTime#showZone(boolean)
 	 */
 	public void setShowZone(boolean showZone) {
-		_dt.showZone(showZone);
+		_showZone = showZone;
 	}
 
 	/**
@@ -143,22 +149,10 @@ public class DateFormatTag extends UserSettingsTag {
 		_dtInclude = Format.DT;
 		_dateFormat = DEFAULT_D_FMT;
 		_timeFormat = DEFAULT_T_FMT;
-		_tz = DEFAULT_TZ;
+		_tz = TZInfo.local();
 		_dt = null;
 		_className = null;
-	}
-
-	/**
-	 * Mashes the date and time together in a date/time object.
-	 * @return TagSupport.SKIP_BODY
-	 * @throws JspException if an error occurs
-	 */
-	@Override
-	public int doStartTag() throws JspException {
-		if (_dt != null)
-			_dt.convertTo(_tz);
-
-		return SKIP_BODY;
+		_showZone = false;
 	}
 
 	/**
@@ -170,26 +164,21 @@ public class DateFormatTag extends UserSettingsTag {
 	public int doEndTag() throws JspException {
 
 		// Build the format string
-		if (_dt != null) {
-			StringBuilder fmtPattern = new StringBuilder();
-			switch (_dtInclude) {
-			case D:
-				fmtPattern.append(_dateFormat);
-				if (_dt != null)
-					_dt.showZone(false);
-				break;
+		StringBuilder fmtPattern = new StringBuilder();
+		switch (_dtInclude) {
+		case D:
+			fmtPattern.append(_dateFormat);
+			_showZone = false;
+			break;
 
-			case T:
-				fmtPattern.append(_timeFormat);
-				break;
+		case T:
+			fmtPattern.append(_timeFormat);
+			break;
 
-			default:
-				fmtPattern.append(_dateFormat);
-				fmtPattern.append(' ');
-				fmtPattern.append(_timeFormat);
-			}
-
-			_dt.setDateFormat(fmtPattern.toString());
+		default:
+			fmtPattern.append(_dateFormat);
+			fmtPattern.append(' ');
+			fmtPattern.append(_timeFormat);
 		}
 
 		// Write the datetime value
@@ -202,8 +191,15 @@ public class DateFormatTag extends UserSettingsTag {
 			}
 
 			// Write the formatted date
-			out.print((_dt != null) ? _dt.toString() : _nullData);
-
+			if (_dt != null) {
+				DateTimeFormatter df = DateTimeFormatter.ofPattern(fmtPattern.toString());
+				ZonedDateTime zdt = ZonedDateTime.ofInstant(_dt, _tz.getZone());
+				out.print(df.format(zdt));
+				if (_showZone)
+					out.print(_tz.getAbbr());
+			} else
+				out.print(_nullData);
+			
 			if (_className != null)
 				out.print("</span>");
 		} catch (Exception e) {

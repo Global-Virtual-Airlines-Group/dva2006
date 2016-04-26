@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.help;
 
 import org.deltava.util.cache.Cacheable;
@@ -6,7 +6,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store Help Desk response templates.
  * @author Luke
- * @version 3.2
+ * @version 7.0
  * @since 3.2
  */
 
@@ -48,14 +48,17 @@ public class ResponseTemplate implements Cacheable, Comparable<ResponseTemplate>
 		_body = body;
 	}
 	
+	@Override
 	public Object cacheKey() {
 		return _title;
 	}
 	
+	@Override
 	public String toString() {
 		return _title;
 	}
 	
+	@Override
 	public int hashCode() {
 		return _title.hashCode();
 	}
@@ -63,6 +66,7 @@ public class ResponseTemplate implements Cacheable, Comparable<ResponseTemplate>
 	/**
 	 * Compares two templates by comparing their titles.
 	 */
+	@Override
 	public int compareTo(ResponseTemplate rt2) {
 		return _title.compareTo(rt2._title);
 	}

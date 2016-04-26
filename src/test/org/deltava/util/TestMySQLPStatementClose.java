@@ -9,8 +9,9 @@ public class TestMySQLPStatementClose extends TestCase {
 
 	private Connection _c;
 
-	private static final String URL = "jdbc:mysql://polaris.sce.net/acars?user=luke&password=14072";
+	private static final String URL = "jdbc:mysql://polaris.sce.net/acars?user=luke&password=test";
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 
@@ -26,6 +27,7 @@ public class TestMySQLPStatementClose extends TestCase {
 		assertNotNull(_c);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		_c.close();
 		super.tearDown();

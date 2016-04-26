@@ -1,7 +1,8 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.Airport;
@@ -13,7 +14,7 @@ import org.gvagroup.acars.ACARSFlags;
 /**
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
- * @version 6.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -30,7 +31,7 @@ public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 	private boolean _dispatchRoute;
 	private String _phaseName;
 
-	public MapRouteEntry(Date dt, GeoLocation gl, Pilot usr, String eqType) {
+	public MapRouteEntry(Instant dt, GeoLocation gl, Pilot usr, String eqType) {
 		super(dt, gl);
 		_usr = usr;
 		_eqType = eqType;
@@ -64,6 +65,7 @@ public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 		_phaseName = phase;
 	}
 
+	@Override
 	public final String getIconColor() {
 		if (isFlagSet(ACARSFlags.FLAG_PAUSED) || isWarning())
 			return RED;
@@ -77,6 +79,7 @@ public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 			return BLUE;
 	}
 	
+	@Override
 	public final String getInfoBox() {
 		StringBuilder buf = new StringBuilder(_usr.getRank().getName());
 		buf.append(", ");
@@ -116,10 +119,12 @@ public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 		return buf.toString();
 	}
 
+	@Override
 	public final List<String> getTabNames() {
 		return TAB_NAMES;
 	}
 
+	@Override
 	public final List<String> getTabContents() {
 		List<String> results = new ArrayList<String>();
 

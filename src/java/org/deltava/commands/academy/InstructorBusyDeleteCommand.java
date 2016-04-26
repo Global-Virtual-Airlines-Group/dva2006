@@ -1,7 +1,7 @@
-// Copyright 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.deltava.beans.academy.InstructionBusy;
 
@@ -15,7 +15,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to delete an Instructor's busy time entry.
  * @author Luke
- * @version 3.4
+ * @version 7.0
  * @since 1.0
  */
 
@@ -26,11 +26,12 @@ public class InstructorBusyDeleteCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Get the instructor ID and start time
 		int instructorID = ctx.getID();
-		Date sd = StringUtils.parseDate(ctx.getParameter("op"), "MMddyyyyHHmm");
+		Instant sd = StringUtils.parseInstant(ctx.getParameter("op"), "MMddyyyyHHmm");
 		
 		// Validate our delete access
 		BusyTimeAccessControl ac = new BusyTimeAccessControl(ctx, new InstructionBusy(instructorID));

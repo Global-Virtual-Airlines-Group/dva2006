@@ -14,13 +14,15 @@ public class TestRunway extends AbstractBeanTestCase {
       return new CoverageDecorator(TestRunway.class, new Class[] { Runway.class, NavigationDataBean.class });
   }
    
-   protected void setUp() throws Exception {
+   @Override
+protected void setUp() throws Exception {
       super.setUp();
       _rwy = new Runway(12.345, -23.456);
       setBean(_rwy);
    }
 
-   protected void tearDown() throws Exception {
+   @Override
+protected void tearDown() throws Exception {
       _rwy = null;
       super.tearDown();
    }

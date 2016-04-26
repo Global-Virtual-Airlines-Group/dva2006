@@ -1,13 +1,17 @@
-// Copyright 2005, 2007, 2008, 2010, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2010, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
 import java.text.*;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.format.TextStyle;
 
 /**
  * A class for dealing with Time Zones.
  * @author Luke
- * @version 6.2
+ * @version 7.0
  * @since 1.0
  */
 
@@ -16,12 +20,12 @@ public class TZInfo implements java.io.Serializable, ComboAlias, Comparable<TZIn
 	/**
 	 * Time Zone for GMT/UTC.
 	 */
-	public static final TZInfo UTC = new TZInfo("Etc/Universal", "Coordinated Universal Time", "UTC");
-	private static final TZInfo _local = new TZInfo(TimeZone.getDefault().getID(), null, null);
+	public static final TZInfo UTC = new TZInfo(ZoneOffset.UTC, "Coordinated Universal Time", "UTC");
+	private static final TZInfo _local = new TZInfo(ZoneId.systemDefault(), null, null);
 
 	private static final Map<String, TZInfo> _timeZones = new HashMap<String, TZInfo>();
 
-	private final TimeZone _tz;
+	private final ZoneId _tz;
 	private final String _displayName;
 	private final String _abbr;
 	
@@ -31,9 +35,9 @@ public class TZInfo implements java.io.Serializable, ComboAlias, Comparable<TZIn
 		_timeZones.put("local", _local);
 	}
 	
-	private TZInfo(String tzName, String dName, String abbr) {
+	private TZInfo(ZoneId tz, String dName, String abbr) {
 		super();
-		_tz = TimeZone.getTimeZone(tzName);
+		_tz = tz;
 		_displayName = dName;
 		_abbr = (abbr != null) ? abbr.toUpperCase().trim() : null;
 	}
@@ -48,7 +52,7 @@ public class TZInfo implements java.io.Serializable, ComboAlias, Comparable<TZIn
 	 * @see TimeZone#getTimeZone(java.lang.String)
 	 */
 	public static TZInfo init(String tzName, String dName, String abbr) {
-		TZInfo tz = new TZInfo(tzName, dName, abbr);
+		TZInfo tz = new TZInfo(ZoneId.of(tzName), dName, abbr);
 		_timeZones.put(tzName, tz);
 		return tz;
 	}
@@ -93,7 +97,7 @@ public class TZInfo implements java.io.Serializable, ComboAlias, Comparable<TZIn
 	 * Returns the underlying Java TimeZone object.
 	 * @return The JVM time zone
 	 */
-	public TimeZone getTimeZone() {
+	public ZoneId getZone() {
 		return _tz;
 	}
 
@@ -103,7 +107,7 @@ public class TZInfo implements java.io.Serializable, ComboAlias, Comparable<TZIn
 	 * @see TimeZone#getID()
 	 */
 	public String getID() {
-		return _tz.getID();
+		return _tz.getId();
 	}
 
 	/**
@@ -119,7 +123,7 @@ public class TZInfo implements java.io.Serializable, ComboAlias, Comparable<TZIn
 	 * @return The name of the time zone; if no user-supplied name is present then use the Java name
 	 */
 	public String getName() {
-		return (_displayName == null) ? _tz.getDisplayName(false, TimeZone.LONG) : _displayName;
+		return (_displayName == null) ? _tz.getDisplayName(TextStyle.FULL_STANDALONE, Locale.US) : _displayName;
 	}
 
 	/**
@@ -129,7 +133,7 @@ public class TZInfo implements java.io.Serializable, ComboAlias, Comparable<TZIn
 	 */
 	@Override
 	public String toString() {
-		int ofs = _tz.getRawOffset() / 60000;
+		int ofs = _tz.getRules().getStandardOffset(Instant.now()).getTotalSeconds() / 60;
 
 		// Start with the name and add the abbreviation if any
 		StringBuilder msg = new StringBuilder(getName());
@@ -149,7 +153,7 @@ public class TZInfo implements java.io.Serializable, ComboAlias, Comparable<TZIn
 		msg.append(df.format(Math.abs(ofs % 60)));
 
 		// Display DST flag
-		if (_tz.useDaylightTime())
+		if (!_tz.getRules().isFixedOffset())
 			msg.append("/DST");
 
 		msg.append(']');
@@ -157,25 +161,14 @@ public class TZInfo implements java.io.Serializable, ComboAlias, Comparable<TZIn
 	}
 
 	/**
-	 * Converts a user-supplied UNIX 32-bit timestamp to UTC.
-	 * @param d A UNIX 32-bit timestamp
-	 * @return A new 32-bit timestamp that contains the specified date/time when converted to UTC
-	 */
-	public long getUTC(long d) {
-		return d + (_tz.getOffset(d) * -1);
-	}
-
-	/**
 	 * Compares this Time Zone to another object by comparing the UTC offset.
 	 * @param tz2 the TimeZone entry to compare to
 	 */
+	@Override
 	public int compareTo(TZInfo tz2) {
-		if ((tz2 == null) || (_tz.getRawOffset() > tz2.getTimeZone().getRawOffset()))
-			return 1;
-		else if (_tz.getRawOffset() < tz2.getTimeZone().getRawOffset())
-			return -1;
-
-		return _tz.getID().compareTo(tz2.getID());
+		Instant now = Instant.now();
+		int tmpResult = _tz.getRules().getOffset(now).compareTo(tz2._tz.getRules().getOffset(now));
+		return (tmpResult == 0) ? _displayName.compareTo(tz2._displayName) : tmpResult;
 	}
 
 	/**
@@ -183,12 +176,12 @@ public class TZInfo implements java.io.Serializable, ComboAlias, Comparable<TZIn
 	 */
 	@Override
 	public boolean equals(Object o2) {
-		return (o2 instanceof TZInfo) && (_tz.getID().equals(((TZInfo) o2)._tz.getID()));
+		return (o2 instanceof TZInfo) && (_tz.getId().equals(((TZInfo) o2)._tz.getId()));
 	}
 	
 	@Override
 	public int hashCode() {
-		return _tz.getID().hashCode();
+		return _tz.hashCode();
 	}
 
 	protected static void reset() {
@@ -201,6 +194,6 @@ public class TZInfo implements java.io.Serializable, ComboAlias, Comparable<TZIn
 	 */
 	@Override
 	public String getRowClassName() {
-		return _tz.useDaylightTime() ? "opt1" : null;
+		return !_tz.getRules().isFixedOffset() ? "opt1" : null;
 	}
 }

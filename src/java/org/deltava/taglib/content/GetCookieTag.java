@@ -1,3 +1,4 @@
+// Copyright 2005, 2016 Global Virtual Ailrines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import javax.servlet.http.*;
@@ -9,8 +10,8 @@ import javax.servlet.jsp.tagext.TagSupport;
  * @author Luke
  * @version 1.0
  * @since 1.0
- * Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
  */
+
 public class GetCookieTag extends TagSupport {
 
     private String _name;
@@ -44,6 +45,7 @@ public class GetCookieTag extends TagSupport {
     /**
      * Releases this tag's state and default value.
      */
+    @Override
     public void release() {
         super.release();
         _default = null;
@@ -74,6 +76,7 @@ public class GetCookieTag extends TagSupport {
      * @return TagSupport.EVAL_PAGE
      * @throws JspException if an error occurs
      */
+    @Override
     public int doEndTag() throws JspException {
         
         // Get the cookie value that we want; if we don't get it, search for the default value

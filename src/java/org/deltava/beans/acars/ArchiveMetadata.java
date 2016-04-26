@@ -1,21 +1,21 @@
-// Copyright 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.deltava.beans.DatabaseBean;
 
 /**
  * A bean to store ACARS position archive metadata.
  * @author Luke
- * @version 6.2
+ * @version 7.0
  * @since 6.2
  */
 
 public class ArchiveMetadata extends DatabaseBean {
 	
 	private int _positionCount;
-	private Date _archivedOn;
+	private Instant _archivedOn;
 	private long _crc;
 	private int _size;
 
@@ -48,7 +48,7 @@ public class ArchiveMetadata extends DatabaseBean {
 	 * Returns the date the flight was archived.
 	 * @return the archive date/time
 	 */
-	public Date getArchivedOn() {
+	public Instant getArchivedOn() {
 		return _archivedOn;
 	}
 	
@@ -80,7 +80,7 @@ public class ArchiveMetadata extends DatabaseBean {
 	 * Updates the archive date.
 	 * @param dt the archive date/time
 	 */
-	public void setArchivedOn(Date dt) {
+	public void setArchivedOn(Instant dt) {
 		_archivedOn = dt;
 	}
 

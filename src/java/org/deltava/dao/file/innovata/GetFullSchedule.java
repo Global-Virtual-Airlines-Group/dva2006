@@ -1,9 +1,11 @@
-// Copyright 2006, 2007, 2008, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file.innovata;
 
 import java.io.*;
 import java.util.*;
-import java.text.*;
+import java.time.*;
+import java.time.format.*;
+import java.time.temporal.ChronoUnit;
 
 import org.apache.log4j.Logger;
 
@@ -19,19 +21,20 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load CSV-format flight schedules from Innovata LLC.
  * @author Luke
- * @version 6.3
+ * @version 7.0
  * @since 1.0
  */
 
 public class GetFullSchedule extends ScheduleLoadDAO {
 
 	private static final Logger log = Logger.getLogger(GetFullSchedule.class);
-	private final DateFormat _df = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-	private final DateFormat _tf = new SimpleDateFormat("HH:mm");
+	
+	private final DateTimeFormatter _df = new DateTimeFormatterBuilder().appendPattern("dd/MM/yyyy HH:mm").parseLenient().toFormatter();
+	private final DateTimeFormatter _tf = new DateTimeFormatterBuilder().appendPattern("HH:mm").parseLenient().toFormatter();
 
 	private static final List<String> GROUND_EQ = Arrays.asList("TRN", "BUS", "LMO", "RFS");
 
-	private Date _effDate = new Date();
+	private LocalDateTime _effDate = LocalDateTime.now();
 
 	private final Collection<CSVTokens> _data = new ArrayList<CSVTokens>();
 	private final Collection<String> _aCodes = new HashSet<String>();
@@ -89,9 +92,9 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 
 		// Check the date
 		try {
-			long sd = _df.parse(entries.get(5) + " 00:00").getTime();
-			long ed = _df.parse(entries.get(6) + " 23:59").getTime();
-			if ((_effDate.getTime() < sd) || (_effDate.getTime() >= ed))
+			LocalDateTime sd = LocalDateTime.parse(entries.get(5), _df);
+			LocalDateTime ed = LocalDateTime.parse(entries.get(6), _df).plusDays(1);
+			if (_effDate.isBefore(sd) || _effDate.isAfter(ed))
 				return false;
 		} catch (Exception e) {
 			log.warn("Invalid start/end date - " + e.getMessage());
@@ -130,9 +133,9 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 	 * will not be loaded.
 	 * @param dt the effective date/time
 	 */
-	public void setEffectiveDate(Date dt) {
+	public void setEffectiveDate(LocalDateTime dt) {
 		if (dt != null)
-			_effDate = dt;
+			_effDate = dt.truncatedTo(ChronoUnit.DAYS);
 	}
 
 	/**
@@ -141,9 +144,8 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 	 * @return a Collection of CSVTokens beans
 	 */
 	public Collection<CSVTokens> load() throws DAOException {
-		LineNumberReader br = null;
+		LineNumberReader br = getReader();
 		try {
-			br = getReader();
 			br.readLine(); // Skip first line
 
 			while (br.ready()) {
@@ -239,11 +241,10 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 				entry.setEquipmentType(eqType);
 				entry.setLength(Integer.parseInt(entries.get(42)) / 6);
 				entry.setDays(dayBuf.toString());
-				entry.setDate(_effDate);
 				try {
-					entry.setTimeD(_tf.parse(entries.get(18)));
-					entry.setTimeA(_tf.parse(entries.get(23)));
-				} catch (ParseException pe) {
+					entry.setTimeD(LocalDateTime.parse(entries.get(18), _tf));
+					entry.setTimeA(LocalDateTime.parse(entries.get(23), _tf));
+				} catch (Exception pe) {
 					log.warn("Error parsing time - " + pe.getMessage());
 					_errors.add("Error parsing time - " + pe.getMessage());
 				}

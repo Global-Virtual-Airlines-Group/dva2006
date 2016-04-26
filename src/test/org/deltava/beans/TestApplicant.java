@@ -12,13 +12,15 @@ public class TestApplicant extends AbstractBeanTestCase {
     
     private Applicant _a;
     
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
         _a = new Applicant("John", "Smith");
         setBean(_a);
     }
     
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         _a = null;
         super.tearDown();
     }

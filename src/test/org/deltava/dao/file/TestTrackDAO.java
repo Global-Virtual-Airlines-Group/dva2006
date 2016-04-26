@@ -8,8 +8,10 @@ import org.apache.log4j.PropertyConfigurator;
 
 import org.deltava.dao.http.*;
 
+@SuppressWarnings("static-method")
 public class TestTrackDAO extends TestCase {
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		PropertyConfigurator.configure("etc/log4j.test.properties");

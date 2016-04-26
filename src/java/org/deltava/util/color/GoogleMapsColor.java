@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.color;
 
 import java.util.StringTokenizer;
@@ -6,7 +6,7 @@ import java.util.StringTokenizer;
 /**
  * A class to define Google Maps colors.
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -40,6 +40,7 @@ public class GoogleMapsColor extends GoogleColor {
 	 * Renders the color in a format to be passed to the Goolge Maps JavaScript API.
 	 * @return the rendered color
 	 */
+	@Override
 	public String toString() {
 		StringBuilder buf = new StringBuilder('#');
 		buf.append(formatHex(_red));

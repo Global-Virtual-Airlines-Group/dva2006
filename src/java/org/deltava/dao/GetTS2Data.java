@@ -1,9 +1,9 @@
-// Copyright 2006, 2007, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
-import java.text.*;
+import java.time.Instant;
 
 import org.apache.log4j.Logger;
 
@@ -14,14 +14,13 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to load TeamSpeak 2 configuration data.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 1.0
  */
 
 public class GetTS2Data extends DAO {
 
 	private static final Logger log = Logger.getLogger(GetTS2Data.class);
-	private final DateFormat _df = new SimpleDateFormat("ddMMyyyyHHmmssSSS");
 
 	/**
 	 * Initializes the Data Access Object.
@@ -34,12 +33,12 @@ public class GetTS2Data extends DAO {
 	/*
 	 * Helper method to convert a date from the godawful TS2 format.
 	 */
-	private java.util.Date getDate(String dt) {
+	private static java.time.Instant getDate(String dt) {
 		try {
-			return (dt == null) ? null : _df.parse(dt);
-		} catch (ParseException pe) {
+			return (dt == null) ? null : StringUtils.parseInstant(dt, "ddMMyyyyHHmmssSSS");
+		} catch (Exception pe) {
 			log.warn("Error parsing date " + dt);
-			return new java.util.Date();
+			return Instant.now();
 		}
 	}
 

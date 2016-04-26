@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import javax.servlet.http.*;
@@ -11,7 +11,7 @@ import static org.deltava.commands.CommandContext.SU_ATTR_NAME;
 /**
  * A JSP tag to filter out content that is displayed for superusers only.
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -30,6 +30,7 @@ public class SuperUserFilterTag extends TagSupport {
 	/**
 	 * Releases the tag's state variables.
 	 */
+	@Override
 	public void release() {
 		super.release();
 		_varName = null;
@@ -40,6 +41,7 @@ public class SuperUserFilterTag extends TagSupport {
 	 * @return EVAL_BODY_INCLUDE if acting as a superUser, otherwise SKIP_BODY
 	 * @throws JspException if an error occurs
 	 */
+	@Override
 	public int doStartTag() throws JspException {
 		
 		// Check if we have the superuser flag
@@ -65,6 +67,7 @@ public class SuperUserFilterTag extends TagSupport {
 	 * @return EVAL_PAGE always
 	 * @throws JspException never
 	 */
+	@Override
 	public int doEndTag() throws JspException {
 		release();
 		return EVAL_PAGE;

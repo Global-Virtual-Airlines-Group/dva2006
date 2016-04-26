@@ -67,7 +67,7 @@ public class FlightStatsService extends WebService {
 			if (loc instanceof RouteEntry) {
 				RouteEntry re = (RouteEntry) loc;
 				JSONArray je = new JSONArray();
-				je.put(re.getDate().getTime());
+				je.put(re.getDate().toEpochMilli());
 				je.put(re.getGroundSpeed());
 				je.put(re.getAltitude());
 				if (re instanceof ACARSRouteEntry) {

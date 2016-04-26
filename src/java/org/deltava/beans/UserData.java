@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -7,7 +7,7 @@ import java.util.*;
  * A class to store cross-Airline User data. This is used to track locations of users in parts of the application (Water
  * Cooler, Online Events) that allow users from other airlines to write database entries.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -153,9 +153,7 @@ public class UserData extends DatabaseBean {
 		_domainName = domainName.trim().toLowerCase();
 	}
 	
-	/**
-	 * Updates the user's database ID in the current database.
-	 */
+	@Override
 	public void setID(int id) {
 		super.setID(id);
 		_xAirlineIDs.add(Integer.valueOf(id));
@@ -179,15 +177,14 @@ public class UserData extends DatabaseBean {
 	 * @return TRUE if the table should be queried by a Pilot DAO, otherwise FALSE
 	 */
 	public static boolean isPilotTable(String tableName) {
-	   if ((tableName != null) && (tableName.indexOf('.') != -1))
-	      tableName = tableName.substring(tableName.indexOf('.') + 1);
-	   
-	   return "PILOTS".equals(tableName);
+	   String tn = ((tableName != null) && (tableName.indexOf('.') != -1)) ? tableName.substring(tableName.indexOf('.') + 1) : tableName;
+	   return "PILOTS".equals(tn);
 	}
 
 	/**
 	 * Returns the hashcode of the database ID.
 	 */
+	@Override
 	public int hashCode() {
 		return getID();
 	}
@@ -195,6 +192,7 @@ public class UserData extends DatabaseBean {
 	/**
 	 * Returns the database ID.
 	 */
+	@Override
 	public Object cacheKey() {
 		return Integer.valueOf(getID());
 	}

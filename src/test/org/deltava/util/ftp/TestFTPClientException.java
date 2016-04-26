@@ -11,9 +11,9 @@ public class TestFTPClientException extends TestCase {
         return new CoverageDecorator(TestFTPClientException.class, new Class[] { FTPClientException.class } );
     }
 
-    public void testCause() {
+    @SuppressWarnings("static-method")
+	public void testCause() {
         Exception e = new NullPointerException();
-        
         try {
             throw new FTPClientException(e);
         } catch (FTPClientException de) {

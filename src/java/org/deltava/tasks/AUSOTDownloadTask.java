@@ -1,10 +1,11 @@
-// Copyright 2006, 2007, 2009, 2010, 2011, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2010, 2011, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.net.*;
 import java.util.*;
 import java.io.IOException;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.navdata.*;
@@ -19,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to download AUSOT data.
  * @author Luke
- * @version 6.0
+ * @version 7.0
  * @since 2.7
  */
 
@@ -43,7 +44,7 @@ public class AUSOTDownloadTask extends Task {
 			URL url = new URL(SystemData.get("config.ausot.url"));
 			
 			// Build the oceanic route bean
-			OceanicNOTAM or = new OceanicNOTAM(OceanicTrackInfo.Type.AUSOT, new Date());
+			OceanicNOTAM or = new OceanicNOTAM(OceanicTrackInfo.Type.AUSOT, Instant.now());
 			or.setSource(url.getHost());
 			
 			// Get the DAO and the AUSOT data

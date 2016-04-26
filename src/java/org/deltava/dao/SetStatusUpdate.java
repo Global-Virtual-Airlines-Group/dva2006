@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to write status updates for a Pilot to the database.
  * @author Luke
- * @version 6.4
+ * @version 7.0
  * @since 1.0
  */
 
@@ -75,10 +75,10 @@ public class SetStatusUpdate extends DAO {
 			
 			long lastUpdateTime = 0;
 			for (StatusUpdate upd : updates) {
-				if (upd.getCreatedOn().getTime() <= lastUpdateTime)
-					upd.setCreatedOn(new java.util.Date(lastUpdateTime + 2));
+				if (upd.getCreatedOn().toEpochMilli() <= lastUpdateTime)
+					upd.setCreatedOn(upd.getCreatedOn().plusMillis(2));
 					
-				lastUpdateTime = upd.getCreatedOn().getTime();
+				lastUpdateTime = upd.getCreatedOn().toEpochMilli();
 				
 				// Write the data
 				_ps.setInt(1, upd.getID());

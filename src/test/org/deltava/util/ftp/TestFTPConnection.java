@@ -12,6 +12,7 @@ public class TestFTPConnection extends TestCase {
 	
 	private FTPConnection _con;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		PropertyConfigurator.configure("data/log4j.test.properties");
@@ -22,6 +23,7 @@ public class TestFTPConnection extends TestCase {
 		assertNotNull(SystemData.get("schedule.innovata.download.file"));
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		_con.close();
 		_con = null;

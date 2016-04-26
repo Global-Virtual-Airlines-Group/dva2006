@@ -1,8 +1,9 @@
-// Copyright 2008, 2009, 2010, 2011, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.util.*;
 import java.sql.Connection;
+import java.time.Instant;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
@@ -22,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to create flight plans.
  * @author Luke
- * @version 6.3
+ * @version 7.0
  * @since 2.2
  */
 
@@ -160,14 +161,14 @@ public class RoutePlanService extends WebService {
 						ai = new AssignmentInfo(ac.getName());
 						ai.setPilotID(ctx.getUser());
 						ai.setStatus(AssignmentInfo.RESERVED);
-						ai.setAssignDate(new Date());
+						ai.setAssignDate(Instant.now());
 						ai.addAssignment(new AssignmentLeg(dfr));
 						ai.addFlight(dfr);
 					}
 					
 					dfr.setFSVersion(sim);
 					dfr.setRank(ctx.getUser().getRank());
-					dfr.setDate(new Date());
+					dfr.setDate(Instant.now());
 				}
 				
 				// Save the flight assignment

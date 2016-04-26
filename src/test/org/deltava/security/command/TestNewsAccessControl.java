@@ -17,13 +17,15 @@ public class TestNewsAccessControl extends AccessControlTestCase {
             NewsAccessControl.class });
    }
    
-   protected void setUp() throws Exception {
+   @Override
+protected void setUp() throws Exception {
       super.setUp();
       _nws = new News("Subject", "John Smith", "Stuff Happened");
       _ac = new NewsAccessControl(_ctxt, _nws);
    }
 
-   protected void tearDown() throws Exception {
+   @Override
+protected void tearDown() throws Exception {
       _ac = null;
       _nws = null;
       super.tearDown();

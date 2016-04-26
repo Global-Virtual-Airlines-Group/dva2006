@@ -4,6 +4,7 @@ package org.deltava.beans.servinfo;
 import java.util.*;
 import junit.framework.TestCase;
 
+@SuppressWarnings("static-method")
 public class TestDuplicateCheck extends TestCase {
 
 	public void testCIDCheck() {

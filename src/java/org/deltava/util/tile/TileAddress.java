@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.tile;
 
 import java.util.*;
@@ -6,7 +6,7 @@ import java.util.*;
 /**
  * A class to store quadtree Tile addresses.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 5.0
  */
 
@@ -39,13 +39,12 @@ public class TileAddress implements  java.io.Serializable, Comparable<TileAddres
 	 */
 	public TileAddress(String name) {
 		super();
-		if (name.indexOf('.') != -1)
-			name = name.substring(0, name.indexOf('.'));
+		String n = (name.indexOf('.') != -1) ? name.substring(0, name.indexOf('.')) : name; 
 
 		// Parse the numbers
-		_level = name.length(); int X = 0; int Y = 0;
+		_level = n.length(); int X = 0; int Y = 0;
 		for (int x = 0; x < _level; x++) {
-			switch (name.charAt(x)) {
+			switch (n.charAt(x)) {
 				case '1':
 					X += MASKS[_level - x];
 					break;
@@ -57,6 +56,10 @@ public class TileAddress implements  java.io.Serializable, Comparable<TileAddres
 				case '3':
 					X += MASKS[_level - x];
 					Y += MASKS[_level - x];
+					break;
+					
+				case '0':
+				default:
 					break;
 			}
 		}
@@ -132,6 +135,7 @@ public class TileAddress implements  java.io.Serializable, Comparable<TileAddres
 	/**
 	 * Returns the coordinates and level of the Tile.
 	 */
+	@Override
 	public String toString() {
 		final StringBuilder buf = new StringBuilder("(");
 		buf.append(_x);
@@ -147,6 +151,7 @@ public class TileAddress implements  java.io.Serializable, Comparable<TileAddres
 	 * Compares two addresses by comparing their levels, Y and X coordinates.
 	 * @see Comparable#compareTo(Object)
 	 */
+	@Override
 	public int compareTo(TileAddress addr2) {
 		// Compare the level
 		int tmpResult = Integer.valueOf(_level).compareTo(Integer.valueOf(addr2._level)) * -1;
@@ -162,10 +167,12 @@ public class TileAddress implements  java.io.Serializable, Comparable<TileAddres
 		return Integer.valueOf(_x).compareTo(Integer.valueOf(addr2._x));
 	}
 	
+	@Override
 	public boolean equals(Object o) {
 		return (o instanceof TileAddress) ? (compareTo((TileAddress) o) == 0) : false;
 	}
-	
+
+	@Override
 	public int hashCode() {
 		return toString().hashCode();
 	}

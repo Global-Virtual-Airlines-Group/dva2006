@@ -39,7 +39,8 @@ public class TestDAO extends AbstractBeanTestCase {
         }
     }
     
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
         
         Properties props = new Properties();
@@ -51,7 +52,8 @@ public class TestDAO extends AbstractBeanTestCase {
         setBean(_dao);
     }
 
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         _con.close();
         super.tearDown();
     }

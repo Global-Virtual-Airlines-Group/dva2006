@@ -8,6 +8,7 @@ public class TestApacheSQLAuthenticator extends SQLTestCase {
 	
 	private SQLAuthenticator _auth;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		
@@ -28,6 +29,7 @@ public class TestApacheSQLAuthenticator extends SQLTestCase {
 		createTable("sql/system/create_auth_alias.sql");
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		executeSQL("DROP TABLE AUTH_ALIAS");
 		executeSQL("DROP TABLE AUTH");

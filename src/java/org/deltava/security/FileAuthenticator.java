@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.*;
  * An authenticator to validate users against a file repository. This should
  * typically be used for testing or backup purposes only.
  * @author Luke
- * @version 2.6
+ * @version 7.0
  * @since 1.0
  */
 
@@ -73,6 +73,7 @@ public class FileAuthenticator implements Authenticator {
 	 * @param propsFile the properties file to use
 	 * @throws SecurityException if an error occurs
 	 */
+	@Override
 	public void init(String propsFile) throws SecurityException {
 
 		_props.clear();
@@ -109,6 +110,7 @@ public class FileAuthenticator implements Authenticator {
 	 * @throws SecurityException if authentication fails
 	 * @see Authenticator#authenticate(Person, String)
 	 */
+	@Override
 	public void authenticate(Person usr, String pwd) throws SecurityException {
 		UserInfo ui = _users.get(usr.getDN());
 		if (ui == null)
@@ -129,6 +131,7 @@ public class FileAuthenticator implements Authenticator {
 	 * @param usr the user bean
 	 * @return TRUE if the Directory name is populated, otherwise FALSE
 	 */
+	@Override
 	public boolean accepts(Person usr) {
 		return ((usr != null) && !StringUtils.isEmpty(usr.getDN()));
 	}
@@ -138,6 +141,7 @@ public class FileAuthenticator implements Authenticator {
 	 * @param usr the User bean
 	 * @return TRUE if the user exists, otherwise FALSE
 	 */
+	@Override
 	public boolean contains(Person usr) {
 		return _users.containsKey(usr.getDN());
 	}
@@ -174,6 +178,7 @@ public class FileAuthenticator implements Authenticator {
 	 * @param pwd the user's password
 	 * @throws SecurityException if an error occurs
 	 */
+	@Override
 	public void updatePassword(Person usr, String pwd) throws SecurityException {
 
 		// Get the User
@@ -193,6 +198,7 @@ public class FileAuthenticator implements Authenticator {
 	 * @param pwd the user's password
 	 * @throws SecurityException if an error occurs
 	 */
+	@Override
 	public void add(Person usr, String pwd) throws SecurityException {
 
 		// Check if the user exists
@@ -212,6 +218,7 @@ public class FileAuthenticator implements Authenticator {
 	 * @param usr the User bean
 	 * @throws SecurityException if an error occurs
 	 */
+	@Override
 	public void remove(Person usr) throws SecurityException {
 		if (!contains(usr))
 			throw new SecurityException("User " + usr.getDN() + " not found");
@@ -225,6 +232,7 @@ public class FileAuthenticator implements Authenticator {
 	 * @param usr the user bean
 	 * @throws SecurityException if an error occurs
 	 */
+	@Override
 	public void disable(Person usr) throws SecurityException {
 		UserInfo usrInfo = _users.get(usr.getDN());
 		if ((usrInfo != null) && (usrInfo.isEnabled())) {
@@ -240,6 +248,7 @@ public class FileAuthenticator implements Authenticator {
 	 * @param newName the new fullly-qualified Directory name
 	 * @throws UnsupportedOperationException always
 	 */
+	@Override
 	public void rename(Person usr, String newName) throws SecurityException {
 		throw new UnsupportedOperationException();
 	}

@@ -1,8 +1,8 @@
-// Copyright 2005, 2006, 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
-import java.util.*;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.deltava.beans.testing.*;
 import org.deltava.commands.*;
@@ -13,7 +13,7 @@ import org.deltava.security.command.QuestionnaireAccessControl;
 /**
  * A Web Site Command for submitting Applicant Questionnaires.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -42,8 +42,7 @@ public class QuestionnaireSubmitCommand extends AbstractCommand {
 				throw securityException("Cannot submit Questionnaire");
 
 			// Set the status of the examination, and submitted date
-			Calendar cld = Calendar.getInstance();
-			ex.setSubmittedOn(cld.getTime());
+			ex.setSubmittedOn(Instant.now());
 			ex.setStatus(TestStatus.SUBMITTED);
 
 			// Save answers from the request
@@ -63,7 +62,7 @@ public class QuestionnaireSubmitCommand extends AbstractCommand {
 
 			// If we're entirely multiple choice, then mark the examination scored
 			if (allMC) {
-				ex.setScoredOn(cld.getTime());
+				ex.setScoredOn(ex.getSubmittedOn());
 				ex.setStatus(TestStatus.SCORED);
 				ex.setScore(score);
 				ex.setAutoScored(true);

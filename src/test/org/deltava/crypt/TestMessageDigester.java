@@ -18,6 +18,7 @@ public class TestMessageDigester extends TestCase {
 		return new CoverageDecorator(TestMessageDigester.class, new Class[] { MessageDigester.class });
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		_md = null;
 		super.tearDown();
@@ -111,6 +112,7 @@ public class TestMessageDigester extends TestCase {
 		assertEquals(hash, MessageDigester.convert(tData));
 	}
 
+	@SuppressWarnings("static-method")
 	public void testHexConversion() {
 		assertNull(MessageDigester.convert(null));
 		try {

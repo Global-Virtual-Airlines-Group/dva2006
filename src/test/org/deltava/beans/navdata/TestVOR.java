@@ -14,13 +14,15 @@ public class TestVOR extends AbstractBeanTestCase {
       return new CoverageDecorator(TestVOR.class, new Class[] { VOR.class, NavigationDataBean.class });
   }
    
-   protected void setUp() throws Exception {
+   @Override
+protected void setUp() throws Exception {
       super.setUp();
       _vor = new VOR(12.345, -23.456);
       setBean(_vor);
    }
 
-   protected void tearDown() throws Exception {
+   @Override
+protected void tearDown() throws Exception {
       _vor = null;
       super.tearDown();
    }

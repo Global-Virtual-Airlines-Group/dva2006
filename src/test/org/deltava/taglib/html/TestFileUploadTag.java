@@ -6,6 +6,7 @@ public class TestFileUploadTag extends AbstractFormTagTestCase {
 	
 	private FileUploadTag _tag;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
         super.setUp();
@@ -14,6 +15,7 @@ public class TestFileUploadTag extends AbstractFormTagTestCase {
         _tag.setParent(_formTag);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
         _tag.release();
         _tag = null;

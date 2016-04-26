@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to download Online Network IDs.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -61,8 +61,9 @@ public class OnlineIDService extends WebService {
 		
 		// If we're using XML, init the document
 		Element re = null;
-		Document doc = isXML ? new Document() : null;
+		Document doc = null;
 		if (isXML) {
+			doc = new Document();
 			re = new Element("pilots");
 			doc.setRootElement(re);
 		} else

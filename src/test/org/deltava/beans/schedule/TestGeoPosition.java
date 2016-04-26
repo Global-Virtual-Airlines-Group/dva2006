@@ -6,6 +6,7 @@ import junit.framework.Test;
 
 import org.deltava.beans.AbstractBeanTestCase;
 
+@SuppressWarnings("static-method")
 public class TestGeoPosition extends AbstractBeanTestCase {
     
     private GeoPosition _gp;
@@ -14,12 +15,14 @@ public class TestGeoPosition extends AbstractBeanTestCase {
         return new CoverageDecorator(TestGeoPosition.class, new Class[] { GeoPosition.class } );
     }
 
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         _gp = new GeoPosition();
         setBean(_gp);
     }
 
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         _gp = null;
         super.tearDown();
     }
@@ -70,7 +73,7 @@ public class TestGeoPosition extends AbstractBeanTestCase {
         assertEquals(20, GeoPosition.getSeconds(_gp.getLongitude()), 0.001);
     }
     
-    public void testStatic() {
+	public void testStatic() {
     	double lat = 54.0;
     	assertEquals(54, GeoPosition.getDegrees(lat));
     	assertEquals(0.0d, Math.abs(lat - GeoPosition.getDegrees(lat)), 0.0001);

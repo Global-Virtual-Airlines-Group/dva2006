@@ -32,10 +32,12 @@ class ReadWorker implements Runnable, Comparable<ReadWorker> {
 		log = Logger.getLogger(ReadWorker.class.getPackage().getName() + "." + toString());
 	}
 
+	@Override
 	public String toString() {
 		return "ReadWorker-" + _id;
 	}
 
+	@Override
 	public int compareTo(ReadWorker rw2) {
 		return Integer.valueOf(_id).compareTo(Integer.valueOf(rw2._id));
 	}

@@ -1,8 +1,9 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.json.*;
 
@@ -24,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle new Water Cooler message threads.
  * @author Luke
- * @version 5.4
+ * @version 7.0
  * @since 1.0
  */
 
@@ -143,16 +144,8 @@ public class ThreadPostCommand extends AbstractCommand {
 			mt.setAuthorID(p.getID());
 
 			// Parse the sticky date
-			if (!StringUtils.isEmpty(ctx.getParameter("stickyDate"))) {
-				try {
-					Date sd = StringUtils.parseDate(ctx.getParameter("stickyDate"), "MM/dd/yyyy");
-					DateTime dt = new DateTime(sd, p.getTZ());
-					dt.convertTo(TZInfo.local());
-					mt.setStickyUntil(dt.getDate());
-				} catch (IllegalArgumentException iae) {
-					throw new CommandException(iae.getMessage(), false);
-				}
-			}
+			if (!StringUtils.isEmpty(ctx.getParameter("stickyDate"))) 
+				mt.setStickyUntil(parseDateTime(ctx, "sticky", "MM/dd/yyyy", null));
 			
 			// Check if we are adding linked Images - parse the JSON and add
 			if (!StringUtils.isEmpty(ctx.getParameter("imgData"))) {
@@ -194,7 +187,7 @@ public class ThreadPostCommand extends AbstractCommand {
 				String forumName = SystemData.get("airline.forum");
 				Image gImg = new Image(mt.getSubject(), forumName + " Screen Shot");
 				gImg.setAuthorID(p.getID());
-				gImg.setCreatedOn(new Date());
+				gImg.setCreatedOn(Instant.now());
 				gImg.load(img.getBuffer());
 
 				// Save the image to the gallery

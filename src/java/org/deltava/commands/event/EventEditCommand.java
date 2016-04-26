@@ -1,11 +1,9 @@
-// Copyright 2005, 2006, 2008, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2010, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
+import java.time.*;
 import java.sql.Connection;
-
-import org.deltava.beans.DateTime;
-import org.deltava.beans.TZInfo;
 
 import org.deltava.beans.event.Event;
 import org.deltava.beans.schedule.*;
@@ -22,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to edit Online Events.
  * @author Luke
- * @version 4.2
+ * @version 7.0
  * @since 1.0
  */
 
@@ -141,13 +139,13 @@ public class EventEditCommand extends AbstractCommand {
 		}
 		
 		// Get the user's local time zone, and the server timezone
-		TZInfo tz = ctx.getUser().getTZ();
+		ZoneId tz = ctx.getUser().getTZ().getZone();
 		
 		// Convert the dates to local time for the input fields
 		ctx.setAttribute("event", e, REQUEST);
-		ctx.setAttribute("startTime", DateTime.convert(e.getStartTime(), tz), REQUEST);
-		ctx.setAttribute("endTime", DateTime.convert(e.getEndTime(), tz), REQUEST);
-		ctx.setAttribute("signupDeadline", DateTime.convert(e.getSignupDeadline(), tz), REQUEST);
+		ctx.setAttribute("startTime", ZonedDateTime.ofInstant(e.getStartTime(), tz), REQUEST);
+		ctx.setAttribute("endTime", ZonedDateTime.ofInstant(e.getEndTime(), tz), REQUEST);
+		ctx.setAttribute("signupDeadline", ZonedDateTime.ofInstant(e.getSignupDeadline(), tz), REQUEST);
 		
 		// Forward to the JSP
 		result.setURL("/jsp/event/eventEdit.jsp");

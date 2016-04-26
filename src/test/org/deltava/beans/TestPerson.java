@@ -1,5 +1,6 @@
 package org.deltava.beans;
 
+import java.time.Instant;
 import java.util.*;
 
 import junit.framework.Test;
@@ -25,38 +26,46 @@ public class TestPerson extends AbstractBeanTestCase {
             super(fName, lName);
         }
         
-        public String getStatusName() {
+        @Override
+		public String getStatusName() {
         	return "MockPerson";
         }
         
-        public final void setStatus(int status) {
+        @Override
+		public final void setStatus(int status) {
             super.setStatus(status);
         }
         
-        public void addRole(String roleName) {
+        @Override
+		public void addRole(String roleName) {
             _roles.add(roleName);
         }
         
-        public Collection<String> getRoles() {
+        @Override
+		public Collection<String> getRoles() {
             return _roles;
         }
         
-        public boolean isInRole(String roleName) {
+        @Override
+		public boolean isInRole(String roleName) {
             return _roles.contains(roleName);
         }
         
-        public String getRowClassName() {
+        @Override
+		public String getRowClassName() {
         	return null;
         }
     }
     
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
         _p = new MockPerson("John", "Smith");
         setBean(_p);
     }
     
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         _p = null;
         super.tearDown();
     }
@@ -136,11 +145,11 @@ public class TestPerson extends AbstractBeanTestCase {
     }
     
     public void testValidation() {
-        _p.setCreatedOn(new Date());
-        validateInput("lastLogin", new Date(_p.getCreatedOn().getTime() + 15000), IllegalArgumentException.class);
-        validateInput("lastLogin", new Date(_p.getCreatedOn().getTime() - 1), IllegalStateException.class);
-        validateInput("lastLogoff", new Date(_p.getCreatedOn().getTime() + 15000), IllegalArgumentException.class);
-        validateInput("lastLogoff", new Date(_p.getCreatedOn().getTime() - 1), IllegalStateException.class);
+        _p.setCreatedOn(Instant.now());
+        validateInput("lastLogin", _p.getCreatedOn().plusSeconds(15), IllegalArgumentException.class);
+        validateInput("lastLogin", _p.getCreatedOn().minusSeconds(1), IllegalStateException.class);
+        validateInput("lastLogoff", _p.getCreatedOn().plusSeconds(15), IllegalArgumentException.class);
+        validateInput("lastLogoff", _p.getCreatedOn().minusSeconds(1), IllegalStateException.class);
         validateInput("loginCount", Integer.valueOf(-1), IllegalArgumentException.class);
         validateInput("ID", Integer.valueOf(-1), IllegalArgumentException.class);
         validateInput("airportCodeType", "XXX", IllegalArgumentException.class);

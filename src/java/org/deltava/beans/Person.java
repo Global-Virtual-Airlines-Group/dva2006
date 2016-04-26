@@ -1,8 +1,9 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2013, 2014 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2013, 2014 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
 import java.text.*;
+import java.time.*;
 import java.security.Principal;
 
 import org.deltava.beans.schedule.Airport;
@@ -11,7 +12,7 @@ import org.deltava.util.StringUtils;
 /**
  * An abstract class storing information about a Person.
  * @author Luke
- * @version 6.2
+ * @version 7.0
  * @since 1.0
  */
 
@@ -50,10 +51,10 @@ public abstract class Person extends DatabaseBlobBean implements Principal, Form
 
 	private int _status;
 
-	private Date _created = new Date();
+	private Instant _created = Instant.now();
 
-	private Date _lastLogin;
-	private Date _lastLogoff;
+	private Instant _lastLogin;
+	private Instant _lastLogoff;
 	private int _loginCount;
 	private String _loginHost;
 
@@ -106,6 +107,7 @@ public abstract class Person extends DatabaseBlobBean implements Principal, Form
 	 * Returns this Person's Full name.
 	 * @return the Person's first and last names.
 	 */
+	@Override
 	public String getName() {
 		StringBuilder buf = new StringBuilder(_firstName).append(' ');
 		return buf.append(_lastName).toString();
@@ -163,10 +165,12 @@ public abstract class Person extends DatabaseBlobBean implements Principal, Form
 	 * @see Person#setEmail(String)
 	 * @see Person#getEmailAccess()
 	 */
+	@Override
 	public String getEmail() {
 		return _email;
 	}
 	
+	@Override
 	public boolean isInvalid() {
 		return _eMailInvalid;
 	}
@@ -223,6 +227,7 @@ public abstract class Person extends DatabaseBlobBean implements Principal, Form
 	 * @return the time zone where this Person is located
 	 * @see Person#setTZ(TZInfo)
 	 */
+	@Override
 	public TZInfo getTZ() {
 		return _tz;
 	}
@@ -365,28 +370,27 @@ public abstract class Person extends DatabaseBlobBean implements Principal, Form
 	/**
 	 * Return the date/time this Person registered.
 	 * @return the date/time the person was registered
-	 * @see Person#setCreatedOn(Date)
+	 * @see Person#setCreatedOn(Instant)
 	 */
-	public Date getCreatedOn() {
+	public Instant getCreatedOn() {
 		return _created;
 	}
 
 	/**
 	 * Return the Person's latest login date/time.
 	 * @return the date/time this person last logged into the system
-	 * @see Person#setLastLogin(Date)
+	 * @see Person#setLastLogin(Instant)
 	 * @see Person#getLastLogoff()
 	 */
-	public Date getLastLogin() {
+	public Instant getLastLogin() {
 		return _lastLogin;
 	}
 
 	/**
 	 * Return the Person's last logoff date/time.
 	 * @return the date/time this person last logged off the system
-	 * 
 	 */
-	public Date getLastLogoff() {
+	public Instant getLastLogoff() {
 		return _lastLogoff;
 	}
 
@@ -396,6 +400,7 @@ public abstract class Person extends DatabaseBlobBean implements Principal, Form
 	 * @see Person#setDateFormat(String)
 	 * @see java.text.SimpleDateFormat#applyPattern(String)
 	 */
+	@Override
 	public String getDateFormat() {
 		return _dFormat;
 	}
@@ -406,6 +411,7 @@ public abstract class Person extends DatabaseBlobBean implements Principal, Form
 	 * @see Person#setTimeFormat(String)
 	 * @see java.text.SimpleDateFormat#applyPattern(String)
 	 */
+	@Override
 	public String getTimeFormat() {
 		return _tFormat;
 	}
@@ -416,6 +422,7 @@ public abstract class Person extends DatabaseBlobBean implements Principal, Form
 	 * @see Person#setNumberFormat(String)
 	 * @see java.text.DecimalFormat#applyPattern(String)
 	 */
+	@Override
 	public String getNumberFormat() {
 		return _nFormat;
 	}
@@ -443,6 +450,7 @@ public abstract class Person extends DatabaseBlobBean implements Principal, Form
 	 * @return the unit type
 	 * @see Person#setDistanceType(DistanceUnit)
 	 */
+	@Override
 	public DistanceUnit getDistanceType() {
 		return _distanceType;
 	}
@@ -461,6 +469,7 @@ public abstract class Person extends DatabaseBlobBean implements Principal, Form
 	 * @return the Airport Code type
 	 * @see Person#setAirportCodeType(Airport.Code)
 	 */
+	@Override
 	public Airport.Code getAirportCodeType() {
 		return _airportCodeType;
 	}
@@ -607,7 +616,7 @@ public abstract class Person extends DatabaseBlobBean implements Principal, Form
 	 * @see Person#getTZ()
 	 */
 	public void setTZ(TZInfo tz) {
-		_tz = (tz == null) ? TZInfo.local() : tz;
+		_tz = (tz == null) ? TZInfo.UTC : tz;
 	}
 
 	/**
@@ -683,7 +692,7 @@ public abstract class Person extends DatabaseBlobBean implements Principal, Form
 	 * @param cd the Date/Time when the Person was created
 	 * @see Person#getCreatedOn()
 	 */
-	public void setCreatedOn(Date cd) {
+	public void setCreatedOn(Instant cd) {
 		_created = cd;
 	}
 
@@ -692,12 +701,12 @@ public abstract class Person extends DatabaseBlobBean implements Principal, Form
 	 * @param lld the Date/Time when the Person last logged in
 	 * @throws IllegalStateException if the timestamp is less than getCreatedOn()
 	 * @see Person#getLastLogin()
-	 * @see Person#setLastLogoff(Date)
+	 * @see Person#setLastLogoff(Instant)
 	 */
-	public void setLastLogin(Date lld) {
+	public void setLastLogin(Instant lld) {
 		if (lld == null)
 			return;
-		else if (lld.before(getCreatedOn()))
+		else if (lld.isBefore(getCreatedOn()))
 			throw new IllegalStateException("Last Login Date cannot be < Created Date");
 		else
 			_lastLogin = lld;
@@ -708,12 +717,12 @@ public abstract class Person extends DatabaseBlobBean implements Principal, Form
 	 * @param lld the Date/Time when the Person last logged out or had the session invalidated
 	 * @throws IllegalStateException if the timestamp is less than getCreatedOn()
 	 * @see Person#getLastLogoff()
-	 * @see Person#setLastLogin(Date)
+	 * @see Person#setLastLogin(Instant)
 	 */
-	public void setLastLogoff(Date lld) {
+	public void setLastLogoff(Instant lld) {
 		if (lld == null)
 			return;
-		else if (lld.before(getCreatedOn()))
+		else if (lld.isBefore(getCreatedOn()))
 			throw new IllegalStateException("Last Logoff Date cannot be < Created Date");
 		else
 			_lastLogoff = lld;
@@ -735,10 +744,10 @@ public abstract class Person extends DatabaseBlobBean implements Principal, Form
 	 */
 	public void setDateFormat(String pattern) {
 		try {
-			pattern = pattern.replace('m', 'M');
-			DateFormat df = new SimpleDateFormat(pattern);
-			if (!pattern.equals(df.format(new Date())))
-				_dFormat = pattern;
+			String p2 = pattern.replace('m', 'M');
+			DateFormat df = new SimpleDateFormat(p2);
+			if (!p2.equals(df.format(new Date())))
+				_dFormat = p2;
 		} catch (Exception e) {
 			//empty
 		}
@@ -751,10 +760,10 @@ public abstract class Person extends DatabaseBlobBean implements Principal, Form
 	 */
 	public void setTimeFormat(String pattern) {
 		try {
-			pattern = pattern.replace('M', 'm');
-			DateFormat df = new SimpleDateFormat(pattern);
-			if (!pattern.equals(df.format(new Date())))
-				_tFormat = pattern;
+			String p2 = pattern.replace('M', 'm');
+			DateFormat df = new SimpleDateFormat(p2);
+			if (!p2.equals(df.format(new Date())))
+				_tFormat = p2;
 		} catch (Exception e) {
 			//empty
 		}
@@ -822,6 +831,7 @@ public abstract class Person extends DatabaseBlobBean implements Principal, Form
 	/**
 	 * Returns the person's full name.
 	 */
+	@Override
 	public String toString() {
 		return getName();
 	}

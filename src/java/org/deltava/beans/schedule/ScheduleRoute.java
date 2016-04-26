@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import org.deltava.beans.ViewEntry;
@@ -6,7 +6,7 @@ import org.deltava.beans.ViewEntry;
 /**
  * A bean to store route pair information.
  * @author Luke
- * @version 4.1
+ * @version 7.0
  * @since 1.0
  */
 
@@ -72,7 +72,8 @@ public class ScheduleRoute extends AbstractRoute implements Comparable<ScheduleR
 	public void setRoutes(int count) {
 		_routes = Math.max(0, count);
 	}
-	
+
+	@Override
 	public String getRowClassName() {
 		return (_routes == 0) ? "opt1" : null;
 	}
@@ -82,6 +83,7 @@ public class ScheduleRoute extends AbstractRoute implements Comparable<ScheduleR
 	 * @see ScheduleRoute#toString()
 	 * @see Comparable#compareTo(Object)
 	 */
+	@Override
 	public int compareTo(ScheduleRoute rp2) {
 		return toString().compareTo(rp2.toString());
 	}
@@ -90,6 +92,7 @@ public class ScheduleRoute extends AbstractRoute implements Comparable<ScheduleR
 	 * Compars two route pairs by comparing their airport codes.
 	 * @see ScheduleRoute#toString()
 	 */
+	@Override
 	public boolean equals(Object o) {
 		return (o instanceof ScheduleRoute) ? (compareTo((ScheduleRoute) o) == 0) : false;
 	}

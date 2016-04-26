@@ -1,8 +1,9 @@
-// Copyright 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.deltava.beans.assign.AssignmentInfo;
 import org.deltava.beans.flight.*;
@@ -16,7 +17,7 @@ import org.deltava.util.system.SystemData;
  * A Web Site Command to build a flight assignment that consists of a single leg selected at random from the last
  * Airport the Pilot completed a flight to in the selected aircraft.
  * @author Luke
- * @version 3.1
+ * @version 7.0
  * @since 2.2
  */
 
@@ -27,6 +28,7 @@ public class SingleAssignmentBuildCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the command results
@@ -41,8 +43,7 @@ public class SingleAssignmentBuildCommand extends AbstractCommand {
 		}
 		
 		// Update the flight assignment
-		Date now = new Date();
-		info.setAssignDate(now);
+		info.setAssignDate(Instant.now());
 		info.setPilotID(ctx.getUser());
 		info.setStatus(AssignmentInfo.RESERVED);
 		info.setRandom(true);
@@ -64,7 +65,7 @@ public class SingleAssignmentBuildCommand extends AbstractCommand {
 			SetFlightReport pwdao = new SetFlightReport(con);
 			for (Iterator<FlightReport> i = info.getFlights().iterator(); i.hasNext();) {
 				FlightReport fr = i.next();
-				fr.setDate(now);
+				fr.setDate(info.getAssignDate());
 				fr.setRank(ctx.getUser().getRank());
 				fr.setDatabaseID(DatabaseID.PILOT, ctx.getUser().getID());
 				pwdao.write(fr);

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.Pilot;
@@ -9,13 +9,13 @@ import org.deltava.security.SecurityContext;
 /**
  * An Access Controller for Flight Assignments.
  * @author Luke
- * @version 2.6
+ * @version 7.0
  * @since 1.0
  */
 
 public class AssignmentAccessControl extends AccessControl {
 
-   private AssignmentInfo _assign;
+   private final AssignmentInfo _assign;
    
    private boolean _canCreateAvailable;
    private boolean _canReserve;
@@ -35,7 +35,8 @@ public class AssignmentAccessControl extends AccessControl {
    /**
 	 * Calculates access rights.
 	 */
-   public void validate() {
+   @Override
+public void validate() {
       validateContext();
       
       // Calculate generic access

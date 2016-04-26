@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.hr.*;
 /**
  * A Data Access Object to read Job applications and profiles from the database.
  * @author Luke
- * @version 4.1
+ * @version 7.0
  * @since 3.4
  */
 
@@ -47,7 +47,7 @@ public class GetJobs extends DAO {
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
 					Application a = new Application(id, rs.getInt(2));
-					a.setCreatedOn(rs.getTimestamp(3));
+					a.setCreatedOn(rs.getTimestamp(3).toInstant());
 					a.setStatus(rs.getInt(4));
 					a.setBody(rs.getString(5));
 					a.setFirstName(rs.getString(6));
@@ -64,7 +64,7 @@ public class GetJobs extends DAO {
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
 					Comment c = new Comment(id, rs.getInt(2));
-					c.setCreatedOn(rs.getTimestamp(3));
+					c.setCreatedOn(rs.getTimestamp(3).toInstant());
 					c.setBody(rs.getString(4));
 					jp.add(c);
 				}
@@ -139,7 +139,7 @@ public class GetJobs extends DAO {
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
 					Application a = new Application(rs.getInt(1), rs.getInt(2));
-					a.setCreatedOn(rs.getTimestamp(3));
+					a.setCreatedOn(rs.getTimestamp(3).toInstant());
 					a.setStatus(rs.getInt(4));
 					a.setBody(rs.getString(5));
 					a.setFirstName(rs.getString(6));
@@ -155,7 +155,7 @@ public class GetJobs extends DAO {
 		}
 	}
 	
-	/**
+	/*
 	 * Helper method to parse Job posting result sets.
 	 */
 	private List<JobPosting> execute() throws SQLException {
@@ -165,8 +165,8 @@ public class GetJobs extends DAO {
 			while (rs.next()) {
 				JobPosting jp = new JobPosting(rs.getString(7));
 				jp.setID(rs.getInt(1));
-				jp.setCreatedOn(rs.getTimestamp(2));
-				jp.setClosesOn(rs.getTimestamp(3));
+				jp.setCreatedOn(rs.getTimestamp(2).toInstant());
+				jp.setClosesOn(toInstant(rs.getTimestamp(3)));
 				jp.setHireManagerID(rs.getInt(4));
 				jp.setStatus(rs.getInt(5));
 				jp.setStaffOnly(rs.getBoolean(6));

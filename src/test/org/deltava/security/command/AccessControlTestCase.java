@@ -29,18 +29,22 @@ public abstract class AccessControlTestCase extends TestCase {
 	      _req = req;
 	   }
 
+	   @Override
 	   public boolean isAuthenticated() {
 	      return (_usr != null);
 	   }
 
+	   @Override
 	   public Person getUser() {
 	      return _usr;
 	   }
 
+	   @Override
 	   public Collection<String> getRoles() {
 	      return isAuthenticated() ? _usr.getRoles() : ANONYMOUS_ROLES;
 	   }
 
+	   @Override
 	   public boolean isUserInRole(String roleName) {
 	      if (isAuthenticated())
 	      	return _usr.isInRole(roleName);
@@ -48,6 +52,7 @@ public abstract class AccessControlTestCase extends TestCase {
 	      return ("*".equals(roleName) || ANONYMOUS_ROLES.contains(roleName));
 	   }
 
+	   @Override
 	   public HttpServletRequest getRequest() {
 	      return _req;
 	   }
@@ -57,6 +62,7 @@ public abstract class AccessControlTestCase extends TestCase {
 	   }
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		_request = new HttpServletRequestSimulator();
@@ -66,6 +72,7 @@ public abstract class AccessControlTestCase extends TestCase {
 		_ctxt = new AccessControlContext(_user, _request);
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		_ctxt = null;
 		_user = null;
@@ -73,7 +80,7 @@ public abstract class AccessControlTestCase extends TestCase {
 		super.tearDown();
 	}
 	
-	protected void doContextValidation(AccessControl ac) {
+	protected static void doContextValidation(AccessControl ac) {
 	   try {
 	      ac.validate();
 	      fail("IllegalStateException expected");

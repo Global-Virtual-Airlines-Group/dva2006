@@ -1,14 +1,14 @@
-// Copyright (c) 2005, 2006, 2009 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.deltava.beans.Person;
 
 /**
  * A comparator for sorting Pilot and Applicant objects.
  * @author Luke
- * @version 2.6
+ * @version 7.0
  * @since 1.0
  */
 
@@ -53,9 +53,9 @@ public class PersonComparator<T extends Person> extends AbstractComparator<T> {
 
     /**
      * Compares two person objects by the designated criteria.
-     * @see java.util.Comparator#compare(Object, Object)
      */
-    protected int compareImpl(T p1, T p2) {
+    @Override
+	protected int compareImpl(T p1, T p2) {
 
         int tmpResult;
         switch (_comparisonType) {
@@ -68,8 +68,8 @@ public class PersonComparator<T extends Person> extends AbstractComparator<T> {
             return (tmpResult == 0) ? p1.getFirstName().compareTo(p2.getFirstName()) : tmpResult;
 
         case LASTLOGIN:
-        	Date ll1 = p1.getLastLogin();
-        	Date ll2 = p2.getLastLogin();
+        	Instant ll1 = p1.getLastLogin();
+        	Instant ll2 = p2.getLastLogin();
             if (ll1 == null)
             	ll1 = p1.getCreatedOn();
             if (ll2 == null)

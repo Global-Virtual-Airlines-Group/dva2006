@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import javax.servlet.jsp.JspException;
@@ -10,7 +10,7 @@ import org.deltava.security.UserPool;
 /**
  * A JSP tag to filter content based upon whether a user is currently logged in.
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -33,6 +33,7 @@ public class ActiveUserFilterTag extends TagSupport {
 	 * @return SKIP_BODY if user not found, otherwise EVAL_BODY_INCLUDE
 	 * @see UserPool#contains(int)
 	 */
+	@Override
 	public int doStartTag() throws JspException {
 		int tmpResult = UserPool.contains(_userID) ? EVAL_BODY_INCLUDE : SKIP_BODY;
 		release();
@@ -42,6 +43,7 @@ public class ActiveUserFilterTag extends TagSupport {
 	/**
 	 * Releases the tag's state variables.
 	 */
+	@Override
 	public void release() {
 		super.release();
 		_userID = 0;

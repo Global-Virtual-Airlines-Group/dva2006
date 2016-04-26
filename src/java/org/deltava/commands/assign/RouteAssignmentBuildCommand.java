@@ -1,8 +1,8 @@
-// Copyright 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
-import java.util.Date;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.deltava.beans.assign.*;
 import org.deltava.beans.flight.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to build multi-leg flight assignments.
  * @author Luke
- * @version 4.1
+ * @version 7.0
  * @since 4.1
  */
 
@@ -34,7 +34,7 @@ public class RouteAssignmentBuildCommand extends AbstractCommand {
 		// Create the bean
 		AssignmentInfo info = new AssignmentInfo(ctx.getUser().getEquipmentType());
 		info.setPilotID(ctx.getUser());
-		info.setAssignDate(new Date());
+		info.setAssignDate(Instant.now());
 		info.setRandom(true);
 		info.setPurgeable(true);
 		info.setStatus(AssignmentInfo.RESERVED);
@@ -58,10 +58,10 @@ public class RouteAssignmentBuildCommand extends AbstractCommand {
 				// Get the schedule entry and create the leg
 				ScheduleEntry se = sdao.get(FlightCodeParser.parse(fCode));
 				DraftFlightReport dfr = new DraftFlightReport(se);
-				dfr.setTimeD(se.getTimeD());
-				dfr.setTimeA(se.getTimeA());
+				dfr.setTimeD(se.getTimeD().toLocalDateTime());
+				dfr.setTimeA(se.getTimeA().toLocalDateTime());
 				dfr.setRank(ctx.getUser().getRank());
-				dfr.setDate(new Date());
+				dfr.setDate(info.getAssignDate());
 				dfr.setEquipmentType((eqOv == null) ? se.getEquipmentType() : eqOv);
 				dfr.setRemarks(dfr.getDraftComments());
 				

@@ -15,13 +15,15 @@ public class TestManual extends AbstractBeanTestCase {
         return new CoverageDecorator(TestManual.class, new Class[] { Manual.class });
     }
     
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
         _m = new Manual(new File("data/test.pdf"));
         setBean(_m);
     }
 
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         _m = null;
         super.tearDown();
     }

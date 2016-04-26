@@ -14,11 +14,13 @@ public class TestKMLMerge extends TestCase {
 	
 	protected class KMLFilter implements FileFilter {
 		
+		@Override
 		public boolean accept(File f) {
 			return f.getName().endsWith(".kml");
 		}
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		

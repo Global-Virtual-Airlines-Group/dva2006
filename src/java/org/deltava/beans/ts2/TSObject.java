@@ -1,27 +1,27 @@
-// Copyright 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.ts2;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.deltava.beans.DatabaseBean;
 
 /**
  * An abstract class to hold common TeamSpeak 2 object data.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 5.0
  */
 
 public abstract class TSObject extends DatabaseBean {
 	
-	private Date _createdOn = new Date();
+	private Instant _createdOn = Instant.now();
 
 	/**
 	 * Returns the date the object was created on.
 	 * @return the creation date/time
-	 * @see TSObject#setCreatedOn(Date)
+	 * @see TSObject#setCreatedOn(Instant)
 	 */
-	public Date getCreatedOn() {
+	public Instant getCreatedOn() {
 		return _createdOn;
 	}
 	
@@ -30,7 +30,7 @@ public abstract class TSObject extends DatabaseBean {
 	 * @param dt the creation date/time
 	 * @see TSObject#getCreatedOn()
 	 */
-	public void setCreatedOn(Date dt) {
+	public void setCreatedOn(Instant dt) {
 		_createdOn = dt;
 	}
 }

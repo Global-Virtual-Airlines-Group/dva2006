@@ -1,10 +1,10 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 /**
  * A bean to store information about Online Network FSD Servers. 
  * @author Luke
- * @version 3.4
+ * @version 7.0
  * @since 3.4
  */
 
@@ -100,6 +100,7 @@ public class Server implements Comparable<Server> {
 		_connections = Math.max(0, cons);
 	}
 	
+	@Override
 	public int hashCode() {
 		return _name.hashCode();
 	}
@@ -107,6 +108,7 @@ public class Server implements Comparable<Server> {
 	/**
 	 * Compares two servers by comparing their names.
 	 */
+	@Override
 	public int compareTo(Server s2) {
 		return _name.compareTo(s2._name);
 	}

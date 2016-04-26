@@ -2,8 +2,9 @@
 package org.deltava.taglib.functions;
 
 import java.util.*;
-import java.text.*;
-import java.time.Instant;
+import java.time.*;
+import java.time.format.*;
+import java.time.temporal.Temporal;
 
 import org.deltava.util.*;
 
@@ -167,30 +168,21 @@ public class MiscFunctions {
 	 * @return the formatted date/time
 	 * @see java.text.DateFormat#format(java.util.Date)
 	 */
-	public static String format(Date dt, String fmt) {
-		DateFormat df = new SimpleDateFormat(fmt);
+	public static String format(Temporal dt, String fmt) {
+		DateTimeFormatter df = new DateTimeFormatterBuilder().appendPattern(fmt).toFormatter();
 		return (dt == null) ? "" : df.format(dt);
 	}
 
 	/**
-	 * Displays the time difference between two date/times. Both date/times are assumed to be in the same time zone.
-	 * @param d1 the first date/time
-	 * @param d2 the second date/time
+	 * Displays the time difference between two date/times.
+	 * @param t1 the first date/time
+	 * @param t2 the second date/time
 	 * @return the difference in seconds, or 0 if either date is null
 	 */
-	public static int difference(Date d1, Date d2) {
-		if ((d1 == null) || (d2 == null))
+	public static long difference(Temporal t1, Temporal t2) {
+		if ((t1 == null) || (t2 == null))
 			return 0;
 
-		return (int) ((d2.getTime() - d1.getTime()) / 1000);
-	}
-	
-	/**
-	 * Converts an Instant into a Date.
-	 * @param d the Date
-	 * @return the Instant, or null
-	 */
-	public static Instant toInstant(Date d) {
-		return (d == null) ? null : Instant.ofEpochMilli(d.getTime());
+		return Duration.between(t1, t2).getSeconds();
 	}
 }

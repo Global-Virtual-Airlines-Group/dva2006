@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to disable Users who have not logged in within a period of time.
  * @author Luke
- * @version 6.4
+ * @version 7.0
  * @since 1.0
  */
 
@@ -110,7 +110,6 @@ public class InactivityUpdateTask extends Task {
 					// Create the StatusUpdate bean
 					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.STATUS_CHANGE);
 					upd.setAuthorID(ctx.getUser().getID());
-					upd.setCreatedOn(new Date());
 					if (noWarn)
 						upd.setDescription("Marked Inactive due to no participation within " + inactiveDays + " days");
 					else if (p.getLoginCount() == 0)
@@ -204,7 +203,6 @@ public class InactivityUpdateTask extends Task {
 					// Create the StatusUpdate bean
 					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.INACTIVITY);
 					upd.setAuthorID(ctx.getUser().getID());
-					upd.setCreatedOn(new Date());
 					upd.setDescription("Sent Reminder due to no logins within " + notifyDays + " days");
 					sudao.write(upd);
 

@@ -55,10 +55,10 @@ public class OnlineTrackTask extends Task {
 					log.debug("Loaded " + networkIDs.size() + " " + network + " IDs");
 				
 				// Aggregate the data for VATSIM
-				if (logAll && ((ctx.getLastRun() == null) || (info.getValidDate().after(ctx.getLastRun())))) {
+				if (logAll && ((ctx.getLastRun() == null) || (info.getValidDate().isAfter(ctx.getLastRun())))) {
 					Collection<ConnectedUser> users = new ArrayList<ConnectedUser>(info.getPilots());
 					users.addAll(info.getControllers());
-					int timeDelta = (int) ((ctx.getLastRun() == null) ? 2 : Math.max(10, (System.currentTimeMillis() - ctx.getLastRun().getTime()) / 60000L));
+					int timeDelta = (int) ((ctx.getLastRun() == null) ? 2 : Math.max(10, (System.currentTimeMillis() - ctx.getLastRun().toEpochMilli()) / 60000L));
 
 					SetOnlineTime otwdao = new SetOnlineTime(con);
 					otwdao.write(network, users, timeDelta);

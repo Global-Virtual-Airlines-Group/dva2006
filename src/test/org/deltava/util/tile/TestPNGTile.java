@@ -7,6 +7,7 @@ import junit.framework.TestCase;
 
 public class TestPNGTile extends TestCase {
 
+	@SuppressWarnings("static-method")
 	public void testSerialization() throws Exception {
 		
 		PNGTile pt = new PNGTile(new TileAddress(1, 1, 2));

@@ -1,20 +1,20 @@
-// Copyright 2005, 2007, 2008, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.calendar;
 
-import java.util.*;
-import java.text.*;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.io.IOException;
 
 import javax.servlet.jsp.*;
 
 import org.deltava.taglib.XMLRenderer;
-import org.deltava.util.CalendarUtils;
 import org.deltava.util.StringUtils;
 
 /**
  * A JSP tag to generate a weekly Calendar.
  * @author Luke
- * @version 5.3
+ * @version 7.0
  * @since 1.0
  */
 
@@ -24,14 +24,12 @@ public class WeeklyCalendarTag extends CalendarTag {
 	 * Sets the starting date for this calendar tag. This is overriden to be the first day of
 	 * the week (Sunday).
 	 * @param dt the start date
-	 * @see CalendarTag#setStartDate(Date)
+	 * @see CalendarTag#setStartDate(ZonedDateTime)
 	 */
 	@Override
-	public void setStartDate(Date dt) {
-		Calendar cld = CalendarUtils.getInstance(dt, true);
-		cld.add(Calendar.DATE, 1 - cld.get(Calendar.DAY_OF_WEEK));
-		_startDate = cld.getTime();
-		calculateEndDate(Calendar.DATE, 7);
+	public void setStartDate(ZonedDateTime dt) {
+		_startDate = dt.truncatedTo(ChronoUnit.DAYS);
+		calculateEndDate(ChronoUnit.WEEKS, 1);
 	}
 	
 	/**
@@ -39,9 +37,8 @@ public class WeeklyCalendarTag extends CalendarTag {
 	 */
 	@Override
 	protected String getBackLabel() {
-		Calendar cld = CalendarUtils.getInstance(_startDate, true);
-		cld.add(_intervalType, _intervalLength * -1);
-		return "WEEK OF " + StringUtils.format(cld.getTime(), "MMM dd yyyy");
+		ZonedDateTime zdt = _startDate.minus(_intervalLength, _intervalType);
+		return "WEEK OF " + StringUtils.format(zdt, "MMM dd yyyy");
 	}
 	
 	/**
@@ -49,9 +46,8 @@ public class WeeklyCalendarTag extends CalendarTag {
 	 */
 	@Override
 	protected String getForwardLabel() {
-		Calendar cld = CalendarUtils.getInstance(_startDate, true);
-		cld.add(_intervalType, _intervalLength);
-		return "WEEK OF " + StringUtils.format(cld.getTime(), "MMM dd yyyy");
+		ZonedDateTime zdt = _startDate.plus(_intervalLength, _intervalType);
+		return "WEEK OF " + StringUtils.format(zdt, "MMM dd yyyy");
 	}
 
 	/**
@@ -59,6 +55,7 @@ public class WeeklyCalendarTag extends CalendarTag {
 	 * @return TagSupport.EVAL_BODY_INCLUDE always
 	 * @throws JspException if an I/O error occurs
 	 */
+	@Override
 	public int doStartTag() throws JspException {
 		super.doStartTag();
 
@@ -67,7 +64,7 @@ public class WeeklyCalendarTag extends CalendarTag {
 
 			// Write the header row
 			_out.print("<tr>");
-			DateFormat wf = new SimpleDateFormat("MMMM dd, yyyy");
+			DateTimeFormatter wf = DateTimeFormatter.ofPattern("MMMM dd, yyyy");
 			XMLRenderer title = new XMLRenderer("td");
 			title.setAttribute("colspan", "7");
 			title.setAttribute("class", _topBarClass);
@@ -79,18 +76,18 @@ public class WeeklyCalendarTag extends CalendarTag {
 
 			// Write the day rows
 			if (_showDaysOfWeek) {
-				Calendar dw = CalendarUtils.getInstance(_currentDate.getTime());
-				DateFormat df = new SimpleDateFormat("EEE MMM dd");
+				ZonedDateTime dw = ZonedDateTime.from(_currentDate);
+				DateTimeFormatter df = DateTimeFormatter.ofPattern("EEE MMM dd");
 
 				// Write the row
 				_out.print("<tr>");
 				for (int x = 0; x < 7; x++) {
 					XMLRenderer dayHdr = new XMLRenderer("td");
-					dayHdr.setAttribute("class", getHeaderClass(dw.getTime()));
+					dayHdr.setAttribute("class", getHeaderClass(dw));
 					_out.print(dayHdr.open(true));
-					_out.print(df.format(dw.getTime()));
+					_out.print(df.format(dw));
 					_out.print(dayHdr.close());
-					dw.add(Calendar.DATE, 1);
+					dw = dw.plus(1, ChronoUnit.DAYS);
 				}
 
 				_out.println("</tr>");
@@ -99,7 +96,7 @@ public class WeeklyCalendarTag extends CalendarTag {
 			// Generate the week row and first day cell
 			_out.print("<tr>");
 			_day = new XMLRenderer("td");
-			_day.setAttribute("class", getContentClass(_currentDate.getTime()));
+			_day.setAttribute("class", getContentClass(_currentDate));
 			_out.print(_day.open(true));
 		} catch (IOException ie) {
 			throw new JspException(ie);
@@ -114,6 +111,7 @@ public class WeeklyCalendarTag extends CalendarTag {
 	 * @return TagSupport.EVAL_BODY_AGAIN if not at end of month, otherwise TagSupport.SKIP_BODY
 	 * @throws JspException never
 	 */
+	@Override
 	public int doAfterBody() throws JspException {
 
 		// Determine if we need to generate more cells
@@ -123,7 +121,7 @@ public class WeeklyCalendarTag extends CalendarTag {
 
 			// Open the next cell if we need to
 			if (result == EVAL_BODY_AGAIN) {
-				_day.setAttribute("class", getContentClass(_currentDate.getTime()));
+				_day.setAttribute("class", getContentClass(_currentDate));
 				_out.print(_day.open(true));
 			}
 		} catch (IOException ie) {
@@ -138,6 +136,7 @@ public class WeeklyCalendarTag extends CalendarTag {
 	 * @return TagSupport.EVAL_PAGE always
 	 * @throws JspException if an I/O error occurs
 	 */
+	@Override
 	public int doEndTag() throws JspException {
 		try {
 			_out.println("</tr>");

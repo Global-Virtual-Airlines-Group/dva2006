@@ -1,4 +1,4 @@
-// Copyright 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.io.*;
@@ -6,7 +6,7 @@ import java.io.*;
 /**
  * A utility class for filesystem functions. 
  * @author Luke
- * @version 4.2
+ * @version 7.0
  * @since 4.2
  */
 
@@ -49,9 +49,10 @@ public class FileUtils {
 		final String p = (prefix == null) ? "" : prefix.toLowerCase().replace("*", "");
 		
 		return new FilenameFilter() {
-	        public boolean accept(File dir, String name) {
-	            name = name.toLowerCase();
-	            return name.startsWith(p) && name.endsWith(e);
+	        @Override
+			public boolean accept(File dir, String name) {
+	            String n = name.toLowerCase();
+	            return n.startsWith(p) && n.endsWith(e);
 	          }};
 	}
 }

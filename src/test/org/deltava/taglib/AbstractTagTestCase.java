@@ -34,6 +34,7 @@ public class AbstractTagTestCase extends TestCase {
    // Quick helper class since ServletUnit does not support getParameterMap()
    protected class HttpServletRequestSimulatorHelper extends HttpServletRequestSimulator {
 
+	   @Override
       public Map<String, String[]> getParameterMap() {
          Map<String, String[]> results = new HashMap<String, String[]>();
          Enumeration<?> pNames = getParameterNames();
@@ -48,6 +49,7 @@ public class AbstractTagTestCase extends TestCase {
 
    protected static final String CRLF = System.getProperty("line.separator");
 
+   @Override
    protected void setUp() throws Exception {
       super.setUp();
 		PropertyConfigurator.configure("data/log4j.test.properties");
@@ -63,6 +65,7 @@ public class AbstractTagTestCase extends TestCase {
       _ctx.initialize(null, _req, _rsp, "", false, 8192, false);
    }
 
+   @Override
    protected void tearDown() throws Exception {
       _jspOut.close();
       _jspOut = null;

@@ -1,8 +1,9 @@
-// Copyright 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.hr;
 
 import java.util.*;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 import org.deltava.beans.hr.JobPosting;
@@ -13,13 +14,12 @@ import org.deltava.dao.*;
 
 import org.deltava.security.command.JobPostingAccessControl;
 
-import org.deltava.util.CalendarUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to clone a Job posting.
  * @author Luke
- * @version 3.7
+ * @version 7.0
  * @since 3.7
  */
 
@@ -58,8 +58,8 @@ public class JobCloneCommand extends AbstractCommand {
 			newjob.setMinAge(jp.getMinAge());
 			newjob.setMinLegs(jp.getMinLegs());
 			newjob.setStaffOnly(true);
-			newjob.setCreatedOn(new Date());
-			newjob.setClosesOn(CalendarUtils.adjust(newjob.getCreatedOn(), 14));
+			newjob.setCreatedOn(Instant.now());
+			newjob.setClosesOn(newjob.getCreatedOn().plusSeconds(14 * 86400));
 			newjob.setHireManagerID(jp.getHireManagerID());
 			newjob.setSummary(jp.getSummary());
 			newjob.setDescription(jp.getDescription());

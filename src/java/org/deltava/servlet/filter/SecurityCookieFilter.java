@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A servlet filter to handle persistent authentication cookies.
  * @author Luke
- * @version 6.4
+ * @version 7.0
  * @since 1.0
  * @see SecurityCookieData
  * @see SecurityCookieGenerator
@@ -140,7 +140,7 @@ public class SecurityCookieFilter implements Filter {
 		Connection con = null;
 		try {
 			String savedAddr = (cData == null) ? null : cData.getRemoteAddr();
-			if (UserPool.isBlocked(p))
+			if ((p != null) && UserPool.isBlocked(p))
 				throw new SecurityException(p.getName() + " is blocked");
 			else if (hreq.isRequestedSessionIdFromURL())
 				throw new SecurityException(req.getRemoteHost() + " attempting to create HTTP session via URL");

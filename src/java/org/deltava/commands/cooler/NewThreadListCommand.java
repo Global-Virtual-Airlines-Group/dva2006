@@ -1,21 +1,25 @@
-// Copyright 2005, 2006, 2009, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 import org.deltava.beans.cooler.*;
 import org.deltava.beans.system.*;
+
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+
 import org.deltava.security.command.CoolerThreadAccessControl;
+
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to display Water Cooler threads updated since a certain date/time.
  * @author Luke
- * @version 5.4
+ * @version 7.0
  * @since 1.0
  */
 
@@ -26,6 +30,7 @@ public class NewThreadListCommand extends AbstractViewCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the user/airline for the channel list
@@ -61,10 +66,10 @@ public class NewThreadListCommand extends AbstractViewCommand {
 			Collection<Integer> pilotIDs = new HashSet<Integer>();
 			GetCoolerLastRead lrdao = new GetCoolerLastRead(con);
 			List<MessageThread> threads = dao2.getSince(p.getLastLogoff(), true);
-			Map<Integer, Date> lastRead = lrdao.getLastRead(threads, p.getID());
+			Map<Integer, Instant> lastRead = lrdao.getLastRead(threads, p.getID());
 			for (Iterator<MessageThread> i = threads.iterator(); i.hasNext();) {
 				MessageThread thread = i.next();
-				Date lastView = lastRead.get(Integer.valueOf(thread.getID()));
+				Instant lastView = lastRead.get(Integer.valueOf(thread.getID()));
 
 				// Get this thread's channel and see if we can read it
 				Channel c = dao.get(thread.getChannel());
@@ -74,7 +79,7 @@ public class NewThreadListCommand extends AbstractViewCommand {
 				// If we cannot read the thread, remove it from the results and check if it's still unread
 				if (!ac.getCanRead())
 					i.remove();
-				else if ((lastView != null) && (lastView.after(thread.getLastUpdatedOn())))
+				else if ((lastView != null) && (lastView.isAfter(thread.getLastUpdatedOn())))
 					i.remove();
 				else {
 					pilotIDs.add(Integer.valueOf(thread.getAuthorID()));

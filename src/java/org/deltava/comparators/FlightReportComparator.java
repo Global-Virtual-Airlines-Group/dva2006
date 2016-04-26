@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
 import org.deltava.beans.flight.FlightReport;
@@ -7,7 +7,7 @@ import org.deltava.beans.schedule.Airport;
 /**
  * A comparator to sort Flight Reports.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -21,8 +21,7 @@ public class FlightReportComparator extends AbstractComparator<FlightReport> {
     public static final int DESTINATION = 5;
     public static final int FLIGHTCODE = 6;
 
-    private static final String[] TYPES = { "Date", "Length", "Distance", "Equipment Type", "Origin", "Destination",
-            "Flight Code" };
+    private static final String[] TYPES = { "Date", "Length", "Distance", "Equipment Type", "Origin", "Destination", "Flight Code" };
 
     /**
      * Creates a new FlightReport comparator with a particular comparison type code.
@@ -51,10 +50,9 @@ public class FlightReportComparator extends AbstractComparator<FlightReport> {
      * @throws ClassCastException if either object is not a FlightReport bean
      * @see java.util.Comparator#compare(Object, Object)
      */
-    protected int compareImpl(FlightReport f1, FlightReport f2) {
-
+    @Override
+	protected int compareImpl(FlightReport f1, FlightReport f2) {
     	int tmpResult;
-        Airport aO, aD;
         switch (_comparisonType) {
             case DATE:
                 if (f1.getStatus() == FlightReport.DRAFT)
@@ -76,13 +74,13 @@ public class FlightReportComparator extends AbstractComparator<FlightReport> {
                 return f1.getEquipmentType().compareTo(f2.getEquipmentType());
 
             case ORIGIN:
-                aO = f1.getAirportD();
+                Airport aO = f1.getAirportD();
                 tmpResult = (aO == null) ? -1 : aO.compareTo(f2.getAirportD());
                 if (tmpResult != 0)
                     return tmpResult;
                 
                 // If the origin is equal, compare the destination airports
-                aD = f1.getAirportA();
+                Airport aD = f1.getAirportA();
                 return (aD == null) ? -1 : aD.compareTo(f2.getAirportA());
 
             case DESTINATION:

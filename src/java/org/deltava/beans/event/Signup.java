@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.event;
 
 import org.deltava.beans.DatabaseBean;
@@ -7,7 +7,7 @@ import org.deltava.beans.schedule.Airport;
 /**
  * A class to hold Online Event pilot signups. 
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -155,6 +155,7 @@ public class Signup extends DatabaseBean {
     /**
      * Compares two signups by comparing their event, route and pilot IDs.
      */
+    @Override
     public int compareTo(Object o) {
     	Signup s2 = (Signup) o;
     	int tmpResult = super.compareTo(s2);

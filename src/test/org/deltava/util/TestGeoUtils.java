@@ -7,6 +7,7 @@ import junit.framework.TestCase;
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.schedule.GeoPosition;
 
+@SuppressWarnings("static-method")
 public class TestGeoUtils extends TestCase {
 
 	public void testGreatCircle() {

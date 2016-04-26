@@ -1,14 +1,14 @@
 // Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 
 /**
  * A bean to store an ACARS Connection record.
  * @author Luke
- * @version 6.4
+ * @version 7.0
  * @since 1.0
  */
 
@@ -17,8 +17,8 @@ public class ConnectionEntry extends ACARSLogEntry implements TimeSpan {
    private long _id;
    private int _pilotID;
    private Pilot _usr;
-   private Date _st;
-   private Date _et;
+   private Instant _st;
+   private Instant _et;
    
    private int _msgCount;
    private boolean _isCompressed;
@@ -51,22 +51,22 @@ public class ConnectionEntry extends ACARSLogEntry implements TimeSpan {
    /**
     * Returns the start date/time of this connection.
     * @return the date/time
-    * @see ConnectionEntry#setStartTime(Date)
+    * @see ConnectionEntry#setStartTime(Instant)
     * @see ConnectionEntry#getEndTime()
     */
    @Override
-   public Date getStartTime() {
+   public Instant getStartTime() {
       return _st;
    }
    
    /**
     * Returns the end date/time of this connection.
     * @return the date/time
-    * @see ConnectionEntry#setEndTime(Date)
+    * @see ConnectionEntry#setEndTime(Instant)
     * @see ConnectionEntry#getStartTime()
     */
    @Override
-   public Date getEndTime() {
+   public Instant getEndTime() {
 	   return _et;
    }
    
@@ -78,11 +78,11 @@ public class ConnectionEntry extends ACARSLogEntry implements TimeSpan {
 	   if (_et == null)
 		   return -1;
 	   
-	   return (_et.getTime() - _st.getTime()) / 1000;
+	   return (_et.toEpochMilli() - _st.toEpochMilli()) / 1000;
    }
    
    @Override
-   public Date getDate() {
+   public Instant getDate() {
 	   return _st;
    }
    
@@ -125,6 +125,7 @@ public class ConnectionEntry extends ACARSLogEntry implements TimeSpan {
     * Returns if this is a Dispatch connection.
     * @return FALSE
     */
+   @SuppressWarnings("static-method")
    public boolean getDispatch() {
 	   return false; 
    }
@@ -224,7 +225,7 @@ public class ConnectionEntry extends ACARSLogEntry implements TimeSpan {
     * @param dt the date/time
     * @see ConnectionEntry#getStartTime()
     */
-   public void setStartTime(Date dt) {
+   public void setStartTime(Instant dt) {
       _st = dt;
    }
    
@@ -233,7 +234,7 @@ public class ConnectionEntry extends ACARSLogEntry implements TimeSpan {
     * @param dt the date/time
     * @see ConnectionEntry#getEndTime()
     */
-   public void setEndTime(Date dt) {
+   public void setEndTime(Instant dt) {
 	   _et = dt;
    }
    

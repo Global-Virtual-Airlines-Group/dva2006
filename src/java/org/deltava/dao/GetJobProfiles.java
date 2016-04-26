@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.hr.*;
 /**
  * A Data Access Object to read Job applications and profiles from the database.
  * @author Luke
- * @version 4.1
+ * @version 7.0
  * @since 3.4
  */
 
@@ -56,7 +56,7 @@ public class GetJobProfiles extends DAO {
 		}
 	}
 	
-	/**
+	/*
 	 * Helper method for Profile result sets.
 	 */
 	private List<Profile> execute() throws SQLException {
@@ -64,7 +64,7 @@ public class GetJobProfiles extends DAO {
 		try (ResultSet rs = _ps.executeQuery()) {
 			while (rs.next()) {
 				Profile p = new Profile(rs.getInt(1));
-				p.setCreatedOn(rs.getTimestamp(2));
+				p.setCreatedOn(rs.getTimestamp(2).toInstant());
 				p.setAutoReuse(rs.getBoolean(3));
 				p.setBody(rs.getString(4));
 				p.setFirstName(rs.getString(5));

@@ -3,6 +3,10 @@ package org.deltava.commands.pirep;
 
 import java.util.*;
 import java.sql.Connection;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoField;
 
 import org.apache.log4j.Logger;
 
@@ -30,7 +34,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle editing/saving Flight Reports.
  * @author Luke
- * @version 6.4
+ * @version 7.0
  * @since 1.0
  */
 
@@ -86,7 +90,7 @@ public class PIREPCommand extends AbstractFormCommand {
 
 			// Check if we are creating a new flight report or editing one with an assignment
 			boolean doCreate = (fr == null);
-			boolean isAssignment = !doCreate && (fr.getDatabaseID(DatabaseID.ASSIGN) != 0);
+			boolean isAssignment = (fr != null) && (fr.getDatabaseID(DatabaseID.ASSIGN) != 0);
 
 			// Create the access controller and validate our access
 			PIREPAccessControl ac = new PIREPAccessControl(ctx, fr);
@@ -193,20 +197,16 @@ public class PIREPCommand extends AbstractFormCommand {
 
 			// Calculate the date
 			Calendar cld = Calendar.getInstance();
-			Calendar pd = new GregorianCalendar(StringUtils.parse(ctx.getParameter("dateY"), cld.get(Calendar.YEAR)),
-					StringUtils.parse(ctx.getParameter("dateM"), cld.get(Calendar.MONTH)), StringUtils.parse(ctx.getParameter("dateD"),
-					cld.get(Calendar.DAY_OF_MONTH)));
-			fr.setDate(pd.getTime());
+			LocalDateTime pd = LocalDateTime.of(StringUtils.parse(ctx.getParameter("dateY"), cld.get(Calendar.YEAR)), StringUtils.parse(ctx.getParameter("dateM"), cld.get(Calendar.MONTH)),
+					StringUtils.parse(ctx.getParameter("dateD"), cld.get(Calendar.DAY_OF_MONTH)), 12, 0, 0);
+			fr.setDate(ZonedDateTime.of(pd, ctx.getUser().getTZ().getZone()).toInstant());
 
 			// Validate the date
 			if (!ctx.isUserInRole("PIREP")) {
-				Calendar forwardLimit = Calendar.getInstance();
-				Calendar backwardLimit = Calendar.getInstance();
-				forwardLimit.add(Calendar.DATE, SystemData.getInt("users.pirep.maxDays"));
-				backwardLimit.add(Calendar.DATE, SystemData.getInt("users.pirep.minDays") * -1);
-				if ((fr.getDate().before(backwardLimit.getTime())) || (fr.getDate().after(forwardLimit.getTime()))) {
-					throw new CommandException("Invalid Flight Report Date - " + fr.getDate() + " ("
-							+ backwardLimit.getTime() + " - " + forwardLimit.getTime(), false);
+				Instant forwardLimit = ZonedDateTime.now().plusDays(SystemData.getInt("users.pirep.maxDays")).toInstant();
+				Instant backwardLimit = ZonedDateTime.now().minusDays(SystemData.getInt("users.pirep.maxDays")).toInstant();
+				if ((fr.getDate().isBefore(backwardLimit)) || (fr.getDate().isAfter(forwardLimit))) {
+					throw new CommandException("Invalid Flight Report Date - " + fr.getDate() + " (" + backwardLimit + " - " + forwardLimit, false);
 				}
 			}
 
@@ -257,9 +257,8 @@ public class PIREPCommand extends AbstractFormCommand {
 		boolean forcePage = (ctx.getSession() != null) && Boolean.valueOf(String.valueOf(ctx.getSession().getAttribute("forcePIREP"))).booleanValue();
 
 		// Get the current date/time in the user's local zone
-		Calendar cld = Calendar.getInstance();
 		TZInfo tz = ctx.isAuthenticated() ? ctx.getUser().getTZ() : TZInfo.get(SystemData.get("time.timezone"));
-		cld.setTime(DateTime.convert(cld.getTime(), tz));
+		ZonedDateTime today = ZonedDateTime.now(tz.getZone());
 
 		// Get all airlines
 		Map<String, Airline> allAirlines = SystemData.getAirlines();
@@ -322,7 +321,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				ctx.setAttribute("networks", p.getNetworks(), REQUEST);
 
 				// Set PIREP date and length
-				cld.setTime(DateTime.convert(fr.getDate(), ctx.getUser().getTZ()));
+				today = ZonedDateTime.ofInstant(fr.getDate(), ctx.getUser().getTZ().getZone());
 				ctx.setAttribute("flightTime", StringUtils.format(fr.getLength() / 10.0, "#0.0"), REQUEST);
 
 				// Get the active airlines
@@ -343,23 +342,21 @@ public class PIREPCommand extends AbstractFormCommand {
 		}
 
 		// Save PIREP date limitations
-		Calendar forwardLimit = CalendarUtils.getInstance(null, true, SystemData.getInt("users.pirep.maxDays"));
-		Calendar backwardLimit = CalendarUtils.getInstance(null, true, SystemData.getInt("users.pirep.minDays") * -1);
-		ctx.setAttribute("forwardDateLimit", forwardLimit.getTime(), REQUEST);
-		ctx.setAttribute("backwardDateLimit", backwardLimit.getTime(), REQUEST);
+		ctx.setAttribute("forwardDateLimit", today.plusDays(SystemData.getInt("users.pirep.maxDays")), REQUEST);
+		ctx.setAttribute("backwardDateLimit", today.minusDays(SystemData.getInt("users.pirep.maxDays")), REQUEST);
 		
 		// Set flight years
 		Collection<String> years = new LinkedHashSet<String>();
-		years.add(String.valueOf(cld.get(Calendar.YEAR)));
+		years.add(String.valueOf(today.get(ChronoField.YEAR)));
 
 		// If we're in January/February, add the previous year
-		if (cld.get(Calendar.MONTH) < 2)
-			years.add(String.valueOf(cld.get(Calendar.YEAR) - 1));
+		if (today.get(ChronoField.MONTH_OF_YEAR) < 3)
+			years.add(String.valueOf(today.get(ChronoField.YEAR) - 1));
 
 		// Save pirep date combobox values
-		ctx.setAttribute("pirepYear", StringUtils.format(cld.get(Calendar.YEAR), "0000"), REQUEST);
-		ctx.setAttribute("pirepMonth", StringUtils.format(cld.get(Calendar.MONTH), "#0"), REQUEST);
-		ctx.setAttribute("pirepDay", StringUtils.format(cld.get(Calendar.DATE), "#0"), REQUEST);
+		ctx.setAttribute("pirepYear", StringUtils.format(today.get(ChronoField.YEAR), "0000"), REQUEST);
+		ctx.setAttribute("pirepMonth", StringUtils.format(today.get(ChronoField.MONTH_OF_YEAR), "#0"), REQUEST);
+		ctx.setAttribute("pirepDay", StringUtils.format(today.get(ChronoField.DAY_OF_MONTH), "#0"), REQUEST);
 
 		// Save airport/airline lists in the request
 		ctx.setAttribute("airline", SystemData.get("airline.code"), REQUEST);
@@ -619,7 +616,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			boolean hasTrack = tdao.hasTrack(fr.getID());
 			if (hasTrack || (fr.hasAttribute(FlightReport.ATTR_ONLINE_MASK) && (fr.getStatus() != FlightReport.DRAFT))) {
 				Collection<PositionData> pd = tdao.get(fr.getID());
-				long age = (fr.getSubmittedOn() == null) ? Long.MAX_VALUE : (System.currentTimeMillis() - fr.getSubmittedOn().getTime()) / 1000;
+				long age = (fr.getSubmittedOn() == null) ? Long.MAX_VALUE : (System.currentTimeMillis() - fr.getSubmittedOn().toEpochMilli()) / 1000;
 				if (pd.isEmpty() && (age < 86000)) {
 					int trackID = tdao.getTrackID(fr.getDatabaseID(DatabaseID.PILOT), fr.getNetwork(), fr.getSubmittedOn(), fr.getAirportD(), fr.getAirportA());
 					if ((trackID == 0) && (fr.getNetwork() == OnlineNetwork.VATSIM)) {

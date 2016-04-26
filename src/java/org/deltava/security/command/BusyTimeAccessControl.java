@@ -1,4 +1,4 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.academy.InstructionBusy;
@@ -8,13 +8,13 @@ import org.deltava.security.SecurityContext;
 /**
  * An access controller for Flight Academy Instructor busy time entries.
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
 public class BusyTimeAccessControl extends AccessControl {
 	
-	private InstructionBusy _busy;
+	private final InstructionBusy _busy;
 	
 	private boolean _canCreate;
 	private boolean _canProxyCreate;
@@ -33,6 +33,7 @@ public class BusyTimeAccessControl extends AccessControl {
 	/**
 	 * Calculates access rights.
 	 */
+	@Override
 	public void validate() {
 		validateContext();
 		

@@ -1,7 +1,7 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.cooler;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 
@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A class to store Water Cooler posts.
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -18,7 +18,7 @@ public class Message extends DatabaseBean implements AuthoredBean {
     
     private int _threadID;
     private int _authorID;
-    private Date _createdOn;
+    private Instant _createdOn;
     private String _msgBody;
     private boolean _contentWarning;
     
@@ -34,7 +34,7 @@ public class Message extends DatabaseBean implements AuthoredBean {
     public Message(int authorID) {
         super();
         setAuthorID(authorID);
-        _createdOn = new Date();
+        _createdOn = Instant.now();
     }
     
     /**
@@ -49,9 +49,9 @@ public class Message extends DatabaseBean implements AuthoredBean {
     /**
      * Returns the date and time this post was written.
      * @return the date/time this post was written
-     * @see Message#setCreatedOn(Date)
+     * @see Message#setCreatedOn(Instant)
      */
-    public Date getCreatedOn() {
+    public Instant getCreatedOn() {
         return _createdOn;
     }
     
@@ -59,6 +59,7 @@ public class Message extends DatabaseBean implements AuthoredBean {
      * Returns the author of this message.
      * @return the database ID of the Pilot object for this message's author.
      */
+    @Override
     public int getAuthorID() {
         return _authorID;
     }
@@ -106,7 +107,7 @@ public class Message extends DatabaseBean implements AuthoredBean {
      * @param dt the date & time this message was created
      * @see Message#getCreatedOn()
      */
-    public void setCreatedOn(Date dt) {
+    public void setCreatedOn(Instant dt) {
         _createdOn = dt;
     }
     
@@ -165,6 +166,7 @@ public class Message extends DatabaseBean implements AuthoredBean {
      * @throws IllegalArgumentException if id is zero or negative
      * @see Message#getAuthorID()
      */
+    @Override
     public void setAuthorID(int id) {
     	validateID(_authorID, id);
     	_authorID = id;
@@ -175,6 +177,7 @@ public class Message extends DatabaseBean implements AuthoredBean {
      * @throws ClassCastException if o2 isn't a Message
      * @see Comparable#compareTo(java.lang.Object)
      */
+    @Override
     public int compareTo(Object o2) {
         Message m2 = (Message) o2;
         return _createdOn.compareTo(m2.getCreatedOn());

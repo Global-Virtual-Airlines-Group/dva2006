@@ -10,6 +10,7 @@ public class TestCoolerThreadAccessControl extends AccessControlTestCase {
    
    private CoolerThreadAccessControl _ac;
    
+   @Override
    protected void setUp() throws Exception {
       super.setUp();
       _c = new Channel("Channel");
@@ -19,6 +20,7 @@ public class TestCoolerThreadAccessControl extends AccessControlTestCase {
       _ac = new CoolerThreadAccessControl(_ctxt);
    }
 
+   @Override
    protected void tearDown() throws Exception {
       _mt = null;
       _c = null;
@@ -129,7 +131,8 @@ public class TestCoolerThreadAccessControl extends AccessControlTestCase {
       }
    }
    
-   public void testContextValidation() {
+   @SuppressWarnings("static-method")
+public void testContextValidation() {
       doContextValidation(new CoolerThreadAccessControl(null));
    }
 }

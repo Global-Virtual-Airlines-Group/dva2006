@@ -1,20 +1,20 @@
-// Copyright 2007, 2009, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.deltava.beans.navdata.*;
 
 /**
  * A bean to store NOTAMs containing Oceanic route data.
  * @author Luke
- * @version 5.1
+ * @version 7.0
  * @since 1.0
  */
 
-public class OceanicNOTAM implements OceanicTrackInfo {
+public class OceanicNOTAM implements OceanicTrackInfo, Comparable<OceanicNOTAM> {
 
-	private Date _date;
+	private Instant _date;
     private Type _routeType;
     private String _sourceHost;
     private String _routeInfo;
@@ -24,18 +24,19 @@ public class OceanicNOTAM implements OceanicTrackInfo {
 	 * @param type the route type
 	 * @param dt the effective date
 	 */
-	public OceanicNOTAM(Type type, Date dt) {
+	public OceanicNOTAM(Type type, Instant dt) {
 		super();
 		setType(type);
-		setDate(dt);
+		_date = dt;
 	}
 	
     /**
      * Returns the date of the Oceanic Route NOTAM.
      * @return the route date
-     * @see OceanicNOTAM#setDate(Date)
+     * @see OceanicNOTAM#setDate(Instant)
      */
-    public Date getDate() {
+	@Override
+    public Instant getDate() {
         return _date;
     }
     
@@ -43,6 +44,7 @@ public class OceanicNOTAM implements OceanicTrackInfo {
      * Returns the route type code.
      * @return the route type
      */
+    @Override
     public Type getType() {
         return _routeType;
     }
@@ -70,7 +72,7 @@ public class OceanicNOTAM implements OceanicTrackInfo {
      * @param d the NOTAM date
      * @see OceanicTrackInfo#getDate()
      */
-    public void setDate(Date d) {
+    public void setDate(Instant d) {
         _date = d;
     }
     
@@ -106,11 +108,13 @@ public class OceanicNOTAM implements OceanicTrackInfo {
      * Implements Comparable interface by comparing the dates, then the route types.
      * @see Comparable#compareTo(Object)
      */
+    @Override
     public int compareTo(OceanicNOTAM or2) {
         int tmpResult = _date.compareTo(or2._date);
         return (tmpResult == 0) ? _routeType.compareTo(or2._routeType) : tmpResult;
     }
-    
+  
+    @Override
     public String toString() {
 		StringBuilder buf = new StringBuilder(_routeType.name());
 		buf.append('-');

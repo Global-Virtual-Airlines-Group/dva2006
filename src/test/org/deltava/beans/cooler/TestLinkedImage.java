@@ -16,12 +16,14 @@ public class TestLinkedImage extends AbstractBeanTestCase {
         return new CoverageDecorator(TestLinkedImage.class, new Class[] { LinkedImage.class } );
     }
 	
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		_img = new LinkedImage(1, "http://localhost/test");
 		setBean(_img);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		_img = null;
 		super.tearDown();

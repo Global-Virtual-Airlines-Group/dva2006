@@ -13,13 +13,15 @@ public class TestMessageTemplate extends AbstractBeanTestCase {
         return new CoverageDecorator(TestMessageTemplate.class, new Class[] { MessageTemplate.class } );
     }
     
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
         _msg = new MessageTemplate("TEST");
         setBean(_msg);
     }
 
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         _msg = null;
         super.tearDown();
     }

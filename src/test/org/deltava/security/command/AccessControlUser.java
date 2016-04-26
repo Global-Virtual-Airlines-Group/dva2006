@@ -11,6 +11,7 @@ public class AccessControlUser extends Pilot {
 		super(fName, lName);
 	}
 
+	@Override
 	public String getRowClassName() {
 		return null;
 	}

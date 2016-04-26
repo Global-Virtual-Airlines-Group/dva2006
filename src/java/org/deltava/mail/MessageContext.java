@@ -2,7 +2,7 @@
 package org.deltava.mail;
 
 import java.lang.reflect.*;
-
+import java.time.*;
 import java.util.*;
 
 import org.apache.log4j.Logger;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A class to store and retrieve message context data.
  * @author Luke
- * @version 6.4
+ * @version 7.0
  * @since 1.0
  */
 
@@ -303,8 +303,8 @@ public class MessageContext {
         		objValue = StringUtils.format(((Double) objValue).doubleValue(), to.getNumberFormat());
         		break;
         		
-        	case "Date":
-        		Date ldt = DateTime.convert((Date) objValue, to.getTZ());
+        	case "Instant":
+        		ZonedDateTime ldt = ZonedDateTime.ofInstant((Instant) objValue, to.getTZ().getZone()); 
         		StringBuilder buf = new StringBuilder();
         		switch (fmtType) {
         		case TIME:
@@ -328,6 +328,9 @@ public class MessageContext {
         	case "Airport":
         		Airport a = (Airport) objValue;
         		objValue = (to.getAirportCodeType() == Airport.Code.IATA) ? a.getIATA() : a.getICAO();
+        		break;
+        		
+        	default:
         		break;
         	}
         }

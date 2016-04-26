@@ -1,7 +1,8 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
+import java.time.Instant;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
@@ -19,7 +20,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to submit and score Pilot Examinations.
  * @author Luke
- * @version 5.1
+ * @version 7.0
  * @since 1.0
  */
 
@@ -75,14 +76,12 @@ public class ExamSubmitCommand extends AbstractCommand {
 				}
 			}
 
-			// Set the status of the examination, and submitted date
-			Calendar cld = Calendar.getInstance();
-			ex.setSubmittedOn(cld.getTime());
+			ex.setSubmittedOn(Instant.now());
 
 			// If we're entirely multiple choice, then mark the examination scored
 			GetPilotDirectory pdao = new GetPilotDirectory(con);
 			if (allMC) {
-				ex.setScoredOn(cld.getTime());
+				ex.setScoredOn(ex.getSubmittedOn());
 				ex.setStatus(TestStatus.SCORED);
 				ex.setScore(score);
 				ex.setAutoScored(true);

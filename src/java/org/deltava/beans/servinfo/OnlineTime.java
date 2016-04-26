@@ -1,4 +1,4 @@
-// Copyright 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.flight.FlightReport;
 /**
  * A utility class to calculate time spend online.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 3.6
  */
 
@@ -33,7 +33,7 @@ public class OnlineTime {
 		int gapSeconds = Math.max(maxGap, 3) * 60; 
 		long lastTime = 0; long totalTime = 0;
 		for (PositionData pd : positions) {
-			long posTime = pd.getDate().getTime();
+			long posTime = pd.getDate().toEpochMilli();
 			if (lastTime != 0) {
 				long gap = (posTime - lastTime) / 1000;
 				if (gap <= gapSeconds)

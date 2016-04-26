@@ -1,6 +1,7 @@
 package org.deltava.dao.file;
 
 import java.io.*;
+import java.time.Instant;
 import java.util.*;
 import java.awt.Color;
 import java.awt.image.*;
@@ -83,12 +84,14 @@ public class TestGetWAFSData extends TestCase {
 		}
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		PropertyConfigurator.configure("etc/log4j.test.properties");
 		log = Logger.getLogger(GetWAFSData.class);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		LogManager.shutdown();
 		super.tearDown();
@@ -106,20 +109,20 @@ public class TestGetWAFSData extends TestCase {
 			String path = "/pub/data/nccf/com/gfs/prod";
 			String dir = con.getNewestDirectory(path, FileUtils.fileFilter("gfs.", null));
 			String fName = con.getNewest(path + "/" + dir, FileUtils.fileFilter("gfs.", ".pgrb2f00"));
-			Date lm = con.getTimestamp(path + "/" + dir, fName);
+			Instant lm = con.getTimestamp(path + "/" + dir, fName);
 			assertNotNull(lm);
-			if (outF.exists() && (outF.lastModified() == lm.getTime()))
+			if (outF.exists() && (outF.lastModified() == lm.toEpochMilli()))
 				return;
 			
 			// Calculate the effective date
-			is = new ImageSeries("jetstream", StringUtils.parseDate(dir.substring(dir.lastIndexOf('.') + 1), "yyyyMMddHH"));
+			is = new ImageSeries("jetstream", StringUtils.parseInstant(dir.substring(dir.lastIndexOf('.') + 1), "yyyyMMddHH"));
 			assertNotNull(is);
 			assertNotNull(is.getDate());
 		
 			// Download
 			try (InputStream in = con.get(path + "/" + dir + "/" + fName, outF)) {
 				log.info("Downloaded GFS data - " + outF.length());
-				outF.setLastModified(lm.getTime());
+				outF.setLastModified(lm.toEpochMilli());
 			}
 		}
 		

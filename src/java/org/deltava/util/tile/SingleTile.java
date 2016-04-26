@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2012, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.tile;
 
 import java.awt.Rectangle;
@@ -7,7 +7,7 @@ import java.awt.image.*;
 /**
  * A single Tile.
  * @author Luke
- * @version 5.2
+ * @version 7.0
  * @since 5.0
  */
 
@@ -37,11 +37,10 @@ public class SingleTile extends AbstractTile implements RasterTile {
 	public SingleTile(TileAddress addr, BufferedImage img) {
 		super(addr);
 		if (img == null) {
-			img = new BufferedImage(Tile.WIDTH, Tile.HEIGHT, BufferedImage.TYPE_BYTE_INDEXED, EMPTY_PAL);
-			img.setData(EMPTY.getData());
-		}
-		
-		_img = img;
+			_img = new BufferedImage(Tile.WIDTH, Tile.HEIGHT, BufferedImage.TYPE_BYTE_INDEXED, EMPTY_PAL);
+			_img.setData(EMPTY.getData());
+		} else
+			_img = img;
 	}
 
 	/**
@@ -62,6 +61,7 @@ public class SingleTile extends AbstractTile implements RasterTile {
 	 * Returns the Tile image.
 	 * @return the image
 	 */
+	@Override
 	public BufferedImage getImage() {
 		return _img;
 	}

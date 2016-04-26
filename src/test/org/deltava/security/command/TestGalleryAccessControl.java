@@ -16,14 +16,16 @@ public class TestGalleryAccessControl extends AccessControlTestCase {
             GalleryAccessControl.class });
    }
    
-   protected void setUp() throws Exception {
+   @Override
+protected void setUp() throws Exception {
       super.setUp();
       _img = new Image("Image", "Description");
       _img.setID(321);
       _ac = new GalleryAccessControl(_ctxt, _img);
    }
 
-   protected void tearDown() throws Exception {
+   @Override
+protected void tearDown() throws Exception {
       _ac = null;
       _img = null;
       super.tearDown();

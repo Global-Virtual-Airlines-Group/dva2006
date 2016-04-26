@@ -1,9 +1,8 @@
-// Copyright 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
 import java.util.*;
-import java.text.*;
 import java.net.SocketTimeoutException;
 
 import org.apache.log4j.Logger;
@@ -19,14 +18,13 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to load VATSIM track data from VRoute.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 2.4
  */
 
 public class GetVRouteData extends DAO {
 
 	private static final Logger log = Logger.getLogger(GetVRouteData.class);
-	private final DateFormat _df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	/**
 	 * Initializes the Data Access Object.
@@ -61,13 +59,13 @@ public class GetVRouteData extends DAO {
 					List<String> tkns = StringUtils.split(data, "\t");
 					if ((tkns.size() == 10) && (tkns.get(8).equals(aD.getICAO())) && (tkns.get(9).equals(aA.getICAO()))) {
 						try {
-							PositionData pd = new PositionData(_df.parse(tkns.get(0)));
+							PositionData pd = new PositionData(StringUtils.parseInstant(tkns.get(0), "yyyy-MM-dd HH:mm:ss"));
 							pd.setPilotID(usr.getID());
 							pd.setPosition(StringUtils.parse(tkns.get(3), 0.0d), StringUtils.parse(tkns.get(4), 0.0d), StringUtils.parse(tkns.get(7), 0));
 							pd.setAirSpeed(StringUtils.parse(tkns.get(5), 0));
 							pd.setHeading(StringUtils.parse(tkns.get(6), 0));
 							results.add(pd);
-						} catch (ParseException pe) {
+						} catch (Exception pe) {
 							log.warn("Error parsing " + data + " - " + pe.getMessage());
 						}
 					}

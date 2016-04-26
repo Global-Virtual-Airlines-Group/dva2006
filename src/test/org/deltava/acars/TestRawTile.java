@@ -4,6 +4,7 @@ import junit.framework.TestCase;
 
 public class TestRawTile extends TestCase {
 
+	@SuppressWarnings("static-method")
 	public void testOverflow() {
 		RawTile srt = RawTile.getTile(255);
 		assertTrue(srt instanceof SmallRawTile);

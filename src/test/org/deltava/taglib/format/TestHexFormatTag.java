@@ -6,12 +6,14 @@ public class TestHexFormatTag extends AbstractTagTestCase {
 
 	private HexFormatTag _tag;
 	
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		_tag = new HexFormatTag();
         _tag.setPageContext(_ctx);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		_tag.release();
 		_tag = null;

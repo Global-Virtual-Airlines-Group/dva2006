@@ -1,7 +1,7 @@
 // Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.security.command;
 
-import java.util.Date;
+import java.time.Instant;
 import junit.framework.Test;
 import org.hansel.CoverageDecorator;
 
@@ -12,17 +12,19 @@ public class TestEventAccessControl extends AccessControlTestCase {
    private EventAccessControl _ac;
    private Event _ev;
    
-   protected void setUp() throws Exception {
+   @Override
+protected void setUp() throws Exception {
       super.setUp();
       _ev = new Event("Event Name");
       _ac = new EventAccessControl(_ctxt, _ev);
       
       long now = System.currentTimeMillis();
-      _ev.setStartTime(new Date(now + 350));
-      _ev.setSignupDeadline(new Date(now + 250));
+      _ev.setStartTime(Instant.ofEpochMilli(now + 350));
+      _ev.setSignupDeadline(Instant.ofEpochMilli(now + 250));
    }
 
-   protected void tearDown() throws Exception {
+   @Override
+protected void tearDown() throws Exception {
       _ac = null;
       _ev = null;
       super.tearDown();

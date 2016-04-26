@@ -1,7 +1,9 @@
-// Copyright 2005, 2006, 2007, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
-import java.text.*;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.*;
 
 import java.io.UnsupportedEncodingException;
@@ -15,13 +17,13 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP tag to create a link to a Web Site Command.
  * @author Luke
- * @version 3.7
+ * @version 7.0
  * @since 1.0
  */
 
 public class CommandLinkTag extends LinkTag {
 	
-	private final DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+	private final DateTimeFormatter df = new DateTimeFormatterBuilder().appendPattern("MM/dd/yyyy").toFormatter();
 
 	private String _domain;
 	private String _cmdName;
@@ -85,7 +87,7 @@ public class CommandLinkTag extends LinkTag {
 	 * Sets the start date if this is linking to a Calendar command.
 	 * @param dt the calendar start date/time
 	 */
-	public void setStartDate(Date dt) {
+	public void setStartDate(ZonedDateTime dt) {
 		_cmdParams.put("startDate", df.format(dt));
 	}
 	

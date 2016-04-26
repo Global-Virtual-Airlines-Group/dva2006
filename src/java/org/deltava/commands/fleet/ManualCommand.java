@@ -1,9 +1,10 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.io.File;
 import java.util.*;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 import org.deltava.beans.fleet.*;
@@ -18,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update Document Library entries.
  * @author Luke
- * @version 6.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -92,7 +93,7 @@ public class ManualCommand extends LibraryEditCommand {
 			entry.setVersion(StringUtils.parse(ctx.getParameter("version"), 1));
 			entry.setShowOnRegister(Boolean.valueOf(ctx.getParameter("showRegister")).booleanValue());
 			entry.setSecurity(Security.valueOf(ctx.getParameter("security")));
-			entry.setLastModified(new java.util.Date());
+			entry.setLastModified(Instant.now());
 			if (mFile != null)
 				entry.setSize(mFile.getBuffer().length);
 			

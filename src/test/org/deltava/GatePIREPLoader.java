@@ -28,6 +28,7 @@ public class GatePIREPLoader extends TestCase {
 	
 	private Connection _c;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		
@@ -54,6 +55,7 @@ public class GatePIREPLoader extends TestCase {
 		assertFalse(_c.getAutoCommit());
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		_c.close();
 		LogManager.shutdown();

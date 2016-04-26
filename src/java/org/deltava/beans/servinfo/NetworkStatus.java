@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store VATSIM/IVAO-specific ServInfo properties.
  * @author Luke
- * @version 2.4
+ * @version 7.0
  * @since 1.0
  */
 
@@ -129,6 +129,7 @@ public class NetworkStatus implements Cacheable, Comparable<NetworkStatus> {
 	/**
 	 * Compares two networks by comparing their network names.
 	 */
+	@Override
 	public int compareTo(NetworkStatus ns2) {
 		return _network.toString().compareTo(ns2._network.toString());
 	}
@@ -136,6 +137,7 @@ public class NetworkStatus implements Cacheable, Comparable<NetworkStatus> {
 	/**
 	 * Returns the network name's hash code.
 	 */
+	@Override
 	public int hashCode() {
 		return _network.hashCode();
 	}
@@ -144,6 +146,7 @@ public class NetworkStatus implements Cacheable, Comparable<NetworkStatus> {
 	 * Returns the cache key for this object.
 	 * @return the network
 	 */
+	@Override
 	public Object cacheKey() {
 		return _network;
 	}

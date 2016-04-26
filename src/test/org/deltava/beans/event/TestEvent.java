@@ -1,5 +1,6 @@
 package org.deltava.beans.event;
 
+import java.time.Instant;
 import java.util.Date;
 
 import junit.framework.Test;
@@ -19,13 +20,15 @@ public class TestEvent extends AbstractBeanTestCase {
         return new CoverageDecorator(TestEvent.class, new Class[] { Event.class } );
     }
     
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
         _e = new Event("NAME");
         setBean(_e);
     }
 
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         _e = null;
         super.tearDown();
     }
@@ -66,16 +69,15 @@ public class TestEvent extends AbstractBeanTestCase {
     }
     
     public void testStatus() {
-        long now = System.currentTimeMillis();
-        _e.setStartTime(new Date(now + 1000));
-        _e.setSignupDeadline(new Date(now + 1000));
+        _e.setStartTime(Instant.now().plusSeconds(1));
+        _e.setSignupDeadline(_e.getStartTime().plusSeconds(1));
         assertEquals(Status.OPEN, _e.getStatus());
-        _e.setSignupDeadline(new Date(now - 5));
+        _e.setSignupDeadline(_e.getStartTime().minusSeconds(5));
         assertEquals(Status.CLOSED, _e.getStatus());
-        _e.setStartTime(new Date(now - 4));
-        _e.setEndTime(new Date(now + 1000));
+        _e.setStartTime(Instant.now().minusMillis(10));
+        _e.setEndTime(_e.getStartTime().plusSeconds(5));
         assertEquals(Status.ACTIVE, _e.getStatus());
-        _e.setEndTime(new Date(now - 3));
+        _e.setEndTime(Instant.now().minusMillis(10));
         assertEquals(Status.COMPLETE, _e.getStatus());
     }
     
@@ -84,18 +86,16 @@ public class TestEvent extends AbstractBeanTestCase {
         validateInput("network", Integer.valueOf(11), IllegalArgumentException.class);
         validateInput("network", "X", IllegalArgumentException.class);
         
-        long now = System.currentTimeMillis();
-        _e.setStartTime(new Date(now));
-        validateInput("signupDeadline", new Date(now + 1), IllegalArgumentException.class);
-        validateInput("endTime", new Date(now - 1), IllegalArgumentException.class);
+        _e.setStartTime(Instant.now());
+        validateInput("signupDeadline", _e.getStartTime().plusSeconds(1), IllegalArgumentException.class);
+        validateInput("endTime", _e.getStartTime().minusSeconds(1), IllegalArgumentException.class);
     }
     
     public void testComparator() {
-        long now = System.currentTimeMillis();
-        _e.setStartTime(new Date(now));
+        _e.setStartTime(Instant.now());
         
         Event e2 = new Event("EVENT2");
-        e2.setStartTime(new Date(now + 2));
+        e2.setStartTime(_e.getStartTime().plusMillis(5));
         
         assertTrue(_e.compareTo(e2) < 0);
         assertTrue(e2.compareTo(_e) > 0);

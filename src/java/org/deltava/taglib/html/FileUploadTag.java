@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import javax.servlet.jsp.JspException;
@@ -6,7 +6,7 @@ import javax.servlet.jsp.JspException;
 /**
  * A JSP tag to generate a FILE tag.
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -49,6 +49,7 @@ public class FileUploadTag extends FormElementTag {
 	/**
 	 * Resets state variables for this tag.
 	 */
+	@Override
 	public void release() {
 		super.release();
 		_data.setAttribute("type", "file");
@@ -58,16 +59,17 @@ public class FileUploadTag extends FormElementTag {
 	 * Generates the HTML for this Input element.
 	 * @throws JspException if an error occurs
 	 */
+	@Override
 	public int doEndTag() throws JspException {
 		try {
 			validateState();
 			_out.print(_data.open(true, true));
 		} catch (Exception e) {
 			throw new JspException(e);
+		} finally {
+			release();
 		}
 
-		// Reset state and return
-		release();
 		return EVAL_PAGE;
 	}
 }

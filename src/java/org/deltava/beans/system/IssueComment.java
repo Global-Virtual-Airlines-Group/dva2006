@@ -1,14 +1,14 @@
-// Copyright 2005, 2006, 2011 Global Virtual Airlnes Group. All Rights Reserved.
+// Copyright 2005, 2006, 2011, 2016 Global Virtual Airlnes Group. All Rights Reserved.
 package org.deltava.beans.system;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 
 /**
  * A bean for storing development issue comments.
  * @author Luke
- * @version 4.1
+ * @version 7.0
  * @since 1.0
  */
 
@@ -20,7 +20,7 @@ public class IssueComment extends DatabaseBlobBean {
 	private String _name;
 	private int _size;
 	
-	private Date _createdOn;
+	private Instant _createdOn = Instant.now();
 	private String _comments;
 	
 	/**
@@ -48,7 +48,6 @@ public class IssueComment extends DatabaseBlobBean {
 	public IssueComment(String comments) {
 		super();
 		_comments = comments.trim();
-		_createdOn = new Date();
 	}
 	
 	/**
@@ -82,9 +81,9 @@ public class IssueComment extends DatabaseBlobBean {
 	/**
 	 * Returns the date/time this comment was created on.
 	 * @return the date/time the comment was created
-	 * @see IssueComment#setCreatedOn(Date)
+	 * @see IssueComment#setCreatedOn(Instant)
 	 */
-	public Date getCreatedOn() {
+	public Instant getCreatedOn() {
 		return _createdOn;
 	}
 	
@@ -93,6 +92,7 @@ public class IssueComment extends DatabaseBlobBean {
 	 * @return the size in bytes
 	 * @see IssueComment#setSize(int)
 	 */
+	@Override
 	public int getSize() {
 		return isLoaded() ? super.getSize() : _size;
 	}
@@ -155,7 +155,7 @@ public class IssueComment extends DatabaseBlobBean {
 	 * @throws IllegalArgumentException if d is null
 	 * @see IssueComment#getCreatedOn()
 	 */
-	public void setCreatedOn(Date d) {
+	public void setCreatedOn(Instant d) {
 		if (d == null)
 			throw new IllegalArgumentException("Creation Date cannot be null");
 		
@@ -192,6 +192,7 @@ public class IssueComment extends DatabaseBlobBean {
 	 * Compares this comment to another by comparing the creation dates.
 	 * @see Comparable#compareTo(Object)
 	 */
+	@Override
 	public int compareTo(Object o2) {
 		IssueComment ic2 = (IssueComment) o2; 
 		int tmpResult = _createdOn.compareTo(ic2.getCreatedOn());

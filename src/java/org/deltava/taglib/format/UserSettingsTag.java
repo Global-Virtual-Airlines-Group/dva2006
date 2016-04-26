@@ -1,4 +1,4 @@
-// Copyright 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import java.security.Principal;
@@ -13,7 +13,7 @@ import org.deltava.beans.Person;
 /**
  * An abstract JSP tag class to expose authenticated user data. 
  * @author Luke
- * @version 5.2
+ * @version 7.0
  * @since 5.2
  */
 
@@ -28,6 +28,7 @@ abstract class UserSettingsTag extends TagSupport {
 	 * Sets the tag's JSP context and loads the user data.
 	 * @param ctxt the JSP context
 	 */
+	@Override
 	public void setPageContext(PageContext ctxt) {
 		super.setPageContext(ctxt);
 		HttpServletRequest req = (HttpServletRequest) ctxt.getRequest();

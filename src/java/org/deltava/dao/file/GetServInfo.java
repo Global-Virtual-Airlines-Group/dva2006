@@ -1,16 +1,14 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
 import java.util.*;
-import java.text.*;
+import java.time.Instant;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.OnlineNetwork;
-import org.deltava.beans.DateTime;
-import org.deltava.beans.TZInfo;
 
 import org.deltava.beans.servinfo.*;
 import org.deltava.beans.schedule.Airport;
@@ -98,9 +96,6 @@ public class GetServInfo extends DAO {
 	public NetworkInfo getInfo(OnlineNetwork network) throws DAOException {
 		try (LineNumberReader br = getReader()) {
 			NetworkInfo info = new NetworkInfo(network);
-
-			// Initialize date formatter
-			SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
 			Map<String, AtomicInteger> serverCons = new HashMap<String, AtomicInteger>();
 			String iData = br.readLine();
 			while (iData != null) {
@@ -120,17 +115,13 @@ public class GetServInfo extends DAO {
 									info.setVersion(val);
 								else if ("UPDATE".equalsIgnoreCase(name)) {
 									try {
-										info.setValidDate(df.parse(val));
-									} catch (ParseException pe) {
-										info.setValidDate(new Date());
+										info.setValidDate(StringUtils.parseInstant(val, "yyyyMMddHHmmss"));
+									} catch (Exception e) {
+										info.setValidDate(Instant.now());
 									}
 
-									// We get the update time in UTC, so convert to local
-									DateTime dt = new DateTime(info.getValidDate(), TZInfo.UTC);
-									dt.convertTo(TZInfo.local());
-									info.setValidDate(dt.getDate());
 									if (log.isDebugEnabled())
-										log.debug("Valid as of " + dt.toString());
+										log.debug("Valid as of " + info.getValidDate());
 								}
 							}
 

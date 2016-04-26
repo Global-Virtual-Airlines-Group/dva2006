@@ -1,25 +1,26 @@
-// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.hr;
 
-import java.util.*;
+import java.time.*;
+import java.time.temporal.ChronoField;
 
 /**
  * A bean to convert Dates into Quarters.
  * @author Luke
- * @version 3.6
+ * @version 7.0
  * @since 3.3
  */
 
 public class Quarter implements java.io.Serializable, Comparable<Quarter> {
 
-	private int _year;
-	private int _qtr;
+	private final int _year;
+	private final int _qtr;
 	
 	/**
 	 * Creates a Quarter from the current Date.
 	 */
 	public Quarter() {
-		this(new Date());
+		this(Instant.now());
 	}
 	
 	/**
@@ -27,14 +28,11 @@ public class Quarter implements java.io.Serializable, Comparable<Quarter> {
 	 * @param dt the Date
 	 * @throws NullPointerException if dt is null
 	 */
-	public Quarter(Date dt) {
+	public Quarter(Instant dt) {
 		super();
-		Calendar cld = Calendar.getInstance();
-		if (dt != null)
-			cld.setTime(dt);
-		
-		_year = cld.get(Calendar.YEAR);
-		_qtr = (cld.get(Calendar.MONTH) / 3) + 1;
+		ZonedDateTime zdt = ZonedDateTime.ofInstant(dt, ZoneOffset.UTC);
+		_year = zdt.get(ChronoField.YEAR);
+		_qtr = ((zdt.get(ChronoField.MONTH_OF_YEAR) - 1) / 3) + 1;
 	}
 	
 	/**
@@ -77,10 +75,11 @@ public class Quarter implements java.io.Serializable, Comparable<Quarter> {
 	 * @param dt the date
 	 * @return TRUE if in the Quarter, otherwise FALSE
 	 */
-	public boolean contains(Date dt) {
+	public boolean contains(Instant dt) {
 		return equals(new Quarter(dt));
 	}
 
+	@Override
 	public String toString() {
 		StringBuilder buf = new StringBuilder("Q");
 		buf.append(_qtr);
@@ -89,14 +88,17 @@ public class Quarter implements java.io.Serializable, Comparable<Quarter> {
 		return buf.toString();
 	}
 	
+	@Override
 	public int hashCode() { 
 		return toString().hashCode();
 	}
 	
+	@Override
 	public boolean equals(Object o) {
 		return (o instanceof Quarter) ? (compareTo((Quarter) o) == 0) : false;
 	}
 	
+	@Override
 	public int compareTo(Quarter q2) {
 		int tmpResult = Integer.valueOf(_year).compareTo(Integer.valueOf(q2._year));
 		return (tmpResult == 0) ? Integer.valueOf(_qtr).compareTo(Integer.valueOf(q2._qtr)) : tmpResult;

@@ -1,19 +1,19 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.fb;
 
-import java.util.Date;
+import java.time.Instant;
 
 /**
  * An abstract class to store common Facebook object properties. 
  * @author Luke
- * @version 3.4
+ * @version 7.0
  * @since 3.4
  */
 
 public abstract class FacebookObject implements java.io.Serializable {
 	
 	private String _id;
-	private Date _updatedOn;
+	private Instant _updatedOn;
 	
 	/**
 	 * Creates a new Facebook object.
@@ -36,7 +36,7 @@ public abstract class FacebookObject implements java.io.Serializable {
 	 * Returns the date the Facebook object was last updated.
 	 * @return the last update date/time
 	 */
-	public Date getLastUpdated() {
+	public Instant getLastUpdated() {
 		return _updatedOn;
 	}
 	
@@ -44,7 +44,7 @@ public abstract class FacebookObject implements java.io.Serializable {
 	 * Updates the last update time of this Facebook object.
 	 * @param dt the date/time the profile was last updated
 	 */
-	public void setLastUpdated(Date dt) {
+	public void setLastUpdated(Instant dt) {
 		_updatedOn = dt;
 	}
 	
@@ -59,6 +59,7 @@ public abstract class FacebookObject implements java.io.Serializable {
 		_id = id;
 	}
 	
+	@Override
 	public int hashCode() {
 		return _id.hashCode();
 	}

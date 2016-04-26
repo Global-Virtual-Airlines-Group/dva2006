@@ -1,12 +1,12 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
+import java.time.*;
+import java.sql.Connection;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpSession;
-
-import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.assign.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to build a Flight Assignment.
  * @author Luke
- * @version 6.2
+ * @version 7.0
  * @since 1.0
  */
 
@@ -71,7 +71,7 @@ public class BuildCommand extends AbstractCommand {
 				info.setStatus(AssignmentInfo.RESERVED);
 				info.setRandom(true);
 				info.setPurgeable(true);
-				info.setAssignDate(new Date());
+				info.setAssignDate(Instant.now());
 			}
 			
 			// Get equipment override
@@ -89,8 +89,8 @@ public class BuildCommand extends AbstractCommand {
 				// Copy arrival/departure times
 				if (f instanceof ScheduleEntry) {
 					ScheduleEntry se = (ScheduleEntry) f;
-					fr.setTimeD(se.getTimeD());
-					fr.setTimeA(se.getTimeA());
+					fr.setTimeD(se.getTimeD().toLocalDateTime());
+					fr.setTimeA(se.getTimeA().toLocalDateTime());
 					fr.setAttribute(FlightReport.ATTR_HISTORIC, se.getHistoric());
 					fr.setRemarks(fr.getDraftComments());
 				}
@@ -116,8 +116,11 @@ public class BuildCommand extends AbstractCommand {
 				for (AssignmentLeg al : info.getAssignments())
 					lastLeg = al;
 		
-				criteria.setAirline(lastLeg.getAirline());
-				criteria.setAirportD(lastLeg.getAirportA());
+				if (lastLeg != null) {
+					criteria.setAirline(lastLeg.getAirline());
+					criteria.setAirportD(lastLeg.getAirportA());
+				}
+				
 				results.clear();
 			}
 				

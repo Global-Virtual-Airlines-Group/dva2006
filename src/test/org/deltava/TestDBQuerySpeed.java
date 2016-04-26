@@ -24,6 +24,7 @@ public class TestDBQuerySpeed extends TestCase {
 	
 	private MemcachedClient _mc;
 	
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		PropertyConfigurator.configure("data/log4j.test.properties");
@@ -37,6 +38,7 @@ public class TestDBQuerySpeed extends TestCase {
 		assertNotNull(c);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		if (_mc != null) _mc.shutdown();
 		LogManager.shutdown();

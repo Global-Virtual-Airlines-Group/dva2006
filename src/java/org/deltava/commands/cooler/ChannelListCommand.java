@@ -1,7 +1,8 @@
-// Copyright 2005, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
@@ -16,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A web site command to display Water Cooler channels.
  * @author Luke
- * @version 3.3
+ * @version 7.0
  * @since 1.0
  */
 
@@ -27,6 +28,7 @@ public class ChannelListCommand extends AbstractCommand {
      * @param ctx the Command context
      * @throws CommandException if an unhandled error occurs
      */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the default airline
@@ -46,11 +48,7 @@ public class ChannelListCommand extends AbstractCommand {
 			ctx.setAttribute("posts", posts, REQUEST);
 			
 			// Build a set of pilot IDs from the last posts
-			Collection<Integer> pilotIDs = new HashSet<Integer>();
-			for (Iterator<Message> i = posts.values().iterator(); i.hasNext(); ) {
-			    Message msg = i.next();
-			    pilotIDs.add(new Integer(msg.getAuthorID()));
-			}
+			Collection<Integer> pilotIDs = posts.values().stream().map(Message::getAuthorID).collect(Collectors.toSet());
 			
 			// Get the location of all the Pilots
 			GetUserData usrdao = new GetUserData(con);
@@ -70,6 +68,6 @@ public class ChannelListCommand extends AbstractCommand {
 		CommandResult result = ctx.getResult();
 		result.setURL("/jsp/cooler/channelList.jsp");
 		result.setSuccess(true);
-		ctx.setExpiry(240);
+		ctx.setExpiry(300);
 	}
 }

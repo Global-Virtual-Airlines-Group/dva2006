@@ -1,7 +1,8 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2013, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2013, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
+import java.time.Instant;
 
 import org.deltava.beans.cooler.*;
 
@@ -10,7 +11,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to handle writing Water Cooler message threads and posts.
  * @author Luke
- * @version 5.4
+ * @version 7.0
  * @since 1.0
  */
 
@@ -333,12 +334,12 @@ public class SetCoolerMessage extends DAO {
 			// Update the author/last update and clean up
 			mt.setAuthorID(rs.getInt(2));
 			mt.setLastUpdateID(rs.getInt(3));
-			mt.setLastUpdatedOn(rs.getTimestamp(4));
+			mt.setLastUpdatedOn(toInstant(rs.getTimestamp(4)));
 			rs.close();
 			_ps.close();
 			
 			// Clear out the sticky date
-			if ((mt.getStickyUntil() != null) && (mt.getStickyUntil().getTime() < System.currentTimeMillis()))
+			if ((mt.getStickyUntil() != null) && (mt.getStickyUntil().toEpochMilli() < System.currentTimeMillis()))
 				mt.setStickyUntil(null);
 			
 			// Lock the thread
@@ -403,8 +404,8 @@ public class SetCoolerMessage extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 * @see SetCoolerMessage#unstickThread(int)
 	 */
-	public void restickThread(int id, java.util.Date sDate, boolean stickyChannel) throws DAOException {
-		if ((sDate == null) || (sDate.before(new java.util.Date()))) {
+	public void restickThread(int id, Instant sDate, boolean stickyChannel) throws DAOException {
+		if ((sDate == null) || (sDate.isBefore(Instant.now()))) {
 			unstickThread(id);
 			return;
 		}
@@ -412,8 +413,7 @@ public class SetCoolerMessage extends DAO {
 		try {
 			startTransaction();
 			lockThreadRow(id);
-			prepareStatement("UPDATE common.COOLER_THREADS SET STICKY=?, STICKY_CHANNEL=?, "
-					+ "SORTDATE=? WHERE (ID=?)");
+			prepareStatement("UPDATE common.COOLER_THREADS SET STICKY=?, STICKY_CHANNEL=?, SORTDATE=? WHERE (ID=?)");
 			_ps.setTimestamp(1, createTimestamp(sDate));
 			_ps.setBoolean(2, stickyChannel);
 			_ps.setTimestamp(3, createTimestamp(sDate));

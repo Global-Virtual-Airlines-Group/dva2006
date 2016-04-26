@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2106 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
 import org.deltava.beans.schedule.Country;
@@ -6,7 +6,7 @@ import org.deltava.beans.schedule.Country;
 /**
  * A Comparator for Country beans.
  * @author Luke
- * @version 3.2
+ * @version 7.0
  * @since 3.2
  */
 
@@ -41,9 +41,9 @@ public class CountryComparator extends AbstractComparator<Country> {
 	
     /**
      * Compares two countries by the designated criteria.
-     * @see java.util.Comparator#compare(Object, Object)
      */
-    public int compareImpl(Country c1, Country c2) {
+    @Override
+	public int compareImpl(Country c1, Country c2) {
     	switch (_comparisonType) {
     	case NAME:
     		return c1.getName().compareTo(c2.getName());

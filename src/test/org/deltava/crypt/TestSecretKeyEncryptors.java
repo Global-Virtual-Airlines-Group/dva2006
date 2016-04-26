@@ -14,7 +14,8 @@ public class TestSecretKeyEncryptors extends TestCase {
         return new CoverageDecorator(TestSecretKeyEncryptors.class, new Class[] { DESEncryptor.class, AESEncryptor.class } );
     }    
     
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         _crypt = null;
         super.tearDown();
     }

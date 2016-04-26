@@ -1,7 +1,9 @@
-// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
+import java.time.LocalDateTime;
+import java.time.format.*;
 import java.sql.Connection;
 
 import org.deltava.beans.schedule.*;
@@ -18,17 +20,20 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update Schedule entries.
  * @author Luke
- * @version 2.6
+ * @version 7.0
  * @since 1.0
  */
 
 public class ScheduleEntryCommand extends AbstractFormCommand {
+	
+	private final DateTimeFormatter _tf = new DateTimeFormatterBuilder().appendPattern("HH:mm").parseLenient().toFormatter();
 
 	/**
 	 * Callback method called when saving the schedule entry.
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	protected void execSave(CommandContext ctx) throws CommandException {
 
 		// Get the old flight ID
@@ -78,12 +83,10 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 			
 			// Parse date/times
 			try {
-				entry.setTimeD(StringUtils.parseDate(ctx.getParameter("timeD"), "HH:mm"));
-				entry.setTimeA(StringUtils.parseDate(ctx.getParameter("timeA"), "HH:mm"));
+				entry.setTimeD(LocalDateTime.parse(ctx.getParameter("timeD"), _tf));
+				entry.setTimeA(LocalDateTime.parse(ctx.getParameter("timeA"), _tf));
 			} catch (IllegalArgumentException iae) {
-				CommandException ce = new CommandException(iae.getMessage());
-				ce.setLogStackDump(false);
-				throw ce;
+				throw new CommandException(iae.getMessage(), false);
 			}
 			
 			// If either airport is null, redirect to the edit page
@@ -138,6 +141,7 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	protected void execEdit(CommandContext ctx) throws CommandException {
 
 		// Get the flight ID
@@ -182,6 +186,7 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 	 * Callback method called when reading the profile. <i>NOT IMPLEMENTED</i>
 	 * @param ctx the Command context
 	 */
+	@Override
 	protected void execRead(CommandContext ctx) throws CommandException {
 		execEdit(ctx);
 	}

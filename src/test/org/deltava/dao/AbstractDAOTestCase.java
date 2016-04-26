@@ -10,7 +10,8 @@ public abstract class AbstractDAOTestCase extends TestCase {
     
     protected Connection _con;
 
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
         
         Properties props = new Properties();
@@ -21,7 +22,8 @@ public abstract class AbstractDAOTestCase extends TestCase {
         _con = DriverManager.getConnection(props.getProperty("url"), props.getProperty("user"), props.getProperty("password"));
     }
     
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         _con.close();
         super.tearDown();
     }

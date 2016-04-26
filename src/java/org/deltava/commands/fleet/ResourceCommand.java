@@ -1,8 +1,9 @@
-// Copyright 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.util.*;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.deltava.beans.fleet.Resource;
 
@@ -14,7 +15,7 @@ import org.deltava.security.command.ResourceAccessControl;
 /**
  * A Web Site Command to display/edit a Web Resource.
  * @author Luke
- * @version 2.7
+ * @version 7.0
  * @since 1.0
  */
 
@@ -25,6 +26,7 @@ public class ResourceCommand extends AbstractFormCommand {
 	 * @param ctx the Command Context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	protected void execSave(CommandContext ctx) throws CommandException {
 		try {
 			Connection con = ctx.getConnection();
@@ -35,7 +37,7 @@ public class ResourceCommand extends AbstractFormCommand {
 			if (ctx.getID() == 0) {
 				r = new Resource(ctx.getParameter("url"));
 				r.setAuthorID(ctx.getUser().getID());
-				r.setCreatedOn(new Date());
+				r.setCreatedOn(Instant.now());
 			} else {
 				r = dao.get(ctx.getID());
 				if (r == null)
@@ -78,6 +80,7 @@ public class ResourceCommand extends AbstractFormCommand {
 	 * @param ctx the Command Context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	protected void execEdit(CommandContext ctx) throws CommandException {
 		
 		Resource r = null;
@@ -99,8 +102,8 @@ public class ResourceCommand extends AbstractFormCommand {
 
 				// Load the author IDs
 				Collection<Integer> IDs = new HashSet<Integer>();
-				IDs.add(new Integer(r.getAuthorID()));
-				IDs.add(new Integer(r.getLastUpdateID()));
+				IDs.add(Integer.valueOf(r.getAuthorID()));
+				IDs.add(Integer.valueOf(r.getLastUpdateID()));
 
 				// Save the User names
 				GetPilot pdao = new GetPilot(con);
@@ -132,6 +135,7 @@ public class ResourceCommand extends AbstractFormCommand {
 	 * Method called when reading the form. <i>NOT IMPLEMENTED</i>
 	 * @param ctx the Command Context
 	 */
+	@Override
 	protected void execRead(CommandContext ctx) throws CommandException {
 		execEdit(ctx);
 	}

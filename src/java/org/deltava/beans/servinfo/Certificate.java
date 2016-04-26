@@ -1,7 +1,8 @@
-// Copyright 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import java.util.*;
+import java.time.Instant;
 import java.text.Collator;
 
 import org.deltava.beans.Person;
@@ -9,7 +10,7 @@ import org.deltava.beans.Person;
 /**
  * A bean to store VATSIM registration data.
  * @author Luke
- * @version 4.1
+ * @version 7.0
  * @since 2.6
  */
 
@@ -17,7 +18,7 @@ public class Certificate extends NetworkUser {
 	
 	private boolean _active;
 	private String _eMail;
-	private Date _regDate;
+	private Instant _regDate;
 	
 	private final Collection<String> _pilotRatings = new TreeSet<String>();
 	
@@ -41,7 +42,7 @@ public class Certificate extends NetworkUser {
 	 * Returns the user's registration date.
 	 * @return the registration date/time
 	 */
-	public Date getRegistrationDate() {
+	public Instant getRegistrationDate() {
 		return _regDate;
 	}
 	
@@ -66,10 +67,7 @@ public class Certificate extends NetworkUser {
 	 * @param rating the rating code
 	 */
 	public void addPilotRating(String rating) {
-		if (!rating.startsWith("P"))
-			rating = "P" + rating;
-		
-		_pilotRatings.add(rating);
+		_pilotRatings.add(rating.startsWith("P") ? rating : ("P" + rating));
 	}
 	
 	/**
@@ -77,17 +75,14 @@ public class Certificate extends NetworkUser {
 	 * @param domain the domain name
 	 */
 	public void setEmailDomain(String domain) {
-		if ((domain != null) && (domain.indexOf('@') != -1))
-			domain = domain.substring(domain.lastIndexOf('@') + 1);
-		
-		_eMail = domain;
+		_eMail = ((domain != null) && (domain.indexOf('@') != -1)) ? domain.substring(domain.lastIndexOf('@') + 1) : domain;
 	}
 
 	/**
 	 * Updates the user's registration date.
 	 * @param dt the registration date/time
 	 */
-	public void setRegistrationDate(Date dt) {
+	public void setRegistrationDate(Instant dt) {
 		_regDate = dt;
 	}
 	
@@ -119,6 +114,7 @@ public class Certificate extends NetworkUser {
 		return Type.PILOT;
 	}
 
+	@Override
 	public String toString() {
 		StringBuilder buf = new StringBuilder(getID());
 		buf.append(' ');

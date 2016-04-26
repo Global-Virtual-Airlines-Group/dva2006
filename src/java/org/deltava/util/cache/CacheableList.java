@@ -1,4 +1,4 @@
-// Copyright 2007, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2010, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 import java.util.ArrayList;
@@ -6,7 +6,7 @@ import java.util.ArrayList;
 /**
  * A utility class to create a cacheable List.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 1.1
  * @see CacheableSet
  */
@@ -36,10 +36,12 @@ public class CacheableList<E> extends ArrayList<E> implements CacheableCollectio
 	/**
 	 * Returns the cache key.
 	 */
+	@Override
 	public Object cacheKey() {
 		return _key;
 	}
 	
+	@Override
 	public CacheableList<E> clone() {
 		return new CacheableList<E>(this);
 	}

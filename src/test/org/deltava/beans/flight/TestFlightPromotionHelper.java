@@ -21,6 +21,7 @@ public class TestFlightPromotionHelper extends TestCase {
 	private final EquipmentType eq1 = new EquipmentType("B727-200");
 	private final EquipmentType eq2 = new EquipmentType("B737-800");
 	
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		
@@ -30,15 +31,15 @@ public class TestFlightPromotionHelper extends TestCase {
 		log.info("Starting");
 		
 		// Load airports
-		TZInfo.init("US/Eastern", null, null);
+		TZInfo est = TZInfo.init("US/Eastern", null, null);
 		_atl.setLocation(34.6404, -84.4269);
-		_atl.setTZ("US/Eastern");
+		_atl.setTZ(est);
 		_jfk.setLocation(40.6397, -73.7789);
-		_jfk.setTZ("US/Eastern");
+		_jfk.setTZ(est);
 		_dob.setLocation(33.9153, -84.5161);
-		_dob.setTZ("US/Eastern");
+		_dob.setTZ(est);
 		_bos.setLocation(42.3642, -71.005);
-		_bos.setTZ("US/Eastern");
+		_bos.setTZ(est);
 		
 		// Load equipment programs
 		assertNotNull(eq1);
@@ -55,6 +56,7 @@ public class TestFlightPromotionHelper extends TestCase {
 		eq2.setPromotionMinLength(5);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		LogManager.shutdown();
 		super.tearDown();

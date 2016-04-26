@@ -20,17 +20,20 @@ public class TestCommand extends TestCase {
             super();
         }
         
-        public void execute(CommandContext ctxt) {
+        @Override
+		public void execute(CommandContext ctxt) {
         	// empty
         }
     }
 
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
         _cmd = new MockCommand();
     }
     
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         _cmd = null;
         super.tearDown();
     }

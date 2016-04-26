@@ -1,4 +1,4 @@
-// Copyright 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.ts2;
 
 import org.deltava.beans.ComboAlias;
@@ -6,7 +6,7 @@ import org.deltava.beans.ComboAlias;
 /**
  * An enumeration to store TeamSpeak 2 channel codecs. 
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 5.0
  */
 
@@ -30,10 +30,12 @@ public enum Codec implements ComboAlias {
 		return _desc;
 	}
 	
+	@Override
 	public String getComboName() {
 		return _desc;
 	}
 	
+	@Override
 	public String getComboAlias() {
 		return name();
 	}

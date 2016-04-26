@@ -1,7 +1,8 @@
-// Copyright 2008, 2010, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2010, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
-import java.text.*;
+import java.time.Instant;
+import java.time.format.*;
 
 import javax.servlet.jsp.JspException;
 
@@ -12,13 +13,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to embed a Water Cooler signature tag.
  * @author Luke
- * @version 6.2
+ * @version 7.0
  * @since 2.3
  */
 
 public class SignatureTag extends ImageTag {
 	
-	private final DateFormat _df = new SimpleDateFormat("yyyyMMddHHmm");
+	private final DateTimeFormatter _df = new DateTimeFormatterBuilder().appendPattern("yyyyMMddHHmm").toFormatter();
 	
 	private Pilot _usr;
 	private String _aCode;
@@ -87,7 +88,7 @@ public class SignatureTag extends ImageTag {
 		buf.append(_usr.getSignatureExtension());
 		if (_noCache) {
 			buf.append("?noCache=");
-			buf.append(System.currentTimeMillis());
+			buf.append(Instant.now().getEpochSecond());
 		}
 			
 		_data.setAttribute("src", buf.toString());

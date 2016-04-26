@@ -8,12 +8,14 @@ public class TestGetSystemDataTag extends AbstractTagTestCase {
 
 	private GetSystemDataTag _tag;
 	
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		_tag = new GetSystemDataTag();
 		_tag.setPageContext(_ctx);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		_tag = null;
 		super.tearDown();

@@ -49,7 +49,7 @@ public class GetACARSData extends DAO {
 					md.setPositionCount(rs.getInt(1));
 					md.setSize(rs.getInt(2));
 					md.setCRC32(rs.getLong(3));
-					md.setArchivedOn(rs.getTimestamp(4));
+					md.setArchivedOn(rs.getTimestamp(4).toInstant());
 				}
 			}
 			
@@ -78,7 +78,7 @@ public class GetACARSData extends DAO {
 			List<ACARSRouteEntry> results = new ArrayList<ACARSRouteEntry>();
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
-					ACARSRouteEntry entry = new ACARSRouteEntry(rs.getTimestamp(1), new GeoPosition(rs.getDouble(2), rs.getDouble(3)));
+					ACARSRouteEntry entry = new ACARSRouteEntry(rs.getTimestamp(1).toInstant(), new GeoPosition(rs.getDouble(2), rs.getDouble(3)));
 					entry.setAltitude(rs.getInt(4));
 					entry.setHeading(rs.getInt(5));
 					entry.setVerticalSpeed(rs.getInt(6));
@@ -375,8 +375,8 @@ public class GetACARSData extends DAO {
 			while (rs.next()) {
 				FlightInfo info = new FlightInfo(rs.getInt(1));
 				info.setAuthorID(rs.getInt(2));
-				info.setStartTime(rs.getTimestamp(3));
-				info.setEndTime(rs.getTimestamp(4));
+				info.setStartTime(rs.getTimestamp(3).toInstant());
+				info.setEndTime(toInstant(rs.getTimestamp(4)));
 				info.setFlightCode(rs.getString(5));
 				info.setEquipmentType(rs.getString(6));
 				info.setAltitude(rs.getString(7));
@@ -417,8 +417,8 @@ public class GetACARSData extends DAO {
 			while (rs.next()) {
 				ConnectionEntry entry = new DispatchConnectionEntry(Long.parseLong(rs.getString(1), 16));
 				entry.setAuthorID(rs.getInt(2));
-				entry.setStartTime(rs.getTimestamp(3));
-				entry.setEndTime(rs.getTimestamp(4));
+				entry.setStartTime(rs.getTimestamp(3).toInstant());
+				entry.setEndTime(toInstant(rs.getTimestamp(4)));
 				entry.setRemoteAddr(rs.getString(5));
 				entry.setRemoteHost(rs.getString(6));
 				entry.setClientBuild(rs.getInt(7));

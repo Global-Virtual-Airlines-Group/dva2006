@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.cooler;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A class containing Water Cooler channel data.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -54,10 +54,12 @@ public class Channel implements Comparable<Channel>, Cacheable, ComboAlias, View
     		_topOfList = isTopOfList;
     	}
     	
+    	@Override
     	public String getComboName() {
     		return _myName;
     	}
     	
+    	@Override
     	public String getComboAlias() {
     		return getName();
     	}
@@ -77,6 +79,7 @@ public class Channel implements Comparable<Channel>, Cacheable, ComboAlias, View
     		return Collections.emptySet();
     	}
     	
+    	@Override
     	public final int compareTo(Channel c2) {
     		return _topOfList ? -1 : getName().compareTo(c2.getName());
     	}
@@ -101,10 +104,12 @@ public class Channel implements Comparable<Channel>, Cacheable, ComboAlias, View
         return _name;
     }
     
+    @Override
     public String getComboName() {
     	return _name;
     }
     
+    @Override
     public String getComboAlias() {
     	return _name;
     }
@@ -396,6 +401,7 @@ public class Channel implements Comparable<Channel>, Cacheable, ComboAlias, View
      * Converts the channel profile to a String.
      * @return the channel name
      */
+    @Override
     public String toString() {
         return getName();
     }
@@ -405,6 +411,7 @@ public class Channel implements Comparable<Channel>, Cacheable, ComboAlias, View
      * @return the cache key
      * @see Cacheable
      */
+    @Override
     public Object cacheKey() {
         return getName();
     }
@@ -413,6 +420,7 @@ public class Channel implements Comparable<Channel>, Cacheable, ComboAlias, View
      * Compares the channel to another object.
      * @return TRUE if o2 is a channel with the same name, or a String with the same name
      */
+    @Override
     public boolean equals(Object o2) {
         if (o2 instanceof Channel)
             return _name.equals(((Channel) o2)._name);
@@ -426,6 +434,7 @@ public class Channel implements Comparable<Channel>, Cacheable, ComboAlias, View
      * Returns the hashcode of the channel name.
      * @return the channel name's hashcode
      */
+    @Override
     public int hashCode() {
         return _name.hashCode();
     }
@@ -433,6 +442,7 @@ public class Channel implements Comparable<Channel>, Cacheable, ComboAlias, View
     /**
      * Compares two Channels by comparing their names.
      */
+    @Override
     public int compareTo(Channel c2) {
     	return _name.compareTo(c2._name);
     }
@@ -441,6 +451,7 @@ public class Channel implements Comparable<Channel>, Cacheable, ComboAlias, View
      * Returns the CSS row class name.
      * @return the CSS class name
      */
+    @Override
     public String getRowClassName() {
     	if (!_allowNewPosts)
     		return "opt2";

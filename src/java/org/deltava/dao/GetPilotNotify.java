@@ -1,4 +1,4 @@
-// Copyright 2005, 2010, 2011, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2010, 2011, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.*;
 /**
  * A Data Access Object to get Pilot notification lists.
  * @author Luke
- * @version 5.2
+ * @version 7.0
  * @since 1.0
  */
 
@@ -34,22 +34,27 @@ public class GetPilotNotify extends GetPilot {
          _name = firstName + " " + lastName;
       }
       
+      @Override
       public String getName() {
          return _name;
       }
       
+      @Override
       public String getEmail() {
          return _addr;
       }
       
+      @Override
       public boolean isInvalid() {
     	  return false;
       }
       
+      @Override
       public int hashCode() {
     	  return _addr.hashCode();
       }
       
+      @Override
       public boolean equals(Object o) {
     	  return (o instanceof EMailAddress) ? _addr.equals(((EMailAddress) o).getEmail()) : false; 
       }

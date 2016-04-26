@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2008, 2009, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.text.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A class to store Flight information.
  * @author Luke
- * @version 4.1
+ * @version 7.0
  * @since 1.0
  */
 
@@ -24,9 +24,15 @@ public abstract class Flight extends DatabaseBean implements RoutePair {
     private Airport _airportD;
     private Airport _airportA;
 
-    public Flight(Airline aCode, int fNumber, int leg) {
+    /**
+     * Creates the bean.
+     * @param a the Airline
+     * @param fNumber the flight number
+     * @param leg the leg
+     */
+    protected Flight(Airline a, int fNumber, int leg) {
         super();
-        setAirline(aCode);
+        setAirline(a);
         setFlightNumber(fNumber);
         setLeg((leg == 0) ? 1 : leg);
     }
@@ -92,30 +98,20 @@ public abstract class Flight extends DatabaseBean implements RoutePair {
      * @throws IllegalStateException if either airport is not set
      * @see GeoPosition#distanceTo(GeoLocation)
      */
+    @Override
     public int getDistance() {
         if ((_airportA == null) || (_airportD == null))
             throw new IllegalStateException("Both Airports are not set");
 
-        // Calculate distance
         return _airportA.getPosition().distanceTo(_airportD.getPosition());
     }
 
-    /**
-     * Returns the Arrival Airport object for this flight.
-     * @return the Arrival Airport object
-     * @see Flight#setAirportA(Airport)
-     * @see Airport
-     */
+    @Override
     public Airport getAirportA() {
         return _airportA;
     }
 
-    /**
-     * Returns the Departure Airport object for this flight.
-     * @return the Departure Airport object
-     * @see Flight#setAirportD(Airport)
-     * @see Airport
-     */
+    @Override
     public Airport getAirportD() {
         return _airportD;
     }
@@ -181,6 +177,7 @@ public abstract class Flight extends DatabaseBean implements RoutePair {
      * @throws ClassCastException if o2 is not a Flight object
      * @see Comparable#compareTo(Object)
      */
+    @Override
     public int compareTo(Object o2) {
         Flight f2 = (Flight) o2;
 
@@ -197,6 +194,7 @@ public abstract class Flight extends DatabaseBean implements RoutePair {
     /**
      * Tests for equality by comparing the Airline Code, Flight Number and Leg.
      */
+    @Override
     public boolean equals(Object o) {
     	return (o instanceof Flight) && (compareTo(o) == 0);
     }
@@ -205,6 +203,7 @@ public abstract class Flight extends DatabaseBean implements RoutePair {
      * Returns a string representation of the flight - the flight code
      * @see Flight#getFlightCode()
      */
+    @Override
     public String toString() {
         return getFlightCode();
     }

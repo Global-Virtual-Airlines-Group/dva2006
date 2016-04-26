@@ -1,4 +1,4 @@
-// Copyright 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.schedule.Airline;
 /**
  * A bean to store airport Gate information.
  * @author Luke
- * @version 6.3
+ * @version 7.0
  * @since 5.1
  */
 
@@ -98,12 +98,13 @@ public class Gate extends NavigationDataBean implements UseCount {
 	 * @param hdg the heading in degrees
 	 */
 	public void setHeading(int hdg) {
-		while (hdg > 360)
-			hdg -= 360;
-		while (hdg < 0)
-			hdg += 360;
+		int h = hdg;
+		while (h > 360)
+			h -= 360;
+		while (h < 0)
+			h += 360;
 
-		_heading = hdg;
+		_heading = h;
 	}
 
 	@Override

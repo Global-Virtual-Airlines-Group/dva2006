@@ -35,12 +35,14 @@ public class SimGateLoader extends SceneryLoaderTestCase {
 			_prefix = prefix;
 		}
 		
+		@Override
 		public boolean accept(File f) {
 			String fn = f.getName().toLowerCase();
 			return (f.isFile() && fn.startsWith(_prefix) && fn.endsWith(".bgl"));
 		}
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		log = Logger.getLogger(SimGateLoader.class);
@@ -57,6 +59,7 @@ public class SimGateLoader extends SceneryLoaderTestCase {
 		_c.setAutoCommit(false);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		_c.close();
 		super.tearDown();

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.ts2;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store TeamSpeak 2 server information.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -42,10 +42,12 @@ public class Server extends TSObject implements ComboAlias, ViewEntry {
 			_roles.put(sa, new TreeSet<String>());	
 	}
 
+	@Override
 	public String getComboName() {
 		return _name;
 	}
 
+	@Override
 	public String getComboAlias() {
 		return StringUtils.formatHex(getID());
 	}
@@ -289,6 +291,7 @@ public class Server extends TSObject implements ComboAlias, ViewEntry {
 	 * Returns the CSS class name when rendered in a view table.
 	 * @return the CSS class name
 	 */
+	@Override
 	public String getRowClassName() {
 		if (!_active)
 			return "warn";
@@ -300,6 +303,7 @@ public class Server extends TSObject implements ComboAlias, ViewEntry {
 	 * Comapres two servers by comparing their names and ports.
 	 * @see Comparable#compareTo(Object)
 	 */
+	@Override
 	public int compareTo(Object o) {
 		Server s2 = (Server) o;
 		int tmpResult = _name.compareTo(s2._name);
@@ -310,6 +314,7 @@ public class Server extends TSObject implements ComboAlias, ViewEntry {
 	 * Returns the Server name.
 	 * @return the name
 	 */
+	@Override
 	public String toString() {
 		return _name;
 	}

@@ -1,4 +1,4 @@
-// Copyright 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import org.deltava.beans.schedule.Airport.Code;
@@ -7,7 +7,7 @@ import org.deltava.beans.schedule.Airport.Code;
  * An interface to describe recipients of formatted e-mail messages, where
  * numbers, airports and distances are formatted according to user preferences.
  * @author Luke
- * @version 6.2
+ * @version 7.0
  * @since 6.2
  */
 

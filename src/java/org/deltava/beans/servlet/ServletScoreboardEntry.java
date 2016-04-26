@@ -1,14 +1,14 @@
-// Copyright 2005, 2007, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servlet;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.deltava.beans.ViewEntry;
 
 /**
  * A bean to store servlet scoreboard entries.
  * @author Luke
- * @version 4.2
+ * @version 7.0
  * @since 1.0
  */
 
@@ -71,8 +71,8 @@ public class ServletScoreboardEntry implements java.io.Serializable, Comparable<
 	 * @see ServletScoreboardEntry#getEndTime()
 	 * @see ServletScoreboardEntry#getExecutionTime()
 	 */
-	public Date getStartTime() {
-		return new Date(_startTime);
+	public Instant getStartTime() {
+		return Instant.ofEpochMilli(_startTime);
 	}
 	
 	/**
@@ -89,8 +89,8 @@ public class ServletScoreboardEntry implements java.io.Serializable, Comparable<
 	 * @see ServletScoreboardEntry#complete()
 	 * @see ServletScoreboardEntry#getStartTime()
 	 */
-	public Date getEndTime() {
-		return (_endTime == 0) ? null : new Date(_endTime);
+	public Instant getEndTime() {
+		return (_endTime == 0) ? null : Instant.ofEpochMilli(_endTime);
 	}
 	
 	/**
@@ -175,6 +175,7 @@ public class ServletScoreboardEntry implements java.io.Serializable, Comparable<
 		_url = url;
 	}
 	
+	@Override
 	public int hashCode() {
 		return _threadName.hashCode();
 	}
@@ -182,6 +183,7 @@ public class ServletScoreboardEntry implements java.io.Serializable, Comparable<
 	/**
 	 * Compares two scorebard entries by comparing their thread names.
 	 */
+	@Override
 	public int compareTo(ServletScoreboardEntry sse2) {
 		return _threadName.compareTo(sse2._threadName);
 	}
@@ -190,6 +192,7 @@ public class ServletScoreboardEntry implements java.io.Serializable, Comparable<
 	 * Returns the CSS class name if in a view table.
 	 * @return the CSS class name
 	 */
+	@Override
 	public String getRowClassName() {
 		if (_endTime > 0)
 			return null;

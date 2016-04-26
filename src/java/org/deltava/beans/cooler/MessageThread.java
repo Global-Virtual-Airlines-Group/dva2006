@@ -1,20 +1,21 @@
-// Copyright 2005, 2006, 2007, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.cooler;
 
 import java.util.*;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 
 /**
  * A class to store Water Cooler message threads.
  * @author Luke
- * @version 5.4
+ * @version 7.0
  * @since 1.0
  */
 
 public class MessageThread extends DatabaseBean implements AuthoredBean, ViewEntry {
 
-	private String _subject;
+	private final String _subject;
 	private String _channel;
 
 	private int _imgID;
@@ -29,8 +30,8 @@ public class MessageThread extends DatabaseBean implements AuthoredBean, ViewEnt
 	private boolean _stickyChannel;
 	private boolean _isPoll;
 
-	private Date _lastUpdatedOn;
-	private Date _stickyUntil;
+	private Instant _lastUpdatedOn;
+	private Instant _stickyUntil;
 
 	private int _views;
 	private int _postCount;
@@ -70,6 +71,7 @@ public class MessageThread extends DatabaseBean implements AuthoredBean, ViewEnt
 	 * @see MessageThread#setAuthorID(int)
 	 * @see MessageThread#getLastUpdateID()
 	 */
+	@Override
 	public int getAuthorID() {
 		return (_posts == null) ? _authorID : (_posts.iterator().next()).getAuthorID();
 	}
@@ -89,10 +91,10 @@ public class MessageThread extends DatabaseBean implements AuthoredBean, ViewEnt
 	 * @param dt the date/time to check
 	 * @return the post ID, or MAX_INTEGER if none
 	 */
-	public int getNextPostID(Date dt) {
+	public int getNextPostID(Instant dt) {
 		if ((_posts == null) || (dt == null)) return Integer.MAX_VALUE;
 		for (Message msg : _posts) {
-			if (msg.getCreatedOn().after(dt))
+			if (msg.getCreatedOn().isAfter(dt))
 				return msg.getID();
 		}
 		
@@ -102,9 +104,9 @@ public class MessageThread extends DatabaseBean implements AuthoredBean, ViewEnt
 	/**
 	 * Returns the date of the latest post in this thread.
 	 * @return the date/time of the latest post
-	 * @see MessageThread#setLastUpdatedOn(Date)
+	 * @see MessageThread#setLastUpdatedOn(Instant)
 	 */
-	public Date getLastUpdatedOn() {
+	public Instant getLastUpdatedOn() {
 		return _lastUpdatedOn;
 	}
 	
@@ -120,9 +122,9 @@ public class MessageThread extends DatabaseBean implements AuthoredBean, ViewEnt
 	/**
 	 * Returns the date/time this thread will be &quot;stuck&quot; at the top of the thread list until.
 	 * @return the date/time the post will be a sticky until
-	 * @see MessageThread#setStickyUntil(Date)
+	 * @see MessageThread#setStickyUntil(Instant)
 	 */
-	public Date getStickyUntil() {
+	public Instant getStickyUntil() {
 		return _stickyUntil;
 	}
 
@@ -275,6 +277,7 @@ public class MessageThread extends DatabaseBean implements AuthoredBean, ViewEnt
 	 * @see MessageThread#setLastUpdateID(int)
 	 * @see DatabaseBean#validateID(int, int)
 	 */
+	@Override
 	public void setAuthorID(int id) {
 		_authorID = id;
 	}
@@ -295,7 +298,7 @@ public class MessageThread extends DatabaseBean implements AuthoredBean, ViewEnt
 	 * Updates the date this thread's latest message was posted.
 	 * @param dt the date/time the last message was posted
 	 */
-	public void setLastUpdatedOn(Date dt) {
+	public void setLastUpdatedOn(Instant dt) {
 		_lastUpdatedOn = dt;
 	}
 
@@ -304,8 +307,8 @@ public class MessageThread extends DatabaseBean implements AuthoredBean, ViewEnt
 	 * @param dt the date/time
 	 * @see MessageThread#getStickyUntil()
 	 */
-	public void setStickyUntil(Date dt) {
-		if ((dt == null) || (dt.getTime() <= System.currentTimeMillis()))
+	public void setStickyUntil(Instant dt) {
+		if ((dt == null) || dt.isBefore(Instant.now()))
 			_stickyUntil = null;
 		else
 			_stickyUntil = dt;
@@ -418,7 +421,7 @@ public class MessageThread extends DatabaseBean implements AuthoredBean, ViewEnt
 			_posts = new TreeSet<Message>();
 			_lastUpdatedOn = msg.getCreatedOn();
 			_lastUpdateID = msg.getAuthorID();
-		} else if (msg.getCreatedOn().after(_lastUpdatedOn)) {
+		} else if (msg.getCreatedOn().isAfter(_lastUpdatedOn)) {
 			_lastUpdatedOn = msg.getCreatedOn();
 			_lastUpdateID = msg.getAuthorID();
 		}
@@ -552,6 +555,7 @@ public class MessageThread extends DatabaseBean implements AuthoredBean, ViewEnt
 	/**
 	 * Compares to another thread via the last updated on date.
 	 */
+	@Override
 	public int compareTo(Object o2) {
 		MessageThread t2 = (MessageThread) o2;
 		return _lastUpdatedOn.compareTo(t2.getLastUpdatedOn());
@@ -561,6 +565,7 @@ public class MessageThread extends DatabaseBean implements AuthoredBean, ViewEnt
 	 * Selects a table row class based upon whether the thread is hidden or not.
 	 * @return the row CSS class name
 	 */
+	@Override
 	public String getRowClassName() {
 		return (_hidden) ? "warn" : null;
 	}

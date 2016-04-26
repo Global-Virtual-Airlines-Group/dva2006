@@ -1,7 +1,7 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.hr;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 
@@ -15,7 +15,7 @@ import org.deltava.beans.*;
 public class NominationComment extends DatabaseBean implements AuthoredBean, ViewEntry {
 	
 	private boolean _support = true;
-	private Date _created;
+	private Instant _created;
 	private String _body;
 
 	/**
@@ -33,9 +33,9 @@ public class NominationComment extends DatabaseBean implements AuthoredBean, Vie
 	/**
 	 * Returns the comment creation date.
 	 * @return the date/time the comment was written
-	 * @see NominationComment#setCreatedOn(Date)
+	 * @see NominationComment#setCreatedOn(Instant)
 	 */
-	public Date getCreatedOn() {
+	public Instant getCreatedOn() {
 		return _created;
 	}
 	
@@ -81,7 +81,7 @@ public class NominationComment extends DatabaseBean implements AuthoredBean, Vie
 	 * @param dt the date/time the comment was created
 	 * @see NominationComment#getCreatedOn()
 	 */
-	public void setCreatedOn(Date dt) {
+	public void setCreatedOn(Instant dt) {
 		_created = dt;
 	}
 	
@@ -94,12 +94,14 @@ public class NominationComment extends DatabaseBean implements AuthoredBean, Vie
 		_support = isSupport;
 	}
 	
+	@Override
 	public int compareTo(Object o2) {
 		NominationComment nc2 = (NominationComment) o2;
 		int tmpResult = _created.compareTo(nc2._created);
 		return (tmpResult == 0) ? Integer.valueOf(getID()).compareTo(Integer.valueOf(nc2.getID())) : tmpResult;
 	}
 	
+	@Override
 	public String getRowClassName() {
 		return _support ? null : "warn";
 	}

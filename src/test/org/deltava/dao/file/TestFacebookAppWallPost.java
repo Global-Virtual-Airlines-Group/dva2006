@@ -11,12 +11,14 @@ import junit.framework.TestCase;
 
 public class TestFacebookAppWallPost extends TestCase {
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		PropertyConfigurator.configure("etc/log4j.test.properties");
 		SystemData.init();
 	}
 
+	@SuppressWarnings("static-method")
 	public void testPostAppWall() throws Exception {
 
 		// Build the news entry

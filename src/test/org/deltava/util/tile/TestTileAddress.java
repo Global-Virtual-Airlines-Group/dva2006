@@ -5,8 +5,9 @@ import java.util.*;
 
 import junit.framework.TestCase;
 
+@SuppressWarnings("static-method")
 public class TestTileAddress extends TestCase {
-
+	
 	public void testLevel1() {
 		TileAddress addr = new TileAddress(1, 0, 1);
 		assertEquals(1, addr.getX());

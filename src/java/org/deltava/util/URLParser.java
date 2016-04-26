@@ -1,4 +1,4 @@
-// Copyright 2004, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2010, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
@@ -6,7 +6,7 @@ import java.util.*;
 /**
  * A utility class to parse URLs.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -25,10 +25,8 @@ public class URLParser {
         _ext = (extpos == -1) ? "" : rawURL.substring(extpos + 1);
         
         // Parse the directories
-        if (extpos != -1)
-            rawURL = rawURL.substring(0, extpos);
-        
-        StringTokenizer tokens = new StringTokenizer(rawURL, "/");
+        String rURL = (extpos != -1) ? rawURL.substring(0, extpos) : rawURL; 
+        StringTokenizer tokens = new StringTokenizer(rURL, "/");
         while (tokens.hasMoreTokens())
             _elements.add(tokens.nextToken());
     }

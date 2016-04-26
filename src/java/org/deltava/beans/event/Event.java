@@ -2,6 +2,7 @@
 package org.deltava.beans.event;
 
 import java.util.*;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.*;
@@ -22,9 +23,9 @@ public class Event extends ImageBean implements ComboAlias, TimeSpan {
 	
     private String _name;
     private String _briefing;
-    private Date _startTime;
-    private Date _endTime;
-    private Date _signupDeadline;
+    private Instant _startTime;
+    private Instant _endTime;
+    private Instant _signupDeadline;
     private String _bannerExt;
     
     private Status _status;
@@ -65,10 +66,12 @@ public class Event extends ImageBean implements ComboAlias, TimeSpan {
         return _name;
     }
     
+    @Override
     public String getComboName() {
         return getName();
     }
     
+    @Override
     public String getComboAlias() {
         return String.valueOf(getID());
     }
@@ -81,12 +84,11 @@ public class Event extends ImageBean implements ComboAlias, TimeSpan {
         return _briefing;
     }
     
-    /**
+    /*
      * Null-safe helper method to compare dates.
      */
-    private static boolean before(Date d2) {
-    	long now = System.currentTimeMillis();    	
-    	return (d2 == null) ? true : (now < d2.getTime());
+    private static boolean before(Instant d2) {
+    	return (d2 == null) ? true : (System.currentTimeMillis() < d2.toEpochMilli());
     }
     
     /**
@@ -140,12 +142,13 @@ public class Event extends ImageBean implements ComboAlias, TimeSpan {
     /**
      * Returns the starting time for this Event.
      * @return the date/time the Event starts
-     * @see Event#setStartTime(Date)
+     * @see Event#setStartTime(Instant)
      * @see Event#getEndTime()
      * @see Event#getDate()
      * @see Event#getSignupDeadline()
      */
-    public Date getStartTime() {
+    @Override
+    public Instant getStartTime() {
         return _startTime;
     }
     
@@ -153,29 +156,31 @@ public class Event extends ImageBean implements ComboAlias, TimeSpan {
      * Returns the start time for this Event.
      * @see CalendarEntry#getDate()
      */
-    public Date getDate() {
+    @Override
+    public Instant getDate() {
     	return _startTime;
     }
     
     /**
      * Returns the ending time for this Event.
      * @return the date/time the Event ends
-     * @see Event#setEndTime(Date)
+     * @see Event#setEndTime(Instant)
      * @see Event#getStartTime()
      * @see Event#getSignupDeadline()
      */
-    public Date getEndTime() {
+    @Override
+    public Instant getEndTime() {
         return _endTime;
     }
     
     /**
      * Returns the final date/time for pilots to sign up for this Event.
      * @return the date/time signups close
-     * @see Event#setSignupDeadline(Date)
+     * @see Event#setSignupDeadline(Instant)
      * @see Event#getStartTime()
      * @see Event#getEndTime()
      */
-    public Date getSignupDeadline() {
+    public Instant getSignupDeadline() {
         return _signupDeadline;
     }
     
@@ -260,8 +265,7 @@ public class Event extends ImageBean implements ComboAlias, TimeSpan {
      * @return a Route bean, or null if not found
      */
     public Route getRoute(int routeID) {
-    	for (Iterator<Route> i = _routes.iterator(); i.hasNext(); ) {
-    		Route r = i.next();
+    	for (Route r : _routes) {
     		if (r.getRouteID() == routeID)
     			return r;
     	}
@@ -422,13 +426,13 @@ public class Event extends ImageBean implements ComboAlias, TimeSpan {
      * to one hour before the start time.
      * @param dt the start date/time
      * @see Event#getStartTime()
-     * @see Event#setEndTime(Date)
-     * @see Event#setSignupDeadline(Date)
+     * @see Event#setEndTime(Instant)
+     * @see Event#setSignupDeadline(Instant)
      */
-    public void setStartTime(Date dt) {
+    public void setStartTime(Instant dt) {
         _startTime = dt;
         if (dt != null)
-        	_signupDeadline = new Date(dt.getTime() - 60000);
+        	_signupDeadline = dt.minusSeconds(60000);
     }
     
     /**
@@ -437,11 +441,11 @@ public class Event extends ImageBean implements ComboAlias, TimeSpan {
      * @throws IllegalArgumentException if dt is before the start time
      * @throws NullPointerException if the start time is null
      * @see Event#getEndTime()
-     * @see Event#setStartTime(Date)
-     * @see Event#setSignupDeadline(Date)
+     * @see Event#setStartTime(Instant)
+     * @see Event#setSignupDeadline(Instant)
      */
-    public void setEndTime(Date dt) {
-        if ((dt != null) && (dt.before(_startTime)))
+    public void setEndTime(Instant dt) {
+        if ((dt != null) && dt.isBefore(_startTime))
             throw new IllegalArgumentException("End Time cannot be before Start Time");
         
         _endTime = dt;
@@ -453,11 +457,11 @@ public class Event extends ImageBean implements ComboAlias, TimeSpan {
      * @throws IllegalArgumentException if dt is before the start time
      * @throws NullPointerException if the start time is null
      * @see Event#getSignupDeadline()
-     * @see Event#setStartTime(Date)
-     * @see Event#setEndTime(Date)
+     * @see Event#setStartTime(Instant)
+     * @see Event#setEndTime(Instant)
      */
-    public void setSignupDeadline(Date dt) {
-        if ((dt != null) && (dt.after(_startTime)))
+    public void setSignupDeadline(Instant dt) {
+        if ((dt != null) && dt.isAfter(_startTime))
             throw new IllegalArgumentException("Signup Deadline cannot be after Start Time");
         
         _signupDeadline = dt;
@@ -602,6 +606,7 @@ public class Event extends ImageBean implements ComboAlias, TimeSpan {
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      * @throws ClassCastException if o2 is not an Event
      */
+    @Override
     public int compareTo(Object o2) {
         Event e2 = (Event) o2;
         int tmpResult = _startTime.compareTo(e2.getStartTime());

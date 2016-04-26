@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.ComboAlias;
 /**
  * A bean to store country names and ISO-3316 codes.
  * @author Luke
- * @version 4.1
+ * @version 7.0
  * @since 3.2
  */
 
@@ -17,9 +17,9 @@ public class Country implements java.io.Serializable, Comparable<Country>, Combo
 	private static final Map<String, Country> _countries = new TreeMap<String, Country>();
 	private static final Collection<String> _continents = new TreeSet<String>();
 	
-	private String _code;
-	private String _name;
-	private String _continent;
+	private final String _code;
+	private final String _name;
+	private final String _continent;
 	
 	/**
 	 * Initializes a country bean.
@@ -99,14 +99,17 @@ public class Country implements java.io.Serializable, Comparable<Country>, Combo
 		return _continent;
 	}
 	
+	@Override
 	public String getComboName() {
 		return _name;
 	}
 	
+	@Override
 	public String getComboAlias() {
 		return _code;
 	}
 	
+	@Override
 	public String toString() {
 		StringBuilder buf = new StringBuilder(_name);
 		buf.append(" (");
@@ -115,10 +118,12 @@ public class Country implements java.io.Serializable, Comparable<Country>, Combo
 		return buf.toString();
 	}
 	
+	@Override
 	public int hashCode() {
 		return _code.hashCode();
 	}
 	
+	@Override
 	public boolean equals(Object o) {
 		if (o instanceof Country)
 			return ((Country) o).getCode().equals(_code);
@@ -126,6 +131,7 @@ public class Country implements java.io.Serializable, Comparable<Country>, Combo
 		return _code.equals(String.valueOf(o).toUpperCase());
 	}
 	
+	@Override
 	public int compareTo(Country c2) {
 		return _name.compareTo(c2._name);
 	}

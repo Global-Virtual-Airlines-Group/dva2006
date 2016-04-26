@@ -1,8 +1,7 @@
-// Copyright 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
-import java.util.Date;
-import java.text.*;
+import java.time.Instant;
 
 import javax.servlet.jsp.JspException;
 
@@ -11,13 +10,13 @@ import org.deltava.util.StringUtils;
 /**
  * An HTML 5 JSP tag for date input elements. 
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 5.0
  */
 
 public class DateInputTag extends HTML5InputTag {
 	
-	private final DateFormat HTML5_DATE_FMT = new SimpleDateFormat("yyyy-MM-dd");
+	private static final String HTML5_DATE_FMT = "yyyy-MM-dd";
 
 	/**
 	 * Creates an e-mail tag if executing in an HTML5 browser.
@@ -31,12 +30,12 @@ public class DateInputTag extends HTML5InputTag {
 		// Check for HTML5 browser
 		if (!isHTML5()) {
 			removeHTML5Attributes();
-			if (_value instanceof Date)
-				_value = StringUtils.format((Date) _value, _dateFmt);
+			if (_value instanceof Instant)
+				_value = StringUtils.format((Instant) _value, _dateFmt);
 		} else {
 			_data.setAttribute("type", "date");
-			if (_value instanceof Date)
-				_value = HTML5_DATE_FMT.format(_value);
+			if (_value instanceof Instant)
+				_value = StringUtils.format((Instant) _value, HTML5_DATE_FMT);
 		}
 		
 		return SKIP_BODY;
@@ -46,16 +45,16 @@ public class DateInputTag extends HTML5InputTag {
 	 * Sets the maximum date.
 	 * @param dt the date/time
 	 */
-	public void setMax(Date dt) {
-		_data.setAttribute("max", HTML5_DATE_FMT.format(dt));
+	public void setMax(Instant dt) {
+		_data.setAttribute("max", StringUtils.format(dt, HTML5_DATE_FMT));
 	}
 	
 	/**
 	 * Sets the minimum date.
 	 * @param dt the date/time
 	 */
-	public void setMin(Date dt) {
-		_data.setAttribute("min", HTML5_DATE_FMT.format(dt));
+	public void setMin(Instant dt) {
+		_data.setAttribute("min", StringUtils.format(dt, HTML5_DATE_FMT));
 	}
 	
 	/**

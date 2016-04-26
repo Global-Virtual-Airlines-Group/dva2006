@@ -22,14 +22,16 @@ public class TestServiceContext extends TestCase {
       return new CoverageDecorator(TestServiceContext.class, new Class[] { ServiceContext.class } );
   }
 
-   protected void setUp() throws Exception {
+   @Override
+protected void setUp() throws Exception {
       super.setUp();
       _req = new HttpServletRequestSimulator();
       _rsp = new HttpServletResponseSimulator();
       _ctx = new ServiceContext(_req, _rsp);
    }
 
-   protected void tearDown() throws Exception {
+   @Override
+protected void tearDown() throws Exception {
       _ctx = null;
       super.tearDown();
    }

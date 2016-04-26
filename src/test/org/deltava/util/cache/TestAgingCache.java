@@ -20,12 +20,14 @@ public class TestAgingCache extends TestCase {
       return new CoverageDecorator(TestAgingCache.class, new Class[] { AgingCache.class, AgingCache.AgingCacheEntry.class } );
   }
    
-   protected void setUp() throws Exception {
+   @Override
+protected void setUp() throws Exception {
       super.setUp();
       _cache = new AgingCache<Cacheable>(2);
    }
 
-   protected void tearDown() throws Exception {
+   @Override
+protected void tearDown() throws Exception {
       _cache = null;
       super.tearDown();
    }

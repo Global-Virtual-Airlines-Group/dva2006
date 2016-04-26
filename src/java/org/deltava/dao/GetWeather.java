@@ -1,4 +1,4 @@
-// Copyright 2009, 2011, 2012, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2011, 2012, 2013, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load weather data from the database.
  * @author Luke
- * @version 6.3
+ * @version 7.0
  * @since 2.7
  */
 
@@ -87,7 +87,7 @@ public class GetWeather extends DAO {
 						a.setAltitude(rs.getInt(7));
 						String data = rs.getString(2);
 						m = MetarParser.parse(data);
-						m.setDate(rs.getTimestamp(1));
+						m.setDate(rs.getTimestamp(1).toInstant());
 						m.setILS(ILSCategory.values()[rs.getInt(3)]);
 						m.setData(data);
 						m.setAirport(a);
@@ -127,7 +127,7 @@ public class GetWeather extends DAO {
 				if (rs.next()) {
 					String data = rs.getString(2);
 					m = MetarParser.parse(data);
-					m.setDate(rs.getTimestamp(1));
+					m.setDate(rs.getTimestamp(1).toInstant());
 					m.setILS(ILSCategory.values()[rs.getInt(3)]);
 					m.setData(data);
 					AirportLocation loc = new AirportLocation(rs.getDouble(4), rs.getDouble(5));
@@ -168,7 +168,7 @@ public class GetWeather extends DAO {
 			try (ResultSet rs = _ps.executeQuery()) {
 				if (rs.next()) {
 					t = new TAF();
-					t.setDate(rs.getTimestamp(1));
+					t.setDate(rs.getTimestamp(1).toInstant());
 					t.setAmended(rs.getBoolean(2));
 					t.setData(rs.getString(3));
 					AirportLocation loc = new AirportLocation(rs.getDouble(4), rs.getDouble(5));

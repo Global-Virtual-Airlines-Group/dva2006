@@ -1,14 +1,14 @@
-// Copyright 2004, 2005, 2008, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2008, 2009, 2010, 2012, 2106 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 
 /**
  * A comparator for sorting Pilot objects.
  * @author Luke
- * @version 4.2
+ * @version 7.0
  * @since 1.0
  */
 
@@ -58,7 +58,8 @@ public class PilotComparator extends PersonComparator<Pilot> {
     /**
      * Compares two pilot objects by the designated criteria.
      */
-    protected int compareImpl(Pilot p1, Pilot p2) {
+    @Override
+	protected int compareImpl(Pilot p1, Pilot p2) {
         
         // If we are using a comparison method that is implemented in the superclass, call it
         if (_comparisonType < PilotComparator.PILOTCODE)
@@ -86,8 +87,8 @@ public class PilotComparator extends PersonComparator<Pilot> {
         		    break;
         		    
         		case LASTFLIGHT:
-        			Date lf1 = p1.getLastFlight();
-        			Date lf2 = p2.getLastFlight();
+        			Instant lf1 = p1.getLastFlight();
+        			Instant lf2 = p2.getLastFlight();
         			if (lf1 == null)
         				tmpResult = (lf2 == null) ? 0 : -1;
         			else if (lf2 == null)

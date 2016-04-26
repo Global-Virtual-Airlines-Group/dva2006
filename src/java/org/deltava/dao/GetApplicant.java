@@ -15,7 +15,7 @@ import org.deltava.util.*;
 /**
  * A Data Access Object to read Applicant data.
  * @author Luke
- * @version 6.4
+ * @version 7.0
  * @since 1.0
  */
 
@@ -383,6 +383,7 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 	 * @return a Collection of Database IDs as Integers
 	 * @throws DAOException if a JDBC error occurs
 	 */
+	@Override
 	public Collection<Integer> checkSoundex(Person usr, String dbName) throws DAOException {
 
 		// Build the SQL statement
@@ -456,7 +457,7 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 				a.setRank(Rank.fromName(rs.getString(17)));
 				a.setNotificationCode(rs.getInt(18));
 				a.setEmailAccess(rs.getInt(19));
-				a.setCreatedOn(rs.getTimestamp(20));
+				a.setCreatedOn(toInstant(rs.getTimestamp(20)));
 				// skip 21
 				a.setRegisterHostName(rs.getString(22));
 				a.setDateFormat(rs.getString(23));

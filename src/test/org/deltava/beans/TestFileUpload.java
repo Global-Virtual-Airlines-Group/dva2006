@@ -15,11 +15,13 @@ public class TestFileUpload extends TestCase {
 		return new CoverageDecorator(TestFileUpload.class, new Class[] { FileUpload.class } );
    }
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		_fu = new FileUpload("file.name");
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		_fu = null;
 		super.tearDown();
@@ -42,6 +44,7 @@ public class TestFileUpload extends TestCase {
         assertEquals(f.length(), _fu.getSize());
 	}
 	
+	@SuppressWarnings("static-method")
 	public void testGZStream() throws IOException {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		try (GZIPOutputStream gzout = new GZIPOutputStream(out)) {

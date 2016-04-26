@@ -23,6 +23,7 @@ public class AccomplishmentLoader extends TestCase {
 	
 	private Connection _c;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		
@@ -65,6 +66,7 @@ public class AccomplishmentLoader extends TestCase {
 		SystemData.add("airports", apdao.getAll());
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		_c.close();
 		LogManager.shutdown();
@@ -100,7 +102,7 @@ public class AccomplishmentLoader extends TestCase {
 			// Walk through the accomplishments
 			boolean hasUpdate = false;
 			for (Accomplishment a : accs) {
-				java.util.Date dt = helper.achieved(a);
+				java.time.Instant dt = helper.achieved(a);
 				if (dt != null) {
 					log.info(p.getName() + " achieved " + a.getName() + " on " + StringUtils.format(dt, "MM/dd/yyyy"));
 					awdao.achieve(p.getID(), a, dt);

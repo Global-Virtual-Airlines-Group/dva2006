@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import org.deltava.beans.*;
@@ -7,9 +7,9 @@ import org.deltava.beans.schedule.GeoPosition;
 import org.deltava.util.*;
 
 /**
- * A bean to store information about users connected to an FSD server 
+ * A bean to store information about users connected to an FSD server. 
  * @author Luke
- * @version 3.4
+ * @version 7.0
  * @since 3.4
  */
 
@@ -37,26 +37,12 @@ public abstract class ConnectedUser extends NetworkUser implements ViewEntry, Ma
         return _callSign;
     }
 
-	/**
-	 * Returns the User's current latitude.
-	 * @return the latitude in degrees
-	 * @see ConnectedUser#getLongitude()
-	 * @see ConnectedUser#getPosition()
-	 * @see ConnectedUser#setPosition(double, double)
-	 * @see ConnectedUser#setPosition(String, String)
-	 */
+    @Override
 	public final double getLatitude() {
 		return _position.getLatitude();
 	}
-	
-	/**
-	 * Returns the User's current longitude.
-	 * @return the longitude in degrees
-	 * @see ConnectedUser#getLatitude() 
-	 * @see ConnectedUser#getPosition()
-	 * @see ConnectedUser#setPosition(double, double)
-	 * @see ConnectedUser#setPosition(String, String)
-	 */
+
+	@Override
 	public final double getLongitude() {
 		return _position.getLongitude();
 	}

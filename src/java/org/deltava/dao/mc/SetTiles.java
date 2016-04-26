@@ -1,6 +1,7 @@
-// Copyright 2012, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2013, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.mc;
 
+import java.time.Instant;
 import java.util.*;
 
 import net.spy.memcached.*;
@@ -12,7 +13,7 @@ import org.deltava.util.tile.*;
 /**
  * A Data Access Object to write map tiles to memcached. 
  * @author Luke
- * @version 6.1
+ * @version 7.0
  * @since 5.0
  */
 
@@ -25,7 +26,7 @@ public class SetTiles extends MemcachedDAO implements SeriesWriter {
 	 */
 	@Override
 	public void write(ImageSeries is) throws DAOException {
-		Long seriesDate = (is.getDate() == null) ? null : Long.valueOf(is.getDate().getTime());
+		Long seriesDate = (is.getDate() == null) ? null : Long.valueOf(is.getDate().toEpochMilli());
 		
 		addImageType(is.getType());
 		addImageDate(is.getType(), is.getDate());
@@ -44,7 +45,7 @@ public class SetTiles extends MemcachedDAO implements SeriesWriter {
 	 * @throws DAOException if an error occured
 	 */
 	public void purge(ImageSeries is) throws DAOException {
-		Long seriesDate = (is.getDate() == null) ? null : Long.valueOf(is.getDate().getTime());
+		Long seriesDate = (is.getDate() == null) ? null : Long.valueOf(is.getDate().toEpochMilli());
 		try {
 			setBucket("mapTiles", is.getType(), seriesDate);
 			boolean hasSeries = (MemcachedUtils.get(createKey("$ME"), 1000) != null);
@@ -66,7 +67,8 @@ public class SetTiles extends MemcachedDAO implements SeriesWriter {
 		setBucket("mapTiles");
 		
 		CASMutation<Object> mutation = new CASMutation<Object>() {
-	    	public Collection<String> getNewValue(Object current) {
+	    	@Override
+			public Collection<String> getNewValue(Object current) {
 	    		@SuppressWarnings("unchecked")
 	    		Collection<String> c = (Collection<String>) current;
 	            Collection<String> c2 = new TreeSet<String>(c);
@@ -86,15 +88,16 @@ public class SetTiles extends MemcachedDAO implements SeriesWriter {
 	/*
 	 * Helper method to use CAS to add an imagery effective date.
 	 */
-	private void addImageDate(String type, final Date effDate) throws DAOException {
+	private void addImageDate(String type, final Instant effDate) throws DAOException {
 		if (effDate == null) return;
 		setBucket("mapTiles", type);
 
 		CASMutation<Object> mutation = new CASMutation<Object>() {
-	    	public List<Date> getNewValue(Object current) {
+	    	@Override
+			public List<Instant> getNewValue(Object current) {
 	    		@SuppressWarnings("unchecked")
-				Collection<Date> c = (Collection<Date>) current;
-	            List<Date> ll = new ArrayList<Date>(c);
+				Collection<Instant> c = (Collection<Instant>) current;
+	            List<Instant> ll = new ArrayList<Instant>(c);
 	            while (ll.size() > 10)
 	                ll.remove(0);
 

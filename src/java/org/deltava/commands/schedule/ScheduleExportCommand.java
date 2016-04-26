@@ -1,8 +1,9 @@
-// Copyright 2005, 2006, 2008, 2010, 2015 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2010, 2015, 2016 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.io.*;
 import java.util.*;
+import java.time.Instant;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -22,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site command to export Flight Schedule data in CSV format.
  * @author Luke
- * @version 6.1
+ * @version 7.0
  * @since 1.0
  */
 
@@ -55,6 +56,7 @@ public class ScheduleExportCommand extends AbstractCommand {
       // Set the content type and force Save As
       String aCode = SystemData.get("airline.code");
       ctx.getResponse().setContentType("text/csv");
+      ctx.getResponse().setCharacterEncoding("utf-8");
       ctx.setHeader("Content-disposition", "attachment; filename=" + aCode.toLowerCase() + "_schedule.csv");
 
       // Get the airport code type
@@ -62,7 +64,7 @@ public class ScheduleExportCommand extends AbstractCommand {
       try {
          // Write the header
          PrintWriter out = ctx.getResponse().getWriter();
-         out.println("; " + aCode + " Flight Schedule - exported on " + StringUtils.format(new Date(), "MM/dd/yyyy HH:mm:ss"));
+         out.println("; " + aCode + " Flight Schedule - exported on " + StringUtils.format(Instant.now(), "MM/dd/yyyy HH:mm:ss"));
          out.println("AIRLINE,NUMBER,LEG,EQTYPE,FROM,DTIME,TO,ATIME,DISTANCE,HISTORIC,PURGE");
 
          // Loop through the results

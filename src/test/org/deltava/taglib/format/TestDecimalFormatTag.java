@@ -12,12 +12,14 @@ public class TestDecimalFormatTag extends AbstractTagTestCase {
 
     private DecimalFormatTag _tag;
     
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
         _tag = new DecimalFormatTag();
     }
 
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         _tag.release();
         _tag = null;
         super.tearDown();

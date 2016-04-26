@@ -1,7 +1,8 @@
-// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taskman;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 
@@ -12,7 +13,7 @@ import org.deltava.util.system.SystemData;
  * A class to control execution of Scheduled Tasks. This operates much like a Unix-style cron daemon in
  * that it checks whether a task should be executed once every 60 seconds.
  * @author Luke
- * @version 2.6
+ * @version 7.0
  * @since 1.0
  */
 
@@ -35,6 +36,7 @@ public class TaskScheduler implements Runnable, Thread.UncaughtExceptionHandler 
 	/**
 	 * Returns the thread name.
 	 */
+	@Override
 	public String toString() {
 		return SystemData.get("airline.code") + " Task Scheduler";
 	}
@@ -59,6 +61,7 @@ public class TaskScheduler implements Runnable, Thread.UncaughtExceptionHandler 
 	/**
 	 * Executes the Task Manager.
 	 */
+	@Override
 	public final void run() {
 		log.info("Starting");
 
@@ -115,13 +118,7 @@ public class TaskScheduler implements Runnable, Thread.UncaughtExceptionHandler 
 	 */
 	public Collection<TaskInfo> getTaskInfo() {
 		Collection<Task> tasks = new TreeSet<Task>(_tasks.values());
-		Collection<TaskInfo> results = new ArrayList<TaskInfo>();
-		for (Iterator<Task> i = tasks.iterator(); i.hasNext();) {
-			Task t = i.next();
-			results.add(new TaskInfo(t));
-		}
-
-		return results;
+		return tasks.stream().map(t -> new TaskInfo(t)).collect(Collectors.toList());
 	}
 	
 	/**
@@ -129,6 +126,7 @@ public class TaskScheduler implements Runnable, Thread.UncaughtExceptionHandler 
 	 * @param t the Thread
 	 * @param e the Exception
 	 */
+	@Override
 	public void uncaughtException(Thread t, Throwable e) {
 		log.error("Uncaught Exception in " + t.getName(), e);
 	}

@@ -1,7 +1,8 @@
-// Copyright 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 
@@ -10,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * An XACARS Position Report.
  * @author Luke
- * @version 4.1
+ * @version 7.0
  * @since 4.1
  */
 
@@ -24,7 +25,7 @@ public class XARouteEntry extends RouteEntry {
 	/**
 	 * Creates the object.
 	 */
-	public XARouteEntry(GeoLocation loc, Date dt) {
+	public XARouteEntry(GeoLocation loc, Instant dt) {
 		super(loc, dt);
 	}
 	
@@ -92,6 +93,7 @@ public class XARouteEntry extends RouteEntry {
 	 * Returns the warning message.
 	 * @return the warning
 	 */
+	@Override
 	public String getWarning() {
 		Collection<String> warnings = new ArrayList<String>();
 		if ((getAltitude() < 10000) && (getAirSpeed() > 250))

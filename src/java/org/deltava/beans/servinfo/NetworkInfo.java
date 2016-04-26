@@ -1,7 +1,8 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import java.util.*;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 import org.deltava.comparators.GeoComparator;
@@ -12,7 +13,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store aggregated network information.
  * @author Luke
- * @version 5.4
+ * @version 7.0
  * @since 1.0
  */
 
@@ -20,7 +21,7 @@ public class NetworkInfo implements Cacheable {
 
     private final OnlineNetwork _net;
     private int _version = 7;
-    private Date _validDate;
+    private Instant _validDate;
     
     private boolean _isExpired;
     private boolean _hasPilotIDs;
@@ -68,9 +69,9 @@ public class NetworkInfo implements Cacheable {
     /**
      * Returns the effective date of this data.
      * @return the date/time the data was generated
-     * @see NetworkInfo#setValidDate(Date)
+     * @see NetworkInfo#setValidDate(Instant)
      */
-    public Date getValidDate() {
+    public Instant getValidDate() {
         return _validDate;
     }
     
@@ -115,12 +116,7 @@ public class NetworkInfo implements Cacheable {
     			case GND:
     				maxDistance = 60;
     				break;
-    				
-    			case TWR:
-    			case ATIS:
-    				maxDistance = 125;
-    				break;
-    				
+
     			case APP:
     				maxDistance = 350;
     				break;
@@ -131,6 +127,12 @@ public class NetworkInfo implements Cacheable {
     				
     			case FSS:
     				maxDistance = 2500;
+    				break;
+
+    			case TWR:
+    			case ATIS:
+    			default:
+    				maxDistance = 125;
     				break;
     		}
     		
@@ -213,7 +215,7 @@ public class NetworkInfo implements Cacheable {
      * @param d the date/time this data was generated
      * @see NetworkInfo#getValidDate()
      */
-    public void setValidDate(Date d) {
+    public void setValidDate(Instant d) {
         _validDate = d;
     }
     
@@ -311,11 +313,12 @@ public class NetworkInfo implements Cacheable {
     /**
      * Clones this NetworkInfo bean.
      */
+    @Override
     public NetworkInfo clone() {
     	NetworkInfo ni2 = new NetworkInfo(_net);
     	ni2._version = _version;
     	ni2._isExpired = _isExpired;
-    	ni2._validDate = new Date(_validDate.getTime());
+    	ni2._validDate = Instant.ofEpochMilli(_validDate.toEpochMilli());
     	ni2._pilots.putAll(_pilots);
     	ni2._controllers.putAll(_controllers);
     	ni2._servers.putAll(_servers);
@@ -325,6 +328,7 @@ public class NetworkInfo implements Cacheable {
     /**
      * Returns the network's hash code.
      */
+    @Override
     public int hashCode() {
        return _net.hashCode();
     }
@@ -333,6 +337,7 @@ public class NetworkInfo implements Cacheable {
      * Returns this object's cache key.
      * @return the network name
      */
+    @Override
     public Object cacheKey() {
        return _net;
     }

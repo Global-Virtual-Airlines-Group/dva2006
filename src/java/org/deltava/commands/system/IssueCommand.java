@@ -1,8 +1,9 @@
-// Copyright 2005, 2006, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 import org.deltava.beans.system.*;
@@ -19,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to manipulate issues.
  * @author Luke
- * @version 4.2
+ * @version 7.0
  * @since 1.0
  */
 
@@ -50,7 +51,7 @@ public class IssueCommand extends AbstractFormCommand {
 				i = new Issue(ctx.getParameter("subject"));
 				i.setStatus(Issue.STATUS_OPEN);
 				i.setAuthorID(ctx.getUser().getID());
-				i.setCreatedOn(new Date());
+				i.setCreatedOn(Instant.now());
 				i.setSecurity(StringUtils.arrayIndexOf(Issue.SECURITY, ctx.getParameter("security"), Issue.SECURITY_USERS));
 
 				// Assign to default user for that issue type.
@@ -122,7 +123,7 @@ public class IssueCommand extends AbstractFormCommand {
 			if ((access.getCanResolve()) && (ctx.getParameter("status") != null)) {
 				i.setStatus(StringUtils.arrayIndexOf(Issue.STATUS, ctx.getParameter("status")));
 				if ((i.getStatus() != Issue.STATUS_OPEN) && (i.getResolvedOn() == null))
-					i.setResolvedOn(new Date());
+					i.setResolvedOn(Instant.now());
 			}
 
 			// If we can reassign the issue, update the assignee

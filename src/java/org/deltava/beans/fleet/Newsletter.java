@@ -1,19 +1,19 @@
-// Copyright 2006, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.fleet;
 
 import java.io.File;
-import java.util.Date;
+import java.time.Instant;
 
 /**
  * A bean to store Newsletter information.
  * @author Luke
- * @version 6.0
+ * @version 7.0
  * @since 1.0
  */
 
 public class Newsletter extends LibraryEntry {
 	
-	private Date _d;
+	private Instant _d;
 	private String _category;
 
 	/**
@@ -27,9 +27,9 @@ public class Newsletter extends LibraryEntry {
 	/**
 	 * Returns the date this newsletter was published.
 	 * @return the publishing date
-	 * @see Newsletter#setDate(Date)
+	 * @see Newsletter#setDate(Instant)
 	 */
-	public Date getDate() {
+	public Instant getDate() {
 		return _d;
 	}
 	
@@ -47,7 +47,7 @@ public class Newsletter extends LibraryEntry {
 	 * @param dt the publish date/time
 	 * @see Newsletter#getDate()
 	 */
-	public void setDate(Date dt) {
+	public void setDate(Instant dt) {
 		_d = dt;
 	}
 	

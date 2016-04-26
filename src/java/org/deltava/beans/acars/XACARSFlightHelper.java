@@ -1,7 +1,7 @@
 // Copyright 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.deltava.beans.Helper;
 import org.deltava.beans.flight.*;
@@ -46,8 +46,8 @@ public final class XACARSFlightHelper {
 		xfr.setAirportA(inf.getAirportA());
 		xfr.setAirportL(inf.getAirportL());
 		xfr.setAuthorID(inf.getAuthorID());
-		xfr.setDate(new Date());
-		xfr.setSubmittedOn(new Date());
+		xfr.setDate(Instant.now());
+		xfr.setSubmittedOn(Instant.now());
 		xfr.setEquipmentType(inf.getEquipmentType());
 		xfr.setFSVersion(inf.getFSVersion());
 		xfr.setAttribute(FlightReport.ATTR_XACARS, true);
@@ -87,7 +87,7 @@ public final class XACARSFlightHelper {
 		fi.setFSVersion(xfr.getFSVersion());
 		
 		// Calculate the flight time
-		int duration = (int) ((xfr.getEndTime().getTime() - xfr.getStartTime().getTime()) / 1000);
+		int duration = (int) ((xfr.getEndTime().toEpochMilli() - xfr.getStartTime().toEpochMilli()) / 1000);
 		xfr.setLength(duration / 36);
 
 		// Create the offline flight

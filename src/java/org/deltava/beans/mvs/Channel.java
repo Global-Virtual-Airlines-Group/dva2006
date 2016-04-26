@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.mvs;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * A bean to store data about an MVS voice channel. 
  * @author Luke
- * @version 4.0
+ * @version 7.0
  * @since 4.0
  */
 
@@ -248,10 +248,12 @@ public class Channel extends DatabaseBean implements ViewEntry {
 		_airlines.add(a);
 	}
 	
+	@Override
 	public int hashCode() {
 		return _name.hashCode();
 	}
 	
+	@Override
 	public boolean equals(Object o) {
 		return ((o instanceof Channel) && (compareTo((Channel) o) == 0));
 	}
@@ -263,10 +265,12 @@ public class Channel extends DatabaseBean implements ViewEntry {
 		return _name.compareTo(c2._name);
 	}
 	
+	@Override
 	public String toString() {
 		return _name;
 	}
-	
+
+	@Override
 	public String getRowClassName() {
 		return getIsTemporary() ? "opt3" : null;
 	}

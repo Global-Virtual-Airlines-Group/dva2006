@@ -1,5 +1,6 @@
 package org.deltava.beans.testing;
 
+import java.time.Instant;
 import java.util.Date;
 
 import junit.framework.Test;
@@ -15,7 +16,8 @@ public class TestCheckRide extends AbstractBeanTestCase {
         return new CoverageDecorator(TestCheckRide.class, new Class[] { CheckRide.class } );
     }
     
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         _cr = null;
         super.tearDown();
     }
@@ -72,14 +74,13 @@ public class TestCheckRide extends AbstractBeanTestCase {
     }
     
     public void testComparator() {
-        long now = System.currentTimeMillis();
         _cr = new CheckRide("Concorde Video");
         _cr.setScore(true);
-        _cr.setDate(new Date(now));
+        _cr.setDate(Instant.now());
         
         CheckRide cr2 = new CheckRide("Concorde Video");
         cr2.setScore(false);
-        cr2.setDate(new Date(now - 864000));
+        cr2.setDate(_cr.getDate().minusSeconds(86400));
         
         assertTrue(_cr.compareTo(cr2) > 0);
         assertTrue(cr2.compareTo(_cr) < 0);

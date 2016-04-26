@@ -1,8 +1,9 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 import org.deltava.beans.academy.CourseProgress;
@@ -17,7 +18,7 @@ import org.deltava.security.command.ExamAccessControl;
 /**
  * A Web Site Command to score Pilot Examinations.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -89,7 +90,7 @@ public class ExamScoreCommand extends AbstractCommand {
          ctx.setAttribute("reScore", Boolean.valueOf(ex.getStatus() == TestStatus.SCORED), REQUEST);
          
          // Update examination
-         ex.setScoredOn(new Date());
+         ex.setScoredOn(Instant.now());
          ex.setStatus(TestStatus.SCORED);
          ex.setScore(score);
          ex.setScorerID(ctx.getUser().getID());

@@ -1,8 +1,9 @@
-// Copyright 2009, 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.deltava.beans.schedule.*;
 
@@ -16,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled task to update cached FlightAware routes.
  * @author Luke
- * @version 5.4
+ * @version 7.0
  * @since 2.6
  */
 
@@ -87,7 +88,7 @@ public class CachedRouteUpdateTask extends Task {
 						rt.setSource(ExternalRoute.INTERNAL);
 						rt.setComments("Auto-generated dummy route");
 						rt.setCruiseAltitude("35000");
-						rt.setCreatedOn(new Date());
+						rt.setCreatedOn(Instant.now());
 						rt.setRoute(rp.getAirportD().getICAO() + " " + rp.getAirportA().getICAO());
 						rcwdao.write(Collections.singleton(rt));
 					}
