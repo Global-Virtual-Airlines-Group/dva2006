@@ -116,13 +116,12 @@ public class GetACARSDispatchStats extends DAO {
 			prepareStatementWithoutLimits("SELECT DISTINCT MONTH(F.CREATED), YEAR(F.CREATED) FROM acars.FLIGHTS F, acars.FLIGHT_DISPATCHER FD WHERE (F.ID=FD.ID) ORDER BY F.CREATED");
 			
 			// Execute the query
-			ZonedDateTime zdt = ZonedDateTime.ofInstant(Instant.now(), ZoneOffset.UTC).truncatedTo(ChronoUnit.MONTHS);
-			
+			ZonedDateTime zdt = ZonedDateTime.ofInstant(Instant.now(), ZoneOffset.UTC).truncatedTo(ChronoUnit.DAYS).withDayOfMonth(1);
 			Collection<DateRange> years = new TreeSet<DateRange>(Collections.reverseOrder());
 			List<DateRange> results = new ArrayList<DateRange>();
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
-					zdt = zdt.withMonth(rs.getInt(1) - 1).withYear(rs.getInt(2));
+					zdt = zdt.withMonth(rs.getInt(1)).withYear(rs.getInt(2));
 					results.add(DateRange.createMonth(zdt.toInstant()));
 					zdt = zdt.withMonth(1);
 					years.add(DateRange.createYear(zdt.toInstant()));

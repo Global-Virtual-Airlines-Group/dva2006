@@ -157,8 +157,6 @@ public class FindFlightCommand extends AbstractCommand {
 			}
 		}
 		
-		// Save UTC time zone and forward
-		ctx.setAttribute("utc", ZoneOffset.UTC, REQUEST);
 		result.setSuccess(true);
 	}
 }

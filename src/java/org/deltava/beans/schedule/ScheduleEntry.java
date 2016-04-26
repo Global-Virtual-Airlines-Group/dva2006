@@ -2,8 +2,6 @@
 package org.deltava.beans.schedule;
 
 import java.time.*;
-import java.time.temporal.ChronoField;
-import java.time.temporal.ChronoUnit;
 
 import org.deltava.beans.*;
 import org.deltava.util.*;
@@ -131,18 +129,6 @@ public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
 		throw new UnsupportedOperationException();
 	}
 	
-	/*
-	 * Ensures each time has a date component of the current date if the year is less than 2001.
-	 */
-	private static LocalDateTime updateDate(LocalDateTime dt) {
-		if (dt.get(ChronoField.YEAR) < 2001) {
-			LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.DAYS);
-			return now.plusMinutes(dt.get(ChronoField.MINUTE_OF_DAY));
-		}
-		
-		return dt;
-	}
-	
 	/**
 	 * Sets the departure time for this flight.
 	 * @param dt the departure time of the flight <i>in local time </i>. The date and time zone are ignored.
@@ -165,7 +151,6 @@ public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
 	 */
 	public void setTimeA(LocalDateTime dt) {
 		ZoneId tz = (getAirportD() == null) ? ZoneId.systemDefault() : getAirportA().getTZ().getZone();
-		dt = updateDate(dt);
 		_length = 0; // reset length
 		if ((_timeD != null) && (dt.isBefore(_timeD.toLocalDateTime())) && (StringUtils.arrayIndexOf(SST, getEquipmentType()) == -1)) {
 			_timeA = ZonedDateTime.of(dt.plusDays(1), tz);

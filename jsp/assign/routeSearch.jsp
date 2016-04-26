@@ -130,8 +130,8 @@ golgotha.onDOMReady(function() {
  <td><el:radio name="leg${legNum}" value="${flight.flightCode}" label="" /></td>
  <td class="pri bld">${flight.flightCode}</td>
  <td class="sec bld">${flight.equipmentType}</td>
- <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${flight.airportD.TZ}" date="${flight.dateTimeD.UTC}" /></td>
- <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${flight.airportA.TZ}" date="${flight.dateTimeA.UTC}" /></td>
+ <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${flight.airportD.TZ}" date="${flight.timeD}" showZone="true" /></td>
+ <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${flight.airportA.TZ}" date="${flight.timeA}" showZone="true" /></td>
  <td class="pri bld nophone"><fmt:int value="${flight.dispatchRoutes}" /></td>
  <td class="nophone"><fmt:int value="${flight.length / 10}" />:<fmt:int value="${(flight.length * 6) % 60}" fmt="00" /></td>
  <td class="sec"><fmt:distance value="${flight.distance}" /></td>

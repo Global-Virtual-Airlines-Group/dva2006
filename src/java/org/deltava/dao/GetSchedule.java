@@ -4,8 +4,7 @@ package org.deltava.dao;
 import java.sql.*;
 import java.util.*;
 import java.time.*;
-import java.time.temporal.ChronoField;
-import java.time.temporal.ChronoUnit;
+import java.time.temporal.*;
 
 import org.deltava.beans.Flight;
 import org.deltava.beans.schedule.*;
@@ -36,7 +35,7 @@ public class GetSchedule extends DAO {
 	 * @param dt the effective date/time or null for today
 	 */
 	public void setEffectiveDate(Instant dt) {
-		_effDate = dt.minusSeconds(dt.get(ChronoField.SECOND_OF_DAY));
+		_effDate = dt.truncatedTo(ChronoUnit.DAYS);
 	}
 
 	/**
@@ -284,10 +283,8 @@ public class GetSchedule extends DAO {
 					se.setEquipmentType(rs.getString(4));
 					se.setAirportD(sr.getAirportD());
 					se.setAirportA(sr.getAirportA());
-					
-					// TODO: convert into effective date
-					se.setTimeD(rs.getTimestamp(5).toLocalDateTime());
-					se.setTimeA(rs.getTimestamp(6).toLocalDateTime());
+					se.setTimeD(rs.getTimestamp(5).toLocalDateTime().plusSeconds(_effDate.getEpochSecond()));
+					se.setTimeA(rs.getTimestamp(6).toLocalDateTime().plusSeconds(_effDate.getEpochSecond()));
 				}
 			}
 
@@ -385,9 +382,8 @@ public class GetSchedule extends DAO {
 				entry.setAirportA(SystemData.getAirport(rs.getString(5)));
 				entry.setEquipmentType(rs.getString(7));
 				entry.setLength(rs.getInt(8));
-				// TODO: convert into effective date
-				entry.setTimeD(rs.getTimestamp(9).toLocalDateTime());
-				entry.setTimeA(rs.getTimestamp(10).toLocalDateTime());
+				entry.setTimeD(rs.getTimestamp(9).toLocalDateTime().plusSeconds(_effDate.getEpochSecond()));
+				entry.setTimeA(rs.getTimestamp(10).toLocalDateTime().plusSeconds(_effDate.getEpochSecond()));
 				entry.setHistoric(rs.getBoolean(11));
 				entry.setCanPurge(rs.getBoolean(12));
 				entry.setAcademy(rs.getBoolean(13));
