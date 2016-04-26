@@ -64,7 +64,6 @@ public class DispatcherStatsCommand extends AbstractCommand {
 			dr = new DateRange(dr.getStartDate(), now);
 		
 		// Display dates
-		ctx.setAttribute("utc", ZoneOffset.UTC, REQUEST);
 		ctx.setAttribute("range", dr, REQUEST);
 		ctx.setAttribute("totalHours", new Double(dr.getLength() / 3600000.0), REQUEST);
 		
