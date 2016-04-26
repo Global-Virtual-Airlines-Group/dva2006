@@ -1,10 +1,10 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.color;
 
 /**
  * A class to define Google Earth colors.
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -45,6 +45,7 @@ public class GoogleEarthColor extends GoogleColor {
 	 * Renders the color to a string, suitable for insertion in KML documents.
 	 * @return the KML-formatted color value
 	 */
+	@Override
 	public String toString() {
 		StringBuilder buf = new StringBuilder(formatHex(_alpha));
 		buf.append(formatHex(_blue));

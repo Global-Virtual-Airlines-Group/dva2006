@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.Person;
@@ -9,7 +9,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An Access Controller for Help Desk Issues.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -40,6 +40,7 @@ public class HelpDeskAccessControl extends AccessControl {
 	 * Calculates access rights.
 	 * @throws AccessControlException if the Issue cannot be read
 	 */
+	@Override
 	public void validate() throws AccessControlException {
 		validateContext();
 		

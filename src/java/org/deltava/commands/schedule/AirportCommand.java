@@ -19,7 +19,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to modify Airport data.
  * @author Luke
- * @version 6.4
+ * @version 7.0
  * @since 1.0
  */
 
@@ -75,7 +75,7 @@ public class AirportCommand extends AbstractFormCommand {
 				a = new Airport(ctx.getParameter("iata"), ctx.getParameter("icao"), ctx.getParameter("name"));
 
 			// Update the aiport from the request
-			a.setTZ(ctx.getParameter("tz"));
+			a.setTZ(TZInfo.get(ctx.getParameter("tz")));
 			a.setAirlines(ctx.getParameters("airline"));
 			a.setCountry(Country.get(ctx.getParameter("country")));
 			a.setADSE(Boolean.valueOf(ctx.getParameter("hasADSE")).booleanValue());
@@ -169,7 +169,7 @@ public class AirportCommand extends AbstractFormCommand {
 					if (icao != null) {
 						GetNavData nvdao = new GetNavData(con);
 						GeospaceLocation al = nvdao.getAirport(icao);
-						if (al != null) {
+						if ((al != null) && (aCode != null)) {
 							a = new Airport((aCode.length() == 3) ? aCode : "", icao, "");
 							a.setLocation(al.getLatitude(), al.getLongitude());
 							a.setAltitude(al.getAltitude());

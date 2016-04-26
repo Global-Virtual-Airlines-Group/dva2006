@@ -22,118 +22,142 @@ public class MockPageContext extends PageContext {
         _out = jspOut;
     }
 
-    public void initialize(Servlet srv, ServletRequest req,
-            ServletResponse rsp, String errorURL, boolean needsSession,
-            int bufferSize, boolean autoFlush) {
+    @Override
+	public void initialize(Servlet srv, ServletRequest req, ServletResponse rsp, String errorURL, boolean needsSession, int bufferSize, boolean autoFlush) {
         _req = (HttpServletRequest) req;
         _rsp = (HttpServletResponse) rsp;
     }
 
-    public void release() {
+    @Override
+	public void release() {
         throw new UnsupportedOperationException();
     }
     
-    public javax.el.ELContext getELContext() {
+    @Override
+	public javax.el.ELContext getELContext() {
     	throw new UnsupportedOperationException();
     }
     
-    @Deprecated
+    @Override
+	@Deprecated
     public VariableResolver getVariableResolver() {
         throw new UnsupportedOperationException();
     }
     
-    @Deprecated
+    @Override
+	@Deprecated
     public ExpressionEvaluator getExpressionEvaluator() {
         throw new UnsupportedOperationException();
     }
     
-    public void setAttribute(String key, Object obj) {
+    @Override
+	public void setAttribute(String key, Object obj) {
         _attrs.put(key, obj);
     }
 
-    public void setAttribute(String key, Object obj, int scope) {
+    @Override
+	public void setAttribute(String key, Object obj, int scope) {
         setAttribute(key, obj);
     }
 
-    public Object getAttribute(String key) {
+    @Override
+	public Object getAttribute(String key) {
         return _attrs.get(key);
     }
 
-    public Object getAttribute(String key, int scope) {
+    @Override
+	public Object getAttribute(String key, int scope) {
         return getAttribute(key);
     }
 
-    public Object findAttribute(String key) {
+    @Override
+	public Object findAttribute(String key) {
         return getAttribute(key);
     }
 
-    public void removeAttribute(String key) {
+    @Override
+	public void removeAttribute(String key) {
         _attrs.remove(key);
     }
 
-    public void removeAttribute(String key, int scope) {
+    @Override
+	public void removeAttribute(String key, int scope) {
         removeAttribute(key);
     }
 
-    public int getAttributesScope(String arg0) {
+    @Override
+	public int getAttributesScope(String arg0) {
         throw new UnsupportedOperationException();
     }
 
-    public Enumeration<String> getAttributeNamesInScope(int arg0) {
+    @Override
+	public Enumeration<String> getAttributeNamesInScope(int arg0) {
         throw new UnsupportedOperationException();
     }
 
-    public JspWriter getOut() {
+    @Override
+	public JspWriter getOut() {
         return _out;
     }
 
-    public HttpSession getSession() {
+    @Override
+	public HttpSession getSession() {
         return _req.getSession();
     }
 
-    public Object getPage() {
+    @Override
+	public Object getPage() {
         throw new UnsupportedOperationException();
     }
 
-    public ServletRequest getRequest() {
+    @Override
+	public ServletRequest getRequest() {
         return _req;
     }
 
-    public ServletResponse getResponse() {
+    @Override
+	public ServletResponse getResponse() {
         return _rsp;
     }
 
-    public Exception getException() {
+    @Override
+	public Exception getException() {
         return null;
     }
 
-    public ServletConfig getServletConfig() {
+    @Override
+	public ServletConfig getServletConfig() {
         throw new UnsupportedOperationException();
     }
 
-    public ServletContext getServletContext() {
+    @Override
+	public ServletContext getServletContext() {
         throw new UnsupportedOperationException();
     }
 
-    public void forward(String arg0) throws ServletException, IOException {
+    @Override
+	public void forward(String arg0) throws ServletException, IOException {
         throw new UnsupportedOperationException();
     }
 
-    public void include(String arg0) {
+    @Override
+	public void include(String arg0) {
         throw new UnsupportedOperationException();
     }
     
-    public void include(String arg0, boolean arg1) {
+    @Override
+	public void include(String arg0, boolean arg1) {
         if (arg1)
             include(arg0);
     }
 
-    public void handlePageException(Exception arg0) throws ServletException,
-            IOException {
+    @Override
+	public void handlePageException(Exception arg0) throws ServletException, IOException {
         throw new UnsupportedOperationException();
     }
 
-    public void handlePageException(Throwable arg0) throws ServletException,
+    @Override
+	public void handlePageException(Throwable arg0) throws ServletException,
             IOException {
         throw new UnsupportedOperationException();
     }

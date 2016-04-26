@@ -1,8 +1,9 @@
-// Copyright 2006, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
 import java.sql.Connection;
+import java.time.ZonedDateTime;
 
 import org.deltava.beans.*;
 import org.deltava.beans.academy.*;
@@ -22,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Flight Academy instruction sessions. 
  * @author Luke
- * @version 3.4
+ * @version 7.0
  * @since 1.0
  */
 
@@ -35,6 +36,7 @@ public class InstructionSessionCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	protected void execSave(CommandContext ctx) throws CommandException {
 		
 		// Init the message context
@@ -137,6 +139,7 @@ public class InstructionSessionCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	protected void execEdit(CommandContext ctx) throws CommandException {
 
 		boolean isNew = (ctx.getID() == 0);
@@ -170,8 +173,8 @@ public class InstructionSessionCommand extends AbstractFormCommand {
 				TZInfo tz = ctx.getUser().getTZ();
 				
 				// Convert the dates to local time for the input fields
-				ctx.setAttribute("startTime", DateTime.convert(s.getStartTime(), tz), REQUEST);
-				ctx.setAttribute("endTime", DateTime.convert(s.getEndTime(), tz), REQUEST);
+				ctx.setAttribute("startTime", ZonedDateTime.ofInstant(s.getStartTime(), tz.getZone()), REQUEST);
+				ctx.setAttribute("endTime", ZonedDateTime.ofInstant(s.getEndTime(), tz.getZone()), REQUEST);
 			} else {
 				int courseID = StringUtils.parseHex(ctx.getParameter("course"));
 				
@@ -218,6 +221,7 @@ public class InstructionSessionCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	protected void execRead(CommandContext ctx) throws CommandException {
 		
 		try {

@@ -1,14 +1,15 @@
-// Copyright 2004, 2005, 2006, 2007, 2009, 2010, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007, 2009, 2010, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.*;
+import java.time.Instant;
 
 import org.deltava.util.StringUtils;
 
 /**
  * A bean to store Oceanic Track (NAT/PACOT) information.
  * @author Luke
- * @version 5.1
+ * @version 7.0
  * @since 1.0
  */
 
@@ -41,7 +42,7 @@ public class OceanicTrack extends Airway implements OceanicTrackInfo {
 		}
 	}
 
-    private Date _date;
+    private Instant _date;
     private Type _routeType;
     
     private String _trackID;
@@ -60,9 +61,10 @@ public class OceanicTrack extends Airway implements OceanicTrackInfo {
     /**
      * Returns the date of the Oceanic Route NOTAM.
      * @return the route date
-     * @see OceanicTrack#setDate(Date)
+     * @see OceanicTrack#setDate(Instant)
      */
-    public Date getDate() {
+    @Override
+    public Instant getDate() {
         return _date;
     }
     
@@ -70,6 +72,7 @@ public class OceanicTrack extends Airway implements OceanicTrackInfo {
      * Returns the route type code.
      * @return the route type
      */
+    @Override
     public Type getType() {
         return _routeType;
     }
@@ -93,6 +96,7 @@ public class OceanicTrack extends Airway implements OceanicTrackInfo {
 	 * Returns whether the track is fixed from day to day.
 	 * @return FALSE always
 	 */
+	@SuppressWarnings("static-method")
 	public boolean isFixed() {
 		return false;
 	}
@@ -129,7 +133,7 @@ public class OceanicTrack extends Airway implements OceanicTrackInfo {
      * @param d the NOTAM date
      * @see OceanicTrackInfo#getDate()
      */
-    public void setDate(Date d) {
+    public void setDate(Instant d) {
         _date = d;
     }
     
@@ -159,13 +163,15 @@ public class OceanicTrack extends Airway implements OceanicTrackInfo {
 	 * @param nd the waypoint
 	 * @see Airway#getWaypoints()
 	 */
+    @Override
 	public void addWaypoint(NavigationDataBean nd) {
 		String awy = nd.getAirway();
 		super.addWaypoint(nd);
 		if ((awy != null) && (awy.indexOf(',') != -1))
 			nd.setAirway(awy);
 	}
-    
+  
+	@Override
 	public String toString() {
 		StringBuilder buf = new StringBuilder(_routeType.name());
 		buf.append(_trackID);

@@ -6,6 +6,7 @@ import org.hansel.CoverageDecorator;
 
 import org.deltava.beans.AbstractBeanTestCase;
 
+@SuppressWarnings("static-method")
 public class TestIntersection extends AbstractBeanTestCase {
 
    private Intersection _int;
@@ -14,13 +15,15 @@ public class TestIntersection extends AbstractBeanTestCase {
       return new CoverageDecorator(TestIntersection.class, new Class[] { Intersection.class });
   }
    
-   protected void setUp() throws Exception {
+   @Override
+protected void setUp() throws Exception {
       super.setUp();
       _int = new Intersection("ABC", 12.345, -23.456);
       setBean(_int);
    }
 
-   protected void tearDown() throws Exception {
+   @Override
+protected void tearDown() throws Exception {
       _int = null;
       super.tearDown();
    }

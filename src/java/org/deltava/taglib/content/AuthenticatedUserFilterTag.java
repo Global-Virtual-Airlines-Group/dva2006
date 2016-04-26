@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import java.security.Principal;
@@ -11,7 +11,7 @@ import javax.servlet.jsp.tagext.TagSupport;
 /**
  * A JSP tag to filter out content that is displayed for authenticated users only.
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -39,6 +39,7 @@ public class AuthenticatedUserFilterTag extends TagSupport {
 	/**
 	 * Releases the tag's state variables.
 	 */
+	@Override
 	public void release() {
 		super.release();
 		_varName = null;
@@ -50,6 +51,7 @@ public class AuthenticatedUserFilterTag extends TagSupport {
 	 * @return EVAL_BODY_INCLUDE if authenticated, otherwise SKIP_BODY
 	 * @throws JspException if an error occurs
 	 */
+	@Override
 	public int doStartTag() throws JspException {
 		
 		// Get the user object
@@ -72,6 +74,7 @@ public class AuthenticatedUserFilterTag extends TagSupport {
 	 * @return EVAL_PAGE always
 	 * @throws JspException never
 	 */
+	@Override
 	public int doEndTag() throws JspException {
 		release();
 		return EVAL_PAGE;

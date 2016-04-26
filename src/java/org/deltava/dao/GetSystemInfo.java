@@ -9,7 +9,7 @@ import org.deltava.beans.stats.*;
 /**
  * A Data Access Object to retrieve ACARS System Information data.
  * @author Luke
- * @version 6.4
+ * @version 7.0
  * @since 1.0
  */
 
@@ -101,7 +101,7 @@ public class GetSystemInfo extends DAO {
 		try (ResultSet rs = _ps.executeQuery()) {
 			while (rs.next()) {
 				SystemInformation sysinfo = new SystemInformation(rs.getInt(1));
-				sysinfo.setDate(rs.getTimestamp(2));
+				sysinfo.setDate(rs.getTimestamp(2).toInstant());
 				sysinfo.setOSVersion(rs.getString(3));
 				sysinfo.setCLRVersion(rs.getString(4));
 				sysinfo.setDotNETVersion(rs.getString(5));

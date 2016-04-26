@@ -1,6 +1,7 @@
-// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
+import java.time.Instant;
 import java.util.*;
 
 import org.deltava.beans.Pilot;
@@ -13,16 +14,15 @@ import org.deltava.util.*;
 /**
  * An access controller for Job Postings.
  * @author Luke
- * @version 3.6
+ * @version 7.0
  * @since 3.4
  */
 
 public class JobPostingAccessControl extends AccessControl {
 	
-	private static final List<String> STAFF_ROLES = Arrays.asList("HR", "Instructor", "PIREP", "Examination", 
-			"Event", "AcademyAdmin", "Schedule");
+	private static final List<String> STAFF_ROLES = Arrays.asList("HR", "Instructor", "PIREP", "Examination", "Event", "AcademyAdmin", "Schedule");
 	
-	private JobPosting _jp;
+	private final JobPosting _jp;
 	
 	private boolean _canComment;
 	private boolean _canViewApplications;
@@ -83,10 +83,10 @@ public class JobPostingAccessControl extends AccessControl {
 		_canComplete = isHR && (_jp.getStatus() == JobPosting.SELECTED);
 			
 		// Check whether we can apply
-		Date now = new Date();
-		Date minDate = CalendarUtils.adjust(CalendarUtils.getInstance(now, true).getTime(), _jp.getMinAge());
-		_canApply = (_jp.getStatus() == JobPosting.OPEN) && (_jp.getClosesOn() != null) && (_jp.getClosesOn().after(now)) && !isHireMgr;
-		_canApply &= (_jp.getMinLegs() <= p.getLegs()) && (p.getCreatedOn().before(minDate));
+		Instant now = Instant.now();
+		Instant minDate = now.minusSeconds(_jp.getMinAge() * 86400);
+		_canApply = (_jp.getStatus() == JobPosting.OPEN) && (_jp.getClosesOn() != null) && (_jp.getClosesOn().isAfter(now)) && !isHireMgr;
+		_canApply &= (_jp.getMinLegs() <= p.getLegs()) && (p.getCreatedOn().isBefore(minDate));
 		if (_jp.getStaffOnly())
 			_canApply &= isStaff;
 		

@@ -1,8 +1,9 @@
-// Copyright 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
 import java.util.*;
+import java.time.Instant;
 
 import org.jdom2.*;
 import org.jdom2.input.SAXBuilder;
@@ -20,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to download FAA chart metadata.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 5.0
  */
 
@@ -74,7 +75,7 @@ public class GetFAACharts extends DAO {
 				}
 
 				ExternalChart c = new ExternalChart(chartName, a);
-				c.setLastModified(new Date());
+				c.setLastModified(Instant.now());
 				c.setImgType(Chart.ImageType.PDF);
 				c.setExternalID(ce.getChildTextTrim("pdf_name"));
 				c.setSource("FAA");
@@ -124,7 +125,7 @@ public class GetFAACharts extends DAO {
 			init(ec.getURL());
 			try (InputStream in = getIn()) {
 				ec.load(in);
-				ec.setLastModified(new Date());
+				ec.setLastModified(Instant.now());
 			}
 		} catch (IOException ie) {
 			throw new DAOException(ie);

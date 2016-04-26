@@ -9,6 +9,7 @@ import org.hansel.CoverageDecorator;
 import org.deltava.commands.CommandContext;
 import org.deltava.crypt.*;
 
+@SuppressWarnings("static-method")
 public class TestSecurityCookieGenerator extends TestCase {
 
 	private static final String _desKey = "SuperSecret 24-byte 3DESKey";

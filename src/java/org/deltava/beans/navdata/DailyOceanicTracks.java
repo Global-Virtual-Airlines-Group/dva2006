@@ -2,6 +2,7 @@
 package org.deltava.beans.navdata;
 
 import java.util.*;
+import java.time.Instant;
 
 /**
  * A bean to store a daily collection of Oceanic Tracks. 
@@ -12,7 +13,7 @@ import java.util.*;
 
 public class DailyOceanicTracks implements java.io.Serializable, Comparable<DailyOceanicTracks>, OceanicTrackInfo {
 	
-	private Date _effectiveDate;
+	private Instant _effectiveDate;
 	private final Type _type;
 	private final Map<String, OceanicTrack> _tracks = new TreeMap<String, OceanicTrack>();
 
@@ -21,16 +22,18 @@ public class DailyOceanicTracks implements java.io.Serializable, Comparable<Dail
 	 * @param t the Track type
 	 * @param effDate the effective date
 	 */
-	public DailyOceanicTracks(Type t, Date effDate) {
+	public DailyOceanicTracks(Type t, Instant effDate) {
 		super();
 		_type = t;
 		_effectiveDate = effDate;
 	}
 
-	public Date getDate() {
+	@Override
+	public Instant getDate() {
 		return _effectiveDate;
 	}
 	
+	@Override
 	public Type getType() {
 		return _type;
 	}
@@ -110,14 +113,17 @@ public class DailyOceanicTracks implements java.io.Serializable, Comparable<Dail
 		return new ArrayList<OceanicTrack>(_tracks.values());
 	}
 	
+	@Override
 	public int hashCode() {
 		return toString().hashCode();
 	}
 	
+	@Override
 	public boolean equals(Object o) {
 		return (o instanceof DailyOceanicTracks) ? (compareTo((DailyOceanicTracks) o) == 0) : false;
 	}
 	
+	@Override
 	public String toString() {
 		StringBuilder buf = new StringBuilder(_type.name());
 		buf.append("S-");
@@ -128,6 +134,7 @@ public class DailyOceanicTracks implements java.io.Serializable, Comparable<Dail
 	/**
 	 * Compares two Track collections by comparing their type and effective dates.
 	 */
+	@Override
 	public int compareTo(DailyOceanicTracks ot2) {
 		int tmpResult = _type.compareTo(ot2._type);
 		return (tmpResult == 0) ? _effectiveDate.compareTo(ot2._effectiveDate) : tmpResult;

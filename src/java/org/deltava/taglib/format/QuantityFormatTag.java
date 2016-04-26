@@ -1,4 +1,4 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import javax.servlet.jsp.*;
@@ -6,7 +6,7 @@ import javax.servlet.jsp.*;
 /**
  * A JSP Tag to display quantities of a particular item.
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -47,6 +47,7 @@ public class QuantityFormatTag extends IntegerFormatTag {
 	 * @return SKIP_BODY always
 	 * @throws JspException never
 	 */
+	@Override
 	public int doStartTag() throws JspException {
 		if (_pluralLabel == null)
 			_pluralLabel = _singleLabel + "s";
@@ -59,6 +60,7 @@ public class QuantityFormatTag extends IntegerFormatTag {
     /**
      * Resets this tag's data when its lifecycle is complete.
      */
+	@Override
 	public void release() {
 		super.release();
 		_pluralLabel = null;
@@ -71,6 +73,7 @@ public class QuantityFormatTag extends IntegerFormatTag {
      * @return TagSupport.EVAL_PAGE
      * @throws JspException if an error occurs
      */
+	@Override
 	public int doEndTag() throws JspException {
 		
 		// Determine the quantity label
@@ -82,10 +85,8 @@ public class QuantityFormatTag extends IntegerFormatTag {
 		
 		// Render the quantity
 		super.doEndTag();
-		
-		// Add the quantity
-        JspWriter out = pageContext.getOut();
         try {
+        	JspWriter out = pageContext.getOut();
         	out.print(' ');
         	out.print(label);
         } catch (Exception e) {

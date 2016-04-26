@@ -16,13 +16,15 @@ public class TestChannel extends AbstractBeanTestCase {
         return new CoverageDecorator(TestChannel.class, new Class[] { Channel.class } );
     }
 
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
         _c = new Channel("NAME");
         setBean(_c);
     }
 
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         _c = null;
         super.tearDown();
     }

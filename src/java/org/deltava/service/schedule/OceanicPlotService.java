@@ -1,9 +1,10 @@
-// Copyright 2007, 2008, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
 import java.text.*;
+import java.time.Instant;
 import java.util.*;
 import java.io.IOException;
 
@@ -19,7 +20,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to return Oceanic Track data.
  * @author Luke
- * @version 4.2
+ * @version 7.0
  * @since 1.0
  */
 
@@ -35,9 +36,9 @@ public class OceanicPlotService extends WebService {
 	public int execute(ServiceContext ctx) throws ServiceException {
 
 		// Get the date
-		Date dt = null;
+		Instant dt = null;
 		try {
-			dt = StringUtils.parseDate(ctx.getParameter("date"), ctx.getUser().getDateFormat());
+			dt = StringUtils.parseInstant(ctx.getParameter("date"), ctx.getUser().getDateFormat());
 		} catch (Exception e) {
 			// empty
 		}
@@ -111,6 +112,7 @@ public class OceanicPlotService extends WebService {
 	 * Returns if the Web Service invocation is logged.
 	 * @return FALSE
 	 */
+	@Override
 	public boolean isLogged() {
 		return false;
 	}
@@ -119,6 +121,7 @@ public class OceanicPlotService extends WebService {
 	 * Returns whether this web service requires authentication.
 	 * @return TRUE
 	 */
+	@Override
 	public boolean isSecure() {
 		return true;
 	}

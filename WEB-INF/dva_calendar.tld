@@ -15,7 +15,7 @@
 			<name>startDate</name>
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
-			<type>java.util.Date</type>
+			<type>java.time.ZonedDateTime</type>
 		</attribute>
 		<attribute>
 			<name>date</name>
@@ -98,7 +98,7 @@
 			<name>startDate</name>
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
-			<type>java.util.Date</type>
+			<type>java.time.ZonedDateTime</type>
 		</attribute>
 		<attribute>
 			<name>entries</name>

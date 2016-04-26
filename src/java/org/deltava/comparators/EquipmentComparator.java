@@ -1,14 +1,13 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
 import org.deltava.beans.EquipmentType;
 
 /**
  * A comparator for EquipmentType beans.
- * @author LKolin
- * @version 1.0
+ * @author Luke
+ * @version 7.0
  * @since 1.0
- * @see EquipmentType
  */
 
 public class EquipmentComparator extends AbstractComparator<EquipmentType> {
@@ -45,12 +44,13 @@ public class EquipmentComparator extends AbstractComparator<EquipmentType> {
      * @throws ClassCastException if either object is not an EquipmentType 
      * @see java.util.Comparator#compare(Object, Object)
      */
-    protected int compareImpl(EquipmentType et1, EquipmentType et2) {
+    @Override
+	protected int compareImpl(EquipmentType et1, EquipmentType et2) {
         switch (_comparisonType) {
-        	case NAME :
+        	case NAME:
         	    return et1.getName().compareTo(et2.getName());
         	    
-        	default :
+        	default:
         	    return et1.compareTo(et2); // Uses default ordering
         }
     }

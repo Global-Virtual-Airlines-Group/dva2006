@@ -29,12 +29,14 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 	private static final String[] CODES = {"N", "S", "E", "W", "NW", "SE", "NE", "SW"};
 	
 	final class SceneryFilter implements FileFilter {
+		@Override
 		public boolean accept(File f) {
 			String fn = f.getName().toLowerCase();
 			return (f.isFile() && fn.startsWith("ap") && fn.endsWith(".bgl"));
 		}
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		log = Logger.getLogger(SimRunwayLoader.class);
@@ -51,6 +53,7 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 		_c.setAutoCommit(false);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		_c.close();
 		super.tearDown();
@@ -210,7 +213,8 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 						code = code.substring(0, 1).toUpperCase();
 						if (!"W".equals(code) && !"N".equals(code))
 							number += code;
-					}
+					} else
+						code = "";
 					
 					// Get the proper code
 					if (Character.isLetter(number.charAt(0))) {

@@ -16,12 +16,14 @@ public abstract class SceneryLoaderTestCase extends TestCase {
 	protected Logger log;
 	
 	final class DirectoryFilter implements FileFilter {
+		@Override
 		public boolean accept(File f) {
 			return ((f != null) && f.isDirectory() && !f.getName().startsWith("."));
 		}
 	}
 	
 	final class XMLFilter implements FileFilter {
+		@Override
 		public boolean accept(File f) {
 			String fn = f.getName().toLowerCase();
 			return (f.isFile() && fn.endsWith(".xml"));
@@ -44,7 +46,7 @@ public abstract class SceneryLoaderTestCase extends TestCase {
 		return files;
 	}
 	
-	protected Collection<File> getSingleFiles(File root, FileFilter filter) {
+	protected static Collection<File> getSingleFiles(File root, FileFilter filter) {
 		Collection<File> files = new ArrayList<File>();
 		File[] bgls = root.listFiles(filter);
 		if (bgls != null)
@@ -53,7 +55,7 @@ public abstract class SceneryLoaderTestCase extends TestCase {
 		return files;
 	}
 	
-	protected Document loadXML(Reader r) throws IOException, JDOMException {
+	protected static Document loadXML(Reader r) throws IOException, JDOMException {
 		SAXBuilder builder = new SAXBuilder();
 		return builder.build(r);
 	}
@@ -115,6 +117,7 @@ public abstract class SceneryLoaderTestCase extends TestCase {
 			log.error("Cannot rename " + outF.getName() + " to " + f.getName());
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		
@@ -122,6 +125,7 @@ public abstract class SceneryLoaderTestCase extends TestCase {
 		PropertyConfigurator.configure("etc/log4j.test.properties");
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		LogManager.shutdown();
 		super.tearDown();

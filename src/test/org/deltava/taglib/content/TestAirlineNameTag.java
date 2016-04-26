@@ -9,12 +9,14 @@ public class TestAirlineNameTag extends AbstractTagTestCase {
 
 	private AirlineNameTag _tag;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		_tag = new AirlineNameTag();
 		_tag.setPageContext(_ctx);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		_tag.release();
 		_tag = null;

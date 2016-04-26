@@ -4,10 +4,11 @@ import java.util.*;
 
 import junit.framework.TestCase;
 
+@SuppressWarnings("static-method")
 public class TestCollectionUtils extends TestCase {
 
 	class ID {
-		private int _id;
+		private final int _id;
 
 		public ID(int id) {
 			super();
@@ -18,7 +19,7 @@ public class TestCollectionUtils extends TestCase {
 			return _id;
 		}
 	}
-
+	
 	public void testIsEmpty() {
 		assertTrue(CollectionUtils.isEmpty(null));
 		assertTrue(CollectionUtils.isEmpty(Collections.EMPTY_LIST));

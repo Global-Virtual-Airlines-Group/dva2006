@@ -15,6 +15,7 @@ public class PlotLocalMap extends PlotMap {
 	
 	private static final List<String> _airports = Arrays.asList("ATL", "YYZ", "MIA", "NRT",  "DFW", "IAD", "HKX", "HKG", "HNL", "OGG", "YUL", "LHR", "ICN", "BDA", "YVR", "SYD", "ZRH", "PPT", "ANC", "GVA"); 
 	
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		_zooms.put(Integer.valueOf(10), new ProjectInfo(10, 64, 10));
@@ -23,7 +24,7 @@ public class PlotLocalMap extends PlotMap {
 		_zooms.put(Integer.valueOf(13), new ProjectInfo(13, 20, 4));
 	}
 	
-	protected Collection<String> getPopularAirports(int max) throws Exception {
+	protected static Collection<String> getPopularAirports(int max) throws Exception {
 		try (Connection c = DriverManager.getConnection(URL)) {
 			c.setAutoCommit(false);
 			try (Statement s = c.createStatement()) {

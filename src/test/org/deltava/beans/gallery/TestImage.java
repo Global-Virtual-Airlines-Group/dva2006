@@ -18,13 +18,15 @@ public class TestImage extends AbstractBeanTestCase {
         return new CoverageDecorator(TestImage.class, new Class[] { Image.class });
     }
 
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
         _img = new Image("testImage", "description");
         setBean(_img);
     }
 
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         _img = null;
         super.tearDown();
     }

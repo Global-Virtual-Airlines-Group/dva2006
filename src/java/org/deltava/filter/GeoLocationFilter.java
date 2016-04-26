@@ -1,4 +1,4 @@
-// Copyright 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.filter;
 
 import org.deltava.beans.GeoLocation;
@@ -7,7 +7,7 @@ import org.deltava.beans.schedule.*;
 /**
  * An Airport Filter to filter by distance from an arbitrary point. 
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 5.0
  */
 
@@ -27,6 +27,7 @@ public class GeoLocationFilter extends AirportFilter {
 		_distance = Math.max(0, distance);
 	}
 	
+	@Override
 	public boolean accept(Airport a) {
 		return (a == null) ? false : (_loc.distanceTo(a) < _distance);
 	}

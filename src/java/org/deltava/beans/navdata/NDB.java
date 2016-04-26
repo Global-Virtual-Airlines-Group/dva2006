@@ -1,10 +1,10 @@
-// Copyright 2005, 2006, 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 /**
  * A bean to store Non-Directional Beacon information.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -23,6 +23,7 @@ public class NDB extends NavigationFrequencyBean {
 	 * Return the default Google Maps icon color.
 	 * @return org.deltava.beans.MapEntry.ORANGE
 	 */
+	@Override
 	public String getIconColor() {
 		return ORANGE;
 	}
@@ -31,6 +32,7 @@ public class NDB extends NavigationFrequencyBean {
 	 * Returns the Google Earth palette code.
 	 * @return 4
 	 */
+	@Override
 	public int getPaletteCode() {
 		return 4;
 	}
@@ -39,6 +41,7 @@ public class NDB extends NavigationFrequencyBean {
 	 * Returns the Google Earth icon code.
 	 * @return 57
 	 */
+	@Override
 	public int getIconCode() {
 		return 57;
 	}

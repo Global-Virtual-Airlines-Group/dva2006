@@ -5,6 +5,7 @@ import junit.framework.TestCase;
 
 public class TestPressureLevel extends TestCase {
 
+	@SuppressWarnings("static-method")
 	public void testClosest() {
 		
 		assertEquals(PressureLevel.LOW, PressureLevel.getClosest(7000));

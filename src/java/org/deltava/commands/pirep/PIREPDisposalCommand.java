@@ -1,9 +1,10 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
 import java.util.stream.Collectors;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.apache.log4j.Logger;
 
@@ -29,7 +30,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Flight Report status changes.
  * @author Luke
- * @version 6.2
+ * @version 7.0
  * @since 1.0
  */
 
@@ -96,6 +97,10 @@ public class PIREPDisposalCommand extends AbstractCommand {
 					ctx.setAttribute("isReject", Boolean.TRUE, REQUEST);
 					mctx.setTemplate(mtdao.get("PIREPREJECT"));
 					isOK = access.getCanReject();
+					break;
+					
+				default:
+					throw new IllegalArgumentException("Invalid Op Code - " + opCode);
 			}
 
 			// If we cannot perform the operation, then stop
@@ -163,7 +168,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 				for (Iterator<Accomplishment> i = accs.iterator(); i.hasNext(); ) {
 					Accomplishment a = i.next();
 					if (acchelper.has(a) != AccomplishmentHistoryHelper.Result.NOTYET) {
-						acwdao.achieve(p.getID(), a, new Date());
+						acwdao.achieve(p.getID(), a, Instant.now());
 						StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.RECOGNITION);
 						upd.setAuthorID(ctx.getUser().getID());
 						upd.setDescription("Joined " + a.getName());

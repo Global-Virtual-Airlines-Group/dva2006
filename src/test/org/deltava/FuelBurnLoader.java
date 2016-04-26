@@ -21,6 +21,7 @@ public class FuelBurnLoader extends TestCase {
 	
 	private Connection _c;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		
@@ -48,6 +49,7 @@ public class FuelBurnLoader extends TestCase {
 		SystemData.add("airports", apdao.getAll());
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		_c.close();
 		LogManager.shutdown();

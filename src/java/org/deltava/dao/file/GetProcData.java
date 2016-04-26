@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -10,10 +10,11 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to read from the Linux /proc filesystem.
  * @author Luke
- * @version 4.2
+ * @version 7.0
  * @since 1.0
  */
 
+@SuppressWarnings("static-method")
 public class GetProcData extends DAO {
 
 	/**

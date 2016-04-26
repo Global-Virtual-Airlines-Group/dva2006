@@ -1,4 +1,4 @@
-// Copyright 2005, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to stuff data from the SystemData singleton into the request.
  * @author Luke
- * @version 3.1
+ * @version 7.0
  * @since 1.0
  */
 
@@ -68,6 +68,7 @@ public class GetSystemDataTag extends TagSupport {
 	/**
 	 * Releases the tag's state variables.
 	 */
+	@Override
 	public void release() {
 	    super.release();
 	    _defaultValue = null;
@@ -80,6 +81,7 @@ public class GetSystemDataTag extends TagSupport {
 	 * @return TagSupport.EVAL_PAGE
 	 * @throws JspException if an error occurs
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public int doEndTag() throws JspException {
 		

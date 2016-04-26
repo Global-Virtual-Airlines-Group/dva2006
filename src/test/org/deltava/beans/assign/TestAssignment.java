@@ -15,13 +15,15 @@ public class TestAssignment extends AbstractBeanTestCase {
         return new CoverageDecorator(TestAssignment.class, new Class[] { AssignmentLeg.class } );
     }
     
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
         _a = new AssignmentLeg(new Airline("DVA", "Delta Virtual Airlines"), 123, 1);
         setBean(_a);
     }
 
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         _a = null;
         super.tearDown();
     }

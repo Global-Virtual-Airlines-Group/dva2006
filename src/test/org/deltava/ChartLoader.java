@@ -40,6 +40,7 @@ public class ChartLoader extends TestCase {
 	private final Map<String, String> pdfs = new HashMap<String, String>();
 	
 	class PDFFilter implements FileFilter {
+		@Override
 		public boolean accept(File f) {
 			return f.isFile() && f.getName().toUpperCase().endsWith("PDF");
 		}
@@ -68,6 +69,7 @@ public class ChartLoader extends TestCase {
 		}
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		File xml = new File(XML);
@@ -138,6 +140,7 @@ public class ChartLoader extends TestCase {
 		}
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		_c.close();
 		_doc = null;
@@ -157,7 +160,7 @@ public class ChartLoader extends TestCase {
 			c.setType(Chart.Type.values()[rs.getInt(3)]);
 			c.setImgType(Chart.ImageType.values()[rs.getInt(4)]);
 			c.setSize(rs.getInt(6));
-			c.setLastModified(new java.util.Date());
+			c.setLastModified(java.time.Instant.now());
 			c.setHash(rs.getString(7));
 			results.add(c);
 		}

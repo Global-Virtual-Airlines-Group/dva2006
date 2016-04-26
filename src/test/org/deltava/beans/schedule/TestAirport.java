@@ -16,11 +16,13 @@ public class TestAirport extends TestCase {
         return new CoverageDecorator(TestAirport.class, new Class[] { Airport.class } );
     }
 
+	@Override
 	protected void setUp() throws Exception {
 	    super.setUp();
 	    _a = new Airport("ATL", "KATL", "Atlanta GA");
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 	    _a = null;
 	    super.tearDown();
@@ -52,12 +54,13 @@ public class TestAirport extends TestCase {
 	
 	public void testTZUpdate() {
 	    TZInfo cst = TZInfo.init("US/Central", null, null);
-	    _a.setTZ("US/Central");
+	    _a.setTZ(cst);
 	    assertTrue(cst.equals(_a.getTZ()));
 	    _a.setTZ(cst);
 	    assertTrue(cst.equals(_a.getTZ()));
 	}
 	
+	@SuppressWarnings("static-method")
 	public void testAllAirports() {
 		Airport a = Airport.ALL;
 		assertEquals("$AL", a.getIATA());

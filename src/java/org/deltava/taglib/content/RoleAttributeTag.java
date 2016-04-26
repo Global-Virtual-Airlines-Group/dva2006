@@ -1,4 +1,4 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import javax.servlet.jsp.tagext.TagSupport;
 /**
  * A JSP Tag to set an attribute based on role membership.
  * @author Luke
- * @version 2.6
+ * @version 7.0
  * @since 2.6
  */
 
@@ -49,6 +49,7 @@ public class RoleAttributeTag extends TagSupport {
 	/**
 	 * Clears state by reseting the role list.
 	 */
+	@Override
 	public void release() {
 		_roles.clear();
 		super.release();
@@ -58,6 +59,7 @@ public class RoleAttributeTag extends TagSupport {
 	 * Checks for the roles listed and adds the attribute to the request if found.
 	 * @return SKIP_BODY always
 	 */
+	@Override
 	public int doStartTag() {
 
 		// Get the request
@@ -87,6 +89,7 @@ public class RoleAttributeTag extends TagSupport {
 	 * Closes the JSP and releases state.
 	 * @return EVAL_PAGE always
 	 */
+	@Override
 	public int doEndTag() {
 		release();
 		return EVAL_PAGE;

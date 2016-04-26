@@ -1,21 +1,21 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.hr;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 
 /**
  * A bean to store comments about a Job Posting.
  * @author Luke
- * @version 3.4
+ * @version 7.0
  * @since 3.4
  */
 
 public class Comment extends DatabaseBean implements AuthoredBean {
 	
 	private int _authorID;
-	private Date _created;
+	private Instant _created;
 	
 	private String _body;
 
@@ -34,7 +34,7 @@ public class Comment extends DatabaseBean implements AuthoredBean {
 	 * Returns the creation date of this comment.
 	 * @return the creation date/time
 	 */
-	public Date getCreatedOn() {
+	public Instant getCreatedOn() {
 		return _created;
 	}
 	
@@ -61,7 +61,7 @@ public class Comment extends DatabaseBean implements AuthoredBean {
 	 * Updates the creation datae of this comment.
 	 * @param dt the creation date/time
 	 */
-	public void setCreatedOn(Date dt) {
+	public void setCreatedOn(Instant dt) {
 		_created = dt;
 	}
 	

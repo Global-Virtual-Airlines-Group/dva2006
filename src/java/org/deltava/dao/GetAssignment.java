@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
  * A Data Access Object to load Flight Assignments. All calls in this DAO will populate the legs for any returned Flight
  * Assignments, but will <i>not </i> populate any Flight Reports.
  * @author Luke
- * @version 4.1
+ * @version 7.0
  * @since 1.0
  */
 
@@ -108,16 +108,15 @@ public class GetAssignment extends DAO {
 	 */
 	public List<AssignmentInfo> getByEvent(int eventID, String dbName) throws DAOException {
 		
-		dbName = formatDBName(dbName);
+		String db = formatDBName(dbName);
 		try {
 			// Load the assignment info
-			prepareStatement("SELECT * FROM " + dbName + ".ASSIGNMENTS WHERE (EVENT_ID=?)");
+			prepareStatement("SELECT * FROM " + db + ".ASSIGNMENTS WHERE (EVENT_ID=?)");
 			_ps.setInt(1, eventID);
 			List<AssignmentInfo> results = loadInfo();
 
 			// Load the legs
-			prepareStatementWithoutLimits("SELECT L.* FROM " + dbName + ".ASSIGNMENTS A, " + dbName + 
-					".ASSIGNLEGS L WHERE (A.ID=L.ID) AND (A.EVENT_ID=?)");
+			prepareStatementWithoutLimits("SELECT L.* FROM " + db + ".ASSIGNMENTS A, " + db + ".ASSIGNLEGS L WHERE (A.ID=L.ID) AND (A.EVENT_ID=?)");
 			_ps.setInt(1, eventID);
 			loadLegs(results);
 
@@ -183,7 +182,7 @@ public class GetAssignment extends DAO {
 		}
 	}
 
-	/**
+	/*
 	 * Helper method to process the assignment info result set.
 	 */
 	private List<AssignmentInfo> loadInfo() throws SQLException {
@@ -195,8 +194,8 @@ public class GetAssignment extends DAO {
 				info.setStatus(rs.getInt(2));
 				info.setPilotID(rs.getInt(3));
 				info.setEventID(rs.getInt(4));
-				info.setAssignDate(rs.getTimestamp(6));
-				info.setCompletionDate(rs.getTimestamp(7));
+				info.setAssignDate(toInstant(rs.getTimestamp(6)));
+				info.setCompletionDate(toInstant(rs.getTimestamp(7)));
 				info.setRepeating(rs.getBoolean(8));
 				info.setRandom(rs.getBoolean(9));
 				info.setPurgeable(rs.getBoolean(10));
@@ -208,7 +207,7 @@ public class GetAssignment extends DAO {
 		return results;
 	}
 
-	/**
+	/*
 	 * Helper method to process the assignment legs result set.
 	 */
 	private void loadLegs(List<AssignmentInfo> assignments) throws SQLException {

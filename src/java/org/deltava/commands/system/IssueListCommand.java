@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
@@ -16,23 +16,22 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to display issues and comments.
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
 public class IssueListCommand extends AbstractViewCommand {
    
-   private static final String[] SORT_CODE = {"I.ID", "I.PRIORITY DESC", "I.AREA, I.RESOLVED DESC", "I.STATUS DESC", "I.CREATED",
-         "I.RESOLVED DESC", "LC DESC"};
-   private static final List<?> SORT_OPTIONS = ComboUtils.fromArray(new String[] {"ID", "Priority", "Area", "Status", "Created On",
-         "Resolved On", "Last Comment"}, SORT_CODE);
+   private static final String[] SORT_CODE = {"I.ID", "I.PRIORITY DESC", "I.AREA, I.RESOLVED DESC", "I.STATUS DESC", "I.CREATED", "I.RESOLVED DESC", "LC DESC"};
+   private static final List<?> SORT_OPTIONS = ComboUtils.fromArray(new String[] {"ID", "Priority", "Area", "Status", "Created On", "Resolved On", "Last Comment"}, SORT_CODE);
     
     /**
      * Executes the command.
      * @param ctx the Command context
      * @throws CommandException if an unhandled error occurs
      */
-    public void execute(CommandContext ctx) throws CommandException {
+    @Override
+	public void execute(CommandContext ctx) throws CommandException {
 
         // Get/set start/count parameters and sort type
         ViewContext vc = initView(ctx);

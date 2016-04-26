@@ -1,22 +1,22 @@
-// Copyright 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 
 /**
  * A bean to store Dispatcher schedule entries.
  * @author Luke
- * @version 3.1
+ * @version 7.0
  * @since 2.2
  */
 
 public class DispatchScheduleEntry extends DatabaseBean implements TimeSpan, AuthoredBean {
 	
 	private int _dispatcherID;
-	private Date _startTime;
-	private Date _endTime;
+	private Instant _startTime;
+	private Instant _endTime;
 	
 	private String _comments;
 
@@ -30,10 +30,7 @@ public class DispatchScheduleEntry extends DatabaseBean implements TimeSpan, Aut
 		setAuthorID(id);
 	}
 	
-	/**
-	 * Returns the Dispatcher ID.
-	 * @return the Dispatcher database ID
-	 */
+	@Override
 	public int getAuthorID() {
 		return _dispatcherID;
 	}
@@ -46,28 +43,18 @@ public class DispatchScheduleEntry extends DatabaseBean implements TimeSpan, Aut
 		return _comments;
 	}
 	
-	/**
-	 * Returns the start date/time.
-	 */
-	public Date getDate() {
+	@Override
+	public Instant getDate() {
 		return _startTime;
 	}
 	
-	/**
-	 * Returns the start of this service time.
-	 * @return the start date/time
-	 * @see CalendarEntry#getDate()
-	 */
-	public Date getStartTime() {
+	@Override
+	public Instant getStartTime() {
 		return _startTime;
 	}
 
-	/**
-	 * Returns the end of this service time.
-	 * @return the end date/time
-	 * @see DispatchScheduleEntry#getStartTime()
-	 */
-	public Date getEndTime() {
+	@Override
+	public Instant getEndTime() {
 		return _endTime;
 	}
 	
@@ -76,6 +63,7 @@ public class DispatchScheduleEntry extends DatabaseBean implements TimeSpan, Aut
 	 * @param id the Dispatcher database ID
 	 * @throws IllegalArgumentException if id is zero or negative
 	 */
+	@Override
 	public void setAuthorID(int id) {
 		DatabaseBean.validateID(_dispatcherID, id);
 		_dispatcherID = id;
@@ -95,7 +83,7 @@ public class DispatchScheduleEntry extends DatabaseBean implements TimeSpan, Aut
 	 * @param dt the start date/time
 	 * @throws NullPointerException if dt is null
 	 */
-	public void setStartTime(Date dt) {
+	public void setStartTime(Instant dt) {
 		if (dt == null)
 			throw new NullPointerException("Start date/time cannot be null");
 		
@@ -109,10 +97,10 @@ public class DispatchScheduleEntry extends DatabaseBean implements TimeSpan, Aut
 	 * @throws NullPointerException if dt is null
 	 * @throws IllegalArgumentException if dt is before the start time
 	 */
-	public void setEndTime(Date dt) {
+	public void setEndTime(Instant dt) {
 		if (dt == null)
 			throw new NullPointerException("End date/time cannot be null");
-		if (dt.before(_startTime))
+		if (dt.isBefore(_startTime))
 			throw new IllegalArgumentException("End cannot be before start time");
 		
 		_endTime = dt;
@@ -122,12 +110,14 @@ public class DispatchScheduleEntry extends DatabaseBean implements TimeSpan, Aut
 	 * Comapres two sessions by comparing their start times.
 	 * @see Comparable#compareTo(Object)
 	 */
+	@Override
 	public int compareTo(Object o) {
 		CalendarEntry ce2 = (CalendarEntry) o;
 		int tmpResult = _startTime.compareTo(ce2.getDate());
 		return (tmpResult == 0) ? super.compareTo(ce2) : tmpResult;
 	}
 	
+	@Override
 	public String toString() {
 		StringBuilder buf = new StringBuilder(String.valueOf(getID()));
 		buf.append('-');

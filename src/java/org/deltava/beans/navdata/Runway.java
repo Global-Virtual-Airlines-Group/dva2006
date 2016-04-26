@@ -7,7 +7,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store Runway information.
  * @author Luke
- * @version 6.4
+ * @version 7.0
  * @since 1.0
  */
 
@@ -79,12 +79,13 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 	 * @see Runway#getHeading()
 	 */
 	public void setHeading(int hdg) {
-		while (hdg > 360)
-			hdg -= 360;
-		while (hdg < 0)
-			hdg += 360;
+		int h = hdg;
+		while (h > 360)
+			h -= 360;
+		while (h < 0)
+			h += 360;
 
-		_heading = hdg;
+		_heading = h;
 	}
 	
 	/**

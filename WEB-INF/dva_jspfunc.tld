@@ -32,13 +32,6 @@
 		<function-signature>java.util.Set keys(java.util.Map)</function-signature>
 	</function>
 
-	<!-- Convert Date to Instant -->
-	<function>
-	   <name>toInstant</name>
-	   <function-class>org.deltava.taglib.functions.MiscFunctions</function-class>
-	   <function-signature>java.time.Instant toInstant(java.util.Date)</function-signature>
-	</function>
-
 	<!-- Get a list entry -->
 	<function>
 		<name>get</name>
@@ -100,7 +93,7 @@
 	<function>
 		<name>delta</name>
 		<function-class>org.deltava.taglib.functions.MiscFunctions</function-class>
-		<function-signature>int difference(java.util.Date, java.util.Date)</function-signature>
+		<function-signature>int difference(java.time.temporal.Temporal, java.time.temporal.Temporal)</function-signature>
 	</function>
 
 	<!-- Converts a number to a hex string -->
@@ -114,7 +107,7 @@
 	<function>
 		<name>dateFmt</name>
 		<function-class>org.deltava.taglib.functions.MiscFunctions</function-class>
-		<function-signature>java.lang.String format(java.util.Date,	java.lang.String)</function-signature>
+		<function-signature>java.lang.String format(java.time.temporal.Temporal, java.lang.String)</function-signature>
 	</function>
 
 	<!-- Get the ACARS Database ID -->

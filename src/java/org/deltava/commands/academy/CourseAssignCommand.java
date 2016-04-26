@@ -1,7 +1,8 @@
-// Copyright 2006, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.deltava.beans.Pilot;
 import org.deltava.beans.academy.*;
@@ -16,7 +17,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to assign an Instructor to a Flight Academy Course.
  * @author Luke
- * @version 3.4
+ * @version 7.0
  * @since 1.0
  */
 
@@ -65,7 +66,7 @@ public class CourseAssignCommand extends AbstractCommand {
 			
 			// Create a comment
 			CourseComment cc = new CourseComment(c.getID(), ctx.getUser().getID());
-			cc.setCreatedOn(new java.util.Date());
+			cc.setCreatedOn(Instant.now());
 			cc.setText((ins == null) ? "Cleared assigned Instructor" : "Assigned " + ins.getName() + " as Instructor");
 			
 			// Start a transaction

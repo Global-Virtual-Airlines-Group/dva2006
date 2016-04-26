@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.exam;
 
 import java.util.*;
@@ -22,7 +22,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to plot maps for route plotting Examination questions. 
  * @author Luke
- * @version 5.1
+ * @version 7.0
  * @since 2.3
  */
 
@@ -141,7 +141,7 @@ public class RoutePlotService extends MapPlotService {
 		Element re = doc.getRootElement();
 		
 		// Return the number of seconds left
-		long timeRemaining = (ex.getExpiryDate().getTime() - System.currentTimeMillis()) / 1000;
+		long timeRemaining = (ex.getExpiryDate().toEpochMilli() - System.currentTimeMillis()) / 1000;
 		re.setAttribute("timeLeft", String.valueOf(timeRemaining));
 		
 		// Dump the XML to the output stream
@@ -160,6 +160,7 @@ public class RoutePlotService extends MapPlotService {
 	 * Returns if the Web Service requires authentication.
 	 * @return TRUE
 	 */
+	@Override
 	public final boolean isSecure() {
 		return true;
 	}

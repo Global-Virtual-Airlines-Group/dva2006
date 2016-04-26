@@ -1,10 +1,10 @@
-// Copyright 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 /**
  * A bean to store ACARS client versions.
  * @author Luke
- * @version 4.1
+ * @version 7.0
  * @since 4.1
  */
 
@@ -38,18 +38,22 @@ public class ClientInfo implements ClientVersion, Comparable<ClientInfo>, java.i
 		_beta = (beta < 1) ? Integer.MAX_VALUE : beta;
 	}
 
+	@Override
 	public int getVersion() {
 		return _version;
 	}
 	
+	@Override
 	public int getClientBuild() {
 		return _build;
 	}
 	
+	@Override
 	public int getBeta() {
 		return _beta;
 	}
 	
+	@Override
 	public ClientType getClientType() {
 		return _type;
 	}
@@ -78,6 +82,7 @@ public class ClientInfo implements ClientVersion, Comparable<ClientInfo>, java.i
 		_type = ct;
 	}
 	
+	@Override
 	public String toString() {
 		StringBuilder buf = new StringBuilder(String.valueOf(_version));
 		buf.append('.');
@@ -89,13 +94,15 @@ public class ClientInfo implements ClientVersion, Comparable<ClientInfo>, java.i
 		
 		return buf.toString();
 	}
-	
+
+	@Override
 	public int hashCode() {
 		StringBuilder buf = new StringBuilder(_type.toString());
 		buf.append(toString());
 		return buf.toString().hashCode();
 	}
 	
+	@Override
 	public int compareTo(ClientInfo c2) {
 		int tmpResult = _type.compareTo(c2._type);
 		if (tmpResult == 0)

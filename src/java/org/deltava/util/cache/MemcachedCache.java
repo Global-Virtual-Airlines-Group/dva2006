@@ -1,4 +1,4 @@
-// Copyright 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 import java.io.InvalidClassException;
@@ -10,7 +10,7 @@ import org.deltava.util.MemcachedUtils;
 /**
  * An object cache using memcached as its backing store.
  * @author Luke
- * @version 6.2
+ * @version 7.0
  * @since 6.1
  */
 
@@ -59,7 +59,7 @@ public class MemcachedCache<T extends Cacheable> extends Cache<T> {
 		int expTime = _expiryTime;
 		if (entry instanceof ExpiringCacheable) {
 			ExpiringCacheable ec = (ExpiringCacheable) entry;
-			expTime = (int) (ec.getExpiryDate().getTime() / 1000);
+			expTime = (int) (ec.getExpiryDate().toEpochMilli() / 1000);
 		}
 		
 		try {

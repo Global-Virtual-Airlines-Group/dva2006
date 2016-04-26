@@ -1,9 +1,10 @@
-// Copyright 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
 import java.util.concurrent.*;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.apache.log4j.Logger;
 
@@ -23,7 +24,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Scheduled Task to validate Facebook security tokens.
  * @author Luke
- * @version 6.0
+ * @version 7.0
  * @since 3.6
  */
 
@@ -127,7 +128,7 @@ public class FacebookValidationTask extends Task {
 				// Create status update
 				StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.EXT_AUTH);
 				upd.setAuthorID(ctx.getUser().getID());
-				upd.setCreatedOn(new Date());
+				upd.setCreatedOn(Instant.now());
 				upd.setDescription("Clearing Facebook Token after errors");
 
 				// Start transaction

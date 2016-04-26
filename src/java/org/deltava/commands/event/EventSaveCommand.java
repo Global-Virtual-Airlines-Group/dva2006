@@ -2,6 +2,7 @@
 package org.deltava.commands.event;
 
 import java.util.*;
+import java.time.*;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
@@ -185,10 +186,10 @@ public class EventSaveCommand extends AbstractCommand {
 					ctx.release();
 					
 					// Convert the dates to local time for the input fields
-					TZInfo tz = ctx.getUser().getTZ();
-					ctx.setAttribute("startTime", DateTime.convert(e.getStartTime(), tz), REQUEST);
-					ctx.setAttribute("endTime", DateTime.convert(e.getEndTime(), tz), REQUEST);
-					ctx.setAttribute("signupDeadline", DateTime.convert(e.getSignupDeadline(), tz), REQUEST);
+					ZoneId tz = ctx.getUser().getTZ().getZone();
+					ctx.setAttribute("startTime", ZonedDateTime.ofInstant(e.getStartTime(), tz), REQUEST);
+					ctx.setAttribute("endTime", ZonedDateTime.ofInstant(e.getEndTime(), tz), REQUEST);
+					ctx.setAttribute("signupDeadline", ZonedDateTime.ofInstant(e.getSignupDeadline(), tz), REQUEST);
 					
 					// Go to page
 					CommandResult result = ctx.getResult();

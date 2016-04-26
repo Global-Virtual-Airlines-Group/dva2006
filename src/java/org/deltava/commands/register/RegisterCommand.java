@@ -1,9 +1,10 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.util.*;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
+import java.time.Instant;
 
 import javax.servlet.http.*;
 
@@ -31,7 +32,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to register a new Applicant.
  * @author Luke
- * @version 6.3
+ * @version 7.0
  * @since 1.0
  */
 
@@ -360,11 +361,8 @@ public class RegisterCommand extends AbstractCommand {
 			mctxt.addData("questionnaire", ex);
 
 			// Set the creation/expiration date/times
-			Calendar cld = Calendar.getInstance();
-			ex.setDate(cld.getTime());
-			cld.add(Calendar.DATE, SystemData.getInt("registration.auto_reject"));
-			cld.add(Calendar.HOUR, -1);
-			ex.setExpiryDate(cld.getTime());
+			ex.setDate(Instant.now());
+			ex.setExpiryDate(ex.getDate().plusSeconds(SystemData.getInt("registration.auto_reject", 5) * 86400 - 3600));
 
 			// Add the questions to the exam
 			int qNum = 0;

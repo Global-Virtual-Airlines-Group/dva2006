@@ -5,6 +5,7 @@ import junit.framework.TestCase;
 
 public class TestOnlineNetwork extends TestCase {
 
+	@SuppressWarnings("static-method")
 	public void testValue() {
 		assertEquals(0, OnlineNetwork.VATSIM.ordinal());
 		assertEquals(OnlineNetwork.VATSIM, OnlineNetwork.valueOf("VATSIM"));

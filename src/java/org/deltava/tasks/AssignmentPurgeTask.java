@@ -1,8 +1,9 @@
-// Copyright 2005, 2006, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.deltava.beans.Pilot;
 import org.deltava.beans.assign.*;
@@ -15,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Schedule Task to automatically release Flight Assignments.
  * @author Luke
- * @version 3.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -31,12 +32,12 @@ public class AssignmentPurgeTask extends Task {
 	/**
 	 * Executes the task.
 	 */
+	@Override
 	protected void execute(TaskContext ctx) {
 
 		// Get the inactivity cutoff time
 		int inactiveDays = SystemData.getInt("users.pirep.assign_purge", 14);
-		Calendar cld = Calendar.getInstance();
-		cld.add(Calendar.DATE, inactiveDays * -1);
+		Instant cld = Instant.now().minusSeconds(inactiveDays * 86400);
 		log.info("Executing");
 
 		try {
@@ -51,7 +52,7 @@ public class AssignmentPurgeTask extends Task {
 			SetAssignment wdao = new SetAssignment(con);
 			for (Iterator<AssignmentInfo> i = assignments.iterator(); i.hasNext();) {
 				AssignmentInfo a = i.next();
-				if (cld.getTime().after(a.getAssignDate())) {
+				if (cld.isAfter(a.getAssignDate())) {
 					Pilot usr = pdao.get(a.getPilotID());
 
 					// If the assignment is repeatable, then release it - otherwise delete it

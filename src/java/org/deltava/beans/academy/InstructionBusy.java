@@ -1,21 +1,21 @@
-// Copyright 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.academy;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 
 /**
  * A bean to block off a Flight Academy Instructor's time.
  * @author Luke
- * @version 3.1
+ * @version 7.0
  * @since 1.0
  */
 
 public class InstructionBusy extends DatabaseBean implements TimeSpan, ViewEntry, InstructorBean {
 
-	private Date _startTime;
-	private Date _endTime;
+	private Instant _startTime;
+	private Instant _endTime;
 
 	private String _comments;
 
@@ -37,35 +37,25 @@ public class InstructionBusy extends DatabaseBean implements TimeSpan, ViewEntry
 		return _comments;
 	}
 
-	/**
-	 * Returns the start of this busy time.
-	 * @return the start date/time
-	 * @see CalendarEntry#getDate()
-	 * @see InstructionBusy#getEndTime()
-	 */
-	public Date getStartTime() {
+	@Override
+	public Instant getStartTime() {
 		return _startTime;
 	}
 
-	/**
-	 * Returns the end of this busy time.
-	 * @return the end date/time
-	 * @see InstructionBusy#getStartTime()
-	 */
-	public Date getEndTime() {
+	@Override
+	public Instant getEndTime() {
 		return _endTime;
 	}
 
-	/**
-	 * Returns the start date/time.
-	 */
-	public Date getDate() {
+	@Override
+	public Instant getDate() {
 		return _startTime;
 	}
 	
 	/**
 	 * Returns the Instructor database ID.
 	 */
+	@Override
 	public int getInstructorID() {
 		return getID();
 	}
@@ -75,9 +65,9 @@ public class InstructionBusy extends DatabaseBean implements TimeSpan, ViewEntry
 	 * @param dt the start date/time
 	 * @see InstructionBusy#getStartTime()
 	 * @see CalendarEntry#getDate()
-	 * @see InstructionBusy#setEndTime(Date)
+	 * @see InstructionBusy#setEndTime(Instant)
 	 */
-	public void setStartTime(Date dt) {
+	public void setStartTime(Instant dt) {
 		_startTime = dt;
 	}
 
@@ -86,10 +76,10 @@ public class InstructionBusy extends DatabaseBean implements TimeSpan, ViewEntry
 	 * @param dt the end date/time
 	 * @throws IllegalArgumentException if dt is before startDate
 	 * @see InstructionBusy#getEndTime()
-	 * @see InstructionBusy#setStartTime(Date)
+	 * @see InstructionBusy#setStartTime(Instant)
 	 */
-	public void setEndTime(Date dt) {
-		if ((dt != null) && (dt.before(_startTime)))
+	public void setEndTime(Instant dt) {
+		if ((dt != null) && dt.isBefore(_startTime))
 			throw new IllegalArgumentException("Invalid End Time - " + dt);
 
 		_endTime = dt;
@@ -108,6 +98,7 @@ public class InstructionBusy extends DatabaseBean implements TimeSpan, ViewEntry
 	 * Returns the CSS row class name if displayed in a view table.
 	 * @return the CSS class name
 	 */
+	@Override
 	public String getRowClassName() {
 		return "warn";
 	}
@@ -116,6 +107,7 @@ public class InstructionBusy extends DatabaseBean implements TimeSpan, ViewEntry
 	 * Comapres two sessions by comparing their start times.
 	 * @see Comparable#compareTo(Object)
 	 */
+	@Override
 	public int compareTo(Object o) {
 		CalendarEntry ce2 = (CalendarEntry) o;
 		int tmpResult = _startTime.compareTo(ce2.getDate());

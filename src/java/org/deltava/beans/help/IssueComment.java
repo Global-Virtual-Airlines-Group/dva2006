@@ -1,21 +1,21 @@
-// Copyright 2006, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.help;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.deltava.beans.DatabaseBean;
 
 /**
- * A bean to store Flight Academy Issue comments.
+ * A bean to store Help Desk Issue comments.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 1.0
  */
 
 public class IssueComment extends DatabaseBean {
 	
 	private final int _authorID;
-	private Date _createdOn;
+	private Instant _createdOn = Instant.now();
 	private boolean _faq;
 	private String _body;
 
@@ -28,7 +28,6 @@ public class IssueComment extends DatabaseBean {
 	public IssueComment(int authorID) {
 		super();
 		_authorID = authorID;
-		_createdOn = new Date();
 	}
 
 	/**
@@ -61,9 +60,9 @@ public class IssueComment extends DatabaseBean {
 	/**
 	 * Returns the creation date of this Comment.
 	 * @return the date/time the Comment was created
-	 * @see IssueComment#setCreatedOn(Date)
+	 * @see IssueComment#setCreatedOn(Instant)
 	 */
-	public Date getCreatedOn() {
+	public Instant getCreatedOn() {
 		return _createdOn;
 	}
 	
@@ -81,7 +80,7 @@ public class IssueComment extends DatabaseBean {
 	 * @param dt the date/time the Comment was created
 	 * @see IssueComment#getCreatedOn()
 	 */
-	public void setCreatedOn(Date dt) {
+	public void setCreatedOn(Instant dt) {
 		_createdOn = dt;
 	}
 	
@@ -97,6 +96,7 @@ public class IssueComment extends DatabaseBean {
 	/**
 	 * Compares two comments by comparing their Issue ID and creation dates.
 	 */
+	@Override
 	public int compareTo(Object o) {
 		IssueComment ic2 = (IssueComment) o;
 		int tmpResult = super.compareTo(ic2);
@@ -106,6 +106,7 @@ public class IssueComment extends DatabaseBean {
 	/**
 	 * Checks for equality by comparison.
 	 */
+	@Override
 	public boolean equals(Object o) {
 		return (o instanceof IssueComment) ? (compareTo(o) == 0) : false;
 	}

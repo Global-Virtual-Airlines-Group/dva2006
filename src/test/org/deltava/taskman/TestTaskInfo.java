@@ -16,6 +16,7 @@ public class TestTaskInfo extends TestCase {
 			super(name, MockTask.class);
 		}
 
+		@Override
 		protected void execute(TaskContext ctx) {
 			// noop
 		}
@@ -25,12 +26,14 @@ public class TestTaskInfo extends TestCase {
         return new CoverageDecorator(TestTaskInfo.class, new Class[] { TaskInfo.class } );
     }
     
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
     	super.setUp();
     	PropertyConfigurator.configure("data/log4j.test.properties");
     	_task = new MockTask("Test Task");
     }
 
+	@Override
 	protected void tearDown() throws Exception {
 		_task = null;
 		_info = null;

@@ -1,9 +1,11 @@
-// Copyright 2005, 2007, 2008, 2010, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2010, 2012, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.calendar;
 
 import java.util.*;
-import java.text.*;
-import java.io.IOException;
+import java.util.stream.Collectors;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 
 import javax.servlet.jsp.*;
 import javax.servlet.jsp.tagext.*;
@@ -12,27 +14,28 @@ import javax.servlet.http.HttpServletRequest;
 import org.deltava.beans.*;
 import org.deltava.taglib.XMLRenderer;
 import org.deltava.util.*;
-import org.deltava.util.system.SystemData;
 
 /**
  * A JSP tag to display a calendar view table.
  * @author Luke
- * @version 5.3
+ * @version 7.0
  * @since 1.0
  */
 
 abstract class CalendarTag extends TagSupport {
 	
-	private final DateFormat _df = new SimpleDateFormat("MM/dd/yyyy");
+	private final DateTimeFormatter _df = DateTimeFormatter.ofPattern("MM/dd/yyyy");
 	private static final Collection<String> RESERVED_PARAMS = Collections.singleton("startDate");
 
 	protected JspWriter _out;
+
+	// Should all be user's local time
+	protected ZonedDateTime _startDate;
+	protected ZonedDateTime _endDate;
+	protected ZonedDateTime _currentDate;
+	protected ZonedDateTime _today;
+	protected ZoneId _tz;
 	
-	protected Date _startDate;
-	protected Date _endDate;
-	protected Calendar _currentDate;
-	protected Date _today;
-	protected TZInfo _tz;
 	private String _currentDateAttr;
 
 	protected final Collection<CalendarEntry> _entries = new TreeSet<CalendarEntry>();
@@ -52,14 +55,14 @@ abstract class CalendarTag extends TagSupport {
 	protected XMLRenderer _table;
 	protected XMLRenderer _day;
 	
-	protected int _intervalType = Calendar.DATE;
+	protected ChronoUnit _intervalType = ChronoUnit.DAYS;
 	protected int _intervalLength = 7;
 
 	/**
 	 * Sets the start date of the data range.
 	 * @param dt the start date/time
 	 */
-	public abstract void setStartDate(Date dt);
+	public abstract void setStartDate(ZonedDateTime dt);
 	
 	/**
 	 * Returns the label for the scroll backwards link.
@@ -80,7 +83,7 @@ abstract class CalendarTag extends TagSupport {
 	 * @param dt the cell date
 	 * @return a CSS class list
 	 */
-	protected String getContentClass(Date dt) {
+	protected String getContentClass(ZonedDateTime dt) {
 		boolean isToday = _today.equals(dt);
 		StringBuilder buf = new StringBuilder();
 		if (_contentClass != null) {
@@ -100,7 +103,7 @@ abstract class CalendarTag extends TagSupport {
 	 * @param dt the cell date
 	 * @return a CSS class list
 	 */
-	protected String getHeaderClass(Date dt) {
+	protected String getHeaderClass(ZonedDateTime dt) {
 		boolean isToday = _today.equals(dt);
 		StringBuilder buf = new StringBuilder();
 		if (_dayBarClass != null) {
@@ -122,10 +125,8 @@ abstract class CalendarTag extends TagSupport {
 	 * @param amount the size of the interval
 	 * @see java.util.Calendar
 	 */
-	protected void calculateEndDate(int intervalType, int amount) {
-		Calendar cld = CalendarUtils.getInstance(_startDate);
-		cld.add(intervalType, amount);
-		_endDate = cld.getTime();
+	protected void calculateEndDate(ChronoUnit intervalType, int amount) {
+		_endDate = _startDate.plus(amount, intervalType);
 		_intervalType = intervalType;
 		_intervalLength = amount;
 	}
@@ -225,11 +226,8 @@ abstract class CalendarTag extends TagSupport {
 	 * @see CalendarTag#getCurrentEntries()
 	 */
 	public final void setEntries(Collection<CalendarEntry> entries) {
-		for (Iterator<CalendarEntry> i = entries.iterator(); i.hasNext();) {
-			CalendarEntry ce = i.next();
-			DateTime edt = new DateTime(ce.getDate(), TZInfo.local());
-			edt.convertTo(_tz);
-			if ((edt.getDate().after(_startDate)) && (edt.getDate().before(_endDate)))
+		for (CalendarEntry ce : entries) {
+			if ((ce.getDate().isAfter(_startDate.toInstant())) && (ce.getDate().isBefore(_endDate.toInstant())))
 				_entries.add(ce);
 		}
 	}
@@ -245,12 +243,10 @@ abstract class CalendarTag extends TagSupport {
 		// Determine the user's time zone
 		HttpServletRequest hreq = (HttpServletRequest) ctx.getRequest();
 		Person usr = (Person) hreq.getUserPrincipal();
-		_tz = (usr != null) ? usr.getTZ() : TZInfo.get(SystemData.get("time.timezone"));
+		_tz = (usr != null) ? usr.getTZ().getZone() : ZoneId.systemDefault();
 		
 		// Determine today's date in user's time zone
-		DateTime dt = new DateTime(new Date());
-		dt.convertTo(_tz);
-		_today = CalendarUtils.getInstance(dt.getDate(), true).getTime();
+		_today = ZonedDateTime.ofInstant(Instant.now(), _tz).truncatedTo(ChronoUnit.DAYS);
 	}
 	
     /*
@@ -282,26 +278,10 @@ abstract class CalendarTag extends TagSupport {
 	 * @see CalendarTag#setEntries(Collection)
 	 */
 	Collection<CalendarEntry> getCurrentEntries() {
-		Collection<CalendarEntry> results = new ArrayList<CalendarEntry>();
-
-		// Create the current date in the user's local time and determine what the local equivalent is
-		DateTime ldt = new DateTime(_currentDate.getTime(), _tz);
-		ldt.convertTo(TZInfo.local());
-		
-		// Calculate the start/end points in the user's local time
-		Calendar sd = CalendarUtils.getInstance(ldt.getDate()); 
-		Calendar ed = CalendarUtils.getInstance(ldt.getDate());			
-		sd.add(Calendar.SECOND, -1);
-		ed.add(Calendar.DATE, 1);
-
-		// Get the entries
-		for (CalendarEntry ce : _entries) {
-			Date entryDate = ce.getDate();
-			if ((entryDate.after(sd.getTime())) && (entryDate.before(ed.getTime())))
-				results.add(ce);
-		}
-
-		return results;
+		// Calculate the start/end points of the current date in the users's local time, in UTC
+		Instant sd = _currentDate.toInstant().minus(1, ChronoUnit.MILLIS);
+		Instant ed = sd.plus(1, ChronoUnit.DAYS).plus(2, ChronoUnit.MILLIS);
+		return _entries.stream().filter(ce -> (ce.getDate().isAfter(sd) && ce.getDate().isBefore(ed))).collect(Collectors.toList());
 	}
 
 	/**
@@ -312,11 +292,11 @@ abstract class CalendarTag extends TagSupport {
 	 */
 	@Override
 	public int doAfterBody() throws JspException {
-		_currentDate.add(Calendar.DATE, 1);
+		_currentDate= _currentDate.plus(1, ChronoUnit.DAYS);
 		if (_currentDateAttr != null)
-			pageContext.setAttribute(_currentDateAttr, _currentDate.getTime(), PageContext.REQUEST_SCOPE);
+			pageContext.setAttribute(_currentDateAttr, _currentDate, PageContext.REQUEST_SCOPE);
 			
-		return _currentDate.getTime().before(_endDate) ? EVAL_BODY_AGAIN : SKIP_BODY;
+		return _currentDate.isBefore(_endDate) ? EVAL_BODY_AGAIN : SKIP_BODY;
 	}
 
 	/**
@@ -329,11 +309,11 @@ abstract class CalendarTag extends TagSupport {
 	public int doStartTag() throws JspException {
 
 		// Generate the current date
-		_currentDate = CalendarUtils.getInstance(_startDate, true);
+		_currentDate = _startDate.truncatedTo(ChronoUnit.DAYS);
 		
 		// Save the current date in the request
 		if (_currentDateAttr != null)
-			pageContext.setAttribute(_currentDateAttr, _currentDate.getTime(), PageContext.REQUEST_SCOPE);
+			pageContext.setAttribute(_currentDateAttr, _currentDate, PageContext.REQUEST_SCOPE);
 		
 		// Generate the view table
 		_table = new XMLRenderer("table");
@@ -353,6 +333,7 @@ abstract class CalendarTag extends TagSupport {
 	 * @return EVAL_PAGE always
 	 * @throws JspException if an I/O error occurs  
 	 */
+	@Override
 	public int doEndTag() throws JspException {
 		if (!_showScrollTags)
 			return EVAL_PAGE;
@@ -361,23 +342,19 @@ abstract class CalendarTag extends TagSupport {
         Map<String, Object> params = new HashMap<String, Object>(pageContext.getRequest().getParameterMap());
         params.keySet().removeAll(RESERVED_PARAMS);
         
-        // Calculate the next page startDate
-        Calendar fd = CalendarUtils.getInstance(_startDate);
-        fd.add(_intervalType, _intervalLength);
-        
-        // Calculate the previous page startDate
-        Calendar bd = CalendarUtils.getInstance(_startDate);
-        bd.add(_intervalType, _intervalLength * -1);
+        // Calculate the next and previous page startDates
+        ZonedDateTime fd = _startDate.plus(_intervalLength, _intervalType);
+        ZonedDateTime bd = _startDate.minus(_intervalLength, _intervalType);
         
         try {
         	// Build the backward URL
         	XMLRenderer backURL = new XMLRenderer("a");
-        	params.put("startDate", new String[] { _df.format(bd.getTime()) } );
+        	params.put("startDate", new String[] { _df.format(bd) } );
         	backURL.setAttribute("href", buildURL(params));
 
         	// Build the forward URL
         	XMLRenderer fwdURL = new XMLRenderer("a");
-        	params.put("startDate", new String[] { _df.format(fd.getTime()) } );
+        	params.put("startDate", new String[] { _df.format(fd) } );
         	fwdURL.setAttribute("href", buildURL(params));
         	
         	// Render the scroll tag bar row
@@ -410,7 +387,7 @@ abstract class CalendarTag extends TagSupport {
 
         	// Close the row
         	_out.println(scrollRow.close());
-        } catch (IOException ie) {
+        } catch (Exception ie) {
         	throw new JspException(ie);
         } finally {
         	release();
@@ -433,7 +410,7 @@ abstract class CalendarTag extends TagSupport {
 		_dayBarClass = null;
 		_contentClass = null;
 		_currentDateAttr = null;
-		_intervalType = Calendar.DATE;
+		_intervalType = ChronoUnit.DAYS;
 		_intervalLength = 7;
 		_entries.clear();
 	}

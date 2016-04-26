@@ -13,6 +13,7 @@ public class TestMemcachedCache extends TestCase {
 
 	private MemcachedCache<Cacheable> _cache;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		PropertyConfigurator.configure("data/log4j.test.properties");
@@ -21,6 +22,7 @@ public class TestMemcachedCache extends TestCase {
 		assertNotNull(_cache);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		_cache = null;
 		MemcachedUtils.shutdown();

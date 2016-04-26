@@ -1,15 +1,15 @@
-// Copyright 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.fleet;
 
 import java.net.*;
-import java.util.Date;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 
 /**
  * A bean to store Web Resource link data.
  * @author Luke
- * @version 2.7
+ * @version 7.0
  * @since 1.0
  */
 
@@ -22,7 +22,7 @@ public class Resource extends DatabaseBean implements ViewEntry, AuthoredBean {
 	private int _authorID;
 	private int _lastUpdateID;
 	
-	private Date _created;
+	private Instant _created;
 	private int _hitCount;
 	private String _desc;
 	private boolean _public;
@@ -80,6 +80,7 @@ public class Resource extends DatabaseBean implements ViewEntry, AuthoredBean {
 	 * @return the Author's database ID
 	 * @see Resource#setAuthorID(int)
 	 */
+	@Override
 	public int getAuthorID() {
 		return _authorID;
 	}
@@ -97,9 +98,9 @@ public class Resource extends DatabaseBean implements ViewEntry, AuthoredBean {
 	/**
 	 * Returns the creation date of this Resource.
 	 * @return the date/time the Resource was created
-	 * @see Resource#setCreatedOn(Date)
+	 * @see Resource#setCreatedOn(Instant)
 	 */
-	public Date getCreatedOn() {
+	public Instant getCreatedOn() {
 		return _created;
 	}
 	
@@ -177,13 +178,7 @@ public class Resource extends DatabaseBean implements ViewEntry, AuthoredBean {
 		_category = cat;
 	}
 	
-	/**
-	 * Updates the Author of this Resource.
-	 * @param id the Author's database ID
-	 * @throws IllegalArgumentException if id is zero or negative
-	 * @see Resource#getAuthorID()
-	 * @see Resource#setLastUpdateID(int)
-	 */
+	@Override
 	public void setAuthorID(int id) {
 		validateID(_authorID, id);
 		_authorID = id;
@@ -205,7 +200,7 @@ public class Resource extends DatabaseBean implements ViewEntry, AuthoredBean {
 	 * @param dt the date/time the resource was created
 	 * @see Resource#getCreatedOn()
 	 */
-	public void setCreatedOn(Date dt) {
+	public void setCreatedOn(Instant dt) {
 		_created = dt;
 	}
 	
@@ -233,6 +228,7 @@ public class Resource extends DatabaseBean implements ViewEntry, AuthoredBean {
 	/**
 	 * Returns the Resource URL.
 	 */
+	@Override
 	public String toString() {
 		return _url;
 	}
@@ -241,6 +237,7 @@ public class Resource extends DatabaseBean implements ViewEntry, AuthoredBean {
 	 * Returns the row CSS class name if displayed in a view table.
 	 * @return the CSS class name
 	 */
+	@Override
 	public String getRowClassName() {
 		return _public ? null : "opt2";
 	}

@@ -1,7 +1,7 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.deltava.beans.UserData;
 import org.deltava.beans.testing.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * An Access Controller for Pilot Examinations and Check Ride records.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -57,7 +57,8 @@ public class ExamAccessControl extends AccessControl {
      * Calculates access rights.
      * @throws AccessControlException if we cannot view the data
      */
-    public void validate() throws AccessControlException {
+    @Override
+	public void validate() throws AccessControlException {
        validateContext();
        
         // Check if we're authenticated
@@ -84,7 +85,7 @@ public class ExamAccessControl extends AccessControl {
         boolean isScored = (_t.getStatus() == TestStatus.SCORED);
         if (!isCR) {
         	Examination ex = (Examination) _t;
-        	isSubmitted = isSubmitted || ((_t.getStatus() == TestStatus.NEW) && (ex.getExpiryDate().before(new Date())));
+        	isSubmitted = isSubmitted || ((_t.getStatus() == TestStatus.NEW) && (ex.getExpiryDate().isBefore(Instant.now())));
         }
         
         // Check if we're able to score - everyone can score a check ride

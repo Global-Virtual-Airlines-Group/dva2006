@@ -7,6 +7,7 @@ import org.hansel.CoverageDecorator;
 import junit.framework.Test;
 import junit.framework.TestCase;
 
+@SuppressWarnings("static-method")
 public class TestRoleUtils extends TestCase {
 
 	private static List<String> EMPTY = Collections.emptyList();

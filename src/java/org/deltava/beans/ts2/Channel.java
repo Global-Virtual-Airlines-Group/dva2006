@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.ts2;
 
 import org.deltava.beans.*;
@@ -6,7 +6,7 @@ import org.deltava.beans.*;
 /**
  * A bean to store TeamSpeak 2 voice channel information.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -232,6 +232,7 @@ public class Channel extends TSObject implements ViewEntry {
 	 * Returns the Channel's cache key.
 	 * @return CH- and the dataabase ID
 	 */
+	@Override
 	public Object cacheKey() {
 		StringBuilder buf = new StringBuilder("CH-");
 		buf.append(String.valueOf(getID()));
@@ -242,6 +243,7 @@ public class Channel extends TSObject implements ViewEntry {
 	 * Returns the CSS class name when rendered in a view table.
 	 * @return the CSS class name
 	 */
+	@Override
 	public String getRowClassName() {
 		return _isDefault ? "opt2" : null;
 	}

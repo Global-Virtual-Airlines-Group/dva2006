@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2010, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2010, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.io.*;
@@ -16,7 +16,7 @@ import org.deltava.util.*;
  * An Authenticator to authenticate users using an Apache-style password file. This authenticator only supports SHA
  * hashing of the password, not MD5 or crypt().
  * @author Luke
- * @version 5.4
+ * @version 7.0
  * @since 1.0
  */
 
@@ -34,6 +34,7 @@ public class ApacheFileAuthenticator implements Authenticator {
 	 * @param propsFile the properties file to use
 	 * @throws SecurityException if an error occurs
 	 */
+	@Override
 	public void init(String propsFile) throws SecurityException {
 
 		_props.clear();
@@ -81,6 +82,7 @@ public class ApacheFileAuthenticator implements Authenticator {
 	 * @param pwd the user's password
 	 * @throws SecurityException if authentication fails
 	 */
+	@Override
 	public void authenticate(Person usr, String pwd) throws SecurityException {
 		
 		// Get the user
@@ -104,6 +106,7 @@ public class ApacheFileAuthenticator implements Authenticator {
 	 * @param usr the User bean
 	 * @return TRUE if the user exists, otherwise FALSE
 	 */
+	@Override
 	public boolean contains(Person usr) throws SecurityException {
 		String userID = getID(usr);
 		return (userID != null) && _pwdInfo.containsKey(userID);
@@ -113,6 +116,7 @@ public class ApacheFileAuthenticator implements Authenticator {
 	 * Checks if this Authenticator will accept a particular user.
 	 * @return TRUE if the user is a Pilot and has the LDAPName property set, otherwise FALSE
 	 */
+	@Override
 	public boolean accepts(Person usr) {
 		return (getID(usr) != null);
 	}
@@ -123,6 +127,7 @@ public class ApacheFileAuthenticator implements Authenticator {
 	 * @param pwd the User's password
 	 * @throws SecurityException if an error occurs
 	 */
+	@Override
 	public void updatePassword(Person usr, String pwd) throws SecurityException {
 
 		// Get the ID to update
@@ -146,6 +151,7 @@ public class ApacheFileAuthenticator implements Authenticator {
 	 * @param pwd the new password
 	 * @throws SecurityException if an error occurs
 	 */
+	@Override
 	public void add(Person usr, String pwd) throws SecurityException {
 
 		// Get the ID to add
@@ -169,6 +175,7 @@ public class ApacheFileAuthenticator implements Authenticator {
 	 * @param newName the new Directory name
 	 * @throws SecurityException if an error occurs
 	 */
+	@Override
 	public void rename(Person usr, String newName) throws SecurityException {
 
 		// Get the ID to rename
@@ -191,6 +198,7 @@ public class ApacheFileAuthenticator implements Authenticator {
 	 * @param usr the User bean
 	 * @throws SecurityException if an error occurs
 	 */
+	@Override
 	public void remove(Person usr) throws SecurityException {
 
 		// Get the ID to delete
@@ -208,6 +216,7 @@ public class ApacheFileAuthenticator implements Authenticator {
 	 * @param usr the user bean
 	 * @throws SecurityException if an error occurs
 	 */
+	@Override
 	public void disable(Person usr) throws SecurityException {
 		remove(usr);
 	}

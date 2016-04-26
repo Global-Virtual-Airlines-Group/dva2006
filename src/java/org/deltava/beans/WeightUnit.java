@@ -1,10 +1,10 @@
-// Copyright 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 /**
  * An enumeration to store units of weight.
  * @author Luke
- * @version 5.2
+ * @version 7.0
  * @since 5.2
  */
 
@@ -24,6 +24,7 @@ public enum WeightUnit implements Unit {
 	 * Returns the unit name.
 	 * @return the full name
 	 */
+	@Override
 	public String getUnitName() {
 		return _name;
 	}
@@ -32,14 +33,17 @@ public enum WeightUnit implements Unit {
 	 * Returns the ratio of this distance unit to pounds.
 	 * @return the ratio
 	 */
+	@Override
 	public double getFactor() {
 		return _factor;
 	}
 	
+	@Override
 	public String getComboName() {
 		return _name;
 	}
 	
+	@Override
 	public String getComboAlias() {
 		return name();
 	}

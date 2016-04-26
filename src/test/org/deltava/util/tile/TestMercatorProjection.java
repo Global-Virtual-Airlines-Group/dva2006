@@ -9,6 +9,7 @@ public class TestMercatorProjection extends TestCase {
 	
 	private MercatorProjection mp;
 	
+	@Override
 	protected void tearDown() throws Exception {
 		mp = null;
 		super.tearDown();

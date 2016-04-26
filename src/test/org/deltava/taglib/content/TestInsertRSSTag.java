@@ -11,13 +11,15 @@ public class TestInsertRSSTag extends AbstractTagTestCase {
    
    private static final String RSS_START = "<link rel=\"alternate\" type=\"application/rss+xml\" title=\"";
    
-   protected void setUp() throws Exception {
+   @Override
+protected void setUp() throws Exception {
       super.setUp();
       _tag = new InsertRSSTag();
       _tag.setPageContext(_ctx);
    }
 
-   protected void tearDown() throws Exception {
+   @Override
+protected void tearDown() throws Exception {
       _tag.release();
       _tag = null;
       super.tearDown();

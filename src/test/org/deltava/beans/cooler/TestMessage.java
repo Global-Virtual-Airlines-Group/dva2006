@@ -1,5 +1,6 @@
 package org.deltava.beans.cooler;
 
+import java.time.Instant;
 import java.util.Date;
 
 import junit.framework.Test;
@@ -17,7 +18,8 @@ public class TestMessage extends AbstractBeanTestCase {
         return new CoverageDecorator(TestMessage.class, new Class[] { Message.class } );
     }
 
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
         _p = new Pilot("John", "Smith");
         _p.setID(123);
@@ -25,7 +27,8 @@ public class TestMessage extends AbstractBeanTestCase {
         setBean(_msg);
     }
 
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         _msg = null;
         _p = null;
         super.tearDown();
@@ -47,7 +50,7 @@ public class TestMessage extends AbstractBeanTestCase {
     public void testComparator() {
         long now = System.currentTimeMillis();
         Message m2 = new Message(_p.getID());
-        m2.setCreatedOn(new Date(now + 1000));
+        m2.setCreatedOn(Instant.ofEpochMilli(now + 1000));
         assertTrue(_msg.compareTo(m2) < 0);
         assertTrue(m2.compareTo(_msg) > 0);
     }

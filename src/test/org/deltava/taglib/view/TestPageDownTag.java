@@ -6,14 +6,16 @@ public class TestPageDownTag extends AbstractScrollTagTestCase {
 
     private PageDownTag _tag;
     
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
         _tag = new PageDownTag();
         _tag.setPageContext(_ctx);
         _tag.setParent(_tableTag);
     }
 
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         _tag = null;
         super.tearDown();
     }

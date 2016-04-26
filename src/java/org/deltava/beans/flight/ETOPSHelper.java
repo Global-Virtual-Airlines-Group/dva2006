@@ -1,4 +1,4 @@
-// Copyright 2011, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.GeoUtils;
 /**
  * A utility class to do ETOPS validation.
  * @author Luke
- * @version 6.0
+ * @version 7.0
  * @since 4.1
  */
 
@@ -105,14 +105,13 @@ public final class ETOPSHelper {
 
 	/**
 	 * Validates whether an ETOPS classification should trigger an ETOPS warning.
-	 * @param a the Aircraft used, or null for a generic 2-engine aircraft
+	 * @param ap the Aircraft used, or null for a generic 2-engine aircraft
 	 * @param e the ETOPS classification
 	 * @return TRUE if an ETOPS warning should be triggered, otherwise FALSE
 	 * @throws NullPointerException if rp is null
 	 */
-	public static boolean validate(Aircraft a, ETOPS e) {
-		if (a == null)
-			a = DUMMY;
+	public static boolean validate(Aircraft ap, ETOPS e) {
+		Aircraft a =  (ap == null) ? DUMMY : ap;
 
 		// Check if aircraft is ETOPS or >2 engines
 		int maxTime = 90;

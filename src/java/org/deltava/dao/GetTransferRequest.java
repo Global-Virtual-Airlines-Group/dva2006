@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Data Access Object to read Pilot Transfer requests.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -143,10 +143,8 @@ public class GetTransferRequest extends DAO {
 	 */
 	public Collection<TransferRequest> getAged(int minAge) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT TX.* FROM TXREQUESTS TX LEFT JOIN TXRIDES TC ON "
-				+"(TX.ID=TC.ID) LEFT JOIN exams.CHECKRIDES CR ON (TC.CHECKRIDE_ID=CR.ID) WHERE "
-				+ "(TX.CREATED < DATE_SUB(NOW(), INTERVAL ? DAY)) AND (TX.STATUS<>?) AND (CR.STATUS<>?) "
-				+ "AND (CR.STATUS<>?) ORDER BY TX.CREATED");
+			prepareStatementWithoutLimits("SELECT TX.* FROM TXREQUESTS TX LEFT JOIN TXRIDES TC ON (TX.ID=TC.ID) LEFT JOIN exams.CHECKRIDES CR ON (TC.CHECKRIDE_ID=CR.ID) WHERE "
+				+ "(TX.CREATED < DATE_SUB(NOW(), INTERVAL ? DAY)) AND (TX.STATUS<>?) AND (CR.STATUS<>?) AND (CR.STATUS<>?) ORDER BY TX.CREATED");
 			_ps.setInt(1, minAge);
 			_ps.setInt(2, TransferRequest.OK);
 			_ps.setInt(3, TestStatus.SUBMITTED.ordinal());
@@ -168,8 +166,7 @@ public class GetTransferRequest extends DAO {
 	public List<TransferRequest> getAll(String orderBy) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT DISTINCT TX.* FROM TXREQUESTS TX LEFT JOIN TXRIDES TC "
-			+"ON (TX.ID=TC.ID) LEFT JOIN exams.CHECKRIDES CR ON (TC.CHECKRIDE_ID=CR.ID) ORDER BY ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT DISTINCT TX.* FROM TXREQUESTS TX LEFT JOIN TXRIDES TC ON (TX.ID=TC.ID) LEFT JOIN exams.CHECKRIDES CR ON (TC.CHECKRIDE_ID=CR.ID) ORDER BY ");
 		sqlBuf.append((orderBy != null) ? orderBy : "TX.STATUS DESC, CR.STATUS DESC, TX.CREATED DESC");
 		
 		try {
@@ -207,7 +204,7 @@ public class GetTransferRequest extends DAO {
 		}
 	}
 
-	/**
+	/*
 	 * Helper method to iterate through the result set.
 	 */
 	private List<TransferRequest> execute() throws SQLException {
@@ -216,7 +213,7 @@ public class GetTransferRequest extends DAO {
 			while (rs.next()) {
 				TransferRequest txreq = new TransferRequest(rs.getInt(1), rs.getString(3));
 				txreq.setStatus(rs.getInt(2));
-				txreq.setDate(rs.getTimestamp(4));
+				txreq.setDate(toInstant(rs.getTimestamp(4)));
 				txreq.setRatingOnly(rs.getBoolean(5));
 				results.add(txreq);
 			}
@@ -226,7 +223,7 @@ public class GetTransferRequest extends DAO {
 		return results;
 	}
 	
-	/**
+	/*
 	 * Helper method to load checkride/transfer mappings.
 	 */
 	private void loadCheckRides(Collection<TransferRequest> txreqs) throws SQLException {

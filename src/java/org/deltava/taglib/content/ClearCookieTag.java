@@ -1,3 +1,4 @@
+// Copyright 2005, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import javax.servlet.http.*;
@@ -8,10 +9,10 @@ import javax.servlet.jsp.tagext.TagSupport;
 /**
  * A JSP tag to allow pages to clear cookies.
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
- * Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
  */
+
 public class ClearCookieTag extends TagSupport {
 
     private String _name;
@@ -29,6 +30,7 @@ public class ClearCookieTag extends TagSupport {
      * @return TagSupport.EVAL_PAGE
      * @throws JspException if an error occurs
      */
+    @Override
     public int doEndTag() throws JspException {
         
         // Create the cookie and expire it right away

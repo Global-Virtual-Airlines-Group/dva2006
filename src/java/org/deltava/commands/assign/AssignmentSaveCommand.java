@@ -1,7 +1,8 @@
-// Copyright 2005, 2006, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
+import java.time.Instant;
 import java.sql.Connection;
 
 import org.deltava.beans.assign.AssignmentInfo;
@@ -15,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to save a Flight Assignment.
  * @author Luke
- * @version 2.8
+ * @version 7.0
  * @since 1.0
  */
 
@@ -26,6 +27,7 @@ public class AssignmentSaveCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error (typically database) occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get command results
@@ -53,7 +55,7 @@ public class AssignmentSaveCommand extends AbstractCommand {
 
 			// If the assignment has a pilot linked with it, write the draft PIREPs
 			if ((info.getStatus() == AssignmentInfo.RESERVED) && (info.getPilotID() != 0)) {
-				Date now = new Date();
+				Instant now = Instant.now();
 				info.setAssignDate(now);
 				awdao.assign(info, info.getPilotID(), SystemData.get("airline.db"));
 

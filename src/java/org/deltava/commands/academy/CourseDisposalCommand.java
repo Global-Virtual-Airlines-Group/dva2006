@@ -1,7 +1,8 @@
-// Copyright 2006, 2007, 2008, 2010, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010, 2011, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
+import java.time.Instant;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
@@ -22,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to change a Flight Academy Course's status.
  * @author Luke
- * @version 6.3
+ * @version 7.0
  * @since 1.0
  */
 
@@ -99,7 +100,7 @@ public class CourseDisposalCommand extends AbstractCommand {
 				case PENDING:
 					upd.setDescription("Requested return to " + c.getName());
 					ctx.setAttribute("isRestarted", Boolean.TRUE, REQUEST);
-					c.setStartDate(new Date());
+					c.setStartDate(Instant.now());
 					canExec = access.getCanRestart();
 					break;
 					
@@ -171,7 +172,7 @@ public class CourseDisposalCommand extends AbstractCommand {
 				usrs.addAll(pdao.get(udm).values());
 			} else if (op == Status.STARTED) {
 				CourseComment cc = new CourseComment(c.getID(), ctx.getUser().getID());
-				cc.setCreatedOn(new Date());
+				cc.setCreatedOn(Instant.now());
 				cc.setText("Returned to Course");
 				wdao.comment(cc);
 			}

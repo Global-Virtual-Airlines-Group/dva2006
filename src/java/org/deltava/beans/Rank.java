@@ -1,10 +1,10 @@
-// Copyright 2004, 2005, 2007, 2009, 2010 Global Virtual Airlines Group. All Righs Reserved.
+// Copyright 2004, 2005, 2007, 2009, 2010, 2016 Global Virtual Airlines Group. All Righs Reserved.
 package org.deltava.beans;
 
 /**
  * An enumeration for rank names.
  * @author Luke
- * @version 3.3
+ * @version 7.0
  * @since 1.0
  */
 
@@ -25,6 +25,7 @@ public enum Rank {
 		return _name;
 	}
 	
+	@Override
 	public String toString() {
 		return _name;
 	}

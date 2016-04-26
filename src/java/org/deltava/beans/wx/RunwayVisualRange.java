@@ -1,4 +1,4 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.wx;
 
 import java.text.*;
@@ -6,7 +6,7 @@ import java.text.*;
 /**
  * A bean to store Runway visual range METAR components. 
  * @author Luke
- * @version 2.6
+ * @version 7.0
  * @since 2.6
  */
 
@@ -69,6 +69,7 @@ public class RunwayVisualRange implements Comparable<RunwayVisualRange> {
 		_minViz = Math.max(0, viz);	
 	}
 	
+	@Override
 	public String toString() {
 		StringBuilder buf = new StringBuilder("R");
 		buf.append(_rwyCode);
@@ -86,10 +87,12 @@ public class RunwayVisualRange implements Comparable<RunwayVisualRange> {
 	/**
 	 * Compares two RVRs by comparing their runway codes.
 	 */
+	@Override
 	public int compareTo(RunwayVisualRange rvr2) {
 		return _rwyCode.compareTo(rvr2._rwyCode);
 	}
-	
+
+	@Override
 	public int hashCode() {
 		return _rwyCode.hashCode();
 	}

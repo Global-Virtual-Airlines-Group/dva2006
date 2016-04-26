@@ -3,6 +3,7 @@ package org.deltava.commands.stats;
 
 import java.util.*;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.deltava.beans.Pilot;
 import org.deltava.beans.acars.*;
@@ -15,7 +16,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to calculate what Pilots are eligible for an Accomplishment.
  * @author Luke
- * @version 6.4
+ * @version 7.0
  * @since 3.6
  */
 
@@ -84,7 +85,7 @@ public class AccomplishmentUpdateCommand extends AbstractCommand {
 				}
 				
 				// Check accomplishment eligibility
-				Date achieveDate = helper.achieved(a);
+				Instant achieveDate = helper.achieved(a);
 				if ((achieveDate != null) && !hasA) {
 					awdao.achieve(p.getID(), a, achieveDate);
 					awardedPilots.add(p);

@@ -4,13 +4,14 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import org.hansel.CoverageDecorator;
 
+@SuppressWarnings("static-method")
 public class TestServiceException extends TestCase {
     
     public static Test suite() {
         return new CoverageDecorator(TestServiceException.class, new Class[] { ServiceException.class } );
     }
 
-    public void testMessage() {
+	public void testMessage() {
         try {
             throw new ServiceException(1, "MSG");
         } catch (ServiceException se) {

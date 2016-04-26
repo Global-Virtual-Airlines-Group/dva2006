@@ -1,20 +1,20 @@
-// Copyright 2006, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.cooler;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 
 /**
  * A bean to store Water Cooler thread history entries.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 1.0
  */
 
-public class ThreadUpdate extends DatabaseBean implements AuthoredBean {
+public class ThreadUpdate extends DatabaseBean implements AuthoredBean, CalendarEntry {
 
-	private Date _date;
+	private Instant _date = Instant.now();
 	private int _authorID;
 	private String _msg;
 
@@ -26,15 +26,15 @@ public class ThreadUpdate extends DatabaseBean implements AuthoredBean {
 	public ThreadUpdate(int id) {
 		super();
 		setID(id);
-		_date = new Date();
 	}
 
 	/**
 	 * Returns the date of this thread update.
 	 * @return the date/time of this update
-	 * @see ThreadUpdate#setDate(Date)
+	 * @see ThreadUpdate#setDate(Instant)
 	 */
-	public Date getDate() {
+	@Override
+	public Instant getDate() {
 		return _date;
 	}
 
@@ -43,6 +43,7 @@ public class ThreadUpdate extends DatabaseBean implements AuthoredBean {
 	 * @return the user's database ID
 	 * @see ThreadUpdate#setAuthorID(int)
 	 */
+	@Override
 	public int getAuthorID() {
 		return _authorID;
 	}
@@ -61,16 +62,11 @@ public class ThreadUpdate extends DatabaseBean implements AuthoredBean {
 	 * @param dt the date/time the status update was created
 	 * @see ThreadUpdate#getDate()
 	 */
-	public void setDate(Date dt) {
+	public void setDate(Instant dt) {
 		_date = dt;
 	}
 
-	/**
-	 * Updates the thread update author.
-	 * @param id the database ID of the author
-	 * @throws IllegalArgumentException if id is zero or negative
-	 * @see ThreadUpdate#getAuthorID()
-	 */
+	@Override
 	public void setAuthorID(int id) {
 		validateID(_authorID, id);
 		_authorID = id;
@@ -88,8 +84,8 @@ public class ThreadUpdate extends DatabaseBean implements AuthoredBean {
 
 	/**
 	 * Compares two beans by comparing their creation dates and thread IDs.
-	 * @see Comparable#compareTo(Object)
 	 */
+	@Override
 	public int compareTo(Object o) {
 		ThreadUpdate tu2 = (ThreadUpdate) o;
 		int tmpResult = _date.compareTo(tu2._date);

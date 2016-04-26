@@ -1,8 +1,9 @@
-// Copyright 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 import org.deltava.beans.testing.*;
@@ -16,9 +17,10 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to waive a Check Ride.
  * @author Luke
- * @version 5.3
+ * @version 7.0
  * @since 5.3
  */
+
 public class WaiveCheckRideCommand extends AbstractTestHistoryCommand {
 
 	/**
@@ -78,14 +80,14 @@ public class WaiveCheckRideCommand extends AbstractTestHistoryCommand {
 			CheckRide cr = new CheckRide(eqType + " Check Ride Waiver");
 			cr.setAuthorID(p.getID());
 			cr.setType(RideType.WAIVER);
-			cr.setDate(new Date());
-			cr.setSubmittedOn(new Date());
+			cr.setDate(Instant.now());
+			cr.setSubmittedOn(cr.getDate());
 			cr.setEquipmentType(eq);
 			cr.setAircraftType(eq.getName());
 			cr.setScore(true);
 			cr.setStatus(TestStatus.SCORED);
 			cr.setScorerID(ctx.getUser().getID());
-			cr.setScoredOn(new Date());
+			cr.setScoredOn(cr.getDate());
 			cr.setOwner(SystemData.getApp(SystemData.get("airline.code")));
 			cr.setComments(ctx.getParameter("comments"));
 

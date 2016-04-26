@@ -9,19 +9,22 @@ public abstract class AbstractFormTagTestCase extends AbstractTagTestCase {
 
     protected FormTag _formTag;
   
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
         _formTag = new FormTag();
         _formTag.setPageContext(_ctx);
     }
     
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         _formTag.release();
         _formTag = null;
         super.tearDown();
     }
     
-    protected void testNameValidation(FormElementTag feTag) {
+    @SuppressWarnings("static-method")
+	protected void testNameValidation(FormElementTag feTag) {
         try {
             assertSkipBody(feTag.doStartTag());
             assertEvalPage(feTag.doEndTag());
@@ -34,7 +37,8 @@ public abstract class AbstractFormTagTestCase extends AbstractTagTestCase {
         }
     }
     
-    protected void testParentValidation(FormElementTag feTag) {
+    @SuppressWarnings("static-method")
+	protected void testParentValidation(FormElementTag feTag) {
         try {
             assertSkipBody(feTag.doStartTag());
             assertEvalPage(feTag.doEndTag());

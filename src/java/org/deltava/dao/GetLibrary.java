@@ -1,9 +1,10 @@
-// Copyright 2005, 2006, 2007, 2009, 2011, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2011, 2012, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.io.File;
 import java.util.*;
 import java.sql.*;
+import java.time.Instant;
 
 import org.deltava.beans.Simulator;
 import org.deltava.beans.fleet.*;
@@ -16,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load metadata from the Fleet/Document Libraries.
  * @author Luke
- * @version 6.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -43,11 +44,11 @@ public class GetLibrary extends DAO {
 	public List<Installer> getFleet(String dbName, boolean isAdmin) throws DAOException {
 
 		// Build the SQL statement
-		dbName = formatDBName(dbName);
+		String db = formatDBName(dbName);
 		StringBuilder sqlBuf = new StringBuilder("SELECT F.* FROM ");
-		sqlBuf.append(dbName);
+		sqlBuf.append(db);
 		sqlBuf.append(".FLEET_AIRLINE FA, ");
-		sqlBuf.append(dbName);
+		sqlBuf.append(db);
 		sqlBuf.append(".FLEET F WHERE (F.FILENAME=FA.FILENAME)");
 		if (!isAdmin)
 			sqlBuf.append(" AND (FA.CODE=?)");
@@ -75,9 +76,8 @@ public class GetLibrary extends DAO {
 	public Installer getInstaller(String fName, String dbName) throws DAOException {
 
 		// Build the SQL statement
-		dbName = formatDBName(dbName);
 		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM ");
-		sqlBuf.append(dbName);
+		sqlBuf.append(formatDBName(dbName));
 		sqlBuf.append(".FLEET WHERE (FILENAME=?) LIMIT 1");
 
 		try {
@@ -118,9 +118,8 @@ public class GetLibrary extends DAO {
 	public Installer getInstallerByCode(String code, String dbName) throws DAOException {
 
 		// Build the SQL statement
-		dbName = formatDBName(dbName);
 		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM ");
-		sqlBuf.append(dbName);
+		sqlBuf.append(formatDBName(dbName));
 		sqlBuf.append(".FLEET WHERE (CODE=?) LIMIT 1");
 
 		try {
@@ -199,11 +198,11 @@ public class GetLibrary extends DAO {
 	public Collection<FileEntry> getFiles(String dbName) throws DAOException {
 
 		// Build the SQL statement
-		dbName = formatDBName(dbName);
+		String db = formatDBName(dbName);
 		StringBuilder sqlBuf = new StringBuilder("SELECT F.*, COUNT(L.FILENAME) FROM ");
-		sqlBuf.append(dbName);
+		sqlBuf.append(db);
 		sqlBuf.append(".FILES F LEFT JOIN ");
-		sqlBuf.append(dbName);
+		sqlBuf.append(db);
 		sqlBuf.append(".DOWNLOADS L ON (F.FILENAME=L.FILENAME) GROUP BY F.NAME ORDER BY F.NAME");
 
 		try {
@@ -260,7 +259,7 @@ public class GetLibrary extends DAO {
 				entry.setCode(rs.getString(9));
 				entry.setDescription(rs.getString(11));
 				if (f.exists())
-					entry.setLastModified(new java.util.Date(f.lastModified()));
+					entry.setLastModified(Instant.ofEpochMilli(f.lastModified()));
 				if (hasTotals)
 					entry.setDownloadCount(rs.getInt(12));
 				

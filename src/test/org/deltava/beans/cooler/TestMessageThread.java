@@ -1,5 +1,6 @@
 package org.deltava.beans.cooler;
 
+import java.time.Instant;
 import java.util.Date;
 
 import junit.framework.Test;
@@ -15,13 +16,15 @@ public class TestMessageThread extends AbstractBeanTestCase {
         return new CoverageDecorator(TestMessageThread.class, new Class[] { MessageThread.class } );
     }
 
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
         _t = new MessageThread("Subject");
         setBean(_t);
     }
 
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         _t = null;
         super.tearDown();
     }
@@ -52,9 +55,9 @@ public class TestMessageThread extends AbstractBeanTestCase {
        assertFalse(_t.getStickyInChannelOnly());
        _t.setStickyInChannelOnly(true);
        assertFalse(_t.getStickyInChannelOnly());
-       _t.setStickyUntil(new Date(System.currentTimeMillis() + 50));
+       _t.setStickyUntil(Instant.now().plusMillis(50));
        assertTrue(_t.getStickyInChannelOnly());
-       _t.setStickyUntil(new Date());
+       _t.setStickyUntil(Instant.now());
        assertNull(_t.getStickyUntil());
     }
     
@@ -71,14 +74,13 @@ public class TestMessageThread extends AbstractBeanTestCase {
     }
     
     public void testPosts() {
-        long now = System.currentTimeMillis();
         assertNotNull(_t.getPosts());
         assertEquals(0, _t.getPostCount());
         assertEquals(_t.getPostCount(), _t.getPosts().size());
         assertNull(_t.getLastUpdatedOn());
         
         Message msg1 = new Message(123);
-        msg1.setCreatedOn(new Date(now));
+        msg1.setCreatedOn(Instant.now());
         _t.addPost(msg1);
         assertEquals(1, _t.getPostCount());
         assertEquals(_t.getPostCount(), _t.getPosts().size());
@@ -86,7 +88,7 @@ public class TestMessageThread extends AbstractBeanTestCase {
         assertEquals(msg1.getCreatedOn(), _t.getLastUpdatedOn());
         
         Message msg2 = new Message(123);
-        msg2.setCreatedOn(new Date(now + 3));
+        msg2.setCreatedOn(Instant.now().plusMillis(3));
         _t.addPost(msg2);
         assertEquals(2, _t.getPostCount());
         assertEquals(_t.getPostCount(), _t.getPosts().size());
@@ -96,14 +98,14 @@ public class TestMessageThread extends AbstractBeanTestCase {
         assertSame(msg2, _t.getPosts().get(1));
         
         Message msg3 = new Message(123);
-        msg3.setCreatedOn(new Date(now + 2));
+        msg3.setCreatedOn(Instant.now().plusMillis(3));
         _t.addPost(msg3);
         assertEquals(3, _t.getPostCount());
         assertEquals(_t.getPostCount(), _t.getPosts().size());
         assertEquals(msg2.getCreatedOn(), _t.getLastUpdatedOn()); // won't change
         
         Message msg4 = new Message(123);
-        msg4.setCreatedOn(new Date(now - 2));
+        msg4.setCreatedOn(Instant.now().plusMillis(2));
         _t.addPost(msg4);
         assertEquals(4, _t.getPostCount());
         assertEquals(_t.getPostCount(), _t.getPosts().size());
@@ -116,11 +118,10 @@ public class TestMessageThread extends AbstractBeanTestCase {
     }
     
     public void testComparator() {
-        long now = System.currentTimeMillis();
-        _t.setLastUpdatedOn(new Date(now));
+        _t.setLastUpdatedOn(Instant.now());
         
         MessageThread t2 = new MessageThread("AAA Recent subject");
-        t2.setLastUpdatedOn(new Date(now + 3));
+        t2.setLastUpdatedOn(Instant.now().plusMillis(3));
         
         assertTrue(_t.compareTo(t2) < 0);
         assertTrue(t2.compareTo(_t) > 0);

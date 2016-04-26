@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display the Pilot Center.
  * @author Luke
- * @version 6.2
+ * @version 7.0
  * @since 1.0
  */
 
@@ -82,7 +82,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			ctx.setAttribute(HTTPContext.USER_ATTR_NAME, p, SESSION);
 			
 			// Calculate how long we've been a member
-			long pilotAge = (System.currentTimeMillis() - p.getCreatedOn().getTime()) / 86400000;
+			long pilotAge = (System.currentTimeMillis() - p.getCreatedOn().toEpochMilli()) / 86400000;
 			ctx.setAttribute("pilotAge", Integer.valueOf((int) pilotAge), REQUEST);
 			
 			// Check for manual PIREP ability

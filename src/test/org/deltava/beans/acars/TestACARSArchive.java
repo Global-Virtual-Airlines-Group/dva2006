@@ -16,6 +16,7 @@ public class TestACARSArchive extends TestCase {
 	private byte[] _xml;
 	private byte[] _sha;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		
@@ -45,11 +46,13 @@ public class TestACARSArchive extends TestCase {
 		is.close();
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		LogManager.shutdown();
 		super.tearDown();
 	}
 
+	@SuppressWarnings("null")
 	public void testSHA() throws Exception {
 		
 		// Get the XML

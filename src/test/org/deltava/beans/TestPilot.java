@@ -1,5 +1,6 @@
 package org.deltava.beans;
 
+import java.time.Instant;
 import java.util.*;
 
 import junit.framework.Test;
@@ -17,13 +18,15 @@ public class TestPilot extends AbstractBeanTestCase {
 
     private Pilot _p;
     
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
         _p = new Pilot("John", "Smith");
         setBean(_p);
     }
     
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         _p = null;
         super.tearDown();
     }
@@ -174,7 +177,7 @@ public class TestPilot extends AbstractBeanTestCase {
     
     public void testFlights() {
     	FlightReport fr = new FlightReport(new Airline("DVA"), 123, 1);
-    	fr.setDate(new Date());
+    	fr.setDate(Instant.now());
     	fr.setLength(11);
     	
         Airport jfk = new Airport("JFK", "KJFK", "New York-Kennedy NY");

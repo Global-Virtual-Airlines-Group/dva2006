@@ -16,6 +16,7 @@ public class TestETOPSHelper extends TestCase {
 	private Airport _jfk;
 	private Airport _dkr;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		

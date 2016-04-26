@@ -1,10 +1,10 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.fb;
 
 /**
  * A bean to store information about a user's Facebook profile.
  * @author Luke
- * @version 3.4
+ * @version 7.0
  * @since 3.4
  */
 
@@ -94,7 +94,8 @@ public class ProfileInfo extends FacebookObject {
 	public void setVerified(boolean isVerified) {
 		_verified = isVerified;
 	}
-	
+
+	@Override
 	public String toString() {
 		StringBuilder buf = new StringBuilder("FB-");
 		buf.append(getID());

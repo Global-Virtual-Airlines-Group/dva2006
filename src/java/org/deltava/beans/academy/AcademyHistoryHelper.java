@@ -1,4 +1,4 @@
-// Copyright 2006, 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010, 2011, 2012, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.academy;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to extract information from a user's Flight Academy history.
  * @author Luke
- * @version 5.3
+ * @version 7.0
  * @since 1.0
  */
 
@@ -349,6 +349,10 @@ public final class AcademyHistoryHelper {
 				}
 				
 				break;
+				
+			case Certification.REQ_ANY:
+			default:
+				return true;
 		}
 		
 		// If we got this far, we can take it
@@ -410,7 +414,7 @@ public final class AcademyHistoryHelper {
 			return false;
 
 		// Check the time from the scoring
-		long timeInterval = (System.currentTimeMillis() - t.getScoredOn().getTime()) / 1000;
+		long timeInterval = (System.currentTimeMillis() - t.getScoredOn().toEpochMilli()) / 1000;
 		log.info("Exam Lockout: interval = " + timeInterval + "s, period = " + (lockoutHours * 3600) + "s");
 		return (timeInterval < (lockoutHours * 3600L));
 	}

@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2007, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007, 2009, 2010, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import org.deltava.util.StringUtils;
@@ -7,7 +7,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A common abstract class for beans stored in the database with a numeric primary key.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -64,6 +64,7 @@ public abstract class DatabaseBean implements Cacheable, Comparable<Object> {
      * @param o the object to compare with
      * @return TRUE if the objects have the same class and database ID
      */
+    @Override
     public boolean equals(Object o) {
     	if (this == o) return true;
         return (o instanceof DatabaseBean) && (compareTo(o) == 0) && (getClass() == o.getClass()); 
@@ -73,6 +74,7 @@ public abstract class DatabaseBean implements Cacheable, Comparable<Object> {
      * Compares two database beans by comparing their IDs.
      * @see Comparable#compareTo(Object)
      */
+    @Override
     public int compareTo(Object o) {
     	return Integer.valueOf(_id).compareTo(Integer.valueOf(((DatabaseBean) o)._id));
     }
@@ -81,6 +83,7 @@ public abstract class DatabaseBean implements Cacheable, Comparable<Object> {
      * Returns the cache key for use in Form/DAO caches.
      * @return the cache key
      */
+    @Override
     public Object cacheKey() {
         return Integer.valueOf(getID());
     }
@@ -88,6 +91,7 @@ public abstract class DatabaseBean implements Cacheable, Comparable<Object> {
     /**
      * Returns the hash code of the database ID.
      */
+    @Override
     public int hashCode() {
     	return cacheKey().hashCode();
     }

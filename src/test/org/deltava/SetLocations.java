@@ -28,6 +28,7 @@ public class SetLocations extends TestCase {
 	private Connection _c;
 	private Connection _c2;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 
@@ -51,6 +52,7 @@ public class SetLocations extends TestCase {
 		assertFalse(_c2.getAutoCommit());
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		_c2.close();
 		_c.close();

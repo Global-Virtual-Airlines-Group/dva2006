@@ -1,11 +1,11 @@
 package org.deltava.taskman;
 
-import java.util.Calendar;
+import java.time.*;
+import java.time.temporal.ChronoUnit;
+
 import junit.framework.*;
 
 import org.apache.log4j.PropertyConfigurator;
-
-import org.deltava.util.CalendarUtils;
 
 public class TestTaskTimes extends TestCase {
 
@@ -16,18 +16,17 @@ public class TestTaskTimes extends TestCase {
 			super(name, MockTask.class);
 		}
 
+		@Override
 		protected void execute(TaskContext ctx) {
 			// noop
 		}
 	}
 
-	private static Calendar time(int h, int m) {
-		Calendar c = CalendarUtils.getInstance(null);
-		c.set(Calendar.HOUR_OF_DAY, h);
-		c.set(Calendar.MINUTE, m);
-		return c;
+	private static Instant time(int h, int m) {
+		return ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.DAYS).plusHours(h).plusMinutes(m).toInstant();
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		PropertyConfigurator.configure("data/log4j.test.properties");
@@ -35,6 +34,7 @@ public class TestTaskTimes extends TestCase {
 		_t.setEnabled(true);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		_t = null;
 		super.tearDown();

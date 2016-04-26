@@ -11,6 +11,7 @@ import org.deltava.util.StringUtils;
  * @since 1.0
  */
 
+@SuppressWarnings("static-method")
 public abstract class WebService {
 
    /**

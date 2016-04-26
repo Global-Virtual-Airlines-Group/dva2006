@@ -1,3 +1,4 @@
+// Copyright 2005, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import javax.servlet.http.*;
@@ -10,8 +11,8 @@ import javax.servlet.jsp.tagext.TagSupport;
  * @author Luke
  * @version 1.0
  * @since 1.0
- * Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
  */
+
 public class SetCookieTag extends TagSupport {
 
     private String _name;
@@ -64,6 +65,7 @@ public class SetCookieTag extends TagSupport {
     /**
      * Releases the tag's state.
      */
+    @Override
     public void release() {
         super.release();
         _domain = null;
@@ -76,6 +78,7 @@ public class SetCookieTag extends TagSupport {
      * @return TagSupport.EVAL_PAGE
      * @throws JspException if an error occurs
      */
+    @Override
     public int doEndTag() throws JspException {
         
         // Create the cookie

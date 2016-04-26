@@ -1,7 +1,9 @@
-// Copyright 2005, 2006, 2009, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
-import java.util.*;
+import java.time.*;
+import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
 
 import org.deltava.beans.*;
 import org.deltava.util.*;
@@ -9,7 +11,7 @@ import org.deltava.util.*;
 /**
  * A class to store Schedule Entry information.
  * @author Luke
- * @version 6.3
+ * @version 7.0
  * @since 1.0
  */
 
@@ -17,10 +19,8 @@ public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
 	
 	private static final String[] SST = {"Concorde", "TU-144"};
 	
-	private Calendar today = CalendarUtils.getInstance(null, true);
-
-	private DateTime _timeD;
-	private DateTime _timeA;
+	private ZonedDateTime _timeD;
+	private ZonedDateTime _timeA;
 	private int _length;
 	private boolean _historic;
 	private boolean _academy;
@@ -46,7 +46,6 @@ public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
 	 * Returns the length of the flight, in hours <i>multiplied by 10</i>.
 	 * @return the length of the flight
 	 * @throws IllegalStateException if departure or arrival times are not set
-	 * @see DateTime#difference(DateTime)
 	 */
 	@Override
 	public final int getLength() {
@@ -56,7 +55,7 @@ public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
 			throw new IllegalStateException("Arrival and Departure Times are not set");
 
 		// Calculate flight time in seconds, and then divide by 3600 and multiply by 10
-		long lengthS = _timeA.difference(_timeD);
+		long lengthS = Duration.between(_timeD, _timeA).getSeconds();
 		if (lengthS < 0)
 			lengthS += 86400;
 
@@ -64,51 +63,27 @@ public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
 	}
 
 	/**
-	 * Returns the departure time of the flight, with full timezone information. The date component of this value can be
-	 * ignored.
-	 * @return the full departure time of the flight
-	 * @see ScheduleEntry#getDateTimeA()
-	 */
-	@Override
-	public DateTime getDateTimeD() {
-		return _timeD;
-	}
-
-	/**
-	 * Returns the arrival time of the flight, with full timezone information. The date component of this value can be
-	 * ignored.
-	 * @return the full arrival time of the flight
-	 * @see ScheduleEntry#getDateTimeD()
-	 */
-	@Override
-	public DateTime getDateTimeA() {
-		return _timeA;
-	}
-
-	/**
 	 * Returns the departure time for this flght. <i>This time is in local time.</i> The date and timezone portions of
 	 * this Date should be ignored.
 	 * @return the departure time for this flight.
-	 * @see ScheduleEntry#setTimeD(Date)
+	 * @see ScheduleEntry#setTimeD(LocalDateTime)
 	 * @see ScheduleEntry#getTimeA()
-	 * @see ScheduleEntry#getDateTimeD()
 	 */
 	@Override
-	public Date getTimeD() {
-		return _timeD.getDate();
+	public ZonedDateTime getTimeD() {
+		return _timeD;
 	}
 
 	/**
 	 * Returns the arrival time for this flght. <i>This time is in local time.</i> The date and timezone portions of
 	 * this Date should be ignored.
 	 * @return the arrival time for this flight.
-	 * @see ScheduleEntry#setTimeA(Date)
+	 * @see ScheduleEntry#setTimeA(LocalDateTime)
 	 * @see ScheduleEntry#getTimeD()
-	 * @see ScheduleEntry#getDateTimeA()
 	 */
 	@Override
-	public Date getTimeA() {
-		return _timeA.getDate();
+	public ZonedDateTime getTimeA() {
+		return _timeA;
 	}
 
 	/**
@@ -159,63 +134,48 @@ public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
 	/*
 	 * Ensures each time has a date component of the current date if the year is less than 2001.
 	 */
-	private Date updateDate(Date dt) {
-		Calendar cld = CalendarUtils.getInstance(dt);
-		if (cld.get(Calendar.YEAR) < 2001) {
-			cld.set(Calendar.YEAR, today.get(Calendar.YEAR));
-			cld.set(Calendar.MONTH, today.get(Calendar.MONTH));
-			cld.set(Calendar.DAY_OF_MONTH, today.get(Calendar.DAY_OF_MONTH));
+	private static LocalDateTime updateDate(LocalDateTime dt) {
+		if (dt.get(ChronoField.YEAR) < 2001) {
+			LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.DAYS);
+			return now.plusMinutes(dt.get(ChronoField.MINUTE_OF_DAY));
 		}
 		
-		return cld.getTime();
+		return dt;
 	}
 	
-	/**
-	 * Sets the effective date of the flight, if replaying an old schedule.
-	 * @param dt the effective date
-	 */
-	public void setDate(Date dt) {
-		today = CalendarUtils.getInstance(dt, true);
-	}
-
 	/**
 	 * Sets the departure time for this flight.
 	 * @param dt the departure time of the flight <i>in local time </i>. The date and time zone are ignored.
 	 * @throws NullPointerException if the departure airport is not set
-	 * @see ScheduleEntry#setTimeA(Date)
+	 * @see ScheduleEntry#setTimeA(LocalDateTime)
 	 * @see ScheduleEntry#getTimeD()
-	 * @see ScheduleEntry#getDateTimeD()
 	 */
-	public void setTimeD(Date dt) {
-		TZInfo tz = (getAirportD() == null) ? TZInfo.local() : getAirportD().getTZ();
+	public void setTimeD(LocalDateTime dt) {
+		ZoneId tz = (getAirportD() == null) ? ZoneId.systemDefault() : getAirportD().getTZ().getZone();
 		_length = 0; // reset length
-		_timeD = new DateTime(updateDate(dt), tz);
+		_timeD = ZonedDateTime.of(dt, tz);
 	}
 
 	/**
 	 * Sets the arrival time for this flight.
 	 * @param dt the arrival time of the flight <i>in local time </i>. The date and time zone are ignored.
 	 * @throws NullPointerException if the arrival airport is not set
-	 * @see ScheduleEntry#setTimeD(Date)
+	 * @see ScheduleEntry#setTimeD(LocalDateTime)
 	 * @see ScheduleEntry#getTimeA()
-	 * @see ScheduleEntry#getDateTimeA()
 	 */
-	public void setTimeA(Date dt) {
+	public void setTimeA(LocalDateTime dt) {
+		ZoneId tz = (getAirportD() == null) ? ZoneId.systemDefault() : getAirportA().getTZ().getZone();
 		dt = updateDate(dt);
-		TZInfo tz = (getAirportA() == null) ? TZInfo.local() : getAirportA().getTZ();
 		_length = 0; // reset length
-		if ((_timeD != null) && (dt.before(_timeD.getDate())) && (StringUtils.arrayIndexOf(SST, getEquipmentType()) == -1)) {
-			Calendar cld = CalendarUtils.getInstance(dt);
-			cld.add(Calendar.DATE, 1);
-			_timeA = new DateTime(cld.getTime(), tz);
+		if ((_timeD != null) && (dt.isBefore(_timeD.toLocalDateTime())) && (StringUtils.arrayIndexOf(SST, getEquipmentType()) == -1)) {
+			_timeA = ZonedDateTime.of(dt.plusDays(1), tz);
 			
 			// Check if the flight time is longer than 20 hours, if so go back a day
-			long lengthS = _timeA.difference(_timeD);
+			long lengthS = Duration.between(_timeD, _timeA).getSeconds();
 			if (lengthS > 72000)
-				_timeA = new DateTime(dt, tz);
-		} else {
-			_timeA = new DateTime(dt, tz);
-		}
+				_timeA = ZonedDateTime.of(dt, tz);
+		} else
+			_timeA = ZonedDateTime.of(dt, tz);
 	}
 
 	/**

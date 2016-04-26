@@ -1,7 +1,8 @@
-// Copyright 2005, 2006, 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 import org.deltava.beans.testing.*;
@@ -16,7 +17,7 @@ import org.deltava.security.command.ExamAccessControl;
 /**
  * A Web Site Command to score Check Rides.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -63,7 +64,7 @@ public class CheckRideScoreCommand extends AbstractCommand {
 			// Update the check ride
 			cr.setComments(ctx.getParameter("comments"));
 			cr.setScorerID(ctx.getUser().getID());
-			cr.setScoredOn(new java.util.Date());
+			cr.setScoredOn(Instant.now());
 			cr.setPassFail(Boolean.valueOf(ctx.getParameter("passFail")).booleanValue());
 			cr.setStatus(TestStatus.SCORED);
 

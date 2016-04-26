@@ -1,10 +1,10 @@
-// Copyright 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 /**
  * A bean to store an external Flight Route. 
  * @author Luke
- * @version 4.0
+ * @version 7.0
  * @since 2.6
  */
 
@@ -23,10 +23,12 @@ public class ExternalRoute extends FlightRoute implements ExternalFlightRoute {
 		_source = src;
 	}
 	
+	@Override
 	public String getSource() {
 		return _source;
 	}
 	
+	@Override
 	public void setSource(String src) {
 		_source = src;
 	}
@@ -39,10 +41,12 @@ public class ExternalRoute extends FlightRoute implements ExternalFlightRoute {
 		return INTERNAL.equals(_source);
 	}
 	
+	@Override
 	public String getComboAlias() {
 		return getRoute();
 	}
 
+	@Override
 	public String getComboName() {
 		return toString();
 	}

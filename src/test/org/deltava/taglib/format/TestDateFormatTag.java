@@ -1,28 +1,31 @@
 package org.deltava.taglib.format;
 
-import java.util.Date;
-import java.text.SimpleDateFormat;
+import java.time.Instant;
 
 import javax.servlet.http.*;
 
 import org.deltava.beans.Pilot;
 import org.deltava.beans.TZInfo;
+
 import org.deltava.servlet.filter.CustomRequestWrapper;
+
 import org.deltava.taglib.AbstractTagTestCase;
+import org.deltava.util.StringUtils;
 
 public class TestDateFormatTag extends AbstractTagTestCase {
 
     private DateFormatTag _tag;
-    private Date _d;
+    private Instant _d;
     
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
-        SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
-        _d = df.parse("12/23/1972 09:38:25");
+        _d = StringUtils.parseInstant("12/23/1972 09:38:25", "MM/dd/yyyy hh:mm:ss");
         _tag = new DateFormatTag();
     }
 
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         _tag.release();
         _tag = null;
         super.tearDown();

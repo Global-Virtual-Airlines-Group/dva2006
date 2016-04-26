@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.view;
 
 import javax.servlet.jsp.tagext.TagSupport;
@@ -8,7 +8,7 @@ import org.deltava.commands.ViewContext;
 /**
  * A JSP tag to selectively display view table scroll tags.
  * @author Luke
- * @version 2.2
+ * @version 7.0
  * @since 1.0
  */
 
@@ -72,6 +72,7 @@ public class ScrollBarTag extends TagSupport {
 	 * only be included if the view context is present and we are not simaltaneously at the start and end of the view.
 	 * @return TagSupport.EVAL_BODY_INCLUDE or TagSupport.SKIP_BODY
 	 */
+	@Override
 	public int doStartTag() {
 
 		// Get the view context
@@ -92,6 +93,7 @@ public class ScrollBarTag extends TagSupport {
 	 * Completes the tag by releasing the state variables.
 	 * @return TagSupport.EVAL_PAGE always
 	 */
+	@Override
 	public int doEndTag() {
 		release();
 		return EVAL_PAGE; 
@@ -100,6 +102,7 @@ public class ScrollBarTag extends TagSupport {
 	/**
 	 * Releases the tag's state variables.
 	 */
+	@Override
 	public void release() {
 		_forceDisplay = false;
 	}

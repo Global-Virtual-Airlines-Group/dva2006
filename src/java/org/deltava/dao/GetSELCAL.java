@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.schedule.SelectCall;
 /**
  * A Data Access Object to read aircraft SELCAL data.
  * @author Luke
- * @version 4.1
+ * @version 7.0
  * @since 1.0
  */
 
@@ -110,7 +110,7 @@ public class GetSELCAL extends DAO {
 		}
 	}
 	
-	/**
+	/*
 	 * Helper method to parse result sets.
 	 */
 	private List<SelectCall> execute() throws SQLException {
@@ -120,7 +120,7 @@ public class GetSELCAL extends DAO {
 				SelectCall sc = new SelectCall(rs.getString(1), rs.getString(2));
 				sc.setEquipmentType(rs.getString(3));
 				sc.setReservedBy(rs.getInt(4));
-				sc.setReservedOn(rs.getTimestamp(5));
+				sc.setReservedOn(toInstant(rs.getTimestamp(5)));
 				results.add(sc);
 			}
 		}

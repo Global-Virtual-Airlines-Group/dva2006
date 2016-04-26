@@ -10,8 +10,10 @@ import org.deltava.util.system.SystemData;
 
 import junit.framework.TestCase;
 
+@SuppressWarnings("static-method")
 public class TestVATSIMData extends TestCase {
 	
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		SystemData.init();

@@ -1,4 +1,4 @@
-// Copyright 2007, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2012, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.tile;
 
 import java.awt.Point;
@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.GeoPosition;
  * A utility class for translating canvas coordinates to latitude and longitude using the Microsoft Virtual
  * Earth and Google Maps modified Mercator projection.
  * @author Luke
- * @version 5.4
+ * @version 7.0
  * @since 5.0
  */
 
@@ -42,6 +42,7 @@ public class MercatorProjection implements Projection {
 	 * Returns the zoom level.
 	 * @return the zoom level
 	 */
+	@Override
 	public int getZoomLevel() {
 		return _zoomLevel;
 	}
@@ -51,6 +52,7 @@ public class MercatorProjection implements Projection {
 	 * @param loc the GeoLocation
 	 * @return the TileAddress of the Tile containing this point at the current zoom level
 	 */
+	@Override
 	public TileAddress getAddress(GeoLocation loc) {
 		Point p = getPixelAddress(loc);
 
@@ -80,6 +82,7 @@ public class MercatorProjection implements Projection {
 	 * @param loc the GeoLocation
 	 * @return a Point with the pixel coordinates
 	 */
+    @Override
 	public Point getPixelAddress(GeoLocation loc) {
 		if ((loc.getLatitude() > MAX_LATITUDE) || (loc.getLatitude() < MIN_LATITUDE)) return null; 
 		
@@ -106,6 +109,7 @@ public class MercatorProjection implements Projection {
 	 * @param y the Y coordinate
 	 * @return a GeoLocation
 	 */
+	@Override
 	public GeoLocation getGeoPosition(int x, int y) {
         double px = (_xScale - x ) / _xScale;
         double py = (_yScale - y ) / _yScale;

@@ -1,4 +1,4 @@
-// Copyright 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -12,7 +12,7 @@ import org.deltava.dao.DAOException;
 /**
  * A Data Access Object to serialize ACARS position records.
  * @author Luke
- * @version 5.4
+ * @version 7.0
  * @since 4.1
  */
 
@@ -57,7 +57,7 @@ public class SetSerializedPosition extends WriteableDAO {
 	private static void write(ACARSRouteEntry re, DataOutputStream out) throws IOException {
 		out.writeDouble(re.getLatitude());
 		out.writeDouble(re.getLongitude());
-		out.writeLong(re.getDate().getTime());
+		out.writeLong(re.getDate().toEpochMilli());
 		out.writeShort(re.getPhase().ordinal());
 		out.writeInt(re.getFlags());
 		out.writeInt(re.getAltitude());
@@ -115,7 +115,7 @@ public class SetSerializedPosition extends WriteableDAO {
 	private static void write(XARouteEntry re, DataOutputStream out) throws IOException {
 		out.writeDouble(re.getLatitude());
 		out.writeDouble(re.getLongitude());
-		out.writeLong(re.getDate().getTime());
+		out.writeLong(re.getDate().toEpochMilli());
 		out.writeShort(re.getPhase().ordinal());
 		out.writeInt(re.getFlags());
 		out.writeInt(re.getAltitude());

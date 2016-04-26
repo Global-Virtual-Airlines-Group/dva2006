@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 /**
@@ -6,7 +6,7 @@ package org.deltava.util.cache;
  * that this cache does not purge an entry until the cache overflows, whereas an {@link ExpiringCache} invalidates data
  * based on age.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -38,10 +38,12 @@ public class AgingCache<T extends Cacheable> extends Cache<T> {
 			super(null);
 		}
 		
+		@Override
 		public String toString() {
 			return "null";
 		}
 		
+		@Override
 		public int hashCode() {
 			return "null".hashCode();
 		}

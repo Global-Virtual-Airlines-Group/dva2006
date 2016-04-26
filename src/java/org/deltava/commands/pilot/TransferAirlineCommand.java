@@ -1,8 +1,9 @@
-// Copyright 2005, 2006, 2007, 2010, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010, 2012, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.apache.log4j.Logger;
 
@@ -26,7 +27,7 @@ import org.deltava.util.system.SystemData;
  * A Web Site Command to transfer pilots to a different airline.
  * @author James
  * @author Luke
- * @version 5.1
+ * @version 7.0
  * @since 1.0
  */
 
@@ -199,7 +200,7 @@ public class TransferAirlineCommand extends AbstractCommand {
 			// List new ratings
 			su = new StatusUpdate(newUser.getID(), StatusUpdate.RATING_ADD);
 			su.setAuthorID(ctx.getUser().getID());
-			su.setCreatedOn(new Date(System.currentTimeMillis() + 1000));
+			su.setCreatedOn(Instant.now().plusSeconds(1));
 			su.setDescription("Ratings added: " + StringUtils.listConcat(newRatings, ", "));
 			sudao.write(aInfo.getDB(), su);
 			
@@ -208,7 +209,7 @@ public class TransferAirlineCommand extends AbstractCommand {
 			for (Course c : courses) {
 				if (c.getStatus() != Status.COMPLETE) {
 					CourseComment cc = new CourseComment(c.getID(), ctx.getUser().getID());
-					cc.setCreatedOn(new Date());
+					cc.setCreatedOn(Instant.now());
 					cc.setText("Transferred to " + aInfo.getName());
 					awdao.reassign(c.getID(), newUser.getID());
 					awdao.comment(cc);

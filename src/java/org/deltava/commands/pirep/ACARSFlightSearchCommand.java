@@ -1,8 +1,8 @@
-// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
-import java.text.*;
+import java.time.Instant;
 import java.sql.Connection;
 
 import org.deltava.commands.*;
@@ -13,7 +13,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to search for ACARS Flight Reports.
  * @author Luke
- * @version 2.6
+ * @version 7.0
  * @since 1.0
  */
 
@@ -29,6 +29,7 @@ public class ACARSFlightSearchCommand extends AbstractViewCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the command results
@@ -90,10 +91,9 @@ public class ACARSFlightSearchCommand extends AbstractViewCommand {
 
 				case DATE:
 					try {
-						DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
-						vc.setResults(dao.getByDate(df.parse(ctx.getParameter("flightDate"))));	
-					} catch (ParseException e) {
-						vc.setResults(dao.getByDate(new Date()));
+						vc.setResults(dao.getByDate(StringUtils.parseInstant(ctx.getParameter("flightDate"), "MM/dd/yyyy")));	
+					} catch (Exception e) {
+						vc.setResults(dao.getByDate(Instant.now()));
 					}
 					
 					break;

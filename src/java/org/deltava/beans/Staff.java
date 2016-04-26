@@ -1,10 +1,10 @@
-// Copyright 2004, 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 /**
  * A class for storing Staff Profiles.
  * @author Luke
- * @version 2.2
+ * @version 7.0
  * @since 1.0
  */
 
@@ -95,6 +95,7 @@ public class Staff extends Pilot {
      * @throws ClassCastException if o2 is not a Staff profile
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
+    @Override
     public int compareTo(Object o2) {
         Staff s2 = (Staff) o2;
         int tmpResult = Integer.valueOf(_sortOrder).compareTo(Integer.valueOf(s2.getSortOrder()));

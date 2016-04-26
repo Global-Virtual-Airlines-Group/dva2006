@@ -1,7 +1,8 @@
-// Copyright 2005, 2006, 2007, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.gallery;
 
 import java.util.*;
+import java.time.Instant;
 import java.sql.Connection;
 
 import org.deltava.beans.gallery.Image;
@@ -16,7 +17,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to view the Image Gallery.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -39,7 +40,7 @@ public class GalleryCommand extends AbstractViewCommand {
 			vc.setSortType(SORT_CODE[0]);
 
 		// Check for a date
-		Date imgDate = parseDateTime(ctx, "img");
+		Instant imgDate = parseDateTime(ctx, "img");
 		try {
 			Connection con = ctx.getConnection();
 

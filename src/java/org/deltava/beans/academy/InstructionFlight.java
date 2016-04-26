@@ -1,14 +1,14 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.academy;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 
 /**
  * A bean to track Flight Academy Instruction Flights.
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -18,7 +18,7 @@ public class InstructionFlight extends DatabaseBean implements Instruction, Inst
 	private int _pilotID;
 	private int _courseID;
 	private String _courseName;
-	private Date _startDate;
+	private Instant _startDate;
 	private String _eqType;
 	private int _length;
 	private String _comments;
@@ -49,6 +49,7 @@ public class InstructionFlight extends DatabaseBean implements Instruction, Inst
 	 * @return the comments
 	 * @see InstructionFlight#setComments(String)
 	 */
+	@Override
 	public String getComments() {
 		return _comments;
 	}
@@ -58,6 +59,7 @@ public class InstructionFlight extends DatabaseBean implements Instruction, Inst
 	 * @return the Course's database ID
 	 * @see InstructionFlight#setCourseID(int)
 	 */
+	@Override
 	public int getCourseID() {
 		return _courseID;
 	}
@@ -78,6 +80,7 @@ public class InstructionFlight extends DatabaseBean implements Instruction, Inst
 	 * @see InstructionFlight#setInstructorID(int)
 	 * @see InstructionFlight#getPilotID()
 	 */
+	@Override
 	public int getInstructorID() {
 		return _instructorID;
 	}
@@ -88,6 +91,7 @@ public class InstructionFlight extends DatabaseBean implements Instruction, Inst
 	 * @see InstructionFlight#setPilotID(int)
 	 * @see InstructionFlight#getInstructorID()
 	 */
+	@Override
 	public int getPilotID() {
 		return _pilotID;
 	}
@@ -95,9 +99,10 @@ public class InstructionFlight extends DatabaseBean implements Instruction, Inst
 	/**
 	 * Returns the date this flight was started.
 	 * @return the start date/time of this flight
-	 * @see InstructionFlight#setDate(Date)
+	 * @see InstructionFlight#setDate(Instant)
 	 */
-	public Date getDate() {
+	@Override
+	public Instant getDate() {
 		return _startDate;
 	}
 
@@ -181,7 +186,7 @@ public class InstructionFlight extends DatabaseBean implements Instruction, Inst
 	 * @param dt the start date/time of this flight
 	 * @see InstructionFlight#getDate()
 	 */
-	public void setDate(Date dt) {
+	public void setDate(Instant dt) {
 		_startDate = dt;
 	}
 
@@ -192,8 +197,8 @@ public class InstructionFlight extends DatabaseBean implements Instruction, Inst
 	 */
 	public void setLength(int length) {
 		if ((length < 0) || (length > 180))
-			length = 180;
-
-		_length = length;
+			_length = 180;
+		else
+			_length = length;
 	}
 }

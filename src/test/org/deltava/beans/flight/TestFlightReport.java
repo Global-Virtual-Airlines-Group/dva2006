@@ -1,5 +1,6 @@
 package org.deltava.beans.flight;
 
+import java.time.Instant;
 import java.util.*;
 
 import junit.framework.Test;
@@ -22,13 +23,15 @@ public class TestFlightReport extends AbstractBeanTestCase {
         return new CoverageDecorator(TestFlightReport.class, new Class[] { Flight.class, FlightReport.class } );
     }
     
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
         _fr = new FlightReport(_a, 123, 1);
         setBean(_fr);
     }
     
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         super.tearDown();
         _fr = null;
     }
@@ -137,8 +140,8 @@ public class TestFlightReport extends AbstractBeanTestCase {
     
     public void testComparison() {
         FlightReport fr2 = new FlightReport(_a, 123, 2);
-        _fr.setDate(new Date());
-        fr2.setDate(new Date(_fr.getDate().getTime() + 1));
+        _fr.setDate(Instant.now());
+        fr2.setDate(_fr.getDate().plusSeconds(1));
         assertEquals(-1, _fr.compareTo(fr2));
         assertEquals(1, fr2.compareTo(_fr));
         assertFalse(_fr.equals(fr2));

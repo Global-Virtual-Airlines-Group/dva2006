@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
  * A Web Site command to display the Document Library. Note that this command will display library entries from other
  * Airlines, with the proviso that <i>all files are in the same library path</i>.
  * @author Luke
- * @version 3.4
+ * @version 7.0
  * @since 1.0
  */
 
@@ -31,13 +31,14 @@ public class DocumentLibraryCommand extends AbstractLibraryCommand {
 	
 	private class AppComparator implements Comparator<AirlineInformation> {
 		
-		private String _myCode;
+		private final String _myCode;
 		
 		AppComparator() {
 			super();
 			_myCode = SystemData.get("airline.code");
 		}
 		
+		@Override
 		public int compare(AirlineInformation ai1, AirlineInformation ai2) {
 			if (ai1.getCode().equals(ai2.getCode()))
 				return 0;
@@ -55,6 +56,7 @@ public class DocumentLibraryCommand extends AbstractLibraryCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Calculate access for adding content

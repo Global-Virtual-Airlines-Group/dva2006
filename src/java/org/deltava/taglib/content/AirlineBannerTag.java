@@ -1,4 +1,4 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import java.security.Principal;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to set the name of the Airline banner image.
  * @author Luke
- * @version 2.0
+ * @version 7.0
  * @since 2.0
  */
 
@@ -35,6 +35,7 @@ public class AirlineBannerTag extends TagSupport {
 	 * Loads the UI scheme name from the user object, if present.
 	 * @param ctxt the JSP page context
 	 */
+	@Override
 	public final void setPageContext(PageContext ctxt) {
 		super.setPageContext(ctxt);
 		HttpServletRequest req = (HttpServletRequest) ctxt.getRequest();
@@ -49,6 +50,7 @@ public class AirlineBannerTag extends TagSupport {
 	/**
 	 * Releases the tag's state variables.
 	 */
+	@Override
 	public void release() {
 		super.release();
 		_scheme = null;
@@ -58,6 +60,7 @@ public class AirlineBannerTag extends TagSupport {
 	 * Renders the Airline name to the JSP output stream.
 	 * @return TagSupport.EVAL_PAGE always
 	 */
+	@Override
 	public int doEndTag() {
 		try {
 			if (_scheme != null) {

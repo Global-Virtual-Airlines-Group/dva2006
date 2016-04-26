@@ -1,4 +1,4 @@
-// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import javax.servlet.jsp.tagext.TagSupport;
 /**
  * A JSP tag to filter body content based on the user's membership in a particular role.
  * @author Luke
- * @version 2.6
+ * @version 7.0
  * @since 1.0
  */
 
@@ -22,6 +22,7 @@ public class RoleFilterTag extends TagSupport {
      * list of roles from this object.
      * @return SKIP_BODY if role not found, otherwise EVAL_BODY_INCLUDE
      */
+    @Override
     public int doStartTag() {
         
         // Get the request
@@ -47,6 +48,7 @@ public class RoleFilterTag extends TagSupport {
      * Closes the JSP and releases state.
      * @return EVAL_PAGE always
      */
+    @Override
     public int doEndTag() {
     	release();
     	return EVAL_PAGE;
@@ -66,6 +68,7 @@ public class RoleFilterTag extends TagSupport {
     /**
      * Clears state by reseting the role list.
      */
+    @Override
     public void release() {
         _roles.clear();
         super.release();

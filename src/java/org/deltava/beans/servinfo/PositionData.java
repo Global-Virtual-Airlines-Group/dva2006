@@ -1,7 +1,7 @@
-// Copyright 2009, 2010, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.*;
@@ -10,14 +10,14 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store ServInfo data for historical purposes.
  * @author Luke
- * @version 6.0
+ * @version 7.0
  * @since 2.4
  */
 
 public class PositionData implements GeospaceLocation, MarkerMapEntry, Comparable<PositionData> {
 	
 	private GeoPosition _pos;
-	private final Date _dt;
+	private final Instant _dt;
 	private int _aSpeed;
 	private int _hdg;
 	
@@ -28,7 +28,7 @@ public class PositionData implements GeospaceLocation, MarkerMapEntry, Comparabl
 	 * Initializes the bean.
 	 * @param dt the date/time of the position entry 
 	 */
-	public PositionData(Date dt) {
+	public PositionData(Instant dt) {
 		super();
 		_dt = dt;
 	}
@@ -61,7 +61,7 @@ public class PositionData implements GeospaceLocation, MarkerMapEntry, Comparabl
 	 * Returns the date/time of the position entry.
 	 * @return the date/time in UTC
 	 */
-	public Date getDate() {
+	public Instant getDate() {
 		return _dt;
 	}
 	

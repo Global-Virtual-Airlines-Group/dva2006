@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.tile;
 
 import java.io.*;
@@ -9,7 +9,7 @@ import java.awt.image.BufferedImage;
 /**
  * A Tile that stores pre-compressed PNG data. 
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 5.0
  */
 
@@ -46,6 +46,7 @@ public class PNGTile extends AbstractTile implements CompressedTile {
 	 * @param img the image to convert.
 	 * @see Tile#setImage(BufferedImage)
 	 */
+	@Override
 	public void setImage(BufferedImage img) {
 		try (ByteArrayOutputStream pngData = new ByteArrayOutputStream(2048)) {
 			ImageIO.write(img, "png", pngData);
@@ -67,6 +68,7 @@ public class PNGTile extends AbstractTile implements CompressedTile {
 	 * Returns the compressed image data.
 	 * @return the binary image data
 	 */
+	@Override
 	public byte[] getData() {
 		return _imgData;
 	}

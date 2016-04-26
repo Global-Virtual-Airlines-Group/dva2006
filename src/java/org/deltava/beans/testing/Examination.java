@@ -1,14 +1,15 @@
-// Copyright 2005, 2006, 2007, 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import java.util.*;
+import java.time.Instant;
 
 import org.deltava.util.StringUtils;
 
 /**
  * A class to store information about written examinations.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -21,7 +22,7 @@ public class Examination extends Test {
 
 	private static final String[] CLASS_NAMES = { "opt2", "opt1", null };
 
-	private Date _expiryDate;
+	private Instant _expiryDate;
 	private final Map<Integer, Question> _questions = new TreeMap<Integer, Question>();
 	private int _size;
 	private boolean _empty;
@@ -40,6 +41,7 @@ public class Examination extends Test {
 	 * @return the number of questions
 	 * @see Examination#setSize(int)
 	 */
+	@Override
 	public int getSize() {
 		return (_questions.size() == 0) ? _size : _questions.size();
 	}
@@ -47,9 +49,9 @@ public class Examination extends Test {
 	/**
 	 * Returns the Expiration Date of this Examination.
 	 * @return the date/time this exam must be completed by
-	 * @see Examination#setExpiryDate(Date)
+	 * @see Examination#setExpiryDate(Instant)
 	 */
-	public Date getExpiryDate() {
+	public Instant getExpiryDate() {
 		return _expiryDate;
 	}
 
@@ -172,6 +174,7 @@ public class Examination extends Test {
 	 * @throws IllegalArgumentException if size is zero or negative
 	 * @see Examination#getSize()
 	 */
+	@Override
 	public void setSize(int size) {
 		if (_questions.size() != 0)
 			throw new IllegalStateException("Question Pool already populated");
@@ -186,7 +189,7 @@ public class Examination extends Test {
 	 * @param dt the new expiration date
 	 * @see Examination#getExpiryDate()
 	 */
-	public void setExpiryDate(Date dt) {
+	public void setExpiryDate(Instant dt) {
 		_expiryDate = dt;
 	}
 	
@@ -203,6 +206,7 @@ public class Examination extends Test {
 	 * Returns the CSS class name for a view table row.
 	 * @return the CSS class name
 	 */
+	@Override
 	public String getRowClassName() {
 		if (getEmpty() && (getStatus() == TestStatus.SCORED))
 			return "warn";

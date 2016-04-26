@@ -1,8 +1,9 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.apache.log4j.Logger;
 
@@ -25,7 +26,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Fligt Report submissions.
  * @author Luke
- * @version 6.2
+ * @version 7.0
  * @since 1.0
  */
 
@@ -77,7 +78,7 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			}
 			
 			// Submitted!
-			pirep.setSubmittedOn(new Date());
+			pirep.setSubmittedOn(Instant.now());
 
 			// Save the Pilot profile
 			ctx.setAttribute("pilot", p, REQUEST);
@@ -148,7 +149,7 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			if (pirep.getDatabaseID(DatabaseID.EVENT) != 0) {
 				Event e = evdao.get(pirep.getDatabaseID(DatabaseID.EVENT));
 				if (e != null) {
-					long timeSinceEnd = (System.currentTimeMillis() - e.getEndTime().getTime()) / 3600_000;
+					long timeSinceEnd = (System.currentTimeMillis() - e.getEndTime().toEpochMilli()) / 3600_000;
 					if (timeSinceEnd > 24) {
 						comments.add("SYSTEM: Flight logged " + timeSinceEnd + " hours after '" + e.getName() + "' completion");
 						pirep.setDatabaseID(DatabaseID.EVENT, 0);

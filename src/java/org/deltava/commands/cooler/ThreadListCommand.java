@@ -1,8 +1,9 @@
-// Copyright 2005, 2006, 2007, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2012, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 import org.deltava.beans.cooler.*;
@@ -18,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A web site command to display Message Threads in a Water Cooler channel.
  * @author Luke
- * @version 5.4
+ * @version 7.0
  * @since 1.0
  */
 
@@ -106,11 +107,11 @@ public class ThreadListCommand extends AbstractViewCommand {
 			// Add the unread marks
 			if (ctx.isAuthenticated() && p.getShowNewPosts()) {
 				GetCoolerLastRead lrdao = new GetCoolerLastRead(con);
-				Map<Integer, Date> lr = lrdao.getLastRead(threads, p.getID());
+				Map<Integer, Instant> lr = lrdao.getLastRead(threads, p.getID());
 				Map<Integer, Integer> lrIDs = new HashMap<Integer, Integer>();
 				for (MessageThread thread : threads) {
 					Integer id = Integer.valueOf(thread.getID());
-					Date dt = lr.get(id);
+					Instant dt = lr.get(id);
 					int postID = thread.getNextPostID(dt);
 					if (postID < Integer.MAX_VALUE)
 						lrIDs.put(id, Integer.valueOf(postID));

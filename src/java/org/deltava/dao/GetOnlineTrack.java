@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -14,7 +14,7 @@ import org.deltava.beans.servinfo.PositionData;
  * from the online track database which contains information for all Airlines populated from the ServInfo feed by the 
  * {@link org.deltava.tasks.OnlineTrackTask} scheduled task. 
  * @author Luke
- * @version 4.1
+ * @version 7.0
  * @since 2.4
  */
 
@@ -38,7 +38,7 @@ public class GetOnlineTrack extends DAO {
 	 * @return the track ID, or zero if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public int getTrackID(int pilotID, OnlineNetwork net, java.util.Date dt, Airport aD, Airport aA) throws DAOException {
+	public int getTrackID(int pilotID, OnlineNetwork net, java.time.Instant dt, Airport aD, Airport aA) throws DAOException {
 		try {
 			prepareStatementWithoutLimits("SELECT OT.ID FROM online.TRACKS OT WHERE (OT.USER_ID=?) AND (OT.AIRPORT_D=?) AND "
 					+ "(OT.AIRPORT_A=?) AND (OT.NETWORK=?) AND (OT.CREATED_ON > DATE_SUB(?, INTERVAL ? HOUR)) "
@@ -103,7 +103,7 @@ public class GetOnlineTrack extends DAO {
 			List<PositionData> results = new ArrayList<PositionData>();
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
-					PositionData pd = new PositionData(rs.getTimestamp(2));
+					PositionData pd = new PositionData(rs.getTimestamp(2).toInstant());
 					pd.setFlightID(rs.getInt(1));
 					pd.setPosition(rs.getDouble(3), rs.getDouble(4), rs.getInt(5));
 					pd.setHeading(rs.getInt(6));
@@ -158,7 +158,7 @@ public class GetOnlineTrack extends DAO {
 			List<PositionData> results = new ArrayList<PositionData>();
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
-					PositionData pd = new PositionData(rs.getTimestamp(3));
+					PositionData pd = new PositionData(rs.getTimestamp(3).toInstant());
 					pd.setPilotID(rs.getInt(1));
 					pd.setFlightID(rs.getInt(2));
 					pd.setPosition(rs.getDouble(4), rs.getDouble(5), rs.getInt(6));

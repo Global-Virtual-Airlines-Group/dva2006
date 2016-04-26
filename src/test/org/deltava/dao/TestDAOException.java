@@ -11,7 +11,8 @@ public class TestDAOException extends TestCase {
         return new CoverageDecorator(TestDAOException.class, new Class[] { DAOException.class } );
     }
 
-    public void testMessage() {
+    @SuppressWarnings("static-method")
+	public void testMessage() {
         try {
             throw new DAOException("MSG");
         } catch (DAOException de) {
@@ -19,9 +20,9 @@ public class TestDAOException extends TestCase {
         }
     }
     
-    public void testCause() {
+    @SuppressWarnings("static-method")
+	public void testCause() {
         Exception e = new NullPointerException();
-        
         try {
             throw new DAOException(e);
         } catch (DAOException de) {

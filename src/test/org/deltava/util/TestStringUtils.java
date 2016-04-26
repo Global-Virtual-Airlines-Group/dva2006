@@ -6,6 +6,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import org.hansel.CoverageDecorator;
 
+@SuppressWarnings("static-method")
 public class TestStringUtils extends TestCase {
 
     public static Test suite() {

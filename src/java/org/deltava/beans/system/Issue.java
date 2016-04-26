@@ -1,14 +1,15 @@
-// Copyright 2005, 2006, 2007, 2009, 2011, 2012 Global Virtual Airlnes Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2011, 2012, 2016 Global Virtual Airlnes Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 import java.util.*;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 
 /**
  * A bean for tracking development issues.
  * @author Luke
- * @version 4.2
+ * @version 7.0
  * @since 1.0
  */
 
@@ -75,9 +76,9 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	private int _issueType;
 	private int _status;
 	
-	private Date _createdOn;
-	private Date _lastCommentOn;
-	private Date _resolvedOn;
+	private Instant _createdOn;
+	private Instant _lastCommentOn;
+	private Instant _resolvedOn;
 	
 	private int _createdBy;
 	private int _assignedTo;
@@ -264,36 +265,31 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	/**
 	 * Returns the date/time this Issue was created on.
 	 * @return the creation date/time
-	 * @see Issue#setCreatedOn(Date)
+	 * @see Issue#setCreatedOn(Instant)
 	 */
-	public Date getCreatedOn() {
+	public Instant getCreatedOn() {
 		return _createdOn;
 	}
 	
 	/**
 	 * Returns the date/time the last comment for this issue was created on.
 	 * @return the creation date/time of the last comment
-	 * @see Issue#setLastCommentOn(Date)
+	 * @see Issue#setLastCommentOn(Instant)
 	 */
-	public Date getLastCommentOn() {
+	public Instant getLastCommentOn() {
 		return _lastCommentOn;
 	}
 	
 	/**
 	 * Returns the date/time this issue was resolved on.
 	 * @return the date/time the issue was resolved on, or null
-	 * @see Issue#setResolvedOn(Date)
+	 * @see Issue#setResolvedOn(Instant)
 	 */
-	public Date getResolvedOn() {
+	public Instant getResolvedOn() {
 		return _resolvedOn;
 	}
-	
-	/**
-	 * The database ID of the Person creating this issue.
-	 * @return the database ID
-	 * @see Issue#setAuthorID(int)
-	 * @see org.deltava.beans.DatabaseBean#getID()
-	 */
+
+	@Override
 	public int getAuthorID() {
 		return _createdBy;
 	}
@@ -354,7 +350,7 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	 * @throws IllegalArgumentException if d is null
 	 * @see Issue#getCreatedOn()
 	 */
-	public void setCreatedOn(Date d) {
+	public void setCreatedOn(Instant d) {
 		if (d == null)
 			throw new IllegalArgumentException("Creation Date cannot be null");
 		
@@ -367,8 +363,8 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	 * @throws IllegalArgumentException if d is null or before getCreatedOn()
 	 * @see Issue#getLastCommentOn()
 	 */
-	public void setLastCommentOn(Date d) {
-		if ((d != null) && (d.before(_createdOn)))
+	public void setLastCommentOn(Instant d) {
+		if ((d != null) && d.isBefore(_createdOn))
 			throw new IllegalArgumentException("Last Comment date cannot be before " + _createdOn);
 		
 		_lastCommentOn = d;
@@ -380,8 +376,8 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	 * @throws IllegalArgumentException if d is null or before getCreatedOn()
 	 * @see Issue#getResolvedOn()
 	 */
-	public void setResolvedOn(Date d) {
-		if ((d != null) && (d.before(_createdOn)))
+	public void setResolvedOn(Instant d) {
+		if ((d != null) && d.isBefore(_createdOn))
 			throw new IllegalArgumentException("Resolved On date cannot be before " + _createdOn);
 		
 		_resolvedOn = d;
@@ -406,13 +402,8 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	public void setMinorVersion(int v) {
 		_minorVersion = Math.max(0, v);		
 	}
-	
-	/**
-	 * Updates the database ID of this Issue's author.
-	 * @param id the database ID
-	 * @throws IllegalArgumentException if id is zero or negative
-	 * @see Issue#getAuthorID()
-	 */
+
+	@Override
 	public void setAuthorID(int id) {
 		validateID(_createdBy, id);
 		_createdBy = id;
@@ -520,6 +511,7 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	 * Returns the CSS row class name if displayed in a view table.
 	 * @return the CSS class name
 	 */
+	@Override
 	public String getRowClassName() {
 		final String[] ROW_CLASSES = {"opt1", null, "opt2", "warn", "err", "opt3"};
 		return ROW_CLASSES[_status];

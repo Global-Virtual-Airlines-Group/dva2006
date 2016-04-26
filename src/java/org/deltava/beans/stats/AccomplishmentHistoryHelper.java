@@ -1,6 +1,7 @@
- // Copyright 2010, 2011, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+ // Copyright 2010, 2011, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
+import java.time.*;
 import java.util.*;
 
 import org.deltava.beans.*;
@@ -8,14 +9,15 @@ import org.deltava.beans.acars.*;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.stats.AccomplishUnit.Data;
+
 import org.deltava.comparators.FlightReportComparator;
-import org.deltava.util.CalendarUtils;
+
 import org.deltava.util.system.SystemData;
 
 /**
  * A utility class to determine what Accomplishments a Pilot has achieved. 
  * @author Luke
- * @version 6.3
+ * @version 7.0
  * @since 3.2
  */
 
@@ -102,7 +104,7 @@ public class AccomplishmentHistoryHelper {
 			fr.getCaptEQType().forEach(eq -> incLeg(_pLegs, eq));
 		}
 		
-		void incLeg(Map<String, MutableInteger> map, String key) {
+		static void incLeg(Map<String, MutableInteger> map, String key) {
 			MutableInteger i = map.get(key);
 			if (i == null)
 				map.put(key, new MutableInteger(1));
@@ -304,7 +306,7 @@ public class AccomplishmentHistoryHelper {
 				return totalLegs;
 				
 			case MEMBERDAYS:
-				long days = (System.currentTimeMillis() - _usr.getCreatedOn().getTime()) / 86400_000;
+				long days = (System.currentTimeMillis() - _usr.getCreatedOn().toEpochMilli()) / 86400_000;
 				return days;
 			default:
 				return 0;
@@ -388,19 +390,21 @@ public class AccomplishmentHistoryHelper {
 	 * @param a the Accomplishment
 	 * @return the date/time it was achieved, or null
 	 */
-	public Date achieved(Accomplishment a) {
+	public Instant achieved(Accomplishment a) {
 		if (has(a) == Result.NOTYET)
 			return null;
 		
 		// Check join date
-		if (a.getUnit() == AccomplishUnit.MEMBERDAYS)
-			return CalendarUtils.adjust(_usr.getCreatedOn(), a.getValue());
-		
+		if (a.getUnit() == AccomplishUnit.MEMBERDAYS) {
+			ZonedDateTime zdt = ZonedDateTime.ofInstant(_usr.getCreatedOn(), ZoneOffset.UTC);
+			return zdt.plusDays(a.getValue()).toInstant();
+		}
+			
 		// Loop through the Flight Reports
 		AccomplishmentCounter cnt = new AccomplishmentCounter();
 		if (a.getUnit().getDataRequired() == Data.FLIGHTS) {
 			for (FlightReport fr : _pireps) {
-				Date dt = (fr.getSubmittedOn() == null) ? fr.getDate() : fr.getSubmittedOn();
+				Instant dt = (fr.getSubmittedOn() == null) ? fr.getDate() : fr.getSubmittedOn();
 				cnt.add(fr);
 				
 				// If we meet the criteria, return the date
@@ -412,7 +416,7 @@ public class AccomplishmentHistoryHelper {
 		// Loop through the connection entries
 		if (a.getUnit().getDataRequired() == Data.DISPATCH) {
 			for (DispatchConnectionEntry dce : _cons) {
-				Date dt = dce.getEndTime();
+				Instant dt = dce.getEndTime();
 				cnt.add(dce);
 				if (has(a, cnt) != Result.NOTYET)
 					return dt;

@@ -8,6 +8,7 @@ import junit.framework.TestCase;
 
 public class TestGoogleGeocode extends TestCase {
 
+	@SuppressWarnings("static-method")
 	public void testGeocodeV3() throws Exception {
 		
 		GetGoogleGeocode gcdao = new GetGoogleGeocode();

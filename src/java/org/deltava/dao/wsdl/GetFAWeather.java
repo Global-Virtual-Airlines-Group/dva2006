@@ -1,7 +1,7 @@
-// Copyright 2008, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.wsdl;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.deltava.beans.navdata.AirportLocation;
 import org.deltava.beans.wx.*;
@@ -14,7 +14,7 @@ import com.flightaware.flightxml.soap.FlightXML2.*;
 /**
  * Loads weather data from FlightAware via SOAP.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 2.2
  */
 
@@ -60,7 +60,7 @@ public class GetFAWeather extends FlightAwareDAO {
 			String data = rsp.getMetarResult();
 			result = MetarParser.parse(data);
 			result.setData(data);
-            result.setDate(new Date());
+            result.setDate(Instant.now());
             result.setAirport(loc);
             _wxCache.add(result);
             return result;
@@ -88,7 +88,7 @@ public class GetFAWeather extends FlightAwareDAO {
 			TafResults rsp = getStub().taf(new TafRequest(loc.getCode()));
 			result = new TAF();
 			result.setData(rsp.getTafResult());
-			result.setDate(new Date());
+			result.setDate(Instant.now());
 			_fCache.add(result);
 			return result;
 		} catch (Exception e) {

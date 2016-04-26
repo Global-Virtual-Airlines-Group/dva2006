@@ -21,6 +21,7 @@ public class TestAirCharts extends TestCase {
 	//private Airport _atl;
 	private Airport _tlv;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		PropertyConfigurator.configure("etc/log4j.test.properties");
@@ -48,6 +49,7 @@ public class TestAirCharts extends TestCase {
 		assertNotNull(SystemData.get("security.key.airCharts"));
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		LogManager.shutdown();
 		super.tearDown();

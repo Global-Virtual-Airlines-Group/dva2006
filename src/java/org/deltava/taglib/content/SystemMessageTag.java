@@ -1,4 +1,4 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import javax.servlet.jsp.*;
@@ -9,7 +9,7 @@ import org.deltava.commands.CommandContext;
 /**
  * A JSP tag to display a system message.
  * @author Luke
- * @version 2.4
+ * @version 7.0
  * @since 2.4
  * @see CommandContext#SYSMSG_ATTR_NAME
  */
@@ -20,6 +20,7 @@ public class SystemMessageTag extends TagSupport {
 	 * Inserts the system message into the JSP.
 	 * @return TagSupport.EVAL_PAGE always
 	 */
+	@Override
 	public int doEndTag() throws JspException {
 		JspWriter out = pageContext.getOut();
 		try {

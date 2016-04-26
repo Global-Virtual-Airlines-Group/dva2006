@@ -1,8 +1,10 @@
-// Copyright 2006, 2007, 2009, 2010, 2012, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2010, 2012, 2013, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.io.*;
 import java.util.*;
+import java.time.*;
+import java.time.temporal.ChronoField;
 import java.sql.Connection;
 
 import org.deltava.beans.EMailAddress;
@@ -20,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to automatically update the flight Schedule from Innovata.
  * @author Luke
- * @version 6.3
+ * @version 7.0
  * @since 1.0
  */
 
@@ -47,12 +49,11 @@ public class ScheduleImportTask extends Task {
 		
 		// Calculate replay date
 		String dt = SystemData.get("schedule.innovata.import.replayDate");
-		Date replayDate = StringUtils.isEmpty(dt) ? null : StringUtils.parseDate(dt, "MM/dd/yyyy");
+		LocalDateTime replayDate = StringUtils.isEmpty(dt) ? null : LocalDateTime.ofInstant(StringUtils.parseInstant(dt, "MM/dd/yyyy"), ZoneOffset.UTC);
 		if (replayDate != null) {
-			Calendar now = CalendarUtils.getInstance(null, true);
-			int daysToAdjust = now.get(Calendar.DAY_OF_WEEK) - 1;
-			Calendar rd = CalendarUtils.getInstance(replayDate, true, daysToAdjust);
-			replayDate = rd.getTime();
+			Instant now = Instant.now();
+			int daysToAdjust = now.get(ChronoField.DAY_OF_WEEK) - 1;
+			replayDate = replayDate.plusDays(daysToAdjust);
 		}
 
 		// Get the file name(s) to download and init the cache
@@ -83,7 +84,7 @@ public class ScheduleImportTask extends Task {
 			GetAirline adao = new GetAirline(con);
 			GetAircraft acdao = new GetAircraft(con);
 			GetFullSchedule dao = new GetFullSchedule(is);
-			dao.setEffectiveDate(CalendarUtils.getInstance(replayDate, true).getTime());
+			dao.setEffectiveDate(replayDate);
 			dao.setMainlineCodes((List<String>) SystemData.getObject("schedule.innovata.primary_codes"));
 			dao.setCodeshareCodes((List<String>) SystemData.getObject("schedule.innovata.codeshare_codes"));
 			dao.setAircraft(acdao.getAircraftTypes());

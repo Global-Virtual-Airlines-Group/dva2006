@@ -1,4 +1,4 @@
-// Copyright 2005, 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2008, 2009, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.flight.FlightReport;
 /**
  * A Data Access Object to retrieve ACARS Flight Reports from the database.
  * @author Luke
- * @version 4.1
+ * @version 7.0
  * @since 1.0
  */
 
@@ -47,7 +47,7 @@ public class GetFlightReportACARS extends GetFlightReports {
 	 * @return a List of FlightReports
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<FlightReport> getByDate(java.util.Date dt) throws DAOException {
+	public List<FlightReport> getByDate(java.time.Instant dt) throws DAOException {
 		try {
 			prepareStatement("SELECT PR.*, PC.COMMENTS, PC.REMARKS, APR.* FROM PIREPS PR, ACARS_PIREPS APR "
 				+ "LEFT JOIN PIREP_COMMENT PC ON (APR.ID=PC.ID) WHERE (PR.ID=APR.ID) AND (PR.DATE=DATE(?))");
@@ -95,13 +95,13 @@ public class GetFlightReportACARS extends GetFlightReports {
 	public List<FlightReport> checkDupes(String dbName, Flight f, int pilotID) throws DAOException {
 		
 		// Build the SQL statement
-		dbName = formatDBName(dbName);
+		String db = formatDBName(dbName);
 		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, PC.REMARKS, APR.* FROM ");
-		sqlBuf.append(dbName);
+		sqlBuf.append(db);
 		sqlBuf.append(".PIREPS PR, ");
-		sqlBuf.append(dbName);
+		sqlBuf.append(db);
 		sqlBuf.append(".ACARS_PIREPS APR LEFT JOIN ");
-		sqlBuf.append(dbName);
+		sqlBuf.append(db);
 		sqlBuf.append(".PIREP_COMMENT PC ON (APR.ID=PC.ID) WHERE (PR.ID=APR.ID) AND (PR.PILOT_ID=?) "
 				+ "AND (PR.SUBMITTED > DATE_SUB(NOW(), INTERVAL ? MINUTE)) AND (PR.STATUS=?) AND "
 				+ "(PR.AIRLINE=?) AND (PR.FLIGHT=?) AND (PR.LEG=?) AND (PR.AIRPORT_D=?) AND (PR.AIRPORT_A=?) "
@@ -134,13 +134,13 @@ public class GetFlightReportACARS extends GetFlightReports {
 	public List<FlightReport> checkDupes(String dbName, int acarsID) throws DAOException {
 		
 		// Build the SQL statement
-		dbName = formatDBName(dbName);
+		String db = formatDBName(dbName);
 		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, PC.REMARKS, APR.* FROM ");
-		sqlBuf.append(dbName);
+		sqlBuf.append(db);
 		sqlBuf.append(".PIREPS PR, ");
-		sqlBuf.append(dbName);
+		sqlBuf.append(db);
 		sqlBuf.append(".ACARS_PIREPS APR LEFT JOIN ");
-		sqlBuf.append(dbName);
+		sqlBuf.append(db);
 		sqlBuf.append(".PIREP_COMMENT PC ON (APR.ID=PC.ID) WHERE (PR.ID=APR.ID) AND (APR.ACARS_ID=?)");
 		
 		try {

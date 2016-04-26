@@ -1,10 +1,10 @@
-// Copyright 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import java.text.*;
+import java.time.Instant;
 
 import org.apache.log4j.Logger;
 
@@ -20,15 +20,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to download Weather data from the NOAA.
  * @author Luke
- * @version 3.6
+ * @version 7.0
  * @since 2.2
  */
 
 public class GetNOAAWeather extends DAO {
 	
 	private static final Logger log = Logger.getLogger(GetNOAAWeather.class);
-	
-	private final DateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm");
 	
 	/**
 	 * Initializes the Data Access Object.
@@ -43,6 +41,7 @@ public class GetNOAAWeather extends DAO {
 	 * @return a Map of METAR objects, keyed by airport code
 	 * @throws DAOException if an I/O error occurs
 	 */
+	@SuppressWarnings("static-method")
 	public Map<String, METAR> getMETARCycle(int hour) throws DAOException {
 		try {
 			URL url = new URL(SystemData.get("weather.url.metarCycle"));
@@ -80,7 +79,7 @@ public class GetNOAAWeather extends DAO {
 				}
 				
 				try {
-					Date dt = df.parse(date);
+					Instant dt = StringUtils.parseInstant(date, "yyyy/MM/dd HH:mm");
 					if (!StringUtils.isEmpty(buf)) {
 						METAR m = MetarParser.parse(buf.toString());
 						m.setDate(dt);
@@ -106,6 +105,7 @@ public class GetNOAAWeather extends DAO {
 	 * @return a Map of TAF objects, keyed by airport code
 	 * @throws DAOException if an I/O error occurs
 	 */
+	@SuppressWarnings("static-method")
 	public Map<String, TAF> getTAFCycle(int hour) throws DAOException {
 		try {
 			URL url = new URL(SystemData.get("weather.url.tafCycle"));
@@ -149,7 +149,7 @@ public class GetNOAAWeather extends DAO {
 
 				// Build the TAF
 				try {
-					Date dt = df.parse(date);
+					Instant dt = StringUtils.parseInstant(date, "yyyy/MM/dd HH:mm");
 					TAF t = new TAF();
 					t.setAmended(isAmended);
 					t.setDate(dt);

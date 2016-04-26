@@ -15,12 +15,14 @@ public class TestAirlineTotals extends AbstractBeanTestCase {
 		return new CoverageDecorator(TestAirlineTotals.class, new Class[] { AirlineTotals.class });
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		_t = new AirlineTotals(System.currentTimeMillis());
 		setBean(_t);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		_t = null;
 		super.tearDown();
@@ -68,6 +70,7 @@ public class TestAirlineTotals extends AbstractBeanTestCase {
 		validateInput("DBRows", Integer.valueOf(-1), IllegalArgumentException.class);
 	}
 	
+	@SuppressWarnings("static-method")
 	public void testAirlineAge() {
 		Calendar c = new GregorianCalendar(2001, 6, 12);
 		AirlineTotals at2 = new AirlineTotals(c.getTimeInMillis());

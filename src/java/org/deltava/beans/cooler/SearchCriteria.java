@@ -1,12 +1,12 @@
-// Copyright 2005, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2008, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.cooler;
 
-import java.util.Date;
+import java.time.Instant;
 
 /**
  * A bean to store Water Cooler search criteria.
  * @author Luke
- * @version 2.5
+ * @version 7.0
  * @since 1.0
  */
 
@@ -15,7 +15,7 @@ public class SearchCriteria {
 	private String _searchStr;
 	private String _channel;
 	private String _author;
-	private Date _threadDate;
+	private Instant _threadDate;
 	
 	private boolean _doSubject;
 	private boolean _doNameFragment;
@@ -49,7 +49,7 @@ public class SearchCriteria {
 	 * Returns the earliest thread update date to include.
 	 * @return the minimum thread last update date/time
 	 */
-	public Date getMinimumDate() {
+	public Instant getMinimumDate() {
 		return _threadDate;
 	}
 	
@@ -81,7 +81,7 @@ public class SearchCriteria {
 		_author = aName;
 	}
 	
-	public void setMinimumDate(Date dt) {
+	public void setMinimumDate(Instant dt) {
 		_threadDate = dt;
 	}
 	

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 import org.deltava.beans.ViewEntry;
@@ -7,13 +7,13 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A class for storing E-Mail message templates.
  * @author Luke
- * @version 3.0
+ * @version 7.0
  * @since 1.0
  */
 
 public class MessageTemplate implements Comparable<MessageTemplate>, Cacheable, ViewEntry {
 
-    private String _name;
+    private final String _name;
     private String _subject;
     private String _desc;
     private String _msgBody;
@@ -115,6 +115,7 @@ public class MessageTemplate implements Comparable<MessageTemplate>, Cacheable, 
     /**
      * Calculates equality by comparing the template names.
      */
+    @Override
     public boolean equals(Object o) {
     	return (o instanceof MessageTemplate) && (compareTo((MessageTemplate) o) == 0);
     }
@@ -122,6 +123,7 @@ public class MessageTemplate implements Comparable<MessageTemplate>, Cacheable, 
     /**
      * Returns the template name's hashcode.
      */
+    @Override
     public int hashCode() {
     	return _name.hashCode();
     }
@@ -129,6 +131,7 @@ public class MessageTemplate implements Comparable<MessageTemplate>, Cacheable, 
     /**
      * Compares two templates by comparing their names.
      */
+    @Override
     public int compareTo(MessageTemplate mt2) {
     	return _name.compareTo(mt2._name);
     }
@@ -137,6 +140,7 @@ public class MessageTemplate implements Comparable<MessageTemplate>, Cacheable, 
      * Returns the cache key.
      * @return the template name
      */
+    @Override
     public Object cacheKey() {
        return _name;
     }
@@ -145,6 +149,7 @@ public class MessageTemplate implements Comparable<MessageTemplate>, Cacheable, 
      * Returns the CSS class name used when displaying in a view table.
      * @return the CSS class name
      */
+    @Override
     public String getRowClassName() {
     	return _isHTML ? "opt1" : null;
     }

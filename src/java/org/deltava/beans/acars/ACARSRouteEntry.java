@@ -1,10 +1,11 @@
 // Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
-import java.util.*;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 import org.deltava.beans.servinfo.Controller;
+
 import org.deltava.util.StringUtils;
 
 import static org.gvagroup.acars.ACARSFlags.*;
@@ -51,7 +52,7 @@ public class ACARSRouteEntry extends RouteEntry {
 	 * @see ACARSRouteEntry#getDate()
 	 * @see ACARSRouteEntry#getLocation()
 	 */
-	public ACARSRouteEntry(Date dt, GeoLocation loc) {
+	public ACARSRouteEntry(Instant dt, GeoLocation loc) {
 		super(loc, dt);
 	}
 	

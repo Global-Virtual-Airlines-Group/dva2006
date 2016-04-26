@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.tile;
 
 import java.awt.image.*;
@@ -6,7 +6,7 @@ import java.awt.image.*;
 /**
  * An abstract class to support common tile functions.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 5.0
  */
 
@@ -27,6 +27,7 @@ public abstract class AbstractTile implements Tile, java.io.Serializable {
 	 * Returns the Tile address.
 	 * @return the address
 	 */
+	@Override
 	public final TileAddress getAddress() {
 		return _addr;
 	}
@@ -35,6 +36,7 @@ public abstract class AbstractTile implements Tile, java.io.Serializable {
 	 * Returns the Tile name.
 	 * @return the name
 	 */
+	@Override
 	public final String getName() {
 		return _addr.getName();
 	}
@@ -43,11 +45,13 @@ public abstract class AbstractTile implements Tile, java.io.Serializable {
 	 * Updates the Tile image.
 	 * @param img the Tile image
 	 */
+	@Override
 	public abstract void setImage(BufferedImage img);
 
 	/**
 	 * Compares two tiles by comparing their addresses.
 	 */
+	@Override
 	public int compareTo(Tile t2) {
 		return _addr.compareTo(t2.getAddress());
 	}

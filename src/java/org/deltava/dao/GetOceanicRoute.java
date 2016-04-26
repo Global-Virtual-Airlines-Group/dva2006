@@ -1,8 +1,9 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
 import java.sql.*;
+import java.time.Instant;
 
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
@@ -11,7 +12,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object for Oceanic Routes.
  * @author Luke
- * @version 5.1
+ * @version 7.0
  * @since 1.0
  */
 
@@ -46,10 +47,9 @@ public class GetOceanicRoute extends GetNavAirway {
      * @return the OceanicRoute
      * @throws DAOException if a JDBC error occurs
      */
-    public OceanicNOTAM get(OceanicTrackInfo.Type routeType, java.util.Date vd) throws DAOException {
+    public OceanicNOTAM get(OceanicTrackInfo.Type routeType, java.time.Instant vd) throws DAOException {
     	try {
-    		prepareStatementWithoutLimits("SELECT * FROM common.OCEANIC WHERE (ROUTETYPE=?) AND "
-    				+ "(VALID_DATE=DATE(?)) LIMIT 1");
+    		prepareStatementWithoutLimits("SELECT * FROM common.OCEANIC WHERE (ROUTETYPE=?) AND (VALID_DATE=DATE(?)) LIMIT 1");
     		_ps.setInt(1, routeType.ordinal());
     		_ps.setTimestamp(2, createTimestamp(vd));
     		
@@ -61,7 +61,7 @@ public class GetOceanicRoute extends GetNavAirway {
     	}
     }
     
-    /**
+    /*
      * Helper method to load Oceanic Route data.
      */
     private List<OceanicNOTAM> execute() throws SQLException {
@@ -86,17 +86,14 @@ public class GetOceanicRoute extends GetNavAirway {
      * @return a Collection of {@link java.util.Date} objects
      * @throws DAOException if a JDBC error occurs
      */
-    public Collection<java.util.Date> getOceanicTrackDates(OceanicTrackInfo.Type routeType) throws DAOException {
+    public Collection<java.time.Instant> getOceanicTrackDates(OceanicTrackInfo.Type routeType) throws DAOException {
     	try {
-    		prepareStatement("SELECT DISTINCT VALID_DATE FROM common.OCEANIC_ROUTES WHERE (ROUTETYPE=?) "
-    				+ "ORDER BY VALID_DATE DESC");
+    		prepareStatement("SELECT DISTINCT VALID_DATE FROM common.OCEANIC_ROUTES WHERE (ROUTETYPE=?) ORDER BY VALID_DATE DESC");
     		_ps.setInt(1, routeType.ordinal());
-    		
-    		// Execute the query
-    		Collection<java.util.Date> results = new LinkedHashSet<java.util.Date>();
+    		Collection<java.time.Instant> results = new LinkedHashSet<java.time.Instant>();
     		try (ResultSet rs = _ps.executeQuery()) {
     			while (rs.next())
-    				results.add(rs.getDate(1));
+    				results.add(Instant.ofEpochMilli(rs.getDate(1).getTime()));
     		}
     		
     		_ps.close();
@@ -113,7 +110,7 @@ public class GetOceanicRoute extends GetNavAirway {
      * @return a {@link DailyOceanicTracks} bean
      * @throws DAOException if a JDBC error occurs
      */
-    public DailyOceanicTracks getOceanicTracks(OceanicTrackInfo.Type routeType, java.util.Date dt) throws DAOException {
+    public DailyOceanicTracks getOceanicTracks(OceanicTrackInfo.Type routeType, java.time.Instant dt) throws DAOException {
     	
     	// Build the SQL statement
     	StringBuilder sqlBuf = new StringBuilder("SELECT * FROM common.OCEANIC_ROUTES WHERE (ROUTETYPE=?) AND ");
@@ -138,7 +135,7 @@ public class GetOceanicRoute extends GetNavAirway {
     				String newTrack = rs.getString(3);
     				if ((trk == null) || (!newTrack.equals(trk.getTrack()))) {
     					trk = new OceanicTrack(routeType, newTrack);
-    					trk.setDate(rs.getTimestamp(2));
+    					trk.setDate(rs.getTimestamp(2).toInstant());
     					tmpResults.add(trk);
     				}
     			

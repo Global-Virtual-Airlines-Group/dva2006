@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to update the Flight Schedule.
  * @author Luke
- * @version 6.4
+ * @version 7.0
  * @since 1.0
  */
 
@@ -200,8 +200,7 @@ public class SetSchedule extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void update(Airport a, String oldCode) throws DAOException {
-		if (oldCode == null)
-			oldCode = a.getIATA();
+		String oc = (oldCode == null) ? a.getIATA() : oldCode;
 		
 		try {
 			startTransaction();
@@ -218,7 +217,7 @@ public class SetSchedule extends DAO {
 			_ps.setBoolean(7, a.getADSE());
 			_ps.setString(8, a.getCountry().getCode());
 			_ps.setString(9, a.getSupercededAirport());
-			_ps.setString(10, oldCode);
+			_ps.setString(10, oc);
 			executeUpdate(1);
 			
 			// Ensure the superceded airports are interchangeable
@@ -233,7 +232,7 @@ public class SetSchedule extends DAO {
 			
 			// Clear out the airlines
 			prepareStatement("DELETE FROM common.AIRPORT_AIRLINE WHERE (IATA=?) AND (APPCODE=?)");
-			_ps.setString(1, oldCode);
+			_ps.setString(1, oc);
 			_ps.setString(2, SystemData.get("airline.code"));
 			executeUpdate(0);
 
@@ -313,8 +312,8 @@ public class SetSchedule extends DAO {
 			_ps.setInt(6, entry.getDistance());
 			_ps.setString(7, entry.getEquipmentType());
 			_ps.setInt(8, entry.getLength());
-			_ps.setTimestamp(9, createTimestamp(entry.getTimeD()));
-			_ps.setTimestamp(10, createTimestamp(entry.getTimeA()));
+			_ps.setTimestamp(9, Timestamp.valueOf(entry.getTimeD().toLocalDateTime()));
+			_ps.setTimestamp(10, Timestamp.valueOf(entry.getTimeA().toLocalDateTime()));
 			_ps.setBoolean(11, entry.getHistoric());
 			_ps.setBoolean(12, entry.getCanPurge());
 			_ps.setBoolean(13, entry.getAcademy());

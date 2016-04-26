@@ -1,4 +1,4 @@
-// Copyright 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.wx;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.schedule.GeoPosition;
 /**
  * A collection to store a gridded result from a GRIB file, tracking the corners of the grid.
  * @author Luke
- * @version 5.2
+ * @version 7.0
  * @since 5.2
  */
 
@@ -42,10 +42,12 @@ public class GRIBResult<T extends GeoLocation> extends ArrayList<T> implements G
 		_maxLng = Math.min(180, lng + (_w * _dLng));
 	}
 
+	@Override
 	public double getLatitude() {
 		return (_maxLat - _minLat) /2;
 	}
 	
+	@Override
 	public double getLongitude() {
 		return (_maxLng - _minLng) / 2;
 	}

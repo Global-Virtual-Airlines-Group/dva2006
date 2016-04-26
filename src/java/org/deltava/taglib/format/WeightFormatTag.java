@@ -1,4 +1,4 @@
-// Copyright 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import javax.servlet.jsp.PageContext;
@@ -8,7 +8,7 @@ import org.deltava.beans.*;
 /**
  * A JSP tag to convert and format weights. 
  * @author Luke
- * @version 5.2
+ * @version 7.0
  * @since 5.2
  */
 
@@ -28,6 +28,7 @@ public class WeightFormatTag extends UnitFormatTag {
 	 * Overrides the units to display the weight in.
 	 * @param units the unit abbreviation
 	 */
+	@Override
 	public void setUnits(String units) {
 		_unit = WeightUnit.valueOf(units.toUpperCase());
 	}

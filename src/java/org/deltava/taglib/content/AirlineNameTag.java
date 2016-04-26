@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import javax.servlet.jsp.JspException;
@@ -9,7 +9,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to write the Airline name.
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -20,6 +20,7 @@ public class AirlineNameTag extends TagSupport {
 	 * @return TagSupport.EVAL_PAGE always
 	 * @throws JspException if an I/O error occurs
 	 */
+	@Override
 	public int doEndTag() throws JspException {
 		try {
 			pageContext.getOut().print(SystemData.get("airline.name"));

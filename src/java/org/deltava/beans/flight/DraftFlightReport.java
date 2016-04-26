@@ -1,7 +1,7 @@
-// Copyright 2010, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
-import java.util.Date;
+import java.time.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.*;
@@ -10,14 +10,14 @@ import org.deltava.util.StringUtils;
 /**
  * A class to store draft Flight Report data, with scheduled departure/arrival times. 
  * @author Luke
- * @version 6.1
+ * @version 7.0
  * @since 2.8
  */
 
 public class DraftFlightReport extends FlightReport implements FlightTimes {
 	
-	private DateTime _timeD;
-	private DateTime _timeA;
+	private ZonedDateTime _timeD;
+	private ZonedDateTime _timeA;
 	
 	/**
 	 * Creates a new Flight Report object with a given Flight.
@@ -46,30 +46,8 @@ public class DraftFlightReport extends FlightReport implements FlightTimes {
 	 * @return the departure date/time
 	 */
 	@Override
-	public Date getTimeD() {
-		return (_timeD == null) ? null : _timeD.getDate();
-	}
-	
-	/**
-	 * Returns the departure time of the flight, with full timezone information. The date component of this value can be
-	 * ignored.
-	 * @return the full departure time of the flight
-	 * @see ScheduleEntry#getDateTimeA()
-	 */
-	@Override
-	public DateTime getDateTimeD() {
+	public ZonedDateTime getTimeD() {
 		return _timeD;
-	}
-
-	/**
-	 * Returns the arrival time of the flight, with full timezone information. The date component of this value can be
-	 * ignored.
-	 * @return the full arrival time of the flight
-	 * @see ScheduleEntry#getDateTimeD()
-	 */
-	@Override
-	public DateTime getDateTimeA() {
-		return _timeA;
 	}
 	
 	/**
@@ -78,8 +56,8 @@ public class DraftFlightReport extends FlightReport implements FlightTimes {
 	 * @return the arrival date/time
 	 */
 	@Override
-	public Date getTimeA() {
-		return (_timeA == null) ? null : _timeA.getDate();
+	public ZonedDateTime getTimeA() {
+		return _timeA;
 	}
 	
 	/**
@@ -87,9 +65,8 @@ public class DraftFlightReport extends FlightReport implements FlightTimes {
 	 * should be ignored.
 	 * @param dt the departure date/time
 	 */
-	public void setTimeD(Date dt) {
-		TZInfo tz = (getAirportD() == null) ? TZInfo.local() : getAirportD().getTZ();
-		_timeD = new DateTime(dt, tz);
+	public void setTimeD(LocalDateTime dt) {
+		_timeD = ZonedDateTime.of(dt, getAirportD().getTZ().getZone());
 	}
 	
 	/**
@@ -97,9 +74,8 @@ public class DraftFlightReport extends FlightReport implements FlightTimes {
 	 * should be ignored.
 	 * @param dt the arrival date/time
 	 */
-	public void setTimeA(Date dt) {
-		TZInfo tz = (getAirportD() == null) ? TZInfo.local() : getAirportA().getTZ();
-		_timeA = new DateTime(dt, tz);
+	public void setTimeA(LocalDateTime dt) {
+		_timeA = ZonedDateTime.of(dt, getAirportA().getTZ().getZone());
 	}
 	
 	/**

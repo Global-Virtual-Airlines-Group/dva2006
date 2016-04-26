@@ -5,8 +5,10 @@ import java.io.*;
 import java.util.*;
 import java.util.zip.*;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.apache.log4j.Logger;
+
 import org.deltava.beans.*;
 import org.deltava.beans.academy.*;
 import org.deltava.beans.acars.*;
@@ -16,10 +18,13 @@ import org.deltava.beans.flight.*;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.testing.*;
+
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+
 import org.deltava.crypt.MessageDigester;
 import org.deltava.comparators.GeoComparator;
+
 import org.deltava.util.*;
 import org.deltava.util.cache.CacheManager;
 import org.deltava.util.system.SystemData;
@@ -27,7 +32,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to allow users to submit Offline Flight Reports.
  * @author Luke
- * @version 6.4
+ * @version 7.0
  * @since 2.4
  */
 
@@ -41,6 +46,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 	 * @throws CommandException if an error occurs
 	 */
 	@Override
+	@SuppressWarnings("null")
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Get command result and check for post
@@ -139,13 +145,11 @@ public class OfflineFlightCommand extends AbstractCommand {
 		inf.setAuthorID(ctx.getUser().getID());
 		inf.setRemoteHost(ctx.getRequest().getRemoteHost());
 		inf.setRemoteAddr(ctx.getRequest().getRemoteAddr());
-		DateTime dt = new DateTime(inf.getEndTime());
-		dt.convertTo(ctx.getUser().getTZ());
 		
 		// If the date/time is too far in the future, reject
-		Calendar cld = CalendarUtils.getInstance(null, false, 1);
-		if (cld.getTime().before(dt.getUTC()) && !noValidate) {
-			String msg = "PIREP too far in future - " + StringUtils.format(dt.getUTC(), "MM/dd/yyyy");
+		Instant maxDate = Instant.now().plusSeconds(86400);
+		if (maxDate.isBefore(inf.getEndTime()) && !noValidate) {
+			String msg = "PIREP too far in future - " + StringUtils.format(inf.getEndTime(), "MM/dd/yyyy");
 			ctx.setAttribute("error", msg, REQUEST);
 			ctx.setMessage(msg);
 			return;
@@ -155,7 +159,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 		ACARSFlightReport afr = flight.getFlightReport();
 		afr.setDatabaseID(DatabaseID.PILOT, inf.getAuthorID());
 		afr.setRank(ctx.getUser().getRank());
-		afr.setDate(dt.getDate());
+		afr.setDate(inf.getEndTime());
 		
 		// Get the client version
 		ClientInfo cInfo = new ClientInfo(inf.getVersion(), inf.getClientBuild(), inf.getBeta());
@@ -266,7 +270,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 			if (afr.getDatabaseID(DatabaseID.EVENT) != 0) {
 				Event e = evdao.get(afr.getDatabaseID(DatabaseID.EVENT));
 				if (e != null) {
-					long timeSinceEnd = (System.currentTimeMillis() - e.getEndTime().getTime()) / 3600_000;
+					long timeSinceEnd = (System.currentTimeMillis() - e.getEndTime().toEpochMilli()) / 3600_000;
 					if (timeSinceEnd > 6) {
 						comments.add("SYSTEM: Flight logged " + timeSinceEnd + " hours after '" + e.getName() + "' completion");
 						afr.setDatabaseID(DatabaseID.EVENT, 0);
@@ -459,7 +463,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 			
 			if (cr != null) {
 				cr.setFlightID(inf.getID());
-				cr.setSubmittedOn(new Date());
+				cr.setSubmittedOn(Instant.now());
 				cr.setStatus(TestStatus.SUBMITTED);
 
 				// Update the checkride

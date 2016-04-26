@@ -1,3 +1,4 @@
+// Copyright 2005, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import java.text.DecimalFormat;
@@ -5,7 +6,7 @@ import java.text.DecimalFormat;
 /**
  * A JSP tag to support the rendering of formatted decimal values.
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -33,7 +34,8 @@ public class DecimalFormatTag extends NumberFormatTag {
     /**
      * Resets this tag's data when its lifecycle is complete.
      */
-    public void release() {
+    @Override
+	public void release() {
         super.release(DEFAULT_PATTERN);
     }    
 }

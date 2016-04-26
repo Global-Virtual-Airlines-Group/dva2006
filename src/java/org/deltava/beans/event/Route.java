@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2010, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2010, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.event;
 
 import org.deltava.beans.*;
@@ -7,7 +7,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A class to store information about a Flight Route for an Online Event.
  * @author Luke
- * @version 5.4
+ * @version 7.0
  * @since 1.0
  */
 
@@ -43,6 +43,7 @@ public class Route extends DatabaseBean implements ComboAlias, ViewEntry, RouteP
      * @see Route#setAirportA(Airport)
      * @see Route#getAirportD()
      */
+	@Override
     public Airport getAirportA() {
         return _airportA;
     }
@@ -53,6 +54,7 @@ public class Route extends DatabaseBean implements ComboAlias, ViewEntry, RouteP
      * @see Route#setAirportD(Airport)
      * @see Route#getAirportA()
      */
+	@Override
     public Airport getAirportD() {
         return _airportD;
     }
@@ -61,6 +63,7 @@ public class Route extends DatabaseBean implements ComboAlias, ViewEntry, RouteP
      * Returns the distance between the Airports.
      * @return the distance in miles
      */
+	@Override
     public int getDistance() {
     	if ((_airportD == null) || (_airportA == null))
     		throw new IllegalStateException("Airports not populated");
@@ -221,10 +224,12 @@ public class Route extends DatabaseBean implements ComboAlias, ViewEntry, RouteP
     	_routeID = id;
     }
     
+    @Override
     public String getComboName() {
     	return (_name == null) ? toString() : _name;
     }
     
+    @Override
     public String getComboAlias() {
     	return String.valueOf(_routeID);
     }
@@ -232,6 +237,7 @@ public class Route extends DatabaseBean implements ComboAlias, ViewEntry, RouteP
     /**
      * Compare two routes by comparing the event and route IDs.
      */
+    @Override
     public int compareTo(Object o) {
     	Route r2 = (Route) o;
     	int tmpResult = super.compareTo(r2);
@@ -246,6 +252,7 @@ public class Route extends DatabaseBean implements ComboAlias, ViewEntry, RouteP
     /**
      * Compares a route by comparing the departure and arrival airports.
      */
+    @Override
     public boolean equals(Object o) {
     	return (o instanceof Route) ? (compareTo(o) == 0) : false;
     }
@@ -253,6 +260,7 @@ public class Route extends DatabaseBean implements ComboAlias, ViewEntry, RouteP
     /**
      * Renders this object to a String by appending the airports and codes.
      */
+    @Override
     public String toString() {
     	StringBuilder buf = new StringBuilder(_airportD.getName());
     	buf.append(" (");
@@ -267,7 +275,8 @@ public class Route extends DatabaseBean implements ComboAlias, ViewEntry, RouteP
     	
     	return buf.toString();
     }
-    
+  
+    @Override
     public String getRowClassName() {
     	return _active ? null : "opt2";
     }

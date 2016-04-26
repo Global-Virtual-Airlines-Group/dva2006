@@ -14,13 +14,15 @@ public class TestAirportLocation extends AbstractBeanTestCase {
       return new CoverageDecorator(TestAirportLocation.class, new Class[] { AirportLocation.class, NavigationDataBean.class });
   }
    
-   protected void setUp() throws Exception {
+   @Override
+protected void setUp() throws Exception {
       super.setUp();
       _a = new AirportLocation(12.345, -23.456);
       setBean(_a);
    }
 
-   protected void tearDown() throws Exception {
+   @Override
+protected void tearDown() throws Exception {
       _a = null;
       super.tearDown();
    }

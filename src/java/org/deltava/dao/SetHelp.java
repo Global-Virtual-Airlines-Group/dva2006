@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2010, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.help.*;
 /**
  * A Data Access Object to update Online Help entries and Help Desk Issues.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -100,7 +100,7 @@ public class SetHelp extends DAO {
 	 * @param createdOn the creation date of the Comment to mark as the answer, or null to remove from the FAQ
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void markFAQ(int id, java.util.Date createdOn) throws DAOException {
+	public void markFAQ(int id, java.time.Instant createdOn) throws DAOException {
 		try {
 			startTransaction();
 			
@@ -175,7 +175,7 @@ public class SetHelp extends DAO {
 	 * @param createdOn the Comment's creation date/time
 	 * @throws DAOException if a JDBC error occurs 
 	 */
-	public void deleteComment(int issueID, java.util.Date createdOn) throws DAOException {
+	public void deleteComment(int issueID, java.time.Instant createdOn) throws DAOException {
 		try {
 			startTransaction();
 			

@@ -2,6 +2,7 @@
 package org.deltava.beans.academy;
 
 import java.util.*;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 import org.deltava.beans.testing.CheckRide;
@@ -23,9 +24,9 @@ public class Course extends DatabaseBean implements ViewEntry {
 	private int _stage;
 	private int _rideCount;
 	
-	private Date _startDate;
-	private Date _endDate;
-	private Date _lastComment;
+	private Instant _startDate;
+	private Instant _endDate;
+	private Instant _lastComment;
 	
 	private final Map<Integer, CheckRide> _checkRides = new TreeMap<Integer, CheckRide>();
 	private final Map<Integer, CourseProgress> _progress = new TreeMap<Integer, CourseProgress>();
@@ -102,27 +103,27 @@ public class Course extends DatabaseBean implements ViewEntry {
 	/**
 	 * Returns the date this Course was started.
 	 * @return the start date/time
-	 * @see Course#setStartDate(Date)
+	 * @see Course#setStartDate(Instant)
 	 */
-	public Date getStartDate() {
+	public Instant getStartDate() {
 		return _startDate;
 	}
 	
 	/**
 	 * Returns the date this Course was completed or abandoned.
 	 * @return the end date/time, or null if in progress
-	 * @see Course#setEndDate(Date)
+	 * @see Course#setEndDate(Instant)
 	 */
-	public Date getEndDate() {
+	public Instant getEndDate() {
 		return _endDate;
 	}
 	
 	/**
 	 * Returns the date of the last comment. <i>This may not be populated</i>.
 	 * @return the date/time of the last comment, or null
-	 * @see Course#setLastComment(Date)
+	 * @see Course#setLastComment(Instant)
 	 */
-	public Date getLastComment() {
+	public Instant getLastComment() {
 		return _comments.isEmpty() ? _lastComment : _comments.last().getCreatedOn();
 	}
 	
@@ -279,7 +280,7 @@ public class Course extends DatabaseBean implements ViewEntry {
 	 * @param dt the start date/time
 	 * @see Course#getStartDate()
 	 */
-	public void setStartDate(Date dt) {
+	public void setStartDate(Instant dt) {
 		_startDate = dt;
 	}
 	
@@ -289,8 +290,8 @@ public class Course extends DatabaseBean implements ViewEntry {
 	 * @throws IllegalArgumentException if dt is before startDate
 	 * @see Course#getEndDate()
 	 */
-	public void setEndDate(Date dt) {
-		if ((dt != null) && (dt.before(_startDate)))
+	public void setEndDate(Instant dt) {
+		if ((dt != null) && dt.isBefore(_startDate))
 			throw new IllegalArgumentException("Invalid End Date - " + dt);
 		
 		_endDate = dt;
@@ -301,7 +302,7 @@ public class Course extends DatabaseBean implements ViewEntry {
 	 * @param dt the date/time of the last comment
 	 * @see Course#getLastComment()
 	 */
-	public void setLastComment(Date dt) {
+	public void setLastComment(Instant dt) {
 		_lastComment = dt;
 	}
 	
@@ -317,7 +318,7 @@ public class Course extends DatabaseBean implements ViewEntry {
 		Integer idx = Integer.valueOf(cr.getIndex());
 		if (_checkRides.containsKey(idx)) {
 			CheckRide cr2 = _checkRides.get(idx);
-			if (cr.getDate().after(cr2.getDate()))
+			if (cr.getDate().isAfter(cr2.getDate()))
 				_checkRides.put(idx, cr);
 		} else
 			_checkRides.put(idx, cr);
@@ -327,6 +328,7 @@ public class Course extends DatabaseBean implements ViewEntry {
 	 * Returns the CSS row class name if displayed in a view table.
 	 * @return the CSS class name
 	 */
+	@Override
 	public String getRowClassName() {
 		final String[] CLASS_NAMES = {"opt1", "warn", null, "opt2"};
 		return CLASS_NAMES[_status.ordinal()];
@@ -336,6 +338,7 @@ public class Course extends DatabaseBean implements ViewEntry {
 	 * Compares two Courses by comparing their start date/times and Pilot IDs.
 	 * @see Comparable#compareTo(Object)
 	 */
+	@Override
 	public int compareTo(Object o) {
 		Course c2 = (Course) o;
 		int tmpResult = Integer.valueOf(_pilotID).compareTo(Integer.valueOf(c2._pilotID));
@@ -345,6 +348,7 @@ public class Course extends DatabaseBean implements ViewEntry {
 	/**
 	 * Returns the Certification name.
 	 */
+	@Override
 	public String toString() {
 		return _certName;
 	}

@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.acars.*;
 /**
  * A Data Access Object to load ACARS log data.
  * @author Luke
- * @version 5.2
+ * @version 7.0
  * @since 1.0
  */
 
@@ -181,7 +181,7 @@ public class GetACARSLog extends GetACARSData {
 		List<TextMessage> results = new ArrayList<TextMessage>();
 		try (ResultSet rs = _ps.executeQuery()) {
 			while (rs.next()) {
-				TextMessage msg = new TextMessage(rs.getTimestamp(1));
+				TextMessage msg = new TextMessage(rs.getTimestamp(1).toInstant());
 				msg.setAuthorID(rs.getInt(2));
 				msg.setRecipientID(rs.getInt(3));
 				msg.setMessage(rs.getString(4));

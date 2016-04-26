@@ -1,7 +1,8 @@
-// Copyright 2006, 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.ts2;
 
 import java.util.*;
+import java.time.Instant;
 
 import org.deltava.beans.DatabaseBean;
 
@@ -10,7 +11,7 @@ import org.deltava.util.UserID;
 /**
  * A bean to store TeamSpeak 2 user information.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -24,7 +25,7 @@ public class Client extends TSObject {
 	private boolean _serverOperator;
 	private boolean _autoVoice;
 	
-	private Date _lastOnline;
+	private Instant _lastOnline;
 	
 	private boolean _isACARS;
 	
@@ -52,8 +53,8 @@ public class Client extends TSObject {
 		_pwd = usr._pwd;
 		_serverID = serverID;
 		_serverAdmin = usr._serverAdmin;
-		setCreatedOn(new Date(usr.getCreatedOn().getTime()));
-		_lastOnline = (usr._lastOnline == null) ? null : (Date) usr._lastOnline.clone();
+		setCreatedOn(getCreatedOn());
+		_lastOnline = usr._lastOnline;
 	}
 
 	/**
@@ -128,9 +129,9 @@ public class Client extends TSObject {
 	/**
 	 * Returns the date the user was last connected to TeamSpeak on.
 	 * @return the last online date/time
-	 * @see Client#setLastOnline(Date)
+	 * @see Client#setLastOnline(Instant)
 	 */
-	public Date getLastOnline() {
+	public Instant getLastOnline() {
 		return _lastOnline;
 	}
 
@@ -233,10 +234,10 @@ public class Client extends TSObject {
 	 * @param dt the last online date/time
 	 * @throws IllegalArgumentException if dt is before CreatedOn
 	 * @see Client#getLastOnline()
-	 * @see Client#setCreatedOn(Date)
+	 * @see Client#setCreatedOn(Instant)
 	 */
-	public void setLastOnline(Date dt) {
-		if ((dt != null) && dt.before(getCreatedOn()))
+	public void setLastOnline(Instant dt) {
+		if ((dt != null) && dt.isBefore(getCreatedOn()))
 			throw new IllegalArgumentException("Last Online cannot be before Created");
 		
 		_lastOnline = dt;
@@ -267,6 +268,7 @@ public class Client extends TSObject {
 	 * Comapres two users by comparing their TS2 user ID.
 	 * @see Comparable#compareTo(Object)
 	 */
+	@Override
 	public int compareTo(Object o) {
 		Client usr = (Client) o;
 		return _userID.compareTo(usr._userID);
@@ -276,6 +278,7 @@ public class Client extends TSObject {
 	 * Returns the user's cache key.
 	 * @return the user ID
 	 */
+	@Override
 	public Object cacheKey() {
 		StringBuilder buf = new StringBuilder(String.valueOf(getID()));
 		buf.append('-');

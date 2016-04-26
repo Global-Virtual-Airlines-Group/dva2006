@@ -194,8 +194,7 @@
 </c:if>
 <tr>
  <td class="label">Flight Time</td>
- <td class="data" colspan="${cspan}"><fmt:date fmt="t" t="HH:mm" className="pri bld" date="${pirep.airborneTime}" showZone="false" tzName="Etc/Greenwich" />, total time
- <fmt:date fmt="t" t="HH:mm" date="${pirep.blockTime}" showZone="false" tzName="Etc/Greenwich" /></td>
+ <td class="data" colspan="${cspan}"><fmt:duration t="HH:mm" className="pri bld" duration="${pirep.airborneTime}" />, total time <fmt:duration t="HH:mm" duration="${pirep.blockTime}" /></td>
 </tr>
 <c:if test="${!isXACARS}">
 <c:set var="times" value="${pirep.times}" scope="page" />

@@ -79,6 +79,7 @@ public class BBCodeHandler extends DefaultHandler
 		return bbMap.values();
 	}
 	
+	@Override
 	public void startElement(String uri, String localName, String tag, Attributes attrs)
 	{
 		if (tag.equals("match")) {
@@ -104,6 +105,7 @@ public class BBCodeHandler extends DefaultHandler
 		this.tagName = tag;
 	}
 
+	@Override
 	public void endElement(String uri, String localName, String tag)
 	{	
 		if (tag.equals("match")) {
@@ -121,11 +123,13 @@ public class BBCodeHandler extends DefaultHandler
 		this.tagName = "";
 	}
 
+	@Override
 	public void characters(char ch[], int start, int length) {
 		if (this.tagName.equals("replace") || this.tagName.equals("regex"))
 			this.sb.append(ch, start, length);
 	}
 
+	@Override
 	public void error(SAXParseException exception) throws SAXException {
 		throw exception;
 	}

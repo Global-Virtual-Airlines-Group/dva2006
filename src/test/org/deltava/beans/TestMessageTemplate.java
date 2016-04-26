@@ -13,13 +13,15 @@ public class TestMessageTemplate extends AbstractBeanTestCase {
         return new CoverageDecorator(TestMessageTemplate.class, new Class[] { MessageTemplate.class } );
     }
     
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
         _msg = new MessageTemplate("TEST");
         setBean(_msg);
     }
 
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         _msg = null;
         super.tearDown();
     }
@@ -45,7 +47,8 @@ public class TestMessageTemplate extends AbstractBeanTestCase {
         assertEquals(_msg.getName().hashCode(), _msg.hashCode());
     }
     
-    public void testComparison() {
+    @SuppressWarnings("static-method")
+	public void testComparison() {
        MessageTemplate msg2 = new MessageTemplate("TEST");
        MessageTemplate msg3 = new MessageTemplate("TEST2");
        MessageTemplate msg4 = new MessageTemplate("TEST");
