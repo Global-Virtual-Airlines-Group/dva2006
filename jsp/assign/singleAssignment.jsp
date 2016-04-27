@@ -73,8 +73,8 @@ golgotha.local.validate = function(f) {
  <td class="sec bld">${flight.equipmentType}</td>
  <td class="small">${flight.airportD.name} (<fmt:airport airport="${flight.airportD}" />) to
  ${flight.airportA.name} (<fmt:airport airport="${flight.airportA}" />)</td>
- <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${flight.airportD.TZ}" date="${flight.timeD}" showZone="true" /></td>
- <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${flight.airportA.TZ}" date="${flight.timeA}" showZone="true" /></td>
+ <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${flight.airportD.TZ}" date="${flight.timeD}" /></td>
+ <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${flight.airportA.TZ}" date="${flight.timeA}" /></td>
  <td class="sec nophone"><fmt:distance value="${flight.distance}" /></td>
 </view:row>
 </c:forEach>

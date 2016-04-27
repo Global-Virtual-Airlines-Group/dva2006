@@ -62,21 +62,22 @@ golgotha.local.saveSubmit = function() {
 };
 
 golgotha.local.initDateCombos = function(mCombo, dCombo, d) {
-	mCombo.selectedIndex = d.getMonth();
+	mCombo.selectedIndex = d.getMonth() - 1;
 	golgotha.local.setDaysInMonth(mCombo);
-	dCombo.selectedIndex = (d.getDate() - 1);
+	dCombo.selectedIndex = d.getDate() - 1;
 	return true;
 };
 
 golgotha.local.setDaysInMonth = function(combo)
 {
-var daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-var month = parseInt(combo.options[combo.selectedIndex].value, 10);
 var dCombo = document.forms[0].dateD;
-dCombo.options.length = daysInMonth[month];
-for (var x = 1; x <= daysInMonth[month]; x++)
+var daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+var dd = dCombo.selectedIndex;
+dCombo.options.length = daysInMonth[combo.selectedIndex];
+for (var x = 1; x <= daysInMonth[combo.selectedIndex]; x++)
 	dCombo.options[x-1] = new Option(x);
 
+dCombo.selectedIndex = Math.min(dd, dCombo.options.length - 1);
 return true;
 };
 
@@ -118,6 +119,7 @@ golgotha.onDOMReady(function() {
 <content:empty var="emptyList" />
 <content:singleton var="apD" value="${pirep.airportD}" />
 <content:singleton var="apA" value="${pirep.airportA}" />
+<content:enum var="fsVersions" className="org.deltava.beans.Simulator" exclude="UNKNOWN,FS98" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -239,9 +241,7 @@ golgotha.onDOMReady(function() {
 <el:table className="bar">
 <tr>
  <td><el:button ID="SaveButton" type="submit" label="SAVE FLIGHT REPORT" />
-<c:if test="${access.canSubmitIfEdit}">
-&nbsp;<el:button ID="SubmitButton" onClick="void golgotha.local.saveSubmit()" label="SUBMIT FLIGHT REPORT" />
-</c:if>
+<c:if test="${access.canSubmitIfEdit}">&nbsp;<el:button ID="SubmitButton" onClick="void golgotha.local.saveSubmit()" label="SUBMIT FLIGHT REPORT" /></c:if>
 </td>
 </tr>
 </el:table>
@@ -252,7 +252,7 @@ golgotha.onDOMReady(function() {
 </content:region>
 </content:page>
 <content:browser html4="true">
-<script id="dateInit" defer>
+<script id="dateInit" async>
 var f = document.forms[0];
 var d = new Date(${pirepYear},${pirepMonth},${pirepDay},0,0,0);
 golgotha.local.initDateCombos(f.dateM, f.dateD, d);

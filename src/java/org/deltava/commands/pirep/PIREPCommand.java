@@ -43,12 +43,10 @@ public class PIREPCommand extends AbstractFormCommand {
 	private static final Logger log = Logger.getLogger(PIREPCommand.class);
 
 	private final Collection<String> _flightTimes = new LinkedHashSet<String>();
-	private final Collection<Simulator> _fsVersions = new LinkedHashSet<Simulator>();
 
 	// Month combolist values
-	private static final List<ComboAlias> months = ComboUtils.fromArray(new String[] { "January", "February", "March",
-			"April", "May", "June", "July", "August", "September", "October", "November", "December" }, new String[] {
-			"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11" });
+	private static final List<ComboAlias> months = ComboUtils.fromArray(new String[] { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" }, 
+			new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" });
 
 	// Check ride approval values
 	private static final List<ComboAlias> crApprove = ComboUtils.fromArray(new String[] { "PASSED", "UNSATISFACTORY" }, new String[] { "true", "false" });
@@ -64,9 +62,6 @@ public class PIREPCommand extends AbstractFormCommand {
 		super.init(id, cmdName);
 		for (int x = 2; x < 189; x++)
 			_flightTimes.add(String.valueOf(x / 10.0f));
-		
-		List<Simulator> sims = Arrays.asList(Simulator.values());
-		_fsVersions.addAll(sims.subList(2, sims.size()));
 	}
 
 	/**
@@ -102,11 +97,15 @@ public class PIREPCommand extends AbstractFormCommand {
 			
 			// Get the Pilot
 			GetPilot pdao = new GetPilot(con);
+			@SuppressWarnings("null")
 			Pilot p = doCreate ? (Pilot) ctx.getUser() : pdao.get(fr.getDatabaseID(DatabaseID.PILOT));
 
 			// Get the airline/airports - don't allow updates if an assignment
+			@SuppressWarnings("null")
 			Airline a = isAssignment ? fr.getAirline() : SystemData.getAirline(ctx.getParameter("airline"));
+			@SuppressWarnings("null")
 			Airport aa = isAssignment ? fr.getAirportA() : SystemData.getAirport(ctx.getParameter("airportA"));
+			@SuppressWarnings("null")
 			Airport ad = isAssignment ? fr.getAirportD() : SystemData.getAirport(ctx.getParameter("airportD"));
 			if (a == null)
 				a = SystemData.getAirline(SystemData.get("airline.code"));
@@ -342,8 +341,8 @@ public class PIREPCommand extends AbstractFormCommand {
 		}
 
 		// Save PIREP date limitations
-		ctx.setAttribute("forwardDateLimit", today.plusDays(SystemData.getInt("users.pirep.maxDays")), REQUEST);
-		ctx.setAttribute("backwardDateLimit", today.minusDays(SystemData.getInt("users.pirep.maxDays")), REQUEST);
+		ctx.setAttribute("forwardDateLimit", today.plusDays(SystemData.getInt("users.pirep.maxDays")).toLocalDateTime(), REQUEST);
+		ctx.setAttribute("backwardDateLimit", today.minusDays(SystemData.getInt("users.pirep.maxDays")).toLocalDateTime(), REQUEST);
 		
 		// Set flight years
 		Collection<String> years = new LinkedHashSet<String>();
@@ -360,9 +359,6 @@ public class PIREPCommand extends AbstractFormCommand {
 
 		// Save airport/airline lists in the request
 		ctx.setAttribute("airline", SystemData.get("airline.code"), REQUEST);
-
-		// Save Flight Simulator versions
-		ctx.setAttribute("fsVersions", _fsVersions, REQUEST);
 
 		// Set basic lists for the JSP
 		ctx.setAttribute("flightTimes", _flightTimes, REQUEST);
