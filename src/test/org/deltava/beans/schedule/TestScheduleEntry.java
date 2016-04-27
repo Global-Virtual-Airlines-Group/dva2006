@@ -125,8 +125,8 @@ public class TestScheduleEntry extends AbstractBeanTestCase {
 	public void testNullAirportLength() {
 		_e.setTimeD(LocalDateTime.parse("10:05", df));
 		_e.setTimeA(LocalDateTime.parse("12:05", df));
-		assertEquals(TZInfo.local(), _e.getTimeD().getZone());
-		assertEquals(TZInfo.local(), _e.getTimeA().getZone());
+		assertEquals(TZInfo.UTC, _e.getTimeD().getZone());
+		assertEquals(TZInfo.UTC, _e.getTimeA().getZone());
 	}
 
 	public void testDistance() {

@@ -1,6 +1,5 @@
 package org.deltava.beans.assign;
 
-import java.util.Date;
 import java.time.Instant;
 
 import junit.framework.Test;

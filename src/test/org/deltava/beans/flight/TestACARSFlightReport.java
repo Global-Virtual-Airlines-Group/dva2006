@@ -2,7 +2,6 @@
 package org.deltava.beans.flight;
 
 import java.time.Instant;
-import java.util.Date;
 
 import org.junit.*;
 import org.hansel.*;

@@ -1,7 +1,6 @@
 package org.deltava.beans;
 
 import java.time.Instant;
-import java.util.Date;
 
 import junit.framework.Test;
 

@@ -33,11 +33,11 @@ public class TestAirCharts extends TestCase {
 		
 		final Airport a = new Airport("ATL", "KATL", "Atlanta GA");
 		a.setCountry(Country.get("US"));
-		a.setTZ(TZInfo.local());
+		a.setTZ(TZInfo.UTC);
 		//_atl = a;
 		final Airport a2 = new Airport("TLV", "LLBG", "Tel Aviv Israel");
 		a.setCountry(Country.get("IL"));
-		a2.setTZ(TZInfo.local());
+		a2.setTZ(TZInfo.UTC);
 		_tlv = a2;
 		Map<String, Airport> airports = new HashMap<String, Airport>() {{ put("KATL", a); put("ATL", a); put("LLBG", a2); put("TLV", a2); }};
 		SystemData.add("airports", airports);
