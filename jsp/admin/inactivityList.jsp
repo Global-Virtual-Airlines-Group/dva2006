@@ -25,16 +25,16 @@
 <content:region id="main">
 <view:table cmd="inactivelist">
 <tr class="title caps">
- <td colspan="6"><content:airline /> PILOT INACTIVITY PURGE PREVIEW - <fmt:int value="${fn:sizeof(fn:keys(results))}" /> PILOTS</td>
+ <td colspan="6" class="left"><content:airline /> PILOT INACTIVITY PURGE PREVIEW - <fmt:int value="${fn:sizeof(fn:keys(results))}" /> PILOTS</td>
 </tr>
 <c:if test="${!empty results}">
 <!-- Table Header Bar -->
 <tr class="title caps">
- <td style="width:10%">CODE</td>
+ <td>CODE</td>
  <td style="width:20%">PILOT NAME</td>
- <td style="width:15%">FLIGHTS</td>
- <td style="width:5%">LOGINS</td>
- <td style="width:10%">LAST LOGIN</td>
+ <td class="nophone">FLIGHTS</td>
+ <td class="nophone">LOGINS</td>
+ <td class="nophone">LAST LOGIN</td>
  <td>PURGE REASON</td>
 </tr>
 </c:if>
@@ -49,9 +49,9 @@
  <td class="pri bld">${pilot.pilotCode}</td>
 </c:if>
  <td><el:cmd url="profile" link="${pilot}" className="bld">${pilot.name}</el:cmd></td>
- <td><fmt:int value="${pilot.legs}" /> legs, <fmt:dec value="${pilot.hours}" /> hours</td>
- <td><fmt:int value="${pilot.loginCount}" /></td>
- <td class="bld"><fmt:date date="${pilot.lastLogin}" default="-" fmt="d" /></td>
+ <td class="nophone"><fmt:int value="${pilot.legs}" /> legs, <fmt:dec value="${pilot.hours}" /> hours</td>
+ <td class="nophone"><fmt:int value="${pilot.loginCount}" /></td>
+ <td class="bld nophone"><fmt:date date="${pilot.lastLogin}" default="-" fmt="d" /></td>
  <td class="left">${results[pilot]}</td>
 </view:row>
 </c:forEach>

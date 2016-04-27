@@ -13,6 +13,7 @@
 <content:css name="main" />
 <content:css name="form" />
 <content:css name="view" />
+<content:js name="common" />
 <content:pics />
 <script type="text/javascript">
 golgotha.local.sort = function(combo) {
@@ -64,7 +65,7 @@ golgotha.local.sort = function(combo) {
 </view:row>
 </c:forEach>
 <tr class="title">
- <td colspan="7"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br /></view:scrollbar>&nbsp;</td>
+ <td colspan="7"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
 </tr>
 </view:table>
 </el:form>
