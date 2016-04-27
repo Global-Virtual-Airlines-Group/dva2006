@@ -1,7 +1,10 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2013, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2013, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
+import java.time.Instant;
+import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
 
 import org.deltava.beans.*;
 import org.deltava.util.ComboUtils;
@@ -9,7 +12,7 @@ import org.deltava.util.ComboUtils;
 /**
  * A bean to store search criteria for the Flight Schedule.
  * @author Luke
- * @version 6.3
+ * @version 7.0
  * @since 1.0
  */
 
@@ -24,8 +27,7 @@ public class ScheduleSearchCriteria extends Flight {
 	public static final List<?> HOURS = ComboUtils.fromArray(new String[] { "-", "Midnight", "1 AM", "2 AM", "3 AM",
 			"4 AM", "5 AM", "6 AM", "7 AM", "8 AM", "9 AM", "10 AM", "11 AM", "Noon", "1 PM", "2 PM", "3 PM", "4 PM",
 			"5 PM", "6 PM", "7 PM", "8 PM", "9 PM", "10 PM", "11 PM" },
-			new String[] { "-1", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15",
-					"16", "17", "18", "19", "20", "21", "22", "23" });
+			new String[] { "-1", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23" });
 
 	private int _distance;
 	private int _distanceRange = 150;
@@ -120,24 +122,16 @@ public class ScheduleSearchCriteria extends Flight {
 		return _lastFlownInterval;
 	}
 
-	public Date getTimeD() {
-		Calendar cld = Calendar.getInstance();
-		cld.set(Calendar.HOUR_OF_DAY, _hourD);
-		cld.set(Calendar.MINUTE, 0);
-		cld.set(Calendar.SECOND, 0);
-		return cld.getTime();
+	public Instant getTimeD() {
+		return Instant.now().truncatedTo(ChronoUnit.HOURS).with(ChronoField.HOUR_OF_DAY, _hourD);
 	}
 
 	public int getHourD() {
 		return _hourD;
 	}
 
-	public Date getTimeA() {
-		Calendar cld = Calendar.getInstance();
-		cld.set(Calendar.HOUR_OF_DAY, _hourA);
-		cld.set(Calendar.MINUTE, 0);
-		cld.set(Calendar.SECOND, 0);
-		return cld.getTime();
+	public Instant getTimeA() {
+		return Instant.now().truncatedTo(ChronoUnit.HOURS).with(ChronoField.HOUR_OF_DAY, _hourA);
 	}
 
 	public int getHourA() {

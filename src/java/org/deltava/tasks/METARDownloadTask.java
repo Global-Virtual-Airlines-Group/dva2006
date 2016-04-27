@@ -1,8 +1,9 @@
-// Copyright 2009, 2011, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2011, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
 import java.sql.Connection;
+import java.time.ZonedDateTime;
 
 import org.deltava.beans.navdata.AirportLocation;
 import org.deltava.beans.wx.*;
@@ -16,7 +17,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Scheduled Task to download METAR data.
  * @author Luke
- * @version 6.3
+ * @version 7.0
  * @since 2.7
  */
 
@@ -35,8 +36,7 @@ public class METARDownloadTask extends Task {
 	@Override
 	protected void execute(TaskContext ctx) {
 		
-		Calendar cld = Calendar.getInstance();
-		int hour = cld.get(Calendar.HOUR_OF_DAY);
+		int hour = ZonedDateTime.now().getHour();
 		try {
 			GetNOAAWeather wxdao = new GetNOAAWeather();
 			log.info("Loading METAR cycle for " + StringUtils.format(hour, "00") + "00Z");

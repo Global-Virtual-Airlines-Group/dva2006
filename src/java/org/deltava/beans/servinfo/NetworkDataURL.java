@@ -2,6 +2,7 @@
 package org.deltava.beans.servinfo;
 
 import java.util.*;
+import java.time.Instant;
 
 /**
  * A bean to track ServInfo data locations and their reliability.
@@ -15,7 +16,7 @@ public class NetworkDataURL implements Comparable<NetworkDataURL> {
 	private static final int MAX_LAST_USES = 8;
 
 	private final String _url;
-	private Date _lastUse;
+	private Instant _lastUse;
 	private int _totalUses;
 	private int _success;
 	
@@ -42,7 +43,7 @@ public class NetworkDataURL implements Comparable<NetworkDataURL> {
 	 * Returns the last time this data source URL was accessed.
 	 * @return the date/time of last access
 	 */
-	public Date getLastUse() {
+	public Instant getLastUse() {
 		return _lastUse;
 	}
 	
@@ -85,7 +86,7 @@ public class NetworkDataURL implements Comparable<NetworkDataURL> {
 			return 100;
 		
 		// If we haven't made a call lately, reset the percentage
-		if ((System.currentTimeMillis() - _lastUse.getTime()) > 3600000) {
+		if ((System.currentTimeMillis() - _lastUse.toEpochMilli()) > 3600_000) {
 			_lastUses.clear();
 			return 100;
 		}
@@ -108,7 +109,7 @@ public class NetworkDataURL implements Comparable<NetworkDataURL> {
 	 */
 	public synchronized void logUsage(boolean isSuccess) {
 		_totalUses++;
-		_lastUse = new Date();
+		_lastUse = Instant.now();
 		if (isSuccess)
 			_success++;
 		

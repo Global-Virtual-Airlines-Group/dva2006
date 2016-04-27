@@ -3,6 +3,7 @@ package org.deltava.security;
 
 import java.io.*;
 import java.util.*;
+import java.time.Instant;
 
 import org.apache.log4j.Logger;
 
@@ -27,8 +28,7 @@ public class FSDAuthenticator implements Authenticator {
 	private final Map<Integer, FSDCert> _certs = Collections.synchronizedMap(new LinkedHashMap<Integer, FSDCert>());
 	private final Map<String, Rating> _roleLevels = new HashMap<String, Rating>();
 
-	private static final String[] LEVEL_NAMES = { "Disabled", "Pilot", "Student 1", "Student 2", "Student 3",
-			"Controller 1", "Controller 2", "Controller 3", "Instructor 1", "Instructor 2", "Instructor 3", "Supervisor", "Administrator" };
+	private static final String[] LEVEL_NAMES = { "Disabled", "Pilot", "Student 1", "Student 2", "Student 3", "Controller 1", "Controller 2", "Controller 3", "Instructor 1", "Instructor 2", "Instructor 3", "Supervisor", "Administrator" };
 
 	private class FSDCert extends DatabaseBean {
 
@@ -283,7 +283,7 @@ public class FSDAuthenticator implements Authenticator {
 	private synchronized void save() throws SecurityException {
 		Collection<FSDCert> certs = new LinkedHashSet<FSDCert>(_certs.values());
 		try (PrintWriter pw = new PrintWriter(_certFile)) {
-			pw.println("; Auto-Generated FSD certs on " + new Date().toString());
+			pw.println("; Auto-Generated FSD certs on " + Instant.now());
 			pw.println(',');
 			pw.println("; User levels");
 			for (int x = 0; x < LEVEL_NAMES.length; x++)

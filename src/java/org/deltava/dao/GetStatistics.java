@@ -47,7 +47,7 @@ public class GetStatistics extends DAO  {
 			if (result != null)
 				return result;
 
-			result = new AirlineTotals(System.currentTimeMillis());
+			result = new AirlineTotals(Instant.now());
 			try {
 				// Create prepared statement
 				prepareStatement("SELECT COUNT(P.ID), ROUND(SUM(P.FLIGHT_TIME), 1), SUM(P.DISTANCE), "
@@ -79,21 +79,20 @@ public class GetStatistics extends DAO  {
 				_ps.close();
 
 				// Get MTD/YTD start dates
-				Instant mc = ZonedDateTime.now().truncatedTo(ChronoUnit.MONTHS).toInstant();
-				Instant yc = ZonedDateTime.now().truncatedTo(ChronoUnit.YEARS).toInstant();
+				Timestamp mt = new Timestamp(ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS).withDayOfMonth(1).toEpochSecond() * 1000); 
+				Timestamp yt = new Timestamp(ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS).withDayOfYear(1).toEpochSecond() * 1000);
 
 				// Count MTD/YTD totals
-				prepareStatement("SELECT SUM(IF((DATE >= ?), 1, 0)), ROUND(SUM(IF((DATE >= ?), FLIGHT_TIME, 0))), "
-						+ "SUM(IF((DATE >= ?), DISTANCE, 0)), SUM(IF((DATE >= ?), 1, 0)), ROUND(SUM(IF((DATE >= ?), FLIGHT_TIME, 0))), "
+				prepareStatement("SELECT SUM(IF((DATE >= ?), 1, 0)), ROUND(SUM(IF((DATE >= ?), FLIGHT_TIME, 0))), SUM(IF((DATE >= ?), DISTANCE, 0)), SUM(IF((DATE >= ?), 1, 0)), ROUND(SUM(IF((DATE >= ?), FLIGHT_TIME, 0))), "
 						+ "SUM(IF((DATE >= ?), DISTANCE, 0)) FROM PIREPS WHERE (DATE >= ?) AND (STATUS=?)");
 				_ps.setQueryTimeout(10);
-				_ps.setTimestamp(1, new Timestamp(mc.toEpochMilli()));
-				_ps.setTimestamp(2, new Timestamp(mc.toEpochMilli()));
-				_ps.setTimestamp(3, new Timestamp(mc.toEpochMilli()));
-				_ps.setTimestamp(4, new Timestamp(yc.toEpochMilli()));
-				_ps.setTimestamp(5, new Timestamp(yc.toEpochMilli()));
-				_ps.setTimestamp(6, new Timestamp(yc.toEpochMilli()));
-				_ps.setTimestamp(7, new Timestamp(yc.toEpochMilli()));
+				_ps.setTimestamp(1, mt);
+				_ps.setTimestamp(2, mt);
+				_ps.setTimestamp(3, mt);
+				_ps.setTimestamp(4, yt);
+				_ps.setTimestamp(5, yt);
+				_ps.setTimestamp(6, yt);
+				_ps.setTimestamp(7, yt);
 				_ps.setInt(8, FlightReport.OK);
 
 				// Do the query
@@ -356,8 +355,7 @@ public class GetStatistics extends DAO  {
 			return result.getValue();
 
 		try {
-			prepareStatementWithoutLimits("SELECT COUNT(*) FROM common.COOLER_POSTS "
-					+ "WHERE (CREATED > DATE_SUB(NOW(), INTERVAL ? DAY)) LIMIT 1");
+			prepareStatementWithoutLimits("SELECT COUNT(*) FROM common.COOLER_POSTS WHERE (CREATED > DATE_SUB(NOW(), INTERVAL ? DAY)) LIMIT 1");
 			_ps.setInt(1, days);
 			try (ResultSet rs = _ps.executeQuery()) {
 				result = new CacheableLong(Integer.valueOf(days), rs.next() ? rs.getInt(1) : 0);

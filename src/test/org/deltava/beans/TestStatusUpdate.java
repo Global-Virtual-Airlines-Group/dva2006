@@ -35,7 +35,7 @@ public class TestStatusUpdate extends AbstractBeanTestCase {
 		checkProperty("lastName", "Smith");
 		checkProperty("authorID", Integer.valueOf(1234));
 		checkProperty("description", "This is a test");
-		checkProperty("createdOn", new Date());
+		checkProperty("createdOn", Instant.now());
 	}
 	
 	public void testValidation() {

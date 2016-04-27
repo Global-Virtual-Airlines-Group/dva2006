@@ -168,7 +168,7 @@ public class ScheduleImportTask extends Task {
 			// Save schedule metadata
 			SetMetadata mdwdao = new SetMetadata(con);
 			String aCode = SystemData.get("airline.code").toLowerCase();
-			mdwdao.write(aCode + ".schedule.import", new Date());
+			mdwdao.write(aCode + ".schedule.import", Instant.now());
 			if (replayDate != null)
 				mdwdao.write(aCode + ".schedule.effDate", replayDate);
 			else

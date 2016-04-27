@@ -1,9 +1,12 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
 import java.io.Serializable;
 import java.sql.Connection;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.TextStyle;
 
 import org.apache.log4j.Logger;
 
@@ -27,7 +30,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to display diagnostic infomration.
  * @author Luke
- * @version 6.2
+ * @version 7.0
  * @since 1.0
  */
 
@@ -46,11 +49,9 @@ public class DiagnosticCommand extends AbstractCommand {
 		// Get system uptime and load average if running on Linux
 		if ("Linux".equals(System.getProperty("os.name"))) {
 			try {
-				Calendar cld = Calendar.getInstance();
 				GetProcData procdao = new GetProcData();
 				int osRunTime = procdao.getUptime();
-				cld.add(Calendar.SECOND, osRunTime * -1);
-				ctx.setAttribute("osStart", cld.getTime(), REQUEST);
+				ctx.setAttribute("osStart", Instant.now().minusSeconds(osRunTime), REQUEST);
 				ctx.setAttribute("osExecTime", Integer.valueOf(osRunTime), REQUEST);
 				ctx.setAttribute("loadAvg", procdao.getLoad(), REQUEST);
 				ctx.setAttribute("osMemInfo", procdao.getMemory(), REQUEST);
@@ -116,9 +117,9 @@ public class DiagnosticCommand extends AbstractCommand {
 		ctx.setAttribute("pctMemory", new Double(100 - (Math.round(rt.freeMemory() * 100.0 / rt.totalMemory()))), REQUEST);
 
 		// Get time zone info
-		TimeZone tz = TimeZone.getDefault();
+		ZoneId tz = ZoneId.systemDefault();
 		ctx.setAttribute("timeZone", tz, REQUEST);
-		ctx.setAttribute("tzName", tz.getDisplayName(tz.inDaylightTime(new Date()), TimeZone.LONG), REQUEST);
+		ctx.setAttribute("tzName", tz.getDisplayName(TextStyle.FULL, Locale.US), REQUEST);
 
 		// Get current time
 		ctx.setAttribute("systemTime", Long.valueOf(System.currentTimeMillis()), REQUEST);

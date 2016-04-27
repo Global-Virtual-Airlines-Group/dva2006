@@ -39,8 +39,8 @@ public class TestAssignmentInfo extends AbstractBeanTestCase {
         checkProperty("eventID", Integer.valueOf(0));
         checkProperty("eventID", Integer.valueOf(1234));
         checkProperty("status", Integer.valueOf(AssignmentInfo.RESERVED));
-        checkProperty("assignDate", new Date());
-        checkProperty("completionDate", new Date());
+        checkProperty("assignDate", Instant.now());
+        checkProperty("completionDate", Instant.now());
         _info.setStatus("Complete");
         assertEquals(AssignmentInfo.COMPLETE, _info.getStatus());
         assertEquals("opt3", _info.getRowClassName());
