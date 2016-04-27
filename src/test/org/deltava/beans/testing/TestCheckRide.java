@@ -36,9 +36,9 @@ public class TestCheckRide extends AbstractBeanTestCase {
         checkProperty("score", Integer.valueOf(0));
         checkProperty("stage", Integer.valueOf(3));
         checkProperty("size", Integer.valueOf(3124));
-        checkProperty("date", new Date());
-        checkProperty("submittedOn", new Date());
-        checkProperty("scoredOn", new Date());
+        checkProperty("date", Instant.now());
+        checkProperty("submittedOn", Instant.now());
+        checkProperty("scoredOn", Instant.now());
         checkProperty("comments", "Test Comments");
         assertFalse(_cr.getPassFail());
         _cr.setScore(true);

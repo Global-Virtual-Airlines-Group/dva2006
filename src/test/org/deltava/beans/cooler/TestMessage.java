@@ -36,7 +36,7 @@ public class TestMessage extends AbstractBeanTestCase {
 
     public void testProperties() {
         assertEquals(_p.getID(), _msg.getAuthorID());
-        checkProperty("createdOn", new Date());
+        checkProperty("createdOn", Instant.now());
         checkProperty("remoteAddr", "127.0.0.1");
         checkProperty("remoteHost", "localhost");
         checkProperty("threadID", Integer.valueOf(1234));

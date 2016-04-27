@@ -19,7 +19,7 @@ public class AirlineTotals implements Comparable<AirlineTotals>, Cacheable {
 	 */
 	public static Instant BIRTHDATE = LocalDateTime.of(2001, 6, 10, 6, 0).toInstant(ZoneOffset.UTC);
 
-	private long _effectiveDate;
+	private final Instant _effectiveDate;
 	
 	private int _totalLegs;
 	private long _totalMiles;
@@ -52,7 +52,7 @@ public class AirlineTotals implements Comparable<AirlineTotals>, Cacheable {
 	 * @param ed the effective date/time of the statistics as a 32-bit UNIX timestamp
 	 * @see AirlineTotals#getEffectiveDate()
 	 */
-	public AirlineTotals(long ed) {
+	public AirlineTotals(Instant ed) {
 		super();
 		_effectiveDate = ed;
 	}
@@ -62,14 +62,14 @@ public class AirlineTotals implements Comparable<AirlineTotals>, Cacheable {
 	 * @return the age of the airline in days, including the birthdate and today
 	 */
 	public int getAge() {
-		return (int) ((_effectiveDate - BIRTHDATE.toEpochMilli()) / 86400_000); 
+		return (int) Duration.between(BIRTHDATE, _effectiveDate).toDays();
 	}
 	
 	/**
 	 * Returns the effective date of these statistics.
-	 * @return the date/time the statistics were generated as a 32-bit UNIX timestamp
+	 * @return the date/time the statistics were generated
 	 */
-	public long getEffectiveDate() {
+	public Instant getEffectiveDate() {
 		return _effectiveDate;
 	}
 
@@ -420,7 +420,7 @@ public class AirlineTotals implements Comparable<AirlineTotals>, Cacheable {
 	 */
 	@Override
 	public int compareTo(AirlineTotals at2) {
-		return new Long(_effectiveDate).compareTo(new Long(at2._effectiveDate));
+		return _effectiveDate.compareTo(at2._effectiveDate);
 	}
 	
 	/**

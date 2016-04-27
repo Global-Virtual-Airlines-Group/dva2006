@@ -3,6 +3,7 @@ package org.deltava.servlet;
 
 import java.io.*;
 import java.util.*;
+import java.time.Instant;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
@@ -26,9 +27,9 @@ abstract class TileServlet extends GenericServlet {
 	 */
 	protected class TileAddress5D extends TileAddress {
 		private final String _name;
-		private final Date _dt;
+		private final Instant _dt;
 		
-		TileAddress5D(String type, Date effDate, String name) {
+		TileAddress5D(String type, Instant effDate, String name) {
 			super(name);
 			_name = type;
 			_dt = effDate;
@@ -46,7 +47,7 @@ abstract class TileServlet extends GenericServlet {
 		 * Returns the effective date.
 		 * @return the tile date/time
 		 */
-		public Date getDate() {
+		public Instant getDate() {
 			return _dt;
 		}
 		
@@ -58,7 +59,7 @@ abstract class TileServlet extends GenericServlet {
 		@Override
 		public String toString() {
 			StringBuilder buf = new StringBuilder(_name).append(':');
-			buf.append((_dt == null) ? 0 : _dt.getTime() / 1000).append(':');
+			buf.append((_dt == null) ? 0 : _dt.toEpochMilli() / 1000).append(':');
 			return buf.append(getName()).toString();
 		}
 	}
@@ -91,7 +92,7 @@ abstract class TileServlet extends GenericServlet {
 		Collections.reverse(pathParts);
 		
 		long rawDate = getDate? Long.parseLong(pathParts.poll()) : 0;
-		return new TileAddress5D(pathParts.poll(), getDate ? new Date(rawDate) : null, url.getName());
+		return new TileAddress5D(pathParts.poll(), getDate ? Instant.ofEpochMilli(rawDate) : null, url.getName());
 	}
 	
 	/**

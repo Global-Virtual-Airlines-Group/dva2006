@@ -1,7 +1,8 @@
-// Copyright 2012, 2013, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2013, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.mc;
 
 import java.util.*;
+import java.time.Instant;
 
 import org.deltava.dao.DAOException;
 
@@ -11,7 +12,7 @@ import org.deltava.util.tile.*;
 /**
  * A Data Access Object to read tiles from memcached. 
  * @author Luke
- * @version 6.1
+ * @version 7.0
  * @since 5.0
  */
 
@@ -39,18 +40,18 @@ public class GetTiles extends MemcachedDAO {
 	 * @return a Collection of Dates
 	 * @throws DAOException if a timeout or I/O error occurs
 	 */
-	public Collection<Date> getDates(String type) throws DAOException {
+	public Collection<Instant> getDates(String type) throws DAOException {
 		setBucket("mapTiles", type);
 		try {
 			@SuppressWarnings("unchecked")
-			Collection<Date> dates = (Collection<Date>) MemcachedUtils.get(createKey("dates"), 100);
+			Collection<Instant> dates = (Collection<Instant>) MemcachedUtils.get(createKey("dates"), 100);
 			if (dates == null)
-				return new HashSet<Date>();
+				return new HashSet<Instant>();
 			
 			// Validate that the tiles exist
-			for (Iterator<Date> i = dates.iterator(); i.hasNext(); ) {
-				Date dt = i.next();
-				setBucket("mapTiles", type, String.valueOf(dt.getTime()));
+			for (Iterator<Instant> i = dates.iterator(); i.hasNext(); ) {
+				Instant dt = i.next();
+				setBucket("mapTiles", type, Long.valueOf(dt.toEpochMilli()));
 				try {
 					Object o = MemcachedUtils.get(createKey("$ME"), 100);
 					if (o == null) i.remove();
@@ -81,8 +82,8 @@ public class GetTiles extends MemcachedDAO {
 	 * @return a PNGTile, or null if none
 	 * @throws DAOException if a timeout or I/O error occurs
 	 */
-	public PNGTile getTile(String imgType, Date effDate, TileAddress addr) throws DAOException {
-		setBucket("mapTiles", imgType, (effDate == null) ? null : Long.valueOf(effDate.getTime()));
+	public PNGTile getTile(String imgType, Instant effDate, TileAddress addr) throws DAOException {
+		setBucket("mapTiles", imgType, (effDate == null) ? null : Long.valueOf(effDate.toEpochMilli()));
 		try {
 			return (PNGTile) MemcachedUtils.get(createKey(addr.getName()), 150);
 		} catch (Exception e) {

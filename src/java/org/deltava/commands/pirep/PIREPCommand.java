@@ -195,9 +195,9 @@ public class PIREPCommand extends AbstractFormCommand {
 			}
 
 			// Calculate the date
-			Calendar cld = Calendar.getInstance();
-			LocalDateTime pd = LocalDateTime.of(StringUtils.parse(ctx.getParameter("dateY"), cld.get(Calendar.YEAR)), StringUtils.parse(ctx.getParameter("dateM"), cld.get(Calendar.MONTH)),
-					StringUtils.parse(ctx.getParameter("dateD"), cld.get(Calendar.DAY_OF_MONTH)), 12, 0, 0);
+			ZonedDateTime now = ZonedDateTime.now(ctx.getUser().getTZ().getZone());
+			LocalDateTime pd = LocalDateTime.of(StringUtils.parse(ctx.getParameter("dateY"), now.getYear()), StringUtils.parse(ctx.getParameter("dateM"), now.getMonthValue()),
+					StringUtils.parse(ctx.getParameter("dateD"), now.getDayOfMonth()), 12, 0, 0);
 			fr.setDate(ZonedDateTime.of(pd, ctx.getUser().getTZ().getZone()).toInstant());
 
 			// Validate the date
