@@ -29,7 +29,7 @@ public class DateFormatTag extends UserSettingsTag {
 	private Format _dtInclude = Format.DT;
 	private String _dateFormat = DEFAULT_D_FMT;
 	private String _timeFormat = DEFAULT_T_FMT;
-	private TZInfo _tz = TZInfo.local();
+	private TZInfo _tz = TZInfo.UTC;
 	private Instant _dt;
 	private boolean _showZone = true;
 
@@ -151,7 +151,7 @@ public class DateFormatTag extends UserSettingsTag {
 		_dtInclude = Format.DT;
 		_dateFormat = DEFAULT_D_FMT;
 		_timeFormat = DEFAULT_T_FMT;
-		_tz = TZInfo.local();
+		_tz = TZInfo.UTC;
 		_dt = null;
 		_className = null;
 		_showZone = true;
