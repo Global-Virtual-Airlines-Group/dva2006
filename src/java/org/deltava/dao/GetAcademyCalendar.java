@@ -192,7 +192,7 @@ public class GetAcademyCalendar extends DAO {
 		if (pilotID != 0)
 			sqlBuf.append("AND ((C.PILOT_ID=?) OR (I.INSTRUCTOR_ID=?)) ");
 
-		sqlBuf.append("ORDER BY I.STARTDATE");
+		sqlBuf.append("ORDER BY I.STARTDATE DESC");
 		
 		int param = 0;
 		try {
