@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.util.*;
@@ -20,14 +20,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display scheduled routes out of a particular Airport. 
  * @author Luke
- * @version 4.2
+ * @version 7.0
  * @since 1.0
  */
 
 public class RouteService extends WebService {
 	
-	private static final Map<String, String> LCOLORS = CollectionUtils.createMap(Arrays.asList(MapEntry.COLORS),
-			Arrays.asList(MapEntry.LINECOLORS));
+	private static final Map<String, String> LCOLORS = CollectionUtils.createMap(Arrays.asList(MapEntry.COLORS), Arrays.asList(MapEntry.LINECOLORS));
 	
 	/**
 	 * Executes the Web Service.
@@ -87,6 +86,7 @@ public class RouteService extends WebService {
 		// Dump the XML to the output stream
 		try {
 			ctx.setContentType("text/xml", "UTF-8");
+			ctx.setExpiry(3600);
 			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (IOException ie) {
@@ -100,6 +100,7 @@ public class RouteService extends WebService {
 	 * Tells the Web Service Servlet not to log invocations of this service.
 	 * @return FALSE
 	 */
+	@Override
 	public final boolean isLogged() {
 		return false;
 	}

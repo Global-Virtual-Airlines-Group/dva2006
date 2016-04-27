@@ -1,4 +1,4 @@
-// Copyright 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import javax.servlet.jsp.PageContext;
@@ -9,7 +9,7 @@ import org.deltava.beans.TZInfo;
 /**
  * A JSP Tag to save the list of time zones as a request attribute.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 5.0
  */
 
@@ -29,6 +29,7 @@ public class TZListTag extends TagSupport {
 	 * Saves the time zone list in the request body.
 	 * @return EVAL_PAGE always
 	 */
+	@Override
 	public int doEndTag() {
 		pageContext.setAttribute(_varName, TZInfo.getAll(), PageContext.REQUEST_SCOPE);
 		return EVAL_PAGE;

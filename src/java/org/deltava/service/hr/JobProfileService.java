@@ -1,4 +1,4 @@
-// Copyright 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.hr;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -17,7 +17,7 @@ import org.deltava.util.XMLUtils;
 /**
  * A Web Service to return a saved Applicant profile to a user.
  * @author Luke
- * @version 4.2
+ * @version 7.0
  * @since 3.4
  */
 
@@ -67,6 +67,7 @@ public class JobProfileService extends WebService {
 	 * Returns if the Web Service requires authentication.
 	 * @return TRUE
 	 */
+	@Override
 	public final boolean isSecure() {
 		return true;
 	}

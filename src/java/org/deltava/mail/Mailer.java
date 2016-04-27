@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2010, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.mail;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to send e-mail messages.
  * @author Luke
- * @version 6.2
+ * @version 7.0
  * @since 1.0
  */
 
@@ -69,10 +69,7 @@ public class Mailer {
 	 */
 	public Mailer(EMailAddress from) {
 		super();
-		if (from == null)
-			from = new EMailSender(SystemData.get("airline.mail.webmaster"), SystemData.get("airline.name"));
-			
-		_env = new SMTPEnvelope(from);
+		_env = new SMTPEnvelope((from == null) ? new EMailSender(SystemData.get("airline.mail.webmaster"), SystemData.get("airline.name")) : from);
 	}
 
 	/**
