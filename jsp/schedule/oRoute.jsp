@@ -37,11 +37,7 @@
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td>&nbsp;
-<c:if test="${access.canDelete}">
-<el:cmdbutton url="routedelete" op="${route.type}" linkID="${fn:dateFmt(route.date, 'MMddyyyy')}" label="DELETE TRACK DATA" />
-</c:if>
- </td>
+ <td>&nbsp;</td>
 </tr>
 </el:table>
 </content:region>
