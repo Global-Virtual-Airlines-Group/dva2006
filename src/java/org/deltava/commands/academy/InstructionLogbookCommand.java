@@ -1,4 +1,4 @@
-// Copyright 2006, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.ComboUtils;
 /**
  * A Web Site Command to display Instruction logbooks.
  * @author Luke
- * @version 3.6
+ * @version 7.0
  * @since 1.0
  */
 
@@ -30,6 +30,7 @@ public class InstructionLogbookCommand extends AbstractViewCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the view start/end
@@ -53,10 +54,9 @@ public class InstructionLogbookCommand extends AbstractViewCommand {
 			// Get the Pilot IDs
 			Collection<Integer> IDs = new HashSet<Integer>();
 			IDs.add(Integer.valueOf(ctx.getID()));
-			for (Iterator<InstructionFlight> i = flights.iterator(); i.hasNext(); ) {
-				InstructionFlight flight = i.next();
-				IDs.add(new Integer(flight.getInstructorID()));
-				IDs.add(new Integer(flight.getPilotID()));
+			for (InstructionFlight flight : flights) {
+				IDs.add(Integer.valueOf(flight.getInstructorID()));
+				IDs.add(Integer.valueOf(flight.getPilotID()));
 			}
 			
 			// Load the Pilot beans
