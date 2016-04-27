@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.hr;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to return database IDs for ACARS users without Pilot codes.
  * @author Luke
- * @version 3.4
+ * @version 7.0
  * @since 1.0
  */
 
@@ -30,6 +30,7 @@ public class DatabaseIDService extends WebService {
 	 * @return the HTTP status code
 	 * @throws ServiceException if an error occurs
 	 */
+	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 
 		// Get the user by name
@@ -74,7 +75,6 @@ public class DatabaseIDService extends WebService {
 			throw error(SC_CONFLICT, "I/O Error", false);
 		}
 		
-		// Return success code
 		return SC_OK;
 	}
 }

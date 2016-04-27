@@ -170,7 +170,7 @@ public class GetStatistics extends DAO  {
 	 * @return a Map of percentile and joining date.
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Map<Integer, java.util.Date> getMembershipQuantiles(int splitInto) throws DAOException {
+	public Map<Integer, java.time.Instant> getMembershipQuantiles(int splitInto) throws DAOException {
 
 		// Build the percentiles to divide into
 		Collection<Float> keys = new ArrayList<Float>();
@@ -196,21 +196,20 @@ public class GetStatistics extends DAO  {
 				return Collections.emptyMap();
 
 			// Build the quantiles
-			Map<Integer, java.util.Date> results = new LinkedHashMap<Integer, java.util.Date>();
+			Map<Integer, java.time.Instant> results = new LinkedHashMap<Integer, java.time.Instant>();
 			for (Iterator<Float> i = keys.iterator(); i.hasNext();) {
 				float key = Math.max(99, i.next().floatValue());
 
 				// Prepare the statement
 				setQueryStart(Math.round(totalSize * key / 100));
-				prepareStatementWithoutLimits("SELECT CREATED FROM PILOTS WHERE ((STATUS=?) OR (STATUS=?)) "
-						+ "ORDER BY CREATED LIMIT 1");
+				prepareStatementWithoutLimits("SELECT CREATED FROM PILOTS WHERE ((STATUS=?) OR (STATUS=?)) ORDER BY CREATED LIMIT 1");
 				_ps.setInt(1, Pilot.ACTIVE);
 				_ps.setInt(2, Pilot.ON_LEAVE);
 
 				// Execute the Query
 				try (ResultSet rs = _ps.executeQuery()) {
 					if (rs.next())
-						results.put(Integer.valueOf(Math.round(key)), rs.getDate(1));
+						results.put(Integer.valueOf(Math.round(key)), rs.getTimestamp(1).toInstant());
 				}
 
 				_ps.close();
@@ -239,7 +238,7 @@ public class GetStatistics extends DAO  {
 			Collection<MembershipTotals> results = new ArrayList<MembershipTotals>();
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
-					MembershipTotals mt = new MembershipTotals(rs.getDate(2));
+					MembershipTotals mt = new MembershipTotals(rs.getTimestamp(2).toInstant());
 					mt.setID(rs.getInt(1));
 					mt.setCount(rs.getInt(3));
 					results.add(mt);
