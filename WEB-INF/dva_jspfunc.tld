@@ -107,7 +107,7 @@
 	<function>
 		<name>dateFmt</name>
 		<function-class>org.deltava.taglib.functions.MiscFunctions</function-class>
-		<function-signature>java.lang.String format(java.time.temporal.Temporal, java.lang.String)</function-signature>
+		<function-signature>java.lang.String format(java.time.Instant, java.lang.String)</function-signature>
 	</function>
 
 	<!-- Get the ACARS Database ID -->
