@@ -122,7 +122,7 @@ public class DiagnosticCommand extends AbstractCommand {
 		ctx.setAttribute("tzName", tz.getDisplayName(TextStyle.FULL, Locale.US), REQUEST);
 
 		// Get current time
-		ctx.setAttribute("systemTime", Long.valueOf(System.currentTimeMillis()), REQUEST);
+		ctx.setAttribute("systemTime", Instant.now(), REQUEST);
 		
 		// Calculate DAO usage count
 		ctx.setAttribute("daoUsageCount", Long.valueOf(org.deltava.dao.DAO.getQueryCount()), REQUEST);
