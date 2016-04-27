@@ -295,8 +295,10 @@ public class Channel implements Comparable<Channel>, Cacheable, ComboAlias, View
      * @see Channel#addRole(InfoType, String)
      */
     public void setRoles(InfoType type, Collection<String> roles) {
-    	if ((type != InfoType.NOTIFY) && ((roles == null) || roles.isEmpty()))
-    		roles = Arrays.asList("*");
+    	if ((type != InfoType.NOTIFY) && ((roles == null) || roles.isEmpty())) {
+    		setRoles(type, Arrays.asList("*"));
+    		return;
+    	}
     	
     	switch (type) {
 			case READ:
