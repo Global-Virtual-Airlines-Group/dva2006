@@ -1,7 +1,7 @@
 // Copyright 2009, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoField;
 
 import javax.servlet.jsp.JspException;
@@ -17,14 +17,14 @@ import org.deltava.taglib.JSTag;
 
 public class JSDateTag extends JSTag {
 	
-	private Instant _dt = Instant.now();
+	private LocalDateTime _dt = LocalDateTime.now();
 	private boolean _doTime;
 
 	/**
 	 * Sets the date/time to format.
 	 * @param dt the date/time
 	 */
-	public void setDate(Instant dt) {
+	public void setDate(LocalDateTime dt) {
 		_dt = dt;
 	}
 	
