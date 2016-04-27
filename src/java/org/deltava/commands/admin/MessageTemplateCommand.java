@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.sql.Connection;
@@ -16,7 +16,7 @@ import org.deltava.security.command.MessageAccessControl;
 /**
  * A Web Site Command to edit Message Templates.
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -27,6 +27,7 @@ public class MessageTemplateCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	protected void execEdit(CommandContext ctx) throws CommandException {
 		
 		// Check if we're creating a new template
@@ -82,6 +83,7 @@ public class MessageTemplateCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	protected void execSave(CommandContext ctx) throws CommandException {
 
 		// Check if we're creating a new template
@@ -137,9 +139,9 @@ public class MessageTemplateCommand extends AbstractFormCommand {
 	/**
 	 * Callback method called when reading the template. <i>NOT IMPLEMENTED</i>
 	 * @param ctx the Command context
-	 * @throws UnsupportedOperationException always
 	 */
+	@Override
 	protected void execRead(CommandContext ctx) throws CommandException {
-		throw new UnsupportedOperationException();
+		execEdit(ctx);
 	}
 }

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.List;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display Pilot locations.
  * @author Luke
- * @version 4.2
+ * @version 7.0
  * @since 1.0
  */
 
@@ -36,18 +36,22 @@ public class PilotBoardCommand extends AbstractCommand {
 			_gPos = new GeoPosition(lat, lon);
 		}
 
+		@Override
 		public double getLatitude() {
 			return _gPos.getLatitude();
 		}
 
+		@Override
 		public double getLongitude() {
 			return _gPos.getLongitude();
 		}
 
+		@Override
 		public String getIconColor() {
 			return MapEntry.RED;
 		}
 
+		@Override
 		public String getInfoBox() {
 			StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox\"><span class=\"bld\">");
 			buf.append(SystemData.get("airline.name"));

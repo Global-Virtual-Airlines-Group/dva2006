@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to display Flight Reports awaiting disposition.
  * @author Luke
- * @version 3.3
+ * @version 7.0
  * @since 1.0
  */
 
@@ -23,8 +23,7 @@ public class PIREPQueueCommand extends AbstractViewCommand {
 	private static final Collection<Integer> PENDING = Arrays.asList(Integer.valueOf(FlightReport.SUBMITTED), Integer.valueOf(FlightReport.HOLD));
 
 	private static final String MY_EQ_SORT = "IF(IFNULL(LOCATE(?,GROUP_CONCAT(ER.EQTYPE)),0)=0,1,0), PR.DATE, PR.SUBMITTED, PR.ID";
-	private static final String[] SORT_CODES = {"PR.DATE, PR.SUBMITTED, PR.ID", "P.LASTNAME, P.FIRSTNAME, PR.SUBMITTED", 
-		"PR.EQTYPE, PR.DATE, PR.SUBMITTED", "$MYEQ"};
+	private static final String[] SORT_CODES = {"PR.DATE, PR.SUBMITTED, PR.ID", "P.LASTNAME, P.FIRSTNAME, PR.SUBMITTED", "PR.EQTYPE, PR.DATE, PR.SUBMITTED", "$MYEQ"};
 	private static final String[] SORT_NAMES = {"Submission Date", "Pilot Name", "Equipment Type", "My Program"};
 	private static final List<ComboAlias> SORT_OPTS = ComboUtils.fromArray(SORT_NAMES, SORT_CODES);
 
@@ -33,6 +32,7 @@ public class PIREPQueueCommand extends AbstractViewCommand {
      * @param ctx the Command context
      * @throws CommandException if an error (typically database) occurs
      */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Build dynamic sort option

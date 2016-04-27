@@ -47,7 +47,7 @@ public class NominationCommand extends AbstractFormCommand {
 				n = null;
 			
 			boolean isNew = (n == null);
-			if (isNew) {
+			if (n == null) {
 				n = new Nomination(ctx.getID());
 				n.setQuarter(new Quarter());
 			}

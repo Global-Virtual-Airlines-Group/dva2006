@@ -1,17 +1,13 @@
-// Copyright (c) 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.ts2;
 
-import java.sql.Connection;
-
 import org.deltava.commands.*;
-
-import org.deltava.dao.GetTS2Data;
-import org.deltava.dao.DAOException;
+import org.deltava.dao.*;
 
 /**
  * A Web Site Command to display TeamSpeak 2 server profiles.
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -22,20 +18,14 @@ public class ServerListCommand extends AbstractViewCommand {
 	 * @param ctx the Command Context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
-		// Get the view Context
 		ViewContext vc = initView(ctx);
-
 		try {
-			Connection con = ctx.getConnection();
-			
-			// Get the DAO and the servers
-			GetTS2Data dao = new GetTS2Data(con);
+			GetTS2Data dao = new GetTS2Data(ctx.getConnection());
 			dao.setQueryStart(vc.getStart());
 			dao.setQueryMax(vc.getCount());
-			
-			// Execute the query
 			vc.setResults(dao.getServers());
 		} catch (DAOException de) {
 			throw new CommandException(de);

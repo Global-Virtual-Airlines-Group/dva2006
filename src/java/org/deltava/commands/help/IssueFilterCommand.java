@@ -1,4 +1,4 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.help;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to view Help Desk issues by Author or Assignee.
  * @author Luke
- * @version 2.1
+ * @version 7.0
  * @since 2.1
  */
 
@@ -25,6 +25,7 @@ public class IssueFilterCommand extends AbstractViewCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Determine if we want by author or assignee
@@ -50,11 +51,10 @@ public class IssueFilterCommand extends AbstractViewCommand {
 			
 			// Get Author IDs
 			Collection<Integer> IDs = new HashSet<Integer>(choiceIDs);
-			for (Iterator<Issue> i = results.iterator(); i.hasNext(); ) {
-				Issue is = i.next();
-				IDs.add(new Integer(is.getAuthorID()));
-				IDs.add(new Integer(is.getAssignedTo()));
-				IDs.add(new Integer(is.getLastCommentAuthorID()));
+			for (Issue is : results) {
+				IDs.add(Integer.valueOf(is.getAuthorID()));
+				IDs.add(Integer.valueOf(is.getAssignedTo()));
+				IDs.add(Integer.valueOf(is.getLastCommentAuthorID()));
 			}
 			
 			// Load Pilot IDs and populate drop down

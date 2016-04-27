@@ -1,7 +1,8 @@
-// Copyright 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.help;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.deltava.beans.EMailAddress;
@@ -16,7 +17,7 @@ import org.deltava.security.command.HelpDeskAccessControl;
 /**
  * A Web Site Command to save Flight Academy Issue comments.
  * @author Luke
- * @version 2.1
+ * @version 7.0
  * @since 1.0
  */
 
@@ -27,6 +28,7 @@ public class IssueCommentCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
         // Create and populate the message context
@@ -56,16 +58,10 @@ public class IssueCommentCommand extends AbstractCommand {
 			i.addComment(ic);
 			
 			// Get all of the recipients
-			Collection<Integer> IDs = new HashSet<Integer>();
-			for (Iterator<IssueComment> ici = i.getComments().iterator(); ici.hasNext(); ) {
-				IssueComment c = ici.next();
-				IDs.add(new Integer(c.getAuthorID()));
-			}
-			
-			// Add Issue participants
-			IDs.add(new Integer(i.getAuthorID()));
-			IDs.add(new Integer(i.getAssignedTo()));
-			IDs.remove(new Integer(ctx.getUser().getID()));
+			Collection<Integer> IDs = i.getComments().stream().map(IssueComment::getAuthorID).collect(Collectors.toSet());
+			IDs.add(Integer.valueOf(i.getAuthorID()));
+			IDs.add(Integer.valueOf(i.getAssignedTo()));
+			IDs.remove(Integer.valueOf(ctx.getUser().getID()));
 			
 			// Update message context
 	        mctx.addData("issue", i);

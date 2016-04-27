@@ -1,8 +1,7 @@
-// Copyright 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
-import java.sql.Connection;
-import java.util.TimeZone;
+import java.time.ZoneId;
 
 import org.deltava.beans.TZInfo;
 
@@ -16,7 +15,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to edit time zone profiles.
  * @author Luke
- * @version 4.1
+ * @version 7.0
  * @since 1.0
  */
 
@@ -40,7 +39,7 @@ public class TimeZoneCommand extends AbstractFormCommand {
 
 		// Save the time zone and JVM options
 		ctx.setAttribute("tz", tz, REQUEST);
-		ctx.setAttribute("tzIDs", ComboUtils.fromArray(TimeZone.getAvailableIDs()), REQUEST);
+		ctx.setAttribute("tzIDs", ComboUtils.fromList(ZoneId.getAvailableZoneIds()), REQUEST);
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
@@ -68,14 +67,9 @@ public class TimeZoneCommand extends AbstractFormCommand {
 
 		String id = (String) ctx.getCmdParameter(ID, null);
 		boolean isNew = (TZInfo.get(id) == null);
+		TZInfo tz = TZInfo.init(ctx.getParameter("newID"), ctx.getParameter("name"), ctx.getParameter("abbr"));
 		try {
-			Connection con = ctx.getConnection();
-
-			// Get the time zone
-			TZInfo tz = TZInfo.init(ctx.getParameter("newID"), ctx.getParameter("name"), ctx.getParameter("abbr"));
-			
-			// Write the time zone
-			SetSystemData wdao = new SetSystemData(con);
+			SetSystemData wdao = new SetSystemData(ctx.getConnection());
 			if (isNew)
 				wdao.write(tz);
 			else

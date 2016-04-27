@@ -1,7 +1,8 @@
-// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
@@ -16,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to save Status History commands for a Pilot.
  * @author Luke
- * @version 2.2
+ * @version 7.0
  * @since 1.0
  */
 
@@ -27,6 +28,7 @@ public class StatusCommentCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Get command result
@@ -56,14 +58,8 @@ public class StatusCommentCommand extends AbstractCommand {
 			Collection<StatusUpdate> updates = sudao.getByUser(usr.getID(), SystemData.get("airline.db")); 
 			ctx.setAttribute("statusUpdates", updates, REQUEST);
 			
-			// Load author IDs
-			Collection<Integer> IDs = new HashSet<Integer>();
-			for (Iterator<StatusUpdate> i = updates.iterator(); i.hasNext(); ) {
-				StatusUpdate upd = i.next();
-				IDs.add(new Integer(upd.getAuthorID()));
-			}
-			
 			// Load authors
+			Collection<Integer> IDs = updates.stream().map(StatusUpdate::getAuthorID).collect(Collectors.toSet());
 			GetUserData uddao = new GetUserData(con);
 			UserDataMap udm = uddao.get(IDs);
 			ctx.setAttribute("authors", pdao.get(udm), REQUEST);

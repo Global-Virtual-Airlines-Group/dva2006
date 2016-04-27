@@ -1,4 +1,4 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.commands.*;
 /**
  * A Web Site Command to display available time zones.
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -21,6 +21,7 @@ public class TimeZoneListCommand extends AbstractViewCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Get the view context
@@ -34,6 +35,7 @@ public class TimeZoneListCommand extends AbstractViewCommand {
 		
 		// Save the entries
 		vc.setResults(entries);
+		ctx.setAttribute("now", java.time.Instant.now(), REQUEST);
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

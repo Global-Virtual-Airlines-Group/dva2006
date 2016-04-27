@@ -1,7 +1,5 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.help;
-
-import java.sql.Connection;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -9,7 +7,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to display the Frequently Asked Questions.
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -20,15 +18,12 @@ public class FAQCommand extends AbstractViewCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
-		// Get the view context
 		ViewContext vc = initView(ctx);
 		try {
-			Connection con = ctx.getConnection();
-			
-			// Get the DAO and the FAQ
-			GetHelp dao = new GetHelp(con);
+			GetHelp dao = new GetHelp(ctx.getConnection());
 			dao.setQueryStart(vc.getStart());
 			dao.setQueryMax(vc.getCount());
 			vc.setResults(dao.getFAQ());

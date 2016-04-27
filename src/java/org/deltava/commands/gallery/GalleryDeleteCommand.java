@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.gallery;
 
 import java.sql.Connection;
@@ -16,7 +16,7 @@ import org.deltava.security.command.GalleryAccessControl;
 /**
  * A Web Site Command to delete Image Gallery images.
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -27,6 +27,7 @@ public class GalleryDeleteCommand extends AbstractCommand {
      * @param ctx the Command context
      * @throws CommandException if an unhandled error occurs
      */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		try {

@@ -1,8 +1,7 @@
-// Copyright 2005, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.news;
 
 import java.util.*;
-import java.sql.Connection;
 
 import org.deltava.beans.News;
 
@@ -14,7 +13,7 @@ import org.deltava.security.command.NewsAccessControl;
 /**
  * A Web Site Command to display the System News.
  * @author Luke
- * @version 2.2
+ * @version 7.0
  * @since 1.0
  */
 
@@ -25,20 +24,14 @@ public class NewsCommand extends AbstractViewCommand {
      * @param ctx the Command context
      * @throws CommandException if an unhandled error occurs
      */
-    public void execute(CommandContext ctx) throws CommandException {
+    @Override
+	public void execute(CommandContext ctx) throws CommandException {
 
-        // Get/set start/count parameters
         ViewContext vc = initView(ctx);
-
         try {
-            Connection con = ctx.getConnection();
-            
-            // Get the system news
-            GetNews dao = new GetNews(con);
+            GetNews dao = new GetNews(ctx.getConnection());
             dao.setQueryStart(vc.getStart());
             dao.setQueryMax(vc.getCount());
-            
-            // Get the results
             vc.setResults(dao.getNews());
         } catch (DAOException de) {
             throw new CommandException(de);
@@ -52,7 +45,7 @@ public class NewsCommand extends AbstractViewCommand {
         	News n = (News) i.next();
         	NewsAccessControl access = new NewsAccessControl(ctx, n);
         	access.validate();
-        	accessMap.put(new Integer(n.getID()), access);
+        	accessMap.put(Integer.valueOf(n.getID()), access);
         }
         
         // Save our access

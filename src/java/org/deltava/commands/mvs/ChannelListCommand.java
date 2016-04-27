@@ -1,4 +1,4 @@
-// Copyright 2006, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.mvs;
 
 import org.deltava.commands.*;
@@ -7,7 +7,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to display MVS persistent channels.
  * @author Luke
- * @version 4.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -18,6 +18,7 @@ public class ChannelListCommand extends AbstractViewCommand {
 	 * @param ctx the Command Context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Init the view context

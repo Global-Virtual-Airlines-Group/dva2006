@@ -1,4 +1,4 @@
-// Copyright 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.sql.Connection;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to release a held Flight Report.
  * @author Luke
- * @version 2.7
+ * @version 7.0
  * @since 1.0
  */
 
@@ -26,6 +26,7 @@ public class PIREPReleaseCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error (typically database) occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		try {
 			Connection con = ctx.getConnection();

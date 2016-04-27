@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import javax.servlet.http.*;
@@ -8,7 +8,7 @@ import org.deltava.commands.*;
 /**
  * A Web Site Command to ensure that session cookies are set correctly.
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -19,6 +19,7 @@ public class CookieCheckCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occrurs.
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the comamnd result
@@ -27,8 +28,6 @@ public class CookieCheckCommand extends AbstractCommand {
 		// Check if our session cookie is OK
 		HttpServletRequest req = ctx.getRequest();
 		boolean isOK = (req.isRequestedSessionIdFromCookie() && req.isRequestedSessionIdValid());
-
-		// If we're not OK, redirect to the warning JSP
 		if (!isOK) {
 			result.setURL("/jsp/error/cookieCheck.jsp");
 			return;
