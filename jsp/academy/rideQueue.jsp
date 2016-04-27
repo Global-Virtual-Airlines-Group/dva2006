@@ -33,7 +33,7 @@
  <td style="width:8%">DATE</td>
  <td style="width:7%">&nbsp;</td>
  <td style="width:20%">PILOT NAME</td>
- <td class='"nophone" style="width:15%">COURSE NAME</td>
+ <td class="nophone" style="width:15%">COURSE NAME</td>
  <td class="nophone" style="width:10%">AIRCRAFT</td>
  <td class="nophone">FLIGHT ROUTE</td>
 </tr>
