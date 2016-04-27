@@ -1,7 +1,6 @@
 package org.deltava.beans.cooler;
 
 import java.time.Instant;
-import java.util.Date;
 
 import junit.framework.Test;
 import org.hansel.CoverageDecorator;
