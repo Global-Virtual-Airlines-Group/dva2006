@@ -1,4 +1,4 @@
-// Copyright 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.navdata;
 
 import java.text.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display all Terminal Routes for an Airport.
  * @author Luke
- * @version 5.1
+ * @version 7.0
  * @since 2.1
  */
 
@@ -121,6 +121,7 @@ public class AirportTerminalRouteService extends WebService {
 	 * Returns whether this web service requires authentication.
 	 * @return TRUE always
 	 */
+	@Override
 	public final boolean isSecure() {
 		return true;
 	}
@@ -129,6 +130,7 @@ public class AirportTerminalRouteService extends WebService {
 	 * Returns whether this web service calls are logged.
 	 * @return TRUE if invocation logging should be performed by the servlet, otherwise FALSE
 	 */
+	@Override
 	public final boolean isLogged() {
 		return false;
 	}

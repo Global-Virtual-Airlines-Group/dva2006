@@ -339,7 +339,7 @@ public class XPIREPService extends XAService {
 			
 			ctx.print("1|Flight Report Saved");
 		} catch (Exception e) {
-			log.error(usr.getName() + " - " + e.getMessage(), e);
+			log.error(((usr == null) ? "Anonymous" : usr.getName()) + " - " + e.getMessage(), e);
 			ctx.rollbackTX();
 			ctx.print("0|" + e.getMessage());
 		} finally {
