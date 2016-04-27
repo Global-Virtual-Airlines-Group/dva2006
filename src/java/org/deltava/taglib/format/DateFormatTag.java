@@ -114,7 +114,7 @@ public class DateFormatTag extends UserSettingsTag {
 			_dt = Instant.ofEpochMilli(ld.toEpochDay() * ChronoUnit.DAYS.getDuration().getSeconds());
 		} else if (i instanceof LocalDateTime)
 			_dt = ((LocalDateTime) i).toInstant(ZoneOffset.UTC);
-		else
+		else if (i != null)
 			throw new IllegalArgumentException("Invalid temporal type - " + i.getClass().getSimpleName());
 	}
 
