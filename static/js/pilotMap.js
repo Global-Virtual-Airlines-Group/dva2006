@@ -92,8 +92,8 @@ var cnt = 0;
 var mrk = golgotha.pilotMap.queue.pop();
 golgotha.pilotMap.pBar.updateBar(2);
 while ((cnt < batchSize) && (mrk != null)) {
-	var rankOK = (rank == 'null') || (mrk.rank == rank);
-	var eqOK = (eqType == 'null') || (mrk.eqType == eqType);
+	var rankOK = (rank == null) || (mrk.rank == rank);
+	var eqOK = (eqType == null) || (mrk.eqType == eqType);
 
 	mrk.setMap((rankOK && eqOK) ? map : null);
 	cnt++;
