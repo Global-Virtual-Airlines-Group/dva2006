@@ -41,9 +41,9 @@ public class TestIssue extends AbstractBeanTestCase {
 		checkProperty("assignedTo", Integer.valueOf(124));
 		checkProperty("majorVersion", Integer.valueOf(3));
 		checkProperty("minorVersion", Integer.valueOf(1));
-		checkProperty("createdOn", new Date());
-		checkProperty("resolvedOn", new Date());
-		checkProperty("lastCommentOn", new Date());
+		checkProperty("createdOn", Instant.now());
+		checkProperty("resolvedOn", Instant.now());
+		checkProperty("lastCommentOn", Instant.now());
 		checkProperty("commentCount", Integer.valueOf(23));
 		_i.setResolvedOn(null);
 		_i.setLastCommentOn(null);

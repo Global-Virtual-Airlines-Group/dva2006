@@ -3,7 +3,8 @@ package org.deltava.tasks;
 
 import java.util.*;
 import java.sql.Connection;
-import java.time.Instant;
+import java.time.*;
+import java.time.temporal.ChronoField;
 
 import org.deltava.beans.*;
 import org.deltava.beans.assign.*;
@@ -120,10 +121,9 @@ public class EventAssignTask extends Task {
 						
 						// Calculate the flight number
 						int flightID = usr.getPilotNumber();
-						if (flightID == 0) {
-							Calendar cld = Calendar.getInstance();
-							flightID = cld.get(Calendar.YEAR) + cld.get(Calendar.DAY_OF_YEAR);
-						} else if (flightID > 10000)
+						if (flightID == 0)
+							flightID = LocalDateTime.now().get(ChronoField.DAY_OF_YEAR);
+						else if (flightID > 10000)
 							flightID %= 10000;
 						
 						// Create an Assignment Leg

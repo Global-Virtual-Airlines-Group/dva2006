@@ -85,9 +85,9 @@ public class TestPerson extends AbstractBeanTestCase {
         assertEquals(0, _p.getAirportCodeType().ordinal());
         checkProperty("emailAccess", Integer.valueOf(1));
         checkProperty("legacyHours", new Double(238.1));
-        checkProperty("createdOn", new Date());
-        checkProperty("lastLogin", new Date());
-        checkProperty("lastLogoff", new Date());
+        checkProperty("createdOn", Instant.now());
+        checkProperty("lastLogin", Instant.now());
+        checkProperty("lastLogoff", Instant.now());
         checkProperty("loginCount", Integer.valueOf(12));
         checkProperty("loginHost", "localhost");
         checkProperty("status", Integer.valueOf(2));

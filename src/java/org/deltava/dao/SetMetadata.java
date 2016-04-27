@@ -1,4 +1,4 @@
-// Copyright 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2013, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,7 +8,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to write app-specific metadata.
  * @author Luke
- * @version 6.3
+ * @version 7.0
  * @since 5.1
  */
 
@@ -50,8 +50,8 @@ public class SetMetadata extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 * @see GetMetadata#getDate(String)
 	 */
-	public void write(String key, java.util.Date dt) throws DAOException {
-		write(key, String.valueOf(dt.getTime() / 1000));
+	public void write(String key, java.time.Instant dt) throws DAOException {
+		write(key, String.valueOf(dt.toEpochMilli() / 1000));
 	}
 	
 	/**

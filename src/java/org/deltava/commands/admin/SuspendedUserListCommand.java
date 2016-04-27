@@ -1,8 +1,10 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 
@@ -12,7 +14,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to display Suspended users.
  * @author Luke
- * @version 2.2
+ * @version 7.0
  * @since 2.2
  */
 
@@ -23,6 +25,7 @@ public class SuspendedUserListCommand extends AbstractViewCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the view context
@@ -38,19 +41,14 @@ public class SuspendedUserListCommand extends AbstractViewCommand {
 			vctx.setResults(pilots);
 			
 			// Load the IDs
-			Collection<Integer> IDs = new HashSet<Integer>();
-			for (Iterator<Pilot> i = pilots.iterator(); i.hasNext(); ) {
-				Pilot p = i.next();
-				IDs.add(new Integer(p.getID()));
-			}
+			Collection<Integer> IDs = pilots.stream().map(Pilot::getID).collect(Collectors.toSet());
 			
 			// Load the status updates
 			Map<Integer, StatusUpdate> updates = new HashMap<Integer, StatusUpdate>();
 			GetStatusUpdate sudao = new GetStatusUpdate(con);
 			Collection<StatusUpdate> upds = sudao.getByType(StatusUpdate.SUSPENDED);
-			for (Iterator<StatusUpdate> i = upds.iterator(); i.hasNext(); ) {
-				StatusUpdate upd = i.next();
-				Integer id = new Integer(upd.getID());
+			for (StatusUpdate upd : upds) {
+				Integer id = Integer.valueOf(upd.getID());
 				if (IDs.contains(id)) {
 					if (updates.containsKey(id)) {
 						StatusUpdate upd2 = updates.get(id);
@@ -70,7 +68,7 @@ public class SuspendedUserListCommand extends AbstractViewCommand {
 		}
 		
 		// Save current date
-		ctx.setAttribute("now", new Date(), REQUEST);
+		ctx.setAttribute("now", Instant.now(), REQUEST);
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

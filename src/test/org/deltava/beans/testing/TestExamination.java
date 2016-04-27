@@ -39,10 +39,10 @@ public class TestExamination extends AbstractBeanTestCase {
         checkProperty("size", Integer.valueOf(20));
         checkProperty("score", Integer.valueOf(0));
         checkProperty("stage", Integer.valueOf(3));
-        checkProperty("date", new Date());
-        checkProperty("expiryDate", new Date());
-        checkProperty("submittedOn", new Date());
-        checkProperty("scoredOn", new Date());
+        checkProperty("date", Instant.now());
+        checkProperty("expiryDate", Instant.now());
+        checkProperty("submittedOn", Instant.now());
+        checkProperty("scoredOn", Instant.now());
         checkProperty("passFail", Boolean.TRUE);
     }
     

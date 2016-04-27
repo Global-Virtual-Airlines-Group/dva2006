@@ -1,7 +1,8 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
+import java.time.ZonedDateTime;
 
 import org.deltava.beans.wx.*;
 
@@ -14,7 +15,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Scheduled Task to download TAF data.
  * @author Luke
- * @version 2.7
+ * @version 7.0
  * @since 2.7
  */
 
@@ -32,8 +33,7 @@ public class TAFDownloadTask extends Task {
 	 */
 	@Override
 	protected void execute(TaskContext ctx) {
-		Calendar cld = Calendar.getInstance();
-		int hour = cld.get(Calendar.HOUR_OF_DAY);
+		int hour = ZonedDateTime.now().getHour();
 		hour -= (hour % 6);
 		try {
 			GetNOAAWeather wxdao = new GetNOAAWeather();
@@ -49,10 +49,8 @@ public class TAFDownloadTask extends Task {
 			
 			// Save the TAFs
 			log.info("Saving TAF cycle - " + tafs.size() + " entries");
-			for (Iterator<TAF> i = tafs.values().iterator(); i.hasNext(); ) {
-				TAF t = i.next();
+			for (TAF t : tafs.values())
 				wxwdao.write(t);
-			}
 			
 			// Commit
 			ctx.commitTX();

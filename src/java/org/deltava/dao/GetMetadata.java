@@ -72,7 +72,7 @@ public class GetMetadata extends DAO {
 	 * @param key the key
 	 * @return the date/time value, or null if not found or unparseable
 	 * @throws DAOException if a JDBC error occurs
-	 * @see SetMetadata#write(String, java.util.Date)
+	 * @see SetMetadata#write(String, java.time.Instant)
 	 */
 	public java.time.Instant getDate(String key) throws DAOException {
 		String dt = get(key);

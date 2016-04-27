@@ -1,10 +1,11 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.stats.*;
+
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
@@ -13,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A web site command to display Airline Total statistics.
  * @author Luke
- * @version 6.3
+ * @version 7.0
  * @since 1.0
  */
 
@@ -70,7 +71,7 @@ public class AirlineTotalsCommand extends AbstractCommand {
 		// Save the results in the request
 		ctx.setAttribute("totals", totals, REQUEST);
 		ctx.setAttribute("tableStatus", tableStatus, REQUEST);
-		ctx.setAttribute("effectiveDate", new Date(totals.getEffectiveDate()), REQUEST);
+		ctx.setAttribute("effectiveDate", totals.getEffectiveDate(), REQUEST);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

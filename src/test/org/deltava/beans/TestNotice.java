@@ -47,7 +47,7 @@ public class TestNotice extends AbstractBeanTestCase {
 	
 	public void testProperties() {
 	    checkProperty("authorID", Integer.valueOf(123));
-	    checkProperty("date", new Date());
+	    checkProperty("date", Instant.now());
 	}
 	
 	public void testValidation() {

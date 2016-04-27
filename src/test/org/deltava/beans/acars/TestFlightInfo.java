@@ -35,8 +35,8 @@ protected void tearDown() throws Exception {
    public void testProperties() {
       assertEquals(1, _info.getID());
       checkProperty("pilotID", Integer.valueOf(1234));
-      checkProperty("startTime", new Date());
-      checkProperty("endTime", new Date());
+      checkProperty("startTime", Instant.now());
+      checkProperty("endTime", Instant.now());
       _info.setEndTime(null);
       assertNull(_info.getEndTime());
       checkProperty("flightCode", "DAL043");

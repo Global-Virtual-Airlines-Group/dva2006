@@ -10,8 +10,8 @@ package org.deltava.beans.system;
 
 public interface VersionInfo {
 
-    public static final int MAJOR = 6;
-    public static final int MINOR = 98;
+    public static final int MAJOR = 7;
+    public static final int MINOR = 0;
     
     public static final int BUILD = 547;
     

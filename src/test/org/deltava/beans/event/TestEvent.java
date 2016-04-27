@@ -38,9 +38,9 @@ public class TestEvent extends AbstractBeanTestCase {
         checkProperty("briefing", "REMARKS");
         checkProperty("route", "KATL SPA KCLT");
         long now = System.currentTimeMillis() - 100;
-        checkProperty("startTime", new Date());
+        checkProperty("startTime", Instant.now());
         checkProperty("signupDeadline", new Date(now));
-        checkProperty("endTime", new Date());
+        checkProperty("endTime", Instant.now());
         checkProperty("airportA", new Airport("ATL", "KATL", "Atlanta GA"));
         checkProperty("network", Integer.valueOf(1));
         assertEquals(Status.COMPLETE, _e.getStatus());

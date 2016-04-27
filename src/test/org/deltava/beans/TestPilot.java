@@ -44,7 +44,7 @@ public class TestPilot extends AbstractBeanTestCase {
         checkProperty("miles", new Long(12345));
         checkProperty("onlineLegs", Integer.valueOf(101));
         checkProperty("onlineHours", new Double(323.4));
-        checkProperty("lastFlight", new Date());
+        checkProperty("lastFlight", Instant.now());
         checkProperty("hasSignature", Boolean.valueOf(true));
         checkProperty("showSignatures", Boolean.valueOf(true));
         checkProperty("showSSThreads", Boolean.valueOf(true));

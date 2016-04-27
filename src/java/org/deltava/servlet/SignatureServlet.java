@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.*;
@@ -18,7 +18,7 @@ import org.gvagroup.jdbc.*;
 /**
  * The Signature Image serving Servlet. This serves Water Cooler signature images.
  * @author Luke
- * @version 6.0
+ * @version 7.0
  * @since 2.6
  */
 
@@ -65,7 +65,7 @@ public class SignatureServlet extends GenericServlet {
 		// Get the connection pool
 		
 		ConnectionPool jdbcPool = getConnectionPool();
-		java.util.Date lastMod = null; Connection c = null;
+		java.time.Instant lastMod = null; Connection c = null;
 		try {
 			c = jdbcPool.getConnection();
 
@@ -83,7 +83,7 @@ public class SignatureServlet extends GenericServlet {
 			jdbcPool.release(c);
 		}
 
-		return (lastMod == null) ? -1 : lastMod.getTime();
+		return (lastMod == null) ? -1 : lastMod.toEpochMilli();
 	}
 
 	/**

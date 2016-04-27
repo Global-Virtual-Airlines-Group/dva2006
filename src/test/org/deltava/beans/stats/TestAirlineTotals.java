@@ -1,6 +1,6 @@
 package org.deltava.beans.stats;
 
-import java.util.*;
+import java.time.*;
 
 import junit.framework.Test;
 
@@ -18,7 +18,7 @@ public class TestAirlineTotals extends AbstractBeanTestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		_t = new AirlineTotals(System.currentTimeMillis());
+		_t = new AirlineTotals(Instant.now());
 		setBean(_t);
 	}
 
@@ -72,14 +72,13 @@ public class TestAirlineTotals extends AbstractBeanTestCase {
 	
 	@SuppressWarnings("static-method")
 	public void testAirlineAge() {
-		Calendar c = new GregorianCalendar(2001, 6, 12);
-		AirlineTotals at2 = new AirlineTotals(c.getTimeInMillis());
+		ZonedDateTime zdt = ZonedDateTime.of(2001, 6, 12, 0, 0, 0, 0, ZoneOffset.UTC);
+		AirlineTotals at2 = new AirlineTotals(zdt.plusDays(2).toInstant());
 		assertEquals(2, at2.getAge());
-		assertEquals(c.getTimeInMillis(), at2.getEffectiveDate());
 	}
 	
 	public void testComparator() {
-		AirlineTotals at2 = new AirlineTotals(_t.getEffectiveDate() + 100);
+		AirlineTotals at2 = new AirlineTotals(_t.getEffectiveDate().plusMillis(100));
 		assertTrue(at2.compareTo(_t) > 0);
 		assertTrue(_t.compareTo(at2) < 0);
 	}

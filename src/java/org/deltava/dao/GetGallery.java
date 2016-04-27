@@ -3,6 +3,7 @@ package org.deltava.dao;
 
 import java.util.*;
 import java.sql.*;
+import java.time.ZonedDateTime;
 
 import org.deltava.beans.gallery.*;
 
@@ -154,7 +155,7 @@ public class GetGallery extends DAO {
 			if (month != null) {
 				StringTokenizer tkns = new StringTokenizer(month, " ");
 				_ps.setString(1, tkns.nextToken());
-				_ps.setInt(2, StringUtils.parse(tkns.nextToken(), Calendar.getInstance().get(Calendar.YEAR)));
+				_ps.setInt(2, StringUtils.parse(tkns.nextToken(), ZonedDateTime.now().getYear()));
 			}
 
 			return execute();

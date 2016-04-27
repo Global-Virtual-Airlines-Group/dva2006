@@ -4,6 +4,7 @@ package org.deltava.commands.navdata;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.deltava.beans.Simulator;
 import org.deltava.beans.navdata.*;
@@ -20,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display Airport runway and gate information.
  * @author Luke
- * @version 6.4
+ * @version 7.0
  * @since 6.3
  */
 
@@ -90,7 +91,7 @@ public class AirportInformationCommand extends AbstractCommand {
 			
 			// Save in request
 			ctx.setAttribute("airport", a, REQUEST);
-			ctx.setAttribute("localTime", new Date(), REQUEST);
+			ctx.setAttribute("localTime", Instant.now(), REQUEST);
 			ctx.setAttribute("runways", allRwys.values(), REQUEST);
 			ctx.setAttribute("validRunways", validRunwayIDs, REQUEST);
 			ctx.setAttribute("airlines", a.getAirlineCodes().stream().map(c -> SystemData.getAirline(c)).filter(al -> !al.getHistoric()).collect(Collectors.toCollection(TreeSet::new)), REQUEST);

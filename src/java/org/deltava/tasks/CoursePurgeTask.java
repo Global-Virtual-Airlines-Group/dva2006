@@ -2,8 +2,8 @@
 package org.deltava.tasks;
 
 import java.util.*;
+import java.time.*;
 import java.sql.Connection;
-import java.time.Instant;
 
 import org.deltava.beans.academy.*;
 
@@ -35,9 +35,8 @@ public class CoursePurgeTask extends Task {
 	protected void execute(TaskContext ctx) {
 		
 		int purgeDays = SystemData.getInt("academy.coursePurge", 240);
-		Calendar cld = Calendar.getInstance();
-		cld.add(Calendar.DAY_OF_MONTH, (purgeDays * -1));
-		log.warn("Purging Flight Academy Courses inactive since before " + cld.getTime());
+		Instant pd = ZonedDateTime.now().minusDays(purgeDays).toInstant();
+		log.warn("Purging Flight Academy Courses inactive since before " + pd);
 		
 		try {
 			Connection con = ctx.getConnection();

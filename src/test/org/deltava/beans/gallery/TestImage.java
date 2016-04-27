@@ -1,7 +1,7 @@
 package org.deltava.beans.gallery;
 
 import java.io.*;
-import java.util.Date;
+import java.time.Instant;
 
 import junit.framework.Test;
 import org.hansel.CoverageDecorator;
@@ -42,7 +42,7 @@ public class TestImage extends AbstractBeanTestCase {
         checkProperty("type", Integer.valueOf(1));
         checkProperty("ID", Integer.valueOf(116));
         checkProperty("authorID", Integer.valueOf(117));
-        checkProperty("createdOn", new Date());
+        checkProperty("createdOn", Instant.now());
         checkProperty("fleet", Boolean.valueOf(true));
         checkProperty("score", new Double(3.1));
         checkProperty("voteCount", Integer.valueOf(16));

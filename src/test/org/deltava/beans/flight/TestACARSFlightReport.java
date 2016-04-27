@@ -41,12 +41,12 @@ public class TestACARSFlightReport extends AbstractBeanTestCase {
         assertEquals(1, _fr.getLeg());
         
         checkProperty("route", "DIRECT");
-        checkProperty("endTime", new Date());
-        checkProperty("engineStartTime", new Date());
-        checkProperty("landingTime", new Date());
-        checkProperty("startTime", new Date());
-        checkProperty("takeoffTime", new Date());
-        checkProperty("taxiTime", new Date());
+        checkProperty("endTime", Instant.now());
+        checkProperty("engineStartTime", Instant.now());
+        checkProperty("landingTime", Instant.now());
+        checkProperty("startTime", Instant.now());
+        checkProperty("takeoffTime", Instant.now());
+        checkProperty("taxiTime", Instant.now());
         checkProperty("gateFuel", Integer.valueOf(15000));
         checkProperty("landingFuel", Integer.valueOf(15000));
         checkProperty("takeoffFuel", Integer.valueOf(15000));

@@ -1,14 +1,15 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
+import java.time.Instant;
 
 import org.deltava.util.cache.*;
 
 /**
  * A Data Access Object to retrieve image data from the database.
  * @author Luke
- * @version 6.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -75,10 +76,10 @@ public class GetImage extends DAO {
      * @return the signature last modified date/time, or null if not found
      * @throws DAOException if a JDBC error occurs
      */
-    public java.util.Date getSigModified(int id, String dbName) throws DAOException {
+    public java.time.Instant getSigModified(int id, String dbName) throws DAOException {
     	CacheableLong lastMod = _sigCache.get(Integer.valueOf(id));
     	if (lastMod != null)
-    		return new Date(lastMod.getValue());
+    		return Instant.ofEpochMilli(lastMod.getValue());
     	
     	StringBuilder sqlBuf = new StringBuilder("SELECT MODIFIED FROM ");
     	sqlBuf.append(formatDBName(dbName));
@@ -87,17 +88,17 @@ public class GetImage extends DAO {
     	try {
     		prepareStatement(sqlBuf.toString());
     		_ps.setInt(1, id);
-    		java.util.Date dt = null;
+    		java.time.Instant dt = null;
     		try (ResultSet rs = _ps.executeQuery()) {
     			if (rs.next())
-    				dt = rs.getTimestamp(1);
+    				dt = toInstant(rs.getTimestamp(1));
     		}
     		
     		_ps.close();
     		
     		// Update the cache and return
     		if (dt != null)
-    			_sigCache.add(new CacheableLong(Integer.valueOf(id), dt.getTime()));
+    			_sigCache.add(new CacheableLong(Integer.valueOf(id), dt.toEpochMilli()));
     		
     		return dt;
     	} catch (SQLException se) {

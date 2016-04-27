@@ -32,7 +32,7 @@ public class TestMessageThread extends AbstractBeanTestCase {
     public void testProperties() {
         assertEquals("Subject", _t.getSubject());
         checkProperty("channel", "ChannelName");
-        checkProperty("lastUpdatedOn", new Date());
+        checkProperty("lastUpdatedOn", Instant.now());
         checkProperty("stickyUntil", new Date(System.currentTimeMillis() + 50));
         checkProperty("ID", Integer.valueOf(1212));
         checkProperty("authorID", Integer.valueOf(1213));
