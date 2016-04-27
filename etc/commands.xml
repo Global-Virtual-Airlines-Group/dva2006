@@ -589,18 +589,6 @@
 		<roles>Pilot</roles>
 	</command>
 	
-	<command id="routedelete">
-		<name>Delete Route</name>
-		<class>org.deltava.commands.schedule.RouteDeleteCommand</class>
-		<roles>Schedule,Operations</roles>
-	</command>
-
-	<command id="routepurge">
-		<name>Purge Routes</name>
-		<class>org.deltava.commands.schedule.RoutePurgeCommand</class>
-		<roles>Schedule,Operations</roles>
-	</command>
-
 	<command id="routeplot">
 		<name>Flight Route Plotter</name>
 		<class>org.deltava.commands.schedule.RoutePlotCommand</class>
