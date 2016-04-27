@@ -168,9 +168,9 @@ public class MiscFunctions {
 	 * @return the formatted date/time
 	 * @see java.text.DateFormat#format(java.util.Date)
 	 */
-	public static String format(Temporal dt, String fmt) {
+	public static String format(Instant dt, String fmt) {
 		DateTimeFormatter df = new DateTimeFormatterBuilder().appendPattern(fmt).toFormatter();
-		return (dt == null) ? "" : df.format(dt);
+		return (dt == null) ? "" : df.format(ZonedDateTime.ofInstant(dt, ZoneOffset.UTC));
 	}
 
 	/**
