@@ -1,7 +1,7 @@
 // Copyright 2008, 2010, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
-import java.time.Instant;
+import java.time.*;
 import java.time.format.*;
 
 import javax.servlet.jsp.JspException;
@@ -79,7 +79,7 @@ public class SignatureTag extends ImageTag {
 
 		// Build the source and render
 		StringBuilder buf = new StringBuilder("/sig/");
-		buf.append(_df.format(_usr.getSignatureModified()));
+		buf.append(_df.format(ZonedDateTime.ofInstant(_usr.getSignatureModified(), ZoneOffset.UTC)));
 		buf.append('/');
 		buf.append((_aCode == null) ? SystemData.get("airline.code") : _aCode);
 		buf.append('/');
