@@ -29,7 +29,7 @@
 <map:usage var="s_APIuse" type="static" />
 <map:usage var="d_APIuse" type="dynamic" />
 <c:set var="startedOn" value="${applicationScope.startedOn}" scope="page" />
-<c:set var="execTime" value="${(systemTime - startedOn.time) / 1000}" scope="page" />
+<c:set var="execTime" value="${(systemTime.toEpochMilli() - startedOn.toEpochMilli()) / 1000}" scope="page" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -104,7 +104,7 @@ Free Memory: <fmt:int value="${freeMemory}" /> bytes</td>
 </tr>
 <tr>
  <td class="label">Local Time Zone</td>
- <td class="data">${timeZone.ID} - ${tzName}</td>
+ <td class="data">${timeZone.id} - ${tzName}</td>
 </tr>
 <tr>
  <td class="label">Database Transactions</td>

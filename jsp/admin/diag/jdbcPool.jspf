@@ -31,8 +31,7 @@
 </tr>
 <c:if test="${!empty pool.lastValidation}">
 <tr>
- <td colspan="8" class="left"><fmt:int value="${pool.validations}" /> Connection Pool Monitor validation runs, last
- on <fmt:date date="${pool.lastValidation}" /></td>
+ <td colspan="8" class="left"><fmt:int value="${pool.validations}" /> Connection Pool Monitor validation runs, last on <fmt:date date="${pool.lastValidation}" /></td>
 </tr>
 </c:if>
 <c:forEach var="con" items="${pool.poolInfo}">

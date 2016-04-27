@@ -51,7 +51,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 	 */
 	@Override
 	public void contextInitialized(ServletContextEvent e) {
-		e.getServletContext().setAttribute("startedOn", new java.util.Date());
+		e.getServletContext().setAttribute("startedOn", java.time.Instant.now());
 		_daemonGroup.setDaemon(true);
 
 		// Initialize system data
