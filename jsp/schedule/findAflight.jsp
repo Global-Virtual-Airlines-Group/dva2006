@@ -177,7 +177,6 @@ golgotha.onDOMReady(function() {
  <td class="label">Recent Routes</td>
  <td class="data">Show Routes flown at least <el:text name="maxLastFlown" size="2" max="4" value="${(empty fafCriteria || (fafCriteria.lastFlownInterval < 0)) ? '' : fafCriteria.lastFlownInterval}" /> days ago</td>
 </tr>
-<c:if test="${acarsEnabled}">
 <tr>
  <td class="label top">Search Options</td>
  <td class="data top"><el:box name="myEQTypes" value="true" checked="${param.myEQTypes}" label="My rated Equipment Types" onChange="golgotha.airportLoad.config.myRated = this.checked" /><br />
@@ -186,16 +185,8 @@ golgotha.onDOMReady(function() {
  <td class="data top"><el:box name="checkDispatch" idx="*" value="true" checked="${empty fafCriteria ? true : fafCriteria.checkDispatch}" label="Display Dispatch route count" /><br />
  <el:box name="dispatchOnly" idx="*" value="true" checked="${fafCriteria.dispatchOnly}" label="Flights with Dispatch routes only" /></td>
 </tr>
-</c:if>
-<c:if test="${!acarsEnabled}">
-<tr>
- <td class="label">&nbsp;</td>
- <td class="data" colspan="3"><el:box name="myEQTypes" value="true" checked="${param.myEQTypes}" label="My rated Equipment Types" onChange="golgotha.airportLoad.config.myRated = this.checked" /><br />
-<el:box name="showUTCTimes" value="true" checked="${param.showUTCTimes}" label="Show Departure/Arrival Times as UTC" /></td>
-</tr>
-</c:if>
 <tr class="title mid">
- <td colspan="4"><el:button ID="SearchButton" type="submit" label="SEARCH FLIGHT SCHEDULE" /></td>
+ <td colspan="4"><el:button type="submit" label="SEARCH FLIGHT SCHEDULE" /></td>
 </tr>
 </el:table>
 </el:form>
@@ -205,7 +196,7 @@ golgotha.onDOMReady(function() {
 <!-- Search Results Data -->
 <tr class="title caps">
  <td colspan="9" class="left"><span class="nophone">FLIGHT SCHEDULE </span>SEARCH RESULTS<c:if test="${!empty importDate}"> - IMPORTED ON <fmt:date date="${importDate}" t="HH:mm" /></c:if>
-<c:if test="${!empty effectiveDate}"> REPLAY OF <fmt:date date="${effectiveDate}" fmt="d" /></c:if></td>
+<c:if test="${!empty effectiveDate}"> REPLAY OF <fmt:date date="${effectiveDate}" fmt="d" tzName="UTC" /></c:if></td>
 </tr>
 
 <!-- Search Results Header Bar -->
@@ -234,8 +225,8 @@ golgotha.onDOMReady(function() {
  <td class="nophone"><fmt:date fmt="t" t="HH:mm" tzName="UTC" date="${flight.timeA}" /> UTC</td>
 </c:if>
 <c:if test="${!param.showUTCTimes}"> 
- <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${flight.airportD.TZ}" date="${flight.timeD}" showZone="true" /></td>
- <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${flight.airportA.TZ}" date="${flight.timeA}" showZone="true" /></td>
+ <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${flight.airportD.TZ}" date="${flight.timeD}" /></td>
+ <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${flight.airportA.TZ}" date="${flight.timeA}" /></td>
 </c:if>
  <td class="small"><fmt:int value="${flight.length / 10}" />:<fmt:int value="${(flight.length * 6) % 60}" fmt="00" /></td>
  <td class="small bld nophone"><fmt:int value="${flight.dispatchRoutes}" /></td>
@@ -245,9 +236,8 @@ golgotha.onDOMReady(function() {
 
 <!-- Button Bar -->
 <tr class="title">
- <td colspan="9">SET EQUIPMENT <el:combo name="eqOverride" size="1" firstEntry="-" options="${myEQ}" />&nbsp;
-<el:button ID="BuildButton" type="submit" label="ADD TO FLIGHT ASSIGNMENT" />&nbsp;
-<el:cmdbutton ID="BuildResetButton" url="resetassign" label="RESET RESULTS" /></td>
+ <td colspan="9">SET EQUIPMENT <el:combo name="eqOverride" size="1" firstEntry="-" options="${myEQ}" />&nbsp;<el:button type="submit" label="ADD TO FLIGHT ASSIGNMENT" />&nbsp;
+<el:cmdbutton url="resetassign" label="RESET RESULTS" /></td>
 </tr>
 </el:table>
 </el:form>
@@ -286,8 +276,8 @@ golgotha.onDOMReady(function() {
  <td class="nophone"><fmt:date fmt="t" t="HH:mm" tzName="UTC" date="${flight.timeA}" /> UTC</td>
 </c:if>
 <c:if test="${!param.showUTCTimes}"> 
- <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${flight.airportD.TZ}" date="${flight.timeD}" showZone="true" /></td>
- <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${flight.airportA.TZ}" date="${flight.timeA}" showZone="true" /></td>
+ <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${flight.airportD.TZ}" date="${flight.timeD}" /></td>
+ <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${flight.airportA.TZ}" date="${flight.timeA}" /></td>
 </c:if>
  <td class="small"><fmt:int value="${flight.length / 10}" />:<fmt:int value="${(flight.length * 6) % 60}" fmt="00" /></td>
  <td class="sec nophone"><fmt:distance value="${flight.distance}" /></td>
@@ -296,9 +286,7 @@ golgotha.onDOMReady(function() {
 
 <!-- Button Bar -->
 <tr class="title">
- <td colspan="7"><view:legend width="150" labels="Regular Flight,Historic Flight" classes=" ,opt2" />&nbsp;
-<el:cmdbutton ID="SaveButton" url="assignsave" label="SAVE FLIGHT ASSIGNMENT" />&nbsp;
-<el:cmdbutton ID="ClearButton" url="resetassign" label="CLEAR FLIGHT ASSIGNMENT" /></td>
+ <td colspan="7"><view:legend width="150" labels="Regular Flight,Historic Flight" classes=" ,opt2" />&nbsp;<el:cmdbutton url="assignsave" label="SAVE FLIGHT ASSIGNMENT" />&nbsp;<el:cmdbutton url="resetassign" label="CLEAR ASSIGNMENT" /></td>
 </tr>
 </el:table>
 </c:if>

@@ -57,7 +57,7 @@ golgotha.onDOMReady(function() {
 
 <!-- Table Header Bars -->
 <tr class="title">
- <td class="left caps" colspan="7"><span class="nophone"><content:airline /> FLIGHT </span>SCHEDULE<c:if test="${!empty importDate}"> IMPORTED ON <fmt:date date="${importDate}" /></c:if>
+ <td class="left caps" colspan="7"><span class="nophone"><content:airline /> FLIGHT </span>SCHEDULE<c:if test="${!empty importDate}"> IMPORTED ON <fmt:date date="${importDate}" t="HH:mm" /></c:if>
 <c:if test="${!empty effectiveDate}"> REPLAY OF <fmt:date date="${effectiveDate}" fmt="d" /></c:if></td>
 </tr>
 <tr class="title">
@@ -84,8 +84,8 @@ golgotha.onDOMReady(function() {
 <c:if test="${isSchedule}"> <td><el:cmd className="bld" url="sched" op="edit" linkID="${entry.flightCode}">${entry.flightCode}</el:cmd></td></c:if>
  <td class="sec bld">${entry.equipmentType}</td>
  <td class="small">${entry.airportD.name} (<fmt:airport airport="${entry.airportD}" />) to ${entry.airportA.name} (<fmt:airport airport="${entry.airportA}" />)</td>
- <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${entry.airportD.TZ}" date="${entry.timeD}" showZone="true" /></td>
- <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${entry.airportA.TZ}" date="${entry.timeA}" showZone="true" /></td>
+ <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${entry.airportD.TZ}" date="${entry.timeD}" /></td>
+ <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${entry.airportA.TZ}" date="${entry.timeA}" /></td>
  <td class="sec nophone"><fmt:distance value="${entry.distance}" /></td>
  <td><fmt:dec value="${entry.length / 10}" /> hours</td>
 </view:row>

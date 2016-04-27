@@ -155,7 +155,7 @@ throw new golgotha.event.ValidationError('Please provide a First or Last Name, P
 
 <!-- Table Legend Bar -->
 <tr class="title">
- <td colspan="8"><view:legend width="100" labels="Active,Inactive,Retired,On Leave,Transferred" classes=" ,opt2,opt3,warn,opt1" /></td>
+ <td colspan="8"><view:legend width="100" labels="Active,Inactive,Retired,On Leave,Transferred,Suspended" classes=" ,opt2,opt3,warn,opt1,err" /></td>
 </tr>
 </c:otherwise>
 </c:choose>
