@@ -15,18 +15,6 @@
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
-<c:if test="${access.canDelete && (!empty viewContext.results)}">
-<content:js name="datePicker" />
-<script type="text/javascript">
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-golgotha.form.validate({f:f.purgeDate, l:10, t:'Purge Date'});
-golgotha.form.submit(f);
-return true;
-};
-</script>
-</c:if>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -36,14 +24,13 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="routes.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <view:table cmd="routes">
 <!-- Table Header Bar -->
 <tr class="title caps">
- <td style="width:15%">DATE</td>
+ <td>DATE</td>
  <td style="width:15%">&nbsp;</td>
- <td style="width:10%">TYPE</td>
- <td>DESCRIPTION</td>
+ <td>TYPE</td>
+ <td class="nophone">DESCRIPTION</td>
 </tr>
 
 <!-- Table Data Section -->
@@ -52,25 +39,15 @@ return true;
  <td class="pri bld"><fmt:date fmt="d" date="${route.date}" /></td>
  <td><el:cmdbutton url="route" op="${route.type}" linkID="${fn:dateFmt(route.date, 'MMddyyyy')}" label="VIEW ROUTE" /></td>
  <td class="sec bld">${route.type}</td>
- <td class="left">${route.type} routes for <fmt:date fmt="d" date="${route.date}" />, via ${route.source}</td>
+ <td class="left nophone">${route.type} routes for <fmt:date fmt="d" date="${route.date}" />, via ${route.source}</td>
 </tr>
 </c:forEach>
 
 <!-- Scroll Bar -->
 <tr class="title">
-<c:if test="${access.canDelete && (!empty viewContext.results)}">
- <td colspan="3"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
- <td colspan="2">PURGE BEFORE <el:text name="purgeDate" idx="*" size="10" max="10" />
- <el:button label="CALENDAR" onClick="void show_calendar('forms[0].purgeDate')" />
- <el:cmdbutton ID="PurgeButton" url="routepurge" post="true" label="PURGE OCEANIC ROUTES" /></td>
-</c:if>
-<c:if test="${!access.canDelete || (empty viewContext.results)}">
- <td colspan="5"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
-</c:if>
+ <td colspan="4"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
 </tr>
 </view:table>
-</el:form>
-<br />
 <content:copyright />
 </content:region>
 </content:page>
