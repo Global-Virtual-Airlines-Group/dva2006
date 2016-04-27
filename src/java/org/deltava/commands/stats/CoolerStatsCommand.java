@@ -1,19 +1,16 @@
-// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
-import java.sql.Connection;
 import java.util.List;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-
-import org.deltava.util.ComboUtils;
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 
 /**
  * A Web Site Command to display Water Cooler statistics.
  * @author Luke
- * @version 2.6
+ * @version 7.0
  * @since 1.0
  */
 
@@ -26,8 +23,7 @@ public class CoolerStatsCommand extends AbstractViewCommand {
 	
 	// Group by options
 	private static final String[] GROUP_NAMES = {"Pilot Name", "Posting Date", "Posting Month"};
-	private static final String[] GROUP_CODE = {"CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME)", "DATE(CP.CREATED)",
-	      "DATE_FORMAT(DATE(CP.CREATED), '%M %x')"};
+	private static final String[] GROUP_CODE = {"CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME)", "DATE(CP.CREATED)", "DATE_FORMAT(DATE(CP.CREATED), '%M %x')"};
 	private static final List<?> GROUP_OPTIONS = ComboUtils.fromArray(GROUP_NAMES, GROUP_CODE);
 
 	/**
@@ -35,6 +31,7 @@ public class CoolerStatsCommand extends AbstractViewCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs.
 	 */
+   @Override
    public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the view context
@@ -58,14 +55,9 @@ public class CoolerStatsCommand extends AbstractViewCommand {
 		}
 
 		try {
-		   Connection con = ctx.getConnection();
-		   
-		   // Get the DAO and set limits
-		   GetStatistics dao = new GetStatistics(con);
+		   GetStatistics dao = new GetStatistics(ctx.getConnection());
 		   dao.setQueryStart(vc.getStart());
 		   dao.setQueryMax(vc.getCount());
-		   
-		   // Get the statistics
 		   vc.setResults(dao.getCoolerStatistics(vc.getSortType(), labelType, distinctType));
 		} catch (DAOException de) {
 		   throw new CommandException(de);

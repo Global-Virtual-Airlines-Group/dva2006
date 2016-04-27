@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display performance metrics.
  * @author Luke
- * @version 4.2
+ * @version 7.0
  * @since 1.0
  */
 
@@ -28,12 +28,10 @@ public class DashboardCommand extends AbstractCommand {
 	private static final String[] PIREP_GSQL = {"EQTYPE", "PILOT_ID", "DISPOSAL_ID", "DATE", "DATE_FORMAT(DATE, '%W')"};
 	
 	private static final String[] EXAM_GROUP_NAMES = {"Exam Name", "Pilot", "Scorer", "Exam Date", "Day of Week"};
-	private static final String[] EXAM_GSQL = {"E.NAME", "E.PILOT_ID", "E.GRADED_BY", "E.CREATED_ON",
-		"DATE_FORMAT(E.CREATED_ON, '%W')"};
+	private static final String[] EXAM_GSQL = {"E.NAME", "E.PILOT_ID", "E.GRADED_BY", "E.CREATED_ON", "DATE_FORMAT(E.CREATED_ON, '%W')"};
 	
 	private static final String[] CRIDE_GROUP_NAMES = {"Equipment Program", "Aircraft", "Pilot", "Scorer", "Date", "Day of Week"};
-	private static final String[] CRIDE_GSQL = {"CR.EQTYPE", "CR.ACTYPE", "CR.PILOT_ID", "CR.GRADED_BY", "CR.CREATED", 
-		"DATE_FORMAT(CR.CREATED, '%W')"};
+	private static final String[] CRIDE_GSQL = {"CR.EQTYPE", "CR.ACTYPE", "CR.PILOT_ID", "CR.GRADED_BY", "CR.CREATED", "DATE_FORMAT(CR.CREATED, '%W')"};
 	
 	private static final String[] COOLER_GROUP_NAMES = {"Date", "Day of Week"};
 	private static final String[] COOLER_GSQL = {"CREATED", "DATE_FORMAT(CREATED, '%W')"};
@@ -43,6 +41,7 @@ public class DashboardCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Get the sort type

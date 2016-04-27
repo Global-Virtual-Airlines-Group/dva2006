@@ -2,7 +2,7 @@
 package org.deltava.commands.stats;
 
 import java.util.*;
-import java.sql.Connection;
+import java.time.Instant;
 
 import org.deltava.beans.stats.*;
 
@@ -25,18 +25,16 @@ public class MembershipStatsCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Get quantiles
 		int quantiles = StringUtils.parse(ctx.getParameter("quantiles"), 10);
 		
-		Map<Integer, Date> qResults = null;
+		Map<Integer, Instant> qResults = null;
 		Collection<MembershipTotals> joinDates = null;
 		try {
-			Connection con = ctx.getConnection();
-			
-			// Get the DAO and the statistics
-			GetStatistics dao = new GetStatistics(con);
+			GetStatistics dao = new GetStatistics(ctx.getConnection());
 			ctx.setAttribute("totals", dao.getAirlineTotals(), REQUEST);
 			joinDates = dao.getJoinStats();
 			qResults = dao.getMembershipQuantiles(quantiles);
@@ -55,11 +53,11 @@ public class MembershipStatsCommand extends AbstractCommand {
 
 		// Save join statistics
 		ctx.setAttribute("joinDates", joinDates, REQUEST);
-		ctx.setAttribute("maxCount", new Integer(maxJoinCount), REQUEST);
+		ctx.setAttribute("maxCount", Integer.valueOf(maxJoinCount), REQUEST);
 		
 		// Save quantiles
 		ctx.setAttribute("quantiles", qResults, REQUEST);
-		ctx.setAttribute("quantileCount", new Integer(quantiles), REQUEST);
+		ctx.setAttribute("quantileCount", Integer.valueOf(quantiles), REQUEST);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

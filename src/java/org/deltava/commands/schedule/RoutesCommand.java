@@ -1,4 +1,4 @@
-// Copyright 2005, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import org.deltava.commands.*;
@@ -9,9 +9,9 @@ import org.deltava.dao.DAOException;
 import org.deltava.security.command.ScheduleAccessControl;
 
 /**
- * Web site command to return Preferred/Oceanic routes.
+ * A Web Site Command to return Preferred/Oceanic routes.
  * @author Luke
- * @version 2.2
+ * @version 7.0
  * @since 1.0
  */
 
@@ -22,7 +22,8 @@ public class RoutesCommand extends AbstractViewCommand {
      * @param ctx the Command context
      * @throws CommandException if an unhandled error occurs
      */
-    public void execute(CommandContext ctx) throws CommandException {
+    @Override
+	public void execute(CommandContext ctx) throws CommandException {
         
         // Get the view context
         ViewContext vc = initView(ctx);
