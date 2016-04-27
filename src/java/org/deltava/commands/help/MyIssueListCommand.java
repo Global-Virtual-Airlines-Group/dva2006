@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.help;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.security.command.HelpDeskAccessControl;
 /**
  * A Web Site Command to display a Pilot's Help Desk issues.
  * @author Luke
- * @version 2.6
+ * @version 7.0
  * @since 1.0
  */
 
@@ -24,15 +24,15 @@ public class MyIssueListCommand extends AbstractViewCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
-		int myID = ctx.getUser().getID();
-
-		// Get the view start/end
+		
 		ViewContext vc = initView(ctx);
 		try {
 			Connection con = ctx.getConnection();
 			
 			// Get the DAO and the issue list
+			int myID = ctx.getUser().getID();
 			GetHelp idao = new GetHelp(con);
 			idao.setQueryStart(vc.getStart());
 			idao.setQueryMax(vc.getCount());
@@ -41,11 +41,10 @@ public class MyIssueListCommand extends AbstractViewCommand {
 			
 			// Get Author IDs
 			Collection<Integer> IDs = new HashSet<Integer>();
-			for (Iterator<Issue> i = results.iterator(); i.hasNext(); ) {
-				Issue is = i.next();
-				IDs.add(new Integer(is.getAuthorID()));
-				IDs.add(new Integer(is.getAssignedTo()));
-				IDs.add(new Integer(is.getLastCommentAuthorID()));
+			for (Issue is : results) {
+				IDs.add(Integer.valueOf(is.getAuthorID()));
+				IDs.add(Integer.valueOf(is.getAssignedTo()));
+				IDs.add(Integer.valueOf(is.getLastCommentAuthorID()));
 			}
 
 			// Load Pilot IDs

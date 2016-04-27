@@ -1,7 +1,5 @@
-// Copyright 2008, 2009, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2012, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.main;
-
-import java.util.Date;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -11,7 +9,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to centralize weather information. 
  * @author Luke
- * @version 5.2
+ * @version 7.0
  * @since 2.2
  */
 
@@ -30,9 +28,7 @@ public class WeatherCenterCommand extends AbstractCommand {
 		
 		try {
 			GetMetadata mddao = new GetMetadata(ctx.getConnection());
-			String gfsDate = mddao.get("gfs.cycle");
-			if (gfsDate != null)
-				ctx.setAttribute("gfsCycle", new Date(Long.parseLong(gfsDate) * 1000), REQUEST);
+			ctx.setAttribute("gfsCycle", mddao.getDate("gfs.cycle"), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

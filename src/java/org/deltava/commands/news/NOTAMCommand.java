@@ -1,4 +1,4 @@
-// Copyright 2005, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2008, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.news;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.security.command.NewsAccessControl;
 /**
  * A Web Site Command to display Notices to Airmen (NOTAMs).
  * @author Luke
- * @version 2.6
+ * @version 7.0
  * @since 1.0
  */
 
@@ -24,7 +24,8 @@ public class NOTAMCommand extends AbstractViewCommand {
      * @param ctx the Command context
      * @throws CommandException if an unhandled error occurs
      */
-    public void execute(CommandContext ctx) throws CommandException {
+    @Override
+	public void execute(CommandContext ctx) throws CommandException {
 
         // Get/set start/count parameters
         ViewContext vc = initView(ctx);
@@ -46,7 +47,7 @@ public class NOTAMCommand extends AbstractViewCommand {
         	Notice n = (Notice) i.next();
         	NewsAccessControl access = new NewsAccessControl(ctx, n);
         	access.validate();
-        	accessMap.put(new Integer(n.getID()), access);
+        	accessMap.put(Integer.valueOf(n.getID()), access);
         }
         
         // Save our access

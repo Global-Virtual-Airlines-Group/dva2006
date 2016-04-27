@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.sql.Connection;
@@ -14,7 +14,7 @@ import org.deltava.security.command.PilotAccessControl;
 /**
  * A Web Site Command to promote a Pilot to Captain.
  * @author Luke
- * @version 3.3
+ * @version 7.0
  * @since 1.0
  */
 
@@ -25,6 +25,7 @@ public class PromoteCommand extends AbstractTestHistoryCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		try {
 			Connection con = ctx.getConnection();
