@@ -26,20 +26,20 @@
 <view:table cmd="tzones">
 <!-- Table Header Bar-->
 <tr class="title caps">
- <td style="width:30%">TIME ZONE NAME</td>
- <td style="width:10%">CODE</td>
+ <td class="nophone">TIME ZONE NAME</td>
+ <td class="nophone">CODE</td>
  <td style="width:35%">NAME</td>
  <td><el:cmdbutton url="tz" op="edit" label="NEW TIME ZONE" /></td>
 </tr>
 
 <!-- Table Data -->
 <c:forEach var="tz" items="${viewContext.results}">
-<c:set var="gmtOffset" value="${tz.timeZone.rawOffset / 1000}" scope="page" />
+<c:set var="gmtOffset" value="${tz.zone.rules.getOffset(now).totalSeconds}" scope="page" />
 <view:row entry="${tz}">
- <td class="bld"><el:cmd url="tz" op="edit" linkID="${tz.ID}">${tz.ID}</el:cmd></td>
- <td class="pri bld">${tz.abbr}</td>
+ <td class="nophone bld"><el:cmd url="tz" op="edit" linkID="${tz.ID}">${tz.ID}</el:cmd></td>
+ <td class="nophone pri bld">${tz.abbr}</td>
  <td><fmt:text value="${tz.name}" /></td>
- <td>GMT ${gmtOffset < 0 ? '' : '+'}<fmt:dec value="${gmtOffset / 3600}" fmt="#0.#" /> hours</td>
+ <td>GMT ${gmtOffset < 0 ? '' : '+'}<fmt:dec value="${gmtOffset / 3600.0}" fmt="#0.##" /> hours</td>
 </view:row>
 </c:forEach>
 
