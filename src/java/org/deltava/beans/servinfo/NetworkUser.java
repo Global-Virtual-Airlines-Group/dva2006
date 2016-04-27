@@ -140,27 +140,27 @@ public abstract class NetworkUser implements java.io.Serializable, Comparable<Ne
     /**
      * Updates the network user's name, stripping off the home airport.
      * @param name the user name
-     * @throws NullPointerException if name is null
      * @see NetworkUser#getName()
      */
     public void setName(String name) {
-    	while (name.indexOf("  ") > -1)
-    		name = name.replace("  ", " ");
+    	String n = name;
+    	while (n.indexOf("  ") > -1)
+    		n = n.replace("  ", " ");
     	
-    	int pos = name.lastIndexOf(' ');
-    	boolean oneSpace = (name.indexOf(' ') == pos);
+    	int pos = n.lastIndexOf(' ');
+    	boolean oneSpace = (n.indexOf(' ') == pos);
     	if (!oneSpace) {
-    		if (pos == (name.length() - 5))
-    			name = name.substring(0, pos);
-    		if (name.endsWith(" -"))
-    			name = name.substring(0, name.length() - 2);
+    		if (pos == (n.length() - 5))
+    			n = n.substring(0, pos);
+    		if (n.endsWith(" -"))
+    			n = n.substring(0, n.length() - 2);
     	}
     	
     	// Split the data
-    	pos = name.lastIndexOf(' ');
-    	setLastName(name.substring(pos + 1));
+    	pos = n.lastIndexOf(' ');
+    	setLastName(n.substring(pos + 1));
     	if (pos > -1)
-    		setFirstName(name.substring(0, pos));
+    		setFirstName(n.substring(0, pos));
     }
     
     /**
