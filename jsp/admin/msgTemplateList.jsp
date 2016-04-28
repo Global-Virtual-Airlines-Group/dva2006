@@ -35,7 +35,7 @@
 </tr>
 
 <!-- Table data -->
-<c:forEach var="template" items="${templates}">
+<c:forEach var="template" items="${viewContext.results}">
 <view:row entry="${template}">
  <td><el:cmd url="msgtemplate" className="pri bld" linkID="${template.name}" op="edit">${template.name}</el:cmd></td>
  <td class="sec bld nophone">${template.isHTML ? 'HTML' : '&nbsp;'}</td>
@@ -46,7 +46,7 @@
 
 <!-- Button Bar -->
 <tr class="title">
- <td colspan="5">&nbsp;</td>
+ <td colspan="5"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
 </tr>
 </view:table>
 <content:copyright />
