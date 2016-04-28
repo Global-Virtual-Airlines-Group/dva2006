@@ -73,10 +73,7 @@ public class TestInnovataGlobalLoad extends TestCase {
 		// Load Airlines
 		GetAirline adao = new GetAirline(_c);
 		_airlines = adao.getActive().values();
-		for (Iterator<Airline> i = _airlines.iterator(); i.hasNext();) {
-			Airline a = i.next();
-			_aCodes.addAll(a.getCodes());
-		}
+		_airlines.forEach(a-> _aCodes.addAll(a.getCodes()));
 		
 		// Load Database information
 		log.info("Loading Cross-Application data");
