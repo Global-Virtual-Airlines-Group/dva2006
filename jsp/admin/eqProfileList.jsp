@@ -14,6 +14,7 @@
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -28,28 +29,27 @@
 <!-- Table Header Bar-->
 <tr class="title caps">
  <td style="width:10%">PROGRAM NAME</td>
- <td style="width:5%">STAGE</td>
- <td style="width:12%">CHIEF PILOT</td>
- <td style="width:23%">RANKS</td>
+ <td>STAGE</td>
+ <td>CHIEF PILOT</td>
+ <td class="nophone">RANKS</td>
  <td style="width:6%">PILOTS</td>
 <c:if test="${isHR}">
  <td style="width:15%"><el:cmdbutton url="eqtype" op="edit" label="NEW EQUIPMENT TYPE" /></td>
 </c:if>
- <td>RATINGS</td>
+ <td class="nophone">RATINGS</td>
 </tr>
 
 <!-- Table data -->
 <c:set var="cspan" value="${isHR ? 2 : 1}" scope="page" />
-<c:forEach var="eqType" items="${eqTypes}">
+<c:forEach var="eqType" items="${viewContext.results}">
 <view:row entry="${eqType}">
  <td class="pri bld"><el:cmd url="eqtype" linkID="${eqType.name}" op="edit">${eqType.name}</el:cmd></td>
  <td class="sec bld"><fmt:int value="${eqType.stage}" /></td>
  <td><el:cmd url="profile" linkID="${fn:hex(eqType.CPID)}">${eqType.CPName}</el:cmd></td>
- <td class="sec small"><fmt:list value="${eqType.ranks}" delim=", " /></td>
+ <td class="sec small nophone"><fmt:list value="${eqType.ranks}" delim=", " /></td>
  <td><fmt:int value="${eqType.size}" /></td>
- <td class="left small" colspan="${cspan}"><span class="pri">PRIMARY: <fmt:list value="${eqType.primaryRatings}" delim=", " /></span>
-<c:if test="${!empty eqType.secondaryRatings}">
-<br />SECONDARY: <fmt:list value="${eqType.secondaryRatings}" delim=", " />
+ <td class="left small nophone" colspan="${cspan}"><span class="pri">PRIMARY: <fmt:list value="${eqType.primaryRatings}" delim=", " /></span>
+<c:if test="${!empty eqType.secondaryRatings}"><br />SECONDARY: <fmt:list value="${eqType.secondaryRatings}" delim=", " />
 </c:if>
 </td>
 </view:row>
@@ -57,7 +57,7 @@
 
 <!-- Button Bar -->
 <tr class="title">
- <td colspan="${cspan + 5}"><view:legend width="95" classes=" ,opt2" labels="Active,Inactive" /></td>
+ <td colspan="${cspan + 5}"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br /></view:scrollbar><view:legend width="95" classes=" ,opt2" labels="Active,Inactive" /></td>
 </tr>
 </view:table>
 <content:copyright />
