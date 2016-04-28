@@ -103,7 +103,7 @@ public class AIRACImportCommand extends NavDataImportCommand {
 
 							AirportLocation al = new AirportLocation(lat, lon);
 							al.setCode(txtData.substring(0, 5));
-							al.setAltitude(Integer.parseInt(txtData.substring(27, 32).trim()));
+							al.setAltitude(StringUtils.parse(txtData.substring(27, 32).trim(), 0));
 							al.setName(txtData.substring(34));
 							nd = al;
 							break;
@@ -198,8 +198,11 @@ public class AIRACImportCommand extends NavDataImportCommand {
 			regionCount = dao.updateRegions(nt);
 			
 			// Write the cycle ID and commit
-			SetMetadata mdwdao = new SetMetadata(con);
-			mdwdao.write("navdata.cycle", newCycle.toString());
+			if (newCycle != null) {
+				SetMetadata mdwdao = new SetMetadata(con);
+				mdwdao.write("navdata.cycle", newCycle.toString());
+			}
+				
 			ctx.commitTX();
 		} catch (IOException | DAOException ie) {
 			ctx.rollbackTX();
