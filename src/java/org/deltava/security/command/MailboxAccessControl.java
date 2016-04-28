@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.system.IMAPConfiguration;
@@ -8,13 +8,13 @@ import org.deltava.security.SecurityContext;
 /**
  * An Access Controller for mailbox profiles.
  * @author Luke
- * @version 2.4
+ * @version 7.0
  * @since 1.0
  */
 
 public class MailboxAccessControl extends AccessControl {
 
-	private IMAPConfiguration _cfg;
+	private final IMAPConfiguration _cfg;
 
 	private boolean _canCreate;
 	private boolean _canEdit;
@@ -33,6 +33,7 @@ public class MailboxAccessControl extends AccessControl {
 	/**
 	 * Calculates access rights.
 	 */
+	@Override
 	public void validate() {
 		validateContext();
 		_canCreate = _ctx.isUserInRole("Admin");

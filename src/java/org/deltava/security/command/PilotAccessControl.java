@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.*;
@@ -8,13 +8,13 @@ import org.deltava.security.SecurityContext;
 /**
  * An access controller for Pilot profile operations.
  * @author Luke
- * @version 3.3
+ * @version 7.0
  * @since 1.0
  */
 
 public class PilotAccessControl extends AccessControl {
 
-	protected Pilot _p;
+	protected final Pilot _p;
 
 	private boolean _isOurs;
 	private boolean _canViewEmail;
@@ -45,6 +45,7 @@ public class PilotAccessControl extends AccessControl {
 	/**
 	 * Calculates access rights.
 	 */
+	@Override
 	public void validate() {
 		validateContext();
 		if (_p == null)

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.testing.QuestionProfile;
@@ -10,7 +10,7 @@ import org.deltava.util.system.SystemData;
 /**
  * An Access Controller for Examination Question Profiles.
  * @author Luke
- * @version 5.1
+ * @version 7.0
  * @since 1.0
  */
 
@@ -37,6 +37,7 @@ public class QuestionProfileAccessControl extends AccessControl {
 	 * Calculates access rights.
 	 * @throws AccessControlException if the user cannot read the profile
 	 */
+	@Override
 	public void validate() throws AccessControlException {
 		validateContext();
 

@@ -1,7 +1,5 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
-
-import java.sql.Connection;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -11,7 +9,7 @@ import org.deltava.security.command.CertificationAccessControl;
 /**
  * A Web Site Command to display Flight Academy certifications.
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -22,13 +20,11 @@ public class CertificationListCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		try {
-			Connection con = ctx.getConnection();
-			
-			// Get the DAO and the certification profiles
-			GetAcademyCertifications dao = new GetAcademyCertifications(con);
+			GetAcademyCertifications dao = new GetAcademyCertifications(ctx.getConnection());
 			ctx.setAttribute("certs", dao.getAll(), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);

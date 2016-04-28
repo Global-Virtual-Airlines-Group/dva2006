@@ -1,4 +1,4 @@
-// Copyright 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import java.util.*;
@@ -11,13 +11,13 @@ import org.deltava.security.SecurityContext;
 /**
  * An Access Controller for Flight Academy training videos.
  * @author Luke
- * @version 2.2
+ * @version 7.0
  * @since 1.0
  */
 
 public class VideoAccessControl extends AccessControl {
 
-	private Collection<Course> _courses;
+	private final Collection<Course> _courses;
 	private Video _video;
 	
 	private boolean _canRead;
@@ -43,15 +43,14 @@ public class VideoAccessControl extends AccessControl {
     /**
      * Calculates access rights.
      */
+	@Override
 	public void validate() {
 		boolean isTV = (_video instanceof TrainingVideo);
 		_canRead = _ctx.isUserInRole("HR") || _ctx.isUserInRole("Instructor") || !isTV;
 		if (!_canRead && isTV) {
 			TrainingVideo tv = (TrainingVideo) _video;
-			for (Iterator<Course> i = _courses.iterator(); !_canRead && i.hasNext(); ) {
-				Course c = i.next();
+			for (Course c : _courses)
 				_canRead |= tv.getCertifications().contains(c.getName());
-			}
 		}
 	}
 

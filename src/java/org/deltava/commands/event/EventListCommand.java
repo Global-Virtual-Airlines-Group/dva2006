@@ -1,19 +1,15 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
-import java.sql.Connection;
-
 import org.deltava.commands.*;
-
-import org.deltava.dao.GetEvent;
-import org.deltava.dao.DAOException;
+import org.deltava.dao.*;
 
 import org.deltava.security.command.EventAccessControl;
 
 /**
  * A Web Site Command to display Online Events.
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -24,20 +20,14 @@ public class EventListCommand extends AbstractViewCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
-		// Get the view context
 		ViewContext vc = initView(ctx);
-
 		try {
-			Connection con = ctx.getConnection();
-
-			// Get the DAO
-			GetEvent dao = new GetEvent(con);
+			GetEvent dao = new GetEvent(ctx.getConnection());
 			dao.setQueryMax(vc.getCount());
 			dao.setQueryStart(vc.getStart());
-
-			// Get the events
 			vc.setResults(dao.getEvents());
 
 			// Calculate our access to create new events

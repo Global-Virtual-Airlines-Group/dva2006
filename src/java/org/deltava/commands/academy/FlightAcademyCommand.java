@@ -1,7 +1,8 @@
-// Copyright 2006, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.deltava.beans.Pilot;
@@ -15,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display the Flight Academy.
  * @author Luke
- * @version 3.6
+ * @version 7.0
  * @since 1.0
  */
 
@@ -26,6 +27,7 @@ public class FlightAcademyCommand extends AbstractAcademyHistoryCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Check if we're enabled
@@ -72,12 +74,8 @@ public class FlightAcademyCommand extends AbstractAcademyHistoryCommand {
 					i.remove();
 			}
 			
-			// Get Instructor IDs
-			Collection<Integer> IDs = new HashSet<Integer>();
-			for (Course c : academyHistory.getCourses())
-				IDs.add(new Integer(c.getInstructorID()));
-			
 			// Load Instructors
+			Collection<Integer> IDs = academyHistory.getCourses().stream().map(Course::getInstructorID).collect(Collectors.toSet());
 			GetUserData uddao = new GetUserData(con);
 			ctx.setAttribute("pilot", p, REQUEST);
 			ctx.setAttribute("pilots", pdao.get(uddao.get(IDs)), REQUEST);
