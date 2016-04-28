@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.Pilot;
@@ -10,7 +10,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An access controller for Flight Report operations.
  * @author Luke
- * @version 5.3
+ * @version 7.0
  * @since 1.0
  */
 
@@ -44,6 +44,7 @@ public class PIREPAccessControl extends AccessControl {
 	/**
 	 * Calculates access rights.
 	 */
+	@Override
 	public void validate() {
 		validateContext();
 		

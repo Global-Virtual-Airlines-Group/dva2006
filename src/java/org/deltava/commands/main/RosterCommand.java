@@ -1,4 +1,4 @@
-// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.main;
 
 import java.util.*;
@@ -15,15 +15,14 @@ import org.deltava.comparators.PilotComparator;
 /**
  * Command to display the Pilot Roster.
  * @author Luke
- * @version 2.6
+ * @version 7.0
  * @since 1.0
  */
 
 public class RosterCommand extends AbstractViewCommand {
 
     // List of query columns we can order by
-    private static final String[] SORT_CODE = {"P.FIRSTNAME", "P.LASTNAME", "P.LAST_LOGIN DESC", "P.CREATED",
-            "P.PILOT_ID", "P.EQTYPE", "P.RANK", "LEGS DESC", "HOURS DESC", "P.STATUS", "LASTFLIGHT DESC"};
+    private static final String[] SORT_CODE = {"P.FIRSTNAME", "P.LASTNAME", "P.LAST_LOGIN DESC", "P.CREATED", "P.PILOT_ID", "P.EQTYPE", "P.RANK", "LEGS DESC", "HOURS DESC", "P.STATUS", "LASTFLIGHT DESC"};
     private static final List<?> SORT_OPTIONS = ComboUtils.fromArray(PilotComparator.TYPES, SORT_CODE);
     
     /**
@@ -31,7 +30,8 @@ public class RosterCommand extends AbstractViewCommand {
      * @param ctx the Command context
      * @throws CommandException if an unhandled error occurs
      */
-    public void execute(CommandContext ctx) throws CommandException {
+    @Override
+	public void execute(CommandContext ctx) throws CommandException {
         
         // Get/set start/count parameters
         ViewContext vc = initView(ctx);

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.security.command.BusyTimeAccessControl;
 /**
  * A Web Site Command to display the Flight Academy Instruction Calendar.
  * @author Luke
- * @version 3.6
+ * @version 7.0
  * @since 1.0
  */
 
@@ -28,6 +28,7 @@ public class InstructionCalendarCommand extends AbstractCalendarCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Calculate busy create access rights
@@ -72,9 +73,9 @@ public class InstructionCalendarCommand extends AbstractCalendarCommand {
 			Collection<Integer> pilotIDs = new HashSet<Integer>();
 			for (Iterator<? extends InstructorBean> i = entries.iterator(); i.hasNext(); ) {
 				InstructorBean s = i.next();
-				pilotIDs.add(new Integer(s.getInstructorID()));
+				pilotIDs.add(Integer.valueOf(s.getInstructorID()));
 				if (s instanceof InstructionSession)
-					pilotIDs.add(new Integer(((InstructionSession) s).getPilotID()));
+					pilotIDs.add(Integer.valueOf(((InstructionSession) s).getPilotID()));
 			}
 			
 			// Load the Pilots

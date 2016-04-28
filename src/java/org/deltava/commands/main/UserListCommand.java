@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.main;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to list logged in users.
  * @author Luke
- * @version 2.8
+ * @version 7.0
  * @since 1.0
  */
 
@@ -28,7 +28,8 @@ public class UserListCommand extends AbstractCommand {
      * @param ctx the Command context
      * @throws CommandException if an error occurs
      */
-    public void execute(CommandContext ctx) throws CommandException {
+    @Override
+	public void execute(CommandContext ctx) throws CommandException {
     	
     	// Get the sort type
     	String sortOpt = ctx.getParameter("sortOpt");
@@ -38,10 +39,9 @@ public class UserListCommand extends AbstractCommand {
     	// Initialize the comparator
     	Collection<Integer> IDs = new HashSet<Integer>();
     	Map<Pilot, UserSession> users = new TreeMap<Pilot, UserSession>(new PilotComparator(sortOpt));
-    	for (Iterator<UserSession> i = UserPool.getPilots().iterator(); i.hasNext(); ) {
-    		UserSession us = i.next();
+    	for (UserSession us : UserPool.getPilots()) {
     		users.put(us.getPerson(), us);
-    		IDs.add(new Integer(us.getPerson().getID()));
+    		IDs.add(Integer.valueOf(us.getPerson().getID()));
     	}
     	
         // Check if we're displaying a map

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.security.SecurityContext;
@@ -8,13 +8,13 @@ import org.deltava.beans.Staff;
 /**
  * An access controller for Staff Profile operations.
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
 public final class StaffAccessControl extends AccessControl {
 	
-	private Staff _sp;
+	private final Staff _sp;
 	
 	private boolean _canEdit;
 	private boolean _canDelete;
@@ -33,6 +33,7 @@ public final class StaffAccessControl extends AccessControl {
     /**
      * Calculates access rights.
      */
+	@Override
 	public void validate() {
 		validateContext();
 		

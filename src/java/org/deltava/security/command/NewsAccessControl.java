@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.security.SecurityContext;
@@ -9,13 +9,13 @@ import org.deltava.beans.Notice;
 /**
  * An Access Controller for System News and NOTAMs.
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
 public class NewsAccessControl extends AccessControl {
 
-   private News _nws;
+   private final News _nws;
    
    private boolean _canCreateNews;
    private boolean _canCreateNOTAM;
@@ -36,6 +36,7 @@ public class NewsAccessControl extends AccessControl {
    /**
     * Calculates access rights.
     */
+   @Override
    public void validate() {
       validateContext();
       

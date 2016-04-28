@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import java.util.List;
@@ -11,7 +11,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An Access Controller for Water Cooler Threads.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -70,9 +70,9 @@ public final class CoolerThreadAccessControl extends AccessControl {
 
     /**
      * Calculates access rights.
-     * @throws IllegalStateException if the message thread or cooler channel were not set
      */
-    public void validate() {
+    @Override
+	public void validate() {
         validateContext();
         
         // Validate that the thread has been set

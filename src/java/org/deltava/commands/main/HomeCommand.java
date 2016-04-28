@@ -130,7 +130,8 @@ public class HomeCommand extends AbstractCommand {
 					break;
 
 				case ACARS_USERS:
-					ctx.setAttribute("acarsPool", IPCUtils.deserialize(acarsPool.getPoolInfo(false)), REQUEST);
+					if (acarsPool != null)
+						ctx.setAttribute("acarsPool", IPCUtils.deserialize(acarsPool.getPoolInfo(false)), REQUEST);
 					break;
 					
 				// Latest takeoffs and landings
@@ -155,6 +156,7 @@ public class HomeCommand extends AbstractCommand {
 					break;
 
 				// Newest Century Club members
+				default:
 				case CENTURY_CLUB:
 				case PROMOTIONS:
 					GetStatusUpdate sudao = new GetStatusUpdate(con);

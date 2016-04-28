@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display Pilots eligible for Promotion.
  * @author Luke
- * @version 2.3
+ * @version 7.0
  * @since 1.0
  */
 
@@ -26,6 +26,7 @@ public class PromotionQueueCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Get the equipment type
@@ -51,11 +52,10 @@ public class PromotionQueueCommand extends AbstractCommand {
 
 		// Check pilot access
 		Map<Integer, AccessControl> accessMap = new HashMap<Integer, AccessControl>();
-		for (Iterator<Pilot> i = pilots.iterator(); i.hasNext();) {
-			Pilot p = i.next();
+		for (Pilot p : pilots) {
 			PilotAccessControl access = new PilotAccessControl(ctx, p);
 			access.validate();
-			accessMap.put(new Integer(p.getID()), access);
+			accessMap.put(Integer.valueOf(p.getID()), access);
 		}
 
 		// Save pilot access

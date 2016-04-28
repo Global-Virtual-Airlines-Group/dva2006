@@ -1,4 +1,4 @@
-// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to list Flight Assignments.
  * @author Luke
- * @version 2.6
+ * @version 7.0
  * @since 1.0
  */
 
@@ -31,6 +31,7 @@ public class AssignmentListCommand extends AbstractViewCommand {
     * @param ctx the Command context
     * @throws CommandException if an error occurs
     */
+   @Override
    public void execute(CommandContext ctx) throws CommandException {
 
       // Get the view context
@@ -68,13 +69,11 @@ public class AssignmentListCommand extends AbstractViewCommand {
          for (Iterator<?> i = vc.getResults().iterator(); i.hasNext(); ) {
          	AssignmentInfo ai = (AssignmentInfo) i.next();
          	if (ai.getPilotID() != 0)
-         		pilotIDs.add(new Integer(ai.getPilotID()));
+         		pilotIDs.add(Integer.valueOf(ai.getPilotID()));
          	
          	// Calculate access to this assignment
             AssignmentAccessControl access = new AssignmentAccessControl(ctx, ai);
             access.validate();
-            
-            // Add to list
             accessList.add(access);
          }
          

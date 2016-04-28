@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.hr.TransferRequest;
@@ -8,13 +8,13 @@ import org.deltava.security.SecurityContext;
 /**
  * An Access Controller for equipment program Transfer Requests.
  * @author Luke
- * @version 3.3
+ * @version 7.0
  * @since 1.0
  */
 
 public class TransferAccessControl extends AccessControl {
 
-   private TransferRequest _treq;
+   private final TransferRequest _treq;
    
    private boolean _canAssignRide;
    private boolean _canToggleRatings;
@@ -36,6 +36,7 @@ public class TransferAccessControl extends AccessControl {
     * Calculates access rights.
     * @throws AccessControlException if the Transfer Request cannot be viewed
     */
+   @Override
    public void validate() throws AccessControlException {
       validateContext();
       

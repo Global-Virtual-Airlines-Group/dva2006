@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2010, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.security.SecurityContext;
@@ -8,7 +8,7 @@ import org.deltava.beans.fleet.LibraryEntry;
 /**
  * An Access Controller to support Fleet/File/Document Library entry operations.
  * @author Luke
- * @version 5.3
+ * @version 7.0
  * @since 1.0
  */
 
@@ -41,7 +41,8 @@ public class FleetEntryAccessControl extends AccessControl {
    /**
     * Calculates access rights.
     */
-   public void validate() {
+   @Override
+public void validate() {
       validateContext();
       _canCreate = _ctx.isUserInRole("Fleet");
       if (_entry == null) return;

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.security.SecurityContext;
@@ -8,7 +8,7 @@ import org.deltava.beans.testing.*;
 /**
  * An Access Controller for Applicant Questionnaires.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -33,6 +33,7 @@ public class QuestionnaireAccessControl extends AccessControl {
 	/**
 	 * Calculates access rights.
 	 */
+	@Override
 	public void validate() {
 
 		// Set role values
