@@ -5,6 +5,7 @@ import java.io.*;
 import java.util.*;
 import java.time.*;
 import java.time.format.*;
+import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 
 import org.apache.log4j.Logger;
@@ -29,8 +30,8 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 
 	private static final Logger log = Logger.getLogger(GetFullSchedule.class);
 	
-	private final DateTimeFormatter _df = new DateTimeFormatterBuilder().appendPattern("dd/MM/yyyy HH:mm").parseLenient().toFormatter();
-	private final DateTimeFormatter _tf = new DateTimeFormatterBuilder().appendPattern("HH:mm").parseLenient().toFormatter();
+	private final DateTimeFormatter _df = new DateTimeFormatterBuilder().appendPattern("dd/MM/yyyy").parseDefaulting(ChronoField.SECOND_OF_DAY, 0).toFormatter();
+	private DateTimeFormatter _tf = new DateTimeFormatterBuilder().appendPattern("HH:mm:ss").toFormatter();
 
 	private static final List<String> GROUND_EQ = Arrays.asList("TRN", "BUS", "LMO", "RFS");
 
@@ -93,7 +94,7 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 		// Check the date
 		try {
 			LocalDateTime sd = LocalDateTime.parse(entries.get(5), _df);
-			LocalDateTime ed = LocalDateTime.parse(entries.get(6), _df).plusDays(1);
+			LocalDateTime ed = LocalDateTime.parse(entries.get(6), _df).plusDays(1).minusSeconds(1);
 			if (_effDate.isBefore(sd) || _effDate.isAfter(ed))
 				return false;
 		} catch (Exception e) {
@@ -134,8 +135,12 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 	 * @param dt the effective date/time
 	 */
 	public void setEffectiveDate(LocalDateTime dt) {
-		if (dt != null)
+		if (dt != null) {
 			_effDate = dt.truncatedTo(ChronoUnit.DAYS);
+			DateTimeFormatterBuilder tfb = new DateTimeFormatterBuilder().appendPattern("HH:mm:ss").parseLenient();
+			tfb.parseDefaulting(ChronoField.YEAR, _effDate.getYear()).parseDefaulting(ChronoField.DAY_OF_YEAR, _effDate.getDayOfYear());
+			_tf = tfb.toFormatter();
+		}
 	}
 
 	/**
