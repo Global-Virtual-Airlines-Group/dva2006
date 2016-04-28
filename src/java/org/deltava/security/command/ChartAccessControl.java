@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.security.SecurityContext;
@@ -6,7 +6,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An Access Controller for Approach Charts. 
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -28,6 +28,7 @@ public class ChartAccessControl extends AccessControl {
     * Calculates access rights.
     * @throws AccessControlException if the user is unauthenticated
     */
+   @Override
    public void validate() throws AccessControlException {
 	   validateContext();
       

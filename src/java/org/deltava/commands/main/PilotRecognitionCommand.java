@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.main;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to display Pilot accomplishments.
  * @author Luke
- * @version 3.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -22,6 +22,7 @@ public class PilotRecognitionCommand extends AbstractCommand {
      * @param ctx the Command context
      * @throws CommandException if an unhandled error occurs
      */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		try {
@@ -46,12 +47,7 @@ public class PilotRecognitionCommand extends AbstractCommand {
 			for (Iterator<Map.Entry<String, Collection<StatusUpdate>>> i = updates.entrySet().iterator(); i.hasNext(); ) {
 				Map.Entry<String, Collection<StatusUpdate>> me = i.next();
 				ctx.setAttribute(me.getKey(), me.getValue(), REQUEST);
-				
-				// Save pilot IDs
-				for (Iterator<StatusUpdate> ui = me.getValue().iterator(); ui.hasNext(); ) {
-					StatusUpdate upd = ui.next();
-					IDs.add(Integer.valueOf(upd.getID()));
-				}
+				me.getValue().forEach(upd -> IDs.add(Integer.valueOf(upd.getID())));
 			}
 			
 			// Load the pilot IDs

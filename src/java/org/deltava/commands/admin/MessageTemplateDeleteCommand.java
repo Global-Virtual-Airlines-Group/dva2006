@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.sql.Connection;
@@ -16,7 +16,7 @@ import org.deltava.security.command.MessageAccessControl;
 /**
  * A Web Site Command to delete Message Templates.
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -27,6 +27,7 @@ public class MessageTemplateDeleteCommand extends AbstractCommand {
      * @param ctx the Command context
      * @throws CommandException if an error occurs
      */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		try {

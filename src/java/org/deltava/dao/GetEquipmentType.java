@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2013, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to retrieve equipment type profiles.
  * @author Luke
- * @version 6.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -49,6 +49,7 @@ public class GetEquipmentType extends DAO {
 	 */
 	public EquipmentType get(String eqType, String dbName) throws DAOException {
 		try {
+			String db = dbName;
 			if (dbName == null) {
 				prepareStatementWithoutLimits("SELECT AI.DBNAME, CASE AI.DBNAME WHEN ? THEN 1 ELSE 0 END AS SRT FROM "
 						+ "common.AIRLINEINFO AI, common.EQPROGRAMS EP WHERE (EP.OWNER=AI.CODE) AND (EP.EQTYPE=?) "
@@ -59,11 +60,11 @@ public class GetEquipmentType extends DAO {
 				// Execute the query
 				try (ResultSet rs = _ps.executeQuery()) {
 					if (rs.next())
-						dbName = rs.getString(1);
+						db = rs.getString(1);
 				}
 				
 				_ps.close();
-				if (dbName == null)
+				if (db == null)
 					return null;
 			}
 			
@@ -73,13 +74,11 @@ public class GetEquipmentType extends DAO {
 				return eq;
 			
 			// Build the SQL statement
-			StringBuilder sqlBuf = new StringBuilder("SELECT EQ.*, EP.OWNER, EP.STAGE, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME), "
-				+ "P.EMAIL FROM ");
-			sqlBuf.append(dbName);
+			StringBuilder sqlBuf = new StringBuilder("SELECT EQ.*, EP.OWNER, EP.STAGE, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME), P.EMAIL FROM ");
+			sqlBuf.append(db);
 			sqlBuf.append(".EQTYPES EQ, common.EQPROGRAMS EP, common.AIRLINEINFO AI, ");
-			sqlBuf.append(dbName);
-			sqlBuf.append(".PILOTS P WHERE (EP.EQTYPE=EQ.EQTYPE) AND (EQ.CP_ID=P.ID) AND (EP.OWNER=AI.CODE) AND "
-				+ "(AI.DBNAME=?) AND (EQ.EQTYPE=?) LIMIT 1");
+			sqlBuf.append(db);
+			sqlBuf.append(".PILOTS P WHERE (EP.EQTYPE=EQ.EQTYPE) AND (EQ.CP_ID=P.ID) AND (EP.OWNER=AI.CODE) AND (AI.DBNAME=?) AND (EQ.EQTYPE=?) LIMIT 1");
 
 			// Prepare the statement
 			prepareStatementWithoutLimits(sqlBuf.toString());
@@ -142,13 +141,12 @@ public class GetEquipmentType extends DAO {
 	public Collection<EquipmentType> getByStage(int stage, String dbName) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT EQ.*, EP.OWNER, EP.STAGE, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME), "
-			+ "P.EMAIL FROM common.EQPROGRAMS EP, common.AIRLINEINFO AI, ");
-		sqlBuf.append(formatDBName(dbName));
+		String db = formatDBName(dbName);
+		StringBuilder sqlBuf = new StringBuilder("SELECT EQ.*, EP.OWNER, EP.STAGE, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME), P.EMAIL FROM common.EQPROGRAMS EP, common.AIRLINEINFO AI, ");
+		sqlBuf.append(db);
 		sqlBuf.append(".EQTYPES EQ, ");
-		sqlBuf.append(formatDBName(dbName));
-		sqlBuf.append(".PILOTS P WHERE (EP.OWNER=AI.CODE) AND (AI.DBNAME=?) AND (EP.EQTYPE=EQ.EQTYPE) AND "
-			+ "(EQ.CP_ID=P.ID) AND (EP.STAGE=?) ORDER BY EP.STAGE, EQ.EQTYPE");
+		sqlBuf.append(db);
+		sqlBuf.append(".PILOTS P WHERE (EP.OWNER=AI.CODE) AND (AI.DBNAME=?) AND (EP.EQTYPE=EQ.EQTYPE) AND (EQ.CP_ID=P.ID) AND (EP.STAGE=?) ORDER BY EP.STAGE, EQ.EQTYPE");
 		
 		try {
 			prepareStatement(sqlBuf.toString());
@@ -236,11 +234,11 @@ public class GetEquipmentType extends DAO {
 	public Collection<EquipmentType> getActive(String dbName) throws DAOException {
 
 		// Build the SQL statement
-		dbName = formatDBName(dbName);
+		String db = formatDBName(dbName);
 		StringBuilder sqlBuf = new StringBuilder("SELECT EQ.*, EP.OWNER, EP.STAGE, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME), P.EMAIL FROM ");
-		sqlBuf.append(dbName);
+		sqlBuf.append(db);
 		sqlBuf.append(".PILOTS P, common.EQPROGRAMS EP, common.AIRLINEINFO AI, ");
-		sqlBuf.append(dbName);
+		sqlBuf.append(db);
 		sqlBuf.append(".EQTYPES EQ WHERE (AI.DBNAME=?) AND (EP.OWNER=AI.CODE) AND (EP.EQTYPE=EQ.EQTYPE) AND "
 			+ "(EQ.CP_ID=P.ID) AND (EQ.ACTIVE=?) ORDER BY EP.STAGE, EQ.EQTYPE");
 

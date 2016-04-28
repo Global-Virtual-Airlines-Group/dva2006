@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.security.command.InstructionAccessControl;
 /**
  * A Web Site Command to cancel a Flight Academy Instruction Session.
  * @author Luke
- * @version 3.4
+ * @version 7.0
  * @since 1.0
  */
 
@@ -27,6 +27,7 @@ public class InstructionCancelCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Init the message context
@@ -55,9 +56,9 @@ public class InstructionCancelCommand extends AbstractCommand {
 			
 			// Figure out the recipients
 			Collection<Integer> IDs = new HashSet<Integer>();
-			IDs.add(new Integer(s.getInstructorID()));
-			IDs.add(new Integer(s.getPilotID()));
-			IDs.remove(new Integer(ctx.getUser().getID()));
+			IDs.add(Integer.valueOf(s.getInstructorID()));
+			IDs.add(Integer.valueOf(s.getPilotID()));
+			IDs.remove(Integer.valueOf(ctx.getUser().getID()));
 			
 			// Load recipient profiles
 			GetUserData uddao = new GetUserData(con);

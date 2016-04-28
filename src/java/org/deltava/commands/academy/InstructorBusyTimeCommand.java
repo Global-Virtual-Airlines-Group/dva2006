@@ -1,7 +1,8 @@
-// Copyright 2007, 2008, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.deltava.beans.Pilot;
@@ -17,7 +18,7 @@ import org.deltava.security.command.BusyTimeAccessControl;
 /**
  * A Web Site Command to list busy time for a Flight Academy Instructor.
  * @author Luke
- * @version 3.6
+ * @version 7.0
  * @since 1.0
  */
 
@@ -28,6 +29,7 @@ public class InstructorBusyTimeCommand extends AbstractCalendarCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Calculate create access rights
@@ -46,8 +48,7 @@ public class InstructorBusyTimeCommand extends AbstractCalendarCommand {
 			
 			// Calculcate access rights
 			Map<InstructionBusy, BusyTimeAccessControl> accessMap = new LinkedHashMap<InstructionBusy, BusyTimeAccessControl>();
-			for (Iterator<InstructionBusy> i = busyTime.iterator(); i.hasNext(); ) {
-				InstructionBusy ib = i.next();
+			for (InstructionBusy ib : busyTime) {
 				BusyTimeAccessControl access = new BusyTimeAccessControl(ctx, ib);
 				access.validate();
 				accessMap.put(ib, access);
@@ -62,14 +63,8 @@ public class InstructorBusyTimeCommand extends AbstractCalendarCommand {
 			for (AirlineInformation ai : uddao.getAirlines(true).values())
 				instructors.addAll(pdao.getByRole("Instructor", ai.getDB()));
 
-			// Get the Pilot IDs from the sessions
-			Collection<Integer> pilotIDs = new HashSet<Integer>();
-			for (Iterator<InstructionBusy> i = busyTime.iterator(); i.hasNext(); ) {
-				InstructionBusy s = i.next();
-				pilotIDs.add(new Integer(s.getID()));
-			}
-
 			// Load the Pilots
+			Collection<Integer> pilotIDs = busyTime.stream().map(InstructionBusy::getID).collect(Collectors.toSet());
 			ctx.setAttribute("pilots", pdao.get(uddao.get(pilotIDs)), REQUEST);
 			ctx.setAttribute("instructors", instructors, REQUEST);
 		} catch (DAOException de) {

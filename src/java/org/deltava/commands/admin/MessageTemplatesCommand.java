@@ -1,37 +1,34 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
-import java.sql.Connection;
-
 import org.deltava.commands.*;
-
-import org.deltava.dao.GetMessageTemplate;
-import org.deltava.dao.DAOException;
+import org.deltava.dao.*;
 
 import org.deltava.security.command.MessageAccessControl;
 
 /**
  * A Web Site Command to display Message Template lists.
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
-public class MessageTemplatesCommand extends AbstractCommand {
+public class MessageTemplatesCommand extends AbstractViewCommand {
 
 	/**
      * Executes the command.
      * @param ctx the Command context
      * @throws CommandException if an error occurs
      */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
-
+		
+		ViewContext vc = initView(ctx);
 		try {
-			Connection con = ctx.getConnection();
-			
-			// Get the DAO and the templates
-			GetMessageTemplate dao = new GetMessageTemplate(con);
-			ctx.setAttribute("templates", dao.getAll(), REQUEST);
+			GetMessageTemplate dao = new GetMessageTemplate(ctx.getConnection());
+			dao.setQueryStart(vc.getStart());
+			dao.setQueryMax(vc.getCount());
+			vc.setResults(dao.getAll());
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

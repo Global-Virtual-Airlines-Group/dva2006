@@ -210,11 +210,11 @@ public class GetPilotDirectory extends GetPilot implements PersonUniquenessDAO {
 	public List<Pilot> getByRole(String roleName, String dbName, boolean activeOnly) throws DAOException {
 
 		// Build the SQL statement
-		dbName = formatDBName(dbName);
+		String db = formatDBName(dbName);
 		StringBuilder sqlBuf = new StringBuilder("SELECT P.ID FROM ");
-		sqlBuf.append(dbName);
+		sqlBuf.append(db);
 		sqlBuf.append(".PILOTS P LEFT JOIN ");
-		sqlBuf.append(dbName);
+		sqlBuf.append(db);
 		sqlBuf.append(".ROLES R ON (P.ID=R.ID) WHERE (R.ROLE=?) ");
 		if (activeOnly)
 			sqlBuf.append("AND (P.STATUS=?) ");

@@ -1,4 +1,4 @@
-// Copyright 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.security.SecurityContext;
@@ -6,7 +6,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An Access Controller for Flight Academy certification profiles.
  * @author Luke
- * @version 2.2
+ * @version 7.0
  * @since 1.0
  */
 
@@ -29,16 +29,14 @@ public class CertificationAccessControl extends AccessControl {
 
 	/**
 	 * Calculates access rights.
-	 * @throws AccessControlException if the user cannot view the Certification profile.
 	 */
-	public void validate() throws AccessControlException {
+	@Override
+	public void validate() {
 		validateContext();
 
-		// Calculate roles - abort if we cannot read
+		// Calculate roles
 		boolean isHR = _ctx.isUserInRole("HR");
 		boolean isAcademyAdmin = _ctx.isUserInRole("AcademyAdmin");
-		if (!isHR && !_ctx.isUserInRole("Instructor") && !isAcademyAdmin)
-			return;
 		
 		_canCreate = isHR || isAcademyAdmin;
 		_canCreateVideo = isHR || isAcademyAdmin;

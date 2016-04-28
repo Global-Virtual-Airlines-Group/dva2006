@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.system.MessageTemplate;
@@ -8,13 +8,13 @@ import org.deltava.security.SecurityContext;
 /**
  * An Access Controller for Message Templates.
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
 public final class MessageAccessControl extends AccessControl {
 	
-	private MessageTemplate _mt;
+	private final MessageTemplate _mt;
 	
 	private boolean _canCreate;
 	private boolean _canEdit;
@@ -32,14 +32,12 @@ public final class MessageAccessControl extends AccessControl {
 	/**
 	 * Calculates a User's access.
 	 */
+	@Override
 	public void validate() {
 		validateContext();
 		
-		// Set status flags
 		_canCreate = _ctx.isUserInRole("HR") || _ctx.isUserInRole("Developer");
 		_canEdit = _canCreate;
-		
-		// Check if we can delete this message template
 		_canDelete = (_ctx.isUserInRole("Admin") && (_mt != null));
 	}
 

@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -16,16 +16,16 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command for users to view Promotion Eligibility. 
  * @author Luke
- * @version 3.3
+ * @version 7.0
  * @since 3.0
  */
 
 public class PromotionEligibilityCommand extends AbstractTestHistoryCommand {
 
 	private class EligibilityMessage implements ViewEntry {
-		private boolean _isOK;
-		private boolean _isEligible;
-		private String _msg;
+		private final boolean _isOK;
+		private final boolean _isEligible;
+		private final String _msg;
 		
 		EligibilityMessage(String msg) {
 			this(false, false, msg);
@@ -38,12 +38,14 @@ public class PromotionEligibilityCommand extends AbstractTestHistoryCommand {
 			_msg = msg;
 		}
 		
+		@Override
 		public String getRowClassName() {
 			if (!_isOK && _isEligible)
 				return "opt2";
 			return _isOK ? null : "warn";
 		}
 		
+		@Override
 		public String toString() {
 			return _msg;
 		}

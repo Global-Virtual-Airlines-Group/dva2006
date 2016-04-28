@@ -1,7 +1,8 @@
-// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.deltava.beans.UserDataMap;
@@ -13,7 +14,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to list pending equipment program Transfer Requests.
  * @author Luke
- * @version 3.3
+ * @version 7.0
  * @since 1.0
  */
 
@@ -24,6 +25,7 @@ public class TransferListCommand extends AbstractViewCommand {
     * @param ctx the Command context
     * @throws CommandException if an error occurs
     */
+   @Override
    public void execute(CommandContext ctx) throws CommandException {
       
       // Initialize the view context
@@ -43,18 +45,12 @@ public class TransferListCommand extends AbstractViewCommand {
          Collection<TransferRequest> results = allEQ ? txdao.getAll(vc.getSortType()) : txdao.getByEQ(eqType, vc.getSortType());
          vc.setResults(results);
          
-         // Build a set of Pilot IDs
-         Collection<Integer> pilotIDs = new HashSet<Integer>();
-         for (Iterator<TransferRequest> i = results.iterator(); i.hasNext(); ) {
-            TransferRequest txreq = i.next();
-            pilotIDs.add(new Integer(txreq.getID()));
-         }
-         
          // Get equipment types
          GetEquipmentType eqdao = new GetEquipmentType(con);
          ctx.setAttribute("activeEQ", eqdao.getActive(), REQUEST);
          
          // Save the Pilot beans in the request
+         Collection<Integer> pilotIDs = results.stream().map(TransferRequest::getID).collect(Collectors.toSet());
          GetUserData uddao = new GetUserData(con);
          UserDataMap udm = uddao.get(pilotIDs);
          GetPilot pdao = new GetPilot(con);

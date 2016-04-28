@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -15,12 +15,13 @@ import org.deltava.dao.*;
 import org.deltava.mail.*;
 
 import org.deltava.util.ComboUtils;
+import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to send group e-mail messages.
  * @author Luke
- * @version 2.6
+ * @version 7.0
  * @since 1.0
  */
 
@@ -33,6 +34,7 @@ public class MassMailingCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the command result and equipment type to process
@@ -54,6 +56,8 @@ public class MassMailingCommand extends AbstractCommand {
 
 		// Check if we're sending to a role
 		boolean isRole = (eqType != null) && (eqType.startsWith("$role_"));
+		if (eqType == null)
+			eqType = "";
 
 		List<? extends EMailAddress> pilots = new ArrayList<EMailAddress>();
 		Collection<Object> eqTypes = null;
@@ -82,7 +86,7 @@ public class MassMailingCommand extends AbstractCommand {
 				GetPilot dao = new GetPilot(con);
 				pilots = dao.getActivePilots(null);
 				ctx.setAttribute("eqType", eqType, REQUEST);
-			} else if (eqType != null) {
+			} else if (!StringUtils.isEmpty(eqType)) {
 				GetPilot dao = new GetPilot(con);
 				pilots = dao.getPilotsByEQ(eqdao.get(ctx.getUser().getEquipmentType(), SystemData.get("airline.db")), null, true, null);
 				ctx.setAttribute("eqType", eqType, REQUEST);
@@ -107,7 +111,7 @@ public class MassMailingCommand extends AbstractCommand {
 		ctx.setAttribute("eqTypes", eqTypes, REQUEST);
 
 		// If we're not sending to anyone, just redirect to the JSP
-		if (eqType == null) {
+		if (StringUtils.isEmpty(eqType)) {
 			result.setURL("/jsp/admin/massMail.jsp");
 			result.setSuccess(true);
 			return;

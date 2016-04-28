@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.security.SecurityContext;
@@ -6,7 +6,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An Access Controller for Equipment Type profile operations.
  * @author Luke
- * @version 2.6
+ * @version 7.0
  * @since 1.0
  */
 
@@ -27,6 +27,7 @@ public final class EquipmentAccessControl extends AccessControl {
     /**
      * Calculates access rights.
      */
+	@Override
 	public void validate() {
 		validateContext();
 

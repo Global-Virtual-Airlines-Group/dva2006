@@ -127,6 +127,9 @@ public class CourseDisposalCommand extends AbstractCommand {
 					mctx.setTemplate(mtdao.get("COURSECOMPLETE"));
 					ctx.setAttribute("isCompleted", Boolean.TRUE, REQUEST);
 					break;
+					
+				default:
+					throw new CommandException("Unknown Operation - " + op);
 			}
 			
 			// If we can't execute the command, stop

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.security.command.EventAccessControl;
 /**
  * A Web Site Command to display the Online Event calendar.
  * @author Luke
- * @version 3.6
+ * @version 7.0
  * @since 1.0
  */
 
@@ -26,6 +26,7 @@ public class EventCalendarCommand extends AbstractCalendarCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Initialize the calendar context
@@ -42,14 +43,8 @@ public class EventCalendarCommand extends AbstractCalendarCommand {
 			ctx.setAttribute("futureEvents", dao.getFutureEvents(), REQUEST);
 			
 			// Get the Pilot IDs from the signups
-			Set<Integer> pilotIDs = new HashSet<Integer>();
-			for (Iterator<Event> i = events.iterator(); i.hasNext(); ) {
-				Event e = i.next();
-				for (Iterator<Signup> si = e.getSignups().iterator(); si.hasNext(); ) {
-					Signup s = si.next();
-					pilotIDs.add(new Integer(s.getPilotID()));
-				}
-			}
+			Collection<Integer> pilotIDs = new HashSet<Integer>();
+			events.forEach(e -> e.getSignups().forEach(s -> pilotIDs.add(Integer.valueOf(s.getPilotID()))));
 			
 			// Load the signup user data
 			GetUserData uddao = new GetUserData(con);
@@ -58,8 +53,6 @@ public class EventCalendarCommand extends AbstractCalendarCommand {
 			// Load the Pilots for the signups
 			GetPilot pdao = new GetPilot(con);
 			Map<Integer, Pilot> pilots = pdao.get(udMap);
-			
-			// Save the pilots
 			ctx.setAttribute("pilots", pilots, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);

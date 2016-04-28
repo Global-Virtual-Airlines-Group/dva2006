@@ -1,7 +1,8 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
@@ -17,7 +18,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to balance signups between routes.
  * @author Luke
- * @version 2.3
+ * @version 7.0
  * @since 2.3
  */
 
@@ -28,11 +29,11 @@ public class EventBalanceCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Get comamnd result
 		CommandResult result = ctx.getResult();
-		
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -48,12 +49,8 @@ public class EventBalanceCommand extends AbstractCommand {
 			if (!ac.getCanBalance())
 				throw securityException("Cannot balance Signups");
 			
-			// Get Pilot IDs
-			Collection<Integer> IDs = new HashSet<Integer>();
-			for (Signup s : e.getSignups())
-				IDs.add(new Integer(s.getPilotID()));
-			
 			// Load Pilots
+			Collection<Integer> IDs = e.getSignups().stream().map(Signup::getPilotID).collect(Collectors.toSet());
 			GetUserData uddao = new GetUserData(con);
 			GetPilot pdao = new GetPilot(con);
 			UserDataMap udm = uddao.get(IDs);

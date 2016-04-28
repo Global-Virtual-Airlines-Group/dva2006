@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.academy.*;
@@ -8,13 +8,13 @@ import org.deltava.security.SecurityContext;
 /**
  * An Access Controller for Fleet Academy Instruction sessions.
  * @author Luke
- * @version 3.4
+ * @version 7.0
  * @since 1.0
  */
 
 public class InstructionAccessControl extends AccessControl {
 	
-	private Instruction _i;
+	private final Instruction _i;
 	
 	private boolean _canCreate;
 	private boolean _canCancel;
@@ -34,6 +34,7 @@ public class InstructionAccessControl extends AccessControl {
 	/**
 	 * Calculates access rights.
 	 */
+	@Override
 	public void validate() {
 		validateContext();
 		

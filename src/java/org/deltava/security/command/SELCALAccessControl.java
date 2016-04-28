@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.schedule.SelectCall;
@@ -8,13 +8,13 @@ import org.deltava.security.SecurityContext;
 /**
  * An Access Controller for SELCAL codes.
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
 public class SELCALAccessControl extends AccessControl {
 	
-	private SelectCall _sc;
+	private final SelectCall _sc;
 	private boolean _forceDeny;
 	
 	private boolean _canReserve;
@@ -33,6 +33,7 @@ public class SELCALAccessControl extends AccessControl {
     /**
      * Calculates access rights.
      */
+	@Override
 	public void validate() {
 		if (!_ctx.isAuthenticated() || (_sc == null))
 			return;

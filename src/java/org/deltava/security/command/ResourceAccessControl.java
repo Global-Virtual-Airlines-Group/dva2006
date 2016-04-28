@@ -1,4 +1,4 @@
-// Copyright 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.fleet.Resource;
@@ -8,13 +8,14 @@ import org.deltava.security.SecurityContext;
 /**
  * An Access Controller for Web Resources.
  * @author Luke
- * @version 2.7
+ * @version 7.0
  * @since 1.0
  */
 
 public class ResourceAccessControl extends AccessControl {
 
-	private Resource _r;
+	private final Resource _r;
+	
 	private boolean _canCreate;
 	private boolean _canEdit;
 	private boolean _canDelete;
@@ -32,6 +33,7 @@ public class ResourceAccessControl extends AccessControl {
 	/**
 	 * Calculates Access roles.
 	 */
+	@Override
 	public void validate() {
 		validateContext();
 

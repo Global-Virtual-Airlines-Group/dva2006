@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.sql.Connection;
@@ -13,7 +13,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to sign up Pilots for an Online Event.
  * @author Luke
- * @version 2.1
+ * @version 7.0
  * @since 1.0
  */
 
@@ -24,11 +24,11 @@ public class EventSignupCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Check if we are canceling our signup
 		boolean isCancel = "cancel".equals(ctx.getCmdParameter(Command.OPERATION, null));
-		
 		try {
 			Connection con = ctx.getConnection();
 			

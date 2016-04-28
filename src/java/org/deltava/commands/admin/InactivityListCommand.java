@@ -1,4 +1,4 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009,  2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to manually display Pilots scheduled to be marked for Inactivity.
  * @author Luke
- * @version 2.6
+ * @version 7.0
  * @since 2.6
  */
 
@@ -28,6 +28,7 @@ public class InactivityListCommand extends AbstractCommand {
      * @param ctx the Command context
      * @throws CommandException if an error occurs
      */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Get the inactivity cutoff times
