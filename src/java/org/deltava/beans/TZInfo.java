@@ -21,7 +21,6 @@ public class TZInfo implements java.io.Serializable, ComboAlias, Comparable<TZIn
 	 * Time Zone for GMT/UTC.
 	 */
 	public static final TZInfo UTC = new TZInfo(ZoneOffset.UTC, "Coordinated Universal Time", "UTC");
-	private static final TZInfo _local = new TZInfo(ZoneId.systemDefault(), null, null);
 
 	private static final Map<String, TZInfo> _timeZones = new HashMap<String, TZInfo>();
 
@@ -32,7 +31,6 @@ public class TZInfo implements java.io.Serializable, ComboAlias, Comparable<TZIn
 	// Init default time zones
 	static {
 		_timeZones.put("UTC", UTC);
-		_timeZones.put("local", _local);
 	}
 	
 	private TZInfo(ZoneId tz, String dName, String abbr) {
@@ -65,14 +63,6 @@ public class TZInfo implements java.io.Serializable, ComboAlias, Comparable<TZIn
 	 */
 	public static TZInfo get(String tzName) {
 		return _timeZones.get(tzName);
-	}
-
-	/**
-	 * Creates/returns a Time Zone wrapper for the local time zone.
-	 * @return a Time Zome wrapper for the local zone
-	 */
-	public static TZInfo local() {
-		return _local;
 	}
 
 	@Override
@@ -194,6 +184,6 @@ public class TZInfo implements java.io.Serializable, ComboAlias, Comparable<TZIn
 	 */
 	@Override
 	public String getRowClassName() {
-		return !_tz.getRules().isFixedOffset() ? "opt1" : null;
+		return (_tz.getRules().nextTransition(Instant.now()) == null) ? null : "opt1";
 	}
 }
