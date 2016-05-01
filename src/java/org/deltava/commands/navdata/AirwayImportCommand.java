@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2012, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2012, 2013, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.io.*;
@@ -16,7 +16,7 @@ import org.deltava.util.cache.CacheManager;
 /**
  * A Web Site Command to import airway data in PSS format.
  * @author Luke
- * @version 6.0
+ * @version 7.0
  * @since 2.0
  */
 
@@ -89,7 +89,8 @@ public class AirwayImportCommand extends NavDataImportCommand {
 					try {
 						NavigationDataBean nd = NavigationDataBean.create(Navaid.INT, Double.parseDouble(codes.get(4)), Double.parseDouble(codes.get(5)));
 						nd.setCode(codes.get(3));
-						a.addWaypoint(nd);
+						if (a != null)
+							a.addWaypoint(nd);
 					} catch (NumberFormatException nfe) {
 						errors.add("Error at line " + br.getLineNumber() + ": " + nfe.getMessage());
 						errors.add(txtData);
