@@ -4,6 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <html lang="en">
 <head>
@@ -34,7 +35,7 @@
 </tr>
 
 <!-- Table Questionnaire Data -->
-<c:forEach var="exam" items="${examQueue}">
+<c:forEach var="exam" items="${viewContext.results}">
 <c:set var="applicant" value="${applicants[exam.authorID]}" scope="page" />
 <tr>
  <td><el:cmdbutton url="questionnaire" link="${exam}" label="SCORE" /></td>
@@ -48,7 +49,7 @@
 
 <!-- Bottom Bar -->
 <tr class="title">
- <td colspan="6">&nbsp;</td>
+ <td colspan="6"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn />&nbsp;</view:scrollbar>&nbsp;</td>
 </tr>
 </el:table>
 <content:copyright />
