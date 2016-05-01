@@ -9,7 +9,9 @@ import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
 
 import org.deltava.util.URLParser;
-import org.deltava.util.tile.*;
+
+import org.deltava.util.tile.SingleTile;
+import org.gvagroup.tile.TileAddress;
 
 /**
  * A servlet to display Quad-tree tiles.

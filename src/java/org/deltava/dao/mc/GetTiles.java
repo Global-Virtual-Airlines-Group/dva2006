@@ -7,7 +7,8 @@ import java.time.Instant;
 import org.deltava.dao.DAOException;
 
 import org.deltava.util.MemcachedUtils;
-import org.deltava.util.tile.*;
+
+import org.gvagroup.tile.*;
 
 /**
  * A Data Access Object to read tiles from memcached. 

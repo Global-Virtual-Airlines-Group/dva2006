@@ -5,6 +5,8 @@ import java.util.*;
 
 import junit.framework.TestCase;
 
+import org.gvagroup.tile.TileAddress;
+
 @SuppressWarnings("static-method")
 public class TestTileAddress extends TestCase {
 	

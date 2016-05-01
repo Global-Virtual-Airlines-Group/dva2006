@@ -4,6 +4,8 @@ package org.deltava.util.tile;
 import java.awt.Rectangle;
 import java.awt.image.*;
 
+import org.gvagroup.tile.*;
+
 /**
  * A single Tile.
  * @author Luke

@@ -1,4 +1,4 @@
-// Copyright 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.IOException;
@@ -12,12 +12,12 @@ import org.deltava.beans.system.VersionInfo;
 import org.deltava.dao.DAOException;
 import org.deltava.dao.mc.GetTiles;
 
-import org.deltava.util.tile.PNGTile;
+import org.gvagroup.tile.PNGTile;
 
 /**
  * A servlet to fetch non-temporal quadtree tiles.
  * @author Luke
- * @version 5.2
+ * @version 7.0
  * @since 5.2
  */
 

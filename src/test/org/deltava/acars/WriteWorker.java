@@ -11,7 +11,7 @@ import javax.imageio.ImageIO;
 
 import org.apache.log4j.Logger;
 
-import org.deltava.util.tile.TileAddress;
+import org.gvagroup.tile.TileAddress;
 
 public class WriteWorker implements Runnable, Comparable<WriteWorker> {
 

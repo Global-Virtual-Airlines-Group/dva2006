@@ -1,14 +1,14 @@
-// Copyright 2006, 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.tile;
 
 /**
  * An interface for Tiles that contain Raster data.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 5.0
  */
 
-public interface RasterTile extends Tile {
+public interface RasterTile extends org.gvagroup.tile.Tile {
 
 	/**
 	 * Returns the rendered image.

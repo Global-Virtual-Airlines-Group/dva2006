@@ -18,6 +18,8 @@ import org.deltava.util.*;
 import org.deltava.util.tile.*;
 import org.deltava.util.ftp.FTPConnection;
 
+import org.gvagroup.tile.*;
+
 public class TestGetWAFSData extends TestCase {
 
 	Logger log;
@@ -72,7 +74,7 @@ public class TestGetWAFSData extends TestCase {
 				if (hasData) {
 					File tf = new File("/Users/luke/tiles", st.getName() + ".png");
 					try (FileOutputStream fo = new FileOutputStream(tf)) {
-						PNGTile png = new PNGTile(st);
+						PNGTile png = new PNGTile(st.getAddress(), st.getImage());
 						fo.write(png.getData());
 					} catch (IOException ie) {
 						log.error(ie.getMessage(), ie);

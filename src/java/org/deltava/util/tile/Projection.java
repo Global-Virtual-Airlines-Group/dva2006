@@ -1,12 +1,12 @@
-// Copyright 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.tile;
 
 import org.deltava.beans.GeoLocation;
 
 /**
  * An interface to convert latitude/longitude pairs to X/Y coordinates.
- * @author LKolin
- * @version 5.0
+ * @author Luke
+ * @version 7.0
  * @since 5.0
  */
 
@@ -23,7 +23,7 @@ public interface Projection {
 	 * @param loc the GeoLocation
 	 * @return the TileAddress of the Tile containing this point at the current zoom level
 	 */
-	public TileAddress getAddress(GeoLocation loc);
+	public org.gvagroup.tile.TileAddress getAddress(GeoLocation loc);
 	
 	/**
 	 * Returns the pixel address of the provided point on the global canvas.

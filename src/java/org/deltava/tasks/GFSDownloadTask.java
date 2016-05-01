@@ -23,6 +23,8 @@ import org.deltava.util.tile.*;
 import org.deltava.util.ftp.FTPConnection;
 import org.deltava.util.system.SystemData;
 
+import org.gvagroup.tile.*;
+
 /**
  * A scheduled task to download GFS global forecast data.
  * @author Luke
@@ -92,7 +94,7 @@ public class GFSDownloadTask extends Task {
 
 				// Convert to PNG
 				if (hasData) {
-					PNGTile png = new PNGTile(st);
+					PNGTile png = new PNGTile(st.getAddress(), st.getImage());
 					synchronized (_out) {
 						_out.put(png.getAddress(), png);
 					}

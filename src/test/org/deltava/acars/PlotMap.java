@@ -11,7 +11,8 @@ import junit.framework.TestCase;
 import org.deltava.dao.*;
 import org.deltava.util.ThreadUtils;
 import org.deltava.util.system.SystemData;
-import org.deltava.util.tile.TileAddress;
+
+import org.gvagroup.tile.TileAddress;
 
 abstract class PlotMap extends TestCase {
 	

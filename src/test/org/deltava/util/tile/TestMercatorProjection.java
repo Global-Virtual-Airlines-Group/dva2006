@@ -5,6 +5,8 @@ import junit.framework.TestCase;
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.schedule.GeoPosition;
 
+import org.gvagroup.tile.TileAddress;
+
 public class TestMercatorProjection extends TestCase {
 	
 	private MercatorProjection mp;
