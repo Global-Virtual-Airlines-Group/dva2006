@@ -35,7 +35,7 @@ public class IssueFilterCommand extends AbstractViewCommand {
 		boolean showActive = Boolean.valueOf(ctx.getParameter("activeOnly")).booleanValue();
 
 		// Get the view start/end
-		ViewContext vc = initView(ctx);
+		ViewContext<Issue> vc = initView(ctx, Issue.class);
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -46,12 +46,11 @@ public class IssueFilterCommand extends AbstractViewCommand {
 			// Get the issues
 			idao.setQueryStart(vc.getStart());
 			idao.setQueryMax(vc.getCount());
-			Collection<Issue> results = idao.getByPilot(isAuthor ? id : -1, isAuthor ? -1 : id, false, showActive);
-			vc.setResults(results);
+			vc.setResults(idao.getByPilot(isAuthor ? id : -1, isAuthor ? -1 : id, false, showActive));
 			
 			// Get Author IDs
 			Collection<Integer> IDs = new HashSet<Integer>(choiceIDs);
-			for (Issue is : results) {
+			for (Issue is : vc.getResults()) {
 				IDs.add(Integer.valueOf(is.getAuthorID()));
 				IDs.add(Integer.valueOf(is.getAssignedTo()));
 				IDs.add(Integer.valueOf(is.getLastCommentAuthorID()));

@@ -1,4 +1,4 @@
-// Copyright 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -14,14 +14,13 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to view rejected Flight Reports.
  * @author Luke
- * @version 5.1
+ * @version 7.0
  * @since 5.1
  */
 
 public class RejectedFlightsCommand extends AbstractViewCommand {
 	
-	private static final String[] SORT_CODES = {"PR.DATE DESC, PR.SUBMITTED DESC", "P.LASTNAME, P.FIRSTNAME, PR.SUBMITTED DESC", 
-		"PR.EQTYPE, PR.DATE DESC, PR.SUBMITTED DESC"};
+	private static final String[] SORT_CODES = {"PR.DATE DESC, PR.SUBMITTED DESC", "P.LASTNAME, P.FIRSTNAME, PR.SUBMITTED DESC", "PR.EQTYPE, PR.DATE DESC, PR.SUBMITTED DESC"};
 	private static final String[] SORT_NAMES = {"Submission Date", "Pilot Name", "Equipment Type"};
 	private static final List<ComboAlias> SORT_OPTS = ComboUtils.fromArray(SORT_NAMES, SORT_CODES);
 
@@ -34,7 +33,7 @@ public class RejectedFlightsCommand extends AbstractViewCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 		
         // Get/set start/count parameters
-        ViewContext vc = initView(ctx);
+        ViewContext<FlightReport> vc = initView(ctx, FlightReport.class);
         if (StringUtils.arrayIndexOf(SORT_CODES, vc.getSortType()) == -1)
         	vc.setSortType(SORT_CODES[0]);
 		
@@ -47,12 +46,12 @@ public class RejectedFlightsCommand extends AbstractViewCommand {
 			dao.setQueryMax(vc.getCount());
 			
 			// Get the PIREPs and load the promotion type
-			Collection<FlightReport> pireps = dao.getByStatus(Collections.singleton(Integer.valueOf(FlightReport.REJECTED)), vc.getSortType());
-			dao.getCaptEQType(pireps);
+			vc.setResults(dao.getByStatus(Collections.singleton(Integer.valueOf(FlightReport.REJECTED)), vc.getSortType()));
+			dao.getCaptEQType(vc.getResults());
 			
 			// Get the Pilot IDs
 			Collection<Integer> IDs = new HashSet<Integer>();
-			for (FlightReport fr : pireps) {
+			for (FlightReport fr : vc.getResults()) {
 				IDs.add(Integer.valueOf(fr.getDatabaseID(DatabaseID.PILOT)));
 				IDs.add(Integer.valueOf(fr.getDatabaseID(DatabaseID.DISPOSAL)));
 			}
@@ -60,9 +59,6 @@ public class RejectedFlightsCommand extends AbstractViewCommand {
 			// Load the Pilots
 			GetPilot pdao = new GetPilot(con);
 			ctx.setAttribute("pilots", pdao.getByID(IDs, "PILOTS"), REQUEST);
-			
-			// Save in request
-			vc.setResults(pireps);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

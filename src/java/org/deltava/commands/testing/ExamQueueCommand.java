@@ -1,11 +1,11 @@
-// Copyright 2005, 2006, 2007, 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.UserDataMap;
-import org.deltava.beans.testing.Test;
+import org.deltava.beans.testing.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -15,7 +15,7 @@ import org.deltava.security.command.*;
 /**
  * A Web Site Command to display Pilot Examinations awaiting scoring.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -28,7 +28,8 @@ public class ExamQueueCommand extends AbstractViewCommand {
 	 */
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
-		ViewContext vc = initView(ctx);
+		
+		ViewContext<Examination> vc = initView(ctx, Examination.class);
 		try {
 			Connection con = ctx.getConnection();
 
@@ -36,11 +37,11 @@ public class ExamQueueCommand extends AbstractViewCommand {
 			GetExam dao = new GetExam(con);
 			dao.setQueryMax(vc.getCount());
 			dao.setQueryStart(vc.getStart());
-			List<? extends Test> results = dao.getSubmitted();
+			vc.setResults(dao.getSubmitted());
 
 			// Check our access level, remove those exams we cannot score and build a list of Pilot IDs
 			Collection<Integer> pilotIDs = new HashSet<Integer>();
-			for (Iterator<? extends Test> i = results.iterator(); i.hasNext();) {
+			for (Iterator<? extends Test> i = vc.getResults().iterator(); i.hasNext();) {
 				Test t = i.next();
 				ExamAccessControl access = new ExamAccessControl(ctx, t, null);
 				try {
@@ -56,9 +57,6 @@ public class ExamQueueCommand extends AbstractViewCommand {
 			UserDataMap udm = uddao.get(pilotIDs);
 			GetPilot pdao = new GetPilot(con);
 			ctx.setAttribute("pilots", pdao.get(udm), REQUEST);
-
-			// Save the examination queue
-			vc.setResults(results);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

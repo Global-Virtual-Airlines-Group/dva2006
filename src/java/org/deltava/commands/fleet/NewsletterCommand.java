@@ -1,4 +1,4 @@
-// Copyright 2006, 2011, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2011, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.io.File;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update Newsletters.
  * @author Luke
- * @version 6.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -85,7 +85,8 @@ public class NewsletterCommand extends LibraryEditCommand {
 				File f = new File(SystemData.get("path.newsletter"), fName);
 				nws = new Newsletter(f);
 				ctx.setAttribute("fileAdded", Boolean.TRUE, REQUEST);
-			}
+			} else if (nws == null)
+				throw new IllegalStateException("No Newletter to modify");
 
 			// Populate fields from the request
 			nws.setDescription(ctx.getParameter("desc"));

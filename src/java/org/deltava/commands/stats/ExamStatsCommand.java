@@ -1,9 +1,10 @@
-// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
 import java.sql.Connection;
 
+import org.deltava.beans.testing.ExamStatsEntry;
 import org.deltava.commands.*;
 import org.deltava.comparators.*;
 import org.deltava.dao.*;
@@ -12,7 +13,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to display Examination and Check Ride statistics. 
  * @author Luke
- * @version 4.0
+ * @version 7.0
  * @since 3.0
  */
 
@@ -33,9 +34,7 @@ public class ExamStatsCommand extends AbstractViewCommand {
 		
 		// Get command result
 		CommandResult result = ctx.getResult();
-		
-		// Get the view Context
-		ViewContext vc = initView(ctx);
+		ViewContext<ExamStatsEntry> vc = initView(ctx, ExamStatsEntry.class);
 		
 		// Get label / sub-label
 		String label = ctx.getParameter("label");

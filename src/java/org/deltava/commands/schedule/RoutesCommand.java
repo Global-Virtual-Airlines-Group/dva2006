@@ -1,10 +1,10 @@
 // Copyright 2005, 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
-import org.deltava.commands.*;
+import org.deltava.beans.schedule.OceanicNOTAM;
 
-import org.deltava.dao.GetOceanicRoute;
-import org.deltava.dao.DAOException;
+import org.deltava.commands.*;
+import org.deltava.dao.*;
 
 import org.deltava.security.command.ScheduleAccessControl;
 
@@ -25,14 +25,7 @@ public class RoutesCommand extends AbstractViewCommand {
     @Override
 	public void execute(CommandContext ctx) throws CommandException {
         
-        // Get the view context
-        ViewContext vc = initView(ctx);
-        
-        // Check our access
-        ScheduleAccessControl access = new ScheduleAccessControl(ctx);
-        access.validate();
-        ctx.setAttribute("access", access, REQUEST);
-        
+        ViewContext<OceanicNOTAM> vc = initView(ctx, OceanicNOTAM.class);
         try {
             GetOceanicRoute dao = new GetOceanicRoute(ctx.getConnection());
             dao.setQueryStart(vc.getStart());
@@ -43,6 +36,11 @@ public class RoutesCommand extends AbstractViewCommand {
         } finally {
             ctx.release();
         }
+        
+        // Check our access
+        ScheduleAccessControl access = new ScheduleAccessControl(ctx);
+        access.validate();
+        ctx.setAttribute("access", access, REQUEST);
         
         // Redirect to the JSP
         CommandResult result = ctx.getResult();

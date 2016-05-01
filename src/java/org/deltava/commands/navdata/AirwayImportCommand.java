@@ -87,8 +87,7 @@ public class AirwayImportCommand extends NavDataImportCommand {
 					
 					// Add a waypoint
 					try {
-						NavigationDataBean nd = NavigationDataBean.create(Navaid.INT, Double.parseDouble(codes.get(4)),
-								Double.parseDouble(codes.get(5)));
+						NavigationDataBean nd = NavigationDataBean.create(Navaid.INT, Double.parseDouble(codes.get(4)), Double.parseDouble(codes.get(5)));
 						nd.setCode(codes.get(3));
 						a.addWaypoint(nd);
 					} catch (NumberFormatException nfe) {

@@ -1,5 +1,7 @@
-// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.dispatch;
+
+import org.deltava.beans.schedule.ScheduleRoute;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -11,7 +13,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to display popular route pairs.
  * @author Luke
- * @version 2.6
+ * @version 7.0
  * @since 2.2
  */
 
@@ -22,6 +24,7 @@ public class PopularRouteListCommand extends AbstractViewCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Get parameters
@@ -30,7 +33,7 @@ public class PopularRouteListCommand extends AbstractViewCommand {
 		int dayFilter = StringUtils.parse(ctx.getParameter("days"), 60);
 
 		// Get the view context
-		ViewContext vc = initView(ctx);
+		ViewContext<ScheduleRoute> vc = initView(ctx, ScheduleRoute.class);
 		try {
 			GetFlightReportStatistics frdao = new GetFlightReportStatistics(ctx.getConnection());
 			frdao.setQueryStart(vc.getStart());

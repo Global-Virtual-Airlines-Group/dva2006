@@ -14,7 +14,7 @@ import org.deltava.commands.ViewContext;
 
 public class ScrollBarTag extends TagSupport {
 
-	private ViewContext _vctx;
+	private ViewContext<?> _vctx;
 	private boolean _forceDisplay;
 
 	/**
@@ -63,7 +63,7 @@ public class ScrollBarTag extends TagSupport {
 	 * Returns the view context.
 	 * @return the view context
 	 */
-	ViewContext getContext() {
+	ViewContext<?> getContext() {
 		return _vctx;
 	}
 
@@ -76,7 +76,7 @@ public class ScrollBarTag extends TagSupport {
 	public int doStartTag() {
 
 		// Get the view context
-		_vctx = (ViewContext) pageContext.findAttribute(ViewContext.VIEW_CONTEXT);
+		_vctx = (ViewContext<?>) pageContext.findAttribute(ViewContext.VIEW_CONTEXT);
 
 		// Check if we force display, otherwise display only if at start or end, or neither
 		if (_forceDisplay)

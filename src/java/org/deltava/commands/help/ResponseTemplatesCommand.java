@@ -1,5 +1,7 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.help;
+
+import org.deltava.beans.help.ResponseTemplate;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -9,7 +11,7 @@ import org.deltava.security.command.HelpDeskAccessControl;
 /**
  * A Web Site Command to list all Help Desk Response Templates.
  * @author Luke
- * @version 3.2
+ * @version 7.0
  * @since 3.2
  */
 
@@ -24,7 +26,7 @@ public class ResponseTemplatesCommand extends AbstractViewCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the view start/end
-		ViewContext vc = initView(ctx);
+		ViewContext<ResponseTemplate> vc = initView(ctx, ResponseTemplate.class);
 		try {
 			GetHelpTemplate dao = new GetHelpTemplate(ctx.getConnection());
 			dao.setQueryStart(vc.getStart());

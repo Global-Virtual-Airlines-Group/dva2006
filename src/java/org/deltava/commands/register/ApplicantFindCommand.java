@@ -1,8 +1,7 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.util.Collection;
-import java.sql.Connection;
 
 import org.deltava.beans.Applicant;
 
@@ -12,7 +11,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to find an Applicant based on e-mail address.
  * @author Luke
- * @version 2.0
+ * @version 7.0
  * @since 2.0
  */
 
@@ -23,6 +22,7 @@ public class ApplicantFindCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Get command results
@@ -35,10 +35,7 @@ public class ApplicantFindCommand extends AbstractCommand {
 
 		Collection<Applicant> results = null;
 		try {
-			Connection con = ctx.getConnection();
-			
-			// Get the DAO and the applicant
-			GetApplicant adao = new GetApplicant(con);
+			GetApplicant adao = new GetApplicant(ctx.getConnection());
 			results = adao.getByName(ctx.getParameter("fName"), ctx.getParameter("lName"));
 		} catch (DAOException de) { 
 			throw new CommandException(de);

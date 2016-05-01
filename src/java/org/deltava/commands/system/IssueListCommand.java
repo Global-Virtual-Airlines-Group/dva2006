@@ -34,7 +34,7 @@ public class IssueListCommand extends AbstractViewCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 
         // Get/set start/count parameters and sort type
-        ViewContext vc = initView(ctx);
+        ViewContext<Issue> vc = initView(ctx, Issue.class);
         if (StringUtils.arrayIndexOf(SORT_CODE, vc.getSortType()) == -1)
            vc.setSortType(SORT_CODE[0]);
         
@@ -42,7 +42,6 @@ public class IssueListCommand extends AbstractViewCommand {
         int id = ctx.getID();
         
         // Get issue status/area
-        Collection<Issue> results = new ArrayList<Issue>();
         int issueStatus = StringUtils.arrayIndexOf(Issue.STATUS, (String) ctx.getCmdParameter(OPERATION, null));
         int issueArea = StringUtils.arrayIndexOf(Issue.AREA, ctx.getParameter("area"));
         try {
@@ -55,11 +54,11 @@ public class IssueListCommand extends AbstractViewCommand {
             
             // If we are getting a user's issues, then grab them
             if (id != 0)
-            	results.addAll(dao.getUserIssues(id));
+            	vc.setResults(dao.getUserIssues(id));
             else if (issueStatus != -1)
-                results.addAll(dao.getByStatus(issueStatus, issueArea, vc.getSortType()));
+            	vc.setResults(dao.getByStatus(issueStatus, issueArea, vc.getSortType()));
             else
-                results.addAll(dao.getAll(vc.getSortType(), issueArea));
+            	vc.setResults(dao.getAll(vc.getSortType(), issueArea));
         } catch (DAOException de) {
             throw new CommandException(de);
         } finally {
@@ -67,16 +66,13 @@ public class IssueListCommand extends AbstractViewCommand {
         }
         
         // Trim issues we cannot see
-        for (Iterator<Issue> i = results.iterator(); i.hasNext(); ) {
+        for (Iterator<Issue> i = vc.getResults().iterator(); i.hasNext(); ) {
         	Issue is = i.next();
         	IssueAccessControl access = new IssueAccessControl(ctx, is);
         	access.validate();
         	if (!access.getCanRead())
         		i.remove();
         }
-        
-        // Save results
-        vc.setResults(results);
         
         // Calculate our access control for creating issues
         IssueAccessControl access = new IssueAccessControl(ctx, null);

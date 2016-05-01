@@ -1,7 +1,5 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
-
-import java.sql.Connection;
 
 import org.deltava.beans.system.Issue;
 
@@ -15,7 +13,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to search Issues and comments.
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -26,6 +24,7 @@ public class IssueSearchCommand extends AbstractCommand {
      * @param ctx the Command context
      * @throws CommandException if an unhandled error occurs
      */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Get search options
@@ -47,10 +46,7 @@ public class IssueSearchCommand extends AbstractCommand {
 		}
 		
 		try {
-			Connection con = ctx.getConnection();
-			
-			// Get the DAO and search
-			GetIssue dao = new GetIssue(con);
+			GetIssue dao = new GetIssue(ctx.getConnection());
 			dao.setQueryMax(maxResults);
 			ctx.setAttribute("results", dao.search(ctx.getParameter("searchStr"), status, area, searchComments), REQUEST);
 		} catch (DAOException de) {
@@ -61,7 +57,7 @@ public class IssueSearchCommand extends AbstractCommand {
 		
 		// Set search attributes
 		ctx.setAttribute("doSearch", Boolean.TRUE, REQUEST);
-		ctx.setAttribute("maxResults", new Integer(maxResults), REQUEST);
+		ctx.setAttribute("maxResults", Integer.valueOf(maxResults), REQUEST);
 		
         // Calculate our access control for creating issues
         IssueAccessControl access = new IssueAccessControl(ctx, null);

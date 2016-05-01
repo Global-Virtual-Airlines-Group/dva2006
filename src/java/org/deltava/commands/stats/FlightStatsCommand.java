@@ -9,7 +9,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to display sorted Flight Report statistics.
  * @author Luke
- * @version 6.4
+ * @version 7.0
  * @since 1.0
  */
 
@@ -24,7 +24,7 @@ public class FlightStatsCommand extends AbstractViewCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get grouping / sorting
-		ViewContext vc = initView(ctx); 
+		ViewContext<FlightStatsEntry> vc = initView(ctx, FlightStatsEntry.class); 
 		FlightStatsSort srt = FlightStatsSort.from(vc.getSortType(), FlightStatsSort.DATE);
 		FlightStatsGroup grp = FlightStatsGroup.from(ctx.getParameter("groupType"), FlightStatsGroup.MONTH);
 		if (!grp.isDateGroup() && (srt == FlightStatsSort.DATE)) srt = FlightStatsSort.LEGS;
@@ -36,8 +36,6 @@ public class FlightStatsCommand extends AbstractViewCommand {
 			GetAggregateStatistics dao = new GetAggregateStatistics(ctx.getConnection());
 			dao.setQueryStart(vc.getStart());
 			dao.setQueryMax(vc.getCount());
-
-			// Save the statistics in the request
 			if (grp.isAirportGroup())
 				vc.setResults(dao.getAirportStatistics(srt, grp.ordinal() - 3));
 			else

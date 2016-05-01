@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.sql.Connection;
@@ -11,7 +11,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to track hits to a Web Resource.
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -22,11 +22,11 @@ public class ResourceJumpCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Get command result
 		CommandResult result = ctx.getResult();
-		
 		try {
 			Connection con = ctx.getConnection();
 			

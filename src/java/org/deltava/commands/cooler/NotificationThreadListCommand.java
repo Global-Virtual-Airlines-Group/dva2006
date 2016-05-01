@@ -1,4 +1,4 @@
-// Copyright 2005, 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2008, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display Water Cooler threads set up for notifications.
  * @author Luke
- * @version 3.6
+ * @version 7.0
  * @since 1.0
  */
 
@@ -30,13 +30,14 @@ public class NotificationThreadListCommand extends AbstractViewCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the user for the channel list and default airline
 		AirlineInformation airline = SystemData.getApp(SystemData.get("airline.code"));
 
 		// Get/set start/count parameters
-		ViewContext vc = initView(ctx);
+		ViewContext<MessageThread> vc = initView(ctx, MessageThread.class);
 		try {
 			Connection con = ctx.getConnection();
 
@@ -60,8 +61,8 @@ public class NotificationThreadListCommand extends AbstractViewCommand {
 
 			// Get either by channel or all; now filter by role
 			Collection<Integer> pilotIDs = new HashSet<Integer>();
-			Collection<MessageThread> threads = tdao.getByNotification(ctx.getUser().getID());
-			for (Iterator<MessageThread> i = threads.iterator(); i.hasNext();) {
+			vc.setResults(tdao.getByNotification(ctx.getUser().getID()));
+			for (Iterator<MessageThread> i = vc.getResults().iterator(); i.hasNext();) {
 				MessageThread thread = i.next();
 
 				// Get this thread's channel and see if we can read it
@@ -71,8 +72,8 @@ public class NotificationThreadListCommand extends AbstractViewCommand {
 
 				// If we cannot read the thread, remove it from the results, otherwise load the pilot profiles
 				if (ac.getCanRead()) {
-					pilotIDs.add(new Integer(thread.getAuthorID()));
-					pilotIDs.add(new Integer(thread.getLastUpdateID()));
+					pilotIDs.add(Integer.valueOf(thread.getAuthorID()));
+					pilotIDs.add(Integer.valueOf(thread.getLastUpdateID()));
 				} else
 					i.remove();
 			}
@@ -83,9 +84,6 @@ public class NotificationThreadListCommand extends AbstractViewCommand {
 			Map<Integer, Pilot> authors = pdao.get(udm);
 			ctx.setAttribute("pilots", authors, REQUEST);
 			ctx.setAttribute("userData", udm, REQUEST);
-
-			// Save in the view context
-			vc.setResults(threads);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

@@ -1,13 +1,15 @@
 // Copyright 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
+import org.deltava.beans.Pilot;
+
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
 /**
  * A Web Site Command to list permanent users.
  * @author Luke
- * @version 6.4
+ * @version 7.0
  * @since 6.4
  */
 
@@ -20,7 +22,8 @@ public class PermanentUsersCommand extends AbstractViewCommand {
      */
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
-		ViewContext vc = initView(ctx);
+		
+		ViewContext<Pilot> vc = initView(ctx, Pilot.class);
 		try {
 			GetPilotDirectory pdao = new GetPilotDirectory(ctx.getConnection());
 			pdao.setQueryStart(vc.getStart());

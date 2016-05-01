@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.sql.Connection;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display statistics about a Pilot's landings.
  * @author Luke
- * @version 6.3
+ * @version 7.0
  * @since 2.1
  */
 
@@ -29,7 +29,7 @@ public class MyFlightStatsCommand extends AbstractViewCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Get grouping / sorting
-		ViewContext vc = initView(ctx);
+		ViewContext<FlightStatsEntry> vc = initView(ctx, FlightStatsEntry.class);
 		FlightStatsSort srt = FlightStatsSort.from(vc.getSortType(), FlightStatsSort.LEGS);
 		FlightStatsGroup grp = FlightStatsGroup.from(ctx.getParameter("groupType"), FlightStatsGroup.EQ);
 		vc.setSortType(srt.name()); ctx.setAttribute("groupType", grp, REQUEST);

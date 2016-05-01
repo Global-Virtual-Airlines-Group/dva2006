@@ -1,4 +1,4 @@
-// Copyright 2005, 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2008, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.util.*;
@@ -10,11 +10,11 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store scrollable view page parameters.
  * @author Luke
- * @version 4.1
+ * @version 7.0
  * @since 1.0
  */
 
-public class ViewContext {
+public class ViewContext<T extends Object> {
 
     /**
      * Request attribute to store view data for presentation-layer JSPs.
@@ -42,7 +42,7 @@ public class ViewContext {
     private static final String[] RESERVED_PARAMS = {START, COUNT, SORTBY};
 
     private final Map<String, Object> _params = new HashMap<String, Object>();
-    private Collection<? extends Object> _results;
+    private Collection<T> _results;
     
     private final int _start;
     private final int _count;
@@ -108,7 +108,7 @@ public class ViewContext {
      * @return a Collection of beans
      * @see ViewContext#setResults(Collection)
      */
-    public Collection<?> getResults() {
+    public Collection<T> getResults() {
         return _results;
     }
     
@@ -143,7 +143,7 @@ public class ViewContext {
      * @param results a List of beans
      * @see ViewContext#getResults()
      */
-    public void setResults(Collection<? extends Object> results) {
+    public void setResults(Collection<T> results) {
         _results = results;
     }
     

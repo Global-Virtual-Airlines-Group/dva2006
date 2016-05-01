@@ -1,4 +1,4 @@
-// Copyright 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.util.*;
@@ -16,25 +16,25 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to display Web Resources.
  * @author Luke
- * @version 2.7
+ * @version 7.0
  * @since 1.0
  */
 
 public class ResourceListCommand extends AbstractViewCommand {
 	
 	private static final String[] SORT_CODES = {"CREATEDON DESC", "HITCOUNT DESC", "DOMAIN", "CATEGORY, URL"};
-	private static final List<?> SORT_OPTIONS = ComboUtils.fromArray(new String[] {"Created On", "Popularity", "Web Site", "Category"}, 
-			SORT_CODES);
+	private static final List<?> SORT_OPTIONS = ComboUtils.fromArray(new String[] {"Created On", "Popularity", "Web Site", "Category"}, SORT_CODES);
 
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
         // Get/set start/count parameters
-        ViewContext vc = initView(ctx);
+        ViewContext<Resource> vc = initView(ctx, Resource.class);
         if (StringUtils.arrayIndexOf(SORT_CODES, vc.getSortType()) == -1)
         	vc.setSortType(SORT_CODES[0]);
         
@@ -52,22 +52,18 @@ public class ResourceListCommand extends AbstractViewCommand {
 			GetResources dao = new GetResources(con);
 			dao.setQueryStart(vc.getStart());
 			dao.setQueryMax(vc.getCount());
-			Collection<Resource> results = viewAll ? dao.getAll(catName, vc.getSortType()) : dao.getAll(catName, ctx.getUser().getID(), vc.getSortType());
-			vc.setResults(results);
-			
-			// Create access Map
-			Map<Integer, ResourceAccessControl> accessMap = new HashMap<Integer, ResourceAccessControl>();
+			vc.setResults(viewAll ? dao.getAll(catName, vc.getSortType()) : dao.getAll(catName, ctx.getUser().getID(), vc.getSortType()));
 			
 			// Load author IDs and get access
+			Map<Integer, ResourceAccessControl> accessMap = new HashMap<Integer, ResourceAccessControl>();
 			Collection<Integer> IDs = new HashSet<Integer>();
-			for (Iterator<Resource> i = results.iterator(); i.hasNext(); ) {
-				Resource r = i.next();
-				IDs.add(new Integer(r.getAuthorID()));
+			for (Resource r : vc.getResults()) {
+				IDs.add(Integer.valueOf(r.getAuthorID()));
 				
 				// Calculate access
 				ResourceAccessControl access = new ResourceAccessControl(ctx, r);
 				access.validate();
-				accessMap.put(new Integer(r.getID()), access);
+				accessMap.put(Integer.valueOf(r.getID()), access);
 			}
 			
 			// Save the access map

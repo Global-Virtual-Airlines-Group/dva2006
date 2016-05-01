@@ -1,7 +1,8 @@
-// Copyright 2005, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.deltava.beans.Pilot;
@@ -26,10 +27,11 @@ public class CommandLogViewCommand extends AbstractViewCommand {
     * @param ctx the Command context
     * @throws CommandException if an unhandled error occurs
     */
+   @Override
    public void execute(CommandContext ctx) throws CommandException {
       
       // Get the start/view/count and command result
-      ViewContext vc = initView(ctx, 150);
+      ViewContext<CommandLog> vc = initView(ctx, CommandLog.class, 150);
       CommandResult result = ctx.getResult();
       
       // If we have no address selected, redirect to the JSP
@@ -49,12 +51,9 @@ public class CommandLogViewCommand extends AbstractViewCommand {
          int id = ctx.getID();
          if ((id == 0) && (ctx.getParameter("pilotName") != null)) {
         	 Collection<Pilot> users = pdao.getByName(ctx.getParameter("pilotName"), SystemData.get("airline.db"));
-        	 for (Iterator<Pilot> i = users.iterator(); i.hasNext(); ) {
-        		 Pilot usr = i.next();
-        		 IDs.add(new Integer(usr.getID()));
-        	 }
+        	 users.forEach(usr -> IDs.add(Integer.valueOf(usr.getID())));
          } else
-        	 IDs.add(new Integer(id));
+        	 IDs.add(Integer.valueOf(id));
          
          // Get the DAO and the log entries
          GetSystemData dao = new GetSystemData(con);
@@ -66,13 +65,7 @@ public class CommandLogViewCommand extends AbstractViewCommand {
          vc.setResults(results);
          
          // Load the pilot IDs
-         Collection<Integer> ids = new HashSet<Integer>();
-         for (Iterator<CommandLog> i = results.iterator(); i.hasNext(); ) {
-        	 CommandLog cl = i.next();
-        	 ids.add(new Integer(cl.getPilotID()));
-         }
-         
-         // Get the pilot IDs
+         Collection<Integer> ids = results.stream().map(CommandLog::getPilotID).collect(Collectors.toSet());
          ctx.setAttribute("pilots", pdao.getByID(ids, "PILOTS"), REQUEST);
       } catch (DAOException de) {
          throw new CommandException(de);

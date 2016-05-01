@@ -38,8 +38,7 @@ public class MessageLogCommand extends ACARSLogViewCommand {
 			return;
 		}
 
-		// Get the view context
-		ViewContext vc = initView(ctx);
+		ViewContext<String> vc = initView(ctx, String.class);
 		try {
 			Connection con = ctx.getConnection();
 			LogSearchCriteria criteria = getSearchCriteria(ctx, con);
@@ -63,17 +62,12 @@ public class MessageLogCommand extends ACARSLogViewCommand {
 			UserDataMap udm = usrdao.get(getPilotIDs(results));
 
 			// Get the authors for each message
-			Map<Integer, Pilot> pilots = new HashMap<Integer, Pilot>();
 			GetPilot pdao = new GetPilot(con);
-			for (Iterator<String> i = udm.getTableNames().iterator(); i.hasNext();) {
-				String dbTableName = i.next();
-				pilots.putAll(pdao.getByID(udm.getByTable(dbTableName), dbTableName));
-			}
+			Map<Integer, Pilot> pilots = pdao.get(udm);
 			
 			// Build the text representation of the messages
 			Collection<String> txtResults = new ArrayList<String>();
-			for (Iterator<TextMessage> i = results.iterator(); i.hasNext(); ) {
-				TextMessage msg = i.next();
+			for (TextMessage msg : results) {
 				ZonedDateTime dt = ZonedDateTime.ofInstant(msg.getDate(), ctx.getUser().getTZ().getZone());
 				StringBuilder buf = new StringBuilder(StringUtils.format(dt, "MM/dd/yyyy HH:mm:ss"));
 				buf.append(" <");

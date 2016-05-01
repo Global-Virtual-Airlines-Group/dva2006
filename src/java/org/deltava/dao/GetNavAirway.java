@@ -15,7 +15,7 @@ import com.enterprisedt.util.debug.Logger;
 /**
  * A Data Access Object to load navigation route and airway data.
  * @author Luke
- * @version 6.4
+ * @version 7.0
  * @since 1.0
  */
 
@@ -350,7 +350,7 @@ public class GetNavAirway extends GetNavData {
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
 					int id = rs.getInt(1);
-					if (id != lastID) {
+					if ((a == null) || (id != lastID)) {
 						lastID = id;
 						a = new Airway(name, id);
 						a.setHighLevel(rs.getBoolean(8));

@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2011, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display program-specific statistics and data.
  * @author Luke
- * @version 6.3
+ * @version 7.0
  * @since 2.1
  */
 
@@ -40,7 +40,7 @@ public class ProgramRosterCommand extends AbstractViewCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Init the view context
-		ViewContext vc = initView(ctx);
+		ViewContext<Pilot> vc = initView(ctx, Pilot.class);
 		if (StringUtils.arrayIndexOf(SORT_CODE, vc.getSortType()) == -1)
 			   vc.setSortType(SORT_CODE[0]);
 		

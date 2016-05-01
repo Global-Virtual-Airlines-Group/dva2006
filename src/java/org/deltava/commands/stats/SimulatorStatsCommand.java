@@ -1,4 +1,4 @@
-// Copyright 2008, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import org.deltava.beans.stats.*;
@@ -9,7 +9,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to display flight simulator version statistics.
  * @author Luke
- * @version 6.3
+ * @version 7.0
  * @since 2.2
  */
 
@@ -24,7 +24,7 @@ public class SimulatorStatsCommand extends AbstractViewCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get grouping / sorting
-		ViewContext vc = initView(ctx);
+		ViewContext<FlightStatsEntry> vc = initView(ctx, FlightStatsEntry.class);
 		FlightStatsSort srt = FlightStatsSort.from(vc.getSortType(), FlightStatsSort.DATE);
 		FlightStatsGroup grp = FlightStatsGroup.from(ctx.getParameter("groupType"), FlightStatsGroup.MONTH);
 		if (!grp.isDateGroup() && (srt == FlightStatsSort.DATE)) srt = FlightStatsSort.LEGS;

@@ -1,4 +1,4 @@
-// Copyright 2005, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display a user's Water Cooler Threads.
  * @author Luke
- * @version 4.2
+ * @version 7.0
  * @since 1.0
  */
 
@@ -36,7 +36,7 @@ public class MyThreadsCommand extends AbstractViewCommand {
 		AirlineInformation airline = SystemData.getApp(SystemData.get("airline.code"));
 
 		// Get/set start/count parameters
-		ViewContext vc = initView(ctx);
+		ViewContext<MessageThread> vc = initView(ctx, MessageThread.class);
 		try {
 			Connection con = ctx.getConnection();
 

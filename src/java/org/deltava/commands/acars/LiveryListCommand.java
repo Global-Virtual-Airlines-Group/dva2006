@@ -1,6 +1,8 @@
 // Copyright 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
+import org.deltava.beans.acars.Livery;
+
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
@@ -24,13 +26,11 @@ public class LiveryListCommand extends AbstractViewCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Get the view context
-		ViewContext vc = initView(ctx);
+		ViewContext<Livery> vc = initView(ctx, Livery.class);
 		try {
 			GetACARSLivery dao = new GetACARSLivery(ctx.getConnection());
 			dao.setQueryStart(vc.getStart());
 			dao.setQueryMax(vc.getCount());
-			
-			// Load the liveries
 			vc.setResults(dao.get(SystemData.getAirline(ctx.getParameter("airline"))));
 		} catch (DAOException de) {
 			throw new CommandException(de);

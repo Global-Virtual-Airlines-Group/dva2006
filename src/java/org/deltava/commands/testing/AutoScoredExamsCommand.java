@@ -1,7 +1,8 @@
-// Copyright 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.deltava.beans.testing.Examination;
@@ -14,7 +15,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to display automatically scored Examinations.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -25,10 +26,11 @@ public class AutoScoredExamsCommand extends AbstractViewCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the view context and examination name filter
-		ViewContext vc = initView(ctx);
+		ViewContext<Examination> vc = initView(ctx, Examination.class);
 		String examName = ctx.getParameter("examName");
 		try {
 			Connection con = ctx.getConnection();
@@ -43,19 +45,12 @@ public class AutoScoredExamsCommand extends AbstractViewCommand {
 			// Get the exams
 			dao.setQueryStart(vc.getStart());
 			dao.setQueryMax(vc.getCount());
-			Collection<Examination> exams = dao.getAutoScored(examName);
-			
-			// Get the Pilot IDs
-			Collection<Integer> IDs = new HashSet<Integer>();
-			for (Examination ex : exams)
-				IDs.add(new Integer(ex.getAuthorID()));
+			vc.setResults(dao.getAutoScored(examName));
 			
 			// Load the Pilots
+			Collection<Integer> IDs = vc.getResults().stream().map(Examination::getAuthorID).collect(Collectors.toSet());
 			GetPilot pdao = new GetPilot(con);
 			ctx.setAttribute("pilots", pdao.getByID(IDs, "PILOTS"), REQUEST);
-			
-			// Save the exams
-			vc.setResults(exams);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

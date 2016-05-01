@@ -38,7 +38,7 @@ public class PageDownTag extends ScrollTag {
         
         // Add Reserved parameters to the map
         // Yes, converting to a string array is stupid
-        ViewContext vc = _scrollBarTag.getContext();
+        ViewContext<?> vc = _scrollBarTag.getContext();
         Map<String, Object> params = vc.getParameters();
         params.put(ViewContext.START, new String[] { String.valueOf(vc.getStart() + vc.getCount()) } );
         params.put(ViewContext.COUNT, new String[] { String.valueOf(vc.getCount()) } );

@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.dispatch;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.security.command.DispatchRouteAccessControl;
 /**
  * A Web Site Command to view saved dispatch routes.
  * @author Luke
- * @version 2.4
+ * @version 7.0
  * @since 2.1
  */
 
@@ -26,6 +26,7 @@ public class RouteCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		try {
 			Connection con = ctx.getConnection();
@@ -49,7 +50,7 @@ public class RouteCommand extends AbstractCommand {
 			Pilot p = pdao.get(ud);
 			
 			// Calculate the mid-point and distance
-			ctx.setAttribute("distance", new Integer(rp.getAirportD().getPosition().distanceTo(rp.getAirportA())), REQUEST);
+			ctx.setAttribute("distance", Integer.valueOf(rp.getAirportD().getPosition().distanceTo(rp.getAirportA())), REQUEST);
 			ctx.setAttribute("mapCenter", rp.getAirportD().getPosition().midPoint(rp.getAirportA()), REQUEST);
 			
 			// Save the waypoints including the airports

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.sql.Connection;
@@ -13,9 +13,10 @@ import org.deltava.security.command.CoolerThreadAccessControl;
 /**
  * A Web Site Command to unlock or unhide Water Cooler message threads.
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
+
 public class ThreadUnlockCommand extends AbstractCommand {
 
 	/**
@@ -23,6 +24,7 @@ public class ThreadUnlockCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
         // Determine what operation we are performing

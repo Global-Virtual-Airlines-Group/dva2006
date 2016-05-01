@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.hr;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.security.command.*;
 /**
  * A Web Site Command to display open Job postings. 
  * @author Luke
- * @version 3.4
+ * @version 7.0
  * @since 3.4
  */
 
@@ -25,7 +25,8 @@ public class JobPostingsCommand extends AbstractViewCommand {
      */
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
-        ViewContext vc = initView(ctx);
+		
+        ViewContext<JobPosting> vc = initView(ctx, JobPosting.class);
         try {
         	GetJobs dao = new GetJobs(ctx.getConnection());
         	dao.setQueryStart(vc.getStart());

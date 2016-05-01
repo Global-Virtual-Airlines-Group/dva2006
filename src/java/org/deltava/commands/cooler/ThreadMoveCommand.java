@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.sql.Connection;
@@ -12,7 +12,7 @@ import org.deltava.security.command.CoolerThreadAccessControl;
 /**
  * A Web Site Command to move a Message Thread to another Water Cooler channel.
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -23,6 +23,7 @@ public class ThreadMoveCommand extends AbstractCommand {
      * @param ctx the Command context
      * @throws CommandException if an unhandled error occurs
      */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		try {

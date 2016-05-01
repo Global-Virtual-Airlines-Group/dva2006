@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.dispatch;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.security.command.DispatchRouteAccessControl;
 /**
  * A Web Site Command to display saved dispatch routes.
  * @author Luke
- * @version 2.6
+ * @version 7.0
  * @since 2.1
  */
 
@@ -27,10 +27,11 @@ public class RouteListCommand extends AbstractViewCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Get the view context
-		ViewContext vc = initView(ctx);
+		ViewContext<DispatchRoute> vc = initView(ctx, DispatchRoute.class);
 		int authorID = ctx.getID();
 		try {
 			Connection con = ctx.getConnection();
@@ -46,16 +47,14 @@ public class RouteListCommand extends AbstractViewCommand {
 			rdao.setQueryMax(vc.getCount());
 			
 			// Get the plans and filter
-			Collection<DispatchRoute> plans = (authorID == 0) ? rdao.getAll(false, true) : rdao.getByAuthor(authorID);
-			for (Iterator<DispatchRoute> i = plans.iterator(); i.hasNext(); ) {
+			vc.setResults((authorID == 0) ? rdao.getAll(false, true) : rdao.getByAuthor(authorID));
+			for (Iterator<DispatchRoute> i = vc.getResults().iterator(); i.hasNext(); ) {
 				DispatchRoute rt = i.next();
 				DispatchRouteAccessControl ac = new DispatchRouteAccessControl(ctx, rt);
 				ac.validate();
 				if (!ac.getCanView())
 					i.remove();
 			}
-			
-			vc.setResults(plans);
 			
 			// Get the user data
 			GetPilot pdao = new GetPilot(con);

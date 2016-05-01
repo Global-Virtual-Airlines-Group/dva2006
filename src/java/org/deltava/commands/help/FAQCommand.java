@@ -1,6 +1,8 @@
 // Copyright 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.help;
 
+import org.deltava.beans.help.Issue;
+
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
@@ -21,7 +23,7 @@ public class FAQCommand extends AbstractViewCommand {
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
-		ViewContext vc = initView(ctx);
+		ViewContext<Issue> vc = initView(ctx, Issue.class);
 		try {
 			GetHelp dao = new GetHelp(ctx.getConnection());
 			dao.setQueryStart(vc.getStart());

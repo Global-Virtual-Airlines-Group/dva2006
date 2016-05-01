@@ -2,6 +2,7 @@
 package org.deltava.commands.pirep;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
@@ -39,7 +40,7 @@ public class PIREPQueueCommand extends AbstractViewCommand {
 		String mySort = MY_EQ_SORT.replace("?", "\'" + ctx.getUser().getEquipmentType() + "\'");
 		
         // Get/set start/count parameters
-        ViewContext vc = initView(ctx);
+        ViewContext<FlightReport> vc = initView(ctx, FlightReport.class);
         if (StringUtils.arrayIndexOf(SORT_CODES, vc.getSortType()) == -1)
         	vc.setSortType(SORT_CODES[0]);
         
@@ -53,17 +54,11 @@ public class PIREPQueueCommand extends AbstractViewCommand {
 			dao.setQueryMax(vc.getCount());
 			
 			// Get the PIREPs and load the promotion type
-			Collection<FlightReport> pireps = dao.getByStatus(PENDING, isMyEQSort ? mySort : vc.getSortType());
-			dao.getCaptEQType(pireps);
-			
-			// Get the Pilot IDs
-			Collection<Integer> IDs = new HashSet<Integer>();
-			for (Iterator<FlightReport> i = pireps.iterator(); i.hasNext(); ) {
-				FlightReport fr = i.next();
-				IDs.add(new Integer(fr.getDatabaseID(DatabaseID.PILOT)));
-			}
+			vc.setResults(dao.getByStatus(PENDING, isMyEQSort ? mySort : vc.getSortType()));
+			dao.getCaptEQType(vc.getResults());
 			
 			// Load the Pilots
+			Collection<Integer> IDs = vc.getResults().stream().map(FlightReport::getAuthorID).collect(Collectors.toSet());
 			GetPilot pdao = new GetPilot(con);
 			ctx.setAttribute("pilots", pdao.getByID(IDs, "PILOTS"), REQUEST);
 			
@@ -73,12 +68,12 @@ public class PIREPQueueCommand extends AbstractViewCommand {
 			ctx.setAttribute("myEQ", myEQ, REQUEST);
 			
 			// Check if we display the scroll bar
-			ctx.setAttribute("doScroll", Boolean.valueOf(pireps.size() >= vc.getCount()), REQUEST);
+			ctx.setAttribute("doScroll", Boolean.valueOf(vc.getResults().size() >= vc.getCount()), REQUEST);
 			
 			// Split into my held PIREPs and my equipment PIREPs
 			Collection<FlightReport> myEQType = new ArrayList<FlightReport>();
 			Collection<FlightReport> myHeld = new ArrayList<FlightReport>();
-			for (Iterator<FlightReport> i = pireps.iterator(); i.hasNext(); ) {
+			for (Iterator<FlightReport> i = vc.getResults().iterator(); i.hasNext(); ) {
 				FlightReport fr = i.next();
 				if ((fr.getStatus() == FlightReport.HOLD) && (fr.getDatabaseID(DatabaseID.DISPOSAL) == ctx.getUser().getID())) {
 					myHeld.add(fr);
@@ -90,7 +85,6 @@ public class PIREPQueueCommand extends AbstractViewCommand {
 			}
 			
 			// Save in request
-			vc.setResults(pireps);
 			ctx.setAttribute("myHeld", myHeld, REQUEST);
 			ctx.setAttribute("myEQType", myEQType, REQUEST);
 		} catch (DAOException de) {

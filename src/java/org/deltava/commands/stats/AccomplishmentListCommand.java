@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.security.command.AccomplishmentAccessControl;
 /**
  * A Web Site Command to display Accomplishment profiles. 
  * @author Luke
- * @version 3.2
+ * @version 7.0
  * @since 3.2
  */
 
@@ -27,21 +27,16 @@ public class AccomplishmentListCommand extends AbstractViewCommand {
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
-		// Get the view context
-		ViewContext vc = initView(ctx);
-		
+		ViewContext<Accomplishment> vc = initView(ctx, Accomplishment.class);
 		try {
 			GetAccomplishment dao = new GetAccomplishment(ctx.getConnection());
 			dao.setQueryStart(vc.getStart());
 			dao.setQueryMax(vc.getCount());
-			
-			// Get the results
-			Collection<Accomplishment> results = dao.getAll();
-			vc.setResults(results);
+			vc.setResults(dao.getAll());
 			
 			// Check our access
 			Map<Accomplishment, AccomplishmentAccessControl> accessMap = new HashMap<Accomplishment, AccomplishmentAccessControl>();
-			for (Accomplishment a : results) {
+			for (Accomplishment a : vc.getResults()) {
 				AccomplishmentAccessControl ac = new AccomplishmentAccessControl(ctx, a);
 				ac.validate();
 				accessMap.put(a, ac);

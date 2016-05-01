@@ -49,7 +49,7 @@ public class CoolerSearchCommand extends AbstractViewCommand {
 		
 		// Get the command result and view context
 		CommandResult result = ctx.getResult();
-		ViewContext vc = initView(ctx);
+		ViewContext<MessageThread> vc = initView(ctx, MessageThread.class);
 		Semaphore s = ctx.isAuthenticated() ? _usrLock : _anonLock; boolean hasLock = false;
 		try {
 			Connection con = ctx.getConnection();
@@ -95,12 +95,12 @@ public class CoolerSearchCommand extends AbstractViewCommand {
 			GetCoolerThreads dao = new GetCoolerThreads(con);
 			dao.setQueryStart(vc.getStart());
 			dao.setQueryMax(Math.round(vc.getCount() * 1.25f));
-			Collection<MessageThread> 	threads = dao.search(criteria);
+			vc.setResults(dao.search(criteria));
 			
 			// Filter out the threads based on our access
 			Collection<Integer> pilotIDs = new HashSet<Integer>();
 			CoolerThreadAccessControl access = new CoolerThreadAccessControl(ctx);
-			for (Iterator<MessageThread> i = threads.iterator(); i.hasNext();) {
+			for (Iterator<MessageThread> i = vc.getResults().iterator(); i.hasNext();) {
 				MessageThread mt = i.next();
 				Channel c = cdao.get(mt.getChannel());
 				access.updateContext(mt, c);
@@ -127,7 +127,6 @@ public class CoolerSearchCommand extends AbstractViewCommand {
 			authors.putAll(adao.get(udm));
 
 			// Save the threads in the request
-			vc.setResults(threads);
 			ctx.setAttribute("pilots", authors, REQUEST);
 			ctx.setAttribute("searchTime", Long.valueOf(tt.stop()), REQUEST);
 		} catch (DAOException de) {

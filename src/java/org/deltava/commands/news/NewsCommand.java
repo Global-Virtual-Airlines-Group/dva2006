@@ -27,7 +27,7 @@ public class NewsCommand extends AbstractViewCommand {
     @Override
 	public void execute(CommandContext ctx) throws CommandException {
 
-        ViewContext vc = initView(ctx);
+        ViewContext<News> vc = initView(ctx, News.class);
         try {
             GetNews dao = new GetNews(ctx.getConnection());
             dao.setQueryStart(vc.getStart());
@@ -41,8 +41,7 @@ public class NewsCommand extends AbstractViewCommand {
         
         // Calculate access rights
         Map<Integer, NewsAccessControl> accessMap = new HashMap<Integer, NewsAccessControl>();
-        for (Iterator<?> i = vc.getResults().iterator(); i.hasNext(); ) {
-        	News n = (News) i.next();
+        for (News n : vc.getResults()) {
         	NewsAccessControl access = new NewsAccessControl(ctx, n);
         	access.validate();
         	accessMap.put(Integer.valueOf(n.getID()), access);

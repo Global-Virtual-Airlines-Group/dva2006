@@ -27,7 +27,7 @@ public class MyIssueListCommand extends AbstractViewCommand {
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
-		ViewContext vc = initView(ctx);
+		ViewContext<Issue> vc = initView(ctx, Issue.class);
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -36,12 +36,11 @@ public class MyIssueListCommand extends AbstractViewCommand {
 			GetHelp idao = new GetHelp(con);
 			idao.setQueryStart(vc.getStart());
 			idao.setQueryMax(vc.getCount());
-			Collection<Issue> results = idao.getByPilot(myID, myID, false, false);
-			vc.setResults(results);
+			vc.setResults(idao.getByPilot(myID, myID, false, false));
 			
 			// Get Author IDs
 			Collection<Integer> IDs = new HashSet<Integer>();
-			for (Issue is : results) {
+			for (Issue is : vc.getResults()) {
 				IDs.add(Integer.valueOf(is.getAuthorID()));
 				IDs.add(Integer.valueOf(is.getAssignedTo()));
 				IDs.add(Integer.valueOf(is.getLastCommentAuthorID()));

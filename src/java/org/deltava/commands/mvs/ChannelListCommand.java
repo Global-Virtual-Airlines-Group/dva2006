@@ -1,6 +1,8 @@
 // Copyright 2006, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.mvs;
 
+import org.deltava.beans.mvs.Channel;
+
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
@@ -22,7 +24,7 @@ public class ChannelListCommand extends AbstractViewCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Init the view context
-		ViewContext vc = initView(ctx);
+		ViewContext<Channel> vc = initView(ctx, Channel.class);
 		try {
 			GetMVSChannel dao = new GetMVSChannel(ctx.getConnection());
 			dao.setQueryMax(vc.getCount());

@@ -313,8 +313,7 @@ public class GetStatistics extends DAO  {
 	 * @return a List of CoolerStatsEntry beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<CoolerStatsEntry<String>> getCoolerStatistics(String orderBy, String groupBy, String distinctBy)
-			throws DAOException {
+	public List<CoolerStatsEntry<String>> getCoolerStatistics(String orderBy, String groupBy, String distinctBy) throws DAOException {
 
 		// Generate SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT ");

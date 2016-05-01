@@ -3,6 +3,8 @@ package org.deltava.commands.stats;
 
 import java.util.List;
 
+import org.deltava.beans.stats.HTTPStatistics;
+
 import org.deltava.commands.*;
 
 import org.deltava.dao.*;
@@ -30,7 +32,7 @@ public class ServerStatsCommand extends AbstractViewCommand {
 public void execute(CommandContext ctx) throws CommandException {
 
       // Get the view context
-      ViewContext vc = initView(ctx);
+      ViewContext<HTTPStatistics> vc = initView(ctx, HTTPStatistics.class);
       if (StringUtils.arrayIndexOf(SORT_CODE, vc.getSortType()) == -1)
 		   vc.setSortType(SORT_CODE[0]);
 

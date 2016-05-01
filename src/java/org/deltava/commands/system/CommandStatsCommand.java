@@ -1,46 +1,39 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
-import java.sql.Connection;
 
 import org.deltava.commands.*;
-
-import org.deltava.dao.GetSystemData;
-import org.deltava.dao.DAOException;
-
-import org.deltava.util.ComboUtils;
+import org.deltava.dao.*;
+import org.deltava.util.*;
 
 /**
  * A Web Site Command to display Web Site Command statistics.
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
 public class CommandStatsCommand extends AbstractCommand {
    
-   private static final List<?> sortOptions = ComboUtils.fromArray(new String[] {"Command Name", "Average Time",
-         "Database Time", "Maximum Time", "Frequency", "Success"}, new String[] {"NAME", "AVGT DESC", "BE DESC",
-         "MAXTOTAL DESC", "TC DESC", "SC DESC"});
+	private static final String[] SORT_CODES = new String[] {"NAME", "AVGT DESC", "BE DESC", "MAXTOTAL DESC", "TC DESC", "SC DESC"};
+	private static final List<?> SORT_OPTS = ComboUtils.fromArray(new String[] {"Command Name", "Average Time", "Database Time", "Maximum Time", "Frequency", "Success"}, SORT_CODES); 
 
    /**
     * Executes the command.
     * @param ctx the Command context
     * @throws CommandException if an unhandled error occurs
     */
+   @Override
    public void execute(CommandContext ctx) throws CommandException {
       
       // Get the sort column
       String sortBy = ctx.getParameter("sortBy");
-      if (sortBy == null)
-         sortBy = "NAME";
+      if (StringUtils.arrayIndexOf(SORT_CODES, sortBy) == -1)
+         sortBy = SORT_CODES[0];
 
       try {
-         Connection con = ctx.getConnection();
-         
-         // Get the DAO and the statistics
-         GetSystemData dao = new GetSystemData(con);
+         GetSystemData dao = new GetSystemData(ctx.getConnection());
          ctx.setAttribute("stats", dao.getCommandStats(sortBy), REQUEST);
       } catch (DAOException de) {
          throw new CommandException(de);
@@ -50,7 +43,7 @@ public class CommandStatsCommand extends AbstractCommand {
       
       // Save sort options
       ctx.setAttribute("sortType", sortBy, REQUEST);
-      ctx.setAttribute("sortOptions", sortOptions, REQUEST);
+      ctx.setAttribute("sortOptions", SORT_OPTS, REQUEST);
 
       // Forward to the JSP
       CommandResult result = ctx.getResult();

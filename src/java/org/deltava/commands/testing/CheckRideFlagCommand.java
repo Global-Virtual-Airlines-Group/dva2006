@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to retroactively flag a Flight Report as a Check Ride.
  * @author Luke
- * @version 6.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -63,7 +63,7 @@ public class CheckRideFlagCommand extends AbstractCommand {
 			GetExam exdao = new GetExam(con);
 			CheckRide cr = (crID != 0) ? exdao.getCheckRide(crID) : exdao.getCheckRide(pilotID, fr.getEquipmentType(), TestStatus.NEW);
 			boolean newCR = (cr == null);
-			if (newCR)
+			if (cr == null)
 				cr = new CheckRide(fr.getEquipmentType() + " Check Ride");
 			else if (cr.getStatus() == TestStatus.NEW) {
 				// empty

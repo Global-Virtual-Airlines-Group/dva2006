@@ -3,7 +3,7 @@ package org.deltava.commands.news;
 
 import java.util.*;
 
-import org.deltava.beans.Notice;
+import org.deltava.beans.News;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -28,7 +28,7 @@ public class NOTAMCommand extends AbstractViewCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 
         // Get/set start/count parameters
-        ViewContext vc = initView(ctx);
+        ViewContext<News> vc = initView(ctx, News.class);
         boolean doActive = !"all".equals(ctx.getCmdParameter(OPERATION, null));
         try {
             GetNews dao = new GetNews(ctx.getConnection());
@@ -43,8 +43,7 @@ public class NOTAMCommand extends AbstractViewCommand {
         
         // Calculate access rights
         Map<Integer, NewsAccessControl> accessMap = new HashMap<Integer, NewsAccessControl>();
-        for (Iterator<?> i = vc.getResults().iterator(); i.hasNext(); ) {
-        	Notice n = (Notice) i.next();
+        for (News n : vc.getResults()) {
         	NewsAccessControl access = new NewsAccessControl(ctx, n);
         	access.validate();
         	accessMap.put(Integer.valueOf(n.getID()), access);

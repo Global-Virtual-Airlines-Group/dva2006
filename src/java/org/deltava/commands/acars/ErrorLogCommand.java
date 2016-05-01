@@ -15,7 +15,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to display ACARS client error reports.
  * @author Luke
- * @version 6.4
+ * @version 7.0
  * @since 1.0
  */
 
@@ -35,7 +35,7 @@ public class ErrorLogCommand extends AbstractViewCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the view context and the search type
-		ViewContext vc = initView(ctx);
+		ViewContext<ACARSError> vc = initView(ctx, ACARSError.class);
 		int searchType = StringUtils.arrayIndexOf(FILTER_OPTS, ctx.getParameter("viewType"), ALL); 
 		try {
 			Connection con = ctx.getConnection();
@@ -64,17 +64,13 @@ public class ErrorLogCommand extends AbstractViewCommand {
 			
 			// Get user IDs
 			Collection<Integer> IDs = new HashSet<Integer>(authorIDs);
-			for (Iterator<?> i = vc.getResults().iterator(); i.hasNext(); ) {
-				ACARSError err = (ACARSError) i.next();
-				IDs.add(Integer.valueOf(err.getAuthorID()));
-			}
+			vc.getResults().forEach(err -> IDs.add(Integer.valueOf(err.getAuthorID())));
 			
-			// Load the User IDs
+			
+			// Load the Users
 			GetUserData uddao = new GetUserData(con);
-			UserDataMap udmap = uddao.get(IDs);
-			
-			// Load the user profles
 			GetPilot pdao = new GetPilot(con);
+			UserDataMap udmap = uddao.get(IDs);
 			Map<Integer, Pilot> pilots = pdao.get(udmap);
 			
 			// Get report author IDs

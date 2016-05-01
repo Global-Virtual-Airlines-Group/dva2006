@@ -1,7 +1,8 @@
-// Copyright 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.hr;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.deltava.beans.hr.*;
@@ -14,7 +15,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Web Site Command to list all Job Applications.
  * @author Luke
- * @version 3.6
+ * @version 7.0
  * @since 3.6
  */
 
@@ -27,7 +28,7 @@ public class ApplicationListCommand extends AbstractViewCommand {
      */
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
-		ViewContext vc = initView(ctx);
+		ViewContext<Application> vc = initView(ctx, Application.class);
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -36,12 +37,8 @@ public class ApplicationListCommand extends AbstractViewCommand {
 			Collection<JobPosting> allJobs = dao.getAll();
 			ctx.setAttribute("jobs", CollectionUtils.createMap(dao.getAll(), "ID"), REQUEST);
 			
-			// Get the hiring manager IDs
-			Collection<Integer> IDs = new HashSet<Integer>();
-			for (JobPosting jp : allJobs)
-				IDs.add(new Integer(jp.getHireManagerID()));
-			
 			// Load hiring managers
+			Collection<Integer> IDs = allJobs.stream().map(JobPosting::getHireManagerID).collect(Collectors.toSet());
 			GetPilot pdao = new GetPilot(con);
 			ctx.setAttribute("hireMgrs", pdao.getByID(IDs, "PILOTS"), REQUEST);
 			

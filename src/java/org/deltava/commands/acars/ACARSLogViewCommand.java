@@ -2,6 +2,7 @@
 package org.deltava.commands.acars;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.Connection;
 import java.time.Instant;
 
@@ -55,17 +56,8 @@ public abstract class ACARSLogViewCommand extends AbstractViewCommand {
 	 * @param viewEntries the view result entries
 	 * @return a Collection of Pilot IDs
 	 */
-	protected static Collection<Integer> getPilotIDs(Collection<?> viewEntries) {
-		Collection<Integer> results = new HashSet<Integer>();
-		for (Iterator<?> i = viewEntries.iterator(); i.hasNext();) {
-			Object o = i.next();
-			if (o instanceof AuthoredBean) {
-				AuthoredBean entry = (AuthoredBean) o;
-				results.add(Integer.valueOf(entry.getAuthorID()));
-			}
-		}
-
-		return results;
+	protected static Collection<Integer> getPilotIDs(Collection<? extends AuthoredBean> viewEntries) {
+		return viewEntries.stream().map(AuthoredBean::getAuthorID).collect(Collectors.toSet());
 	}
 
 	/*

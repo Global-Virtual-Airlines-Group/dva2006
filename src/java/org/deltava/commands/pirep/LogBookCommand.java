@@ -41,7 +41,7 @@ public class LogBookCommand extends AbstractViewCommand {
     public void execute(CommandContext ctx) throws CommandException {
        
         // Get/set start/count parameters
-        ViewContext vc = initView(ctx);
+        ViewContext<FlightReport> vc = initView(ctx, FlightReport.class);
         if (StringUtils.arrayIndexOf(SORT_CODE, vc.getSortType()) == -1)
   		   	vc.setSortType(SORT_CODE[0]);
        
@@ -76,9 +76,8 @@ public class LogBookCommand extends AbstractViewCommand {
             dao2.setQueryMax(vc.getCount());
             
             // Get the PIREP beans and load the promotion eligibility
-            Collection<FlightReport> pireps = dao2.getByPilot(id, criteria);
-            dao2.getCaptEQType(pireps);
-            vc.setResults(pireps);
+            vc.setResults(dao2.getByPilot(id, criteria));
+            dao2.getCaptEQType(vc.getResults());
             
             // Load the Equipment types
             GetAircraft acdao = new GetAircraft(con);

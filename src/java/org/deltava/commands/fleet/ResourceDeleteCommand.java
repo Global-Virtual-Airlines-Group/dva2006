@@ -1,4 +1,4 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.sql.Connection;
@@ -13,7 +13,7 @@ import org.deltava.security.command.ResourceAccessControl;
 /**
  * A Web Site Command to delete a Web Resource link.
  * @author Luke
- * @version 2.7
+ * @version 7.0
  * @since 2.7
  */
 
@@ -24,6 +24,7 @@ public class ResourceDeleteCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		try {
 			Connection con = ctx.getConnection();

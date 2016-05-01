@@ -1,7 +1,8 @@
-// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.gallery;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.deltava.beans.gallery.Image;
@@ -16,7 +17,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to display the Fleet Gallery.
  * @author Luke
- * @version 6.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -41,12 +42,8 @@ public class FleetGalleryCommand extends AbstractViewCommand {
             GetGallery dao = new GetGallery(con);
             results.addAll(dao.getFleetGallery());
             
-			// Get all the Author IDs
-			Collection<Integer> authorIDs = new HashSet<Integer>();
-			for (Image img : results)
-				authorIDs.add(Integer.valueOf(img.getAuthorID()));
-
 			// Load the Image Authors
+            Collection<Integer> authorIDs = results.stream().map(Image::getAuthorID).collect(Collectors.toSet());
 			GetPilot pdao = new GetPilot(con);
 			ctx.setAttribute("pilots", pdao.getByID(authorIDs, "PILOTS"), REQUEST);
         } catch (DAOException de) {
@@ -66,7 +63,7 @@ public class FleetGalleryCommand extends AbstractViewCommand {
     		ctx.setAttribute("access", access, REQUEST);
     		
     		// Initialize the view context
-    		ViewContext vctx = initView(ctx);
+    		ViewContext<Image> vctx = initView(ctx, Image.class);
     		vctx.setResults(results);
 
     		// Forward to the JSP

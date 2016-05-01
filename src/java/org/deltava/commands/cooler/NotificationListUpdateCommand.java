@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to update the Thread Notification list.
  * @author Luke
- * @version 2.7
+ * @version 7.0
  * @since 2.1
  */
 
@@ -23,17 +23,16 @@ public class NotificationListUpdateCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the threads to clear
 		Collection<String> IDs = ctx.getParameters("threadID");
 		if (!CollectionUtils.isEmpty(IDs)) {
 			try {
-				// Get the DAO and clear the notifications
 				SetCoolerNotification ndao = new SetCoolerNotification(ctx.getConnection());
 				ctx.startTX();
-				for (Iterator<String> i = IDs.iterator(); i.hasNext();) {
-					String id = i.next();
+				for (String id : IDs) {
 					try {
 						int threadID = StringUtils.parseHex(id);
 						ndao.delete(threadID, ctx.getUser().getID());
@@ -42,7 +41,6 @@ public class NotificationListUpdateCommand extends AbstractCommand {
 					}
 				}
 
-				// Commit
 				ctx.commitTX();
 			} catch (DAOException de) {
 				ctx.rollbackTX();

@@ -1,6 +1,8 @@
 // Copyright 2005, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
+import org.deltava.beans.event.Event;
+
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
@@ -23,22 +25,22 @@ public class EventListCommand extends AbstractViewCommand {
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
-		ViewContext vc = initView(ctx);
+		ViewContext<Event> vc = initView(ctx, Event.class);
 		try {
 			GetEvent dao = new GetEvent(ctx.getConnection());
 			dao.setQueryMax(vc.getCount());
 			dao.setQueryStart(vc.getStart());
 			vc.setResults(dao.getEvents());
-
-			// Calculate our access to create new events
-			EventAccessControl access = new EventAccessControl(ctx, null);
-			access.validate();
-			ctx.setAttribute("access", access, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
 		}
+		
+		// Calculate our access to create new events
+		EventAccessControl access = new EventAccessControl(ctx, null);
+		access.validate();
+		ctx.setAttribute("access", access, REQUEST);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

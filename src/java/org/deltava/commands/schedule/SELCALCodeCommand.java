@@ -3,6 +3,7 @@ package org.deltava.commands.schedule;
 
 import java.time.*;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.deltava.beans.schedule.SelectCall;
@@ -36,7 +37,7 @@ public class SELCALCodeCommand extends AbstractViewCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the view context
-		ViewContext vc = initView(ctx);
+		ViewContext<SelectCall> vc = initView(ctx, SelectCall.class);
 		vc.setSortType(ctx.getParameter("sortType"));
 		if (StringUtils.arrayIndexOf(SORT_CODES, vc.getSortType()) == -1)
 			vc.setSortType(SORT_CODES[0]);
@@ -52,16 +53,14 @@ public class SELCALCodeCommand extends AbstractViewCommand {
 			dao.setQueryMax(vc.getCount());
 			
 			// Pull up the SELCAL codes
-			Collection<SelectCall> codes = null;
 			if (SORT_CODES[4].equals(vc.getSortType()))
-				codes = dao.getReserved(ctx.getUser().getID());
+				vc.setResults(dao.getReserved(ctx.getUser().getID()));
 			else if (eqType != null)
-				codes = dao.getByEquipmentType(eqType);
+				vc.setResults(dao.getByEquipmentType(eqType));
 			else 
-				codes = dao.getCodes(vc.getSortType());
+				vc.setResults(dao.getCodes(vc.getSortType()));
 			
 			// Save codes and equipment types
-			vc.setResults(codes);
 			ctx.setAttribute("eqTypes", dao.getEquipmentTypes(), REQUEST);
 			
 			// Check if we can reserve new codes
@@ -74,7 +73,7 @@ public class SELCALCodeCommand extends AbstractViewCommand {
 			
 			// Calculate the access control
 			Map<String, SELCALAccessControl> access = new HashMap<String, SELCALAccessControl>();
-			for (SelectCall sc : codes) {
+			for (SelectCall sc : vc.getResults()) {
 				SELCALAccessControl ac = new SELCALAccessControl(ctx, sc);
 				if (usrCodes >= maxCodes)
 					ac.markUnavailable();
@@ -92,16 +91,9 @@ public class SELCALCodeCommand extends AbstractViewCommand {
 			ctx.setAttribute("releaseDates", releaseDates, REQUEST);
 			
 			// Load the Pilots
-			Collection<Integer> ids = new HashSet<Integer>();
-			for (Iterator<SelectCall> i = codes.iterator(); i.hasNext(); ) {
-				SelectCall sc = i.next();
-				if (sc.getReservedBy() != 0)
-					ids.add(new Integer(sc.getReservedBy()));
-			}
-			
-			// Get the Pilot DAO and the Pilots
+			Collection<Integer> IDs = vc.getResults().stream().filter(sc -> (sc.getReservedBy() != 0)).map(SelectCall::getReservedBy).collect(Collectors.toSet());
 			GetPilot pdao = new GetPilot(con);
-			ctx.setAttribute("pilots", pdao.getByID(ids, "PILOTS"), REQUEST);
+			ctx.setAttribute("pilots", pdao.getByID(IDs, "PILOTS"), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

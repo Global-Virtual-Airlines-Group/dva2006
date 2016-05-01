@@ -1,22 +1,19 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
-import java.sql.Connection;
 
 import org.deltava.beans.testing.ExamProfile;
 
 import org.deltava.commands.*;
-
-import org.deltava.dao.GetExamProfiles;
-import org.deltava.dao.DAOException;
+import org.deltava.dao.*;
 
 import org.deltava.security.command.ExamProfileAccessControl;
 
 /**
  * A Web Site Command to display Examination Profiles.
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -27,14 +24,12 @@ public class ExamProfilesCommand extends AbstractCommand {
     * @param ctx the Command context
     * @throws CommandException if an unhandled error occurs
     */
+   @Override
    public void execute(CommandContext ctx) throws CommandException {
 
       Collection<ExamProfile> results = null;
       try {
-         Connection con = ctx.getConnection();
-         
-         // Get the DAO and the exam profile list
-         GetExamProfiles dao = new GetExamProfiles(con);
+         GetExamProfiles dao = new GetExamProfiles(ctx.getConnection());
          results = dao.getExamProfiles();
       } catch (DAOException de) {
          throw new CommandException(de);

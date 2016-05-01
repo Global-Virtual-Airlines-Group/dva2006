@@ -7,7 +7,7 @@ import org.deltava.taglib.view.*;
 
 public abstract class AbstractScrollTagTestCase extends AbstractTagTestCase {
 
-	protected ViewContext _vctx;
+	protected ViewContext<?> _vctx;
     protected TableTag _tableTag;
     
     @Override
@@ -27,7 +27,7 @@ public abstract class AbstractScrollTagTestCase extends AbstractTagTestCase {
     }
     
     protected void initViewContext() {
-    	_vctx = new ViewContext(_req, 25);
+    	_vctx = new ViewContext<Object>(_req, 25);
     	_ctx.setAttribute(ViewContext.VIEW_CONTEXT, _vctx, PageContext.REQUEST_SCOPE);
     }
     
