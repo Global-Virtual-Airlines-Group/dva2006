@@ -1765,12 +1765,6 @@
 		<roles>Admin</roles>
 	</command>
 
-	<command id="cmdstatpurge">
-		<name>Command Statistics Purge</name>
-		<class>org.deltava.commands.system.CommandStatsPurgeCommand</class>
-		<roles>Admin</roles>
-	</command>
-
 	<command id="taskexec">
 		<name>Scheduled Task Execute</name>
 		<class>org.deltava.commands.system.TaskExecuteCommand</class>
