@@ -8,7 +8,9 @@ import net.spy.memcached.*;
 
 import org.deltava.dao.DAOException;
 import org.deltava.util.MemcachedUtils;
-import org.deltava.util.tile.*;
+import org.deltava.util.tile.SeriesWriter;
+
+import org.gvagroup.tile.*;
 
 /**
  * A Data Access Object to write map tiles to memcached. 

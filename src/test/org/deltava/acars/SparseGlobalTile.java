@@ -5,7 +5,7 @@ import java.util.*;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.concurrent.locks.*;
 
-import org.deltava.util.tile.*;
+import org.gvagroup.tile.TileAddress;
 
 public class SparseGlobalTile {
 	
