@@ -35,7 +35,7 @@ public class AssignmentListCommand extends AbstractViewCommand {
    public void execute(CommandContext ctx) throws CommandException {
 
       // Get the view context
-      ViewContext vc = initView(ctx);
+      ViewContext<AssignmentInfo> vc = initView(ctx, AssignmentInfo.class);
       
       // Get status and equipment type
       String status = ctx.getParameter("status");
@@ -66,8 +66,7 @@ public class AssignmentListCommand extends AbstractViewCommand {
          // Build a Collection of access controllers and Pilot IDs
          Collection<Integer> pilotIDs = new HashSet<Integer>();
          List<AssignmentAccessControl> accessList = new ArrayList<AssignmentAccessControl>();
-         for (Iterator<?> i = vc.getResults().iterator(); i.hasNext(); ) {
-         	AssignmentInfo ai = (AssignmentInfo) i.next();
+         for (AssignmentInfo ai : vc.getResults()) {
          	if (ai.getPilotID() != 0)
          		pilotIDs.add(Integer.valueOf(ai.getPilotID()));
          	
@@ -81,10 +80,8 @@ public class AssignmentListCommand extends AbstractViewCommand {
          GetPilot pdao = new GetPilot(con);
          ctx.setAttribute("pilots", pdao.getByID(pilotIDs, "PILOTS"), REQUEST);
          
-         // Save statuses
+         // Save statuses and controllers
          ctx.setAttribute("statuses", ComboUtils.fromArray(AssignmentInfo.STATUS), REQUEST);
-         
-         // Save the access controllers
          ctx.setAttribute("accessList", accessList, REQUEST);
       } catch (DAOException de) {
          throw new CommandException(de);

@@ -4,6 +4,7 @@ package org.deltava.commands.acars;
 import java.sql.Connection;
 
 import org.deltava.beans.UserDataMap;
+import org.deltava.beans.acars.FlightInfo;
 import org.deltava.beans.acars.LogSearchCriteria;
 
 import org.deltava.commands.*;
@@ -26,19 +27,15 @@ public class FlightLogCommand extends ACARSLogViewCommand {
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
-		// Get the view context and the search type
-		ViewContext vc = initView(ctx);
-
-		// Get the command result
-		CommandResult result = ctx.getResult();
-
 		// If we're not displaying anything, redirect to the result page
+		CommandResult result = ctx.getResult();
 		if (ctx.getParameter("pilotCode") == null) {
 			result.setURL("/jsp/acars/flightLog.jsp");
 			result.setSuccess(true);
 			return;
 		}
 
+		ViewContext<FlightInfo> vc = initView(ctx, FlightInfo.class);
 		try {
 			Connection con = ctx.getConnection();
 			LogSearchCriteria criteria = getSearchCriteria(ctx, con);
@@ -47,8 +44,6 @@ public class FlightLogCommand extends ACARSLogViewCommand {
 			GetACARSLog dao = new GetACARSLog(con);
 			dao.setQueryStart(vc.getStart());
 			dao.setQueryMax(vc.getCount());
-
-			// Do the search
 			vc.setResults(dao.getFlights(criteria));
 
 			// Load the Pilot data

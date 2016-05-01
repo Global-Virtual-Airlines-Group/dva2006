@@ -2,6 +2,7 @@
 package org.deltava.commands.register;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.deltava.beans.testing.Examination;
@@ -25,7 +26,8 @@ public class QuestionnaireQueueCommand extends AbstractViewCommand {
 	 */
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
-		ViewContext vctxt = initView(ctx);
+		
+		ViewContext<Examination> vctxt = initView(ctx, Examination.class);
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -33,19 +35,12 @@ public class QuestionnaireQueueCommand extends AbstractViewCommand {
 			GetQuestionnaire dao = new GetQuestionnaire(con);
 			dao.setQueryStart(vctxt.getStart());
 			dao.setQueryMax(vctxt.getCount());
-			Collection<Examination> queue = dao.getPending();
+			vctxt.setResults(dao.getPending());
 			
-			// Build a collection of applicant IDs
-			Collection<Integer> applicantIDs = new HashSet<Integer>();
-			for (Examination e : queue)
-				applicantIDs.add(Integer.valueOf(e.getAuthorID()));
-			
-			// Get the DAO and save the applicant IDs in the request
+			// Save the applicants in the request
+			Collection<Integer> IDs = vctxt.getResults().stream().map(Examination::getAuthorID).collect(Collectors.toSet());
 			GetApplicant adao = new GetApplicant(con);
-			ctx.setAttribute("applicants", adao.getByID(applicantIDs, "APPLICANTS"), REQUEST);
-			
-			// Save the questionnaire queue
-			ctx.setAttribute("examQueue", queue, REQUEST);
+			ctx.setAttribute("applicants", adao.getByID(IDs, "APPLICANTS"), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

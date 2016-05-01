@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to display Flight Academy courses ready for approval.
  * @author Luke
- * @version 3.6
+ * @version 7.0
  * @since 3.4
  */
 
@@ -27,8 +27,7 @@ public class CourseQueueCommand extends AbstractViewCommand {
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
-		// Get the view start/end
-		ViewContext vc = initView(ctx);
+		ViewContext<Course> vc = initView(ctx, Course.class);
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -36,12 +35,11 @@ public class CourseQueueCommand extends AbstractViewCommand {
 			GetAcademyCourses cdao = new GetAcademyCourses(con);
 			cdao.setQueryStart(vc.getStart());
 			cdao.setQueryMax(vc.getCount());
-			Collection<Course> queue = cdao.getCompletionQueue();
-			vc.setResults(queue);
+			vc.setResults(cdao.getCompletionQueue());
 			
 			// Get the pilot IDs
 			Collection<Integer> IDs = new HashSet<Integer>();
-			for (Course c : queue) {
+			for (Course c : vc.getResults()) {
 				IDs.add(new Integer(c.getPilotID()));
 				IDs.add(new Integer(c.getInstructorID()));
 			}

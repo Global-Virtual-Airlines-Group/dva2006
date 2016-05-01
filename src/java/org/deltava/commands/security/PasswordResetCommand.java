@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.util.List;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to reset users' passwords.
  * @author Luke
- * @version 6.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -30,6 +30,7 @@ public class PasswordResetCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Initialize default command result

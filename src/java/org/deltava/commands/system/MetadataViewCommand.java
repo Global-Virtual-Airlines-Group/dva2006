@@ -1,4 +1,4 @@
-// Copyright 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.Map;
@@ -9,7 +9,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to view metadata.
  * @author Luke
- * @version 5.1
+ * @version 7.0
  * @since 5.1
  */
 
@@ -23,7 +23,7 @@ public class MetadataViewCommand extends AbstractViewCommand {
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
-		ViewContext vctxt = initView(ctx);
+		ViewContext<String> vctxt = initView(ctx, String.class);
 		try {
 			GetMetadata mddao = new GetMetadata(ctx.getConnection());
 			mddao.setQueryStart(vctxt.getStart());

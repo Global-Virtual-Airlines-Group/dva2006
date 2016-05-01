@@ -1,4 +1,4 @@
-// Copyright 2005, 2009, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2012, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.fleet;
 
 import java.io.*;
@@ -9,7 +9,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * An abstract bean to store information about Library entries.
  * @author Luke
- * @version 6.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -182,5 +182,10 @@ public abstract class LibraryEntry implements Comparable<LibraryEntry>, Cacheabl
    @Override
    public final Object cacheKey() {
       return getName();
+   }
+  
+   @Override
+   public String toString() {
+	   return _name;
    }
 }

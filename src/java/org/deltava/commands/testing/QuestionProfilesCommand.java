@@ -1,11 +1,11 @@
-// Copyright 2005, 2006, 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.ComboAlias;
-import org.deltava.beans.testing.ExamProfile;
+import org.deltava.beans.testing.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -35,7 +35,7 @@ public class QuestionProfilesCommand extends AbstractViewCommand {
    public void execute(CommandContext ctx) throws CommandException {
 
       // Get the view start/end/count
-      ViewContext vc = initView(ctx);
+      ViewContext<QuestionProfile> vc = initView(ctx, QuestionProfile.class);
 
       // Get the exam name
       String examName = (String) ctx.getCmdParameter(Command.ID, "ALL");

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.io.File;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to support editing the User File Library.
  * @author Luke
- * @version 6.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -128,7 +128,7 @@ public class UserFileCommand extends AbstractFormCommand {
 			access.validate();
 			boolean isOK = (entry == null) ? access.getCanCreate() : access.getCanEdit();
 			if (!isOK)
-				throw securityException("Cannot create/edit File Library entry for " + entry.getFileName());
+				throw securityException("Cannot create/edit File Library entry - " + entry);
 
 			// Save the entry and the access controller
 			ctx.setAttribute("entry", entry, REQUEST);

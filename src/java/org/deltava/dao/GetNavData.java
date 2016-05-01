@@ -15,7 +15,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to read Navigation data.
  * @author Luke
- * @version 6.4
+ * @version 7.0
  * @since 1.0
  */
 
@@ -42,35 +42,36 @@ public class GetNavData extends DAO {
 			return new NavigationDataMap();
 		
 		// Check the cache
-		NavigationDataMap result = _cache.get(code);
+		String c = code.toUpperCase();
+		NavigationDataMap result = _cache.get(c);
 		if (result != null)
 			return result;
 		
 		// If we're too long, then try looking for a bearing and range
-		if (code.length() > 7) {
-			result = getBearingRange(code);
+		if (c.length() > 7) {
+			result = getBearingRange(c);
 			if (!result.isEmpty())
 				return result;
 			
-			code = code.substring(0, 7);
+			c = code.substring(0, 7);
 		}
 		
 		// Build the navigation data map
 		NavigationDataMap ndmap = new NavigationDataMap();
-		ndmap.setCacheKey(code);
+		ndmap.setCacheKey(c);
 		
 		try {
 			prepareStatement("SELECT * FROM common.NAVDATA WHERE (CODE=?) ORDER BY ITEMTYPE");
-			_ps.setString(1, code.toUpperCase());
+			_ps.setString(1, c);
 			ndmap.addAll(execute());
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 		
 		// Check for a lat/long pair
-		if (NavigationDataBean.isCoordinates(code) != CodeType.CODE) {
+		if (NavigationDataBean.isCoordinates(c) != CodeType.CODE) {
 			try {
-				Intersection i = Intersection.parse(code);
+				Intersection i = Intersection.parse(c);
 				ndmap.add(i);
 			} catch (Exception e) {
 				// empty
@@ -178,9 +179,11 @@ public class GetNavData extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Runway getRunway(ICAOAirport a, String rwyCode, Simulator sim) throws DAOException {
+		if (rwyCode == null) return null;
 		Simulator s = (sim == null) ? Simulator.FSX : sim;
-		if ((rwyCode != null) && rwyCode.startsWith("RW"))
-			rwyCode = rwyCode.substring(2);
+		String rw = rwyCode.toUpperCase();
+		if (rw.startsWith("RW"))
+			rw = rw.substring(2);
 		
 		try {
 			prepareStatement("SELECT N.*, R.MAGVAR, IFNULL(R.SURFACE, ?) FROM common.NAVDATA N LEFT JOIN common.RUNWAYS R ON "
@@ -189,7 +192,7 @@ public class GetNavData extends DAO {
 			_ps.setInt(2, s.getCode());
 			_ps.setInt(3, Navaid.RUNWAY.ordinal());
 			_ps.setString(4, a.getICAO());
-			_ps.setString(5, rwyCode.toUpperCase());
+			_ps.setString(5, rw);
 			List<NavigationDataBean> results = execute();
 			return results.isEmpty() ? null : (Runway) results.get(0);
 		} catch (SQLException se) {

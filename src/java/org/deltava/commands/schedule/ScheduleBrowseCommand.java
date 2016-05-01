@@ -26,9 +26,6 @@ public class ScheduleBrowseCommand extends AbstractViewCommand {
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
-		// Get the view context
-		ViewContext vc = initView(ctx);
-
 		// Get the departure airport
 		Airport aD = SystemData.getAirport(ctx.getParameter("airportD"));
 		if (aD == null)
@@ -40,13 +37,13 @@ public class ScheduleBrowseCommand extends AbstractViewCommand {
 		criteria.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
 		criteria.setSortBy("AIRPORT_D, AIRPORT_A");
 		criteria.setDBName(SystemData.get("airline.db"));
-		criteria.setIncludeAcademy(ctx.isUserInRole("Instructor") || ctx.isUserInRole("Schedule") || ctx.isUserInRole("HR")
-				|| ctx.isUserInRole("AcademyAudit"));
+		criteria.setIncludeAcademy(ctx.isUserInRole("Instructor") || ctx.isUserInRole("Schedule") || ctx.isUserInRole("HR") || ctx.isUserInRole("AcademyAudit"));
 
 		// Save the search criteria
 		ctx.setAttribute("airportD", aD, REQUEST);
 		ctx.setAttribute("airportA", criteria.getAirportA(), REQUEST);
 
+		ViewContext<ScheduleEntry> vc = initView(ctx, ScheduleEntry.class);
 		try {
 			Connection con = ctx.getConnection();
 			

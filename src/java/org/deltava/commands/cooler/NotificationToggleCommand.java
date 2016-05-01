@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.sql.Connection;
@@ -12,7 +12,7 @@ import org.deltava.security.command.CoolerThreadAccessControl;
 /**
  * A Web Site Command to toggle Water Cooler thread update notifications.
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -23,11 +23,11 @@ public class NotificationToggleCommand extends AbstractCommand {
     * @param ctx the Command context
     * @throws CommandException if an unhandled error occurs
     */
+   @Override
    public void execute(CommandContext ctx) throws CommandException {
       
       // Get the thread ID
       int id = ctx.getID();
-
       try {
          Connection con = ctx.getConnection();
          
@@ -56,11 +56,10 @@ public class NotificationToggleCommand extends AbstractCommand {
          
          // Get the DAO and update the database
          SetCoolerNotification wdao = new SetCoolerNotification(con);
-         if (isRemove) {
+         if (isRemove)
             wdao.delete(id, ctx.getUser().getID());
-         } else {
+         else
             wdao.add(id, ctx.getUser().getID());
-         }
          
          // Set status attributes
          ctx.setAttribute("notifyUpdate", Boolean.TRUE, REQUEST);

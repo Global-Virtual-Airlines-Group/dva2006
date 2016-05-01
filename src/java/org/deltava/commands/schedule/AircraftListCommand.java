@@ -1,4 +1,4 @@
-// Copyright 2006, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.security.command.AircraftAccessControl;
 /**
  * A Web Site Command to display aircraft data.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -26,7 +26,7 @@ public class AircraftListCommand extends AbstractViewCommand {
      */
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
-		ViewContext vc = initView(ctx);
+		ViewContext<Aircraft> vc = initView(ctx, Aircraft.class);
 		try {
 			GetAircraft dao = new GetAircraft(ctx.getConnection());
 			dao.setQueryStart(vc.getStart());

@@ -1,6 +1,8 @@
 // Copyright 2005, 2006, 2009, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
+import org.deltava.beans.EquipmentType;
+
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
@@ -21,7 +23,7 @@ public class EquipmentProfilesCommand extends AbstractViewCommand {
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
-		ViewContext vc = initView(ctx);
+		ViewContext<EquipmentType> vc = initView(ctx, EquipmentType.class);
 		try {
 			GetEquipmentType dao = new GetEquipmentType(ctx.getConnection());
 			dao.setQueryStart(vc.getStart());

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2011, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2011, 2012, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update Fleet Library entries.
  * @author Luke
- * @version 6.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -81,7 +81,8 @@ public class InstallerCommand extends LibraryEditCommand {
 				File f = new File(SystemData.get("path.library"), fName);
 				entry = new Installer(f);
 				ctx.setAttribute("fileAdded", Boolean.TRUE, REQUEST);
-			}
+			} else if (entry == null)
+				throw new IllegalStateException("No Library Entry to modify");
 
 			// Populate fields from the request
 			entry.setDescription(ctx.getParameter("desc"));
@@ -89,8 +90,7 @@ public class InstallerCommand extends LibraryEditCommand {
 			entry.setCode(ctx.getParameter("code"));
 			entry.setImage(ctx.getParameter("img"));
 			entry.setSecurity(Security.valueOf(ctx.getParameter("security")));
-			entry.setVersion(StringUtils.parse(ctx.getParameter("majorVersion"), 1), StringUtils.parse(ctx
-					.getParameter("minorVersion"), 0), StringUtils.parse(ctx.getParameter("subVersion"), 0));
+			entry.setVersion(StringUtils.parse(ctx.getParameter("majorVersion"), 1), StringUtils.parse(ctx.getParameter("minorVersion"), 0), StringUtils.parse(ctx.getParameter("subVersion"), 0));
 			
 			// Add Simulator Codes
 			Collection<String> fsCodes = ctx.getParameters("fsVersion");

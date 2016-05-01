@@ -29,7 +29,7 @@ public class TransferListCommand extends AbstractViewCommand {
    public void execute(CommandContext ctx) throws CommandException {
       
       // Initialize the view context
-      ViewContext vc = initView(ctx);
+      ViewContext<TransferRequest> vc = initView(ctx, TransferRequest.class);
       String eqType = ctx.getParameter("eqType");
       if (eqType == null)
     	  eqType = ctx.isUserInRole("HR") ? "-" : ctx.getUser().getEquipmentType();
@@ -42,15 +42,14 @@ public class TransferListCommand extends AbstractViewCommand {
          GetTransferRequest txdao = new GetTransferRequest(con);
          txdao.setQueryStart(vc.getStart());
          txdao.setQueryMax(vc.getCount());
-         Collection<TransferRequest> results = allEQ ? txdao.getAll(vc.getSortType()) : txdao.getByEQ(eqType, vc.getSortType());
-         vc.setResults(results);
+         vc.setResults(allEQ ? txdao.getAll(vc.getSortType()) : txdao.getByEQ(eqType, vc.getSortType()));
          
          // Get equipment types
          GetEquipmentType eqdao = new GetEquipmentType(con);
          ctx.setAttribute("activeEQ", eqdao.getActive(), REQUEST);
          
          // Save the Pilot beans in the request
-         Collection<Integer> pilotIDs = results.stream().map(TransferRequest::getID).collect(Collectors.toSet());
+         Collection<Integer> pilotIDs = vc.getResults().stream().map(TransferRequest::getID).collect(Collectors.toSet());
          GetUserData uddao = new GetUserData(con);
          UserDataMap udm = uddao.get(pilotIDs);
          GetPilot pdao = new GetPilot(con);

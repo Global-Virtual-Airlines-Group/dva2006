@@ -1,4 +1,4 @@
-// Copyright 2007, 2009, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to display landing statistics.
  * @author Luke
- * @version 6.3
+ * @version 7.0
  * @since 2.1
  */
 
@@ -32,7 +32,7 @@ public class LandingStatsCommand extends AbstractViewCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Load the view context and minimum landings
-		ViewContext vc = initView(ctx, 50);
+		ViewContext<LandingStatistics> vc = initView(ctx, LandingStatistics.class, 50);
 		int minLegs = Math.max(0, StringUtils.parse(ctx.getParameter("legCount"), 20));
 		ctx.setAttribute("legCount", Integer.valueOf(minLegs), REQUEST);
 		
@@ -48,11 +48,10 @@ public class LandingStatsCommand extends AbstractViewCommand {
 			dao.setDayFilter(StringUtils.parse(ctx.getParameter("days"), 30));
 			dao.setQueryStart(vc.getStart());
 			dao.setQueryMax(vc.getCount());
-			Collection<LandingStatistics> stats = dao.getLandings(eqType, minLegs);
-			vc.setResults(stats);
+			vc.setResults(dao.getLandings(eqType, minLegs));
 			
 			// Load the Pilots
-			Collection<Integer>IDs = stats.stream().map(LandingStatistics::getID).collect(Collectors.toSet());
+			Collection<Integer>IDs = vc.getResults().stream().map(LandingStatistics::getID).collect(Collectors.toSet());
 			GetPilot pdao = new GetPilot(con);
 			ctx.setAttribute("pilots", pdao.getByID(IDs, "PILOTS"), REQUEST);
 			

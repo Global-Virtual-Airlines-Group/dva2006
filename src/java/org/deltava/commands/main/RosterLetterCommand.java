@@ -3,6 +3,8 @@ package org.deltava.commands.main;
 
 import java.util.*;
 
+import org.deltava.beans.Pilot;
+
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
@@ -25,14 +27,9 @@ public class RosterLetterCommand extends AbstractViewCommand {
     @Override
 	public void execute(CommandContext ctx) throws CommandException {
         
-        // Get/set start/count parameters
-        ViewContext vc = initView(ctx);
-        
-        // Save the letters
-        ctx.setAttribute("letters", LETTERS, REQUEST);
-        
         // Get the letter to display
         String letter = (String) ctx.getCmdParameter(Command.OPERATION, null);
+        ctx.setAttribute("letters", LETTERS, REQUEST);
         
         // If no letter specified, just redirect to the JSP
         if ((letter == null) || !LETTERS.contains(letter)) {
@@ -42,6 +39,7 @@ public class RosterLetterCommand extends AbstractViewCommand {
             return;
         }
         
+        ViewContext<Pilot> vc = initView(ctx, Pilot.class);
         try {
             GetPilot dao = new GetPilot(ctx.getConnection());
             dao.setQueryStart(vc.getStart());

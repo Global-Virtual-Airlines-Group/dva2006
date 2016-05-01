@@ -1,12 +1,10 @@
-// Copyright 2005, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
-import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.Pilot;
-import org.deltava.beans.UserDataMap;
-import org.deltava.beans.acars.LogSearchCriteria;
+import org.deltava.beans.*;
+import org.deltava.beans.acars.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -14,7 +12,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to display ACARS Connection Log entries.
  * @author Luke
- * @version 6.3
+ * @version 7.0
  * @since 1.0
  */
 
@@ -36,7 +34,7 @@ public class ConnectionLogCommand extends ACARSLogViewCommand {
 			return;
 		}
 
-		ViewContext vc = initView(ctx);
+		ViewContext<ConnectionEntry> vc = initView(ctx, ConnectionEntry.class);
 		try {
 			Connection con = ctx.getConnection();
 			LogSearchCriteria criteria = getSearchCriteria(ctx, con);
@@ -49,17 +47,10 @@ public class ConnectionLogCommand extends ACARSLogViewCommand {
 
 			// Load the Pilot data
 			GetUserData usrdao = new GetUserData(con);
+			GetPilot pdao = new GetPilot(con);
 			UserDataMap udm = usrdao.get(getPilotIDs(vc.getResults()));
 			ctx.setAttribute("userData", udm, REQUEST);
-
-			// Get the users for each connection
-			Map<Integer, Pilot> pilots = new HashMap<Integer, Pilot>();
-			GetPilot pdao = new GetPilot(con);
-			for (String dbTable : udm.getTableNames())
-				pilots.putAll(pdao.getByID(udm.getByTable(dbTable), dbTable));
-
-			// Save the pilots in the request
-			ctx.setAttribute("pilots", pilots, REQUEST);
+			ctx.setAttribute("pilots", pdao.get(udm), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

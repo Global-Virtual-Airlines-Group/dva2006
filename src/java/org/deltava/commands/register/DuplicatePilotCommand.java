@@ -1,7 +1,5 @@
-//Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+//Copyright 2005, 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
-
-import java.sql.Connection;
 
 import org.deltava.beans.*;
 
@@ -14,7 +12,8 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to send information about a duplicate pilot registration to HR.
  * @author James
- * @version 1.0
+ * @author Luke
+ * @version 7.0
  * @since 1.0
  */
 
@@ -25,15 +24,13 @@ public class DuplicatePilotCommand extends AbstractCommand {
 	 * @param ctx Command Context.
 	 * @throws CommandException if a command error occurs.
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Create e-mail message context
 		MessageContext mctxt = new MessageContext();
-		
-		// Get e-mail message template
 		try {
-			Connection con = ctx.getConnection();
-			GetMessageTemplate mtdao = new GetMessageTemplate(con);
+			GetMessageTemplate mtdao = new GetMessageTemplate(ctx.getConnection());
 			mctxt.setTemplate(mtdao.get("DUPEREGISTER"));
 		} catch (DAOException de) {
 			throw new CommandException(de);

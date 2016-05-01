@@ -1,6 +1,8 @@
 // Copyright 2005, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
+import org.deltava.beans.system.MessageTemplate;
+
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
@@ -23,7 +25,7 @@ public class MessageTemplatesCommand extends AbstractViewCommand {
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
-		ViewContext vc = initView(ctx);
+		ViewContext<MessageTemplate> vc = initView(ctx, MessageTemplate.class);
 		try {
 			GetMessageTemplate dao = new GetMessageTemplate(ctx.getConnection());
 			dao.setQueryStart(vc.getStart());

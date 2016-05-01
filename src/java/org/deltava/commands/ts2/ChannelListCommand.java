@@ -1,6 +1,8 @@
 // Copyright 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.ts2;
 
+import org.deltava.beans.ts2.Channel;
+
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
@@ -23,7 +25,7 @@ public class ChannelListCommand extends AbstractViewCommand {
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
-		ViewContext vc = initView(ctx);
+		ViewContext<Channel> vc = initView(ctx, Channel.class);
 		try {
 			// Get the DAO and the servers
 			GetTS2Data dao = new GetTS2Data(ctx.getConnection());

@@ -121,7 +121,7 @@ public class LoginCommand extends AbstractCommand {
 		// Build the full name
 		StringBuilder fullName = new StringBuilder(fName.trim());
 		fullName.append(' ');
-		fullName.append(lName.trim());
+		fullName.append(String.valueOf(lName).trim());
 
 		Pilot p = null;
 		Instant maxUserDate = UserPool.getMaxSizeDate();

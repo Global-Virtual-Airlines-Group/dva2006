@@ -2,6 +2,7 @@
 package org.deltava.commands.gallery;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.time.Instant;
 import java.sql.Connection;
 
@@ -35,7 +36,7 @@ public class GalleryCommand extends AbstractViewCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get/set start/count parameters
-		ViewContext vc = initView(ctx);
+		ViewContext<Image> vc = initView(ctx, Image.class);
 		if (StringUtils.arrayIndexOf(SORT_CODE, vc.getSortType()) == -1)
 			vc.setSortType(SORT_CODE[0]);
 
@@ -50,21 +51,15 @@ public class GalleryCommand extends AbstractViewCommand {
 			dao.setQueryMax(vc.getCount());
 
 			// Get the images
-			Collection<Image> results = null; 
 			if (imgDate != null)
-				results = dao.getPictureGallery(imgDate);
+				vc.setResults(dao.getPictureGallery(imgDate));
 			else
-				results = dao.getPictureGallery(vc.getSortType(), (String) ctx.getCmdParameter(Command.OPERATION, null));
+				vc.setResults(dao.getPictureGallery(vc.getSortType(), (String) ctx.getCmdParameter(Command.OPERATION, null)));
 			
-			// Validate our access and get author IDs
-			Collection<Integer> authorIDs = new HashSet<Integer>();
-			for (Image i : results)
-				authorIDs.add(Integer.valueOf(i.getAuthorID()));
-
 			// Load the Image Authors
+			Collection<Integer> IDs = vc.getResults().stream().map(Image::getAuthorID).collect(Collectors.toSet());
 			GetPilot pdao = new GetPilot(con);
-			ctx.setAttribute("pilots", pdao.getByID(authorIDs, "PILOTS"), REQUEST);
-			vc.setResults(results);
+			ctx.setAttribute("pilots", pdao.getByID(IDs, "PILOTS"), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

@@ -28,8 +28,7 @@ public class SuspendedUserListCommand extends AbstractViewCommand {
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
-		// Get the view context
-		ViewContext vctx = initView(ctx);
+		ViewContext<Pilot> vctx = initView(ctx, Pilot.class);
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -37,11 +36,10 @@ public class SuspendedUserListCommand extends AbstractViewCommand {
 			GetPilot pdao = new GetPilot(con);
 			pdao.setQueryStart(vctx.getStart());
 			pdao.setQueryMax(vctx.getCount());
-			Collection<Pilot> pilots = pdao.getPilotsByStatus(Pilot.SUSPENDED);
-			vctx.setResults(pilots);
+			vctx.setResults(pdao.getPilotsByStatus(Pilot.SUSPENDED));
 			
 			// Load the IDs
-			Collection<Integer> IDs = pilots.stream().map(Pilot::getID).collect(Collectors.toSet());
+			Collection<Integer> IDs = vctx.getResults().stream().map(Pilot::getID).collect(Collectors.toSet());
 			
 			// Load the status updates
 			Map<Integer, StatusUpdate> updates = new HashMap<Integer, StatusUpdate>();

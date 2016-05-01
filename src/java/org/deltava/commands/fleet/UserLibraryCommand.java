@@ -1,13 +1,13 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.apache.log4j.Logger;
 
-import org.deltava.beans.Pilot;
-import org.deltava.beans.UserDataMap;
+import org.deltava.beans.*;
 import org.deltava.beans.fleet.*;
 
 import org.deltava.commands.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display user-sharable files.
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -33,12 +33,10 @@ public class UserLibraryCommand extends AbstractViewCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
-		// Get the view start/end
-		ViewContext vc = initView(ctx);
-
-		Collection<FileEntry> results = null;
+		ViewContext<FileEntry> vc = initView(ctx, FileEntry.class);
 		try {
 			Connection con = ctx.getConnection();
 
@@ -46,24 +44,15 @@ public class UserLibraryCommand extends AbstractViewCommand {
 			GetLibrary dao = new GetLibrary(con);
 			dao.setQueryStart(vc.getStart());
 			dao.setQueryMax(Math.round(vc.getCount() * 1.25f));
-			results = dao.getFiles(SystemData.get("airline.db"));
-
-			// Get the authors
-			Set<Integer> authors = new HashSet<Integer>();
-			for (Iterator<FileEntry> i = results.iterator(); i.hasNext();) {
-				FileEntry e = i.next();
-				authors.add(new Integer(e.getAuthorID()));
-			}
+			vc.setResults(dao.getFiles(SystemData.get("airline.db")));
 
 			// Get the author data
+			Collection<Integer> IDs = vc.getResults().stream().map(FileEntry::getAuthorID).collect(Collectors.toSet());
 			GetUserData uddao = new GetUserData(con);
-			UserDataMap udmap = uddao.get(authors);
-			ctx.setAttribute("userData", udmap, REQUEST);
-
-			// Get the author profiles
 			GetPilot pdao = new GetPilot(con);
-			Map<Integer, Pilot> pilots = pdao.get(udmap);
-			ctx.setAttribute("authors", pilots, REQUEST);
+			UserDataMap udm = uddao.get(IDs);
+			ctx.setAttribute("userData", udm, REQUEST);
+			ctx.setAttribute("authors", pdao.get(udm), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
@@ -79,7 +68,7 @@ public class UserLibraryCommand extends AbstractViewCommand {
 		Map<String, FileEntryAccessControl> accessMap = new HashMap<String, FileEntryAccessControl>();
 
 		// Validate our access to the results
-		for (Iterator<FileEntry> i = results.iterator(); i.hasNext();) {
+		for (Iterator<FileEntry> i = vc.getResults().iterator(); i.hasNext();) {
 			FileEntry e = i.next();
 			access = new FileEntryAccessControl(ctx, e);
 			access.validate();
@@ -90,13 +79,11 @@ public class UserLibraryCommand extends AbstractViewCommand {
 				log.warn(e.getFullName() + " not found in file system!");
 				if (!access.getCanEdit())
 					i.remove();
-			} else if (!access.getCanView()) {
+			} else if (!access.getCanView())
 				i.remove();
-			}
 		}
 
 		// Save the results in the request
-		ctx.setAttribute("files", results, REQUEST);
 		ctx.setAttribute("accessMap", accessMap, REQUEST);
 
 		// Forward to the JSP

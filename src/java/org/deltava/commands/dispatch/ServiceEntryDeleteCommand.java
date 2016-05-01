@@ -1,4 +1,4 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.dispatch;
 
 import java.sql.Connection;
@@ -13,9 +13,10 @@ import org.deltava.security.command.DispatchScheduleAccessControl;
 /**
  * A Web Site Command to delete an ACARS Dispatcher schedule entry.
  * @author Luke
- * @version 2.2
+ * @version 7.0
  * @since 2.2
  */
+
 public class ServiceEntryDeleteCommand extends AbstractCommand {
 
 	/**
@@ -23,6 +24,7 @@ public class ServiceEntryDeleteCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		try {
 			Connection con = ctx.getConnection();
