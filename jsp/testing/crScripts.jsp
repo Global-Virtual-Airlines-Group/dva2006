@@ -33,7 +33,7 @@
 </tr>
 
 <!-- Table Script Data -->
-<c:forEach var="sc" items="${results}">
+<c:forEach var="sc" items="${viewContext.results}">
 <view:row entry="${sc}">
 <c:set var="access" value="${accessMap[sc.equipmentType]}" scope="page" />
 <c:if test="${access.canEdit}">
