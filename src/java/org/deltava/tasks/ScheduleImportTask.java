@@ -63,7 +63,7 @@ public class ScheduleImportTask extends Task {
 		cache.setCredentials(SystemData.get("schedule.innovata.download.user"), SystemData.get("schedule.innovata.download.pwd"));
 
 		// Connect to the FTP server and download the files as needed
-		Collection<ScheduleEntry> entries = new ArrayList<ScheduleEntry>();
+		final Collection<ScheduleEntry> entries = new ArrayList<ScheduleEntry>();
 		try {
 			// If we haven't specified a file name, get the newest file
 			if ((fileName == null) || fileName.contains("*"))
@@ -96,8 +96,7 @@ public class ScheduleImportTask extends Task {
 			dao.load();
 			Collection<ScheduleEntry> schedEntries = dao.process();
 			Collection<String> codes = new HashSet<String>();
-			for (Iterator<ScheduleEntry> si = schedEntries.iterator(); si.hasNext();) {
-				ScheduleEntry entry = si.next();
+			for (ScheduleEntry entry : schedEntries) {
 				if (codes.contains(entry.getFlightCode()))
 					log.warn("Duplicate flight in " + fileName + " - " + entry.getFlightCode());
 
@@ -115,7 +114,7 @@ public class ScheduleImportTask extends Task {
 			swdao.write(dao.getInvalidAirlines(), dao.getInvalidAirports(), dao.getInvalidEQ(), dao.getErrorMessages());
 		} catch (DAOException de) {
 			log.error(de.getMessage(), de);
-			entries = null;
+			entries.clear();
 		} finally {
 			ctx.release();
 		}
