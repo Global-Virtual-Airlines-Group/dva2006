@@ -18,14 +18,6 @@ golgotha.local.setSort = function(combo) {
 	self.location = '/cmdstats.do?sortBy=' + golgotha.form.getCombo(combo);
 	return true;
 };
-
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-golgotha.form.validate({f:f.purgeDays, min:2, t:'Days of Log Entries to keep'});
-golgotha.form.submit(f);
-return true;
-};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -36,7 +28,6 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="cmdstatpurge.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="view">
 <!-- Table Header Bar -->
 <tr class="title">
@@ -72,12 +63,9 @@ return true;
 
 <!-- Bottom Row -->
 <tr class="title caps">
- <td colspan="8">PURGE ENTRIES MORE THAN <el:text name="purgeDays" idx="*" size="1" max="3" value="" />
- DAYS OLD <el:button ID="PurgeButton" type="submit" label="PURGE COMMAND LOG" /></td>
+ <td colspan="8">&nbsp;</td>
 </tr>
 </el:table>
-</el:form>
-<br />
 <content:copyright />
 </content:region>
 </content:page>
