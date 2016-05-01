@@ -1,4 +1,4 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.util.*;
@@ -16,24 +16,24 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display applicants.
  * @author Luke
- * @version 6.3
+ * @version 7.0
  * @since 1.0
  */
 
 public class ApplicantListCommand extends AbstractViewCommand {
 	
-	private static final List<String> LETTERS = Arrays.asList("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", 
-			"O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z");
+	private static final List<String> LETTERS = Arrays.asList("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z");
 
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Initialize the view context
-		ViewContext vc = initView(ctx);
+		ViewContext<Applicant> vc = initView(ctx, Applicant.class);
 		boolean isQueue = false;
 		
 		// Set combobox options
@@ -53,22 +53,21 @@ public class ApplicantListCommand extends AbstractViewCommand {
 			dao.setQueryMax(vc.getCount());
 			
 			// Figure out which method to call
-			List<Applicant> results = null;
 			if (ctx.getParameter("status") != null) {
 				int statusCode = StringUtils.arrayIndexOf(Applicant.STATUS, ctx.getParameter("status"));
-				results = dao.getByStatus((statusCode == -1) ? Applicant.PENDING : statusCode, "CREATED DESC");
+				vc.setResults(dao.getByStatus((statusCode == -1) ? Applicant.PENDING : statusCode, "CREATED DESC"));
 			} else if (ctx.getParameter("eqType") != null)
-				results = dao.getByEquipmentType(ctx.getParameter("eqType"));
+				vc.setResults(dao.getByEquipmentType(ctx.getParameter("eqType")));
 			else if (!StringUtils.isEmpty(ctx.getParameter("letter")))
-				results = dao.getByLetter(ctx.getParameter("letter"));
+				vc.setResults(dao.getByLetter(ctx.getParameter("letter")));
 			else {
 				isQueue = true;
-				results = dao.getByStatus(Applicant.PENDING, "CREATED DESC");
+				vc.setResults(dao.getByStatus(Applicant.PENDING, "CREATED DESC"));
 			}
 			
 			// Get the applicant/pilot IDs
-			Collection<Integer> IDs = results.stream().map(Applicant::getID).collect(Collectors.toSet());
-			Collection<Integer> pIDs = results.stream().filter(a -> (a.getPilotID() > 0)).map(Applicant::getPilotID).collect(Collectors.toSet());
+			Collection<Integer> IDs = vc.getResults().stream().map(Applicant::getID).collect(Collectors.toSet());
+			Collection<Integer> pIDs = vc.getResults().stream().filter(a -> (a.getPilotID() > 0)).map(Applicant::getPilotID).collect(Collectors.toSet());
 			
 			// Load the questionnaires
 			GetExam exdao = new GetExam(con);
@@ -89,8 +88,6 @@ public class ApplicantListCommand extends AbstractViewCommand {
 			// Load the airline size
 			GetStatistics stdao = new GetStatistics(con);
 			ctx.setAttribute("airlineSize", Integer.valueOf(stdao.getActivePilots(SystemData.get("airline.db"))), REQUEST);
-
-			vc.setResults(results);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

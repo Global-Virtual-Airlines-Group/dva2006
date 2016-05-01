@@ -2,11 +2,9 @@
 package org.deltava.commands.pirep;
 
 import java.util.*;
-import java.sql.Connection;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.temporal.ChronoField;
+import java.sql.Connection;
 
 import org.apache.log4j.Logger;
 
@@ -18,10 +16,10 @@ import org.deltava.beans.navdata.*;
 import org.deltava.beans.testing.*;
 import org.deltava.beans.servinfo.OnlineTime;
 import org.deltava.beans.servinfo.PositionData;
-
 import org.deltava.beans.schedule.*;
+
 import org.deltava.commands.*;
-import org.deltava.comparators.RunwayComparator;
+import org.deltava.comparators.*;
 
 import org.deltava.dao.*;
 import org.deltava.dao.http.GetVRouteData;
@@ -296,11 +294,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				ctx.setAttribute("networks", usr.getNetworks(), REQUEST);
 
 				// Get the active airlines
-				for (Iterator<Airline> i = allAirlines.values().iterator(); i.hasNext();) {
-					Airline a = i.next();
-					if (a.getActive())
-						airlines.add(a);
-				}
+				allAirlines.values().stream().filter(Airline::getActive).forEach(a-> airlines.add(a));
 			} else {
 				FlightReport fr = dao.get(ctx.getID());
 				if (fr == null)

@@ -4,8 +4,7 @@ package org.deltava.commands.main;
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.EquipmentType;
-
+import org.deltava.beans.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.util.*;
@@ -13,7 +12,7 @@ import org.deltava.util.*;
 import org.deltava.comparators.PilotComparator;
 
 /**
- * Command to display the Pilot Roster.
+ * A Web Site Command to display the Pilot Roster.
  * @author Luke
  * @version 7.0
  * @since 1.0
@@ -34,7 +33,7 @@ public class RosterCommand extends AbstractViewCommand {
 	public void execute(CommandContext ctx) throws CommandException {
         
         // Get/set start/count parameters
-        ViewContext vc = initView(ctx);
+        ViewContext<Pilot> vc = initView(ctx, Pilot.class);
         if (StringUtils.arrayIndexOf(SORT_CODE, vc.getSortType()) == -1)
            vc.setSortType(SORT_CODE[4]);
         

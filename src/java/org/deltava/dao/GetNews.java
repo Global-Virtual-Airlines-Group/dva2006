@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.Notice;
 /**
  * A Data Access Object to read System News entries.
  * @author Luke
- * @version 4.1
+ * @version 7.0
  * @since 1.0
  */
 
@@ -49,10 +49,9 @@ public class GetNews extends DAO {
 	 * @return a List of News beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<? extends News> getNews() throws DAOException {
+	public List<News> getNews() throws DAOException {
 		try {
-			prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, N.* FROM NEWS N, PILOTS P "
-					+ "WHERE (N.PILOT_ID=P.ID) ORDER BY N.DATE DESC");
+			prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, N.* FROM NEWS N, PILOTS P WHERE (N.PILOT_ID=P.ID) ORDER BY N.DATE DESC");
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -67,11 +66,8 @@ public class GetNews extends DAO {
 	 */
 	public Notice getNOTAM(int id) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT P.FIRSTNAME, P.LASTNAME, N.* FROM NOTAMS N, PILOTS P "
-					+ "WHERE (N.ID=?) AND (N.PILOT_ID=P.ID) LIMIT 1");
+			prepareStatementWithoutLimits("SELECT P.FIRSTNAME, P.LASTNAME, N.* FROM NOTAMS N, PILOTS P WHERE (N.ID=?) AND (N.PILOT_ID=P.ID) LIMIT 1");
 			_ps.setInt(1, id);
-
-			// Execute the query - if we get nothing back, then return null
 			List<?> results = execute();
 			return results.isEmpty() ? null : (Notice) results.get(0);
 		} catch (SQLException se) {
@@ -84,10 +80,9 @@ public class GetNews extends DAO {
 	 * @return a List of Notice beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<? extends News> getNOTAMs() throws DAOException {
+	public List<News> getNOTAMs() throws DAOException {
 		try {
-			prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, N.* FROM NOTAMS N, PILOTS P "
-					+ "WHERE (N.PILOT_ID=P.ID) ORDER BY N.EFFDATE DESC");
+			prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, N.* FROM NOTAMS N, PILOTS P WHERE (N.PILOT_ID=P.ID) ORDER BY N.EFFDATE DESC");
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -99,10 +94,9 @@ public class GetNews extends DAO {
 	 * @return a List of Notice beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<? extends News> getActiveNOTAMs() throws DAOException {
+	public List<News> getActiveNOTAMs() throws DAOException {
 		try {
-			prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, N.* FROM NOTAMS N, PILOTS P "
-					+ "WHERE (N.PILOT_ID=P.ID) AND (N.ACTIVE=?) ORDER BY N.EFFDATE DESC");
+			prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, N.* FROM NOTAMS N, PILOTS P WHERE (N.PILOT_ID=P.ID) AND (N.ACTIVE=?) ORDER BY N.EFFDATE DESC");
 			_ps.setBoolean(1, true);
 			return execute();
 		} catch (SQLException se) {
@@ -110,10 +104,10 @@ public class GetNews extends DAO {
 		}
 	}
 
-	/**
+	/*
 	 * Helper method to iterate through the result set.
 	 */
-	private List<? extends News> execute() throws SQLException {
+	private List<News> execute() throws SQLException {
 		List<News> results = new ArrayList<News>();
 		try (ResultSet rs = _ps.executeQuery()) {
 			boolean isNOTAM = (rs.getMetaData().getColumnCount() > 7);

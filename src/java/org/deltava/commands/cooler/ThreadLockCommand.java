@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.sql.Connection;
@@ -12,7 +12,7 @@ import org.deltava.security.command.CoolerThreadAccessControl;
 /**
  * A Web Site Command to lock or hide Water Cooler message threads.
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -23,6 +23,7 @@ public class ThreadLockCommand extends AbstractCommand {
      * @param ctx the Command context
      * @throws CommandException if an unhandled error occurs
      */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
         // Determine what operation we are performing
@@ -48,8 +49,6 @@ public class ThreadLockCommand extends AbstractCommand {
             CoolerThreadAccessControl ac = new CoolerThreadAccessControl(ctx);
             ac.updateContext(thread, ch);
             ac.validate();
-            
-            // Check our access level
             if (!ac.getCanLock())
                 throw securityException("Cannot moderate Message Thread " + ctx.getID());
             

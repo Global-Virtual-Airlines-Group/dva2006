@@ -1,4 +1,4 @@
-// Copyright 2007, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.Map;
@@ -16,7 +16,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to unlink a Water Cooler linked image. 
  * @author Luke
- * @version 3.7
+ * @version 7.0
  * @since 1.0
  */
 
@@ -27,6 +27,7 @@ public class UnlinkImageCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Get the sequence number

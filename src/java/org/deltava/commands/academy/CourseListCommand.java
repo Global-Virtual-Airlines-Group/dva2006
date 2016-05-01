@@ -1,7 +1,8 @@
-// Copyright 2006, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
@@ -17,7 +18,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to display Flight Academy certifications.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -25,14 +26,11 @@ public class CourseListCommand extends AbstractViewCommand {
 
 	// Sort options
 	private static final String[] SORT_CODE = { "C.STARTDATE", "C.STARTDATE DESC", "LC DESC", "CR.STAGE" };
-	private static final List<ComboAlias> SORT_OPTS = ComboUtils.fromArray(new String[] { "Earliest Enrollment",
-			"Latest Enrollment", "Last Comment", "Course Stage" }, SORT_CODE);
+	private static final List<ComboAlias> SORT_OPTS = ComboUtils.fromArray(new String[] { "Earliest Enrollment", "Latest Enrollment", "Last Comment", "Course Stage" }, SORT_CODE);
 
 	// Filtering options
 	private static final String[] VIEW_CODE = { "all", "active", "pending", "complete", "unassigned", "mine" };
-	private static final List<ComboAlias> VIEW_OPTS = ComboUtils.fromArray(new String[] { "All Courses",
-			"Active Courses", "Pending Enrollments", "Completed Courses", "Unassigned Courses", "My Courses" },
-			VIEW_CODE);
+	private static final List<ComboAlias> VIEW_OPTS = ComboUtils.fromArray(new String[] { "All Courses", "Active Courses", "Pending Enrollments", "Completed Courses", "Unassigned Courses", "My Courses" }, VIEW_CODE);
 
 	/**
 	 * Executes the command.
@@ -43,7 +41,7 @@ public class CourseListCommand extends AbstractViewCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get/set start/count parameters
-		ViewContext vc = initView(ctx);
+		ViewContext<Course> vc = initView(ctx, Course.class);
 		if (StringUtils.arrayIndexOf(SORT_CODE, vc.getSortType()) == -1)
 			vc.setSortType(SORT_CODE[0]);
 
@@ -62,13 +60,9 @@ public class CourseListCommand extends AbstractViewCommand {
 			Collection<Pilot> instructors = new TreeSet<Pilot>(new PilotComparator(PersonComparator.FIRSTNAME));
 			for (AirlineInformation ai : uddao.getAirlines(true).values())
 				instructors.addAll(pdao.getByRole("Instructor", ai.getDB()));
-			for (Iterator<? extends ComboAlias> i = instructors.iterator(); i.hasNext();) {
-				ComboAlias a = i.next();
-				codes.add(a.getComboAlias());
-			}
+			instructors.forEach(in -> codes.add(in.getComboAlias()));
 
 			// Filter by status
-			Collection<Course> courses = null;
 			int filterType = codes.indexOf(ctx.getParameter("filterType"));
 			if (filterType == -1)
 				filterType = 1;
@@ -76,45 +70,36 @@ public class CourseListCommand extends AbstractViewCommand {
 			ctx.setAttribute("filterOpt", codes.get(filterType), REQUEST);
 			switch (filterType) {
 				case 0:
-					courses = dao.getAll(vc.getSortType());
+					vc.setResults(dao.getAll(vc.getSortType()));
 					break;
 
 				case 1:
-					courses = dao.getByStatus(Status.STARTED, vc.getSortType(), null);
+					vc.setResults(dao.getByStatus(Status.STARTED, vc.getSortType(), null));
 					break;
 
 				case 2:
 					ctx.setAttribute("isPending", Boolean.TRUE, REQUEST);
-					courses = dao.getByStatus(Status.PENDING, vc.getSortType(), null);
+					vc.setResults(dao.getByStatus(Status.PENDING, vc.getSortType(), null));
 					break;
 
 				case 4: // Unassigned
-					courses = dao.getByInstructor(0, vc.getSortType());
+					vc.setResults(dao.getByInstructor(0, vc.getSortType()));
 					break;
 
 				case 5:
-					courses = dao.getByInstructor(ctx.getUser().getID(), vc.getSortType());
+					vc.setResults(dao.getByInstructor(ctx.getUser().getID(), vc.getSortType()));
 					break;
 
 				case 3:
-					courses = dao.getCompleted(0, vc.getSortType());
+					vc.setResults(dao.getCompleted(0, vc.getSortType()));
 					break;
 
 				default:
-					courses = dao.getByInstructor(Integer.parseInt(ctx.getParameter("filterType")), vc.getSortType());
-			}
-
-			// Save in the view context
-			vc.setResults(courses);
-
-			// Get the Pilot IDs
-			Collection<Integer> IDs = new HashSet<Integer>();
-			for (Iterator<Course> i = courses.iterator(); i.hasNext(); ) {
-				Course c = i.next();
-				IDs.add(new Integer(c.getPilotID()));
+					vc.setResults(dao.getByInstructor(Integer.parseInt(ctx.getParameter("filterType")), vc.getSortType()));
 			}
 
 			// Load the Pilot profiles
+			Collection<Integer> IDs = vc.getResults().stream().map(Course::getPilotID).collect(Collectors.toSet());
 			UserDataMap udm = uddao.get(IDs);
 			ctx.setAttribute("userData", udm, REQUEST);
 			ctx.setAttribute("pilots", pdao.get(udm), REQUEST);

@@ -85,16 +85,14 @@ abstract class PilotReadDAO extends DAO {
 	public final List<Pilot> getByName(String fullName, String dbName) throws DAOException {
 
 		// Build the SQL statement
-		dbName = formatDBName(dbName);
-		StringBuilder sqlBuf = new StringBuilder("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), "
-				+ "ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE), S.EXT, S.MODIFIED FROM ");
-		sqlBuf.append(dbName);
+		String db = formatDBName(dbName);
+		StringBuilder sqlBuf = new StringBuilder("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE), S.EXT, S.MODIFIED FROM ");
+		sqlBuf.append(db);
 		sqlBuf.append(".PILOTS P LEFT JOIN ");
-		sqlBuf.append(dbName);
+		sqlBuf.append(db);
 		sqlBuf.append(".PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) LEFT JOIN ");
-		sqlBuf.append(dbName);
-		sqlBuf.append(".SIGNATURES S ON (P.ID=S.ID) WHERE (CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME)=?) "
-				+ "GROUP BY P.ID");
+		sqlBuf.append(db);
+		sqlBuf.append(".SIGNATURES S ON (P.ID=S.ID) WHERE (CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME)=?) GROUP BY P.ID");
 
 		try {
 			prepareStatement(sqlBuf.toString());
@@ -140,8 +138,7 @@ abstract class PilotReadDAO extends DAO {
 	 */
 	public Map<Integer, Pilot> get(UserDataMap udm) throws DAOException {
 		Map<Integer, Pilot> results = new HashMap<Integer, Pilot>();
-		for (Iterator<String> i = udm.getTableNames().iterator(); i.hasNext(); ) {
-			String tableName = i.next();
+		for (String tableName : udm.getTableNames()) {
 			if (UserData.isPilotTable(tableName))
 				results.putAll(getByID(udm.getByTable(tableName), tableName));
 		}
@@ -150,10 +147,8 @@ abstract class PilotReadDAO extends DAO {
 	}
 
 	/**
-	 * Returns a Map of pilots based on a Set of pilot IDs. This is typically called by a Water Cooler thread/channel
-	 * list command.
-	 * @param ids a Collection of pilot IDs. This can either be a Collection of Integers, a Collection of
-	 * {@link DatabaseBean}beans
+	 * Returns a Map of pilots based on a Set of pilot IDs. This is typically called by a Water Cooler thread/channel list command.
+	 * @param ids a Collection of pilot IDs. This can either be a Collection of Integers, a Collection of {@link DatabaseBean}beans
 	 * @param tableName the table to read from, in <i>DATABASE.TABLE </i> format for a remote database, or <i>TABLE </i>
 	 * for a table in the current airline's database.
 	 * @return a Map of Pilots, indexed by the pilot code
@@ -164,8 +159,7 @@ abstract class PilotReadDAO extends DAO {
 		// Get the datbaase - if we haven't specified one, use the current database
 		int ofs = tableName.indexOf('.');
 		String dbName = (ofs == -1) ? SystemData.get("airline.db").toLowerCase() : formatDBName(tableName);
-		if (ofs != -1)
-			tableName = tableName.substring(ofs + 1);
+		String table = (ofs != -1) ? tableName.substring(ofs + 1) : tableName;
 
 		List<Pilot> results = new ArrayList<Pilot>(ids.size());
 		if (log.isDebugEnabled())
@@ -176,7 +170,7 @@ abstract class PilotReadDAO extends DAO {
 				+ "ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE), S.EXT, S.MODIFIED FROM ");
 		sqlBuf.append(dbName);
 		sqlBuf.append('.');
-		sqlBuf.append(tableName);
+		sqlBuf.append(table);
 		sqlBuf.append(" P LEFT JOIN ");
 		sqlBuf.append(dbName);
 		sqlBuf.append(".PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) LEFT JOIN ");

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
  * A Web Site Command to view Newsletters. Note that this command will display library entries from other Airlines, with
  * the proviso that <i>all files are in the same library path</i>.
  * @author Luke
- * @version 1.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -32,6 +32,7 @@ public class NewsLibraryCommand extends AbstractViewCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the newsletter category
@@ -75,9 +76,8 @@ public class NewsLibraryCommand extends AbstractViewCommand {
 				log.warn(nws.getFullName() + " not found in file system!");
 				if (!ctx.isUserInRole("Fleet"))
 					i.remove();
-			} else if (!access.getCanView()) {
+			} else if (!access.getCanView())
 				i.remove();
-			}
 		}
 
 		// Save the results in the request

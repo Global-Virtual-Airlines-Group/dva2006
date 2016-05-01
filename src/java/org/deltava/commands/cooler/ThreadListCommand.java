@@ -41,7 +41,7 @@ public class ThreadListCommand extends AbstractViewCommand {
 		boolean showImgThreads = ctx.isAuthenticated() ? p.getShowSSThreads() : true;
 
 		// Get/set start/count parameters and channel name
-		ViewContext vc = initView(ctx);
+		ViewContext<MessageThread> vc = initView(ctx, MessageThread.class);
 		String cName = (String) ctx.getCmdParameter(ID, "General Discussion");
 		try {
 			Connection con = ctx.getConnection();
@@ -105,7 +105,7 @@ public class ThreadListCommand extends AbstractViewCommand {
 			}
 			
 			// Add the unread marks
-			if (ctx.isAuthenticated() && p.getShowNewPosts()) {
+			if ((p != null) && p.getShowNewPosts()) {
 				GetCoolerLastRead lrdao = new GetCoolerLastRead(con);
 				Map<Integer, Instant> lr = lrdao.getLastRead(threads, p.getID());
 				Map<Integer, Integer> lrIDs = new HashMap<Integer, Integer>();

@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A helper class to calculate hash code values for e-mail address validation.
  * @author Luke
- * @version 6.5
+ * @version 7.0
  * @since 1.0
  */
 
@@ -66,12 +66,13 @@ public final class AddressValidationHelper {
 		   return null;
 	   
 	   // Trim trailing space if necessary
+	   CharSequence rh = rawHash;
 	   if (rawHash.charAt(rawHash.length() - 1) == ' ')
-		   rawHash = rawHash.subSequence(0, rawHash.length() - 1);
+		   rh = rawHash.subSequence(0, rawHash.length() - 1);
 	   
 	   StringBuilder buf = new StringBuilder();
-	   for (int x = 0; x < rawHash.length(); x++) {
-		   char c = rawHash.charAt(x);
+	   for (int x = 0; x < rh.length(); x++) {
+		   char c = rh.charAt(x);
 		   buf.append((c == ' ') ? '+' : c);
 	   }
 	   

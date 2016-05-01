@@ -1,4 +1,4 @@
-// Copyright 2006, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Web Site Command to display submitted Flight Academy Check Rides.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -31,7 +31,7 @@ public class RideQueueCommand extends AbstractViewCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the view start/end
-		ViewContext vc = initView(ctx);
+		ViewContext<CheckRide> vc = initView(ctx, CheckRide.class);
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -39,8 +39,7 @@ public class RideQueueCommand extends AbstractViewCommand {
 			GetExam exdao = new GetExam(con);
 			exdao.setQueryStart(vc.getStart());
 			exdao.setQueryMax(vc.getCount());
-			Collection<CheckRide> rides = exdao.getCheckRideQueue(true);
-			vc.setResults(rides);
+			vc.setResults(exdao.getCheckRideQueue(true));
 			
 			// Get the user data / flight report DAOs
 			GetUserData uddao = new GetUserData(con);
@@ -50,8 +49,7 @@ public class RideQueueCommand extends AbstractViewCommand {
 			Collection<Integer> ids = new HashSet<Integer>();
 			Collection<Integer> pids = new HashSet<Integer>();
 			Map<Integer, FlightReport> pireps = new HashMap<Integer, FlightReport>();
-			for (Iterator<CheckRide> i = rides.iterator(); i.hasNext(); ) {
-				CheckRide cr = i.next();
+			for (CheckRide cr : vc.getResults()) {
 				ids.add(Integer.valueOf(cr.getID()));
 				pids.add(Integer.valueOf(cr.getAuthorID()));
 				

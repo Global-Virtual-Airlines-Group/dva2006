@@ -85,7 +85,8 @@ public class ManualCommand extends LibraryEditCommand {
 				File f = new File(SystemData.get("path.library"), fName);
 				entry = new Manual(f);
 				ctx.setAttribute("fileAdded", Boolean.TRUE, REQUEST);
-			}
+			} else if (entry == null)
+				throw new IllegalStateException("No Library Entry to modify");
 
 			// Populate fields from the request
 			entry.setDescription(ctx.getParameter("desc"));

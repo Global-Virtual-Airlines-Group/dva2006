@@ -31,7 +31,7 @@ public class IssueListCommand extends AbstractViewCommand {
 		boolean isActive = "active".equals(ctx.getCmdParameter(OPERATION, null));
 
 		// Get the view start/end
-		ViewContext vc = initView(ctx);
+		ViewContext<Issue> vc = initView(ctx, Issue.class);
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -58,8 +58,7 @@ public class IssueListCommand extends AbstractViewCommand {
 			
 			// Get Author IDs
 			Collection<Integer> IDs = new HashSet<Integer>();
-			for (Iterator<Issue> i = results.iterator(); i.hasNext(); ) {
-				Issue is = i.next();
+			for (Issue is : results) {
 				IDs.add(Integer.valueOf(is.getAuthorID()));
 				IDs.add(Integer.valueOf(is.getAssignedTo()));
 				IDs.add(Integer.valueOf(is.getLastCommentAuthorID()));

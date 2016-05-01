@@ -5,7 +5,7 @@ import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.ComboAlias;
-import org.deltava.beans.schedule.Airline;
+import org.deltava.beans.schedule.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -34,7 +34,7 @@ public class AirportListCommand extends AbstractViewCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the start/end/count
-		ViewContext vc = initView(ctx);
+		ViewContext<Airport> vc = initView(ctx, Airport.class);
 		String aCode = ctx.getParameter("airline");
 		Airline a = SystemData.getAirline(aCode);
 		if ((a == null) && !StringUtils.isEmpty(aCode)) {

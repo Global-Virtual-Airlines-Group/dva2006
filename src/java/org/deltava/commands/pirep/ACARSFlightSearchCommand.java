@@ -5,6 +5,8 @@ import java.util.*;
 import java.time.Instant;
 import java.sql.Connection;
 
+import org.deltava.beans.flight.FlightReport;
+
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
@@ -44,7 +46,7 @@ public class ACARSFlightSearchCommand extends AbstractViewCommand {
 		ctx.setAttribute("searchTypes", sTypes, REQUEST);
 
 		// Get the view context and search type
-		ViewContext vc = initView(ctx);
+		ViewContext<FlightReport> vc = initView(ctx, FlightReport.class);
 		int searchType = StringUtils.arrayIndexOf(SEARCH_TYPES, ctx.getParameter("searchType"));
 		if (searchType == -1)
 			searchType = ctx.isAuthenticated() ? PILOT : DATE;

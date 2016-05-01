@@ -33,14 +33,12 @@ public class InstructionLogbookCommand extends AbstractViewCommand {
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
-		// Get the view start/end
-		ViewContext vc = initView(ctx);
-
 		// Get the user ID to check
 		int id = ctx.getID();
 		if ((id == 0) && (!ctx.isUserInRole("HR")))
 			id = ctx.getUser().getID();
 
+		ViewContext<InstructionFlight> vc = initView(ctx, InstructionFlight.class);
 		try {
 			Connection con = ctx.getConnection();
 
@@ -48,13 +46,12 @@ public class InstructionLogbookCommand extends AbstractViewCommand {
 			GetAcademyCalendar dao = new GetAcademyCalendar(con);
 			dao.setQueryStart(vc.getStart());
 			dao.setQueryMax(vc.getCount());
-			Collection<InstructionFlight> flights = dao.getFlightCalendar(id, null); 
-			vc.setResults(flights);
+			vc.setResults(dao.getFlightCalendar(id, null)); 
 			
 			// Get the Pilot IDs
 			Collection<Integer> IDs = new HashSet<Integer>();
 			IDs.add(Integer.valueOf(ctx.getID()));
-			for (InstructionFlight flight : flights) {
+			for (InstructionFlight flight : vc.getResults()) {
 				IDs.add(Integer.valueOf(flight.getInstructorID()));
 				IDs.add(Integer.valueOf(flight.getPilotID()));
 			}

@@ -85,12 +85,13 @@ public class ImageLinkTestTask extends Task {
 							tLog.info("Validated " + url.toExternalForm());
 					}
 				} catch (IllegalArgumentException iae) {
-					tLog.warn("Known bad host - " + url.getHost());
+					if (url != null)
+						tLog.warn("Known bad host - " + url.getHost());
 				} catch (MalformedURLException mue) {
 					tLog.warn("Invalid URL - " + img);
 				} catch (IOException ie) {
 					tLog.warn("Error validating " + img + " - " + ie.getMessage());
-					if ("Connection timed out".equals(ie.getMessage()))
+					if ("Connection timed out".equals(ie.getMessage()) && (url != null))
 						_invalidHosts.add(url.getHost());
 				}
 				

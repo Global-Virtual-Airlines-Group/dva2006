@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.security.command.*;
 /**
  * A Web Site Command to display Fleet Academy training videos.
  * @author Luke
- * @version 6.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -31,7 +31,7 @@ public class VideoLibraryCommand extends AbstractViewCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the view start/end
-		ViewContext vc = initView(ctx);
+		ViewContext<Video> vc = initView(ctx, Video.class);
 
 		// Calculate access for adding content
 		CertificationAccessControl access = new CertificationAccessControl(ctx);
@@ -39,7 +39,6 @@ public class VideoLibraryCommand extends AbstractViewCommand {
 		ctx.setAttribute("access", access, REQUEST);
 
 		VideoAccessControl vAccess = null;
-		Collection<Video> results = null;
 		try {
 			Connection con = ctx.getConnection();
 
@@ -47,10 +46,10 @@ public class VideoLibraryCommand extends AbstractViewCommand {
 			GetVideos dao = new GetVideos(con);
 			dao.setQueryStart(vc.getStart());
 			dao.setQueryMax(Math.round(vc.getCount() * 1.5f));
-			results = dao.getVideos();
+			vc.setResults(dao.getVideos());
 
 			// Get the authors
-			Collection<Integer> IDs = results.stream().map(v -> Integer.valueOf(v.getAuthorID())).collect(Collectors.toSet());
+			Collection<Integer> IDs = vc.getResults().stream().map(v -> Integer.valueOf(v.getAuthorID())).collect(Collectors.toSet());
 
 			// Get the author data
 			GetPilot pdao = new GetPilot(con);
@@ -68,20 +67,17 @@ public class VideoLibraryCommand extends AbstractViewCommand {
 		}
 
 		// Validate our access to the results
-		for (Iterator<Video> i = results.iterator(); i.hasNext();) {
+		for (Iterator<Video> i = vc.getResults().iterator(); i.hasNext();) {
 			Video video = i.next();
 			vAccess.updateContext(video);
 			vAccess.validate();
 			
 			// Check that the resource exists
-			if ((video.getSize() == 0) && (!access.getCanEditVideo())) {
+			if ((video.getSize() == 0) && (!access.getCanEditVideo()))
 				i.remove();
-			} else if (!vAccess.getCanRead())
+			else if (!vAccess.getCanRead())
 				i.remove();
 		}
-
-		// Save the results in the view context
-		vc.setResults(results);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -14,14 +14,13 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to display the smoothest landings.
  * @author Luke
- * @version 6.3
+ * @version 7.0
  * @since 1.0
  */
 
 public class GreasedLandingCommand extends AbstractViewCommand {
 
-	private static final List<?> DATE_FILTER = ComboUtils.fromArray(new String[] { "30 Days", "60 Days", "90 Days", "180 Days", "1 Year" },
-			new String[] { "30", "60", "90", "180", "365" });
+	private static final List<?> DATE_FILTER = ComboUtils.fromArray(new String[] { "30 Days", "60 Days", "90 Days", "180 Days", "1 Year" }, new String[] { "30", "60", "90", "180", "365" });
 
 	/**
 	 * Executes the command.
@@ -32,7 +31,7 @@ public class GreasedLandingCommand extends AbstractViewCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Load the view context
-		ViewContext vc = initView(ctx, 25);
+		ViewContext<Integer> vc = initView(ctx, Integer.class, 25);
 
 		// Check equipment type and how many days back to search
 		String eqType = ctx.getParameter("eqType");
@@ -54,13 +53,12 @@ public class GreasedLandingCommand extends AbstractViewCommand {
 			// Get the results
 			dao.setQueryMax(vc.getCount());
 			dao.setDayFilter(daysBack);
-			List<Integer> results = null;
 			if (StringUtils.isEmpty(eqType))
-				results = dao.getGreasedLandings();
+				vc.setResults(dao.getGreasedLandings());
 			else if ("staff".equals(eqType))
-				results = dao.getStaffReports();
+				vc.setResults(dao.getStaffReports());
 			else
-				results = dao.getGreasedLandings(eqType);
+				vc.setResults(dao.getGreasedLandings(eqType));
 			
 			// Load the PIREPs and runways
 			GetFlightReports frdao = new GetFlightReports(con);
@@ -68,7 +66,7 @@ public class GreasedLandingCommand extends AbstractViewCommand {
 			Collection<Integer> pilotIDs = new HashSet<Integer>();
 			Collection<FlightReport> pireps = new ArrayList<FlightReport>();
 			Map<Integer, RunwayDistance> runways = new HashMap<Integer, RunwayDistance>();
-			for (Integer pirepID : results) {
+			for (Integer pirepID : vc.getResults()) {
 				FlightReport fr = frdao.get(pirepID.intValue());
 				pilotIDs.add(Integer.valueOf(fr.getDatabaseID(DatabaseID.PILOT)));
 				pireps.add(fr);
@@ -80,7 +78,6 @@ public class GreasedLandingCommand extends AbstractViewCommand {
 			GetPilot pdao = new GetPilot(con);
 			ctx.setAttribute("pilots", pdao.getByID(pilotIDs, "PILOTS"), REQUEST);
 			ctx.setAttribute("rwys", runways, REQUEST);
-			vc.setResults(pireps);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

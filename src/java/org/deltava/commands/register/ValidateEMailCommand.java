@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.sql.Connection;
@@ -11,8 +11,8 @@ import org.deltava.dao.*;
 
 /**
  * A Web Site Command for Applicants to validate their e-mail address.
- * @author LKolin
- * @version 2.1
+ * @author Luke
+ * @version 7.0
  * @since 2.0
  */
 
@@ -23,6 +23,7 @@ public class ValidateEMailCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Get the command result
@@ -80,7 +81,6 @@ public class ValidateEMailCommand extends AbstractCommand {
 			ctx.release();
 		}
 
-		// Forward to the JSP
 		result.setSuccess(true);
 	}
 }

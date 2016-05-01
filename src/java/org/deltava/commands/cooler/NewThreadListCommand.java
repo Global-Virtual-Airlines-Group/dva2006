@@ -38,17 +38,15 @@ public class NewThreadListCommand extends AbstractViewCommand {
 		AirlineInformation airline = SystemData.getApp(SystemData.get("airline.code"));
 
 		// Get/set start/count parameters
-		ViewContext vc = initView(ctx);
+		ViewContext<MessageThread> vc = initView(ctx, MessageThread.class);
 		try {
 			Connection con = ctx.getConnection();
 
 			// Get the DAO and the Pilot's airline
 			GetUserData uddao = new GetUserData(con);
-			if (p != null) {
-				UserData usrData = uddao.get(p.getID());
-				if (usrData != null)
-					airline = SystemData.getApp(usrData.getAirlineCode());
-			}
+			UserData usrData = uddao.get(p.getID());
+			if (usrData != null)
+				airline = SystemData.getApp(usrData.getAirlineCode());
 
 			// Get the channel DAO and the list of channels
 			GetCoolerChannels dao = new GetCoolerChannels(con);
@@ -65,9 +63,9 @@ public class NewThreadListCommand extends AbstractViewCommand {
 			// Get either by channel or all; now filter by role
 			Collection<Integer> pilotIDs = new HashSet<Integer>();
 			GetCoolerLastRead lrdao = new GetCoolerLastRead(con);
-			List<MessageThread> threads = dao2.getSince(p.getLastLogoff(), true);
-			Map<Integer, Instant> lastRead = lrdao.getLastRead(threads, p.getID());
-			for (Iterator<MessageThread> i = threads.iterator(); i.hasNext();) {
+			vc.setResults(dao2.getSince(p.getLastLogoff(), true));
+			Map<Integer, Instant> lastRead = lrdao.getLastRead(vc.getResults(), p.getID());
+			for (Iterator<MessageThread> i = vc.getResults().iterator(); i.hasNext();) {
 				MessageThread thread = i.next();
 				Instant lastView = lastRead.get(Integer.valueOf(thread.getID()));
 
@@ -92,15 +90,9 @@ public class NewThreadListCommand extends AbstractViewCommand {
 			ctx.setAttribute("userData", udm, REQUEST);
 
 			// Get the authors for the last post in each channel
-			Map<Integer, Pilot> authors = new HashMap<Integer, Pilot>();
 			GetPilot pdao = new GetPilot(con);
-			for (String tableName : udm.getTableNames())
-				authors.putAll(pdao.getByID(udm.getByTable(tableName), tableName));
-
-			// Get the pilot IDs in the returned threads
-			ctx.setAttribute("pilots", authors, REQUEST);
+			ctx.setAttribute("pilots", pdao.get(udm), REQUEST);
 			ctx.setAttribute("lastRead", lastRead, REQUEST);
-			vc.setResults(threads);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

@@ -32,7 +32,7 @@ public class MyAssignmentsCommand extends AbstractViewCommand {
 public void execute(CommandContext ctx) throws CommandException {
       
       // Get the view context
-      ViewContext vc = initView(ctx);
+      ViewContext<AssignmentInfo> vc = initView(ctx, AssignmentInfo.class);
       try {
          // Get the DAO and the equipmentTypes
          GetAssignment dao = new GetAssignment(ctx.getConnection());
@@ -43,11 +43,10 @@ public void execute(CommandContext ctx) throws CommandException {
          dao.setQueryStart(vc.getStart());
          
          // Get the assignments
-         List<AssignmentInfo> results = dao.getByPilot(ctx.getUser().getID());
-         vc.setResults(results);
+         vc.setResults(dao.getByPilot(ctx.getUser().getID()));
          
          // Get the access controllers for the assignments
-         List<AssignmentAccessControl> accessList = results.stream().map(ai -> { AssignmentAccessControl access = new AssignmentAccessControl(ctx, ai); access.validate(); return access; }).collect(Collectors.toList());
+         List<AssignmentAccessControl> accessList = vc.getResults().stream().map(ai -> { AssignmentAccessControl access = new AssignmentAccessControl(ctx, ai); access.validate(); return access; }).collect(Collectors.toList());
          
          // Save dummy map of pilot IDs - the only one we need to add is our own
          Map<Integer, Person> pilots = new HashMap<Integer, Person>();

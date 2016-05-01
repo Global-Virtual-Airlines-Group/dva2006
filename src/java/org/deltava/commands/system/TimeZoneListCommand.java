@@ -25,7 +25,7 @@ public class TimeZoneListCommand extends AbstractViewCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Get the view context
-		ViewContext vc = initView(ctx);
+		ViewContext<TZInfo> vc = initView(ctx, TZInfo.class);
 		
 		// Get the entries and shrink to fit
 		List<TZInfo> entries = new ArrayList<TZInfo>(TZInfo.getAll());

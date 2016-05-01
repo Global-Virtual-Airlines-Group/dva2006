@@ -754,9 +754,9 @@ public class ImageInfo {
 	}
 
 	private static boolean equals(byte[] a1, int offs1, byte[] a2, int offs2, int num) {
-		int n = num;
+		int n = num; int ofs1 = offs1; int ofs2 = offs2;
 		while (n-- > 0) {
-			if (a1[offs1++] != a2[offs2++]) {
+			if (a1[ofs1++] != a2[ofs2++]) {
 				return false;
 			}
 		}
@@ -1117,16 +1117,15 @@ public class ImageInfo {
 	}
 
 	private void skip(int num) throws IOException {
-		while (num > 0) {
+		int n = num;
+		while (n > 0) {
 			long result;
-			if (in != null) {
-				result = in.skip(num);
-			} else {
-				result = din.skipBytes(num);
-			}
-			if (result > 0) {
-				num -= result;
-			}
+			if (in != null)
+				result = in.skip(n);
+			else
+				result = din.skipBytes(n);
+			if (result > 0)
+				n -= result;
 		}
 	}
 	
