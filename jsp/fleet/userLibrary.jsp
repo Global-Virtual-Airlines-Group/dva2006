@@ -41,7 +41,7 @@
 </tr>
 
 <!-- Table Data Section -->
-<c:forEach var="entry" items="${files}">
+<c:forEach var="entry" items="${viewContext.results}">
 <c:set var="access" value="${accessMap[entry.fileName]}" scope="page" />
 <c:set var="author" value="${authors[entry.authorID]}" scope="page" />
 <c:set var="authorLoc" value="${userData[entry.authorID]}" scope="page" />
