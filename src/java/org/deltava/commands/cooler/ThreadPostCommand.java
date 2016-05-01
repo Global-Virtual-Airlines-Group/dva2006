@@ -59,11 +59,9 @@ public class ThreadPostCommand extends AbstractCommand {
 
 			// Get the Pilot's airline
 			GetUserData uddao = new GetUserData(con);
-			if (p != null) {
-				UserData usrData = uddao.get(p.getID());
-				if (usrData != null)
-					airline = SystemData.getApp(usrData.getAirlineCode());
-			}
+			UserData usrData = uddao.get(p.getID());
+			if (usrData != null)
+				airline = SystemData.getApp(usrData.getAirlineCode());
 
 			// Get the channel DAO and the list of channels
 			GetCoolerChannels dao = new GetCoolerChannels(con);
@@ -141,7 +139,7 @@ public class ThreadPostCommand extends AbstractCommand {
 			// Create the new thread bean
 			MessageThread mt = new MessageThread(ctx.getParameter("subject"));
 			mt.setChannel(cName);
-			mt.setAuthorID(p.getID());
+			mt.setAuthorID(ctx.getUser().getID());
 
 			// Parse the sticky date
 			if (!StringUtils.isEmpty(ctx.getParameter("stickyDate"))) 
