@@ -515,12 +515,6 @@
 		<roles>*</roles>
 	</command>
 
-	<command id="coolerstats">
-		<name>Water Cooler Statistics</name>
-		<class>org.deltava.commands.stats.CoolerStatsCommand</class>
-		<roles>Moderator,HR</roles>
-	</command>
-
 	<command id="httpstats">
 		<name>HTTP Statistics</name>
 		<class>org.deltava.commands.stats.ServerStatsCommand</class>
