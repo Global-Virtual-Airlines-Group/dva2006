@@ -21,34 +21,21 @@ public abstract class AbstractViewCommand extends AbstractCommand {
 	 */
     protected static <T extends Object> ViewContext<T> initView(CommandContext ctx, Class<T> c, int defaultSize) {
         
-        // Get start/count/sortType
         ViewContext<T> vctx = new ViewContext<T>(ctx.getRequest(), defaultSize);
         ctx.setAttribute(ViewContext.VIEW_CONTEXT, vctx, REQUEST);
         return vctx;
     }
     
     /**
-     * Initializes the view context for a command invocation, with the default view page size
+     * Initializes the view context for a command invocation, with the default view page size, either for the system or
+     * for the authenticated user (if any).
      * @param ctx the Command context
      * @param c the result type Class
      * @return the View context
      */
     protected static <T extends Object> ViewContext<T> initView(CommandContext ctx, Class<T> c) {
     	
-    	// Get the default view size for the user if authenticated
     	int defaultSize = ctx.isAuthenticated() ? ctx.getUser().getViewCount() : SystemData.getInt("html.table.viewSize"); 
     	return initView(ctx, c, defaultSize);
-    }
-    
-    /**
-     * Initializes the view context for a command invocation, with the default view page size
-     * @param ctx the Command context
-     * @return the View context
-     */
-    protected static ViewContext<Object> initView(CommandContext ctx) {
-    	
-    	// Get the default view size for the user if authenticated
-    	int defaultSize = ctx.isAuthenticated() ? ctx.getUser().getViewCount() : SystemData.getInt("html.table.viewSize"); 
-    	return initView(ctx, Object.class, defaultSize);
     }
 }
