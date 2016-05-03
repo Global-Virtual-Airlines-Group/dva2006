@@ -51,7 +51,7 @@ public class ScheduleImportTask extends Task {
 		String dt = SystemData.get("schedule.innovata.import.replayDate");
 		LocalDateTime replayDate = StringUtils.isEmpty(dt) ? null : LocalDateTime.ofInstant(StringUtils.parseInstant(dt, "MM/dd/yyyy"), ZoneOffset.UTC);
 		if (replayDate != null) {
-			Instant now = Instant.now();
+			LocalDateTime now = LocalDateTime.now();
 			int daysToAdjust = now.get(ChronoField.DAY_OF_WEEK) - 1;
 			replayDate = replayDate.plusDays(daysToAdjust);
 		}
@@ -169,7 +169,7 @@ public class ScheduleImportTask extends Task {
 			String aCode = SystemData.get("airline.code").toLowerCase();
 			mdwdao.write(aCode + ".schedule.import", Instant.now());
 			if (replayDate != null)
-				mdwdao.write(aCode + ".schedule.effDate", replayDate);
+				mdwdao.write(aCode + ".schedule.effDate", replayDate.toInstant(ZoneOffset.UTC));
 			else
 				mdwdao.delete(aCode + ".schedule.effDate");
 

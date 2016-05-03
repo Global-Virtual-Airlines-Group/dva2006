@@ -35,7 +35,8 @@ public class GetSchedule extends DAO {
 	 * @param dt the effective date/time or null for today
 	 */
 	public void setEffectiveDate(Instant dt) {
-		_effDate = dt.truncatedTo(ChronoUnit.DAYS);
+		if (dt != null)
+			_effDate = dt.truncatedTo(ChronoUnit.DAYS);
 	}
 
 	/**

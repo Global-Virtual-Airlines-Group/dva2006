@@ -111,12 +111,13 @@ public class InnovataDownloadCommand extends ScheduleImportCommand {
 			String aCode = SystemData.get("airline.code").toLowerCase();
 			mdwdao.write(aCode + ".schedule.import", Instant.now());
 			if (replayDate != null)
-				mdwdao.write(aCode + ".schedule.effDate", replayDate);
+				mdwdao.write(aCode + ".schedule.effDate", replayDate.toInstant(ZoneOffset.UTC));
 			else
 				mdwdao.delete(aCode + ".schedule.effDate");
 
 			// Save the cache status
 			ctx.setAttribute("innovataCache", Boolean.valueOf(isCached), REQUEST);
+			ctx.setAttribute("replayDate", replayDate, REQUEST);
 
 			// Save the data in the session
 			ctx.setAttribute("entries", entries, SESSION);
