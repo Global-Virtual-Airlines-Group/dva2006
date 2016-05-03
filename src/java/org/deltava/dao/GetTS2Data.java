@@ -3,7 +3,8 @@ package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
-import java.time.Instant;
+import java.time.*;
+import java.time.format.*;
 
 import org.apache.log4j.Logger;
 
@@ -31,11 +32,15 @@ public class GetTS2Data extends DAO {
 	}
 	
 	/*
-	 * Helper method to convert a date from the godawful TS2 format.
+	 * Helper method to convert a date from the godawful TS2 format. The JDK has a bug where
+	 * we cannot parse fractional seconds if there are no separators in the format string.
 	 */
-	private static java.time.Instant getDate(String dt) {
+	private static Instant getDate(String dt) {
 		try {
-			return (dt == null) ? null : StringUtils.parseInstant(dt, "ddMMyyyyHHmmssSSS");
+			if (dt == null) return null;
+			DateTimeFormatter df = DateTimeFormatter.ofPattern("ddMMyyyyHHmmss");
+			Instant i = LocalDateTime.parse(dt.substring(0, 14), df).toInstant(ZoneOffset.UTC);
+			return i.plusSeconds(Integer.parseInt(dt.substring(14)));
 		} catch (Exception pe) {
 			log.warn("Error parsing date " + dt);
 			return Instant.now();
@@ -126,9 +131,8 @@ public class GetTS2Data extends DAO {
 	 */
 	public Collection<Server> getServers() throws DAOException {
 		try {
-			prepareStatement("SELECT i_server_id, s_server_name, s_server_welcomemessage, i_server_maxusers, "
-					+ "i_server_udpport, s_server_password, b_server_active, dt_server_created, s_server_description, "
-					+ "b_server_no_acars FROM teamspeak.ts2_servers");
+			prepareStatement("SELECT i_server_id, s_server_name, s_server_welcomemessage, i_server_maxusers, i_server_udpport, s_server_password, b_server_active, dt_server_created, s_server_description, "
+				+ "b_server_no_acars FROM teamspeak.ts2_servers");
 			return executeServers();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -165,11 +169,8 @@ public class GetTS2Data extends DAO {
 			return Collections.emptySet();
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder(
-				"SELECT s.i_server_id, s.s_server_name, s.s_server_welcomemessage, "
-						+ "s.i_server_maxusers, s.i_server_udpport, s.s_server_password, s.b_server_active, s.dt_server_created, "
-						+ "s.s_server_description, b_server_no_acars FROM teamspeak.ts2_servers s, teamspeak.ts2_server_roles r "
-						+ "WHERE (s.i_server_id=r.i_server_id) AND (");
+		StringBuilder sqlBuf = new StringBuilder("SELECT s.i_server_id, s.s_server_name, s.s_server_welcomemessage, s.i_server_maxusers, s.i_server_udpport, s.s_server_password, s.b_server_active, s.dt_server_created, "
+				+ "s.s_server_description, b_server_no_acars FROM teamspeak.ts2_servers s, teamspeak.ts2_server_roles r WHERE (s.i_server_id=r.i_server_id) AND (");
 		for (Iterator<String> i = roles.iterator(); i.hasNext();) {
 			String role = i.next();
 			sqlBuf.append("(r.s_role_name=\'");
@@ -181,7 +182,6 @@ public class GetTS2Data extends DAO {
 
 		sqlBuf.append(')');
 
-		// Execute the query
 		try {
 			prepareStatement(sqlBuf.toString());
 			return executeServers();
@@ -198,15 +198,11 @@ public class GetTS2Data extends DAO {
 	 */
 	public Server getServer(int id) throws DAOException {
 		try {
-			setQueryMax(1);
-			prepareStatement("SELECT i_server_id, s_server_name, s_server_welcomemessage, i_server_maxusers, "
-					+ "i_server_udpport, s_server_password, b_server_active, dt_server_created, s_server_description, "
-					+ "b_server_no_acars FROM teamspeak.ts2_servers WHERE (i_server_id=?)");
+			prepareStatementWithoutLimits("SELECT i_server_id, s_server_name, s_server_welcomemessage, i_server_maxusers, i_server_udpport, s_server_password, b_server_active, dt_server_created, s_server_description, "
+				+ "b_server_no_acars FROM teamspeak.ts2_servers WHERE (i_server_id=?) LIMIT 1");
 			_ps.setInt(1, id);
 			
-			// Execute the query
 			List<Server> results = executeServers();
-			setQueryMax(0);
 			return results.isEmpty() ? null : results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
