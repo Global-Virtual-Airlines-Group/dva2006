@@ -178,9 +178,7 @@ public class DateFormatTag extends UserSettingsTag {
 			break;
 
 		default:
-			fmtPattern.append(_dateFormat);
-			fmtPattern.append(' ');
-			fmtPattern.append(_timeFormat);
+			fmtPattern.append(_dateFormat).append(' ').append(_timeFormat);
 		}
 
 		// Write the datetime value
@@ -194,6 +192,7 @@ public class DateFormatTag extends UserSettingsTag {
 
 			// Write the formatted date
 			if (_dt != null) {
+				if (_tz == null) _tz =TZInfo.UTC;
 				DateTimeFormatter df = DateTimeFormatter.ofPattern(fmtPattern.toString());
 				ZonedDateTime zdt = ZonedDateTime.ofInstant(_dt, _tz.getZone());
 				out.print(df.format(zdt));
