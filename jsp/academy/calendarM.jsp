@@ -49,7 +49,7 @@ return true;
 <el:form action="insbusysave.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title">
- <td style="width:70%" class="caps"><content:airline /> INSTRUCTION CALENDAR - <fmt:date fmt="d" date="${startDate}" d="MMMM yyyy" tzName="local" /></td>
+ <td style="width:70%" class="caps"><content:airline /> INSTRUCTION CALENDAR - <fmt:date fmt="d" date="${startDate}" d="MMMM yyyy" /></td>
 <c:if test="${isMine}">
  <td style="width:10%" class="mid"><el:cmd url="academycalendar" op="31" startDate="${startDate}">ALL SESSIONS</el:cmd></td>
 </c:if>
