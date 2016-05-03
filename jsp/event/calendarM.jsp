@@ -6,7 +6,6 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_calendar.tld" prefix="calendar" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html lang="en">
 <head>
 <title><content:airline /> Event Calendar</title>
@@ -42,7 +41,7 @@ golgotha.local.expandSection = function(id) {
 <el:form action="eventcalendar.do" method="get" validate="return false">
 <el:table className="form">
 <tr class="title">
- <td style="width:80%" class="caps"><content:airline /> ONLINE EVENT CALENDAR - <fmt:date fmt="d" date="${startDate}" d="MMMM yyyy" tzName="local" /></td>
+ <td style="width:80%" class="caps"><content:airline /> ONLINE EVENT CALENDAR - <fmt:date fmt="d" date="${startDate}" d="MMMM yyyy" /></td>
  <td class="right">CALENDAR TYPE <el:combo name="op" size="1" idx="*" options="${typeOptions}" value="30" onChange="void golgotha.local.switchType(this)" /></td>
 </tr>
 </el:table>
@@ -50,14 +49,13 @@ golgotha.local.expandSection = function(id) {
 <calendar:month date="cDate" startDate="${startDate}" entries="${events}" topBarClass="dayHdr"
 	dayBarClass="dayHdr" tableClass="calendar" contentClass="contentM" scrollClass="scroll" cmd="eventcalendar">
 <calendar:entry name="event">
-<c:set var="eventSize" value="${fn:sizeof(event.signups)}" scope="page" />
+<c:set var="eventSize" value="${event.signups.size()}" scope="page" />
 <c:set var="eventLargeSignup" value="${eventSize > 10}" scope="page" />
-<c:set var="eventLargeRoutes" value="${fn:sizeof(event.routes) > 3}" scope="page" />
+<c:set var="eventLargeRoutes" value="${event.routes.size() > 3}" scope="page" />
 <el:cmd url="event" link="${event}" className="pri bld">${event.name}</el:cmd><br />
-<span class="sec small bld">${event.network}</span> <span class="small"><fmt:date fmt="t" t="HH:mm" date="${event.startTime}" /> 
-- <fmt:date fmt="t" t="HH:mm" date="${event.endTime}" /></span><br />
+<span class="sec small bld">${event.network}</span> <span class="small"><fmt:date fmt="t" t="HH:mm" date="${event.startTime}" /> - <fmt:date fmt="t" t="HH:mm" date="${event.endTime}" /></span><br />
 <c:if test="${eventLargeRoutes}">
-<a href="javascript:golgotha.local.expandSection('eRoute${event.hexID}')" class="small pri bld"><fmt:int value="${fn:sizeof(event.routes)}" /> Routes</a><br />
+<a href="javascript:golgotha.local.expandSection('eRoute${event.hexID}')" class="small pri bld"><fmt:int value="${event.routes.size()}" /> Routes</a><br />
 </c:if>
 <div id="eRoute${event.hexID}" class="small"<c:if test="${eventLargeRoutes}"> style="display:none;"</c:if>>
 <c:forEach var="route" items="${event.routes}">

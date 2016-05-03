@@ -13,6 +13,7 @@
 <content:css name="main" />
 <content:css name="form" />
 <content:css name="calendar" />
+<content:js name="common" />
 <content:pics />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <script type="text/javascript">
@@ -38,13 +39,11 @@ golgotha.local.switchType = function(combo) {
 </tr>
 </el:table>
 <div class="mid">
-<calendar:week date="cDate" startDate="${startDate}" entries="${pireps}" topBarClass="dayHdr"
-	dayBarClass="dayHdr" tableClass="calendar" contentClass="contentW" scrollClass="scroll" cmd="logcalendar">
+<calendar:week date="cDate" startDate="${startDate}" entries="${pireps}" topBarClass="dayHdr" dayBarClass="dayHdr" tableClass="calendar" contentClass="contentW" scrollClass="scroll" cmd="logcalendar">
 <calendar:entry name="pirep">
 <el:cmd className="bld" url="pirep" link="${pirep}">${pirep.flightCode}</el:cmd><br />
 <span class="bld">${pirep.equipmentType}</span><br />
-<span class="small">${pirep.airportD.name} (<fmt:airport airport="${pirep.airportD}" />) - ${pirep.airportA.name}
- (<fmt:airport airport="${pirep.airportA}" />)</span><br />
+<span class="small">${pirep.airportD.name} (<fmt:airport airport="${pirep.airportD}" />) - ${pirep.airportA.name} (<fmt:airport airport="${pirep.airportA}" />)</span><br />
 <fmt:dec fmt="#0.0" value="${pirep.length / 10}" /> hours<br />
 <c:if test="${fn:EventID(pirep) != 0}"><el:img src="network/event.png" caption="Online Event" /></c:if> 
 <c:if test="${fn:isACARS(pirep)}"><el:img src="acars.png" caption="ACARS Logged" /></c:if>
