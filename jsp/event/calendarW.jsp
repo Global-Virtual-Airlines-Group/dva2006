@@ -6,7 +6,6 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_calendar.tld" prefix="calendar" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html lang="en">
 <head>
 <title><content:airline /> Event Calendar</title>
@@ -42,19 +41,17 @@ golgotha.local.expandSection = function(id) {
 <el:form action="eventcalendar.do" method="get" validate="return false">
 <el:table className="form">
 <tr class="title">
- <td style="width:80%" class="caps"><content:airline /> ONLINE EVENT CALENDAR - WEEK OF <fmt:date fmt="d" date="${startDate}" d="MMMM dd, yyyy" tzName="local" /></td>
+ <td style="width:80%" class="caps"><content:airline /> ONLINE EVENT CALENDAR - WEEK OF <fmt:date fmt="d" date="${startDate}" d="MMMM dd, yyyy" /></td>
  <td class="right">&nbsp;<span class="nophone">CALENDAR TYPE <el:combo name="op" size="1" idx="*" options="${typeOptions}" value="7" onChange="void golgotha.local.switchType(this)" /></span></td>
 </tr>
 </el:table>
 <div class="mid">
-<calendar:week date="cDate" startDate="${startDate}" entries="${events}" topBarClass="dayHdr" 
-	dayBarClass="dayHdr" tableClass="calendar" contentClass="contentW" scrollClass="scroll" cmd="eventcalendar">
+<calendar:week date="cDate" startDate="${startDate}" entries="${events}" topBarClass="dayHdr" dayBarClass="dayHdr" tableClass="calendar" contentClass="contentW" scrollClass="scroll" cmd="eventcalendar">
 <calendar:entry name="event">
-<c:set var="eventSize" value="${fn:sizeof(event.signups)}" scope="page" />
+<c:set var="eventSize" value="${event.signups.size()}" scope="page" />
 <c:set var="eventLargeSignup" value="${eventSize > 20}" scope="page" />
 <el:cmd url="event" link="${event}" className="pri bld">${event.name}</el:cmd><br />
-<span class="sec small bld">${event.network}</span> <span class="small"><fmt:date fmt="t" t="HH:mm" date="${event.startTime}" /> 
-- <fmt:date fmt="t" t="HH:mm" date="${event.endTime}" /></span><br />
+<span class="sec small bld">${event.network}</span> <span class="small"><fmt:date fmt="t" t="HH:mm" date="${event.startTime}" /> - <fmt:date fmt="t" t="HH:mm" date="${event.endTime}" /></span><br />
 <c:forEach var="route" items="${event.routes}">
 <c:if test="${((route.maxSignups == 0) || (route.signups < route.maxSignups))}">
 <div class="small">${route.airportD.name} - ${route.airportA.name}<br />

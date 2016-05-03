@@ -46,7 +46,7 @@ return true;
 <el:form action="dspentry.do" op="save" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title">
- <td style="width:80%" class="caps"><content:airline /> ACARS DISPATCHER SERVICE CALENDAR - <fmt:date fmt="d" date="${startDate}" d="MMMM yyyy" tzName="local" /></td>
+ <td style="width:80%" class="caps"><content:airline /> ACARS DISPATCHER SERVICE CALENDAR - <fmt:date fmt="d" date="${startDate}" d="MMMM yyyy" /></td>
  <td class="right">CALENDAR TYPE <el:combo name="op" size="1" idx="*" options="${typeOptions}" value="30" onChange="void golgotha.local.switchType(this)" /></td>
 </tr>
 </el:table>
