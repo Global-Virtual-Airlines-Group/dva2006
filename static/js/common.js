@@ -236,14 +236,7 @@ if (!Array.prototype.indexOf)
 }
 
 Array.prototype.contains = function(obj) { return (this.indexOf(obj) != -1); };
-Array.prototype.clone = function() {
-	var result = [];	
-	for (var x = 0; x < this.length; x++)
-		result.push(this[x]);
-
-	return result;
-};
-
+Array.prototype.clone = function() { return this.slice(); };
 if (!Array.prototype.forEach) {
 	Array.prototype.forEach = function(f) {
 		for (var x = 0; x < this.length; x++)
