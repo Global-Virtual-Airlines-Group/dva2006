@@ -306,40 +306,6 @@ public class GetStatistics extends DAO  {
 	}
 
 	/**
-	 * Returns Water Cooler posting statistics.
-	 * @param orderBy the order by column within SQL
-	 * @param groupBy the label SQL function
-	 * @param distinctBy the column to bring in to count distinct entries
-	 * @return a List of CoolerStatsEntry beans
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public List<CoolerStatsEntry<String>> getCoolerStatistics(String orderBy, String groupBy, String distinctBy) throws DAOException {
-
-		// Generate SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT ");
-		sqlBuf.append(groupBy);
-		sqlBuf.append("AS LBL, COUNT(DISTINCT CP.POST_ID) AS PC, COUNT(DISTINCT ");
-		sqlBuf.append(distinctBy);
-		sqlBuf.append(") AS DSTNCT FROM PILOTS P, common.COOLER_POSTS CP WHERE (P.ID=CP.AUTHOR_ID)");
-		sqlBuf.append(" GROUP BY LBL ORDER BY ");
-		sqlBuf.append(orderBy);
-
-		try {
-			prepareStatement(sqlBuf.toString());
-			List<CoolerStatsEntry<String>> results = new ArrayList<CoolerStatsEntry<String>>();
-			try (ResultSet rs = _ps.executeQuery()) {
-				while (rs.next())
-					results.add(new CoolerStatsEntry<String>(rs.getString(1), rs.getInt(2), rs.getInt(3)));
-			}
-
-			_ps.close();
-			return results;
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-
-	/**
 	 * Retrieves Water Cooler post counts.
 	 * @param days the number of days in the past to count
 	 * @return the number of posts in the specified interval
