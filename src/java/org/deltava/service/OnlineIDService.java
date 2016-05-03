@@ -72,7 +72,7 @@ public class OnlineIDService extends WebService {
 		// Write out the pilot list
 		for (Iterator<Pilot> i = pilots.iterator(); i.hasNext(); ) {
 			Pilot p = i.next();
-			if (isXML) {
+			if (isXML && (re != null)) {
 				Element pe = new Element("pilot");
 				pe.setAttribute("id", p.getNetworkID(net));
 				pe.setAttribute("name", p.getName());
