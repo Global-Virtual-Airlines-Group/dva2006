@@ -114,14 +114,13 @@ return true;
 golgotha.pilotMap.updateMapOptions = function(opt)
 {
 golgotha.event.beacon('Pilot Map', 'Switch Type');
-map.toggle(golgotha.pilotMap.mrks, (opt.value != 'MAP'));
-golgotha.pilotMap.hmap.setMap(toggleOpts.checked ? null : map);
-hq.setMap(toggleOpts.checked ? map : null);
+var isHeatMap = (opt.value != 'MAP');
+map.toggle(golgotha.pilotMap.mrks, isHeatMap);
+golgotha.pilotMap.hmap.setMap(isHeatMap ? null : map);
+hq.setMap(isHeatMap ? map : null);
 
 // Toggle filter rows
 var rows = golgotha.util.getElementsByClass('locFilter');
-for (var x = 0; x < rows.length; x++)
-	golgotha.util.display(rows[x], toggleOpts.checked);
-
+rows.forEach(function(r) { golgotha.util.display(r, isHeatMap); }); 
 return true;
 };

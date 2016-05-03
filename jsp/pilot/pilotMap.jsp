@@ -27,7 +27,7 @@ xmlreq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; char
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	for (var x = 0; x < golgotha.pilotMap.mrks.length; x++) {
-		var mrk = golgotha.pilotMap.mrks.length[x];
+		var mrk = golgotha.pilotMap.mrks[x];
 		if (mrk.ID == id) {
 			golgotha.pilotMap.mrks.remove(mrk);
 			mrk.setMap(null);
@@ -41,7 +41,7 @@ xmlreq.onreadystatechange = function() {
 golgotha.event.beacon('Pilot Map', 'Delete Invalid Marker');
 xmlreq.send('id=0x' + id.toString(16));
 return true;
-}
+};
 </script></content:filter>
 </head>
 <content:copyright visible="false" />
