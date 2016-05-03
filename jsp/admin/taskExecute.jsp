@@ -10,6 +10,7 @@
 <title><content:airline /> Task Executed</title>
 <content:css name="main" />
 <content:pics />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 </head>
 <content:copyright visible="false" />
@@ -27,13 +28,14 @@ The ${task.name} Scheduled Task (${task.className}) has been successfully execut
 </c:if>
 <c:if test="${!empty ex}">
 The ${task.name} Scheduled Task (${task.className}) encountered an error and did not complete successfully.<br />
+<br />
 The stack dump is as follows:<br />
 <pre>
 <fmt:stack exception="${ex}" />
 </pre>
 <br />
 <c:if test="${!empty ex.cause}">
-This is the root cause of the exception: <b>${ex.cause.class.name}</b><br />
+This is the root cause of the exception: <b>${ex.cause.getClass().name}</b><br />
 <pre>
 <fmt:stack exception="${ex.cause}" />
 </pre>
@@ -41,7 +43,7 @@ This is the root cause of the exception: <b>${ex.cause.class.name}</b><br />
 </c:if>
 </c:if>
 <br />
-To return to the <content:airline /> System Diagnostics page, <el:cmd url="diag" className="sec bld">Click here</el:cmd>.<br />
+To return to the <content:airline /> System Diagnostics page, <el:cmd url="diag" className="sec bld">Click Here</el:cmd>.<br />
 <br />
 <content:copyright />
 </content:region>
