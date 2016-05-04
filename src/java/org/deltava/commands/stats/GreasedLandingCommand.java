@@ -31,7 +31,7 @@ public class GreasedLandingCommand extends AbstractViewCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Load the view context
-		ViewContext<Integer> vc = initView(ctx, Integer.class, 25);
+		ViewContext<FlightReport> vc = initView(ctx, FlightReport.class, 25);
 
 		// Check equipment type and how many days back to search
 		String eqType = ctx.getParameter("eqType");
@@ -51,14 +51,15 @@ public class GreasedLandingCommand extends AbstractViewCommand {
 			ctx.setAttribute("eqTypes", eqTypes, REQUEST);
 			
 			// Get the results
+			Collection<Integer> IDs = new ArrayList<Integer>(vc.getCount() + 2);
 			dao.setQueryMax(vc.getCount());
 			dao.setDayFilter(daysBack);
 			if (StringUtils.isEmpty(eqType))
-				vc.setResults(dao.getGreasedLandings());
+				IDs.addAll(dao.getGreasedLandings());
 			else if ("staff".equals(eqType))
-				vc.setResults(dao.getStaffReports());
+				IDs.addAll(dao.getStaffReports());
 			else
-				vc.setResults(dao.getGreasedLandings(eqType));
+				IDs.addAll(dao.getGreasedLandings(eqType));
 			
 			// Load the PIREPs and runways
 			GetFlightReports frdao = new GetFlightReports(con);
@@ -66,7 +67,7 @@ public class GreasedLandingCommand extends AbstractViewCommand {
 			Collection<Integer> pilotIDs = new HashSet<Integer>();
 			Collection<FlightReport> pireps = new ArrayList<FlightReport>();
 			Map<Integer, RunwayDistance> runways = new HashMap<Integer, RunwayDistance>();
-			for (Integer pirepID : vc.getResults()) {
+			for (Integer pirepID : IDs) {
 				FlightReport fr = frdao.get(pirepID.intValue());
 				pilotIDs.add(Integer.valueOf(fr.getDatabaseID(DatabaseID.PILOT)));
 				pireps.add(fr);
@@ -78,6 +79,7 @@ public class GreasedLandingCommand extends AbstractViewCommand {
 			GetPilot pdao = new GetPilot(con);
 			ctx.setAttribute("pilots", pdao.getByID(pilotIDs, "PILOTS"), REQUEST);
 			ctx.setAttribute("rwys", runways, REQUEST);
+			vc.setResults(pireps);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
