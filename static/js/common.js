@@ -326,7 +326,7 @@ if ('addr' in opts) return golgotha.form.validateEMail(opts.f, opts.t);
 if ('l' in opts) return golgotha.form.validateText(opts.f, opts.l, opts.t);
 if (!opts.f) return true;
 if ('min' in opts) {
-	var vf = (0 in opts.f) ? golgotha.form.validateCheckBox : golgotha.form.validateNumber;
+	var vf = ((0 in opts.f) || (opts.f.type == 'checkbox')) ? golgotha.form.validateCheckBox : golgotha.form.validateNumber;
 	return vf(opts.f, opts.min, opts.t);
 }
 
