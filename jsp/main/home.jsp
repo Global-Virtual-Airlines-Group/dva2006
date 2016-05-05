@@ -134,8 +134,7 @@ our sister airline <a rel="external" target="_new" href="${reqProtocol}://${part
  <td class="sec bld">${con.flightInfo.flightCode}</td>
  <td class="nophone small bld">${con.flightInfo.equipmentType}</td>
  <td class="nophone small sec">${con.flightPhase}</td>
- <td class="small">${con.flightInfo.airportD.name} (<fmt:airport airport="${con.flightInfo.airportD}" />) 
-- ${con.flightInfo.airportA.name} (<fmt:airport airport="${con.flightInfo.airportA}" />)</td>
+ <td class="small">${con.flightInfo.airportD.name} (<fmt:airport airport="${con.flightInfo.airportD}" />) - ${con.flightInfo.airportA.name} (<fmt:airport airport="${con.flightInfo.airportA}" />)</td>
 </c:when>
 <c:when test="${con.dispatch}">
  <td colspan="4" class="pri bld mid">PROVIDING ACARS DISPATCHER SERVICES</td>
@@ -195,8 +194,7 @@ our sister airline <a rel="external" target="_new" href="${reqProtocol}://${part
  <td class="nophone small caps">NO AVAILABLE ROUTES</td>
 </c:if>
 <c:if test="${!empty eRoute}">
- <td class="nophone left small">${eRoute.airportD.name} (<fmt:airport airport="${eRoute.airportD}" />) - 
-${eRoute.airportA.name} (<fmt:airport airport="${eRoute.airportA}" />)</td>
+ <td class="nophone left small">${eRoute.airportD.name} (<fmt:airport airport="${eRoute.airportD}" />) - ${eRoute.airportA.name} (<fmt:airport airport="${eRoute.airportA}" />)</td>
 </c:if>
 </tr>
 </c:forEach>
@@ -214,12 +212,10 @@ ${eRoute.airportA.name} (<fmt:airport airport="${eRoute.airportA}" />)</td>
  <td class="priB" style="width:115px;">${info.flightCode}</td>
  <td class="secB nophone" style="width:145px;">${info.equipmentType}</td>
 <c:if test="${tl.isTakeoff}">
- <td class="left">Departed from ${info.airportD.name} (<fmt:airport airport="${info.airportD}" />)
- at <fmt:date date="${tl.date}" t="HH:mm" /></td>
+ <td class="left">Departed from ${info.airportD.name} (<fmt:airport airport="${info.airportD}" />) at <fmt:date date="${tl.date}" t="HH:mm" /></td>
 </c:if>
 <c:if test="${!tl.isTakeoff}">
- <td class="left">Arrived at ${info.airportA.name} (<fmt:airport airport="${info.airportA}" />)
- at <fmt:date date="${tl.date}" t="HH:mm" /></td>
+ <td class="left">Arrived at ${info.airportA.name} (<fmt:airport airport="${info.airportA}" />) at <fmt:date date="${tl.date}" t="HH:mm" /></td>
 </c:if>
 </tr>
 </c:forEach>
