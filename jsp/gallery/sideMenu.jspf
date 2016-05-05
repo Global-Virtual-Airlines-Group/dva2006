@@ -9,7 +9,7 @@
 <content:sysdata var="helpDeskEnabled" name="helpdesk.enabled" />
 <!-- Top Menu Frame -->
 <content:region id="navmenu">
-<content:menu attr="isSideMenu">
+<content:menu attr="isSideMenu" maxWidth="15%">
 <c:if test="${!isSideMenu}">
 <content:authUser var="user">
 <c:set var="itemLength" value="${fn:length(user.name) * 10}" scope="page" />
