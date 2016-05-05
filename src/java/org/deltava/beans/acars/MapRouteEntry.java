@@ -27,6 +27,7 @@ public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 	private Airport _airportD;
 	private Airport _airportA;
 	private OnlineNetwork _network;
+	private Simulator _sim;
 	private boolean _checkRide;
 	private boolean _dispatchRoute;
 	private String _phaseName;
@@ -63,6 +64,10 @@ public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 	
 	public void setPhaseName(String phase) {
 		_phaseName = phase;
+	}
+	
+	public void setSimulator(Simulator s) {
+		_sim = s;
 	}
 
 	@Override
@@ -108,6 +113,9 @@ public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 		buf.append(" (");
 		buf.append(_airportA.getICAO());
 		buf.append(")<br />");
+		buf.append("Using ");
+		buf.append(_sim.getName());
+		buf.append("<br />");
 		if (_network != null) {
 			buf.append("Flight operated online using <span class=\"sec bld caps\">");
 			buf.append(_network.toString());
