@@ -1,4 +1,4 @@
-// Copyright 2009, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.layout;
 
 import javax.servlet.jsp.*;
@@ -8,13 +8,14 @@ import org.deltava.taglib.ContentHelper;
 /**
  * A JSP tag to display a navigation menu.
  * @author Luke
- * @version 6.3
+ * @version 7.0
  * @since 2.6
  */
 
 public class MenuTag extends MenuElementTag {
 	
 	private String _attrName;
+	private String _maxSubMenuWidth;
 	
 	/**
 	 * Sets the page attribute that stores whether a side menu is being rendered.
@@ -25,12 +26,30 @@ public class MenuTag extends MenuElementTag {
 	}
 	
 	/**
+	 * Sets the CSS attribute for the maximum width of each submenu.
+	 * @param mw the attribute
+	 */
+	public void setMaxWidth(String mw) {
+		_maxSubMenuWidth = mw;
+	}
+	
+	/**
+	 * Returns the CSS attribute for the maximum width of each submenu.
+	 * @return the attribute, or null if none
+	 * @see SubMenuTag
+	 */
+	String getMaxMenuWidth() {
+		return _maxSubMenuWidth;
+	}
+	
+	/**
 	 * Releases the tag's state variables.
 	 */
 	@Override
 	public void release() {
 		super.release();
 		_attrName = null;
+		_maxSubMenuWidth = null;
 	}
 
 	/**

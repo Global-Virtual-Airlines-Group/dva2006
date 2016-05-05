@@ -2,6 +2,9 @@
 package org.deltava.taglib.layout;
 
 import javax.servlet.jsp.*;
+import javax.servlet.jsp.tagext.TagSupport;
+
+import org.deltava.util.StringUtils;
 
 /**
  * A JSP tag to render a top level menu item in a JSP tag.
@@ -44,9 +47,28 @@ public class MenuItemTag extends MenuElementTag {
 			if (_renderTable)
 				out.print("<tr class=\"menuitem\"><td>");
 			else {
+				MenuTag parent = (MenuTag) TagSupport.findAncestorWithClass(this, MenuTag.class);
+				if (parent == null)
+					throw new JspException("Not contained within MenuTag");
+				
 				out.print("<ul class=\"menuitem\"");
-				if (_width > 0)
-					out.print(" style=\"width:" + String.valueOf(_width) + "px;\"");
+				if (_width > 0) {
+					out.print(" style=\"width:");
+					out.print(_width);
+					out.print("px");
+					
+					// Render maxWidth if present
+					String maxWidth = parent.getMaxMenuWidth();
+					if (!StringUtils.isEmpty(maxWidth)) {
+						out.print(";max-width:");
+						out.print(maxWidth);
+						if (!maxWidth.endsWith("%"))
+							out.print("px");
+					}
+					
+					out.print(";\"");
+				}
+				
 				out.print("><li><span>");
 			}
 		} catch (Exception e) {
