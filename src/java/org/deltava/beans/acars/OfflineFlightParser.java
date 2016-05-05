@@ -4,6 +4,11 @@ package org.deltava.beans.acars;
 import java.util.*;
 import java.io.StringReader;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
 
 import org.apache.log4j.Logger;
 
@@ -28,7 +33,7 @@ import org.deltava.util.system.SystemData;
 public final class OfflineFlightParser {
 	
 	private static final Logger log = Logger.getLogger(OfflineFlightParser.class);
-
+	
 	// singleton
 	private OfflineFlightParser() {
 		super();
@@ -111,16 +116,15 @@ public final class OfflineFlightParser {
 		Element ppe = re.getChild("positions");
 		List<Element> pL = (ppe != null) ? ppe.getChildren("position") : null;
 		if (pL != null) {
+			DateTimeFormatter mdtf = new DateTimeFormatterBuilder().appendPattern("MM/dd/yyyy HH:mm:ss").appendFraction(ChronoField.MILLI_OF_SECOND, 0, 3, true).toFormatter();
 			for (Iterator<Element> i = pL.iterator(); i.hasNext();) {
 				Element pe = i.next();
 				String dt = pe.getChildTextTrim("date");
-				if (dt.indexOf('.') == -1)
-					dt += ".000";
-
+				
 				// Build a position entry
 				try {
 					GeoLocation loc = new GeoPosition(parse(pe.getChildTextTrim("lat")), parse(pe.getChildTextTrim("lon")));
-					ACARSRouteEntry pos = new ACARSRouteEntry(StringUtils.parseInstant(dt, "MM/dd/yyyy HH:mm:ss.SSS"), loc);
+					ACARSRouteEntry pos = new ACARSRouteEntry(LocalDateTime.parse(dt, mdtf).toInstant(ZoneOffset.UTC), loc);
 					pos.setAltitude(StringUtils.parse(pe.getChildTextTrim("msl"), 0));
 					pos.setRadarAltitude(StringUtils.parse(pe.getChildTextTrim("agl"), 0));
 					pos.setHeading(StringUtils.parse(pe.getChildTextTrim("hdg"), 0));
