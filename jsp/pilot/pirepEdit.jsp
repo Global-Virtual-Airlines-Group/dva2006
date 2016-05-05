@@ -198,8 +198,7 @@ golgotha.onDOMReady(function() {
 </content:browser>
 <content:browser html4="true">
  <td class="data"><el:combo name="dateM" idx="*" size="1" options="${months}" required="true" onChange="void golgotha.local.setDaysInMonth(this)" />
- <el:combo name="dateD" idx="*" size="1" required="true" options="${emptyList}" />&nbsp;
- <el:combo name="dateY" idx="*" size="1" value="${pirep.date.year + 1900}" required="true" options="${years}" /></td>
+ <el:combo name="dateD" idx="*" size="1" required="true" options="${emptyList}" /> <el:combo name="dateY" idx="*" size="1" value="${pirepYear}" required="true" options="${years}" /></td>
 </content:browser>
 </tr>
 <tr>
