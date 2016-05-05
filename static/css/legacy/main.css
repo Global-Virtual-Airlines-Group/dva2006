@@ -107,7 +107,7 @@ ul.menu, ul.menuitem {
 
 ul.menuitem li {
 	height: 15px;
-	font: 11px tahoma, verdana, helvetica, sans-serif;
+	font-family: tahoma, verdana, helvetica, sans-serif;
 	color: #ffffff;
 	margin: 1px;
 	padding: 1px;
@@ -119,7 +119,7 @@ div.ipv4 ul.menuitem li {
 }
 
 div.ipv6 ul.menuitem li {
-	background-color: #00a088;
+	background-color: #00af88;
 }
 
 ul.menu ul.submenu {
@@ -131,7 +131,8 @@ ul.menu ul.submenu {
 
 ul.menu li.submenuTitle {
 	height: 17px;
-	font: bold 12px tahoma, verdana, helvetica, sans-serif;
+	font-weight: bold;
+	font-family: tahoma, verdana, helvetica, sans-serif;
 	color: #ffffff;
 	background-color: #0000a1;
 	margin: 0px;
@@ -180,6 +181,45 @@ ul.submenu li a:hover {
 ul.menu li ul {
 	position: fixed;
 	z-index: 500;
+}
+
+/* Navbar font sizes */
+@media (max-width: 920px) {
+    ul.menu li.submenuTitle {
+        font-size: 10px;
+    }
+
+    ul.menuitem li {
+        font-size: 10px;
+    }
+
+    .notablet {
+        display: none;
+    }
+}
+
+@media (min-width: 921px) and (max-width: 1152px) {
+    ul.menu li.submenuTitle {
+        font-size: 11px;
+    }
+
+    ul.menuitem li {
+        font-size: 10px;
+    }
+
+    .notablet {
+        display: none;
+    }
+}
+
+@media (min-width: 1153px){
+    ul.menu li.submenuTitle {
+        font-size: 12px;
+    }
+
+    ul.menuitem li {
+        font-size: 11px; 
+    }
 }
 
 
