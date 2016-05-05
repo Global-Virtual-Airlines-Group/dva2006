@@ -11,7 +11,7 @@
 <content:sysdata var="helpDeskEnabled" name="helpdesk.enabled" />
 <!-- Top Menu Frame -->
 <content:region id="navmenu">
-<content:menu attr="isSideMenu">
+<content:menu attr="isSideMenu" maxWidth="16%">
 <c:if test="${!isSideMenu}">
 <content:authUser var="user">
 <c:set var="itemLength" value="${fn:length(user.name) * 10}" scope="page" />
@@ -36,7 +36,7 @@
 </content:submenu>
 
 <c:if test="${!empty futureEvents}">
-<content:submenu title="Upcoming Events" width="190">
+<content:submenu title="Upcoming Events" width="200">
 <c:forEach var="nextEvent" items="${futureEvents}">
  <content:subitem><el:cmd url="event" link="${nextEvent}">${nextEvent.name}</el:cmd></content:subitem>
 </c:forEach>
