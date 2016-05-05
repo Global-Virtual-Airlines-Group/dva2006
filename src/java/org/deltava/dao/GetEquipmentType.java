@@ -82,7 +82,7 @@ public class GetEquipmentType extends DAO {
 
 			// Prepare the statement
 			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setString(1, dbName);
+			_ps.setString(1, db);
 			_ps.setString(2, eqType);
 
 			// Execute the query - if we get nothing back, then return null
@@ -91,10 +91,10 @@ public class GetEquipmentType extends DAO {
 				return null;
 
 			// Get the ratings/exams
-			loadRatings(results, dbName);
-			loadExams(results, dbName);
+			loadRatings(results, db);
+			loadExams(results, db);
 			loadAirlines(results);
-			loadSize(results, dbName);
+			loadSize(results, db);
 			_cache.addAll(results);
 			return results.get(0);
 		} catch (SQLException se) {
@@ -150,15 +150,15 @@ public class GetEquipmentType extends DAO {
 		
 		try {
 			prepareStatement(sqlBuf.toString());
-			_ps.setString(1, dbName);
+			_ps.setString(1, db);
 			_ps.setInt(2, stage);
 
 			// Return results
 			List<EquipmentType> results = execute();
-			loadRatings(results, dbName);
-			loadExams(results, dbName);
+			loadRatings(results, db);
+			loadExams(results, db);
 			loadAirlines(results);
-			loadSize(results, dbName);
+			loadSize(results, db);
 			_cache.addAll(results);
 			return results;
 		} catch (SQLException se) {
@@ -244,13 +244,13 @@ public class GetEquipmentType extends DAO {
 
 		try {
 			prepareStatement(sqlBuf.toString());
-			_ps.setString(1, dbName);
+			_ps.setString(1, db);
 			_ps.setBoolean(2, true);
 			List<EquipmentType> results = execute();
-			loadRatings(results, dbName);
-			loadExams(results, dbName);
+			loadRatings(results, db);
+			loadExams(results, db);
 			loadAirlines(results);
-			loadSize(results, dbName);
+			loadSize(results, db);
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -274,14 +274,15 @@ public class GetEquipmentType extends DAO {
 	 */
 	public List<EquipmentType> getAll() throws DAOException {
 		try {
+			String db = SystemData.get("airline.db");
 			prepareStatement("SELECT EQ.*, EP.OWNER, EP.STAGE, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME), P.EMAIL FROM EQTYPES EQ, "
 					+ "common.EQPROGRAMS EP, PILOTS P WHERE (EQ.EQTYPE=EP.EQTYPE) AND (EQ.CP_ID=P.ID) AND (EP.OWNER=?) "
 					+ "ORDER BY EP.STAGE, EQ.EQTYPE");
 			_ps.setString(1, SystemData.get("airline.code"));
 			List<EquipmentType> results = execute();
-			loadRatings(results, SystemData.get("airline.db"));
-			loadExams(results, SystemData.get("airline.db"));
-			loadSize(results, SystemData.get("airline.db"));
+			loadRatings(results, db);
+			loadExams(results, db);
+			loadSize(results, db);
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
