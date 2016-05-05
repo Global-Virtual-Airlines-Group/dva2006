@@ -108,7 +108,7 @@ ul.menu, ul.menuitem {
 
 ul.menuitem li {
 	height: 15px;
-	font: 11px verdana, tahoma, helvetica, sans-serif;
+	font-family: verdana, tahoma, helvetica, sans-serif;
 	color: #ffffff;
 	margin: 1px;
 	padding: 1px;
@@ -132,7 +132,8 @@ ul.menu ul.submenu {
 
 ul.menu li.submenuTitle {
 	height: 17px;
-	font: bold 12px verdana, tahoma, helvetica, sans-serif;
+	font-weight: bold;
+	font-family: verdana, tahoma, helvetica, sans-serif;
 	color: #ffffff;
 	background-color: #1a4876;
 	margin: 0px;
@@ -182,6 +183,47 @@ ul.menu li ul {
 	position: fixed;
 	z-index: 500;
 }
+
+
+/* Navbar font sizes */
+@media (max-width: 920px) {
+    ul.menu li.submenuTitle {
+        font-size: 10px;
+    }
+
+    ul.menuitem li {
+        font-size: 10px;
+    }
+
+    .notablet {
+        display: none;
+    }
+}
+
+@media (min-width: 921px) and (max-width: 1152px) {
+    ul.menu li.submenuTitle {
+        font-size: 11px;
+    }
+
+    ul.menuitem li {
+        font-size: 10px;
+    }
+
+    .notablet {
+        display: none;
+    }
+}
+
+@media (min-width: 1153px){
+    ul.menu li.submenuTitle {
+        font-size: 12px;
+    }
+
+    ul.menuitem li {
+        font-size: 11px; 
+    }
+}
+
 
 /* Controls the sizing and formatting of side navigation elements     */
 table.nav {
