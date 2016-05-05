@@ -166,11 +166,18 @@ public class MiscFunctions {
 	 * @param dt the date/time value
 	 * @param fmt the format pattern
 	 * @return the formatted date/time
-	 * @see java.text.DateFormat#format(java.util.Date)
 	 */
-	public static String format(Instant dt, String fmt) {
+	public static String format(Temporal dt, String fmt) {
+		ZonedDateTime zdt = null;
+		if (dt instanceof Instant)
+			zdt = ZonedDateTime.ofInstant((Instant) dt, ZoneOffset.UTC);
+		else if (dt instanceof ZonedDateTime)
+			zdt = (ZonedDateTime) dt;
+		else if (dt != null)
+			throw new IllegalArgumentException("Unknown temporal type - " + dt.getClass().getName());
+			
 		DateTimeFormatter df = new DateTimeFormatterBuilder().appendPattern(fmt).toFormatter();
-		return (dt == null) ? "" : df.format(ZonedDateTime.ofInstant(dt, ZoneOffset.UTC));
+		return (zdt == null) ? "" : df.format(zdt);
 	}
 
 	/**
