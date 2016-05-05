@@ -1,7 +1,7 @@
 // Copyright 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.deltava.beans.DatabaseBean;
 
@@ -15,7 +15,7 @@ import org.deltava.beans.DatabaseBean;
 public class TakeoffLanding extends DatabaseBean {
 	
 	private boolean _isTakeoff;
-	private Date _eventTime;
+	private Instant _eventTime;
 
 	/**
 	 * Initializes the bean.
@@ -40,7 +40,7 @@ public class TakeoffLanding extends DatabaseBean {
 	 * Returns the date of the takeoff/landing.
 	 * @return the takeoff/landing date/time
 	 */
-	public Date getDate() {
+	public Instant getDate() {
 		return _eventTime;
 	}
 
@@ -48,7 +48,7 @@ public class TakeoffLanding extends DatabaseBean {
 	 * Updates the takeoff/landing date.
 	 * @param dt the takeoff/landing date/time
 	 */
-	public void setDate(Date dt) {
+	public void setDate(Instant dt) {
 		_eventTime = dt;
 	}
 	
