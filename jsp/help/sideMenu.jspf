@@ -9,7 +9,7 @@
 <content:sysdata var="academyFlights" name="academy.minFlights" />
 <!-- Top Menu Frame -->
 <content:region id="navmenu">
-<content:menu attr="isSideMenu">
+<content:menu attr="isSideMenu" maxWidth="14%">
 <c:if test="${!isSideMenu}">
 <content:authUser var="user">
 <c:set var="itemLength" value="${fn:length(user.name) * 10}" scope="page" />
@@ -22,7 +22,7 @@
 </c:if>
 
 <content:filter roles="Pilot">
-<content:submenu title="Online Help" width="170">
+<content:submenu title="Online Help" width="175">
  <content:subitem><el:cmd url="helpdesk">Help Desk</el:cmd></content:subitem>
  <content:subitem><el:cmd url="myhdissues">My Issues</el:cmd></content:subitem>
 <c:if test="${access.canCreate}">
