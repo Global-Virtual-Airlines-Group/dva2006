@@ -2,8 +2,8 @@
 package org.deltava.commands.cooler;
 
 import java.util.*;
+import java.time.*;
 import java.sql.Connection;
-import java.time.Instant;
 
 import org.deltava.beans.*;
 import org.deltava.beans.cooler.*;
@@ -260,7 +260,7 @@ public class ThreadCommand extends AbstractCommand {
 		
 		// Save the sticky date in the user's time zone
 		if (ctx.isUserInRole("Moderator") && (mt.getStickyUntil() != null))
-			ctx.setAttribute("stickyDate", mt.getStickyUntil(), REQUEST);
+			ctx.setAttribute("stickyDate", ZonedDateTime.ofInstant(mt.getStickyUntil(), ctx.getUser().getTZ().getZone()), REQUEST);
 
 		// Save scores choices and if we are editing
 		ctx.setAttribute("doEdit", Boolean.valueOf(doEdit), REQUEST);
