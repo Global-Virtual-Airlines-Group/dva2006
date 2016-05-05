@@ -86,7 +86,7 @@ golgotha.onDOMReady(function() {
 </tr>
 <tr>
  <td class="label">Event Name</td>
- <td class="data"><el:text name="name" className="pri bld req" idx="*" size="48" max="80" value="${event.name}" /></td>
+ <td class="data"><el:text name="name" className="pri bld" required="true" idx="*" size="48" max="80" value="${event.name}" /></td>
 </tr>
 <tr>
  <td class="label">Online Network</td>
@@ -94,17 +94,13 @@ golgotha.onDOMReady(function() {
 </tr>
 <tr>
  <td class="label">Event Starts on</td>
- <td class="data"><el:text name="startDate" idx="*" size="10" max="10" value="${fn:dateFmt(startTime, 'MM/dd/yyyy')}" className="req" />
- at <el:text name="startTime" idx="*" size="4" max="5" value="${fn:dateFmt(startTime, 'HH:mm')}" className="req" />
-&nbsp;<el:button label="CALENDAR" onClick="void show_calendar('forms[0].startDate')" />
-&nbsp;<span class="small">All dates/times are ${user.TZ.name}. (Format: ${dateFmt} HH:mm)</span></td>
+ <td class="data"><el:text name="startDate" required="true" idx="*" size="10" max="10" value="${fn:dateFmt(startTime, 'MM/dd/yyyy')}" /> at <el:text name="startTime" required="true"  idx="*" size="4" max="5" value="${fn:dateFmt(startTime, 'HH:mm')}" />
+&nbsp;<el:button label="CALENDAR" onClick="void show_calendar('forms[0].startDate')" /> <span class="small">All dates/times are ${user.TZ.name}. (Format: ${dateFmt} HH:mm)</span></td>
 </tr>
 <tr>
  <td class="label">Event Ends on</td>
- <td class="data"><el:text name="endDate" idx="*" size="10" max="10" value="${fn:dateFmt(endTime, 'MM/dd/yyyy')}" className="req" />
- at <el:text name="endTime" idx="*" size="4" max="5" value="${fn:dateFmt(endTime, 'HH:mm')}" className="req" />
-&nbsp;<el:button label="CALENDAR" onClick="void show_calendar('forms[0].endDate')" />
-&nbsp;<span class="small">All dates/times are ${user.TZ.name}. (Format: ${dateFmt} HH:mm)</span></td>
+ <td class="data"><el:text name="endDate" required="true" idx="*" size="10" max="10" value="${fn:dateFmt(endTime, 'MM/dd/yyyy')}" /> at <el:text name="endTime" required="true" idx="*" size="4" max="5" value="${fn:dateFmt(endTime, 'HH:mm')}" />
+&nbsp;<el:button label="CALENDAR" onClick="void show_calendar('forms[0].endDate')" /> <span class="small">All dates/times are ${user.TZ.name}. (Format: ${dateFmt} HH:mm)</span></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
@@ -120,10 +116,8 @@ golgotha.onDOMReady(function() {
 </tr>
 <tr>
  <td class="label">Signups Close at</td>
- <td class="data"><el:text name="closeDate" idx="*" size="10" max="10" value="${fn:dateFmt(signupDeadline, 'MM/dd/yyyy')}" className="req" />
- at <el:text name="closeTime" idx="*" size="4" max="5" value="${fn:dateFmt(signupDeadline, 'HH:mm')}" className="req" />
-&nbsp;<el:button ID="CloseCalendarButton" label="CALENDAR" onClick="void show_calendar('forms[0].closeDate')" />
-&nbsp;<span class="small">Your time zone is ${user.TZ.name}.</span></td>
+ <td class="data"><el:text name="closeDate" required="true" idx="*" size="10" max="10" value="${fn:dateFmt(signupDeadline, 'MM/dd/yyyy')}" /> at <el:text name="closeTime" idx="*" size="4" max="5" value="${fn:dateFmt(signupDeadline, 'HH:mm')}" className="req" />
+&nbsp;<el:button ID="CloseCalendarButton" label="CALENDAR" onClick="void show_calendar('forms[0].closeDate')" /> <span class="small">Your time zone is ${user.TZ.name}.</span></td>
 </tr>
 <c:if test="${event.hasBanner}">
 <tr>
@@ -135,8 +129,7 @@ golgotha.onDOMReady(function() {
 <tr>
  <td class="label top">Upload Banner Image</td>
  <td class="data"><el:file name="bannerImg" className="small" idx="*" size="80" max="144" /><br />
-<span class="small sec">The maximum size for a banner image is <fmt:int value="${bannerX}" />x<fmt:int value="${bannerY}" /> 
-pixels, and the maximum file size is <fmt:int value="${bannerSize}" /> bytes.</span>
+<span class="small sec">The maximum size for a banner image is <fmt:int value="${bannerX}" />x<fmt:int value="${bannerY}" /> pixels, and the maximum file size is <fmt:int value="${bannerSize}" /> bytes.</span>
 <content:hasmsg><br /><span class="bld error"><content:sysmsg /></span></content:hasmsg></td>
 </tr>
 <tr>
@@ -149,8 +142,7 @@ pixels, and the maximum file size is <fmt:int value="${bannerSize}" /> bytes.</s
 </tr>
 <tr>
  <td class="label top">Equipment Types</td>
- <td class="data"><span class="sec small">These should be unselected unless signups are restricted 
-to a specific set of equipment.</span><br />
+ <td class="data"><span class="sec small">These should be unselected unless signups are restricted to a specific set of equipment.</span><br />
 <el:check name="eqTypes" idx="*" cols="9" width="95" newLine="true" className="small" checked="${event.equipmentTypes}" options="${allEQ}" /></td>
 </tr>
 <tr class="title caps">
