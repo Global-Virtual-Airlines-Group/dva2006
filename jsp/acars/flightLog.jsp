@@ -88,7 +88,7 @@
  <td class="pri bld nophone"><el:profile location="${pilotLoc}">${pilot.name}</el:profile></td>
  <td class="bld">${flight.flightCode}</td>
  <td class="small nophone">${flight.airportD.name} (<fmt:airport airport="${flight.airportD}" />) - ${flight.airportA.name} (<fmt:airport airport="${flight.airportA}" />)</td>
- <td class="sec">${flight.FSVersion}</td>
+ <td class="sec">${flight.simulator}</td>
 </view:row>
 <view:row entry="${entry}">
  <td colspan="7" class="left">Route: ${flight.route}</td>

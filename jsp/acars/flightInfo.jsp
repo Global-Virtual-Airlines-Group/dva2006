@@ -45,7 +45,7 @@
 </tr>
 <tr>
  <td class="label">Equipment Type</td>
- <td class="data">${info.equipmentType} <span class="sec">(using ${info.FSVersion.name})</span></td>
+ <td class="data">${info.equipmentType} <span class="sec">(using ${info.simulator.name})</span></td>
  <td class="label">Flight Code</td>
  <td class="data pri bld">${info.flightCode}</td>
 </tr>
