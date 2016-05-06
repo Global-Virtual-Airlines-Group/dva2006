@@ -59,8 +59,8 @@ public class TestFlightReport extends AbstractBeanTestCase {
         checkProperty("status", Integer.valueOf(2));
         assertEquals(FlightReport.STATUS[_fr.getStatus()], _fr.getStatusName());
         checkProperty("FSVersion", Integer.valueOf(2002));
-        _fr.setFSVersion(Simulator.FS9);
-        assertEquals(Simulator.FS9, _fr.getFSVersion());
+        _fr.setSimulator(Simulator.FS9);
+        assertEquals(Simulator.FS9, _fr.getSimulator());
         _fr.setStatus("Hold");
         assertEquals(FlightReport.HOLD, _fr.getStatus());
     }
