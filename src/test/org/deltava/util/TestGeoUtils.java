@@ -29,7 +29,7 @@ public class TestGeoUtils extends TestCase {
 		assertEquals(116, GeoUtils.normalize(116), 0.0);
 		assertEquals(359, GeoUtils.normalize(-1), 0.0);
 		assertEquals(116, GeoUtils.normalize(476), 0.0);
-		assertEquals(116, GeoUtils.normalize(836), 0.0);
+		assertEquals(116, GeoUtils.normalize(836 + (360 * 1000000)), 0.0);
 	}
 	
 	public void testBearingPoint() {
