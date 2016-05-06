@@ -70,7 +70,7 @@ final class OfflineFlightParser {
 		inf.setAirportL(SystemData.getAirport(ie.getChildTextTrim("airportL")));
 		inf.setRemoteAddr(ie.getChildTextTrim("remoteAddr"));
 		inf.setRemoteHost(ie.getChildTextTrim("remoteHost"));
-		inf.setFSVersion(Simulator.fromName(ie.getChildTextTrim("sim")));
+		inf.setSimulator(Simulator.fromName(ie.getChildTextTrim("sim")));
 		inf.setFDR(Recorder.SIMFDR);
 		inf.setFlightCode(cs);
 		inf.setRoute(ie.getChildTextTrim("route"));
@@ -91,7 +91,7 @@ final class OfflineFlightParser {
 		afr.setAirportA(inf.getAirportA());
 		afr.setRoute(ie.getChildTextTrim("route"));
 		afr.setRemarks(ie.getChildTextTrim("remarks"));
-		afr.setFSVersion(inf.getFSVersion());
+		afr.setSimulator(inf.getSimulator());
 		afr.setDate(Instant.now());
 		afr.setSubmittedOn(afr.getDate());
 		afr.setHasReload(Boolean.valueOf(ie.getChildTextTrim("hasRestore")).booleanValue());

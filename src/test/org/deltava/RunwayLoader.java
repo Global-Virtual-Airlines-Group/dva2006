@@ -127,7 +127,7 @@ public class RunwayLoader extends TestCase {
 			
 			// Load the runways
 			boolean newData = false;
-			LandingRunways lrD = navdao.getBestRunway(info.getAirportD(), afr.getFSVersion(), tdEntries.get(0), tdEntries.get(0).getHeading());
+			LandingRunways lrD = navdao.getBestRunway(info.getAirportD(), afr.getSimulator(), tdEntries.get(0), tdEntries.get(0).getHeading());
 			Runway rwyD = lrD.getBestRunway();
 			if ((rwyD != null) && ((info.getRunwayD() == null) || (!rwyD.getCode().equals(info.getRunwayD().getCode())))) {
 				if (info.getRunwayD() != null)
@@ -140,7 +140,7 @@ public class RunwayLoader extends TestCase {
 				}
 			}
 			
-			LandingRunways lrA = navdao.getBestRunway(afr.getAirportA(), afr.getFSVersion(), tdEntries.get(1), tdEntries.get(1).getHeading());
+			LandingRunways lrA = navdao.getBestRunway(afr.getAirportA(), afr.getSimulator(), tdEntries.get(1), tdEntries.get(1).getHeading());
 			Runway rwyA = lrA.getBestRunway();
 			if ((rwyA != null) && ((info.getRunwayA() == null) || (!rwyA.getCode().equals(info.getRunwayA().getCode())))) {
 				if (info.getRunwayA() != null)

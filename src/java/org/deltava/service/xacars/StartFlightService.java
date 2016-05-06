@@ -73,9 +73,9 @@ public class StartFlightService extends XAService {
 		// Get the simulator version
 		String sim = getSimulator(ctx);
 		if (sim.contains("MSFS"))
-			info.setFSVersion(Simulator.FS9);
+			info.setSimulator(Simulator.FSX);
 		else
-			info.setFSVersion(Simulator.XP9);
+			info.setSimulator(Simulator.XP10);
 		
 		// Parse the position data
 		XARouteEntry pos = new XARouteEntry(GeoUtils.parseXACARS(data.get(6)), info.getStartTime());

@@ -157,7 +157,7 @@ public class GetACARSPositions extends GetACARSData {
 		
 		// Get archive metadata and file pointer
 		ArchiveMetadata md = getArchiveInfo(flightID);
-		File f = ArchiveHelper.getFile(flightID);
+		File f = ArchiveHelper.getPositions(flightID);
 		if ((md == null) || !f.exists())
 			return Collections.emptyList();
 		

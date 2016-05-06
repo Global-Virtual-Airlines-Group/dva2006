@@ -294,11 +294,11 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 	}
 
 	/**
-	 * The Simulator version used for this Flight.
-	 * @return the version number
-	 * @see FlightReport#setFSVersion(Simulator)
+	 * Returns the Simulator used for this Flight.
+	 * @return the Simulator
+	 * @see FlightReport#setSimulator(Simulator)
 	 */
-	public Simulator getFSVersion() {
+	public Simulator getSimulator() {
 		return _fsVersion;
 	}
 
@@ -526,11 +526,11 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 	}
 
 	/**
-	 * Set the Flight Simulator version used for this flight.
+	 * Updates the Simulator used for this flight.
 	 * @param sim the Simulator
-	 * @see FlightReport#getFSVersion()
+	 * @see FlightReport#getSimulator()
 	 */
-	public void setFSVersion(Simulator sim) {
+	public void setSimulator(Simulator sim) {
 		_fsVersion = sim;
 	}
 

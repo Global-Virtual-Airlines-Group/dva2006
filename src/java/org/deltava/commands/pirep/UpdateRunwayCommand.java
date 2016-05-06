@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to manually update the departure and arrival runways for an ACARS flight.
  * @author Luke
- * @version 6.4
+ * @version 7.0
  * @since 3.0
  */
 
@@ -61,8 +61,8 @@ public class UpdateRunwayCommand extends AbstractCommand {
 			
 			// Get the runways
 			GetNavData navdao = new GetNavData(con);
-			Runway rD = (dRwy == null) ? null : navdao.getRunway(afr.getAirportD(), dRwy.get(1), afr.getFSVersion());
-			Runway rA = (aRwy == null) ? null : navdao.getRunway(afr.getAirportA(), aRwy.get(1), afr.getFSVersion());
+			Runway rD = (dRwy == null) ? null : navdao.getRunway(afr.getAirportD(), dRwy.get(1), afr.getSimulator());
+			Runway rA = (aRwy == null) ? null : navdao.getRunway(afr.getAirportA(), aRwy.get(1), afr.getSimulator());
 			
 			// Check if we've changed anything
 			boolean isUpdated = false;

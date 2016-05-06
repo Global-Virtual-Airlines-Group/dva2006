@@ -65,13 +65,13 @@ public class GateCalculateCommand extends AbstractCommand {
 			// Get the closest departure gate
 			GetGates gdao = new GetGates(con);
 			SortedSet<Gate> dGates = new TreeSet<Gate>(dgc);
-			dGates.addAll(gdao.getAllGates(afr.getAirportD(), info.getFSVersion()));
+			dGates.addAll(gdao.getAllGates(afr.getAirportD(), info.getSimulator()));
 			Gate gD = dGates.isEmpty() ? null : dGates.first();
 			boolean isUpdated = (gD != null) && !gD.equals(info.getGateD());
 			
 			// Get the closest arrival gate
 			SortedSet<Gate> aGates = new TreeSet<Gate>(agc);
-			aGates.addAll(gdao.getAllGates(afr.getAirportA(), info.getFSVersion()));
+			aGates.addAll(gdao.getAllGates(afr.getAirportA(), info.getSimulator()));
 			Gate gA = aGates.isEmpty() ? null : aGates.first();
 			isUpdated |= ((gA != null) && !gA.equals(info.getGateA()));
 			

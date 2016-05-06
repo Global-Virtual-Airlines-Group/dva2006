@@ -69,8 +69,7 @@ public class GetACARSData extends DAO {
 	 */
 	public List<? extends RouteEntry> getTakeoffLanding(int flightID) throws DAOException {
 		try {
-			prepareStatement("SELECT REPORT_TIME, LAT, LNG, B_ALT, HEADING, VSPEED FROM acars.POSITIONS WHERE "
-				+ "(FLIGHT_ID=?) AND ((FLAGS & ?) > 0) ORDER BY REPORT_TIME");
+			prepareStatement("SELECT REPORT_TIME, LAT, LNG, B_ALT, HEADING, VSPEED FROM acars.POSITIONS WHERE (FLIGHT_ID=?) AND ((FLAGS & ?) > 0) ORDER BY REPORT_TIME");
 			_ps.setInt(1, flightID);
 			_ps.setInt(2, FLAG_TOUCHDOWN);
 			
@@ -198,10 +197,8 @@ public class GetACARSData extends DAO {
 	 */
 	public int getDuplicateID(int id) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT F.ID FROM acars.FLIGHTS F WHERE "
-				+ "(F.CREATED=(SELECT CREATED FROM acars.FLIGHTS WHERE (ID=?) LIMIT 1)) AND "
-				+ "(F.PILOT_ID=(SELECT PILOT_ID FROM acars.FLIGHTS WHERE (ID=?) LIMIT 1)) AND "
-				+ "(F.ID<>?) ORDER BY F.ID LIMIT 1");
+			prepareStatementWithoutLimits("SELECT F.ID FROM acars.FLIGHTS F WHERE (F.CREATED=(SELECT CREATED FROM acars.FLIGHTS WHERE (ID=?) LIMIT 1)) AND "
+				+ "(F.PILOT_ID=(SELECT PILOT_ID FROM acars.FLIGHTS WHERE (ID=?) LIMIT 1)) AND (F.ID<>?) ORDER BY F.ID LIMIT 1");
 			_ps.setInt(1, id);
 			_ps.setInt(2, id);
 			_ps.setInt(3, id);
@@ -251,7 +248,7 @@ public class GetACARSData extends DAO {
 					+ "ON ((RW.ICAO=ND.CODE) AND (RW.NAME=ND.NAME) AND (RW.SIMVERSION=?)) WHERE (R.ID=?) LIMIT 2");
 				_ps.setInt(1, Surface.UNKNOWN.ordinal());
 				_ps.setInt(2, Navaid.RUNWAY.ordinal());
-				_ps.setInt(3, Math.max(2004, info.getFSVersion().getCode()));
+				_ps.setInt(3, Math.max(2004, info.getSimulator().getCode()));
 				_ps.setInt(4, flightID);
 				try (ResultSet rs = _ps.executeQuery()) {
 					while (rs.next()) {
@@ -387,7 +384,7 @@ public class GetACARSData extends DAO {
 				info.setRemoteHost(rs.getString(12));
 				info.setRoute(rs.getString(13));
 				info.setRemarks(rs.getString(14));
-				info.setFSVersion(Simulator.fromVersion(rs.getInt(15)));
+				info.setSimulator(Simulator.fromVersion(rs.getInt(15)));
 				info.setOffline(rs.getBoolean(16));
 				info.setHasPIREP(rs.getBoolean(17));
 				info.setArchived(rs.getBoolean(18));
@@ -397,9 +394,10 @@ public class GetACARSData extends DAO {
 				info.setClientBuild(rs.getInt(22));
 				info.setBeta(rs.getInt(23));
 				info.setFDR(Recorder.values()[rs.getInt(24)]);
-				info.setRemoteAddr(rs.getString(25));
-				info.setRouteID(rs.getInt(26));
-				info.setDispatcherID(rs.getInt(27));
+				info.setSimulatorVersion(rs.getInt(25), rs.getInt(26));
+				info.setRemoteAddr(rs.getString(27));
+				info.setRouteID(rs.getInt(28));
+				info.setDispatcherID(rs.getInt(29));
 				results.add(info);
 			}
 		}

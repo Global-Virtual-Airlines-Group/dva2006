@@ -1,4 +1,4 @@
-// Copyright 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.sql.Connection;
@@ -12,7 +12,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to display runway calculation data.
  * @author Luke
- * @version 4.2
+ * @version 7.0
  * @since 4.2
  */
 
@@ -43,12 +43,12 @@ public class RunwayChoiceCommand extends AbstractCommand {
 			// Process the runways
 			GetNavData navdao = new GetNavData(con);
 			if (afr.getTakeoffHeading() > -1) {
-				LandingRunways lrD = navdao.getBestRunway(afr.getAirportD(), afr.getFSVersion(), afr.getTakeoffLocation(), afr.getTakeoffHeading());
+				LandingRunways lrD = navdao.getBestRunway(afr.getAirportD(), afr.getSimulator(), afr.getTakeoffLocation(), afr.getTakeoffHeading());
 				ctx.setAttribute("rwysD", lrD, REQUEST);
 			}
 			
 			if (afr.getLandingHeading() > -1) {
-				LandingRunways lrA = navdao.getBestRunway(afr.getAirportA(), afr.getFSVersion(), afr.getLandingLocation(), afr.getLandingHeading());
+				LandingRunways lrA = navdao.getBestRunway(afr.getAirportA(), afr.getSimulator(), afr.getLandingLocation(), afr.getLandingHeading());
 				ctx.setAttribute("rwysA", lrA, REQUEST);
 			}
 		} catch (DAOException de) {

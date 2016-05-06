@@ -1,4 +1,4 @@
-// Copyright 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.acars.*;
 /**
  * A Data Access Object for writing XACARS data to the database.
  * @author Luke
- * @version 5.4
+ * @version 7.0
  * @since 4.1
  */
 
@@ -41,7 +41,7 @@ public class SetXACARS extends DAO {
 			_ps.setTimestamp(8, createTimestamp(inf.getStartTime()));
 			_ps.setInt(9, inf.getPhase().ordinal());
 			_ps.setString(10, inf.getRoute());
-			_ps.setInt(11, inf.getFSVersion().getCode());
+			_ps.setInt(11, inf.getSimulator().getCode());
 			executeUpdate(1);
 			inf.setID(getNewID());
 		} catch (SQLException se) {
@@ -89,7 +89,7 @@ public class SetXACARS extends DAO {
 			_ps.setInt(26, inf.getClimbPhase().ordinal());
 			_ps.setInt(27, inf.getZeroFuelWeight());
 			_ps.setString(28, inf.getRoute());
-			_ps.setInt(29, inf.getFSVersion().getCode());
+			_ps.setInt(29, inf.getSimulator().getCode());
 			_ps.setInt(30, inf.getID());
 			executeUpdate(1);
 		} catch (SQLException se) {

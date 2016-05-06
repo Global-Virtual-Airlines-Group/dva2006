@@ -368,7 +368,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 			GetNavAirway navdao = new GetNavAirway(con);
 			Runway rD = null;
 			if (afr.getTakeoffHeading() > -1) {
-				LandingRunways lr = navdao.getBestRunway(inf.getAirportD(), afr.getFSVersion(), afr.getTakeoffLocation(), afr.getTakeoffHeading());
+				LandingRunways lr = navdao.getBestRunway(inf.getAirportD(), afr.getSimulator(), afr.getTakeoffLocation(), afr.getTakeoffHeading());
 				Runway r = lr.getBestRunway();
 				if (r != null) {
 					int dist = GeoUtils.distanceFeet(r, afr.getTakeoffLocation());
@@ -383,7 +383,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 			// Load the arrival runway
 			Runway rA = null;
 			if (afr.getLandingHeading() > -1) {
-				LandingRunways lr = navdao.getBestRunway(afr.getAirportA(), afr.getFSVersion(), afr.getLandingLocation(), afr.getLandingHeading());
+				LandingRunways lr = navdao.getBestRunway(afr.getAirportA(), afr.getSimulator(), afr.getLandingLocation(), afr.getLandingHeading());
 				Runway r = lr.getBestRunway();
 				if (r != null) {
 					int dist = GeoUtils.distanceFeet(r, afr.getLandingLocation());
@@ -404,12 +404,12 @@ public class OfflineFlightCommand extends AbstractCommand {
 				// Get the closest departure gate
 				GetGates gdao = new GetGates(con);
 				SortedSet<Gate> dGates = new TreeSet<Gate>(dgc);
-				dGates.addAll(gdao.getAllGates(afr.getAirportD(), inf.getFSVersion()));
+				dGates.addAll(gdao.getAllGates(afr.getAirportD(), inf.getSimulator()));
 				gD = dGates.isEmpty() ? null : dGates.first();
 				
 				// Get the closest arrival gate
 				SortedSet<Gate> aGates = new TreeSet<Gate>(agc);
-				aGates.addAll(gdao.getAllGates(afr.getAirportA(), inf.getFSVersion()));
+				aGates.addAll(gdao.getAllGates(afr.getAirportA(), inf.getSimulator()));
 				gA = aGates.isEmpty() ? null : aGates.first();
 			}
 			
