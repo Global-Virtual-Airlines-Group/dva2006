@@ -4,9 +4,8 @@ import java.io.*;
 import java.sql.*;
 import java.util.*;
 import java.util.zip.*;
-import java.text.*;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import junit.framework.TestCase;
@@ -32,7 +31,7 @@ public class TestInnovataGlobalLoad extends TestCase {
 	private static final List<String> CODES = Arrays.asList("AF", "DL", "JM", "KL", "AM", "NW");
 	private static final List<String> CS_CODES = Arrays.asList("AF");
 
-	private final DateFormat _df = new SimpleDateFormat("dd/MM/yyyy");
+	private final DateTimeFormatter _df = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
 	@Override
 	@SuppressWarnings("unchecked")
@@ -91,7 +90,7 @@ public class TestInnovataGlobalLoad extends TestCase {
 	 * Rules for adding a flight: 1. Range contains today. 2. Airline code is AF or DL and the codeshare field is blank.
 	 * 3. Airline code is a codeshare (ie. NOT AF or DL) and the codeshare info field contains AF or DL.
 	 */
-	public void testLoadCSV() throws IOException, ParseException {
+	public void testLoadCSV() throws IOException {
 
 		// Build the file name
 		java.time.Instant d = java.time.Instant.now();
@@ -113,8 +112,7 @@ public class TestInnovataGlobalLoad extends TestCase {
 		PrintWriter out = new PrintWriter(of);
 		
 		// Get the effective date
-		long now = System.currentTimeMillis();
-		//long now = StringUtils.parseDate("02/20/2010", "MM/dd/yyyy").getTime();
+		LocalDateTime now = LocalDateTime.now();
 		
 		// Airline counts
 		Map<String, AtomicInteger> aCount = new TreeMap<String, AtomicInteger>();
@@ -137,9 +135,9 @@ public class TestInnovataGlobalLoad extends TestCase {
 			}
 
 			// Check the date
-			long sd = _df.parse(entries.get(5)).getTime();
-			long ed = _df.parse(entries.get(6)).getTime();
-			boolean isOK = (now >= sd) && (now <= ed);
+			LocalDateTime sd = LocalDateTime.parse(entries.get(5), _df);
+			LocalDateTime ed = LocalDateTime.parse(entries.get(6), _df).plusDays(1).minusSeconds(1);
+			boolean isOK = (now.isAfter(sd) && now.isBefore(ed));
 
 			// Check codeshare operation
 			boolean isCS = "1".equals(entries.get(48));
