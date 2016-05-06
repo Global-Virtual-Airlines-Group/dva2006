@@ -2,8 +2,8 @@
 package org.deltava.beans.wx;
 
 import java.io.*;
-import java.util.*;
-import java.text.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import org.apache.log4j.*;
 import org.deltava.beans.flight.ILSCategory;
@@ -15,7 +15,7 @@ public class TestMetarParser extends TestCase {
 	
 	private Logger log;
 	
-	private final DateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+	private final DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
 	private LineNumberReader lr;
 
 	@Override
@@ -40,14 +40,14 @@ public class TestMetarParser extends TestCase {
 	}
 
 	public void testMETARs() throws Exception {
-		Date dt = null;
+		LocalDateTime dt = null;
 		
 		while (lr.ready()) {
 			String data = lr.readLine();
 			if (data.length() < 3)
 				continue;
 			else if (data.startsWith("200") || data.startsWith("201")) {
-				dt = df.parse(data);
+				dt = LocalDateTime.parse(data, df);
 				assertNotNull(dt);
 				continue;
 			}
