@@ -1,9 +1,10 @@
-// Copyright 2006, 2007, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2010, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
-import java.text.*;
 import java.util.*;
+import java.time.format.*;
+import java.time.temporal.ChronoField;
 
 import org.deltava.beans.ts2.*;
 
@@ -12,13 +13,13 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Data Access Object to write TeamSpeak 2 configuration data.
  * @author Luke
- * @version 5.0
+ * @version 7.0
  * @since 1.0
  */
 
 public class SetTS2Data extends DAO {
 
-	private final DateFormat _df = new SimpleDateFormat("ddMMyyyyHHmmssSSS");
+	private final DateTimeFormatter _df = new DateTimeFormatterBuilder().appendPattern("ddMMyyyyHHmmss").appendFraction(ChronoField.MILLI_OF_SECOND, 3, 3, true).toFormatter();
 
 	/**
 	 * Initializes the Data Access Object.
@@ -36,8 +37,7 @@ public class SetTS2Data extends DAO {
 	public void write(Channel c) throws DAOException {
 		try {
 			startTransaction();
-			prepareStatement("INSERT INTO teamspeak.ts2_channels (i_channel_server_id, b_channel_flag_moderated, "
-					+ "b_channel_flag_default, i_channel_codec, i_channel_maxusers, s_channel_name, s_channel_topic, "
+			prepareStatement("INSERT INTO teamspeak.ts2_channels (i_channel_server_id, b_channel_flag_moderated, b_channel_flag_default, i_channel_codec, i_channel_maxusers, s_channel_name, s_channel_topic, "
 					+ "s_channel_description, s_channel_password, dt_channel_created) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setInt(1, c.getServerID());
 			_ps.setInt(2, c.getModerated() ? -1 : 0);
@@ -114,8 +114,7 @@ public class SetTS2Data extends DAO {
 			startTransaction();
 
 			// Prepare the statement
-			prepareStatement("REPLACE INTO teamspeak.ts2_clients (i_client_id, i_client_server_id, b_client_privilege_serveradmin, "
-					+ "s_client_name, s_client_password, dt_client_created, dt_client_lastonline) VALUES (?, ?, ?, ?, ?, ?, ?)");
+			prepareStatement("REPLACE INTO teamspeak.ts2_clients (i_client_id, i_client_server_id, b_client_privilege_serveradmin, s_client_name, s_client_password, dt_client_created, dt_client_lastonline) VALUES (?, ?, ?, ?, ?, ?, ?)");
 			_ps.setInt(1, usr.getID());
 			_ps.setInt(3, usr.getServerAdmin() ? -1 : 0);
 			_ps.setString(4, usr.getUserID());
@@ -140,14 +139,11 @@ public class SetTS2Data extends DAO {
 			executeUpdate(0);
 			
 			// Write the client/channel privileges
-			prepareStatement("REPLACE INTO teamspeak.ts2_channel_privileges (i_cp_server_id, i_cp_channel_id, "
-					+ "i_cp_client_id, b_cp_flag_admin, b_cp_flag_autoop, b_cp_flag_autovoice) VALUES (?, ?, ?, ?, ?, ?)");
-			for (Iterator<Client> i = usrs.iterator(); i.hasNext();) {
-				Client c = i.next();
+			prepareStatement("REPLACE INTO teamspeak.ts2_channel_privileges (i_cp_server_id, i_cp_channel_id, i_cp_client_id, b_cp_flag_admin, b_cp_flag_autoop, b_cp_flag_autovoice) VALUES (?, ?, ?, ?, ?, ?)");
+			for (Client c : usrs) {
 				_ps.setInt(1, c.getServerID());
 				_ps.setInt(3, usr.getID());
-				for (Iterator<Integer> ci = c.getChannelIDs().iterator(); ci.hasNext(); ) {
-					Integer id = ci.next();
+				for (Integer id : c.getChannelIDs()) {
 					_ps.setInt(2, id.intValue());
 					_ps.setInt(4, c.getServerAdmin() ? -1 : 0);
 					_ps.setInt(5, c.getServerOperator() ? -1 : 0);
@@ -173,8 +169,7 @@ public class SetTS2Data extends DAO {
 	 */
 	public void setDefault(int serverID) throws DAOException {
 		try {
-			prepareStatement("SELECT COUNT(*) FROM teamspeak.ts2_channels WHERE (i_channel_server_id=?) AND "
-					+ "(b_channel_flag_default=?)");
+			prepareStatement("SELECT COUNT(*) FROM teamspeak.ts2_channels WHERE (i_channel_server_id=?) AND (b_channel_flag_default=?)");
 			_ps.setInt(1, serverID);
 			_ps.setInt(2, -1);
 			
@@ -190,8 +185,7 @@ public class SetTS2Data extends DAO {
 				return;
 			
 			// Update the default channel
-			prepareStatement("UPDATE teamspeak.ts2_channels SET b_channel_flag_default=? WHERE (i_channel_server_id=?) "
-					+ "ORDER BY RAND()");
+			prepareStatement("UPDATE teamspeak.ts2_channels SET b_channel_flag_default=? WHERE (i_channel_server_id=?) ORDER BY RAND()");
 			_ps.setInt(1, -1);
 			_ps.setInt(2, serverID);
 			executeUpdate(0);
@@ -258,8 +252,7 @@ public class SetTS2Data extends DAO {
 	}
 
 	/**
-	 * Removes a number of users from a TeamSpeak server. This should typically be called when updating a server's
-	 * roles.
+	 * Removes a number of users from a TeamSpeak server. This should typically be called when updating a server's roles.
 	 * @param srv the Server bean
 	 * @param pilotIDs a Collection of database IDs
 	 * @throws DAOException if a JDBC error occurs
@@ -301,12 +294,10 @@ public class SetTS2Data extends DAO {
 		try {
 			startTransaction();
 			if (isNew) {
-				prepareStatement("INSERT INTO teamspeak.ts2_servers (s_server_name, s_server_welcomemessage, i_server_maxusers, "
-						+ "i_server_udpport, s_server_password, b_server_active, dt_server_created, s_server_description, b_server_no_acars) "
+				prepareStatement("INSERT INTO teamspeak.ts2_servers (s_server_name, s_server_welcomemessage, i_server_maxusers, i_server_udpport, s_server_password, b_server_active, dt_server_created, s_server_description, b_server_no_acars) "
 						+ "VALUES (?, ?, ?, ?, ?, ?, NOW(), ?, ?)");
 			} else {
-				prepareStatement("UPDATE teamspeak.ts2_servers SET s_server_name=?, s_server_welcomemessage=?, "
-						+ "i_server_maxusers=?, i_server_udpport=?, s_server_password=?, b_server_active=?, s_server_description=?, "
+				prepareStatement("UPDATE teamspeak.ts2_servers SET s_server_name=?, s_server_welcomemessage=?, i_server_maxusers=?, i_server_udpport=?, s_server_password=?, b_server_active=?, s_server_description=?, "
 						+ "b_server_no_acars=? WHERE (i_server_id=?)");
 				_ps.setInt(9, srv.getID());
 			}
@@ -338,11 +329,9 @@ public class SetTS2Data extends DAO {
 			Collection<String> allRoles = roles.get(ServerAccess.ACCESS);
 
 			// Write the server roles
-			prepareStatement("INSERT INTO teamspeak.ts2_server_roles (i_server_id, s_role_name, b_server_admin, "
-					+ "b_channel_admin, b_autovoice) VALUES (?, ?, ?, ?, ?)");
+			prepareStatement("INSERT INTO teamspeak.ts2_server_roles (i_server_id, s_role_name, b_server_admin, b_channel_admin, b_autovoice) VALUES (?, ?, ?, ?, ?)");
 			_ps.setInt(1, srv.getID());
-			for (Iterator<String> i = allRoles.iterator(); i.hasNext();) {
-				String role = i.next();
+			for (String role : allRoles) {
 				_ps.setString(2, role);
 				_ps.setBoolean(3, roles.get(ServerAccess.ADMIN).contains(role));
 				_ps.setBoolean(4, roles.get(ServerAccess.OPERATOR).contains(role));
@@ -393,12 +382,11 @@ public class SetTS2Data extends DAO {
 		}
 	}
 
-	/**
+	/*
 	 * Helper method to clear the default channel flag for all channels but one.
 	 */
 	private void clearDefaultChannelFlag(int id, int serverID) throws SQLException {
-		prepareStatement("UPDATE teamspeak.ts2_channels SET b_channel_flag_default=0 WHERE "
-				+ "(i_channel_id <> ?) AND (i_channel_server_id=?)");
+		prepareStatement("UPDATE teamspeak.ts2_channels SET b_channel_flag_default=0 WHERE (i_channel_id <> ?) AND (i_channel_server_id=?)");
 		_ps.setInt(1, id);
 		_ps.setInt(2, serverID);
 		executeUpdate(0);

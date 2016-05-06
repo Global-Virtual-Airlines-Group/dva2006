@@ -2,7 +2,7 @@
 package org.deltava.tasks;
 
 import java.util.*;
-import java.text.*;
+import java.time.format.*;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
@@ -26,7 +26,7 @@ import org.deltava.util.system.SystemData;
 
 public class InactivityUpdateTask extends Task {
 
-	private final DateFormat _df = new SimpleDateFormat("MMMM dd yyyy");
+	private final DateTimeFormatter _df = new DateTimeFormatterBuilder().appendPattern("MMMM dd yyyy").toFormatter();
 
 	/**
 	 * Initializes the Schedued Task.
