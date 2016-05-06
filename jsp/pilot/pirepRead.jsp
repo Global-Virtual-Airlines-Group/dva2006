@@ -86,15 +86,13 @@ golgotha.local.showRunwayChoices = function() {
 <el:table className="form">
 <!-- PIREP Title Bar -->
 <tr class="title">
- <td class="caps" colspan="2">FLIGHT ${pirep.flightCode} FLOWN ON <fmt:date fmt="d" date="${pirep.date}" /> by 
- <el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></td>
+ <td class="caps" colspan="2">FLIGHT ${pirep.flightCode} FLOWN ON <fmt:date fmt="d" date="${pirep.date}" /><span class="nophone"> by <el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></span></td>
 </tr>
 
 <!-- Pirep Data -->
 <tr>
  <td class="label">Pilot Code / Rank</td>
- <td class="data"><c:if test="${!empty pilot.pilotCode}">${pilot.pilotCode} </c:if>(${pilot.rank.name}, ${pilot.equipmentType})
- - <el:cmd url="logbook" link="${pilot}">VIEW LOG BOOK</el:cmd></td>
+ <td class="data"><c:if test="${!empty pilot.pilotCode}">${pilot.pilotCode} </c:if>(${pilot.rank.name}, ${pilot.equipmentType}) - <el:cmd url="logbook" link="${pilot}">VIEW LOG BOOK</el:cmd></td>
 </tr>
 <content:filter roles="HR,PIREP,Examination,Operations">
 <tr>
@@ -164,7 +162,7 @@ golgotha.local.showRunwayChoices = function() {
 <c:if test="${!fn:isDraft(pirep)}">
 <tr>
  <td class="label">Simulator</td>
- <td class="data sec bld">${pirep.FSVersion.name}</td>
+ <td class="data sec bld">${pirep.simulator.name}<c:if test="${flightInfo.simMajor > 1}"> ${flightInfo.simMajor}.${flightInfo.simMinor}</c:if></td>
 </tr>
 </c:if>
 <c:if test="${access.canDispose && fn:isOnline(pirep)}">
@@ -175,8 +173,7 @@ golgotha.local.showRunwayChoices = function() {
 <c:if test="${(empty event) && (!empty possibleEvents)}">
 <tr>
  <td class="label">Online Event</td>
- <td class="data"><el:combo name="onlineEvent" size="1" firstEntry="-" options="${possibleEvents}" />
- <el:cmdbutton url="updevent" post="true" link="${pirep}" label="UPDATE ONLINE EVENT" /></td>
+ <td class="data"><el:combo name="onlineEvent" size="1" firstEntry="-" options="${possibleEvents}" /> <el:cmdbutton url="updevent" post="true" link="${pirep}" label="UPDATE ONLINE EVENT" /></td>
 </tr>
 </c:if>
 </c:if>
@@ -184,56 +181,39 @@ golgotha.local.showRunwayChoices = function() {
  <td class="label top">Other Information</td>
  <td class="data"><c:if test="${fn:isOnline(pirep) && !access.canDispose}">Flight Leg flown online using the ${fn:network(pirep)} network<br /></c:if>
 <c:if test="${isACARS && !isXACARS && !isSimFDR}">
-<div class="ok bld caps">Flight Leg data logged using <content:airline /> ACARS</div>
-</c:if>
+<div class="ok bld caps">Flight Leg data logged using <content:airline /> ACARS</div></c:if>
 <c:if test="${isXACARS}">
-<div class="ok bld caps">Flight Leg data logged using XACARS</div>
-</c:if>
+<div class="ok bld caps">Flight Leg data logged using XACARS</div></c:if>
 <c:if test="${isSimFDR}">
-<div class="ok bld">FLIGHT LEG DATA LOGGED USING simFDR</div>
-</c:if>
+<div class="ok bld">FLIGHT LEG DATA LOGGED USING simFDR</div></c:if>
 <c:if test="${fn:isDispatch(pirep)}">
-<div class="pri bld caps">Flight Leg planned using <content:airline /> Dispatch</div>
-</c:if>
+<div class="pri bld caps">Flight Leg planned using <content:airline /> Dispatch</div></c:if>
 <c:if test="${!fn:isRated(pirep)}">
-<div class="error bld caps">Flight Leg flown without Aircraft type rating</div>
-</c:if>
+<div class="error bld caps">Flight Leg flown without Aircraft type rating</div></c:if>
 <c:if test="${fn:routeWarn(pirep)}">
-<div class="error bld caps">Flight Route not found in <content:airline /> schedule</div>
-</c:if>
+<div class="error bld caps">Flight Route not found in <content:airline /> schedule</div></c:if>
 <c:if test="${fn:rangeWarn(pirep)}">
-<div class="error bld caps">Flight Distance outside Aircraft Range</div>
-</c:if>
+<div class="error bld caps">Flight Distance outside Aircraft Range</div></c:if>
 <c:if test="${fn:rwyWarn(pirep)}">
-<div class="warn bld caps">Insufficient Runway Length</div>
-</c:if>
+<div class="warn bld caps">Insufficient Runway Length</div></c:if>
 <c:if test="${fn:etopsWarn(pirep)}">
-<div class="error bld caps">Non-ETOPS Aircraft used on ETOPS route</div>
-</c:if>
+<div class="error bld caps">Non-ETOPS Aircraft used on ETOPS route</div></c:if>
 <c:if test="${fn:timeWarn(pirep)}">
-<div class="warn bld caps">Flight Length outside Schedule Guidelines</div>
-</c:if>
+<div class="warn bld caps">Flight Length outside Schedule Guidelines</div></c:if>
 <c:if test="${fn:weightWarn(pirep)}">
-<div class="warn bld caps">Excesive Aircraft Weight Detected</div>
-</c:if>
+<div class="warn bld caps">Excesive Aircraft Weight Detected</div></c:if>
 <c:if test="${fn:refuelWarn(pirep)}">
-<div class="warn bld caps">In-Flight Refueling Detected</div>
-</c:if>
+<div class="warn bld caps">In-Flight Refueling Detected</div></c:if>
 <c:if test="${fn:isCharter(pirep)}">
-<div class="pri bld caps">Flight operated as a <content:airline /> Charter</div>
-</c:if>
+<div class="pri bld caps">Flight operated as a <content:airline /> Charter</div></c:if>
 <c:if test="${fn:isHistoric(pirep)}">
-<div class="ter bld caps">Flight operated as part of the <content:airline /> Historic program</div>
-</c:if>
+<div class="ter bld caps">Flight operated as part of the <content:airline /> Historic program</div></c:if>
 <c:if test="${fn:isPromoLeg(pirep)}">
-<div class="ter bld caps">Flight Leg counts towards promotion to Captain in the <fmt:list value="${pirep.captEQType}" delim=", " /></div>
-</c:if>
+<div class="ter bld caps">Flight Leg counts towards promotion to Captain in the <fmt:list value="${pirep.captEQType}" delim=", " /></div></c:if>
 <c:if test="${!empty event}">
-<div class="pri bld caps">Flight Leg part of the ${event.name} Online Event</div>
-</c:if>
+<div class="pri bld caps">Flight Leg part of the ${event.name} Online Event</div></c:if>
 <c:if test="${fn:isAcademy(pirep)}">
-<div class="pri bld caps">Flight Leg part of the <content:airline /> Flight Academy</div>
-</c:if>
+<div class="pri bld caps">Flight Leg part of the <content:airline /> Flight Academy</div></c:if>
  </td>
 </tr>
 <tr>
