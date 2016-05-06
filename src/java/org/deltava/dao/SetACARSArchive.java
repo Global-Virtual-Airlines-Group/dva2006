@@ -80,7 +80,7 @@ public class SetACARSArchive extends DAO {
 				update(md);
 				
 				// Write to the file system
-				try (OutputStream os = new FileOutputStream(ArchiveHelper.getFile(flightID))) {
+				try (OutputStream os = new BufferedOutputStream(new FileOutputStream(ArchiveHelper.getPositions(flightID)), 8192)) {
 					os.write(data);
 				}
 			}

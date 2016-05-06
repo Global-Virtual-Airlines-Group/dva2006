@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to plot a flight route.
  * @author Luke
- * @version 5.1
+ * @version 7.0
  * @since 1.0
  */
 
@@ -42,8 +42,8 @@ public class RoutePlotCommand extends AbstractCommand {
 				ctx.setAttribute("airlines", Collections.singleton(dfr.getAirline()), REQUEST);
 				ctx.setAttribute("airportsD", Collections.singleton(dfr.getAirportD()), REQUEST);
 				ctx.setAttribute("airportsA", Collections.singleton(dfr.getAirportA()), REQUEST);
-				if (dfr.getFSVersion() != Simulator.UNKNOWN)
-					ctx.setAttribute("sim", dfr.getFSVersion(), REQUEST);
+				if (dfr.getSimulator() != Simulator.UNKNOWN)
+					ctx.setAttribute("sim", dfr.getSimulator(), REQUEST);
 			} else {
 				ctx.setAttribute("airlines", SystemData.getAirlines().values(), REQUEST);
 				ctx.setAttribute("airportsD", Collections.emptyList(), REQUEST);
@@ -54,7 +54,7 @@ public class RoutePlotCommand extends AbstractCommand {
 				List<FlightReport> results = frdao.getByPilot(ctx.getUser().getID(), new ScheduleSearchCriteria("SUBMITTED DESC"));
 				for (FlightReport fr : results) {
 					if ((fr.getStatus() != FlightReport.DRAFT) && (fr.getStatus() != FlightReport.REJECTED)) {
-						ctx.setAttribute("sim", fr.getFSVersion(), REQUEST);
+						ctx.setAttribute("sim", fr.getSimulator(), REQUEST);
 						break;
 					}
 				}

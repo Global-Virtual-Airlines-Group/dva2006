@@ -34,15 +34,11 @@ public class SetACARSData extends DAO {
 		try {
 			// Prepare the statement
 			if (info.getID() == 0)
-				prepareStatement("INSERT INTO acars.FLIGHTS (FLIGHT_NUM, CREATED, END_TIME, EQTYPE, "
-					+ "CRUISE_ALT, AIRPORT_D, AIRPORT_A, AIRPORT_L, ROUTE, REMARKS, FSVERSION, OFFLINE, "
-					+ "PIREP, FDR, REMOTE_HOST, REMOTE_ADDR, CLIENT_BUILD, BETA_BUILD, PILOT_ID) "
-					+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, INET6_ATON(?), ?, ?, ?)");
+				prepareStatement("INSERT INTO acars.FLIGHTS (FLIGHT_NUM, CREATED, END_TIME, EQTYPE, CRUISE_ALT, AIRPORT_D, AIRPORT_A, AIRPORT_L, ROUTE, REMARKS, FSVERSION, OFFLINE, "
+					+ "PIREP, FDR, REMOTE_HOST, REMOTE_ADDR, CLIENT_BUILD, BETA_BUILD, SIM_MAJOR, SIM_MINOR, PILOT_ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, INET6_ATON(?), ?, ?, ?, ?, ?)");
 			else
-				prepareStatement("UPDATE acars.FLIGHTS SET FLIGHT_NUM=?, CREATED=?, END_TIME=?, "
-					+ "EQTYPE=?, CRUISE_ALT=?, AIRPORT_D=?, AIRPORT_A=?, AIRPORT_L=?, ROUTE=?, REMARKS=?, "
-					+ "FSVERSION=?, OFFLINE=?, PIREP=?, FDR=?, REMOTE_HOST=?, REMOTE_ADDR=INET6_ATON(?), "
-					+ "CLIENT_BUILD=?, BETA_BUILD=?, PILOT_ID=? WHERE (ID=?)");
+				prepareStatement("UPDATE acars.FLIGHTS SET FLIGHT_NUM=?, CREATED=?, END_TIME=?, EQTYPE=?, CRUISE_ALT=?, AIRPORT_D=?, AIRPORT_A=?, AIRPORT_L=?, ROUTE=?, REMARKS=?, "
+					+ "FSVERSION=?, OFFLINE=?, PIREP=?, FDR=?, REMOTE_HOST=?, REMOTE_ADDR=INET6_ATON(?), CLIENT_BUILD=?, BETA_BUILD=?, SIM_MAJOR=?, SIM_MINOR=?, PILOT_ID=? WHERE (ID=?)");
 			
 			// Write the flight info record
 			_ps.setString(1, info.getFlightCode());
@@ -55,7 +51,7 @@ public class SetACARSData extends DAO {
 			_ps.setString(8, (info.getAirportL() == null) ? null : info.getAirportL().getIATA());
 			_ps.setString(9, info.getRoute());
 			_ps.setString(10, info.getRemarks());
-			_ps.setInt(11, info.getFSVersion().getCode());
+			_ps.setInt(11, info.getSimulator().getCode());
 			_ps.setBoolean(12, info.getOffline());
 			_ps.setBoolean(13, true);
 			_ps.setInt(14, info.getFDR().ordinal());
@@ -63,9 +59,11 @@ public class SetACARSData extends DAO {
 			_ps.setString(16, info.getRemoteAddr());
 			_ps.setInt(17, info.getClientBuild());
 			_ps.setInt(18, info.getBeta());
-			_ps.setInt(19, info.getAuthorID());
+			_ps.setInt(19, info.getSimMajor());
+			_ps.setInt(20, info.getSimMinor());
+			_ps.setInt(21, info.getAuthorID());
 			if (info.getID() != 0)
-				_ps.setInt(20, info.getID());
+				_ps.setInt(22, info.getID());
 			
 			executeUpdate(1);
 
@@ -124,10 +122,8 @@ public class SetACARSData extends DAO {
 	 */
 	public void writePositions(int flightID, Collection<ACARSRouteEntry> entries) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("REPLACE INTO acars.POSITIONS (FLIGHT_ID, REPORT_TIME, LAT, LNG, B_ALT, R_ALT, "
-					+ "HEADING, ASPEED, GSPEED, VSPEED, N1, N2, MACH, FUEL, PHASE, SIM_RATE, FLAGS, FLAPS, PITCH, BANK, "
-					+ "FUELFLOW, WIND_HDG, WIND_SPEED, AOA, GFORCE, FRAMERATE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
-					+ "?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			prepareStatementWithoutLimits("REPLACE INTO acars.POSITIONS (FLIGHT_ID, REPORT_TIME, LAT, LNG, B_ALT, R_ALT, HEADING, ASPEED, GSPEED, VSPEED, N1, N2, MACH, FUEL, PHASE, SIM_RATE, FLAGS, FLAPS, PITCH, BANK, "
+				+ "FUELFLOW, WIND_HDG, WIND_SPEED, AOA, GFORCE, FRAMERATE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 			// Loop through the positions
 			_ps.setInt(1, flightID);

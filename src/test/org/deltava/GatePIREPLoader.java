@@ -108,7 +108,7 @@ public class GatePIREPLoader extends TestCase {
 			
 			// Get the closest departure gate
 			SortedSet<Gate> dGates = new TreeSet<Gate>(dgc);
-			dGates.addAll(gdao.getAllGates(fr.getAirportD(), fi.getFSVersion()));
+			dGates.addAll(gdao.getAllGates(fr.getAirportD(), fi.getSimulator()));
 			if (!dGates.isEmpty()) {
 				Gate g = dGates.first();
 				int dist = GeoUtils.distanceFeet(dgc.getLocation(), g);
@@ -121,7 +121,7 @@ public class GatePIREPLoader extends TestCase {
 			
 			// Get the closest arrival gate
 			SortedSet<Gate> aGates = new TreeSet<Gate>(agc);
-			aGates.addAll(gdao.getAllGates(fr.getAirportA(), fi.getFSVersion()));
+			aGates.addAll(gdao.getAllGates(fr.getAirportA(), fi.getSimulator()));
 			if (!aGates.isEmpty()) {
 				Gate g = aGates.first();
 				int dist = GeoUtils.distanceFeet(agc.getLocation(), g);

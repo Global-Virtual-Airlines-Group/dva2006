@@ -1,4 +1,4 @@
-// Copyright 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,12 +9,9 @@ import org.deltava.beans.schedule.Airport;
 import org.deltava.beans.servinfo.PositionData;
 
 /**
- * A Data Access Object to write VATSIM/IVAO Online tracks. This DAO, like the
- * {@link GetOnlineTrack} DAO, can write both "raw" track data obtained from the ServInfo
- * feed to a common table shared between all Airlines, as well as to a local table that links the
- * raw data to a specific Flight Report. 
+ * A Data Access Object to write VATSIM/IVAO Online tracks.
  * @author Luke
- * @version 3.2
+ * @version 7.0
  * @since 2.4
  */
 
@@ -64,8 +61,7 @@ public class SetOnlineTrack extends DAO {
 			return;
 		
 		try {
-			prepareStatementWithoutLimits("REPLACE INTO online.TRACKDATA (ID, REPORT_TIME, LAT, LNG, ALT, HDG, SPEED) "
-				+ "VALUES (?, ?, ?, ?, ?, ?, ?)");
+			prepareStatementWithoutLimits("REPLACE INTO online.TRACKDATA (ID, REPORT_TIME, LAT, LNG, ALT, HDG, SPEED) VALUES (?, ?, ?, ?, ?, ?, ?)");
 			_ps.setInt(1, pd.getFlightID());
 			_ps.setTimestamp(2, createTimestamp(pd.getDate()));
 			_ps.setDouble(3, pd.getLatitude());
@@ -84,7 +80,7 @@ public class SetOnlineTrack extends DAO {
 	 * @param rawFlightID the flight ID of the raw flight data
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void purge(int rawFlightID) throws DAOException {
+	public void purgeRaw(int rawFlightID) throws DAOException {
 		try {
 			prepareStatementWithoutLimits("DELETE FROM online.TRACKS WHERE (ID=?)");
 			_ps.setInt(1, rawFlightID);
@@ -109,6 +105,21 @@ public class SetOnlineTrack extends DAO {
 			throw new DAOException(se);
 		}
 	}
+	
+	/**
+	 * Purges linked data from the database.
+	 * @param pirepID the flight report ID
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void purge(int pirepID) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("DELETE FROM ONLINE_TRACK WHERE (PIREP_ID=?)");
+			_ps.setInt(1, pirepID);
+			executeUpdate(0);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
 
 	/**
 	 * Writes position records to the database and links them to a Flight Report.
@@ -118,8 +129,7 @@ public class SetOnlineTrack extends DAO {
 	 */
 	public void write(int pirepID, Collection<PositionData> pds) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("INSERT INTO ONLINE_TRACK (PILOT_ID, PIREP_ID, DATE, "
-				+ "LAT, LNG, ALT, HEADING, ASPEED) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+			prepareStatementWithoutLimits("INSERT INTO ONLINE_TRACK (PILOT_ID, PIREP_ID, DATE, LAT, LNG, ALT, HEADING, ASPEED) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setInt(2, pirepID);
 			for (Iterator<PositionData> i = pds.iterator(); i.hasNext(); ) {
 				PositionData pd = i.next();

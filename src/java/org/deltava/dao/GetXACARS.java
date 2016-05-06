@@ -1,4 +1,4 @@
-// Copyright 2011, 2012,2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -172,7 +172,7 @@ public class GetXACARS extends DAO {
 				inf.setClimbPhase(XAFlightInfo.ClimbPhase.values()[rs.getInt(35)]);
 				inf.setZeroFuelWeight(rs.getInt(36));
 				inf.setRoute(rs.getString(37));
-				inf.setFSVersion(Simulator.fromVersion(rs.getInt(38)));
+				inf.setSimulator(Simulator.fromVersion(rs.getInt(38)));
 				results.add(inf);
 			}
 		}
