@@ -61,7 +61,7 @@ public class DateFormatTag extends UserSettingsTag {
 	/**
 	 * Updates the date format pattern.
 	 * @param pattern the pattern string
-	 * @throws IllegalArgumentException if SimpleDateFormat cannot interpret the pattern
+	 * @throws IllegalArgumentException if {@link DateTimeFormatter} cannot interpret the pattern
 	 */
 	public void setD(String pattern) {
 		DateTimeFormatter df = DateTimeFormatter.ofPattern(pattern); // validate pattern
@@ -80,7 +80,7 @@ public class DateFormatTag extends UserSettingsTag {
 	/**
 	 * Updates the time format pattern.
 	 * @param pattern the pattern string
-	 * @throws IllegalArgumentException if SimpleDateFormat cannot interpret the pattern
+	 * @throws IllegalArgumentException if {@link DateTimeFormatter} cannot interpret the pattern
 	 */
 	public void setT(String pattern) {
 		DateTimeFormatter df = DateTimeFormatter.ofPattern(pattern); // validate pattern
