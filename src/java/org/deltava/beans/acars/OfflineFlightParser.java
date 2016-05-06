@@ -103,7 +103,8 @@ public final class OfflineFlightParser {
 		inf.setAltitude(ie.getChildTextTrim("altitude"));
 		inf.setRoute(ie.getChildTextTrim("route"));
 		inf.setRemarks(ie.getChildTextTrim("remarks"));
-		inf.setFSVersion(Simulator.fromName(ie.getChildTextTrim("fs_ver")));
+		inf.setSimulator(Simulator.fromName(ie.getChildTextTrim("fs_ver")));
+		inf.setSimulatorVersion(StringUtils.parse(ie.getChildTextTrim("simMajor"), 0), StringUtils.parse(ie.getChildTextTrim("simMinor"), 0));
 		inf.setScheduleValidated(Boolean.valueOf(ie.getChildTextTrim("schedOK")).booleanValue());
 		inf.setDispatchPlan(Boolean.valueOf(ie.getChildTextTrim("dispatchRoute")).booleanValue());
 		inf.setDispatcherID(StringUtils.parse(ie.getChildTextTrim("dispatcherID"), 0));
@@ -162,7 +163,7 @@ public final class OfflineFlightParser {
 		ACARSFlightReport afr = new ACARSFlightReport(al, flight, leg);
 		afr.setAttribute(FlightReport.ATTR_ACARS, true);
 		afr.setAttribute(FlightReport.ATTR_DISPATCH, inf.isDispatchPlan());
-		afr.setFSVersion(inf.getFSVersion());
+		afr.setSimulator(inf.getSimulator());
 		afr.setStatus(FlightReport.SUBMITTED);
 		afr.setSubmittedOn(Instant.now());
 		afr.setAirportD(inf.getAirportD());

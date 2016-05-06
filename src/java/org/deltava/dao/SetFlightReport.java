@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access object to write Flight Reports to the database.
  * @author Luke
- * @version 5.1
+ * @version 7.0
  * @since 1.0
  */
 
@@ -116,7 +116,7 @@ public class SetFlightReport extends DAO {
 		_ps.setString(8, fr.getAirportD().getIATA());
 		_ps.setString(9, fr.getAirportA().getIATA());
 		_ps.setString(10, fr.getEquipmentType());
-		_ps.setInt(11, fr.getFSVersion().getCode());
+		_ps.setInt(11, fr.getSimulator().getCode());
 		_ps.setInt(12, fr.getAttributes());
 		_ps.setInt(13, fr.getDistance());
 		_ps.setDouble(14, (fr.getLength() / 10.0));
@@ -149,7 +149,7 @@ public class SetFlightReport extends DAO {
 		_ps.setString(6, fr.getAirportD().getIATA());
 		_ps.setString(7, fr.getAirportA().getIATA());
 		_ps.setString(8, fr.getEquipmentType());
-		_ps.setInt(9, fr.getFSVersion().getCode());
+		_ps.setInt(9, fr.getSimulator().getCode());
 		_ps.setInt(10, fr.getAttributes());
 		_ps.setInt(11, fr.getDistance());
 		_ps.setDouble(12, (fr.getLength() / 10.0));

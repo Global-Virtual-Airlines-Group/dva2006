@@ -222,7 +222,7 @@ public class FlightSubmitService extends SimFDRService {
 			// Load the departure runway
 			GetNavAirway navdao = new GetNavAirway(con);
 			Runway rD = null;
-			LandingRunways lr = navdao.getBestRunway(fr.getAirportD(), fr.getFSVersion(), fr.getTakeoffLocation(), fr.getTakeoffHeading());
+			LandingRunways lr = navdao.getBestRunway(fr.getAirportD(), fr.getSimulator(), fr.getTakeoffLocation(), fr.getTakeoffHeading());
 			Runway r = lr.getBestRunway();
 			if (r != null) {
 				int dist = GeoUtils.distanceFeet(r, fr.getTakeoffLocation());
@@ -235,7 +235,7 @@ public class FlightSubmitService extends SimFDRService {
 
 			// Load the arrival runway
 			Runway rA = null;
-			lr = navdao.getBestRunway(fr.getAirportA(), fr.getFSVersion(), fr.getLandingLocation(), fr.getLandingHeading());
+			lr = navdao.getBestRunway(fr.getAirportA(), fr.getSimulator(), fr.getLandingLocation(), fr.getLandingHeading());
 			r = lr.getBestRunway();
 			if (r != null) {
 				int dist = GeoUtils.distanceFeet(r, fr.getLandingLocation());
@@ -255,12 +255,12 @@ public class FlightSubmitService extends SimFDRService {
 				// Get the closest departure gate
 				GetGates gdao = new GetGates(con);
 				SortedSet<Gate> dGates = new TreeSet<Gate>(dgc);
-				dGates.addAll(gdao.getAllGates(fr.getAirportD(), fr.getFSVersion()));
+				dGates.addAll(gdao.getAllGates(fr.getAirportD(), fr.getSimulator()));
 				gD = dGates.isEmpty() ? null : dGates.first();
 				
 				// Get the closest arrival gate
 				SortedSet<Gate> aGates = new TreeSet<Gate>(agc);
-				aGates.addAll(gdao.getAllGates(fr.getAirportA(), fr.getFSVersion()));
+				aGates.addAll(gdao.getAllGates(fr.getAirportA(), fr.getSimulator()));
 				gA = aGates.isEmpty() ? null : aGates.first();
 			}
 			

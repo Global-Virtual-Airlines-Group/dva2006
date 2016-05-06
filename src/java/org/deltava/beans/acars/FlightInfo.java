@@ -46,6 +46,9 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 	private String _remarks;
 
 	private Simulator _fsVersion;
+	private int _simMajor;
+	private int _simMinor;
+	
 	private boolean _offline;
 	private boolean _scheduleValidated;
 	private boolean _dispatchPlan;
@@ -254,12 +257,28 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 	}
 
 	/**
-	 * Returns the version of the Simulator used in this flight.
+	 * Returns the Simulator used in this flight.
 	 * @return the Simulator
-	 * @see FlightInfo#setFSVersion(Simulator)
+	 * @see FlightInfo#setSimulator(Simulator)
 	 */
-	public Simulator getFSVersion() {
+	public Simulator getSimulator() {
 		return _fsVersion;
+	}
+	
+	/**
+	 * Returns the major version number of the Simulator used in this flight.
+	 * @return the major version, or zero if unknown
+	 */
+	public int getSimMajor() {
+		return _simMajor;
+	}
+	
+	/**
+	 * Returns the minor version number of the Simulator used in this flight.
+	 * @return the minor version
+	 */
+	public int getSimMinor() {
+		return _simMinor;
 	}
 
 	/**
@@ -599,14 +618,24 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 	}
 
 	/**
-	 * Updates the Simulator version used in this flight.
+	 * Updates the Simulator used in this flight.
 	 * @param sim the Simulator
-	 * @see FlightInfo#getFSVersion()
+	 * @see FlightInfo#getSimulator()
 	 */
-	public void setFSVersion(Simulator sim) {
+	public void setSimulator(Simulator sim) {
 		_fsVersion = sim;
 		if ((sim == Simulator.XP9) || (sim == Simulator.XP10))
 			_fdr = Recorder.XACARS;
+	}
+
+	/**
+	 * Updates the simulator version used in this flight.
+	 * @param major the major version
+	 * @param minor the minor version
+	 */
+	public void setSimulatorVersion(int major, int minor) {
+		_simMajor = Math.max(1, major);
+		_simMinor = Math.max(0, minor);
 	}
 
 	/**

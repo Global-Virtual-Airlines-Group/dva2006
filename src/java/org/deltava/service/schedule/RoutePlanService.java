@@ -166,7 +166,7 @@ public class RoutePlanService extends WebService {
 						ai.addFlight(dfr);
 					}
 					
-					dfr.setFSVersion(sim);
+					dfr.setSimulator(sim);
 					dfr.setRank(ctx.getUser().getRank());
 					dfr.setDate(Instant.now());
 				}

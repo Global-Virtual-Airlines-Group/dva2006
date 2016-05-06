@@ -49,7 +49,7 @@ public final class XACARSFlightHelper {
 		xfr.setDate(Instant.now());
 		xfr.setSubmittedOn(Instant.now());
 		xfr.setEquipmentType(inf.getEquipmentType());
-		xfr.setFSVersion(inf.getFSVersion());
+		xfr.setSimulator(inf.getSimulator());
 		xfr.setAttribute(FlightReport.ATTR_XACARS, true);
 		xfr.setPassengers(inf.getPassengers());
 		xfr.setLoadFactor(inf.getLoadFactor());
@@ -84,7 +84,7 @@ public final class XACARSFlightHelper {
 		xfr.setGateFuel(inf.getGateFuel());
 		xfr.setGateWeight(inf.getGateWeight());
 		xfr.setEndTime(inf.getEndTime());
-		fi.setFSVersion(xfr.getFSVersion());
+		fi.setSimulator(xfr.getSimulator());
 		
 		// Calculate the flight time
 		int duration = (int) ((xfr.getEndTime().toEpochMilli() - xfr.getStartTime().toEpochMilli()) / 1000);

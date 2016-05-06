@@ -23,7 +23,7 @@ public class XACARSFlightReport extends FDRFlightReport {
      */
 	public XACARSFlightReport(Airline a, int flightNumber, int leg) {
 		super(a, flightNumber, leg);
-		setFSVersion(Simulator.XP10);
+		setSimulator(Simulator.XP10);
 	}
 	
 	@Override
