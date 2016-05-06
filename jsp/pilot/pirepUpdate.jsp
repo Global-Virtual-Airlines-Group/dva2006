@@ -88,13 +88,13 @@ for ${pilot.name} is <b>${pilot.pilotCode}</b>.<br />
 </c:if>
 <c:if test="${assignComplete}">
 With the approval of this Flight Report, a Flight Assignment has been successfully completed.<br />
-<br />
+<br /></c:if>
+<c:if test="${onlineArchive}">
+This flight was flown using the ${pirep.network} online network, and track data has been archived for later retrieval.<br />
 </c:if>
 <c:if test="${acarsArchive}">
-This flight was logged using <content:airline /> ACARS software, and all position data has been archived 
-for later retrieval.<br />
-<br />
-</c:if>
+This flight was logged using <content:airline /> ACARS software, and all position data has been archived for later retrieval.<br />
+<br /></c:if>
 <c:if test="${!empty checkRide}">
 <br />
 This Flight Report is for a <b>${checkRide.name}</b>, and this Check Ride has been graded as part

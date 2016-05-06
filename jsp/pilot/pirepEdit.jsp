@@ -207,7 +207,7 @@ golgotha.onDOMReady(function() {
 </tr>
 <tr>
  <td class="label">Simulator</td>
- <td class="data"><el:combo name="fsVersion" idx="*" size="1" required="true" options="${fsVersions}" firstEntry="[ SIMULATOR ]" value="${pirep.FSVersion}" /></td>
+ <td class="data"><el:combo name="fsVersion" idx="*" size="1" required="true" options="${fsVersions}" firstEntry="[ SIMULATOR ]" value="${pirep.simulator}" /></td>
 </tr>
 <c:set var="tmpH" value="${empty pirep ? '' : pirep.length / 10}" scope="page" />
 <c:set var="tmpM" value="${empty pirep ? '' : (pirep.length % 10) * 6}" scope="page" />
