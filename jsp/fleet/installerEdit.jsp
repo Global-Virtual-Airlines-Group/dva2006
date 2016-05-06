@@ -81,7 +81,7 @@ return true;
 <el:text name="subVersion" idx="*" size="1" max="2" className="req" value="${entry.subVersion}" /></td>
 </tr>
 <tr>
- <td class="label">Flight Simulator</td>
+ <td class="label">Simulator</td>
  <td class="data"><el:check name="fsVersion" width="200" options="${fsVersions}" className="req" checked="${entry.FSVersions}" /></td>
 </tr>
 <tr>
