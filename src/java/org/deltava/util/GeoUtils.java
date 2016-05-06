@@ -157,9 +157,10 @@ public class GeoUtils {
 	 * @return the normalized angle
 	 */
 	public static double normalize(double degrees) {
-		int amt = (degrees < 0) ? 360 : -360; double d = degrees;
-		while ((d < 0) || (d > 360))
-			d += amt;
+		int amt = (degrees > 0) ? 360 : -360; 
+		double d = degrees % amt;
+		while (d < 0)
+			d -= amt;
 
 		return d;
 	}
@@ -201,14 +202,21 @@ public class GeoUtils {
 	 * @return the normalized location
 	 */
 	public static GeoLocation normalize(double lat, double lng) {
+	
+		// Sanity check
+		double lt = lat; double ln = lng;
+		if (Math.abs(lt) > 90)
+			lt %= (lt > 0) ? 90 : -90;
+		if (Math.abs(ln) > 180)
+			ln %= (ln > 0) ? 180 : -180;
 
 		// Normalize latitude
-		int amt = (lat < -90) ? 90 : -90; double lt = lat;
+		int amt = (lat < -90) ? 90 : -90; 
 		while ((lt < -90) || (lt > 90))
 			lt += amt;
 
 		// Normalize longitude
-		amt = (lng < -180) ? 180 : -180; double ln = lng;
+		amt = (lng < -180) ? 180 : -180; 
 		while ((ln < -180) || (ln > 180))
 			ln += amt;
 
