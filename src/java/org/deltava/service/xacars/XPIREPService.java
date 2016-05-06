@@ -238,7 +238,7 @@ public class XPIREPService extends XAService {
 			// Load the departure runway
 			GetNavRoute navdao = new GetNavRoute(con);
 			if (xfr.getTakeoffHeading() > -1) {
-				LandingRunways lr = navdao.getBestRunway(inf.getAirportD(), xfr.getFSVersion(), xfr.getTakeoffLocation(), xfr.getTakeoffHeading());
+				LandingRunways lr = navdao.getBestRunway(inf.getAirportD(), xfr.getSimulator(), xfr.getTakeoffLocation(), xfr.getTakeoffHeading());
 				Runway r = lr.getBestRunway();
 				if (r != null) {
 					int dist = GeoUtils.distanceFeet(r, xfr.getTakeoffLocation());
@@ -248,7 +248,7 @@ public class XPIREPService extends XAService {
 
 			// Load the arrival runway
 			if (xfr.getLandingHeading() > -1) {
-				LandingRunways lr = navdao.getBestRunway(xfr.getAirportA(), xfr.getFSVersion(), xfr.getLandingLocation(), xfr.getLandingHeading());
+				LandingRunways lr = navdao.getBestRunway(xfr.getAirportA(), xfr.getSimulator(), xfr.getLandingLocation(), xfr.getLandingHeading());
 				Runway r = lr.getBestRunway();
 				if (r != null) {
 					int dist = GeoUtils.distanceFeet(r, xfr.getLandingLocation());
