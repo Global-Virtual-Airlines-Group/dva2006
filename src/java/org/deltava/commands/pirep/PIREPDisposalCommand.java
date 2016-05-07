@@ -1,6 +1,7 @@
 // Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
+import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.sql.Connection;
@@ -13,10 +14,12 @@ import org.deltava.beans.acars.*;
 import org.deltava.beans.assign.AssignmentInfo;
 import org.deltava.beans.fb.NewsEntry;
 import org.deltava.beans.flight.*;
+import org.deltava.beans.servinfo.PositionData;
 import org.deltava.beans.stats.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+import org.deltava.dao.file.*;
 import org.deltava.dao.http.SetFacebookData;
 
 import org.deltava.mail.*;
@@ -295,6 +298,40 @@ public class PIREPDisposalCommand extends AbstractCommand {
 					acdao.archive(acarsID, entries);
 				}
 				
+				// Write the online track data
+				GetOnlineTrack tdao = new GetOnlineTrack(con);
+				boolean hasTrack = fr.hasAttribute(FlightReport.ATTR_ONLINE_MASK) && tdao.hasTrack(fr.getID());
+				if (hasTrack) {
+					SetOnlineTrack twdao = new SetOnlineTrack(con);
+					Collection<PositionData> onlineEntries = tdao.get(fr.getID());
+					try (OutputStream os = new FileOutputStream(ArchiveHelper.getOnline(fr.getID()))) {
+						SetSerializedOnline owdao = new SetSerializedOnline(os);
+						owdao.archive(fr.getID(), onlineEntries);
+					} catch (IOException ie) {
+						throw new DAOException(ie); 
+					}
+					
+					twdao.purge(fr.getID());
+					ctx.setAttribute("onlineArchive", Boolean.TRUE, REQUEST);
+				}
+				
+				// Write the route data
+				boolean hasRoute = ArchiveHelper.getRoute(fr.getID()).exists();
+				if (!hasRoute) {
+					GetACARSData fidao = new GetACARSData(con); GetNavRoute navdao = new GetNavRoute(con);
+					FlightInfo fi = (fr instanceof FDRFlightReport) ? fidao.getInfo(fr.getDatabaseID(DatabaseID.ACARS)) : null;
+					RouteBuilder rb = new RouteBuilder(fr, (fi == null) ? fr.getRoute() : fi.getRoute());
+					navdao.getRouteWaypoints(rb.getRoute(), fr.getAirportD()).forEach(wp -> rb.add(wp));
+					if (rb.hasData()) {
+						try (OutputStream os = new FileOutputStream(ArchiveHelper.getRoute(fr.getID()))) {
+							SetSerializedRoute rtw = new SetSerializedRoute(os);
+							rtw.archive(fr.getID(), rb.getPoints());
+						} catch (IOException ie) {
+							log.warn("Error writing serialized route data", ie);
+						}
+					}
+				}
+				
 				ctx.setAttribute("acarsArchive", Boolean.TRUE, REQUEST);
 			}
 			
@@ -303,13 +340,13 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			
 			// Invalidate the pilot again to reflect the new totals
 			if (opCode == FlightReport.OK)
-				CacheManager.invalidate("Pilots", Integer.valueOf(fr.getDatabaseID(DatabaseID.PILOT)));				
+				CacheManager.invalidate("Pilots", Integer.valueOf(fr.getAuthorID()));				
 			
 			// Save the flight report in the request and the Message Context
 			ctx.setAttribute("pirep", fr, REQUEST);
 			mctx.addData("pirep", fr);
 		} catch (DAOException de) {
-		   ctx.rollbackTX();
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
