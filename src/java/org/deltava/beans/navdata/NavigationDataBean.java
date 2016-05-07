@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.*;
@@ -11,20 +11,21 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store common properties for Navigation Database objects.
  * @author Luke
- * @version 5.1
+ * @version 7.0
  * @since 1.0
  */
 
-public abstract class NavigationDataBean implements java.io.Serializable, Cloneable, Comparable<NavigationDataBean>, 
-	MarkerMapEntry, IconMapEntry {
+public abstract class NavigationDataBean implements java.io.Serializable, Cloneable, Comparable<NavigationDataBean>, MarkerMapEntry, IconMapEntry {
 
+	private static final long serialVersionUID = 4880772877749063792L;
+	
 	private String _code;
 	private String _name;
 	private String _region;
 	private String _airway;
 	private final Navaid _type;
 
-	private GeoPosition _gp;
+	private final GeoPosition _gp;
 
 	/**
 	 * Creates a new Navigation Object.
@@ -267,9 +268,7 @@ public abstract class NavigationDataBean implements java.io.Serializable, Clonea
 	
 	@Override
 	public Object clone() throws CloneNotSupportedException {
-		NavigationDataBean nd2 = (NavigationDataBean) super.clone();
-		nd2._gp = new GeoPosition(nd2._gp);
-		return nd2;
+		return super.clone();
 	}
 
 	/**
