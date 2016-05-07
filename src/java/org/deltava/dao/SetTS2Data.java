@@ -3,6 +3,7 @@ package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
+import java.time.*;
 import java.time.format.*;
 import java.time.temporal.ChronoField;
 
@@ -48,7 +49,7 @@ public class SetTS2Data extends DAO {
 			_ps.setString(7, c.getTopic());
 			_ps.setString(8, c.getDescription());
 			_ps.setString(9, c.getPassword());
-			_ps.setString(10, _df.format(c.getCreatedOn()));
+			_ps.setString(10, _df.format(LocalDateTime.ofInstant(c.getCreatedOn(), ZoneOffset.UTC)));
 			executeUpdate(1);
 
 			// Get the new channel ID
@@ -120,7 +121,7 @@ public class SetTS2Data extends DAO {
 			_ps.setString(4, usr.getUserID());
 			_ps.setString(5, usr.getPassword());
 			_ps.setString(6, _df.format(usr.getCreatedOn()));
-			_ps.setString(7, (usr.getLastOnline() == null) ? null : _df.format(usr.getLastOnline()));
+			_ps.setString(7, (usr.getLastOnline() == null) ? null : _df.format(LocalDateTime.ofInstant(usr.getLastOnline(), ZoneOffset.UTC)));
 
 			// Write one entry per server
 			for (Iterator<Client> i = usrs.iterator(); i.hasNext();) {
