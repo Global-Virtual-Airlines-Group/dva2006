@@ -5,7 +5,6 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
 <html lang="en">
 <head>
@@ -45,7 +44,7 @@
 </tr>
 <tr>
  <td class="label">Equipment Type</td>
- <td class="data">${info.equipmentType} <span class="sec">(using ${info.simulator.name})</span></td>
+ <td class="data">${info.equipmentType} <span class="sec">(using ${info.simulator.name}<c:if test="${info.simMajor > 1}">${info.simMajor}.${info.simMinor}</c:if>)</span></td>
  <td class="label">Flight Code</td>
  <td class="data pri bld">${info.flightCode}</td>
 </tr>
@@ -99,7 +98,7 @@
 </c:if>
 </c:if>
 
-<c:if test="${fn:sizeof(mapRoute) > 0}">
+<c:if test="${mapRoute.size() > 0}">
 <!-- Flight Map -->
 <tr>
  <td class="label">Route Map Data</td>
@@ -110,8 +109,7 @@
 <span id="routeProgress" class="small"></span></td>
 </tr>
 <tr>
- <td class="label top">Route Map</td>
- <td class="data" colspan="4"><map:div ID="googleMap" height="530" /></td>
+ <td class="data" colspan="5"><map:div ID="googleMap" height="530" /></td>
 </tr>
 </c:if>
 </el:table>
@@ -129,7 +127,7 @@
 <content:copyright />
 </content:region>
 </content:page>
-<c:if test="${fn:sizeof(mapRoute) > 0}">
+<c:if test="${mapRoute.size() > 0}">
 <script id="mapInit">
 // Build the route line and map center
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
