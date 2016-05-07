@@ -35,13 +35,13 @@ public class SetSerializedPosition extends WriteableDAO {
 	public void archivePositions(int flightID, Collection<? extends RouteEntry> positions) throws DAOException {
 		if (positions.isEmpty()) return;
 		RouteEntry re = positions.iterator().next();
-		SerializedDataVersion ver = (re instanceof ACARSRouteEntry) ? SerializedDataVersion.ACARSv2 : SerializedDataVersion.XACARS;
+		SerializedDataVersion ver = (re instanceof ACARSRouteEntry) ? SerializedDataVersion.ACARSv3 : SerializedDataVersion.XACARS;
 		try (DataOutputStream out = new DataOutputStream(_os)) {
 			out.writeShort(ver.ordinal());
 			out.writeInt(flightID);
 			out.writeInt(positions.size());
 			for (RouteEntry rte : positions) {
-				if (ver == SerializedDataVersion.ACARSv2)
+				if (ver == SerializedDataVersion.ACARSv3)
 					write((ACARSRouteEntry) rte, out);
 				else if (ver == SerializedDataVersion.XACARS)
 					write((XARouteEntry) rte, out);
@@ -81,6 +81,9 @@ public class SetSerializedPosition extends WriteableDAO {
 		out.writeShort(re.getFlaps());
 		out.writeShort(re.getFrameRate());
 		out.writeShort(re.getSimRate());
+		out.writeShort(re.getTemperature()); // v3
+		out.writeInt(re.getPressure()); // v3
+		out.writeLong(re.getSimUTC().toEpochMilli()); // v3
 		out.writeUTF((re.getNAV1() == null) ? "" : re.getNAV1());
 		out.writeUTF((re.getNAV2() == null) ? "" : re.getNAV2());
 		

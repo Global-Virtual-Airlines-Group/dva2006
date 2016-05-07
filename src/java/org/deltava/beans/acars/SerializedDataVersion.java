@@ -1,28 +1,36 @@
-// Copyright 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 /**
  * An enumeration to store serialized ACARS position data version information.
  * @author Luke
- * @version 5.4
+ * @version 7.0
  * @since 4.1
  */
 
 public enum SerializedDataVersion {
-	ACARS(1, false), XACARS(1, true), ACARSv2(2, false);
+	ACARS(1, false), XACARS(1, true), ACARSv2(2, false), ACARSv3(3, false);
 
-	private int _version;
-	private boolean _isXACARS;
+	private final int _version;
+	private final boolean _isXACARS;
 	
 	SerializedDataVersion(int version, boolean isXACARS) {
 		_version = version;
 		_isXACARS = isXACARS;
 	}
-	
+
+	/**
+	 * Returns the version number.
+	 * @return the version
+	 */
 	public int getVersion() {
 		return _version;
 	}
 	
+	/**
+	 * Returns whether this is an XACARS-generated data stream.
+	 * @return TRUE if created by XACARS, otherwise FALSE
+	 */
 	public boolean isXACARS() {
 		return _isXACARS;
 	}
