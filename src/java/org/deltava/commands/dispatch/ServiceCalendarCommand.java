@@ -2,8 +2,8 @@
 package org.deltava.commands.dispatch;
 
 import java.util.*;
+import java.time.*;
 import java.sql.Connection;
-import java.time.Duration;
 
 import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
@@ -136,7 +136,8 @@ public class ServiceCalendarCommand extends AbstractCalendarCommand {
 				lastEntry = ce;
 				entries.add(ce);
 			} else {
-				long timeDiff = Duration.between(ce.getStartTime(), ce.getEndTime()).getSeconds();
+				Instant endTime = (ce.getEndTime() == null) ? Instant.now() : ce.getEndTime();
+				long timeDiff = Duration.between(ce.getStartTime(), endTime).getSeconds();
 				if (timeDiff < 900) {
 					lastEntry.setEndTime(ce.getEndTime());
 					lastEntry.addFlights(ce.getFlights());
