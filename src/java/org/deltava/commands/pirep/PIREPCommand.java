@@ -1,6 +1,7 @@
 // Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
+import java.io.*;
 import java.util.*;
 import java.time.*;
 import java.time.temporal.ChronoField;
@@ -22,6 +23,7 @@ import org.deltava.commands.*;
 import org.deltava.comparators.*;
 
 import org.deltava.dao.*;
+import org.deltava.dao.file.*;
 import org.deltava.dao.http.GetVRouteData;
 
 import org.deltava.security.command.*;
@@ -141,7 +143,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			fr.setAirportA(aa);
 			fr.setEquipmentType(ctx.getParameter("eq"));
 			fr.setRemarks(ctx.getParameter("remarks"));
-			fr.setFSVersion(Simulator.fromName(ctx.getParameter("fsVersion")));
+			fr.setSimulator(Simulator.fromName(ctx.getParameter("fsVersion")));
 			fr.setRoute(ctx.getParameter("route"));
 
 			// Check for historic aircraft
@@ -202,9 +204,8 @@ public class PIREPCommand extends AbstractFormCommand {
 			if (!ctx.isUserInRole("PIREP")) {
 				Instant forwardLimit = ZonedDateTime.now().plusDays(SystemData.getInt("users.pirep.maxDays")).toInstant();
 				Instant backwardLimit = ZonedDateTime.now().minusDays(SystemData.getInt("users.pirep.maxDays")).toInstant();
-				if ((fr.getDate().isBefore(backwardLimit)) || (fr.getDate().isAfter(forwardLimit))) {
+				if ((fr.getDate().isBefore(backwardLimit)) || (fr.getDate().isAfter(forwardLimit)))
 					throw new CommandException("Invalid Flight Report Date - " + fr.getDate() + " (" + backwardLimit + " - " + forwardLimit, false);
-				}
 			}
 
 			// Get the DAO and write the updateed PIREP to the database
@@ -428,7 +429,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			
 			// Calculate the average time between the airports and user's networks
 			if (ac.getCanDispose()) {
-				GetSchedule scdao = new GetSchedule(con);
+				org.deltava.dao.GetSchedule scdao = new org.deltava.dao.GetSchedule(con);
 				FlightTime ft = scdao.getFlightTime(fr);
 				ctx.setAttribute("avgTime", Integer.valueOf(ft.getFlightTime()), REQUEST);
 				ctx.setAttribute("networks", p.getNetworks(), REQUEST);
@@ -488,7 +489,7 @@ public class PIREPCommand extends AbstractFormCommand {
 					
 					// Load the gates
 					GetGates gdao = new GetGates(con);
-					List<Gate> gates = gdao.get(info.getID());
+					Collection<Gate> gates = gdao.get(info.getID());
 					for (Gate g : gates) {
 						if (g.getCode().equals(info.getAirportD().getICAO()))
 							info.setGateD(g);
@@ -496,66 +497,55 @@ public class PIREPCommand extends AbstractFormCommand {
 							info.setGateA(g);
 					}
 					
-					// Split the route
-					List<String> wps = StringUtils.nullTrim(StringUtils.split(info.getRoute(), " "));
-					wps.remove(info.getAirportD().getICAO());
-					wps.remove(info.getAirportA().getICAO());
-					
-					// Check the SID
-					SetACARSData awdao = new SetACARSData(con);
-					if ((info.getSID() == null) && (wps.size() > 2)) {
-						String name = wps.get(0);
-						TerminalRoute sid = navdao.getBestRoute(info.getAirportD(), TerminalRoute.Type.SID, TerminalRoute.makeGeneric(name), wps.get(1), info.getRunwayD());
-						if (sid != null) {
-							wps.remove(0);
-							info.setSID(sid);
-							awdao.writeSIDSTAR(info.getID(), sid);
-						}
-					}
-					
-					// Check the STAR
-					if ((info.getSTAR() == null) && (wps.size() > 2)) {
-						String name = wps.get(wps.size() - 1);
-						TerminalRoute star = navdao.getBestRoute(info.getAirportA(), TerminalRoute.Type.STAR, TerminalRoute.makeGeneric(name), wps.get(wps.size() - 2), info.getRunwayA());
-						if (star != null) {
-							wps.remove(wps.size() - 1);
-							info.setSTAR(star);
-							awdao.writeSIDSTAR(info.getID(), star);
-						}
-					}
-					
 					// Build the route
+					RouteBuilder rb = new RouteBuilder(fr, info.getRoute());
 					Collection<MapEntry> route = new LinkedHashSet<MapEntry>();
 					route.add((info.getGateD() != null) ? info.getGateD() : info.getAirportD());
 					if (info.getRunwayD() != null)
 						route.add(info.getRunwayD());
+					rb.add(info.getSID());
 					
-					if (info.getSID() != null) {
-						if (!CollectionUtils.isEmpty(wps))
-							route.addAll(info.getSID().getWaypoints(wps.get(0)));
-						else
-							route.addAll(info.getSID().getWaypoints()); 
+					// Load the serialized route
+					Collection<NavigationDataBean> rtePoints = new ArrayList<NavigationDataBean>();
+					if (ArchiveHelper.getRoute(fr.getID()).exists()) {
+						try (InputStream in = new FileInputStream(ArchiveHelper.getRoute(fr.getID()))) {
+							GetSerializedRoute rtdao = new GetSerializedRoute(in);
+							rtePoints.addAll(rtdao.read());
+						} catch (IOException ie) {
+							log.error("Error loading serialized route - " + ie.getMessage(), ie);
+						}
 					}
+					
+					// Check the SID
+					if ((info.getSID() == null) && (rb.getSID() != null)) {
+						TerminalRoute sid = navdao.getBestRoute(info.getAirportD(), TerminalRoute.Type.SID, TerminalRoute.makeGeneric(rb.getSID()), rb.getSIDTransition(), info.getRunwayD());
+						rb.add(sid);
+					} else if (info.getSID() != null)
+						rb.add(info.getSID());
 						
-					route.addAll(navdao.getRouteWaypoints(StringUtils.listConcat(wps," "), info.getAirportD()));
-					if (info.getSTAR() != null) {
-						if (!CollectionUtils.isEmpty(wps))
-							route.addAll(info.getSTAR().getWaypoints(wps.get(wps.size() - 1)));
-						else
-							route.addAll(info.getSTAR().getWaypoints());
-					}
+					if (rtePoints.isEmpty())
+						rtePoints.addAll(navdao.getRouteWaypoints(rb.getRoute(), info.getAirportD()));
+					rtePoints.forEach(wp -> rb.add(wp));
 
+					// Check the STAR
+					if ((info.getSTAR() == null) && (rb.getSTAR() != null)) {
+						TerminalRoute star = navdao.getBestRoute(info.getAirportA(), TerminalRoute.Type.STAR, TerminalRoute.makeGeneric(rb.getSTAR()), rb.getSTARTransition(), info.getRunwayA());
+						rb.add(star);
+					} else if (info.getSTAR() != null)
+						rb.add(info.getSTAR());
+
+					route.addAll(rb.getPoints());
 					if (info.getRunwayA() != null)
 						route.add(info.getRunwayA());
 					route.add((info.getGateA() != null) ? info.getGateA() : info.getAirportA());
 					
 					// Load departure and arrival runways
 					if (ac.getCanDispose()) {
-						Collection<Runway> dRwys = navdao.getRunways(info.getAirportD(), fr.getFSVersion());
+						Collection<Runway> dRwys = navdao.getRunways(info.getAirportD(), fr.getSimulator());
 						if (info.getRunwayD() != null)
 							dRwys = CollectionUtils.sort(dRwys, new RunwayComparator(info.getRunwayD().getHeading(), 5));	
 					
-						Collection<Runway> aRwys = navdao.getRunways(info.getAirportA(), fr.getFSVersion());
+						Collection<Runway> aRwys = navdao.getRunways(info.getAirportA(), fr.getSimulator());
 						if (info.getRunwayA() != null)
 							aRwys = CollectionUtils.sort(aRwys, new RunwayComparator(info.getRunwayA().getHeading(), 5));	
 					
@@ -565,7 +555,7 @@ public class PIREPCommand extends AbstractFormCommand {
 					}
 					
 					// Save ACARS route, stripping out excessive bits
-					ctx.setAttribute("filedRoute", GeoUtils.stripDetours(route, 50), REQUEST);
+					ctx.setAttribute("filedRoute", GeoUtils.stripDetours(route, 250), REQUEST);
 				}
 
 				// Get the check ride
@@ -605,7 +595,21 @@ public class PIREPCommand extends AbstractFormCommand {
 			GetOnlineTrack tdao = new GetOnlineTrack(con);
 			boolean hasTrack = tdao.hasTrack(fr.getID());
 			if (hasTrack || (fr.hasAttribute(FlightReport.ATTR_ONLINE_MASK) && (fr.getStatus() != FlightReport.DRAFT))) {
-				Collection<PositionData> pd = tdao.get(fr.getID());
+				File f = ArchiveHelper.getOnline(fr.getID());
+				Collection<PositionData> pd = new ArrayList<PositionData>();
+				if (f.exists()) {
+					try (InputStream in = new FileInputStream(f)) {
+						GetSerializedOnline stdao = new GetSerializedOnline(in);
+						pd.addAll(stdao.read());
+					} catch (IOException ie) {
+						log.error("Error loading serialized Online Track data - " + ie.getMessage(), ie);
+						f.delete();
+					}
+				}
+			
+				if (pd.isEmpty())
+					pd.addAll(tdao.get(fr.getID()));
+				
 				long age = (fr.getSubmittedOn() == null) ? Long.MAX_VALUE : (System.currentTimeMillis() - fr.getSubmittedOn().toEpochMilli()) / 1000;
 				if (pd.isEmpty() && (age < 86000)) {
 					int trackID = tdao.getTrackID(fr.getDatabaseID(DatabaseID.PILOT), fr.getNetwork(), fr.getSubmittedOn(), fr.getAirportD(), fr.getAirportA());
@@ -633,7 +637,7 @@ public class PIREPCommand extends AbstractFormCommand {
 							// Move track data from the raw table
 							SetOnlineTrack twdao = new SetOnlineTrack(con);
 							twdao.write(fr.getID(), pd);
-							twdao.purge(trackID);
+							twdao.purgeRaw(trackID);
 							
 							// Save the route
 							SetFlightReport frwdao = new SetFlightReport(con);
@@ -655,42 +659,26 @@ public class PIREPCommand extends AbstractFormCommand {
 			
 			// If the PIREP has a route in it, load it here
 			if (!StringUtils.isEmpty(fr.getRoute()) && !isACARS) {
-				List<String> wps = StringUtils.nullTrim(StringUtils.split(fr.getRoute(), " "));
-				wps.remove(fr.getAirportD().getICAO());
-				wps.remove(fr.getAirportA().getICAO());
+				RouteBuilder rb = new RouteBuilder(fr, fr.getRoute());
+
+				// Load the SID
+				if (rb.getSID() != null) {
+					TerminalRoute sid = navdao.getBestRoute(fr.getAirportD(), TerminalRoute.Type.SID, TerminalRoute.makeGeneric(rb.getSID()), rb.getSIDTransition(), (String) null);
+					rb.add(sid);
+				}
 				
+				navdao.getRouteWaypoints(rb.getRoute(), fr.getAirportD()).forEach(wp -> rb.add(wp));
+				
+				// Load the STAR
+				if (rb.getSTAR() != null) {
+					TerminalRoute star = navdao.getBestRoute(fr.getAirportA(), TerminalRoute.Type.STAR, TerminalRoute.makeGeneric(rb.getSTAR()), rb.getSTARTransition(), (String) null);
+					rb.add(star);
+				}
+
 				// Build the route
 				Collection<MapEntry> route = new LinkedHashSet<MapEntry>();
 				route.add(fr.getAirportD());
-
-				// Load the SID
-				if (wps.size() > 2) {
-					String name = wps.get(0);
-					TerminalRoute sid = navdao.getBestRoute(fr.getAirportD(), TerminalRoute.Type.SID, TerminalRoute.makeGeneric(name), wps.get(1), (String) null);
-					if (sid != null) {
-						wps.remove(0);
-						if (!CollectionUtils.isEmpty(wps))
-							route.addAll(sid.getWaypoints(wps.get(0)));
-						else
-							route.addAll(sid.getWaypoints()); 
-					}
-				}
-				
-				route.addAll(navdao.getRouteWaypoints(StringUtils.listConcat(wps," "), fr.getAirportD()));
-				
-				// Load the STAR
-				if (wps.size() > 2) {
-					String name = wps.get(wps.size() - 1);
-					TerminalRoute star = navdao.getBestRoute(fr.getAirportA(), TerminalRoute.Type.STAR, TerminalRoute.makeGeneric(name), wps.get(wps.size() - 2), (String) null);
-					if (star != null) {
-						wps.remove(wps.size() - 1);
-						if (!CollectionUtils.isEmpty(wps))
-							route.addAll(star.getWaypoints(wps.get(wps.size() - 1)));
-						else
-							route.addAll(star.getWaypoints());
-					}
-				}
-				
+				route.addAll(rb.getPoints());
 				route.add(fr.getAirportA());
 				ctx.setAttribute("filedRoute", GeoUtils.stripDetours(route, 65), REQUEST);				
 			} else if (!isACARS && (mapType != MapType.FALLINGRAIN))
