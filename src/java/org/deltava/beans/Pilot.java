@@ -18,6 +18,8 @@ import org.deltava.util.StringUtils;
 
 public class Pilot extends Person implements ComboAlias, Cloneable {
 
+	private static final long serialVersionUID = -6034960522937668007L;
+	
 	/**
 	 * Pilot status codes.
 	 */
