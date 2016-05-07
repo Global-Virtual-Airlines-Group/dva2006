@@ -56,7 +56,7 @@ public class JSDateTag extends JSTag {
         StringBuilder buf = new StringBuilder("new Date(");
         buf.append(_dt.get(ChronoField.YEAR));
         buf.append(',');
-        buf.append(_dt.get(ChronoField.MONTH_OF_YEAR));
+        buf.append(_dt.get(ChronoField.MONTH_OF_YEAR) - 1);
         buf.append(',');
         buf.append(_dt.get(ChronoField.DAY_OF_MONTH));
         if (_doTime) {
