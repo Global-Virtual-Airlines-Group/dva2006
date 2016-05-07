@@ -31,7 +31,7 @@ public class GetSerializedPosition extends DAO {
 	}
 
 	/**
-	 * Deserializes ACARS/XACARS position reports
+	 * Deserializes ACARS/XACARS position reports.
 	 * @return a Collection of RouteEntry beans
 	 * @throws DAOException if an I/O error occurs
 	 */
@@ -39,7 +39,7 @@ public class GetSerializedPosition extends DAO {
 		try (DataInputStream in = new DataInputStream(getStream())) {
 			SerializedDataVersion ver = SerializedDataVersion.values()[in.readShort()];
 			in.readInt(); // flight ID
-			if ((ver == SerializedDataVersion.ACARS) || (ver == SerializedDataVersion.ACARSv2))
+			if ((ver == SerializedDataVersion.ACARS) || (ver == SerializedDataVersion.ACARSv2) || (ver == SerializedDataVersion.ACARSv3))
 				return loadACARS(in, ver.getVersion());
 			else if (ver == SerializedDataVersion.XACARS)
 				return loadXACARS(in);
@@ -79,6 +79,14 @@ public class GetSerializedPosition extends DAO {
 			re.setFlaps(in.readShort());
 			re.setFrameRate(in.readShort());
 			re.setSimRate(in.readShort());
+			
+			// Load weather and sim time
+			if (version > 2) {
+				re.setTemperature(in.readShort());
+				re.setPressure(in.readInt());
+				re.setSimUTC(Instant.ofEpochMilli(in.readLong()));
+			} else
+				re.setSimUTC(re.getDate()); // ensure non-null
 			
 			// Load NAV1/NAV2
 			if (version > 1) {

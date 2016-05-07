@@ -120,12 +120,9 @@ public final class OfflineFlightParser {
 			DateTimeFormatter mdtf = new DateTimeFormatterBuilder().appendPattern("MM/dd/yyyy HH:mm:ss").appendFraction(ChronoField.MILLI_OF_SECOND, 0, 3, true).toFormatter();
 			for (Iterator<Element> i = pL.iterator(); i.hasNext();) {
 				Element pe = i.next();
-				String dt = pe.getChildTextTrim("date");
-				
-				// Build a position entry
 				try {
 					GeoLocation loc = new GeoPosition(parse(pe.getChildTextTrim("lat")), parse(pe.getChildTextTrim("lon")));
-					ACARSRouteEntry pos = new ACARSRouteEntry(LocalDateTime.parse(dt, mdtf).toInstant(ZoneOffset.UTC), loc);
+					ACARSRouteEntry pos = new ACARSRouteEntry(LocalDateTime.parse(pe.getChildTextTrim("date"), mdtf).toInstant(ZoneOffset.UTC), loc);
 					pos.setAltitude(StringUtils.parse(pe.getChildTextTrim("msl"), 0));
 					pos.setRadarAltitude(StringUtils.parse(pe.getChildTextTrim("agl"), 0));
 					pos.setHeading(StringUtils.parse(pe.getChildTextTrim("hdg"), 0));
@@ -146,10 +143,17 @@ public final class OfflineFlightParser {
 					pos.setFuelRemaining(StringUtils.parse(pe.getChildTextTrim("fuel"), 0));
 					pos.setWindHeading(StringUtils.parse(pe.getChildTextTrim("wHdg"), 0));
 					pos.setWindSpeed(StringUtils.parse(pe.getChildTextTrim("wSpeed"), 0));
+					pos.setTemperature(StringUtils.parse(pe.getChildText("temp"), 0));
+					pos.setPressure(StringUtils.parse(pe.getChildText("pressure"), 0));
+					pos.setVisibility(StringUtils.parse(pe.getChildTextTrim("viz"), 0.0));
 					pos.setFrameRate(StringUtils.parse(pe.getChildTextTrim("frameRate"), 0));
 					pos.setFlags(StringUtils.parse(pe.getChildTextTrim("flags"), 0));
 					pos.setNAV1(pe.getChildTextTrim("nav1"));
 					pos.setNAV2(pe.getChildTextTrim("nav2"));
+					
+					// Load simDate
+					String sd = pe.getChildTextTrim("simDate");
+					pos.setSimUTC((sd == null) ? pos.getDate() : LocalDateTime.parse(sd, mdtf).toInstant(ZoneOffset.UTC));
 					result.addPosition(pos);
 				} catch (NumberFormatException nfe) {
 					log.error("Error parsing value - " + nfe.getMessage());

@@ -61,10 +61,9 @@ public class GetACARSPositions extends GetACARSData {
 	
 	private List<GeoLocation> getLiveEntries(int flightID, boolean includeOnGround) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT P.REPORT_TIME, P.LAT, P.LNG, P.B_ALT, P.R_ALT, P.HEADING, P.PITCH, P.BANK, "
-				+ "P.ASPEED, P.GSPEED, P.VSPEED, P.MACH, P.N1, P.N2, P.FLAPS, P.WIND_HDG, P.WIND_SPEED, P.FUEL, P.FUELFLOW, "
-				+ "P.AOA, P.GFORCE, P.FLAGS, P.FRAMERATE, P.SIM_RATE, P.PHASE, P.NAV1, P.NAV2 FROM acars.POSITIONS P WHERE "
-				+ "(P.FLIGHT_ID=?) ORDER BY P.REPORT_TIME");
+			prepareStatementWithoutLimits("SELECT REPORT_TIME, LAT, LNG, B_ALT, R_ALT, HEADING, PITCH, BANK, ASPEED, GSPEED, VSPEED, MACH, N1, N2, FLAPS, "
+				+ "WIND_HDG, WIND_SPEED, TEMP, PRESSURE, VIZ, FUEL, FUELFLOW, AOA, GFORCE, FLAGS, FRAMERATE, SIM_RATE, SIM_TIME, PHASE, NAV1, NAV2 FROM "
+				+ "acars.POSITIONS WHERE (FLIGHT_ID=?) ORDER BY REPORT_TIME");
 			_ps.setInt(1, flightID);
 
 			// Execute the query
@@ -74,7 +73,7 @@ public class GetACARSPositions extends GetACARSData {
 					Long ts = Long.valueOf(rs.getTimestamp(1).getTime());
 					GeoLocation pos = new GeoPosition(rs.getDouble(2), rs.getDouble(3));
 					ACARSRouteEntry entry = new ACARSRouteEntry(rs.getTimestamp(1).toInstant(), pos);
-					entry.setFlags(rs.getInt(22));
+					entry.setFlags(rs.getInt(25));
 
 					// Add to results - or just log a GeoPosition if we're on the ground
 					if (entry.isFlagSet(FLAG_ONGROUND) && !entry.isFlagSet(FLAG_TOUCHDOWN) && !includeOnGround)
@@ -94,15 +93,19 @@ public class GetACARSPositions extends GetACARSData {
 						entry.setFlaps(rs.getInt(15));
 						entry.setWindHeading(rs.getInt(16));
 						entry.setWindSpeed(rs.getInt(17));
-						entry.setFuelRemaining(rs.getInt(18));
-						entry.setFuelFlow(rs.getInt(19));
-						entry.setAOA(rs.getDouble(20));
-						entry.setG(rs.getDouble(21));
-						entry.setFrameRate(rs.getInt(23));
-						entry.setSimRate(rs.getInt(24));
-						entry.setPhase(rs.getInt(25));
-						entry.setNAV1(rs.getString(26));
-						entry.setNAV2(rs.getString(27));
+						entry.setTemperature(rs.getInt(18));
+						entry.setPressure(rs.getInt(19));
+						entry.setVisibility(rs.getDouble(20));
+						entry.setFuelRemaining(rs.getInt(21));
+						entry.setFuelFlow(rs.getInt(22));
+						entry.setAOA(rs.getDouble(23));
+						entry.setG(rs.getDouble(24));
+						entry.setFrameRate(rs.getInt(26));
+						entry.setSimRate(rs.getInt(27));
+						entry.setSimUTC(toInstant(rs.getTimestamp(28)));
+						entry.setPhase(rs.getInt(29));
+						entry.setNAV1(rs.getString(30));
+						entry.setNAV2(rs.getString(31));
 						results.put(ts, entry);
 					}
 				}
