@@ -391,7 +391,7 @@ public class GeoUtils {
 		if (entries.size() > 3) {
 			GeoLocation lastP = locs.getFirst(); GeoLocation dest = locs.getLast();
 			int distance = GeoUtils.distance(lastP, dest);
-			int distThreshold = Math.min(150, Math.max(minDetour, distance / 10));
+			int distThreshold = Math.min(250, Math.max(minDetour, distance / 10));
 
 			// Strip out any points that are too far out of the way
 			final Collection<GeoLocation> deletedItems = new LinkedHashSet<GeoLocation>();
