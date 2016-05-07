@@ -28,11 +28,17 @@ public class ACARSRouteEntry extends RouteEntry {
 	private double _gForce;
 	private double _n1;
 	private double _n2;
+	
 	private double _viz;
+	private int _temp;
+	private int _pressure;
+	
 	private int _fuelFlow;
 	private int _flaps;
 	private int _frameRate;
 	private int _simRate;
+	
+	private Instant _simTime;
 	
 	private String _nav1;
 	private String _nav2;
@@ -136,6 +142,22 @@ public class ACARSRouteEntry extends RouteEntry {
 	public double getVisibility() {
 		return _viz;
 	}
+	
+	/**
+	 * Returns the ambient air temperature.
+	 * @return the temperature in degrees Celsius
+	 */
+	public int getTemperature() {
+		return _temp;
+	}
+	
+	/**
+	 * Returns the ambient air pressure.
+	 * @return the pressure in pascals
+	 */
+	public int getPressure() {
+		return _pressure;
+	}
 
 	/**
 	 * Returns the aircraft's vertical speed.
@@ -165,12 +187,20 @@ public class ACARSRouteEntry extends RouteEntry {
 	}
 	
 	/**
-	 * Returns the Flight Simulator time acceleration rate.
+	 * Returns the simulator time acceleration rate.
 	 * @return the acceleration rate
 	 * @see ACARSRouteEntry#setSimRate(int)
 	 */
 	public int getSimRate() {
 		return _simRate;
+	}
+	
+	/**
+	 * Returns the UTC time in the simulator.
+	 * @return the sim UTC time
+	 */
+	public Instant getSimUTC() {
+		return _simTime;
 	}
 	
 	/**
@@ -327,12 +357,20 @@ public class ACARSRouteEntry extends RouteEntry {
 	}
 	
 	/**
-	 * Updates the Flight Simulator time acceleration rate.
+	 * Updates the simulator time acceleration rate.
 	 * @param rate the rate
 	 * @see ACARSRouteEntry#getSimRate()
 	 */
 	public void setSimRate(int rate) {
 		_simRate = Math.max(1, rate);
+	}
+	
+	/**
+	 * Updates the UTC time in the simulator 
+	 * @param i the UTC time
+	 */
+	public void setSimUTC(Instant i) {
+		_simTime = i;
 	}
 	
 	/**
@@ -351,6 +389,22 @@ public class ACARSRouteEntry extends RouteEntry {
 	 */
 	public void setVisibility(double viz) {
 		_viz = Math.max(0, viz);
+	}
+	
+	/**
+	 * Sets the ambient air pressure.
+	 * @param p the pressure in pascals
+	 */
+	public void setPressure(int p) {
+		_pressure = p;
+	}
+	
+	/**
+	 * Sets the ambient temperature.
+	 * @param t the temperature in degrees celsius
+	 */
+	public void setTemperature(int t) {
+		_temp = t;
 	}
 	
 	/**
@@ -492,7 +546,7 @@ public class ACARSRouteEntry extends RouteEntry {
 	 */
 	@Override
 	public String getInfoBox() {
-		StringBuilder buf = new StringBuilder(224);
+		StringBuilder buf = new StringBuilder(256);
 		buf.append("<div class=\"mapInfoBox acarsFlight\">Position: <span class=\"bld\">");
 		buf.append(StringUtils.format(_pos, true, GeoLocation.ALL));
 		buf.append("</span><br />Time: ");
