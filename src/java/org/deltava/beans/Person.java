@@ -2,9 +2,10 @@
 package org.deltava.beans;
 
 import java.util.*;
-import java.text.*;
 import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.security.Principal;
+import java.text.DecimalFormat;
 
 import org.deltava.beans.schedule.Airport;
 import org.deltava.util.StringUtils;
@@ -17,6 +18,8 @@ import org.deltava.util.StringUtils;
  */
 
 public abstract class Person extends DatabaseBlobBean implements Principal, FormattedEMailRecipient, ViewEntry {
+
+	private static final long serialVersionUID = -7815765435601664719L;
 
 	/**
 	 * Hide e-mail address from all non-staff users.
@@ -744,9 +747,9 @@ public abstract class Person extends DatabaseBlobBean implements Principal, Form
 	 */
 	public void setDateFormat(String pattern) {
 		try {
-			String p2 = pattern.replace('m', 'M');
-			DateFormat df = new SimpleDateFormat(p2);
-			if (!p2.equals(df.format(new Date())))
+			String p2 = pattern.replace('m', 'M').replace('D', 'd');
+			DateTimeFormatter df = DateTimeFormatter.ofPattern(p2);
+			if (!p2.equals(df.format(LocalDateTime.now())))
 				_dFormat = p2;
 		} catch (Exception e) {
 			//empty
@@ -760,9 +763,9 @@ public abstract class Person extends DatabaseBlobBean implements Principal, Form
 	 */
 	public void setTimeFormat(String pattern) {
 		try {
-			String p2 = pattern.replace('M', 'm');
-			DateFormat df = new SimpleDateFormat(p2);
-			if (!p2.equals(df.format(new Date())))
+			String p2 = pattern.replace('M', 'm').replace('S', 's');
+			DateTimeFormatter df = DateTimeFormatter.ofPattern(p2);
+			if (!p2.equals(df.format(LocalDateTime.now())))
 				_tFormat = p2;
 		} catch (Exception e) {
 			//empty
@@ -776,8 +779,7 @@ public abstract class Person extends DatabaseBlobBean implements Principal, Form
 	 */
 	public void setNumberFormat(String pattern) {
 		try {
-			DecimalFormat nf = new DecimalFormat(pattern);
-			_nFormat = nf.toPattern();
+			_nFormat = new DecimalFormat(pattern).toPattern();
 		} catch (Exception e) {
 			// empty
 		}
