@@ -2,12 +2,13 @@
 package org.deltava.service.acars;
 
 import java.util.*;
-import java.io.IOException;
+import java.time.Instant;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
 import org.deltava.beans.acars.*;
 import org.deltava.beans.flight.Recorder;
+
 import org.deltava.dao.*;
 import org.deltava.service.*;
 
@@ -59,7 +60,7 @@ public class FlightDataExportService extends WebService {
 		// Write the CSV header
 		if (info.getFDR() != Recorder.XACARS) {
 			ctx.println("Date/Time,Latitude,Longitude,Altitude,Heading,Air Speed,Ground Speed,Mach,Vertical Speed,N1,N2,Bank,Pitch,Flaps,"
-				+ "WindSpeed,WindHdg,Visibility,FuelFlow,Fuel,Gs,AOA,AP,ALT,AT,FrameRate,NAV1,NAV2,COM1,ATC1,COM2,ATC2,WARN");
+				+ "WindSpeed,WindHdg,Temperature,Pressure,Visibility,FuelFlow,Fuel,Gs,AOA,AP,ALT,AT,FrameRate,NAV1,NAV2,COM1,ATC1,COM2,ATC2,WARN");
 		} else
 			ctx.println("Date/Time,Latitude,Longitude,Altitude,Heading,Air Speed,Ground Speed,Mach,WindSpeed,WindHdg,Fuel");
 
@@ -76,7 +77,7 @@ public class FlightDataExportService extends WebService {
 			ctx.setContentType("text/csv", "utf-8");
 			ctx.setHeader("Content-disposition", "attachment; filename=acars" + id + ".csv");
 			ctx.commit();
-		} catch (IOException ie) {
+		} catch (Exception e) {
 			throw error(SC_CONFLICT, "I/O Error", false);
 		}
 
@@ -117,7 +118,8 @@ public class FlightDataExportService extends WebService {
 	 * Helper method to format an ACARS position entry.
 	 */
 	private static String format(ACARSRouteEntry entry) {
-		StringBuilder buf = new StringBuilder(StringUtils.format(entry.getDate(), "MM/dd/yyyy HH:mm:ss"));
+		Instant i = (entry.getSimUTC() == null) ? entry.getDate() : entry.getSimUTC();
+		StringBuilder buf = new StringBuilder(StringUtils.format(i, "MM/dd/yyyy HH:mm:ss"));
 		buf.append(',');
 		buf.append(StringUtils.format(entry.getLatitude(), "##0.0000"));
 		buf.append(',');
@@ -148,6 +150,10 @@ public class FlightDataExportService extends WebService {
 		buf.append(StringUtils.format(entry.getWindSpeed(), "##0"));
 		buf.append(',');
 		buf.append(StringUtils.format(entry.getWindHeading(), "000"));
+		buf.append(',');
+		buf.append((entry.getTemperature() == 0) ? "" : String.valueOf(entry.getTemperature()));
+		buf.append(',');
+		buf.append((entry.getPressure() == 0) ? "" : StringUtils.format(entry.getPressure() / 1000.0, "##0.00"));
 		buf.append(',');
 		buf.append(StringUtils.format(entry.getVisibility(), "#0.00"));
 		buf.append(',');
