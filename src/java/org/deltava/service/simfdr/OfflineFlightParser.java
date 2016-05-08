@@ -118,6 +118,9 @@ final class OfflineFlightParser {
 					GeoLocation loc = new GeoPosition(Double.parseDouble(pe.getAttributeValue("lat")), Double.parseDouble(pe.getAttributeValue("lng")));
 					ACARSRouteEntry pos = new ACARSRouteEntry(StringUtils.parseEpoch(pe.getAttributeValue("date")), loc);
 					pos.setSimUTC(StringUtils.parseEpoch(pe.getAttributeValue("simDate")));
+					if (pos.getSimUTC() == null)
+						pos.setSimUTC(pos.getDate());
+					
 					pos.setAltitude(StringUtils.parse(pe.getChildTextTrim("msl"), 0));
 					pos.setRadarAltitude(StringUtils.parse(pe.getChildTextTrim("agl"), 0));
 					pos.setHeading(StringUtils.parse(pe.getChildTextTrim("hdg"), 0));
@@ -139,6 +142,7 @@ final class OfflineFlightParser {
 					pos.setWindHeading(StringUtils.parse(pe.getChildTextTrim("windHdg"), 0));
 					pos.setWindSpeed(StringUtils.parse(pe.getChildTextTrim("windSpeed"), 0));
 					pos.setPressure(StringUtils.parse(pe.getChildTextTrim("pressure"), 0));
+					pos.setVisibility(StringUtils.parse(pe.getChildTextTrim("viz"), 0.0d));
 					pos.setTemperature(StringUtils.parse(pe.getChildTextTrim("temp"), 0));
 					pos.setFrameRate(StringUtils.parse(pe.getChildTextTrim("frameRate"), 0));
 					pos.setFlags(StringUtils.parse(pe.getChildTextTrim("flags"), 0));
