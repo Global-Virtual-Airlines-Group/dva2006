@@ -74,8 +74,7 @@ public class SetTS2Data extends DAO {
 	public void update(Channel c) throws DAOException {
 		try {
 			startTransaction();
-			prepareStatement("UPDATE teamspeak.ts2_channels SET b_channel_flag_moderated=?, b_channel_flag_default=?, "
-					+ "i_channel_codec=?, i_channel_maxusers=?, s_channel_name=?, s_channel_topic=?, s_channel_description=?, "
+			prepareStatement("UPDATE teamspeak.ts2_channels SET b_channel_flag_moderated=?, b_channel_flag_default=?, i_channel_codec=?, i_channel_maxusers=?, s_channel_name=?, s_channel_topic=?, s_channel_description=?, "
 					+ "s_channel_password=? WHERE (i_channel_id=?)");
 			_ps.setInt(1, c.getModerated() ? -1 : 0);
 			_ps.setInt(2, c.getDefault() ? -1 : 0);
@@ -120,7 +119,7 @@ public class SetTS2Data extends DAO {
 			_ps.setInt(3, usr.getServerAdmin() ? -1 : 0);
 			_ps.setString(4, usr.getUserID());
 			_ps.setString(5, usr.getPassword());
-			_ps.setString(6, _df.format(usr.getCreatedOn()));
+			_ps.setString(6, _df.format(LocalDateTime.ofInstant(usr.getCreatedOn(), ZoneOffset.UTC)));
 			_ps.setString(7, (usr.getLastOnline() == null) ? null : _df.format(LocalDateTime.ofInstant(usr.getLastOnline(), ZoneOffset.UTC)));
 
 			// Write one entry per server
