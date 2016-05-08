@@ -123,7 +123,7 @@ public class SetACARSData extends DAO {
 	public void writePositions(int flightID, Collection<ACARSRouteEntry> entries) throws DAOException {
 		try {
 			prepareStatementWithoutLimits("REPLACE INTO acars.POSITIONS (FLIGHT_ID, REPORT_TIME, LAT, LNG, B_ALT, R_ALT, HEADING, ASPEED, GSPEED, VSPEED, N1, N2, MACH, FUEL, PHASE, SIM_RATE, FLAGS, FLAPS, PITCH, BANK, "
-				+ "FUELFLOW, WIND_HDG, WIND_SPEED, AOA, GFORCE, FRAMERATE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+				+ "FUELFLOW, WIND_HDG, WIND_SPEED, TEMP, PRESSURE, VIZ, AOA, GFORCE, FRAMERATE, SIM_TIME) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 			// Loop through the positions
 			_ps.setInt(1, flightID);
@@ -151,13 +151,16 @@ public class SetACARSData extends DAO {
 				_ps.setInt(21, re.getFuelFlow());
 				_ps.setInt(22, re.getWindHeading());
 				_ps.setInt(23, re.getWindSpeed());
-				_ps.setDouble(24, re.getAOA());
-				_ps.setDouble(25, re.getG());
-				_ps.setInt(26, re.getFrameRate());
+				_ps.setInt(24, re.getTemperature());
+				_ps.setInt(25, re.getPressure());
+				_ps.setDouble(26, re.getVisibility());
+				_ps.setDouble(27, re.getAOA());
+				_ps.setDouble(28, re.getG());
+				_ps.setInt(29, re.getFrameRate());
+				_ps.setTimestamp(30, createTimestamp(re.getSimUTC()));
 				_ps.addBatch();
 			}
 
-			// Write the batch
 			_ps.executeBatch();
 			_ps.close();
 		} catch (SQLException se) {
@@ -221,8 +224,7 @@ public class SetACARSData extends DAO {
 			executeUpdate(1);
 
 			// Write the route data
-			prepareStatementWithoutLimits("REPLACE INTO acars.FLIGHT_SIDSTAR_WP (ID, TYPE, SEQ, CODE, WPTYPE, "
-				+ "LATITUDE, LONGITUDE, REGION) VALUES (?, ? ,?, ?, ?, ?, ?, ?)");
+			prepareStatementWithoutLimits("REPLACE INTO acars.FLIGHT_SIDSTAR_WP (ID, TYPE, SEQ, CODE, WPTYPE, LATITUDE, LONGITUDE, REGION) VALUES (?, ? ,?, ?, ?, ?, ?, ?)");
 			_ps.setInt(1, id);
 			_ps.setInt(2, tr.getType().ordinal());
 			LinkedList<NavigationDataBean> wps = tr.getWaypoints();
@@ -297,8 +299,7 @@ public class SetACARSData extends DAO {
 			executeUpdate(0);
 			
 			// Restore the default livery
-			prepareStatementWithoutLimits("UPDATE acars.LIVERIES SET ISDEFAULT=? WHERE (AIRLINE=?) "
-					+ "ORDER BY ISDEFAULT DESC, LIVERY LIMIT 1");
+			prepareStatementWithoutLimits("UPDATE acars.LIVERIES SET ISDEFAULT=? WHERE (AIRLINE=?) ORDER BY ISDEFAULT DESC, LIVERY LIMIT 1");
 			_ps.setBoolean(1, true);
 			_ps.setString(2, code);
 			executeUpdate(0);
