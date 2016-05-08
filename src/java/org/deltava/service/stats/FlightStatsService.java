@@ -67,14 +67,18 @@ public class FlightStatsService extends WebService {
 			if (loc instanceof RouteEntry) {
 				RouteEntry re = (RouteEntry) loc;
 				JSONArray je = new JSONArray();
-				je.put(re.getDate().toEpochMilli());
-				je.put(re.getGroundSpeed());
-				je.put(re.getAltitude());
 				if (re instanceof ACARSRouteEntry) {
 					ACARSRouteEntry ae = (ACARSRouteEntry) re;
+					je.put(ae.getSimUTC().toEpochMilli());
+					je.put(re.getGroundSpeed());
+					je.put(re.getAltitude());	
 					je.put(Math.max(0, ae.getAltitude() - ae.getRadarAltitude()));
+				} else {
+					je.put(re.getDate().toEpochMilli());
+					je.put(re.getGroundSpeed());
+					je.put(re.getAltitude());	
 				}
-					
+				
 				jo.append("data", je);
 				maxSpeed = Math.max(maxSpeed, re.getGroundSpeed());
 				maxAlt = Math.max(maxAlt, re.getAltitude());
