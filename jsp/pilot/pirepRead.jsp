@@ -445,7 +445,7 @@ xreq.onreadystatechange = function() {
     var va1 = {maxValue:statsData.maxSpeed,gridlines:{count:5},title:'Speed',textStyle:lgStyle};
 	var s = [{},{targetAxisIndex:1},{targetAxisIndex:1,type:'area',areaOpacity:0.7}];
     var chart = new google.visualization.ComboChart(document.getElementById('flightChart'));
-	chart.draw(data,{series:s,vAxes:[va1,va0],hAxis:ha,fontName:'Tahoma',fontSize:10,colors:[pr,sc,'#b8b8d8']});
+	chart.draw(data,{series:s,vAxes:[va1,va0],hAxis:ha,fontName:'Verdana',fontSize:10,colors:[pr,sc,'#b8b8d8']});
 <c:if test="${access.canApprove}">golgotha.util.toggleExpand(document.getElementById('chartToggle'), 'flightDataChart');</c:if>	
 	return true;
 };
