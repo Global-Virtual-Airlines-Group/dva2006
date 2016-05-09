@@ -6,7 +6,7 @@ import java.util.*;
 import org.deltava.beans.Helper;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.RoutePair;
-
+import org.deltava.util.CollectionUtils;
 import org.deltava.util.StringUtils;
 
 /**
@@ -32,9 +32,12 @@ public class RouteBuilder {
 	 */
 	public RouteBuilder(RoutePair f, String route) {
 		super();
-		_wps.addAll(StringUtils.nullTrim(StringUtils.split(route, " ")));
-		_wps.remove(f.getAirportD().getICAO());
-		_wps.remove(f.getAirportA().getICAO());
+		List<String> wps = StringUtils.nullTrim(StringUtils.split(route, " "));
+		if (!CollectionUtils.isEmpty(wps)) {
+			_wps.addAll(wps);
+			_wps.remove(f.getAirportD().getICAO());
+			_wps.remove(f.getAirportA().getICAO());
+		}
 		
 		if ((_wps.size() > 1) && TerminalRoute.isNameValid(_wps.getFirst())) {
 			_sid = _wps.getFirst();
