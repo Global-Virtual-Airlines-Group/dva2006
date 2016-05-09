@@ -2,6 +2,7 @@
 package org.deltava.tasks;
 
 import java.util.*;
+import java.time.*;
 import java.time.format.*;
 import java.sql.Connection;
 
@@ -26,7 +27,7 @@ import org.deltava.util.system.SystemData;
 
 public class InactivityUpdateTask extends Task {
 
-	private final DateTimeFormatter _df = new DateTimeFormatterBuilder().appendPattern("MMMM dd yyyy").toFormatter();
+	private final DateTimeFormatter _df = DateTimeFormatter.ofPattern("MMMM dd yyyy");
 
 	/**
 	 * Initializes the Schedued Task.
@@ -122,7 +123,7 @@ public class InactivityUpdateTask extends Task {
 					mctxt.setTemplate(imt);
 					mctxt.addData("user", ctx.getUser());
 					mctxt.addData("pilot", p);
-					mctxt.addData("lastLogin", (p.getLastLogin() == null) ? "NEVER" : _df.format(p.getLastLogin()));
+					mctxt.addData("lastLogin", (p.getLastLogin() == null) ? "NEVER" : _df.format(ZonedDateTime.ofInstant(p.getLastLogin(), p.getTZ().getZone())));
 					
 					// Start a transaction
 					ctx.startTX();
@@ -195,7 +196,7 @@ public class InactivityUpdateTask extends Task {
 					mctxt.setTemplate(nmt);
 					mctxt.addData("user", ctx.getUser());
 					mctxt.addData("pilot", p);
-					mctxt.addData("lastLogin", (p.getLastLogin() == null) ? "NEVER" : _df.format(p.getLastLogin()));
+					mctxt.addData("lastLogin", (p.getLastLogin() == null) ? "NEVER" : _df.format(ZonedDateTime.ofInstant(p.getLastLogin(), p.getTZ().getZone())));
 
 					// Start the transaction
 					ctx.startTX();
