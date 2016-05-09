@@ -44,7 +44,7 @@
 </tr>
 <tr>
  <td class="label">Equipment Type</td>
- <td class="data">${info.equipmentType} <span class="sec">(using ${info.simulator.name}<c:if test="${info.simMajor > 1}">${info.simMajor}.${info.simMinor}</c:if>)</span></td>
+ <td class="data">${info.equipmentType} <span class="sec">(using ${info.simulator.name}<c:if test="${info.simMajor > 1}"> <content:simVersion sim="${info.simulator}" major ="${info.simMajor}" minor="${info.simMinor}" /></c:if>)</span></td>
  <td class="label">Flight Code</td>
  <td class="data pri bld">${info.flightCode}</td>
 </tr>
