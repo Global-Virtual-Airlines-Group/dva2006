@@ -162,7 +162,7 @@ golgotha.local.showRunwayChoices = function() {
 <c:if test="${!fn:isDraft(pirep)}">
 <tr>
  <td class="label">Simulator</td>
- <td class="data sec bld">${pirep.simulator.name}<c:if test="${flightInfo.simMajor > 1}"> ${flightInfo.simMajor}.${flightInfo.simMinor}</c:if></td>
+ <td class="data sec bld">${pirep.simulator.name}<c:if test="${flightInfo.simMajor > 1}"> <content:simVersion sim="${pirep.simulator}" major ="${flightInfo.simMajor}" minor="${flightInfo.simMinor}" /></c:if></td>
 </tr>
 </c:if>
 <c:if test="${access.canDispose && fn:isOnline(pirep)}">
