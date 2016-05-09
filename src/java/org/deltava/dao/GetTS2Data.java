@@ -40,9 +40,9 @@ public class GetTS2Data extends DAO {
 			if (dt == null) return null;
 			DateTimeFormatter df = DateTimeFormatter.ofPattern("ddMMyyyyHHmmss");
 			Instant i = LocalDateTime.parse(dt.substring(0, 14), df).toInstant(ZoneOffset.UTC);
-			return i.plusSeconds(Integer.parseInt(dt.substring(14)));
+			return i.plusMillis(Long.parseLong(dt.substring(15)));
 		} catch (Exception pe) {
-			log.warn("Error parsing date " + dt);
+			log.warn("Error parsing date " + dt + " - " + pe.getMessage());
 			return Instant.now();
 		}
 	}
