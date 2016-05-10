@@ -91,8 +91,8 @@
  <content:subitem><el:cmd url="dspcalendar">Dispatch Schedule</el:cmd></content:subitem>
 <content:filter roles="Pilot">
  <content:subitem><el:cmd url="dsprsearch">Dispatch Route Search</el:cmd></content:subitem>
- <content:subitem><el:cmd url="trackmap">ACARS Track Map</el:cmd></content:subitem>
-</content:filter>
+</content:filter> 
+<content:subitem><el:cmd url="trackmap">ACARS Track Map</el:cmd></content:subitem>
 <content:filter roles="Route">
  <content:subitem><el:cmd url="dsprouteplot">Dispatch Plotter</el:cmd></content:subitem>
  <content:subitem><el:cmd url="poproutes">Popular Routes</el:cmd></content:subitem>
