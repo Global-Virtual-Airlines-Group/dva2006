@@ -90,27 +90,6 @@ public final class StringUtils {
 	}
 	
 	/**
-	 * Escapes forward slashes and single quotes for use when writing HTML using JavaScript.
-	 * @param rawString the string to escape
-	 * @return an escaped string
-	 * @throws NullPointerException if rawString is null
-	 */
-	public static String escapeSlashes(String rawString) {
-		StringBuilder buf = new StringBuilder(rawString);
-		for (int x = 0; x < buf.length(); x++) {
-			if (buf.charAt(x) == '/') {
-				buf.insert(x, '\\');
-				x++;
-			} else if (buf.charAt(x) == '\'') {
-				buf.insert(x, '\\');
-				x++;
-			}
-		}
-
-		return buf.toString();
-	}
-
-	/**
 	 * Concatenates a collection of Strings into a single delimited String.
 	 * @param values the List of values
 	 * @param delim the value delimiter
@@ -191,8 +170,7 @@ public final class StringUtils {
 	 * @param dt the date to parse
 	 * @param fmt the format pattern
 	 * @return the parsed Date
-	 * @throws IllegalArgumentException if the date cannot be parsed
-	 * @see DateFormat#parse(java.lang.String)
+	 * @see LocalDateTime#parse(java.lang.CharSequence)
 	 */
 	public static Instant parseInstant(String dt, String fmt) {
 		DateTimeFormatterBuilder dfb = new DateTimeFormatterBuilder().appendPattern(fmt);
@@ -203,6 +181,13 @@ public final class StringUtils {
 		return ldt.toInstant(ZoneOffset.UTC);
 	}
 	
+	/**
+	 * Parses a date using a given format pattern.
+	 * @param dt the date to parse
+	 * @param fmt the format pattern
+	 * @return the parsed Date
+	 * @see LocalDateTime#parse(java.lang.CharSequence)
+	 */
 	public static ZonedDateTime parseLocal(String dt, String fmt, ZoneId tz) {
 		DateTimeFormatterBuilder dfb = new DateTimeFormatterBuilder().appendPattern(fmt);
 		dfb.parseDefaulting(ChronoField.HOUR_OF_DAY, 0);
@@ -313,7 +298,7 @@ public final class StringUtils {
 	 * @see GeoLocation#LONGITUDE
 	 */
 	public static String format(GeoLocation loc, boolean asHTML, int formatMask) {
-		StringBuilder buf = new StringBuilder(24);
+		StringBuilder buf = new StringBuilder(32);
 
 		// Format the latitude
 		if ((formatMask & GeoLocation.LATITUDE) != 0) {
@@ -410,20 +395,9 @@ public final class StringUtils {
 	}
 	
 	/**
-	 * Trims a String, returning null if the string is empty.
-	 * @param s the string to trim
-	 * @return null, or the trimmed string
-	 * @see String#trim()
-	 */
-	public static String nullTrim(String s) {
-		return isEmpty(s) ? null : s.trim();
-	}
-
-	/**
 	 * Trims a Collection of Strings, removing elements if the string is empty.
 	 * @param s the Collection of Strings to trim
 	 * @return a List of Strings
-	 * @see StringUtils#nullTrim(String)
 	 */
 	public static List<String> nullTrim(Collection<String> s) {
 		if (s == null)
@@ -431,7 +405,7 @@ public final class StringUtils {
 		
 		List<String> results = new ArrayList<String>();
 		for (String st : s) {
-			String s2 = nullTrim(st);
+			String s2 = isEmpty(st) ? null : st.trim();
 			if (s2 != null)
 				results.add(s2);
 		}
@@ -440,7 +414,7 @@ public final class StringUtils {
 	}
 	
 	/**
-	 * Returns the query parameters on a URL
+	 * Returns the query parameters on a URL.
 	 * @param url the URL
 	 * @return a Map of parameters and values
 	 */
