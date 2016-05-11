@@ -7,6 +7,7 @@
 	<!-- Image caches -->
 	<cache id="Signature" max="640" />
 	<cache id="Image" max="32" expires="600" />
+	<cache id="Tracks" expires="604800" remote="true" />
 
 	<!-- Water Cooler caches -->
 	<cache id="CoolerChannels" max="64" expires="1800" />

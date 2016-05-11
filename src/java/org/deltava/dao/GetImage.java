@@ -6,6 +6,8 @@ import java.time.Instant;
 
 import org.deltava.util.cache.*;
 
+import org.gvagroup.tile.TileAddress;
+
 /**
  * A Data Access Object to retrieve image data from the database.
  * @author Luke
@@ -17,6 +19,7 @@ public class GetImage extends DAO {
 	
 	private static final Cache<CacheableBlob> _imgCache = CacheManager.get(CacheableBlob.class, "Image");
 	private static final Cache<CacheableLong> _sigCache = CacheManager.get(CacheableLong.class,  "Signature");
+	private static final Cache<CacheableBlob> _trackCache = CacheManager.get(CacheableBlob.class, "Tracks");
 
     /**
      * Initializes the DAO from a JDBC connection.
@@ -161,18 +164,21 @@ public class GetImage extends DAO {
     
     /**
      * Returns an ACARS track tile.
-     * @param x the X-coordnate
-     * @param y the Y-coordinate
-     * @param z the zoom level
+     * @param addr the TileAddress
      * @return the PNG tile data, or null if not found
      * @throws DAOException if a JDBC error occurs
      */
-    public byte[] getTile(int x, int y, int z) throws DAOException {
+    public byte[] getTile(TileAddress addr) throws DAOException {
+    	String cacheKey = "track-" + addr.getName();
+    	CacheableBlob img = _trackCache.get(cacheKey);
+    	if (img != null)
+    		return img.getData();
+    	
     	try {
     		prepareStatementWithoutLimits("SELECT IMG FROM acars.TRACKS WHERE (X=?) AND (Y=?) AND (Z=?) LIMIT 1");
-    		_ps.setInt(1, x);
-    		_ps.setInt(2, y);
-    		_ps.setInt(3, z);
+    		_ps.setInt(1, addr.getX());
+    		_ps.setInt(2, addr.getY());
+    		_ps.setInt(3, addr.getLevel());
     		
     		byte[] results = null;
     		try (ResultSet rs = _ps.executeQuery()) {
@@ -181,6 +187,9 @@ public class GetImage extends DAO {
     		}
 
     		_ps.close();
+    		
+    		// Put in cache
+    		_trackCache.add(new CacheableBlob(cacheKey, results));
     		return results;
     	} catch (SQLException se) {
     		throw new DAOException(se);
