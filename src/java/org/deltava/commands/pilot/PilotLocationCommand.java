@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to set a user's geolocation.
  * @author Luke
- * @version 5.1
+ * @version 7.0
  * @since 1.0
  */
 
@@ -55,13 +55,13 @@ public class PilotLocationCommand extends AbstractCommand {
 			if ((gp == null) && (addrInfo != null)) {
 				ctx.setAttribute("mapCenter", addrInfo, REQUEST);
 				ctx.setAttribute("location", new PilotLocation(p, addrInfo), REQUEST);
-			} else if (gp == null)
-				ctx.setAttribute("mapCenter", DEFAULT, REQUEST);
-			else {
+			} else if (gp == null) {
+				GetIPLocation ipdao = new GetIPLocation(con);
+				GeoLocation loc = ipdao.get(ctx.getRequest().getRemoteAddr());
+				ctx.setAttribute("mapCenter", (loc == null) ? DEFAULT : loc, REQUEST);
+			} else {
 				ctx.setAttribute("location", new PilotLocation(p, gp), REQUEST);
 				ctx.setAttribute("mapCenter", gp, REQUEST);
-				if (gp instanceof MapEntry)
-					ctx.setAttribute("locationText", StringUtils.escapeSlashes(((MapEntry) gp).getInfoBox()), REQUEST);
 			}
 
 			// If we have a lat/lon pair, then update the location
