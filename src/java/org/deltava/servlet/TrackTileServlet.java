@@ -32,7 +32,7 @@ public class TrackTileServlet extends TileServlet {
 	 */
 	@Override
 	public String getServletInfo() {
-		return "ACARS Track Image Servlet " + VersionInfo.TXT_COPYRIGHT;
+		return "ACARS Track Servlet " + VersionInfo.TXT_COPYRIGHT;
 	}
 	
 	/**
@@ -55,7 +55,7 @@ public class TrackTileServlet extends TileServlet {
 			try {
 				c = jdbcPool.getConnection();
 				GetImage dao = new GetImage(c);
-				data = dao.getTile(addr.getX(), addr.getY(), addr.getLevel());
+				data = dao.getTile(addr);
 				if (data == null)
 					data = EMPTY;
 			} catch (ConnectionPoolException cpe) {
