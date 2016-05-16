@@ -24,6 +24,7 @@
 <content:googleAnalytics eventSupport="true" />
 <content:sysdata var="minDays" name="users.pirep.minDays" />
 <fmt:aptype var="useICAO" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <script type="text/javascript">
 golgotha.local.validate = function(f)
 {
@@ -90,6 +91,7 @@ if (f.airline.selectedIndex != 0) {
 	cfg.add = golgotha.form.getCombo(f.airportD); 
 	f.airportD.loadAirports(cfg);
 	cfg = golgotha.airportLoad.config.clone();
+	cfg.dst = true;
 	cfg.add = golgotha.form.getCombo(f.airportA);
 	f.airportA.loadAirports(cfg);
 } else
