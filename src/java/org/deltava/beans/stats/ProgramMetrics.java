@@ -43,8 +43,7 @@ public class ProgramMetrics implements Cacheable, Comparable<ProgramMetrics> {
 	 * @param pilots the Pilots in the equipment program
 	 */
 	public void addPilots(Collection<Pilot> pilots) {
-		for (Pilot p : pilots) 
-			addPilot(p);
+		pilots.forEach(p-> addPilot(p));
 	}
 
 	/**
@@ -60,7 +59,7 @@ public class ProgramMetrics implements Cacheable, Comparable<ProgramMetrics> {
 		}
 	}
 	
-	/**
+	/*
 	 * Helper method to increment rank count.
 	 */
 	private void addRank(Rank rank) {
@@ -76,7 +75,7 @@ public class ProgramMetrics implements Cacheable, Comparable<ProgramMetrics> {
 	 * Helper method to increment hire date count.
 	 */
 	private void addHireDate(Instant dt) {
-		Instant i = ZonedDateTime.ofInstant(dt, ZoneOffset.UTC).truncatedTo(ChronoUnit.MONTHS).toInstant();
+		Instant i = ZonedDateTime.ofInstant(dt, ZoneOffset.UTC).withDayOfMonth(1).toInstant().truncatedTo(ChronoUnit.DAYS);
 		Integer cnt = _hireCounts.get(i);
 		if (cnt != null) {
 			_hireCounts.put(i, Integer.valueOf(cnt.intValue() + 1));
