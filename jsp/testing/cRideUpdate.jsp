@@ -9,6 +9,7 @@
 <title><content:airline /> Check Ride</title>
 <content:css name="main" />
 <content:pics />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -23,8 +24,7 @@
 <!-- Check Ride Scored -->
 <div class="updateHdr">Check Ride Scored</div>
 <br />
-This ${checkRide.equipmentType} for ${pilot.name} has been successfully scored. An e-mail
-message has been sent to ${pilot.rank.name} ${pilot.lastName} notifying him or her of the scoring
+This ${checkRide.equipmentType} for ${pilot.name} has been successfully scored. An e-mail message has been sent to ${pilot.rank.name} ${pilot.lastName} notifying him or her of the scoring
 of this Check Ride.<br />
 <br />
 To view the Pilot Profile, <el:cmd url="profile" link="${pilot}">Click here</el:cmd>.<br />
@@ -35,24 +35,24 @@ To return to the list of pending equipment program transfer requests, <el:cmd ur
 <!-- Check Ride Assigned -->
 <div class="updateHdr">Check Ride Assigned</div>
 <br />
-This <content:airline /> ${checkRide.name} Check Ride has been assigned to ${pilot.name}, 
-and an e-mail message has been sent to the Pilot.<br />
+This <content:airline /> ${checkRide.name} Check Ride has been assigned to ${pilot.name}, and an e-mail message has been sent to the Pilot.<br />
+<c:if test="${!empty script}">
+<br />
+The <span class="bld">${script.program}</span> program Check Ride script for the <span class="pri bld">${script.equipmentType}</span> has been used as the template for this Check Ride.<br /></c:if>
 <br />
 To return to the list of pending equipment program transfer requests, <el:cmd url="txrequests" className="sec bld">Click Here</el:cmd>.<br />
 </c:when>
 <c:when test="${isRideAlreadyAssigned && (empty tx)}">
 <div class="updateHdr">Check Ride Pending</div>
 <br />
-A ${checkRide.equipmentType} Check Ride is currently pending for ${pilot.name}. No new Check Rides can 
-be assigned while one is currently pending.<br />
+A ${checkRide.equipmentType} Check Ride is currently pending for ${pilot.name}. No new Check Rides can be assigned while one is currently pending.<br />
 <br />
 To return to the list of pending equipment program transfer requests, <el:cmd url="txrequests" className="sec bld">Click Here</el:cmd>.<br />
 </c:when>
 <c:when test="${!empty tx}">
 <div class="updateHdr">Transfer Request Pending</div>
 <br />
-An Equipment Program Transfer Request to the ${tx.equipmentType} is currently pending for ${pilot.name}. No new
-Check Rides be assigned while a Transfer Request is pending.<br />
+An Equipment Program Transfer Request to the ${tx.equipmentType} is currently pending for ${pilot.name}. No new Check Rides be assigned while a Transfer Request is pending.<br />
 </c:when>
 </c:choose>
 <br />

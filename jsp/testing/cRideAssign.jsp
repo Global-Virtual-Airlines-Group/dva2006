@@ -9,14 +9,30 @@
 <content:css name="main" />
 <content:css name="form" />
 <content:pics />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <script type="text/javascript">
+golgotha.local.eqAircraft = ${eqAircraft};
+golgotha.local.updateEQ = function(combo)
+{
+var f = document.forms[0];
+var eqChoices = golgotha.local.eqAircraft[golgotha.form.getCombo(combo)];
+if (eqChoices != null) {
+	if (!Array.isArray(eqChoices)) eqChoices = [eqChoices]; 
+	f.crType.options.length = eqChoices.length + 1;
+	for (var x = 0; x < eqChoices.length; x++)
+		f.crType.options[x+1] = new Option(eqChoices[x]);
+}
+	
+return true;
+};
+
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
 golgotha.form.validate({f:f.crType, t:'Aircraft Type'});
 golgotha.form.validate({f:f.eqType, t:'Equimpment Program'});
-var hasScript = ((form.doScript) && (form.doScript.value == 'true'));
+var hasScript = ((f.doScript) && (f.doScript.value == 'true'));
 if (!hasScript)
 	golgotha.form.validate({f:f.comments, l:6, t:'Check Ride Comments'});
 
@@ -26,7 +42,7 @@ return true;
 </script>
 </head>
 <content:copyright visible="false" />
-<body>
+<body onload="void golgotha.local.updateEQ(document.forms[0].eqType)">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -40,7 +56,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Equipment Program</td>
- <td class="data"><el:combo name="eqType" idx="*" size="1" firstEntry="-" options="${eqTypes}" value="${param.eqType}" /></td>
+ <td class="data"><el:combo name="eqType" idx="*" size="1" firstEntry="-" options="${eqTypes}" value="${param.eqType}" onChange="void golgotha.local.updateEQ(this)" /></td>
 </tr>
 <tr>
  <td class="label">Aircraft Type</td>
