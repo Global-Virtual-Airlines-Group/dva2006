@@ -18,8 +18,6 @@ import org.deltava.mail.*;
 import org.deltava.security.command.CourseAccessControl;
 
 import org.deltava.util.StringUtils;
-import org.deltava.util.bbcode.BBCode;
-import org.deltava.util.bbcode.BBCodeHandler;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -159,22 +157,7 @@ public class CourseCheckRideCommand extends AbstractCommand {
 			mctxt.addData("pilot", p);
 			mctxt.addData("course", c);
 			mctxt.addData("checkRide", cr);
-
-			// Convert BBCode to HTML for email message
-			if (sc != null) {
-				String desc = sc.getDescription();	
-				boolean hasBBCode = ((desc.indexOf('[') > -1) && (desc.indexOf(']') > -1));
-				if (hasBBCode) {
-					mctxt.getTemplate().setIsHTML(true);
-					BBCodeHandler bbHandler = new BBCodeHandler();
-					bbHandler.init();
-					for (BBCode bb : bbHandler.getAll())
-						desc = desc.replaceAll(bb.getRegex(), bb.getReplace());
-				}
-
-				mctxt.addData("crScript", desc);
-			} else
-				mctxt.addData("crScript", cr.getComments());
+			mctxt.addData("crScript", (sc != null) ? sc.getDescription() : cr.getComments());
 			
 			// Write the checkride to the database
 			SetExam exwdao = new SetExam(con);
