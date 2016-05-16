@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.util.*;
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
  * A Web Service to process Airport List AJAX requests.
  * @author Luke
  * @author Rahul
- * @version 6.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -71,8 +71,9 @@ public class AirportListService extends WebService {
 				Airline a = SystemData.getAirline(al);
 				// Either search the schedule or return the SystemData list
 				if (useSched) {
+					boolean isDest = Boolean.valueOf(ctx.getParameter("dst")).booleanValue();
 					GetScheduleAirport dao = new GetScheduleAirport(con);
-					filter.add(new IATAFilter(dao.getOriginAirports(a)));
+					filter.add(new IATAFilter(isDest ? dao.getDestinationAirports(a) : dao.getOriginAirports(a)));
 				} else {
 					if ("charts".equalsIgnoreCase(al)) {
 						GetChart dao = new GetChart(con);
