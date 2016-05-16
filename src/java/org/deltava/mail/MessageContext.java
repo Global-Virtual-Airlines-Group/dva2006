@@ -12,6 +12,7 @@ import org.deltava.beans.schedule.Airport;
 import org.deltava.beans.system.*;
 
 import org.deltava.util.StringUtils;
+import org.deltava.util.bbcode.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -26,6 +27,8 @@ public class MessageContext {
     private static final Logger log = Logger.getLogger(MessageContext.class);
 
     private final AirlineInformation _aInfo;
+    
+    private final BBCodeHandler _bbHandler = new BBCodeHandler();
     
     private MessageTemplate _mt;
     private String _subject;
@@ -50,8 +53,7 @@ public class MessageContext {
     	// Initialize predefined variables
     	_aInfo = SystemData.getApp(aCode);
     	_data.put("airline", _aInfo.getName());
-    	String proto = _aInfo.getSSL() ? "https" : "http";
-   		_data.put("url", proto + "://www." + _aInfo.getDomain() + "/");
+   		_data.put("url", (_aInfo.getSSL() ? "https" : "http") + "://www." + _aInfo.getDomain() + "/");
     }
     
     /**
@@ -72,7 +74,8 @@ public class MessageContext {
     	_subject = subj;
     }
     
-    private String eval(StringBuilder buf) {
+    private String eval(CharSequence s) {
+    	final StringBuilder buf = new StringBuilder(s);
         int spos = buf.indexOf("${");
         while (spos != -1) {
            int epos = buf.indexOf("}", spos);
@@ -113,8 +116,33 @@ public class MessageContext {
           throw new IllegalStateException("Message Template or Body not loaded");
 
        // Load the Message template and eval
-       StringBuilder buf = new StringBuilder((_mt != null) ? _mt.getBody() : _body);
-       return eval(buf);
+       String body = eval((_mt != null) ? _mt.getBody() : _body);
+       
+       // If we have bbCode, evaluate it
+       boolean hasBBCode = (_mt != null) && (body.indexOf('[') > -1) && (body.indexOf(']', body.indexOf('[')) > -1);
+       boolean isHTML = (_mt != null) && _mt.getIsHTML();
+       if (hasBBCode) {
+    	   _bbHandler.init();
+    	   for (BBCode bb : _bbHandler.getAll())
+				body = body.replaceAll(bb.getRegex(), bb.getReplace());    	   
+       }
+       
+       // Convert line breaks to HTML
+       if (isHTML) {
+    	   StringBuilder buf = new StringBuilder();
+    	   StringTokenizer tkns = new StringTokenizer(body, " \n\r", true);
+    	   while (tkns.hasMoreTokens()) {
+    		   String token = tkns.nextToken();
+				if (token.equals("\n"))
+					buf.append("<br />\n");
+				else
+					buf.append(token);
+    	   }
+    	   
+    	   body = buf.toString();
+       }
+       
+       return body;
     }
     
     /**
@@ -304,7 +332,11 @@ public class MessageContext {
         		break;
         		
         	case "Instant":
-        		ZonedDateTime ldt = ZonedDateTime.ofInstant((Instant) objValue, to.getTZ().getZone()); 
+        		objValue = ZonedDateTime.ofInstant((Instant) objValue, to.getTZ().getZone());
+        		
+				//$FALL-THROUGH$
+			case "ZonedDateTime":
+        		ZonedDateTime ldt = (ZonedDateTime) objValue; 
         		StringBuilder buf = new StringBuilder();
         		switch (fmtType) {
         		case TIME:

@@ -67,6 +67,9 @@ public class BBCodeHandler extends DefaultHandler
 	private BBCode bb;
 	
 	public void init() {
+		if (!bbMap.isEmpty())
+			return;
+		
 		try (InputStream is = ConfigLoader.getStream("/etc/bb_config.xml")) {
 			SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
 			parser.parse(is, this);
@@ -83,22 +86,22 @@ public class BBCodeHandler extends DefaultHandler
 	public void startElement(String uri, String localName, String tag, Attributes attrs)
 	{
 		if (tag.equals("match")) {
-			this.sb = new StringBuilder();
-			this.bb = new BBCode();
+			sb = new StringBuilder();
+			bb = new BBCode();
 			
 			String tName = attrs.getValue("name");
 			if (tName != null)
-				this.bb.setTagName(tName);
+				bb.setTagName(tName);
 			
 			// Shall we remove the infamous quotes?
 			String removeQuotes = attrs.getValue("removeQuotes");
 			if (removeQuotes != null && removeQuotes.equals("true")) {
-				this.bb.enableRemoveQuotes();
+				bb.enableRemoveQuotes();
 			}
 			
 			String alwaysProcess = attrs.getValue("alwaysProcess");
 			if (alwaysProcess != null && "true".equals(alwaysProcess)) {
-				this.bb.enableAlwaysProcess();
+				bb.enableAlwaysProcess();
 			}
 		}
 	
@@ -108,25 +111,24 @@ public class BBCodeHandler extends DefaultHandler
 	@Override
 	public void endElement(String uri, String localName, String tag)
 	{	
-		if (tag.equals("match")) {
-			bbMap.put(this.bb.getTagName(), this.bb);
+		if (tag.equals("match"))
+			bbMap.put(bb.getTagName(), bb);
+		else if (tagName.equals("replace")) {
+			bb.setReplace(sb.toString().trim());
+			sb.delete(0, sb.length());
 		}
-		else if (this.tagName.equals("replace")) {
-			this.bb.setReplace(this.sb.toString().trim());
-			this.sb.delete(0, this.sb.length());
-		}
-		else if (this.tagName.equals("regex")) {
-			this.bb.setRegex(this.sb.toString().trim());
-			this.sb.delete(0, this.sb.length());
+		else if (tagName.equals("regex")) {
+			bb.setRegex(sb.toString().trim());
+			sb.delete(0, sb.length());
 		}
 	
-		this.tagName = "";
+		tagName = "";
 	}
 
 	@Override
 	public void characters(char ch[], int start, int length) {
-		if (this.tagName.equals("replace") || this.tagName.equals("regex"))
-			this.sb.append(ch, start, length);
+		if (tagName.equals("replace") || tagName.equals("regex"))
+			sb.append(ch, start, length);
 	}
 
 	@Override
