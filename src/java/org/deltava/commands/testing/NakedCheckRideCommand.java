@@ -15,8 +15,8 @@ import org.deltava.mail.*;
 
 import org.deltava.security.command.PilotAccessControl;
 
-import org.deltava.util.bbcode.*;
 import org.deltava.util.system.SystemData;
+import org.json.JSONObject;
 
 /**
  * A Web Site Command to assign Check Rides not linked to a Transfer Request.
@@ -91,14 +91,15 @@ public class NakedCheckRideCommand extends AbstractCommand {
 			if (!access.getCanAssignRide())
 				throw securityException("Cannot assign Check Ride");
 
-			// Get all equipment programs
+			// Get all equipment programs and their aircraft
 			GetEquipmentType eqdao = new GetEquipmentType(con);
-			ctx.setAttribute("eqTypes", eqdao.getAll(), REQUEST);
+			Collection<EquipmentType> eqTypes = eqdao.getActive();
+			ctx.setAttribute("eqTypes", eqTypes, REQUEST);
+			JSONObject eqo = new JSONObject();
+			ctx.setAttribute("eqAircraft", eqo, REQUEST);
+			for (EquipmentType eq : eqTypes)
+				eq.getPrimaryRatings().forEach(ac -> eqo.accumulate(eq.getName(), ac));
 			
-			// Get all aircraft types
-			GetAircraft acdao = new GetAircraft(con);
-			ctx.setAttribute("actypes", acdao.getAircraftTypes(), REQUEST);
-
 			// If we are not doing a POST, then redirect
 			if (ctx.getParameter("eqType") == null) {
 				ctx.release();
@@ -138,19 +139,8 @@ public class NakedCheckRideCommand extends AbstractCommand {
 			if (useScript) {
 				GetExamProfiles epdao = new GetExamProfiles(con);
 				CheckRideScript sc = epdao.getScript(ctx.getParameter("crType"));
-				if (sc != null) {
-					String desc = sc.getDescription();
-					boolean hasBBCode = ((desc.indexOf('[') > -1) && (desc.indexOf(']') > -1));
-					if (hasBBCode) {
-						mctxt.getTemplate().setIsHTML(true);
-						BBCodeHandler bbHandler = new BBCodeHandler();
-						bbHandler.init();
-						for (BBCode bb : bbHandler.getAll())
-							desc = desc.replaceAll(bb.getRegex(), bb.getReplace());
-					}
-					
-					comments = comments + "\n\n" + desc;
-				}
+				if (sc != null)
+					comments = comments + "\n\n" + sc.getDescription();
 			}
 
 			// Create the checkride bean
@@ -164,7 +154,6 @@ public class NakedCheckRideCommand extends AbstractCommand {
 			cr.setAircraftType(acType);
 			cr.setEquipmentType(eqType.getName());
 			cr.setComments(comments);
-
 
 			// Write the checkride to the database
 			SetExam exwdao = new SetExam(con);

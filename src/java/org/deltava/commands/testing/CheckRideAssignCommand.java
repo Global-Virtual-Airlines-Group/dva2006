@@ -14,7 +14,6 @@ import org.deltava.mail.*;
 
 import org.deltava.security.command.TransferAccessControl;
 
-import org.deltava.util.bbcode.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -79,23 +78,14 @@ public class CheckRideAssignCommand extends AbstractCommand {
 			mctxt.addData("eqType", eq);
 
 			// Check if we are using the script
-			String comments = ctx.getParameter("comments"); String rawComments = comments;
+			String comments = ctx.getParameter("comments");
 			boolean useScript = Boolean.valueOf(ctx.getParameter("useScript")).booleanValue();
 			if (useScript) {
 				GetExamProfiles epdao = new GetExamProfiles(con);
 				CheckRideScript sc = epdao.getScript(ctx.getParameter("crType"));
 				if (sc != null) {
-					String desc = sc.getDescription(); rawComments = rawComments + "\n\n" + desc;
-					boolean hasBBCode = ((desc.indexOf('[') > -1) && (desc.indexOf(']') > -1));
-					if (hasBBCode) {
-						mctxt.getTemplate().setIsHTML(true);
-						BBCodeHandler bbHandler = new BBCodeHandler();
-						bbHandler.init();
-						for (BBCode bb : bbHandler.getAll())
-							desc = desc.replaceAll(bb.getRegex(), bb.getReplace());
-					}
-
-					comments = comments + "\n\n" + desc;
+					comments = comments + "\n\n" + sc.getDescription();
+					ctx.setAttribute("script", sc, REQUEST);
 				}
 			}
 
@@ -109,7 +99,7 @@ public class CheckRideAssignCommand extends AbstractCommand {
 			cr.setScorerID(ctx.getUser().getID());
 			cr.setStatus(TestStatus.NEW);
 			cr.setStage(eq.getStage());
-			cr.setComments(rawComments);
+			cr.setComments(comments);
 
 			// Use a SQL Transaction
 			ctx.startTX();
