@@ -2,8 +2,9 @@
 package org.deltava.commands.schedule;
 
 import java.util.*;
-import java.time.LocalDateTime;
+import java.time.*;
 import java.time.format.*;
+import java.time.temporal.*;
 import java.sql.Connection;
 
 import org.deltava.beans.schedule.*;
@@ -26,7 +27,7 @@ import org.deltava.util.system.SystemData;
 
 public class ScheduleEntryCommand extends AbstractFormCommand {
 	
-	private final DateTimeFormatter _tf = new DateTimeFormatterBuilder().appendPattern("HH:mm").parseLenient().toFormatter();
+	private final DateTimeFormatter _tf = new DateTimeFormatterBuilder().appendPattern("HH:mm").parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0).toFormatter();
 
 	/**
 	 * Callback method called when saving the schedule entry.
@@ -51,9 +52,16 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 
 		try {
 			Connection con = ctx.getConnection();
+			
+			// Get schedule effective date
+			GetMetadata mddao = new GetMetadata(con);
+			String aCode = SystemData.get("airline.code").toLowerCase();
+			Instant effDate = mddao.getDate(aCode + ".schedule.effDate").truncatedTo(ChronoUnit.DAYS);
+			ctx.setAttribute("effectiveDate", effDate, REQUEST);
 
 			// Get the existing entry or create a new one
 			GetSchedule dao = new GetSchedule(con);
+			dao.setEffectiveDate(effDate);
 			ScheduleEntry entry = null;
 			if (id != null) {
 				entry = dao.get(id);
@@ -81,13 +89,11 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 			entry.setHistoric(Boolean.valueOf(ctx.getParameter("isHistoric")).booleanValue());
 			entry.setAcademy(Boolean.valueOf(ctx.getParameter("isAcademy")).booleanValue());
 			
-			// Parse date/times
-			try {
-				entry.setTimeD(LocalDateTime.parse(ctx.getParameter("timeD"), _tf));
-				entry.setTimeA(LocalDateTime.parse(ctx.getParameter("timeA"), _tf));
-			} catch (IllegalArgumentException iae) {
-				throw new CommandException(iae.getMessage(), false);
-			}
+			// Parse times
+			LocalTime dt = LocalTime.parse(ctx.getParameter("timeD"), _tf);
+			LocalTime at = LocalTime.parse(ctx.getParameter("timeA"), _tf);
+			entry.setTimeD(LocalDateTime.ofInstant(effDate, ZoneOffset.UTC).plusSeconds(dt.toSecondOfDay()));
+			entry.setTimeA(LocalDateTime.ofInstant(effDate, ZoneOffset.UTC).plusSeconds(at.toSecondOfDay()));
 			
 			// If either airport is null, redirect to the edit page
 			if ((aD == null) || (aA == null)) {
@@ -151,8 +157,16 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 		// Get the Schedule entry
 		try {
 			Connection con = ctx.getConnection();
+			
+			// Get schedule effective date
+			GetMetadata mddao = new GetMetadata(con);
+			String aCode = SystemData.get("airline.code").toLowerCase();
+			Instant effDate = mddao.getDate(aCode + ".schedule.effDate");
+			ctx.setAttribute("effectiveDate", effDate, REQUEST);
+			
 			if (id != null) {
 				GetSchedule dao = new GetSchedule(con);
+				dao.setEffectiveDate(effDate);
 				ScheduleEntry entry = dao.get(id);
 				if (entry == null)
 					throw notFoundException("Invalid Schedule Entry - " + fCode);
@@ -183,7 +197,7 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 	}
 
 	/**
-	 * Callback method called when reading the profile. <i>NOT IMPLEMENTED</i>
+	 * Callback method called when reading the profile.
 	 * @param ctx the Command context
 	 */
 	@Override
