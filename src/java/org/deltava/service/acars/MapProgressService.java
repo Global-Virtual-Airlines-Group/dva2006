@@ -2,7 +2,6 @@
 package org.deltava.service.acars;
 
 import java.util.*;
-import java.io.IOException;
 import java.sql.Connection;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -12,7 +11,10 @@ import org.jdom2.*;
 import org.deltava.beans.*;
 import org.deltava.beans.acars.FlightInfo;
 import org.deltava.beans.flight.Recorder;
+
 import org.deltava.dao.*;
+import org.deltava.dao.mc.GetTrack;
+
 import org.deltava.service.*;
 import org.deltava.util.*;
 
@@ -45,6 +47,7 @@ public class MapProgressService extends WebService {
 		// Get the DAO and the route data
 		final Collection<GeoLocation> routePoints = new ArrayList<GeoLocation>();
 		final Collection<MarkerMapEntry> routeWaypoints = new ArrayList<MarkerMapEntry>();
+		final Collection<GeoLocation> tempPoints = new ArrayList<GeoLocation>();
 		try {
 			Connection con = ctx.getConnection();
 			GetACARSPositions dao = new GetACARSPositions(con);
@@ -53,6 +56,10 @@ public class MapProgressService extends WebService {
 				routePoints.addAll(dao.getXACARSEntries(id));
 			else if (info != null)
 				routePoints.addAll(dao.getRouteEntries(id, false, false));
+			
+			// Get temporary waypoints
+			GetTrack tkdao = new GetTrack();
+			tempPoints.addAll(tkdao.getTrack(id));
 
 			// Load the route and the route waypoints
 			if ((info != null) && doRoute) {
@@ -71,7 +78,7 @@ public class MapProgressService extends WebService {
 				wps.add(info.getAirportA());
 				
 				// Trim spurious entries
-				routeWaypoints.addAll(GeoUtils.stripDetours(wps, 50));
+				routeWaypoints.addAll(GeoUtils.stripDetours(wps, 150));
 			}
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
@@ -84,10 +91,17 @@ public class MapProgressService extends WebService {
 		Element re = new Element("wsdata");
 		doc.setRootElement(re);
 
-		// Write the positions
-		for (Iterator<GeoLocation> i = routePoints.iterator(); i.hasNext();) {
-			GeoLocation entry = i.next();
+		// Write the saved positions
+		for (GeoLocation entry : routePoints) {
 			Element e = new Element("pos");
+			e.setAttribute("lat", StringUtils.format(entry.getLatitude(), "##0.00000"));
+			e.setAttribute("lng", StringUtils.format(entry.getLongitude(), "##0.00000"));
+			re.addContent(e);
+		}
+		
+		// Write the temporary positions
+		for (GeoLocation entry : tempPoints) {
+			Element e = new Element("tpos");
 			e.setAttribute("lat", StringUtils.format(entry.getLatitude(), "##0.00000"));
 			e.setAttribute("lng", StringUtils.format(entry.getLongitude(), "##0.00000"));
 			re.addContent(e);
@@ -112,9 +126,10 @@ public class MapProgressService extends WebService {
 		// Dump the XML to the output stream
 		try {
 			ctx.setContentType("text/xml", "UTF-8");
+			ctx.setExpiry(5);
 			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
-		} catch (IOException ie) {
+		} catch (Exception e) {
 			throw error(SC_CONFLICT, "I/O Error", false);
 		}
 
