@@ -1,7 +1,6 @@
-golgotha.maps.acars = golgotha.maps.acars || {acPositions:[], dcPositions:[], routeData:null, routeWaypoints:null};
+golgotha.maps.acars = golgotha.maps.acars || {acPositions:[], dcPositions:[], routeData:null, routeWaypoints:null, tempData:null};
 golgotha.maps.acars.generateXMLRequest = function()
 {
-// Build the XMLHTTPRequest
 var xmlreq = new XMLHttpRequest();
 xmlreq.open('get', 'acars_map.ws?time=' + golgotha.util.getTimestamp(3000), true);
 xmlreq.onreadystatechange = function() {
@@ -150,10 +149,10 @@ xmlreq.onreadystatechange = function() {
 		isLoading.innerHTML = ' - ' + (ac.length + dc.length) + ' CONNECTIONS';
 
 	return true;
-} // function
+};
 
 return xmlreq;
-}
+};
 
 golgotha.maps.acars.clickAircraft = function(e)
 {
@@ -177,13 +176,14 @@ if (isInfo && (this.tabs)) {
 // Display flight progress / route
 if (isProgress || isRoute) {
 	map.removeMarkers(golgotha.maps.acars.routeData);
+	map.removeMarkers(golgotha.maps.acars.tempData);
 	map.removeMarkers(golgotha.maps.acars.routeWaypoints);
 	golgotha.maps.acars.showFlightProgress(this, isProgress, isRoute);
 }
 
 document.pauseRefresh = true;
 return true;
-}
+};
 
 golgotha.maps.acars.clickDispatch = function(e)
 {
@@ -215,7 +215,7 @@ if (!this.rangeCircle) {
 
 document.pauseRefresh = true;
 return true;
-}
+};
 
 golgotha.maps.acars.infoClose = function()
 {
@@ -224,10 +224,11 @@ if ((map.infoWindow.marker) && (map.infoWindow.marker.rangeCircle))
 	map.infoWindow.marker.rangeCircle.setMap(null);
 
 map.removeMarkers(golgotha.maps.acars.routeData);
+map.removeMarkers(golgotha.maps.acars.tempData);
 map.removeMarkers(golgotha.maps.acars.routeWaypoints);
 map.closeWindow();
 return true;	
-}
+};
 
 golgotha.maps.acars.showFlightProgress = function(marker, doProgress, doRoute)
 {
@@ -258,10 +259,17 @@ xreq.onreadystatechange = function() {
 		var positions = [];
 		for (var pe = pos.pop(); (pe != null); pe = pos.pop())
 			positions.push({lat:parseFloat(pe.getAttribute('lat')), lng:parseFloat(pe.getAttribute('lng'))});
+		
+		var tpos = [].slice.call(wsdata.getElementsByTagName('tpos'));
+		var tpositions = [];
+		if (positions.length > 0) tpositions.push(positions[0]);
+		for (var pe = tpos.pop(); (pe != null); pe = tpos.pop())
+			tpositions.push({lat:parseFloat(pe.getAttribute('lat')), lng:parseFloat(pe.getAttribute('lng'))});
 
-		// Draw the line
+		// Draw the lines
 		golgotha.event.beacon('ACARS', 'Flight Progress Info');
 		golgotha.maps.acars.routeData = new google.maps.Polyline({map:map, path:positions, strokeColor:'#4080af', strokeWeight:2, strokeOpacity:0.8, zIndex:(golgotha.maps.z.POLYLINE-1)});
+		golgotha.maps.acars.tempData = new google.maps.Polyline({map:map, path:tpositions, strokeColor:'#20a0bf', strokeWeight:2, strokeOpacity:0.625, zIndex:(golgotha.maps.z.POLYLINE-1)});
 	}
 
 	return true;
@@ -277,7 +285,7 @@ var bC = marker.isBusy ? '#c02020' : '#20c060';
 var fC = marker.isBusy ? '#802020' : '#208040';
 var fOp = marker.isBusy ? 0.1 : 0.2;
 return new google.maps.Circle({center:marker.getPosition(), radius:golgotha.maps.miles2Meter(range), strokeColor:bC, strokeWeight:1, strokeOpacity:0.65, fillColor:fC, fillOpacity:fOp, zIndex:golgotha.maps.z.POLYGON});
-}
+};
 
 golgotha.maps.acars.zoomTo = function(combo)
 {
@@ -292,4 +300,4 @@ if (f.zoomToPilot.checked) map.setZoom(9);
 map.panTo(opt.mrk.getPosition());
 google.maps.event.trigger(opt.mrk, 'click');
 return true;
-}
+};
