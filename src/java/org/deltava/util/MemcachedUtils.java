@@ -1,4 +1,4 @@
-// Copyright 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.beans.Helper;
 /**
  * A utility class for memcached operations.
  * @author Luke
- * @version 6.1
+ * @version 7.0
  * @since 6.1
  */
 
@@ -87,11 +87,29 @@ public class MemcachedUtils {
 	 * @throws Exception if something bad happened, or a timeout
 	 */
 	public static Object get(String key, int ms) throws Exception {
+		return get(key, ms, true);
+	}
+	
+	/**
+	 * Fetches an object from memcached.
+	 * @param key the key
+	 * @param ms the timeout in milliseconds
+	 * @param failOnTimeout TRUE if an timeout should throw an exception, otherwise FALSE
+	 * @return the value
+	 * @throws Exception if something bad happened, or a timeout
+	 */
+	public static Object get(String key, int ms, boolean failOnTimeout) throws Exception {
 		Future<Object> f = null;
 		try {
 			checkConnection();
 			f = _client.asyncGet(key);
 			return f.get(ms, TimeUnit.MILLISECONDS);
+		} catch (TimeoutException te) {
+			f.cancel(true);
+			if (failOnTimeout)
+				return null;
+			
+			throw te;
 		} catch (Exception e) {
 			if (f != null) f.cancel(true);
 			throw e;

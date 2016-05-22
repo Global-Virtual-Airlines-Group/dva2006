@@ -27,7 +27,7 @@ public class GetTrack extends MemcachedDAO {
 		
 		try {
 			@SuppressWarnings("unchecked")
-			Collection<RouteEntry> results = (Collection<RouteEntry>) MemcachedUtils.get(createKey(String.valueOf(flightID)), 150);
+			Collection<RouteEntry> results = (Collection<RouteEntry>) MemcachedUtils.get(createKey(String.valueOf(flightID)), 150, false);
 			return (results == null) ? new HashSet<RouteEntry>() : results;
 		} catch (Exception e) {
 			throw new DAOException(e);

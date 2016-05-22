@@ -45,7 +45,7 @@ public class GetTiles extends MemcachedDAO {
 		setBucket("mapTiles", type);
 		try {
 			@SuppressWarnings("unchecked")
-			Collection<Instant> dates = (Collection<Instant>) MemcachedUtils.get(createKey("dates"), 100);
+			Collection<Instant> dates = (Collection<Instant>) MemcachedUtils.get(createKey("dates"), 125, false);
 			if (dates == null)
 				return new HashSet<Instant>();
 			
@@ -54,7 +54,7 @@ public class GetTiles extends MemcachedDAO {
 				Instant dt = i.next();
 				setBucket("mapTiles", type, Long.valueOf(dt.toEpochMilli()));
 				try {
-					Object o = MemcachedUtils.get(createKey("$ME"), 100);
+					Object o = MemcachedUtils.get(createKey("$ME"), 100, false);
 					if (o == null) i.remove();
 				} catch (Exception e) {
 					i.remove();
