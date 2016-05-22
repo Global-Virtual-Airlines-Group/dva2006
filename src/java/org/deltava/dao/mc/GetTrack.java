@@ -3,7 +3,7 @@ package org.deltava.dao.mc;
 
 import java.util.*;
 
-import org.deltava.beans.acars.RouteEntry;
+import org.deltava.beans.GeoLocation;
 
 import org.deltava.dao.DAOException;
 import org.deltava.util.MemcachedUtils;
@@ -22,13 +22,13 @@ public class GetTrack extends MemcachedDAO {
 	 * @param flightID the Flight ID
 	 * @return a Collection of RouteEntry beans
 	 */
-	public Collection<RouteEntry> getTrack(int flightID) throws DAOException {
+	public Collection<GeoLocation> getTrack(int flightID) throws DAOException {
 		setBucket("acarsTrack");
 		
 		try {
 			@SuppressWarnings("unchecked")
-			Collection<RouteEntry> results = (Collection<RouteEntry>) MemcachedUtils.get(createKey(String.valueOf(flightID)), 150, false);
-			return (results == null) ? new HashSet<RouteEntry>() : results;
+			Collection<GeoLocation> results = (Collection<GeoLocation>) MemcachedUtils.get(createKey(String.valueOf(flightID)), 150, false);
+			return (results == null) ? new HashSet<GeoLocation>() : results;
 		} catch (Exception e) {
 			throw new DAOException(e);
 		}
