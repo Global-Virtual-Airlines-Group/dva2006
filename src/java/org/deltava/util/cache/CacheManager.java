@@ -156,6 +156,7 @@ public class CacheManager {
 		if (cache != null) return cache;
 
 		// Register a null cache
+		log.warn("Registering unknown null cache " + id);
 		cache = new NullCache<T>();
 		try {
 			_w.lock();
