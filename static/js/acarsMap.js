@@ -262,7 +262,6 @@ xreq.onreadystatechange = function() {
 		
 		var tpos = [].slice.call(wsdata.getElementsByTagName('tpos'));
 		var tpositions = [];
-		if (positions.length > 0) tpositions.push(positions[0]);
 		for (var pe = tpos.pop(); (pe != null); pe = tpos.pop())
 			tpositions.push({lat:parseFloat(pe.getAttribute('lat')), lng:parseFloat(pe.getAttribute('lng'))});
 
