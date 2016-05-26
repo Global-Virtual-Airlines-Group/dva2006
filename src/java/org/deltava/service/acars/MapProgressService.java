@@ -45,9 +45,9 @@ public class MapProgressService extends WebService {
 		boolean doRoute = Boolean.valueOf(ctx.getParameter("route")).booleanValue();
 
 		// Get the DAO and the route data
-		final Collection<GeoLocation> routePoints = new ArrayList<GeoLocation>();
+		final List<GeoLocation> routePoints = new ArrayList<GeoLocation>();
 		final Collection<MarkerMapEntry> routeWaypoints = new ArrayList<MarkerMapEntry>();
-		final Collection<GeoLocation> tempPoints = new ArrayList<GeoLocation>();
+		final List<GeoLocation> tempPoints = new ArrayList<GeoLocation>();
 		try {
 			Connection con = ctx.getConnection();
 			GetACARSPositions dao = new GetACARSPositions(con);
@@ -60,6 +60,8 @@ public class MapProgressService extends WebService {
 			// Get temporary waypoints
 			GetTrack tkdao = new GetTrack();
 			tempPoints.addAll(tkdao.getTrack(id));
+			if (!routePoints.isEmpty())
+				tempPoints.add(0, routePoints.get(routePoints.size() - 1));
 
 			// Load the route and the route waypoints
 			if ((info != null) && doRoute) {
