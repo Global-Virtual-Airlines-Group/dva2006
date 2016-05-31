@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
 
 public class ScheduleEntryCommand extends AbstractFormCommand {
 	
-	private final DateTimeFormatter _tf = new DateTimeFormatterBuilder().appendPattern("HH:mm").parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0).toFormatter();
+	private final DateTimeFormatter _tf = new DateTimeFormatterBuilder().appendPattern("H:mm").parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0).toFormatter();
 
 	/**
 	 * Callback method called when saving the schedule entry.

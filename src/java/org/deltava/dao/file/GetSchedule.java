@@ -5,6 +5,7 @@ import java.io.*;
 import java.util.*;
 import java.time.LocalDateTime;
 import java.time.format.*;
+import java.time.temporal.ChronoField;
 
 import org.deltava.beans.schedule.*;
 
@@ -21,7 +22,7 @@ import org.deltava.util.system.SystemData;
 
 public class GetSchedule extends ScheduleLoadDAO {
 	
-	private final DateTimeFormatter _df = new DateTimeFormatterBuilder().appendPattern("HH:mm").parseLenient().toFormatter();
+	private final DateTimeFormatter _tf = new DateTimeFormatterBuilder().appendPattern("H:mm").parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0).toFormatter();
 	
 	/**
 	 * Initializes the Data Access Object.
@@ -74,9 +75,9 @@ public class GetSchedule extends ScheduleLoadDAO {
 
 						// Get the airports and times
 						entry.setAirportD(getAirport(tkns.nextToken(), br.getLineNumber()));
-						entry.setTimeD(LocalDateTime.parse(tkns.nextToken(), _df));
+						entry.setTimeD(LocalDateTime.parse(tkns.nextToken(), _tf));
 						entry.setAirportA(getAirport(tkns.nextToken(), br.getLineNumber()));
-						entry.setTimeA(LocalDateTime.parse(tkns.nextToken(), _df));
+						entry.setTimeA(LocalDateTime.parse(tkns.nextToken(), _tf));
 						if ((entry.getAirportD() == null) || (entry.getAirportA() == null))
 							throw new IllegalArgumentException("Invalid Airport Code");
 
