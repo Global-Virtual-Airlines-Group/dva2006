@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import java.net.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to support writing formatted text with URLs and emoticons.
  * @author Luke
- * @version 6.0
+ * @version 7.0
  * @since 1.0
  */
 
@@ -104,6 +104,9 @@ public class MessageFormatTag extends TagSupport {
 			String token = tkns.nextToken();
 			if (!_bbCode && (token.startsWith("http://") || token.startsWith("https://"))) {
 				try {
+					while (token.endsWith(".") || token.endsWith(","))
+						token = token.substring(0, token.length() - 1);
+					
 					URL url = new URL(token);
 					buf.append("<a href=\"");
 					buf.append(token);
