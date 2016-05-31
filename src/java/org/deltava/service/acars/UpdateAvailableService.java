@@ -1,11 +1,9 @@
-// Copyright 2011, 2012, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2013, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
-import org.deltava.beans.acars.ClientInfo;
-import org.deltava.beans.acars.ClientType;
-import org.deltava.beans.acars.UpdateChannel;
+import org.deltava.beans.acars.*;
 import org.deltava.dao.*;
 import org.deltava.service.*;
 
@@ -14,7 +12,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to determine whether a new ACARS client is available.
  * @author Luke
- * @version 6.1
+ * @version 7.0
  * @since 4.1
  */
 
@@ -30,8 +28,7 @@ public class UpdateAvailableService extends WebService {
 	public int execute(ServiceContext ctx) throws ServiceException {
 		
 		// Parse the info
-		ClientInfo cInfo = new ClientInfo(StringUtils.parse(ctx.getParameter("version"), 3),
-				StringUtils.parse(ctx.getParameter("build"), 100), StringUtils.parse(ctx.getParameter("beta"), 0));
+		ClientInfo cInfo = new ClientInfo(StringUtils.parse(ctx.getParameter("version"), 3), StringUtils.parse(ctx.getParameter("build"), 100), StringUtils.parse(ctx.getParameter("beta"), 0));
 		if (Boolean.valueOf(ctx.getParameter("dispatch")).booleanValue())
 			cInfo.setClientType(ClientType.DISPATCH);
 		else if (Boolean.valueOf(ctx.getParameter("atc")).booleanValue())
@@ -48,10 +45,14 @@ public class UpdateAvailableService extends WebService {
 			}
 		}
 
-		ClientInfo latest = null;
+		ClientInfo latest = null; boolean isForced = false;
 		try {
 			GetACARSBuilds abdao = new GetACARSBuilds(ctx.getConnection());
 			latest = abdao.getLatestBuild(cInfo);
+			
+			// Check for a forced upgrade
+			ClientInfo forced = abdao.getLatestBuild(cInfo, true);
+			isForced = (forced != null) && (forced.compareTo(cInfo) > 0);
 			
 			// If we're a beta, check the beta release
 			if (ch == UpdateChannel.BETA) {
@@ -66,9 +67,10 @@ public class UpdateAvailableService extends WebService {
 		}
 		
 		// Set header with latest data
-		ctx.setHeader("X-update-channel", ch.toString().toLowerCase());
+		ctx.setHeader("X-Update-Channel", ch.toString().toLowerCase());
+		ctx.setHeader("X-Force-Upgrade", String.valueOf(isForced));
 		if (latest != null)
-			ctx.setHeader("X-update-latest", latest.toString());
+			ctx.setHeader("X-Update-Latest", latest.toString());
 		
 		// See if anything is available
 		return ((latest == null) || (latest.compareTo(cInfo) < 1)) ? SC_NOT_MODIFIED : SC_OK;
