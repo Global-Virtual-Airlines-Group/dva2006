@@ -1,8 +1,9 @@
-// Copyright 2004, 2008, 2009, 2011, 2013, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2008, 2009, 2011, 2013, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.util.*;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 
 import org.deltava.crypt.*;
 
@@ -13,7 +14,7 @@ import org.deltava.crypt.*;
  * signature of the above string encoded in Base64. The password is converted into hex bytes, and the entire
  * string is encrypted using a SecretKeyEncryptor.
  * @author Luke
- * @version 6.3
+ * @version 7.0
  * @since 1.0
  */
 
@@ -42,8 +43,7 @@ public final class SecurityCookieGenerator {
 	public static synchronized SecurityCookieData readCookie(String cookieText) throws SecurityException {
 		
 		String rawToken = null;
-		Base64.Decoder b64d = Base64.getDecoder();
-		byte[] encData = b64d.decode(cookieText);
+		byte[] encData = Base64.getDecoder().decode(cookieText);
 		try {
 			rawToken = new String(_encryptor.decrypt(encData), StandardCharsets.UTF_8);
 		} catch (CryptoException ce) {
@@ -86,8 +86,8 @@ public final class SecurityCookieGenerator {
 		SecurityCookieData scData = new SecurityCookieData(cookieData.get("uid"));
 		scData.setRemoteAddr(cookieData.get("addr").replace('%', ':'));
 		try {
-			scData.setLoginDate(Long.parseLong(cookieData.get("login"), 16));
-		    scData.setExpiryDate(Long.parseLong(cookieData.get("expiry"), 16));
+			scData.setLoginDate(Instant.ofEpochMilli(Long.parseLong(cookieData.get("login"), 16)));
+		    scData.setExpiryDate(Instant.ofEpochMilli(Long.parseLong(cookieData.get("expiry"), 16)));
 		} catch (NumberFormatException nfe) {
 			throw new SecurityException("Invalid Security Cookie Data");
 		}
@@ -108,9 +108,9 @@ public final class SecurityCookieGenerator {
 		buf.append("@addr:");
 		buf.append(scData.getRemoteAddr().replace(':', '%'));
 		buf.append("@login:");
-		buf.append(Long.toHexString(scData.getLoginDate()));
+		buf.append(Long.toHexString(scData.getLoginDate().toEpochMilli()));
 		buf.append("@expiry:");
-		buf.append(Long.toHexString(scData.getExpiryDate()));
+		buf.append(Long.toHexString(scData.getExpiryDate().toEpochMilli()));
 		
 		// Get the message digest for the token
 		Base64.Encoder b64e = Base64.getEncoder();

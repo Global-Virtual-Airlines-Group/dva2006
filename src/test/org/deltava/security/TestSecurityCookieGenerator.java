@@ -1,5 +1,7 @@
 package org.deltava.security;
 
+import java.time.Instant;
+
 import javax.servlet.http.Cookie;
 
 import junit.framework.Test;
@@ -22,7 +24,7 @@ public class TestSecurityCookieGenerator extends TestCase {
 	public void testGeneration() {
 	    SecurityCookieGenerator.init(new DESEncryptor(_desKey));
 	    
-	    long now = System.currentTimeMillis();
+	    Instant now = Instant.now();
 	    
 	    SecurityCookieData d1 = new SecurityCookieData("cn=Luke,ou=dva,o=sce");
 	    d1.setRemoteAddr("127.0.0.1");
@@ -43,7 +45,7 @@ public class TestSecurityCookieGenerator extends TestCase {
 	public void testAES() {
 		SecurityCookieGenerator.init(new AESEncryptor(_aesKey));
 
-	    long now = System.currentTimeMillis();
+		Instant now = Instant.now();
 	    
 	    SecurityCookieData d1 = new SecurityCookieData("cn=Luke,ou=dva,o=sce");
 	    d1.setRemoteAddr("127.0.0.1");
@@ -61,7 +63,7 @@ public class TestSecurityCookieGenerator extends TestCase {
 	public void testInvalidCookie() {
 	    SecurityCookieGenerator.init(new DESEncryptor(_desKey));
 
-	    long now = System.currentTimeMillis();
+	    Instant now = Instant.now();
 
 	    SecurityCookieData d1 = new SecurityCookieData("cn=Luke,ou=dva,o=sce");
 	    d1.setRemoteAddr("127.0.0.1");
