@@ -126,11 +126,11 @@ public class SecurityCookieFilter implements Filter {
 			cData = null;
 			p = null;
 		} else if (cData != null) {
-			long timeUntilExpiry = (cData.getExpiryDate() - System.currentTimeMillis());
+			long timeUntilExpiry = (cData.getExpiryDate().toEpochMilli() - System.currentTimeMillis());
 			
 			// Renew the cookie if it's about to expire
-			if (timeUntilExpiry < 600_000) {
-				cData.setExpiryDate(cData.getExpiryDate() + 3600_000);
+			if (timeUntilExpiry < 900_000) {
+				cData.setExpiryDate(cData.getExpiryDate().plusSeconds(3600 * 4));
 				String newCookie = SecurityCookieGenerator.getCookieData(cData);
 				hrsp.addCookie(new Cookie(AUTH_COOKIE_NAME, newCookie));	
 			}
