@@ -1,4 +1,4 @@
-// Copyright 2011, 2012, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2013, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to load ACARS build data. 
  * @author Luke
- * @version 6.0
+ * @version 7.0
  * @since 4.1
  */
 
@@ -63,21 +63,32 @@ public class GetACARSBuilds extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public ClientInfo getLatestBuild(ClientInfo info) throws DAOException {
+		return getLatestBuild(info, false);
+	}
+	
+	/**
+	 * Returns the latest build for a particular ACARS version and client type.
+	 * @param info the ClientInfo
+	 * @param isForced TRUE if selecting minimum build to force an upgrade
+	 * @return a ClientInfo bean, or null if not found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public ClientInfo getLatestBuild(ClientInfo info, boolean isForced) throws DAOException {
 		try {
 			prepareStatement("SELECT DATA FROM acars.VERSION_INFO WHERE (NAME=?) AND (VER=?)");
 			_ps.setInt(2, info.getVersion());
 			switch (info.getClientType()) {
 				case DISPATCH:
-					_ps.setString(1, "latestDispatch");
+					_ps.setString(1, isForced ? "latestDispatch" : "forcedDispatch");
 					break;
 			
 				case ATC:
-					_ps.setString(1, "latestATC");
+					_ps.setString(1, isForced ? "forcedATC" : "latestATC");
 					break;
 					
 				case PILOT:
 				default:
-					_ps.setString(1, "latest");
+					_ps.setString(1, isForced ? "forced" : "latest");
 					break;
 			}
 			
