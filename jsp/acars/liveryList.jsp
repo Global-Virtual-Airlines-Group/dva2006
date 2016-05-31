@@ -13,6 +13,7 @@
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <script type="text/javascript">
 golgotha.local.update = function(combo) {
 	self.location = '/liveries.do?airline=' + combo.options[combo.selectedIndex].value;
@@ -38,8 +39,8 @@ golgotha.local.update = function(combo) {
 <!-- Table Header Bar -->
 <tr class="title">
  <td style="width:20%">AIRLINE</td>
- <td style="width:15%">LIVERY CODE</td>
- <td style="width:25%">DESCRIPTION</td>
+ <td>LIVERY CODE</td>
+ <td>DESCRIPTION</td>
  <td><el:cmdbutton url="livery" op="edit" label="NEW LIVERY" /></td>
 </tr>
 

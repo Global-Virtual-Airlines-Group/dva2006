@@ -22,8 +22,8 @@ golgotha.local.setType = function() { return document.forms[0].submit(); };
 <content:copyright visible="false" />
 <body>
 <content:page>
-<%@ include file="/jsp/academy/header.jspf" %> 
-<%@ include file="/jsp/academy/sideMenu.jspf" %>
+<%@ include file="/jsp/main/header.jspf" %> 
+<%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:attr attr="canView" value="true" roles="HR,AcademyAdmin,AcademyAudit,Instructor" /> 
 
 <!-- Main Body Frame -->

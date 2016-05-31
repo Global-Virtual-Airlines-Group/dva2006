@@ -12,9 +12,9 @@
 <content:css name="main" />
 <content:css name="form" />
 <content:pics />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <content:js name="datePicker" />
-<content:js name="hourCalc" />
 <script type="text/javascript">
 golgotha.local.validate = function(f)
 {
@@ -72,9 +72,7 @@ return true;
 <c:set var="tmpM" value="${empty flight ? '' : (flight.length % 10) * 6}" scope="page" />
 <tr>
  <td class="label">Logged Time</td>
- <td class="data"><el:combo name="flightTime" idx="*" size="1" className="req" firstEntry="[ HOURS ]" options="${flightTimes}" value="${flightTime}" />&nbsp;
-<el:text name="tmpHours" size="1" max="2" value="${tmpH}" /> hours, <el:text name="tmpMinutes" size="1" max="2" value="${tmpM}" /> minutes&nbsp;
-<el:button ID="CalcButton" label="CALCULATE" onClick="void golgotha.form.wrap(golgotha.util.hoursCalc, document.forms[0])" /></td>
+ <td class="data"><el:combo name="flightTime" idx="*" size="1" className="req" firstEntry="[ HOURS ]" options="${flightTimes}" value="${flightTime}" /></td>
 </tr>
 <tr>
  <td class="label top">Remarks</td>
