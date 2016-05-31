@@ -11,6 +11,7 @@
 <content:css name="main" />
 <content:css name="view" />
 <content:pics />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 </head>
 <content:copyright visible="false" />
@@ -25,10 +26,10 @@
 <!-- Table Header Bar-->
 <tr class="title caps">
  <td style="width:25%">AIRLINE NAME</td>
- <td style="width:10%">CODE</td>
- <td style="width:15%">DATABASE</td>
- <td style="width:15%">DOMAIN NAME</td>
- <td>&nbsp;</td>
+ <td>CODE</td>
+ <td class="nophone">DATABASE</td>
+ <td>DOMAIN NAME</td>
+ <td class="nophone">&nbsp;</td>
 </tr>
 
 <!-- Table Data -->
@@ -37,9 +38,9 @@
 <view:row entry="${ai}">
  <td class="pri bld"><el:cmd url="ainfo" linkID="${ai.code}" op="${ac.canEdit ? 'edit' : 'read'}">${ai.name}</el:cmd></td>
  <td class="sec bld">${ai.code}</td>
- <td class="bld">${ai.DB}</td>
+ <td class="bld nophone">${ai.DB}</td>
  <td>${ai.domain}</td>
- <td class="sec small"><c:if test="${ai.canTransfer}">Airline allows inbound Pilot transfers</c:if>
+ <td class="nophpone sec small"><c:if test="${ai.canTransfer}">Airline allows inbound Pilot transfers</c:if>
 <c:if test="${ai.canTransfer && ai.historicRestricted}"><br /></c:if>
 <c:if test="${ai.historicRestricted}">Historic Routes require Historic Aircraft</c:if>
 <c:if test="${!ai.canTransfer && !ai.historicRestricted}">-</c:if></td>

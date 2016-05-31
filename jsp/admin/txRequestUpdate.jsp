@@ -30,8 +30,7 @@ Your request for additional ratings from the <span class="pri bld">${txReq.equip
 <div class="updateHdr">Transfer Request Submitted</div>
 <br />
 Your request to be transferred to the <span class="pri bld">${txReq.equipmentType}</span></c:if>
- program has been submitted. A Check Ride may be required in order to complete the process. If this is the case, 
-you will be notified via e-mail within the next 24 to 72 hours regarding the requirements for your Check Ride.<br />
+ program has been submitted. A Check Ride may be required in order to complete the process. If this is the case, you will be notified via e-mail within the next 24 to 72 hours regarding the requirements for your Check Ride.<br />
 <br />
 To return to the <content:airline /> Pilot Center, <el:cmd url="pilotcenter" className="sec bld">Click Here</el:cmd>.<br />
 </c:if>
@@ -61,8 +60,7 @@ An e-mail message has been sent to ${pilot.name} informing of the equipment prog
 <c:if test="${isReject}">
 <div class="updateHdr">Equipment Program Transfer Rejected</div>
 <br />
-This equipment program transfer request to the <span class="pri bld">${txreq.equipmentType}</span> program 
-has been rejected. An e-mail message has been sent to ${pilot.name} informing of the rejection.<br />
+This equipment program transfer request to the <span class="pri bld">${txreq.equipmentType}</span> program has been rejected. An e-mail message has been sent to ${pilot.name} informing of the rejection.<br />
 <c:if test="${checkRideDelete}">
 <br />
 ${pilot.name}'s pending Check Ride has been deleted.<br />
@@ -71,8 +69,7 @@ ${pilot.name}'s pending Check Ride has been deleted.<br />
 <c:if test="${isDelete}">
 <div class="updateHdr">Equipment Program Transfer Deleted</div>
 <br />
-${pilot.name}'s equipment program transfer request to the <span class="pri bld">${txreq.equipmentType}</span> program 
-has been deleted.<c:if test="${checkRideDelete}"> ${pilot.name}'s pending Check Ride has been deleted.</c:if><br />
+${pilot.name}'s equipment program transfer request to the <span class="pri bld">${txreq.equipmentType}</span> program has been deleted.<c:if test="${checkRideDelete}"> ${pilot.name}'s pending Check Ride has been deleted.</c:if><br />
 </c:if>
 <c:if test="${isEmpty}">
 <div class="updateHdr">Equipment Program Transfer Unavailable</div>
