@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import javax.servlet.http.*;
@@ -8,7 +8,7 @@ import javax.servlet.http.*;
  * Connections, since by doing so we can easily return connections back to the pool in a <b>finally</b> block without
  * nasty scope issues.
  * @author Luke
- * @version 6.3
+ * @version 7.0
  * @since 1.0
  * @see Command
  */
@@ -67,19 +67,14 @@ public class CommandContext extends HTTPContext {
 		Object obj = getCmdParameter(Command.ID, Integer.valueOf(0));
 		if (obj instanceof Integer)
 			return ((Integer) obj).intValue();
-		else if (obj == null) {
-			CommandException ce = new CommandException("Invalid Database ID - " + obj, false);
-			ce.setStatusCode(400);
-			throw ce;
-		}
+		else if (obj == null)
+			throw new CommandException("Invalid Database ID - " + obj, false) {{ setStatusCode(400); }};
 		
 		// Try and convert into an integer
 		try {
 			return Integer.decode(String.valueOf(obj)).intValue();
 		} catch (Exception e) {
-			CommandException ce = new CommandException("Invalid Database ID - " + obj, false);
-			ce.setStatusCode(400);
-			throw ce;
+			throw new CommandException("Invalid Database ID - " + obj, false) {{ setStatusCode(400); }};
 		}
 	}
 }
