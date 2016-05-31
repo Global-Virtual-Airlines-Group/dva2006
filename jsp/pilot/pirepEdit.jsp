@@ -18,7 +18,6 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
-<content:browser html4="true"><content:js name="hourCalc" /></content:browser>
 <c:if test="${!isAssign}"><content:json />
 <content:js name="airportRefresh" /></c:if>
 <content:googleAnalytics eventSupport="true" />
@@ -107,6 +106,35 @@ golgotha.onDOMReady(function() {
 	golgotha.airportLoad.setHelpers(f.airportA);
 	golgotha.airportLoad.config.doICAO = ${useICAO};
 });
+
+golgotha.local.hoursCalc = function(f)
+{
+var h = parseInt(f.tmpHours.value);
+var m = parseInt(f.tmpMinutes.value);
+if ((h == Number.NaN) || (m == Number.NaN)) {
+    var fe = (h == Number.NaN) ? f.tmpHours : f.tmpMinutes;
+    throw new golgotha.event.ValidationError('Please fill in both Hours and Minutes.', fe);
+}
+    
+if ((h < 0) || (m < 0)) {
+    var fe = (h < 0) ? f.tmpHours : f.tmpMinutes;
+    throw new golgotha.event.ValidationError('Hours and minutes cannnot be negative.', fe);
+}
+
+// Turn into a single number
+var tmpHours = (h + (m / 60));
+var hrs = Math.round(tmpHours * 10) / 10;
+var combo = f.flightTime;
+for (x = 0; x < combo.options.length; x++) {
+    var opt = combo.options[x];
+    if (opt.text == hrs) {
+        opt.selected = true;
+        return true;
+    }
+}
+
+return true;
+};
 <content:browser html4="true">
 // Set PIREP date limitations
 <fmt:jsdate var="fwdLimit" date="${forwardDateLimit}" />
@@ -215,14 +243,8 @@ golgotha.onDOMReady(function() {
 <c:set var="tmpM" value="${empty pirep ? '' : (pirep.length % 10) * 6}" scope="page" />
 <tr>
  <td class="label">Logged Time</td>
-<content:browser html4="true">
- <td class="data"><el:combo name="flightTime" idx="*" size="1"  required="true" firstEntry="[ HOURS ]" options="${flightTimes}" value="${flightTime}" />&nbsp;
-<el:text name="tmpHours" size="1" max="2" idx="*" value="${tmpH}" /> hours, <el:text name="tmpMinutes" size="1" max="2" idx="*" value="${tmpM}" />
- minutes&nbsp;<el:button ID="CalcButton" label="CALCULATE" onClick="void golgotha.form.wrap(golgotha.util.hoursCalc, document.forms[0])" /></td>
-</content:browser>
-<content:browser html5="true">
- <td class="data"><el:float name="flightTime" idx="*" size="3" max="18.9" min="0" step="0.1" value="${flightTime}" required="true" /> hours</td>
-</content:browser>
+ <td class="data"><el:combo name="flightTime" idx="*" size="1"  required="true" firstEntry="[ HOURS ]" options="${flightTimes}" value="${flightTime}" /> <el:text name="tmpHours" size="1" max="2" idx="*" value="${tmpH}" /> hours, 
+ <el:text name="tmpMinutes" size="1" max="2" idx="*" value="${tmpM}" /> minutes <el:button ID="CalcButton" label="CALCULATE" onClick="void golgotha.form.wrap(golgotha.local.hoursCalc, document.forms[0])" /></td>
 </tr>
 <c:if test="${!isACARS}">
 <tr>
