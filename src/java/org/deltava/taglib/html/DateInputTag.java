@@ -1,7 +1,7 @@
 // Copyright 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
-import java.time.Instant;
+import java.time.*;
 
 import javax.servlet.jsp.JspException;
 
@@ -45,7 +45,7 @@ public class DateInputTag extends HTML5InputTag {
 	 * Sets the maximum date.
 	 * @param dt the date/time
 	 */
-	public void setMax(Instant dt) {
+	public void setMax(ZonedDateTime dt) {
 		_data.setAttribute("max", StringUtils.format(dt, HTML5_DATE_FMT));
 	}
 	
@@ -53,7 +53,7 @@ public class DateInputTag extends HTML5InputTag {
 	 * Sets the minimum date.
 	 * @param dt the date/time
 	 */
-	public void setMin(Instant dt) {
+	public void setMin(ZonedDateTime dt) {
 		_data.setAttribute("min", StringUtils.format(dt, HTML5_DATE_FMT));
 	}
 	

@@ -923,13 +923,13 @@
 			<name>min</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
-			<type>java.time.Instant</type>
+			<type>java.time.ZonedDateTime</type>
 		</attribute>
 		<attribute>
 			<name>max</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
-			<type>java.time.Instant</type>
+			<type>java.time.ZonedDateTime</type>
 		</attribute>
 		<attribute>
 			<name>step</name>
