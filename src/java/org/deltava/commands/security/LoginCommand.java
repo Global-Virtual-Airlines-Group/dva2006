@@ -201,7 +201,7 @@ public class LoginCommand extends AbstractCommand {
 
 			// Create the user authentication cookie
 			SecurityCookieData cData = new SecurityCookieData(p.getHexID());
-			cData.setLoginDate(System.currentTimeMillis());
+			cData.setLoginDate(Instant.now());
 			cData.setRemoteAddr(remoteAddr);
 			
 			// Encode the encrypted data via Base64

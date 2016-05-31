@@ -1,21 +1,23 @@
-// Copyright 2005, 2006, 2011, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2011, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
+
+import java.time.Instant;
 
 /**
  * A bean containing data stored in the security cookie.
  * @author Luke
- * @version 6.3
+ * @version 7.0
  * @since 1.0
  */
 
 public class SecurityCookieData implements java.io.Serializable {
     
-    private transient static final long DEFAULT_EXPIRY = 360 * 60000; // 6 hours
+    private transient static final long DEFAULT_EXPIRY = 3600 * 8;
     
  	private final String _userID;
 	private String _remoteAddr;
-	private long _loginDate;
-	private long _expiryDate;
+	private Instant _loginDate;
+	private Instant _expiryDate;
 	
 	/**
 	 * Creates security cookie data for a given user ID.
@@ -24,22 +26,22 @@ public class SecurityCookieData implements java.io.Serializable {
     public SecurityCookieData(String userID) {
         super();
         _userID = userID;
-        setExpiryDate(System.currentTimeMillis() + DEFAULT_EXPIRY);
+        setExpiryDate(Instant.now().plusSeconds(DEFAULT_EXPIRY));
     }
     
     /**
      * Returns the expiration date of the cookie.
-     * @return the expiration date as a 64-bit Unix timestamp
+     * @return the expiration date
      */
-    public long getExpiryDate() {
+    public Instant getExpiryDate() {
         return _expiryDate;
     }
     
     /**
      * Returns the login date.
-     * @return the login date as a 64-bit Unix timestamp
+     * @return the login date
      */
-    public long getLoginDate() {
+    public Instant getLoginDate() {
     	return _loginDate;
     }
     
@@ -64,23 +66,23 @@ public class SecurityCookieData implements java.io.Serializable {
 	 * @return TRUE if the cookie has expired, otherwise FALSE
 	 */
 	public boolean isExpired() {
-		return (System.currentTimeMillis() > _expiryDate);
+		return (System.currentTimeMillis() > _expiryDate.toEpochMilli());
 	}
 	
 	/**
 	 * Sets the expiry date of the security cookie.
-	 * @param dt the expiration date as a 64-bit UNIX timestamp
+	 * @param dt the expiration date
 	 */
-	public void setExpiryDate(long dt) {
-	    _expiryDate = Math.max(_loginDate, dt);
+	public void setExpiryDate(Instant dt) {
+	    _expiryDate = dt;
 	}
 	
 	/**
 	 * Sets the login date.
-	 * @param dt the login date as a 64-bit UNIX timestamp
+	 * @param dt the login date
 	 */
-	public void setLoginDate(long dt) {
-		_loginDate = Math.max(1, dt);
+	public void setLoginDate(Instant dt) {
+		_loginDate = dt;
 	}
     
  	/**
@@ -89,6 +91,11 @@ public class SecurityCookieData implements java.io.Serializable {
  	 */
  	public void setRemoteAddr(String remoteAddr) {
  		_remoteAddr = remoteAddr;
+ 	}
+ 	
+ 	@Override
+ 	public int hashCode() {
+ 		return _userID.hashCode();
  	}
  	
  	@Override
