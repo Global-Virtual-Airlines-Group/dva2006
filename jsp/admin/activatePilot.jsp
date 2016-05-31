@@ -10,6 +10,7 @@
 <title><content:airline /> Pilot Reactivation</title>
 <content:css name="main" />
 <content:css name="form" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:pics />
 <content:js name="common" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />

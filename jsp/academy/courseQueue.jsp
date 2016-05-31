@@ -12,6 +12,7 @@
 <content:css name="main" />
 <content:css name="view" />
 <content:pics />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -30,11 +31,11 @@
 <tr class="title caps">
  <td style="width:20%">COURSE NAME</td>
  <td style="width:20%">PILOT NAME</td>
- <td style="width:7%">STAGE</td>
- <td style="width:20%">INSTRUCTOR NAME</td>
- <td style="width:10%">STATUS</td>
- <td style="width:10%">STARTED</td>
- <td>LAST COMMENT</td>
+ <td class="nophone">STAGE</td>
+ <td class="nophone">INSTRUCTOR NAME</td>
+ <td class="nophone">STATUS</td>
+ <td>STARTED</td>
+ <td class="nophone">LAST COMMENT</td>
 </tr>
 
 <!-- Table View data -->
@@ -45,18 +46,18 @@
 <view:row entry="${course}">
  <td><el:cmd url="course" link="${course}" className="pri bld">${course.name}</el:cmd></td>
  <td><el:profile location="${pilotLoc}" className="sec bld">${pilot.name}</el:profile> <span class="small">(${pilot.pilotCode})</span></td>
- <td class="bld"><fmt:int value="${course.stage}" /></td>
+ <td class="bld nophone"><fmt:int value="${course.stage}" /></td>
 <c:choose>
 <c:when test="${empty ins}">
- <td class="sec bld">Self-Directed</td>
+ <td class="sec bld nophone">Self-Directed</td>
 </c:when>
 <c:otherwise>
- <td>${instructor.name}</td>
+ <td class="nophone">${instructor.name}</td>
 </c:otherwise>
 </c:choose>
- <td class="pri bld">${course.status.name}</td>
+ <td class="pri bld nophone">${course.status.name}</td>
  <td class="small"><fmt:date fmt="d" date="${course.startDate}" /></td>
- <td class="sec small"><fmt:date fmt="d" date="${course.lastComment}" default="-" /></td>
+ <td class="sec small nophone"><fmt:date fmt="d" date="${course.lastComment}" default="-" /></td>
 </view:row>
 </c:forEach>
 

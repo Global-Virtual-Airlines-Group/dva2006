@@ -8,6 +8,8 @@
 <head>
 <title><content:airline /> MVS Configuration Updated</title>
 <content:css name="main" />
+<content:js name="common" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:pics />
 </head>
 <content:copyright visible="false" />

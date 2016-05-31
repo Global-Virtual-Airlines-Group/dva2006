@@ -12,6 +12,7 @@
 <content:css name="main" />
 <content:css name="view" />
 <content:js name="common" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:pics />
 </head>
 <content:copyright visible="false" />
@@ -30,8 +31,8 @@
 <!-- Table Header Bar -->
 <tr class="title">
  <td style="width:20%">CHANNEL NAME</td>
- <td style="width:15%">SAMPLE RATE</td>
- <td style="width:10%">RANGE</td>
+ <td class="nophone">SAMPLE RATE</td>
+ <td class="nophone">RANGE</td>
  <td style="width:10%">MAX USERS</td>
  <td style="width:15%"><el:cmdbutton url="mvschannel" op="edit" label="NEW CHANNEL" /></td>
  <td class="left">DESCRIPTION</td>
@@ -41,12 +42,12 @@
 <c:forEach var="channel" items="${viewContext.results}">
 <view:row entry="${channel}">
  <td><el:cmd url="mvschannel" op="edit" link="${channel}" className="pri bld">${channel.name}</el:cmd></td>
- <td>${channel.sampleRate} (<fmt:int value="${channel.sampleRate.rate}" />)</td>
+ <td class="nophone">${channel.sampleRate} (<fmt:int value="${channel.sampleRate.rate}" />)</td>
 <c:if test="${channel.range == 0}">
- <td class="bld small caps">Unlimited</td>
+ <td class="bld small caps nophone">Unlimited</td>
 </c:if>
 <c:if test="${channel.range > 0}">
- <td><fmt:int value="${channel.range}" /> miles</td>
+ <td class="nophone"><fmt:int value="${channel.range}" /> miles</td>
 </c:if>
  <td class="sec bld"><fmt:int value="${channel.maxUsers}" /></td>
  <td colspan="2" class="left small">${channel.description}</td>

@@ -10,6 +10,7 @@
 <content:css name="main" />
 <content:css name="form" />
 <content:pics />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 </head>
 <content:copyright visible="false" />

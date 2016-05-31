@@ -37,9 +37,8 @@ return true;
  <td colspan="2" class="left caps">NEW STATUS COMMENT FOR ${pilot.name}</td>
 </tr>
 <tr>
- <td colspan="2" class="pri bld mid">Suspending a Pilot will remove his or her ability to log into the
- <content:airline /> web site<c:if test="${acarsEnabled}"> and ACARS</c:if>, and will automatically
- disconnect the Pilot if  already authenticated.</td>
+ <td colspan="2" class="pri bld mid">Suspending a Pilot will remove his or her ability to log into the <content:airline /> web site<c:if test="${acarsEnabled}"> and ACARS</c:if>, and will automatically
+ disconnect the Pilot from ACARS if already authenticated.</td>
 </tr>
 <tr>
  <td class="label top">Reason for Suspension</td>

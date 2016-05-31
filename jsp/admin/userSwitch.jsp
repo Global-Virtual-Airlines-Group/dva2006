@@ -21,13 +21,13 @@
 <content:region id="main">
 <div class="updateHdr">Switched to ${user.name}</div>
 <br />
-You have switched user credentials to ${user.name}<c:if test="${!empty user.pilotCode}"> (${user.pilotCode})</c:if>. You
-will continue to operate with these credentials until you log out, at which point you will revert to your proper
+You have switched user credentials to ${user.name}<c:if test="${!empty user.pilotCode}"> (${user.pilotCode})</c:if>. You will continue to operate with these credentials until you log out, at which point you will revert to your proper
 credentials.<br />
 <br />
-<b>Please be aware that the system is incapable of distinguishing between you and the user you 
-are impersonating - <span class="sec bld">${user.name}!</span></b><br />
+<span class="bld">Please be aware that the system is incapable of distinguishing between you and the user you are impersonating - <span class="sec">${user.name}!</span></span><br />
 <br />
+To navigate to the <content:airline /> Pilot Center, <el:cmd url="pilotcenter" className="sec bld">Click Here</el:cmd>.<br />
+<br /> 
 <content:copyright />
 </content:region>
 </content:page>
