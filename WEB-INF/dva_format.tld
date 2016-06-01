@@ -369,7 +369,7 @@
 			<name>date</name>
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
-			<type>java.time.LocalDateTime</type>
+			<type>java.time.ZonedDateTime</type>
 		</attribute>
 	</tag>
 
