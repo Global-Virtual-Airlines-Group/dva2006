@@ -1,7 +1,7 @@
 // Copyright 2009, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
-import java.time.LocalDateTime;
+import java.time.*;
 import java.time.temporal.ChronoField;
 
 import javax.servlet.jsp.JspException;
@@ -17,14 +17,14 @@ import org.deltava.taglib.JSTag;
 
 public class JSDateTag extends JSTag {
 	
-	private LocalDateTime _dt = LocalDateTime.now();
+	private ZonedDateTime _dt = ZonedDateTime.now(ZoneOffset.UTC);
 	private boolean _doTime;
 
 	/**
 	 * Sets the date/time to format.
 	 * @param dt the date/time
 	 */
-	public void setDate(LocalDateTime dt) {
+	public void setDate(ZonedDateTime dt) {
 		_dt = dt;
 	}
 	
@@ -54,17 +54,13 @@ public class JSDateTag extends JSTag {
 	public int doEndTag() throws JspException {
 		
         StringBuilder buf = new StringBuilder("new Date(");
-        buf.append(_dt.get(ChronoField.YEAR));
-        buf.append(',');
-        buf.append(_dt.get(ChronoField.MONTH_OF_YEAR) - 1);
-        buf.append(',');
+        buf.append(_dt.get(ChronoField.YEAR)).append(',');
+        buf.append(_dt.get(ChronoField.MONTH_OF_YEAR) - 1).append(',');
         buf.append(_dt.get(ChronoField.DAY_OF_MONTH));
         if (_doTime) {
         	buf.append(',');
-        	buf.append(_dt.get(ChronoField.HOUR_OF_DAY));
-        	buf.append(',');
-        	buf.append(_dt.get(ChronoField.MINUTE_OF_HOUR));
-        	buf.append(',');
+        	buf.append(_dt.get(ChronoField.HOUR_OF_DAY)).append(',');
+        	buf.append(_dt.get(ChronoField.MINUTE_OF_HOUR)).append(',');
         	buf.append(_dt.get(ChronoField.SECOND_OF_MINUTE));
         }
         
