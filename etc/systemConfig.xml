@@ -394,6 +394,7 @@
 			<airCharts>bc59d23a-a926-5a6d-83aa-8e477688a38d</airCharts>
 			<wunderground>e466a9feecedb389</wunderground>
 			<dsx>217b980f-be43-4148-8aa4-cd5da694980d</dsx>
+			<googleMaps>AIzaSyAtQn98Rtr9WVU5TCFgYBLgJDWCOiosyA8</googleMaps>
 		</key>
 		
 		<list name="roles" attr="role" sorted="true" unique="true">
