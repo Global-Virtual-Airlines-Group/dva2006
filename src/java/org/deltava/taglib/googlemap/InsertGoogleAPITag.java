@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP Tag to insert a JavaScript link to the Google Maps API.
  * @author Luke
- * @version 6.3
+ * @version 7.0
  * @since 1.0
  */
 
@@ -25,14 +25,14 @@ public class InsertGoogleAPITag extends TagSupport {
 	static final String API_VER_ATTR_NAME = "$googleMapAPIVersion$";
 	
 	private static final int MIN_API_VERSION = 3;
-	private static final String DEFAULT_V3_MINOR = "22";
+	private static final String DEFAULT_V3_MINOR = "24";
 	
 	private static final String V3_API_URL = "maps.googleapis.com/maps/api/js?v=";
 	
 	private int _majorVersion = MIN_API_VERSION;
 	private String _minorVersion;
 	private final Collection<String> _libraries = new LinkedHashSet<String>();
-
+	
 	/**
 	 * Sets the Google API version to pull down.
 	 * @param ver the API major version
@@ -102,7 +102,7 @@ public class InsertGoogleAPITag extends TagSupport {
 			}
 
 			if (!_libraries.isEmpty()) {
-				out.print("&amp;libraries=");
+				out.print("&libraries=");
 				for (Iterator<String> i = _libraries.iterator(); i.hasNext(); ) {
 					out.print(i.next());
 					if (i.hasNext())
@@ -110,6 +110,8 @@ public class InsertGoogleAPITag extends TagSupport {
 				}
 			}
 			
+			out.print("&key=");
+			out.print(SystemData.get("security.key.googleMaps"));
 			out.println("\"></script>");
 			
 			// Build the Map context object
