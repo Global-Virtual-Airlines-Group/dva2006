@@ -40,9 +40,7 @@
 <c:if test="${!empty exam.submittedOn}">
 <tr>
  <td class="label">Submitted on</td>
- <td class="data"><fmt:date date="${exam.submittedOn}" />
-<c:if test="${exam.submittedOn > exam.expiryDate}"><span class="error"><fmt:int value="${(exam.submittedOn.time - exam.expiryDate.time) / 60000}" />
- minutes late</span></c:if></td>
+ <td class="data"><fmt:date date="${exam.submittedOn}" /><c:if test="${exam.submittedOn > exam.expiryDate}"><span class="error"><fmt:int value="${(exam.submittedOn.toEpochMilli() - exam.expiryDate.toEpochMilli()) / 60000}" /> minutes late</span></c:if></td>
 </tr>
 </c:if>
 <c:if test="${!empty exam.scoredOn}">
@@ -136,7 +134,7 @@ golgotha.exam.maps = [];
 
 // Create map
 var mapTypes = {mapTypeIds:[google.maps.MapTypeId.TERRAIN, google.maps.MapTypeId.SATELLITE]};
-var mapOpts = {center:mapC, zoom:golgotha.maps.util.getDefaultZoom(${q.distance}), scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
+var mapOpts = {center:mapC, zoom:golgotha.maps.util.getDefaultZoom(${q.distance}), scrollwheel:false, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:mapTypes};
 var map = new golgotha.maps.Map(document.getElementById('qMap${q.number}'), mapOpts);
 map.setMapTypeId(google.maps.MapTypeId.TERRAIN);
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});

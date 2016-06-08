@@ -137,7 +137,7 @@
 
 // Build the map
 var mapTypes = {mapTypeIds:golgotha.maps.DEFAULT_TYPES};
-var mapOpts = {center:golgotha.local.mapC, minZoom:2, zoom:golgotha.maps.util.getDefaultZoom(${pirep.distance}), scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
+var mapOpts = {center:golgotha.local.mapC, minZoom:2, zoom:golgotha.maps.util.getDefaultZoom(${pirep.distance}), scrollwheel:false, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
 var map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'click', map.closeWindow);

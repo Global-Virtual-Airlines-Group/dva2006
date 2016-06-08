@@ -61,7 +61,7 @@ return true;
  <td class="right">AIRLINE <el:combo name="airline" idx="*" firstEntry="[ ALL ]"  options="${airlines}" onChange="void golgotha.local.filter(this)"  /></td>
 </tr>
 <tr>
- <td class="data" colspan="3"><map:div ID="googleMap" height="425" /></td>
+ <td class="data" colspan="3"><map:div ID="googleMap" height="540" /></td>
 </tr>
 </el:table>
 </el:form>
@@ -71,7 +71,7 @@ return true;
 </content:page>
 <script id="mapInit">
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
-var mapOpts = {center:golgotha.local.mapC, zoom:6, minZoom:2, maxZoom:11, streetViewControl:false, scrollwheel:true, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
+var mapOpts = {center:golgotha.local.mapC, zoom:6, minZoom:2, maxZoom:11, streetViewControl:false, clickableIcons:false, scrollwheel:true, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
 var map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});

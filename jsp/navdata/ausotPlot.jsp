@@ -61,7 +61,7 @@
 <script id="mapInit">
 // Create map options
 var mapTypes = {mapTypeIds: [google.maps.MapTypeId.SATELLITE, google.maps.MapTypeId.TERRAIN]};
-var mapOpts = {center:new google.maps.LatLng(-26.0, 133.0), zoom:4, minZoom:3, maxZoom:8, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
+var mapOpts = {center:{lat:-26.0,lng:133.0}, zoom:4, minZoom:3, maxZoom:8, scrollwheel:false, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
 
 // Create the map
 var map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);

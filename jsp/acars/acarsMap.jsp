@@ -161,7 +161,7 @@ golgotha.maps.acars.showEarth = function() {
 <content:sysdata var="wuAPI" name="security.key.wunderground" />
 <script id="mapInit">
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
-var mapOpts = {center:golgotha.local.mapC, minZoom:2, maxZoom:17, zoom:${zoomLevel}, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
+var mapOpts = {center:golgotha.local.mapC, minZoom:2, maxZoom:17, zoom:${zoomLevel}, scrollwheel:false, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
 
 // Create the map
 var map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);

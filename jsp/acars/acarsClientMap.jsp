@@ -77,7 +77,7 @@ return true;
 </tr>
 </c:if>
 <tr>
- <td class="data"><map:div ID="googleMap" /><div id="copyright" class="small mapTextLabel"></div>
+ <td class="data"><map:div ID="googleMap" height="550" /><div id="copyright" class="small mapTextLabel"></div>
 <div id="mapStatus" class="small mapTextLabel"></div></td>
 </tr>
 </el:table>
@@ -86,7 +86,7 @@ return true;
 <content:sysdata var="wuAPI" name="security.key.wunderground" />
 <script id="mapInit">
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
-var mapOpts = {center:golgotha.local.mapC, minZoom:2, zoom:${zoomLevel}, maxZoom:17, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
+var mapOpts = {center:golgotha.local.mapC, minZoom:2, zoom:${zoomLevel}, maxZoom:17, scrollwheel:false, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
 
 // Create the map
 var map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);

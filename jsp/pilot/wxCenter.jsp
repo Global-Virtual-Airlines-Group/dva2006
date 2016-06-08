@@ -218,7 +218,7 @@ return true;
 <content:sysdata var="wuAPI" name="security.key.wunderground" />
 <script id="mapInit">
 <map:point var="golgotha.local.mapC" point="${homeAirport}" />
-var mapOpts = {center:golgotha.local.mapC, zoom:5, minZoom:3, maxZoom:14, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
+var mapOpts = {center:golgotha.local.mapC, zoom:5, minZoom:3, maxZoom:14, scrollwheel:false, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
 
 // Create the map
 var map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);

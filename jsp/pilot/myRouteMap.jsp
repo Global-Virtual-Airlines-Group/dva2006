@@ -44,7 +44,7 @@
 <script id="mapInit">
 <map:point var="golgotha.local.mapC" point="${home}" />
 var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
-var mapOpts = {center:golgotha.local.mapC, minZoom:2, zoom:3, scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
+var mapOpts = {center:golgotha.local.mapC, minZoom:2, zoom:3, scrollwheel:false, clickableIcons:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
 
 // Create the map
 var map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);

@@ -122,7 +122,7 @@ golgotha.local.update = function(combo) {
 <map:bounds var="golgotha.local.mapBounds" items="${rwys}" />
 
 // Create the map
-var mapOpts = {center:golgotha.local.mapC, zoom:15, minZoom:12, maxZoom:19, scrollwheel:false, streetViewControl:false};
+var mapOpts = {center:golgotha.local.mapC, zoom:15, minZoom:12, maxZoom:19, scrollwheel:false, clickableIcons:false, streetViewControl:false};
 var map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
 map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
 map.fitBounds(golgotha.local.mapBounds);

@@ -191,7 +191,7 @@ Airports outside the United States or Canada with multiple airports, use &lt;Cit
 <map:marker var="apMarker" point="${airport}" color="green" />
 
 // Build the map
-var mapOpts = {center:golgotha.local.mapC, zoom:6, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
+var mapOpts = {center:golgotha.local.mapC, zoom:6, scrollwheel:false, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
 var map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
 map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
 apMarker.setMap(map);
