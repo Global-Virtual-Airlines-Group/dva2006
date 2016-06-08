@@ -30,7 +30,7 @@ var mapTypes = {mapTypeIds:[google.maps.MapTypeId.TERRAIN, google.maps.MapTypeId
 for (var x = 0; x < golgotha.exam.rpQuestions.length; x++) {
 	var idx = golgotha.exam.rpQuestions[x];
 	var info = golgotha.exam.rpInfo[idx];
-	var mapOpts = {center:info.mapCenter, zoom:golgotha.maps.util.getDefaultZoom(info.distance), scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
+	var mapOpts = {center:info.mapCenter, zoom:golgotha.maps.util.getDefaultZoom(info.distance), scrollwheel:false, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
 	info.map = new golgotha.maps.Map(document.getElementById('qMap' + info.idx), mapOpts);
 	info.map.setMapTypeId(google.maps.MapTypeId.TERRAIN);
 	info.aD.setMap(info.map);

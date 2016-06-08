@@ -83,7 +83,7 @@ return true;
 <script id="mapInit">
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
 var mapTypes = {mapTypeIds:golgotha.maps.DEFAULT_TYPES};
-var mapOpts = {center:golgotha.local.mapC, zoom:4, minZoom:2, maxZoom:9, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
+var mapOpts = {center:golgotha.local.mapC, zoom:4, minZoom:2, maxZoom:9, scrollwheel:false, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:mapTypes};
 
 // Create the map
 var map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);

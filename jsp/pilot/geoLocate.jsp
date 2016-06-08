@@ -170,7 +170,7 @@ location within a 3 mile circle each time the Pilot Location Board is displayed.
 
 // Create map options
 var mapTypes = {mapTypeIds:golgotha.maps.DEFAULT_TYPES};
-var mapOpts = {center:golgotha.local.mapC, zoom:golgotha.maps.util.getDefaultZoom(${!empty location ? 30 : 2000}), scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
+var mapOpts = {center:golgotha.local.mapC, zoom:golgotha.maps.util.getDefaultZoom(${!empty location ? 30 : 2000}), scrollwheel:false, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
 
 // Build the map
 var map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);

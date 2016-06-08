@@ -34,7 +34,7 @@
  <td style="width:15%" class="mid"><el:cmd url="users">VIEW LIST</el:cmd></td>
 </tr>
 <tr>
- <td colspan="2"><map:div ID="googleMap" height="520" /></td>
+ <td colspan="2"><map:div ID="googleMap" height="540" /></td>
 </tr>
 </el:table>
 </el:form>
@@ -43,7 +43,7 @@
 </content:region>
 </content:page>
 <script id="mapInit">
-var mapOpts = {center:{lat:38.88, lng:-93.25}, zoom:4, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
+var mapOpts = {center:{lat:38.88, lng:-93.25}, zoom:4, scrollwheel:false, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
 var map = new golgotha.maps.Map(document.getElementById("googleMap"), mapOpts);
 map.setMapTypeId(google.maps.MapTypeId.TERRAIN);
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
