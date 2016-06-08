@@ -22,8 +22,8 @@ import org.deltava.util.system.SystemData;
 
 public class GetSchedule extends ScheduleLoadDAO {
 	
-	private final DateTimeFormatter _tf = new DateTimeFormatterBuilder().appendPattern("H:mm").parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0).toFormatter();
-	
+	private final DateTimeFormatterBuilder _tfb = new DateTimeFormatterBuilder().appendPattern("H:mm");
+		
 	/**
 	 * Initializes the Data Access Object.
 	 * @param is the input stream to read
@@ -53,6 +53,10 @@ public class GetSchedule extends ScheduleLoadDAO {
 	 */
 	@Override
 	public Collection<ScheduleEntry> process() throws DAOException {
+		
+		// Build the Parser
+		final DateTimeFormatter tf = _tfb.parseDefaulting(ChronoField.DAY_OF_YEAR, LocalDateTime.now().get(ChronoField.DAY_OF_YEAR)).toFormatter();
+		
 		Collection<ScheduleEntry> results = new ArrayList<ScheduleEntry>();
 		try (LineNumberReader br = new LineNumberReader(getReader())) {
 			while (br.ready()) {
@@ -75,9 +79,9 @@ public class GetSchedule extends ScheduleLoadDAO {
 
 						// Get the airports and times
 						entry.setAirportD(getAirport(tkns.nextToken(), br.getLineNumber()));
-						entry.setTimeD(LocalDateTime.parse(tkns.nextToken(), _tf));
+						entry.setTimeD(LocalDateTime.parse(tkns.nextToken(), tf));
 						entry.setAirportA(getAirport(tkns.nextToken(), br.getLineNumber()));
-						entry.setTimeA(LocalDateTime.parse(tkns.nextToken(), _tf));
+						entry.setTimeA(LocalDateTime.parse(tkns.nextToken(), tf));
 						if ((entry.getAirportD() == null) || (entry.getAirportA() == null))
 							throw new IllegalArgumentException("Invalid Airport Code");
 

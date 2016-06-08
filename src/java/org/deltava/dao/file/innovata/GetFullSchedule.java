@@ -31,7 +31,7 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 	private static final Logger log = Logger.getLogger(GetFullSchedule.class);
 	
 	private final DateTimeFormatter _df = new DateTimeFormatterBuilder().appendPattern("dd/MM/yyyy").parseDefaulting(ChronoField.SECOND_OF_DAY, 0).toFormatter();
-	private DateTimeFormatter _tf = new DateTimeFormatterBuilder().appendPattern("HH:mm:ss").toFormatter();
+	private DateTimeFormatter _tf = new DateTimeFormatterBuilder().appendPattern("H:mm:ss").toFormatter();
 
 	private static final List<String> GROUND_EQ = Arrays.asList("TRN", "BUS", "LMO", "RFS");
 
@@ -130,14 +130,13 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 	}
 
 	/**
-	 * Sets the effective date of the schedule import. Flights starting after this date (or ending before this date)
-	 * will not be loaded.
+	 * Sets the effective date of the schedule import. Flights starting after this date (or ending before this date) will not be loaded.
 	 * @param dt the effective date/time
 	 */
 	public void setEffectiveDate(LocalDateTime dt) {
 		if (dt != null) {
 			_effDate = dt.truncatedTo(ChronoUnit.DAYS);
-			DateTimeFormatterBuilder tfb = new DateTimeFormatterBuilder().appendPattern("HH:mm:ss").parseLenient();
+			DateTimeFormatterBuilder tfb = new DateTimeFormatterBuilder().appendPattern("H:mm:ss");
 			tfb.parseDefaulting(ChronoField.YEAR, _effDate.getYear()).parseDefaulting(ChronoField.DAY_OF_YEAR, _effDate.getDayOfYear());
 			_tf = tfb.toFormatter();
 		}
@@ -149,10 +148,9 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 	 * @return a Collection of CSVTokens beans
 	 */
 	public Collection<CSVTokens> load() throws DAOException {
-		LineNumberReader br = getReader();
-		try {
+		LineNumberReader lr = getReader();
+		try (LineNumberReader br = lr) {
 			br.readLine(); // Skip first line
-
 			while (br.ready()) {
 				String data = br.readLine();
 				CSVTokens tkns = new CSVTokens(data, br.getLineNumber());
@@ -164,10 +162,8 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 				else if (include(tkns))
 					_data.add(tkns);
 			}
-
-			br.close();
 		} catch (Exception e) {
-			log.error("Error at line " + br.getLineNumber() + " - " + e.getMessage(), e);
+			log.error("Error at line " + lr.getLineNumber() + " - " + e.getMessage(), e);
 			throw new DAOException(e);
 		}
 
