@@ -169,15 +169,13 @@ public class OfflineFlightCommand extends AbstractCommand {
 			// Check that the build isn't deprecated
 			GetACARSBuilds abdao = new GetACARSBuilds(con);
 			boolean isBuildOK = abdao.isValid(cInfo, AccessRole.UPLOAD);
+			ClientInfo latestBuild = null;
+			if (cInfo.isBeta())
+				latestBuild = abdao.getLatestBeta(cInfo);
+			if (latestBuild == null)
+				latestBuild = abdao.getLatestBuild(cInfo);
+			
 			if (!isBuildOK) {
-				ClientInfo latestBuild = null;
-				if (cInfo.isBeta())
-					latestBuild = abdao.getLatestBeta(cInfo);
-				if (latestBuild == null)
-					latestBuild = abdao.getLatestBuild(cInfo);
-				ctx.release();
-				
-				// Set message
 				String msg = "ACARS Build " + cInfo.toString() + " not supported.";
 				if (latestBuild != null) {
 					msg += " Minimum ACARS " + cInfo.getVersion() + ".x build is Build " + latestBuild.getClientBuild() + "-";
@@ -187,6 +185,10 @@ public class OfflineFlightCommand extends AbstractCommand {
 				ctx.setMessage(msg);
 				return;
 			}
+			
+			// If we're not the latest, warn
+			if (cInfo.compareTo(latestBuild) < 0)
+				ctx.setAttribute("newerBuild", latestBuild, REQUEST);
 			
 			// Validate the Flight ID
 			if (inf.getID() != 0) {
