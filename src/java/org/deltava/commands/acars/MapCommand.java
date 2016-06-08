@@ -35,8 +35,7 @@ public class MapCommand extends AbstractCommand {
 		ctx.setAttribute("cookieExpiry", StringUtils.format(expDate, "yyyy, M, d"), REQUEST);
 		
 		// Create the map center
-		GeoPosition ctr = new GeoPosition(StringUtils.parse(ctx.getParameter("lat"), DEFAULT_CTR.getLatitude()), 
-				StringUtils.parse(ctx.getParameter("lng"), DEFAULT_CTR.getLongitude()));
+		GeoPosition ctr = new GeoPosition(StringUtils.parse(ctx.getParameter("lat"), DEFAULT_CTR.getLatitude()), StringUtils.parse(ctx.getParameter("lng"), DEFAULT_CTR.getLongitude()));
 		try {
 			if (ctx.getParameter("lat") == null) {
 				String lat = ctx.getCookie("acarsMapLat").getValue();
@@ -53,7 +52,7 @@ public class MapCommand extends AbstractCommand {
 		// Check if we're retrieving this from the ACARS client
 		boolean isACARSClient = Boolean.valueOf(ctx.getParameter("acarsClient")).booleanValue();
 		ctx.setAttribute("isDispatch", Boolean.valueOf(ctx.getParameter("dispatchClient")), REQUEST);
-		ctx.setAttribute("mapAPIVersion", Integer.valueOf(StringUtils.parse(ctx.getParameter("api"), 2)), REQUEST);
+		ctx.setAttribute("mapAPIVersion", Integer.valueOf(StringUtils.parse(ctx.getParameter("api"), 3)), REQUEST);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
