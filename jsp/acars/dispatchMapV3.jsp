@@ -77,7 +77,7 @@ toggleObjects = golgotha.local.toggleObjects;
 <div id="mapStatus" class="small mapTextLabel"></div>
 </el:form>
 <script id="mapInit">
-var mapOpts = {center:{lat:36.44,lng:-100.14}, zoom:6, minZoom:2, maxZoom:12, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
+var mapOpts = {center:{lat:36.44,lng:-100.14}, zoom:6, minZoom:2, maxZoom:12, scrollwheel:false, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
 var map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});

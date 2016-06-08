@@ -66,8 +66,7 @@ return true;
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data"><div class="error bld">SUBMISSION FAILURE - SHA-256 MISMATCH</div><br />
-<span class="ita">The content of the <content:airline /> ACARS XML data file that you have submitted does not match the
- cryptographic signature contained in the SHA file.</span></td>
+<span class="ita">The content of the <content:airline /> ACARS XML data file that you have submitted does not match the cryptographic signature contained in the SHA file.</span></td>
 </tr>
 </c:if>
 <content:hasmsg>
@@ -86,6 +85,12 @@ return true;
 <tr class="title caps">
  <td colspan="2">FLIGHT REPORT SUBMITTED SUCCESSFULLY</td> 
 </tr>
+<c:if test="${!empty newerBuild}">
+<tr>
+ <td colspan="2" class="mid error bld">A newer version of the <content:airline /> ACARS client is currently available. Please upgrade as soon as possible to Build ${newerBuild.clientBuild}
+<c:if test="${newerBuild.beta > 0}"> Beta ${newerBuild.beta}</c:if>!</td>
+</tr>
+</c:if>
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data">Your ACARS Offline Flight Report has been submitted. <el:cmd url="pirep" link="${pirep}" className="sec bld">Click Here</el:cmd> to view it.</td>
