@@ -21,14 +21,26 @@ public class SimulatorVersionTag extends TagSupport {
 	private int _major;
 	private int _minor;
 	
+	/**
+	 * Sets the Simulator used.
+	 * @param sim the Simulator
+	 */
 	public void setSim(Simulator sim) {
 		_sim = sim;
 	}
 	
+	/**
+	 * Sets the simulator major version number.
+	 * @param major the major version
+	 */
 	public void setMajor(int major) {
 		_major = major;
 	}
 	
+	/**
+	 * Sets the simulator minor version number.
+	 * @param minor the minor version
+	 */
 	public void setMinor(int minor) {
 		_minor = minor;
 	}
