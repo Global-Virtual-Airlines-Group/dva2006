@@ -40,6 +40,9 @@ else if (act.indexOf('threadsubjectedit.do') != -1)
 else if (act.indexOf('linkimg.do') != -1) {
 	golgotha.form.validate({f:f.imgURL, l:12, t:'URL of your Linked Image'});
 	golgotha.form.validate({f:f.desc, l:8, t:'Description of your Linked Image'});
+} else if (act.indexOf('threadstick.do') != -1) {
+	golgotha.form.validate({f:f.stickyDate, l:8, t:'the date Thread will be stuck until'});
+	golgotha.form.validate({f:f.stickyTime, l:5, t:'the time Thread will be stuck until'});
 } else if (f.msgText.value.length < 4)
 	golgotha.form.validate({f:f.pollVote, min:1, t:'Poll Vote'});
 
@@ -54,7 +57,7 @@ golgotha.local.openEmoticons = function() {
 golgotha.local.postQuote = function(postID, f)
 {
 var xmlreq = new XMLHttpRequest();
-xmlreq.open('GET', 'quote.ws?id=${thread.hexID}&post=' + postID);
+xmlreq.open('get', 'quote.ws?id=${thread.hexID}&post=' + postID);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 
@@ -368,7 +371,7 @@ notification each time a reply is posted in this Thread.
 </content:region>
 </content:page>
 <c:if test="${!empty lastReadPostID}">
-<script type="text/javascript" defer>
+<script type="text/javascript" async defer>
 var postRow = document.getElementById('post${lastReadPostID}');
 if (postRow) postRow.scrollIntoView();
 </script></c:if>
