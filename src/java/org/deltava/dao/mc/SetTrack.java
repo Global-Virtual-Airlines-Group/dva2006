@@ -7,6 +7,7 @@ import org.deltava.beans.GeoLocation;
 import org.deltava.beans.schedule.GeoPosition;
 
 import org.deltava.util.MemcachedUtils;
+import org.deltava.util.StringUtils;
 import org.deltava.util.cache.*;
 
 /**
@@ -44,7 +45,7 @@ public class SetTrack extends MemcachedDAO {
 	    	_casCache.add(data);
 	    	MemcachedUtils.write(key, 900, data);
 	    } catch (Exception e) {
-    		log.warn(e.getMessage());
+    		log.warn(StringUtils.isEmpty(e.getMessage()) ? e.getClass().getSimpleName() : e.getMessage());
 	    }
 	}
 
