@@ -88,7 +88,7 @@ return true;
 <c:if test="${!empty newerBuild}">
 <tr>
  <td colspan="2" class="mid error bld">A newer version of the <content:airline /> ACARS client is currently available. Please upgrade as soon as possible to Build ${newerBuild.clientBuild}
-<c:if test="${newerBuild.beta > 0}"> Beta ${newerBuild.beta}</c:if>!</td>
+<c:if test="${newerBuild.isBeta()}"> Beta ${newerBuild.beta}</c:if>!</td>
 </tr>
 </c:if>
 <tr>
