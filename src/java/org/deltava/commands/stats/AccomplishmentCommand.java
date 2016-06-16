@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Accomplishment profiles. 
  * @author Luke
- * @version 6.3
+ * @version 7.0
  * @since 3.2
  */
 
@@ -58,7 +58,6 @@ public class AccomplishmentCommand extends AbstractFormCommand {
 				throw securityException("Cannot " + (isNew ? "create" : "edit") + " Accomplishment profile");
 			
 			// Update fields
-			a.setValue(StringUtils.parse(ctx.getParameter("value"), 0));
 			a.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
 			a.setAlwaysDisplay(Boolean.valueOf(ctx.getParameter("alwaysDisplay")).booleanValue());
 			a.setUnit(AccomplishUnit.valueOf(ctx.getParameter("units")));
@@ -101,6 +100,10 @@ public class AccomplishmentCommand extends AbstractFormCommand {
 			default:
 				a.setChoices(StringUtils.nullTrim(StringUtils.split(ctx.getParameter("choices"), ",")));
 			}
+			
+			// Get count/all
+			boolean doAll = Boolean.valueOf(ctx.getParameter("doAll")).booleanValue();
+			a.setValue(doAll ? a.getChoices().size() : StringUtils.parse(ctx.getParameter("value"), 0));
 			
 			// Write the accomplishment
 			SetAccomplishment wdao = new SetAccomplishment(con);

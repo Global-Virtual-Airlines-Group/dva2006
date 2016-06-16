@@ -27,6 +27,13 @@ golgotha.form.submit(f);
 return true;
 };
 
+golgotha.local.toggleAll = function()
+{
+var f = document.forms[0;]	
+golgotha.util.disable(f.value, f.doAll.checked);	
+return true;	
+};
+
 golgotha.local.showChoices = function()
 {
 var f = document.forms[0];
@@ -71,7 +78,7 @@ return true;
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void golgotha.local.showChoices()">
+<body onload="void golgotha.local.showChoices(); void golgotha.local.toggleAll()">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -93,7 +100,8 @@ return true;
 </tr>
 <tr>
  <td class="label">Number of Units</td>
- <td class="data"><el:text name="value" idx="*" size="7" max="8" className="bld req" value="${ap.value}" /></td>
+ <td class="data"><el:text name="value" idx="*" size="7" max="8" className="bld req" value="${ap.value}" />
+ <el:check name="doAll" value="true" checked="${ap.value == ap.choices.size()}" label="All" onChange="void golgotha.local.toggleAll()" /></td>
 </tr>
 <tr>
  <td class="label">Label color</td>
