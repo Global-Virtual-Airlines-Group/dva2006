@@ -29,7 +29,7 @@ return true;
 
 golgotha.local.toggleAll = function()
 {
-var f = document.forms[0;]	
+var f = document.forms[0];	
 golgotha.util.disable(f.value, f.doAll.checked);	
 return true;	
 };
@@ -78,7 +78,7 @@ return true;
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void golgotha.local.showChoices(); void golgotha.local.toggleAll()">
+<body onload="golgotha.local.showChoices(); golgotha.local.toggleAll()">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -100,13 +100,11 @@ return true;
 </tr>
 <tr>
  <td class="label">Number of Units</td>
- <td class="data"><el:text name="value" idx="*" size="7" max="8" className="bld req" value="${ap.value}" />
- <el:check name="doAll" value="true" checked="${ap.value == ap.choices.size()}" label="All" onChange="void golgotha.local.toggleAll()" /></td>
+ <td class="data"><el:text name="value" idx="*" size="7" max="8" className="bld req" value="${ap.value}" /> <el:box name="doAll" value="true" checked="${ap.value == ap.choices.size()}" label="All" onChange="void golgotha.local.toggleAll()" /></td>
 </tr>
 <tr>
  <td class="label">Label color</td>
- <td class="data"><el:text name="color" idx="*" className="color bld req" size="6" max="8" value="${ap.hexColor}" />
- <span class="small">Click on the text box for a color picker.</span></td>
+ <td class="data"><el:text name="color" idx="*" className="color bld req" size="6" max="8" value="${ap.hexColor}" /> <span class="small">Click on the text box for a color picker.</span></td>
 </tr>
 <tr id="valueBox" style="display:none;" class="valueRow">
  <td class="label top">Valid Values</td>
