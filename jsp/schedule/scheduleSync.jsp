@@ -9,6 +9,7 @@
 <content:css name="main" />
 <content:css name="form" />
 <content:pics />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <script type="text/javascript">
 golgotha.local.purgeOnly = false;
@@ -23,11 +24,13 @@ golgotha.form.submit(f);
 return true;
 };
 
-golgotha.local.toggle = function(cb) {
-	var f = document.forms[0];
-	golgotha.local.purgeOnly = cb.checked;
-	golgotha.util.disable(f.vaCode, golgotha.local.purgeOnly);
-	return true;
+golgotha.local.toggle = function(cb)
+{
+var f = document.forms[0];
+golgotha.local.purgeOnly = cb.checked;
+golgotha.util.disable(f.vaCode, golgotha.local.purgeOnly);
+golgotha.util.disable(f.purgeEntries, golgotha.local.purgeOnly);
+return true;
 };
 </script>
 </head>
@@ -54,7 +57,8 @@ golgotha.local.toggle = function(cb) {
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="purgeOnly" value="true" label="Remove existing Schedule entries only" onChange="void golgotha.local.toggle(this)" /></td>
+ <td class="data"><el:box name="purgeOnly" value="true" label="Remove existing Schedule entries only" onChange="void golgotha.local.toggle(this)" /><br />
+<el:box name="purgeEntries" value="true" label="Purge synchronized Schedule entries at next Import" /></td>
 </tr>
 </el:table>
 
