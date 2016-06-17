@@ -34,7 +34,7 @@ public class SetScheduleSync extends DAO {
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("INSERT INTO SCHEDULE (SELECT AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A, DISTANCE, EQTYPE, "
-				+ "FLIGHT_LENGTH, TIME_D, TIME_A, HISTORIC, ?, ACADEMY FROM ");
+				+ "FLIGHT_TIME, TIME_D, TIME_A, HISTORIC, ?, ACADEMY FROM ");
 		sqlBuf.append(formatDBName(srcDB));
 		sqlBuf.append(".SCHEDULE WHERE (AIRLINE=?))");
 		
