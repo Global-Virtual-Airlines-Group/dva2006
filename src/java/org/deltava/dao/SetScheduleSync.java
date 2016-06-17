@@ -25,20 +25,23 @@ public class SetScheduleSync extends DAO {
 	/**
 	 * Copies all schedule entries for a particular airline into the current database.
 	 * @param al the Airline
+	 * @param canPurge TRUE if the entries should be purged next import, otherwise FALSE
 	 * @param srcDB the source database name
 	 * @return the number of entries copied
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public int copy(Airline al, String srcDB) throws DAOException {
+	public int copy(Airline al, boolean canPurge, String srcDB) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("INSERT INTO SCHEDULE (SELECT * FROM ");
+		StringBuilder sqlBuf = new StringBuilder("INSERT INTO SCHEDULE (SELECT AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A, DISTANCE, EQTYPE, "
+				+ "FLIGHT_LENGTH, TIME_D, TIME_A, HISTORIC, ?, ACADEMY FROM ");
 		sqlBuf.append(formatDBName(srcDB));
 		sqlBuf.append(".SCHEDULE WHERE (AIRLINE=?))");
 		
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setString(1, al.getCode());
+			_ps.setBoolean(1, canPurge);
+			_ps.setString(2, al.getCode());
 			return executeUpdate(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
