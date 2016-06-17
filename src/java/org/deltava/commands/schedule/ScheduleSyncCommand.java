@@ -1,4 +1,4 @@
-// Copyright 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.stream.Collectors;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to synchronize flight schedules between Airlines.
  * @author Luke
- * @version 6.0
+ * @version 7.0
  * @since 6.0
  */
 
@@ -62,6 +62,7 @@ public class ScheduleSyncCommand extends AbstractCommand {
 		}
 		
 		boolean purgeOnly = Boolean.valueOf(ctx.getParameter("purgeOnly")).booleanValue();
+		boolean purgeEntries = Boolean.valueOf(ctx.getParameter("purgeEntries")).booleanValue();
 		try { 
 			Connection con = ctx.getConnection();
 			ctx.startTX();
@@ -70,7 +71,7 @@ public class ScheduleSyncCommand extends AbstractCommand {
 			SetScheduleSync swdao = new SetScheduleSync(con);
 			ctx.setAttribute("entriesPurged", Integer.valueOf(swdao.purge(al)), REQUEST);
 			if (!purgeOnly)
-				ctx.setAttribute("entriesCopied", Integer.valueOf(swdao.copy(al, ai.getDB())), REQUEST);
+				ctx.setAttribute("entriesCopied", Integer.valueOf(swdao.copy(al, purgeEntries, ai.getDB())), REQUEST);
 			ctx.commitTX();
 		} catch (DAOException de) {
 			ctx.rollbackTX();
