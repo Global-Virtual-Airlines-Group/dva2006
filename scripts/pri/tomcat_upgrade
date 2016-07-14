@@ -1,6 +1,6 @@
 #!/bin/bash
 # Tomcat upgrade script
-# (c) 2006, 2010, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+# (c) 2006, 2010, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 
 # Check the version argument is preset
 if [ "$1" == "" ]
@@ -29,11 +29,15 @@ rm LICENSE
 rm NOTICE
 rm RELEASE-NOTES
 rm RUNNING.txt
+chmod 755 *
 
 # Nuke bad stuff in bin
 echo "Removing Windows-specific files"
 rm bin/*.bat
 rm bin/*.tar.gz
+chmod 755 bin/*.sh
+chmod 644 bin/*.jar
+chmod 644 bin/*.xml
 
 # Create the logging symlink
 rm -r logs
@@ -41,6 +45,7 @@ ln -s /var/log/tomcat logs
 
 # Copy over common libraries
 echo "Copying libraries"
+chmod 644 lib/*.jar
 cp -pu /usr/local/tomcat/lib/* lib
 
 # Copy over configuration files
@@ -51,10 +56,6 @@ chmod 640 conf/*
 mkdir conf/Catalina
 chown root:www conf/Catalina
 chmod 775 conf/Catalina
-
-# Copy over jsvc
-echo "Copying java service daemon"
-cp /usr/local/tomcat/bin/jsvc bin
 
 # Change permissions
 echo "Changing file permissions"
