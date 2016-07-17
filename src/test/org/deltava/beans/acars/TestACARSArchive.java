@@ -52,7 +52,6 @@ public class TestACARSArchive extends TestCase {
 		super.tearDown();
 	}
 
-	@SuppressWarnings("null")
 	public void testSHA() throws Exception {
 		
 		// Get the XML

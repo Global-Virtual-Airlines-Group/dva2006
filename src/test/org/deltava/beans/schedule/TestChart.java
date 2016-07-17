@@ -71,7 +71,6 @@ public class TestChart extends AbstractBeanTestCase {
         try {
             Chart c2 = new Chart(null, new Airport("ATL", "KATL", "Atlanta GA"));
             assertNull(c2);
-            fail("NullPointerException expected");
         } catch (NullPointerException npe) { 
         	// empty
         }
