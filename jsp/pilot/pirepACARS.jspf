@@ -172,11 +172,12 @@
 <c:if test="${access.canDispose && (pirep.landingLocation.latitude == 0.0) && (pirep.landingLocation.longitude == 0.0)}">
  | <el:cmd url="updtd" link="${flightInfo}">RECALCULATE TOUCHDOWN POINT</el:cmd></c:if></td>
 </tr>
+<c:if test="${pirep.endTime.isAfter(pirep.landingTime)}">
 <tr>
  <td class="label">Arrival Time</td>
- <td class="data" colspan="${cspan}"><fmt:date className="bld" date="${pirep.endTime}" />, 
-(<fmt:int value="${fn:delta(pirep.startTime, pirep.endTime) / 60}" /> minutes after start)</td>
+ <td class="data" colspan="${cspan}"><fmt:date className="bld" date="${pirep.endTime}" />, (<fmt:int value="${fn:delta(pirep.startTime, pirep.endTime) / 60}" /> minutes after start)</td>
 </tr>
+</c:if>
 <c:if test="${pirep.gateFuel > 0}">
 <c:set var="gate" value="${flightInfo.gateA}" scope="page" />
 <tr>
