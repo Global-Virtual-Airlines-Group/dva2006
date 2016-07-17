@@ -29,7 +29,7 @@ import org.deltava.util.system.SystemData;
  * 30 planned_route 31 planned_depairport_lat 32 planned_depairport_lon 33 planned_destairport_lat
  * 34 planned_destairport_lon 35 atis_message 36 time_last_atis_received 37 time_logon 38 heading 39 QNH_iHg 40 QNH_Mb
  * @author Luke
- * @version 6.1
+ * @version 7.0
  * @since 1.0
  */
 
@@ -223,7 +223,8 @@ public class GetServInfo extends DAO {
 											srvCnt.incrementAndGet();
 
 										// Add to results
-										info.add(p);
+										if (p.getID() != 0)
+											info.add(p);
 									} catch (Exception e) {
 										log.info("Error parsing pilot data for " + si.get(SITokens.CALLSIGN) + " - " + e.getMessage());
 									}

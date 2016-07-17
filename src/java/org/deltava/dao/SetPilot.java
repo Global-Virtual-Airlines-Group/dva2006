@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to update Pilot profiles.
  * @author Luke
- * @version 6.4
+ * @version 7.0
  * @since 1.0
  */
 
@@ -48,7 +48,7 @@ public class SetPilot extends PilotWriteDAO {
 		StringBuilder sqlBuf = new StringBuilder("UPDATE ");
 		sqlBuf.append(formatDBName(db));
 		sqlBuf.append(".PILOTS SET EMAIL=?, LOCATION=?, LEGACY_HOURS=?, HOME_AIRPORT=?, VATSIM_ID=?, "
-			+ "IVAO_ID=?, TZ=?, NOTIFY=?, SHOW_EMAIL=?, SHOW_WC_SIG=?, SHOW_WC_SSHOTS=?, "
+			+ "IVAO_ID=?, PE_ID=?, TZ=?, NOTIFY=?, SHOW_EMAIL=?, SHOW_WC_SIG=?, SHOW_WC_SSHOTS=?, "
 			+ "SHOW_DEF_SIG=?, SHOW_NEW_POSTS=?, UISCHEME=?, NAVBAR=?, VIEWSIZE=?, DFORMAT=?, "
 			+ "TFORMAT=?, NFORMAT=?, AIRPORTCODE=?, DISTANCEUNITS=?, WEIGHTUNITS=?, MAPTYPE=?, "
 			+ "RANK=?, EQTYPE=?, STATUS=?, NOEXAMS=?, NOVOICE=?, NOCOOLER=?, NOTIMECOMPRESS=?, "
@@ -64,38 +64,39 @@ public class SetPilot extends PilotWriteDAO {
 			_ps.setString(4, p.getHomeAirport());
 			_ps.setString(5, p.getNetworkID(OnlineNetwork.VATSIM));
 			_ps.setString(6, p.getNetworkID(OnlineNetwork.IVAO));
-			_ps.setString(7, p.getTZ().getID());
-			_ps.setInt(8, p.getNotifyCode());
-			_ps.setInt(9, p.getEmailAccess());
-			_ps.setBoolean(10, p.getShowSignatures());
-			_ps.setBoolean(11, p.getShowSSThreads());
-			_ps.setBoolean(12, p.getHasDefaultSignature());
-			_ps.setBoolean(13, p.getShowNewPosts());
-			_ps.setString(14, p.getUIScheme());
-			_ps.setBoolean(15, p.getShowNavBar());
-			_ps.setInt(16, p.getViewCount());
-			_ps.setString(17, p.getDateFormat());
-			_ps.setString(18, p.getTimeFormat());
-			_ps.setString(19, p.getNumberFormat());
-			_ps.setInt(20, p.getAirportCodeType().ordinal());
-			_ps.setInt(21, p.getDistanceType().ordinal());
-			_ps.setInt(22, p.getWeightType().ordinal());
-			_ps.setInt(23, p.getMapType().ordinal());
-			_ps.setString(24, p.getRank().getName());
-			_ps.setString(25, p.getEquipmentType());
-			_ps.setInt(26, p.getStatus());
-			_ps.setBoolean(27, p.getNoExams());
-			_ps.setBoolean(28, p.getNoVoice());
-			_ps.setBoolean(29, p.getNoCooler());
-			_ps.setBoolean(30, p.getNoTimeCompression());
-			_ps.setInt(31, p.getACARSRestriction().ordinal());
-			_ps.setBoolean(32, p.isInvalid());
-			_ps.setString(33, p.getLDAPName());
-			_ps.setString(34, p.getMotto());
-			_ps.setBoolean(35, p.getIsPermanent());
-			_ps.setString(36, p.getFirstName());
-			_ps.setString(37, p.getLastName());
-			_ps.setInt(38, p.getID());
+			_ps.setString(7, p.getNetworkID(OnlineNetwork.PILOTEDGE));
+			_ps.setString(8, p.getTZ().getID());
+			_ps.setInt(9, p.getNotifyCode());
+			_ps.setInt(10, p.getEmailAccess());
+			_ps.setBoolean(11, p.getShowSignatures());
+			_ps.setBoolean(12, p.getShowSSThreads());
+			_ps.setBoolean(13, p.getHasDefaultSignature());
+			_ps.setBoolean(14, p.getShowNewPosts());
+			_ps.setString(15, p.getUIScheme());
+			_ps.setBoolean(16, p.getShowNavBar());
+			_ps.setInt(17, p.getViewCount());
+			_ps.setString(18, p.getDateFormat());
+			_ps.setString(19, p.getTimeFormat());
+			_ps.setString(20, p.getNumberFormat());
+			_ps.setInt(21, p.getAirportCodeType().ordinal());
+			_ps.setInt(22, p.getDistanceType().ordinal());
+			_ps.setInt(23, p.getWeightType().ordinal());
+			_ps.setInt(24, p.getMapType().ordinal());
+			_ps.setString(25, p.getRank().getName());
+			_ps.setString(26, p.getEquipmentType());
+			_ps.setInt(27, p.getStatus());
+			_ps.setBoolean(28, p.getNoExams());
+			_ps.setBoolean(29, p.getNoVoice());
+			_ps.setBoolean(30, p.getNoCooler());
+			_ps.setBoolean(31, p.getNoTimeCompression());
+			_ps.setInt(32, p.getACARSRestriction().ordinal());
+			_ps.setBoolean(33, p.isInvalid());
+			_ps.setString(34, p.getLDAPName());
+			_ps.setString(35, p.getMotto());
+			_ps.setBoolean(36, p.getIsPermanent());
+			_ps.setString(37, p.getFirstName());
+			_ps.setString(38, p.getLastName());
+			_ps.setInt(39, p.getID());
 			executeUpdate(1);
 
 			// Update the roles/ratings
@@ -176,10 +177,11 @@ public class SetPilot extends PilotWriteDAO {
 	 */
 	public void assignID(Pilot p, String db) throws DAOException {
 		try {
+			String dbName = formatDBName(db);
 			startTransaction();
 			
 			// Get the next available Pilot ID
-			prepareStatementWithoutLimits("SELECT MAX(PILOT_ID)+1 FROM " + formatDBName(db) + ".PILOTS");
+			prepareStatementWithoutLimits("SELECT MAX(PILOT_ID)+1 FROM " +  dbName + ".PILOTS");
 			try (ResultSet rs = _ps.executeQuery()) {
 				p.setPilotNumber(rs.next() ? rs.getInt(1) : 1);
 			}
@@ -187,7 +189,7 @@ public class SetPilot extends PilotWriteDAO {
 			_ps.close();
 
 			// Write the new Pilot ID
-			prepareStatement("UPDATE " + formatDBName(db) + ".PILOTS SET PILOT_ID=? WHERE (ID=?) AND ((PILOT_ID=0) OR (PILOT_ID IS NULL))");
+			prepareStatement("UPDATE " + dbName + ".PILOTS SET PILOT_ID=? WHERE (ID=?) AND ((PILOT_ID=0) OR (PILOT_ID IS NULL))");
 			_ps.setInt(1, p.getPilotNumber());
 			_ps.setInt(2, p.getID());
 			executeUpdate(1);

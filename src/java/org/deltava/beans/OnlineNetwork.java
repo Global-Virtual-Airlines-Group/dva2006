@@ -9,7 +9,7 @@ package org.deltava.beans;
  */
 
 public enum OnlineNetwork {
-	VATSIM, IVAO, FPI, INTVAS, ACARS;
+	VATSIM, IVAO, FPI, INTVAS, ACARS, PILOTEDGE;
 
 	/**
 	 * Parses an online network name.
@@ -22,5 +22,10 @@ public enum OnlineNetwork {
 		} catch (Exception e) {
 			return null;
 		}
+	}
+	
+	@Override
+	public String toString() {
+		return (this != PILOTEDGE) ? name() : "PilotEdge";
 	}
 }

@@ -111,15 +111,22 @@ return true;
 <c:set var="vatsimID" value="${fn:networkID(pilot, 'VATSIM')}" scope="page" />
 <c:if test="${!empty vatsimID}">
 <tr>
- <td class="label">VATSIM ID#</td>
+ <td class="label">VATSIM ID</td>
  <td colspan="${cspan}" class="data">${vatsimID}</td>
 </tr>
 </c:if>
 <c:set var="ivaoID" value="${fn:networkID(pilot, 'IVAO')}" scope="page" />
 <c:if test="${!empty ivaoID}">
 <tr>
- <td class="label">IVAO ID#</td>
+ <td class="label">IVAO ID</td>
  <td colspan="${cspan}" class="data">${ivaoID}</td>
+</tr>
+</c:if>
+<c:set var="peID" value="${fn:networkID(pilot, 'PilotEdge')}" scope="page" />
+<c:if test="${!empty peID}">
+<tr>
+ <td class="label">PilotEdge ID</td>
+ <td colspan="${cspan}" class="data">${peID}</td>
 </tr>
 </c:if>
 <tr>
