@@ -104,7 +104,6 @@ public final class OfflineFlightParser {
 		inf.setRoute(ie.getChildTextTrim("route"));
 		inf.setRemarks(ie.getChildTextTrim("remarks"));
 		inf.setSimulator(Simulator.fromName(ie.getChildTextTrim("fs_ver")));
-		inf.setSimulatorVersion(StringUtils.parse(ie.getChildTextTrim("simMajor"), 0), StringUtils.parse(ie.getChildTextTrim("simMinor"), 0));
 		inf.setScheduleValidated(Boolean.valueOf(ie.getChildTextTrim("schedOK")).booleanValue());
 		inf.setDispatchPlan(Boolean.valueOf(ie.getChildTextTrim("dispatchRoute")).booleanValue());
 		inf.setDispatcherID(StringUtils.parse(ie.getChildTextTrim("dispatcherID"), 0));
@@ -112,6 +111,18 @@ public final class OfflineFlightParser {
 		result.setSID(ie.getChildTextTrim("sid"));
 		result.setSTAR(ie.getChildTextTrim("star"));
 		result.setInfo(inf);
+		
+		// Load sim major/minor
+		String simVersion = ie.getChildTextTrim("simVersion"); 
+		if (!StringUtils.isEmpty(simVersion)) {
+			int vpos = simVersion.indexOf('.');
+			int major = StringUtils.parse(simVersion.substring(0, vpos), 0); int minor = StringUtils.parse(simVersion.substring(vpos + 1), 0);
+			if (major != 0)
+				inf.setSimulatorVersion(major, minor);
+		} else if (inf.getSimulator() == Simulator.FS9)
+			inf.setSimulatorVersion(9, 1);
+		else if (inf.getSimulator() == Simulator.FS2002)
+			inf.setSimulatorVersion(8, 0);
 		
 		// Build the position entries
 		Element ppe = re.getChild("positions");
