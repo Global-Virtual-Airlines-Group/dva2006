@@ -335,8 +335,16 @@ public class OfflineFlightCommand extends AbstractCommand {
 				afr.setAttribute(FlightReport.ATTR_ACADEMY, (c != null));
 			}
 			
-			// Check for inflight refueling
-			FuelUse fuelUse = FuelUse.validate(flight.getPositions());
+			// Combine offline and online position reports
+			Collection<ACARSRouteEntry> positions = new TreeSet<ACARSRouteEntry>(flight.getPositions().comparator());
+			positions.addAll(flight.getPositions());
+			if (inf.getID() > 0) {
+				GetACARSPositions posdao = new GetACARSPositions(con);
+				positions.addAll(posdao.getRouteEntries(inf.getID(), false));
+			}
+			
+			// Check for inflight refueling and calculate fuel use
+			FuelUse fuelUse = FuelUse.validate(positions);
 			afr.setAttribute(FlightReport.ATTR_REFUELWARN, fuelUse.getRefuel());
 			afr.setTotalFuel(fuelUse.getTotalFuel());
 
@@ -354,13 +362,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 			}
 			
 			// Calculate average frame rate
-			if (!CollectionUtils.isEmpty(flight.getPositions())) {
-				int totalFrames = 0;
-				for (ACARSRouteEntry rte : flight.getPositions())
-					totalFrames += rte.getFrameRate();
-					
-				afr.setAverageFrameRate(((double) totalFrames) / flight.getPositions().size());  
-			}
+			afr.setAverageFrameRate(positions.stream().mapToInt(ACARSRouteEntry::getFrameRate).average().getAsDouble());
 				
 			// Save comments
 			if (!comments.isEmpty())
