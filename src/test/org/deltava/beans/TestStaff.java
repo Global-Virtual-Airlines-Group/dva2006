@@ -43,7 +43,6 @@ public class TestStaff extends AbstractBeanTestCase {
         try {
             Staff s2 = new Staff(null, "Smith");
             assertNull(s2);
-            fail("NullPointerException expected");
         } catch (NullPointerException npe) {
         	// empty
         }
@@ -51,7 +50,6 @@ public class TestStaff extends AbstractBeanTestCase {
         try {
             Staff s2 = new Staff("John", null);
             assertNull(s2);
-            fail("NullPointerException expected");
         } catch (NullPointerException npe) {
         	// empty
         }

@@ -86,7 +86,6 @@ public class TestExamination extends AbstractBeanTestCase {
         try {
             Examination e2 = new Examination(null);
             assertNull(e2);
-            fail("NullPointerException expected");
         } catch (NullPointerException npe) {
         	// empty
         }
