@@ -68,6 +68,11 @@
 <c:if test="${!empty missingScripts}"><br /><span class="error">Missing Check Ride Scripts for Check Ride(s) <fmt:list value="${missingScripts}" delim=", " /></span></c:if></td>
 </tr>
 </c:if>
+<c:if test="${!empty crScripts}">
+<tr>
+ <td class="label top">Check Ride Scripts</td>
+ <td class="data"><c:forEach var="sc" items="${crScripts}" varStatus="scStatus"><el:cmd url="arScript" linkID="${sc.certificationName}-${sc.index}">Check Ride Script #${sc.index}</el:cmd><c:if test="${!scStatus.isLast()}"><br /></c:if></c:forEach></td></tr>
+</c:if>
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data bld"><c:if test="${cert.active}"><span class="ter caps">CERTIFICATION IS AVAILABLE</span></c:if>

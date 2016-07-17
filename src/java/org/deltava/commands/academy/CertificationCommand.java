@@ -1,4 +1,4 @@
-// Copyright 2006, 2009, 2010, 2011, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2010, 2011, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to view and update Flight Academy certification profiles.
  * @author Luke
- * @version 6.1
+ * @version 7.0
  * @since 1.0
  */
 
@@ -191,10 +191,13 @@ public class CertificationCommand extends AbstractFormCommand {
 			
 			// Check if we have check ride scripts
 			Collection<Integer> missingScripts = new TreeSet<Integer>();
+			Collection<AcademyRideScript> crScripts = new ArrayList<AcademyRideScript>(); 
 			for (int x = 1; x <= cert.getRideCount(); x++) {
 				AcademyRideScript sc = dao.getScript(new AcademyRideID(cert.getName(), x));
 				if (sc == null)
 					missingScripts.add(Integer.valueOf(x));
+				else
+					crScripts.add(sc);
 			}
 				
 			// If we have a specific pre-req, load it as well
@@ -209,6 +212,7 @@ public class CertificationCommand extends AbstractFormCommand {
 			ctx.setAttribute("cert", cert, REQUEST);
 			ctx.setAttribute("access", access, REQUEST);
 			ctx.setAttribute("missingScripts", missingScripts, REQUEST);
+			ctx.setAttribute("crScripts", crScripts, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
