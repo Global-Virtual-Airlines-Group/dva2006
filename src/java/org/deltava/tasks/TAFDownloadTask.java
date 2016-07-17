@@ -45,7 +45,7 @@ public class TAFDownloadTask extends Task {
 			ctx.startTX();
 			
 			// Purge the data
-			wxwdao.purgeTAF(360);
+			wxwdao.purgeTAF(490);
 			
 			// Save the TAFs
 			log.info("Saving TAF cycle - " + tafs.size() + " entries");

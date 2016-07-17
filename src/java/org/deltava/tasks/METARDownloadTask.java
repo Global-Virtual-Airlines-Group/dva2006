@@ -51,7 +51,7 @@ public class METARDownloadTask extends Task {
 			ctx.startTX();
 			
 			// Purge the data
-			wxwdao.purgeMETAR(180);
+			wxwdao.purgeMETAR(270);
 			
 			// Save the METARs
 			log.info("Saving METAR cycle - " + data.size() + " entries");
