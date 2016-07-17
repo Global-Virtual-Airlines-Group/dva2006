@@ -1,0 +1,69 @@
+#!/bin/bash
+# ServInfo direct download script
+# (c) 2006, 2009, 2010, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+
+# Set the file to download to
+if [ -z "$2" ]; then
+ echo "servinfo <network> <path> [verbose] ..."
+ exit 1
+fi
+
+# Turn on verbose operation if requested
+QuietOpt=""
+if [ -z "$3" ]; then
+ QuietOpt="-q"
+fi
+
+# Get the status URL
+if [ "PilotEdge" == "$1" ]; then
+ MyURL="http://map.pilotedge.net/vspro.dat"
+ InfoFile="vspro.dat"
+ network="pilotedge"
+else
+ echo "Unknown network - $1"
+ exit 3
+fi
+
+# Check if we're already downloading or reading
+if [ -f "/tmp/$network.isactive" ]; then
+ echo "$network data is busy!"
+ sleep 1.5
+ if [ -f "/tmp/$network.isactive" ]; then
+  echo "Already downloading $network data!"
+  exit 2
+ else
+  echo active > /tmp/$network.isactive
+ fi
+else
+ echo active > /tmp/$network.isactive
+fi
+
+# Make path
+mkdir /tmp/$network
+cd /tmp/$network
+
+# Get the info file
+LastMod=1
+if [ -f "$2/$network.info" ]; then
+ cp $2/$network.info /tmp/$network/$InfoFile
+ touch -r $2/$network.info /tmp/$network/$InfoFile
+ LastMod=$(stat -c %Y /tmp/$network/$InfoFile)
+fi
+wget $MyURL -N --timeout=10 --tries=5 $QuietOpt
+if [ -f "/tmp/$network/$InfoFile" ]; then
+ LastModDL=$(stat -c %Y /tmp/$network/$InfoFile)
+ if [ "$LastMod" -ge "$LastModDL" ]; then
+  echo "Downloaded file is same/older!"
+ else
+  cp /tmp/$network/$InfoFile $2/$network.info
+  touch -r /tmp/$network/$InfoFile $2/$network.info
+ fi 
+else
+ echo "Invalid $network traffic data!"
+fi
+
+# Clean up temp files
+cd /tmp
+rm -r /tmp/$network
+rm $network.isactive
+exit 0

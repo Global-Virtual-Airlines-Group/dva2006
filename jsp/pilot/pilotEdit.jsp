@@ -197,12 +197,16 @@ golgotha.onDOMReady(function() {
  <el:text name="homeAirportCode" size="3" max="4" onBlur="void document.forms[0].homeAirport.setAirport(this.value)" /></td>
 </tr>
 <tr>
- <td class="label">VATSIM ID#</td>
+ <td class="label">VATSIM ID</td>
  <td colspan="${cspan}" class="data"><el:text name="VATSIM_ID" idx="*" value="${fn:networkID(pilot, 'VATSIM')}" size="10" max="9" /></td>
 </tr>
 <tr>
- <td class="label">IVAO ID#</td>
+ <td class="label">IVAO ID</td>
  <td colspan="${cspan}" class="data"><el:text name="IVAO_ID" idx="*" value="${fn:networkID(pilot, 'IVAO')}" size="10" max="9" /></td>
+</tr>
+<tr>
+ <td class="label">PilotEdge ID</td>
+ <td colspan="${cspan}" class="data"><el:text name="PilotEdge_ID" idx="*" value="${fn:networkID(pilot, 'PilotEdge')}" size="10" max="9" /></td>
 </tr>
 <c:if test="${empty pilotLocation}">
 <tr>

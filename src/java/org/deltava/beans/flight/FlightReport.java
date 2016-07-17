@@ -129,6 +129,11 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 	public static final int ATTR_SIMFDR = 0x80000;
 	
 	/**
+	 * Flight logged using PilotEdge.
+	 */
+	public static final int ATTR_PEDGE = 0x100000;
+	
+	/**
 	 * Attribute mask for all warnings.
 	 */
 	public static final int ATTR_WARN_MASK = 0x6B861;
@@ -136,7 +141,7 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 	/**
 	 * Attribute mask for VATSIM/IVAO/FPI online flights.
 	 */
-	public static final int ATTR_ONLINE_MASK = 0x0E;
+	public static final int ATTR_ONLINE_MASK = 0x10000E;
 	
 	/**
 	 * Minimum ACARS client version for inclusion in statistics aggregation.
