@@ -34,7 +34,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to handle editing/saving Pilot Profiles.
  * @author Luke
- * @version 6.4
+ * @version 7.0
  * @since 1.0
  */
 
@@ -128,6 +128,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			// Update the profile with data from the request
 			p.setHomeAirport(ctx.getParameter("homeAirport"));
 			p.setNetworkID(OnlineNetwork.IVAO, ctx.getParameter("IVAO_ID"));
+			p.setNetworkID(OnlineNetwork.PILOTEDGE, ctx.getParameter("PilotEdge_ID"));
 			p.setMotto(ctx.getParameter("motto"));
 			p.setEmailAccess(StringUtils.parse(ctx.getParameter("privacyOption"), Person.HIDE_EMAIL));
 			p.setTZ(TZInfo.get(ctx.getParameter("tz")));
@@ -306,8 +307,7 @@ public class ProfileCommand extends AbstractFormCommand {
 						upd.setDescription("Promoted to " + newRank + ", " + newEQ);
 						updates.add(upd);
 					} else {
-						StatusUpdate upd = new StatusUpdate(p.getID(), newSC ? StatusUpdate.SR_CAPTAIN
-								: StatusUpdate.RANK_CHANGE);
+						StatusUpdate upd = new StatusUpdate(p.getID(), newSC ? StatusUpdate.SR_CAPTAIN : StatusUpdate.RANK_CHANGE);
 						upd.setAuthorID(ctx.getUser().getID());
 						upd.setDescription("Rank Changed to " + newRank + ", " + newEQ);
 						updates.add(upd);
@@ -400,16 +400,14 @@ public class ProfileCommand extends AbstractFormCommand {
 				int maxY = SystemData.getInt("cooler.sig_max.y");
 				if (imgOK && ((info.getWidth() > maxX) || (info.getHeight() > maxY))) {
 					imgOK = false;
-					ctx.setMessage("Your Signature Image is too large. (Max = " + maxX + "x" + maxY + ", Yours = "
-							+ info.getWidth() + "x" + info.getHeight() + ")");
+					ctx.setMessage("Your Signature Image is too large. (Max = " + maxX + "x" + maxY + ", Yours = " + info.getWidth() + "x" + info.getHeight() + ")");
 				}
 
 				// Check the image size
 				int maxSize = SystemData.getInt("cooler.sig_max.size");
 				if (imgOK && (imgData.getSize() > maxSize)) {
 					imgOK = false;
-					ctx.setMessage("Your signature Image is too large. (Max = " + maxSize + "bytes, Yours ="
-							+ imgData.getSize() + " bytes)");
+					ctx.setMessage("Your signature Image is too large. (Max = " + maxSize + "bytes, Yours =" + imgData.getSize() + " bytes)");
 				}
 
 				// Update the image if it's OK
@@ -502,10 +500,7 @@ public class ProfileCommand extends AbstractFormCommand {
 
 				// Check for unique names
 				Collection<Integer> dupeResults = new HashSet<Integer>();
-				for (Iterator<AirlineInformation> i = airlines.iterator(); i.hasNext();) {
-					AirlineInformation info = i.next();
-
-					// Check Pilots & applicants
+				for (AirlineInformation info : airlines) {
 					dupeResults.addAll(rdao.checkUnique(p2, info.getDB()));
 					dupeResults.addAll(adao.checkUnique(p2, info.getDB(), 21));
 

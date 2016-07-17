@@ -24,8 +24,8 @@ golgotha.local.setNetwork = function(combo) {
 <content:copyright visible="false" />
 <body>
 <content:page>
-<%@ include file="/jsp/main/header.jspf" %> 
-<%@ include file="/jsp/main/sideMenu.jspf" %>
+<%@ include file="/jsp/event/header.jspf" %> 
+<%@ include file="/jsp/event/sideMenu.jspf" %>
 <content:sysdata var="networks" name="online.networks" />
 
 <!-- Main Body Frame -->
