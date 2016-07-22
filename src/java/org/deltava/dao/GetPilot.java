@@ -189,7 +189,7 @@ public class GetPilot extends PilotReadDAO {
 		try {
 			prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), "
 					+ "MAX(F.DATE) FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) WHERE "
-					+ "(UPPER(LEFT(P.LASTNAME, 1))=?) GROUP BY P.ID ORDER BY P.LASTNAME");
+					+ "(LEFT(P.LASTNAME, 1)=?) GROUP BY P.ID ORDER BY P.LASTNAME");
 			_ps.setInt(1, FlightReport.OK);
 			_ps.setString(2, letter.substring(0, 1).toUpperCase());
 			return execute();
