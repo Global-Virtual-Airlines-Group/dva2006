@@ -307,7 +307,7 @@ abstract class PilotReadDAO extends DAO {
 				p.setMotto(rs.getString(46));
 
 				// Check if this result set has columns 47-50, which is the PIREP totals
-				if (columnCount > 50) {
+				if (columnCount > 49) {
 					p.setLegs(rs.getInt(47));
 					p.setMiles(rs.getLong(48));
 					p.setHours(rs.getDouble(49));
