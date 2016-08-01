@@ -114,8 +114,7 @@ public class FlightSubmitService extends SimFDRService {
 					boolean isOK = helper.canPromote(pEQ);
 					if (!isOK) {
 						i.remove();
-						if (!StringUtils.isEmpty(helper.getLastComment()))
-							comments.add("Not eligible for promotion: " + helper.getLastComment());
+						comments.add("Not eligible for promotion: " + helper.getLastComment());
 					}
 				}
 				
