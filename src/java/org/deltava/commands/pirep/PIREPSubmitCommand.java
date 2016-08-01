@@ -106,8 +106,7 @@ public class PIREPSubmitCommand extends AbstractCommand {
 					EquipmentType pEQ = eqdao.get(pType, SystemData.get("airline.db"));
 					if (!helper.canPromote(pEQ)) {
 						i.remove();
-						if (!StringUtils.isEmpty(helper.getLastComment()))
-							comments.add("Not eligible for promotion: " + helper.getLastComment());
+						comments.add("Not eligible for promotion: " + helper.getLastComment());
 					}
 				}
 				
