@@ -17,7 +17,7 @@ public class TestRedisCache extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		PropertyConfigurator.configure("data/log4j.test.properties");
-		RedisUtils.init("localhost");
+		RedisUtils.init("192.168.0.2");
 		_cache = new RedisCache<Cacheable>("test", 1);
 		assertNotNull(_cache);
 	}
@@ -56,10 +56,16 @@ public class TestRedisCache extends TestCase {
 		_cache.add(new Airline("DVA", "Delta Virtual"));
 		assertTrue(_cache.contains("AF"));
 		assertTrue(_cache.contains("DVA"));
+		assertNotNull(_cache.get("AF"));
+		assertNotNull(_cache.get("DVA"));
+		assertEquals(2, _cache.getRequests());
+		assertEquals(2, _cache.getHits());
 
 		Thread.sleep(1050);
 		assertNull(_cache.get("AF"));
 		assertNull(_cache.get("DVA"));
+		assertEquals(4, _cache.getRequests());
+		assertEquals(2, _cache.getHits());
 	}
 
 	public void testNull() {
@@ -75,6 +81,6 @@ public class TestRedisCache extends TestCase {
 
 		long start = System.currentTimeMillis();
 		_cache.addAll(entries);
-		assertTrue((System.currentTimeMillis() - start) < 1500);
+		assertTrue((System.currentTimeMillis() - start) < 3500);
 	}
 }
