@@ -154,7 +154,7 @@ golgotha.local.fbAuthorize = function() {
  <td class="data">You are a <span class="pri bld">${pilot.rank.name}</span> in the <span class="sec bld">${pilot.equipmentType}</span>
  program. <span class="pri bld">(Stage ${eqType.stage})</span><br />
 <br />
-Your Chief Pilot is <a class="bld" href="mailto:${eqType.CPEmail}">${eqType.CPName}</a>.<br />
+Your Chief Pilot is <a class="bld" href="mailto:${CP.email}">${CP.name}</a>.<br />
 <c:if test="${!empty asstCP}">
 <c:if test="${fn:sizeof(asstCP) == 1}">
 Your Assistant Chief Pilot is 
