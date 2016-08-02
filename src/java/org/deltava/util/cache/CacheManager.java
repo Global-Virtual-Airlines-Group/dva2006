@@ -11,7 +11,7 @@ import org.gvagroup.common.*;
 /**
  * A utility class to handle centralized cache registration and invalidation.
  * @author Luke
- * @version 7.0
+ * @version 7.1
  * @since 5.0
  */
 
@@ -78,7 +78,7 @@ public class CacheManager {
 		}
 		
 		cache.clear();
-		if (sendEvent && (cache instanceof MemcachedCache))
+		if (sendEvent && (cache instanceof RedisCache))
 			EventDispatcher.send(new IDEvent(SystemEvent.Type.CACHE_FLUSH, id));
 	}
 	
@@ -111,8 +111,8 @@ public class CacheManager {
 		
 		// Create the cache
 		if (isRemote) {
-			cache = new MemcachedCache<T>("cache:" + id, (expiryTime < 5) ? 86400 * 4 : expiryTime);
-			log.info("Registered memcached cache " + id + ", expiry=" + expiryTime + "s");
+			cache = new RedisCache<T>("cache:" + id, (expiryTime < 5) ? 86400 * 4 : expiryTime);
+			log.info("Registered Redis cache " + id + ", expiry=" + expiryTime + "s");
 		} else if (maxSize < 1) {
 			cache = new NullCache<T>();
 			log.info("Registered cache " + id + ", null cache");

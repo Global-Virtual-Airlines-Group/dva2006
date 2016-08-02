@@ -8,8 +8,6 @@ import org.apache.log4j.Logger;
 
 import net.spy.memcached.*;
 
-import org.deltava.beans.Helper;
-
 /**
  * A utility class for memcached operations.
  * @author Luke
@@ -17,7 +15,6 @@ import org.deltava.beans.Helper;
  * @since 6.1
  */
 
-@Helper(org.deltava.dao.mc.MemcachedDAO.class)
 public class MemcachedUtils {
 	
 	private static final Logger log = Logger.getLogger(MemcachedUtils.class);

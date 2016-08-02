@@ -10,8 +10,7 @@ import org.apache.log4j.Logger;
 import org.deltava.beans.system.VersionInfo;
 
 import org.deltava.dao.DAOException;
-import org.deltava.dao.mc.GetTiles;
-
+import org.deltava.dao.redis.GetTiles;
 import org.gvagroup.tile.PNGTile;
 
 /**

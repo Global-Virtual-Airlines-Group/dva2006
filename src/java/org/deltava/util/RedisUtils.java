@@ -119,6 +119,21 @@ public class RedisUtils {
 	}
 
 	/**
+	 * Pushes a value to a list. The list will be trimmed if it exceeds a maximum size
+	 * @param key the key
+	 * @param value the list element
+	 * @param maxLength the maximum size of the list or zero for unlimited
+	 */
+	public static void push(String key, String value, int maxLength) {
+		checkConnection();
+		try (Jedis jc = _client.getResource()) {
+			long len = jc.rpush(key, value).longValue();
+			if ((maxLength > 0) && (len > maxLength))
+				jc.ltrim(key, (len - maxLength), len);
+		}
+	}
+
+	/**
 	 * Deletes a key from memcached.
 	 * @param key the key
 	 */
