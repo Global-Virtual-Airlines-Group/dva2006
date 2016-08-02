@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display the Pilot Center.
  * @author Luke
- * @version 7.0
+ * @version 7.1
  * @since 1.0
  */
 
@@ -158,6 +158,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			ctx.setAttribute("examLockout", Boolean.valueOf(testHistory.isLockedOut(SystemData.getInt("testing.lockout"))), REQUEST);
 
 			// Get the Assistant Chief Pilots (if any) for the equipment program
+			ctx.setAttribute("CP", pdao.get(testHistory.getEquipmentType().getCPID()), REQUEST);
 			ctx.setAttribute("asstCP", pdao.getPilotsByEQ(testHistory.getEquipmentType(), null, true, Rank.ACP), REQUEST);
 
 			// Save the pilot's equipment program and check if we can get promoted to Captain
