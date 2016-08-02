@@ -14,6 +14,7 @@ import org.deltava.util.MemcachedUtils;
  * @since 6.1
  */
 
+@Deprecated
 public class MemcachedCache<T extends Cacheable> extends Cache<T> {
 	
 	private final String _bucket;

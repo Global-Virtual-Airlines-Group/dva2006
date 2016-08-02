@@ -9,6 +9,7 @@ import org.apache.log4j.*;
 import org.deltava.beans.schedule.Airline;
 import org.deltava.util.MemcachedUtils;
 
+@Deprecated
 public class TestMemcachedCache extends TestCase {
 
 	private MemcachedCache<Cacheable> _cache;
