@@ -112,7 +112,7 @@ public class RedisUtils {
 
 			byte[] rawKey = key.getBytes(StandardCharsets.UTF_8);
 			try (Jedis jc = _client.getResource()) {
-				if (expiry > 86400) {
+				if (expiry > 864000) {
 					jc.set(rawKey, bo.toByteArray());
 					jc.expireAt(rawKey, expiry);
 				} else
