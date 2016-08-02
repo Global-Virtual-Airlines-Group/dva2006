@@ -1,20 +1,18 @@
-// Copyright 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
-
-import java.io.InvalidClassException;
 
 import java.util.concurrent.atomic.LongAdder;
 
-import org.deltava.util.MemcachedUtils;
+import org.deltava.util.RedisUtils;
 
 /**
- * An object cache using memcached as its backing store.
+ * An object cache using Redis as its backing store.
  * @author Luke
  * @version 7.1
- * @since 6.1
+ * @since 7.1
  */
 
-public class MemcachedCache<T extends Cacheable> extends Cache<T> {
+public class RedisCache<T extends Cacheable> extends Cache<T> {
 	
 	private final String _bucket;
 	private final int _expiryTime;
@@ -26,7 +24,7 @@ public class MemcachedCache<T extends Cacheable> extends Cache<T> {
 	 * @param bucket the mecmached bucket to use
 	 * @param expiry the expiration time in seconds
 	 */
-	public MemcachedCache(String bucket, int expiry) {
+	public RedisCache(String bucket, int expiry) {
 		super(1);
 		_bucket = bucket;
 		_expiryTime = Math.min(3600 * 24 * 30, Math.max(1, expiry));
@@ -63,7 +61,7 @@ public class MemcachedCache<T extends Cacheable> extends Cache<T> {
 		}
 		
 		try {
-			MemcachedUtils.write(createKey(entry.cacheKey()), expTime, new RemoteCacheEntry<T>(entry));
+			RedisUtils.write(createKey(entry.cacheKey()), expTime, new RemoteCacheEntry<T>(entry));
 		} catch (Exception e) {
 			// empty
 		}
@@ -77,7 +75,7 @@ public class MemcachedCache<T extends Cacheable> extends Cache<T> {
 	protected void addNullEntry(Object key) {
 		if (key == null) return;
 		try {
-			MemcachedUtils.write(createKey(key), _expiryTime, new RemoteCacheEntry<T>(null));
+			RedisUtils.write(createKey(key), _expiryTime, new RemoteCacheEntry<T>(null));
 		} catch (Exception e) {
 			// empty
 		}
@@ -93,18 +91,14 @@ public class MemcachedCache<T extends Cacheable> extends Cache<T> {
 	public boolean contains(Object key) {
 		String mcKey = createKey(key);
 		try {
-			RemoteCacheEntry<T> e = (RemoteCacheEntry<T>) MemcachedUtils.get(mcKey, 100);
+			RemoteCacheEntry<T> e = (RemoteCacheEntry<T>) RedisUtils.get(mcKey);
 			if ((e != null) && (e.getCreatedOn() < _lastFlushTime)) {
-				MemcachedUtils.delete(mcKey);
+				RedisUtils.delete(mcKey);
 				return false;
 			} else if (e == null)
 				return false;
 			
 			return true;
-		} catch (InvalidClassException ice) {
-			_errors.increment();
-			MemcachedUtils.delete(mcKey);
-			return false;
 		} catch (Exception e) {
 			_errors.increment();
 			return false;
@@ -122,19 +116,15 @@ public class MemcachedCache<T extends Cacheable> extends Cache<T> {
 		request();
 		String mcKey = createKey(key);
 		try {
-			RemoteCacheEntry<T> e = (RemoteCacheEntry<T>) MemcachedUtils.get(mcKey, 125);
+			RemoteCacheEntry<T> e = (RemoteCacheEntry<T>) RedisUtils.get(mcKey);
 			if (e == null)
 				return null;
 			else if (e.getCreatedOn() < _lastFlushTime)
-				MemcachedUtils.delete(mcKey);
+				RedisUtils.delete(mcKey);
 			
 			T data = e.get();
 			hit();
 			return data;
-		} catch (InvalidClassException ice) {
-			_errors.increment();
-			MemcachedUtils.delete(mcKey);
-			return null;
 		} catch (Exception e) {
 			_errors.increment();
 			return null;	
@@ -148,7 +138,7 @@ public class MemcachedCache<T extends Cacheable> extends Cache<T> {
 	@Override
 	public void remove(Object key) {
 		try {
-			MemcachedUtils.delete(createKey(key));
+			RedisUtils.delete(createKey(key));
 		} finally {
 			// empty
 		}
@@ -171,7 +161,7 @@ public class MemcachedCache<T extends Cacheable> extends Cache<T> {
 	public int getMaxSize() {
 		try {
 			long startTime = System.nanoTime();
-			MemcachedUtils.get(MemcachedUtils.LATENCY_KEY, 3500);
+			RedisUtils.get(RedisUtils.LATENCY_KEY);
 			return (int)(System.nanoTime() - startTime);
 		} catch (Exception e) {
 			_errors.increment();
