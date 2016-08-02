@@ -157,7 +157,7 @@ public class PositionData implements GeospaceLocation, MarkerMapEntry, Comparabl
 	
 	@Override
 	public String getIconColor() {
-		if ((_pos.getAltitude() < 10000) && (_aSpeed > 250))
+		if ((_pos.getAltitude() < 10000) && (_aSpeed > 275))
 			return RED;
 		return BLUE;
 	}
