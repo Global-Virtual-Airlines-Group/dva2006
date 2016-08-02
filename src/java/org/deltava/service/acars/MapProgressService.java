@@ -13,15 +13,14 @@ import org.deltava.beans.acars.FlightInfo;
 import org.deltava.beans.flight.Recorder;
 
 import org.deltava.dao.*;
-import org.deltava.dao.mc.GetTrack;
-
+import org.deltava.dao.redis.GetTrack;
 import org.deltava.service.*;
 import org.deltava.util.*;
 
 /**
  * A Web Service to provide XML-formatted ACARS progress data for Google Maps.
  * @author Luke
- * @version 7.0
+ * @version 7.1
  * @since 1.0
  */
 

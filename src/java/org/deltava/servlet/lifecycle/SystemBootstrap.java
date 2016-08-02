@@ -32,7 +32,7 @@ import org.gvagroup.jdbc.*;
 /**
  * The System bootstrap loader, that fires when the servlet container is started or stopped.
  * @author Luke
- * @version 7.0
+ * @version 7.1
  * @since 1.0
  */
 
@@ -94,13 +94,8 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 		SystemData.add(SystemData.JDBC_POOL, _jdbcPool);
 		SharedData.addData(SharedData.JDBC_POOL + SystemData.get("airline.code"), _jdbcPool);
 		
-		// Init memcached
-		Collection<?> rawAddrs = (Collection<?>) SystemData.getObject("memcached.addrs");
-		if (rawAddrs != null) {
-			List<String> addrs = rawAddrs.stream().map(Object::toString).collect(java.util.stream.Collectors.toList());
-			MemcachedUtils.init(addrs);
-		} else
-			MemcachedUtils.init(Collections.singletonList("localhost:11211"));
+		// Init Redis
+		RedisUtils.init("localhost");
 
 		// Get and load the authenticator
 		String authClass = SystemData.get("security.auth");
@@ -258,8 +253,8 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 			}
 		}
 		
-		// Shut down memcached clients and JDBC connection pool
-		MemcachedUtils.shutdown();
+		// Shut down Redis and JDBC connection pools
+		RedisUtils.shutdown();
 		_jdbcPool.close();
 		
 		// Clear shared data

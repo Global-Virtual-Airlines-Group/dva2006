@@ -1,4 +1,4 @@
-// Copyright 2009, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2011, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 import org.deltava.beans.ViewEntry;
@@ -6,7 +6,7 @@ import org.deltava.beans.ViewEntry;
 /**
  * A bean to store information about a cache.
  * @author Luke
- * @version 6.2
+ * @version 7.1
  * @since 2.6
  */
 
@@ -34,7 +34,7 @@ public class CacheInfo implements java.io.Serializable, ViewEntry, Comparable<Ca
 		_reqs = c.getRequests();
 		_size = c.size();
 		_capacity = c.getMaxSize();
-		_isRemote = (c instanceof MemcachedCache);
+		_isRemote = (c instanceof RedisCache);
 		_errors = c.getErrors();
 	}
 
