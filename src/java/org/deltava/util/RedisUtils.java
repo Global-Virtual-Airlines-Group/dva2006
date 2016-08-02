@@ -69,7 +69,7 @@ public class RedisUtils {
 			_client = null;
 		}
 	}
-	
+
 	/**
 	 * Fetches an object from Redis.
 	 * @param key the key
@@ -100,18 +100,23 @@ public class RedisUtils {
 	/**
 	 * Writes an object to Redis.
 	 * @param key the key
-	 * @param expiry
+	 * @param expiry the expiry time in seconds from the present or an absolute timestamp
 	 * @param value the value
 	 */
-	public static void write(String key, int expiry, Object value) {
+	public static void write(String key, long expiry, Object value) {
 		checkConnection();
 		try (ByteArrayOutputStream bo = new ByteArrayOutputStream(1024)) {
 			try (ObjectOutputStream oo = new ObjectOutputStream(bo)) {
 				oo.writeObject(value);
 			}
 
+			byte[] rawKey = key.getBytes(StandardCharsets.UTF_8);
 			try (Jedis jc = _client.getResource()) {
-				jc.setex(key.getBytes(StandardCharsets.UTF_8), expiry, bo.toByteArray());	
+				if (expiry > 86400) {
+					jc.set(rawKey, bo.toByteArray());
+					jc.expireAt(rawKey, expiry);
+				} else
+					jc.setex(rawKey, (int) expiry, bo.toByteArray());	
 			}
 		} catch (IOException ie) {
 			log.warn("Error writing to Redis - " + ie.getMessage());
@@ -119,7 +124,7 @@ public class RedisUtils {
 	}
 
 	/**
-	 * Pushes a value to a list. The list will be trimmed if it exceeds a maximum size
+	 * Pushes a value to a list. The list will be trimmed if it exceeds a maximum size.
 	 * @param key the key
 	 * @param value the list element
 	 * @param maxLength the maximum size of the list or zero for unlimited

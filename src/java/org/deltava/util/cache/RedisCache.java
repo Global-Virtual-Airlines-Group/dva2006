@@ -54,17 +54,13 @@ public class RedisCache<T extends Cacheable> extends Cache<T> {
 	@Override
 	protected void addEntry(T entry) {
 		if (entry == null) return;
-		int expTime = _expiryTime;
+		long expTime = _expiryTime;
 		if (entry instanceof ExpiringCacheable) {
 			ExpiringCacheable ec = (ExpiringCacheable) entry;
-			expTime = (int) (ec.getExpiryDate().toEpochMilli() / 1000);
+			expTime = ec.getExpiryDate().toEpochMilli();
 		}
 		
-		try {
-			RedisUtils.write(createKey(entry.cacheKey()), expTime, new RemoteCacheEntry<T>(entry));
-		} catch (Exception e) {
-			// empty
-		}
+		RedisUtils.write(createKey(entry.cacheKey()), expTime, new RemoteCacheEntry<T>(entry));
 	}
 	
 	/**
@@ -74,11 +70,7 @@ public class RedisCache<T extends Cacheable> extends Cache<T> {
 	@Override
 	protected void addNullEntry(Object key) {
 		if (key == null) return;
-		try {
-			RedisUtils.write(createKey(key), _expiryTime, new RemoteCacheEntry<T>(null));
-		} catch (Exception e) {
-			// empty
-		}
+		RedisUtils.write(createKey(key), _expiryTime, new RemoteCacheEntry<T>(null));
 	}
 	
 	/**
