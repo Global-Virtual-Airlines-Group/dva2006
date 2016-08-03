@@ -59,7 +59,7 @@ public class MassMailingCommand extends AbstractCommand {
 		if (eqType == null)
 			eqType = "";
 
-		List<? extends EMailAddress> pilots = new ArrayList<EMailAddress>();
+		Collection<? extends EMailAddress> pilots = new ArrayList<EMailAddress>();
 		Collection<Object> eqTypes = null;
 		try {
 			Connection con = ctx.getConnection();

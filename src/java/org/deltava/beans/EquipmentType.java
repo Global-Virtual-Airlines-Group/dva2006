@@ -27,8 +27,6 @@ public class EquipmentType implements Cacheable, Comparable<EquipmentType>, Comb
     private boolean _acarsPromotion;
     private boolean _newHires;
     
-    private String _cpName;
-    private String _cpEmail;
     private int _cpID;
     private int _size;
     
@@ -67,24 +65,6 @@ public class EquipmentType implements Cacheable, Comparable<EquipmentType>, Comb
      */
     public String getName() {
         return _name;
-    }
-    
-    /**
-     * Returns the name of this equipment program's Chief Pilot.
-     * @return The name of the Chief Pilot
-     * @see EquipmentType#setCPEmail(String)
-     */
-    public String getCPName() {
-        return _cpName;
-    }
-    
-    /**
-     * Returns the e-mail address of this equipment program's Chief Pilot.
-     * @return the e-mail address
-     * @see EquipmentType#setCPEmail(String)
-     */
-    public String getCPEmail() {
-        return _cpEmail;
     }
     
     /**
@@ -432,24 +412,6 @@ public class EquipmentType implements Cacheable, Comparable<EquipmentType>, Comb
     	   _secondaryRatings.addAll(sr);
     }
     
-    /**
-     * Set the name of this equipment program's Chief Pilot.
-     * @param cpName The name of the Chief Pilot
-     * @see EquipmentType#getCPName()
-     */
-    public void setCPName(String cpName) {
-        _cpName = cpName;
-    }
-    
-    /**
-     * Updates the e-mail address of this program's Chief Pilot.
-     * @param email The e-mail address
-     * @see EquipmentType#getCPEmail()
-     */
-    public void setCPEmail(String email) {
-        _cpEmail = email;
-    }
-
 	/**
 	 * Update the database row ID of this program's Chief Pilot. <i>This typically will only be called by a DAO</i>
 	 * @param id The primary key of the entry in the <b>PILOTS</b> table in the database that corresponds
