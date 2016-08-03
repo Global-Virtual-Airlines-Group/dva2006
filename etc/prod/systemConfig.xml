@@ -569,6 +569,7 @@
 			<domain>live.com</domain>
 			<domain>msn.com</domain>
 			<domain>live.co.uk</domain>
+			<domain>att.net</domain>
 		</list>
 
 		<auto_reject type="Integer">5</auto_reject>
