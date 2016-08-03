@@ -1,4 +1,4 @@
-// Copyright 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.stats.DisposalQueueStats;
 /**
  * A Data Access Object to return Flight Report disposal queue information.
  * @author Luke
- * @version 6.1
+ * @version 7.1
  * @since 5.0
  */
 
@@ -41,15 +41,18 @@ public class GetFlightReportQueue extends DAO {
 		else
 			sqlBuf.append(" WHERE");
 		
-		sqlBuf.append(" (PR.STATUS=?)");
+		sqlBuf.append(" (PR.STATUS=?) AND ((PR.ATTR & ?)=0)");
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
 			if (eqType != null) {
 				_ps.setInt(1, EquipmentType.Rating.PRIMARY.ordinal());
 				_ps.setString(2, eqType);
 				_ps.setInt(3, FlightReport.SUBMITTED);
-			} else
+				_ps.setInt(4, FlightReport.ATTR_CHECKRIDE);
+			} else {
 				_ps.setInt(1, FlightReport.SUBMITTED);
+				_ps.setInt(2, FlightReport.ATTR_CHECKRIDE);
+			}
 
 			DisposalQueueStats dq = new DisposalQueueStats(new java.util.Date(), 0, 0);
 			try (ResultSet rs = _ps.executeQuery()) {
