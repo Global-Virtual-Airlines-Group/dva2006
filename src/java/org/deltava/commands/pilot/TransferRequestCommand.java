@@ -137,7 +137,7 @@ public class TransferRequestCommand extends AbstractTestHistoryCommand {
 			for (Pilot acp : pdao.getPilotsByEQ(eq, null, true, Rank.ACP))
 				m.setCC(acp);
 			
-			m.send(Mailer.makeAddress(eq.getCPEmail(), eq.getCPName()));
+			m.send(pdao.get(eq.getCPID()));
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

@@ -44,8 +44,7 @@ public class ApplicantApproveCommand extends AbstractCommand {
 		MessageContext mctxt = new MessageContext();
 		mctxt.addData("user", ctx.getUser());
 
-		Applicant a = null;
-		EquipmentType eq = null;
+		Applicant a = null; EquipmentType eq = null; Pilot cp = null;
 		try {
 			Connection con = ctx.getConnection();
 
@@ -184,7 +183,7 @@ public class ApplicantApproveCommand extends AbstractCommand {
 
 			// Get the Pilot and optionally set ACARS-only PIREP flag
 			GetPilot pdao = new GetPilot(con);
-			Pilot p = pdao.get(a.getPilotID());
+			Pilot p = pdao.get(a.getPilotID()); cp = pdao.get(eq.getCPID());
 			if (SystemData.getBoolean("users.pirep.acars_only")) {
 				p.setACARSRestriction(Restriction.NOMANUAL);
 				pwdao.write(p);
@@ -218,7 +217,7 @@ public class ApplicantApproveCommand extends AbstractCommand {
 		// Send e-mail notification
 		Mailer mailer = new Mailer(ctx.getUser());
 		mailer.setContext(mctxt);
-		mailer.setCC(Mailer.makeAddress(eq.getCPEmail(), eq.getCPName()));
+		mailer.setCC(cp);
 		mailer.send(a);
 
 		// Forward to the JSP
