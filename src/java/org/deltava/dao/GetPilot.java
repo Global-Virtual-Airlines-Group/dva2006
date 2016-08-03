@@ -51,8 +51,7 @@ public class GetPilot extends PilotReadDAO {
 
 		// Build the SQL statement
 		String db = formatDBName(dbName);
-		StringBuilder sqlBuf = new StringBuilder("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), "
-				+ "ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE), S.EXT, S.MODIFIED FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE), S.EXT, S.MODIFIED FROM ");
 		sqlBuf.append(db);
 		sqlBuf.append(".PILOTS P LEFT JOIN ");
 		sqlBuf.append(db);
@@ -92,10 +91,8 @@ public class GetPilot extends PilotReadDAO {
 	 */
 	public List<Pilot> getActivePilots(String orderBy) throws DAOException {
 
-		StringBuilder sql = new StringBuilder("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), "
-				+ "ROUND(SUM(F.FLIGHT_TIME), 1) AS HOURS, MAX(F.DATE) AS LASTFLIGHT FROM PILOTS P "
-				+ "LEFT JOIN PIREPS F ON ((F.STATUS=?) AND (P.ID=F.PILOT_ID)) WHERE (P.STATUS=?) AND "
-				+ "(P.PILOT_ID > 0) GROUP BY P.ID ORDER BY ");
+		StringBuilder sql = new StringBuilder("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1) AS HOURS, MAX(F.DATE) AS LASTFLIGHT FROM PILOTS P "
+			+ "LEFT JOIN PIREPS F ON ((F.STATUS=?) AND (P.ID=F.PILOT_ID)) WHERE (P.STATUS=?) AND (P.PILOT_ID > 0) GROUP BY P.ID ORDER BY ");
 
 		// Add sort by column
 		sql.append((orderBy != null) ? orderBy.toUpperCase() : "P.PILOT_ID");
@@ -118,35 +115,31 @@ public class GetPilot extends PilotReadDAO {
 	 * @return a List of Pilots in a particular equipment type
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<Pilot> getPilotsByEQ(EquipmentType eq, String sortBy, boolean showActive, Rank rank) throws DAOException {
+	public Collection<Pilot> getPilotsByEQ(EquipmentType eq, String sortBy, boolean showActive, Rank rank) throws DAOException {
 		
 		// Build the SQL statement
 		String dbName = formatDBName(eq.getOwner().getDB());
-		StringBuilder sqlBuf = new StringBuilder("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), "
-				+ "ROUND(SUM(F.FLIGHT_TIME), 1) AS HOURS, MAX(F.DATE) AS LASTFLIGHT FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT P.ID FROM ");
 		sqlBuf.append(dbName);
-		sqlBuf.append(".PILOTS P LEFT JOIN ");
-		sqlBuf.append(dbName);
-		sqlBuf.append(".PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) WHERE (P.EQTYPE=?)");
+		sqlBuf.append(".PILOTS P WHERE (P.EQTYPE=?)");
 		if (showActive)
 			sqlBuf.append(" AND (P.STATUS=?)");
 		if (rank != null)
 			sqlBuf.append(" AND (P.RANK=?)");
 		
-		sqlBuf.append("GROUP BY P.ID ORDER BY ");
+		sqlBuf.append(" ORDER BY ");
 		sqlBuf.append((sortBy == null) ? "P.LASTNAME, P.FIRSTNAME" : sortBy);
 
 		try {
 			int pos = 0;
 			prepareStatement(sqlBuf.toString());	
-			_ps.setInt(++pos, FlightReport.OK);
 			_ps.setString(++pos, eq.getName());
 			if (showActive)
 				_ps.setInt(++pos, Pilot.ACTIVE);
 			if (rank != null)
 				_ps.setString(++pos, rank.getName());
 			
-			return execute();
+			return getByID(executeIDs(), dbName + ".PILOTS").values();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -160,8 +153,7 @@ public class GetPilot extends PilotReadDAO {
 	 */
 	public List<Pilot> getPilotsByRank(Rank rank) throws DAOException {
 		try {
-			prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), "
-				+ "MAX(F.DATE), S.EXT, S.MODIFIED FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) "
+			prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE), S.EXT, S.MODIFIED FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) "
 				+ "LEFT JOIN SIGNATURES S ON (P.ID=S.ID) WHERE (P.RANK=?) AND (P.STATUS=?) GROUP BY P.ID");
 			_ps.setInt(1, FlightReport.OK);
 			_ps.setString(2, rank.getName());
@@ -187,9 +179,8 @@ public class GetPilot extends PilotReadDAO {
 			throw new IllegalArgumentException("Invalid Lastname Letter - " + letter);
 
 		try {
-			prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), "
-					+ "MAX(F.DATE) FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) WHERE "
-					+ "(LEFT(P.LASTNAME, 1)=?) GROUP BY P.ID ORDER BY P.LASTNAME");
+			prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE) FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) WHERE "
+				+ "(LEFT(P.LASTNAME, 1)=?) GROUP BY P.ID ORDER BY P.LASTNAME");
 			_ps.setInt(1, FlightReport.OK);
 			_ps.setString(2, letter.substring(0, 1).toUpperCase());
 			return execute();
@@ -205,9 +196,8 @@ public class GetPilot extends PilotReadDAO {
 	 */
 	public List<Pilot> getPilotsByStatus(int status) throws DAOException {
 		try {
-			prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), "
-					+ "MAX(F.DATE) FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) WHERE "
-					+ "(P.STATUS=?) GROUP BY P.ID ORDER BY P.CREATED");
+			prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE) FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) WHERE "
+				+ "(P.STATUS=?) GROUP BY P.ID ORDER BY P.CREATED");
 			_ps.setInt(1, FlightReport.OK);
 			_ps.setInt(2, status);
 			return execute();
@@ -223,8 +213,7 @@ public class GetPilot extends PilotReadDAO {
 	 */
 	public List<Pilot> getPilots() throws DAOException {
 		try {
-			prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), "
-					+ "MAX(F.DATE) FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) GROUP BY P.ID");
+			prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE) FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) GROUP BY P.ID");
 			_ps.setInt(1, FlightReport.OK);
 			return execute();
 		} catch (SQLException se) {
