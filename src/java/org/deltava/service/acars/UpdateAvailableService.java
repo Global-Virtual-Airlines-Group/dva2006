@@ -66,13 +66,18 @@ public class UpdateAvailableService extends WebService {
 			ctx.release();
 		}
 		
+		if (latest == null) return SC_OK;
+		
 		// Set header with latest data
 		ctx.setHeader("X-Update-Channel", ch.toString().toLowerCase());
 		ctx.setHeader("X-Force-Upgrade", String.valueOf(isForced));
-		if (latest != null)
-			ctx.setHeader("X-Update-Latest", latest.toString());
+		ctx.setHeader("X-Update-Latest", latest.toString());
+		
+		// Check if we're running a beta
+		if ((latest.getClientBuild() < cInfo.getClientBuild()) && cInfo.isBeta() && (ch == UpdateChannel.RELEASE))
+			return SC_OK;
 		
 		// See if anything is available
-		return ((latest == null) || (latest.compareTo(cInfo) < 1)) ? SC_NOT_MODIFIED : SC_OK;
+		return (latest.compareTo(cInfo) < 1) ? SC_NOT_MODIFIED : SC_OK;
 	}
 }
