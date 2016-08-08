@@ -113,8 +113,10 @@ public class RedisUtils {
 			byte[] rawKey = key.getBytes(StandardCharsets.UTF_8);
 			try (Jedis jc = _client.getResource()) {
 				if (expiry > 864000) {
-					jc.set(rawKey, bo.toByteArray());
-					jc.expireAt(rawKey, expiry);
+					Pipeline p = jc.pipelined();
+					p.set(rawKey, bo.toByteArray());
+					p.expireAt(rawKey, expiry);
+					p.sync();
 				} else
 					jc.setex(rawKey, (int) expiry, bo.toByteArray());	
 			}
