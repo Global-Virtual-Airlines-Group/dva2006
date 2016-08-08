@@ -1,4 +1,4 @@
-// Copyright 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.servinfo.*;
 /**
  * A Data Access Object to write aggregated VATSIM usage data.
  * @author Luke
- * @version 6.1
+ * @version 7.1
  * @since 6.1
  */
 
@@ -34,7 +34,7 @@ public class SetOnlineTime extends DAO {
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("INSERT INTO stats.");
-		sqlBuf.append(net.toString());
+		sqlBuf.append(net.name());
 		sqlBuf.append("_STATS (ID, DATE, CALLSIGN, USETIME, RATING) VALUES (?, CURDATE(), ?, ?, ?) ON DUPLICATE KEY UPDATE USETIME=USETIME+?");
 		
 		try {
