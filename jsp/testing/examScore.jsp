@@ -48,7 +48,7 @@ return true;
  <td class="data"><fmt:date date="${exam.date}" /></td>
 </tr>
 <c:if test="${!empty exam.submittedOn}">
-<c:set var="late" value="${(exam.submittedOn.time - exam.expiryDate.time) / 1000}" scope="page" />
+<c:set var="late" value="${(exam.submittedOn.toEpochMilli() - exam.expiryDate.toEpochMilli()) / 1000}" scope="page" />
 <c:set var="lateH" value="${late / 3600}" scope="page" />
 <c:set var="lateM" value="${(late % 3600) / 60}" scope="page" />
 <c:set var="lateS" value="${late % 60}" scope="page" />
