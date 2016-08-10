@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to support the display of formatted date/time values.
  * @author Luke
- * @version 7.0
+ * @version 7.1
  * @since 1.0
  */
 
@@ -21,7 +21,9 @@ public class DateFormatTag extends UserSettingsTag {
 	
 	private final String DEFAULT_D_FMT = SystemData.get("time.date_format");
 	private final String DEFAULT_T_FMT = SystemData.get("time.time_format");
-
+	
+	private final TZInfo DEFAULT_TZ = TZInfo.get(SystemData.get("time.timezone"));
+	
 	private enum Format {
 		DT, D, T
 	}
@@ -29,7 +31,7 @@ public class DateFormatTag extends UserSettingsTag {
 	private Format _dtInclude = Format.DT;
 	private String _dateFormat = DEFAULT_D_FMT;
 	private String _timeFormat = DEFAULT_T_FMT;
-	private TZInfo _tz = TZInfo.UTC;
+	private TZInfo _tz = DEFAULT_TZ;
 	private Instant _dt;
 	private boolean _showZone = true;
 
@@ -110,8 +112,7 @@ public class DateFormatTag extends UserSettingsTag {
 		else if (i instanceof ZonedDateTime)
 			_dt = ((ZonedDateTime) i).toInstant();
 		else if (i instanceof LocalDate) {
-			LocalDate ld = (LocalDate) i;
-			_dt = Instant.ofEpochMilli(ld.toEpochDay() * ChronoUnit.DAYS.getDuration().getSeconds());
+			_dt = Instant.ofEpochMilli(((LocalDate) i).toEpochDay() * ChronoUnit.DAYS.getDuration().getSeconds());
 		} else if (i instanceof LocalDateTime)
 			_dt = ((LocalDateTime) i).toInstant(ZoneOffset.UTC);
 		else if (i != null)
@@ -151,7 +152,7 @@ public class DateFormatTag extends UserSettingsTag {
 		_dtInclude = Format.DT;
 		_dateFormat = DEFAULT_D_FMT;
 		_timeFormat = DEFAULT_T_FMT;
-		_tz = TZInfo.UTC;
+		_tz = DEFAULT_TZ;
 		_dt = null;
 		_className = null;
 		_showZone = true;
@@ -192,7 +193,7 @@ public class DateFormatTag extends UserSettingsTag {
 
 			// Write the formatted date
 			if (_dt != null) {
-				if (_tz == null) _tz =TZInfo.UTC;
+				if (_tz == null) _tz = DEFAULT_TZ;
 				DateTimeFormatter df = DateTimeFormatter.ofPattern(fmtPattern.toString());
 				ZonedDateTime zdt = ZonedDateTime.ofInstant(_dt, _tz.getZone());
 				out.print(df.format(zdt));
