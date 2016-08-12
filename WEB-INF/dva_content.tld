@@ -501,47 +501,15 @@
 	</tag>
 
 	<tag>
-		<description>SetCookie tag, for writing cookie data</description>
-		<name>setCookie</name>
-		<tag-class>org.deltava.taglib.content.SetCookieTag</tag-class>
+		<description>Expires Tag, for setting an HTML expiry header</description>
+		<name>expire</name>
+		<tag-class>org.deltava.taglib.content.ExpirationTag</tag-class>
 		<body-content>empty</body-content>
 		<attribute>
-			<name>name</name>
+			<name>expires</name>
 			<required>true</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-		<attribute>
-			<name>value</name>
-			<required>true</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-		<attribute>
-			<name>path</name>
-			<required>false</required>
 			<rtexprvalue>false</rtexprvalue>
-		</attribute>
-		<attribute>
-			<name>domain</name>
-			<required>false</required>
-			<rtexprvalue>false</rtexprvalue>
-		</attribute>
-		<attribute>
-			<name>age</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
 			<type>java.lang.Integer</type>
-		</attribute>
-	</tag>
-
-	<tag>
-		<description>ClearCookie tag, for clearing cookies</description>
-		<name>clearCookie</name>
-		<tag-class>org.deltava.taglib.content.ClearCookieTag</tag-class>
-		<body-content>empty</body-content>
-		<attribute>
-			<name>name</name>
-			<required>true</required>
-			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 	</tag>
 
