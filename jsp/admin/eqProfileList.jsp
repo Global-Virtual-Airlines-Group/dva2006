@@ -42,10 +42,11 @@
 <!-- Table data -->
 <c:set var="cspan" value="${isHR ? 2 : 1}" scope="page" />
 <c:forEach var="eqType" items="${viewContext.results}">
+<c:set var="CP" value="${pilots[eqType.CPID]}" scope="page" />
 <view:row entry="${eqType}">
  <td class="pri bld"><el:cmd url="eqtype" linkID="${eqType.name}" op="edit">${eqType.name}</el:cmd></td>
  <td class="sec bld"><fmt:int value="${eqType.stage}" /></td>
- <td><el:cmd url="profile" linkID="${fn:hex(eqType.CPID)}">${eqType.CPName}</el:cmd></td>
+ <td><el:cmd url="profile" link="${CP}">${CP.name}</el:cmd></td>
  <td class="sec small nophone"><fmt:list value="${eqType.ranks}" delim=", " /></td>
  <td><fmt:int value="${eqType.size}" /></td>
  <td class="left small nophone" colspan="${cspan}"><span class="pri">PRIMARY: <fmt:list value="${eqType.primaryRatings}" delim=", " /></span>
