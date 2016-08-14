@@ -9,6 +9,7 @@
 <html lang="en">
 <head>
 <title><content:airline /> Pilot Center - ${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></title>
+<content:expire expires="10" />
 <content:css name="main" />
 <content:css name="form" />
 <content:js name="common" />
@@ -96,25 +97,9 @@ name to the <content:airline /> Pilot Board.<br />
 the <content:airline /> Pilot Board is viewed.</span></td>
 </c:if>
 </tr>
-<c:if test="${!empty fbClientID}">
-<c:choose>
-<c:when test="${fn:hasIM(pilot, 'FBTOKEN')}">
-<script type="text/javascript" defer>
-golgotha.local.fbDeauthorize = function() {
-	return window.open('/fbdeauth.do', 'fbAuth', 'height=320,width=860,menubar=no,toolbar=no,status=no,scrollbars=no,resizable=no');
-};
-</script>
-<tr>
- <td class="mid"><a class="bld" href="javascript:void golgotha.local.fbDeauthorize()">Disable Facebook Publishing</a></td>
- <td class="data"><content:airline /> can publish information to your Facebook news feed, including promotions and completion
-of Accomplishments.<c:if test="${acarsEnabled}"> Submitted flight reports using <content:airline /> ACARS will also be published
-to your Facebook news feed.</c:if></td>
-</tr>
-</c:when>
-<c:when test="${!empty fbPerms}">
+<content:filter roles="Facebook">
 <c:set var="fbPermissions" value="${fn:splice(fbPerms, ',')}" scope="page" />
-<c:if test="${!empty fbPageID}"><content:filter roles="Facebook">
-<c:set var="fbPermissions" value="${fbPermissions},manage_pages" scope="page" /></content:filter></c:if>
+<c:if test="${!empty fbPageID}"><c:set var="fbPermissions" value="${fbPermissions},manage_pages" scope="page" /></c:if>
 <content:protocol var="reqProtocol" />
 <script type="text/javascript" defer>
 golgotha.local.fbAuthorize = function() {
@@ -135,9 +120,7 @@ golgotha.local.fbAuthorize = function() {
 </c:otherwise>
 </c:choose>
 </tr>
-</c:when>
-</c:choose>
-</c:if>
+</content:filter>
 <c:if test="${access.canTakeLeave}">
 <content:sysdata var="inactivity_days" name="users.inactive_days" />
 <tr>

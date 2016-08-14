@@ -7,6 +7,7 @@
 <html lang="en">
 <head>
 <title><content:airline /> Fleet Gallery</title>
+<content:expire expires="60" />
 <content:css name="main" />
 <content:css name="form" />
 <content:pics />
