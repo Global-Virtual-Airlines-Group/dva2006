@@ -265,7 +265,7 @@
 	</task>
 
 	<!-- GFS Download -->
-	<task id="gfsdl" enabled="false">
+	<task id="gfsdl" enabled="true">
 		<class>org.deltava.tasks.GFSDownloadTask</class>
 		<time>
 			<min>0</min>
