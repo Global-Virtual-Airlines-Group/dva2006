@@ -27,7 +27,7 @@ import org.gvagroup.tile.*;
 /**
  * A scheduled task to download GFS global forecast data.
  * @author Luke
- * @version 7.0
+ * @version 7.1
  * @since 5.2
  */
 
@@ -77,7 +77,7 @@ public class GFSDownloadTask extends Task {
 							continue;
 						
 						int c = Math.min(255, wd.getJetStreamSpeed() + 48);
-						if (wd.getJetStreamSpeed() > 80) {
+						if (wd.getJetStreamSpeed() > 60) {
 							int r = Math.min(255, c+30);
 							int g = (wd.getJetStreamSpeed() > 120) ? Math.min(255, c+32): c;
 							Color rgb = new Color(r,g,c);
@@ -122,6 +122,8 @@ public class GFSDownloadTask extends Task {
 				String dir = con.getNewestDirectory(basePath, FileUtils.fileFilter("gfs.", null));
 				String fName = con.getNewest(basePath + "/" + dir, FileUtils.fileFilter("gfs.", ".pgrb2b.0p25.f000"));
 				Instant lm = con.getTimestamp(basePath + "/" + dir, fName);
+				log.info(fName + " timestamp = " + StringUtils.format(lm, "MM/dd HH:mm"));
+				log.info("Local timestamp = " + StringUtils.format(Instant.ofEpochMilli(outF.lastModified()), "MM/dd HH:mm"));
 				
 				// Calculate the effective date and download
 				dt = StringUtils.parseInstant(dir.substring(dir.lastIndexOf('.') + 1), "yyyyMMddHH");
@@ -139,17 +141,19 @@ public class GFSDownloadTask extends Task {
 			// Save the winds
 			GetWAFSData dao = new GetWAFSData(outF.getAbsolutePath());
 			try {
-				/* SetWinds wwdao = new SetWinds();
+				long startTime = System.currentTimeMillis();
+				SetWinds wwdao = new SetWinds();
 				wwdao.setExpiry(18 * 3600);
 				for (PressureLevel lvl : PressureLevel.values()) {
 					log.info("Loading " + lvl.getPressure() + "mb wind data");
 					GRIBResult<WindData> data = dao.load(lvl);		
 					wwdao.write(data);
-				} */
+				}
 				
 				// Write GFS cycle data
 				SetMetadata mwdao = new SetMetadata(ctx.getConnection());
 				mwdao.write("gfs.cycle", dt);
+				log.info("Winds written in " + (System.currentTimeMillis() - startTime) + "ms");
 			} catch(DAOException de) {
 				log.error(de.getMessage(), de);
 			} finally {
