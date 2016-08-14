@@ -1,8 +1,7 @@
 // Copyright 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
-import javax.servlet.http.HttpServletResponse;
-
+import javax.servlet.http.*;
 import javax.servlet.jsp.tagext.TagSupport;
 
 /**
@@ -32,10 +31,18 @@ public class ExpirationTag extends TagSupport {
 	public int doEndTag() {
 		
 		HttpServletResponse rsp = (HttpServletResponse) pageContext.getResponse();
-		if (_expiryTime < 1)
+		if (_expiryTime > 0) {
+			HttpServletRequest req = (HttpServletRequest) pageContext.getRequest();
+			StringBuilder buf = new StringBuilder();
+			if (req.getUserPrincipal() != null)
+				buf.append("private, ");
+			
+			buf.append("max-age=");
+			buf.append(_expiryTime);
+			rsp.setHeader("cache-control", buf.toString());
+			rsp.setDateHeader("Expires", System.currentTimeMillis() + (_expiryTime * 1000));
+		} else
 			rsp.setHeader("cache-control", "no-cache");
-		else
-			rsp.setHeader("cache-control", "max-age=" + _expiryTime);
 		
 		return EVAL_PAGE;
 	}
