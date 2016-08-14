@@ -12,7 +12,7 @@ import org.deltava.util.*;
 /**
  * A Data Access Object to get Pilots from the database, for use in roster operations.
  * @author Luke
- * @version 7.0
+ * @version 7.1
  * @since 1.0
  */
 
@@ -115,31 +115,34 @@ public class GetPilot extends PilotReadDAO {
 	 * @return a List of Pilots in a particular equipment type
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<Pilot> getPilotsByEQ(EquipmentType eq, String sortBy, boolean showActive, Rank rank) throws DAOException {
+	public List<Pilot> getPilotsByEQ(EquipmentType eq, String sortBy, boolean showActive, Rank rank) throws DAOException {
 		
 		// Build the SQL statement
 		String dbName = formatDBName(eq.getOwner().getDB());
-		StringBuilder sqlBuf = new StringBuilder("SELECT P.ID FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1) AS HOURS, MAX(F.DATE) AS LASTFLIGHT FROM ");
 		sqlBuf.append(dbName);
-		sqlBuf.append(".PILOTS P WHERE (P.EQTYPE=?)");
+		sqlBuf.append(".PILOTS P LEFT JOIN ");
+		sqlBuf.append(dbName);
+		sqlBuf.append(".PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) WHERE (P.EQTYPE=?)");
 		if (showActive)
 			sqlBuf.append(" AND (P.STATUS=?)");
 		if (rank != null)
 			sqlBuf.append(" AND (P.RANK=?)");
 		
-		sqlBuf.append(" ORDER BY ");
+		sqlBuf.append("GROUP BY P.ID ORDER BY ");
 		sqlBuf.append((sortBy == null) ? "P.LASTNAME, P.FIRSTNAME" : sortBy);
 
 		try {
 			int pos = 0;
 			prepareStatement(sqlBuf.toString());	
+			_ps.setInt(++pos, FlightReport.OK);
 			_ps.setString(++pos, eq.getName());
 			if (showActive)
 				_ps.setInt(++pos, Pilot.ACTIVE);
 			if (rank != null)
 				_ps.setString(++pos, rank.getName());
 			
-			return getByID(executeIDs(), dbName + ".PILOTS").values();
+			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
