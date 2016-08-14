@@ -8,6 +8,7 @@
 <html lang="en">
 <head>
 <title><content:airline /> Airport Weather Finder</title>
+<content:expire expires="600" />
 <content:css name="main" />
 <content:css name="form" />
 <content:pics />

@@ -8,6 +8,7 @@
 <html lang="en">
 <head>
 <title><content:airline /> ACARS Dispatch Map</title>
+<content:expire expires="3600" />
 <content:css name="dispatchMap" scheme="legacy" />
 <content:pics />
 <content:js name="common" />

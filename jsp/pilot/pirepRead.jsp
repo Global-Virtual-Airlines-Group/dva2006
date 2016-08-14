@@ -11,6 +11,7 @@
 <html lang="en">
 <head>
 <title><content:airline /> Flight Report - ${pirep.flightCode} (<fmt:date date="${pirep.date}" fmt="d" />)</title>
+<content:expire expires="60" />
 <content:canonical convertID="true" />
 <content:css name="main" />
 <content:css name="form" />

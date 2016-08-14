@@ -9,6 +9,7 @@
 <html lang="en">
 <head>
 <title><content:airline /> Airline News</title>
+<content:expire expires="600" />
 <content:css name="main" />
 <content:css name="view" />
 <content:js name="common" />

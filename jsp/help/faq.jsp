@@ -10,6 +10,7 @@
 <html lang="en">
 <head>
 <title><content:airline /> Frequently Asked Questions</title>
+<content:expire expires="3600" />
 <content:css name="main" />
 <content:css name="view" />
 <content:js name="common" />

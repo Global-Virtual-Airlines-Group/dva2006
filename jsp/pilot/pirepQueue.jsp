@@ -10,6 +10,7 @@
 <html lang="en">
 <head>
 <title><content:airline /> Flight Report Queue</title>
+<content:expire expires="5" />
 <content:css name="main" />
 <content:css name="form" />
 <content:css name="view" />
