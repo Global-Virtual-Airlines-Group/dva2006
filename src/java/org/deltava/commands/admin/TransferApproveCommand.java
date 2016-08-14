@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to Approve equipment program Transfers.
  * @author Luke
- * @version 7.0
+ * @version 7.1
  * @since 1.0
  */
 
@@ -123,6 +123,7 @@ public class TransferApproveCommand extends AbstractCommand {
 				
 				// Add the new equipment program to the message context and request
 				mctxt.addData("eqType", newEQ);
+				mctxt.addData("CP", pdao.get(newEQ.getCPID()));
 				ctx.setAttribute("eqType", newEQ, REQUEST);
 			} else {
 				mctxt.addData("eqType", currentEQ);
