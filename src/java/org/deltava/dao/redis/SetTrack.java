@@ -17,9 +17,8 @@ import org.deltava.util.cache.*;
  */
 
 public class SetTrack extends RedisDAO {
-	
+
 	private static final Logger log = Logger.getLogger(SetTrack.class);
-	
 	private static final Cache<CacheableCollection<GeoLocation>> _casCache = CacheManager.getCollection(GeoLocation.class, "ACARSTrackCAS");
 
 	/**
@@ -32,20 +31,22 @@ public class SetTrack extends RedisDAO {
 		setBucket("acarsTrack");
 		String rawKey = String.valueOf(flightID);
 		String key = createKey(rawKey);
-		
-	    try {
-			CacheableCollection<GeoLocation> data = _casCache.get(rawKey);
-	    		if (data == null)
-	    			data = (CacheableCollection<GeoLocation>) RedisUtils.get(key);
-	    		if (data == null)
-	    			data = new CacheableList<GeoLocation>(rawKey);
-	    	
-	    		data.add(new GeoPosition(gl));
-	    		_casCache.add(data);
-	    		RedisUtils.write(key, 900, data);
-	    } catch (Exception e) {
-    			log.warn(StringUtils.isEmpty(e.getMessage()) ? e.getClass().getSimpleName() : e.getMessage());
-	    }
+
+		try {
+			synchronized (rawKey) {
+				CacheableCollection<GeoLocation> data = _casCache.get(rawKey);
+				if (data == null)
+					data = (CacheableCollection<GeoLocation>) RedisUtils.get(key);
+				if (data == null)
+					data = new CacheableList<GeoLocation>(rawKey);
+
+				data.add(new GeoPosition(gl));
+				_casCache.add(data);
+				RedisUtils.write(key, 900, data);
+			}
+		} catch (Exception e) {
+			log.warn(StringUtils.isEmpty(e.getMessage()) ? e.getClass().getSimpleName() : e.getMessage());
+		}
 	}
 
 	/**
