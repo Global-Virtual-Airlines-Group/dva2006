@@ -10,6 +10,7 @@
 <html lang="en">
 <head>
 <title><content:airline /> Logbook for ${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></title>
+<content:expire expires="30" />
 <content:css name="main" />
 <content:css name="form" />
 <content:css name="calendar" />

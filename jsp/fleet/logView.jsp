@@ -9,6 +9,7 @@
 <html lang="en">
 <head>
 <title><content:airline /> Installer Log</title>
+<content:expire expires="3600" />
 <content:css name="main" />
 <content:css name="form" />
 <content:css name="view" />

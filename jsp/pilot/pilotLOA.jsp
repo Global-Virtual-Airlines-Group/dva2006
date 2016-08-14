@@ -23,8 +23,7 @@
 <content:region id="main">
 <div class="updateHdr"><content:airline /> Pilot Leave of Absence</div>
 <br />
-You have been placed on a Leave of Absence for up to <fmt:int value="${interval}" /> days. To return to Active status, 
-please log into the <content:airline /> web site again prior to the expiration of your Leave of Absence, which will 
+You have been placed on a Leave of Absence for up to <fmt:int value="${interval}" /> days. To return to Active status, please log into the <content:airline /> web site again prior to the expiration of your Leave of Absence, which will 
 occur on <fmt:date fmt="d" date="${loaExpires}" />.<br />
 <br />
 <content:copyright />

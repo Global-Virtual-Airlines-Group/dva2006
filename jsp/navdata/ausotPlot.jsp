@@ -8,6 +8,7 @@
 <html lang="en">
 <head>
 <title><content:airline /> Australian Track Plotter</title>
+<content:expire expires="3600" />
 <content:css name="main" />
 <content:css name="form" />
 <content:pics />

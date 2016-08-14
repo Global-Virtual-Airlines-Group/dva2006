@@ -8,6 +8,7 @@
 <html lang="en">
 <head>
 <title><content:airline /> System News Entry</title>
+<content:expire expires="3600" />
 <content:css name="main" />
 <content:pics />
 <content:js name="common" />

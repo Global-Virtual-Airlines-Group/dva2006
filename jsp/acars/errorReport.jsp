@@ -9,6 +9,7 @@
 <html lang="en">
 <head>
 <title><content:airline /> ACARS Client Error Report</title>
+<content:expire expires="30" />
 <content:css name="main" />
 <content:css name="form" />
 <content:pics />
