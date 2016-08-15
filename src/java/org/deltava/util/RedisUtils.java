@@ -36,6 +36,38 @@ public class RedisUtils {
 		if (_client == null) throw new IllegalStateException("Not started");
 	}
 	
+	public static byte[] encodeKey(String key) {
+		return key.getBytes(StandardCharsets.UTF_8);
+	}
+	
+	public static Object read(byte[] data) {
+		try (ByteArrayInputStream bi = new ByteArrayInputStream(data)) {
+			try (ObjectInputStream oi = new ObjectInputStream(bi)) {
+				return oi.readObject();
+			}
+		} catch (ClassNotFoundException cnfe) {
+			log.warn("Cannot load " + cnfe.getMessage());
+		} catch (IOException ie) {
+			// empty
+		}
+			
+		return null;
+	}
+		
+	public static byte[] write(Object o) {
+		try (ByteArrayOutputStream bo = new ByteArrayOutputStream(1024)) {
+			try (ObjectOutputStream oo = new ObjectOutputStream(bo)) {
+				oo.writeObject(o);
+			}
+				
+			return bo.toByteArray();
+		} catch (Exception e) {
+			log.warn("Error writing " + o.getClass().getName() + " - " + e.getMessage());
+		}
+			
+		return null;
+	}
+	
 	/**
 	 * Initializes the Redis connection.
 	 * @param addr the address of the Redis server
@@ -50,7 +82,7 @@ public class RedisUtils {
 			config.setMinEvictableIdleTimeMillis(10000);
 			_client = new JedisPool(config, addr, 6379);
 			write(LATENCY_KEY, 864000, String.valueOf((System.currentTimeMillis() / 1000) + (3600 * 24 * 365)));
-			log.warn("Initialized");
+			log.info("Initialized");
 		} catch (Exception e) {
 			throw new IllegalStateException(e);
 		}
@@ -62,8 +94,14 @@ public class RedisUtils {
 	public static synchronized void shutdown() {
 		try {
 			if (_client != null) {
+				int isActive = _client.getNumActive();
+				if (isActive > 0)
+					log.warn(isActive + " active connections on close");
+
+				log.info(_client.getNumIdle() + " idle connections on close");
+				_client.close();
 				_client.destroy();
-				log.warn("Disconnected");
+				log.info("Disconnected");
 			}
 		} finally {
 			_client = null;
@@ -77,24 +115,16 @@ public class RedisUtils {
 	 */
 	public static Object get(String key) {
 		checkConnection();
-		byte[] rawKey = key.getBytes(StandardCharsets.UTF_8);
+		byte[] rawKey = encodeKey(key);
 		try (Jedis jc = _client.getResource()) {
 			byte[] data = jc.get(rawKey);
 			if (data == null) return null;
+			Object o = read(data);
+			if (o == null)
+				jc.del(rawKey);
 			
-			try (ByteArrayInputStream bi = new ByteArrayInputStream(data)) {
-				try (ObjectInputStream oi = new ObjectInputStream(bi)) {
-					return oi.readObject();
-				}
-			} catch (ClassNotFoundException cnfe) {
-				log.warn("Cannot load " + cnfe.getMessage());
-				jc.expire(rawKey, 0);
-			} catch (IOException ie) {
-				log.warn("Error reading " + key + " - " + ie.getMessage());
-			}	
+			return o;
 		}
-		
-		return null;
 	}
 	
 	/**
@@ -104,24 +134,18 @@ public class RedisUtils {
 	 * @param value the value
 	 */
 	public static void write(String key, long expiry, Object value) {
+		if (value == null) return;
 		checkConnection();
-		try (ByteArrayOutputStream bo = new ByteArrayOutputStream(1024)) {
-			try (ObjectOutputStream oo = new ObjectOutputStream(bo)) {
-				oo.writeObject(value);
-			}
-
-			byte[] rawKey = key.getBytes(StandardCharsets.UTF_8);
-			try (Jedis jc = _client.getResource()) {
-				if (expiry > 864000) {
-					Pipeline p = jc.pipelined();
-					p.set(rawKey, bo.toByteArray());
-					p.expireAt(rawKey, expiry);
-					p.sync();
-				} else
-					jc.setex(rawKey, (int) expiry, bo.toByteArray());	
-			}
-		} catch (IOException ie) {
-			log.warn("Error writing to Redis - " + ie.getMessage());
+		byte[] rawKey = encodeKey(key);
+		byte[] data = write(value);
+		try (Jedis jc = _client.getResource()) {
+			if (expiry > 864000) {
+				Pipeline p = jc.pipelined();
+				p.set(rawKey, data);
+				p.expireAt(rawKey, expiry);
+				p.sync();
+			} else
+				jc.setex(rawKey, (int) expiry, data);	
 		}
 	}
 
@@ -141,13 +165,22 @@ public class RedisUtils {
 	}
 
 	/**
-	 * Deletes a key from memcached.
+	 * Deletes a key from Redis.
 	 * @param key the key
 	 */
 	public static void delete(String key) {
 		checkConnection();
 		try (Jedis jc = _client.getResource()) {
-			jc.expire(key.getBytes(StandardCharsets.UTF_8), 0);
+			jc.del(encodeKey(key));
 		}
+	}
+	
+	/**
+	 * Retrieves a Redis connection from the pool.
+	 * @return a Jedis client
+	 */
+	public static Jedis getConnection() {
+		checkConnection();
+		return _client.getResource();
 	}
 }

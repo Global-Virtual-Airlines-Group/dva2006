@@ -10,6 +10,8 @@ import org.deltava.util.tile.SeriesWriter;
 
 import org.gvagroup.tile.*;
 
+import redis.clients.jedis.Jedis;
+
 /**
  * A Data Access Object to write map tiles to Redis. 
  * @author Luke
@@ -20,27 +22,30 @@ import org.gvagroup.tile.*;
 public class SetTiles extends RedisDAO implements SeriesWriter {
 
 	/**
-	 * Writes an ImageSeries to memcached. 
+	 * Writes an ImageSeries to Redis. 
 	 * @param is the ImageSeries
 	 * @throws DAOException if an error occured
 	 */
 	@Override
 	public void write(ImageSeries is) throws DAOException {
 		Long seriesDate = (is.getDate() == null) ? null : Long.valueOf(is.getDate().toEpochMilli());
-		
 		addImageType(is.getType());
 		addImageDate(is.getType(), is.getDate());
 		
 		// Write the Tiles
 		setBucket("mapTiles", is.getType(), seriesDate);
-		RedisUtils.write(createKey("$ME"), _expiry, Boolean.TRUE);
-		RedisUtils.write(createKey("$SIZE"), _expiry, Integer.valueOf(is.size()));
-		RedisUtils.write(createKey("$KEYS"), _expiry, new ArrayList<TileAddress>(is.keySet()));
-		is.entrySet().forEach(me -> RedisUtils.write(createKey(me.getKey().getName()), _expiry, me.getValue()));
+		try (Jedis j = RedisUtils.getConnection()) {
+			j.pipelined();
+			j.setex(RedisUtils.encodeKey(createKey("$ME")), _expiry, RedisUtils.write(Boolean.TRUE));
+			j.setex(RedisUtils.encodeKey(createKey("$SIZE")), _expiry, RedisUtils.write(Integer.valueOf(is.size())));
+			j.setex(RedisUtils.encodeKey(createKey("$ME")), _expiry, RedisUtils.write(new ArrayList<TileAddress>(is.keySet())));
+			is.entrySet().forEach(me -> j.setex(RedisUtils.encodeKey(createKey(me.getKey().getName())), _expiry, RedisUtils.write(me.getValue())));
+			j.sync();
+		}
 	}
 	
 	/**
-	 * Purges an image series from memcached.
+	 * Purges an image series from Redis.
 	 * @param is the ImageSeries
 	 * @throws DAOException if an error occured
 	 */
@@ -53,8 +58,16 @@ public class SetTiles extends RedisDAO implements SeriesWriter {
 		
 			@SuppressWarnings("unchecked")
 			Collection<TileAddress> keys = (Collection<TileAddress>) RedisUtils.get(createKey("$KEYS"));
-			if (keys != null)
-				keys.forEach(k -> RedisUtils.delete(createKey(k.getName())));
+			if (keys != null) {
+				try (Jedis j = RedisUtils.getConnection()) {
+					j.pipelined();
+					j.expire(RedisUtils.encodeKey(createKey("$SIZE")), 0);
+					j.expire(RedisUtils.encodeKey(createKey("$KEYS")), 0);
+					j.expire(RedisUtils.encodeKey(createKey("$ME")), 0);
+					keys.forEach(k -> j.expire(RedisUtils.encodeKey(createKey(k.getName())), 0));
+					j.sync();
+				}
+			}
 		} catch (Exception e) {
 			throw new DAOException(e);
 		}
