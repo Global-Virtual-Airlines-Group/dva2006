@@ -13,7 +13,7 @@ import org.deltava.util.*;
 /**
  * An abstract Command class to support Calendar views.
  * @author Luke
- * @version 7.0
+ * @version 7.1
  * @since 1.0
  */
 
@@ -23,13 +23,24 @@ public abstract class AbstractCalendarCommand extends AbstractCommand {
 	
 	protected static final class CalendarContext {
 		
+		/**
+	     * Request attribute to store view data for presentation-layer JSPs.
+	     */
+	    public static final String CALENDAR_CONTEXT = "calendarContext";
+		
 		private final DateRange _dr;
 		private final int _days;
+		private final boolean _hasPrev;
+		private final boolean _hasNext;
 		
 		CalendarContext(DateRange dr, int days) {
 			super();
 			_dr = dr;
 			_days = days;
+			ZonedDateTime zdt = ZonedDateTime.ofInstant(dr.getStartDate(), ZoneOffset.UTC);
+			Duration d = Duration.between(Instant.now(), dr.getStartDate());
+			_hasPrev = (zdt.get(ChronoField.YEAR) < 2000);
+			_hasNext = !d.isNegative() && (d.toDays() > 740);
 		}
 		
 		public Instant getStartDate() {
@@ -43,14 +54,23 @@ public abstract class AbstractCalendarCommand extends AbstractCommand {
 		public int getDays() {
 			return _days;
 		}
+		
+		public boolean getHasPrevious() {
+			return _hasPrev;
+		}
+		
+		public boolean getHasNext() {
+			return _hasNext;
+		}
 	}
 	
 	/**
 	 * Initializes the Calendar context.
 	 * @param ctx the Command context
 	 * @return a CalendarContext bean
+	 * @throws CommandException if the specified start date is invalid
 	 */
-	protected static CalendarContext initCalendar(CommandContext ctx) {
+	protected static CalendarContext initCalendar(CommandContext ctx) throws CommandException {
 		
 		// Get the browser context and check for mobile
 		HTTPContextData httpCtx = (HTTPContextData) ctx.getRequest().getAttribute(HTTPContext.HTTPCTXT_ATTR_NAME);
@@ -76,6 +96,10 @@ public abstract class AbstractCalendarCommand extends AbstractCommand {
 		} else
 			startDate = startDate.minusDays(startDate.get(ChronoField.DAY_OF_MONTH) - 1);
 		
+		// Check start/end date
+		if ((startDate.get(ChronoField.YEAR) < 2000) || (Duration.between(Instant.now(), startDate.toInstant()).toDays() > 730))
+			throw notFoundException("Invalid start date - " + StringUtils.format(startDate, "MM/dd/yyyy"));
+		
 		// Save the calendar options in the request
 		ctx.setAttribute("startDate", startDate, REQUEST);
 		ctx.setAttribute("startDays", Integer.valueOf(days), REQUEST);
@@ -83,6 +107,8 @@ public abstract class AbstractCalendarCommand extends AbstractCommand {
 		
 		// Build and return the Calendar context
 		DateRange dr = (days == 7) ? DateRange.createWeek(startDate.toInstant()) : DateRange.createMonth(startDate.toInstant());
-		return new CalendarContext(dr, days);
+		CalendarContext cctx = new CalendarContext(dr, days);
+		ctx.setAttribute(CalendarContext.CALENDAR_CONTEXT, cctx, REQUEST);
+		return cctx;
 	}
 }
