@@ -4,6 +4,7 @@ package org.deltava.commands;
 import java.util.*;
 import java.time.*;
 import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
 
 import org.deltava.beans.*;
 import org.deltava.beans.system.*;
@@ -81,7 +82,7 @@ public abstract class AbstractCalendarCommand extends AbstractCommand {
 		ZoneId tz = ctx.isAuthenticated() ? ctx.getUser().getTZ().getZone() : ZoneId.systemDefault();
 		ZonedDateTime startDate = null;
 		try {
-			startDate = StringUtils.parseLocal(ctx.getParameter("startDate"), "MM/dd/yyyy", tz);
+			startDate = StringUtils.parseLocal(ctx.getParameter("startDate"), "MM/dd/yyyy", tz).truncatedTo(ChronoUnit.DAYS);
 		} catch (Exception e) {
 			startDate = ZonedDateTime.now(tz);
 		}
@@ -106,7 +107,7 @@ public abstract class AbstractCalendarCommand extends AbstractCommand {
 		ctx.setAttribute("typeOptions", TYPE_OPTIONS, REQUEST);
 		
 		// Build and return the Calendar context
-		DateRange dr = (days == 7) ? DateRange.createWeek(startDate.toInstant()) : DateRange.createMonth(startDate.toInstant());
+		DateRange dr = (days == 7) ? DateRange.createWeek(startDate) : DateRange.createMonth(startDate);
 		CalendarContext cctx = new CalendarContext(dr, days);
 		ctx.setAttribute(CalendarContext.CALENDAR_CONTEXT, cctx, REQUEST);
 		return cctx;
