@@ -12,7 +12,7 @@ import org.deltava.beans.stats.DispatchStatistics;
 /**
  * A Data Access Object to load Dispatcher Activity statistics. 
  * @author Luke
- * @version 7.0
+ * @version 7.1
  * @since 3.2
  */
 
@@ -122,9 +122,9 @@ public class GetACARSDispatchStats extends DAO {
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
 					zdt = zdt.withMonth(rs.getInt(1)).withYear(rs.getInt(2));
-					results.add(DateRange.createMonth(zdt.toInstant()));
+					results.add(DateRange.createMonth(zdt));
 					zdt = zdt.withMonth(1);
-					years.add(DateRange.createYear(zdt.toInstant()));
+					years.add(DateRange.createYear(zdt));
 				}
 			}
 			

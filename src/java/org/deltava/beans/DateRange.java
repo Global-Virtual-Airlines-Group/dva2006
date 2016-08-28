@@ -9,7 +9,7 @@ import org.deltava.util.*;
 /**
  * A bean to store date/time ranges.
  * @author Luke
- * @version 7.0
+ * @version 7.1
  * @since 3.6
  */
 
@@ -20,49 +20,37 @@ public class DateRange implements java.io.Serializable, Comparable<DateRange>, C
 	private final Instant _endDate;
 
 	/**
-	 * Creates a date range for a specific day.
-	 * @param dt a date/time within that day
-	 * @return a DateRange
-	 */
-	public static DateRange createDay(Instant dt) {
-		Instant sd = dt.truncatedTo(ChronoUnit.DAYS);
-		Instant ed = sd.plus(1, ChronoUnit.DAYS);
-		return new DateRange(sd, ed, StringUtils.format(sd, "MMM dd yyyy"));
-	}
-	
-	/**
 	 * Creates a date range for a specific week.
-	 * @param dt a date/time within that day
+	 * @param zdt a date/time within that day
 	 * @return a DateRange
 	 */
-	public static DateRange createWeek(Instant dt) {
-		Instant sd = dt.truncatedTo(ChronoUnit.DAYS);
-		Instant ed = sd.plus(7, ChronoUnit.DAYS);
-		return new DateRange(sd, ed, StringUtils.format(sd, "MMM dd yyyy"));
+	public static DateRange createWeek(ZonedDateTime zdt) {
+		Instant ed = zdt.toInstant().plus(7, ChronoUnit.DAYS);
+		return new DateRange(zdt.toInstant(), ed, StringUtils.format(zdt, "MMM dd yyyy"));
 	}
 	
 	/**
 	 * Creates a date range for a specific month.
-	 * @param dt a date/time within that month
+	 * @param zdt a date/time within that month
 	 * @return a DateRange
 	 */
-	public static DateRange createMonth(Instant dt) {
-		ZonedDateTime zdt = ZonedDateTime.ofInstant(dt, ZoneOffset.UTC).truncatedTo(ChronoUnit.DAYS);
-		ZonedDateTime sd = zdt.minusDays(zdt.get(ChronoField.DAY_OF_MONTH) - 1);
+	public static DateRange createMonth(ZonedDateTime zdt) {
+		ZonedDateTime zdt2 = zdt.truncatedTo(ChronoUnit.DAYS);
+		ZonedDateTime sd = zdt2.minusDays(zdt2.get(ChronoField.DAY_OF_MONTH) - 1);
 		ZonedDateTime ed = sd.plus(1, ChronoUnit.MONTHS);
-		return new DateRange(sd.toInstant(), ed.toInstant(), StringUtils.format(sd, "MMMM yyyy"));
+		return new DateRange(sd.toInstant(), ed.toInstant(), StringUtils.format(zdt, "MMMM yyyy"));
 	}
 	
 	/**
 	 * Creates a date range for a specific year.
-	 * @param dt a date/time within that year
+	 * @param zdt a date/time within that year
 	 * @return a DateRange
 	 */
-	public static DateRange createYear(Instant dt) {
-		ZonedDateTime zdt = ZonedDateTime.ofInstant(dt, ZoneOffset.UTC).truncatedTo(ChronoUnit.DAYS);
-		ZonedDateTime sd = zdt.minusDays(zdt.get(ChronoField.DAY_OF_YEAR) - 1);
+	public static DateRange createYear(ZonedDateTime zdt) {
+		ZonedDateTime zdt2 = zdt.truncatedTo(ChronoUnit.DAYS);
+		ZonedDateTime sd = zdt2.minusDays(zdt2.get(ChronoField.DAY_OF_YEAR) - 1);
 		ZonedDateTime ed = sd.plus(1, ChronoUnit.YEARS);
-		return new DateRange(sd.toInstant(), ed.toInstant(), StringUtils.format(sd, "MMMM yyyy"));
+		return new DateRange(sd.toInstant(), ed.toInstant(), StringUtils.format(zdt, "MMMM yyyy"));
 	}
 	
 	/**

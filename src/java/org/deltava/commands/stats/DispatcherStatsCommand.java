@@ -15,7 +15,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to display ACARS Dispatcher statistics.
  * @author Luke
- * @version 7.0
+ * @version 7.1
  * @since 3.6
  */
 
@@ -32,7 +32,7 @@ public class DispatcherStatsCommand extends AbstractCommand {
 		// Get the date
 		DateRange dr = DateRange.parse(ctx.getParameter("range"));
 		if (dr == null)
-			dr = DateRange.createMonth(Instant.now());
+			dr = DateRange.createMonth(ZonedDateTime.now());
 		
 		try {
 			Connection con = ctx.getConnection();
