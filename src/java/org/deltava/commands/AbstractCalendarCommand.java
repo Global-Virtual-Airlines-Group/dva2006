@@ -24,24 +24,13 @@ public abstract class AbstractCalendarCommand extends AbstractCommand {
 	
 	protected static final class CalendarContext {
 		
-		/**
-	     * Request attribute to store view data for presentation-layer JSPs.
-	     */
-	    public static final String CALENDAR_CONTEXT = "calendarContext";
-		
 		private final DateRange _dr;
 		private final int _days;
-		private final boolean _hasPrev;
-		private final boolean _hasNext;
 		
 		CalendarContext(DateRange dr, int days) {
 			super();
 			_dr = dr;
 			_days = days;
-			ZonedDateTime zdt = ZonedDateTime.ofInstant(dr.getStartDate(), ZoneOffset.UTC);
-			Duration d = Duration.between(Instant.now(), dr.getStartDate());
-			_hasPrev = (zdt.get(ChronoField.YEAR) < 2000);
-			_hasNext = !d.isNegative() && (d.toDays() > 740);
 		}
 		
 		public Instant getStartDate() {
@@ -54,14 +43,6 @@ public abstract class AbstractCalendarCommand extends AbstractCommand {
 		
 		public int getDays() {
 			return _days;
-		}
-		
-		public boolean getHasPrevious() {
-			return _hasPrev;
-		}
-		
-		public boolean getHasNext() {
-			return _hasNext;
 		}
 	}
 	
@@ -108,8 +89,6 @@ public abstract class AbstractCalendarCommand extends AbstractCommand {
 		
 		// Build and return the Calendar context
 		DateRange dr = (days == 7) ? DateRange.createWeek(startDate) : DateRange.createMonth(startDate);
-		CalendarContext cctx = new CalendarContext(dr, days);
-		ctx.setAttribute(CalendarContext.CALENDAR_CONTEXT, cctx, REQUEST);
-		return cctx;
+		return new CalendarContext(dr, days);
 	}
 }
