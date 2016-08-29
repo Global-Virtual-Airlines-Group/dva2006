@@ -219,6 +219,8 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 		// Create the command context
 		CommandContext ctxt = new CommandContext(req, rsp);
 		NewRelic.setTransactionName("Command", cmd.getName());
+		if (req.getUserPrincipal() != null)
+			NewRelic.setUserName(req.getUserPrincipal().getName());
 		try {
 			// Validate command access
 			if (!RoleUtils.hasAccess(ctxt.getRoles(), cmd.getRoles())) {
