@@ -10,6 +10,8 @@ import javax.servlet.annotation.MultipartConfig;
 
 import org.apache.log4j.Logger;
 
+import com.newrelic.api.agent.NewRelic;
+
 import org.deltava.service.*;
 
 import org.deltava.beans.Pilot;
@@ -21,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A servlet to handle Web Service data requests.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -89,6 +91,7 @@ public class WebServiceServlet extends BasicAuthServlet {
 		}
 		
 		// Check if we need SSL
+		NewRelic.setTransactionName("Web Service", svc.getClass().getSimpleName());
 		if (!req.isSecure() && svc.requiresSSL()) {
 			log.info("Redirecting " + req.getRequestURI() + " to secure connection");
 			rsp.sendRedirect("https://" + req.getServerName() + req.getRequestURI());
@@ -103,7 +106,8 @@ public class WebServiceServlet extends BasicAuthServlet {
 				challenge(rsp, WS_REALM.replace("%A", SystemData.get("airline.name")));
 				return;
 			}
-		}
+		} else if (usr != null)
+			NewRelic.setUserName(usr.getName());
 		
 		// Generate the service context
 		ServiceContext ctx = new ServiceContext(req, rsp);
@@ -137,6 +141,7 @@ public class WebServiceServlet extends BasicAuthServlet {
 		}
 		
 		// Log excessive execution
+		NewRelic.recordResponseTimeMetric(svc.getClass().getSimpleName(), tt.getMillis());
 		if (tt.getMillis() > 5000)
 			log.warn("Excessive execution time for " + parser.getName().toLowerCase() + " - " + tt.getMillis() + "ms");
 	}
