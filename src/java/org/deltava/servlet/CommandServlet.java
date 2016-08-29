@@ -20,6 +20,8 @@ import org.deltava.util.redirect.RequestStateHelper;
 import org.deltava.util.system.SystemData;
 import org.gvagroup.jdbc.*;
 
+import com.newrelic.api.agent.NewRelic;
+
 /**
  * The main command controller. This is the application's brain stem.
  * @author Luke
@@ -216,6 +218,7 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 
 		// Create the command context
 		CommandContext ctxt = new CommandContext(req, rsp);
+		NewRelic.setTransactionName("Command", cmd.getName());
 		try {
 			// Validate command access
 			if (!RoleUtils.hasAccess(ctxt.getRoles(), cmd.getRoles())) {
