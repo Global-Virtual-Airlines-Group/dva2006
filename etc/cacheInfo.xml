@@ -19,7 +19,7 @@
     <cache id="NavRunway" expires="86400" remote="true" />
     <cache id="NavSIDSTAR" expires="86400" remote="true" />
     <cache id="NavRoute" expires="86400" remote="true" />
-	<cache id="FIRs" max="256" />
+	<cache id="FIRs" max="512" />
 	<cache id="FIRIDs" max="256" />
 
 	<!-- ACARS caches -->
