@@ -9,10 +9,12 @@ import org.deltava.beans.system.*;
 
 import org.deltava.taglib.BrowserInfoTag;
 
+import com.newrelic.api.agent.NewRelic;
+
 /**
  * A JSP tag to render page layouts in a user-specific way.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -65,6 +67,7 @@ public class PageTag extends BrowserInfoTag {
 
 		try {
 			JspWriter out = pageContext.getOut();
+			out.println(NewRelic.getBrowserTimingHeader());
 			out.print("<div id=\"nav\" class=\"");
 			out.print(_sideMenu ? "navside" : "navbar");
 			out.print(bctxt.isIPv6() ? " ipv6 " : " ipv4 ");
@@ -98,7 +101,9 @@ public class PageTag extends BrowserInfoTag {
 	@Override
 	public int doEndTag() throws JspException {
 		try {
-			pageContext.getOut().print("</div>");
+			JspWriter out = pageContext.getOut();
+			out.println("</div>");
+			out.println(NewRelic.getBrowserTimingFooter());
 		} catch (Exception e) {
 			throw new JspException(e);
 		} finally {
