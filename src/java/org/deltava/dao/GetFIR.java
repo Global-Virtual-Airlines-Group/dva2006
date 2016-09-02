@@ -17,7 +17,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load FIR data.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 3.2
  */
 
@@ -44,9 +44,12 @@ public class GetFIR extends DAO {
 	public FIR get(String id, boolean isOceanic) throws DAOException {
 		
 		// Get the ID
-		CacheableString idCacheKey = _idCache.get(id);
-		if ((idCacheKey != null) && (!idCacheKey.getValue().equals(id)))
-			return get(idCacheKey.getValue(), isOceanic);
+		CacheableString idCacheKey = _idCache.get(id); FIR fir = null;
+		if ((idCacheKey != null) && (!idCacheKey.getValue().equals(id))) {
+			fir = get(idCacheKey.getValue(), isOceanic);
+			if (fir != null)
+				return fir;
+		}
 
 		// Build the cache key
 		String cacheKey = id.trim().toUpperCase();
@@ -54,7 +57,7 @@ public class GetFIR extends DAO {
 			cacheKey += " Oceanic";
 		
 		// Check the cache
-		FIR fir = _cache.get(cacheKey);
+		fir = _cache.get(cacheKey);
 		if (fir != null)
 			return fir;
 		
@@ -88,19 +91,19 @@ public class GetFIR extends DAO {
 				
 			// Load aliases
 			prepareStatementWithoutLimits("SELECT ALIAS FROM common.FIRALIAS WHERE (ID=?) AND (OCEANIC=?)");
-			_ps.setString(1, fir.getID());
-			_ps.setBoolean(2, fir.isOceanic());				
+			_ps.setString(1, f.getID());
+			_ps.setBoolean(2, f.isOceanic());				
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
-					fir.addAlias(rs.getString(1));
+					f.addAlias(rs.getString(1));
 					_idCache.add(new CacheableString(id, rs.getString(1)));
 				}
 			}
 				
 			// Clean up and add to cache
 			_ps.close();
-			_cache.add(fir);
-			return fir;
+			_cache.add(f);
+			return f;
 		} catch (SQLException | ParseException se) {
 			throw new DAOException(se);
 		}
@@ -143,7 +146,6 @@ public class GetFIR extends DAO {
 	 */
 	public FIR search(GeoLocation loc) throws DAOException {
 		String pt = formatLocation(loc);
-		//String pt = "POINT(" + String.valueOf(loc.getLatitude()) + " " + String.valueOf(loc.getLongitude()) + ")";
 		try {
 			prepareStatementWithoutLimits("SELECT ID, OCEANIC FROM common.FIR WHERE ST_Contains(data, ST_PointFromText(?,?))");
 			_ps.setString(1, pt);
