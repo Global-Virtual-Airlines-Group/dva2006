@@ -19,7 +19,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to reactivate a Pilot.
  * @author Luke
- * @version 6.4
+ * @version 7.2
  * @since 1.0
  */
 
@@ -82,6 +82,7 @@ public class PilotActivationCommand extends AbstractCommand {
 			ctx.setAttribute("pilot", p, REQUEST);
 			mctx.addData("pilot", p);
 			mctx.addData("eqType", eq);
+			mctx.addData("CP", dao.get(eq.getCPID()));
 
 			// If we're full and not forcing, redirect to a warning page
 			if (isFull && !doForce) {
