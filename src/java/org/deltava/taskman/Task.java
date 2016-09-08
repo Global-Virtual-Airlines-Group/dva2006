@@ -13,14 +13,17 @@ import org.apache.log4j.Logger;
 import org.deltava.beans.Pilot;
 import org.deltava.dao.*;
 import org.deltava.util.*;
-
+import org.deltava.util.log.SyntheticRequest;
+import org.deltava.util.log.SyntheticResponse;
 import org.deltava.util.system.SystemData;
+
+import com.newrelic.api.agent.NewRelic;
 
 /**
  * A class to support Scheduled Tasks. Scheduled Tasks are similar to UNIX cron jobs, and are scheduled for
  * execution in much the same way.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -278,7 +281,10 @@ public abstract class Task implements Runnable, Comparable<Task>, Thread.Uncaugh
     	// Execute the task
         execute(ctxt);
         _lastRunTime = (System.currentTimeMillis() - _lastStartTime.toEpochMilli());
-        log.info(getName() + " completed - " + getLastRunTime() + " ms");
+        log.info(getName() + " completed - " + _lastRunTime + " ms");
+        NewRelic.setRequestAndResponse(new SyntheticRequest(_name, (usr == null) ? "SYSTEM" : usr.getPilotCode()), new SyntheticResponse());
+        NewRelic.setTransactionName("Task", _name);
+        NewRelic.recordResponseTimeMetric(_name, _lastRunTime);
         
         // Log execution time
     	try {
