@@ -3,11 +3,13 @@ package org.deltava.service;
 
 import org.deltava.util.StringUtils;
 
+import com.newrelic.api.agent.Trace;
+
 /**
  * Web Services are designed to be light-weight objects that are instantiated using a no-argument constructor
  * and then passed a request and a response.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -20,6 +22,7 @@ public abstract class WebService {
     * @return the HTTP status code
     * @throws ServiceException if an error occurs
     */
+	@Trace(dispatcher=true)
    public abstract int execute(ServiceContext ctx) throws ServiceException;
    
    /**

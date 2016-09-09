@@ -1,14 +1,16 @@
-// Copyright 2004, 2007, 2008, 2009, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2007, 2008, 2009, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.util.Collection;
 
 import javax.servlet.jsp.PageContext;
 
+import com.newrelic.api.agent.Trace;
+
 /**
- * A Web Command.
+ * A Web Site Command.
  * @author Luke
- * @version 6.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -55,6 +57,7 @@ public interface Command {
      * @param ctx run-time information needed to execute
      * @throws CommandException if an error occurs
      */
+    @Trace
     public void execute(CommandContext ctx) throws CommandException;
 
     /**
