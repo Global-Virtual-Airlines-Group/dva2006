@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to parse XML-format offline Flight Reports.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 2.4
  */
 
@@ -134,6 +134,7 @@ public final class OfflineFlightParser {
 				try {
 					GeoLocation loc = new GeoPosition(parse(pe.getChildTextTrim("lat")), parse(pe.getChildTextTrim("lon")));
 					ACARSRouteEntry pos = new ACARSRouteEntry(LocalDateTime.parse(pe.getChildTextTrim("date"), mdtf).toInstant(ZoneOffset.UTC), loc);
+					pos.setVASFree(StringUtils.parse(pe.getAttributeValue("vasFree", "0"), 0));
 					pos.setAltitude(StringUtils.parse(pe.getChildTextTrim("msl"), 0));
 					pos.setRadarAltitude(StringUtils.parse(pe.getChildTextTrim("agl"), 0));
 					pos.setHeading(StringUtils.parse(pe.getChildTextTrim("hdg"), 0));
