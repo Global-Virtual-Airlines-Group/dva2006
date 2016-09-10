@@ -34,7 +34,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to handle editing/saving Pilot Profiles.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -161,13 +161,10 @@ public class ProfileCommand extends AbstractFormCommand {
 
 			// Set Notification Options
 			Collection<String> notifyOpts = ctx.getParameters("notifyOption");
-			if (notifyOpts != null) {
-				for (Notification n : Notification.values())
-					p.setNotifyOption(n, notifyOpts.contains(n.name()));
-			} else {
-				for (Notification n : Notification.values())
-					p.setNotifyOption(n, false);
-			}
+			if (notifyOpts != null)
+				Arrays.asList(Notification.values()).forEach(n -> p.setNotifyOption(n, notifyOpts.contains(n.name())));
+			else
+				Arrays.asList(Notification.values()).forEach(n -> p.setNotifyOption(n, false));
 
 			// Determine if we are changing the pilot's status
 			if (p_access.getCanChangeStatus() || p_access.getCanChangeRoles()) {

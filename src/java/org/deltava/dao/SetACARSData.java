@@ -11,7 +11,7 @@ import org.deltava.beans.navdata.*;
  * A Data Access Object to write ACARS data. This is used outside of the ACARS server by classes that need to simulate
  * ACARS server writes without having access to the ACARS server message bean code.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -123,12 +123,9 @@ public class SetACARSData extends DAO {
 	public void writePositions(int flightID, Collection<ACARSRouteEntry> entries) throws DAOException {
 		try {
 			prepareStatementWithoutLimits("REPLACE INTO acars.POSITIONS (FLIGHT_ID, REPORT_TIME, LAT, LNG, B_ALT, R_ALT, HEADING, ASPEED, GSPEED, VSPEED, N1, N2, MACH, FUEL, PHASE, SIM_RATE, FLAGS, FLAPS, PITCH, BANK, "
-				+ "FUELFLOW, WIND_HDG, WIND_SPEED, TEMP, PRESSURE, VIZ, AOA, GFORCE, FRAMERATE, SIM_TIME) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-
-			// Loop through the positions
+				+ "FUELFLOW, WIND_HDG, WIND_SPEED, TEMP, PRESSURE, VIZ, AOA, GFORCE, FRAMERATE, SIM_TIME, VAS) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setInt(1, flightID);
-			for (Iterator<ACARSRouteEntry> i = entries.iterator(); i.hasNext();) {
-				ACARSRouteEntry re = i.next();
+			for (ACARSRouteEntry re: entries) {
 				_ps.setTimestamp(2, createTimestamp(re.getDate()));
 				_ps.setDouble(3, re.getLatitude());
 				_ps.setDouble(4, re.getLongitude());
@@ -158,6 +155,7 @@ public class SetACARSData extends DAO {
 				_ps.setDouble(28, re.getG());
 				_ps.setInt(29, re.getFrameRate());
 				_ps.setTimestamp(30, createTimestamp(re.getSimUTC()));
+				_ps.setInt(31, re.getVASFree());
 				_ps.addBatch();
 			}
 
