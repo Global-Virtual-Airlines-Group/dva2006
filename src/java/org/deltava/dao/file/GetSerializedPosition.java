@@ -16,7 +16,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to deserialize ACARS/XACARS position records.  
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 4.1
  */
 
@@ -39,18 +39,13 @@ public class GetSerializedPosition extends DAO {
 		try (DataInputStream in = new DataInputStream(getStream())) {
 			SerializedDataVersion ver = SerializedDataVersion.values()[in.readShort()];
 			in.readInt(); // flight ID
-			if ((ver == SerializedDataVersion.ACARS) || (ver == SerializedDataVersion.ACARSv2) || (ver == SerializedDataVersion.ACARSv3))
-				return loadACARS(in, ver.getVersion());
-			else if (ver == SerializedDataVersion.XACARS)
-				return loadXACARS(in);
-			
-			return Collections.emptyList();
+			return (ver != SerializedDataVersion.XACARS) ? loadACARS(in, ver) : loadXACARS(in);
 		} catch (IOException ie) {
 			throw new DAOException(ie);
 		}
 	}
 	
-	private static Collection<ACARSRouteEntry> loadACARS(DataInputStream in, int version) throws IOException {
+	private static Collection<ACARSRouteEntry> loadACARS(DataInputStream in, SerializedDataVersion version) throws IOException {
 		int size = in.readInt();
 		Collection<ACARSRouteEntry> results = new ArrayList<ACARSRouteEntry>(size + 2);
 		for (int x = 0; x < size; x++) {
@@ -81,15 +76,17 @@ public class GetSerializedPosition extends DAO {
 			re.setSimRate(in.readShort());
 			
 			// Load weather and sim time
-			if (version > 2) {
+			if (version.getVersion() > 2) {
 				re.setTemperature(in.readShort());
 				re.setPressure(in.readInt());
 				re.setSimUTC(Instant.ofEpochMilli(in.readLong()));
+				if (version == SerializedDataVersion.ACARSv4)
+					re.setVASFree(in.readInt());
 			} else
 				re.setSimUTC(re.getDate()); // ensure non-null
 			
 			// Load NAV1/NAV2
-			if (version > 1) {
+			if (version != SerializedDataVersion.ACARS) {
 				String n1 = in.readUTF();
 				String n2 = in.readUTF();
 				re.setNAV1(StringUtils.isEmpty(n1) ? null : n1);
@@ -108,7 +105,7 @@ public class GetSerializedPosition extends DAO {
 			}
 			
 			// Check for ATC2
-			String com2 = (version > 1) ? in.readUTF() : null;
+			String com2 = (version.getVersion() > 1) ? in.readUTF() : null;
 			if (!StringUtils.isEmpty(com2)) {
 				re.setCOM2(com2);
 				Controller atc = new Controller(in.readInt());

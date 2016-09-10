@@ -4,12 +4,12 @@ package org.deltava.beans.acars;
 /**
  * An enumeration to store serialized ACARS position data version information.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 4.1
  */
 
 public enum SerializedDataVersion {
-	ACARS(1, false), XACARS(1, true), ACARSv2(2, false), ACARSv3(3, false);
+	ACARS(1, false), XACARS(1, true), ACARSv2(2, false), ACARSv3(3, false), ACARSv4(3, false);
 
 	private final int _version;
 	private final boolean _isXACARS;

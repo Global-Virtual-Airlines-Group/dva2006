@@ -19,7 +19,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * A Web Service to return ACARS flight data parameters.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -60,7 +60,7 @@ public class FlightDataExportService extends WebService {
 		// Write the CSV header
 		if (info.getFDR() != Recorder.XACARS) {
 			ctx.println("Date/Time,Latitude,Longitude,Altitude,Heading,Air Speed,Ground Speed,Mach,Vertical Speed,N1,N2,Bank,Pitch,Flaps,"
-				+ "WindSpeed,WindHdg,Temperature,Pressure,Visibility,FuelFlow,Fuel,Gs,AOA,AP,ALT,AT,FrameRate,NAV1,NAV2,COM1,ATC1,COM2,ATC2,WARN");
+				+ "WindSpeed,WindHdg,Temperature,Pressure,Visibility,FuelFlow,Fuel,Gs,AOA,AP,ALT,AT,FrameRate,VAS,NAV1,NAV2,COM1,ATC1,COM2,ATC2,WARN");
 		} else
 			ctx.println("Date/Time,Latitude,Longitude,Altitude,Heading,Air Speed,Ground Speed,Mach,WindSpeed,WindHdg,Fuel");
 
@@ -187,6 +187,9 @@ public class FlightDataExportService extends WebService {
 		
 		buf.append(',');
 		buf.append(String.valueOf(entry.getFrameRate()));
+		buf.append(',');
+		if (entry.getVASFree() > 0)
+			buf.append(entry.getVASFree() / 1024);
 		buf.append(',');
 		buf.append(entry.getNAV1());
 		buf.append(',');

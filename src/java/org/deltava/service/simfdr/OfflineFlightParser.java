@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to parse simFDR submitted flight reports.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 7.0
  */
 
@@ -117,6 +117,7 @@ final class OfflineFlightParser {
 				try {
 					GeoLocation loc = new GeoPosition(Double.parseDouble(pe.getAttributeValue("lat")), Double.parseDouble(pe.getAttributeValue("lng")));
 					ACARSRouteEntry pos = new ACARSRouteEntry(StringUtils.parseEpoch(pe.getAttributeValue("date")), loc);
+					pos.setVASFree(StringUtils.parse(pe.getAttributeValue("vasFree", "0"), 0));
 					pos.setSimUTC(StringUtils.parseEpoch(pe.getAttributeValue("simDate")));
 					if (pos.getSimUTC() == null)
 						pos.setSimUTC(pos.getDate());
