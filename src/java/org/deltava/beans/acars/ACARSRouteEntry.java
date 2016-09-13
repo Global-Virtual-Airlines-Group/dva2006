@@ -48,7 +48,7 @@ public class ACARSRouteEntry extends RouteEntry {
 	private Controller _atc1;
 	private Controller _atc2;
 	
-	private int _vasFree = Integer.MAX_VALUE;
+	private int _vasFree;
 
 	private static final int[] AP_FLAGS = { FLAG_AP_APR, FLAG_AP_HDG, FLAG_AP_NAV, FLAG_AP_ALT, FLAG_AP_GPS , FLAG_AP_LNAV};
 	private static final String[] AP_FLAG_NAMES = { "APR", "HDG", "NAV", "ALT", "GPS", "LNAV" };
@@ -680,8 +680,12 @@ public class ACARSRouteEntry extends RouteEntry {
 		// Add Pause/Stall/VAS/Warning flags
 		if (isFlagSet(FLAG_PAUSED))
 			buf.append("<span class=\"error\">FLIGHT PAUSED</span><br />");
-		if (_vasFree < 524288)
-			buf.append("<span class=\"warn\">LOW FREE MEMORY</span><br />");
+		if ((_vasFree > 0) && (_vasFree < 524288)) {
+			buf.append("<span class=\"warn\">LOW MEMORY - ");
+			buf.append(_vasFree / 1024);
+			buf.append("K</span><br />");
+		}
+		
 		String warn = getWarning();
 		if (warn != null) {
 			buf.append("<span class=\"error bld\">");
