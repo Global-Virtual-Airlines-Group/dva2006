@@ -18,7 +18,7 @@ import org.deltava.util.*;
 /**
  * A JSP tag to display a calendar view table.
  * @author Luke
- * @version 7.1
+ * @version 7.2
  * @since 1.0
  */
 
@@ -252,11 +252,7 @@ abstract class CalendarTag extends TagSupport {
 	 * Helper method to bundle request parameters into a URL string.
 	 */
 	private String buildURL(Map<String, Object> params) {
-		StringBuilder url = new StringBuilder("/");
-		url.append(_cmdName);
-		url.append(".do?");
-
-		// Loop through the parameters
+		StringBuilder url = new StringBuilder("/").append(_cmdName).append(".do?");
 		for (Iterator<String> i = params.keySet().iterator(); i.hasNext();) {
 			String pName = i.next();
 			String[] pValues = (String[]) params.get(pName);
@@ -267,7 +263,6 @@ abstract class CalendarTag extends TagSupport {
 				url.append("&amp;");
 		}
 
-		// Return the string
 		return url.toString();
 	}
 
@@ -343,8 +338,8 @@ abstract class CalendarTag extends TagSupport {
 		ZonedDateTime fd = _startDate.plus(_intervalLength, _intervalType);
 		ZonedDateTime bd = _startDate.minus(_intervalLength, _intervalType);
 		Duration d = Duration.between(Instant.now(), fd.toInstant());
-		boolean hasPrev = (bd.get(ChronoField.YEAR) < 2000);
-		boolean hasNext = !d.isNegative() && (d.toDays() > 740);
+		boolean hasPrev = (bd.get(ChronoField.YEAR) > 2000);
+		boolean hasNext = !d.isNegative() || (d.toDays() < 740);
 
 		try {
 			// Build the backward URL
