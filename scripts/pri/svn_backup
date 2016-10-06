@@ -1,6 +1,6 @@
 #!/bin/bash
 # GVA Subversion Repository backup script
-# (c) 2005, 2007, 2008, 2009, 2010, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+# (c) 2005, 2007, 2008, 2009, 2010, 2012, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
 
 # Set archiving options
 arc_util="pbzip2 -9 -p4 -c"
@@ -23,202 +23,112 @@ if [ "$1" != "force" ] ;then
 fi
 
 # Back up the first 1000 revisions
-if [ ! -f "/home/backup/svn/svn_1xxx.bz2" ] ;then
+if [ ! -f "/home/backup/svn/svn_0xxx.bz2" ] ;then
  echo 'Backing up revisions 0-999'
- svnadmin dump /home/svn --revision 0:999 | $arc_util > svn_1xxx.bz2
+ svnadmin dump /home/svn --revision 0:999 | $arc_util > svn_0xxx.bz2
  echo 1000 > /tmp/svn.revision_base
 else
  echo 1000 > /tmp/svn.revision_base
 fi
 
-# If we have more than 1500 revisions, back them up
-if [ "`cat /tmp/svn.revision`" -gt "1500" ] ;then
- if [ ! -f "/home/backup/svn/svn_15xx.bz2" ] ;then
-  echo 'Backing up revisions 1000-1499'
-  svnadmin dump /home/svn --incremental --revision 1000:1499 | $arc_util > svn_15xx.bz2
- fi
-
- echo 1500 > /tmp/svn.revision_base
-fi
-
 # If we have more than 2000 revisions, back them up
 if [ "`cat /tmp/svn.revision`" -gt "2000" ] ;then
- if [ ! -f "/home/backup/svn/svn_20xx.bz2" ] ;then
-  echo 'Backing up revisions 1500-1999'
-  svnadmin dump /home/svn --incremental --revision 1500:1999 | $arc_util > svn_20xx.bz2
+ if [ ! -f "/home/backup/svn/svn_10xx.bz2" ] ;then
+  echo 'Backing up revisions 1000-1999'
+  svnadmin dump /home/svn --incremental --revision 1000:1999 | $arc_util > svn_10xx.bz2
  fi
 
  echo 2000 > /tmp/svn.revision_base
 fi
 
-# If we have more than 2500 revisions, back them up
-if [ "`cat /tmp/svn.revision`" -gt "2500" ] ;then
- if [ ! -f "/home/backup/svn/svn_25xx.bz2" ] ;then
-  echo 'Backing up revisions 2000-2499'
-  svnadmin dump /home/svn --incremental --revision 2000:2499 | $arc_util > svn_25xx.bz2
- fi
-
- echo 2500 > /tmp/svn.revision_base
-fi
-
 # If we have more than 3000 revisions, back them up
 if [ "`cat /tmp/svn.revision`" -gt "3000" ] ;then
- if [ ! -f "/home/backup/svn/svn_30xx.bz2" ] ;then
-  echo 'Backing up revisions 2500-2999'
-  svnadmin dump /home/svn --incremental --revision 2500:2999 | $arc_util > svn_30xx.bz2
+ if [ ! -f "/home/backup/svn/svn_20xx.bz2" ] ;then
+  echo 'Backing up revisions 2000-2999'
+  svnadmin dump /home/svn --incremental --revision 2000:2999 | $arc_util > svn_20xx.bz2
  fi
 
  echo 3000 > /tmp/svn.revision_base
 fi
 
-# If we have more than 3500 revisions, back them up
-if [ "`cat /tmp/svn.revision`" -gt "3500" ] ;then
- if [ ! -f "/home/backup/svn/svn_35xx.bz2" ] ;then
-  echo 'Backing up revisions 3000-3499'
-  svnadmin dump /home/svn --incremental --revision 3000:3499 | $arc_util > svn_35xx.bz2
- fi
-
- echo 3500 > /tmp/svn.revision_base
-fi
-
 # If we have more than 4000 revisions, back them up
 if [ "`cat /tmp/svn.revision`" -gt "4000" ] ;then
- if [ ! -f "/home/backup/svn/svn_40xx.bz2" ] ;then
-  echo 'Backing up revisions 3500-3999'
-  svnadmin dump /home/svn --incremental --revision 3500:3999 | $arc_util > svn_40xx.bz2
+ if [ ! -f "/home/backup/svn/svn_30xx.bz2" ] ;then
+  echo 'Backing up revisions 3000-3999'
+  svnadmin dump /home/svn --incremental --revision 3000:3999 | $arc_util > svn_30xx.bz2
  fi
 
  echo 4000 > /tmp/svn.revision_base
 fi
 
-# If we have more than 4500 revisions, back them up
-if [ "`cat /tmp/svn.revision`" -gt "4500" ] ;then
- if [ ! -f "/home/backup/svn/svn_45xx.bz2" ] ;then
-  echo 'Backing up revisions 4000-4499'
-  svnadmin dump /home/svn --incremental --revision 4000:4499 | $arc_util > svn_45xx.bz2
- fi
-
- echo 4500 > /tmp/svn.revision_base
-fi
-
 # If we have more than 5000 revisions, back them up
 if [ "`cat /tmp/svn.revision`" -gt "5000" ] ;then
- if [ ! -f "/home/backup/svn/svn_50xx.bz2" ] ;then
-  echo 'Backing up revisions 4500-4999'
-  svnadmin dump /home/svn --incremental --revision 4500:4999 | $arc_util > svn_50xx.bz2
+ if [ ! -f "/home/backup/svn/svn_40xx.bz2" ] ;then
+  echo 'Backing up revisions 4000-4999'
+  svnadmin dump /home/svn --incremental --revision 4000:4999 | $arc_util > svn_40xx.bz2
  fi
 
  echo 5000 > /tmp/svn.revision_base
 fi
 
-# If we have more than 5500 revisions, back them up
-if [ "`cat /tmp/svn.revision`" -gt "5500" ] ;then
- if [ ! -f "/home/backup/svn/svn_55xx.bz2" ] ;then
-  echo 'Backing up revisions 5000-5499'
-  svnadmin dump /home/svn --incremental --revision 5000:5499 | $arc_util > svn_55xx.bz2
- fi
-
- echo 5500 > /tmp/svn.revision_base
-fi
-
 # If we have more than 6000 revisions, back them up
 if [ "`cat /tmp/svn.revision`" -gt "6000" ] ;then
- if [ ! -f "/home/backup/svn/svn_60xx.bz2" ] ;then
-  echo 'Backing up revisions 5500-5999'
-  svnadmin dump /home/svn --incremental --revision 5500:5999 | $arc_util > svn_60xx.bz2
+ if [ ! -f "/home/backup/svn/svn_50xx.bz2" ] ;then
+  echo 'Backing up revisions 5000-5999'
+  svnadmin dump /home/svn --incremental --revision 5000:5999 | $arc_util > svn_50xx.bz2
  fi
 
  echo 6000 > /tmp/svn.revision_base
 fi
 
-# If we have more than 6500 revisions, back them up
-if [ "`cat /tmp/svn.revision`" -gt "6500" ] ;then
- if [ ! -f "/home/backup/svn/svn_65xx.bz2" ] ;then
-  echo 'Backing up revisions 6000-6499'
-  svnadmin dump /home/svn --incremental --revision 6000:6499 | $arc_util > svn_65xx.bz2
- fi
-
- echo 6500 > /tmp/svn.revision_base
-fi
-
 # If we have more than 7000 revisions, back them up
 if [ "`cat /tmp/svn.revision`" -gt "7000" ] ;then
- if [ ! -f "/home/backup/svn/svn_70xx.bz2" ] ;then
-  echo 'Backing up revisions 6500-6999'
-  svnadmin dump /home/svn --incremental --revision 6500:6999 | $arc_util > svn_70xx.bz2
+ if [ ! -f "/home/backup/svn/svn_60xx.bz2" ] ;then
+  echo 'Backing up revisions 6000-6999'
+  svnadmin dump /home/svn --incremental --revision 6000:6999 | $arc_util > svn_60xx.bz2
  fi
 
  echo 7000 > /tmp/svn.revision_base
 fi
 
-# If we have more than 7500 revisions, back them up
-if [ "`cat /tmp/svn.revision`" -gt "7500" ] ;then
- if [ ! -f "/home/backup/svn/svn_75xx.bz2" ] ;then
-  echo 'Backing up revisions 7000-7499'
-  svnadmin dump /home/svn --incremental --revision 7000:7499 | $arc_util > svn_75xx.bz2
- fi
-
- echo 7500 > /tmp/svn.revision_base
-fi
-
 # If we have more than 8000 revisions, back them up
 if [ "`cat /tmp/svn.revision`" -gt "8000" ] ;then
- if [ ! -f "/home/backup/svn/svn_80xx.bz2" ] ;then
-  echo 'Backing up revisions 7500-7999'
-  svnadmin dump /home/svn --incremental --revision 7500:7999 | $arc_util > svn_80xx.bz2
+ if [ ! -f "/home/backup/svn/svn_70xx.bz2" ] ;then
+  echo 'Backing up revisions 7000-7999'
+  svnadmin dump /home/svn --incremental --revision 7000:7999 | $arc_util > svn_70xx.bz2
  fi
 
  echo 8000 > /tmp/svn.revision_base
 fi
 
-# If we have more than 8500 revisions, back them up
-if [ "`cat /tmp/svn.revision`" -gt "8500" ] ;then
- if [ ! -f "/home/backup/svn/svn_85xx.bz2" ] ;then
-  echo 'Backing up revisions 8000-8499'
-  svnadmin dump /home/svn --incremental --revision 8000:8499 | $arc_util > svn_85xx.bz2
- fi
-
- echo 8500 > /tmp/svn.revision_base
-fi
-
 # If we have more than 9000 revisions, back them up
 if [ "`cat /tmp/svn.revision`" -gt "9000" ] ;then
- if [ ! -f "/home/backup/svn/svn_90xx.bz2" ] ;then
-  echo 'Backing up revisions 8500-8999'
-  svnadmin dump /home/svn --incremental --revision 8500:8999 | $arc_util > svn_90xx.bz2
+ if [ ! -f "/home/backup/svn/svn_80xx.bz2" ] ;then
+  echo 'Backing up revisions 8000-8999'
+  svnadmin dump /home/svn --incremental --revision 8000:8999 | $arc_util > svn_80xx.bz2
  fi
 
  echo 9000 > /tmp/svn.revision_base
 fi
 
-# If we have more than 9500 revisions, back them up
-if [ "`cat /tmp/svn.revision`" -gt "9500" ] ;then
- if [ ! -f "/home/backup/svn/svn_95xx.bz2" ] ;then
-  echo 'Backing up revisions 9000-9499'
-  svnadmin dump /home/svn --incremental --revision 9000:9499 | $arc_util > svn_95xx.bz2
- fi
-
- echo 9500 > /tmp/svn.revision_base
-fi
-
 # If we have more than 10k revisions, back them up
 if [ "`cat /tmp/svn.revision`" -gt "10000" ] ;then
- if [ ! -f "/home/backup/svn/svn_100xx.bz2" ] ;then
-  echo 'Backing up revisions 9500-9999'
-  svnadmin dump /home/svn --incremental --revision 9500:9999 | $arc_util > svn_100xx.bz2
+ if [ ! -f "/home/backup/svn/svn_90xx.bz2" ] ;then
+  echo 'Backing up revisions 9000-9999'
+  svnadmin dump /home/svn --incremental --revision 9000:9999 | $arc_util > svn_90xx.bz2
  fi
 
  echo 10000 > /tmp/svn.revision_base
 fi
 
-# If we have more than 10500 revisions, back them up
-if [ "`cat /tmp/svn.revision`" -gt "10500" ] ;then
- if [ ! -f "/home/backup/svn/svn_105xx.bz2" ] ;then
-  echo 'Backing up revisions 10000-10499'
-  svnadmin dump /home/svn --incremental --revision 10000:10499 | $arc_util > svn_100xx.bz2
+# If we have more than 11k revisions, back them up
+if [ "`cat /tmp/svn.revision`" -gt "11000" ] ;then
+ if [ ! -f "/home/backup/svn/svn_100xx.bz2" ] ;then
+  echo 'Backing up revisions 10000-10999'
+  svnadmin dump /home/svn --incremental --revision 10000:10999 | $arc_util > svn_100xx.bz2
  fi
 
- echo 10500 > /tmp/svn.revision_base
+ echo 11000 > /tmp/svn.revision_base
 fi
 
 # Back up the last revisions
