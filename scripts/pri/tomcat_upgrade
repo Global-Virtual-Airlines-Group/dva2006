@@ -47,6 +47,7 @@ ln -s /var/log/tomcat logs
 echo "Copying libraries"
 chmod 644 lib/*.jar
 cp -pu /usr/local/tomcat/lib/* lib
+cp /usr/local/tomcat/bin/jsvc bin
 
 # Copy over configuration files
 echo "Copying Tomcat configuration"
