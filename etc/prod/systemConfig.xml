@@ -610,15 +610,15 @@
 	
 	<cooler>
 		<img_max>
-			<x type="Integer">1230</x>
-			<y type="Integer">840</y>
+			<x type="Integer">1260</x>
+			<y type="Integer">860</y>
 			<size type="Integer">327680</size>
 		</img_max>
 
 		<sig_max>
-			<x type="Integer">540</x>
-			<y type="Integer">180</y>
-			<size type="Integer">81920</size>
+			<x type="Integer">640</x>
+			<y type="Integer">185</y>
+			<size type="Integer">102400</size>
 		</sig_max>
 
 		<imgurls>
