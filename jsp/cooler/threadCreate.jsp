@@ -112,7 +112,7 @@ img.onload = function() {
 	return true;	
 };
 
-img.onerror = function() { msgSpan.innerHTML = 'Canot load image!'; return false; }
+img.onerror = function() { msgSpan.innerHTML = 'Canot load image!'; return false; };
 img.src = imgURL;
 return true;
 };
@@ -132,7 +132,7 @@ return true;
 <el:form action="threadpost.do" method="post" allowUpload="true" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title">
- <td colspan="2" class="left caps">New ${forumName} Discusion Thread</td>
+ <td colspan="2" class="left caps">New ${forumName} Discussion Thread</td>
 </tr>
 <tr>
  <td class="label">Thread Title</td>
