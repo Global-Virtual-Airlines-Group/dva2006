@@ -8,8 +8,9 @@ import org.deltava.util.RedisUtils;
 /**
  * An object cache using Redis as its backing store.
  * @author Luke
- * @version 7.1
+ * @version 7.2
  * @since 7.1
+ * @param <T> the Cacheable object type
  */
 
 public class RedisCache<T extends Cacheable> extends Cache<T> {

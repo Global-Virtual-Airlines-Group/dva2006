@@ -6,9 +6,10 @@ import java.util.ArrayList;
 /**
  * A utility class to create a cacheable List.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.1
  * @see CacheableSet
+ * @param <E> the cacheable object type
  */
 
 public class CacheableList<E> extends ArrayList<E> implements CacheableCollection<E> {
@@ -33,9 +34,6 @@ public class CacheableList<E> extends ArrayList<E> implements CacheableCollectio
 		addAll(cc);
 	}
 
-	/**
-	 * Returns the cache key.
-	 */
 	@Override
 	public Object cacheKey() {
 		return _key;

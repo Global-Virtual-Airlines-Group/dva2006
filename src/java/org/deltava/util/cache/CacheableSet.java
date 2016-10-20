@@ -6,9 +6,10 @@ import java.util.LinkedHashSet;
 /**
  * A utility class to create a cacheable Set.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  * @see CacheableList
+ * @param <E> the cacheable object type
  */
 
 public class CacheableSet<E> extends LinkedHashSet<E> implements CacheableCollection<E> {
@@ -33,9 +34,6 @@ public class CacheableSet<E> extends LinkedHashSet<E> implements CacheableCollec
 		addAll(cc);
 	}
 	
-	/**
-	 * Returns the cache key.
-	 */
 	@Override
 	public Object cacheKey() {
 		return _key;

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
  * A class to support Web Site Commands use a {@link TestingHistoryHelper} object to determine what
  * examinations/transfers a Pilot is eligible for.
  * @author Luke
- * @version 5.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -27,6 +27,7 @@ public abstract class AbstractTestHistoryCommand extends AbstractCommand {
 	 * Populates the Testing History Helper by calling the proper DAOs in the right order.
 	 * @param p the Pilot bean
 	 * @param c the JDBC connection to use
+	 * @return a populated TestingHistoryHelper bean
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	protected static final TestingHistoryHelper initTestHistory(Person p, Connection c) throws DAOException {
@@ -52,8 +53,7 @@ public abstract class AbstractTestHistoryCommand extends AbstractCommand {
 
 		// Create a dummy FO exam(s) for the hired in program
 		if (ieq != null) {
-			for (Iterator<String> i = ieq.getExamNames(Rank.FO).iterator(); i.hasNext(); ) {
-				String foExam = i.next();
+			for (String foExam : ieq.getExamNames(Rank.FO)) {
 				if (!StringUtils.isEmpty(foExam) && !helper.hasPassed(Collections.singleton(foExam))) {
 					Examination ex = new Examination(foExam);
 					ex.setSize(1);

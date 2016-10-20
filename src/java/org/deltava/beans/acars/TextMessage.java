@@ -8,7 +8,7 @@ import org.deltava.beans.*;
 /**
  * A bean to store saved ACARS text messages.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -21,9 +21,7 @@ public class TextMessage implements AuthoredBean, Comparable<TextMessage> {
 
    /**
     * Creates a new Text Message bean.
-    * @throws IllegalArgumentException if id is zero or negative
-    * @throws NullPointerException if msg is null
-    * @see TextMessage#getDate()
+    * @param dt the date/time of the message 
     */
    public TextMessage(Instant dt) {
       super();

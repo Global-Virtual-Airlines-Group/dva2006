@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
  * A Data Access Object to load Flight Assignments. All calls in this DAO will populate the legs for any returned Flight
  * Assignments, but will <i>not </i> populate any Flight Reports.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -103,6 +103,7 @@ public class GetAssignment extends DAO {
 	/**
 	 * Returns all Flight Assignments related to a particular Online Event.
 	 * @param eventID the Event database ID
+	 * @param dbName the database name
 	 * @return a List of AssignmentInfo beans
 	 * @throws DAOException if a JDBC error occurs
 	 */

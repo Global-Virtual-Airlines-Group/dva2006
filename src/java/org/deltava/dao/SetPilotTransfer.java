@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.*;
 /**
  * A Data Access Object to transfer pilots between Airlines.
  * @author Luke
- * @version 6.3
+ * @version 7.2
  * @since 1.0
  */
 
@@ -27,6 +27,7 @@ public class SetPilotTransfer extends SetPilot {
 	 * Writes a new Pilot to a database.
 	 * @param p the Pilot/Applicant
 	 * @param dbName the database name
+	 * @param ratings the Pilot's equipment ratings
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void transfer(Person p, String dbName, Collection<String> ratings) throws DAOException {

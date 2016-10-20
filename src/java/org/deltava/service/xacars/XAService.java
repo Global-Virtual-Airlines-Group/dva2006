@@ -1,4 +1,4 @@
-// Copyright 2011, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.xacars;
 
 import java.sql.Connection;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to support XACARS HTTP requests.
  * @author Luke
- * @version 6.0
+ * @version 7.2
  * @since 4.1
  */
 
@@ -49,6 +49,8 @@ public abstract class XAService extends WebService {
 
 	/**
 	 * Returns the XACARS protocol version.
+	 * @param ctx the ServiceContext
+	 * @return the protocol version
 	 */
 	protected static String getProtocolVersion(ServiceContext ctx) {
 		String data = ctx.getParameter("DATA1");
@@ -64,8 +66,11 @@ public abstract class XAService extends WebService {
 	
 	/**
 	 * Returns the simulator.
+	 * @param ctx the ServiceContext
+	 * @return the simulator name
 	 */
 	protected static String getSimulator(ServiceContext ctx) {
+		// TODO: Return Simualtor enum?
 		String data = ctx.getParameter("DATA1");
 		if ((data == null) || (data.indexOf('_') == -1))
 			return "UNKNOWN";

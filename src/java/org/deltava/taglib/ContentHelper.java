@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.commands.HTTPContext;
 /**
  * A Helper class to check whether content has been aded into this request.
  * @author Luke
- * @version 3.7
+ * @version 7.2
  * @since 1.0
  * @see org.deltava.servlet.filter.BrowserTypeFilter
  * @see org.deltava.taglib.content.BrowserFilterTag
@@ -28,6 +28,7 @@ public class ContentHelper {
 
 	/**
 	 * Updates a request-located map of all inserted content files.
+	 * @param ctx the JSP PageContext
 	 * @param contentType the type of content (css/js)
 	 * @param contentName the name of the inserted content
 	 * @see ContentHelper#containsContent(PageContext, String, String)
@@ -48,6 +49,7 @@ public class ContentHelper {
 
 	/**
 	 * Determines if a particular content file has been inserted during this request invocation.
+	 * @param ctx the JSP PageContext
 	 * @param contentType the type of content (css/js)
 	 * @param contentName the name of the content
 	 * @return TRUE if the content has been added, otherwise FALSE

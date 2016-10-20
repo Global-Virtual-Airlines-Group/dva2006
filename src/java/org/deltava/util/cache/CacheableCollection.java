@@ -6,16 +6,13 @@ import java.util.Collection;
 /**
  * An interface to label cacheable Collections.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.1
+ * @param <E> the cacheable object type
  */
 
 public interface CacheableCollection<E> extends Collection<E>, Cacheable {
 
-	/**
-	 * Returns the cache key.
-	 * @return the cache key
-	 */
 	@Override
 	public Object cacheKey();
 	

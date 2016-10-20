@@ -6,7 +6,7 @@ import org.deltava.beans.ComboAlias;
 /**
  * An enumeration to store MS Flight Simulator Fuel Tank codes.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 2.0
  */
 
@@ -17,8 +17,8 @@ public enum FuelTank implements ComboAlias {
 	RIGHT_MAIN(4, "Right Main"), RIGHT_AUX(5, "Right Aux"), RIGHT_TIP(6, "Right Tip"),
 	EXTERNAL(9, "External"), EXTERNAL_2(10, "External 2");
     
-    private int _code;
-    private String _name;
+    private final int _code;
+    private final String _name;
     
 	/**
 	 * Creates a Fuel Tank.
@@ -58,6 +58,8 @@ public enum FuelTank implements ComboAlias {
 	
 	/**
 	 * Retreives a Fuel Tank by name.
+	 * @param s the name
+	 * @return a FuelTank
 	 */
 	public static FuelTank get(String s) {
 		return Enum.valueOf(FuelTank.class, s.replace(' ', '_').toUpperCase());

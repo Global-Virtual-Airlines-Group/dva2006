@@ -10,7 +10,7 @@ import org.deltava.util.system.SystemData;
 /**
  * An Access Controller for Examination Question Profiles.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -27,6 +27,7 @@ public class QuestionProfileAccessControl extends AccessControl {
 	/**
 	 * Initializes the Access Controller.
 	 * @param ctx the command context
+	 * @param qp the QuestionProfile
 	 */
 	public QuestionProfileAccessControl(SecurityContext ctx, QuestionProfile qp) {
 		super(ctx);

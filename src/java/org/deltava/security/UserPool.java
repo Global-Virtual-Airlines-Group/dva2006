@@ -11,7 +11,7 @@ import org.deltava.beans.system.IPBlock;
 /**
  * A singleton class for tracking connected and blocked users.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -34,11 +34,12 @@ public class UserPool {
 	 * explanation of why we add the session ID.
 	 * @param p the Pilot to add
 	 * @param sessionID the session ID
+	 * @param addrInfo the user's IP address block
 	 * @param userAgent the User-Agent header
 	 * @param isSSL TRUE if using SSL, otherwise FALSE
 	 * @see UserPool#remove(Person, String)
 	 */
-	public static void add(Pilot p, String sessionID, IPBlock addrInfo, String userAgent, boolean isSSL) {
+	public static synchronized void add(Pilot p, String sessionID, IPBlock addrInfo, String userAgent, boolean isSSL) {
 		if ((p != null) && (!isBlocked(p))) {
 			UserSession uw = new UserSession(p, sessionID, addrInfo, userAgent, isSSL);
 			_users.put(Integer.valueOf(p.getID()), uw);

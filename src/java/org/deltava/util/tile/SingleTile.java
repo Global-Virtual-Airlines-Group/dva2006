@@ -9,7 +9,7 @@ import org.gvagroup.tile.*;
 /**
  * A single Tile.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 5.0
  */
 
@@ -35,6 +35,7 @@ public class SingleTile extends AbstractTile implements RasterTile {
 	/**
 	 * Creates a new Tile.
 	 * @param addr the address
+	 * @param img the BufferedImage
 	 */
 	public SingleTile(TileAddress addr, BufferedImage img) {
 		super(addr);

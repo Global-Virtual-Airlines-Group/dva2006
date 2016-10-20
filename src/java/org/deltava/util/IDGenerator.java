@@ -1,4 +1,4 @@
-// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.concurrent.atomic.AtomicLong;
@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * A unique ID generator for messaging purposes.
  * @author Luke
- * @version 2.7
+ * @version 7.2
  * @since 1.0
  */
 
@@ -31,6 +31,7 @@ public class IDGenerator {
 	
 	/**
 	 * Sets the value to use.
+	 * @param value the value
 	 */
 	public void reset(long value) {
 		_id.set(value);

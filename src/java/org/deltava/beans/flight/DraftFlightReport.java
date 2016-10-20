@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A class to store draft Flight Report data, with scheduled departure/arrival times. 
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 2.8
  */
 
@@ -80,6 +80,7 @@ public class DraftFlightReport extends FlightReport implements FlightTimes {
 	
 	/**
 	 * Returns default comments with departure and arrival times.
+	 * @return the comments
 	 */
 	public String getDraftComments() {
 		StringBuilder buf = new StringBuilder("Scheduled departure at ");

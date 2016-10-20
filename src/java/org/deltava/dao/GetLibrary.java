@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load metadata from the Fleet/Document Libraries.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -68,8 +68,9 @@ public class GetLibrary extends DAO {
 	}
 
 	/**
-	 * Returns metadata about a specifc Installer <i>in the current database</i>.
+	 * Returns metadata about a specifc Installer.
 	 * @param fName the filename
+	 * @param dbName the database name
 	 * @return an Installer, or null if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
@@ -279,6 +280,8 @@ public class GetLibrary extends DAO {
 	
 	/**
 	 * Helper method to fetch download counts from the cache.
+	 * @param files the Collection to populate
+	 * @throws SQLException if an error occurs
 	 */
 	protected void loadDownloadCounts(Collection<? extends FleetEntry> files) throws SQLException {
 		

@@ -1,4 +1,4 @@
-// Copyright 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import org.deltava.beans.Helper;
@@ -9,7 +9,7 @@ import org.deltava.beans.stats.LandingStatistics;
 /**
  * A utility class to grade flights.
  * @author Luke
- * @version 5.1
+ * @version 7.2
  * @since 5.1
  */
 
@@ -49,6 +49,8 @@ public class FlightScorer {
 	/**
 	 * Scores a flight.
 	 * @param fr an FDRFlightReport
+	 * @param rD the departure Runway
+	 * @param rA the arrival Runway
 	 * @return a FlightScore
 	 */
 	public static FlightScore score(FDRFlightReport fr, Runway rD, Runway rA) {

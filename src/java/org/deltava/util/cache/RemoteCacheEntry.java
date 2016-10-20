@@ -4,8 +4,9 @@ package org.deltava.util.cache;
 /**
  * A cache entry stored in a remote (Redis/memcached) cache.
  * @author Luke
- * @version 7.1
+ * @version 7.2
  * @since 6.1
+ * @param <T> the cacheable object type
  */
 
 class RemoteCacheEntry<T extends Cacheable> extends CacheEntry<T> {
