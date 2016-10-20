@@ -1,4 +1,4 @@
-// Copyright 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * An abstract class for Facebook HTTP APIs. 
  * @author Luke
- * @version 5.0
+ * @version 7.2
  * @since 3.4
  */
 
@@ -39,6 +39,7 @@ public abstract class FacebookDAO extends DAO {
 		
 		/**
 		 * Builds a POST body of name/value pairs.
+		 * @return the POST body
 		 */
 		public String getBody() {
 			StringBuilder dataBuf = new StringBuilder();

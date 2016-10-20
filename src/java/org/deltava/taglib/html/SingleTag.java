@@ -8,7 +8,7 @@ import org.deltava.beans.system.*;
 /**
  * An abstract JSP tag to support the generation of HTML single-option checkboxes or radio buttons.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -22,6 +22,8 @@ public abstract class SingleTag extends FormElementTag {
 
 	/**
 	 * Creates a new checkbox tag.
+	 * @param type the type
+	 * @param className the DOM class name
 	 */
 	protected SingleTag(String type, String className) {
 		super("input", false);

@@ -9,8 +9,9 @@ import org.deltava.beans.schedule.GeoPosition;
 /**
  * A collection to store a gridded result from a GRIB file, tracking the corners of the grid.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 5.2
+ * @param <T> the data type 
  */
 
 public class GRIBResult<T extends GeoLocation> extends ArrayList<T> implements GeoLocation {
@@ -28,6 +29,10 @@ public class GRIBResult<T extends GeoLocation> extends ArrayList<T> implements G
 	
 	/**
 	 * Initializes the collection.
+	 * @param w the width
+	 * @param h the height
+	 * @param dLat the latitude delta in degrees 
+	 * @param dLng the longitude delta in degrees
 	 */
 	public GRIBResult(int w, int h, float dLat, float dLng) {
 		super(8192);

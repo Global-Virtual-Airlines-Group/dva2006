@@ -13,7 +13,7 @@ import org.deltava.beans.schedule.GeoPosition;
 /**
  * A String utility class.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -185,6 +185,7 @@ public final class StringUtils {
 	 * Parses a date using a given format pattern.
 	 * @param dt the date to parse
 	 * @param fmt the format pattern
+	 * @param tz the ZoneId
 	 * @return the parsed Date
 	 * @see LocalDateTime#parse(java.lang.CharSequence)
 	 */

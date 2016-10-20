@@ -1,10 +1,10 @@
-// Copyright 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2013, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.wx;
 
 /**
  * An enumeration to store GFS pressure levels.
  * @author Luke
- * @version 6.0
+ * @version 7.2
  * @since 5.2
  */
 
@@ -39,6 +39,7 @@ public enum PressureLevel {
 	/**
 	 * Returns the closest pressure level for an altitude.
 	 * @param alt the altitude in feet
+	 * @return the closest PressureLevel
 	 */
 	public static PressureLevel getClosest(int alt) {
 		PressureLevel l = LOW; int delta = Math.abs(alt - l.getAltitude());

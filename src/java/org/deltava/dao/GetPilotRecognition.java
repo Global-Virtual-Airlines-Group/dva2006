@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Acccess Object to read Pilots that have achieved certain accomplishments.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -83,6 +83,7 @@ public class GetPilotRecognition extends GetPilot {
     
     /**
      * Returns Pilots eligible for promotion to Captain.
+     * @param eqType the Equipment program, or null for all programs
      * @return a List of Pilot IDs
      * @throws DAOException if a JDBC error occurs
      */

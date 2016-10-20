@@ -8,7 +8,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An Access Controller for Message Templates.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -23,6 +23,7 @@ public final class MessageAccessControl extends AccessControl {
 	/**
 	 * Initialize the Access Controller.
 	 * @param ctx the Security context
+	 * @param mt the MessageTemplate
 	 */
 	public MessageAccessControl(SecurityContext ctx, MessageTemplate mt) {
 		super(ctx);

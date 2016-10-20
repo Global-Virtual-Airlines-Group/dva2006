@@ -11,7 +11,7 @@ import org.gvagroup.common.*;
 /**
  * A utility class to handle centralized cache registration and invalidation.
  * @author Luke
- * @version 7.1
+ * @version 7.2
  * @since 5.0
  */
 
@@ -98,6 +98,7 @@ public class CacheManager {
 	 * @param id the cache ID
 	 * @param maxSize the maximum size of the cache, in entries
 	 * @param expiryTime the expiry time in seconds, zero or negative values return an AgingCache
+	 * @param isRemote TRUE if a remote (Redis) cache, otherwise FALSE
 	 * @return a Cache
 	 * @see ExpiringCache
 	 * @see AgingCache

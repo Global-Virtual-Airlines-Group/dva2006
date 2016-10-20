@@ -1,4 +1,4 @@
-// Copyright 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -10,8 +10,10 @@ import org.deltava.comparators.CalendarEntryComparator;
 /**
  * A bean to store data about a submitted offline ACARS Flight Report.
  * @author Luke
- * @version 5.1
+ * @version 7.2
  * @since 2.4
+ * @param <T> the FlightReport type 
+ * @param <P> the RotueEntry type
  */
 
 public class OfflineFlight<T extends FDRFlightReport, P extends RouteEntry> {

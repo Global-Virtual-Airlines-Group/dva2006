@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2007, 2010, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007, 2010, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.*;
 /**
  * An abstract Authenticator that supports multiple authenticators.
  * @author Luke
- * @version 6.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -45,6 +45,7 @@ public abstract class MultiAuthenticator extends SQLAuthenticator {
 	/**
 	 * Initializes the authenticator.
 	 * @param propsFile the properties file to use
+	 * @param authPrefix the property prefix
 	 * @throws SecurityException if an error occurs
 	 */
 	protected void init(String propsFile, String authPrefix) throws SecurityException {

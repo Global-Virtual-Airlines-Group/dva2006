@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to search the Flight Schedule.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -197,6 +197,7 @@ public class GetSchedule extends DAO {
 	/**
 	 * Returns the average flight time for all flights in the Schedule database between two airports.
 	 * @param rp the RoutePair
+	 * @param dbName the database name
 	 * @return a FlightTime bean
 	 * @throws DAOException if a JDBC error occurs
 	 */
@@ -248,6 +249,7 @@ public class GetSchedule extends DAO {
 	/**
 	 * Returns the most appropriate flight/leg number between two airports. 
 	 * @param sr the ScheduleRoute
+	 * @param hourOfDay the preferred hour of day (0-23)
 	 * @param dbName the database name
 	 * @return a ScheduleEntry bean with the Airline, Flight and Leg number or null if none found
 	 * @throws DAOException if a JDBC error occurs
@@ -359,6 +361,8 @@ public class GetSchedule extends DAO {
 	
 	/**
 	 * Helper method to query the database.
+	 * @return a List of ScheduleEntry beans
+	 * @throws SQLException if an error occurs
 	 */
 	protected List<ScheduleEntry> execute() throws SQLException {
 		List<ScheduleEntry> results = new ArrayList<ScheduleEntry>();

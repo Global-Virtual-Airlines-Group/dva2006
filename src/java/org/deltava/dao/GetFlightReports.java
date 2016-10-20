@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Flight Reports.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -550,6 +550,8 @@ public class GetFlightReports extends DAO {
 
 	/**
 	 * Helper method to load PIREP data.
+	 * @return a List of FlightReport beans
+	 * @throws SQLException if an error occurs
 	 */
 	protected List<FlightReport> execute() throws SQLException {
 		

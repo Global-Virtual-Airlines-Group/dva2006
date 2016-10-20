@@ -11,7 +11,7 @@ import java.time.format.TextStyle;
 /**
  * A class for dealing with Time Zones.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -58,6 +58,7 @@ public class TZInfo implements java.io.Serializable, ComboAlias, Comparable<TZIn
 	/**
 	 * Gets a Time Zone wrapper using the standard Java Time Zone name.
 	 * @param tzName A standard Java Time Zone ID
+	 * @return a TZInfo bean, or null if not found
 	 * @see TimeZone#getAvailableIDs()
 	 * @see TimeZone#getTimeZone(String)
 	 */

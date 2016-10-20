@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2010, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2010, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
 import java.util.Comparator;
@@ -9,8 +9,9 @@ import org.deltava.util.StringUtils;
  * Implements common comparator functions.
  * NOTE: Most comparators in this package <b>impose orderings that are inconsistent with equals</b>.
  * @author Luke
- * @version 6.3
+ * @version 7.2
  * @since 1.0
+ * @param <T> the object class
  */
 
 public abstract class AbstractComparator<T> implements Comparator<T>, java.io.Serializable {

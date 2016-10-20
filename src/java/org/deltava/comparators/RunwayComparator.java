@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.util.GeoUtils;
 /**
  * A comparator to sort Runways based on appropriateness based on a wind heading. 
  * @author Luke
- * @version 6.3
+ * @version 7.2
  * @since 2.6
  */
 
@@ -21,6 +21,7 @@ public class RunwayComparator implements Comparator<Runway>, java.io.Serializabl
 	/**
 	 * Initializes the Comparator.
 	 * @param windHdg the wind heading in degrees  
+	 * @param windSpeed the wind speed in knots
 	 */
 	public RunwayComparator(int windHdg, int windSpeed) {
 		super();

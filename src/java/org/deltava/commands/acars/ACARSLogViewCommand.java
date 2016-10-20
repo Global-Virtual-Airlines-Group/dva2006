@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A helper class for viewing ACARS logs.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -28,7 +28,9 @@ public abstract class ACARSLogViewCommand extends AbstractViewCommand {
 	/**
 	 * Calculates the search type from the request, and updates request attributes.
 	 * @param ctx the Command context
+	 * @param con the JDBC connection to use
 	 * @return a search type constant
+	 * @throws DAOException if a JDBC error occurs
 	 */
 	protected static LogSearchCriteria getSearchCriteria(CommandContext ctx, Connection con) throws DAOException {
 		

@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * An XACARS Position Report.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 4.1
  */
 
@@ -23,7 +23,9 @@ public class XARouteEntry extends RouteEntry {
 	private String _msgType;
 	
 	/**
-	 * Creates the object.
+	 * Creates the route entry.
+	 * @param loc the GeoLocation
+	 * @param dt the date/time
 	 */
 	public XARouteEntry(GeoLocation loc, Instant dt) {
 		super(loc, dt);

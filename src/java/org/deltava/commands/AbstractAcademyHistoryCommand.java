@@ -1,4 +1,4 @@
-// Copyright 2006, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.util.*;
@@ -16,16 +16,17 @@ import org.deltava.dao.*;
  * A class to support Web Site Commands use a {@link AcademyHistoryHelper} object to determine what
  * Flight Academy examinations/courses a Pilot is eligible for.
  * @author Luke
- * @version 4.2
+ * @version 7.2
  * @since 1.0
  */
 
 public abstract class AbstractAcademyHistoryCommand extends AbstractCommand {
 	
 	/**
-	 * Populates the Testing History Helper by calling the proper DAOs in the right order.
+	 * Populates the Academy Testing History Helper by calling the proper DAOs in the right order.
 	 * @param p the Pilot bean
 	 * @param c the JDBC connection to use
+	 * @return a populated AcademyHistoryHelper bean
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	protected static final AcademyHistoryHelper initHistory(Pilot p, Connection c) throws DAOException {

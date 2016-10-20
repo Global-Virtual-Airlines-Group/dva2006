@@ -4,8 +4,9 @@ package org.deltava.beans.stats;
 /**
  * A bean to store System Information statistics.
  * @author Luke
- * @version 6.4
+ * @version 7.2
  * @since 6.4
+ * @param <T> the value class 
  */
 
 public class SystemStatistics<T extends Number> implements java.io.Serializable, Comparable<SystemStatistics<Number>> {
@@ -43,6 +44,12 @@ public class SystemStatistics<T extends Number> implements java.io.Serializable,
 	@Override
 	public int hashCode() {
 		return _label.hashCode();
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder buf = new StringBuilder(_label);
+		return buf.append(':').append(String.valueOf(_count)).toString();
 	}
 	
 	@Override

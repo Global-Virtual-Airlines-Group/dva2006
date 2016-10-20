@@ -1,11 +1,10 @@
-// Copyright 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.jdbc;
 
 import java.sql.Connection;
 
 import org.apache.log4j.Logger;
 
-import org.deltava.commands.CommandContext;
 import org.deltava.dao.DAOException;
 import org.deltava.util.system.SystemData;
 
@@ -14,7 +13,7 @@ import org.gvagroup.jdbc.*;
 /**
  * A Context object that allows fetching of connections from the connection pool.
  * @author Luke
- * @version 3.1
+ * @version 7.2
  * @since 1.0
  */
 
@@ -64,7 +63,7 @@ public abstract class ConnectionContext {
         return _con;
     }
 
-    /**
+    /*
      * Helper method to ensure a connection has been reserved.
      */
     private void checkConnection() {
@@ -76,8 +75,6 @@ public abstract class ConnectionContext {
      * Starts a JDBC transaction block, by turning off autoCommit on the reserved Connection.
      * @throws IllegalStateException if no JDBC Connection is reserved
      * @throws TransactionException if a JDBC error occurs
-     * @see CommandContext#commitTX()
-     * @see CommandContext#rollbackTX()
      */
     public void startTX() throws TransactionException {
        checkConnection();
@@ -93,8 +90,6 @@ public abstract class ConnectionContext {
      * Commits the current JDBC transaction.
      * @throws IllegalStateException if no JDBC Connection is reserved
      * @throws TransactionException if a JDBC error occurs
-     * @see CommandContext#startTX()
-     * @see CommandContext#rollbackTX()
      */
     public void commitTX() throws TransactionException {
        checkConnection();
@@ -109,8 +104,6 @@ public abstract class ConnectionContext {
     
     /**
      * Rolls back the current JDBC transaction. This will consume all exceptions.
-     * @see CommandContext#startTX()
-     * @see CommandContext#commitTX()
      */
     public void rollbackTX() {
        try {
@@ -126,6 +119,7 @@ public abstract class ConnectionContext {
     
     /**
      * Returns a JDBC Connection to the connection pool.
+     * @return the time the connection was in use, in milliseconds
      */
     public long release() {
         if ((_pool == null) || (_con == null))

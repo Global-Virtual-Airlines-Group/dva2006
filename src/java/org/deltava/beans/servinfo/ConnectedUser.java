@@ -9,11 +9,11 @@ import org.deltava.util.*;
 /**
  * A bean to store information about users connected to an FSD server. 
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 3.4
  */
 
-public abstract class ConnectedUser extends NetworkUser implements ViewEntry, MarkerMapEntry {
+public abstract class ConnectedUser extends NetworkUser implements MarkerMapEntry {
 	
 	private String _callSign;
 	private String _server;

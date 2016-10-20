@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to support writing Pilot object(s) to the database.
  * @author Luke
- * @version 5.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -147,6 +147,7 @@ public abstract class PilotWriteDAO extends DAO {
 	/**
 	 * Updates a Pilots' status in the database.
 	 * @param id the pilot database ID
+	 * @param status the pilot status
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void setStatus(int id, int status) throws DAOException {

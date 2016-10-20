@@ -1,4 +1,4 @@
-// Copyright 2010, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to fetch authentication data from Facebook via the Graph API. 
  * @author Luke
- * @version 6.0
+ * @version 7.2
  * @since 3.4
  */
 
@@ -23,6 +23,7 @@ public class GetFacebookAuth extends FacebookDAO {
 	/**
 	 * Retrieves an access token from a particular user authroization callback code.
 	 * @param code the callback code
+	 * @param redirectURI the redirection URL when complete
 	 * @return an access token
 	 * @throws DAOException if an errror occurs
 	 */

@@ -1,4 +1,4 @@
-// Copyright 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import org.deltava.util.cache.Cacheable;
@@ -6,8 +6,10 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A utility class to create a tuple. 
  * @author Luke
- * @version 6.0
+ * @version 7.2
  * @since 6.0
+ * @param <K> the first value type
+ * @param <V> the second value type
  */
 
 public class Tuple<K, V> implements Cacheable {

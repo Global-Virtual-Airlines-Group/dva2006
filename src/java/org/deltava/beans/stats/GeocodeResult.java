@@ -7,7 +7,7 @@ import org.deltava.beans.schedule.GeoPosition;
 /**
  * A bean to store Google Geocoding results. 
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 2.3
  */
 
@@ -168,6 +168,7 @@ public class GeocodeResult implements GeoLocation {
 
 	/**
 	 * Displays the city and state, and the country code if not US.
+	 * @return the concatenated city, state and country
 	 */
 	public String getCityState() {
 		StringBuilder buf = new StringBuilder();

@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service that authenticates using the simFDR user account. 
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 7.0
  */
 
@@ -21,6 +21,7 @@ abstract class SimFDRService extends WebService {
 	/**
 	 * Authenticates the simFDR User.
 	 * @param ctx the ServiceContext
+	 * @throws ServiceException if authentication fails
 	 */
 	protected static void authenticate(ServiceContext ctx) throws ServiceException {
 		

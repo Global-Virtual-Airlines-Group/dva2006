@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A helper class to extract information from a user's examination/check ride history.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -92,6 +92,7 @@ public final class TestingHistoryHelper {
 
 	/**
 	 * Returns whether a Pilot qualifies for Captain's rank in a particular stage.
+	 * @param stage the stage number
 	 * @return TRUE if the Pilot has passed the Captain's exam and flown the necessary legs
 	 * in <i>ANY</i> equipment program in a particular stage.
 	 */

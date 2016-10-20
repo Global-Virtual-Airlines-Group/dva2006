@@ -13,7 +13,7 @@ import org.gvagroup.tile.*;
 /**
  * A Data Access Object to read tiles from Redis. 
  * @author Luke
- * @version 7.1
+ * @version 7.2
  * @since 5.0
  */
 
@@ -68,7 +68,8 @@ public class GetTiles extends RedisDAO {
 	}
 	
 	/**
-	 * Reads a tile from memcached.
+	 * Reads a tile from cache.
+	 * @param imgType the image type
 	 * @param addr the TileAddress
 	 * @return a PNGTile, or null if none
 	 * @throws DAOException if a timeout or I/O error occurs
@@ -78,7 +79,9 @@ public class GetTiles extends RedisDAO {
 	}
 	
 	/**
-	 * Reads a tile from memcached.
+	 * Reads a tile from cache.
+	 * @param imgType the image type
+	 * @param effDate the effective date
 	 * @param addr the TileAddress
 	 * @return a PNGTile, or null if none
 	 * @throws DAOException if a timeout or I/O error occurs
