@@ -6,7 +6,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store online Controller information.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -126,6 +126,8 @@ public class Controller extends ConnectedUser {
     
     /**
      * Compares this user to another Controller by comparing the Network IDs and callsigns.
+     * @param c2 the Controller
+     * @return  TRUE if the IDs and Callsigns are equal, otherwise FALSE
      */
     public int compareTo(Controller c2) {
     	int tmpResult = super.compareTo(c2);

@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2007, 2009, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007, 2009, 2011, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import org.deltava.beans.*;
@@ -7,7 +7,7 @@ import org.deltava.beans.system.*;
 /**
  * A bean to store data about a User session.
  * @author Luke
- * @version 6.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -25,6 +25,7 @@ public class UserSession implements java.io.Serializable, ViewEntry, Comparable<
 	 * @param sessionID the HTTP session ID
 	 * @param addrInfo the IP block info
 	 * @param userAgent the user-agent header
+	 * @param isSSL TRUE if user is using SSL, otherwise FALSE
 	 */
 	public UserSession(Pilot p, String sessionID, IPBlock addrInfo, String userAgent, boolean isSSL) {
 		super();

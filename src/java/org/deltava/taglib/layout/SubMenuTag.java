@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP tag to render a top level menu item in a JSP tag.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 2.6
  */
 
@@ -39,8 +39,9 @@ public class SubMenuTag extends MenuElementTag {
 
 	/**
 	 * Writes a sub-menu &lt;URL&gt; element.
+	 * @throws java.io.IOException if an I/O error occurs
 	 */
-	void writeSubMenu() throws Exception {
+	void writeSubMenu() throws java.io.IOException {
 		if (_hasSubMenu || _renderTable)
 			return;
 		

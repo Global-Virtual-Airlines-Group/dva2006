@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.io.*;
@@ -14,7 +14,7 @@ import org.deltava.util.*;
 /**
  * A factory class to initalize the web command map.
  * @author Luke
- * @version 6.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -33,14 +33,12 @@ public class CommandFactory {
 		if (StringUtils.isEmpty(roleNames))
 			return Collections.singleton("*");
 
-		// Build the roles
-		Collection<String> results = new TreeSet<String>();
-		results.addAll(StringUtils.split(roleNames, ","));
-		return results;
+		return new TreeSet<String>(StringUtils.split(roleNames, ","));
 	}
 
 	/**
 	 * Returns the initialized command objects.
+	 * @param configXML the name of the command configuration file
 	 * @return a Map of initialized command objects
 	 * @throws IOException if an I/O error occurs
 	 * @see Command#init(String, String)

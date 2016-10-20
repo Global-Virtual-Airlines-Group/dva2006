@@ -1,11 +1,12 @@
-// Copyright 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 /**
  * A utility class to create a cacheable Object.
  * @author Luke
- * @version 6.0
+ * @version 7.2
  * @since 6.0
+ * @param <T> the cacheable object type
  */
 
 public class CacheWrapper<T extends Object> implements Cacheable {
@@ -24,9 +25,6 @@ public class CacheWrapper<T extends Object> implements Cacheable {
 		_value = value;
 	}
 
-	/**
-	 * Returns the cache key.
-	 */
 	@Override
 	public Object cacheKey() {
 		return _key;

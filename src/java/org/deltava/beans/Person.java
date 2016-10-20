@@ -13,7 +13,7 @@ import org.deltava.util.StringUtils;
 /**
  * An abstract class storing information about a Person.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -302,8 +302,8 @@ public abstract class Person extends DatabaseBlobBean implements Principal, Form
 	
 	/**
 	 * Retuns if this Person is a memebr of an online network.
-	 * @return the network user IDs
-	 * @see Person#setNetworkID(OnlineNetwork, CharSequence)
+	 * @param net the OnlineNetwork
+	 * @return TRUE if the user has a network ID, otherwise false
 	 */
 	public boolean hasNetworkID(OnlineNetwork net) {
 		return _networkIDs.containsKey(net);

@@ -8,7 +8,7 @@ import org.deltava.beans.navdata.*;
 /**
  * A Flight Route that has its waypoints populated.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 2.6
  */
 
@@ -17,7 +17,8 @@ public class PopulatedRoute extends FlightRoute implements Route {
 	private final Map<NavigationDataBean, String> _route = new LinkedHashMap<NavigationDataBean, String>(); 
 
 	/**
-	 * Helper method to copy a route from one PopulatedBean to another.
+	 * Helper method to copy a route from one PopulatedRoute to another.
+	 * @param pr the PopulatedRoute bean
 	 */
 	protected void load(PopulatedRoute pr) {
 		_route.putAll(pr._route);

@@ -8,8 +8,9 @@ import org.deltava.beans.Person;
 /**
  * A comparator for sorting Pilot and Applicant objects.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
+ * @param <T> the Person subclass
  */
 
 public class PersonComparator<T extends Person> extends AbstractComparator<T> {
@@ -51,16 +52,12 @@ public class PersonComparator<T extends Person> extends AbstractComparator<T> {
         super(typeNames);
     }
 
-    /**
-     * Compares two person objects by the designated criteria.
-     */
     @Override
 	protected int compareImpl(T p1, T p2) {
 
-        int tmpResult;
         switch (_comparisonType) {
         case FIRSTNAME:
-            tmpResult = p1.getFirstName().compareTo(p2.getFirstName());
+            int tmpResult = p1.getFirstName().compareTo(p2.getFirstName());
             return (tmpResult == 0) ? p1.getLastName().compareTo(p2.getLastName()) : tmpResult;
 
         case LASTNAME:

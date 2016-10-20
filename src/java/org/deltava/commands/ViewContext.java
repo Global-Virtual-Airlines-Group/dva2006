@@ -10,7 +10,8 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store scrollable view page parameters.
  * @author Luke
- * @version 7.0
+ * @version 7.2
+ * @param <T> the result object type
  * @since 1.0
  */
 
@@ -51,6 +52,7 @@ public class ViewContext<T extends Object> {
     /**
      * Initializes the view context from the HTTP request.
      * @param req the HTTP request
+     * @param size the size of the viewport 
      */
     public ViewContext(HttpServletRequest req, int size) {
         super();

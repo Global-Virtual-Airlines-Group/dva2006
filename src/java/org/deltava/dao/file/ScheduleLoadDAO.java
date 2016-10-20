@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.dao.DAOException;
 /**
  * An abstract class to store common methods for Flight Schedule import Data Access Objects.
  * @author Luke
- * @version 6.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -68,6 +68,7 @@ public abstract class ScheduleLoadDAO extends DAO {
 	/**
 	 * Returns back the loaded Flight Schedule entries.
 	 * @return a Collection of ScheduleEntry beans
+	 * @throws DAOException if a JDBC error occurs
 	 */
 	public abstract Collection<ScheduleEntry> process() throws DAOException;
 
@@ -139,6 +140,7 @@ public abstract class ScheduleLoadDAO extends DAO {
 	/**
 	 * Ensures that both airports in a schedule entry are served by the Airline.
 	 * @param se the ScheduleEntry to validate
+	 * @return TRUE if the Airline serves both Airports, otherwise FALSE
 	 */
 	protected boolean validateAirports(ScheduleEntry se) {
 		boolean isOK = true;

@@ -15,7 +15,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to read Navigation data.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -174,7 +174,7 @@ public class GetNavData extends DAO {
 	 * Returns information about a particular airport Runway.
 	 * @param a the ICAOAirport
 	 * @param rwyCode the runway name/number
-	 * @sim the Simulator to select
+	 * @param sim the Simulator to select
 	 * @return a Runway bean, or null if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
@@ -203,7 +203,8 @@ public class GetNavData extends DAO {
 	/**
 	 * Returns all Runways for a particular Airport.
 	 * @param a the ICAOAirport
-	 * @return a Collection Runway beans
+	 * @param sim the Simulator to select
+	 * @return a Collection of Runway beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<Runway> getRunways(ICAOAirport a, Simulator sim) throws DAOException {

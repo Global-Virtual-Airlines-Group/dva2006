@@ -11,7 +11,7 @@ import org.deltava.util.RedisUtils;
 /**
  * A Data Access Object to get unpersisted ACARS track data from Redis.
  * @author Luke
- * @version 7.1
+ * @version 7.2
  * @since 7.0
  */
 
@@ -21,10 +21,10 @@ public class GetTrack extends RedisDAO {
 	 * Retrieves ACARS track data for a particular flight.
 	 * @param flightID the Flight ID
 	 * @return a Collection of RouteEntry beans
+	 * @throws DAOException if an error occurs
 	 */
 	public Collection<GeoLocation> getTrack(int flightID) throws DAOException {
 		setBucket("acarsTrack");
-		
 		try {
 			@SuppressWarnings("unchecked")
 			Collection<GeoLocation> results = (Collection<GeoLocation>) RedisUtils.get(createKey(String.valueOf(flightID)));

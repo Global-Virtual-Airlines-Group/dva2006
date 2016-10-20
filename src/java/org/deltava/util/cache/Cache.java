@@ -9,8 +9,9 @@ import java.util.concurrent.atomic.*;
  * An an abstract class to store common cache operations. These caches can store null
  * entries to prevent repeated uncached calls for invalid keys.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
+ * @param <T> the cacheable object type
  */
 
 public abstract class Cache<T extends Cacheable> {

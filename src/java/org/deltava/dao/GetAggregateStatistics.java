@@ -10,7 +10,7 @@ import org.deltava.beans.stats.*;
 /**
  * A Data Access Object to read aggregated Flight Report statistics. 
  * @author Luke
- * @version 6.4
+ * @version 7.2
  * @since 6.2
  */
 
@@ -75,6 +75,7 @@ public class GetAggregateStatistics extends DAO {
 	/**
 	 * Retrieves aggregated approved Flight Report statistics.
 	 * @param s the sorting option
+	 * @param apType the airport type, 1 for departure and 2 for arrival, 0 for all
 	 * @return a Collection of FlightStatsEntry beans
 	 * @throws DAOException if a JDBC error occurs
 	 */

@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A bean to store FDR (ACARS/XACARS/simFDR) submitted flight reports. 
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -45,6 +45,9 @@ public abstract class FDRFlightReport extends FlightReport {
     
     /**
      * Creates a new FDR Flight Report object.
+     * @param a the Airline
+     * @param flightNumber the flight number 
+     * @param leg the leg number 
      */
 	public FDRFlightReport(Airline a, int flightNumber, int leg) {
 		super(a, flightNumber, leg);

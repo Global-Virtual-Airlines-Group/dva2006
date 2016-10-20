@@ -1,16 +1,17 @@
 // Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
+import org.deltava.beans.ViewEntry;
 import org.deltava.util.*;
 
 /**
  * A bean to store Online Network user information.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
-public abstract class NetworkUser implements java.io.Serializable, Comparable<NetworkUser> {
+public abstract class NetworkUser implements java.io.Serializable, ViewEntry, Comparable<NetworkUser> {
 	
 	public enum Type {
 		PILOT, ATC;
@@ -196,9 +197,7 @@ public abstract class NetworkUser implements java.io.Serializable, Comparable<Ne
     	return Integer.valueOf(_id).hashCode();
     }
     
-    /**
-     * Returns the row class name, which is set if the Network user is a Pilot.
-     */
+    @Override
     public String getRowClassName() {
     	return (_databaseID == 0) ? null : "opt2";
     }

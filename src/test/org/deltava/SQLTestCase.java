@@ -63,6 +63,7 @@ public abstract class SQLTestCase extends TestCase {
 	/**
 	 * Loads a DDL file and executes it.
 	 */
+	@SuppressWarnings("javadoc")
 	protected void createTable(String ddlFile) throws IOException, SQLException {
 
 		// Load the File

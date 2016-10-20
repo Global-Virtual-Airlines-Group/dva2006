@@ -1,10 +1,11 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 /**
  * A cache entry with an expiration date.
  * @author Luke
- * @version 5.0
+ * @version 7.2
+ * @param <T> the Cacheable object type
  * @since 1.0
  */
 

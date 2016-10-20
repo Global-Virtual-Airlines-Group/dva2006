@@ -212,6 +212,7 @@ public class SetFlightReport extends DAO {
 	 * Updates passenger count based on load factor.
 	 * @param id the Flight Report database ID
 	 * @param dbName the database name
+	 * @return TRUE if the passenger count was updated, otherwise FALSE
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public boolean updatePaxCount(int id, String dbName) throws DAOException {
@@ -219,8 +220,7 @@ public class SetFlightReport extends DAO {
 		// Build the SQL statement
 		StringBuilder buf = new StringBuilder("UPDATE ");
 		buf.append(formatDBName(dbName));
-		buf.append(".PIREPS P, common.AIRCRAFT A SET P.PAX=ROUND(A.SEATS*P.LOADFACTOR, 0) WHERE "
-			+ "(P.ID=?) AND (P.EQTYPE=A.NAME) AND (ABS(P.PAX-(A.SEATS*P.LOADFACTOR))>1)");
+		buf.append(".PIREPS P, common.AIRCRAFT A SET P.PAX=ROUND(A.SEATS*P.LOADFACTOR, 0) WHERE (P.ID=?) AND (P.EQTYPE=A.NAME) AND (ABS(P.PAX-(A.SEATS*P.LOADFACTOR))>1)");
 		
 		try {
 			prepareStatementWithoutLimits(buf.toString());
@@ -359,14 +359,10 @@ public class SetFlightReport extends DAO {
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("REPLACE INTO ");
 		sqlBuf.append(db);
-		sqlBuf.append(".ACARS_PIREPS (ID, ACARS_ID, START_TIME, TAXI_TIME, TAXI_WEIGHT, TAXI_FUEL, "
-			+ "TAKEOFF_TIME, TAKEOFF_DISTANCE, TAKEOFF_SPEED, TAKEOFF_N1, TAKEOFF_HDG, TAKEOFF_LAT, "
-			+ "TAKEOFF_LNG, TAKEOFF_ALT, TAKEOFF_WEIGHT, TAKEOFF_FUEL, LANDING_TIME, LANDING_DISTANCE, "
-			+ "LANDING_SPEED, LANDING_VSPEED, LANDING_N1, LANDING_HDG, LANDING_LAT, LANDING_LNG, "
-			+ "LANDING_ALT, LANDING_WEIGHT, LANDING_FUEL, END_TIME, GATE_WEIGHT, GATE_FUEL, TOTAL_FUEL, "
-			+ "TIME_0X, TIME_1X, TIME_2X, TIME_4X, FDE, CODE, SDK, RELOAD, CLIENT_BUILD, BETA_BUILD, LANDING_G, "
-			+ "LANDING_CAT, FRAMERATE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
-			+ "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sqlBuf.append(".ACARS_PIREPS (ID, ACARS_ID, START_TIME, TAXI_TIME, TAXI_WEIGHT, TAXI_FUEL, TAKEOFF_TIME, TAKEOFF_DISTANCE, TAKEOFF_SPEED, TAKEOFF_N1, TAKEOFF_HDG, TAKEOFF_LAT, TAKEOFF_LNG, "
+			+ "TAKEOFF_ALT, TAKEOFF_WEIGHT, TAKEOFF_FUEL, LANDING_TIME, LANDING_DISTANCE, LANDING_SPEED, LANDING_VSPEED, LANDING_N1, LANDING_HDG, LANDING_LAT, LANDING_LNG, LANDING_ALT, LANDING_WEIGHT, "
+			+ "LANDING_FUEL, END_TIME, GATE_WEIGHT, GATE_FUEL, TOTAL_FUEL, TIME_0X, TIME_1X, TIME_2X, TIME_4X, FDE, CODE, SDK, RELOAD, CLIENT_BUILD, BETA_BUILD, LANDING_G, LANDING_CAT, FRAMERATE) VALUES "
+			+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		try {
 			startTransaction();

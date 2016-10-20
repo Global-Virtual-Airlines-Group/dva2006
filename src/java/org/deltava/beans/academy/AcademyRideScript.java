@@ -1,4 +1,4 @@
-// Copyright 2005, 2009, 2010, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2010, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.academy;
 
 import org.deltava.beans.testing.CheckRideScript;
@@ -6,17 +6,18 @@ import org.deltava.beans.testing.CheckRideScript;
 /**
  * A bean to store Flight Academy Check Ride scripts.
  * @author Luke
- * @version 5.3
+ * @version 7.2
  * @since 1.0
  */
 
 public class AcademyRideScript extends CheckRideScript {
 	
-	private int _idx;
+	private final int _idx;
 	
    /**
     * Creates a new Check Ride script.
     * @param certName the certification name
+    * @param idx the script index, for courses with multiple check rides 
     * @throws NullPointerException if certName is null
     */
    public AcademyRideScript(String certName, int idx) {

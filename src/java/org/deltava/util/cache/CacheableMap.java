@@ -6,8 +6,10 @@ import java.util.*;
 /**
  * A utility class to create a cacheable Map.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 2.2
+ * @param <K> the key type
+ * @param <V> the value type
  */
 
 public class CacheableMap<K, V> extends LinkedHashMap<K, V> implements Cacheable {

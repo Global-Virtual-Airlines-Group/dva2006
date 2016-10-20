@@ -6,7 +6,7 @@ import org.deltava.beans.ComboAlias;
 /**
  * Valid MVS sample rates.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 4.0
  */
 
@@ -18,6 +18,8 @@ public enum SampleRate implements ComboAlias {
 	
 	/**
 	 * Creates a SampleRate from a numeric bit rate.
+	 * @param rate the bit rate
+	 * @return a SampleRate
 	 */
 	public static SampleRate getRate(int rate) {
 		switch (rate) {

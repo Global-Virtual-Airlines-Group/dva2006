@@ -17,7 +17,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * A Data Access Object to load ACARS information.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -365,6 +365,8 @@ public class GetACARSData extends DAO {
 
 	/**
 	 * Helper method to parse Flight Info result sets.
+	 * @return a List of FlightInfo beans
+	 * @throws SQLException if an error occurs
 	 */
 	protected List<FlightInfo> executeFlightInfo() throws SQLException {
 		List<FlightInfo> results = new ArrayList<FlightInfo>();
@@ -408,6 +410,8 @@ public class GetACARSData extends DAO {
 
 	/**
 	 * Helper method to parse Connection result sets.
+	 * @return a List of ConnectionEntry beans
+	 * @throws SQLException if an error occurs
 	 */
 	protected List<ConnectionEntry> executeConnectionInfo() throws SQLException {
 		List<ConnectionEntry> results = new ArrayList<ConnectionEntry>();

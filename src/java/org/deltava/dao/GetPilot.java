@@ -12,7 +12,7 @@ import org.deltava.util.*;
 /**
  * A Data Access Object to get Pilots from the database, for use in roster operations.
  * @author Luke
- * @version 7.1
+ * @version 7.2
  * @since 1.0
  */
 
@@ -194,6 +194,7 @@ public class GetPilot extends PilotReadDAO {
 
 	/**
 	 * Returns Pilots based upon their status.
+	 * @param status the Pilot status
 	 * @return a List of Pilots
 	 * @throws DAOException if a JDBC error occurs
 	 */

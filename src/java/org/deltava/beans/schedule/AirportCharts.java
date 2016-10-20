@@ -1,4 +1,4 @@
-// Copyright 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -6,8 +6,9 @@ import java.util.*;
 /**
  * A bean to store a collection of Charts associated with an Airport.
  * @author Luke
- * @version 5.0
+ * @version 7.2
  * @since 5.0
+ * @param <T> the Chart type
  */
 
 public class AirportCharts<T extends Chart> implements Iterable<T>, java.io.Serializable, Comparable<AirportCharts<?>> {
@@ -31,8 +32,7 @@ public class AirportCharts<T extends Chart> implements Iterable<T>, java.io.Seri
 	 */
 	public AirportCharts(Airport a, Collection<T> charts) {
 		this(a);
-		for (T chart : charts)
-			add(chart);
+		charts.forEach(c -> add(c));
 	}
 
 	/**

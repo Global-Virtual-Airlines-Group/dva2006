@@ -10,7 +10,7 @@ import org.deltava.beans.servinfo.*;
 /**
  * A Data Access Object to write aggregated VATSIM usage data.
  * @author Luke
- * @version 7.1
+ * @version 7.2
  * @since 6.1
  */
 
@@ -25,7 +25,8 @@ public class SetOnlineTime extends DAO {
 	}
 
 	/**
-	 * Aggregates VATSIM connection data to the database.
+	 * Aggregates online connection data to the database.
+	 * @param net the OnlineNetwork
 	 * @param users a Colection of ConnectedUser beans
 	 * @param interval the assumed connected time in minutes
 	 * @throws DAOException if a JDBC error occurs

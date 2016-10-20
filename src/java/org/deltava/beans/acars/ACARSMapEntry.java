@@ -7,7 +7,7 @@ import org.deltava.beans.schedule.GeoPosition;
 /**
  * An abstract class to describe ACARS map entries.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 2.2
  */
 
@@ -71,6 +71,7 @@ public abstract class ACARSMapEntry extends DatabaseBean implements MarkerMapEnt
 	
 	/**
 	 * Returns the map entry type.
+	 * @return the EntryType
 	 */
 	public abstract EntryType getType();
 	

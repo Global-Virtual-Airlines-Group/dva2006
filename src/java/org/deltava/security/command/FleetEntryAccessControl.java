@@ -8,7 +8,7 @@ import org.deltava.beans.fleet.LibraryEntry;
 /**
  * An Access Controller to support Fleet/File/Document Library entry operations.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -24,6 +24,7 @@ public class FleetEntryAccessControl extends AccessControl {
    /**
     * Initializes the access controller.
     * @param ctx the Command context
+    * @param e the LibraryEntry
     */
    public FleetEntryAccessControl(SecurityContext ctx, LibraryEntry e) {
       super(ctx);

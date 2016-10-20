@@ -7,7 +7,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A class for storing XACARS-submitted Flight Reports.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 4.1
  */
 
@@ -20,6 +20,9 @@ public class XACARSFlightReport extends FDRFlightReport {
 	
 	/**
      * Creates a new XACARS Flight Report object.
+	 * @param a the Airline
+	 * @param flightNumber the flight number 
+	 * @param leg the leg number
      */
 	public XACARSFlightReport(Airline a, int flightNumber, int leg) {
 		super(a, flightNumber, leg);

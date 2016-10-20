@@ -25,7 +25,7 @@ public interface Command {
 		SES(PageContext.SESSION_SCOPE),
 		PAG(PageContext.PAGE_SCOPE);
 		
-		private int _code;
+		private final int _code;
 		
 		Scope(int code) {
 			_code = code;
@@ -45,8 +45,8 @@ public interface Command {
     public static final int OPERATION = 1;
     
     /**
-     * Initialize the Command. Since commands are instantiated via reflection, the init method is used to run
-     * data that would ordinarily be in the constructor.
+     * Initialize the Command. Since commands are instantiated via reflection, the init method is used to run data that would ordinarily be in the constructor.
+     * @param id the command ID
      * @param cmdName the name of the command
      * @throws IllegalStateException if the command has already been initialized
      */

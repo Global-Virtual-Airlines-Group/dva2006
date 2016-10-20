@@ -14,7 +14,7 @@ import org.deltava.dao.file.SetSerializedPosition;
 /**
  * A Data Access Object to write to the ACARS position archive.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 4.1
  */
 
@@ -31,6 +31,7 @@ public class SetACARSArchive extends DAO {
 	/**
 	 * Marks ACARS data as archived.
 	 * @param flightID the ACARS Flight ID
+	 * @param positions a Collection of RouteEntry beans 
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void archive(int flightID, Collection<? extends RouteEntry> positions) throws DAOException {

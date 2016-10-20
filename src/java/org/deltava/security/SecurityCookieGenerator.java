@@ -14,7 +14,7 @@ import org.deltava.crypt.*;
  * signature of the above string encoded in Base64. The password is converted into hex bytes, and the entire
  * string is encrypted using a SecretKeyEncryptor.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -38,6 +38,7 @@ public final class SecurityCookieGenerator {
 	/**
 	 * Parses a supplied security cookie value into its component parts. 
 	 * @param cookieText the Security Cookie value
+	 * @return a SecurityCookieData bean
 	 * @throws SecurityException if the cookie contains invalid data
 	 */
 	public static synchronized SecurityCookieData readCookie(String cookieText) throws SecurityException {

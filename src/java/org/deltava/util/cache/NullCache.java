@@ -1,12 +1,12 @@
-// Copyright 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 /**
- * A cache implementation that does no caching. This is used to ensure that
- * CacheManager never returns null. 
+ * A cache implementation that does no caching. This is used to ensure that CacheManager never returns null. 
  * @author Luke
- * @version 5.0
+ * @version 7.2
  * @since 5.0
+ * @param <T> the Cacheable object type
  */
 
 public class NullCache<T extends Cacheable> extends Cache<T> {

@@ -7,7 +7,7 @@ import org.deltava.beans.schedule.*;
 /**
  * An XACARS Flight Information object. 
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 4.1
  */
 
@@ -38,7 +38,9 @@ public class XAFlightInfo extends FDRFlightReport {
 	private int _zfw;
 	
 	/**
-	 * Creates the object.
+	 * Creates the Flight Info object.
+	 * @param a the Airline
+	 * @param leg the leg number
 	 */
 	public XAFlightInfo(Airline a, int leg) {
 		super(a, leg, 1);

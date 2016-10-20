@@ -6,7 +6,7 @@ import org.deltava.beans.ViewEntry;
 /**
  * A bean to store job posting application data.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 3.4
  */
 
@@ -23,6 +23,7 @@ public class Application extends ApplicantData implements ViewEntry {
 
 	/**
 	 * Creates the Application bean.
+	 * @param jobID the Job database ID
 	 * @param authorID the JobPosting database ID 
 	 */
 	public Application(int jobID, int authorID) {

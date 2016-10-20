@@ -10,7 +10,7 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * A bean to store data about an MVS voice channel. 
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 4.0
  */
 
@@ -260,6 +260,8 @@ public class Channel extends DatabaseBean implements ViewEntry {
 
 	/**
 	 * Compares two Channels by comparing their names.
+	 * @param c2 the second channel
+	 * @return TRUE if the names are equal, otherwise FALSE
 	 */
 	public int compareTo(Channel c2) {
 		return _name.compareTo(c2._name);

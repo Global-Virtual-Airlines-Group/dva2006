@@ -7,8 +7,9 @@ import java.util.concurrent.Semaphore;
 /**
  * An object cache that supports expiration dates.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
+ * @param <T> the Cacheable object type
  */
 
 public class ExpiringCache<T extends Cacheable> extends Cache<T> {
@@ -33,6 +34,7 @@ public class ExpiringCache<T extends Cacheable> extends Cache<T> {
 	
 	/**
 	 * A null cache entry for expiring caches.
+	 * @param <U> the Cacheable object type
 	 */
 	protected class ExpiringNullCacheEntry<U extends T> extends ExpiringCacheEntry<U> {
 		

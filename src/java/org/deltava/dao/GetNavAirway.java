@@ -15,7 +15,7 @@ import com.enterprisedt.util.debug.Logger;
 /**
  * A Data Access Object to load navigation route and airway data.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -187,6 +187,7 @@ public class GetNavAirway extends GetNavData {
 	 * @param wp the waypoint
 	 * @param rwy the runway name, or null
 	 * @return the TerminalRoute, or null if none found
+	 * @throws DAOException if a JDBC error occurs
 	 * @see GetNavAirway#getBestRoute(ICAOAirport, TerminalRoute.Type, String, String, Runway)
 	 */
 	public TerminalRoute getBestRoute(ICAOAirport a, TerminalRoute.Type t, String name, String wp, Runway rwy) throws DAOException {
@@ -201,6 +202,7 @@ public class GetNavAirway extends GetNavData {
 	 * @param wp the waypoint
 	 * @param rwy the Runway bean, or null
 	 * @return the TerminalRoute, or null if none found
+	 * @throws DAOException if a JDBC error occurs
 	 */
 	public TerminalRoute getBestRoute(ICAOAirport a, TerminalRoute.Type t, String name, String wp, String rwy) throws DAOException {
 		
