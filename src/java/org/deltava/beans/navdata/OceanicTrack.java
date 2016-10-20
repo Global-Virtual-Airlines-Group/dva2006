@@ -7,16 +7,15 @@ import java.time.Instant;
 import org.deltava.util.StringUtils;
 
 /**
- * A bean to store Oceanic Track (NAT/PACOT) information.
+ * A bean to store Oceanic Track (NAT/PACOT/AUSOT) information.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
 public class OceanicTrack extends Airway implements OceanicTrackInfo {
 	
-	public static final Collection<? extends OceanicTrack> CONC_ROUTES = Arrays.asList(new ConcordeNAT("SM",
-		"5015N,5020N,5030N,4840N,4750N"), new ConcordeNAT("SN", "4550N,4740N,4930N,4920N,4915N"), 
+	public static final Collection<? extends OceanicTrack> CONC_ROUTES = Arrays.asList(new ConcordeNAT("SM", "5015N,5020N,5030N,4840N,4750N"), new ConcordeNAT("SN", "4550N,4740N,4930N,4920N,4915N"), 
 		new ConcordeNAT("SO", "4815N,4820N,4830N,4640N,4450N,4260N"), new ConcordeNAT("SP", "4720N,4524N,4230N,3440N"));
 
 	private static class ConcordeNAT extends OceanicTrack {
@@ -50,6 +49,7 @@ public class OceanicTrack extends Airway implements OceanicTrackInfo {
     /**
      * Creates a new Oceanic Route for a given data.
      * @param type the route Type
+     * @param code the route code
      * @throws IllegalArgumentException if type is invalid
      */
     public OceanicTrack(Type type, String code) {

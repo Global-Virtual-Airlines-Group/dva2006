@@ -14,6 +14,7 @@ import org.deltava.util.system.SystemData;
 
 import org.gvagroup.tile.TileAddress;
 
+@SuppressWarnings("javadoc")
 abstract class PlotMap extends TestCase {
 	
 	protected Logger log;

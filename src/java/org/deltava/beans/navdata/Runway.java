@@ -7,7 +7,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store Runway information.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -135,6 +135,8 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 	
 	/**
 	 * Compares two Runways by comparing their airport and runway codes.
+	 * @param r2 the Runway
+	 * @return TRUE if the airport and runway codes match, otherwise FALSE
 	 */
 	public boolean equals(Runway r2) {
 		return (r2 == null) ? false : getComboAlias().equals(r2.getComboAlias());
