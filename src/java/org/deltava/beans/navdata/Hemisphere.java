@@ -1,19 +1,18 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 /**
  * An enumeration to store lat/long conversion factors for Hemispheres on the Earth.
  * @author Luke
- * @version 2.6
+ * @version 7.2
  * @since 2.6
  */
 
 public enum Hemisphere {
-	
 	N(1, -1), E(1, 1), W(-1, -1), S(-1, 1);
 	
-	private int _latFactor;
-	private int _lngFactor;
+	private final int _latFactor;
+	private final int _lngFactor;
 
 	Hemisphere(int lat, int lng) {
 		_latFactor = lat;
@@ -22,13 +21,15 @@ public enum Hemisphere {
 
 	/**
 	 * Returns the latitude conversion factor.
+	 * @return the conversion factor
 	 */
 	public int getLatitudeFactor() {
 		return _latFactor;
 	}
 
 	/**
-	 * Retrurns the longitude conversion factror.
+	 * Returns the longitude conversion factror.
+	 * @return the conversion factor
 	 */
 	public int getLongitudeFactor() {
 		return _lngFactor;
