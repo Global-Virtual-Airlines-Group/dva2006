@@ -571,6 +571,7 @@
 			<domain>live.co.uk</domain>
 			<domain>att.net</domain>
 			<domain>sbcglobal.net</domain>
+			<domain>bellsouth.net</domain>
 		</list>
 
 		<auto_reject type="Integer">5</auto_reject>
