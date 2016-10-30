@@ -7,15 +7,16 @@ import org.deltava.beans.*;
 import org.deltava.beans.schedule.GeoPosition;
 
 import org.deltava.util.StringUtils;
+import org.deltava.util.cache.Cacheable;
 
 /**
  * A bean to store common properties for Navigation Database objects.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
-public abstract class NavigationDataBean implements java.io.Serializable, Cloneable, Comparable<NavigationDataBean>, MarkerMapEntry, IconMapEntry {
+public abstract class NavigationDataBean implements Cloneable, Cacheable, Comparable<NavigationDataBean>, MarkerMapEntry, IconMapEntry {
 
 	private static final long serialVersionUID = 4880772877749063792L;
 	
@@ -238,9 +239,7 @@ public abstract class NavigationDataBean implements java.io.Serializable, Clonea
 		return (o2 instanceof NavigationDataBean) ? (compareTo((NavigationDataBean) o2) == 0) : false;
 	}
 
-	/**
-	 * Returns the object's code to use as a cache key.
-	 */
+	@Override
 	public Object cacheKey() {
 		return getCode();
 	}
