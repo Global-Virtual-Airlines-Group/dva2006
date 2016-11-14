@@ -1,7 +1,8 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
+import java.time.Instant;
 import java.sql.Connection;
 
 import org.apache.log4j.Logger;
@@ -21,7 +22,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to handle Water Cooler response posting and editing.
  * @author Luke
- * @version 6.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -49,7 +50,7 @@ public class ThreadReplyCommand extends AbstractCommand {
 
 			// Get the Message Thread
 			GetCoolerThreads tdao = new GetCoolerThreads(con);
-			MessageThread mt = tdao.getThread(ctx.getID());
+			MessageThread mt = tdao.getThread(ctx.getID(), true);
 			if (mt == null)
 				throw notFoundException("Unknown Message Thread - " + ctx.getID());
 
@@ -74,6 +75,11 @@ public class ThreadReplyCommand extends AbstractCommand {
 			// Get the notification entries, and remove our own
 			ThreadNotifications nt = tdao.getNotifications(mt.getID());
 			nt.removeUser(ctx.getUser());
+			
+			// Remove anyone whose lastread was prior to the previous reply date
+			Instant lastReply = mt.getLastPost().getCreatedOn();
+			GetCoolerLastRead lrdao = new GetCoolerLastRead(con);
+			lrdao.getLastRead(mt.getID()).entrySet().stream().filter(me -> me.getValue().isBefore(lastReply)).forEach(me -> nt.removeUser(me.getKey().intValue()));
 			
 			// Get the DAOs
 			GetPilot pdao = new GetPilot(con);
@@ -160,8 +166,7 @@ public class ThreadReplyCommand extends AbstractCommand {
 
 		// Send the notification messages
 		if (!notifyList.isEmpty()) {
-			for (Iterator<Map.Entry<UserData, Person>> i = notifyList.entrySet().iterator(); i.hasNext(); ) {
-				Map.Entry<UserData, Person> me = i.next();
+			for (Map.Entry<UserData, Person> me : notifyList.entrySet()) {
 			
 				// Create the mailer
 				Mailer mailer = new Mailer(null);
@@ -170,7 +175,6 @@ public class ThreadReplyCommand extends AbstractCommand {
 				mailer.send(me.getValue());
 			}
 
-			// Save notification message count
 			ctx.setAttribute("notifyMsgs", Integer.valueOf(notifyList.size()), REQUEST);
 		}
 		
