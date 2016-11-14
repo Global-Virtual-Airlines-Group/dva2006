@@ -3,13 +3,14 @@ package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
+import java.time.Instant;
 
 import org.deltava.beans.DatabaseBean;
 
 /**
  * A Data Access Object to read Water Cooler last read marks.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 5.4
  */
 
@@ -30,10 +31,33 @@ public class GetCoolerLastRead extends DAO {
 	 * @return the last read date/time or null if never
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public java.time.Instant getLastRead(int threadID, int userID) throws DAOException {
+	public Instant getLastRead(int threadID, int userID) throws DAOException {
 		Integer ID = Integer.valueOf(threadID);
-		Map<Integer, java.time.Instant> results = getLastRead(Collections.singleton(ID), userID);
+		Map<Integer, Instant> results = getLastRead(Collections.singleton(ID), userID);
 		return results.get(ID);
+	}
+	
+	/**
+	 * Returns the date/time all users last read a particular Cooler message thread.
+	 * @param threadID the Message Thread ID
+	 * @return a Map of last read date/times, keyed by user ID
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Map<Integer, Instant> getLastRead(int threadID) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("SELECT AUTHOR_ID, LASTREAD FROM cooler.LASTREAD WHERE (ID=?)");
+			_ps.setInt(1, threadID);
+			Map<Integer, Instant> results = new HashMap<Integer, Instant>();
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+					results.put(Integer.valueOf(rs.getInt(1)), rs.getTimestamp(2).toInstant());
+			}
+			
+			_ps.close();
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
 	}
 
 	/**
