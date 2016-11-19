@@ -258,6 +258,7 @@ xmlreq.onreadystatechange = function() {
 	return true;
 };
 
+delete golgotha.routePlot.keepRoute;
 if (myParams == null) myParams = golgotha.routePlot.getAJAXParams();
 golgotha.form.submit();
 xmlreq.send(golgotha.routePlot.formatAJAXParams(myParams, '&'));
@@ -328,7 +329,8 @@ golgotha.routePlot.setRoute = function(combo)
 var f = document.forms[0];
 if (combo.selectedIndex < 1) {
 	f.cruiseAlt.value = '';
-	f.route.value = '';
+	if (!golgotha.routePlot.keepRoute)
+		f.route.value = '';
 	f.comments.value = ''
 	f.sid.selectedIndex = 0;
 	f.star.selectedIndex = 0;
@@ -372,7 +374,8 @@ if (airportsChanged) {
 	f.routes.options.length = 1;
 	f.routes.options[0] = new Option('No Routes Loaded', '');
 	f.routes.selectedIndex = 0;
-	f.route.value = '';
+	if (!golgotha.routePlot.keepRoute)
+		f.route.value = '';
 	golgotha.util.show('routeList', false);
 	golgotha.routePlot.setRoute(f.routes);
 }
