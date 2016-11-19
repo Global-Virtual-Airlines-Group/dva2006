@@ -129,11 +129,11 @@ golgotha.routePlot.updateAirline = function(combo) {
 </tr>
 <tr>
  <td class="label">Waypoints</td>
- <td class="data"><el:text name="route" size="80" max="320" idx="*" value="" onChange="golgotha.routePlot.updateRoute(); golgotha.routePlot.plotMap()" /></td>
+ <td class="data"><el:text name="route" size="80" max="320" idx="*" value="" spellcheck="false" onChange="golgotha.routePlot.updateRoute(); golgotha.routePlot.plotMap()" /></td>
 </tr>
 <tr>
  <td class="label">Cruising Altitude</td>
- <td class="data"><el:text name="cruiseAlt" size="5" max="5" idx="*" value="35000" onChange="void golgotha.routePlot.updateRoute();" /></td>
+ <td class="data"><el:text name="cruiseAlt" size="5" max="5" idx="*" value="35000" spellcheck="false" onChange="void golgotha.routePlot.updateRoute();" /></td>
 </tr>
 <tr>
  <td class="label top">Comments</td>
