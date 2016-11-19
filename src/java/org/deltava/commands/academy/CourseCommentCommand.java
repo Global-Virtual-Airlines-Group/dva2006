@@ -20,7 +20,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Web Site Command to post comments in a Flight Academy Course.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -38,7 +38,7 @@ public class CourseCommentCommand extends AbstractCommand {
 		MessageContext mctxt = new MessageContext();
 		mctxt.addData("user", ctx.getUser());
 
-		Collection<Pilot> addrs = null;
+		Collection<EMailAddress> addrs = new ArrayList<EMailAddress>();
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -79,27 +79,18 @@ public class CourseCommentCommand extends AbstractCommand {
 			// Get Pilot IDs from comments - only add instructors
 			boolean hasINS = (c.getInstructorID() != 0);
 			Collection<Integer> IDs = new HashSet<Integer>();
-			IDs.add(new Integer(c.getPilotID()));
+			IDs.add(Integer.valueOf(c.getPilotID()));
+			c.getComments().stream().map(CourseComment::getAuthorID).filter(id -> ins.containsKey(id)).forEach(id -> IDs.add(id));
 			if (hasINS)
-				IDs.add(new Integer(c.getInstructorID()));
-			for (Iterator<CourseComment> i = c.getComments().iterator(); i.hasNext(); ) {
-				CourseComment comment = i.next();
-				Integer id = new Integer(comment.getAuthorID());
-				if (ins.containsKey(id))
-					IDs.add(id);
-			}
+				IDs.add(Integer.valueOf(c.getInstructorID()));
 			
 			// Load Pilot Information
 			GetPilot pdao = new GetPilot(con);
 			UserDataMap udm = uddao.get(IDs);
-			addrs = new ArrayList<Pilot>(pdao.get(udm).values());
+			addrs.addAll(pdao.get(udm).values());
 			
 			// Add additional instructors
-			for (Iterator<Map.Entry<Integer, Pilot>> i = ins.entrySet().iterator(); i.hasNext(); ) {
-				Map.Entry<Integer, Pilot> me = i.next();
-				if (!IDs.contains(me.getKey()) || !hasINS || me.getValue().isInRole("AcademyAdmin"))
-					addrs.add(me.getValue());
-			}
+			ins.entrySet().stream().filter(me -> !IDs.contains(me.getKey()) || !hasINS || me.getValue().isInRole("AcademyAdmin")).forEach(me -> addrs.add(me.getValue()));
 
 			// Get the write DAO and write the comment
 			SetAcademy wdao = new SetAcademy(con);

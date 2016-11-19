@@ -1,14 +1,16 @@
 // Copyright 2006, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
+import java.util.*;
 import java.sql.Connection;
 import java.time.Instant;
 
-import org.deltava.beans.Pilot;
+import org.deltava.beans.*;
 import org.deltava.beans.academy.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+import org.deltava.mail.*;
 
 import org.deltava.security.command.CourseAccessControl;
 
@@ -17,7 +19,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to assign an Instructor to a Flight Academy Course.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -30,7 +32,13 @@ public class CourseAssignCommand extends AbstractCommand {
 	 */
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
+		
+		// Create the messaging context
+		MessageContext mctxt = new MessageContext();
+		mctxt.addData("user", ctx.getUser());
+		
 		Course c = null;
+		Collection<EMailAddress> addrs = new ArrayList<EMailAddress>();
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -46,14 +54,17 @@ public class CourseAssignCommand extends AbstractCommand {
 			if (!ac.getCanAssignInstructor())
 				throw securityException("Cannot assign Instructor");
 			
+			// Load student info
+			GetUserData uddao = new GetUserData(con);
+			GetPilot pdao = new GetPilot(con);
+			addrs.add(pdao.get(uddao.get(c.getPilotID())));
+			
 			// Parse the instructor ID
 			int id = StringUtils.parse(ctx.getParameter("instructor"), 0);
 			
 			// Get the instructor
 			Pilot ins = null;
 			if (id != 0) {
-				GetUserData uddao = new GetUserData(con);
-				GetPilot pdao = new GetPilot(con);
 				ins = pdao.get(uddao.get(id));
 				if (ins == null)
 					throw notFoundException("Invalid Pilot ID - " + ctx.getParameter("instructor"));
@@ -63,11 +74,19 @@ public class CourseAssignCommand extends AbstractCommand {
 			
 			// Update the course
 			c.setInstructorID(id);
+			if (ins != null)
+				addrs.add(ins);
 			
 			// Create a comment
 			CourseComment cc = new CourseComment(c.getID(), ctx.getUser().getID());
 			cc.setCreatedOn(Instant.now());
 			cc.setText((ins == null) ? "Cleared assigned Instructor" : "Assigned " + ins.getName() + " as Instructor");
+			
+			// Get the message template
+			GetMessageTemplate mtdao = new GetMessageTemplate(con);
+			mctxt.setTemplate(mtdao.get("COURSECOMMENT"));
+			mctxt.addData("comment", cc);
+			mctxt.addData("course", c);
 			
 			// Start a transaction
 			ctx.startTX();
@@ -85,6 +104,11 @@ public class CourseAssignCommand extends AbstractCommand {
 		} finally {
 			ctx.release();
 		}
+		
+        // Create the e-mail message
+        Mailer mailer = new Mailer(ctx.getUser());
+        mailer.setContext(mctxt);
+        mailer.send(addrs);
 		
 		// Forward back to the Course
 		CommandResult result = ctx.getResult();
