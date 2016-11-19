@@ -116,7 +116,7 @@ golgotha.local.showRunwayChoices = function() {
  <td class="label">Status</td>
  <td class="data bld sec">${statusMsg}<c:if test="${!empty pirep.disposedOn}"> on <fmt:date date="${pirep.disposedOn}" /></c:if> 
 <c:if test="${fn:AssignID(pirep) > 0}"> <span class="ter bld">FLIGHT ASSIGNMENT</span></c:if>
-<c:if test="${fn:isDraft(pirep) && (empty pirep.route)}"> - <el:cmd url="routeplot" link="${pirep}">Plot Route</el:cmd></c:if></td>
+<c:if test="${fn:isDraft(pirep)}"> - <el:cmd url="routeplot" link="${pirep}">Plot Route</el:cmd></c:if></td>
 </tr>
 <c:if test="${!empty pirep.submittedOn}">
 <tr>
