@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display plotted flight routes with SID/STAR/Airway data.
  * @author Luke
- * @version 6.4
+ * @version 7.2
  * @since 1.0
  */
 
@@ -105,7 +105,11 @@ public class RoutePlotMapService extends MapPlotService {
 				if (dGates.size() < 3)
 					gates.addAll(gdao.getGates(dr.getAirportD(), sim));
 				
-				String rwyD = ctx.getParameter("runway");
+				String rwy = ctx.getParameter("runway");
+				if (rwy.indexOf(' ') > 0)
+					rwy = rwy.substring(rwy.indexOf(' ') + 1);
+				
+				final String rwyD = rwy;
 				Collection<TerminalRoute> sids = new TreeSet<TerminalRoute>(dao.getRoutes(dr.getAirportD(), TerminalRoute.Type.SID));
 				if (!StringUtils.isEmpty(rwyD))
 					sids = sids.stream().filter(sid -> sid.getRunway().equals("ALL") || sid.getRunway().equals(rwyD)).collect(Collectors.toCollection(TreeSet::new));
@@ -305,7 +309,7 @@ public class RoutePlotMapService extends MapPlotService {
 		for (Runway r : runways) {
 			if  ((a != null) && (a.getTakeoffRunwayLength() > r.getLength())) continue;
 			Element e = new Element("runway");
-			e.setAttribute("code", "RW" + r.getName());
+			e.setAttribute("code", r.getComboAlias());
 			
 			// Build the label
 			StringBuilder buf = new StringBuilder("Runway ");
