@@ -520,7 +520,7 @@ public abstract class Person extends DatabaseBlobBean implements Principal, Form
 					buf.append(c);
 			}
 			
-			if (buf.length() > 5)
+			if (buf.length() > ((network == OnlineNetwork.PILOTEDGE) ? 3 : 5))
 				_networkIDs.put(network, buf.toString());
 		} else
 			_networkIDs.remove(network);
