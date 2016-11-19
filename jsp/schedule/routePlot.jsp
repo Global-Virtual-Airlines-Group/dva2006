@@ -38,6 +38,7 @@ loaders.series.setData('windspeed', 0.325, 'wxWind');
 loaders.series.onload(function() { golgotha.util.enable('#selImg'); });
 loaders.fr.onload(function() { golgotha.util.enable('selFronts'); });
 
+golgotha.routePlot.keepRoute = ${fn:length(flight.route) > 0};
 golgotha.local.validate = function(f) {
     golgotha.form.validate({f:f.eqType, t:'EquipmentType'});
     golgotha.form.validate({f:f.airportD, t:'Departure Airport'});
@@ -54,6 +55,7 @@ golgotha.local.validate = function(f) {
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:sysdata var="aCode" name="airline.code" />
 <content:empty var="emptyList" />
+<content:enum var="simVersions" className="org.deltava.beans.Simulator" exclude="UNKNOWN,FS98,FS2000,FS2002,XP9" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -74,7 +76,7 @@ golgotha.local.validate = function(f) {
  <td class="label">Departing from</td>
  <td class="data"><el:combo name="airportD" className="req" size="1" idx="*" options="${airportsD}" firstEntry="-" value="${flight.airportD}" onChange="void golgotha.routePlot.updateRoute(true, true)" />
  <el:airportCode combo="airportD" airport="${flight.airportD}" idx="*" />
-<span id="runways" style="visibility:hidden;"> departing <el:combo name="runway" idx="*" size="1" options="${emptyList}" firstEntry="-" onChange="void golgotha.routePlot.updateRoute(true, false)" /></span></td>
+<span id="runways" style="visibility:hidden;"> departing <el:combo name="runway" idx="*" size="1" value="${rwy}" options="${dRwys}" firstEntry="-" onChange="void golgotha.routePlot.updateRoute(true, false)" /></span></td>
 </tr>
 <tr id="gatesD" style="display:none;">
  <td class="label">Departure Gate</td>
@@ -112,7 +114,7 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr>
  <td class="label">Waypoints</td>
- <td class="data"><el:text name="route" size="100" max="320" idx="*" value="" onChange="void golgotha.routePlot.plotMap()" /></td>
+ <td class="data"><el:text name="route" size="100" max="320" idx="*" value="${flight.route}" spellcheck="false" onChange="void golgotha.routePlot.plotMap()" /></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
@@ -157,7 +159,7 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr>
  <td class="label">Cruising Altitude</td>
- <td class="data"><el:text name="cruiseAlt" size="5" max="5" idx="*" value="35000" /></td>
+ <td class="data"><el:text name="cruiseAlt" size="5" max="5" idx="*" value="35000" spellcheck="false" /></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
@@ -198,7 +200,7 @@ f.airportD.loadAirports(golgotha.airportLoad.config);
 window.setTimeout(function() { f.airportA.loadAirports(golgotha.airportLoad.config); }, 725);
 </c:when>
 <c:otherwise>
-golgotha.routePlot.updateRoute(true, false);
+golgotha.routePlot.updateRoute(${!empty rwy}, false);
 </c:otherwise>
 </c:choose>
 // Create the map

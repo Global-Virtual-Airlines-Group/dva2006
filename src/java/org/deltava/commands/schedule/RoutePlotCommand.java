@@ -2,28 +2,30 @@
 package org.deltava.commands.schedule;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.deltava.beans.Simulator;
 import org.deltava.beans.flight.*;
-import org.deltava.beans.schedule.ScheduleSearchCriteria;
+import org.deltava.beans.navdata.*;
+import org.deltava.beans.schedule.*;
+import org.deltava.beans.wx.METAR;
 
 import org.deltava.commands.*;
+import org.deltava.comparators.RunwayComparator;
 import org.deltava.dao.*;
-
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to plot a flight route.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
 public class RoutePlotCommand extends AbstractCommand {
 	
-	private static final List<Simulator> SIM_VERSIONS = Arrays.asList(Simulator.FS9, Simulator.FSX, Simulator.P3D, Simulator.XP9);
-
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
@@ -44,6 +46,39 @@ public class RoutePlotCommand extends AbstractCommand {
 				ctx.setAttribute("airportsA", Collections.singleton(dfr.getAirportA()), REQUEST);
 				if (dfr.getSimulator() != Simulator.UNKNOWN)
 					ctx.setAttribute("sim", dfr.getSimulator(), REQUEST);
+				
+				// Get aircraft profile and SID runways
+				GetAircraft acdao = new GetAircraft(con);
+				GetNavRoute navdao = new GetNavRoute(con);
+				Aircraft a = acdao.get(dfr.getEquipmentType());
+				Collection<String> sidRwys = navdao.getSIDRunways(dfr.getAirportD());
+				
+				// Get departure runways
+				GetACARSRunways rwdao = new GetACARSRunways(con);
+				List<Runway> runways = rwdao.getPopularRunways(dfr.getAirportD(), dfr.getAirportA(), true).stream().filter(r -> r.getLength() > a.getTakeoffRunwayLength())
+						.filter(r -> sidRwys.contains("RW" + r.getName())).collect(Collectors.toList());
+				
+				// Sort based on wind
+				GetWeather wxdao = new GetWeather(con);
+				METAR wxD = wxdao.getMETAR(dfr.getAirportD());
+				if ((wxD != null) && (wxD.getWindSpeed() > 0))
+					runways = CollectionUtils.sort(runways, new RunwayComparator(wxD.getWindDirection(), wxD.getWindSpeed()));
+
+				// Save runways and best runway
+				ctx.setAttribute("dRwys", runways, REQUEST);
+				if (runways.size() > 0)
+					ctx.setAttribute("rwy", runways.get(0), REQUEST);
+				
+				// Load up route
+				if (!StringUtils.isEmpty(dfr.getRoute())) {
+					List<String> wps = StringUtils.split(dfr.getRoute(), " ");
+					if (TerminalRoute.isNameValid(wps.get(0)))
+						wps.remove(0);
+					if ((wps.size() > 1) && TerminalRoute.isNameValid(wps.get(wps.size() - 1)))
+						wps.remove(wps.size() - 1);
+					
+					dfr.setRoute(StringUtils.listConcat(wps, " "));
+				}
 			} else {
 				ctx.setAttribute("airlines", SystemData.getAirlines().values(), REQUEST);
 				ctx.setAttribute("airportsD", Collections.emptyList(), REQUEST);
@@ -68,9 +103,6 @@ public class RoutePlotCommand extends AbstractCommand {
 		} finally {
 			ctx.release();
 		}
-		
-		// Set request attributes
-		ctx.setAttribute("simVersions", SIM_VERSIONS, REQUEST);
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
