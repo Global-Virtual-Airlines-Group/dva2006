@@ -45,7 +45,7 @@ public class GetCoolerLastRead extends DAO {
 	 */
 	public Map<Integer, Instant> getLastRead(int threadID) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT AUTHOR_ID, LASTREAD FROM cooler.LASTREAD WHERE (ID=?)");
+			prepareStatementWithoutLimits("SELECT AUTHOR_ID, LASTREAD FROM common.COOLER_LASTREAD WHERE (ID=?)");
 			_ps.setInt(1, threadID);
 			Map<Integer, Instant> results = new HashMap<Integer, Instant>();
 			try (ResultSet rs = _ps.executeQuery()) {
@@ -72,8 +72,7 @@ public class GetCoolerLastRead extends DAO {
 			return Collections.emptyMap();
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT ID, LASTREAD FROM common.COOLER_LASTREAD WHERE "
-			+ "(AUTHOR_ID=?) AND (ID IN (");
+		StringBuilder sqlBuf = new StringBuilder("SELECT ID, LASTREAD FROM common.COOLER_LASTREAD WHERE (AUTHOR_ID=?) AND (ID IN (");
 		for (Iterator<?> i = ids.iterator(); i.hasNext(); ) {
 			Object rawID = i.next();
 			Integer id = (rawID instanceof Integer) ? (Integer) rawID : Integer.valueOf(((DatabaseBean) rawID).getID());
@@ -87,7 +86,7 @@ public class GetCoolerLastRead extends DAO {
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
 			_ps.setInt(1, userID);
-			Map<Integer, java.time.Instant> results = new HashMap<Integer, java.time.Instant>();
+			Map<Integer, Instant> results = new HashMap<Integer, Instant>();
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next())
 					results.put(Integer.valueOf(rs.getInt(1)), rs.getTimestamp(2).toInstant());
