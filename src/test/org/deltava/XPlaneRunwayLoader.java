@@ -132,7 +132,7 @@ public class XPlaneRunwayLoader extends TestCase {
 				for (Runway r : rwys) {
 					ps.setString(1, r.getCode());
 					ps.setString(2, r.getName());
-					ps.setInt(3, Simulator.XP10.ordinal());
+					ps.setInt(3, Simulator.XP10.getCode());
 					ps.setDouble(4, r.getLatitude());
 					ps.setDouble(5, r.getLongitude());
 					ps.setInt(6, r.getHeading());
