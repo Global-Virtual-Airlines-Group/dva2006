@@ -25,7 +25,7 @@
 	<!-- ACARS caches -->
 	<cache id="ACARSMap" max="1" expires="3" />
 	<cache id="ACARSFlightID" max="1" expires="3" />
-	<cache id="ACARSRunways" max="512" />
+	<cache id="ACARSRunways" remote="true" expires="86400" />
 
 	<!-- Statistics caches -->
 	<cache id="GreasedLandings" max="16" expires="1800" />
