@@ -23,6 +23,7 @@
 
 <content:submenu title="Image Gallery" width="170">
  <content:subitem><el:cmd url="imagegallery" linkID="ALL">All Images</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="fleetgallery">Fleet Gallery</el:cmd></content:subitem>
 <c:if test="${access.canCreate}">
  <content:subitem><el:cmd url="image" op="edit">Add New Image</el:cmd></content:subitem>
 </c:if>
