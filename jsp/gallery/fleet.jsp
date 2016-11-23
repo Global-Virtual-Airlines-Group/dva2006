@@ -7,7 +7,7 @@
 <html lang="en">
 <head>
 <title><content:airline /> Fleet Gallery</title>
-<content:expire expires="60" />
+<content:expire expires="240" />
 <content:css name="main" />
 <content:css name="form" />
 <content:pics />
@@ -17,20 +17,26 @@
 <script type="text/javascript">
 golgotha.local.selectAircraft = function(combo)
 {
-if (!golgotha.form.comboSet(combo)) return false;
+if (!golgotha.form.comboSet(combo)) {
+	golgotha.util.display('descRow', false);
+	golgotha.util.display('imgRow', false);
+	return false;
+}
 
 // Get the image object and its description object
-var img = document.getElementById('FleetPic');
-var desc = document.getElementById('FleetDesc');
+var img = document.getElementById('fleetPic');
+var desc = document.getElementById('fleetDesc');
 
 // Load the picture in its place, save the description
 img.src = '/gallery/${imgDB}/0x' + escape(golgotha.form.getCombo(combo)) + '.jpg';
 desc.innerHTML = golgotha.local.dList[combo.selectedIndex - 1];
-desc.focus();
+golgotha.util.display('imgRow', true);
+golgotha.util.display('descRow', true);
+desc.focus(); 
 return true;
 };
 
-golgotha.local.dList = <fmt:jsarray items="${fleetGalleryDesc}" />;
+<fmt:jsarray var="golgotha.local.dList" items="${fleetGalleryDesc}" />
 </script>
 </head>
 <content:copyright visible="false" />
@@ -51,12 +57,12 @@ golgotha.local.dList = <fmt:jsarray items="${fleetGalleryDesc}" />;
  <td class="label">Select Aircraft</td>
  <td><el:combo name="Aircraft" size="1" idx="1" options="${fleetGallery}" firstEntry="[ SELECT AIRCRAFT ]" onChange="void golgotha.local.selectAircraft(this)" /></td>
 </tr>
-<tr>
+<tr id="descRow" style="display:none;">
  <td class="label">Description</td>
- <td><span id="FleetDesc"></span></td>
+ <td><span id="fleetDesc"></span></td>
 </tr>
-<tr valign="middle">
- <td colspan="2" class="mid"><img id="FleetPic" style="width:100%; max-width:600px; max-height:450px;" src="/${imgPath}/blank.png" alt="<content:airline /> Fleet Gallery" /></td>
+<tr id="imgRow" style="display:none;">
+ <td colspan="2" class="mid"><img id="fleetPic" style="max-width:98%;" src="/${imgPath}/blank.png" alt="<content:airline /> Fleet Gallery" /></td>
 </tr>
 <tr class="title">
  <td colspan="2">&nbsp;</td>
