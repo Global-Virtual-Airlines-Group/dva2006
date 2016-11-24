@@ -11,7 +11,7 @@ import redis.clients.jedis.*;
 /**
  * A utility class for Redis operations.
  * @author Luke
- * @version 7.1
+ * @version 7.2
  * @since 6.1
  */
 
@@ -30,7 +30,7 @@ public class RedisUtils {
 	protected static JedisPool _client;
 
 	/*
-	 * Checks the memcached connection.
+	 * Checks the Redis connection.
 	 */
 	private static void checkConnection() {
 		if (_client == null) throw new IllegalStateException("Not started");
@@ -62,7 +62,7 @@ public class RedisUtils {
 				
 			return bo.toByteArray();
 		} catch (Exception e) {
-			log.warn("Error writing " + o.getClass().getName() + " - " + e.getMessage());
+			log.warn("Error writing " + o.getClass().getName() + " - " + e.getClass().getSimpleName());
 		}
 			
 		return null;
