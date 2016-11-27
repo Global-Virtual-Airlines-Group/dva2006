@@ -9,7 +9,7 @@ import org.deltava.beans.Simulator;
 /**
  * A JSP tag to display Simulator service pack information.  
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 7.0
  */
 
@@ -67,6 +67,7 @@ public class SimulatorVersionTag extends TagSupport {
 			case P3D:
 			case XP9:
 			case XP10:
+			case XP11:
 				out.print(_major);
 				out.print('.');
 				out.print(_minor);

@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to create flight plans.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 2.2
  */
 
@@ -59,6 +59,7 @@ public class RoutePlanService extends WebService {
 		switch (sim) {
 			case XP9:
 			case XP10:
+			case XP11:
 				fpgen = new XP9Generator();
 				break;
 				
