@@ -19,13 +19,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update Fleet Library entries.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
 public class InstallerCommand extends LibraryEditCommand {
 	
-	private static final List<Simulator> SIMS = Arrays.asList(Simulator.FS2002, Simulator.FS9, Simulator.FSX, Simulator.P3D, Simulator.XP9, Simulator.XP10);
+	private static final List<Simulator> SIMS = Arrays.asList(Simulator.FS2002, Simulator.FS9, Simulator.FSX, Simulator.P3D, Simulator.XP9, Simulator.XP10, Simulator.XP11);
 
 	/**
 	 * Method called when editing the form.
