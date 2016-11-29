@@ -25,7 +25,7 @@ public class InsertGoogleAPITag extends TagSupport {
 	static final String API_VER_ATTR_NAME = "$googleMapAPIVersion$";
 	
 	private static final int MIN_API_VERSION = 3;
-	private static final String DEFAULT_V3_MINOR = "26";
+	private static final String DEFAULT_V3_MINOR = "25";
 	
 	private static final String V3_API_URL = "maps.googleapis.com/maps/api/js?v=";
 	
@@ -118,6 +118,7 @@ public class InsertGoogleAPITag extends TagSupport {
 			JSONObject mco = new JSONObject();
 			mco.put("IMG_PATH", SystemData.get("path.img"));
 			mco.put("API", _majorVersion);
+			mco.put("protocol", pageContext.getRequest().isSecure() ? "https" : "http");
 			mco.put("tileHost", SystemData.get("weather.tileHost"));
 			mco.put("seriesData", Collections.emptyMap());
 			mco.put("wxHost", SystemData.get("weather.apiHost"));
