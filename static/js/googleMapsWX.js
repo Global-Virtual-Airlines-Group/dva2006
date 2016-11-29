@@ -70,8 +70,8 @@ return elements;
 };
 
 // Tile URL generation functions
-golgotha.maps.util.S3OverlayLayer = function(name, ts, size) { return 'http://' + golgotha.maps.tileHost + '/tile/' + name + '/' + size.height + '/' + ts + '/'; };
-golgotha.maps.util.GinsuOverlayLayer = function(name, ts, size) { return 'http://g.imwx.com/TileServer/imgs/' + name + '/u' + ts + '/'; };
+golgotha.maps.util.S3OverlayLayer = function(name, ts, size) { return golgotha.maps.protocol + '://' + golgotha.maps.tileHost + '/tile/' + name + '/' + size.height + '/' + ts + '/'; };
+golgotha.maps.util.GinsuOverlayLayer = function(name, ts, size) { return '/wx/tile/' + name + '/u' + ts + '/'; };
 
 // Create a weather overlay type
 golgotha.maps.WeatherLayer = function(opts, timestamp) {
