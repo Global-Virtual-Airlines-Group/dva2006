@@ -10,7 +10,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to insert a JavaScript include file.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -53,10 +53,12 @@ public class InsertJSTag extends InsertMinifiedContentTag {
 			JspWriter out = pageContext.getOut();
 			out.print("<script src=\"");
 			if (!_resourceName.startsWith("http://")) {
-				out.print(SystemData.get("path.js"));
-				out.print('/');
-				out.print(getFileName());
-				out.print(".js");
+				StringBuilder buf = new StringBuilder(SystemData.get("path.js"));
+				buf.append('/');
+				buf.append(getFileName());
+				buf.append(".js");
+				out.print(buf.toString());
+				ContentHelper.pushContent(pageContext, buf.insert(0, '/').toString(), "script");
 			}
 			else
 				out.print(_resourceName);
@@ -71,6 +73,7 @@ public class InsertJSTag extends InsertMinifiedContentTag {
 			release();
 		}
 
+		// Mark the content as added and return
 		ContentHelper.addContent(pageContext, "JS", _resourceName);
 		return EVAL_PAGE;
 	}
