@@ -4,8 +4,10 @@ package org.deltava.taglib;
 import java.util.*;
 
 import javax.servlet.jsp.PageContext;
+import javax.servlet.http.HttpServletResponse;
 
 import org.deltava.beans.system.HTTPContextData;
+
 import org.deltava.commands.HTTPContext;
 
 /**
@@ -68,5 +70,31 @@ public class ContentHelper {
 	 */
 	public static HTTPContextData getBrowserContext(PageContext ctx) {
 		return (HTTPContextData) ctx.getRequest().getAttribute(HTTPContext.HTTPCTXT_ATTR_NAME);
+	}
+	
+	/**
+	 * Adds an HTTP/2 preload link header to the response.
+	 * @param ctx the PageContext object
+	 * @param url the URL to push
+	 * @param type the type of resource
+	 */
+	public static void pushContent(PageContext ctx, String url, String type) {
+		HTTPContextData bctxt = getBrowserContext(ctx);
+		HttpServletResponse rsp = (HttpServletResponse) ctx.getResponse();
+		if ((bctxt == null) || !bctxt.isHTTP2() || rsp.isCommitted())
+			return;
+	
+		// Build the header
+		StringBuilder buf = new StringBuilder("<");
+		if (url.startsWith("/")) {
+			buf.append(ctx.getRequest().isSecure() ? "https" : "http");
+			buf.append("://");
+			buf.append(ctx.getRequest().getServerName());
+		}
+		
+		buf.append(url);
+		buf.append(">; rel=preload; as=");
+		buf.append(type);
+		rsp.addHeader("Link", buf.toString());
 	}
 }
