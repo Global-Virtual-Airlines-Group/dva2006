@@ -17,7 +17,7 @@ import org.deltava.util.StringUtils;
 /**
  * A servlet filter to detect the browser type.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -26,7 +26,7 @@ public class BrowserTypeFilter implements Filter {
 	private static final Logger log = Logger.getLogger(BrowserTypeFilter.class);
 
 	private String _defaultCode;
-	
+
 	/**
 	 * Called by the servlet container when the filter is started. Logs a message.
 	 * @param cfg the Filter Configuration
@@ -53,7 +53,7 @@ public class BrowserTypeFilter implements Filter {
 		String userAgent = hreq.getHeader("User-Agent");
 		if ((userAgent == null) && (_defaultCode != null))
 			userAgent = _defaultCode;
-		
+
 		// Create the Context data object
 		BrowserType.BrowserVersion ver = BrowserType.detect(userAgent);
 		BrowserType bt = ver.getType();
@@ -62,24 +62,30 @@ public class BrowserTypeFilter implements Filter {
 		int pos = ver.getVersion().indexOf('.');
 		ctxt.setVersion(StringUtils.parse(ver.getVersion().substring(0, pos), 0), StringUtils.parse(ver.getVersion().substring(pos + 1), 0));
 		ctxt.setHTML5((bt == BrowserType.CHROME) && (ctxt.getMajor() >= 20));
-		
+
 		// Check for native JSON
 		ctxt.setJSON((bt == BrowserType.CHROME) || (bt == BrowserType.FIREFOX) || (bt == BrowserType.OPERA) || (bt == BrowserType.WEBKIT));
+
+		// Check for IPv6
+		InetAddress addr = InetAddress.getByName(hreq.getRemoteAddr());
+		ctxt.setIPv6((addr instanceof Inet6Address));
 		
-    	// Check for IPv6
-    	InetAddress addr = InetAddress.getByName(hreq.getRemoteAddr());
-    	ctxt.setIPv6((addr instanceof Inet6Address));
-    	
-    	// If we're using IE, set the compatability header
-    	if (ver.getType() == BrowserType.IE) {
-    		HttpServletResponse hrsp = (HttpServletResponse) rsp;
-    		hrsp.setHeader("X-UA-Compatible", "IE=11, IE=edge");
-    		ctxt.setJSON(ctxt.getMajor() > 7);
-    		ctxt.setHTML5(ctxt.getMajor() > 10);
-    	}
+		// Check for HTTP/2
+		if (req.isSecure()) {
+			String proto = req.getProtocol().substring(req.getProtocol().lastIndexOf('/') + 1);
+			ctxt.setHTTP2((proto.length() > 0) && (proto.charAt(0) == '2'));
+		}
+
+		// If we're using IE, set the compatability header
+		if (ver.getType() == BrowserType.IE) {
+			HttpServletResponse hrsp = (HttpServletResponse) rsp;
+			hrsp.setHeader("X-UA-Compatible", "IE=11, IE=edge");
+			ctxt.setJSON(ctxt.getMajor() > 7);
+			ctxt.setHTML5(ctxt.getMajor() > 10);
+		}
 
 		// Execute the next filter in the chain
-    	req.setAttribute(HTTPContext.HTTPCTXT_ATTR_NAME, ctxt);
+		req.setAttribute(HTTPContext.HTTPCTXT_ATTR_NAME, ctxt);
 		fc.doFilter(req, rsp);
 	}
 
