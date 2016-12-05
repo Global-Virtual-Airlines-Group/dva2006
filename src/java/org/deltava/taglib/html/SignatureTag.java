@@ -78,7 +78,7 @@ public class SignatureTag extends ImageTag {
 			return EVAL_PAGE;
 
 		// Build the source and render
-		StringBuilder buf = new StringBuilder("/sig/");
+		StringBuilder buf = new StringBuilder("sig/");
 		buf.append(_df.format(ZonedDateTime.ofInstant(_usr.getSignatureModified(), ZoneOffset.UTC)));
 		buf.append('/');
 		buf.append((_aCode == null) ? SystemData.get("airline.code") : _aCode);
