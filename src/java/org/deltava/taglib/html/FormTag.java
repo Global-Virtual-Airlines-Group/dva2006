@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import java.io.UnsupportedEncodingException;
@@ -9,13 +9,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.*;
 
 import org.deltava.beans.*;
-
+import org.deltava.taglib.ContentHelper;
 import org.deltava.util.system.SystemData;
 
 /**
  * A JSP tag for generating HTML forms.
  * @author Luke
- * @version 6.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -31,6 +31,7 @@ public class FormTag extends ElementTag {
     
     private String _scheme;
     private boolean _spinner = true;
+    private String _spinnerURL;
     
     private String _id;
     private String _opName;
@@ -64,7 +65,15 @@ public class FormTag extends ElementTag {
      */
     @Override
     public int doStartTag() throws JspException {
-    	super.doStartTag();
+    		super.doStartTag();
+    		if (_spinner) {
+    			StringBuilder buf = new StringBuilder("/").append(SystemData.get("path.img"));
+        		buf.append("/spinner_");
+        		buf.append((_scheme == null) ? DEFAULT_SCHEME : _scheme);
+        		buf.append(".gif");
+        		_spinnerURL = buf.toString();
+        		ContentHelper.pushContent(pageContext, buf.substring(1), "image");
+    		}
         
         // Set the ACTION URL
         try {
@@ -107,10 +116,8 @@ public class FormTag extends ElementTag {
         try {
         	if (_spinner) {
         		_out.print("<div id=\"spinner\" style=\"display:none;\"><img class=\"spinImg\" src=\"");
-        		_out.print(SystemData.get("path.img"));
-        		_out.print("/spinner_");
-        		_out.print((_scheme == null) ? DEFAULT_SCHEME : _scheme);
-        		_out.println(".gif\" /></div>");
+        		_out.print(_spinnerURL);
+        		_out.println("\" /></div>");
         	}
         	
             _out.println(_data.close());
