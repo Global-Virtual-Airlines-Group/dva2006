@@ -72,7 +72,7 @@ public class FormTag extends ElementTag {
         		buf.append((_scheme == null) ? DEFAULT_SCHEME : _scheme);
         		buf.append(".gif");
         		_spinnerURL = buf.toString();
-        		ContentHelper.pushContent(pageContext, buf.substring(1), "image");
+        		ContentHelper.pushContent(pageContext, _spinnerURL, "image");
     		}
         
         // Set the ACTION URL
