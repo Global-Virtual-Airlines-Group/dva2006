@@ -21,6 +21,7 @@ import org.deltava.commands.HTTPContext;
 
 public class ContentHelper {
 
+	private static final String PUSH_URL_ATTR = "$PushURLs";
 	private static final String CONTENT_MAP_ATTR = "$TagContentNames$";
 
 	// Singleton constructor
@@ -42,7 +43,7 @@ public class ContentHelper {
 		Set<String> content = (Set<String>) ctx.findAttribute(CONTENT_MAP_ATTR);
 		if (content == null) {
 			content = new HashSet<String>();
-			ctx.setAttribute(CONTENT_MAP_ATTR, content, PageContext.PAGE_SCOPE);
+			ctx.setAttribute(CONTENT_MAP_ATTR, content, PageContext.REQUEST_SCOPE);
 		}
 
 		// Add the resource to the content name map
@@ -83,9 +84,17 @@ public class ContentHelper {
 		HttpServletResponse rsp = (HttpServletResponse) ctx.getResponse();
 		if ((bctxt == null) || !bctxt.isHTTP2() || rsp.isCommitted())
 			return;
+		
+		// Load list of preloaded resources
+		@SuppressWarnings("unchecked")
+		Collection<Object> pushLinks = (Collection<Object>) ctx.findAttribute(PUSH_URL_ATTR);
+		if (pushLinks == null) {
+			pushLinks = new HashSet<Object>();
+			ctx.setAttribute(PUSH_URL_ATTR, pushLinks, PageContext.REQUEST_SCOPE);
+		}
 	
 		// Build the header
-		StringBuilder buf = new StringBuilder("<");
+		StringBuilder buf = new StringBuilder();
 		if (url.startsWith("/")) {
 			buf.append(ctx.getRequest().isSecure() ? "https" : "http");
 			buf.append("://");
@@ -93,6 +102,14 @@ public class ContentHelper {
 		}
 		
 		buf.append(url);
+		
+		// Check if we add
+		String rsrc = buf.toString();
+		if (!pushLinks.add(rsrc))
+			return;
+		
+		// Finish building
+		buf.insert(0, '<');
 		buf.append(">; rel=preload; as=");
 		buf.append(type);
 		rsp.addHeader("Link", buf.toString());
