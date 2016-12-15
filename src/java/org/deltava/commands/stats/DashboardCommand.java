@@ -2,6 +2,7 @@
 package org.deltava.commands.stats;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
@@ -18,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display performance metrics.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -33,9 +34,6 @@ public class DashboardCommand extends AbstractCommand {
 	private static final String[] CRIDE_GROUP_NAMES = {"Equipment Program", "Aircraft", "Pilot", "Scorer", "Date", "Day of Week"};
 	private static final String[] CRIDE_GSQL = {"CR.EQTYPE", "CR.ACTYPE", "CR.PILOT_ID", "CR.GRADED_BY", "CR.CREATED", "DATE_FORMAT(CR.CREATED, '%W')"};
 	
-	private static final String[] COOLER_GROUP_NAMES = {"Date", "Day of Week"};
-	private static final String[] COOLER_GSQL = {"CREATED", "DATE_FORMAT(CREATED, '%W')"};
-
 	/**
 	 * Execute the command.
 	 * @param ctx the Command context
@@ -56,7 +54,6 @@ public class DashboardCommand extends AbstractCommand {
 		// Get start and end dates
 		int startDays = StringUtils.parse(ctx.getParameter("startDays"), 31);
 		int endDays = StringUtils.parse(ctx.getParameter("endDays"), 0);
-
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -71,9 +68,9 @@ public class DashboardCommand extends AbstractCommand {
 			Collections.sort(metrics, cmp);
 			results.put("pirepApproval", metrics);
 			if (dao.isPilotID()) {
-				UserDataMap udmap = uddao.get(getUserIDs(metrics));
+				UserDataMap udmap = uddao.get(metrics.stream().map(PerformanceMetrics::getAuthorID).collect(Collectors.toSet()));
 				Map<Integer, Pilot> pilots = pdao.getByID(udmap.getByTable(SystemData.get("airline.db") + ".PILOTS"), "PILOTS");
-				updatePilotNames(pilots, metrics);
+				metrics.forEach(pm -> { Pilot usr = pilots.get(Integer.valueOf(pm.getAuthorID())); if (usr != null) pm.setName(usr.getName()); });
 				Collections.sort(metrics, cmp);
 			}
 				
@@ -83,9 +80,9 @@ public class DashboardCommand extends AbstractCommand {
 			Collections.sort(metrics, cmp);
 			results.put("examGrading", metrics);
 			if (dao.isPilotID()) {
-				UserDataMap udmap = uddao.get(getUserIDs(metrics));
+				UserDataMap udmap = uddao.get(metrics.stream().map(PerformanceMetrics::getAuthorID).collect(Collectors.toSet()));
 				Map<Integer, Pilot> pilots = pdao.getByID(udmap.getByTable(SystemData.get("airline.db") + ".PILOTS"), "PILOTS");
-				updatePilotNames(pilots, metrics);
+				metrics.forEach(pm -> { Pilot usr = pilots.get(Integer.valueOf(pm.getAuthorID())); if (usr != null) pm.setName(usr.getName()); });
 				Collections.sort(metrics, cmp);
 			}
 			
@@ -95,9 +92,9 @@ public class DashboardCommand extends AbstractCommand {
 			Collections.sort(metrics, cmp);
 			results.put("rideGrading", metrics);
 			if (dao.isPilotID()) {
-				UserDataMap udmap = uddao.get(getUserIDs(metrics));
+				UserDataMap udmap = uddao.get(metrics.stream().map(PerformanceMetrics::getAuthorID).collect(Collectors.toSet()));
 				Map<Integer, Pilot> pilots = pdao.getByID(udmap.getByTable(SystemData.get("airline.db") + ".PILOTS"), "PILOTS");
-				updatePilotNames(pilots, metrics);
+				metrics.forEach(pm -> { Pilot usr = pilots.get(Integer.valueOf(pm.getAuthorID())); if (usr != null) pm.setName(usr.getName()); });
 				Collections.sort(metrics, cmp);
 			}
 			
@@ -107,9 +104,9 @@ public class DashboardCommand extends AbstractCommand {
 			Collections.sort(metrics, cmp);
 			results.put("pirepStats", metrics);
 			if (dao.isPilotID()) {
-				UserDataMap udmap = uddao.get(getUserIDs(metrics));
+				UserDataMap udmap = uddao.get(metrics.stream().map(PerformanceMetrics::getAuthorID).collect(Collectors.toSet()));
 				Map<Integer, Pilot> pilots = pdao.getByID(udmap.getByTable(SystemData.get("airline.db") + ".PILOTS"), "PILOTS");
-				updatePilotNames(pilots, metrics);
+				metrics.forEach(pm -> { Pilot usr = pilots.get(Integer.valueOf(pm.getAuthorID())); if (usr != null) pm.setName(usr.getName()); });
 				Collections.sort(metrics, cmp);
 			}
 			
@@ -119,17 +116,11 @@ public class DashboardCommand extends AbstractCommand {
 			Collections.sort(metrics, cmp);
 			results.put("acarsStats", metrics);
 			if (dao.isPilotID()) {
-				UserDataMap udmap = uddao.get(getUserIDs(metrics));
+				UserDataMap udmap = uddao.get(metrics.stream().map(PerformanceMetrics::getAuthorID).collect(Collectors.toSet()));
 				Map<Integer, Pilot> pilots = pdao.getByID(udmap.getByTable(SystemData.get("airline.db") + ".PILOTS"), "PILOTS");
-				updatePilotNames(pilots, metrics);
+				metrics.forEach(pm -> { Pilot usr = pilots.get(Integer.valueOf(pm.getAuthorID())); if (usr != null) pm.setName(usr.getName()); });
 				Collections.sort(metrics, cmp);
 			}
-
-			// Load Water Cooler statistics
-			dao.setCategorySQL(COOLER_GSQL[StringUtils.arrayIndexOf(COOLER_GROUP_NAMES, ctx.getParameter("coolerGroup"), 0)]);
-			//metrics = dao.getCoolerPosts(startDays, endDays);
-			//Collections.sort(metrics, cmp);
-			//results.put("coolerStats", metrics);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
@@ -143,7 +134,6 @@ public class DashboardCommand extends AbstractCommand {
 		ctx.setAttribute("pirepGroupOptions", ComboUtils.fromArray(PIREP_GROUP_NAMES), REQUEST);
 		ctx.setAttribute("examGroupOptions", ComboUtils.fromArray(EXAM_GROUP_NAMES), REQUEST);
 		ctx.setAttribute("rideGroupOptions", ComboUtils.fromArray(CRIDE_GROUP_NAMES), REQUEST);
-		ctx.setAttribute("coolerGroupOptions", ComboUtils.fromArray(COOLER_GROUP_NAMES), REQUEST);
 		
 		// Save start/end dates
 		ctx.setAttribute("startDays", Integer.valueOf(startDays), REQUEST);
@@ -156,38 +146,5 @@ public class DashboardCommand extends AbstractCommand {
 		CommandResult result = ctx.getResult();
 		result.setURL("/jsp/stats/dashBoard.jsp");
 		result.setSuccess(true);
-	}
-	
-	/*
-	 * Helper method to extract database IDs from metrics bean categories.
-	 */
-	private static Collection<Integer> getUserIDs(Collection<PerformanceMetrics> metrics) {
-		Collection<Integer> results = new HashSet<Integer>();
-		for (Iterator<PerformanceMetrics> i = metrics.iterator(); i.hasNext(); ) {
-			PerformanceMetrics pm = i.next();
-			try {
-				results.add(Integer.valueOf(pm.getName()));
-			} catch (NumberFormatException nfe) {
-				// not a number
-			}
-		}
-		
-		return results;
-	}
-	
-	/*
-	 * Helper method to update Pilot names.
-	 */
-	private static void updatePilotNames(Map<Integer, Pilot> users, Collection<PerformanceMetrics> metrics) {
-		for (Iterator<PerformanceMetrics> i = metrics.iterator(); i.hasNext(); ) {
-			PerformanceMetrics pm = i.next();
-			try {
-				Pilot usr = users.get(Integer.valueOf(pm.getName()));
-				if (usr != null)
-					pm.setName(usr.getName());
-			} catch (NumberFormatException nfe) {
-				// not a number
-			}
-		}
 	}
 }
