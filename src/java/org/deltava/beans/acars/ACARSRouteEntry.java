@@ -680,7 +680,15 @@ public class ACARSRouteEntry extends RouteEntry {
 		// Add Pause/Stall/VAS/Warning flags
 		if (isFlagSet(FLAG_PAUSED))
 			buf.append("<span class=\"error\">FLIGHT PAUSED</span><br />");
+		if (_frameRate <= 8) {
+			buf.append("<br /><span class=\"warn\">FRAME RATE - ");
+			buf.append(_frameRate);
+			buf.append(" fps<br />");
+		}
 		if ((_vasFree > 0) && (_vasFree < 524288)) {
+			if (_frameRate > 8)
+				buf.append("<br />");
+				
 			buf.append("<span class=\"warn\">LOW MEMORY - ");
 			buf.append(_vasFree / 1024);
 			buf.append("K</span><br />");
