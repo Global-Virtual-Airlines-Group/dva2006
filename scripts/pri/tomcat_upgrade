@@ -38,6 +38,7 @@ rm bin/*.tar.gz
 chmod 755 bin/*.sh
 chmod 644 bin/*.jar
 chmod 644 bin/*.xml
+ln -s /usr/local/bin/jsvc bin/jsvc
 
 # Create the logging symlink
 rm -r logs
