@@ -1,20 +1,24 @@
 // Copyright 2006, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
+import org.deltava.beans.*;
+
 /**
  * A bean to track performance metrics data.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
-public class PerformanceMetrics implements java.io.Serializable, Comparable<PerformanceMetrics> {
+public class PerformanceMetrics implements java.io.Serializable, AuthoredBean, Comparable<PerformanceMetrics> {
 
 	private String _name;
 	private double _avg;
 	private double _max;
 	private double _min;
 	private long _count;
+	
+	private int _authorID;
 	
 	/**
 	 * Creates a new performance metrics bean.
@@ -67,6 +71,11 @@ public class PerformanceMetrics implements java.io.Serializable, Comparable<Perf
 		return _min;
 	}
 	
+	@Override
+	public int getAuthorID() {
+		return _authorID;
+	}
+
 	/**
 	 * Updates the category name.
 	 * @param name the category name
@@ -100,6 +109,12 @@ public class PerformanceMetrics implements java.io.Serializable, Comparable<Perf
 	public void setLimits(double mn, double mx) {
 		_max = mx;
 		_min = mn;
+	}
+	
+	@Override
+	public void setAuthorID(int id) {
+		DatabaseBean.validateID(_authorID, id);
+		_authorID = id;
 	}
 
 	/**

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,13 +8,13 @@ import static org.deltava.beans.flight.FlightReport.*;
 
 import org.deltava.beans.testing.TestStatus;
 import org.deltava.beans.stats.PerformanceMetrics;
-
+import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to load performance data from the database.
  * @author Luke
- * @version 5.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -225,17 +225,24 @@ public class GetPerformance extends DAO {
 		}
 	}
 	
-	/**
+	/*
 	 * Helper method to parse result sets.
 	 */
 	private List<PerformanceMetrics> execute() throws SQLException {
 		List<PerformanceMetrics> results = new ArrayList<PerformanceMetrics>();
+		boolean isPilotID = isPilotID();
 		try (ResultSet rs = _ps.executeQuery()) {
 			while (rs.next()) {
 				PerformanceMetrics pm = new PerformanceMetrics(rs.getString(1));
 				pm.setAverage(rs.getDouble(2));
 				pm.setLimits(rs.getDouble(3), rs.getDouble(4));
 				pm.setCount(rs.getLong(5));
+				if (isPilotID) {
+					int id = StringUtils.parse(pm.getName(), 0);
+					if (id > 0)
+						pm.setAuthorID(id);
+				}
+				
 				results.add(pm);
 			}
 		}
