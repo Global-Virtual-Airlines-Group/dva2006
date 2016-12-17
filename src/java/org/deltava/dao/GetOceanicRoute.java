@@ -12,7 +12,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object for Oceanic Routes.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -115,7 +115,7 @@ public class GetOceanicRoute extends GetNavAirway {
     	// Build the SQL statement
     	StringBuilder sqlBuf = new StringBuilder("SELECT * FROM common.OCEANIC_ROUTES WHERE (ROUTETYPE=?) AND ");
     	if (dt == null)
-    		sqlBuf.append("(VALID_DATE = (SELECT MAX(VALID_DATE) FROM common.OCEANIC_ROUTES))");
+    		sqlBuf.append("(VALID_DATE = (SELECT MAX(VALID_DATE) FROM common.OCEANIC_ROUTES WHERE (ROUTETYPE=?)))");
     	else
     		sqlBuf.append("(VALID_DATE=DATE(?))");
     	
@@ -126,6 +126,8 @@ public class GetOceanicRoute extends GetNavAirway {
     		_ps.setInt(1, routeType.ordinal());
     		if (dt != null)
     			_ps.setTimestamp(2, createTimestamp(dt));
+    		else
+    			_ps.setInt(2, routeType.ordinal());
     		
     		// Execute the query
     		OceanicTrack trk = null;
