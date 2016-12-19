@@ -1738,7 +1738,7 @@
 	<command id="dashboard">
 		<name>Management Dashboard</name>
 		<class>org.deltava.commands.stats.DashboardCommand</class>
-		<roles>HR</roles>
+		<roles>HR,Operations,PIREP,Examination,AcademyAdmin</roles>
 	</command>
 
 	<command id="examstats">
