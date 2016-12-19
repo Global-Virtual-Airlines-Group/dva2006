@@ -61,6 +61,8 @@ public class DashboardCommand extends AbstractCommand {
 			GetUserData uddao = new GetUserData(con);
 			GetPilot pdao = new GetPilot(con);
 			GetPerformance dao = new GetPerformance(con);
+			if (!ctx.isUserInRole("HR") && !ctx.isUserInRole("Operations"))
+				dao.setUserID(ctx.getUser().getID());
 			
 			// Load PIREP approval statistics
 			dao.setCategorySQL(PIREP_GSQL[StringUtils.arrayIndexOf(PIREP_GROUP_NAMES, ctx.getParameter("paGroup"), 0)]);
@@ -100,7 +102,7 @@ public class DashboardCommand extends AbstractCommand {
 			
 			// Load Flight Report statistics
 			dao.setCategorySQL(PIREP_GSQL[StringUtils.arrayIndexOf(PIREP_GROUP_NAMES, ctx.getParameter("frGroup"), 3)]);
-			metrics = dao.getFlights(startDays, endDays);
+			metrics = dao.getFlights(startDays, endDays, false);
 			Collections.sort(metrics, cmp);
 			results.put("pirepStats", metrics);
 			if (dao.isPilotID()) {
@@ -112,7 +114,7 @@ public class DashboardCommand extends AbstractCommand {
 			
 			// Load ACARS Flight Report statistics
 			dao.setCategorySQL(PIREP_GSQL[StringUtils.arrayIndexOf(PIREP_GROUP_NAMES, ctx.getParameter("afrGroup"), 3)]);
-			metrics = dao.getACARSFlights(startDays, endDays);
+			metrics = dao.getFlights(startDays, endDays, true);
 			Collections.sort(metrics, cmp);
 			results.put("acarsStats", metrics);
 			if (dao.isPilotID()) {

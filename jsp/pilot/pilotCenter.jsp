@@ -649,7 +649,7 @@ training session with a Flight Academy student.</td>
 </c:if>
 </content:filter>
 </c:if>
-<content:filter roles="HR,PIREP,Operations">
+<content:filter roles="HR,PIREP,Examination,AcademyAdmin,Operations">
 <!-- Human Resources Admin Section -->
 <tr class="title caps">
  <td colspan="2">HUMAN RESOURCES</td>
@@ -669,6 +669,10 @@ training session with a Flight Academy student.</td>
 </content:filter>
 </tr>
 </content:filter>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="dashboard">Performance Dashboard</el:cmd></td>
+ <td class="data">You can view performance metrics on Flight Report approval, Pilot Examination and Check Ride scoring delays and Flight Report logging.</td>
+</tr>
 <content:filter roles="HR,Operations">
 <tr>
  <td class="mid"><el:cmd className="bld" url="accomplishrecalc">Recalculate Pilot Accomplishments</el:cmd></td>
@@ -926,11 +930,6 @@ new Online Events, System News entries and NOTAMs, and Flight Report approval or
  <td class="data">You can view and update profiles for hosted IMAP mailboxes.</td>
 </tr>
 </c:if>
-<tr>
- <td class="mid"><el:cmd className="bld" url="dashboard">Performance Dashboard</el:cmd></td>
- <td class="data">You can view performance metrics on Flight Report approval, Pilot Examination and Check Ride
-scoring delays, discussion forum participation rates and Flight Report logging.</td>
-</tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="examstats">Examination / Check Ride Statistics</el:cmd></td>
  <td class="data">You can view performance metrics on Pilot Examination and Check Ride scoring.</td>
