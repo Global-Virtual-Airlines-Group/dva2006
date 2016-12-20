@@ -80,6 +80,7 @@ public class RedisUtils {
 			config.setMaxWaitMillis(75);
 			config.setMaxTotal(12);
 			config.setMinEvictableIdleTimeMillis(10000);
+			config.setTestWhileIdle(true);
 			_client = new JedisPool(config, addr, 6379);
 			write(LATENCY_KEY, 864000, String.valueOf((System.currentTimeMillis() / 1000) + (3600 * 24 * 365)));
 			log.info("Initialized");
