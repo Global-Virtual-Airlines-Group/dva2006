@@ -15,7 +15,7 @@ import redis.clients.jedis.Jedis;
 /**
  * A Data Access Object to write map tiles to Redis. 
  * @author Luke
- * @version 7.1
+ * @version 7.2
  * @since 5.0
  */
 
@@ -35,12 +35,10 @@ public class SetTiles extends RedisDAO implements SeriesWriter {
 		// Write the Tiles
 		setBucket("mapTiles", is.getType(), seriesDate);
 		try (Jedis j = RedisUtils.getConnection()) {
-			j.pipelined();
 			j.setex(RedisUtils.encodeKey(createKey("$ME")), _expiry, RedisUtils.write(Boolean.TRUE));
 			j.setex(RedisUtils.encodeKey(createKey("$SIZE")), _expiry, RedisUtils.write(Integer.valueOf(is.size())));
 			j.setex(RedisUtils.encodeKey(createKey("$ME")), _expiry, RedisUtils.write(new ArrayList<TileAddress>(is.keySet())));
 			is.entrySet().forEach(me -> j.setex(RedisUtils.encodeKey(createKey(me.getKey().getName())), _expiry, RedisUtils.write(me.getValue())));
-			j.sync();
 		}
 	}
 	
@@ -60,12 +58,10 @@ public class SetTiles extends RedisDAO implements SeriesWriter {
 			Collection<TileAddress> keys = (Collection<TileAddress>) RedisUtils.get(createKey("$KEYS"));
 			if (keys != null) {
 				try (Jedis j = RedisUtils.getConnection()) {
-					j.pipelined();
 					j.expire(RedisUtils.encodeKey(createKey("$SIZE")), 0);
 					j.expire(RedisUtils.encodeKey(createKey("$KEYS")), 0);
 					j.expire(RedisUtils.encodeKey(createKey("$ME")), 0);
 					keys.forEach(k -> j.expire(RedisUtils.encodeKey(createKey(k.getName())), 0));
-					j.sync();
 				}
 			}
 		} catch (Exception e) {
