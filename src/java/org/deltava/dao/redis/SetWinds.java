@@ -12,7 +12,7 @@ import redis.clients.jedis.Jedis;
 /**
  * A Data Access Object to write wind data to Redis.
  * @author Luke
- * @version 7.1
+ * @version 7.2
  * @since 5.4
  */
 
@@ -36,7 +36,6 @@ public class SetWinds extends RedisDAO {
 			Collection<Object> keys = new ArrayList<Object>();
 			RedisUtils.write(createKey("$ME"), _expiry, Boolean.TRUE);
 			try (Jedis j = RedisUtils.getConnection()) {
-				j.pipelined();
 				for (WindData w : wd) {
 					byte[] key = RedisUtils.encodeKey(createKey(w.cacheKey()));
 					j.setex(key, _expiry, RedisUtils.write(w));
@@ -45,7 +44,6 @@ public class SetWinds extends RedisDAO {
 				
 				j.setex(RedisUtils.encodeKey(createKey("$KEYS")), _expiry, RedisUtils.write(keys));
 				j.setex(RedisUtils.encodeKey(createKey("$SIZE")), _expiry, RedisUtils.write(Integer.valueOf(keys.size())));
-				j.sync();
 			}
 		}
 	}
