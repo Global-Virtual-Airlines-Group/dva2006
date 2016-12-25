@@ -45,11 +45,11 @@
 	<!-- System caches -->
 	<cache id="AircraftInfo" max="96" expires="3600" />
 	<cache id="EquipmentTypes" max="24" expires="3600" />
-	<cache id="Accomplishments" max="144" expires="3600" />
+	<cache id="Accomplishments" max="192" expires="3600" />
 	<cache id="Metadata" max="24" expires="1800" />
 
 	<cache id="MessageTemplate" max="32" />
-	<cache id="LibraryDLCount" max="96" expires="1800" />
+	<cache id="LibraryDLCount" max="144" expires="3600" />
 
 	<cache id="IPInfo" max="1024" expires="345600" />
 	<cache id="IPBlock" max="6144" expires="345600" />
