@@ -1,10 +1,12 @@
-// Copyright 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
+
+import org.deltava.util.StringUtils;
 
 /**
  * A JSP tag to display a national flag image.
  * @author Luke
- * @version 5.0
+ * @version 7.2
  * @since 2.5
  */
 
@@ -34,6 +36,7 @@ public class FlagTag extends ImageTag {
 	 * @param code the ISO 3166-1 country code
 	 */
 	public void setCountryCode(String code) {
+		if (StringUtils.isEmpty(code)) return;
 		StringBuilder buf = new StringBuilder("flags/");
 		buf.append(code.toLowerCase());
 		buf.append(".png");
