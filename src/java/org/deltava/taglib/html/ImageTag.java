@@ -32,9 +32,12 @@ public class ImageTag extends ElementTag {
 	@Override
 	public int doEndTag() throws JspException {
 		try {
-			_out.print(_data.open(true, true));
-			StringBuilder buf = new StringBuilder(_data.get("src"));
-			ContentHelper.pushContent(pageContext, buf.insert(0, '/').toString(), "image");
+			String src = _data.get("src");
+			if (src != null) {
+				_out.print(_data.open(true, true));
+				StringBuilder buf = new StringBuilder(src);
+				ContentHelper.pushContent(pageContext, buf.insert(0, '/').toString(), "image");
+			}
 		} catch (Exception e) {
 			throw new JspException(e);
 		} finally {
