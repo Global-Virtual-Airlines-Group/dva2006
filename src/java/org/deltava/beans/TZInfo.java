@@ -98,7 +98,8 @@ public class TZInfo implements java.io.Serializable, ComboAlias, Comparable<TZIn
 	 * @see TimeZone#getID()
 	 */
 	public String getID() {
-		return _tz.getId();
+		String id = _tz.getId();
+		return "Z".equals(id) ? "Etc/UTC" : id;
 	}
 
 	/**
