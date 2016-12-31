@@ -146,8 +146,8 @@ public class GFSDownloadTask extends Task {
 				wwdao.setExpiry(18 * 3600);
 				for (PressureLevel lvl : PressureLevel.values()) {
 					log.info("Loading " + lvl.getPressure() + "mb wind data");
-					GRIBResult<WindData> data = dao.load(lvl);		
-					wwdao.write(data);
+					//GRIBResult<WindData> data = dao.load(lvl);		
+					//wwdao.write(data);
 				}
 				
 				// Write GFS cycle data
