@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to Authenticate users.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -60,15 +60,8 @@ public class LoginCommand extends AbstractCommand {
 		}
 
 		// If we're already logged in, just redirect to home
-		boolean hasSSL = SystemData.getApp(SystemData.get("airline.code")).getSSL();
 		if (ctx.isAuthenticated()) {
 			result.setURL(StringUtils.isEmpty(referer) ? "home.do" : referer);
-			result.setType(ResultType.REDIRECT);
-			result.setSuccess(true);
-			return;
-		} else if (hasSSL && !isSecure && (ctx.getCookie("secureLogin") != null)) {
-			HttpServletRequest req = ctx.getRequest();
-			result.setURL("https://" + req.getServerName() + req.getRequestURI());
 			result.setType(ResultType.REDIRECT);
 			result.setSuccess(true);
 			return;
@@ -212,20 +205,6 @@ public class LoginCommand extends AbstractCommand {
 			c.setPath("/");
 			ctx.addCookie(c);
 			
-			// Set secure only cookie if requested
-			boolean doSecureLogin = Boolean.valueOf(ctx.getParameter("secureLogin")).booleanValue();
-			if (doSecureLogin) {
-				c = new Cookie("secureLogin", "true");
-				c.setHttpOnly(true);
-				c.setPath(ctx.getRequest().getRequestURI());
-				c.setMaxAge(365 * 86400);
-				ctx.addCookie(c);
-			} else if (!isSecure) {
-				c = new Cookie("secureLogin", "");
-				c.setMaxAge(0);
-				ctx.addCookie(c);
-			}
-			
 			// Check if we have an address validation entry outstanding
 			GetAddressValidation avdao = new GetAddressValidation(con);
 			AddressValidation av = avdao.get(p.getID());
@@ -277,7 +256,7 @@ public class LoginCommand extends AbstractCommand {
 			s.setAttribute(HTTPContext.USER_ATTR_NAME, p);
 			s.setAttribute(HTTPContext.ADDRINFO_ATTR_NAME, addrInfo);
 			s.setAttribute(HTTPContext.USERAGENT_ATTR_NAME, userAgent);
-			s.setAttribute(HTTPContext.SSL_ATTR_NAME, Boolean.valueOf(ctx.getRequest().isSecure()));
+			s.setAttribute(HTTPContext.SSL_ATTR_NAME, Boolean.valueOf(isSecure));
 			s.setAttribute(CommandContext.AUTH_COOKIE_NAME, cData);
 			
 			// Determine where we are referring from, if on the site return back there
@@ -291,7 +270,7 @@ public class LoginCommand extends AbstractCommand {
 				s.setAttribute("next_url", "home.do");
 
 			// Add the user to the User pool
-			UserPool.add(p, s.getId(), addrInfo, userAgent, ctx.getRequest().isSecure());
+			UserPool.add(p, s.getId(), addrInfo, userAgent, isSecure);
 			
 			// Check if we need to save maximum users
 			if (UserPool.getMaxSizeDate().isAfter(maxUserDate)) {

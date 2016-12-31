@@ -76,8 +76,7 @@ from <span class="sec bld">${domain}</span> in order to log into our web site.<b
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data sec small"><el:box name="saveInfo" idx="*" value="true" label="Remember me next time I Log in" checked="${!empty fname}" />
-<content:secure secure="true"><br /><el:box name="secureLogin" idx="*" value="true" label="Use Secure Login by default" checked="true" /></content:secure></td>
+ <td class="data sec small"><el:box name="saveInfo" idx="*" value="true" label="Remember me next time I Log in" checked="${!empty fname}" /></td>
 </tr>
 <c:if test="${!empty dupeUsers}">
 <tr class="title caps">
