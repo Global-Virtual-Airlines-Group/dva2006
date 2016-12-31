@@ -459,13 +459,8 @@
 				<code>DL</code>
 			</list>
 
-			<!-- FTP download data -->
-			<download>
-				<host>67.97.212.90</host>
-				<user>deltava</user>
-				<pwd>Ssim#2001</pwd>
-				<file>deltava - *</file>
-			</download>
+            <!-- Local file to import -->			
+			<file>/var/cache/sched/deltava - jan 23.zip</file>
 
 			<!-- Automated import -->
 			<import>

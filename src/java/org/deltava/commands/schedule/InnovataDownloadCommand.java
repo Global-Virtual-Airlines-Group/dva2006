@@ -3,6 +3,7 @@ package org.deltava.commands.schedule;
 
 import java.io.*;
 import java.util.*;
+import java.util.zip.ZipInputStream;
 import java.sql.Connection;
 import java.time.*;
 import java.time.temporal.ChronoField;
@@ -14,13 +15,12 @@ import org.deltava.dao.*;
 import org.deltava.dao.file.innovata.*;
 
 import org.deltava.util.*;
-import org.deltava.util.ftp.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to download and import Innovata LLC schedule data.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -36,10 +36,7 @@ public class InnovataDownloadCommand extends ScheduleImportCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the file name to download and init the cache
-		String fileName = SystemData.get("schedule.innovata.download.file");
-		FTPCache cache = new FTPCache(SystemData.get("schedule.innovata.cache"));
-		cache.setHost(SystemData.get("schedule.innovata.download.host"));
-		cache.setCredentials(SystemData.get("schedule.innovata.download.user"), SystemData.get("schedule.innovata.download.pwd"));
+		String fileName = SystemData.get("schedule.innovata.file");
 
 		// Calculate replay date
 		String dt = SystemData.get("schedule.innovata.import.replayDate");
@@ -51,26 +48,17 @@ public class InnovataDownloadCommand extends ScheduleImportCommand {
 		}
 		
 		// Connect to the FTP server and download the files as needed
-		try {
+		try (InputStream fis = new FileInputStream(fileName)) {
 			Collection<String> msgs = new ArrayList<String>();
 			Collection<String> codes = new HashSet<String>();
 			Collection<ScheduleEntry> entries = new ArrayList<ScheduleEntry>();
-			
-			// If we haven't specified a file name, get the newest file
-			if ((fileName == null) || fileName.contains("*"))
-				fileName = cache.getNewest("", FileUtils.fileFilter(fileName, ".zip"));
-
-			// Download the files
-			boolean isCached = false;
-			InputStream is = cache.getFile(fileName);
-
-			// Get download information
-			FTPDownloadData ftpInfo = cache.getDownloadInfo();
-			isCached |= ftpInfo.isCached();
-			if (ftpInfo.isCached())
-				msgs.add("Using local copy of " + fileName);
-			else
-				msgs.add("Downloaded " + fileName + ", " + ftpInfo.getSize() + " bytes, " + ftpInfo.getSpeed() + " bytes/sec");
+			InputStream is = fis;
+			if (fileName.endsWith(".zip")) {
+				@SuppressWarnings("resource")
+				ZipInputStream zis = new ZipInputStream(fis);
+				zis.getNextEntry();
+				is = zis;
+			}
 			
 			// Get the connection
 			Connection con = ctx.getConnection();
@@ -116,14 +104,14 @@ public class InnovataDownloadCommand extends ScheduleImportCommand {
 				mdwdao.delete(aCode + ".schedule.effDate");
 
 			// Save the cache status
-			ctx.setAttribute("innovataCache", Boolean.valueOf(isCached), REQUEST);
+			ctx.setAttribute("innovataCache", Boolean.TRUE, REQUEST);
 			ctx.setAttribute("replayDate", replayDate, REQUEST);
 
 			// Save the data in the session
 			ctx.setAttribute("entries", entries, SESSION);
 			ctx.setAttribute("schedType", SCHED_TYPES[INNOVATA], SESSION);
 			ctx.setAttribute("errors", msgs, SESSION);
-		} catch (DAOException de) {
+		} catch (IOException | DAOException de) {
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
