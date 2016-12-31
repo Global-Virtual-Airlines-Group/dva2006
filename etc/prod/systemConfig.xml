@@ -272,7 +272,7 @@
 		<http>
 			<format>httpd-access.dva.log</format>
 			<parser>org.deltava.util.log.ApacheLogParser</parser>
-			<archive>/home/backup/logs/dva</archive>
+			<archive>/home/backup/httplogs/dva</archive>
 		</http>
 	</log>
 
