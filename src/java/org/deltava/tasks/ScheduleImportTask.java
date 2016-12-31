@@ -3,6 +3,7 @@ package org.deltava.tasks;
 
 import java.io.*;
 import java.util.*;
+import java.util.zip.*;
 import java.time.*;
 import java.time.temporal.ChronoField;
 import java.sql.Connection;
@@ -16,13 +17,12 @@ import org.deltava.mail.*;
 import org.deltava.taskman.*;
 
 import org.deltava.util.*;
-import org.deltava.util.ftp.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Scheduled Task to automatically update the flight Schedule from Innovata.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -57,27 +57,19 @@ public class ScheduleImportTask extends Task {
 		}
 
 		// Get the file name(s) to download and init the cache
-		String fileName = SystemData.get("schedule.innovata.download.file");
-		FTPCache cache = new FTPCache(SystemData.get("schedule.innovata.cache"));
-		cache.setHost(SystemData.get("schedule.innovata.download.host"));
-		cache.setCredentials(SystemData.get("schedule.innovata.download.user"), SystemData.get("schedule.innovata.download.pwd"));
+		String fileName = SystemData.get("schedule.innovata.file");
 
 		// Connect to the FTP server and download the files as needed
 		final Collection<ScheduleEntry> entries = new ArrayList<ScheduleEntry>();
-		try {
-			// If we haven't specified a file name, get the newest file
-			if ((fileName == null) || fileName.contains("*"))
-				fileName = cache.getNewest("", FileUtils.fileFilter(fileName, ".zip"));
-
-			// Download the file
-			InputStream is = cache.getFile(fileName);
-			FTPDownloadData ftpInfo = cache.getDownloadInfo();
-			if (ftpInfo.isCached())
-				log.info("Using local copy of " + fileName);
-			else
-				log.info("Downloaded " + fileName + ", " + ftpInfo.getSize() + " bytes, " + ftpInfo.getSpeed() + " bytes/sec");
+		try (InputStream fis = new FileInputStream(fileName)) {
+			InputStream is = fis;
+			if (fileName.endsWith(".zip")) {
+				@SuppressWarnings("resource")
+				ZipInputStream zis = new ZipInputStream(fis);
+				zis.getNextEntry();
+				is = zis;
+			}
 			
-			// Get the connection
 			Connection con = ctx.getConnection();
 
 			// Initialize the DAOs
@@ -112,7 +104,7 @@ public class ScheduleImportTask extends Task {
 			// Save error conditions
 			SetImportStatus swdao = new SetImportStatus(SystemData.get("schedule.innovata.cache"), "import.status.txt");
 			swdao.write(dao.getInvalidAirlines(), dao.getInvalidAirports(), dao.getInvalidEQ(), dao.getErrorMessages());
-		} catch (DAOException de) {
+		} catch (IOException | DAOException de) {
 			log.error(de.getMessage(), de);
 			entries.clear();
 		} finally {
