@@ -29,12 +29,8 @@ public class SyntheticRequest extends ExtendedRequest {
 		_userID = userID;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.newrelic.api.agent.Request#getAttribute(java.lang.String)
-	 */
 	@Override
 	public Object getAttribute(String arg0) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
