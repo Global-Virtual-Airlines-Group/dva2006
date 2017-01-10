@@ -16,11 +16,6 @@
 <content:css name="main" />
 <content:css name="form" />
 <content:sysdata var="airlineURL" name="airline.url" />
-<meta property="og:title" content="<content:airline /> Flight Report - ${pirep.flightCode}" />
-<meta property="og:type" content="game.achievement" />
-<meta property="og:url" content="https://${airlineURL}/pirep.do?id=${pirep.hexID}" />
-<meta property="og:site_name" content="<content:airline />" />
-<meta property="game:points" content="1" />
 <content:pics />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
@@ -85,9 +80,8 @@ golgotha.local.showRunwayChoices = function() {
 </c:choose>
 <el:form action="${act}" method="post" link="${lnk}" validate="${validation}">
 <el:table className="form">
-<!-- PIREP Title Bar -->
 <tr class="title">
- <td class="caps" colspan="2">FLIGHT ${pirep.flightCode} FLOWN ON <fmt:date fmt="d" date="${pirep.date}" /><span class="nophone"> by <el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></span></td>
+ <td class="caps" colspan="2">FLIGHT ${pirep.flightCode} <c:if test="${!fn:isDraft(pirep)}">FLOWN ON <fmt:date fmt="d" date="${pirep.date}" /></c:if><span class="nophone"> by <el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></span></td>
 </tr>
 
 <!-- Pirep Data -->
