@@ -3,8 +3,7 @@
 <project default="deploy">
     <target name="javadoc" description="Build the Golgotha JavaDoc">
 		<mkdir dir="${java.io.tmpdir}/javadoc" />
-        <javadoc destdir="${java.io.tmpdir}/javadoc" access="package" source="1.8" use="false"
-    		useexternalfile="true" notree="false" nonavbar="false" noindex="false" splitindex="true" 
+        <javadoc destdir="${java.io.tmpdir}/javadoc" access="package" source="1.8" use="false" useexternalfile="true" notree="false" nonavbar="false" noindex="false" splitindex="true" 
         	author="true" version="true" nodeprecatedlist="false" nodeprecated="false">
         	<fileset dir=".">
         		<include name="src/java/**/*.java" />
@@ -23,7 +22,7 @@
    	    	</classpath>
         	
            	<doctitle><![CDATA[<h2>Golgotha API Documentation</h2>]]></doctitle>
-			<bottom><![CDATA[<i>Copyright &#169; 2004-2015 Global Virtual Airlines Group. All Rights Reserved.</i>]]></bottom>
+			<bottom><![CDATA[<i>Copyright &#169; 2004-2017 Global Virtual Airlines Group. All Rights Reserved.</i>]]></bottom>
         </javadoc>
     	
 		<!-- TAR up the JavaDoc -->
@@ -50,15 +49,12 @@
     		command="rm -rf ${javadoc.ssh.path.javadoc}/*" />
 
     	<!-- Upload the JavaDoc archive -->
-    	<scp todir="${javadoc.ssh.user}@${javadoc.ssh.server}:/tmp" trust="yes" verbose="yes" port="${javadoc.ssh.port}" 
-    		keyfile="${javadoc.ssh.key}" localfile="${java.io.tmpdir}/golgotha_javadoc.tar.bz2" />
+    	<scp todir="${javadoc.ssh.user}@${javadoc.ssh.server}:/tmp" trust="yes" verbose="yes" port="${javadoc.ssh.port}" keyfile="${javadoc.ssh.key}" localfile="${java.io.tmpdir}/golgotha_javadoc.tar.bz2" />
 
     	<!-- Explode the JavaDoc -->
-    	<sshexec keyfile="${javadoc.ssh.key}" username="${javadoc.ssh.user}" trust="yes"
-    		host="${javadoc.ssh.server}" timeout="37500" failonerror="no" port="${javadoc.ssh.port}"
+    	<sshexec keyfile="${javadoc.ssh.key}" username="${javadoc.ssh.user}" trust="yes" host="${javadoc.ssh.server}" timeout="37500" failonerror="no" port="${javadoc.ssh.port}"
     		command="cd ${javadoc.ssh.path.javadoc} ; tar xvfj /tmp/golgotha_javadoc.tar.bz2" />
-		<sshexec keyfile="${javadoc.ssh.key}" username="${javadoc.ssh.user}" trust="yes"
-    	    host="${javadoc.ssh.server}" timeout="12500" failonerror="no" port="${javadoc.ssh.port}"
+		<sshexec keyfile="${javadoc.ssh.key}" username="${javadoc.ssh.user}" trust="yes" host="${javadoc.ssh.server}" timeout="12500" failonerror="no" port="${javadoc.ssh.port}"
     	    command="rm /tmp/golgotha_javadoc.tar.bz2" />
 
     	<!-- Clean out the temp folder -->
@@ -122,8 +118,7 @@
 		
 		<!-- Compile the code -->
 		<mkdir dir="${java.io.tmpdir}/build/classes" />
-		<javac srcdir="src/java" destdir="${java.io.tmpdir}/build/classes" debug="true" includeantruntime="false"
-		 debuglevel="lines,vars,source" source="1.8" target="1.8" compiler="modern" fork="true">
+		<javac srcdir="src/java" destdir="${java.io.tmpdir}/build/classes" debug="true" includeantruntime="false" debuglevel="lines,vars,source" source="1.8" target="1.8" compiler="modern" fork="true">
 			<compilerarg value="-Xlint:unchecked,deprecation,finally" />
 	    	<classpath id="javac.classpath">
 				<pathelement path="${classpath}" />
@@ -368,8 +363,7 @@
 		</javac>
 
 		<!-- Compress the Java classes into a single JAR file -->
-		<jar basedir="${java.io.tmpdir}/build/wsdl" compress="true" index="true"
-		 	destfile="lib/deploy/flightaware.jar" />
+		<jar basedir="${java.io.tmpdir}/build/wsdl" compress="true" index="true" destfile="lib/deploy/flightaware.jar" />
 		
 		<!-- Archive the source -->
 		<zip destfile="lib/src/flightaware.zip" basedir="${java.io.tmpdir}/src/wsdl" includes="**/*.java" />
@@ -436,7 +430,6 @@
 		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:${webapp.ssh.path.common}"
 			port="${webapp.ssh.port}" verbose="yes" trust="yes" keyfile="${webapp.ssh.key}">
 			<fileset dir="lib/deploy" includes="*.jar">
-				<exclude name="spymemcached*.jar" />
 				<modified seldirs="false" algorithm="digest" update="true" delayupdate="false">
 					<param name="algorithm.algorithm" value="MD5" />
 					<param name="cache.cachefile" value="../.local_data/jar.cache.txt" />
@@ -457,7 +450,6 @@
 				</modified>
 			</fileset>
 			<fileset dir="lib/deploy">
-				<include name="spymemcached*.jar" />
 				<modified seldirs="false" algorithm="digest" update="true" delayupdate="false">
 					<param name="algorithm.algorithm" value="MD5" />
 					<param name="cache.cachefile" value="../.local_data/jar.cache.txt" />
@@ -579,5 +571,49 @@
 				</modified>
 			</fileset>
 		</scp>
+	</target>
+	
+	<target name="tracktile" depends="compile" description="Build CLI ACARS Track generator">
+		<property name="jar.tracks" value="${java.io.tmpdir}/build/acars_tracks.jar" />
+
+	    <!-- Compile the code -->
+	    <mkdir dir="${java.io.tmpdir}/build/tracktile" />
+	    <javac srcdir="src/test" destdir="${java.io.tmpdir}/build/tracktile" debug="true" includeantruntime="false" debuglevel="lines,vars,source" source="1.8" target="1.8" compiler="modern" fork="true">
+	    	<include name="org/deltava/acars/*.java" />
+	        <compilerarg value="-Xlint:unchecked,deprecation,finally" />
+	        <classpath id="javac.classpath">
+	            <pathelement path="${classpath}" />
+	        	<fileset dir="${java.io.tmpdir}/build" includes="*.jar" />
+	            <fileset dir="lib">
+	                <include name="**/*.jar"/>
+	            </fileset>
+            </classpath>
+	    </javac>
+		
+		<!-- Build the JAR manifest -->
+		<mkdir dir="${java.io.tmpdir}/build/tracktile/META-INF" />
+		<manifest file="${java.io.tmpdir}/build/tracktile/META-INF/MANIFEST.MF">
+			<attribute name="Built-By" value="${user.name}" />
+			<attribute name="Main-Class" value="org.deltava.acars.PlotGlobalMap" />
+			<attribute name="Class-Path" value="log4j-1.2.17.jar jdom-2.0.6.jar mysql-connector-java-5.1.40-bin.jar golgotha.jar golgotha_ipc-2.10.jar" />
+		</manifest>
+
+		<!-- Compress the base Java classes into a single JAR file -->
+	    <jar basedir="${java.io.tmpdir}/build/tracktile" compress="true" index="false" destfile="${jar.tracks}" manifest="${java.io.tmpdir}/build/tracktile/META-INF/MANIFEST.MF" />
+		
+		<!-- Copy package to dest folder -->
+		<mkdir dir="D:\Temp\etc" />
+		<copy file="${jar.tracks}" todir="D:/temp" />
+		<copy file="${jar.core}" todir="D:/temp" />
+		<copy file="etc/log4j.test.properties" tofile="D:/temp/etc/log4j.properties" />
+		<copy file="etc/systemConfig.xml" todir="D:/temp/etc" />
+		<copy todir="D:/temp">
+			<fileset dir="lib/deploy">
+			    <include name="mysql-*.jar" />
+				<include name="log4j-*.jar" />
+				<include name="jdom-*.jar" />
+				<include name="golgotha_ipc-2.*.jar" />
+			</fileset>
+		</copy>
 	</target>
 </project>
