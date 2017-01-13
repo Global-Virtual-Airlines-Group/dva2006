@@ -6,8 +6,6 @@ import java.util.concurrent.*;
 
 import org.apache.log4j.*;
 
-import junit.framework.TestCase;
-
 import org.deltava.dao.*;
 import org.deltava.util.ThreadUtils;
 import org.deltava.util.system.SystemData;
@@ -15,32 +13,26 @@ import org.deltava.util.system.SystemData;
 import org.gvagroup.tile.TileAddress;
 
 @SuppressWarnings("javadoc")
-abstract class PlotMap extends TestCase {
+abstract class PlotMap {
 	
-	protected Logger log;
-	protected static final String URL = "jdbc:mysql://sirius.sce.net/acars?user=luke&password=test";
+	protected static Logger log;
+	protected static final String URL = "jdbc:mysql://sirius.sce.net/acars?useSSL=false&user=luke&password=test";
 	
-	private static final int READ_THREADS = 12;
-	private static final int WRITE_THREADS = 10;
+	static int READ_THREADS = Runtime.getRuntime().availableProcessors() + 1;
+	static int WRITE_THREADS = Runtime.getRuntime().availableProcessors() + 2;
 	
 	protected final Map<Integer, ProjectInfo> _zooms = new HashMap<Integer, ProjectInfo>();
 	
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		
-		// Init Log4j
-		PropertyConfigurator.configure("etc/log4j.test.properties");
-		log = Logger.getLogger(PlotMap.class);
+	protected static void setUp() throws Exception {
 		
 		SystemData.init();
 		TileData.init("D:\\temp\\swap");
 		
 		// Connect to the database
 		Class<?> drv = Class.forName("com.mysql.jdbc.Driver");
-		assertNotNull(drv);
+		assert (drv != null);
 		Connection c = DriverManager.getConnection(URL);
-		assertNotNull(c);
+		assert (c != null);
 		
 		// Load the airports/time zones
 		GetTimeZone tzdao = new GetTimeZone(c);
@@ -50,12 +42,6 @@ abstract class PlotMap extends TestCase {
 		GetAirline aldao = new GetAirline(c);
 		SystemData.add("airlines", aldao.getAll());
 		log.info("Loaded System Data");
-	}
-	
-	@Override
-	protected void tearDown() throws Exception {
-		LogManager.shutdown();
-		super.tearDown();
 	}
 	
 	protected static BlockingQueue<Integer> getIDs(int max) throws Exception {
@@ -81,7 +67,7 @@ abstract class PlotMap extends TestCase {
 	protected static void truncateTracks() throws SQLException {
 		try (Connection c = DriverManager.getConnection(URL)) {
 			try (Statement s = c.createStatement()) {
-				s.executeUpdate("TRUNCATE acars.TRACKS");
+				s.executeUpdate("DELETE FROM acars.TRACKS WHERE (Z<10)");
 			}
 		}
 	}
@@ -89,7 +75,7 @@ abstract class PlotMap extends TestCase {
 	protected static void truncateTracks(int minZoom) throws SQLException {
 		try (Connection c = DriverManager.getConnection(URL)) {
 			try (PreparedStatement ps = c.prepareStatement("DELETE FROM acars.TRACKS WHERE (Z>=?)")) {
-				ps.setInt(1,  minZoom);
+				ps.setInt(1, minZoom);
 				ps.executeUpdate();
 			}
 		}
@@ -98,12 +84,12 @@ abstract class PlotMap extends TestCase {
 	/**
 	 * Load Flight data from the database
 	 */
+	@SuppressWarnings("static-method")
 	protected void loadFlights(BlockingQueue<Integer> IDs, SparseGlobalTile gt, RouteEntryFilter f) throws Exception {
 		log.info("Loading Flight Data for " + IDs.size() + " flights");
 		Collection<Thread> wrks = new ArrayList<Thread>(24);
 		for (int x = 0; x < READ_THREADS; x++) {
-			Connection c2 = DriverManager.getConnection(URL);
-			ReadWorker rw = new ReadWorker(x+1, f, c2, gt, IDs);
+			ReadWorker rw = new ReadWorker(x+1, f, gt, IDs);
 			Thread t = new Thread(rw, rw.toString());
 			t.setPriority(Math.max(Thread.MIN_PRIORITY, Thread.currentThread().getPriority() - 1));
 			t.setDaemon(true);

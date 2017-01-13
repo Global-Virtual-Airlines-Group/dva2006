@@ -26,8 +26,6 @@ public class WriteWorker implements Runnable, Comparable<WriteWorker> {
 	
 	private final ProjectInfo _ppp;
 	
-	//private static final int MAX_GREY = 160;
-	
 	public WriteWorker(int id, ProjectInfo ppp, Connection c, BlockingQueue<TileAddress> work, SparseGlobalTile in, SparseGlobalTile out) {
 		super();
 		_id = id;
@@ -118,21 +116,15 @@ public class WriteWorker implements Runnable, Comparable<WriteWorker> {
 					hasData = true;
 					float value = (cnt *0.9f / _ppp.getMax()) + 0.105f;
 					int v = Math.min(255, (int)(value*255));
-					/* if (v > MAX_GREY) {
-						int dV = ((v - MAX_GREY) >> 3) + MAX_GREY;
-						int rgb = (dV << 16) + (dV << 8) + v;
-						png.setRGB(x, y, 0xFF000000 | rgb);
-					} else { */
-						int rgb = (v << 16) + (v << 8) + v;
-						png.setRGB(x, y, 0xFF000000 | rgb);
-					//}
+					int rgb = (v << 16) + (v << 8) + v;
+					png.setRGB(x, y, 0xFF000000 | rgb);
 				}
 			}
 		}
 		
 		try {
 			if (hasData) {
-				try (ByteArrayOutputStream buf = new ByteArrayOutputStream(256)) {
+				try (ByteArrayOutputStream buf = new ByteArrayOutputStream(512)) {
 					ImageIO.write(png, "png", buf);
 					_ps.setInt(1, addr.getX());
 					_ps.setInt(2, addr.getY());
