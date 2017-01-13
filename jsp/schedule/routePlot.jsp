@@ -106,11 +106,11 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr id="sids" style="display:none;">
  <td class="label">Standard Departure (SID)</td>
- <td class="data"><el:combo name="sid" size="1" idx="*" options="${emptyList}" firstEntry="-" onChange="void golgotha.routePlot.plotMap()" /></td>
+ <td class="data"><el:combo name="sid" size="1" idx="*" options="${sids}" value="${sid}" firstEntry="-" onChange="void golgotha.routePlot.plotMap()" /></td>
 </tr>
 <tr id="stars" style="display:none;">
  <td class="label">Terminal Arrival (STAR)</td>
- <td class="data"><el:combo name="star" size="1" idx="*" options="${emptyList}" firstEntry="-" onChange="void golgotha.routePlot.plotMap()" /></td>
+ <td class="data"><el:combo name="star" size="1" idx="*" options="${stars}" value="${star}" firstEntry="-" onChange="void golgotha.routePlot.plotMap()" /></td>
 </tr>
 <tr>
  <td class="label">Waypoints</td>
@@ -192,14 +192,14 @@ golgotha.airportLoad.config.airline = 'all';
 golgotha.airportLoad.setHelpers(f.airportD);
 golgotha.airportLoad.setHelpers(f.airportA);
 golgotha.airportLoad.setHelpers(f.airportL);
-
-// Load the airports
 <c:choose>
 <c:when test="${empty flight}">
+// Load the airports
 f.airportD.loadAirports(golgotha.airportLoad.config);
-window.setTimeout(function() { f.airportA.loadAirports(golgotha.airportLoad.config); }, 725);
+window.setTimeout(function() { f.airportA.loadAirports(golgotha.airportLoad.config); }, 700);
 </c:when>
 <c:otherwise>
+golgotha.routePlot.keepRoute = ${(!empty sid) || (!empty star)}; 
 golgotha.routePlot.updateRoute(${!empty rwy}, false);
 </c:otherwise>
 </c:choose>

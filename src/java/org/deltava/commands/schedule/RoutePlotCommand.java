@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -36,6 +36,10 @@ public class RoutePlotCommand extends AbstractCommand {
 		try {
 			Connection con = ctx.getConnection();
 			
+			// Load aircraft types
+			GetAircraft acdao = new GetAircraft(con);
+			ctx.setAttribute("eqTypes", acdao.getAircraftTypes(SystemData.get("airline.code")), REQUEST);
+			
 			// Look for a draft PIREP
 			GetFlightReports frdao = new GetFlightReports(con);
 			FlightReport dfr = frdao.get(ctx.getID());
@@ -48,7 +52,6 @@ public class RoutePlotCommand extends AbstractCommand {
 					ctx.setAttribute("sim", dfr.getSimulator(), REQUEST);
 				
 				// Get aircraft profile and SID runways
-				GetAircraft acdao = new GetAircraft(con);
 				GetNavRoute navdao = new GetNavRoute(con);
 				Aircraft a = acdao.get(dfr.getEquipmentType());
 				Collection<String> sidRwys = navdao.getSIDRunways(dfr.getAirportD());
@@ -63,19 +66,28 @@ public class RoutePlotCommand extends AbstractCommand {
 				METAR wxD = wxdao.getMETAR(dfr.getAirportD());
 				if ((wxD != null) && (wxD.getWindSpeed() > 0))
 					runways = CollectionUtils.sort(runways, new RunwayComparator(wxD.getWindDirection(), wxD.getWindSpeed()));
-
+				
 				// Save runways and best runway
+				Runway rwyD = runways.isEmpty() ? null : runways.get(0);
 				ctx.setAttribute("dRwys", runways, REQUEST);
-				if (runways.size() > 0)
-					ctx.setAttribute("rwy", runways.get(0), REQUEST);
+				ctx.setAttribute("rwy", rwyD, REQUEST);
+				
+				// Load SID/STARs
+				ctx.setAttribute("sids", navdao.getRoutes(dfr.getAirportD(), TerminalRoute.Type.SID), REQUEST);
+				ctx.setAttribute("stars", navdao.getRoutes(dfr.getAirportA(), TerminalRoute.Type.STAR), REQUEST);
 				
 				// Load up route
 				if (!StringUtils.isEmpty(dfr.getRoute())) {
 					List<String> wps = StringUtils.split(dfr.getRoute(), " ");
-					if (TerminalRoute.isNameValid(wps.get(0)))
+					if (TerminalRoute.isNameValid(wps.get(0))) {
+						if ((rwyD != null) && (wps.size() > 1))
+							ctx.setAttribute("sid", navdao.getBestRoute(dfr.getAirportD(), TerminalRoute.Type.SID, wps.get(0), wps.get(1), rwyD), REQUEST);
+						
 						wps.remove(0);
-					if ((wps.size() > 1) && TerminalRoute.isNameValid(wps.get(wps.size() - 1)))
+					} if ((wps.size() > 1) && TerminalRoute.isNameValid(wps.get(wps.size() - 1))) {
+						ctx.setAttribute("star", navdao.getBestRoute(dfr.getAirportA(), TerminalRoute.Type.STAR, wps.get(wps.size() -1), wps.get(wps.size() - 2), (String)null), REQUEST);
 						wps.remove(wps.size() - 1);
+					}
 					
 					dfr.setRoute(StringUtils.listConcat(wps, " "));
 				}
@@ -94,10 +106,6 @@ public class RoutePlotCommand extends AbstractCommand {
 					}
 				}
 			}
-			
-			// Load aircraft types
-			GetAircraft acdao = new GetAircraft(con);
-			ctx.setAttribute("eqTypes", acdao.getAircraftTypes(SystemData.get("airline.code")), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

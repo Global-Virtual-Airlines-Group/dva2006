@@ -329,11 +329,13 @@ golgotha.routePlot.setRoute = function(combo)
 var f = document.forms[0];
 if (combo.selectedIndex < 1) {
 	f.cruiseAlt.value = '';
-	if (!golgotha.routePlot.keepRoute)
+	if (!golgotha.routePlot.keepRoute) {
 		f.route.value = '';
+		f.sid.selectedIndex = 0;
+		f.star.selectedIndex = 0;
+	}
+
 	f.comments.value = ''
-	f.sid.selectedIndex = 0;
-	f.star.selectedIndex = 0;
 	if (f.routeID)
 		f.routeID.value = '0';
 
