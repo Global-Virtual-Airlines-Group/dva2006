@@ -1,9 +1,8 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import org.deltava.beans.*;
 import org.deltava.beans.navdata.*;
@@ -243,7 +242,7 @@ public class GetNavData extends DAO {
 		Collection<Runway> results = new HashSet<Runway>();
 		try {
 			if (sim != Simulator.UNKNOWN) {
-				prepareStatement("SELECT * FROM common.RUNWAYS WHERE (ICAO=?) AND (SIMVERSION=?)");	
+				prepareStatementWithoutLimits("SELECT * FROM common.RUNWAYS WHERE (ICAO=?) AND (SIMVERSION=?)");	
 				_ps.setString(1, a.getICAO());
 				_ps.setInt(2, Math.max(2004, sim.getCode()));
 				try (ResultSet rs = _ps.executeQuery()) {
@@ -262,12 +261,11 @@ public class GetNavData extends DAO {
 				_ps.close();
 			}
 			
-			prepareStatement("SELECT * FROM common.NAVDATA WHERE (ITEMTYPE=?) AND (CODE=?)");
+			prepareStatementWithoutLimits("SELECT * FROM common.NAVDATA WHERE (ITEMTYPE=?) AND (CODE=?)");
 			_ps.setInt(1, Navaid.RUNWAY.ordinal());
 			_ps.setString(2, a.getICAO());
 			Collection<NavigationDataBean> r2 = execute();
-			for (Iterator<NavigationDataBean> i = r2.iterator(); i.hasNext(); ) {
-				NavigationDataBean nd = i.next();
+			for (NavigationDataBean nd : r2) {
 				if (nd.getType() == Navaid.RUNWAY)
 					results.add((Runway) nd);
 			}
@@ -311,26 +309,16 @@ public class GetNavData extends DAO {
 		if ((distance < 0) || (distance > 1000))
 			throw new IllegalArgumentException("Invalid distance -  " + distance);
 
-		// Calculate the height/width of the square in degrees (use 95% of the value of a lon degree)
-		double height = (distance / GeoLocation.DEGREE_MILES) / 2;
-		double width = (height * 0.95);
-
-		Collection<NavigationDataBean> results = null;
 		try {
-			prepareStatement("SELECT * FROM common.NAVDATA WHERE (ITEMTYPE=?) AND ((LATITUDE > ?) AND (LATITUDE < ?)) "
-					+ "AND ((LONGITUDE > ?) AND (LONGITUDE < ?))");
-			_ps.setInt(1, Navaid.INT.ordinal());
-			_ps.setDouble(2, loc.getLatitude() - height);
-			_ps.setDouble(3, loc.getLatitude() + height);
-			_ps.setDouble(4, loc.getLongitude() - width);
-			_ps.setDouble(5, loc.getLongitude() + width);
-			results = execute();
+			prepareStatement("SELECT ND.*, ST_Distance(LL, ST_PointFromText(?,?)) AS DST FROM common.NAVDATA ND WHERE (ND.ITEMTYPE=?) HAVING (DST<?) ORDER BY DST");
+			_ps.setString(1, formatLocation(loc));
+			_ps.setInt(2, GEO_SRID);
+			_ps.setInt(3, Navaid.INT.ordinal());
+			_ps.setDouble(4, distance / GeoLocation.DEGREE_MILES);
+			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
-
-		// Ensure that we are within the correct distance
-		return results.stream().filter(nd -> nd.distanceTo(loc) < distance).collect(Collectors.toList());
 	}
 
 	/**
@@ -339,32 +327,22 @@ public class GetNavData extends DAO {
 	 * @param distance the distance in miles
 	 * @return a Map of NavigationDataBeans, with the code as the key
 	 * @throws DAOException if a JDBC error occurs
-	 * @throws IllegalArgumentException if distance is negative or > 1000
+	 * @throws IllegalArgumentException if distance is negative or > 1500
 	 */
 	public Collection<NavigationDataBean> getObjects(GeoLocation loc, int distance) throws DAOException {
 		if ((distance < 0) || (distance > 1500))
 			throw new IllegalArgumentException("Invalid distance -  " + distance);
 
-		// Calculate the height/width of the square in degrees (use 85% of the value of a lon degree)
-		double height = (distance / GeoLocation.DEGREE_MILES) / 2;
-		double width = (height * 0.85);
-
-		Collection<NavigationDataBean> results = null;
 		try {
-			prepareStatement("SELECT * FROM common.NAVDATA WHERE (ITEMTYPE<=?) AND ((LATITUDE>?) AND (LATITUDE<?)) "
-				+ "AND ((LONGITUDE>?) AND (LONGITUDE<?)) ORDER BY ITEMTYPE DESC");
-			_ps.setInt(1, Navaid.NDB.ordinal());
-			_ps.setDouble(2, loc.getLatitude() - height);
-			_ps.setDouble(3, loc.getLatitude() + height);
-			_ps.setDouble(4, loc.getLongitude() - width);
-			_ps.setDouble(5, loc.getLongitude() + width);
-			results = execute();
+			prepareStatement("SELECT ND.*, ST_Distance(LL, ST_PointFromText(?,?)) AS DST FROM common.NAVDATA ND WHERE (ND.ITEMTYPE<=?) HAVING (DST<?) ORDER BY DST");
+			_ps.setString(1, formatLocation(loc));
+			_ps.setInt(2, GEO_SRID);
+			_ps.setInt(3, Navaid.NDB.ordinal());
+			_ps.setDouble(4, distance / GeoLocation.DEGREE_MILES); // convert to degrees
+			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
-
-		// Ensure that we are within the correct distance
-		return results.stream().filter(nd -> nd.distanceTo(loc) < distance).collect(Collectors.toList());
 	}
 
 	/*
@@ -418,9 +396,9 @@ public class GetNavData extends DAO {
 						rwy.setName(rs.getString(7));
 						rwy.setHeading(rs.getInt(8));
 						rwy.setRegion(rs.getString(9));
-						if (md.getColumnCount() > 10) {
-							rwy.setMagVar(rs.getDouble(10));
-							rwy.setSurface(Surface.values()[rs.getInt(11)]);
+						if (md.getColumnCount() > 11) {
+							rwy.setMagVar(rs.getDouble(11));
+							rwy.setSurface(Surface.values()[rs.getInt(12)]);
 						}
 						
 						obj = rwy;
