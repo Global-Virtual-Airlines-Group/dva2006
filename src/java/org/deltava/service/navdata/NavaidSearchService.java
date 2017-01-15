@@ -36,18 +36,15 @@ public class NavaidSearchService extends WebService {
 	public int execute(ServiceContext ctx) throws ServiceException {
 
 		// Get the navaid to search for
-		double lat = StringUtils.parse(ctx.getParameter("lat"), 0.0);
-		double lng = StringUtils.parse(ctx.getParameter("lng"), 0.0);
 		int range = Math.min(1000, StringUtils.parse(ctx.getParameter("range"), 150));
-		boolean includeAirports = Boolean.valueOf(ctx.getParameter("airports")).booleanValue();
 		
 		// Build the location
-		GeoLocation loc = new GeoPosition(lat, lng);
-		Collection<NavigationDataBean> results = new ArrayList<NavigationDataBean>();
+		GeoLocation loc = new GeoPosition(StringUtils.parse(ctx.getParameter("lat"), 0.0), StringUtils.parse(ctx.getParameter("lng"), 0.0));
+		Collection<NavigationDataBean> results = new LinkedHashSet<NavigationDataBean>();
 		try {
 			GetNavData dao = new GetNavData(ctx.getConnection());
 			dao.setQueryMax(1250);
-          	results.addAll(dao.getObjects(loc, range * 3 / 2));
+          	results.addAll(dao.getObjects(loc, range));
           	results.addAll(dao.getIntersections(loc, range));
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
@@ -61,10 +58,11 @@ public class NavaidSearchService extends WebService {
 		doc.setRootElement(re);
 		
 		// Format navaids
+		boolean includeAirports = Boolean.valueOf(ctx.getParameter("airports")).booleanValue();
 		final NumberFormat df = new DecimalFormat("#0.000000");
 		for (NavigationDataBean nd : results) {
 			if (includeAirports || (nd.getType() != Navaid.AIRPORT)) {
-				Element we = new Element("waypoint");
+				Element we = XMLUtils.createElement("waypoint", nd.getInfoBox(), true);
 				we.setAttribute("lat", df.format(nd.getLatitude()));
 				we.setAttribute("lng", df.format(nd.getLongitude()));
 				we.setAttribute("code", nd.getCode());
@@ -72,7 +70,6 @@ public class NavaidSearchService extends WebService {
 				we.setAttribute("pal", String.valueOf(nd.getPaletteCode()));
 				we.setAttribute("icon", String.valueOf(nd.getIconCode()));
 				we.setAttribute("type", nd.getType().getName());
-				we.addContent(new CDATA(nd.getInfoBox()));
 				re.addContent(we);
 			}
 		}

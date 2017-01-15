@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2011, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.beans.GeoLocation;
 /**
  * A JDBC Data Access Object. DAOs are used to read and write persistent data to JDBC data sources.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -75,8 +75,7 @@ public abstract class DAO {
 	 * @return a Java date/time
 	 */
 	protected static java.time.Instant expandDate(Date dt) {
-		if (dt == null) return null;
-		return Instant.ofEpochMilli(dt.getTime()).plusSeconds(12 * 3600);
+		return (dt == null) ? null : Instant.ofEpochMilli(dt.getTime()).plusSeconds(12 * 3600);
 	}
 	
 	/**
