@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.time.Instant;
@@ -691,7 +691,7 @@ public class ACARSRouteEntry extends RouteEntry {
 				
 			buf.append("<span class=\"warn\">LOW MEMORY - ");
 			buf.append(_vasFree / 1024);
-			buf.append("K</span><br />");
+			buf.append("MB</span><br />");
 		}
 		
 		String warn = getWarning();
