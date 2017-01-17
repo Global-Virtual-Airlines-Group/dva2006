@@ -1,4 +1,4 @@
-// Copyright 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -14,9 +14,9 @@ import org.deltava.util.CollectionUtils;
 import org.deltava.util.StringUtils;
 
 /**
- * A Web Site Command for users to view Promotion Eligibility. 
+ * A Web Site Command for users to view Promotion Eligibility.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 3.0
  */
 
@@ -26,31 +26,31 @@ public class PromotionEligibilityCommand extends AbstractTestHistoryCommand {
 		private final boolean _isOK;
 		private final boolean _isEligible;
 		private final String _msg;
-		
+
 		EligibilityMessage(String msg) {
 			this(false, false, msg);
 		}
-		
+
 		EligibilityMessage(boolean isOK, boolean isEligible, String msg) {
 			super();
 			_isOK = isOK;
 			_isEligible = isEligible;
 			_msg = msg;
 		}
-		
+
 		@Override
 		public String getRowClassName() {
 			if (!_isOK && _isEligible)
 				return "opt2";
 			return _isOK ? null : "warn";
 		}
-		
+
 		@Override
 		public String toString() {
 			return _msg;
 		}
 	}
-	
+
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
@@ -58,84 +58,85 @@ public class PromotionEligibilityCommand extends AbstractTestHistoryCommand {
 	 */
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
-		
-        // Determine who to display
-        int id = ctx.isUserInRole("HR") ? ctx.getID() : ctx.getUser().getID();
-        if (id == 0)
-        	id = ctx.getUser().getID();
-		
+
+		// Determine who to display
+		int id = ctx.isUserInRole("HR") ? ctx.getID() : ctx.getUser().getID();
+		if (id == 0)
+			id = ctx.getUser().getID();
+
 		try {
 			Connection con = ctx.getConnection();
-			
-            // Initialize the testing history helper
+
+			// Initialize the testing history helper
 			GetPilot pdao = new GetPilot(con);
 			Pilot p = pdao.get(id);
-            TestingHistoryHelper testHistory = initTestHistory(p, con);
-            ctx.setAttribute("pilot", p, REQUEST);
-            
-            // Get all of the equipment programs
-            GetEquipmentType eqdao = new GetEquipmentType(con);
-            Collection<EquipmentType> eqTypes = eqdao.getActive();
-            
-            // Get the exam profile DAO
-            GetExamProfiles epdao = new GetExamProfiles(con);
-            
-            // Iterate through each equipment type
-            Map<EquipmentType, EligibilityMessage> eqData = new TreeMap<EquipmentType, EligibilityMessage>();
-            for (Iterator<EquipmentType> i = eqTypes.iterator(); i.hasNext(); ) {
-            	EquipmentType eq = i.next();
-            	if (eq.getName().equals(p.getEquipmentType())) {
-            		eqData.put(eq, new EligibilityMessage(true, true, "You are currently in this Equipment program."));
-            		continue;
-            	}
-            	
-            	// Check if we've passed the FO exams
-            	Collection<String> examNames = eq.getExamNames(Rank.FO); 
-            	if (!testHistory.hasPassed(examNames)) {
-            		Collection<String> msgs = new ArrayList<String>();
-            		for (String examName : examNames) {
-            			ExamProfile ep = epdao.getExamProfile(examName);
-            			if (!testHistory.hasPassed(Collections.singleton(examName))) {
-            				try {
-            					testHistory.canWrite(ep);
-            					msgs.add("You are eligible to take but have not passed the " + examName + " examination.");
-            				} catch (IneligibilityException ie) {
-            					msgs.add("You have not passed and cannot take the " + examName + " examination - " + ie.getMessage());
-            				}
-            			} else
-            				msgs.add("You have passed the " + examName + " examination.");
-            		}
-            		
-            		eqData.put(eq, new EligibilityMessage(StringUtils.listConcat(msgs, "\n")));
-            		continue;
-            	}
-            	
-            	// Check if we've passed the check ride
-            	if (!testHistory.hasCheckRide(eq)) {
-            		try {
-            			testHistory.canRequestCheckRide(eq);
-            			eqData.put(eq, new EligibilityMessage(false, true, "You are elgibile to request but have not passed the Check Ride for this Equipment program."));
-            		} catch (IneligibilityException ie) {
-            			eqData.put(eq, new EligibilityMessage("You are not elgibile to request the Check Ride for this Equipment program - " + ie.getMessage()));
-            		}
-            		
-            		continue;
-            	}
-            	
-            	// 	Check if we can switch
-            	if (!testHistory.canRequestRatings(eq)) {
-             		eqData.put(eq, new EligibilityMessage(true, true, "You are eligible to switch to this Equipment program."));
-             		continue;
-            	}
+			TestingHistoryHelper testHistory = initTestHistory(p, con);
+			ctx.setAttribute("pilot", p, REQUEST);
 
-            	// Figure out what new ratings we can get
-            	Collection<String> extraRatings = new TreeSet<String>(CollectionUtils.getDelta(eq.getRatings(), p.getRatings()));
-           		eqData.put(eq, new EligibilityMessage(false, true, "You are eligible to switch to or seek the following additional ratings (" +
-           				StringUtils.listConcat(extraRatings, ", ") + ") in this Equipment program."));
-            }
-			
-			// Save the equipment type data
-            ctx.setAttribute("eqData", eqData, REQUEST);
+			// Get all of the equipment programs
+			GetEquipmentType eqdao = new GetEquipmentType(con);
+			Collection<EquipmentType> eqTypes = eqdao.getActive();
+
+			// Get the exam profile DAO
+			GetExamProfiles epdao = new GetExamProfiles(con);
+
+			// Iterate through each equipment type
+			Map<EquipmentType, EligibilityMessage> eqData = new TreeMap<EquipmentType, EligibilityMessage>();
+			for (Iterator<EquipmentType> i = eqTypes.iterator(); i.hasNext();) {
+				EquipmentType eq = i.next();
+				if (eq.getName().equals(p.getEquipmentType())) {
+					eqData.put(eq, new EligibilityMessage(true, true, "You are currently in this Equipment program."));
+					continue;
+				}
+
+				// Check if we've passed the FO exams
+				Collection<String> examNames = eq.getExamNames(Rank.FO);
+				if (!testHistory.hasPassed(examNames)) {
+					Collection<String> msgs = new ArrayList<String>();
+					for (String examName : examNames) {
+						ExamProfile ep = epdao.getExamProfile(examName);
+						if (!testHistory.hasPassed(Collections.singleton(examName))) {
+							try {
+								testHistory.canWrite(ep);
+								msgs.add("You are eligible to take but have not passed the " + examName + " examination.");
+							} catch (IneligibilityException ie) {
+								msgs.add("You have not passed and cannot take the " + examName + " examination - " + ie.getMessage());
+							}
+						} else
+							msgs.add("You have passed the " + examName + " examination.");
+					}
+
+					eqData.put(eq, new EligibilityMessage(StringUtils.listConcat(msgs, "\n")));
+					continue;
+				}
+
+				// Check if we've passed the check ride
+				if (!testHistory.hasCheckRide(eq)) {
+					try {
+						testHistory.canRequestCheckRide(eq);
+						eqData.put(eq, new EligibilityMessage(false, true,
+								"You are eligibile to request but have not passed the Check Ride for this Equipment program."));
+					} catch (IneligibilityException ie) {
+						eqData.put(eq, new EligibilityMessage(
+								"You are not eligibile to request the Check Ride for this Equipment program - " + ie.getMessage()));
+					}
+
+					continue;
+				}
+
+				// Check if we can switch
+				if (!testHistory.canRequestRatings(eq)) {
+					eqData.put(eq, new EligibilityMessage(true, true, "You are eligible to switch to this Equipment program."));
+					continue;
+				}
+
+				// Figure out what new ratings we can get
+				Collection<String> extraRatings = new TreeSet<String>(CollectionUtils.getDelta(eq.getRatings(), p.getRatings()));
+				eqData.put(eq, new EligibilityMessage(false, true, "You are eligible to switch to or seek the following additional ratings ("
+					+ StringUtils.listConcat(extraRatings, ", ") + ") in this Equipment program."));
+			}
+
+			ctx.setAttribute("eqData", eqData, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
