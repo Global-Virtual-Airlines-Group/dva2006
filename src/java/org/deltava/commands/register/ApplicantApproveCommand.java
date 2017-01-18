@@ -1,11 +1,9 @@
-// Copyright 2005, 2006, 2007, 2010, 2012, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010, 2012, 2014, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.util.*;
 import java.sql.Connection;
 import java.time.Instant;
-
-import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
 import org.deltava.beans.acars.Restriction;
@@ -24,13 +22,11 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to hire new Applicants as Pilots.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
 public class ApplicantApproveCommand extends AbstractCommand {
-
-	private static final Logger log = Logger.getLogger(ApplicantApproveCommand.class);
 
 	/**
 	 * Executes the command.
@@ -44,7 +40,7 @@ public class ApplicantApproveCommand extends AbstractCommand {
 		MessageContext mctxt = new MessageContext();
 		mctxt.addData("user", ctx.getUser());
 
-		Applicant a = null; EquipmentType eq = null; Pilot cp = null;
+		Applicant a = null; Pilot cp = null;
 		try {
 			Connection con = ctx.getConnection();
 
@@ -68,20 +64,14 @@ public class ApplicantApproveCommand extends AbstractCommand {
 
 			// Get the Equipment Type hired into
 			GetEquipmentType eqdao = new GetEquipmentType(con);
-			eq = eqdao.get(a.getEquipmentType());
+			EquipmentType eq = eqdao.get(a.getEquipmentType());
 			if (eq == null)
 				throw notFoundException("Invalid Equipment Program - " + a.getEquipmentType());
-
-			// Log equipment type
-			log.info("Hiring " + a.getName() + " into " + eq.getName() + " program (Stage " + eq.getStage() + ")");
 
 			// Get the equipment ratings
 			Collection<String> ratings = new TreeSet<String>();
 			ratings.addAll(eq.getPrimaryRatings());
 			ratings.addAll(eq.getSecondaryRatings());
-
-			// Log ratings
-			log.info(a.getName() + " rated in " + StringUtils.listConcat(ratings, ", "));
 
 			// Get the message template
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
@@ -147,25 +137,21 @@ public class ApplicantApproveCommand extends AbstractCommand {
 			exwdao.write(cr);
 			exwdao.write(cr);
 
-			// Write Status update history
-			List<StatusUpdate> updates = new ArrayList<StatusUpdate>();
-
 			// Create a StatusUpdate for the registration
 			StatusUpdate upd = new StatusUpdate(a.getPilotID(), StatusUpdate.STATUS_CHANGE);
 			upd.setAuthorID(ctx.getUser().getID());
 			upd.setCreatedOn(a.getCreatedOn());
 			upd.setDescription("Pilot Application Submitted");
-			updates.add(upd);
 
 			// Create a StatusUpdate for the hire
 			StatusUpdate upd2 = new StatusUpdate(a.getPilotID(), StatusUpdate.STATUS_CHANGE);
 			upd2.setAuthorID(ctx.getUser().getID());
 			upd2.setDescription("Applicant Approved, Pilot Hired");
-			updates.add(upd2);
 
 			// Write the status updates
 			SetStatusUpdate updao = new SetStatusUpdate(con);
-			updao.write(updates);
+			updao.write(upd);
+			updao.write(upd2);
 
 			// Write an inactivity purge entry
 			SetInactivity idao = new SetInactivity(con);
@@ -184,6 +170,7 @@ public class ApplicantApproveCommand extends AbstractCommand {
 			// Get the Pilot and optionally set ACARS-only PIREP flag
 			GetPilot pdao = new GetPilot(con);
 			Pilot p = pdao.get(a.getPilotID()); cp = pdao.get(eq.getCPID());
+			mctxt.addData("cp", cp);
 			if (SystemData.getBoolean("users.pirep.acars_only")) {
 				p.setACARSRestriction(Restriction.NOMANUAL);
 				pwdao.write(p);
