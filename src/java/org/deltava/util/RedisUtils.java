@@ -1,4 +1,4 @@
-// Copyright 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.io.*;
@@ -36,15 +36,23 @@ public class RedisUtils {
 		if (_client == null) throw new IllegalStateException("Not started");
 	}
 	
+	/**
+	 * Returns a key's encoding in UTF-8.
+	 * @param key the key
+	 * @return the key using the standard encoding
+	 */
 	public static byte[] encodeKey(String key) {
 		return key.getBytes(StandardCharsets.UTF_8);
 	}
 	
+	/**
+	 * Helper method to deserialize an object and swallow exceptions.
+	 * @param data the serialized data
+	 * @return the Object
+	 */
 	public static Object read(byte[] data) {
-		try (ByteArrayInputStream bi = new ByteArrayInputStream(data)) {
-			try (ObjectInputStream oi = new ObjectInputStream(bi)) {
-				return oi.readObject();
-			}
+		try (ByteArrayInputStream bi = new ByteArrayInputStream(data); ObjectInputStream oi = new ObjectInputStream(bi)) {
+			return oi.readObject();
 		} catch (ClassNotFoundException cnfe) {
 			log.warn("Cannot load " + cnfe.getMessage());
 		} catch (IOException ie) {
@@ -54,12 +62,14 @@ public class RedisUtils {
 		return null;
 	}
 		
+	/**
+	 * Helper method to serialiaze an object and swallow checked exceptions.
+	 * @param o the Object to serialize
+	 * @return the serialized data
+	 */
 	public static byte[] write(Object o) {
-		try (ByteArrayOutputStream bo = new ByteArrayOutputStream(1024)) {
-			try (ObjectOutputStream oo = new ObjectOutputStream(bo)) {
-				oo.writeObject(o);
-			}
-				
+		try (ByteArrayOutputStream bo = new ByteArrayOutputStream(1024); ObjectOutputStream oo = new ObjectOutputStream(bo)) {
+			oo.writeObject(o);
 			return bo.toByteArray();
 		} catch (Exception e) {
 			log.warn("Error writing " + o.getClass().getName() + " - " + e.getClass().getSimpleName());
@@ -77,9 +87,9 @@ public class RedisUtils {
 		try {
 			JedisPoolConfig config = new JedisPoolConfig();
 			config.setMaxIdle(1); config.setMinIdle(1);
-			config.setMaxWaitMillis(75);
+			config.setMaxWaitMillis(50);
 			config.setMaxTotal(12);
-			config.setMinEvictableIdleTimeMillis(10000);
+			config.setMinEvictableIdleTimeMillis(5000);
 			config.setTestWhileIdle(true);
 			_client = new JedisPool(config, addr, 6379);
 			write(LATENCY_KEY, 864000, String.valueOf((System.currentTimeMillis() / 1000) + (3600 * 24 * 365)));
@@ -115,9 +125,8 @@ public class RedisUtils {
 	 * @return the value
 	 */
 	public static Object get(String key) {
-		checkConnection();
 		byte[] rawKey = encodeKey(key);
-		try (Jedis jc = _client.getResource()) {
+		try (Jedis jc = getConnection()) {
 			byte[] data = jc.get(rawKey);
 			if (data == null) return null;
 			Object o = read(data);
@@ -136,15 +145,12 @@ public class RedisUtils {
 	 */
 	public static void write(String key, long expiry, Object value) {
 		if (value == null) return;
-		checkConnection();
 		byte[] rawKey = encodeKey(key);
 		byte[] data = write(value);
-		try (Jedis jc = _client.getResource()) {
+		try (Jedis jc = getConnection()) {
 			if (expiry > 864000) {
-				Pipeline p = jc.pipelined();
-				p.set(rawKey, data);
-				p.expireAt(rawKey, expiry);
-				p.sync();
+				jc.set(rawKey, data);
+				jc.expireAt(rawKey, expiry);
 			} else
 				jc.setex(rawKey, (int) expiry, data);	
 		}
@@ -157,8 +163,7 @@ public class RedisUtils {
 	 * @param maxLength the maximum size of the list or zero for unlimited
 	 */
 	public static void push(String key, String value, int maxLength) {
-		checkConnection();
-		try (Jedis jc = _client.getResource()) {
+		try (Jedis jc = getConnection()) {
 			long len = jc.rpush(key, value).longValue();
 			if ((maxLength > 0) && (len > maxLength))
 				jc.ltrim(key, (len - maxLength), len);
@@ -170,8 +175,7 @@ public class RedisUtils {
 	 * @param key the key
 	 */
 	public static void delete(String key) {
-		checkConnection();
-		try (Jedis jc = _client.getResource()) {
+		try (Jedis jc = getConnection()) {
 			jc.del(encodeKey(key));
 		}
 	}
