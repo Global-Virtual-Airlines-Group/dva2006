@@ -332,9 +332,10 @@ public class GetScheduleSearch extends GetSchedule {
 		// Do a sort - check for descending sort
 		String sort = ssc.getSortBy().replace(" DESC", "");
 		int sortType = StringUtils.arrayIndexOf(ScheduleSearchCriteria.SORT_CODES, sort, 0);
-		if (sortType > 0)
-			results.sort(new ScheduleEntryComparator(sortType).reversed());
-		else
+		if (sortType > 0) {
+			Comparator<ScheduleEntry> cmp = new ScheduleEntryComparator(sortType);
+			results.sort(ssc.getSortBy().endsWith("DESC") ? cmp.reversed() : cmp);
+		} else
 			Collections.shuffle(results);
 			
 		return results;
