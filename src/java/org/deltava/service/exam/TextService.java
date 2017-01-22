@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.exam;
 
 import java.sql.Connection;
@@ -19,7 +19,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to dynamically save examination answers.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -87,7 +87,7 @@ public class TextService extends WebService {
 				wdao.answer(examID, q);
 			}
 		} catch (DAOException de) {
-			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), true);
+			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
 		} finally {
 			ctx.release();
 		}
