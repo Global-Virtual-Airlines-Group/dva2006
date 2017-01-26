@@ -1,4 +1,4 @@
-// Copyright 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -113,6 +113,7 @@ public class GetAggregateStatistics extends DAO {
 	public Collection<FlightStatsEntry> getPIREPStatistics(FlightStatsSort s, FlightStatsGroup grp) throws DAOException {
 
 		// Get the SQL statement to use
+		// FIXME: If we get FSG.PILOT as the grp, we need to use different S
 		StringBuilder sqlBuf = new StringBuilder("SELECT ");
 		sqlBuf.append(grp.getSQL());
 		sqlBuf.append(" AS LABEL, SUM(LEGS) AS SL, SUM(HOURS) AS SH, SUM(MILES) AS SM, SUM(HISTORIC) AS SHL, SUM(DISPATCH) AS SDL, "
@@ -125,7 +126,7 @@ public class GetAggregateStatistics extends DAO {
 		
 		sqlBuf.append(", SUM(IVAO+VATSIM) AS OLEGS, SUM(MILES)/SUM(LEGS) AS AVGMILES, SUM(HOURS)/SUM(LEGS) AS AVGHOURS FROM ");
 		if (grp.isPilotGroup())
-			sqlBuf.append("FLIGHTSTATS_PILOT F");
+			sqlBuf.append("FLIGHTSTATS_PILOT F LEFT JOIN PILOTS P ON (F.PILOT_ID=P.ID)");
 		else if (grp.getSQL().contains("EQTYPE"))
 			sqlBuf.append("FLIGHTSTATS_EQTYPE F");
 		else
