@@ -1,6 +1,6 @@
 #!/bin/bash
 # Tomcat upgrade script
-# (c) 2006, 2010, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+# (c) 2006, 2010, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 
 # Check the version argument is preset
 if [ "$1" == "" ]
@@ -24,6 +24,7 @@ echo "Cleaning default installation"
 rm -r webapps/docs
 rm -r webapps/examples
 rm -r webapps/ROOT
+rm -r webapps/host-manager
 rm temp/*
 rm LICENSE
 rm NOTICE
@@ -48,7 +49,6 @@ ln -s /var/log/tomcat logs
 echo "Copying libraries"
 chmod 644 lib/*.jar
 cp -pu /usr/local/tomcat/lib/* lib
-cp /usr/local/tomcat/bin/jsvc bin
 
 # Copy over configuration files
 echo "Copying Tomcat configuration"
@@ -64,6 +64,7 @@ echo "Changing file permissions"
 chgrp www temp work
 chgrp users lib
 chmod 775 lib temp work
+chown -R www webapps/manager
 
 # Switch to /usr/local
 cd /usr/local
