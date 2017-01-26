@@ -65,9 +65,9 @@ return new google.maps.ImageMapType(layerOpts);
 <content:copyright />
 </content:region>
 </content:page>
-<c:set var="maxZoomLevel"  value="${(empty localAP) ? 9 : 13}" scope="request" />
+<c:set var="maxZoomLevel"  value="${(empty localAP) ? 9 : 12}" scope="page" />
 <div id="zoomLevel" class="small bld mapTextLabel"></div>
-<script id="mapInit">
+<script id="mapInit" async>
 <map:point var="mapC" point="${mapCenter}" />
 var mapTypes = {mapTypeIds: ['acars_trackmap', google.maps.MapTypeId.SATELLITE]};
 var mapOpts = {center:mapC, minZoom:3, maxZoom:${maxZoomLevel}, zoom:6, scrollwheel:true, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:mapTypes};

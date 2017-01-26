@@ -77,7 +77,7 @@ public class PlotLocalMap extends PlotMap {
 		// Init the filter
 		Collection<String> apCodes = getPopularAirports(count, start);
 		Collection<Airport> airports = apCodes.stream().map(code -> SystemData.getAirport(code)).filter(Objects::nonNull).collect(Collectors.toList());
-		AirportEntryFilter f = new AirportEntryFilter(MAX_ZOOM, 95, airports);
+		AirportEntryFilter f = new AirportEntryFilter(MAX_ZOOM, 80, airports);
 		f.setMaxAltitude(16900);
 		
 		// Load flight IDs
