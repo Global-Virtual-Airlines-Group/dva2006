@@ -8,7 +8,7 @@
 <html lang="en">
 <head>
 <title><content:airline /> ACARS Track Map</title>
-<content:expire expires="3600" />
+<content:expire expires="7200" />
 <content:css name="main" />
 <content:css name="form" />
 <content:pics />
@@ -70,7 +70,7 @@ return new google.maps.ImageMapType(layerOpts);
 <script id="mapInit">
 <map:point var="mapC" point="${mapCenter}" />
 var mapTypes = {mapTypeIds: ['acars_trackmap', google.maps.MapTypeId.SATELLITE]};
-var mapOpts = {center:mapC, minZoom:3, maxZoom:${maxZoomLevel}, zoom:6, scrollwheel:false, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
+var mapOpts = {center:mapC, minZoom:3, maxZoom:${maxZoomLevel}, zoom:6, scrollwheel:true, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
 
 // Create the map
 var map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
@@ -78,7 +78,7 @@ var tmStyledMap = new google.maps.StyledMapType(golgotha.maps.styles.TRACKMAP, {
 map.mapTypes.set('acars_trackmap', tmStyledMap);
 map.setMapTypeId('acars_trackmap');
 google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
-var trkLayer = new golgotha.maps.track.ShapeLayer(0.45, 3, ${maxZoomLevel});
+var trkLayer = new golgotha.maps.track.ShapeLayer(0.525, 3, ${maxZoomLevel});
 map.overlayMapTypes.insertAt(0, trkLayer);
 google.maps.event.addListener(map, 'zoom_changed', golgotha.maps.updateZoom);
 <c:if test="${!empty localAP}">
