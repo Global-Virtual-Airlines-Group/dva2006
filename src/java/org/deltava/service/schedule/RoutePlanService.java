@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.util.*;
@@ -130,6 +130,9 @@ public class RoutePlanService extends WebService {
 
 			// Add the destination airport
 			routePoints.add(new AirportLocation(aA));
+			
+			// Trim out detours like the route plotter does
+			routePoints = GeoUtils.stripDetours(routePoints, 60);
 
 			// If we're saving a draft PIREP
 			if (saveDraft) {
