@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.gvagroup.acars.ACARSFlags;
 /**
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -117,7 +117,7 @@ public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 		buf.append(_sim.getName());
 		buf.append("<br />");
 		if (_network != null) {
-			buf.append("Flight operated online using <span class=\"sec bld caps\">");
+			buf.append("Flight operated online using <span class=\"sec bld\">");
 			buf.append(_network.toString());
 			buf.append("</span><br />");
 		}
@@ -174,12 +174,12 @@ public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 		buf.append(" (");
 		buf.append(_airportA.getICAO());
 		buf.append(")<br />Using <span class=\"pri\">");
-		buf.append(_sim.getName());		
+		buf.append(_sim.getName());
 		buf.append("</span><br /><br />ACARS Flight <span class=\"bld\">");
 		buf.append(StringUtils.format(getID(), "#,##0"));
 		buf.append("</span>");
 		if (_network != null) {
-			buf.append("<br />Flight operated online using <span class=\"sec bld caps\">");
+			buf.append("<br />Flight operated online using <span class=\"sec bld\">");
 			buf.append(_network.toString());
 			buf.append("</span>");
 		}
@@ -194,6 +194,7 @@ public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 			if (_checkRide) buf.append("<span class=\"pri bld\">CHECK RIDE</span> ");
 			if (_dispatchRoute) buf.append("<span class=\"sec bld\">USING DISPATCH</span> ");
 			if (_busy) buf.append("<span class=\"error bld\">BUSY</span>");
+			if (!_busy && ((getRadarAltitude() < 5000) || (getAltitude() < 10000))) buf.append("<span class=\"ter bld\">STERILE COCKPIT</span>");
 		}
 		
 		buf.append("</div>");
