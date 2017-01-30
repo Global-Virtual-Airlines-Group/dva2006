@@ -347,6 +347,8 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 			return OnlineNetwork.VATSIM;
 		else if (hasAttribute(ATTR_IVAO))
 			return OnlineNetwork.IVAO;
+		else if (hasAttribute(ATTR_PEDGE))
+			return OnlineNetwork.PILOTEDGE;
 		else if (hasAttribute(ATTR_FPI))
 			return OnlineNetwork.FPI;
 		
