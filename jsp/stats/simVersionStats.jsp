@@ -38,17 +38,17 @@ golgotha.local.updateSort = function() { return document.forms[0].submit(); };
 </tr>
 <!-- Table Header Bar-->
 <tr class="title caps">
- <td style="width:6%;">#</td>
- <td style="width:21%;">ENTRY</td>
+ <td style="width:5%;">#</td>
+ <td style="width:18%;">ENTRY</td>
  <td style="width:10%;">HOURS</td>
- <td style="width:10%;">LEGS</td>
+ <td style="width:9%;">LEGS</td>
  <td class="nophone">DISTANCE</td>
  <td>FSX</td>
  <td>P3D</td>
  <td>FS2004</td>
+ <td class="nophone">X-Plane</td>
  <td class="nophone">FS2002</td>
  <td class="nophone">FS2000</td>
- <td class="nophone">X-Plane</td>
  <td class="nophone">OTHER</td>
 </tr>
 
@@ -66,9 +66,9 @@ golgotha.local.updateSort = function() { return document.forms[0].submit(); };
  <td class="small"><fmt:int value="${eLegs['FSX']}" /> (<fmt:dec value="${eLegs['FSX'] * 100.0 / stat.legs}" />%)</td>
  <td class="small"><fmt:int value="${eLegs['P3D']}" /> (<fmt:dec value="${eLegs['P3D'] * 100.0 / stat.legs}" />%)</td>
  <td class="small"><fmt:int value="${eLegs['FS9']}" /> (<fmt:dec value="${eLegs['FS9'] * 100.0 / stat.legs}" />%)</td>
+ <td class="small nophone"><fmt:int value="${eLegs['XP9']}" /> (<fmt:dec value="${eLegs['XP9'] * 100.0 / stat.legs}" />%)</td>
  <td class="small nophone"><fmt:int value="${eLegs['FS2002']}" /> (<fmt:dec value="${eLegs['FS2002'] * 100.0 / stat.legs}" />%)</td>
  <td class="small nophone"><fmt:int value="${eLegs['FS2000']}" /> (<fmt:dec value="${eLegs['FS2000'] * 100.0 / stat.legs}" />%)</td>
- <td class="small nophone"><fmt:int value="${eLegs['XP9']}" /> (<fmt:dec value="${eLegs['XP9'] * 100.0 / stat.legs}" />%)</td>
  <td class="small nophone"><fmt:int value="${eLegs['UNKNOWN']}" /> (<fmt:dec value="${eLegs['UNKNOWN'] * 100.0 / stat.legs}" />%)</td>
 </view:row>
 </c:forEach>
