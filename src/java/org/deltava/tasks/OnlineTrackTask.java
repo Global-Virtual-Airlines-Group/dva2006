@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to download Online Tracks via the ServInfo feed from all Online networks.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 3.1
  */
 
@@ -43,6 +43,7 @@ public class OnlineTrackTask extends Task {
 			
 			// Get the network info
 			NetworkInfo info = ServInfoHelper.getInfo(network);
+			log.info("Loaded data for " + network + " valid as of " + info.getValidDate());
 			
 			// Load the network IDs
 			Map<String, Integer> networkIDs = new HashMap<String, Integer>();
