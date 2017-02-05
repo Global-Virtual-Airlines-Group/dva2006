@@ -65,12 +65,12 @@ public class ContentHelper {
 	}
 	
 	/**
-	 * Clears any pushed content with resetting the request, like when forwarding to an error page.
+	 * Clears any included content with resetting the request, like when forwarding to an error page. The push content
+	 * list is not cleared since the headers have already been set.
 	 * @param req the ServletRequest
 	 */
 	public static void clearContent(ServletRequest req) {
 		req.removeAttribute(CONTENT_MAP_ATTR);
-		req.removeAttribute(PUSH_URL_ATTR);
 	}
 	
 	/**
