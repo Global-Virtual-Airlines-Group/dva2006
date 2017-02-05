@@ -32,9 +32,14 @@
 </tr>
 <tr>
  <td class="label">Prerequisites</td>
- <td class="data"><span class="sec bld">${cert.reqName}</span><c:if test="${!empty preReqCert}"> - 
- <el:cmd url="cert" linkID="${preReqCert.name}" className="pri bld">${preReqCert.name}</el:cmd></c:if></td>
+ <td class="data"><span class="sec bld">${cert.reqName}</span><c:if test="${!empty preReqCert}"> - <el:cmd url="cert" linkID="${preReqCert.name}" className="pri bld">${preReqCert.name}</el:cmd></c:if></td>
 </tr>
+<c:if test="${cert.flightCount > 0}">
+<tr>
+ <td class="label">${cert.reqName}</td>
+ <td class="data">At least <fmt:int value="${cert.flightCount}" /><c:if test="${!empty eqProgram}"> in the <span class="sec bld">${cert.equipmentProgram}</span> primary types: <span class="ita small">( <fmt:list value="${eqProgram.primaryRatings}" delim=", " /> )</span></c:if></td>
+</tr>
+</c:if>
 <tr>
  <td class="label">Airlines</td>
  <td class="data"><fmt:list value="${cert.airlines}" delim=", " /></td>
@@ -54,8 +59,7 @@
 <c:if test="${!empty docs}">
 <tr>
  <td class="label top">Study Documents</td>
- <td class="data"><span class="sec bld ita">To modify this list, please update the Documents in the 
-<content:airline /> Document Library.</span><br />
+ <td class="data"><span class="sec bld ita">To modify this list, please update the Documents in the <content:airline /> Document Library.</span><br />
 <c:forEach var="doc" items="${docs}">
 <el:link target="_new" url="/library/${doc.fileName}">${doc.name}</el:link><br />
 </c:forEach></td>
