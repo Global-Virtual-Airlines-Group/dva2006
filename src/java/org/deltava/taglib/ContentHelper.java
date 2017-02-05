@@ -1,8 +1,9 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib;
 
 import java.util.*;
 
+import javax.servlet.ServletRequest;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.http.HttpServletResponse;
 
@@ -61,6 +62,15 @@ public class ContentHelper {
 	public static boolean containsContent(PageContext ctx, String contentType, String contentName) {
 		Set<?> content = (Set<?>) ctx.findAttribute(CONTENT_MAP_ATTR);
 		return (content == null) ? false : content.contains(contentType + "$" + contentName);
+	}
+	
+	/**
+	 * Clears any pushed content with resetting the request, like when forwarding to an error page.
+	 * @param req the ServletRequest
+	 */
+	public static void clearContent(ServletRequest req) {
+		req.removeAttribute(CONTENT_MAP_ATTR);
+		req.removeAttribute(PUSH_URL_ATTR);
 	}
 	
 	/**
