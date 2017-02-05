@@ -144,6 +144,11 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 	public static final int ATTR_ONLINE_MASK = 0x10000E;
 	
 	/**
+	 * Attribute mask for ACARS/XACARS/simFDR flights.
+	 */
+	public static final int ATTR_FDR_MASK = 0x90010;
+	
+	/**
 	 * Minimum ACARS client version for inclusion in statistics aggregation.
 	 */
 	public static final int MIN_ACARS_CLIENT = 61;
