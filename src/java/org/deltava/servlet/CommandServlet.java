@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.util.*;
@@ -15,6 +15,7 @@ import org.deltava.beans.servlet.*;
 import org.deltava.beans.system.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+import org.deltava.taglib.ContentHelper;
 import org.deltava.util.*;
 import org.deltava.util.redirect.RequestStateHelper;
 import org.deltava.util.system.SystemData;
@@ -25,7 +26,7 @@ import com.newrelic.api.agent.NewRelic;
 /**
  * The main command controller. This is the application's brain stem.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -305,6 +306,7 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 			// Redirect to the error page
 			try {
 				RequestDispatcher rd = req.getRequestDispatcher(errPage);
+				ContentHelper.clearContent(req);
 				req.setAttribute("servlet_error", e.getMessage());
 				req.setAttribute("servlet_exception", (e.getCause() == null) ? e : e.getCause());
 				rd.forward(req, rsp);
