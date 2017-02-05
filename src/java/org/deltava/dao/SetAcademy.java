@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2012, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010, 2012, 2014, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.academy.*;
 /**
  * A Data Access Object to write Flight Academy Course data to the database.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -34,12 +34,10 @@ public class SetAcademy extends DAO {
 			
 			// Prepare the statement
 			if (c.getID() == 0) {
-				prepareStatement("INSERT INTO exams.COURSES (CERTNAME, PILOT_ID, INSTRUCTOR_ID, STATUS, STARTDATE, CHECKRIDES) "
-						+ "VALUES (?, ?, ?, ?, ?, ?)");
+				prepareStatement("INSERT INTO exams.COURSES (CERTNAME, PILOT_ID, INSTRUCTOR_ID, STATUS, STARTDATE, CHECKRIDES) VALUES (?, ?, ?, ?, ?, ?)");
 				_ps.setInt(6, c.getRideCount());
 			} else {
-				prepareStatement("UPDATE exams.COURSES SET CERTNAME=?, PILOT_ID=?, INSTRUCTOR_ID=?, STATUS=?, "
-						+ "STARTDATE=?, ENDDATE=? WHERE (ID=?)");
+				prepareStatement("UPDATE exams.COURSES SET CERTNAME=?, PILOT_ID=?, INSTRUCTOR_ID=?, STATUS=?, STARTDATE=?, ENDDATE=? WHERE (ID=?)");
 				_ps.setTimestamp(6, createTimestamp(c.getEndDate()));
 				_ps.setInt(7, c.getID());
 			}
@@ -85,8 +83,7 @@ public class SetAcademy extends DAO {
 	 */
 	public void comment(CourseComment cc) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("INSERT INTO exams.COURSECHAT (COURSE_ID, PILOT_ID, CREATED, COMMENTS) "
-					+ "VALUES (?, ?, ?, ?)");
+			prepareStatementWithoutLimits("INSERT INTO exams.COURSECHAT (COURSE_ID, PILOT_ID, CREATED, COMMENTS) VALUES (?, ?, ?, ?)");
 			_ps.setInt(1, cc.getID());
 			_ps.setInt(2, cc.getAuthorID());
 			_ps.setTimestamp(3, createTimestamp(cc.getCreatedOn()));
@@ -105,8 +102,7 @@ public class SetAcademy extends DAO {
 	 */
 	public void complete(int courseID, int seq) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("UPDATE exams.COURSEPROGRESS SET COMPLETE=?, COMPLETED=NOW() WHERE "
-					+ "(ID=?) AND (SEQ=?) AND (COMPLETE=?)");
+			prepareStatementWithoutLimits("UPDATE exams.COURSEPROGRESS SET COMPLETE=?, COMPLETED=NOW() WHERE (ID=?) AND (SEQ=?) AND (COMPLETE=?)");
 			_ps.setBoolean(1, true);
 			_ps.setInt(2, courseID);
 			_ps.setInt(3, seq);
@@ -124,8 +120,7 @@ public class SetAcademy extends DAO {
 	 */
 	public void updateProgress(CourseProgress cp) throws DAOException {
 		try {
-			prepareStatement("REPLACE INTO exams.COURSEPROGRESS (ID, SEQ, AUTHOR, REQENTRY, EXAMNAME, COMPLETE, COMPLETED) "
-					+ "VALUES (?, ?, ?, ?, ?, ?, ?)");
+			prepareStatement("REPLACE INTO exams.COURSEPROGRESS (ID, SEQ, AUTHOR, REQENTRY, EXAMNAME, COMPLETE, COMPLETED) VALUES (?, ?, ?, ?, ?, ?, ?)");
 			_ps.setInt(1, cp.getCourseID());
 			_ps.setInt(2, cp.getID());
 			_ps.setInt(3, cp.getAuthorID());
@@ -148,8 +143,7 @@ public class SetAcademy extends DAO {
 	 */
 	public void setStatus(int courseID, Status s, java.time.Instant sd) throws DAOException {
 		try {
-			prepareStatement("UPDATE exams.COURSES SET STATUS=?, STARTDATE=?, ENDDATE=IF(STATUS=?, NOW(), NULL)"
-					+ " WHERE (ID=?)");
+			prepareStatement("UPDATE exams.COURSES SET STATUS=?, STARTDATE=?, ENDDATE=IF(STATUS=?, NOW(), NULL) WHERE (ID=?)");
 			_ps.setInt(1, s.ordinal());
 			_ps.setTimestamp(2, createTimestamp(sd));
 			_ps.setInt(3, Status.COMPLETE.ordinal());
