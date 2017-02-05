@@ -1,4 +1,4 @@
-// Copyright 2006, 2009, 2010, 2011, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2010, 2011, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.academy;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * A bean to store Flight Academy certification data.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -19,9 +19,10 @@ public class Certification implements java.io.Serializable, ComboAlias, ViewEntr
 	public static final int REQ_ANYPRIOR = 1;
 	public static final int REQ_ALLPRIOR = 2;
 	public static final int REQ_SPECIFIC = 3;
+	public static final int REQ_FLIGHTS = 4;
+	public static final int REQ_HOURS = 5;
 	
-	public static final String[] REQ_NAMES = {"No Pre-Requisite", "Any Prior Stage Certification", "All Prior Stage Certifications",
-		"Specific Certification"};
+	public static final String[] REQ_NAMES = {"No Pre-Requisite", "Any Prior Stage Certification", "All Prior Stage Certifications", "Specific Certification", "Flight Legs", "Flight Hours"};
 
 	private String _name;
 	private String _code;
@@ -33,6 +34,9 @@ public class Certification implements java.io.Serializable, ComboAlias, ViewEntr
 	private boolean _active;
 	private boolean _visible;
 	private boolean _autoEnroll;
+	
+	private String _eqProgram;
+	private int _flightCount;
 	
 	private String _desc;
 	private final Collection<AirlineInformation> _airlines = new HashSet<AirlineInformation>();
@@ -202,6 +206,24 @@ public class Certification implements java.io.Serializable, ComboAlias, ViewEntr
 	 */
 	public Collection<String> getRoles() {
 		return _enrollRoles;
+	}
+	
+	/**
+	 * Returns the equipment program required for pre-requisite flight legs or hours.
+	 * @return the equipment type, or null if none or any
+	 * @see Certification#setEquipmentProgram(String)
+	 */
+	public String getEquipmentProgram() {
+		return _eqProgram;
+	}
+	
+	/**
+	 * Returns the number of pre-requisite flight legs or hours required to enroll for this Certification.
+	 * @return the number of legs or hours
+	 * @see Certification#setFlightCount(int)
+	 */
+	public int getFlightCount() {
+		return _flightCount;
 	}
 	
 	/**
@@ -431,6 +453,24 @@ public class Certification implements java.io.Serializable, ComboAlias, ViewEntr
 			throw new IllegalStateException("Specific Certification pre-requisite not set");
 		
 		_certReq = (certCode == null) ? null : certCode.toUpperCase();
+	}
+	
+	/**
+	 * Updates the equipment type program required for pre-requisite flights.
+	 * @param eqProgram the equipment program name, or null for none or any
+	 * @see Certification#getEquipmentProgram()
+	 */
+	public void setEquipmentProgram(String eqProgram) {
+		_eqProgram = eqProgram;
+	}
+	
+	/**
+	 * Updates the number of flight legs or hours required to enroll for this Certification.
+	 * @param cnt the number of legs or hours
+	 * @see Certification#getFlightCount()
+	 */
+	public void setFlightCount(int cnt) {
+		_flightCount = Math.max(0, cnt); 
 	}
 	
 	/**

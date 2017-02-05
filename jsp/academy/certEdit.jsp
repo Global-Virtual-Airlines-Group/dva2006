@@ -17,6 +17,7 @@
 golgotha.local.showReqCert = function(combo) {
 	var opt = combo.options[combo.selectedIndex];
 	golgotha.util.display('reqCertRow', (opt.text == 'Specific Certification'));
+	golgotha.util.display('reqEQRow', opt.text.startsWith('Flight '));
 	return true;	
 };
 
@@ -31,6 +32,11 @@ golgotha.form.validate({f:f.preReqs, t:'Examination Prerequisites'});
 var reqCertRow = document.getElementById('reqCertRow');
 if (reqCertRow.style.display != 'none')
 	golgotha.form.validate({f:f.preReqCert, t:'Specific Certification Prerequisite'});
+
+// Check min flights / hours
+var eqCertRow = document.getElementById('reqEQRow');
+if (eqCertRow.style.display != 'none')
+	golgotha.form.validate({f:f.flightCount, min:1, t:'Minimum flight Count'});
 
 golgotha.form.submit(f);
 return true;
@@ -79,6 +85,11 @@ golgotha.local.onload = function() {
  <td class="label">Certification</td>
  <td class="data"><el:combo name="reqCert" className="req" size="1" value="${cert.reqCert}" options="${allCerts}" firstEntry="-" /></td>
 </tr>
+<tr id="reqEQRow" style="display:none;">
+ <td class="label">Minimum Flights</td>
+ <td class="data">At least <el:text className="bld req" name="flightCount" size="3" max="3" value="${cert.flightCount}" /> flights/hours in the primary equipment types for the
+ <el:combo name="eqProgram" className="req" size="1" value="${cert.equipmentProgram}" options="${allPrograms}" firstEntry = "[ ANY PROGRAM ]" /> program</td>
+</tr>
 <tr>
  <td class="label top">Enrollment Roles</td>
  <td class="data"><span class="ita">Select any Security Roles required for this Certification to be available for enrollment by a particular Pilot.</span><br />
@@ -94,8 +105,7 @@ golgotha.local.onload = function() {
 </tr>
 <tr>
  <td class="label">Check Rides</td>
- <td class="data">This certification requires <el:int name="rideCount" idx="*" min="0" max="9" size="1" className="sec bld" value="${cert.rideCount}" />
- Check Rides</td>
+ <td class="data">This certification requires <el:int name="rideCount" idx="*" min="0" max="9" size="1" className="sec bld" value="${cert.rideCount}" /> Check Rides</td>
 </tr>
 <tr>
  <td class="label top">Check Ride Equipment Type(s)</td>

@@ -33,8 +33,7 @@ public class GetAcademyCertifications extends DAO {
 	 */
 	public Certification get(String name) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT C.*, CPR.ABBR FROM exams.CERTS C LEFT JOIN exams.CERTPREREQ CPR "
-				+" ON (C.NAME=CPR.NAME) WHERE (C.NAME=?) OR (C.ABBR=?) LIMIT 1");
+			prepareStatementWithoutLimits("SELECT C.*, CPR.ABBR FROM exams.CERTS C LEFT JOIN exams.CERTPREREQ CPR ON (C.NAME=CPR.NAME) WHERE (C.NAME=?) OR (C.ABBR=?) LIMIT 1");
 			_ps.setString(1, name);
 			_ps.setString(2, name);
 			
@@ -63,9 +62,8 @@ public class GetAcademyCertifications extends DAO {
 	 */
 	public Collection<Certification> getActive() throws DAOException {
 		try {
-			prepareStatement("SELECT C.*, CPR.ABBR, COUNT(CR.SEQ) FROM exams.CERTS C LEFT JOIN exams.CERTPREREQ CPR "
-				+ "ON (C.NAME=CPR.NAME) LEFT JOIN exams.CERTREQS CR ON (C.NAME=CR.CERTNAME) WHERE (C.ACTIVE=?) "
-				+ "GROUP BY C.NAME ORDER BY C.STAGE, C.NAME");
+			prepareStatement("SELECT C.*, CPR.ABBR, COUNT(CR.SEQ) FROM exams.CERTS C LEFT JOIN exams.CERTPREREQ CPR ON (C.NAME=CPR.NAME) LEFT JOIN exams.CERTREQS CR "
+				+ "ON (C.NAME=CR.CERTNAME) WHERE (C.ACTIVE=?) GROUP BY C.NAME ORDER BY C.STAGE, C.NAME");
 			_ps.setBoolean(1, true);
 			Collection<Certification> results = execute();
 			for (Certification c: results) {
@@ -88,9 +86,8 @@ public class GetAcademyCertifications extends DAO {
 	 */
 	public Collection<Certification> getAll() throws DAOException {
 		try {
-			prepareStatement("SELECT C.*, CPR.ABBR, COUNT(CR.SEQ) FROM exams.CERTS C LEFT JOIN exams.CERTPREREQ CPR "
-				+ "ON (C.NAME=CPR.NAME) LEFT JOIN exams.CERTREQS CR ON (C.NAME=CR.CERTNAME) GROUP BY C.NAME "
-				+ "ORDER BY C.STAGE, C.NAME");
+			prepareStatement("SELECT C.*, CPR.ABBR, COUNT(CR.SEQ) FROM exams.CERTS C LEFT JOIN exams.CERTPREREQ CPR ON (C.NAME=CPR.NAME) LEFT JOIN exams.CERTREQS CR "
+				+ "ON (C.NAME=CR.CERTNAME) GROUP BY C.NAME ORDER BY C.STAGE, C.NAME");
 			Collection<Certification> results = execute();
 			for (Certification c : results) {
 				loadExams(c);
@@ -113,9 +110,8 @@ public class GetAcademyCertifications extends DAO {
 	 */
 	public Collection<Certification> getWithGraduates(boolean visibleOnly) throws DAOException {
 		try {
-			prepareStatement("SELECT C.*, CPR.ABBR, COUNT(CR.SEQ) FROM exams.COURSES CS, exams.CERTS C LEFT JOIN exams.CERTPREREQ CPR "
-				+ "ON (C.NAME=CPR.NAME) LEFT JOIN exams.CERTREQS CR ON (C.NAME=CR.CERTNAME) WHERE (C.NAME=CS.CERTNAME) AND "
-				+ "(CS.STATUS=?) GROUP BY C.NAME ORDER BY C.STAGE, C.NAME;");
+			prepareStatement("SELECT C.*, CPR.ABBR, COUNT(CR.SEQ) FROM exams.COURSES CS, exams.CERTS C LEFT JOIN exams.CERTPREREQ CPR ON (C.NAME=CPR.NAME) "
+				+ "LEFT JOIN exams.CERTREQS CR ON (C.NAME=CR.CERTNAME) WHERE (C.NAME=CS.CERTNAME) AND (CS.STATUS=?) GROUP BY C.NAME ORDER BY C.STAGE, C.NAME;");
 			_ps.setInt(1, Status.COMPLETE.ordinal());
 			Collection<Certification> results = execute();
 			for (Iterator<Certification> i = results.iterator(); i.hasNext(); ) {
@@ -192,7 +188,7 @@ public class GetAcademyCertifications extends DAO {
 	private List<Certification> execute() throws SQLException {
 		List<Certification> results = new ArrayList<Certification>();
 		try (ResultSet rs = _ps.executeQuery()) {
-			boolean hasReqCount = (rs.getMetaData().getColumnCount() > 10);
+			boolean hasReqCount = (rs.getMetaData().getColumnCount() > 12);
 			while (rs.next()) {
 				Certification cert = new Certification(rs.getString(1));
 				cert.setCode(rs.getString(2));
@@ -202,11 +198,13 @@ public class GetAcademyCertifications extends DAO {
 				cert.setAutoEnroll(rs.getBoolean(6));
 				cert.setVisible(rs.getBoolean(7));
 				cert.setRideCount(rs.getInt(8));
-				cert.setDescription(rs.getString(9));
+				cert.setEquipmentProgram(rs.getString(9));
+				cert.setFlightCount(rs.getInt(10));
+				cert.setDescription(rs.getString(11));
 				if (cert.getReqs() == Certification.REQ_SPECIFIC)
-					cert.setReqCert(rs.getString(10));
+					cert.setReqCert(rs.getString(12));
 				if (hasReqCount)
-					cert.setReqCount(rs.getInt(11));
+					cert.setReqCount(rs.getInt(13));
 			
 				results.add(cert);
 			}

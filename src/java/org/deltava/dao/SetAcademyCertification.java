@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2011, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010, 2011, 2014, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object for Flight Academy Certifications and Check Ride Scripts.
  * @author Luke
- * @version 6.1
+ * @version 7.2
  * @since 3.4
  */
 
@@ -36,8 +36,8 @@ public class SetAcademyCertification extends DAO {
 			startTransaction();
 			
 			// Write the certification entry
-			prepareStatementWithoutLimits("INSERT INTO exams.CERTS (NAME, ABBR, STAGE, PREREQ, ACTIVE, "
-				+ "AUTO_ENROLL, VISIBLE, CHECKRIDES, DESCRIPTION) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			prepareStatementWithoutLimits("INSERT INTO exams.CERTS (NAME, ABBR, STAGE, PREREQ, ACTIVE, AUTO_ENROLL, VISIBLE, CHECKRIDES, EQPROGRAM, FLIGHTCOUNT, DESCRIPTION) "
+				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setString(1, c.getName());
 			_ps.setString(2, c.getCode());
 			_ps.setInt(3, c.getStage());
@@ -46,7 +46,9 @@ public class SetAcademyCertification extends DAO {
 			_ps.setBoolean(6, c.getAutoEnroll());
 			_ps.setBoolean(7, c.getVisible());
 			_ps.setInt(8, c.getRideCount());
-			_ps.setString(9, c.getDescription());
+			_ps.setString(9, c.getEquipmentProgram());
+			_ps.setInt(10, c.getFlightCount());
+			_ps.setString(11, c.getDescription());
 			executeUpdate(1);
 			
 			// If we've got a pre-req, write it
@@ -76,8 +78,8 @@ public class SetAcademyCertification extends DAO {
 			startTransaction();
 			
 			// Write the profile
-			prepareStatementWithoutLimits("UPDATE exams.CERTS SET NAME=?, ABBR=?, STAGE=?, PREREQ=?, ACTIVE=?, "
-				+ "AUTO_ENROLL=?, VISIBLE=?, CHECKRIDES=?, DESCRIPTION=? WHERE (NAME=?)");
+			prepareStatementWithoutLimits("UPDATE exams.CERTS SET NAME=?, ABBR=?, STAGE=?, PREREQ=?, ACTIVE=?, AUTO_ENROLL=?, VISIBLE=?, CHECKRIDES=?, EQPROGRAM=?, "
+				+ "FLIGHTCOUNT=?, DESCRIPTION=? WHERE (NAME=?)");
 			_ps.setString(1, c.getName());
 			_ps.setString(2, c.getCode());
 			_ps.setInt(3, c.getStage());
@@ -86,8 +88,10 @@ public class SetAcademyCertification extends DAO {
 			_ps.setBoolean(6, c.getAutoEnroll());
 			_ps.setBoolean(7, c.getVisible());
 			_ps.setInt(8, c.getRideCount());
-			_ps.setString(9, c.getDescription());
-			_ps.setString(10, name);
+			_ps.setString(9, c.getEquipmentProgram());
+			_ps.setInt(10, c.getFlightCount());
+			_ps.setString(11, c.getDescription());
+			_ps.setString(12, name);
 			executeUpdate(1);
 			
 			// Write the pre-requisite

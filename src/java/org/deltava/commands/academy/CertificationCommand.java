@@ -1,20 +1,25 @@
-// Copyright 2006, 2009, 2010, 2011, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2010, 2011, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.academy.*;
+import org.deltava.beans.EquipmentType;
+import org.deltava.beans.system.AirlineInformation;
+
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+
 import org.deltava.security.command.CertificationAccessControl;
+
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to view and update Flight Academy certification profiles.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -71,6 +76,14 @@ public class CertificationCommand extends AbstractFormCommand {
 			cert.setRoles(ctx.getParameters("enrollRoles"));
 			cert.setExams(ctx.getParameters("reqExams"));
 			cert.setRideEQ(ctx.getParameters("rideEQ"));
+			if ((cert.getReqs() == Certification.REQ_FLIGHTS) || (cert.getReqs() == Certification.REQ_HOURS)) {
+				cert.setFlightCount(StringUtils.parse(ctx.getParameter("flightCount"), 1));
+				String eqProgram = ctx.getParameter("eqProgram");
+				cert.setEquipmentProgram(eqProgram.startsWith("[") ? null : eqProgram);
+			} else {
+				cert.setFlightCount(0);
+				cert.setEquipmentProgram(null);
+			}
 			
 			// Load apps
 			cert.getAirlines().clear();
@@ -150,6 +163,14 @@ public class CertificationCommand extends AbstractFormCommand {
 			GetAircraft acdao = new GetAircraft(con);
 			ctx.setAttribute("allEQ", acdao.getAll(), REQUEST);
 			
+			// Get all equipment type programs
+			Collection<EquipmentType> eqPrograms = new TreeSet<EquipmentType>();
+			GetEquipmentType eqdao = new GetEquipmentType(con);
+			for (AirlineInformation ai : SystemData.getApps())
+				eqPrograms.addAll(eqdao.getActive(ai.getDB()));
+			
+			ctx.setAttribute("allPrograms", eqPrograms, REQUEST);
+			
 			// Get available examinations
 			GetExamProfiles exdao = new GetExamProfiles(con);
 			ctx.setAttribute("exams", exdao.getExamProfiles(), REQUEST); 
@@ -203,6 +224,12 @@ public class CertificationCommand extends AbstractFormCommand {
 			// If we have a specific pre-req, load it as well
 			if (cert.getReqs() == Certification.REQ_SPECIFIC)
 				ctx.setAttribute("preReqCert", dao.get(cert.getReqCert()), REQUEST);
+			
+			// If we have a specific program for minimum flight hours, load it as well
+			if (!StringUtils.isEmpty(cert.getEquipmentProgram()) && ((cert.getReqs() == Certification.REQ_FLIGHTS) || (cert.getReqs() == Certification.REQ_HOURS))) {
+				GetEquipmentType eqdao = new GetEquipmentType(con);
+				ctx.setAttribute("eqProgram", eqdao.get(cert.getEquipmentProgram()), REQUEST);
+			}
 			
 			// Get associated documents
 			GetDocuments ddao = new GetDocuments(con);

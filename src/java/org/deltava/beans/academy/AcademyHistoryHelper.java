@@ -1,11 +1,13 @@
-// Copyright 2006, 2010, 2011, 2012, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010, 2011, 2012, 2014, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.academy;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
+import org.deltava.beans.flight.*;
 import org.deltava.beans.testing.*;
 import org.deltava.beans.system.AirlineInformation;
 
@@ -15,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to extract information from a user's Flight Academy history.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -31,7 +33,10 @@ public final class AcademyHistoryHelper {
 	private final Map<Object, Certification> _certs = new HashMap<Object, Certification>();
 	private final Map<Object, Course> _courses = new HashMap<Object, Course>();
 	private final SortedSet<Test> _tests = new TreeSet<Test>();
-
+	
+	private final Map<String, Collection<String>> _primaryTypes = new HashMap<String, Collection<String>>();
+	private final Collection<FlightReport> _flights = new ArrayList<FlightReport>();
+	
 	/**
 	 * Initializes the helper.
 	 * @param p the Pilot
@@ -47,8 +52,7 @@ public final class AcademyHistoryHelper {
 	}
 
 	private void log(String msg) {
-		if (_debugLog)
-			log.warn(msg);
+		if (_debugLog) log.warn(msg);
 	}
 
 	/**
@@ -119,6 +123,22 @@ public final class AcademyHistoryHelper {
 					c.addCheckRide(cr);
 			}
 		}
+	}
+
+	/**
+	 * Adds the Pilot's approved flight reports. Only flights logged using a Flight Data Recorder (ACARS/XACARS/simFDR) will be added.
+	 * @param flights a Collection of FlightReport beans
+	 */
+	public void addFlights(Collection<FlightReport> flights) {
+		flights.stream().filter(fr -> ((fr.getStatus() == FlightReport.OK) && fr.hasAttribute(FlightReport.ATTR_FDR_MASK))).forEach(fr -> _flights.add(fr));
+	}
+	
+	/**
+	 * Adds primary equipment types for a particular equipment program.
+	 * @param eq the EquipmentType
+	 */
+	public void addPrimaryRatings(EquipmentType eq) {
+		_primaryTypes.putIfAbsent(eq.getName(), eq.getPrimaryRatings());
 	}
 
 	/**
@@ -229,8 +249,7 @@ public final class AcademyHistoryHelper {
 		
 		// Check if we've passed all of the exams
 		Certification cert = _certs.get(certName);
-		for (Iterator<String> i = cert.getExamNames().iterator(); i.hasNext(); ) {
-			String examName = i.next();
+		for (String examName : cert.getExamNames()) {
 			if (!passedExam(examName)) {
 				log(certName +  " not complete, " + examName + " not passed");
 				return false;
@@ -238,8 +257,7 @@ public final class AcademyHistoryHelper {
 		}
 		
 		// Check if we've finished up all of the requirements
-		for (Iterator<CourseProgress> i = cr.getProgress().iterator(); i.hasNext(); ) {
-			CourseProgress cp = i.next();
+		for (CourseProgress cp : cr.getProgress()) {
 			if (!cp.getComplete()) {
 				log(certName +  " not complete, requirement #" + cp.getID() + " incomplete");
 				return false;
@@ -255,19 +273,8 @@ public final class AcademyHistoryHelper {
 	 * @return TRUE if all Certification were passed, otherwise FALSE
 	 */
 	public boolean hasAll(int stage) {
-		
-		// Get all certs in that particular stage
-		Collection<Certification> sCerts = new HashSet<Certification>();
-		for (Iterator<Certification> i = _certs.values().iterator(); i.hasNext(); ) {
-			Certification c = i.next();
-			if (c.getStage() == stage)
-				sCerts.add(c);
-		}
-		
-		// Check if we've passed them all
-		for (Iterator<Certification> i = sCerts.iterator(); i.hasNext(); ) {
-			Certification c = i.next();
-			if (!hasPassed(c.getName()))
+		for (Certification c : _certs.values()) {
+			if ((c.getStage() == stage) && !hasPassed(c.getName()))
 				return false;
 		}
 		
@@ -350,6 +357,24 @@ public final class AcademyHistoryHelper {
 				
 				break;
 				
+			case Certification.REQ_FLIGHTS:
+				int legs = getFlightTotals(c.getEquipmentProgram(), false); 
+				if (legs < c.getFlightCount()) {
+					log("Requires " + c.getFlightCount() + " legs in " + c.getEquipmentProgram() + ", pilot has " + legs);
+					return false;
+				}
+				
+				break;
+				
+			case Certification.REQ_HOURS:
+				double hours = getFlightTotals(c.getEquipmentProgram(), true) / 10.0;
+				if (hours < c.getFlightCount()) {
+					log("Requires " + c.getFlightCount() + " hours in " + c.getEquipmentProgram() + ", pilot has " + StringUtils.format(hours, "#0.0"));
+					return false;
+				}
+				
+				break;
+				
 			case Certification.REQ_ANY:
 			default:
 				return true;
@@ -407,15 +432,36 @@ public final class AcademyHistoryHelper {
 		if (!(t instanceof Examination))
 			return false;
 
-		// If the test is not scored and failed, then forget
-		if (t.getStatus() != TestStatus.SCORED)
-			return false;
-		else if (t.getPassFail())
+		// If the test is not scored or failed, then forget it
+		if ((t.getStatus() != TestStatus.SCORED) || t.getPassFail())
 			return false;
 
 		// Check the time from the scoring
 		long timeInterval = (System.currentTimeMillis() - t.getScoredOn().toEpochMilli()) / 1000;
 		log.info("Exam Lockout: interval = " + timeInterval + "s, period = " + (lockoutHours * 3600) + "s");
 		return (timeInterval < (lockoutHours * 3600L));
+	}
+	
+	/*
+	 * Static function to adjust time-accelerated hours.
+	 */
+	private static int getAdjustedHours(FlightReport fr) {
+		if (!(fr instanceof ACARSFlightReport))
+			return fr.getLength();
+			
+		ACARSFlightReport afr = (ACARSFlightReport) fr;
+		return (afr.getTime(1) + (afr.getTime(2) / 2) + (afr.getTime(4) / 4)) / 360;
+	}
+	
+	/**
+	 * Returns the number of flight legs or hours flown using the primary equipment type of a particular equipment program.
+	 * @param eqProgram the equipment type eprogram
+	 * @param isHours TRUE if returning hours, otherwise flight legs
+	 * @return the number of flight legs or hours
+	 */
+	public int getFlightTotals(String eqProgram, boolean isHours) {
+		final Collection<String> primaryTypes = StringUtils.isEmpty(eqProgram) ? Collections.emptySet() : _primaryTypes.get(eqProgram);
+		Predicate<FlightReport> filterFunc = CollectionUtils.isEmpty(primaryTypes) ? fr -> true : fr -> primaryTypes.contains(fr.getEquipmentType()); 
+		return _flights.stream().filter(filterFunc).mapToInt(fr -> (isHours ? getAdjustedHours(fr) : 1)).sum();
 	}
 }
