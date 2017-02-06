@@ -58,7 +58,9 @@ public class FindFlightCommand extends AbstractCommand {
 		}
 		
 		// Save airlines and ratings
-		ctx.setAttribute("airlines", SystemData.getAirlines().values().stream().filter(Airline::getActive).collect(Collectors.toList()), REQUEST);
+		List<Airline> airlines = SystemData.getAirlines().values().stream().filter(Airline::getActive).collect(Collectors.toList());
+		Collections.sort(airlines);
+		ctx.setAttribute("airlines", airlines, REQUEST);
 		ctx.setAttribute("myEQ", ctx.getUser().getRatings(), REQUEST);
 		
 		// Get the result JSP and redirect if we're not posting
