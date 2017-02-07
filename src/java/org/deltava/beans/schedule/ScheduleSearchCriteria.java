@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2013, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2013, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.ComboUtils;
 /**
  * A bean to store search criteria for the Flight Schedule.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -54,13 +54,12 @@ public class ScheduleSearchCriteria extends Flight {
 
 	/**
 	 * Initializes the search criteria.
-	 * @param aCode
-	 * @param fNumber
-	 * @param leg
+	 * @param a the Airline
+	 * @param fNumber the flight number
+	 * @param leg the leg number
 	 */
-	public ScheduleSearchCriteria(Airline aCode, int fNumber, int leg) {
-		super(aCode, fNumber, leg);
-		setLeg(leg);
+	public ScheduleSearchCriteria(Airline a, int fNumber, int leg) {
+		super(a, fNumber, leg);
 	}
 	
 	public ScheduleSearchCriteria(String sortBy) {
@@ -69,10 +68,18 @@ public class ScheduleSearchCriteria extends Flight {
 		setLeg(0);
 	}
 	
+	/**
+	 * Returns the database to search.
+	 * @return the database name
+	 */
 	public String getDBName() {
 		return _dbName;
 	}
 
+	/**
+	 * Returns the SQL sorting clause.
+	 * @return the sorting SQL
+	 */
 	public String getSortBy() {
 		return _sortBy;
 	}
@@ -86,18 +93,34 @@ public class ScheduleSearchCriteria extends Flight {
 		return _distanceRange;
 	}
 	
+	/**
+	 * Returns whether to include Flight Academy flights in the search.
+	 * @return TRUE if including Flight Academy flights, otherwise FALSE
+	 */
 	public boolean getIncludeAcademy() {
 		return _includeAcademy;
 	}
 	
+	/**
+	 * Returns the Pilot ID, if filtering for unvisited airports.
+	 * @return the Pilot's database ID
+	 */
 	public int getPilotID() {
 		return _pilotID;
 	}
 	
+	/**
+	 * Returns whether to only search routes including an airport not previously visited.
+	 * @return TRUE if only including unvisited departure Airports, otherwise FALSE
+	 */
 	public boolean getNotVisitedD() {
 		return _notVisitedD;
 	}
 	
+	/**
+	 * Returns whether to only search routes including an airport not previously visited.
+	 * @return TRUE if only including unvisited arrival Airports, otherwise FALSE
+	 */
 	public boolean getNotVisitedA() {
 		return _notVisitedA;
 	}
@@ -105,11 +128,19 @@ public class ScheduleSearchCriteria extends Flight {
 	public boolean getCheckDispatch() {
 		return _dispatchRouteCounts;
 	}
-	
+
+	/**
+	 * Returns whether to search for flights with dispatch flight plans.
+	 * @return TRUE if restricted to route pairs with dispatch plans, otherwise FALSE
+	 */
 	public boolean getDispatchOnly() {
 		return _dispatchOnly;
 	}
 	
+	/**
+	 * Returns the maximum number of schedule entries per route to return.
+	 * @return the maximum number of entries
+	 */
 	public int getFlightsPerRoute() {
 		return _maxPerRoute;
 	}
@@ -143,7 +174,11 @@ public class ScheduleSearchCriteria extends Flight {
 		return _length;
 	}
 
-	public final int getMaxResults() {
+	/**
+	 * Returns the maximum numnber of schedule entries to return.
+	 * @return the maximum number of results
+	 */
+	public int getMaxResults() {
 		return _maxResults;
 	}
 
@@ -159,10 +194,18 @@ public class ScheduleSearchCriteria extends Flight {
 		_hourA = hour;
 	}
 
+	/**
+	 * Returns the equipment types to search for.
+	 * @return a Collection of equipment type names
+	 */
 	public Collection<String> getEquipmentTypes() {
 		return _eqTypes;
 	}
 
+	/**
+	 * Updates the database to search.
+	 * @param db the database name
+	 */
 	public void setDBName(String db) {
 		_dbName = db;
 	}
