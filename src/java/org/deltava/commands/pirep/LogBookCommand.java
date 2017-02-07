@@ -58,7 +58,7 @@ public class LogBookCommand extends AbstractViewCommand {
         // Initialize the search criteria
         ScheduleSearchCriteria criteria = new ScheduleSearchCriteria(null, 0, 0);
         criteria.addEquipmentType(ctx.getParameter("eqType"));
-        criteria.setSortBy("FR.STATUS DESC, " + vc.getSortType());
+        criteria.setSortBy(vc.getSortType());
         criteria.setAirportD(SystemData.getAirport(ctx.getParameter("airportD")));
         criteria.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
         
