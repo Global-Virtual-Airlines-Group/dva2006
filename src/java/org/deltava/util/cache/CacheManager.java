@@ -1,4 +1,4 @@
-// Copyright 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 import java.util.*;
@@ -23,7 +23,7 @@ public class CacheManager {
 	private static final ReentrantReadWriteLock.ReadLock _r = _rw.readLock();
 	private static final ReentrantReadWriteLock.WriteLock _w = _rw.writeLock();
 	
-	private static final Map<String, Cache<?>> _caches = new LinkedHashMap<String, Cache<?>>(24);
+	private static final Map<String, Cache<?>> _caches = new LinkedHashMap<String, Cache<?>>(32);
 	
 	// singleton
 	private CacheManager() {
@@ -92,6 +92,18 @@ public class CacheManager {
 		if (cache != null) cache.remove(key);
 	}
 	
+	/*
+	 * Helper method to add a cache.
+	 */
+	private static void addCache(String id, Cache<?> c) {
+		try {
+			_w.lock();
+			_caches.put(id, c);
+		} finally {
+			_w.unlock();
+		}
+	}
+	
 	/**
 	 * Registers a cache. 
 	 * @param c the cache content class
@@ -126,13 +138,8 @@ public class CacheManager {
 		}
 		
 		// Register and return
-		try {
-			_w.lock();
-			_caches.put(id, cache);
-			return cache;
-		} finally {
-			_w.unlock();
-		}
+		addCache(id, cache);
+		return cache;
 	}
 	
 	/**
@@ -159,12 +166,25 @@ public class CacheManager {
 		// Register a null cache
 		log.warn("Registering unknown null cache " + id);
 		cache = new NullCache<T>();
-		try {
-			_w.lock();
-			_caches.put(id, cache);
-			return cache;
-		} finally {
-			_w.unlock();
-		}
+		addCache(id, cache);
+		return cache;
+	}
+	
+	/**
+	 * Retrieves an existing Map cache.  This will return a {@link NullCache} if the cache ID has not been registered.
+	 * @param k the cache Map content key class
+	 * @param v the cache Map content value class
+	 * @param id the Cache ID
+	 * @return a Cache
+	 */
+	public static <K extends Object, V extends Object, T extends CacheableMap<K, V>> Cache<T> getMap(Class<K> k, Class<V> v, String id) {
+		Cache<T> cache = get(id);
+		if (cache != null) return cache;
+		
+		// Register a null cache
+		log.warn("Registering unknown null cache " + id);
+		cache = new NullCache<T>();
+		addCache(id, cache);
+		return cache;		
 	}
 }

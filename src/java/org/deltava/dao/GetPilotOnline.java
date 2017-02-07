@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2010, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2010, 2011, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,13 +11,13 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load Pilot data for Online Network operations.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
 public class GetPilotOnline extends PilotReadDAO {
 	
-	private static final Cache<CacheableMap<String, Integer>> _idCache = new ExpiringCache<CacheableMap<String, Integer>>(2, 1800);
+	private static final Cache<CacheableMap<String, Integer>> _idCache = CacheManager.getMap(String.class, Integer.class, "OnlineIDs");
 	
 	/**
 	 * Initializes the Data Access Object.
