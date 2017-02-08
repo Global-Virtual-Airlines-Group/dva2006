@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -20,8 +20,7 @@ import org.deltava.beans.ts2.*;
 import org.deltava.comparators.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-
-import org.deltava.dao.http.GetVATSIMData;
+import org.deltava.dao.http.*;
 
 import org.deltava.security.*;
 import org.deltava.security.command.*;
@@ -875,6 +874,12 @@ public class ProfileCommand extends AbstractFormCommand {
 			// Load authors
 			UserDataMap udm = uddao.get(IDs);
 			ctx.setAttribute("authors", dao.get(udm), REQUEST);
+			
+			// Load VATSIM certs
+			if (p.hasNetworkID(OnlineNetwork.VATSIM)) {
+				GetATOData atodao = new GetATOData();
+				ctx.setAttribute("vatsim_ratings", atodao.get(p.getNetworkID(OnlineNetwork.VATSIM)), REQUEST);
+			}
 			
 			// Get the online totals
 			if (p.getACARSLegs() < 0) {
