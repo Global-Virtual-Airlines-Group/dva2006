@@ -38,6 +38,9 @@ public class Certification implements java.io.Serializable, ComboAlias, ViewEntr
 	private String _eqProgram;
 	private int _flightCount;
 	
+	private OnlineNetwork _network;
+	private String _ratingCode;
+	
 	private String _desc;
 	private final Collection<AirlineInformation> _airlines = new HashSet<AirlineInformation>();
 	
@@ -235,6 +238,22 @@ public class Certification implements java.io.Serializable, ComboAlias, ViewEntr
 	}
 	
 	/**
+	 * Returns the Online network that grants a pilot rating when this Certification is completed.
+	 * @return the OnlineNetwork, or null if none
+	 */
+	public OnlineNetwork getNetwork() {
+		return _network;
+	}
+	
+	/**
+	 * Returns the Online network's pilot rating code.
+	 * @return the code
+	 */
+	public String getNetworkRatingCode() {
+		return _ratingCode;
+	}
+	
+	/**
 	 * Adds an eligible virtual airline to this Certification.
 	 * @param ai an AirlineInformation bean
 	 * @see Certification#getAirlines()
@@ -276,8 +295,7 @@ public class Certification implements java.io.Serializable, ComboAlias, ViewEntr
 	 */
 	public void setRequirements(Collection<CertificationRequirement> reqs) {
 		_reqs.clear();
-		for (Iterator<CertificationRequirement> i = reqs.iterator(); i.hasNext(); )
-			addRequirement(i.next());
+		reqs.forEach(r -> addRequirement(r));
 	}
 	
 	/**
@@ -479,6 +497,22 @@ public class Certification implements java.io.Serializable, ComboAlias, ViewEntr
 	 */
 	public void setDescription(String desc) {
 		_desc = desc;
+	}
+	
+	/**
+	 * Updates the online network that this Ceritification will grant a Pilot Rating for.
+	 * @param net the OnlineNetwork, or null if none
+	 */
+	public void setNetwork(OnlineNetwork net) {
+		_network = net;
+	}
+	
+	/**
+	 * Updates the rating code used by the online network.
+	 * @param code the rating code
+	 */
+	public void setNetworkRatingCode(String code) {
+		_ratingCode = code;
 	}
 	
 	@Override

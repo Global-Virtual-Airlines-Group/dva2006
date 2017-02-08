@@ -1,4 +1,4 @@
-// Copyright 2006, 2009, 2010, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2010, 2011, 2012, 2014, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display a Fleet Academy course.
  * @author Luke
- * @version 5.3
+ * @version 7.2
  * @since 1.0
  */
 
@@ -53,8 +53,7 @@ public class CourseCommand extends AbstractAcademyHistoryCommand {
 			AcademyHistoryHelper helper = initHistory(p, con);
 			helper.setDebug(ctx.isSuperUser());
 			Course c2 = helper.getCourse(c.getID());
-			for (CheckRide cr : c2.getCheckRides())
-				c.addCheckRide(cr);
+			c2.getCheckRides().forEach(cr -> c.addCheckRide(cr));
 
 			// Get the certification profile
 			Certification cert = helper.getCertification(c.getCode());
@@ -63,17 +62,16 @@ public class CourseCommand extends AbstractAcademyHistoryCommand {
 			
 			// Check our access
 			CourseAccessControl access = new CourseAccessControl(ctx, c);
+			access.setCertification(cert);
 			access.validate();
 			
 			// Get Pilot IDs from comments/progress
 			Collection<Integer> IDs = new HashSet<Integer>();
 			IDs.add(Integer.valueOf(c.getPilotID()));
+			c.getComments().forEach(cc -> IDs.add(Integer.valueOf(cc.getAuthorID())));
+			c.getProgress().forEach(cp -> IDs.add(Integer.valueOf(cp.getAuthorID())));
 			if (c.getInstructorID() != 0)
 				IDs.add(Integer.valueOf(c.getInstructorID()));
-			for (CourseComment cc : c.getComments())
-				IDs.add(Integer.valueOf(cc.getAuthorID()));
-			for (CourseProgress cp : c.getProgress())
-				IDs.add(Integer.valueOf(cp.getAuthorID()));
 			
 			// Load documents/exams if its our course
 			if (access.getCanComment()) {
@@ -109,10 +107,7 @@ public class CourseCommand extends AbstractAcademyHistoryCommand {
 				// Get Pilot IDs from flights
 				Collection<Instruction> insC = new ArrayList<Instruction>(flights);
 				insC.addAll(sessions);
-				for (Iterator<? extends Instruction> i = insC.iterator(); i.hasNext(); ) {
-					Instruction ins = i.next();
-					IDs.add(new Integer(ins.getInstructorID()));
-				}
+				insC.forEach(ins -> IDs.add(Integer.valueOf(ins.getInstructorID())));
 			}
 			
 			// Load Pilot Information

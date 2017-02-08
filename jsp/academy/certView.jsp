@@ -56,6 +56,12 @@
  <td class="data"><fmt:list value="${cert.roles}" delim=", " /></td>
 </tr>
 </c:if>
+<c:if test="${!empty cert.network}">
+<tr>
+ <td class="label">Online Network</td>
+ <td class="data">Completion of this Certification will grant the user the <span class="bld">${cert.networkRatingCode}</span> Pilot Rating on the <span class="ter bld">${cert.network}</span> network</td>
+</tr>
+</c:if>
 <c:if test="${!empty docs}">
 <tr>
  <td class="label top">Study Documents</td>

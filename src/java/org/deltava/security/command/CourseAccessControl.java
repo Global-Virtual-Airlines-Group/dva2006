@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010, 2012, 2014, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.academy.*;
@@ -9,13 +9,15 @@ import org.deltava.security.SecurityContext;
 /**
  * An Access Controller for Flight Academy Course profiles.
  * @author Luke
- * @version 5.3
+ * @version 7.2
  * @since 1.0
  */
 
 public class CourseAccessControl extends AccessControl {
 	
 	private final Course _c;
+	private Certification _crt;
+	
 	private boolean _canComment;
 	private boolean _canCancel;
 	private boolean _canRestart;
@@ -35,6 +37,14 @@ public class CourseAccessControl extends AccessControl {
 	public CourseAccessControl(SecurityContext ctx, Course c) {
 		super(ctx);
 		_c = c;
+	}
+	
+	/**
+	 * Sets the Certification, used for validating Online courses.
+	 * @param crt the Certification bean
+	 */
+	public void setCertification(Certification crt) {
+		_crt = crt;
 	}
 
 	/**
@@ -81,7 +91,7 @@ public class CourseAccessControl extends AccessControl {
 		
 		boolean crComplete = (completedRides == _c.getRideCount());
 		_canAssignCheckRide = isComplete && isStarted && (_c.getRideCount() > 0) && !hasPendingRide && !crComplete;
-		_canApprove = crComplete && isComplete && (isHR || isINS) && isStarted && !isMine;
+		_canApprove = (_crt != null) && crComplete && isComplete && (isHR || isINS) && isStarted && !isMine && ((_crt.getNetwork() == null) || _ctx.getUser().hasNetworkID(_crt.getNetwork()));
 	}
 
 	/**

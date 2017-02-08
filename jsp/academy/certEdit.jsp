@@ -21,6 +21,11 @@ golgotha.local.showReqCert = function(combo) {
 	return true;	
 };
 
+golgotha.local.showNetworkRating = function(combo) {
+	golgotha.util.display('ratingCodeRow', (combo.selectedIndex > 0));
+	return true;
+};
+
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -38,6 +43,11 @@ var eqCertRow = document.getElementById('reqEQRow');
 if (eqCertRow.style.display != 'none')
 	golgotha.form.validate({f:f.flightCount, min:1, t:'Minimum flight Count'});
 
+// Check network rating code
+var ratingRow = document.getElementById('ratingCodeRow');
+if (ratingRow.style.display != 'none')
+	golgotha.form.validate({f:f.ratingCode, l:2, t:'Online Network rating Code'});
+
 golgotha.form.submit(f);
 return true;
 };
@@ -46,6 +56,7 @@ golgotha.local.onload = function() {
 	var f = document.forms[0];
 	golgotha.form.resize(f.desc);
 	golgotha.local.showReqCert(f.preReqs);
+	golgotha.local.showNetworkRating(f.network);
 	return true;
 };
 </script>
@@ -57,6 +68,7 @@ golgotha.local.onload = function() {
 <%@ include file="/jsp/academy/sideMenu.jspf" %>
 <content:sysdata var="roles" name="security.roles" />
 <content:sysdata var="airlines" name="apps" mapValues="true" />
+<content:sysdata var="networks" name="online.networks" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -98,6 +110,14 @@ golgotha.local.onload = function() {
 <tr>
  <td class="label">Airlines</td>
  <td class="data"><el:check name="airlines" width="175" options="${airlines}" checked="${cert.airlines}" /></td>
+</tr>
+<tr>
+ <td class="label">Online Network</td>
+ <td class="data"><el:combo name="network" size="1" idx="*" required="true" options="${networks}" firstEntry="None" value="${cert.network}" onChange="void golgotha.local.showNetworkRating(this)" /></td>
+</tr>
+<tr id="ratingCodeRow" style="display:none;">
+ <td class="label">Rating Code</td>
+ <td class="data"><el:text name="ratingCode" size="5" max="5" idx="*" className="bld req" value="${cert.networkRatingCode}" /></td>
 </tr>
 <tr>
  <td class="label top">Required Examinations</td>

@@ -328,6 +328,12 @@ public final class AcademyHistoryHelper {
 			}
 		}
 		
+		// Check if we have a network ID
+		if ((c.getNetwork() != null) && !_p.hasNetworkID(c.getNetwork())) {
+			log("Cannot take " + c.getName() + ", no " + c.getNetwork() + " ID");
+			return false;
+		}
+		
 		// Check the pre-reqs for the Certification
 		switch (c.getReqs()) {
 			case Certification.REQ_ANYPRIOR :
