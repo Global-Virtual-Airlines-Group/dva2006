@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.beans.system.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-
+import org.deltava.dao.http.GetATOData;
 import org.deltava.security.command.*;
 
 import org.deltava.util.*;
@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display the Pilot Center.
  * @author Luke
- * @version 7.1
+ * @version 7.2
  * @since 1.0
  */
 
@@ -273,6 +273,12 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 				facdao.setQueryMax(1);
 				boolean hasFlights = !facdao.getFlightCalendar(p.getID(), null).isEmpty();
 				ctx.setAttribute("academyInsFlights", Boolean.valueOf(hasFlights || ctx.isUserInRole("HR")), REQUEST);
+				
+				// Check if we have VATSIM ratings
+				if (p.hasNetworkID(OnlineNetwork.VATSIM)) {
+					GetATOData atodao = new GetATOData();
+					ctx.setAttribute("vatsim_ratings", atodao.get(p.getNetworkID(OnlineNetwork.VATSIM)), REQUEST);
+				}
 			}
 
 			// Save the examinations
