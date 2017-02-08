@@ -1,9 +1,10 @@
-// Copyright 2006, 2007, 2010, 2011, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2010, 2011, 2014, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 
+import org.deltava.beans.OnlineNetwork;
 import org.deltava.beans.academy.*;
 
 import org.deltava.util.system.SystemData;
@@ -11,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Flight Academy Certifications and Check Ride scripts. 
  * @author Luke
- * @version 6.1
+ * @version 7.2
  * @since 1.0
  */
 
@@ -188,7 +189,7 @@ public class GetAcademyCertifications extends DAO {
 	private List<Certification> execute() throws SQLException {
 		List<Certification> results = new ArrayList<Certification>();
 		try (ResultSet rs = _ps.executeQuery()) {
-			boolean hasReqCount = (rs.getMetaData().getColumnCount() > 12);
+			boolean hasReqCount = (rs.getMetaData().getColumnCount() > 14);
 			while (rs.next()) {
 				Certification cert = new Certification(rs.getString(1));
 				cert.setCode(rs.getString(2));
@@ -200,11 +201,13 @@ public class GetAcademyCertifications extends DAO {
 				cert.setRideCount(rs.getInt(8));
 				cert.setEquipmentProgram(rs.getString(9));
 				cert.setFlightCount(rs.getInt(10));
-				cert.setDescription(rs.getString(11));
+				cert.setNetwork(OnlineNetwork.fromName(rs.getString(11)));
+				cert.setNetworkRatingCode(rs.getString(12));
+				cert.setDescription(rs.getString(13));
 				if (cert.getReqs() == Certification.REQ_SPECIFIC)
-					cert.setReqCert(rs.getString(12));
+					cert.setReqCert(rs.getString(14));
 				if (hasReqCount)
-					cert.setReqCount(rs.getInt(13));
+					cert.setReqCount(rs.getInt(15));
 			
 				results.add(cert);
 			}

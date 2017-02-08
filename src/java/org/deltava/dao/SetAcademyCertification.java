@@ -36,8 +36,8 @@ public class SetAcademyCertification extends DAO {
 			startTransaction();
 			
 			// Write the certification entry
-			prepareStatementWithoutLimits("INSERT INTO exams.CERTS (NAME, ABBR, STAGE, PREREQ, ACTIVE, AUTO_ENROLL, VISIBLE, CHECKRIDES, EQPROGRAM, FLIGHTCOUNT, DESCRIPTION) "
-				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			prepareStatementWithoutLimits("INSERT INTO exams.CERTS (NAME, ABBR, STAGE, PREREQ, ACTIVE, AUTO_ENROLL, VISIBLE, CHECKRIDES, EQPROGRAM, FLIGHTCOUNT, NETWORK, "
+				+ "NETWORK, RATINGCODE, DESCRIPTION) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setString(1, c.getName());
 			_ps.setString(2, c.getCode());
 			_ps.setInt(3, c.getStage());
@@ -48,7 +48,9 @@ public class SetAcademyCertification extends DAO {
 			_ps.setInt(8, c.getRideCount());
 			_ps.setString(9, c.getEquipmentProgram());
 			_ps.setInt(10, c.getFlightCount());
-			_ps.setString(11, c.getDescription());
+			_ps.setString(11, (c.getNetwork() == null) ? null : c.getNetwork().name());
+			_ps.setString(12, c.getNetworkRatingCode());
+			_ps.setString(13, c.getDescription());
 			executeUpdate(1);
 			
 			// If we've got a pre-req, write it
@@ -79,7 +81,7 @@ public class SetAcademyCertification extends DAO {
 			
 			// Write the profile
 			prepareStatementWithoutLimits("UPDATE exams.CERTS SET NAME=?, ABBR=?, STAGE=?, PREREQ=?, ACTIVE=?, AUTO_ENROLL=?, VISIBLE=?, CHECKRIDES=?, EQPROGRAM=?, "
-				+ "FLIGHTCOUNT=?, DESCRIPTION=? WHERE (NAME=?)");
+				+ "FLIGHTCOUNT=?, NETWORK=?, RATINGCODE=?, DESCRIPTION=? WHERE (NAME=?)");
 			_ps.setString(1, c.getName());
 			_ps.setString(2, c.getCode());
 			_ps.setInt(3, c.getStage());
@@ -90,8 +92,10 @@ public class SetAcademyCertification extends DAO {
 			_ps.setInt(8, c.getRideCount());
 			_ps.setString(9, c.getEquipmentProgram());
 			_ps.setInt(10, c.getFlightCount());
-			_ps.setString(11, c.getDescription());
-			_ps.setString(12, name);
+			_ps.setString(11, (c.getNetwork() == null) ? null : c.getNetwork().name());
+			_ps.setString(12, c.getNetworkRatingCode());
+			_ps.setString(13, c.getDescription());
+			_ps.setString(14, name);
 			executeUpdate(1);
 			
 			// Write the pre-requisite

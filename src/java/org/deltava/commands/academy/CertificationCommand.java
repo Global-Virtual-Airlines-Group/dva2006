@@ -6,6 +6,7 @@ import java.sql.Connection;
 
 import org.deltava.beans.academy.*;
 import org.deltava.beans.EquipmentType;
+import org.deltava.beans.OnlineNetwork;
 import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.commands.*;
@@ -76,6 +77,8 @@ public class CertificationCommand extends AbstractFormCommand {
 			cert.setRoles(ctx.getParameters("enrollRoles"));
 			cert.setExams(ctx.getParameters("reqExams"));
 			cert.setRideEQ(ctx.getParameters("rideEQ"));
+			cert.setNetwork(OnlineNetwork.fromName(ctx.getParameter("network")));
+			cert.setNetworkRatingCode((cert.getNetwork() == null) ? null : ctx.getParameter("ratingCode"));
 			if ((cert.getReqs() == Certification.REQ_FLIGHTS) || (cert.getReqs() == Certification.REQ_HOURS)) {
 				cert.setFlightCount(StringUtils.parse(ctx.getParameter("flightCount"), 1));
 				String eqProgram = ctx.getParameter("eqProgram");
