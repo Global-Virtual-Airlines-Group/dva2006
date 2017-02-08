@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import org.deltava.beans.ViewEntry;
@@ -14,7 +14,7 @@ import org.deltava.util.*;
 public abstract class NetworkUser implements java.io.Serializable, ViewEntry, Comparable<NetworkUser> {
 	
 	public enum Type {
-		PILOT, ATC;
+		PILOT, ATC, RATING;
 	}
 	
     private int _id;
@@ -144,7 +144,7 @@ public abstract class NetworkUser implements java.io.Serializable, ViewEntry, Co
      * @see NetworkUser#getName()
      */
     public void setName(String name) {
-    	String n = name;
+    	String n = name.trim();
     	while (n.indexOf("  ") > -1)
     		n = n.replace("  ", " ");
     	

@@ -344,6 +344,7 @@
 		<vatsim>
 			<status_url>http://usa-s1.vatsim.net/data/status.txt</status_url>
 			<validation_url>https://cert.vatsim.net/vatsimnet/idstatus.php</validation_url>
+			<rating_url>https://ptd.vatsim.net/certifications</rating_url>
 			<banner>vatsim.gif</banner>
 			<url>http://www.vatsim.net/</url>
 			<local>
@@ -402,6 +403,7 @@
 			<wunderground>e466a9feecedb389</wunderground>
 			<dsx>217b980f-be43-4148-8aa4-cd5da694980d</dsx>
 			<googleMaps>AIzaSyAtQn98Rtr9WVU5TCFgYBLgJDWCOiosyA8</googleMaps>
+			<vatsim>1db84fa44417fda98d313a5839f80ba8</vatsim>
 		</key>
 
 		<list name="roles" attr="role" sorted="true">
