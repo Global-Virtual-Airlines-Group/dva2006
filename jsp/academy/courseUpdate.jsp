@@ -48,6 +48,9 @@ You have withdrawn from the <content:airline /> Flight Academy course <span clas
 <br />
 ${pilot.name} has successfully completed the <content:airline /> Flight Academy course <span class="pri bld">${course.name}</span>, and has been awarded the <span class="bld">${course.name}</span> 
 Certification. An e-mail message has been sent to ${pilot.rank.name} ${pilot.lastName}.<br />
+<c:if test="${networkRatingAdded}">
+<br />
+The <span class="bld">${cert.networkRatingCode}</span> Pilot rating on the <span class="ter bld">${cert.network}</span> has been successfully granted to this Pilot.<br /></c:if>
 <br />
 To view the Pilot profile, <el:cmd url="profile" link="${pilot}" className="sec bld">Click Here</el:cmd>.<br />
 </c:if>

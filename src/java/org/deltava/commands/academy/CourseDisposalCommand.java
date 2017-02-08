@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2011, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010, 2011, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -8,11 +8,12 @@ import java.sql.Connection;
 import org.deltava.beans.*;
 import org.deltava.beans.academy.*;
 import org.deltava.beans.fb.NewsEntry;
+import org.deltava.beans.servinfo.PilotRating;
 import org.deltava.beans.testing.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-import org.deltava.dao.http.SetFacebookData;
+import org.deltava.dao.http.*;
 import org.deltava.mail.*;
 
 import org.deltava.security.command.CourseAccessControl;
@@ -23,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to change a Flight Academy Course's status.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -89,6 +90,7 @@ public class CourseDisposalCommand extends AbstractCommand {
 
 			// Check our access
 			CourseAccessControl access = new CourseAccessControl(ctx, c);
+			access.setCertification(crt);
 			access.validate();
 			boolean canExec = false;
 			switch (op) {
@@ -183,6 +185,19 @@ public class CourseDisposalCommand extends AbstractCommand {
 			// Write the Status Update
 			SetStatusUpdate uwdao = new SetStatusUpdate(con);
 			uwdao.write(ud.getDB(), upd);
+			
+			// Send the completion to VATSIM
+			if ((op == Status.COMPLETE) && (crt.getNetwork() != null)) {
+				ctx.setAttribute("cert", crt, REQUEST);
+				PilotRating pr = new PilotRating(StringUtils.parse(usr.getNetworkID(crt.getNetwork()), 0), crt.getNetworkRatingCode());
+				pr.setInstructorID(StringUtils.parse(ctx.getUser().getNetworkID(crt.getNetwork()), 0));
+				pr.setIssueDate(Instant.now());
+				if (crt.getNetwork() == OnlineNetwork.VATSIM) {
+					SetVATSIMData vwdao = new SetVATSIMData();
+					vwdao.addRating(pr);
+					ctx.setAttribute("networkRatingAdded", Boolean.TRUE, REQUEST);
+				}
+			}
 			
 			// Write Facebook update
 			if (!StringUtils.isEmpty(SystemData.get("users.facebook.id")) && (op == Status.COMPLETE) && crt.getVisible()) {
