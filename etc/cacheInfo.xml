@@ -21,6 +21,10 @@
     <cache id="NavRoute" expires="86400" remote="true" />
 	<cache id="FIRs" max="512" />
 	<cache id="FIRIDs" max="256" />
+	
+	<!-- VATSIM caches -->
+	<cache id="ATORatings" expires="14400" remote="true" />
+	<cache id="ATOInstructors" expires="14400" remote="true" />
 
 	<!-- ACARS caches -->
 	<cache id="ACARSMap" max="1" expires="3" />
