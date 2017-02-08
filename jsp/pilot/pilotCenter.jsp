@@ -541,8 +541,7 @@ to withdraw this Transfer Request.</span></c:if></td>
 </c:if>
 <tr>
  <td class="mid"><el:cmd className="bld" url="promoeligibility">Review Promotion Eligibility</el:cmd></td>
- <td class="data">You can review the different Equipment programs at <content:airline /> to see what you need in order to switch
- programs or request additional equipment type ratings.</td>
+ <td class="data">You can review the different Equipment programs at <content:airline /> to see what you need in order to switch programs or request additional equipment type ratings.</td>
 </tr>
 <tr>
 <c:if test="${(pilot.legs >= 5) && !pilot.noExams}">
@@ -551,22 +550,17 @@ to withdraw this Transfer Request.</span></c:if></td>
 <c:if test="${pilot.legs < 5 || pilot.noExams}">
  <td class="mid bld">Testing Center</td>
 </c:if>
- <td class="data">The <content:airline /> Testing Center is your single source for the written 
-examinations needed for promotions and additional type ratings. Here you can see your prior tests 
+ <td class="data">The <content:airline /> Testing Center is your single source for the written examinations needed for promotions and additional type ratings. Here you can see your prior tests 
 and their results, in addition to writing new aircraft tests.
-<c:if test="${examLockout}"><span class="sec bld">You completed a <content:airline /> pilot Examination 
-with an unsatisfactory score less than <fmt:int value="${examLockoutHours}" /> hours ago, and therefore 
+<c:if test="${examLockout}"><span class="sec bld">You completed a <content:airline /> pilot Examination with an unsatisfactory score less than <fmt:int value="${examLockoutHours}" /> hours ago, and therefore 
 cannot write a new Examination until this interval has passed.</span></c:if>
-<c:if test="${pilot.legs < 5}"><span class="sec bld">As a new <content:airline /> pilot, you will 
-be eligible to take written examinations once you have completed 5 flights.</span></c:if></td>
+<c:if test="${pilot.legs < 5}"><span class="sec bld">As a new <content:airline /> pilot, you will be eligible to take written examinations once you have completed 5 flights.</span></c:if></td>
 </tr>
 <c:if test="${hasSC && (pilot.legs >= scMinFlights) && (pilotAge >= scMinAge)}">
 <tr>
  <td class="mid"><el:cmd className="bld" url="scnomcenter">Senior Captain Nominations</el:cmd></td>
- <td class="data">Promotion to the rank of Senior Captain is the highest individual achievement a <content:airline />
- pilot can obtain. You can nominate up to <fmt:int value="${scMaxNoms}" /> individuals for promotion to
- Senior captain each calendar quarter. Please note that the final decision on promotions to Senior Captain
- is the exclusive perogative of the <content:airline /> Senior Staff.</td>
+ <td class="data">Promotion to the rank of Senior Captain is the highest individual achievement a <content:airline /> pilot can obtain. You can nominate up to <fmt:int value="${scMaxNoms}" /> individuals for promotion to
+ Senior captain each calendar quarter. Please note that the final decision on promotions to Senior Captain is the exclusive perogative of the <content:airline /> Senior Staff.</td>
 </tr>
 </c:if>
 
@@ -575,7 +569,7 @@ be eligible to take written examinations once you have completed 5 flights.</spa
 <c:set var="academyNoFlights" value="${(pilot.legs < academyFlights) && !isAcademyAdmin}" scope="page" />
 <!-- Flight Academy Section -->
 <tr class="title caps">
- <td colspan="2">FLIGHT ACADEMY</td>
+ <td colspan="2"><content:airline /> FLIGHT ACADEMY</td>
 </tr>
 <tr>
 <c:if test="${!academyNoFlights}">
@@ -584,39 +578,37 @@ be eligible to take written examinations once you have completed 5 flights.</spa
 <c:if test="${academyNoFlights}">
  <td class="mid bld">Flight Academy</td>
 </c:if>
- <td class="data">The <content:airline /> Flight Academy is our official Pilot training program. 
-The Academy is available to assist all members regardless of experience, skill level or ratings. 
-The spectrum of training spans from formal flight instruction to informal mentoring to address 
-specific issues like online flying, VOR tracking, ATC procedures, improved landings.<c:if test="${!empty courses}"><br />
+ <td class="data">The <content:airline /> Flight Academy is our official Pilot training program. The Academy is available to assist all members regardless of experience, skill level or ratings. 
+The spectrum of training spans from formal flight instruction to informal mentoring to address specific issues like online flying, VOR tracking, ATC procedures, improved landings.<c:if test="${!empty courses}"><br />
 <br />
-You have completed or are enrolled in the following <content:airline /> Flight Academy courses: 
-<fmt:list value="${courses}" delim=", " />.</c:if>
+You have completed or are enrolled in the following <content:airline /> Flight Academy courses: <span class="sec bld"><fmt:list value="${courses}" delim=", " /></span>.</c:if>
 <c:if test="${!empty course}"><br />
-You are currently enrolled in the <el:cmd url="course" link="${course}" className="pri bld">${course.name}</el:cmd> 
-Flight Academy course.</c:if>
+You are currently enrolled in the <el:cmd url="course" link="${course}" className="pri bld">${course.name}</el:cmd> Flight Academy course.</c:if>
 <c:if test="${academyNoFlights}"><br />
 <br />
-<span class="ita">You cannot enroll in a <content:airline /> Flight Academy course until you have successfully completed 
-<fmt:int value="${academyFlights}" /> Flight legs.</span></c:if></td>
+<span class="ita">You cannot enroll in a <content:airline /> Flight Academy course until you have successfully completed <fmt:int value="${academyFlights}" /> Flight legs.</span></c:if>
+<c:if test="${!empty vatsim_ratings}">
+<br /><br />
+You have obtained the following VATSIM Pilot Ratings:<br />
+<br />
+<c:forEach var="pr" items="${vatsim_ratings}" varStatus="prStatus"><span class="pri bld">${pr.ratingCode}</span>, issued by <span class="ter bld">${pr.ATOName}</span> on <fmt:date fmt="d" date="${pr.issueDate}" />.<c:if test="${!prStatus.last}"><br /></c:if></c:forEach>
+</c:if></td>
 </tr>
 <c:if test="${!empty course}">
 <tr>
  <td class="mid"><el:cmd url="academycalendar" className="bld">Instruction Calendar</el:cmd></td>
- <td class="data">The <content:airline /> Flight Academy Instruction Calendar allows you to schedule a
-training session with a Flight Academy instructor to meet online for test flights, check rides and other 
+ <td class="data">The <content:airline /> Flight Academy Instruction Calendar allows you to schedule a training session with a Flight Academy instructor to meet online for test flights, check rides and other 
 situations where a virtual Flight Instructor can asisst you in your development.</td>
 </tr>
 </c:if>
 <content:filter roles="HR,Instructor,AcademyAdmin,AcademyAudit">
 <tr>
  <td class="mid"><el:cmd url="courses" className="bld">Active Courses</el:cmd></td>
- <td class="data">You can view Pilots currently enrolled within a <content:airline /> Flight Academy 
-training course.</td>
+ <td class="data">You can view Pilots currently enrolled within a <content:airline /> Flight Academy training course.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd url="academyridequeue" className="bld">Submitted Check Rides</el:cmd></td>
- <td class="data">You can view submitted <content:airline /> Flight Academy Check Rides that are
- awaiting scoring by a Flight Academy Examiner.</td>
+ <td class="data">You can view submitted <content:airline /> Flight Academy Check Rides that are awaiting scoring by a Flight Academy Examiner.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd url="arscripts" className="bld">Check Ride Scripts</el:cmd></td>
@@ -624,27 +616,23 @@ training course.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd url="coursequeue" className="bld">Completed Courses</el:cmd></td>
- <td class="data">You can view <content:airline /> Flight Academy Courses that are ready for a Certification
- to be granted, since all Course requirements have been met.</td>
+ <td class="data">You can view <content:airline /> Flight Academy Courses that are ready for a Certification to be granted, since all Course requirements have been met.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd url="certs" className="bld">Certification Profiles</el:cmd></td>
- <td class="data">You can view and/or modify Flight Academy certification profiles here, to change 
-the requirements, necessary examinations and prerequisites for each <content:airline /> Flight Academy 
+ <td class="data">You can view and/or modify Flight Academy certification profiles here, to change the requirements, necessary examinations and prerequisites for each <content:airline /> Flight Academy 
 pilot Certification.</td>
 </tr>
 <c:if test="${academyInsFlights}">
 <tr>
  <td class="mid"><el:cmd url="inslogbook" className="bld">Instruction Logbook</el:cmd></td>
- <td class="data">You can view instruction flight log books for the <content:airline /> Flight 
-Academy.</td>
+ <td class="data">You can view instruction flight log books for the <content:airline /> Flight Academy.</td>
 </tr>
 </c:if>
 <c:if test="${empty course}">
 <tr>
  <td class="mid"><el:cmd url="academycalendar" className="bld">Instruction Calendar</el:cmd></td>
- <td class="data">The <content:airline /> Flight Academy Instruction Calendar allows you to schedule a
-training session with a Flight Academy student.</td>
+ <td class="data">The <content:airline /> Flight Academy Instruction Calendar allows you to schedule a training session with a Flight Academy student.</td>
 </tr>
 </c:if>
 </content:filter>
@@ -656,8 +644,7 @@ training session with a Flight Academy student.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="massmail">Group E-Mail</el:cmd></td>
- <td class="data">You can send an e-mail message to a group of pilots in a single equipment program,
- or to the entire airline.</td>
+ <td class="data">You can send an e-mail message to a group of pilots in a single equipment program, or to the entire airline.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="accomplishments">Pilot Accomplishments</el:cmd></td>
@@ -680,8 +667,7 @@ training session with a Flight Academy student.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="eqtypes">Equipment Type Programs</el:cmd></td>
- <td class="data">You can add new equipment programs, or modify existing programs to
- change Chief Pilots, automatic additional ratings or equipment types for flight legs
+ <td class="data">You can add new equipment programs, or modify existing programs to change Chief Pilots, automatic additional ratings or equipment types for flight legs
  that qualify for promotion to Captain.</td>
 </tr>
 </content:filter>
@@ -689,21 +675,18 @@ training session with a Flight Academy student.</td>
 <c:if test="${hasSC}">
 <tr>
  <td class="mid"><el:cmd className="bld" url="scnomcenter">Senior Captain Nominations</el:cmd></td>
- <td class="data">You can view the status of <content:airline /> Senior Captain nominations for the current
- calendar quarter here.</td>
+ <td class="data">You can view the status of <content:airline /> Senior Captain nominations for the current calendar quarter here.</td>
 </tr>
 </c:if>
 </content:filter>
 <content:filter roles="HR">
 <tr>
  <td class="mid"><el:cmd className="bld" url="careers">Career Opportunities</el:cmd></td>
- <td class="data">You can view any <content:airline /> volunteer staff Job Posting here, and create new
- Job Postings for <content:airline /> staff members and Pilots to view.</td>
+ <td class="data">You can view any <content:airline /> volunteer staff Job Posting here, and create new Job Postings for <content:airline /> staff members and Pilots to view.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="jobapplist">Job Applications</el:cmd></td>
- <td class="data">You can view any applications for current or historic <content:airline /> volunteer
- staff Job Postings.</td>
+ <td class="data">You can view any applications for current or historic <content:airline /> volunteer staff Job Postings.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="applicants">Pilot Registration</el:cmd></td>
@@ -715,13 +698,11 @@ training session with a Flight Academy student.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="dupeSearch">Duplicate Pilots</el:cmd></td>
- <td class="data">You can search for and merge duplicate pilot names and IDs into a single <content:airline />
- Pilot profile.</td>
+ <td class="data">You can search for and merge duplicate pilot names and IDs into a single <content:airline /> Pilot profile.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="suspendedusers">Suspended Pilots</el:cmd></td>
- <td class="data">You can view all suspended <content:airline /> pilots and the lengths of their membership
- suspensions.</td>
+ <td class="data">You can view all suspended <content:airline /> pilots and the lengths of their membership suspensions.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="inactivelist">Inactivity Purge Preview</el:cmd></td>
@@ -729,8 +710,7 @@ training session with a Flight Academy student.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="loginaddrs">Login Addresses</el:cmd></td>
- <td class="data">You can search the system logs to determine which user accounts have been access from
- a particular IP address, host name or address range.</td> 
+ <td class="data">You can search the system logs to determine which user accounts have been access from a particular IP address, host name or address range.</td> 
 </tr>
 </content:filter> 
 <content:filter roles="HR,Examination,TestAdmin,Operations">
@@ -765,24 +745,20 @@ aircraft types, for easy reuse when assigning a Check Ride to a pilot.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="airlines">Update Airlines</el:cmd></td>
- <td class="data">You can modify the Airline profiles contained within the <content:airline /> Flight Schedule.
- <span class="small ita">This information is shared between all web applications.</span></td>
+ <td class="data">You can modify the Airline profiles contained within the <content:airline /> Flight Schedule. <span class="small ita">This information is shared between all web applications.</span></td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="airports">Update Airports</el:cmd></td>
- <td class="data">You can modify the Airport profiles contained within the <content:airline /> Flight Schedule.
- <span class="small ita">This information is shared between all web applications.</span></td>
+ <td class="data">You can modify the Airport profiles contained within the <content:airline /> Flight Schedule. <span class="small ita">This information is shared between all web applications.</span></td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="aircraftlist">Update Aircraft</el:cmd></td>
- <td class="data">You can update Aircraft profiles contained within the <content:airline /> Flight Schedule.
- <span class="small ita">This information is shared between all web applications.</span></td>
+ <td class="data">You can update Aircraft profiles contained within the <content:airline /> Flight Schedule. <span class="small ita">This information is shared between all web applications.</span></td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="schedimport">Import Flight Schedule</el:cmd><br />
 <el:cmd className="bld" url="schedexport">Export Flight Schedule</el:cmd></td>
- <td class="data">You can import entries into the <content:airline /> Flight Schedule database from a CSV 
-data file. You may also export entries from the Flight Schedule into a CSV data file.</td>
+ <td class="data">You can import entries into the <content:airline /> Flight Schedule database from a CSV data file. You may also export entries from the Flight Schedule into a CSV data file.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="schedsync">Synchronize Flight Schedule</el:cmd></td>
@@ -798,35 +774,30 @@ data file. You may also export entries from the Flight Schedule into a CSV data 
 <c:if test="${innovataEnabled}">
 <tr>
  <td class="mid"><el:cmd className="bld" url="ivimport">Innovata Schedule Download</el:cmd></td>
- <td class="data"><content:airline /> has partnered with Innovata, LLC to provide instant real-world
- schedule updates which can be downloaded via FTP and imported into the Flight Schedule. If newer
+ <td class="data"><content:airline /> has partnered with Innovata, LLC to provide instant real-world schedule updates which can be downloaded via FTP and imported into the Flight Schedule. If newer
  schedule data is available on Innovata's servers, it will be downloaded.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="ivstatus">Innovata Schedule Download Status</el:cmd></td>
- <td class="data">You can view a status report from the last Innovata, LLC schedule download, to list
- new airports or equipment codes that need to be added to the <content:airline /> Flight Schedule.</td>
+ <td class="data">You can view a status report from the last Innovata, LLC schedule download, to list new airports or equipment codes that need to be added to the <content:airline /> Flight Schedule.</td>
 </tr>
 </c:if>
 <tr>
  <td class="mid"><el:cmd className="bld" url="usvcairports">Unserviced Airports</el:cmd></td>
- <td class="data">As the <content:airline /> Flight Schedule is updated, certain airports may no longer
- be served by a particular Airline. This will display Airports with no corresponding flights in the
+ <td class="data">As the <content:airline /> Flight Schedule is updated, certain airports may no longer be served by a particular Airline. This will display Airports with no corresponding flights in the
  Flight Schedule so that their servicing Airlines may be updated.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="navimport">Navigation Data</el:cmd><br />
 <el:cmd className="bld" url="awyimport">Airway Data</el:cmd><br />
 <el:cmd className="bld" url="trouteimport">Terminal Routes</el:cmd></td>
- <td class="data">You can import and purge AIRAC data stored within the <content:airline /> Navigation Data
-database. AIRAC data can be imported in one of three ways - Navigation Aids, Airways and Terminal Routes 
+ <td class="data">You can import and purge AIRAC data stored within the <content:airline /> Navigation Data database. AIRAC data can be imported in one of three ways - Navigation Aids, Airways and Terminal Routes 
 (SIDs / STARs).</td>
 </tr>
 <c:if test="${acarsEnabled}">
 <tr>
  <td class="mid"><el:cmd className="bld" url="dsptrouteupdate">Dispatch SID/STAR Update</el:cmd></td>
- <td class="data">You can update the <content:airline /> ACARS Dispatch Route Terminal Routes. This should be 
-performed each time the Terminal Routes have been imported from AIRAC data.</td>
+ <td class="data">You can update the <content:airline /> ACARS Dispatch Route Terminal Routes. This should be performed each time the Terminal Routes have been imported from AIRAC data.</td>
 </tr>
 </c:if>
 </content:filter>
@@ -848,14 +819,12 @@ performed each time the Terminal Routes have been imported from AIRAC data.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="dspcalendar">Dispatcher Service Calendar</el:cmd></td>
- <td class="data">This calendar allows <content:airline /> ACARS Dispatchers to announce the times they will be
- providing Dispatch services.</td>
+ <td class="data">This calendar allows <content:airline /> ACARS Dispatchers to announce the times they will be providing Dispatch services.</td>
 </tr>
 <c:if test="${hasDispatchAccess}">
 <tr>
  <td class="mid"><el:cmd className="bld" url="poproutes">Popular Flight Routes</el:cmd></td>
- <td class="data">You can sort route pairs based on popularity, to determine popular routes not covered by routes
- in the <content:airline /> ACARS Dispatch database.</td>
+ <td class="data">You can sort route pairs based on popularity, to determine popular routes not covered by routes in the <content:airline /> ACARS Dispatch database.</td>
 </tr>
 </c:if>
 <content:filter roles="HR,Route">

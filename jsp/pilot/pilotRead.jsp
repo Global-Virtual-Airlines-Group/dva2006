@@ -115,6 +115,13 @@ return true;
  <td class="label">VATSIM ID</td>
  <td colspan="${cspan}" class="data">${vatsimID}</td>
 </tr>
+<c:if test="${!empty vatsim_ratings}">
+<tr>
+ <td class="label top">VATSIM Ratings</td>
+ <td colspan="${cspan}" class="data"><c:forEach var="pr" items="${vatsim_ratings}" varStatus="prStatus"><span class="pri bld">${pr.ratingCode}</span>, issued by ${pr.ATOName} on <fmt:date fmt="d" date="${pr.issueDate}" />
+<c:if test="${!prStatus.last}"><br /></c:if></c:forEach></td>
+</tr>
+</c:if>
 </c:if>
 <c:set var="ivaoID" value="${fn:networkID(pilot, 'IVAO')}" scope="page" />
 <c:if test="${!empty ivaoID}">
