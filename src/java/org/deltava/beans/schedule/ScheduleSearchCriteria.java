@@ -60,6 +60,7 @@ public class ScheduleSearchCriteria extends Flight {
 	 */
 	public ScheduleSearchCriteria(Airline a, int fNumber, int leg) {
 		super(a, fNumber, leg);
+		setLeg(0);
 	}
 	
 	public ScheduleSearchCriteria(String sortBy) {
