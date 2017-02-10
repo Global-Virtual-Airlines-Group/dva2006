@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009, 2012, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servlet;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A scoreboard to track servlet activity.
  * @author Luke
- * @version 2.6
+ * @version 7.2
  * @since 1.0
  */
 
@@ -33,14 +33,14 @@ public class ServletScoreboard implements java.io.Serializable {
 	 * @return a Collection of ServletScoreboardEntry beans
 	 */
 	public static Collection<ServletScoreboardEntry> getScoreboard() {
-		return _entries.values();
+		return new ArrayList<ServletScoreboardEntry>(_entries.values());
 	}
 	
 	/**
 	 * Updates the scoreboard upon servlet completion.
 	 */
 	public static void complete() {
-		Long id = new Long(Thread.currentThread().getId());
+		Long id = Long.valueOf(Thread.currentThread().getId());
 		try {
 			_r.lock();
 			ServletScoreboardEntry entry = _entries.get(id);
@@ -56,11 +56,11 @@ public class ServletScoreboard implements java.io.Serializable {
 	 * @param req the servlet request
 	 */
 	public static void add(HttpServletRequest req) {
-		Thread t = Thread.currentThread();
+		Thread t = Thread.currentThread(); Long k = Long.valueOf(t.getId());
 		ServletScoreboardEntry entry = null;
 		try {
 			_r.lock();
-			entry = _entries.get(new Long(t.getId()));
+			entry = _entries.get(k);
 		} finally {
 			_r.unlock();
 		}
@@ -69,7 +69,7 @@ public class ServletScoreboard implements java.io.Serializable {
 			entry = new ServletScoreboardEntry(t.getName());
 			try {
 				_w.lock();
-				_entries.put(new Long(t.getId()), entry);
+				_entries.put(k, entry);
 			} finally {
 				_w.unlock();
 			}
@@ -90,7 +90,7 @@ public class ServletScoreboard implements java.io.Serializable {
 			_w.lock();
 			Thread[] threads = new Thread[tg.activeCount()];
 			tg.enumerate(threads);
-			Map<String, Thread> threadMap = CollectionUtils.createMap(Arrays.asList(threads), "name");
+			Map<String, Thread> threadMap = CollectionUtils.createMap(Arrays.asList(threads), Thread::getName);
 			for (ServletScoreboardEntry entry : _entries.values()) {
 				Thread t = threadMap.get(entry.getName());
 				entry.setAlive((t != null) && t.isAlive());

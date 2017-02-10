@@ -1,16 +1,15 @@
-// Copyright 2006, 2007, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.ts2;
 
 import java.util.*;
 
 import org.deltava.beans.*;
-
 import org.deltava.util.StringUtils;
 
 /**
  * A bean to store TeamSpeak 2 server information.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -192,10 +191,8 @@ public class Server extends TSObject implements ComboAlias, ViewEntry {
 		roles.addAll(newRoles);
 
 		// Add role to access list
-		if (ServerAccess.ACCESS != type) {
-			for (Iterator<String> i = newRoles.iterator(); i.hasNext();)
-				addRole(ServerAccess.ACCESS, i.next());
-		}
+		if (ServerAccess.ACCESS != type)
+			newRoles.forEach(r -> addRole(ServerAccess.ACCESS, r));
 	}
 
 	/**

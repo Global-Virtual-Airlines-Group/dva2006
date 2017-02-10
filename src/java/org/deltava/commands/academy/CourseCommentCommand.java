@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2010, 2011, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -70,10 +70,8 @@ public class CourseCommentCommand extends AbstractCommand {
 			GetPilotDirectory pddao = new GetPilotDirectory(con);
 			Map<Integer, Pilot> ins = new HashMap<Integer, Pilot>();
 			for (AirlineInformation ai : uddao.getAirlines(true).values()) {
-				Map<Integer, Pilot> usrs = CollectionUtils.createMap(pddao.getByRole("Instructor", ai.getDB()), "ID");
-				Map<Integer, Pilot> admins = CollectionUtils.createMap(pddao.getByRole("AcademyAdmin", ai.getDB()), "ID");
-				ins.putAll(usrs);
-				ins.putAll(admins);
+				ins.putAll(CollectionUtils.createMap(pddao.getByRole("Instructor", ai.getDB()), Pilot::getID));
+				ins.putAll(CollectionUtils.createMap(pddao.getByRole("AcademyAdmin", ai.getDB()), Pilot::getID));
 			}
 			
 			// Get Pilot IDs from comments - only add instructors

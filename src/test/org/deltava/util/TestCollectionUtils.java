@@ -55,63 +55,17 @@ public class TestCollectionUtils extends TestCase {
 		assertTrue(cd2.contains("5"));
 	}
 
-	public void testSetDelta() {
-		// We do the double-list creation since arrays.asList returns an immutable collection
-		Collection<String> c1 = new ArrayList<String>(Arrays.asList(new String[] { "1", "2", "3" }));
-		Collection<String> c2 = new ArrayList<String>(Arrays.asList(new String[] { "3", "4", "5" }));
-
-		CollectionUtils.setDelta(c1, c2);
-		assertEquals(2, c1.size());
-		assertTrue(c1.contains("1"));
-		assertTrue(c1.contains("2"));
-
-		assertEquals(2, c2.size());
-		assertTrue(c2.contains("4"));
-		assertTrue(c2.contains("5"));
-	}
-
-	public void testLoadList() {
-		String[] entries = { "1", "2", "3" };
-		Collection<String> toList = CollectionUtils.loadList(entries, null);
-		assertEquals(entries.length, toList.size());
-		assertEquals(toList, CollectionUtils.loadList(null, toList));
-	}
-
 	public void testCreateMap() {
-		Set<Object> ids = new HashSet<Object>();
+		Set<ID> ids = new HashSet<ID>();
 		ids.add(new ID(1));
 		ids.add(new ID(2));
 		ids.add(new ID(10));
-		ids.add(new Object());
 
-		Map<?, ?> m = CollectionUtils.createMap(ids, "ID");
+		Map<?, ?> m = CollectionUtils.createMap(ids, ID::getID);
 		assertEquals(ids.size() - 1, m.size());
 		assertTrue(m.containsKey(Integer.valueOf(1)));
 		assertTrue(m.containsKey(Integer.valueOf(2)));
 		assertTrue(m.containsKey(Integer.valueOf(10)));
-	}
-
-	public void testHasMatches() {
-		Set<String> c1 = new HashSet<String>();
-		c1.add("A");
-		c1.add("B");
-		c1.add("C");
-		Set<String> c2 = new HashSet<String>();
-		c2.add("A");
-		c2.add("C");
-		c2.add("D");
-		assertEquals(2, CollectionUtils.hasMatches(c1, c2));
-		c2.remove("C");
-		assertEquals(1, CollectionUtils.hasMatches(c1, c2));
-		c1.remove("A");
-		assertEquals(0, CollectionUtils.hasMatches(c1, c2));
-	}
-
-	public void testGetLast() {
-		Set<String> s1 = new LinkedHashSet<String>();
-		s1.add("A");
-		s1.add("B");
-		assertEquals("B", CollectionUtils.getLast(s1));
 	}
 
 	public void testUnion() {

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to retrieve Examination questions.
  * @author Luke
- * @version 4.1
+ * @version 7.2
  * @since 2.1
  */
 
@@ -163,14 +163,12 @@ public class GetExamQuestions extends DAO {
 	public List<QuestionProfile> getMostPopular(boolean isAcademy) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT Q.*, QS.TOTAL, QS.CORRECT, COUNT(MQ.ID), QI.TYPE, QI.SIZE, "
-			+ "QI.X, QI.Y, RQ.AIRPORT_D, RQ.AIRPORT_A FROM exams.QUESTIONINFO Q LEFT JOIN exams.QUESTIONSTATS QS "
-			+ "ON ((Q.ID=QS.ID)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT Q.*, QS.TOTAL, QS.CORRECT, COUNT(MQ.ID), QI.TYPE, QI.SIZE, QI.X, QI.Y, "
+			+ "RQ.AIRPORT_D, RQ.AIRPORT_A FROM exams.QUESTIONINFO Q LEFT JOIN exams.QUESTIONSTATS QS ON ((Q.ID=QS.ID)");
 		if (isAcademy)
 			sqlBuf.append(" AND (QS.ACADEMY=?)");
-		sqlBuf.append(")	LEFT JOIN exams.QUESTIONIMGS QI ON (Q.ID=QI.ID) LEFT JOIN exams.QUESTIONMINFO MQ ON "
-			+ "(Q.ID=MQ.ID) LEFT JOIN exams.QUESTIONRPINFO RQ ON (Q.ID=RQ.ID) WHERE (Q.ACTIVE=?) GROUP BY "
-			+ "Q.ID ORDER BY QS.TOTAL DESC");
+		sqlBuf.append(")	LEFT JOIN exams.QUESTIONIMGS QI ON (Q.ID=QI.ID) LEFT JOIN exams.QUESTIONMINFO MQ ON (Q.ID=MQ.ID) "
+			+ "LEFT JOIN exams.QUESTIONRPINFO RQ ON (Q.ID=RQ.ID) WHERE (Q.ACTIVE=?) GROUP BY Q.ID ORDER BY QS.TOTAL DESC");
 		
 		try {
 			prepareStatement(sqlBuf.toString());
@@ -273,7 +271,7 @@ public class GetExamQuestions extends DAO {
 		}
 	}
 	
-	/**
+	/*
 	 * Helper method to load Question result sets.
 	 */
 	private List<QuestionProfile> execute() throws SQLException {
@@ -318,14 +316,13 @@ public class GetExamQuestions extends DAO {
 		return results;
 	}
 	
-	/**
+	/*
 	 * Helper method to populate multiple choice question options.
 	 */
 	private void loadMultiChoice(String examName, Collection<QuestionProfile> qs) throws SQLException {
-		Map<Integer, QuestionProfile> resultMap = CollectionUtils.createMap(qs, "ID");
-		prepareStatementWithoutLimits("SELECT MQ.* FROM exams.QUESTIONMINFO MQ, exams.QUESTIONINFO Q, "
-				+ "exams.QE_INFO QE WHERE (Q.ID=QE.QUESTION_ID) AND (Q.ID=MQ.ID) AND (QE.EXAM_NAME=?) "
-				+ "ORDER BY MQ.ID, MQ.SEQ");
+		Map<Integer, QuestionProfile> resultMap = CollectionUtils.createMap(qs, QuestionProfile::getID);
+		prepareStatementWithoutLimits("SELECT MQ.* FROM exams.QUESTIONMINFO MQ, exams.QUESTIONINFO Q, exams.EQ_INFO QE "
+			+ "WHERE (Q.ID=QE.QUESTION_ID) AND (Q.ID=MQ.ID) AND (QE.EXAM_NAME=?) ORDER BY MQ.ID, MQ.SEQ");
 		_ps.setString(1, examName);
 
 		// Execute the query

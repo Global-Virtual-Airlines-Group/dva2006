@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -100,7 +100,7 @@ abstract class PilotReadDAO extends DAO {
 			_ps.setString(2, fullName);
 
 			// Execute the query and get the result
-			Map<Integer, Pilot> results = CollectionUtils.createMap(execute(), "ID");
+			Map<Integer, Pilot> results = CollectionUtils.createMap(execute(), Pilot::getID);
 			loadIMAddrs(results, dbName);
 			loadRatings(results, dbName);
 			loadRoles(results, dbName);
@@ -210,7 +210,7 @@ abstract class PilotReadDAO extends DAO {
 				uncached = execute();
 
 				// Convert to a map and load ratings/roles
-				Map<Integer, Pilot> ucMap = CollectionUtils.createMap(uncached, "ID");
+				Map<Integer, Pilot> ucMap = CollectionUtils.createMap(uncached, Pilot::getID);
 				loadIMAddrs(ucMap, dbName);
 				loadRatings(ucMap, dbName);
 				loadRoles(ucMap, dbName);
@@ -230,7 +230,7 @@ abstract class PilotReadDAO extends DAO {
 		}
 
 		// Convert to a Map for easy searching
-		return CollectionUtils.createMap(results, "ID");
+		return CollectionUtils.createMap(results, Pilot::getID);
 	}
 	
 	/**

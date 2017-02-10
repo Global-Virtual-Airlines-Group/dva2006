@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.*;
 /**
  * A bean to store ACARS Flight Information records.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -59,6 +59,8 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 
 	private int _dispatcherID;
 	private int _routeID;
+	
+	private int _txCode;
 
 	private RouteEntry _lastPosition;
 	private SortedSet<RouteEntry> _routeData;
@@ -318,6 +320,15 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 	}
 
 	/**
+	 * Returns the transponder code used on this Flight.
+	 * @return the transponder code
+	 * @see FlightInfo#setTXCode(int)
+	 */
+	public int getTXCode() {
+		return _txCode;
+	}
+	
+	/**
 	 * Returns the number of position records associated with this Flight.
 	 * @return the number of positions
 	 * @see FlightInfo#setPositionCount(int)
@@ -325,7 +336,7 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 	public int getPositionCount() {
 		return hasRouteData() ? _routeData.size() : _positionCount;
 	}
-
+	
 	/**
 	 * Returns the last logged position for this flight.
 	 * @return the latest PositionEntry, or NULL if no route data
@@ -672,6 +683,15 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 	 */
 	public void setRemarks(String remarks) {
 		_remarks = remarks;
+	}
+	
+	/**
+	 * Updates the transponder code used on this flight.
+	 * @param tx the transponder code
+	 * @see FlightInfo#getTXCode()
+	 */
+	public void setTXCode(int tx) {
+		_txCode = tx;
 	}
 
 	/**

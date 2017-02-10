@@ -1,7 +1,8 @@
-// Copyright 2008, 2009, 2011, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2011, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
@@ -20,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display program-specific statistics and data.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 2.1
  */
 
@@ -69,7 +70,7 @@ public class ProgramRosterCommand extends AbstractViewCommand {
 			GetPilot pdao = new GetPilot(con);
 			pdao.setQueryStart(vc.getStart());
 			pdao.setQueryMax(vc.getCount());
-			Map<Integer, Pilot> pilots = CollectionUtils.createMap(pdao.getPilotsByEQ(eq, vc.getSortType(), true, rank), "ID");
+			Map<Integer, Pilot> pilots = CollectionUtils.createMap(pdao.getPilotsByEQ(eq, vc.getSortType(), true, rank), Pilot::getID);
 			vc.setResults(pilots.values());
 			
 			// Load promotion queue
@@ -80,8 +81,7 @@ public class ProgramRosterCommand extends AbstractViewCommand {
 			// Calculate promotion queue and filter by rank
 			boolean canPromote = false;
 			Map<Integer, PilotAccessControl> accessMap = new HashMap<Integer, PilotAccessControl>();
-			for (Iterator<Pilot> i = promoPilots.values().iterator(); i.hasNext(); ) {
-				Pilot p = i.next();
+			for (Pilot p : promoPilots.values()) {
 				PilotAccessControl ac = new PilotAccessControl(ctx, p);
 				ac.validate();
 				accessMap.put(Integer.valueOf(p.getID()), ac);
@@ -100,17 +100,13 @@ public class ProgramRosterCommand extends AbstractViewCommand {
 			}
 			
 			// Load the program statistics
-			Collection<Integer> IDs = new HashSet<Integer>();
 			GetProgramStatistics stdao = new GetProgramStatistics(con);
 			ProgramMetrics pm = stdao.getMetrics(eq);
 			
-			// Load pending transfer
+			// Load pending transfers
 			GetTransferRequest txdao = new GetTransferRequest(con);
 			Collection<TransferRequest> txs = txdao.getByEQ(eq.getName(), "CREATED");
-			for (Iterator<TransferRequest> i = txs.iterator(); i.hasNext(); ) {
-				TransferRequest tx = i.next();
-				IDs.add(Integer.valueOf(tx.getID()));
-			}
+			Collection<Integer> IDs = txs.stream().map(TransferRequest::getID).collect(Collectors.toSet());
 			
 			// Load pending checkrides
 			GetExam exdao = new GetExam(con);

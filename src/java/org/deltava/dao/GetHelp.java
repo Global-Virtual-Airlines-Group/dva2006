@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Data Access Object to load Online Help and Help Desk entries.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -189,7 +189,7 @@ public class GetHelp extends DAO {
 		try {
 			prepareStatement("SELECT * FROM HELPDESK WHERE (ISFAQ=?)");
 			_ps.setBoolean(1, true);
-			Map<Integer, Issue> results = CollectionUtils.createMap(executeIssue(), "ID");
+			Map<Integer, Issue> results = CollectionUtils.createMap(executeIssue(), Issue::getID);
 
 			// Build the FAQ answer comments query
 			if (!results.isEmpty()) {
@@ -215,7 +215,7 @@ public class GetHelp extends DAO {
 						// Stuff into issue
 						Issue i = results.get(Integer.valueOf(ic.getID()));
 						if (i != null)
-						i.addComment(ic);
+							i.addComment(ic);
 					}
 				}
 

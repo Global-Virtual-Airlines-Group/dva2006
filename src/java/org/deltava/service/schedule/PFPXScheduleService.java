@@ -1,4 +1,4 @@
-// Copyright 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Serivce to export the Flight Schedule in PFPX format. 
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 6.1
  */
 
@@ -71,7 +71,7 @@ public class PFPXScheduleService extends DownloadService {
 			
 			// Load all aircraft
 			GetAircraft acdao = new GetAircraft(con);
-			acInfo.putAll(CollectionUtils.createMap(acdao.getAircraftTypes(), "name"));
+			acInfo.putAll(CollectionUtils.createMap(acdao.getAircraftTypes(), Aircraft::getName));
 			
 			// Load the schedule
 			GetSchedule sdao = new GetSchedule(con);

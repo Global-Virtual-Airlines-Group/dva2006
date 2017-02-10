@@ -1,4 +1,4 @@
-// Copyright 2009,  2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009,  2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to manually display Pilots scheduled to be marked for Inactivity.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 2.6
  */
 
@@ -42,7 +42,7 @@ public class InactivityListCommand extends AbstractCommand {
 			GetInactivity dao = new GetInactivity(con);
 			
 			// Get the pilots to mark without warning
-			Map<Integer, InactivityPurge> purgeBeans = CollectionUtils.createMap(dao.getPurgeable(),  "ID");
+			Map<Integer, InactivityPurge> purgeBeans = CollectionUtils.createMap(dao.getPurgeable(), InactivityPurge::getID);
 			Collection<Integer> noWarnIDs = dao.getRepeatInactive(notifyDays, inactiveDays, 2);
 			for (Iterator<Integer> i = noWarnIDs.iterator(); i.hasNext(); ) {
 				Integer id = i.next();

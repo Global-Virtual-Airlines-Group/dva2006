@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Data Access Object to read Pilot Transfer requests.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -227,7 +227,7 @@ public class GetTransferRequest extends DAO {
 	 * Helper method to load checkride/transfer mappings.
 	 */
 	private void loadCheckRides(Collection<TransferRequest> txreqs) throws SQLException {
-		Map<Integer, TransferRequest> reqs = CollectionUtils.createMap(txreqs, "ID");
+		Map<Integer, TransferRequest> reqs = CollectionUtils.createMap(txreqs, TransferRequest::getID);
 		if (txreqs.isEmpty())
 			return;
 		

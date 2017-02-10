@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -397,9 +397,10 @@ public class GetACARSData extends DAO {
 				info.setBeta(rs.getInt(23));
 				info.setFDR(Recorder.values()[rs.getInt(24)]);
 				info.setSimulatorVersion(rs.getInt(25), rs.getInt(26));
-				info.setRemoteAddr(rs.getString(27));
-				info.setRouteID(rs.getInt(28));
-				info.setDispatcherID(rs.getInt(29));
+				info.setTXCode(rs.getInt(27));
+				info.setRemoteAddr(rs.getString(28));
+				info.setRouteID(rs.getInt(29));
+				info.setDispatcherID(rs.getInt(30));
 				results.add(info);
 			}
 		}

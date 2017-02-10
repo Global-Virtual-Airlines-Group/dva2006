@@ -1,4 +1,4 @@
-// Copyright 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2014, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to waive a Check Ride.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 5.3
  */
 
@@ -48,7 +48,7 @@ public class WaiveCheckRideCommand extends AbstractTestHistoryCommand {
 
 			// Get the active Equipment Profiles and determine what we are missing check rides for
 			GetEquipmentType eqdao = new GetEquipmentType(con);
-			Map<String, EquipmentType> activeEQ = CollectionUtils.createMap(eqdao.getAvailable(SystemData.get("airline.code")), "name");
+			Map<String, EquipmentType> activeEQ = CollectionUtils.createMap(eqdao.getAvailable(SystemData.get("airline.code")), EquipmentType::getName);
 			for (Iterator<EquipmentType> i = activeEQ.values().iterator(); i.hasNext();) {
 				EquipmentType eq = i.next();
 				if (testHistory.hasCheckRide(eq))

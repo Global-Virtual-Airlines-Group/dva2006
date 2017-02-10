@@ -1,4 +1,4 @@
-// Copyright 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2013, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to refresh external approach charts. 
  * @author Luke
- * @version 5.1
+ * @version 7.2
  * @since 5.1
  */
 
@@ -49,7 +49,7 @@ public class ExternalChartRefreshCommand extends AbstractCommand {
 			
 			// Load AirCharts and map internal IDs
 			GetAirCharts acdao = new GetAirCharts();
-			Map<String, ExternalChart> newCharts = CollectionUtils.createMap(acdao.getCharts(a), "externalID");
+			Map<String, ExternalChart> newCharts = CollectionUtils.createMap(acdao.getCharts(a), ExternalChart::getExternalID);
 			for (Map.Entry<String, ExternalChart> me : newCharts.entrySet()) {
 				ExternalChart oec = oldCharts.get(me.getKey());
 				if (oec != null)

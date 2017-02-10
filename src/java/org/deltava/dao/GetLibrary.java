@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2011, 2012, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2011, 2012, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.io.File;
@@ -306,7 +306,7 @@ public class GetLibrary extends DAO {
 		// Load from the database
 		sqlBuf.setLength(sqlBuf.length() - 1);
 		sqlBuf.append(") GROUP BY FILENAME");
-		Map<String, ? extends FleetEntry> is = CollectionUtils.createMap(files, "fileName");
+		Map<String, ? extends FleetEntry> is = CollectionUtils.createMap(files, FleetEntry::getFileName);
 		prepareStatement(sqlBuf.toString());
 		
 		// Parse the results

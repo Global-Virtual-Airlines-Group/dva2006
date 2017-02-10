@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to read examination configuration data.
  * @author Luke
- * @version 4.1
+ * @version 7.2
  * @since 1.0
  */
 
@@ -185,11 +185,11 @@ public class GetExamProfiles extends DAO {
 		return results;
 	}
 
-	/**
+	/*
 	 * Helper method to load airlines for Exams.
 	 */
 	private void loadAirlines(Collection<ExamProfile> eProfiles) throws SQLException {
-		Map<String, ExamProfile> exams = CollectionUtils.createMap(eProfiles, "name");
+		Map<String, ExamProfile> exams = CollectionUtils.createMap(eProfiles, ExamProfile::getName);
 		if (eProfiles.isEmpty())
 			return;
 
@@ -219,11 +219,11 @@ public class GetExamProfiles extends DAO {
 		_ps.close();
 	}
 	
-	/**
+	/*
 	 * Helper method to load scorers for Exams.
 	 */
 	private void loadScorers(Collection<ExamProfile> eProfiles) throws SQLException {
-		Map<String, ExamProfile> exams = CollectionUtils.createMap(eProfiles, "name");
+		Map<String, ExamProfile> exams = CollectionUtils.createMap(eProfiles, ExamProfile::getName);
 		if (eProfiles.isEmpty())
 			return;
 		

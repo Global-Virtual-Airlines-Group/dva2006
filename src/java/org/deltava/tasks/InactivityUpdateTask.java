@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to disable Users who have not logged in within a period of time.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -67,7 +67,7 @@ public class InactivityUpdateTask extends Task {
 			// Load pending flight academy users
 			Collection<Course> pC = cdao.getByStatus(Status.PENDING, null, null);
 			pC.addAll(cdao.getByStatus(Status.STARTED, null, null));
-			Map<Integer, Course> courses = CollectionUtils.createMap(pC, "pilotID");
+			Map<Integer, Course> courses = CollectionUtils.createMap(pC, Course::getPilotID);
 
 			// Get the Message templates
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
@@ -75,7 +75,7 @@ public class InactivityUpdateTask extends Task {
 			MessageTemplate nmt = mtdao.get("USERNOTIFY");
 
 			// Get the pilots to mark without warning
-			Map<Integer, InactivityPurge> purgeBeans = CollectionUtils.createMap(dao.getPurgeable(),  "ID");
+			Map<Integer, InactivityPurge> purgeBeans = CollectionUtils.createMap(dao.getPurgeable(), InactivityPurge::getID);
 			Collection<Integer> noWarnIDs = dao.getRepeatInactive(notifyDays, inactiveDays, 2);
 			for (Iterator<Integer> i = noWarnIDs.iterator(); i.hasNext(); ) {
 				Integer id = i.next();

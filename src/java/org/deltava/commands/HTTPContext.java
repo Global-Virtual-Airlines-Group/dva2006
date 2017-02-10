@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
 /**
  * An abstract class to share command data between different HTTP command contexts.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 2.4
  */
 
@@ -155,6 +155,17 @@ public abstract class HTTPContext extends ConnectionContext implements SecurityC
 	public String getParameter(String pName) {
 		return _req.getParameter(pName);
 	}
+	
+	/**
+	 * Returns the values of a collection of request parameters.
+	 * @param pName the parameter name
+	 * @param deflt the default value if the parameter is null
+	 * @return a Collection parameter values, or the default value if not present
+	 */
+	public Collection<String> getParameters(String pName, Collection<String> deflt) {
+		String[] pValues = _req.getParameterValues(pName);
+		return (pValues == null) ? deflt : new ArrayList<String>(Arrays.asList(pValues));
+	}
 
 	/**
 	 * Returns the values of a collection of request parameters.
@@ -162,8 +173,7 @@ public abstract class HTTPContext extends ConnectionContext implements SecurityC
 	 * @return a Collection parameter values, or null if not present
 	 */
 	public Collection<String> getParameters(String pName) {
-		String[] pValues = _req.getParameterValues(pName);
-		return (pValues == null) ? null : new ArrayList<String>(Arrays.asList(pValues));
+		return getParameters(pName, null);
 	}
 
 	/**

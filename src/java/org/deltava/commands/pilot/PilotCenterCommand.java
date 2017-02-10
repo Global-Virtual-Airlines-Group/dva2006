@@ -173,7 +173,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 
 			// Get Exam profiles
 			GetExamProfiles epdao = new GetExamProfiles(con);
-			Map<String, ExamProfile> exams = CollectionUtils.createMap(epdao.getExamProfiles(false), "name");
+			Map<String, ExamProfile> exams = CollectionUtils.createMap(epdao.getExamProfiles(false), ExamProfile::getName);
 
 			// Check if we are trying to switch equipment types
 			GetTransferRequest txdao = new GetTransferRequest(con);

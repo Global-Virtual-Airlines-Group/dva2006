@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2011, 2012, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2011, 2012, 2014, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load stored ACARS dispatch routes.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 2.0
  */
 
@@ -273,7 +273,7 @@ public class GetACARSRoute extends DAO {
 		prepareStatementWithoutLimits(buf.toString());
 		
 		// Execute the query
-		Map<Integer, DispatchRoute> data = CollectionUtils.createMap(routes, "ID");
+		Map<Integer, DispatchRoute> data = CollectionUtils.createMap(routes, DispatchRoute::getID);
 		try (ResultSet rs = _ps.executeQuery()) {
 			while (rs.next()) {
 				DispatchRoute rp = data.get(Integer.valueOf(rs.getInt(1)));

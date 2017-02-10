@@ -1,7 +1,7 @@
-// Copyright 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.ts2;
 
-import org.deltava.beans.ts2.Channel;
+import org.deltava.beans.ts2.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -11,7 +11,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Web Site Command to display TeamSpeak 2 channels.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -29,7 +29,7 @@ public class ChannelListCommand extends AbstractViewCommand {
 		try {
 			// Get the DAO and the servers
 			GetTS2Data dao = new GetTS2Data(ctx.getConnection());
-			ctx.setAttribute("servers", CollectionUtils.createMap(dao.getServers(), "ID"), REQUEST);
+			ctx.setAttribute("servers", CollectionUtils.createMap(dao.getServers(), Server::getID), REQUEST);
 			
 			// Get the channels
 			dao.setQueryMax(vc.getCount());

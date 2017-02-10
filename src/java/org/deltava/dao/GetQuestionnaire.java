@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2009, 2011, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009, 2011, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Applicant Questionaires.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -78,9 +78,8 @@ public class GetQuestionnaire extends DAO {
 			
 			// Load multiple choice questions
 			if (e.hasMultipleChoice()) {
-				Map<Integer, Question> qMap = CollectionUtils.createMap(e.getQuestions(), "ID");
-				prepareStatementWithoutLimits("SELECT QUESTION_ID, SEQ, ANSWER FROM APPQUESTIONSM WHERE "
-						+ "(EXAM_ID=?) ORDER BY QUESTION_ID, SEQ");
+				Map<Integer, Question> qMap = CollectionUtils.createMap(e.getQuestions(), Question::getID);
+				prepareStatementWithoutLimits("SELECT QUESTION_ID, SEQ, ANSWER FROM APPQUESTIONSM WHERE (EXAM_ID=?) ORDER BY QUESTION_ID, SEQ");
 				_ps.setInt(1, e.getID());
 
 				// Execute the query
@@ -173,7 +172,7 @@ public class GetQuestionnaire extends DAO {
 		
 		try {
 			prepareStatement(sqlBuf.toString());
-			return CollectionUtils.createMap(execute(), "authorID");
+			return CollectionUtils.createMap(execute(), Examination::getAuthorID);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

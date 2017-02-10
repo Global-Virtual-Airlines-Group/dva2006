@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to request a transfer to a different Equipment program.
  * @author Luke
- * @version 4.1
+ * @version 7.2
  * @since 1.0
  */
 
@@ -52,7 +52,7 @@ public class TransferRequestCommand extends AbstractTestHistoryCommand {
 
 			// Get the active Equipment Profiles and determine what we can switch to
 			GetEquipmentType eqdao = new GetEquipmentType(con);
-			Map<String, EquipmentType> activeEQ = CollectionUtils.createMap(eqdao.getAvailable(SystemData.get("airline.code")), "name");
+			Map<String, EquipmentType> activeEQ = CollectionUtils.createMap(eqdao.getAvailable(SystemData.get("airline.code")), EquipmentType::getName);
 			for (Iterator<EquipmentType> i = activeEQ.values().iterator(); i.hasNext(); ) {
 				EquipmentType eq = i.next();
 				try {

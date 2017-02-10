@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.net.*;
@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to link an Image to a Water Cooler discussion thread.
  * @author Luke
- * @version 6.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -78,7 +78,7 @@ public class LinkImageCommand extends AbstractCommand {
 			
 			// Get the linked images
 			GetCoolerLinks ldao = new GetCoolerLinks(con);
-			Map<String, LinkedImage> urlMap = CollectionUtils.createMap(ldao.getURLs(mt.getID()), "URL");
+			Map<String, LinkedImage> urlMap = CollectionUtils.createMap(ldao.getURLs(mt.getID()), LinkedImage::getURL);
 			Collection<String> imgURLs = new LinkedHashSet<String>(urlMap.keySet());
 			
 			// Validate the image
@@ -95,8 +95,8 @@ public class LinkImageCommand extends AbstractCommand {
 				hc.getParams().setParameter("http.protocol.version", HttpVersion.HTTP_1_1);
 				hc.getParams().setParameter("http.useragent",  VersionInfo.USERAGENT);
 				hc.getParams().setParameter("http.tcp.nodelay", Boolean.TRUE);
-				hc.getParams().setParameter("http.socket.timeout", new Integer(2500));
-				hc.getParams().setParameter("http.connection.timeout", new Integer(1500));
+				hc.getParams().setParameter("http.socket.timeout", Integer.valueOf(2500));
+				hc.getParams().setParameter("http.connection.timeout", Integer.valueOf(2000));
 				
 				// Open the connection
 				HeadMethod hm = new HeadMethod(url.toExternalForm());

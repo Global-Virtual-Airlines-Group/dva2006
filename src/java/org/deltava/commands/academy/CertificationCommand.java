@@ -141,7 +141,7 @@ public class CertificationCommand extends AbstractFormCommand {
 			
 			// Get the DAO and all certifications
 			GetAcademyCertifications dao = new GetAcademyCertifications(con);
-			Map<String, Certification> allCerts = CollectionUtils.createMap(dao.getAll(), "code");
+			Map<String, Certification> allCerts = CollectionUtils.createMap(dao.getAll(), Certification::getCode);
 			
 			// Get the certification
 			String name = (String) ctx.getCmdParameter(ID, null);
