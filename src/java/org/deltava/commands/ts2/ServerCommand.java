@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2012, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.ts2;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update TeamSpeak 2 virtual server data.
  * @author Luke
- * @version 5.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -88,10 +88,10 @@ public class ServerCommand extends AbstractFormCommand {
 			srv.setPort(Integer.parseInt(ctx.getParameter("port")));
 			srv.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
 			srv.setACARSOnly(Boolean.valueOf(ctx.getParameter("isACARS")).booleanValue());
-			srv.setRoles(ServerAccess.ACCESS, CollectionUtils.loadList(ctx.getRequest().getParameterValues("accessRoles"), PILOT_ROLES));
-			srv.setRoles(ServerAccess.VOICE, CollectionUtils.loadList(ctx.getRequest().getParameterValues("voxRoles"), PILOT_ROLES));
-			srv.setRoles(ServerAccess.ADMIN, CollectionUtils.loadList(ctx.getRequest().getParameterValues("adminRoles"), HR_ROLES));
-			srv.setRoles(ServerAccess.OPERATOR, CollectionUtils.loadList(ctx.getRequest().getParameterValues("opRoles"), HR_ROLES));
+			srv.setRoles(ServerAccess.ACCESS, ctx.getParameters("accessRoles", PILOT_ROLES));
+			srv.setRoles(ServerAccess.VOICE, ctx.getParameters("voxRoles", PILOT_ROLES));
+			srv.setRoles(ServerAccess.ADMIN, ctx.getParameters("adminRoles", HR_ROLES));
+			srv.setRoles(ServerAccess.OPERATOR, ctx.getParameters("opRoles", HR_ROLES));
 			
 			// Build messages collection
 			Collection<String> msgs = new ArrayList<String>();
@@ -108,12 +108,11 @@ public class ServerCommand extends AbstractFormCommand {
 			
 			// Determine what users to remove from the server
 			Collection<Integer> removeIDs = new HashSet<Integer>();
-			for (Iterator<Pilot> i = srvUsers.getPilots().iterator(); i.hasNext(); ) {
-				Pilot p = i.next();
+			for (Pilot p : srvUsers.getPilots()) {
 				if ((!RoleUtils.hasAccess(p.getRoles(), accessRoles)) || (p.getStatus() != Pilot.ACTIVE) || (p.getNoVoice())) {
 					msgs.add("Removed " + p.getName() + " " + p.getPilotCode() + " from TS2 Server " + srv.getName());
 					log.warn("Removing " + p.getName() + " " + p.getPilotCode() + " from TS2 Server " + srv.getName());
-					removeIDs.add(new Integer(p.getID()));
+					removeIDs.add(Integer.valueOf(p.getID()));
 				}
 			}
 			
@@ -122,8 +121,7 @@ public class ServerCommand extends AbstractFormCommand {
 			
 			// Determine what users to add to the server
 			Collection<Client> addUsrs = new HashSet<Client>();
-			for (Iterator<Pilot> i = otherPilots.getPilots().iterator(); i.hasNext(); ) {
-				Pilot p = i.next();
+			for (Pilot p : otherPilots.getPilots()) {
 				if ((RoleUtils.hasAccess(p.getRoles(), accessRoles)) && (p.getStatus() == Pilot.ACTIVE) && (!p.getNoVoice())) {
 					msgs.add("Added " + p.getName() + " " + p.getPilotCode() + " to TS2 Server " + srv.getName());
 					log.warn("Adding " + p.getName() + " " + p.getPilotCode() + " to TS2 Server " + srv.getName());

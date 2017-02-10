@@ -1,4 +1,4 @@
-// Copyright 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display Airport runway and gate information.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 6.3
  */
 
@@ -53,7 +53,7 @@ public class AirportInformationCommand extends AbstractCommand {
 			// Get runway data
 			Comparator<Runway> rC = new RunwayComparator(m.getWindDirection(), m.getWindSpeed());
 			GetNavData nddao = new GetNavData(con);
-			Map<String, Runway> allRwys = CollectionUtils.createMap(nddao.getRunways(a, Simulator.FSX), "name");
+			Map<String, Runway> allRwys = CollectionUtils.createMap(nddao.getRunways(a, Simulator.FSX), Runway::getName);
 			
 			// Build airport bounding box
 			ctx.setAttribute("rwys", new ArrayList<Runway>(allRwys.values()), REQUEST);

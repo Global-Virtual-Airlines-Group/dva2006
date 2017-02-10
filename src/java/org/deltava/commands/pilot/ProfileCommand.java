@@ -343,8 +343,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			}
 
 			// Load the roles from the request and convert to a set to maintain uniqueness
-			String[] roles = ctx.getRequest().getParameterValues("securityRoles");
-			Collection<String> newRoles = p_access.getCanChangeRoles() ? CollectionUtils.loadList(roles, Collections.emptySet()) : p.getRoles();
+			Collection<String> newRoles = p_access.getCanChangeRoles() ? ctx.getParameters("securityRoles", Collections.emptySet()) : p.getRoles();
 			newRoles.add("Pilot");
 
 			// Update LDAP name
@@ -898,7 +897,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			// Get TeamSpeak2 data
 			if (SystemData.getBoolean("airline.voice.ts2.enabled") && !crossDB) {
 				GetTS2Data ts2dao = new GetTS2Data(con);
-				ctx.setAttribute("ts2Servers", CollectionUtils.createMap(ts2dao.getServers(p.getRoles()), "ID"), REQUEST);
+				ctx.setAttribute("ts2Servers", CollectionUtils.createMap(ts2dao.getServers(p.getRoles()), Server::getID), REQUEST);
 				ctx.setAttribute("ts2Clients", ts2dao.getUsers(p.getID()), REQUEST);
 			}
 			

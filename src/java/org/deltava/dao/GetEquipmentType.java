@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2013, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to retrieve equipment type profiles.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -343,7 +343,7 @@ public class GetEquipmentType extends DAO {
 	 * Helper method to load type ratings for each equipment type program.
 	 */
 	private void loadRatings(Collection<EquipmentType> eTypes, String db) throws SQLException {
-		Map<String, EquipmentType> types = CollectionUtils.createMap(eTypes, "name");
+		Map<String, EquipmentType> types = CollectionUtils.createMap(eTypes, EquipmentType::getName);
 		prepareStatementWithoutLimits("SELECT * FROM " + db + ".EQRATINGS");
 		try (ResultSet rs = _ps.executeQuery()) {
 			while (rs.next()) {
@@ -369,7 +369,7 @@ public class GetEquipmentType extends DAO {
 	 * Helper method to load examinations for each equipment type program.
 	 */
 	private void loadExams(Collection<EquipmentType> eTypes, String db) throws SQLException {
-		Map<String, EquipmentType> types = CollectionUtils.createMap(eTypes, "name");
+		Map<String, EquipmentType> types = CollectionUtils.createMap(eTypes, EquipmentType::getName);
 		prepareStatementWithoutLimits("SELECT EQTYPE, EXAMTYPE, EXAM FROM " + db + ".EQEXAMS");
 		try (ResultSet rs = _ps.executeQuery()) {
 			while (rs.next()) {
@@ -389,7 +389,7 @@ public class GetEquipmentType extends DAO {
 	 * Helper method to load airlines for equipment type program.
 	 */
 	private void loadAirlines(Collection<EquipmentType> eTypes) throws SQLException {
-		Map<String, EquipmentType> types = CollectionUtils.createMap(eTypes, "name");
+		Map<String, EquipmentType> types = CollectionUtils.createMap(eTypes, EquipmentType::getName);
 		prepareStatementWithoutLimits("SELECT EQTYPE, OWNER, AIRLINE FROM common.EQAIRLINES");
 		try (ResultSet rs = _ps.executeQuery()) {
 			while (rs.next()) {
@@ -407,7 +407,7 @@ public class GetEquipmentType extends DAO {
 	 * Helper method to load program sizes.
 	 */
 	private void loadSize(Collection<EquipmentType> eTypes, String db) throws SQLException {
-		Map<String, EquipmentType> types = CollectionUtils.createMap(eTypes, "name");
+		Map<String, EquipmentType> types = CollectionUtils.createMap(eTypes, EquipmentType::getName);
 		prepareStatementWithoutLimits("SELECT P.EQTYPE, COUNT(P.ID) FROM " + db + ".PILOTS P WHERE ((P.STATUS=?) OR (P.STATUS=?)) GROUP BY P.EQTYPE");
 		_ps.setInt(1, Pilot.ACTIVE);
 		_ps.setInt(2, Pilot.ON_LEAVE);

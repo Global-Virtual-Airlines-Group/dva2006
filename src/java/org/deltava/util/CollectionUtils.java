@@ -1,13 +1,13 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2013, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
-import java.lang.reflect.Method;
+import java.util.function.Function;
 
 /**
  * A utility class for dealing with Collections.
  * @author Luke
- * @version 5.1
+ * @version 7.2
  * @since 1.0
  */
 
@@ -28,21 +28,6 @@ public class CollectionUtils {
 	}
 	
 	/**
-	 * Returns the last object in a Collection, using its natural iteration order.
-	 * @param c the Collection
-	 * @return the last entry, or null if the collection is empty
-	 */
-	public static <T> T getLast(Collection<T> c) {
-		if (isEmpty(c))
-			return null;
-		
-		// Reverse the set
-		List<T> l = new ArrayList<T>(c);
-		Collections.reverse(l);
-		return l.get(0);
-	}
-
-	/**
 	 * Determines which elements are contained within only one Collection.
 	 * @param c1 the Collection to examine
 	 * @param c2 the entries to check
@@ -59,32 +44,6 @@ public class CollectionUtils {
 		return l1;
 	}
 	
-	/**
-	 * Compares two Collections and strips the values present in the other. <i>Note that this method does NOT
-	 * preserve data; the Collections are altered via this method. </i>
-	 * @param c1 the first Collection of entries
-	 * @param c2 the first Collection of entries
-	 * @throws NullPointerException if c1 or c2 are null
-	 */
-	public static <T> void setDelta(Collection<T> c1, Collection<T> c2) {
-		List<T> tmpC1 = new ArrayList<T>(c1); // we copy c1 since we modify it before c2.removeAll()
-		c1.removeAll(c2);
-		c2.removeAll(tmpC1);
-	}
-	
-	/**
-	 * Compares two collections and returns the number of elements present in both Collections.
-	 * @param c1 the first Collection
-	 * @param c2 the second Collection
-	 * @return the number of entries present in both
-	 * @throws NullPointerException if c1 or c2 are null
-	 */
-	public static <T> int hasMatches(Collection<T> c1, Collection<T> c2) {
-		Collection<T> tmpC1 = new ArrayList<T>(c1);
-		tmpC1.removeAll(c2);
-		return (c1.size() - tmpC1.size());
-	}
-
 	/**
 	 * Compares two Collections to see if there are any differences between them. This is done by comparing
 	 * their sizes, and then calling c1.containsAll(c2) to ensure that all of c2 is contained within c1.
@@ -103,6 +62,7 @@ public class CollectionUtils {
 	 * @return strValues converted to a List, or defltValues if strValues is null
 	 * @see Arrays#asList(Object[])
 	 */
+	@Deprecated
 	public static Collection<String> loadList(String[] strValues, Collection<String> defltValues) {
 		return new LinkedHashSet<String>((strValues != null) ? Arrays.asList(strValues) : defltValues);
 	}
@@ -110,26 +70,12 @@ public class CollectionUtils {
 	/**
 	 * Converts a Collection into a Map.
 	 * @param values the values to use
-	 * @param keyProperty the property to call on each value to get the key value
+	 * @param f the function to call on each value to get the key value
 	 * @return a Map of the values, indexed by their key
 	 */
-	@SuppressWarnings("unchecked")
-	public static <K, V> Map<K, V> createMap(Collection<V> values, String keyProperty) {
-		Method m = null;
+	public static <K, V> Map<K, V> createMap(Collection<V> values, Function<V, K> f) {
 		Map<K, V> results = new LinkedHashMap<K, V>();
-		for (Iterator<V> i = values.iterator(); i.hasNext(); ) {
-			V obj = i.next();
-			try {
-				if (m == null)
-					m = obj.getClass().getMethod(StringUtils.getPropertyMethod(keyProperty), (Class []) null);
-				
-				K key = (K) m.invoke(obj, (Object []) null);
-				results.put(key, obj);
-			} catch (Exception e) {
-				// empty
-			}
-		}
-		
+		values.stream().forEach(v -> results.put(f.apply(v), v));
 		return results;
 	}
 	
@@ -144,11 +90,8 @@ public class CollectionUtils {
 	public static <K, V> Map<K, V> createMap(Collection<K> keys, Collection<V> values) {
 		Map<K, V> results = new LinkedHashMap<K, V>();
 		Iterator<V> vi = values.iterator();
-		for (Iterator<K> ki = keys.iterator(); ki.hasNext() && vi.hasNext(); ) {
-			K key = ki.next();
-			V value = vi.next();
-			results.put(key, value);
-		}
+		for (Iterator<K> ki = keys.iterator(); ki.hasNext() && vi.hasNext(); )
+			results.put(ki.next(), vi.next());
 		
 		return results;
 	}

@@ -1,21 +1,20 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.*;
 
 import org.deltava.beans.cooler.*;
 import org.deltava.beans.system.AirlineInformation;
 
-import org.deltava.util.CollectionUtils;
-import org.deltava.util.RoleUtils;
-
+import org.deltava.util.*;
 import org.deltava.util.cache.*;
 
 /**
  * A Data Access Object to load Water Cooler channel profiles.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -232,14 +231,7 @@ public class GetCoolerChannels extends DAO {
 	public Map<Integer, Message> getLastPosts(Collection<Channel> channels) throws DAOException {
 
 		// Build a set of post IDs
-		Collection<Integer> idSet = new HashSet<Integer>();
-		for (Iterator<Channel> i = channels.iterator(); i.hasNext();) {
-			Channel ch = i.next();
-			if (ch.getLastThreadID() != 0)
-				idSet.add(new Integer(ch.getLastThreadID()));
-		}
-
-		// If we have no post IDs, then return an empty map
+		Collection<Integer> idSet = channels.stream().map(Channel::getLastThreadID).filter(id -> (id.intValue() > 0)).collect(Collectors.toSet());
 		if (idSet.isEmpty())
 			return Collections.emptyMap();
 
@@ -273,6 +265,6 @@ public class GetCoolerChannels extends DAO {
 			throw new DAOException(se);
 		}
 
-		return CollectionUtils.createMap(results, "ID");
+		return CollectionUtils.createMap(results, Message::getID);
 	}
 }

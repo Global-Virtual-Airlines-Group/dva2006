@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2011, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -216,7 +216,7 @@ public class GetAssignment extends DAO {
 			return;
 
 		// Execute the Query
-		Map<Integer, AssignmentInfo> infoMap = CollectionUtils.createMap(assignments, "ID");
+		Map<Integer, AssignmentInfo> infoMap = CollectionUtils.createMap(assignments, AssignmentInfo::getID);
 		try (ResultSet rs = _ps.executeQuery()) {
 			while (rs.next()) {
 				int assignID = rs.getInt(1);

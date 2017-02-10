@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2014, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Online Event data.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -44,7 +44,7 @@ public class GetEvent extends DAO {
 			List<Event> results = execute();
 			
 			// Load the airports
-			Map<Integer, Event> eMap = CollectionUtils.createMap(results, "ID");
+			Map<Integer, Event> eMap = CollectionUtils.createMap(results, Event::getID);
 			loadRoutes(eMap);
 			loadSignups(eMap);
 			return results;
@@ -71,7 +71,7 @@ public class GetEvent extends DAO {
 			List<Event> results = execute();
 			
 			// Load the airports
-			Map<Integer, Event> eMap = CollectionUtils.createMap(results, "ID");
+			Map<Integer, Event> eMap = CollectionUtils.createMap(results, Event::getID);
 			loadRoutes(eMap);
 			loadSignups(eMap);
 			return results;
@@ -138,7 +138,7 @@ public class GetEvent extends DAO {
 			List<Event> results = execute();
 			
 			// Load the airports
-			Map<Integer, Event> eMap = CollectionUtils.createMap(results, "ID");
+			Map<Integer, Event> eMap = CollectionUtils.createMap(results, Event::getID);
 			loadRoutes(eMap);
 			loadSignups(eMap);
 			return results;
@@ -180,13 +180,12 @@ public class GetEvent extends DAO {
 	 */
 	public List<Event> getEvents() throws DAOException {
 		try {
-			prepareStatement("SELECT E.* FROM events.EVENTS E, events.AIRLINES EA WHERE (E.ID=EA.ID) AND "
-					+ "(EA.AIRLINE=?) ORDER BY E.STARTTIME DESC");
+			prepareStatement("SELECT E.* FROM events.EVENTS E, events.AIRLINES EA WHERE (E.ID=EA.ID) AND (EA.AIRLINE=?) ORDER BY E.STARTTIME DESC");
 			_ps.setString(1, SystemData.get("airline.code"));
 			List<Event> results = execute();
 			
 			// Load the airports
-			Map<Integer, Event> eMap = CollectionUtils.createMap(results, "ID");
+			Map<Integer, Event> eMap = CollectionUtils.createMap(results, Event::getID);
 			loadRoutes(eMap);
 			return results;
 		} catch (SQLException se) {
@@ -202,8 +201,7 @@ public class GetEvent extends DAO {
 	public Collection<Event> getWithACARS() throws DAOException {
 		try {
 			prepareStatement("SELECT DISTINCT E.* FROM events.EVENTS E, PIREPS PR, ACARS_PIREPS APR "
-					+ "WHERE (PR.EVENT_ID=E.ID) AND (APR.ID=PR.ID) AND (APR.ACARS_ID <> 0) ORDER BY "
-					+ "E.STARTTIME DESC");
+				+ "WHERE (PR.EVENT_ID=E.ID) AND (APR.ID=PR.ID) AND (APR.ACARS_ID <> 0) ORDER BY E.STARTTIME DESC");
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -218,8 +216,7 @@ public class GetEvent extends DAO {
 	 */
 	public Event get(int id) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT E.*, EB.EXT FROM events.EVENTS E LEFT JOIN events.BANNERS EB "
-					+ "ON (E.ID=EB.ID) WHERE (E.ID=?) LIMIT 1");
+			prepareStatementWithoutLimits("SELECT E.*, EB.EXT FROM events.EVENTS E LEFT JOIN events.BANNERS EB ON (E.ID=EB.ID) WHERE (E.ID=?) LIMIT 1");
 			_ps.setInt(1, id);
 
 			// Execute the query and return null if nothing found
@@ -244,7 +241,7 @@ public class GetEvent extends DAO {
 		}
 	}
 	
-	/**
+	/*
 	 * Helper method to load event airports/routes.
 	 */
 	private void loadRoutes(Map<Integer, Event> events) throws SQLException {

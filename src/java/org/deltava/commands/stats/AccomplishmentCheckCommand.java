@@ -1,4 +1,4 @@
-// Copyright 2010, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to recalculate what Accomplishments a Pilot has achieved.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 3.2
  */
 
@@ -79,7 +79,7 @@ public class AccomplishmentCheckCommand extends AbstractCommand {
 			
 			// Clear the user's accomplishments
 			SetAccomplishment awdao = new SetAccomplishment(con);
-			Map<Integer, DatedAccomplishment> pAccs = CollectionUtils.createMap(adao.getByPilot(p, SystemData.get("airline.db")), "ID");
+			Map<Integer, DatedAccomplishment> pAccs = CollectionUtils.createMap(adao.getByPilot(p, SystemData.get("airline.db")), Accomplishment::getID);
 			for (Accomplishment a : pAccs.values())
 				awdao.clearAchievement(p.getID(), a);
 			

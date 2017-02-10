@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.*;
 /**
  * A Data Access Object to read Applicant data.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -143,8 +143,7 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 			results.addAll(uncached);
 		}
 
-		// Convert to a Map for easy searching
-		return CollectionUtils.createMap(results, "ID");
+		return CollectionUtils.createMap(results, Applicant::getID);
 	}
 	
 	/**
@@ -172,8 +171,7 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 	@Override
 	public Map<Integer, Applicant> get(UserDataMap udm) throws DAOException {
 		Map<Integer, Applicant> results = new HashMap<Integer, Applicant>();
-		for (Iterator<String> i = udm.getTableNames().iterator(); i.hasNext(); ) {
-			String tableName = i.next();
+		for (String tableName : udm.getTableNames()) {
 			if (!UserData.isPilotTable(tableName))
 				results.putAll(getByID(udm.getByTable(tableName), tableName));
 		}

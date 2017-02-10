@@ -1,4 +1,4 @@
-// Copyright 2012, 2013, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2013, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.io.File;
@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to manually download FAA approach charts.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 5.0
  */
 
@@ -176,7 +176,7 @@ public class FAAChartDownloadCommand extends AbstractCommand {
 			File ff = dldao.download();
 			
 			GetFAACharts mddao = new GetFAACharts();
-			Map<Airport, AirportCharts<ExternalChart>> nc = CollectionUtils.createMap(mddao.getChartList(ff.toURI().toString()), "airport"); 
+			Map<Airport, AirportCharts<ExternalChart>> nc = CollectionUtils.createMap(mddao.getChartList(ff.toURI().toString()), AirportCharts::getAirport); 
 			newCharts.putAll(nc);
 			
 			// Go through the airports and load the charts

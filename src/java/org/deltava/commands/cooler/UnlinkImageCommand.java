@@ -1,4 +1,4 @@
-// Copyright 2007, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2011, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.Map;
@@ -16,7 +16,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to unlink a Water Cooler linked image. 
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -49,7 +49,7 @@ public class UnlinkImageCommand extends AbstractCommand {
 			
 			// Get the linked images
 			GetCoolerLinks ldao = new GetCoolerLinks(con);
-			Map<Integer, LinkedImage> imgs = CollectionUtils.createMap(ldao.getURLs(mt.getID()), "ID");
+			Map<Integer, LinkedImage> imgs = CollectionUtils.createMap(ldao.getURLs(mt.getID()), LinkedImage::getID);
 			LinkedImage imgURL = imgs.get(Integer.valueOf(seq));
 			if (imgURL == null)
 				throw notFoundException("Unknown Linked Image sequence - " + seq);
