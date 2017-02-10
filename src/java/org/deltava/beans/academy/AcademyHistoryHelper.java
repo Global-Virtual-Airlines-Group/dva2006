@@ -46,9 +46,9 @@ public final class AcademyHistoryHelper {
 	public AcademyHistoryHelper(Pilot p, Collection<Course> courses, Collection<Certification> allCerts) {
 		super();
 		_p = p;
-		_courses.putAll(CollectionUtils.createMap(courses, "name"));
-		_certs.putAll(CollectionUtils.createMap(allCerts, "name"));
-		_certs.putAll(CollectionUtils.createMap(allCerts, "code"));
+		_courses.putAll(CollectionUtils.createMap(courses, Course::getName));
+		_certs.putAll(CollectionUtils.createMap(allCerts, Certification::getName));
+		_certs.putAll(CollectionUtils.createMap(allCerts, Certification::getCode));
 	}
 
 	private void log(String msg) {

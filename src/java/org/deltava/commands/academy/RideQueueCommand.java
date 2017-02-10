@@ -1,4 +1,4 @@
-// Copyright 2006, 2010, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010, 2011, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Web Site Command to display submitted Flight Academy Check Rides.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -62,7 +62,7 @@ public class RideQueueCommand extends AbstractViewCommand {
 			
 			// Load the Courses
 			GetAcademyCourses cdao = new GetAcademyCourses(con);
-			ctx.setAttribute("courses", CollectionUtils.createMap(cdao.getByCheckRide(ids), "ID"), REQUEST);
+			ctx.setAttribute("courses", CollectionUtils.createMap(cdao.getByCheckRide(ids), DatabaseBean::getID), REQUEST);
 			
 			// Load the Pilots and pireps
 			GetPilot pdao = new GetPilot(con);

@@ -1,4 +1,4 @@
-// Copyright 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2012, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava;
 
 import java.io.*;
@@ -195,7 +195,7 @@ public class ChartLoader extends TestCase {
 		for (Iterator<Element> i = chartEs.iterator(); i.hasNext(); ) {
 			Element e = i.next();
 			Airport a = airports.get(e.getAttributeValue("icao_ident").toUpperCase());
-			Map<String, MD5Chart> apCharts = CollectionUtils.createMap(charts.get(a), "name");
+			Map<String, MD5Chart> apCharts = CollectionUtils.createMap(charts.get(a), Chart::getName);
 			Collection<String> chartNames = new HashSet<String>();
 			log.info("Processing " + a.getName());
 			

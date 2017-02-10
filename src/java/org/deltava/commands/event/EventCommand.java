@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2014, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -7,10 +7,12 @@ import java.sql.Connection;
 import org.deltava.beans.*;
 import org.deltava.beans.event.*;
 import org.deltava.beans.flight.*;
+import org.deltava.beans.servinfo.PilotRating;
 import org.deltava.beans.acars.DispatchRoute;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+import org.deltava.dao.http.GetATOData;
 
 import org.deltava.security.command.*;
 
@@ -19,7 +21,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Web Site Command to display an Online Event.
  * @author Luke
- * @version 6.1
+ * @version 7.2
  * @since 1.0
  */
 
@@ -95,8 +97,7 @@ public class EventCommand extends AbstractCommand {
 			
 			// Get dispatch routes
 			GetACARSRoute ardao = new GetACARSRoute(con);
-			for (Iterator<Route> i = e.getActiveRoutes().iterator(); i.hasNext(); ) {
-				Route r = i.next();
+			for (Route r : e.getActiveRoutes()) {
 				Collection<DispatchRoute> rts = ardao.getRoutes(r, true);
 				e.getDispatchRoutes().addAll(rts);
 			}
@@ -120,8 +121,7 @@ public class EventCommand extends AbstractCommand {
 			Collection<FlightReport> pireps = new ArrayList<FlightReport>();
 			Map<Integer, Pilot> pilots = new HashMap<Integer, Pilot>();
 			Map<Integer, Collection<String>> certs = new HashMap<Integer, Collection<String>>();
-			for (Iterator<String> i = udm.getTableNames().iterator(); i.hasNext(); ) {
-				String tableName = i.next();
+			for (String tableName : udm.getTableNames()) {
 				Collection<UserData> ids = udm.getByTable(tableName);
 				Collection<FlightReport> flights = frdao.getByEvent(e.getID(), tableName);
 				frdao.getCaptEQType(flights);
@@ -156,11 +156,17 @@ public class EventCommand extends AbstractCommand {
 				certs.putAll(crsdao.getCertifications(ids, true));
 			}
 			
+			// Load VATSIM Ratings
+			if (e.getNetwork() == OnlineNetwork.VATSIM) {
+				GetATOData atodao = new GetATOData();
+				Collection<PilotRating> ratings = atodao.getCertificates();
+				
+			}
+			
 			// Calculate attendance probability
 			if (e.getStatus() != Status.CANCELED) {
 				float predictedPilots = 0;
-				for (Iterator<Signup> i = e.getSignups().iterator(); i.hasNext(); ) {
-					Signup s = i.next();
+				for (Signup s : e.getSignups()) {
 					Pilot p = pilots.get(Integer.valueOf(s.getPilotID()));
 					if ((p != null) && (p.getEventSignups() > 2))
 						predictedPilots += Math.min(1.0d, (p.getEventLegs() * 1.0d) / p.getEventSignups());
@@ -183,7 +189,7 @@ public class EventCommand extends AbstractCommand {
 			ctx.setAttribute("saAccess", sAccessMap, REQUEST);
 			
 			// Save the routes in a map, keyed by ID
-			ctx.setAttribute("routes", CollectionUtils.createMap(e.getRoutes(), "routeID"), REQUEST);
+			ctx.setAttribute("routes", CollectionUtils.createMap(e.getRoutes(), Route::getRouteID), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Acces Object for loading Examination/Check Ride data.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -97,7 +97,7 @@ public class GetExam extends DAO {
 
 			// Load multiple choice questions
 			if (e.hasMultipleChoice()) {
-				Map<Integer, Question> qMap = CollectionUtils.createMap(e.getQuestions(), "ID");
+				Map<Integer, Question> qMap = CollectionUtils.createMap(e.getQuestions(), Question::getID);
 				prepareStatementWithoutLimits("SELECT QUESTION_ID, SEQ, ANSWER FROM exams.EXAMQUESTIONSM "
 						+ "WHERE (EXAM_ID=?) ORDER BY QUESTION_ID, SEQ");
 				_ps.setInt(1, e.getID());
@@ -392,7 +392,7 @@ public class GetExam extends DAO {
 		try {
 			prepareStatement(sqlBuf.toString());
 			_ps.setString(1, SystemData.get("airline.code") + " " + Examination.QUESTIONNAIRE_NAME);
-			return CollectionUtils.createMap(execute(), "authorID");
+			return CollectionUtils.createMap(execute(), Examination::getAuthorID);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -427,8 +427,7 @@ public class GetExam extends DAO {
 	 */
 	public int getActiveExam(int id) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT ID FROM exams.EXAMS WHERE (PILOT_ID=?) AND "
-					+ "((STATUS=?) OR (STATUS=?)) LIMIT 1");
+			prepareStatementWithoutLimits("SELECT ID FROM exams.EXAMS WHERE (PILOT_ID=?) AND ((STATUS=?) OR (STATUS=?)) LIMIT 1");
 			_ps.setInt(1, id);
 			_ps.setInt(2, TestStatus.NEW.ordinal());
 			_ps.setInt(3, TestStatus.SUBMITTED.ordinal());

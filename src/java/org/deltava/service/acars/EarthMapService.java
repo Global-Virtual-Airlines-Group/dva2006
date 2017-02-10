@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010, 2011, 2012, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -26,7 +26,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to render the ACARS Map in Google Earth.
  * @author Luke
- * @version 4.2
+ * @version 7.2
  * @since 1.0
  */
 
@@ -49,7 +49,7 @@ public class EarthMapService extends GoogleEarthService {
 		Collection<Integer> ids = acdao.getFlightIDs();
 		
 		// Get the entries
-		Map<Integer, ACARSMapEntry> positions = CollectionUtils.createMap(entries, "ID");
+		Map<Integer, ACARSMapEntry> positions = CollectionUtils.createMap(entries, ACARSMapEntry::getID);
 
 		// Load the flight information
 		Map<Integer, Pilot> pilots = new HashMap<Integer, Pilot>();
@@ -60,8 +60,7 @@ public class EarthMapService extends GoogleEarthService {
 			// Loop through the flights
 			GetACARSPositions dao = new GetACARSPositions(con);
 			Collection<Integer> userIDs = new HashSet<Integer>();
-			for (Iterator<Integer> i = ids.iterator(); i.hasNext(); ) {
-				Integer flightID = i.next();
+			for (Integer flightID : ids) {
 				FlightInfo info = dao.getInfo(flightID.intValue());
 				if (info != null) {
 					userIDs.add(Integer.valueOf(info.getAuthorID()));
@@ -74,12 +73,10 @@ public class EarthMapService extends GoogleEarthService {
 				}
 			}
 			
-			// Load the user data
+			// Load the user/pilot data
+			GetPilot pdao = new GetPilot(con);
 			GetUserData uddao = new GetUserData(con);
 			UserDataMap udmap = uddao.get(userIDs);
-			
-			// Add into the pilot map
-			GetPilot pdao = new GetPilot(con);
 			pilots.putAll(pdao.get(udmap));
 		} catch (DAOException de) {
 			log.error(de.getMessage(), de);
@@ -97,8 +94,7 @@ public class EarthMapService extends GoogleEarthService {
 		// Convert the flight data to KML
 		int colorOfs = -1;
 		Collection<Airport> airports = new TreeSet<Airport>();
-		for (Iterator<FlightInfo> i = flights.iterator(); i.hasNext(); ) {
-			FlightInfo info = i.next();
+		for (FlightInfo info : flights) {
 			Pilot usr = pilots.get(Integer.valueOf(info.getAuthorID()));
 			
 			// Increment the line color 
@@ -123,23 +119,17 @@ public class EarthMapService extends GoogleEarthService {
 		
 		// Render the airports
 		Element afe = folders.get("airports");
-		for (Iterator<Airport> i = airports.iterator(); i.hasNext(); ) {
-			Airport a = i.next();
+		for (Airport a : airports) {
 			Element ae = createAirport(a, a.toString());
 			KMLUtils.setVisibility(ae, false);
 			afe.addContent(ae);
 		}
 		
-		// Build the XML document
+		// Build the XML document and add the folders
 		Document doc = KMLUtils.createKMLRoot();
 		Element de = new Element("Document");
 		doc.getRootElement().addContent(de);
-		
-		// Add the folders to the document
-		for (Iterator<Element> i = folders.values().iterator(); i.hasNext(); ) {
-			Element fe = i.next();
-			de.addContent(fe);
-		}
+		folders.values().forEach(f -> de.addContent(f));
 		
 		// Clean up the namespace
 		KMLUtils.copyNamespace(doc);
@@ -164,7 +154,6 @@ public class EarthMapService extends GoogleEarthService {
 				}
 			}
 
-			// Flush the buffer
 			ctx.getResponse().flushBuffer();
 		} catch (IOException ie) {
 			throw error(SC_CONFLICT, "I/O Error", false);
