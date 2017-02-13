@@ -29,15 +29,16 @@ public class SetVATSIMData extends DAO {
 		
 		// Build the payload
 		JSONObject jo = new JSONObject();
-		jo.put("cid", pr.getID());
-		jo.put("rating", pr.getRatingCode().replace("P", ""));
-		jo.put("instructor", pr.getInstructor());
+		jo.put("cid", String.valueOf(pr.getID()));
+		jo.put("rating", pr.getRatingCode().substring(1));
+		jo.put("instructor", String.valueOf(pr.getInstructor()));
 		
 		try {
 			setMethod("POST");
 
 			// Send the data
 			init(SystemData.get("online.vatsim.rating_url"));
+			setRequestHeader("Content-Type", "application/json");
 			setRequestHeader("Authorization", "Token token=\"" + SystemData.get("security.key.vatsim") + "\"");
 			try (DataOutputStream out = new DataOutputStream(getOut())) {
 				out.writeBytes(jo.toString());
