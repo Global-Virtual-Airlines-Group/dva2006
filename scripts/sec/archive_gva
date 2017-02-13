@@ -1,10 +1,10 @@
 #!/bin/bash
 #
 # GVA Log archive script
-# Copyright 2009, 2015 Global Virtual Airlines Group. All Rights Reserved.
+# Copyright 2009, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
 #
 
-logarc="/home/backup/gva"
+logarc="/home/backup/httplogs/gva"
 arc_cmd="pbzip2 -p2 -9"
 
 # Calculate yesterday's date
@@ -22,9 +22,10 @@ fi
 # Get the log file
 logdate=`stat $logfile --format=%x`
 yesterday=`date -d "$logdate" +%Y-%b-%d`
+year=`date -d "$logdate" +%Y`
 
 # Rename the log
-mv $logfile $logarc/$yesterday
-chown root:users $logarc/$yesterday
-$arc_cmd $logarc/$yesterday
+mv $logfile $logarc/$year/$yesterday
+chown root:users $logarc/$year/$yesterday
+$arc_cmd $logarc/$year/$yesterday
 exit 0
