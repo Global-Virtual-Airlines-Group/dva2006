@@ -653,6 +653,13 @@
 		<transfer_max type="Integer">30</transfer_max>
 		<checkrde_max type="Integer">3</checkrde_max>
 
+		<twitter>
+			<url>
+				<tweet>https://api.twitter.com/1.1/statuses/update.json</tweet>
+			</url>
+		
+		</twitter>
+
 		<facebook>
 			<id>93603160577</id>		
 			<pageID>105017132650</pageID>
