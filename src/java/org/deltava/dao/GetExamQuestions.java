@@ -321,7 +321,7 @@ public class GetExamQuestions extends DAO {
 	 */
 	private void loadMultiChoice(String examName, Collection<QuestionProfile> qs) throws SQLException {
 		Map<Integer, QuestionProfile> resultMap = CollectionUtils.createMap(qs, QuestionProfile::getID);
-		prepareStatementWithoutLimits("SELECT MQ.* FROM exams.QUESTIONMINFO MQ, exams.QUESTIONINFO Q, exams.EQ_INFO QE "
+		prepareStatementWithoutLimits("SELECT MQ.* FROM exams.QUESTIONMINFO MQ, exams.QUESTIONINFO Q, exams.QE_INFO QE "
 			+ "WHERE (Q.ID=QE.QUESTION_ID) AND (Q.ID=MQ.ID) AND (QE.EXAM_NAME=?) ORDER BY MQ.ID, MQ.SEQ");
 		_ps.setString(1, examName);
 
