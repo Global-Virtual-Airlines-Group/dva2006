@@ -134,7 +134,7 @@ public abstract class AbstractCommand implements Command {
 				ldt = LocalDateTime.parse(ctx.getParameter(paramHdr + "DateTime"), dfb.toFormatter());
 			} else if ((ctx.getParameter(paramHdr + "Date") != null) && (ctx.getParameter(paramHdr + "Time") != null)) {
 				String timeValue = ctx.getParameter(paramHdr + "Time");
-				if (!StringUtils.isEmpty(timeValue)) {
+				if (StringUtils.isEmpty(timeValue)) {
 					DateTimeFormatter tf = DateTimeFormatter.ofPattern(tfmt);
 					timeValue = tf.format(LocalDateTime.ofInstant(Instant.EPOCH, ZoneId.systemDefault()));
 				}
