@@ -86,15 +86,12 @@ You are visiting today from <span class="bld">${req.remoteHost}</span> (${req.re
 <c:if test="${!empty geoLocation}">
  <td class="data">You can update your location on the <content:airline /> Pilot Board.<br />
 <br />
-<span class="ita">For privacy reasons, your specific location will be altered by a random number of miles each time 
-the <content:airline /> Pilot Board is viewed.</span></td>
+<span class="ita">For privacy reasons, your specific location will be altered by a random number of miles each time the <content:airline /> Pilot Board is viewed.</span></td>
 </c:if>
 <c:if test="${empty geoLocation}">
- <td class="data">You have not specified your geographic location. By doing so, you can add your 
-name to the <content:airline /> Pilot Board.<br />
+ <td class="data">You have not specified your geographic location. By doing so, you can add your name to the <content:airline /> Pilot Board.<br />
 <br />
-<span class="ita">For privacy reasons, your specific location will be altered by a random number of miles each time 
-the <content:airline /> Pilot Board is viewed.</span></td>
+<span class="ita">For privacy reasons, your specific location will be altered by a random number of miles each time the <content:airline /> Pilot Board is viewed.</span></td>
 </c:if>
 </tr>
 <content:filter roles="Facebook">
@@ -125,8 +122,7 @@ golgotha.local.fbAuthorize = function() {
 <content:sysdata var="inactivity_days" name="users.inactive_days" />
 <tr>
  <td class="mid"><el:cmd className="bld" url="loa">Request Leave of Absence</el:cmd></td>
- <td class="data">In order to remain an active pilot, you need to log into our web site at least once every
- ${inactivity_days} days. If you are unable to do so, you can request a <span class="pri bld">Leave of 
+ <td class="data">In order to remain an active pilot, you need to log into our web site at least once every ${inactivity_days} days. If you are unable to do so, you can request a <span class="pri bld">Leave of 
  Absence</span> by clicking on the link on the left.</td>
 </tr>
 </c:if>
@@ -134,17 +130,14 @@ golgotha.local.fbAuthorize = function() {
  <td class="mid">&nbsp;
 <c:if test="${!empty acImage}"><el:img src="${acImage}" className="nophone" caption="${pilot.equipmentType}" /></c:if>
  </td>
- <td class="data">You are a <span class="pri bld">${pilot.rank.name}</span> in the <span class="sec bld">${pilot.equipmentType}</span>
- program. <span class="pri bld">(Stage ${eqType.stage})</span><br />
+ <td class="data">You are a <span class="pri bld">${pilot.rank.name}</span> in the <span class="sec bld">${pilot.equipmentType}</span> program. <span class="pri bld">(Stage ${eqType.stage})</span><br />
 <br />
 Your Chief Pilot is <a class="bld" href="mailto:${CP.email}">${CP.name}</a>.<br />
 <c:if test="${!empty asstCP}">
 <c:if test="${fn:sizeof(asstCP) == 1}">
-Your Assistant Chief Pilot is 
-</c:if>
+Your Assistant Chief Pilot is </c:if>
 <c:if test="${fn:sizeof(asstCP) > 1}">
-Your Assistant Chief Pilots are 
-</c:if>
+Your Assistant Chief Pilots are </c:if>
 <c:forEach var="aCP" items="${asstCP}" varStatus="acpStatus">
 <a class="bld" href="mailto:${aCP.email}">${aCP.name}</a><c:if test="${!acpStatus.last}">, </c:if></c:forEach>.
 <br />
@@ -154,33 +147,32 @@ You are also qualified to file Flight Reports using the following aircraft:<br /
 <fmt:list value="${pilot.ratings}" delim=", " />.
 <content:filter roles="Dispatch">
 <br /><br />
-You are an ACARS Flight Dispatcher, dispatched <fmt:int value="${pilot.dispatchFlights}" /> flights and provided
- Dispatch services for <fmt:dec value="${pilot.dispatchHours}" /> hours.</content:filter></td>
+You are an ACARS Flight Dispatcher and have dispatched <fmt:int value="${pilot.dispatchFlights}" /> flights and provided Dispatch services for <fmt:dec value="${pilot.dispatchHours}" /> hours.</content:filter></td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="acceligibility">Accomplishment Eligibility</el:cmd></td>
+<td class="data">
 <c:if test="${empty accs}">
- <td class="data">You have not achieved any Pilot Accomplishments yet.</td>
+You have not achieved any Pilot Accomplishments yet.
 </c:if>
 <c:if test="${!empty accs}">
- <td class="data">You have achieved the following Accomplishments:<br />
+You have achieved the following Accomplishments:<br />
 <br />
 <c:forEach var="a" items="${accs}">
 <fmt:accomplish accomplish="${a}" className="bld" />, (<fmt:int value="${a.value}" /> ${a.unit.name}) on <span class="bld"><fmt:date date="${a.date}" fmt="d" /></span><br />
-</c:forEach></td>
-</c:if>
+</c:forEach></c:if>
+<br />
+To view a map of Airports to visit to complete Accomplishments, <el:cmd url="accairportmap" className="sec bld">Click Here</el:cmd>.</td>
 </tr>
 <content:filter roles="HR,Examination,Operations">
 <tr>
  <td class="mid"><el:cmd url="prgroster" className="bld">Program Roster</el:cmd></td>
- <td class="data">You can view statistics about the ${pilot.equipmentType} program, and view the pilot roster for
- this equipment program.</td>
+ <td class="data">You can view statistics about the ${pilot.equipmentType} program, and view the pilot roster for this equipment program.</td>
 </tr>
 </content:filter>
 <tr>
  <td class="mid"><el:cmd className="bld" url="pilotsearch">Pilot Search</el:cmd></td>
- <td class="data">You can search the <content:airline /> Pilot Roster based on a Pilot's name or
- E-Mail Address.</td>
+ <td class="data">You can search the <content:airline /> Pilot Roster based on a Pilot's name or E-Mail Address.</td>
 </tr>
 
 <c:if test="${helpDeskEnabled}">
@@ -190,8 +182,7 @@ You are an ACARS Flight Dispatcher, dispatched <fmt:int value="${pilot.dispatchF
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="helpdesk">Help Desk</el:cmd></td>
- <td class="data">The <content:airline /> Help Desk lets our members communicate with our Instructors 
- and Staff to quickly and easily resolve any issues or answer questions about <content:airline />.</td>
+ <td class="data">The <content:airline /> Help Desk lets our members communicate with our Instructors and Staff to quickly and easily resolve any issues or answer questions about <content:airline />.</td>
 </tr>
 </c:if>
 
@@ -201,8 +192,7 @@ You are an ACARS Flight Dispatcher, dispatched <fmt:int value="${pilot.dispatchF
 </tr>
 <c:if test="${heldPIREPCount >= maxHeld}">
 <tr>
- <td colspan="2" class="mid error bld">You currently have held <fmt:int value="${heldPIREPCount}" /> Flight Reports.
- All future submitted Flight Reports will be automatically Held until the currently held Flights are approved or rejected.</td>
+ <td colspan="2" class="mid error bld">You currently have held <fmt:int value="${heldPIREPCount}" /> Flight Reports. All future submitted Flight Reports will be automatically Held until the currently held Flights are approved or rejected.</td>
 </tr>
 </c:if>
 <tr>
@@ -228,15 +218,13 @@ You have carried <fmt:int value="${totalPax}" /> passengers on your flights.<br 
 <c:if test="${!empty lastFlight}">
 <br />
 Your last flight was on <fmt:date className="sec bld" date="${lastFlight.date}" fmt="d" />:<br />
-<el:cmd url="pirep" link="${lastFlight}" className="pri bld">${lastFlight}</el:cmd> - ${lastFlight.airportD.name}
- (<fmt:airport airport="${lastFlight.airportD}" />) to ${lastFlight.airportA.name} (<fmt:airport airport="${lastFlight.airportA}" />)
+<el:cmd url="pirep" link="${lastFlight}" className="pri bld">${lastFlight}</el:cmd> - ${lastFlight.airportD.name} (<fmt:airport airport="${lastFlight.airportD}" />) to ${lastFlight.airportA.name} (<fmt:airport airport="${lastFlight.airportA}" />)
  in a ${lastFlight.equipmentType}.</c:if></td>
 </tr>
 <c:if test="${needReturnCharter}">
 <tr>
  <td class="mid"><el:cmd className="bld" url="rcharter">Request Return Charter</el:cmd></td>
- <td class="data">There are no flights in the <content:airline /> Flight Schedule between ${lastFlight.airportA.name}
- (<fmt:airport airport="${lastFlight.airportA}" />) and ${lastFlight.airportD.name} (<fmt:airport airport="${lastFlight.airportD}" />).
+ <td class="data">There are no flights in the <content:airline /> Flight Schedule between ${lastFlight.airportA.name} (<fmt:airport airport="${lastFlight.airportA}" />) and ${lastFlight.airportD.name} (<fmt:airport airport="${lastFlight.airportD}" />).
  You can request a Return Charter flight to return to your previous airport.</td>
 </tr>
 </c:if>
@@ -313,37 +301,32 @@ for promotion to the rank of Captain in their Equipment Program.<c:if test="${pr
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="doclibrary">Document Library</el:cmd></td>
- <td class="data">The <content:airline /> Document Library contains all of <content:airline />'s
- official airline procedure manuals, as well as operating manuals for each equipment type. All
+ <td class="data">The <content:airline /> Document Library contains all of <content:airline />'s official airline procedure manuals, as well as operating manuals for each equipment type. All
  manuals are stored in cross-platform Adobe Acrobat PDF files.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="fleetlibrary">Fleet Library</el:cmd></td>
- <td class="data">Our Fleet Library contains the official <content:airline /> Fleet - a collection 
- of aircraft, panels manuals and sound schemes.</td>
+ <td class="data">Our Fleet Library contains the official <content:airline /> Fleet - a collection of aircraft, panels manuals and sound schemes.</td>
 </tr>
 <c:if test="${fileLibEnabled}">
 <content:filter roles="Fleet,HR">
 <tr>
  <td class="mid"><el:cmd className="bld" url="filelibrary">File Library</el:cmd></td>
- <td class="data">The <content:airline /> File Library contains a number of approved downloadable 
-contributions from our community that will enhance your flight simulation experience.</td>
+ <td class="data">The <content:airline /> File Library contains a number of approved downloadable contributions from our community that will enhance your flight simulation experience.</td>
 </tr>
 </content:filter>
 </c:if>
 <c:if test="${newsletterEnabled}">
 <tr>
  <td class="mid"><el:cmd className="bld" url="newsletters">Newsletters</el:cmd></td>
- <td class="data">${newsletter} is the official <content:airline /> newsletter, and is published regularly.
- You can view back issues of ${newsletter} here. You can also download copies of the other <content:airline />
+ <td class="data">${newsletter} is the official <content:airline /> newsletter, and is published regularly. You can view back issues of ${newsletter} here. You can also download copies of the other <content:airline />
  newsletters (<fmt:list value="${newsletterCats}" delim=", " />) here.</td>
 </tr>
 </c:if>
 <c:if test="${resourceEnabled}">
 <tr>
  <td class="mid"><el:cmd className="bld" url="resources">Web Resources</el:cmd></td>
- <td class="data">Our Web Resources contain links to a number of online sites that can assist you in
- all manner of flight planning and other ways.</td>
+ <td class="data">Our Web Resources contain links to a number of online sites that can assist you in all manner of flight planning and other ways.</td>
 </tr>
 </c:if>
 <c:if test="${videoEnabled}">
@@ -365,13 +348,11 @@ contributions from our community that will enhance your flight simulation experi
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="findflight">Find A Flight</el:cmd></td>
- <td class="data">If you're looking for a flight at random, you can select an Airport, Departure Time,
-  Aircraft Type and Flight Length, and pick a flight at random!</td>
+ <td class="data">If you're looking for a flight at random, you can select an Airport, Departure Time, Aircraft Type and Flight Length, and pick a flight at random!</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="browse">Browse Schedule</el:cmd></td>
- <td class="data">You are able to browse the <content:airline /> Flight Schedule, which contains 
-<fmt:int value="${scheduleSize}" /> flight legs to a variety of different destinations.</td>
+ <td class="data">You are able to browse the <content:airline /> Flight Schedule, which contains <fmt:int value="${scheduleSize}" /> flight legs to a variety of different destinations.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="routemap">Route Map</el:cmd></td>
@@ -388,26 +369,22 @@ contributions from our community that will enhance your flight simulation experi
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="routeplot">Route Plotter</el:cmd></td>
- <td class="data">You can use our Google Maps tool to visually display a flight route between two airports, 
-including Standard Instrument Departure (SID) and Standard Terminal Arrival Route (STAR) data and waypoints.</td>
+ <td class="data">You can use our Google Maps tool to visually display a flight route between two airports, including Standard Instrument Departure (SID) and Standard Terminal Arrival Route (STAR) data and waypoints.</td>
 </tr>
 <c:if test="${!empty lastFlight}">
 <tr>
  <td class="mid"><el:cmd className="bld" url="singleassign">Random Flight</el:cmd></td>
- <td class="data">You can select one or more Flights starting from ${lastFlight.airportA.name} (<fmt:airport airport="${lastFlight.airportA}" />) 
-from the <content:airline /> Flight Schedule. This flight is selected at random, and depending on the airport, there may not be flights 
-departing today.</td>
+ <td class="data">You can select one or more Flights starting from ${lastFlight.airportA.name} (<fmt:airport airport="${lastFlight.airportA}" />) from the <content:airline /> Flight Schedule. This flight is selected at random, and 
+ depending on the airport there may not be flights departing today.</td>
 </tr>
 </c:if>
 <tr>
  <td class="mid"><el:cmd className="bld" url="routeassign">Multi-Leg Route</el:cmd></td>
- <td class="data">You can build a route of one or more flight legs between two different airports using flights from the <content:airline />
- Flight Schedule.</td>
+ <td class="data">You can build a route of one or more flight legs between two different airports using flights from the <content:airline /> Flight Schedule.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="myassign">Flight Assignments</el:cmd></td>
- <td class="data">While <content:airline /> doesn't have a formal flight bidding system, we do have 
- 'Flight Assigments': routes of 2 to 6 flight legs created by our staff as suggested routes to fly, or you
+ <td class="data">While <content:airline /> doesn't have a formal flight bidding system, we do have 'Flight Assigments': routes of 2 to 6 flight legs created by our staff as suggested routes to fly, or you
  can have our automated system <el:cmd url="findflight">randomly select flights</el:cmd> for you to fly.</td>
 </tr>
 <tr>
