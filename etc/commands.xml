@@ -1219,7 +1219,7 @@
 	</command>
 
 	<command id="accalc">
-		<name>Pilot Accomplishment Recalculate</name>
+		<name>Pilot Accomplishment Check</name>
 		<class>org.deltava.commands.stats.AccomplishmentCheckCommand</class>
 		<roles>HR,Operations</roles>
 	</command>
@@ -1233,6 +1233,12 @@
 	<command id="acceligibility">
 		<name>Pilot Accomplishment Eligibility</name>
 		<class>org.deltava.commands.stats.AccomplishmentEligibilityCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
+	<command id="accairportmap">
+		<name>Pilot Accomplishment Airport Mapy</name>
+		<class>org.deltava.commands.stats.AccomplishmentAirportMapCommand</class>
 		<roles>Pilot</roles>
 	</command>
 
