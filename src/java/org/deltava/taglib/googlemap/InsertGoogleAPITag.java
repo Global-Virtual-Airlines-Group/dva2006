@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import java.util.*;
@@ -25,7 +25,7 @@ public class InsertGoogleAPITag extends TagSupport {
 	static final String API_VER_ATTR_NAME = "$googleMapAPIVersion$";
 	
 	private static final int MIN_API_VERSION = 3;
-	private static final String DEFAULT_V3_MINOR = "25";
+	private static final String DEFAULT_V3_MINOR = "27";
 	
 	private static final String V3_API_URL = "maps.googleapis.com/maps/api/js?v=";
 	
