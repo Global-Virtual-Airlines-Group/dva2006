@@ -71,8 +71,7 @@ golgotha.maps.util.getDefaultZoom = function(distance)
 {
 var zooms = [6100,2900,1600,780,390,195,90,50];
 for (var x = 0; x < zooms.length; x++) {
-	if (distance > zooms[x])
-		return (x+2);
+	if (distance > zooms[x]) return (x+2);
 }
 
 return 10;
@@ -114,9 +113,7 @@ golgotha.maps.setMap = function(map) {
 };
 
 // Track instances
-google.maps.controlStyle = 'azteca';
 golgotha.maps.Map = function(div, opts) { var m = new google.maps.Map(div, opts); golgotha.maps.instances.push(m); return m; };
-
 
 // Track overlays
 google.maps.Marker.prototype.setMap_OLD = google.maps.Marker.prototype.setMap;
@@ -352,46 +349,43 @@ golgotha.maps.LayerClearControl = function(map, opts) {
 
 // Create an arbitrary overlay layer
 golgotha.maps.ShapeLayer = function(opts, name, imgClass) {
-	opts.name = name;
 	if (opts.tileSize == null) opts.tileSize = golgotha.maps.TILE_SIZE;
 	if (opts.host == null) opts.host = self.location.host;
-	opts.getTileUrl = golgotha.maps.util.getTileUrl;
-	var ov = new google.maps.ImageMapType(opts);
-	ov.set('maxZoom', opts.maxZoom);
-	ov.set('nativeZoom', opts.nativeZoom);
-	ov.set('tileSize', opts.tileSize);
-	ov.set('baseURL', 'http://' + opts.host + '/tile/' + imgClass + '/');
-	ov.set('imgClass', imgClass); 
-	ov.getTileUrl = opts.getTileUrl;
-	ov.getTile = golgotha.maps.util.buildTile;
-	ov.getMap = function() { return this.map; };
-	ov.setMap = function(m) {
-		if ((this.map != null) && (m != null)) {
-			if (m == this.map) return false;
-			setMap(null);
-		}
+	this.maxZoom = opts.maxZoom;
+	this.nativeZoom = opts.nativeZoom;
+	this.tileSize = opts.tileSize;
+	this.baseURL = self.location.protocol + '//' + opts.host + '/tile/' + imgClass + '/';
+	this.imgClass = imgClass;
+	this.opacity = opts.opacity;
+	this.makeURL = golgotha.maps.util.getTileUrl;
+	this.getTile = golgotha.maps.util.buildTile;
+};	
 
-		if (m != null) {
-			golgotha.maps.ovLayers.push(this);
-			m.overlayMapTypes.insertAt(0, this);
-			this.map = m;
-		} else if (this.map != null) {
-			m = this.map;
-			this.map = null;
-			golgotha.maps.ovLayers.remove(this);
-			for (var x = 0; x < m.overlayMapTypes.getLength(); x++) {
-				var l = m.overlayMapTypes.getAt(x);
-				if (l == this) {
-					m.overlayMapTypes.removeAt(x);
-					return true;
-				}
+golgotha.maps.ShapeLayer.prototype.getMap = function() { return this.map; };
+golgotha.maps.ShapeLayer.prototype.setMap = function(m) {
+	if ((this.map != null) && (m != null)) {
+		if (m == this.map) return false;
+		setMap(null);
+	}
+
+	if (m != null) {
+		golgotha.maps.ovLayers.push(this);
+		m.overlayMapTypes.insertAt(0, this);
+		this.map = m;
+	} else if (this.map != null) {
+		m = this.map;
+		this.map = null;
+		golgotha.maps.ovLayers.remove(this);
+		for (var x = 0; x < m.overlayMapTypes.getLength(); x++) {
+			var l = m.overlayMapTypes.getAt(x);
+			if (l == this) {
+				m.overlayMapTypes.removeAt(x);
+				return true;
 			}
 		}
+	}
 
-		return true;
-	};
-
-	return ov;
+	return true;
 };
 
 // Arbitrary marker layer
@@ -405,9 +399,8 @@ golgotha.maps.MarkerLayer = function(opts, name) {
 	l.remove = function(m) { this.mrks.remove(m); };
 	l.getTextDate = function() {
 		var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-		var d = this.get('timestamp'); if (d == null) return '';
-		return d.getDate() + '-' + months[d.getMonth()] + '-' + d.getFullYear() + '  ' 
-			+ d.getHours() + ':' + ((d.getMinutes() < 10) ? '0' + d.getMinutes() : d.getMinutes());	
+		var d = this.timestamp; if (d == null) return '';
+		return d.getDate() + '-' + months[d.getMonth()] + '-' + d.getFullYear() + '  ' + d.getHours() + ':' + ((d.getMinutes() < 10) ? '0' + d.getMinutes() : d.getMinutes());	
 	};
 	
 	return l;
