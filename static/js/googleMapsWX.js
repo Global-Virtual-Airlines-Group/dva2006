@@ -2,7 +2,7 @@
 if (window.progressBar) golgotha.maps.util.progress = progressBar({strokeWidth:512, strokeColor:'#0020ff'});
 golgotha.maps.util.buildTile = function(pnt, zoom, doc)
 {
-var sz = this.get('tileSize');
+var sz = this.tileSize;
 var div = doc.createElement('div');
 div.style.width = sz.width + 'px';
 div.style.height = sz.height + 'px';
@@ -10,16 +10,16 @@ div.style.overflow = 'hidden';
 div.style.position = 'relative';
 var img = doc.createElement('img');
 img.onerror = golgotha.maps.util.blankImg;
-var c = 'wxTile ' + this.get('imgClass') + ' ' + this.get('imgClass') + '-' + this.get('date');
+var c = 'wxTile ' + this.imgClass + ' ' + this.imgClass + '-' + this.date;
 var imgURL = '';
-var nZ = this.get('nativeZoom');
+var nZ = this.nativeZoom;
 if (zoom > nZ) {
 	var numTiles = Math.pow(2, zoom - nZ);
 	var imgSize = numTiles * sz.width; // assuming square
 	var offsetX = pnt.x % numTiles;
 	var offsetY = pnt.y % numTiles;
 	var addr = new golgotha.maps.TileAddress(pnt.x, pnt.y, zoom);
-	imgURL = this.getTileUrl(addr.convert(nZ), nZ);
+	imgURL = this.makeURL(addr.convert(nZ), nZ);
 	if (imgURL.length == 0) return div;
 	img.width = imgSize;
 	img.height = imgSize;
@@ -30,7 +30,7 @@ if (zoom > nZ) {
 	if (offsetY > 0)
 		img.style.marginTop = (sz.height * -offsetY) + 'px';
 } else {
-	imgURL = this.getTileUrl(pnt, zoom);
+	imgURL = this.makeURL(pnt, zoom);
 	if (imgURL.length == 0) return div;
 	img.width = sz.width;
 	img.height = sz.height;
@@ -39,18 +39,17 @@ if (zoom > nZ) {
 img.src = imgURL;
 img.setAttribute('class', c);
 if (golgotha.maps.util.oldIE) img.IE8 = c;
-var tx = (this.tempZeroOpacity == true) ? 0 : this.getOpacity();
+var tx = (this.tempZeroOpacity == true) ? 0 : this.opacity;
 golgotha.maps.setOpacity(img, tx);
 div.appendChild(img);
 return div;	
 };
 
-golgotha.maps.util.blankImg = function(e)
-{
-var img = e.target;
-img.onerror = null;
-img.src = golgotha.maps.BLANK_IMG;
-return true;
+golgotha.maps.util.blankImg = function(e) {
+	var img = e.target;
+	img.onerror = null;
+	img.src = golgotha.maps.BLANK_IMG;
+	return true;
 };
 
 // Tile selection function
@@ -77,134 +76,131 @@ golgotha.maps.util.GinsuOverlayLayer = function(name, ts, size) { return '/wx/ti
 golgotha.maps.WeatherLayer = function(opts, timestamp) {
 	if (opts.range == null) opts.range = [];
 	var tileURLFunc = (opts.tileURL) ? opts.tileURL : golgotha.maps.util.S3OverlayLayer;
-	opts.getTileUrl = golgotha.maps.util.getTileUrl;
-	var ov = new google.maps.ImageMapType(opts);
-	ov.set('maxZoom', opts.maxZoom);
-	ov.set('baseURL', tileURLFunc(opts.name, timestamp, opts.tileSize));
-	ov.set('date', timestamp);
-	ov.set('range', opts.range);
-	ov.set('timestamp', new Date(timestamp));
-	ov.set('tileSize', opts.tileSize);
-	ov.getTileUrl = opts.getTileUrl;
-	ov.getTile = golgotha.maps.util.buildTile;
-	ov.isPreloaded = function(l) { if (this.pl == null) { this.pl = []; return false; } else return (this.pl.indexOf(l) > -1); };
-	ov.getMap = function() { return this.map; }
-	ov.setMap = function(m) {
-		if ((this.map != null) && (m != null)) {
-			if (m == this.map) return false;
-			setMap(null);
-		}
+	this.maxZoom = opts.maxZoom;
+	this.baseURL = tileURLFunc(opts.name, timestamp, opts.tileSize);
+	this.date = timestamp;
+	this.range = opts.range;
+	this.timestamp = new Date(timestamp);
+	this.tileSize = opts.tileSize;
+	this.getTile = golgotha.maps.util.buildTile;
+	this.makeURL = golgotha.maps.util.getTileUrl;
+	this.opacity = opts.opacity;
+};
+	
+golgotha.maps.WeatherLayer.prototype.isPreloaded = function(l) { if (this.pl == null) { this.pl = []; return false; } else return (this.pl.indexOf(l) > -1); };
+golgotha.maps.WeatherLayer.prototype.getMap = function() { return this.map; };
+golgotha.maps.WeatherLayer.prototype.setMap = function(m) {
+	if ((this.map != null) && (m != null)) {
+		if (m == this.map) return false;
+		setMap(null);
+	}
 
-		if (m != null) {
-			golgotha.maps.ovLayers.push(this);
-			m.overlayMapTypes.insertAt(0, this);
-			this.map = m;
-		} else if (this.map != null) {
-			try { delete this.tempZeroOpacity; } catch (err) { this.tempZeroOpacity = null; }
-			m = this.map;
-			this.map = null;
-			golgotha.maps.ovLayers.remove(this);
-			for (var x = 0; x < m.overlayMapTypes.getLength(); x++) {
-				var l = m.overlayMapTypes.getAt(x);
-				if (l == this) {
-					m.overlayMapTypes.removeAt(x);
-					return true;
-				}
+	if (m != null) {
+		golgotha.maps.ovLayers.push(this);
+		m.overlayMapTypes.insertAt(0, this);
+		this.map = m;
+	} else if (this.map != null) {
+		try { delete this.tempZeroOpacity; } catch (err) { this.tempZeroOpacity = null; }
+		m = this.map;
+		this.map = null;
+		golgotha.maps.ovLayers.remove(this);
+		for (var x = 0; x < m.overlayMapTypes.getLength(); x++) {
+			var l = m.overlayMapTypes.getAt(x);
+			if (l == this) {
+				m.overlayMapTypes.removeAt(x);
+				return true;
 			}
 		}
-
-		return true;
 	}
 
-	ov.getCopyright = function() {
-		var d = this.get('timestamp');
-		return 'Weather Data &copy; ' + d.getFullYear() + ' The Weather Company.'
-	}
+	return true;
+};
+
+golgotha.maps.WeatherLayer.prototype.getCopyright = function() {
+	var d = this.timestamp;
+	return 'Weather Data &copy; ' + d.getFullYear() + ' The Weather Company.'
+};
 	
-	ov.getTextDate = function() {
-		var d = this.get('timestamp');
-		var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-		return d.getDate() + '-' + months[d.getMonth()] + '-' + d.getFullYear() + '  ' 
-			+ d.getHours() + ':' + ((d.getMinutes() < 10) ? '0' + d.getMinutes() : d.getMinutes());	
-	}
+golgotha.maps.WeatherLayer.prototype.getTextDate = function() {
+	var d = this.timestamp;
+	var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+	return d.getDate() + '-' + months[d.getMonth()] + '-' + d.getFullYear() + '  ' + d.getHours() + ':' + ((d.getMinutes() < 10) ? '0' + d.getMinutes() : d.getMinutes());	
+};
 
-	ov.display = function(isVisible) {
-		if (!isVisible && (this.map == null)) {
-			this.tempZeroOpacity = true;
+golgotha.maps.WeatherLayer.prototype.display = function(isVisible) {
+	if (!isVisible && (this.map == null)) {
+		this.tempZeroOpacity = true;
+		return true;
+	} else if (this.tempZeroOpacity) {
+		try { delete this.tempZeroOpacity; } catch (e) { this.tempZeroOpacity = undefined; }
+	}
+		
+	var o = isVisible ? this.opacity : 0;
+	var imgs = golgotha.maps.util.getTileImgs(this.imgClass + '-' + this.date, 'img');
+	for (var x = 0; x < imgs.length; x++)
+		golgotha.maps.setOpacity(imgs[x], o);
+		
+	return true;
+};
+
+golgotha.maps.WeatherLayer.prototype.hideAll = function() {
+	var imgs = golgotha.maps.util.getTileImgs(this.imgClass);
+	for (var x = 0; x < imgs.length; x++)
+		golgotha.maps.setOpacity(imgs[x], 0);
+
+	return true;
+};
+	
+golgotha.maps.WeatherLayer.prototype.preload = function(map, handler, tileLoadHandler) {
+	if (this.preloaded) return true;
+	var lvl = Math.min(map.getZoom(), this.nativeZoom);
+	if (this.isPreloaded(lvl)) return true;
+	var vizTiles = map.getVisibleTiles(lvl, this.tileSize);
+	var imgsToLoad = []; var ov = this;
+	for (var x = 0; x < vizTiles.length; x++) {
+		var src = ov.makeURL(vizTiles[x], map.getZoom());
+		var img = new Image();
+		img.loadCount = 1;
+		img.onload = function(e) {
+			imgsToLoad.remove(this.src);
+			try { delete this.loadCount; } catch (err) { this.loadCount = undefined; }
+			if (tileLoadHandler != null) tileLoadHandler.call();
+			if (imgsToLoad.length == 0) {
+				ov.pl.push(lvl);
+				if (handler != null) handler(ov);
+			}
+
 			return true;
-		} else if (this.tempZeroOpacity) {
-			try { delete this.tempZeroOpacity; } catch (e) { this.tempZeroOpacity = undefined; }
-		}
+		};
 		
-		var o = isVisible ? this.getOpacity() : 0;
-		var imgs = golgotha.maps.util.getTileImgs(this.get('imgClass') + '-' + this.get('date'), 'img');
-		for (var x = 0; x < imgs.length; x++)
-			golgotha.maps.setOpacity(imgs[x], o);
-		
-		return true;
-	}
+		img.onerror = function(e) {
+			console.log('Error ' + this.loadCount + ' loading ' + this.src);
+			if (this.loadCount > 1) {
+				this.onload();
+				return false;
+			}
 
-	ov.hideAll = function() {
-		var imgs = golgotha.maps.util.getTileImgs(this.get('imgClass'));
-		for (var x = 0; x < imgs.length; x++)
-			golgotha.maps.setOpacity(imgs[x], 0);
-
-		return true;
-	}
-	
-	ov.preload = function(map, handler, tileLoadHandler) {
-		if (this.preloaded) return true;
-		var lvl = Math.min(map.getZoom(), this.get('nativeZoom'));
-		if (this.isPreloaded(lvl)) return true;
-		var vizTiles = map.getVisibleTiles(lvl, this.get('tileSize'));
-		var imgsToLoad = []; var ov = this;
-		for (var x = 0; x < vizTiles.length; x++) {
-			var src = ov.getTileUrl(vizTiles[x], map.getZoom());
 			var img = new Image();
-			img.loadCount = 1;
-			img.onload = function(e) {
-				imgsToLoad.remove(this.src);
-				try { delete this.loadCount; } catch (err) { this.loadCount = undefined; }
-				if (tileLoadHandler != null) tileLoadHandler.call();
-				if (imgsToLoad.length == 0) {
-					ov.pl.push(lvl);
-					if (handler != null) handler(ov);
-				}
+			img.loadCount = (this.loadCount+1);
+			img.onload = this.onload;
+			img.onerror = this.onerror;
+			img.src = this.src;
+			return true;
+		};
 
-				return true;
-			};
-
-			img.onerror = function(e) {
-				console.log('Error ' + this.loadCount + ' loading ' + this.src);
-				if (this.loadCount > 1) {
-					this.onload();
-					return false;
-				}
-			
-				var img = new Image();
-				img.loadCount = (this.loadCount+1);
-				img.onload = this.onload;
-				img.onerror = this.onerror;
-				img.src = this.src;
-				return true;
-			};
-
-			imgsToLoad.push(src);
-			img.src = src;
-		}
-
-		return true;
+		imgsToLoad.push(src);
+		img.src = src;
 	}
 
-	return ov;
-}
+	return true;
+};
 
 golgotha.maps.util.getTileUrl = function(pnt, zoom) {
-	if (zoom > this.get('maxZoom')) return '';
+	if (zoom > this.maxZoom) return '';
 	var addr = new golgotha.maps.TileAddress(pnt.x, pnt.y, zoom);
 
 	// Check if we are in the bounding box
-	var bb = this.get('range');
+	var bb = this.range;
 	if ((bb != null) && (bb.length > 0) && (zoom > 2)) {
 		var notOK = true;
 		for (var x = 0; notOK && (x < bb.length); x++) {
@@ -225,7 +221,7 @@ golgotha.maps.util.getTileUrl = function(pnt, zoom) {
 	}
 
 	// Check for multi-host
-	var url = this.get('baseURL'); var pos = url.indexOf('%');
+	var url = this.baseURL; var pos = url.indexOf('%');
 	if (pos > -1) {
 		var lastDigit = url.charAt(tileID.length - 1);
 		url = url.substr(0, pos) + lastDigit + url.substr(pos + 1);
@@ -268,10 +264,9 @@ return new golgotha.maps.TileAddress(x, y, level);
 
 // Create a FF weather overlay type
 golgotha.maps.FFWeatherLayer = function(opts, timestamp, effective) {
-	var ov = golgotha.maps.WeatherLayer(opts, effective);
-	var base = ov.get('baseURL');
-	ov.set('effDate', new Date(effective));
-	ov.set('baseURL', base + timestamp + '/');
+	var ov = new golgotha.maps.WeatherLayer(opts, effective);
+	ov.effDate = new Date(effective);
+	ov.baseURL = ov.baseURL + timestamp + '/';
 	return ov;
 };
 
@@ -309,10 +304,10 @@ for (var x = 0; ((x < l1.length) && (results.length < max)); x++) {
 }
 
 max = results.length * 2;
-var maxDate = results[results.length-1].get('timestamp');
+var maxDate = results[results.length-1].timestamp;
 for (var x = 0; ((x < l2.length) && (results.length < max)); x++) {
 	var ov = l2[x];
-	var d = ov.get('timestamp');
+	var d = ov.timestamp;
 	if (d.getTime() > maxDate)
 		results.push(ov);
 }
@@ -363,22 +358,22 @@ for (var layerName = sd.seriesNames.pop(); (layerName != null); layerName = sd.s
 		var layerOpts = {minZoom:2, name:layerName, maxZoom:layerData.maxZoom, opacity:myLayerData.opacity, tileSize:golgotha.maps.TILE_SIZE, range:[], zIndex:golgotha.maps.z.OVERLAY};
 		layerOpts.tileURL = golgotha.maps.util.GinsuOverlayLayer;
 		var ovLayer = isFF ? new golgotha.maps.FFWeatherLayer(layerOpts, ts.unixDate, layerData.series[0].unixDate) : new golgotha.maps.WeatherLayer(layerOpts, ts.unixDate);
-		ovLayer.set('imgClass', myLayerData.imgClass);
-		ovLayer.set('nativeZoom', layerData.nativeZoom);
-		ovLayer.set('tileSize', golgotha.maps.TILE_SIZE);
+		ovLayer.imgClass = myLayerData.imgClass;
+		ovLayer.nativeZoom = layerData.nativeZoom;
+		ovLayer.tileSize = golgotha.maps.TILE_SIZE;
 		ovLayer.latest = (tsX == 0);
 
 		// Determine whether we display it - it's either the latest or an arbitrary timeslice
 		for (var x = 0; x < dl.layers.length; x++) {
 			var dspL = dl.layers[x]; if (dspL == null) continue; 
-			var dt = dspL.get('date');
+			var dt = dspL.date;
 			if (ovLayer.latest == true) { // If we're processing the latest
 				if (dt == ts.unixDate) {
 					ovLayer = dspL;
 					dl.layers[x] = null;
-					console.log('Keeping latest ' + layerName + ' ' + dspL.get('timestamp'));
+					console.log('Keeping latest ' + layerName + ' ' + dspL.timestamp);
 				} else if (dspL.latest) {
-					console.log('Replacing latest ' + layerName + ', replacing ' + dspL.get('timestamp') + ' with ' + ovLayer.get('timestamp'));
+					console.log('Replacing latest ' + layerName + ', replacing ' + dspL.timestamp + ' with ' + ovLayer.timestamp);
 					dspL.force = true;
 					ovLayer.setMap(dspL.getMap());
 					dspL.setMap(null);
@@ -387,7 +382,7 @@ for (var layerName = sd.seriesNames.pop(); (layerName != null); layerName = sd.s
 				if ((!dspL.latest) && (!dspL.force)) {
 					ovLayer = dspL;
 					dl.layers[x] = null;
-					console.log('Keeping ' + layerName + ' ' + dspL.get('timestamp'));
+					console.log('Keeping ' + layerName + ' ' + dspL.timestamp);
 				}
 			}
 		}
@@ -463,22 +458,22 @@ for (var ldoc = sd.body.pop(); (ldoc != null); ldoc = sd.body.pop()) {
 		var layerOpts = {minZoom:2, name:layerName, maxZoom:layerData.maxZoom, isPng:true, opacity:myLayerData.opacity, tileSize:tsz, range:bb, zIndex:golgotha.maps.z.OVERLAY};
 		var ovLayer = isFF ? new golgotha.maps.FFWeatherLayer(layerOpts, ts.unixDate, layerData.series[0].unixDate) :  
 				new golgotha.maps.WeatherLayer(layerOpts, ts.unixDate);
-		ovLayer.set('imgClass', myLayerData.imgClass);
-		ovLayer.set('nativeZoom', layerData.nativeZoom);
-		ovLayer.set('tileSize', tsz);
+		ovLayer.imgClass = myLayerData.imgClass;
+		ovLayer.nativeZoom = layerData.nativeZoom;
+		ovLayer.tileSize = tsz;
 		ovLayer.latest = (tsX == 0);
 		
 		// Determine whether we display it - it's either the latest or an arbitrary timeslice
 		for (var x = 0; x < dl.layers.length; x++) {
 			var dspL = dl.layers[x]; if (dspL == null) continue; 
-			var dt = dspL.get('date');
+			var dt = dspL.date;
 			if (ovLayer.latest == true) { // If we're processing the latest
 				if (dt == ts.unixDate) {
 					ovLayer = dspL;
 					dl.layers[x] = null;
-					console.log('Keeping latest ' + layerName + ' ' + dspL.get('timestamp'));
+					console.log('Keeping latest ' + layerName + ' ' + dspL.timestamp);
 				} else if (dspL.latest) {
-					console.log('Replacing latest ' + layerName + ', replacing ' + dspL.get('timestamp') + ' with ' + ovLayer.get('timestamp'));
+					console.log('Replacing latest ' + layerName + ', replacing ' + dspL.timestamp + ' with ' + ovLayer.timestamp);
 					dspL.force = true;
 					ovLayer.setMap(dspL.getMap());
 				}
@@ -486,7 +481,7 @@ for (var ldoc = sd.body.pop(); (ldoc != null); ldoc = sd.body.pop()) {
 				if ((!dspL.latest) && (!dspL.force)) {
 					ovLayer = dspL;
 					dl.layers[x] = null;
-					console.log('Keeping ' + layerName + ' ' + dspL.get('timestamp'));
+					console.log('Keeping ' + layerName + ' ' + dspL.timestamp);
 				}
 			}
 		}
@@ -583,8 +578,8 @@ golgotha.maps.LayerAnimateControl = function(opts, layers) {
 			golgotha.util.addClass(this, 'displayed');
 
 		var ll = container.layers(); var lz = ll[0]; container.animator.animate(ll);
-		var nZ = Math.min(opts.map.getZoom(), lz.get('nativeZoom'));
-		var tilesPerLayer = opts.map.getVisibleTiles(nZ, lz.get('tileSize')).length;
+		var nZ = Math.min(opts.map.getZoom(), lz.nativeZoom);
+		var tilesPerLayer = opts.map.getVisibleTiles(nZ, lz.tileSize).length;
 		for (var x = 0; x < ll.length; x++) {
 			var ov = ll[x];
 			var doLoad = !ov.isPreloaded(nZ);
