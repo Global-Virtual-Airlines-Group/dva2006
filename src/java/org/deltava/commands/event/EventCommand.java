@@ -155,9 +155,9 @@ public class EventCommand extends AbstractCommand {
 				GetATOData atodao = new GetATOData();
 				Map<String, Collection<PilotRating>> ratings = new HashMap<String, Collection<PilotRating>>();
 				atodao.getCertificates().stream().filter(pr -> networkIDs.contains(Integer.valueOf(pr.getID()))).forEach(pr -> CollectionUtils.addMapCollection(ratings, String.valueOf(pr.getID()), pr));
-				ctx.setAttribute("pilotRatings", ratings, REQUEST);
+				ctx.setAttribute("allRatings", ratings, REQUEST);
 			} else
-				ctx.setAttribute("pilotRatings", Collections.emptyMap(), REQUEST);
+				ctx.setAttribute("allRatings", Collections.emptyMap(), REQUEST);
 			
 			// Calculate attendance probability
 			if (e.getStatus() != Status.CANCELED) {

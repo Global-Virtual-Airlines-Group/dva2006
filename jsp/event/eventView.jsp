@@ -205,7 +205,7 @@ golgotha.local.resizeBriefing = function(maxRows) {
 <c:forEach var="signup" items="${event.signups}">
 <c:set var="pilot" value="${pilots[signup.pilotID]}" scope="page" />
 <c:set var="pilotCerts" value="${certs[signup.pilotID]}" scope="page" />
-<c:set var="pilotRatings" value="${pilotRatings[fn:networkID(pilot, event.network)]}" scope="page" />
+<c:set var="pilotRatings" value="${allRatings[fn:networkID(pilot, event.network)]}" scope="page" />
 <c:set var="pilotLoc" value="${userData[signup.pilotID]}" scope="page" />
 <c:set var="sa" value="${saAccess[signup.pilotID]}" scope="page" />
 <c:set var="showPilotStats" value="${showStats && (pilot.eventSignups > 0)}" scope="page" />
