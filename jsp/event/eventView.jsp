@@ -57,8 +57,7 @@ golgotha.local.resizeBriefing = function(maxRows) {
 <el:form action="${formAction}" method="post" link="${event}" validate="${formValidate}">
 <el:table className="form view">
 <tr class="title caps">
- <td colspan="6" class="left">${event.name} - <fmt:date date="${event.startTime}" d="EEEE MMMM dd yyyy" t="HH:mm" /> -
- <fmt:date date="${event.endTime}" fmt="t" t="HH:mm" /></td>
+ <td colspan="6" class="left">${event.name} - <fmt:date date="${event.startTime}" d="EEEE MMMM dd yyyy" t="HH:mm" /> - <fmt:date date="${event.endTime}" fmt="t" t="HH:mm" /></td>
 </tr>
 <c:if test="${event.hasBanner}">
 <tr class="nophone">
@@ -92,8 +91,7 @@ golgotha.local.resizeBriefing = function(maxRows) {
 <c:forEach var="route" items="${event.routes}">
 <view:row entry="${route}">
  <td class="label top" rowspan="2">Route #<fmt:int value="${route.routeID}" /></td>
- <td class="data" colspan="5">${route.airportD.name} (<fmt:airport airport="${route.airportD}" />) - ${route.airportA.name}
- (<fmt:airport airport="${route.airportA}" />)<c:if test="${route.isRNAV}"> (RNAV)</c:if></td>
+ <td class="data" colspan="5">${route.airportD.name} (<fmt:airport airport="${route.airportD}" />) - ${route.airportA.name} (<fmt:airport airport="${route.airportA}" />)<c:if test="${route.isRNAV}"> (RNAV)</c:if></td>
 </view:row>
 <view:row entry="${route}">
  <td class="data" colspan="5">${route.route}</td>
@@ -207,6 +205,7 @@ golgotha.local.resizeBriefing = function(maxRows) {
 <c:forEach var="signup" items="${event.signups}">
 <c:set var="pilot" value="${pilots[signup.pilotID]}" scope="page" />
 <c:set var="pilotCerts" value="${certs[signup.pilotID]}" scope="page" />
+<c:set var="pilotRatings" value="${pilotRatings[fn:networkID(pilot, event.network)]}" scope="page" />
 <c:set var="pilotLoc" value="${userData[signup.pilotID]}" scope="page" />
 <c:set var="sa" value="${saAccess[signup.pilotID]}" scope="page" />
 <c:set var="showPilotStats" value="${showStats && (pilot.eventSignups > 0)}" scope="page" />
@@ -218,15 +217,15 @@ golgotha.local.resizeBriefing = function(maxRows) {
  <td class="pri bld">${pilot.pilotCode}</td>
 </c:if>
  <td><el:profile location="${pilotLoc}">${pilot.name}</el:profile>
-<c:if test="${!empty pilotCerts}"><span class="ter bld nophone"><fmt:list value="${pilotCerts}" delim=", " /></span></c:if></td>
+<c:if test="${!empty pilotCerts}"><span class="ter bld nophone"><fmt:list value="${pilotCerts}" delim=", " /></span></c:if>
+<c:if test="${!empty pilotRatings}"> <span class="sec nophone"><fmt:list value="${pilotRatings}" delim=", " /></span></c:if>
+</td>
  <td class="sec bld nophone">${signup.equipmentType}</td>
  <td class="pri bld">${fn:networkID(pilot, event.network)}</td>
 <c:if test="${showPilotStats}">
- <td class="small nophone"><fmt:int value="${pilot.eventSignups}" /> signups, <fmt:int value="${pilot.eventLegs}" /> legs
- (<fmt:dec value="${(pilot.eventLegs * 100.0) / pilot.eventSignups}" fmt="##0.0" />%)</td>
+ <td class="small nophone"><fmt:int value="${pilot.eventSignups}" /> signups, <fmt:int value="${pilot.eventLegs}" /> legs (<fmt:dec value="${(pilot.eventLegs * 100.0) / pilot.eventSignups}" fmt="##0.0" />%)</td>
 </c:if>
- <td<c:if test="${!showPilotStats}"> colspan="2"</c:if> class="small">${signup.airportD.name} (<fmt:airport airport="${signup.airportD}" />) - ${signup.airportA.name}
- (<fmt:airport airport="${signup.airportA}" />)</td>
+ <td<c:if test="${!showPilotStats}"> colspan="2"</c:if> class="small">${signup.airportD.name} (<fmt:airport airport="${signup.airportD}" />) - ${signup.airportA.name} (<fmt:airport airport="${signup.airportA}" />)</td>
 </tr>
 </c:forEach>
 </c:if>

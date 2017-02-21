@@ -2,6 +2,7 @@
 package org.deltava.commands.event;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
@@ -132,15 +133,7 @@ public class EventCommand extends AbstractCommand {
 				
 				// Load pilots who may have logged the flight but not signed up
 				if ((e.getStatus() == Status.COMPLETE) || (e.getStatus() == Status.CLOSED)) {
-					Collection<Integer> newIDs = new HashSet<Integer>();
-					for (Iterator<FlightReport> fi =flights.iterator(); fi.hasNext(); ) {
-						FlightReport fr = fi.next();
-						int pilotID = fr.getDatabaseID(DatabaseID.PILOT);
-						if (!udm.contains(pilotID))
-							newIDs.add(Integer.valueOf(pilotID));
-					}
-				
-					// Load additional pilots
+					Collection<Integer> newIDs = flights.stream().filter(fr -> !udm.contains(fr.getAuthorID())).map(FlightReport::getAuthorID).collect(Collectors.toSet());
 					if (!newIDs.isEmpty()) {
 						udm.putAll(usrdao.get(newIDs));
 						evPilots.putAll(pdao.getByID(newIDs, tableName));
@@ -157,11 +150,14 @@ public class EventCommand extends AbstractCommand {
 			}
 			
 			// Load VATSIM Ratings
+			Collection<Integer> networkIDs = pilots.values().stream().map(p -> Integer.valueOf(p.getNetworkID(e.getNetwork()))).collect(Collectors.toSet());
 			if (e.getNetwork() == OnlineNetwork.VATSIM) {
 				GetATOData atodao = new GetATOData();
-				Collection<PilotRating> ratings = atodao.getCertificates();
-				
-			}
+				Map<String, Collection<PilotRating>> ratings = new HashMap<String, Collection<PilotRating>>();
+				atodao.getCertificates().stream().filter(pr -> networkIDs.contains(Integer.valueOf(pr.getID()))).forEach(pr -> CollectionUtils.addMapCollection(ratings, String.valueOf(pr.getID()), pr));
+				ctx.setAttribute("pilotRatings", ratings, REQUEST);
+			} else
+				ctx.setAttribute("pilotRatings", Collections.emptyMap(), REQUEST);
 			
 			// Calculate attendance probability
 			if (e.getStatus() != Status.CANCELED) {
@@ -171,10 +167,9 @@ public class EventCommand extends AbstractCommand {
 					if ((p != null) && (p.getEventSignups() > 2))
 						predictedPilots += Math.min(1.0d, (p.getEventLegs() * 1.0d) / p.getEventSignups());
 					else
-						predictedPilots += 0.45;
+						predictedPilots += 0.4;
 				}
 				
-				// Save event probability
 				ctx.setAttribute("signupPredict", Integer.valueOf(Math.round(predictedPilots)), REQUEST); 
 			}
 			
