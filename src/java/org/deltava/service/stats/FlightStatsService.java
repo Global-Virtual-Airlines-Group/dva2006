@@ -1,10 +1,11 @@
-// Copyright 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
 import java.util.*;
 import java.sql.Connection;
+import java.time.Instant;
 
 import org.json.*;
 
@@ -20,7 +21,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to display flight data in JSON format. 
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 5.0
  */
 
@@ -60,6 +61,17 @@ public class FlightStatsService extends WebService {
 			ctx.release();
 		}
 		
+		// Determine if sim time went backwards
+		boolean fwdTime = true; Instant lt = Instant.EPOCH;
+		for (Iterator<? extends GeoLocation> i = routePoints.iterator(); i.hasNext() && fwdTime; ) {
+			GeoLocation loc = i.next();
+			if (loc instanceof ACARSRouteEntry) {
+				ACARSRouteEntry ae = (ACARSRouteEntry) loc;
+				fwdTime &= ae.getSimUTC().isAfter(lt);
+				lt = ae.getSimUTC();
+			}
+		}
+		
 		// Go through the rows
 		JSONObject jo = new JSONObject();
 		int maxSpeed = 0; int maxAlt = 0;
@@ -69,7 +81,7 @@ public class FlightStatsService extends WebService {
 				JSONArray je = new JSONArray();
 				if (re instanceof ACARSRouteEntry) {
 					ACARSRouteEntry ae = (ACARSRouteEntry) re;
-					je.put(ae.getSimUTC().toEpochMilli());
+					je.put(fwdTime ? ae.getSimUTC().toEpochMilli() : ae.getDate().toEpochMilli());
 					je.put(re.getGroundSpeed());
 					je.put(re.getAltitude());	
 					je.put(Math.max(0, ae.getAltitude() - ae.getRadarAltitude()));
