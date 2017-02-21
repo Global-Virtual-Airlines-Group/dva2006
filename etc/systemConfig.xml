@@ -399,6 +399,16 @@
 			<dsx>217b980f-be43-4148-8aa4-cd5da694980d</dsx>
 			<googleMaps>***REMOVED***</googleMaps>
 			<vatsim>***REMOVED***</vatsim>
+			<twitter>
+			     <access>
+                    <token>233767315-DbNEky5q2vnms8y6l8tpuG6cBZFfL6QX6Felmvjn</token>
+                    <secret>MI53kqfAwvWVhPp5p6nUQZuGq6owUwcqynajiIDEtiZdh</secret>
+                </access>
+                <consumer>
+                    <key>vJlAlQb6TjZRcxtXTbOnag</key>
+                    <secret>yyYVbThYZ4s0IzWJZEd1zHCDItVanNV7uGoc6Q89ffQ</secret>
+                </consumer>
+			</twitter>
 		</key>
 		
 		<list name="roles" attr="role" sorted="true" unique="true">
