@@ -28,7 +28,6 @@
 var loaders = {};
 loaders.fir = new golgotha.maps.LayerLoader('FIRs', golgotha.maps.FIRParser);
 loaders.fr = new golgotha.maps.LayerLoader('Fronts', golgotha.maps.fronts.FrontParser);
-loaders.lg = new golgotha.maps.LayerLoader('Lightning', golgotha.maps.LightningParser);
 loaders.series = new golgotha.maps.SeriesLoader();
 loaders.series.setData('radar', 0.45, 'wxRadar', 1024);
 loaders.series.setData('eurorad', 0.45, 'wxRadar', 512);
@@ -38,7 +37,6 @@ loaders.series.setData('temp', 0.275, 'wxTemp');
 loaders.series.setData('windspeed', 0.325, 'wxWind');
 loaders.series.onload(function() { golgotha.util.enable('#selImg'); });
 loaders.fr.onload(function() { golgotha.util.enable('selFronts'); });
-loaders.lg.onload(function() { golgotha.util.enable('selLG'); });
 loaders.fir.onload(function() { golgotha.util.enable('selFIR'); });
 
 golgotha.maps.acars.reloadData = function(isAuto)
@@ -84,15 +82,22 @@ alert('Your <content:airline /> ACARS Map preferences have been saved.');
 return true;
 };
 
-golgotha.maps.acars.clearSettings = function()
-{
-var expiryDate = new Date();
-document.cookie = 'acarsMapLat=; expires=' + expiryDate.toGMTString();
-document.cookie = 'acarsMapLng=; expires=' + expiryDate.toGMTString();
-document.cookie = 'acarsMapZoomLevel=; expires=' + expiryDate.toGMTString();
-document.cookie = 'acarsMapType=; expires=' + expiryDate.toGMTString();
-alert('Your <content:airline /> ACARS Map preferences have been cleared.');
-return true;
+golgotha.maps.acars.clearSettings = function() {
+	var expiryDate = new Date();
+	document.cookie = 'acarsMapLat=; expires=' + expiryDate.toGMTString();
+	document.cookie = 'acarsMapLng=; expires=' + expiryDate.toGMTString();
+	document.cookie = 'acarsMapZoomLevel=; expires=' + expiryDate.toGMTString();
+	document.cookie = 'acarsMapType=; expires=' + expiryDate.toGMTString();
+	alert('Your <content:airline /> ACARS Map preferences have been cleared.');
+	return true;
+};
+
+golgotha.maps.acars.showLegend = function(box) {
+	var rows = golgotha.util.getElementsByClass('mapLegend', 'tr');
+	for (var r = rows.pop(); (r != null); r = rows.pop())
+		golgotha.util.display(r, box.checked);
+	
+	return true;
 };
 
 golgotha.maps.acars.showEarth = function() {
@@ -121,37 +126,36 @@ golgotha.maps.acars.showEarth = function() {
 <tr>
  <td class="label">Map Options</td>
  <td class="data" colspan="3"><span class="bld"><el:box name="showProgress" idx="*" value="1" label="Show Flight Progress" checked="true" />&nbsp;
-<el:box name="autoRefresh" idx="*" value="true" label="Automatically Refresh Map" checked="true" />&nbsp;
-<el:box name="showInfo" idx="*" value="true" label="Show Flight Data" checked="true" />&nbsp;
+<el:box name="autoRefresh" idx="*" value="true" label="Automatically Refresh Map" checked="true" />
+<el:box name="showInfo" idx="*" value="true" label="Show Flight Data" checked="true" />
 <el:box name="showRoute" idx="*" value="true" label="Show Flight Plan" checked="false" />
-<el:box name="zoomToPilot" idx="*" value="true" label="Zoom to Pilot" checked="false" /></span></td>
+<span class="nophone"><el:box name="zoomToPilot" idx="*" value="true" label="Zoom to Pilot" checked="false" />
+<el:box name="showLegend" idx="*" value="true" label="Show Legend" checked="true" onChange="void golgotha.maps.acars.showLegend(this)" /></span></span></td>
 </tr>
-<tr>
+<tr class="nophone mapLegend">
  <td class="label">Aircraft Legend</td>
  <td class="data" style="width:45%;"><map:legend color="blue" legend="Cruising" /> <map:legend color="white" legend="On Ground" />
  <map:legend color="orange" legend="Climbing" /> <map:legend color="yellow" legend="Descending" /></td>
- <td class="label nophone">Dispatcher Legend</td>
- <td class="data nophone"><map:legend color="green" legend="Available" /> <map:legend color="purple" legend="Busy" /></td>
+ <td class="label">Dispatcher Legend</td>
+ <td class="data"><map:legend color="green" legend="Available" /> <map:legend color="purple" legend="Busy" /></td>
 </tr>
-<tr>
+<tr class="nophone mapLegend">
  <td class="label">Dispatch Service</td>
  <td class="data"><span id="dispatchStatus" class="bld caps">DISPATCH CURRENTLY OFFLINE</span></td>
- <td class="label nophone">Weather Layer</td>
- <td class="data nophone"><span id="wxLoading" class="small" style="width:150px;">None</span></td>
+ <td class="label">Weather Layer</td>
+ <td class="data"><span id="wxLoading" class="small" style="width:150px;">None</span></td>
 </tr>
 <tr>
- <td class="data" colspan="4"><map:div ID="googleMap" height="550" /><div id="copyright" class="small mapTextLabel"></div>
-<div id="mapStatus" class="small mapTextLabel"></div><div id="zoomLevel" class="small mapTextLabel"></div><div id="seriesRefresh" class="small mapTextLabel"></div></td>
+ <td class="data" colspan="4"><map:div ID="googleMap" height="550" /><div id="copyright" class="small mapTextLabel"></div><div id="mapStatus" class="small mapTextLabel"></div>
+<div id="zoomLevel" class="small mapTextLabel"></div><div id="seriesRefresh" class="small mapTextLabel"></div></td>
 </tr>
 </el:table>
 
 <!-- Button Bar -->
 <el:table className="bar">
 <tr class="title">
- <td><el:button ID="RefreshButton" onClick="void golgotha.maps.acars.reloadData(false)" label="REFRESH ACARS DATA" />&nbsp;
-<el:button ID="SettingsButton" onClick="void golgotha.maps.acars.saveSettings()" label="SAVE SETTINGS" />&nbsp;
-<el:button ID="ClearButton" onClick="void golgotha.maps.acars.clearSettings()" label="CLEAR SETTINGS" />&nbsp;
-<el:button ID="EarthButton" onClick="void golgotha.maps.acars.showEarth()" label="DISPLAY IN GOOGLE EARTH" /></td>
+ <td><el:button ID="RefreshButton" onClick="void golgotha.maps.acars.reloadData(false)" label="REFRESH ACARS DATA" />&nbsp;<el:button ID="SettingsButton" onClick="void golgotha.maps.acars.saveSettings()" label="SAVE SETTINGS" />&nbsp;
+<el:button ID="ClearButton" onClick="void golgotha.maps.acars.clearSettings()" label="CLEAR SETTINGS" />&nbsp;<el:button ID="EarthButton" onClick="void golgotha.maps.acars.showEarth()" label="DISPLAY IN GOOGLE EARTH" /></td>
 </tr>
 </el:table>
 </el:form>
@@ -160,7 +164,7 @@ golgotha.maps.acars.showEarth = function() {
 </content:region>
 </content:page>
 <content:sysdata var="wuAPI" name="security.key.wunderground" />
-<script id="mapInit">
+<script id="mapInit" async>
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
 var mapOpts = {center:golgotha.local.mapC, minZoom:2, maxZoom:17, zoom:${zoomLevel}, scrollwheel:false, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
 
@@ -191,7 +195,7 @@ ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Jet Stream'}, hj
 
 // Add other layers
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'FIRs', disabled:true, id:'selFIR'}, function() { return loaders.fir.getLayer(); }));
-map.DN = new DayNightOverlay({fillColor:'rgba(40,48,56,0.33)'});
+map.DN = new DayNightOverlay({fillColor:'rgba(40,48,56,0.275)'});
 ctls.push(new golgotha.maps.SelectControl('Day/Night', function() { map.DN.setMap(map); }, function() { map.DN.setMap(null); }));
 ctls.push(new golgotha.maps.LayerClearControl(map));
 
