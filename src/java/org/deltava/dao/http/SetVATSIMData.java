@@ -5,6 +5,7 @@ import org.json.*;
 
 import java.io.*;
 import java.net.HttpURLConnection;
+import java.nio.charset.StandardCharsets;
 
 import org.deltava.beans.servinfo.PilotRating;
 
@@ -34,19 +35,24 @@ public class SetVATSIMData extends DAO {
 		jo.put("instructor", String.valueOf(pr.getInstructor()));
 		
 		try {
+			setReturnErrorStream(true);
 			setMethod("POST");
 
 			// Send the data
 			init(SystemData.get("online.vatsim.rating_url"));
-			setRequestHeader("Content-Type", "application/json");
+			setRequestHeader("Content-Type", "application/json; charset=utf-8");
+			setRequestHeader("Accept", "application/json");
 			setRequestHeader("Authorization", "Token token=\"" + SystemData.get("security.key.vatsim") + "\"");
-			try (DataOutputStream out = new DataOutputStream(getOut())) {
-				out.writeBytes(jo.toString());
+			try (OutputStream out = getOut()) {
+				out.write(jo.toString().getBytes(StandardCharsets.UTF_8));
 				out.flush();
 			}
 
-			if (getResponseCode() != HttpURLConnection.HTTP_OK)
-				throw new HTTPDAOException("Invalid response code", getResponseCode());
+			int code = getResponseCode();
+			if (code != HttpURLConnection.HTTP_OK) {
+				JSONObject eo = new JSONObject(new JSONTokener(getIn()));
+				throw new HTTPDAOException(String.valueOf(eo), code);
+			}
 		} catch (IOException ie) {
 			throw new HTTPDAOException(ie);
 		}

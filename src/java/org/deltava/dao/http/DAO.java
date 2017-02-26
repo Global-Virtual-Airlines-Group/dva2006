@@ -10,12 +10,10 @@ import javax.net.ssl.*;
 import org.deltava.beans.system.VersionInfo;
 
 /**
- * An abstract class to supports Data Access Objects that read from an HTTP
- * URL. This differs from a stream-based Data Access Object only that HTTP
- * DAOs create their own stream to a URL. This is used in situations where
- * request-specific data is encoded into the URL. 
+ * An abstract class to supports Data Access Objects that read from an HTTP URL. This differs from a stream-based Data Access Object only 
+ * that HTTP DAOs create their own stream to a URL. This is used in situations where request-specific data is encoded into the URL. 
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 2.4
  */
 
@@ -29,6 +27,14 @@ public abstract class DAO {
 	
 	private URLConnection _urlcon;
 	private boolean _getErrorStream;
+	
+	/*
+	 * Helper to check connection state.
+	 */
+	private void checkConnected() {
+		if (_urlcon == null)
+    		throw new IllegalStateException("Not Initialized");
+	}
 	
     /**
      * Overrides the context used to generate SSL context.
@@ -109,6 +115,7 @@ public abstract class DAO {
      * @param value the header value
      */
     protected void setRequestHeader(String name, String value) {
+    	checkConnected();
     	_urlcon.setRequestProperty(name, value);
     }
     
@@ -131,9 +138,7 @@ public abstract class DAO {
      * @throws IOException if an error occured
      */
     protected int getResponseCode() throws IOException {
-    	if (_urlcon == null)
-    		throw new IllegalStateException("Not Initialized");
-    	
+    	checkConnected();
     	return (_urlcon instanceof HttpURLConnection) ? ((HttpURLConnection)_urlcon).getResponseCode() : 0;
     }
     
@@ -143,9 +148,7 @@ public abstract class DAO {
      * @return the header value
      */
     protected String getHeaderField(String name) {
-    	if (_urlcon == null)
-    		throw new IllegalStateException("Not Initialized");
-    	
+    	checkConnected();
     	return _urlcon.getHeaderField(name);
     }
 
@@ -155,8 +158,7 @@ public abstract class DAO {
      * @throws IOException if an error occurs
      */
     protected InputStream getIn() throws IOException {
-    	if (_urlcon == null)
-    		throw new IllegalStateException("Not Initialized");
+    	checkConnected();
 
     	try {
     		return _urlcon.getInputStream();
@@ -174,11 +176,11 @@ public abstract class DAO {
      * @throws IOException if an error occurs
      */
     protected OutputStream getOut() throws IOException {
-    	if (_urlcon == null)
-    		throw new IllegalStateException("Not Initialized");
-    	
+    	checkConnected();
     	_urlcon.setDoOutput(true);
-    	setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    	if (_urlcon.getRequestProperty("Content-Type") == null)
+    		setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    	
 		return _urlcon.getOutputStream();
     }
   
