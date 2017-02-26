@@ -51,6 +51,9 @@ Certification. An e-mail message has been sent to ${pilot.rank.name} ${pilot.las
 <c:if test="${networkRatingAdded}">
 <br />
 The <span class="bld">${cert.networkRatingCode}</span> Pilot rating on the <span class="ter bld">${cert.network}</span> has been successfully granted to this Pilot.<br /></c:if>
+<c:if test="${!empty networkRatingError}">
+<br />
+<span class="warn">The following error occured when attempting to grant the ${cert.networkRatingCode} Pilot rating on the ${cert.networt}: <span class="bld">${networkRatingError.message}</span></span><br /></c:if>
 <br />
 To view the Pilot profile, <el:cmd url="profile" link="${pilot}" className="sec bld">Click Here</el:cmd>.<br />
 </c:if>
