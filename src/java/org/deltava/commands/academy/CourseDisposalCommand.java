@@ -193,9 +193,13 @@ public class CourseDisposalCommand extends AbstractCommand {
 				pr.setInstructorID(StringUtils.parse(ctx.getUser().getNetworkID(crt.getNetwork()), 0));
 				pr.setIssueDate(Instant.now());
 				if (crt.getNetwork() == OnlineNetwork.VATSIM) {
-					SetVATSIMData vwdao = new SetVATSIMData();
-					vwdao.addRating(pr);
-					ctx.setAttribute("networkRatingAdded", Boolean.TRUE, REQUEST);
+					try {
+						SetVATSIMData vwdao = new SetVATSIMData();
+						vwdao.addRating(pr);
+						ctx.setAttribute("networkRatingAdded", Boolean.TRUE, REQUEST);
+					} catch (DAOException rde) {
+						ctx.setAttribute("networkRatingError", rde, REQUEST);
+					}
 				}
 			}
 			
