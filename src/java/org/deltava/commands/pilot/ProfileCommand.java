@@ -343,7 +343,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			}
 
 			// Load the roles from the request and convert to a set to maintain uniqueness
-			Collection<String> newRoles = p_access.getCanChangeRoles() ? ctx.getParameters("securityRoles", Collections.emptySet()) : p.getRoles();
+			Collection<String> newRoles = p_access.getCanChangeRoles() ? ctx.getParameters("securityRoles", new HashSet<String>()) : p.getRoles();
 			newRoles.add("Pilot");
 
 			// Update LDAP name
