@@ -36,7 +36,7 @@ golgotha.form.validate({f:f.preReqs, t:'Examination Prerequisites'});
 // Check specific cert
 var reqCertRow = document.getElementById('reqCertRow');
 if (reqCertRow.style.display != 'none')
-	golgotha.form.validate({f:f.preReqCert, t:'Specific Certification Prerequisite'});
+	golgotha.form.validate({f:f.reqCert, t:'Specific Certification Prerequisite'});
 
 // Check min flights / hours
 var eqCertRow = document.getElementById('reqEQRow');
