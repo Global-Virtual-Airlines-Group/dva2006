@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import org.deltava.beans.ComboAlias;
@@ -6,7 +6,7 @@ import org.deltava.beans.ComboAlias;
 /**
  * An enumeration to track Accomplishment units of measurement.
  * @author Luke
- * @version 6.3
+ * @version 7.2
  * @since 6.3
  */
 
@@ -19,7 +19,8 @@ public enum AccomplishUnit implements ComboAlias {
 	MEMBERDAYS("Days since joining", Data.NONE), AIRLINES("Airlines"), 
 	DFLIGHTS("Flights Dispatched", Data.DISPATCH), DHOURS("Dispatch Hours", Data.DISPATCH),
 	EQLEGS("Legs in Aircraft"), CONTINENTS("Continents Visited"), PAX("Passengers Carried"),
-	AIRPORTD("Departure Airport"), AIRPORTA("Arrival Airport"), PROMOLEGS("Promotion Legs");
+	AIRPORTD("Departure Airport"), AIRPORTA("Arrival Airport"), PROMOLEGS("Promotion Legs"),
+	ADLEGS("Departures from Airport"), AALEGS("Arrivals at Airport");
 
 	public enum Data {
 		NONE, DISPATCH, FLIGHTS
@@ -28,10 +29,19 @@ public enum AccomplishUnit implements ComboAlias {
 	private final String _name;
 	private final Data _data;
 	
+	/**
+	 * Creates the Accomplishment Unit with Flights as the type of data.
+	 * @param name the Unit name
+	 */
 	AccomplishUnit(String name) {
 		this(name, Data.FLIGHTS);
 	}
 	
+	/**
+	 * Creates the Accomplishment Unit.
+	 * @param name the Unit name
+	 * @param d the type of data to track
+	 */
 	AccomplishUnit(String name, Data d) {
 		_name = name;
 		_data = d;

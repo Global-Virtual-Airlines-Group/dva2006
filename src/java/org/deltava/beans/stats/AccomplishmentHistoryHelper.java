@@ -1,4 +1,4 @@
- // Copyright 2010, 2011, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+ // Copyright 2010, 2011, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import java.time.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to determine what Accomplishments a Pilot has achieved. 
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 3.2
  */
 
@@ -47,8 +47,8 @@ public class AccomplishmentHistoryHelper {
 			_value++;
 		}
 		
-		public int getValue() {
-			return _value;
+		public Integer getValue() {
+			return Integer.valueOf(_value);
 		}
 		
 		@Override
@@ -83,6 +83,9 @@ public class AccomplishmentHistoryHelper {
 		private final Collection<State> _states = new TreeSet<State>();
 		private final Map<String, MutableInteger> _eqLegs = new TreeMap<String, MutableInteger>();
 		private final Map<String, MutableInteger> _pLegs = new TreeMap<String, MutableInteger>();
+		
+		private final Map<String, MutableInteger> _daLegs = new TreeMap<String, MutableInteger>();
+		private final Map<String, MutableInteger> _aaLegs = new TreeMap<String, MutableInteger>();
 
 		AccomplishmentCounter() {
 			super();
@@ -101,6 +104,8 @@ public class AccomplishmentHistoryHelper {
 			if (fr.hasAttribute(FlightReport.ATTR_ONLINE_MASK)) _onlineLegs++;
 			if (fr.getDatabaseID(DatabaseID.EVENT) != 0) _events.add(Integer.valueOf(fr.getDatabaseID(DatabaseID.EVENT)));
 			incLeg(_eqLegs, fr.getEquipmentType());
+			incLeg(_daLegs, fr.getAirportD().getIATA());
+			incLeg(_aaLegs, fr.getAirportA().getIATA());
 			fr.getCaptEQType().forEach(eq -> incLeg(_pLegs, eq));
 		}
 		
@@ -190,12 +195,20 @@ public class AccomplishmentHistoryHelper {
 			return _dspHours;
 		}
 		
-		public int getEquipmentLegs(String eqType) {
-			return _eqLegs.containsKey(eqType) ? _eqLegs.get(eqType).getValue() : 0;
+		public Integer getEquipmentLegs(String eqType) {
+			return _eqLegs.containsKey(eqType) ? _eqLegs.get(eqType).getValue() : Integer.valueOf(0);
 		}
 		
-		public int getPromotionLegs(String eqType) {
-			return _pLegs.containsKey(eqType) ? _pLegs.get(eqType).getValue() : 0;
+		public Integer getPromotionLegs(String eqType) {
+			return _pLegs.containsKey(eqType) ? _pLegs.get(eqType).getValue() : Integer.valueOf(0);
+		}
+		
+		public Integer getDepartureLegs(String iata) {
+			return _daLegs.containsKey(iata) ? _daLegs.get(iata).getValue() : Integer.valueOf(0);
+		}
+		
+		public Integer getArrivalLegs(String iata) {
+			return _aaLegs.containsKey(iata) ? _aaLegs.get(iata).getValue() : Integer.valueOf(0);
 		}
 	}
 	
@@ -257,9 +270,6 @@ public class AccomplishmentHistoryHelper {
 	 * Returns how far a pilot is towards a particular Accomplishment.
 	 */
 	private long progress(Accomplishment a, AccomplishmentCounter cnt) {
-		
-		// Big switch based on types
-		int totalLegs = 0;
 		switch (a.getUnit()) {
 			case LEGS:
 				return cnt.getLegs();
@@ -279,6 +289,10 @@ public class AccomplishmentHistoryHelper {
 				return AccomplishmentFilter.filter(cnt.getArrivalAirports(), a).size();
 			case AIRPORTD:
 				return AccomplishmentFilter.filter(cnt.getDepartureAirports(), a).size();
+			case ADLEGS:
+				return a.getChoices().stream().map(ap -> cnt.getDepartureLegs(ap)).mapToInt(Integer::intValue).sum();
+			case AALEGS:
+				return a.getChoices().stream().map(ap -> cnt.getArrivalLegs(ap)).mapToInt(Integer::intValue).sum();
 			case AIRCRAFT:
 				return AccomplishmentFilter.filter(cnt.getEquipmentTypes(), a).size();
 			case COUNTRIES:
@@ -294,20 +308,11 @@ public class AccomplishmentHistoryHelper {
 			case DHOURS:
 				return (long) cnt.getDispatchHours();
 			case EQLEGS:
-				for (String eqType : a.getChoices())
-					totalLegs += cnt.getEquipmentLegs(eqType);
-				
-				return totalLegs;
-
+				return a.getChoices().stream().map(eqType -> cnt.getEquipmentLegs(eqType)).mapToInt(Integer::intValue).sum();
 			case PROMOLEGS:
-				for (String eqType : a.getChoices())
-					totalLegs += cnt.getPromotionLegs(eqType);
-				
-				return totalLegs;
-				
+				return a.getChoices().stream().map(eqType -> cnt.getPromotionLegs(eqType)).mapToInt(Integer::intValue).sum();
 			case MEMBERDAYS:
-				long days = (System.currentTimeMillis() - _usr.getCreatedOn().toEpochMilli()) / 86400_000;
-				return days;
+				return (System.currentTimeMillis() - _usr.getCreatedOn().toEpochMilli()) / 86400_000;
 			default:
 				return 0;
 		}
@@ -416,10 +421,9 @@ public class AccomplishmentHistoryHelper {
 		// Loop through the connection entries
 		if (a.getUnit().getDataRequired() == Data.DISPATCH) {
 			for (DispatchConnectionEntry dce : _cons) {
-				Instant dt = dce.getEndTime();
 				cnt.add(dce);
 				if (has(a, cnt) != Result.NOTYET)
-					return dt;
+					return dce.getEndTime();
 			}
 		}
 		

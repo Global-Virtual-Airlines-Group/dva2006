@@ -27,20 +27,21 @@ golgotha.form.submit(f);
 return true;
 };
 
-golgotha.local.toggleAll = function()
-{
-var f = document.forms[0];	
-golgotha.util.disable(f.value, f.doAll.checked);	
-return true;	
+golgotha.local.toggleAll = function() {
+    var f = document.forms[0];	
+    golgotha.util.disable(f.value, f.doAll.checked);	
+    return true;	
 };
 
 golgotha.local.showChoices = function()
 {
-var f = document.forms[0];
 var rows = golgotha.util.getElementsByClass('valueRow');
 for (var r = rows.pop(); (r != null); r = rows.pop())
 	golgotha.util.display(r, false);
 
+golgotha.util.display('chkAll', true);
+golgotha.local.toggleAll();
+var f = document.forms[0];
 var c = golgotha.form.getCombo(f.units);
 switch (c) {
 case 'COUNTRIES':
@@ -66,6 +67,13 @@ case 'EQLEGS':
 	
 case 'PROMOLEGS':
 	golgotha.util.display('valueEQProgram', true);
+	break;
+	
+case 'ADLEGS':
+case 'AALEGS':
+	golgotha.util.display('chkAll', false);
+	golgotha.util.display('valueBox', true);
+	golgotha.util.disable(f.value, false);
 	break;
 
 default:
@@ -100,7 +108,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Number of Units</td>
- <td class="data"><el:text name="value" idx="*" size="7" max="8" className="bld req" value="${ap.value}" /> <el:box name="doAll" value="true" checked="${ap.value == ap.choices.size()}" label="All" onChange="void golgotha.local.toggleAll()" /></td>
+ <td class="data"><el:text name="value" idx="*" size="7" max="8" className="bld req" value="${ap.value}" /><span id="chkAll" > <el:box name="doAll" value="true" checked="${ap.value == ap.choices.size()}" label="All" onChange="void golgotha.local.toggleAll()" /></span></td>
 </tr>
 <tr>
  <td class="label">Label color</td>

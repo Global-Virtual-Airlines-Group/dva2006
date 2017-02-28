@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Accomplishment profiles. 
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 3.2
  */
 
@@ -103,6 +103,7 @@ public class AccomplishmentCommand extends AbstractFormCommand {
 			
 			// Get count/all
 			boolean doAll = Boolean.valueOf(ctx.getParameter("doAll")).booleanValue();
+			doAll &= (a.getUnit() != AccomplishUnit.ADLEGS) && (a.getUnit() != AccomplishUnit.AALEGS);
 			a.setValue(doAll ? a.getChoices().size() : StringUtils.parse(ctx.getParameter("value"), 0));
 			
 			// Write the accomplishment
