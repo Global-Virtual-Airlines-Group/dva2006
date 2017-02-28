@@ -150,7 +150,7 @@ public class EventCommand extends AbstractCommand {
 			}
 			
 			// Load VATSIM Ratings
-			Collection<Integer> networkIDs = pilots.values().stream().map(p -> Integer.valueOf(p.getNetworkID(e.getNetwork()))).collect(Collectors.toSet());
+			Collection<Integer> networkIDs = pilots.values().stream().map(p -> p.getNetworkID(e.getNetwork())).filter(Objects::nonNull).map(id -> Integer.valueOf(id)).collect(Collectors.toSet());
 			if (e.getNetwork() == OnlineNetwork.VATSIM) {
 				GetATOData atodao = new GetATOData();
 				Map<String, Collection<PilotRating>> ratings = new HashMap<String, Collection<PilotRating>>();
