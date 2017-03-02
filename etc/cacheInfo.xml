@@ -23,8 +23,8 @@
 	<cache id="FIRIDs" max="256" />
 	
 	<!-- VATSIM caches -->
-	<cache id="ATORatings" expires="14400" remote="true" />
-	<cache id="ATOInstructors" expires="14400" remote="true" />
+	<cache id="ATORatings" expires="28800" remote="true" />
+	<cache id="ATOInstructors" expires="28800" remote="true" />
 
 	<!-- ACARS caches -->
 	<cache id="ACARSMap" max="1" expires="3" />
