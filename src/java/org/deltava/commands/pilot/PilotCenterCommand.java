@@ -277,6 +277,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 				// Check if we have VATSIM ratings
 				if (p.hasNetworkID(OnlineNetwork.VATSIM)) {
 					GetATOData atodao = new GetATOData();
+					atodao.setReadTimeout(7500);
 					ctx.setAttribute("vatsim_ratings", atodao.get(p.getNetworkID(OnlineNetwork.VATSIM)), REQUEST);
 				}
 			}
