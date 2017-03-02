@@ -4,14 +4,15 @@ package org.deltava.dao.http;
 import static java.net.HttpURLConnection.HTTP_OK;
 
 import java.io.*;
+import java.net.SocketTimeoutException;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.time.Instant;
 
 import org.json.*;
+import org.apache.log4j.Logger;
 
 import org.deltava.beans.servinfo.*;
-
 import org.deltava.dao.DAOException;
 
 import org.deltava.util.StringUtils;
@@ -25,6 +26,8 @@ import org.deltava.util.cache.*;
  */
 
 public class GetATOData extends DAO {
+	
+	private static final Logger log = Logger.getLogger(GetATOData.class);
 	
 	private static final Cache<CacheableCollection<PilotRating>> _rCache = CacheManager.getCollection(PilotRating.class, "ATORatings");
 	private static final Cache<CacheableCollection<Certificate>> _insCache = CacheManager.getCollection(Certificate.class, "ATOInstructors");
@@ -88,6 +91,9 @@ public class GetATOData extends DAO {
 
 			_insCache.add(results);
 			return results.clone();
+		} catch (SocketTimeoutException ste) {
+			log.warn("VATSIM Instructors - " +  ste.getMessage());
+			return Collections.emptySet();
 		} catch (IOException ie) {
 			throw new HTTPDAOException(ie);
 		}
@@ -130,6 +136,9 @@ public class GetATOData extends DAO {
 
 			_rCache.add(results);
 			return results.clone();
+		} catch (SocketTimeoutException ste) {
+			log.warn("VATSIM Certificates - " +  ste.getMessage());
+			return Collections.emptySet();
 		} catch (IOException ie) {
 			throw new HTTPDAOException(ie);
 		}

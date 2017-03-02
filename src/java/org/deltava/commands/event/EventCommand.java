@@ -153,6 +153,7 @@ public class EventCommand extends AbstractCommand {
 			Collection<Integer> networkIDs = pilots.values().stream().map(p -> p.getNetworkID(e.getNetwork())).filter(Objects::nonNull).map(id -> Integer.valueOf(id)).collect(Collectors.toSet());
 			if (e.getNetwork() == OnlineNetwork.VATSIM) {
 				GetATOData atodao = new GetATOData();
+				atodao.setReadTimeout(7500);
 				Map<String, Collection<PilotRating>> ratings = new HashMap<String, Collection<PilotRating>>();
 				atodao.getCertificates().stream().filter(pr -> networkIDs.contains(Integer.valueOf(pr.getID()))).forEach(pr -> CollectionUtils.addMapCollection(ratings, String.valueOf(pr.getID()), pr));
 				ctx.setAttribute("allRatings", ratings, REQUEST);
