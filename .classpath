@@ -32,9 +32,9 @@
 	<classpathentry kind="lib" path="lib/deploy/spymemcached-2.12.1.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-pool2-2.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/newrelic-api.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-5.1.40-bin.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/deploy/jstl-1.2.3.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jedis-2.7.2.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-5.1.41-bin.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
