@@ -1,4 +1,3 @@
-// Copyright 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import org.apache.log4j.*;
@@ -50,12 +49,26 @@ public class TestVATSIMData extends TestCase {
 		assertTrue(c.comapreName(p2));
 	}
 	
-	public void testATOCert() throws DAOException {
+	public void testATOCert() {
 		
 		PilotRating pr = new PilotRating(837789, "P1");
 		pr.setInstructorID(931991);
 		
-		SetVATSIMData atodao = new SetVATSIMData();
-		atodao.addRating(pr);
+		try {
+			SetVATSIMData atodao = new SetVATSIMData();
+			atodao.addRating(pr);
+			fail("Failure expected");
+		} catch (DAOException de) {
+			// empty
+		}
+	}
+	
+	public void testGetATOData() throws DAOException {
+
+		GetATOData atodao = new GetATOData();
+		atodao.setReadTimeout(30000);
+		assertFalse(atodao.getInstructors().isEmpty());
+		atodao.reset();
+		assertFalse(atodao.getCertificates().isEmpty());
 	}
 }
