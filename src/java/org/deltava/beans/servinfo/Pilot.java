@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.*;
 /**
  * A bean to store online Pilot information.
  * @author Luke
- * @version 6.1
+ * @version 7.2
  * @since 1.0
  */
 
@@ -33,9 +33,10 @@ public class Pilot extends ConnectedUser {
 	/**
 	 * Initializes the bean with a given user ID.
 	 * @param id the user ID
+	 * @param net the OnlineNetwork
 	 */
-	public Pilot(int id) {
-		super(id);
+	public Pilot(int id, OnlineNetwork net) {
+		super(id, net);
 	}
 
 	/**

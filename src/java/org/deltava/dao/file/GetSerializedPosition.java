@@ -1,4 +1,4 @@
-// Copyright 2012, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2014, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -97,7 +97,7 @@ public class GetSerializedPosition extends DAO {
 			String com1 = in.readUTF();
 			if (!StringUtils.isEmpty(com1)) {
 				re.setCOM1(com1);
-				Controller atc = new Controller(in.readInt());
+				Controller atc = new Controller(in.readInt(), null);
 				atc.setFacility(Facility.values()[in.readShort()]);
 				atc.setCallsign(in.readUTF());
 				atc.setPosition(in.readFloat(), in.readFloat());
@@ -108,7 +108,7 @@ public class GetSerializedPosition extends DAO {
 			String com2 = (version.getVersion() > 1) ? in.readUTF() : null;
 			if (!StringUtils.isEmpty(com2)) {
 				re.setCOM2(com2);
-				Controller atc = new Controller(in.readInt());
+				Controller atc = new Controller(in.readInt(), null);
 				atc.setFacility(Facility.values()[in.readShort()]);
 				atc.setCallsign(in.readUTF());
 				atc.setPosition(in.readFloat(), in.readFloat());

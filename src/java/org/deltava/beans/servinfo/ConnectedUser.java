@@ -1,4 +1,4 @@
-// Copyright 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import org.deltava.beans.*;
@@ -23,9 +23,10 @@ public abstract class ConnectedUser extends NetworkUser implements MarkerMapEntr
 	/**
 	 * Initializes the user.
 	 * @param id the network ID
+	 * @param net the OnlineNetwork
 	 */
-	public ConnectedUser(int id) {
-		super(id);
+	public ConnectedUser(int id, OnlineNetwork net) {
+		super(id, net);
 	}
 
     /**

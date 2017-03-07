@@ -1,7 +1,7 @@
 // Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
-import org.deltava.beans.ViewEntry;
+import org.deltava.beans.*;
 import org.deltava.util.*;
 
 /**
@@ -24,15 +24,19 @@ public abstract class NetworkUser implements java.io.Serializable, ViewEntry, Co
     
     private int _databaseID;
     
+    private final OnlineNetwork _net;
+    
     /**
      * Initializes the bean with a given network ID.
      * @param id the user ID
+     * @param net the OnlineNetwork
      * @throws IllegalArgumentException if id is negative
      * @see NetworkUser#setID(int)
      */
-    public NetworkUser(int id) {
+    public NetworkUser(int id, OnlineNetwork net) {
         super();
         setID(id);
+        _net = net;
     }
 
     /**
@@ -57,6 +61,14 @@ public abstract class NetworkUser implements java.io.Serializable, ViewEntry, Co
      */
     public int getID() {
         return _id;
+    }
+    
+    /**
+     * Returns the Online Network for this user.
+     * @return an OnlineNetwork, or null if unknown
+     */
+    public OnlineNetwork getNetwork() {
+    	return _net;
     }
     
     /**
@@ -174,27 +186,29 @@ public abstract class NetworkUser implements java.io.Serializable, ViewEntry, Co
     }
     
     /**
-     * Compares this user to another network user by comparing the Network IDs.
+     * Compares this user to another network user by comparing the Network IDs and Networks.
      */
     @Override
     public int compareTo(NetworkUser usr2) {
-        return Integer.valueOf(_id).compareTo(Integer.valueOf(usr2._id));
+        int tmpResult = Integer.valueOf(_id).compareTo(Integer.valueOf(usr2._id));
+        return (tmpResult == 0) ? _net.compareTo(usr2._net) : tmpResult;
     }
     
-    /**
-     * Checks equality by comparing network IDs.
-     */
+    @Override
+    public String toString() {
+    	StringBuilder buf = new StringBuilder(_net.toString());
+    	buf.append(':').append(_id);
+    	return buf.toString();
+    }
+    
     @Override
     public boolean equals(Object o2) {
     	return (o2 instanceof NetworkUser) ? (compareTo((NetworkUser) o2) == 0) : false;
     }
     
-    /**
-     * Returns the Network ID's hash code.
-     */
     @Override
     public int hashCode() {
-    	return Integer.valueOf(_id).hashCode();
+    	return toString().hashCode();
     }
     
     @Override

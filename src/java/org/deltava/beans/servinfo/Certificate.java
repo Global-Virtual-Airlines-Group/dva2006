@@ -1,16 +1,17 @@
-// Copyright 2009, 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import java.util.*;
 import java.time.Instant;
 import java.text.Collator;
 
+import org.deltava.beans.OnlineNetwork;
 import org.deltava.beans.Person;
 
 /**
  * A bean to store VATSIM registration data.
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 2.6
  */
 
@@ -27,7 +28,7 @@ public class Certificate extends NetworkUser {
 	 * @param id the user's VATSIM ID
 	 */
 	public Certificate(int id) {
-		super(id);
+		super(id, OnlineNetwork.VATSIM);
 	}
 	
 	/**

@@ -3,6 +3,8 @@ package org.deltava.beans.servinfo;
 
 import java.time.Instant;
 
+import org.deltava.beans.OnlineNetwork;
+
 /**
  * A bean to store VATSIM Pilot Rating certificates.
  * @author Luke
@@ -25,7 +27,7 @@ public class PilotRating extends NetworkUser {
 	 * @param rating the rating code
 	 */
 	public PilotRating(int id, String rating) {
-		super(id);
+		super(id, OnlineNetwork.VATSIM);
 		_rating = rating;
 	}
 	
