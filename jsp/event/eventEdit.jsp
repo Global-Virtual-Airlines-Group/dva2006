@@ -20,8 +20,9 @@
 <content:googleAnalytics eventSupport="true" />
 <fmt:aptype var="useICAO" />
 <script type="text/javascript">
-golgotha.local.updateSignups = function(f)
+golgotha.local.updateSignups = function()
 {
+var f = document.forms[0];
 var tg = !f.canSignup.checked;
 golgotha.util.disable(f.closeDate, tg);
 golgotha.util.disable(f.closeTime, tg);
@@ -46,7 +47,7 @@ golgotha.form.validate({f:f.airportA, t:'Destination Airport'});
 golgotha.form.validate({f:f.route, l:5, t:'Default Route'});
 golgotha.form.validate({f:f.airline, min:1, t:'Participating Airline'});
 golgotha.form.validate({f:f.briefing, l:15, t:'Flight Briefing'});
-golgotha.form.validate({f:f.bannerImg, ext:['jpg','png','gif'], t:'Banner Image'});
+golgotha.form.validate({f:f.bannerImg, ext:['jpg','png','gif'], t:'Banner Image', empty:true});
 golgotha.form.submit(f);
 return true;
 };
@@ -60,7 +61,7 @@ golgotha.onDOMReady(function() {
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void updateSignups()">
+<body onload="void golgotha.local.updateSignups()">
 <content:page>
 <%@ include file="/jsp/event/header.jspf" %> 
 <%@ include file="/jsp/event/sideMenu.jspf" %>
