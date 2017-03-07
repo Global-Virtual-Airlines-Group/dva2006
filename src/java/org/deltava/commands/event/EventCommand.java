@@ -117,6 +117,8 @@ public class EventCommand extends AbstractCommand {
 			GetEventSignups evsdao = new GetEventSignups(con);
 			GetFlightReports frdao = new GetFlightReports(con);
 			GetAcademyCourses crsdao = new GetAcademyCourses(con);
+			GetAcademyCertifications crtdao = new GetAcademyCertifications(con);
+			ctx.setAttribute("allCerts", crtdao.getAll(), REQUEST);
 			
 			// Load the Pilots and Flight Reports
 			Collection<FlightReport> pireps = new ArrayList<FlightReport>();
@@ -182,8 +184,7 @@ public class EventCommand extends AbstractCommand {
 			// Save event info in the request
 			ctx.setAttribute("event", e, REQUEST);
 			ctx.setAttribute("access", eAccess, REQUEST);
-			ctx.setAttribute("saAccess", sAccessMap, REQUEST);
-			
+			ctx.setAttribute("saAccess", sAccessMap, REQUEST);			
 			// Save the routes in a map, keyed by ID
 			ctx.setAttribute("routes", CollectionUtils.createMap(e.getRoutes(), Route::getRouteID), REQUEST);
 		} catch (DAOException de) {

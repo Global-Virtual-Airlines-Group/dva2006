@@ -19,7 +19,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <content:rss title="${airlineName} Online Events" path="/event_rss.ws" />
-<script type="text/javascript">
+<script>
 golgotha.local.validate = function(f) {
     if (!golgotha.form.check()) return false;
     golgotha.form.validate({f:f.eqType, t:'Equipment Type'});
@@ -31,7 +31,7 @@ golgotha.local.validate = function(f) {
 golgotha.local.resizeBriefing = function(maxRows) {
 	var txt = document.forms[0].briefing;
 	golgotha.form.resize(txt);
-	if (txt.rows > maxRows) txt.rows = maxRows;
+	txt.rows = Math.min(txt.rows, maxRows);
 	return true;
 };
 </script>
@@ -205,7 +205,8 @@ golgotha.local.resizeBriefing = function(maxRows) {
 <c:forEach var="signup" items="${event.signups}">
 <c:set var="pilot" value="${pilots[signup.pilotID]}" scope="page" />
 <c:set var="pilotCerts" value="${certs[signup.pilotID]}" scope="page" />
-<c:set var="pilotRatings" value="${allRatings[fn:networkID(pilot, event.network)]}" scope="page" />
+<c:set var="myCerts" value="${fn:filterCerts(pilotCerts, allCerts)}" scope="page" />
+<c:set var="pilotRatings" value="${fn:filterRatings(allRatings[fn:networkID(pilot, event.network)], myCerts)}" scope="page" />
 <c:set var="pilotLoc" value="${userData[signup.pilotID]}" scope="page" />
 <c:set var="sa" value="${saAccess[signup.pilotID]}" scope="page" />
 <c:set var="showPilotStats" value="${showStats && (pilot.eventSignups > 0)}" scope="page" />
@@ -257,8 +258,7 @@ golgotha.local.resizeBriefing = function(maxRows) {
  <td><el:profile location="${pilotLoc}">${pilot.name}</el:profile></td>
  <td class="sec bld nophone">${pirep.equipmentType}</td>
  <td class="nophone">${pirep.flightCode}</td>
- <td colspan="2" class="small nophone">${pirep.airportD.name} (<fmt:airport airport="${pirep.airportD}" />) - ${pirep.airportA.name}
- (<fmt:airport airport="${pirep.airportA}" />)</td>
+ <td colspan="2" class="small nophone">${pirep.airportD.name} (<fmt:airport airport="${pirep.airportD}" />) - ${pirep.airportA.name} (<fmt:airport airport="${pirep.airportA}" />)</td>
 </view:row>
 </c:forEach>
 
@@ -308,24 +308,19 @@ golgotha.local.resizeBriefing = function(maxRows) {
 <tr>
  <td>&nbsp;
 <c:if test="${access.canSignup}">
- <el:button ID="SaveButton" type="submit" label="SIGN UP FOR THIS EVENT" />
-</c:if>
+ <el:button ID="SaveButton" type="submit" label="SIGN UP FOR THIS EVENT" /></c:if>
 <c:if test="${access.canEdit}">
  <el:cmdbutton ID="RouteButton" url="eventroutes" link="${event}" label="UPDATE ROUTES" />
  <el:cmdbutton ID="EditButton" url="eventedit" link="${event}" label="EDIT EVENT" />
 </c:if>
 <c:if test="${access.canAssignFlights}">
  <el:cmdbutton ID="AssignButton" url="eventassign" link="${event}" label="ASSIGN FLIGHTS FOR THIS EVENT" />
-</c:if>
-<c:if test="${access.canBalance}">
- <el:cmdbutton ID="BalanceButton" url="eventbalance" link="${event}" label="BALANCE SIGNUPS" />
-</c:if>
+</c:if><c:if test="${access.canBalance}">
+ <el:cmdbutton ID="BalanceButton" url="eventbalance" link="${event}" label="BALANCE SIGNUPS" /></c:if>
 <c:if test="${access.canCancel}">
- <el:cmdbutton ID="CancelButton" url="eventcancel" link="${event}" label="CANCEL EVENT" />
-</c:if>
+ <el:cmdbutton ID="CancelButton" url="eventcancel" link="${event}" label="CANCEL EVENT" /></c:if>
 <c:if test="${access.canDelete}">
- <el:cmdbutton ID="DeleteButton" url="eventdelete" link="${event}" label="DELETE EVENT" />
-</c:if>
+ <el:cmdbutton ID="DeleteButton" url="eventdelete" link="${event}" label="DELETE EVENT" /></c:if>
  </td>
 </tr>
 </el:table>
