@@ -76,7 +76,7 @@ public class GetATOData extends DAO {
 			results = new CacheableList<Certificate>(Certificate.class);
 			for (int x = 0; x < ja.length(); x++) {
 				JSONObject co = ja.getJSONObject(x);
-				JSONArray cro = co.getJSONArray("Roles");
+				JSONArray cro = co.getJSONArray("roles");
 				Certificate c = new Certificate(co.getInt("cid"));
 				c.setName(co.getString("name").replace(" (" + c.getID() + ")", ""));
 				
