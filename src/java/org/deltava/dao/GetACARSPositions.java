@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import static org.gvagroup.acars.ACARSFlags.*;
@@ -131,7 +131,7 @@ public class GetACARSPositions extends GetACARSData {
 
 						// Set controller
 						String atcID = rs.getString(4);
-						Controller ctr = new Controller(rs.getInt(7));
+						Controller ctr = new Controller(rs.getInt(7), null);
 						ctr.setPosition(rs.getDouble(5), rs.getDouble(6));
 						ctr.setCallsign(atcID);
 						

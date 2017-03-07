@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -29,7 +29,7 @@ import org.deltava.util.system.SystemData;
  * 30 planned_route 31 planned_depairport_lat 32 planned_depairport_lon 33 planned_destairport_lat
  * 34 planned_destairport_lon 35 atis_message 36 time_last_atis_received 37 time_logon 38 heading 39 QNH_iHg 40 QNH_Mb
  * @author Luke
- * @version 7.0
+ * @version 7.2
  * @since 1.0
  */
 
@@ -148,7 +148,7 @@ public class GetServInfo extends DAO {
 										break;
 									
 									try {
-										Controller c = new Controller(id);
+										Controller c = new Controller(id, network);
 										c.setCallsign(si.get(SITokens.CALLSIGN));
 										c.setName(si.get(SITokens.NAME));
 										c.setFrequency(si.get(SITokens.FREQ));
@@ -180,7 +180,7 @@ public class GetServInfo extends DAO {
 										break;
 									
 									try {
-										Pilot p = new Pilot(id);
+										Pilot p = new Pilot(id, network);
 										p.setCallsign(si.get(SITokens.CALLSIGN));
 										p.setName(si.get(SITokens.NAME));
 										p.setAirportD(getAirport(si.get(SITokens.AIRPORT_D)));
