@@ -340,16 +340,15 @@ golgotha.form.validateText = function(t, min, title) {
 	return true;
 };
 
-golgotha.form.validateNumber = function(t, minValue, title)
-{
-if ((!t) || (t.disabled)) return true;
-var i = parseFloat(t.value);
-if ((t.value.length < 1) || (i == Number.NaN))
-	throw new golgotha.event.ValidationError('Please provide a numeric ' + title + '.', t);
-if (i < minValue)
-	throw new golgotha.event.ValidationError('The ' + title + ' must be greater than ' + minValue + '.', t);
+golgotha.form.validateNumber = function(t, minValue, title) {
+	if ((!t) || (t.disabled)) return true;
+	var i = parseFloat(t.value);
+	if ((t.value.length < 1) || (i == Number.NaN))
+		throw new golgotha.event.ValidationError('Please provide a numeric ' + title + '.', t);
+	if (i < minValue)
+		throw new golgotha.event.ValidationError('The ' + title + ' must be greater than ' + minValue + '.', t);
 
-return true;
+	return true;
 };
 
 golgotha.form.validateEMail = function(t, title)
@@ -375,15 +374,14 @@ golgotha.form.validateCombo = function(c, title) {
 	throw new golgotha.event.ValidationError('Please provide the ' + title + '.', c);
 };
 
-golgotha.form.validateFile = function(f, extTypes, title, allowBlank)
-{
-if ((!f) || (f.disabled)) return true;
-if (allowBlank && (f.value.length == 0)) return true;
-var ext = f.value.substring(f.value.lastIndexOf('.') + 1).toLowerCase();
-for (var e = extTypes.pop(); (e != null); e = extTypes.pop())
-	if (ext == e) return true;
+golgotha.form.validateFile = function(f, extTypes, title, allowBlank) {
+	if ((!f) || (f.disabled)) return true;
+	if (allowBlank && (f.value.length == 0)) return true;
+	var ext = f.value.substring(f.value.lastIndexOf('.') + 1).toLowerCase();
+	for (var e = extTypes.pop(); (e != null); e = extTypes.pop())
+		if (ext == e) return true;
 
-throw new golgotha.event.ValidationError('The ' + title + ' must be a ' + ext.toUpperCase() + ' file.', f);
+	throw new golgotha.event.ValidationError('The ' + title + ' must be a ' + extTypes + ' file.', f);
 };
 
 golgotha.form.validateCheckBox = function(cb, min, title)
