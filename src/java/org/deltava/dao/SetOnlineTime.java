@@ -1,4 +1,4 @@
-// Copyright 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.OnlineNetwork;
 import org.deltava.beans.servinfo.*;
 
 /**
- * A Data Access Object to write aggregated VATSIM usage data.
+ * A Data Access Object to write aggregated VATSIM and IVAO usage data.
  * @author Luke
  * @version 7.2
  * @since 6.1
@@ -52,6 +52,41 @@ public class SetOnlineTime extends DAO {
 			_ps.executeBatch();
 			_ps.close();
 		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Writes Pilot Ratings to the database.
+	 * @param ratings a Collection of PilotRating beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void writeRatings(Collection<PilotRating> ratings) throws DAOException {
+		try {
+			startTransaction();
+			prepareStatementWithoutLimits("INSERT INTO online.RATINGS (ID, NETWORK, RATING, CREATED, UPDATED, INS_ID, ATO) VALUES (?, ?, ?, ?, NOW(), ?, ?) ON DUPLICATE KEY UPDATE UPDATED=NOW()");
+			int cnt = 0;
+			for (PilotRating pr : ratings) {
+				_ps.setInt(1, pr.getID());
+				_ps.setString(2, pr.getNetwork().toString());
+				_ps.setString(3, pr.getRatingCode());
+				_ps.setTimestamp(4, createTimestamp(pr.getIssueDate()));
+				_ps.setInt(5, pr.getInstructor());
+				_ps.setString(6, pr.getATOName());
+				_ps.addBatch();
+				cnt++;
+				if ((cnt % 100) == 0) {
+					_ps.executeBatch();
+					cnt = 0;
+				}
+			}
+			
+			if (cnt > 0)
+				_ps.executeBatch();
+			_ps.close();
+			commitTransaction();
+		} catch (SQLException se) {
+			rollbackTransaction();
 			throw new DAOException(se);
 		}
 	}

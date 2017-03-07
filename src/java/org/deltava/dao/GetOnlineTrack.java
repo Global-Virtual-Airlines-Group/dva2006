@@ -40,9 +40,8 @@ public class GetOnlineTrack extends DAO {
 	 */
 	public int getTrackID(int pilotID, OnlineNetwork net, java.time.Instant dt, Airport aD, Airport aA) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT OT.ID FROM online.TRACKS OT WHERE (OT.USER_ID=?) AND (OT.AIRPORT_D=?) AND "
-					+ "(OT.AIRPORT_A=?) AND (OT.NETWORK=?) AND (OT.CREATED_ON > DATE_SUB(?, INTERVAL ? HOUR)) "
-					+ "ORDER BY OT.ID DESC LIMIT 1");
+			prepareStatementWithoutLimits("SELECT OT.ID FROM online.TRACKS OT WHERE (OT.USER_ID=?) AND (OT.AIRPORT_D=?) AND (OT.AIRPORT_A=?) "
+					+ "AND (OT.NETWORK=?) AND (OT.CREATED_ON > DATE_SUB(?, INTERVAL ? HOUR)) ORDER BY OT.ID DESC LIMIT 1");
 			_ps.setInt(1, pilotID);
 			_ps.setString(2, aD.getICAO());
 			_ps.setString(3, aA.getICAO());

@@ -1,5 +1,7 @@
-// Copyright 2005, 2006, 2009, 2010, 2011, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010, 2011, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
+
+import org.deltava.beans.OnlineNetwork;
 
 import org.deltava.util.StringUtils;
 
@@ -18,9 +20,10 @@ public class Controller extends ConnectedUser {
     /**
      * Initializes the bean with a particular user ID.
      * @param id the user ID
+     * @param net the OnlineNetwork
      */
-    public Controller(int id) {
-        super(id);
+    public Controller(int id, OnlineNetwork net) {
+        super(id, net);
     }
 
     /**
