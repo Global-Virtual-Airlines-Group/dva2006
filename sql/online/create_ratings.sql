@@ -1,0 +1,10 @@
+CREATE TABLE RATINGS (
+ ID                     INTEGER UNSIGNED NOT NULL,
+ NETWORK                VARCHAR(10) NOT NULL,
+ RATING                 VARCHAR(6) NOT NULL,
+ CREATED                DATETIME NOT NULL,
+ UPDATED                DATETIME NOT NULL,
+ INS_ID                 INTEGER UNSIGNED NOT NULL,
+ ATO                    VARCHAR(64) NOT NULL,
+ PRIMARY KEY (ID, NETWORK, RATING)
+);
