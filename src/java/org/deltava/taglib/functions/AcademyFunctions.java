@@ -8,6 +8,8 @@ import org.deltava.beans.CalendarEntry;
 import org.deltava.beans.academy.*;
 import org.deltava.beans.servinfo.PilotRating;
 
+import org.deltava.util.CollectionUtils;
+
 /**
  * A JSP Function Library to define FlightAcademy-related functions.
  * @author Luke
@@ -66,7 +68,7 @@ public class AcademyFunctions {
 	 */
 	public static Collection<PilotRating> filterRatings(Collection<PilotRating> ratings, Collection<Certification> certs) {
 		Collection<String> codes = certs.stream().map(Certification::getNetworkRatingCode).filter(Objects::nonNull).collect(Collectors.toSet());
-		return ratings.stream().filter(r -> !codes.contains(r.getRatingCode())).collect(Collectors.toSet());
+		return CollectionUtils.isEmpty(ratings) ? Collections.emptySet() : ratings.stream().filter(r -> !codes.contains(r.getRatingCode())).collect(Collectors.toSet());
 	}
 	
 	/**
@@ -76,6 +78,6 @@ public class AcademyFunctions {
 	 * @return a Collection of filtered Certifications
 	 */
 	public static Collection<Certification> filterCerts(Collection<String> codes, Collection<Certification> allCerts) {
-		return allCerts.stream().filter(c -> codes.contains(c.getCode())).collect(Collectors.toSet());
+		return CollectionUtils.isEmpty(codes) ? Collections.emptySet() : allCerts.stream().filter(c -> codes.contains(c.getCode())).collect(Collectors.toSet());
 	}
 }
