@@ -122,7 +122,9 @@ public class CourseDisposalCommand extends AbstractCommand {
 					
 					// Get our exams and init the academy helper
 					AcademyHistoryHelper helper = new AcademyHistoryHelper(usr, dao.getByPilot(c.getPilotID()), cdao.getAll());
-					helper.addExams(exdao.getExams(c.getPilotID()));
+					helper.setDebug(ctx.isSuperUser());
+					for (Integer xdbID : ud.getIDs())
+						helper.addExams(exdao.getExams(xdbID.intValue()));
 					
 					// Check our access
 					canExec = access.getCanApprove() && helper.hasCompleted(c.getName());

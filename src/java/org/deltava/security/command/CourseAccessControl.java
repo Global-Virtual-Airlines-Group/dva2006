@@ -55,7 +55,7 @@ public class CourseAccessControl extends AccessControl {
 	public void validate() throws AccessControlException {
 		validateContext();
 		if (!_ctx.isAuthenticated())
-			throw new AccessControlException("Not Authorized");
+			throw new AccessControlException("Not Logged in");
 
 		// Define conditions
 		boolean isHR = _ctx.isUserInRole("HR");
