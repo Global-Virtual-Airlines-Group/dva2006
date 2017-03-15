@@ -129,7 +129,7 @@ public class XMLTerminalRouteService extends DownloadService {
 			// Format and write
 			ctx.setHeader("Content-disposition", "attachment; filename=xmlsidstar.zip");
 			ctx.setContentType("application/zip");
-			ctx.setHeader("max-age", 1800);
+			ctx.setExpiry(1800);
 			ctx.setHeader("airportCount", apCount);
 			sendFile(f, ctx.getResponse());
 		} catch (Exception e) {

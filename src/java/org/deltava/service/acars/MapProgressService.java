@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -6,7 +6,7 @@ import java.sql.Connection;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
-import org.jdom2.*;
+import org.json.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.acars.FlightInfo;
@@ -20,7 +20,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to provide XML-formatted ACARS progress data for Google Maps.
  * @author Luke
- * @version 7.1
+ * @version 7.3
  * @since 1.0
  */
 
@@ -86,49 +86,34 @@ public class MapProgressService extends WebService {
 		} finally {
 			ctx.release();
 		}
-
-		// Generate the XML document
-		Document doc = new Document();
-		Element re = new Element("wsdata");
-		doc.setRootElement(re);
-
-		// Write the saved positions
-		for (GeoLocation entry : routePoints) {
-			Element e = new Element("pos");
-			e.setAttribute("lat", StringUtils.format(entry.getLatitude(), "##0.00000"));
-			e.setAttribute("lng", StringUtils.format(entry.getLongitude(), "##0.00000"));
-			re.addContent(e);
-		}
 		
-		// Write the temporary positions
-		for (GeoLocation entry : tempPoints) {
-			Element e = new Element("tpos");
-			e.setAttribute("lat", StringUtils.format(entry.getLatitude(), "##0.00000"));
-			e.setAttribute("lng", StringUtils.format(entry.getLongitude(), "##0.00000"));
-			re.addContent(e);
-		}
-
+		// Generate the JSON document
+		JSONObject jo = new JSONObject();
+		jo.put("id", id);
+		routePoints.forEach(entry -> jo.accumulate("savedPositions", GeoUtils.toJSON(entry)));
+		tempPoints.forEach(entry -> jo.accumulate("tempPositions", GeoUtils.toJSON(entry)));
+		
 		// Write the route
 		for (MapEntry entry : routeWaypoints) {
-			Element e = XMLUtils.createElement("route", entry.getInfoBox(), true);
-			e.setAttribute("lat", StringUtils.format(entry.getLatitude(), "##0.00000"));
-			e.setAttribute("lng", StringUtils.format(entry.getLongitude(), "##0.00000"));
+			JSONObject eo = new JSONObject();
+			eo.put("ll", GeoUtils.toJSON(entry));
+			eo.put("route", entry.getInfoBox());
 			if (entry instanceof MarkerMapEntry)
-				e.setAttribute("color", ((MarkerMapEntry) entry).getIconColor());
+				eo.put("color", ((MarkerMapEntry) entry).getIconColor());
 			else {
 				IconMapEntry ime = (IconMapEntry) entry;
-				e.setAttribute("pal", String.valueOf(ime.getPaletteCode()));
-				e.setAttribute("icon", String.valueOf(ime.getIconCode()));
+				eo.put("pal", ime.getPaletteCode());
+				eo.put("icon", ime.getIconCode());
 			}
 			
-			re.addContent(e);
+			jo.accumulate("waypoints", eo);
 		}
-
-		// Dump the XML to the output stream
+		
+		// Dump the JSON to the output stream
 		try {
-			ctx.setContentType("text/xml", "UTF-8");
+			ctx.setContentType("application/json", "UTF-8");
 			ctx.setExpiry(5);
-			ctx.println(XMLUtils.format(doc, "UTF-8"));
+			ctx.println(jo.toString());
 			ctx.commit();
 		} catch (Exception e) {
 			throw error(SC_CONFLICT, "I/O Error", false);

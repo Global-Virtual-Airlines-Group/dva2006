@@ -1,11 +1,11 @@
-// Copyright 2008, 2009, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.wx;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
 import java.sql.Connection;
 
-import org.jdom2.*;
+import org.json.*;
 
 import org.deltava.beans.wx.TAF;
 import org.deltava.beans.navdata.AirportLocation;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to fetch Terminal Area Forecast data.
  * @author Luke
- * @version 7.0
+ * @version 7.3
  * @since 2.3
  */
 
@@ -64,26 +64,21 @@ public class TAFService extends WebService {
 			ctx.release();
 		}
 
-		// Create the XML document
-		Document doc = new Document();
-		Element re = new Element("weather");
-		doc.setRootElement(re);
+		// Create the JSON document
+		JSONObject jo = new JSONObject();
+		jo.put("icao", data.getCode());
+		jo.put("tabs", new JSONArray());
+		jo.put("ll", GeoUtils.toJSON(data));
+		jo.put("color", data.getIconColor());
+		jo.put("type", data.getType().toString());
+		jo.put("date", data.getDate().toEpochMilli() / 1000);
+		jo.put("info", data.getInfoBox());
 
-		// Add the TAF data
-		Element e = XMLUtils.createElement("wx", data.getInfoBox(), true);
-		e.setAttribute("tabs", "0");
-		e.setAttribute("lat", StringUtils.format(data.getLatitude(), "##0.00000"));
-		e.setAttribute("lng", StringUtils.format(data.getLongitude(), "##0.00000"));
-		e.setAttribute("color", data.getIconColor());
-		e.setAttribute("type", data.getType().toString());
-		e.setAttribute("icao", data.getCode());
-		e.setAttribute("date", String.valueOf(data.getDate().toEpochMilli() / 1000));
-		re.addContent(e);
-
-		// Dump the XML to the output stream
+		// Dump the JSON to the output stream
 		try {
-			ctx.setContentType("text/xml", "UTF-8");
-			ctx.println(XMLUtils.format(doc, "UTF-8"));
+			ctx.setContentType("application/json", "UTF-8");
+			ctx.setExpiry(1800);
+			ctx.println(jo.toString());
 			ctx.commit();
 		} catch (Exception ex) {
 			throw error(SC_CONFLICT, "I/O Error", false);

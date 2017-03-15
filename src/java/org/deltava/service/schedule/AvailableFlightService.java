@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2012, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.util.*;
@@ -6,7 +6,7 @@ import java.io.IOException;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
-import org.jdom2.*;
+import org.json.*;
 
 import org.deltava.beans.schedule.Airline;
 
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to return the next available Flight Number in the Flight Schedule.
  * @author Luke
- * @version 4.2
+ * @version 7.3
  * @since 1.0
  */
 
@@ -53,28 +53,23 @@ public class AvailableFlightService extends WebService {
 		
 		// Find the first available flight number in the range
 		int flightNumber = startFlight + 1;
-		for (Iterator<Integer> i = flights.iterator(); i.hasNext(); ) {
-			Integer fn = i.next();
+		for (Integer fn : flights) {
 			if (flightNumber < fn.intValue())
 				break;
 			
 			flightNumber++;
 		}
 			
-		// Generate the XML document
-		Document doc = new Document();
-		Element re = new Element("wsdata");
-		doc.setRootElement(re);
+		// Generate the JSON document
+		JSONObject jo = new JSONObject();
+		jo.put("airline", a.getCode());
+		jo.put("number", flightNumber);
+		jo.put("leg", 1);
 		
-		// Save the flight number
-		re.setAttribute("airline", a.getCode());
-		re.setAttribute("number", String.valueOf(flightNumber));
-		re.setAttribute("leg", "1");
-		
-		// Dump the XML to the output stream
+		// Dump the JSON to the output stream
 		try {
-			ctx.setContentType("text/xml", "UTF-8");
-			ctx.println(XMLUtils.format(doc, "UTF-8"));
+			ctx.setContentType("application/json", "UTF-8");
+			ctx.println(jo.toString());
 			ctx.commit();
 		} catch (IOException ie) {
 			throw error(SC_CONFLICT, "I/O Error", false);

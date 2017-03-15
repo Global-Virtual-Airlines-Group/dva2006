@@ -18,6 +18,7 @@
 <content:googleAnalytics eventSupport="true" />
 <content:sysdata var="refreshInterval" name="acars.livemap.reload" />
 <map:api version="3" />
+<content:json />
 <content:js name="acarsMap" />
 <content:js name="progressBar" />
 <content:js name="markerWithLabel" />
