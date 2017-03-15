@@ -37,11 +37,11 @@ var xmlreq = new XMLHttpRequest();
 xmlreq.open('GET', 'next_flight.ws?start=' + f.rangeStart.value + '&end=' + f.rangeEnd.value + '&airline=' + golgotha.form.getCombo(f.airline), true);
 xmlreq.onreadystatechange = function () {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
-	var e = xmlreq.responseXML.documentElement;
+	var e = JSON.parse(xreq.responseText);
 
 	// Update the flight number and leg
-	f.flightNumber.value = e.getAttribute("number");
-	f.flightLeg.value = e.getAttribute("leg");
+	f.flightNumber.value = e.number;
+	f.flightLeg.value = e.leg;
 
 	// Enable the buttons
 	golgotha.util.disable('LegSearchButton', flase);
@@ -62,11 +62,11 @@ var xmlreq = new XMLHttpRequest();
 xmlreq.open('GET', 'next_leg.ws?flight=' + f.flightNumber.value + '&airline=' + golgotha.form.getCombo(f.airline), true);
 xmlreq.onreadystatechange = function () {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
-	var e = xmlreq.responseXML.documentElement;
+	var e = JSON.parse(xreq.responseText);
 
 	// Update the flight number and leg
-	f.flightNumber.value = e.getAttribute("number");
-	f.flightLeg.value = e.getAttribute("leg");
+	f.flightNumber.value = e.number;
+	f.flightLeg.value = e.leg;
 
 	// Enable the button
 	golgotha.util.disable('LegSearchButton', false);

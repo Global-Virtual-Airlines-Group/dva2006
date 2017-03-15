@@ -68,25 +68,18 @@ xmlreq.onreadystatechange = function() {
 	map.clearOverlays();
 	golgotha.maps.oceanic.resetTracks();
 
-	// Get the XML document
-	var xdoc = xmlreq.responseXML.documentElement;
-	var xtracks = xdoc.getElementsByTagName('track');
-	for (var i = 0; i < xtracks.length; i++) {
+	// Get the JSON document
+	var jsData = JSON.parse(xreq.responseText);
+	for (var i = 0; i < jsData.tracks.length; i++) {
 		var trackPos = [];
-		var track = xtracks[i];
-		var trackType = track.getAttribute('type');
-		var waypoints = track.getElementsByTagName('waypoint');
-		for (var j = 0; j < waypoints.length; j++) {
-			var wp = waypoints[j];
-			var label = wp.firstChild;
-			var p = {lat:parseFloat(wp.getAttribute('lat')), lng:parseFloat(wp.getAttribute('lng'))};
-			trackPos.push(p);
+		var track = jsData.tracks[i];
+		for (var j = 0; j < track.waypoints.length; j++) {
+			var wp = track.waypoints[j];
+			trackPos.push(wp.ll);
 
 			// Create the map marker
-			var code = wp.getAttribute('code'); var cl = wp.getAttribute('color');
-			var mrk = new golgotha.maps.Marker({map:map, color:cl, info:label.data, label:code}, p);
-			mrk.title = track.getAttribute('code');
-			mrk.trackPoints = track.getAttribute('track');
+			var mrk = new golgotha.maps.Marker({map:map, color:wp.color, info:track.info, label:wp.code}, wp.ll);
+			mrk.title = track.code; mrk.trackPoints = track.track;
 			google.maps.event.addListener(mrk, 'click', function() { golgotha.maps.oceanic.showTrackInfo(this); });
 			golgotha.maps.oceanic.points[trackType].push(mrk);
 		}

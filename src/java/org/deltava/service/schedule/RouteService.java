@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.util.*;
@@ -6,7 +6,7 @@ import java.io.IOException;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
-import org.jdom2.*;
+import org.json.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display scheduled routes out of a particular Airport. 
  * @author Luke
- * @version 7.0
+ * @version 7.3
  * @since 1.0
  */
 
@@ -52,42 +52,35 @@ public class RouteService extends WebService {
 			ctx.release();
 		}
 		
-		// Generate the XML document
-		Document doc = new Document();
-		Element re = new Element("wsdata");
-		doc.setRootElement(re);
+		// Generate the JSON document
+		JSONObject jo = new JSONObject();
+		jo.put("icao", a.getICAO());
 
 		// Create the routes
 		Collection<Airport> dstAirports = new TreeSet<Airport>();
-		for (Iterator<ScheduleEntry> i = flights.iterator(); i.hasNext(); ) {
-			ScheduleEntry entry = i.next();
+		for (ScheduleEntry entry : flights) {
 			Airport ap = entry.getAirportA();
-			if (!dstAirports.contains(ap)) {
-				Collection<? extends GeoLocation> gc = Arrays.asList(a, ap); 
-				Element gce = new Element("route");
-				gce.setAttribute("from", a.getICAO());
-				gce.setAttribute("to", ap.getICAO());
-				gce.setAttribute("airline", entry.getAirline().getCode());
-				gce.setAttribute("color", LCOLORS.get(entry.getAirline().getColor()));
-				for (Iterator<? extends GeoLocation> gci = gc.iterator(); gci.hasNext(); ) {
-					GeoLocation loc = gci.next();
-					Element pe = new Element("pos");
-					pe.setAttribute("lat", StringUtils.format(loc.getLatitude(), "##0.00000"));
-					pe.setAttribute("lng", StringUtils.format(loc.getLongitude(), "##0.00000"));
-					gce.addContent(pe);
-				}
+			if (dstAirports.contains(ap))
+				continue;
 
-				// Add to the root element
-				re.addContent(gce);
-				dstAirports.add(ap);
-			}
+			JSONObject ro = new JSONObject();
+			ro.put("from", a.getICAO());
+			ro.put("to", ap.getICAO());
+			ro.put("airline", entry.getAirline().getCode());
+			ro.put("color", LCOLORS.get(entry.getAirline().getColor()));
+			ro.accumulate("positions", GeoUtils.toJSON(a));
+			ro.accumulate("positions", GeoUtils.toJSON(ap));
+
+			// Add to the root element
+			jo.accumulate("routes", ro);
+			dstAirports.add(ap);
 		}
 		
-		// Dump the XML to the output stream
+		// Dump the JSON to the output stream
 		try {
-			ctx.setContentType("text/xml", "UTF-8");
+			ctx.setContentType("application/json", "UTF-8");
 			ctx.setExpiry(3600);
-			ctx.println(XMLUtils.format(doc, "UTF-8"));
+			ctx.println(jo.toString());
 			ctx.commit();
 		} catch (IOException ie) {
 			throw error(SC_CONFLICT, "I/O Error", false);

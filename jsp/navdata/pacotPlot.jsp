@@ -15,6 +15,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <map:api version="3" />
+<content:json />
 <content:js name="googleMapsWX" />
 <content:js name="markerWithLabel" />
 <content:js name="oceanicPlot" />
@@ -61,7 +62,7 @@
 </content:page>
 <div id="copyright" class="mapTextLabel"></div>
 <content:sysdata var="wuAPI" name="security.key.wunderground" />
-<script id="mapInit">
+<script id="mapInit" async>
 // Create map options
 var mapTypes = {mapTypeIds: [google.maps.MapTypeId.SATELLITE, google.maps.MapTypeId.TERRAIN]};
 var mapOpts = {center:{lat:42,lng:-165}, zoom:4, minZoom:2, maxZoom:8, scrollwheel:false, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:mapTypes};

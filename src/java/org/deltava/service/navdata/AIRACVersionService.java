@@ -1,4 +1,4 @@
-// Copyright 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2013, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.navdata;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -9,7 +9,7 @@ import org.deltava.service.*;
 /**
  * A Web Service to return the current AIRAC version cycle.
  * @author Luke
- * @version 5.1
+ * @version 7.3
  * @since 5.1
  */
 
@@ -33,7 +33,8 @@ public class AIRACVersionService extends WebService {
 		}
 		
 		try {
-			ctx.setContentType("text/plan", "UTF-8");
+			ctx.setContentType("text/plain", "UTF-8");
+			ctx.setExpiry(1800);
 			ctx.commit();
 		} catch (Exception e) {
 			throw error(SC_CONFLICT, "I/O Error", false);

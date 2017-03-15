@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2012, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.util.*;
@@ -6,7 +6,7 @@ import java.io.IOException;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
-import org.jdom2.*;
+import org.json.*;
 
 import org.deltava.beans.schedule.*;
 import org.deltava.comparators.AirportComparator;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to list all airports serviced by a particular Airline.
  * @author Luke
- * @version 6.0
+ * @version 7.3
  * @since 1.0
  */
 
@@ -51,46 +51,44 @@ public class ServicedAirportService extends WebService {
 			ctx.release();
 		}
 		
-		// Generate the XML document
-		Document doc = new Document();
-		Element re = new Element("wsdata");
-		doc.setRootElement(re);
+		// Generate the JSON document
+		JSONObject jo = new JSONObject();
+		jo.put("airline", al.getName());
 
 		// Write the entries
 		for (Airport a : airports) {
-			Element e = new Element("airport");
-			e.setAttribute("icao", a.getICAO());
-			e.setAttribute("iata", a.getIATA());
-			e.setAttribute("lat", StringUtils.format(a.getLatitude(), "##0.00000"));
-			e.setAttribute("lng", StringUtils.format(a.getLongitude(), "##0.00000"));
-			e.setAttribute("color", al.getColor());
-			StringBuffer info = new StringBuffer(a.getInfoBox());
-			info.append("<div class=\"mapInfoBox navdata\"><br />Airlines:<br />");
+			JSONObject ao = new JSONObject();
+			ao.put("ll", GeoUtils.toJSON(a));
+			ao.put("icao", a.getICAO());
+			ao.put("iata", a.getIATA());
+			ao.put("color", al.getColor());
 			
 			// Add Airlines
+			StringBuffer info = new StringBuffer(a.getInfoBox());
+			info.append("<div class=\"mapInfoBox navdata\"><br />Airlines:<br />");
 			for (Iterator<String> ai = a.getAirlineCodes().iterator(); ai.hasNext(); ) {
 				Airline aal = SystemData.getAirline(ai.next());
-				if (aal != null) {
-					Element ae = new Element("airline");
-					ae.setAttribute("name", aal.getName());
-					ae.setAttribute("code", aal.getCode());
-					e.addContent(ae);
-					info.append(aal.getName());
-					if (ai.hasNext())
-						info.append("<br />");
-				}
+				if (aal == null) continue;
+				
+				JSONObject alo = new JSONObject();
+				alo.put("name", aal.getName());
+				alo.put("code", aal.getCode());
+				ao.accumulate("airlines", alo);
+				info.append(aal.getName());
+				if (ai.hasNext())
+					info.append("<br />");
 			}
 			
 			// Build info box
 			info.append("</div>");
-			e.addContent(new CDATA(info.toString()));
-			re.addContent(e);
+			jo.put("Info", info.toString());
+			jo.accumulate("airports", ao);
 		}
 		
-		// Dump the XML to the output stream
+		// Dump the JSON to the output stream
 		try {
-			ctx.setContentType("text/xml", "UTF-8");
-			ctx.println(XMLUtils.format(doc, "UTF-8"));
+			ctx.setContentType("application/json", "UTF-8");
+			ctx.println(jo.toString());
 			ctx.commit();
 		} catch (IOException ie) {
 			throw error(SC_CONFLICT, "I/O Error", false);

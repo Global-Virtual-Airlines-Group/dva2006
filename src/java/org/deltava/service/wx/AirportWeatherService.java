@@ -1,10 +1,10 @@
-// Copyright 2008, 2009, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.wx;
 
 import java.util.*;
 import java.sql.Connection;
 
-import org.jdom2.*;
+import org.json.*;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to provide aggregated METAR/TAF data for an Airport.
  * @author Luke
- * @version 7.0
+ * @version 7.3
  * @since 2.3
  */
 
@@ -40,8 +40,7 @@ public class AirportWeatherService extends WebService {
 
 		// Check if using FlightAware data services
 		boolean useFA = Boolean.valueOf(ctx.getParameter("fa")).booleanValue();
-		useFA &= SystemData.getBoolean("schedule.flightaware.enabled")
-				&& (ctx.isUserInRole("Route") || ctx.isUserInRole("Dispatch"));
+		useFA &= SystemData.getBoolean("schedule.flightaware.enabled") && (ctx.isUserInRole("Route") || ctx.isUserInRole("Dispatch"));
 		
 		// Check the code
 		String code = ctx.getParameter("code");
@@ -86,49 +85,44 @@ public class AirportWeatherService extends WebService {
 		}
 		
 		// Create the XML document
-		Document doc = new Document();
-		Element re = new Element("weather");
-		doc.setRootElement(re);
+		JSONObject jo = new JSONObject();
+		jo.put("icao", code);
 
 		// Add the METAR/TAF data
 		if (al != null) {
-			Element e = new Element("wx");
-			re.addContent(e);
-			e.setAttribute("lat", StringUtils.format(al.getLatitude(), "##0.00000"));
-			e.setAttribute("lng", StringUtils.format(al.getLongitude(), "##0.00000"));
-			e.setAttribute("color", MapEntry.WHITE);
-			e.setAttribute("icao", al.getCode());
-			e.setAttribute("tabs", String.valueOf(wxBeans.size()));
+			JSONObject wo = new JSONObject();
+			wo.put("ll", GeoUtils.toJSON(al));
+			wo.put("color", MapEntry.WHITE);
+			wo.put("icao", al.getCode());
 			for (WeatherDataBean wx : wxBeans) {
-				if (wx == null)
-					continue;
+				if (wx == null) continue;
 				
 				// Create the element
 				wx.setAirport(al);
-				Element te = new Element("tab");
-				te.setAttribute("name", wx.getType().toString());
-				te.setAttribute("type", wx.getType().toString());
+				JSONObject to = new JSONObject();
+				to.put("name", wx.getType().toString());
+				to.put("type", wx.getType().toString());
 
 				// Convert newlines to <br>
 				if (wx.getType() == WeatherDataBean.Type.TAF) {
 					StringBuilder buf = new StringBuilder();
 					List<String> data = StringUtils.split(wx.getData(), "\n");
-					for (Iterator<String> i = data.iterator(); i.hasNext(); )
-						buf.append(i.next());
-					
-					te.addContent(new CDATA(buf.toString()));
+					data.forEach(d -> buf.append(d));
+					to.put("info", buf.toString());
 				} else 
-					te.addContent(new CDATA(wx.getData()));
+					to.put("info", wx.getData());
 				
-				e.addContent(te);
+				wo.accumulate("tabs", to);
 			}
+			
+			jo.put("wx", wo);
 		}
 
-		// Dump the XML to the output stream
+		// Dump the JSON to the output stream
 		try {
-			ctx.setContentType("text/xml", "UTF-8");
+			ctx.setContentType("application/json", "UTF-8");
 			ctx.setExpiry(600);
-			ctx.println(XMLUtils.format(doc, "UTF-8"));
+			ctx.println(jo.toString());
 			ctx.commit();
 		} catch (Exception ex) {
 			throw error(SC_CONFLICT, "I/O Error", false);
