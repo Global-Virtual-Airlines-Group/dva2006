@@ -12,17 +12,17 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
+<content:json />
 <map:api version="3" />
 <content:googleAnalytics eventSupport="true" />
 <content:js name="markermanager" />
 <content:js name="markerWithLabel" />
 <script type="text/javascript">
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-golgotha.form.validate({f:f.navaidCode, l:2, t:'Navigation Aid Code'});
-golgotha.form.submit(f);
-return true;
+golgotha.local.validate = function(f) {
+	if (!golgotha.form.check()) return false;
+	golgotha.form.validate({f:f.navaidCode, l:2, t:'Navigation Aid Code'});
+	golgotha.form.submit(f);
+	return true;
 };
 
 golgotha.local.zoomTo = function(combo)
@@ -59,26 +59,22 @@ var xmlreq = new XMLHttpRequest();
 xmlreq.open('get', 'navaidsearch.ws?airports=true&lat=' + lat + '&lng=' + lng + '&range=' + Math.min(1000, Math.round(range)), true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
-
-	var xml = xmlreq.responseXML;
-	var xe = xml.documentElement;
+	
+	var js = JSON.parse(xreq.responseText);
 	var wps = xe.getElementsByTagName('waypoint');
-	for (var i = 0; i < wps.length; i++) {
-		var wp = wps[i];
-		var code = wp.getAttribute('code');
-		if (code == '${param.navaidCode}') continue;
-		var p = {lat:parseFloat(wp.getAttribute('lat')), lng:parseFloat(wp.getAttribute('lng'))};
+	for (var i = 0; i < js.items.length; i++) {
+		var wp = js.items[i];
+		if (wp.code == '${param.navaidCode}') continue;
 		var mrk;
 		if (wp.getAttribute('pal'))
-			mrk = new golgotha.maps.IconMarker({pal:wp.getAttribute('pal'), icon:wp.getAttribute('icon'), info:wp.firstChild.data}, p);
+			mrk = new golgotha.maps.IconMarker({pal:wp.pal, icon:wp.icon, info:wp.info}, wp.ll);
 		else
-			mrk = new golgotha.maps.Marker({color:wp.getAttribute('color'), info:wp.firstChild.data, label:code}, p);
+			mrk = new golgotha.maps.Marker({color:wp.color, info:wp.info, label:wp.code}, wp.ll);
 
-		mrk.minZoom = 6; mrk.code = code;
-		var type = wp.getAttribute('type');
-		if (type == 'Airport')
+		mrk.minZoom = 6; mrk.code = wo.code;
+		if (wp.type == 'Airport')
 			mrk.minZoom = 7;
-		else if (type == 'Intersection')
+		else if (wp.type == 'Intersection')
 			mrk.minZoom = 8;
 
 		golgotha.local.sMarkers.addMarker(mrk, mrk.minZoom);
@@ -151,7 +147,7 @@ return true;
 </content:page>
 <div id="zoomLevel" class="mapTextLabel"></div>
 <c:if test="${!empty results}">
-<script id="mapInit">
+<script id="mapInit" async>
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
 
 // Build the map

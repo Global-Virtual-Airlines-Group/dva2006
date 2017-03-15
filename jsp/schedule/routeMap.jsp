@@ -13,6 +13,7 @@
 <content:pics />
 <content:js name="common" />
 <map:api version="3" />
+<content:json />
 <content:js name="routeMap" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:googleAnalytics eventSupport="true" />
@@ -47,7 +48,7 @@
 <content:copyright />
 </content:region>
 </content:page>
-<script id="mapInit">
+<script id="mapInit" async>
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
 
 // Create the map

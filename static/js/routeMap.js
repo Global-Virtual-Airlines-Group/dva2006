@@ -33,26 +33,14 @@ xmlreq.onreadystatechange = function() {
 	golgotha.routeMap.aps = [];
 	var f = document.forms[0];
 
-	// Parse the XML
-	var xdoc = xmlreq.responseXML;
-	var wsdata = xdoc.documentElement;
-	var els = wsdata.getElementsByTagName('airport');
-	for (var x = 0; x < els.length; x++) {
-		var a = els[x];
-		var mrk = new golgotha.maps.Marker({color:a.getAttribute('color')}, {lat:parseFloat(a.getAttribute('lat')),lng:parseFloat(a.getAttribute('lng'))});
-		mrk.icao = a.getAttribute('icao');
-		mrk.iata = a.getAttribute('iata');
+	// Parse the JSON
+	var js = JSON.parse(xmlreq.responseText);
+	for (var x = 0; x < js.airports.length; x++) {
+		var a = js.airports[x];
+		var mrk = new golgotha.maps.Marker({color:a.color}, a.ll);
+		mrk.icao = a.icao; mrk.iata = a.iata;
 		mrk.infoShow = golgotha.routeMap.showRoutes;
-		for (var nidx = a.childNodes.length; nidx > 0; nidx--) {
-			var nd = a.childNodes[nidx - 1];
-			try {
-				if (nd.nodeType == 4) {
-					mrk.infoLabel = nd.data;
-					nidx = 0;
-				}
-			} catch (e) { }
-		}
-
+		mrk.infoLabel = a.info;
 		google.maps.event.addListener(mrk, 'click', mrk.infoShow);
 		golgotha.routeMap.aps.push(mrk);
 	}
@@ -90,25 +78,12 @@ xmlreq.onreadystatechange = function() {
 	isLoading.innerHTML = ' - REDRAWING...';
 	golgotha.routeMap.routes.length = 0;
 
-	// Parse the XML
-	var xdoc = xmlreq.responseXML;
-	var wsdata = xdoc.documentElement;
-	var rts = wsdata.getElementsByTagName('route');
-	for (var x = 0; x < rts.length; x++) {
-		var rt = rts[x];
-		var al = rt.getAttribute('airline');
-		if (al == aCode) {
-			var positions = [];
-
-			// Get the positions
-			var pos = rt.getElementsByTagName('pos');
-			for (var i = 0; i < pos.length; i++) {
-				var pe = pos[i];
-				positions.push({lat:parseFloat(pe.getAttribute('lat')), lng:parseFloat(pe.getAttribute('lng'))});
-			}
-
-			// Draw the line
-			var routeLine = new google.maps.Polyline({map:map, path:positions, strokeColor:'#4080af', strokeWeight:2, strokeOpacity:0.8, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
+	// Parse the JSON
+	var js = JSON.parse(xmlreq.responseText);
+	for (var x = 0; x < js.routes.length; x++) {
+		var rt = js.routes[x];
+		if (rt.airline == aCode) {
+			var routeLine = new google.maps.Polyline({map:map, path:rt.positions, strokeColor:rt.color, strokeWeight:2, strokeOpacity:0.8, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
 			golgotha.routeMap.routes.push(routeLine);
 		}
 	}

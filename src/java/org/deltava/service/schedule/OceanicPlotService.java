@@ -1,14 +1,12 @@
-// Copyright 2007, 2008, 2009, 2010, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
-import java.text.*;
 import java.time.Instant;
-import java.util.*;
 import java.io.IOException;
 
-import org.jdom2.*;
+import org.json.*;
 
 import org.deltava.beans.MapEntry;
 import org.deltava.beans.navdata.*;
@@ -20,7 +18,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to return Oceanic Track data.
  * @author Luke
- * @version 7.0
+ * @version 7.3
  * @since 1.0
  */
 
@@ -62,44 +60,38 @@ public class OceanicPlotService extends WebService {
 		}
 		
 		// Add concorde routes if NAT
-		if (trackType == OceanicTrackInfo.Type.NAT) {
-			for (OceanicTrack ot : OceanicTrack.CONC_ROUTES)
-				tracks.addTrack(ot);
-		}
+		if (trackType == OceanicTrackInfo.Type.NAT)
+			tracks.addAll(OceanicTrack.CONC_ROUTES);
 
-		// Generate the XML document
-		Document doc = new Document();
-		Element re = new Element("wsdata");
-		doc.setRootElement(re);
-		re.setAttribute("date", StringUtils.format(tracks.getDate(), "MM/dd/yyyy"));
+		// Generate the JSON document
+		JSONObject jo = new JSONObject();
+		jo.put("date", StringUtils.format(tracks.getDate(), "MM/dd/yyyy"));
 
 		// Build the track data
-		final NumberFormat nf = new DecimalFormat("##0.0000");
-		for (Iterator<OceanicTrack> i = tracks.getTracks().iterator(); i.hasNext();) {
-			OceanicTrack ow = i.next();
+		for (OceanicTrack ow : tracks.getTracks()) {
 			boolean isEast = (ow.getDirection() == OceanicTrackInfo.Direction.EAST);
-			Element te = new Element("track");
-			te.setAttribute("code", ow.getTrack());
-			te.setAttribute("type", ow.isFixed() ? "C" : (isEast ? "E" : "W"));
-			te.setAttribute("color", ow.isFixed() ? "#2040E0" : (isEast ? "#EEEEEE" : "#EEEE44"));
-			te.setAttribute("track", ow.getRoute());
-			for (Iterator<NavigationDataBean> wi = ow.getWaypoints().iterator(); wi.hasNext();) {
-				NavigationDataBean ndb = wi.next();
-				Element we = XMLUtils.createElement("waypoint", ndb.getInfoBox(), true);
-				we.setAttribute("code", ndb.getCode());
-				we.setAttribute("lat", nf.format(ndb.getLatitude()));
-				we.setAttribute("lng", nf.format(ndb.getLongitude()));
-				we.setAttribute("color", ow.isFixed() ? MapEntry.BLUE : (isEast ? MapEntry.WHITE : MapEntry.ORANGE));
-				te.addContent(we);
+			JSONObject to = new JSONObject();
+			to.put("code", ow.getTrack());
+			to.put("type", ow.isFixed() ? "C" : (isEast ? "E" : "W"));
+			to.put("color", ow.isFixed() ? "#2040E0" : (isEast ? "#EEEEEE" : "#EEEE44"));
+			to.put("track", ow.getRoute());
+			for (NavigationDataBean ndb : ow.getWaypoints()) {
+				JSONObject wo = new JSONObject();
+				wo.put("code", ndb.getCode());
+				wo.put("ll", GeoUtils.toJSON(ndb));
+				wo.put("color", ow.isFixed() ? MapEntry.BLUE : (isEast ? MapEntry.WHITE : MapEntry.ORANGE));
+				wo.put("info", ndb.getInfoBox());
+				to.accumulate("waypoints", wo);
 			}
 
-			re.addContent(te);
+			jo.accumulate("tracks", to);
 		}
 
 		// Dump the XML to the output stream
 		try {
-			ctx.setContentType("text/xml", "UTF-8");
-			ctx.println(XMLUtils.format(doc, "UTF-8"));
+			ctx.setContentType("application/json", "UTF-8");
+			ctx.setExpiry(3600);
+			ctx.println(jo.toString());
 			ctx.commit();
 		} catch (IOException ie) {
 			throw error(SC_CONFLICT, "I/O Error", false);

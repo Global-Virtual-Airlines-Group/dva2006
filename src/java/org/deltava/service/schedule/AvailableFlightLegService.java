@@ -1,11 +1,11 @@
-// Copyright 2006, 2007, 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2012, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.io.IOException;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
-import org.jdom2.*;
+import org.json.*;
 
 import org.deltava.beans.schedule.Airline;
 
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to return the next available Leg number for a Flight.
  * @author Luke
- * @version 4.2
+ * @version 7.3
  * @since 1.0
  */
 
@@ -49,20 +49,16 @@ public class AvailableFlightLegService extends WebService {
 			ctx.release();
 		}
 		
-		// Generate the XML document
-		Document doc = new Document();
-		Element re = new Element("wsdata");
-		doc.setRootElement(re);
-
-		// Save the flight number
-		re.setAttribute("airline", a.getCode());
-		re.setAttribute("number", String.valueOf(flight));
-		re.setAttribute("leg", String.valueOf(leg));
+		// Generate the JSON document
+		JSONObject jo = new JSONObject();
+		jo.put("airline", a.getCode());
+		jo.put("number", flight);
+		jo.put("leg", leg);
 
 		// Dump the XML to the output stream
 		try {
-			ctx.setContentType("text/xml", "UTF-8");
-			ctx.println(XMLUtils.format(doc, "UTF-8"));
+			ctx.setContentType("application/json", "UTF-8");
+			ctx.println(jo.toString());
 			ctx.commit();
 		} catch (IOException ie) {
 			throw error(SC_CONFLICT, "I/O Error", false);
