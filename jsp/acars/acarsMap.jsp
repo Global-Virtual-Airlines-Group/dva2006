@@ -63,10 +63,6 @@ return true;
 
 golgotha.maps.acars.saveSettings = function()
 {
-// Get the latitude, longitude and zoom level
-var myLat = map.getCenter().lat();
-var myLng = map.getCenter().lng();
-var myZoom = map.getZoom();
 var myType = 'terrain';
 if (map.getMapTypeId() == google.maps.MapTypeId.SATELLITE)
 	myType = 'sat';
@@ -75,29 +71,27 @@ else if (map.getMapTypeId() == google.maps.MapTypeId.ROADMAP)
 
 // Save the cookies
 var expiryDate = new Date(${cookieExpiry});
-document.cookie = 'acarsMapLat=' + myLat + '; expires=' + expiryDate.toGMTString();
-document.cookie = 'acarsMapLng=' + myLng + '; expires=' + expiryDate.toGMTString();
-document.cookie = 'acarsMapZoomLevel=' + myZoom + '; expires=' + expiryDate.toGMTString();
+document.cookie = 'acarsMapLat=' + map.getCenter().lat() + '; expires=' + expiryDate.toGMTString();
+document.cookie = 'acarsMapLng=' + map.getCenter().lng() + '; expires=' + expiryDate.toGMTString();
+document.cookie = 'acarsMapZoomLevel=' + map.getZoom() + '; expires=' + expiryDate.toGMTString();
 document.cookie = 'acarsMapType=' + myType + '; expires=' + expiryDate.toGMTString();
 alert('Your <content:airline /> ACARS Map preferences have been saved.');
 return true;
 };
 
 golgotha.maps.acars.clearSettings = function() {
-	var expiryDate = new Date();
-	document.cookie = 'acarsMapLat=; expires=' + expiryDate.toGMTString();
-	document.cookie = 'acarsMapLng=; expires=' + expiryDate.toGMTString();
-	document.cookie = 'acarsMapZoomLevel=; expires=' + expiryDate.toGMTString();
-	document.cookie = 'acarsMapType=; expires=' + expiryDate.toGMTString();
+	var expiryDate = new Date().toGMTString();
+	document.cookie = 'acarsMapLat=; expires=' + expiryDate;
+	document.cookie = 'acarsMapLng=; expires=' + expiryDate;
+	document.cookie = 'acarsMapZoomLevel=; expires=' + expiryDate;
+	document.cookie = 'acarsMapType=; expires=' + expiryDate;
 	alert('Your <content:airline /> ACARS Map preferences have been cleared.');
 	return true;
 };
 
 golgotha.maps.acars.showLegend = function(box) {
 	var rows = golgotha.util.getElementsByClass('mapLegend', 'tr');
-	for (var r = rows.pop(); (r != null); r = rows.pop())
-		golgotha.util.display(r, box.checked);
-	
+	rows.forEach(function(r) { golgotha.util.display(r, box.checked); });
 	return true;
 };
 
