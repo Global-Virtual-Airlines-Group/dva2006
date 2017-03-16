@@ -1,11 +1,10 @@
-// Copyright 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2014, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.servinfo;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
 import java.util.*;
 
-import org.deltava.beans.GeoLocation;
 import org.deltava.beans.navdata.FIR;
 
 import org.deltava.dao.*;
@@ -50,11 +49,7 @@ public class FIRLayerService extends WebService {
 			fo.put("name", f.toString());
 			fo.put("oceanic", f.isOceanic());
 			fo.put("aux", f.isAux());
-			JSONArray co = new JSONArray();
-			for (GeoLocation loc : f.getBorder())
-				co.put(GeoUtils.toJSON(loc));
-			
-			fo.put("border", co);
+			f.getBorder().forEach(loc -> fo.accumulate("border", GeoUtils.toJSON(loc)));
 			ja.put(fo);
 		}
 		 
