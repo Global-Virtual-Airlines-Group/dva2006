@@ -38,7 +38,7 @@ return true;
 };
 </script></c:if>
 <c:if test="${isACARS}">
-<content:googleJS />
+<content:googleJS module="charts" />
 <content:json />
 <content:js name="acarsFlightMap" />
 <script type="text/javascript">
@@ -354,7 +354,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 </content:page>
 <content:browser human="true">
 <c:if test="${googleMap}">
-<script id="mapInit">
+<script id="mapInit" async>
 <c:if test="${!isACARS}">
 golgotha.maps.acarsFlight = golgotha.maps.acarsFlight || {};</c:if>
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
@@ -407,8 +407,8 @@ golgotha.maps.acarsFlight.filedMarkers = [golgotha.maps.acarsFlight.gmA, golgoth
 map.addMarkers(golgotha.maps.acarsFlight.filedMarkers);
 </c:if>
 <c:if test="${isACARS}">
-google.load('visualization','1.1',{'packages':['corechart']});
-google.setOnLoadCallback(function() {
+google.charts.load('current', {'packages':['corechart']});
+google.charts.setOnLoadCallback(function() {
 var xreq = new XMLHttpRequest();
 xreq.open('get', 'pirepstats.ws?id=${pirep.hexID}', true);
 xreq.onreadystatechange = function() {
@@ -426,7 +426,7 @@ xreq.onreadystatechange = function() {
 	data.addColumn('datetime', 'Date/Time');
 	data.addColumn('number', 'Ground Speed');
 	data.addColumn('number', 'Altitude');
-<c:if test="${!isXACARS}">   data.addColumn('number', 'Ground Elevation');</c:if>
+<c:if test="${!isXACARS}">    data.addColumn('number', 'Ground Elevation');</c:if>
     data.addRows(statsData.data);
 
 	// Read CSS selectors for graph lines
