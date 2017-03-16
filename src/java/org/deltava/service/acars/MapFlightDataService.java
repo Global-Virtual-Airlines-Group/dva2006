@@ -88,7 +88,7 @@ public class MapFlightDataService extends WebService {
 				}
 			}
 			
-			jo.accumulate("positions", eo);
+			jo.append("positions", eo);
 		}
 		
 		// Dump the JSON to the output stream
