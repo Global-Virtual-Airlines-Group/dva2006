@@ -86,7 +86,6 @@
 	<service id="airacversion" class="org.deltava.service.navdata.AIRACVersionService" />
 
 	<!-- SID/STAR updating -->
-	<service id="apsidstar" class="org.deltava.service.navdata.AirportTerminalRouteService" />
 	<service id="trouteupdate" class="org.deltava.service.navdata.TerminalRouteUpdateService" />
 
 	<!-- ACARS client autoupdate -->
