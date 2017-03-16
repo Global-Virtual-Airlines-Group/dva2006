@@ -22,9 +22,9 @@
  <td class="data"><div id="bwChart" style="height:350px;"></div></td>
 </tr>
 </el:table>
-<script>
-google.load('visualization','1.1',{'packages':['corechart']});
-google.setOnLoadCallback(function() {
+<script async>
+google.charts.load('current', {'packages':['corechart']});
+google.charts.setOnLoadCallback(function() {
 var xmlreq = new XMLHttpRequest();
 xmlreq.open('get', 'bwstats.ws', true);
 xmlreq.onreadystatechange = function() {

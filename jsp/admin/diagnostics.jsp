@@ -19,7 +19,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <content:json />
-<content:googleJS />
+<content:googleJS module="charts" />
 </head>
 <content:copyright visible="false" />
 <body>
