@@ -17,6 +17,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <map:api version="3" />
+<content:json />
 <content:js name="progressBar" />
 <content:js name="googleMapsWX" />
 <content:js name="wxParsers" />
@@ -52,39 +53,28 @@ var xmlreq = new XMLHttpRequest();
 xmlreq.open('GET', 'airportWX.ws?fa=' + useFA + '&code=' + code + '&type=METAR,TAF&time=' + golgotha.util.getTimestamp(30000), true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
-	var xdoc = xmlreq.responseXML.documentElement;
+	var js = JSON.parse(xmlreq.responseText);
 
 	// Load the weather data
-	var wc = xdoc.getElementsByTagName('wx');
-	for (var i = 0; i < wc.length; i++) {
-		var wx = wc[i];
+	for (var i = 0; i < js.wx.length; i++) {
+		var wx = js.wx[i];
 
 		// Check for an existing marker
-		var code = wx.getAttribute('icao');
-		var wxType = wx.getAttribute('type');
-		var mrk = golgotha.local.wxMarkers[code];
+		var mrk = golgotha.local.wxMarkers[wx.code];
 		if (mrk) {
-			if (mrk.isOpen)
-				map.infoWindow.close();
-
-			var tabs = parseInt(wx.getAttribute('tabs'));
-			if (tabs == 0) {
+			if (mrk.isOpen) map.infoWindow.close();
+			if (wx.tabs.length == 0) {
 				delete mrk.tabs;
 				var label = wx.firstChild;
 				if (label)
 					mrk.infoLabel = label.data.replace(/\n/g, '<br />');
 			} else {
 				mrk.tabs = [];
-				var tbs = wx.getElementsByTagName('tab');
-				for (var x = 0; x < tbs.length; x++) {
-					var tab = tbs[x];
-					var tabType = tab.getAttribute('type');
-					var label = tab.firstChild;
-					if (label) {
-						eval('mrk.' + tabType + ' = label.data');
-						var wxData = label.data.replace(/\n/g, '<br />');
-						mrk.tabs.push({name:tab.getAttribute('name'), content:wxData});
-					}
+				for (var x = 0; x < wx.tabs.length; x++) {
+					var tab = wx.tabs[x];
+					eval('mrk.' + tab.type + ' = tab.content');
+					var wxData = tab.content.replace(/\n/g, '<br />');
+					mrk.tabs.push({name:tab.name, content:wxData});
 				}
 			}
 
@@ -92,31 +82,23 @@ xmlreq.onreadystatechange = function() {
 		}
 
 		// Create the marker
-		var p = {lat:parseFloat(wx.getAttribute('lat')), lng:parseFloat(wx.getAttribute('lng'))};
-		if (wx.getAttribute('pal'))
-			mrk = new golgotha.maps.IconMarker({pal:wx.getAttribute('pal'), icon:wx.getAttribute('icon')}, p);
-		else if (wx.getAttribute('color'))
-			mrk = new golgotha.maps.Marker({color:wx.getAttribute('color')}, p);
+		if (wx.pal)
+			mrk = new golgotha.maps.IconMarker({pal:wx.pal, icon:wx.icon}, wx.ll);
+		else if (wx.color)
+			mrk = new golgotha.maps.Marker({color:wx.color}, wx.ll);
 
-		mrk.code = code;
-		mrk.isOpen = false;
-		var tabs = parseInt(wx.getAttribute('tabs'));
-		if (tabs == 0) {
+		mrk.code = wx.icao; mrk.isOpen = false;
+		if (wx.tabs.length == 0) {
 			var label = wx.firstChild;
 			if (label)
 				mrk.infoLabel = label.data;
 		} else {
 			mrk.tabs = []; mrk.updateTab = golgotha.maps.util.updateTab; 
-			var tbs = wx.getElementsByTagName('tab');
-			for (var x = 0; x < tbs.length; x++) {
-				var tab = tbs[x];
-				var tabType = tab.getAttribute('type');
-				var label = tab.firstChild;
-				if (label) {
-					eval('mrk.' + tabType + ' = label.data');
-					var wxData = label.data.replace(/\n/g, '<br />');
-					mrk.tabs.push({name:tab.getAttribute('name'), content:wxData});
-				}
+			for (var x = 0; x < wx.tabs.length; x++) {
+				var tab = wx.tabs[x];
+				eval('mrk.' + tab.type + ' = tab.content');
+				var wxData = tab.content.replace(/\n/g, '<br />');
+				mrk.tabs.push({name:tab.name, content:wxData});
 			}
 		}
 
@@ -140,17 +122,16 @@ xmlreq.send(null);
 return true;
 };
 
-golgotha.local.closeWindow = function()
-{
-this.isOpen = false;
-var f = document.forms[0];
-f.wxID.value = '';
-f.metarData.value = '';
-f.metarData.disabled = true;
-f.tafData.value = '';
-f.tafData.disabled = true;
-map.closeWindow();
-return true;
+golgotha.local.closeWindow = function() {
+    this.isOpen = false;
+    var f = document.forms[0];
+    f.wxID.value = '';
+    f.metarData.value = '';
+    f.metarData.disabled = true;
+    f.tafData.value = '';
+    f.tafData.disabled = true;
+    map.closeWindow();
+    return true;
 };
 
 golgotha.local.clickInfo = function()
@@ -217,7 +198,7 @@ return true;
 <div id="zoomLevel" class="mapTextLabel"></div>
 <div id="seriesRefresh" class="mapTextLabel"></div>
 <content:sysdata var="wuAPI" name="security.key.wunderground" />
-<script id="mapInit">
+<script id="mapInit" async>
 <map:point var="golgotha.local.mapC" point="${homeAirport}" />
 var mapOpts = {center:golgotha.local.mapC, zoom:5, minZoom:3, maxZoom:14, scrollwheel:false, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
 
