@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to display a Pilot's Flight Report statistics to a Google chart.
  * @author Luke
- * @version 7.0
+ * @version 7.3
  * @since 2.1
  */
 
@@ -57,7 +57,7 @@ public class MyFlightsService extends WebService {
 		}
 
 		// Create the equipment stats
-		JSONArray ja = new JSONArray();
+		JSONObject jo = new JSONObject();
 		JSONArray ee = new JSONArray();
 		ee.put("All Others");
 
@@ -71,7 +71,7 @@ public class MyFlightsService extends WebService {
 				JSONArray ea = new JSONArray();
 				ea.put(entry.getLabel());
 				ea.put(entry.getLegs());
-				ja.put(ea);
+				jo.append("eqCount", ea);
 			}
 			else
 				eeValue += entry.getLegs();
@@ -79,10 +79,9 @@ public class MyFlightsService extends WebService {
 
 		// Add the "everything else" entry
 		ee.put(eeValue);
-		ja.put(ee);
+		jo.append("eqCount", ee);
 		
 		// Create landing rate groups - this will be a stacked bar chart
-		JSONArray lja = new JSONArray();
 		for (Map.Entry<Integer, Integer> me : vsStats.entrySet()) {
 			int fpm = me.getKey().intValue();
 			JSONArray ea = new JSONArray();  
@@ -91,11 +90,10 @@ public class MyFlightsService extends WebService {
 			ea.put((fpm < -300) && (fpm >= -600) ? me.getValue().intValue() : 0);
 			ea.put((fpm < -50) && (fpm >= -300) ? me.getValue().intValue() : 0);
 			ea.put((fpm <= 0) && (fpm >= -50) ? me.getValue().intValue() : 0);
-			lja.put(ea);
+			jo.append("landingSpd", ea);
 		}
 		
 		// Go through landing statistics
-		JSONArray sja = new JSONArray();
 		int[] qualCount = new int[] {0, 0, 0};
 		for (LandingStatistics ls : landings) {
 			JSONArray ea = new JSONArray();
@@ -112,24 +110,16 @@ public class MyFlightsService extends WebService {
 			ea.put(!tooSoft && (score == FlightScore.ACCEPTABLE) ? Integer.valueOf(fpm) : null);
 			ea.put((score == FlightScore.OPTIMAL) ? Integer.valueOf(fpm) : null);
 			ea.put(tooSoft ? Integer.valueOf(fpm) : null);
-			sja.put(ea);
+			jo.append("landingSct", ea);
 		}
 		
 		// Convert qualitative info into an array
-		JSONArray qja = new JSONArray();
 		for (int x = 0; x < qualCount.length; x++) {
 			JSONArray ea = new JSONArray();
 			ea.put(FlightScore.values()[x].getName());
 			ea.put(qualCount[x]);
-			qja.put(ea);
+			jo.append("landingQuality", ea);
 		}
-		
-		// Slap together
-		JSONObject jo = new JSONObject();
-		jo.put("eqCount", ja);
-		jo.put("landingSpd", lja);
-		jo.put("landingSct", sja);
-		jo.put("landingQuality", qja);
 		
 		// Dump the JSON to the output stream
 		try {
