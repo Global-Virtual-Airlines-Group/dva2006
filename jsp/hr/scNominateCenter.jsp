@@ -13,6 +13,7 @@
 <content:css name="main" />
 <content:css name="form" />
 <content:css name="view" />
+<content:json />
 <content:js name="common" />
 <content:js name="scNominate" />
 <content:pics />
