@@ -13,20 +13,14 @@ xmlreq.onreadystatechange = function() {
 		return false;
 	}
 
-	// Parse the XML
+	// Parse the JSON
 	var cbo = document.getElementById('selectPilot');
 	if (cbo == null) return false;
 	cbo.options.length = 1;
-	var xmlDoc = xmlreq.responseXML;
-	var pe = xmlDoc.documentElement.getElementsByTagName('pilot');
-	for (var x = 0; x < pe.length; x++) {
-		var p = pe[x];
-		var id = p.getAttribute('id');
-		var code = p.getAttribute('code'); var name = p.getAttribute('name');
-		var o = new Option(name + ' (' + code + ')', id);
-		o.pilotID = id;
-		o.pilotCode = code;
-		o.pilotName = name;
+	var js = JSON.parse(xmlreq.responseText);
+	for (var p = js.pop(); (p != null); p = js.pop()) {
+		var o = new Option(p.name + ' (' + p.code + ')', p.id);
+		o.pilotID = p.id; o.pilotCode = p.code; o.pilotName = p.name;
 		try {
 			cbo.add(o, null);
 		} catch (err) {
@@ -84,8 +78,7 @@ var lnk = document.getElementById('tc' + id);
 if (lnk == null) return false;
 var visible = false;
 var rows = golgotha.util.getElementsByClass('nc-' + id);
-for (var x = 0; x < rows.length; x++) {
-	var row = rows[x];
+for (var r = rows.pop(); (r != null); r = rows.pop()) {
 	visible = (row.style.display != 'none');
 	golgotha.util.display(row, !visible);
 }
@@ -97,11 +90,8 @@ return true;
 golgotha.sc.toggleAll = function()
 {
 var lnks = golgotha.util.getElementsByClass('ncToggle');	
-for (var x = 0; x < lnks.length; x++) {
-	var lnk = lnks[x];
-	var linkID = lnk.id.substring(2);
-	lnk.onclick(linkID);
-}
+for (var l = lnks.pop(); (lnk != null); l = lnks.pop())
+	lnk.onclick(lnk.id.substring(2));
 	
 return true;
 };

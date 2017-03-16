@@ -9,9 +9,9 @@ import java.time.Instant;
 import static javax.servlet.http.HttpServletResponse.*;
 
 import org.json.*;
-
+import org.deltava.beans.GeoLocation;
 import org.deltava.beans.OnlineNetwork;
-import org.deltava.beans.navdata.TerminalRoute;
+import org.deltava.beans.navdata.*;
 import org.deltava.beans.servinfo.*;
 
 import org.deltava.dao.*;
@@ -120,8 +120,20 @@ public class MapRouteService extends WebService {
 
 		// Generate the JSON document
 		JSONObject jo = new JSONObject();
-		p.getWaypoints().forEach(wp -> jo.append("waypoints", GeoUtils.toJSON(wp)));
 		trackInfo.forEach(loc -> jo.append("track", GeoUtils.toJSON(loc)));
+		for (GeoLocation loc : p.getWaypoints()) {
+			jo.append("route", GeoUtils.toJSON(loc));
+			if (!(loc instanceof NavigationDataBean)) continue;
+			NavigationDataBean ndb = (NavigationDataBean) loc;
+			JSONObject lo = new JSONObject();
+			lo.put("ll", GeoUtils.toJSON(loc));
+			lo.put("code", ndb.getCode());
+			lo.put("pal", ndb.getPaletteCode());
+			lo.put("icon", ndb.getIconCode());
+			lo.put("color", ndb.getIconColor());
+			lo.put("info", ndb.getInfoBox());
+			jo.append("waypoints", lo);
+		}
 
 		// Dump the JSON to the output stream
 		try {
