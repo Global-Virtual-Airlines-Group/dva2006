@@ -13,6 +13,7 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
+<content:json />
 <script type="text/javascript">
 golgotha.local.validate = function(f)
 {
@@ -37,17 +38,11 @@ xmlreq.onreadystatechange = function() {
 		return false;
 	}
 
-	// Parse the XML
-	var xmlDoc = xmlreq.responseXML;
-	if (!xmlDoc) return false;
-
-	// Get the info
-	var info = xmlDoc.documentElement;
-	var infoStr = info.getAttribute('network') + ' Information for ' + info.getAttribute('id')
-		+ ':\n\nPilot Name : ' + info.getAttribute('name') + '\nUser Status : '
-		+ info.getAttribute('status') + '\nE-Mail Domain : ' + info.getAttribute('domain');
-	alert(infoStr);
-	golgotha.util.disable('ValidateButton', false);
+	// Parse the JSON
+	var s = document.getElementById('validationInfo');
+	var js = JSON.parse(xmlreq.responseText);
+	s.innerHTML = 'Name : ' + js.name + 'Active : ' + js.active + 'E-Mail Domain : ' + js.domain;
+	golgotha.util.display('ValidateButton', false);
 	return true;
 };
 
@@ -128,9 +123,7 @@ ${dupe.rank.name} <el:cmd url="profile" link="${dupe}" className="bld">${dupe.na
 <c:if test="${!empty VATSIM_ID}">
 <tr>
  <td class="label">VATSIM ID#</td>
- <td class="data">${VATSIM_ID}
-<c:if test="${access.canApprove}"> <el:button ID="ValidateButton" onClick="void golgotha.local.checkVATSIMData(${VATSIM_ID}, '${applicant.name}')" label="VALIDATE" /></c:if>
- </td>
+ <td class="data">${VATSIM_ID}<c:if test="${access.canApprove}"> <el:button ID="ValidateButton" onClick="void golgotha.local.checkVATSIMData(${VATSIM_ID}, '${applicant.name}')" label="VALIDATE" /><span id="validationInfo" class="sec ita bld"></span></c:if></td>
 </tr>
 </c:if>
 <c:set var="IVAO_ID" value="${fn:networkID(applicant, 'IVAO')}" scope="page" />
