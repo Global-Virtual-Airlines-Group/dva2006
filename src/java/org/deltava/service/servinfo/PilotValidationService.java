@@ -1,11 +1,11 @@
-// Copyright 2007, 2008, 2009, 2010, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010, 2011, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.servinfo;
 
 import java.io.IOException;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
-import org.jdom2.*;
+import org.json.*;
 
 import org.deltava.beans.servinfo.Certificate;
 
@@ -14,12 +14,12 @@ import org.deltava.dao.http.GetVATSIMData;
 
 import org.deltava.service.*;
 
-import org.deltava.util.*;
+import org.deltava.util.StringUtils;
 
 /**
  * A Web Service to validate VATSIM membership data.
  * @author Luke
- * @version 7.0
+ * @version 7.3
  * @since 1.0
  */
 
@@ -51,24 +51,21 @@ public class PilotValidationService extends WebService {
 		if (c == null)
 			return SC_NOT_FOUND;
 		
-		// Build the XML Document
-		Document doc = new Document();
-		Element re = new Element("pilot");
-		doc.setRootElement(re);
+		// Build the JSON Document
+		JSONObject jo = new JSONObject();
+		jo.put("id", c.getID());
+		jo.put("network", "VATSIM");
+		jo.put("firstName", c.getFirstName());
+		jo.put("lastName", c.getLastName());
+		jo.put("name", c.getName());
+		jo.put("registeredOn", StringUtils.format(c.getRegistrationDate(), "yyyy/MM/dd HH:mm"));
+		jo.put("active", c.isActive());
+		jo.put("domain", c.getEmailDomain());
 		
-		// Set the properties
-		re.setAttribute("id", String.valueOf(c.getID()));
-		re.setAttribute("network", "VATSIM");
-		re.setAttribute("firstName", c.getFirstName());
-		re.setAttribute("lastName", c.getLastName());
-		re.setAttribute("registeredOn", StringUtils.format(c.getRegistrationDate(), "yyyy/MM/dd HH:mm"));
-		re.setAttribute("active", String.valueOf(c.isActive()));
-		re.setAttribute("domain", c.getEmailDomain());
-		
-		// Dump the XML to the output stream
+		// Dump the JSON to the output stream
 		try {
-			ctx.setContentType("text/xml", "UTF-8");
-			ctx.println(XMLUtils.format(doc, "UTF-8"));
+			ctx.setContentType("application/json", "UTF-8");
+			ctx.println(jo.toString());
 			ctx.commit();
 		} catch (IOException ie) {
 			throw error(SC_CONFLICT, "I/O Error", false);
