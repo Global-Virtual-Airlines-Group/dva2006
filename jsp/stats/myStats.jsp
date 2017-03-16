@@ -15,10 +15,10 @@
 <content:css name="view" />
 <content:js name="common" />
 <content:json />
-<content:googleJS />
+<content:googleJS module="charts" />
 <content:pics />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script type="text/javascript">
+<script>
 golgotha.local.updateSort = function() { return document.forms[0].submit(); };
 golgotha.local.validate = function(f) {
     if (!golgotha.form.check()) return false;
@@ -114,9 +114,9 @@ golgotha.local.validate = function(f) {
 <content:copyright />
 </content:region>
 </content:page>
-<script type="text/javascript" defer>
-google.load('visualization','1.0',{'packages':['corechart']});
-google.setOnLoadCallback(function() {
+<script async>
+google.charts.load('current', {'packages':['corechart']});
+google.charts.setOnLoadCallback(function() {
 var xmlreq = new XMLHttpRequest();
 xmlreq.open('GET', 'mystats.ws?id=${pilot.hexID}', true);
 xmlreq.onreadystatechange = function() {

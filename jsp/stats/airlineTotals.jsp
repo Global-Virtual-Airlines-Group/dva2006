@@ -13,7 +13,7 @@
 <content:css name="view" />
 <content:js name="common" />
 <content:json />
-<content:googleJS />
+<content:googleJS module="charts" />
 <content:pics />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
@@ -118,9 +118,9 @@
 <content:copyright />
 </content:region>
 </content:page>
-<script type="text/javascript">
-google.load('visualization','1.0',{'packages':['corechart']});
-google.setOnLoadCallback(function() {
+<script async>
+google.charts.load('current', {'packages':['corechart']});
+google.charts.setOnLoadCallback(function() {
 var xmlreq = new XMLHttpRequest();
 xmlreq.open('GET', 'allstats.ws', true);
 xmlreq.onreadystatechange = function() {
