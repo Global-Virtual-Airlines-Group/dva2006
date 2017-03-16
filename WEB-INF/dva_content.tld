@@ -518,6 +518,11 @@
 		<name>googleJS</name>
 		<tag-class>org.deltava.taglib.content.GoogleJSTag</tag-class>
 		<body-content>empty</body-content>
+		<attribute>
+            <name>module</name>		
+            <required>true</required>
+            <rtexprvalue>false</rtexprvalue>
+		</attribute>
 	</tag>
 
 	<tag>
