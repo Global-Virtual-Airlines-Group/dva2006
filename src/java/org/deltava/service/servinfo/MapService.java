@@ -1,4 +1,4 @@
-// Copyright 2010, 2012, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2012, 2014, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.servinfo;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -6,7 +6,7 @@ import static javax.servlet.http.HttpServletResponse.*;
 import java.io.*;
 import java.util.*;
 
-import org.jdom2.*;
+import org.json.*;
 
 import org.deltava.beans.OnlineNetwork;
 import org.deltava.beans.servinfo.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display an online network map. 
  * @author Luke
- * @version 7.0
+ * @version 7.3
  * @since 3.2
  */
 
@@ -58,11 +58,9 @@ public class MapService extends WebService {
 			}
 		}
 		
-		// Generate the XML document
-		Document doc = new Document();
-		Element re = new Element("wsdata");
-		re.setAttribute("date", String.valueOf(info.getValidDate().toEpochMilli()));
-		doc.setRootElement(re);
+		// Generate the JSON document
+		JSONObject jo = new JSONObject();
+		jo.put("date", info.getValidDate().toEpochMilli());
 		
 		// Display the pilots
 		List<?> codes = (List<?>) SystemData.getObject("online.highlightCodes");
@@ -74,14 +72,13 @@ public class MapService extends WebService {
 					usr.setHighlighted(true);
 			}
 			
-			Element pe = new Element("pilot");
-			pe.setAttribute("id", String.valueOf(usr.getID()));
-			pe.setAttribute("callsign", usr.getCallsign());
-			pe.setAttribute("lat", StringUtils.format(usr.getLatitude(), "##0.00000"));
-			pe.setAttribute("lng", StringUtils.format(usr.getLongitude(), "##0.00000"));
-			pe.setAttribute("color", usr.getIconColor());
-			pe.addContent(new CDATA(usr.getInfoBox()));
-			re.addContent(pe);
+			JSONObject po = new JSONObject();
+			po.put("id", usr.getID());
+			po.put("callsign", usr.getCallsign());
+			po.put("ll", GeoUtils.toJSON(usr));
+			po.put("color", usr.getIconColor());
+			po.put("info", usr.getInfoBox());
+			jo.append("pilots", po);
 		}
 		
 		// Display the controllers if required
@@ -91,24 +88,24 @@ public class MapService extends WebService {
 				Controller usr = i.next();
 				if ((usr.getFacility() != Facility.FSS) && (usr.getFacility() != Facility.CTR) && (usr.getFacility() != Facility.APP))
 					continue;
-			
-				Element ae = new Element("atc");
-				ae.setAttribute("id", String.valueOf(usr.getID()));
-				ae.setAttribute("callsign", usr.getCallsign());
-				ae.setAttribute("type", String.valueOf(usr.getFacility()));
-				ae.setAttribute("lat", StringUtils.format(usr.getLatitude(), "##0.00000"));
-				ae.setAttribute("lng", StringUtils.format(usr.getLongitude(), "##0.00000"));
-				ae.setAttribute("color", usr.getIconColor());	
-				ae.setAttribute("range", String.valueOf(usr.getFacility().getRange()));
-				ae.addContent(new CDATA(usr.getInfoBox()));
-				re.addContent(ae);
+
+				JSONObject ao = new JSONObject();
+				ao.put("id", usr.getID());
+				ao.put("callsign", usr.getCallsign());
+				ao.put("type", String.valueOf(usr.getFacility()));
+				ao.put("ll", GeoUtils.toJSON(usr));
+				ao.put("color", usr.getIconColor());	
+				ao.put("range", usr.getFacility().getRange());
+				ao.put("info", usr.getInfoBox());
+				jo.append("atc", ao);
 			}
 		}
 		
-		// Dump the XML to the output stream
+		// Dump the JSON to the output stream
 		try {
-			ctx.setContentType("text/xml", "UTF-8");
-			ctx.println(XMLUtils.format(doc, "UTF-8"));
+			ctx.setContentType("application/json", "UTF-8");
+			ctx.setExpiry(30);
+			ctx.println(jo.toString());
 			ctx.commit();
 		} catch (IOException ie) {
 			throw error(SC_CONFLICT, "I/O Error", false);
