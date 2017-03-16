@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.servinfo;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -6,9 +6,8 @@ import static javax.servlet.http.HttpServletResponse.*;
 import java.util.*;
 import java.io.IOException;
 
-import org.jdom2.*;
+import org.json.*;
 
-import org.deltava.beans.GeoLocation;
 import org.deltava.beans.navdata.FIR;
 import org.deltava.beans.servinfo.EuroControl;
 
@@ -19,7 +18,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display FIR boundaries on a map.
  * @author Luke
- * @version 7.0
+ * @version 7.3
  * @since 3.2
  */
 
@@ -72,32 +71,22 @@ public class FIRInfoService extends WebService {
 			ctx.release();
 		}
 		
-		// Generate the XML document
-		Document doc = new Document();
-		Element re = new Element("wsdata");
-		doc.setRootElement(re);
-		
 		// Save info and coordinates
+		JSONObject jo = new JSONObject();
 		for (FIR fir : results) {
-			Element fe = new Element("fir");
-			fe.setAttribute("id", fir.getID());
-			fe.setAttribute("name", fir.getName());
-			fe.setAttribute("oceanic", String.valueOf(fir.isOceanic()));
-			for (GeoLocation loc : fir.getBorder()) {
-				Element pe = new Element("pt");
-				pe.setAttribute("lat", StringUtils.format(loc.getLatitude(), "##0.00000"));
-				pe.setAttribute("lng", StringUtils.format(loc.getLongitude(), "##0.00000"));
-				fe.addContent(pe);
-			}
-			
-			re.addContent(fe);
+			JSONObject fo = new JSONObject();
+			fo.put("id", fir.getID());
+			fo.put("name", fir.getName());
+			fo.put("oceanic", fir.isOceanic());
+			fir.getBorder().forEach(loc -> fo.accumulate("border", GeoUtils.toJSON(loc)));
+			jo.append("firs", fo);
 		}
 		
-		// Dump the XML to the output stream
+		// Dump the JSON to the output stream
 		try {
-			ctx.setContentType("text/xml", "UTF-8");
-			ctx.setExpiry(3600);
-			ctx.println(XMLUtils.format(doc, "UTF-8"));
+			ctx.setContentType("application/json", "UTF-8");
+			ctx.setExpiry(7200);
+			ctx.println(jo.toString());
 			ctx.commit();
 		} catch (IOException ie) {
 			throw error(SC_CONFLICT, "I/O Error", false);

@@ -97,25 +97,15 @@ public class AirportWeatherService extends WebService {
 			for (WeatherDataBean wx : wxBeans) {
 				if (wx == null) continue;
 				
-				// Create the element
 				wx.setAirport(al);
 				JSONObject to = new JSONObject();
 				to.put("name", wx.getType().toString());
 				to.put("type", wx.getType().toString());
-
-				// Convert newlines to <br>
-				if (wx.getType() == WeatherDataBean.Type.TAF) {
-					StringBuilder buf = new StringBuilder();
-					List<String> data = StringUtils.split(wx.getData(), "\n");
-					data.forEach(d -> buf.append(d));
-					to.put("info", buf.toString());
-				} else 
-					to.put("info", wx.getData());
-				
-				wo.accumulate("tabs", to);
+				to.put("content", wx.getData());
+				wo.append("tabs", to);
 			}
 			
-			jo.put("wx", wo);
+			jo.append("wx", wo);
 		}
 
 		// Dump the JSON to the output stream

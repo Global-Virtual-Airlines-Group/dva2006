@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2014, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.servinfo;
 
 import java.io.*;
@@ -8,9 +8,8 @@ import java.time.Instant;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
-import org.jdom2.*;
+import org.json.*;
 
-import org.deltava.beans.GeoLocation;
 import org.deltava.beans.OnlineNetwork;
 import org.deltava.beans.navdata.TerminalRoute;
 import org.deltava.beans.servinfo.*;
@@ -25,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to download ServInfo route data for Google Maps.
  * @author Luke
- * @version 7.0
+ * @version 7.3
  * @since 1.0
  */
 
@@ -119,31 +118,16 @@ public class MapRouteService extends WebService {
 			ctx.release();
 		}
 
-		// Generate the XML document
-		Document doc = new Document();
-		Element re = new Element("wsdata");
-		doc.setRootElement(re);
+		// Generate the JSON document
+		JSONObject jo = new JSONObject();
+		p.getWaypoints().forEach(wp -> jo.append("waypoints", GeoUtils.toJSON(wp)));
+		trackInfo.forEach(loc -> jo.append("track", GeoUtils.toJSON(loc)));
 
-		// Render the route
-		for (GeoLocation loc : p.getWaypoints()) {
-			Element e = new Element("waypoint");
-			e.setAttribute("lat", StringUtils.format(loc.getLatitude(), "##0.00000"));
-			e.setAttribute("lng", StringUtils.format(loc.getLongitude(), "##0.00000"));
-			re.addContent(e);
-		}
-		
-		// Render the track
-		for (GeoLocation loc : trackInfo) {
-			Element e = new Element("track");
-			e.setAttribute("lat", StringUtils.format(loc.getLatitude(), "##0.00000"));
-			e.setAttribute("lng", StringUtils.format(loc.getLongitude(), "##0.00000"));
-			re.addContent(e);
-		}
-
-		// Dump the XML to the output stream
+		// Dump the JSON to the output stream
 		try {
-			ctx.setContentType("text/xml", "UTF-8");
-			ctx.println(XMLUtils.format(doc, "UTF-8"));
+			ctx.setContentType("application/json", "UTF-8");
+			ctx.setExpiry(120);
+			ctx.println(jo.toString());
 			ctx.commit();
 		} catch (IOException ie) {
 			throw error(SC_CONFLICT, "I/O Error", false);

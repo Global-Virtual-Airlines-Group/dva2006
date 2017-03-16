@@ -37,7 +37,7 @@ xmlreq.onreadystatechange = function() {
 			mrk = new golgotha.maps.Marker({color:a.color}, a.ll);
 
 		mrk.flight_id = a.flight_id;
-		mrk.isBusy = (a.busy == 'true');
+		mrk.isBusy = a.busy;
 		if (a.tabs.length == 0)
 			mrk.infoLabel = a.info;
 		else {
@@ -77,11 +77,10 @@ xmlreq.onreadystatechange = function() {
 			mrk = new golgotha.maps.Marker({color:d.color}, d.ll);
 
 		mrk.range = d.range;
-		mrk.isBusy = (d.busy == 'true');
-		if (d.tabs.length == 0) {
-			var le = d.getElementsByTagName('info');
-			mrk.infoLabel = le[0].firstChild.data;
-		} else {
+		mrk.isBusy = d.busy;
+		if (d.tabs.length == 0)
+			mrk.infoLabel = d.info;
+		else {
 			mrk.updateTab = golgotha.maps.util.updateTab;
 			mrk.tabs = d.tabs;
 		}
@@ -110,7 +109,7 @@ xmlreq.onreadystatechange = function() {
 
 	// Display dispatch status
 	var de = document.getElementById('dispatchStatus');
-	if ((de) && (dc.length > 0)) {
+	if ((de) && (js.dispatch.length > 0)) {
 		de.className = 'ter bld caps';
 		de.innerHTML = 'Dispatcher Currently Online';
 	} else if (de) {
@@ -218,7 +217,7 @@ xreq.onreadystatechange = function() {
 	var js = JSON.parse(xreq.responseText);
 	if (doRoute) {
 		var waypoints = [];
-		js.waypoints.forEach(function(wp) {waypoints.push(wp.ll); });
+		js.waypoints.forEach(function(wp) { waypoints.push(wp.ll); });
 		golgotha.event.beacon('ACARS', 'Flight Route Info');
 		golgotha.maps.acars.routeWaypoints = new google.maps.Polyline({map:map, path:waypoints, strokeColor:'#af8040', strokeWeight:2, strokeOpacity:0.7, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
 	}

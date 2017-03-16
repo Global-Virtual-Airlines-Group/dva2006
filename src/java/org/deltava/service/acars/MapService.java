@@ -75,7 +75,7 @@ public class MapService extends WebService {
 					JSONObject to = new JSONObject();
 					to.put("name", tme.getTabNames().get(x));
 					to.put("content", tme.getTabContents().get(x));
-					eo.accumulate("tabs", to);
+					eo.append("tabs", to);
 				}
 			} else {
 				eo.put("tabs", new JSONArray());
@@ -94,7 +94,7 @@ public class MapService extends WebService {
 				eo.put("pilot", po);
 			}
 			
-			jo.accumulate(entry.getType().toString().toLowerCase(), eo);
+			jo.append(entry.getType().toString().toLowerCase(), eo);
 		}
 
 		// Dump the JSON to the output stream
