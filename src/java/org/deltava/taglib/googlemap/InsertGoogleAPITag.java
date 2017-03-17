@@ -8,6 +8,8 @@ import javax.servlet.jsp.tagext.TagSupport;
 
 import org.json.JSONObject;
 
+import org.deltava.beans.system.VersionInfo;
+
 import org.deltava.taglib.ContentHelper;
 
 import org.deltava.util.StringUtils;
@@ -137,6 +139,8 @@ public class InsertGoogleAPITag extends TagSupport {
 			String jsFileName = "googleMapsV" + String.valueOf(_majorVersion);
 			out.print("<script src=\"");
 			out.print(SystemData.get("path.js"));
+			out.print("/v");
+			out.print(VersionInfo.BUILD);
 			out.print('/');
 			out.print(jsFileName);
 			out.println(".js\"></script>");
