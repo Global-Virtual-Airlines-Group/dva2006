@@ -91,7 +91,7 @@ public class AirportWeatherService extends WebService {
 		// Add the METAR/TAF data
 		if (al != null) {
 			JSONObject wo = new JSONObject();
-			wo.put("ll", GeoUtils.toJSON(al));
+			wo.put("ll", JSONUtils.format(al));
 			wo.put("color", MapEntry.WHITE);
 			wo.put("icao", al.getCode());
 			for (WeatherDataBean wx : wxBeans) {
@@ -105,13 +105,15 @@ public class AirportWeatherService extends WebService {
 				wo.append("tabs", to);
 			}
 			
+			JSONUtils.ensureArrayPresent(wo, "tabs");
 			jo.append("wx", wo);
 		}
 
 		// Dump the JSON to the output stream
+		JSONUtils.ensureArrayPresent(jo, "wx");
 		try {
-			ctx.setContentType("application/json", "UTF-8");
-			ctx.setExpiry(600);
+			ctx.setContentType("application/json", "utf-8");
+			ctx.setExpiry(1200);
 			ctx.println(jo.toString());
 			ctx.commit();
 		} catch (Exception ex) {

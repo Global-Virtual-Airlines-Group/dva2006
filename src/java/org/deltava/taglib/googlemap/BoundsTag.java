@@ -1,4 +1,4 @@
-// Copyright 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.*;
 /**
  * A JSP tag to create a Google Maps LatLngBounds object.
  * @author Luke
- * @version 6.3
+ * @version 7.3
  * @since 6.3
  */
 
@@ -49,9 +49,9 @@ public class BoundsTag extends GoogleMapEntryTag {
 			JspWriter out = pageContext.getOut();
 			writeVariableName();
 			out.print("new google.maps.LatLngBounds(");
-			out.print(GeoUtils.toJSON(bnds.getRight()));
+			out.print(JSONUtils.format(bnds.getRight()));
 			out.print(',');
-			out.print(GeoUtils.toJSON(bnds.getLeft()));
+			out.print(JSONUtils.format(bnds.getLeft()));
 			out.print(");");
 		} catch (Exception e) {
 			throw new JspException(e);
