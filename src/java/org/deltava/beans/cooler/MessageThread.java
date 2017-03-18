@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2014, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.cooler;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.*;
 /**
  * A class to store Water Cooler message threads.
  * @author Luke
- * @version 7.0
+ * @version 7.3
  * @since 1.0
  */
 
@@ -451,7 +451,7 @@ public class MessageThread extends DatabaseBean implements AuthoredBean, ViewEnt
 		if (_reportIDs == null)
 			_reportIDs = new HashSet<Integer>();
 		
-		_reportIDs.add(new Integer(id));
+		_reportIDs.add(Integer.valueOf(id));
 	}
 
 	/**

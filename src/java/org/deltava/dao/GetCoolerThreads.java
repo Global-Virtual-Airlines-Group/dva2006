@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2013, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2013, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -17,7 +17,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to retrieve Water Cooler threads and thread notifications.
  * @author Luke
- * @version 7.0
+ * @version 7.3
  * @since 1.0
  */
 
@@ -169,7 +169,7 @@ public class GetCoolerThreads extends DAO {
 	public MessageThread getThread(int id, boolean loadPosts) throws DAOException {
 		
 		// Load from the cache
-		Integer ID = new Integer(id);
+		Integer ID = Integer.valueOf(id);
 		MessageThread mt = _tCache.get(ID);
 		if (mt == null) {
 			List<MessageThread> threads = getByID(Collections.singleton(ID));

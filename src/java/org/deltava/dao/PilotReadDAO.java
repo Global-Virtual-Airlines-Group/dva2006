@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
  * A DAO to support reading Pilot object(s) from the database. This class contains methods to read an individual Pilot
  * from the database; implementing subclasses typically add methods to retrieve Lists of pilots based on particular criteria.
  * @author Luke
- * @version 7.2
+ * @version 7.3
  * @since 1.0
  */
 
@@ -181,7 +181,7 @@ abstract class PilotReadDAO extends DAO {
 		int querySize = 0;
 		for (Iterator<?> i = ids.iterator(); i.hasNext();) {
 			Object rawID = i.next();
-			Integer id = (rawID instanceof Integer) ? (Integer) rawID : new Integer(((DatabaseBean) rawID).getID());
+			Integer id = (rawID instanceof Integer) ? (Integer) rawID : Integer.valueOf(((DatabaseBean) rawID).getID());
 
 			// Pull from the cache if at all possible; this is an evil query
 			Pilot p = _cache.get(id);
@@ -344,7 +344,7 @@ abstract class PilotReadDAO extends DAO {
 	 */
 	protected final void loadChildRows(Pilot p, String dbName) throws SQLException {
 		Map<Integer, Pilot> tmpMap = new HashMap<Integer, Pilot>();
-		tmpMap.put(new Integer(p.getID()), p);
+		tmpMap.put(Integer.valueOf(p.getID()), p);
 		loadIMAddrs(tmpMap, dbName);
 		loadRatings(tmpMap, dbName);
 		loadRoles(tmpMap, dbName);
