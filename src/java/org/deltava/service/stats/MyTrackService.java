@@ -1,4 +1,4 @@
-// Copyright 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2014, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display route tracks between airports.
  * @author Luke
- * @version 6.3
+ * @version 7.3
  * @since 5.4
  */
 
@@ -99,10 +99,11 @@ public class MyTrackService extends WebService {
 				int dst = GeoUtils.distance(loc, last);
 				if ((last == null) || (dst > 20)) {
 					last = loc;
-					fo.append("trk", GeoUtils.toJSON(loc));
+					fo.append("trk", JSONUtils.format(loc));
 				}
 			}
 			
+			JSONUtils.ensureArrayPresent(fo, "trk");
 			jo.append("routes", fo);
 		}
 		
