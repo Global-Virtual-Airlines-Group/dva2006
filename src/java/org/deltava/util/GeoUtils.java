@@ -1,9 +1,7 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
-
-import org.json.JSONObject;
 
 import org.deltava.beans.*;
 import org.deltava.beans.navdata.Hemisphere;
@@ -12,7 +10,7 @@ import org.deltava.beans.schedule.GeoPosition;
 /**
  * A utility class for performing geocoding operations.
  * @author Luke
- * @version 7.0
+ * @version 7.3
  * @since 1.0
  */
 
@@ -460,17 +458,5 @@ public class GeoUtils {
 		}
 		
 		return isOK;
-	}
-
-	/**
-	 * Converts a location into a Google Maps LatLngLiteral JSON object. 
-	 * @param loc a GeoLocation
-	 * @return a JSONObject
-	 */
-	public static JSONObject toJSON(GeoLocation loc) {
-		JSONObject jo = new JSONObject();
-		jo.put("lat", loc.getLatitude());
-		jo.put("lng", loc.getLongitude());
-		return jo;
 	}
 }
