@@ -78,6 +78,35 @@ ${k} = ${stateData[k]}<br />
 </c:forEach></td>
 </tr>
 </c:if>
+<c:if test="${!empty acarsClientInfo}">
+<tr class="title caps">
+ <td colspan="2">SYSTEM INFORMATION AS OF <fmt:date fmt="d" date="${acarsClientInfo.date}"  /></td>
+</tr>
+<tr>
+ <td class="label">Operating System</td>
+ <td class="data">${acarsClientInfo.OSVersion} (<fmt:int value="${acarsClientInfo.memorySize}" />KB memory) <span class="ita">as of <fmt:date fmt="d" date="${acarsClientInfo.date}" /></span></td>
+</tr>
+<tr>
+ <td class="label">.NET Runtime</td>
+ <td class="data"><span class="bld">${acarsClientInfo.dotNETVersion}</span> <span class="small">CLR: ${acarsClientInfo.CLRVersion}</span></td>
+</tr>
+<tr>
+ <td class="label">Locale / Time Zone</td>
+ <td class="data">${acarsClientInfo.locale} <span class="ita">Time Zone: ${acarsClientInfo.timeZone}</span></td>
+</tr>
+<tr>
+ <td class="label">CPU Information</td>
+ <td class="data">${acarsClientInfo.CPU} <span class="sec small ita">(<fmt:int value="${acarsClientInfo.cores}" /> cores, <fmt:int value="${acarsClientInfo.threads}" /> threads)</span></td>
+</tr>
+<tr>
+ <td class="label">GPU Information</td>
+ <td class="data">${acarsClientInfo.GPU} <span class="small ita">(<fmt:int value="${acarsClientInfo.videoMemorySize}" /> KB, ${acarsClientInfo.width}x${acarsClientInfo.height}x${acarsClientInfo.colorDepth}, ${acarsClientInfo.screenCount} screens)</span></td>
+</tr>
+<tr>
+ <td class="label">GPU Driver</td>
+ <td cclass="data">${acarsClientInfo.GPUDriverVersion}</td>
+</tr>
+</c:if>
 </el:table>
 
 <!-- Button Bar -->
