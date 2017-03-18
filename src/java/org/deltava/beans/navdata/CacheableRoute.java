@@ -1,7 +1,14 @@
-// Copyright 2009, 2010, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.*;
+
+/**
+ * A bean to store a route and its waypoints.
+ * @author Luke
+ * @version 7.3
+ * @since 7.3
+ */
 
 public class CacheableRoute implements Route {
 	
@@ -41,7 +48,7 @@ public class CacheableRoute implements Route {
 
 	@Override
 	public Object cacheKey() {
-		return new Integer(_route.hashCode());
+		return Integer.valueOf(_route.hashCode());
 	}
 	
 	@Override

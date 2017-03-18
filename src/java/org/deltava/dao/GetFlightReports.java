@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Flight Reports.
  * @author Luke
- * @version 7.2
+ * @version 7.3
  * @since 1.0
  */
 
@@ -388,7 +388,7 @@ public class GetFlightReports extends DAO {
 	 */
 	public void getOnlineTotals(Pilot p, String dbName) throws DAOException {
 		Map<Integer, Pilot> pilots = new HashMap<Integer, Pilot>(2);
-		pilots.put(new Integer(p.getID()), p);
+		pilots.put(Integer.valueOf(p.getID()), p);
 		getOnlineTotals(pilots, dbName);
 	}
 
