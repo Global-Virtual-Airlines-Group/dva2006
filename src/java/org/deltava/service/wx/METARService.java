@@ -14,7 +14,7 @@ import org.deltava.dao.*;
 import org.deltava.dao.wsdl.GetFAWeather;
 import org.deltava.service.*;
 
-import org.deltava.util.*;
+import org.deltava.util.JSONUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -37,8 +37,7 @@ public class METARService extends WebService {
 		
 		// Check if using FlightAware data services
 		boolean useFA = Boolean.valueOf(ctx.getParameter("fa")).booleanValue();
-		useFA &= SystemData.getBoolean("schedule.flightaware.enabled")
-				&& (ctx.isUserInRole("Route") || ctx.isUserInRole("Dispatch"));
+		useFA &= SystemData.getBoolean("schedule.flightaware.enabled") && (ctx.isUserInRole("Route") || ctx.isUserInRole("Dispatch"));
 		
 		// Get the weather data
 		METAR data = null;
@@ -69,16 +68,16 @@ public class METARService extends WebService {
 		// Create the JSON document
 		JSONObject jo = new JSONObject();
 		jo.put("icao", data.getCode());
-		jo.put("tabs", new JSONArray());
-		jo.put("ll", GeoUtils.toJSON(data));
+		jo.put("ll", JSONUtils.format(data));
 		jo.put("color", data.getIconColor());
 		jo.put("type", data.getType().toString());
 		jo.put("date", data.getDate().toEpochMilli() / 1000);
 		jo.put("info", data.getInfoBox());
+		JSONUtils.ensureArrayPresent(jo, "tabs");
 		
 		// Dump the JSON to the output stream
 		try {
-			ctx.setContentType("application/json", "UTF-8");
+			ctx.setContentType("application/json", "utf-8");
 			ctx.setExpiry(1800);
 			ctx.println(jo.toString());
 			ctx.commit();
