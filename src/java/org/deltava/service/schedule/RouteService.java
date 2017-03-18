@@ -68,15 +68,16 @@ public class RouteService extends WebService {
 			ro.put("to", ap.getICAO());
 			ro.put("airline", entry.getAirline().getCode());
 			ro.put("color", LCOLORS.get(entry.getAirline().getColor()));
-			ro.accumulate("positions", GeoUtils.toJSON(a));
-			ro.accumulate("positions", GeoUtils.toJSON(ap));
+			ro.append("positions", JSONUtils.format(a));
+			ro.append("positions", JSONUtils.format(ap));
 
 			// Add to the root element
-			jo.accumulate("routes", ro);
+			jo.append("routes", ro);
 			dstAirports.add(ap);
 		}
 		
 		// Dump the JSON to the output stream
+		JSONUtils.ensureArrayPresent(jo, "routes");
 		try {
 			ctx.setContentType("application/json", "UTF-8");
 			ctx.setExpiry(3600);
