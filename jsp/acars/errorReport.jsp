@@ -84,7 +84,7 @@ ${k} = ${stateData[k]}<br />
 </tr>
 <tr>
  <td class="label">Operating System</td>
- <td class="data">${acarsClientInfo.OSVersion} (<fmt:int value="${acarsClientInfo.memorySize}" />KB memory) <span class="ita">as of <fmt:date fmt="d" date="${acarsClientInfo.date}" /></span></td>
+ <td class="data"><fmt:windows version="${acarsClientInfo.OSVersion}" /> (<fmt:int value="${acarsClientInfo.memorySize}" />KB memory) <span class="ita">as of <fmt:date fmt="d" date="${acarsClientInfo.date}" /></span></td>
 </tr>
 <tr>
  <td class="label">.NET Runtime</td>

@@ -68,9 +68,14 @@ golgotha.local.validate = function(f) {
 <c:forEach var="stat" items="${stats}">
 <c:set var="pct" value="${stat.count * 100.0 / total}" scope="page" />
 <view:row entry="${stat}">
+<c:if test="${isWindowsVersion}">
+ <td class="pri bld"><fmt:windows version="${stat.label}" /></td>
+</c:if>
+<c:if test="${!isWindowsVersion}">
  <td class="pri bld">${stat.label}</td>
+</c:if>
  <td class="bld"><fmt:int value="${stat.count}" /></td>
- <td class="sec bld"><fmt:dec value="${pct}" />%</td>
+ <td class="sec bld"><fmt:dec value="${pct}" fmt="##0.00" />%</td>
 </view:row>
 </c:forEach>
 
