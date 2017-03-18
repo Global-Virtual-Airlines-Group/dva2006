@@ -46,7 +46,7 @@ golgotha.gate.reload = function(al) {
 		else if (g.useCount > 0)
 			opts = golgotha.gate.icons.pop;
 
-		var mrk = new golgotha.maps.IconMarker({pal:opts.pal,icon:opts.icon,info:g.info}, g.pos);
+		var mrk = new golgotha.maps.IconMarker({pal:opts.pal,icon:opts.icon,info:g.info}, g.ll);
 		mrk.gateID = id; g.toggleAirline = golgotha.gate.toggleAirline;
 		var dst = isOurs ? golgotha.gate.ourGates : golgotha.gate.gates;
 		if (golgotha.gate.isEdit) {
