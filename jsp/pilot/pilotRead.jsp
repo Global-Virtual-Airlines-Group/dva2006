@@ -171,7 +171,6 @@ return true;
 </c:if>
 </c:forEach>
 </c:if>
-
 <c:if test="${!pilot.noVoice && !empty ts2Clients}"><content:filter roles="HR,Instructor">
 <!-- TeamSpeak 2 Virtual Server access -->
 <tr class="title">
@@ -191,7 +190,36 @@ return true;
 </c:if></c:forEach></td>
 </tr>
 </content:filter></c:if>
-
+<c:if test="${!empty acarsClientInfo}">
+<!-- ACARS client system data -->
+<tr class="title">
+ <td colspan="${cspan + 1}">ACARS CLIENT SYSTEM INFORMATION - <span class="und" onclick="void golgotha.util.toggleExpand(this, 'acarsClient')">EXPAND</span></td>
+</tr>
+<tr class="acarsClient" style="display:none;">
+ <td class="label">Operating System</td>
+ <td colspan="${cspan + 1}"  class="data">${acarsClientInfo.OSVersion} (<fmt:int value="${acarsClientInfo.memorySize}" />KB memory) <span class="ita">as of <fmt:date fmt="d" date="${acarsClientInfo.date}" /></span></td>
+</tr>
+<tr class="acarsClient" style="display:none;">
+ <td class="label">.NET Runtime</td>
+ <td colspan="${cspan + 1}"  class="data"><span class="bld">${acarsClientInfo.dotNETVersion}</span> <span class="small">CLR: ${acarsClientInfo.CLRVersion}</span></td>
+</tr>
+<tr class="acarsClient" style="display:none;">
+ <td class="label">Locale / Time Zone</td>
+ <td colspan="${cspan + 1}"  class="data">${acarsClientInfo.locale} <span class="ita">Time Zone: ${acarsClientInfo.timeZone}</span></td>
+</tr>
+<tr class="acarsClient" style="display:none;">
+ <td class="label">CPU Information</td>
+ <td colspan="${cspan + 1}"  class="data">${acarsClientInfo.CPU} <span class="sec small ita">(<fmt:int value="${acarsClientInfo.cores}" /> cores, <fmt:int value="${acarsClientInfo.threads}" /> threads)</span></td>
+</tr>
+<tr class="acarsClient" style="display:none;">
+ <td class="label">GPU Information</td>
+ <td colspan="${cspan + 1}"  class="data">${acarsClientInfo.GPU} <span class="small ita">(<fmt:int value="${acarsClientInfo.videoMemorySize}" /> KB, ${acarsClientInfo.width}x${acarsClientInfo.height}x${acarsClientInfo.colorDepth}, ${acarsClientInfo.screenCount} screens)</span></td>
+</tr>
+<tr class="acarsClient" style="display:none;">
+ <td class="label">GPU Driver</td>
+ <td colspan="${cspan + 1}"  class="data">${acarsClientInfo.GPUDriverVersion}</td>
+</tr>
+</c:if>
 <!-- Pilot Statistics -->
 <tr class="title">
  <td colspan="${cspan + 1}">PILOT STATISTICS</td>

@@ -33,7 +33,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to handle editing/saving Pilot Profiles.
  * @author Luke
- * @version 7.2
+ * @version 7.3
  * @since 1.0
  */
 
@@ -878,6 +878,12 @@ public class ProfileCommand extends AbstractFormCommand {
 			if (p.hasNetworkID(OnlineNetwork.VATSIM)) {
 				GetATOData atodao = new GetATOData();
 				ctx.setAttribute("vatsim_ratings", atodao.get(p.getNetworkID(OnlineNetwork.VATSIM)), REQUEST);
+			}
+			
+			// Load ACARS client data
+			if (ctx.isUserInRole("HR") || ctx.isUserInRole("Developer")) {
+				GetSystemInfo sysdao = new GetSystemInfo(con);
+				ctx.setAttribute("acarsClientInfo", sysdao.get(p.getID()), REQUEST);
 			}
 			
 			// Get the online totals
