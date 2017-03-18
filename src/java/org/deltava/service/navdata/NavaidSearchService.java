@@ -58,17 +58,18 @@ public class NavaidSearchService extends WebService {
 			if (includeAirports || (nd.getType() != Navaid.AIRPORT)) {
 				JSONObject wo = new JSONObject();
 				wo.put("code", nd.getCode());
-				wo.put("ll", GeoUtils.toJSON(nd));
+				wo.put("ll", JSONUtils.format(nd));
 				wo.put("color", nd.getIconColor());
 				wo.put("pal", nd.getPaletteCode());
 				wo.put("icon", nd.getIconCode());
 				wo.put("type", nd.getType().getName());
 				wo.put("info", nd.getInfoBox());
-				jo.accumulate("items", wo);
+				jo.append("items", wo);
 			}
 		}
 		
 		// Dump the XML to the output stream
+		JSONUtils.ensureArrayPresent(jo, "items");
 		try {
 			ctx.setContentType("application/json", "UTF-8");
 			ctx.setExpiry(3600);
