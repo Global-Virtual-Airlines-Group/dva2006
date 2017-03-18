@@ -65,7 +65,7 @@ public class OceanicPlotService extends WebService {
 
 		// Generate the JSON document
 		JSONObject jo = new JSONObject();
-		jo.put("date", StringUtils.format(tracks.getDate(), "MM/dd/yyyy"));
+		jo.put("date", StringUtils.format(tracks.getDate(), ctx.isAuthenticated() ? ctx.getUser().getDateFormat() : "MM/dd/yyyy"));
 
 		// Build the track data
 		for (OceanicTrack ow : tracks.getTracks()) {
@@ -73,18 +73,19 @@ public class OceanicPlotService extends WebService {
 			JSONObject to = new JSONObject();
 			to.put("code", ow.getTrack());
 			to.put("type", ow.isFixed() ? "C" : (isEast ? "E" : "W"));
-			to.put("color", ow.isFixed() ? "#2040E0" : (isEast ? "#EEEEEE" : "#EEEE44"));
+			to.put("color", ow.isFixed() ? "#2040e0" : (isEast ? "#eeeeee" : "#eeee44"));
 			to.put("track", ow.getRoute());
 			for (NavigationDataBean ndb : ow.getWaypoints()) {
 				JSONObject wo = new JSONObject();
 				wo.put("code", ndb.getCode());
-				wo.put("ll", GeoUtils.toJSON(ndb));
+				wo.put("ll", JSONUtils.format(ndb));
 				wo.put("color", ow.isFixed() ? MapEntry.BLUE : (isEast ? MapEntry.WHITE : MapEntry.ORANGE));
 				wo.put("info", ndb.getInfoBox());
-				to.accumulate("waypoints", wo);
+				to.append("waypoints", wo);
 			}
 
-			jo.accumulate("tracks", to);
+			JSONUtils.ensureArrayPresent(to, "waypoints");
+			jo.append("tracks", to);
 		}
 
 		// Dump the XML to the output stream
