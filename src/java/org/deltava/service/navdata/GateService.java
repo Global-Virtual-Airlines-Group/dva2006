@@ -1,4 +1,4 @@
-// Copyright 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.navdata;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to return preferred airport Gate data. 
  * @author Luke
- * @version 6.3
+ * @version 7.3
  * @since 6.3
  */
 
@@ -57,13 +57,13 @@ public class GateService extends WebService {
 		// Create the JSON
 		JSONObject jo = new JSONObject();
 		jo.put("icao", a.getICAO());
-		jo.put("position", GeoUtils.toJSON(a));
+		jo.put("ll", JSONUtils.format(a));
 		
 		// Write gates
 		for (Gate g : gates) {
 			JSONObject go = new JSONObject();
 			go.put("id", g.getName());
-			go.put("pos", GeoUtils.toJSON(g));
+			go.put("ll", JSONUtils.format(g));
 			go.put("isIntl", g.isInternational());
 			go.put("useCount", g.getUseCount());
 			go.put("info", g.getInfoBox());
@@ -76,8 +76,8 @@ public class GateService extends WebService {
 		
 		// Write the JSON document
 		try {
-			ctx.setContentType("text/javascript", "UTF-8");
-			ctx.setExpiry(90);
+			ctx.setContentType("application/json", "UTF-8");
+			ctx.setExpiry(60);
 			ctx.println(jo.toString());
 			ctx.commit();
 		} catch (Exception e) {
