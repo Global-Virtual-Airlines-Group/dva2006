@@ -140,8 +140,6 @@ var sc = document.createElement('script');
 sc.setAttribute('id', opts.id);
 sc.src = url;
 if (opts.async) sc.setAttribute('async', 'true');
-else if (opts.defer) sc.setAttribute('defer', 'true');
-
 var oldSC = document.getElementById(opts.id);
 if (oldSC != null)
 	oldSC.parentNode.replaceChild(sc, oldSC);
