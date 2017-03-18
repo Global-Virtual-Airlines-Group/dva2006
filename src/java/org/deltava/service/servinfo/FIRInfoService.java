@@ -78,7 +78,7 @@ public class FIRInfoService extends WebService {
 			fo.put("id", fir.getID());
 			fo.put("name", fir.getName());
 			fo.put("oceanic", fir.isOceanic());
-			fir.getBorder().forEach(loc -> fo.accumulate("border", GeoUtils.toJSON(loc)));
+			fir.getBorder().forEach(loc -> fo.append("border", JSONUtils.format(loc)));
 			jo.append("firs", fo);
 		}
 		

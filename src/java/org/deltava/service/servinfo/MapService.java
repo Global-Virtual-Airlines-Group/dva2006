@@ -75,7 +75,7 @@ public class MapService extends WebService {
 			JSONObject po = new JSONObject();
 			po.put("id", usr.getID());
 			po.put("callsign", usr.getCallsign());
-			po.put("ll", GeoUtils.toJSON(usr));
+			po.put("ll", JSONUtils.format(usr));
 			po.put("color", usr.getIconColor());
 			po.put("info", usr.getInfoBox());
 			jo.append("pilots", po);
@@ -93,7 +93,7 @@ public class MapService extends WebService {
 				ao.put("id", usr.getID());
 				ao.put("callsign", usr.getCallsign());
 				ao.put("type", String.valueOf(usr.getFacility()));
-				ao.put("ll", GeoUtils.toJSON(usr));
+				ao.put("ll", JSONUtils.format(usr));
 				ao.put("color", usr.getIconColor());	
 				ao.put("range", usr.getFacility().getRange());
 				ao.put("info", usr.getInfoBox());
@@ -102,6 +102,7 @@ public class MapService extends WebService {
 		}
 		
 		// Dump the JSON to the output stream
+		JSONUtils.ensureArrayPresent(jo, "pilots", "atc");
 		try {
 			ctx.setContentType("application/json", "UTF-8");
 			ctx.setExpiry(30);
