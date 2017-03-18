@@ -58,7 +58,7 @@ public class ServicedAirportService extends WebService {
 		// Write the entries
 		for (Airport a : airports) {
 			JSONObject ao = new JSONObject();
-			ao.put("ll", GeoUtils.toJSON(a));
+			ao.put("ll", JSONUtils.format(a));
 			ao.put("icao", a.getICAO());
 			ao.put("iata", a.getIATA());
 			ao.put("color", al.getColor());
@@ -73,7 +73,7 @@ public class ServicedAirportService extends WebService {
 				JSONObject alo = new JSONObject();
 				alo.put("name", aal.getName());
 				alo.put("code", aal.getCode());
-				ao.accumulate("airlines", alo);
+				ao.append("airlines", alo);
 				info.append(aal.getName());
 				if (ai.hasNext())
 					info.append("<br />");
@@ -81,13 +81,15 @@ public class ServicedAirportService extends WebService {
 			
 			// Build info box
 			info.append("</div>");
-			jo.put("Info", info.toString());
-			jo.accumulate("airports", ao);
+			ao.put("info", info.toString());
+			JSONUtils.ensureArrayPresent(ao, "airlines");
+			jo.append("airports", ao);
 		}
 		
 		// Dump the JSON to the output stream
 		try {
-			ctx.setContentType("application/json", "UTF-8");
+			ctx.setContentType("application/json", "utf-8");
+			ctx.setExpiry(900);
 			ctx.println(jo.toString());
 			ctx.commit();
 		} catch (IOException ie) {
