@@ -120,13 +120,13 @@ public class MapRouteService extends WebService {
 
 		// Generate the JSON document
 		JSONObject jo = new JSONObject();
-		trackInfo.forEach(loc -> jo.append("track", GeoUtils.toJSON(loc)));
+		trackInfo.forEach(loc -> jo.append("track", JSONUtils.format(loc)));
 		for (GeoLocation loc : p.getWaypoints()) {
-			jo.append("route", GeoUtils.toJSON(loc));
+			jo.append("route", JSONUtils.format(loc));
 			if (!(loc instanceof NavigationDataBean)) continue;
 			NavigationDataBean ndb = (NavigationDataBean) loc;
 			JSONObject lo = new JSONObject();
-			lo.put("ll", GeoUtils.toJSON(loc));
+			lo.put("ll", JSONUtils.format(loc));
 			lo.put("code", ndb.getCode());
 			lo.put("pal", ndb.getPaletteCode());
 			lo.put("icon", ndb.getIconCode());

@@ -16,7 +16,7 @@ import org.json.*;
 /**
  * A Web Service to display all FIR data as a Map layer.
  * @author Luke
- * @version 6.0
+ * @version 7.3
  * @since 6.0
  */
 
@@ -49,7 +49,7 @@ public class FIRLayerService extends WebService {
 			fo.put("name", f.toString());
 			fo.put("oceanic", f.isOceanic());
 			fo.put("aux", f.isAux());
-			f.getBorder().forEach(loc -> fo.accumulate("border", GeoUtils.toJSON(loc)));
+			f.getBorder().forEach(loc -> fo.append("border", JSONUtils.format(loc)));
 			ja.put(fo);
 		}
 		 
