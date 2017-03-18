@@ -65,7 +65,7 @@ public class MyRouteMapService extends WebService {
 		// Add airports
 		for (Airport a : airports) {
 			JSONObject ao = new JSONObject();
-			ao.put("ll", GeoUtils.toJSON(a));
+			ao.put("ll", JSONUtils.format(a));
 			ao.put("icao", a.getICAO());
 			ao.put("code", (ac == Airport.Code.ICAO) ? a.getICAO() : a.getIATA());
 			ao.put("name", a.getName());
@@ -76,16 +76,17 @@ public class MyRouteMapService extends WebService {
 		// Add route data
 		for (RouteStats r : routes) {
 			JSONObject ro = new JSONObject();
-			ro.put("ll", GeoUtils.toJSON(r));
+			ro.put("ll", JSONUtils.format(r));
 			ro.put("desc", r.getInfoBox());
 			ro.put("ratio", Math.max(1, r.getFlights() * 100 / max));
 			ro.put("src", r.getAirportD().getICAO());
 			ro.put("dst", r.getAirportA().getICAO());
-			r.getPoints().forEach(loc -> ro.append("points", GeoUtils.toJSON(loc)));
+			r.getPoints().forEach(loc -> ro.append("points", JSONUtils.format(loc)));
 			jo.append("routes", ro);
 		}
 			
 		// Dump the JSON to the output stream
+		JSONUtils.ensureArrayPresent(jo, "airports", "routes");
 		try {
 			ctx.setContentType("application/json", "UTF-8");
 			ctx.setExpiry(1800);
