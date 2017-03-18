@@ -197,7 +197,7 @@ return true;
 </tr>
 <tr class="acarsClient" style="display:none;">
  <td class="label">Operating System</td>
- <td colspan="${cspan + 1}" class="data">${acarsClientInfo.OSVersion} (<fmt:int value="${acarsClientInfo.memorySize}" />KB memory) <span class="ita">as of <fmt:date fmt="d" date="${acarsClientInfo.date}" /></span></td>
+ <td colspan="${cspan + 1}" class="data"><span class="pri bld"><fmt:windows version="${acarsClientInfo.OSVersion}" /></span> (<fmt:int value="${acarsClientInfo.memorySize}" />KB memory) <span class="ita">as of <fmt:date fmt="d" date="${acarsClientInfo.date}" /></span></td>
 </tr>
 <tr class="acarsClient" style="display:none;">
  <td class="label">.NET Runtime</td>

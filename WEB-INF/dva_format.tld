@@ -474,4 +474,16 @@
 			<type>java.lang.Throwable</type>
 		</attribute>
 	</tag>
+
+	<tag>
+	   <description>WindowsVersion tag, used to format Microsoft Windows version strings</description>
+	   <name>windows</name>
+	   <tag-class>org.deltava.taglib.format.WindowsVersionTag</tag-class>
+	   <body-content>empty</body-content>
+	   <attribute>
+	       <name>version</name>
+	       <required>true</required>
+	       <rtexprvalue>true</rtexprvalue>
+	   </attribute>
+	</tag>
 </taglib>
