@@ -95,11 +95,9 @@ if (txtbox.length == 1) {
 // Create the AJAX request
 var xmlreq = new XMLHttpRequest();
 xmlreq.open('POST', 'answer.ws?id=' + id + '&q=' + qNum + '&date=' + golgotha.util.getTimestamp(100));
-xmlreq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+xmlreq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=utf-8');
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
-	var time = parseInt(xmlreq.responseText);
-	if (!isNaN(time)) secondsLeft = time;
 	if (txtbox.length == 1) {
 		txtbox[0].style.border = txtbox[0].oldBorder;
 		delete txtbox[0].oldBorder;
@@ -128,7 +126,7 @@ golgotha.exam.updateMap = function(rpq)
 {
 var xmlreq = new XMLHttpRequest();
 xmlreq.open('POST', 'examplot.ws?id=' + rpq.examID + '&q=' + rpq.idx + '&date=' + golgotha.util.getTimestamp(100), true);
-xmlreq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+xmlreq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=utf-8');
 var txtbox = golgotha.exam.getElementsById('A' + rpq.idx);
 if (!txtbox) return false;
 if (txtbox.length == 1) {
@@ -144,26 +142,18 @@ xmlreq.onreadystatechange = function() {
 	// Draw the markers and load the codes
 	var positions = [];
 	var codes = [];
-	var xdoc = xmlreq.responseXML.documentElement;
-	var waypoints = xdoc.getElementsByTagName('pos');
-	for (var i = 0; i < waypoints.length; i++) {
-		var wp = waypoints[i];
-		var label = wp.firstChild;
-		var p = {lat:parseFloat(wp.getAttribute('lat')), lng:parseFloat(wp.getAttribute('lng'))};
-		positions.push(p);
-		codes.push(wp.getAttribute('code'));
-		var mrk = null;
-		if (wp.getAttribute('pal'))
-			mrk = new golgotha.maps.IconMarker({pal:wp.getAttribute('pal'), icon:wp.getAttribute('icon'), info:label.data}, p);
+	var js = JSON.parse(xmlreq.responseText);
+	js.positions.forEach(function(wp) {
+		positions.push(wp.ll);
+		codes.push(wp.code);
+		if (wp.pal)
+			var mrk = new golgotha.maps.IconMarker({map:rpq.map, pal:wp.pal, icon:wp.icon, info:wp.info}, wp.ll);
 		else
-			mrk = new golgotha.maps.Marker({color:wp.getAttribute('color'), info:label.data}, p);
-
-		mrk.setMap(rpq.map);
-	}
-
+			var mrk = new golgotha.maps.Marker({map:rpq.map, color:wp.color, info:wp.info}, wp.ll);
+	});
+	
 	// Draw the route
-	var rt = new google.maps.Polyline({path:positions, strokeColor:'#4080af', strokeWeight:1.65, strokeOpacity:0.8, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
-	rt.setMap(rpq.map);
+	var rt = new google.maps.Polyline({map:rpq.map, path:positions, strokeColor:'#4080af', strokeWeight:1.65, strokeOpacity:0.8, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
 
 	// Save the codes
 	if (txtbox.length == 1) {
