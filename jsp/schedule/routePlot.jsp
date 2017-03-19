@@ -136,14 +136,12 @@ golgotha.local.validate = function(f) {
  <td class="data"><el:textbox name="comments" idx="*" width="80%" height="2" readOnly="true" /></td>
 </tr>
 <tr class="title caps">
- <td colspan="2" class="left">PLOTTED ROUTE<span id="rtDistance"></span></td>
+ <td colspan="2" class="left">PLOTTED ROUTE<span id="rtDistance"></span><span id="rtETOPS"></span></td>
 </tr>
 <tr id="gateLegendRow" style="display:none;">
  <td class="label">Gate Legend</td>
- <td class="data"><span class="small"><img src="${proto}://maps.google.com/mapfiles/kml/pal2/icon56.png" alt="Our Gate"  width="16" height="16" />Domestic Gates
- | <img src="${proto}://maps.google.com/mapfiles/kml/pal2/icon48.png" alt="International Gate"  width="16" height="16" />International Gates
- | <img src="${proto}://maps.google.com/mapfiles/kml/pal3/icon52.png" alt="Frequently Used Gate"  width="16" height="16" /> Frequently Used Gates
- | <img src="${proto}://maps.google.com/mapfiles/kml/pal3/icon60.png" alt="Other Gate"  width="16" height="16" /> Other Gates</span></td>
+ <td class="data"><span class="small"><img src="${proto}://maps.google.com/mapfiles/kml/pal2/icon56.png" alt="Our Gate"  width="16" height="16" />Domestic Gates | <img src="${proto}://maps.google.com/mapfiles/kml/pal2/icon48.png" alt="International Gate"  width="16" height="16" />International Gates
+ | <img src="${proto}://maps.google.com/mapfiles/kml/pal3/icon52.png" alt="Frequently Used Gate"  width="16" height="16" /> Frequently Used Gates | <img src="${proto}://maps.google.com/mapfiles/kml/pal3/icon60.png" alt="Other Gate"  width="16" height="16" /> Other Gates</span></td>
 </tr>
 <tr>
  <td colspan="2" class="data"><map:div ID="googleMap" height="580" /><div id="copyright" class="small mapTextLabel"></div>
@@ -170,9 +168,7 @@ golgotha.local.validate = function(f) {
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="UpdateButton" onClick="void plotMap()" label="UPDATE ROUTE MAP" />
- <el:button ID="SaveButton" type="submit" label="DOWNLOAD FLIGHT PLAN" />
-</td>
+ <td><el:button ID="UpdateButton" onClick="void plotMap()" label="UPDATE ROUTE MAP" /> <el:button ID="SaveButton" type="submit" label="DOWNLOAD FLIGHT PLAN" /></td>
 </tr>
 </el:table>
 </el:form>
@@ -182,7 +178,7 @@ golgotha.local.validate = function(f) {
 </content:page>
 <fmt:aptype var="useICAO" />
 <content:sysdata var="wuAPI" name="security.key.wunderground" />
-<script id="mapInit">
+<script id="mapInit" async>
 var f = document.forms[0];
 golgotha.util.disable(f.routes);
 golgotha.util.disable('SearchButton');
