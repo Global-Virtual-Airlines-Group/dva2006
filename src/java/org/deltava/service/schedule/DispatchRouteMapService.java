@@ -1,4 +1,4 @@
-// Copyright 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2012, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -6,19 +6,19 @@ import static javax.servlet.http.HttpServletResponse.*;
 import java.util.*;
 import java.io.IOException;
 
-import org.jdom2.*;
+import org.json.*;
 
 import org.deltava.beans.acars.DispatchRoute;
 import org.deltava.beans.navdata.NavigationDataBean;
 
 import org.deltava.dao.*;
 import org.deltava.service.*;
-import org.deltava.util.*;
+import org.deltava.util.StringUtils;
 
 /**
  * A Web Service to display Dispatch flight routes with SID/STAR/Airway data.
  * @author Luke
- * @version 4.2
+ * @version 7.3
  * @since 2.2
  */
 
@@ -46,14 +46,13 @@ public class DispatchRouteMapService extends MapPlotService {
 		
 		// Convert points to an XML document
 		List<NavigationDataBean> points = new ArrayList<NavigationDataBean>(rt.getWaypoints());
-		Document doc = formatPoints(points, true);
-		Element re = doc.getRootElement();
-		re.setAttribute("id", String.valueOf(rt.getID()));
+		JSONObject jo = formatPoints(points, true);
+		jo.put("id", rt.getID());
 
 		// Dump the XML to the output stream
 		try {
-			ctx.setContentType("text/xml", "UTF-8");
-			ctx.println(XMLUtils.format(doc, "UTF-8"));
+			ctx.setContentType("application/json", "utf-8");
+			ctx.println(jo.toString());
 			ctx.commit();
 		} catch (IOException ie) {
 			throw error(SC_CONFLICT, "I/O Error", false);
