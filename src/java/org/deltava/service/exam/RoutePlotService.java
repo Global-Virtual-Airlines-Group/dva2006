@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.exam;
 
 import java.util.*;
@@ -7,7 +7,7 @@ import java.io.IOException;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
-import org.jdom2.*;
+import org.json.*;
 
 import org.apache.log4j.Logger;
 
@@ -17,12 +17,12 @@ import org.deltava.beans.testing.*;
 import org.deltava.dao.*;
 import org.deltava.security.command.*;
 import org.deltava.service.*;
-import org.deltava.util.*;
+import org.deltava.util.StringUtils;
 
 /**
  * A Web Service to plot maps for route plotting Examination questions. 
  * @author Luke
- * @version 7.0
+ * @version 7.3
  * @since 2.3
  */
 
@@ -137,17 +137,16 @@ public class RoutePlotService extends MapPlotService {
 			
 		// Convert points to an XML document
 		List<NavigationDataBean> points = new ArrayList<NavigationDataBean>(routePoints);
-		Document doc = formatPoints(points, true);
-		Element re = doc.getRootElement();
+		JSONObject jo = formatPoints(points, true);
 		
 		// Return the number of seconds left
 		long timeRemaining = (ex.getExpiryDate().toEpochMilli() - System.currentTimeMillis()) / 1000;
-		re.setAttribute("timeLeft", String.valueOf(timeRemaining));
+		jo.put("timeLeft", timeRemaining);
 		
 		// Dump the XML to the output stream
 		try {
-			ctx.setContentType("text/xml", "UTF-8");
-			ctx.println(XMLUtils.format(doc, "UTF-8"));
+			ctx.setContentType("application/json", "UTF-8");
+			ctx.println(jo.toString());
 			ctx.commit();
 		} catch (IOException ie) {
 			throw error(SC_CONFLICT, "I/O Error", false);

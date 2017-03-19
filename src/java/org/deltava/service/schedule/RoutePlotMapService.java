@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.util.*;
@@ -8,7 +8,7 @@ import java.sql.Connection;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
-import org.jdom2.*;
+import org.json.*;
 
 import org.deltava.beans.Simulator;
 import org.deltava.beans.acars.DispatchRoute;
@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display plotted flight routes with SID/STAR/Airway data.
  * @author Luke
- * @version 7.2
+ * @version 7.3
  * @since 1.0
  */
 
@@ -42,9 +42,17 @@ public class RoutePlotMapService extends MapPlotService {
 	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 		
+		// Parse the data
+		JSONObject req = null;
+		try {
+			req = new JSONObject(new JSONTokener(ctx.getRequest().getInputStream()));
+		} catch (Exception e) {
+			throw error(SC_BAD_REQUEST, e.getMessage());
+		}
+		
 		// Check if we download runways
-		boolean doRunways = Boolean.valueOf(ctx.getParameter("runways")).booleanValue();
-		Simulator sim = Simulator.fromName(ctx.getParameter("simVersion"), Simulator.FSX);
+		boolean doRunways = req.optBoolean("runways");
+		Simulator sim = Simulator.fromName(req.optString("simVersion"), Simulator.FSX);
 
 		List<TerminalRoute> tRoutes = new ArrayList<TerminalRoute>();
 		Collection<Runway> runways = new LinkedHashSet<Runway>();
@@ -55,10 +63,10 @@ public class RoutePlotMapService extends MapPlotService {
 		
 		// Get the departure/arrival airports
 		DispatchRoute dr = new DispatchRoute();
-		dr.setAirline(SystemData.getAirline(ctx.getParameter("airline")));
-		dr.setAirportD(SystemData.getAirport(ctx.getParameter("airportD")));
-		dr.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
-		dr.setAirportL(SystemData.getAirport(ctx.getParameter("airportL")));
+		dr.setAirline(SystemData.getAirline(req.optString("airline")));
+		dr.setAirportD(SystemData.getAirport(req.optString("airportD")));
+		dr.setAirportA(SystemData.getAirport(req.optString("airportA")));
+		dr.setAirportL(SystemData.getAirport(req.optString("airportL")));
 		boolean isIntl = (dr.getAirportD() != null) && (dr.getAirportA() != null) && (!dr.getAirportD().getCountry().equals(dr.getAirportA().getCountry()));
 
 		Aircraft a = null;
@@ -69,10 +77,10 @@ public class RoutePlotMapService extends MapPlotService {
 			GetGates gdao = new GetGates(con);
 			GetWeather wxdao = new GetWeather(con);
 			
-			String route = ctx.getParameter("route");
+			String route = req.optString("route", "");
 			
 			// Load Aircraft
-			a = acdao.get(ctx.getParameter("eqType"));
+			a = acdao.get(req.optString("eqType"));
 			
 			// Get the weather
 			METAR wxD = wxdao.getMETAR(dr.getAirportD());
@@ -105,7 +113,7 @@ public class RoutePlotMapService extends MapPlotService {
 				if (dGates.size() < 3)
 					gates.addAll(gdao.getGates(dr.getAirportD(), sim));
 				
-				String rwy = ctx.getParameter("runway");
+				String rwy = req.optString("runway", "");
 				if (rwy.indexOf(' ') > 0)
 					rwy = rwy.substring(rwy.indexOf(' ') + 1);
 				
@@ -117,7 +125,7 @@ public class RoutePlotMapService extends MapPlotService {
 				tRoutes.addAll(sids);
 				
 				// Get the departure gate
-				Gate gateD = gdao.getGate(dr.getAirportD(), sim, ctx.getParameter("gateD"));
+				Gate gateD = gdao.getGate(dr.getAirportD(), sim, req.optString("gateD"));
 				if (gateD != null)
 					routePoints.add(gateD);
 				else
@@ -145,7 +153,7 @@ public class RoutePlotMapService extends MapPlotService {
 
 			// Check if we have a SID
 			List<String> wps = StringUtils.split(route, " ");
-			TerminalRoute sid = dao.getRoute(dr.getAirportD(), TerminalRoute.Type.SID, ctx.getParameter("sid"));
+			TerminalRoute sid = dao.getRoute(dr.getAirportD(), TerminalRoute.Type.SID, req.optString("sid"));
 			if (sid != null) {
 				Runway r = dao.getRunway(dr.getAirportD(), sid.getRunway(), sim);
 				if (r != null)
@@ -155,7 +163,7 @@ public class RoutePlotMapService extends MapPlotService {
 				else
 					routePoints.addAll(sid.getWaypoints());
 			} else if (dr.getAirportD() != null) {
-				Runway r = dao.getRunway(dr.getAirportD(), ctx.getParameter("runway"), sim);
+				Runway r = dao.getRunway(dr.getAirportD(), req.optString("runway"), sim);
 				if (r != null)
 					routePoints.add(r);
 			}
@@ -167,7 +175,7 @@ public class RoutePlotMapService extends MapPlotService {
 			}
 
 			// Check if we have a STAR
-			TerminalRoute star = dao.getRoute(dr.getAirportA(), TerminalRoute.Type.STAR, ctx.getParameter("star"));
+			TerminalRoute star = dao.getRoute(dr.getAirportA(), TerminalRoute.Type.STAR, req.optString("star"));
 			if (star != null) {
 				if (!CollectionUtils.isEmpty(wps))
 					routePoints.addAll(star.getWaypoints(wps.get(wps.size() - 1)));
@@ -235,81 +243,81 @@ public class RoutePlotMapService extends MapPlotService {
 		dr.addWaypoints(points);
 		ETOPSResult er = ETOPSHelper.classify(dr);
 
-		// Convert points to an XML document
-		Document doc = formatPoints(points, true);
-		Element re = doc.getRootElement();
-		re.setAttribute("intl", String.valueOf(isIntl));
+		// Convert points to a JSON object
+		JSONObject jo = formatPoints(points, true);
+		jo.put("intl", isIntl);
 		if (dr.getAirline() != null) {
-			Element ae = new Element("airline");
-			ae.setAttribute("name", dr.getAirline().getName());
-			ae.setAttribute("code", dr.getAirline().getCode());
-			re.addContent(ae);
+			JSONObject alo = new JSONObject();
+			alo.put("name", dr.getAirline().getName());
+			alo.put("code", dr.getAirline().getCode());
+			jo.put("airline", alo);
 		}
 		
-		if (dr.getAirportD() != null) {
-			Element ade = new Element("airportD");
-			ade.setAttribute("lat", StringUtils.format(dr.getAirportD().getLatitude(), "#0.00000"));
-			ade.setAttribute("lng", StringUtils.format(dr.getAirportD().getLongitude(), "##0.00000"));
-			re.addContent(ade);
-		}
+		if (dr.getAirportD() != null)
+			jo.put("airportD", JSONUtils.format(dr.getAirportD()));
+		if (dr.getAirportA() != null)
+			jo.put("airportA", JSONUtils.format(dr.getAirportA()));
 		
 		// Add ETOPS rating
-		Element ee = new Element("etops");
-		re.addContent(ee);
-		ee.setAttribute("rating", er.getResult().toString());
+		JSONObject eo = new JSONObject();
+		jo.put("etops", eo);
+		eo.put("rating", er.getResult().toString());
 		if (ETOPSHelper.validate(a, er.getResult())) {
 			ETOPS erng = (a != null) && (a.getEngines() == 3) ? ETOPS.ETOPS120 : ETOPS.ETOPS90;
-			ee.setAttribute("range", String.valueOf(erng.getRange()));
-			ee.setAttribute("warning", "true");
+			eo.put("range", erng.getRange());
+			eo.put("warning", true);
+			eo.put("aircraftRating", erng.toString());
 			for (NavigationDataBean ap : er.getClosestAirports()) {
-				Element eae = XMLUtils.createElement("airport", ap.getInfoBox(), true);
-				eae.setAttribute("lat", StringUtils.format(ap.getLatitude(), "##0.00000"));
-				eae.setAttribute("lng", StringUtils.format(ap.getLongitude(), "##0.00000"));
-				eae.setAttribute("pal", String.valueOf(ap.getPaletteCode()));
-				eae.setAttribute("icon", String.valueOf(ap.getIconCode()));
-				ee.addContent(eae);
+				JSONObject apo = new JSONObject();
+				apo.put("ll", JSONUtils.format(ap));
+				apo.put("pal", ap.getPaletteCode());
+				apo.put("icon", ap.getIconCode());
+				apo.put("color", ap.getIconColor());
+				apo.put("info", ap.getInfoBox());
+				eo.append("airports", apo);
 			}
 			
 			NavigationDataBean wp = (NavigationDataBean) er.getWarningPoint();
-			Element eae = XMLUtils.createElement("warnPoint", wp.getInfoBox(), true);
-			eae.setAttribute("lat", StringUtils.format(wp.getLatitude(), "##0.00000"));
-			eae.setAttribute("lng", StringUtils.format(wp.getLongitude(), "##0.00000"));
-			eae.setAttribute("pal", String.valueOf(wp.getPaletteCode()));
-			eae.setAttribute("icon", String.valueOf(wp.getIconCode()));
-			ee.addContent(eae);
-		}
+			JSONObject wo = new JSONObject();
+			wo.put("ll", JSONUtils.format(wp));
+			wo.put("pal", wp.getPaletteCode());
+			wo.put("icon", wp.getIconCode());
+			wo.put("info", wp.getInfoBox());
+			eo.put("warnPoint", wo);
+			JSONUtils.ensureArrayPresent(eo, "airports");
+		} else
+			eo.put("warning", false);
 		
 		// Add gates to XML document
 		for (Gate g : gates) {
 			boolean isDeparture = (dr.getAirportD() != null) && (g.getCode().equals(dr.getAirportD().getICAO()));
-			Element e = XMLUtils.createElement(isDeparture ? "gateD" : "gateA", g.getInfoBox(), true) ;
-			e.setAttribute("name", g.getName());
-			e.setAttribute("lat", StringUtils.format(g.getLatitude(), "##0.00000"));
-			e.setAttribute("lng", StringUtils.format(g.getLongitude(), "##0.00000"));
-			e.setAttribute("pal", String.valueOf(g.getPaletteCode()));
-			e.setAttribute("icon", String.valueOf(g.getIconCode()));
-			Collection<String> alCodes = g.getAirlines().stream().map(Airline::getCode).collect(Collectors.toSet());
-			e.setAttribute("airlines", StringUtils.listConcat(alCodes, ","));
-			e.setAttribute("isIntl", String.valueOf(g.isInternational()));
-			e.setAttribute("useCount", String.valueOf(g.getUseCount()));
-			re.addContent(e);
+			JSONObject go = new JSONObject();
+			go.put("name", g.getName());
+			go.put("ll", JSONUtils.format(g));
+			go.put("pal", g.getPaletteCode());
+			go.put("icon", g.getIconCode());
+			go.put("airlines", g.getAirlines().stream().map(Airline::getCode).collect(Collectors.toSet()));
+			go.put("isIntl", g.isInternational());
+			go.put("useCount", g.getUseCount());
+			jo.put("info", g.getInfoBox());
+			jo.append(isDeparture ? "departureGates" : "arrivalGates", go);
 		}
 		
 		// Add SID/STAR names to XML document
 		for (TerminalRoute tr : tRoutes) {
-			Element e = new Element(tr.getType().name().toLowerCase());
-			e.setAttribute("name", tr.getName());
-			e.setAttribute("transition", tr.getTransition());
-			e.setAttribute("label", tr.getCode());
-			e.setAttribute("code", tr.toString().endsWith(".ALL") ? tr.getCode() + ".ALL" : tr.getCode());
-			re.addContent(e);
+			JSONObject tro = new JSONObject();
+			tro.put("name", tr.getName());
+			tro.put("transition", tr.getTransition());
+			tro.put("label", tr.getCode());
+			tro.put("code", tr.toString().endsWith(".ALL") ? tr.getCode() + ".ALL" : tr.getCode());
+			jo.append(tr.getType().name().toLowerCase(), tro);
 		}
 		
 		// Add runways
 		for (Runway r : runways) {
 			if  ((a != null) && (a.getTakeoffRunwayLength() > r.getLength())) continue;
-			Element e = new Element("runway");
-			e.setAttribute("code", r.getComboAlias());
+			JSONObject ro = new JSONObject();
+			ro.put("code", r.getComboAlias());
 			
 			// Build the label
 			StringBuilder buf = new StringBuilder("Runway ");
@@ -319,33 +327,38 @@ public class RoutePlotMapService extends MapPlotService {
 			buf.append(" feet - ");
 			buf.append(r.getHeading());
 			buf.append(" degrees)");
-			e.setAttribute("label", buf.toString());
-			re.addContent(e);
+			ro.put("label", buf.toString());
+			jo.append("runways", ro);
 		}
 		
 		// Add weather
 		for (WeatherDataBean wx : wxs) {
-			Element e = XMLUtils.createElement("wx", wx.getData(), true);
-			e.setAttribute("type", wx.getType().name().toLowerCase());
-			e.setAttribute("icao", wx.getCode());
-			if (dr.getAirportD() != null)
-				e.setAttribute("dst", String.valueOf(!wx.getCode().equals(dr.getAirportD().getICAO())));
-			re.addContent(e);
+			JSONObject wo = new JSONObject();
+			wo.put("type", wx.getType().name().toLowerCase());
+			wo.put("icao", wx.getCode());
+			wo.put("info", wx.getData());
+			wo.put("date", wx.getDate().toEpochMilli());
+			wo.put("dst", (dr.getAirportD() == null) || !wx.getCode().equals(dr.getAirportD().getICAO()));
+			jo.append("wx", wo);
 		}
 		
 		// Add alternates
+		jo.put("alternates", new JSONArray()); // ensure present
 		for (Airport alt : alternates) {
-			Element e = new Element("alt");
-			e.setAttribute("iata", alt.getIATA());
-			e.setAttribute("icao", alt.getICAO());
-			e.setAttribute("name", alt.getName());
-			re.addContent(e);
+			JSONObject ao = new JSONObject();
+			ao.put("iata", alt.getIATA());
+			ao.put("icao", alt.getICAO());
+			ao.put("name", alt.getName());
+			jo.append("alternates", ao);
 		}
+		
+		// Ensure arrays are populated
+		JSONUtils.ensureArrayPresent(jo, "departureGates", "arrivalGates", "runways", "sid", "star", "wx", "alternates");
 		
 		// Dump the XML to the output stream
 		try {
-			ctx.setContentType("text/xml", "UTF-8");
-			ctx.println(XMLUtils.format(doc, "UTF-8"));
+			ctx.setContentType("application/json", "utf-8");
+			ctx.println(jo.toString(1));
 			ctx.commit();
 		} catch (IOException ie) {
 			throw error(SC_INTERNAL_SERVER_ERROR, "I/O Error", false);
