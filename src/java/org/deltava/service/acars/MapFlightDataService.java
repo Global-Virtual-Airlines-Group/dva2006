@@ -59,7 +59,7 @@ public class MapFlightDataService extends WebService {
 		jo.put("id", id);
 		for (GeoLocation entry : routePoints) {
 			JSONObject eo = new JSONObject(); 
-			eo.put("ll", GeoUtils.toJSON(entry));
+			eo.put("ll", JSONUtils.format(entry));
 			
 			if (entry instanceof MarkerMapEntry) {
 				MarkerMapEntry me = (MarkerMapEntry) entry;
@@ -80,7 +80,7 @@ public class MapFlightDataService extends WebService {
 					ao.put("id", ctr.getCallsign());
 					ao.put("type", String.valueOf(ctr.getFacility()));
 					if ((ctr.getFacility() != Facility.CTR) && (ctr.getFacility() != Facility.FSS)) {
-						ao.put("ll", GeoUtils.toJSON(ctr));
+						ao.put("ll", JSONUtils.format(ctr));
 						ao.put("range", ctr.getFacility().getRange());
 					}
 					
@@ -92,6 +92,7 @@ public class MapFlightDataService extends WebService {
 		}
 		
 		// Dump the JSON to the output stream
+		JSONUtils.ensureArrayPresent(jo, "positions");
 		try {
 			ctx.setContentType("application/json", "UTF-8");
 			ctx.setExpiry(3600);
