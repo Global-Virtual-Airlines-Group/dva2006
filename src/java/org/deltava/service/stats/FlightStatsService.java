@@ -15,13 +15,12 @@ import org.deltava.beans.flight.*;
 
 import org.deltava.dao.*;
 import org.deltava.service.*;
-
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 
 /**
  * A Web Service to display flight data in JSON format. 
  * @author Luke
- * @version 7.2
+ * @version 7.3
  * @since 5.0
  */
 
@@ -102,6 +101,7 @@ public class FlightStatsService extends WebService {
 		maxSpeed = (maxSpeed + 100 - (maxSpeed % 100));
 		jo.put("maxAlt", maxAlt);
 		jo.put("maxSpeed", maxSpeed);
+		JSONUtils.ensureArrayPresent(jo, "data");
 		
 		// Dump to the output stream
 		try {
