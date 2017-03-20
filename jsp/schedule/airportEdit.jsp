@@ -19,7 +19,7 @@
 <c:if test="${googleMap}">
 <map:api version="3" /></c:if>
 <content:googleAnalytics eventSupport="true" />
-<script type="text/javascript">
+<script>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -75,11 +75,9 @@ golgotha.onDOMReady(function() {
 <tr>
  <td class="data small">The airport name should be in the following formats:<br />
 Airports inside the United States or Canada, use &lt;City Name&gt; &lt;State Abbreviation&gt;. <span class="ita">(Chattanooga TN)</span><br /> 
-Airports inside the United States or Canada with multiple airports, use &lt;City Name&gt;-&lt;Airport Name&gt; &lt;State Abbreviation&gt;. 
- <span class="ita">(New York-Kennedy NY)</span><br />
+Airports inside the United States or Canada with multiple airports, use &lt;City Name&gt;-&lt;Airport Name&gt; &lt;State Abbreviation&gt;. <span class="ita">(New York-Kennedy NY)</span><br />
 Airports outside the United States or Canada, use &lt;City Name&gt; &lt;Country&gt;. <span class="ita">(Trondheim Norway)</span><br />
-Airports outside the United States or Canada with multiple airports, use &lt;City Name&gt;-&lt;Airport Name&gt; &lt;Country&gt;.
- <span class="ita">(Paris-Charles De Gaulle France)</span></td>
+Airports outside the United States or Canada with multiple airports, use &lt;City Name&gt;-&lt;Airport Name&gt; &lt;Country&gt;. <span class="ita">(Paris-Charles De Gaulle France)</span></td>
 </tr>
 <tr>
  <td class="label">Country</td>
@@ -127,7 +125,7 @@ Airports outside the United States or Canada with multiple airports, use &lt;Cit
 </tr>
 <tr>
  <td class="label top">Airlines</td>
- <td class="data"><el:check name="airline" idx="*" width="195" className="small" cols="4" options="${airlines}" newLine="true" checked="${airport.airlineCodes}" /></td>
+ <td class="data"><el:check name="airline" idx="*" width="205" className="small" cols="4" options="${airlines}" newLine="true" checked="${airport.airlineCodes}" /></td>
 </tr>
 <tr>
  <td class="label top">Prior Airport</td>
@@ -186,7 +184,7 @@ Airports outside the United States or Canada with multiple airports, use &lt;Cit
 </content:region>
 </content:page>
 <c:if test="${googleMap}">
-<script id="mapInit">
+<script id="mapInit" async>
 <map:point var="golgotha.local.mapC" point="${airport}" />
 <map:marker var="apMarker" point="${airport}" color="green" />
 
