@@ -1,8 +1,8 @@
-// Copyright 2005, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
-import java.sql.Connection;
+import java.util.stream.Collectors;
 
 import org.deltava.beans.ComboAlias;
 import org.deltava.beans.schedule.*;
@@ -10,18 +10,21 @@ import org.deltava.beans.schedule.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
+import org.deltava.comparators.AirportComparator;
+
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to display Airports.
  * @author Luke
- * @version 7.0
+ * @version 7.3
  * @since 1.0
  */
 
 public class AirportListCommand extends AbstractViewCommand {
 	
+	private static final String NO_GATE = "$NOGATE";
 	private static final String[] SORT_TYPES = {"IATA", "ICAO", "NAME"};
 	private static final List<ComboAlias> SORT_OPTIONS = ComboUtils.fromArray(new String[] {"IATA Code", "ICAO Code", "Airport Name"}, SORT_TYPES);
 
@@ -32,49 +35,52 @@ public class AirportListCommand extends AbstractViewCommand {
      */
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
-
-		// Get the start/end/count
+		
+		// Get the sort type
 		ViewContext<Airport> vc = initView(ctx, Airport.class);
+		int sortOfs = StringUtils.arrayIndexOf(SORT_TYPES, vc.getSortType(), 0);
+		vc.setSortType(SORT_TYPES[sortOfs]);
+
+		// Get the airline
 		String aCode = ctx.getParameter("airline");
 		Airline a = SystemData.getAirline(aCode);
-		if ((a == null) && !StringUtils.isEmpty(aCode)) {
+		if (NO_GATE.equals(aCode)) {
+			List<Airport> airports = new HashSet<Airport>(SystemData.getAirports().values()).stream().filter(ap -> !ap.getGateData() && !ap.getAirlineCodes().isEmpty()).collect(Collectors.toList());
+			AirportComparator cmp = new AirportComparator(sortOfs);
+			airports.sort(cmp);
+			vc.setResults(airports.subList(vc.getStart(), vc.getStart() + vc.getCount()));
+			ctx.setAttribute("airline", NO_GATE, REQUEST);
+		} else if ((a == null) && !StringUtils.isEmpty(aCode)) {
 		   a = SystemData.getAirline(SystemData.get("airline.code"));
 		   
 		   // THIS IS A HACK FOR AFV SINCE AIRLINE.CODE DOESN'T MATCH THE SCHEDULE DB
 		   if (a == null)
 		      a = SystemData.getAirline("AF");
+		   
+		   ctx.setAttribute("airline", a, REQUEST);
 		}
 		
-		// Get the sort type
-		if (StringUtils.arrayIndexOf(SORT_TYPES, vc.getSortType()) == -1)
-			vc.setSortType(SORT_TYPES[0]);
-		
-		try {
-			Connection con = ctx.getConnection();
-			
-			// Get the DAO and the airports
-			GetAirport dao = new GetAirport(con);
-			dao.setQueryMax(vc.getCount());
-			dao.setQueryStart(vc.getStart());
-			
-			// Save the results
-			vc.setResults(dao.getByAirline(a, vc.getSortType()));
-			
-			// Get all airlines
-			Collection<ComboAlias> airlines = new ArrayList<ComboAlias>();
-			airlines.add(ComboUtils.fromString("No Airline", ""));
-			airlines.addAll(SystemData.getAirlines().values());
-			ctx.setAttribute("airlines", airlines, REQUEST);
-		} catch (DAOException de) {
-			throw new CommandException(de);
-		} finally {
-			ctx.release();
-		}
-		
-		// Save the airline / sort options
-		ctx.setAttribute("airline", a, REQUEST);
+		// Get all airlines
+		Collection<ComboAlias> airlines = new ArrayList<ComboAlias>();
+		airlines.add(ComboUtils.fromString("No Airline", ""));
+		airlines.add(ComboUtils.fromString("No Gate Data", NO_GATE));
+		airlines.addAll(SystemData.getAirlines().values());
+		ctx.setAttribute("airlines", airlines, REQUEST);
 		ctx.setAttribute("sortOptions", SORT_OPTIONS, REQUEST);
 
+		if (!NO_GATE.equals(aCode)) {
+			try {
+				GetAirport dao = new GetAirport(ctx.getConnection());
+				dao.setQueryMax(vc.getCount());
+				dao.setQueryStart(vc.getStart());
+				vc.setResults(dao.getByAirline(a, vc.getSortType()));
+			} catch (DAOException de) {
+				throw new CommandException(de);
+			} finally {
+				ctx.release();
+			}
+		}
+		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
 		result.setURL("/jsp/schedule/airportList.jsp");
