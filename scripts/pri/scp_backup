@@ -1,6 +1,6 @@
 #!/bin/bash
 # SCP database backup script
-# Copyright 2007, 2008, 2009, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+# Copyright 2007, 2008, 2009, 2011, 2012, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
 #
 # To get automated SSH working, create an SSH key for the user and then copy id_rsa.pub to the
 # remote user's home directory ~/.ssh/authorized_keys
@@ -11,22 +11,21 @@ if [ "$2" != "" ]; then
         USER="$2"
 fi
 
-OPTS="-avr --delete --progress --bwlimit=4096"
+OPTS="-avr --progress --bwlimit=4096"
 
 # Back up base files
 cd /home/backup
-rsync $OPTS cfg/*.tar.gz $USER@$1:cfg 
-rsync $OPTS db/*.bz2 $USER@$1:db
-rsync $OPTS sites/*.tar.gz $USER@$1:sites
-rsync $OPTS /home/www/pos_archive/* $USER@$1:archive
+rsync $OPTS --delete cfg/* $USER@$1:~/cfg 
+rsync $OPTS --delete db/* $USER@$1:~/db
+rsync $OPTS sites/*.tar.gz $USER@$1:~/sites
+rsync $OPTS --delete /home/www/pos_archive/* $USER@$1:~/archive
 
 # Backup logs via rsync
-rsync $OPTS logs/* $USER@$1:httplogs
-rsync $OPTS --exclude=svn.revision_base svn $USER@$1:
+rsync $OPTS logs/* $USER@$1:~/httplogs
+rsync $OPTS --delete --exclude=svn.revision_base svn/* $USER@$1:~/svn
 
 # Backup library
-cd /home/www/library
-rsync $OPTS ./* $USER@$1:library
+rsync $OPTS --delete /home/www/library/* $USER@$1:~/library
 
 # Exit with success
 exit 0
