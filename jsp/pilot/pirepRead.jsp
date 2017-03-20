@@ -128,7 +128,7 @@ golgotha.local.showRunwayChoices = function() {
 </tr>
 <tr>
  <td class="label">Departed from</td>
- <td class="data">${pirep.airportD.name} (<fmt:airport airport="${pirep.airportD}" />)</td>
+ <td class="data">${pirep.airportD.name} (<el:cmd url="airportinfo" linkID="${pirep.airportD.IATA}" className="plain"><fmt:airport airport="${pirep.airportD}" /></el:cmd>)</td>
 </tr>
 <c:if test="${isACARS && (!empty flightInfo.SID)}">
 <tr>
@@ -139,7 +139,7 @@ golgotha.local.showRunwayChoices = function() {
 <c:set var="isDivert" value="${isACARS && (flightInfo.airportA.ICAO != pirep.airportA.ICAO)}" scope="page" />
 <tr>
  <td class="label">Arrived at</td>
- <td class="data">${pirep.airportA.name} (<fmt:airport airport="${pirep.airportA}" />)
+ <td class="data">${pirep.airportA.name} (<el:cmd url="airportinfo" linkID="${pirep.airportA.IATA}" className="plain"><fmt:airport airport="${pirep.airportA}" /></el:cmd>)
 <c:if test="${isDivert}"> <span class="data warn caps bld">Originally filed to ${flightInfo.airportA.name} (<fmt:airport airport="${flightInfo.airportA}" />)</span></c:if></td>
 </tr>
 <c:if test="${isACARS && !isDivert && (!empty flightInfo.STAR)}">
@@ -151,7 +151,7 @@ golgotha.local.showRunwayChoices = function() {
 <c:if test="${isACARS && (!empty flightInfo.airportL)}">
 <tr>
  <td class="label">Alternate</td>
- <td class="data">${flightInfo.airportL.name} (<fmt:airport airport="${flightInfo.airportL}" />)</td>
+ <td class="data">${flightInfo.airportL.name} (<el:cmd url="airportinfo" linkID="${flightInfo.airportL.IATA}" className="plain"><fmt:airport airport="${flightInfo.airportL}" /></el:cmd>)</td>
 </tr>
 </c:if>
 <c:if test="${!fn:isDraft(pirep)}">
