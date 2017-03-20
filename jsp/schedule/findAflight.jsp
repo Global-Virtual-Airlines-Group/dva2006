@@ -269,8 +269,7 @@ golgotha.onDOMReady(function() {
 <tr>
  <td class="pri bld">${flight.flightCode}</td>
  <td class="sec bld">${flight.equipmentType}</td>
- <td class="small">${flight.airportD.name} (<fmt:airport airport="${flight.airportD}" />) to
- ${flight.airportA.name} (<fmt:airport airport="${flight.airportA}" />)</td>
+ <td class="small">${flight.airportD.name} (<el:cmd url="airportinfo" linkID="${flight.airportD.IATA}"><fmt:airport airport="${flight.airportD}" /></el:cmd>) to ${flight.airportA.name} (<el:cmd url="airportinfo" linkID="${flight.airportA.IATA}"><fmt:airport airport="${flight.airportA}" /></el:cmd>)</td>
 <c:if test="${param.showUTCTimes}">
  <td class="nophone"><fmt:date fmt="t" t="HH:mm" tzName="UTC" date="${flight.timeD}" /> UTC</td>
  <td class="nophone"><fmt:date fmt="t" t="HH:mm" tzName="UTC" date="${flight.timeA}" /> UTC</td>

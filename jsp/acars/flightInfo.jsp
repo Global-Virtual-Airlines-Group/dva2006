@@ -15,6 +15,7 @@
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
+<content:json />
 <map:api version="3" />
 <content:js name="acarsFlightMap" />
 <content:googleAnalytics eventSupport="true" />
@@ -51,9 +52,9 @@
 </tr>
 <tr>
  <td class="label">Flight from</td>
- <td class="data">${info.airportD.name} (<fmt:airport airport="${info.airportD}" />)</td>
+ <td class="data">${info.airportD.name} (<el:cmd url="airportinfo" linkID="${info.airportD.IATA}" className="plain"><fmt:airport airport="${info.airportD}" /></el:cmd>)</td>
  <td class="label">Flight to</td>
- <td class="data">${info.airportA.name} (<fmt:airport airport="${info.airportA}" />)</td>
+ <td class="data">${info.airportA.name} (<el:cmd url="airportinfo" linkID="${info.airportA.IATA}" className="plain"><fmt:airport airport="${info.airportA}" /></el:cmd>)</td>
 </tr>
 <tr>
  <td class="label">Flight started at</td>
@@ -129,7 +130,7 @@
 </content:region>
 </content:page>
 <c:if test="${mapRoute.size() > 0}">
-<script id="mapInit">
+<script id="mapInit" async>
 // Build the route line and map center
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
 <map:points var="golgotha.maps.acarsFlight.filedPoints" items="${filedRoute}" />
