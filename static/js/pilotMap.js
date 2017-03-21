@@ -7,7 +7,11 @@ xmlreq.open('get', 'pilotmap.ws', true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	var js = JSON.parse(xmlreq.responseText);
-	js.forEach(function(p) { golgotha.pilotMap.queue.push(p); golgotha.pilotMap.heatMapData.push(p.ll); });
+	js.forEach(function(p) { 
+		golgotha.pilotMap.queue.push(p);
+		golgotha.pilotMap.heatMapData.push(new google.maps.LatLng(p.ll.lat, p.ll.lng));
+	});
+
 	map.removeMarkers(golgotha.pilotMap.mrks);
 	golgotha.pilotMap.hmap.setData(golgotha.pilotMap.heatMapData);
 	var batchSize = Math.round(golgotha.pilotMap.queue.length / 50);
