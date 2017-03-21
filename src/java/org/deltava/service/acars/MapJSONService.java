@@ -17,13 +17,13 @@ import org.deltava.service.*;
 import org.deltava.util.*;
 
 /**
- * A Web Service to provide XML-formatted ACARS position data for Google Maps.
+ * A Web Service to provide JSON-formatted ACARS position data for Google Maps.
  * @author Luke
  * @version 7.3
  * @since 1.0
  */
 
-public class MapService extends WebService {
+public class MapJSONService extends WebService {
 	
 	/**
 	 * Executes the Web Service.
@@ -41,10 +41,10 @@ public class MapService extends WebService {
 			entries = Collections.emptyList();
 
 		// Add the items
-		JSONObject jo = new JSONObject(); jo.put("aircraft", new JSONArray()); jo.put("dispatch",new JSONArray());
+		JSONObject jo = new JSONObject();
 		for (ACARSMapEntry entry : entries) {
 			JSONObject eo = new JSONObject();
-			eo.put("ll", GeoUtils.toJSON(entry));
+			eo.put("ll", JSONUtils.format(entry));
 			eo.put("color", entry.getIconColor());
 			eo.put("busy", entry.isBusy());
 			
@@ -98,6 +98,7 @@ public class MapService extends WebService {
 		}
 
 		// Dump the JSON to the output stream
+		JSONUtils.ensureArrayPresent(jo, "aircraft", "dispatch");
 		try {
 			ctx.setContentType("application/json", "UTF-8");
 			ctx.setExpiry(5);
