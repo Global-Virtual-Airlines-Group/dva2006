@@ -86,18 +86,17 @@ golgotha.routePlot.updateAirline = function(combo) {
 <tr>
  <td class="label">Departing from</td>
  <td class="data"><el:combo name="airportD" size="1" idx="*" options="${airportsD}" firstEntry="-" value="${airportD}" onChange="void golgotha.routePlot.updateRoute(true, true)" />
- <el:text ID="airportDCode" name="airportDCode" idx="*" size="3" max="4" onChange="document.forms[0].airportD.setAirport(this.value); golgotha.routePlot.updateRoute(true)" />
-<span id="runways" style="visibility:hidden;"> departing <el:combo name="runway" idx="*" size="1" options="${emptyList}" firstEntry="-" onChange="void golgotha.routePlot.updateRoute(true, false)" /></span></td>
+ <el:airportCode combo="airportD" airport="${airportD}" idx="*" /><span id="runways" style="visibility:hidden;"> departing <el:combo name="runway" idx="*" size="1" options="${emptyList}" firstEntry="-" onChange="void golgotha.routePlot.updateRoute(true, false)" /></span></td>
 </tr>
 <tr>
  <td class="label">Arriving at</td>
  <td class="data"><el:combo name="airportA" size="1" idx="*" options="${airportsA}" firstEntry="-" value="${airportA}" onChange="void golgotha.routePlot.updateRoute(true)" />
- <el:text ID="airportACode" name="airportACode" idx="*" size="3" max="4" onChange="void document.forms[0].airportA.setAirport(this.value, true)" /></td>
+ <el:airportCode combo="airportA" airport="${airportA}" idx="*" /></td>
 </tr>
 <tr>
  <td class="label">Alternate</td>
  <td class="data"><el:combo name="airportL" size="1" idx="*" options="${emptyList}" firstEntry="-" onChange="golgotha.routePlot.updateRoute(); golgotha.routePlot.plotMap()" />
- <el:text ID="airportLCode" name="airportLCode" idx="*" size="3" max="4" onChange="void document.forms[0].airportL.setAirport(this.value, true)" /></td>
+ <el:airportCode combo="airportL" idx="*" /></td>
 </tr>
 <tr id="sids" style="display:none;">
  <td class="label">Standard Departure (SID)</td>
@@ -117,11 +116,10 @@ golgotha.routePlot.updateAirline = function(combo) {
 <tr>
  <td class="label">Saved Routes</td>
  <td class="data"><el:combo name="routes" idx="*" size="1" className="small req" options="${emptyList}" firstEntry="No Routes Loaded" onChange="void golgotha.routePlot.setRoute(this)" />
- <el:box name="external" value="true" className="small" label="Search FlightAware route database" />
- <el:button ID="SearchButton" onClick="void golgotha.routePlot.searchRoutes()" label="SEARCH" /></td>
+ <el:box name="external" value="true" className="small" label="Search FlightAware route database" /> <el:button ID="SearchButton" onClick="void golgotha.routePlot.searchRoutes()" label="SEARCH" /></td>
 </tr>
 <tr class="title caps">
- <td colspan="2" class="left">PLOTTED ROUTE<span id="rtDistance"></span></td>
+ <td colspan="2" class="left">PLOTTED ROUTE<span id="rtDistance"></span><span id="rtETOPS"></span></td>
 </tr>
 <tr>
  <td colspan="2" class="data"><map:div ID="googleMap" height="580" /><div id="copyright" class="small mapTextLabel"></div>
@@ -155,7 +153,7 @@ golgotha.routePlot.updateAirline = function(combo) {
 </content:region>
 </content:page>
 <content:sysdata var="wuAPI" name="security.key.wunderground" />
-<script id="mapInit">
+<script id="mapInit" async>
 var f = document.forms[0];
 golgotha.util.disable(f.routes);
 golgotha.util.disable('SearchButton', (f.airportD.selectedIndex == 0) || (f.airportA.selectedIndex == 0));
@@ -205,7 +203,9 @@ map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementB
 map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(document.getElementById('mapStatus'));
 
 // Build departure gates marker manager
-golgotha.routePlot.dGates = new MarkerManager(map, {maxZoom:11});
+golgotha.routePlot.dGates = new MarkerManager(map, {maxZoom:14});
+golgotha.routePlot.aGates = new MarkerManager(map, {maxZoom:14});
+golgotha.routePlot.etopsCheck = false;
 
 // Load data async once tiles are loaded
 google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
