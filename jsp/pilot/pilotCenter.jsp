@@ -218,8 +218,8 @@ You have carried <fmt:int value="${totalPax}" /> passengers on your flights.<br 
 <c:if test="${!empty lastFlight}">
 <br />
 Your last flight was on <fmt:date className="sec bld" date="${lastFlight.date}" fmt="d" />:<br />
-<el:cmd url="pirep" link="${lastFlight}" className="pri bld">${lastFlight}</el:cmd> - ${lastFlight.airportD.name} (<fmt:airport airport="${lastFlight.airportD}" />) to ${lastFlight.airportA.name} (<fmt:airport airport="${lastFlight.airportA}" />)
- in a ${lastFlight.equipmentType}.</c:if></td>
+<el:cmd url="pirep" link="${lastFlight}" className="pri bld">${lastFlight}</el:cmd> - ${lastFlight.airportD.name} (<el:cmd url="airportinfo" linkID="${lastFlight.airportD.IATA}" className="plain"><fmt:airport airport="${lastFlight.airportD}" /></el:cmd>) to 
+ ${lastFlight.airportA.name} (<el:cmd url="airportinfo" linkID="${lastFlight.airportA.IATA}" className="plain"><fmt:airport airport="${lastFlight.airportA}" /></el:cmd>) in a ${lastFlight.equipmentType}.</c:if></td>
 </tr>
 <c:if test="${needReturnCharter}">
 <tr>
