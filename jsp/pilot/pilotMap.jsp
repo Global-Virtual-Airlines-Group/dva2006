@@ -15,6 +15,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <map:api version="3" libraries="visualization" />
+<content:json />
 <content:js name="pilotMap" />
 <content:googleAnalytics eventSupport="true" />
 <content:js name="progressBar" />
@@ -23,7 +24,7 @@
 golgotha.pilotMap.deleteMarker = function(id)
 {
 var xmlreq = new XMLHttpRequest();
-xmlreq.open('POST', 'pilotmapclear.ws', true);
+xmlreq.open('post', 'pilotmapclear.ws', true);
 xmlreq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
