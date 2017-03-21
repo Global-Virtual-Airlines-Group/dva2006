@@ -52,7 +52,7 @@ public class GetEvent extends DAO {
 			throw new DAOException(se);
 		}
 	}
-
+	
 	/**
 	 * Returns all future Online Events with signups that are available for assignment.
 	 * @return a List of Event beans
@@ -236,6 +236,42 @@ public class GetEvent extends DAO {
 			loadRoutes(eMap);
 			loadSignups(eMap);
 			return e;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns the events which a user has signed up for or participated in. 
+	 * @param userID the user's database ID
+	 * @return a Collection of Event IDs
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Integer> getMyEventIDs(int userID) throws DAOException {
+		try {
+			Collection<Integer> IDs = new TreeSet<Integer>();
+			
+			// Load from signups
+			prepareStatementWithoutLimits("SELECT ID from events.EVENT_SIGNUPS WHERE (PILOT_ID=?)");
+			_ps.setInt(1, userID);
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+					IDs.add(Integer.valueOf(rs.getInt(1)));
+			}
+			
+			_ps.close();
+			
+			// Load from Flight Reports
+			prepareStatementWithoutLimits("SELECT EVENT_ID FROM PIREPS WHERE (EVENT_ID>0) AND (PILOT_ID=?) AND (STATUS=?)");
+			_ps.setInt(1, userID);
+			_ps.setInt(2, FlightReport.OK);
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+					IDs.add(Integer.valueOf(rs.getInt(1)));
+			}
+
+			_ps.close();
+			return IDs;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

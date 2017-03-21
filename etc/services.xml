@@ -24,6 +24,7 @@
 	<service id="event_rss" class="org.deltava.service.rss.EventSyndicationService" />
 	<service id="notams_rss" class="org.deltava.service.rss.NoticeSyndicationService" />
 	<service id="news_rss" class="org.deltava.service.rss.NewsSyndicationService" />
+	<service id="eventcal" class="org.deltava.service.EventCalendarService" />
 
 	<!-- Fleet Library Services -->
 	<service id="fleet_info" class="org.deltava.service.FleetInfoService" />
@@ -34,7 +35,6 @@
 	<service id="airports" class="org.deltava.service.schedule.AirportListService" />
 	<service id="next_flight" class="org.deltava.service.schedule.AvailableFlightService" />
 	<service id="next_leg" class="org.deltava.service.schedule.AvailableFlightLegService" />
-	<service id="route" class="org.deltava.service.schedule.RouteMapService" />
 	<service id="routeplot" class="org.deltava.service.schedule.RoutePlotMapService" />
 	<service id="rmap_airports" class="org.deltava.service.schedule.ServicedAirportService" />
 	<service id="rmap_routes" class="org.deltava.service.schedule.RouteService" />
@@ -95,8 +95,10 @@
 	<!-- ACARS/Google Maps Services -->
 	<service id="acars_data" class="org.deltava.service.acars.FlightDataExportService" />
 	<service id="acars_error" class="org.deltava.service.acars.ErrorLogService" />
-	<service id="acars_map" class="org.deltava.service.acars.MapService" />
-	<service id="acars_progress" class="org.deltava.service.acars.MapProgressService" />
+	<service id="acars_map" class="org.deltava.service.acars.MapXMLService" />
+	<service id="acars_map_json" class="org.deltava.service.acars.MapJSONService" />
+	<service id="acars_progress" class="org.deltava.service.acars.MapProgressXMLService" />
+	<service id="acars_progress_json" class="org.deltava.service.acars.MapProgressJSONService" />
 	<service id="acars_pirep" class="org.deltava.service.acars.MapFlightDataService" />
 	<service id="acars_earth" class="org.deltava.service.acars.FlightDataEarthService" />
 	<service id="otrackinfo" class="org.deltava.service.schedule.OceanicPlotService" />
