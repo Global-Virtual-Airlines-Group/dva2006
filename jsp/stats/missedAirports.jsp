@@ -50,7 +50,7 @@
 <c:set var="srcList" value="${srcAirports[ap]}" scope="page" />
 <c:set var="srcSize" value="${fn:sizeof(srcList)}" scope="page" />
 <tr class="ap${airline.code}">
- <td class="pri bld">${ap.name}</td>
+ <td class="pri bld"><el:cmd url="airportinfo" linklID="${ap.IATA}">${ap.name}</el:cmd></td>
  <td class="bld nophone">${ap.ICAO}</td>
  <td class="sec">${ap.IATA}</td>
  <td class="small nophone">${ap.country.name} <el:flag countryCode="${ap.country.code}" caption="${ap.country.name}" /></td>
