@@ -259,6 +259,12 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
+            <name>authOnly</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <type>java.lang.Boolean</type>		
+		</attribute>
+		<attribute>
 			<name>startDate</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
