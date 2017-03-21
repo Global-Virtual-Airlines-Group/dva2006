@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2010, 2012, 2014, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import java.util.*;
@@ -7,7 +7,8 @@ import java.sql.Connection;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
-import org.jdom2.*;
+import org.json.*;
+
 import org.deltava.beans.*;
 import org.deltava.beans.stats.*;
 import org.deltava.dao.*;
@@ -16,7 +17,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display Pilot Locations on a map.
  * @author Luke
- * @version 5.4
+ * @version 7.3
  * @since 1.0
  */
 
@@ -49,12 +50,8 @@ public class PilotLocationService extends WebService {
 			ctx.release();
 		}
 		
-		// Create the XML document
-		Document doc = new Document();
-		Element re = new Element("wsdata");
-		doc.setRootElement(re);
-				
 		// Loop through the GeoLocations, apply the random adjuster and combine with the Pilot
+		JSONArray ja = new JSONArray();
 		for (Iterator<Pilot> i = pilots.iterator(); i.hasNext();) {
 			Pilot usr = i.next();
 			FuzzyPosition fp = (FuzzyPosition) locations.get(Integer.valueOf(usr.getID()));
@@ -66,23 +63,23 @@ public class PilotLocationService extends WebService {
 				loc.setAllowDelete(isHR);
 				
 				// Build the element
-				Element e = XMLUtils.createElement("pilot", loc.getInfoBox(), true);
-				e.setAttribute("id", String.valueOf(usr.getID()));
-				e.setAttribute("rank", usr.getRank().getName());
-				e.setAttribute("eqType", usr.getEquipmentType());
-				e.setAttribute("minZoom", "1");
-				e.setAttribute("lat", StringUtils.format(gl.getLatitude(), "##0.00000"));
-				e.setAttribute("lng", StringUtils.format(gl.getLongitude(), "##0.00000"));
-				e.setAttribute("color", loc.getIconColor());
-				re.addContent(e);
+				JSONObject po = new JSONObject();
+				po.put("id", usr.getID());
+				po.put("rank", usr.getRank().getName());
+				po.put("eqType", usr.getEquipmentType());
+				po.put("minZoom", 1);
+				po.put("ll", JSONUtils.format(gl));
+				po.put("color", loc.getIconColor());
+				po.put("info", loc.getInfoBox());
+				ja.put(po);
 			}
 		}
 		
-		// Dump the XML to the output stream
+		// Dump the JSON to the output stream
 		try {
-			ctx.setContentType("text/xml", "UTF-8");
+			ctx.setContentType("application/json", "UTF-8");
 			ctx.setExpiry(1800);
-			ctx.println(XMLUtils.format(doc, "UTF-8"));
+			ctx.println(ja.toString());
 			ctx.commit();
 		} catch (IOException ie) {
 			throw error(SC_CONFLICT, "I/O Error", false);

@@ -6,15 +6,8 @@ var xmlreq = new XMLHttpRequest();
 xmlreq.open('get', 'pilotmap.ws', true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
-	var xmlDoc = xmlreq.responseXML;
-	var ac = xmlDoc.documentElement.getElementsByTagName('pilot');
-	for (var x = 0; x < ac.length; x++) {
-		var a = ac[x];
-		a.ll = new google.maps.LatLng(parseFloat(a.getAttribute('lat')), parseFloat(a.getAttribute('lng')));
-		golgotha.pilotMap.queue.push(a);
-		golgotha.pilotMap.heatMapData.push(a.ll);
-	}
-
+	var js = JSON.parse(xmlreq.responseText);
+	js.forEach(function(p) { golgotha.pilotMap.queue.push(p); golgotha.pilotMap.heatMapData.push(p.ll); });
 	map.removeMarkers(golgotha.pilotMap.mrks);
 	golgotha.pilotMap.hmap.setData(golgotha.pilotMap.heatMapData);
 	var batchSize = Math.round(golgotha.pilotMap.queue.length / 50);
@@ -38,12 +31,8 @@ var cnt = 0;
 var a = golgotha.pilotMap.queue.pop();
 golgotha.pilotMap.pBar.updateBar(2);
 while ((cnt < batchSize) && (a != null)) {
-	var label = a.firstChild;
-	var mrk = new golgotha.maps.Marker({map:map, color:a.getAttribute('color')}, a.ll);
-	mrk.infoLabel = label.data;
-	mrk.rank = a.getAttribute('rank');
-	mrk.eqType = a.getAttribute('eqType');
-	mrk.ID = parseInt(a.getAttribute('id'));
+	var mrk = new golgotha.maps.Marker({map:map, color:a.color}, a.ll);
+	mrk.infoLabel = a.info; mrk.ID = a.id; mrk.rank = a.rank; mrk.eqType = a.eqType;
 
 	// Set the the click handler and add to the list
 	google.maps.event.addListener(mrk, 'click', function() { map.infoWindow.setContent(this.infoLabel); map.infoWindow.open(map, this); } );
