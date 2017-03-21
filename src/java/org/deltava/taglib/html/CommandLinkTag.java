@@ -1,14 +1,15 @@
-// Copyright 2005, 2006, 2007, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2011, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.*;
 import java.util.*;
 
 import java.io.UnsupportedEncodingException;
 
 import java.net.URLEncoder;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 
 import org.deltava.beans.DatabaseBean;
@@ -17,7 +18,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP tag to create a link to a Web Site Command.
  * @author Luke
- * @version 7.0
+ * @version 7.3
  * @since 1.0
  */
 
@@ -29,6 +30,7 @@ public class CommandLinkTag extends LinkTag {
 	private String _cmdName;
 	private final Map<String, String> _cmdParams = new TreeMap<String, String>();
 	private boolean _disableLink;
+	private boolean _authOnly;
 
 	/**
 	 * Sets the ID parameter for the command invocation.
@@ -48,6 +50,14 @@ public class CommandLinkTag extends LinkTag {
 	public void setLink(DatabaseBean db) {
 		if (db != null)
 			_cmdParams.put("id", db.getHexID());
+	}
+	
+	/**
+	 * Sets whether to render the link for authenticated users only.
+	 * @param authUsersOnly TRUE to render only if logged in, otherwise FALSE
+	 */
+	public void setAuthOnly(boolean authUsersOnly) {
+		_authOnly = authUsersOnly;
 	}
 	
 	/**
@@ -110,11 +120,18 @@ public class CommandLinkTag extends LinkTag {
 	 */
 	@Override
 	public final int doStartTag() throws JspException {
+		
+		// Check if we're logged in
+		if (_authOnly) {
+			HttpServletRequest req = (HttpServletRequest) pageContext.getRequest();
+			_disableLink |= (req.getUserPrincipal() == null);
+		}
+		
 		// Do nothing if disable flag set
 		if (_disableLink)
 			return EVAL_BODY_INCLUDE;
 		
-		StringBuilder url = new StringBuilder(64);
+		StringBuilder url = new StringBuilder(80);
 		if (!StringUtils.isEmpty(_domain)) {
 			url.append(pageContext.getRequest().getScheme());
 			url.append("://www.");
