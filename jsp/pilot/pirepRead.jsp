@@ -99,8 +99,7 @@ golgotha.local.showRunwayChoices = function() {
 <c:if test="${!empty vatsimID}">
 <tr>
  <td class="label">VATSIM ID</td>
- <td class="data"><span class="bld">${vatsimID}</span><c:if test="${empty onlineTrack}"> - View flight log at 
- <el:link url="http://www.vataware.com/pilot.cfm?cid=${fn:networkID(pilot,'VATSIM')}" target="_new" external="true">
+ <td class="data"><span class="bld">${vatsimID}</span><c:if test="${empty onlineTrack}"> - View flight log at <el:link url="http://www.vataware.com/pilot.cfm?cid=${fn:networkID(pilot,'VATSIM')}" target="_new" external="true">
 <el:img src="vataware.png" className="noborder" x="50" y="16" caption="View VATAWARE Flight Log" /></el:link></c:if></td>
 </tr>
 </c:if>
@@ -128,7 +127,7 @@ golgotha.local.showRunwayChoices = function() {
 </tr>
 <tr>
  <td class="label">Departed from</td>
- <td class="data">${pirep.airportD.name} (<el:cmd url="airportinfo" linkID="${pirep.airportD.IATA}" className="plain"><fmt:airport airport="${pirep.airportD}" /></el:cmd>)</td>
+ <td class="data">${pirep.airportD.name} (<el:cmd url="airportinfo" linkID="${pirep.airportD.IATA}" authOnly="true" className="plain"><fmt:airport airport="${pirep.airportD}" /></el:cmd>)</td>
 </tr>
 <c:if test="${isACARS && (!empty flightInfo.SID)}">
 <tr>
@@ -139,7 +138,7 @@ golgotha.local.showRunwayChoices = function() {
 <c:set var="isDivert" value="${isACARS && (flightInfo.airportA.ICAO != pirep.airportA.ICAO)}" scope="page" />
 <tr>
  <td class="label">Arrived at</td>
- <td class="data">${pirep.airportA.name} (<el:cmd url="airportinfo" linkID="${pirep.airportA.IATA}" className="plain"><fmt:airport airport="${pirep.airportA}" /></el:cmd>)
+ <td class="data">${pirep.airportA.name} (<el:cmd url="airportinfo" linkID="${pirep.airportA.IATA}" authOnly="true" className="plain"><fmt:airport airport="${pirep.airportA}" /></el:cmd>)
 <c:if test="${isDivert}"> <span class="data warn caps bld">Originally filed to ${flightInfo.airportA.name} (<fmt:airport airport="${flightInfo.airportA}" />)</span></c:if></td>
 </tr>
 <c:if test="${isACARS && !isDivert && (!empty flightInfo.STAR)}">
