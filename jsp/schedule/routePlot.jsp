@@ -148,10 +148,6 @@ golgotha.local.validate = function(f) {
 <div id="mapStatus" class="small mapTextLabel"></div></td>
 </tr>
 <tr>
- <td class="label">Flight Route</td>
- <td class="data"><el:text name="routeCodes" size="144" max="480" readOnly="true" value="" /></td>
-</tr>
-<tr>
  <td class="label">Simulator Version</td>
  <td class="data"><el:check type="radio" name="simVersion" idx="*" options="${simVersions}" value="${sim}" /></td>
 </tr>

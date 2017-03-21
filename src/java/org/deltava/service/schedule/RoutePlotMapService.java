@@ -77,10 +77,9 @@ public class RoutePlotMapService extends MapPlotService {
 			GetGates gdao = new GetGates(con);
 			GetWeather wxdao = new GetWeather(con);
 			
-			String route = req.optString("route", "");
-			
-			// Load Aircraft
+			// Load Aircraft and route
 			a = acdao.get(req.optString("eqType"));
+			String route = req.optString("route", "");
 			
 			// Get the weather
 			METAR wxD = wxdao.getMETAR(dr.getAirportD());
@@ -97,22 +96,17 @@ public class RoutePlotMapService extends MapPlotService {
 
 			// Add the departure airport
 			if (dr.getAirportD() != null) {
-				Collection<Gate> dGates = gdao.getPopularGates(dr, sim, true);
-				if (dr.getAirline() != null) {
-					List<Gate> fdGates = dGates.stream().filter(g -> g.getAirlines().contains(dr.getAirline())).collect(Collectors.toList());
-					if (!fdGates.isEmpty()) {
-						dGates = fdGates;
-						if (isIntl)
-							fdGates = fdGates.stream().filter(g -> g.isInternational()).collect(Collectors.toList());
-						if (fdGates.isEmpty())
-							dGates = fdGates;
-					}
+				Collection<Gate> dGates = new LinkedHashSet<Gate>();
+				Collection<Gate> allGates = gdao.getGates(dr.getAirportD(), sim); 
+				dGates.addAll(filter(allGates, dr.getAirline(), isIntl));
+				if (dGates.size() < 2) {
+					Collection<Gate> popGates = gdao.getPopularGates(dr, sim, true);
+					dGates.addAll(popGates);
+					if (dGates.size() < 3)
+						dGates.addAll(allGates);
 				}
-
-				gates.addAll(dGates);
-				if (dGates.size() < 3)
-					gates.addAll(gdao.getGates(dr.getAirportD(), sim));
 				
+				gates.addAll(dGates);
 				String rwy = req.optString("runway", "");
 				if (rwy.indexOf(' ') > 0)
 					rwy = rwy.substring(rwy.indexOf(' ') + 1);
@@ -190,22 +184,17 @@ public class RoutePlotMapService extends MapPlotService {
 			// Add the arrival airport
 			if (dr.getAirportA() != null) {
 				routePoints.add(new AirportLocation(dr.getAirportA()));
-				Collection<Gate> aGates = gdao.getPopularGates(dr, sim, false);
-				if (dr.getAirline() != null) {
-					List<Gate> adGates = aGates.stream().filter(g -> g.getAirlines().contains(dr.getAirline())).collect(Collectors.toList());
-					if (!adGates.isEmpty()) {
-						aGates = adGates;
-						if (isIntl)
-							adGates = adGates.stream().filter(g -> g.isInternational()).collect(Collectors.toList());
-						if (!adGates.isEmpty())
-							aGates= adGates;
-					}
+				Collection<Gate> aGates = new LinkedHashSet<Gate>();
+				Collection<Gate> allGates = gdao.getGates(dr.getAirportA(), sim); 
+				aGates.addAll(filter(allGates, dr.getAirline(), isIntl));
+				if (aGates.size() < 2) {
+					Collection<Gate> popGates = gdao.getPopularGates(dr, sim, false);
+					aGates.addAll(popGates);
+					if (aGates.size() < 3)
+						aGates.addAll(allGates);
 				}
 				
 				gates.addAll(aGates);
-				if (aGates.size() < 3)
-					gates.addAll(gdao.getGates(dr.getAirportA(), sim));
-				
 				Set<TerminalRoute> stars = new TreeSet<TerminalRoute>(dao.getRoutes(dr.getAirportA(), TerminalRoute.Type.STAR));
 				tRoutes.addAll(stars);
 				
@@ -262,7 +251,7 @@ public class RoutePlotMapService extends MapPlotService {
 		JSONObject eo = new JSONObject();
 		jo.put("etops", eo);
 		eo.put("rating", er.getResult().toString());
-		if (ETOPSHelper.validate(a, er.getResult())) {
+		if (req.optBoolean("etopsCheck", true) && ETOPSHelper.validate(a, er.getResult())) {
 			ETOPS erng = (a != null) && (a.getEngines() == 3) ? ETOPS.ETOPS120 : ETOPS.ETOPS90;
 			eo.put("range", erng.getRange());
 			eo.put("warning", true);
@@ -365,5 +354,20 @@ public class RoutePlotMapService extends MapPlotService {
 		}
 
 		return SC_OK;
+	}
+	
+	/*
+	 * Helper method to filter gates.
+	 */
+	private static List<Gate> filter(Collection<Gate> gates, Airline a, boolean isIntl) {
+
+		List<Gate> fdGates = gates.stream().filter(g -> (a != null) && g.getAirlines().contains(a)).collect(Collectors.toList());
+		if (isIntl) {
+			List<Gate> iGates = fdGates.stream().filter(g -> g.isInternational()).collect(Collectors.toList());
+			if (!iGates.isEmpty())
+				return iGates;
+		}
+		
+		return fdGates;
 	}
 }
