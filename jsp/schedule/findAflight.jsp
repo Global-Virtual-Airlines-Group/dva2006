@@ -218,8 +218,8 @@ golgotha.onDOMReady(function() {
  <td><el:box name="addFA" value="${flight.flightCode}" label="" /></td>
  <td class="pri bld">${flight.flightCode}</td>
  <td class="sec bld">${flight.equipmentType}</td>
- <td class="small">${flight.airportD.name} <span class="nophone">(<fmt:airport airport="${flight.airportD}" />)</span> to
- ${flight.airportA.name} <span class="nophone">(<fmt:airport airport="${flight.airportA}" />)</span></td>
+ <td class="small">${flight.airportD.name} <span class="nophone">(<el:cmd url="airportinfo" linkID="${flight.airportD.IATA}"><fmt:airport airport="${flight.airportD}" /></el:cmd>)</span> to
+ ${flight.airportA.name} <span class="nophone">(<el:cmd url="airportinfo" linkID="${flight.airportA.IATA}"><fmt:airport airport="${flight.airportA}" /></el:cmd>)</span></td>
 <c:if test="${param.showUTCTimes}">
  <td class="nophone"><fmt:date fmt="t" t="HH:mm" tzName="UTC" date="${flight.timeD}" /> UTC</td>
  <td class="nophone"><fmt:date fmt="t" t="HH:mm" tzName="UTC" date="${flight.timeA}" /> UTC</td>
@@ -236,15 +236,11 @@ golgotha.onDOMReady(function() {
 
 <!-- Button Bar -->
 <tr class="title">
- <td colspan="9">SET EQUIPMENT <el:combo name="eqOverride" size="1" firstEntry="-" options="${myEQ}" />&nbsp;<el:button type="submit" label="ADD TO FLIGHT ASSIGNMENT" />&nbsp;
-<el:cmdbutton url="resetassign" label="RESET RESULTS" /></td>
+ <td colspan="9">SET EQUIPMENT <el:combo name="eqOverride" size="1" firstEntry="-" options="${myEQ}" /> <el:button type="submit" label="ADD TO FLIGHT ASSIGNMENT" /> <el:cmdbutton url="resetassign" label="RESET RESULTS" /></td>
 </tr>
 </el:table>
 </el:form>
 </c:if>
-<content:hasmsg>
-<div class="error caps bld"><content:sysmsg /></div>
-</content:hasmsg>
 <c:if test="${!empty buildAssign}">
 <br />
 <el:table className="view">
