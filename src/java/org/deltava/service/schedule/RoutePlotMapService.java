@@ -251,6 +251,7 @@ public class RoutePlotMapService extends MapPlotService {
 		JSONObject eo = new JSONObject();
 		jo.put("etops", eo);
 		eo.put("rating", er.getResult().toString());
+		eo.put("time", er.getResult().getTime());
 		if (req.optBoolean("etopsCheck", true) && ETOPSHelper.validate(a, er.getResult())) {
 			ETOPS erng = (a != null) && (a.getEngines() == 3) ? ETOPS.ETOPS120 : ETOPS.ETOPS90;
 			eo.put("range", erng.getRange());

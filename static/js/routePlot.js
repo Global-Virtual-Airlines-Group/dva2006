@@ -138,7 +138,8 @@ xmlreq.onreadystatechange = function() {
 
 	// Display ETOPS rating
 	var etopsSpan = document.getElementById('rtETOPS');
-	etopsSpan.innerHTML = ' - ' + js.etops.rating;
+	if (js.etops.warning || (js.etops.time > 75))
+		etopsSpan.innerHTML = ' - ' + js.etops.rating;
 
 	// Check for ETOPS warning
 	if (js.etops.warning) {
