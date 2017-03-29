@@ -11,6 +11,7 @@
 <content:css name="main" />
 <content:css name="form" />
 <content:pics />
+<content:json />
 <content:js name="common" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:sysdata var="imgPath" name="path.img" />
@@ -28,33 +29,22 @@ var xmlreq = new XMLHttpRequest();
 xmlreq.open('GET', 'fleetlib.ws?code=' + escape(golgotha.form.getCombo(combo)), true);
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
-	var xmlDoc = xmlreq.responseXML;
-	var infoElements = xmlDoc.documentElement.getElementsByTagName("installer");
-	var info = infoElements[0];
-
-	// Get the Flight Simulator versions
-	var verDesc = 'This <content:airline /> Fleet Library installer is compatible with ';
-	var versions = info.getElementsByTagName('version');
-	for (var x = 0; x < versions.length; x++) {
-		var vE = versions[x];
-		verDesc = verDesc + ((vE.text) ? vE.text : vE.textContent);
-		if (x < (versions.length - 1))
-			verDesc = verDesc + ', ';
+	if (xmlreq.status != 200) {
+		combo.disabled = false;
+		return false;
 	}
 
 	// Update the page
-	golgotha.local.fName = info.getAttribute('filename');
-	document.getElementById('FleetPic').src = info.getAttribute('img');
-	document.getElementById('divName').innerHTML = info.getAttribute('title');
-	var dt = info.getAttribute('date');
-	if (dt)
-		document.getElementById('divDT').innerHTML = dt;
-	document.getElementById('divSize').innerHTML = info.getAttribute('size');
-	document.getElementById('FSVersions').innerHTML = (versions.length == 0) ? '' : (verDesc + '.');
-
-	// Load the description
-	var descE = info.getElementsByTagName('desc')[0].firstChild;
-	document.getElementById('divDesc').innerHTML = descE.data;
+	var js = JSON.parse(xmlreq.responseText);
+	var verDesc = 'This <content:airline /> Fleet Library installer is compatible with ' + js.sims.join(', ') + '.';
+	golgotha.local.fName = js.fileName;
+	document.getElementById('FleetPic').src = js.img;
+	document.getElementById('divName').innerHTML = js.title;
+	if (js.date)
+		document.getElementById('divDT').innerHTML = js.date;
+	document.getElementById('divSize').innerHTML = js.size;
+	document.getElementById('FSVersions').innerHTML = (js.sims.length == 0) ? '' : verDesc;
+	document.getElementById('divDesc').innerHTML = js.desc;
 	combo.disabled = false;
 	golgotha.util.show('installerInfo', true);
 	return true;
@@ -91,10 +81,8 @@ golgotha.local.download = function() {
  <div id="installerInfo" class="top" style="visibility:hidden; margin:4px;"><span id="divName" class="pri bld"></span><br /><br />
 <span class="sec bld"><span id="divSize"></span>&nbsp;bytes, last modified on <span id="divDT"></span></span><br />
 <span id="FSVersions" class="pri bld small"></span><br /><br />
-<span id="divDesc">The <content:airline /> Fleet Library contains Windows installation packages to let 
-you quickly and easily install all aircraft in our fleet, and the fleets of our partner airlines. Each 
-aircraft comes in a number of liveries, along with a high quality freeware panel and the ability to 
-download a sound package and an operating manual from the <content:airline /> Document Library.<br />
+<span id="divDesc">The <content:airline /> Fleet Library contains Windows installation packages to let you quickly and easily install all aircraft in our fleet, and the fleets of our partner airlines. Each 
+aircraft comes in a number of liveries, along with a high quality freeware panel and the ability to download a sound package and an operating manual from the <content:airline /> Document Library.<br />
 <br />
 Please select a <content:airline /> Fleet Installer from the list above.</span>
 </div></td>
