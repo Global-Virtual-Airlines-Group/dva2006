@@ -1,12 +1,11 @@
-// Copyright 2009, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2012, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
-import java.io.IOException;
 import java.sql.Connection;
 
-import org.jdom2.*;
+import org.json.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.cooler.*;
@@ -19,7 +18,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to allow Water Cooler quoting.
  * @author Luke
- * @version 6.1
+ * @version 7.3
  * @since 2.7
  */
 
@@ -38,7 +37,7 @@ public class CoolerQuoteService extends WebService {
 		int threadID = StringUtils.parse(ctx.getParameter("id"), 0);
 		int postID = StringUtils.parse(ctx.getParameter("post"), 0) - 1;
 		
-		Document doc = new Document();
+		JSONObject jo = new JSONObject();
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -73,23 +72,21 @@ public class CoolerQuoteService extends WebService {
 			Pilot p = pdao.get(ud);
 			
 			// Return the data
-			Element re = new Element("msg");
-			doc.setRootElement(re);
-			re.addContent(XMLUtils.createElement("body", msg.getBody(), true));
+			jo.put("body",  msg.getBody());
 			if (p != null)
-				re.addContent(XMLUtils.createElement("author", p.getName(), true));
+				jo.put("author", p.getName());
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		} finally {
 			ctx.release();
 		}
 		
-		// Dump the XML to the output stream
+		// Dump the JSON to the output stream
 		try {
 			ctx.setContentType("text/xml", "utf-8");
-			ctx.println(XMLUtils.format(doc, "UTF-8"));
+			ctx.println(jo.toString());
 			ctx.commit();
-		} catch (IOException ie) {
+		} catch (Exception e) {
 			throw error(SC_CONFLICT, "I/O Error", false);
 		}
 		
