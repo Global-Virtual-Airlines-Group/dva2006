@@ -25,6 +25,7 @@
 </c:forEach>
 <content:pics />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<content:json />
 <content:js name="common" />
 <content:filter roles="Moderator"><content:js name="datePicker" /></content:filter>
 <c:if test="${!empty img}"><content:js name="imgLike" /></c:if>
@@ -60,27 +61,16 @@ var xmlreq = new XMLHttpRequest();
 xmlreq.open('get', 'quote.ws?id=${thread.hexID}&post=' + postID);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
-
-	// Parse the XML
-	var xml = xmlreq.responseXML;
-	if (!xml) return false;
-	var xe = xml.documentElement;
-	var aes = xe.getElementsByTagName("author");
-	var ae = (aes.length == 0) ? null : aes[0];
-	var bds = xe.getElementsByTagName("body");
-	if (bds.length == 0) return false;
+	var js = JSON.parse(xmlreq.responseText);
 
 	// Create the opening
 	var quote = '[quote';
-	if (ae) {
-		var name = ae.firstChild;
-		quote += '=' + name.data;
-	}
-
+	if (js.author)
+		quote += '=' + js.author;
 	quote += ']';
 
 	// Add the body
-	quote += bds[0].firstChild.data;
+	quote += js.body;
 	quote += '[/quote]\r\n\r\n';
 
 	// Save in the field
