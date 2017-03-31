@@ -1,4 +1,4 @@
-// Copyright 2006, 2009, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.time.Instant;
@@ -8,11 +8,11 @@ import org.deltava.beans.*;
 /**
  * A bean to store ACARS error dumps.
  * @author Luke
- * @version 7.0
+ * @version 7.3
  * @since 1.0
  */
 
-public class ACARSError extends DatabaseBean implements ClientVersion, AuthoredBean {
+public class ACARSError extends DatabaseBlobBean implements ClientVersion, AuthoredBean {
 	
 	private int _userID;
 	private Instant _createdOn;
@@ -210,6 +210,14 @@ public class ACARSError extends DatabaseBean implements ClientVersion, AuthoredB
 	 */
 	public String getStateData() {
 		return _stateData;
+	}
+	
+	/**
+	 * Returns the log data.
+	 * @return the log data, or null if none
+	 */
+	public byte[] getLogData() {
+		return _buffer;
 	}
 
 	@Override
