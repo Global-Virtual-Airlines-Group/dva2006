@@ -1,6 +1,7 @@
-// Copyright 2006, 2007, 2009, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
+import java.util.Base64;
 import java.time.Instant;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -15,7 +16,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to log ACARS client errors.
  * @author Luke
- * @version 7.0
+ * @version 7.3
  * @since 1.0
  */
 
@@ -60,6 +61,11 @@ public class ErrorLogService extends WebService {
 			 err.setVersion(2);
 		 else
 			 err.setVersion(3);
+		
+		// Parse the log if any
+		String b64logData = ctx.getParameter("log");
+		if (!StringUtils.isEmpty(b64logData))
+			err.load(Base64.getDecoder().decode(b64logData));
 		
 		// Sanitfy check the message
 		if (StringUtils.isEmpty(err.getMessage()))
