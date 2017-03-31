@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.*;
@@ -9,6 +9,7 @@ import javax.servlet.http.*;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.Pilot;
+import org.deltava.beans.acars.ACARSError;
 import org.deltava.beans.cooler.*;
 import org.deltava.beans.gallery.Image;
 import org.deltava.beans.schedule.*;
@@ -26,11 +27,11 @@ import org.gvagroup.jdbc.*;
 /**
  * The Image serving Servlet. This serves all database-contained images.
  * @author Luke
- * @version 6.3
+ * @version 7.3
  * @since 1.0
  */
 
-public class ImageServlet extends BasicAuthServlet {
+public class ImageServlet extends DownloadServlet {
 
 	private static final Logger log = Logger.getLogger(ImageServlet.class);
 
@@ -38,7 +39,7 @@ public class ImageServlet extends BasicAuthServlet {
 	private static final String EXAM_REALM = "\"Pilot Examinations\"";
 
 	private enum ImageType {
-		CHART("charts"), GALLERY("gallery"), EXAM("exam_rsrc"), EVENT("event"), ISSUE("issue");
+		CHART("charts"), GALLERY("gallery"), EXAM("exam_rsrc"), EVENT("event"), ISSUE("issue"), ERROR("error");
 		
 		private final String _urlPart;
 		
@@ -58,19 +59,6 @@ public class ImageServlet extends BasicAuthServlet {
 	@Override
 	public String getServletInfo() {
 		return "Database Image Servlet " + VersionInfo.TXT_COPYRIGHT;
-	}
-
-	/*
-	 * A helper method to get the image type from the URL.
-	 */
-	private static ImageType getImageType(URLParser up) {
-		for (int x = 0; x < ImageType.values().length; x++) {
-			ImageType t = ImageType.values()[x];
-			if (up.containsPath(t.getURLPart()))
-				return t;
-		}
-
-		return null;
 	}
 
 	/**
@@ -219,7 +207,23 @@ public class ImageServlet extends BasicAuthServlet {
 					rsp.setHeader("Content-disposition", "attachment; filename=" + iFile.getName());
 					rsp.setHeader("Cache-Control", "private");
 					break;
-
+					
+				case ERROR:
+					if (!req.isUserInRole("Developer"))
+						throw new ForbiddenException("Cannot view ACARS Errror Logs");
+					
+					GetACARSErrors errdao = new GetACARSErrors(c);
+					ACARSError err = errdao.get(imgID);
+					if (err == null)
+						throw new NotFoundException("Invalid Error Report - " + imgID);
+					else if (!err.isLoaded())
+						throw new NotFoundException("No Log attached to Error Report - " + imgID);
+					
+					imgBuffer = err.getLogData();
+					rsp.setHeader("Cache-Control", "private");
+					rsp.setIntHeader("max-age", 60);
+					break;
+					
 				case EXAM:
 					imgBuffer = dao.getExamResource(imgID);
 					if (imgBuffer == null)
@@ -259,7 +263,9 @@ public class ImageServlet extends BasicAuthServlet {
 			return;
 
 		// Check for PDF
-		if (imgType != ImageType.ISSUE) {
+		if (imgType == ImageType.ERROR)
+			rsp.setContentType("text/plain");
+		else if (imgType != ImageType.ISSUE) {
 			boolean isPDF = (imgBuffer.length > Chart.PDF_MAGIC.length());
 			for (int x = 0; isPDF && (x < Chart.PDF_MAGIC.length()); x++)
 				isPDF &= (imgBuffer[x] == Chart.PDF_MAGIC.getBytes()[x]);
