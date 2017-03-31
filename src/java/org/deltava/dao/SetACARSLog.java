@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2012, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2012, 2013, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.acars.ACARSError;
 /**
  * A Data Access Object to update or remove ACARS log entries.
  * @author Luke
- * @version 6.4
+ * @version 7.3
  * @since 1.0
  */
 
@@ -60,9 +60,8 @@ public class SetACARSLog extends DAO {
 	 */
 	public void logError(ACARSError err) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("INSERT INTO acars.ERRORS (USERID, CREATED_ON, REMOTE_ADDR, REMOTE_HOST, "
-				+ "CLIENT_BUILD, BETA, FS_VERSION, FSUIPC_VERSION, OS_VERSION, IS64BIT, CLR_VERSION, LOCALE, TZ, ERROR_MSG, "
-				+ "STACKDUMP, STATEDATA) VALUES (?, ?, INET6_ATON(?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			prepareStatementWithoutLimits("INSERT INTO acars.ERRORS (USERID, CREATED_ON, REMOTE_ADDR, REMOTE_HOST, CLIENT_BUILD, BETA, FS_VERSION, FSUIPC_VERSION, "
+				+ "OS_VERSION, IS64BIT, CLR_VERSION, LOCALE, TZ, ERROR_MSG, STACKDUMP, STATEDATA, LOG) VALUES (?, ?, INET6_ATON(?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setInt(1, err.getAuthorID());
 			_ps.setTimestamp(2, createTimestamp(err.getCreatedOn()));
 			_ps.setString(3, err.getRemoteAddr());
@@ -79,6 +78,7 @@ public class SetACARSLog extends DAO {
 			_ps.setString(14, err.getMessage());
 			_ps.setString(15, err.getStackDump());
 			_ps.setString(16, err.getStateData());
+			_ps.setBinaryStream(17, err.getInputStream());
 			executeUpdate(1);
 			err.setID(getNewID());
 		} catch (SQLException se) {
