@@ -74,8 +74,8 @@
 <c:if test="${fn:isDispatch(pirep)}"><el:img src="dispatch.png" caption="ACARS Dispatch Services" /></c:if>
 <c:if test="${fn:isPromoLeg(pirep)}"><el:img src="promote.png" caption="Counts for Promotion in the ${fn:promoEQTypes(pirep)}" /></c:if></td>
  <td><el:cmd className="bld" url="pirep" link="${pirep}">${pirep.flightCode}</el:cmd></td>
- <td class="small nophone">${pirep.airportD.name} (<fmt:airport airport="${pirep.airportD}" />) - 
- ${pirep.airportA.name} (<fmt:airport airport="${pirep.airportA}" />)</td>
+ <td class="small nophone">${pirep.airportD.name} (<el:cmd url="airportinfo" linkID="${pirep.airportD.IATA}" className="plain" authOnly="true"><fmt:airport airport="${pirep.airportD}" /></el:cmd>) - 
+ ${pirep.airportA.name} (<el:cmd url="airportinfo" linkID="${pirep.airportA.IATA}" className="plain" authOnly="true"><fmt:airport airport="${pirep.airportA}" /></el:cmd>)</td>
  <td class="sec">${pirep.equipmentType}</td>
  <td class="nophone"><fmt:dec fmt="#0.0" value="${pirep.length / 10}" /> hours</td>
 </view:row>
