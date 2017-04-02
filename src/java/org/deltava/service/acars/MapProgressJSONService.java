@@ -90,29 +90,26 @@ public class MapProgressJSONService extends WebService {
 		// Generate the JSON document
 		JSONObject jo = new JSONObject();
 		jo.put("id", id);
-		routePoints.forEach(entry -> jo.accumulate("savedPositions", JSONUtils.format(entry)));
-		tempPoints.forEach(entry -> jo.accumulate("tempPositions", JSONUtils.format(entry)));
+		routePoints.forEach(entry -> jo.append("savedPositions", JSONUtils.format(entry)));
+		tempPoints.forEach(entry -> jo.append("tempPositions", JSONUtils.format(entry)));
 		
 		// Write the route
 		for (MapEntry entry : routeWaypoints) {
 			JSONObject eo = new JSONObject();
 			eo.put("ll", JSONUtils.format(entry));
 			eo.put("route", entry.getInfoBox());
-			if (entry instanceof MarkerMapEntry)
-				eo.put("color", ((MarkerMapEntry) entry).getIconColor());
-			else {
+			if (entry instanceof IconMapEntry) {
 				IconMapEntry ime = (IconMapEntry) entry;
 				eo.put("pal", ime.getPaletteCode());
 				eo.put("icon", ime.getIconCode());
-			}
+			} else
+				eo.put("color", ((MarkerMapEntry) entry).getIconColor());
 			
-			jo.accumulate("waypoints", eo);
+			jo.append("waypoints", eo);
 		}
 		
-		// Ensure arrays are populated
-		JSONUtils.ensureArrayPresent(jo, "savedPositions", "tempPositions", "waypoints");
-		
 		// Dump the JSON to the output stream
+		JSONUtils.ensureArrayPresent(jo, "savedPositions", "tempPositions", "waypoints");
 		try {
 			ctx.setContentType("application/json", "UTF-8");
 			ctx.setExpiry(5);
