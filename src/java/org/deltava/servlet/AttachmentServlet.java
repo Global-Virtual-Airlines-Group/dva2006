@@ -149,6 +149,7 @@ public class AttachmentServlet extends DownloadServlet {
 				
 				buffer = err.getLogData();
 				rsp.setContentType("text/plain");
+				rsp.setHeader("Content-disposition", "attachment; filename=acars_error_" + dbID + ".log");
 				rsp.setIntHeader("max-age", 3600);
 				break;
 				
