@@ -21,8 +21,7 @@ xmlreq.onreadystatechange = function() {
 };
 
 var f = document.forms[0];
-var isLoading = document.getElementById('isLoading');
-isLoading.innerHTML = ' - LOADING...';
+golgotha.util.setHTML('isLoading', ' - LOADING...');
 golgotha.util.disable(f.noFilter);
 golgotha.util.disable(f.eqType);
 golgotha.util.disable(f.rank);
@@ -50,8 +49,7 @@ if (a != null)
 	window.setTimeout(golgotha.pilotMap.load, 2, batchSize);
 else {
 	var f = document.forms[0];
-	var isLoading = document.getElementById('isLoading');
-	isLoading.innerHTML = '';
+	golgotha.util.setHTML('isLoading', '');
 	golgotha.util.disable(f.noFilter, false);
 	golgotha.util.disable(f.eqType, false);
 	golgotha.util.disable(f.rank, false);

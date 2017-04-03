@@ -21,11 +21,7 @@ var fd = data.FRONTS;
 for (var f = fd.pop(); (f != null); f = fd.pop()) {
 	var l = new google.maps.Polyline(golgotha.maps.fronts.opts[f.type]);
 	var pts = [];
-	for (var y = 0; y < f.points.length; y++) {
-		var pt = f.points[y];
-		pts.push({lat:pt.lat, lng:pt.lon});
-	}
-
+	f.points.forEach(function(pt) { pts.push({lat:pt.lat, lng:pt.lon});	});
 	if (f.type == 'WARM') pts.reverse();
 	l.setPath(pts);
 	results.mrks.push(l);

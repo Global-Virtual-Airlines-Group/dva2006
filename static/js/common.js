@@ -84,6 +84,13 @@ golgotha.util.getStyle = function(sheet, cl) {
 	return null;
 };
 
+golgotha.util.setHTML = function(e, content) {
+	if (!e) return false;
+	if (!e.style) e = document.getElementById(e);
+	if (e) e.innerHTML = content;
+	return true;
+};
+
 golgotha.form.resizeAll = function() {
 	var boxes = golgotha.util.getElementsByClass('resizable');
 	for (var x = 0; x < boxes.length; x++) golgotha.form.resize(boxes[x]);

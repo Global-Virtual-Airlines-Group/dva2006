@@ -1,5 +1,5 @@
 golgotha.gate = golgotha.gate || {ids:[],gates:[],ourGates:[],isEdit:false,isDirty:[],data:[]};
-golgotha.gate.icons = {ours:{pal:2,icon:56},intl:{pal:2,icon:48},pop:{pal:3,icon:52},other:{pal:3,icon:60}};
+golgotha.gate.icons = {ours:{pal:2,icon:56,tx:1},intl:{pal:2,icon:48,tx:1},pop:{pal:3,icon:52,tx:0.75},other:{pal:3,icon:60,tx:0.65}};
 golgotha.gate.markDirty = function(id) { if (!golgotha.gate.isDirty.contains(id)) golgotha.gate.isDirty.push(id); };
 golgotha.gate.toggleAirline = function(al) {
 	var wasOurs = this.airlines.remove(al); 
@@ -46,7 +46,7 @@ golgotha.gate.reload = function(al) {
 		else if (g.useCount > 0)
 			opts = golgotha.gate.icons.pop;
 
-		var mrk = new golgotha.maps.IconMarker({pal:opts.pal,icon:opts.icon,info:g.info}, g.ll);
+		var mrk = new golgotha.maps.IconMarker({pal:opts.pal, icon:opts.icon, opacity:opts.tx, info:g.info}, g.ll);
 		mrk.gateID = id; g.toggleAirline = golgotha.gate.toggleAirline;
 		var dst = isOurs ? golgotha.gate.ourGates : golgotha.gate.gates;
 		if (golgotha.gate.isEdit) {

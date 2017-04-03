@@ -1,16 +1,15 @@
-golgotha.maps.acars = golgotha.maps.acars || {acPositions:[], dcPositions:[], routeData:null, routeWaypoints:null, tempData:null};
+golgotha.maps.acars = golgotha.maps.acars || {acPositions:[], dcPositions:[], routeData:null, routeWaypoints:null, tempData:null, routeMarkers:[]};
 golgotha.maps.acars.generateXMLRequest = function()
 {
 var xmlreq = new XMLHttpRequest();
 xmlreq.open('get', 'acars_map_json.ws?time=' + golgotha.util.getTimestamp(3000), true);
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
-	var isLoading = document.getElementById('isLoading');
-	if (isLoading && (xmlreq.status != 200)) {
-		isLoading.innerHTML = ' - ERROR ' + xmlreq.status;
+	if (xmlreq.status != 200) {
+		golgotha.util.setHTML('isLoading', ' - ERROR ' + xmlreq.status);
 		return false;
-	} else if (isLoading)
-		isLoading.innerHTML = ' - REDRAWING...';
+	}
+		golgotha.util.setHTML('isLoading', ' - REDRAWING...');
 		
 	// Clean up the map - don't strip out the weather layer
 	map.removeMarkers(golgotha.maps.acars.routeData);
@@ -30,7 +29,7 @@ xmlreq.onreadystatechange = function() {
 	var js = JSON.parse(xmlreq.responseText);
 	if (js.aircraft.length > 0) golgotha.event.beacon('ACARS', 'Aircraft Positions');
 	for (var i = 0; i < js.aircraft.length; i++) {
-		var a = js.aircraft[i]; var mrk = null;
+		var a = js.aircraft[i]; var mrk;
 		if (a.pal)
 			mrk = new golgotha.maps.IconMarker({pal:a.pal, icon:a.icon}, a.ll);
 		else if (a.color)
@@ -70,7 +69,7 @@ xmlreq.onreadystatechange = function() {
 
 	if (js.dispatch.length > 0) golgotha.event.beacon('ACARS', 'Dispatch Positions');
 	for (var i = 0; i < js.dispatch.length; i++) {
-		var d = js.dispatch[i]; var mrk = null;
+		var d = js.dispatch[i]; var mrk;
 		if (d.pal)
 			mrk = new golgotha.maps.IconMarker({pal:d.pal, icon:d.icon}, d.ll);
 		else if (d.color)
@@ -118,10 +117,9 @@ xmlreq.onreadystatechange = function() {
 	}
 
 	// Focus on the map
+	golgotha.util.setHTML('isLoading', ' - ' + (js.aircraft.length + js.dispatch.length) + ' CONNECTIONS');
 	if (cbo)
 		golgotha.util.display('userSelect', (cbo.options.length > 1));
-	if (isLoading)
-		isLoading.innerHTML = ' - ' + (js.aircraft.length + js.dispatch.length) + ' CONNECTIONS';
 
 	return true;
 };
@@ -201,6 +199,7 @@ if ((map.infoWindow.marker) && (map.infoWindow.marker.rangeCircle))
 map.removeMarkers(golgotha.maps.acars.routeData);
 map.removeMarkers(golgotha.maps.acars.tempData);
 map.removeMarkers(golgotha.maps.acars.routeWaypoints);
+map.removeMarkers(golgotha.maps.acars.routeMarkers);
 map.closeWindow();
 return true;	
 };
@@ -217,7 +216,16 @@ xreq.onreadystatechange = function() {
 	var js = JSON.parse(xreq.responseText);
 	if (doRoute) {
 		var waypoints = [];
-		js.waypoints.forEach(function(wp) { waypoints.push(wp.ll); });
+		js.waypoints.forEach(function(wp) { 
+			waypoints.push(wp.ll); var mrk;
+			if (wp.pal)
+				mrk = new golgotha.maps.IconMarker({map:map, pal:wp.pal, icon:wp.icon, opacity:0.5}, wp.ll);
+			else if (a.color)
+				mrk = new golgotha.maps.Marker({map:map, color:wp.color, opacity:0.5}, wp.ll);
+
+			golgotha.maps.acars.routeMarkers.push(mrk)
+		});
+
 		golgotha.event.beacon('ACARS', 'Flight Route Info');
 		golgotha.maps.acars.routeWaypoints = new google.maps.Polyline({map:map, path:waypoints, strokeColor:'#af8040', strokeWeight:2, strokeOpacity:0.7, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
 	}
@@ -236,12 +244,11 @@ xreq.send(null);
 return true;
 };
 
-golgotha.maps.acars.getServiceRange = function(marker, range)
-{
-var bC = marker.isBusy ? '#c02020' : '#20c060';
-var fC = marker.isBusy ? '#802020' : '#208040';
-var fOp = marker.isBusy ? 0.1 : 0.2;
-return new google.maps.Circle({center:marker.getPosition(), radius:golgotha.maps.miles2Meter(range), strokeColor:bC, strokeWeight:1, strokeOpacity:0.65, fillColor:fC, fillOpacity:fOp, zIndex:golgotha.maps.z.POLYGON});
+golgotha.maps.acars.getServiceRange = function(marker, range) {
+	var bC = marker.isBusy ? '#c02020' : '#20c060';
+	var fC = marker.isBusy ? '#802020' : '#208040';
+	var fOp = marker.isBusy ? 0.1 : 0.2;
+	return new google.maps.Circle({center:marker.getPosition(), radius:golgotha.maps.miles2Meter(range), strokeColor:bC, strokeWeight:1, strokeOpacity:0.65, fillColor:fC, fillOpacity:fOp, zIndex:golgotha.maps.z.POLYGON});
 };
 
 golgotha.maps.acars.zoomTo = function(combo)

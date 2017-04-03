@@ -116,11 +116,7 @@ golgotha.maps.WeatherLayer.prototype.setMap = function(m) {
 	return true;
 };
 
-golgotha.maps.WeatherLayer.prototype.getCopyright = function() {
-	var d = this.timestamp;
-	return 'Weather Data &copy; ' + d.getFullYear() + ' The Weather Company.'
-};
-	
+golgotha.maps.WeatherLayer.prototype.getCopyright = function() { return 'Weather Data &copy; ' + this.timestamp.getFullYear() + ' The Weather Company.' };
 golgotha.maps.WeatherLayer.prototype.getTextDate = function() {
 	var d = this.timestamp;
 	var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -145,9 +141,7 @@ golgotha.maps.WeatherLayer.prototype.display = function(isVisible) {
 
 golgotha.maps.WeatherLayer.prototype.hideAll = function() {
 	var imgs = golgotha.maps.util.getTileImgs(this.imgClass);
-	for (var x = 0; x < imgs.length; x++)
-		golgotha.maps.setOpacity(imgs[x], 0);
-
+	imgs.forEach(function(img) { golgotha.maps.setOpacity(img, 0); });
 	return true;
 };
 	
@@ -266,7 +260,7 @@ return new golgotha.maps.TileAddress(x, y, level);
 golgotha.maps.FFWeatherLayer = function(opts, timestamp, effective) {
 	var ov = new golgotha.maps.WeatherLayer(opts, effective);
 	ov.effDate = new Date(effective);
-	ov.baseURL = ov.baseURL + timestamp + '/';
+	ov.baseURL += (timestamp + '/');
 	return ov;
 };
 
@@ -284,12 +278,11 @@ if (mx < d.length) d.splice(mx, data.length);
 return d;
 };
 
-golgotha.maps.SeriesLoader.prototype.setData = function(name, tx, imgClassName, imgSize)
-{
-var d = {opacity:tx, imgClass:imgClassName};
-d.size = (imgSize) ? imgSize : golgotha.maps.TILE_SIZE.width;
-this.imgData[name] = d;
-return true;
+golgotha.maps.SeriesLoader.prototype.setData = function(name, tx, imgClassName, imgSize) {
+	var d = {opacity:tx, imgClass:imgClassName};
+	d.size = (imgSize) ? imgSize : golgotha.maps.TILE_SIZE.width;
+	this.imgData[name] = d;
+	return true;
 };
 
 golgotha.maps.SeriesLoader.prototype.onload = function(f) { this.onLoad.push(f); return true; };
@@ -456,8 +449,7 @@ for (var ldoc = sd.body.pop(); (ldoc != null); ldoc = sd.body.pop()) {
 
 		var tsz = new google.maps.Size(myLayerData.size, myLayerData.size);
 		var layerOpts = {minZoom:2, name:layerName, maxZoom:layerData.maxZoom, isPng:true, opacity:myLayerData.opacity, tileSize:tsz, range:bb, zIndex:golgotha.maps.z.OVERLAY};
-		var ovLayer = isFF ? new golgotha.maps.FFWeatherLayer(layerOpts, ts.unixDate, layerData.series[0].unixDate) :  
-				new golgotha.maps.WeatherLayer(layerOpts, ts.unixDate);
+		var ovLayer = isFF ? new golgotha.maps.FFWeatherLayer(layerOpts, ts.unixDate, layerData.series[0].unixDate) :  new golgotha.maps.WeatherLayer(layerOpts, ts.unixDate);
 		ovLayer.imgClass = myLayerData.imgClass;
 		ovLayer.nativeZoom = layerData.nativeZoom;
 		ovLayer.tileSize = tsz;
@@ -494,11 +486,7 @@ for (var ldoc = sd.body.pop(); (ldoc != null); ldoc = sd.body.pop()) {
 }
 
 // Remove displayed layers
-for (var x = 0; x < dl.layers.length; x++) {
-	var ov = dl.layers[x];
-	if (ov != null)
-		ov.setMap(null);
-}
+dl.layers.forEach(function(ov) { if (ov != null) ov.setMap(null); });
 
 // Fire event handlers
 for (var l = this.onLoad.pop(); (l != null); l = this.onLoad.pop())

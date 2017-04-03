@@ -12,7 +12,7 @@ xmlreq.onreadystatechange = function() {
 	
 xmlreq.send(null);
 return true;
-}
+};
 
 golgotha.like.exec = function(id)
 {
@@ -27,7 +27,7 @@ xmlreq.onreadystatechange = function() {
 	
 xmlreq.send('like=true&id=' + id);
 return true;	
-}
+};
 
 golgotha.like.parseResponse = function(js)
 {
@@ -35,8 +35,6 @@ if (js.mine) js.likes--;
 
 // If we liked it, hide the link
 golgotha.util.show('imgLike', js.canLike);
-var totalDiv = document.getElementById('imgLikeTotal');
-if (!totalDiv) return false;
 var msg = ''
 if (js.mine)
 	msg += ((js.likes > 0) ? 'You and ' : 'You '); 
@@ -47,7 +45,6 @@ if (js.likes > 0) {
 	msg += ((js.likes > 1) ? 's ' : ' ');
 }
 
-msg += 'like this Image.';
-totalDiv.innerHTML = msg;
+golgotha.util.setHTML('imgLikeTotal', msg + 'like this Image.');
 return true;
-}
+};
