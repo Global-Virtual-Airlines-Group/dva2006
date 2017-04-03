@@ -72,10 +72,14 @@
 <c:if test="${!empty stateData}">
 <tr>
  <td class="label top">State Data</td>
- <td class="data">
-<c:forEach var="k" items="${fn:keys(stateData)}">
-${k} = ${stateData[k]}<br />
-</c:forEach></td>
+ <td class="data"><c:forEach var="k" items="${fn:keys(stateData)}">
+${k} = ${stateData[k]}<br /></c:forEach></td>
+</tr>
+</c:if>
+<c:if test="${err.isLoaded()}">
+<tr>
+ <td class="label">Application Log</td>
+ <td class="data"><span class="pri bld">acars_error${err.ID}.log</span> (<fmt:int value="${err.size / 1024}" />K) <a href="/error_log/${err.hexID}">Click to download</a></td>
 </tr>
 </c:if>
 <c:if test="${!empty acarsClientInfo}">
@@ -104,7 +108,7 @@ ${k} = ${stateData[k]}<br />
 </tr>
 <tr>
  <td class="label">GPU Driver</td>
- <td cclass="data">${acarsClientInfo.GPUDriverVersion}</td>
+ <td class="data">${acarsClientInfo.GPUDriverVersion}</td>
 </tr>
 </c:if>
 </el:table>
