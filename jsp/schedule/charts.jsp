@@ -16,6 +16,7 @@
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
 <content:pics />
+<content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <fmt:aptype var="useICAO" />
 <script type="text/javascript">

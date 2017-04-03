@@ -11,6 +11,7 @@
 <content:css name="main" />
 <content:css name="form" />
 <content:pics />
+<content:favicon />
 <content:enum var="icons" className="org.deltava.beans.cooler.Emoticons" />
 <script type="text/javascript">
 golgotha = {local:{}};

@@ -9,6 +9,7 @@
 <head>
 <title><content:airline /> Pilot Accomplishment Updated</title>
 <content:pics />
+<content:favicon />
 <content:css name="main" />
 <content:js name="common" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />

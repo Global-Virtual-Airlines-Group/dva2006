@@ -12,6 +12,7 @@
 <content:css name="main" />
 <content:css name="view" />
 <content:pics />
+<content:favicon />
 </head>
 <content:copyright visible="false" />
 <body>

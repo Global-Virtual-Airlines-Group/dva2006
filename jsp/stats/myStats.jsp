@@ -17,6 +17,7 @@
 <content:json />
 <content:googleJS module="charts" />
 <content:pics />
+<content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <script>
 golgotha.local.updateSort = function() { return document.forms[0].submit(); };

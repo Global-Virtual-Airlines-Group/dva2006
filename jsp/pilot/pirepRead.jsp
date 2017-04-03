@@ -17,6 +17,7 @@
 <content:css name="form" />
 <content:sysdata var="airlineURL" name="airline.url" />
 <content:pics />
+<content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <content:googleAnalytics eventSupport="true" />

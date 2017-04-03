@@ -9,6 +9,7 @@
 <content:css name="main" />
 <content:css name="form" />
 <content:pics />
+<content:favicon />
 </head>
 <content:copyright visible="false" />
 <body>
