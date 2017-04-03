@@ -6,9 +6,8 @@ var xmlreq = new XMLHttpRequest();
 xmlreq.open('GET', 'si_data.ws?network=' + golgotha.flightBoard.network + '&time=' + golgotha.util.getTimestamp(5000) + '&atc=true', true);
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
-	var isLoading = document.getElementById('isLoading');
 	if (xmlreq.status != 200) {
-		isLoading.innerHTML = ' - ERROR ' + xmlreq.status;
+		golgotha.util.setHTML('isLoading', ' - ERROR ' + xmlreq.status);
 		return false;
 	}
 
@@ -21,19 +20,19 @@ xmlreq.onreadystatechange = function() {
 
 	// Display effective date
 	var dt = new Date(js.date);
-	isLoading.innerHTML = ' - VALID AS OF ' + golgotha.flightBoard.months[dt.getMonth()] + ' ' + dt.getDate() + ' ' + dt.getFullYear() + ' ' + dt.getHours() + ':' + dt.getMinutes();
+	golgotha.util.setHTML('isLoading', ' - VALID AS OF ' + golgotha.flightBoard.months[dt.getMonth()] + ' ' + dt.getDate() + ' ' + dt.getFullYear() + ' ' + dt.getHours() + ':' + dt.getMinutes());
 
 	// Display pilots
 	golgotha.flightBoard.pilots.length = 0;
-	for (var wp = js.pilots.pop(); (wp != null); wp = js.pilots.pop()) {
+	js.pilots.forEach(function(wp) {
 		var mrk = new golgotha.maps.Marker({color:wp.color, info:wp.info, map:map}, wp.ll);
 		mrk.networkID = wp.id; mrk.callsign = wp.callsign;
 		google.maps.event.addListener(mrk, 'click', function() { golgotha.flightBoard.infoClose(); golgotha.flightBoard.showRoute(this.networkID); });
-		golgotha.flightBoard.pilots[mrk.callsign] = mrk;		
-	}
+		golgotha.flightBoard.pilots[mrk.callsign] = mrk;
+	});
 
 	// Display controllers
-	for (var cp = js.atc.pop(); (cp != null); cp = js.atc.pop()) {
+	js.atc.forEach(function(cp) {
 		var mrk = new golgotha.maps.Marker({color:cp.color, info:cp.info, map:map}, cp.ll);
 		mrk.networkID = cp.id; mrk.callsign = cp.callsign;
 		if ((cp.type == 'CTR') || (cp.type == 'FSS'))
@@ -42,9 +41,9 @@ xmlreq.onreadystatechange = function() {
 			mrk.range = cp.range;
 			google.maps.event.addListener(mrk, 'click', function() { golgotha.flightBoard.infoClose(); golgotha.flightBoard.showAPP(this); });
 		}
-		
+
 		golgotha.flightBoard.atc[mrk.callsign] = mrk;
-		
+
 		// Add to ATC list
 		var o = new Option(mrk.callsign, mrk.callsign);
 		o.mrk = mrk;
@@ -55,7 +54,7 @@ xmlreq.onreadystatechange = function() {
 		}
 		if (selectedATC == mrk.callsign)
 			cbo.selectedIndex = (cbo.options.length - 1);
-	}
+	});
 
 	golgotha.util.display('userSelect', (cbo.options.length > 1));
 	if (isAuto)
@@ -136,13 +135,13 @@ xreq.onreadystatechange = function() {
 	golgotha.flightBoard.infoClose();
 	var js = JSON.parse(xreq.responseText);
 	if (js.route instanceof Array)
-		golgotha.flightBoard.selectedRoute = new google.maps.Polyline({map:map, path:js.route, strokeColor:'#af8040', strokeWeight:2, strokeOpacity:0.85, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
+		golgotha.flightBoard.selectedRoute = new google.maps.Polyline({map:map, path:js.route, strokeColor:'#af8040', strokeWeight:2, strokeOpacity:0.625, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
 	if (js.track instanceof Array)
 		golgotha.flightBoard.selectedTrack = new google.maps.Polyline({map:map, path:js.track, strokeColor:'#4080af', strokeWeight:2, strokeOpacity:0.75, geodesic:true, zIndex:(golgotha.maps.z.POLYLINE-1)});
 	if (js.waypoints instanceof Array) {
 		golgotha.flightBoard.waypoints = [];
 		js.waypoints.forEach(function(wp) {
-			var mrk = new golgotha.maps.IconMarker({map:map, pal:wp.pal, icon:wp.icon, info:wp.info}, wp.ll);
+			var mrk = new golgotha.maps.IconMarker({map:map, pal:wp.pal, icon:wp.icon, info:wp.info, opacity:0.55}, wp.ll);
 			golgotha.flightBoard.waypoints.push(mrk);
 		});
 	}
