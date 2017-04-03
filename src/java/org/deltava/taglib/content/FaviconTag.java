@@ -6,6 +6,7 @@ import javax.servlet.jsp.*;
 import org.deltava.beans.system.*;
 
 import org.deltava.taglib.BrowserInfoTag;
+import org.deltava.taglib.ContentHelper;
 
 /**
  * A JSP tag to display favicon link elements.
@@ -37,9 +38,13 @@ public class FaviconTag extends BrowserInfoTag {
 	 */
 	@Override
 	public int doEndTag() throws JspException {
+		
+		// Check for duplicate content
+		if (ContentHelper.containsContent(pageContext, "IMG", "favicon"))
+			throw new JspException("Favicon already on page");
 
-		HTTPContextData bCtxt = getBrowserContext();
 		try {
+			HTTPContextData bCtxt = getBrowserContext();
 			JspWriter out = pageContext.getOut();
 			if (bCtxt.getBrowserType() == BrowserType.WEBKIT) {
 				out.println(generateTag("link rel=\"apple-touch-icon\" sizes=\"180x180\"", "apple-touch-icon.png"));
@@ -62,6 +67,7 @@ public class FaviconTag extends BrowserInfoTag {
 			release();
 		}
 		
+		ContentHelper.addContent(pageContext, "IMG", "favicon");
 		return EVAL_PAGE;
 	}
 }
