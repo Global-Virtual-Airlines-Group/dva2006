@@ -9,6 +9,7 @@
 <title><content:airline /> Facebook Authorization Completed</title>
 <content:css name="main" />
 <content:pics />
+<content:favicon />
 <script type="text/javascript">
 golgotha = {local:{}};
 golgotha.local.closeRefresh = function() {

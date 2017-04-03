@@ -16,6 +16,7 @@
 <content:css name="calendar" />
 <content:js name="common" />
 <content:pics />
+<content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <script type="text/javascript">
 golgotha.local.switchType = function(combo) {

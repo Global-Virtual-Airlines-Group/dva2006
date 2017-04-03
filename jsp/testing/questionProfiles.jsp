@@ -14,6 +14,7 @@
 <content:css name="view" />
 <content:css name="form" />
 <content:pics />
+<content:favicon />
 <content:js name="common" />
 <script type="text/javascript">
 golgotha.local.update = function() { return document.forms[0].submit(); };

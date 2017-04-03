@@ -12,6 +12,7 @@
 <content:css name="main" />
 <content:js name="common" />
 <content:pics />
+<content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <c:if test="${!isDelete}">
 <meta http-equiv="refresh" content="3;url=/thread.do?id=${thread.hexID}" /></c:if>

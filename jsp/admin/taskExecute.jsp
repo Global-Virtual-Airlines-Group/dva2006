@@ -10,6 +10,7 @@
 <title><content:airline /> Task Executed</title>
 <content:css name="main" />
 <content:pics />
+<content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 </head>

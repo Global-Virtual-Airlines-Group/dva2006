@@ -9,6 +9,7 @@
 <title><content:airline /> Flight Academy Certification Updated</title>
 <content:css name="main" />
 <content:pics />
+<content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <content:copyright visible="false" />

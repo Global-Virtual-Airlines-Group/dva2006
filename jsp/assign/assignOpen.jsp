@@ -12,6 +12,7 @@
 </head>
 <content:copyright visible="false" />
 <content:pics />
+<content:favicon />
 <body>
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 

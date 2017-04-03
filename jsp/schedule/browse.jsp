@@ -13,6 +13,7 @@
 <content:css name="form" />
 <content:css name="view" />
 <content:pics />
+<content:favicon />
 <content:js name="common" />
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />

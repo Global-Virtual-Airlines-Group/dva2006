@@ -8,6 +8,7 @@
 <head>
 <title><content:airline /> Issue Updated</title>
 <content:pics />
+<content:favicon />
 <content:css name="main" />
 <meta http-equiv="refresh" content="3;url=/issue.do?id=${issue.hexID}&amp;op=read" />
 </head>

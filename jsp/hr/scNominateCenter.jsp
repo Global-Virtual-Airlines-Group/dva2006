@@ -17,6 +17,7 @@
 <content:js name="common" />
 <content:js name="scNominate" />
 <content:pics />
+<content:favicon />
 <script type="text/javascript">
 golgotha.local.validate = function(f)
 {

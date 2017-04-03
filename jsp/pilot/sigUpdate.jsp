@@ -12,6 +12,7 @@
 <content:css name="main" />
 <content:css name="form" />
 <content:pics />
+<content:favicon />
 <script type="text/javascript">
 golgotha.local.validate = function(f)
 {

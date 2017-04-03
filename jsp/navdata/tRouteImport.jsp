@@ -9,6 +9,7 @@
 <content:css name="main" />
 <content:css name="form" />
 <content:pics />
+<content:favicon />
 <content:js name="common" />
 <script type="text/javascript">
 golgotha.local.dataFiles = ['pssstar.dat','psssid.dat','pssstar.dat.gz','psssid.dat.gz'];

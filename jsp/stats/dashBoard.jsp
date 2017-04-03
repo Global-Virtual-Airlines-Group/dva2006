@@ -13,6 +13,7 @@
 <content:css name="form" />
 <content:js name="common" />
 <content:pics />
+<content:favicon />
 <script type="text/javascript">
 golgotha.local.updateSort = function() { return document.forms[0].submit(); };
 </script>
