@@ -100,6 +100,13 @@
 	</tag>
 
 	<tag>
+		<description>Favicon tag, for inserting favicon links</description>
+		<name>favicon</name>
+		<tag-class>org.deltava.taglib.content.FaviconTag</tag-class>
+		<body-content>empty</body-content>
+	</tag>
+
+	<tag>
 		<description>Adds an empty List as a page attribute</description>
 		<name>empty</name>
 		<tag-class>org.deltava.taglib.content.EmptyListTag</tag-class>
