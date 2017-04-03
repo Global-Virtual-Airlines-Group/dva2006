@@ -1,10 +1,14 @@
 // Copyright 2006, 2007, 2009, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
+import java.io.*;
 import java.util.Base64;
+import java.util.zip.GZIPInputStream;
 import java.time.Instant;
 
 import static javax.servlet.http.HttpServletResponse.*;
+
+import org.apache.log4j.Logger;
 
 import org.deltava.beans.Simulator;
 import org.deltava.beans.acars.*;
@@ -21,6 +25,8 @@ import org.deltava.util.*;
  */
 
 public class ErrorLogService extends WebService {
+	
+	private static final Logger log = Logger.getLogger(ErrorLogService.class);
 
 	/**
 	 * Executes the Web Service.
@@ -64,8 +70,24 @@ public class ErrorLogService extends WebService {
 		
 		// Parse the log if any
 		String b64logData = ctx.getParameter("log");
-		if (!StringUtils.isEmpty(b64logData))
-			err.load(Base64.getDecoder().decode(b64logData));
+		if (!StringUtils.isEmpty(b64logData)) {
+			try (ByteArrayInputStream is = new ByteArrayInputStream(Base64.getDecoder().decode(b64logData))) {
+				try (GZIPInputStream gz = new GZIPInputStream(is)) {
+					try (ByteArrayOutputStream os = new ByteArrayOutputStream(b64logData.length())) {
+						int d = gz.read();
+						while (d != -1) {
+							os.write(d);
+							d = gz.read();
+						}
+						
+						err.load(os.toByteArray());
+					}
+				}
+			} catch (IOException ie) {
+				log.error(ie.getMessage(), ie);
+				err.load(ie.getMessage().getBytes());
+			}
+		}
 		
 		// Sanitfy check the message
 		if (StringUtils.isEmpty(err.getMessage()))
