@@ -12,18 +12,26 @@ import org.deltava.util.URLParser;
 
 abstract class DownloadServlet extends BasicAuthServlet {
 	
+	/**
+	 * Interface for file type enumerations.
+	 */
 	protected interface FileType {
-	
+		
+		/**
+		 * The URL part to search for.
+		 * @return the URL part
+		 */
 		String getURLPart();
 	}
 	
 	/**
-	 * A helper method to get the image type from the URL.
+	 * A helper method to get the file type from the URL.
 	 * @param up the URLParser
+	 * @param values the possible types
 	 * @return a FileType, or null if unknown
 	 */
-	protected static FileType getFileType(URLParser up) {
-		for (FileType t : FileType.values()) {
+	protected static FileType getFileType(URLParser up, FileType[] values) {
+		for (FileType t : values) {
 			if (up.containsPath(t.getURLPart()))
 				return t;
 		}
