@@ -9,7 +9,6 @@ import javax.servlet.http.*;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.Pilot;
-import org.deltava.beans.acars.ACARSError;
 import org.deltava.beans.cooler.*;
 import org.deltava.beans.gallery.Image;
 import org.deltava.beans.schedule.*;
@@ -38,8 +37,8 @@ public class ImageServlet extends DownloadServlet {
 	private static final String CHART_REALM = "\"Approach Charts\"";
 	private static final String EXAM_REALM = "\"Pilot Examinations\"";
 
-	private enum ImageType {
-		CHART("charts"), GALLERY("gallery"), EXAM("exam_rsrc"), EVENT("event"), ISSUE("issue"), ERROR("error");
+	private enum ImageType implements FileType {
+		CHART("charts"), GALLERY("gallery"), EXAM("exam_rsrc"), EVENT("event");
 		
 		private final String _urlPart;
 		
@@ -47,6 +46,7 @@ public class ImageServlet extends DownloadServlet {
 			_urlPart = urlPart;
 		}
 		
+		@Override
 		public String getURLPart() {
 			return _urlPart;
 		}
@@ -72,7 +72,7 @@ public class ImageServlet extends DownloadServlet {
 
 		// Parse the URL to figure out what kind of image we want
 		URLParser url = new URLParser(req.getRequestURI());
-		ImageType imgType = getImageType(url);
+		ImageType imgType = (ImageType) getFileType(url, ImageType.values());
 		if (imgType == null) {
 			log.warn("Invalid Image type - " + url.getLastPath());
 			rsp.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -185,45 +185,6 @@ public class ImageServlet extends DownloadServlet {
 					rsp.setIntHeader("max-age", 3600);
 					break;
 					
-				case ISSUE:
-					// Validate that we can view the issue
-					GetIssue idao = new GetIssue(c);
-					Issue i = idao.get(StringUtils.parse(url.getLastPath(), -1));
-					if (i == null)
-						throw new NotFoundException("Invalid Issue - " + url.getLastPath());
-					
-					// Validate access to the thread
-					IssueAccessControl access = new IssueAccessControl(new ServletSecurityContext(req), i);
-					access.validate();
-					if (!access.getCanRead())
-						throw new ForbiddenException("Cannot view Image - Cannot read Issue " + i.getID());
-					
-					// Serve the file
-					IssueComment iFile = idao.getFile(imgID);
-					if (iFile == null)
-						throw new NotFoundException("Cannot find image " + url.getLastPath() + "/" + imgID);
-					
-					imgBuffer = iFile.getBuffer();
-					rsp.setHeader("Content-disposition", "attachment; filename=" + iFile.getName());
-					rsp.setHeader("Cache-Control", "private");
-					break;
-					
-				case ERROR:
-					if (!req.isUserInRole("Developer"))
-						throw new ForbiddenException("Cannot view ACARS Errror Logs");
-					
-					GetACARSErrors errdao = new GetACARSErrors(c);
-					ACARSError err = errdao.get(imgID);
-					if (err == null)
-						throw new NotFoundException("Invalid Error Report - " + imgID);
-					else if (!err.isLoaded())
-						throw new NotFoundException("No Log attached to Error Report - " + imgID);
-					
-					imgBuffer = err.getLogData();
-					rsp.setHeader("Cache-Control", "private");
-					rsp.setIntHeader("max-age", 60);
-					break;
-					
 				case EXAM:
 					imgBuffer = dao.getExamResource(imgID);
 					if (imgBuffer == null)
@@ -263,26 +224,21 @@ public class ImageServlet extends DownloadServlet {
 			return;
 
 		// Check for PDF
-		if (imgType == ImageType.ERROR)
-			rsp.setContentType("text/plain");
-		else if (imgType != ImageType.ISSUE) {
-			boolean isPDF = (imgBuffer.length > Chart.PDF_MAGIC.length());
-			for (int x = 0; isPDF && (x < Chart.PDF_MAGIC.length()); x++)
-				isPDF &= (imgBuffer[x] == Chart.PDF_MAGIC.getBytes()[x]);
+		boolean isPDF = (imgBuffer.length > Chart.PDF_MAGIC.length());
+		for (int x = 0; isPDF && (x < Chart.PDF_MAGIC.length()); x++)
+			isPDF &= (imgBuffer[x] == Chart.PDF_MAGIC.getBytes()[x]);
 
-			// Get the image type
-			if (!isPDF) {
-				ImageInfo info = new ImageInfo(imgBuffer);
-				if (!info.check()) {
-					rsp.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
-					return;
-				}
+		// Get the image type
+		if (!isPDF) {
+			ImageInfo info = new ImageInfo(imgBuffer);
+			if (!info.check()) {
+				rsp.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
+				return;
+			}
 			
-				rsp.setContentType(info.getMimeType());
-			} else
-				rsp.setContentType("application/pdf");
+			rsp.setContentType(info.getMimeType());
 		} else
-			rsp.setContentType("application/octet-stream");
+			rsp.setContentType("application/pdf");
 
 		// Set the content-type and content length
 		rsp.setStatus(HttpServletResponse.SC_OK);
