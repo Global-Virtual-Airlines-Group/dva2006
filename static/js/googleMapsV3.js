@@ -12,6 +12,7 @@ golgotha.maps.ovLayers = [];
 golgotha.maps.styles = {};
 golgotha.maps.reload = 60000;
 golgotha.maps.masks = [0, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288];
+golgotha.maps.zooms = [6100,2900,1600,780,390,195,90,50];
 golgotha.maps.util = {isIE:golgotha.util.isIE, oldIE:golgotha.util.oldIE, isIOS:golgotha.util.isIOS};
 golgotha.maps.util.isIE10 = (golgotha.maps.util.isIE && (navigator.appVersion.indexOf('IE 10.0') > 0));
 golgotha.maps.util.isIE11 = ((navigator.appname == 'Netscape') && (navigator.userAgent.contains('Trident/')));
@@ -52,11 +53,7 @@ golgotha.maps.util.resize = function() {
 			d.style.height = Math.max(200, Math.floor(h * ratio)) + 'px';
 	}
 
-	for (var x = 0; x < golgotha.maps.instances.length; x++) {
-		var m = golgotha.maps.instances[x];
-		google.maps.event.trigger(m, 'resize');
-	}
-
+	golgotha.maps.instances.forEach(function(m) { google.maps.event.trigger(m, 'resize'); });
 	return true;
 };
 
@@ -67,14 +64,11 @@ else
 	window.addEventListener('resize', golgotha.maps.util.resize);
 
 // Calculate default zoom for flight distance
-golgotha.maps.util.getDefaultZoom = function(distance)
-{
-var zooms = [6100,2900,1600,780,390,195,90,50];
-for (var x = 0; x < zooms.length; x++) {
-	if (distance > zooms[x]) return (x+2);
-}
+golgotha.maps.util.getDefaultZoom = function(distance) {
+	for (var x = 0; x < golgotha.maps.zooms.length; x++)
+		if (distance > golgotha.maps.zooms[x]) return (x+2);
 
-return 10;
+	return 10;
 };
 
 // Calculate GMT offset in seconds from local
@@ -89,17 +83,13 @@ golgotha.maps.TEXT_COLOR = {roadmap:'#002010', satellite:'#efefef', terrain:'#00
 golgotha.maps.updateMapText = function () {
 	var newColor = golgotha.maps.TEXT_COLOR[this.getMapTypeId()];
 	var elements = golgotha.util.getElementsByClass('mapTextLabel');
-	for (var e = elements.pop(); (e != null); e = elements.pop())
-		e.style.color = newColor;
-
+	elements.forEach(function(e) { e.style.color = newColor; });
 	return true;
 };
 
-golgotha.maps.updateZoom = function() {
-	var zl = document.getElementById('zoomLevel');
-	if (zl) zl.innerHTML = 'Zoom Level ' + this.getZoom();
-	return true;
-};
+golgotha.maps.updateZoom = function() {	return golgotha.util.setHTML('zoomLevel', 'Zoom Level ' + this.getZoom()); };
+google.maps.Map.prototype.setCopyright = function(msg) { return golgotha.util.setHTML('copyright', msg); };
+google.maps.Map.prototype.setStatus = function(msg) { return golgotha.util.setHTML('mapStatus', msg); };
 
 golgotha.maps.displayedMarkers = [];
 golgotha.maps.setMap = function(map) {
@@ -130,13 +120,6 @@ google.maps.Map.prototype.clearOverlays = function() {
 		mrk.setMap(null);
 	}
 	
-	return true;
-};
-
-// Sets copyright DIV
-google.maps.Map.prototype.setCopyright = function(msg) {
-	var sp = document.getElementById('copyright');
-	if (sp) sp.innerHTML = msg;
 	return true;
 };
 
@@ -217,22 +200,13 @@ google.maps.Map.prototype.clearSelects = function(cl) {
 	this.clearLayers();
 	for (var x = 0; x < cl.length; x++) {
 		var lsc = golgotha.util.getElementsByClass(cl[x], 'div', map.getDiv());
-		for (var idx = 0; idx < lsc.length; idx++) {
-			var dv = lsc[idx];
-			if (dv.isSelected) {
-				google.maps.event.trigger(dv, 'click');
-				google.maps.event.trigger(dv, 'stop');
-			}
-		}
+		lsc.forEach(function(dv) {
+			if (!dv.isSelected) return false;
+			google.maps.event.trigger(dv, 'click');
+			google.maps.event.trigger(dv, 'stop');
+		});
 	}
 
-	return true;
-};
-
-// Sets a status message
-google.maps.Map.prototype.setStatus = function(msg) {
-	var sp = document.getElementById('mapStatus');
-	if (sp) sp.innerHTML = msg;
 	return true;
 };
 
@@ -416,6 +390,7 @@ golgotha.maps.Marker = function(opts, pt) {
 	
 	var icn = new google.maps.MarkerImage('/' + golgotha.maps.IMG_PATH + '/maps/point_' + opts.color + '.png', null, null, null, golgotha.maps.PIN_SIZE);
 	var mrkOpts = {position:pt, icon:icn, shadow:golgotha.maps.DEFAULT_SHADOW, zIndex:golgotha.maps.z.MARKER};
+	mrkOpts.opacity = (opts.opacity) ? opts.opacity : 1.0;
 	if (hasLabel) {
 		mrkOpts.labelClass = 'mapMarkerLabel';
 		if (opts.labelClass)
@@ -426,7 +401,7 @@ golgotha.maps.Marker = function(opts, pt) {
 		mrkOpts.labelAnchor = new google.maps.Point((opts.label.length * 3), 0);
 	}
 	
-	var mrk = hasLabel ? new MarkerWithLabel(mrkOpts) : new google.maps.Marker(mrkOpts);	
+	var mrk = hasLabel ? new MarkerWithLabel(mrkOpts) : new google.maps.Marker(mrkOpts);
 	if (opts.info != null) {
 		mrk.info = opts.info;	
 		google.maps.event.addListener(mrk, 'click', function() { map.infoWindow.setContent(this.info); map.infoWindow.open(map, this); });	
@@ -438,7 +413,6 @@ golgotha.maps.Marker = function(opts, pt) {
 
 golgotha.maps.IconMarker = function(opts, pt) {
 	if (opts == null) opts = {pal:0, icon:0};
-	var hasLabel = (opts.label != null);
 	var imgBase = null;
 	if (opts.pal > 0)
 		imgBase = self.location.protocol + '//maps.google.com/mapfiles/kml/pal' + opts.pal + '/icon' + opts.icon;
@@ -447,7 +421,12 @@ golgotha.maps.IconMarker = function(opts, pt) {
 
 	var icn = new google.maps.MarkerImage(imgBase + '.png', null, null, golgotha.maps.ICON_ANCHOR, golgotha.maps.S_ICON_SIZE);
 	var shd = new google.maps.MarkerImage(imgBase + 's.png', null, null, golgotha.maps.ICON_ANCHOR, golgotha.maps.S_ICON_SHADOW_SIZE);
-	var mrk = new google.maps.Marker({position:pt, icon:icn, shadow:shd, zIndex:golgotha.maps.z.MARKER});
+	var mrkOpts = {position:pt, icon:icn, shadow:shd, zIndex:golgotha.maps.z.MARKER};
+	mrkOpts.opacity = (opts.opacity) ? opts.opacity : 1.0;
+	if (opts.label != null)
+		mrkOpts.label = opts.label;
+
+	var mrk = new google.maps.Marker(mrkOpts);
 	if (opts.info != null) {
 		mrk.info = opts.info;
 		google.maps.event.addListener(mrk, 'click', function() { map.infoWindow.setContent(this.info); map.infoWindow.open(map, this); });
@@ -484,8 +463,7 @@ if (data != null) {
 	}
 
 	if (!ld.success) return false;
-	for (var mrk = ld.mrks.pop(); (mrk != null); mrk = ld.mrks.pop())
-		l.add(mrk);
+	ld.mrks.forEach(function(mrk) { l.add(mrk); });
 
 	// Add custom functions to the layer
 	for (var fnName in ld.fn) {
