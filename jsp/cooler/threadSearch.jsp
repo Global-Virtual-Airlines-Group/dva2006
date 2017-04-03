@@ -15,6 +15,7 @@
 <content:css name="form" />
 <content:css name="view" />
 <content:pics />
+<content:favicon />
 <content:js name="common" />
 <content:rss title="${airlineName} ${forumName}" path="/cooler_rss.ws" />
 <script type="text/javascript">

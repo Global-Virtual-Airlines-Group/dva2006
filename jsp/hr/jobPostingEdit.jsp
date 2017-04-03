@@ -13,6 +13,7 @@
 <content:js name="common" />
 <content:js name="datePicker" />
 <content:pics />
+<content:favicon />
 <script type="text/javascript">
 golgotha.local.validate = function(f)
 {

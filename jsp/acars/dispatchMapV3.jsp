@@ -11,6 +11,7 @@
 <content:expire expires="3600" />
 <content:css name="dispatchMap" scheme="legacy" />
 <content:pics />
+<content:favicon />
 <content:js name="common" />
 <map:api version="3" />
 <content:js name="progressBar" />

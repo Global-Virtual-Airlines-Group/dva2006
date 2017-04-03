@@ -24,6 +24,7 @@
 </c:if>
 </c:forEach>
 <content:pics />
+<content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:json />
 <content:js name="common" />

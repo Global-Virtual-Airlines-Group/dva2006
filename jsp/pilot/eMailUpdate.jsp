@@ -12,6 +12,7 @@
 <content:css name="form" />
 <content:js name="common" />
 <content:pics />
+<content:favicon />
 <content:sysdata var="badDomains" name="registration.reject_domain" />
 <script type="text/javascript">
 <fmt:jsarray var="golgotha.form.invalidDomains" items="${badDomains}" />

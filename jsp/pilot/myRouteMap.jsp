@@ -12,6 +12,7 @@
 <content:css name="main" />
 <content:css name="form" />
 <content:pics />
+<content:favicon />
 <content:js name="common" />
 <content:json />
 <map:api version="3" />

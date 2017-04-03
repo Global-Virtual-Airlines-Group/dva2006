@@ -14,6 +14,7 @@
 <content:css name="form" />
 <content:js name="common" />
 <content:pics />
+<content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="examTake" />
 <script type="text/javascript">

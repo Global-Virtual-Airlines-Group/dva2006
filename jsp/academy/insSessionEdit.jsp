@@ -11,6 +11,7 @@
 <content:css name="main" />
 <content:css name="form" />
 <content:pics />
+<content:favicon />
 <content:js name="common" />
 <content:js name="datePicker" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />

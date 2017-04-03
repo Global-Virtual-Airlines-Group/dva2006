@@ -14,6 +14,7 @@
 <content:css name="view" />
 <content:js name="common" />
 <content:pics />
+<content:favicon />
 <script type="text/javascript">
 golgotha.local.update = function(combo) {
 	self.location = '/hdissuefilter.do?op=${param.op}&id=' + escape(golgotha.form.getCombo(combo));

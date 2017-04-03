@@ -14,6 +14,7 @@
 <content:css name="form" />
 <content:css name="view" />
 <content:pics />
+<content:favicon />
 <content:js name="common" />
 <map:api version="3" />
 </head>

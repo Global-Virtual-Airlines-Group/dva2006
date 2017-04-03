@@ -13,6 +13,7 @@
 <content:css name="main" />
 <content:css name="form" />
 <content:pics />
+<content:favicon />
 <content:js name="common" />
 <c:if test="${exam.routePlot}">
 <map:api version="3" /></c:if>

@@ -10,6 +10,7 @@
 <content:css name="form" />
 <content:js name="common" />
 <content:pics />
+<content:favicon />
 </head>
 <content:copyright visible="false" />
 <body>

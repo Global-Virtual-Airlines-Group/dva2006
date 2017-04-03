@@ -20,6 +20,7 @@
 <content:css name="main" />
 <content:css name="form" />
 <content:pics />
+<content:favicon />
 <content:js name="common" />
 <content:js name="datePicker" />
 <script type="text/javascript">

@@ -14,6 +14,7 @@
 <content:css name="form" />
 <content:css name="view" />
 <content:pics />
+<content:favicon />
 <script type="text/javascript">
 golgotha.local.sort = function() { return document.forms[0].submit(); };
 </script>

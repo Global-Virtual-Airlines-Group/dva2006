@@ -7,6 +7,7 @@
 <title><content:airline /> Approach Chart - ${chart.name}</title>
 <content:css name="main" />
 <content:pics />
+<content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <style type="text/css">
 @media print 

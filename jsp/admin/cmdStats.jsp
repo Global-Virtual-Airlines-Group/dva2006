@@ -13,6 +13,7 @@
 <content:css name="form" />
 <content:css name="view" />
 <content:pics />
+<content:favicon />
 <script type="text/javascript">
 golgotha.local.setSort = function(combo) {
 	self.location = '/cmdstats.do?sortBy=' + golgotha.form.getCombo(combo);

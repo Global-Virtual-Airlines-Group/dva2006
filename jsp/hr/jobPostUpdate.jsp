@@ -9,6 +9,7 @@
 <head>
 <title><content:airline /> Job Posting Updated</title>
 <content:pics />
+<content:favicon />
 <content:css name="main" />
 </head>
 <content:copyright visible="false" />

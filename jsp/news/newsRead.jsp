@@ -11,6 +11,7 @@
 <content:expire expires="3600" />
 <content:css name="main" />
 <content:pics />
+<content:favicon />
 <content:js name="common" />
 </head>
 <content:copyright visible="false" />

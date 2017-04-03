@@ -13,6 +13,7 @@
 <content:css name="form" />
 <content:js name="common" />
 <content:pics />
+<content:favicon />
 <c:set var="formURL" value="job.do" scope="page" />
 <c:choose>
 <c:when test="${access.canApply}">

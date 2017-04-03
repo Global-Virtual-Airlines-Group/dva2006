@@ -11,6 +11,7 @@
 <title><content:airline /> Flight Assignment Updated</title>
 <content:css name="main" />
 <content:pics />
+<content:favicon />
 </head>
 <content:copyright visible="false" />
 <body>

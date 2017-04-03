@@ -13,6 +13,7 @@
 <content:css name="main" />
 <content:css name="view" />
 <content:pics />
+<content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <content:rss title="${airlineName} Online Events" path="/event_rss.ws" />
