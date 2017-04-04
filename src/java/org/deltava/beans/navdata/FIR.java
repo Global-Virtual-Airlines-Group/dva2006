@@ -1,57 +1,30 @@
-// Copyright 2010, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2012, 2014, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.*;
 
-import org.deltava.beans.GeoLocation;
-
-import org.deltava.util.cache.Cacheable;
-
 /**
  * A bean to store data about a Flight Information Region or ARTCC.
  * @author Luke
- * @version 6.0
+ * @version 7.3
  * @since 3.2
  */
 
-public class FIR implements Comparable<FIR>, Cacheable {
+public class FIR extends Airspace {
 	
-	private final String _id;
 	private boolean _oceanic;
 	private boolean _aux;
-	private String _name;
 	
 	private final Collection<String> _aliases = new TreeSet<String>();
-	private final Collection<GeoLocation> _border = new LinkedHashSet<GeoLocation>();
 
 	/**
 	 * Creates the bean.
 	 * @param id the FIR ID
-	 * @throws NullPointerException if id is null
-	 * @see FIR#getID() 
 	 */
 	public FIR(String id) {
-		super();
-		_id = id.trim().toUpperCase();
+		super(id, AirspaceType.CTR);
 	}
 
-	/**
-	 * Returns the FIR name.
-	 * @return the name
-	 * @see FIR#setName(String)
-	 */
-	public String getName() {
-		return _name;
-	}
-	
-	/**
-	 * Returns the FIR ID.
-	 * @return the ID
-	 */
-	public String getID() {
-		return _id;
-	}
-	
 	/**
 	 * Returns if this is an Oceanic sector.
 	 * @return TRUE if Oceanic, otherwise FALSE
@@ -71,31 +44,12 @@ public class FIR implements Comparable<FIR>, Cacheable {
 	}
 	
 	/**
-	 * Returns the coordinates of the FIR boundary.
-	 * @return a Collection of GeoLocations
-	 * @see FIR#addBorderPoint(GeoLocation)
-	 */
-	public Collection<GeoLocation> getBorder() {
-		return new ArrayList<GeoLocation>(_border);
-	}
-	
-	/**
 	 * Returns the aliases of this FIR.
 	 * @return a Collection of aliases
 	 * @see FIR#addAlias(String)
 	 */
 	public Collection<String> getAliases() {
 		return new ArrayList<String>(_aliases);
-	}
-	
-	/**
-	 * Sets the FIR name.
-	 * @param name the name
-	 * @throws NullPointerException if name is null
-	 * @see FIR#getName()
-	 */
-	public void setName(String name) {
-		_name = name.trim();
 	}
 	
 	/**
@@ -117,15 +71,6 @@ public class FIR implements Comparable<FIR>, Cacheable {
 	}
 	
 	/**
-	 * Adds a point to the FIR boundary.
-	 * @param loc a GeoLocation
-	 * @see FIR#getBorder()
-	 */
-	public void addBorderPoint(GeoLocation loc) {
-		_border.add(loc);
-	}
-	
-	/**
 	 * Adds an alias for this FIR.
 	 * @param code the alias
 	 * @throws NullPointerException if code is null
@@ -137,7 +82,7 @@ public class FIR implements Comparable<FIR>, Cacheable {
 	
 	@Override
 	public String toString() {
-		StringBuilder buf = new StringBuilder(_id);
+		StringBuilder buf = new StringBuilder(getID());
 		if (_oceanic)
 			buf.append(" Oceanic");
 		
@@ -152,14 +97,5 @@ public class FIR implements Comparable<FIR>, Cacheable {
 	@Override
 	public Object cacheKey() {
 		return toString();
-	}
-
-	/**
-	 * Compares two FIRs by comparing their IDs.
-	 */
-	@Override
-	public int compareTo(FIR f2) {
-		int tmpResult = _id.compareTo(f2._id);
-		return (tmpResult == 0) ? Boolean.valueOf(_oceanic).compareTo(Boolean.valueOf(f2._oceanic)) : tmpResult;
 	}
 }
