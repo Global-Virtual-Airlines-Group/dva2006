@@ -32,7 +32,7 @@ public class AttachmentServlet extends DownloadServlet {
 	private static final Logger log = Logger.getLogger(AttachmentServlet.class);
 	
 	private enum AttachType implements FileType {
-		ISSUE("issue", "Technology Issues"), ERROR("error", "ACARS Error Logs");
+		ISSUE("issue", "Technology Issues"), ERROR("error_log", "ACARS Error Logs");
 		
 		private final String _urlPart;
 		private final String _realm;
