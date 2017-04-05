@@ -26,40 +26,38 @@
 <c:if test="${!empty navCycleID}">Navigation Data Cycle <span class="pri bld">${navCycleID}</span> Imported<br />
 <br /></c:if>
 <c:if test="${purgeCount > 0}"><fmt:int value="${purgeCount}" /> ${navaidType.name} records purged. </c:if><fmt:int value="${entryCount}" /> 
-<c:if test="${legacyCount > 0}"> current and <fmt:int value="${legacyCount}" /> legacy</c:if> ${navaidType.name} records loaded. <fmt:int value="${regionCount}" /> 
-records have had the proper ICAO region code set after import.<br />
+<c:if test="${legacyCount > 0}"> current and <fmt:int value="${legacyCount}" /> legacy</c:if> ${navaidType.name} records loaded. <fmt:int value="${regionCount}" /> records have had the proper ICAO region code set after import.<br />
 <br />
 <c:choose>
 <c:when test="${navData}">
-Navigation aid data from the latest PSS AIRAC Navigation Data cycle has been imported into the <content:airline /> 
-Navigation Database. This data will be available for all pilots.<br />
+Navigation aid data from the latest PSS AIRAC Navigation Data cycle has been imported into the <content:airline /> Navigation Database. This data will be available for all pilots.<br />
 </c:when>
 <c:when test="${airway}">
-Airway data from the latest PSS AIRAC Navigation Data cycle has been imported into the <content:airline /> 
-Navigation Database. This data will be available for all pilots.<c:if test="${doPurge}"> <span class="bld">The Airway 
-table was purged prior to the import.</span></c:if><br />
+Airway data from the latest PSS AIRAC Navigation Data cycle has been imported into the <content:airline /> Navigation Database. This data will be available for all pilots.<c:if test="${doPurge}"> <span class="bld">The Airway 
+data was purged prior to the import.</span></c:if><br />
 </c:when>
 <c:when test="${terminalRoute}">
-SID/STAR data from the latest PSS AIRAC Navigation Data cycle has been imported into the <content:airline /> 
-Navigation Database. This data will be available for all pilots.<c:if test="${doPurge}"> <span class="bld">The SID/STAR 
-table was purged prior to the import.</span></c:if><br />
+SID/STAR data from the latest PSS AIRAC Navigation Data cycle has been imported into the <content:airline />  Navigation Database. This data will be available for all pilots.<c:if test="${doPurge}"> <span class="bld">The SID/STAR 
+data was purged prior to the import.</span></c:if><br />
+</c:when>
+<c:when test="${airspace}">
+Airspace boundary data has been imported into the <content:airline /> Navigation Database. This data will be avialable for all pilots.<br />
 </c:when>
 </c:choose>
 <c:if test="${!empty errors}">
 <br />
 The following errors occurred during the import of this AIRAC data file:<br />
 <br />
-<div class="small">
-<c:forEach var="error" items="${errors}">
+<span class="small"><c:forEach var="error" items="${errors}">
 ${error}<br />
-</c:forEach>
-</div>
+</c:forEach></span>
 </c:if>
 </c:if>
 <br />
 To return to the AIRAC Navigation Data import page, <el:cmd url="navimport" className="sec bld">Click Here</el:cmd>.<br />
 To return to the AIRAC Airway import page, <el:cmd url="awyimport" className="sec bld">Click Here</el:cmd>.<br />
 To return to the AIRAC Terminal Route import page, <el:cmd url="trouteimport" className="sec bld">Click Here</el:cmd>.<br />
+To return to the Airspace Data import page, <el:cmd url="airspaceimport" className="sec bld">Click Here</el:cmd>.<br />
 <br />
 <content:copyright />
 </content:region>

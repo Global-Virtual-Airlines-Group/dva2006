@@ -70,7 +70,7 @@ public class Airspace implements Comparable<Airspace>, Cacheable {
 	 * @return a Collection of GeoLocations
 	 * @see FIR#addBorderPoint(GeoLocation)
 	 */
-	public Collection<GeoLocation> getBorder() {
+	public List<GeoLocation> getBorder() {
 		return new ArrayList<GeoLocation>(_border);
 	}
 	
