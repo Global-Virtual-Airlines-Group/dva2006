@@ -637,6 +637,12 @@
 		<roles>Schedule,Operations</roles>
 	</command>
 
+	<command id="airspaceimport">
+	   <name>Import Airspace data</name>
+	   <class>org.deltava.commands.navdata.AirspaceImportCommand</class>
+	   <roles>Schedule,Operations</roles>
+	</command>
+
 	<command id="dsptrouteupdate">
 		<name>Dispatch SID/STAR Update</name>
 		<class>org.deltava.commands.navdata.DispatchRouteUpdateCommand</class>

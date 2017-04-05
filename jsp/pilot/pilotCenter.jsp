@@ -479,14 +479,12 @@ equipment programs: <b><fmt:list value="${eqSwitchFOExam}" delim=", " /></b>.</c
 <c:if test="${(isFO && !captPromote) || (promoteLegs < eqType.promotionLegs)}"><br />
 <c:if test="${isFO && !captPromote && (eqType.stage == eqSwitchMaxStage)}">
 <br />
-<span class="ita">You will not be eligible for equipment type transfers or additional ratings in equipment type programs 
- in Stage <fmt:int value="${eqSwitchMaxStage}" /> or above until you become eligible for promotion to Captain
+<span class="ita">You will not be eligible for equipment type transfers or additional ratings in equipment type programs in Stage <fmt:int value="${eqSwitchMaxStage}" /> or above until you become eligible for promotion to Captain
  in the ${eqType.name} or another Stage <fmt:int value="${eqType.stage}" /> equipment program.</span><br />
 </c:if>
 <c:if test="${promoteLegs < (eqType.promotionLegs / 2)}">
 <br />
-<span class="ita">You will not be eligible for equipment type transfers or additional ratings in new equipment type programs 
-in Stage <fmt:int value="${eqType.stage}" /> and below until you have completed <fmt:int value="${eqType.promotionLegs / 2}" /> 
+<span class="ita">You will not be eligible for equipment type transfers or additional ratings in new equipment type programs in Stage <fmt:int value="${eqType.stage}" /> and below until you have completed <fmt:int value="${eqType.promotionLegs / 2}" /> 
 of the <fmt:int value="${eqType.promotionLegs}" /> Flight legs in the <fmt:list value="${eqType.primaryRatings}" delim=", " />.</span></c:if>
 </c:if>
 </td></tr>
@@ -494,21 +492,17 @@ of the <fmt:int value="${eqType.promotionLegs}" /> Flight legs in the <fmt:list 
 <c:if test="${(!empty txreq) && (!txreq.ratingOnly)}">
 <tr>
  <td class="mid bld">Switch Equipment Programs</td>
- <td class="data">On <fmt:date fmt="d" date="${txreq.date}" />, you have requested a change of Equipment 
-Program to the <span class="bld">${txreq.equipmentType}</span> program.<c:if test="${!empty checkRide}"> A
+ <td class="data">On <fmt:date fmt="d" date="${txreq.date}" />, you have requested a change of Equipment Program to the <span class="bld">${txreq.equipmentType}</span> program.<c:if test="${!empty checkRide}"> A
 ${checkRide.equipmentType} Check Ride was assigned on <fmt:date date="${checkRide.date}" fmt="d" />.</c:if>
-<c:if test="${txAccess.canDelete}"> <span class="small"><el:cmd className="bld" url="txreqdelete" link="${txreq}">CLICK HERE</el:cmd> 
-to withdraw this Transfer Request.</span></c:if></td>
+<c:if test="${txAccess.canDelete}"> <span class="small"><el:cmd className="bld" url="txreqdelete" link="${txreq}">CLICK HERE</el:cmd> to withdraw this Transfer Request.</span></c:if></td>
 </tr>
 </c:if>
 <c:if test="${(!empty txreq) && txreq.ratingOnly}">
 <tr>
  <td class="mid bld">Request Additional Rating</td>
- <td class="data">On <fmt:date fmt="d" date="${txreq.date}" />, you have requested additional equipment type
- ratings in the <span class="bld">${txreq.equipmentType}</span> program.<c:if test="${!empty checkRide}"> A
+ <td class="data">On <fmt:date fmt="d" date="${txreq.date}" />, you have requested additional equipment type ratings in the <span class="bld">${txreq.equipmentType}</span> program.<c:if test="${!empty checkRide}"> A
 ${checkRide.equipmentType} Check Ride was assigned on <fmt:date date="${checkRide.date}" fmt="d" />.</c:if>
-<c:if test="${txAccess.canDelete}"> <span class="small"><el:cmd className="bld" url="txreqdelete" link="${txreq}">CLICK HERE</el:cmd> 
-to withdraw this Transfer Request.</span></c:if></td>
+<c:if test="${txAccess.canDelete}"> <span class="small"><el:cmd className="bld" url="txreqdelete" link="${txreq}">CLICK HERE</el:cmd> to withdraw this Transfer Request.</span></c:if></td>
 </tr>
 </c:if>
 <c:if test="${txPending && (empty txreq)}">
@@ -769,8 +763,11 @@ aircraft types, for easy reuse when assigning a Check Ride to a pilot.</td>
  <td class="mid"><el:cmd className="bld" url="navimport">Navigation Data</el:cmd><br />
 <el:cmd className="bld" url="awyimport">Airway Data</el:cmd><br />
 <el:cmd className="bld" url="trouteimport">Terminal Routes</el:cmd></td>
- <td class="data">You can import and purge AIRAC data stored within the <content:airline /> Navigation Data database. AIRAC data can be imported in one of three ways - Navigation Aids, Airways and Terminal Routes 
-(SIDs / STARs).</td>
+ <td class="data">You can import and purge AIRAC data stored within the <content:airline /> Navigation Data database. AIRAC data can be imported in one of three ways - Navigation Aids, Airways and Terminal Routes (SIDs / STARs).</td>
+</tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="airspaceimport">Airspace Data</el:cmd></td>
+ <td class="data">You can import and update airspace boundary definitions in the <content:airline /> Navigation Data database.</td>
 </tr>
 <c:if test="${acarsEnabled}">
 <tr>
