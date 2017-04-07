@@ -4,6 +4,7 @@ package org.deltava.beans.acars;
 import java.time.Instant;
 
 import org.deltava.beans.*;
+import org.deltava.beans.navdata.AirspaceType;
 import org.deltava.beans.servinfo.Controller;
 
 import org.deltava.util.StringUtils;
@@ -14,7 +15,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
  * @author Rahul
- * @version 7.2
+ * @version 7.3
  * @since 1.0
  */
 
@@ -49,6 +50,7 @@ public class ACARSRouteEntry extends RouteEntry {
 	private Controller _atc2;
 	
 	private int _vasFree;
+	private AirspaceType _asType = AirspaceType.E;
 
 	private static final int[] AP_FLAGS = { FLAG_AP_APR, FLAG_AP_HDG, FLAG_AP_NAV, FLAG_AP_ALT, FLAG_AP_GPS , FLAG_AP_LNAV};
 	private static final String[] AP_FLAG_NAMES = { "APR", "HDG", "NAV", "ALT", "GPS", "LNAV" };
@@ -269,6 +271,14 @@ public class ACARSRouteEntry extends RouteEntry {
 	}
 	
 	/**
+	 * Returns the type of Airspace covering the current position.
+	 * @return an AirspaceType enumeration
+	 */
+	public AirspaceType getAirspace() {
+		return _asType;
+	}
+	
+	/**
 	 * Updates the aircraft's altitude above <i>ground level</i>.
 	 * @param alt the altitude in feet AGL
 	 * @see ACARSRouteEntry#getRadarAltitude()
@@ -481,6 +491,10 @@ public class ACARSRouteEntry extends RouteEntry {
 		_vasFree = kb;
 	}
 	
+	public void setAirspace(AirspaceType at) {
+		_asType = at;
+	}
+	
 	/**
 	 * Marks this route entry as having a notable flight parameter.
 	 * @return TRUE if the entry should be noted, otherwise FALSE
@@ -531,6 +545,8 @@ public class ACARSRouteEntry extends RouteEntry {
 			buf.append("OVERSPEED ");
 		if ((getAltitude() > 45000) && (getMach() < 1.05))
 			buf.append("ALTITUDE ");
+		if (_asType == AirspaceType.P)
+			buf.append("AIRSPACE ");
 		if (isFlagSet(FLAG_GEARDOWN) && (getAirSpeed() > 250))
 			buf.append("GEAR SPEED ");
 		if (!isFlagSet(FLAG_GEARDOWN) && isFlagSet(FLAG_ONGROUND))

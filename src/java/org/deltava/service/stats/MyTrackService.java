@@ -8,7 +8,7 @@ import java.sql.Connection;
 
 import org.json.*;
 
-import org.deltava.beans.GeoLocation;
+import org.deltava.beans.*;
 import org.deltava.beans.acars.FlightInfo;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.*;
@@ -52,7 +52,7 @@ public class MyTrackService extends WebService {
 		if (a == null)
 			throw error(SC_NOT_FOUND, "Invalid Airport - " + ctx.getParameter("icao"));
 
-		Map<FlightInfo, Collection<GeoLocation>> rts = new LinkedHashMap<FlightInfo, Collection<GeoLocation>>();
+		Map<FlightInfo, Collection<GeospaceLocation>> rts = new LinkedHashMap<FlightInfo, Collection<GeospaceLocation>>();
 		try {
 			Connection con = ctx.getConnection();
 			GetFlightReports frdao = new GetFlightReports(con);
@@ -91,7 +91,7 @@ public class MyTrackService extends WebService {
 		
 		// Generate the output
 		JSONObject jo = new JSONObject();
-		for (Map.Entry<FlightInfo, Collection<GeoLocation>> me : rts.entrySet()) {
+		for (Map.Entry<FlightInfo, Collection<GeospaceLocation>> me : rts.entrySet()) {
 			JSONObject fo = new JSONObject();
 			fo.put("isDST", (me.getKey().getAirportA().equals(a)));
 			GeoLocation last = null;
