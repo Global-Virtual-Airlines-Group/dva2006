@@ -40,7 +40,7 @@ data was purged prior to the import.</span></c:if><br />
 SID/STAR data from the latest PSS AIRAC Navigation Data cycle has been imported into the <content:airline />  Navigation Database. This data will be available for all pilots.<c:if test="${doPurge}"> <span class="bld">The SID/STAR 
 data was purged prior to the import.</span></c:if><br />
 </c:when>
-<c:when test="${airspace}">
+<c:when test="${airspaceData}">
 Airspace boundary data has been imported into the <content:airline /> Navigation Database. This data will be avialable for all pilots.<br />
 </c:when>
 </c:choose>

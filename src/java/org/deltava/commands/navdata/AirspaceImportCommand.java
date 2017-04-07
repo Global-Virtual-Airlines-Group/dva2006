@@ -2,8 +2,9 @@
 package org.deltava.commands.navdata;
 
 import java.io.*;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.Connection;
-import java.util.Collection;
 
 import org.deltava.beans.FileUpload;
 import org.deltava.beans.navdata.*;
@@ -14,6 +15,7 @@ import org.deltava.dao.*;
 import org.deltava.dao.file.GetAirspaceDefinition;
 
 import org.deltava.security.command.ScheduleAccessControl;
+import org.deltava.util.CollectionUtils;
 
 /**
  * A Web Site Command to import Airspace boundary data. 
@@ -54,6 +56,11 @@ public class AirspaceImportCommand extends NavDataImportCommand {
 			return;
 		}
 		
+		// Load airspaceTypes
+		Collection<AirspaceType> types = new HashSet<AirspaceType>();
+		if (!CollectionUtils.isEmpty(ctx.getParameters("types")))
+			ctx.getParameters("types").stream().map(t -> AirspaceType.fromName(t)).filter(Objects::nonNull).forEach(at -> types.add(at));
+		
 		boolean doPurge = Boolean.valueOf(ctx.getParameter("doPurge")).booleanValue();
 		Country c = Country.get(ctx.getParameter("country"));
 		try (InputStream is = navData.getInputStream()) {
@@ -62,7 +69,7 @@ public class AirspaceImportCommand extends NavDataImportCommand {
 			
 			// Load the data
 			GetAirspaceDefinition dao = new GetAirspaceDefinition(is);
-			Collection<Airspace> airspaces = dao.load();
+			Collection<Airspace> airspaces = dao.load().stream().filter(a -> types.isEmpty() || types.contains(a.getType())).collect(Collectors.toList());
 			airspaces.forEach(a -> a.setCountry(c));
 			
 			// Get the write DAO, clear and update
