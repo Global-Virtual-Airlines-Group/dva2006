@@ -40,7 +40,7 @@ public class SetAirspace extends DAO {
 		GeometryFactory gf = new GeometryFactory();
 		List<Coordinate> cts = new ArrayList<Coordinate>(); List<GeoLocation> brd = a.getBorder();
 		brd.add(brd.get(0));
-		brd.forEach(pt -> cts.add(new Coordinate(pt.getLongitude(), pt.getLatitude())));
+		brd.forEach(pt -> cts.add(new Coordinate(pt.getLatitude(), pt.getLongitude())));
 		Geometry geo = gf.createPolygon(gf.createLinearRing(cts.toArray(new Coordinate[0])), null);
 		
 		try {
