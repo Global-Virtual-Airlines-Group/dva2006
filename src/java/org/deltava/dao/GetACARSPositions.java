@@ -8,7 +8,7 @@ import java.sql.*;
 import java.util.*;
 import java.util.zip.*;
 
-import org.deltava.beans.GeoLocation;
+import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.schedule.GeoPosition;
 import org.deltava.beans.servinfo.*;
@@ -18,7 +18,7 @@ import org.deltava.dao.file.GetSerializedPosition;
 /**
  * A Data Access Object to load ACARS position data.
  * @author Luke
- * @version 7.2
+ * @version 7.3
  * @since 4.1
  */
 
@@ -55,11 +55,11 @@ public class GetACARSPositions extends GetACARSData {
 	 * @throws DAOException if a JDBC error occurs
 	 * @see GetACARSPositions#getRouteEntries(int, boolean)
 	 */
-	public List<GeoLocation> getRouteEntries(int flightID, boolean includeOnGround, boolean isArchived) throws DAOException {
+	public List<GeospaceLocation> getRouteEntries(int flightID, boolean includeOnGround, boolean isArchived) throws DAOException {
 		return isArchived ? getArchivedEntries(flightID, includeOnGround) : getLiveEntries(flightID, includeOnGround);
 	}
 	
-	private List<GeoLocation> getLiveEntries(int flightID, boolean includeOnGround) throws DAOException {
+	private List<GeospaceLocation> getLiveEntries(int flightID, boolean includeOnGround) throws DAOException {
 		try {
 			prepareStatementWithoutLimits("SELECT REPORT_TIME, LAT, LNG, B_ALT, R_ALT, HEADING, PITCH, BANK, ASPEED, GSPEED, VSPEED, MACH, N1, N2, FLAPS, "
 				+ "WIND_HDG, WIND_SPEED, TEMP, PRESSURE, VIZ, FUEL, FUELFLOW, AOA, GFORCE, FLAGS, FRAMERATE, SIM_RATE, SIM_TIME, PHASE, NAV1, NAV2, VAS "
@@ -67,11 +67,11 @@ public class GetACARSPositions extends GetACARSData {
 			_ps.setInt(1, flightID);
 
 			// Execute the query
-			Map<Long, GeoLocation> results = new LinkedHashMap<Long, GeoLocation>();
+			Map<Long, GeospaceLocation> results = new LinkedHashMap<Long, GeospaceLocation>();
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
 					Long ts = Long.valueOf(rs.getTimestamp(1).getTime());
-					GeoLocation pos = new GeoPosition(rs.getDouble(2), rs.getDouble(3));
+					GeospaceLocation pos = new GeoPosition(rs.getDouble(2), rs.getDouble(3));
 					ACARSRouteEntry entry = new ACARSRouteEntry(rs.getTimestamp(1).toInstant(), pos);
 					entry.setFlags(rs.getInt(25));
 
@@ -151,13 +151,13 @@ public class GetACARSPositions extends GetACARSData {
 			}
 			
 			_ps.close();
-			return new ArrayList<GeoLocation>(results.values());
+			return new ArrayList<GeospaceLocation>(results.values());
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 	}
 	
-	private List<GeoLocation> getArchivedEntries(int flightID, boolean includeOnGround) throws DAOException {
+	private List<GeospaceLocation> getArchivedEntries(int flightID, boolean includeOnGround) throws DAOException {
 		
 		// Get archive metadata and file pointer
 		ArchiveMetadata md = getArchiveInfo(flightID);
@@ -191,7 +191,7 @@ public class GetACARSPositions extends GetACARSData {
 			throw new DAOException("Flight " + flightID + " Invalid CRC32, expected " + Long.toHexString(md.getCRC32()) + ", got " + Long.toHexString(crc.getValue()));
 		
 		// Deserialize and validate
-		List<GeoLocation> results = new ArrayList<GeoLocation>();
+		List<GeospaceLocation> results = new ArrayList<GeospaceLocation>();
 		try (GZIPInputStream gi = new GZIPInputStream(new ByteArrayInputStream(rawData))) {
 			GetSerializedPosition psdao = new GetSerializedPosition(gi);
 			Collection<? extends RouteEntry> entries = psdao.read();
