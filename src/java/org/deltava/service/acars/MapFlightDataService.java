@@ -3,6 +3,7 @@ package org.deltava.service.acars;
 
 import java.util.*;
 import java.io.IOException;
+import java.sql.Connection;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
@@ -11,6 +12,7 @@ import org.json.*;
 import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.flight.Recorder;
+import org.deltava.beans.navdata.Airspace;
 import org.deltava.beans.servinfo.*;
 
 import org.deltava.dao.*;
@@ -37,9 +39,13 @@ public class MapFlightDataService extends WebService {
       
 		// Get the DAO and the route data
 		int id = StringUtils.parse(ctx.getParameter("id"), 0);
-		Collection<? extends GeoLocation> routePoints = null;
+		Collection<? extends GeospaceLocation> routePoints = null;
+		Collection<Airspace> airspaces = new HashSet<Airspace>();
 		try {
-			GetACARSPositions dao = new GetACARSPositions(ctx.getConnection());
+			Connection con = ctx.getConnection();
+			
+			// Load flight data
+			GetACARSPositions dao = new GetACARSPositions(con);
 			FlightInfo info = dao.getInfo(id);
 			if (info == null)
 				routePoints = Collections.emptyList();
@@ -48,6 +54,17 @@ public class MapFlightDataService extends WebService {
 			else
 				routePoints = dao.getRouteEntries(id, false, info.getArchived());
 				
+			// Load airspaces
+			GetAirspace asdao = new GetAirspace(con); GeospaceLocation lastLoc = null;
+			for (GeospaceLocation rt : routePoints) {
+				int alt = (rt instanceof ACARSRouteEntry) ? ((ACARSRouteEntry) rt).getRadarAltitude() : rt.getAltitude();
+				int distance = (alt < 2500) ? 2 : 5;
+				if ((lastLoc == null) || (GeoUtils.distance(rt, lastLoc) > distance)) { 
+					airspaces.addAll(asdao.find(rt));
+					airspaces.addAll(asdao.findRestricted(rt, 10));
+					lastLoc = rt;
+				}
+			}
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		} finally {
@@ -91,8 +108,22 @@ public class MapFlightDataService extends WebService {
 			jo.append("positions", eo);
 		}
 		
+		// Load airspace boundaries
+		for (Airspace a : airspaces) {
+			JSONObject ao = new JSONObject();
+			ao.put("id", a.getID());
+			ao.put("type", a.getType().name());
+			ao.put("min", a.getMinAltitude());
+			ao.put("max", a.getMaxAltitude());
+			ao.put("exclude", a.isExclusion());
+			ao.put("info", a.getInfoBox());
+			ao.put("ll", JSONUtils.format(a));
+			a.getBorder().forEach(pt -> ao.append("border", JSONUtils.format(pt)));
+			jo.append("airspace", ao);
+		}
+		
 		// Dump the JSON to the output stream
-		JSONUtils.ensureArrayPresent(jo, "positions");
+		JSONUtils.ensureArrayPresent(jo, "positions", "airspace");
 		try {
 			ctx.setContentType("application/json", "UTF-8");
 			ctx.setExpiry(3600);
