@@ -26,6 +26,7 @@ golgotha.local.validate = function(f) {
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:enum var="types" className="org.deltava.beans.navdata.AirspaceType" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -41,6 +42,10 @@ golgotha.local.validate = function(f) {
 <tr>
  <td class="label">Country</td>
  <td class="data"><el:combo name="country" idx="*" size="1"  options="${countries}" firstEntry="[ SELECT COUNTRY]" /></td>
+</tr>
+<tr>
+ <td class="label top">Airspace Types</td>
+ <td class="data"><el:check name="types" idx="*" width="125" cols="4" options="${types}" /></td>
 </tr>
 <tr>
  <td class="label">Upload Data File</td>
