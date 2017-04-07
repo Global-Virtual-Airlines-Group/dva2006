@@ -3,19 +3,19 @@ package org.deltava.beans.navdata;
 
 import java.util.*;
 
-import org.deltava.beans.GeoLocation;
+import org.deltava.beans.*;
 import org.deltava.beans.schedule.Country;
 
 import org.deltava.util.cache.Cacheable;
 
 /**
- * A bean to define arbitrary airspaces. 
+ * A bean to define arbitrary airspace boundaries.
  * @author Luke
  * @version 7.3
  * @since 7.3
  */
 
-public class Airspace implements Comparable<Airspace>, Cacheable {
+public class Airspace implements MapEntry, GeospaceLocation, Comparable<Airspace>, Cacheable {
 	
 	private final String _id;
 	private String _name;
@@ -98,6 +98,21 @@ public class Airspace implements Comparable<Airspace>, Cacheable {
 		return _minAlt;
 	}
 	
+	@Override
+	public double getLatitude() {
+		return _border.stream().mapToDouble(loc -> loc.getLatitude()).average().orElse(0);
+	}
+
+	@Override
+	public double getLongitude() {
+		return _border.stream().mapToDouble(loc -> loc.getLongitude()).average().orElse(0);
+	}
+	
+	@Override
+	public int getAltitude() {
+		return (_maxAlt + _minAlt) / 2;
+	}
+	
 	/**
 	 * Returns whether this is an exclusion zone of an existing Airspace.
 	 * @return TRUE if an exclusion zone, otherwise FALSE
@@ -155,6 +170,22 @@ public class Airspace implements Comparable<Airspace>, Cacheable {
 	 */
 	public void setMinAltitude(int alt) {
 		_minAlt = Math.min(_maxAlt, alt);
+	}
+	
+	@Override
+	public String getInfoBox() {
+		StringBuilder buf = new StringBuilder("<span class=\"bld\">");
+		buf.append(_id);
+		buf.append("</span> - <span class=\"sec bld\">");
+		buf.append(_type.getName());
+		buf.append("</span><br />");
+		buf.append(_name);
+		buf.append("<br /><br /><span class=\"small\">From ");
+		buf.append(_minAlt);
+		buf.append(" MSL to ");
+		buf.append(_maxAlt);
+		buf.append(" MSL</span>");
+		return buf.toString();
 	}
 
 	@Override
