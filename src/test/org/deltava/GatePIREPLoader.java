@@ -91,7 +91,7 @@ public class GatePIREPLoader extends TestCase {
 		SetACARSRunway gwdao = new SetACARSRunway(_c);
 		for (Integer i : IDs) {
 			FlightInfo fi = ardao.getInfo(i.intValue());
-			List<GeoLocation> entries = ardao.getRouteEntries(fi.getID(), false, fi.getArchived());
+			List<? extends GeoLocation> entries = ardao.getRouteEntries(fi.getID(), false, fi.getArchived());
 			if (entries.size() < 4) continue;
 			
 			// Load the user and the PIREP
