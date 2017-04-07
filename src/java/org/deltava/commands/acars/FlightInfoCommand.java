@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2011, 2012, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to view all collected ACARS information about a flight.
  * @author Luke
- * @version 4.2
+ * @version 7.3
  * @since 1.0
  */
 
@@ -83,8 +83,7 @@ public class FlightInfoCommand extends AbstractCommand {
 			
 			// Filter out navaids and put them in the correct order
 			List<NavigationDataBean> routeInfo = new ArrayList<NavigationDataBean>();
-			for (Iterator<String> i = routeEntries.iterator(); i.hasNext();) {
-				String navCode = i.next();
+			for (String navCode : routeEntries) {
 				NavigationDataBean wPoint = navaids.get(navCode, lastWaypoint);
 				if (wPoint != null) {
 					if (lastWaypoint.distanceTo(wPoint) < distance) {
@@ -96,18 +95,18 @@ public class FlightInfoCommand extends AbstractCommand {
 			}
 
 			// Load the route data
-			List<GeoLocation> positions = dao.getRouteEntries(info.getID(), false, info.getArchived());
+			List<GeospaceLocation> positions = dao.getRouteEntries(info.getID(), false, info.getArchived());
 
 			// Calculate and save the map center for the Google Map
 			if (!positions.isEmpty()) {
 			   GeoPosition start = new GeoPosition(positions.get(0));
 			   GeoLocation end = positions.get(positions.size() - 1);
 			   ctx.setAttribute("mapCenter", start.midPoint(end), REQUEST);
-			   ctx.setAttribute("routeLength", new Integer(start.distanceTo(end)), REQUEST);
+			   ctx.setAttribute("routeLength", Integer.valueOf(start.distanceTo(end)), REQUEST);
 			} else {
 			   GeoPosition start = info.getAirportD().getPosition();
 			   ctx.setAttribute("mapCenter", start.midPoint(info.getAirportA()), REQUEST);
-			   ctx.setAttribute("routeLength", new Integer(start.distanceTo(info.getAirportA())), REQUEST);
+			   ctx.setAttribute("routeLength", Integer.valueOf(start.distanceTo(info.getAirportA())), REQUEST);
 			}
 			
 			// Save the filed/actual routes
