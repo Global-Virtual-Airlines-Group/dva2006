@@ -68,7 +68,10 @@ public class GetAirspaceDefinition extends DAO {
 					break;
 					
 				case "AN":
-					int p2 = data.indexOf(' '); String id = data.substring(p2);
+					int p2 = data.indexOf(' '); String id = (type.ordinal() < AirspaceType.CTR.ordinal()) ? data.substring(p2) : data; 
+					if (((type == AirspaceType.P) || (type == AirspaceType.R)) && id.contains(" "))
+						id = name.substring(0, name.indexOf(' '));
+					
 					if (id.length() > 48)
 						id = id.substring(0, 48);
 					if (name.length() > 63)
