@@ -1,6 +1,8 @@
 // Copyright 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
+import org.deltava.beans.ComboAlias;
+
 /**
  * An enumeration to store Airspace types.
  * @author Luke
@@ -8,8 +10,8 @@ package org.deltava.beans.navdata;
  * @since 7.3
  */
 
-public enum AirspaceType {
-	P("Prohibited"), R("Restricted"), Q("Danger"), CTR("Center"), A("Class A"), B("Class B"), C("Class C"), D("Class D");
+public enum AirspaceType implements ComboAlias {
+	P("Prohibited"), R("Restricted"), Q("Danger"), CTR("Center"), D("Class D"), C("Class C"), B("Class B"), A("Class A"), E("Class E"), G("Class G");
 	
 	private final String _name;
 	
@@ -38,5 +40,30 @@ public enum AirspaceType {
 		}
 		
 		return null;
+	}
+	
+	/**
+	 * Returns the airspace type depending on altitude.
+	 * @param agl the altitude above ground level
+	 * @param msl the altitude above mean sea level
+	 * @return the AirspaceType
+	 */
+	public static AirspaceType fromAltitude(int agl, int msl) {
+		if (agl < 1200)
+			return G;
+		else if ((msl < 18000) || (msl > 60000))
+			return E;
+		else
+			return A;
+	}
+
+	@Override
+	public String getComboAlias() {
+		return name();
+	}
+
+	@Override
+	public String getComboName() {
+		return _name;
 	}
 }
