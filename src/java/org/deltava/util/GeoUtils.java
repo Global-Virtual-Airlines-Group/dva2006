@@ -2,10 +2,13 @@
 package org.deltava.util;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.deltava.beans.*;
 import org.deltava.beans.navdata.Hemisphere;
 import org.deltava.beans.schedule.GeoPosition;
+
+import com.vividsolutions.jts.geom.*;
 
 /**
  * A utility class for performing geocoding operations.
@@ -28,7 +31,6 @@ public class GeoUtils {
 		results.add(results.indexOf(start) + 1, mPoint);
 		if (mPoint.distanceTo(start) > distance)
 			recurseMidPoint(start, mPoint, results, distance);
-
 		if (mPoint.distanceTo(end) > distance)
 			recurseMidPoint(mPoint, end, results, distance);
 	}
@@ -248,16 +250,9 @@ public class GeoUtils {
 	 * @param distance the distance in miles
 	 * @return a Collection of GeoLocations
 	 */
-	public static Collection<GeoLocation> neighbors(GeoLocation gl, Collection<? extends GeoLocation> points, int distance) {
+	public static List<GeoLocation> neighbors(GeoLocation gl, Collection<? extends GeoLocation> points, int distance) {
 		GeoPosition gp = new GeoPosition(gl);
-		Collection<GeoLocation> results = new ArrayList<GeoLocation>();
-		for (Iterator<? extends GeoLocation> i = points.iterator(); i.hasNext();) {
-			GeoLocation loc = i.next();
-			if (gp.distanceTo(loc) < distance)
-				results.add(loc);
-		}
-
-		return results;
+		return points.stream().filter(pt -> (gp.distanceTo(pt) < distance)).collect(Collectors.toList());
 	}
 	
 	/**
@@ -458,5 +453,39 @@ public class GeoUtils {
 		}
 		
 		return isOK;
+	}
+	
+	/**
+	 * Converts a Collection of GeoLocations into a LinearRing object.
+	 * @param pts a Collection of GeoLocations
+	 * @return a LinearRing object
+	 */
+	public static LinearRing toRing(Collection<GeoLocation> pts) {
+		List<GeoLocation> brd = new ArrayList<GeoLocation>(pts);
+		brd.add(brd.get(0));
+		List<Coordinate> cts = brd.stream().map(pt -> new Coordinate(pt.getLatitude(), pt.getLongitude())).collect(Collectors.toList());
+		
+		GeometryFactory gf = new GeometryFactory();
+		return gf.createLinearRing(cts.toArray(new Coordinate[0]));
+	}
+	
+	/**
+	 * Converts a Collection of GeoLocations into a Geometry object.
+	 * @param pts a Collection of GeoLocations 
+	 * @return a Geometry object
+	 */
+	public static Geometry toGeometry(Collection<GeoLocation> pts) {
+		GeometryFactory gf = new GeometryFactory();
+		return gf.createPolygon(toRing(pts), null);
+	}
+
+	/**
+	 * Parses a Geometry object and converts it into a Collection of GeoLocations.
+	 * @param geo a Geometry
+	 * @return a Collection of GeoLocations
+	 */
+	public static Collection<GeoLocation> fromGeometry(Geometry geo) {
+		List<Coordinate> coords = Arrays.asList(geo.getCoordinates());
+		return coords.stream().map(pt -> new GeoPosition(pt.x, pt.y)).collect(Collectors.toList());
 	}
 }
