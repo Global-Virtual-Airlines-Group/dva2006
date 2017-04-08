@@ -6,7 +6,10 @@ import java.util.*;
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.Country;
 
+import org.deltava.util.GeoUtils;
 import org.deltava.util.cache.Cacheable;
+
+import com.vividsolutions.jts.geom.*;
 
 /**
  * A bean to define arbitrary airspace boundaries.
@@ -28,7 +31,9 @@ public class Airspace implements MapEntry, GeospaceLocation, Comparable<Airspace
 	private int _maxAlt;
 	
 	private final Collection<GeoLocation> _border = new LinkedHashSet<GeoLocation>();
-
+	
+	private transient Geometry _geo;
+	
 	/**
 	 * Creates the bean.
 	 * @param id the airspace code
@@ -68,6 +73,7 @@ public class Airspace implements MapEntry, GeospaceLocation, Comparable<Airspace
 	/**
 	 * Returns the coordinates of the FIR boundary.
 	 * @return a Collection of GeoLocations
+	 * @see FIR#setBorder(Collection)
 	 * @see FIR#addBorderPoint(GeoLocation)
 	 */
 	public List<GeoLocation> getBorder() {
@@ -100,17 +106,36 @@ public class Airspace implements MapEntry, GeospaceLocation, Comparable<Airspace
 	
 	@Override
 	public double getLatitude() {
-		return _border.stream().mapToDouble(loc -> loc.getLatitude()).average().orElse(0);
+		calculateGeo();
+		return _geo.getCentroid().getY();
 	}
 
 	@Override
 	public double getLongitude() {
-		return _border.stream().mapToDouble(loc -> loc.getLongitude()).average().orElse(0);
+		calculateGeo();
+		return _geo.getCentroid().getX();
 	}
 	
 	@Override
 	public int getAltitude() {
 		return (_maxAlt + _minAlt) / 2;
+	}
+	
+	/**
+	 * Returns whether a point is contained within this Airspace.
+	 * @param loc a GeospaceLocation
+	 * @return TRUE if the Airspace contains this point, otherwise FALSE
+	 */
+	public boolean contains(GeospaceLocation loc) {
+		boolean isContained = (loc.getAltitude() >= _minAlt) && (loc.getAltitude() <= _maxAlt);
+		if (isContained) {
+			calculateGeo();
+			GeometryFactory gf = new GeometryFactory();
+			Point pt = gf.createPoint(new Coordinate(loc.getLatitude(), loc.getLongitude()));
+			isContained = _geo.contains(pt);
+		}
+		
+		return isContained;
 	}
 	
 	/**
@@ -127,7 +152,18 @@ public class Airspace implements MapEntry, GeospaceLocation, Comparable<Airspace
 	 * @see Airspace#getBorder()
 	 */
 	public void addBorderPoint(GeoLocation loc) {
+		_geo = null;
 		_border.add(loc);
+	}
+	
+	/**
+	 * Sets the airspace boundary.
+	 * @param locs a Collection of GeoLocations
+	 * @see Airspace#getBorder()
+	 */
+	public void setBorder(Collection<GeoLocation> locs) {
+		_geo = null;
+		_border.addAll(locs);
 	}
 	
 	/**
@@ -170,6 +206,11 @@ public class Airspace implements MapEntry, GeospaceLocation, Comparable<Airspace
 	 */
 	public void setMinAltitude(int alt) {
 		_minAlt = Math.min(_maxAlt, alt);
+	}
+	
+	private void calculateGeo() {
+		if (_geo == null)
+			_geo = GeoUtils.toGeometry(_border);
 	}
 	
 	@Override
