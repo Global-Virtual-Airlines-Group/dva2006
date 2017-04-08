@@ -2,15 +2,14 @@
 package org.deltava.dao;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.io.WKTWriter;
 
-import org.deltava.beans.GeoLocation;
 import org.deltava.beans.navdata.Airspace;
 import org.deltava.beans.schedule.Country;
+
+import org.deltava.util.GeoUtils;
 
 /**
  * A Data Access Object to write Airspace boundaries to the database.
@@ -36,13 +35,7 @@ public class SetAirspace extends DAO {
 	 */
 	public void write(Airspace a) throws DAOException {
 		
-		// Build geometry
-		GeometryFactory gf = new GeometryFactory();
-		List<Coordinate> cts = new ArrayList<Coordinate>(); List<GeoLocation> brd = a.getBorder();
-		brd.add(brd.get(0));
-		brd.forEach(pt -> cts.add(new Coordinate(pt.getLatitude(), pt.getLongitude())));
-		Geometry geo = gf.createPolygon(gf.createLinearRing(cts.toArray(new Coordinate[0])), null);
-		
+		Geometry geo = GeoUtils.toGeometry(a.getBorder());
 		try {
 			prepareStatementWithoutLimits("REPLACE INTO common.AIRSPACE (ID, NAME, COUNTRY, TYPE, EXCLUSION, MIN_ALT, MAX_ALT, CTR, DATA) VALUES (?, ?, ?, ?, ?, ?, ?, ST_GeomFromText(?, ?), ST_GeomFromText(?, ?))");
 			_ps.setString(1, a.getID());

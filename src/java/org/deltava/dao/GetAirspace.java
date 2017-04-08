@@ -10,7 +10,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import org.deltava.beans.*;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
-
+import org.deltava.util.GeoUtils;
 import org.deltava.util.Tuple;
 import org.deltava.util.cache.*;
 
@@ -64,7 +64,7 @@ public class GetAirspace extends DAO {
 					a.setMaxAltitude(rs.getInt(7));
 					geo = wr.read(rs.getString(8));
 					if (geo != null) {
-						Arrays.asList(geo.getCoordinates()).forEach(pt -> a.addBorderPoint(new GeoPosition(pt.x, pt.y)));
+						a.setBorder(GeoUtils.fromGeometry(geo));
 						results.add(a);
 					}
 				}
@@ -89,12 +89,35 @@ public class GetAirspace extends DAO {
 	public List<Airspace> find(GeospaceLocation loc) throws DAOException {
 		Collection<Tuple<String, Country>> codes = new ArrayList<Tuple<String, Country>>();
 		try {
-			prepareStatementWithoutLimits("SELECT ID, COUNTRY FROM common.AIRSPACE WHERE ST_Contains(DATA, ST_PointFromText(?,?)) AND (EXCLUSION=?) AND (MIN_ALT<=?) AND (MAX_ALT>=?) ORDER BY TYPE");
+			prepareStatementWithoutLimits("SELECT ID, COUNTRY FROM common.AIRSPACE FORCE INDEX (AS_ALT_IDX) WHERE ST_Contains(DATA, ST_PointFromText(?,?)) AND (MIN_ALT<=?) AND (MAX_ALT>=?) AND (EXCLUSION=?) ORDER BY TYPE");
 			_ps.setString(1, formatLocation(loc));
 			_ps.setInt(2, GEO_SRID);
 			_ps.setBoolean(3, false);
 			_ps.setInt(4, loc.getAltitude());
 			_ps.setInt(5, loc.getAltitude());
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+					codes.add(Tuple.create(rs.getString(1), Country.get(rs.getString(2))));
+			}
+			
+			_ps.close();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+		
+		return load(codes);
+	}
+	
+	/**
+	 * Returns all restricted airspace boundaries.
+	 * @return a Collection of Airspace beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<Airspace> getRestricted() throws DAOException {
+		Collection<Tuple<String, Country>> codes = new ArrayList<Tuple<String, Country>>();
+		try {
+			prepareStatementWithoutLimits("SELECT ID, COUNTRY FROM common.AIRSPACE WHERE (TYPE<=?)");
+			_ps.setInt(1, AirspaceType.R.ordinal());
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next())
 					codes.add(Tuple.create(rs.getString(1), Country.get(rs.getString(2))));
@@ -118,13 +141,15 @@ public class GetAirspace extends DAO {
 	public Collection<Airspace> findRestricted(GeospaceLocation loc, int distance) throws DAOException {
 		Collection<Tuple<String, Country>> codes = new ArrayList<Tuple<String, Country>>();
 		try {
-			prepareStatementWithoutLimits("SELECT ID, COUNTRY FROM common.AIRSPACE WHERE (ST_Distance(DATA, ST_PointFromText(?,?)) < ?) AND ((TYPE=?) OR (TYPE=?)) AND (EXCLUSION=?)");
+			prepareStatementWithoutLimits("SELECT ID, COUNTRY FROM common.AIRSPACE FORCE INDEX (AS_TYPE_IDX, AS_ALT_IDX) WHERE (ST_Distance(DATA, ST_PointFromText(?,?)) < ?) AND (TYPE<?) AND "
+				+"(MIN_ALT<=?) AND (MAX_ALT>=?) AND (EXCLUSION=?)");
 			_ps.setString(1, formatLocation(loc));
 			_ps.setInt(2, GEO_SRID);
 			_ps.setDouble(3, (distance / GeoLocation.DEGREE_MILES));
-			_ps.setInt(4, AirspaceType.P.ordinal());
-			_ps.setInt(5, AirspaceType.R.ordinal());
-			_ps.setBoolean(6, false);
+			_ps.setInt(4, AirspaceType.R.ordinal());
+			_ps.setInt(5, Math.max(0, loc.getAltitude() - 2500));
+			_ps.setInt(6, Math.min(60000, loc.getAltitude() + 2500));
+			_ps.setBoolean(7, false);
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next())
 					codes.add(Tuple.create(rs.getString(1), Country.get(rs.getString(2))));
