@@ -134,9 +134,14 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 	public static final int ATTR_PEDGE = 0x100000;
 	
 	/**
+	 * Flight flown through prohibited airspace.
+	 */
+	public static final int ATTR_AIRSPACEWARN = 0x200000;
+	
+	/**
 	 * Attribute mask for all warnings.
 	 */
-	public static final int ATTR_WARN_MASK = 0x6B861;
+	public static final int ATTR_WARN_MASK = 0x26B861;
 	
 	/**
 	 * Attribute mask for VATSIM/IVAO/FPI online flights.
@@ -464,14 +469,10 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 	/**
 	 * Sets the Flight Leg. Overrides the superclass implementation to check for zero values.
 	 * @param leg the Flight Leg
-	 * @throws IllegalArgumentException if leg is zero or negative
 	 */
 	@Override
 	public final void setLeg(int leg) {
-		if (leg == 0)
-			throw new IllegalArgumentException("Flight Leg cannot be zero or negative");
-
-		super.setLeg(leg);
+		super.setLeg(Math.max(1, leg));
 	}
 
 	/**
