@@ -1,12 +1,11 @@
-// Copyright 2011, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.xacars;
 
 import java.sql.Connection;
 
 import org.apache.log4j.Logger;
 
-import org.deltava.beans.Pilot;
-
+import org.deltava.beans.*;
 import org.deltava.dao.*;
 import org.deltava.security.*;
 import org.deltava.service.*;
@@ -17,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to support XACARS HTTP requests.
  * @author Luke
- * @version 7.2
+ * @version 7.3
  * @since 4.1
  */
 
@@ -65,18 +64,19 @@ public abstract class XAService extends WebService {
 	}
 	
 	/**
-	 * Returns the simulator.
+	 * Returns the simulator used.
 	 * @param ctx the ServiceContext
-	 * @return the simulator name
+	 * @return the Simulator
 	 */
-	protected static String getSimulator(ServiceContext ctx) {
-		// TODO: Return Simualtor enum?
+	protected static Simulator getSimulator(ServiceContext ctx) {
+
 		String data = ctx.getParameter("DATA1");
 		if ((data == null) || (data.indexOf('_') == -1))
-			return "UNKNOWN";
+			return Simulator.UNKNOWN;
 		
 		int pos = data.indexOf('_');
-		return data.substring(pos + 1, data.indexOf('|', pos));
+		String sim = data.substring(pos + 1, data.indexOf('|', pos));
+		return sim.contains("MSFS") ? Simulator.FSX : Simulator.XP10;
 	}
 	
 	/**
