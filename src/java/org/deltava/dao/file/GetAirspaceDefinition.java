@@ -100,14 +100,12 @@ public class GetAirspaceDefinition extends DAO {
 					List<String> params = StringUtils.split(data, ",");
 					GeoLocation gl1 = parseLL(params.get(0)); GeoLocation gl2 = parseLL(params.get(1));
 					double a1 = GeoUtils.course(ctr, gl1); double a2 = GeoUtils.course(ctr, gl2); double dst = GeoUtils.distance(ctr, gl1);
-					final Airspace asp = a;
-					drawArc(ctr, dst, a1, a2, isClockwise).forEach(pt -> asp.addBorderPoint(pt));
+					a.setBorder(drawArc(ctr, dst, a1, a2, isClockwise));
 					break;
 					
 				case "DC": // draw circle
 					double radius = StringUtils.parse(data, 1.0d);
-					final Airspace ap = a;
-					drawArc(ctr, radius, 0, 360, true).forEach(pt -> ap.addBorderPoint(pt));
+					a.setBorder(drawArc(ctr, radius, 0, 360, true));
 					break;
 					
 				case "V": // set pt

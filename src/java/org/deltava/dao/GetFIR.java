@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2012, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,15 +9,14 @@ import com.vividsolutions.jts.geom.Geometry;
 
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.navdata.FIR;
-import org.deltava.beans.schedule.GeoPosition;
 
-import org.deltava.util.Tuple;
+import org.deltava.util.*;
 import org.deltava.util.cache.*;
 
 /**
  * A Data Access Object to load FIR data.
  * @author Luke
- * @version 7.2
+ * @version 7.3
  * @since 3.2
  */
 
@@ -86,24 +85,23 @@ public class GetFIR extends DAO {
 				return null;
 			
 			// Parse border coordinates
-			final FIR f = fir;
-			Arrays.asList(geo.getCoordinates()).forEach(c -> f.addBorderPoint(new GeoPosition(c.x, c.y)));
+			fir.setBorder(GeoUtils.fromGeometry(geo));
 				
 			// Load aliases
 			prepareStatementWithoutLimits("SELECT ALIAS FROM common.FIRALIAS WHERE (ID=?) AND (OCEANIC=?)");
-			_ps.setString(1, f.getID());
-			_ps.setBoolean(2, f.isOceanic());				
+			_ps.setString(1, fir.getID());
+			_ps.setBoolean(2, fir.isOceanic());				
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
-					f.addAlias(rs.getString(1));
+					fir.addAlias(rs.getString(1));
 					_idCache.add(new CacheableString(id, rs.getString(1)));
 				}
 			}
 				
 			// Clean up and add to cache
 			_ps.close();
-			_cache.add(f);
-			return f;
+			_cache.add(fir);
+			return fir;
 		} catch (SQLException | ParseException se) {
 			throw new DAOException(se);
 		}
