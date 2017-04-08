@@ -1,4 +1,4 @@
-// Copyright 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.xacars;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -8,7 +8,6 @@ import java.sql.Connection;
 import java.time.Instant;
 
 import org.deltava.beans.Pilot;
-import org.deltava.beans.Simulator;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.schedule.*;
 
@@ -20,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * The XACARS Start Flight service.
  * @author Luke
- * @version 7.0
+ * @version 7.3
  * @since 4.1
  */
 
@@ -65,17 +64,11 @@ public class StartFlightService extends XAService {
 		info.setAirportD(SystemData.getAirport(rte.get(0)));
 		info.setAirportA(SystemData.getAirport(rte.get(rte.size() - 1)));
 		info.setStartTime(Instant.now());
+		info.setSimulator(getSimulator(ctx));
 		if (rte.size() > 2)
 			info.setRoute(StringUtils.listConcat(rte.subList(1, rte.size() - 1), " "));
 		else
 			info.setRoute(StringUtils.listConcat(rte, " "));
-		
-		// Get the simulator version
-		String sim = getSimulator(ctx);
-		if (sim.contains("MSFS"))
-			info.setSimulator(Simulator.FSX);
-		else
-			info.setSimulator(Simulator.XP10);
 		
 		// Parse the position data
 		XARouteEntry pos = new XARouteEntry(GeoUtils.parseXACARS(data.get(6)), info.getStartTime());
