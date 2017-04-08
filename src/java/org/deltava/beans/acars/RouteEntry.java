@@ -1,9 +1,10 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.time.Instant;
 
 import org.deltava.beans.*;
+import org.deltava.beans.navdata.AirspaceType;
 
 import org.deltava.util.StringUtils;
 
@@ -12,7 +13,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
- * @version 7.0
+ * @version 7.3
  * @since 1.0
  */
 
@@ -20,6 +21,7 @@ public abstract class RouteEntry extends ACARSMapEntry implements GeospaceLocati
 
 	private Instant _date;
 	private FlightPhase _phase;
+	private AirspaceType _asType = AirspaceType.E;
 
 	private int _alt;
 	private int _hdg;
@@ -161,6 +163,15 @@ public abstract class RouteEntry extends ACARSMapEntry implements GeospaceLocati
 	 */
 	public String getPhaseName() {
 		return _phase.getName();
+	}
+	
+	/**
+	 * Returns the type of Airspace covering the current position.
+	 * @return an AirspaceType enumeration
+	 * @see RouteEntry#setAirspace(AirspaceType)
+	 */
+	public AirspaceType getAirspace() {
+		return _asType;
 	}
 	
 	@Override
@@ -306,6 +317,15 @@ public abstract class RouteEntry extends ACARSMapEntry implements GeospaceLocati
 	public void setWindHeading(int hdg) {
 		if ((hdg >= 0) && (hdg < 360))
 			_wHdg = hdg;
+	}
+	
+	/**
+	 * Sets the Airspace type covering the current position.
+	 * @param at the AirspaceType
+	 * @see RouteEntry#getAirspace()
+	 */
+	public void setAirspace(AirspaceType at) {
+		_asType = at;
 	}
 
 	/**
