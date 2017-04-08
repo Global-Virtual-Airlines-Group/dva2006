@@ -263,6 +263,13 @@
 		<function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>
 		<function-signature>boolean etopsWarn(org.deltava.beans.flight.FlightReport)</function-signature>
 	</function>
+	
+	<!-- Check for airspace warning flag -->
+	<function>
+	   <name>airspaceWarn</name>
+	   <function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>
+	   <function-signature>boolean airspaceWarn(org.deltava.beans.flight.FlightReport)</function-signature>
+	</function>
 
 	<!-- Check for excessive weight flag -->
 	<function>

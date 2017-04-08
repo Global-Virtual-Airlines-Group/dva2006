@@ -24,7 +24,7 @@
 <content:browser human="true"><c:if test="${googleMap}">
 <map:api version="3" /></c:if></content:browser>
 <c:if test="${scoreCR || access.canDispose}">
-<script type="text/javascript">
+<script>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -42,7 +42,7 @@ return true;
 <content:googleJS module="charts" />
 <content:json />
 <content:js name="acarsFlightMap" />
-<script type="text/javascript">
+<script>
 golgotha.local.zoomTo = function(lat, lng, zoom) {
 	map.setZoom((zoom == null) ? 12 : zoom);
 	map.panTo({lat:lat, lng:lng});
@@ -191,6 +191,8 @@ golgotha.local.showRunwayChoices = function() {
 <div class="error bld caps">Flight Distance outside Aircraft Range</div></c:if>
 <c:if test="${fn:rwyWarn(pirep)}">
 <div class="warn bld caps">Insufficient Runway Length</div></c:if>
+<c:if test="${fn:airspaceWarn(pirep)}">
+<div class="error bld caps">Flight flown through Prohibited/Restricted Airspace</div></c:if>
 <c:if test="${fn:etopsWarn(pirep)}">
 <div class="error bld caps">Non-ETOPS Aircraft used on ETOPS route</div></c:if>
 <c:if test="${fn:timeWarn(pirep)}">

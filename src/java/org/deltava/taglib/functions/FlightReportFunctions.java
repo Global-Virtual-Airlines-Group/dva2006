@@ -222,6 +222,16 @@ public class FlightReportFunctions {
 	public static boolean etopsWarn(FlightReport fr) {
 		return ((fr != null) && fr.hasAttribute(FlightReport.ATTR_ETOPSWARN));
 	}
+	
+	/**
+	 * Returns if this Flight entered Prohibited or Restricted airspace.
+	 * @param fr the FlightReport
+	 * @return TRUE if the AIRSPACEWARN attribute is present, otherwise FALSE
+	 * @see FlightReport#ATTR_AIRSPACEWARN
+	 */
+	public static boolean airspaceWarn(FlightReport fr) {
+		return ((fr != null) && fr.hasAttribute(FlightReport.ATTR_AIRSPACEWARN));
+	}
 
 	/**
 	 * Returns if excessive takeoff or landing weight was detected.
@@ -278,9 +288,6 @@ public class FlightReportFunctions {
 	 * @see FlightReportFunctions#isOnline(FlightReport)
 	 */
 	public static String network(FlightReport fr) {
-		if ((fr == null) || (fr.getNetwork() == null))
-			return "Offline";
-
-		return fr.getNetwork().toString();
+		return ((fr == null) || (fr.getNetwork() == null)) ? "Offline" : fr.getNetwork().toString();
 	}
 }
