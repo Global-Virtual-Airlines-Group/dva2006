@@ -41,11 +41,11 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr>
  <td class="label">Country</td>
- <td class="data"><el:combo name="country" idx="*" size="1"  options="${countries}" firstEntry="[ SELECT COUNTRY]" /></td>
+ <td class="data"><el:combo name="country" idx="*" size="1"  options="${countries}" firstEntry="[ SELECT COUNTRY]" value="US" /></td>
 </tr>
 <tr>
  <td class="label top">Airspace Types</td>
- <td class="data"><el:check name="types" idx="*" width="125" cols="4" options="${types}" /></td>
+ <td class="data"><el:check name="types" idx="*" width="90" options="${types}" /></td>
 </tr>
 <tr>
  <td class="label">Upload Data File</td>
