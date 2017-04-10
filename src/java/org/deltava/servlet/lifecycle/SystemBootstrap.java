@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.lifecycle;
 
 import java.io.*;
@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 import org.deltava.beans.econ.EconomyInfo;
 import org.deltava.beans.fb.FacebookCredentials;
 import org.deltava.beans.flight.ETOPSHelper;
+import org.deltava.beans.navdata.Airspace;
 import org.deltava.beans.schedule.Airport;
 import org.deltava.beans.stats.AirlineTotals;
 
@@ -32,7 +33,7 @@ import org.gvagroup.jdbc.*;
 /**
  * The System bootstrap loader, that fires when the servlet container is started or stopped.
  * @author Luke
- * @version 7.1
+ * @version 7.3
  * @since 1.0
  */
 
@@ -158,16 +159,19 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 			SystemData.add("airports", airports);
 			ETOPSHelper.init(airports.values());
 			log.info("Initialized ETOPS helper");
+			
+			// Load prohibited airspace
+			log.info("Loading restricted Airspace");
+			GetAirspace asdao = new GetAirspace(c);
+			Airspace.init(asdao.getRestricted());
 
 			// Load last execution date/times for Scheduled Tasks
 			if (taskSched != null) {
 				log.info("Loading Scheduled Task execution data");
 				GetSystemData sysdao = new GetSystemData(c);
 				Map<String, TaskLastRun> taskInfo = sysdao.getTaskExecution();
-				for (Iterator<TaskLastRun> i = taskInfo.values().iterator(); i.hasNext();) {
-					TaskLastRun tlr = i.next();
+				for (TaskLastRun tlr : taskInfo.values())
 					taskSched.setLastRunTime(tlr);
-				}
 			}
 			
 			// Load User Pool max values

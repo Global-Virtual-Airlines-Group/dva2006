@@ -1,5 +1,5 @@
 golgotha.maps.acarsFlight = golgotha.maps.acarsFlight || {selectedFIRs:[], routePoints:[], routeMarkers:[], airspace:[]}; 
-golgotha.maps.acarsFlight.airspaceColors = {'P':{c:'#ee1010',tx:0.4,z:10}, 'R':{c:'#dddd20',tx:0.25,z:5}, 'B':{c:'#10e0e0',tx:0.1,z:0}, 'C':{c:'#a0a018', tx:0.125,z:1}, 'D':{c:'#608040', tx:0.175,z:2}};
+golgotha.maps.acarsFlight.airspaceColors = {'P':{c:'#ee1010',tx:0.4,z:10}, 'R':{c:'#adad10',tx:0.2,z:5}, 'B':{c:'#10e0e0',tx:0.1,z:0}, 'C':{c:'#ffa018', tx:0.125,z:1}, 'D':{c:'#608040', tx:0.175,z:2}};
 golgotha.maps.acarsFlight.getACARSData = function(pirepID, doToggle)
 {
 // Disable checkboxes
@@ -38,7 +38,7 @@ xmlreq.onreadystatechange = function() {
 
 	js.airspace.forEach(function(a) {
 		if (a.exclude) return false;
-		var ac = golgotha.maps.acarsFlight.airspaceColors[a.code] || {c:'#cfdfff', tx:0.25};
+		var ac = golgotha.maps.acarsFlight.airspaceColors[a.type];
 		var brd = new google.maps.Polygon({paths:[a.border], strokeColor:ac.c, strokeWeight:0.75, strokeOpacity:ac.tx, fillColor:ac.c, fillOpacity:(ac.tx/3), zIndex:golgotha.maps.z.OVERLAY+ac.z});
 		brd.info = a.info; brd.ll = a.ll;
 		google.maps.event.addListener(brd, 'click', function() { map.infoWindow.setContent(this.info); map.infoWindow.open(map); map.infoWindow.setPosition(this.ll); });

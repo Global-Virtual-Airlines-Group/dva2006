@@ -1,4 +1,4 @@
-// Copyright 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.simfdr;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -6,6 +6,7 @@ import static javax.servlet.http.HttpServletResponse.*;
 import java.util.*;
 import java.io.IOException;
 import java.sql.Connection;
+import java.util.stream.Collectors;
 
 import org.jdom2.*;
 
@@ -30,7 +31,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to process simFDR submitted Flight Reports.
  * @author Luke
- * @version 7.0
+ * @version 7.3
  * @since 7.0
  */
 
@@ -176,6 +177,13 @@ public class FlightSubmitService extends SimFDRService {
 			fr.setAttribute(FlightReport.ATTR_ETOPSWARN, ETOPSHelper.validate(a, etopsClass.getResult()));
 			if (fr.hasAttribute(FlightReport.ATTR_ETOPSWARN))
 				comments.add("ETOPS classificataion: " + String.valueOf(etopsClass));
+			
+			// Check prohibited airspace
+			Collection<Airspace> rstAirspaces = ofr.getPositions().stream().map(pos -> Airspace.isRestricted(pos)).filter(Objects::nonNull).collect(Collectors.toSet());
+			if (!rstAirspaces.isEmpty()) {
+				fr.setAttribute(FlightReport.ATTR_AIRSPACEWARN, true);
+				comments.add("SYSTEM: Entered restricted airspace " + StringUtils.listConcat(rstAirspaces, ", "));
+			}
 			
 			// Calculate the load factor
 			EconomyInfo eInfo = (EconomyInfo) SystemData.getObject(SystemData.ECON_DATA);

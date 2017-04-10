@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2012, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -18,15 +18,14 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * An abstract class to support Web Services rendering ACARS data in Google Earth. 
  * @author Luke
- * @version 5.0
+ * @version 7.3
  * @since 1.0
  */
 
 public abstract class GoogleEarthService extends org.deltava.service.WebService {
 
-	protected static final GoogleEarthColor[] COLORS = {new GoogleEarthColor(208, 184, 0), new GoogleEarthColor(0, 205, 0),
-		new GoogleEarthColor(240, 48, 48), new GoogleEarthColor(80, 192, 240), new GoogleEarthColor(240, 16, 240),
-		new GoogleEarthColor(0, 240, 240), new GoogleEarthColor(240, 240, 64) };
+	protected static final GoogleEarthColor[] COLORS = {new GoogleEarthColor(208, 184, 0), new GoogleEarthColor(0, 205, 0), new GoogleEarthColor(240, 48, 48), 
+		new GoogleEarthColor(80, 192, 240), new GoogleEarthColor(240, 16, 240), new GoogleEarthColor(0, 240, 240), new GoogleEarthColor(240, 240, 64) };
 	
 	/**
 	 * Helper method to generate an airport Placemark element.
@@ -126,11 +125,7 @@ public abstract class GoogleEarthService extends org.deltava.service.WebService 
 
 		// Format all of the coordinates
 		StringBuilder buf = new StringBuilder();
-		for (Iterator<RouteEntry> i = positions.iterator(); i.hasNext();) {
-			RouteEntry entry = i.next();
-			buf.append(GeoUtils.format3D(entry, entry.getRadarAltitude()));
-			buf.append(" \n");
-		}
+		positions.forEach(re -> buf.append(GeoUtils.format3D(re, re.getRadarAltitude())).append(" \n") );
 
 		// Save the coordinates and return
 		lse.addContent(XMLUtils.createElement("coordinates", buf.toString()));
@@ -153,8 +148,7 @@ public abstract class GoogleEarthService extends org.deltava.service.WebService 
 		
 		// Render the position data
 		int pos = 0;
-		for (Iterator<RouteEntry> i = positions.iterator(); i.hasNext();) {
-			RouteEntry entry = i.next();
+		for (RouteEntry entry : positions) {
 			Element pe = new Element("Placemark");
 			pe.addContent(XMLUtils.createElement("name", "Route Point #" + String.valueOf(++pos)));
 			pe.addContent(XMLUtils.createElement("visibility", isVisible ? "1" : "0"));
@@ -184,8 +178,29 @@ public abstract class GoogleEarthService extends org.deltava.service.WebService 
 			fe.addContent(pe);
 		}
 
-		// Return the folder element
 		return fe;
+	}
+	
+	/**
+	 * Renders an Airspace boundary into Google Earth KML.
+	 * @param a an Airspace bean
+	 * @param isVisible TRUE if the element is visible, otherwise FALSE
+	 * @return a KML element containing the Airspace entry
+	 */
+	protected static Element createAirpsace(Airspace a, boolean isVisible) {
+
+		// Create the box
+		Element rle = new Element("Placemark");
+		rle.addContent(XMLUtils.createElement("name", a.getName()));
+		rle.addContent(XMLUtils.createElement("visibility", isVisible ? "1" : "0"));
+
+		Element rls = new Element("Style");
+		Element rlce = XMLUtils.createElement("LineStyle", "color", new GoogleEarthColor(224, 192, 192, 48).toString());
+		rlce.addContent(XMLUtils.createElement("width", "1"));
+		rls.addContent(rlce);
+		rle.addContent(rls);
+
+		return rle;
 	}
 	
 	/**
