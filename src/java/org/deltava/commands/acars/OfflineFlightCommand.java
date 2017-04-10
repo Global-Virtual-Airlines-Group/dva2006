@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import java.io.*;
@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.zip.*;
 import java.sql.Connection;
 import java.time.Instant;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 
@@ -32,7 +33,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to allow users to submit Offline Flight Reports.
  * @author Luke
- * @version 7.0
+ * @version 7.3
  * @since 2.4
  */
 
@@ -302,12 +303,6 @@ public class OfflineFlightCommand extends AbstractCommand {
 			else if ((a.getMaxLandingWeight() != 0) && (afr.getLandingWeight() > a.getMaxLandingWeight()))
 				afr.setAttribute(FlightReport.ATTR_WEIGHTWARN, true);
 			
-			// Check ETOPS
-			ETOPSResult etopsClass = ETOPSHelper.classify(flight.getPositions()); 
-			afr.setAttribute(FlightReport.ATTR_ETOPSWARN, ETOPSHelper.validate(a, etopsClass.getResult()));
-			if (afr.hasAttribute(FlightReport.ATTR_ETOPSWARN))
-				comments.add("ETOPS classificataion: " + String.valueOf(etopsClass));
-			
 			// Calculate the load factor
 			EconomyInfo eInfo = (EconomyInfo) SystemData.getObject(SystemData.ECON_DATA);
 			if (eInfo != null) {
@@ -340,6 +335,19 @@ public class OfflineFlightCommand extends AbstractCommand {
 			if (inf.getID() > 0) {
 				GetACARSPositions posdao = new GetACARSPositions(con);
 				positions.addAll(posdao.getRouteEntries(inf.getID(), false));
+			}
+			
+			// Check ETOPS
+			ETOPSResult etopsClass = ETOPSHelper.classify(positions); 
+			afr.setAttribute(FlightReport.ATTR_ETOPSWARN, ETOPSHelper.validate(a, etopsClass.getResult()));
+			if (afr.hasAttribute(FlightReport.ATTR_ETOPSWARN))
+				comments.add("ETOPS classificataion: " + String.valueOf(etopsClass));
+			
+			// Check prohibited airspace
+			Collection<Airspace> rstAirspaces = positions.stream().map(pos -> Airspace.isRestricted(pos)).filter(Objects::nonNull).collect(Collectors.toSet());
+			if (!rstAirspaces.isEmpty()) {
+				afr.setAttribute(FlightReport.ATTR_AIRSPACEWARN, true);
+				comments.add("SYSTEM: Entered restricted airspace " + StringUtils.listConcat(rstAirspaces, ", "));
 			}
 			
 			// Check for inflight refueling and calculate fuel use

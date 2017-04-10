@@ -12,7 +12,7 @@ import org.json.*;
 import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.flight.Recorder;
-import org.deltava.beans.navdata.Airspace;
+import org.deltava.beans.navdata.*;
 import org.deltava.beans.servinfo.*;
 
 import org.deltava.dao.*;
@@ -40,7 +40,7 @@ public class MapFlightDataService extends WebService {
 		// Get the DAO and the route data
 		int id = StringUtils.parse(ctx.getParameter("id"), 0);
 		Collection<? extends GeospaceLocation> routePoints = null;
-		Collection<Airspace> airspaces = new HashSet<Airspace>();
+		Collection<Airspace> airspaces = new LinkedHashSet<Airspace>();
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -54,15 +54,29 @@ public class MapFlightDataService extends WebService {
 			else
 				routePoints = dao.getRouteEntries(id, false, info.getArchived());
 				
-			// Load airspaces
-			GetAirspace asdao = new GetAirspace(con); GeospaceLocation lastLoc = null;
+			// Check airspace
+			GetAirspace asdao = new GetAirspace(con);
+			Collection<Airspace> rsts = asdao.getRestricted();
 			for (GeospaceLocation rt : routePoints) {
-				int alt = (rt instanceof ACARSRouteEntry) ? ((ACARSRouteEntry) rt).getRadarAltitude() : rt.getAltitude();
-				int distance = (alt < 2500) ? 2 : 5;
-				if ((lastLoc == null) || (GeoUtils.distance(rt, lastLoc) > distance)) { 
-					airspaces.addAll(asdao.find(rt));
-					airspaces.addAll(asdao.findRestricted(rt, 10));
-					lastLoc = rt;
+				ACARSRouteEntry re = (rt instanceof ACARSRouteEntry) ? (ACARSRouteEntry) rt : null;
+				AirspaceType at = null;
+				for (Iterator<Airspace> i = rsts.iterator(); (i.hasNext() && (at == null)); ) {
+					Airspace a = i.next();
+					if (a.contains(rt)) {
+						at = a.getType();
+						airspaces.add(a);
+					}
+				}
+				
+				if (rt.getAltitude() > 18000) {
+					if (re != null)
+						re.setAirspace((at == null) ? AirspaceType.fromAltitude(re.getRadarAltitude(), re.getAltitude()) : at);
+				} else {
+					List<Airspace> aSpaces = asdao.find(rt);
+					airspaces.addAll(aSpaces);
+					airspaces.addAll(asdao.findRestricted(rt, 6));
+					if (re != null)
+						re.setAirspace(aSpaces.isEmpty() ? AirspaceType.fromAltitude(re.getRadarAltitude(), re.getAltitude()) : aSpaces.get(0).getType());
 				}
 			}
 		} catch (DAOException de) {
