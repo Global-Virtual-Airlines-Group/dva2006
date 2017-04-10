@@ -34,6 +34,32 @@ public class Airspace implements MapEntry, GeospaceLocation, Comparable<Airspace
 	
 	private transient Geometry _geo;
 	
+	private static final Collection<Airspace> _restricted = new LinkedHashSet<Airspace>();
+	
+	/**
+	 * Initializes restricted airspace.
+	 * @param data a Collection of Airspace beans
+	 */
+	public static synchronized void init(Collection<Airspace> data) {
+		data.stream().filter(a -> ((a.getType() == AirspaceType.P) || (a.getType() == AirspaceType.R))).forEach(a -> _restricted.add(a));
+	}
+	
+	/**
+	 * Returns whether a particular point is in restricted airspace.
+	 * @param loc the GeospaceLocation
+	 * @return the Airspace bean, or null if none
+	 */
+	public static Airspace isRestricted(GeospaceLocation loc) {
+		GeometryFactory gf = new GeometryFactory();
+		Point pt = gf.createPoint(new Coordinate(loc.getLatitude(), loc.getLongitude()));
+		for (Airspace a : _restricted) {
+			if ((loc.getAltitude() < a._minAlt) || (loc.getAltitude() < a._maxAlt)) continue;
+			if (a.contains(pt)) return a;
+		}
+		
+		return null;
+	}
+	
 	/**
 	 * Creates the bean.
 	 * @param id the airspace code
@@ -129,13 +155,17 @@ public class Airspace implements MapEntry, GeospaceLocation, Comparable<Airspace
 	public boolean contains(GeospaceLocation loc) {
 		boolean isContained = (loc.getAltitude() >= _minAlt) && (loc.getAltitude() <= _maxAlt);
 		if (isContained) {
-			calculateGeo();
 			GeometryFactory gf = new GeometryFactory();
 			Point pt = gf.createPoint(new Coordinate(loc.getLatitude(), loc.getLongitude()));
-			isContained = _geo.contains(pt);
+			isContained = contains(pt);
 		}
 		
 		return isContained;
+	}
+	
+	private boolean contains(Point p) {
+		calculateGeo();
+		return _geo.contains(p);
 	}
 	
 	/**
@@ -241,5 +271,10 @@ public class Airspace implements MapEntry, GeospaceLocation, Comparable<Airspace
 	public int compareTo(Airspace a2) {
 		int tmpResult = _type.compareTo(a2._type);
 		return (tmpResult == 0) ? _id.compareTo(a2._id) : tmpResult;
+	}
+	
+	@Override
+	public String toString() {
+		return _id;
 	}
 }
