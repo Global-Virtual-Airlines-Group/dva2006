@@ -53,7 +53,7 @@ public class Airspace implements MapEntry, GeospaceLocation, Comparable<Airspace
 		GeometryFactory gf = new GeometryFactory();
 		Point pt = gf.createPoint(new Coordinate(loc.getLatitude(), loc.getLongitude()));
 		for (Airspace a : _restricted) {
-			if ((loc.getAltitude() < a._minAlt) || (loc.getAltitude() < a._maxAlt)) continue;
+			if ((loc.getAltitude() < a._minAlt) || (loc.getAltitude() > a._maxAlt)) continue;
 			if (a.contains(pt)) return a;
 		}
 		
@@ -133,13 +133,13 @@ public class Airspace implements MapEntry, GeospaceLocation, Comparable<Airspace
 	@Override
 	public double getLatitude() {
 		calculateGeo();
-		return _geo.getCentroid().getY();
+		return _geo.getCentroid().getX();
 	}
 
 	@Override
 	public double getLongitude() {
 		calculateGeo();
-		return _geo.getCentroid().getX();
+		return _geo.getCentroid().getY();
 	}
 	
 	@Override
