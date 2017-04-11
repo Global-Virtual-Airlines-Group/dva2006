@@ -463,7 +463,7 @@ public class GeoUtils {
 	public static LinearRing toRing(Collection<GeoLocation> pts) {
 		List<GeoLocation> brd = new ArrayList<GeoLocation>(pts);
 		brd.add(brd.get(0));
-		List<Coordinate> cts = brd.stream().map(pt -> new Coordinate(pt.getLatitude(), pt.getLongitude())).collect(Collectors.toList());
+		List<Coordinate> cts = brd.stream().map(pt -> new Coordinate(pt.getLongitude(), pt.getLatitude())).collect(Collectors.toList());
 		
 		GeometryFactory gf = new GeometryFactory();
 		return gf.createLinearRing(cts.toArray(new Coordinate[0]));
