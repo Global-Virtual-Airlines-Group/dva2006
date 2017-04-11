@@ -56,21 +56,14 @@ public class MapFlightDataService extends WebService {
 				
 			// Check airspace
 			GetAirspace asdao = new GetAirspace(con);
-			Collection<Airspace> rsts = asdao.getRestricted();
 			for (GeospaceLocation rt : routePoints) {
 				ACARSRouteEntry re = (rt instanceof ACARSRouteEntry) ? (ACARSRouteEntry) rt : null;
-				AirspaceType at = null;
-				for (Iterator<Airspace> i = rsts.iterator(); (i.hasNext() && (at == null)); ) {
-					Airspace a = i.next();
-					if (a.contains(rt)) {
-						at = a.getType();
-						airspaces.add(a);
-					}
-				}
-				
+				Airspace a = Airspace.isRestricted(rt);
+				if (a != null)
+					airspaces.add(a);
 				if (rt.getAltitude() > 18000) {
 					if (re != null)
-						re.setAirspace((at == null) ? AirspaceType.fromAltitude(re.getRadarAltitude(), re.getAltitude()) : at);
+						re.setAirspace((a == null) ? AirspaceType.fromAltitude(re.getRadarAltitude(), re.getAltitude()) : a.getType());
 				} else {
 					List<Airspace> aSpaces = asdao.find(rt);
 					airspaces.addAll(aSpaces);
