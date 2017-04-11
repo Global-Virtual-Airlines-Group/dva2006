@@ -39,7 +39,7 @@ xmlreq.onreadystatechange = function() {
 	js.airspace.forEach(function(a) {
 		if (a.exclude) return false;
 		var ac = golgotha.maps.acarsFlight.airspaceColors[a.type];
-		var brd = new google.maps.Polygon({paths:[a.border], strokeColor:ac.c, strokeWeight:0.75, strokeOpacity:ac.tx, fillColor:ac.c, fillOpacity:(ac.tx/3), zIndex:golgotha.maps.z.OVERLAY+ac.z});
+		var brd = new google.maps.Polygon({map:map, paths:[a.border], strokeColor:ac.c, strokeWeight:1, strokeOpacity:ac.tx, fillColor:'#802020', fillOpacity:0.1, zIndex:golgotha.maps.z.POLYGON, visible:false});
 		brd.info = a.info; brd.ll = a.ll;
 		google.maps.event.addListener(brd, 'click', function() { map.infoWindow.setContent(this.info); map.infoWindow.open(map); map.infoWindow.setPosition(this.ll); });
 		golgotha.maps.acarsFlight.airspace.push(brd);
@@ -76,10 +76,9 @@ golgotha.maps.acarsFlight.showAPP = function(ctr, range) {
 	return true;
 };
 
-golgotha.maps.acarsFlight.showAirspace = function(p) {
-	
-	
-	
+golgotha.maps.acarsFlight.toggleAirspace = function(show) {
+	golgotha.maps.acarsFlight.airspace.forEach(function(as) { as.setVisible(show); });
+	return true;
 };
 
 golgotha.maps.acarsFlight.showFIR = function(code)
@@ -92,8 +91,7 @@ xmlreq.onreadystatechange = function() {
 	golgotha.maps.acarsFlight.hideATC();
 	js.firs.forEach(function(fe) {
 		if (fe.border.length == 0) return false;
-		fe.border.push(fe.border[0]);
-		golgotha.maps.acarsFlight.selectedFIRs.push(new google.maps.Polygon({map:map, paths:[fe.border], strokeColor:'#efefff', strokeWeight:1, stokeOpacity:0.85, fillColor:'#7f7f80', fillOpacity:0.25, zIndex:golgotha.maps.z.POLYGON}));
+		golgotha.maps.acarsFlight.selectedFIRs.push(new google.maps.Polygon({map:map, paths:[fe.border], strokeColor:'#efefff', strokeWeight:1, strokeOpacity:0.85, fillColor:'#7f7f80', fillOpacity:0.25, zIndex:golgotha.maps.z.POLYGON}));
 	});
 
 	golgotha.event.beacon('ACARS', 'Show FIR', code);
