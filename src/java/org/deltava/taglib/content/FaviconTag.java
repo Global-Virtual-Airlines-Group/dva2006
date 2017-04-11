@@ -56,7 +56,7 @@ public class FaviconTag extends BrowserInfoTag {
 			out.println(generateTag("link rel=\"shortcut icon\"", "favicon.ico"));
 			out.println(generateTag("link rel=\"manifest\"", "manifest.json"));
 			if ((bCtxt.getBrowserType() == BrowserType.IE) && (bCtxt.getMajor() > 9)) {
-				out.print("meta name=\"msapplication-config\" content=\"/favicon/v");
+				out.print("<meta name=\"msapplication-config\" content=\"/favicon/v");
 				out.print(VersionInfo.BUILD);
 				out.println("/browserconfig.xml\">");
 				out.println("<meta name=\"theme-color\" content=\"#ffffff\">");
