@@ -67,7 +67,7 @@ public class MapFlightDataService extends WebService {
 				} else {
 					List<Airspace> aSpaces = asdao.find(rt);
 					airspaces.addAll(aSpaces);
-					airspaces.addAll(asdao.findRestricted(rt, 6));
+					airspaces.addAll(Airspace.findRestricted(rt, 10));
 					if (re != null)
 						re.setAirspace(aSpaces.isEmpty() ? AirspaceType.fromAltitude(re.getRadarAltitude(), re.getAltitude()) : aSpaces.get(0).getType());
 				}
