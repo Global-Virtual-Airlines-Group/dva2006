@@ -463,7 +463,7 @@ public class GeoUtils {
 	public static LinearRing toRing(Collection<GeoLocation> pts) {
 		List<GeoLocation> brd = new ArrayList<GeoLocation>(pts);
 		brd.add(brd.get(0));
-		List<Coordinate> cts = brd.stream().map(pt -> new Coordinate(pt.getLatitude(), pt.getLongitude())).collect(Collectors.toList());
+		List<Coordinate> cts = brd.stream().map(pt -> toCoordinate(pt)).collect(Collectors.toList());
 		
 		GeometryFactory gf = new GeometryFactory();
 		return gf.createLinearRing(cts.toArray(new Coordinate[0]));
@@ -486,6 +486,24 @@ public class GeoUtils {
 	 */
 	public static Collection<GeoLocation> fromGeometry(Geometry geo) {
 		List<Coordinate> coords = Arrays.asList(geo.getCoordinates());
-		return coords.stream().map(pt -> new GeoPosition(pt.x, pt.y)).collect(Collectors.toList());
+		return coords.stream().map(pt -> fromCoordinate(pt)).collect(Collectors.toList());
+	}
+	
+	/**
+	 * Converts a GeoLocation to a JTS Coordinate.
+	 * @param loc a GeoLocation
+	 * @return a JTS Coordinate
+	 */
+	public static Coordinate toCoordinate(GeoLocation loc) {
+		return new Coordinate(loc.getLatitude(), loc.getLongitude());
+	}
+	
+	/**
+	 * Converts a JTS Coordinate to a GeoLocation.
+	 * @param c a Coordinate
+	 * @return a GeoLocation
+	 */
+	public static GeoLocation fromCoordinate(Coordinate c) {
+		return  new GeoPosition(c.x, c.y);
 	}
 }
