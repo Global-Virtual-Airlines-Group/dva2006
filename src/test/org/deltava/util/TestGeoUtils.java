@@ -7,6 +7,8 @@ import junit.framework.TestCase;
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.schedule.GeoPosition;
 
+import com.vividsolutions.jts.geom.Geometry;
+
 @SuppressWarnings("static-method")
 public class TestGeoUtils extends TestCase {
 
@@ -101,5 +103,20 @@ public class TestGeoUtils extends TestCase {
 		assertTrue(GeoUtils.isValid(new GeoPosition(1, 1)));
 		assertFalse(GeoUtils.isValid(new GeoPosition(0, 0)));
 		assertTrue(GeoUtils.isValid(new GeoPosition(0, 0, 1)));
+	}
+	
+	public void testGeometry() {
+		
+		List<GeoLocation> locs = Arrays.asList(new GeoPosition(40, -110), new GeoPosition(40, -111), new GeoPosition(39, -111), new GeoPosition(39, -110));
+		
+		Geometry g = GeoUtils.toGeometry(locs);
+		assertNotNull(g);
+		assertEquals(locs.size() + 1, g.getCoordinates().length);
+		
+		List<GeoLocation> locs2 = new ArrayList<GeoLocation>(GeoUtils.fromGeometry(g));
+		assertNotNull(locs2);
+		assertEquals(locs.size() + 1, locs2.size());
+		for (int x = 0; x < locs.size(); x++)
+			assertTrue(locs.get(x).equals(locs2.get(x)));
 	}
 }
