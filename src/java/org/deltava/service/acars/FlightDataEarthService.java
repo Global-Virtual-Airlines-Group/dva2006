@@ -82,10 +82,9 @@ public class FlightDataEarthService extends GoogleEarthService {
 						int distance = (rt.getRadarAltitude() < 2500) ? 2 : (rt.getGroundSpeed() / 120);
 						if ((lastLoc == null) || (GeoUtils.distance(rt, lastLoc) > distance)) {
 							airspaces.addAll(asdao.find(rt));
-							airspaces.addAll(asdao.findRestricted(rt, (rt.getGroundSpeed() / 90)));
+							airspaces.addAll(Airspace.findRestricted(rt, (rt.getGroundSpeed() / 90)));
 							lastLoc = rt;
 						}
-						
 					}
 					
 					info.setRouteData(routeData);

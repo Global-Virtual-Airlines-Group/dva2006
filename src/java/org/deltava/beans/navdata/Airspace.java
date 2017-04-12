@@ -31,10 +31,9 @@ public class Airspace implements MapEntry, GeospaceLocation, Comparable<Airspace
 	private int _maxAlt;
 	
 	private final Collection<GeoLocation> _border = new LinkedHashSet<GeoLocation>();
-	
 	private transient Geometry _geo;
 	
-	private static final Collection<Airspace> _restricted = new LinkedHashSet<Airspace>();
+	private transient static final Collection<Airspace> _restricted = new LinkedHashSet<Airspace>();
 	
 	/**
 	 * Initializes restricted airspace.
@@ -58,6 +57,26 @@ public class Airspace implements MapEntry, GeospaceLocation, Comparable<Airspace
 		}
 		
 		return null;
+	}
+	
+	/**
+	 * Returns whether any restricted airspace is within a set distance of a point.
+	 * @param loc the GeoLocation
+	 * @param distance the distance in miles
+	 * @return a Collection of Airspace beans
+	 */
+	public static Collection<Airspace> findRestricted(GeoLocation loc, int distance) {
+		GeometryFactory gf = new GeometryFactory();
+		Point pt = gf.createPoint(new Coordinate(loc.getLatitude(), loc.getLongitude()));
+		double dst = distance / GeoLocation.DEGREE_MILES;
+		
+		Collection<Airspace> results = new HashSet<Airspace>();
+		for (Airspace a : _restricted) {
+			if (a.contains(pt) || (a._geo.distance(pt) < dst))
+				results.add(a);
+		}
+		
+		return results;
 	}
 	
 	/**

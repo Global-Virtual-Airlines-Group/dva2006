@@ -131,62 +131,6 @@ public class GetAirspace extends DAO {
 		return load(codes);
 	}
 	
-	/**
-	 * Finds restricted airspace close to a particular point.
-	 * @param loc the GeospaceLocation
-	 * @param distance the distance in miles
-	 * @return a Collection of Airspace beans
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public Collection<Airspace> findRestricted(GeospaceLocation loc, int distance) throws DAOException {
-		Collection<Tuple<String, Country>> codes = new ArrayList<Tuple<String, Country>>();
-		try {
-			prepareStatementWithoutLimits("SELECT ID, COUNTRY FROM common.AIRSPACE FORCE INDEX (AS_TYPE_IDX, AS_ALT_IDX) WHERE (ST_Distance(DATA, ST_PointFromText(?,?)) < ?) AND (TYPE<?) AND "
-				+"(MIN_ALT<=?) AND (MAX_ALT>=?) AND (EXCLUSION=?)");
-			_ps.setString(1, formatLocation(loc));
-			_ps.setInt(2, GEO_SRID);
-			_ps.setDouble(3, (distance / GeoLocation.DEGREE_MILES));
-			_ps.setInt(4, AirspaceType.R.ordinal());
-			_ps.setInt(5, Math.max(0, loc.getAltitude() - 2500));
-			_ps.setInt(6, Math.min(60000, loc.getAltitude() + 2500));
-			_ps.setBoolean(7, false);
-			try (ResultSet rs = _ps.executeQuery()) {
-				while (rs.next())
-					codes.add(Tuple.create(rs.getString(1), Country.get(rs.getString(2))));
-			}			
-			
-			_ps.close();
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-		
-		return load(codes);
-	}
-	
-	/**
-	 * Loads all Airspace of a particular Type.
-	 * @param t the AirspaceType
-	 * @return a Collection of Airspace beans
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public Collection<Airspace> getByType(AirspaceType t) throws DAOException {
-		Collection<Tuple<String, Country>> codes = new ArrayList<Tuple<String, Country>>();
-		try {
-			prepareStatementWithoutLimits("SELECT ID, COUNTRY FROM common.AIRSPACE WHERE (TYPE=?)");
-			_ps.setInt(1, t.ordinal());
-			try (ResultSet rs = _ps.executeQuery()) {
-				while (rs.next())
-					codes.add(Tuple.create(rs.getString(1), Country.get(rs.getString(2))));
-			}
-			
-			_ps.close();
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-		
-		return load(codes);
-	}
-	
 	/*
 	 * Helper method to load airpsace from code collections.
 	 */
