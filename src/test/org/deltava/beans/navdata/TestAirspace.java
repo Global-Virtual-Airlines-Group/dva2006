@@ -4,6 +4,7 @@ import java.util.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.GeoPosition;
+import org.deltava.util.GeoUtils;
 
 import junit.framework.TestCase;
 
@@ -40,6 +41,17 @@ public class TestAirspace extends TestCase {
 		assertNotNull(a2);
 		assertEquals(a.getID(), a2.getID());
 		
-		Airspace.findRestricted(gl, 5);
+		Collection<Airspace> rsts = Airspace.findRestricted(gl, 5);
+		assertNotNull(rsts);
+		assertFalse(rsts.isEmpty());
+		
+		GeoLocation gl2 = GeoUtils.bearingPoint(locs.get(0), 4, 135);
+		rsts = Airspace.findRestricted(gl2, 5);
+		assertNotNull(rsts);
+		assertFalse(rsts.isEmpty());
+		
+		rsts = Airspace.findRestricted(gl2, 1);
+		assertNotNull(rsts);
+		assertTrue(rsts.isEmpty());
 	}
 }
