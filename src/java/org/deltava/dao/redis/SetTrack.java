@@ -1,4 +1,4 @@
-// Copyright 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.redis;
 
 import org.apache.log4j.Logger;
@@ -12,7 +12,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to save temporary ACARS track data to Redis.
  * @author Luke
- * @version 7.1
+ * @version 7.3
  * @since 7.0
  */
 
@@ -55,8 +55,13 @@ public class SetTrack extends RedisDAO {
 	 */
 	public void clear(int flightID) {
 		String rawKey = String.valueOf(flightID);
-		setBucket("acarsTrack");
-		RedisUtils.delete(createKey(rawKey));
-		_casCache.remove(rawKey);
+		try {
+			setBucket("acarsTrack");
+			RedisUtils.delete(createKey(rawKey));
+		} catch (Exception e) {
+			log.warn(StringUtils.isEmpty(e.getMessage()) ? e.getClass().getSimpleName() : e.getMessage());
+		} finally {
+			_casCache.remove(rawKey);	
+		}
 	}
 }
