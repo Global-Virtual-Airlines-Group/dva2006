@@ -1,6 +1,5 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
-<%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <c:if test="${!empty img || !empty thread.imageURLs }">
 <style type="text/css">
 @media (max-width: 1022px) {
@@ -14,7 +13,13 @@
 <!-- Linked Image(s) -->
 <tr class="mid">
 <td colspan="3"><c:forEach var="imgLink" items="${thread.imageURLs}">
+<c:if test="${imgLink.disabled}">
+<span class="pri bld">DISABLED IMAGE</span><br />
+<span class="small">${imgLink.URL}</span><br />
+</c:if>
+<c:if test="${!imgLink.disabled}">
 <img class="gallery" src="${imgLink.URL}" alt="${imgLink.description}" class="noborder" /><br />
+</c:if>
 <span class="small">${imgLink.description}</span>
 <c:if test="${access.canDelete || access.canLock || access.canUnlock || access.canUnlinkImage}">
 &nbsp;<el:cmd url="linkedimgkill" link="${thread}" op="${imgLink.ID}" className="pri bld small">UNLINK IMAGE</el:cmd></c:if><br />

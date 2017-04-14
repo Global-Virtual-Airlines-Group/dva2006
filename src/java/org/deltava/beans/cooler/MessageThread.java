@@ -200,6 +200,14 @@ public class MessageThread extends DatabaseBean implements AuthoredBean, ViewEnt
 	public boolean getPoll() {
 		return _isPoll || !getOptions().isEmpty(); 
 	}
+	
+	/**
+	 * Returns whether this thread has any disabled Image Links.
+	 * @return TRUE if any links are disabled, otherwise FALSE
+	 */
+	public boolean getHasDisabledLinks() {
+		return (_imgURLs == null) ? false : (_imgURLs.stream().filter(li -> li.getDisabled()).count() > 0);
+	}
 
 	/**
 	 * Returns all poll options for this Message Thread.
@@ -208,7 +216,7 @@ public class MessageThread extends DatabaseBean implements AuthoredBean, ViewEnt
 	 * @see MessageThread#getVotes()
 	 */
 	public Collection<PollOption> getOptions() {
-		return (_pollOptions == null) ? new HashSet<PollOption>() : _pollOptions;
+		return (_pollOptions == null) ? Collections.emptySet() : _pollOptions;
 	}
 
 	/**
@@ -218,7 +226,7 @@ public class MessageThread extends DatabaseBean implements AuthoredBean, ViewEnt
 	 * @see MessageThread#getOptions()
 	 */
 	public Collection<PollVote> getVotes() {
-		return (_pollVotes == null) ? new HashSet<PollVote>() : _pollVotes;
+		return (_pollVotes == null) ? Collections.emptySet() : _pollVotes;
 	}
 	
 	/**
@@ -227,7 +235,7 @@ public class MessageThread extends DatabaseBean implements AuthoredBean, ViewEnt
 	 * @see MessageThread#addImageURL(String, String)
 	 */
 	public Collection<LinkedImage> getImageURLs() {
-		return (_imgURLs == null) ? new HashSet<LinkedImage>() : _imgURLs;
+		return (_imgURLs == null) ? Collections.emptySet() : _imgURLs;
 	}
 	
 	/**
@@ -236,7 +244,7 @@ public class MessageThread extends DatabaseBean implements AuthoredBean, ViewEnt
 	 * @see MessageThread#getReportCount()
 	 */
 	public Collection<Integer> getReportIDs() {
-		return (_reportIDs == null) ? new HashSet<Integer>() : _reportIDs;
+		return (_reportIDs == null) ? Collections.emptySet() : _reportIDs;
 	}
 	
 	/**
@@ -249,8 +257,7 @@ public class MessageThread extends DatabaseBean implements AuthoredBean, ViewEnt
 			return false;
 		
 		// Check if the pilot has voted in the poll
-		for (Iterator<PollVote> i = _pollVotes.iterator(); i.hasNext(); ) {
-			PollVote v = i.next();
+		for (PollVote v : _pollVotes) {
 			if (v.getPilotID() == pilotID)
 				return true;
 		}
