@@ -994,6 +994,12 @@
 		<roles>Moderator,HR</roles>
 	</command>
 
+	<command id="restoreimglinks">
+		<name>Restore Water Cooler Image Links</name>
+		<class>org.deltava.commands.cooler.RestoreImageLinksCommand</class>
+		<roles>Moderator,HR</roles>
+	</command>
+
 	<command id="threadsubjectedit">
 		<name>Water Cooler Thread Subject Edit</name>
 		<class>org.deltava.commands.cooler.ThreadSubjectEditCommand</class>
