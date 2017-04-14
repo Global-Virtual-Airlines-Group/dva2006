@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2011, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.net.*;
@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to validate the integrity of Water Cooler Image URLs.
  * @author Luke
- * @version 7.0
+ * @version 7.3
  * @since 1.0
  */
 
@@ -129,7 +129,7 @@ public class ImageLinkTestTask extends Task {
 			// Load the images
 			Queue<LinkedImage> work = new ConcurrentLinkedQueue<LinkedImage>();
 			for (Integer id : ids)
-				work.addAll(dao.getURLs(id.intValue()));
+				work.addAll(dao.getURLs(id.intValue(), false));
 			
 			ctx.release();
 
@@ -179,7 +179,7 @@ public class ImageLinkTestTask extends Task {
 				
 				// Write a thread update and delete the link
 				msgdao.write(upd);
-				wdao.delete(img.getThreadID(), img.getURL());
+				wdao.disable(img.getThreadID(), img.getID());
 			}
 			
 			// Commit

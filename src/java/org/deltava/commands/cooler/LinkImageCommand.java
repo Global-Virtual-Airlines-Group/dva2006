@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to link an Image to a Water Cooler discussion thread.
  * @author Luke
- * @version 7.2
+ * @version 7.3
  * @since 1.0
  */
 
@@ -78,7 +78,7 @@ public class LinkImageCommand extends AbstractCommand {
 			
 			// Get the linked images
 			GetCoolerLinks ldao = new GetCoolerLinks(con);
-			Map<String, LinkedImage> urlMap = CollectionUtils.createMap(ldao.getURLs(mt.getID()), LinkedImage::getURL);
+			Map<String, LinkedImage> urlMap = CollectionUtils.createMap(ldao.getURLs(mt.getID(), true), LinkedImage::getURL);
 			Collection<String> imgURLs = new LinkedHashSet<String>(urlMap.keySet());
 			
 			// Validate the image

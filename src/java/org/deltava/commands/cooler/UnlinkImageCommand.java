@@ -16,7 +16,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to unlink a Water Cooler linked image. 
  * @author Luke
- * @version 7.2
+ * @version 7.3
  * @since 1.0
  */
 
@@ -49,7 +49,7 @@ public class UnlinkImageCommand extends AbstractCommand {
 			
 			// Get the linked images
 			GetCoolerLinks ldao = new GetCoolerLinks(con);
-			Map<Integer, LinkedImage> imgs = CollectionUtils.createMap(ldao.getURLs(mt.getID()), LinkedImage::getID);
+			Map<Integer, LinkedImage> imgs = CollectionUtils.createMap(ldao.getURLs(mt.getID(), true), LinkedImage::getID);
 			LinkedImage imgURL = imgs.get(Integer.valueOf(seq));
 			if (imgURL == null)
 				throw notFoundException("Unknown Linked Image sequence - " + seq);

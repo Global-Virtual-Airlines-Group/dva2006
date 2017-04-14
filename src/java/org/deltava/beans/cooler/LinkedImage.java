@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.cooler;
 
 import java.net.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.DatabaseBean;
 /**
  * A bean to store Water Cooler Linked Images and their descriptions.
  * @author Luke
- * @version 7.0
+ * @version 7.3
  * @since 1.0
  */
 
@@ -17,6 +17,7 @@ public class LinkedImage extends DatabaseBean {
 	private int _threadID;
 	private String _url;
 	private String _desc;
+	private boolean _isDisabled;
 
 	/**
 	 * Creates the Linked Image bean.
@@ -58,6 +59,15 @@ public class LinkedImage extends DatabaseBean {
 	}
 	
 	/**
+	 * Returns whther this Linked Image is dsiabled.
+	 * @return TRUE if disabled, otherwise FALSE
+	 * @see LinkedImage#setDisabled(boolean)
+	 */
+	public boolean getDisabled() {
+		return _isDisabled;
+	}
+	
+	/**
 	 * Updates the linked Image URL.
 	 * @param url the URL
 	 * @throws IllegalArgumentException if the URL is malformed or invalid
@@ -90,10 +100,16 @@ public class LinkedImage extends DatabaseBean {
 	public void setDescription(String desc) {
 		_desc = desc;
 	}
-	
+
 	/**
-	 * Returns the url's hash code.
+	 * Marks this Image Link as disabled.
+	 * @param isDisabled TRUE if disabled, otherwise FALSE
+	 * @see LinkedImage#getDisabled()
 	 */
+	public void setDisabled(boolean isDisabled) {
+		_isDisabled = isDisabled;
+	}
+	
 	@Override
 	public int hashCode() {
 		return _url.hashCode();
