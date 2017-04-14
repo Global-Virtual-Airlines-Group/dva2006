@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008, 2011, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.cooler.LinkedImage;
 /**
  * A Data Access Object to load Water Cooler image links.
  * @author Luke
- * @version 4.1
+ * @version 7.3
  * @since 1.0
  */
 
@@ -49,13 +49,22 @@ public class GetCoolerLinks extends DAO {
 	/**
 	 * Returns all Image URLs for a particular Messasge Thread.
 	 * @param id the Message Thread database ID
+	 * @param includeDisabled TRUE if disabled links should be included, otherwise FALSE
 	 * @return a Collection of URLs
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<LinkedImage> getURLs(int id) throws DAOException {
+	public Collection<LinkedImage> getURLs(int id, boolean includeDisabled) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder buf = new StringBuilder("SELECT SEQ, URL, COMMENTS, DISABLED FROM common.COOLER_IMGURLS WHERE (ID=?)");
+		if (!includeDisabled)
+			buf.append(" AND (DISABLED=?)");
+		
 		try {
-			prepareStatementWithoutLimits("SELECT SEQ, URL, COMMENTS FROM common.COOLER_IMGURLS WHERE (ID=?)");
+			prepareStatementWithoutLimits(buf.toString());
 			_ps.setInt(1, id);
+			if (!includeDisabled)
+				_ps.setBoolean(2, false);
 			
 			// Execute the query
 			Collection<LinkedImage> results = new TreeSet<LinkedImage>();
@@ -63,6 +72,7 @@ public class GetCoolerLinks extends DAO {
 				while (rs.next()) {
 					LinkedImage img = new LinkedImage(rs.getInt(1), rs.getString(2));
 					img.setDescription(rs.getString(3));
+					img.setDisabled(rs.getBoolean(4));
 					img.setThreadID(id);
 					results.add(img);
 				}

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2012, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,11 +9,13 @@ import org.deltava.util.cache.CacheManager;
 /**
  * A Data Access Object to write and update Water Cooler image URLs.
  * @author Luke
- * @version 5.0
+ * @version 7.3
  * @since 1.0
  */
 
 public class SetCoolerLinks extends DAO {
+	
+	private static final String CACHE_ID = "CoolerThreads";
 
 	/**
 	 * Initializes the Data Access Object.
@@ -33,22 +35,22 @@ public class SetCoolerLinks extends DAO {
 			return;
 		
 		try {
-			prepareStatementWithoutLimits("INSERT INTO common.COOLER_IMGURLS (ID, SEQ, URL, COMMENTS) VALUES (?, ?, ?, ?)");
+			prepareStatementWithoutLimits("INSERT INTO common.COOLER_IMGURLS (ID, SEQ, DISABLED, URL, COMMENTS) VALUES (?, ?, ?, ?, ?)");
 			_ps.setInt(1, t.getID());
+			_ps.setBoolean(3, false);
 			for (LinkedImage img : t.getImageURLs()) {
 				_ps.setInt(2, img.getID());
-				_ps.setString(3, img.getURL());
-				_ps.setString(4, img.getDescription());
+				_ps.setString(4, img.getURL());
+				_ps.setString(5, img.getDescription());
 				_ps.addBatch();
 			}
 
-			// Execute the trasnaction
 			_ps.executeBatch();
 			_ps.close();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		} finally {
-			CacheManager.invalidate("CoolerThreads", t.cacheKey());
+			CacheManager.invalidate(CACHE_ID, t.cacheKey());
 		}
 	}
 	
@@ -60,40 +62,32 @@ public class SetCoolerLinks extends DAO {
 	 */
 	public void add(int threadID, LinkedImage img) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("INSERT INTO common.COOLER_IMGURLS (ID, SEQ, URL, COMMENTS) VALUES (?, ?, ?, ?)");
+			prepareStatementWithoutLimits("INSERT INTO common.COOLER_IMGURLS (ID, SEQ, DISABLED, URL, COMMENTS) VALUES (?, ?, ?, ?, ?)");
 			_ps.setInt(1, threadID);
 			_ps.setInt(2, img.getID());
-			_ps.setString(3, img.getURL());
-			_ps.setString(4, img.getDescription());
+			_ps.setBoolean(3,  false);
+			_ps.setString(4, img.getURL());
+			_ps.setString(5, img.getDescription());
 			executeUpdate(1);
-			CacheManager.invalidate("CoolerThreads", Integer.valueOf(threadID));
 		} catch (SQLException se) {
 			throw new DAOException(se);
+		} finally {
+			CacheManager.invalidate(CACHE_ID, Integer.valueOf(threadID));
 		}
 	}
 	
 	/**
-	 * Deletes an image URL associated with a particular Message Thread.
-	 * @param threadID the Message Thread database ID 
-	 * @param url the Image URL to delete
+	 * Restores disabled Linked Images within an existing discussion thread.
+	 * @param threadID the MessageThread database ID
 	 * @throws DAOException if a JDBC error occurs
-	 * @see SetCoolerLinks#delete(int, int)
 	 */
-	public void delete(int threadID, String url) throws DAOException {
-		
-		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("DELETE FROM common.COOLER_IMGURLS WHERE (ID=?)");
-		if (url != null)
-			sqlBuf.append(" AND (URL=?)");
-		
+	public void restore(int threadID) throws DAOException {
 		try {
-			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setInt(1, threadID);
-			if (url != null)
-				_ps.setString(2, url);
-			
-			executeUpdate(0);
-			CacheManager.invalidate("CoolerThreads", Integer.valueOf(threadID));
+			prepareStatementWithoutLimits("UPDATE common.COOLER_IMGURLS SET DISABLED=? WHERE (ID=?) AND (DISABLED=?)");
+			_ps.setBoolean(1, false);
+			_ps.setInt(2, threadID);
+			_ps.setBoolean(3, true);
+			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -101,20 +95,40 @@ public class SetCoolerLinks extends DAO {
 	
 	/**
 	 * Deletes an image URL associated with a particular Message Thread.
-	 * @param threadID the Message Thread database ID
+	 * @param threadID the MessageThread database ID
 	 * @param seq the Image URL sequence ID
 	 * @throws DAOException if a JDBC error occurs
-	 * @see SetCoolerLinks#delete(int, String)
 	 */
 	public void delete(int threadID, int seq) throws DAOException {
 		try {
-			prepareStatement("DELETE FROM common.COOLER_IMGURLS WHERE (ID=?) AND (SEQ=?)");
+			prepareStatementWithoutLimits("DELETE FROM common.COOLER_IMGURLS WHERE (ID=?) AND (SEQ=?)");
 			_ps.setInt(1, threadID);
 			_ps.setInt(2, seq);
 			executeUpdate(1);
-			CacheManager.invalidate("CoolerThreads", Integer.valueOf(threadID));
 		} catch (SQLException se) {
 			throw new DAOException(se);
+		} finally {
+			CacheManager.invalidate(CACHE_ID, Integer.valueOf(threadID));
 		}
 	}
+
+	/***
+	 * Disables an image URL associated with a particular Message Thread.
+	 * @param threadID the MessageThread database ID
+	 * @param seq the Image URL sequence ID
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void disable(int threadID, int seq) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("UPDATE common.COOLER_IMGURLS SET DISABLED=? WHERE (ID=?) AND (SEQ=?)");
+			_ps.setBoolean(1, true);
+			_ps.setInt(2, threadID);
+			_ps.setInt(3, seq);
+			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		} finally {
+			CacheManager.invalidate(CACHE_ID, Integer.valueOf(threadID));
+		}
+	}	
 }
