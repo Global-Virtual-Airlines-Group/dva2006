@@ -40,7 +40,7 @@ public class Airspace implements MapEntry, GeospaceLocation, Comparable<Airspace
 	 * @param data a Collection of Airspace beans
 	 */
 	public static synchronized void init(Collection<Airspace> data) {
-		data.stream().filter(a -> ((a.getType() == AirspaceType.P) || (a.getType() == AirspaceType.R))).forEach(a -> _restricted.add(a));
+		data.stream().filter(a -> ((a.getType() == AirspaceType.P) || (a.getType() == AirspaceType.R))).forEach(_restricted::add);
 	}
 	
 	/**
@@ -49,8 +49,9 @@ public class Airspace implements MapEntry, GeospaceLocation, Comparable<Airspace
 	 * @return the Airspace bean, or null if none
 	 */
 	public static Airspace isRestricted(GeospaceLocation loc) {
+		if (loc == null) return null;
 		GeometryFactory gf = new GeometryFactory();
-		Point pt = gf.createPoint(new Coordinate(loc.getLatitude(), loc.getLongitude()));
+		Point pt = gf.createPoint(GeoUtils.toCoordinate(loc));
 		for (Airspace a : _restricted) {
 			if ((loc.getAltitude() < a._minAlt) || (loc.getAltitude() > a._maxAlt)) continue;
 			if (a.contains(pt)) return a;
@@ -281,6 +282,16 @@ public class Airspace implements MapEntry, GeospaceLocation, Comparable<Airspace
 	@Override
 	public Object cacheKey() {
 		return (_id + "!!" + _c.getCode());
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		return (o instanceof Airspace) ? (compareTo((Airspace) o) == 0) : false;
+	}
+	
+	@Override
+	public int hashCode() {
+		return cacheKey().hashCode();
 	}
 	
 	/**
