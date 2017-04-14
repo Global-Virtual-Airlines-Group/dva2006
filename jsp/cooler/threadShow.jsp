@@ -261,28 +261,31 @@ APPLICANT<br />
 <tr class="pri bld mid nophone">
  <td colspan="3">
 <c:if test="${access.canLock}">
- <el:cmdbutton ID="LockButton" label="LOCK" url="threadlock" link="${thread}" op="lock" />
- <el:cmdbutton ID="HideButton" label="HIDE" url="threadlock" link="${thread}" op="hide" />
+ <el:cmdbutton label="LOCK" url="threadlock" link="${thread}" op="lock" />
+ <el:cmdbutton label="HIDE" url="threadlock" link="${thread}" op="hide" />
 </c:if>
 <c:if test="${access.canUnlock}">
- <el:cmdbutton ID="UnlockButton" label="UNLOCK" url="threadunlock" link="${thread}" op="unlock" />
- <el:cmdbutton ID="UnhideButton" label="UNHIDE" url="threadunlock" link="${thread}" op="unhide" />
+ <el:cmdbutton label="UNLOCK" url="threadunlock" link="${thread}" op="unlock" />
+ <el:cmdbutton label="UNHIDE" url="threadunlock" link="${thread}" op="unhide" />
 </c:if>
 <c:if test="${imgAccess.canDelete}">
  <el:cmdbutton ID="ImgDeleteButton" label="DELETE IMAGE" url="imgdelete" link="${img}" />
 </c:if>
+<c:if test="${access.canRelinkImages}">
+ <el:cmdbutton label="RESTORE IMAGE LINKS" url="restoreimglinks" link="${thread}" />
+</c:if>
 <content:filter roles="Moderator"><c:if test="${contentWarn || (thread.reportCount > 0)}">
- <el:cmdbutton ID="UnfilterButton" label="CLEAR WARNINGS" url="clearcontentwarn" link="${thread}" />
+ <el:cmdbutton label="CLEAR WARNINGS" url="clearcontentwarn" link="${thread}" />
 </c:if></content:filter>
 <c:if test="${access.canUnstick}">
- <el:cmdbutton ID="UnstickButton" label="UNSTICK" url="unstick" link="${thread}" />
+ <el:cmdbutton label="UNSTICK" url="unstick" link="${thread}" />
 </c:if>
 <c:if test="${access.canDelete}">
- <el:cmdbutton ID="DeleteButton" label="DELETE THREAD" url="threadkill" link="${thread}" />
+ <el:cmdbutton label="DELETE THREAD" url="threadkill" link="${thread}" />
 </c:if>
 <content:filter roles="Moderator">
  MOVE TO <el:combo name="newChannel" idx="*" size="1" options="${channels}" firstEntry="-" value="${thread.channel}" />
- <el:cmdbutton ID="MoveButton" label="MOVE" url="threadmove" post="true" link="${thread}" />
+ <el:cmdbutton label="MOVE" url="threadmove" post="true" link="${thread}" />
 </content:filter></td>
 </tr>
 <content:filter roles="Moderator">
@@ -291,10 +294,7 @@ APPLICANT<br />
 &nbsp;<el:text name="stickyDate" idx="*" size="10" max="10" value="${fn:dateFmt(stickyDate, dateFmt)}" />
  at <el:text name="stickyTime" idx="*" size="4" max="5" value="${fn:dateFmt(stickyDate, 'HH:mm')}" />
 <c:if test="${dateFmt == 'MM/dd/yyyy'}">
- <el:button ID="CalendarButton" label="CALENDAR" onClick="void show_calendar('forms[0].stickyDate')" />
-</c:if>
-&nbsp;<el:cmdbutton ID="StickButton" label="STICK" url="threadstick" post="true" link="${thread}" />
-&nbsp;<span class="small">Your time zone is ${user.TZ.name}.</span></td>
+ <el:button label="CALENDAR" onClick="void show_calendar('forms[0].stickyDate')" /></c:if> <el:cmdbutton label="STICK" url="threadstick" post="true" link="${thread}" /> <span class="small">Your time zone is ${user.TZ.name}.</span></td>
 </tr>
 </content:filter>
 </c:if>
@@ -362,7 +362,7 @@ notification each time a reply is posted in this Thread.
 </content:region>
 </content:page>
 <c:if test="${!empty lastReadPostID}">
-<script type="text/javascript" async defer>
+<script async>
 var postRow = document.getElementById('post${lastReadPostID}');
 if (postRow) postRow.scrollIntoView();
 </script></c:if>
