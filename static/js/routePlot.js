@@ -1,6 +1,7 @@
-golgotha.routePlot = golgotha.routePlot || {routeUpdated:false, getInactive:false, etopsCheck:true};
+golgotha.routePlot = golgotha.routePlot || {routeUpdated:false, getInactive:false, etopsCheck:true, rsts:[]};
 golgotha.routePlot.gateIcons = {ours:{pal:2,icon:56},intl:{pal:2,icon:48},pop:{pal:3,icon:52},other:{pal:3,icon:60}};
 golgotha.routePlot.gatesVisible = function () { return (this.dGates.visible() || this.aGates.visible()); };
+golgotha.routePlot.airspaceColors = {'P':{c:'#ee1010',tx:0.4}, 'R':{c:'#adad10',tx:0.2}, 'B':{c:'#10e0e0',tx:0.1}, 'C':{c:'#ffa018', tx:0.125}, 'D':{c:'#608040', tx:0.175}};
 golgotha.routePlot.getAJAXParams = function()
 {
 var f = document.forms[0]; var o = {runways:true};
@@ -154,6 +155,21 @@ xmlreq.onreadystatechange = function() {
 			var wl = new google.maps.Polyline({map:map, path:[a.ll,js.etops.warnPoint.ll],strokeColor:'red',strokeOpacity:0.55,strokeWeight:1.15,zIndex:golgotha.maps.z.POLYLINE+1})
 		});
 	}
+	
+	// Check for restricted airspace
+	golgotha.routePlot.rsts = []; var asIDs = [];
+	js.airspace.forEach(function(as) {
+		var c = golgotha.routePlot.airspaceColors[as.type];
+		var p = new google.maps.Polygon({map:map, paths:[as.border], strokeColor:c.c, strokeWeight:1, strokeOpacity:c.tx, fillColor:'#802020', fillOpacity:0.2, zIndex:golgotha.maps.z.POLYGON});
+		p.info = as.info; p.ll = as.ll;
+		google.maps.event.addListener(p, 'click', function() { map.infoWindow.setContent(this.info); map.infoWindow.open(map); map.infoWindow.setPosition(this.ll); });
+		golgotha.routePlot.rsts.push(p);
+		asIDs.push(as.id);
+	});
+
+	// Display restricted airspace list
+	golgotha.util.setHTML('aspaceList', asIDs.join(', '));
+	golgotha.util.display('asWarnRow', (asIDs.length > 0));
 
 	// Load the alternate list
 	golgotha.util.display('airportL', (js.alternates.length > 0));
