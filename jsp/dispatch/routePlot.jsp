@@ -122,6 +122,10 @@ golgotha.routePlot.updateAirline = function(combo) {
 <tr class="title caps">
  <td colspan="2" class="left">PLOTTED ROUTE<span id="rtDistance"></span><span id="rtETOPS"></span></td>
 </tr>
+<tr id="asWarnRow" style="display:none;'">
+ <td class="label">&nbsp;</td>
+ <td colspan="2" class="data bld"><span class="warn small caps">Route enters the following Restricted/Prohibited Airspace: <span id="aspaceList"></span></span></td>
+</tr>
 <tr>
  <td colspan="2" class="data"><map:div ID="googleMap" height="580" /><div id="copyright" class="small mapTextLabel"></div>
 <div id="mapStatus" class="small mapTextLabel"></div></td>
