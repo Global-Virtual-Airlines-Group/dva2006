@@ -6,7 +6,6 @@ import static javax.servlet.http.HttpServletResponse.*;
 import java.util.*;
 import java.io.IOException;
 import java.sql.Connection;
-import java.util.stream.Collectors;
 
 import org.jdom2.*;
 
@@ -179,7 +178,7 @@ public class FlightSubmitService extends SimFDRService {
 				comments.add("ETOPS classificataion: " + String.valueOf(etopsClass));
 			
 			// Check prohibited airspace
-			Collection<Airspace> rstAirspaces = ofr.getPositions().stream().map(pos -> Airspace.isRestricted(pos)).filter(Objects::nonNull).collect(Collectors.toSet());
+			Collection<Airspace> rstAirspaces = AirspaceHelper.classify(ofr.getPositions(), true);
 			if (!rstAirspaces.isEmpty()) {
 				fr.setAttribute(FlightReport.ATTR_AIRSPACEWARN, true);
 				comments.add("SYSTEM: Entered restricted airspace " + StringUtils.listConcat(rstAirspaces, ", "));
