@@ -7,6 +7,7 @@ import org.deltava.beans.system.*;
 
 import org.deltava.taglib.BrowserInfoTag;
 import org.deltava.taglib.ContentHelper;
+import org.deltava.util.system.SystemData;
 
 /**
  * A JSP tag to display favicon link elements.
@@ -23,7 +24,9 @@ public class FaviconTag extends BrowserInfoTag {
 	private static String generateTag(String base, String path) {
 		StringBuilder buf = new StringBuilder("<");
 		buf.append(base);
-		buf.append(" href=\"/favicon/v");
+		buf.append(" href=\"");
+		buf.append(SystemData.get("path.img"));
+		buf.append("/favicon/v");
 		buf.append(VersionInfo.BUILD);
 		buf.append('/');
 		buf.append(path);
