@@ -6,7 +6,6 @@ import java.util.*;
 import java.util.zip.*;
 import java.sql.Connection;
 import java.time.Instant;
-import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 
@@ -344,7 +343,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 				comments.add("ETOPS classificataion: " + String.valueOf(etopsClass));
 			
 			// Check prohibited airspace
-			Collection<Airspace> rstAirspaces = positions.stream().map(pos -> Airspace.isRestricted(pos)).filter(Objects::nonNull).collect(Collectors.toSet());
+			Collection<Airspace> rstAirspaces = AirspaceHelper.classify(positions, true);
 			if (!rstAirspaces.isEmpty()) {
 				afr.setAttribute(FlightReport.ATTR_AIRSPACEWARN, true);
 				comments.add("SYSTEM: Entered restricted airspace " + StringUtils.listConcat(rstAirspaces, ", "));

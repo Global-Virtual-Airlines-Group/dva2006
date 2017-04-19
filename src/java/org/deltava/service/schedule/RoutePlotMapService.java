@@ -278,6 +278,21 @@ public class RoutePlotMapService extends MapPlotService {
 		} else
 			eo.put("warning", false);
 		
+		// Check for restricted Airspace
+		Collection<Airspace> rsts = AirspaceHelper.classify(dr, true);
+		for (Airspace r : rsts) {
+			JSONObject ao = new JSONObject();
+			ao.put("id", r.getID());
+			ao.put("type", r.getType().name());
+			ao.put("min", r.getMinAltitude());
+			ao.put("max", r.getMaxAltitude());
+			ao.put("exclude", r.isExclusion());
+			ao.put("info", r.getInfoBox());
+			ao.put("ll", JSONUtils.format(r));
+			r.getBorder().forEach(pt -> ao.append("border", JSONUtils.format(pt)));
+			jo.append("airspace", ao);
+		}
+		
 		// Add gates to XML document
 		for (Gate g : gates) {
 			boolean isDeparture = (dr.getAirportD() != null) && (g.getCode().equals(dr.getAirportD().getICAO()));
@@ -343,7 +358,7 @@ public class RoutePlotMapService extends MapPlotService {
 		}
 		
 		// Ensure arrays are populated
-		JSONUtils.ensureArrayPresent(jo, "departureGates", "arrivalGates", "runways", "sid", "star", "wx", "alternates");
+		JSONUtils.ensureArrayPresent(jo, "departureGates", "arrivalGates", "runways", "sid", "star", "wx", "alternates", "airspace");
 		
 		// Dump the XML to the output stream
 		try {
@@ -361,10 +376,9 @@ public class RoutePlotMapService extends MapPlotService {
 	 * Helper method to filter gates.
 	 */
 	private static List<Gate> filter(Collection<Gate> gates, Airline a, boolean isIntl) {
-
 		List<Gate> fdGates = gates.stream().filter(g -> (a != null) && g.getAirlines().contains(a)).collect(Collectors.toList());
 		if (isIntl) {
-			List<Gate> iGates = fdGates.stream().filter(g -> g.isInternational()).collect(Collectors.toList());
+			List<Gate> iGates = fdGates.stream().filter(Gate::isInternational).collect(Collectors.toList());
 			if (!iGates.isEmpty())
 				return iGates;
 		}
