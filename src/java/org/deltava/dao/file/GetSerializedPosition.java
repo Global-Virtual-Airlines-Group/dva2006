@@ -6,6 +6,7 @@ import java.time.Instant;
 import java.util.*;
 
 import org.deltava.beans.acars.*;
+import org.deltava.beans.navdata.AirspaceType;
 import org.deltava.beans.servinfo.*;
 import org.deltava.beans.schedule.GeoPosition;
 
@@ -16,7 +17,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to deserialize ACARS/XACARS position records.  
  * @author Luke
- * @version 7.2
+ * @version 7.3
  * @since 4.1
  */
 
@@ -80,8 +81,10 @@ public class GetSerializedPosition extends DAO {
 				re.setTemperature(in.readShort());
 				re.setPressure(in.readInt());
 				re.setSimUTC(Instant.ofEpochMilli(in.readLong()));
-				if (version == SerializedDataVersion.ACARSv4)
+				if (version.getVersion() > 3)
 					re.setVASFree(in.readInt());
+				if (version == SerializedDataVersion.ACARSv41)
+					re.setAirspace(AirspaceType.values()[in.readShort()]);
 			} else
 				re.setSimUTC(re.getDate()); // ensure non-null
 			
