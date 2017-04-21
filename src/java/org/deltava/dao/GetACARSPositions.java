@@ -10,6 +10,7 @@ import java.util.zip.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
+import org.deltava.beans.navdata.AirspaceType;
 import org.deltava.beans.schedule.GeoPosition;
 import org.deltava.beans.servinfo.*;
 
@@ -62,8 +63,8 @@ public class GetACARSPositions extends GetACARSData {
 	private List<GeospaceLocation> getLiveEntries(int flightID, boolean includeOnGround) throws DAOException {
 		try {
 			prepareStatementWithoutLimits("SELECT REPORT_TIME, LAT, LNG, B_ALT, R_ALT, HEADING, PITCH, BANK, ASPEED, GSPEED, VSPEED, MACH, N1, N2, FLAPS, "
-				+ "WIND_HDG, WIND_SPEED, TEMP, PRESSURE, VIZ, FUEL, FUELFLOW, AOA, GFORCE, FLAGS, FRAMERATE, SIM_RATE, SIM_TIME, PHASE, NAV1, NAV2, VAS "
-				+ "FROM acars.POSITIONS WHERE (FLIGHT_ID=?) ORDER BY REPORT_TIME");
+				+ "WIND_HDG, WIND_SPEED, TEMP, PRESSURE, VIZ, FUEL, FUELFLOW, AOA, GFORCE, FLAGS, FRAMERATE, SIM_RATE, SIM_TIME, PHASE, NAV1, NAV2, VAS, "
+				+ "ASTYPE FROM acars.POSITIONS WHERE (FLIGHT_ID=?) ORDER BY REPORT_TIME");
 			_ps.setInt(1, flightID);
 
 			// Execute the query
@@ -107,6 +108,7 @@ public class GetACARSPositions extends GetACARSData {
 						entry.setNAV1(rs.getString(30));
 						entry.setNAV2(rs.getString(31));
 						entry.setVASFree(rs.getInt(32));
+						entry.setAirspace(AirspaceType.values()[rs.getInt(33)]);
 						results.put(ts, entry);
 					}
 				}

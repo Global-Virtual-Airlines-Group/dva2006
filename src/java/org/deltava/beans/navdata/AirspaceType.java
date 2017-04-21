@@ -28,6 +28,14 @@ public enum AirspaceType implements ComboAlias {
 	}
 	
 	/**
+	 * Returns whether this is a Restricted airspace type.
+	 * @return TRUE if class P or class R, otherwise FALSE
+	 */
+	public boolean isRestricted() {
+		return ((this == P) || (this == R));
+	}
+	
+	/**
 	 * Retrieves n AirspaceType type based on its name.
 	 * @param name the name
 	 * @return an Airspacetype, or null if unknown

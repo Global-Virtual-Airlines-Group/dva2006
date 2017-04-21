@@ -4,7 +4,6 @@ package org.deltava.beans.acars;
 import java.time.Instant;
 
 import org.deltava.beans.*;
-import org.deltava.beans.navdata.AirspaceType;
 import org.deltava.beans.servinfo.Controller;
 
 import org.deltava.util.StringUtils;
@@ -532,7 +531,7 @@ public class ACARSRouteEntry extends RouteEntry {
 			buf.append("OVERSPEED ");
 		if ((getAltitude() > 45000) && (getMach() < 1.05))
 			buf.append("ALTITUDE ");
-		if (getAirspace() == AirspaceType.P)
+		if (getAirspace().isRestricted())
 			buf.append("AIRSPACE ");
 		if (isFlagSet(FLAG_GEARDOWN) && (getAirSpeed() > 250))
 			buf.append("GEAR SPEED ");
