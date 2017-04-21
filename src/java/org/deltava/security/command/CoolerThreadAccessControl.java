@@ -178,7 +178,7 @@ public final class CoolerThreadAccessControl extends AccessControl {
 	 * Returns if a user can restore disable Linked Images in this thread.
 	 * @return TRUE if disabled linked images exists and can be enabled, otherwise FALSE
 	 */
-	public boolean getCanRelinkImage() {
+	public boolean getCanRelinkImages() {
 		return _canRelinkImage;
 	}
 	/**
