@@ -68,15 +68,11 @@ public class Airspace implements MapEntry, GeospaceLocation, Comparable<Airspace
 	 */
 	public static Collection<Airspace> findRestricted(GeoLocation loc, int distance) {
 		GeometryFactory gf = new GeometryFactory();
-		Point pt = gf.createPoint(new Coordinate(loc.getLatitude(), loc.getLongitude()));
+		Point pt = gf.createPoint(GeoUtils.toCoordinate(loc));
 		double dst = distance / GeoLocation.DEGREE_MILES;
 		
 		Collection<Airspace> results = new HashSet<Airspace>();
-		for (Airspace a : _restricted) {
-			if (a.contains(pt) || (a._geo.distance(pt) < dst))
-				results.add(a);
-		}
-		
+		_restricted.stream().filter(a -> (a.contains(pt) || (a._geo.distance(pt) < dst))).forEach(results::add);
 		return results;
 	}
 	
