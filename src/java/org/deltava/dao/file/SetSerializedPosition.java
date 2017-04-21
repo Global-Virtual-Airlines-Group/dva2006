@@ -41,10 +41,10 @@ public class SetSerializedPosition extends WriteableDAO {
 			out.writeInt(flightID);
 			out.writeInt(positions.size());
 			for (RouteEntry rte : positions) {
-				if (ver == SerializedDataVersion.ACARSv4)
-					write((ACARSRouteEntry) rte, out);
-				else if (ver == SerializedDataVersion.XACARS)
+				if (ver.isXACARS())
 					write((XARouteEntry) rte, out);
+				else
+					write((ACARSRouteEntry) rte, out);
 			}
 		} catch (IOException ie) {
 			throw new DAOException(ie);
