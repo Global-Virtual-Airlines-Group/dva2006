@@ -172,7 +172,7 @@ public class Airspace implements MapEntry, GeospaceLocation, Comparable<Airspace
 		boolean isContained = (loc.getAltitude() >= _minAlt) && (loc.getAltitude() <= _maxAlt);
 		if (isContained) {
 			GeometryFactory gf = new GeometryFactory();
-			Point pt = gf.createPoint(new Coordinate(loc.getLatitude(), loc.getLongitude()));
+			Point pt = gf.createPoint(GeoUtils.toCoordinate(loc));
 			isContained = contains(pt);
 		}
 		
