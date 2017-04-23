@@ -478,6 +478,24 @@ public class GeoUtils {
 		GeometryFactory gf = new GeometryFactory();
 		return gf.createPolygon(toRing(pts), null);
 	}
+	
+	/**
+	 * Converts a Collection of GeoLocations into a Geometry object.
+	 * @param pts a Collection of GeoLocations 
+	 * @return a Geometry object
+	 */
+	public static MultiPolygon toMultiPolygon(Collection<Collection<GeoLocation>> pts) {
+		GeometryFactory gf = new GeometryFactory();
+		Polygon[] polys = new Polygon[pts.size()];
+		
+		int x = 0;
+		for (Collection<GeoLocation> locs : pts) {
+			polys[x] = gf.createPolygon(toRing(locs), null);
+			x++;
+		}
+
+		return gf.createMultiPolygon(polys);
+	}
 
 	/**
 	 * Parses a Geometry object and converts it into a Collection of GeoLocations.
@@ -487,6 +505,19 @@ public class GeoUtils {
 	public static Collection<GeoLocation> fromGeometry(Geometry geo) {
 		List<Coordinate> coords = Arrays.asList(geo.getCoordinates());
 		return coords.stream().map(pt -> fromCoordinate(pt)).collect(Collectors.toList());
+	}
+	
+	/**
+	 * Parses a MultiPolygon object and converts each of its Geometries into a Collection of GeoLocations.
+	 * @param mp a MultiPolygon
+	 * @return a Collection of Collections of GeoLocations
+	 */
+	public static Collection<Collection<GeoLocation>> fromMultiPolygon(MultiPolygon mp) {
+		List<Collection<GeoLocation>> results = new ArrayList<Collection<GeoLocation>>();
+		for (int x = 0; x < mp.getNumGeometries(); x++)
+			results.add(fromGeometry(mp.getGeometryN(x)));
+		
+		return results;
 	}
 	
 	/**
