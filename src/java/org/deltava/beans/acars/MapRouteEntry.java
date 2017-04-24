@@ -5,7 +5,7 @@ import java.util.*;
 import java.time.Instant;
 
 import org.deltava.beans.*;
-import org.deltava.beans.schedule.Airport;
+import org.deltava.beans.schedule.*;
 
 import org.deltava.util.StringUtils;
 
@@ -14,7 +14,7 @@ import org.gvagroup.acars.ACARSFlags;
 /**
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
- * @version 7.2
+ * @version 7.3
  * @since 1.0
  */
 
@@ -31,6 +31,7 @@ public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 	private boolean _checkRide;
 	private boolean _dispatchRoute;
 	private String _phaseName;
+	private Country _c;
 
 	public MapRouteEntry(Instant dt, GeoLocation gl, Pilot usr, String eqType) {
 		super(dt, gl);
@@ -68,6 +69,10 @@ public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 	
 	public void setSimulator(Simulator s) {
 		_sim = s;
+	}
+	
+	public void setCountry(Country c) {
+		_c = c;
 	}
 
 	@Override
@@ -122,6 +127,9 @@ public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 			buf.append("</span><br />");
 		}
 		
+		buf.append("<span class=\"small\">Currently in ");
+		buf.append((_c == null) ? "International" : _c.getName());
+		buf.append(" airspace</span><br />");
 		buf.append("<br />");
 		buf.append(super.getInfoBox());
 		return buf.toString();
@@ -187,6 +195,10 @@ public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 			buf.append("<br />Flight Phase: <span class=\"bld\">");
 			buf.append(_phaseName);
 			buf.append("</span>");
+		} else {
+			buf.append("<br /><span class=\"small\">Currently in ");
+			buf.append((_c == null) ? "International" : _c.getName());
+			buf.append(" airspace</span><br />");
 		}
 		
 		if (_checkRide || _dispatchRoute || _busy) {
