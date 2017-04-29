@@ -1,10 +1,12 @@
 // Copyright 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
+import static java.net.HttpURLConnection.*;
+
 import org.json.*;
 
 import java.io.*;
-import java.net.HttpURLConnection;
+import java.util.*;
 import java.nio.charset.StandardCharsets;
 
 import org.deltava.beans.servinfo.PilotRating;
@@ -15,11 +17,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to write VATSIM user data.
  * @author Luke
- * @version 7.2
+ * @version 7.3
  * @since 7.2
  */
 
 public class SetVATSIMData extends DAO {
+	
+	private static final Collection<Integer> VALID_CODES = Arrays.asList(Integer.valueOf(HTTP_OK), Integer.valueOf(HTTP_CREATED));
 
 	/**
 	 * Assigns a VATSIM Pilot Rating to a user.
@@ -49,7 +53,7 @@ public class SetVATSIMData extends DAO {
 			}
 
 			int code = getResponseCode();
-			if (code != HttpURLConnection.HTTP_OK) {
+			if (VALID_CODES.contains(Integer.valueOf(code))) {
 				JSONObject eo = new JSONObject(new JSONTokener(getIn()));
 				throw new HTTPDAOException(String.valueOf(eo), code);
 			}
