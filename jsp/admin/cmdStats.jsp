@@ -12,6 +12,7 @@
 <content:css name="main" />
 <content:css name="form" />
 <content:css name="view" />
+<content:js name="common" />
 <content:pics />
 <content:favicon />
 <script type="text/javascript">
