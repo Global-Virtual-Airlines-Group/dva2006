@@ -1,4 +1,4 @@
-// Copyright 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 import java.io.*;
@@ -12,7 +12,7 @@ import org.deltava.util.StringUtils;
 /**
  * A utility class to register caches from an XML file.
  * @author Luke
- * @version 6.1
+ * @version 7.3
  * @since 5.0
  */
 
@@ -42,8 +42,9 @@ public class CacheLoader {
 		for (Element ce : doc.getRootElement().getChildren("cache")) {
 			int maxSize = StringUtils.parse(ce.getAttributeValue("max", "0"), 10);
 			int expires = StringUtils.parse(ce.getAttributeValue("expires", "0"), 0);
-			boolean isRemote = Boolean.valueOf(ce.getAttributeValue("remote", "false")).booleanValue();
-			CacheManager.register(Cacheable.class, ce.getAttributeValue("id"), maxSize, expires, isRemote);
+			boolean isGeo = Boolean.valueOf(ce.getAttributeValue("geo", "false")).booleanValue();
+			boolean isRemote = isGeo || Boolean.valueOf(ce.getAttributeValue("remote", "false")).booleanValue();
+			CacheManager.register(Cacheable.class, ce.getAttributeValue("id"), maxSize, expires, isGeo, isRemote);
 		}
 	}
 }

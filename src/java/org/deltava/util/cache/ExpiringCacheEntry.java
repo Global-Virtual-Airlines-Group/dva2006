@@ -1,10 +1,10 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 /**
  * A cache entry with an expiration date.
  * @author Luke
- * @version 7.2
+ * @version 7.3
  * @param <T> the Cacheable object type
  * @since 1.0
  */
@@ -24,7 +24,7 @@ abstract class ExpiringCacheEntry<T extends Cacheable> extends CacheEntry<T> {
 	 * @param key the cache key
 	 */
 	protected ExpiringCacheEntry(Object key) {
-		super(key);
+		super(key, null);
 	}
 
 	/**

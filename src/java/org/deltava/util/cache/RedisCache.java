@@ -1,4 +1,4 @@
-// Copyright 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 import java.util.concurrent.atomic.LongAdder;
@@ -8,7 +8,7 @@ import org.deltava.util.RedisUtils;
 /**
  * An object cache using Redis as its backing store.
  * @author Luke
- * @version 7.2
+ * @version 7.3
  * @since 7.1
  * @param <T> the Cacheable object type
  */
@@ -31,12 +31,29 @@ public class RedisCache<T extends Cacheable> extends Cache<T> {
 		_expiryTime = Math.min(3600 * 24 * 30, Math.max(1, expiry));
 	}
 	
-	/*
-	 * Creates a memcached bucket:key key.
+	/**
+	 * Creates a Reids bucket:key key.
+	 * @param key the raw key
+	 * @return the bucket:key key
 	 */
-	private String createKey(Object key) {
+	protected String createKey(Object key) {
 		StringBuilder buf = new StringBuilder(_bucket).append(':');
 		return buf.append(String.valueOf(key)).toString();
+	}
+	
+	/**
+	 * Returns the expiration time for a cache entry, based on the cache or the entry's expiration time.
+	 * @param entry the entry
+	 * @return the time it will expire
+	 */
+	protected long getExpiryTime(T entry) {
+		long expTime = _expiryTime;
+		if (entry instanceof ExpiringCacheable) {
+			ExpiringCacheable ec = (ExpiringCacheable) entry;
+			expTime = ec.getExpiryDate().toEpochMilli();
+		}
+		
+		return expTime;
 	}
 	
 	/**
@@ -55,13 +72,7 @@ public class RedisCache<T extends Cacheable> extends Cache<T> {
 	@Override
 	protected void addEntry(T entry) {
 		if (entry == null) return;
-		long expTime = _expiryTime;
-		if (entry instanceof ExpiringCacheable) {
-			ExpiringCacheable ec = (ExpiringCacheable) entry;
-			expTime = ec.getExpiryDate().toEpochMilli();
-		}
-		
-		RedisUtils.write(createKey(entry.cacheKey()), expTime, new RemoteCacheEntry<T>(entry));
+		RedisUtils.write(createKey(entry.cacheKey()), getExpiryTime(entry), new RemoteCacheEntry<T>(entry));
 	}
 	
 	/**
