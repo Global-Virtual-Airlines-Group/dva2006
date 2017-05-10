@@ -1,14 +1,13 @@
 package org.deltava.util.cache;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
 
 import org.hansel.CoverageDecorator;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
+import junit.framework.*;
 
-import org.deltava.beans.schedule.Airline;
+import org.deltava.beans.GeoLocation;
+import org.deltava.beans.schedule.*;
 
 public class TestNullCache extends TestCase {
    
@@ -52,6 +51,14 @@ protected void tearDown() throws Exception {
 	   assertEquals(0, _cache.size());
 	   assertFalse(_cache.contains("DVA"));
 	   assertNull(_cache.get("DVA"));
+   }
+   
+   public void testGeo() {
+	   GeoLocation loc = new GeoPosition(15, -25);
+	   assertFalse(_cache.contains(loc));
+	   _cache.add(loc, new CacheableLong(loc, 0));
+	   assertFalse(_cache.contains(loc));
+	   assertNull(_cache.get(loc));
    }
    
    public void testLargeCache() {
