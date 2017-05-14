@@ -126,13 +126,13 @@ public class CacheManager {
 		// Create the cache
 		if (isGeo && isRemote) {
 			cache = new RedisGeoCache<T>("cache:" + id, (expiryTime < 5) ? 86400 * 4 : expiryTime, maxSize);
-			log.info("Registered GeoRedis cache " + id + ", expiry=" + expiryTime + "s");
+			log.info("Registered GeoRedis cache " + id + ", expiry=" + expiryTime + "s, precision=" + maxSize);
 		} else if (isRemote) {
 			cache = new RedisCache<T>("cache:" + id, (expiryTime < 5) ? 86400 * 4 : expiryTime);
 			log.info("Registered Redis cache " + id + ", expiry=" + expiryTime + "s");
 		} else if (isGeo) {
 			cache = new ExpiringGeoCache<T>(maxSize, expiryTime, 2);
-			log.info("Registered Geo cache " + id + ", expiry=" + expiryTime + "s");
+			log.info("Registered Geo cache " + id + ", expiry=" + expiryTime + "s, precision=2");
 		} else if (expiryTime > 0) {
 			cache = new ExpiringCache<T>(maxSize, expiryTime);
 			log.info("Registered cache " + id + ", size=" + maxSize + ", expiry=" + expiryTime + "s");
