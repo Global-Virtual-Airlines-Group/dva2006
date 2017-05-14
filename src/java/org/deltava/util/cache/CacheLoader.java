@@ -44,7 +44,7 @@ public class CacheLoader {
 			int expires = StringUtils.parse(ce.getAttributeValue("expires", "0"), 0);
 			boolean isGeo = Boolean.valueOf(ce.getAttributeValue("geo", "false")).booleanValue();
 			boolean isRemote = isGeo || Boolean.valueOf(ce.getAttributeValue("remote", "false")).booleanValue();
-			CacheManager.register(Cacheable.class, ce.getAttributeValue("id"), maxSize, expires, isGeo, isRemote);
+			CacheManager.register(Cacheable.class, ce.getAttributeValue("id"), maxSize, expires, isRemote, isGeo);
 		}
 	}
 }
