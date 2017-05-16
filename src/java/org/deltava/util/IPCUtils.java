@@ -1,4 +1,4 @@
-// Copyright 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009, 2010, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.io.*;
@@ -11,7 +11,7 @@ import org.gvagroup.ipc.IPCInfo;
 /**
  * A utility class to handle deserializing IPC data.
  * @author Luke
- * @version 3.2
+ * @version 7.3
  * @since 1.0
  */
 
@@ -30,12 +30,11 @@ public class IPCUtils {
 	 * @return a local class version of the shared object
 	 */
 	public static Serializable reserialize(Serializable data) {
-		try {
-			ByteArrayOutputStream bos = new ByteArrayOutputStream(512);
-			ObjectOutputStream oos = new ObjectOutputStream(bos);
+		try (ByteArrayOutputStream bos = new ByteArrayOutputStream(512); ObjectOutputStream oos = new ObjectOutputStream(bos)) {
 			oos.writeObject(data);
-			ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bos.toByteArray()));
-			return (Serializable) in.readObject();
+			try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bos.toByteArray()))) {
+				return (Serializable) in.readObject();
+			}
 		} catch (ClassNotFoundException cnfe) {
 			log.error("Unknown class " + cnfe.getMessage());
 		} catch (IOException ie) {
@@ -63,8 +62,7 @@ public class IPCUtils {
 	public static <T extends Serializable> Collection<T> deserialize(Collection<byte[]> data) {
 		Collection<T> results = new ArrayList<T>(data.size());
 		for (Iterator<byte[]> i = data.iterator(); i.hasNext(); ) {
-			ByteArrayInputStream is = new ByteArrayInputStream(i.next());
-			try {
+			try (ByteArrayInputStream is = new ByteArrayInputStream(i.next())) {
 				ObjectInputStream ois = new ObjectInputStream(is);
 				T entry = (T) ois.readObject();
 				results.add(entry);
@@ -85,11 +83,8 @@ public class IPCUtils {
 	 */
 	public static Collection<byte[]> serialize(Collection<? extends Serializable> data) {
 		Collection<byte[]> results = new ArrayList<byte[]>();
-		for (Iterator<? extends Serializable> i = data.iterator(); i.hasNext(); ) {
-			Serializable entry = i.next();
-			try {
-				ByteArrayOutputStream bos = new ByteArrayOutputStream(256);
-				ObjectOutputStream oos = new ObjectOutputStream(bos);
+		for (Serializable entry : data) {
+			try (ByteArrayOutputStream bos = new ByteArrayOutputStream(512); ObjectOutputStream oos = new ObjectOutputStream(bos)) {
 				oos.writeObject(entry);
 				results.add(bos.toByteArray());
 			} catch (IOException ie) {
