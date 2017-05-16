@@ -24,7 +24,7 @@ public class FaviconTag extends BrowserInfoTag {
 	private static String generateTag(String base, String path) {
 		StringBuilder buf = new StringBuilder("<");
 		buf.append(base);
-		buf.append(" href=\"");
+		buf.append(" href=\"/");
 		buf.append(SystemData.get("path.img"));
 		buf.append("/favicon/v");
 		buf.append(VersionInfo.BUILD);
