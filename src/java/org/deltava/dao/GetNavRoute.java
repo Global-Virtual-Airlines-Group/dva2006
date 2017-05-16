@@ -147,8 +147,6 @@ public class GetNavRoute extends GetOceanicRoute {
 				// Get the waypoints
 				String endPoint = (x < (tkns.size() - 1)) ? tkns.get(x + 1) : "";
 				Collection<NavigationDataBean> awPoints = aw.getWaypoints((x == 0) ? wp : tkns.get(x - 1), endPoint);
-				if (lastPosition instanceof NavigationDataBean)
-					routePoints.remove(lastPosition);
 				routePoints.addAll(awPoints);
 			} else {
 				NavigationDataMap navaids = get(wp);
