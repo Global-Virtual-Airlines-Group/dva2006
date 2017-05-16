@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -8,13 +8,18 @@ import org.deltava.beans.ComboAlias;
 /**
  * A bean to store country names and ISO-3316 codes.
  * @author Luke
- * @version 7.0
+ * @version 7.3
  * @since 3.2
  */
 
 public class Country implements java.io.Serializable, Comparable<Country>, ComboAlias {
+	
+	/**
+	 * International Airspace.
+	 */
+	public static final Country INTL = new Country("??", "International", "");
 
-	private static final Map<String, Country> _countries = new TreeMap<String, Country>();
+	private static final Map<String, Country> _countries = new TreeMap<String, Country>() {{ put(INTL.getCode(), INTL); }};
 	private static final Collection<String> _continents = new TreeSet<String>();
 	
 	private final String _code;
