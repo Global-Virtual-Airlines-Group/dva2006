@@ -17,7 +17,7 @@ import org.deltava.util.cache.*;
 
 public class GetCountry extends DAO {
 	
-	private static final GeoCache<CacheableString> _cache = CacheManager.getGeo(CacheableString.class, "geoCountry");
+	private static final GeoCache<CacheableString> _cache = CacheManager.getGeo(CacheableString.class, "GeoCountry");
 	
 	/**
 	 * Initializes the Data Access Object.
@@ -81,6 +81,7 @@ public class GetCountry extends DAO {
 				return Country.get(id.getValue());
 			}
 			
+			_cache.add(loc, new CacheableString("", Country.INTL.getCode()));
 			return null;
 		} catch (SQLException se) {
 			throw new DAOException(se);
