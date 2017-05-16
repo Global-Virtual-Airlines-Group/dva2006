@@ -1,16 +1,14 @@
-// Copyright 2009, 2011, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2011, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
-
-import org.deltava.beans.ViewEntry;
 
 /**
  * A bean to store information about a cache.
  * @author Luke
- * @version 7.1
+ * @version 7.3
  * @since 2.6
  */
 
-public class CacheInfo implements java.io.Serializable, ViewEntry, Comparable<CacheInfo> {
+public class CacheInfo implements java.io.Serializable, org.deltava.beans.ViewEntry, Comparable<CacheInfo> {
 
 	private final String _id;
 	private final String _type;
@@ -20,6 +18,7 @@ public class CacheInfo implements java.io.Serializable, ViewEntry, Comparable<Ca
 	private final long _capacity;
 	private final long _errors;
 	private final boolean _isRemote;
+	private final boolean _isGeo;
 
 	/**
 	 * Initializes the information bean from a Cache.
@@ -35,7 +34,26 @@ public class CacheInfo implements java.io.Serializable, ViewEntry, Comparable<Ca
 		_size = c.size();
 		_capacity = c.getMaxSize();
 		_isRemote = (c instanceof RedisCache);
+		_isGeo = (c instanceof GeoCache);
 		_errors = c.getErrors();
+	}
+	
+	/**
+	 * Initializes the information bean from a CacheInfo bean. This is used when combining cache info from multiple web applications.
+	 * @param prefix the prefix to prepend in front of the Cache ID
+	 * @param ci the CacheInfo bean
+	 */
+	public CacheInfo(String prefix, CacheInfo ci) {
+		super();
+		_id = prefix + "." + ci._id;
+		_type = ci._type;
+		_hits = ci._hits;
+		_reqs = ci._reqs;
+		_size = ci._size;
+		_capacity = ci._capacity;
+		_isRemote = ci._isRemote;
+		_isGeo = ci._isGeo;
+		_errors = ci._errors;
 	}
 
 	/**
@@ -100,6 +118,14 @@ public class CacheInfo implements java.io.Serializable, ViewEntry, Comparable<Ca
 	 */
 	public boolean getIsRemote() {
 		return _isRemote;
+	}
+	
+	/**
+	 * Returns whether this is a geolocation cache.
+	 * @return TRUE if geolocation, otherwise FALSE
+	 */
+	public boolean getIsGeo() {
+		return _isGeo;
 	}
 	
 	@Override
