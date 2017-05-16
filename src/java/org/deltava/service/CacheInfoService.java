@@ -1,4 +1,4 @@
-// Copyright 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -7,13 +7,16 @@ import java.util.Collection;
 
 import org.json.*;
 
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 import org.deltava.util.cache.*;
+import org.deltava.util.system.SystemData;
+
+import org.gvagroup.common.*;
 
 /**
  * A Web Service to display application cache information.
  * @author Luke
- * @version 6.2
+ * @version 7.3
  * @since 6.2
  */
 
@@ -30,8 +33,20 @@ public class CacheInfoService extends WebService {
 		if (!ctx.isUserInRole("Admin"))
 			throw error(SC_UNAUTHORIZED, "Not in Admin role", false);
 		
+		// Get cache info
 		Collection<CacheInfo> info = CacheManager.getCacheInfo();
 		String fmt = ctx.getUser().getNumberFormat();
+		
+		// Tell ACARS to update its cache
+		if (SystemData.getBoolean("acars.enabled")) {
+			EventDispatcher.send(new SystemEvent(SystemEvent.Type.CACHE_STATS));
+			ThreadUtils.sleep(50);
+			
+			@SuppressWarnings("unchecked")
+			Collection<CacheInfo> acarsInfo = (Collection<CacheInfo>) IPCUtils.reserialize(SharedData.get(SharedData.ACARS_CACHEINFO));
+			if (acarsInfo != null)
+				acarsInfo.forEach(ci -> { info.add(new CacheInfo("acars", ci)); });
+		}
 		
 		// Format results
 		JSONObject jo = new JSONObject();
@@ -40,6 +55,7 @@ public class CacheInfoService extends WebService {
 			co.put("id", c.getID());
 			co.put("type", c.getType());
 			co.put("remote", c.getIsRemote());
+			co.put("geo", c.getIsGeo());
 			co.put("reqs", c.getRequests());
 			co.put("hits", c.getHits());
 			co.put("size", c.getSize());
@@ -55,6 +71,7 @@ public class CacheInfoService extends WebService {
 		}
 		
 		// Dump the JSON to the output stream
+		JSONUtils.ensureArrayPresent(jo, "caches");
 		try {
 			ctx.setContentType("application/json", "UTF-8");
 			ctx.setExpiry(2);
