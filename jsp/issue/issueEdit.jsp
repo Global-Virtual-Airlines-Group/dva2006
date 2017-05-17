@@ -96,7 +96,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Target Version</td>
- <td class="data"><el:combo name="version" size="1" idx="*" options="${versions}" value="${issue.majorVersion}.${issue.minorVersion}" /></td>
+ <td class="data"><el:combo name="version" size="1" idx="*" options="${versions}" value="${empty issue ? currentVersion : (issue.majorVersion}.${issue.minorVersion})" /></td>
 </tr>
 <tr>
  <td class="label top">Issue Description</td>
