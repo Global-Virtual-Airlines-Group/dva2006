@@ -189,6 +189,8 @@ public class IssueCommand extends AbstractFormCommand {
 		boolean isNew = (ctx.getID() == 0);
 		try {
 			IssueAccessControl access = null;
+			@SuppressWarnings("unchecked")
+			Collection<String> versions = (Collection<String>) SystemData.getObject("issue_track.versions");
 			Connection con = ctx.getConnection();
 
 			// Get the Issue
@@ -200,6 +202,11 @@ public class IssueCommand extends AbstractFormCommand {
 				access.validate();
 				if (!access.getCanCreate())
 					throw securityException("Cannot Create new Issues");
+				
+				// Get current version string
+				String currentVer = String.valueOf(VersionInfo.MAJOR) + "." + String.valueOf(VersionInfo.MINOR);
+				versions.add(currentVer);
+				ctx.setAttribute("currentVersion", currentVer, REQUEST);  
 			} else {
 				i = dao.get(ctx.getID());
 				if (i == null)
@@ -213,6 +220,7 @@ public class IssueCommand extends AbstractFormCommand {
 
 				// Save the issue in the request
 				ctx.setAttribute("issue", i, REQUEST);
+				versions.add(String.valueOf(i.getMajorVersion()) + "." + String.valueOf(i.getMinorVersion()));
 			}
 
 			// Get the Pilot DAO
@@ -310,11 +318,7 @@ public class IssueCommand extends AbstractFormCommand {
 		Collection<Integer> results = new HashSet<Integer>();
 		results.add(Integer.valueOf(i.getAuthorID()));
 		results.add(Integer.valueOf(i.getAssignedTo()));
-
-		// Add comment authors
-		for (IssueComment ic : i.getComments())
-			results.add(Integer.valueOf(ic.getAuthorID()));
-
+		i.getComments().stream().map(IssueComment::getAuthorID).forEach(results::add);
 		return results;
 	}
 }
