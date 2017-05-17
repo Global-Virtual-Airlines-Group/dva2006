@@ -1,4 +1,4 @@
-// Copyright 2007, 2009, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009, 2010, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.jdbc;
 
 import java.sql.Connection;
@@ -13,7 +13,7 @@ import org.gvagroup.jdbc.*;
 /**
  * A Context object that allows fetching of connections from the connection pool.
  * @author Luke
- * @version 7.2
+ * @version 7.3
  * @since 1.0
  */
 
@@ -49,10 +49,8 @@ public abstract class ConnectionContext {
     public Connection getConnection() throws ConnectionPoolException {
         if (_pool == null)
             throw new ConnectionPoolException("No Connection Pool defined");
-
-        // Check if a connection has already been reserved
         if (_con != null)
-            throw new IllegalStateException("Connection already reserved");
+            return _con;
 
         try {
 			_con = _pool.getConnection();
@@ -61,6 +59,14 @@ public abstract class ConnectionContext {
 		}
 		
         return _con;
+    }
+    
+    /**
+     * Returns whether a JDBC connection has been reserved by this context.
+     * @return TRUE if a Connection has been reserved, otherwise FALSE
+     */
+    public boolean hasConnection() {
+    	return (_con != null);
     }
 
     /*
