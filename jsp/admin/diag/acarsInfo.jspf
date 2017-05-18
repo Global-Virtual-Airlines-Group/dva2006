@@ -133,7 +133,7 @@ writes / message, <fmt:dec value="${udp.bytesOut / udp.bufferWrites}" fmt="###0.
 <c:forEach var="worker" items="${workers}">
 <view:row entry="${worker}">
  <td class="pri bld">${worker}</td>
- <td class="sec">${worker.statusName}</td>
+ <td class="sec">${worker.status.name}</td>
  <td><fmt:int value="${worker.executionCount}" /></td>
  <td class="left">${worker.message}</td>
 </view:row>
