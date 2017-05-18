@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2011, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to manipulate issues.
  * @author Luke
- * @version 7.0
+ * @version 7.4
  * @since 1.0
  */
 
@@ -219,8 +219,10 @@ public class IssueCommand extends AbstractFormCommand {
 					throw securityException("Cannot Edit Issue " + ctx.getID());
 
 				// Save the issue in the request
+				String currentVer = String.valueOf(i.getMajorVersion()) + "." + String.valueOf(i.getMinorVersion());
 				ctx.setAttribute("issue", i, REQUEST);
-				versions.add(String.valueOf(i.getMajorVersion()) + "." + String.valueOf(i.getMinorVersion()));
+				versions.add(currentVer);
+				ctx.setAttribute("currentVersion", currentVer, REQUEST);
 			}
 
 			// Get the Pilot DAO
