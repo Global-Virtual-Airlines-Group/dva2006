@@ -11,7 +11,7 @@ import org.gvagroup.common.*;
 /**
  * A utility class to handle centralized cache registration and invalidation.
  * @author Luke
- * @version 7.3
+ * @version 7.4
  * @since 5.0
  */
 
@@ -23,7 +23,7 @@ public class CacheManager {
 	private static final ReentrantReadWriteLock.ReadLock _r = _rw.readLock();
 	private static final ReentrantReadWriteLock.WriteLock _w = _rw.writeLock();
 	
-	private static final Map<String, Cache<?>> _caches = new LinkedHashMap<String, Cache<?>>(32);
+	private static final Map<String, Cache<?>> _caches = new LinkedHashMap<String, Cache<?>>();
 	
 	// singleton
 	private CacheManager() {
@@ -107,51 +107,45 @@ public class CacheManager {
 	/**
 	 * Registers a cache. 
 	 * @param c the cache content class
-	 * @param id the cache ID
-	 * @param maxSize the maximum size of the cache, in entries
-	 * @param expiryTime the expiry time in seconds, zero or negative values return an AgingCache
-	 * @param isRemote TRUE if remote, otherwise FALSE
-	 * @param isGeo TRUE if geographic, otherwise FALSE
+	 * @param cfg the CacheConfig bean
 	 * @return a Cache
-	 * @see ExpiringCache
-	 * @see AgingCache
 	 */
-	static <T extends Cacheable> Cache<T> register(Class<T> c, String id, int maxSize, int expiryTime, boolean isRemote, boolean isGeo) {
-		Cache<T> cache = get(id);
+	static <T extends Cacheable> Cache<T> register(Class<T> c, CacheConfig cfg) {
+		Cache<T> cache = get(cfg.getID());
 		if (cache != null) {
-			log.warn("Duplicate registration attempted for cache " + id + "!");
+			log.warn("Duplicate registration attempted for cache " + cfg.getID() + "!");
 			return cache;
 		}
 		
 		// Create the cache
-		if (isGeo && isRemote) {
-			cache = new RedisGeoCache<T>("cache:" + id, (expiryTime < 5) ? 86400 * 4 : expiryTime, maxSize);
-			log.info("Registered GeoRedis cache " + id + ", expiry=" + expiryTime + "s, precision=" + maxSize);
-		} else if (isRemote) {
-			cache = new RedisCache<T>("cache:" + id, (expiryTime < 5) ? 86400 * 4 : expiryTime);
-			log.info("Registered Redis cache " + id + ", expiry=" + expiryTime + "s");
-		} else if (isGeo) {
-			cache = new ExpiringGeoCache<T>(maxSize, expiryTime, 2);
-			log.info("Registered Geo cache " + id + ", expiry=" + expiryTime + "s, precision=2");
-		} else if (expiryTime > 0) {
-			cache = new ExpiringCache<T>(maxSize, expiryTime);
-			log.info("Registered cache " + id + ", size=" + maxSize + ", expiry=" + expiryTime + "s");
+		if (cfg.getExpiryTime() == 0)
+			return registerNull(cfg.getID());
+		
+		if (cfg.isGeo() && cfg.isRemote()) {
+			cache = new RedisGeoCache<T>("cache:" + cfg.getID(), cfg.getExpiryTime(), cfg.getPrecision());
+			log.info("Registered GeoRedis cache " + cfg.getID() + ", expiry=" + cfg.getExpiryTime() + "s, precision=" + cfg.getPrecision());
+		} else if (cfg.isRemote()) {
+			cache = new RedisCache<T>("cache:" + cfg.getID(), cfg.getExpiryTime());
+			log.info("Registered Redis cache " + cfg.getID() + ", expiry=" + cfg.getExpiryTime() + "s");
+		} else if (cfg.isGeo()) {
+			cache = new ExpiringGeoCache<T>(cfg.getMaxSize(), cfg.getExpiryTime(), cfg.getPrecision());
+			log.info("Registered Geo cache " + cfg.getID() + ", expiry=" + cfg.getExpiryTime() + "s, precision=" + cfg.getPrecision());
+		} else if (cfg.getExpiryTime() > 0) {
+			cache = new ExpiringCache<T>(cfg.getMaxSize(), cfg.getExpiryTime());
+			log.info("Registered cache " + cfg.getID() + ", size=" + cfg.getMaxSize() + ", expiry=" + cfg.getExpiryTime() + "s");
 		} else {
-			cache = new AgingCache<T>(maxSize);
-			log.info("Registered cache " + id + ", size=" + maxSize);
+			cache = new AgingCache<T>(cfg.getMaxSize());
+			log.info("Registered cache " + cfg.getID() + ", size=" + cfg.getMaxSize());
 		}
 		
-		addCache(id, cache);
+		addCache(cfg.getID(), cache);
 		return cache;
 	}
 	
-	/**
-	 * Restisters a null cache. 
-	 * @param c the cache content class
-	 * @param id the cache ID
-	 * @return a NullCache
+	/*
+	 * Registers a null cache. 
 	 */
-	static <T extends Cacheable> Cache<T> registerNull(Class<T> c, String id) {
+	private static <T extends Cacheable> Cache<T> registerNull(String id) {
 		Cache<T> cache = get(id);
 		if (cache != null) {
 			log.warn("Duplicate registration attempted for cache " + id + "!");
@@ -172,7 +166,7 @@ public class CacheManager {
 	 */
 	public static <T extends Cacheable> Cache<T> get(Class<T> c, String id) {
 		Cache<T> cache = get(id);
-		return (cache != null) ? cache : registerNull(c, id);
+		return (cache != null) ? cache : registerNull(id);
 	}
 	
 	/**
@@ -184,7 +178,7 @@ public class CacheManager {
 	@SuppressWarnings("unchecked")
 	public static <T extends Cacheable> GeoCache<T> getGeo(Class<T> c, String id) {
 		GeoCache<T> cache = (GeoCache<T>) get(id);
-		return (cache != null) ? cache : (GeoCache<T>) registerNull(c, id);
+		return (cache != null) ? cache : (GeoCache<T>) registerNull(id);
 	}
 	
 	/**
@@ -195,13 +189,7 @@ public class CacheManager {
 	 */
 	public static <U extends Object, T extends CacheableCollection<U>> Cache<T> getCollection(Class<U> c, String id) {
 		Cache<T> cache = get(id);
-		if (cache != null) return cache;
-
-		// Register a null cache
-		log.warn("Registering unknown null cache " + id);
-		cache = new NullCache<T>();
-		addCache(id, cache);
-		return cache;
+		return (cache != null) ? cache : registerNull(id);
 	}
 	
 	/**
@@ -213,12 +201,6 @@ public class CacheManager {
 	 */
 	public static <K extends Object, V extends Object, T extends CacheableMap<K, V>> Cache<T> getMap(Class<K> k, Class<V> v, String id) {
 		Cache<T> cache = get(id);
-		if (cache != null) return cache;
-		
-		// Register a null cache
-		log.warn("Registering unknown null cache " + id);
-		cache = new NullCache<T>();
-		addCache(id, cache);
-		return cache;		
+		return (cache != null) ? cache : registerNull(id);
 	}
 }

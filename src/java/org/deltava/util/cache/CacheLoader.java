@@ -12,7 +12,7 @@ import org.deltava.util.StringUtils;
 /**
  * A utility class to register caches from an XML file.
  * @author Luke
- * @version 7.3
+ * @version 7.4
  * @since 5.0
  */
 
@@ -40,11 +40,15 @@ public class CacheLoader {
 		
 		// Parse the entries
 		for (Element ce : doc.getRootElement().getChildren("cache")) {
-			int maxSize = StringUtils.parse(ce.getAttributeValue("max", "0"), 10);
-			int expires = StringUtils.parse(ce.getAttributeValue("expires", "0"), 0);
-			boolean isGeo = Boolean.valueOf(ce.getAttributeValue("geo", "false")).booleanValue();
-			boolean isRemote = isGeo || Boolean.valueOf(ce.getAttributeValue("remote", "false")).booleanValue();
-			CacheManager.register(Cacheable.class, ce.getAttributeValue("id"), maxSize, expires, isRemote, isGeo);
+			CacheConfig cfg = new CacheConfig(ce.getAttributeValue("id"));
+			cfg.setMaxSize(StringUtils.parse(ce.getAttributeValue("max", "0"), 10));
+			cfg.setExpiryTime(StringUtils.parse(ce.getAttributeValue("expires", "-1"), 0));
+			cfg.setGeo(Boolean.valueOf(ce.getAttributeValue("geo", "false")).booleanValue());
+			cfg.setRemote(Boolean.valueOf(ce.getAttributeValue("remote", "false")).booleanValue());
+			if (cfg.isGeo())
+				cfg.setPrecision(StringUtils.parse(ce.getAttributeValue("precision"), 2));
+			
+			CacheManager.register(Cacheable.class, cfg);
 		}
 	}
 }
