@@ -1,17 +1,25 @@
 // Copyright 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
+import java.math.BigDecimal;
+
 import org.deltava.beans.GeoLocation;
 
 /**
  * An interface for caches that cache data based on geographic locations.
  * @author Luke
- * @version 7.3
+ * @version 7.4
  * @since 7.3
  * @param <T> the Cacheable object type 
  */
 
 public interface GeoCache<T extends Cacheable> {
+	
+	/**
+	 * Returns the precision of the lat/long key rounding.
+	 * @return the precision in decimal places
+	 */
+	public int getPrecision();
 
 	/**
 	 * Adds a geographically located object to the cache.
@@ -45,4 +53,18 @@ public interface GeoCache<T extends Cacheable> {
 	 * @param loc the GeoLocation
 	 */
 	public void remove(GeoLocation loc);
+
+	/**
+	 * Creates a lat/long key by rounding to the specific number of decimal places. 
+	 * @param loc the GeoLocation
+	 * @return a key
+	 */
+	default String createGeoKey(GeoLocation loc) {
+		BigDecimal lat = new BigDecimal(Double.toString(loc.getLatitude())).setScale(getPrecision(), BigDecimal.ROUND_HALF_UP);
+		BigDecimal lng = new BigDecimal(Double.toString(loc.getLongitude())).setScale(getPrecision(), BigDecimal.ROUND_HALF_UP);
+		StringBuilder buf = new StringBuilder(lat.toString());
+		buf.append('@');
+		buf.append(lng.toString());
+		return buf.toString();
+	}
 }
