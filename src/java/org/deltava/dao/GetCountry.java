@@ -11,7 +11,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load ISO-3316 country codes and perform geolocation.
  * @author Luke
- * @version 7.3
+ * @version 7.4
  * @since 3.2
  */
 
@@ -53,10 +53,12 @@ public class GetCountry extends DAO {
 	/**
 	 * Determines what country covers a particular point.
 	 * @param loc a GeoLocation
-	 * @return a Country object, or null if none found
+	 * @param isAirspace TRUE if we want INTL returned if no match, otherwise FALSE
+	 * @return a Country object, or null/INTL if none found
 	 * @throws DAOException if a JDBC error occurs
+	 * @see Country#INTL
 	 */
-	public Country find(GeoLocation loc) throws DAOException {
+	public Country find(GeoLocation loc, boolean isAirspace) throws DAOException {
 		
 		// Check the cache
 		CacheableString id = _cache.get(loc);
@@ -79,9 +81,11 @@ public class GetCountry extends DAO {
 			if (id != null) {
 				_cache.add(loc, id);
 				return Country.get(id.getValue());
+			} else if (isAirspace) {
+				_cache.add(loc, new CacheableString("", Country.INTL.getCode()));
+				return Country.INTL;
 			}
-			
-			_cache.add(loc, new CacheableString("", Country.INTL.getCode()));
+
 			return null;
 		} catch (SQLException se) {
 			throw new DAOException(se);
