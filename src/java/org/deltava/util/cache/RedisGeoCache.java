@@ -1,8 +1,6 @@
 // Copyright 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
-import java.math.BigDecimal;
-
 import org.deltava.beans.GeoLocation;
 
 import org.deltava.util.RedisUtils;
@@ -10,7 +8,7 @@ import org.deltava.util.RedisUtils;
 /**
  * A cache to store geographic lookups in Redis. Lat/long coordinates are automatically reduced to a set number of decimal places. 
  * @author Luke
- * @version 7.3
+ * @version 7.4
  * @since 7.3
  * @param <T> the Cacheable object type
  */
@@ -30,16 +28,9 @@ public class RedisGeoCache<T extends Cacheable> extends RedisCache<T> implements
 		_precision = Math.max(0, precision);
 	}
 	
-	/*
-	 * Helper method to strip precision when creating cache keys.
-	 */
-	private String createGeoKey(GeoLocation loc) {
-		BigDecimal lat = new BigDecimal(Double.toString(loc.getLatitude())).setScale(_precision, BigDecimal.ROUND_HALF_UP);
-		BigDecimal lng = new BigDecimal(Double.toString(loc.getLongitude())).setScale(_precision, BigDecimal.ROUND_HALF_UP);
-		StringBuilder buf = new StringBuilder(lat.toString());
-		buf.append('@');
-		buf.append(lng.toString());
-		return buf.toString();
+	@Override
+	public int getPrecision() {
+		return _precision;
 	}
 	
 	/**
