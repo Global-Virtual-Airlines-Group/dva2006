@@ -21,7 +21,7 @@ public class TestGeoCache extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		_cache = new ExpiringGeoCache<Cacheable>(2, 1, 1);
+		_cache = new ExpiringGeoCache<Cacheable>(2, 1, 2);
 	}
 
 	@Override
@@ -66,9 +66,13 @@ public class TestGeoCache extends TestCase {
 	}
 	
 	public void testRounding() {
-		_cache.addNull(new GeoPosition(52.5, 5.5));
+		assertEquals(2, _cache.getPrecision());
+		_cache.addNull(new GeoPosition(52.51, 5.51));
 		assertEquals(1, _cache.size());
 		assertTrue(_cache.contains(new GeoPosition(52.51, 5.51)));
+		assertFalse(_cache.contains(new GeoPosition(52.52, 5.52)));
+		assertTrue(_cache.contains(new GeoPosition(52.514, 5.514)));
+		assertTrue(_cache.contains(new GeoPosition(52.508, 5.506)));
 	}
 
 	public void testLargeCache() {
