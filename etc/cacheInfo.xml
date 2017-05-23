@@ -22,7 +22,7 @@
     <cache id="Airspace" expires="86400" remote="true" />
 	<cache id="FIRs" max="512" />
 	<cache id="FIRIDs" max="256" />
-	<cache id="GeoCountry" remote="true" geo="true" expires="864000" precision="2" />
+    <cache id="GeoCountry" remote="true" geo="true" expires="864000" precision="0.01" />
 	
 	<!-- VATSIM caches -->
 	<cache id="ATORatings" expires="28800" remote="true" />
