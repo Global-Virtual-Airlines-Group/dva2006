@@ -163,7 +163,7 @@ public class AirportListService extends WebService {
 		// Dump the JSON to the output stream
 		try {
 			ctx.setContentType("application/json", "UTF-8");
-			ctx.setExpiry(3600);
+			ctx.setExpiry(1800);
 			ctx.println(ja.toString());
 			ctx.commit();
 		} catch (IOException ie) {
