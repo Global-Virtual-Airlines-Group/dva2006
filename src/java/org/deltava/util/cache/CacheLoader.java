@@ -46,7 +46,7 @@ public class CacheLoader {
 			cfg.setGeo(Boolean.valueOf(ce.getAttributeValue("geo", "false")).booleanValue());
 			cfg.setRemote(Boolean.valueOf(ce.getAttributeValue("remote", "false")).booleanValue());
 			if (cfg.isGeo())
-				cfg.setPrecision(StringUtils.parse(ce.getAttributeValue("precision"), 2));
+				cfg.setPrecision(StringUtils.parse(ce.getAttributeValue("precision"), 0.01));
 			
 			CacheManager.register(Cacheable.class, cfg);
 		}
