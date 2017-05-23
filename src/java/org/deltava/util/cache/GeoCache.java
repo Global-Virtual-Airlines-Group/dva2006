@@ -17,9 +17,9 @@ public interface GeoCache<T extends Cacheable> {
 	
 	/**
 	 * Returns the precision of the lat/long key rounding.
-	 * @return the precision in decimal places
+	 * @return the rounding amount
 	 */
-	public int getPrecision();
+	public double getRoundingAmount();
 
 	/**
 	 * Adds a geographically located object to the cache.
@@ -60,8 +60,9 @@ public interface GeoCache<T extends Cacheable> {
 	 * @return a key
 	 */
 	default String createGeoKey(GeoLocation loc) {
-		BigDecimal lat = new BigDecimal(Double.toString(loc.getLatitude())).setScale(getPrecision(), BigDecimal.ROUND_HALF_UP);
-		BigDecimal lng = new BigDecimal(Double.toString(loc.getLongitude())).setScale(getPrecision(), BigDecimal.ROUND_HALF_UP);
+		BigDecimal inc = new BigDecimal(Double.toString(getRoundingAmount()));
+		BigDecimal lat = new BigDecimal(Double.toString(loc.getLatitude())).divide(inc, 0, BigDecimal.ROUND_HALF_DOWN).multiply(inc);
+		BigDecimal lng = new BigDecimal(Double.toString(loc.getLongitude())).divide(inc, 0, BigDecimal.ROUND_HALF_DOWN).multiply(inc);
 		StringBuilder buf = new StringBuilder(lat.toString());
 		buf.append('@');
 		buf.append(lng.toString());

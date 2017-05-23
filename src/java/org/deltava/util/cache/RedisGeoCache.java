@@ -15,22 +15,22 @@ import org.deltava.util.RedisUtils;
 
 public class RedisGeoCache<T extends Cacheable> extends RedisCache<T> implements GeoCache<T> {
 
-	private final int _precision;
+	private final double _roundAmt;
 	
 	/**
 	 * Creates the cache.
 	 * @param bucket the Redis bucket name 
 	 * @param expiry the expirty time in seconds
-	 * @param precision the number of decimal places to reduce lat/long values to
+	 * @param roundAmt the rounding factot to apply to latitude/longitude
 	 */
-	public RedisGeoCache(String bucket, int expiry, int precision) {
+	public RedisGeoCache(String bucket, int expiry, double roundAmt) {
 		super(bucket, expiry);
-		_precision = Math.max(0, precision);
+		_roundAmt = Math.max(0.000001, roundAmt);
 	}
 	
 	@Override
-	public int getPrecision() {
-		return _precision;
+	public double getRoundingAmount() {
+		return _roundAmt;
 	}
 	
 	/**

@@ -18,7 +18,7 @@ class CacheConfig {
 	private boolean _isRemote;
 	
 	private boolean _isGeo;
-	private int _precision;
+	private double _precision;
 	
 	/**
 	 * Creates the configuration bean.
@@ -63,9 +63,9 @@ class CacheConfig {
 	
 	/**
 	 * Returns the precision of a GeoLocation cache.
-	 * @return the number of decimal digits
+	 * @return the precision rounding factor
 	 */
-	public int getPrecision() {
+	public double getPrecision() {
 		return _precision;
 	}
 	
@@ -111,14 +111,19 @@ class CacheConfig {
 	
 	/**
 	 * Sets the preicsion of a GeoLocation cache.
-	 * @param digits the number of decimal digits to round lat/long to
+	 * @param amt the rounding factor to apply
 	 */
-	public void setPrecision(int digits) {
-		_precision = Math.max(0, digits);
+	public void setPrecision(double amt) {
+		_precision = Math.max(0.00001, amt);
 	}
 	
 	@Override
 	public int hashCode() {
 		return _id.hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		return (o instanceof CacheConfig) ? (hashCode() == o.hashCode()) : false;
 	}
 }

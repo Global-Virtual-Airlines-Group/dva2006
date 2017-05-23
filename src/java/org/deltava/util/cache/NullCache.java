@@ -46,8 +46,8 @@ public class NullCache<T extends Cacheable> extends Cache<T> implements GeoCache
 	}
 	
 	@Override
-	public int getPrecision() {
-		return 0;
+	public double getRoundingAmount() {
+		return 0.01;
 	}
 
 	@Override

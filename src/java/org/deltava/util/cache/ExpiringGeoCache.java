@@ -13,24 +13,24 @@ import org.deltava.beans.GeoLocation;
 
 public class ExpiringGeoCache<T extends Cacheable> extends ExpiringCache<T> implements GeoCache<T> {
 	
-	private final int _precision;
+	private final double _roundAmt;
 
 	/**
 	 * Creates a new Cache.
 	 * @param maxSize the maximum number of entries
 	 * @param expiryTime the expiration time in seconds
-	 * @param precision the number of decimal places to round to
+	 * @param roundAmt the number of decimal places to round to
 	 * @see ExpiringCache#setMaxSize(int)
 	 * @see ExpiringCache#setExpiration(int)
 	 */
-	public ExpiringGeoCache(int maxSize, int expiryTime, int precision) {
+	public ExpiringGeoCache(int maxSize, int expiryTime, double roundAmt) {
 		super(maxSize, expiryTime);
-		_precision = Math.max(0, precision);
+		_roundAmt = Math.max(0.00001, roundAmt);
 	}
 	
 	@Override
-	public int getPrecision() {
-		return _precision;
+	public double getRoundingAmount() {
+		return _roundAmt;
 	}
 	
 	/**
