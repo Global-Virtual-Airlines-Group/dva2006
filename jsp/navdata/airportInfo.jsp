@@ -35,6 +35,8 @@ golgotha.local.update = function(combo) {
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<c:set var="isNorthSummer" value="${(localTime.monthValue >2) && (localTime.monthValue < 10)}" scope="page" />
+<c:set var="isSummer" value="${(isNorthSummer && (airport.latitude > 0)) || (!isNorthSummer && (airport.latitude < 0))}" scope="page" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -52,6 +54,23 @@ golgotha.local.update = function(combo) {
 <tr>
  <td class="label">Time Zone</td>
  <td class="data" colspan="2">${airport.TZ} <span class="small ita">(Current local time: <fmt:date date="${localTime}" tz="${airport.TZ}" t="HH:mm" />)</span>
+</tr>
+<tr>
+ <td class="label">Sunrise / Sunset</td>
+ <c:choose>
+<c:when test="${(empty sunrise) && (empty sunset)}">
+<td class="data pri bld caps">Continuous ${isSummer ? 'Daylight' : 'Darkness'}</td>
+</c:when> 
+<c:when test="${empty sunrise}">
+ <td class="data sec bld">Continuous Darkness begins at <fmt:date date="${sunset}" fmt="t" /></td>
+</c:when>
+<c:when test="${empty sunset}">
+ <td class="data sec bld">Continuous Daylight begins at <fmt:date date="${sunrise}" fmt="t" /></td>
+</c:when>
+<c:otherwise>
+ <td class="data">Sun rises at <fmt:date date="${sunrise}" fmt="t" />, sets at <fmt:date date="${sunset}" fmt="t" /></td>
+</c:otherwise>
+</c:choose>
 </tr>
 <c:if test="${!empty airlines}">
 <tr>
