@@ -1,10 +1,10 @@
 // Copyright 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
+import java.time.*;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.sql.Connection;
-import java.time.Instant;
 
 import org.deltava.beans.Simulator;
 import org.deltava.beans.navdata.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display Airport runway and gate information.
  * @author Luke
- * @version 7.2
+ * @version 7.4
  * @since 6.3
  */
 
@@ -91,7 +91,6 @@ public class AirportInformationCommand extends AbstractCommand {
 			
 			// Save in request
 			ctx.setAttribute("airport", a, REQUEST);
-			ctx.setAttribute("localTime", Instant.now(), REQUEST);
 			ctx.setAttribute("runways", allRwys.values(), REQUEST);
 			ctx.setAttribute("validRunways", validRunwayIDs, REQUEST);
 			ctx.setAttribute("airlines", a.getAirlineCodes().stream().map(c -> SystemData.getAirline(c)).filter(al -> !al.getHistoric()).collect(Collectors.toCollection(TreeSet::new)), REQUEST);
@@ -105,6 +104,12 @@ public class AirportInformationCommand extends AbstractCommand {
 		Collection<Airport> airports = new TreeSet<Airport>(new AirportComparator(AirportComparator.NAME)); 
 		airports.addAll(SystemData.getAirports().values().stream().filter(ap -> !ap.getAirlineCodes().isEmpty()).collect(Collectors.toList()));
 		ctx.setAttribute("airports", airports, REQUEST);
+		
+		// Calculate sunrise / sunset
+		ZonedDateTime zdt = ZonedDateTime.of(LocalDateTime.now(), a.getTZ().getZone());
+		ctx.setAttribute("sunrise", SunriseSunset.getSunrise(a, zdt), REQUEST);
+		ctx.setAttribute("sunset", SunriseSunset.getSunset(a, zdt), REQUEST);
+		ctx.setAttribute("localTime", zdt, REQUEST);
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
