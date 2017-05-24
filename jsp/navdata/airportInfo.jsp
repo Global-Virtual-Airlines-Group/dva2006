@@ -49,7 +49,7 @@ golgotha.local.update = function(combo) {
 </tr>
 <tr>
  <td class="label">Location</td>
- <td class="data" colspan="2"><fmt:geo pos="${airport}" /> - <c:if test="${!empty airport.state}">${airport.state.name}, </c:if>${airport.country.name} <el:flag countryCode="${airport.country.code}" /></td>
+ <td class="data" colspan="2"><fmt:geo pos="${airport}" /> (<fmt:int value="${airport.altitude}" /> feet MSL) - <c:if test="${!empty airport.state}">${airport.state.name}, </c:if>${airport.country.name} <el:flag countryCode="${airport.country.code}" /></td>
 </tr>
 <tr>
  <td class="label">Time Zone</td>
