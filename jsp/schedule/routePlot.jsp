@@ -77,7 +77,8 @@ golgotha.local.validate = function(f) {
  <td class="label">Departing from</td>
  <td class="data"><el:combo name="airportD" className="req" size="1" idx="*" options="${airportsD}" firstEntry="-" value="${flight.airportD}" onChange="void golgotha.routePlot.updateRoute(true, true)" />
  <el:airportCode combo="airportD" airport="${flight.airportD}" idx="*" />
-<span id="runways" style="visibility:hidden;"> departing <el:combo name="runway" idx="*" size="1" value="${rwy}" options="${dRwys}" firstEntry="-" onChange="void golgotha.routePlot.updateRoute(true, false)" /></span></td>
+<span id="runways" style="visibility:hidden;"> departing <el:combo name="runway" idx="*" size="1" value="${rwy}" options="${dRwys}" firstEntry="-" onChange="void golgotha.routePlot.updateRoute(true, false)" /></span>
+<c:if test="${!empty flight.airportD}"> <el:cmd url="airportInfo" linkID="${flight.airportD.ICAO}" className="small" target="_new">Airport Information</el:cmd></c:if></td>
 </tr>
 <tr id="gatesD" style="display:none;">
  <td class="label">Departure Gate</td>
@@ -90,7 +91,8 @@ golgotha.local.validate = function(f) {
 <tr>
  <td class="label">Arriving at</td>
  <td class="data"><el:combo name="airportA" className="req" size="1" idx="*" options="${airportsA}" firstEntry="-" value="${flight.airportA}" onChange="void golgotha.routePlot.updateRoute(true)" />
- <el:airportCode combo="airportA" airport="${flight.airportA}" idx="*" /></td>
+ <el:airportCode combo="airportA" airport="${flight.airportA}" idx="*" />
+<c:if test="${!empty flight.airportA}"> <el:cmd url="airportInfo" linkID="${flight.airportA.ICAO}" className="small" target="_new">Airport Information</el:cmd></c:if></td>
 </tr>
 <tr id="gatesA" style="display:none;">
  <td class="label">Arrival Gate</td>
