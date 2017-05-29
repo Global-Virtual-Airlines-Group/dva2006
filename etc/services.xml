@@ -54,6 +54,7 @@
 	<service id="pirepstats" class="org.deltava.service.stats.FlightStatsService" />
 	<service id="myroutemap" class="org.deltava.service.stats.MyRouteMapService" />
 	<service id="mytracks" class="org.deltava.service.stats.MyTrackService" />
+	<service id="simstats" class="org.deltava.service.stats.SimulatorStatsService" />
 
 	<!-- Pilot Data Services -->
 	<service id="pilotmap" class="org.deltava.service.PilotLocationService" />

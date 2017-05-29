@@ -13,12 +13,11 @@
 <content:css name="view" />
 <content:css name="form" />
 <content:js name="common" />
+<content:json />
+<content:googleJS module="charts" />
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script type="text/javascript">
-golgotha.local.updateSort = function() { return document.forms[0].submit(); };
-</script>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -36,6 +35,14 @@ golgotha.local.updateSort = function() { return document.forms[0].submit(); };
  <td colspan="5" class="left caps"><content:airline /> FLIGHT SIMULATOR VERSION STATISTICS</td>
  <td colspan="7" class="right">GROUP BY <el:combo name="groupType" size="1" idx="*" options="${groupTypes}" value="${groupType}" onChange="void golgotha.local.updateSort()" />
  SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${viewContext.sortType}" onChange="void golgotha.local.updateSort()" /></td>
+</tr>
+<!--  Chart Header Bar -->
+<tr class="title caps">
+ <td colspan="9" class="left">SIMULATOR VERSION CHART</td>
+ <td colspan="3"><span class="und" onclick="golgotha.util.toggleExpand(this, 'chartRow'); golgotha.local.showChart()">EXPAND</span></td>
+</tr>
+<tr class="chartRow" style="display:none;">
+ <td colspan="12"><div id="flightStats" style="height:325px;"></div></td>
 </tr>
 <!-- Table Header Bar-->
 <tr class="title caps">
@@ -84,6 +91,44 @@ golgotha.local.updateSort = function() { return document.forms[0].submit(); };
 <content:copyright />
 </content:region>
 </content:page>
+<script async>
+golgotha.local.updateSort = function() { return document.forms[0].submit(); };
+google.charts.load('current', {'packages':['corechart']});
+golgotha.local.showChart = function() {
+	if (golgotha.local.chartData) return false;
+
+	var xmlreq = new XMLHttpRequest();
+	xmlreq.open('get', 'simstats.ws', true);
+	xmlreq.onreadystatechange = function() {
+		if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
+		var js = JSON.parse(xmlreq.responseText);
+		js.splice(0, 1); 
+		golgotha.local.chartData = js.reverse();
+		return golgotha.local.renderChart();
+	};
+
+	xmlreq.send(null);
+	return true;
+};
+
+golgotha.local.renderChart = function() {
+	var lgStyle = {color:'black',fontName:'Verdana',fontSize:8};
+
+    // Display the chart
+    var chart = new google.visualization.LineChart(document.getElementById('flightStats'));
+    var data = new google.visualization.DataTable();
+    data.addColumn('string','Month');
+    data.addColumn('number','Prepar3D');
+    data.addColumn('number','FSX');
+    data.addColumn('number','FS2004');
+    data.addColumn('number','X-Plane');
+    data.addColumn('number','FS2002');
+    data.addColumn('number','Other');
+    data.addRows(golgotha.local.chartData);
+    chart.draw(data,{hAxis:{textStyle:lgStyle},legend:{textStyle:lgStyle}});
+    return true;
+};
+</script>
 <content:googleAnalytics />
 </body>
 </html>
