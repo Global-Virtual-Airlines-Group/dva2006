@@ -21,7 +21,7 @@
  <td>HIT RATE</td>
 </tr>
 </el:table>
-<script id="cacheReload" defer>
+<script id="cacheReload" async>
 golgotha.local.cacheUpdate = function(updateInterval) {
 	var xmlreq = new XMLHttpRequest();
 	xmlreq.open('GET', 'cacheinfo.ws', true);
