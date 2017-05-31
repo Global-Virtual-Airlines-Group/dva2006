@@ -2,7 +2,7 @@
 package org.deltava.util;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 import org.apache.log4j.Logger;
 
@@ -11,7 +11,7 @@ import redis.clients.jedis.*;
 /**
  * A utility class for Redis operations.
  * @author Luke
- * @version 7.2
+ * @version 7.4
  * @since 6.1
  */
 
@@ -25,10 +25,15 @@ public class RedisUtils {
 	public static final String LATENCY_KEY = "$LATENCYTEST";
 	
 	/**
-	 * The Jedis onnection pool
+	 * The Jedis connection pool.
 	 */
 	protected static JedisPool _client;
 
+	// static class
+	private RedisUtils() {
+		super();
+	}
+	
 	/*
 	 * Checks the Redis connection.
 	 */
@@ -42,7 +47,7 @@ public class RedisUtils {
 	 * @return the key using the standard encoding
 	 */
 	public static byte[] encodeKey(String key) {
-		return key.getBytes(StandardCharsets.UTF_8);
+		return key.getBytes(java.nio.charset.StandardCharsets.UTF_8);
 	}
 	
 	/**
@@ -187,5 +192,19 @@ public class RedisUtils {
 	public static Jedis getConnection() {
 		checkConnection();
 		return _client.getResource();
+	}
+	
+	/**
+	 * Returns the Redis connection pool status.
+	 * @return a Map of status attributes
+	 */
+	public static synchronized Map<String, Long> getStatus() {
+		if (_client == null) return Collections.emptyMap();
+		Map<String, Long> results = new LinkedHashMap<String, Long>();
+		results.put("maxWait", Long.valueOf(_client.getMaxBorrowWaitTimeMillis()));
+		results.put("meanWait", Long.valueOf(_client.getMeanBorrowWaitTimeMillis()));
+		results.put("idle", Long.valueOf(_client.getNumIdle()));
+		results.put("active", Long.valueOf(_client.getNumActive()));
+		return results;
 	}
 }
