@@ -1,8 +1,10 @@
-// Copyright 2007, 2009, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009, 2011, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
 import java.sql.Connection;
+
+import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
 import org.deltava.beans.flight.*;
@@ -17,11 +19,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to toggle whether a Flight Report counts for promotion to Captain.
  * @author Luke
- * @version 7.0
+ * @version 7.4
  * @since 1.0
  */
 
 public class PromotionToggleCommand extends AbstractCommand {
+	
+	private static final Logger log = Logger.getLogger(PromotionToggleCommand.class);
 
 	/**
 	 * Executes the command.
@@ -67,8 +71,10 @@ public class PromotionToggleCommand extends AbstractCommand {
 				for (Iterator<String> i = pTypeNames.iterator(); i.hasNext(); ) {
 					String pType = i.next();
 					EquipmentType pEQ = eqdao.get(pType, SystemData.get("airline.db"));
-					if (!helper.canPromote(pEQ))
+					if (!helper.canPromote(pEQ)) {
+						log.warn(helper.getLastComment());
 						i.remove();
+					}
 				}
 				
 				if (!pTypeNames.isEmpty()) {
