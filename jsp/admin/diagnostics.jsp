@@ -19,8 +19,9 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
+<c:if test="${acarsEnabled}">
 <content:json />
-<content:googleJS module="charts" />
+<content:googleJS module="charts" /></c:if>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -99,8 +100,7 @@
 </tr>
 <tr>
  <td class="label">JVM Memory</td>
- <td class="data"><fmt:int value="${totalMemory}" /> bytes in use, <fmt:int value="${maxMemory}" />
- bytes maximum. <span class="bld">(<fmt:dec value="${pctMemory}" />% used)</span> 
+ <td class="data"><fmt:int value="${totalMemory}" /> bytes in use, <fmt:int value="${maxMemory}" /> bytes maximum. <span class="bld">(<fmt:dec value="${pctMemory}" />% used)</span> 
 Free Memory: <fmt:int value="${freeMemory}" /> bytes</td>
 </tr>
 <tr>
@@ -109,9 +109,14 @@ Free Memory: <fmt:int value="${freeMemory}" /> bytes</td>
 </tr>
 <tr>
  <td class="label">Database Transactions</td>
- <td class="data"><fmt:int value="${daoUsageCount}" /> queries, (<fmt:dec value="${(daoUsageCount * 60) / execTime}" />
- per minute)</td>
+ <td class="data"><fmt:int value="${daoUsageCount}" /> queries, (<fmt:dec value="${(daoUsageCount * 60) / execTime}" /> per minute)</td>
 </tr>
+<c:if test="${!empty redisStatus}">
+<tr>
+ <td class="label">Redis Status</td>
+ <td class="data">Connections: <fmt:int value="${redisStatus['active']}" /> active, <fmt:int value="${redisStatus['idle']}" /> idle. Wait time: <fmt:int value="${redisStatus['maxWait']}" />ms max, <fmt:int value="${redisStatus['meanWait']}" /> ms mean</td>
+</tr>
+</c:if>
 <tr>
  <td class="label">Google Maps API Usage</td>
  <td class="data"><fmt:int value="${d_APIuse}" /> dynamic, <fmt:int value="${s_APIuse}" /> static since application start</td>
@@ -122,8 +127,7 @@ Free Memory: <fmt:int value="${freeMemory}" /> bytes</td>
 <%@ include file="/jsp/admin/diag/scoreBoard.jspf" %>
 <%@ include file="/jsp/admin/diag/schedTasks.jspf" %>
 <c:if test="${acarsEnabled}">
-<%@ include file="/jsp/admin/diag/acarsInfo.jspf" %>
-</c:if>
+<%@ include file="/jsp/admin/diag/acarsInfo.jspf" %></c:if>
 <br />
 <content:copyright />
 </content:region>

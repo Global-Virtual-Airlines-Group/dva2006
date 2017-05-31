@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
@@ -30,7 +30,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to display diagnostic infomration.
  * @author Luke
- * @version 7.0
+ * @version 7.4
  * @since 1.0
  */
 
@@ -95,8 +95,7 @@ public class DiagnosticCommand extends AbstractCommand {
 		// Get JDBC Connection Pool data
 		Collection<String> appNames = SharedData.getApplications();
 		Map<String, ConnectionPool> pools = new HashMap<String, ConnectionPool>();
-		for (Iterator<String> i = appNames.iterator(); i.hasNext(); ) {
-			String appName = i.next();
+		for (String appName : appNames) {
 			Serializable rawPool = SharedData.get(SharedData.JDBC_POOL + appName);
 			ConnectionPool jdbcPool = (ConnectionPool) IPCUtils.reserialize(rawPool);
 			pools.put(appName, jdbcPool);
@@ -124,8 +123,9 @@ public class DiagnosticCommand extends AbstractCommand {
 		// Get current time
 		ctx.setAttribute("systemTime", Instant.now(), REQUEST);
 		
-		// Calculate DAO usage count
+		// Calculate DAO usage count and redis statistics
 		ctx.setAttribute("daoUsageCount", Long.valueOf(org.deltava.dao.DAO.getQueryCount()), REQUEST);
+		ctx.setAttribute("redisStatus", RedisUtils.getStatus(), REQUEST);
 
 		// Get System properties
 		ctx.setAttribute("sys", System.getProperties(), REQUEST);
