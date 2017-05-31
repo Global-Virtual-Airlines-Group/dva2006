@@ -95,7 +95,10 @@ public class RedisUtils {
 			config.setMaxWaitMillis(50);
 			config.setMaxTotal(12);
 			config.setMinEvictableIdleTimeMillis(5000);
+			config.setTestOnBorrow(false);
+			config.setTestOnReturn(false);
 			config.setTestWhileIdle(true);
+			config.setTimeBetweenEvictionRunsMillis(30000);
 			_client = new JedisPool(config, addr, 6379);
 			write(LATENCY_KEY, 864000, String.valueOf((System.currentTimeMillis() / 1000) + (3600 * 24 * 365)));
 			log.info("Initialized");
