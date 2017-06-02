@@ -856,10 +856,6 @@ new Online Events, System News entries and NOTAMs, and Flight Report approval or
 </tr>
 </content:filter>
 <content:filter roles="HR,Developer">
-<tr>
- <td class="mid"><el:cmd className="bld" url="helplist">Online Help</el:cmd></td>
- <td class="data">You can view and edit <content:airline /> Online Help entries.</td>
-</tr>
 <c:if test="${acarsEnabled}">
 <tr>
  <td class="mid"><el:cmd className="bld" url="liveries">ACARS Multi-Player Liveries</el:cmd></td>
