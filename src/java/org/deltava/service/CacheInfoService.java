@@ -16,7 +16,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Service to display application cache information.
  * @author Luke
- * @version 7.3
+ * @version 7.4
  * @since 6.2
  */
 
@@ -65,7 +65,7 @@ public class CacheInfoService extends WebService {
 				co.put("maxSize", c.getMaxSize());
 				co.put("fill", StringUtils.format(c.getSize() * 100d / c.getMaxSize(), fmt) + "%");
 			} else
-				co.put("latency", StringUtils.format(c.getMaxSize() / 1000000d, fmt));
+				co.put("latency", StringUtils.format(c.getMaxSize() / 1000000d, fmt + "00"));
 			
 			jo.accumulate("caches", co);
 		}
