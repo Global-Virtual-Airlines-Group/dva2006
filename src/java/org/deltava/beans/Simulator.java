@@ -1,17 +1,17 @@
-// Copyright 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 /**
  * An enumeration of Simulator versions.
  * @author Luke
- * @version 7.2
+ * @version 7.4
  * @since 5.1
  */
 
 public enum Simulator implements ComboAlias {
 	UNKNOWN(0, "Unknown"), FS98(98, "Microsoft Flight Simulator 98"), FS2000(2000, "Microsoft Flight Simulator 2000"), 
 	FS2002(2002, "Microsoft Flight Simulator 2002"),	FS9(2004, "Microsoft Flight Simulator 2004"), 
-	FSX(2006, "Microsoft Flight Simulator X"), P3D(2008, "Lockheed-Martin Prepar3D"),
+	FSX(2006, "Microsoft Flight Simulator X"), P3D(2008, "Lockheed-Martin Prepar3D"), P3Dv4(2017, "Lockheed-Martin Prepar3D/64"),
 	XP9(100, "Laminar Research X-Plane 9"), XP10(101, "Laminar Research X-Plane 10"), XP11(102, "Laminar Research X-Plane 11");
 
 	private final String _name;

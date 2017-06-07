@@ -64,6 +64,7 @@
 <c:set var="entryNumber" value="${viewContext.start}" scope="page" />
 <c:forEach var="stat" items="${viewContext.results}">
 <view:row entry="${stat}">
+<c:set var="has64" value="${eLegs['P3D'] > 0}" scope="page" />
 <c:set var="entryNumber" value="${entryNumber + 1}" scope="page" />
 <c:set var="eLegs" value="${stat.versionLegs}" scope ="page" />
  <td class="sec bld small">${entryNumber}</td>
@@ -72,7 +73,7 @@
  <td class="pri bld"><fmt:int value="${stat.legs}" /></td>
  <td class="sec bld nophone"><fmt:distance value="${stat.distance}" /></td>
  <td class="small"><fmt:int value="${eLegs['FSX']}" /> (<fmt:dec value="${eLegs['FSX'] * 100.0 / stat.legs}" />%)</td>
- <td class="small"><fmt:int value="${eLegs['P3D']}" /> (<fmt:dec value="${eLegs['P3D'] * 100.0 / stat.legs}" />%)</td>
+ <td class="small"><c:if test="${has64}"><fmt:int value="${eLegs['P3Dv4']}" /> + </c:if><fmt:int value="${eLegs['P3D']}" /> (<fmt:dec value="${(eLegs['P3D'] + eLegs['P3Dv4']) * 100.0 / stat.legs}" />%)</td>
  <td class="small"><fmt:int value="${eLegs['FS9']}" /> (<fmt:dec value="${eLegs['FS9'] * 100.0 / stat.legs}" />%)</td>
  <td class="small nophone"><fmt:int value="${eLegs['XP9']}" /> (<fmt:dec value="${eLegs['XP9'] * 100.0 / stat.legs}" />%)</td>
  <td class="small nophone"><fmt:int value="${eLegs['FS2002']}" /> (<fmt:dec value="${eLegs['FS2002'] * 100.0 / stat.legs}" />%)</td>
