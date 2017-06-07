@@ -64,9 +64,9 @@
 <c:set var="entryNumber" value="${viewContext.start}" scope="page" />
 <c:forEach var="stat" items="${viewContext.results}">
 <view:row entry="${stat}">
-<c:set var="has64" value="${eLegs['P3D'] > 0}" scope="page" />
 <c:set var="entryNumber" value="${entryNumber + 1}" scope="page" />
 <c:set var="eLegs" value="${stat.versionLegs}" scope ="page" />
+<c:set var="has64" value="${eLegs['P3Dv4'] > 0}" scope="page" />
  <td class="sec bld small">${entryNumber}</td>
  <td class="pri bld">${stat.label}</td>
  <td class="bld"><fmt:dec value="${stat.hours}" /></td>
