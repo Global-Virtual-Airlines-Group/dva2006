@@ -46,7 +46,7 @@ public class SimulatorStatsService extends WebService {
 			Map<String, Integer> legs = e.getVersionLegs();
 			JSONArray ma = new JSONArray();
 			ma.put(e.getLabel());
-			ma.put(legs.getOrDefault("P3D", ZERO).intValue());
+			ma.put(legs.getOrDefault("P3D", ZERO).intValue() + legs.getOrDefault("P3Dv4", ZERO).intValue());
 			ma.put(legs.getOrDefault("FSX", ZERO).intValue());
 			ma.put(legs.getOrDefault("FS9", ZERO).intValue());
 			ma.put(legs.getOrDefault("XP9", ZERO).intValue());
