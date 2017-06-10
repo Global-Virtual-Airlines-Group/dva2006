@@ -4,7 +4,7 @@ package org.deltava.beans.acars;
 /**
  * An enumeration to list valid ACARS flight phases. 
  * @author Luke
- * @version 7.3
+ * @version 7.4
  * @since 2.1
  */
 
@@ -36,6 +36,12 @@ public enum FlightPhase {
 		try {
 			return FlightPhase.valueOf(phase);
 		} catch (Exception e) {
+			FlightPhase[] phases = values();
+			for (int x = 0; x < phases.length; x++) {
+				if (phase.equalsIgnoreCase(phases[x].getName()))
+					return phases[x];
+			}
+			
 			return UNKNOWN;
 		}
 	}
