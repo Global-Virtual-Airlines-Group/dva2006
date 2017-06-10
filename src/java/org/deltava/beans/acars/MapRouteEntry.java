@@ -14,7 +14,7 @@ import org.gvagroup.acars.ACARSFlags;
 /**
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
- * @version 7.3
+ * @version 7.4
  * @since 1.0
  */
 
@@ -201,12 +201,13 @@ public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 			buf.append(" airspace</span><br />");
 		}
 		
-		if (_checkRide || _dispatchRoute || _busy) {
+		boolean sterileCockpit = (!_busy && ((getRadarAltitude() < 5000) || (getAltitude() < 10000)));
+		if (_checkRide || _dispatchRoute || _busy || sterileCockpit) {
 			buf.append("<br />");
 			if (_checkRide) buf.append("<span class=\"pri bld\">CHECK RIDE</span> ");
 			if (_dispatchRoute) buf.append("<span class=\"sec bld\">USING DISPATCH</span> ");
-			if (_busy) buf.append("<span class=\"error bld\">BUSY</span>");
-			if (!_busy && ((getRadarAltitude() < 5000) || (getAltitude() < 10000))) buf.append("<span class=\"ter bld\">STERILE COCKPIT</span>");
+			if (_busy) buf.append("<span class=\"error bld\">BUSY</span> ");
+			if (sterileCockpit) buf.append("<span class=\"ter bld\">STERILE COCKPIT</span>");
 		}
 		
 		buf.append("</div>");
