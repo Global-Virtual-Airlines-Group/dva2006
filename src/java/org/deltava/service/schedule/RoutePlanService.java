@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to create flight plans.
  * @author Luke
- * @version 7.2
+ * @version 7.4
  * @since 2.2
  */
 
@@ -64,6 +64,7 @@ public class RoutePlanService extends WebService {
 				break;
 				
 			case P3D:
+			case P3Dv4:
 				fpgen = new P3DGenerator();
 				break;
 		

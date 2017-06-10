@@ -27,7 +27,7 @@
 <content:getCookie name="acarsMapZoomLevel" default="12" var="zoomLevel" />
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
 <content:protocol var="proto" />
-<script type="text/javascript">
+<script>
 var loaders = {};
 loaders.series = new golgotha.maps.SeriesLoader();
 loaders.fr = new golgotha.maps.LayerLoader('Fronts', golgotha.maps.fronts.FrontParser);
@@ -56,7 +56,7 @@ golgotha.local.validate = function(f) {
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:sysdata var="aCode" name="airline.code" />
 <content:empty var="emptyList" />
-<content:enum var="simVersions" className="org.deltava.beans.Simulator" exclude="UNKNOWN,FS98,FS2000,FS2002,XP9" />
+<content:enum var="simVersions" className="org.deltava.beans.Simulator" exclude="UNKNOWN,FS98,FS2000,FS2002,P3Dv4,XP9" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
