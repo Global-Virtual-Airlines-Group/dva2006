@@ -11,7 +11,7 @@ package org.deltava.beans.acars;
 public enum FlightPhase {
 	
 	UNKNOWN("Unknown"), PREFLIGHT("Pre-Flight"), PUSHBACK("Pushback"), TAXIOUT("Taxi Out"), TAKEOFF("Takeoff"), AIRBORNE("Airborne"), ROLLOUT("Rollout"), 
-	TAXIIN("Taxi In"), ATGATE("At Gate"), SHUTDOWN("Shutdown"), COMPLETE("Completed"), ABORTED("Abort"), ERROR("Error"), PIREPFILE("File PIREP");
+	TAXIIN("Taxi In"), ATGATE("At Gate"), SHUTDOWN("Shutdown"), COMPLETE("Complete"), ABORTED("Aborted"), ERROR("Error"), PIREPFILE("PIREP File");
 	
 	private final String _name;
 
