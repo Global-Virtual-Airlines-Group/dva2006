@@ -1,4 +1,4 @@
-// Copyright 2006, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.cooler;
 
 import java.time.Instant;
@@ -8,11 +8,11 @@ import org.deltava.beans.*;
 /**
  * A bean to store Water Cooler thread history entries.
  * @author Luke
- * @version 7.0
+ * @version 7.4
  * @since 1.0
  */
 
-public class ThreadUpdate extends DatabaseBean implements AuthoredBean, CalendarEntry {
+public class ThreadUpdate extends DatabaseBean implements AuditEntry, CalendarEntry {
 
 	private Instant _date = Instant.now();
 	private int _authorID;
@@ -28,34 +28,30 @@ public class ThreadUpdate extends DatabaseBean implements AuthoredBean, Calendar
 		setID(id);
 	}
 
-	/**
-	 * Returns the date of this thread update.
-	 * @return the date/time of this update
-	 * @see ThreadUpdate#setDate(Instant)
-	 */
 	@Override
 	public Instant getDate() {
 		return _date;
 	}
 
-	/**
-	 * Returns the database ID of the user who created this update.
-	 * @return the user's database ID
-	 * @see ThreadUpdate#setAuthorID(int)
-	 */
 	@Override
 	public int getAuthorID() {
 		return _authorID;
 	}
 
-	/**
-	 * Returns the thread update message.
-	 * @return the message
-	 * @see ThreadUpdate#setMessage(String)
-	 */
-	public String getMessage() {
+	 @Override
+	public String getDescription() {
 		return _msg;
 	}
+	 
+	 @Override
+	 public String getAuditType() {
+		 return "Thread";
+	 }
+	 
+	 @Override
+	 public String getAuditID() {
+		 return getHexID();
+	 }
 
 	/**
 	 * Updates the status update date.
@@ -76,9 +72,9 @@ public class ThreadUpdate extends DatabaseBean implements AuthoredBean, Calendar
 	 * Updates the status update message.
 	 * @param msg the message
 	 * @throws NullPointerException if msg is null
-	 * @see ThreadUpdate#getMessage()
+	 * @see ThreadUpdate#getDescription()
 	 */
-	public void setMessage(String msg) {
+	public void setDescription(String msg) {
 		_msg = msg.trim();
 	}
 

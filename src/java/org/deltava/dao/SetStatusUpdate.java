@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to write status updates for a Pilot to the database.
  * @author Luke
- * @version 7.0
+ * @version 7.4
  * @since 1.0
  */
 
@@ -51,7 +51,7 @@ public class SetStatusUpdate extends DAO {
 			prepareStatementWithoutLimits(sqlBuf.toString());
 			_ps.setInt(1, update.getID());
 			_ps.setInt(2, update.getAuthorID());
-			_ps.setTimestamp(3, createTimestamp(update.getCreatedOn()));
+			_ps.setTimestamp(3, createTimestamp(update.getDate()));
 			_ps.setInt(4, update.getType());
 			_ps.setString(5, update.getDescription());
 			executeUpdate(1);
@@ -75,15 +75,15 @@ public class SetStatusUpdate extends DAO {
 			
 			long lastUpdateTime = 0;
 			for (StatusUpdate upd : updates) {
-				if (upd.getCreatedOn().toEpochMilli() <= lastUpdateTime)
-					upd.setCreatedOn(upd.getCreatedOn().plusMillis(2));
+				if (upd.getDate().toEpochMilli() <= lastUpdateTime)
+					upd.setDate(upd.getDate().plusMillis(2));
 					
-				lastUpdateTime = upd.getCreatedOn().toEpochMilli();
+				lastUpdateTime = upd.getDate().toEpochMilli();
 				
 				// Write the data
 				_ps.setInt(1, upd.getID());
 				_ps.setInt(2, upd.getAuthorID());
-				_ps.setTimestamp(3, createTimestamp(upd.getCreatedOn()));
+				_ps.setTimestamp(3, createTimestamp(upd.getDate()));
 				_ps.setInt(4, upd.getType());
 				_ps.setString(5, upd.getDescription());
 				_ps.addBatch();

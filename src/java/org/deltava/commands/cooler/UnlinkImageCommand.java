@@ -16,7 +16,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to unlink a Water Cooler linked image. 
  * @author Luke
- * @version 7.3
+ * @version 7.4
  * @since 1.0
  */
 
@@ -64,7 +64,7 @@ public class UnlinkImageCommand extends AbstractCommand {
 			// Create the status message
 			ThreadUpdate upd = new ThreadUpdate(mt.getID());
 			upd.setAuthorID(ctx.getUser().getID());
-			upd.setMessage("Removed link to " + imgURL.getURL());
+			upd.setDescription("Removed link to " + imgURL.getURL());
 
 			// Start a transaction
 			ctx.startTX();

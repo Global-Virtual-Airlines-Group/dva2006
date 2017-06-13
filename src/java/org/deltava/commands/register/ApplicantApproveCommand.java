@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to hire new Applicants as Pilots.
  * @author Luke
- * @version 7.2
+ * @version 7.4
  * @since 1.0
  */
 
@@ -140,7 +140,7 @@ public class ApplicantApproveCommand extends AbstractCommand {
 			// Create a StatusUpdate for the registration
 			StatusUpdate upd = new StatusUpdate(a.getPilotID(), StatusUpdate.STATUS_CHANGE);
 			upd.setAuthorID(ctx.getUser().getID());
-			upd.setCreatedOn(a.getCreatedOn());
+			upd.setDate(a.getCreatedOn());
 			upd.setDescription("Pilot Application Submitted");
 
 			// Create a StatusUpdate for the hire

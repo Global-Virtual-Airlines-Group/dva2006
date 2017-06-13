@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to validate the integrity of Water Cooler Image URLs.
  * @author Luke
- * @version 7.3
+ * @version 7.4
  * @since 1.0
  */
 
@@ -162,7 +162,7 @@ public class ImageLinkTestTask extends Task {
 			SetCoolerMessage msgdao = new SetCoolerMessage(con);
 			for (LinkedImage img : badImgs) {
 				ThreadUpdate upd = new ThreadUpdate(img.getThreadID());
-				upd.setMessage("Removed linked image " + img.getURL());
+				upd.setDescription("Disabled linked image " + img.getURL());
 				upd.setAuthorID(ctx.getUser().getID());
 
 				// Get the update time

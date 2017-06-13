@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.sql.Connection;
@@ -13,7 +13,7 @@ import org.deltava.security.command.CoolerThreadAccessControl;
 /**
  * A Web Site Command to unstick Water Cooler Threads.
  * @author Luke
- * @version 7.0
+ * @version 7.4
  * @since 1.0
  */
 
@@ -53,7 +53,7 @@ public class ThreadUnstickCommand extends AbstractCommand {
 			// Create the status update bean
 			ThreadUpdate upd = new ThreadUpdate(mt.getID());
 			upd.setAuthorID(ctx.getUser().getID());
-			upd.setMessage("Message Thread unstuck");
+			upd.setDescription("Message Thread unstuck");
 			
 			// Start a transaction
 			ctx.startTX();
