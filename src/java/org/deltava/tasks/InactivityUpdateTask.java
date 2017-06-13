@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to disable Users who have not logged in within a period of time.
  * @author Luke
- * @version 7.2
+ * @version 7.4
  * @since 1.0
  */
 
@@ -139,7 +139,7 @@ public class InactivityUpdateTask extends Task {
 						
 						// Create comment
 						CourseComment cc = new CourseComment(c.getID(), upd.getAuthorID());
-						cc.setCreatedOn(upd.getCreatedOn());
+						cc.setCreatedOn(upd.getDate());
 						cc.setText(upd.getDescription());
 						log.warn("Removing " + p.getName() + " from " + c.getName() + " Flight Academy Course");
 						

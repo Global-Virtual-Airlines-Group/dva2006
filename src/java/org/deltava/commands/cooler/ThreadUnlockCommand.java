@@ -13,7 +13,7 @@ import org.deltava.security.command.CoolerThreadAccessControl;
 /**
  * A Web Site Command to unlock or unhide Water Cooler message threads.
  * @author Luke
- * @version 7.0
+ * @version 7.4
  * @since 1.0
  */
 
@@ -60,7 +60,7 @@ public class ThreadUnlockCommand extends AbstractCommand {
 			// Create the status update bean
 			ThreadUpdate upd = new ThreadUpdate(thread.getID());
 			upd.setAuthorID(ctx.getUser().getID());
-			upd.setMessage("Message Thread unlocked");
+			upd.setDescription("Message Thread unlocked");
 
 			// Start a transaction
 			ctx.startTX();

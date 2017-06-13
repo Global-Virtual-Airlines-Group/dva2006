@@ -13,7 +13,7 @@ import org.deltava.security.command.CoolerThreadAccessControl;
 /**
  * A Web Site Command to restore disabled Image Links.
  * @author Luke
- * @version 7.3
+ * @version 7.4
  * @since 7.3
  */
 
@@ -42,6 +42,7 @@ public class RestoreImageLinksCommand extends AbstractCommand {
 			// Check our access
 			CoolerThreadAccessControl access = new CoolerThreadAccessControl(ctx);
 			access.updateContext(mt, ch);
+			access.validate();
 			if (!access.getCanUnlinkImage())
 				throw securityException("Cannot restore Linked Images to Message Thread " + ctx.getID());
 			
@@ -49,10 +50,26 @@ public class RestoreImageLinksCommand extends AbstractCommand {
 			if (!mt.getHasDisabledLinks())
 				throw notFoundException("No disabled Image Links on Message Thread " + ctx.getID());
 			
+			// Create status update
+			ThreadUpdate upd = new ThreadUpdate(mt.getID());
+			upd.setAuthorID(ctx.getUser().getID());
+			upd.setDescription("Restored Image Links");
+			
+			// Start transaction
+			ctx.startTX();
+			
 			// Restore the images
 			SetCoolerLinks wdao = new SetCoolerLinks(con);
 			wdao.restore(mt.getID());
+			
+			// Create a comment
+			SetCoolerMessage wtdao = new SetCoolerMessage(con);
+			wtdao.write(upd);
+			
+			// Commit
+			ctx.commitTX();
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();

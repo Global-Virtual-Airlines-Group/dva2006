@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.sql.Connection;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update the sticky date of a Water Cooler thread.
  * @author Luke
- * @version 7.0
+ * @version 7.4
  * @since 1.0
  */
 
@@ -67,7 +67,7 @@ public class ThreadStickCommand extends AbstractCommand {
 			// Create the status update bean
 			ThreadUpdate upd = new ThreadUpdate(mt.getID());
 			upd.setAuthorID(ctx.getUser().getID());
-			upd.setMessage("Message Thread stuck until " + StringUtils.format(stickyDate, "MMMM dd, yyyy HH:mm"));
+			upd.setDescription("Message Thread stuck until " + StringUtils.format(stickyDate, "MMMM dd, yyyy HH:mm"));
 			mt.setStickyUntil(stickyDate);
 
 			// Start a transaction
