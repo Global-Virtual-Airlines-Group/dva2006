@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.sql.Connection;
@@ -12,7 +12,7 @@ import org.deltava.security.command.CoolerThreadAccessControl;
 /**
  * A Web Site Command to move a Message Thread to another Water Cooler channel.
  * @author Luke
- * @version 7.0
+ * @version 7.4
  * @since 1.0
  */
 
@@ -52,7 +52,7 @@ public class ThreadMoveCommand extends AbstractCommand {
 			// Create the status update bean
 			ThreadUpdate upd = new ThreadUpdate(t.getID());
 			upd.setAuthorID(ctx.getUser().getID());
-			upd.setMessage("Moved to Channel \"" + newChannel + "\" from \"" + t.getChannel() + "\"");
+			upd.setDescription("Moved to Channel \"" + newChannel + "\" from \"" + t.getChannel() + "\"");
 			
 			// Start a transaction
 			ctx.startTX();

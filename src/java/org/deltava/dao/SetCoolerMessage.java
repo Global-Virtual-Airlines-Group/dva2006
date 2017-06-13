@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2013, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2013, 2014, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to handle writing Water Cooler message threads and posts.
  * @author Luke
- * @version 7.0
+ * @version 7.4
  * @since 1.0
  */
 
@@ -149,7 +149,7 @@ public class SetCoolerMessage extends DAO {
 			_ps.setInt(1, upd.getID());
 			_ps.setTimestamp(2, createTimestamp(upd.getDate()));
 			_ps.setInt(3, upd.getAuthorID());
-			_ps.setString(4, upd.getMessage());
+			_ps.setString(4, upd.getDescription());
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);

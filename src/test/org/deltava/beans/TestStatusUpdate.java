@@ -45,10 +45,10 @@ public class TestStatusUpdate extends AbstractBeanTestCase {
 	
 	public void testComparator() {
 		Instant now = Instant.now();
-		_upd.setCreatedOn(now);
+		_upd.setDate(now);
 		
 		StatusUpdate upd2 = new StatusUpdate(2, 1);
-		upd2.setCreatedOn(now.plusMillis(5));
+		upd2.setDate(now.plusMillis(5));
 		
 		assertTrue(_upd.compareTo(upd2) < 0);
 		assertTrue(upd2.compareTo(_upd) > 0);

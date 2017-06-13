@@ -1,4 +1,4 @@
-// Copyright 2007, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.sql.Connection;
@@ -12,7 +12,7 @@ import org.deltava.security.command.*;
 /**
  * A Web Site Command to update Water Cooler discussion thread titles.
  * @author Luke
- * @version 7.0
+ * @version 7.4
  * @since 1.0
  */
 
@@ -50,7 +50,7 @@ public class ThreadSubjectEditCommand extends AbstractCommand {
 			// Add a subject changed entry
 			ThreadUpdate upd = new ThreadUpdate(mt.getID());
 			upd.setAuthorID(ctx.getUser().getID());
-			upd.setMessage("Subject changed from \'" + mt.getSubject() + "\'");
+			upd.setDescription("Subject changed from \'" + mt.getSubject() + "\'");
 			
 			// Start a JDBC transaction
 			ctx.startTX();

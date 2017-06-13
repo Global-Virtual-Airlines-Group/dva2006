@@ -4,6 +4,7 @@ package org.deltava.commands.cooler;
 import java.util.*;
 import java.time.*;
 import java.sql.Connection;
+import java.util.stream.Collectors;
 
 import org.deltava.beans.*;
 import org.deltava.beans.cooler.*;
@@ -22,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command for viewing Water Cooler discussion threads.
  * @author Luke
- * @version 7.0
+ * @version 7.4
  * @since 1.0
  */
 
@@ -80,12 +81,7 @@ public class ThreadCommand extends AbstractCommand {
 			mt.addOptions(tpdao.getOptions(mt.getID()));
 			mt.addVotes(tpdao.getVotes(mt.getID()));
 			if (!mt.getOptions().isEmpty()) {
-				int maxVotes = 0;
-				for (Iterator<PollOption> i = mt.getOptions().iterator(); i.hasNext(); ) {
-					PollOption opt = i.next();
-					maxVotes = Math.max(maxVotes, opt.getVotes());
-				}
-				
+				int maxVotes = mt.getOptions().stream().mapToInt(PollOption::getVotes).max().orElse(0);
 				ctx.setAttribute("barColors", COLORS, REQUEST);
 				ctx.setAttribute("maxVotes", Integer.valueOf(maxVotes), REQUEST);
 			}
@@ -124,9 +120,7 @@ public class ThreadCommand extends AbstractCommand {
 			}
 			
 			// Get the locations of the pilots writing updates
-			Collection<Integer> updateIDs = new HashSet<Integer>();
-			for (ThreadUpdate upd : mt.getUpdates())
-				updateIDs.add(Integer.valueOf(upd.getAuthorID()));
+			Collection<Integer> updateIDs = mt.getUpdates().stream().map(ThreadUpdate::getAuthorID).collect(Collectors.toSet());
 
 			// Get the location of all the Pilots reporting/updating/posting in the thread and load all cross
 			updateIDs.addAll(mt.getReportIDs());
@@ -181,8 +175,7 @@ public class ThreadCommand extends AbstractCommand {
 					// Add the totals
 					int totalLegs = 0;
 					double totalHours = 0;
-					for (Iterator<Integer> ii = ids.iterator(); ii.hasNext(); ) {
-						Integer userID = ii.next();
+					for (Integer userID : ids) {
 						Person p2 = users.get(userID);
 						if (p2 instanceof Pilot) {
 							Pilot usr2 = (Pilot) p2;
@@ -231,8 +224,7 @@ public class ThreadCommand extends AbstractCommand {
 				// Load poster IP addreses
 				GetIPLocation ipdao = new GetIPLocation(con);
 				Map<String, IPBlock> addrInfo = new HashMap<String, IPBlock>();
-				for (Iterator<Message> i = mt.getPosts().iterator(); i.hasNext(); ) {
-					Message msg = i.next();
+				for (Message msg : mt.getPosts()) {
 					IPBlock info = ipdao.get(msg.getRemoteAddr());
 					if (info != null)
 						addrInfo.put(msg.getRemoteAddr(), info);

@@ -17,7 +17,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to retrieve Water Cooler threads and thread notifications.
  * @author Luke
- * @version 7.3
+ * @version 7.4
  * @since 1.0
  */
 
@@ -44,8 +44,7 @@ public class GetCoolerThreads extends DAO {
 	public List<MessageThread> getByChannel(String channelName, boolean showImgs) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT T.ID, IFNULL(I.SEQ, T.IMAGE_ID) AS IMGID FROM "
-				+ "common.COOLER_THREADS T LEFT JOIN common.COOLER_IMGURLS I ON (T.ID=I.ID) AND (I.SEQ=1)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT T.ID, IFNULL(I.SEQ, T.IMAGE_ID) AS IMGID FROM common.COOLER_THREADS T LEFT JOIN common.COOLER_IMGURLS I ON (T.ID=I.ID) AND (I.SEQ=1)");
 		if (channelName != null)
 			sqlBuf.append(" WHERE (T.CHANNEL=?)");
 		if (!showImgs)
@@ -88,8 +87,7 @@ public class GetCoolerThreads extends DAO {
 	public List<MessageThread> getByAuthor(int userID, boolean showImgs) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT T.ID, IFNULL(I.SEQ, T.IMAGE_ID) AS IMGID FROM common.COOLER_THREADS T "
-				+ "LEFT JOIN common.COOLER_IMGURLS I ON (T.ID=I.ID) AND (I.SEQ=1) WHERE (T.AUTHOR=?)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT T.ID, IFNULL(I.SEQ, T.IMAGE_ID) AS IMGID FROM common.COOLER_THREADS T LEFT JOIN common.COOLER_IMGURLS I ON (T.ID=I.ID) AND (I.SEQ=1) WHERE (T.AUTHOR=?)");
 		if (!showImgs)
 			sqlBuf.append(" HAVING (IMGID=0)");
 		sqlBuf.append(" ORDER BY T.SORTDATE DESC");
@@ -111,8 +109,7 @@ public class GetCoolerThreads extends DAO {
 	 */
 	public List<MessageThread> getByNotification(int userID) throws DAOException {
 		try {
-			prepareStatement("SELECT T.ID FROM common.COOLER_NOTIFY N, common.COOLER_THREADS T "
-					+ "WHERE (N.USER_ID=?) AND (T.ID=N.THREAD_ID) ORDER BY T.SORTDATE DESC");
+			prepareStatement("SELECT T.ID FROM common.COOLER_NOTIFY N, common.COOLER_THREADS T WHERE (N.USER_ID=?) AND (T.ID=N.THREAD_ID) ORDER BY T.SORTDATE DESC");
 			_ps.setInt(1, userID);
 			return getByID(executeIDs());
 		} catch (SQLException se) {
@@ -183,11 +180,9 @@ public class GetCoolerThreads extends DAO {
 		if (!loadPosts || (!mt.getPosts().isEmpty()))
 			return mt;
 
+		// Fetch the thread posts
 		try {
-			// Fetch the thread posts
-			prepareStatementWithoutLimits("SELECT POST_ID, AUTHOR_ID, CREATED, INET6_NTOA(REMOTE_ADDR), "
-					+ "REMOTE_HOST, MSGBODY, CONTENTWARN FROM common.COOLER_POSTS WHERE (THREAD_ID=?) "
-					+ "ORDER BY CREATED");
+			prepareStatementWithoutLimits("SELECT POST_ID, AUTHOR_ID, CREATED, INET6_NTOA(REMOTE_ADDR), REMOTE_HOST, MSGBODY, CONTENTWARN FROM common.COOLER_POSTS WHERE (THREAD_ID=?) ORDER BY CREATED");
 			_ps.setInt(1, id);
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
@@ -213,7 +208,7 @@ public class GetCoolerThreads extends DAO {
 					ThreadUpdate upd = new ThreadUpdate(id);
 					upd.setDate(rs.getTimestamp(1).toInstant());
 					upd.setAuthorID(rs.getInt(2));
-					upd.setMessage(rs.getString(3));
+					upd.setDescription(rs.getString(3));
 					mt.addUpdate(upd);
 				}
 			}
@@ -267,8 +262,7 @@ public class GetCoolerThreads extends DAO {
 	public List<MessageThread> search(SearchCriteria criteria) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder buf = new StringBuilder("SELECT DISTINCT T.ID FROM common.COOLER_THREADS T, "
-			+"common.COOLER_POSTS P WHERE (T.ID=P.THREAD_ID) ");
+		StringBuilder buf = new StringBuilder("SELECT DISTINCT T.ID FROM common.COOLER_THREADS T, common.COOLER_POSTS P WHERE (T.ID=P.THREAD_ID) ");
 		
 		// Check for text / subject search
 		boolean hasQuery = !StringUtils.isEmpty(criteria.getSearchTerm());
@@ -320,7 +314,6 @@ public class GetCoolerThreads extends DAO {
 			return Collections.emptyList();
 		
 		// Build the comparator
-		int size = IDs.size();
 		Comparator<DatabaseBean> cmp = new ArbitraryComparator(IDs);
 		if (log.isDebugEnabled())
 			log.debug("Raw set size = " + IDs.size());
@@ -343,10 +336,8 @@ public class GetCoolerThreads extends DAO {
 		}
 		
 		// Build the SQL query
-		StringBuilder sqlBuf = new StringBuilder("SELECT DISTINCT T.*, 0, IF(T.STICKY, IF(T.STICKY < NOW(), "
-				+ "T.LASTUPDATE, T.STICKY), T.LASTUPDATE) AS SD, COUNT(O.OPT_ID), "
-				+ "IFNULL(I.SEQ, T.IMAGE_ID) AS IMGID FROM common.COOLER_THREADS T "
-				+ "LEFT JOIN common.COOLER_POLLS O ON (T.ID=O.ID) LEFT JOIN common.COOLER_IMGURLS I "
+		StringBuilder sqlBuf = new StringBuilder("SELECT DISTINCT T.*, 0, IF(T.STICKY, IF(T.STICKY < NOW(), T.LASTUPDATE, T.STICKY), T.LASTUPDATE) AS SD, COUNT(O.OPT_ID), "
+				+ "IFNULL(I.SEQ, T.IMAGE_ID) AS IMGID FROM common.COOLER_THREADS T LEFT JOIN common.COOLER_POLLS O ON (T.ID=O.ID) LEFT JOIN common.COOLER_IMGURLS I "
 				+ "ON (T.ID=I.ID) AND (I.SEQ=1) WHERE T.ID IN (");
 		for (Iterator<Integer> i = IDs.iterator(); i.hasNext(); ) {
 			Integer id = i.next();
@@ -362,9 +353,6 @@ public class GetCoolerThreads extends DAO {
 			
 			// Sort and return
 			Collections.sort(results, cmp);
-			if (results.size() != size)
-				log.info("Raw = " + size + ", IDs = " + IDs.size() + ", threads = " + results.size());
-				
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);

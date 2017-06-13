@@ -1,4 +1,4 @@
- // Copyright 2006, 2007, 2008, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+ // Copyright 2006, 2007, 2008, 2011, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to report Water Cooler threads with questionable content.
  * @author Luke
- * @version 7.0
+ * @version 7.4
  * @since 1.0
  */
 
@@ -69,7 +69,7 @@ public class ContentReportCommand extends AbstractCommand {
 			// Add a content warning entry
 			ThreadUpdate upd = new ThreadUpdate(mt.getID());
 			upd.setAuthorID(ctx.getUser().getID());
-			upd.setMessage("Discussion Thread reported for potential inappropriate content");
+			upd.setDescription("Discussion Thread reported for potential inappropriate content");
 			
 			// Start a transaction
 			ctx.startTX();
@@ -95,7 +95,7 @@ public class ContentReportCommand extends AbstractCommand {
 				ThreadUpdate upd2 = new ThreadUpdate(mt.getID());
 				upd2.setDate(upd.getDate().plusSeconds(1));
 				upd2.setAuthorID(ctx.getUser().getID());
-				upd2.setMessage("Discussion Thread automatically locked/hidden after " + maxWarns + " content reports");
+				upd2.setDescription("Discussion Thread automatically locked/hidden after " + maxWarns + " content reports");
 				wdao.write(upd2);
 				isLocked = true;
 			} else if (mt.getReportCount() == 1) {

@@ -249,7 +249,7 @@ APPLICANT<br />
 <c:set var="pilot" value="${pilots[update.authorID]}" scope="page" />
 <tr>
  <td class="mid small"><fmt:date date="${update.date}" t="HH:mm" /></td>
- <td colspan="2">${update.message} by <span class="pri bld">${pilot.name}</span></td>
+ <td colspan="2">${update.description} by <span class="pri bld">${pilot.name}</span></td>
 </tr>
 </c:forEach>
 </c:if></content:filter>

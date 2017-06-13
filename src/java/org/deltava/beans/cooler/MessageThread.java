@@ -9,7 +9,7 @@ import org.deltava.beans.*;
 /**
  * A class to store Water Cooler message threads.
  * @author Luke
- * @version 7.3
+ * @version 7.4
  * @since 1.0
  */
 
@@ -206,7 +206,7 @@ public class MessageThread extends DatabaseBean implements AuthoredBean, ViewEnt
 	 * @return TRUE if any links are disabled, otherwise FALSE
 	 */
 	public boolean getHasDisabledLinks() {
-		return (_imgURLs == null) ? false : (_imgURLs.stream().filter(li -> li.getDisabled()).count() > 0);
+		return (_imgURLs != null) && (_imgURLs.stream().filter(LinkedImage::getDisabled).count() > 0); 
 	}
 
 	/**

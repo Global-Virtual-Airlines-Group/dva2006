@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to link an Image to a Water Cooler discussion thread.
  * @author Luke
- * @version 7.3
+ * @version 7.4
  * @since 1.0
  */
 
@@ -134,7 +134,7 @@ public class LinkImageCommand extends AbstractCommand {
 			// Create the status message
 			ThreadUpdate upd = new ThreadUpdate(mt.getID());
 			upd.setAuthorID(ctx.getUser().getID());
-			upd.setMessage("Added link to " + img.getURL());
+			upd.setDescription("Added link to " + img.getURL());
 			
 			// Start a JDBC transaction
 			ctx.startTX();

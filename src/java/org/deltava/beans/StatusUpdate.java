@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2106 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2106, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.time.Instant;
@@ -6,11 +6,11 @@ import java.time.Instant;
 /**
  * A bean to track pilot promotions and general comments.
  * @author Luke
- * @version 7.0
+ * @version 7.4
  * @since 1.0
  */
 
-public class StatusUpdate extends DatabaseBean implements AuthoredBean {
+public class StatusUpdate extends DatabaseBean implements AuditEntry {
 	
 	public static final int COMMENT = 0;
 	public static final int INTPROMOTION = 1;
@@ -32,10 +32,8 @@ public class StatusUpdate extends DatabaseBean implements AuthoredBean {
 	public static final int EXT_AUTH = 17;
 	public static final int VOICE_WARN = 18;
 	
-	public static final String[] TYPES = {"Comment", "Promotion", "Rank Change", "Added Rating", "Pilot Recognition",
-			"Status Change", "Added Security Role", "Removed Rating", "Removed Security Role", "Promotion", "Airline Transfer",
-			"Inactivity Notice", "Academy Update", "Pilot Certification", "Senior Captain", "Account Suspended", "Leave of Absence",
-			"External Authentication", "Voice Warning"};
+	public static final String[] TYPES = {"Comment", "Promotion", "Rank Change", "Added Rating", "Pilot Recognition", "Status Change", "Added Security Role", "Removed Rating", "Removed Security Role", 
+			"Promotion", "Airline Transfer", "Inactivity Notice", "Academy Update", "Pilot Certification", "Senior Captain", "Account Suspended", "Leave of Absence", "External Authentication", "Voice Warning"};
 
 	private int _type;
 	private int _authorID;
@@ -78,22 +76,24 @@ public class StatusUpdate extends DatabaseBean implements AuthoredBean {
 		return _authorID;
 	}
 	
-	/**
-	 * Returns the creation date of this update.
-	 * @return the date/time this update was created on
-	 * @see StatusUpdate#setCreatedOn(Instant)
-	 */
-	public Instant getCreatedOn() {
+	@Override
+	public Instant getDate() {
 		return _createdOn;
 	}
 	
-	/**
-	 * Returns a text description of this status updatae, or the comments.
-	 * @return the description or comments
-	 * @see StatusUpdate#setDescription(String)
-	 */
+	@Override
 	public String getDescription() {
 		return _desc;
+	}
+	
+	@Override
+	public String getAuditType() {
+		return "Pilot";
+	}
+	
+	@Override
+	public String getAuditID() {
+		return getHexID();
 	}
 	
 	/**
@@ -113,9 +113,9 @@ public class StatusUpdate extends DatabaseBean implements AuthoredBean {
 	/**
 	 * Sets the date this update was created on.
 	 * @param dt the date/time this update was created on
-	 * @see StatusUpdate#getCreatedOn()
+	 * @see StatusUpdate#getDate()
 	 */
-	public void setCreatedOn(Instant dt) {
+	public void setDate(Instant dt) {
 		_createdOn = dt;
 	}
 	
@@ -141,6 +141,6 @@ public class StatusUpdate extends DatabaseBean implements AuthoredBean {
 	@Override
 	public int compareTo(Object o2) {
 		StatusUpdate su2 = (StatusUpdate) o2;
-		return _createdOn.compareTo(su2.getCreatedOn());
+		return _createdOn.compareTo(su2._createdOn);
 	}
 }
