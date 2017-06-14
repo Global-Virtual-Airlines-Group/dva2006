@@ -81,7 +81,7 @@ public class SunriseSunset {
 	 * @return the zoned time of sunrise, or null if none
 	 */
 	public static ZonedDateTime getSunrise(GeoLocation loc, ZonedDateTime dt) {
-		return getTime(loc, dt, true, Twilight.EXACT);
+		return getTime(loc, dt, true, Twilight.CIVIL);
 	}
 
 	/**
@@ -91,6 +91,6 @@ public class SunriseSunset {
 	 * @return the zoned time of sunset, or null if none
 	 */
 	public static ZonedDateTime getSunset(GeoLocation loc, ZonedDateTime dt) {
-		return getTime(loc, dt, false, Twilight.EXACT);
+		return getTime(loc, dt, false, Twilight.CIVIL);
 	}
 }
