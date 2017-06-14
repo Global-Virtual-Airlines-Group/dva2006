@@ -23,6 +23,44 @@ public class BeanUtils {
 		super();
 	}
 	
+	public static class PropertyChange implements Comparable<PropertyChange> {
+		
+		private final String _name;
+		private final String _old;
+		private final String _new;
+		
+		PropertyChange(String name, String oldValue, String newValue) {
+			super();
+			_name = name;
+			_old = oldValue;
+			_new = newValue;
+		}
+		
+		public String getName() {
+			return _name;
+		}
+		
+		@Override
+		public int hashCode() {
+			return _name.hashCode();
+		}
+		
+		@Override
+		public String toString() {
+			StringBuilder buf = new StringBuilder(_name).append(": { \"");
+			buf.append(_old);
+			buf.append("\" -> \"");
+			buf.append(_new);
+			buf.append("\"}");
+			return buf.toString();
+		}
+
+		@Override
+		public int compareTo(PropertyChange pc) {
+			return _name.compareTo(pc._name);
+		}
+	}
+	
 	@SuppressWarnings("unchecked")
 	public static <T> T clone(T obj) {
 		try {
@@ -37,9 +75,9 @@ public class BeanUtils {
 	 * @param o the old bean value
 	 * @param n the new bean value
 	 * @param ignoredFields a list of fields to ignore
-	 * @return a Map of old field values, keyed by property name
+	 * @return a Collection of PropertyChange beans
 	 */
-	public static Map<String, String> getPreviousValues(Object o, Object n, String... ignoredFields) {
+	public static List<PropertyChange> getPreviousValues(Object o, Object n, String... ignoredFields) {
 		if (!o.getClass().equals(n.getClass()))
 			throw new IllegalArgumentException("Cannot compare " + o.getClass().getName() + " to " + n.getClass().getName());
 		
@@ -47,7 +85,7 @@ public class BeanUtils {
 		PropertyUtilsBean pu = new PropertyUtilsBean();
 		
 		Collection<String> ignore = new HashSet<String>(Arrays.asList(ignoredFields));
-		Map<String, String> results = new LinkedHashMap<String, String>();
+		List<PropertyChange> results = new ArrayList<PropertyChange>();
 		for (Object pn : m.keySet()) {
 			String propertyName = (String) pn;
 			if (ignore.contains(propertyName)) continue;
@@ -55,7 +93,7 @@ public class BeanUtils {
 				Object p1 = pu.getProperty(o, propertyName);
 				Object p2 = pu.getProperty(n, propertyName);
 				if (!p1.equals(p2))
-					results.put(propertyName, String.valueOf(p1));
+					results.add(new PropertyChange(propertyName, String.valueOf(p1), String.valueOf(p2)));
 			} catch (Exception e) {
 				log.error(e.getMessage() + " on " + o.getClass().getSimpleName() + "::" + propertyName);
 			}
