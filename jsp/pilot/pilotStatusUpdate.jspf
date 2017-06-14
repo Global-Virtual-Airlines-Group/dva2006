@@ -26,7 +26,7 @@
 <c:set var="isSuspended" value="${(update.type == 15)}" scope="page" />
 <c:if test="${!isPrivate || isHR}">
 <tr class="mid statusUpd"<c:if test="${statusCollapse}"> style="display:none;"</c:if>>
- <td class="pri bld"><fmt:date fmt="d" date="${update.createdOn}" /></td>
+ <td class="pri bld"><fmt:date fmt="d" date="${update.date}" /></td>
 <c:if test="${!isSuspended || isHR}">
  <td colspan="2">${update.description}</td>
 </c:if>

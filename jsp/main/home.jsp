@@ -150,7 +150,7 @@ If you are interested in a virtual airline with primarily ${partnerLoc} operatio
 <c:set var="pilot" value="${updPilots[entry.ID]}" scope="page" />
 <tr>
  <td class="priB mid">${pilot.name}</td>
- <td class="def mid">${entry.description} on <fmt:date fmt="d" date="${entry.createdOn}" /></td>
+ <td class="def mid">${entry.description} on <fmt:date fmt="d" date="${entry.date}" /></td>
 </tr>
 </c:forEach>
 </el:table>
@@ -165,7 +165,7 @@ If you are interested in a virtual airline with primarily ${partnerLoc} operatio
 <c:set var="pilot" value="${updPilots[entry.ID]}" scope="page" />
 <tr>
  <td class="priB mid">${pilot.name}</td>
- <td class="def mid">${entry.description} on <fmt:date fmt="d" date="${entry.createdOn}" /></td>
+ <td class="def mid">${entry.description} on <fmt:date fmt="d" date="${entry.date}" /></td>
 </tr>
 </c:forEach>
 </el:table>
@@ -186,7 +186,8 @@ If you are interested in a virtual airline with primarily ${partnerLoc} operatio
  <td class="nophone small caps">NO AVAILABLE ROUTES</td>
 </c:if>
 <c:if test="${!empty eRoute}">
- <td class="nophone left small">${eRoute.airportD.name} (<fmt:airport airport="${eRoute.airportD}" />) - ${eRoute.airportA.name} (<fmt:airport airport="${eRoute.airportA}" />)</td>
+ <td class="nophone left small">${eRoute.airportD.name} (<el:cmd url="airportInfo" linkID="${eRoute.airportD.IATA}" authOnly="true" className="plain"><fmt:airport airport="${eRoute.airportD}" /></el:cmd>) - 
+ ${eRoute.airportA.name} (<el:cmd url="airportInfo" linkID="${eRoute.airportA.IATA}" authOnly="true" className="plain"><fmt:airport airport="${eRoute.airportA}" /></el:cmd>)</td>
 </c:if>
 </tr>
 </c:forEach>
