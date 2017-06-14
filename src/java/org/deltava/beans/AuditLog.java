@@ -16,6 +16,10 @@ public class AuditLog implements AuditEntry, Comparable<AuditLog> {
 	private final String _id;
 	private int _authorID;
 	private Instant _createdOn;
+	
+	private String _remoteAddr;
+	private String _remoteHost;
+	
 	private String _desc;
 	
 	/**
@@ -56,6 +60,22 @@ public class AuditLog implements AuditEntry, Comparable<AuditLog> {
 		return _desc;
 	}
 	
+	/**
+	 * Returns the IP address for this audit entry.
+	 * @return the address
+	 */
+	public String getRemoteAddr() {
+		return _remoteAddr;
+	}
+	
+	/**
+	 * Returns the host name for this audit entry.
+	 * @return the host name
+	 */
+	public String getRemoteHost() {
+		return _remoteHost;
+	}
+	
 	@Override
 	public void setAuthorID(int id) {
 		DatabaseBean.validateID(_authorID, id);
@@ -68,6 +88,30 @@ public class AuditLog implements AuditEntry, Comparable<AuditLog> {
 	 */
 	public void setDescription(String desc) {
 		_desc = desc;
+	}
+	
+	/**
+	 * Updates the entry creation date.
+	 * @param i the date/time
+	 */
+	public void setDate(Instant i) {
+		_createdOn = i;
+	}
+	
+	/**
+	 * Updates the IP address for this audit entry.
+	 * @param addr the address
+	 */
+	public void setRemoteAddr(String addr) {
+		_remoteAddr = addr;
+	}
+	
+	/**
+	 * Updates the host name for this audit entry.
+	 * @param host the host name
+	 */
+	public void setRemoteHost(String host) {
+		_remoteHost = host;
 	}
 	
 	@Override
