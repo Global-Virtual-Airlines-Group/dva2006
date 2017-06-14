@@ -1,7 +1,7 @@
 // Copyright 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
-import java.util.Map;
+import java.util.List;
 
 import org.apache.log4j.*;
 
@@ -32,10 +32,10 @@ public class TestBeanUtils extends TestCase {
 		gp2.setLatitude(55);
 		assertFalse(gp2.getLatitude() == gp1.getLatitude());
 		
-		Map<String, String> delta = BeanUtils.getPreviousValues(gp1, gp2);
+		List<BeanUtils.PropertyChange> delta = BeanUtils.getPreviousValues(gp1, gp2);
 		assertNotNull(delta);
 		assertEquals(1, delta.size());
-		assertEquals("latitude", delta.keySet().iterator().next());
+		assertEquals("latitude", delta.get(0).getName());
 	}
 	
 	@SuppressWarnings("static-method")
@@ -45,7 +45,7 @@ public class TestBeanUtils extends TestCase {
 		GeoPosition gp2 = BeanUtils.clone(gp1);
 		assertNotNull(gp2);
 		
-		Map<String, String> delta = BeanUtils.getPreviousValues(gp1, gp2);
+		List<BeanUtils.PropertyChange> delta = BeanUtils.getPreviousValues(gp1, gp2);
 		assertNotNull(delta);
 		assertTrue(delta.isEmpty());
 	}
@@ -60,9 +60,9 @@ public class TestBeanUtils extends TestCase {
 		gp2.setAltitude(200);
 		assertTrue(gp1.getAltitude() != gp2.getAltitude());
 
-		Map<String, String> delta = BeanUtils.getPreviousValues(gp1, gp2, "altitude");
+		List<BeanUtils.PropertyChange> delta = BeanUtils.getPreviousValues(gp1, gp2, "altitude");
 		assertNotNull(delta);
 		assertEquals(1, delta.size());
-		assertEquals("latitude", delta.keySet().iterator().next());
+		assertEquals("latitude", delta.get(0).getName());
 	}
 }
