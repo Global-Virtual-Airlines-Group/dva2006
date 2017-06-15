@@ -1,5 +1,6 @@
 {
-    "name": "Delta Virtual",
+    "name": "Delta Virtual Airlines",
+    "short_name": "deltava.org",
     "icons": [
         {
             "src": "/favicon/android-chrome-192x192.png",
@@ -12,7 +13,7 @@
             "type": "image/png"
         }
     ],
-    "theme_color": "#ffffff",
+    "theme_color": "#0000a1",
     "background_color": "#ffffff",
     "display": "standalone"
 }
