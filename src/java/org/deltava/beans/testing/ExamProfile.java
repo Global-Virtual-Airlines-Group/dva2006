@@ -1,9 +1,9 @@
-// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import java.util.*;
 
-import org.deltava.beans.ViewEntry;
+import org.deltava.beans.*;
 import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.util.cache.Cacheable;
@@ -11,11 +11,11 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A class to store Examination profile information.
  * @author Luke
- * @version 7.0
+ * @version 7.4
  * @since 1.0
  */
 
-public class ExamProfile implements Comparable<ExamProfile>, Cacheable, ViewEntry {
+public class ExamProfile implements Comparable<ExamProfile>, Auditable, Cacheable, ViewEntry {
 
     private String _name;
     private int _stage;
@@ -310,10 +310,6 @@ public class ExamProfile implements Comparable<ExamProfile>, Cacheable, ViewEntr
         return (tmpResult != 0) ? tmpResult : _name.compareTo(e2._name); 
     }
     
-    /**
-     * Returns the Examination name for cache purposes.
-     * @return the Examination name
-     */
     @Override
     public Object cacheKey() {
         return _name;
@@ -324,20 +320,18 @@ public class ExamProfile implements Comparable<ExamProfile>, Cacheable, ViewEntr
     	return _name.hashCode();
     }
 
-    /**
-     * Returns the Examination name.
-     */
     @Override
     public String toString() {
     	return _name;
     }
 
-    /**
-     * Returns the CSS class name if displayed in a view table.
-     * @return the CSS class name
-     */
     @Override
     public String getRowClassName() {
     	return !_active ? "warn" : (_flightAcademy ? "opt2" : null); 
     }
+
+	@Override
+	public String getAuditID() {
+		return _name;
+	}
 }

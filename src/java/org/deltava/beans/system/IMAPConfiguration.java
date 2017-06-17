@@ -1,20 +1,20 @@
-// Copyright 2005, 2006, 2008, 2010, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2010, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 import java.util.*;
 
-import org.deltava.beans.DatabaseBean;
-import org.deltava.beans.ViewEntry;
+import org.deltava.beans.*;
+
 import org.deltava.util.StringUtils;
 
 /**
  * A bean to store IMAP mailbox data. 
  * @author Luke
- * @version 6.1
+ * @version 7.4
  * @since 1.0
  */
 
-public class IMAPConfiguration extends DatabaseBean implements ViewEntry {
+public class IMAPConfiguration extends DatabaseBean implements Auditable, ViewEntry {
 
 	private String _addr;
 	private String _mailDir;
@@ -168,12 +168,13 @@ public class IMAPConfiguration extends DatabaseBean implements ViewEntry {
 		_allowSMTP = allowSMTP;
 	}
     
-    /**
-     * Returns the CSS row class name if in a view table.
-     * @return the CSS class name
-     */
 	@Override
     public String getRowClassName() {
        return _active ? null : "warn";
     }
+
+	@Override
+	public String getAuditID() {
+		return getHexID();
+	}
 }

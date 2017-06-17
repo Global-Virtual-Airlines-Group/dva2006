@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2012, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import java.util.*;
@@ -7,13 +7,13 @@ import org.deltava.beans.*;
 import org.deltava.beans.system.AirlineInformation;
 
 /**
- * A bean to define Pilot accomplishments.
+ * A bean to define Pilot Accomplishments.
  * @author Luke
- * @version 7.0
+ * @version 7.4
  * @since 3.2
  */
 
-public class Accomplishment extends DatabaseBean implements ComboAlias, ViewEntry {
+public class Accomplishment extends DatabaseBean implements ComboAlias, Auditable, ViewEntry {
 
 	private String _name;
 	private AccomplishUnit _unit;
@@ -258,5 +258,10 @@ public class Accomplishment extends DatabaseBean implements ComboAlias, ViewEntr
 			tmpResult = Integer.valueOf(_value).compareTo(Integer.valueOf(a2._value));
 			
 		return (tmpResult == 0) ? _name.compareTo(a2._name) : tmpResult;
+	}
+
+	@Override
+	public String getAuditID() {
+		return Integer.toHexString(hashCode());
 	}
 }

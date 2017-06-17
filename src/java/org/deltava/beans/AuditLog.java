@@ -1,7 +1,10 @@
 // Copyright 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
+import java.util.*;
 import java.time.Instant;
+
+import org.deltava.util.BeanUtils;
 
 /**
  * A bean to store an audit log record. 
@@ -23,6 +26,29 @@ public class AuditLog implements AuditEntry, Comparable<AuditLog> {
 	private String _desc;
 	
 	/**
+	 * Creates an audit log from a list of bean property changes.
+	 * @param a the Auditable object
+	 * @param delta the list of changes
+	 * @param authorID the author's database ID
+	 * @return an AuditLog, or null if no changes
+	 */
+	public static AuditLog create(Auditable a, Collection<BeanUtils.PropertyChange> delta, int authorID) {
+		if (delta.isEmpty()) return null;
+		AuditLog ae = new AuditLog(a, authorID);
+		ae.setDate(Instant.now());
+		StringBuilder buf = new StringBuilder();
+		for (Iterator<BeanUtils.PropertyChange> i = delta.iterator(); i.hasNext(); ) {
+			BeanUtils.PropertyChange bc = i.next();
+			buf.append(bc.toString());
+			if (i.hasNext())
+				buf.append('\n');
+		}
+		
+		ae.setDescription(buf.toString());
+		return ae;
+	}
+	
+	/**
 	 * Creates the log entry.
 	 * @param type the entry type
 	 * @param id the entry ID
@@ -33,6 +59,15 @@ public class AuditLog implements AuditEntry, Comparable<AuditLog> {
 		_type = type;
 		_id = id;
 		setAuthorID(authorID);
+	}
+	
+	/**
+	 * Creates the log entry.
+	 * @param a the Auditable object
+	 * @param authorID the author's database ID
+	 */
+	public AuditLog(Auditable a, int authorID) {
+		this (a.getAuditType(), a.getAuditID(), authorID);
 	}
 	
 	@Override

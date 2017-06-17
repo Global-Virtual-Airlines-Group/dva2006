@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.cooler;
 
 import java.util.*;
@@ -9,11 +9,11 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A class containing Water Cooler channel data.
  * @author Luke
- * @version 7.0
+ * @version 7.4
  * @since 1.0
  */
 
-public class Channel implements Comparable<Channel>, Cacheable, ComboAlias, ViewEntry {
+public class Channel implements Comparable<Channel>, Auditable, Cacheable, ComboAlias, ViewEntry {
 
     public static final Channel ALL = new AllChannel("All Discussions", "ALL", true);
     public static final Channel SHOTS = new AllChannel("Screen Shots", "SSHOTS", false);
@@ -399,20 +399,11 @@ public class Channel implements Comparable<Channel>, Cacheable, ComboAlias, View
         _viewCount = Math.max(0, count);
     }
     
-    /**
-     * Converts the channel profile to a String.
-     * @return the channel name
-     */
     @Override
     public String toString() {
         return getName();
     }
 
-    /**
-     * Returns the cache key.
-     * @return the cache key
-     * @see Cacheable
-     */
     @Override
     public Object cacheKey() {
         return getName();
@@ -432,27 +423,16 @@ public class Channel implements Comparable<Channel>, Cacheable, ComboAlias, View
         return false;
     }
     
-    /**
-     * Returns the hashcode of the channel name.
-     * @return the channel name's hashcode
-     */
     @Override
     public int hashCode() {
         return _name.hashCode();
     }
     
-    /**
-     * Compares two Channels by comparing their names.
-     */
     @Override
     public int compareTo(Channel c2) {
     	return _name.compareTo(c2._name);
     }
     
-    /**
-     * Returns the CSS row class name.
-     * @return the CSS class name
-     */
     @Override
     public String getRowClassName() {
     	if (!_allowNewPosts)
@@ -460,4 +440,9 @@ public class Channel implements Comparable<Channel>, Cacheable, ComboAlias, View
     
     	return _active ? null : "warn"; 
     }
+
+	@Override
+	public String getAuditID() {
+		return _name;
+	}
 }

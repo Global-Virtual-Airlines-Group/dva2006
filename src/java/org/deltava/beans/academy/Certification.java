@@ -9,11 +9,11 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * A bean to store Flight Academy certification data.
  * @author Luke
- * @version 7.2
+ * @version 7.4
  * @since 1.0
  */
 
-public class Certification implements java.io.Serializable, ComboAlias, ViewEntry, Comparable<Certification> {
+public class Certification implements java.io.Serializable, ComboAlias, ViewEntry, Auditable, Comparable<Certification> {
 	
 	public static final int REQ_ANY = 0;
 	public static final int REQ_ANYPRIOR = 1;
@@ -553,6 +553,11 @@ public class Certification implements java.io.Serializable, ComboAlias, ViewEntr
 	 */
 	@Override
 	public String toString() {
+		return _name;
+	}
+
+	@Override
+	public String getAuditID() {
 		return _name;
 	}
 }

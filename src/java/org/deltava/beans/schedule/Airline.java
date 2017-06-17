@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -13,11 +13,11 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A class for storing Airline information.
  * @author Luke
- * @version 7.0
+ * @version 7.4
  * @since 1.0
  */
 
-public class Airline implements ComboAlias, Comparable<Airline>, Cacheable, ViewEntry {
+public class Airline implements ComboAlias, Auditable, Comparable<Airline>, Cacheable, ViewEntry {
 
 	private String _code;
 	private String _name;
@@ -279,6 +279,11 @@ public class Airline implements ComboAlias, Comparable<Airline>, Cacheable, View
 	@Override
 	public Object cacheKey() {
 	    return _code;
+	}
+	
+	@Override
+	public String getAuditID() {
+		return _code;
 	}
 
 	@Override
