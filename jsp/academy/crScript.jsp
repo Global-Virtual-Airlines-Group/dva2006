@@ -14,7 +14,7 @@
 <content:favicon />
 <content:js name="common" />
 <content:json />
-<script type="text/javascript">
+<script>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -86,6 +86,7 @@ return true;
  <td class="label top">Script Text</td>
  <td class="data"><el:textbox name="body" idx="*" width="90%" height="5" resize="true" className="req">${sc.description}</el:textbox></td>
 </tr>
+<%@ include file="/jsp/auditLog.jspf" %> 
 </el:table>
 
 <!-- Button bar -->

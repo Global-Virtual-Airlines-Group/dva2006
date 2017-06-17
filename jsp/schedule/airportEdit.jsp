@@ -170,6 +170,7 @@ Airports outside the United States or Canada with multiple airports, use &lt;Cit
 </c:if>
 </content:secure>
 </c:if>
+<%@ include file="/jsp/auditLog.jspf" %>
 </el:table>
 
 <!-- Button Bar -->

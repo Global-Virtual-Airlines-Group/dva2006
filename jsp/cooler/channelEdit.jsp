@@ -15,7 +15,7 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
-<script type="text/javascript">
+<script>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -70,6 +70,7 @@ return true;
  <td class="data"><el:box name="active" idx="*" className="sec" value="true" label="Channel is Active" checked="${channel.active}" /><br />
 <el:box name="allowNew" idx="*" value="true" label="Allow New Threads and Replies" checked="${channel.allowNewPosts}" /></td>
 </tr>
+<%@ include file="/jsp/auditLog.jspf" %> 
 </el:table>
 
 <!-- Button Bar -->

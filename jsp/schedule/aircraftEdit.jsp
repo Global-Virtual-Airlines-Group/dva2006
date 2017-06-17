@@ -162,6 +162,7 @@ return true;
  <td class="label top">Other Tanks</td>
  <td class="data"><el:check name="oTanks" idx="*" width="100" cols="6" newLine="true" checked="${aircraft.tankNames['Other']}" options="${tankNames}" /></td>
 </tr>
+<%@ include file="/jsp/auditLog.jspf" %>
 </el:table>
 
 <!-- Button Bar -->
