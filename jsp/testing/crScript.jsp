@@ -12,15 +12,14 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
-<script type="text/javascript">
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-golgotha.form.validate({f:f.eqType, t:'Aircraft Type'});
-golgotha.form.validate({f:f.programType, t:'Equipment Program'});
-golgotha.form.validate({f:f.msgText, l:15, t:'Check Ride content'});
-golgotha.form.submit(f);
-return true;
+<script>
+golgotha.local.validate = function(f) {
+    if (!golgotha.form.check()) return false;
+    golgotha.form.validate({f:f.eqType, t:'Aircraft Type'});
+    golgotha.form.validate({f:f.programType, t:'Equipment Program'});
+    golgotha.form.validate({f:f.msgText, l:15, t:'Check Ride content'});
+    golgotha.form.submit(f);
+    return true;
 };
 </script>
 </head>
@@ -50,6 +49,7 @@ return true;
  <td class="label top">Script Text</td>
  <td class="data"><el:textbox name="msgText" idx="*" width="90%" height="5" resize="true" className="req">${script.description}</el:textbox></td>
 </tr>
+<%@ include file="/jsp/auditLog.jspf" %>
 </el:table>
 
 <!-- Button bar -->

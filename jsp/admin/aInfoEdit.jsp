@@ -13,14 +13,13 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script type="text/javascript">
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-golgotha.form.validate({f:f.domain, l:6, t:'Domain Name'});
-golgotha.form.validate({f:f.db, l:2, t:'Database Name'});
-golgotha.form.submit(f);
-return true;
+<script>
+golgotha.local.validate = function(f) {
+    if (!golgotha.form.check()) return false;
+    golgotha.form.validate({f:f.domain, l:6, t:'Domain Name'});
+    golgotha.form.validate({f:f.db, l:2, t:'Database Name'});
+    golgotha.form.submit(f);
+    return true;
 };
 </script>
 </head>
@@ -59,6 +58,7 @@ return true;
 <el:box name="canTX" className="small" label="Airline allows inbound Pilot transfers" value="true" checked="${aInfo.canTransfer}" /><br />
 <el:box name="historicRestrict" className="small" label="Historic Routes require Historic Aircraft" value="true" checked="${aInfo.historicRestricted}" /></td>
 </tr>
+<%@ include file="/jsp/auditLog.jspf" %>
 </el:table>
 
 <!-- Button Bar -->

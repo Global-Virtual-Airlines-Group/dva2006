@@ -72,6 +72,7 @@ return true;
  <td class="label top">Template Text</td>
  <td class="data"><el:textbox name="body" idx="*" width="80%" className="req" height="8" resize="true">${template.body}</el:textbox></td>
 </tr>
+<%@ include file="/jsp/auditLog.jspf" %>
 </el:table>
 
 <!-- Button Bar -->

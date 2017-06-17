@@ -75,6 +75,7 @@
 <c:if test="${eProfile.academy}"><br />
 Examination is part of the <content:airline /> Flight Academy</c:if></td>
 </tr>
+<%@ include file="/jsp/auditLog.jspf" %>
 </el:table>
 
 <!-- Button Bar -->

@@ -126,6 +126,7 @@ return true;
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="updateRatings" idx="*" value="true" label="Update Pilot Ratings" /></td>
 </tr>
+<%@ include file="/jsp/auditLog.jspf" %>
 </el:table>
 
 <!-- Button Bar -->
