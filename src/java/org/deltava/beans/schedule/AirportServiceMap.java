@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2012, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -6,7 +6,7 @@ import java.util.*;
 /**
  * A bean to track which Airports are served by particular Airlines. 
  * @author Luke
- * @version 4.2
+ * @version 7.4
  * @since 1.0
  */
 
@@ -46,11 +46,10 @@ public class AirportServiceMap extends TreeMap<Airline, Collection<Airport>> {
 	 * @see Airport#setAirlines(Collection)
 	 */
 	public Collection<String> getAirlineCodes(Airport a) {
-		Collection<String> results = new HashSet<String>();
-		for (Iterator<Map.Entry<Airline, Collection<Airport>>> i = entrySet().iterator(); i.hasNext();) {
-			Airline al = i.next().getKey();
-			if (isServiced(a, al))
-				results.add(al.getCode());
+		Collection<String> results = new TreeSet<String>();
+		for (Map.Entry<Airline, Collection<Airport>> me : entrySet()) {
+			if (me.getValue().contains(a))
+				results.add(me.getKey().getCode());
 		}
 
 		return results;
