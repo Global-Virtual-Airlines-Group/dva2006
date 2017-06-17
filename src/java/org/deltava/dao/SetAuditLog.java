@@ -29,7 +29,7 @@ public class SetAuditLog extends DAO {
 	 */
 	public void write(AuditLog al) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("INSERT INTO AUDIT_LOG (CREATED, TYPE, ID, AUTHOR_ID, REMOTE_HOST, REMOTE_ADDR, DESCRIPTION) VALUES (NOW(), ?, ?, ?, ?, INET6_ATON(?), ?)");
+			prepareStatementWithoutLimits("INSERT INTO common.AUDIT_LOG (CREATED, TYPE, ID, AUTHOR_ID, REMOTE_HOST, REMOTE_ADDR, DESCRIPTION) VALUES (NOW(), ?, ?, ?, ?, INET6_ATON(?), ?)");
 			_ps.setString(1, al.getAuditType());
 			_ps.setString(2, al.getAuditID());
 			_ps.setInt(3, al.getAuthorID());
@@ -37,6 +37,23 @@ public class SetAuditLog extends DAO {
 			_ps.setString(5, al.getRemoteAddr());
 			_ps.setString(6, al.getDescription());
 			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Clears the audit log for a particular object.
+	 * @param auditType the object type
+	 * @param id the object ID
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void clear(String auditType, String id) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("DELETE FROM common.AUDIT_LOG WHERE (TYPE=?) AND (ID=?)");
+			_ps.setString(1, auditType);
+			_ps.setString(2, id);
+			executeUpdate(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
