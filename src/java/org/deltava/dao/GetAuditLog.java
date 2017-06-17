@@ -4,7 +4,7 @@ package org.deltava.dao;
 import java.sql.*;
 import java.util.*;
 
-import org.deltava.beans.AuditLog;
+import org.deltava.beans.*;
 
 /**
  * A Data Access Object to read the audit log for an object.
@@ -25,16 +25,15 @@ public class GetAuditLog extends DAO {
 
 	/**
 	 * Loads all Audit log entries for a given object.
-	 * @param type the object type
-	 * @param id the object ID
+	 * @param a the Auditable object
 	 * @return a Collection of AuditLog beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<AuditLog> getEntries(String type, String id) throws DAOException {
+	public Collection<AuditLog> getEntries(Auditable a) throws DAOException {
 		try {
-			prepareStatement("SELECT TYPE, ID, CREATED, AUTHOR_ID, REMOTE_HOST, INET6_NTOA(REMOTE_ADDR), DESCRIPTION FROM AUDIT_LOG WHERE (TYPE=?) AND (ID=?)");
-			_ps.setString(1, type);
-			_ps.setString(2, id);
+			prepareStatement("SELECT TYPE, ID, CREATED, AUTHOR_ID, REMOTE_HOST, INET6_NTOA(REMOTE_ADDR), DESCRIPTION FROM common.AUDIT_LOG WHERE (TYPE=?) AND (ID=?)");
+			_ps.setString(1, a.getAuditType());
+			_ps.setString(2, a.getAuditID());
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -49,7 +48,7 @@ public class GetAuditLog extends DAO {
 	 */
 	public Collection<AuditLog> getEntries(String type) throws DAOException {
 		try {
-			prepareStatement("SELECT TYPE, ID, CREATED, AUTHOR_ID, REMOTE_HOST, INET6_NTOA(REMOTE_ADDR), DESCRIPTION FROM AUDIT_LOG WHERE (TYPE=?)");
+			prepareStatement("SELECT TYPE, ID, CREATED, AUTHOR_ID, REMOTE_HOST, INET6_NTOA(REMOTE_ADDR), DESCRIPTION FROM common.AUDIT_LOG WHERE (TYPE=?)");
 			_ps.setString(1, type);
 			return execute();
 		} catch (SQLException se) {
@@ -63,12 +62,14 @@ public class GetAuditLog extends DAO {
 	private List<AuditLog> execute() throws SQLException {
 		List<AuditLog> results = new ArrayList<AuditLog>();
 		try (ResultSet rs = _ps.executeQuery()) {
-			AuditLog ae = new AuditLog(rs.getString(1), rs.getString(2), rs.getInt(4));
-			ae.setDate(toInstant(rs.getTimestamp(3)));
-			ae.setRemoteHost(rs.getString(5));
-			ae.setRemoteAddr(rs.getString(6));
-			ae.setDescription(rs.getString(7));
-			results.add(ae);
+			while (rs.next()) {
+				AuditLog ae = new AuditLog(rs.getString(1), rs.getString(2), rs.getInt(4));
+				ae.setDate(toInstant(rs.getTimestamp(3)));
+				ae.setRemoteHost(rs.getString(5));
+				ae.setRemoteAddr(rs.getString(6));
+				ae.setDescription(rs.getString(7));
+				results.add(ae);
+			}
 		}
 		
 		_ps.close();
