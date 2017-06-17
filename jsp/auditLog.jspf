@@ -1,0 +1,23 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<c:if test="${!empty auditLog}">
+<tr class="title caps">
+ <td colspan="2"><span class="und" onclick="void golgotha.local.toggleLog()">REVISION LOG</span></td>
+</tr>
+<c:forEach var="logEntry" items="${auditLog}">
+<c:set var="ipInfo" value="${auditIPInfo[logEntry.remoteAddr]}" scope="page" />
+<c:set var="author" value="${auditAuthors[logEntry.authorID]}" scope="page" />
+<tr class="auditLogEntry" style="display:none;">
+ <td class="mid"><fmt:date date="${logEntry.date}" t="HH:mm" /></td>
+ <td class="small">Modified by <span class="pri bld">${author.name}</span> (<span class="bld">${author.pilotCode}</span>)<span class="nophone"> from ${logEntry.remoteHost} (${logEntry.remoteAddr}<c:if test="${!empty ipInfo}"> <el:flag countryCode="${ipInfo.country.code}" caption="${ipInfo.location}" /> ${ipInfo.location}</c:if>)</span><br />
+<fmt:text value="${logEntry.description}"></fmt:text></td>
+</tr>
+</c:forEach>
+<script async>
+golgotha.local.toggleLog = function() {
+	var rows = golgotha.util.getElementsByClass('auditLogEntry', 'tr');
+	rows.forEach(function(r) { r.style.display = (r.style.display == '') ? 'none' : ''; });
+};
+</script>
+</c:if>
