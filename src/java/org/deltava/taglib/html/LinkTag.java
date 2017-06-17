@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2010, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2010, 2012, 2014, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import javax.servlet.jsp.JspException;
@@ -8,7 +8,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP tag to generate an HTML link.
  * @author Luke
- * @version 5.4
+ * @version 7.4
  * @since 1.0
  */
 
@@ -85,13 +85,11 @@ public class LinkTag extends ElementTag {
     }
     
     /**
-     * Sets the label for this link. This causes window.status to be set in the <b>onMouseOver</b> event,
-     * and then cleared on the <b>onMouseOut</b> event.
-     * @param label
+     * Sets the label for this link.
+     * @param label the link label
      */
     public void setLabel(String label) {
-        _data.setAttribute("onmouseover", "window.status=\'" + label + "\';");
-        _data.setAttribute("onmouseout", "window.status=\'\';");
+    	_data.setAttribute("title", label);
     }
     
     /**
