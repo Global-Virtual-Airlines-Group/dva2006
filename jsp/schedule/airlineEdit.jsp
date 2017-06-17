@@ -70,6 +70,7 @@ return true;
  <el:box name="historic" idx="*" value="true" label="This is a Historic Airline" checked="${airline.historic}" /><br />
  <el:box name="sync" idx="*" value="true" label="Synchronize schedule with other Web Applications" checked="${airline.scheduleSync}" /> </td>
 </tr>
+<%@ include file="/jsp/auditLog.jspf" %>
 </el:table>
 
 <!-- Button Bar -->

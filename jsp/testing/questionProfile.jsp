@@ -93,6 +93,7 @@
  <td class="data error bld caps">Question is Not Available</td>
 </c:if>
 </tr>
+<%@ include file="/jsp/auditLog.jspf" %>
 </el:table>
 
 <!-- Button Bar -->

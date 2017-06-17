@@ -139,6 +139,7 @@
  <td class="label top">Other Tanks</td>
  <td class="sec data"><fmt:list value="${aircraft.tankNames['Other']}" delim=", " empty="NONE" /></td>
 </tr>
+<%@ include file="/jsp/auditLog.jspf" %>
 </el:table>
 
 <!-- Button Bar -->

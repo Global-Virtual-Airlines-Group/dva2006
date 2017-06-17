@@ -143,6 +143,7 @@ golgotha.local.onload = function() {
  <td class="label top">Instructions</td>
  <td class="data"><el:textbox name="desc" idx="*" width="90%" height="5" resize="true">${cert.description}</el:textbox></td>
 </tr>
+<%@ include file="/jsp/auditLog.jspf" %> 
 </el:table>
 
 <!-- Button Bar -->

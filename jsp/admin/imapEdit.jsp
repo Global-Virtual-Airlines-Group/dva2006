@@ -19,14 +19,13 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script type="text/javascript">
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-golgotha.form.validate({f:f.IMAPAddr, addr:true, t:'E-Mail Address'});
-golgotha.form.validate({f:f.IMAPQuota, min:0, t:'Mailbox Quota'});
-golgotha.form.submit(f);
-return true;
+<script>
+golgotha.local.validate = function(f) {
+    if (!golgotha.form.check()) return false;
+    golgotha.form.validate({f:f.IMAPAddr, addr:true, t:'E-Mail Address'});
+    golgotha.form.validate({f:f.IMAPQuota, min:0, t:'Mailbox Quota'});
+    golgotha.form.submit(f);
+    return true;
 };
 </script>
 </head>
@@ -65,6 +64,7 @@ return true;
  <td class="data"><el:box name="IMAPAllowSMTP" idx="*" value="true" checked="${mb.allowSMTP}" label="Allow direct connections from third-party mail clients" /><br />
  <el:box name="IMAPActive" idx="*" value="true" checked="${mb.active}" label="Mailbox is Active" /></td>
 </tr>
+<%@ include file="/jsp/auditLog.jspf" %>
 </el:table>
 
 <!-- Button Bar -->

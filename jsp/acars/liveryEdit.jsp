@@ -66,6 +66,7 @@ return true;
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="isDefault" idx="*" value="true" checked="${livery.getDefault()}" label="This is the default livery for the Airline" /></td>
 </tr>
+<%@ include file="/jsp/auditLog.jspf" %> 
 </el:table>
 
 <!-- Button Bar -->

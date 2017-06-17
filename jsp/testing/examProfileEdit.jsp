@@ -93,6 +93,7 @@ return true;
 <el:box name="doNotify" idx="*" value="true" label="Notify Scorers when Submitted" checked="${eProfile.notify}" /><br />
 <el:box name="isAcademy" className="sec" idx="*" value="true" label="This is a Fleet Academy Examination" checked="${eProfile.academy}" /></td>
 </tr>
+<%@ include file="/jsp/auditLog.jspf" %>
 </el:table>
 
 <!-- Button Bar -->

@@ -48,6 +48,7 @@
 <c:if test="${aInfo.canTransfer && aInfo.historicRestricted}"><br /></c:if>
 <c:if test="${aInfo.historicRestricted}"><span class="ter bld small">Historic Routes require Historic Aircraft</span></c:if></td>
 </tr>
+<%@ include file="/jsp/auditLog.jspf" %>
 </el:table>
 
 <!-- Button Bar -->
