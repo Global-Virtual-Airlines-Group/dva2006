@@ -1,10 +1,10 @@
-// Copyright 2005, 2009, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2010, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 /**
  * A bean to store Check Ride scripts.
  * @author Luke
- * @version 7.2
+ * @version 7.4
  * @since 1.0
  */
 
@@ -68,5 +68,10 @@ public class EquipmentRideScript extends CheckRideScript {
 	public int compareTo(EquipmentRideScript cs2) {
 		int tmpResult = super.compareTo(cs2);
 		return (tmpResult == 0) ? _eqType.compareTo(cs2._eqType) : tmpResult;
+	}
+
+	@Override
+	public String getAuditID() {
+		return _programName + "!!" + _eqType;
 	}
 }

@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -10,11 +10,11 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A class for storing equipment program information.
  * @author Luke
- * @version 7.0
+ * @version 7.4
  * @since 1.0
  */
 
-public class EquipmentType implements Cacheable, Comparable<EquipmentType>, ComboAlias, ViewEntry {
+public class EquipmentType implements Cacheable, Auditable, Comparable<EquipmentType>, ComboAlias, ViewEntry {
 	
 	public enum Rating {
 		SECONDARY, PRIMARY
@@ -627,4 +627,9 @@ public class EquipmentType implements Cacheable, Comparable<EquipmentType>, Comb
     public String getRowClassName() {
     	return _active ? null : "opt2";
     }
+
+	@Override
+	public String getAuditID() {
+		return String.valueOf(cacheKey());
+	}
 }

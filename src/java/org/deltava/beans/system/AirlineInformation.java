@@ -1,17 +1,18 @@
-// Copyright 2005, 2007, 2010, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2010, 2012, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
-import org.deltava.beans.ComboAlias;
+import org.deltava.beans.*;
+
 import org.deltava.util.cache.Cacheable;
 
 /**
  * A bean to store information about other virtual airlines.
  * @author Luke
- * @version 6.0
+ * @version 7.4
  * @since 1.0
  */
 
-public class AirlineInformation implements Comparable<AirlineInformation>, ComboAlias, Cacheable {
+public class AirlineInformation implements Comparable<AirlineInformation>, Auditable, ComboAlias, Cacheable {
    
    private final String _code;
    private final String _name;
@@ -176,19 +177,18 @@ public class AirlineInformation implements Comparable<AirlineInformation>, Combo
 		   return false;
    }
    
-   /**
-    * Returns the airline code.
-    */
    @Override
    public String toString() {
 	   return _code;
    }
    
-   /**
-    * Returns the airline code's hashcode.
-    */
    @Override
    public int hashCode() {
       return _code.hashCode();
+   }
+
+   @Override
+   public String getAuditID() {
+	   return _code;
    }
 }
