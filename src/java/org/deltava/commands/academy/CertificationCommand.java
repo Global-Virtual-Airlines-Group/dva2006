@@ -4,9 +4,8 @@ package org.deltava.commands.academy;
 import java.util.*;
 import java.sql.Connection;
 
+import org.deltava.beans.*;
 import org.deltava.beans.academy.*;
-import org.deltava.beans.EquipmentType;
-import org.deltava.beans.OnlineNetwork;
 import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.commands.*;
@@ -20,11 +19,11 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to view and update Flight Academy certification profiles.
  * @author Luke
- * @version 7.2
+ * @version 7.4
  * @since 1.0
  */
 
-public class CertificationCommand extends AbstractFormCommand {
+public class CertificationCommand extends AbstractAuditFormCommand {
 
 	/**
 	 * Method called when saving the form.
@@ -44,7 +43,7 @@ public class CertificationCommand extends AbstractFormCommand {
 			access.validate();
 			
 			// If we're saving an existing cert, get it
-			Certification cert = null;
+			Certification cert = null; Certification oldCert = null;
 			if (name != null) {
 				GetAcademyCertifications dao = new GetAcademyCertifications(con);
 				cert = dao.get(name);
@@ -55,6 +54,7 @@ public class CertificationCommand extends AbstractFormCommand {
 				if (!access.getCanEdit())
 					throw securityException("Cannot edit Certification");
 				
+				oldCert = BeanUtils.clone(cert);
 				cert.setName(ctx.getParameter("name"));
 			} else {
 				// Check our access
@@ -99,6 +99,16 @@ public class CertificationCommand extends AbstractFormCommand {
 					req.setExamName(null);
 			}
 			
+			// Check audit log
+			Collection<BeanUtils.PropertyChange> delta = BeanUtils.getDelta(oldCert, cert);
+			AuditLog ae = AuditLog.create(cert, delta, ctx.getUser().getID());
+			
+			// Start transaction
+			ctx.startTX();
+			
+			// Write audit log
+			writeAuditLog(ctx, ae);
+			
 			// Get the write DAO and save the certification
 			SetAcademyCertification wdao = new SetAcademyCertification(con);
 			if (name != null)
@@ -106,9 +116,13 @@ public class CertificationCommand extends AbstractFormCommand {
 			else
 				wdao.write(cert);
 			
+			// Commit
+			ctx.commitTX();
+			
 			// Save the certification in the request
 			ctx.setAttribute("cert", cert, REQUEST);
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
@@ -237,6 +251,9 @@ public class CertificationCommand extends AbstractFormCommand {
 			// Get associated documents
 			GetDocuments ddao = new GetDocuments(con);
 			ctx.setAttribute("docs", ddao.getByCertification(SystemData.get("airline.db"), cert.getCode()), REQUEST);
+			
+			// Get audit log
+			readAuditLog(ctx, cert);
 
 			// Save in the request
 			ctx.setAttribute("cert", cert, REQUEST);

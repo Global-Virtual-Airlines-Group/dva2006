@@ -4,6 +4,7 @@ package org.deltava.commands.stats;
 import java.util.*;
 import java.sql.Connection;
 
+import org.deltava.beans.AuditLog;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.stats.*;
 
@@ -20,11 +21,11 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Accomplishment profiles. 
  * @author Luke
- * @version 7.2
+ * @version 7.4
  * @since 3.2
  */
 
-public class AccomplishmentCommand extends AbstractFormCommand {
+public class AccomplishmentCommand extends AbstractAuditFormCommand {
 
 	/**
 	 * Callback method called when saving the Accomplishment.
@@ -39,13 +40,14 @@ public class AccomplishmentCommand extends AbstractFormCommand {
 		try {
 			Connection con = ctx.getConnection();
 			
-			Accomplishment a = null;	
+			Accomplishment a = null; Accomplishment oa = null;	
 			if (!isNew) {
 				GetAccomplishment dao = new GetAccomplishment(con);
 				a = dao.get(ctx.getID());
 				if (a == null)
 					throw notFoundException("Invalid Accomplishment - " + ctx.getID());
 				
+				oa = BeanUtils.clone(a);
 				a.setName(ctx.getParameter("name"));
 			} else
 				a = new Accomplishment(ctx.getParameter("name"));
@@ -106,14 +108,26 @@ public class AccomplishmentCommand extends AbstractFormCommand {
 			doAll &= (a.getUnit() != AccomplishUnit.ADLEGS) && (a.getUnit() != AccomplishUnit.AALEGS);
 			a.setValue(doAll ? a.getChoices().size() : StringUtils.parse(ctx.getParameter("value"), 0));
 			
+			// Check audit log
+			Collection<BeanUtils.PropertyChange> delta = BeanUtils.getDelta(oa, a);
+			AuditLog ae = AuditLog.create(a, delta, ctx.getUser().getID());
+			
+			// Start transaction
+			ctx.startTX();
+			
 			// Write the accomplishment
 			SetAccomplishment wdao = new SetAccomplishment(con);
 			wdao.write(a);
+			
+			// Write audit log
+			writeAuditLog(ctx, ae);
+			ctx.commitTX();
 			
 			// Save status attributes
 			ctx.setAttribute("ap", a, REQUEST);
 			ctx.setAttribute("isNew", Boolean.valueOf(isNew), REQUEST);
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
@@ -178,6 +192,7 @@ public class AccomplishmentCommand extends AbstractFormCommand {
 			ctx.setAttribute("activeCountries", activeCountries, REQUEST);
 			
 			// Save in request
+			readAuditLog(ctx, a);
 			ctx.setAttribute("ap", a, REQUEST);
 			ctx.setAttribute("access", ac, REQUEST);
 		} catch (DAOException de) {

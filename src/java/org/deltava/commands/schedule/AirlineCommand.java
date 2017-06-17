@@ -1,27 +1,27 @@
-// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
 import java.sql.Connection;
 
+import org.deltava.beans.AuditLog;
 import org.deltava.beans.MapEntry;
 import org.deltava.beans.schedule.Airline;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 
 import org.gvagroup.common.*;
 
 /**
  * A Web Site Command to update Airline profiles.
  * @author Luke
- * @version 6.0
+ * @version 7.4
  * @since 1.0
  */
 
-public class AirlineCommand extends AbstractFormCommand {
+public class AirlineCommand extends AbstractAuditFormCommand {
 
 	/**
 	 * Callback method called when saving the Airline.
@@ -40,12 +40,14 @@ public class AirlineCommand extends AbstractFormCommand {
 			Connection con = ctx.getConnection();
 			
 			// If we're editing an existing airline, load it
+			Airline oa = null;
 			if (!isNew) {
 				GetAirline dao = new GetAirline(con);
 				a = dao.get(aCode);
 				if (a == null)
 					throw notFoundException("Invalid Airline - " + aCode);
 				
+				oa = BeanUtils.clone(a);
 				a.setCode(ctx.getParameter("code"));
 				a.setName(ctx.getParameter("name"));
 			} else {
@@ -60,6 +62,13 @@ public class AirlineCommand extends AbstractFormCommand {
 			a.setScheduleSync(Boolean.valueOf(ctx.getParameter("sync")).booleanValue());
 			a.setHistoric(Boolean.valueOf(ctx.getParameter("historic")).booleanValue());
 			
+			// Check audit log
+			Collection<BeanUtils.PropertyChange> delta = BeanUtils.getDelta(oa, a);
+			AuditLog ae = AuditLog.create(a, delta, ctx.getUser().getID());
+			
+			// Start transaction
+			ctx.startTX();
+			
 			// Get the DAO and update the database
 			SetSchedule wdao = new SetSchedule(con);
 			if (isNew) {
@@ -70,9 +79,14 @@ public class AirlineCommand extends AbstractFormCommand {
 				ctx.setAttribute("airlineUpdate", Boolean.TRUE, REQUEST);
 			}
 			
+			// Write audit log
+			writeAuditLog(ctx, ae);
+			ctx.commitTX();
+			
 			// Save the airline in the request
 			ctx.setAttribute("airline", a, REQUEST);
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
@@ -110,6 +124,8 @@ public class AirlineCommand extends AbstractFormCommand {
 				if (a != null) {
 					ctx.setAttribute("airline", a, REQUEST);
 					ctx.setAttribute("altCodes", StringUtils.listConcat(a.getCodes(), "\n"), REQUEST);
+					
+					readAuditLog(ctx, a);
 					
 					// Get airports
 					GetAirport apdao = new GetAirport(con);

@@ -1,26 +1,27 @@
-// Copyright 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
+import java.util.*;
 import java.sql.Connection;
-import java.util.StringTokenizer;
 
+import org.deltava.beans.AuditLog;
 import org.deltava.beans.acars.Livery;
 import org.deltava.beans.schedule.Airline;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to handle ACARS multi-player livery data. 
  * @author Luke
- * @version 7.0
+ * @version 7.4
  * @since 2.2
  */
 
-public class LiveryCommand extends AbstractFormCommand {
+public class LiveryCommand extends AbstractAuditFormCommand {
 
 	/**
 	 * Callback method called when editing the livery.
@@ -34,7 +35,8 @@ public class LiveryCommand extends AbstractFormCommand {
 		String id = (String) ctx.getCmdParameter(Command.ID, null);
 		boolean isNew = StringUtils.isEmpty(id);
 		try {
-			GetACARSLivery dao = new GetACARSLivery(ctx.getConnection());
+			Connection con = ctx.getConnection();
+			GetACARSLivery dao = new GetACARSLivery(con);
 			if (!isNew) {
 				StringTokenizer tkns = new StringTokenizer(id, "-");
 				Airline a = SystemData.getAirline(tkns.nextToken());
@@ -43,6 +45,7 @@ public class LiveryCommand extends AbstractFormCommand {
 					throw notFoundException("Unknown Livery - " + id);
 				
 				ctx.setAttribute("livery", l, REQUEST);
+				readAuditLog(ctx, l);
 			}
 		} catch (DAOException de) {
 			throw new CommandException(de);
@@ -80,14 +83,14 @@ public class LiveryCommand extends AbstractFormCommand {
 		String id = (String) ctx.getCmdParameter(Command.ID, null);
 		boolean isNew = StringUtils.isEmpty(id);
 		try {
-			Livery l = null;
+			Livery l = null; Livery ol = null;
 			Connection con = ctx.getConnection();
 			
 			GetACARSLivery dao = new GetACARSLivery(con);
 			if (!isNew) {
 				StringTokenizer tkns = new StringTokenizer(id, "-");
 				Airline a = SystemData.getAirline(tkns.nextToken());
-				l = dao.get(a, tkns.nextToken());
+				l = dao.get(a, tkns.nextToken()); ol = BeanUtils.clone(l);
 				if (l == null)
 					throw notFoundException("Unknown Livery - " + id);
 			} else 
@@ -97,10 +100,22 @@ public class LiveryCommand extends AbstractFormCommand {
 			l.setDescription(ctx.getParameter("desc"));
 			l.setDefault(Boolean.valueOf(ctx.getParameter("isDefault")).booleanValue());
 			
-			// Save the livery
+			// Check audit log
+			Collection<BeanUtils.PropertyChange> delta = BeanUtils.getDelta(ol, l);
+			AuditLog ae = AuditLog.create(l, delta, ctx.getUser().getID());
+			
+			// Start transaction
+			ctx.startTX();
+			
+			// Write audit log
+			writeAuditLog(ctx, ae);
+			
+			// Save the livery and commit
 			SetACARSData wdao = new SetACARSData(con);
 			wdao.write(l);
+			ctx.commitTX();
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
