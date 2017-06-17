@@ -1,9 +1,11 @@
-// Copyright 2005, 2006, 2009, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.sql.Connection;
+import java.util.Collection;
 import java.util.Collections;
 
+import org.deltava.beans.AuditLog;
 import org.deltava.beans.EquipmentType;
 import org.deltava.beans.testing.EquipmentRideScript;
 
@@ -11,17 +13,17 @@ import org.deltava.commands.*;
 import org.deltava.dao.*;
 
 import org.deltava.security.command.EquipmentRideScriptAccessControl;
-
+import org.deltava.util.BeanUtils;
 import org.deltava.util.StringUtils;
 
 /**
  * A Web Site Command to update Check Ride scripts.
  * @author Luke
- * @version 7.0
+ * @version 7.4
  * @since 1.0
  */
 
-public class CheckRideScriptCommand extends AbstractFormCommand {
+public class CheckRideScriptCommand extends AbstractAuditFormCommand {
 
 	/**
 	 * Callback method called when saving the script.
@@ -41,7 +43,7 @@ public class CheckRideScriptCommand extends AbstractFormCommand {
 
 			// Get the DAO and the existing script
 			GetExamProfiles dao = new GetExamProfiles(con);
-			EquipmentRideScript sc = dao.getScript(id);
+			EquipmentRideScript sc = dao.getScript(id); EquipmentRideScript osc = BeanUtils.clone(sc);
 			if (sc == null)
 				sc = new EquipmentRideScript(id);
 
@@ -55,14 +57,26 @@ public class CheckRideScriptCommand extends AbstractFormCommand {
 			access.validate();
 			if (!access.getCanEdit())
 				throw securityException("Cannot save Check Ride script");
+			
+			// Check audit log
+			Collection<BeanUtils.PropertyChange> delta = BeanUtils.getDelta(osc, sc);
+			AuditLog ae = AuditLog.create(sc, delta, ctx.getUser().getID());
+			
+			// Start transaction
+			ctx.startTX();
 
 			// Get the DAO and update the script
 			SetExamProfile wdao = new SetExamProfile(con);
 			wdao.write(sc);
+			
+			// Write audit log
+			writeAuditLog(ctx, ae);
+			ctx.commitTX();
 
 			// Save status attribute
 			ctx.setAttribute("script", sc, REQUEST);
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
@@ -110,6 +124,7 @@ public class CheckRideScriptCommand extends AbstractFormCommand {
 				// Save in the request
 				ctx.setAttribute("script", sc, REQUEST);
 				ctx.setAttribute("access", access, REQUEST);
+				readAuditLog(ctx, sc);
 				
 				// Get primary equipment types
 				EquipmentType eq = eqdao.get(sc.getProgram());

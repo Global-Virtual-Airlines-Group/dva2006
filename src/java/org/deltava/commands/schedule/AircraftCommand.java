@@ -1,9 +1,10 @@
-// Copyright 2006, 2007, 2008, 2009, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.sql.*;
 import java.util.*;
 
+import org.deltava.beans.AuditLog;
 import org.deltava.beans.schedule.Aircraft;
 
 import org.deltava.commands.*;
@@ -17,11 +18,11 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Aircraft profiles.
  * @author Luke
- * @version 6.4
+ * @version 7.4
  * @since 1.0
  */
 
-public class AircraftCommand extends AbstractFormCommand {
+public class AircraftCommand extends AbstractAuditFormCommand {
 
 	/**
 	 * Callback method called when saving the Aircraft profile.
@@ -38,14 +39,14 @@ public class AircraftCommand extends AbstractFormCommand {
 			Connection con = ctx.getConnection();
 			
 			// If we're editing an existing aircraft, load it
-			Aircraft a = null; String oldName = null;
+			Aircraft a = null; Aircraft oa = null; String oldName = null;
 			if (!isNew) {
 				GetAircraft dao = new GetAircraft(con);
 				a = dao.get(aCode);
 				if (a == null)
 					throw notFoundException("Unknown Aircraft - " + aCode);
 
-				oldName = a.getName();
+				oa = BeanUtils.clone(a); oldName = a.getName();
 				a.setName(ctx.getParameter("name"));
 			} else
 				a = new Aircraft(ctx.getParameter("name"));
@@ -92,6 +93,13 @@ public class AircraftCommand extends AbstractFormCommand {
 					a.addApp(SystemData.getApp(i.next()));
 			}
 			
+			// Check audit log
+			Collection<BeanUtils.PropertyChange> delta = BeanUtils.getDelta(oa, a);
+			AuditLog ae = AuditLog.create(a, delta, ctx.getUser().getID());
+			
+			// Start transaction
+			ctx.startTX();
+			
 			// Get the DAO and update the database
 			SetSchedule wdao = new SetSchedule(con);
 			if (isNew) {
@@ -102,9 +110,14 @@ public class AircraftCommand extends AbstractFormCommand {
 				ctx.setAttribute("aircraftUpdate", Boolean.TRUE, REQUEST);
 			}
 			
+			// Write audit log
+			writeAuditLog(ctx, ae);
+			ctx.commitTX();
+			
 			// Save the aircraft in the request
 			ctx.setAttribute("aircraft", a, REQUEST);
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
@@ -135,6 +148,8 @@ public class AircraftCommand extends AbstractFormCommand {
 				Aircraft a = dao.get(aCode);
 				if (a == null)
 					throw notFoundException("Unknown Aircraft - " + aCode);
+				
+				readAuditLog(ctx, a);
 				
 				ctx.setAttribute("aircraft", a, REQUEST);
 				ctx.setAttribute("iataCodes", StringUtils.listConcat(a.getIATA(), "\n"), REQUEST);
@@ -172,6 +187,7 @@ public class AircraftCommand extends AbstractFormCommand {
 				throw securityException("Cannot read Aircraft profile");
 
 			// Save request variables
+			readAuditLog(ctx, a);
 			ctx.setAttribute("aircraft", a, REQUEST);
 			ctx.setAttribute("access", ac, REQUEST);
 		} catch (DAOException de) {

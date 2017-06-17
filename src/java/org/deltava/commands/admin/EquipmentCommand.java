@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2013, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -18,11 +18,11 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to edit Equipment Type profiles. 
  * @author Luke
- * @version 6.0
+ * @version 7.4
  * @since 1.0
  */
 
-public class EquipmentCommand extends AbstractFormCommand {
+public class EquipmentCommand extends AbstractAuditFormCommand {
 
 	/**
 	 * Callback method called when editing the profile.
@@ -51,6 +51,7 @@ public class EquipmentCommand extends AbstractFormCommand {
 			// Get the DAO and execute
 			GetEquipmentType eqdao = new GetEquipmentType(con);
 			EquipmentType eq = (eqType == null) ? null : eqdao.get(eqType, SystemData.get("airline.db"));
+			readAuditLog(ctx, eq);
 			
 			// Get the aircraft types
 			GetAircraft acdao = new GetAircraft(con);
@@ -99,6 +100,7 @@ public class EquipmentCommand extends AbstractFormCommand {
 			// Get the DAO and the existing equipment type profile
 			GetEquipmentType rdao = new GetEquipmentType(con);
 			EquipmentType eq = isNew ? new EquipmentType(ctx.getParameter("eqType")) : rdao.get(eqType, SystemData.get("airline.db"));
+			EquipmentType oeq = isNew ? null : BeanUtils.clone(eq);
 			if (isNew)
 				eq.setOwner(SystemData.getApp(SystemData.get("airline.code")));
 			
@@ -136,6 +138,10 @@ public class EquipmentCommand extends AbstractFormCommand {
 			// Update examination names
 			eq.setExamNames(Rank.FO, ctx.getParameters("examFO"));
 			eq.setExamNames(Rank.C, ctx.getParameters("examC"));
+			
+			// Check audit log
+			Collection<BeanUtils.PropertyChange> delta = BeanUtils.getDelta(oeq, eq);
+			AuditLog ae = AuditLog.create(eq, delta, ctx.getUser().getID());
 			
 			// Start transaction
 			ctx.startTX();
@@ -189,6 +195,7 @@ public class EquipmentCommand extends AbstractFormCommand {
 			}
 			
 			// Commit the transaction and save in request
+			writeAuditLog(ctx, ae);
 			ctx.commitTX();
 			ctx.setAttribute("eqType", eq, REQUEST);
 		} catch (DAOException de) {

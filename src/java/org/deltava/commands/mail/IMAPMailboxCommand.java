@@ -1,11 +1,11 @@
-// Copyright 2008, 2010, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2010, 2012, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.mail;
 
 import java.io.*;
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.Pilot;
+import org.deltava.beans.*;
 import org.deltava.beans.system.IMAPConfiguration;
 
 import org.deltava.commands.*;
@@ -17,11 +17,11 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle IMAP mailbox profiles.
  * @author Luke
- * @version 6.1
+ * @version 7.4
  * @since 2.2
  */
 
-public class IMAPMailboxCommand extends AbstractFormCommand {
+public class IMAPMailboxCommand extends AbstractAuditFormCommand {
 
 	/**
 	 * Callback method called when editing the profile.
@@ -52,6 +52,7 @@ public class IMAPMailboxCommand extends AbstractFormCommand {
 			// Save in the request
 			ctx.setAttribute("pilot", p, REQUEST);
 			ctx.setAttribute("mb", cfg, REQUEST);
+			readAuditLog(ctx, cfg);
 			ctx.setAttribute("aliases", StringUtils.listConcat(cfg.getAliases(), "\n"), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
@@ -96,7 +97,7 @@ public class IMAPMailboxCommand extends AbstractFormCommand {
 			// Load the e-mail configuration
 			GetPilotEMail idao = new GetPilotEMail(con);
 			IMAPConfiguration cfg = idao.getEMailInfo(usr.getID());
-			isNew = (cfg == null);
+			isNew = (cfg == null); IMAPConfiguration ocfg = BeanUtils.clone(cfg);
 			if (cfg == null)
 				cfg = new IMAPConfiguration(usr.getID(), ctx.getParameter("IMAPAddr"));
 			else
@@ -108,6 +109,10 @@ public class IMAPMailboxCommand extends AbstractFormCommand {
 			cfg.setActive(Boolean.valueOf(ctx.getParameter("IMAPActive")).booleanValue());
 			cfg.setAllowSMTP(Boolean.valueOf(ctx.getParameter("IMAPAllowSMTP")).booleanValue());
 			cfg.setAliases(StringUtils.split(ctx.getParameter("IMAPAliases"), "\n"));
+			
+			// Check audit log
+			Collection<BeanUtils.PropertyChange> delta = BeanUtils.getDelta(ocfg, cfg);
+			AuditLog ae = AuditLog.create(cfg, delta, ctx.getUser().getID());
 
 			// Start a transaction
 			ctx.startTX();
@@ -155,6 +160,8 @@ public class IMAPMailboxCommand extends AbstractFormCommand {
 			} else
 				ewdao.update(cfg, usr.getName());
 
+			// Commit
+			writeAuditLog(ctx, ae);
 			ctx.commitTX();
 		} catch (DAOException de) {
 			ctx.rollbackTX();
