@@ -32,7 +32,7 @@ public class TestBeanUtils extends TestCase {
 		gp2.setLatitude(55);
 		assertFalse(gp2.getLatitude() == gp1.getLatitude());
 		
-		List<BeanUtils.PropertyChange> delta = BeanUtils.getPreviousValues(gp1, gp2);
+		List<BeanUtils.PropertyChange> delta = BeanUtils.getDelta(gp1, gp2);
 		assertNotNull(delta);
 		assertEquals(1, delta.size());
 		assertEquals("latitude", delta.get(0).getName());
@@ -45,7 +45,7 @@ public class TestBeanUtils extends TestCase {
 		GeoPosition gp2 = BeanUtils.clone(gp1);
 		assertNotNull(gp2);
 		
-		List<BeanUtils.PropertyChange> delta = BeanUtils.getPreviousValues(gp1, gp2);
+		List<BeanUtils.PropertyChange> delta = BeanUtils.getDelta(gp1, gp2);
 		assertNotNull(delta);
 		assertTrue(delta.isEmpty());
 	}
@@ -60,9 +60,22 @@ public class TestBeanUtils extends TestCase {
 		gp2.setAltitude(200);
 		assertTrue(gp1.getAltitude() != gp2.getAltitude());
 
-		List<BeanUtils.PropertyChange> delta = BeanUtils.getPreviousValues(gp1, gp2, "altitude");
+		List<BeanUtils.PropertyChange> delta = BeanUtils.getDelta(gp1, gp2, "altitude");
 		assertNotNull(delta);
 		assertEquals(1, delta.size());
 		assertEquals("latitude", delta.get(0).getName());
+	}
+	
+	@SuppressWarnings("static-method")
+	public void testNull() {
+		
+		GeoPosition a = null;
+		assertNull(a);
+		assertNull(BeanUtils.clone(a));
+		
+		GeoPosition gp1 = new GeoPosition(45, -98, 100);
+		List<BeanUtils.PropertyChange> delta = BeanUtils.getDelta(gp1, a);
+		assertNotNull(delta);
+		assertTrue(delta.isEmpty());
 	}
 }
