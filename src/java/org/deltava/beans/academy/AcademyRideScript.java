@@ -1,4 +1,4 @@
-// Copyright 2005, 2009, 2010, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2010, 2014, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.academy;
 
 import org.deltava.beans.testing.CheckRideScript;
@@ -6,7 +6,7 @@ import org.deltava.beans.testing.CheckRideScript;
 /**
  * A bean to store Flight Academy Check Ride scripts.
  * @author Luke
- * @version 7.2
+ * @version 7.4
  * @since 1.0
  */
 
@@ -47,5 +47,10 @@ public class AcademyRideScript extends CheckRideScript {
     */
    public AcademyRideID getID() {
 	   return new AcademyRideID(getCertificationName(), _idx);
+   }
+   
+   @Override
+   public String getAuditID() {
+	   return getID().toString();
    }
 }

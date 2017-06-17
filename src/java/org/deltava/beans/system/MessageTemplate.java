@@ -1,17 +1,18 @@
-// Copyright 2005, 2006, 2009, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
-import org.deltava.beans.ViewEntry;
+import org.deltava.beans.*;
+
 import org.deltava.util.cache.Cacheable;
 
 /**
  * A class for storing E-Mail message templates.
  * @author Luke
- * @version 7.0
+ * @version 7.4
  * @since 1.0
  */
 
-public class MessageTemplate implements Comparable<MessageTemplate>, Cacheable, ViewEntry {
+public class MessageTemplate implements Comparable<MessageTemplate>, Auditable, Cacheable, ViewEntry {
 
     private final String _name;
     private String _subject;
@@ -112,17 +113,11 @@ public class MessageTemplate implements Comparable<MessageTemplate>, Cacheable, 
     	_isHTML = html;
     }
     
-    /**
-     * Calculates equality by comparing the template names.
-     */
     @Override
     public boolean equals(Object o) {
     	return (o instanceof MessageTemplate) && (compareTo((MessageTemplate) o) == 0);
     }
     
-    /**
-     * Returns the template name's hashcode.
-     */
     @Override
     public int hashCode() {
     	return _name.hashCode();
@@ -136,19 +131,16 @@ public class MessageTemplate implements Comparable<MessageTemplate>, Cacheable, 
     	return _name.compareTo(mt2._name);
     }
     
-    /**
-     * Returns the cache key.
-     * @return the template name
-     */
     @Override
     public Object cacheKey() {
        return _name;
     }
     
-    /**
-     * Returns the CSS class name used when displaying in a view table.
-     * @return the CSS class name
-     */
+    @Override
+    public String getAuditID() {
+    	return _name;
+    }
+    
     @Override
     public String getRowClassName() {
     	return _isHTML ? "opt1" : null;
