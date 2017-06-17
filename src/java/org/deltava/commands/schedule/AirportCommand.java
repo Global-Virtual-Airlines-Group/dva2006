@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -10,8 +10,7 @@ import org.deltava.beans.schedule.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 import org.gvagroup.common.*;
@@ -19,11 +18,11 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to modify Airport data.
  * @author Luke
- * @version 7.0
+ * @version 7.4
  * @since 1.0
  */
 
-public class AirportCommand extends AbstractFormCommand {
+public class AirportCommand extends AbstractAuditFormCommand {
 	
 	/**
 	 * Callback method called when saving the Airport.
@@ -56,7 +55,7 @@ public class AirportCommand extends AbstractFormCommand {
 		}
 
 		try {
-			Airport a = null; String oldIATA = null;
+			Airport a = null; Airport oa = null; String oldIATA = null;
 			Connection con = ctx.getConnection();
 
 			// Get the DAO and the Airport
@@ -67,6 +66,7 @@ public class AirportCommand extends AbstractFormCommand {
 					throw notFoundException("Invalid Airport Code - " + aCode);
 
 				// Load airport fields
+				oa = BeanUtils.clone(a);
 				oldIATA = a.getIATA();
 				a.setName(ctx.getParameter("name"));
 				a.setICAO(ctx.getParameter("icao"));
@@ -114,6 +114,13 @@ public class AirportCommand extends AbstractFormCommand {
 			GetNavData navdao = new GetNavData(con);
 			for (Runway r : navdao.getRunways(a, Simulator.FSX))
 				a.setMaximumRunwayLength(r.getLength());
+			
+			// Check audit log
+			Collection<BeanUtils.PropertyChange> delta = BeanUtils.getDelta(oa, a);
+			AuditLog ae = AuditLog.create(a, delta, ctx.getUser().getID());
+			
+			// Start transaction
+			ctx.startTX();
 
 			// Get the DAO and write the airport
 			SetSchedule wdao = new SetSchedule(con);
@@ -124,10 +131,15 @@ public class AirportCommand extends AbstractFormCommand {
 				wdao.update(a, oldIATA);
 				ctx.setAttribute("isUpdate", Boolean.TRUE, REQUEST);
 			}
+			
+			// Write audit log
+			writeAuditLog(ctx, ae);
+			ctx.commitTX();
 
 			// Save the airport in the request
 			ctx.setAttribute("airport", a, REQUEST);
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
@@ -164,6 +176,7 @@ public class AirportCommand extends AbstractFormCommand {
 				// Get the DAO and the Airport
 				GetAirport dao = new GetAirport(con);
 				a = dao.get(aCode);
+				readAuditLog(ctx, a);
 				if (a == null) {
 					String icao = dao.getICAO(aCode);
 					if (icao != null) {

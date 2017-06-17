@@ -1,9 +1,10 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
 import java.sql.Connection;
 
+import org.deltava.beans.AuditLog;
 import org.deltava.beans.FileUpload;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.Airport;
@@ -14,18 +15,18 @@ import org.deltava.comparators.AirportComparator;
 import org.deltava.dao.*;
 
 import org.deltava.security.command.QuestionProfileAccessControl;
-
+import org.deltava.util.BeanUtils;
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to support the modification of Examination Question Profiles.
  * @author Luke
- * @version 5.1
+ * @version 7.4
  * @since 1.0
  */
 
-public class QuestionProfileCommand extends AbstractFormCommand {
+public class QuestionProfileCommand extends AbstractAuditFormCommand {
 
 	/**
 	 * Callback method called when saving the profile.
@@ -38,7 +39,7 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 			Connection con = ctx.getConnection();
 
 			// Get the DAO and load the existing question profile, or create a new one
-			QuestionProfile qp = null;
+			QuestionProfile qp = null; QuestionProfile oqp = null;
 			if (ctx.getID() != 0) {
 				GetExamQuestions rdao = new GetExamQuestions(con);
 				qp = rdao.getQuestionProfile(ctx.getID());
@@ -46,6 +47,7 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 					throw notFoundException("Invalid Question Profile - " + ctx.getID());
 
 				// Update question text / answer
+				oqp = BeanUtils.clone(qp);
 				qp.setQuestion(ctx.getParameter("question"));
 				if (qp instanceof MultipleChoice) {
 					MultiChoiceQuestionProfile mqp = (MultiChoiceQuestionProfile) qp;
@@ -104,7 +106,11 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 			if (examNames != null)
 				qp.setExams(examNames);
 			else
-				qp.setExams(new HashSet<String>());
+				qp.setExams(Collections.emptySet());
+			
+			// Check audit log
+			Collection<BeanUtils.PropertyChange> delta = BeanUtils.getDelta(oqp, qp);
+			AuditLog ae = AuditLog.create(qp, delta, ctx.getUser().getID());
 
 			// Start a transaction
 			ctx.startTX();
@@ -122,8 +128,9 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 				qp.load(imgData.getBuffer());
 				wdao.writeImage(qp);
 			}
-
-			// Commit the transaction
+			
+			// Write audit log
+			writeAuditLog(ctx, ae);
 			ctx.commitTX();
 
 			// Save the question in the request
@@ -172,6 +179,7 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 			// If we cannot edit, we're just including
 			doEdit = access.getCanEdit();
 			ctx.setAttribute("access", access, REQUEST);
+			readAuditLog(ctx, qp);
 
 			// Determine if the user uses IATA/ICAO codes
 			boolean useIATA = (ctx.getUser().getAirportCodeType() == Airport.Code.IATA);
@@ -248,6 +256,7 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 			// Check our access level
 			QuestionProfileAccessControl access = new QuestionProfileAccessControl(ctx, qp);
 			access.validate();
+			readAuditLog(ctx, qp);
 
 			// Display route
 			if (qp instanceof RoutePlot) {

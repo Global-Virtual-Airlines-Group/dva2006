@@ -1,26 +1,27 @@
-// Copyright 2005, 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.sql.Connection;
+import java.util.Collection;
 
+import org.deltava.beans.AuditLog;
 import org.deltava.beans.system.MessageTemplate;
 
 import org.deltava.commands.*;
-
-import org.deltava.dao.GetMessageTemplate;
-import org.deltava.dao.DAOException;
-import org.deltava.dao.SetMessageTemplate;
+import org.deltava.dao.*;
 
 import org.deltava.security.command.MessageAccessControl;
+
+import org.deltava.util.BeanUtils;
 
 /**
  * A Web Site Command to edit Message Templates.
  * @author Luke
- * @version 7.0
+ * @version 7.4
  * @since 1.0
  */
 
-public class MessageTemplateCommand extends AbstractFormCommand {
+public class MessageTemplateCommand extends AbstractAuditFormCommand {
 
 	/**
 	 * Callback method called when editing the template.
@@ -67,6 +68,7 @@ public class MessageTemplateCommand extends AbstractFormCommand {
 			// Save the template in the request
 			ctx.setAttribute("access", access, REQUEST);
 			ctx.setAttribute("template", msg, REQUEST);
+			readAuditLog(ctx, msg);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
@@ -92,7 +94,7 @@ public class MessageTemplateCommand extends AbstractFormCommand {
 			Connection con = ctx.getConnection();
 			
 			// Get the DAO and the existing template
-			MessageTemplate mt = null;
+			MessageTemplate mt = null; MessageTemplate omt = null;
 			if (!isNew) {
 				GetMessageTemplate dao = new GetMessageTemplate(con);
 				mt = dao.get((String) ctx.getCmdParameter(Command.ID, null));
@@ -104,6 +106,8 @@ public class MessageTemplateCommand extends AbstractFormCommand {
 				access.validate();
 				if (!access.getCanEdit())
 					throw securityException("Cannot edit Message Template");
+				
+				omt = BeanUtils.clone(mt);
 			} else {
 				// Check our access
 				MessageAccessControl access = new MessageAccessControl(ctx, mt);
@@ -120,10 +124,22 @@ public class MessageTemplateCommand extends AbstractFormCommand {
 			mt.setBody(ctx.getParameter("body"));
 			mt.setIsHTML(Boolean.valueOf(ctx.getParameter("isHTML")).booleanValue());
 			
+			// Check audit log
+			Collection<BeanUtils.PropertyChange> delta = BeanUtils.getDelta(omt, mt);
+			AuditLog ae = AuditLog.create(mt, delta, ctx.getUser().getID());
+			
+			// Start transaction
+			ctx.startTX();
+			
 			// Get the write DAO and update the template
 			SetMessageTemplate wdao = new SetMessageTemplate(con);
 			wdao.write(mt);
+			
+			// Write audit log
+			writeAuditLog(ctx, ae);
+			ctx.commitTX();
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();

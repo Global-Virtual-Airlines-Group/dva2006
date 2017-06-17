@@ -1,8 +1,10 @@
-// Copyright 2010, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2014, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.sql.Connection;
+import java.util.Collection;
 
+import org.deltava.beans.AuditLog;
 import org.deltava.beans.academy.*;
 
 import org.deltava.commands.*;
@@ -10,16 +12,16 @@ import org.deltava.dao.*;
 
 import org.deltava.security.command.AcademyRideScriptAccessControl;
 
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 
 /**
  * A Web Site Command to handle Flight Academy Check Ride scripts.
  * @author Luke
- * @version 5.3
+ * @version 7.4
  * @since 3.4
  */
 
-public class RideScriptCommand extends AbstractFormCommand {
+public class RideScriptCommand extends AbstractAuditFormCommand {
 
 	/**
 	 * Method called when saving the form.
@@ -42,7 +44,7 @@ public class RideScriptCommand extends AbstractFormCommand {
 			
 			// Get the script
 			AcademyRideID rideID = isNew ? new AcademyRideID(c.getName() + "-" + ctx.getParameter("seq")) : new AcademyRideID(id);
-			AcademyRideScript sc = acdao.getScript(rideID);
+			AcademyRideScript sc = acdao.getScript(rideID); AcademyRideScript oldSC = BeanUtils.clone(sc);
 			if (!isNew && (sc == null))
 				throw notFoundException("Academy Check Ride script not found - " + rideID);
 
@@ -58,10 +60,24 @@ public class RideScriptCommand extends AbstractFormCommand {
 				
 			sc.setDescription(ctx.getParameter("body"));
 			
+			// Check audit log
+			Collection<BeanUtils.PropertyChange> delta = BeanUtils.getDelta(oldSC, sc);
+			AuditLog ae = AuditLog.create(sc, delta, ctx.getUser().getID());
+			
+			// Start transaction
+			ctx.startTX();
+			
+			// Write audit log
+			writeAuditLog(ctx, ae);
+			
 			// Save the script
 			SetAcademyCertification acwdao = new SetAcademyCertification(con);
 			acwdao.write(sc);
+			
+			// Commit
+			ctx.commitTX();
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
@@ -84,13 +100,17 @@ public class RideScriptCommand extends AbstractFormCommand {
 		String id = (String) ctx.getCmdParameter(ID, null);
 		
 		try {
+			Connection con = ctx.getConnection();
+			
 			boolean isNew = StringUtils.isEmpty(id);
 			AcademyRideScript sc = null;
-			GetAcademyCertifications acdao = new GetAcademyCertifications(ctx.getConnection());
+			GetAcademyCertifications acdao = new GetAcademyCertifications(con);
 			if (!isNew) {
 				sc = acdao.getScript(new AcademyRideID(id));
 				if (sc == null)
 					throw notFoundException("Academy Check Ride script not found - " + id);
+				
+				readAuditLog(ctx, sc);
 			}
 			
 			// Check our access
