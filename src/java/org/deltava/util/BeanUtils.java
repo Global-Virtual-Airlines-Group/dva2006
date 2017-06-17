@@ -16,7 +16,9 @@ import org.apache.log4j.Logger;
 
 public class BeanUtils {
 	
-	private static final Logger log = Logger.getLogger(org.apache.axis.utils.BeanUtils.class);
+	private static final Logger log = Logger.getLogger(BeanUtils.class);
+	
+	private static final Collection<String> DEFAULT_IGNORE_FIELDS = Arrays.asList("rowClassName", "infoBox");
 
 	// static class
 	private BeanUtils() {
@@ -51,7 +53,7 @@ public class BeanUtils {
 			buf.append(_old);
 			buf.append("\" -> \"");
 			buf.append(_new);
-			buf.append("\"}");
+			buf.append("\" }");
 			return buf.toString();
 		}
 
@@ -62,12 +64,8 @@ public class BeanUtils {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static <T> T clone(T obj) {
-		try {
-			return (T) org.apache.commons.beanutils.BeanUtils.cloneBean(obj);
-		} catch (Exception e) {
-			return null;
-		}
+	public static <T extends java.io.Serializable> T clone(T obj) {
+		return (obj == null) ? null : (T) IPCUtils.reserialize(obj);
 	}
 
 	/**
@@ -77,7 +75,8 @@ public class BeanUtils {
 	 * @param ignoredFields a list of fields to ignore
 	 * @return a Collection of PropertyChange beans
 	 */
-	public static List<PropertyChange> getPreviousValues(Object o, Object n, String... ignoredFields) {
+	public static List<PropertyChange> getDelta(Object o, Object n, String... ignoredFields) {
+		if ((o == null) || (n == null)) return Collections.emptyList();
 		if (!o.getClass().equals(n.getClass()))
 			throw new IllegalArgumentException("Cannot compare " + o.getClass().getName() + " to " + n.getClass().getName());
 		
@@ -85,6 +84,7 @@ public class BeanUtils {
 		PropertyUtilsBean pu = new PropertyUtilsBean();
 		
 		Collection<String> ignore = new HashSet<String>(Arrays.asList(ignoredFields));
+		ignore.addAll(DEFAULT_IGNORE_FIELDS);
 		List<PropertyChange> results = new ArrayList<PropertyChange>();
 		for (Object pn : m.keySet()) {
 			String propertyName = (String) pn;
