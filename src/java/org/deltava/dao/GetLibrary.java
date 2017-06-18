@@ -9,15 +9,14 @@ import java.time.Instant;
 import org.deltava.beans.Simulator;
 import org.deltava.beans.fleet.*;
 
-import org.deltava.util.CollectionUtils;
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to load metadata from the Fleet/Document Libraries.
  * @author Luke
- * @version 7.2
+ * @version 7.5
  * @since 1.0
  */
 
@@ -220,7 +219,7 @@ public class GetLibrary extends DAO {
 	private List<FileEntry> loadFiles(boolean isVideo) throws SQLException {
 		
 		// Determine the path
-		File p = new File(SystemData.get(isVideo ? "path.video.live" : "path.userfiles"));
+		File p = new File(SystemData.get(isVideo ? "path.video" : "path.userfiles"));
 		List<FileEntry> results = new ArrayList<FileEntry>();
 		try (ResultSet rs = _ps.executeQuery()) {
 			boolean hasTotals = (rs.getMetaData().getColumnCount() > 7);

@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Videos.
  * @author Luke
- * @version 6.0
+ * @version 7.5
  * @since 1.0
  */
 
@@ -35,8 +35,7 @@ public class GetVideos extends GetLibrary {
 	 */
 	public Collection<Video> getVideos() throws DAOException {
 		try {
-			prepareStatement("SELECT V.*, GROUP_CONCAT(VC.CERT) FROM exams.VIDEOS V LEFT JOIN "
-					+ "exams.CERTVIDEOS VC ON (V.FILENAME=VC.FILENAME) GROUP BY V.NAME");
+			prepareStatement("SELECT V.*, GROUP_CONCAT(VC.CERT) FROM exams.VIDEOS V LEFT JOIN exams.CERTVIDEOS VC ON (V.FILENAME=VC.FILENAME) GROUP BY V.NAME");
 			return loadVideos();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -51,9 +50,7 @@ public class GetVideos extends GetLibrary {
 	 */
 	public Collection<Video> getVideos(String certName) throws DAOException {
 		try {
-			prepareStatement("SELECT V.*, GROUP_CONCAT(VC.CERT) FROM exams.VIDEOS V LEFT JOIN "
-					+ "exams.CERTVIDEOS VC ON (V.FILENAME=VC.FILENAME) WHERE (VC.CERT=?) GROUP BY "
-					+ "V.NAME");
+			prepareStatement("SELECT V.*, GROUP_CONCAT(VC.CERT) FROM exams.VIDEOS V LEFT JOIN exams.CERTVIDEOS VC ON (V.FILENAME=VC.FILENAME) WHERE (VC.CERT=?) GROUP BY V.NAME");
 			_ps.setString(1, certName);
 			return loadVideos();
 		} catch (SQLException se) {
@@ -66,7 +63,7 @@ public class GetVideos extends GetLibrary {
 	 */
 	private List<Video> loadVideos() throws SQLException {
 		List<Video> results = new ArrayList<Video>();
-		File p = new File(SystemData.get("path.video.live"));
+		File p = new File(SystemData.get("path.video"));
 		try (ResultSet rs = _ps.executeQuery()) {
 			while (rs.next()) {
 				Video entry = null;
