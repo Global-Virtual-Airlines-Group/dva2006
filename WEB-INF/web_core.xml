@@ -76,6 +76,13 @@
 	   <load-on-startup>3</load-on-startup>
 	</servlet>
 
+	<!-- File Upload servlet -->
+	<servlet>
+	   <servlet-name>upload</servlet-name>
+	   <servlet-class>org.deltava.servlet.UploadServlet</servlet-class>
+        <load-on-startup>3</load-on-startup>
+	</servlet>
+
 	<!-- ACARS Track Image servlet -->
 	<servlet>
 		<servlet-name>trackImage</servlet-name>
@@ -148,7 +155,7 @@
 		<url-pattern>/gallery/*</url-pattern>
 	</filter-mapping>
 
-    <!-- Filter mappings to File Attachments -->
+    <!-- Filter mappings to File Attachments/Upload -->
     <filter-mapping>
         <filter-name>SecurityCookieFilter</filter-name>
         <url-pattern>/issue/*</url-pattern>
@@ -158,12 +165,20 @@
         <url-pattern>/error_log/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
+        <filter-name>SecurityCookieFilter</filter-name>
+        <url-pattern>/upload/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
         <filter-name>SecurityRequestWrapperFilter</filter-name>
         <url-pattern>/issue/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>SecurityRequestWrapperFilter</filter-name>
         <url-pattern>/error_log/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>SecurityRequestWrapperFilter</filter-name>
+        <url-pattern>/upload/*</url-pattern>
     </filter-mapping>
 
 	<!-- Filter mappings to Fleet Library -->
@@ -244,6 +259,11 @@
     <servlet-mapping>
         <servlet-name>attachments</servlet-name>    
         <url-pattern>/error_log/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>upload</servlet-name>
+        <url-pattern>/upload/*</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
