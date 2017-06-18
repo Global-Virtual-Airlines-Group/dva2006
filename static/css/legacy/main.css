@@ -348,7 +348,7 @@ body {
 	font: 12px tahoma, verdana, sans-serif;
 }
 
-div.ovalBorder {
+div.ovalBorder, span.ovalBorder {
 	border: 1px solid;
 	padding: 12px;
 	border-radius: 14px;
