@@ -12,19 +12,30 @@
 <content:css name="main" />
 <content:css name="form" />
 <content:js name="common" />
+<content:js name="resumable" />
+<content:js name="progress" />
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script type="text/javascript">
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-golgotha.form.validate({f:f.title, l:10, t:'Video Title'});
-golgotha.form.validate({f:f.baseFile, t:'Video File'});
-golgotha.form.validate({f:f.category, t:'Video Category'});
-golgotha.form.validate({f:f.desc, l:10, t:'Description'});
-golgotha.form.submit(f);
-return true;
+<script>
+golgotha.local.validate = function(f) {
+    if (!golgotha.local.file || !golgotha.form.check()) return false;
+    if (!golgotha.local.uploadComplete) {
+    	f.action = '/tvideo.do?op=save&id=' + golgotha.local.file.file.name;
+    	golgotha.local.showProgress(true);
+    	golgotha.local.pb.set(0.01);
+    	window.setTimeout(golgotha.local.updateProgress, 50);
+    	golgotha.util.display('selectFile', false);
+    	golgotha.util.disable('SelectButton', true);
+    	golgotha.local.r.upload();
+    	return false;
+    }
+    
+    golgotha.form.validate({f:f.title, l:10, t:'Video Title'});
+    golgotha.form.validate({f:f.category, t:'Video Category'});
+    golgotha.form.validate({f:f.desc, l:10, t:'Description'});
+    golgotha.form.submit(f);
+    return true;
 };
 </script>
 </head>
@@ -38,7 +49,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="tvideo.do" linkID="${video.fileName}" op="save" method="post" allowUpload="true" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
+<el:form action="tvideo.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
 <c:choose>
@@ -50,12 +61,10 @@ return true;
 </c:otherwise>
 </c:choose>
 </tr>
-<c:if test="${empty video}">
-<tr>
- <td class="label">Local File</td>
- <td class="data"><el:combo name="baseFile" idx="*" required="true" size="1" options="${availableFiles}" firstEntry="[ VIDEO FILE ]" /></td>
+<tr id="selectFile">
+ <td class="label top">Video File</td>
+ <td class="data" style="height:64px;"><span id="dropTarget" class="ovalBorder pri ita">Drag a File here to Upload</span> <el:button ID="SelectButton" label="SELECT FILE" /></td>
 </tr>
-</c:if>
 <tr>
  <td class="label">Video Title</td>
  <td class="data"><el:text name="title" className="pri bld" required="true" idx="*" size="48" max="80" value="${video.name}" /></td>
@@ -97,6 +106,12 @@ return true;
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="noNotify" idx="*" value="true" label="Don't send notification e-mail" /></td>
 </tr>
+<tr class="progress title caps" style="display:none;">
+ <td colspan="2">UPLOAD PROGRESS</td>
+</tr>
+<tr class="progress" style="display:none;">
+ <td colspan="2" class="mid"><span id="progressBar" class="ovalBorder" style="width:85%; height:32px;"></span></td>
+</tr>
 </el:table>
 
 <!-- Button Bar -->
@@ -112,5 +127,40 @@ return true;
 </content:region>
 </content:page>
 <content:googleAnalytics />
+<script async>
+golgotha.util.disable('SaveButton', true);
+golgotha.local.r = new Resumable({chunkSize:524288, withCredentials:true, chunkNumberParameterName:'c', chunkSizeParameterName:'cs', totalChunksParameterName:'cc', totalSizeParameterName:'ts', xhrTimeout:25000, fileType:['mp4', 'mkv', 'm4v']});
+var dt = document.getElementById('dropTarget');
+golgotha.local.r.assignDrop(dt);
+golgotha.local.r.assignBrowse(document.getElementById('SelectButton'));
+golgotha.local.r.on('fileAdded', function(f, ev) {
+	golgotha.local.file = f;
+    dt.innerHTML = f.file.name + ', ' + f.file.size + ' bytes';
+    golgotha.local.r.opts.target = '/upload/video/' + f.file.name;
+    golgotha.util.disable('SaveButton', false);
+});
+
+golgotha.local.pb = new ProgressBar.Line('#progressBar', {color:'#1a4876', text:{value:'', className:'pri', style:{color:'#ffff'}}, fill:'#1a4876'});
+golgotha.local.showProgress = function(doShow) {
+	var pr = golgotha.util.getElementsByClass('progress', 'tr');
+	pr.forEach(function(r) { golgotha.util.display(r, doShow); });
+};
+
+golgotha.local.updateProgress = function() {
+	var p = golgotha.local.r.progress();
+    golgotha.local.pb.setText(Math.round(p * 100) + '% complete');
+	golgotha.local.pb.animate(p, {duration: 50});
+	if (p >= 1) {
+		console.log('Upload Complete');
+		golgotha.local.showProgress(false);
+		golgotha.local.uploadComplete = true;
+		document.forms[0].submit();
+		return true;
+	}
+	
+    window.setTimeout(golgotha.local.updateProgress, 65);
+    return true;
+};
+</script>
 </body>
 </html>
