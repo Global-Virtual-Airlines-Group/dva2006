@@ -489,6 +489,12 @@
 		<roles>HR,Fleet,Resource</roles>
 	</command>
 
+	<command id="acarsinstupdate">
+	   <name>ACARS Installer Update</name>
+	   <class>org.deltava.commands.fleet.InstallerUploadCommand</class>
+	   <roles>Fleet,Developer</roles>
+	</command>
+
 
 	<!-- Statistics commands -->
 	<command id="airlinestats">
