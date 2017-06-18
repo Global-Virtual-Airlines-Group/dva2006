@@ -2,6 +2,7 @@
 package org.deltava.servlet;
 
 import java.io.*;
+import java.security.Principal;
 
 import javax.servlet.http.*;
 
@@ -56,6 +57,15 @@ public class UploadServlet extends BasicAuthServlet {
 	@Override
 	public void doPost(HttpServletRequest req, HttpServletResponse rsp) throws IOException {
         int chunk =  StringUtils.parse(req.getParameter("c"), -1);
+        
+		// Make sure we are authenticated
+		Principal usr = req.getUserPrincipal();
+		if (usr == null)
+			usr = authenticate(req);
+		if (usr == null) {
+			challenge(rsp, "File Upload");
+			return;
+		}
 
         UploadInfo info = getInfo(req, true);
         try (RandomAccessFile raf = new RandomAccessFile(info.getTempFile(), "rw")) {
@@ -107,6 +117,16 @@ public class UploadServlet extends BasicAuthServlet {
 	 */
     @Override
 	public void doGet(HttpServletRequest req, HttpServletResponse rsp) throws IOException {
+    	
+		// Make sure we are authenticated
+		Principal usr = req.getUserPrincipal();
+		if (usr == null)
+			usr = authenticate(req);
+		if (usr == null) {
+			challenge(rsp, "File Upload");
+			return;
+		}
+
     	UploadInfo info = getInfo(req, false);
     	int chunk =  StringUtils.parse(req.getParameter("c"), -1);
     	rsp.setStatus((info != null) && info.isComplete(chunk) ? HttpServletResponse.SC_OK : HttpServletResponse.SC_NOT_FOUND);
