@@ -342,6 +342,12 @@ for promotion to the rank of Captain in their Equipment Program.<c:if test="${pr
  <td class="data">You can add or update entries in the <content:airline /> Fleet Library.</td>
 </tr>
 </content:filter>
+<content:filter roles="Fleet,Developer">
+<tr>
+ <td class="mid"><el:cmd className="bld" url="acarsinstupdate">ACARS Installer Update</el:cmd></td>
+ <td class="data">You can upload new <content:airline /> ACARS Incremental Installers to the server.</td>
+</tr>
+</content:filter>
 
 <!-- Flight Schedule Section -->
 <tr class="title caps">
