@@ -545,10 +545,8 @@
 		<img>img</img>
 		<library>/home/www/library</library>
 		<userfiles>/home/www/library/usrfiles</userfiles>
-		<video>
-		    <live>/home/www/video</live>
-		    <stage>/home/video</stage>
-	    </video>
+		<video>/home/www/video</video>
+		<upload>/home/www/upload</upload>
 		<httplog>/var/log/www</httplog>
 		<archive>/home/www/pos_archive</archive>
 	</path>
