@@ -8,6 +8,7 @@
 	<cache id="Signature" max="640" />
 	<cache id="Image" max="32" expires="600" />
 	<cache id="Tracks" expires="604800" remote="true" />
+	<cache id="UploadState" expires="14400" max="32" />
 
 	<!-- Water Cooler caches -->
 	<cache id="CoolerChannels" max="64" expires="1800" />
