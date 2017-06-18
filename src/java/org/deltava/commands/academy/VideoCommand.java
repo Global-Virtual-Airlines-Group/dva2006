@@ -1,8 +1,7 @@
-// Copyright 2006, 2010, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.io.File;
 import java.sql.Connection;
 
@@ -21,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to view and update Flight Academy Training videos.
  * @author Luke
- * @version 7.0
+ * @version 7.5
  * @since 1.0
  */
 
@@ -35,25 +34,15 @@ public class VideoCommand extends AbstractFormCommand {
 	@Override
 	protected void execSave(CommandContext ctx) throws CommandException {
 
-		// Get the file name and if we are saving a new document
+		// Get the file name
 		String fName = (String) ctx.getCmdParameter(Command.ID, null);
-		boolean isNew = (fName == null);
-		
-		// Check our access
-		CertificationAccessControl access = new CertificationAccessControl(ctx);
-		access.validate();
-		boolean canExec = isNew ? access.getCanCreateVideo() : access.getCanEditVideo();
-		if (!canExec)
-			throw securityException("Cannot create/edit Training Video");
 		
 		// Get the uploaded file - look for a file
-		if (isNew) {
-			File f = new File(SystemData.get("path.video.stage"), ctx.getParameter("baseFile"));
-			if (f.exists())
-				fName = f.getName();
-			if (fName == null)
-				throw notFoundException("No Training Video Specified");
-		}
+		File f = new File(SystemData.get("path.upload"), fName);
+		if (f.exists())
+			fName = f.getName();
+		if (fName == null)
+			throw notFoundException("No Video Uploaded");
 
 		// Check if we notify people
 		boolean noNotify = Boolean.valueOf(ctx.getParameter("noNotify")).booleanValue();
@@ -70,13 +59,18 @@ public class VideoCommand extends AbstractFormCommand {
 			// Get the DAO and the Training Video
 			GetVideos dao = new GetVideos(con);
 			Video v = dao.getVideo(fName);
+			boolean isNew = (v == null);
+			
+			// Check our access
+			CertificationAccessControl access = new CertificationAccessControl(ctx);
+			access.validate();
+			boolean canExec = isNew ? access.getCanCreateVideo() : access.getCanEditVideo();
+			if (!canExec)
+				throw securityException("Cannot create/edit Training Video");
 
 			// Check if we're uploading to ensure that the file does not already exist
-			if (isNew && (v != null)) {
-				throw new CommandException("Video " + fName + " already exists");
-			} else if (isNew || (v == null)) {
-				File f = new File(SystemData.get("path.video.stage"), fName);
-				video = new TrainingVideo(f);
+			if (isNew) {
+				video = new TrainingVideo(new File(SystemData.get("path.video"), fName));
 				video.setAuthorID(ctx.getUser().getID());
 				ctx.setAttribute("fileAdded", Boolean.TRUE, REQUEST);
 			} else {
@@ -113,12 +107,12 @@ public class VideoCommand extends AbstractFormCommand {
 			// Write the certifications
 			SetAcademy awdao = new SetAcademy(con);
 			awdao.writeCertifications(video);
+			
+			// Copy the file
+			if (!f.renameTo(video.file()))
+				throw new DAOException("Cannot move " + f.getAbsolutePath() + " to " + video.file().getAbsolutePath());
 
-			// Move the files
-			if (isNew)
-				video.file().renameTo(new File(SystemData.get("path.video.live"), video.getFileName()));
-
-			// Commit the transaction
+			// Commit
 			ctx.commitTX();
 		} catch (DAOException de) {
 			ctx.rollbackTX();
@@ -183,11 +177,6 @@ public class VideoCommand extends AbstractFormCommand {
 				
 				// Save the video in the request 
 				ctx.setAttribute("video", video, REQUEST);
-			} else {
-				File p = new File(SystemData.get("path.video.stage")); File[] pl = p.listFiles();
-				Collection<File> files = (pl == null) ? Collections.emptyList() : Arrays.asList(pl);
-				Collection<String> videos = files.stream().filter(f -> f.isFile() && Video.isValidFormat(f.getName())).map(f -> f.getName()).collect(Collectors.toSet());
-				ctx.setAttribute("availableFiles", videos, REQUEST);
 			}
 			
 			// Get the certification options
