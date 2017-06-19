@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2009, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009, 2011, 2012, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.filter;
 
 import java.io.*;
@@ -18,7 +18,7 @@ import org.deltava.util.StringUtils;
 /**
  * A servlet filter to support saving multi-part form upload data into the servlet request.
  * @author Luke
- * @version 6.0
+ * @version 7.5
  * @since 1.0
  */
 
@@ -61,8 +61,7 @@ public class FileUploadFilter implements Filter {
 			for (Part p : hreq.getParts()) {
 				if (log.isDebugEnabled())
 					log.debug(p.getName() + " " + p.getHeaderNames());
-				String fName = getFileName(p);
-
+				String fName = p.getSubmittedFileName();
 				if (!StringUtils.isEmpty(fName)) {
 					if (log.isDebugEnabled())
 						log.debug("Found File element " + p.getName() + ", file=" + fName);
@@ -78,12 +77,13 @@ public class FileUploadFilter implements Filter {
 						p.delete();
 					}
 				} else {
-					BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream(), "UTF-8"));
 					StringBuilder buf = new StringBuilder();
-					while (br.ready()) {
-						buf.append(br.readLine());
-						if (br.ready())
-							buf.append('\n');
+					try (BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream(), "UTF-8"))) {
+						while (br.ready()) {
+							buf.append(br.readLine());
+							if (br.ready())
+								buf.append('\n');
+						}
 					}
 					
 					if (buf.length() > 0)
@@ -106,19 +106,6 @@ public class FileUploadFilter implements Filter {
 			fc.doFilter(reqWrap, rsp);
 		} else
 			fc.doFilter(req, rsp);
-	}
-
-	/*
-	 * Gets the file name of a Part.
-	 */
-	private static String getFileName(Part p) {
-		String hdr = p.getHeader("content-disposition");
-		for (String cd : hdr.split(";")) {
-			if (cd.trim().startsWith("filename"))
-				return cd.substring(cd.indexOf('=') + 1).trim().replace("\"", "");
-		}
-
-		return null;
 	}
 
 	/**
