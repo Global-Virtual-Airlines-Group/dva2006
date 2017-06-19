@@ -21,7 +21,7 @@
 golgotha.local.validate = function(f) {
     if (!golgotha.local.file || !golgotha.form.check()) return false;
     if (!golgotha.local.uploadComplete) {
-    	f.action = '/tvideo.do?op=save&id=' + golgotha.local.file.file.name;
+    	f.id.value = golgotha.local.file.file.name;
     	golgotha.local.showProgress(true);
     	golgotha.local.pb.set(0.01);
     	window.setTimeout(golgotha.local.updateProgress, 50);
@@ -49,7 +49,7 @@ golgotha.local.validate = function(f) {
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="tvideo.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
+<el:form action="tvideo.do" op="save" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
 <c:choose>
@@ -121,6 +121,7 @@ golgotha.local.validate = function(f) {
 <c:if test="${!empty video}"> <el:cmdbutton ID="DeleteButton" url="tvdelete" linkID="${video.fileName}" label="DELETE VIDEO" /></c:if></c:if> </td>
 </tr>
 </el:table>
+<el:text name="id" type="hidden" value="" />
 </el:form>
 <br />
 <content:copyright />
