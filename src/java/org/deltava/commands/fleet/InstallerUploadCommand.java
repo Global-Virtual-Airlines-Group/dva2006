@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
  */
 
 public class InstallerUploadCommand extends AbstractFormCommand {
-
+	
 	/**
 	 * Method called when saving the form.
 	 * @param ctx the Command context
@@ -32,6 +32,13 @@ public class InstallerUploadCommand extends AbstractFormCommand {
 		// Get the file name
 		String fName = (String) ctx.getCmdParameter(Command.ID, null);
 		
+		// Build client version
+		int version = StringUtils.parse(ctx.getParameter("version"), 3); boolean isBeta = Boolean.valueOf(ctx.getParameter("isBeta")).booleanValue();
+		int beta = isBeta ? StringUtils.parse(ctx.getParameter("beta"), 0) : 0;
+		ClientInfo info = new ClientInfo(version, StringUtils.parse(ctx.getParameter("build"), 0), beta);
+		String newFile = SystemData.get("airline.code") + "-ACARS" + version + (info.isBeta() ? "Beta" : "") + "Inc.exe";
+		File nf = new File(SystemData.get("path.library"), newFile);
+		
 		// Get the uploaded file - look for a file
 		File f = new File(SystemData.get("path.upload"), fName);
 		if (f.exists())
@@ -39,12 +46,6 @@ public class InstallerUploadCommand extends AbstractFormCommand {
 		if (fName == null)
 			throw notFoundException("No Instaler Uploaded");
 		
-		// Build client version
-		int version = StringUtils.parse(ctx.getParameter("version"), 3); boolean isBeta = Boolean.valueOf(ctx.getParameter("isBeta")).booleanValue();
-		int beta = isBeta ? StringUtils.parse(ctx.getParameter("beta"), 0) : 0;
-		ClientInfo info = new ClientInfo(version, StringUtils.parse(ctx.getParameter("build"), 0), beta);
-		String newFile = SystemData.get("airline.code") + "ACARS" + version + (info.isBeta() ? "Beta" : "") + "Inc.exe";
-		File nf = new File(SystemData.get("path.library"), newFile);
 		
 		try {
 			Connection con = ctx.getConnection();
@@ -55,6 +56,9 @@ public class InstallerUploadCommand extends AbstractFormCommand {
 			// Update the build number
 			SetACARSBuilds bwdao = new SetACARSBuilds(con);
 			bwdao.setLatest(info, false);
+			
+			if (nf.exists())
+				nf.delete();
 			
 			// Copy the file
 			if (!f.renameTo(nf))
