@@ -108,6 +108,10 @@ public class VideoCommand extends AbstractFormCommand {
 			SetAcademy awdao = new SetAcademy(con);
 			awdao.writeCertifications(video);
 			
+			// Delete if exists
+			if (video.file().exists())
+				video.file().delete();
+			
 			// Copy the file
 			if (!f.renameTo(video.file()))
 				throw new DAOException("Cannot move " + f.getAbsolutePath() + " to " + video.file().getAbsolutePath());

@@ -19,7 +19,7 @@
 golgotha.local.validate = function(f) {
     if (!golgotha.local.file || !golgotha.form.check()) return false;
     if (!golgotha.local.uploadComplete) {
-        f.action = '/acarsinstUpdate.do?op=save&id=' + golgotha.local.file.file.name;
+    	f.id.value = golgotha.local.file.file.name;
         golgotha.local.showProgress(true);
         golgotha.local.pb.set(0.01);
         window.setTimeout(golgotha.local.updateProgress, 50);
@@ -29,7 +29,6 @@ golgotha.local.validate = function(f) {
         return false;
     }
 
-    return false;
     golgotha.form.submit(f);
     return true;
 };    
@@ -43,7 +42,7 @@ golgotha.local.validate = function(f) {
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="acarsinstUpdate.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
+<el:form action="acarsinstUpdate.do" op="save" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2"><span class="nophone"><content:airline /> </span>ACARS INCREMENTAL INSTALLER UPDATE</td>
@@ -54,12 +53,12 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr>
  <td class="label">Version Information</td>
- <td class="data">Version <el:text name="version" value="${latest.version}" size="2" max="2" /> Build <el:text className="bld" name="build" value="${latest.clientBuild}" size="3" max="3" />
-<span id="beta" style="display:none;"> Beta <el:text name="beta" value="${latest.getBeta()}" size="2" max="2" /></span></td>
+ <td class="data">Version <el:text name="version" value="${latest.version}" size="1" max="2" /> Build <el:text className="bld" name="build" value="${latest.clientBuild}" size="2" max="3" />
+<span id="beta" style="display:none;"> Beta <el:text name="beta" value="${latest.getBeta()}" size="1" max="2" /></span></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="isBeta" value="true" label="This is a Beta build" onChange="void golgotha.local.setBeta(this)" /></td>
+ <td class="data"><el:box name="isBeta" value="true" label="This is a Beta build" checked="${latest.beta}" onChange="void golgotha.local.setBeta(this)" /></td>
 </tr>
 <tr class="progress title caps" style="display:none;">
  <td colspan="2">UPLOAD PROGRESS</td>
@@ -75,6 +74,7 @@ golgotha.local.validate = function(f) {
  <td><el:button ID="SaveButton" type="submit" label="UPDATE INCREMENTAL INSTALLER" /></td>
 </tr>
 </el:table>
+<el:text name="id" type="hidden" value="" />
 </el:form>
 <br />
 <content:copyright />
@@ -82,7 +82,7 @@ golgotha.local.validate = function(f) {
 </content:page>
 <content:googleAnalytics />
 <script async>
-golgotha.util.disable('SaveButton', true);
+golgotha.util.disable('SaveButton', true); golgotha.util.display('beta', ${latest.beta});
 golgotha.local.r = new Resumable({chunkSize:524288, withCredentials:true, chunkNumberParameterName:'c', chunkSizeParameterName:'cs', totalChunksParameterName:'cc', totalSizeParameterName:'ts', xhrTimeout:25000, fileType:['exe']});
 var dt = document.getElementById('dropTarget');
 golgotha.local.r.assignDrop(dt);
@@ -100,12 +100,7 @@ golgotha.local.showProgress = function(doShow) {
     pr.forEach(function(r) { golgotha.util.display(r, doShow); });
 };
 
-golgotha.local.setBeta = function(cb) {
-	var isBeta = cb.checked;
-	var sp = document.getElementById('beta');
-	golgotha.util.display(sp, isBeta);
-};
-
+golgotha.local.setBeta = function(cb) { golgotha.util.display('beta', cb.checked); };
 golgotha.local.updateProgress = function() {
     var p = golgotha.local.r.progress();
     golgotha.local.pb.setText(Math.round(p * 100) + '% complete');
