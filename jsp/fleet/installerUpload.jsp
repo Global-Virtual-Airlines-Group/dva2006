@@ -58,7 +58,7 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="isBeta" value="true" label="This is a Beta build" checked="${latest.beta}" onChange="void golgotha.local.setBeta(this)" /></td>
+ <td class="data"><el:box name="isBeta" value="true" label="This is a Beta build" checked="${latest.isBeta()}" onChange="void golgotha.local.setBeta(this)" /></td>
 </tr>
 <tr class="progress title caps" style="display:none;">
  <td colspan="2">UPLOAD PROGRESS</td>
@@ -82,7 +82,7 @@ golgotha.local.validate = function(f) {
 </content:page>
 <content:googleAnalytics />
 <script async>
-golgotha.util.disable('SaveButton', true); golgotha.util.display('beta', ${latest.beta});
+golgotha.util.disable('SaveButton', true); golgotha.util.display('beta', ${latest.isBeta()});
 golgotha.local.r = new Resumable({chunkSize:524288, withCredentials:true, chunkNumberParameterName:'c', chunkSizeParameterName:'cs', totalChunksParameterName:'cc', totalSizeParameterName:'ts', xhrTimeout:25000, fileType:['exe']});
 var dt = document.getElementById('dropTarget');
 golgotha.local.r.assignDrop(dt);
@@ -106,10 +106,12 @@ golgotha.local.updateProgress = function() {
     golgotha.local.pb.setText(Math.round(p * 100) + '% complete');
     golgotha.local.pb.animate(p, {duration: 50});
     if (p >= 1) {
+    	var f = document.forms[0];
         console.log('Upload Complete');
         golgotha.local.showProgress(false);
         golgotha.local.uploadComplete = true;
-        document.forms[0].submit();
+        golgotha.form.submit(f);
+        f.submit();
         return true;
     }
     
