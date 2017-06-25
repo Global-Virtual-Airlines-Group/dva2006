@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2009, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.io.*;
@@ -6,7 +6,7 @@ import java.io.*;
 /**
  * An abstract class to implement support for image/file buffers in a bean.
  * @author Luke
- * @version 2.6
+ * @version 7.5
  * @since 1.0
  */
 
@@ -52,16 +52,16 @@ public abstract class DatabaseBlobBean extends DatabaseBean {
      * @see DatabaseBlobBean#load(byte[])    
      */
     public void load(InputStream is) throws IOException {
-        ByteArrayOutputStream os = new ByteArrayOutputStream(4096);
-        byte[] buf = new byte[16384];
-        int bytesRead = is.read(buf);
-        while (bytesRead != -1) {
-            os.write(buf, 0, bytesRead);
-            bytesRead = is.read(buf);
-        }
+        try (ByteArrayOutputStream os = new ByteArrayOutputStream(4096)) {
+        	byte[] buf = new byte[16384];
+        	int bytesRead = is.read(buf);
+        	while (bytesRead != -1) {
+        		os.write(buf, 0, bytesRead);
+        		bytesRead = is.read(buf);
+        	}
         
-        os.close();
-        _buffer = os.toByteArray();
+        	load(os.toByteArray());
+        }
     }
     
     /**
@@ -70,7 +70,7 @@ public abstract class DatabaseBlobBean extends DatabaseBean {
      * @see DatabaseBlobBean#load(InputStream)
      */
     public void load(byte[] buffer) {
-        _buffer = buffer;
+        _buffer = ((buffer == null) || (buffer.length == 0)) ? null : buffer;
     }
     
     /**
