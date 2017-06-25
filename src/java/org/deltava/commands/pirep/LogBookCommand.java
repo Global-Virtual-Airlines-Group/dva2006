@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display a Pilot's Flight Reports.
  * @author Luke
- * @version 7.2
+ * @version 7.5
  * @since 1.0
  */
 
@@ -41,7 +41,7 @@ public class LogBookCommand extends AbstractViewCommand {
     public void execute(CommandContext ctx) throws CommandException {
        
         // Get/set start/count parameters
-    		ctx.setAttribute("sortTypes", SORT_OPTIONS, REQUEST);
+    	ctx.setAttribute("sortTypes", SORT_OPTIONS, REQUEST);
         ViewContext<FlightReport> vc = initView(ctx, FlightReport.class);
         if (StringUtils.arrayIndexOf(SORT_CODE, vc.getSortType()) == -1)
   		   	vc.setSortType(SORT_CODE[0]);
@@ -50,6 +50,15 @@ public class LogBookCommand extends AbstractViewCommand {
         int id = ctx.getID();
         if ((id == 0) && ctx.isAuthenticated())
         	id = ctx.getUser().getID();
+        
+        // Redirect if no one specified
+        if (id == 0) {
+        	CommandResult result = ctx.getResult();
+        	result.setURL("logbook.do");
+        	result.setType(ResultType.REDIRECT);
+        	result.setSuccess(true);
+        	return;
+        }
         
         // Determine if we display comments or not
         boolean showComments = "log".equals(ctx.getCmdParameter(Command.OPERATION, "log"));
