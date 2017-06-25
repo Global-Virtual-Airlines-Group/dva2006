@@ -1,10 +1,10 @@
-// Copyright 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 /**
  * An interface for version/build/beta tuples. 
  * @author Luke
- * @version 4.1
+ * @version 7.5
  * @since 4.1
  */
 
@@ -33,4 +33,12 @@ public interface ClientVersion {
 	 * @return the type
 	 */
 	public ClientType getClientType();
+	
+	/**
+	 * Returns whether this is a beta build.
+	 * @return TRUE if beta, otherwise FALSE
+	 */
+	default boolean isBeta() {
+		return ((getBeta() > 0) && (getBeta() < Integer.MAX_VALUE));
+	}
 }

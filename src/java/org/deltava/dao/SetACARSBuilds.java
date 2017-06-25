@@ -1,4 +1,4 @@
-// Copyright 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to write ACARS client version data.
  * @author Luke
- * @version 7.0
+ * @version 7.5
  * @since 5.0
  */
 
@@ -47,7 +47,7 @@ public class SetACARSBuilds extends DAO {
 					break;
 					
 				default:
-					_ps.setString(1, (ver.getBeta() != 0) ? "beta" : (isForced ? "forced" : "latest"));
+					_ps.setString(1, ver.isBeta() ? "beta" : (isForced ? "forced" : "latest"));
 					_ps.setString(3, getVersionBeta(ver));
 			}
 			
@@ -64,7 +64,6 @@ public class SetACARSBuilds extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void setMinimum(ClientVersion ver, AccessRole role) throws DAOException {
-		boolean isBeta = (ver.getBeta() != 0);
 		try {
 			prepareStatementWithoutLimits("REPLACE INTO acars.VERSION_INFO (NAME, VER, DATA) VALUES (?, ?, ?)");
 			_ps.setInt(2, ver.getVersion());
@@ -81,11 +80,11 @@ public class SetACARSBuilds extends DAO {
 						break;
 					
 					default:
-						_ps.setString(1, isBeta ? "minBeta" : "minBuild");
+						_ps.setString(1, ver.isBeta() ? "minBeta" : "minBuild");
 						_ps.setString(3, getVersionBeta(ver));
 				}
 			} else {
-				_ps.setString(1, isBeta ? "minUploadBeta" : "minUpload");
+				_ps.setString(1, ver.isBeta() ? "minUploadBeta" : "minUpload");
 				_ps.setString(3, getVersionBeta(ver));
 			}
 				
@@ -123,7 +122,7 @@ public class SetACARSBuilds extends DAO {
 	 */
 	private static String getVersionBeta(ClientVersion ver) {
 		StringBuilder buf = new StringBuilder(String.valueOf(ver.getClientBuild()));
-		if (ver.getBeta() != 0) {
+		if (ver.isBeta()) {
 			buf.append('.');
 			buf.append(ver.getBeta());
 		}

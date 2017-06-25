@@ -1,14 +1,14 @@
-// Copyright 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 /**
  * A bean to store ACARS client versions.
  * @author Luke
- * @version 7.0
+ * @version 7.5
  * @since 4.1
  */
 
-public class ClientInfo implements ClientVersion, Comparable<ClientInfo>, java.io.Serializable {
+public class ClientInfo implements ClientVersion, Comparable<ClientVersion>, java.io.Serializable {
 	
 	private final int _version;
 	private final int _build;
@@ -58,14 +58,6 @@ public class ClientInfo implements ClientVersion, Comparable<ClientInfo>, java.i
 		return _type;
 	}
 	
-	/**
-	 * Returns whether this is a beta build.
-	 * @return TRUE if a beta build, otherwise FALSE
-	 */
-	public boolean isBeta() {
-		return (_beta < Integer.MAX_VALUE);
-	}
-	
 	public boolean isATC() {
 		return (_type == ClientType.ATC);
 	}
@@ -103,14 +95,19 @@ public class ClientInfo implements ClientVersion, Comparable<ClientInfo>, java.i
 	}
 	
 	@Override
-	public int compareTo(ClientInfo c2) {
-		int tmpResult = _type.compareTo(c2._type);
+	public boolean equals(Object o) {
+		return ((o instanceof ClientInfo) && (compareTo((ClientInfo) o) == 0));
+	}
+	
+	@Override
+	public int compareTo(ClientVersion c2) {
+		int tmpResult = _type.compareTo(c2.getClientType());
 		if (tmpResult == 0)
-			tmpResult = Integer.valueOf(_version).compareTo(Integer.valueOf(c2._version));
+			tmpResult = Integer.valueOf(_version).compareTo(Integer.valueOf(c2.getVersion()));
 		if (tmpResult == 0)
-			tmpResult = Integer.valueOf(_build).compareTo(Integer.valueOf(c2._build));
+			tmpResult = Integer.valueOf(_build).compareTo(Integer.valueOf(c2.getClientBuild()));
 		if (tmpResult == 0)
-			tmpResult = Integer.valueOf(_beta).compareTo(Integer.valueOf(c2._beta));
+			tmpResult = Integer.valueOf(_beta).compareTo(Integer.valueOf(c2.getBeta()));
 		
 		return tmpResult;
 	}
