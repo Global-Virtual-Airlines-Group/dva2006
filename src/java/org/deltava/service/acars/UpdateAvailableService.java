@@ -60,8 +60,8 @@ public class UpdateAvailableService extends WebService {
 				if ((beta != null) && (beta.getClientBuild() >= cInfo.getClientBuild()) && (beta.compareTo(latest) > 0))
 					latest = beta;
 			}
-		} catch (DAOException de) {
-			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());			
+		} catch (Exception e) {
+			throw error(SC_INTERNAL_SERVER_ERROR, e.getMessage());			
 		} finally {
 			ctx.release();
 		}
