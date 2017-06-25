@@ -40,12 +40,11 @@ public class InstallerUploadCommand extends AbstractFormCommand {
 		File nf = new File(SystemData.get("path.library"), newFile);
 		
 		// Get the uploaded file - look for a file
-		File f = new File(SystemData.get("path.upload"), fName);
+		File f = new File(SystemData.get("path.upload"), ctx.getParameter("id"));
 		if (f.exists())
 			fName = f.getName();
 		if (fName == null)
 			throw notFoundException("No Instaler Uploaded");
-		
 		
 		try {
 			Connection con = ctx.getConnection();
@@ -77,6 +76,8 @@ public class InstallerUploadCommand extends AbstractFormCommand {
 		ctx.setAttribute("newInfo", info, REQUEST);
 		ctx.setAttribute("fileName", newFile, REQUEST);
 		ctx.setAttribute("library", "Fleet", REQUEST);
+		ctx.setAttribute("librarycmd", "fleetlibrary", REQUEST);
+		ctx.setAttribute("libraryop", "admin", REQUEST);
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
@@ -109,6 +110,11 @@ public class InstallerUploadCommand extends AbstractFormCommand {
 		result.setSuccess(true);
 	}
 
+	/**
+	 * Method called when editing the form.
+	 * @param ctx the Command context
+	 * @throws CommandException if an unhandled error occurs
+	 */
 	@Override
 	protected void execRead(CommandContext ctx) throws CommandException {
 		execEdit(ctx);
