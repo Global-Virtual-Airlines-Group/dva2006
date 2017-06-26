@@ -18,7 +18,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to display Dispatch flight routes with SID/STAR/Airway data.
  * @author Luke
- * @version 7.3
+ * @version 7.5
  * @since 2.2
  */
 
@@ -44,12 +44,11 @@ public class DispatchRouteMapService extends MapPlotService {
 			ctx.release();
 		}
 		
-		// Convert points to an XML document
-		List<NavigationDataBean> points = new ArrayList<NavigationDataBean>(rt.getWaypoints());
-		JSONObject jo = formatPoints(points, true);
+		// Convert points to a JSON document
+		JSONObject jo = formatPoints(new ArrayList<NavigationDataBean>(rt.getWaypoints()));
 		jo.put("id", rt.getID());
 
-		// Dump the XML to the output stream
+		// Dump the JSON to the output stream
 		try {
 			ctx.setContentType("application/json", "utf-8");
 			ctx.println(jo.toString());

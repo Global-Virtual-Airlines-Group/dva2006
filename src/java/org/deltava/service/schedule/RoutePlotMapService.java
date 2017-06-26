@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display plotted flight routes with SID/STAR/Airway data.
  * @author Luke
- * @version 7.3
+ * @version 7.5
  * @since 1.0
  */
 
@@ -233,7 +233,7 @@ public class RoutePlotMapService extends MapPlotService {
 		ETOPSResult er = ETOPSHelper.classify(dr);
 
 		// Convert points to a JSON object
-		JSONObject jo = formatPoints(points, true);
+		JSONObject jo = formatPoints(points);
 		jo.put("intl", isIntl);
 		if (dr.getAirline() != null) {
 			JSONObject alo = new JSONObject();

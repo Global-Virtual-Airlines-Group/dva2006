@@ -13,7 +13,7 @@ import org.deltava.util.JSONUtils;
 /**
  * An abstract Web Service to store common map plotting code. 
  * @author Luke
- * @version 7.3
+ * @version 7.5
  * @since 2.3
  */
 
@@ -22,10 +22,9 @@ public abstract class MapPlotService extends WebService {
 	/**
 	 * Converts route points into a JSON object.
 	 * @param points a List of MapEntry beans
-	 * @param doIcons render markers as icons if supported
-	 * @return a JSON Object
+	 * @return a JSONObject
 	 */
-	protected static JSONObject formatPoints(List<NavigationDataBean> points, boolean doIcons) {
+	protected static JSONObject formatPoints(List<NavigationDataBean> points) {
 
 		// Calculate the distance and midpoint by taking the first/last waypoints
 		GeoLocation mp = null; 
@@ -55,11 +54,8 @@ public abstract class MapPlotService extends WebService {
 			po.put("ll", JSONUtils.format(entry));
 			po.put("color", entry.getIconColor());
 			po.put("info", entry.getInfoBox());
-			if (doIcons) {
-				po.put("pal", entry.getPaletteCode());
-				po.put("icon", entry.getIconCode());
-			}
-			
+			po.put("pal", entry.getPaletteCode());
+			po.put("icon", entry.getIconCode());
 			start = entry;
 			jo.append("positions", po);
 		}
