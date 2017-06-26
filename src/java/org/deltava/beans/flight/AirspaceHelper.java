@@ -2,6 +2,7 @@
 package org.deltava.beans.flight;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.deltava.beans.*;
 import org.deltava.beans.navdata.*;
@@ -12,7 +13,7 @@ import org.deltava.util.GeoUtils;
 /**
  * A utility class to perform Restricted Airspace validation.
  * @author Luke
- * @version 7.3
+ * @version 7.5
  * @since 7.3
  */
 
@@ -42,10 +43,9 @@ public final class AirspaceHelper {
 		// Turn into great circle route and approximte climb / descent at 500 ft/mile
 		Collection<GeospaceLocation> locs = new ArrayList<GeospaceLocation>();
 		GeoLocation lastLoc = pr.getAirportD();
-		List<NavigationDataBean> wps = pr.getWaypoints(); wps.add(new AirportLocation(pr.getAirportA()));
-		for (GeoLocation loc : wps) {
+		for (GeoLocation loc : pr.getWaypoints()) {
 			int apDistance = Math.min(GeoUtils.distance(loc, pr.getAirportD()), GeoUtils.distance(loc, pr.getAirportA()));
-			int maxDistance = Math.max(1, Math.min(10, apDistance / 5));
+			int maxDistance = (pr.getWaypoints().size() < 4) ? 20 : Math.max(1, Math.min(20, apDistance / 5));
 			
 			int dist = GeoUtils.distance(lastLoc, loc);
 			if (dist > maxDistance)
@@ -60,6 +60,7 @@ public final class AirspaceHelper {
 			lastLoc= loc;
 		}
 
+		System.out.println(pr.getWaypoints().size() + " => " + locs.size());
 		return classify(locs, includeRestricted);
 	}
 	
@@ -69,15 +70,7 @@ public final class AirspaceHelper {
 	 * @param includeRestricted TRUE if Restricted as well as Prohibited Airspace should be checked, otherwise FALSE
 	 * @return a Collection of entered Airspace beans 
 	 */
-	public static Collection<Airspace> classify(Collection<? extends GeospaceLocation> locs, boolean includeRestricted) {
-		
-		Collection<Airspace> results = new LinkedHashSet<Airspace>();
-		for (GeospaceLocation loc : locs) {
-			Airspace rst = Airspace.isRestricted(loc);
-			if ((rst != null) && (includeRestricted || (rst.getType() == AirspaceType.P)))
-				results.add(rst);
-		}
-		
-		return results;
+	public static Collection<Airspace> classify(Collection<? extends GeospaceLocation> locs, final boolean includeRestricted) {
+		return locs.stream().map(loc -> Airspace.isRestricted(loc)).filter(Objects::nonNull).filter(a -> { return includeRestricted || (a.getType() == AirspaceType.P); }).collect(Collectors.toSet());
 	}
 }
