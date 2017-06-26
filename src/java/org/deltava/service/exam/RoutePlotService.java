@@ -22,7 +22,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to plot maps for route plotting Examination questions. 
  * @author Luke
- * @version 7.3
+ * @version 7.5
  * @since 2.3
  */
 
@@ -135,15 +135,14 @@ public class RoutePlotService extends MapPlotService {
 			ctx.release();
 		}
 			
-		// Convert points to an XML document
-		List<NavigationDataBean> points = new ArrayList<NavigationDataBean>(routePoints);
-		JSONObject jo = formatPoints(points, true);
+		// Convert points to a JSON document
+		JSONObject jo = formatPoints(new ArrayList<NavigationDataBean>(routePoints));
 		
 		// Return the number of seconds left
 		long timeRemaining = (ex.getExpiryDate().toEpochMilli() - System.currentTimeMillis()) / 1000;
 		jo.put("timeLeft", timeRemaining);
 		
-		// Dump the XML to the output stream
+		// Dump the JSON to the output stream
 		try {
 			ctx.setContentType("application/json", "UTF-8");
 			ctx.println(jo.toString());
