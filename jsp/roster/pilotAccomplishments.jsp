@@ -46,7 +46,7 @@ following accomplishments:<br />
 <c:forEach var="promotion" items="${promotions}">
 <c:set var="pilot" value="${pilots[promotion.ID]}" scope="page" />
 <tr>
- <td class="pri bld"><fmt:date fmt="d" date="${promotion.createdOn}" /></td>
+ <td class="pri bld"><fmt:date fmt="d" date="${promotion.date}" /></td>
  <td class="bld"><el:cmd url="profile" link="${promotion}">${pilot.name}</el:cmd></td>
  <td class="left">${promotion.description}</td>
 </tr>
@@ -61,7 +61,7 @@ following accomplishments:<br />
 <c:forEach var="promotion" items="${rankChanges}">
 <c:set var="pilot" value="${pilots[promotion.ID]}" scope="page" />
 <tr>
- <td class="pri bld"><fmt:date fmt="d" date="${promotion.createdOn}" /></td>
+ <td class="pri bld"><fmt:date fmt="d" date="${promotion.date}" /></td>
  <td class="bld"><el:cmd url="profile" link="${promotion}">${pilot.name}</el:cmd></td>
  <td class="left">${promotion.description}</td>
 </tr>
@@ -76,7 +76,7 @@ following accomplishments:<br />
 <c:forEach var="promotion" items="${recognition}">
 <c:set var="pilot" value="${pilots[promotion.ID]}" scope="page" />
 <tr>
- <td class="pri bld"><fmt:date fmt="d" date="${promotion.createdOn}" /></td>
+ <td class="pri bld"><fmt:date fmt="d" date="${promotion.date}" /></td>
  <td class="bld"><el:cmd url="profile" link="${promotion}">${pilot.name}</el:cmd></td>
  <td class="left">${promotion.description}</td>
 </tr>
@@ -91,7 +91,7 @@ following accomplishments:<br />
 <c:forEach var="promotion" items="${ratingChanges}">
 <c:set var="pilot" value="${pilots[promotion.ID]}" scope="page" />
 <tr>
- <td class="pri bld"><fmt:date fmt="d" date="${promotion.createdOn}" /></td>
+ <td class="pri bld"><fmt:date fmt="d" date="${promotion.date}" /></td>
  <td class="bld"><el:cmd url="profile" link="${promotion}">${pilot.name}</el:cmd></td>
  <td class="left">${promotion.description}</td>
 </tr>
@@ -106,7 +106,7 @@ following accomplishments:<br />
 <c:forEach var="cert" items="${academyCerts}">
 <c:set var="pilot" value="${pilots[cert.ID]}" scope="page" />
 <tr>
- <td class="pri bld"><fmt:date fmt="d" date="${cert.createdOn}" /></td>
+ <td class="pri bld"><fmt:date fmt="d" date="${cert.date}" /></td>
  <td class="bld"><el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></td>
  <td class="left">${cert.description}</td>
 </tr>
