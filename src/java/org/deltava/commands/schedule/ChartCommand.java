@@ -1,7 +1,6 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
-import java.util.List;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
@@ -18,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Approach Charts.
  * @author Luke
- * @version 7.0
+ * @version 7.5
  * @since 1.0
  */
 
@@ -137,11 +136,6 @@ public class ChartCommand extends AbstractFormCommand {
 		boolean isOK = (isNew) ? access.getCanCreate() : access.getCanEdit();
 		if (!isOK)
 			throw securityException("Cannot create/edit Approach Chart");
-		
-		// Get chart types (and remove Unknown)
-		List<ComboAlias> cTypes = ComboUtils.fromArray(Chart.Type.values());
-		cTypes.remove(0);
-		ctx.setAttribute("chartTypes", cTypes, REQUEST);
 
 		// Load the chart if not new
 		if (!isNew) {

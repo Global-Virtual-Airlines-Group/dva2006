@@ -16,16 +16,16 @@
 <content:json />
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
-<script type="text/javascript">
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-golgotha.form.validate({f:f.airport, t:'Airport'});
-golgotha.form.validate({f:f.name, l:4, t:'Chart Name'});
-golgotha.form.validate({f:f.chartType, t:'Chart Type'});
-golgotha.form.validate({f:f.img, ext:['gif','jpg','png','pdf'], t:'Chart Image'});
-golgotha.form.submit(f);
-return true;
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script>
+golgotha.local.validate = function(f) {
+	if (!golgotha.form.check()) return false;
+	golgotha.form.validate({f:f.airport, t:'Airport'});
+	golgotha.form.validate({f:f.name, l:4, t:'Chart Name'});
+	golgotha.form.validate({f:f.chartType, t:'Chart Type'});
+	golgotha.form.validate({f:f.img, ext:['gif','jpg','png','pdf'], t:'Chart Image'});
+	golgotha.form.submit(f);
+	return true;
 };
 </script>
 </head>
@@ -35,6 +35,7 @@ return true;
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:empty var="emptyList" />
+<content:enum var="chartTypes" className="org.deltava.beans.schedule.Chart$Type" exclude="UNKNOWN" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -81,9 +82,7 @@ return true;
 <el:table className="bar">
 <tr>
  <td><el:button ID="SaveButton" type="submit" label="SAVE CHART" />
-<c:if test="${access.canDelete && (!empty chart)}">
- <el:cmdbutton ID="DeleteButton" url="chartdelete" link="${chart}" label="DELETE CHART" />
-</c:if></td>
+<c:if test="${access.canDelete && (!empty chart)}"> <el:cmdbutton ID="DeleteButton" url="chartdelete" link="${chart}" label="DELETE CHART" /></c:if></td>
 </tr>
 </el:table>
 </el:form>
@@ -92,13 +91,13 @@ return true;
 </content:region>
 </content:page>
 <fmt:aptype var="useICAO" />
-<script type="text/javascript">
+<script async>
 golgotha.airportLoad.config.doICAO = ${useICAO};
 golgotha.airportLoad.config.airlne = 'all';
 
 var f = document.forms[0];
 golgotha.airportLoad.setHelpers(f.airport);
-f.loadAirports(golgotha.airportLoad.config);
+f.airport.loadAirports(golgotha.airportLoad.config);
 </script>
 </body>
 </html>
