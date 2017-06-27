@@ -4,7 +4,7 @@ package org.deltava.beans;
 /**
  * An enumeration of Simulator versions.
  * @author Luke
- * @version 7.4
+ * @version 7.5
  * @since 5.1
  */
 
@@ -92,6 +92,7 @@ public enum Simulator implements ComboAlias {
 	public static Simulator fromName(String name, Simulator defaultSim) {
 		try {
 			if ("FS2K4".equals(name)) return Simulator.FS9;
+			if ("P3Dv4".equals(name)) return Simulator.P3Dv4;
 			return Simulator.valueOf(name.toUpperCase());
 		} catch (Exception e) {
 			return defaultSim;
