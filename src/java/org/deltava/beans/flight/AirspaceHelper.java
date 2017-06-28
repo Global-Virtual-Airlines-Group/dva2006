@@ -4,6 +4,8 @@ package org.deltava.beans.flight;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import org.apache.log4j.Logger;
+
 import org.deltava.beans.*;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
@@ -19,6 +21,8 @@ import org.deltava.util.GeoUtils;
 
 @Helper(Airspace.class)
 public final class AirspaceHelper {
+	
+	private static final Logger log = Logger.getLogger(AirspaceHelper.class);
 	
 	private static final int CLIMB_RATE = 500;
 
@@ -45,7 +49,7 @@ public final class AirspaceHelper {
 		GeoLocation lastLoc = pr.getAirportD();
 		for (GeoLocation loc : pr.getWaypoints()) {
 			int apDistance = Math.min(GeoUtils.distance(loc, pr.getAirportD()), GeoUtils.distance(loc, pr.getAirportA()));
-			int maxDistance = (pr.getWaypoints().size() < 4) ? 20 : Math.max(1, Math.min(20, apDistance / 5));
+			int maxDistance = (pr.getWaypoints().size() < 4) ? 25 : Math.max(1, Math.min(20, apDistance / 5));
 			
 			int dist = GeoUtils.distance(lastLoc, loc);
 			if (dist > maxDistance)
@@ -60,7 +64,7 @@ public final class AirspaceHelper {
 			lastLoc= loc;
 		}
 
-		System.out.println(pr.getWaypoints().size() + " => " + locs.size());
+		log.info(pr.getWaypoints().size() + " => " + locs.size());
 		return classify(locs, includeRestricted);
 	}
 	
@@ -71,6 +75,6 @@ public final class AirspaceHelper {
 	 * @return a Collection of entered Airspace beans 
 	 */
 	public static Collection<Airspace> classify(Collection<? extends GeospaceLocation> locs, final boolean includeRestricted) {
-		return locs.stream().map(loc -> Airspace.isRestricted(loc)).filter(Objects::nonNull).filter(a -> { return includeRestricted || (a.getType() == AirspaceType.P); }).collect(Collectors.toSet());
+		return locs.parallelStream().map(loc -> Airspace.isRestricted(loc)).filter(Objects::nonNull).filter(a -> { return includeRestricted || (a.getType() == AirspaceType.P); }).collect(Collectors.toSet());
 	}
 }
