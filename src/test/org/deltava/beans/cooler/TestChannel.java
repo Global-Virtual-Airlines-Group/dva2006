@@ -103,7 +103,8 @@ public class TestChannel extends AbstractBeanTestCase {
         assertTrue(_c.hasAirline("COA"));
     }
     
-    public void testEquality() {
+    @SuppressWarnings("unlikely-arg-type")
+	public void testEquality() {
     	assertEquals(_c.getName().hashCode(), _c.hashCode());
     	assertEquals(_c.getName(), _c.toString());
     	

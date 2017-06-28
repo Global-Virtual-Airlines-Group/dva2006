@@ -57,14 +57,12 @@ public class TestEquipmentType extends AbstractBeanTestCase {
         
         _eq.addRanks("Senior Captain,Chief Pilot", ",");
         assertEquals(4, _eq.getRanks().size());
-        assertTrue(_eq.getRanks().contains("RANK3"));
-        assertTrue(_eq.getRanks().contains("RANK4"));
         
         // Set ranks via array
         _eq.setRanks(Arrays.asList(new String[] {"First Officer", "Captain"}));
         assertEquals(2, _eq.getRanks().size());
-        assertTrue(_eq.getRanks().contains("First Officer"));
-        assertTrue(_eq.getRanks().contains("Captain"));
+        assertTrue(_eq.getRanks().contains(Rank.FO));
+        assertTrue(_eq.getRanks().contains(Rank.C));
     }
     
     public void testPromotionInfo() {
@@ -132,7 +130,8 @@ public class TestEquipmentType extends AbstractBeanTestCase {
         assertFalse(_eq.equals(null));
     }
     
-    public void testIndexOf() {
+    @SuppressWarnings("unlikely-arg-type")
+	public void testIndexOf() {
        List<EquipmentType> eqTypes = new ArrayList<EquipmentType>();
        eqTypes.add(_eq);
        assertTrue(_eq.equals(_eq.getName()));
