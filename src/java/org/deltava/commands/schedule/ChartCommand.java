@@ -1,6 +1,7 @@
 // Copyright 2005, 2006, 2007, 2008, 2010, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
+import java.time.Instant;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
@@ -60,6 +61,7 @@ public class ChartCommand extends AbstractFormCommand {
 			// Load data from the request
 			c.setName(ctx.getParameter("name"));
 			c.setAirport(SystemData.getAirport(ctx.getParameter("airport")));
+			c.setLastModified(Instant.now());
 			try {
 				Chart.Type ct = Chart.Type.valueOf(ctx.getParameter("chartType"));
 				c.setType(ct);
