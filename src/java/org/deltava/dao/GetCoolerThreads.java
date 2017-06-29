@@ -17,7 +17,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to retrieve Water Cooler threads and thread notifications.
  * @author Luke
- * @version 7.4
+ * @version 7.5
  * @since 1.0
  */
 
@@ -275,7 +275,7 @@ public class GetCoolerThreads extends DAO {
 		}
 
 		// Add channel/author criteria
-		if (!Channel.ALL.equals(criteria.getChannel()))
+		if (!Channel.ALL.getName().equals(criteria.getChannel()))
 			buf.append("AND (T.CHANNEL=?) ");
 		if (criteria.getMinimumDate() != null)
 			buf.append("AND (T.LASTUPDATE > ?)");
@@ -292,7 +292,7 @@ public class GetCoolerThreads extends DAO {
 					_ps.setString(++psOfs, criteria.getSearchTerm());
 			}
 			
-			if (!Channel.ALL.equals(criteria.getChannel()))
+			if (!Channel.ALL.getName().equals(criteria.getChannel()))
 				_ps.setString(++psOfs, criteria.getChannel());
 			if (criteria.getMinimumDate() != null)
 				_ps.setTimestamp(++psOfs, createTimestamp(criteria.getMinimumDate()));
