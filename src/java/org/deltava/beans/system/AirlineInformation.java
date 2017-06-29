@@ -8,7 +8,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store information about other virtual airlines.
  * @author Luke
- * @version 7.4
+ * @version 7.5
  * @since 1.0
  */
 
@@ -169,12 +169,7 @@ public class AirlineInformation implements Comparable<AirlineInformation>, Audit
    
    @Override
    public boolean equals(Object o) {
-	   if (o instanceof AirlineInformation)
-		   return (compareTo((AirlineInformation) o) == 0);
-	   else if (o instanceof String)
-		   return _code.equals(o);
-	   else
-		   return false;
+	   return (o instanceof AirlineInformation) && (compareTo((AirlineInformation) o) == 0);
    }
    
    @Override

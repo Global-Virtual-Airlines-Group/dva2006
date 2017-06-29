@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to request a transfer to a different Equipment program.
  * @author Luke
- * @version 7.2
+ * @version 7.5
  * @since 1.0
  */
 
@@ -97,7 +97,7 @@ public class TransferRequestCommand extends AbstractTestHistoryCommand {
 			// Populate the transfer request
 			EquipmentType eq = activeEQ.get(eqType);
 			TransferRequest txreq = new TransferRequest(p.getID(), eqType);
-			if (!eq.getOwner().equals(SystemData.get("airline.code")))
+			if (!eq.getOwner().getCode().equals(SystemData.get("airline.code")))
 				txreq.setRatingOnly(true);
 			else
 				txreq.setRatingOnly(Boolean.valueOf(ctx.getParameter("ratingOnly")).booleanValue());

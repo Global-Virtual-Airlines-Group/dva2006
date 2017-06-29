@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012, 2014, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to load flight routes from the database.
  * @author Luke
- * @version 6.3
+ * @version 7.5
  * @since 3.4
  */
 
@@ -112,7 +112,7 @@ public final class RouteLoadHelper {
 	 * @throws DAOException if an I/O or JDBC error occurs
 	 */
 	public void loadFlightAwareRoutes(boolean saveRoutes) throws DAOException {
-		boolean isUS = (_rp.getAirportD().getCountry().equals("US")) || (_rp.getAirportA().getCountry().equals("US"));
+		boolean isUS = (_rp.getAirportD().getCountry().getCode().equals("US")) || (_rp.getAirportA().getCountry().getCode().equals("US"));
 		if (!isUS) {
 			log.info(_rp.getAirportD() + " to " + _rp.getAirportA() + " not a US route");
 			return;

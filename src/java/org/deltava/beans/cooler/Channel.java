@@ -9,7 +9,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A class containing Water Cooler channel data.
  * @author Luke
- * @version 7.4
+ * @version 7.5
  * @since 1.0
  */
 
@@ -415,12 +415,7 @@ public class Channel implements Comparable<Channel>, Auditable, Cacheable, Combo
      */
     @Override
     public boolean equals(Object o2) {
-        if (o2 instanceof Channel)
-            return _name.equals(((Channel) o2)._name);
-        else if (o2 instanceof String)
-            return _name.equals(o2);
-           
-        return false;
+        return (o2 instanceof Channel) && _name.equals(((Channel) o2)._name);
     }
     
     @Override
