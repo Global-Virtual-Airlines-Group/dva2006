@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.rss;
 
 import java.util.*;
@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display a Discussion Forum RSS feed.
  * @author Luke
- * @version 6.0
+ * @version 7.5
  * @since 1.0
  */
 
@@ -65,7 +65,7 @@ public class CoolerSyndicationService extends WebService {
 			// Get the cooler threads
 			GetCoolerThreads tdao = new GetCoolerThreads(con);
 			tdao.setQueryMax(getCount(ctx, 50));
-			threads = Channel.ALL.equals(channel) ? tdao.getByChannel(null, true) : tdao.getByChannel(channel, true);
+			threads = Channel.ALL.getName().equals(channel) ? tdao.getByChannel(null, true) : tdao.getByChannel(channel, true);
 
 			// Filter out threads based on our access
 			CoolerThreadAccessControl tac = new CoolerThreadAccessControl(ctx);

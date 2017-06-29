@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2012, 2013, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display Approach Charts.
  * @author Luke
- * @version 5.2
+ * @version 7.5
  * @since 1.0
  */
 
@@ -53,7 +53,7 @@ public class ChartsCommand extends AbstractCommand {
             ctx.setAttribute("airports", dao.getAirports(), REQUEST);
             
             // If this is a US airport, get the chart cycle data
-            if (a.getCountry().equals("US")) {
+            if (a.getCountry().getCode().equals("US")) {
             	GetMetadata mddao = new GetMetadata(con);
             	String chartCycleID = mddao.get("charts.cycle.faa");
             	if (chartCycleID != null) {

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to automatically assign flghts to Online Event participants.
  * @author Luke
- * @version 7.0
+ * @version 7.5
  * @since 1.0
  */
 
@@ -162,7 +162,7 @@ public class EventAssignTask extends Task {
 					ctx.commitTX();
 					
 					// Send ATC notification
-					if (!e.getContactAddrs().isEmpty() && e.getOwner().equals(aCode)) {
+					if (!e.getContactAddrs().isEmpty() && e.getOwner().getCode().equals(aCode)) {
 						mctxt = new MessageContext();
 						
 						// Get the template

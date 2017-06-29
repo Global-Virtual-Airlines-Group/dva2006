@@ -1,4 +1,4 @@
-// Copyright 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.help;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Web Site Command to update a Help Desk Issue.
  * @author Luke
- * @version 7.0
+ * @version 7.5
  * @since 1.0
  */
 
@@ -45,11 +45,8 @@ public class IssueUpdateCommand extends AbstractCommand {
 				throw securityException("Cannot update Comments/FAQ status");
 
 			// Build a map of comments
-			Map<Instant, IssueComment> comments = new HashMap<Instant, IssueComment>();
-			for (Iterator<IssueComment> ici = i.getComments().iterator(); ici.hasNext();) {
-				IssueComment ic = ici.next();
-				comments.put(ic.getCreatedOn(), ic);
-			}
+			Map<Long, IssueComment> comments = new HashMap<Long, IssueComment>();
+			i.getComments().forEach(ic -> comments.put(Long.valueOf(ic.getCreatedOn().toEpochMilli()), ic));
 
 			// Update FAQ attribute from the request
 			i.setFAQ(Boolean.valueOf(ctx.getParameter("isFAQ")).booleanValue());
