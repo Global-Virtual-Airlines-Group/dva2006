@@ -16,7 +16,7 @@ import org.json.*;
 /**
  * A Web Service to display all FIR data as a Map layer.
  * @author Luke
- * @version 7.3
+ * @version 7.5
  * @since 6.0
  */
 
@@ -56,7 +56,7 @@ public class FIRLayerService extends WebService {
 		// Dump to the output stream
 		String cb = ctx.getParameter("jsonp");
 		try {
-			ctx.setContentType("application/json", "UTF-8");
+			ctx.setContentType(StringUtils.isEmpty(cb) ? "application/json" : "application/javascript", "UTF-8");
 			ctx.setExpiry(86400 * 7);
 			if (!StringUtils.isEmpty(cb)) {
 				ctx.print(cb);

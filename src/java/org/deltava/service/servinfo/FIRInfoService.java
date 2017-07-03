@@ -18,7 +18,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display FIR boundaries on a map.
  * @author Luke
- * @version 7.3
+ * @version 7.5
  * @since 3.2
  */
 
@@ -83,8 +83,9 @@ public class FIRInfoService extends WebService {
 		}
 		
 		// Dump the JSON to the output stream
+		boolean isJSONP = !StringUtils.isEmpty(ctx.getParameter("jsonp"));
 		try {
-			ctx.setContentType("application/json", "UTF-8");
+			ctx.setContentType(isJSONP ? "application/javascript": "application/json", "UTF-8");
 			ctx.setExpiry(7200);
 			ctx.println(jo.toString());
 			ctx.commit();
