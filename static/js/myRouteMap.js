@@ -113,7 +113,6 @@ golgotha.routeMap.loadTracks = function(icao, isDST) {
 
 		var js = JSON.parse(xmlreq.responseText);
 		golgotha.util.setHTML('isLoading', '');
-		var rts = jsData.routes; 
 		js.routes.forEach(function(rt) {
 			var c = rt.isDST ? '#80c0d8' : '#e0b080';
 			var rt = new google.maps.Polyline({path:rt.trk, strokeColor:c, map:map, strokeWeight:1, strokeOpacity:0.55, clickable:false, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
