@@ -23,6 +23,7 @@
 <content:js name="googleMapsWX" />
 <content:js name="wxParsers" />
 <content:js name="routePlot" />
+<content:js name="fileSaver" />
 <content:googleAnalytics eventSupport="true" />
 <content:getCookie name="acarsMapZoomLevel" default="12" var="zoomLevel" />
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
@@ -171,7 +172,7 @@ golgotha.local.validate = function(f) {
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="UpdateButton" onClick="void plotMap()" label="UPDATE ROUTE MAP" /> <el:button ID="SaveButton" type="submit" label="DOWNLOAD FLIGHT PLAN" /></td>
+ <td><el:button onClick="void plotMap()" label="UPDATE ROUTE MAP" /> <el:button ID="SaveButton" type="submit" label="DOWNLOAD FLIGHT PLAN" /></td>
 </tr>
 </el:table>
 </el:form>
@@ -185,6 +186,16 @@ golgotha.local.validate = function(f) {
 var f = document.forms[0];
 golgotha.util.disable(f.routes);
 golgotha.util.disable('SearchButton');
+try {
+	golgotha.routePlot.hasBlob = !!new Blob;
+} catch (e) {}
+
+// Reset form links if blob download supported
+if (golgotha.routePlot.hasBlob) {
+	f.onsubmit = function() { return false; };
+	var btn = document.getElementById('SaveButton');
+	btn.onclick = golgotha.routePlot.download;
+}
 
 golgotha.airportLoad.config.doICAO = ${useICAO};
 golgotha.airportLoad.config.airline = 'all';
