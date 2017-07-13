@@ -1,6 +1,6 @@
 CREATE TABLE AUDIT_LOG (
  CREATED                DATETIME NOT NULL,
- TYPE                   VARCHAR(16) NOT NULL,
+ TYPE                   VARCHAR(24) NOT NULL,
  ID                     VARCHAR(32) NOT NULL,
  AUTHOR_ID              INTEGER UNSIGNED NOT NULL,
  REMOTE_ADDR            VARBINARY(16),
