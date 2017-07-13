@@ -59,7 +59,7 @@ $mysqldump $dump_opt `cat /etc/sqlbackup.conf` xacars | $arc_util > xacars.sql.b
 
 # Dump Common data/Water Cooler/Events
 echo `date +%H:%M:%S`' Writing Common data'
-$mysqldump $dump_opt `cat /etc/sqlbackup.conf` common AIRLINEINFO TZ METADATA COUNTRY AIRCRAFT AIRCRAFT_AIRLINE AIRLINES APP_AIRLINES AIRLINE_CODES AIRPORTS AIRPORT_AIRLINE AIRPORT_CODES USERDATA XDB_IDS EQPROGRAMS EQAIRLINES AUTH AUTH_ALIAS OCEANIC OCEANIC_ROUTES RESOURCES SYSINFODATA | $arc_util > common.sql.bz2
+$mysqldump $dump_opt `cat /etc/sqlbackup.conf` common AIRLINEINFO TZ METADATA COUNTRY AIRCRAFT AIRCRAFT_AIRLINE AIRLINES APP_AIRLINES AIRLINE_CODES AIRPORTS AIRPORT_AIRLINE AIRPORT_CODES USERDATA XDB_IDS EQPROGRAMS EQAIRLINES AUTH AUTH_ALIAS OCEANIC OCEANIC_ROUTES RESOURCES SYSINFODATA AUDIT_LOG | $arc_util > common.sql.bz2
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` common ISSUES ISSUE_COMMENTS ISSUE_FILES | $arc_util > issues.sql.bz2
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` common NAVDATA NAVLEGACY NAVREGIONS NAVCYCLE SIDSTAR_META SIDSTAR_WAYPOINTS AIRWAYS RUNWAYS GATES GATE_AIRLINES ROUTE_CACHE MAGVAR FIR FIRALIAS AIRSPACE | $arc_util > navdata.sql.bz2
 $mysqldump $dump_opt `cat /etc/sqlbackup.conf` common CHARTS CHARTIMGS CHARTURLS | $arc_util > charts.sql.bz2
