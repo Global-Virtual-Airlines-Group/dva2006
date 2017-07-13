@@ -52,7 +52,7 @@
  <td style="width:9%;">LEGS</td>
  <td class="nophone">DISTANCE</td>
  <td>FSX</td>
- <td>P3D</td>
+ <td>P3D<span class="nophone"> v4 / v3</span></td>
  <td>FS2004</td>
  <td class="nophone">X-Plane</td>
  <td class="nophone">FS2002</td>
