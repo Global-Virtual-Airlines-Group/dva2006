@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to create flight plans.
  * @author Luke
- * @version 7.4
+ * @version 7.5
  * @since 2.2
  */
 
@@ -196,9 +196,11 @@ public class RoutePlanService extends WebService {
 		}
 
 		// Flush the output buffer
+		String fileName = aD.getICAO() + "-" + aA.getICAO() + "." + fpgen.getExtension();
 		try {
 			ctx.setContentType(fpgen.getMimeType(), "utf-8");
-			ctx.setHeader("Content-disposition", "attachment; filename=" + aD.getICAO() + "-" + aA.getICAO() + "." + fpgen.getExtension());
+			ctx.setHeader("X-Plan-Filename", fileName);
+			ctx.setHeader("Content-disposition", "attachment; filename=" + fileName);
 			ctx.println(fpgen.generate(routePoints));
 			ctx.commit();
 		} catch (Exception e) {

@@ -1,4 +1,4 @@
-golgotha.routePlot = golgotha.routePlot || {routeUpdated:false, getInactive:false, etopsCheck:true, rsts:[]};
+golgotha.routePlot = golgotha.routePlot || {routeUpdated:false, getInactive:false, etopsCheck:true, rsts:[], hasBlob:false};
 golgotha.routePlot.gateIcons = {ours:{pal:2,icon:56},intl:{pal:2,icon:48},pop:{pal:3,icon:52},other:{pal:3,icon:60}};
 golgotha.routePlot.gatesVisible = function () { return (this.dGates.visible() || this.aGates.visible()); };
 golgotha.routePlot.airspaceColors = {'P':{c:'#ee1010',tx:0.4}, 'R':{c:'#adad10',tx:0.2}, 'B':{c:'#10e0e0',tx:0.1}, 'C':{c:'#ffa018', tx:0.125}, 'D':{c:'#608040', tx:0.175}};
@@ -350,5 +350,32 @@ golgotha.routePlot.toggleGates = function(gts) {
 	if (gts.visible() && map.getZoom() < 14) map.setZoom(14);
 	if (gts.mapCenter) map.setCenter(gts.mapCenter);
 	golgotha.util.display('gateLegendRow', golgotha.routePlot.gatesVisible());
+	return true;
+};
+
+golgotha.routePlot.toForm = function(o) {
+	var params = [];
+	for (p in o) {
+		if (o.hasOwnProperty(p))
+			params.push(p + '=' + o[p]);
+	}
+	
+	return params.join('&');
+};
+
+golgotha.routePlot.download = function() {
+	if (!golgotha.form.wrap(golgotha.local.validate, document.forms[0])) return false;
+	var xmlreq = new XMLHttpRequest();
+	xmlreq.open('post', '/routeplan.ws', true);
+	xmlreq.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+	xmlreq.responseType = 'blob';
+	xmlreq.onreadystatechange = function() {
+		if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;		
+		var b = new Blob([xmlreq.response], {type: xmlreq.getResponseHeader('Content-Type')});
+		saveAs(b, xmlreq.getResponseHeader('X-Plan-Filename'));
+		return true;
+	};
+	
+	xmlreq.send(golgotha.routePlot.toForm(golgotha.routePlot.getAJAXParams()));
 	return true;
 };
