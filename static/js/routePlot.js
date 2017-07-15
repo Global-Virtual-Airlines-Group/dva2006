@@ -353,16 +353,6 @@ golgotha.routePlot.toggleGates = function(gts) {
 	return true;
 };
 
-golgotha.routePlot.toForm = function(o) {
-	var params = [];
-	for (p in o) {
-		if (o.hasOwnProperty(p))
-			params.push(p + '=' + o[p]);
-	}
-	
-	return params.join('&');
-};
-
 golgotha.routePlot.download = function() {
 	if (!golgotha.form.wrap(golgotha.local.validate, document.forms[0])) return false;
 	var xmlreq = new XMLHttpRequest();
@@ -370,12 +360,20 @@ golgotha.routePlot.download = function() {
 	xmlreq.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 	xmlreq.responseType = 'blob';
 	xmlreq.onreadystatechange = function() {
-		if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;		
-		var b = new Blob([xmlreq.response], {type: xmlreq.getResponseHeader('Content-Type')});
+		if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
+		var ct = xmlreq.getResponseHeader('Content-Type');
+		var b = new Blob([xmlreq.response], {type: ct.substring(0, ct.indexOf(';')), endings:'native'});
 		saveAs(b, xmlreq.getResponseHeader('X-Plan-Filename'));
 		return true;
 	};
-	
-	xmlreq.send(golgotha.routePlot.toForm(golgotha.routePlot.getAJAXParams()));
+
+	// Parse parameters
+	var params = []; var o = golgotha.routePlot.getAJAXParams();
+	for (p in o) {
+		if (o.hasOwnProperty(p))
+			params.push(p + '=' + o[p]);
+	}
+
+	xmlreq.send(params.join('&'));
 	return true;
 };
