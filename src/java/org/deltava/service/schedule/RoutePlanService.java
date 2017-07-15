@@ -198,7 +198,7 @@ public class RoutePlanService extends WebService {
 		// Flush the output buffer
 		String fileName = aD.getICAO() + "-" + aA.getICAO() + "." + fpgen.getExtension();
 		try {
-			ctx.setContentType(fpgen.getMimeType(), "utf-8");
+			ctx.setContentType(fpgen.getMimeType(), "windows-1252");
 			ctx.setHeader("X-Plan-Filename", fileName);
 			ctx.setHeader("Content-disposition", "attachment; filename=" + fileName);
 			ctx.println(fpgen.generate(routePoints));
