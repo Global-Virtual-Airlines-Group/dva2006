@@ -129,7 +129,7 @@ Attached File: <span class="pri bld">${comment.name}</span> (<fmt:int value="${c
 <tr>
  <td class="label">&nbsp;</td>
  <td class="small sec"><el:box name="emailComment" value="true" idx="*" label="Send Comments via E-Mail" checked="true" onChange="void golgotha.local.toggleCheckbox()" />
- <el:box name="emailAll" value="true" idx="*" label="Send Comments to all Participants" checked="false" /></td>
+ <el:box name="emailAll" value="true" idx="*" label="Send Comments to all Participants" checked="${multiComment}" /></td>
 </tr>
 </c:if>
 </el:table>

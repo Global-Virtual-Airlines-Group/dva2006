@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to manipulate issues.
  * @author Luke
- * @version 7.4
+ * @version 7.5
  * @since 1.0
  */
 
@@ -297,6 +297,7 @@ public class IssueCommand extends AbstractFormCommand {
 			UserDataMap udm = uddao.get(getPilotIDs(i));
 			ctx.setAttribute("userData", udm, REQUEST);
 			ctx.setAttribute("pilots", pdao.get(udm), REQUEST);
+			ctx.setAttribute("multiComment", Boolean.valueOf(udm.size() > 2), REQUEST);
 			
 			// Save the issue and the access in the request
 			ctx.setAttribute("issue", i, REQUEST);
