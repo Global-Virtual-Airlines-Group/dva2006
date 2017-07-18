@@ -1,4 +1,4 @@
-// Copyright 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.flightplan;
 
 import java.util.Collection;
@@ -12,7 +12,7 @@ import org.deltava.util.*;
 /**
  * A Flight Plan Generator for Lockheed-Martin Prepar3D.
  * @author Luke
- * @version 6.3
+ * @version 7.5
  * @since 5.0
  */
 
@@ -73,7 +73,7 @@ public class P3DGenerator extends MSFSGenerator {
 			be.addContent(nde);
 		}
 		
-		return XMLUtils.format(doc);
+		return XMLUtils.format(doc, "Windows-1252");
 	}
 
 	/**
