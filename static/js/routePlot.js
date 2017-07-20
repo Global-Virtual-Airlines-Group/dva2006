@@ -15,6 +15,7 @@ if (golgotha.form.comboSet(f.eqType)) o.eqType = golgotha.form.getCombo(f.eqType
 if (golgotha.form.comboSet(f.sid)) o.sid = golgotha.form.getCombo(f.sid);
 if (golgotha.form.comboSet(f.star)) o.star = golgotha.form.getCombo(f.star);
 if ((f.route) && (f.route.value.length > 0)) o.route = f.route.value;
+o.saveDraft = ((f.saveDraft) && f.saveDraft.checked);
 o.getInactive = golgotha.routePlot.getInactive;
 o.etopsCheck = golgotha.routePlot.etopsCheck;
 for (var j = 0; ((f.simVersion) && (j < f.simVersion.length)); j++) {
