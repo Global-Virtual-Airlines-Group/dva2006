@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to search the Flight Schedule.
  * @author Luke
- * @version 7.2
+ * @version 7.5
  * @since 1.0
  */
 
@@ -354,6 +354,36 @@ public class GetSchedule extends DAO {
 		try {
 			prepareStatement("SELECT * FROM SCHEDULE ORDER BY AIRLINE, FLIGHT, LEG");
 			return execute();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns all Airports and the Airports they are directly connected to. 
+	 * @return a Map of destination Airport Collections, keyed by source Airport
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Map<Airport, Collection<Airport>> getRoutePairs() throws DAOException {
+		try {
+			Map<Airport, Collection<Airport>> results = new HashMap<Airport, Collection<Airport>>();
+			prepareStatementWithoutLimits("SELECT DISTINCT AIRPORT_D, AIRPORT_A FROM SCHEDULE ORDER BY AIRPORT_D, AIRPORT_A");
+			try (ResultSet rs = _ps.executeQuery()) {
+				Airport lastAP = null; Collection<Airport> dests = null;
+				while (rs.next()) {
+					Airport a = SystemData.getAirport(rs.getString(1));
+					if (!a.equals(lastAP) || (dests == null)) {
+						dests = new LinkedHashSet<Airport>();
+						lastAP = a;
+						results.put(lastAP, dests);
+					}
+					
+					dests.add(SystemData.getAirport(rs.getString(2)));
+				}
+			}
+			
+			_ps.close();
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
