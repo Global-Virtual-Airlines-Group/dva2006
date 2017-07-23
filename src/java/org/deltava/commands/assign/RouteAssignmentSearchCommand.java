@@ -1,4 +1,4 @@
-// Copyright 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
@@ -9,13 +9,12 @@ import org.deltava.beans.schedule.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
-import org.deltava.util.GeoUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to build a Flight Assignment from a multi-leg route.
  * @author Luke
- * @version 4.1
+ * @version 7.5
  * @since 4.1
  */
 
@@ -43,43 +42,44 @@ public class RouteAssignmentSearchCommand extends AbstractCommand {
 			Connection con = ctx.getConnection();
 			
 			// Load aircraft for the user
-			Collection<Aircraft> myEQTypes = new ArrayList<Aircraft>();
+			int maxRange = 0; Collection<Aircraft> myEQTypes = new TreeSet<Aircraft>();
 			GetAircraft acdao = new GetAircraft(con);
-			for (String eqType : ctx.getUser().getRatings())
-				myEQTypes.add(acdao.get(eqType));
-
-			// Find the route
-			GetScheduleRouteSearch rsdao = new GetScheduleRouteSearch(con);
-			List<Airport> airports = rsdao.findRoute(rp);
-			if (!airports.isEmpty()) {
-				Map<Airport, Collection<ScheduleEntry>> results = new LinkedHashMap<Airport, Collection<ScheduleEntry>>();
-				Airport lastA = airports.get(0);
-				GetScheduleSearch sdao = new GetScheduleSearch(con);
-				for (int x = 1; x < airports.size(); x++) {
-					Airport nextA = airports.get(x);
-					ScheduleSearchCriteria ssc = new ScheduleSearchCriteria("RAND()");
-					ssc.setDBName(SystemData.get("airline.db"));
-					ssc.setAirportD(lastA);
-					ssc.setAirportA(nextA);
-					ssc.setLeg(0);
-					ssc.setCheckDispatchRoutes(true);
-					results.put(nextA, sdao.search(ssc));
-					
-					// Prune equipment types that don't match the range
-					int distance = GeoUtils.distance(lastA, nextA);
-					for (Iterator<Aircraft> i = myEQTypes.iterator(); i.hasNext(); ) {
-						Aircraft a = i.next();
-						if ((a.getRange() > 0) && ((distance + 200) > a.getRange()))
-							i.remove();
-					}
-					
-					lastA = nextA;
-				}
-
-				// Save results
-				ctx.setAttribute("results", results, REQUEST);
-				ctx.setAttribute("myEQ", myEQTypes, REQUEST);
+			for (String eqType : ctx.getUser().getRatings()) {
+				Aircraft ac = acdao.get(eqType);
+				maxRange = Math.max(maxRange, ac.getRange());
+				myEQTypes.add(ac);
 			}
+			
+			// Load all route pairs
+			RoutePathHelper rph = new RoutePathHelper();
+			GetScheduleSearch sdao = new GetScheduleSearch(con);
+			Map<Airport, Collection<Airport>> routes = sdao.getRoutePairs();
+			routes.forEach((k, v) -> rph.setLinks(k, v));
+			
+			// Figure out the routes
+			Collection<RoutePair> rts = rph.getShortestPath(rp);
+			
+			// Load the flights
+			Map<Airport, Collection<ScheduleEntry>> results = new LinkedHashMap<Airport, Collection<ScheduleEntry>>();
+			for (RoutePair rtp : rts) {
+				ScheduleSearchCriteria ssc = new ScheduleSearchCriteria("RAND()");
+				ssc.setDBName(SystemData.get("airline.db"));
+				ssc.setAirportD(rp.getAirportD());
+				ssc.setAirportA(rp.getAirportA());
+				ssc.setLeg(0);
+				ssc.setCheckDispatchRoutes(true);
+				for (Iterator<Aircraft> i = myEQTypes.iterator(); i.hasNext(); ) {
+					Aircraft a = i.next();
+					if ((a.getRange() > 0) && ((rtp.getDistance() + 200) > a.getRange()))
+						i.remove();
+				}
+				
+				results.put(rtp.getAirportA(), sdao.search(ssc));
+			}
+			
+			// Save results
+			ctx.setAttribute("results", results, REQUEST);
+			ctx.setAttribute("myEQ", myEQTypes, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
