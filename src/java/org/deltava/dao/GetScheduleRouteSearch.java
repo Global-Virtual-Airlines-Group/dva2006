@@ -15,6 +15,7 @@ import org.deltava.util.system.SystemData;
  * @since 4.1
  */
 
+@Deprecated
 public class GetScheduleRouteSearch extends GetSchedule {
 
 	/**
