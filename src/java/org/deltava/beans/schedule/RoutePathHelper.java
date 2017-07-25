@@ -3,11 +3,9 @@ package org.deltava.beans.schedule;
 
 import java.util.*;
 
-import org.apache.log4j.Logger;
-
 import org.deltava.beans.Helper;
 
-import org.deltava.util.*;
+import org.deltava.util.CollectionUtils;
 
 /**
  * A utility class that uses Dijkstra's algorithm to calculate the shortest multi-airport leg.
@@ -17,11 +15,12 @@ import org.deltava.util.*;
  */
 
 @Helper(RoutePair.class)
-public class RoutePathHelper {
+public final class RoutePathHelper {
 	
-	private static final Logger log = Logger.getLogger(RoutePathHelper.class);
+	private final Map<Airport, Collection<ScheduleRoute>> _links = new HashMap<Airport, Collection<ScheduleRoute>>();
 	
-	private final Map<Airport, Collection<Airport>> _links = new HashMap<Airport, Collection<Airport>>();
+	private final int _legCost;
+	private final int _historicCost;
 	
 	private class Vertex implements Comparable<Vertex> {
 		private final Airport _a;
@@ -56,6 +55,16 @@ public class RoutePathHelper {
 		public String toString() {
 			return _a.getICAO();
 		}
+		
+		@Override
+		public int hashCode() {
+			return _a.getICAO().hashCode();
+		}
+		
+		@Override
+		public boolean equals(Object o) {
+			return ((o instanceof Vertex) && (_a.equals(((Vertex) o)._a)));
+		}
 
 		@Override
 		public int compareTo(Vertex v) {
@@ -65,14 +74,25 @@ public class RoutePathHelper {
 		}
 	}
 	
-	public RoutePathHelper() {
+	/**
+	 * Creates the helper bean.
+	 * @param legCost the flat extra cost of each additional leg in miles, to prioritize fewer legs over absolute distance
+	 * @param historicCost the flat extra cost of route pair served only by historical flights
+	 */
+	public RoutePathHelper(int legCost, int historicCost) {
 		super();
+		_legCost = legCost;
+		_historicCost = historicCost;
 	}
 	
-	public void setLinks(Airport a, Collection<Airport> links) {
-		_links.put(a, links);
+	/**
+	 * Populates the links between the airports.
+	 * @param links a Collection of ScheduleRoutes
+	 */
+	public void setLinks(Collection<ScheduleRoute> links) {
+		links.forEach(sr -> CollectionUtils.addMapCollection(_links, sr.getAirportD(), sr));
 	}
-
+	
 	/**
 	 * Calculates the shortest path between two Airports.
 	 * @param rp the RoutePair
@@ -83,50 +103,50 @@ public class RoutePathHelper {
 		Vertex v = new Vertex(rp.getAirportD());
 		v.setDistance(0);
 
-		Collection<Vertex> uvV = new TreeSet<Vertex>() {{ add(v); }};
+		List<Vertex> Q = new ArrayList<Vertex>(_links.size() + 2) {{ add(v); }};
 		Map<Airport, Vertex> uvA = new HashMap<Airport, Vertex>() {{ put(rp.getAirportD(), v); }};
-		_links.keySet().forEach(ap -> { Vertex vx = new Vertex(ap); uvV.add(vx); uvA.put(ap, vx); });
+		_links.keySet().forEach(ap -> { 
+			Vertex vx = new Vertex(ap); uvA.put(ap, vx);
+			if (!ap.equals(rp.getAirportD())) Q.add(vx);
+		});
 				
 		// Loop through the unvisited
-		uvV.stream().forEach(vv -> {
-			log.info("Starting at " + vv);
-			Collection<Airport> neighbors = _links.get(vv.getAirport());
-			for (Airport aN : neighbors) {
-				Vertex vN = uvA.get(aN);
-				if (vN == null)  continue;
+		while (!Q.isEmpty()) {
+			Collections.sort(Q);			
+			Vertex u = Q.get(0);
+			Q.remove(0);
+			//if (u.getAirport().equals(rp.getAirportA())) continue;
+			
+			Collection<ScheduleRoute> links = _links.get(u.getAirport());
+			for (ScheduleRoute srt : links) {
+				Vertex vN = uvA.get(srt.getAirportA());
+				if (vN == null) continue;
 				
-				int distance = (vv.getDistance() == Integer.MAX_VALUE ? 0 : vv.getDistance()) + GeoUtils.distance(vv.getAirport(), aN);
+				boolean isHistoricLeg = (srt.getFlights() == srt.getRoutes());
+				int distance = u.getDistance() + srt.getDistance() + _legCost + (isHistoricLeg ? _historicCost : 0);
 				if (distance < vN.getDistance()) {
-					if (vN.getDistance() == Integer.MAX_VALUE)
-						log.info("Shortest path to " + vN + " is from " + vv + ", distance=" + distance);
-					else
-						log.info("Decreasing shortest path from " + rp.getAirportD().getICAO() + " to " + vN + " from " + vv + "(was " + vN + ") distance=" + vN.getDistance() + " to " + distance);
-						
 					vN.setDistance(distance);
-					vN.setPrevious(vv);
+					vN.setPrevious(u);
 				}
 			}
-		});
+		}
 		
 		// Work backwards from the destination
 		Vertex vA = uvA.get(rp.getAirportA());
 		if (vA.getPrevious() == null)
-			return Collections.emptySet();
+			return Collections.emptyList();
 		
-		Collection<RoutePair> route = new ArrayList<RoutePair>();
+		List<RoutePair> route = new ArrayList<RoutePair>();
 		while (vA.getPrevious() != null) {
-			RoutePair rt = new ScheduleRoute(vA.getAirport(), vA.getPrevious().getAirport());
+			RoutePair rt = new ScheduleRoute(vA.getPrevious().getAirport(), vA.getAirport());
 			route.add(rt);
-			log.info(rt);
-			if ((vA.getPrevious() != null) && (vA.getPrevious().getPrevious() == vA)) {
-				log.warn("Loop between " + vA + " and " + vA.getPrevious());
-				break;
-			}
+			if ((vA.getPrevious() != null) && (vA.getPrevious().getPrevious() == vA))
+				throw new IllegalStateException("Loop between " + vA + " and " + vA.getPrevious());
 				
 			vA = vA.getPrevious();
 		}
 		
-		log.info("Route is " + route);
+		Collections.reverse(route);
 		return route;
 	}
 }

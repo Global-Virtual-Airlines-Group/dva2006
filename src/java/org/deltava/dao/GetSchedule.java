@@ -361,24 +361,19 @@ public class GetSchedule extends DAO {
 	
 	/**
 	 * Returns all Airports and the Airports they are directly connected to. 
-	 * @return a Map of destination Airport Collections, keyed by source Airport
+	 * @return a Collection of ScheduleRoutes
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Map<Airport, Collection<Airport>> getRoutePairs() throws DAOException {
+	public Collection<ScheduleRoute> getRoutePairs() throws DAOException {
 		try {
-			Map<Airport, Collection<Airport>> results = new HashMap<Airport, Collection<Airport>>();
-			prepareStatementWithoutLimits("SELECT DISTINCT AIRPORT_D, AIRPORT_A FROM SCHEDULE ORDER BY AIRPORT_D, AIRPORT_A");
+			Collection<ScheduleRoute> results = new ArrayList<ScheduleRoute>();
+			prepareStatementWithoutLimits("SELECT AIRPORT_D, AIRPORT_A, COUNT(FLIGHT), SUM(HISTORIC) FROM SCHEDULE GROUP BY AIRPORT_D, AIRPORT_A");
 			try (ResultSet rs = _ps.executeQuery()) {
-				Airport lastAP = null; Collection<Airport> dests = null;
 				while (rs.next()) {
-					Airport a = SystemData.getAirport(rs.getString(1));
-					if (!a.equals(lastAP) || (dests == null)) {
-						dests = new LinkedHashSet<Airport>();
-						lastAP = a;
-						results.put(lastAP, dests);
-					}
-					
-					dests.add(SystemData.getAirport(rs.getString(2)));
+					ScheduleRoute rp = new ScheduleRoute(SystemData.getAirport(rs.getString(1)), SystemData.getAirport(rs.getString(2)));
+					rp.setFlights(rs.getInt(3));
+					rp.setRoutes(rs.getInt(4));
+					results.add(rp);
 				}
 			}
 			
