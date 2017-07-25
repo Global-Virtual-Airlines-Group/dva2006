@@ -4,11 +4,13 @@ package org.deltava.commands.assign;
 import java.util.*;
 import java.sql.Connection;
 
+import org.deltava.beans.ComboAlias;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -19,6 +21,8 @@ import org.deltava.util.system.SystemData;
  */
 
 public class RouteAssignmentSearchCommand extends AbstractCommand {
+	
+	private static final Collection<ComboAlias> BIAS_OPTS = ComboUtils.fromArray(new String[] { "Avoid Historic Routes",  "No Preference", "Prefer Historic Routes"}, new String[] {"750", "0", "-500"});
 
 	/**
 	 * Executes the command.
@@ -30,6 +34,7 @@ public class RouteAssignmentSearchCommand extends AbstractCommand {
 		
 		// Get command result
 		CommandResult result = ctx.getResult();
+		ctx.setAttribute("biasOpts", BIAS_OPTS, REQUEST);
 		result.setURL("/jsp/assign/routeSearch.jsp");
 		if (ctx.getParameter("airportD") == null) {
 			result.setSuccess(true);	
@@ -42,19 +47,17 @@ public class RouteAssignmentSearchCommand extends AbstractCommand {
 			Connection con = ctx.getConnection();
 			
 			// Load aircraft for the user
-			int maxRange = 0; Collection<Aircraft> myEQTypes = new TreeSet<Aircraft>();
+			Collection<Aircraft> myEQTypes = new TreeSet<Aircraft>();
 			GetAircraft acdao = new GetAircraft(con);
 			for (String eqType : ctx.getUser().getRatings()) {
 				Aircraft ac = acdao.get(eqType);
-				maxRange = Math.max(maxRange, ac.getRange());
 				myEQTypes.add(ac);
 			}
 			
 			// Load all route pairs
-			RoutePathHelper rph = new RoutePathHelper();
+			RoutePathHelper rph = new RoutePathHelper(400, StringUtils.parse(ctx.getParameter("historicBias"), 0));
 			GetScheduleSearch sdao = new GetScheduleSearch(con);
-			Map<Airport, Collection<Airport>> routes = sdao.getRoutePairs();
-			routes.forEach((k, v) -> rph.setLinks(k, v));
+			rph.setLinks(sdao.getRoutePairs());
 			
 			// Figure out the routes
 			Collection<RoutePair> rts = rph.getShortestPath(rp);
@@ -64,13 +67,13 @@ public class RouteAssignmentSearchCommand extends AbstractCommand {
 			for (RoutePair rtp : rts) {
 				ScheduleSearchCriteria ssc = new ScheduleSearchCriteria("RAND()");
 				ssc.setDBName(SystemData.get("airline.db"));
-				ssc.setAirportD(rp.getAirportD());
-				ssc.setAirportA(rp.getAirportA());
+				ssc.setAirportD(rtp.getAirportD());
+				ssc.setAirportA(rtp.getAirportA());
 				ssc.setLeg(0);
 				ssc.setCheckDispatchRoutes(true);
 				for (Iterator<Aircraft> i = myEQTypes.iterator(); i.hasNext(); ) {
 					Aircraft a = i.next();
-					if ((a.getRange() > 0) && ((rtp.getDistance() + 200) > a.getRange()))
+					if ((a.getRange() > 0) && ((rtp.getDistance() + 250) > a.getRange()))
 						i.remove();
 				}
 				
