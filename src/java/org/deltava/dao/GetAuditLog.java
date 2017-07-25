@@ -9,7 +9,7 @@ import org.deltava.beans.*;
 /**
  * A Data Access Object to read the audit log for an object.
  * @author Luke
- * @version 7.4
+ * @version 7.5
  * @since 7.4
  */
 
@@ -42,14 +42,12 @@ public class GetAuditLog extends DAO {
 
 	/**
 	 * Loads all Audit log entries for a given object type
-	 * @param type the object type
 	 * @return a Collection of AuditLog beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<AuditLog> getEntries(String type) throws DAOException {
+	public Collection<AuditLog> getEntries() throws DAOException {
 		try {
-			prepareStatement("SELECT TYPE, ID, CREATED, AUTHOR_ID, REMOTE_HOST, INET6_NTOA(REMOTE_ADDR), DESCRIPTION FROM common.AUDIT_LOG WHERE (TYPE=?)");
-			_ps.setString(1, type);
+			prepareStatement("SELECT TYPE, ID, CREATED, AUTHOR_ID, REMOTE_HOST, INET6_NTOA(REMOTE_ADDR), DESCRIPTION FROM common.AUDIT_LOG ORDER BY CREATED DESC");
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
