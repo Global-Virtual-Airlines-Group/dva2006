@@ -51,8 +51,8 @@ public class AuditLogCommand extends AbstractViewCommand {
 			Collection<Integer> IDs = vc.getResults().stream().map(AuthoredBean::getAuthorID).collect(Collectors.toSet());
 			UserDataMap udm = uddao.get(IDs);
 			ctx.setAttribute("authors", pdao.get(udm), REQUEST);
-			ctx.setAttribute("userdata", udm, REQUEST);
-			ctx.setAttribute("ipInfo", ipInfo, REQUEST);
+			ctx.setAttribute("userData", udm, REQUEST);
+			ctx.setAttribute("ip", ipInfo, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

@@ -894,6 +894,12 @@ new Online Events, System News entries and NOTAMs, and Flight Report approval or
  <td class="data">You can view a list of <content:airline /> Pilots with permanent user accounts.</td>
 </tr>
 </content:filter>
+<content:filter roles="HR,Operations">
+<tr>
+ <td class="mid"><el:cmd className="bld" url="changelog">Change Log</el:cmd></td>
+ <td class="data">You can view the Change Log summarizing modifications to certain common Airline data.</td>
+</tr>
+</content:filter>
 <content:filter roles="Admin">
 <tr>
  <td class="mid"><el:cmd className="bld" url="diag">Diagnostics</el:cmd></td>

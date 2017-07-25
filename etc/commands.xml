@@ -1753,6 +1753,12 @@
 		<roles>Admin</roles>
 	</command>
 
+	<command id="changelog">
+		<name>Change Log</name>
+		<class>org.deltava.commands.admin.AuditLogCommand</class>
+		<roles>Operations,HR</roles>
+	</command>
+
 	<command id="permusers">
         <name>Permanent Users</name>
         <class>org.deltava.commands.admin.PermanentUsersCommand</class>
