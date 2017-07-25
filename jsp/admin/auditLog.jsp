@@ -42,15 +42,16 @@
 
 <!-- Table Audit Data -->
 <c:forEach var="log" items="${viewContext.results}">
-<c:set var="author" value="${pilot[log.authorID]}" scope="page" />
-<c:set var="ipInfo" value="${ipInfo[log.remoteAddr]}" scope="page" />
+<c:set var="ud" value="${userData[log.authorID]}" scope="page" />
+<c:set var="author" value="${authors[log.authorID]}" scope="page" />
+<c:set var="ipInfo" value="${ip[log.remoteAddr]}" scope="page" />
 <tr>
  <td><fmt:date date="${log.date}" t="HH:mm" /></td>
  <td class="sec">${log.auditType}</td>
  <td class="pri bld">${log.auditID}</td>
  <td>${author.name}</td>
- <td class="small nophone">${log.remoteAddr} (${log.remoteHost})<br /></td>
- <td class="small right">${log.description}</td>
+ <td class="small nophone">${log.remoteAddr} (${log.remoteHost})<c:if test="${!empty ipInfo}"><br /><el:flag countryCode="${ipInfo.country.code}" caption="${ipInfo.location}" /> ${ipInfo.location}</c:if></td>
+ <td class="small right"><fmt:text value="${log.description}"></fmt:text></td>
 </tr>
 </c:forEach>
 
