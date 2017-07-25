@@ -86,6 +86,10 @@ golgotha.onDOMReady(function() {
  <td class="data"><el:combo name="airportA" size="1" idx="*" options="${aA}" firstEntry="-" value="${rp.airportA}" onChange="void this.updateAirportCode()" />
  <el:airportCode combo="airportA" idx="*" airport="${rp.airportA}" /></td>
 </tr>
+<tr>
+ <td class="label">Historic Routes</td>
+ <td class="data"><el:combo name="historicBias" size="1" idx="*" options="${biasOpts}" value="${param.historicBias}" /></td>
+</tr>
 
 <!-- Button Bar -->
 <tr class="title">
@@ -154,11 +158,10 @@ golgotha.onDOMReady(function() {
 <c:if test="${empty results}">
 <el:table className="view">
 <tr class="title caps">
- <td class="left">SEARCH RESULTS FROM ${rp.airportD.name} (<fmt:airport airport="${rp.airportD}" />) to ${rp.airportA.name}
- (<fmt:airport airport="${rp.airportA}" />)</td>
+ <td class="left">SEARCH RESULTS FROM ${rp.airportD.name} (<fmt:airport airport="${rp.airportD}" />) to ${rp.airportA.name} (<fmt:airport airport="${rp.airportA}" />)</td>
 </tr>
 <tr>
- <td class="pri bld">No route could be plotted between ${rp.airportD.name} and ${rp.airportA.name}.</td>
+ <td class="pri bld">No route could be plotted between ${rp.airportD.name} (<fmt:airport airport="${rp.airportD}" />) and ${rp.airportA.name} (<fmt:airport airport="${rp.airportA}" />).</td>
 </tr>
 </el:table>
 </c:if>
