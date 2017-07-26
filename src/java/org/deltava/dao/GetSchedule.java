@@ -223,10 +223,11 @@ public class GetSchedule extends DAO {
 			// Execute the Query
 			FlightTime result = null;
 			try (ResultSet rs = _ps.executeQuery()) {
-				if (rs.next())
-					result = new FlightTime(rs.getInt(3), (rs.getInt(5) > 0), (rs.getInt(4) > rs.getInt(5)));
-				else
-					result = new FlightTime(0, false, false);
+				if (rs.next()) {
+					boolean hasHistoric = (rs.getInt(5) > 0); boolean hasCurrent = (rs.getInt(4) > rs.getInt(5));
+					result = new FlightTime(rs.getInt(3), (hasHistoric && hasCurrent) ? RoutePairType.HYBRID : (hasHistoric ? RoutePairType.HISTORIC : RoutePairType.PRESENT));
+				} else
+					result = new FlightTime(0, RoutePairType.UNKNOWN);
 			}
 
 			_ps.close();
@@ -372,7 +373,8 @@ public class GetSchedule extends DAO {
 				while (rs.next()) {
 					ScheduleRoute rp = new ScheduleRoute(SystemData.getAirport(rs.getString(1)), SystemData.getAirport(rs.getString(2)));
 					rp.setFlights(rs.getInt(3));
-					rp.setRoutes(rs.getInt(4));
+					boolean hasHistoric = (rs.getInt(4) > 1); boolean hasCurrent = (rs.getInt(3) > rs.getInt(4));
+					rp.setType(hasHistoric && hasCurrent ? RoutePairType.HYBRID : (hasCurrent ? RoutePairType.PRESENT : RoutePairType.HISTORIC));
 					results.add(rp);
 				}
 			}
