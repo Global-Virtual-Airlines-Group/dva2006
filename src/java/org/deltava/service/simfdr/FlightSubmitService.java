@@ -30,7 +30,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to process simFDR submitted Flight Reports.
  * @author Luke
- * @version 7.3
+ * @version 7.5
  * @since 7.0
  */
 
@@ -203,7 +203,7 @@ public class FlightSubmitService extends SimFDRService {
 			FlightTime avgHours = sdao.getFlightTime(fr);
 			boolean isAssignment = (fr.getDatabaseID(DatabaseID.ASSIGN) != 0);
 			boolean isEvent = (fr.getDatabaseID(DatabaseID.EVENT) != 0);
-			if (!avgHours.hasHistoric() && !avgHours.hasCurrent() && !isAssignment && !isEvent)
+			if ((avgHours.getType() == RoutePairType.UNKNOWN) && !isAssignment && !isEvent)
 				fr.setAttribute(FlightReport.ATTR_ROUTEWARN, true);
 			else if (avgHours.getFlightTime() > 0) {
 				int minHours = (int) ((avgHours.getFlightTime() * 0.75) - (SystemData.getDouble("users.pirep.pad_hours", 0) * 10));

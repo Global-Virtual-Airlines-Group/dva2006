@@ -33,7 +33,7 @@ import org.deltava.util.system.SystemData;
 /**
  * The XACARS Flight Report Web Service. 
  * @author Luke
- * @version 7.3
+ * @version 7.5
  * @since 4.1
  */
 
@@ -215,7 +215,7 @@ public class XPIREPService extends XAService {
 			
 			// Check the schedule database and check the route pair
 			FlightTime avgHours = sdao.getFlightTime(xfr);
-			if (!avgHours.hasCurrent() && !avgHours.hasHistoric() && !xfr.hasAttribute(FlightReport.ATTR_CHARTER))
+			if ((avgHours.getType() == RoutePairType.UNKNOWN) && !xfr.hasAttribute(FlightReport.ATTR_CHARTER))
 				xfr.setAttribute(FlightReport.ATTR_ROUTEWARN, true);
 			else {
 				int minHours = (int) ((avgHours.getFlightTime() * 0.75) - (SystemData.getDouble("users.pirep.pad_hours", 0) * 10));
