@@ -3,6 +3,7 @@ package org.deltava.beans.schedule;
 
 import java.util.*;
 
+import org.apache.log4j.Logger;
 import org.deltava.beans.Helper;
 
 import org.deltava.util.CollectionUtils;
@@ -16,6 +17,8 @@ import org.deltava.util.CollectionUtils;
 
 @Helper(RoutePair.class)
 public final class RoutePathHelper {
+	
+	private static final Logger log = Logger.getLogger(RoutePathHelper.class);
 	
 	private final Map<Airport, Collection<ScheduleRoute>> _links = new HashMap<Airport, Collection<ScheduleRoute>>();
 	
@@ -115,7 +118,13 @@ public final class RoutePathHelper {
 			Collections.sort(Q);			
 			Vertex u = Q.get(0);
 			Q.remove(0);
-			//if (u.getAirport().equals(rp.getAirportA())) continue;
+			if (u.getAirport().equals(rp.getAirportA())) {
+				log.info("Skipping " + u);
+				continue;
+			} else if (u.getDistance() == Integer.MAX_VALUE) {
+				log.info("No routes to " + u);
+				continue;
+			}
 			
 			Collection<ScheduleRoute> links = _links.get(u.getAirport());
 			for (ScheduleRoute srt : links) {
@@ -123,8 +132,11 @@ public final class RoutePathHelper {
 				if (vN == null) continue;
 				
 				boolean isHistoricLeg = (srt.getFlights() == srt.getRoutes());
-				int distance = u.getDistance() + srt.getDistance() + _legCost + (isHistoricLeg ? _historicCost : 0);
-				if (distance < vN.getDistance()) {
+				int distance = u.getDistance() + srt.getDistance() + (isHistoricLeg ? _historicCost : _legCost);
+				if (distance < vN.getDistance() && (distance > 0)) {
+					if (vN.getPrevious() != null)
+						log.info("Distance to " + vN + " is now " + distance + " from " + u + " was " + vN.getDistance() + " from " + vN.getPrevious());
+					
 					vN.setDistance(distance);
 					vN.setPrevious(u);
 				}
@@ -147,6 +159,7 @@ public final class RoutePathHelper {
 		}
 		
 		Collections.reverse(route);
+		log.info(route);
 		return route;
 	}
 }
