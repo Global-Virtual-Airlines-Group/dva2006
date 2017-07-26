@@ -4,7 +4,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html lang="en">
 <head>
 <title><content:airline /> Password Reset</title>
@@ -12,6 +11,7 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <content:attr roles="HR" attr="isHR" value="true" />
 <script type="text/javascript">
@@ -59,14 +59,13 @@ return true;
  <td colspan="2">MULTIPLE USERS NAMED ${userName} FOUND</td>
 </tr>
 <c:forEach var="pilot" items="${dupeUsers}">
-<c:if test="${fn:isActive(pilot)}">
 <c:set var="pCode" value="${empty pilot.pilotCode ? 'N/A' : pilot.pilotCode}" scope="page" />
 <tr>
  <td><el:radio name="pilotCode" value="${pilot.hexID}" label="${pCode}" /></td>
  <td class="data"><span class="pri bld">${pilot.name}</span> (${pilot.rank.name}, ${pilot.equipmentType})
 <content:filter roles="HR"> <el:link url="mailto:${pilot.email}">${pilot.email}</el:link></content:filter></td>
 </tr>
-</c:if></c:forEach>
+</c:forEach>
 </c:if>
 <content:hasmsg>
 <tr>
