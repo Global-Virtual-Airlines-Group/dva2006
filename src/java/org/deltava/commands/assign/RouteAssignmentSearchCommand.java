@@ -2,6 +2,7 @@
 package org.deltava.commands.assign;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.deltava.beans.ComboAlias;
@@ -22,8 +23,9 @@ import org.deltava.util.system.SystemData;
 
 public class RouteAssignmentSearchCommand extends AbstractCommand {
 	
-	private static final Collection<ComboAlias> BIAS_OPTS = ComboUtils.fromArray(new String[] { "Avoid Historic Routes",  "No Preference", "Prefer Historic Routes"}, new String[] {"750", "0", "-500"});
-
+	private static final int DEFAULT_COST = 400;
+	private static final Collection<ComboAlias> BIAS_OPTS = ComboUtils.fromArray(new String[] { "Avoid Historic Routes",  "No Preference", "Prefer Historic Routes"}, new String[] {"850", String.valueOf(DEFAULT_COST), "50"});
+	
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
@@ -41,8 +43,10 @@ public class RouteAssignmentSearchCommand extends AbstractCommand {
 			return;
 		}
 		
-		// Get the route pair
-		RoutePair rp = new ScheduleRoute(SystemData.getAirport(ctx.getParameter("airportD")), SystemData.getAirport(ctx.getParameter("airportA")));
+		// Get the route pair and type
+		int historicCost = StringUtils.parse(ctx.getParameter("historicBias"), DEFAULT_COST);
+		ScheduleRoute rp = new ScheduleRoute(SystemData.getAirport(ctx.getParameter("airportD")), SystemData.getAirport(ctx.getParameter("airportA")));
+		rp.setType((historicCost == DEFAULT_COST) ? RoutePairType.HYBRID : (historicCost > DEFAULT_COST) ? RoutePairType.PRESENT : RoutePairType.HISTORIC);
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -55,7 +59,7 @@ public class RouteAssignmentSearchCommand extends AbstractCommand {
 			}
 			
 			// Load all route pairs
-			RoutePathHelper rph = new RoutePathHelper(400, StringUtils.parse(ctx.getParameter("historicBias"), 0));
+			RoutePathHelper rph = new RoutePathHelper(400, historicCost);
 			GetScheduleSearch sdao = new GetScheduleSearch(con);
 			rph.setLinks(sdao.getRoutePairs());
 			
@@ -63,8 +67,9 @@ public class RouteAssignmentSearchCommand extends AbstractCommand {
 			Collection<RoutePair> rts = rph.getShortestPath(rp);
 			
 			// Load the flights
-			Map<Airport, Collection<ScheduleEntry>> results = new LinkedHashMap<Airport, Collection<ScheduleEntry>>();
+			Map<Airport, Collection<ScheduleEntry>> results = new LinkedHashMap<Airport, Collection<ScheduleEntry>>(); int totalDistance = 0;
 			for (RoutePair rtp : rts) {
+				totalDistance += rtp.getDistance();
 				ScheduleSearchCriteria ssc = new ScheduleSearchCriteria("RAND()");
 				ssc.setDBName(SystemData.get("airline.db"));
 				ssc.setAirportD(rtp.getAirportD());
@@ -77,12 +82,15 @@ public class RouteAssignmentSearchCommand extends AbstractCommand {
 						i.remove();
 				}
 				
-				results.put(rtp.getAirportA(), sdao.search(ssc));
+				Collection<ScheduleEntry> entries = sdao.search(ssc);
+				Collection<ScheduleEntry> filteredEntries = entries.stream().filter(se -> filter(se, rp.getType())).collect(Collectors.toList());
+				results.put(rtp.getAirportA(), filteredEntries.isEmpty() ? entries : filteredEntries);
 			}
 			
 			// Save results
 			ctx.setAttribute("results", results, REQUEST);
 			ctx.setAttribute("myEQ", myEQTypes, REQUEST);
+			ctx.setAttribute("totalDistance", Integer.valueOf(totalDistance), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
@@ -93,5 +101,9 @@ public class RouteAssignmentSearchCommand extends AbstractCommand {
 		ctx.setAttribute("rp", rp, REQUEST);
 		ctx.setAttribute("doSearch", Boolean.TRUE, REQUEST);
 		result.setSuccess(true);
+	}
+	
+	private static boolean filter(ScheduleEntry se, RoutePairType rt) {
+		return (rt.hasHistoric() && se.getHistoric()) || (rt.hasCurrent() && !se.getHistoric());
 	}
 }

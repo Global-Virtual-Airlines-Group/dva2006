@@ -20,13 +20,12 @@
 <content:js name="airportRefresh" />
 <fmt:aptype var="useICAO" />
 <script type="text/javascript">
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-golgotha.form.validate({f:f.airportD, t:'Departure Airport'});
-golgotha.form.validate({f:f.airportA, t:'Arrival Airport'});
-golgotha.form.submit(f);
-return true;
+golgotha.local.validate = function(f) {
+	if (!golgotha.form.check()) return false;
+	golgotha.form.validate({f:f.airportD, t:'Departure Airport'});
+	golgotha.form.validate({f:f.airportA, t:'Arrival Airport'});
+	golgotha.form.submit(f);
+	return true;
 };
 <c:if test="${!empty results}">
 golgotha.local.validateBuild = function(f)
@@ -34,8 +33,7 @@ golgotha.local.validateBuild = function(f)
 if (!golgotha.form.check()) return false;
 var legNum = f.legCount.value;
 for (var x = 1; x <= legNum; x++) {
-	var radio = eval('f.leg' + x);
-	var isOK = false;
+	var radio = eval('f.leg' + x); var lg = 'leg' + x; var isOK = false;
 	if (typeof radio.length != 'undefined') {
 		for (var y = 0; !isOK && (y < radio.length); y++)
 			isOK = radio[y].checked;
@@ -105,8 +103,7 @@ golgotha.onDOMReady(function() {
 <el:form method="post" action="routebuild.do" validate="return golgotha.form.wrap(golgotha.local.validateBuild, this)">
 <el:table className="view">
 <tr class="title caps">
- <td colspan="8" class="left"><span class="nophone">SEARCH RESULTS FROM </span>${rp.airportD.name} (<fmt:airport airport="${rp.airportD}" />) to ${rp.airportA.name}
- (<fmt:airport airport="${rp.airportA}" />)</td>
+ <td colspan="8" class="left"><span class="nophone">SEARCH RESULTS FROM </span>${rp.airportD.name} (<fmt:airport airport="${rp.airportD}" />) to ${rp.airportA.name} (<fmt:airport airport="${rp.airportA}" />) - <fmt:distance value="${totalDistance}" /></td>
 </tr>
 <!-- Schedule Entry Header Bar -->
 <tr class="caps title">
