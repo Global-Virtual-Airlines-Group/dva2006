@@ -6,7 +6,7 @@ import org.deltava.beans.ViewEntry;
 /**
  * A bean to store route pair information.
  * @author Luke
- * @version 7.0
+ * @version 7.5
  * @since 1.0
  */
 
@@ -14,6 +14,7 @@ public class ScheduleRoute extends AbstractRoute implements Comparable<ScheduleR
 	
 	private final Airline _a;
 	private int _routes;
+	private RoutePairType _type = RoutePairType.UNKNOWN;
 	
 	/**
 	 * Creates a new Route Pair.
@@ -52,6 +53,14 @@ public class ScheduleRoute extends AbstractRoute implements Comparable<ScheduleR
 	public int getRoutes() {
 		return _routes;
 	}
+
+	/**
+	 * Returns the pair type.
+	 * @return a RoutePairType
+	 */
+	public RoutePairType getType() {
+		return _type;
+	}
 	
 	/**
 	 * Updates the number of flights between these two airports. 
@@ -71,6 +80,14 @@ public class ScheduleRoute extends AbstractRoute implements Comparable<ScheduleR
 	 */
 	public void setRoutes(int count) {
 		_routes = Math.max(0, count);
+	}
+	
+	/**
+	 * Updates the route pair type.
+	 * @param rt the RoutePairType
+	 */
+	public void setType(RoutePairType rt) {
+		_type = rt;
 	}
 
 	@Override
