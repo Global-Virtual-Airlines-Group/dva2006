@@ -14,7 +14,7 @@ import org.gvagroup.acars.ACARSFlags;
 /**
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
- * @version 7.4
+ * @version 7.5
  * @since 1.0
  */
 
@@ -31,7 +31,9 @@ public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 	private boolean _checkRide;
 	private boolean _dispatchRoute;
 	private String _phaseName;
+	
 	private Country _c;
+	private String _tailCode;
 
 	public MapRouteEntry(Instant dt, GeoLocation gl, Pilot usr, String eqType) {
 		super(dt, gl);
@@ -74,6 +76,10 @@ public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 	public void setCountry(Country c) {
 		_c = c;
 	}
+	
+	public void setTailCode(String tailCode) {
+		_tailCode = tailCode;
+	}
 
 	@Override
 	public final String getIconColor() {
@@ -109,7 +115,14 @@ public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 			buf.append(_betaBuild);
 		}
 		
-		buf.append(")<br />From: ");
+		buf.append(")<br />");
+		if (!StringUtils.isEmpty(_tailCode)) {
+			buf.append("<span class=\"small\">Using ");
+			buf.append(_tailCode);
+			buf.append("</span><br />");
+		}
+		
+		buf.append("From: ");
 		buf.append(_airportD.getName());
 		buf.append(" (");
 		buf.append(_airportD.getICAO());
