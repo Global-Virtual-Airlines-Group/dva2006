@@ -115,14 +115,7 @@ public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 			buf.append(_betaBuild);
 		}
 		
-		buf.append(")<br />");
-		if (!StringUtils.isEmpty(_tailCode)) {
-			buf.append("<span class=\"small\">Using ");
-			buf.append(_tailCode);
-			buf.append("</span><br />");
-		}
-		
-		buf.append("From: ");
+		buf.append(")<br />From: ");
 		buf.append(_airportD.getName());
 		buf.append(" (");
 		buf.append(_airportD.getICAO());
@@ -199,6 +192,12 @@ public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 		buf.append("</span><br /><br />ACARS Flight <span class=\"bld\">");
 		buf.append(StringUtils.format(getID(), "#,##0"));
 		buf.append("</span>");
+		if (!StringUtils.isEmpty(_tailCode)) {
+			buf.append(" <span class=\"small\">(a/c ");
+			buf.append(_tailCode);
+			buf.append(")</span>");
+		}
+		
 		if (_network != null) {
 			buf.append("<br />Flight operated online using <span class=\"sec bld\">");
 			buf.append(_network.toString());
