@@ -12,7 +12,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Data Access Object to read Pilot Transfer requests.
  * @author Luke
- * @version 7.2
+ * @version 7.5
  * @since 1.0
  */
 
@@ -122,8 +122,7 @@ public class GetTransferRequest extends DAO {
 	 */
 	public TransferRequest getByCheckRide(int checkRideID) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT TX.* FROM TXREQUESTS TX LEFT JOIN TXRIDES TC ON "
-				+ "(TX.ID=TC.ID) WHERE (TC.CHECKRIDE_ID=?) LIMIT 1");
+			prepareStatementWithoutLimits("SELECT TX.* FROM TXREQUESTS TX LEFT JOIN TXRIDES TC ON (TX.ID=TC.ID) WHERE (TC.CHECKRIDE_ID=?) LIMIT 1");
 			_ps.setInt(1, checkRideID);
 
 			// Execute the query, if empty return null
@@ -213,8 +212,9 @@ public class GetTransferRequest extends DAO {
 			while (rs.next()) {
 				TransferRequest txreq = new TransferRequest(rs.getInt(1), rs.getString(3));
 				txreq.setStatus(rs.getInt(2));
-				txreq.setDate(toInstant(rs.getTimestamp(4)));
-				txreq.setRatingOnly(rs.getBoolean(5));
+				txreq.setAircraftType(rs.getString(4));
+				txreq.setDate(toInstant(rs.getTimestamp(5)));
+				txreq.setRatingOnly(rs.getBoolean(6));
 				results.add(txreq);
 			}
 		}

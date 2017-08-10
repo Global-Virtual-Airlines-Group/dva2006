@@ -71,6 +71,10 @@ public class TransferRequestCommand extends AbstractTestHistoryCommand {
 					i.remove();
 				}
 			}
+			
+			// Load available scripts
+			GetExamProfiles eqpdao = new GetExamProfiles(con);
+			ctx.setAttribute("eqAircraft", eqpdao.getAircraftScripts(), REQUEST);
 
 			// If we're just doing a GET, then redirect to the JSP
 			String eqType = ctx.getParameter("eqType");
@@ -97,6 +101,7 @@ public class TransferRequestCommand extends AbstractTestHistoryCommand {
 			// Populate the transfer request
 			EquipmentType eq = activeEQ.get(eqType);
 			TransferRequest txreq = new TransferRequest(p.getID(), eqType);
+			txreq.setAircraftType(ctx.getParameter("acType"));
 			if (!eq.getOwner().getCode().equals(SystemData.get("airline.code")))
 				txreq.setRatingOnly(true);
 			else

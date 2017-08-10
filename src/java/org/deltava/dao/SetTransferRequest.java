@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2011, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to write equipment program Transfer Requests.
  * @author Luke
- * @version 3.7
+ * @version 7.5
  * @since 1.0
  */
 
@@ -34,14 +34,12 @@ public class SetTransferRequest extends DAO {
 		String db = formatDBName(dbName);
 		try {
 			startTransaction();
-			
-			// Write the transfer request
-            prepareStatement("INSERT INTO " + db + ".TXREQUESTS (STATUS, EQTYPE, CREATED, "
-            		+ "RATING_ONLY, ID) VALUES (?, ?, NOW(), ?, ?)");
+            prepareStatement("INSERT INTO " + db + ".TXREQUESTS (STATUS, EQTYPE, ACTYPE, CREATED, RATING_ONLY, ID) VALUES (?, ?, ?, NOW(), ?, ?)");
             _ps.setInt(1, txreq.getStatus());
             _ps.setString(2, txreq.getEquipmentType());
-            _ps.setBoolean(3, txreq.getRatingOnly());
-            _ps.setInt(4, txreq.getID());
+            _ps.setString(3, txreq.getAircraftType());
+            _ps.setBoolean(4, txreq.getRatingOnly());
+            _ps.setInt(5, txreq.getID());
             executeUpdate(1);
             
 			// Write check ride IDs
@@ -61,14 +59,13 @@ public class SetTransferRequest extends DAO {
 	public void update(TransferRequest txreq) throws DAOException {
 		try {
 			startTransaction();
-			
-			// Write the transfer request
-			prepareStatement("UPDATE TXREQUESTS SET STATUS=?, EQTYPE=?, CREATED=?, RATING_ONLY=? WHERE (ID=?)");
+			prepareStatement("UPDATE TXREQUESTS SET STATUS=?, EQTYPE=?, ACTYPE=?, CREATED=?, RATING_ONLY=? WHERE (ID=?)");
 			_ps.setInt(1, txreq.getStatus());
 			_ps.setString(2, txreq.getEquipmentType());
-			_ps.setTimestamp(3, createTimestamp(txreq.getDate()));
-			_ps.setBoolean(4, txreq.getRatingOnly());
-			_ps.setInt(5, txreq.getID());
+			_ps.setString(3, txreq.getAircraftType());
+			_ps.setTimestamp(4, createTimestamp(txreq.getDate()));
+			_ps.setBoolean(5, txreq.getRatingOnly());
+			_ps.setInt(6, txreq.getID());
 			executeUpdate(1);
 			
 			// Write check ride IDs
@@ -80,7 +77,7 @@ public class SetTransferRequest extends DAO {
 		}
 	}
 	
-	/**
+	/*
 	 * Helper method to write check ride IDs to the database.
 	 */
 	private void writeRides(TransferRequest txreq, String db) throws SQLException {
@@ -109,7 +106,7 @@ public class SetTransferRequest extends DAO {
 	 */
 	public void delete(int pilotID) throws DAOException {
 		try {
-			prepareStatement("DELETE FROM TXREQUESTS WHERE (ID=?)");
+			prepareStatementWithoutLimits("DELETE FROM TXREQUESTS WHERE (ID=?)");
 			_ps.setInt(1, pilotID);
 			executeUpdate(0);
 		} catch (SQLException se) {
