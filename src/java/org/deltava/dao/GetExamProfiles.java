@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to read examination configuration data.
  * @author Luke
- * @version 7.2
+ * @version 7.5
  * @since 1.0
  */
 
@@ -158,8 +158,29 @@ public class GetExamProfiles extends DAO {
 			throw new DAOException(se);
 		}
 	}
-
+	
 	/**
+	 * Returns all available equipment/aircraft script combinations. 
+	 * @return a Map of Collections of aircraft names, keyed by equipment profile
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Map<String, Collection<String>> getAircraftScripts() throws DAOException {
+		try {
+			Map<String, Collection<String>> results = new LinkedHashMap<String, Collection<String>>();
+			prepareStatementWithoutLimits("SELECT EQPROGRAM, EQTYPE FROM CR_DESCS");
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+					CollectionUtils.addMapCollection(results, rs.getString(1), rs.getString(2));
+			}
+			
+			_ps.close();
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+
+	/*
 	 * Helper method to parse ExamProfile result sets.
 	 */
 	private List<ExamProfile> execute() throws SQLException {
