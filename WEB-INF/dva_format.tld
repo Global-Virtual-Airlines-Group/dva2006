@@ -356,6 +356,24 @@
 	</tag>
 
 	<tag>
+		<description>JS Map tag, used to put objects into a JavaScript associative array</description>
+		<name>js</name>
+		<tag-class>org.deltava.taglib.format.JSMapTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<name>var</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>object</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.util.Map</type>
+		</attribute>
+	</tag>
+
+	<tag>
 		<description>JS Date tag, used to translate date/times into JavaScript</description>
 		<name>jsdate</name>
 		<tag-class>org.deltava.taglib.format.JSDateTag</tag-class>
