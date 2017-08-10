@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010, 2012, 2014, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.sql.*;
@@ -8,11 +8,12 @@ import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
 import org.deltava.crypt.MessageDigester;
+import org.deltava.util.StringUtils;
 
 /**
  * An Authenticator to authenticate users against Apache2-style database tables.
  * @author Luke
- * @version 6.0
+ * @version 7.5
  * @since 1.0
  */
 
@@ -150,12 +151,18 @@ public class ApacheSQLAuthenticator extends SQLAuthenticator {
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("REPLACE INTO ");
 		sqlBuf.append(_props.getProperty("apachesql.table", "AUTH"));
-		sqlBuf.append(" (ID, PWD, ENABLED) VALUES (?, ?, ?)");
+		sqlBuf.append(" (ID, PWD, NAME, ENABLED) VALUES (?, ?, ?, ?)");
 
 		// Generate the password hash
 		MessageDigester md = new MessageDigester("SHA-1");
 		Base64.Encoder b64e = Base64.getEncoder();
 		String pwdHash = "{SHA}" + b64e.encodeToString(md.digest(pwd.getBytes()));
+		
+		boolean hasAlias = false;
+		if (usr instanceof Pilot) {
+			Pilot p = (Pilot) usr;
+			hasAlias = !StringUtils.isEmpty(p.getLDAPName()) || !StringUtils.isEmpty(p.getPilotCode());
+		}
 
 		try {
 			Connection con = getConnection();
@@ -166,19 +173,40 @@ public class ApacheSQLAuthenticator extends SQLAuthenticator {
 			try (PreparedStatement ps = con.prepareStatement(sqlBuf.toString())) {
 				ps.setInt(1, id);
 				ps.setString(2, pwdHash);
-				ps.setBoolean(3, true);
+				ps.setString(3, usr.getName());
+				ps.setBoolean(4, true);
+				ps.executeUpdate();
+			}
+			
+			sqlBuf = new StringBuilder("DELETE FROM ");
+			sqlBuf.append(_props.getProperty("apachesql.alias", "common.AUTH_ALIAS"));
+			sqlBuf.append(" WHERE (ID=?)");
+			try (PreparedStatement ps = con.prepareStatement(sqlBuf.toString())) {
+				ps.setInt(1, id);
 				ps.executeUpdate();
 			}
 
 			// If we have an alias, then update it
-			if ((usr instanceof Pilot) && (((Pilot) usr).getLDAPName() != null)) {
+			if (hasAlias) {
+				Pilot p = (Pilot) usr;	
 				sqlBuf = new StringBuilder("INSERT INTO ");
 				sqlBuf.append(_props.getProperty("apachesql.alias", "common.AUTH_ALIAS"));
-				sqlBuf.append(" (ID, USERID) VALUES (?, ?)");
+				sqlBuf.append(" (ID, USERID, ISCODE) VALUES (?, ?, ?)");
 				try (PreparedStatement ps = con.prepareStatement(sqlBuf.toString())) {
 					ps.setInt(1, usr.getID());
-					ps.setString(2, ((Pilot) usr).getLDAPName());
-					ps.executeUpdate();
+					if (!StringUtils.isEmpty(p.getPilotCode())) {
+						ps.setString(2, p.getPilotCode());
+						ps.setBoolean(3, true);
+						ps.addBatch();
+					}
+					
+					if (!StringUtils.isEmpty(p.getLDAPName())) {
+						ps.setString(2, p.getLDAPName());
+						ps.setBoolean(3, false);
+						ps.addBatch();
+					}
+					
+					ps.executeBatch();
 				}
 			}
 			
@@ -193,15 +221,31 @@ public class ApacheSQLAuthenticator extends SQLAuthenticator {
 	}
 
 	/**
-	 * Renames a user in the Directory. Since the Apache Authenticator relies upon database IDs, this is not
-	 * implemented.
+	 * Renames a user in the Directory.
 	 * @param usr the user bean
 	 * @param newName the new fully-qualified directory
 	 * @throws SecurityException if an error occurs
 	 */
 	@Override
 	public void rename(Person usr, String newName) throws SecurityException {
-		// empty
+		if (log.isDebugEnabled())
+			log.debug("Renaming user " + usr.getDN() + " to " + newName);
+
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("UPDATE ");
+		sqlBuf.append(_props.getProperty("apachesql.table", "AUTH"));
+		sqlBuf.append(" SET NAME=? WHERE (ID=?)");
+		
+		try {
+			Connection con = getConnection();
+			try (PreparedStatement ps = con.prepareStatement(sqlBuf.toString())) {
+				ps.setString(1, newName);
+				ps.setInt(2, usr.getID());
+				ps.executeUpdate();
+			}
+		} catch (Exception e) {
+			throw new SecurityException(e);
+		}
 	}
 	
 	/**
