@@ -65,6 +65,10 @@ return true;
  <td class="data">${pilot.rank.name}, ${pilot.equipmentType} (Stage <fmt:int value="${currentEQ.stage}" />)</td>
 </tr>
 <tr>
+ <td class="label">Preferred Aircraft</td>
+ <td class="data sec bld">${txReq.aircraftType}</td>
+</tr>
+<tr>
  <td class="label">Transfer Status</td>
  <td class="data"><span class="sec bld">${txReq.statusName}</span> (Created on <fmt:date t="HH:mm" date="${txReq.date}" />)</td>
 </tr>
@@ -156,7 +160,7 @@ return true;
 </c:if>
 <tr>
  <td class="label">Equipment Type</td>
- <td class="data"><el:combo name="crType" idx="*" size="1" firstEntry="-" className="req" options="${eqType.primaryRatings}" value="${eqType.name}" /></td>
+ <td class="data"><el:combo name="crType" idx="*" size="1" firstEntry="-" className="req" options="${eqType.primaryRatings}" value="${txreq.aircraftType}" /></td>
 </tr>
 <tr>
  <td class="label top">Comments</td>
