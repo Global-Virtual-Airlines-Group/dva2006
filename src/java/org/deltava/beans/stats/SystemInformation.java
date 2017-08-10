@@ -1,4 +1,4 @@
-// Copyright 2005, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import java.time.Instant;
@@ -8,7 +8,7 @@ import org.deltava.beans.*;
 /**
  * A bean to store system information.
  * @author Luke
- * @version 7.0
+ * @version 7.5
  * @since 6.4
  */
 
@@ -23,6 +23,9 @@ public class SystemInformation extends DatabaseBean {
 	
 	private String _locale;
 	private String _tz;
+	
+	private Simulator _sim = Simulator.UNKNOWN;
+	private String _bridgeInfo;
 	
 	private String _cpu;
 	private int _cpuSpeed;
@@ -95,6 +98,22 @@ public class SystemInformation extends DatabaseBean {
 	 */
 	public String getTimeZone() {
 		return _tz;
+	}
+	
+	/**
+	 * Returns the user's simulator.
+	 * @return a Simulator enum
+	 */
+	public Simulator getSimulator() {
+		return _sim;
+	}
+	
+	/**
+	 * Returns the user's simulator bridge information.
+	 * @return the bridge version, or null if unknown
+	 */
+	public String getBridgeInfo() {
+		return _bridgeInfo;
 	}
 	
 	/**
@@ -280,6 +299,22 @@ public class SystemInformation extends DatabaseBean {
 	 */
 	public void setTimeZone(String tz) {
 		_tz = tz;
+	}
+	
+	/**
+	 * Updates the user's simulator.
+	 * @param sim a Simulator
+	 */
+	public void setSimulator(Simulator sim) {
+		_sim = sim;
+	}
+	
+	/**
+	 * Updates the user's simulator bridge version.
+	 * @param info the Bridge info
+	 */
+	public void setBridgeInfo(String info) {
+		_bridgeInfo = info;
 	}
 	
 	/**

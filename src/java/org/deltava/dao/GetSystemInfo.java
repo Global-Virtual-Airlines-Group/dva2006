@@ -1,9 +1,10 @@
-// Copyright 2005, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2011, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 
+import org.deltava.beans.Simulator;
 import org.deltava.beans.stats.*;
 
 /**
@@ -51,11 +52,41 @@ public class GetSystemInfo extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public SystemInformation get(int id) throws DAOException {
+		return get(id, Simulator.UNKNOWN);
+	}
+	
+	/**
+	 * Returns system configuration data for a particular Pilot.
+	 * @param id the user's database ID
+	 * @param sim an optional Simulator bean
+	 * @return a SystemInformation bean, or null if not found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public SystemInformation get(int id, Simulator sim) throws DAOException {
 		try {
 			prepareStatementWithoutLimits("SELECT * from acars.SYSINFO WHERE (ID=?) LIMIT 1");
 			_ps.setInt(1, id);
 			List<SystemInformation> results = execute();
-			return results.isEmpty() ? null : results.get(0);
+			if (results.isEmpty())
+				return null;
+			
+			SystemInformation inf = results.get(0);
+			if (sim != Simulator.UNKNOWN) {
+				prepareStatementWithoutLimits("SELECT BRIDGE FROM acars.SIMINFO WHERE (ID=?) AND (SIM=?) LIMIT 1");
+				_ps.setInt(1, id);
+				_ps.setTimestamp(2, createTimestamp(inf.getDate()));
+			
+				try (ResultSet rs = _ps.executeQuery()) {
+					if (rs.next()) {
+						inf.setSimulator(sim);
+						inf.setBridgeInfo(rs.getString(1));
+					}
+				}
+			
+				_ps.close();
+			}
+			
+			return inf;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
