@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010, 2011, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.hr;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.*;
  * A class to store Equipment Program transfer requests. Since a checkride may be required for switches to
  * additional equipment programs, this bean may also be used to track check ride workflows.
  * @author Luke
- * @version 7.0
+ * @version 7.5
  * @since 1.0
  */
 
@@ -26,7 +26,8 @@ public class TransferRequest extends DatabaseBean implements ViewEntry {
 	private boolean _crSubmitted;
 	
 	private int _status;
-	private String _eqType;
+	private final String _eqType;
+	private String _acType;
 	private Instant _date;
 	private boolean _ratingOnly;
 
@@ -41,6 +42,14 @@ public class TransferRequest extends DatabaseBean implements ViewEntry {
 		super();
 		setID(pilotID);
 		_eqType = eqType.trim();
+	}
+	
+	/**
+	 * Returns the preferred aircraft type for the Check Ride.
+	 * @return the aircraft type
+	 */
+	public String getAircraftType() {
+		return _acType;
 	}
 
 	/**
@@ -126,6 +135,14 @@ public class TransferRequest extends DatabaseBean implements ViewEntry {
 	public void setDate(Instant dt) {
 		_date = dt;
 	}
+	
+	/**
+	 * Updates the preferr aircraft type to use for the check ride.
+	 * @param acType the aircraft type
+	 */
+	public void setAircraftType(String acType) {
+		_acType = acType;
+	}
 
 	/**
 	 * Updates the database ID of the assigned Check Ride.
@@ -190,10 +207,9 @@ public class TransferRequest extends DatabaseBean implements ViewEntry {
 	 */
 	@Override
 	public String getRowClassName() {
-		if (getStatus() == ASSIGNED)
+		if (_status == ASSIGNED)
 			return _crSubmitted ? "opt3" : "opt1";
 			
-		String[] ROW_CLASSES = { null, "opt2", null, null };
-		return ROW_CLASSES[getStatus()];
+		return (_status == 1) ? "opt2" : null;
 	}
 }
