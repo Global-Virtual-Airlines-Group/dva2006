@@ -4,6 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <html lang="en">
 <head>
 <title>Check Ride Script</title>
@@ -13,6 +14,7 @@
 <content:favicon />
 <content:js name="common" />
 <script>
+<fmt:js var="golgotha.local.eqACMap" object="${acTypes}" />
 golgotha.local.validate = function(f) {
     if (!golgotha.form.check()) return false;
     golgotha.form.validate({f:f.eqType, t:'Aircraft Type'});
@@ -21,6 +23,19 @@ golgotha.local.validate = function(f) {
     golgotha.form.submit(f);
     return true;
 };
+
+golgotha.local.updateEQ = function(combo) {
+	var eq = golgotha.form.getCombo(combo);
+	var acTypes = golgotha.local.eqACMap[eq];
+
+	var acc = document.forms[0].eqType;
+	acc.options.length = acTypes.length + 1;
+	acc.selectedIndex = 0;
+	for (var x = 0; x < acTypes.length; x++)
+		acc.options[x + 1] = new Option(acTypes[x], acTypes[x]);
+
+	return true;
+};
 </script>
 </head>
 <content:copyright visible="false" />
@@ -28,6 +43,7 @@ golgotha.local.validate = function(f) {
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:empty var="emptyList" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -35,15 +51,15 @@ golgotha.local.validate = function(f) {
 <el:table className="form">
 <!-- Title Bar -->
 <tr class="title caps">
- <td colspan="2">CHECK RIDE SCRIPT</td>
-</tr>
-<tr>
- <td class="label">Aircraft Type</td>
- <td class="data"><el:combo name="eqType" idx="*" size="1" className="req" options="${acTypes}" firstEntry="-" value="${script.equipmentType}" /></td>
+ <td colspan="2"><content:airline /> CHECK RIDE SCRIPT</td>
 </tr>
 <tr>
  <td class="label">Equipment Program</td>
- <td class="data"><el:combo name="programType" idx="*" size="1" className="req" options="${eqTypes}" firstEntry="-" value="${script.program}" /></td>
+ <td class="data"><el:combo name="programType" idx="*" size="1" required="true" options="${eqTypes}" firstEntry="[ EQUIPMENT PROGRAM ]" value="${script.program}" onChange="void golgotha.local.updateEQ(this)" /></td>
+</tr>
+<tr>
+ <td class="label">Aircraft Type</td>
+ <td class="data"><el:combo name="eqType" idx="*" size="1" required="true" options="${(empty script) ? emptyList : acTypes[script.program]}" firstEntry="[ AIRCRAFT TYPE ]" value="${script.equipmentType}" /></td>
 </tr>
 <tr>
  <td class="label top">Script Text</td>
