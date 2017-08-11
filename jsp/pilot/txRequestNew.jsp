@@ -39,7 +39,7 @@ golgotha.local.updateAircraft = function(combo) {
 
 	golgotha.util.display('acType', (acTypes.length > 1));
 	acc.selectedIndex = (acTypes.length > 1) ? 0 : 1;
-	return true;		
+	return true;
 };
 </script>
 </head>
