@@ -196,6 +196,12 @@ return true;
 <tr class="title">
  <td colspan="${cspan + 1}">ACARS CLIENT SYSTEM INFORMATION - <span class="und" onclick="void golgotha.util.toggleExpand(this, 'acarsClient')">EXPAND</span></td>
 </tr>
+<c:if test="${!empty acarsClientInfo.bridgeInfo}">
+<tr class="acarsClient" style="display:none;">
+ <td class="label">Simulator / Bridge</td>
+ <td colspan="${cspan + 1}" class="data"><span class="sec bld">${acarsClientInfo.simulator.name}</span><span class="small nophone"> (Using ${acarsClientInfo.bridgeInfo} simulator Bridge)</span></td>
+</tr>
+</c:if>
 <tr class="acarsClient" style="display:none;">
  <td class="label">Operating System</td>
  <td colspan="${cspan + 1}" class="data"><span class="pri bld"><fmt:windows version="${acarsClientInfo.OSVersion}" /></span> (<fmt:int value="${acarsClientInfo.memorySize}" />KB memory) <span class="ita">as of <fmt:date fmt="d" date="${acarsClientInfo.date}" /></span></td>

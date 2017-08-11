@@ -74,7 +74,7 @@ public class GetSystemInfo extends DAO {
 			if (sim != Simulator.UNKNOWN) {
 				prepareStatementWithoutLimits("SELECT BRIDGE FROM acars.SIMINFO WHERE (ID=?) AND (SIM=?) LIMIT 1");
 				_ps.setInt(1, id);
-				_ps.setTimestamp(2, createTimestamp(inf.getDate()));
+				_ps.setInt(2, sim.ordinal());
 			
 				try (ResultSet rs = _ps.executeQuery()) {
 					if (rs.next()) {

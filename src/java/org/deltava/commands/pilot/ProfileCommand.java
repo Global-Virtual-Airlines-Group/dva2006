@@ -33,7 +33,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to handle editing/saving Pilot Profiles.
  * @author Luke
- * @version 7.3
+ * @version 7.5
  * @since 1.0
  */
 
@@ -881,7 +881,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			}
 			
 			// Load ACARS client data
-			if (ctx.isUserInRole("HR") || ctx.isUserInRole("Developer")) {
+			if (ctx.isUserInRole("Operations") || ctx.isUserInRole("Developer")) {
 				GetSystemInfo sysdao = new GetSystemInfo(con);
 				ctx.setAttribute("acarsClientInfo", sysdao.get(p.getID()), REQUEST);
 			}
