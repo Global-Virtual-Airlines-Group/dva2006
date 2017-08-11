@@ -15,7 +15,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to display an ACARS client error report.
  * @author Luke
- * @version 7.3
+ * @version 7.5
  * @since 1.0
  */
 
@@ -63,7 +63,7 @@ public class ErrorLogEntryCommand extends AbstractCommand {
 			
 			// Load the client data
 			GetSystemInfo sysdao = new GetSystemInfo(con);
-			ctx.setAttribute("acarsClientInfo", sysdao.get(ud.getID()), REQUEST);
+			ctx.setAttribute("acarsClientInfo", sysdao.get(ud.getID(), err.getSimulator()), REQUEST);
 
 			// Save the error report
 			ctx.setAttribute("err", err, REQUEST);
