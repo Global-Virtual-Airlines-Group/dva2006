@@ -1,25 +1,23 @@
 // Copyright 2005, 2006, 2009, 2010, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
+import java.util.*;
 import java.sql.Connection;
-import java.util.Collection;
-import java.util.Collections;
 
-import org.deltava.beans.AuditLog;
-import org.deltava.beans.EquipmentType;
+import org.deltava.beans.*;
 import org.deltava.beans.testing.EquipmentRideScript;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
 import org.deltava.security.command.EquipmentRideScriptAccessControl;
-import org.deltava.util.BeanUtils;
-import org.deltava.util.StringUtils;
+
+import org.deltava.util.*;
 
 /**
  * A Web Site Command to update Check Ride scripts.
  * @author Luke
- * @version 7.4
+ * @version 7.5
  * @since 1.0
  */
 
@@ -107,6 +105,8 @@ public class CheckRideScriptCommand extends AbstractAuditFormCommand {
 			// Get equipment type DAOs
 			GetAircraft acdao = new GetAircraft(con);
 			GetEquipmentType eqdao = new GetEquipmentType(con);
+			Collection<EquipmentType> allEQ = eqdao.getAll();
+			Map<String, Collection<String>> acTypes = new LinkedHashMap<String, Collection<String>>();
 
 			// Get the DAO and the script
 			GetExamProfiles dao = new GetExamProfiles(con);
@@ -130,10 +130,11 @@ public class CheckRideScriptCommand extends AbstractAuditFormCommand {
 				EquipmentType eq = eqdao.get(sc.getProgram());
 				if (eq != null) {
 					ctx.setAttribute("eqTypes", Collections.singleton(eq), REQUEST);
-					ctx.setAttribute("acTypes", eq.getPrimaryRatings(), REQUEST);
+					acTypes.put(eq.getName(), eq.getPrimaryRatings());
 				} else {
 					ctx.setAttribute("acTypes", acdao.getAircraftTypes(), REQUEST);
-					ctx.setAttribute("eqTypes", eqdao.getAll(), REQUEST);	
+					ctx.setAttribute("eqTypes", allEQ, REQUEST);	
+					allEQ.forEach(ep -> acTypes.put(ep.getName(), ep.getPrimaryRatings()));
 				}
 			} else {
 				// Calculate our access
@@ -146,9 +147,11 @@ public class CheckRideScriptCommand extends AbstractAuditFormCommand {
 				ctx.setAttribute("access", access, REQUEST);
 				
 				// Save all equipment types
-				ctx.setAttribute("acTypes", acdao.getAircraftTypes(), REQUEST);
-				ctx.setAttribute("eqTypes", eqdao.getAll(), REQUEST);
+				allEQ.forEach(ep -> acTypes.put(ep.getName(), ep.getPrimaryRatings()));
+				ctx.setAttribute("eqTypes", allEQ, REQUEST);
 			}
+			
+			ctx.setAttribute("acTypes", acTypes, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
