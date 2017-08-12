@@ -63,7 +63,7 @@ public class ErrorLogEntryCommand extends AbstractCommand {
 			
 			// Load the client data
 			GetSystemInfo sysdao = new GetSystemInfo(con);
-			ctx.setAttribute("acarsClientInfo", sysdao.get(ud.getID(), err.getSimulator()), REQUEST);
+			ctx.setAttribute("acarsClientInfo", sysdao.get(ud.getID(), err.getSimulator(), err.getCreatedOn()), REQUEST);
 
 			// Save the error report
 			ctx.setAttribute("err", err, REQUEST);
