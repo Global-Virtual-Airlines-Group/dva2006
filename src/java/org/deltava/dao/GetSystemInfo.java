@@ -3,6 +3,7 @@ package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
+import java.time.Instant;
 
 import org.deltava.beans.Simulator;
 import org.deltava.beans.stats.*;
@@ -10,7 +11,7 @@ import org.deltava.beans.stats.*;
 /**
  * A Data Access Object to retrieve ACARS System Information data.
  * @author Luke
- * @version 7.0
+ * @version 7.5
  * @since 1.0
  */
 
@@ -52,17 +53,18 @@ public class GetSystemInfo extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public SystemInformation get(int id) throws DAOException {
-		return get(id, Simulator.UNKNOWN);
+		return get(id, Simulator.UNKNOWN, null);
 	}
 	
 	/**
 	 * Returns system configuration data for a particular Pilot.
 	 * @param id the user's database ID
 	 * @param sim an optional Simulator bean
+	 * @param dt the date/time of the configuration recording
 	 * @return a SystemInformation bean, or null if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public SystemInformation get(int id, Simulator sim) throws DAOException {
+	public SystemInformation get(int id, Simulator sim, Instant dt) throws DAOException {
 		try {
 			prepareStatementWithoutLimits("SELECT * from acars.SYSINFO WHERE (ID=?) LIMIT 1");
 			_ps.setInt(1, id);
@@ -72,9 +74,10 @@ public class GetSystemInfo extends DAO {
 			
 			SystemInformation inf = results.get(0);
 			if (sim != Simulator.UNKNOWN) {
-				prepareStatementWithoutLimits("SELECT BRIDGE FROM acars.SIMINFO WHERE (ID=?) AND (SIM=?) LIMIT 1");
+				prepareStatementWithoutLimits("SELECT BRIDGE FROM acars.SIMINFO WHERE (ID=?) AND (SIM=?) AND (CREATED <= ?) LIMIT 1");
 				_ps.setInt(1, id);
 				_ps.setInt(2, sim.ordinal());
+				_ps.setTimestamp(3, createTimestamp(dt));
 			
 				try (ResultSet rs = _ps.executeQuery()) {
 					if (rs.next()) {

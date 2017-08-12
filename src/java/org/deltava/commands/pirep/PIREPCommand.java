@@ -476,7 +476,7 @@ public class PIREPCommand extends AbstractFormCommand {
 					// Get system info
 					if (ctx.isUserInRole("Developer") || ctx.isUserInRole("Operations")) {
 						GetSystemInfo sysdao = new GetSystemInfo(con);
-						ctx.setAttribute("acarsClientInfo", sysdao.get(afr.getAuthorID(), afr.getSimulator()), REQUEST);
+						ctx.setAttribute("acarsClientInfo", sysdao.get(afr.getAuthorID(), afr.getSimulator(), afr.getSubmittedOn()), REQUEST);
 					}
 					
 					// Load the dispatcher if there is one
