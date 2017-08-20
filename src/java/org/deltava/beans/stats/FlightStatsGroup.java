@@ -1,4 +1,4 @@
-// Copyright 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import org.deltava.beans.ComboAlias;
@@ -6,14 +6,14 @@ import org.deltava.beans.ComboAlias;
 /**
  * An enumeration to store Flight Statistics grouping options.
  * @author Luke
- * @version 6.3
+ * @version 7.5
  * @since 6.3
  */
 
 public enum FlightStatsGroup implements ComboAlias {
 
 	PILOT("Pilot Name", "CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME)"), DATE("Flight Date", "F.DATE"), EQ("Equipment Type", "F.EQTYPE"),
-	AP("Airport", "AP.NAME"), AD("Departed from", "AP.AIRPORT_D"), AA("Arrived at", "AP.AIRPORT_A"), MONTH("Month", "DATE_FORMAT(F.DATE, '%M %Y')"),
+	AP("Airport", "AP.NAME"), AD("Departed from", "AP.NAME"), AA("Arrived at", "AP.NAME"), MONTH("Month", "DATE_FORMAT(F.DATE, '%M %Y')"),
 	WEEK("Week", "DATE_SUB(F.DATE, INTERVAL WEEKDAY(F.DATE) DAY)"), YEAR("Year", "YEAR(F.DATE)");
 	
 	private final String _label;
