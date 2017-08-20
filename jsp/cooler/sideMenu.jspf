@@ -110,6 +110,7 @@
  <content:subitem><el:cmd url="charterstats">Charter Statistics</el:cmd></content:subitem>
 </content:filter>
  <content:subitem><el:cmd url="simversionstats">Simulator Versions</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="econstats">Passenger Statistics</el:cmd></content:subitem>
  <content:subitem><el:cmd url="landingstats">Landing Statistics</el:cmd></content:subitem>
  <content:subitem><el:cmd url="landings">Optimal Landings</el:cmd></content:subitem>
 <content:filter roles="Operations,Fleet,HR"> 
