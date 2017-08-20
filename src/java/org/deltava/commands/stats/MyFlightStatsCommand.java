@@ -1,6 +1,7 @@
-// Copyright 2007, 2008, 2009, 2010, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
+import java.util.Collection;
 import java.sql.Connection;
 
 import org.deltava.beans.Pilot;
@@ -14,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display statistics about a Pilot's landings.
  * @author Luke
- * @version 7.0
+ * @version 7.5
  * @since 2.1
  */
 
@@ -58,10 +59,13 @@ public class MyFlightStatsCommand extends AbstractViewCommand {
 			// Get the Flight Report statistics
 			GetFlightReportStatistics stdao = new GetFlightReportStatistics(con);
 			vc.setResults(stdao.getPIREPStatistics(userID, srt, grp));
-			
-			// Get the DAO and the landing statistics
-			ctx.setAttribute("eqLandingStats", stdao.getLandings(userID), REQUEST);
+			Collection<LandingStatistics> landingStats = stdao.getLandings(userID);
+			ctx.setAttribute("eqLandingStats", landingStats, REQUEST);
+
+			// Get pilot and totals
 			ctx.setAttribute("pilot", p, REQUEST);
+			ctx.setAttribute("totalLegs", Integer.valueOf(vc.getResults().stream().mapToInt(FlightStatsEntry::getLegs).sum()),REQUEST);
+			ctx.setAttribute("acarsLegs", Integer.valueOf(landingStats.stream().mapToInt(LandingStatistics::getLegs).sum()), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

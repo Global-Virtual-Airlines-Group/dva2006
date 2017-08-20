@@ -42,7 +42,7 @@ golgotha.local.validate = function(f) {
 <!-- All Flight Report statistics -->
 <view:table cmd="mystats">
 <tr class="title">
- <td colspan="6" class="left caps"><span class="nophone"><content:airline /> </span>FLIGHT STATISTICS FOR ${pilot.name}</td>
+ <td colspan="6" class="left caps"><span class="nophone"><content:airline /> </span>FLIGHT STATISTICS FOR ${pilot.name}<span class="nophone"> - <fmt:int value="${totalLegs}" /> FLIGHTS</span></td>
  <td colspan="6" class="right">GROUP BY <el:combo name="groupType" size="1" idx="*" options="${groupTypes}" value="${groupType}" onChange="void golgotha.local.updateSort()" />
  SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${viewContext.sortType}" onChange="void golgotha.local.updateSort()" /></td>
 </tr>
@@ -52,7 +52,7 @@ golgotha.local.validate = function(f) {
 <!-- Touchdown Speed statistics -->
 <el:table className="form">
 <tr class="title">
- <td colspan="8" class="left caps">TOUCHDOWN SPEED STATISTICS - <fmt:int value="${pilot.ACARSLegs}" /> LANDINGS USING ACARS</td>
+ <td colspan="8" class="left caps">TOUCHDOWN SPEED STATISTICS - <fmt:int value="${acarsLegs}" /> LANDINGS USING ACARS</td>
 </tr>
 
 <!-- Table Header Bar-->
