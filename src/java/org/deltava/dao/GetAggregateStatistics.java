@@ -10,7 +10,7 @@ import org.deltava.beans.stats.*;
 /**
  * A Data Access Object to read aggregated Flight Report statistics. 
  * @author Luke
- * @version 7.4
+ * @version 7.5
  * @since 6.2
  */
 
@@ -37,7 +37,8 @@ public class GetAggregateStatistics extends DAO {
 		StringBuilder sqlBuf = new StringBuilder("SELECT ");
 		sqlBuf.append(grp.getSQL());
 		sqlBuf.append(" AS LABEL, SUM(LEGS) AS SL, SUM(HOURS) AS SH, SUM(MILES) AS SM, SUM(FS2000), SUM(FS2002), SUM(FS2004) AS SFS9, SUM(FSX) AS SFSX, "
-				+ "SUM(P3D) AS SP3D, SUM(P3Dv4) AS SP3DV4, SUM(XP10) AS SXP, SUM(OTHER_SIM), AVG(MILES) AS AVGMILES, AVG(HOURS) AS AVGHOURS FROM ");
+				+ "SUM(P3D) AS SP3D, SUM(P3Dv4) AS SP3DV4, SUM(XP10) AS SXP, SUM(OTHER_SIM), SUM(PAX) AS PAX, AVG(LOADFACTOR) AS LF, AVG(MILES) AS AVGMILES, "
+				+ "AVG(HOURS) AS AVGHOURS FROM ");
 		if ("F.EQTYPE".equals(grp.getSQL()))
 			sqlBuf.append("FLIGHTSTATS_EQTYPE F");
 		else if (grp.isPilotGroup())
@@ -62,6 +63,8 @@ public class GetAggregateStatistics extends DAO {
 					entry.setFSVersionLegs(Simulator.P3Dv4, rs.getInt(10));
 					entry.setFSVersionLegs(Simulator.XP9, rs.getInt(11));
 					entry.setFSVersionLegs(Simulator.UNKNOWN, rs.getInt(12));
+					entry.setPax(rs.getInt(13));
+					entry.setLoadFactor(rs.getDouble(14));
 					results.add(entry);
 				}
 			}
@@ -83,11 +86,10 @@ public class GetAggregateStatistics extends DAO {
 	public Collection<FlightStatsEntry> getAirportStatistics(FlightStatsSort s, int apType) throws DAOException {
 
 		// Get the SQL statement to use
-		StringBuilder sqlBuf = new StringBuilder("SELECT AP.NAME, SUM(LEGS) AS SL, SUM(HOURS) AS SH, SUM(MILES) AS SM, SUM(HISTORIC) AS SHL, "
-			+ "SUM(DISPATCH) AS SDL, SUM(ACARS) AS SAL, SUM(VATSIM) AS OVL, SUM(IVAO) AS OIL, SUM(FS2000), SUM(FS2002), SUM(FS2004) AS SFS9, "
-			+ "SUM(FSX) AS SFSX, SUM(P3D) AS SP3D, SUM(P3Dv4) AS SP3Dv4, SUM(XP10) AS SXP, SUM(OTHER_SIM), AVG(LOADFACTOR), SUM(PAX) AS SP, SUM(PILOTS) AS PIDS, "
-			+ "SUM(IVAO+VATSIM) AS OLEGS, SUM(MILES)/SUM(LEGS) AS AVGMILES, SUM(HOURS)/SUM(LEGS) AS AVGHOURS FROM FLIGHTSTATS_AIRPORT F, common.AIRPORTS AP "
-			+ "WHERE (F.IATA=AP.IATA) ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT AP.NAME, SUM(LEGS) AS SL, SUM(HOURS) AS SH, SUM(MILES) AS SM, SUM(HISTORIC) AS SHL, SUM(DISPATCH) AS SDL, "
+			+ "SUM(ACARS) AS SAL, SUM(VATSIM) AS OVL, SUM(IVAO) AS OIL, SUM(FS2000), SUM(FS2002), SUM(FS2004) AS SFS9, SUM(FSX) AS SFSX, SUM(P3D) AS SP3D, "
+			+ "SUM(P3Dv4) AS SP3Dv4, SUM(XP10) AS SXP, SUM(OTHER_SIM), SUM(PAX) AS SP, AVG(LOADFACTOR) AS LF, SUM(PILOTS) AS PIDS, SUM(IVAO+VATSIM) AS OLEGS, "
+			+ "SUM(MILES)/SUM(LEGS) AS AVGMILES, SUM(HOURS)/SUM(LEGS) AS AVGHOURS FROM FLIGHTSTATS_AIRPORT F, common.AIRPORTS AP WHERE (F.IATA=AP.IATA) ");
 		if (apType == 1)
 			sqlBuf.append("AND (IS_DEPARTURE=1) ");
 		else if (apType == 2)
@@ -114,12 +116,11 @@ public class GetAggregateStatistics extends DAO {
 	public Collection<FlightStatsEntry> getPIREPStatistics(FlightStatsSort s, FlightStatsGroup grp) throws DAOException {
 
 		// Get the SQL statement to use
-		// FIXME: If we get FSG.PILOT as the grp, we need to use different S
 		StringBuilder sqlBuf = new StringBuilder("SELECT ");
 		sqlBuf.append(grp.getSQL());
 		sqlBuf.append(" AS LABEL, SUM(LEGS) AS SL, SUM(HOURS) AS SH, SUM(MILES) AS SM, SUM(HISTORIC) AS SHL, SUM(DISPATCH) AS SDL, "
 			+ "SUM(ACARS) AS SAL, SUM(VATSIM) AS OVL, SUM(IVAO) AS OIL, SUM(FS2000), SUM(FS2002), SUM(FS2004) AS SFS9, SUM(FSX) AS SFSX, "
-			+ "SUM(P3D) AS SP3D, SUM(P3Dv4) AS SP3DV4, SUM(XP10) AS SXP, SUM(OTHER_SIM), AVG(LOADFACTOR), SUM(PAX) AS SP, ");
+			+ "SUM(P3D) AS SP3D, SUM(P3Dv4) AS SP3DV4, SUM(XP10) AS SXP, SUM(OTHER_SIM), SUM(PAX) AS SP, AVG(LOADFACTOR) AS LF, ");
 		if (grp.isDateGroup() && (grp != FlightStatsGroup.DATE))
 			sqlBuf.append("0 AS PIDS");
 		else
@@ -130,6 +131,10 @@ public class GetAggregateStatistics extends DAO {
 			sqlBuf.append("FLIGHTSTATS_PILOT F LEFT JOIN PILOTS P ON (F.PILOT_ID=P.ID)");
 		else if (grp.getSQL().contains("EQTYPE"))
 			sqlBuf.append("FLIGHTSTATS_EQTYPE F");
+		else if (grp.isAirportGroup() && (grp != FlightStatsGroup.AP))
+			sqlBuf.append("FLIGHTSTATS_AIRPORT FA, common.AIRPORTS AP WHERE (AP.IATA=FA.IATA) AND (FA.IS_DEPARTURE=?)");
+		else if (grp.isAirportGroup())
+			sqlBuf.append("FLIGHTSTATS_AIRPORT FA, common.AIRPORTS AP WHERE (AP.IATA=FA.IATA)");
 		else
 			sqlBuf.append("FLIGHTSTATS_DATE F");
 		sqlBuf.append(" GROUP BY LABEL ORDER BY ");
@@ -137,6 +142,9 @@ public class GetAggregateStatistics extends DAO {
 
 		try {
 			prepareStatement(sqlBuf.toString());
+			if (grp.isAirportGroup() && (grp != FlightStatsGroup.AP))
+				_ps.setBoolean(1, (grp == FlightStatsGroup.AD));
+			
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -164,8 +172,8 @@ public class GetAggregateStatistics extends DAO {
 				entry.setFSVersionLegs(Simulator.P3Dv4, rs.getInt(15));
 				entry.setFSVersionLegs(Simulator.XP9, rs.getInt(16));
 				entry.setFSVersionLegs(Simulator.UNKNOWN, rs.getInt(17));
-				entry.setLoadFactor(rs.getDouble(18));
-				entry.setPax(rs.getInt(19));
+				entry.setPax(rs.getInt(18));
+				entry.setLoadFactor(rs.getDouble(19));
 				entry.setPilotIDs(rs.getInt(20));
 				results.add(entry);
 			}
