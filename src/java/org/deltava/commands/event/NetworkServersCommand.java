@@ -1,4 +1,4 @@
-// Copyright 2010, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2012, 2014, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display VATSIM/IVAO FSD server information.
  * @author Luke
- * @version 5.4
+ * @version 7.5
  * @since 3.4
  */
 
@@ -40,6 +40,7 @@ public class NetworkServersCommand extends AbstractCommand {
 		// Get the network info
 		NetworkInfo info = ServInfoHelper.getInfo(net);
 		ctx.setAttribute("netInfo", info, REQUEST);
+		ctx.setAttribute("totalUsers", Integer.valueOf(info.getServers().stream().mapToInt(Server::getConnections).sum()), REQUEST);
 		
 		// Get IP location
 		try {
