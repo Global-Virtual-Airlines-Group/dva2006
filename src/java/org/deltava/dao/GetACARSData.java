@@ -17,7 +17,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * A Data Access Object to load ACARS information.
  * @author Luke
- * @version 7.2
+ * @version 7.5
  * @since 1.0
  */
 
@@ -398,9 +398,10 @@ public class GetACARSData extends DAO {
 				info.setFDR(Recorder.values()[rs.getInt(24)]);
 				info.setSimulatorVersion(rs.getInt(25), rs.getInt(26));
 				info.setTXCode(rs.getInt(27));
-				info.setRemoteAddr(rs.getString(28));
-				info.setRouteID(rs.getInt(29));
-				info.setDispatcherID(rs.getInt(30));
+				info.setLoadFactor(rs.getDouble(28));
+				info.setRemoteAddr(rs.getString(29));
+				info.setRouteID(rs.getInt(30));
+				info.setDispatcherID(rs.getInt(31));
 				results.add(info);
 			}
 		}
