@@ -14,7 +14,7 @@ import org.deltava.util.*;
 /**
  * A bean to store ACARS Flight Information records.
  * @author Luke
- * @version 7.2
+ * @version 7.5
  * @since 1.0
  */
 
@@ -61,6 +61,7 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 	private int _routeID;
 	
 	private int _txCode;
+	private double _loadFactor;
 
 	private RouteEntry _lastPosition;
 	private SortedSet<RouteEntry> _routeData;
@@ -326,6 +327,15 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 	 */
 	public int getTXCode() {
 		return _txCode;
+	}
+	
+	/**
+	 * Returns the load factor for this flight.
+	 * @return the load factor, or -1 if not set
+	 * @see FlightInfo#setLoadFactor(double)
+	 */
+	public double getLoadFactor() {
+		return _loadFactor;
 	}
 	
 	/**
@@ -626,6 +636,15 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 	 */
 	public void setEquipmentType(String eq) {
 		_eqType = eq;
+	}
+	
+	/**
+	 * Updates the load factor for this flight
+	 * @param lf the load factor
+	 * @see FlightInfo#getLoadFactor()
+	 */
+	public void setLoadFactor(double lf) {
+		_loadFactor = Math.max(-1, Math.max(1, lf));
 	}
 
 	/**

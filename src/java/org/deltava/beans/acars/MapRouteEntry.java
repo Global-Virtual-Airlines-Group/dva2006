@@ -34,41 +34,99 @@ public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 	
 	private Country _c;
 	private String _tailCode;
+	
+	private double _lf = -1;
+	private int _pax;
 
+	/**
+	 * Creates the bean.
+	 * @param dt the date/time
+	 * @param gl the aircraft location
+	 * @param usr the Pilot
+	 * @param eqType the aircraft type
+	 */
 	public MapRouteEntry(Instant dt, GeoLocation gl, Pilot usr, String eqType) {
 		super(dt, gl);
 		_usr = usr;
 		_eqType = eqType;
 	}
 
+	/**
+	 * Updates whether the pilot is flying a check ride.
+	 * @param isCR TRUE if a check ride, otherwise FALSE
+	 */
 	public void setCheckRide(boolean isCR) {
 		_checkRide = isCR;
 	}
 	
+	/**
+	 * Updates whether the pilot is flying using a Dispatch-generated flight route.
+	 * @param isDP TRUE if a dispatched plan, otherwise FALSE
+	 */
 	public void setDispatchPlan(boolean isDP) {
 		_dispatchRoute = isDP;
 	}
 
+	/**
+	 * Updates the flight code.
+	 * @param flightNumber the flight code
+	 */
 	public void setFlightNumber(String flightNumber) {
 		_flightNumber = flightNumber;
 	}
 
+	/**
+	 * Updates the departure Airport.
+	 * @param a the Airport
+	 */
 	public void setAirportD(Airport a) {
 		_airportD = a;
 	}
 	
+	/**
+	 * Updates the arrival Airport.
+	 * @param a the Airport
+	 */
 	public void setAirportA(Airport a) {
 		_airportA = a;
 	}
 	
+	/**
+	 * Updates the online network used for this flight.
+	 * @param network the OnlineNetwork
+	 */
 	public void setNetwork(OnlineNetwork network) {
 		_network = network;
 	}
 	
+	/**
+	 * Updates the flight's flight phase. 
+	 * @param phase the phase name
+	 */
 	public void setPhaseName(String phase) {
 		_phaseName = phase;
 	}
 	
+	/**
+	 * Updates the load factor for this flight.
+	 * @param lf the load factor
+	 */
+	public void setLoadFactor(double lf) {
+		_lf = lf;
+	}
+	
+	/**
+	 * Updates the passenger count for this flight.
+	 * @param pax the passenger count
+	 */
+	public void setPassengers(int pax) {
+		_pax = Math.max(0, pax);
+	}
+	
+	/**
+	 * Updates the Simulator used on this flight.
+	 * @param s the Simulator
+	 */
 	public void setSimulator(Simulator s) {
 		_sim = s;
 	}
@@ -77,6 +135,10 @@ public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 		_c = c;
 	}
 	
+	/**
+	 * Updates the aircraft's tail code.
+	 * @param tailCode the tail code
+	 */
 	public void setTailCode(String tailCode) {
 		_tailCode = tailCode;
 	}
@@ -196,6 +258,14 @@ public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 			buf.append(" <span class=\"small\">(a/c ");
 			buf.append(_tailCode);
 			buf.append(")</span>");
+		}
+		
+		if (_pax > 0) {
+			buf.append("<br /><span class=\"small\">Carrying <span class=\"ter bld\">");
+			buf.append(_pax);
+			buf.append("</span> passengers (");
+			buf.append(StringUtils.format(_lf, "##0.0%"));
+			buf.append(" full)</span>");
 		}
 		
 		if (_network != null) {
