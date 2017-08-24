@@ -58,7 +58,7 @@ public class LogBookCommand extends AbstractViewCommand {
         
         // Redirect if no one specified
         if (id == 0) {
-        	result.setURL("lroster");
+        	result.setURL("lroster.do");
         	result.setType(ResultType.REDIRECT);
         	result.setSuccess(true);
         	return;
