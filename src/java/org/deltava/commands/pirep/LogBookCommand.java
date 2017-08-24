@@ -47,14 +47,18 @@ public class LogBookCommand extends AbstractViewCommand {
   		   	vc.setSortType(SORT_CODE[0]);
        
         // Determine who to display
-        int id = ctx.getID();
-        if ((id == 0) && ctx.isAuthenticated())
-        	id = ctx.getUser().getID();
+        CommandResult result = ctx.getResult();
+        int id = ctx.getID(); 
+        if ((id == 0) && ctx.isAuthenticated()) {
+        	result.setURL("logbook", null, ctx.getUser().getID());
+        	result.setType(ResultType.REDIRECT);
+        	result.setSuccess(true);
+        	return;
+        }
         
         // Redirect if no one specified
         if (id == 0) {
-        	CommandResult result = ctx.getResult();
-        	result.setURL("lroster.do");
+        	result.setURL("lroster");
         	result.setType(ResultType.REDIRECT);
         	result.setSuccess(true);
         	return;
@@ -108,7 +112,6 @@ public class LogBookCommand extends AbstractViewCommand {
         ctx.setAttribute("access", ac, REQUEST);
       
         // Set the result page and return
-        CommandResult result = ctx.getResult();
         result.setURL("/jsp/pilot/logBook.jsp");
         result.setSuccess(true);
     }
