@@ -24,7 +24,7 @@
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<content:enum var="sortTypes" className="org.deltava.beans.stats.FlightStatsSort" exclude="PIDS,ALEGS,OLEGS,OVLEGS,OILEGS,HLEGS,DSPLEGS" />
+<content:enum var="sortTypes" className="org.deltava.beans.stats.FlightStatsSort" exclude="PIDS,ALEGS,OLEGS,OVLEGS,OILEGS,HLEGS,DSPLEGS,PAX,LF" />
 <content:enum var="groupTypes" className="org.deltava.beans.stats.FlightStatsGroup" />
 
 <!-- Main Body Frame -->
