@@ -178,7 +178,7 @@ public class FlightSubmitService extends SimFDRService {
 				comments.add("ETOPS classificataion: " + String.valueOf(etopsClass));
 			
 			// Check prohibited airspace
-			Collection<Airspace> rstAirspaces = AirspaceHelper.classify(ofr.getPositions(), true);
+			Collection<Airspace> rstAirspaces = AirspaceHelper.classify(ofr.getPositions(), false);
 			if (!rstAirspaces.isEmpty()) {
 				fr.setAttribute(FlightReport.ATTR_AIRSPACEWARN, true);
 				comments.add("SYSTEM: Entered restricted airspace " + StringUtils.listConcat(rstAirspaces, ", "));
