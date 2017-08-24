@@ -32,7 +32,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to allow users to submit Offline Flight Reports.
  * @author Luke
- * @version 7.3
+ * @version 7.5
  * @since 2.4
  */
 
@@ -343,7 +343,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 				comments.add("ETOPS classificataion: " + String.valueOf(etopsClass));
 			
 			// Check prohibited airspace
-			Collection<Airspace> rstAirspaces = AirspaceHelper.classify(positions, true);
+			Collection<Airspace> rstAirspaces = AirspaceHelper.classify(positions, false);
 			if (!rstAirspaces.isEmpty()) {
 				afr.setAttribute(FlightReport.ATTR_AIRSPACEWARN, true);
 				comments.add("SYSTEM: Entered restricted airspace " + StringUtils.listConcat(rstAirspaces, ", "));
