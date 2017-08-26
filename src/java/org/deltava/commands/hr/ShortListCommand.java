@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.hr;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to short-list applicants for a Job Posting.
  * @author Luke
- * @version 7.0
+ * @version 7.5
  * @since 3.4
  */
 
@@ -98,6 +98,7 @@ public class ShortListCommand extends AbstractCommand {
 			// Load the users
 			GetPilotDirectory pdao = new GetPilotDirectory(con);
 			Collection<Pilot> pilots = new HashSet<Pilot>(pdao.getByRole("HR", SystemData.get("airline.db")));
+			pilots.add(pdao.get(jp.getHireManagerID()));
 			pilots.remove(ctx.getUser());
 			
             // Create the e-mail message
