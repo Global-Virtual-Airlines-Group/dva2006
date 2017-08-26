@@ -9,7 +9,6 @@
 <html lang="en">
 <head>
 <title><content:airline /></title>
-<content:expire expires="10" />
 <content:sysdata var="forumName" name="airline.forum" />
 <content:sysdata var="airlineName" name="airline.name" />
 <content:sysdata var="airlineURL" name="airline.url" />
