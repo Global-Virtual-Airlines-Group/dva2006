@@ -135,7 +135,7 @@ golgotha.onDOMReady(function() {
  <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${flight.airportD.TZ}" date="${flight.timeD}" /></td>
  <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${flight.airportA.TZ}" date="${flight.timeA}" /></td>
  <td class="pri bld nophone"><fmt:int value="${flight.dispatchRoutes}" /></td>
- <td class="nophone"><fmt:int value="${flight.length / 10}" />:<fmt:int value="${(flight.length * 6) % 60}" fmt="00" /></td>
+ <td class="nophone"><fmt:duration duration="${flight.duration}" t="HH:mm" /></td>
  <td class="sec"><fmt:distance value="${flight.distance}" /></td>
 </view:row>
 </c:forEach>

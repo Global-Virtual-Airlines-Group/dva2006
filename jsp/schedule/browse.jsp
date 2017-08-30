@@ -88,7 +88,7 @@ golgotha.onDOMReady(function() {
  <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${entry.airportD.TZ}" date="${entry.timeD}" /></td>
  <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${entry.airportA.TZ}" date="${entry.timeA}" /></td>
  <td class="sec nophone"><fmt:distance value="${entry.distance}" /></td>
- <td><fmt:dec value="${entry.length / 10}" /> hours</td>
+ <td><fmt:duration duration="${entry.duration}" t="HH:mm" /></td> 
 </view:row>
 </c:forEach>
 

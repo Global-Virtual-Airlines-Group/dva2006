@@ -229,7 +229,7 @@ golgotha.onDOMReady(function() {
  <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${flight.airportD.TZ}" date="${flight.timeD}" /></td>
  <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${flight.airportA.TZ}" date="${flight.timeA}" /></td>
 </c:if>
- <td class="small"><fmt:int value="${flight.length / 10}" />:<fmt:int value="${(flight.length * 6) % 60}" fmt="00" /></td>
+ <td class="small"><fmt:duration duration="${flight.duration}" /></td>
  <td class="small bld nophone"><fmt:int value="${flight.dispatchRoutes}" /></td>
  <td class="sec nophone"><fmt:distance value="${flight.distance}" /></td>
 </view:row>
@@ -275,7 +275,7 @@ golgotha.onDOMReady(function() {
  <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${flight.airportD.TZ}" date="${flight.timeD}" /></td>
  <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${flight.airportA.TZ}" date="${flight.timeA}" /></td>
 </c:if>
- <td class="small"><fmt:int value="${flight.length / 10}" />:<fmt:int value="${(flight.length * 6) % 60}" fmt="00" /></td>
+ <td class="small"><fmt:duration duration="${flight.duration}" t="HH:mm" /></td>
  <td class="sec nophone"><fmt:distance value="${flight.distance}" /></td>
 </tr>
 </c:forEach>
