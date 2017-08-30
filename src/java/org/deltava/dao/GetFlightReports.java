@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Flight Reports.
  * @author Luke
- * @version 7.3
+ * @version 7.5
  * @since 1.0
  */
 
@@ -355,11 +355,11 @@ public class GetFlightReports extends DAO {
 			if (criteria.getAirportA() != null)
 				buf.append(" AND (PR.AIRPORT_A=?)");
 			if (criteria.getSortBy() != null) {
-				buf.append(" ORDER BY PR.");
+				buf.append(" ORDER BY IF(PR.STATUS=?,0,1), PR.");
 				buf.append(criteria.getSortBy());
 			}
 		}
-
+		
 		int idx = 1;
 		try {
 			prepareStatement(buf.toString());
@@ -371,6 +371,7 @@ public class GetFlightReports extends DAO {
 					_ps.setString(++idx, criteria.getAirportD().getIATA());
 				if (criteria.getAirportA() != null)
 					_ps.setString(++idx, criteria.getAirportA().getIATA());
+				_ps.setInt(++idx, FlightReport.DRAFT);
 			}
 			
 			return execute();
