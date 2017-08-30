@@ -2,7 +2,7 @@
 package org.deltava.beans.acars;
 
 import java.util.*;
-import java.time.Instant;
+import java.time.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.flight.Recorder;
@@ -113,6 +113,15 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 	@Override
 	public Instant getEndTime() {
 		return _endTime;
+	}
+	
+	/**
+	 * Returns the duration of the Flight.
+	 * @return a Duration
+	 */
+	public Duration getDuration() {
+		Instant et = (_endTime == null) ? Instant.now() : _endTime;
+		return Duration.between(_startTime, et);
 	}
 
 	/**
