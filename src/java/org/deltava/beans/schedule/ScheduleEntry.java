@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.time.*;
@@ -9,7 +9,7 @@ import org.deltava.util.*;
 /**
  * A class to store Schedule Entry information.
  * @author Luke
- * @version 7.0
+ * @version 7.5
  * @since 1.0
  */
 
@@ -43,21 +43,26 @@ public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
 	/**
 	 * Returns the length of the flight, in hours <i>multiplied by 10</i>.
 	 * @return the length of the flight
+	 * @see ScheduleEntry#getDuration()
 	 * @throws IllegalStateException if departure or arrival times are not set
 	 */
 	@Override
 	public final int getLength() {
 		if (_length > 0)
 			return _length;
-		else if ((_timeA == null) || (_timeD == null))
-			throw new IllegalStateException("Arrival and Departure Times are not set");
-
+		
 		// Calculate flight time in seconds, and then divide by 3600 and multiply by 10
-		long lengthS = Duration.between(_timeD, _timeA).getSeconds();
-		if (lengthS < 0)
-			lengthS += 86400;
-
+		long lengthS = getDuration().getSeconds();
 		return (int) (lengthS / 360);
+	}
+
+	@Override
+	public Duration getDuration() {
+		if ((_timeA == null) || (_timeD == null))
+			throw new IllegalStateException("Arrival and Departure Times are not set");
+		
+		Duration d = Duration.between(_timeD, _timeA);
+		return d.isNegative() ? d.negated() : d;
 	}
 
 	/**
