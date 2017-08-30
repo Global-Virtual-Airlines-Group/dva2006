@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.assign;
 
 import org.deltava.beans.Flight;
@@ -8,7 +8,7 @@ import org.deltava.beans.schedule.Airline;
 /**
  * A class to store assigned Flights.
  * @author Luke
- * @version 7.0
+ * @version 7.5
  * @since 1.0
  */
 
@@ -42,6 +42,15 @@ public class AssignmentLeg extends Flight {
      */
     @Override
     public final int getLength() {
+        throw new UnsupportedOperationException();
+    }
+    
+    /**
+     * DISABLED property.
+     * @throws UnsupportedOperationException
+     */
+    @Override
+    public final java.time.Duration getDuration() {
         throw new UnsupportedOperationException();
     }
 }

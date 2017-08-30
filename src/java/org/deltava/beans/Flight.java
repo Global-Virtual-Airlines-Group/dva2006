@@ -1,14 +1,15 @@
-// Copyright 2004, 2005, 2006, 2008, 2009, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2008, 2009, 2011, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.text.*;
+import java.time.Duration;
 
 import org.deltava.beans.schedule.*;
 
 /**
  * A class to store Flight information.
  * @author Luke
- * @version 7.0
+ * @version 7.5
  * @since 1.0
  */
 
@@ -42,6 +43,12 @@ public abstract class Flight extends DatabaseBean implements RoutePair {
      * @return the length of the flight
      */
     public abstract int getLength();
+
+    /**
+     * A method to return the exact length of the flight.
+     * @return a Duration
+     */
+    public abstract Duration getDuration();
 
     /**
      * Returns the Airline for the Flight.
