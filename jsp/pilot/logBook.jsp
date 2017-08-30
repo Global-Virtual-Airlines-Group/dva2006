@@ -67,7 +67,7 @@
 <!-- Table Flight Report Data -->
 <c:forEach var="pirep" items="${viewContext.results}">
 <view:row entry="${pirep}">
- <td class="title"><fmt:date date="${pirep.date}" fmt="d" default="-" /></td>
+ <td><fmt:date date="${fn:isDraft(pirep) ? null : pirep.date}" fmt="d" default="-" /></td>
  <td class="nophone"><c:if test="${fn:EventID(pirep) != 0}"><el:img src="network/event.png" caption="Online Event" /></c:if> 
 <c:if test="${fn:isACARS(pirep)}"><el:img src="acars.png" caption="ACARS Logged" /></c:if>
 <c:if test="${fn:isCheckFlight(pirep)}"><el:img src="checkride.png" caption="Check Ride" /></c:if>
