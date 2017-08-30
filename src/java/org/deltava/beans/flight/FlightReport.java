@@ -2,7 +2,7 @@
 package org.deltava.beans.flight;
 
 import java.util.*;
-import java.time.Instant;
+import java.time.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.Airline;
@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.Airline;
 /**
  * A class for dealing with PIREP data.
  * @author Luke
- * @version 7.2
+ * @version 7.5
  * @since 1.0
  */
 
@@ -223,6 +223,11 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 	@Override
 	public int getLength() {
 		return _length;
+	}
+	
+	@Override
+	public Duration getDuration() {
+		return Duration.ofSeconds(_length * 360);
 	}
 
 	/**
