@@ -15,7 +15,7 @@ import org.deltava.service.*;
 /**
  * A Web Service to graph simulator version statistics.
  * @author Luke
- * @version 7.4
+ * @version 7.5
  * @since 7.4
  */
 
@@ -49,7 +49,7 @@ public class SimulatorStatsService extends WebService {
 			ma.put(legs.getOrDefault("P3D", ZERO).intValue() + legs.getOrDefault("P3Dv4", ZERO).intValue());
 			ma.put(legs.getOrDefault("FSX", ZERO).intValue());
 			ma.put(legs.getOrDefault("FS9", ZERO).intValue());
-			ma.put(legs.getOrDefault("XP9", ZERO).intValue());
+			ma.put(legs.getOrDefault("XP10", ZERO).intValue() + legs.getOrDefault("XP11", ZERO).intValue());
 			ma.put(legs.getOrDefault("FS2002", ZERO).intValue());
 			ma.put(legs.getOrDefault("UNKNOWN", ZERO).intValue() + legs.getOrDefault("FS2000", ZERO).intValue());
 			ja.put(ma);
