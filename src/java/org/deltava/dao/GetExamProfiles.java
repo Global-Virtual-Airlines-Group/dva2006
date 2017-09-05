@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to read examination configuration data.
  * @author Luke
- * @version 7.5
+ * @version 8.0
  * @since 1.0
  */
 
@@ -71,8 +71,7 @@ public class GetExamProfiles extends DAO {
 	 */
 	public List<ExamProfile> getExamProfiles() throws DAOException {
 		try {
-			prepareStatement("SELECT E.* FROM exams.EXAMINFO E, exams.EXAM_AIRLINES EA WHERE (E.NAME=EA.NAME) "
-					+ "AND (EA.AIRLINE=?) ORDER BY E.STAGE, E.NAME");
+			prepareStatement("SELECT E.* FROM exams.EXAMINFO E, exams.EXAM_AIRLINES EA WHERE (E.NAME=EA.NAME) AND (EA.AIRLINE=?) ORDER BY E.STAGE, E.NAME");
 			_ps.setString(1, SystemData.get("airline.code"));
 			List<ExamProfile> results = execute();
 			loadAirlines(results);
@@ -91,8 +90,7 @@ public class GetExamProfiles extends DAO {
 	 */
 	public List<ExamProfile> getExamProfiles(boolean isAcademy) throws DAOException {
 		try {
-			prepareStatement("SELECT E.* FROM exams.EXAMINFO E, exams.EXAM_AIRLINES EA WHERE (E.NAME=EA.NAME) "
-					+ "AND (E.ACADEMY=?) AND (EA.AIRLINE=?) ORDER BY E.STAGE, E.NAME");
+			prepareStatement("SELECT E.* FROM exams.EXAMINFO E, exams.EXAM_AIRLINES EA WHERE (E.NAME=EA.NAME) AND (E.ACADEMY=?) AND (EA.AIRLINE=?) ORDER BY E.STAGE, E.NAME");
 			_ps.setBoolean(1, isAcademy);
 			_ps.setString(2, SystemData.get("airline.code"));
 			List<ExamProfile> results = execute();
@@ -107,21 +105,22 @@ public class GetExamProfiles extends DAO {
 	/**
 	 * Loads a Check Ride script.
 	 * @param eqType the equipment type
+	 * @param isCurrency TRUE if a currency check ride script, otherwise FALSE
 	 * @return a CheckRideScript bean, or null if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public EquipmentRideScript getScript(String eqType) throws DAOException {
+	public EquipmentRideScript getScript(String eqType, boolean isCurrency) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT * FROM CR_DESCS WHERE (EQTYPE=?) LIMIT 1");
+			prepareStatementWithoutLimits("SELECT * FROM CR_DESCS WHERE (EQTYPE=?) AND (CURRENCY=?) LIMIT 1");
 			_ps.setString(1, eqType);
-
-			// Execute the Query - return null if nothing found
+			_ps.setBoolean(2, isCurrency);
 			EquipmentRideScript result = null;
 			try (ResultSet rs = _ps.executeQuery()) {
 				if (rs.next()) {
 					result = new EquipmentRideScript(rs.getString(1));
 					result.setProgram(rs.getString(2));
-					result.setDescription(rs.getString(3));
+					result.setIsCurrency(rs.getBoolean(3));
+					result.setDescription(rs.getString(4));
 				}
 			}
 
@@ -140,14 +139,13 @@ public class GetExamProfiles extends DAO {
 	public List<EquipmentRideScript> getScripts() throws DAOException {
 		try {
 			prepareStatement("SELECT * FROM CR_DESCS");
-
-			// Execute the query
 			List<EquipmentRideScript> results = new ArrayList<EquipmentRideScript>();
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
 					EquipmentRideScript sc = new EquipmentRideScript(rs.getString(1));
 					sc.setProgram(rs.getString(2));
-					sc.setDescription(rs.getString(3));
+					sc.setIsCurrency(rs.getBoolean(3));
+					sc.setDescription(rs.getString(4));
 					results.add(sc);
 				}
 			}
