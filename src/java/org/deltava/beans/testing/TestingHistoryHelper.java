@@ -59,11 +59,11 @@ public final class TestingHistoryHelper {
 	}
 
 	/**
-	 * Adds an Examination to the Pilot's test history.
-	 * @param ex the Examiantion
+	 * Adds an Examination or Check Ride to the Pilot's test history.
+	 * @param t the Test
 	 */
-	public void addExam(Examination ex) {
-		_tests.add(ex);
+	public void add(Test t) {
+		_tests.add(t);
 	}
 
 	/**
@@ -267,9 +267,10 @@ public final class TestingHistoryHelper {
 	/**
 	 * Returns if a user can request a Check Ride to move to a particular equipment program.
 	 * @param eq the EquipmentType bean
+	 * @return the RideType to request
 	 * @throws IneligibilityException if the user cannot request a check ride
 	 */
-	public void canRequestCheckRide(EquipmentType eq) throws IneligibilityException {
+	public RideType canRequestCheckRide(EquipmentType eq) throws IneligibilityException {
 
 		// Make sure we're a captain in the previous stage if the stage is higher than our own
 		if ((eq.getStage() > getMaxCheckRideStage()) && (!isCaptainInStage(eq.getStage() - 1)))
@@ -291,6 +292,11 @@ public final class TestingHistoryHelper {
 		// If we require a checkride, ensure we have a minimum number of legs
 		if (!canRequestSwitch())
 			throw new PromotionIneligibilityException("Has not completed " + (_myEQ.getPromotionLegs() / 2) + " legs for promotion");
+		
+		if (_usr.getProficiencyCheckRides() && hasCheckRide(eq, RideType.CHECKRIDE))
+			return RideType.CURRENCY;
+		
+		return RideType.CHECKRIDE;
 	}
 	
 	/**
@@ -368,7 +374,7 @@ public final class TestingHistoryHelper {
 	}
 
 	/**
-	 * Returns if a user has passed a check ride for a particular equipment type.
+	 * Returns if a user has passed any check ride for a particular equipment type.
 	 * @param eq the Equipment Type bean
 	 * @return TRUE if the user passed the check ride, otherwise FALSE
 	 */

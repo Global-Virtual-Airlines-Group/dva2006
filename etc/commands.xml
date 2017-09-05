@@ -1471,6 +1471,18 @@
 		<roles>Pilot</roles>
 	</command>
 
+	<command id="currencyenable">
+		<name>Enable Currency Check Rides</name>
+		<class>org.deltava.commands.testing.ProficiencyRideEnableCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
+	<command id="currencydisable">
+		<name>Disable Currency Check Rides</name>
+		<class>org.deltava.commands.testing.ProficiencyRideDisableCommand</class>
+		<roles>Pilot</roles>
+	</command>
+	
 	<command id="checkride">
 		<name>Check Ride</name>
 		<class>org.deltava.commands.testing.CheckRideCommand</class>
