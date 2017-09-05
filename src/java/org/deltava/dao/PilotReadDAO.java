@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
  * A DAO to support reading Pilot object(s) from the database. This class contains methods to read an individual Pilot
  * from the database; implementing subclasses typically add methods to retrieve Lists of pilots based on particular criteria.
  * @author Luke
- * @version 7.3
+ * @version 8.0
  * @since 1.0
  */
 
@@ -52,9 +52,8 @@ abstract class PilotReadDAO extends DAO {
 			return p;
 
 		try {
-			prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), "
-				+ "MAX(F.DATE), S.EXT, S.MODIFIED FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) "
-				+ "LEFT JOIN SIGNATURES S ON (P.ID=S.ID) WHERE (P.ID=?) GROUP BY P.ID LIMIT 1");
+			prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE), S.EXT, S.MODIFIED FROM PILOTS P LEFT JOIN PIREPS F "
+				+ "ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) LEFT JOIN SIGNATURES S ON (P.ID=S.ID) WHERE (P.ID=?) GROUP BY P.ID LIMIT 1");
 			_ps.setInt(1, FlightReport.OK);
 			_ps.setInt(2, id);
 
@@ -166,8 +165,7 @@ abstract class PilotReadDAO extends DAO {
 			log.debug("Raw set size = " + ids.size());
 
 		// Init the prepared statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), "
-				+ "ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE), S.EXT, S.MODIFIED FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE), S.EXT, S.MODIFIED FROM ");
 		sqlBuf.append(dbName);
 		sqlBuf.append('.');
 		sqlBuf.append(table);
@@ -196,8 +194,6 @@ abstract class PilotReadDAO extends DAO {
 		}
 
 		// Only execute the prepared statement if we haven't gotten anything from the cache
-		if (log.isDebugEnabled())
-			log.debug("Uncached set size = " + querySize);
 		if (querySize > 0) {
 			if (sqlBuf.charAt(sqlBuf.length() - 1) == ',')
 				sqlBuf.setLength(sqlBuf.length() - 1);
@@ -220,8 +216,7 @@ abstract class PilotReadDAO extends DAO {
 				throw new DAOException(se);
 			}
 
-			// If the database does not equal the current airline code, refresh all of the Pilot IDs with
-			// the pilot number, but use the database name as the airline code.
+			// If the database does not equal the current airline code, refresh all of the Pilot IDs with the pilot number, but use the database name as the airline code.
 			updatePilotCodes(uncached, dbName);
 
 			// Add to results and the cache
@@ -288,44 +283,45 @@ abstract class PilotReadDAO extends DAO {
 				p.setHasDefaultSignature(rs.getBoolean(25));
 				p.setShowNewPosts(rs.getBoolean(26));
 				p.setIsPermanent(rs.getBoolean(27));
-				p.setUIScheme(rs.getString(28));
-				p.setShowNavBar(rs.getBoolean(29));
-				p.setViewCount(rs.getInt(30));
-				p.setLoginHost(rs.getString(31));
-				p.setDateFormat(rs.getString(32));
-				p.setTimeFormat(rs.getString(33));
-				p.setNumberFormat(rs.getString(34));
-				p.setAirportCodeType(Airport.Code.values()[rs.getInt(35)]);
-				p.setDistanceType(DistanceUnit.values()[rs.getInt(36)]);
-				p.setWeightType(WeightUnit.values()[rs.getInt(37)]);
-				p.setMapType(MapType.values()[rs.getInt(38)]);
-				p.setNoExams(rs.getBoolean(39));
-				p.setNoVoice(rs.getBoolean(40));
-				p.setNoCooler(rs.getBoolean(41));
-				p.setNoTimeCompression(rs.getBoolean(42));
-				p.setACARSRestriction(Restriction.values()[rs.getInt(43)]);
-				p.setEmailInvalid(rs.getBoolean(44));
-				p.setLDAPName(rs.getString(45));
-				p.setMotto(rs.getString(46));
+				p.setProficiencyCheckRides(rs.getBoolean(28));
+				p.setUIScheme(rs.getString(29));
+				p.setShowNavBar(rs.getBoolean(30));
+				p.setViewCount(rs.getInt(31));
+				p.setLoginHost(rs.getString(32));
+				p.setDateFormat(rs.getString(33));
+				p.setTimeFormat(rs.getString(34));
+				p.setNumberFormat(rs.getString(35));
+				p.setAirportCodeType(Airport.Code.values()[rs.getInt(36)]);
+				p.setDistanceType(DistanceUnit.values()[rs.getInt(37)]);
+				p.setWeightType(WeightUnit.values()[rs.getInt(38)]);
+				p.setMapType(MapType.values()[rs.getInt(39)]);
+				p.setNoExams(rs.getBoolean(40));
+				p.setNoVoice(rs.getBoolean(41));
+				p.setNoCooler(rs.getBoolean(42));
+				p.setNoTimeCompression(rs.getBoolean(43));
+				p.setACARSRestriction(Restriction.values()[rs.getInt(44)]);
+				p.setEmailInvalid(rs.getBoolean(45));
+				p.setLDAPName(rs.getString(46));
+				p.setMotto(rs.getString(47));
 
-				// Check if this result set has columns 47-50, which is the PIREP totals
-				if (columnCount > 49) {
-					p.setLegs(rs.getInt(47));
-					p.setMiles(rs.getLong(48));
-					p.setHours(rs.getDouble(49));
-					p.setLastFlight(expandDate(rs.getDate(50)));
+				// Check if this result set has columns 48-51, which is the PIREP totals
+				if (columnCount > 50) {
+					p.setLegs(rs.getInt(48));
+					p.setMiles(rs.getLong(49));
+					p.setHours(rs.getDouble(50));
+					p.setLastFlight(expandDate(rs.getDate(51)));
 				}
 
-				// Check if this result set has columns 51/52, which is the signature extension
-				if (columnCount > 51) {
-					p.setSignatureExtension(rs.getString(51));
-					p.setSignatureModified(toInstant(rs.getTimestamp(52)));
+				// Check if this result set has columns 52/53, which is the signature extension
+				if (columnCount > 52) {
+					p.setSignatureExtension(rs.getString(52));
+					p.setSignatureModified(toInstant(rs.getTimestamp(53)));
 				}
 
-				// Check if this result set has columns 53/54, which are online legs/hours
-				if (columnCount > 53) {
-					p.setOnlineLegs(rs.getInt(53));
-					p.setOnlineHours(rs.getDouble(54));
+				// Check if this result set has columns 54/55, which are online legs/hours
+				if (columnCount > 54) {
+					p.setOnlineLegs(rs.getInt(54));
+					p.setOnlineHours(rs.getDouble(55));
 				}
 
 				results.add(p);

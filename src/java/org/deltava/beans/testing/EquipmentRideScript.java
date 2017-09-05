@@ -4,13 +4,14 @@ package org.deltava.beans.testing;
 /**
  * A bean to store Check Ride scripts.
  * @author Luke
- * @version 7.4
+ * @version 8.0
  * @since 1.0
  */
 
 public class EquipmentRideScript extends CheckRideScript {
 
 	private String _eqType;
+	private boolean _isCurrency;
 
 	/**
 	 * Creates a new Check Ride script.
@@ -40,6 +41,15 @@ public class EquipmentRideScript extends CheckRideScript {
 	public String getProgram() {
 		return _programName;
 	}
+	
+	/**
+	 * Returns whether this is a currency check ride script
+	 * @return TRUE if a currency check ride script, otherwise FALSE
+	 * @see EquipmentRideScript#setIsCurrency(boolean)
+	 */
+	public boolean getIsCurrency() {
+		return _isCurrency;
+	}
 
 	/**
 	 * Sets the equipment program for this check ride script.
@@ -58,6 +68,15 @@ public class EquipmentRideScript extends CheckRideScript {
 	 */
 	public void setEquipmentType(String eqType) {
 		_eqType = eqType.trim();
+	}
+	
+	/**
+	 * Sets whether this is a currency check ride script.
+	 * @param isCurrency TRUE if a currency check ride script, otherwise FALSE
+	 * @see EquipmentRideScript#getIsCurrency() 
+	 */
+	public void setIsCurrency(boolean isCurrency) {
+		_isCurrency = isCurrency;
 	}
 
 	/**
