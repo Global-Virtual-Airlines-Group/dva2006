@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -17,11 +17,11 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to retroactively flag a Flight Report as a Check Ride.
  * @author Luke
- * @version 7.0
+ * @version 8.0
  * @since 1.0
  */
 
-public class CheckRideFlagCommand extends AbstractCommand {
+public class CheckRideFlagCommand extends AbstractTestHistoryCommand {
 
 	/**
 	 * Executes the command.
@@ -99,6 +99,17 @@ public class CheckRideFlagCommand extends AbstractCommand {
 				
 					// Set the equipment type
 					cr.setEquipmentType(eqTypes.iterator().next());
+					
+					// If we are doing recurring check rides, pull up the history and set the ride type
+					if (ctx.getUser().getProficiencyCheckRides()) {
+						GetPilot pdao = new GetPilot(con);
+						TestingHistoryHelper helper = initTestHistory(pdao.get(pilotID), con);
+						try {
+							cr.setType(helper.canRequestCheckRide(eqdao.get(cr.getEquipmentType())));
+						} catch (IneligibilityException ie) {
+							cr.setComments("Ineligibility issue - " + ie.getMessage());
+						}
+					}
 				} else
 					cr.setEquipmentType(eqdao.getDefault(SystemData.get("airline.db")));
 			}

@@ -58,6 +58,8 @@
 <content:sysdata var="fbClientID" name="users.facebook.id" />
 <content:sysdata var="fbPageID" name="users.facebook.pageID" />
 <content:sysdata var="faaChartURL" name="schedule.chart.url.faa.meta" />
+<content:sysdata var="currencyEnabled" name="testing.currency.enabled" />
+<content:sysdata var="currencyInterval" name="testing.currency.validity" />
 <content:attr attr="hasDispatchAccess" value="true" roles="HR,Route,Dispatch" />
 
 <!-- Main Body Frame -->
@@ -273,16 +275,14 @@ review flown using equipment in the ${pilot.equipmentType} program.</span></c:if
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="txrequests">Equipment Transfer Requests</el:cmd></td>
- <td class="data">Pilots wishing to switch Equipment Programs can submit transfer requests once 
-they have met the necessary requirements for a new Equipment Program. You can view these transfer 
+ <td class="data">Pilots wishing to switch Equipment Programs can submit transfer requests once  they have met the necessary requirements for a new Equipment Program. You can view these transfer 
 requests here, assign Check Rides, and complete the Promotion Process.<c:if test="${txQueueSize > 0}"><br />
 <br />
 <span class="ita">There <fmt:is value="${txQueueSize}" /> <fmt:quantity value="${txQueueSize}" single="pending Transfer Request" />.</span></c:if></td>
 </tr>
 <tr>
  <td class="mid bld"><el:cmd url="promoqueue">Promotion Queue</el:cmd></td>
- <td class="data">The Promotion Queue lists pilots who have successfully met all the requirements
-for promotion to the rank of Captain in their Equipment Program.<c:if test="${promoQueueSize > 0}"><br />
+ <td class="data">The Promotion Queue lists pilots who have successfully met all the requirements for promotion to the rank of Captain in their Equipment Program.<c:if test="${promoQueueSize > 0}"><br />
 <br />
 <b>There <fmt:is value="${promoQueueSize}" /> <fmt:quantity value="${promoQueueSize}" single="Pilot" /> awaiting promotion to Captain.</b></c:if></td>
 </tr>
@@ -443,25 +443,38 @@ for promotion to the rank of Captain in their Equipment Program.<c:if test="${pr
 <tr class="title caps">
  <td colspan="2">PILOT TESTING AND PROMOTION</td>
 </tr>
+<c:if test="${currencyEnabled}">
+<tr>
+ <td class="mid" colspan="2"><content:airline /> allows its Pilots to <span class="ita">opt into</span> a recurrent certification model. Pilots will continue to require the successful completion of a written Examination
+ as well as an initial Check Ride for entrance into a particular equipment program. Pilot who opt into recurrent certification will require an additional operational Check Ride every <fmt:int value="${currencyInterval}" />
+ days in order to retain their type ratings.<br />
+<br /> 
+<c:if test="${!pilot.proficiencyCheckRides}">
+You are currently enrolled in our <span class="pri bld caps">LEGACY</span> certification model. Ratings never expire, and Check Rides will remain valid permanently.<br />
+<br />
+
+
+</c:if>
+<c:if test="${pilot.proficiencyCheckRides}">
+You are currently enrolled within our <span class="ter bld caps">RECURRENT</span> certification model.
+
+</c:if>
+ </td>
+</tr>
+</c:if>
 <c:if test="${isFO}">
 <tr>
  <td class="pri mid bld">Promotion to Captain</td>
 <c:choose>
 <c:when test="${captPromote}"> 
- <td class="data">You are eligible for a promotion to Captain in the <span class="pri bld">${eqType.name}</span>
-program. Your name is on the list of Pilots eligible for a promotion, and you can expect to be promoted 
-within the next 24 to 72 hours. You are also eligible for equipment transfers and additional ratings in 
-higher stage equipment type programs.</td></c:when>
+ <td class="data">You are eligible for a promotion to Captain in the <span class="pri bld">${eqType.name}</span> program. Your name is on the list of Pilots eligible for a promotion, and you can expect to be promoted 
+within the next 24 to 72 hours. You are also eligible for equipment transfers and additional ratings in higher stage equipment type programs.</td></c:when>
 <c:when test="${promoteLegs < eqType.promotionLegs}">
- <td class="data">You have completed <fmt:int value="${promoteLegs}" /> of the <fmt:quantity value="${eqType.promotionLegs}" single="Flight" />
- in the <fmt:list value="${eqType.primaryRatings}" delim=", " /> 
-<c:if test="${eqType.ACARSPromotionLegs}">using ACARS </c:if>required for promotion to the rank of 
-Captain in the ${eqType.name} program.</td></c:when>
+ <td class="data">You have completed <fmt:int value="${promoteLegs}" /> of the <fmt:quantity value="${eqType.promotionLegs}" single="Flight" /> in the <fmt:list value="${eqType.primaryRatings}" delim=", " /> 
+<c:if test="${eqType.ACARSPromotionLegs}">using ACARS </c:if>required for promotion to the rank of Captain in the ${eqType.name} program.</td></c:when>
 <c:when test="${promoteLegs >= eqType.promotionLegs}">
- <td class="data">You have completed the <fmt:int value="${eqType.promotionLegs}" /> Flight Legs in 
- the <fmt:list value="${eqType.primaryRatings}" delim=", " /> 
-<c:if test="${eqType.ACARSPromotionLegs}">using ACARS </c:if> required for promotion to the rank of 
-Captain in the ${eqType.name} program. <span class="ita">You still need to pass the <span class="pri bld"><fmt:list value="${fn:examC(eqType)}" delim="," /></span> 
+ <td class="data">You have completed the <fmt:int value="${eqType.promotionLegs}" /> Flight Legs in the <fmt:list value="${eqType.primaryRatings}" delim=", " /> 
+<c:if test="${eqType.ACARSPromotionLegs}">using ACARS </c:if> required for promotion to the rank of Captain in the ${eqType.name} program. <span class="ita">You still need to pass the <span class="pri bld"><fmt:list value="${fn:examC(eqType)}" delim="," /></span> 
 Examination(s) in order to be eligible for promotion to Captain</span>.</td></c:when>
 </c:choose>
 </tr>
@@ -476,11 +489,9 @@ Examination(s) in order to be eligible for promotion to Captain</span>.</td></c:
 <c:if test="${empty eqSwitch}">
  <td class="mid">&nbsp;</td>
 </c:if>
- <td class="data"><c:if test="${!empty eqSwitch}">You are eligible to transfer to or request additional
- ratings in the following equipment types: <b><fmt:list value="${eqSwitch}" delim=", " /></b>.</c:if>
+ <td class="data"><c:if test="${!empty eqSwitch}">You are eligible to transfer to or request additional ratings in the following equipment types: <b><fmt:list value="${eqSwitch}" delim=", " /></b>.</c:if>
 <c:if test="${!empty eqSwitch && canSwitchFO}"><br /><br /></c:if>
-<c:if test="${canSwitchFO}">You are eligible to transfer to or request additional ratings in the 
-following equipment types upon successful completion of the First Officer's examination for these 
+<c:if test="${canSwitchFO}">You are eligible to transfer to or request additional ratings in the following equipment types upon successful completion of the First Officer's examination for these 
 equipment programs: <b><fmt:list value="${eqSwitchFOExam}" delim=", " /></b>.</c:if>
 <c:if test="${(isFO && !captPromote) || (promoteLegs < eqType.promotionLegs)}"><br />
 <c:if test="${isFO && !captPromote && (eqType.stage == eqSwitchMaxStage)}">

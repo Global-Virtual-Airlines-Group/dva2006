@@ -63,7 +63,7 @@ public abstract class AbstractTestHistoryCommand extends AbstractCommand {
 					ex.setDate(p.getCreatedOn());
 					ex.setScoredOn(p.getCreatedOn());
 					ex.setOwner(SystemData.getApp(SystemData.get("airline.code")));
-					helper.addExam(ex);
+					helper.add(ex);
 				}
 			}
 		}

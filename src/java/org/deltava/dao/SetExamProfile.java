@@ -171,13 +171,14 @@ public class SetExamProfile extends DAO {
 
 	/**
 	 * Deletes a Check Ride Script from the database.
-	 * @param sc the CheckRideScript bean
+	 * @param key the key
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void delete(EquipmentRideScript sc) throws DAOException {
+	public void delete(EquipmentRideScriptKey key) throws DAOException {
 		try {
-			prepareStatement("DELETE FROM CR_DESCS WHERE (EQTYPE=?)");
-			_ps.setString(1, sc.getEquipmentType());
+			prepareStatement("DELETE FROM CR_DESCS WHERE (EQTYPE=?) AND (CURRENCY=?)");
+			_ps.setString(1, key.getEquipmentType());
+			_ps.setBoolean(2, key.isCurrency());
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);

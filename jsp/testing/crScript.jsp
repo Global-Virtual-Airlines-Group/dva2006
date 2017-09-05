@@ -27,7 +27,6 @@ golgotha.local.validate = function(f) {
 golgotha.local.updateEQ = function(combo) {
 	var eq = golgotha.form.getCombo(combo);
 	var acTypes = golgotha.local.eqACMap[eq];
-
 	var acc = document.forms[0].eqType;
 	acc.options.length = acTypes.length + 1;
 	acc.selectedIndex = 0;
@@ -44,10 +43,11 @@ golgotha.local.updateEQ = function(combo) {
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:empty var="emptyList" />
+<content:sysdata var="currencyEnabled" name="testing.currency.enabled" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="crscript.do" op="save" linkID="${script.equipmentType}" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
+<el:form action="crscript.do" op="save" linkID="${script.auditID}" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <!-- Title Bar -->
 <tr class="title caps">
@@ -61,6 +61,12 @@ golgotha.local.updateEQ = function(combo) {
  <td class="label">Aircraft Type</td>
  <td class="data"><el:combo name="eqType" idx="*" size="1" required="true" options="${(empty script) ? emptyList : acTypes[script.program]}" firstEntry="[ AIRCRAFT TYPE ]" value="${script.equipmentType}" /></td>
 </tr>
+<c:if test="${currencyEnabled}">
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data"><el:box name="isCurrency" value="true" className="small" label="This is a Currency check ride script" checked="${script.isCurrency}" /></td> 
+</tr>
+</c:if>
 <tr>
  <td class="label top">Script Text</td>
  <td class="data"><el:textbox name="msgText" idx="*" width="90%" height="5" resize="true" className="req">${script.description}</el:textbox></td>
