@@ -15,15 +15,16 @@ public class EquipmentRideScript extends CheckRideScript {
 
 	/**
 	 * Creates a new Check Ride script.
+	 * @param programName the equipment program name
 	 * @param eqType the equipment type
 	 * @throws NullPointerException if eqType is null
 	 * @see EquipmentRideScript#setEquipmentType(String)
 	 */
-	public EquipmentRideScript(String eqType) {
-		super(null);
+	public EquipmentRideScript(String programName, String eqType) {
+		super(programName);
 		setEquipmentType(eqType);
 	}
-
+	
 	/**
 	 * Returns the equipment type for this script.
 	 * @return the equipment type
@@ -36,7 +37,6 @@ public class EquipmentRideScript extends CheckRideScript {
 	/**
 	 * Returns the Equipment Program for this check ride script.
 	 * @return the equipment program name
-	 * @see EquipmentRideScript#setProgram(String)
 	 */
 	public String getProgram() {
 		return _programName;
@@ -50,16 +50,7 @@ public class EquipmentRideScript extends CheckRideScript {
 	public boolean getIsCurrency() {
 		return _isCurrency;
 	}
-
-	/**
-	 * Sets the equipment program for this check ride script.
-	 * @param eqType the equipment program name
-	 * @see EquipmentRideScript#getProgram()
-	 */
-	public void setProgram(String eqType) {
-		_programName = eqType;
-	}
-
+	
 	/**
 	 * Sets the aircraft type for this check ride script.
 	 * @param eqType the aircraft type
@@ -86,11 +77,12 @@ public class EquipmentRideScript extends CheckRideScript {
 	 */
 	public int compareTo(EquipmentRideScript cs2) {
 		int tmpResult = super.compareTo(cs2);
-		return (tmpResult == 0) ? _eqType.compareTo(cs2._eqType) : tmpResult;
+		if  (tmpResult == 0) tmpResult = _eqType.compareTo(cs2._eqType);
+		return (tmpResult == 0) ? Boolean.compare(_isCurrency, cs2._isCurrency) : tmpResult;
 	}
 
 	@Override
 	public String getAuditID() {
-		return _programName + "!!" + _eqType;
+		return new EquipmentRideScriptKey(_programName, _eqType, _isCurrency).getAuditID();
 	}
 }

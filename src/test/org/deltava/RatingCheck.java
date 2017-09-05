@@ -104,7 +104,7 @@ public class RatingCheck extends TestCase {
 					ex.setDate(p.getCreatedOn());
 					ex.setScoredOn(p.getCreatedOn());
 					ex.setOwner(SystemData.getApp(SystemData.get("airline.code")));
-					helper.addExam(ex);
+					helper.add(ex);
 				}
 			}
 			

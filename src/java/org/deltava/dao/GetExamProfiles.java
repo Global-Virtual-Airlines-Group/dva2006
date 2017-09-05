@@ -104,21 +104,19 @@ public class GetExamProfiles extends DAO {
 	
 	/**
 	 * Loads a Check Ride script.
-	 * @param eqType the equipment type
-	 * @param isCurrency TRUE if a currency check ride script, otherwise FALSE
-	 * @return a CheckRideScript bean, or null if not found
+	 * @param key the script key
+	 * @return an EquipmentRideScript bean, or null if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public EquipmentRideScript getScript(String eqType, boolean isCurrency) throws DAOException {
+	public EquipmentRideScript getScript(EquipmentRideScriptKey key) throws DAOException {
 		try {
 			prepareStatementWithoutLimits("SELECT * FROM CR_DESCS WHERE (EQTYPE=?) AND (CURRENCY=?) LIMIT 1");
-			_ps.setString(1, eqType);
-			_ps.setBoolean(2, isCurrency);
+			_ps.setString(1, key.getEquipmentType());
+			_ps.setBoolean(2, key.isCurrency());
 			EquipmentRideScript result = null;
 			try (ResultSet rs = _ps.executeQuery()) {
 				if (rs.next()) {
-					result = new EquipmentRideScript(rs.getString(1));
-					result.setProgram(rs.getString(2));
+					result = new EquipmentRideScript(rs.getString(2), rs.getString(1));
 					result.setIsCurrency(rs.getBoolean(3));
 					result.setDescription(rs.getString(4));
 				}
@@ -142,8 +140,7 @@ public class GetExamProfiles extends DAO {
 			List<EquipmentRideScript> results = new ArrayList<EquipmentRideScript>();
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
-					EquipmentRideScript sc = new EquipmentRideScript(rs.getString(1));
-					sc.setProgram(rs.getString(2));
+					EquipmentRideScript sc = new EquipmentRideScript(rs.getString(2), rs.getString(1));
 					sc.setIsCurrency(rs.getBoolean(3));
 					sc.setDescription(rs.getString(4));
 					results.add(sc);

@@ -21,6 +21,7 @@
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <c:set var="access" value="${accessMap['NEW']}" scope="page" />
+<content:sysdata var="currencyEnabled" name="testing.currency.enabled" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -30,6 +31,9 @@
  <td style="width:10%">AIRCRAFT TYPE</td>
  <td style="width:10%">EQUIPMENT PROGRAM</td>
  <td style="width:65%" class="left">DESCRIPTION</td>
+<c:if test="${currencyEnabled}">
+ <td>CURRENCY</td>
+</c:if>
  <td> <c:if test="${access.canCreate}"><el:cmd url="crscript" op="edit">NEW SCRIPT</el:cmd></c:if></td>
 </tr>
 
@@ -38,19 +42,22 @@
 <view:row entry="${sc}">
 <c:set var="access" value="${accessMap[sc.equipmentType]}" scope="page" />
 <c:if test="${access.canEdit}">
- <td><el:cmd url="crscript" linkID="${sc.equipmentType}" op="edit">${sc.equipmentType}</el:cmd></td>
+ <td><el:cmd url="crscript" linkID="${sc.auditID}" op="edit">${sc.equipmentType}</el:cmd></td>
 </c:if>
 <c:if test="${!access.canEdit}">
  <td class="pri bld">${sc.equipmentType}</td>
 </c:if>
  <td class="sec bld">${sc.program}</td>
+<c:if test="${currencyEnabled}">
+ <td class="small">${sc.isCurrency ? 'YES' : ''}</td>
+</c:if>
  <td class="small left" colspan="2"><fmt:msg value="${sc.description}" bbCode="true" /></td>
 </view:row>
 </c:forEach>
 
 <!-- Bottom Bar -->
 <tr class="title">
- <td colspan="4">&nbsp;</td>
+ <td colspan="${currencyEnabled ? 5 : 4}">&nbsp;</td>
 </tr>
 </view:table>
 <br />

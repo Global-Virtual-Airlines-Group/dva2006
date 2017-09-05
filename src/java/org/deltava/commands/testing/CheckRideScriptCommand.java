@@ -6,7 +6,7 @@ import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.testing.EquipmentRideScript;
-
+import org.deltava.beans.testing.EquipmentRideScriptKey;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
@@ -17,7 +17,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to update Check Ride scripts.
  * @author Luke
- * @version 7.5
+ * @version 8.0
  * @since 1.0
  */
 
@@ -36,19 +36,20 @@ public class CheckRideScriptCommand extends AbstractAuditFormCommand {
 		if (StringUtils.isEmpty(id))
 			id = ctx.getParameter("eqType");
 		
+		EquipmentRideScriptKey key = EquipmentRideScriptKey.parse(id);
 		try {
 			Connection con = ctx.getConnection();
 
 			// Get the DAO and the existing script
 			GetExamProfiles dao = new GetExamProfiles(con);
-			EquipmentRideScript sc = dao.getScript(id); EquipmentRideScript osc = BeanUtils.clone(sc);
+			EquipmentRideScript sc = dao.getScript(key); EquipmentRideScript osc = BeanUtils.clone(sc);
 			if (sc == null)
-				sc = new EquipmentRideScript(id);
+				sc = new EquipmentRideScript(ctx.getParameter("programType"), id);
 
 			// Load the program and description
-			sc.setProgram(ctx.getParameter("programType"));
 			sc.setDescription(ctx.getParameter("msgText"));
 			sc.setEquipmentType(ctx.getParameter("eqType"));
+			sc.setIsCurrency(Boolean.valueOf(ctx.getParameter("isCurrency")).booleanValue());
 
 			// Calculate our access
 			EquipmentRideScriptAccessControl access = new EquipmentRideScriptAccessControl(ctx, sc);
@@ -98,7 +99,7 @@ public class CheckRideScriptCommand extends AbstractAuditFormCommand {
 	@Override
 	protected void execEdit(CommandContext ctx) throws CommandException {
 
-		String id = (String) ctx.getCmdParameter(ID, null);
+		EquipmentRideScriptKey key = EquipmentRideScriptKey.parse((String) ctx.getCmdParameter(ID, null));
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -110,10 +111,10 @@ public class CheckRideScriptCommand extends AbstractAuditFormCommand {
 
 			// Get the DAO and the script
 			GetExamProfiles dao = new GetExamProfiles(con);
-			if (id != null) {
-				EquipmentRideScript sc = dao.getScript(id);
+			if (key != null) {
+				EquipmentRideScript sc = dao.getScript(key);
 				if (sc == null)
-					throw notFoundException("Invalid Check Ride script - " + id);
+					throw notFoundException("Invalid Check Ride script - " + key.getEquipmentType());
 
 				// Calculate our access
 				EquipmentRideScriptAccessControl access = new EquipmentRideScriptAccessControl(ctx, sc);

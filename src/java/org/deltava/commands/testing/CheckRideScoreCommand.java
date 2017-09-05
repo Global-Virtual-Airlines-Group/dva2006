@@ -1,8 +1,9 @@
-// Copyright 2005, 2006, 2007, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.sql.Connection;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 import org.deltava.beans.*;
 import org.deltava.beans.testing.*;
@@ -13,11 +14,12 @@ import org.deltava.dao.*;
 import org.deltava.mail.*;
 
 import org.deltava.security.command.ExamAccessControl;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to score Check Rides.
  * @author Luke
- * @version 7.0
+ * @version 8.0
  * @since 1.0
  */
 
@@ -67,6 +69,8 @@ public class CheckRideScoreCommand extends AbstractCommand {
 			cr.setScoredOn(Instant.now());
 			cr.setPassFail(Boolean.valueOf(ctx.getParameter("passFail")).booleanValue());
 			cr.setStatus(TestStatus.SCORED);
+			if (cr.getPassFail() && sendTo.getProficiencyCheckRides())
+				cr.setExpirationDate(Instant.now().plus(SystemData.getInt("testing.currency.validity", 365), ChronoUnit.DAYS));
 
 			// Get the message tempate
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
@@ -98,10 +102,8 @@ public class CheckRideScoreCommand extends AbstractCommand {
 				txwdao.update(txreq);
 			}
 
-			// Commit the transaction
+			// Commit and save the checkride in the request
 			ctx.commitTX();
-
-			// Save the checkride in the request
 			ctx.setAttribute("checkRide", cr, REQUEST);
 		} catch (DAOException de) {
 			ctx.rollbackTX();

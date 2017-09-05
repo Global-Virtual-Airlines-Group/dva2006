@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2011, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2011, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.sql.Connection;
@@ -19,11 +19,11 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to assign Check Rides.
  * @author Luke
- * @version 7.0
+ * @version 8.0
  * @since 1.0
  */
 
-public class CheckRideAssignCommand extends AbstractCommand {
+public class CheckRideAssignCommand extends AbstractTestHistoryCommand {
 
 	/**
 	 * Executes the command.
@@ -70,7 +70,15 @@ public class CheckRideAssignCommand extends AbstractCommand {
 			EquipmentType eq = eqdao.get(ctx.getParameter("eqType"));
 			if (eq == null)
 				throw notFoundException("Invalid Equipment Program - " + ctx.getParameter("eqType"));
-
+			
+			// Determine the check ride type
+			RideType rt = RideType.CHECKRIDE;
+			if (p.getProficiencyCheckRides()) {
+				TestingHistoryHelper testHelper = initTestHistory(p, con);
+				if (testHelper.hasCheckRide(eq, RideType.CHECKRIDE))
+					rt = RideType.CURRENCY;
+			}
+			
 			// Get the message template
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
 			mctxt.setTemplate(mtdao.get("RIDEASSIGN"));
@@ -81,8 +89,9 @@ public class CheckRideAssignCommand extends AbstractCommand {
 			String comments = ctx.getParameter("comments");
 			boolean useScript = Boolean.valueOf(ctx.getParameter("useScript")).booleanValue();
 			if (useScript) {
+				EquipmentRideScriptKey key = new EquipmentRideScriptKey(eq.getName(), ctx.getParameter("crType"), false);
 				GetExamProfiles epdao = new GetExamProfiles(con);
-				CheckRideScript sc = epdao.getScript(ctx.getParameter("crType"));
+				CheckRideScript sc = epdao.getScript(key);
 				if (sc != null) {
 					comments = comments + "\n\n" + sc.getDescription();
 					ctx.setAttribute("script", sc, REQUEST);
@@ -99,6 +108,7 @@ public class CheckRideAssignCommand extends AbstractCommand {
 			cr.setScorerID(ctx.getUser().getID());
 			cr.setStatus(TestStatus.NEW);
 			cr.setStage(eq.getStage());
+			cr.setType(rt);
 			cr.setComments(comments);
 
 			// Use a SQL Transaction

@@ -9,13 +9,14 @@
 <html lang="en">
 <head>
 <title>${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></title>
-<content:expire expires="60" />
+<content:expire expires="15" />
 <content:canonical convertID="true" />
 <content:css name="main" />
 <content:css name="form" />
 <content:css name="view" />
 <content:pics />
 <content:favicon />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <c:if test="${!empty loginAddrs}">
 <script type="text/javascript">
@@ -43,6 +44,8 @@ return true;
 <content:sysdata var="forumName" name="airline.forum" />
 <content:sysdata var="dbName" name="airline.db" />
 <content:sysdata var="acarsEnabled" name="acars.enabled" />
+<content:sysdata var="currencyEnabled" name="testing.currency.enabled" />
+<content:sysdata var="currencyInterval" name="testing.currency.validity" />
 <content:filter roles="HR,Signature">
 <c:set var="canSigAuth" value="${pilot.hasSignature && !sigAuthorized}" scope="page" />
 </content:filter>
@@ -100,6 +103,10 @@ return true;
  <td class="label top">Additional Ratings</td>
  <td colspan="${cspan}" class="data small"><fmt:list value="${pilot.ratings}" delim=", " /></td>
 </tr>
+<c:if test="${currencyEnabled && pilot.proficiencyCheckRides}">
+ <td class="label">Currency Testing</td>
+ <td colspan="${cspan}" class="data"><span class="ter bld">ENABLED</span>, check ride validity <fmt:int value="${currencyInterval}" /> days</td>
+</c:if>
 <c:if test="${!empty certs}">
 <tr>
  <td class="label">Flight Academy Certifications</td>

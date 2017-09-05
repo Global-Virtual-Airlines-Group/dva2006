@@ -6,7 +6,7 @@ import java.time.Instant;
 /**
  * A bean to track pilot promotions and general comments.
  * @author Luke
- * @version 7.4
+ * @version 8.0
  * @since 1.0
  */
 
@@ -31,9 +31,11 @@ public class StatusUpdate extends DatabaseBean implements AuditEntry {
 	public static final int LOA = 16;
 	public static final int EXT_AUTH = 17;
 	public static final int VOICE_WARN = 18;
+	public static final int CURRENCY = 19;
 	
 	public static final String[] TYPES = {"Comment", "Promotion", "Rank Change", "Added Rating", "Pilot Recognition", "Status Change", "Added Security Role", "Removed Rating", "Removed Security Role", 
-			"Promotion", "Airline Transfer", "Inactivity Notice", "Academy Update", "Pilot Certification", "Senior Captain", "Account Suspended", "Leave of Absence", "External Authentication", "Voice Warning"};
+			"Promotion", "Airline Transfer", "Inactivity Notice", "Academy Update", "Pilot Certification", "Senior Captain", "Account Suspended", "Leave of Absence", "External Authentication", "Voice Warning",
+			"Currency Policy"};
 
 	private int _type;
 	private int _authorID;

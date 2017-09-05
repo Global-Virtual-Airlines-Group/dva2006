@@ -4,6 +4,7 @@ package org.deltava.commands.testing;
 import java.util.*;
 import java.sql.Connection;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 import org.deltava.beans.*;
 import org.deltava.beans.testing.*;
@@ -17,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to waive a Check Ride.
  * @author Luke
- * @version 7.2
+ * @version 8.0
  * @since 5.3
  */
 
@@ -78,7 +79,7 @@ public class WaiveCheckRideCommand extends AbstractTestHistoryCommand {
 
 			// Create the check ride record
 			CheckRide cr = new CheckRide(eqType + " Check Ride Waiver");
-			cr.setAuthorID(p.getID());
+			cr.setAuthorID(ctx.getUser().getID());
 			cr.setType(RideType.WAIVER);
 			cr.setDate(Instant.now());
 			cr.setSubmittedOn(cr.getDate());
@@ -90,6 +91,8 @@ public class WaiveCheckRideCommand extends AbstractTestHistoryCommand {
 			cr.setScoredOn(cr.getDate());
 			cr.setOwner(SystemData.getApp(SystemData.get("airline.code")));
 			cr.setComments(ctx.getParameter("comments"));
+			if (p.getProficiencyCheckRides())
+				cr.setExpirationDate(Instant.now().plus(SystemData.getInt("testing.currency.validity", 365), ChronoUnit.DAYS));
 
 			// Save the check ride
 			SetExam wdao = new SetExam(con);

@@ -261,6 +261,10 @@
 	<!-- Testing settings -->
 	<testing>
 		<lockout type="Integer">24</lockout>
+		<currency>
+			<enabled type="Boolean">true</enabled>
+			<validity type="Integer">90</validity>
+		</currency>
 	</testing>
 
 	<!-- Weather map tile sources -->	
