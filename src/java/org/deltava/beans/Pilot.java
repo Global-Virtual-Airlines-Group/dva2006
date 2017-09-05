@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -10,9 +10,9 @@ import org.deltava.beans.stats.DatedAccomplishmentID;
 import org.deltava.util.StringUtils;
 
 /**
- * A class for storing Pilot entries.
+ * A class for storing Pilot information.
  * @author Luke
- * @version 7.0
+ * @version 8.0
  * @since 1.0
  */
 
@@ -83,6 +83,7 @@ public class Pilot extends Person implements ComboAlias, Cloneable {
 
 	private boolean _showNavBar;
 	private boolean _isPermanent;
+	private boolean _profCheckRides;
 
 	/**
 	 * Creates a Pilot object with a given first and last name, converted to "proper case".
@@ -241,6 +242,15 @@ public class Pilot extends Person implements ComboAlias, Cloneable {
 	 */
 	public boolean getIsPermanent() {
 		return _isPermanent;
+	}
+	
+	/**
+	 * Returns whether this Pilot has opted for recurring check rides.
+	 * @return TRUE if proficiency check rides are enabled, otherwise FALSE
+	 * @see Pilot#setProficiencyCheckRides(boolean)
+	 */
+	public boolean getProficiencyCheckRides() {
+		return _profCheckRides;
 	}
 
 	/**
@@ -536,6 +546,15 @@ public class Pilot extends Person implements ComboAlias, Cloneable {
 	 */
 	public void setIsPermanent(boolean isPerm) {
 		_isPermanent = isPerm;
+	}
+	
+	/**
+	 * Marks this Pilot as having opted for proficiency check rides.
+	 * @param isPCR TRUE if recurring check rides, otherwise FALSE
+	 * @see Pilot#getProficiencyCheckRides()
+	 */
+	public void setProficiencyCheckRides(boolean isPCR) {
+		_profCheckRides = isPCR;
 	}
 
 	/**
