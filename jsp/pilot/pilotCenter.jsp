@@ -98,7 +98,7 @@ You are visiting today from <span class="bld">${req.remoteHost}</span> (${req.re
 <c:set var="fbPermissions" value="${fn:splice(fbPerms, ',')}" scope="page" />
 <c:if test="${!empty fbPageID}"><c:set var="fbPermissions" value="${fbPermissions},manage_pages" scope="page" /></c:if>
 <content:protocol var="reqProtocol" />
-<script type="text/javascript" defer>
+<script type="text/javascript" async>
 golgotha.local.fbAuthorize = function() {
 	var URLflags = 'height=360,width=860,menubar=no,toolbar=no,status=no,scrollbars=no,resizable=no';
 	return window.open('${fbAuthURL}?client_id=${fbClientID}&redirect_uri=${reqProtocol}://${req.serverName}/fbauth.do&scope=${fbPermissions}&display=popup', 'fbAuth', URLflags);
@@ -453,10 +453,12 @@ have on your existing aircraft type ratings.
 <c:if test="${pilot.proficiencyCheckRides}">
 You are currently enrolled within our <span class="ter bld caps">RECURRENT</span> certification model. Check ries are only valid for <fmt:int value="${currencyInterval}" /> days and a currency Check Ride will need to
  be performed before ratings expire.<br />
+<c:if test="${!empty upcomingExpirations}"><br />
+The following Check Rides or Check Ride Waivers are due to expire within the next 60 days. You will need to successfully complete a currency Check Ride prior to expiration in order to maintain your raings:<br />
 <br />
-TODO: Here's a list of pending ratings that are about to expire soon!<br />
-<br />
-</c:if>
+<c:forEach var="expCR" items="${upcomingExpirations}" varStatus="expStatus">
+${expCR.name}, completed on <fmt:date fmt="d" date="${expCR.scoredOn}" /> expires on <fmt:date fmt="d" className="error bld" date="${expCR.expirationDate}" /><c:if test="${!expStatus.last}"><br /></c:if>
+</c:forEach></c:if></c:if>
  </td>
 </tr>
 </c:if>
