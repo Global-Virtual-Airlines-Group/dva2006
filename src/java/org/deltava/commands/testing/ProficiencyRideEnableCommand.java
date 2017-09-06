@@ -52,9 +52,10 @@ public class ProficiencyRideEnableCommand extends AbstractTestHistoryCommand {
 				throw new CommandException("Proficiency check rides not enabled for Airline");
 			
 			// Load exam history
+			int rideValidity = SystemData.getInt("testing.currency.validity", 365);
 			TestingHistoryHelper testHelper = initTestHistory(p, con);
 			Collection<EquipmentType> oldEQ = testHelper.getQualifiedPrograms();
-			testHelper.applyExpiration(SystemData.getInt("testing.currency.validity", 365) + 30);
+			testHelper.applyExpiration(rideValidity + 30);
 			
 			// Go back and rebuild the list of things we are eligible for
 			Collection<EquipmentType> newEQ = testHelper.getQualifiedPrograms();
@@ -68,9 +69,11 @@ public class ProficiencyRideEnableCommand extends AbstractTestHistoryCommand {
 			upds.add(upd);
 			
 			// If we are not eligible for our program, create a 30-day waiver
-			Collection<CheckRide> waivers = new ArrayList<CheckRide>();
+			List<CheckRide> waivers = new ArrayList<CheckRide>();
 			Collection<EquipmentType> deltaEQ = CollectionUtils.getDelta(oldEQ, newEQ);
 			if (!deltaEQ.isEmpty()) {
+				Collection<String> waiverNames = new TreeSet<String>();
+				Instant waiverDate = Instant.now().plus(30, ChronoUnit.DAYS);
 				for (EquipmentType weq : deltaEQ) {
 					CheckRide wcr = new CheckRide("Initial Proficiency Waiver");
 					wcr.setType(RideType.WAIVER);
@@ -80,20 +83,23 @@ public class ProficiencyRideEnableCommand extends AbstractTestHistoryCommand {
 					wcr.setSubmittedOn(wcr.getDate());
 					wcr.setScoredOn(wcr.getDate());
 					wcr.setScorerID(ctx.getUser().getID());
-					wcr.setExpirationDate(Instant.now().plus(30, ChronoUnit.DAYS));
+					wcr.setExpirationDate(waiverDate);
 					wcr.setEquipmentType(weq.getName());
 					wcr.setOwner(SystemData.getApp(null));
 					wcr.setComments("Proficiency Check Rides enabled, waiver for rated program");
 					testHelper.add(wcr);
 					waivers.add(wcr);
 					newEQ.add(weq);
+					waiverNames.add(weq.getName());
 				}
+				
+				ctx.setAttribute("waiverExpiry", waiverDate, REQUEST);
+				ctx.setAttribute("waiverNames", waiverNames, REQUEST);
 			}
 
 			// Set status attributes
-			Collection<String> ratingDelta = CollectionUtils.getDelta(p.getRatings(), newRatings);
+			Collection<String> ratingDelta = CollectionUtils.getDelta(p.getRatings(), testHelper.getQualifiedRatings());
 			ctx.setAttribute("pilot", p, REQUEST);
-			ctx.setAttribute("waivers", waivers, REQUEST);
 			ctx.setAttribute("newRatings", newRatings, REQUEST);
 			ctx.setAttribute("ratingDelta", ratingDelta, REQUEST);
 			if (!ratingDelta.isEmpty()) {
@@ -125,6 +131,10 @@ public class ProficiencyRideEnableCommand extends AbstractTestHistoryCommand {
 				
 				// Commit
 				ctx.commitTX();
+				
+				// Return upcoming expirations
+				GetExam exdao = new GetExam(con);
+				ctx.setAttribute("upcomingExpirations", exdao.getExpiringCheckRides(p.getID(), Math.min(rideValidity / 4, 60)), REQUEST);
 			}
 		} catch (DAOException de) {
 			ctx.rollbackTX();
@@ -136,7 +146,7 @@ public class ProficiencyRideEnableCommand extends AbstractTestHistoryCommand {
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
 		result.setURL("/jsp/testing/proficiencyRideEnabled.jsp");
-		result.setType(ResultType.REQREDIRECT);
+		result.setType(confirm ? ResultType.REQREDIRECT : ResultType.FORWARD);
 		result.setSuccess(true);
 	}
 }

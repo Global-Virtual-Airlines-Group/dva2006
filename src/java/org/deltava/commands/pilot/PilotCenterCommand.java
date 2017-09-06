@@ -256,11 +256,17 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 				ctx.setAttribute("examQueueSize", Integer.valueOf(exdao.getSubmitted().size()), REQUEST);
 				ctx.setAttribute("txQueueSize", Integer.valueOf(txdao.getCount(myEQType)), REQUEST);
 			}
+			
+			// If we have proficiency-based check rides, get upcoming expirations
+			if (p.getProficiencyCheckRides()) {
+				GetExam exdao = new GetExam(con);
+				ctx.setAttribute("upcomingExpirations", exdao.getExpiringCheckRides(p.getID(), 60), REQUEST);
+			}
 
 			// See if we are enrolled in a Flight Academy course
 			if (SystemData.getBoolean("academy.enabled")) {
 				GetAcademyCourses fadao = new GetAcademyCourses(con);
-				List<Course> courses = new ArrayList<Course>(fadao.getByPilot(ctx.getUser().getID()));
+				List<Course> courses = new ArrayList<Course>(fadao.getByPilot(p.getID()));
 				ctx.setAttribute("courses", courses, REQUEST);
 				if (!courses.isEmpty()) {
 					Course c = courses.get(courses.size() - 1);

@@ -38,6 +38,7 @@ return true;
 <content:sysdata var="examLockoutHours" name="testing.lockout" />
 <content:sysdata var="currencyEnabled" name="testing.currency.enabled" />
 <content:sysdata var="currencyInterval" name="testing.currency.validity" />
+<c:set var="cspan" value="${pilot.proficiencyCheckRides ? 8 : 7}" scope="page" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -46,10 +47,10 @@ return true;
 <c:if test="${currencyEnabled}">
 <!-- Promotion Mode Title bar -->
 <tr class="title caps">
- <td colspan="7">CHECK RIDE CURRENCY</td>
+ <td colspan="${cspan}">CHECK RIDE CURRENCY</td>
 </tr>
 <tr>
- <td colspan="7"><content:airline /> allows its Pilots to <span class="ita">opt into</span> a recurrent certification model. Pilots will continue to require the successful completion of a written Examination
+ <td colspan="${cspan}"><content:airline /> allows its Pilots to <span class="ita">opt into</span> a recurrent certification model. Pilots will continue to require the successful completion of a written Examination
  as well as an initial Check Ride for entrance into a particular equipment program. Pilot who opt into recurrent certification will require an additional operational Check Ride every <fmt:int value="${currencyInterval}" />
  days in order to retain their type ratings.<br />
 <br /> 
@@ -76,6 +77,7 @@ TODO: Here's a list of pending ratings that are about to expire soon!<br />
  <td style="width:10%">SCORE</td>
  <td style="width:10%">QUESTIONS</td>
  <td style="width:10%">PERCENT</td>
+<c:if test="${pilot.proficiencyCheckRides}"><td>EXPIRES</td></c:if>
  <td>DATE</td>
 </tr>
 
@@ -100,74 +102,62 @@ TODO: Here's a list of pending ratings that are about to expire soon!<br />
  <td class="pri bld">${exam.score}</td>
  <td class="bld">${exam.size}</td>
  <td class="sec"><fmt:dec value="${exam.score / exam.size * 100.0}" />%</td>
+<c:if test="${pilot.proficiencyCheckRides}"><td><fmt:date fmt="d" date="${exam.expirationDate}" default="-" /></td></c:if>
  <td><fmt:date fmt="d" date="${exam.date}" /></td>
 </tr>
 </c:forEach>
 </c:if>
 <c:if test="${empty exams}">
 <tr>
- <td colspan="7" class="pri bld">You have not completed any Pilot Examinations.</td>
+ <td colspan="${cspan}" class="pri bld">You have not completed any Pilot Examinations.</td>
 </tr>
 </c:if>
 
 <!-- Document Library Section -->
 <tr class="title caps">
- <td class="left" colspan="7">DOCUMENT LIBRARY</td>
+ <td class="left" colspan="${cspan}">DOCUMENT LIBRARY</td>
 </tr>
 <tr>
- <td class="left" colspan="5">The <content:airline /> Document Library contains all of
- the materials needed to successfully complete written examinations, in addition to being a
- valuable resource for learning more about all aspects of our operations. Before you take
- a written examination, please make sure you've gone through the Document Library and read
+ <td class="left" colspan="${cspan - 2}">The <content:airline /> Document Library contains all of the materials needed to successfully complete written examinations, in addition to being a
+ valuable resource for learning more about all aspects of our operations. Before you take a written examination, please make sure you've gone through the Document Library and read
  the manuals for your aircraft type. All documents require Adobe Acrobat Reader 6.0 or above.</td>
  <td colspan="2"><el:cmdbutton url="doclibrary" label="DOCUMENT LIBRARY" /></td>
 </tr>
 
 <!-- New Examination Section -->
 <tr class="title caps">
- <td class="left" colspan="7">PILOT EXAMINATIONS</td>
+ <td class="left" colspan="${cspan}">PILOT EXAMINATIONS</td>
 </tr>
-
 <c:choose>
 <c:when test="${examActive > 0}">
 <tr>
- <td class="left" colspan="7">You currently are in the process of taking a Pilot Examination.
- Until it has been submitted and scored, you cannot take any new examinations.
- <el:cmd url="exam" linkID="${fn:hex(examActive)}" className="sec bld">Click Here</el:cmd> to
- return to the Examination.</td>
+ <td class="left" colspan="${cspan}">You currently are in the process of taking a Pilot Examination. Until it has been submitted and scored, you cannot take any new examinations.
+ <el:cmd url="exam" linkID="${fn:hex(examActive)}" className="sec bld">Click Here</el:cmd> to return to the Examination.</td>
 </tr>
 </c:when>
 <c:when test="${!empty txreq}">
 <tr>
- <td class="left" colspan="7">You currently are in the process of transferring between Equipment
- Programs. Until your Equipment Program Transfer has been completed, you cannot take any new
- examinations.</td>
+ <td class="left" colspan="${cspan}">You currently are in the process of transferring between Equipment Programs. Until your Equipment Program Transfer has been completed, you cannot take any new examinations.</td>
 </tr>
 </c:when>
 <c:when test="${failedExam}">
 <tr>
- <td class="left" colspan="7">You completed a <content:airline /> pilot Examination with an 
- unsatisfactory score less than <fmt:int value="${examLockoutHours}" /> hours ago, and therefore 
+ <td class="left" colspan="${cspan}">You completed a <content:airline /> pilot Examination with an  unsatisfactory score less than <fmt:int value="${examLockoutHours}" /> hours ago, and therefore 
  cannot write a new Examination until this interval has passed.</td>
 </tr>
 </c:when>
 <c:otherwise>
 <tr>
- <td class="left" colspan="7">Please select a written examination from the list below. Make sure that
- you are prepared to take the exam before clicking on &quot;New Examination.&quot;<br />
+ <td class="left" colspan="${cspan}">Please select a written examination from the list below. Make sure that you are prepared to take the exam before clicking on &quot;New Examination.&quot;<br />
 <br />
-Our exams are timed. You will see time remaining at the top of the examination page. After starting
- you have 40 minutes to complete and submit the examination. <span class="ita">After 40 minutes the 
+Our exams are timed. You will see time remaining at the top of the examination page. After starting you have 40 minutes to complete and submit the examination. <span class="ita">After 40 minutes the 
  examination will be automatically submitted, regardless of number of questions answered</span>.<br />
 <br />
-The specific program Chief Pilot or Assistant Chief Pilots score examianations within 72 hours of
- submission, and the results of your examination will be sent to you by email. Until it is scored,
- you will not be able to take any exam again.<span class="pri bld">Make sure that you are prepared 
- before you begin an examination!</span></td>
+The specific program Chief Pilot or Assistant Chief Pilots score examianations within 72 hours of submission, and the results of your examination will be sent to you by email. Until it is scored,
+ you will not be able to take any exam again.<span class="pri bld">Make sure that you are prepared before you begin an examination!</span></td>
 </tr>
 <tr class="title">
- <td colspan="7">SELECT EXAMINATION <el:combo name="examName" idx="1" size="1" options="${availableExams}" firstEntry="[ SELECT EXAM ]" />
- <el:button ID="ExamButton" type="submit" label="NEW EXAMINATION" /></td>
+ <td colspan="${cspan}">SELECT EXAMINATION <el:combo name="examName" idx="1" size="1" options="${availableExams}" firstEntry="[ SELECT EXAM ]" /> <el:button ID="ExamButton" type="submit" label="NEW EXAMINATION" /></td>
 </tr>
 </c:otherwise>
 </c:choose>
