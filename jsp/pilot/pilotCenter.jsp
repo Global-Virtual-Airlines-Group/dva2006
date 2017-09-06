@@ -452,12 +452,15 @@ requests here, assign Check Rides, and complete the Promotion Process.<c:if test
 <c:if test="${!pilot.proficiencyCheckRides}">
 You are currently enrolled in our <span class="pri bld caps">LEGACY</span> certification model. Ratings never expire, and Check Rides will remain valid permanently.<br />
 <br />
-
-
+To discover more about our currency-based certification model, you can <el:cmd url="currencyenable" link="${pilot}" className="pri bld">Click Here</el:cmd> to review the changes that switching to this model will
+have on your existing aircraft type ratings.
 </c:if>
 <c:if test="${pilot.proficiencyCheckRides}">
-You are currently enrolled within our <span class="ter bld caps">RECURRENT</span> certification model.
-
+You are currently enrolled within our <span class="ter bld caps">RECURRENT</span> certification model. Check ries are only valid for <fmt:int value="${currencyInterval}" /> days and a currency Check Ride will need to
+ be performed before ratings expire.<br />
+<br />
+TODO: Here's a list of pending ratings that are about to expire soon!<br />
+<br />
 </c:if>
  </td>
 </tr>
