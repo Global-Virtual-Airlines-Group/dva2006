@@ -1,15 +1,16 @@
-// Copyright 2005, 2006, 2007, 2008, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import java.util.*;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 import org.deltava.util.StringUtils;
 
 /**
  * A class to store information about written examinations.
  * @author Luke
- * @version 7.0
+ * @version 8.0
  * @since 1.0
  */
 
@@ -171,15 +172,12 @@ public class Examination extends Test {
 	 * Updates the size of this examination.
 	 * @param size the number of questions
 	 * @throws IllegalStateException if at least one question has been aded to this exam
-	 * @throws IllegalArgumentException if size is zero or negative
 	 * @see Examination#getSize()
 	 */
 	@Override
 	public void setSize(int size) {
 		if (_questions.size() != 0)
 			throw new IllegalStateException("Question Pool already populated");
-		else if (size < 1)
-			throw new IllegalArgumentException("Examination Size cannot be zero or negative");
 
 		_size = size;
 	}
@@ -210,6 +208,8 @@ public class Examination extends Test {
 	public String getRowClassName() {
 		if (getEmpty() && (getStatus() == TestStatus.SCORED))
 			return "warn";
+		else if ((_expiryDate != null) && (_expiryDate.isBefore(Instant.now().plus(60, ChronoUnit.DAYS))))
+				return "opt3";
 
 		return CLASS_NAMES[getStatus().ordinal()];
 	}
