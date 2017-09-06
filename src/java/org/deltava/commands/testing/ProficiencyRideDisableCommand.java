@@ -1,20 +1,16 @@
 // Copyright 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
+import java.util.*;
 import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.TreeSet;
 
 import org.deltava.beans.*;
-import org.deltava.beans.testing.IneligibilityException;
 import org.deltava.beans.testing.TestingHistoryHelper;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-import org.deltava.util.CollectionUtils;
-import org.deltava.util.StringUtils;
+
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -57,18 +53,7 @@ public class ProficiencyRideDisableCommand extends AbstractTestHistoryCommand {
 			TestingHistoryHelper testHelper = initTestHistory(p, con);
 			
 			// Go back and rebuild the list of things we are eligible for
-			Collection<String> newRatings = new TreeSet<String>();
-			GetEquipmentType eqdao = new GetEquipmentType(con);
-			Collection<EquipmentType> newEQ = eqdao.getActive();
-			for (Iterator<EquipmentType> i = newEQ.iterator(); i.hasNext(); ) {
-				EquipmentType eq = i.next();
-				try {
-					testHelper.canSwitchTo(eq);
-					newRatings.addAll(eq.getRatings());
-				} catch (IneligibilityException ie) {
-					i.remove();
-				}
-			}
+			Collection<String> newRatings = testHelper.getQualifiedRatings();
 
 			// Status update
 			Collection<StatusUpdate> upds = new ArrayList<StatusUpdate>();

@@ -7,7 +7,7 @@ import java.util.function.Function;
 /**
  * A utility class for dealing with Collections.
  * @author Luke
- * @version 7.2
+ * @version 8.0
  * @since 1.0
  */
 
@@ -53,18 +53,6 @@ public class CollectionUtils {
 	 */
 	public static <T> boolean hasDelta(Collection<T> c1, Collection<T> c2) {
 		return ((c1.size() != c2.size()) || (!c1.containsAll(c2)));
-	}
-
-	/**
-	 * A null-safe mechanism for converting a String array into a Collection.
-	 * @param strValues the values to load into a List, usually from an HTTP request
-	 * @param defltValues a Collection of values if strValues is null
-	 * @return strValues converted to a List, or defltValues if strValues is null
-	 * @see Arrays#asList(Object[])
-	 */
-	@Deprecated
-	public static Collection<String> loadList(String[] strValues, Collection<String> defltValues) {
-		return new LinkedHashSet<String>((strValues != null) ? Arrays.asList(strValues) : defltValues);
 	}
 
 	/**

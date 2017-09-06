@@ -74,15 +74,12 @@
  <td class="sideLabel mid"><el:cmd className="bld" url="profile" link="${pilot}" op="edit">Edit My Profile</el:cmd></td>
  <td class="data">Welcome back to <span class="pri bld"><content:airline /></span>, ${pilot.firstName}.
 <c:if test="${!empty pilot.pilotCode}"> Your pilot code is <span class="pri bld">${pilot.pilotCode}</span>.</c:if><br />
- You signed up on <fmt:date date="${pilot.createdOn}" fmt="d" /> (<fmt:int value="${pilotAge}" /> days ago) and have visited 
- <fmt:quantity value="${pilot.loginCount}" single="time" />.<br />
-You are visiting today from <span class="bld">${req.remoteHost}</span> (${req.remoteAddr})<c:if test="${!empty ipAddrInfo}">, 
- in ${ipAddrInfo.location}</c:if>.</td>
+ You signed up on <fmt:date date="${pilot.createdOn}" fmt="d" /> (<fmt:int value="${pilotAge}" /> days ago) and have visited <fmt:quantity value="${pilot.loginCount}" single="time" />.<br />
+You are visiting today from <span class="bld">${req.remoteHost}</span> (${req.remoteAddr})<c:if test="${!empty ipAddrInfo}">, in ${ipAddrInfo.location}</c:if>.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd url="emailupd" className="bld">Change E-mail Address</el:cmd></td>
- <td class="data">Your e-mail address is <span class="sec bld">${pilot.email}</span>. Membership at <content:airline /> is contingent on providing
- a valid, verified e-mail address. You may update your e-mail address and start the validation process.</td>
+ <td class="data">Your e-mail address is <span class="sec bld">${pilot.email}</span>. Membership at <content:airline /> is contingent on providing a valid, verified e-mail address. You may update your e-mail address and start the validation process.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="geolocate">Update Location</el:cmd></td>
@@ -111,12 +108,10 @@ golgotha.local.fbAuthorize = function() {
  <td class="mid"><a class="bld" href="javascript:void golgotha.local.fbAuthorize()">Authorize Us</a></td>
 <c:choose>
 <c:when test="${fn:hasIM(pilot, 'FB')}">
- <td class="data"><span class="pri bld">The Facebook authorization token you have given <content:airline /> has expired.</span> Further updates to your
- Facebook wall cannot be made until <content:airline /> has been authorized to publish to Facebook.</td>
+ <td class="data"><span class="pri bld">The Facebook authorization token you have given <content:airline /> has expired.</span> Further updates to your Facebook wall cannot be made until <content:airline /> has been authorized to publish to Facebook.</td>
 </c:when>
 <c:otherwise>
- <td class="data">If you are a Facebook member, you can connect to Facebook and allow <content:airline /> to post updates about your virtual career to
- your Facebook wall<c:if test="${acarsEnabled}">, as well as information about your flights flown using <content:airline /> ACARS</c:if>.</td>
+ <td class="data">If you are a Facebook member, you can connect to Facebook and allow <content:airline /> to post updates about your virtual career to your Facebook wall<c:if test="${acarsEnabled}">, as well as information about your flights flown using <content:airline /> ACARS</c:if>.</td>
 </c:otherwise>
 </c:choose>
 </tr>
