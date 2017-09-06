@@ -47,8 +47,9 @@ public class GetPilot extends PilotReadDAO {
 	 */
 	public List<Pilot> getCurrencyPilots() throws DAOException {
 		try {
-			prepareStatement("SELECT * FROM PILOTS WHERE (PROF_CR=?)");
+			prepareStatement("SELECT * FROM PILOTS WHERE (PROF_CR=?) AND (STATUS=?)");
 			_ps.setBoolean(1, true);
+			_ps.setInt(2, Pilot.ACTIVE);
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);

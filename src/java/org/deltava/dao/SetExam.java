@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.testing.*;
 /**
  * A Data Access Object to write Pilot Examinations and Check Rides to the database.
  * @author Luke
- * @version 6.3
+ * @version 8.0
  * @since 1.0
  */
 
@@ -172,8 +172,7 @@ public class SetExam extends DAO {
 			
 			// Prepare the statement, either an INSERT or an UPDATE
 			if (cr.getID() == 0) {
-				prepareStatement("INSERT INTO exams.CHECKRIDES (NAME, PILOT_ID, STATUS, EQTYPE, ACTYPE, "
-					+ "GRADED_BY, CREATED, SUBMITTED, COMMENTS, PASS, TYPE, EXPIRES, ACADEMY, OWNER) "
+				prepareStatement("INSERT INTO exams.CHECKRIDES (NAME, PILOT_ID, STATUS, EQTYPE, ACTYPE,GRADED_BY, CREATED, SUBMITTED, COMMENTS, PASS, TYPE, EXPIRES, GRADED, ACADEMY, OWNER) "
 					+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 				_ps.setString(1, cr.getName());
 				_ps.setInt(2, cr.getAuthorID());
@@ -187,11 +186,11 @@ public class SetExam extends DAO {
 				_ps.setBoolean(10, cr.getPassFail());
 				_ps.setInt(11, cr.getType().ordinal());
 				_ps.setTimestamp(12, createTimestamp(cr.getExpirationDate()));
-				_ps.setBoolean(13, cr.getAcademy());
-				_ps.setString(14, cr.getOwner().getCode());
+				_ps.setTimestamp(13, createTimestamp(cr.getScoredOn()));
+				_ps.setBoolean(14, cr.getAcademy());
+				_ps.setString(15, cr.getOwner().getCode());
 			} else {
-				prepareStatement("UPDATE exams.CHECKRIDES SET STATUS=?, SUBMITTED=?, GRADED=?, GRADED_BY=?, "
-						+ "PASS=?, COMMENTS=?, EXPIRES=? WHERE (ID=?)");
+				prepareStatement("UPDATE exams.CHECKRIDES SET STATUS=?, SUBMITTED=?, GRADED=?, GRADED_BY=?, PASS=?, COMMENTS=?, EXPIRES=? WHERE (ID=?)");
 				_ps.setInt(1, cr.getStatus().ordinal());
 				_ps.setTimestamp(2, createTimestamp(cr.getSubmittedOn()));
 				_ps.setTimestamp(3, createTimestamp(cr.getScoredOn()));

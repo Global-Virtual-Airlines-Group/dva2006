@@ -10,7 +10,8 @@ import org.deltava.beans.testing.*;
 
 import org.deltava.dao.*;
 import org.deltava.taskman.*;
-
+import org.deltava.util.CollectionUtils;
+import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -42,42 +43,83 @@ public class CurrencyRatingTask extends Task {
 			// Load Pilots enrolled in program
 			GetPilot pdao = new GetPilot(con);
 			Collection<Pilot> pilots = pdao.getCurrencyPilots();
+			log.info("Recaculating ratings for " + pilots.size() + " Pilots");
+			
+			// Get all equipment types
+			GetEquipmentType eqdao = new GetEquipmentType(con);
+			Collection<EquipmentType> allEQ = eqdao.getActive();
 			
 			// Load their check rides, and determine what has expired
 			GetExam exdao = new GetExam(con);
 			GetFlightReports frdao = new GetFlightReports(con);
-			GetEquipmentType eqdao = new GetEquipmentType(con);
+			SetPilot pwdao = new SetPilot(con);
+			SetStatusUpdate suwdao = new SetStatusUpdate(con);
 			for (Pilot p : pilots) {
 				Collection<FlightReport> pireps = frdao.getByPilot(p.getID(), null);
 				frdao.getCaptEQType(pireps);
+				EquipmentType myEQ = eqdao.get(p.getEquipmentType());
+				boolean noUpdate = false;
 				
 				// Load flights and exams for pilot
-				TestingHistoryHelper helper = new TestingHistoryHelper(p, eqdao.get(p.getEquipmentType()), exdao.getExams(p.getID()), pireps);
+				TestingHistoryHelper helper = new TestingHistoryHelper(p, myEQ, exdao.getExams(p.getID()), pireps);
+				helper.setEquipmentTypes(allEQ);
 				helper.applyExpiration(currencyDays);
 				
 				// Go back and rebuild the list of things we are eligible for
-				Collection<String> newRatings = new TreeSet<String>();
-				Collection<EquipmentType> newEQ = eqdao.getActive();
-				for (Iterator<EquipmentType> i = newEQ.iterator(); i.hasNext(); ) {
-					EquipmentType eq = i.next();
-					try {
-						helper.canSwitchTo(eq);
-						newRatings.addAll(eq.getRatings());
-					} catch (IneligibilityException ie) {
-						i.remove();
-					}
-				}
+				Collection<String> newRatings = helper.getQualifiedRatings();
+				SortedSet<EquipmentType> newEQ = helper.getQualifiedPrograms();
 
 				// If newEQ is empty, disable currency ratings
+				Collection<StatusUpdate> upds = new ArrayList<StatusUpdate>();
+				if (newEQ.isEmpty()) {
+					p.setProficiencyCheckRides(false);
+					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.CURRENCY);
+					upd.setAuthorID(ctx.getUser().getID());
+					upd.setDescription("Proficiency Check Rides disabled, no current ratings");
+					upds.add(upd);
+					log.info(p.getName() + " " + upd.getDescription());
+					
+					// Recalculate ratings
+					helper.clearExpiration();
+					newRatings = helper.getQualifiedRatings();
+					
+				} else if (!newEQ.contains(myEQ)) { // If newEQ is not empty but doesn't include eqType, switch to one that does
+					EquipmentType newET = newEQ.last();
+					p.setEquipmentType(newET.getName());
+					Collection<String> removedRatings = CollectionUtils.getDelta(p.getRatings(), newRatings);
+					log.info(p.getName() + " lost " + myEQ + " rating, switching to " + newET);
+					log.info(p.getName() + " removed " + removedRatings + " ratings");
+					
+					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.CURRENCY);
+					upd.setAuthorID(ctx.getUser().getID());
+					upd.setDescription("Lost rating in " + myEQ.getName() + ", switching to " + newET.getName());
+					upds.add(upd);
+					
+					upd = new StatusUpdate(p.getID(), StatusUpdate.RATING_REMOVE);
+					upd.setAuthorID(ctx.getUser().getID());
+					upd.setDescription("Ratings removed: " + StringUtils.listConcat(removedRatings, ", "));
+					upds.add(upd);
+				} else if (CollectionUtils.hasDelta(p.getRatings(), newRatings)) { // Check if any ratings were removed
+					Collection<String> removedRatings = CollectionUtils.getDelta(p.getRatings(), newRatings);
+					p.removeRatings(removedRatings);
+					log.info(p.getName() + " removed " + removedRatings + " ratings");
+					
+					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.RATING_REMOVE);
+					upd.setAuthorID(ctx.getUser().getID());
+					upd.setDescription("Ratings removed: " + StringUtils.listConcat(removedRatings, ", "));
+					upds.add(upd);
+				} else
+					noUpdate = true;
 				
-				// If newEQ is not empty but doesn't include eqType, switch to one that does
-				
-				
-				
+				if (!noUpdate) {
+					ctx.startTX();
+					pwdao.write(p);
+					suwdao.write(upds);
+					ctx.commitTX();
+				}
 			}
-			
-			
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			log.error(de.getMessage(), de);
 		} finally {
 			ctx.release();
