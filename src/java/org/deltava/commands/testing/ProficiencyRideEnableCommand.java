@@ -2,7 +2,6 @@
 package org.deltava.commands.testing;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.sql.Connection;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -38,7 +37,7 @@ public class ProficiencyRideEnableCommand extends AbstractTestHistoryCommand {
 		if (ctx.isUserInRole("HR") && (ctx.getID() != 0))
 			userID = ctx.getID();
 
-		boolean confirm = Boolean.valueOf(ctx.getParameter("doConfirm")).booleanValue();
+		boolean confirm = Boolean.valueOf((String) ctx.getCmdParameter(OPERATION, null)).booleanValue();
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -52,10 +51,9 @@ public class ProficiencyRideEnableCommand extends AbstractTestHistoryCommand {
 			else if (!SystemData.getBoolean("testing.currency.enabled"))
 				throw new CommandException("Proficiency check rides not enabled for Airline");
 			
-			// Determine checkrides that need expiration dates
+			// Load exam history
 			TestingHistoryHelper testHelper = initTestHistory(p, con);
-			Collection<CheckRide> updatedRides = testHelper.getExams().stream().filter(CheckRide.class::isInstance).map(CheckRide.class::cast).filter(cr -> (cr.getExpirationDate() == null)).collect(Collectors.toList());
-			updatedRides.forEach(cr -> cr.setExpirationDate(cr.getScoredOn().plus(SystemData.getInt("testing.currency.validity", 365), ChronoUnit.DAYS)));
+			testHelper.applyExpiration(SystemData.getInt("testing.currency.validity", 365) + 30);
 			
 			// Go back and rebuild the list of things we are eligible for
 			Collection<String> newRatings = new TreeSet<String>();
@@ -95,10 +93,10 @@ public class ProficiencyRideEnableCommand extends AbstractTestHistoryCommand {
 			}
 
 			// Set status attributes
-			Collection<String> ratingDelta = CollectionUtils.getDelta(ctx.getUser().getRatings(), newRatings);
-			ctx.setAttribute("newEQ", newEQ, REQUEST);
-			ctx.setAttribute("newRatings", newRatings, REQUEST);
+			Collection<String> ratingDelta = CollectionUtils.getDelta(p.getRatings(), newRatings);
+			ctx.setAttribute("pilot", p, REQUEST);
 			ctx.setAttribute("waiver", wcr, REQUEST);
+			ctx.setAttribute("newRatings", newRatings, REQUEST);
 			ctx.setAttribute("ratingDelta", ratingDelta, REQUEST);
 			if (!ratingDelta.isEmpty()) {
 				StatusUpdate upd2 = new StatusUpdate(p.getID(), StatusUpdate.RATING_REMOVE);
@@ -109,15 +107,14 @@ public class ProficiencyRideEnableCommand extends AbstractTestHistoryCommand {
 			
 			// If we're confirming, make the changes
 			if (confirm) {
+				ctx.setAttribute("doConfirm", Boolean.TRUE, REQUEST);
 				ctx.startTX();
 				
-				// Write the updated exams
-				SetExam ewdao = new SetExam(con);
-				for (CheckRide cr : updatedRides)
-					ewdao.write(cr);
-				
-				if (wcr != null)
+				// Write the waiver
+				if (wcr != null) {
+					SetExam ewdao = new SetExam(con);
 					ewdao.write(wcr);
+				}
 				
 				// Update the pilot profile and ratings
 				p.setProficiencyCheckRides(true);

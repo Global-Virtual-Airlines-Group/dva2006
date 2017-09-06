@@ -12,8 +12,7 @@
 <tr class="title caps">
  <td colspan="${cspan + 1}">EXAMINATIONS AND CHECK RIDES 
 <c:if test="${showExamToggle}"> - <span class="und" onclick="void golgotha.util.toggleExpand(this, 'examHistory')">${toggleLabel}</span></c:if>
-<content:filter roles="HR"> - <el:cmd url="promoeligibility" link="${pilot}">REVIEW PROMOTION ELIGIBILITY</el:cmd>
- - <el:cmd url="waivecr" link="${pilot}">WAIVE CHECK RIDE</el:cmd></content:filter></td>
+<content:filter roles="HR"> - <el:cmd url="promoeligibility" link="${pilot}">REVIEW PROMOTION ELIGIBILITY</el:cmd> - <el:cmd url="waivecr" link="${pilot}">WAIVE CHECK RIDE</el:cmd></content:filter></td>
 </tr>
 <tr class="title mid caps examHistory"<c:if test="${examCollapse}"> style="display:none;"</c:if>>
  <td>&nbsp;</td>

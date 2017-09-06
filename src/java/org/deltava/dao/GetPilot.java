@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2013, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2013, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.*;
 /**
  * A Data Access Object to get Pilots from the database, for use in roster operations.
  * @author Luke
- * @version 7.2
+ * @version 8.0
  * @since 1.0
  */
 
@@ -34,6 +34,21 @@ public class GetPilot extends PilotReadDAO {
 	public List<Pilot> getNewestPilots() throws DAOException {
 		try {
 			prepareStatement("SELECT * FROM PILOTS WHERE (PILOT_ID IS NOT NULL) ORDER BY PILOT_ID DESC");
+			return execute();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns pilots who have enabled currency-based Check Rides.
+	 * @return a List of Pilots
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<Pilot> getCurrencyPilots() throws DAOException {
+		try {
+			prepareStatement("SELECT * FROM PILOTS WHERE (PROF_CR=?)");
+			_ps.setBoolean(1, true);
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);

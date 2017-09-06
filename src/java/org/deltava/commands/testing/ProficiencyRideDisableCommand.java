@@ -1,16 +1,20 @@
 // Copyright 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
-import java.util.*;
-import java.util.stream.Collectors;
 import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.TreeSet;
 
 import org.deltava.beans.*;
-import org.deltava.beans.testing.*;
+import org.deltava.beans.testing.IneligibilityException;
+import org.deltava.beans.testing.TestingHistoryHelper;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-
+import org.deltava.util.CollectionUtils;
+import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -38,7 +42,7 @@ public class ProficiencyRideDisableCommand extends AbstractTestHistoryCommand {
 		try {
 			Connection con = ctx.getConnection();
 			
-			// Load the Pilot and the exams
+			// Load the Pilot
 			GetPilot pdao = new GetPilot(con);
 			Pilot p = pdao.get(userID);
 			if (p == null)
@@ -47,31 +51,54 @@ public class ProficiencyRideDisableCommand extends AbstractTestHistoryCommand {
 				throw new CommandException("Proficiency check rides already disabled");
 			else if (!SystemData.getBoolean("testing.currency.enabled"))
 				throw new CommandException("Proficiency check rides not enabled for Airline");
-
-			// Determine checkrides that need expiration dates removed
+			
+			// Load exams, without expiration dates 
+			p.setProficiencyCheckRides(false);
 			TestingHistoryHelper testHelper = initTestHistory(p, con);
-			Collection<CheckRide> updatedRides = testHelper.getExams().stream().filter(CheckRide.class::isInstance).map(CheckRide.class::cast).filter(cr -> (cr.getType() != RideType.CURRENCY)).collect(Collectors.toList());
-			updatedRides.forEach(cr -> cr.setExpirationDate(null));
+			
+			// Go back and rebuild the list of things we are eligible for
+			Collection<String> newRatings = new TreeSet<String>();
+			GetEquipmentType eqdao = new GetEquipmentType(con);
+			Collection<EquipmentType> newEQ = eqdao.getActive();
+			for (Iterator<EquipmentType> i = newEQ.iterator(); i.hasNext(); ) {
+				EquipmentType eq = i.next();
+				try {
+					testHelper.canSwitchTo(eq);
+					newRatings.addAll(eq.getRatings());
+				} catch (IneligibilityException ie) {
+					i.remove();
+				}
+			}
 
 			// Status update
+			Collection<StatusUpdate> upds = new ArrayList<StatusUpdate>();
 			StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.CURRENCY);
 			upd.setAuthorID(ctx.getUser().getID());
 			upd.setDescription("Disabled currency Check Rides");
+			upds.add(upd);
 			
-			// Write the updated exams
-			ctx.startTX();
-			SetExam ewdao = new SetExam(con);
-			for (CheckRide cr : updatedRides)
-				ewdao.write(cr);
+			// Set status attributes
+			Collection<String> ratingDelta = CollectionUtils.getDelta(newRatings, p.getRatings());
+			ctx.setAttribute("pilot", p, REQUEST);
+			ctx.setAttribute("newRatings", newRatings, REQUEST);
+			ctx.setAttribute("ratingDelta", ratingDelta, REQUEST);
+			if (!ratingDelta.isEmpty()) {
+				StatusUpdate upd2 = new StatusUpdate(p.getID(), StatusUpdate.RATING_ADD);
+				upd2.setAuthorID(ctx.getUser().getID());
+				upd2.setDescription("Ratings added: " + StringUtils.listConcat(ratingDelta, ", "));
+				upds.add(upd2);
+			}
 			
 			// Update the pilot
+			ctx.startTX();
 			SetPilot pwdao = new SetPilot(con);
 			p.setProficiencyCheckRides(false);
+			p.addRatings(newRatings);
 			pwdao.write(p);
 			
-			// Write status update
+			// Write status updates
 			SetStatusUpdate sudao = new SetStatusUpdate(con);
-			sudao.write(upd);
+			sudao.write(upds);
 			ctx.commitTX();
 		} catch (DAOException de) {
 			ctx.rollbackTX();

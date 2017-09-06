@@ -3,6 +3,7 @@ package org.deltava.beans.testing;
 
 import java.util.*;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 import org.apache.log4j.Logger;
 
@@ -89,6 +90,14 @@ public final class TestingHistoryHelper {
 	public Collection<Test> getExams() {
 		return _tests;
 	}
+	
+	/**
+	 * Applies expiration dates to non-Currency check rides.
+	 * @param days the expiration in days
+	 */
+	public void applyExpiration(int days) {
+		_tests.stream().filter(CheckRide.class::isInstance).map(CheckRide.class::cast).filter(cr -> (!cr.getAcademy() && (cr.getExpirationDate() == null))).forEach(cr -> cr.setExpirationDate(cr.getScoredOn().plus(days, ChronoUnit.DAYS)));
+	}
 
 	/**
 	 * Returns whether a Pilot qualifies for Captain's rank in a particular stage.
@@ -129,8 +138,7 @@ public final class TestingHistoryHelper {
 
 		int maxStage = 1;
 		for (Test t : _tests) {
-			if ((t instanceof Examination) && (!_qName.equals(t.getName())) && t.getPassFail()
-					&& SystemData.get("airline.code").equals(t.getOwner().getCode()))
+			if ((t instanceof Examination) && (!_qName.equals(t.getName())) && t.getPassFail() && SystemData.get("airline.code").equals(t.getOwner().getCode()))
 				maxStage = Math.max(maxStage, t.getStage());
 		}
 
