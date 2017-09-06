@@ -16,7 +16,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script type="text/javascript">
+<script>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -36,11 +36,38 @@ return true;
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:sysdata var="examLockoutHours" name="testing.lockout" />
+<content:sysdata var="currencyEnabled" name="testing.currency.enabled" />
+<content:sysdata var="currencyInterval" name="testing.currency.validity" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="newexam.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="view">
+<c:if test="${currencyEnabled}">
+<!-- Promotion Mode Title bar -->
+<tr class="title caps">
+ <td colspan="7">CHECK RIDE CURRENCY</td>
+</tr>
+<tr>
+ <td colspan="7"><content:airline /> allows its Pilots to <span class="ita">opt into</span> a recurrent certification model. Pilots will continue to require the successful completion of a written Examination
+ as well as an initial Check Ride for entrance into a particular equipment program. Pilot who opt into recurrent certification will require an additional operational Check Ride every <fmt:int value="${currencyInterval}" />
+ days in order to retain their type ratings.<br />
+<br /> 
+<c:if test="${!pilot.proficiencyCheckRides}">
+You are currently enrolled in our <span class="pri bld caps">LEGACY</span> certification model. Ratings never expire, and Check Rides will remain valid permanently.<br />
+<br />
+To discover more about our currency-based certification model, you can <el:cmd url="currencyenable" link="${pilot}" className="pri bld">Click Here</el:cmd> to review the changes that switching to this model will
+have on your existing aircraft type ratings.
+</c:if>
+<c:if test="${pilot.proficiencyCheckRides}">
+You are currently enrolled within our <span class="ter bld caps">RECURRENT</span> certification model. Check ries are only valid for <fmt:int value="${currencyInterval}" /> days and a currency Check Ride will need to
+ be performed before ratings expire.<br />
+<br />
+TODO: Here's a list of pending ratings that are about to expire soon!<br />
+</c:if>
+ </td>
+</tr>
+</c:if>
 <!-- Examination Title Bar -->
 <tr class="title caps">
  <td>&nbsp;</td>

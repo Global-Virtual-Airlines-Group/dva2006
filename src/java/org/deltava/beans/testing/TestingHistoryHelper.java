@@ -98,6 +98,13 @@ public final class TestingHistoryHelper {
 	public void applyExpiration(int days) {
 		_tests.stream().filter(CheckRide.class::isInstance).map(CheckRide.class::cast).filter(cr -> (!cr.getAcademy() && (cr.getExpirationDate() == null))).forEach(cr -> cr.setExpirationDate(cr.getScoredOn().plus(days, ChronoUnit.DAYS)));
 	}
+	
+	/**
+	 * Clears expiration dates from non-Currency check rides.
+	 */
+	public void clearExpiration() {
+		_tests.stream().filter(CheckRide.class::isInstance).map(CheckRide.class::cast).filter(cr -> (cr.getType() != RideType.CURRENCY)).forEach(cr -> cr.setExpirationDate(null));
+	}
 
 	/**
 	 * Returns whether a Pilot qualifies for Captain's rank in a particular stage.
@@ -435,5 +442,38 @@ public final class TestingHistoryHelper {
 		long timeInterval = (System.currentTimeMillis() - t.getScoredOn().toEpochMilli()) / 1000;
 		log.info("Exam Lockout: interval = " + timeInterval + "s, period = " + (lockoutHours * 3600) + "s");
 		return (timeInterval < (lockoutHours * 3600L));
+	}
+	
+	/**
+	 * Returns all Equipment programs that the Pilot is fully rated for.
+	 * @return a Collection of EquipmentTypes, sorted by stage and name
+	 */
+	public SortedSet<EquipmentType> getQualifiedPrograms() {
+		SortedSet<EquipmentType> results = new TreeSet<EquipmentType>();
+		for (EquipmentType eq : _allEQ) {
+			try {
+				canSwitchTo(eq);
+				results.add(eq);
+			} catch (IneligibilityException ie) {
+				// empty
+			}
+		}
+		
+		// Check my program
+		boolean initialHire = hasCheckRide(_myEQ, RideType.HIRE);
+		if (initialHire || (hasPassed(_myEQ.getExamNames(Rank.FO)) && hasCheckRide(_myEQ)))
+			results.add(_myEQ);
+		
+		return results;
+	}
+
+	/**
+	 * Returns all aircraft types that the Pilot is fully rated for.
+	 * @return a Collection of Aircraft types
+	 */
+	public Collection<String> getQualifiedRatings() {
+		Collection<String> results = new TreeSet<String>();
+		getQualifiedPrograms().stream().map(EquipmentType::getRatings).forEach(results::addAll);
+		return results;
 	}
 }
