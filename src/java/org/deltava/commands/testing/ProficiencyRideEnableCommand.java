@@ -111,6 +111,8 @@ public class ProficiencyRideEnableCommand extends AbstractTestHistoryCommand {
 			
 			// If we're confirming, make the changes
 			if (confirm) {
+				// TODO Return upcoming expirations
+				
 				ctx.setAttribute("doConfirm", Boolean.TRUE, REQUEST);
 				ctx.startTX();
 				
@@ -128,13 +130,7 @@ public class ProficiencyRideEnableCommand extends AbstractTestHistoryCommand {
 				// Write status updates
 				SetStatusUpdate swdao = new SetStatusUpdate(con);
 				swdao.write(upds);
-				
-				// Commit
 				ctx.commitTX();
-				
-				// Return upcoming expirations
-				GetExam exdao = new GetExam(con);
-				ctx.setAttribute("upcomingExpirations", exdao.getExpiringCheckRides(p.getID(), Math.min(rideValidity / 4, 60)), REQUEST);
 			}
 		} catch (DAOException de) {
 			ctx.rollbackTX();

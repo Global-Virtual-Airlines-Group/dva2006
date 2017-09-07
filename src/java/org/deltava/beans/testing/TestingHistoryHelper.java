@@ -2,6 +2,7 @@
 package org.deltava.beans.testing;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
@@ -26,7 +27,7 @@ public final class TestingHistoryHelper {
 	private static final Logger log = Logger.getLogger(TestingHistoryHelper.class);
 
 	// Arbitrary max exam stage used for Chief Pilots and Assistants
-	private static final int CP_STAGE = 5;
+	private static final int CP_STAGE = 6;
 	
 	private final String _qName = SystemData.get("airline.code") + " " + Examination.QUESTIONNAIRE_NAME;
 
@@ -35,6 +36,15 @@ public final class TestingHistoryHelper {
 	private final SortedSet<Test> _tests = new TreeSet<Test>();
 	private final Collection<FlightReport> _pireps = new ArrayList<FlightReport>();
 	private final Collection<EquipmentType> _allEQ = new TreeSet<EquipmentType>();
+	
+	static class ExpiringRideComparator implements Comparator<CheckRide> {
+
+		@Override
+		public int compare(CheckRide cr1, CheckRide cr2) {
+			int tmpResult = cr1.getEquipmentType().compareTo(cr2.getEquipmentType());
+			return (tmpResult == 0) ? tmpResult = cr1.getScoredOn().compareTo(cr2.getScoredOn()) : tmpResult;
+		}
+	}
 	
 	static class PromotionIneligibilityException extends IneligibilityException {
 		PromotionIneligibilityException(String msg) {
@@ -84,7 +94,7 @@ public final class TestingHistoryHelper {
 	}
 
 	/**
-	 * Returns the Pilot's examinations.
+	 * Returns the Pilot's examinations and CheckRides.
 	 * @return a Collection of Test beans
 	 */
 	public Collection<Test> getExams() {
@@ -92,18 +102,35 @@ public final class TestingHistoryHelper {
 	}
 	
 	/**
+	 * Returns the Pilots Check Rides.
+	 * @param expirationDays
+	 * @return a Collection of CheckRide beans
+	 */
+	public Collection<CheckRide> getCheckRides(int expirationDays) {
+		Collection<CheckRide> results = _tests.stream().filter(CheckRide.class::isInstance).map(CheckRide.class::cast).collect(Collectors.toList());
+		if (expirationDays == 0)
+			return results;
+		
+		// Flter by expiration
+		Instant expDate = Instant.now().plus(expirationDays, ChronoUnit.DAYS);
+		Collection<CheckRide> expResults = new TreeSet<CheckRide>(new ExpiringRideComparator());
+		results.stream().filter(cr -> (!cr.getAcademy() && expDate.isAfter(cr.getExpirationDate()))).forEach(expResults::add);
+		return results;
+	}
+	
+	/**
 	 * Applies expiration dates to non-Currency check rides.
 	 * @param days the expiration in days
 	 */
 	public void applyExpiration(int days) {
-		_tests.stream().filter(CheckRide.class::isInstance).map(CheckRide.class::cast).filter(cr -> (!cr.getAcademy() && (cr.getExpirationDate() == null))).forEach(cr -> cr.setExpirationDate(cr.getScoredOn().plus(days, ChronoUnit.DAYS)));
+		getCheckRides(0).stream().filter(cr -> (!cr.getAcademy() && (cr.getExpirationDate() == null))).forEach(cr -> cr.setExpirationDate(cr.getScoredOn().plus(days, ChronoUnit.DAYS)));
 	}
 	
 	/**
 	 * Clears expiration dates from non-Currency check rides.
 	 */
 	public void clearExpiration() {
-		_tests.stream().filter(CheckRide.class::isInstance).map(CheckRide.class::cast).filter(cr -> (cr.getType() != RideType.CURRENCY)).forEach(cr -> cr.setExpirationDate(null));
+		getCheckRides(0).stream().filter(cr -> (cr.getType() != RideType.CURRENCY)).forEach(cr -> cr.setExpirationDate(null));
 	}
 
 	/**

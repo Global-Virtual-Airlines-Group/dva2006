@@ -3,6 +3,7 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <html lang="en">
 <head>
 <title>Assign Check Ride for ${pilot.name}</title>
@@ -13,32 +14,29 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <script type="text/javascript">
-golgotha.local.eqAircraft = ${eqAircraft};
-golgotha.local.updateEQ = function(combo)
-{
-var f = document.forms[0];
-var eqChoices = golgotha.local.eqAircraft[golgotha.form.getCombo(combo)];
-if (eqChoices != null) {
-	if (!Array.isArray(eqChoices)) eqChoices = [eqChoices]; 
-	f.crType.options.length = eqChoices.length + 1;
-	for (var x = 0; x < eqChoices.length; x++)
-		f.crType.options[x+1] = new Option(eqChoices[x]);
-}
-	
-return true;
+<fmt:js var="golgotha.local.eqAircraft" object="${eqAircraft}" />
+golgotha.local.updateEQ = function(combo) {
+	var eq = golgotha.form.getCombo(combo);
+	var acTypes = golgotha.local.eqAircraft[eq];
+	var acc = document.forms[0].eqType;
+	acc.options.length = acTypes.length + 1;
+	acc.selectedIndex = 0;
+	for (var x = 0; x < acTypes.length; x++)
+		acc.options[x + 1] = new Option(acTypes[x], acTypes[x]);
+
+	return true;
 };
 
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-golgotha.form.validate({f:f.crType, t:'Aircraft Type'});
-golgotha.form.validate({f:f.eqType, t:'Equimpment Program'});
-var hasScript = ((f.doScript) && (f.doScript.value == 'true'));
-if (!hasScript)
-	golgotha.form.validate({f:f.comments, l:6, t:'Check Ride Comments'});
+golgotha.local.validate = function(f) {
+	if (!golgotha.form.check()) return false;
+	golgotha.form.validate({f:f.crType, t:'Aircraft Type'});
+	golgotha.form.validate({f:f.eqType, t:'Equimpment Program'});
+	var hasScript = ((f.doScript) && (f.doScript.value == 'true'));
+	if (!hasScript)
+		golgotha.form.validate({f:f.comments, l:6, t:'Check Ride Comments'});
 
-golgotha.form.submit(f);
-return true;
+	golgotha.form.submit(f);
+	return true;
 };
 </script>
 </head>

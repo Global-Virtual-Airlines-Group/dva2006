@@ -16,7 +16,6 @@ import org.deltava.mail.*;
 import org.deltava.security.command.PilotAccessControl;
 
 import org.deltava.util.system.SystemData;
-import org.json.JSONObject;
 
 /**
  * A Web Site Command to assign Check Rides not linked to a Transfer Request.
@@ -84,7 +83,7 @@ public class NakedCheckRideCommand extends AbstractCommand {
 				result.setSuccess(true);
 				return;
 			}
-
+			
 			// Check if we can assign the ride
 			PilotAccessControl access = new PilotAccessControl(ctx, p);
 			access.validate();
@@ -94,11 +93,10 @@ public class NakedCheckRideCommand extends AbstractCommand {
 			// Get all equipment programs and their aircraft
 			GetEquipmentType eqdao = new GetEquipmentType(con);
 			Collection<EquipmentType> eqTypes = eqdao.getActive();
+			Map<String, Collection<String>> allEQ = new HashMap<String, Collection<String>>();
+			eqTypes.forEach(eq -> allEQ.put(eq.getName(), eq.getPrimaryRatings()));
 			ctx.setAttribute("eqTypes", eqTypes, REQUEST);
-			JSONObject eqo = new JSONObject();
-			ctx.setAttribute("eqAircraft", eqo, REQUEST);
-			for (EquipmentType eq : eqTypes)
-				eq.getPrimaryRatings().forEach(ac -> eqo.accumulate(eq.getName(), ac));
+			ctx.setAttribute("eqAircraft", allEQ, REQUEST);
 			
 			// If we are not doing a POST, then redirect
 			if (ctx.getParameter("eqType") == null) {
@@ -127,6 +125,10 @@ public class NakedCheckRideCommand extends AbstractCommand {
 				return;
 			}
 			
+			// TODO: Check if this is recurrent or initial
+			RideType rt = RideType.CHECKRIDE;
+
+			
 			// Get the message template
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
 			mctxt.setTemplate(mtdao.get("RIDEASSIGN"));
@@ -137,7 +139,7 @@ public class NakedCheckRideCommand extends AbstractCommand {
 			String comments = ctx.getParameter("comments");
 			boolean useScript = Boolean.valueOf(ctx.getParameter("useScript")).booleanValue();
 			if (useScript) {
-				EquipmentRideScriptKey key = new EquipmentRideScriptKey(eqType.getName(), ctx.getParameter("crType"), false);
+				EquipmentRideScriptKey key = new EquipmentRideScriptKey(eqType.getName(), ctx.getParameter("crType"), (rt == RideType.CURRENCY));
 				GetExamProfiles epdao = new GetExamProfiles(con);
 				CheckRideScript sc = epdao.getScript(key);
 				if (sc != null)
@@ -154,6 +156,7 @@ public class NakedCheckRideCommand extends AbstractCommand {
 			cr.setStage(eqType.getStage());
 			cr.setAircraftType(acType);
 			cr.setEquipmentType(eqType.getName());
+			cr.setType(rt);
 			cr.setComments(comments);
 
 			// Write the checkride to the database

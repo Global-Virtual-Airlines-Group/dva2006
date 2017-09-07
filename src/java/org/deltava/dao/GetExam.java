@@ -230,27 +230,6 @@ public class GetExam extends DAO {
 	}
 	
 	/**
-	 * Returns all Check Rides for a particular Pilot which will expire in the next few days.
-	 * @param pilotID the pilot Database ID
-	 * @param days the number of days in the future
-	 * @return a List of CheckRide beans
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public List<CheckRide> getExpiringCheckRides(int pilotID, int days) throws DAOException {
-		try {
-			prepareStatement("SELECT CR.*, CF.ACARS_ID, EQ.STAGE, CRR.COURSE FROM (exams.CHECKRIDES CR, common.EQPROGRAMS EQ) LEFT JOIN exams.CHECKRIDE_FLIGHTS CF ON (CR.ID=CF.ID) "
-				+ "LEFT JOIN exams.COURSERIDES CRR ON (CR.ID=CRR.CHECKRIDE) WHERE (CR.PILOT_ID=?) AND (IFNULL(EXPIRES,DATE_ADD(GRADED, INTERVAL ? DAYS)) < DATE_ADD(NOW(), INTERVAL ? DAYS)) "
-				+ "AND (CR.EQTYPE=EQ.EQTYPE) AND (CR.OWNER=EQ.OWNER) ORDER BY CR.CREATED");
-			_ps.setInt(1, pilotID);
-			_ps.setInt(2, SystemData.getInt("testing.currency.validity", 365));
-			_ps.setInt(3, days);
-			return executeCheckride();
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-	
-	/**
 	 * Returns all submitted Check Rides for the current airline or the Flight Academy.
 	 * @param isAcademy TRUE if listing Flight Academy Check Rides, otherwise FALSE
 	 * @return a Collection of CheckRide beans
