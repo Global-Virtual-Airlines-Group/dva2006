@@ -401,13 +401,11 @@ requests here, assign Check Rides, and complete the Promotion Process.<c:if test
  <td class="mid"><el:cmd className="bld" url="natplot">NAT Route Plotter</el:cmd><br />
 <el:cmd className="bld" url="pacotplot">PACOT Route Plotter</el:cmd><br />
 <el:cmd className="bld" url="ausotplot">AUSOT Route Plotter</el:cmd></td>
- <td class="data">You can use our Google Maps tool to plot today's North Atlantic, Pacific and Australian Tracks, or NAT / PACOT 
- / AUSOT routes for the previous several months.</td>
+ <td class="data">You can use our Google Maps tool to plot today's North Atlantic, Pacific and Australian Tracks, or NAT / PACOT / AUSOT routes for the previous several months.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="wxcenter">Weather Center</el:cmd></td>
- <td class="data">The <content:airline /> Weather Center allows you to view Airport conditions and forecast
- information, along with a number of interactive weather maps covering the continental United States and the world.</td>  
+ <td class="data">The <content:airline /> Weather Center allows you to view Airport conditions and forecast information, along with a number of interactive weather maps covering the continental United States and the world.</td>  
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="wxfinder">Airport Weather Finder</el:cmd></td>
@@ -415,8 +413,7 @@ requests here, assign Check Rides, and complete the Promotion Process.<c:if test
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="aircraftlist">Aircraft Profiles</el:cmd></td>
- <td class="data">You can view Aircraft profiles contained within the <content:airline /> Flight Schedule. This lists operational
- maximum weights, minimum runway distances and ACARS fuel load profiles.</td>
+ <td class="data">You can view Aircraft profiles contained within the <content:airline /> Flight Schedule. This lists operational maximum weights, minimum runway distances and ACARS fuel load profiles.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="navsearch">Navigation Aids</el:cmd></td>
@@ -424,14 +421,11 @@ requests here, assign Check Rides, and complete the Promotion Process.<c:if test
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="navcycles">Navigation Cycle Release Dates</el:cmd></td>
- <td class="data">You can view when new navigation data cycles will be released, as well as view which cycle data is currently
- loaded in the <content:airline /> Navigation database and FAA Approach Chart database.</td>
+ <td class="data">You can view when new navigation data cycles will be released, as well as view which cycle data is currently loaded in the <content:airline /> Navigation database and FAA Approach Chart database.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="selcals">SELCAL Codes</el:cmd></td>
- <td class="data">You can view SELCAL codes used by <content:airline /> and its partner airlines' aircraft,
- and temporarily reserve up to <fmt:int value="${selcalMax}" /> SELCAL codes for your own use, for up to
- <fmt:int value="${selcalReserve}" /> days.</td>
+ <td class="data">You can view SELCAL codes used by <content:airline /> and its partner airlines' aircraft,  and temporarily reserve up to <fmt:int value="${selcalMax}" /> SELCAL codes for your own use, for up to <fmt:int value="${selcalReserve}" /> days.</td>
 </tr>
 
 <!-- Testing Section -->
@@ -858,8 +852,7 @@ aircraft types, for easy reuse when assigning a Check Ride to a pilot.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="msgtemplates">E-Mail Message Templates</el:cmd></td>
- <td class="data">The <content:airline /> web site sends out e-mail notification messages to inform members of
-new Online Events, System News entries and NOTAMs, and Flight Report approval or rejection.</td>
+ <td class="data">The <content:airline /> web site sends out e-mail notification messages to inform members of new Online Events, System News entries and NOTAMs, and Flight Report approval or rejection.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="metadata">System Metadata</el:cmd></td>
@@ -893,8 +886,7 @@ new Online Events, System News entries and NOTAMs, and Flight Report approval or
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="memberstats">Membership Statistics</el:cmd></td>
- <td class="data">You can view statistics about the <content:airline /> membership and how long they
- have been members of the Airline.</td>
+ <td class="data">You can view statistics about the <content:airline /> membership and how long they have been members of the <content:airline />.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="rejectedpireps">Rejected Flight Reports</el:cmd></td>
@@ -926,8 +918,7 @@ new Online Events, System News entries and NOTAMs, and Flight Report approval or
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="cmdstats">Command Statistics</el:cmd></td>
- <td class="data">You can view statistics about Web Site Command invocations, application server 
-and database usage times here.</td>
+ <td class="data">You can view statistics about Web Site Command invocations, application server and database usage times here.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="cmdlog">Command Log</el:cmd></td>
@@ -937,8 +928,7 @@ and database usage times here.</td>
 <tr>
  <td class="mid"><el:cmd className="bld" url="ts2servers">TeamSpeak 2 Virtual Servers</el:cmd><br />
 <el:cmd className="bld" url="ts2channels">TeamSpeak 2 Voice Channels</el:cmd></td>
- <td class="data">You can update TeamSpeak 2 virtual server permissions and configurations, and 
-create, edit or delete TeamSpeak 2 voice channels.</td>
+ <td class="data">You can update TeamSpeak 2 virtual server permissions and configurations, and create, edit or delete TeamSpeak 2 voice channels.</td>
 </tr>
 </c:if>
 <c:if test="${mvsEnabled}">
