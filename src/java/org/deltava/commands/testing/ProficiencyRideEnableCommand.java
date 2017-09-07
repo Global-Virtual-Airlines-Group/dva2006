@@ -59,7 +59,6 @@ public class ProficiencyRideEnableCommand extends AbstractTestHistoryCommand {
 			
 			// Go back and rebuild the list of things we are eligible for
 			Collection<EquipmentType> newEQ = testHelper.getQualifiedPrograms();
-			Collection<String> newRatings = testHelper.getQualifiedRatings();
 			
 			// Status update collection
 			Collection<StatusUpdate> upds = new ArrayList<StatusUpdate>();
@@ -98,7 +97,8 @@ public class ProficiencyRideEnableCommand extends AbstractTestHistoryCommand {
 			}
 
 			// Set status attributes
-			Collection<String> ratingDelta = CollectionUtils.getDelta(p.getRatings(), testHelper.getQualifiedRatings());
+			Collection<String> newRatings = testHelper.getQualifiedRatings();
+			Collection<String> ratingDelta = CollectionUtils.getDelta(p.getRatings(), newRatings);
 			ctx.setAttribute("pilot", p, REQUEST);
 			ctx.setAttribute("newRatings", newRatings, REQUEST);
 			ctx.setAttribute("ratingDelta", ratingDelta, REQUEST);
@@ -111,7 +111,7 @@ public class ProficiencyRideEnableCommand extends AbstractTestHistoryCommand {
 			
 			// If we're confirming, make the changes
 			if (confirm) {
-				// TODO Return upcoming expirations
+				ctx.setAttribute("upcomingExpirations", testHelper.getCheckRides(60), REQUEST);
 				
 				ctx.setAttribute("doConfirm", Boolean.TRUE, REQUEST);
 				ctx.startTX();
