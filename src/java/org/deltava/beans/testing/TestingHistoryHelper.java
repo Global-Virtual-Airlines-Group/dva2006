@@ -41,8 +41,7 @@ public final class TestingHistoryHelper {
 
 		@Override
 		public int compare(CheckRide cr1, CheckRide cr2) {
-			int tmpResult = cr1.getEquipmentType().compareTo(cr2.getEquipmentType());
-			return (tmpResult == 0) ? tmpResult = cr1.getScoredOn().compareTo(cr2.getScoredOn()) : tmpResult;
+			return cr1.getEquipmentType().compareTo(cr2.getEquipmentType());
 		}
 	}
 	
@@ -112,15 +111,16 @@ public final class TestingHistoryHelper {
 	 * @return a Collection of CheckRide beans
 	 */
 	public Collection<CheckRide> getCheckRides(int expirationDays) {
-		Collection<CheckRide> results = _tests.stream().filter(CheckRide.class::isInstance).map(CheckRide.class::cast).collect(Collectors.toList());
+		List<CheckRide> results = _tests.stream().filter(CheckRide.class::isInstance).map(CheckRide.class::cast).collect(Collectors.toList());
 		if (expirationDays == 0)
 			return results;
 		
 		// Flter by expiration
+		Collections.reverse(results);
 		Instant expDate = Instant.now().plus(expirationDays, ChronoUnit.DAYS);
 		Collection<CheckRide> expResults = new TreeSet<CheckRide>(new ExpiringRideComparator());
-		results.stream().filter(cr -> (!cr.getAcademy() && expDate.isBefore(cr.getExpirationDate()))).forEach(expResults::add);
-		return results;
+		results.stream().filter(cr -> (!cr.getAcademy() && expDate.isAfter(cr.getExpirationDate()))).forEach(expResults::add);
+		return expResults;
 	}
 	
 	/**
