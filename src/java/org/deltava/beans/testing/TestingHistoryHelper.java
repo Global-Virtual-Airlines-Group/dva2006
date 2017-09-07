@@ -74,6 +74,11 @@ public final class TestingHistoryHelper {
 	 * @param t the Test
 	 */
 	public void add(Test t) {
+		
+		// Check for an unsaved test, give it a dummy ID so that the TreeSet doesn't consider it a dupe
+		if (t.getID() == 0)
+			t.setID(Integer.MAX_VALUE - 1000 + _tests.size());
+		
 		_tests.add(t);
 	}
 
@@ -114,7 +119,7 @@ public final class TestingHistoryHelper {
 		// Flter by expiration
 		Instant expDate = Instant.now().plus(expirationDays, ChronoUnit.DAYS);
 		Collection<CheckRide> expResults = new TreeSet<CheckRide>(new ExpiringRideComparator());
-		results.stream().filter(cr -> (!cr.getAcademy() && expDate.isAfter(cr.getExpirationDate()))).forEach(expResults::add);
+		results.stream().filter(cr -> (!cr.getAcademy() && expDate.isBefore(cr.getExpirationDate()))).forEach(expResults::add);
 		return results;
 	}
 	

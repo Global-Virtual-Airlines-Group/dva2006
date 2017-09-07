@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
@@ -28,10 +29,10 @@
 <content:region id="main">
 <el:table className="view">
 <tr class="title caps">
- <td colspan="2" class="title caps"><content:airline /> PROFICIENCY CHECK RIDES</td>
+ <td colspan="5" class="left"><content:airline /> PROFICIENCY CHECK RIDES</td>
 </tr>
 <tr>
- <td colspan="2"><content:airline /> allows its Pilots to opt into a currency-based rating system. Examinations and Check Rides are still required in order to enter an Equipment Program or gain additional
+ <td colspan="5"><content:airline /> allows its Pilots to opt into a currency-based rating system. Examinations and Check Rides are still required in order to enter an Equipment Program or gain additional
  type ratings, but the validity of Check Rides will expire after <fmt:int value="${currencyInterval}" /> days and a currency Check Ride will need to be successfully completed in order to maintain type ratings in
  a particular aircraft type or Equipment Program.<br />
 <br />
@@ -58,11 +59,38 @@ ${pilot.firstName}, you have opted into currency-based Check Rides. We have revi
 Thank you for opting into <content:airline />'s currency-based Check Ride program. This adds an additional level of realism to our virtual airline experience and will bring a new dimension to your virtual flying career.</c:if>
  </td>
 </tr>
-<%@ include file="/jsp/pilot/pilotExams.jspf" %>
+<c:if test="${!empty upcomingExpiration}">
+<tr class="title caps">
+ <td colspan="5" class="left">UPCOMING CHECK RIDE / WAIVER EXPIRATIONS</td>
+</tr>
+<tr class="title caps">
+ <td style="width:40%">CHECK RIDE NAME</td>
+ <td style="width:20%">EQUIPMENT PROGRAM</td>
+ <td>AIRCRAFT TYPE</td>
+ <td>&nbsp;</td>
+ <td>EXPIRES</td>
+ <td>DATE</td>
+</tr>
+<c:forEach var="cr" items="${upcomingExpirations}">
+<tr>
+<c:if test="${cr.ID != 0}">
+ <td class="pri bld"><el:cmd url="checkride" link="${cr}">${cr.name}</el:cmd></td>
+</c:if>
+<c:if test="${cr.ID == 0}">
+ <td class="pri bld">${cr.name}</td>
+</c:if>
+ <td class="bld">${cr.equipmentType}</td>
+ <td>${cr.aicraftType}</td>
+ <td class="sec bld">Stage <fmt:int value="${cr.stage}" /></td>
+ <td class="warn bld"><fmt:date fmt="d" date="${cr.expirationDate}" /></td>
+ <td><fmt:date fmt="d" date="${cr.date}" /></td>
+</tr>
+</c:forEach>
+</c:if>
 
 <!-- Button Bar -->
 <tr class="title">
- <td><c:if test="${!doConfirm}"><el:cmdbutton url="currencyenable" op="true" label="ENABLE CURRENCY CHECK RIDES" /> </c:if><el:cmdbutton url="testcenter" label="RETURN TO TESTING CENTER" /></td>
+ <td colspan="5"><c:if test="${!doConfirm}"><el:cmdbutton url="currencyenable" op="true" label="ENABLE CURRENCY CHECK RIDES" /> </c:if><el:cmdbutton url="testcenter" label="RETURN TO TESTING CENTER" /></td>
 </tr>
 </el:table>
 <content:copyright />

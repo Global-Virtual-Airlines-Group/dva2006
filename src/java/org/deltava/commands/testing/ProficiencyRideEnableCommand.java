@@ -78,12 +78,13 @@ public class ProficiencyRideEnableCommand extends AbstractTestHistoryCommand {
 					wcr.setType(RideType.WAIVER);
 					wcr.setDate(Instant.now());
 					wcr.setPassFail(true);
-					wcr.setAuthorID(ctx.getUser().getID());
+					wcr.setAuthorID(p.getID());
 					wcr.setSubmittedOn(wcr.getDate());
 					wcr.setScoredOn(wcr.getDate());
 					wcr.setScorerID(ctx.getUser().getID());
 					wcr.setExpirationDate(waiverDate);
 					wcr.setEquipmentType(weq.getName());
+					wcr.setAircraftType(weq.getName());
 					wcr.setOwner(SystemData.getApp(null));
 					wcr.setComments("Proficiency Check Rides enabled, waiver for rated program");
 					testHelper.add(wcr);
@@ -109,10 +110,13 @@ public class ProficiencyRideEnableCommand extends AbstractTestHistoryCommand {
 				upds.add(upd2);
 			}
 			
+			// Display upcoming expirations
+			int expDays = Math.min(60, Math.max(31, rideValidity));
+			ctx.setAttribute("expiry", Instant.now().plus(expDays, ChronoUnit.DAYS), REQUEST);
+			ctx.setAttribute("upcomingExpirations", testHelper.getCheckRides(expDays), REQUEST);
+			
 			// If we're confirming, make the changes
 			if (confirm) {
-				ctx.setAttribute("upcomingExpirations", testHelper.getCheckRides(60), REQUEST);
-				
 				ctx.setAttribute("doConfirm", Boolean.TRUE, REQUEST);
 				ctx.startTX();
 				
