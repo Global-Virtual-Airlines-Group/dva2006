@@ -259,8 +259,9 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			
 			// If we have proficiency-based check rides, get upcoming expirations
 			if (p.getProficiencyCheckRides()) {
-				GetExam exdao = new GetExam(con);
-				ctx.setAttribute("upcomingExpirations", exdao.getExpiringCheckRides(p.getID(), 60), REQUEST);
+				int expDays = Math.min(30, Math.max(15, SystemData.getInt("testing.currency.validity", 365)));
+				ctx.setAttribute("upcomingExpirations", testHistory.getCheckRides(expDays), REQUEST);
+				ctx.setAttribute("expiryDays", Integer.valueOf(expDays), REQUEST);
 			}
 
 			// See if we are enrolled in a Flight Academy course

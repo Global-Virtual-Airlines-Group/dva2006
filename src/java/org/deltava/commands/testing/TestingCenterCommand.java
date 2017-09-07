@@ -1,8 +1,10 @@
-// Copyright 2005, 2006, 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2010, 2011, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
 import java.sql.Connection;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 import org.apache.log4j.Logger;
 
@@ -18,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display the Testing Center.
  * @author Luke
- * @version 7.0
+ * @version 8.0
  * @since 1.0
  */
 
@@ -43,6 +45,13 @@ public class TestingCenterCommand extends AbstractTestHistoryCommand {
 
 			// Initialize the Testing History
 			TestingHistoryHelper testHistory = initTestHistory(usr, con);
+			
+			// If we have currency check rides, see what is going to expire
+			if (usr.getProficiencyCheckRides()) {
+				int expDays = Math.min(30, Math.max(15, SystemData.getInt("testing.currency.validity", 365)));
+				ctx.setAttribute("expiringRides", testHistory.getCheckRides(expDays), REQUEST);
+				ctx.setAttribute("expiryDate", Instant.now().plus(expDays, ChronoUnit.DAYS), REQUEST);
+			}
 
 			// Get all Examination Profiles
 			GetExamProfiles epdao = new GetExamProfiles(con);

@@ -62,10 +62,9 @@ have on your existing aircraft type ratings.
 </c:if>
 <c:if test="${pilot.proficiencyCheckRides}">
 You are currently enrolled within our <span class="ter bld caps">RECURRENT</span> certification model. Check ries are only valid for <fmt:int value="${currencyInterval}" /> days and a currency Check Ride will need to
- be performed before ratings expire.<br />
-<br />
-TODO: Here's a list of pending ratings that are about to expire soon!<br />
-</c:if>
+ be performed before ratings expire.<c:if test="${!empty expiringRides}"><br />
+ <br />
+ <span class="pri bld">You have <fmt:int value="${expiringRides.size()}" /> Check Rides that will expire before <fmt:date fmt="d" date="${expiryDate}" />.</span></c:if></c:if>
  </td>
 </tr>
 </c:if>
