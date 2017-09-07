@@ -25,14 +25,13 @@
 <!-- Check Ride Scored -->
 <div class="updateHdr">Check Ride Scored</div>
 <br />
-This ${checkRide.equipmentType} for ${pilot.name} has been successfully scored. An e-mail message has been sent to ${pilot.rank.name} ${pilot.lastName} notifying him or her of the scoring
-of this Check Ride.<br />
+This ${checkRide.equipmentType} for ${pilot.name} has been successfully scored. An e-mail message has been sent to ${pilot.rank.name} ${pilot.lastName} notifying him or her of the scoring of this Check Ride.<br />
 <br />
 To view the Pilot Profile, <el:cmd url="profile" link="${pilot}">Click here</el:cmd>.<br />
 To return to the Examination Queue, <el:cmd url="examqueue">Click Here</el:cmd>.<br />
 To return to the list of pending equipment program transfer requests, <el:cmd url="txrequests" className="sec bld">Click Here</el:cmd>.<br />
 </c:when>
-<c:when test="${isAssign}">
+<c:when test="${isAssign && !isCurrency}">
 <!-- Check Ride Assigned -->
 <div class="updateHdr">Check Ride Assigned</div>
 <br />
@@ -42,6 +41,14 @@ This <content:airline /> ${checkRide.name} Check Ride has been assigned to ${pil
 The <span class="bld">${script.program}</span> program Check Ride script for the <span class="pri bld">${script.equipmentType}</span> has been used as the template for this Check Ride.<br /></c:if>
 <br />
 To return to the list of pending equipment program transfer requests, <el:cmd url="txrequests" className="sec bld">Click Here</el:cmd>.<br />
+</c:when>
+<c:when test="${isCurrency}">
+<div class="updateHdr">Check Ride Assigned</div>
+<br />
+You have assigend yourself a currency Check Ride for the <span class="bld">${checkRide.equipmentType}</span> program, using the ${checkRide.aircraftType}. An e-mail message has been sent
+to you with details of the Check Ride.<br />
+<br />
+To return to the Testing Center, <el:cmd url="testcenter" className="sec bld">Click Here</el:cmd>.<br />
 </c:when>
 <c:when test="${isRideAlreadyAssigned && (empty tx)}">
 <div class="updateHdr">Check Ride Pending</div>
