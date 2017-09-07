@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to determine what Accomplishments a Pilot has achieved. 
  * @author Luke
- * @version 7.2
+ * @version 8.0
  * @since 3.2
  */
 
@@ -347,17 +347,17 @@ public class AccomplishmentHistoryHelper {
 		switch (a.getUnit()) {
 			case AIRPORTS:
 				codes.addAll(AccomplishmentFilter.missing(_totals.getAirports(), a));
-				codes.forEach(code -> results.add(SystemData.getAirport(code)));
+				codes.stream().map(code -> SystemData.getAirport(code)).filter(Objects::nonNull).forEach(results::add);
 				break;
 				
 			case AIRPORTD:
 				codes.addAll(AccomplishmentFilter.missing(_totals.getDepartureAirports(), a));
-				codes.forEach(code -> results.add(SystemData.getAirport(code)));
+				codes.stream().map(code -> SystemData.getAirport(code)).filter(Objects::nonNull).forEach(results::add);
 				break;
 				
 			case AIRPORTA:
 				codes.addAll(AccomplishmentFilter.missing(_totals.getArrivalAirports(), a));
-				codes.forEach(code -> results.add(SystemData.getAirport(code)));
+				codes.stream().map(code -> SystemData.getAirport(code)).filter(Objects::nonNull).forEach(results::add);
 				break;
 			
 			case CONTINENTS:
@@ -366,12 +366,12 @@ public class AccomplishmentHistoryHelper {
 				
 			case COUNTRIES:
 				codes.addAll(AccomplishmentFilter.missing(_totals.getCountries(), a));
-				codes.forEach(code -> results.add(Country.get(code)));
+				codes.stream().map(code -> Country.get(code)).forEach(results::add);
 				break;
 			
 			case STATES:
 				codes.addAll(AccomplishmentFilter.missing(_totals.getStates(), a));
-				codes.forEach(code -> results.add(State.valueOf(code.toUpperCase())));
+				codes.stream().map(code -> State.valueOf(code.toUpperCase())).filter(Objects::nonNull).forEach(results::add);
 				break;
 				
 			case AIRCRAFT:
@@ -380,7 +380,7 @@ public class AccomplishmentHistoryHelper {
 				
 			case AIRLINES:
 				codes.addAll(AccomplishmentFilter.missing(_totals.getAirlines(), a));
-				codes.forEach(code -> results.add(SystemData.getAirline(code)));
+				codes.stream().map(code -> SystemData.getAirline(code)).filter(Objects::nonNull).forEach(results::add);
 				break;
 		
 			default:
