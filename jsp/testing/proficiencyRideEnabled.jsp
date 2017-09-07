@@ -29,10 +29,10 @@
 <content:region id="main">
 <el:table className="view">
 <tr class="title caps">
- <td colspan="5" class="left"><content:airline /> PROFICIENCY CHECK RIDES</td>
+ <td colspan="7" class="left"><content:airline /> PROFICIENCY CHECK RIDES</td>
 </tr>
 <tr>
- <td colspan="5"><content:airline /> allows its Pilots to opt into a currency-based rating system. Examinations and Check Rides are still required in order to enter an Equipment Program or gain additional
+ <td colspan="7"><content:airline /> allows its Pilots to opt into a currency-based rating system. Examinations and Check Rides are still required in order to enter an Equipment Program or gain additional
  type ratings, but the validity of Check Rides will expire after <fmt:int value="${currencyInterval}" /> days and a currency Check Ride will need to be successfully completed in order to maintain type ratings in
  a particular aircraft type or Equipment Program.<br />
 <br />
@@ -42,17 +42,13 @@ Enabling currency-based ratings is a significant step. Your Examination and Chec
 <br />
 <c:if test="${!empty waiverNames}"><span class="pri bld ita">You currently qualify for the <fmt:list value="${waiverNames}" delim=", " /> equipment program(s), and do not have a current Check Ride. If you enable currency-based Check
  Rides, you will receive a waiver and need to obtain a current Check Ride for each program by <fmt:date date="${waiverExpiry}" />.</span><br /><br /></c:if>
-<c:if test="${!empty ratingDelta}">After you enable currency-based Check Rides, you will lose the following equipment ratings:<br />
-<br />
-<fmt:list value="${ratingDelta}" delim=", " /><br />
+<c:if test="${!empty ratingDelta}">After you enable currency-based Check Rides, you will lose the following equipment ratings: <fmt:list value="${ratingDelta}" delim=", " /><br />
 <br /></c:if>
 After you have opted into currency-based Check Rides, you can opt out again at any time. <span class="bld ita">However, any ratings that you lose while opting into this program will <span class="pri">NOT</span>
  be restored after you opt out and return to <content:airline />'s traditional type rating program.</span></c:if>
 <c:if test="${doConfirm}">
 ${pilot.firstName}, you have opted into currency-based Check Rides. We have reviewed your Examination and Check Ride history at <content:airline /> and have recalculated your aircraft type ratings.
-<c:if test="${!empty ratingDelta}"> The following equipment type ratings have been removed based on your history:<br />
-<br />
-<fmt:list value="${ratingDelta}" delim=", " /><br /></c:if>
+<c:if test="${!empty ratingDelta}"> The following equipment type ratings have been removed based on your history: <fmt:list value="${ratingDelta}" delim=", " /><br /></c:if>
 <br />
  <c:if test="${!empty waiverNames}"><span class="pri bld ita">You currently qualify for the <fmt:list value="${waiverNames}" delim=", " /> equipment program(s), and do not have a current Check Ride. You have received a 
  Check Ride waiver and will need to obtain a current Check Ride for each program by <fmt:date date="${waiverExpiry}" />.</span><br /><br /></c:if>
@@ -61,36 +57,33 @@ Thank you for opting into <content:airline />'s currency-based Check Ride progra
 </tr>
 <c:if test="${!empty upcomingExpiration}">
 <tr class="title caps">
- <td colspan="5" class="left">UPCOMING CHECK RIDE / WAIVER EXPIRATIONS</td>
+ <td colspan="7" class="left">UPCOMING CHECK RIDE / WAIVER EXPIRATIONS</td>
 </tr>
 <tr class="title caps">
  <td style="width:40%">CHECK RIDE NAME</td>
- <td style="width:20%">EQUIPMENT PROGRAM</td>
- <td>AIRCRAFT TYPE</td>
- <td>&nbsp;</td>
+ <td class="nophone">TYPE</td>
+ <td>EQUIPMENT PROGRAM</td>
+ <td class="nophone">AIRCRAFT TYPE</td>
+ <td class="nophone">&nbsp;</td>
  <td>EXPIRES</td>
- <td>DATE</td>
+ <td class="nophone">DATE</td>
 </tr>
-<c:forEach var="cr" items="${upcomingExpirations}">
+<c:forEach var="cr" items="${upcomingExpiration}">
 <tr>
-<c:if test="${cr.ID != 0}">
- <td class="pri bld"><el:cmd url="checkride" link="${cr}">${cr.name}</el:cmd></td>
-</c:if>
-<c:if test="${cr.ID == 0}">
  <td class="pri bld">${cr.name}</td>
-</c:if>
+ <td class="sec bld nophone">${cr.type.name}</td>
  <td class="bld">${cr.equipmentType}</td>
- <td>${cr.aicraftType}</td>
- <td class="sec bld">Stage <fmt:int value="${cr.stage}" /></td>
- <td class="warn bld"><fmt:date fmt="d" date="${cr.expirationDate}" /></td>
- <td><fmt:date fmt="d" date="${cr.date}" /></td>
+ <td class="nophone">${cr.aircraftType}</td>
+ <td class="sec nophone">Stage <fmt:int value="${cr.stage}" /></td>
+ <td><fmt:date className="warn bld" fmt="d" date="${cr.expirationDate}" /></td>
+ <td class="nophone"><fmt:date fmt="d" date="${cr.date}" /></td>
 </tr>
 </c:forEach>
 </c:if>
 
 <!-- Button Bar -->
 <tr class="title">
- <td colspan="5"><c:if test="${!doConfirm}"><el:cmdbutton url="currencyenable" op="true" label="ENABLE CURRENCY CHECK RIDES" /> </c:if><el:cmdbutton url="testcenter" label="RETURN TO TESTING CENTER" /></td>
+ <td colspan="7"><c:if test="${!doConfirm}"><el:cmdbutton url="currencyenable" op="true" label="ENABLE CURRENCY CHECK RIDES" /> </c:if><el:cmdbutton url="testcenter" label="RETURN TO TESTING CENTER" /></td>
 </tr>
 </el:table>
 <content:copyright />
