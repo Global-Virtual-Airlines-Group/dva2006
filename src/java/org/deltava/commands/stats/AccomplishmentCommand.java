@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Accomplishment profiles. 
  * @author Luke
- * @version 7.4
+ * @version 8.0
  * @since 3.2
  */
 
@@ -93,9 +93,11 @@ public class AccomplishmentCommand extends AbstractAuditFormCommand {
 				break;
 				
 			case AIRPORTS:
+			case AIRPORTD:
+			case AIRPORTA:
 				Collection<String> apCodes = StringUtils.nullTrim(StringUtils.split(ctx.getParameter("choices"), ","));
 				Collection<String> iataCodes = new TreeSet<String>();
-				apCodes.forEach(c -> { Airport ap = SystemData.getAirport(c); if (ap != null) iataCodes.add(ap.getIATA()); });
+				apCodes.stream().map(c -> SystemData.getAirport(c)).filter(Objects::nonNull).map(Airport::getIATA).forEach(iataCodes::add);
 				a.setChoices(iataCodes);
 				break;
 				
