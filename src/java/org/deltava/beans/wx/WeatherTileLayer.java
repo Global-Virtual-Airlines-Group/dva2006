@@ -35,6 +35,15 @@ public class WeatherTileLayer implements Comparable<WeatherTileLayer>, java.io.S
 	}
 	
 	/**
+	 * Returns whether this bean has future layers.
+	 * @return FALSE
+	 */
+	@SuppressWarnings("static-method")
+	public boolean hasFuture() {
+		return false;
+	}
+	
+	/**
 	 * Returns the layer name.
 	 * @return the name
 	 */

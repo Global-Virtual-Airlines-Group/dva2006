@@ -39,4 +39,9 @@ public class WeatherFutureTileLayer extends WeatherTileLayer {
 	public void addSlice(Instant dt) {
 		_sliceDates.add(dt);
 	}
+	
+	@Override
+	public boolean hasFuture() {
+		return true;
+	}
 }
