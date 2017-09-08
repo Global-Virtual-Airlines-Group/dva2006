@@ -51,7 +51,7 @@ ${pilot.firstName}, you have opted into currency-based Check Rides. We have revi
 <c:if test="${!empty ratingDelta}"> The following equipment type ratings have been removed based on your history: <fmt:list value="${ratingDelta}" delim=", " /><br /></c:if>
 <br />
  <c:if test="${!empty waiverNames}"><span class="pri bld ita">You currently qualify for the <fmt:list value="${waiverNames}" delim=", " /> equipment program(s), and do not have a current Check Ride. You have received a 
- Check Ride waiver and will need to obtain a current Check Ride for each program by <fmt:date date="${waiverExpiry}" />.</span><br /><br /></c:if>
+ Check Ride waiver and will need to obtain a current Check Ride for each program by <fmt:date fmt="d" date="${waiverExpiry}" />.</span><br /><br /></c:if>
 Thank you for opting into <content:airline />'s currency-based Check Ride program. This adds an additional level of realism to our virtual airline experience and will bring a new dimension to your virtual flying career.</c:if>
  </td>
 </tr>
