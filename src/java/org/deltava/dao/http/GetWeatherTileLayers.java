@@ -27,7 +27,7 @@ import org.gvagroup.tile.TileAddress;
 
 public class GetWeatherTileLayers extends DAO {
 	
-	private static final Cache<CacheableCollection<WeatherTileLayer>> _cache = CacheManager.getCollection(WeatherTileLayer.class, "twcSeriesList");
+	private static final Cache<CacheableCollection<WeatherTileLayer>> _cache = CacheManager.getCollection(WeatherTileLayer.class, "TWCSeriesList");
 	private static final String KEY = "$TWCSeriesList";
 	
 	/**
