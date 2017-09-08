@@ -7,7 +7,7 @@ import java.util.*;
 
 import org.json.*;
 
-import org.deltava.beans.wx.WeatherTileLayer;
+import org.deltava.beans.wx.*;
 
 import org.deltava.dao.DAOException;
 import org.deltava.dao.http.GetWeatherTileLayers;
@@ -15,7 +15,7 @@ import org.deltava.dao.http.GetWeatherTileLayers;
 import org.deltava.service.*;
 
 /**
- * 
+ * A Web Service to display TWC weather tile data.
  * @author Luke
  * @version 8.0
  * @since 8.0
@@ -49,8 +49,14 @@ public class SeriesListService extends WebService {
 				lastLayer = l.getName();
 				lo.put("nativeZoom", l.getNativeZoom());
 				lo.put("maxZoom", l.getMaxZoom());
+				lo.accumulate("slices", Long.valueOf(l.getDate().toEpochMilli() / 1000));
+				if (l.hasFuture()) {
+					JSONArray fa = new JSONArray();
+					WeatherFutureTileLayer fl = (WeatherFutureTileLayer) l;
+					fl.getSliceDates().forEach(dt -> fa.put((int)(dt.toEpochMilli() / 1000)));
+					lo.accumulate("futureSlices", fa);
+				}
 			}
-			
 		}
 		
 		// Dump the JSON to the output stream
