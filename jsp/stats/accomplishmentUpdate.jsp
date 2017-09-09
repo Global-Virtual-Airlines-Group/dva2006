@@ -32,11 +32,15 @@ in the database. This Accomplishment has <span class="bld">NOT</span> been award
 <c:otherwise>
 <div class="updateHdr"><content:airline /> Pilot Accomplishment Updated</div>
 <br />
-The <content:airline /> Pilot Accomplishment <fmt:accomplish className="bld" accomplish="${ap}" /> has been updated
-in the database.<br />
+The <content:airline /> Pilot Accomplishment <fmt:accomplish className="bld" accomplish="${ap}" /> has been updated in the database.<br />
 </c:otherwise>
 </c:choose>
 <br />
+<c:if test="${!empty invalidAirports}">
+The following airport codes were not recognized and have been stripped from the Pilot Accomplishment: <span class="error bld"><fmt:list value="${invalidAirports}" delim=", " /></span><br />
+<br />
+To modify this Accomplishment, <el:cmd url="accomplishment" link="${ap}" className="sec bld">Click Here</el:cmd>.<br />
+</c:if>
 To calculate which Pilots are eligible for this Accomplishment, <el:cmd url="accomplishrecalc" link="${ap}" className="sec bld">Click Here</el:cmd>.<br />
 To return to the list of Pilot Accomplishments, <el:cmd url="accomplishments" className="sec bld">Click Here</el:cmd>.<br />
 <br />
