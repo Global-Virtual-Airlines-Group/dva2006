@@ -275,8 +275,7 @@
 			<path>/pub/data/nccf/com/gfs/prod</path>
 		</gfs>
 		
-		<tileHost>t.w-x.co</tileHost>
-		<apiHost>dsx-int.weather.com</apiHost>
+		<tileHost>api.weather.com</tileHost>
 
 		<!-- Radar download bounds -->
 		<radar>
@@ -400,7 +399,6 @@
 			<analytics>UA-2066915-1</analytics>
 			<airCharts>***REMOVED***</airCharts>
 			<wunderground>***REMOVED***</wunderground>
-			<dsx>217b980f-be43-4148-8aa4-cd5da694980d</dsx>
 			<googleMaps>***REMOVED***</googleMaps>
 			<vatsim>***REMOVED***</vatsim>
 			<twc>***REMOVED***</twc>
