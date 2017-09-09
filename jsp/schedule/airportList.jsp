@@ -14,8 +14,9 @@
 <content:css name="view" />
 <content:pics />
 <content:favicon />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script type="text/javascript">
+<script>
 golgotha.local.updateSort = function() {
 	var f = document.forms[0];
 	f.action = '/airports.do';
@@ -43,12 +44,12 @@ golgotha.local.validate = function(f) {
 <!-- Table Header Bar -->
 <tr class="title">
  <td style="width:11%"><el:cmdbutton url="airport" op="edit" label="NEW AIRPORT" /></td>
- <td style="width:11%">AIRPORT NAME</td>
+ <td style="width:11%">NAME</td>
  <td style="width:6%">IATA</td>
  <td style="width:6%">ICAO</td>
- <td style="width:14%">EDIT <el:text name="id" idx="*" size="3" max="4" value="" /> <el:button ID="EditButton" type="submit" label="GO" /></td>
- <td style="width:9%">TIME ZONE</td>
- <td colspan="3" class="right">SORT BY <el:combo name="sortType" idx="*" size="1" options="${sortOptions}" value="${param.sortType}" onChange="void golgotha.local.updateSort()" /> 
+ <td style="width:12%">EDIT <el:text name="id" idx="*" size="3" max="4" value="" /> <el:button ID="EditButton" type="submit" label="GO" /></td>
+ <td style="width:11">TIME ZONE</td>
+ <td colspan="3" class="right"><el:cmd url="airportexport">EXPORT</el:cmd> | SORT BY <el:combo name="sortType" idx="*" size="1" options="${sortOptions}" value="${param.sortType}" onChange="void golgotha.local.updateSort()" /> 
  AIRLINE <el:combo name="airline" idx="*" size="1" options="${airlines}" value="${airline}" onChange="void golgotha.local.updateSort()" /></td>
 </tr>
 
