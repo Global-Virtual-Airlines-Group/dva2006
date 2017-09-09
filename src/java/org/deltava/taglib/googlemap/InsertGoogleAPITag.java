@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP Tag to insert a JavaScript link to the Google Maps API.
  * @author Luke
- * @version 7.5
+ * @version 8.0
  * @since 1.0
  */
 
@@ -27,7 +27,7 @@ public class InsertGoogleAPITag extends TagSupport {
 	static final String API_VER_ATTR_NAME = "$googleMapAPIVersion$";
 	
 	private static final int MIN_API_VERSION = 3;
-	private static final String DEFAULT_V3_MINOR = "28";
+	private static final String DEFAULT_V3_MINOR = "29";
 	
 	private static final String V3_API_URL = "maps.googleapis.com/maps/api/js?v=";
 	
@@ -126,7 +126,7 @@ public class InsertGoogleAPITag extends TagSupport {
 			mco.put("wxHost", SystemData.get("weather.apiHost"));
 			JSONObject mkeys = new JSONObject();
 			mkeys.put("wu", SystemData.get("security.key.wunderground"));
-			mkeys.put("api", SystemData.get("security.key.dsx"));
+			mkeys.put("twc", SystemData.get("security.key.twc"));
 			mco.put("keys", mkeys);
 			
 			// Init common code
