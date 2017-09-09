@@ -1261,7 +1261,7 @@
 	</command>
 
 	<command id="accairportmap">
-		<name>Pilot Accomplishment Airport Mapy</name>
+		<name>Pilot Accomplishment Airport Map</name>
 		<class>org.deltava.commands.stats.AccomplishmentAirportMapCommand</class>
 		<roles>Pilot</roles>
 	</command>
