@@ -13,35 +13,37 @@ import java.time.Instant;
 
 public class WeatherFutureTileLayer extends WeatherTileLayer {
 	
-	private final SortedSet<Instant> _sliceDates = new TreeSet<Instant>();
+	private final Map<Instant, SortedSet<Instant>> _sliceDates = new TreeMap<Instant, SortedSet<Instant>>();
 
 	/**
 	 * Creates the layer.
 	 * @param name the layer name
-	 * @param dt the effective date/time
 	 */
-	public WeatherFutureTileLayer(String name, Instant dt) {
-		super(name, dt);
+	public WeatherFutureTileLayer(String name) {
+		super(name);
 	}
 
 	/**
-	 * Returns the slices available.
+	 * Returns the slices available for a particular effective date.
+	 * @param effDate the effetive date/time
 	 * @return a Collection of Instants
 	 */
-	public SortedSet<Instant> getSliceDates() {
-		return _sliceDates;
+	public SortedSet<Instant> getSliceDates(Instant effDate) {
+		return _sliceDates.getOrDefault(effDate, new TreeSet<Instant>());
 	}
 	
 	/**
-	 * Adds an available slice date/time to the layer.
+	 * Adds an available slice date/time.
+	 * @param effDate the effective date/time
 	 * @param dt the slice date/time
 	 */
-	public void addSlice(Instant dt) {
-		_sliceDates.add(dt);
-	}
-	
-	@Override
-	public boolean hasFuture() {
-		return true;
+	public void addSlice(Instant effDate, Instant dt) {
+		SortedSet<Instant> dts = _sliceDates.get(effDate);
+		if (dts == null) {
+			dts = new TreeSet<Instant>();
+			_sliceDates.put(effDate, dts);
+		}
+			
+		dts.add(dt);
 	}
 }

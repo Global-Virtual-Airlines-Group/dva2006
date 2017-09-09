@@ -7,16 +7,12 @@ import java.time.Instant;
 
 import org.json.*;
 
-import org.deltava.beans.schedule.GeoPosition;
 import org.deltava.beans.wx.*;
 
 import org.deltava.dao.DAOException;
 
-import org.deltava.util.tile.*;
 import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
-
-import org.gvagroup.tile.TileAddress;
 
 /**
  * A Data Access Object to load weather tile layers.
@@ -51,36 +47,39 @@ public class GetWeatherTileLayers extends DAO {
 			init (buf.toString());
 			try (InputStream in = getIn()) {
 				JSONObject jo = new JSONObject(new JSONTokener(in));
-				if (!jo.has("seriesInfo"))
+				JSONObject so = jo.optJSONObject("seriesInfo");
+				if (so == null)
 					throw new DAOException("No seriesInfo in response");
 				
-				for (String name : jo.keySet()) {
-					JSONObject layerInfo = jo.getJSONObject(name);
+				for (String name : so.keySet()) {
+					JSONObject layerInfo = so.getJSONObject(name);
+					JSONArray seriesTimes = layerInfo.optJSONArray("series");
+					if (seriesTimes == null) continue;
+					
+					// Build the bean
+					boolean isFF = ((seriesTimes.length() > 0) && seriesTimes.getJSONObject(0).has("fts"));
+					WeatherTileLayer layer = null;
+					if (isFF)
+						layer = new WeatherFutureTileLayer(name);
+					else
+						layer = new WeatherTileLayer(name);
 					
 					// Build bounding box
-					Projection p = new MercatorProjection(layerInfo.getInt("nativeZoom"));
-					JSONObject jtl = layerInfo.getJSONObject("bb").getJSONObject("tl");
-					JSONObject jbr = layerInfo.getJSONObject("bb").getJSONObject("br");
-					TileAddress tl = p.getAddress(new GeoPosition(jtl.getDouble("lat"), jtl.getDouble("lng")));
-					TileAddress br = p.getAddress(new GeoPosition(jbr.getDouble("lat"), jbr.getDouble("lng")));
+					layer.setZoom(layerInfo.getInt("nativeZoom"), layerInfo.getInt("maxZoom"));
 					
-					JSONArray seriesTimes = layerInfo.getJSONArray("series");
 					for (int x = 0; x < seriesTimes.length(); x++) {
 						JSONObject st = seriesTimes.getJSONObject(x);
-						boolean isFF = st.has("fts"); WeatherTileLayer layer = null;
 						Instant dt = Instant.ofEpochSecond(st.getLong("ts"));
+						layer.addDate(dt);
 						if (isFF) {
-							WeatherFutureTileLayer flayer = new WeatherFutureTileLayer(name, dt); layer = flayer;
+							WeatherFutureTileLayer flayer = (WeatherFutureTileLayer) layer;
 							JSONArray ffa = st.getJSONArray("fts");
 							for (int y = 0; y < ffa.length(); y++)
-								flayer.addSlice(Instant.ofEpochSecond(ffa.getLong(y)));
-						} else
-							layer = new WeatherTileLayer(name, dt);
-						
-						layer.setZoom(layerInfo.getInt("nativeZoom"), layerInfo.getInt("maxZoom"));
-						layer.setCoordinates(tl, br);
-						layers.add(layer);
+								flayer.addSlice(dt, Instant.ofEpochSecond(ffa.getLong(y)));
+						}
 					}
+					
+					layers.add(layer);
 				}
 			}
 		} catch (IOException ie) {

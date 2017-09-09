@@ -4,6 +4,7 @@ package org.deltava.service.wx;
 import static javax.servlet.http.HttpServletResponse.*;
 
 import java.util.*;
+import java.time.Instant;
 
 import org.json.*;
 
@@ -41,21 +42,28 @@ public class SeriesListService extends WebService {
 		}
 		
 		// Build the JSON object
-		JSONObject jo = new JSONObject(); JSONObject lo = null; String lastLayer = null;
+		JSONObject jo = new JSONObject(); JSONObject so = new JSONObject();
+		jo.put("timestamp", System.currentTimeMillis());
+		jo.put("seriesInfo", so);
 		for (WeatherTileLayer l : layers) {
-			if (!l.getName().equals(lastLayer)) {
-				lo = new JSONObject();
-				jo.put(l.getName(), lo);
-				lastLayer = l.getName();
-				lo.put("nativeZoom", l.getNativeZoom());
-				lo.put("maxZoom", l.getMaxZoom());
-				lo.accumulate("slices", Long.valueOf(l.getDate().toEpochMilli() / 1000));
-				if (l.hasFuture()) {
-					JSONArray fa = new JSONArray();
+			jo.accumulate("seriesNames", l.getName());
+			JSONObject lo = new JSONObject();
+			so.put(l.getName(), lo);
+			lo.put("nativeZoom", l.getNativeZoom());
+			lo.put("maxZoom", l.getMaxZoom());
+			for (Instant dt : l.getDates()) {
+				JSONObject dto = new JSONObject();
+				dto.put("unixDate", dt.toEpochMilli());
+				if (l instanceof WeatherFutureTileLayer) {
 					WeatherFutureTileLayer fl = (WeatherFutureTileLayer) l;
-					fl.getSliceDates().forEach(dt -> fa.put((int)(dt.toEpochMilli() / 1000)));
-					lo.accumulate("futureSlices", fa);
+					for (Instant fdt : fl.getSliceDates(dt)) {
+						JSONObject ffo = new JSONObject();
+						ffo.put("unixDate", fdt.toEpochMilli());
+						dto.accumulate("ff", ffo);
+					}
 				}
+				
+				lo.accumulate("series", dto);
 			}
 		}
 		
