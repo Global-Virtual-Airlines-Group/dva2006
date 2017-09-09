@@ -745,6 +745,12 @@
 		<roles>Schedule,Operations</roles>
 	</command>
 
+	<command id="airportexport">
+		<name>Airport List Export</name>
+		<class>org.deltava.commands.schedule.AirportExportCommand</class>
+		<roles>Schedule,Operations</roles>
+	</command>
+
 	<command id="airportdelete">
 		<name>Delete Airport</name>
 		<class>org.deltava.commands.schedule.AirportDeleteCommand</class>
