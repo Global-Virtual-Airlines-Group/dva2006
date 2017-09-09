@@ -95,10 +95,18 @@ public class AccomplishmentCommand extends AbstractAuditFormCommand {
 			case AIRPORTS:
 			case AIRPORTD:
 			case AIRPORTA:
+				Collection<String> iataCodes = new TreeSet<String>(); Collection<String> badCodes = new LinkedHashSet<String>();
 				Collection<String> apCodes = StringUtils.nullTrim(StringUtils.split(ctx.getParameter("choices"), ","));
-				Collection<String> iataCodes = new TreeSet<String>();
-				apCodes.stream().map(c -> SystemData.getAirport(c)).filter(Objects::nonNull).map(Airport::getIATA).forEach(iataCodes::add);
+				for (String code : apCodes) {
+					Airport ap = SystemData.getAirport(code);
+					if (ap != null)
+						iataCodes.add(ap.getIATA());
+					else
+						badCodes.add(code);
+				}
+				
 				a.setChoices(iataCodes);
+				ctx.setAttribute("invalidAirports", badCodes, REQUEST);
 				break;
 				
 			default:
