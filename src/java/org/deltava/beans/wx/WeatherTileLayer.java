@@ -1,9 +1,8 @@
 // Copyright 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.wx;
 
+import java.util.*;
 import java.time.Instant;
-
-import org.gvagroup.tile.TileAddress;
 
 /**
  * A bean to store weather tile overlay layer data.
@@ -15,32 +14,18 @@ import org.gvagroup.tile.TileAddress;
 public class WeatherTileLayer implements Comparable<WeatherTileLayer>, java.io.Serializable {
 
 	private final String _name;
-	private final Instant _dt;
+	private final Collection<Instant> _dates = new TreeSet<Instant>();
 	
 	private int _nativeZoom;
 	private int _maxZoom;
 
-	private TileAddress _topLeft;
-	private TileAddress _bottomRight;
-	
 	/**
 	 * Creates the layer bean.
 	 * @param name the layer name
-	 * @param dt the effective date/time
 	 */
-	public WeatherTileLayer(String name, Instant dt) {
+	public WeatherTileLayer(String name) {
 		super();
 		_name = name;
-		_dt = dt;
-	}
-	
-	/**
-	 * Returns whether this bean has future layers.
-	 * @return FALSE
-	 */
-	@SuppressWarnings("static-method")
-	public boolean hasFuture() {
-		return false;
 	}
 	
 	/**
@@ -52,27 +37,11 @@ public class WeatherTileLayer implements Comparable<WeatherTileLayer>, java.io.S
 	}
 	
 	/**
-	 * Returns the layer effective date.
-	 * @return the date/time
+	 * Returns the layer effective dates.
+	 * @return a Collection of Instants
 	 */
-	public Instant getDate() {
-		return _dt;
-	}
-	
-	/**
-	 * Returns the address of the top-left tile in the layer.
-	 * @return the TileAddress
-	 */
-	public TileAddress getTopLeft() {
-		return _topLeft;
-	}
-	
-	/**
-	 * Returns the address of the bottom-right tile in the layer.
-	 * @return the TileAddress
-	 */
-	public TileAddress getBottomRight() {
-		return _bottomRight;
+	public Collection<Instant> getDates() {
+		return _dates;
 	}
 	
 	/**
@@ -92,13 +61,11 @@ public class WeatherTileLayer implements Comparable<WeatherTileLayer>, java.io.S
 	}
 	
 	/**
-	 * Sets the coordinates of the top-left and bottom-right tiles in this layer.
-	 * @param tl the top-left TileAddress
-	 * @param br
+	 * Adds an effective date to this layer.
+	 * @param dt a date/time
 	 */
-	public void setCoordinates(TileAddress tl, TileAddress br) {
-		_topLeft = tl;
-		_bottomRight = br;
+	public void addDate(Instant dt) {
+		_dates.add(dt);
 	}
 	
 	/**
@@ -113,9 +80,7 @@ public class WeatherTileLayer implements Comparable<WeatherTileLayer>, java.io.S
 	
 	@Override
 	public String toString() {
-		StringBuilder buf = new StringBuilder(_name).append('-');
-		buf.append(_dt.toString());
-		return buf.toString();
+		return _name;
 	}
 	
 	@Override
@@ -125,7 +90,6 @@ public class WeatherTileLayer implements Comparable<WeatherTileLayer>, java.io.S
 	
 	@Override
 	public int compareTo(WeatherTileLayer l2) {
-		int tmpResult = _name.compareTo(l2._name);
-		return (tmpResult == 0) ? _dt.compareTo(l2._dt) : tmpResult;
+		return _name.compareTo(l2._name);
 	}
 }
