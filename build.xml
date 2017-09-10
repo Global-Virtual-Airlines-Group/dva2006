@@ -356,10 +356,9 @@
 		
 		<!-- Compile the Java source files -->
 		<mkdir dir="${java.io.tmpdir}/build/wsdl" />
-		<javac srcdir="${java.io.tmpdir}/src/wsdl" destdir="${java.io.tmpdir}/build/wsdl"
-			debug="on" debuglevel="source" optimize="on" target="1.8" source="1.8">
+		<javac srcdir="${java.io.tmpdir}/src/wsdl" destdir="${java.io.tmpdir}/build/wsdl" debug="on" debuglevel="source" optimize="on" target="1.8" source="1.8">
 			<classpath refid="wsdl.classpath" />
-			<compilerarg value="-Xlint:deprecated,finally" />
+			<compilerarg value="-Xlint:deprecation,finally" />
 		</javac>
 
 		<!-- Compress the Java classes into a single JAR file -->
