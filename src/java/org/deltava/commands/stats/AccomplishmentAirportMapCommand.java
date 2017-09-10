@@ -64,7 +64,7 @@ public class AccomplishmentAirportMapCommand extends AbstractCommand {
 			flights.forEach(fr -> helper.add(fr));
 			
 			// Map the missing airports to the accomplishments
-			accs.forEach(a -> missingAirports.put(a.getComboAlias(), helper.missing(a)));
+			accs.stream().filter(Accomplishment::getActive).forEach(a -> missingAirports.put(a.getComboAlias(), helper.missing(a)));
 			
 			// Save in request
 			ctx.setAttribute("accs", accs, REQUEST);
