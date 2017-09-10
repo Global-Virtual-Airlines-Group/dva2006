@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008, 2009, 2012, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to detect airports no longer serviced by an Airline.
  * @author Luke
- * @version 5.0
+ * @version 8.0
  * @since 1.0
  */
 
@@ -30,10 +30,8 @@ public class UnservicedAirportsCommand extends AbstractCommand {
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
-		// Get the airline list
+		// Get the airline list and determine if we write to the database
 		Collection<Airline> airlines = SystemData.getAirlines().values(); 
-		
-		// Determine if we write to the database
 		boolean updateDB = Boolean.valueOf(ctx.getParameter("updateDB")).booleanValue();
 		
 		int totalResults = 0;
@@ -53,10 +51,7 @@ public class UnservicedAirportsCommand extends AbstractCommand {
 				if (!extraAirports.isEmpty()) {
 					results.put(a, extraAirports);
 					totalResults += extraAirports.size();
-					for (Airport ap : extraAirports) {
-						ap.removeAirlineCode(a.getCode());
-						updateAirports.add(ap);
-					}
+					extraAirports.forEach(ap -> { ap.removeAirlineCode(a.getCode()); updateAirports.add(ap); });
 				}
 			}
 			
@@ -65,7 +60,7 @@ public class UnservicedAirportsCommand extends AbstractCommand {
 				ctx.startTX();
 				
 				// Get the DAO and update the airports
-				SetSchedule wdao = new SetSchedule(con);
+				SetAirportAirline wdao = new SetAirportAirline(con);
 				for (Airport ap : updateAirports)
 					wdao.update(ap, ap.getIATA());
 				

@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Aircraft profiles.
  * @author Luke
- * @version 7.4
+ * @version 8.0
  * @since 1.0
  */
 
@@ -101,7 +101,7 @@ public class AircraftCommand extends AbstractAuditFormCommand {
 			ctx.startTX();
 			
 			// Get the DAO and update the database
-			SetSchedule wdao = new SetSchedule(con);
+			SetAirportAirline wdao = new SetAirportAirline(con);
 			if (isNew) {
 				wdao.create(a);
 				ctx.setAttribute("aircraftCreate", Boolean.TRUE, REQUEST);

@@ -1,4 +1,4 @@
-// Copyright 2006, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to save imported Flight Schedule data to the database.
  * @author Luke
- * @version 7.0
+ * @version 8.0
  * @since 1.0
  */
 
@@ -80,16 +80,16 @@ public class ScheduleSaveCommand extends AbstractCommand {
 			if (updateAirports) {
 				GetScheduleInfo sidao = new GetScheduleInfo(con);
 				AirportServiceMap svcMap = sidao.getRoutePairs();
+				SetAirportAirline awdao = new SetAirportAirline(con);
 				
 				synchronized (SystemData.class) {
 					Collection<Airport> allAirports = SystemData.getAirports().values();
-					for (Iterator<Airport> i = allAirports.iterator(); i.hasNext();) {
-						Airport ap = i.next();
+					for (Airport ap : allAirports) {
 						Collection<String> newAirlines = svcMap.getAirlineCodes(ap);
 						if (CollectionUtils.hasDelta(ap.getAirlineCodes(), newAirlines)) {
 							log.info("Updating " + ap.getName() + " new codes = " + newAirlines + ", was " + ap.getAirlineCodes());
 							ap.setAirlines(svcMap.getAirlineCodes(ap));
-							dao.update(ap, ap.getIATA());
+							awdao.update(ap, ap.getIATA());
 						}
 					}
 				}
