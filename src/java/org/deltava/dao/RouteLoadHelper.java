@@ -13,7 +13,7 @@ import org.deltava.beans.wx.METAR;
 
 import org.deltava.comparators.RunwayComparator;
 
-import org.deltava.dao.wsdl.GetFARoutes;
+import org.deltava.dao.http.GetFARoutes;
 
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to load flight routes from the database.
  * @author Luke
- * @version 7.5
+ * @version 8.0
  * @since 3.4
  */
 
@@ -119,8 +119,8 @@ public final class RouteLoadHelper {
 		}
 		
 		GetFARoutes fwdao = new GetFARoutes();
-		fwdao.setUser(SystemData.get("schedule.flightaware.download.user"));
-		fwdao.setPassword(SystemData.get("schedule.flightaware.download.pwd"));
+		fwdao.setUser(SystemData.get("schedule.flightaware.flightXML.user"));
+		fwdao.setPassword(SystemData.get("schedule.flightaware.flightXML.v3"));
 		Collection<? extends FlightRoute> routes = fwdao.getRouteData(_rp);
 		log.info("Loaded " + routes.size() + " FlightAware Routes");
 		_routes.addAll(routes);
