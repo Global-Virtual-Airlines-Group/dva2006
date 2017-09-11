@@ -8,9 +8,6 @@
 	<classpathentry kind="lib" path="lib/asm-all-3.0_RC1.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-httpclient-3.1.jar"/>
 	<classpathentry kind="lib" path="lib/el-api.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/flightaware.jar" sourcepath="lib/src/flightaware.zip"/>
-	<classpathentry kind="lib" path="lib/deploy/jaxrpc-1.1.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/axis-1.4.jar"/>
 	<classpathentry kind="lib" path="lib/jtar-2.5.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/log4j-1.2.17.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/edtftpj-2.4.0.jar"/>
