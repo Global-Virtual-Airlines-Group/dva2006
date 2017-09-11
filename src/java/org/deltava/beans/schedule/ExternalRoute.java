@@ -1,10 +1,10 @@
-// Copyright 2009, 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 /**
  * A bean to store an external Flight Route. 
  * @author Luke
- * @version 7.0
+ * @version 8.0
  * @since 2.6
  */
 
@@ -13,6 +13,7 @@ public class ExternalRoute extends FlightRoute implements ExternalFlightRoute {
 	public static final String INTERNAL = "Internal";
 	
 	private String _source;
+	private int _count;
 
 	/**
 	 * Creates a new External route.
@@ -28,9 +29,25 @@ public class ExternalRoute extends FlightRoute implements ExternalFlightRoute {
 		return _source;
 	}
 	
+	/**
+	 * Returns the number of times the route was used prior to import.
+	 * @return the number of times
+	 */
+	public int getCount() {
+		return _count;
+	}
+	
 	@Override
 	public void setSource(String src) {
 		_source = src;
+	}
+	
+	/**
+	 * Updates the number of times this route was used.
+	 * @param cnt the number of times
+	 */
+	public void setCount(int cnt) {
+		_count = cnt;
 	}
 	
 	/**
