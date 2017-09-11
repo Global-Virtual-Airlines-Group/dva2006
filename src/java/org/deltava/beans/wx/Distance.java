@@ -1,10 +1,10 @@
-// Copyright 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.wx;
 
 /**
  * An enumeration for visibility distances.
  * @author Luke
- * @version 4.1
+ * @version 8.0
  * @since 4.1
  */
 
@@ -24,5 +24,19 @@ public enum Distance {
 	 */
 	public int getFeet(double value) {
 		return (int)Math.round(_feet * value);
+	}
+	
+	/**
+	 * Exception-safge enum name parser.
+	 * @param value the METAR value
+	 * @param defValue the default value
+	 * @return a Distance
+	 */
+	public static Distance from(String value, Distance defValue) {
+		try {
+			return valueOf(value.toUpperCase());
+		} catch (Exception e) {
+			return defValue;
+		}
 	}
 }
