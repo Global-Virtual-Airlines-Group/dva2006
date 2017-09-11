@@ -11,7 +11,7 @@ import org.deltava.beans.navdata.AirportLocation;
 import org.deltava.beans.wx.METAR;
 
 import org.deltava.dao.*;
-import org.deltava.dao.wsdl.GetFAWeather;
+import org.deltava.dao.http.GetFAWeather;
 import org.deltava.service.*;
 
 import org.deltava.util.JSONUtils;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to fetch METAR data. 
  * @author Luke
- * @version 7.3
+ * @version 8.0
  * @since 2.3
  */
 
@@ -52,8 +52,9 @@ public class METARService extends WebService {
 				
 				// Load the weather
 				GetFAWeather wxdao = new GetFAWeather();
-				wxdao.setUser(SystemData.get("schedule.flightaware.download.user"));
-				wxdao.setPassword(SystemData.get("schedule.flightaware.download.pwd"));
+				wxdao.setUser(SystemData.get("schedule.flightaware.flightXML.user"));
+				wxdao.setPassword(SystemData.get("schedule.flightaware.flightXML.v3"));
+				wxdao.setReadTimeout(5000);
 				data = wxdao.getMETAR(loc);
 			} else {
 				GetWeather wxdao = new GetWeather(con);

@@ -13,8 +13,7 @@ import org.deltava.beans.wx.*;
 import org.deltava.beans.navdata.AirportLocation;
 
 import org.deltava.dao.*;
-import org.deltava.dao.wsdl.GetFAWeather;
-
+import org.deltava.dao.http.GetFAWeather;
 import org.deltava.service.*;
 
 import org.deltava.util.*;
@@ -23,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to provide aggregated METAR/TAF data for an Airport.
  * @author Luke
- * @version 7.3
+ * @version 8.0
  * @since 2.3
  */
 
@@ -65,8 +64,9 @@ public class AirportWeatherService extends WebService {
 			// Get the weather
 			if (useFA) {
 				GetFAWeather dao = new GetFAWeather();
-				dao.setUser(SystemData.get("schedule.flightaware.download.user"));
-				dao.setPassword(SystemData.get("schedule.flightaware.download.pwd"));
+				dao.setUser(SystemData.get("schedule.flightaware.flightXML.user"));
+				dao.setPassword(SystemData.get("schedule.flightaware.flightXML.v3"));
+				dao.setReadTimeout(5000);
 				if (useMETAR)
 					wxBeans.add(dao.getMETAR(al));
 				if (useTAF)
