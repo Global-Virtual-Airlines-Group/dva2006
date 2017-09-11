@@ -525,10 +525,11 @@
 			<enabled type="Boolean">true</enabled>
 			<max_age type="Integer">180</max_age>
 			<max_load type="Integer">10</max_load>
-			<download>
+			<flightXML>
 				<user>gvagroup</user>			
-				<pwd>***REMOVED***</pwd>			
-			</download>
+				<v2>***REMOVED***</v2>
+				<v3>***REMOVED***</v3>			
+			</flightXML>
 		</flightaware>
 	</schedule>
 
