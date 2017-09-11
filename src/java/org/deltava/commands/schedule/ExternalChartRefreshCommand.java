@@ -4,18 +4,19 @@ package org.deltava.commands.schedule;
 import java.util.*;
 import java.sql.Connection;
 
-import org.apache.axis.utils.StringUtils;
 import org.deltava.beans.schedule.*;
 import org.deltava.commands.*;
+
 import org.deltava.dao.*;
 import org.deltava.dao.http.GetAirCharts;
-import org.deltava.util.CollectionUtils;
+
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to refresh external approach charts. 
  * @author Luke
- * @version 7.2
+ * @version 8.0
  * @since 5.1
  */
 
