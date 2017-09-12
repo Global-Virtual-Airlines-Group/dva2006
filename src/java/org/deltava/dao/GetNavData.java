@@ -14,7 +14,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to read Navigation data.
  * @author Luke
- * @version 7.2
+ * @version 8.0
  * @since 1.0
  */
 
@@ -185,13 +185,15 @@ public class GetNavData extends DAO {
 			rw = rw.substring(2);
 		
 		try {
-			prepareStatement("SELECT N.*, R.MAGVAR, IFNULL(R.SURFACE, ?) FROM common.NAVDATA N LEFT JOIN common.RUNWAYS R ON "
-				+ "((N.CODE=R.ICAO) AND (N.NAME=R.NAME) AND (R.SIMVERSION=?)) WHERE (N.ITEMTYPE=?) AND (N.CODE=?) AND (N.NAME=?)");
-			_ps.setInt(1, Surface.UNKNOWN.ordinal());
-			_ps.setInt(2, s.getCode());
+			prepareStatement("SELECT ?, R.ICAO, R.LATITUDE, R.LONGITUDE, N.FREQ, R.LENGTH, R.NAME, R.HDG, N.REGION, NULL AS LL, R.MAGVAR, IFNULL(R.SURFACE, ?), RR.NEWCODE FROM "
+				+ "common.RUNWAYS R LEFT JOIN common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND (R.NAME=RR.OLDCODE)) LEFT JOIN common.NAVDATA N ON ((N.CODE=R.ICAO) "
+				+ "AND (N.NAME=IFNULL(RR.NEWCODE,R.NAME)) AND (N.ITEMTYPE=?)) WHERE (R.ICAO=?) AND (R.NAME=?) AND (R.SIMVERSION=?)");
+			_ps.setInt(1, Navaid.RUNWAY.ordinal());
+			_ps.setInt(2, Surface.UNKNOWN.ordinal());
 			_ps.setInt(3, Navaid.RUNWAY.ordinal());
 			_ps.setString(4, a.getICAO());
 			_ps.setString(5, rw);
+			_ps.setInt(6, s.getCode());
 			List<NavigationDataBean> results = execute();
 			return results.isEmpty() ? null : (Runway) results.get(0);
 		} catch (SQLException se) {
@@ -209,12 +211,14 @@ public class GetNavData extends DAO {
 	public List<Runway> getRunways(ICAOAirport a, Simulator sim) throws DAOException {
 		Simulator s = (sim == null) ? Simulator.FSX : sim;
 		try {
-			prepareStatement("SELECT N.*, R.MAGVAR, IFNULL(R.SURFACE, ?) FROM common.NAVDATA N LEFT JOIN common.RUNWAYS R ON "
-				+ "((N.CODE=R.ICAO) AND (N.NAME=R.NAME) AND (R.SIMVERSION=?)) WHERE (N.ITEMTYPE=?) AND (N.CODE=?)");
-			_ps.setInt(1, Surface.UNKNOWN.ordinal());
-			_ps.setInt(2, s.getCode());
+			prepareStatement("SELECT ?, R.ICAO, R.LATITUDE, R.LONGITUDE, N.FREQ, R.LENGTH, R.NAME, R.HDG, N.REGION, NULL AS LL, R.MAGVAR, IFNULL(R.SURFACE, ?), RR.NEWCODE FROM "
+				+ "common.RUNWAYS R LEFT JOIN common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND (R.NAME=RR.OLDCODE)) LEFT JOIN common.NAVDATA N ON "
+				+ "((N.CODE=R.ICAO) AND (N.NAME=IFNULL(RR.NEWCODE,R.NAME)) AND (N.ITEMTYPE=?)) WHERE (R.ICAO=?) AND (R.SIMVERSION=?)");
+			_ps.setInt(1, Navaid.RUNWAY.ordinal());
+			_ps.setInt(2, Surface.UNKNOWN.ordinal());
 			_ps.setInt(3, Navaid.RUNWAY.ordinal());
 			_ps.setString(4, a.getICAO());
+			_ps.setInt(5, s.getCode());
 			List<NavigationDataBean> results = execute();
 			List<Runway> runways = new ArrayList<Runway>();
 			for (NavigationDataBean nd : results) {
@@ -242,7 +246,8 @@ public class GetNavData extends DAO {
 		Collection<Runway> results = new HashSet<Runway>();
 		try {
 			if (sim != Simulator.UNKNOWN) {
-				prepareStatementWithoutLimits("SELECT * FROM common.RUNWAYS WHERE (ICAO=?) AND (SIMVERSION=?)");	
+				prepareStatementWithoutLimits("SELECT R.*, RR.NEWCODE FROM common.RUNWAYS R LEFT JOIN common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND (R.NAME=RR.OLDCODE)) "
+					+ "WHERE (R.ICAO=?) AND (R.SIMVERSION=?)");	
 				_ps.setString(1, a.getICAO());
 				_ps.setInt(2, Math.max(2004, sim.getCode()));
 				try (ResultSet rs = _ps.executeQuery()) {
@@ -254,6 +259,8 @@ public class GetNavData extends DAO {
 						r.setLength(rs.getInt(7));
 						r.setMagVar(rs.getDouble(8));
 						r.setSurface(Surface.values()[rs.getInt(9)]);
+						// LL
+						r.setNewCode(rs.getString(11));
 						results.add(r);
 					}
 				}
@@ -389,6 +396,7 @@ public class GetNavData extends DAO {
 						break;
 
 					case RUNWAY:
+						int cc = md.getColumnCount();
 						Runway rwy = new Runway(rs.getDouble(3), rs.getDouble(4));
 						rwy.setCode(rs.getString(2));
 						rwy.setFrequency(rs.getString(5));
@@ -396,9 +404,11 @@ public class GetNavData extends DAO {
 						rwy.setName(rs.getString(7));
 						rwy.setHeading(rs.getInt(8));
 						rwy.setRegion(rs.getString(9));
-						if (md.getColumnCount() > 11) {
+						if (cc > 11) {
 							rwy.setMagVar(rs.getDouble(11));
 							rwy.setSurface(Surface.values()[rs.getInt(12)]);
+							if (cc > 12) 
+								rwy.setNewCode(rs.getString(13));
 						}
 						
 						obj = rwy;

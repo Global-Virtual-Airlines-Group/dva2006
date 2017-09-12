@@ -17,7 +17,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * A Data Access Object to load ACARS information.
  * @author Luke
- * @version 7.5
+ * @version 8.0
  * @since 1.0
  */
 
@@ -100,9 +100,9 @@ public class GetACARSData extends DAO {
 	 */
 	public RunwayDistance getLandingRunway(int flightID) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT R.*, IFNULL(ND.HDG, 0), ND.FREQ FROM acars.RWYDATA R LEFT JOIN "
-				+ "common.NAVDATA ND ON (R.ICAO=ND.CODE) AND (R.RUNWAY=ND.NAME) AND (ND.ITEMTYPE=?) AND "
-				+ "(R.ISTAKEOFF=?) WHERE (ID=?) LIMIT 1");
+			prepareStatementWithoutLimits("SELECT R.*, IFNULL(ND.HDG, 0), ND.FREQ, RR.NEWCODE FROM acars.RWYDATA R LEFT JOIN common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND "
+				+ "(R.RUNWAY=RR.OLDCODE)) LEFT JOIN common.NAVDATA ND ON (R.ICAO=ND.CODE) AND (IFNULL(RR.NEWCODE,R.RUNWAY)=ND.NAME) AND (ND.ITEMTYPE=?) AND (R.ISTAKEOFF=?) "
+				+ "WHERE (ID=?) LIMIT 1");
 			_ps.setInt(1, Navaid.RUNWAY.ordinal());
 			_ps.setBoolean(2, false);
 			_ps.setInt(3, flightID);
@@ -117,6 +117,7 @@ public class GetACARSData extends DAO {
 					r.setLength(rs.getInt(6));
 					r.setHeading(rs.getInt(9));
 					r.setFrequency(rs.getString(10));
+					r.setNewCode(rs.getString(11));
 					rd = new RunwayDistance(r, rs.getInt(7));
 				}
 			}
@@ -225,9 +226,8 @@ public class GetACARSData extends DAO {
 	 */
 	public FlightInfo getInfo(int flightID) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT F.*, INET6_NTOA(F.REMOTE_ADDR), FD.ROUTE_ID, "
-				+ "FDR.DISPATCHER_ID FROM acars.FLIGHTS F LEFT JOIN acars.FLIGHT_DISPATCH FD ON "
-				+ "(F.ID=FD.ID) LEFT JOIN acars.FLIGHT_DISPATCHER FDR ON (F.ID=FDR.ID) WHERE (F.ID=?) LIMIT 1");
+			prepareStatementWithoutLimits("SELECT F.*, INET6_NTOA(F.REMOTE_ADDR), FD.ROUTE_ID, FDR.DISPATCHER_ID FROM acars.FLIGHTS F LEFT JOIN "
+				+ "acars.FLIGHT_DISPATCH FD ON (F.ID=FD.ID) LEFT JOIN acars.FLIGHT_DISPATCHER FDR ON (F.ID=FDR.ID) WHERE (F.ID=?) LIMIT 1");
 			_ps.setInt(1, flightID);
 
 			// Get the first entry, or null
@@ -243,12 +243,12 @@ public class GetACARSData extends DAO {
 			
 			// Fetch the takeoff and landing runways
 			if (info.getHasPIREP()) {
-				prepareStatementWithoutLimits("SELECT R.*, IFNULL(ND.HDG, 0), ND.FREQ, RW.MAGVAR, IFNULL(RW.SURFACE, ?) FROM acars.RWYDATA R LEFT JOIN "
-					+ "common.NAVDATA ND ON ((R.ICAO=ND.CODE) AND (R.RUNWAY=ND.NAME) AND (ND.ITEMTYPE=?)) LEFT JOIN common.RUNWAYS RW "
-					+ "ON ((RW.ICAO=ND.CODE) AND (RW.NAME=ND.NAME) AND (RW.SIMVERSION=?)) WHERE (R.ID=?) LIMIT 2");
+				prepareStatementWithoutLimits("SELECT R.*, IFNULL(ND.HDG, 0), ND.FREQ, RW.MAGVAR, IFNULL(RW.SURFACE, ?), RR.NEWCODE FROM acars.RWYDATA R LEFT JOIN common.RUNWAYS RW ON "
+					+ "((RW.ICAO=R.ICAO) AND (RW.NAME=R.RUNWAY) AND (RW.SIMVERSION=?)) LEFT JOIN common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND (R.RUNWAY=RR.OLDCODE)) LEFT JOIN "
+					+ "common.NAVDATA ND ON ((R.ICAO=ND.CODE) AND (IFNULL(RR.NEWCODE,R.RUNWAY)=ND.NAME) AND (ND.ITEMTYPE=?)) WHERE (R.ID=?) LIMIT 2");
 				_ps.setInt(1, Surface.UNKNOWN.ordinal());
-				_ps.setInt(2, Navaid.RUNWAY.ordinal());
-				_ps.setInt(3, Math.max(2004, info.getSimulator().getCode()));
+				_ps.setInt(2, Math.max(2004, info.getSimulator().getCode()));
+				_ps.setInt(3, Navaid.RUNWAY.ordinal());
 				_ps.setInt(4, flightID);
 				try (ResultSet rs = _ps.executeQuery()) {
 					while (rs.next()) {
@@ -260,6 +260,7 @@ public class GetACARSData extends DAO {
 						r.setFrequency(rs.getString(10));
 						r.setMagVar(rs.getDouble(11));
 						r.setSurface(Surface.values()[rs.getInt(12)]);
+						r.setNewCode(rs.getString(13));
 						if (rs.getBoolean(8))
 							info.setRunwayD(new RunwayDistance(r, rs.getInt(7)));
 						else

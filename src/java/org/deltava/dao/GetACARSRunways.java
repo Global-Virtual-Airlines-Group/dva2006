@@ -113,15 +113,15 @@ public class GetACARSRunways extends DAO {
 			return rwys.clone();
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT R.RUNWAY, R.ICAO, ND.LATITUDE, ND.LONGITUDE, ND.ALTITUDE, ND.HDG, "
-				+ "IF(ND.FREQ=?,NULL, ND.FREQ) AS FREQ, COUNT(R.ID) AS CNT FROM acars.FLIGHTS F, acars.RWYDATA R LEFT JOIN "
-				+ "common.NAVDATA ND ON (ND.CODE=R.ICAO) AND (ND.NAME=R.RUNWAY) AND (ND.ITEMTYPE=?) WHERE (F.ID=R.ID) "
-				+ "AND (R.ISTAKEOFF=?) ");
+		// TODO: Handle new codes in FREQ
+		StringBuilder sqlBuf = new StringBuilder("SELECT ND.NAME, ND.CODE, ND.LATITUDE, ND.LONGITUDE, ND.ALTITUDE, ND.HDG, IFNULL(ND.FREQ, ?), COUNT(R.ID) AS CNT FROM acars.FLIGHTS F, "
+			+ "acars.RWYDATA R LEFT JOIN common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND (R.RUNWAY=RR.OLDCODE)) LEFT JOIN common.NAVDATA ND ON ((ND.CODE=R.ICAO) AND "
+			+ "(ND.NAME=IFNULL(RR.NEWCODE, R.RUNWAY)) AND (ND.ITEMTYPE=?)) WHERE (F.ID=R.ID) AND (R.ISTAKEOFF=?) ");
 		if (aD != null)
 			sqlBuf.append("AND (F.AIRPORT_D=?) ");
 		if (aA != null)
 			sqlBuf.append("AND (F.AIRPORT_A=?) ");
-		sqlBuf.append("GROUP BY R.RUNWAY ORDER BY CNT DESC");
+		sqlBuf.append("GROUP BY ND.NAME ORDER BY CNT DESC");
 		
 		try {
 			int pos = 0;
@@ -148,8 +148,8 @@ public class GetACARSRunways extends DAO {
 					r.setUseCount(rs.getInt(8));
 					max = Math.max(max, r.getUseCount());
 					
-					// Determine percentage - default to 10%, if we have more than 10,000 flights use 20%
-					int maxRatio = (max > 5000) ? 4 : 10;
+					// Determine percentage - default to 10%, if we have more than 7,500 flights use 20%
+					int maxRatio = (max > 7500) ? 5 : 10;
 					if ((r.getUseCount() > (max / maxRatio)) || (max < 20))
 						results.add(r);
 					else
