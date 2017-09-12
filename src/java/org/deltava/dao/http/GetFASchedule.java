@@ -63,7 +63,6 @@ public class GetFASchedule extends FlightAwareDAO {
 		// Build the URL
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("airline", a.getCode());
-		params.put("howMany", "150");
 		params.put("offset", String.valueOf(start));
 		Instant sd = startDate.truncatedTo(ChronoUnit.DAYS);
 		Instant ed = sd.plus(days, ChronoUnit.DAYS);
