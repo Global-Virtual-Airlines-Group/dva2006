@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import org.deltava.beans.ComboAlias;
@@ -7,7 +7,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store Runway information.
  * @author Luke
- * @version 7.2
+ * @version 8.0
  * @since 1.0
  */
 
@@ -18,6 +18,8 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 	
 	private Surface _sfc = Surface.UNKNOWN;
 	private double _magVar;
+	
+	private String _newCode;
 
 	/**
 	 * Creates a new Runway bean.
@@ -63,6 +65,14 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 	public double getMagVar() {
 		return _magVar;
 	}
+	
+	/**
+	 * Returns the updated code for this Runway.
+	 * @return the new code, or null if none
+	 */
+	public String getNewCode() {
+		return _newCode;
+	}
 
 	/**
 	 * Updates the length of the runway.
@@ -104,6 +114,14 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 	 */
 	public void setMagVar(double mv) {
 		_magVar = mv;
+	}
+	
+	/**
+	 * If this runway has been renumbered, the current runway code.
+	 * @param newCode the new runway code, or null if none
+	 */
+	public void setNewCode(String newCode) {
+		_newCode = newCode;
 	}
  
 	/**
