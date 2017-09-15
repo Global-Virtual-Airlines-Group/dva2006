@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to retrieve equipment type profiles.
  * @author Luke
- * @version 7.2
+ * @version 8.0
  * @since 1.0
  */
 
@@ -408,10 +408,8 @@ public class GetEquipmentType extends DAO {
 	 */
 	private void loadSize(Collection<EquipmentType> eTypes, String db) throws SQLException {
 		Map<String, EquipmentType> types = CollectionUtils.createMap(eTypes, EquipmentType::getName);
-		prepareStatementWithoutLimits("SELECT P.EQTYPE, COUNT(P.ID) FROM " + db + ".PILOTS P WHERE ((P.STATUS=?) OR (P.STATUS=?)) GROUP BY P.EQTYPE");
+		prepareStatementWithoutLimits("SELECT P.EQTYPE, COUNT(P.ID) FROM " + db + ".PILOTS P WHERE (P.STATUS=?) GROUP BY P.EQTYPE");
 		_ps.setInt(1, Pilot.ACTIVE);
-		_ps.setInt(2, Pilot.ON_LEAVE);
-		
 		try (ResultSet rs = _ps.executeQuery()) {
 			while (rs.next()) {
 				EquipmentType eq = types.get(rs.getString(1));
