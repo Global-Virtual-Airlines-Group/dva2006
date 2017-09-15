@@ -70,8 +70,7 @@ public class ProgramRosterCommand extends AbstractViewCommand {
 			GetPilot pdao = new GetPilot(con);
 			pdao.setQueryStart(vc.getStart());
 			pdao.setQueryMax(vc.getCount());
-			Map<Integer, Pilot> pilots = CollectionUtils.createMap(pdao.getPilotsByEQ(eq, vc.getSortType(), true, rank), Pilot::getID);
-			vc.setResults(pilots.values());
+			vc.setResults(pdao.getPilotsByEQ(eq, vc.getSortType(), true, rank));
 			
 			// Load promotion queue
 			GetPilotRecognition pqdao = new GetPilotRecognition(con);
@@ -90,7 +89,7 @@ public class ProgramRosterCommand extends AbstractViewCommand {
 			
 			// Load Online/ACARS totals
 			GetFlightReports frdao = new GetFlightReports(con);
-			frdao.getOnlineTotals(pilots, SystemData.get("airline.db"));
+			frdao.getOnlineTotals(CollectionUtils.createMap(vc.getResults(), Pilot::getID), SystemData.get("airline.db"));
 			
 			// Save promotion queue and access
 			if (canPromote) {
