@@ -359,8 +359,7 @@ public class GetFlightReportStatistics extends DAO {
 	}
 
 	/**
-	 * Retrieves aggregated approved Flight Report statistics for Flights flown using aircraft that are Primary Ratings for
-	 * a particular Equipment Type program.
+	 * Retrieves aggregated approved Flight Report statistics for Flights flown using aircraft that are Primary Ratings for a particular Equipment Type program.
 	 * @param eqType the Equipment type name
 	 * @param groupBy the &quot;GROUP BY&quot; column name
 	 * @param orderBy the &quot;ORDER BY&quot; column name
@@ -372,11 +371,11 @@ public class GetFlightReportStatistics extends DAO {
 		// Build the SQL statemnet
 		StringBuilder sqlBuf = new StringBuilder("SELECT ");
 		sqlBuf.append(groupBy);
-		sqlBuf.append(" AS LABEL, COUNT(F.DISTANCE) AS SL, SUM(F.DISTANCE) AS SM, ROUND(SUM(F.FLIGHT_TIME), 1) AS SH, "
-			+ "AVG(F.FLIGHT_TIME) AS AVGHOURS, AVG(F.DISTANCE) AS AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SAL, "
-			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OVL, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OIL, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SHL, "
-			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SDL, COUNT(DISTINCT F.PILOT_ID) AS PIDS, SUM(PAX), SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OLEGS "
-			+ "FROM EQRATINGS EQR, PIREPS F WHERE (F.STATUS=?) AND ((EQR.EQTYPE=?) AND (EQR.RATING_TYPE=?) AND (EQR.RATED_EQ=F.EQTYPE))");
+		sqlBuf.append(" AS LABEL, COUNT(F.DISTANCE) AS SL, SUM(F.DISTANCE) AS SM, ROUND(SUM(F.FLIGHT_TIME), 1) AS SH, AVG(F.FLIGHT_TIME) AS AVGHOURS, "
+			+ "AVG(F.DISTANCE) AS AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SAL, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OVL, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OIL, "
+			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SHL, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS SDL, COUNT(DISTINCT F.PILOT_ID) AS PIDS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OLEGS, "
+			+ "SUM(PAX) AS SP, AVG(F.LOADFACTOR) AS LF FROM EQRATINGS EQR, PIREPS F WHERE (F.STATUS=?) AND ((EQR.EQTYPE=?) AND (EQR.RATING_TYPE=?) AND "
+			+ "(EQR.RATED_EQ=F.EQTYPE))");
 		if (_dayFilter > 0)
 			sqlBuf.append("AND (F.DATE > DATE_SUB(NOW(), INTERVAL ? DAY)) ");
 		sqlBuf.append(" GROUP BY LABEL ORDER BY ");
