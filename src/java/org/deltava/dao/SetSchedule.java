@@ -54,6 +54,32 @@ public class SetSchedule extends DAO {
 			throw new DAOException(se);
 		}
 	}
+	
+	/**
+	 * Writes a raw Schedule Entry from FlightAware into the storage database.
+	 * @param rse a RawScheduleEntry
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void writeRaw(RawScheduleEntry rse) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("REPLACE INTO RAW_SCHEDULE (ARLINE, FLIGHT, AIRPORT_D, AIRPORT_A, EQTYPE, TIME_D, TIME_A, CS_MASTER, PAX_F, PAX_B, PAX_E) "
+				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			_ps.setString(1, rse.getAirline().getCode());
+			_ps.setInt(2, rse.getFlightNumber());
+			_ps.setString(3, rse.getAirportD().getIATA());
+			_ps.setString(4, rse.getAirportA().getIATA());
+			_ps.setString(5, rse.getEquipmentType());
+			_ps.setTimestamp(6, Timestamp.valueOf(rse.getTimeD().toLocalDateTime()));
+			_ps.setTimestamp(7, Timestamp.valueOf(rse.getTimeA().toLocalDateTime()));
+			_ps.setString(8, rse.getCodeShare());
+			_ps.setInt(9, rse.getFirst());
+			_ps.setInt(10, rse.getBusiness());
+			_ps.setInt(11, rse.getEconomy());
+			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
 
 	/**
 	 * Deletes an entry from the Flight Schedule.
