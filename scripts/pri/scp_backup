@@ -11,7 +11,7 @@ if [ "$2" != "" ]; then
         USER="$2"
 fi
 
-OPTS="-avr --progress --bwlimit=4096"
+OPTS="-avr --progress --address=172.31.10.29 --bwlimit=4096"
 
 # Back up base files
 cd /home/backup
