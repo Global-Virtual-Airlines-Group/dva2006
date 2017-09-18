@@ -1,15 +1,15 @@
-// Copyright 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import org.deltava.beans.Helper;
-import org.deltava.beans.acars.RunwayDistance;
+import org.deltava.beans.acars.*;
 import org.deltava.beans.navdata.Runway;
 import org.deltava.beans.stats.LandingStatistics;
 
 /**
  * A utility class to grade flights.
  * @author Luke
- * @version 7.2
+ * @version 8.0
  * @since 5.1
  */
 
@@ -72,5 +72,34 @@ public class FlightScorer {
 		double rwyPct = (double)ad.getDistance() / ad.getLength();
 		FlightScore ls = score(fr.getLandingVSpeed(), rwyPct);
 		return (ls.compareTo(score) < 0) ? score : ls;
+	}
+
+	/**
+	 * Scores a Check Ride. This will review flight parameters to ensure that 
+	 * @param pkg a ScorePackage
+	 * @return a FlightScore
+	 */
+	public static FlightScore score(ScorePackage pkg) {
+		
+		FlightScore fs = score(pkg.getFlightReport(), pkg.getRunwayD(), pkg.getRunwayA());
+		FDRFlightReport fr = pkg.getFlightReport();
+		if (fr.getTakeoffWeight() > pkg.getAircraft().getMaxTakeoffWeight())
+			fs = FlightScore.max(fs, FlightScore.DANGEROUS);
+		else if (fr.getLandingWeight() > pkg.getAircraft().getMaxLandingWeight())
+			fs = FlightScore.max(fs, FlightScore.DANGEROUS);
+		else if (fr.getGateFuel() < pkg.getAircraft().getBaseFuel())
+			fs = FlightScore.max(fs, FlightScore.DANGEROUS);
+		else if (pkg.getRunwayD().getLength() < pkg.getAircraft().getTakeoffRunwayLength())
+			fs = FlightScore.max(fs, FlightScore.DANGEROUS);
+		else if (pkg.getRunwayA().getLength() < pkg.getAircraft().getLandingRunwayLength())
+			fs = FlightScore.max(fs, FlightScore.DANGEROUS);
+		
+		FlightScore es = FlightScore.OPTIMAL;
+		for (ACARSRouteEntry re : pkg.getData()) {
+			for (Warning w : re.getWarnings())
+				es = FlightScore.max(es, w.getScore());
+		}
+		
+		return FlightScore.max(fs, es);
 	}
 }

@@ -1,10 +1,10 @@
-// Copyright 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 /**
  * An enumeration of Flight Report scores. 
  * @author Luke
- * @version 5.1
+ * @version 8.0
  * @since 5.1
  */
 
@@ -33,5 +33,15 @@ public enum FlightScore {
 	 */
 	public String getColor() {
 		return _color;
+	}
+	
+	/**
+	 * Returns the higher of two Flight Scores. 
+	 * @param fs1 the first FlightScore
+	 * @param fs2 the second FlightScore
+	 * @return the larger FlightScore
+	 */
+	public static FlightScore max(FlightScore fs1, FlightScore fs2) {
+		return values()[Math.max(fs1.ordinal(), fs2.ordinal())];
 	}
 }

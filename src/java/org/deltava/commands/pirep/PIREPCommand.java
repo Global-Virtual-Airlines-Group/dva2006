@@ -34,7 +34,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle editing/saving Flight Reports.
  * @author Luke
- * @version 7.5
+ * @version 8.0
  * @since 1.0
  */
 
@@ -319,12 +319,9 @@ public class PIREPCommand extends AbstractFormCommand {
 				ctx.setAttribute("flightTime", StringUtils.format(fr.getLength() / 10.0, "#0.0"), REQUEST);
 
 				// Get the active airlines
-				if (fr.getDatabaseID(DatabaseID.ASSIGN) == 0) {
-					for (Airline a : allAirlines.values()) {
-						if (a.getActive() || (fr.getAirline().equals(a)))
-							airlines.add(a);
-					}
-				} else
+				if (fr.getDatabaseID(DatabaseID.ASSIGN) == 0)
+					allAirlines.values().stream().filter(a -> (a.getActive() || fr.getAirline().equals(a))).forEach(airlines::add);
+				else
 					airlines.add(fr.getAirline());
 			}
 			
@@ -462,8 +459,20 @@ public class PIREPCommand extends AbstractFormCommand {
 				if (info != null) {
 					ctx.setAttribute("flightInfo", info, REQUEST);
 					
+					// Get the aircraft profile
+					GetAircraft acdao = new GetAircraft(con);
+					Aircraft acInfo = acdao.get(fr.getEquipmentType());
+					if ((acInfo != null) && (acInfo.getMaxWeight() > 0))
+						ctx.setAttribute("acInfo", acInfo, REQUEST);
+					
 					// Get the flight score
-					FlightScore score = FlightScorer.score(afr, info.getRunwayD(), info.getRunwayA());
+					ScorePackage pkg = new ScorePackage(acInfo, afr, info.getRunwayD(), info.getRunwayA());
+					if (afr.hasAttribute(FlightReport.ATTR_CHECKRIDE) && (afr.getFDR() != Recorder.XACARS)) {
+						GetACARSPositions posdao = new GetACARSPositions(con);
+						posdao.getRouteEntries(info.getID(), true, info.getArchived());
+					}
+					
+					FlightScore score = FlightScorer.score(pkg);
 					if (score != FlightScore.INCOMPLETE)
 						ctx.setAttribute("flightScore", score, REQUEST);
 					
@@ -486,12 +495,6 @@ public class PIREPCommand extends AbstractFormCommand {
 						if (ud != null)
 							ctx.setAttribute("dispatcher", pdao.get(ud), REQUEST);
 					}
-					
-					// Get the aircraft profile
-					GetAircraft acdao = new GetAircraft(con);
-					Aircraft acInfo = acdao.get(fr.getEquipmentType());
-					if ((acInfo != null) && (acInfo.getMaxWeight() > 0))
-						ctx.setAttribute("acInfo", acInfo, REQUEST);
 					
 					// Load the gates
 					GetGates gdao = new GetGates(con);
