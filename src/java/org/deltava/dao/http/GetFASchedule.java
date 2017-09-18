@@ -30,6 +30,8 @@ public class GetFASchedule extends FlightAwareDAO {
 	
 	private final Collection<String> _unknownAirlines = new HashSet<String>();
 	private final Collection<String> _unknownAirports = new HashSet<String>();
+	
+	private int _errorCount;
 
 	/**
 	 * Returns any unknown Airport codes from the import.
@@ -45,6 +47,10 @@ public class GetFASchedule extends FlightAwareDAO {
 	 */
 	public Collection<String> getUnknownAirlines() {
 		return _unknownAirlines;
+	}
+	
+	public int getErrorCount() {
+		return _errorCount;
 	}
 	
 	/**
@@ -63,11 +69,11 @@ public class GetFASchedule extends FlightAwareDAO {
 		// Build the URL
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("airline", a.getCode());
-		params.put("offset", String.valueOf(start));
 		Instant sd = startDate.truncatedTo(ChronoUnit.DAYS);
-		Instant ed = sd.plus(days, ChronoUnit.DAYS);
 		params.put("start_date", String.valueOf(sd.getEpochSecond()));
-		params.put("end_date", String.valueOf(ed.getEpochSecond()));
+		params.put("end_date", String.valueOf(sd.plus(days, ChronoUnit.DAYS).getEpochSecond()));
+		if (start > 0)
+			params.put("offset", String.valueOf(start));
 		if (!includeCS)
 			params.put("exclude_codeshare", "true");
 			
@@ -78,7 +84,9 @@ public class GetFASchedule extends FlightAwareDAO {
 			}
 			
 			JSONObject ro = jo.getJSONObject("AirlineFlightSchedulesResult");
-			JSONArray data = ro.getJSONArray("data");
+			JSONArray data = ro.getJSONArray("flights");
+			_nextOffset = ro.optInt("next_offset", data.length());
+			_errorCount = 0;
 			for (int x = 0; x < data.length(); x++) {
 				JSONObject fo = data.getJSONObject(x);
 				
@@ -111,6 +119,7 @@ public class GetFASchedule extends FlightAwareDAO {
 				results.add(sce);
 			}
 		} catch (Exception e) {
+			_errorCount++;
 			throw new DAOException(e);
 		}
 		
