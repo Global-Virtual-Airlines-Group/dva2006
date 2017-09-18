@@ -19,7 +19,7 @@ import org.deltava.dao.file.GetSerializedPosition;
 /**
  * A Data Access Object to load ACARS position data.
  * @author Luke
- * @version 7.3
+ * @version 8.0
  * @since 4.1
  */
 
@@ -74,43 +74,42 @@ public class GetACARSPositions extends GetACARSData {
 					Long ts = Long.valueOf(rs.getTimestamp(1).getTime());
 					GeospaceLocation pos = new GeoPosition(rs.getDouble(2), rs.getDouble(3));
 					ACARSRouteEntry entry = new ACARSRouteEntry(rs.getTimestamp(1).toInstant(), pos);
+					entry.setAltitude(rs.getInt(4));
+					entry.setRadarAltitude(rs.getInt(5));
+					entry.setHeading(rs.getInt(6));
+					entry.setPitch(rs.getDouble(7));
+					entry.setBank(rs.getDouble(8));
+					entry.setAirSpeed(rs.getInt(9));
+					entry.setGroundSpeed(rs.getInt(10));
+					entry.setVerticalSpeed(rs.getInt(11));
+					entry.setMach(rs.getDouble(12));
+					entry.setN1(rs.getDouble(13));
+					entry.setN2(rs.getDouble(14));
+					entry.setFlaps(rs.getInt(15));
+					entry.setWindHeading(rs.getInt(16));
+					entry.setWindSpeed(rs.getInt(17));
+					entry.setTemperature(rs.getInt(18));
+					entry.setPressure(rs.getInt(19));
+					entry.setVisibility(rs.getDouble(20));
+					entry.setFuelRemaining(rs.getInt(21));
+					entry.setFuelFlow(rs.getInt(22));
+					entry.setAOA(rs.getDouble(23));
+					entry.setG(rs.getDouble(24));
 					entry.setFlags(rs.getInt(25));
+					entry.setFrameRate(rs.getInt(26));
+					entry.setSimRate(rs.getInt(27));
+					entry.setSimUTC(toInstant(rs.getTimestamp(28)));
+					entry.setPhase(rs.getInt(29));
+					entry.setNAV1(rs.getString(30));
+					entry.setNAV2(rs.getString(31));
+					entry.setVASFree(rs.getInt(32));
+					entry.setAirspace(AirspaceType.values()[rs.getInt(33)]);
 
 					// Add to results - or just log a GeoPosition if we're on the ground
-					if (entry.isFlagSet(FLAG_ONGROUND) && !entry.isFlagSet(FLAG_TOUCHDOWN) && !includeOnGround)
+					if (entry.isFlagSet(FLAG_ONGROUND) && !entry.isFlagSet(FLAG_TOUCHDOWN) && !includeOnGround && !entry.isWarning())
 						results.put(ts, pos);
-					else {
-						entry.setAltitude(rs.getInt(4));
-						entry.setRadarAltitude(rs.getInt(5));
-						entry.setHeading(rs.getInt(6));
-						entry.setPitch(rs.getDouble(7));
-						entry.setBank(rs.getDouble(8));
-						entry.setAirSpeed(rs.getInt(9));
-						entry.setGroundSpeed(rs.getInt(10));
-						entry.setVerticalSpeed(rs.getInt(11));
-						entry.setMach(rs.getDouble(12));
-						entry.setN1(rs.getDouble(13));
-						entry.setN2(rs.getDouble(14));
-						entry.setFlaps(rs.getInt(15));
-						entry.setWindHeading(rs.getInt(16));
-						entry.setWindSpeed(rs.getInt(17));
-						entry.setTemperature(rs.getInt(18));
-						entry.setPressure(rs.getInt(19));
-						entry.setVisibility(rs.getDouble(20));
-						entry.setFuelRemaining(rs.getInt(21));
-						entry.setFuelFlow(rs.getInt(22));
-						entry.setAOA(rs.getDouble(23));
-						entry.setG(rs.getDouble(24));
-						entry.setFrameRate(rs.getInt(26));
-						entry.setSimRate(rs.getInt(27));
-						entry.setSimUTC(toInstant(rs.getTimestamp(28)));
-						entry.setPhase(rs.getInt(29));
-						entry.setNAV1(rs.getString(30));
-						entry.setNAV2(rs.getString(31));
-						entry.setVASFree(rs.getInt(32));
-						entry.setAirspace(AirspaceType.values()[rs.getInt(33)]);
+					else
 						results.put(ts, entry);
-					}
 				}
 			}
 
@@ -198,7 +197,7 @@ public class GetACARSPositions extends GetACARSData {
 			GetSerializedPosition psdao = new GetSerializedPosition(gi);
 			Collection<? extends RouteEntry> entries = psdao.read();
 			for (RouteEntry entry : entries) {
-				if (entry.isFlagSet(FLAG_ONGROUND) && !entry.isFlagSet(FLAG_TOUCHDOWN) && !includeOnGround)
+				if (entry.isFlagSet(FLAG_ONGROUND) && !entry.isFlagSet(FLAG_TOUCHDOWN) && !includeOnGround && !entry.isWarning())
 					results.add(new GeoPosition(entry));
 				else
 					results.add(entry);
