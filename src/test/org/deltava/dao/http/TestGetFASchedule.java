@@ -69,9 +69,18 @@ public class TestGetFASchedule extends TestCase {
 		super.tearDown();
 	}
 	
+	private static int getOffset(String fileName) throws IOException {
+		try (LineNumberReader lr = new LineNumberReader(new FileReader(fileName))) {
+			return StringUtils.parse(lr.readLine(), 0);
+		} catch (FileNotFoundException fne) {
+			return 0;
+		}
+	}
+	
 	private static Collection<RawScheduleEntry> load(String fileName) throws IOException {
 		Collection<RawScheduleEntry> results = new ArrayList<RawScheduleEntry>();
 		try (LineNumberReader lr = new LineNumberReader(new FileReader(fileName))) {
+			lr.readLine(); // ofset
 			String data = lr.readLine();
 			while (data != null) {
 				List<String> parts = StringUtils.split(data, ",");
@@ -95,8 +104,9 @@ public class TestGetFASchedule extends TestCase {
 		return results;
 	}
 	
-	private static void save(Collection<RawScheduleEntry> data, String fileName) throws IOException {
-		try (PrintWriter pw = new PrintWriter(new FileWriter(fileName, true))) {
+	private static void save(int offset, Collection<RawScheduleEntry> data, String fileName) throws IOException {
+		try (PrintWriter pw = new PrintWriter(new FileWriter(fileName, false))) {
+			pw.println(offset);
 			for (RawScheduleEntry se : data) {
 				pw.print(se.getAirline().getCode());
 				pw.print(',');
@@ -131,29 +141,34 @@ public class TestGetFASchedule extends TestCase {
 		Airline a = SystemData.getAirline("AF");
 		String csvFile = "C:\\Temp\\flightAware_" + a.getCode() + ".csv";
 		log.info("Loading previous flights");
-		Collection<RawScheduleEntry> flights = load(csvFile); int ofs = flights.size();
+		Collection<RawScheduleEntry> flights = load(csvFile); int ofs = getOffset(csvFile);
 		log.info("Pre-Loaded " + ofs + " schedule entries");
 		
 		GetFASchedule fadao = new GetFASchedule();
-		fadao.setReadTimeout(10000);
+		fadao.setReadTimeout(22500);
 		fadao.setUser(SystemData.get("schedule.flightaware.flightXML.user"));
 		fadao.setPassword(SystemData.get("schedule.flightaware.flightXML.v3"));
+		fadao.setMaxResults(30);
 		
-		Instant startDate = Instant.now().truncatedTo(ChronoUnit.DAYS).minus(1, ChronoUnit.DAYS);
+		Instant startDate = Instant.now().truncatedTo(ChronoUnit.DAYS);
 
-		Collection<RawScheduleEntry> entries = fadao.getSchedule(a, ofs, startDate, 7, false); 
+		Collection<RawScheduleEntry> entries = fadao.getSchedule(a, ofs, startDate, 1, true); 
 		assertNotNull(entries);
-		while (!entries.isEmpty()) {
-			ofs += entries.size();
+		while ((fadao.getNextOffset() > flights.size()) && (fadao.getErrorCount() < 8)) {
 			flights.addAll(entries);
-			save(entries, csvFile);
+			entries.clear();
+			save(fadao.getNextOffset(), flights, csvFile);
 			log.info("Loaded " + flights.size() + " schedule entries");
 			fadao.reset();
-			entries = fadao.getSchedule(a, ofs, startDate, 7, false);
+			try {
+				entries = fadao.getSchedule(a, 0, startDate, 7, true);
+			} catch (DAOException de) {
+				log.error(de.getMessage());
+			}
 		}
 		
 		flights.addAll(entries);
 		if (!entries.isEmpty())
-			save(entries, csvFile);
+			save(fadao.getNextOffset(), flights, csvFile);
 	}
 }

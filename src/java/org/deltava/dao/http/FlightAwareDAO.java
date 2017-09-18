@@ -16,7 +16,27 @@ abstract class FlightAwareDAO extends DAO {
 	private String _userID;
 	private String _password;
 	private int _maxResults;
+	
+	/**
+	 * Offset to a subsequent data call.
+	 */
+	protected int _nextOffset;
 
+	/**
+	 * Clears the returned subsequent offset value.
+	 */
+	public void clearNextOffset() {
+		_nextOffset = 0;
+	}
+	
+	/**
+	 * Returns the starting offset of a subequent paginated data call.
+	 * @return the offset
+	 */
+	public int getNextOffset() {
+		return _nextOffset;
+	}
+	
 	/**
 	 * Sets the User ID to use.
 	 * @param usr the user ID
@@ -57,6 +77,8 @@ abstract class FlightAwareDAO extends DAO {
 		StringBuilder buf = new StringBuilder("https://flightxml.flightaware.com/json/FlightXML3/");
 		buf.append(method);
 		buf.append('?');
+		if (_nextOffset > 0)
+			params.putIfAbsent("offset", String.valueOf(_nextOffset));
 		if (_maxResults > 0)
 			params.put("howMany", String.valueOf(_maxResults));
 		
