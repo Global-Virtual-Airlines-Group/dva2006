@@ -1,9 +1,11 @@
 // Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
+import java.util.*;
 import java.time.Instant;
 
 import org.deltava.beans.*;
+import org.deltava.beans.flight.Warning;
 import org.deltava.beans.servinfo.Controller;
 
 import org.deltava.util.StringUtils;
@@ -14,7 +16,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
  * @author Rahul
- * @version 7.3
+ * @version 8.0
  * @since 1.0
  */
 
@@ -481,15 +483,6 @@ public class ACARSRouteEntry extends RouteEntry {
 		_vasFree = kb;
 	}
 	
-	/**
-	 * Marks this route entry as having a notable flight parameter.
-	 * @return TRUE if the entry should be noted, otherwise FALSE
-	 */
-	@Override
-	public boolean isWarning() {
-		return (getWarning() != null);
-	}
-	
 	private String getATCData(int idx) {
 		StringBuilder buf = new StringBuilder();
 		Controller ctr = (idx == 1) ? _atc1 : _atc2;
@@ -511,40 +504,41 @@ public class ACARSRouteEntry extends RouteEntry {
 	 * @return the warning
 	 */
 	@Override
-	public String getWarning() {
-		StringBuilder buf = new StringBuilder();
+	public Collection<Warning> getWarnings() {
+		Collection<Warning> warns = new LinkedHashSet<Warning>();
 		if ((getAltitude() < 10000) && (getAirSpeed() > 250))
-			buf.append("250 UNDER 10K ");
+			warns.add(Warning.OVER250K);
 		if ((_radarAlt < 1500) && (_vSpeed < -1500))
-			buf.append("DESCENT RATE ");
+			warns.add(Warning.DESCENTRATE);
 		if (Math.abs(_bank) > 45)
-			buf.append("BANK ");
+			warns.add(Warning.BANK);
 		if (Math.abs(_pitch) > 35)
-			buf.append("PITCH ");
-		if (Math.abs(1 - _gForce) >= 0.25)
-			buf.append("G-FORCE ");
-		if (getFuelRemaining() < 25)
-			buf.append("NO FUEL ");
+			warns.add(Warning.PITCH);
+		if (Math.abs(1 - _gForce) >= 0.333)
+			warns.add(Warning.GFORCE);
+		if ((getGroundSpeed() > 30) && ((getPhase() == FlightPhase.TAXIIN) || (getPhase() == FlightPhase.TAXIOUT)))
+			warns.add(Warning.TAXISPEED);
+		if (getFuelRemaining() < 20)
+			warns.add(Warning.NOFUEL);
 		if (isFlagSet(FLAG_STALL))
-			buf.append("STALL ");
+			warns.add(Warning.STALL);
 		if (isFlagSet(FLAG_OVERSPEED))
-			buf.append("OVERSPEED ");
+			warns.add(Warning.OVERSPEED);
 		if ((getAltitude() > 45000) && (getMach() < 1.05))
-			buf.append("ALTITUDE ");
+			warns.add(Warning.ALTITUDE);
 		if (getAirspace().isRestricted())
-			buf.append("AIRSPACE ");
+			warns.add(Warning.AIRSPACE);
 		if (isFlagSet(FLAG_GEARDOWN) && (getAirSpeed() > 250))
-			buf.append("GEAR SPEED ");
-		if (!isFlagSet(FLAG_GEARDOWN) && isFlagSet(FLAG_ONGROUND))
-			buf.append("GEAR UP ");
+			warns.add(Warning.GEARSPEED);
+		if (!isFlagSet(FLAG_GEARDOWN)) {
+			if (isFlagSet(FLAG_ONGROUND) || ((_vSpeed < 100) && (_radarAlt < 1000)))
+				warns.add(Warning.GEARUP);
+		}
+			
 		if (isFlagSet(FLAG_CRASH))
-			buf.append("CRASH");
+			warns.add(Warning.CRASH);
 		
-		if (buf.length() == 0)
-			return null;
-		
-		buf.setLength(buf.length() -1);
-		return buf.toString();
+		return warns;
 	}
 
 	/**
@@ -696,10 +690,15 @@ public class ACARSRouteEntry extends RouteEntry {
 			buf.append("MB</span><br />");
 		}
 		
-		String warn = getWarning();
-		if (warn != null) {
-			buf.append("<span class=\"error bld\">");
-			buf.append(warn);
+		Collection<Warning> warns = getWarnings();
+		if (!warns.isEmpty()) {
+			buf.append("<span class=\"error bld caps\">");
+			for (Iterator<Warning> i = warns.iterator(); i.hasNext(); ) {
+				buf.append(i.next().getDescription());
+				if (i.hasNext())
+					buf.append(' ');
+			}
+
 			buf.append("</span><br />");
 		}
 		

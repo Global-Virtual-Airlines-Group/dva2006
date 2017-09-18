@@ -2,8 +2,11 @@
 package org.deltava.beans.acars;
 
 import java.time.Instant;
+import java.util.Collection;
+import java.util.Iterator;
 
 import org.deltava.beans.*;
+import org.deltava.beans.flight.Warning;
 import org.deltava.beans.navdata.AirspaceType;
 
 import org.deltava.util.StringUtils;
@@ -13,7 +16,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
- * @version 7.3
+ * @version 8.0
  * @since 1.0
  */
 
@@ -333,14 +336,14 @@ public abstract class RouteEntry extends ACARSMapEntry implements GeospaceLocati
 	 * @return TRUE if the entry should be noted, otherwise FALSE
 	 */
 	public boolean isWarning() {
-		return (getWarning() != null);
+		return (getWarnings().size() > 0);
 	}
 	
 	/**
 	 * Returns the warning message.
 	 * @return the warning
 	 */
-	public abstract String getWarning();
+	public abstract Collection<Warning> getWarnings();
 
 	/**
 	 * Compares two route entries by comparing their date/times.
@@ -398,10 +401,15 @@ public abstract class RouteEntry extends ACARSMapEntry implements GeospaceLocati
 		// Add Pause/Stall/Warning flags
 		if (isFlagSet(FLAG_PAUSED))
 			buf.append("<span class=\"error\">FLIGHT PAUSED</span><br />");
-		String warn = getWarning();
-		if (warn != null) {
-			buf.append("<span class=\"error bld\">");
-			buf.append(warn);
+		Collection<Warning> warns = getWarnings();
+		if (!warns.isEmpty()) {
+			buf.append("<span class=\"error bld caps\">");
+			for (Iterator<Warning> i = warns.iterator(); i.hasNext(); ) {
+				buf.append(i.next().getDescription());
+				if (i.hasNext())
+					buf.append(' ');
+			}
+					
 			buf.append("</span>");
 		}
 		
