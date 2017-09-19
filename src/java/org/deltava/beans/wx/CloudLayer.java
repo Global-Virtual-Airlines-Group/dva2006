@@ -1,10 +1,10 @@
-// Copyright 2009, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2011, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.wx;
 
 /**
  * A bean to store cloud layer data.
  * @author Luke
- * @version 7.0
+ * @version 8.0
  * @since 2.6
  */
 
@@ -57,7 +57,7 @@ public class CloudLayer implements Comparable<CloudLayer> {
 	
 	private Type _type = Type.C;
 	private Amount _amt;
-	private int _height;
+	private final int _height;
 
 	/**
 	 * Initializes the bean.
@@ -108,12 +108,9 @@ public class CloudLayer implements Comparable<CloudLayer> {
 		_amt = amt;
 	}
 
-	/**
-	 * Compares two cloud layers by comparing their heights.
-	 */
 	@Override
 	public int compareTo(CloudLayer cl2) {
-		return Integer.valueOf(_height).compareTo(Integer.valueOf(cl2._height));
+		return Integer.compare(_height, cl2._height);
 	}
 	
 	@Override

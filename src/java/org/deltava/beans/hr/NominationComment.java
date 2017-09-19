@@ -1,4 +1,4 @@
-// Copyright 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.hr;
 
 import java.time.Instant;
@@ -8,7 +8,7 @@ import org.deltava.beans.*;
 /**
  * A bean to track Senior Captain nomination comments.
  * @author Luke
- * @version 3.3
+ * @version 8.0
  * @since 3.3
  */
 
@@ -98,7 +98,7 @@ public class NominationComment extends DatabaseBean implements AuthoredBean, Vie
 	public int compareTo(Object o2) {
 		NominationComment nc2 = (NominationComment) o2;
 		int tmpResult = _created.compareTo(nc2._created);
-		return (tmpResult == 0) ? Integer.valueOf(getID()).compareTo(Integer.valueOf(nc2.getID())) : tmpResult;
+		return (tmpResult == 0) ? Integer.compare(getID(), nc2.getID()) : tmpResult;
 	}
 	
 	@Override

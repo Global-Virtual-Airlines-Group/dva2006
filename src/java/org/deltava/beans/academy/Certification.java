@@ -9,7 +9,7 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * A bean to store Flight Academy certification data.
  * @author Luke
- * @version 7.4
+ * @version 8.0
  * @since 1.0
  */
 
@@ -534,12 +534,9 @@ public class Certification implements java.io.Serializable, ComboAlias, ViewEntr
 		return _active ? null : "opt1";
 	}
 
-	/**
-	 * Compares two certifications by comparing their stage and name.
-	 */
 	@Override
 	public int compareTo(Certification c2) {
-		int tmpResult = Integer.valueOf(_stage).compareTo(Integer.valueOf(c2._stage));
+		int tmpResult = Integer.compare(_stage, c2._stage);
 		return (tmpResult == 0) ? _name.compareTo(c2._name) : tmpResult;
 	}
 	
@@ -548,9 +545,6 @@ public class Certification implements java.io.Serializable, ComboAlias, ViewEntr
 		return _code.hashCode();
 	}
 	
-	/**
-	 * Returns the Certification name.
-	 */
 	@Override
 	public String toString() {
 		return _name;

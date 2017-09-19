@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.GeoPosition;
  * A bean to store Airway names and waypoint data. Since there can be multiple Airways across the world with the
  * same code, each intersection can be flagged as "end of sequence" deliniating the end of a particular airway sequence.
  * @author Luke
- * @version 6.4
+ * @version 8.0
  * @since 1.0
  */
 
@@ -225,13 +225,10 @@ public class Airway implements Comparable<Airway>, Route, GeoLocation {
 		_highLevel = isHigh;
 	}
 
-	/**
-	 * Compares two airways by comparing their names and sequence numbers.
-	 */
 	@Override
 	public int compareTo(Airway a2) {
 		int tmpResult = _code.compareTo(a2._code);
-		return (tmpResult == 0) ? Integer.valueOf(_awseq).compareTo(Integer.valueOf(_awseq)) : tmpResult;
+		return (tmpResult == 0) ? Integer.compare(_awseq, a2._awseq) : tmpResult;
 	}
 	
 	@Override

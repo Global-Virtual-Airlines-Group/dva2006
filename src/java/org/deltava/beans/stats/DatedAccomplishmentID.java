@@ -1,4 +1,4 @@
-// Copyright 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import java.time.Instant;
@@ -7,7 +7,7 @@ import java.time.Instant;
  * A bean to store accomplishment IDs and Dates. This is used to improve
  * cacheability over storing merely the Accomoplishment ID.  
  * @author Luke
- * @version 7.0
+ * @version 8.0
  * @since 3.2
  */
 
@@ -46,6 +46,6 @@ public class DatedAccomplishmentID implements java.io.Serializable, Comparable<D
 	@Override
 	public int compareTo(DatedAccomplishmentID id2) {
 		int tmpResult = _dt.compareTo(id2._dt);
-		return (tmpResult == 0) ? Integer.valueOf(_id).compareTo(Integer.valueOf(id2._id)) : tmpResult;
+		return (tmpResult == 0) ? Integer.compare(_id, id2._id) : tmpResult;
 	}
 }

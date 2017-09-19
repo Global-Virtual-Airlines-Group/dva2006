@@ -1,4 +1,4 @@
-// Copyright 2009, 2012, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2012, 2013, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 import java.math.BigInteger;
@@ -8,7 +8,7 @@ import org.deltava.util.*;
 /**
  * A bean to store IPv6 address block information.
  * @author Luke
- * @version 7.0
+ * @version 8.0
  * @since 5.2
  */
 
@@ -46,9 +46,6 @@ public class IP6Block extends IPBlock {
 		return (ia.compareTo(_rawEndAddr) > -1) && (ia.compareTo(_endAddr) < 1);
 	}
 
-	/**
-	 * Compares two IP Ranges by comparing their base addresses and mask sizes.
-	 */
 	@Override
 	public int compareTo(IPBlock ib2) {
 		int tmpResult = IPAddress.IPV6.compareTo(ib2.getType());
@@ -56,7 +53,7 @@ public class IP6Block extends IPBlock {
 			IP6Block ib6 = (IP6Block) ib2;
 			tmpResult = _rawEndAddr.compareTo(ib6._rawEndAddr);
 			if (tmpResult == 0)
-				tmpResult = Integer.valueOf(getBits()).compareTo(Integer.valueOf(ib6.getBits()));
+				tmpResult = Integer.compare(getBits(), ib6.getBits());
 		}
 		
 		return tmpResult;

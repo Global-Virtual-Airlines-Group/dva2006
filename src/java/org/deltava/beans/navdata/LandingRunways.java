@@ -1,4 +1,4 @@
-// Copyright 2012, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2013, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.util.GeoUtils;
 /**
  * A bean to store runway selection results. 
  * @author Luke
- * @version 6.4
+ * @version 8.0
  * @since 4.2
  */
 
@@ -78,7 +78,7 @@ public class LandingRunways {
 		
 		@Override
 		public int compareTo(PossibleRunway pr) {
-			int tmpResult = Integer.valueOf((int) _hdgDiff / 45).compareTo(Integer.valueOf((int) pr._hdgDiff / 45));
+			int tmpResult = Integer.compare((int) _hdgDiff / 45, (int) pr._hdgDiff / 45);
 			if (tmpResult == 0)
 				tmpResult = Double.valueOf(_xBrgDiff).compareTo(Double.valueOf(pr._xBrgDiff));
 			return (tmpResult == 0) ? Double.valueOf(_brgDiff).compareTo(Double.valueOf(pr._brgDiff)) : tmpResult;

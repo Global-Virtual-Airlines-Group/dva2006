@@ -9,7 +9,7 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * A bean to define Pilot Accomplishments.
  * @author Luke
- * @version 7.4
+ * @version 8.0
  * @since 3.2
  */
 
@@ -255,7 +255,7 @@ public class Accomplishment extends DatabaseBean implements ComboAlias, Auditabl
 		Accomplishment a2 = (Accomplishment) o;
 		int tmpResult = _unit.compareTo(a2._unit);
 		if (tmpResult == 0)
-			tmpResult = Integer.valueOf(_value).compareTo(Integer.valueOf(a2._value));
+			tmpResult = Integer.compare(_value, a2._value);
 			
 		return (tmpResult == 0) ? _name.compareTo(a2._name) : tmpResult;
 	}

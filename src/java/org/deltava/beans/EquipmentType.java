@@ -10,7 +10,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A class for storing equipment program information.
  * @author Luke
- * @version 7.4
+ * @version 8.0
  * @since 1.0
  */
 
@@ -578,7 +578,7 @@ public class EquipmentType implements Cacheable, Auditable, Comparable<Equipment
      */
     @Override
     public int compareTo(EquipmentType et2) {
-        int tmp = Integer.valueOf(_stage).compareTo(Integer.valueOf(et2._stage));
+        int tmp = Integer.compare(_stage, et2._stage);
         return (tmp == 0) ? _name.compareTo(et2._name) : tmp;
     }
     
