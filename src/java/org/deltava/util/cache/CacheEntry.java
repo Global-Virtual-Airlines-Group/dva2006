@@ -4,7 +4,7 @@ package org.deltava.util.cache;
 /**
  * An abstract class to handle cache entries.
  * @author Luke
- * @version 7.3
+ * @version 8.0
  * @since 1.0
  * @param <T> the cacheable object type
  */
@@ -71,6 +71,6 @@ abstract class CacheEntry<T extends Cacheable> implements java.io.Serializable, 
 
 	@Override
 	public int compareTo(CacheEntry<T> e2) {
-		return Long.valueOf(_createExpire).compareTo(Long.valueOf(e2._createExpire));
+		return Long.compare(_createExpire, e2._createExpire);
 	}
 }

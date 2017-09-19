@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2011, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.dispatch;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.security.command.DispatchScheduleAccessControl;
 /**
  * A Web Site Command to display the ACARS Dispatch service calendar.
  * @author Luke
- * @version 7.0
+ * @version 8.0
  * @since 2.2
  */
 
@@ -31,7 +31,7 @@ public class ServiceCalendarCommand extends AbstractCalendarCommand {
 		
 		@Override
 		public int compare(DispatchConnectionEntry dce1, DispatchConnectionEntry dce2) {
-			int tmpResult = Integer.valueOf(dce1.getAuthorID()).compareTo(Integer.valueOf(dce2.getAuthorID()));
+			int tmpResult = Integer.compare(dce1.getAuthorID(), dce2.getAuthorID());
 			if (tmpResult == 0)
 				tmpResult = dce1.getStartTime().compareTo(dce2.getStartTime());
 			
