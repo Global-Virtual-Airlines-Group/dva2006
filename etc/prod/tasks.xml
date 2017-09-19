@@ -344,4 +344,15 @@
             <wday>*</wday>
         </time>
     </task>
+
+	<task id="currencyrating" enabled="false">
+	    <class>org.deltava.tasks.CurrencyRatingTask</class>
+	    <time>
+            <min>45</min>
+            <hour>8</hour>
+            <mday>*</mday>
+            <month>*</month>
+            <wday>*</wday>
+        </time>
+    </task>
 </tasks>
