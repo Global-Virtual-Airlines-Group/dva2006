@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import java.time.Instant;
@@ -9,7 +9,7 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * An class to implement commonalities between user examinations and flight videos.
  * @author Luke
- * @version 7.0
+ * @version 8.0
  * @since 1.0
  */
 
@@ -321,13 +321,10 @@ public abstract class Test extends DatabaseBean implements AuthoredBean, ViewEnt
     	_owner = ai;
     }
     
-    /**
-     * Compares examinations/checkrides by comparing their date.
-     */
     @Override
     public int compareTo(Object o2) {
         Test t2 = (Test) o2;
         int tmpResult = _createdOn.compareTo(t2.getDate());
-        return (tmpResult == 0) ? Integer.valueOf(getID()).compareTo(Integer.valueOf(t2.getID())) : tmpResult;
+        return (tmpResult == 0) ? Integer.compare(getID(), t2.getID()) : tmpResult;
     }
 }

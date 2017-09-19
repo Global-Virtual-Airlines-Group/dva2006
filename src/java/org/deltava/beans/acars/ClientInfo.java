@@ -4,7 +4,7 @@ package org.deltava.beans.acars;
 /**
  * A bean to store ACARS client versions.
  * @author Luke
- * @version 7.5
+ * @version 8.0
  * @since 4.1
  */
 
@@ -103,12 +103,9 @@ public class ClientInfo implements ClientVersion, Comparable<ClientVersion>, jav
 	public int compareTo(ClientVersion c2) {
 		int tmpResult = _type.compareTo(c2.getClientType());
 		if (tmpResult == 0)
-			tmpResult = Integer.valueOf(_version).compareTo(Integer.valueOf(c2.getVersion()));
+			tmpResult = Integer.compare(_version, c2.getVersion());
 		if (tmpResult == 0)
-			tmpResult = Integer.valueOf(_build).compareTo(Integer.valueOf(c2.getClientBuild()));
-		if (tmpResult == 0)
-			tmpResult = Integer.valueOf(_beta).compareTo(Integer.valueOf(c2.getBeta()));
-		
-		return tmpResult;
+			tmpResult = Integer.compare(_build, c2.getClientBuild());
+		return (tmpResult == 0) ? Integer.compare(_beta, c2.getBeta()) : tmpResult;
 	}
 }

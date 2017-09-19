@@ -1,4 +1,4 @@
-// Copyright 2009, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2012, 2013, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 import org.deltava.util.*;
@@ -6,7 +6,7 @@ import org.deltava.util.*;
 /**
  * A bean to store IP address block information.
  * @author Luke
- * @version 5.2
+ * @version 8.0
  * @since 5.2
  */
 
@@ -44,9 +44,9 @@ public class IP4Block extends IPBlock {
 		int tmpResult = IPAddress.IPV4.compareTo(ib2.getType());
 		if (tmpResult == 0) {
 			IP4Block ib4 = (IP4Block) ib2;
-			tmpResult = Long.valueOf(_rawAddr).compareTo(Long.valueOf(ib4._rawAddr));
+			tmpResult = Long.compare(_rawAddr, ib4._rawAddr);
 			if (tmpResult == 0)
-				tmpResult = Integer.valueOf(getBits()).compareTo(Integer.valueOf(ib4.getBits()));
+				tmpResult = Integer.compare(getBits(), ib4.getBits());
 		}
 		
 		return tmpResult;

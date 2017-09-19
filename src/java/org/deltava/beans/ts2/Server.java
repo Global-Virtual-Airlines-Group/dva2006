@@ -9,7 +9,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store TeamSpeak 2 server information.
  * @author Luke
- * @version 7.2
+ * @version 8.0
  * @since 1.0
  */
 
@@ -284,10 +284,6 @@ public class Server extends TSObject implements ComboAlias, ViewEntry {
 		_autoVoice = autoVoice;
 	}
 
-	/**
-	 * Returns the CSS class name when rendered in a view table.
-	 * @return the CSS class name
-	 */
 	@Override
 	public String getRowClassName() {
 		if (!_active)
@@ -296,21 +292,13 @@ public class Server extends TSObject implements ComboAlias, ViewEntry {
 		return _acarsOnly ? "opt2" : null;
 	}
 
-	/**
-	 * Comapres two servers by comparing their names and ports.
-	 * @see Comparable#compareTo(Object)
-	 */
 	@Override
 	public int compareTo(Object o) {
 		Server s2 = (Server) o;
 		int tmpResult = _name.compareTo(s2._name);
-		return (tmpResult == 0) ? Integer.valueOf(_port).compareTo(Integer.valueOf(s2._port)) : tmpResult;
+		return (tmpResult == 0) ? Integer.compare(_port, s2._port) : tmpResult;
 	}
 
-	/**
-	 * Returns the Server name.
-	 * @return the name
-	 */
 	@Override
 	public String toString() {
 		return _name;

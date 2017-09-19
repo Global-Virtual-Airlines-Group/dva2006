@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store common properties for Navigation Database objects.
  * @author Luke
- * @version 7.2
+ * @version 8.0
  * @since 1.0
  */
 
@@ -171,7 +171,7 @@ public abstract class NavigationDataBean implements Cloneable, Cacheable, Compar
 			GeoPosition gp = new GeoPosition(0, 0);
 			int d1 = gp.distanceTo(this);
 			int d2 = gp.distanceTo(nb2);
-			tmpResult = Integer.valueOf(d1).compareTo(Integer.valueOf(d2));
+			tmpResult = Integer.compare(d1, d2);
 		}
 
 		return tmpResult;

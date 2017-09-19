@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2010, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2010, 2012, 2014, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.academy;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.testing.CheckRide;
 /**
  * A bean to store Flight Academy Course information.
  * @author Luke
- * @version 5.3
+ * @version 8.0
  * @since 1.0
  */
 
@@ -341,13 +341,10 @@ public class Course extends DatabaseBean implements ViewEntry {
 	@Override
 	public int compareTo(Object o) {
 		Course c2 = (Course) o;
-		int tmpResult = Integer.valueOf(_pilotID).compareTo(Integer.valueOf(c2._pilotID));
+		int tmpResult = Integer.compare(_pilotID, c2._pilotID);
 		return (tmpResult == 0) ? _startDate.compareTo(c2._startDate) : tmpResult;
 	}
 	
-	/**
-	 * Returns the Certification name.
-	 */
 	@Override
 	public String toString() {
 		return _certName;

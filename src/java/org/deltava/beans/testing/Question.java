@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import org.deltava.beans.ImageBean;
@@ -6,7 +6,7 @@ import org.deltava.beans.ImageBean;
 /**
  * A class to store examination question information.
  * @author Luke
- * @version 7.0
+ * @version 8.0
  * @since 1.0
  */
 
@@ -115,14 +115,10 @@ public class Question extends ImageBean {
     /**
      * Updates the Question Number.
      * @param number the question number
-     * @throws IllegalArgumentException if number is zero or negative
      * @see Question#getNumber()
      */
     public void setNumber(int number) {
-        if (number < 1)
-            throw new IllegalArgumentException("Question Number cannot be zero or negative");
-        
-        _number = number;
+        _number = Math.max(1, number);
     }
     
     /**
@@ -132,6 +128,6 @@ public class Question extends ImageBean {
     @Override
     public int compareTo(Object o2) {
         Question q2 = (Question) o2;
-        return Integer.valueOf(_number).compareTo(Integer.valueOf(q2._number));
+        return Integer.compare(_number, q2._number);
     }
 }
