@@ -26,17 +26,16 @@
 <content:js name="dayNightLayer" />
 <content:js name="googleMapsWX" />
 <content:js name="wxParsers" />
-<script type="text/javascript">
+<script>
 var loaders = {};
 loaders.fir = new golgotha.maps.LayerLoader('FIRs', golgotha.maps.FIRParser);
 loaders.fr = new golgotha.maps.LayerLoader('Fronts', golgotha.maps.fronts.FrontParser);
 loaders.series = new golgotha.maps.SeriesLoader();
-loaders.series.setData('radar', 0.45, 'wxRadar', 1024);
-loaders.series.setData('eurorad', 0.45, 'wxRadar', 512);
-loaders.series.setData('aussieradar', 0.45, 'wxRadar', 512);
-loaders.series.setData('future_radar_ff', 0.45, 'wxRadar', 1024);
+loaders.series.setData('twcRadarHcMosaic', 0.45, 'wxRadar');
+loaders.series.setData('futureRadar', 0.45, 'wxRadar');
 loaders.series.setData('temp', 0.275, 'wxTemp');
-loaders.series.setData('windspeed', 0.325, 'wxWind');
+loaders.series.setData('windSpeed', 0.325, 'wxWind', 256, true);
+loaders.series.setData('windSpeedGust', 0.375, 'wxGust', 256, true);
 loaders.series.onload(function() { golgotha.util.enable('#selImg'); });
 loaders.fr.onload(function() { golgotha.util.enable('selFronts'); });
 loaders.fir.onload(function() { golgotha.util.enable('selFIR'); });
@@ -162,7 +161,7 @@ golgotha.maps.acars.showEarth = function() {
 <content:sysdata var="wuAPI" name="security.key.wunderground" />
 <script id="mapInit" async>
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
-var mapOpts = {center:golgotha.local.mapC, minZoom:2, maxZoom:17, zoom:${zoomLevel}, scrollwheel:true, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
+var mapOpts = {center:golgotha.local.mapC, minZoom:3, maxZoom:17, zoom:${zoomLevel}, scrollwheel:true, clickableIcons:false, streetViewControl:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
 
 // Create the map
 var map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
@@ -179,11 +178,11 @@ map.controls[google.maps.ControlPosition.TOP_CENTER].push(golgotha.maps.util.pro
 // Build the weather layer controls
 var ctls = map.controls[google.maps.ControlPosition.BOTTOM_LEFT];
 var loop = function() { return loaders.series.combine(12, 'radar', 'future_radar_ff'); };
-var worldRadar = function() { return [loaders.series.getLatest('radar'), loaders.series.getLatest('eurorad'), loaders.series.getLatest('aussieradar')]; };
 var hjsl = new golgotha.maps.ShapeLayer({maxZoom:8, nativeZoom:6, opacity:0.55, zIndex:golgotha.maps.z.OVERLAY}, 'High Jet', 'wind-jet');
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Radar', disabled:true, c:'selImg'}, worldRadar));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Radar', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('twcRadarHcMosaic'); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Temperature', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('temp'); }));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Wind Speed', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('windspeed'); }));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Wind Speed', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('windSpeed'); }));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Wind Gusts', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('windSpeedGust'); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Clouds', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('sat'); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Fronts', disabled:true, id:'selFronts'}, function() { return loaders.fr.getLayer(); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Jet Stream'}, hjsl));
@@ -220,14 +219,14 @@ golgotha.maps.reloadData = function(isReload) {
 		console.log('Animating Map - reload skipped');
 		return false;
 	}
-	
+
 	var dv = document.getElementById('seriesRefresh');
 	if (dv != null) {
 		var txtDate = new Date().toString();
 		dv.innerHTML = txtDate.substring(0, txtDate.indexOf('('));
 	}
 
-	golgotha.util.createScript({id:'wxLoader', url:('//' + self.location.host + '/wx/serieslist.js?function=loaders.series.loadGinsu'), async:true});
+	loaders.series.loadGinsu();
 	return true;
 };
 </script>

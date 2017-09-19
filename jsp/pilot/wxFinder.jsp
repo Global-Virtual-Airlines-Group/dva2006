@@ -19,16 +19,15 @@
 <content:js name="googleMapsWX" />
 <content:js name="wxParsers" />
 <content:googleAnalytics eventSupport="true" />
-<script type="text/javascript">
+<script>
 var loaders = {};
 loaders.series = new golgotha.maps.SeriesLoader();
 loaders.lg = new golgotha.maps.LayerLoader('Lightning', golgotha.maps.LightningParser);
 loaders.fr = new golgotha.maps.LayerLoader('Fronts', golgotha.maps.fronts.FrontParser);
-loaders.series.setData('radar', 0.45, 'wxRadar', 1024);
-loaders.series.setData('eurorad', 0.45, 'wxRadar', 512);
-loaders.series.setData('aussieradar', 0.45, 'wxRadar', 512);
+loaders.series.setData('twcRadarHcMosaic', 0.45, 'wxRadar');
 loaders.series.setData('temp', 0.275, 'wxTemp');
-loaders.series.setData('windspeed', 0.325, 'wxWind');
+loaders.series.setData('windSpeed', 0.325, 'wxWind', 256, true);
+loaders.series.setData('windSpeedGust', 0.375, 'wxGust', 256, true);
 loaders.series.onload(function() { golgotha.util.enable('#selImg'); });
 loaders.fr.onload(function() { golgotha.util.enable('selFronts'); });
 loaders.lg.onload(function() { golgotha.util.enable('selLG'); });
@@ -82,10 +81,10 @@ return true;
 </content:region>
 </content:page>
 <content:sysdata var="wuAPI" name="security.key.wunderground" />
-<script id="mapInit">
+<script id="mapInit" async>
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
 var mapTypes = {mapTypeIds:golgotha.maps.DEFAULT_TYPES};
-var mapOpts = {center:golgotha.local.mapC, zoom:4, minZoom:2, maxZoom:9, scrollwheel:false, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:mapTypes};
+var mapOpts = {center:golgotha.local.mapC, zoom:4, minZoom:3, maxZoom:9, scrollwheel:false, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:mapTypes};
 
 // Create the map
 var map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
@@ -106,10 +105,10 @@ map.addMarkers(golgotha.local.wxAirports);
 
 // Build the layer controls
 var ctls = map.controls[google.maps.ControlPosition.BOTTOM_LEFT];
-var worldRadar = function() { return [loaders.series.getLatest('radar'), loaders.series.getLatest('eurorad'), loaders.series.getLatest('aussieradar')]; };
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Radar', disabled:true, c:'selImg'}, worldRadar));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Radar', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('twcRadarHcMosaic'); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Temperature', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('temp'); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Wind Speed', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('windSpeed'); }));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Wind Gusts', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('windSpeedGust'); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Clouds', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('sat'); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Fronts', disabled:true, id:'selFronts'}, function() { return loaders.fr.getLayer(); }));
 ctls.push(new golgotha.maps.LayerClearControl(map));
@@ -133,8 +132,7 @@ golgotha.maps.reloadData = function(isReload) {
 
 	var dv = document.getElementById('seriesRefresh');
 	if (dv != null) dv.innerHTML = new Date();
-	golgotha.util.createScript({id:'wxLoader', url:('//' + self.location.host + '/wx/serieslist.js?function=loaders.series.loadGinsu'), async:true});
-	golgotha.util.createScript({id:'lgAlert', url:'/wxd/LGRecord/CURRENT?jsonp=loaders.lg.load', async:true});
+	loaders.series.loadGinsu();
 	return true;
 };
 </script>
