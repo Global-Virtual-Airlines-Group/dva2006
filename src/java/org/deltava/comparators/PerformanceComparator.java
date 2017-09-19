@@ -1,4 +1,4 @@
-// Copyright 2006, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
 import org.deltava.beans.stats.PerformanceMetrics;
@@ -6,7 +6,7 @@ import org.deltava.beans.stats.PerformanceMetrics;
 /**
  * A Comparator to sort Performance Metrics beans.
  * @author Luke
- * @version 7.0
+ * @version 8.0
  * @since 1.0
  */
 
@@ -63,7 +63,7 @@ public class PerformanceComparator extends AbstractComparator<PerformanceMetrics
 				return new Double(m1.getMinimum()).compareTo(new Double(m2.getMinimum()));
 
 			case COUNT:
-				return Long.valueOf(m1.getCount()).compareTo(Long.valueOf(m2.getCount()));
+				return Long.compare(m1.getCount(), m2.getCount());
 
 			default:
 				return m1.compareTo(m2);

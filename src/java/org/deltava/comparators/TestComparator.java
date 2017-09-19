@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2010, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
 import org.deltava.beans.testing.*;
@@ -6,7 +6,7 @@ import org.deltava.beans.testing.*;
 /**
  * A comparator for sorting Examination and Check Ride objects.
  * @author Luke
- * @version 7.0
+ * @version 8.0
  * @since 1.0
  */
 
@@ -51,7 +51,7 @@ public class TestComparator extends AbstractComparator<Test> {
 				return t1.getDate().compareTo(t2.getDate());
 				
 			case SCORE:
-				return Integer.valueOf(t1.getScore()).compareTo(Integer.valueOf(t2.getScore()));
+				return Integer.compare(t1.getScore(), t2.getScore());
 
 			case PERCENT:
 				double pct1 = (t1 instanceof Examination) ? (t1.getScore() / t1.getSize()) : t1.getScore();
@@ -62,7 +62,7 @@ public class TestComparator extends AbstractComparator<Test> {
 				return t1.getClass().getName().compareTo(t2.getClass().getName());
 				
 			default:
-				return 0;
+				return t1.compareTo(t2);
 		}
 	}
 }

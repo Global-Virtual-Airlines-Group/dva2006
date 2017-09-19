@@ -1,4 +1,4 @@
-// Copyright 2011, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
 import org.deltava.beans.schedule.*;
@@ -6,7 +6,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A comparator for Schedule entries.
  * @author Luke
- * @version 7.0
+ * @version 8.0
  * @since 4.1
  */
 
@@ -58,16 +58,16 @@ public class ScheduleEntryComparator extends AbstractComparator<ScheduleEntry> {
 				return se1.getTimeA().compareTo(se2.getTimeA());
 				
 			case LENGTH:
-				return Integer.valueOf(se1.getLength()).compareTo(Integer.valueOf(se2.getLength()));
+				return Integer.compare(se1.getLength(), se2.getLength());
 				
 			case DISTANCE:
-				return Integer.valueOf(se1.getDistance()).compareTo(Integer.valueOf(se2.getDistance()));
+				return Integer.compare(se1.getDistance(), se2.getDistance());
 				
 			case FLCOUNT:
 				if ((se1 instanceof ScheduleSearchEntry) && (se2 instanceof ScheduleSearchEntry)) {
 					ScheduleSearchEntry sse1 = (ScheduleSearchEntry) se1;
 					ScheduleSearchEntry sse2 = (ScheduleSearchEntry) se2;
-					return Integer.valueOf(sse1.getFlightCount()).compareTo(Integer.valueOf(sse2.getFlightCount()));
+					return Integer.compare(sse1.getFlightCount(), sse2.getFlightCount());
 				}
 				
 				return se1.compareTo(se2);
