@@ -1,4 +1,4 @@
-// Copyright 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
  * A helper class to calculate diversion airports. Airports are given a score based on maximum
  * runway length in excess of minimums and distance from the destination.
  * @author Luke
- * @version 6.0
+ * @version 8.0
  * @since 4.2
  */
 
@@ -51,8 +51,8 @@ public class AlternateAirportHelper {
 		
 		@Override
 		public int compareTo(Score s2) {
-			int tmpResult = Integer.valueOf(_aggScore).compareTo(Integer.valueOf(s2._aggScore));
-			return (tmpResult == 0) ? Integer.valueOf(_distance).compareTo(Integer.valueOf(s2._distance)) : tmpResult;
+			int tmpResult = Integer.compare(_aggScore, s2._aggScore);
+			return (tmpResult == 0) ? Integer.compare(_distance, s2._distance) : tmpResult;
 		}
 	}
 	

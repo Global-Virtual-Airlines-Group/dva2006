@@ -7,7 +7,7 @@ import org.deltava.beans.schedule.Airline;
 /**
  * A bean to store ACARS multi-player airline livery data.
  * @author Luke
- * @version 7.4
+ * @version 8.0
  * @since 2.2
  */
 
@@ -98,7 +98,7 @@ public class Livery implements Comparable<Livery>, java.io.Serializable, Auditab
 	public int compareTo(Livery l2) {
 		int tmpResult = _a.compareTo(l2._a);
 		if (tmpResult != 0)
-			tmpResult = Boolean.valueOf(_isDefault).compareTo(Boolean.valueOf(l2._isDefault)) * -1;
+			tmpResult = Boolean.compare(_isDefault, l2._isDefault) * -1;
 		
 		return (tmpResult == 0) ? _code.compareTo(l2._code) : tmpResult;
 	}

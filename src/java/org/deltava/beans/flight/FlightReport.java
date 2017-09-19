@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.Airline;
 /**
  * A class for dealing with PIREP data.
  * @author Luke
- * @version 7.5
+ * @version 8.0
  * @since 1.0
  */
 
@@ -618,23 +618,15 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 		setDatabaseID(DatabaseID.PILOT, id);
 	}
 
-	/**
-	 * Compare two Flight Reports by comparing their date/time.
-	 * @see Comparable#compareTo(Object)
-	 */
 	@Override
 	public int compareTo(Object o) {
 		FlightReport fr2 = (FlightReport) o;
-		int tmpResult = Integer.valueOf(getID()).compareTo(Integer.valueOf(fr2.getID()));
+		int tmpResult = Integer.compare(getID(), fr2.getID());
 		if ((tmpResult == 0) && (_date != null) && (fr2.getDate() != null))
 			tmpResult = _date.compareTo(fr2.getDate());
 		return (tmpResult == 0) ? super.compareTo(fr2) : tmpResult;
 	}
 
-	/**
-	 * Selects a table row class based upon the Flight Report status.
-	 * @return the row CSS class name
-	 */
 	@Override
 	public String getRowClassName() {
 		if (hasAttribute(ATTR_ACADEMY))

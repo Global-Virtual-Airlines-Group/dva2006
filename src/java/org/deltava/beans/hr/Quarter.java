@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.hr;
 
 import java.time.*;
@@ -7,7 +7,7 @@ import java.time.temporal.ChronoField;
 /**
  * A bean to convert Dates into Quarters.
  * @author Luke
- * @version 7.0
+ * @version 8.0
  * @since 3.3
  */
 
@@ -100,7 +100,7 @@ public class Quarter implements java.io.Serializable, Comparable<Quarter> {
 	
 	@Override
 	public int compareTo(Quarter q2) {
-		int tmpResult = Integer.valueOf(_year).compareTo(Integer.valueOf(q2._year));
-		return (tmpResult == 0) ? Integer.valueOf(_qtr).compareTo(Integer.valueOf(q2._qtr)) : tmpResult;
+		int tmpResult = Integer.compare(_year, q2._year);
+		return (tmpResult == 0) ? Integer.compare(_qtr, q2._qtr) : tmpResult;
 	}
 }

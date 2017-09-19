@@ -9,7 +9,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A class to store Flight information.
  * @author Luke
- * @version 7.5
+ * @version 8.0
  * @since 1.0
  */
 
@@ -189,13 +189,13 @@ public abstract class Flight extends DatabaseBean implements RoutePair {
         Flight f2 = (Flight) o2;
 
         // Compare the airline code
-        int tmpResult = _airline.compareTo(f2.getAirline());
+        int tmpResult = _airline.compareTo(f2._airline);
         if (tmpResult != 0)
             return tmpResult;
 
         // Compare the flight number and leg
-        tmpResult = Integer.valueOf(_flightNumber).compareTo(Integer.valueOf(f2.getFlightNumber()));
-        return (tmpResult != 0) ? tmpResult : Integer.valueOf(_leg).compareTo(Integer.valueOf(f2.getLeg()));
+        tmpResult = Integer.compare(_flightNumber, f2._flightNumber);
+        return (tmpResult != 0) ? tmpResult : Integer.compare(_leg, f2._leg);
     }
 
     /**

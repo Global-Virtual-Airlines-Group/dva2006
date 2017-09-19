@@ -1,4 +1,4 @@
-// Copyright 2008, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2010, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.time.Instant;
@@ -7,7 +7,7 @@ import java.time.temporal.ChronoUnit;
 /**
  * A bean to store ACARS bandwidth statistics. 
  * @author Luke
- * @version 7.0
+ * @version 8.0
  * @since 2.1
  */
 
@@ -231,12 +231,9 @@ public class Bandwidth implements Comparable<Bandwidth> {
 		return _startDate.toString() + "-" + getEndDate().toString();
 	}
 	
-	/**
-	 * Compares two beans by comparing their start dates and intervals.
-	 */
 	@Override
 	public int compareTo(Bandwidth bw2) {
 		int tmpResult = _startDate.compareTo(bw2._startDate);
-		return (tmpResult == 0)  ? Integer.valueOf(_interval).compareTo(Integer.valueOf(bw2._interval)) : tmpResult;
+		return (tmpResult == 0)  ? Integer.compare(_interval, bw2._interval) : tmpResult;
 	}
 }

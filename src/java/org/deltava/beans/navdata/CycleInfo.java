@@ -1,4 +1,4 @@
-// Copyright 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2013, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.time.*;
@@ -10,7 +10,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store Navigation Data cycle information.
  * @author Luke
- * @version 7.0
+ * @version 8.0
  * @since 5.1
  */
 
@@ -106,8 +106,8 @@ public class CycleInfo implements Cacheable, ViewEntry, Comparable<CycleInfo> {
 
 	@Override
 	public int compareTo(CycleInfo c2) {
-		int tmpResult = Integer.valueOf(_year).compareTo(Integer.valueOf(c2._year));
-		return (tmpResult == 0) ? Integer.valueOf(_seq).compareTo(Integer.valueOf(c2._seq)) : tmpResult;
+		int tmpResult = Integer.compare(_year, c2._year);
+		return (tmpResult == 0) ? Integer.compare(_seq, c2._seq) : tmpResult;
 	}
 
 	@Override

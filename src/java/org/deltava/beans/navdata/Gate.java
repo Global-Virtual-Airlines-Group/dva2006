@@ -1,4 +1,4 @@
-// Copyright 2012, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.schedule.Airline;
 /**
  * A bean to store airport Gate information.
  * @author Luke
- * @version 7.0
+ * @version 8.0
  * @since 5.1
  */
 
@@ -225,6 +225,6 @@ public class Gate extends NavigationDataBean implements UseCount {
 			return super.compareTo(ndb2);
 		
 		Gate g2 = (Gate) ndb2;
-		return Integer.valueOf(_useCount).compareTo(Integer.valueOf(g2._useCount));
+		return Integer.compare(_useCount, g2._useCount);
 	}
 }
