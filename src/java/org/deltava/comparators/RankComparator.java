@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2010, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
 import org.deltava.beans.Rank;
@@ -7,7 +7,7 @@ import org.deltava.beans.Rank;
  * A Comparator to compare pilot rank/equipment program changes. This isn't a true comparator since it
  * doesn't implement {@link java.util.Comparator}, but it returns similar values.
  * @author Luke
- * @version 7.0
+ * @version 8.0
  * @since 1.0
  */
 
@@ -30,7 +30,7 @@ public class RankComparator {
       // Compare stages, and only ranks if stages are equal
       @Override
       public int compareTo(RankStage rs2) {
-         int tmpResult = Integer.valueOf(_stage).compareTo(Integer.valueOf(rs2._stage));
+         int tmpResult = Integer.compare(_stage, rs2._stage);
          return (tmpResult == 0) ? _rank.compareTo(rs2._rank) : tmpResult;
       }
    }

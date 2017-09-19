@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import java.time.Instant;
@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store ServInfo data for historical purposes.
  * @author Luke
- * @version 7.0
+ * @version 8.0
  * @since 2.4
  */
 
@@ -162,14 +162,11 @@ public class PositionData implements GeospaceLocation, MarkerMapEntry, Comparabl
 		return BLUE;
 	}
 
-	/**
-	 * Compares two positions by comparing their date/time.
-	 */
 	@Override
 	public int compareTo(PositionData pd2) {
 		int tmpResult = _dt.compareTo(pd2._dt);
 		if (tmpResult == 0)
-			tmpResult = Integer.valueOf(_pilotID).compareTo(Integer.valueOf(pd2._pilotID));
+			tmpResult = Integer.compare(_pilotID, pd2._pilotID);
 		
 		return tmpResult;
 	}

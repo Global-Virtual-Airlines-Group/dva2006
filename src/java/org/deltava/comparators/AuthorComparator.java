@@ -1,4 +1,4 @@
-// Copyright 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
 import java.util.Comparator;
@@ -8,7 +8,7 @@ import org.deltava.beans.AuthoredBean;
 /**
  * A Comparator to sort AuthoredBean objects.
  * @author Luke
- * @version 7.0
+ * @version 8.0
  * @since 3.1
  */
 
@@ -32,12 +32,9 @@ public class AuthorComparator implements Comparator<AuthoredBean>, java.io.Seria
 		_isReverse = isReverse; 
 	}
 	
-	/**
-	 * Compares two AuthoredBeans by comparing their Author IDs.
-	 */
 	@Override
 	public int compare(AuthoredBean ab1, AuthoredBean ab2) {
-		int tmpResult = Integer.valueOf(ab1.getAuthorID()).compareTo(Integer.valueOf(ab2.getAuthorID()));
+		int tmpResult = Integer.compare(ab1.getAuthorID(), ab2.getAuthorID());
 		return _isReverse ? (tmpResult * -1) : tmpResult;
 	}
 }

@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2008, 2009, 2010, 2012, 2106 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2008, 2009, 2010, 2012, 2106, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
 import java.time.Instant;
@@ -8,7 +8,7 @@ import org.deltava.beans.*;
 /**
  * A comparator for sorting Pilot objects.
  * @author Luke
- * @version 7.0
+ * @version 8.0
  * @since 1.0
  */
 
@@ -51,13 +51,9 @@ public class PilotComparator extends PersonComparator<Pilot> {
         else if ((pc2 == 0) && (pc1 > 0))
             return -1;
         
-        // Do a regular comparison
-        return Integer.valueOf(pc1).compareTo(Integer.valueOf(pc2));
+        return Integer.compare(pc1, pc2);
     }
 
-    /**
-     * Compares two pilot objects by the designated criteria.
-     */
     @Override
 	protected int compareImpl(Pilot p1, Pilot p2) {
         
@@ -79,11 +75,11 @@ public class PilotComparator extends PersonComparator<Pilot> {
         		    break;
         		    
         		case LEGS :
-        		    tmpResult = Integer.valueOf(p1.getLegs()).compareTo(Integer.valueOf(p2.getLegs()));
+        		    tmpResult = Integer.compare(p1.getLegs(), p2.getLegs());
         		    break;
         		    
         		case STATUS :
-        		    tmpResult = Integer.valueOf(p1.getStatus()).compareTo(Integer.valueOf(p2.getStatus()));
+        		    tmpResult = Integer.compare(p1.getStatus(), p2.getStatus());
         		    break;
         		    
         		case LASTFLIGHT:
@@ -103,6 +99,6 @@ public class PilotComparator extends PersonComparator<Pilot> {
         		    return new Double(p1.getHours()).compareTo(new Double(p2.getHours()));
         }
         
-        return (tmpResult == 0) ? Integer.valueOf(p1.getID()).compareTo(Integer.valueOf(p2.getID())) : tmpResult;
+        return (tmpResult == 0) ? Integer.compare(p1.getID(), p2.getID()) : tmpResult;
     }
 }

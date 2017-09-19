@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
 import org.deltava.beans.flight.FlightReport;
@@ -7,7 +7,7 @@ import org.deltava.beans.schedule.Airport;
 /**
  * A comparator to sort Flight Reports.
  * @author Luke
- * @version 7.0
+ * @version 8.0
  * @since 1.0
  */
 
@@ -65,13 +65,16 @@ public class FlightReportComparator extends AbstractComparator<FlightReport> {
                 }
 
             case LENGTH:
-                return Integer.valueOf(f1.getLength()).compareTo(Integer.valueOf(f2.getLength()));
+                tmpResult = Integer.compare(f1.getLength(), f2.getLength());
+                return (tmpResult == 0) ? f1.compareTo(f2) : tmpResult;
 
             case DISTANCE:
-                return Integer.valueOf(f1.getDistance()).compareTo(Integer.valueOf(f2.getDistance()));
+                tmpResult = Integer.compare(f1.getDistance(), f2.getDistance());
+                return (tmpResult == 0) ? f1.compareTo(f2) : tmpResult;
 
             case EQUIPMENT:
-                return f1.getEquipmentType().compareTo(f2.getEquipmentType());
+                tmpResult = f1.getEquipmentType().compareTo(f2.getEquipmentType());
+                return (tmpResult == 0) ? f1.compareTo(f2) : tmpResult;
 
             case ORIGIN:
                 Airport aO = f1.getAirportD();
