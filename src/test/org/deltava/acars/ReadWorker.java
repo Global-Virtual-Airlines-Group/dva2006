@@ -37,7 +37,7 @@ class ReadWorker implements Runnable, Comparable<ReadWorker> {
 
 	@Override
 	public int compareTo(ReadWorker rw2) {
-		return Integer.valueOf(_id).compareTo(Integer.valueOf(rw2._id));
+		return Integer.compare(_id, rw2._id);
 	}
 	
 	private File getFile(int id) {
