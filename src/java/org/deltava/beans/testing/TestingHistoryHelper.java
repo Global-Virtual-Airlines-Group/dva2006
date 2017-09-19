@@ -36,12 +36,29 @@ public final class TestingHistoryHelper {
 	private final SortedSet<Test> _tests = new TreeSet<Test>();
 	private final Collection<FlightReport> _pireps = new ArrayList<FlightReport>();
 	private final Collection<EquipmentType> _allEQ = new TreeSet<EquipmentType>();
-	
+
+	/**
+	 * Utilty class to compare check rides by equipment program only, used to limit Sets to a single ride per program. 
+	 */
 	static class ExpiringRideComparator implements Comparator<CheckRide> {
 
 		@Override
 		public int compare(CheckRide cr1, CheckRide cr2) {
 			return cr1.getEquipmentType().compareTo(cr2.getEquipmentType());
+		}
+	}
+
+	/**
+	 * Utility class to sort check rides by expiration date.
+	 */
+	static class RideExpireComparator implements Comparator<CheckRide> {
+
+		@Override
+		public int compare(CheckRide cr1, CheckRide cr2) {
+			Instant e1 = (cr1.getExpirationDate() ==  null) ? Instant.MAX : cr1.getExpirationDate();
+			Instant e2 = (cr2.getExpirationDate() ==  null) ? Instant.MAX : cr2.getExpirationDate();
+			int tmpResult = e1.compareTo(e2);
+			return (tmpResult == 0) ? cr1.compareTo(cr2) : tmpResult;
 		}
 	}
 	
@@ -120,7 +137,7 @@ public final class TestingHistoryHelper {
 		Instant expDate = Instant.now().plus(expirationDays, ChronoUnit.DAYS);
 		Collection<CheckRide> expResults = new TreeSet<CheckRide>(new ExpiringRideComparator());
 		results.stream().filter(cr -> (!cr.getAcademy() && expDate.isAfter(cr.getExpirationDate()))).forEach(expResults::add);
-		return expResults;
+		return CollectionUtils.sort(expResults, new RideExpireComparator());
 	}
 	
 	/**

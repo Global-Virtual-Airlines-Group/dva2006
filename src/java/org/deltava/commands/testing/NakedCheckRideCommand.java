@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class NakedCheckRideCommand extends AbstractCommand {
+public class NakedCheckRideCommand extends AbstractTestHistoryCommand {
 
 	/**
 	 * Executes the command.
@@ -127,7 +127,11 @@ public class NakedCheckRideCommand extends AbstractCommand {
 			
 			// TODO: Check if this is recurrent or initial
 			RideType rt = RideType.CHECKRIDE;
-
+			if (p.getProficiencyCheckRides()) {
+				TestingHistoryHelper history = initTestHistory(p, con);
+				if (history.hasCheckRide(eqType, RideType.CHECKRIDE))
+					rt = RideType.CURRENCY;
+			}
 			
 			// Get the message template
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
@@ -137,7 +141,7 @@ public class NakedCheckRideCommand extends AbstractCommand {
 
 			// Check if we are using the script
 			String comments = ctx.getParameter("comments");
-			boolean useScript = Boolean.valueOf(ctx.getParameter("useScript")).booleanValue();
+			boolean useScript = Boolean.valueOf(ctx.getParameter("useScript")).booleanValue() || (rt == RideType.CURRENCY);
 			if (useScript) {
 				EquipmentRideScriptKey key = new EquipmentRideScriptKey(eqType.getName(), ctx.getParameter("crType"), (rt == RideType.CURRENCY));
 				GetExamProfiles epdao = new GetExamProfiles(con);
