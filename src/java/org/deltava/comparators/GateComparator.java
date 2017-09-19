@@ -1,4 +1,4 @@
-// Copyright 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
 import org.deltava.beans.navdata.Gate;
@@ -6,7 +6,7 @@ import org.deltava.beans.navdata.Gate;
 /**
  * A comparator for airport Gates.
  * @author Luke
- * @version 6.3
+ * @version 8.0
  * @since 5.1
  */
 
@@ -38,10 +38,10 @@ public class GateComparator extends AbstractComparator<Gate> {
     	switch (_comparisonType) {
     		case TYPENUMBER:
     			tmpResult = g1.getGateType().compareTo(g2.getGateType());
-    			return (tmpResult == 0) ? Integer.valueOf(g1.getGateNumber()).compareTo(Integer.valueOf(g2.getGateNumber())) : tmpResult;
+    			return (tmpResult == 0) ? Integer.compare(g1.getGateNumber(), g2.getGateNumber()) : tmpResult;
     			
     		case USAGE:
-    			tmpResult = Integer.valueOf(g1.getUseCount()).compareTo(Integer.valueOf(g2.getUseCount()));
+    			tmpResult = Integer.compare(g1.getUseCount(), g2.getUseCount());
     			if (tmpResult != 0)
     				return tmpResult;
     	
