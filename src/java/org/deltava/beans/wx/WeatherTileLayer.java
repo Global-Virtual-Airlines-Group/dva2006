@@ -14,7 +14,7 @@ import java.time.Instant;
 public class WeatherTileLayer implements Comparable<WeatherTileLayer>, java.io.Serializable {
 
 	private final String _name;
-	private final Collection<Instant> _dates = new TreeSet<Instant>();
+	private final Collection<Instant> _dates = new TreeSet<Instant>(Collections.reverseOrder());
 	
 	private int _nativeZoom;
 	private int _maxZoom;
