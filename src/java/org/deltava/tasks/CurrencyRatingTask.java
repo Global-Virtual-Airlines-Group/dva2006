@@ -2,16 +2,19 @@
 package org.deltava.tasks;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.flight.FlightReport;
+import org.deltava.beans.system.MessageTemplate;
 import org.deltava.beans.testing.*;
 
 import org.deltava.dao.*;
+import org.deltava.mail.*;
 import org.deltava.taskman.*;
-import org.deltava.util.CollectionUtils;
-import org.deltava.util.StringUtils;
+
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -37,6 +40,7 @@ public class CurrencyRatingTask extends Task {
 	protected void execute(TaskContext ctx) {
 		
 		int currencyDays = SystemData.getInt("testing.currency.validity", 365);
+		int expDays = Math.min(30, Math.max(15, SystemData.getInt("testing.currency.validity", 365)));
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -48,6 +52,10 @@ public class CurrencyRatingTask extends Task {
 			// Get all equipment types
 			GetEquipmentType eqdao = new GetEquipmentType(con);
 			Collection<EquipmentType> allEQ = eqdao.getActive();
+			
+			// Load message template
+			GetMessageTemplate mtdao = new GetMessageTemplate(con);
+			MessageTemplate mt = mtdao.get("CURREXPIRING");
 			
 			// Load their check rides, and determine what has expired
 			GetExam exdao = new GetExam(con);
@@ -89,6 +97,7 @@ public class CurrencyRatingTask extends Task {
 					Collection<String> removedRatings = CollectionUtils.getDelta(p.getRatings(), newRatings);
 					log.info(p.getName() + " lost " + myEQ + " rating, switching to " + newET);
 					log.info(p.getName() + " removed " + removedRatings + " ratings");
+					p.removeRatings(removedRatings);
 					
 					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.CURRENCY);
 					upd.setAuthorID(ctx.getUser().getID());
@@ -110,6 +119,17 @@ public class CurrencyRatingTask extends Task {
 					upds.add(upd);
 				} else
 					noUpdate = true;
+				
+				// Check if any ratings are expiring
+				Collection<CheckRide> expRides = helper.getCheckRides(expDays);
+				if (!expRides.isEmpty()) {
+					Collection<String> rideNames = expRides.stream().map(CheckRide::getName).collect(Collectors.toList());
+					MessageContext mctxt = new MessageContext();
+					mctxt.addData("exams", StringUtils.listConcat(rideNames, ", "));
+					mctxt.setTemplate(mt);
+					Mailer m = new Mailer(ctx.getUser());
+					m.send(p);
+				}
 				
 				if (!noUpdate) {
 					ctx.startTX();
