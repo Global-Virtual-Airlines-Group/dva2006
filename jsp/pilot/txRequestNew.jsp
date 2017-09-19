@@ -5,7 +5,7 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<c:set var="reqType" value="${isRating ? 'Equipment Transfer' : 'Additional Rating'}" scope="page" />
+<c:set var="reqType" value="${isRating ? 'Additional Rating' : 'Equipment Transfer'}" scope="page" />
 <html lang="en">
 <head>
 <title>New <content:airline /> ${reqType} Request</title>
