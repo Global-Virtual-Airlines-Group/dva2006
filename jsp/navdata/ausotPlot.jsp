@@ -77,7 +77,7 @@ google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapT
 // Weather layer loader
 golgotha.local.loader = new golgotha.maps.SeriesLoader();
 golgotha.local.loader.setData('sat', 0.325, 'wxSat');
-golgotha.local.loader.setData('aussieradar', 0.45, 'wxRadar', 512);
+golgotha.local.loader.setData('radar', 0.45, 'wxRadar');
 golgotha.local.loader.onload(function() { golgotha.util.enable('#selImg'); });
 
 // Create the jetstream layers
@@ -88,7 +88,7 @@ var ljsl = new golgotha.maps.ShapeLayer(jsOpts, 'Low Jet', 'wind-lojet');
 
 // Add clouds and jet stream layers
 var ctls = map.controls[google.maps.ControlPosition.BOTTOM_LEFT];
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Radar', disabled:true, c:'selImg'}, function() { return golgotha.local.loader.getLatest('aussieradar'); }));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Radar', disabled:true, c:'selImg'}, function() { return golgotha.local.loader.getLatest('radar'); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Clouds', disabled:true, c:'selImg'}, function() { return golgotha.local.loader.getLatest('sat'); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Low Jet'}, ljsl));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Jet Stream'}, jsl));
@@ -98,7 +98,7 @@ ctls.push(new golgotha.maps.LayerClearControl(map));
 // Load data async once tiles are loaded
 google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
 	golgotha.maps.oceanic.resetTracks();
-	golgotha.util.createScript({id:'wxLoader', url:('//' + self.location.host + '/wx/serieslist.js?function=golgotha.local.loader.loadGinsu'), async:true});
+	loaders.series.loadGinsu();
 	google.maps.event.trigger(map, 'maptypeid_changed');
 });
 </script>

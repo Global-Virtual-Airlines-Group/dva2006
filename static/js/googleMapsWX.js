@@ -69,21 +69,25 @@ return elements;
 };
 
 // Tile URL generation functions
-golgotha.maps.util.S3OverlayLayer = function(name, ts, size) { return golgotha.maps.protocol + '://' + golgotha.maps.tileHost + '/tile/' + name + '/' + size.height + '/' + ts + '/'; };
 golgotha.maps.util.GinsuOverlayLayer = function(name, ts, size) { return '/wx/tile/' + name + '/u' + ts + '/'; };
+golgotha.maps.util.TWCOverlayLayer = function(name, ts, size, noStencil) {
+	var url = golgotha.maps.protocol + '://' + golgotha.maps.tileHost + '/v3/TileServer/tile?product=' + name + '&ts=' + (ts/1000) + '&apiKey=' + golgotha.maps.keys.twc;
+	if (noStencil) url += '&stencil=false';
+	return url;
+};
 
 // Create a weather overlay type
 golgotha.maps.WeatherLayer = function(opts, timestamp) {
 	if (opts.range == null) opts.range = [];
-	var tileURLFunc = (opts.tileURL) ? opts.tileURL : golgotha.maps.util.S3OverlayLayer;
+	var tileURLFunc = (opts.tileURL) ? opts.tileURL : golgotha.maps.util.GinsuOverlayLayer;
 	this.maxZoom = opts.maxZoom;
-	this.baseURL = tileURLFunc(opts.name, timestamp, opts.tileSize);
+	this.baseURL = tileURLFunc(opts.name, timestamp, opts.tileSize, !opts.stencil);
 	this.date = timestamp;
 	this.range = opts.range;
 	this.timestamp = new Date(timestamp);
 	this.tileSize = opts.tileSize;
 	this.getTile = golgotha.maps.util.buildTile;
-	this.makeURL = golgotha.maps.util.getTileUrl;
+	this.makeURL = (tileURLFunc == golgotha.maps.util.TWCOverlayLayer) ? golgotha.maps.util.getTWCTileUrl : golgotha.maps.util.getTileUrl;
 	this.opacity = opts.opacity;
 };
 	
@@ -189,6 +193,14 @@ golgotha.maps.WeatherLayer.prototype.preload = function(map, handler, tileLoadHa
 	return true;
 };
 
+golgotha.maps.util.getTWCTileUrl = function(pnt, zoom) {
+	if (zoom > this.maxZoom) return '';
+	var max = Math.pow(2, zoom);
+	var x = (pnt.x >= max) ? (pnt.x-max) : ((pnt.x < 0) ? (pnt.x+max) : pnt.x);
+	var y = (pnt.y >= max) ? (pnt.y-max) : ((pnt.y < 0) ? (pnt.y+max) : pnt.y);
+	return this.baseURL + '&xyz=' + x + ':' + y + ':' + zoom;
+};
+
 golgotha.maps.util.getTileUrl = function(pnt, zoom) {
 	if (zoom > this.maxZoom) return '';
 	var addr = new golgotha.maps.TileAddress(pnt.x, pnt.y, zoom);
@@ -278,8 +290,8 @@ if (mx < d.length) d.splice(mx, data.length);
 return d;
 };
 
-golgotha.maps.SeriesLoader.prototype.setData = function(name, tx, imgClassName, imgSize) {
-	var d = {opacity:tx, imgClass:imgClassName};
+golgotha.maps.SeriesLoader.prototype.setData = function(name, tx, imgClassName, imgSize, noStencil) {
+	var d = {opacity:tx, imgClass:imgClassName, stencil:(!noStencil)};
 	d.size = (imgSize) ? imgSize : golgotha.maps.TILE_SIZE.width;
 	this.imgData[name] = d;
 	return true;
@@ -327,7 +339,29 @@ for (var x = 0; x < this.layers.names.length; x++) {
 return results;
 };
 
-golgotha.maps.SeriesLoader.prototype.loadGinsu = function(id, sd)
+// Loads TWC radar data from web service
+golgotha.maps.SeriesLoader.prototype.loadGinsu = function()
+{
+var xmlreq = new XMLHttpRequest();	xmlreq.loader = this;
+xmlreq.open('get', 'tileseries.ws?time=' + golgotha.util.getTimestamp(3000), true);
+xmlreq.onreadystatechange = function() {
+	if (xmlreq.readyState != 4) return false;
+	if (xmlreq.status != 200) {
+		console.log('Error ' + xmlreq.status + ' loading tile series data');
+		return false;
+	}
+	
+	// Parse the JSON
+	var js = JSON.parse(xmlreq.responseText);
+	this.loader.parseGinsu(js);
+	return true;
+};
+
+xmlreq.send(null);
+return true;
+};
+
+golgotha.maps.SeriesLoader.prototype.parseGinsu = function(sd)
 {
 if ((!sd.seriesNames) || (!sd.seriesInfo)) return false;
 var displayedLayers = this.getDisplayed(); this.clear();
@@ -343,13 +377,13 @@ for (var layerName = sd.seriesNames.pop(); (layerName != null); layerName = sd.s
 	var timestamps = isFF ? layerData.series[0].ff : layerData.series;
 	var myLayerData = this.imgData[layerName];
 	if (myLayerData == null)
-		myLayerData = {opacity:0.5, imgClass:layerName, size:golgotha.maps.TILE_SIZE.width};
+		myLayerData = {opacity:0.5, imgClass:layerName, size:golgotha.maps.TILE_SIZE.width, stencil:true};
 
 	var slices = [];
 	for (var tsX = 0; tsX < timestamps.length; tsX++) {
 		var ts = timestamps[tsX];
-		var layerOpts = {minZoom:2, name:layerName, maxZoom:layerData.maxZoom, opacity:myLayerData.opacity, tileSize:golgotha.maps.TILE_SIZE, range:[], zIndex:golgotha.maps.z.OVERLAY};
-		layerOpts.tileURL = golgotha.maps.util.GinsuOverlayLayer;
+		var layerOpts = {minZoom:2, name:layerName, maxZoom:layerData.maxZoom, opacity:myLayerData.opacity, tileSize:golgotha.maps.TILE_SIZE, range:[], zIndex:golgotha.maps.z.OVERLAY, stencil:myLayerData.stencil};
+		layerOpts.tileURL = golgotha.maps.util.TWCOverlayLayer;
 		var ovLayer = isFF ? new golgotha.maps.FFWeatherLayer(layerOpts, ts.unixDate, layerData.series[0].unixDate) : new golgotha.maps.WeatherLayer(layerOpts, ts.unixDate);
 		ovLayer.imgClass = myLayerData.imgClass;
 		ovLayer.nativeZoom = layerData.nativeZoom;
@@ -418,7 +452,7 @@ for (var ldoc = sd.body.pop(); (ldoc != null); ldoc = sd.body.pop()) {
 	var timestamps = isFF ? layerData.series[0].ff : layerData.series;
 	var myLayerData = this.imgData[layerName];
 	if (myLayerData == null)
-		myLayerData = {opacity:0.5, imgClass:layerName, size:golgotha.maps.TILE_SIZE.width};
+		myLayerData = {opacity:0.5, imgClass:layerName, size:golgotha.maps.TILE_SIZE.width, stencil:true};
 
 	var slices = []; var bbZoomLevel = 3;
 	for (var tsX = 0; tsX < timestamps.length; tsX++) {
@@ -448,7 +482,7 @@ for (var ldoc = sd.body.pop(); (ldoc != null); ldoc = sd.body.pop()) {
 		}
 
 		var tsz = new google.maps.Size(myLayerData.size, myLayerData.size);
-		var layerOpts = {minZoom:2, name:layerName, maxZoom:layerData.maxZoom, isPng:true, opacity:myLayerData.opacity, tileSize:tsz, range:bb, zIndex:golgotha.maps.z.OVERLAY};
+		var layerOpts = {minZoom:2, name:layerName, maxZoom:layerData.maxZoom, isPng:true, opacity:myLayerData.opacity, tileSize:tsz, range:bb, zIndex:golgotha.maps.z.OVERLAY, stencil:myLayerData.stencil};
 		var ovLayer = isFF ? new golgotha.maps.FFWeatherLayer(layerOpts, ts.unixDate, layerData.series[0].unixDate) :  new golgotha.maps.WeatherLayer(layerOpts, ts.unixDate);
 		ovLayer.imgClass = myLayerData.imgClass;
 		ovLayer.nativeZoom = layerData.nativeZoom;
