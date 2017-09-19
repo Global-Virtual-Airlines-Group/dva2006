@@ -1,4 +1,4 @@
-// Copyright 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
@@ -13,7 +13,7 @@ import org.deltava.dao.DAOException;
 /**
  * A Data Access Object to download a file via HTTP. 
  * @author Luke
- * @version 5.0
+ * @version 8.0
  * @since 5.0
  */
 
@@ -76,6 +76,25 @@ public class GetURL extends DAO {
 			}
 			
 			return outF;
+		} catch (IOException ie) {
+			throw new DAOException(ie);
+		} finally {
+			reset();
+		}
+	}
+	
+	/**
+	 * Checks whether the URL is available for download.
+	 * @return TRUE if content is available, otherwise FALSE
+	 * @throws DAOException if an unexpected error occurs
+	 */
+	public boolean isAvailable() throws DAOException {
+		try {
+			setMethod("HEAD");
+			init(_url);
+			return (getResponseCode() == 200); 
+		} catch (FileNotFoundException fne) {
+			return false;
 		} catch (IOException ie) {
 			throw new DAOException(ie);
 		} finally {

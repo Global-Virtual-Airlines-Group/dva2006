@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to manually download FAA approach charts.
  * @author Luke
- * @version 7.2
+ * @version 8.0
  * @since 5.0
  */
 
@@ -173,8 +173,10 @@ public class FAAChartDownloadCommand extends AbstractCommand {
 		try {
 			File f = new File(SystemData.get("schedule.cache"), localName);
 			GetURL dldao = new GetURL(metaURL, f.getAbsolutePath());
+			if (!dldao.isAvailable())
+				throw new CommandException(metaURL + " not yet available", false);
+				
 			File ff = dldao.download();
-			
 			GetFAACharts mddao = new GetFAACharts();
 			Map<Airport, AirportCharts<ExternalChart>> nc = CollectionUtils.createMap(mddao.getChartList(ff.toURI().toString()), AirportCharts::getAirport); 
 			newCharts.putAll(nc);
