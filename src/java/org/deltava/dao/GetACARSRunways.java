@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load popular runways for takeoff and landing.
  * @author Luke
- * @version 7.2
+ * @version 8.0
  * @since 2.6
  */
 
@@ -79,7 +79,7 @@ public class GetACARSRunways extends DAO {
 				return super.compareTo(nd2);
 			
 			SelectableRunway sr2 = (SelectableRunway) nd2;
-			int tmpResult = Integer.valueOf(_useCount).compareTo(Integer.valueOf(sr2._useCount));
+			int tmpResult = Integer.compare(_useCount, sr2._useCount);
 			if (tmpResult == 0)
 				tmpResult = getName().compareTo(sr2.getName());
 			
