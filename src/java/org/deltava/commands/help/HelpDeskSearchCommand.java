@@ -1,4 +1,4 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.help;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to search the Help Desk.
  * @author Luke
- * @version 2.7
+ * @version 8.0
  * @since 2.7
  */
 
@@ -56,9 +56,9 @@ public class HelpDeskSearchCommand extends AbstractCommand {
 				HelpDeskAccessControl access = new HelpDeskAccessControl(ctx, is);
 				try {
 					access.validate();
-					IDs.add(new Integer(is.getAuthorID()));
-					IDs.add(new Integer(is.getAssignedTo()));
-					IDs.add(new Integer(is.getLastCommentAuthorID()));
+					IDs.add(Integer.valueOf(is.getAuthorID()));
+					IDs.add(Integer.valueOf(is.getAssignedTo()));
+					IDs.add(Integer.valueOf(is.getLastCommentAuthorID()));
 				} catch (AccessControlException ac) {
 					i.remove();
 				}

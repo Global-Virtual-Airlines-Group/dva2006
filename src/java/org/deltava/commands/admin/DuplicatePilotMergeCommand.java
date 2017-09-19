@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to merge two pilot profiles.
  * @author Luke
- * @version 6.0
+ * @version 8.0
  * @since 1.0
  */
 
@@ -36,7 +36,7 @@ public class DuplicatePilotMergeCommand extends AbstractCommand {
 		Collection<Integer> ids = new HashSet<Integer>();
 		Collection<String> mergeIDs = ctx.getParameters("sourceID");
 		for (Iterator<String> i = mergeIDs.iterator(); i.hasNext();)
-			ids.add(new Integer(StringUtils.parseHex(i.next())));
+			ids.add(Integer.valueOf(StringUtils.parseHex(i.next())));
 		
 		// Create the messaging context
 		MessageContext mctxt = new MessageContext();

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010, 2012, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.security.command.EventAccessControl;
 /**
  * A Web Site Command to cancel an Online Event.
  * @author Luke
- * @version 5.0
+ * @version 8.0
  * @since 1.0
  */
 
@@ -79,18 +79,18 @@ public class EventCancelCommand extends AbstractCommand {
          }
          
          // Save flight totals
-         ctx.setAttribute("flightsDeleted", new Integer(flightsDeleted), REQUEST);
-         ctx.setAttribute("flightsUpdated", new Integer(flightsUpdated), REQUEST);
+         ctx.setAttribute("flightsDeleted", Integer.valueOf(flightsDeleted), REQUEST);
+         ctx.setAttribute("flightsUpdated", Integer.valueOf(flightsUpdated), REQUEST);
 
          // Get the assignments for the event and delete them
          GetAssignment ardao = new GetAssignment(con);
          SetAssignment awdao = new SetAssignment(con);
          for (Iterator<String> ti = udmap.getTableNames().iterator(); ti.hasNext(); ) {
-        	 String tableName = ti.next();
-        	 Collection<AssignmentInfo> assignments = ardao.getByEvent(e.getID(), tableName);
-        	 for (Iterator<AssignmentInfo> i = assignments.iterator(); i.hasNext();) {
-        		 AssignmentInfo ai = i.next();
-                 awdao.delete(ai);
+        	 	String tableName = ti.next();
+        	 	Collection<AssignmentInfo> assignments = ardao.getByEvent(e.getID(), tableName);
+        	 	for (Iterator<AssignmentInfo> i = assignments.iterator(); i.hasNext();) {
+        	 		AssignmentInfo ai = i.next();
+        	 		awdao.delete(ai);
               }	 
          }
          
@@ -99,10 +99,8 @@ public class EventCancelCommand extends AbstractCommand {
          e.setStatus(Status.CANCELED);
          wdao.write(e);
 
-         // Commit the transaction
-         ctx.commitTX();
-         
          // Seve the event in the request
+         ctx.commitTX();
          ctx.setAttribute("event", e, REQUEST);
       } catch (DAOException de) {
          ctx.rollbackTX();

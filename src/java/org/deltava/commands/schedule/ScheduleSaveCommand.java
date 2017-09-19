@@ -111,7 +111,7 @@ public class ScheduleSaveCommand extends AbstractCommand {
 
 		// Save the status
 		ctx.setAttribute("isFlights", Boolean.TRUE, REQUEST);
-		ctx.setAttribute("entryCount", new Integer(entries.size()), REQUEST);
+		ctx.setAttribute("entryCount", Integer.valueOf(entries.size()), REQUEST);
 		ctx.setAttribute("doPurge", Boolean.valueOf(doPurge), REQUEST);
 
 		// Forward to the JSP

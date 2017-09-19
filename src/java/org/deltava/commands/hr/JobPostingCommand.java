@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.hr;
 
 import java.util.*;
@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Job Postings.
  * @author Luke
- * @version 7.0
+ * @version 8.0
  * @since 3.4
  */
 
@@ -223,7 +223,7 @@ public class JobPostingCommand extends AbstractFormCommand {
 			// Get Hiring manager
 			Map<Integer, Pilot> pilots = new HashMap<Integer, Pilot>();
 			GetPilot pdao = new GetPilot(con);
-			pilots.put(new Integer(jp.getHireManagerID()), pdao.get(jp.getHireManagerID()));
+			pilots.put(Integer.valueOf(jp.getHireManagerID()), pdao.get(jp.getHireManagerID()));
 			
 			// Validate our access - this will throw an exception if we can't read
 			JobPostingAccessControl access = new JobPostingAccessControl(ctx, jp);
@@ -240,7 +240,7 @@ public class JobPostingCommand extends AbstractFormCommand {
 					JobApplicationAccessControl aac = new JobApplicationAccessControl(ctx, jp, a);
 					aac.validate();
 					if (aac.getCanView())
-						IDs.add(new Integer(a.getAuthorID()));
+						IDs.add(Integer.valueOf(a.getAuthorID()));
 					else
 						i.remove();
 				}
@@ -249,10 +249,8 @@ public class JobPostingCommand extends AbstractFormCommand {
 			}
 			
 			// Load commenter IDs
-			if (access.getCanComment()) {
-				for (Comment c : jp.getComments())
-					IDs.add(new Integer(c.getAuthorID()));
-			}
+			if (access.getCanComment())
+				jp.getComments().stream().map(Comment::getAuthorID).forEach(IDs::add);
 			
 			// Load pilots
 			pilots.putAll(pdao.getByID(IDs, "PILOTS"));

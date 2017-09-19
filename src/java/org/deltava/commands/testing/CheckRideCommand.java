@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2012, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.ComboUtils;
 /**
  * A Web Site Command to view Check Ride records.
  * @author Luke
- * @version 5.0
+ * @version 8.0
  * @since 1.0
  */
 
@@ -61,12 +61,8 @@ public class CheckRideCommand extends AbstractCommand {
 
 			// Load Flight Academy data
 			if (cr.getAcademy()) {
-				Collection<Integer> ids = new HashSet<Integer>();
-				ids.add(new Integer(cr.getID()));
-
-				// Get the DAO and the course
 				GetAcademyCourses acdao = new GetAcademyCourses(con);
-				List<Course> courses = new ArrayList<Course>(acdao.getByCheckRide(ids));
+				List<Course> courses = new ArrayList<Course>(acdao.getByCheckRide(Collections.singleton(Integer.valueOf(cr.getID()))));
 				if (!courses.isEmpty())
 					ctx.setAttribute("course", courses.get(0), REQUEST);
 			}

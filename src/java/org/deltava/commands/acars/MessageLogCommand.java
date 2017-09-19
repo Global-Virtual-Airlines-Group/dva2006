@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to view the ACARS Text Message log.
  * @author Luke
- * @version 7.0
+ * @version 8.0
  * @since 1.0
  */
 
@@ -71,9 +71,9 @@ public class MessageLogCommand extends ACARSLogViewCommand {
 				ZonedDateTime dt = ZonedDateTime.ofInstant(msg.getDate(), ctx.getUser().getTZ().getZone());
 				StringBuilder buf = new StringBuilder(StringUtils.format(dt, "MM/dd/yyyy HH:mm:ss"));
 				buf.append(" <");
-				Pilot msgFrom = pilots.get(new Integer(msg.getAuthorID()));
+				Pilot msgFrom = pilots.get(Integer.valueOf(msg.getAuthorID()));
 				buf.append((msgFrom == null) ? String.valueOf(msg.getAuthorID()) : msgFrom.getName());
-				Pilot msgTo = pilots.get(new Integer(msg.getRecipientID()));
+				Pilot msgTo = pilots.get(Integer.valueOf(msg.getRecipientID()));
 				if (msgTo != null) {
 					buf.append('-');
 					buf.append(msgTo.getName());

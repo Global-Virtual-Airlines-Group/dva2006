@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.dispatch;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.security.command.DispatchRouteAccessControl;
 /**
  * A Web Site Command to display saved dispatch routes.
  * @author Luke
- * @version 7.0
+ * @version 8.0
  * @since 2.1
  */
 
@@ -39,7 +39,7 @@ public class RouteListCommand extends AbstractViewCommand {
 			// Load the Author IDs and check if valid
 			GetACARSRoute rdao = new GetACARSRoute(con);
 			Collection<Integer> IDs = rdao.getAuthorIDs();
-			if (!IDs.contains(new Integer(authorID)))
+			if (!IDs.contains(Integer.valueOf(authorID)))
 				authorID = 0;
 			
 			// Get the routes
@@ -68,7 +68,7 @@ public class RouteListCommand extends AbstractViewCommand {
 			
 			// Save in the request
 			ctx.setAttribute("authors", authors, REQUEST);
-			ctx.setAttribute("author", authors.get(new Integer(authorID)), REQUEST);
+			ctx.setAttribute("author", authors.get(Integer.valueOf(authorID)), REQUEST);
 			ctx.setAttribute("authorNames", pilots, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);

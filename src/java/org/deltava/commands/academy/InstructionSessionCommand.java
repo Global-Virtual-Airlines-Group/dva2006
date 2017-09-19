@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2010, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Flight Academy instruction sessions. 
  * @author Luke
- * @version 7.0
+ * @version 8.0
  * @since 1.0
  */
 
@@ -241,8 +241,8 @@ public class InstructionSessionCommand extends AbstractFormCommand {
 			
 			// Get the Pilot IDs
 			Collection<Integer> IDs = new HashSet<Integer>();
-			IDs.add(new Integer(s.getPilotID()));
-			IDs.add(new Integer(s.getInstructorID()));
+			IDs.add(Integer.valueOf(s.getPilotID()));
+			IDs.add(Integer.valueOf(s.getInstructorID()));
 			
 			// Get the Pilots
 			GetUserData uddao = new GetUserData(con);
