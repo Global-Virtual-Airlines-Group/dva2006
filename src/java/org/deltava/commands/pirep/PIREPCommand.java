@@ -207,16 +207,27 @@ public class PIREPCommand extends AbstractFormCommand {
 				if ((fr.getDate().isBefore(backwardLimit)) || (fr.getDate().isAfter(forwardLimit)))
 					throw new CommandException("Invalid Flight Report Date - " + fr.getDate() + " (" + backwardLimit + " - " + forwardLimit, false);
 			}
+			
+			// Start transaction
+			ctx.startTX();
 
 			// Get the DAO and write the updateed PIREP to the database
 			SetFlightReport wdao = new SetFlightReport(con);
 			wdao.write(fr);
+			
+			// If the flight is already approved, recalc statistics
+			if (fr.getStatus() == FlightReport.OK) {
+				SetAggregateStatistics swdao = new SetAggregateStatistics(con);
+				swdao.update(fr);
+			}
 
 			// Update the status for the JSP
+			ctx.commitTX();
 			ctx.setAttribute("pirep", fr, REQUEST);
 			ctx.setAttribute("isCreated", Boolean.valueOf(doCreate), REQUEST);
 			ctx.setAttribute("isOurs", Boolean.valueOf(fr.getDatabaseID(DatabaseID.PILOT) == ctx.getUser().getID()), REQUEST);
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
