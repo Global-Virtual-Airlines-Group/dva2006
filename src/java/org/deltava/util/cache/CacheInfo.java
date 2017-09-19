@@ -4,7 +4,7 @@ package org.deltava.util.cache;
 /**
  * A bean to store information about a cache.
  * @author Luke
- * @version 7.3
+ * @version 8.0
  * @since 2.6
  */
 
@@ -136,7 +136,7 @@ public class CacheInfo implements java.io.Serializable, org.deltava.beans.ViewEn
 	@Override
 	public int compareTo(CacheInfo ci2) {
 		int tmpResult = _id.compareTo(ci2._id);
-		return (tmpResult == 0) ? Integer.valueOf(hashCode()).compareTo(Integer.valueOf(ci2.hashCode())) : tmpResult;
+		return (tmpResult == 0) ? Integer.compare(hashCode(), ci2.hashCode()) : tmpResult;
 	}
 
 	@Override
