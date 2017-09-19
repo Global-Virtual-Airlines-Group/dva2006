@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2010, 2012, 2013, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010, 2012, 2013, 2014, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.util.Collection;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update a registered Pilot's e-mail address.
  * @author Luke
- * @version 5.3
+ * @version 8.0
  * @since 1.0
  */
 
@@ -60,7 +60,7 @@ public class UpdateEmailCommand extends AbstractCommand {
 			Pilot usr = new Pilot("!X", "!X");
 			usr.setEmail(addr);
 			Collection<Integer> IDs = pdao.checkUnique(usr, SystemData.get("airline.db"));
-			IDs.remove(new Integer(p.getID()));
+			IDs.remove(Integer.valueOf(p.getID()));
 			if (!IDs.isEmpty()) {
 				ctx.release();
 				ctx.setAttribute("dupeAddr", Boolean.TRUE, REQUEST);

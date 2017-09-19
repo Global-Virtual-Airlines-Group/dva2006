@@ -1,4 +1,4 @@
-// Copyright 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2012, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display Senior Captain nominations.
  * @author Luke
- * @version 4.2
+ * @version 8.0
  * @since 3.3
  */
 
@@ -56,11 +56,7 @@ public class NominationCenterCommand extends AbstractCommand {
 				noms.put(Status.PENDING, allPending);
 				noms.put(Status.APPROVED, ndao.getByStatus(Status.APPROVED, qNow));
 				noms.put(Status.REJECTED, ndao.getByStatus(Status.REJECTED, qNow));
-				for (Iterator<Collection<Nomination>> i = noms.values().iterator(); i.hasNext(); ) {
-					Collection<Nomination> nm = i.next();
-					allNoms.addAll(nm);
-				}
-				
+				noms.values().forEach(allNoms::addAll);
 				ctx.setAttribute("allNoms", noms, REQUEST);
 				ctx.setAttribute("prevQuarterPending", Boolean.valueOf(allPending.size() > cqPending.size()), REQUEST);
 			} else if (ctx.getUser().getRank().isCP()) {
@@ -73,9 +69,9 @@ public class NominationCenterCommand extends AbstractCommand {
 			Collection<Integer> IDs = new HashSet<Integer>();
 			Map<Nomination, NominationAccessControl> acMap = new HashMap<Nomination, NominationAccessControl>();
 			for (Nomination n : allNoms) {
-				IDs.add(new Integer(n.getID()));
+				IDs.add(Integer.valueOf(n.getID()));
 				for (NominationComment nc : n.getComments())
-					IDs.add(new Integer(nc.getAuthorID()));
+					IDs.add(Integer.valueOf(nc.getAuthorID()));
 				
 				// Calculate access
 				NominationAccessControl access = new NominationAccessControl(ctx, n);

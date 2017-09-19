@@ -1,7 +1,8 @@
-// Copyright 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.hr;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.Connection;
 import java.time.Instant;
 
@@ -19,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Senior Captain nominations.
  * @author Luke
- * @version 7.0
+ * @version 8.0
  * @since 3.3
  */
 
@@ -89,9 +90,7 @@ public class NominationCommand extends AbstractFormCommand {
 			n.addComment(nc);
 			
 			// Load the authors IDs
-			Collection<Integer> IDs = new HashSet<Integer>();
-			for (NominationComment ncm : n.getComments())
-				IDs.add(new Integer(ncm.getAuthorID()));
+			Collection<Integer> IDs = n.getComments().stream().map(NominationComment::getAuthorID).collect(Collectors.toSet());
 			
 			// Score the nomination
 			Collection<Pilot> authors = pdao.getByID(IDs, "PILOTS").values();
@@ -179,12 +178,9 @@ public class NominationCommand extends AbstractFormCommand {
 			ctx.setAttribute("courses", fadao.getByPilot(n.getID()), REQUEST);
 			
 			// Get pilot IDs
-			Collection<Integer> IDs = new HashSet<Integer>();
-			IDs.add(new Integer(n.getID()));
-			for (NominationComment nc : n.getComments())
-				IDs.add(new Integer(nc.getAuthorID()));
-			for (StatusUpdate upd : updates)
-				IDs.add(new Integer(upd.getAuthorID()));
+			Collection<Integer> IDs = n.getComments().stream().map(NominationComment::getAuthorID).collect(Collectors.toSet());
+			updates.stream().map(StatusUpdate::getAuthorID).forEach(IDs::add);
+			IDs.add(Integer.valueOf(n.getID()));
 			
 			// Load Pilots
 			GetFlightReports frdao = new GetFlightReports(con);

@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display the Pilot Center.
  * @author Luke
- * @version 7.2
+ * @version 8.0
  * @since 1.0
  */
 
@@ -73,7 +73,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			}
 			
 			// Save total legs/hours
-			p = profiles.get(new Integer(ctx.getUser().getID()));
+			p = profiles.get(Integer.valueOf(ctx.getUser().getID()));
 			p.setTotalLegs(totalLegs);
 			p.setTotalHours(totalHours);
 
