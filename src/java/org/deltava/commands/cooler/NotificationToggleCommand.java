@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.sql.Connection;
@@ -12,7 +12,7 @@ import org.deltava.security.command.CoolerThreadAccessControl;
 /**
  * A Web Site Command to toggle Water Cooler thread update notifications.
  * @author Luke
- * @version 7.0
+ * @version 8.0
  * @since 1.0
  */
 
@@ -45,7 +45,7 @@ public class NotificationToggleCommand extends AbstractCommand {
          
          // Get the Notifications for this thread, and if we're doing an add or a remove
          ThreadNotifications nt = tdao.getNotifications(id);
-         boolean isRemove = nt.getIDs().contains(new Integer(ctx.getUser().getID()));
+         boolean isRemove = nt.getIDs().contains(Integer.valueOf(ctx.getUser().getID()));
          
          // Check our access - only if we're reading
          CoolerThreadAccessControl access = new CoolerThreadAccessControl(ctx);

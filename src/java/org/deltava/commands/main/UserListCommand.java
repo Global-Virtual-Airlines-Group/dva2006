@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.main;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to list logged in users.
  * @author Luke
- * @version 7.0
+ * @version 8.0
  * @since 1.0
  */
 
@@ -68,7 +68,7 @@ public class UserListCommand extends AbstractCommand {
     		Collection<MapEntry> markers = new ArrayList<MapEntry>();
     		for (Iterator<UserSession> i = users.values().iterator(); i.hasNext(); ) {
     			UserSession usr = i.next();
-    			GeoLocation loc = pLocs.get(new Integer(usr.getPerson().getID()));
+    			GeoLocation loc = pLocs.get(Integer.valueOf(usr.getPerson().getID()));
     			if (!isHR) {
     				if ((loc == null) && (usr.getAddressInfo() != null)) {
     					loc = new GeoPosition(usr.getAddressInfo());
