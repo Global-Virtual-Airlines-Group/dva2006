@@ -107,6 +107,8 @@ golgotha.onDOMReady(function() {
 <content:attr attr="isHR" value="true" roles="HR" />
 <c:set var="cspan" value="${(!empty exams) || (!empty statusUpdates) ? 6 : 1}" scope="request" />
 <content:sysdata var="db" name="airline.db" />
+<content:sysdata var="currencyEnabled" name="testing.currency.enabled" />
+<content:sysdata var="currencyInterval" name="testing.currency.validity" />
 <content:tz var="timeZones" />
 <content:singleton var="airports" value="${homeAirport}" />
 <content:enum var="ranks" className="org.deltava.beans.Rank" />
@@ -149,7 +151,9 @@ golgotha.onDOMReady(function() {
 <el:box name="noVoice" idx="*" value="true" checked="${pilot.noVoice}" label="Disable Private Voice access" /><br />
 <el:box name="noExams" idx="*" value="true" checked="${pilot.noExams}" label="Disable Testing Center access" /><br />
 <el:box name="noTimeCompress" idx="*" value="true" checked="${pilot.noTimeCompression}" label="Disable ACARS Time Compression" /><br />
-<el:box name="permAccount" value="true" checked="${pilot.isPermanent}" label="This is a Permanent account and will never be marked Inactive" /></td>
+<el:box name="permAccount" value="true" checked="${pilot.isPermanent}" label="This is a Permanent account and will never be marked Inactive" />
+<c:if test="${currencyEnabled}"><br />
+<el:box name="currencyRides" value="true" checked="${pilot.proficiencyCheckRides}" label="Currency Check Rides Enabled (expire after ${currencyInterval} days)" /></c:if></td>
 </tr>
 <tr>
  <td class="label">ACARS Capabilities</td>

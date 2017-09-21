@@ -33,7 +33,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to handle editing/saving Pilot Profiles.
  * @author Luke
- * @version 7.5
+ * @version 8.0
  * @since 1.0
  */
 
@@ -172,8 +172,6 @@ public class ProfileCommand extends AbstractFormCommand {
 				if (coolerPostsLocked != p.getNoCooler()) {
 					p.setNoCooler(coolerPostsLocked);
 					String forumName = SystemData.get("airline.forum");
-
-					// Write the status update entry
 					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.COMMENT);
 					upd.setAuthorID(ctx.getUser().getID());
 					upd.setDescription(forumName + " posts " + (coolerPostsLocked ? "locked out" : "enabled"));
@@ -185,8 +183,6 @@ public class ProfileCommand extends AbstractFormCommand {
 				boolean examsLocked = Boolean.valueOf(ctx.getParameter("noExams")).booleanValue();
 				if (examsLocked != p.getNoExams()) {
 					p.setNoExams(examsLocked);
-
-					// Write the status update entry
 					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.COMMENT);
 					upd.setAuthorID(ctx.getUser().getID());
 					upd.setDescription(examsLocked ? "Testing Center locked out" : "Testing Center enabled");
@@ -198,8 +194,6 @@ public class ProfileCommand extends AbstractFormCommand {
 				boolean voiceLocked = Boolean.valueOf(ctx.getParameter("noVoice")).booleanValue();
 				if (voiceLocked != p.getNoVoice()) {
 					p.setNoVoice(voiceLocked);
-
-					// Write the status update entry
 					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.COMMENT);
 					upd.setAuthorID(ctx.getUser().getID());
 					upd.setDescription(examsLocked ? "Voice access locked out" : "Voice access enabled");
@@ -211,8 +205,6 @@ public class ProfileCommand extends AbstractFormCommand {
 				Restriction newACARSRest = Restriction.valueOf(ctx.getParameter("ACARSrestrict"));
 				if (newACARSRest != p.getACARSRestriction()) {
 					p.setACARSRestriction(newACARSRest);
-
-					// Write the status update entry
 					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.COMMENT);
 					upd.setAuthorID(ctx.getUser().getID());
 					upd.setDescription("ACARS restrictions set to " + p.getACARSRestriction().getName());
@@ -224,8 +216,6 @@ public class ProfileCommand extends AbstractFormCommand {
 				boolean compressLocked = Boolean.valueOf(ctx.getParameter("noTimeCompress")).booleanValue();
 				if (compressLocked != p.getNoTimeCompression()) {
 					p.setNoTimeCompression(compressLocked);
-					
-					// Write the status update entry
 					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.COMMENT);
 					upd.setAuthorID(ctx.getUser().getID());
 					upd.setDescription(compressLocked ? "Time Compression locked out" : "Time Compression enabled");
@@ -237,10 +227,19 @@ public class ProfileCommand extends AbstractFormCommand {
 				boolean newPermAccount = Boolean.valueOf(ctx.getParameter("permAccount")).booleanValue();
 				if (newPermAccount != p.getIsPermanent()) {
 					p.setIsPermanent(newPermAccount);
-					
 					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.STATUS_CHANGE);
 					upd.setAuthorID(ctx.getUser().getID());
 					upd.setDescription("Permanent account flag " + (newPermAccount ? "Set" : "Cleared"));
+					updates.add(upd);
+				}
+				
+				// Check currency ride status
+				boolean newCurrencyRides = Boolean.valueOf(ctx.getParameter("currencyRides")).booleanValue();
+				if (newCurrencyRides != p.getProficiencyCheckRides()) {
+					p.setProficiencyCheckRides(newCurrencyRides);
+					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.CURRENCY);
+					upd.setAuthorID(ctx.getUser().getID());
+					upd.setDescription("Proficiency Check Rides " + (newCurrencyRides ? "enabled" : "disabled"));
 					updates.add(upd);
 				}
 			}
