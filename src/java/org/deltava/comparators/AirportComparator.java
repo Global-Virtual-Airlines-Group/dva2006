@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
 import org.deltava.beans.schedule.Airport;
@@ -6,7 +6,7 @@ import org.deltava.beans.schedule.Airport;
 /**
  * A comparator for Airport beans.
  * @author Luke
- * @version 7.0
+ * @version 8.0
  * @since 1.0
  */
 
@@ -55,9 +55,9 @@ public class AirportComparator extends AbstractComparator<Airport> {
         	case NAME :
         	    return a1.getName().compareTo(a2.getName());
         	case LATITUDE :
-        	    return new Double(a1.getLatitude()).compareTo(new Double(a2.getLatitude()));
+        	    return Double.compare(a1.getLatitude(), a2.getLatitude());
         	case LONGITUDE :
-        	    return new Double(a1.getLongitude()).compareTo(new Double(a2.getLongitude()));
+        	    return Double.compare(a1.getLongitude(), a2.getLongitude());
         	default :
         	    return a1.getIATA().compareTo(a2.getIATA());
         }

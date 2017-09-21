@@ -96,7 +96,7 @@ public class PilotComparator extends PersonComparator<Pilot> {
         		    
         		default :   
         		case HOURS :
-        		    return new Double(p1.getHours()).compareTo(new Double(p2.getHours()));
+        		    return Double.compare(p1.getHours(), p2.getHours());
         }
         
         return (tmpResult == 0) ? Integer.compare(p1.getID(), p2.getID()) : tmpResult;
