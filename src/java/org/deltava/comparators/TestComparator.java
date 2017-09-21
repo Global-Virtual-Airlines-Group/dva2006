@@ -56,7 +56,7 @@ public class TestComparator extends AbstractComparator<Test> {
 			case PERCENT:
 				double pct1 = (t1 instanceof Examination) ? (t1.getScore() / t1.getSize()) : t1.getScore();
 				double pct2 = (t2 instanceof Examination) ? (t2.getScore() / t2.getSize()) : t2.getScore();
-				return new Double(pct1).compareTo(new Double(pct2));
+				return Double.compare(pct1, pct2);
 
 			case TYPE:
 				return t1.getClass().getName().compareTo(t2.getClass().getName());

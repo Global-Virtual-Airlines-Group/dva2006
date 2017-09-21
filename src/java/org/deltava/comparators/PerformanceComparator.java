@@ -54,13 +54,13 @@ public class PerformanceComparator extends AbstractComparator<PerformanceMetrics
 				return m1.getName().compareTo(m2.getName());
 
 			case AVERAGE:
-				return new Double(m1.getAverage()).compareTo(new Double(m2.getAverage()));
+				return Double.compare(m1.getAverage(), m2.getAverage());
 
 			case MAX:
-				return new Double(m1.getMaximum()).compareTo(new Double(m2.getMaximum()));
+				return Double.compare(m1.getMaximum(), m2.getMaximum());
 
 			case MIN:
-				return new Double(m1.getMinimum()).compareTo(new Double(m2.getMinimum()));
+				return Double.compare(m1.getMinimum(), m2.getMinimum());
 
 			case COUNT:
 				return Long.compare(m1.getCount(), m2.getCount());
