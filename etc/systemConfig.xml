@@ -17,14 +17,6 @@
 				<enabled type="Boolean">true</enabled>
 				<url>teamspeak://ts2.deltava.org</url>
 			</ts2>
-			<ts3>
-			    <enabled type="Boolean">true</enabled>
-			    <host>ts3.deltava.org</host>
-			    <serverquery>
-			        <host>127.0.0.1</host>
-			        <port>10011</port>
-			    </serverquery>
-			</ts3>
 			<mvs>
 				<enabled type="Boolean">true</enabled>
 			</mvs>
@@ -263,6 +255,7 @@
 		<lockout type="Integer">24</lockout>
 		<currency>
 			<enabled type="Boolean">true</enabled>
+			<selfenroll type="Boolean">false</selfenroll>
 			<validity type="Integer">90</validity>
 		</currency>
 	</testing>
