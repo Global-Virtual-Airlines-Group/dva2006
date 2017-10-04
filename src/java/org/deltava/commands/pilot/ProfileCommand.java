@@ -232,16 +232,6 @@ public class ProfileCommand extends AbstractFormCommand {
 					upd.setDescription("Permanent account flag " + (newPermAccount ? "Set" : "Cleared"));
 					updates.add(upd);
 				}
-				
-				// Check currency ride status
-				boolean newCurrencyRides = Boolean.valueOf(ctx.getParameter("currencyRides")).booleanValue();
-				if (newCurrencyRides != p.getProficiencyCheckRides()) {
-					p.setProficiencyCheckRides(newCurrencyRides);
-					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.CURRENCY);
-					upd.setAuthorID(ctx.getUser().getID());
-					upd.setDescription("Proficiency Check Rides " + (newCurrencyRides ? "enabled" : "disabled"));
-					updates.add(upd);
-				}
 			}
 
 			// Update legacy hours
