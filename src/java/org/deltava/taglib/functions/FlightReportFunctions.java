@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.functions;
 
 import java.util.Iterator;
@@ -8,7 +8,7 @@ import org.deltava.beans.flight.*;
 /**
  * A JSP Function Library to define Flight Report-related functions.
  * @author Luke
- * @version 7.2
+ * @version 8.0
  * @since 1.0
  */
 
@@ -161,6 +161,16 @@ public class FlightReportFunctions {
 	 */
 	public static boolean isRated(FlightReport fr) {
 		return (fr == null) || !fr.hasAttribute(FlightReport.ATTR_NOTRATED);
+	}
+	
+	/**
+	 * Returns if this Flight was a diversion to another airport.
+	 * @param fr the FlightReport
+	 * @return TRUE if the DIVERT attribute is present, otherwsie FALSE
+	 * @see FlightReport#ATTR_DIVERT
+	 */
+	public static boolean isDivert(FlightReport fr) {
+		return (fr != null) && fr.hasAttribute(FlightReport.ATTR_DIVERT);
 	}
 
 	/**
