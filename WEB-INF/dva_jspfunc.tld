@@ -235,7 +235,14 @@
 		<function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>
 		<function-signature>boolean isRated(org.deltava.beans.flight.FlightReport)</function-signature>
 	</function>
-	
+
+	<!-- Check for Flight Diversion -->
+	<function>
+		<name>isDivert</name>
+		<function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>
+		<function-signature>boolean isDivert(org.deltava.beans.flight.FlightReport)</function-signature>
+	</function>
+
 	<!-- Check for Unknown Route flag -->
 	<function>
 		<name>routeWarn</name>

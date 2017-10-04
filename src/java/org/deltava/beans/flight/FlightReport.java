@@ -139,6 +139,11 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 	public static final int ATTR_AIRSPACEWARN = 0x200000;
 	
 	/**
+	 * Flight diverted to alternate airport.
+	 */
+	public static final int ATTR_DIVERT = 0x400000;
+	
+	/**
 	 * Attribute mask for all warnings.
 	 */
 	public static final int ATTR_WARN_MASK = 0x26B861;
