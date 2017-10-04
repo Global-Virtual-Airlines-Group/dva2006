@@ -122,6 +122,15 @@ public abstract class Flight extends DatabaseBean implements RoutePair {
     public Airport getAirportD() {
         return _airportD;
     }
+    
+    /**
+     * Returns whether this Flight's route matches a particular Route Pair.
+     * @param rp a RoutePair
+     * @return TRUE if the departure and arrival Airports are the same, otherwise FALSE
+     */
+    public boolean matches(RoutePair rp) {
+    	return (_airportD.equals(rp.getAirportD()) && _airportA.equals(rp.getAirportA()));
+    }
 
     /**
      * Set the Airline for this flight.
