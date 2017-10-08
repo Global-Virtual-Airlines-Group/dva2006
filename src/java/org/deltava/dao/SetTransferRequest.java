@@ -10,7 +10,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to write equipment program Transfer Requests.
  * @author Luke
- * @version 7.5
+ * @version 8.0
  * @since 1.0
  */
 
@@ -95,8 +95,7 @@ public class SetTransferRequest extends DAO {
 			_ps.addBatch();
 		}
 		
-		_ps.executeBatch();
-		_ps.close();
+		executeBatchUpdate(1, txreq.getCheckRideIDs().size());
 	}
 
 	/**

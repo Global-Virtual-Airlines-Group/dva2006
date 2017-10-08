@@ -9,7 +9,7 @@ import org.deltava.util.cache.CacheManager;
 /**
  * A Data Access Object to write and update Water Cooler image URLs.
  * @author Luke
- * @version 7.3
+ * @version 8.0
  * @since 1.0
  */
 
@@ -45,8 +45,7 @@ public class SetCoolerLinks extends DAO {
 				_ps.addBatch();
 			}
 
-			_ps.executeBatch();
-			_ps.close();
+			executeBatchUpdate(1, t.getImageURLs().size());
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		} finally {

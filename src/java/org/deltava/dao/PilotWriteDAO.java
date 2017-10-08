@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2010, 2016, 2017  Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,9 +10,9 @@ import org.deltava.util.cache.CacheManager;
 import org.deltava.util.system.SystemData;
 
 /**
- * A Data Access Object to support writing Pilot object(s) to the database.
+ * A Data Access Object to support writing Pilot objects to the database.
  * @author Luke
- * @version 7.2
+ * @version 8.0
  * @since 1.0
  */
 
@@ -36,13 +36,13 @@ public abstract class PilotWriteDAO extends DAO {
 	protected void writeRoles(int id, Collection<String> roles, String db) throws SQLException {
 
 		// Clear existing roles
-		prepareStatementWithoutLimits("DELETE FROM " + db.toLowerCase() + ".ROLES WHERE (ID=?)");
+		String dbName = formatDBName(db);
+		prepareStatementWithoutLimits("DELETE FROM " + dbName + ".ROLES WHERE (ID=?)");
 		_ps.setInt(1, id);
-		_ps.executeUpdate();
-		_ps.close();
+		executeUpdate(0);
 
 		// Write the roles to the database - don't add the "pilot" role
-		prepareStatementWithoutLimits("INSERT INTO " + db.toLowerCase() + ".ROLES (ID, ROLE) VALUES (?, ?)");
+		prepareStatementWithoutLimits("INSERT INTO " + dbName + ".ROLES (ID, ROLE) VALUES (?, ?)");
 		_ps.setInt(1, id);
 		for (Iterator<String> i = roles.iterator(); i.hasNext();) {
 			String role = i.next();
@@ -52,9 +52,7 @@ public abstract class PilotWriteDAO extends DAO {
 			}
 		}
 
-		// Execute the batch update
-		_ps.executeBatch();
-		_ps.close();
+		executeBatchUpdate(1, 0);
 	}
 
 	/**
@@ -72,8 +70,7 @@ public abstract class PilotWriteDAO extends DAO {
 		if (doClear) {
 			prepareStatementWithoutLimits("DELETE FROM " + dbName + ".RATINGS WHERE (ID=?)");
 			_ps.setInt(1, id);
-			_ps.executeUpdate();
-			_ps.close();
+			executeUpdate(0);
 		}
 
 		// Write the ratings to the database
@@ -84,9 +81,7 @@ public abstract class PilotWriteDAO extends DAO {
 			_ps.addBatch();
 		}
 
-		// Execute the batch update
-		_ps.executeBatch();
-		_ps.close();
+		executeBatchUpdate(1, ratings.size());
 	}
 	
 	/**
@@ -104,23 +99,19 @@ public abstract class PilotWriteDAO extends DAO {
 		if (doClear) {
 			prepareStatementWithoutLimits("DELETE FROM " + dbName + ".PILOT_IMADDR WHERE (ID=?)");
 			_ps.setInt(1, id);
-			_ps.executeUpdate();
-			_ps.close();
+			executeUpdate(0);
 		}
 		
 		// Write the IM addrs to the database
 		prepareStatementWithoutLimits("REPLACE INTO " + dbName + ".PILOT_IMADDR (ID, TYPE, ADDR) VALUES (?, ?, ?)");
 		_ps.setInt(1, id);
-		for (Iterator<Map.Entry<IMAddress, String>> i = addrs.entrySet().iterator(); i.hasNext();) {
-			Map.Entry<IMAddress, String> me = i.next();
+		for (Map.Entry<IMAddress, String> me : addrs.entrySet()) {
 			_ps.setString(2, me.getKey().toString());
 			_ps.setString(3, me.getValue());
 			_ps.addBatch();
 		}
 		
-		// Execute the batch update
-		_ps.executeBatch();
-		_ps.close();
+		executeBatchUpdate(1, addrs.size());
 	}
 	
 	/**
@@ -134,8 +125,7 @@ public abstract class PilotWriteDAO extends DAO {
 			return;
 		
 		// Write the alias
-		prepareStatementWithoutLimits((uid == null) ? "DELETE FROM common.AUTH_ALIAS WHERE (ID=?)" :
-			"REPLACE INTO common.AUTH_ALIAS (ID, USERID) VALUES (?, ?)");
+		prepareStatementWithoutLimits((uid == null) ? "DELETE FROM common.AUTH_ALIAS WHERE (ID=?)" : "REPLACE INTO common.AUTH_ALIAS (ID, USERID) VALUES (?, ?)");
 		_ps.setInt(1, id);
 		if (uid != null)
 			_ps.setString(2, uid);

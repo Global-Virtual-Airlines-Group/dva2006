@@ -1,8 +1,7 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2012, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2012, 2014, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
-import java.util.Iterator;
 
 import org.deltava.beans.fleet.*;
 import org.deltava.beans.system.AirlineInformation;
@@ -12,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to write and update Fleet/Document Library metadata.
  * @author Luke
- * @version 6.4
+ * @version 8.0
  * @since 1.0
  */
 
@@ -53,11 +52,9 @@ public class SetLibrary extends DAO {
 		try {
 			startTransaction();
 			if (isNew)
-				prepareStatement("INSERT INTO DOCS (NAME, FILESIZE, VERSION, SECURITY, BODY, ONREG, IGNORE_CERTS, "
-					+ "FILENAME) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+				prepareStatement("INSERT INTO DOCS (NAME, FILESIZE, VERSION, SECURITY, BODY, ONREG, IGNORE_CERTS, FILENAME) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 			else
-				prepareStatement("UPDATE DOCS SET NAME=?, FILESIZE=?, VERSION=?, SECURITY=?, BODY=?, ONREG=?, "
-					+ "IGNORE_CERTS=? WHERE (FILENAME=?)");
+				prepareStatement("UPDATE DOCS SET NAME=?, FILESIZE=?, VERSION=?, SECURITY=?, BODY=?, ONREG=?, IGNORE_CERTS=? WHERE (FILENAME=?)");
 
 			// Update the prepared statement
 			_ps.setString(1, m.getName());
@@ -80,14 +77,12 @@ public class SetLibrary extends DAO {
 			// Write the certification names
 			prepareStatement("INSERT INTO exams.CERTDOCS (FILENAME, CERT) VALUES (?, ?)");
 			_ps.setString(1, m.getFileName());
-			for (Iterator<String> i = m.getCertifications().iterator(); i.hasNext(); ) {
-				_ps.setString(2, i.next());
+			for (String cert : m.getCertifications()) {
+				_ps.setString(2, cert);
 				_ps.addBatch();
 			}
 			
-			// Execute the batch statement
-			_ps.executeBatch();
-			_ps.close();
+			executeBatchUpdate(1, m.getCertifications().size());
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -103,11 +98,9 @@ public class SetLibrary extends DAO {
 	public void write(Newsletter nws) throws DAOException {
 		try {
 			if (nws.getDownloadCount() == 0)
-				prepareStatement("REPLACE INTO NEWSLETTERS (NAME, CATEGORY, FILESIZE, SECURITY, PUBLISHED, "
-						+ "BODY, FILENAME) VALUES (?, ?, ?, ?, ?, ?, ?)");
+				prepareStatement("REPLACE INTO NEWSLETTERS (NAME, CATEGORY, FILESIZE, SECURITY, PUBLISHED, BODY, FILENAME) VALUES (?, ?, ?, ?, ?, ?, ?)");
 			else
-				prepareStatement("UPDATE NEWSLETTERS SET NAME=?, CATEGORY=?, FILESIZE=?, SECURITY=?, "
-						+ "PUBLISHED=?, BODY=? WHERE (FILENAME=?)");
+				prepareStatement("UPDATE NEWSLETTERS SET NAME=?, CATEGORY=?, FILESIZE=?, SECURITY=?, PUBLISHED=?, BODY=? WHERE (FILENAME=?)");
 			
 			// Update the prepared statement
 			_ps.setString(1, nws.getName());
@@ -139,11 +132,9 @@ public class SetLibrary extends DAO {
 			
 			// Prepare the statement
 			if (i.getDownloadCount() == 0)
-				prepareStatement("REPLACE INTO FLEET (NAME, IMG, FILESIZE, MAJOR, MINOR, SUBMINOR, SECURITY, "
-						+ "CODE, BODY, FSVERSION, FILENAME) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+				prepareStatement("REPLACE INTO FLEET (NAME, IMG, FILESIZE, MAJOR, MINOR, SUBMINOR, SECURITY, CODE, BODY, FSVERSION, FILENAME) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			else
-				prepareStatement("UPDATE FLEET SET NAME=?, IMG=?, FILESIZE=?, MAJOR=?, MINOR=?, SUBMINOR=?, "
-						+ "SECURITY=?, CODE=?, BODY=?, FSVERSION=? WHERE (FILENAME=?)");
+				prepareStatement("UPDATE FLEET SET NAME=?, IMG=?, FILESIZE=?, MAJOR=?, MINOR=?, SUBMINOR=?, SECURITY=?, CODE=?, BODY=?, FSVERSION=? WHERE (FILENAME=?)");
 
 			// Update the prepared statement
 			_ps.setString(1, i.getName());
@@ -162,15 +153,12 @@ public class SetLibrary extends DAO {
 			// Write the app entries
 			prepareStatement("INSERT INTO FLEET_AIRLINE (FILENAME, CODE) VALUES (?, ?)");
 			_ps.setString(1, i.getFileName());
-			for (Iterator<AirlineInformation> ai = i.getApps().iterator(); ai.hasNext();) {
-				AirlineInformation info = ai.next();
+			for (AirlineInformation info : i.getApps()) {
 				_ps.setString(2, info.getCode());
 				_ps.addBatch();
 			}
-			
-			// Execute and commit
-			_ps.executeBatch();
-			_ps.close();
+
+			executeBatchUpdate(1, i.getApps().size());
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();

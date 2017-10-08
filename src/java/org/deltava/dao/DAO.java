@@ -12,7 +12,7 @@ import org.deltava.beans.GeoLocation;
 /**
  * A JDBC Data Access Object. DAOs are used to read and write persistent data to JDBC data sources.
  * @author Luke
- * @version 7.2
+ * @version 8.0
  * @since 1.0
  */
 
@@ -182,18 +182,39 @@ public abstract class DAO {
 	 * expected number of rows were updated. The prepared statement is closed in either circumstance.
 	 * @param minUpdateCount the minimum number of rows to update
 	 * @return the actual number of rows updated
-	 * @throws SQLException if the update fails due to a JDBC error, or if less than the expected number of rows were
-	 * updated
+	 * @throws SQLException if the update fails due to a JDBC error, or if less than the expected number of rows were updated
 	 */
 	protected int executeUpdate(int minUpdateCount) throws SQLException {
-		try {
+		try (PreparedStatement ps = _ps) {
 			int rowsUpdated = _ps.executeUpdate();
-			if ((rowsUpdated >= 0) && (rowsUpdated < minUpdateCount))
-				throw new SQLException("Unexpected Row Update count - " + rowsUpdated + ", expected " + minUpdateCount);
+			if (rowsUpdated < minUpdateCount)
+				throw new SQLException("Unexpected Update count - " + rowsUpdated + ", expected " + minUpdateCount);
 
 			return rowsUpdated;
-		} finally {
-			_ps.close();
+		}
+	}
+	
+	/**
+	 * Executes an batched UPDATE transaction on the prepared statement, and throws a {@link SQLException}if less than the
+	 * expected number of rows were updated per batch entry. The prepared statement is closed in either circumstance.
+	 * @param minPerUpdate the minimum number of rows to update per batch entry
+	 * @param minTotal the minimum number of rows to update across the entry batch
+	 * @return the actual number of rows updated
+	 * @throws SQLException if the update fails due to a JDBC error, or if less than the expected number of rows were updated
+	 */
+	protected int executeBatchUpdate(int minPerUpdate, int minTotal) throws SQLException {
+		try (PreparedStatement ps = _ps) {
+			int[] rowsUpdated = _ps.executeBatch(); int totalRows = 0;
+			for (int x = 0; x < rowsUpdated.length; x++) {
+				totalRows += rowsUpdated[x];
+				if (rowsUpdated[x] < minPerUpdate)
+					throw new SQLException("Unexpected Update count at batch entry " + x + " - " + rowsUpdated[x] + ", expected " + minPerUpdate);
+			}
+			
+			if (totalRows < minTotal)
+				throw new SQLException("Unexpected Update count - " + totalRows + ", expected " + minTotal);
+			
+			return totalRows;
 		}
 	}
 

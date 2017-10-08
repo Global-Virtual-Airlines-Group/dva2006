@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2013, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.beans.servlet.CommandLog;
 /**
  * A Data Access Object to write system logging (user commands, tasks) entries.
  * @author Luke
- * @version 7.0
+ * @version 8.0
  * @since 1.0
  */
 
@@ -33,13 +33,9 @@ public class SetSystemData extends DAO {
 	 */
 	public void logCommands(Collection<CommandLog> entries) throws DAOException {
 		try {
-			prepareStatement("INSERT INTO SYS_COMMANDS (CMDDATE, PILOT_ID, REMOTE_ADDR, REMOTE_HOST, "
-					+ "NAME, RESULT, TOTAL_TIME, BE_TIME, SUCCESS) VALUES (?, ?, INET6_ATON(?), ?, ?, ?, ?, ?, ?) ON "
-					+ "DUPLICATE KEY UPDATE CMDDATE=?");
-			
-			// Write the log entries
-			for (Iterator<CommandLog> i = entries.iterator(); i.hasNext(); ) {
-			   CommandLog log = i.next();
+			prepareStatementWithoutLimits("INSERT INTO SYS_COMMANDS (CMDDATE, PILOT_ID, REMOTE_ADDR, REMOTE_HOST, NAME, RESULT, TOTAL_TIME, BE_TIME, SUCCESS) "
+				+ "VALUES (?, ?, INET6_ATON(?), ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE CMDDATE=?");
+			for (CommandLog log : entries) {
 				_ps.setTimestamp(1, createTimestamp(log.getDate()));
 				_ps.setInt(2, log.getPilotID());
 				_ps.setString(3, log.getRemoteAddr());
@@ -52,10 +48,8 @@ public class SetSystemData extends DAO {
 				_ps.setTimestamp(10, createTimestamp(log.getDate()));
 				_ps.addBatch();
 			}
-			
-			// Do the batch update and close
-			_ps.executeBatch();
-			_ps.close();
+
+			executeBatchUpdate(1, entries.size());
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

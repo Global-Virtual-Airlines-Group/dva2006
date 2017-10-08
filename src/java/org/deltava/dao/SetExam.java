@@ -2,7 +2,6 @@
 package org.deltava.dao;
 
 import java.sql.*;
-import java.util.*;
 
 import org.deltava.beans.testing.*;
 
@@ -34,8 +33,7 @@ public class SetExam extends DAO {
 			startTransaction();
 
 			// Prepare the statement for the examination
-			prepareStatement("INSERT INTO exams.EXAMS (NAME, PILOT_ID, STATUS, CREATED_ON, SUBMITTED_ON, "
-					+ "GRADED_ON, GRADED_BY, AUTOSCORE, EXPIRY_TIME) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			prepareStatement("INSERT INTO exams.EXAMS (NAME, PILOT_ID, STATUS, CREATED_ON, SUBMITTED_ON, GRADED_ON, GRADED_BY, AUTOSCORE, EXPIRY_TIME) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setString(1, ex.getName());
 			_ps.setInt(2, ex.getAuthorID());
 			_ps.setInt(3, ex.getStatus().ordinal());
@@ -51,12 +49,9 @@ public class SetExam extends DAO {
 			ex.setID(getNewID());
 			
 			// Write the questions
-			for (Iterator<Question> i = ex.getQuestions().iterator(); i.hasNext(); ) {
-				Question q = i.next();
+			for (Question q : ex.getQuestions())
 				write(ex.getID(), q);
-			}
 
-			// Commit the transaction
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -68,16 +63,14 @@ public class SetExam extends DAO {
 	 * Helper method to write a Question to the database.
 	 */
 	private void write(int id, Question q) throws SQLException {
-		prepareStatementWithoutLimits("INSERT INTO exams.EXAMQUESTIONS (EXAM_ID, QUESTION_ID, QUESTION_NO) "
-			+ "VALUES (?, ?, ?)");
+		prepareStatementWithoutLimits("INSERT INTO exams.EXAMQUESTIONS (EXAM_ID, QUESTION_ID, QUESTION_NO) VALUES (?, ?, ?)");
 		_ps.setInt(1, id);
 		_ps.setInt(2, q.getID());
 		_ps.setInt(3, q.getNumber());
 		executeUpdate(1);
 		
 		// Write question text
-		prepareStatementWithoutLimits("INSERT INTO exams.EXAMQANSWERS (EXAM_ID, QUESTION_NO, QUESTION, "
-				+ "CORRECT_ANSWER) VALUES (?, ?, ?, ?)");
+		prepareStatementWithoutLimits("INSERT INTO exams.EXAMQANSWERS (EXAM_ID, QUESTION_NO, QUESTION, CORRECT_ANSWER) VALUES (?, ?, ?, ?)");
 		_ps.setInt(1, id);
 		_ps.setInt(2, q.getNumber());
 		_ps.setString(3, q.getQuestion());
@@ -87,27 +80,24 @@ public class SetExam extends DAO {
 		// Write child tables
 		if (q instanceof MultiChoiceQuestion) {
 			MultiChoiceQuestion mcq = (MultiChoiceQuestion) q;
-			prepareStatementWithoutLimits("INSERT INTO exams.EXAMQUESTIONSM (EXAM_ID, QUESTION_ID, SEQ, ANSWER) "
-					+ "VALUES (?, ?, ?, ?)");
+			prepareStatementWithoutLimits("INSERT INTO exams.EXAMQUESTIONSM (EXAM_ID, QUESTION_ID, SEQ, ANSWER) VALUES (?, ?, ?, ?)");
 			_ps.setInt(1, id);
 			_ps.setInt(2, q.getID());
 			
 			// Save the choices
 			int seq = 0;
-			for (Iterator<String> ci = mcq.getChoices().iterator(); ci.hasNext(); ) {
-				String choice = ci.next();
+			for (String choice : mcq.getChoices()) {
 				_ps.setInt(3, ++seq);
 				_ps.setString(4, choice);
 				_ps.addBatch();
 			}
-			
-			_ps.executeBatch();
+
+			executeBatchUpdate(1, mcq.getChoices().size());
 		} 
 		
 		if (q instanceof RoutePlotQuestion) {
 			RoutePlotQuestion rpq = (RoutePlotQuestion) q;
-			prepareStatementWithoutLimits("INSERT INTO exams.EXAMQUESTIONSRP (EXAM_ID, QUESTION_ID, AIRPORT_D, " + 
-					"AIRPORT_A) VALUES (?, ?, ?, ?)");
+			prepareStatementWithoutLimits("INSERT INTO exams.EXAMQUESTIONSRP (EXAM_ID, QUESTION_ID, AIRPORT_D, AIRPORT_A) VALUES (?, ?, ?, ?)");
 			_ps.setInt(1, id);
 			_ps.setInt(2, q.getID());
 			_ps.setString(3, rpq.getAirportD().getIATA());
@@ -126,8 +116,7 @@ public class SetExam extends DAO {
 			startTransaction();
 
 			// Prepare the statement for the examination
-			prepareStatement("UPDATE exams.EXAMS SET STATUS=?, SUBMITTED_ON=?, GRADED_ON=?, GRADED_BY=?, "
-					+ "PASS=?, COMMENTS=?, ISEMPTY=?, AUTOSCORE=? WHERE (ID=?)");
+			prepareStatement("UPDATE exams.EXAMS SET STATUS=?, SUBMITTED_ON=?, GRADED_ON=?, GRADED_BY=?, PASS=?, COMMENTS=?, ISEMPTY=?, AUTOSCORE=? WHERE (ID=?)");
 			_ps.setInt(1, ex.getStatus().ordinal());
 			_ps.setTimestamp(2, createTimestamp(ex.getSubmittedOn()));
 			_ps.setTimestamp(3, createTimestamp(ex.getScoredOn()));
@@ -140,8 +129,7 @@ public class SetExam extends DAO {
 			executeUpdate(1);
 
 			// Prepare the statement for questions
-			prepareStatement("UPDATE exams.EXAMQUESTIONS EQ, exams.EXAMQANSWERS EQA SET EQA.ANSWER=?, "
-				+ "EQ.CORRECT=? WHERE (EQ.EXAM_ID=EQA.EXAM_ID) AND (EQ.QUESTION_NO=EQA.QUESTION_NO) AND "
+			prepareStatement("UPDATE exams.EXAMQUESTIONS EQ, exams.EXAMQANSWERS EQA SET EQA.ANSWER=?, EQ.CORRECT=? WHERE (EQ.EXAM_ID=EQA.EXAM_ID) AND (EQ.QUESTION_NO=EQA.QUESTION_NO) AND "
 				+ "(EQ.EXAM_ID=?) AND (EQ.QUESTION_NO=?)");
 			_ps.setInt(3, ex.getID());
 			for (Question q : ex.getQuestions()) {
@@ -152,8 +140,7 @@ public class SetExam extends DAO {
 			}
 
 			// Update the questions
-			_ps.executeBatch();
-			_ps.close();
+			executeBatchUpdate(1, ex.getQuestions().size());
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -172,8 +159,8 @@ public class SetExam extends DAO {
 			
 			// Prepare the statement, either an INSERT or an UPDATE
 			if (cr.getID() == 0) {
-				prepareStatement("INSERT INTO exams.CHECKRIDES (NAME, PILOT_ID, STATUS, EQTYPE, ACTYPE,GRADED_BY, CREATED, SUBMITTED, COMMENTS, PASS, TYPE, EXPIRES, GRADED, ACADEMY, OWNER) "
-					+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+				prepareStatement("INSERT INTO exams.CHECKRIDES (NAME, PILOT_ID, STATUS, EQTYPE, ACTYPE, GRADED_BY, CREATED, SUBMITTED, COMMENTS, PASS, TYPE, EXPIRES, GRADED, ACADEMY, OWNER) "
+					+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 				_ps.setString(1, cr.getName());
 				_ps.setInt(2, cr.getAuthorID());
 				_ps.setInt(3, cr.getStatus().ordinal());
@@ -271,10 +258,8 @@ public class SetExam extends DAO {
 	 */
 	public void updateStats(Examination e) throws DAOException {
 		try {
-			prepareStatement("REPLACE INTO exams.QUESTIONSTATS (SELECT EQ.QUESTION_ID, ?, COUNT(EQ.CORRECT), "
-				+ "SUM(EQ.CORRECT) FROM exams.EXAMQUESTIONS EQ, exams.EXAMS E, exams.EXAMINFO EP WHERE "
-				+ "(EQ.EXAM_ID=E.ID) AND (EP.NAME=E.NAME) AND (E.ISEMPTY=?) AND (EP.ACADEMY=?) AND (EQ.QUESTION_ID=?) "
-				+ "GROUP BY EQ.QUESTION_ID)");
+			prepareStatement("REPLACE INTO exams.QUESTIONSTATS (SELECT EQ.QUESTION_ID, ?, COUNT(EQ.CORRECT), SUM(EQ.CORRECT) FROM exams.EXAMQUESTIONS EQ, exams.EXAMS E, exams.EXAMINFO EP WHERE "
+				+ "(EQ.EXAM_ID=E.ID) AND (EP.NAME=E.NAME) AND (E.ISEMPTY=?) AND (EP.ACADEMY=?) AND (EQ.QUESTION_ID=?) GROUP BY EQ.QUESTION_ID)");
 			_ps.setBoolean(1, e.getAcademy());
 			_ps.setBoolean(2, false);
 			_ps.setBoolean(3, e.getAcademy());
@@ -283,8 +268,7 @@ public class SetExam extends DAO {
 				_ps.addBatch();
 			}
 			
-			_ps.executeBatch();
-			_ps.close();
+			executeBatchUpdate(1, e.getQuestions().size());
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

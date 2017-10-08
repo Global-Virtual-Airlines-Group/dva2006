@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2012, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.navdata.NavigationDataBean;
 /**
  * A Data Access Object to write ACARS Dispatcher routes.
  * @author Luke
- * @version 5.0
+ * @version 8.0
  * @since 2.2
  */
 
@@ -35,13 +35,11 @@ public class SetACARSRoute extends DAO {
 			
 			// Prepare the statement
 			if (rp.getID() != 0) {
-				prepareStatement("UPDATE acars.ROUTES SET AUTHOR=?, AIRLINE=?, AIRPORT_D=?, AIRPORT_A=?, "
-						+ "AIRPORT_L=?, ALTITUDE=?, SID=?, STAR=?, REMARKS=?, ROUTE=? WHERE (ID=?)");
+				prepareStatement("UPDATE acars.ROUTES SET AUTHOR=?, AIRLINE=?, AIRPORT_D=?, AIRPORT_A=?, AIRPORT_L=?, ALTITUDE=?, SID=?, STAR=?, REMARKS=?, ROUTE=? WHERE (ID=?)");
 				_ps.setInt(11, rp.getID());
 			} else
-				prepareStatementWithoutLimits("INSERT INTO acars.ROUTES (AUTHOR, AIRLINE, AIRPORT_D, AIRPORT_A, "
-						+ "AIRPORT_L, ALTITUDE, SID, STAR, BUILD, REMARKS, ROUTE, USED, CREATEDON) VALUES "
-						+ "(?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, 0, NOW())");	
+				prepareStatementWithoutLimits("INSERT INTO acars.ROUTES (AUTHOR, AIRLINE, AIRPORT_D, AIRPORT_A, AIRPORT_L, ALTITUDE, SID, STAR, BUILD, REMARKS, ROUTE, USED, CREATEDON) VALUES "
+					+ "(?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, 0, NOW())");	
 			
 			// Write the route
 			_ps.setInt(1, rp.getAuthorID());
@@ -66,8 +64,7 @@ public class SetACARSRoute extends DAO {
 			
 			// Save the waypoints
 			int seq = -1;
-			prepareStatementWithoutLimits("INSERT INTO acars.ROUTE_WP (ID, SEQ, CODE, ITEMTYPE, LATITUDE, "
-					+ "LONGITUDE, AIRWAY, REGION) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+			prepareStatementWithoutLimits("INSERT INTO acars.ROUTE_WP (ID, SEQ, CODE, ITEMTYPE, LATITUDE, LONGITUDE, AIRWAY, REGION) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setInt(1, rp.getID());
 			for (Iterator<NavigationDataBean> i = rp.getWaypoints().iterator(); i.hasNext(); ) {
 				NavigationDataBean nd = i.next();
@@ -82,8 +79,7 @@ public class SetACARSRoute extends DAO {
 			}
 
 			// Write and commit
-			_ps.executeBatch();
-			_ps.close();
+			executeBatchUpdate(1, rp.getWaypoints().size());
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();

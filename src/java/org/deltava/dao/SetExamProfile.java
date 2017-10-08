@@ -2,7 +2,6 @@
 package org.deltava.dao;
 
 import java.sql.*;
-import java.util.Iterator;
 
 import org.deltava.beans.testing.*;
 import org.deltava.beans.system.AirlineInformation;
@@ -45,8 +44,7 @@ public class SetExamProfile extends DAO {
 			executeUpdate(0);
 
 			// Write the profile
-			prepareStatement("UPDATE exams.EXAMINFO SET STAGE=?, QUESTIONS=?, PASS_SCORE=?, TIME=?, "
-					+ "ACTIVE=?, EQTYPE=?, MIN_STAGE=?, ACADEMY=?, NOTIFY=?, NAME=?, AIRLINE=? WHERE (NAME=?)");
+			prepareStatement("UPDATE exams.EXAMINFO SET STAGE=?, QUESTIONS=?, PASS_SCORE=?, TIME=?, ACTIVE=?, EQTYPE=?, MIN_STAGE=?, ACADEMY=?, NOTIFY=?, NAME=?, AIRLINE=? WHERE (NAME=?)");
 			_ps.setInt(1, ep.getStage());
 			_ps.setInt(2, ep.getSize());
 			_ps.setInt(3, ep.getPassScore());
@@ -64,28 +62,22 @@ public class SetExamProfile extends DAO {
 			// Write the new airlines
 			prepareStatementWithoutLimits("INSERT INTO exams.EXAM_AIRLINES (NAME, AIRLINE) VALUES (?, ?)");
 			_ps.setString(1, ep.getName());
-			for (Iterator<AirlineInformation> i = ep.getAirlines().iterator(); i.hasNext();) {
-				AirlineInformation ai = i.next();
+			for (AirlineInformation ai : ep.getAirlines()) {
 				_ps.setString(2, ai.getCode());
 				_ps.addBatch();
 			}
 
-			// Execute the update
-			_ps.executeBatch();
-			_ps.close();
+			executeBatchUpdate(1, ep.getAirlines().size());
 			
 			// Write the new scorers 
 			prepareStatementWithoutLimits("INSERT INTO exams.EXAMSCORERS (NAME, PILOT_ID) VALUES (?, ?)");
 			_ps.setString(1, ep.getName());
-			for (Iterator<Integer> i = ep.getScorerIDs().iterator(); i.hasNext(); ) {
-				Integer id = i.next();
+			for (Integer id : ep.getScorerIDs()) {
 				_ps.setInt(2, id.intValue());
 				_ps.addBatch();
 			}
 			
-			// Execute the update and commit
-			_ps.executeBatch();
-			_ps.close();
+			executeBatchUpdate(1, ep.getScorerIDs().size());
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -121,28 +113,22 @@ public class SetExamProfile extends DAO {
 			// Write the airlines
 			prepareStatementWithoutLimits("INSERT INTO exams.EXAM_AIRLINES (NAME, AIRLINE) VALUES (?, ?)");
 			_ps.setString(1, ep.getName());
-			for (Iterator<AirlineInformation> i = ep.getAirlines().iterator(); i.hasNext();) {
-				AirlineInformation ai = i.next();
+			for (AirlineInformation ai : ep.getAirlines()) {
 				_ps.setString(2, ai.getCode());
 				_ps.addBatch();
 			}
 
-			// Execute the update
-			_ps.executeBatch();
-			_ps.close();
+			executeBatchUpdate(1, ep.getAirlines().size());
 			
 			// Write the scorers
 			prepareStatementWithoutLimits("INSERT INTO exams.EXAMSCORERS (NAME, PILOT_ID) VALUES (?, ?)");
 			_ps.setString(1, ep.getName());
-			for (Iterator<Integer> i = ep.getScorerIDs().iterator(); i.hasNext(); ) {
-				Integer id = i.next();
+			for (Integer id : ep.getScorerIDs()) {
 				_ps.setInt(2, id.intValue());
 				_ps.addBatch();
 			}
 			
-			// Execute the update and commit
-			_ps.executeBatch();
-			_ps.close();
+			executeBatchUpdate(1, ep.getScorerIDs().size());
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();

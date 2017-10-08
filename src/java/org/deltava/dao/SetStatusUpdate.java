@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to write status updates for a Pilot to the database.
  * @author Luke
- * @version 7.4
+ * @version 8.0
  * @since 1.0
  */
 
@@ -89,8 +89,7 @@ public class SetStatusUpdate extends DAO {
 				_ps.addBatch();
 			}
 
-			_ps.executeBatch();
-			_ps.close();
+			executeBatchUpdate(1, updates.size());
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();

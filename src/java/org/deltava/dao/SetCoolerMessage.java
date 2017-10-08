@@ -11,7 +11,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to handle writing Water Cooler message threads and posts.
  * @author Luke
- * @version 7.4
+ * @version 8.0
  * @since 1.0
  */
 
@@ -123,8 +123,7 @@ public class SetCoolerMessage extends DAO {
 					_ps.addBatch();
 				}
 				
-				_ps.executeBatch();
-				_ps.close();
+				executeBatchUpdate(1, t.getOptions().size());
 			}
 			
 			write(msg);

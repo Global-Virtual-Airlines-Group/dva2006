@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.system.IMAPConfiguration;
 /**
  * A Data Access Object to update Pilot IMAP data.
  * @author Luke
- * @version 7.2
+ * @version 8.0
  * @since 1.0
  */
 
@@ -147,12 +147,11 @@ public class SetPilotEMail extends DAO {
 		prepareStatementWithoutLimits("INSERT INTO postfix.alias (address, goto, active) VALUES (?, ?, ?)");
 		_ps.setString(2, addr);
 		_ps.setBoolean(3, true);
-		for (Iterator<String> i = aliases.iterator(); i.hasNext(); ) {
-			_ps.setString(1, i.next());
+		for (String alias : aliases) {
+			_ps.setString(1, alias);
 			_ps.addBatch();
 		}
 
-		_ps.executeBatch();
-		_ps.close();
+		executeBatchUpdate(1, aliases.size());
 	}
 }

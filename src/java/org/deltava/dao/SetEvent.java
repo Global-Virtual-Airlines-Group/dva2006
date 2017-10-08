@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2011, 2012, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2011, 2012, 2014, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.cache.CacheManager;
 /**
  * A Data Access Object to write Online Event data.
  * @author Luke
- * @version 5.3
+ * @version 8.0
  * @since 1.0
  */
 
@@ -219,20 +219,15 @@ public class SetEvent extends DAO {
 		if (e.getCharts().isEmpty())
 			return;
 
-		// Create the prepared statement
+		// Write the charts
 		prepareStatement("INSERT INTO events.EVENT_CHARTS (ID, CHART) VALUES (?, ?)");
 		_ps.setInt(1, e.getID());
-
-		// Write the charts
-		for (Iterator<Chart> i = e.getCharts().iterator(); i.hasNext();) {
-			Chart c = i.next();
+		for (Chart c : e.getCharts()) {
 			_ps.setInt(2, c.getID());
 			_ps.addBatch();
 		}
 
-		// Write to the database and clean up
-		_ps.executeBatch();
-		_ps.close();
+		executeBatchUpdate(1, e.getCharts().size());
 	}
 
 	private void writeAirports(Event e) throws SQLException {
@@ -244,11 +239,9 @@ public class SetEvent extends DAO {
 			maxRouteID = Math.max(maxRouteID, r.getRouteID() + 1);
 			if (r.getRouteID() == 0) {
 				r.setRouteID(maxRouteID);
-				prepareStatement("INSERT INTO events.EVENT_AIRPORTS (AIRPORT_D, AIRPORT_A, ROUTE, ACTIVE, "
-						+ "RNAV, MAX_SIGNUPS, NAME, ROUTE_ID, ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+				prepareStatement("INSERT INTO events.EVENT_AIRPORTS (AIRPORT_D, AIRPORT_A, ROUTE, ACTIVE, RNAV, MAX_SIGNUPS, NAME, ROUTE_ID, ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			} else
-				prepareStatement("UPDATE events.EVENT_AIRPORTS SET AIRPORT_D=?, AIRPORT_A=?, ROUTE=?, "
-						+ "ACTIVE=?, RNAV=?, MAX_SIGNUPS=?, NAME=? WHERE (ROUTE_ID=?) AND (ID=?)");
+				prepareStatement("UPDATE events.EVENT_AIRPORTS SET AIRPORT_D=?, AIRPORT_A=?, ROUTE=?, ACTIVE=?, RNAV=?, MAX_SIGNUPS=?, NAME=? WHERE (ROUTE_ID=?) AND (ID=?)");
 
 			_ps.setString(1, r.getAirportD().getIATA());
 			_ps.setString(2, r.getAirportA().getIATA());
@@ -276,15 +269,12 @@ public class SetEvent extends DAO {
 		// Add airline codes
 		prepareStatement("INSERT INTO events.AIRLINES (ID, AIRLINE) VALUES (?, ?)");
 		_ps.setInt(1, e.getID());
-		for (Iterator<AirlineInformation> i = e.getAirlines().iterator(); i.hasNext(); ) {
-			AirlineInformation ai = i.next();
+		for (AirlineInformation ai : e.getAirlines()) {
 			_ps.setString(2, ai.getCode());
 			_ps.addBatch();
 		}
-		
-		// Update the database and clean up
-		_ps.executeBatch();
-		_ps.close();
+
+		executeBatchUpdate(1, e.getAirlines().size());
 	}
 
 	/*
@@ -300,14 +290,12 @@ public class SetEvent extends DAO {
 		// Add the equipment types
 		prepareStatement("INSERT INTO events.EVENT_EQTYPES (ID, RATING) VALUES (?, ?)");
 		_ps.setInt(1, e.getID());
-		for (Iterator<String> i = e.getEquipmentTypes().iterator(); i.hasNext();) {
-			_ps.setString(2, i.next());
+		for (String eq : e.getEquipmentTypes()) {
+			_ps.setString(2, eq);
 			_ps.addBatch();
 		}
 
-		// Update the database and clearn up
-		_ps.executeBatch();
-		_ps.close();
+		executeBatchUpdate(1, e.getEquipmentTypes().size());
 	}
 
 	/*
@@ -323,22 +311,19 @@ public class SetEvent extends DAO {
 		// Create the prepared statement
 		prepareStatement("INSERT INTO events.EVENT_CONTACTS (ID, ADDRESS) VALUES (?, ?)");
 		_ps.setInt(1, e.getID());
-		for (Iterator<String> i = e.getContactAddrs().iterator(); i.hasNext();) {
-			_ps.setString(2, i.next());
+		for (String addr : e.getContactAddrs()) {
+			_ps.setString(2, addr);
 			_ps.addBatch();
 		}
 
-		// Update the database and clean up
-		_ps.executeBatch();
-		_ps.close();
+		executeBatchUpdate(1, e.getContactAddrs().size());
 	}
 
 	/*
 	 * Adds a new Online Event to the database.
 	 */
 	private void insert(Event e) throws SQLException {
-		prepareStatement("INSERT INTO events.EVENTS (TITLE, NETWORK, STATUS, STARTTIME, ENDTIME, SU_DEADLINE, "
-				+ "BRIEFING, CAN_SIGNUP, SIGNUP_URL, OWNER) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		prepareStatement("INSERT INTO events.EVENTS (TITLE, NETWORK, STATUS, STARTTIME, ENDTIME, SU_DEADLINE, BRIEFING, CAN_SIGNUP, SIGNUP_URL, OWNER) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 		_ps.setString(1, e.getName());
 		_ps.setInt(2, e.getNetwork().ordinal());
 		_ps.setInt(3, e.getStatus().ordinal());
@@ -359,8 +344,7 @@ public class SetEvent extends DAO {
 	 * Updates an existing Online Event in the database.
 	 */
 	private void update(Event e) throws SQLException {
-		prepareStatement("UPDATE events.EVENTS SET TITLE=?, NETWORK=?, STARTTIME=?, ENDTIME=?, SU_DEADLINE=?, "
-				+ "BRIEFING=?, CAN_SIGNUP=?, SIGNUP_URL=?, STATUS=?, OWNER=? WHERE (ID=?)");
+		prepareStatement("UPDATE events.EVENTS SET TITLE=?, NETWORK=?, STARTTIME=?, ENDTIME=?, SU_DEADLINE=?, BRIEFING=?, CAN_SIGNUP=?, SIGNUP_URL=?, STATUS=?, OWNER=? WHERE (ID=?)");
 		_ps.setString(1, e.getName());
 		_ps.setInt(2, e.getNetwork().ordinal());
 		_ps.setTimestamp(3, createTimestamp(e.getStartTime()));

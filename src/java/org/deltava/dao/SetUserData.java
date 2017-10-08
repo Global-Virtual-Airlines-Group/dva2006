@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2012, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.cache.CacheManager;
 /**
  * A Data Access Object to write cross-applicaton User data.
  * @author Luke
- * @version 6.0
+ * @version 8.0
  * @since 1.0
  */
 
@@ -58,8 +58,7 @@ public class SetUserData extends DAO {
 			}
 			
 			// Write child rows and commit
-			_ps.executeBatch();
-			_ps.close();
+			executeBatchUpdate(1, 0);
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
