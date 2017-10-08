@@ -143,7 +143,7 @@ public class GetPilot extends PilotReadDAO {
 		if (showActive)
 			sqlBuf.append(" AND (P.STATUS=?)");
 		if (rank != null)
-			sqlBuf.append(" AND (P.RANK=?)");
+			sqlBuf.append(" AND (P.RANKING=?)");
 		
 		sqlBuf.append("GROUP BY P.ID ORDER BY ");
 		sqlBuf.append((sortBy == null) ? "P.LASTNAME, P.FIRSTNAME" : sortBy);
@@ -173,7 +173,7 @@ public class GetPilot extends PilotReadDAO {
 	public List<Pilot> getPilotsByRank(Rank rank) throws DAOException {
 		try {
 			prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE), S.EXT, S.MODIFIED FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) "
-				+ "LEFT JOIN SIGNATURES S ON (P.ID=S.ID) WHERE (P.RANK=?) AND (P.STATUS=?) GROUP BY P.ID");
+				+ "LEFT JOIN SIGNATURES S ON (P.ID=S.ID) WHERE (P.RANKING=?) AND (P.STATUS=?) GROUP BY P.ID");
 			_ps.setInt(1, FlightReport.OK);
 			_ps.setString(2, rank.getName());
 			_ps.setInt(3, Pilot.ACTIVE);

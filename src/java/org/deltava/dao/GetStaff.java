@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.Staff;
 /**
  * A Data Access Object to return Staff Profiles.
  * @author Luke
- * @version 4.1
+ * @version 8.0
  * @since 1.0
  */
 
@@ -32,8 +32,7 @@ public class GetStaff extends DAO {
      */
     public Staff get(int id) throws DAOException {
         try {
-            prepareStatementWithoutLimits("SELECT P.FIRSTNAME, P.LASTNAME, P.EMAIL, P.EQTYPE, P.RANK, S.* "
-            	+ "FROM STAFF S, PILOTS P WHERE (S.ID=P.ID) AND (S.ID=?) LIMIT 1");
+            prepareStatementWithoutLimits("SELECT P.FIRSTNAME, P.LASTNAME, P.EMAIL, P.EQTYPE, P.RANKING, S.* FROM STAFF S, PILOTS P WHERE (S.ID=P.ID) AND (S.ID=?) LIMIT 1");
             _ps.setInt(1, id);
             
             // Execute the query and get the result; if none return null
@@ -66,8 +65,7 @@ public class GetStaff extends DAO {
      */
     public Collection<Staff> getStaff() throws DAOException {
         try {
-            prepareStatementWithoutLimits("SELECT P.FIRSTNAME, P.LASTNAME, P.EMAIL, P.EQTYPE, P.RANK, "
-            	+ "S.* FROM STAFF S, PILOTS P WHERE (S.ID=P.ID)");
+            prepareStatementWithoutLimits("SELECT P.FIRSTNAME, P.LASTNAME, P.EMAIL, P.EQTYPE, P.RANKING, S.* FROM STAFF S, PILOTS P WHERE (S.ID=P.ID)");
             
             // Execute the query
             Collection<Staff> results = new ArrayList<Staff>();
