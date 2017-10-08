@@ -15,7 +15,7 @@ import org.deltava.util.*;
 /**
  * A Data Access Object to read Applicant data.
  * @author Luke
- * @version 7.2
+ * @version 8.0
  * @since 1.0
  */
 
@@ -443,8 +443,8 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 				a.setPilotID(rs.getInt(2)); // Status must be populated first
 				a.setEmail(rs.getString(6));
 				a.setLocation(rs.getString(7));
-				a.setIMHandle(IMAddress.AIM, rs.getString(8));
-				a.setIMHandle(IMAddress.MSN, rs.getString(9));
+				//a.setIMHandle(IMAddress.AIM, rs.getString(8)); // AIM Handle
+				//a.setIMHandle(IMAddress.MSN, rs.getString(9)); // MSN Handle
 				a.setNetworkID(OnlineNetwork.VATSIM, rs.getString(10));
 				a.setNetworkID(OnlineNetwork.IVAO, rs.getString(11));
 				a.setLegacyHours(rs.getDouble(12));

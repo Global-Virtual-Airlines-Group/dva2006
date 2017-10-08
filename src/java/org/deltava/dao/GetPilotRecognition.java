@@ -90,14 +90,10 @@ public class GetPilotRecognition extends GetPilot {
     public Collection<Integer> getPromotionQueue(String eqType) throws DAOException {
     	
     	// Build the SQL statement
-        StringBuilder buf = new StringBuilder("SELECT P.ID, P.EQTYPE, (SELECT COUNT(DISTINCT F.ID) FROM PIREPS F, "
-        		+ "PROMO_EQ PEQ WHERE (F.PILOT_ID=P.ID) AND (F.ID=PEQ.ID) AND (PEQ.EQTYPE=P.EQTYPE) "
-        		+ "AND (F.STATUS=?)) AS CLEGS, EQ.C_LEGS, COUNT(DISTINCT EQE.EXAM) AS CREQ_EXAMS, "
-        		+ "COUNT(DISTINCT EX.ID) as C_EXAMS FROM (PILOTS P, EQTYPES EQ) LEFT JOIN EQEXAMS EQE "
-        		+ "ON (EQE.EQTYPE=P.EQTYPE) LEFT JOIN exams.EXAMS EX ON ((EX.PILOT_ID=P.ID) AND "
-        		+ "(EX.NAME=EQE.EXAM) AND (EQE.EXAMTYPE=?) AND (EX.PASS=?)) WHERE (P.STATUS=?) AND "
-        		+ "(P.RANK=?) AND ((P.EQTYPE=EQ.EQTYPE) AND (EQ.EQTYPE=EQE.EQTYPE) AND (EQE.EXAMTYPE=?)) "
-        		+ "GROUP BY P.ID HAVING (CLEGS >= EQ.C_LEGS) AND (C_EXAMS>=CREQ_EXAMS)");
+        StringBuilder buf = new StringBuilder("SELECT P.ID, P.EQTYPE, (SELECT COUNT(DISTINCT F.ID) FROM PIREPS F, PROMO_EQ PEQ WHERE (F.PILOT_ID=P.ID) AND (F.ID=PEQ.ID) AND (PEQ.EQTYPE=P.EQTYPE) "
+       		+ "AND (F.STATUS=?)) AS CLEGS, EQ.C_LEGS, COUNT(DISTINCT EQE.EXAM) AS CREQ_EXAMS, COUNT(DISTINCT EX.ID) as C_EXAMS FROM (PILOTS P, EQTYPES EQ) LEFT JOIN EQEXAMS EQE "
+       		+ "ON (EQE.EQTYPE=P.EQTYPE) LEFT JOIN exams.EXAMS EX ON ((EX.PILOT_ID=P.ID) AND (EX.NAME=EQE.EXAM) AND (EQE.EXAMTYPE=?) AND (EX.PASS=?)) WHERE (P.STATUS=?) AND "
+       		+ "(P.RANKING=?) AND ((P.EQTYPE=EQ.EQTYPE) AND (EQ.EQTYPE=EQE.EQTYPE) AND (EQE.EXAMTYPE=?)) GROUP BY P.ID HAVING (CLEGS >= EQ.C_LEGS) AND (C_EXAMS>=CREQ_EXAMS)");
         if (eqType != null)
         	buf.append(" AND (P.EQTYPE=?)");
     	
@@ -133,7 +129,7 @@ public class GetPilotRecognition extends GetPilot {
     		prepareStatementWithoutLimits("SELECT P.ID, (SELECT COUNT(DISTINCT F.ID) FROM PIREPS F WHERE (P.ID=F.PILOT_ID) "
     			+ "AND (F.STATUS=?)) AS LEGS, COUNT(SU.PILOT_ID) AS SC, IFNULL(N.STATUS, ?) AS NOMSTATUS FROM PILOTS P LEFT JOIN "
     			+ "STATUS_UPDATES SU ON (P.ID=SU.PILOT_ID) AND (SU.TYPE=?) LEFT JOIN NOMINATIONS N ON (P.ID=N.ID) AND "
-    			+ "(N.QUARTER=?) WHERE (P.RANK=?) AND (P.STATUS=?) AND (P.CREATED < DATE_SUB(CURDATE(), INTERVAL ? DAY)) "
+    			+ "(N.QUARTER=?) WHERE (P.RANKING=?) AND (P.STATUS=?) AND (P.CREATED < DATE_SUB(CURDATE(), INTERVAL ? DAY)) "
     			+ "GROUP BY P.ID HAVING (SC=0) AND (NOMSTATUS=?) AND (LEGS>=?)");
     		_ps.setInt(1, FlightReport.OK);
     		_ps.setInt(2, Nomination.Status.PENDING.ordinal());

@@ -60,11 +60,9 @@ public class SetApplicant extends PilotWriteDAO {
 
 				// Get the new applicant ID
 				a.setID(getNewID());
-				prepareStatement("INSERT INTO APPLICANTS (STATUS, FIRSTNAME, LASTNAME, EMAIL, LOCATION, IMHANDLE, "
-						+ "MSNHANDLE, VATSIM_ID, IVAO_ID, LEGACY_HOURS, LEGACY_URL, LEGACY_OK, HOME_AIRPORT, NOTIFY, "
-						+ "SHOW_EMAIL, CREATED, REGHOSTNAME, REGADDR, DFORMAT, TFORMAT, NFORMAT, AIRPORTCODE, "
-						+ "DISTANCEUNITS, SIM_VERSION, TZ, UISCHEME, COMMENTS, HR_COMMENTS, ID) VALUES "
-						+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, INET6_ATON(?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+				prepareStatement("INSERT INTO APPLICANTS (STATUS, FIRSTNAME, LASTNAME, EMAIL, LOCATION, VATSIM_ID, IVAO_ID, PE_ID, LEGACY_HOURS, LEGACY_URL, LEGACY_OK, "
+					+ "HOME_AIRPORT, NOTIFY, SHOW_EMAIL, CREATED, REGHOSTNAME, REGADDR, DFORMAT, TFORMAT, NFORMAT, AIRPORTCODE, DISTANCEUNITS, SIM_VERSION, TZ, "
+					+ "UISCHEME, COMMENTS, HR_COMMENTS, ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, INET6_ATON(?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 				_ps.setString(28, a.getHRComments());
 				_ps.setInt(29, a.getID());
 			} else {
@@ -74,11 +72,9 @@ public class SetApplicant extends PilotWriteDAO {
 				executeUpdate(0);
 				
 				// Create the UPDATE statement
-				prepareStatement("UPDATE APPLICANTS SET STATUS=?, FIRSTNAME=?, LASTNAME=?, EMAIL=?, LOCATION=?, "
-						+ "IMHANDLE=?, MSNHANDLE=?, VATSIM_ID=?, IVAO_ID=?, LEGACY_HOURS=?, LEGACY_URL=?, LEGACY_OK=?, "
-						+ "HOME_AIRPORT=?, NOTIFY=?, SHOW_EMAIL=?, CREATED=?, REGHOSTNAME=?, REGADDR=INET6_ATON(?), "
-						+ "DFORMAT=?, TFORMAT=?, NFORMAT=?, AIRPORTCODE=?, DISTANCEUNITS=?, SIM_VERSION=?, TZ=?, "
-						+ "UISCHEME=?, COMMENTS=?, EQTYPE=?, RANK=?, HR_COMMENTS=? WHERE (ID=?)");
+				prepareStatement("UPDATE APPLICANTS SET STATUS=?, FIRSTNAME=?, LASTNAME=?, EMAIL=?, LOCATION=?, VATSIM_ID=?, IVAO_ID=?, PE_ID=?, LEGACY_HOURS=?, "
+					+ "LEGACY_URL=?, LEGACY_OK=?, HOME_AIRPORT=?, NOTIFY=?, SHOW_EMAIL=?, CREATED=?, REGHOSTNAME=?, REGADDR=INET6_ATON(?), DFORMAT=?, TFORMAT=?, "
+					+ "NFORMAT=?, AIRPORTCODE=?, DISTANCEUNITS=?, SIM_VERSION=?, TZ=?, UISCHEME=?, COMMENTS=?, EQTYPE=?, RANKING=?, HR_COMMENTS=? WHERE (ID=?)");
 				_ps.setString(28, a.getEquipmentType());
 				_ps.setString(29, a.getRank().getName());
 				_ps.setString(30, a.getHRComments());
@@ -91,28 +87,27 @@ public class SetApplicant extends PilotWriteDAO {
 			_ps.setString(3, a.getLastName());
 			_ps.setString(4, a.getEmail());
 			_ps.setString(5, a.getLocation());
-			_ps.setString(6, a.getIMHandle(IMAddress.AIM));
-			_ps.setString(7, a.getIMHandle(IMAddress.MSN));
-			_ps.setString(8, a.getNetworkID(OnlineNetwork.VATSIM));
-			_ps.setString(9, a.getNetworkID(OnlineNetwork.IVAO));
-			_ps.setDouble(10, a.getLegacyHours());
-			_ps.setString(11, a.getLegacyURL());
-			_ps.setBoolean(12, a.getLegacyVerified());
-			_ps.setString(13, a.getHomeAirport());
-			_ps.setInt(14, a.getNotifyCode());
-			_ps.setInt(15, a.getEmailAccess());
-			_ps.setTimestamp(16, createTimestamp(a.getCreatedOn()));
-			_ps.setString(17, a.getRegisterHostName());
-			_ps.setString(18, a.getRegisterAddress());
-			_ps.setString(19, a.getDateFormat());
-			_ps.setString(20, a.getTimeFormat());
-			_ps.setString(21, a.getNumberFormat());
-			_ps.setInt(22, a.getAirportCodeType().ordinal());
-			_ps.setInt(23, a.getDistanceType().ordinal());
-			_ps.setInt(24, a.getSimVersion().ordinal());
-			_ps.setString(25, a.getTZ().getID());
-			_ps.setString(26, a.getUIScheme());
-			_ps.setString(27, a.getComments());
+			_ps.setString(6, a.getNetworkID(OnlineNetwork.VATSIM));
+			_ps.setString(7, a.getNetworkID(OnlineNetwork.IVAO));
+			_ps.setString(8, a.getNetworkID(OnlineNetwork.PILOTEDGE));
+			_ps.setDouble(9, a.getLegacyHours());
+			_ps.setString(10, a.getLegacyURL());
+			_ps.setBoolean(11, a.getLegacyVerified());
+			_ps.setString(12, a.getHomeAirport());
+			_ps.setInt(13, a.getNotifyCode());
+			_ps.setInt(14, a.getEmailAccess());
+			_ps.setTimestamp(15, createTimestamp(a.getCreatedOn()));
+			_ps.setString(16, a.getRegisterHostName());
+			_ps.setString(17, a.getRegisterAddress());
+			_ps.setString(18, a.getDateFormat());
+			_ps.setString(19, a.getTimeFormat());
+			_ps.setString(20, a.getNumberFormat());
+			_ps.setInt(21, a.getAirportCodeType().ordinal());
+			_ps.setInt(22, a.getDistanceType().ordinal());
+			_ps.setInt(23, a.getSimVersion().ordinal());
+			_ps.setString(24, a.getTZ().getID());
+			_ps.setString(25, a.getUIScheme());
+			_ps.setString(26, a.getComments());
 			executeUpdate(1);
 			
 			// Write the stage choices
