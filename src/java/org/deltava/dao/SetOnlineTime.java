@@ -10,7 +10,7 @@ import org.deltava.beans.servinfo.*;
 /**
  * A Data Access Object to write aggregated VATSIM and IVAO usage data.
  * @author Luke
- * @version 7.2
+ * @version 8.0
  * @since 6.1
  */
 
@@ -49,8 +49,7 @@ public class SetOnlineTime extends DAO {
 				_ps.addBatch();
 			}
 			
-			_ps.executeBatch();
-			_ps.close();
+			executeBatchUpdate(1, users.size());
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -82,8 +81,7 @@ public class SetOnlineTime extends DAO {
 			}
 			
 			if (cnt > 0)
-				_ps.executeBatch();
-			_ps.close();
+				executeBatchUpdate(1, cnt);
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();

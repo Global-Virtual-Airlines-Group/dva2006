@@ -9,7 +9,7 @@ import org.deltava.beans.academy.*;
 /**
  * A Data Access Object to write Flight Academy Course data to the database.
  * @author Luke
- * @version 7.2
+ * @version 8.0
  * @since 1.0
  */
 
@@ -209,8 +209,7 @@ public class SetAcademy extends DAO {
 			}
 			
 			// Execute the batch transaction and commit
-			_ps.executeBatch();
-			_ps.close();
+			executeBatchUpdate(1, video.getCertifications().size());
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();

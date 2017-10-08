@@ -58,8 +58,7 @@ public class SetAirportAirline extends DAO {
 			}
 			
 			// Execute update
-			_ps.executeBatch();
-			_ps.close();
+			executeBatchUpdate(1, 0);
 			
 			// Write the webapp data
 			prepareStatement("INSERT INTO common.APP_AIRLINES (CODE, APPCODE) VALUES (?, ?)");
@@ -70,8 +69,7 @@ public class SetAirportAirline extends DAO {
 			}
 			
 			// Write and commit
-			_ps.executeBatch();
-			_ps.close();
+			executeBatchUpdate(1, al.getApplications().size());
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -120,9 +118,7 @@ public class SetAirportAirline extends DAO {
 				}
 			}
 			
-			// Execute update
-			_ps.executeBatch();
-			_ps.close();
+			executeBatchUpdate(1, 0);
 			
 			// Write the webapp data
 			prepareStatement("INSERT INTO common.APP_AIRLINES (CODE, APPCODE) VALUES (?, ?)");
@@ -132,8 +128,7 @@ public class SetAirportAirline extends DAO {
 				_ps.addBatch();
 			}
 
-			_ps.executeBatch();
-			_ps.close();
+			executeBatchUpdate(1, al.getApplications().size());
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -181,8 +176,7 @@ public class SetAirportAirline extends DAO {
 			}
 
 			// Execute and commit
-			_ps.executeBatch();
-			_ps.close();
+			executeBatchUpdate(1, a.getAirlineCodes().size());
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -241,8 +235,7 @@ public class SetAirportAirline extends DAO {
 			}
 
 			// Execute and commit
-			_ps.executeBatch();
-			_ps.close();
+			executeBatchUpdate(1, a.getAirlineCodes().size());
 			commitTransaction();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -291,10 +284,8 @@ public class SetAirportAirline extends DAO {
 	public void create(Aircraft a) throws DAOException {
 		try {
 			startTransaction();
-			prepareStatement("INSERT INTO common.AIRCRAFT (NAME, FULLNAME, FAMILY, ACRANGE, IATA, HISTORIC, ETOPS, SEATS, "
-				+ "ENGINES, ENGINE_TYPE, CRUISE_SPEED, FUEL_FLOW, BASE_FUEL, TAXI_FUEL, PRI_TANKS, PRI_PCT, SEC_TANKS, "
-				+ "SEC_PCT, OTHER_TANKS, MAX_WEIGHT, MAX_TWEIGHT, MAX_LWEIGHT, MAX_ZFW, TO_RWLENGTH, LN_RWLENGTH, "
-				+ "SOFT_RWY) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			prepareStatement("INSERT INTO common.AIRCRAFT (NAME, FULLNAME, FAMILY, ACRANGE, IATA, HISTORIC, ETOPS, SEATS, ENGINES, ENGINE_TYPE, CRUISE_SPEED, FUEL_FLOW, BASE_FUEL, TAXI_FUEL, PRI_TANKS, PRI_PCT, SEC_TANKS, "
+				+ "SEC_PCT, OTHER_TANKS, MAX_WEIGHT, MAX_TWEIGHT, MAX_LWEIGHT, MAX_ZFW, TO_RWLENGTH, LN_RWLENGTH, SOFT_RWY) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setString(1, a.getName());
 			_ps.setString(2, a.getFullName());
 			_ps.setString(3, a.getFamily());
@@ -332,8 +323,7 @@ public class SetAirportAirline extends DAO {
 			}
 			
 			// Execute and commit
-			_ps.executeBatch();
-			_ps.close();
+			executeBatchUpdate(1, a.getApps().size());
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -397,8 +387,7 @@ public class SetAirportAirline extends DAO {
 			}
 			
 			// Execute and commit
-			_ps.executeBatch();
-			_ps.close();
+			executeBatchUpdate(1, a.getApps().size());
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();

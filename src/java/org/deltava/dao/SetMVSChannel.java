@@ -1,4 +1,4 @@
-// Copyright 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * A Data Access Object to write permanent voice channel data.
  * @author Luke
- * @version 5.0
+ * @version 8.0
  * @since 4.0
  */
 
@@ -55,8 +55,7 @@ public class SetMVSChannel extends DAO {
 				_ps.addBatch();
 			}
 			
-			_ps.executeBatch();
-			_ps.close();
+			executeBatchUpdate(1, ch.getAirlines().size());
 			
 			// Write roles
 			prepareStatementWithoutLimits("INSERT INTO acars.CHANNEL_ROLES (ID, ROLE, TYPE) VALUES (?, ?, ?)");
@@ -68,9 +67,8 @@ public class SetMVSChannel extends DAO {
 					_ps.addBatch();
 				}
 			}
-			
-			_ps.executeBatch();
-			_ps.close();
+
+			executeBatchUpdate(1, 0);
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();

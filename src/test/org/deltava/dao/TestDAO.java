@@ -39,6 +39,31 @@ public class TestDAO extends AbstractBeanTestCase {
         }
     }
     
+    private class UpdateDAO extends DAO {
+    	
+    	public UpdateDAO(Connection c) {
+            super(c);
+        }
+    	
+    	public void testExecuteUpdate(int id, int v, int expected) throws SQLException {
+    		prepareStatement("INSERT INTO UPD_TEST VALUES (?, ?)");
+  			_ps.setInt(1, id);
+   			_ps.setInt(2, v);
+   			executeUpdate(expected);
+    	}
+    	
+    	public void testExecuteBatchUpdate(int[] ids, int expected) throws SQLException {
+    		prepareStatement("INSERT INTO UPD_TEST VALUES (?, ?)");
+    		for (int x = 0; x < ids.length; x++) {
+    			_ps.setInt(1, ids[x]);
+    			_ps.setInt(2, x);
+    			_ps.addBatch();
+    		}
+    		
+    		executeBatchUpdate(0, expected);
+    	}
+    }
+    
     @Override
 	protected void setUp() throws Exception {
         super.setUp();
@@ -67,23 +92,47 @@ public class TestDAO extends AbstractBeanTestCase {
         }
         
         assertEquals(1, _dao.getQueryTimeout());
-        validateInput("queryTimeout", Integer.valueOf(-1), IllegalArgumentException.class);
         
         // Execute and check for failure
         try {
         	_dao.execute();
         	fail("SQLException expected");
         } catch (SQLException se) {
-        	assertEquals(23, se.getErrorCode());
+        	assertEquals(0, se.getErrorCode());
         }
     }
     
     public void testLimits() {
-        validateInput("queryMax", Integer.valueOf(-1), IllegalArgumentException.class);
-        validateInput("queryStart", Integer.valueOf(-1), IllegalArgumentException.class);
         _dao.setQueryMax(30);
         _dao.setQueryStart(1);
         assertEquals(30, _dao.getQueryMax());
         assertEquals(1, _dao.getQueryStart());
+    }
+    
+    public void testExpectedResults() throws SQLException{
+
+    	// Create the temp table
+		try (Statement s = _con.createStatement()) {
+			s.executeUpdate("CREATE TEMPORARY TABLE UPD_TEST ( ID INTEGER UNSIGNED NOT NULL, V INTEGER UNSIGNED NOT NULL, PRIMARY KEY (ID) )");
+		}
+    	
+    	UpdateDAO upddao = new UpdateDAO(_con);
+    	upddao.testExecuteUpdate(31, 0, 1);
+    	try {
+    		upddao.testExecuteUpdate(33, 0, 3);
+    		fail("SQLException expected");
+    	} catch (SQLException se) {
+    		// yay!
+    	}
+    	
+    	upddao.testExecuteBatchUpdate(new int[] { 25,  26, 27}, 3);
+    	upddao.testExecuteBatchUpdate(new int[] { 125,  126, 127}, 1);
+    	upddao.testExecuteBatchUpdate(new int[] {}, 0);
+    	try {
+    		upddao.testExecuteBatchUpdate(new int[] { 225,  226, 227}, 4);
+    		fail("SQLException expected");
+    	} catch (SQLException se) {
+    		//yay
+    	}
     }
 }

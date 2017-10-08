@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2010, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2010, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -14,7 +14,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Data Access Object to write TeamSpeak 2 configuration data.
  * @author Luke
- * @version 7.0
+ * @version 8.0
  * @since 1.0
  */
 
@@ -123,15 +123,12 @@ public class SetTS2Data extends DAO {
 			_ps.setString(7, (usr.getLastOnline() == null) ? null : _df.format(LocalDateTime.ofInstant(usr.getLastOnline(), ZoneOffset.UTC)));
 
 			// Write one entry per server
-			for (Iterator<Client> i = usrs.iterator(); i.hasNext();) {
-				Client c = i.next();
+			for (Client c : usrs) {
 				_ps.setInt(2, c.getServerID());
 				_ps.addBatch();
 			}
 			
-			// Write the entries
-			_ps.executeBatch();
-			_ps.close();
+			executeBatchUpdate(1, usrs.size());
 			
 			// Clean out the privileges
 			prepareStatementWithoutLimits("DELETE FROM teamspeak.ts2_channel_privileges where (i_cp_client_id=?)");
@@ -153,8 +150,7 @@ public class SetTS2Data extends DAO {
 			}
 			
 			// Write the entries and commit
-			_ps.executeBatch();
-			_ps.close();
+			executeBatchUpdate(1, usrs.size());
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -227,8 +223,6 @@ public class SetTS2Data extends DAO {
 			prepareStatement("DELETE FROM teamspeak.ts2_servers WHERE (i_server_id=?)");
 			_ps.setInt(1, srv.getID());
 			executeUpdate(0);
-
-			// Commit
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -311,8 +305,6 @@ public class SetTS2Data extends DAO {
 			_ps.setInt(6, srv.getActive() ? -1 : 0);
 			_ps.setString(7, srv.getDescription());
 			_ps.setBoolean(8, srv.getACARSOnly());
-
-			// Write the server
 			executeUpdate(1);
 
 			// Get the new server ID if new, otherwise clear out the roles entries
@@ -340,8 +332,7 @@ public class SetTS2Data extends DAO {
 			}
 
 			// Execute the batch update and commit
-			_ps.executeBatch();
-			_ps.close();
+			executeBatchUpdate(1, allRoles.size());
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();

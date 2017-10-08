@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * A Data Access Object to write Examination Question profiles to the database. 
  * @author Luke
- * @version 3.6
+ * @version 8.0
  * @since 3.6
  */
 
@@ -36,7 +36,7 @@ public class SetExamQuestion extends DAO {
 			
 			// Prepare different statements for INSERT and UPDATE operations
 			if (qp.getID() == 0) {
-				prepareStatement("INSERT INTO exams.QUESTIONINFO (QUESTION, CORRECT, ACTIVE, AIRLINE) VALUES (?, ?, ?, ?)");
+				prepareStatementWithoutLimits("INSERT INTO exams.QUESTIONINFO (QUESTION, CORRECT, ACTIVE, AIRLINE) VALUES (?, ?, ?, ?)");
 				_ps.setString(4, qp.getOwner().getCode());
 			} else {
 				prepareStatementWithoutLimits("DELETE FROM exams.QUESTIONAIRLINES WHERE (ID=?)");
@@ -79,22 +79,17 @@ public class SetExamQuestion extends DAO {
 				_ps.addBatch();
 			}
 
-			// Execute the batch statement and clean up
-			_ps.executeBatch();
-			_ps.close();
+			executeBatchUpdate(1, qp.getExams().size());
 			
 			// Write the airline names
 			prepareStatementWithoutLimits("INSERT INTO exams.QUESTIONAIRLINES (ID, AIRLINE) VALUES (?, ?)");
 			_ps.setInt(1, qp.getID());
-			for (Iterator<AirlineInformation> i = qp.getAirlines().iterator(); i.hasNext(); ) {
-				AirlineInformation ai = i.next();
+			for (AirlineInformation ai : qp.getAirlines()) {
 				_ps.setString(2, ai.getCode());
 				_ps.addBatch();
 			}
 
-			// Execute the batch statement and clean up
-			_ps.executeBatch();
-			_ps.close();
+			executeBatchUpdate(1, qp.getAirlines().size());
 
 			// Write the multiple choice entries
 			if (qp instanceof MultipleChoice) {
@@ -104,16 +99,13 @@ public class SetExamQuestion extends DAO {
 
 				// Write the entries
 				int seq = 0;
-				for (Iterator<String> i = mq.getChoices().iterator(); i.hasNext();) {
-					String choice = i.next();
+				for (String choice : mq.getChoices()) {
 					_ps.setInt(2, ++seq);
 					_ps.setString(3, choice);
 					_ps.addBatch();
 				}
 
-				// Execute the batch transaction
-				_ps.executeBatch();
-				_ps.close();
+				executeBatchUpdate(1, mq.getChoices().size());
 			}
 			
 			// Write the route plot entries
@@ -156,9 +148,7 @@ public class SetExamQuestion extends DAO {
 				_ps.addBatch();
 			}
 
-			// Execute the batch statement and clean up
-			_ps.executeBatch();
-			_ps.close();
+			executeBatchUpdate(1, qp.getExams().size());
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
