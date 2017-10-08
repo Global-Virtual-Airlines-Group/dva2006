@@ -9,7 +9,7 @@ import org.deltava.beans.navdata.*;
 /**
  * A Data Access Object to update Navigation data.
  * @author Luke
- * @version 7.2
+ * @version 8.0
  * @since 1.0
  */
 
@@ -114,8 +114,7 @@ public class SetNavData extends DAO {
 				x++;
 			}
 
-			_ps.executeBatch();
-			_ps.close();
+			executeBatchUpdate(1, a.getWaypoints().size());
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -160,8 +159,7 @@ public class SetNavData extends DAO {
 				_ps.addBatch();
 			}
 
-			_ps.executeBatch();
-			_ps.close();
+			executeBatchUpdate(1, wps.size());
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();

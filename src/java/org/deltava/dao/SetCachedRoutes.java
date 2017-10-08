@@ -1,4 +1,4 @@
-// Copyright 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2012, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A Data Access Object to saved cached flight routes to the database.
  * @author Luke
- * @version 4.1
+ * @version 8.0
  * @since 2.6
  */
 
@@ -30,10 +30,8 @@ public class SetCachedRoutes extends DAO {
 	 */
 	public void write(Collection<? extends FlightRoute> routes) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("INSERT INTO common.ROUTE_CACHE (AIRPORT_D, AIRPORT_A, "
-					+ "CREATED, ALTITUDE, SOURCE, COMMENTS, ROUTE) VALUES (?, ?, ?, ?, ?, ?, ?)");
-			for (Iterator<? extends FlightRoute> i = routes.iterator(); i.hasNext(); ) {
-				FlightRoute rt = i.next();
+			prepareStatementWithoutLimits("INSERT INTO common.ROUTE_CACHE (AIRPORT_D, AIRPORT_A, CREATED, ALTITUDE, SOURCE, COMMENTS, ROUTE) VALUES (?, ?, ?, ?, ?, ?, ?)");
+			for (FlightRoute rt : routes) {
 				_ps.setString(1, rt.getAirportD().getICAO());
 				_ps.setString(2, rt.getAirportA().getICAO());
 				_ps.setTimestamp(3, createTimestamp(rt.getCreatedOn()));
@@ -43,10 +41,8 @@ public class SetCachedRoutes extends DAO {
 				_ps.setString(7, rt.getFullRoute());
 				_ps.addBatch();
 			}
-			
-			// Write and clean up
-			_ps.executeBatch();
-			_ps.close();
+
+			executeBatchUpdate(1, routes.size());
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

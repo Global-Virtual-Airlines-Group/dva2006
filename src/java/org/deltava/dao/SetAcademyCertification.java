@@ -12,7 +12,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object for Flight Academy Certifications and Check Ride Scripts.
  * @author Luke
- * @version 7.2
+ * @version 8.0
  * @since 3.4
  */
 
@@ -142,8 +142,7 @@ public class SetAcademyCertification extends DAO {
 				_ps.addBatch();
 			}
 			
-			_ps.executeBatch();
-			_ps.close();
+			executeBatchUpdate(1, c.getRequirements().size());
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -226,8 +225,7 @@ public class SetAcademyCertification extends DAO {
 			_ps.addBatch();			
 		}
 		
-		_ps.executeBatch();
-		_ps.close();
+		executeBatchUpdate(1, roles.size());
 	}
 	
 	/*
@@ -241,8 +239,7 @@ public class SetAcademyCertification extends DAO {
 			_ps.addBatch();
 		}
 		
-		_ps.executeBatch();
-		_ps.close();
+		executeBatchUpdate(1, exams.size());
 	}
 	
 	/*
@@ -255,9 +252,8 @@ public class SetAcademyCertification extends DAO {
 			_ps.setString(2, ai.getCode());
 			_ps.addBatch();
 		}
-		
-		_ps.executeBatch();
-		_ps.close();
+
+		executeBatchUpdate(1, airlines.size());
 	}
 	
 	/*
@@ -270,8 +266,7 @@ public class SetAcademyCertification extends DAO {
 			_ps.setString(2, eqType);
 			_ps.addBatch();
 		}
-		
-		_ps.executeBatch();
-		_ps.close();
+
+		executeBatchUpdate(1, eqTypes.size());
 	}
 }

@@ -1,8 +1,7 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
-import java.util.*;
 
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
@@ -10,7 +9,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A Data Access Object to write Oceanic Routes.
  * @author Luke
- * @version 7.0
+ * @version 8.0
  * @since 1.0
  */
 
@@ -68,7 +67,7 @@ public class SetOceanic extends DAO {
 	 */
 	public void write(OceanicNOTAM or) throws DAOException {
 		try {
-			prepareStatement("REPLACE INTO common.OCEANIC (ROUTETYPE, VALID_DATE, SOURCE, ROUTE) VALUES (?, ?, ?, ?)");
+			prepareStatementWithoutLimits("REPLACE INTO common.OCEANIC (ROUTETYPE, VALID_DATE, SOURCE, ROUTE) VALUES (?, ?, ?, ?)");
 			_ps.setInt(1, or.getType().ordinal());
 			_ps.setTimestamp(2, createTimestamp(or.getDate()));
 			_ps.setString(3, or.getSource());
@@ -89,24 +88,21 @@ public class SetOceanic extends DAO {
 			startTransaction();
 			
 			// Clean out the route
-			prepareStatement("DELETE FROM common.OCEANIC_ROUTES WHERE (ROUTETYPE=?) AND (VALID_DATE=DATE(?)) AND "
-					+ "(TRACK=?)");
+			prepareStatementWithoutLimits("DELETE FROM common.OCEANIC_ROUTES WHERE (ROUTETYPE=?) AND (VALID_DATE=DATE(?)) AND (TRACK=?)");
 			_ps.setInt(1, ow.getType().ordinal());
 			_ps.setTimestamp(2, createTimestamp(ow.getDate()));
 			_ps.setString(3, ow.getTrack());
 			executeUpdate(0);
 			
 			// Write the route
-			prepareStatement("INSERT INTO common.OCEANIC_ROUTES (ROUTETYPE, VALID_DATE, TRACK, SEQ, WAYPOINT, "
-					+ "LATITUDE, LONGITUDE) VALUES (?, ?, ?, ?, ?, ? ,?)");
+			prepareStatementWithoutLimits("INSERT INTO common.OCEANIC_ROUTES (ROUTETYPE, VALID_DATE, TRACK, SEQ, WAYPOINT, LATITUDE, LONGITUDE) VALUES (?, ?, ?, ?, ?, ? ,?)");
 			_ps.setInt(1, ow.getType().ordinal());
 			_ps.setTimestamp(2, createTimestamp(ow.getDate()));
 			_ps.setString(3, ow.getTrack());
 			
 			// Write the waypoints
 			int seq = 0;
-			for (Iterator<NavigationDataBean> i = ow.getWaypoints().iterator(); i.hasNext(); ) {
-				NavigationDataBean wp = i.next();
+			for (NavigationDataBean wp : ow.getWaypoints()) {
 				if (wp.getCode().length() > 15)
 					wp.setCode(wp.getCode().substring(0, 16));
 				
@@ -117,9 +113,7 @@ public class SetOceanic extends DAO {
 				_ps.addBatch();
 			}
 			
-			// Execute and clean up
-			_ps.executeBatch();
-			_ps.close();
+			executeBatchUpdate(1, ow.getWaypoints().size());
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();

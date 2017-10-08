@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,9 +9,9 @@ import org.deltava.beans.schedule.Airport;
 import org.deltava.beans.servinfo.PositionData;
 
 /**
- * A Data Access Object to write VATSIM/IVAO Online tracks.
+ * A Data Access Object to write VATSIM/IVAO/PilotEdge Online tracks.
  * @author Luke
- * @version 7.0
+ * @version 8.0
  * @since 2.4
  */
 
@@ -37,8 +37,7 @@ public class SetOnlineTrack extends DAO {
 	 */
 	public int writeTrack(int userID, OnlineNetwork net, Airport aD, Airport aA, String route) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("INSERT INTO online.TRACKS (USER_ID, NETWORK, CREATED_ON, AIRPORT_D, "
-				+ "AIRPORT_A, ROUTE) VALUES (?, ?, NOW(), ?, ?, ?)");
+			prepareStatementWithoutLimits("INSERT INTO online.TRACKS (USER_ID, NETWORK, CREATED_ON, AIRPORT_D, AIRPORT_A, ROUTE) VALUES (?, ?, NOW(), ?, ?, ?)");
 			_ps.setInt(1, userID);
 			_ps.setString(2, net.toString());
 			_ps.setString(3, aD.getICAO());
@@ -131,8 +130,7 @@ public class SetOnlineTrack extends DAO {
 		try {
 			prepareStatementWithoutLimits("INSERT INTO ONLINE_TRACK (PILOT_ID, PIREP_ID, DATE, LAT, LNG, ALT, HEADING, ASPEED) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setInt(2, pirepID);
-			for (Iterator<PositionData> i = pds.iterator(); i.hasNext(); ) {
-				PositionData pd = i.next();
+			for (PositionData pd : pds) {
 				_ps.setInt(1, pd.getPilotID());
 				_ps.setTimestamp(3, createTimestamp(pd.getDate()));
 				_ps.setDouble(4, pd.getLatitude());
@@ -142,9 +140,8 @@ public class SetOnlineTrack extends DAO {
 				_ps.setInt(8, pd.getAirSpeed());
 				_ps.addBatch();
 			}
-			
-			_ps.executeBatch();
-			_ps.close();
+
+			executeBatchUpdate(1, pds.size());
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

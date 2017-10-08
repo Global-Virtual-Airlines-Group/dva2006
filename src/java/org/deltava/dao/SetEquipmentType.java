@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2013, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to write Equipment Profiles.
  * @author Luke
- * @version 6.0
+ * @version 8.0
  * @since 1.0
  */
 
@@ -167,8 +167,7 @@ public class SetEquipmentType extends DAO {
 			_ps.addBatch();
 		}
 		
-		_ps.executeBatch();
-		_ps.close();
+		executeBatchUpdate(1, 0);
 	}
 	
 	/*
@@ -209,8 +208,7 @@ public class SetEquipmentType extends DAO {
 			_ps.addBatch();
 		}
 		
-		_ps.executeBatch();
-		_ps.close();
+		executeBatchUpdate(1, 0);
 	}
 
 	/*
@@ -233,7 +231,6 @@ public class SetEquipmentType extends DAO {
 			_ps.addBatch();
 		}
 		
-		_ps.executeBatch();
-		_ps.close();
+		executeBatchUpdate(1, eq.getAirlines().size());
 	}
 }
