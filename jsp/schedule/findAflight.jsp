@@ -87,7 +87,7 @@ var f = checkbox.form;
 var srcA = golgotha.form.getCombo(f.airportD);
 var cfg = golgotha.airportLoad.config.clone();
 cfg.airline = golgotha.form.getCombo(f.airline); cfg.notVisited = checkbox.checked;
-if (isDest && (srcA != null)) {
+if (isDest && (srcA != null) && (srcA != '')) {
 	cfg.dst = true;	
 	cfg.code = srcA;
 }
