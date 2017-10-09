@@ -188,11 +188,7 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
 <c:if test="${!isPilot}">
 <span class="pri bld">${pilot.name}</span><br />
 APPLICANT<br />
-</c:if>
-<el:showaddr user="${pilot}">
-<content:enum var="imAddr" className="org.deltava.beans.IMAddress" item="AIM" />
-<c:set var="aimAddr" value="${pilot.IMHandle[imAddr]}" scope="page" />
-</el:showaddr></td>
+</c:if></td>
 <c:set var="showPostTools" value="${(access.canReply && !doEdit) || canEdit || (access.canDelete && (postCount > 1))}" scope="page" />
  <td class="${isUnread ? 'unread_' : ''}postDate" colspan="${showPostTools ? '1' : '2'}"><span class="phone">Posted on</span><span class="nophone">Post created on</span>
  <fmt:date date="${msg.createdOn}" d="MMMM dd yyyy" /><span class="phone"> by <span class="pri bld">${pilot.name}</span></span>

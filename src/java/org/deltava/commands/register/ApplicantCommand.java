@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command for processing Applicant Profiles.
  * @author Luke
- * @version 6.4
+ * @version 8.0
  * @since 1.0
  */
 
@@ -56,10 +56,9 @@ public class ApplicantCommand extends AbstractFormCommand {
 			a.setLastName(ctx.getParameter("lastName"));
 			a.setEmail(ctx.getParameter("email"));
 			a.setLocation(ctx.getParameter("location"));
-			a.setIMHandle(IMAddress.AIM, ctx.getParameter("aimHandle"));
-			a.setIMHandle(IMAddress.MSN, ctx.getParameter("msnHandle"));
 			a.setNetworkID(OnlineNetwork.VATSIM, ctx.getParameter("VATSIM_ID"));
 			a.setNetworkID(OnlineNetwork.IVAO, ctx.getParameter("IVAO_ID"));
+			a.setNetworkID(OnlineNetwork.PILOTEDGE, ctx.getParameter("PilotEdge_ID"));
 			a.setLegacyURL(ctx.getParameter("legacyURL"));
 			a.setLegacyVerified("1".equals(ctx.getParameter("legacyOK")));
 			a.setLegacyHours(StringUtils.parse(ctx.getParameter("legacyHours"), 0.0d));
