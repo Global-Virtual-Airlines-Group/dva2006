@@ -13,6 +13,7 @@
 <content:css name="view" />
 <content:pics />
 <content:favicon />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 </head>
 <content:copyright visible="false" />
@@ -30,10 +31,7 @@
 <tr class="title">
  <td style="width:10%">AIRCRAFT TYPE</td>
  <td style="width:10%">EQUIPMENT PROGRAM</td>
- <td style="width:65%" class="left">DESCRIPTION</td>
-<c:if test="${currencyEnabled}">
- <td>CURRENCY</td>
-</c:if>
+ <td style="width:65%" class="left nophone">DESCRIPTION</td>
  <td> <c:if test="${access.canCreate}"><el:cmd url="crscript" op="edit">NEW SCRIPT</el:cmd></c:if></td>
 </tr>
 
@@ -41,23 +39,19 @@
 <c:forEach var="sc" items="${viewContext.results}">
 <view:row entry="${sc}">
 <c:set var="access" value="${accessMap[sc.equipmentType]}" scope="page" />
-<c:if test="${access.canEdit}">
- <td><el:cmd url="crscript" linkID="${sc.auditID}" op="edit">${sc.equipmentType}</el:cmd></td>
-</c:if>
-<c:if test="${!access.canEdit}">
- <td class="pri bld">${sc.equipmentType}</td>
-</c:if>
+<td>
+<c:if test="${access.canEdit}"><el:cmd url="crscript" linkID="${sc.auditID}" op="edit">${sc.equipmentType}</el:cmd></c:if>
+<c:if test="${!access.canEdit}"><span class="pri bld">${sc.equipmentType}</span></c:if>
+<c:if test="${sc.isCurrency}"><br />
+<span class="ter bld small">CURRENCY</span></c:if></td>
  <td class="sec bld">${sc.program}</td>
-<c:if test="${currencyEnabled}">
- <td class="small">${sc.isCurrency ? 'YES' : ''}</td>
-</c:if>
- <td class="small left" colspan="2"><fmt:msg value="${sc.description}" bbCode="true" /></td>
+ <td class="small left nophone" colspan="2"><fmt:msg value="${sc.description}" bbCode="true" /></td>
 </view:row>
 </c:forEach>
 
 <!-- Bottom Bar -->
 <tr class="title">
- <td colspan="${currencyEnabled ? 5 : 4}">&nbsp;</td>
+ <td colspan="4"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
 </tr>
 </view:table>
 <br />

@@ -28,10 +28,9 @@
 <br />
 This Pilot Examination Question has been succesfully updated in the database.<br />
 <br />
-To view this Question, <el:cmd url="qprofile" link="${question}">Click Here</el:cmd>.<br />
+To view this Question, <el:cmd url="qprofile" link="${question}" className="sec bld">Click Here</el:cmd>.<br />
 <br />
-This Question has been included in <fmt:int value="${fn:sizeof(question.exams)}" /> Pilot
-Examinations. To view all Questions in these Examinations, select one from the list below:<br />
+This Question has been included in <fmt:int value="${fn:sizeof(question.exams)}" /> Pilot Examinations. To view all Questions in these Examinations, select one from the list below:<br />
 <br />
 <c:forEach var="exam" items="${question.exams}">
 <el:cmd url="qprofiles" linkID="${exam}">${exam}</el:cmd><br />
@@ -49,8 +48,9 @@ To view Questions in this Examination, <el:cmd url="qprofiles" linkID="${exam.na
 <c:if test="${(!empty script) && isUpdate}">
 <div class="updateHdr">Check Ride Script Updated</div>
 <br />
-The script for the ${script.equipmentType} Check Ride in the <span class="sec bld">${script.program}</span> 
-equipment program has been saved in the database.<br />
+The script for the ${script.equipmentType} Check Ride in the <span class="sec bld">${script.program}</span> equipment program has been saved in the database.<br />
+<br />
+To view the list of Check Ride scripts, <el:cmd url="crscripts" className="sec bld">Click Here</el:cmd>.<br />
 </c:if>
 <c:if test="${!(empty question) && isDelete}">
 <div class="updateHdr">Examination Question Deleted</div>
