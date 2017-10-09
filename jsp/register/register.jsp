@@ -185,12 +185,8 @@ This is also a good time to review <content:airline />'s <el:cmd url="privacy" c
  <td class="data" colspan="${cspan}"><el:text name="IVAO_ID" idx="*" size="10" max="9" value="${param.IVAO_ID}" /></td>
 </tr>
 <tr>
- <td class="label">AOL Instant Messenger</td>
- <td class="data" colspan="${cspan}"><el:text name="aimHandle" idx="*" size="14" max="36" value="${param.aimHandle}" /></td>
-</tr>
-<tr>
- <td class="label">MSN Messenger</td>
- <td class="data" colspan="${cspan}"><el:text name="msnHandle" idx="*" size="32" max="128" value="${param.msnHandle}" /></td>
+ <td class="label">PilotEdge ID#</td>
+ <td class="data" colspan="${cspan}"><el:text name="PilotEdge_ID" idx="*" size="10" max="9" value="${param.PilotEdge_ID}" /></td>
 </tr>
 
 <!-- E-Mail Information -->
