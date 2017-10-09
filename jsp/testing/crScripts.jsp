@@ -15,6 +15,20 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
+<style>
+span.el {
+  display: block; /* Fallback for non-webkit */
+  display: -webkit-box;
+  max-width: 95%;
+  height: 11*1.4*8; /* Fallback for non-webkit */
+  margin: 0 auto;
+  line-height: 1.4;
+  -webkit-line-clamp: 8;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+</style>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -45,7 +59,7 @@
 <c:if test="${sc.isCurrency}"><br />
 <span class="ter bld small">CURRENCY</span></c:if></td>
  <td class="sec bld">${sc.program}</td>
- <td class="small left nophone" colspan="2"><fmt:msg value="${sc.description}" bbCode="true" /></td>
+ <td class="small left nophone" colspan="2"><span class="el"><fmt:msg value="${sc.description}" bbCode="true" /></span></td>
 </view:row>
 </c:forEach>
 
