@@ -33,10 +33,8 @@ public class CheckRideScriptCommand extends AbstractAuditFormCommand {
 		
 		// Get the equipment type
 		String id = (String) ctx.getCmdParameter(ID, null);
-		if (StringUtils.isEmpty(id))
-			id = ctx.getParameter("eqType");
-		
-		EquipmentRideScriptKey key = EquipmentRideScriptKey.parse(id);
+		boolean isCurrency = Boolean.valueOf(ctx.getParameter("isCurrency")).booleanValue();
+		EquipmentRideScriptKey key = EquipmentRideScriptKey.isValid(id) ? EquipmentRideScriptKey.parse(id) : new EquipmentRideScriptKey(ctx.getParameter("programType"), ctx.getParameter("eqType"), isCurrency);
 		try {
 			Connection con = ctx.getConnection();
 
@@ -44,12 +42,12 @@ public class CheckRideScriptCommand extends AbstractAuditFormCommand {
 			GetExamProfiles dao = new GetExamProfiles(con);
 			EquipmentRideScript sc = dao.getScript(key); EquipmentRideScript osc = BeanUtils.clone(sc);
 			if (sc == null)
-				sc = new EquipmentRideScript(ctx.getParameter("programType"), id);
+				sc = new EquipmentRideScript(key.getProgramName(), key.getEquipmentType());
 
 			// Load the program and description
 			sc.setDescription(ctx.getParameter("msgText"));
 			sc.setEquipmentType(ctx.getParameter("eqType"));
-			sc.setIsCurrency(Boolean.valueOf(ctx.getParameter("isCurrency")).booleanValue());
+			sc.setIsCurrency(isCurrency);
 
 			// Calculate our access
 			EquipmentRideScriptAccessControl access = new EquipmentRideScriptAccessControl(ctx, sc);

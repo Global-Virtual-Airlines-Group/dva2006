@@ -33,6 +33,15 @@ public class EquipmentRideScriptKey implements Auditable {
 	}
 	
 	/**
+	 * Checks whether a Check Ride script key is valid.
+	 * @param id the ID
+	 * @return TRUE if valid, otherwise FALSE
+	 */
+	public static boolean isValid(String id) {
+		return (id != null) && (id.indexOf("!!") > 1);
+	}
+	
+	/**
 	 * Creates the ride script key.
 	 * @param programName the equipment program name
 	 * @param eqType the equipment type
