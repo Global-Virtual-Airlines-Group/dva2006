@@ -32,7 +32,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to allow users to submit Offline Flight Reports.
  * @author Luke
- * @version 7.5
+ * @version 8.0
  * @since 2.4
  */
 
@@ -222,6 +222,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 				afr.setDatabaseID(DatabaseID.ASSIGN, fr.getDatabaseID(DatabaseID.ASSIGN));
 				afr.setDatabaseID(DatabaseID.EVENT, fr.getDatabaseID(DatabaseID.EVENT));
 				afr.setAttribute(FlightReport.ATTR_CHARTER, fr.hasAttribute(FlightReport.ATTR_CHARTER));
+				afr.setAttribute(FlightReport.ATTR_DIVERT, fr.hasAttribute(FlightReport.ATTR_DIVERT));
 				if (!StringUtils.isEmpty(fr.getComments()))
 					comments.add(fr.getComments());
 			}
@@ -292,9 +293,9 @@ public class OfflineFlightCommand extends AbstractCommand {
 			if (!p.getRatings().contains(afr.getEquipmentType()) && !eq.getRatings().contains(afr.getEquipmentType()))
 				afr.setAttribute(FlightReport.ATTR_NOTRATED, !afr.hasAttribute(FlightReport.ATTR_CHECKRIDE));
 
-			// Check for excessive distance
-			if (afr.getDistance() > a.getRange())
-				afr.setAttribute(FlightReport.ATTR_RANGEWARN, true);
+			// Check for excessive distance and diversion
+			afr.setAttribute(FlightReport.ATTR_RANGEWARN, (afr.getDistance() > a.getRange()));
+			afr.setAttribute(FlightReport.ATTR_DIVERT, !afr.getAirportA().equals(inf.getAirportA()));
 
 			// Check for excessive weight
 			if ((a.getMaxTakeoffWeight() != 0) && (afr.getTakeoffWeight() > a.getMaxTakeoffWeight()))
@@ -383,10 +384,8 @@ public class OfflineFlightCommand extends AbstractCommand {
 				if (r != null) {
 					int dist = GeoUtils.distanceFeet(r, afr.getTakeoffLocation());
 					rD = new RunwayDistance(r, dist);
-					if (r.getLength() < a.getTakeoffRunwayLength())
-						afr.setAttribute(FlightReport.ATTR_RWYWARN, true);
-					if (!r.getSurface().isHard() && !a.getUseSoftRunways())
-						afr.setAttribute(FlightReport.ATTR_RWYSFCWARN, true);
+					afr.setAttribute(FlightReport.ATTR_RWYWARN, (r.getLength() < a.getTakeoffRunwayLength()));
+					afr.setAttribute(FlightReport.ATTR_RWYSFCWARN, (!r.getSurface().isHard() && !a.getUseSoftRunways()));
 				}
 			}
 
@@ -398,10 +397,8 @@ public class OfflineFlightCommand extends AbstractCommand {
 				if (r != null) {
 					int dist = GeoUtils.distanceFeet(r, afr.getLandingLocation());
 					rA = new RunwayDistance(r, dist);
-					if (r.getLength() < a.getLandingRunwayLength())
-						afr.setAttribute(FlightReport.ATTR_RWYWARN, true);
-					if (!r.getSurface().isHard() && !a.getUseSoftRunways())
-						afr.setAttribute(FlightReport.ATTR_RWYSFCWARN, true);
+					afr.setAttribute(FlightReport.ATTR_RWYWARN, (r.getLength() < a.getLandingRunwayLength()));
+					afr.setAttribute(FlightReport.ATTR_RWYSFCWARN, (!r.getSurface().isHard() && !a.getUseSoftRunways()));
 				}
 			}
 			
