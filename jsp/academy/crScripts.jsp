@@ -13,7 +13,22 @@
 <content:css name="view" />
 <content:pics />
 <content:favicon />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
+<style>
+span.el {
+  display: block; /* Fallback for non-webkit */
+  display: -webkit-box;
+  max-width: 95%;
+  height: 11*1.4*8; /* Fallback for non-webkit */
+  margin: 0 auto;
+  line-height: 1.4;
+  -webkit-line-clamp: 8;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+</style>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -44,13 +59,13 @@
  <td class="pri bld">${sc.certificationName}</td>
 </c:if>
  <td class="sec bld"><fmt:int value="${sc.index}" /></td>
- <td class="small left" colspan="2"><fmt:msg value="${sc.description}" bbCode="true" /></td>
+ <td class="small left" colspan="2"><span class="el"><fmt:msg value="${sc.description}" bbCode="true" /></span></td>
 </view:row>
 </c:forEach>
 
 <!-- Bottom Bar -->
 <tr class="title">
- <td colspan="4">&nbsp;</td>
+ <td colspan="4"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
 </tr>
 </view:table>
 <br />
