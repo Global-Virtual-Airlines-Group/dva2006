@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2008, 2009, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2008, 2009, 2010, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.assign;
 
 import java.util.*;
@@ -6,11 +6,12 @@ import java.time.Instant;
 
 import org.deltava.beans.*;
 import org.deltava.beans.flight.*;
+import org.deltava.beans.schedule.RoutePair;
 
 /**
  * A class to store Flight Assignments.
  * @author Luke
- * @version 7.0
+ * @version 8.0
  * @since 1.0
  */
 
@@ -128,13 +129,7 @@ public class AssignmentInfo extends DatabaseBean implements ViewEntry {
      * @return TRUE if all assignment flights are complete, otherwise FALS
      */
     public boolean isComplete() {
-        for (Iterator<FlightReport> i = _flights.iterator(); i.hasNext(); ) {
-            FlightReport fr = i.next();
-            if ((fr.getStatus() != FlightReport.OK) && (fr.getStatus() != FlightReport.REJECTED))
-                return false;
-        }
-        
-        return true;
+    	return _flights.stream().allMatch(fr -> ((fr.getStatus() == FlightReport.OK) || (fr.getStatus() == FlightReport.REJECTED)));
     }
     
     /**
@@ -223,14 +218,10 @@ public class AssignmentInfo extends DatabaseBean implements ViewEntry {
     /**
      * Updates the status of this Flight Assignment.
      * @param status the status code
-     * @throws IllegalArgumentException if an invalid or negative status code
      * @see AssignmentInfo#setStatus(String)
      * @see AssignmentInfo#getStatus()
      */
     public void setStatus(int status) {
-        if ((status < 0) || (status >= STATUS.length))
-            throw new IllegalArgumentException("Invalid Flight Assignment status - " + status);
-        
         _status = status;
     }
     
@@ -296,6 +287,28 @@ public class AssignmentInfo extends DatabaseBean implements ViewEntry {
      */
     public void setCompletionDate(Instant dt) {
         _completedOn = dt;
+    }
+    
+    /**
+     * Removes an unflown leg from this assignment.
+     * @param rp the RoutePair to remove
+     */
+    @SuppressWarnings("unlikely-arg-type")
+	public void remove(RoutePair rp) {
+    	FlightReport dfr  = null;
+    	for (Iterator<FlightReport> i = _flights.iterator(); i.hasNext(); ) {
+    		FlightReport fr = i.next();
+    		if ((fr.getStatus() == FlightReport.DRAFT) && fr.matches(rp)) {
+    			dfr = fr;
+    			i.remove();
+    		}
+    	}
+    	
+    	for (Iterator<AssignmentLeg> i = _assignments.iterator(); i.hasNext(); ) {
+    		AssignmentLeg al = i.next();
+    		if (al.matches(dfr) && al.equals(dfr))
+    			i.remove();
+    	}
     }
     
     /**
