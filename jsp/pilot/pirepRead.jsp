@@ -136,7 +136,7 @@ golgotha.local.showRunwayChoices = function() {
  <td class="data">${flightInfo.SID.name}.${flightInfo.SID.transition}<content:filter roles="Developer">.${flightInfo.SID.runway}</content:filter></td>
 </tr>
 </c:if>
-<c:set var="isDivert" value="${isACARS && (flightInfo.airportA.ICAO != pirep.airportA.ICAO)}" scope="page" />
+<c:set var="isDivert" value="${sACARS && (flightInfo.airportA.ICAO != pirep.airportA.ICAO)}" scope="page" />
 <tr>
  <td class="label">Arrived at</td>
  <td class="data">${pirep.airportA.name} (<el:cmd url="airportinfo" linkID="${pirep.airportA.IATA}" authOnly="true" className="plain"><fmt:airport airport="${pirep.airportA}" /></el:cmd>)
@@ -148,7 +148,7 @@ golgotha.local.showRunwayChoices = function() {
  <td class="data">${flightInfo.STAR.name}.${flightInfo.STAR.transition}<content:filter roles="Developer">.${flightInfo.STAR.runway}</content:filter></td>
 </tr>
 </c:if>
-<c:if test="${isACARS && (!empty flightInfo.airportL)}">
+<c:if test="${isACARS && (!empty flightInfo.airportL) && (flightInfo.airportL.ICAO != pirep.airportA.ICAO)}">
 <tr>
  <td class="label">Alternate</td>
  <td class="data">${flightInfo.airportL.name} (<el:cmd url="airportinfo" linkID="${flightInfo.airportL.IATA}" className="plain"><fmt:airport airport="${flightInfo.airportL}" /></el:cmd>)</td>
@@ -183,6 +183,10 @@ golgotha.local.showRunwayChoices = function() {
 <div class="ok bld">FLIGHT LEG DATA LOGGED USING simFDR</div></c:if>
 <c:if test="${fn:isDispatch(pirep)}">
 <div class="pri bld caps">Flight Leg planned using <content:airline /> Dispatch</div></c:if>
+<c:if test="${fn:isDivert(pirep) || isDivert}">
+<div class="warn bld caps">Flight diverted to Non-Scheduled Airport</div></c:if>
+<c:if test="${fn:isDivert(pirep) || !isDivert}">
+<div class="ter bld caps">Flight Leg is completion of Diverted Flight</div></c:if>
 <c:if test="${!fn:isRated(pirep)}">
 <div class="error bld caps">Flight Leg flown without Aircraft type rating</div></c:if>
 <c:if test="${fn:routeWarn(pirep)}">
@@ -339,7 +343,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 </c:if> </c:if>
 <content:filter roles="PIREP,HR,Developer,Operations">
 <c:if test="${isACARS}">
- <el:button label="RUNWAY CHOICES" key="R" onClick="void golgotha.local.showRunwayChoices()" />
+<span class="nophone"> <el:button label="RUNWAY CHOICES" key="R" onClick="void golgotha.local.showRunwayChoices()" /></span>
  <el:cmdbutton url="gaterecalc" link="${pirep}" label="LOAD GATES" />
 </c:if>
 </content:filter>
