@@ -46,6 +46,9 @@ return true;
 <content:sysdata var="acarsEnabled" name="acars.enabled" />
 <content:sysdata var="currencyEnabled" name="testing.currency.enabled" />
 <content:sysdata var="currencyInterval" name="testing.currency.validity" />
+<content:filter roles="HR,Operations">
+<c:set var="canToggleCurrency" value="${currencyEnabled}" scope="page" />
+</content:filter>
 <content:filter roles="HR,Signature">
 <c:set var="canSigAuth" value="${pilot.hasSignature && !sigAuthorized}" scope="page" />
 </content:filter>
@@ -103,10 +106,21 @@ return true;
  <td class="label top">Additional Ratings</td>
  <td colspan="${cspan}" class="data small"><fmt:list value="${pilot.ratings}" delim=", " /></td>
 </tr>
-<c:if test="${currencyEnabled && pilot.proficiencyCheckRides}">
+<c:choose>
+<c:when test="${currencyEnabled && pilot.proficiencyCheckRides}">
+<tr>
  <td class="label">Currency Testing</td>
- <td colspan="${cspan}" class="data"><span class="ter bld">ENABLED</span>, check ride validity <fmt:int value="${currencyInterval}" /> days</td>
-</c:if>
+ <td colspan="${cspan}" class="data"><span class="ter bld">ENABLED</span>, check ride validity <fmt:int value="${currencyInterval}" /> days
+<c:if test="${canToggleCurrency}"> <el:cmd url="currencydisable" link="${pilot}" className="sec bld">DISABLE<span class="nophone"> CURRENCY CHECK RIDES</span></el:cmd></c:if></td>
+</tr>
+</c:when>
+<c:when test="${currencyEnabled && canToggleCurrency}">
+<tr>
+ <td class="label">Currency Testing</td>
+ <td colspan="${cspan}" class="data"><span class="ter bld">DISABLED</span> - <el:cmd url="currencyenable" link="${pilot}" className="sec bld">ENABLE<span class="nophone">CURRENCY CHECK RIDES</span></el:cmd></td> 
+</tr>
+</c:when>
+</c:choose>
 <c:if test="${!empty certs}">
 <tr>
  <td class="label">Flight Academy Certifications</td>
@@ -170,14 +184,6 @@ return true;
  <td colspan="${cspan}" class="data error bld">E-MAIL ADDRESS INVALIDATED</td>
 </c:if>
 </tr>
-<c:forEach var="imAddr" items="${fn:keys(pilot.IMHandle)}">
-<c:if test="${imAddr.isVisible}">
-<tr>
- <td class="label">${imAddr} Address</td>
- <td colspan="${cspan}" class="data">${pilot.IMHandle[imAddr]}</td>
-</tr>
-</c:if>
-</c:forEach>
 </c:if>
 <c:if test="${!pilot.noVoice && !empty ts2Clients}"><content:filter roles="HR,Instructor">
 <!-- TeamSpeak 2 Virtual Server access -->

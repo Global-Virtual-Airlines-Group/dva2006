@@ -151,9 +151,7 @@ golgotha.onDOMReady(function() {
 <el:box name="noVoice" idx="*" value="true" checked="${pilot.noVoice}" label="Disable Private Voice access" /><br />
 <el:box name="noExams" idx="*" value="true" checked="${pilot.noExams}" label="Disable Testing Center access" /><br />
 <el:box name="noTimeCompress" idx="*" value="true" checked="${pilot.noTimeCompression}" label="Disable ACARS Time Compression" /><br />
-<el:box name="permAccount" value="true" checked="${pilot.isPermanent}" label="This is a Permanent account and will never be marked Inactive" />
-<c:if test="${currencyEnabled}"><br />
-<el:box name="currencyRides" value="true" checked="${pilot.proficiencyCheckRides}" label="Currency Check Rides Enabled (expire after ${currencyInterval} days)" /></c:if></td>
+<el:box name="permAccount" value="true" checked="${pilot.isPermanent}" label="This is a Permanent account and will never be marked Inactive" /></td>
 </tr>
 <tr>
  <td class="label">ACARS Capabilities</td>
