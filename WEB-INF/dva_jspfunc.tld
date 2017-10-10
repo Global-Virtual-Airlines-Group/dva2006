@@ -369,6 +369,13 @@
 		<function-signature>boolean isSubmitted(org.deltava.beans.testing.Test)</function-signature>
 	</function>
 
+	<!-- Check for Check Ride waiver -->
+	<function>
+		<name>isWaiver</name>
+		<function-class>org.deltava.taglib.functions.TestingFunctions</function-class>
+		<function-signature>boolean isWaiver(org.deltava.beans.testing.CheckRide)</function-signature>
+	</function>
+
 	<!-- Get Captain's Examination Name -->
 	<function>
 		<name>examC</name>
