@@ -54,11 +54,11 @@ public class NakedCheckRideCommand extends AbstractTestHistoryCommand {
 			boolean hasRide = false;
 			GetExam exdao = new GetExam(con);
 			Collection<CheckRide> cRides = exdao.getCheckRides(p.getID());
-			for (Iterator<CheckRide> i = cRides.iterator(); i.hasNext() && !hasRide;) {
-				CheckRide cr = i.next();
+			for (CheckRide cr : cRides) {
 				if (cr.getStatus() != TestStatus.SCORED) {
 					hasRide = true;
 					ctx.setAttribute("checkRide", cr, REQUEST);
+					break;
 				}
 			}
 			
@@ -125,7 +125,7 @@ public class NakedCheckRideCommand extends AbstractTestHistoryCommand {
 				return;
 			}
 			
-			// TODO: Check if this is recurrent or initial
+			// Check if this is recurrent or initial
 			RideType rt = RideType.CHECKRIDE;
 			if (p.getProficiencyCheckRides()) {
 				TestingHistoryHelper history = initTestHistory(p, con);

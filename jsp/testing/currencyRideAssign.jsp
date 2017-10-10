@@ -18,7 +18,7 @@
 golgotha.local.updateEQ = function(combo) {
 	var eq = golgotha.form.getCombo(combo);
 	var acTypes = golgotha.local.eqAircraft[eq];
-	var acc = document.forms[0].eqType;
+	var acc = document.forms[0].acType;
 	acc.options.length = acTypes.length + 1;
 	acc.selectedIndex = 0;
 	for (var x = 0; x < acTypes.length; x++)
@@ -47,7 +47,7 @@ golgotha.local.validate = function(f) {
 <el:form action="currencyassign.do" method="post" link="${pilot}" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
- <td colspan="2">CURRENCY CHECK RIDE - ${pilot.name}</td>
+ <td colspan="2">CURRENCY CHECK RIDE<span class="nophone"> - ${pilot.rank.name} ${pilot.name} (${pilot.pilotCode})</span></td>
 </tr>
 <c:choose>
 <c:when test="${hasCheckRide}">
@@ -57,14 +57,14 @@ golgotha.local.validate = function(f) {
 </c:when>
 <c:when test="${empty eqTypes}">
 <tr>
- <td colspan="2" class="pri bld mid">You do not have any Equipment type ratings that will expire before <fmt:date fmt="d" date="${expiry}" />.</td>
+ <td colspan="2" class="pri bld mid">You do not have any Equipment type ratings that will expire before <fmt:date fmt="d" date="${expiryDate}" />.</td>
 </tr>
 </c:when>
 <c:otherwise>
 <tr>
  <td class="label">Equipment Program</td>
  <td class="data"><el:combo name="eqType" idx="*" size="1" firstEntry="[ EQUIPMENT PROGRAM ]" options="${eqTypes}" value="${param.eqType}" onChange="void golgotha.local.updateEQ(this)" />
- <span class="small ita nophone">(Don't see a program listed? You can only request Check Rides for type ratings that expire before <fmt:date fmt="d" date="${expiry}" />.)</span></td>
+ <span class="small ita nophone">(Don't see a program listed? You can only request Check Rides for type ratings that expire before <fmt:date fmt="d" date="${expiryDate}" />.)</span></td>
 </tr>
 <tr>
  <td class="label">Aircraft Type</td>

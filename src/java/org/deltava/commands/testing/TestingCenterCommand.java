@@ -35,21 +35,23 @@ public class TestingCenterCommand extends AbstractTestHistoryCommand {
 	 */
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
-
-		// Get the user Profile
-		Pilot usr = ctx.getUser();
-		ctx.setAttribute("pilot", usr, REQUEST);
-
 		try {
 			Connection con = ctx.getConnection();
+			
+			// Load the user from the database, to avoid cache
+			GetPilot pdao = new GetPilot(con);
+			Pilot usr = pdao.get(ctx.getUser().getID());
+			ctx.setAttribute("pilot", usr, REQUEST);
 
 			// Initialize the Testing History
 			TestingHistoryHelper testHistory = initTestHistory(usr, con);
+			ctx.setAttribute("hasPendingCR", Boolean.valueOf(testHistory.getCheckRides(0).stream().anyMatch(cr -> (cr.getStatus() != TestStatus.SCORED))), REQUEST);
 			
 			// If we have currency check rides, see what is going to expire
 			if (usr.getProficiencyCheckRides()) {
 				int expDays = Math.min(30, Math.max(15, SystemData.getInt("testing.currency.validity", 365)));
-				ctx.setAttribute("expiringRides", testHistory.getCheckRides(expDays), REQUEST);
+				Collection<CheckRide> expRides = testHistory.getCheckRides(expDays);
+				ctx.setAttribute("expiringRides", expRides, REQUEST);
 				ctx.setAttribute("expiryDate", Instant.now().plus(expDays, ChronoUnit.DAYS), REQUEST);
 			}
 

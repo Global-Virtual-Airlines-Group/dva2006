@@ -62,16 +62,16 @@ public class CheckRideScoreCommand extends AbstractCommand {
 			sendTo = prdao.get(ud);
 			mctxt.addData("pilot", sendTo);
 			mctxt.addData("checkRide", cr);
-
+			
 			// Update the check ride
 			cr.setComments(ctx.getParameter("comments"));
 			cr.setScorerID(ctx.getUser().getID());
 			cr.setScoredOn(Instant.now());
 			cr.setPassFail(Boolean.valueOf(ctx.getParameter("passFail")).booleanValue());
 			cr.setStatus(TestStatus.SCORED);
-			if (cr.getPassFail() && sendTo.getProficiencyCheckRides())
+			if (cr.getPassFail() && (cr.getType() == RideType.CURRENCY))
 				cr.setExpirationDate(Instant.now().plus(SystemData.getInt("testing.currency.validity", 365), ChronoUnit.DAYS));
-
+			
 			// Get the message tempate
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
 			mctxt.setTemplate(mtdao.get(cr.getPassFail() ? "CRPASS" : "CRFAIL"));
