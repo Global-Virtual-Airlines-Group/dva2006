@@ -59,8 +59,10 @@
 <content:sysdata var="fbPageID" name="users.facebook.pageID" />
 <content:sysdata var="faaChartURL" name="schedule.chart.url.faa.meta" />
 <content:sysdata var="currencyEnabled" name="testing.currency.enabled" />
+<content:sysdata var="currencySelfEnroll" name="testing.currency.selfenroll" />
 <content:sysdata var="currencyInterval" name="testing.currency.validity" />
 <content:attr attr="hasDispatchAccess" value="true" roles="HR,Route,Dispatch" />
+<content:attr attr="isHROperations" value="true" roles="HR,Operations" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -432,7 +434,7 @@ requests here, assign Check Rides, and complete the Promotion Process.<c:if test
 <tr class="title caps">
  <td colspan="2">PILOT TESTING AND PROMOTION</td>
 </tr>
-<c:if test="${currencyEnabled}">
+<c:if test="${currencyEnabled && (currencySelfEnroll || isHROperations)}">
 <tr>
  <td class="mid" colspan="2"><content:airline /> allows its Pilots to <span class="ita">opt into</span> a recurrent certification model. Pilots will continue to require the successful completion of a written Examination
  as well as an initial Check Ride for entrance into a particular equipment program. Pilot who opt into recurrent certification will require an additional operational Check Ride every <fmt:int value="${currencyInterval}" />
@@ -451,7 +453,8 @@ You are currently enrolled within our <span class="ter bld caps">RECURRENT</span
 The following Check Rides or Check Ride Waivers are due to expire within the next 60 days. You will need to successfully complete a currency Check Ride prior to expiration in order to maintain your raings:<br />
 <br />
 <c:forEach var="expCR" items="${upcomingExpirations}" varStatus="expStatus">
-${expCR.name}, completed on <fmt:date fmt="d" date="${expCR.scoredOn}" /> expires on <fmt:date fmt="d" className="error bld" date="${expCR.expirationDate}" /><c:if test="${!expStatus.last}"><br /></c:if>
+<c:set var="isExpired" value="${expCR.expirationDate.isBefore(now)}" scope="page" />
+${expCR.name}, completed on <fmt:date fmt="d" date="${expCR.scoredOn}" /> ${isExpired ? 'expired' : 'expires'} on <fmt:date fmt="d" className="error bld" date="${expCR.expirationDate}" /><c:if test="${!expStatus.last}"><br /></c:if>
 </c:forEach></c:if></c:if>
  </td>
 </tr>
@@ -534,7 +537,7 @@ ${checkRide.equipmentType} Check Ride was assigned on <fmt:date date="${checkRid
  <td class="mid bld">Testing Center</td>
 </c:if>
  <td class="data">The <content:airline /> Testing Center is your single source for the written examinations needed for promotions and additional type ratings. Here you can see your prior tests 
-and their results, in addition to writing new aircraft tests.
+and their results, in addition to writing new aircraft tests.<c:if test="${pilot.proficiencyCheckRides}"> You may also schedule a currency Check Ride from the Testing Center. </c:if>
 <c:if test="${examLockout}"><span class="sec bld">You completed a <content:airline /> pilot Examination with an unsatisfactory score less than <fmt:int value="${examLockoutHours}" /> hours ago, and therefore 
 cannot write a new Examination until this interval has passed.</span></c:if>
 <c:if test="${pilot.legs < 5}"><span class="sec bld">As a new <content:airline /> pilot, you will be eligible to take written examinations once you have completed 5 flights.</span></c:if></td>
