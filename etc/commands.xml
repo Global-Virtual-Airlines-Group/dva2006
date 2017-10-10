@@ -1549,6 +1549,12 @@
 		<roles>HR,PIREP,Operations</roles>
 	</command>
 
+	<command id="currencyassign">
+		<name>Currency Check Ride Assign</name>
+		<class>org.deltava.commands.testing.CurrencyRideAssignCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
 	<command id="exam">
 		<name>Examination</name>
 		<class>org.deltava.commands.testing.ExamCommand</class>
