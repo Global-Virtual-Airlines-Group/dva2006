@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.functions;
 
 import org.deltava.beans.testing.*;
@@ -6,7 +6,7 @@ import org.deltava.beans.testing.*;
 /**
  * A JSP Function Library to define Testing Center-related functions.
  * @author Luke
- * @version 5.0
+ * @version 8.0
  * @since 1.0
  */
 
@@ -50,10 +50,9 @@ public class TestingFunctions {
 	 * Checks if a question has been answered correctly.
 	 * @param q the Question
 	 * @return TRUE if the answer is correct, otherwise FALSE
-	 * @throws NullPointerException if q is null
 	 */
 	public static boolean correct(Question q) {
-	   return q.isCorrect();
+	   return (q != null) && q.isCorrect();
 	}
 	
 	/**
@@ -71,20 +70,18 @@ public class TestingFunctions {
 	 * Checks if a Test has been passed.
 	 * @param t the Test
 	 * @return TRUE if the test is scored and passed, otherwise FALSE
-	 * @throws NullPointerException if t is null
 	 */
 	public static boolean isPass(Test t) {
-		return ((t.getStatus() == TestStatus.SCORED) && t.getPassFail());
+		return (t != null) && (t.getStatus() == TestStatus.SCORED) && t.getPassFail();
 	}
 	
 	/**
 	 * Checks if a Test has been failed.
 	 * @param t the Test
 	 * @return TRUE if the test is scored and not passed, otherwise FALSE
-	 * @throws NullPointerException if t is null
 	 */
 	public static boolean isFail(Test t) {
-		return ((t.getStatus() == TestStatus.SCORED) && !t.getPassFail());
+		return (t != null) && (t.getStatus() == TestStatus.SCORED) && !t.getPassFail();
 	}
 	
 	/**
@@ -100,9 +97,17 @@ public class TestingFunctions {
 	 * Check if a Test is submitted.
 	 * @param t the Test
 	 * @return TRUE if the test has been submitted
-	 * @throws NullPointerException if t is null
 	 */
 	public static boolean isSubmitted(Test t) {
 	   return (t != null) && (t.getStatus() == TestStatus.SUBMITTED);
+	}
+	
+	/**
+	 * Returns whether this is a Check Ride waiver or initial hire waiver.
+	 * @param cr the CheckRide
+	 * @return TRUE if the Check Ride is an iniital hire waiver or check ride waiver, otherwise FALSE
+	 */
+	public static boolean isWaiver(CheckRide cr) {
+		return (cr != null) && ((cr.getType() == RideType.WAIVER) || (cr.getType() == RideType.HIRE));
 	}
 }
