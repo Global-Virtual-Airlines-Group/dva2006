@@ -3,6 +3,8 @@ package org.deltava.commands.pilot;
 
 import java.util.*;
 import java.sql.Connection;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 import org.deltava.beans.*;
 import org.deltava.beans.testing.*;
@@ -262,6 +264,8 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 				int expDays = Math.min(30, Math.max(15, SystemData.getInt("testing.currency.validity", 365)));
 				ctx.setAttribute("upcomingExpirations", testHistory.getCheckRides(expDays), REQUEST);
 				ctx.setAttribute("expiryDays", Integer.valueOf(expDays), REQUEST);
+				ctx.setAttribute("expirationDate", Instant.now().plus(expDays, ChronoUnit.DAYS), REQUEST);
+				ctx.setAttribute("now", Instant.now(), REQUEST);
 			}
 
 			// See if we are enrolled in a Flight Academy course

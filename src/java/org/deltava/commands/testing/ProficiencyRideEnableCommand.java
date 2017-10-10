@@ -34,7 +34,7 @@ public class ProficiencyRideEnableCommand extends AbstractTestHistoryCommand {
 
 		// Get the user ID
 		int userID = ctx.getUser().getID();
-		if (ctx.isUserInRole("HR") && (ctx.getID() != 0))
+		if ((ctx.isUserInRole("HR") || ctx.isUserInRole("Operations")) && (ctx.getID() != 0))
 			userID = ctx.getID();
 
 		boolean confirm = Boolean.valueOf((String) ctx.getCmdParameter(OPERATION, null)).booleanValue();
@@ -50,6 +50,8 @@ public class ProficiencyRideEnableCommand extends AbstractTestHistoryCommand {
 				throw new CommandException("Proficiency check rides already enabled");
 			else if (!SystemData.getBoolean("testing.currency.enabled"))
 				throw new CommandException("Proficiency check rides not enabled for Airline");
+			else if (!SystemData.getBoolean("testing.currency.selfenroll") && !ctx.isUserInRole("HR") && !ctx.isUserInRole("Operations"))
+				throw new CommandException("Self-enrollment in Proficiency check rides not enabled");
 			
 			// Load exam history
 			int rideValidity = SystemData.getInt("testing.currency.validity", 365);
@@ -72,11 +74,11 @@ public class ProficiencyRideEnableCommand extends AbstractTestHistoryCommand {
 			Collection<EquipmentType> deltaEQ = CollectionUtils.getDelta(oldEQ, newEQ);
 			if (!deltaEQ.isEmpty()) {
 				Collection<String> waiverNames = new TreeSet<String>();
-				Instant waiverDate = Instant.now().plus(30, ChronoUnit.DAYS);
+				Instant waiverDate = Instant.now().plus(30, ChronoUnit.DAYS); long now = Instant.now().getEpochSecond();
 				for (EquipmentType weq : deltaEQ) {
 					CheckRide wcr = new CheckRide(weq.getName() +" Initial Proficiency Waiver");
 					wcr.setType(RideType.WAIVER);
-					wcr.setDate(Instant.now());
+					wcr.setDate(Instant.ofEpochSecond(now));
 					wcr.setPassFail(true);
 					wcr.setAuthorID(p.getID());
 					wcr.setSubmittedOn(wcr.getDate());
@@ -86,12 +88,14 @@ public class ProficiencyRideEnableCommand extends AbstractTestHistoryCommand {
 					wcr.setEquipmentType(weq.getName());
 					wcr.setAircraftType(weq.getName());
 					wcr.setStage(weq.getStage());
+					wcr.setStatus(TestStatus.SCORED);
 					wcr.setOwner(SystemData.getApp(null));
 					wcr.setComments("Proficiency Check Rides enabled, waiver for rated program");
 					testHelper.add(wcr);
 					waivers.add(wcr);
 					newEQ.add(weq);
 					waiverNames.add(weq.getName());
+					now++;
 				}
 				
 				ctx.setAttribute("waiverExpiry", waiverDate, REQUEST);

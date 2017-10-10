@@ -14,15 +14,15 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
-<script type="text/javascript">
-golgotha.local.toggleBody = function(id)
-{
-var row = document.getElementById(id);
-var linkDesc = document.getElementById('toggleC');
-var visible = (row.style.display != 'none');
-golgotha.util.display(row, !visible);
-linkDesc.innerHTML = visible ? 'View' : 'Hide';
-return true;
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script>
+golgotha.local.toggleBody = function(id) {
+	var row = document.getElementById(id);
+	var linkDesc = document.getElementById('toggleC');
+	var visible = (row.style.display != 'none');
+	golgotha.util.display(row, !visible);
+	linkDesc.innerHTML = visible ? 'View' : 'Hide';
+	return true;
 };
 </script>
 </head>
@@ -36,17 +36,18 @@ return true;
 <content:region id="main">
 <el:table className="form">
 <tr class="title caps">
- <td colspan="2">${checkRide.aircraftType} CHECK RIDE FOR ${pilot.name} (${pilot.pilotCode})</td>
+ <td colspan="2">${checkRide.name} FOR ${pilot.name} (${pilot.pilotCode})</td>
 </tr>
+<c:if test="${!fn:isWaiver(checkRide)}">
 <tr>
  <td class="label">${fn:pending(checkRide) ? 'Assigned' : 'Scored'} by</td>
  <td class="data"><span class="sec bld">${scorer.name}</span> (${scorer.pilotCode})</td>
 </tr>
+</c:if>
 <c:if test="${!checkRide.academy}">
 <tr>
  <td class="label">Equipment Program</td>
- <td class="data"><span class="sec bld">${checkRide.equipmentType}</span> (Stage <fmt:int value="${checkRide.stage}" />) -
- ${checkRide.owner.name}</td>
+ <td class="data"><span class="sec bld">${checkRide.equipmentType}</span> (Stage <fmt:int value="${checkRide.stage}" />) - <span class="sec bld">${checkRide.owner.name}</span></td>
 </tr>
 </c:if>
 <tr>
@@ -70,12 +71,13 @@ return true;
  <td class="label">Assigned on</td>
  <td class="data"><fmt:date fmt="d" date="${checkRide.date}" /> - <a href="javascript:void golgotha.local.toggleBody('crComments')"><span id="toggleC">View</span> Description</a></td>
 </tr>
-<c:if test="${!empty checkRide.submittedOn}">
+<c:if test="${!fn:isWaiver(checkRide) && (!empty checkRide.submittedOn)}">
 <tr>
  <td class="label">Submitted on</td>
  <td class="data"><fmt:date fmt="d" date="${checkRide.submittedOn}" /></td>
 </tr>
 </c:if>
+<c:if test="${!fn:isWaiver(checkRide)}">
 <tr>
  <td class="label">Check Ride Status</td>
 <c:choose>
@@ -90,6 +92,7 @@ return true;
 </c:otherwise>
 </c:choose>
 </tr>
+</c:if>
 <c:if test="${!empty checkRide.scoredOn}">
 <tr>
  <td class="label">Evaluated on</td>
@@ -122,7 +125,7 @@ return true;
 <el:cmdbutton url="checkride" link="${checkRide}" op="edit" label="RESCORE EXAMINATION" />
 </c:if> 
 <c:if test="${access.canDelete}">
-<el:cmdbutton url="examdelete" link="${checkRide}" op="checkride" label="DELETE CHECK RIDE" />
+<el:cmdbutton url="examdelete" link="${checkRide}" op="checkride" label="DELETE CHECK RIDE${fn:isWaiver(checkRide) ? ' WAIVER' : ''}" />
 </c:if>
  </td>
 </tr>

@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
@@ -41,14 +39,14 @@ Enabling currency-based ratings is a significant step. Your Examination and Chec
  or waivers valid for the specific currency interval of <fmt:int value="${currencyInterval}" /> plus 30 days.<br />
 <br />
 <c:if test="${!empty waiverNames}"><span class="pri bld ita">You currently qualify for the <fmt:list value="${waiverNames}" delim=", " /> equipment program(s), and do not have a current Check Ride. If you enable currency-based Check
- Rides, you will receive a waiver and need to obtain a current Check Ride for each program by <fmt:date date="${waiverExpiry}" />.</span><br /><br /></c:if>
+ Rides, you will receive a waiver and need to obtain a current Check Ride for each program by <fmt:date fmt="d" date="${waiverExpiry}" />.</span><br /><br /></c:if>
 <c:if test="${!empty ratingDelta}">After you enable currency-based Check Rides, you will lose the following equipment ratings: <fmt:list value="${ratingDelta}" delim=", " /><br />
 <br /></c:if>
 After you have opted into currency-based Check Rides, you can opt out again at any time. <span class="bld ita">However, any ratings that you lose while opting into this program will <span class="pri">NOT</span>
  be restored after you opt out and return to <content:airline />'s traditional type rating program.</span></c:if>
 <c:if test="${doConfirm}">
 ${pilot.firstName}, you have opted into currency-based Check Rides. We have reviewed your Examination and Check Ride history at <content:airline /> and have recalculated your aircraft type ratings.
-<c:if test="${!empty ratingDelta}"> The following equipment type ratings have been removed based on your history: <fmt:list value="${ratingDelta}" delim=", " /><br /></c:if>
+<c:if test="${!empty ratingDelta}"> The following <fmt:int value="${ratingDelta.size()}" /> equipment type ratings have been removed based on your history: <fmt:list value="${ratingDelta}" delim=", " /><br /></c:if>
 <br />
  <c:if test="${!empty waiverNames}"><span class="pri bld ita">You currently qualify for the <fmt:list value="${waiverNames}" delim=", " /> equipment program(s), and do not have a current Check Ride. You have received a 
  Check Ride waiver and will need to obtain a current Check Ride for each program by <fmt:date fmt="d" date="${waiverExpiry}" />.</span><br /><br /></c:if>
@@ -57,7 +55,7 @@ Thank you for opting into <content:airline />'s currency-based Check Ride progra
 </tr>
 <c:if test="${!empty upcomingExpiration}">
 <tr class="title caps">
- <td colspan="7" class="left">UPCOMING CHECK RIDE / WAIVER EXPIRATIONS</td>
+ <td colspan="7" class="left">UPCOMING<span class="nophone"> CHECK RIDE / WAIVER</span> EXPIRATIONS<span class="nophone"> - ${pilot.name} (${pilot.pilotCode})</span></td>
 </tr>
 <tr class="title caps">
  <td style="width:40%">CHECK RIDE NAME</td>

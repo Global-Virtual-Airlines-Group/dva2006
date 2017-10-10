@@ -33,9 +33,23 @@ public final class TestingHistoryHelper {
 
 	private final Pilot _usr;
 	private final EquipmentType _myEQ;
-	private final SortedSet<Test> _tests = new TreeSet<Test>();
+	private final SortedSet<Test> _tests = new TreeSet<Test>(new HistoryTestComparator());
 	private final Collection<FlightReport> _pireps = new ArrayList<FlightReport>();
 	private final Collection<EquipmentType> _allEQ = new TreeSet<EquipmentType>();
+	
+	/**
+	 * Utility class to compare Examinations by checking the ID, then the scoring date if the ID is zero and they are unsaved waivers.
+	 */
+	static class HistoryTestComparator implements Comparator<Test> {
+
+		@Override
+		public int compare(Test t1, Test t2) {
+			Instant d1 = (t1.getScoredOn() == null) ? t1.getDate() : t1.getScoredOn();
+			Instant d2 = (t2.getScoredOn() == null) ? t2.getDate() : t2.getScoredOn();
+			int tmpResult = d1.compareTo(d2);
+			return (tmpResult == 0) ? Integer.compare(t1.getID(), t2.getID()) : tmpResult;
+		}
+	}
 
 	/**
 	 * Utilty class to compare check rides by equipment program only, used to limit Sets to a single ride per program. 
@@ -90,11 +104,6 @@ public final class TestingHistoryHelper {
 	 * @param t the Test
 	 */
 	public void add(Test t) {
-		
-		// Check for an unsaved test, give it a dummy ID so that the TreeSet doesn't consider it a dupe
-		if (t.getID() == 0)
-			t.setID(Integer.MAX_VALUE - 1000 + _tests.size());
-		
 		_tests.add(t);
 	}
 
@@ -124,7 +133,7 @@ public final class TestingHistoryHelper {
 	
 	/**
 	 * Returns the Pilots Check Rides.
-	 * @param expirationDays
+	 * @param expirationDays the number of days in the future each check ride will expire
 	 * @return a Collection of CheckRide beans
 	 */
 	public Collection<CheckRide> getCheckRides(int expirationDays) {
@@ -136,7 +145,7 @@ public final class TestingHistoryHelper {
 		Collections.reverse(results);
 		Instant expDate = Instant.now().plus(expirationDays, ChronoUnit.DAYS);
 		Collection<CheckRide> expResults = new TreeSet<CheckRide>(new ExpiringRideComparator());
-		results.stream().filter(cr -> (!cr.getAcademy() && expDate.isAfter(cr.getExpirationDate()))).forEach(expResults::add);
+		results.stream().filter(cr -> (!cr.getAcademy() && ((cr.getStatus() == TestStatus.SCORED) && expDate.isAfter(cr.getExpirationDate())))).forEach(expResults::add);
 		return CollectionUtils.sort(expResults, new RideExpireComparator());
 	}
 	
@@ -145,7 +154,7 @@ public final class TestingHistoryHelper {
 	 * @param days the expiration in days
 	 */
 	public void applyExpiration(int days) {
-		getCheckRides(0).stream().filter(cr -> (!cr.getAcademy() && (cr.getExpirationDate() == null))).forEach(cr -> cr.setExpirationDate(cr.getScoredOn().plus(days, ChronoUnit.DAYS)));
+		getCheckRides(0).stream().filter(cr -> (!cr.getAcademy() && (cr.getStatus() == TestStatus.SCORED) && (cr.getExpirationDate() == null))).forEach(cr -> cr.setExpirationDate(cr.getScoredOn().plus(days, ChronoUnit.DAYS)));
 	}
 	
 	/**

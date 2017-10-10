@@ -8,7 +8,7 @@
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html lang="en">
 <head>
-<title>Testing Center - ${pilot.name}</title>
+<title>Testing Center - ${pilot.name} ($pilot.pilotCode)</title>
 <content:css name="main" />
 <content:css name="form" />
 <content:css name="view" />
@@ -17,16 +17,25 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <script>
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-if (!f.examName) return false;
-if (!golgotha.form.comboSet(f.examName))
-	throw new golgotha.event.ValidationError('Please select the Examination you wish to take.', f.examName);
+golgotha.local.validate = function(f, isCR) {
+	if (!golgotha.form.check()) return false;
+	if (!isCR) {
+		if (!f.examName) return false;
+		if (!golgotha.form.comboSet(f.examName))
+			throw new golgotha.event.ValidationError('Please select the Examination you wish to take.', f.examName);
 
-if (!confirm('Are you sure you wish to take the ' + golgotha.form.getCombo(f.examName) + ' Examination?')) return false;
-golgotha.form.submit(f);
-return true;
+		if (!confirm('Are you sure you wish to take the ' + golgotha.form.getCombo(f.examName) + ' Examination?')) return false;
+	}
+
+	golgotha.form.submit(f);
+	return true;
+};
+
+golgotha.local.doCR = function() {
+	var f = document.forms[0];
+	if (!golgotha.local.validate(f, true)) return false;
+	f.action = 'currencyassign.do';
+	return f.submit();
 };
 </script>
 </head>
@@ -37,6 +46,7 @@ return true;
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:sysdata var="examLockoutHours" name="testing.lockout" />
 <content:sysdata var="currencyEnabled" name="testing.currency.enabled" />
+<content:sysdata var="currencySelfEnroll" name="testing.currency.selfenroll" />
 <content:sysdata var="currencyInterval" name="testing.currency.validity" />
 <c:set var="cspan" value="${pilot.proficiencyCheckRides ? 8 : 7}" scope="page" />
 
@@ -44,7 +54,7 @@ return true;
 <content:region id="main">
 <el:form action="newexam.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="view">
-<c:if test="${currencyEnabled}">
+<c:if test="${currencyEnabled && currencySelfEnroll}">
 <!-- Promotion Mode Title bar -->
 <tr class="title caps">
  <td colspan="${cspan}">CHECK RIDE CURRENCY</td>
@@ -84,6 +94,8 @@ You are currently enrolled within our <span class="ter bld caps">RECURRENT</span
 <!-- Examination Data -->
 <c:forEach var="exam" items="${exams}">
 <c:set var="cmdName" value="${fn:isCheckRide(exam) ? 'checkride' : 'exam'}" scope="page" />
+<c:if test="${pilot.proficiencyCheckRides && fn:isCheckRide(exam)}"><c:set var="expDate" value="${exam.expirationDate}"  scope="page" />
+<c:set var="isExpired" value="${(!empty expDate) && expDate.isBefore(expiryDate)}" scope="page" /></c:if>
 <tr>
 <c:choose>
 <c:when test="${!fn:passed(exam) && !fn:failed(exam)}">
@@ -97,13 +109,21 @@ You are currently enrolled within our <span class="ter bld caps">RECURRENT</span
 </c:when>
 </c:choose>
  <td class="pri bld"><el:cmd url="${cmdName}" link="${exam}">${exam.name}</el:cmd></td>
- <td class="sec">${fn:isCheckRide(exam)? 'Check Ride' : 'Examination'}</td>
+ <td class="sec">${fn:isCheckRide(exam)? exam.type.name : 'Examination'}</td>
+<c:choose>
+<c:when test="${fn:pending(exam) || (fn:isCheckRide(exam) && fn:isWaiver(exam))}">
+ <td colspan="3">NOT APPLICABLE</td>
+</c:when>
+<c:otherwise>
  <td class="pri bld">${exam.score}</td>
  <td class="bld">${exam.size}</td>
- <td class="sec"><fmt:dec value="${exam.score / exam.size * 100.0}" />%</td>
-<c:if test="${pilot.proficiencyCheckRides}"><td><fmt:date fmt="d" date="${exam.expirationDate}" default="-" /></td></c:if>
+ <td class="sec"><fmt:dec value="${exam.score * 100.0 / exam.size}" />%</td>
+</c:otherwise>
+</c:choose>
+<c:if test="${pilot.proficiencyCheckRides}"> <td<c:if test="${isExpired}"> class="warn bld"</c:if>><fmt:date fmt="d" date="${expDate}" default="-" /></td></c:if>
  <td><fmt:date fmt="d" date="${exam.date}" /></td>
 </tr>
+<c:remove var="expDate" /><c:remove var="isExpired" />
 </c:forEach>
 </c:if>
 <c:if test="${empty exams}">
@@ -149,18 +169,32 @@ You are currently enrolled within our <span class="ter bld caps">RECURRENT</span
 <tr>
  <td class="left" colspan="${cspan}">Please select a written examination from the list below. Make sure that you are prepared to take the exam before clicking on &quot;New Examination.&quot;<br />
 <br />
-Our exams are timed. You will see time remaining at the top of the examination page. After starting you have 40 minutes to complete and submit the examination. <span class="ita">After 40 minutes the 
+Our exams are timed. You will see time remaining at the top of the examination page. After starting you have approximately 40 minutes to complete and submit the examination. <span class="bld ita">After 40 minutes the 
  examination will be automatically submitted, regardless of number of questions answered</span>.<br />
 <br />
-The specific program Chief Pilot or Assistant Chief Pilots score examianations within 72 hours of submission, and the results of your examination will be sent to you by email. Until it is scored,
- you will not be able to take any exam again.<span class="pri bld">Make sure that you are prepared before you begin an examination!</span></td>
+Most <content:airline /> examianations are multiple choice and automatically scored when submitted. If not, your examination will be scored within 72 hours of submission, and the results will be sent to you by e-mail.
+ Until it is scored, you will not be able to take any exam again.<span class="pri bld">Make sure that you are prepared before you begin an examination!</span></td>
 </tr>
 <tr class="title">
- <td colspan="${cspan}">SELECT EXAMINATION <el:combo name="examName" idx="1" size="1" options="${availableExams}" firstEntry="[ SELECT EXAM ]" /> <el:button ID="ExamButton" type="submit" label="NEW EXAMINATION" /></td>
+ <td colspan="${cspan}">SELECT EXAMINATION <el:combo name="examName" idx="1" size="1" options="${availableExams}" firstEntry="[ SELECT EXAM ]" /> <el:button type="submit" label="NEW EXAMINATION" /></td>
 </tr>
 </c:otherwise>
 </c:choose>
+<c:if test="${pilot.proficiencyCheckRides && (!empty expiringRides) && !hasPendingCR}">
+<!-- Expiring Check Ride Section -->
+<tr class="title caps">
+ <td class="left" colspan="${cspan}">EXPIRING CURRENCY CHECK RIDES</td>
+</tr>
+<tr>
+ <td class="left" colspan="${cspan}">You have <fmt:int value="${expiringRides.size()}" /> currency Check Rides that have either expired or will expire before <fmt:date fmt="d" date="${expiryDate}" />. In order to maintain your existing
+ equipment ratings, you will need to successfully complete a Check Ride before your ratings expire. To assign yourself a currency Check Ride, please select the equipment program below.</td>
+</tr>
+<tr class="title">
+ <td colspan="${cspan}"><el:button onClick="void golgotha.local.doCR()" label="NEW CURRENCY CHECK RIDE" /></td>
+</tr>
+</c:if>
 </el:table>
+<el:text type="hidden" value="${pilot.hexID}" name="id" />
 </el:form>
 <br />
 <content:copyright />
