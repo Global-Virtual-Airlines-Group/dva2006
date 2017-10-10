@@ -11,7 +11,6 @@ import org.deltava.commands.*;
 import org.deltava.dao.*;
 
 import org.deltava.util.*;
-import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to disable Proficiency Check Rides for a Pilot.
@@ -32,7 +31,7 @@ public class ProficiencyRideDisableCommand extends AbstractTestHistoryCommand {
 		
 		// Get the user ID
 		int userID = ctx.getUser().getID();
-		if (ctx.isUserInRole("HR") && (ctx.getID() != 0))
+		if ((ctx.isUserInRole("HR") || ctx.isUserInRole("Operations")) && (ctx.getID() != 0))
 			userID = ctx.getID();
 
 		try {
@@ -45,8 +44,6 @@ public class ProficiencyRideDisableCommand extends AbstractTestHistoryCommand {
 				throw notFoundException("Unknown Pilot - " + userID);
 			else if (!p.getProficiencyCheckRides())
 				throw new CommandException("Proficiency check rides already disabled");
-			else if (!SystemData.getBoolean("testing.currency.enabled"))
-				throw new CommandException("Proficiency check rides not enabled for Airline");
 			
 			// Load exams, without expiration dates 
 			p.setProficiencyCheckRides(false);

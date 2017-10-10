@@ -61,7 +61,7 @@ public class CurrencyRideAssignCommand extends AbstractTestHistoryCommand {
 			
 			// Load valid equipment types - needs to be something we are rated for
 			GetEquipmentType eqdao = new GetEquipmentType(con);
-			Collection<EquipmentType> myEQ = new ArrayList<EquipmentType>();
+			Collection<EquipmentType> myEQ = new LinkedHashSet<EquipmentType>();
 			for (CheckRide ecr : expRides)
 				myEQ.add(eqdao.get(ecr.getEquipmentType()));
 			
@@ -70,6 +70,7 @@ public class CurrencyRideAssignCommand extends AbstractTestHistoryCommand {
 				Map<String, Collection<String>> primaryEQ = new TreeMap<String, Collection<String>>();
 				myEQ.forEach(eq -> primaryEQ.put(eq.getName(), eq.getPrimaryRatings()));
 
+				ctx.setAttribute("pilot", p, REQUEST);
 				ctx.setAttribute("expiryDate", Instant.now().plus(expDays, ChronoUnit.DAYS), REQUEST);
 				ctx.setAttribute("eqTypes", myEQ, REQUEST);
 				ctx.setAttribute("eqAircraft", primaryEQ, REQUEST);
@@ -105,7 +106,7 @@ public class CurrencyRideAssignCommand extends AbstractTestHistoryCommand {
 				comments = sc.getDescription();
 			
 			// Create the check ride
-			CheckRide cr = new CheckRide(eq.getName() + " recurrent Check Ride");
+			CheckRide cr = new CheckRide(eq.getName() + " Recurrent Check Ride");
 			cr.setOwner(SystemData.getApp(null));
 			cr.setDate(Instant.now());
 			cr.setEquipmentType(eq.getName());
