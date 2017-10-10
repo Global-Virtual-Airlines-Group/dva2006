@@ -69,6 +69,9 @@
 <content:filter roles="Pilot">
  <content:subitem><el:cmd url="pilotcenter" className="bld">Pilot Center</el:cmd></content:subitem>
  <content:subitem><el:cmd url="logbook" link="${user}">Log Book</el:cmd></content:subitem>
+<c:if test="${(user.legs >= 5) && !user.noExams}">
+ <content:subitem><el:cmd url="testcenter">Testing Center</el:cmd></content:subitem> 
+</c:if>
 <c:if test="${helpDeskEnabled}">
  <content:subitem><el:cmd url="helpdesk">Help Desk</el:cmd></content:subitem>
 </c:if>
