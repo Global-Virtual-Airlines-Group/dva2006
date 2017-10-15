@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.simfdr;
 
 import java.time.Instant;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to parse simFDR submitted flight reports.
  * @author Luke
- * @version 7.2
+ * @version 8.0
  * @since 7.0
  */
 
@@ -70,11 +70,16 @@ final class OfflineFlightParser {
 		inf.setAirportL(SystemData.getAirport(ie.getChildTextTrim("airportL")));
 		inf.setRemoteAddr(ie.getChildTextTrim("remoteAddr"));
 		inf.setRemoteHost(ie.getChildTextTrim("remoteHost"));
-		inf.setSimulator(Simulator.fromName(ie.getChildTextTrim("sim")));
 		inf.setFDR(Recorder.SIMFDR);
 		inf.setFlightCode(cs);
 		inf.setRoute(ie.getChildTextTrim("route"));
 		of.setInfo(inf);
+		
+		// Load simulator
+		String sim = ie.getChildTextTrim("sim");
+		inf.setSimulator(Simulator.fromName(sim, Simulator.UNKNOWN));
+		if (inf.getSimulator() == Simulator.UNKNOWN)
+			log.warn("Unknown simulator version - " + sim);
 		
 		// Build a flight data entry
 		Flight f = FlightCodeParser.parse(cs); 
