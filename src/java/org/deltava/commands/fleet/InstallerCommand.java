@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update Fleet Library entries.
  * @author Luke
- * @version 7.5
+ * @version 8.0
  * @since 1.0
  */
 
@@ -93,21 +93,18 @@ public class InstallerCommand extends LibraryEditCommand {
 			entry.setVersion(StringUtils.parse(ctx.getParameter("majorVersion"), 1), StringUtils.parse(ctx.getParameter("minorVersion"), 0), StringUtils.parse(ctx.getParameter("subVersion"), 0));
 			
 			// Add Simulator Codes
+			final Installer e = entry;
 			Collection<String> fsCodes = ctx.getParameters("fsVersion");
 			if (fsCodes != null) {
-				entry.getFSVersions().clear();
-				for (String sim : fsCodes)
-					entry.addFSVersion(Simulator.fromName(sim));
+				e.getFSVersions().clear();
+				fsCodes.forEach(sim -> e.addFSVersion(Simulator.fromName(sim, Simulator.UNKNOWN)));
 			}
 
 			// Add airline codes
 			Collection<String> appCodes = ctx.getParameters("airlines");
 			if (appCodes != null) {
-				entry.getApps().clear();
-				for (Iterator<String> i = appCodes.iterator(); i.hasNext();) {
-					String appCode = i.next();
-					entry.addApp(SystemData.getApp(appCode));
-				}
+				e.getApps().clear();
+				appCodes.forEach(c -> e.addApp(SystemData.getApp(c)));
 			}
 			
 			// Get the message template

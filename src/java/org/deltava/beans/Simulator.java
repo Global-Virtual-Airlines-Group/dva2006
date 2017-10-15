@@ -4,7 +4,7 @@ package org.deltava.beans;
 /**
  * An enumeration of Simulator versions.
  * @author Luke
- * @version 7.5
+ * @version 8.0
  * @since 5.1
  */
 
@@ -63,15 +63,6 @@ public enum Simulator implements ComboAlias {
 		}
 		
 		return defaultSim;
-	}
-	
-	/**
-	 * Exception-swallowing way to parse a simulator name.
-	 * @param name the simulator name
-	 * @return a Simulator
-	 */
-	public static Simulator fromName(String name) {
-		return fromName(name, UNKNOWN);
 	}
 	
 	/**

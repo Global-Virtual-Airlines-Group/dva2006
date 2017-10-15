@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to parse XML-format offline Flight Reports.
  * @author Luke
- * @version 7.2
+ * @version 8.0
  * @since 2.4
  */
 
@@ -103,7 +103,6 @@ public final class OfflineFlightParser {
 		inf.setAltitude(ie.getChildTextTrim("altitude"));
 		inf.setRoute(ie.getChildTextTrim("route"));
 		inf.setRemarks(ie.getChildTextTrim("remarks"));
-		inf.setSimulator(Simulator.fromName(ie.getChildTextTrim("fs_ver")));
 		inf.setScheduleValidated(Boolean.valueOf(ie.getChildTextTrim("schedOK")).booleanValue());
 		inf.setDispatchPlan(Boolean.valueOf(ie.getChildTextTrim("dispatchRoute")).booleanValue());
 		inf.setDispatcherID(StringUtils.parse(ie.getChildTextTrim("dispatcherID"), 0));
@@ -111,6 +110,12 @@ public final class OfflineFlightParser {
 		result.setSID(ie.getChildTextTrim("sid"));
 		result.setSTAR(ie.getChildTextTrim("star"));
 		result.setInfo(inf);
+		
+		// Load simulator
+		String sim = ie.getChildTextTrim("fs_ver");
+		inf.setSimulator(Simulator.fromName(sim, Simulator.UNKNOWN));
+		if (inf.getSimulator() == Simulator.UNKNOWN)
+			log.warn("Unknown simulator version - " + sim);
 		
 		// Load sim major/minor
 		String simVersion = ie.getChildTextTrim("simVersion"); 

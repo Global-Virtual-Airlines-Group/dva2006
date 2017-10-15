@@ -143,7 +143,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			fr.setAirportA(aa);
 			fr.setEquipmentType(ctx.getParameter("eq"));
 			fr.setRemarks(ctx.getParameter("remarks"));
-			fr.setSimulator(Simulator.fromName(ctx.getParameter("fsVersion")));
+			fr.setSimulator(Simulator.fromName(ctx.getParameter("fsVersion"), Simulator.UNKNOWN));
 			fr.setRoute(ctx.getParameter("route"));
 
 			// Check for historic aircraft
