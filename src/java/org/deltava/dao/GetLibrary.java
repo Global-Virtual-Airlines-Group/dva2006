@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load metadata from the Fleet/Document Libraries.
  * @author Luke
- * @version 7.5
+ * @version 8.0
  * @since 1.0
  */
 
@@ -266,7 +266,7 @@ public class GetLibrary extends DAO {
 				String fsCodes = rs.getString(10);
 				if (fsCodes != null) {
 					for (String sim : StringUtils.split(fsCodes, ","))
-						entry.addFSVersion(Simulator.fromName(sim));
+						entry.addFSVersion(Simulator.fromName(sim, Simulator.UNKNOWN));
 				}
 
 				results.add(entry);
