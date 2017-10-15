@@ -387,7 +387,7 @@ public class GetACARSData extends DAO {
 				info.setRemoteHost(rs.getString(12));
 				info.setRoute(rs.getString(13));
 				info.setRemarks(rs.getString(14));
-				info.setSimulator(Simulator.fromVersion(rs.getInt(15)));
+				info.setSimulator(Simulator.fromVersion(rs.getInt(15), Simulator.UNKNOWN));
 				info.setOffline(rs.getBoolean(16));
 				info.setHasPIREP(rs.getBoolean(17));
 				info.setArchived(rs.getBoolean(18));
