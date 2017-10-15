@@ -10,7 +10,7 @@ import org.deltava.beans.acars.ACARSError;
 /**
  * A Data Access Object to load ACARS client error logs.
  * @author Luke
- * @version 7.3
+ * @version 8.0
  * @since 1.0
  */
 
@@ -143,7 +143,7 @@ public class GetACARSErrors extends DAO {
 				err.setRemoteHost(rs.getString(5));
 				err.setClientBuild(rs.getInt(6));
 				err.setBeta(rs.getInt(7));
-				err.setSimulator(Simulator.fromVersion(rs.getInt(8)));
+				err.setSimulator(Simulator.fromVersion(rs.getInt(8), Simulator.UNKNOWN));
 				err.setFSUIPCVersion(rs.getString(9));
 				err.setOSVersion(rs.getString(10));
 				err.setCLRVersion(rs.getString(11));

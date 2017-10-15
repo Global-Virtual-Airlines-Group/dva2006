@@ -1,4 +1,4 @@
-// Copyright 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object for reading XACARS data from the database.
  * @author Luke
- * @version 7.0
+ * @version 8.0
  * @since 4.1
  */
 
@@ -38,8 +38,7 @@ public class GetXACARS extends DAO {
 	 */
 	public int getID(int userID, Flight f) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT ID FROM xacars.FLIGHTS WHERE (PILOT_ID=?) AND (AIRLINE=?) AND "
-				+ "(FLIGHT=?) ORDER BY START_TIME DESC LIMIT 1");
+			prepareStatementWithoutLimits("SELECT ID FROM xacars.FLIGHTS WHERE (PILOT_ID=?) AND (AIRLINE=?) AND (FLIGHT=?) ORDER BY START_TIME DESC LIMIT 1");
 			_ps.setInt(1, userID);
 			_ps.setString(2, f.getAirline().getCode());
 			_ps.setInt(3, f.getFlightNumber());
@@ -84,9 +83,8 @@ public class GetXACARS extends DAO {
 	 */
 	public Collection<XAFlightInfo> getActive() throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT F.*, MAX(P.REPORT_TIME) AS LATPOS FROM xacars.FLIGHTS F, "
-				+ "xacars.POSITIONS P WHERE (F.ID=P.FLIGHT_ID) GROUP BY F.ID HAVING (LASTPOS > DATE_SUB(NOW(), "
-				+ "INTERVAL ? MINUTE))");
+			prepareStatementWithoutLimits("SELECT F.*, MAX(P.REPORT_TIME) AS LATPOS FROM xacars.FLIGHTS F, xacars.POSITIONS P WHERE (F.ID=P.FLIGHT_ID) GROUP BY F.ID "
+				+ "HAVING (LASTPOS > DATE_SUB(NOW(), INTERVAL ? MINUTE))");
 			_ps.setInt(1, 30);
 			return execute();
 		} catch (SQLException se) {
@@ -136,7 +134,6 @@ public class GetXACARS extends DAO {
 	 * Helper method to parse Flight Info result sets.
 	 */
 	private List<XAFlightInfo> execute() throws SQLException {
-
 		List<XAFlightInfo> results = new ArrayList<XAFlightInfo>();
 		try (ResultSet rs = _ps.executeQuery()) {
 			while (rs.next()) {
@@ -172,7 +169,7 @@ public class GetXACARS extends DAO {
 				inf.setClimbPhase(XAFlightInfo.ClimbPhase.values()[rs.getInt(35)]);
 				inf.setZeroFuelWeight(rs.getInt(36));
 				inf.setRoute(rs.getString(37));
-				inf.setSimulator(Simulator.fromVersion(rs.getInt(38)));
+				inf.setSimulator(Simulator.fromVersion(rs.getInt(38), Simulator.UNKNOWN));
 				results.add(inf);
 			}
 		}
