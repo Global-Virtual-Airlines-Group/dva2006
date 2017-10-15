@@ -66,15 +66,6 @@ public enum Simulator implements ComboAlias {
 	}
 	
 	/**
-	 * Converts a version code to a Simulator.
-	 * @param code the version code
-	 * @return a Simulator
-	 */
-	public static Simulator fromVersion(int code) {
-		return fromVersion(code, UNKNOWN);
-	}
-	
-	/**
 	 * Exception-swallowing way to parse a simulator name.
 	 * @param name the simulator name
 	 * @return a Simulator
@@ -91,8 +82,9 @@ public enum Simulator implements ComboAlias {
 	 */
 	public static Simulator fromName(String name, Simulator defaultSim) {
 		try {
-			if ("FS2K4".equals(name)) return Simulator.FS9;
-			if ("P3Dv4".equals(name)) return Simulator.P3Dv4;
+			if ("FS2K4".equals(name)) return FS9;
+			if ("P3Dv4".equals(name)) return P3Dv4;
+			if ("XP".equals(name)) return XP9;
 			return Simulator.valueOf(name.toUpperCase());
 		} catch (Exception e) {
 			return defaultSim;
