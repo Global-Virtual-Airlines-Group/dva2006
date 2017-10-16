@@ -331,4 +331,15 @@
             <wday>*</wday>
         </time>
     </task>
+
+    <task id="currencypurge" enabled="false">
+    		<class>org.deltava.tasks.CurrencyRidePurgeTask</class>
+    		<time>
+			<min>50</min>
+			<hour>8</hour>    		
+    			<mday>*</mday>
+    			<month>*</month>
+    			<wday>*</wday>
+    		</time>
+    </task>
 </tasks>
