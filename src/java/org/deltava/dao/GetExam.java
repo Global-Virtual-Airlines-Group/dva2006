@@ -230,6 +230,27 @@ public class GetExam extends DAO {
 	}
 	
 	/**
+	 * Returns all unsubmitted Check Rides older than a certain date.
+	 * @param days the number of days
+	 * @param rt a RideType
+	 * @return a List of CheckRide beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<CheckRide> getPendingRides(int days, RideType rt) throws DAOException {
+		try {
+			prepareStatement("SELECT CR.*, CF.ACARS_ID, EQ.STAGE, CRR.COURSE FROM (exams.CHECKRIDES CR, common.EQPROGRAMS EQ) LEFT JOIN exams.CHECKRIDE_FLIGHTS CF ON (CR.ID=CF.ID) "
+				+ "LEFT JOIN exams.COURSERIDES CRR ON (CR.ID=CRR.CHECKRIDE) WHERE (CR.TYPE=?) AND (CR.STATUS=?) AND (CR.CREATED < DATE_SUB(NOW(), INTERVAL ? DAY)) AND (CR.EQTYPE=EQ.EQTYPE) "
+				+ "AND (CR.OWNER=EQ.OWNER) ORDER BY CR.CREATED");
+			_ps.setInt(1, rt.ordinal());
+			_ps.setInt(2, TestStatus.NEW.ordinal());
+			_ps.setInt(3, days);
+			return executeCheckride();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Returns all submitted Check Rides for the current airline or the Flight Academy.
 	 * @param isAcademy TRUE if listing Flight Academy Check Rides, otherwise FALSE
 	 * @return a Collection of CheckRide beans
