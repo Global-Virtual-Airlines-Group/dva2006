@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.io.*;
@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
-import org.deltava.beans.assign.AssignmentInfo;
+import org.deltava.beans.assign.*;
 import org.deltava.beans.fb.NewsEntry;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.servinfo.PositionData;
@@ -33,7 +33,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Flight Report status changes.
  * @author Luke
- * @version 7.0
+ * @version 8.0
  * @since 1.0
  */
 
@@ -230,6 +230,48 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			// Get the write DAO and update/dispose of the PIREP
 			SetFlightReport wdao = new SetFlightReport(con);
 			wdao.dispose(SystemData.get("airline.db"), ctx.getUser(), fr, opCode);
+
+			// If this is part of a flight assignment, load it
+		   GetAssignment fadao = new GetAssignment(con);
+		   AssignmentInfo assign = (fr.getDatabaseID(DatabaseID.ASSIGN) == 0) ? null : fadao.get(fr.getDatabaseID(DatabaseID.ASSIGN));
+		   if (assign != null) {
+			   List<FlightReport> flights = rdao.getByAssignment(assign.getID(), SystemData.get("airline.db"));
+			   flights.forEach(fl -> assign.addFlight(fl));
+		   }
+			
+			// Diversion handling
+			if (fr.hasAttribute(FlightReport.ATTR_DIVERT) && (opCode == FlightReport.HOLD) && (fr instanceof ACARSFlightReport)) {
+				GetACARSData fidao = new GetACARSData(con); 
+				FlightInfo fInfo = fidao.getInfo(fr.getDatabaseID(DatabaseID.ACARS));
+
+				// Remove this leg from the assignment
+				if (assign != null)
+					assign.remove(fInfo);
+				
+				// Create the draft PIREP
+				DraftFlightReport dfr = new DraftFlightReport(fr.getAirline(), fr.getFlightNumber(), fr.getLeg() + 1);
+				dfr.setAirportD(fr.getAirportA());
+				dfr.setAirportA(fInfo.getAirportA());
+				dfr.setEquipmentType(fr.getEquipmentType());
+				dfr.setAttribute(FlightReport.ATTR_HISTORIC, fr.hasAttribute(FlightReport.ATTR_HISTORIC));
+				dfr.setAttribute(FlightReport.ATTR_DIVERT, true);
+				dfr.setComments("Diversion completion flight to " + fInfo.getAirportA().getIATA());
+				
+				// Create a new flight assignment
+				AssignmentInfo newAssign = new AssignmentInfo(fr.getEquipmentType());
+				newAssign.setPilotID(fr.getAuthorID());
+				newAssign.setStatus(AssignmentInfo.RESERVED);
+				newAssign.setRandom(true);
+				newAssign.setPurgeable(true);
+				newAssign.setAssignDate(Instant.now());
+				newAssign.addAssignment(new AssignmentLeg(fr));
+				newAssign.addAssignment(new AssignmentLeg(dfr));
+				
+				// Save the assignment
+				SetAssignment fawdao = new SetAssignment(con);
+				fawdao.write(newAssign, SystemData.get("airline.db"));
+				wdao.write(dfr);
+			}
 			
 			// If we're approving and have not assigned a Pilot Number yet, assign it
 			if ((opCode == FlightReport.OK) && (p.getPilotNumber() == 0)) {
@@ -259,13 +301,9 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			}
 			
 			// If we're approving the PIREP and it's part of a Flight Assignment, check completion
-			int assignID = fr.getDatabaseID(DatabaseID.ASSIGN);
-			if (((opCode == FlightReport.OK) || (opCode == FlightReport.REJECTED)) && (assignID != 0)) {
-			   GetAssignment fadao = new GetAssignment(con);
-			   AssignmentInfo assign = fadao.get(assignID);
-			   List<FlightReport> flights = rdao.getByAssignment(assignID, SystemData.get("airline.db"));
-			   for (Iterator<FlightReport> i = flights.iterator(); i.hasNext(); )
-			      assign.addFlight(i.next());
+			if (((opCode == FlightReport.OK) || (opCode == FlightReport.REJECTED)) && (assign != null)) {
+			   List<FlightReport> flights = rdao.getByAssignment(assign.getID(), SystemData.get("airline.db"));
+			   flights.forEach(fl -> assign.addFlight(fl));
 			   
 			   // If the assignment is complete, then mark it as such
 			   if (assign.isComplete()) {
