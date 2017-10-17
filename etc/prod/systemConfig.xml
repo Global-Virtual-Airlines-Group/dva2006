@@ -279,6 +279,11 @@
 	<testing>
 		<lockout type="Integer">24</lockout>
 		<correct_ratio_age type="Integer">90</correct_ratio_age>
+		<currency>
+			<enabled type="Boolean">true</enabled>
+			<selfenroll type="Boolean">false</selfenroll>
+			<validity type="Integer">365</validity>
+		</currency>
 	</testing>
 
 	<!-- Weather map tile sources -->	

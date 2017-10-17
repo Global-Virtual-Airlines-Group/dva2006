@@ -256,7 +256,7 @@
 		<currency>
 			<enabled type="Boolean">true</enabled>
 			<selfenroll type="Boolean">false</selfenroll>
-			<validity type="Integer">90</validity>
+			<validity type="Integer">180</validity>
 		</currency>
 	</testing>
 
