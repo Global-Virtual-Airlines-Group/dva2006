@@ -294,8 +294,7 @@
 			<path>/pub/data/nccf/com/gfs/prod</path>
 		</gfs>
 
-		<tileHost>t.w-x.co</tileHost>
-		<apiHost>dsx.weather.com</apiHost>
+		<tileHost>api.weather.com</tileHost>
 
 		<!-- Download locations -->
 		<url>
