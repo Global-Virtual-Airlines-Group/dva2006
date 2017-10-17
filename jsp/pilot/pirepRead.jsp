@@ -136,7 +136,7 @@ golgotha.local.showRunwayChoices = function() {
  <td class="data">${flightInfo.SID.name}.${flightInfo.SID.transition}<content:filter roles="Developer">.${flightInfo.SID.runway}</content:filter></td>
 </tr>
 </c:if>
-<c:set var="isDivert" value="${sACARS && (flightInfo.airportA.ICAO != pirep.airportA.ICAO)}" scope="page" />
+<c:set var="isDivert" value="${isACARS && (flightInfo.airportA.ICAO != pirep.airportA.ICAO)}" scope="page" />
 <tr>
  <td class="label">Arrived at</td>
  <td class="data">${pirep.airportA.name} (<el:cmd url="airportinfo" linkID="${pirep.airportA.IATA}" authOnly="true" className="plain"><fmt:airport airport="${pirep.airportA}" /></el:cmd>)
