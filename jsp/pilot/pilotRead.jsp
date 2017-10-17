@@ -117,7 +117,7 @@ return true;
 <c:when test="${currencyEnabled && canToggleCurrency}">
 <tr>
  <td class="label">Currency Testing</td>
- <td colspan="${cspan}" class="data"><span class="ter bld">DISABLED</span> - <el:cmd url="currencyenable" link="${pilot}" className="sec bld">ENABLE<span class="nophone">CURRENCY CHECK RIDES</span></el:cmd></td> 
+ <td colspan="${cspan}" class="data"><span class="ter bld">DISABLED</span> - <el:cmd url="currencyenable" link="${pilot}" className="sec bld">ENABLE<span class="nophone"> CURRENCY CHECK RIDES</span></el:cmd></td> 
 </tr>
 </c:when>
 </c:choose>
