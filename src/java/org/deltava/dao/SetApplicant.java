@@ -134,7 +134,7 @@ public class SetApplicant extends PilotWriteDAO {
 	 */
 	public void hire(Applicant a) throws DAOException {
 		try {
-			prepareStatement("UPDATE APPLICANTS SET STATUS=?, PILOT_ID=?, RANK=?, EQTYPE=? WHERE (ID=?)");
+			prepareStatement("UPDATE APPLICANTS SET STATUS=?, PILOT_ID=?, RANKING=?, EQTYPE=? WHERE (ID=?)");
 			_ps.setInt(1, Applicant.APPROVED);
 			_ps.setInt(2, a.getPilotID());
 			_ps.setString(3, a.getRank().getName());
