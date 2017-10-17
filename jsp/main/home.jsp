@@ -47,8 +47,9 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-Welcome to the <span class="bld"><content:airline /></span> web site. We are a group of flight simulation enthusiasts who fly Delta Air Lines and its alliance partners' routes using Microsoft Flight Simulator 2002, 2004 or Flight 
-Simulator X (including FSX: Steam Edition), Lockheed-Martin Prepar3D and Laminar Research X-Plane. We are in no way affiliated with Delta Air Lines.<br />
+Welcome to the <span class="bld"><content:airline /></span> web site. We are a group of flight simulation enthusiasts who fly Delta Air Lines and its alliance partners' routes using Microsoft Flight Simulator 2004 and Flight 
+ Simulator X (including FSX: Steam Edition). We offer partial support at this time for Lockheed-Martin Prepar3D v1-3 and Laminar Research X-Plane 10. We are working to implement more features of these programs into our aircraft 
+ programs, and VATSIM approved Flight Academy.We are in no way affiliated with Delta Air Lines.<br />
 <br />
 Since May 2003, we have received over <fmt:int value="${httpStats.homeHits}" /> visits and received <fmt:int value="${httpStats.hits}" /> hits. During this time, our servers have sent out over <fmt:int value="${httpStats.bytes}" /> bytes worth of data.
 <c:if test="${coolerStats > 1}"> Our members have posted over <fmt:quantity value="${coolerStats}" single="message" /> in our ${forumName} discussion forum in the past 24 hours.</c:if>
@@ -114,7 +115,7 @@ If you are interested in a virtual airline with primarily ${partnerLoc} operatio
 <!-- Current ACARS server connections -->
 <el:table className="view">
 <tr class="title caps left">
- <td colspan="6">CURRENTLY FLYING USING <content:airline /> ACARS</td>
+ <td colspan="7">CURRENTLY FLYING USING <content:airline /> ACARS</td>
 </tr>
 <c:forEach var="con" items="${acarsPool}">
 <c:if test="${!con.userHidden || isHR}">
@@ -124,15 +125,16 @@ If you are interested in a virtual airline with primarily ${partnerLoc} operatio
 <c:when test="${!empty con.flightInfo.flightCode}">
  <td class="sec bld">${con.flightInfo.flightCode}</td>
  <td class="nophone small bld">${con.flightInfo.equipmentType}</td>
+ <td class="nophone small ter">${con.flightInfo.simulator}</td>
  <td class="nophone small sec">${con.flightPhase}</td>
  <td class="nophone bld"><fmt:duration duration="${con.flightInfo.duration}" t="HH:mm" /></td>
  <td class="small">${con.flightInfo.airportD.name} (<fmt:airport airport="${con.flightInfo.airportD}" />) - ${con.flightInfo.airportA.name} (<fmt:airport airport="${con.flightInfo.airportA}" />)</td>
 </c:when>
 <c:when test="${con.dispatch}">
- <td colspan="5" class="pri bld mid">PROVIDING ACARS DISPATCHER SERVICES</td>
+ <td colspan="6" class="pri bld mid">PROVIDING ACARS DISPATCHER SERVICES</td>
 </c:when>
 <c:otherwise>
- <td colspan="5" class="sec bld mid">NOT CURRENTLY IN FLIGHT</td>
+ <td colspan="6" class="sec bld mid">NOT CURRENTLY IN FLIGHT</td>
 </c:otherwise>
 </c:choose>
 </tr>
