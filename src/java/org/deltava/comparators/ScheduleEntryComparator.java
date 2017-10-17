@@ -43,25 +43,32 @@ public class ScheduleEntryComparator extends AbstractComparator<ScheduleEntry> {
 	protected int compareImpl(ScheduleEntry se1, ScheduleEntry se2) {
 		switch (_comparisonType) {
 			case EQTYPE:
-				return se1.getEquipmentType().compareTo(se2.getEquipmentType());
+				int tmpResult = se1.getEquipmentType().compareTo(se2.getEquipmentType());
+				return (tmpResult == 0) ? se1.compareTo(se2) : tmpResult;
 				
 			case ORIGIN:
-				return se1.getAirportD().compareTo(se2.getAirportD());
+				tmpResult = se1.getAirportD().compareTo(se2.getAirportD());
+				return (tmpResult == 0) ? se1.compareTo(se2) : tmpResult;
 				
 			case DEST:
-				return se1.getAirportA().compareTo(se2.getAirportA());
+				tmpResult = se1.getAirportA().compareTo(se2.getAirportA());
+				return (tmpResult == 0) ? se1.compareTo(se2) : tmpResult;
 				
 			case DTIME:
-				return se1.getTimeD().compareTo(se2.getTimeD());
+				tmpResult = se1.getTimeD().compareTo(se2.getTimeD());
+				return (tmpResult == 0) ? se1.compareTo(se2) : tmpResult;
 				
 			case ATIME:
-				return se1.getTimeA().compareTo(se2.getTimeA());
+				tmpResult = se1.getTimeA().compareTo(se2.getTimeA());
+				return (tmpResult == 0) ? se1.compareTo(se2) : tmpResult;
 				
 			case LENGTH:
-				return Integer.compare(se1.getLength(), se2.getLength());
+				tmpResult = Integer.compare(se1.getLength(), se2.getLength());
+				return (tmpResult == 0) ? se1.compareTo(se2) : tmpResult;
 				
 			case DISTANCE:
-				return Integer.compare(se1.getDistance(), se2.getDistance());
+				tmpResult = Integer.compare(se1.getDistance(), se2.getDistance());
+				return (tmpResult == 0) ? se1.compareTo(se2) : tmpResult;
 				
 			case FLCOUNT:
 				if ((se1 instanceof ScheduleSearchEntry) && (se2 instanceof ScheduleSearchEntry)) {

@@ -98,7 +98,8 @@ public class FlightReportComparator extends AbstractComparator<FlightReport> {
                 
             case FLIGHTCODE:
             default:
-                return f1.compareTo(f2);
+                tmpResult = f1.compareTo(f2);
+                return (tmpResult == 0) ? Integer.compare(f1.getID(), f2.getID()) : tmpResult;
         }
     }
 }
