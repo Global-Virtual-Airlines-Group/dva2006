@@ -113,10 +113,9 @@ public class GetACARSRunways extends DAO {
 			return rwys.clone();
 
 		// Build the SQL statement
-		// TODO: Handle new codes in FREQ
 		StringBuilder sqlBuf = new StringBuilder("SELECT ND.NAME, ND.CODE, ND.LATITUDE, ND.LONGITUDE, ND.ALTITUDE, ND.HDG, IFNULL(ND.FREQ, ?), COUNT(R.ID) AS CNT FROM acars.FLIGHTS F, "
 			+ "acars.RWYDATA R LEFT JOIN common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND (R.RUNWAY=RR.OLDCODE)) LEFT JOIN common.NAVDATA ND ON ((ND.CODE=R.ICAO) AND "
-			+ "(ND.NAME=IFNULL(RR.NEWCODE, R.RUNWAY)) AND (ND.ITEMTYPE=?)) WHERE (F.ID=R.ID) AND (R.ISTAKEOFF=?) ");
+			+ "(ND.NAME=IFNULL(RR.NEWCODE, R.RUNWAY)) AND (ND.ITEMTYPE=?)) WHERE (F.ID=R.ID) AND (R.ISTAKEOFF=?) AND (ND.NAME IS NOT NULL) ");
 		if (aD != null)
 			sqlBuf.append("AND (F.AIRPORT_D=?) ");
 		if (aA != null)
