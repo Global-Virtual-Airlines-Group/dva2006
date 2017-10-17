@@ -89,9 +89,9 @@ public class FlightScorer {
 			fs = FlightScore.max(fs, FlightScore.DANGEROUS);
 		else if (fr.getGateFuel() < pkg.getAircraft().getBaseFuel())
 			fs = FlightScore.max(fs, FlightScore.DANGEROUS);
-		else if (pkg.getRunwayD().getLength() < pkg.getAircraft().getTakeoffRunwayLength())
+		else if ((pkg.getRunwayD() != null) && (pkg.getRunwayD().getLength() < pkg.getAircraft().getTakeoffRunwayLength()))
 			fs = FlightScore.max(fs, FlightScore.DANGEROUS);
-		else if (pkg.getRunwayA().getLength() < pkg.getAircraft().getLandingRunwayLength())
+		else if ((pkg.getRunwayA() != null) && (pkg.getRunwayA().getLength() < pkg.getAircraft().getLandingRunwayLength()))
 			fs = FlightScore.max(fs, FlightScore.DANGEROUS);
 		
 		FlightScore es = FlightScore.OPTIMAL;
