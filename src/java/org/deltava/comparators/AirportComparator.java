@@ -50,14 +50,17 @@ public class AirportComparator extends AbstractComparator<Airport> {
     @Override
 	protected int compareImpl(Airport a1, Airport a2) {
         switch (_comparisonType) {
-        	case ICAO :
+        	case ICAO:
         	    return a1.getICAO().compareTo(a2.getICAO());
-        	case NAME :
-        	    return a1.getName().compareTo(a2.getName());
-        	case LATITUDE :
-        	    return Double.compare(a1.getLatitude(), a2.getLatitude());
-        	case LONGITUDE :
-        	    return Double.compare(a1.getLongitude(), a2.getLongitude());
+        	case NAME:
+        		int tmpResult = a1.getName().compareTo(a2.getName()); 
+        	    return (tmpResult == 0) ? a1.getIATA().compareTo(a2.getIATA()) : tmpResult;
+        	case LATITUDE:
+        	    tmpResult = Double.compare(a1.getLatitude(), a2.getLatitude());
+        	    return (tmpResult == 0) ? Double.compare(a1.getLongitude(), a2.getLongitude()) : tmpResult; 
+        	case LONGITUDE:
+        		tmpResult = Double.compare(a1.getLongitude(), a2.getLongitude());
+        		return (tmpResult == 0) ? Double.compare(a1.getLatitude(), a2.getLatitude()) : tmpResult;
         	default :
         	    return a1.getIATA().compareTo(a2.getIATA());
         }
