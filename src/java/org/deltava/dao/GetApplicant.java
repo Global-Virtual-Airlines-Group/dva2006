@@ -447,29 +447,30 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 				//a.setIMHandle(IMAddress.MSN, rs.getString(9)); // MSN Handle
 				a.setNetworkID(OnlineNetwork.VATSIM, rs.getString(10));
 				a.setNetworkID(OnlineNetwork.IVAO, rs.getString(11));
-				a.setLegacyHours(rs.getDouble(12));
-				a.setLegacyURL(rs.getString(13));
-				a.setLegacyVerified(rs.getBoolean(14));
-				a.setHomeAirport(rs.getString(15));
-				a.setEquipmentType(rs.getString(16));
-				a.setRank(Rank.fromName(rs.getString(17)));
-				a.setNotificationCode(rs.getInt(18));
-				a.setEmailAccess(rs.getInt(19));
-				a.setCreatedOn(toInstant(rs.getTimestamp(20)));
-				// skip 21
-				a.setRegisterHostName(rs.getString(22));
-				a.setDateFormat(rs.getString(23));
-				a.setTimeFormat(rs.getString(24));
-				a.setNumberFormat(rs.getString(25));
-				a.setAirportCodeType(Airport.Code.values()[rs.getInt(26)]);
-				a.setDistanceType(DistanceUnit.values()[rs.getInt(27)]);
-				a.setWeightType(WeightUnit.values()[rs.getInt(28)]);
-				a.setSimVersion(Simulator.values()[rs.getInt(29)]);
-				a.setTZ(TZInfo.get(rs.getString(30)));
-				a.setUIScheme(rs.getString(31));
-				a.setComments(rs.getString(32));
-				a.setHRComments(rs.getString(33));
-				a.setRegisterAddress(rs.getString(34));
+				a.setNetworkID(OnlineNetwork.PILOTEDGE, rs.getString(12));
+				a.setLegacyHours(rs.getDouble(13));
+				a.setLegacyURL(rs.getString(14));
+				a.setLegacyVerified(rs.getBoolean(15));
+				a.setHomeAirport(rs.getString(16));
+				a.setEquipmentType(rs.getString(17));
+				a.setRank(Rank.fromName(rs.getString(18)));
+				a.setNotificationCode(rs.getInt(19));
+				a.setEmailAccess(rs.getInt(20));
+				a.setCreatedOn(toInstant(rs.getTimestamp(21)));
+				// skip 22
+				a.setRegisterHostName(rs.getString(23));
+				a.setDateFormat(rs.getString(24));
+				a.setTimeFormat(rs.getString(25));
+				a.setNumberFormat(rs.getString(26));
+				a.setAirportCodeType(Airport.Code.values()[rs.getInt(27)]);
+				a.setDistanceType(DistanceUnit.values()[rs.getInt(28)]);
+				a.setWeightType(WeightUnit.values()[rs.getInt(29)]);
+				a.setSimVersion(Simulator.values()[rs.getInt(30)]);
+				a.setTZ(TZInfo.get(rs.getString(31)));
+				a.setUIScheme(rs.getString(32));
+				a.setComments(rs.getString(33));
+				a.setHRComments(rs.getString(34));
+				a.setRegisterAddress(rs.getString(35));
 				results.add(a);
 			}
 		}
