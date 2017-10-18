@@ -63,8 +63,8 @@ public class SetApplicant extends PilotWriteDAO {
 				prepareStatement("INSERT INTO APPLICANTS (STATUS, FIRSTNAME, LASTNAME, EMAIL, LOCATION, VATSIM_ID, IVAO_ID, PE_ID, LEGACY_HOURS, LEGACY_URL, LEGACY_OK, "
 					+ "HOME_AIRPORT, NOTIFY, SHOW_EMAIL, CREATED, REGHOSTNAME, REGADDR, DFORMAT, TFORMAT, NFORMAT, AIRPORTCODE, DISTANCEUNITS, SIM_VERSION, TZ, "
 					+ "UISCHEME, COMMENTS, HR_COMMENTS, ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, INET6_ATON(?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-				_ps.setString(28, a.getHRComments());
-				_ps.setInt(29, a.getID());
+				_ps.setString(27, a.getHRComments());
+				_ps.setInt(28, a.getID());
 			} else {
 				// Delete stage choices
 				prepareStatementWithoutLimits("DELETE FROM APPLICANT_STAGE_CHOICES WHERE (ID=?)");
@@ -75,10 +75,10 @@ public class SetApplicant extends PilotWriteDAO {
 				prepareStatement("UPDATE APPLICANTS SET STATUS=?, FIRSTNAME=?, LASTNAME=?, EMAIL=?, LOCATION=?, VATSIM_ID=?, IVAO_ID=?, PE_ID=?, LEGACY_HOURS=?, "
 					+ "LEGACY_URL=?, LEGACY_OK=?, HOME_AIRPORT=?, NOTIFY=?, SHOW_EMAIL=?, CREATED=?, REGHOSTNAME=?, REGADDR=INET6_ATON(?), DFORMAT=?, TFORMAT=?, "
 					+ "NFORMAT=?, AIRPORTCODE=?, DISTANCEUNITS=?, SIM_VERSION=?, TZ=?, UISCHEME=?, COMMENTS=?, EQTYPE=?, RANKING=?, HR_COMMENTS=? WHERE (ID=?)");
-				_ps.setString(28, a.getEquipmentType());
-				_ps.setString(29, a.getRank().getName());
-				_ps.setString(30, a.getHRComments());
-				_ps.setInt(31, a.getID());
+				_ps.setString(27, a.getEquipmentType());
+				_ps.setString(28, a.getRank().getName());
+				_ps.setString(29, a.getHRComments());
+				_ps.setInt(30, a.getID());
 			}
 
 			// Set the fields
