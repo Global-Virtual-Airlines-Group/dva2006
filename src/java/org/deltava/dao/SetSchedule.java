@@ -56,14 +56,13 @@ public class SetSchedule extends DAO {
 	}
 	
 	/**
-	 * Writes a raw Schedule Entry from FlightAware into the storage database.
+	 * Writes a raw Schedule Entry from a schedule provider into the storage database.
 	 * @param rse a RawScheduleEntry
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void writeRaw(RawScheduleEntry rse) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("REPLACE INTO RAW_SCHEDULE (ARLINE, FLIGHT, AIRPORT_D, AIRPORT_A, EQTYPE, TIME_D, TIME_A, CS_MASTER, PAX_F, PAX_B, PAX_E) "
-				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			prepareStatementWithoutLimits("REPLACE INTO RAW_SCHEDULE (ARLINE, FLIGHT, AIRPORT_D, AIRPORT_A, EQTYPE, TIME_D, TIME_A, DAYS, CS_MASTER) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setString(1, rse.getAirline().getCode());
 			_ps.setInt(2, rse.getFlightNumber());
 			_ps.setString(3, rse.getAirportD().getIATA());
@@ -71,10 +70,24 @@ public class SetSchedule extends DAO {
 			_ps.setString(5, rse.getEquipmentType());
 			_ps.setTimestamp(6, Timestamp.valueOf(rse.getTimeD().toLocalDateTime()));
 			_ps.setTimestamp(7, Timestamp.valueOf(rse.getTimeA().toLocalDateTime()));
-			_ps.setString(8, rse.getCodeShare());
-			_ps.setInt(9, rse.getFirst());
-			_ps.setInt(10, rse.getBusiness());
-			_ps.setInt(11, rse.getEconomy());
+			_ps.setInt(8, rse.getDays().stream().mapToInt(d -> (1 << d.ordinal())).sum()); // bitmask field
+			_ps.setString(9, rse.getCodeShare());
+			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Writes a tailcode/equipment mapping from a schedule provider to the database.
+	 * @param tc a TailCode bean
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void write(TailCode tc) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("REPLACE INTO RAW_SCHEDULE_AC (TAILCODE, ICAO) VALUES (?, ?)");
+			_ps.setString(1, tc.getTailCode());
+			_ps.setString(2, tc.getICAO());
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
