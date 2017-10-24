@@ -90,7 +90,7 @@ public class GetURL extends DAO {
 	 */
 	public boolean isAvailable() throws DAOException {
 		try {
-			setMethod("HEAD");
+			setMethod("GET");
 			init(_url);
 			return (getResponseCode() == 200); 
 		} catch (FileNotFoundException fne) {
