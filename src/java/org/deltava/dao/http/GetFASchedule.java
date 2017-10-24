@@ -91,7 +91,7 @@ public class GetFASchedule extends FlightAwareDAO {
 				JSONObject fo = data.getJSONObject(x);
 				
 				ScheduleEntry se = FlightCodeParser.parse(fo.getString("ident"));
-				RawScheduleEntry sce = new RawScheduleEntry(se.getAirline(), se.getFlightNumber());
+				RawScheduleEntry sce = new RawScheduleEntry(se.getAirline(), se.getFlightNumber(), 1);
 				if (se.getAirline() == null) {
 					_unknownAirlines.add(fo.getString("ident"));
 					log.warn("Unknown airline " + fo.getString("ident"));
@@ -109,7 +109,6 @@ public class GetFASchedule extends FlightAwareDAO {
 				
 				sce.setEquipmentType(fo.optString("aircrafttype"));
 				sce.setCodeShare(fo.optString("actual_ident"));
-				sce.setCapacity(fo.optInt("seats_cabin_first"), fo.optInt("seats_cabin_business"), fo.optInt("seats_cabin_coach"));
 				
 				// Get the arrival/departure times
 				ZonedDateTime zdd = ZonedDateTime.ofInstant(Instant.ofEpochSecond(fo.optLong("departuretime")), sce.getAirportD().getTZ().getZone());
