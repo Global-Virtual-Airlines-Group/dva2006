@@ -84,7 +84,7 @@ public class TestGetFASchedule extends TestCase {
 			String data = lr.readLine();
 			while (data != null) {
 				List<String> parts = StringUtils.split(data, ",");
-				RawScheduleEntry se = new RawScheduleEntry(SystemData.getAirline(parts.get(0)), StringUtils.parse(parts.get(1), 0));
+				RawScheduleEntry se = new RawScheduleEntry(SystemData.getAirline(parts.get(0)), StringUtils.parse(parts.get(1), 0), 1);
 				se.setAirportD(SystemData.getAirport(parts.get(2)));
 				se.setAirportA(SystemData.getAirport(parts.get(3)));
 				se.setEquipmentType(parts.get(4));
@@ -93,7 +93,6 @@ public class TestGetFASchedule extends TestCase {
 				ZonedDateTime zat = ZonedDateTime.ofInstant(Instant.ofEpochSecond(Long.parseLong(parts.get(6))), se.getAirportA().getTZ().getZone());
 				se.setTimeA(zat.toLocalDateTime());
 				se.setCodeShare(parts.get(7));
-				se.setCapacity(StringUtils.parse(parts.get(8), 0), StringUtils.parse(parts.get(9), 0), StringUtils.parse(parts.get(10), 0));
 				results.add(se);
 				data = lr.readLine();
 			}
@@ -124,13 +123,6 @@ public class TestGetFASchedule extends TestCase {
 				pw.print(',');
 				if (!StringUtils.isEmpty(se.getCodeShare()))
 					pw.print(se.getCodeShare());
-				
-				pw.print(',');
-				pw.print(se.getFirst());
-				pw.print(',');
-				pw.print(se.getBusiness());
-				pw.print(',');
-				pw.println(se.getEconomy());
 			}
 		}
 	}
