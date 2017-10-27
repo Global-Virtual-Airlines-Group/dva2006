@@ -83,6 +83,7 @@ golgotha.local.frLoad.onload(function() { golgotha.util.enable('selFronts'); });
 // Weather layer loader
 golgotha.local.loader = new golgotha.maps.SeriesLoader();
 golgotha.local.loader.setData('sat', 0.325, 'wxSat');
+golgotha.local.loader.setData('twcRadarHcMosaic', 0.45, 'wxRadar');
 golgotha.local.loader.onload(function() { golgotha.util.enable('#selImg'); });
 
 // Create the jetstream layers
@@ -94,6 +95,7 @@ var ljsl = new golgotha.maps.ShapeLayer(jsOpts, 'Low Jet', 'wind-lojet');
 // Add clouds and jet stream layers
 var ctls = map.controls[google.maps.ControlPosition.BOTTOM_LEFT];
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Fronts', disabled:true, id:'selFronts'}, function() { return golgotha.local.frLoad.getLayer(); }));
+ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Radar', disabled:true, c:'selImg'}, function() { return golgotha.local.loader.getLatest('twcRadarHcMosaic'); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Clouds', disabled:true, c:'selImg'}, function() { return golgotha.local.loader.getLatest('sat'); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Low Jet'}, ljsl));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Jet Stream'}, jsl));
@@ -104,7 +106,7 @@ map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementB
 // Load data async once tiles are loaded
 google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
 	golgotha.maps.oceanic.resetTracks();
-	loaders.series.loadGinsu();
+	golgotha.local.loader.loadGinsu();
 	golgotha.util.createScript({id:'wuFronts', url:'//api.wunderground.com/api/${wuAPI}/fronts/view.json?callback=golgotha.local.frLoad.load', async:true});
 	google.maps.event.trigger(map, 'maptypeid_changed');
 });
