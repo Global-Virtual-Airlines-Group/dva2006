@@ -13,7 +13,7 @@ import org.deltava.util.cache.Cacheable;
  * A bean to store Aircraft type information and ACARS fuel profiles. Fuel is loaded in ACARS in the order of primary, secondary
  * and other tanks, and each Microsoft Flight Simulator fuel tank can be assigned to one of these three tank types.
  * @author Luke
- * @version 7.4
+ * @version 8.0
  * @since 1.0
  */
 
@@ -65,6 +65,7 @@ public class Aircraft implements Comparable<Aircraft>, Auditable, Cacheable, Vie
 	private int[] _tankCodes = { 0, 0, 0 };
 	private int[] _tankPct = { 0, 0, 0 };
 
+	private String _icao;
 	private final Collection<String> _iataCodes = new TreeSet<String>();
 	private final Collection<AirlineInformation> _airlines = new HashSet<AirlineInformation>();
 
@@ -103,6 +104,15 @@ public class Aircraft implements Comparable<Aircraft>, Auditable, Cacheable, Vie
 	 */
 	public int getRange() {
 		return _maxRange;
+	}
+	
+	/**
+	 * Returns the aircraft's ICAO equipmnet code.
+	 * @return the ICAO equipment code
+	 * @see Aircraft#setICAO(String)
+	 */
+	public String getICAO() {
+		return _icao;
 	}
 
 	/**
@@ -487,6 +497,14 @@ public class Aircraft implements Comparable<Aircraft>, Auditable, Cacheable, Vie
 	 */
 	public void setLandingRunwayLength(int len) {
 		_lndRunwayLength = Math.max(0, len);
+	}
+	
+	/**
+	 * Updates the aircraft's ICAO code.
+	 * @param code the ICAO code
+	 */
+	public void setICAO(String code) {
+		_icao = code.trim().toUpperCase();
 	}
 	
 	/**
