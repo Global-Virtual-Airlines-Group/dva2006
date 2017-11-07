@@ -134,9 +134,8 @@ public class SetFlightReport extends DAO {
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("UPDATE ");
 		sqlBuf.append(db);
-		sqlBuf.append(".PIREPS SET STATUS=?, DATE=?, AIRLINE=?, FLIGHT=?, LEG=?, AIRPORT_D=?, AIRPORT_A=?, "
-				+ "EQTYPE=?, FSVERSION=?, ATTR=?, DISTANCE=?, FLIGHT_TIME=?, DISPOSAL_ID=?, SUBMITTED=?, "
-				+ "DISPOSED=?, ASSIGN_ID=?, EVENT_ID=?, PAX=?, LOADFACTOR=? WHERE (ID=?)");
+		sqlBuf.append(".PIREPS SET STATUS=?, DATE=?, AIRLINE=?, FLIGHT=?, LEG=?, AIRPORT_D=?, AIRPORT_A=?, EQTYPE=?, FSVERSION=?, ATTR=?, DISTANCE=?, FLIGHT_TIME=?, DISPOSAL_ID=?, SUBMITTED=?, "
+			+ "DISPOSED=?, ASSIGN_ID=?, EVENT_ID=?, PAX=?, LOADFACTOR=? WHERE (ID=?)");
 
 		// Set the prepared statement parameters
 		prepareStatement(sqlBuf.toString());
@@ -295,11 +294,8 @@ public class SetFlightReport extends DAO {
 		}
 	}
 	
-	/**
+	/*
 	 * Writes flight report comments to the database.
-	 * @param fr the FlightReport bean
-	 * @param dbName the database name
-	 * @throws SQLException if a JDBC error occurs
 	 */
 	private void writeComments(FlightReport fr, String dbName) throws SQLException {
 		boolean isEmpty = StringUtils.isEmpty(fr.getRemarks()) && StringUtils.isEmpty(fr.getComments());
@@ -359,8 +355,8 @@ public class SetFlightReport extends DAO {
 		sqlBuf.append(db);
 		sqlBuf.append(".ACARS_PIREPS (ID, ACARS_ID, START_TIME, TAXI_TIME, TAXI_WEIGHT, TAXI_FUEL, TAKEOFF_TIME, TAKEOFF_DISTANCE, TAKEOFF_SPEED, TAKEOFF_N1, TAKEOFF_HDG, TAKEOFF_LAT, TAKEOFF_LNG, "
 			+ "TAKEOFF_ALT, TAKEOFF_WEIGHT, TAKEOFF_FUEL, LANDING_TIME, LANDING_DISTANCE, LANDING_SPEED, LANDING_VSPEED, LANDING_N1, LANDING_HDG, LANDING_LAT, LANDING_LNG, LANDING_ALT, LANDING_WEIGHT, "
-			+ "LANDING_FUEL, END_TIME, GATE_WEIGHT, GATE_FUEL, TOTAL_FUEL, TIME_0X, TIME_1X, TIME_2X, TIME_4X, FDE, CODE, SDK, RELOAD, CLIENT_BUILD, BETA_BUILD, LANDING_G, LANDING_CAT, FRAMERATE) VALUES "
-			+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			+ "LANDING_FUEL, END_TIME, GATE_WEIGHT, GATE_FUEL, TOTAL_FUEL, TIME_0X, TIME_1X, TIME_2X, TIME_4X, FDE, CODE, SDK, RELOAD, CLIENT_BUILD, BETA_BUILD, LANDING_G, LANDING_CAT, FRAMERATE, PAX_WEIGHT, "
+			+ "CARGO_WEIGHT) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		try {
 			startTransaction();
@@ -420,6 +416,8 @@ public class SetFlightReport extends DAO {
 				_ps.setDouble(42, afr.getLandingG());
 				_ps.setInt(43, afr.getLandingCategory().ordinal());
 				_ps.setInt(44, (int)(afr.getAverageFrameRate() * 10));
+				_ps.setInt(45, afr.getPaxWeight());
+				_ps.setInt(46, afr.getCargoWeight());
 			} else if (fr instanceof XACARSFlightReport) {
 				XACARSFlightReport xfr = (XACARSFlightReport) fr;
 				_ps.setInt(32, 0);
@@ -435,6 +433,8 @@ public class SetFlightReport extends DAO {
 				_ps.setDouble(42, 0);
 				_ps.setInt(43, 0);
 				_ps.setInt(44, 0);
+				_ps.setInt(45, 0);
+				_ps.setInt(46, 0);
 			}
 
 			// Commit the transaction

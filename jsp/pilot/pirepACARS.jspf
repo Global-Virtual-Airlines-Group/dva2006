@@ -193,6 +193,12 @@
  <td class="data" colspan="${cspan}"><fmt:weight value="${pirep.totalFuel}" longUnits="true" /></td>
 </tr>
 </c:if>
+<c:if test="${(pirep.paxWeight > 0) || (pirep.cargoWeight > 0)}">
+<tr>
+ <td class="label">Payload Weight</td>
+ <td class="data" colspan="${cspan}"><c:if test="${pirep.paxWeight > 0}"><fmt:weight value="${pirep.paxWeight}" /> passengers, </c:if><fmt:weight value="${pirep.cargoWeight}" /> baggage/cargo</td>
+</tr>
+</c:if>
 <tr>
  <td class="label">Flight Time</td>
  <td class="data" colspan="${cspan}"><fmt:duration t="HH:mm" className="pri bld" duration="${pirep.airborneTime}" />, total time <fmt:duration t="HH:mm" duration="${pirep.blockTime}" /></td>

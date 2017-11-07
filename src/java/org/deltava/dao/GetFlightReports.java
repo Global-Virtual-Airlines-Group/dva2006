@@ -666,21 +666,23 @@ public class GetFlightReports extends DAO {
 					ap.setLandingG(rs.getDouble(45));
 					int ils = rs.getInt(53);
 					ap.setLandingCategory(ILSCategory.values()[ils]);
-					ap.setTime(0, rs.getInt(58));
-					ap.setTime(1, rs.getInt(59));
-					ap.setTime(2, rs.getInt(60));
-					ap.setTime(4, rs.getInt(61));
-					ap.setFDE(rs.getString(62));
-					ap.setAircraftCode(rs.getString(63));
-					ap.setSDK(rs.getString(64));
-					ap.setHasReload(rs.getBoolean(65));
-					ap.setAverageFrameRate(rs.getInt(66) / 10d);
-					ap.setClientBuild(rs.getInt(67));
-					ap.setBeta(rs.getInt(68));
+					ap.setPaxWeight(rs.getInt(58));
+					ap.setCargoWeight(rs.getInt(59));
+					ap.setTime(0, rs.getInt(60));
+					ap.setTime(1, rs.getInt(61));
+					ap.setTime(2, rs.getInt(62));
+					ap.setTime(4, rs.getInt(63));
+					ap.setFDE(rs.getString(64));
+					ap.setAircraftCode(rs.getString(65));
+					ap.setSDK(rs.getString(66));
+					ap.setHasReload(rs.getBoolean(67));
+					ap.setAverageFrameRate(rs.getInt(68) / 10d);
+					ap.setClientBuild(rs.getInt(69));
+					ap.setBeta(rs.getInt(70));
 				} else if (isXACARS) {
 					XACARSFlightReport ap = (XACARSFlightReport) p;
-					ap.setMajorVersion(rs.getInt(67));
-					ap.setMinorVersion(rs.getInt(68));
+					ap.setMajorVersion(rs.getInt(69));
+					ap.setMinorVersion(rs.getInt(70));
 				}
 
 				results.add(p);

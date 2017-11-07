@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.time.Duration;
@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A class for storing ACARS-submitted Flight Reports.
  * @author Luke
- * @version 7.0
+ * @version 8.0
  * @since 1.0
  */
 
@@ -24,6 +24,9 @@ public class ACARSFlightReport extends FDRFlightReport {
     private String _fde;
     private String _code;
     private String _sdk;
+    
+    private int _paxWeight;
+    private int _cargoWeight;
     
     private double _avgFrames;
     
@@ -167,6 +170,22 @@ public class ACARSFlightReport extends FDRFlightReport {
 	public ILSCategory getLandingCategory() {
 		return _ils;
 	}
+	
+	/**
+	 * Returns the total passenger weight.
+	 * @return the weight in pounds
+	 */
+	public int getPaxWeight() {
+		return _paxWeight;
+	}
+	
+	/**
+	 * Returns the total cargo weight.
+	 * @return the weight in pounds
+	 */
+	public int getCargoWeight() {
+		return _cargoWeight;
+	}
     
     /**
      * Updates the G-Forces at touchdown.
@@ -260,5 +279,21 @@ public class ACARSFlightReport extends FDRFlightReport {
 	 */
 	public void setSDK(String sdk) {
 		_sdk = sdk;
+	}
+	
+	/**
+	 * Updates the passenger weight.
+	 * @param wt the total passenger weight, in pounds
+	 */
+	public void setPaxWeight(int wt) {
+		_paxWeight = Math.max(0, wt);
+	}
+
+	/**
+	 * Updates the cargo weight.
+	 * @param wt the total cargo weight, in pounds
+	 */
+	public void setCargoWeight(int wt) {
+		_cargoWeight = Math.max(0, wt);
 	}
 }
