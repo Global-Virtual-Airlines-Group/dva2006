@@ -155,7 +155,7 @@ public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
 	 * @see ScheduleEntry#getTimeA()
 	 */
 	public void setTimeA(LocalDateTime dt) {
-		ZoneId tz = (getAirportD() == null) ? ZoneId.systemDefault() : getAirportA().getTZ().getZone();
+		ZoneId tz = (getAirportD() == null) ? ZoneId.systemDefault() : getAirportD().getTZ().getZone();
 		_length = 0; // reset length
 		if ((_timeD != null) && (dt.isBefore(_timeD.toLocalDateTime())) && (StringUtils.arrayIndexOf(SST, getEquipmentType()) == -1)) {
 			_timeA = ZonedDateTime.of(dt.plusDays(1), tz);
