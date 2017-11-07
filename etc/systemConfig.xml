@@ -445,6 +445,9 @@
 
 	<!-- Innovata schedule link data -->
 	<schedule>
+		<vabase>
+			<enabled type="Boolean">true</enabled>
+		</vabase>
 		<innovata>
 			<enabled type="Boolean">true</enabled>
 			<popup>
