@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2011, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2011, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Aircraft data.
  * @author Luke
- * @version 7.0
+ * @version 8.0
  * @since 1.0
  */
 
@@ -135,27 +135,28 @@ public class GetAircraft extends DAO {
 				a.setFamily(rs.getString(3));
 				a.setRange(rs.getInt(4));
 				a.setIATA(StringUtils.split(rs.getString(5), ","));
-				a.setHistoric(rs.getBoolean(6));
-				a.setETOPS(rs.getBoolean(7));
-				a.setSeats(rs.getInt(8));
-				a.setEngines(rs.getByte(9));
-				a.setEngineType(rs.getString(10));
-				a.setCruiseSpeed(rs.getInt(11));
-				a.setFuelFlow(rs.getInt(12));
-				a.setBaseFuel(rs.getInt(13));
-				a.setTaxiFuel(rs.getInt(14));
-				a.setTanks(Aircraft.TankType.PRIMARY, rs.getInt(15));
-				a.setPct(Aircraft.TankType.PRIMARY, rs.getInt(16));
-				a.setTanks(Aircraft.TankType.SECONDARY, rs.getInt(17));
-				a.setPct(Aircraft.TankType.SECONDARY, rs.getInt(18));
-				a.setTanks(Aircraft.TankType.OTHER, rs.getInt(19));
-				a.setMaxWeight(rs.getInt(20));
-				a.setMaxTakeoffWeight(rs.getInt(21));
-				a.setMaxLandingWeight(rs.getInt(22));
-				a.setMaxZeroFuelWeight(rs.getInt(23));
-				a.setTakeoffRunwayLength(rs.getInt(24));
-				a.setLandingRunwayLength(rs.getInt(25));
-				a.setUseSoftRunways(rs.getBoolean(26));
+				a.setICAO(rs.getString(6));
+				a.setHistoric(rs.getBoolean(7));
+				a.setETOPS(rs.getBoolean(8));
+				a.setSeats(rs.getInt(9));
+				a.setEngines(rs.getByte(10));
+				a.setEngineType(rs.getString(11));
+				a.setCruiseSpeed(rs.getInt(12));
+				a.setFuelFlow(rs.getInt(13));
+				a.setBaseFuel(rs.getInt(14));
+				a.setTaxiFuel(rs.getInt(15));
+				a.setTanks(Aircraft.TankType.PRIMARY, rs.getInt(16));
+				a.setPct(Aircraft.TankType.PRIMARY, rs.getInt(17));
+				a.setTanks(Aircraft.TankType.SECONDARY, rs.getInt(18));
+				a.setPct(Aircraft.TankType.SECONDARY, rs.getInt(19));
+				a.setTanks(Aircraft.TankType.OTHER, rs.getInt(20));
+				a.setMaxWeight(rs.getInt(21));
+				a.setMaxTakeoffWeight(rs.getInt(22));
+				a.setMaxLandingWeight(rs.getInt(23));
+				a.setMaxZeroFuelWeight(rs.getInt(24));
+				a.setTakeoffRunwayLength(rs.getInt(25));
+				a.setLandingRunwayLength(rs.getInt(26));
+				a.setUseSoftRunways(rs.getBoolean(27));
 				results.put(a.getName(), a);
 			}
 		}
@@ -178,9 +179,7 @@ public class GetAircraft extends DAO {
 		
 		// Add to cache and return
 		List<Aircraft> ac = new ArrayList<Aircraft>(results.values());
-		for (Aircraft a : ac)
-			_cache.add(a);
-		
+		ac.forEach(_cache::add);
 		return ac;
 	}
 }
