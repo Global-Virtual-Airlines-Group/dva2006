@@ -62,7 +62,7 @@ public class SetSchedule extends DAO {
 	 */
 	public void writeRaw(RawScheduleEntry rse) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("REPLACE INTO RAW_SCHEDULE (ARLINE, FLIGHT, AIRPORT_D, AIRPORT_A, EQTYPE, TIME_D, TIME_A, DAYS, CS_MASTER) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			prepareStatementWithoutLimits("REPLACE INTO RAW_SCHEDULE (AIRLINE, FLIGHT, AIRPORT_D, AIRPORT_A, EQTYPE, TIME_D, TIME_A, DAYS, CS_MASTER) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setString(1, rse.getAirline().getCode());
 			_ps.setInt(2, rse.getFlightNumber());
 			_ps.setString(3, rse.getAirportD().getIATA());
@@ -85,9 +85,9 @@ public class SetSchedule extends DAO {
 	 */
 	public void write(TailCode tc) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("REPLACE INTO RAW_SCHEDULE_AC (TAILCODE, ICAO) VALUES (?, ?)");
+			prepareStatementWithoutLimits("REPLACE INTO RAW_SCHEDULE_AC (TAILCODE, EQTYPE) VALUES (?, ?)");
 			_ps.setString(1, tc.getTailCode());
-			_ps.setString(2, tc.getICAO());
+			_ps.setString(2, tc.getEquipmentType());
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -128,6 +128,19 @@ public class SetSchedule extends DAO {
 			if (!force)
 				_ps.setBoolean(1, true);
 
+			executeUpdate(0);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Purges entries from the raw Flight Schedule.
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void purgeRaw() throws DAOException {
+		try {
+			prepareStatementWithoutLimits("DELETE FROM RAW_SCHEDULE");
 			executeUpdate(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);

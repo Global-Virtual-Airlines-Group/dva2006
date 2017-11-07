@@ -4,6 +4,8 @@ package org.deltava.beans.schedule;
 import java.util.*;
 import java.time.DayOfWeek;
 
+import org.deltava.beans.Flight;
+
 import org.deltava.util.StringUtils;
 
 /**
@@ -16,6 +18,7 @@ import org.deltava.util.StringUtils;
 public class RawScheduleEntry extends ScheduleEntry {
 
 	private String _codeShare;
+	private String _tailCode;
 	private final Collection<DayOfWeek> _days = new TreeSet<DayOfWeek>();
 	
 	/**
@@ -27,6 +30,14 @@ public class RawScheduleEntry extends ScheduleEntry {
 	public RawScheduleEntry(Airline a, int fNumber, int leg) {
 		super(a, fNumber, leg);
 	}
+	
+	/**
+	 * Creates the bean from an existing Flight Number.
+	 * @param f a Flight
+	 */
+	public RawScheduleEntry(Flight f) {
+		super(f.getAirline(), f.getFlightNumber(), f.getLeg());
+	}
 
 	/**
 	 * If a codeshare, the flight code of the operator's flight.
@@ -34,6 +45,14 @@ public class RawScheduleEntry extends ScheduleEntry {
 	 */
 	public String getCodeShare() {
 		return _codeShare;
+	}
+	
+	/**
+	 * Returns the tail code of the aircraft used for this flight.
+	 * @return the aircraft tail code, or null if unknown
+	 */
+	public String getTailCode() {
+		return _tailCode;
 	}
 	
 	/**
@@ -59,5 +78,13 @@ public class RawScheduleEntry extends ScheduleEntry {
 	public void setCodeShare(String flightCode) {
 		if (!StringUtils.isEmpty(flightCode))
 			_codeShare = flightCode;
+	}
+	
+	/**
+	 * Updates the aircraft registration code for this flight.
+	 * @param code the aircraft tail code
+	 */
+	public void setTailCode(String code) {
+		_tailCode = code;
 	}
 }

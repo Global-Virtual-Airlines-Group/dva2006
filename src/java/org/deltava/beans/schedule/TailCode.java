@@ -10,28 +10,28 @@ import org.deltava.util.cache.Cacheable;
  * @since 8.0
  */
 
-public class TailCode implements Cacheable {
+public class TailCode implements Cacheable, Comparable<TailCode> {
 	
 	private final String _tailCode;
-	private final String _icao;
+	private final String _eqType;
 
 	/**
 	 * Creates the bean.
 	 * @param tailCode the tail code
-	 * @param icao the ICAO equipment code
+	 * @param eqType the equipment type
 	 */
-	public TailCode(String tailCode, String icao) {
+	public TailCode(String tailCode, String eqType) {
 		super();
 		_tailCode = tailCode.trim().toUpperCase();
-		_icao = icao.trim().toUpperCase();
+		_eqType = eqType;
 	}
 	
 	/**
-	 * Returns the aircraft's ICAO equipment code.
-	 * @return the ICAO equipment code
+	 * Returns the aircraft's equipment type.
+	 * @return the equipment type
 	 */
-	public String getICAO() {
-		return _icao;
+	public String getEquipmentType() {
+		return _eqType;
 	}
 	
 	/**
@@ -59,6 +59,11 @@ public class TailCode implements Cacheable {
 	
 	@Override
 	public String toString() {
-		return _tailCode + "=" + _icao;
+		return _tailCode + "=" + _eqType;
+	}
+
+	@Override
+	public int compareTo(TailCode tc) {
+		return _tailCode.compareTo(tc._tailCode);
 	}
 }
