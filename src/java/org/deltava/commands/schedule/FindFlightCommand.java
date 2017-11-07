@@ -62,6 +62,7 @@ public class FindFlightCommand extends AbstractCommand {
 		Collections.sort(airlines);
 		ctx.setAttribute("airlines", airlines, REQUEST);
 		ctx.setAttribute("myEQ", ctx.getUser().getRatings(), REQUEST);
+		ctx.setAttribute("airline", SystemData.getAirline(SystemData.get("airline.code")), REQUEST);
 		
 		// Get the result JSP and redirect if we're not posting
 		CommandResult result = ctx.getResult();
