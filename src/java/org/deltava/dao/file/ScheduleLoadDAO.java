@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.util.*;
@@ -9,11 +9,12 @@ import org.deltava.beans.schedule.*;
 import org.deltava.comparators.AirportComparator;
 
 import org.deltava.dao.DAOException;
+import org.deltava.util.StringUtils;
 
 /**
  * An abstract class to store common methods for Flight Schedule import Data Access Objects.
  * @author Luke
- * @version 7.2
+ * @version 8.0
  * @since 1.0
  */
 
@@ -38,16 +39,14 @@ public abstract class ScheduleLoadDAO extends DAO {
 	}
 
 	/**
-	 * Initializes the IATA aircraft code mappings.
+	 * Initializes the IATA/ICAO aircraft code mappings.
 	 * @param acInfo a collection of Aircraft profile beans
 	 */
 	public void setAircraft(Collection<Aircraft> acInfo) {
-		for (Iterator<Aircraft> i = acInfo.iterator(); i.hasNext(); ) {
-			Aircraft a = i.next();
-			for (Iterator<String> ci = a.getIATA().iterator(); ci.hasNext(); ) {
-				String iata = ci.next();
-				_iataMappings.put(iata, a);
-			}
+		for (Aircraft a : acInfo) {
+			a.getIATA().forEach(iata -> _iataMappings.putIfAbsent(iata, a));
+			if (!StringUtils.isEmpty(a.getICAO()))
+				_iataMappings.putIfAbsent(a.getICAO(), a);
 		}
 	}
 	
@@ -58,11 +57,7 @@ public abstract class ScheduleLoadDAO extends DAO {
 	 */
 	public void setAirlines(Collection<Airline> airlines) {
 		_airlines = new HashMap<String, Airline>();
-		for (Iterator<Airline> i = airlines.iterator(); i.hasNext();) {
-			Airline a = i.next();
-			for (Iterator<String> ci = a.getCodes().iterator(); ci.hasNext();)
-				_airlines.put(ci.next(), a);
-		}
+		airlines.forEach(a -> a.getCodes().forEach(c -> _airlines.put(c,  a)));
 	}
 	
 	/**
