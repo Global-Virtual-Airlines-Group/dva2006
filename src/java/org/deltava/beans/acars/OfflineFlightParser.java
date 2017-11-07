@@ -107,6 +107,8 @@ public final class OfflineFlightParser {
 		inf.setDispatchPlan(Boolean.valueOf(ie.getChildTextTrim("dispatchRoute")).booleanValue());
 		inf.setDispatcherID(StringUtils.parse(ie.getChildTextTrim("dispatcherID"), 0));
 		inf.setRouteID(StringUtils.parse(ie.getChildTextTrim("dispatchRouteID"), 0));
+		inf.setPassengers(StringUtils.parse(ie.getChildTextTrim("pax"), 0));
+		inf.setLoadFactor(StringUtils.parse(ie.getChildTextTrim("loadFactor"), 0.0d));
 		result.setSID(ie.getChildTextTrim("sid"));
 		result.setSTAR(ie.getChildTextTrim("star"));
 		result.setInfo(inf);
@@ -211,6 +213,8 @@ public final class OfflineFlightParser {
 		afr.setEndTime(StringUtils.parseInstant(ie.getChildTextTrim("gateTime"), "MM/dd/yyyy HH:mm:ss"));
 
 		// Set the weights/speeds
+		afr.setPaxWeight(StringUtils.parse(ie.getChildTextTrim("paxWeight"), 0));
+		afr.setCargoWeight(StringUtils.parse(ie.getChildTextTrim("cargoWeight"), 0));
 		afr.setTaxiFuel(StringUtils.parse(ie.getChildTextTrim("taxiFuel"), 0));
 		afr.setTaxiWeight(StringUtils.parse(ie.getChildTextTrim("taxiWeight"), 0));
 		afr.setTakeoffFuel(StringUtils.parse(ie.getChildTextTrim("takeoffFuel"), 0));
