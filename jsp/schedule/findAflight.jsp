@@ -125,7 +125,6 @@ golgotha.onDOMReady(function() {
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:sysdata var="acarsEnabled" name="acars.enabled" />
-<content:sysdata var="aCode" name="airline.code" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -136,7 +135,7 @@ golgotha.onDOMReady(function() {
 </tr>
 <tr>
  <td class="label">Airline</td>
- <td class="data"><el:combo name="airline" size="1" idx="*" firstEntry="-" options="${airlines}" value="${empty fafCriteria ? aCode : fafCriteria.airline}" onChange="void golgotha.ff.updateAirline(this)" /></td>
+ <td class="data"><el:combo name="airline" size="1" idx="*" firstEntry="-" options="${airlines}" value="${empty fafCriteria ? airline : fafCriteria.airline}" onChange="void golgotha.ff.updateAirline(this)" /></td>
  <td class="label">Equipment</td>
  <td class="data"><el:combo name="eqType" size="1" idx="*" firstEntry="-" options="${allEQ}" value="${param.myEQTypes ? '-' : fafCriteria.equipmentType}" /></td>
 </tr>
