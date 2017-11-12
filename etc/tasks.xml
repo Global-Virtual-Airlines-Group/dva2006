@@ -156,9 +156,9 @@
 		</time>
 	</task>
 
-	<!-- Innovata Schedule download -->
-	<task id="innovatadl" enabled="true">
-		<class>org.deltava.tasks.ScheduleImportTask</class>
+	<!-- Raw Schedule load -->
+	<task id="schedfilter" enabled="true">
+		<class>org.deltava.tasks.ScheduleFilterTask</class>
 		<time>
 			<min>0</min>
 			<hour>9</hour>

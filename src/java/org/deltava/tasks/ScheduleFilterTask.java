@@ -1,43 +1,41 @@
 // Copyright 2017 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.commands.schedule;
+package org.deltava.tasks;
 
 import java.util.*;
 import java.time.Instant;
 import java.sql.Connection;
 
-import org.deltava.beans.schedule.RawScheduleEntry;
+import org.deltava.beans.schedule.*;
 import org.deltava.comparators.ScheduleEntryComparator;
 
-import org.deltava.commands.*;
 import org.deltava.dao.*;
+import org.deltava.taskman.*;
 
-import org.deltava.security.command.ScheduleAccessControl;
-
+import org.deltava.util.CollectionUtils;
 import org.deltava.util.system.SystemData;
 
 /**
- * A Web Site Command to save VABase schedule data for the current day into the flight schedule.
+ * A Scheduled Task to filter the day's raw schedule. 
  * @author Luke
  * @version 8.0
  * @since 8.0
  */
 
-public class VABaseFilterCommand extends AbstractCommand {
-	
+public class ScheduleFilterTask extends Task {
+
 	/**
-	 * Executes the command.
-	 * @param ctx the Command context
-	 * @throws CommandException if an unhandled error occurs
+	 * Initializes the Task.
+	 */
+	public ScheduleFilterTask() {
+		super("Schedule Filter", ScheduleFilterTask.class);
+	}
+
+	/**
+	 * Executes the Task.
 	 */
 	@Override
-	public void execute(CommandContext ctx) throws CommandException {
+	protected void execute(TaskContext ctx) {
 		
-		// Check our access level
-		ScheduleAccessControl access = new ScheduleAccessControl(ctx);
-		access.validate();
-		if (!access.getCanImport())
-			throw securityException("Cannot import Flight Schedule data");
-
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -45,7 +43,7 @@ public class VABaseFilterCommand extends AbstractCommand {
 			GetRawSchedule rsdao = new GetRawSchedule(con);
 			List<RawScheduleEntry> entries = rsdao.load(Instant.now());
 			Collections.sort(entries, new ScheduleEntryComparator(ScheduleEntryComparator.FLIGHT_DTIME));
-			
+
 			// Calculate the leg numbers
 			RawScheduleEntry lastE = null;
 			for (RawScheduleEntry rse : entries) {
@@ -67,28 +65,35 @@ public class VABaseFilterCommand extends AbstractCommand {
 			for (RawScheduleEntry rse : entries)
 				swdao.write(rse, true);
 			
+			// Get route pairs
+			GetScheduleInfo sidao = new GetScheduleInfo(con);
+			SetAirportAirline awdao = new SetAirportAirline(con);
+			AirportServiceMap svcMap = sidao.getRoutePairs();
+			
+			// Determine unserviced airports
+			Collection<Airport> allAirports = SystemData.getAirports().values();
+			for (Airport ap : allAirports) {
+				Collection<String> newAirlines = svcMap.getAirlineCodes(ap);
+				if (CollectionUtils.hasDelta(ap.getAirlineCodes(), newAirlines)) {
+					log.info("Updating " + ap.getName() + " new codes = " + newAirlines + ", was " + ap.getAirlineCodes());
+					ap.setAirlines(svcMap.getAirlineCodes(ap));
+					awdao.update(ap, ap.getIATA());
+				}
+			}
+			
 			// Clear metadata
 			SetMetadata mdwdao = new SetMetadata(con);
 			String aCode = SystemData.get("airline.code").toLowerCase();
 			mdwdao.write(aCode + ".schedule.import", Instant.now());
 			mdwdao.delete(aCode + ".schedule.effDate");
-			
-			ctx.setAttribute("entriesLoaded", Integer.valueOf(entries.size()), REQUEST);
 			ctx.commitTX();
 		} catch (DAOException de) {
 			ctx.rollbackTX();
-			throw new CommandException(de);
+			log.error(de.getMessage(), de);
 		} finally {
 			ctx.release();
 		}
-		
-		// Set status attributes
-		ctx.setAttribute("isFilter", Boolean.TRUE, REQUEST);
 
-		// Forward to the JSP
-		CommandResult result = ctx.getResult();
-		result.setURL("/jsp/schedule/vaBaseStatus.jsp");
-		result.setType(ResultType.REQREDIRECT);
-		result.setSuccess(true);
+		log.info("Import Complete");
 	}
 }
