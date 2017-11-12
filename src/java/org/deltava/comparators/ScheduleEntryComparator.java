@@ -22,8 +22,9 @@ public class ScheduleEntryComparator extends AbstractComparator<ScheduleEntry> {
 	public static final int DISTANCE = 8;
 	public static final int FLCOUNT = 9;
 	public static final int LASTFLT = 10;
+	public static final int FLIGHT_DTIME = 11;
 	
-	private static final String[] TYPES = {"???", "Flight Number", "Equipment Type", "Origin", "Destination", "Departure Time", "Arrival Time", "Length", "Distance", "Flight Count", "Last Flown"};
+	private static final String[] TYPES = {"???", "Flight Number", "Equipment Type", "Origin", "Destination", "Departure Time", "Arrival Time", "Length", "Distance", "Flight Count", "Last Flown", "Flight+Departure"};
 	
     /**
      * Creates a new comparator with a given comparison type.
@@ -78,6 +79,10 @@ public class ScheduleEntryComparator extends AbstractComparator<ScheduleEntry> {
 				}
 				
 				return se1.compareTo(se2);
+				
+			case FLIGHT_DTIME:
+				tmpResult = se1.compareTo(se2);
+				return (tmpResult == 0) ? se1.getTimeD().toInstant().compareTo(se2.getTimeD().toInstant()) : tmpResult;
 				
 			case LASTFLT:
 				if ((se1 instanceof ScheduleSearchEntry) && (se2 instanceof ScheduleSearchEntry)) {
