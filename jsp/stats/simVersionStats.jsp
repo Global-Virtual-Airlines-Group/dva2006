@@ -38,11 +38,11 @@
 </tr>
 <!--  Chart Header Bar -->
 <tr class="title caps">
- <td colspan="7" class="left">SIMULATOR VERSION CHART</td>
+ <td colspan="6" class="left">SIMULATOR VERSION CHART</td>
  <td colspan="5"><span class="und" onclick="golgotha.util.toggleExpand(this, 'chartRow'); golgotha.local.showChart()">EXPAND</span></td>
 </tr>
 <tr class="chartRow" style="display:none;">
- <td colspan="12"><div id="flightStats" style="height:325px;"></div></td>
+ <td colspan="11"><div id="flightStats" style="height:325px;"></div></td>
 </tr>
 <!-- Table Header Bar-->
 <tr class="title caps">
@@ -55,8 +55,7 @@
  <td>P3D<span class="nophone"> v4 / v3</span></td>
  <td>FS2004</td>
  <td class="nophone">X-Plane 11 / 10</td>
- <td class="nophone">FS2002</td>
- <td class="nophone">FS2000</td>
+ <td class="nophone">FS2002 / FS2000</td>
  <td class="nophone">OTHER</td>
 </tr>
 
@@ -68,7 +67,8 @@
 <c:set var="eLegs" value="${stat.versionLegs}" scope ="page" />
 <c:set var="has64" value="${eLegs['P3Dv4'] > 0}" scope="page" />
 <c:set var="hasXP11" value="${eLegs['XP11'] > 0}" scope="page" />
- <td class="sec bld small">${entryNumber}</td>
+<c:set var="hasFS2K" value="${eLegs['FS2000'] > 0}" scope="page" />
+ <td class="sec bld small"><fmt:int value="${entryNumber}" /></td>
  <td class="pri bld">${stat.label}</td>
  <td class="bld"><fmt:dec value="${stat.hours}" /></td>
  <td class="pri bld"><fmt:int value="${stat.legs}" /></td>
@@ -77,15 +77,14 @@
  <td class="small"><c:if test="${has64}"><fmt:int value="${eLegs['P3Dv4']}" /> + </c:if><fmt:int value="${eLegs['P3D']}" /> (<fmt:dec value="${(eLegs['P3D'] + eLegs['P3Dv4']) * 100.0 / stat.legs}" />%)</td>
  <td class="small"><fmt:int value="${eLegs['FS9']}" /> (<fmt:dec value="${eLegs['FS9'] * 100.0 / stat.legs}" />%)</td>
  <td class="small nophone"><c:if test="${hasXP11}"><fmt:int value="${eLegs['XP11']}" /> + </c:if><fmt:int value="${eLegs['XP10']}" /> (<fmt:dec value="${(eLegs['XP10'] + eLegs['XP11']) * 100.0 / stat.legs}" />%)</td>
- <td class="small nophone"><fmt:int value="${eLegs['FS2002']}" /> (<fmt:dec value="${eLegs['FS2002'] * 100.0 / stat.legs}" />%)</td>
- <td class="small nophone"><fmt:int value="${eLegs['FS2000']}" /> (<fmt:dec value="${eLegs['FS2000'] * 100.0 / stat.legs}" />%)</td>
+ <td class="small nophone"><fmt:int value="${eLegs['FS2002']}" /> <c:if test="${hasFS2K}">/ <fmt:int value="${eLegs['FS2000']}" /> </c:if>(<fmt:dec value="${(eLegs['FS2002'] + eLegs['FS2000']) * 100.0 / stat.legs}" />%)</td>
  <td class="small nophone"><fmt:int value="${eLegs['UNKNOWN']}" /> (<fmt:dec value="${eLegs['UNKNOWN'] * 100.0 / stat.legs}" />%)</td>
 </view:row>
 </c:forEach>
 
 <!-- Table Footer Bar -->
 <tr class="title">
- <td colspan="12"><view:scrollbar><view:pgUp /> <view:pgDn /></view:scrollbar>&nbsp;</td>
+ <td colspan="11"><view:scrollbar><view:pgUp /> <view:pgDn /></view:scrollbar>&nbsp;</td>
 </tr>
 </view:table>
 </el:form>
