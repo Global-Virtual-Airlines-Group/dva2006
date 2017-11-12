@@ -516,7 +516,7 @@ public class ACARSRouteEntry extends RouteEntry {
 			warns.add(Warning.PITCH);
 		if (Math.abs(1 - _gForce) >= 0.333)
 			warns.add(Warning.GFORCE);
-		if ((getGroundSpeed() > 30) && ((getPhase() == FlightPhase.TAXIIN) || (getPhase() == FlightPhase.TAXIOUT)))
+		if ((getGroundSpeed() > 35) && ((getPhase() == FlightPhase.TAXIIN) || (getPhase() == FlightPhase.TAXIOUT)))
 			warns.add(Warning.TAXISPEED);
 		if (getFuelRemaining() < 20)
 			warns.add(Warning.NOFUEL);
