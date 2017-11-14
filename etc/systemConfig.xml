@@ -479,7 +479,7 @@
 				<markCanPurge type="Boolean">true</markCanPurge>
 				<isHistoric type="Boolean">false</isHistoric>
 				<minEntries type="Integer">250</minEntries>
-				<replayDate>09/27/2015</replayDate>
+				<replayDate>02/17/2015</replayDate>
 			</import>
 
 			<!-- downloaded file cache -->
