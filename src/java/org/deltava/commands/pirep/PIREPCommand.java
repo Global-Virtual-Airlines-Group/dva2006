@@ -480,7 +480,8 @@ public class PIREPCommand extends AbstractFormCommand {
 					ScorePackage pkg = new ScorePackage(acInfo, afr, info.getRunwayD(), info.getRunwayA());
 					if (afr.hasAttribute(FlightReport.ATTR_CHECKRIDE) && (afr.getFDR() != Recorder.XACARS)) {
 						GetACARSPositions posdao = new GetACARSPositions(con);
-						posdao.getRouteEntries(info.getID(), true, info.getArchived());
+						Collection<GeospaceLocation> positions = posdao.getRouteEntries(info.getID(), true, info.getArchived());
+						positions.stream().filter(ACARSRouteEntry.class::isInstance).map(ACARSRouteEntry.class::cast).forEach(pkg::add);
 					}
 					
 					FlightScore score = FlightScorer.score(pkg);

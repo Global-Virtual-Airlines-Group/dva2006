@@ -41,10 +41,10 @@ public class ScorePackage {
 	
 	/**
 	 * Adds data to the scoring package.
-	 * @param entries a Collection of ACARSRouteEntry beans
+	 * @param e an ACARSRouteEntry
 	 */
-	public void addData(Collection<ACARSRouteEntry> entries) {
-		_data.addAll(entries);
+	public void add(ACARSRouteEntry e) {
+		_data.add(e);
 	}
 	
 	/**
