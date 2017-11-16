@@ -57,11 +57,11 @@ public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
 	}
 
 	@Override
-	public Duration getDuration() {
+	public final Duration getDuration() {
 		if ((_timeA == null) || (_timeD == null))
 			throw new IllegalStateException("Arrival and Departure Times are not set");
 		
-		Duration d = Duration.between(_timeD, _timeA);
+		Duration d = Duration.between(_timeD.toInstant(), _timeA.toInstant());
 		return d.isNegative() ? d.negated() : d;
 	}
 
