@@ -311,7 +311,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
  <td colspan="2">FLIGHT DIVERSION HANDLING</td>
 </tr>
 <tr>
- <td class="title">Assign Leg</td>
+ <td class="label">Assign Leg</td>
  <td class="data"><span class="ita nophone">This flight does not appear to have arrived at its originally filed destination. Click the box below to hold the Flight Report and automatically assign a leg to complete the originally scheduled flight.</span><br />
 <br /><el:box name="holdDivert" value="true" label="Create diversion completion Flight Assignment" /></td>
 </tr>
