@@ -1,24 +1,26 @@
-// Copyright 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.util.*;
 
 import org.deltava.beans.Helper;
 import org.deltava.beans.navdata.*;
-import org.deltava.beans.schedule.RoutePair;
-import org.deltava.util.CollectionUtils;
-import org.deltava.util.StringUtils;
+import org.deltava.beans.schedule.*;
+
+import org.deltava.util.*;
 
 /**
  * A utility class to build a flight route.
  * @author Luke
- * @version 7.0
+ * @version 8.0
  * @since 7.0
  */
 
 @Helper(FlightReport.class)
-public class RouteBuilder {
+public class RouteBuilder implements RoutePair {
 
+	private final Airport _aD;
+	private final Airport _aA;
 	private final String _sid;
 	private final String _star;
 	
@@ -26,17 +28,19 @@ public class RouteBuilder {
 	private final Collection<NavigationDataBean> _pts = new LinkedHashSet<NavigationDataBean>();
 
 	/**
-	 * Creates the builder. This will parse the provided route to identify a filed SID or STAR
-	 * @param f the RoutePair
+	 * Creates the builder. This will parse the provided route to identify a filed SID or STAR.
+	 * @param rp the RoutePair
 	 * @param route the filed route
 	 */
-	public RouteBuilder(RoutePair f, String route) {
+	public RouteBuilder(RoutePair rp, String route) {
 		super();
+		_aD = rp.getAirportD();
+		_aA = rp.getAirportA();
 		List<String> wps = StringUtils.nullTrim(StringUtils.split(route, " "));
 		if (!CollectionUtils.isEmpty(wps)) {
 			_wps.addAll(wps);
-			_wps.remove(f.getAirportD().getICAO());
-			_wps.remove(f.getAirportA().getICAO());
+			_wps.remove(_aD.getICAO());
+			_wps.remove(_aA.getICAO());
 		}
 		
 		if ((_wps.size() > 1) && TerminalRoute.isNameValid(_wps.getFirst())) {
@@ -50,6 +54,21 @@ public class RouteBuilder {
 			_wps.removeLast();
 		} else
 			_star = null;
+	}
+	
+	@Override
+	public Airport getAirportD() {
+		return _aD;
+	}
+	
+	@Override
+	public Airport getAirportA() {
+		return _aA;
+	}
+	
+	@Override
+	public int getDistance() {
+		return GeoUtils.distance(_aD, _aA);
 	}
 	
 	/**
