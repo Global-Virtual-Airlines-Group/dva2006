@@ -334,40 +334,6 @@
 		</scp>
 	</target>
 	
-	<!-- Generate classes based on FlightAware WSDL -->
-	<target name="fa_wsdl" description="Compile FlightXML2 WSDL">
-		<taskdef name="wsdl2java" classname="org.apache.axis.tools.ant.wsdl.Wsdl2javaAntTask">
-			<classpath id="wsdl.classpath"> 
-				<fileset dir="lib">
-					<include name="axis-ant-*.jar" />
-					<include name="deploy/axis-*.jar" />
-					<include name="wsdl4j-*.jar" />
-					<include name="deploy/jaxrpc-*.jar" />
-					<include name="deploy/commons-logging-*.jar" />
-					<include name="commons-discovery-*.jar" />
-					<include name="deploy/javamail-*.jar" />
-				</fileset>
-			</classpath> 
-	  	</taskdef>
-
-		<!-- Build the Java source files -->
-		<mkdir dir="${java.io.tmpdir}/src/wsdl" />
-		<wsdl2java debug="false" output="${java.io.tmpdir}/src/wsdl" url="data/flightXMLv2.wsdl" />
-		
-		<!-- Compile the Java source files -->
-		<mkdir dir="${java.io.tmpdir}/build/wsdl" />
-		<javac srcdir="${java.io.tmpdir}/src/wsdl" destdir="${java.io.tmpdir}/build/wsdl" debug="on" debuglevel="source" optimize="on" target="1.8" source="1.8">
-			<classpath refid="wsdl.classpath" />
-			<compilerarg value="-Xlint:deprecation,finally" />
-		</javac>
-
-		<!-- Compress the Java classes into a single JAR file -->
-		<jar basedir="${java.io.tmpdir}/build/wsdl" compress="true" index="true" destfile="lib/deploy/flightaware.jar" />
-		
-		<!-- Archive the source -->
-		<zip destfile="lib/src/flightaware.zip" basedir="${java.io.tmpdir}/src/wsdl" includes="**/*.java" />
-	</target>
-	
 	<!-- Clean out compiled data -->
 	<target name="clean" description="Clean build paths">
 		<delete dir="${java.io.tmpdir}/build" />
