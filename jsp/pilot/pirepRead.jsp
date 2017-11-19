@@ -110,7 +110,7 @@ golgotha.local.showRunwayChoices = function() {
  <td class="label">Status</td>
  <td class="data bld sec">${statusMsg}<c:if test="${!empty pirep.disposedOn}"> on <fmt:date date="${pirep.disposedOn}" /></c:if> 
 <c:if test="${fn:AssignID(pirep) > 0}"> <span class="ter bld">FLIGHT ASSIGNMENT</span></c:if>
-<c:if test="${fn:isDraft(pirep)}"> - <el:cmd url="routeplot" link="${pirep}">Plot Route</el:cmd></c:if></td>
+<content:authUser anonymous="false"><c:if test="${fn:isDraft(pirep)}"> - <el:cmd url="routeplot" link="${pirep}">Plot Route</el:cmd></c:if><c:if test="${!empty pirep.route}"> - <a href="draftplan.ws?id=${pirep.hexID}" rel="nofollow">Download Flight Plan</a></c:if></content:authUser></td>
 </tr>
 <c:if test="${!empty pirep.submittedOn}">
 <tr>
@@ -221,11 +221,12 @@ golgotha.local.showRunwayChoices = function() {
  <td class="label">Flight Distance</td>
  <td class="data pri bld"><fmt:distance value="${pirep.distance}" longUnits="true" /></td>
 </tr>
+<c:if test="${pirep.length > 0}">
 <tr>
  <td class="label">Logged Time</td>
- <td class="data"><fmt:dec value="${pirep.length / 10.0}" /> hours<c:if test="${avgTime > 0}">
- <span class="ita">(average time: <fmt:dec value="${avgTime / 10.0}" /> hours)</span></c:if></td>
+ <td class="data"><fmt:dec value="${pirep.length / 10.0}" /> hours<c:if test="${avgTime > 0}"> <span class="ita">(average time: <fmt:dec value="${avgTime / 10.0}" /> hours)</span></c:if></td>
 </tr>
+</c:if>
 <c:if test="${!empty onlineTrack}">
 <c:set var="onlinePct" value="${onlineTime * 100 / (pirep.length * 360)}" scope="page" />
 <c:set var="onlinePct" value="${(onlinePct > 100) ? 100 : onlinePct}" scope="page" />
