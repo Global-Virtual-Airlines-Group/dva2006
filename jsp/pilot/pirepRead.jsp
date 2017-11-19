@@ -100,7 +100,7 @@ golgotha.local.showRunwayChoices = function() {
 <c:if test="${!empty vatsimID}">
 <tr>
  <td class="label">VATSIM ID</td>
- <td class="data"><span class="bld">${vatsimID}</span><c:if test="${empty onlineTrack}"> - View flight log at <el:link url="http://www.vataware.com/pilot.cfm?cid=${fn:networkID(pilot,'VATSIM')}" target="_new" external="true">
+ <td class="data"><span class="bld">${vatsimID}</span><c:if test="${empty onlineTrack}"> - View flight log at <el:link url="http://www.vataware.com/pilot.cfm?cid=${vatsimID}" target="_new" external="true">
 <el:img src="vataware.png" className="noborder" x="50" y="16" caption="View VATAWARE Flight Log" /></el:link></c:if></td>
 </tr>
 </c:if>
@@ -110,7 +110,7 @@ golgotha.local.showRunwayChoices = function() {
  <td class="label">Status</td>
  <td class="data bld sec">${statusMsg}<c:if test="${!empty pirep.disposedOn}"> on <fmt:date date="${pirep.disposedOn}" /></c:if> 
 <c:if test="${fn:AssignID(pirep) > 0}"> <span class="ter bld">FLIGHT ASSIGNMENT</span></c:if>
-<content:authUser anonymous="false"><c:if test="${fn:isDraft(pirep)}"> - <el:cmd url="routeplot" link="${pirep}">Plot Route</el:cmd></c:if><c:if test="${!empty pirep.route}"> - <a href="draftplan.ws?id=${pirep.hexID}" rel="nofollow">Download Flight Plan</a></c:if></content:authUser></td>
+<content:authUser anonymous="false"><c:if test="${fn:isDraft(pirep)}"> - <el:cmd url="routeplot" link="${pirep}">Plot Route</el:cmd><c:if test="${!empty pirep.route}"> - <a href="draftplan.ws?id=${pirep.hexID}" rel="nofollow">Download Flight Plan</a></c:if></c:if></content:authUser></td>
 </tr>
 <c:if test="${!empty pirep.submittedOn}">
 <tr>
@@ -163,7 +163,7 @@ golgotha.local.showRunwayChoices = function() {
 <c:if test="${access.canDispose && fn:isOnline(pirep)}">
 <tr>
  <td class="label">Online Flight</td>
- <td class="data"><el:check type="radio" name="network" idx="*" width="70" firstEntry="Offline" options="${networks}" value="${fn:network(pirep)}" /></td>
+ <td class="data"><el:check type="radio" name="network" idx="*" width="84" firstEntry="Offline" options="${networks}" value="${fn:network(pirep)}" /></td>
 </tr>
 <c:if test="${(empty event) && (!empty possibleEvents)}">
 <tr>
