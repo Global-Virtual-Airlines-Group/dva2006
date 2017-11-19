@@ -38,9 +38,9 @@ import org.deltava.util.system.SystemData;
  */
 
 public class PIREPDisposalCommand extends AbstractCommand {
-	
+
 	private static final Logger log = Logger.getLogger(PIREPDisposalCommand.class);
-	
+
 	// Operation constants
 	private static final String[] OPNAMES = { "", "", "hold", "approve", "reject" };
 
@@ -56,8 +56,8 @@ public class PIREPDisposalCommand extends AbstractCommand {
 		String opName = (String) ctx.getCmdParameter(Command.OPERATION, null);
 		int opCode = StringUtils.arrayIndexOf(OPNAMES, opName);
 		if (opCode < 2)
-			throw new CommandException("Invalid Operation - " + opName,false);
-		
+			throw new CommandException("Invalid Operation - " + opName, false);
+
 		ctx.setAttribute("opName", opName, REQUEST);
 
 		// Initialize the Message Context
@@ -84,63 +84,63 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			// Determine if we can perform the operation in question and set a request attribute
 			boolean isOK = false;
 			switch (opCode) {
-				case FlightReport.HOLD:
-					ctx.setAttribute("isHold", Boolean.TRUE, REQUEST);
-					mctx.setTemplate(mtdao.get("PIREPHOLD"));
-					isOK = access.getCanHold();
-					break;
+			case FlightReport.HOLD:
+				ctx.setAttribute("isHold", Boolean.TRUE, REQUEST);
+				mctx.setTemplate(mtdao.get("PIREPHOLD"));
+				isOK = access.getCanHold();
+				break;
 
-				case FlightReport.OK:
-					ctx.setAttribute("isApprove", Boolean.TRUE, REQUEST);
-					mctx.setTemplate(mtdao.get("PIREPAPPROVE"));
-					isOK = access.getCanApprove();
-					break;
+			case FlightReport.OK:
+				ctx.setAttribute("isApprove", Boolean.TRUE, REQUEST);
+				mctx.setTemplate(mtdao.get("PIREPAPPROVE"));
+				isOK = access.getCanApprove();
+				break;
 
-				case FlightReport.REJECTED:
-					ctx.setAttribute("isReject", Boolean.TRUE, REQUEST);
-					mctx.setTemplate(mtdao.get("PIREPREJECT"));
-					isOK = access.getCanReject();
-					break;
-					
-				default:
-					throw new IllegalArgumentException("Invalid Op Code - " + opCode);
+			case FlightReport.REJECTED:
+				ctx.setAttribute("isReject", Boolean.TRUE, REQUEST);
+				mctx.setTemplate(mtdao.get("PIREPREJECT"));
+				isOK = access.getCanReject();
+				break;
+
+			default:
+				throw new IllegalArgumentException("Invalid Op Code - " + opCode);
 			}
 
 			// If we cannot perform the operation, then stop
 			if (!isOK)
 				throw securityException("Cannot dispose of Flight Report #" + fr.getID());
-			
+
 			// Load the comments
 			Collection<String> comments = new LinkedHashSet<String>();
 			if (ctx.getParameter("dComments") != null)
 				comments.add(ctx.getParameter("dComments"));
-			
+
 			// Get the Pilot object
 			GetPilot pdao = new GetPilot(con);
 			CacheManager.invalidate("Pilots", Integer.valueOf(fr.getDatabaseID(DatabaseID.PILOT)));
 			p = pdao.get(fr.getDatabaseID(DatabaseID.PILOT));
 			if (p == null)
-			   throw notFoundException("Unknown Pilot - " + fr.getDatabaseID(DatabaseID.PILOT));
-			
+				throw notFoundException("Unknown Pilot - " + fr.getDatabaseID(DatabaseID.PILOT));
+
 			// Load the pilot's equipment type
 			GetEquipmentType eqdao = new GetEquipmentType(con);
 			EquipmentType eq = eqdao.get(p.getEquipmentType());
-			
+
 			// Check if the pilot is rated in the equipment type
 			Collection<String> allRatings = new HashSet<String>(p.getRatings());
 			allRatings.addAll(eq.getRatings());
 			boolean isRated = allRatings.contains(fr.getEquipmentType());
 			ctx.setAttribute("notRated", Boolean.valueOf(!isRated), REQUEST);
 			if (fr.hasAttribute(FlightReport.ATTR_NOTRATED) != !isRated) {
-				log.warn("Updating NotRated flag for " + p.getName() + ", eq="  + fr.getEquipmentType() + " ratings = " + p.getRatings());
+				log.warn("Updating NotRated flag for " + p.getName() + ", eq=" + fr.getEquipmentType() + " ratings = " + p.getRatings());
 				log.warn("NotRated was " + fr.hasAttribute(FlightReport.ATTR_NOTRATED) + ", now " + !isRated);
 				fr.setAttribute(FlightReport.ATTR_NOTRATED, !isRated);
 			}
-			
+
 			// Update comments
 			if (!comments.isEmpty())
 				fr.setComments(StringUtils.listConcat(comments, "\r\n"));
-			
+
 			// Set message context objects
 			Collection<StatusUpdate> upds = new ArrayList<StatusUpdate>();
 			ctx.setAttribute("pilot", p, REQUEST);
@@ -148,27 +148,28 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			mctx.addData("flightDate", StringUtils.format(fr.getDate(), p.getDateFormat()));
 			mctx.addData("pilot", p);
 			fr.setStatus(opCode);
-			
+
 			// Start a JDBC transaction
 			ctx.startTX();
-			
+
 			// Load the flights for accomplishment purposes
 			if (opCode == FlightReport.OK) {
 				Collection<FlightReport> pireps = rdao.getByPilot(p.getID(), null);
 				rdao.getCaptEQType(pireps);
 				AccomplishmentHistoryHelper acchelper = new AccomplishmentHistoryHelper(p);
 				pireps.forEach(pr -> acchelper.add(pr));
-				
+
 				// Load accomplishments - only save the ones we don't meet yet
 				GetAccomplishment accdao = new GetAccomplishment(con);
-				Collection<Accomplishment> accs = accdao.getAll().stream().filter(a -> (acchelper.has(a) == AccomplishmentHistoryHelper.Result.NOTYET)).collect(Collectors.toList());
-				
+				Collection<Accomplishment> accs = accdao.getAll().stream()
+						.filter(a -> (acchelper.has(a) == AccomplishmentHistoryHelper.Result.NOTYET)).collect(Collectors.toList());
+
 				// Add the approved PIREP
 				acchelper.add(fr);
-				
+
 				// See if we meet any accomplishments now
 				SetAccomplishment acwdao = new SetAccomplishment(con);
-				for (Iterator<Accomplishment> i = accs.iterator(); i.hasNext(); ) {
+				for (Iterator<Accomplishment> i = accs.iterator(); i.hasNext();) {
 					Accomplishment a = i.next();
 					if (acchelper.has(a) != AccomplishmentHistoryHelper.Result.NOTYET) {
 						acwdao.achieve(p.getID(), a, Instant.now());
@@ -179,39 +180,39 @@ public class PIREPDisposalCommand extends AbstractCommand {
 					} else
 						i.remove();
 				}
-				
+
 				// Log Accomplishments
 				if (!accs.isEmpty()) {
 					ctx.setAttribute("accomplishments", accs, REQUEST);
-				
+
 					// Write Facebook update
 					if (!StringUtils.isEmpty(SystemData.get("users.facebook.id"))) {
 						MessageContext fbctxt = new MessageContext();
 						fbctxt.addData("user", p);
 						fbctxt.setTemplate(mtdao.get("FBACCOMPLISH"));
-						
+
 						// Write the post
 						SetFacebookData fbwdao = new SetFacebookData();
 						fbwdao.setWarnMode(true);
-						for (Iterator<Accomplishment> i = accs.iterator(); i.hasNext(); ) {
+						for (Iterator<Accomplishment> i = accs.iterator(); i.hasNext();) {
 							Accomplishment a = i.next();
 							fbctxt.addData("accomplish", a);
 							NewsEntry nws = new NewsEntry(fbctxt.getBody());
-							
+
 							// Write to user feed or app page
 							fbwdao.reset();
 							if (p.hasIM(IMAddress.FBTOKEN)) {
 								fbwdao.setToken(p.getIMHandle(IMAddress.FBTOKEN));
 								fbwdao.write(nws);
 							} else {
-								fbwdao.setAppID(SystemData.get("users.facebook.pageID"));		
+								fbwdao.setAppID(SystemData.get("users.facebook.pageID"));
 								fbwdao.setToken(SystemData.get("users.facebook.pageToken"));
 								fbwdao.writeApp(nws);
 							}
 						}
 					}
 				}
-				
+
 				// Figure out what network the flight was flown on and ensure we have an ID
 				OnlineNetwork net = null;
 				try {
@@ -226,37 +227,40 @@ public class PIREPDisposalCommand extends AbstractCommand {
 					fr.setNetwork(net);
 				}
 			}
-			
+
 			// Get the write DAO and update/dispose of the PIREP
 			SetFlightReport wdao = new SetFlightReport(con);
 			wdao.dispose(SystemData.get("airline.db"), ctx.getUser(), fr, opCode);
 
 			// If this is part of a flight assignment, load it
-		   GetAssignment fadao = new GetAssignment(con);
-		   AssignmentInfo assign = (fr.getDatabaseID(DatabaseID.ASSIGN) == 0) ? null : fadao.get(fr.getDatabaseID(DatabaseID.ASSIGN));
-		   if (assign != null) {
-			   List<FlightReport> flights = rdao.getByAssignment(assign.getID(), SystemData.get("airline.db"));
-			   flights.forEach(fl -> assign.addFlight(fl));
-		   }
-			
+			GetAssignment fadao = new GetAssignment(con);
+			AssignmentInfo assign = (fr.getDatabaseID(DatabaseID.ASSIGN) == 0) ? null : fadao.get(fr.getDatabaseID(DatabaseID.ASSIGN));
+			if (assign != null) {
+				List<FlightReport> flights = rdao.getByAssignment(assign.getID(), SystemData.get("airline.db"));
+				flights.forEach(fl -> assign.addFlight(fl));
+			}
+
 			// Diversion handling
-			if (fr.hasAttribute(FlightReport.ATTR_DIVERT) && (opCode == FlightReport.HOLD) && (fr instanceof ACARSFlightReport)) {
-				GetACARSData fidao = new GetACARSData(con); 
+			boolean doDivert = Boolean.valueOf(ctx.getParameter("holdDivert")).booleanValue();
+			if (doDivert && (opCode == FlightReport.HOLD) && (fr instanceof ACARSFlightReport)) {
+				GetACARSData fidao = new GetACARSData(con);
 				FlightInfo fInfo = fidao.getInfo(fr.getDatabaseID(DatabaseID.ACARS));
 
 				// Remove this leg from the assignment
 				if (assign != null)
 					assign.remove(fInfo);
-				
+
 				// Create the draft PIREP
 				DraftFlightReport dfr = new DraftFlightReport(fr.getAirline(), fr.getFlightNumber(), fr.getLeg() + 1);
 				dfr.setAirportD(fr.getAirportA());
 				dfr.setAirportA(fInfo.getAirportA());
+				dfr.setRank(p.getRank());
+				dfr.setAuthorID(fr.getAuthorID());
 				dfr.setEquipmentType(fr.getEquipmentType());
 				dfr.setAttribute(FlightReport.ATTR_HISTORIC, fr.hasAttribute(FlightReport.ATTR_HISTORIC));
 				dfr.setAttribute(FlightReport.ATTR_DIVERT, true);
 				dfr.setComments("Diversion completion flight to " + fInfo.getAirportA().getIATA());
-				
+
 				// Create a new flight assignment
 				AssignmentInfo newAssign = new AssignmentInfo(fr.getEquipmentType());
 				newAssign.setPilotID(fr.getAuthorID());
@@ -266,63 +270,63 @@ public class PIREPDisposalCommand extends AbstractCommand {
 				newAssign.setAssignDate(Instant.now());
 				newAssign.addAssignment(new AssignmentLeg(fr));
 				newAssign.addAssignment(new AssignmentLeg(dfr));
-				
+
 				// Save the assignment
 				SetAssignment fawdao = new SetAssignment(con);
 				fawdao.write(newAssign, SystemData.get("airline.db"));
 				wdao.write(dfr);
 			}
-			
+
 			// If we're approving and have not assigned a Pilot Number yet, assign it
 			if ((opCode == FlightReport.OK) && (p.getPilotNumber() == 0)) {
-			   SetPilot pwdao = new SetPilot(con);
-			   pwdao.assignID(p, SystemData.get("airline.db"));
-			   ctx.setAttribute("assignID", Boolean.TRUE, REQUEST);
-			   
-			   // Create status update
-			   StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.STATUS_CHANGE);
-			   upd.setAuthorID(ctx.getUser().getID());
-			   upd.setDescription("Assigned Pilot ID " + p.getPilotCode());
-			   upds.add(upd);
-			   
-			   // Write Facebook update
-			   if (p.hasIM(IMAddress.FBTOKEN)) {
-				   MessageContext fbctxt = new MessageContext();
-				   fbctxt.addData("user", p);
-				   fbctxt.setTemplate(mtdao.get("FBIDASSIGNED"));
-				   NewsEntry nws = new NewsEntry(fbctxt.getBody());
-				   
+				SetPilot pwdao = new SetPilot(con);
+				pwdao.assignID(p, SystemData.get("airline.db"));
+				ctx.setAttribute("assignID", Boolean.TRUE, REQUEST);
+
+				// Create status update
+				StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.STATUS_CHANGE);
+				upd.setAuthorID(ctx.getUser().getID());
+				upd.setDescription("Assigned Pilot ID " + p.getPilotCode());
+				upds.add(upd);
+
+				// Write Facebook update
+				if (p.hasIM(IMAddress.FBTOKEN)) {
+					MessageContext fbctxt = new MessageContext();
+					fbctxt.addData("user", p);
+					fbctxt.setTemplate(mtdao.get("FBIDASSIGNED"));
+					NewsEntry nws = new NewsEntry(fbctxt.getBody());
+
 					// Write to user feed
 					SetFacebookData fbwdao = new SetFacebookData();
 					fbwdao.setWarnMode(true);
 					fbwdao.setToken(p.getIMHandle(IMAddress.FBTOKEN));
 					fbwdao.write(nws);
-			   }
+				}
 			}
-			
+
 			// If we're approving the PIREP and it's part of a Flight Assignment, check completion
 			if (((opCode == FlightReport.OK) || (opCode == FlightReport.REJECTED)) && (assign != null)) {
-			   List<FlightReport> flights = rdao.getByAssignment(assign.getID(), SystemData.get("airline.db"));
-			   flights.forEach(fl -> assign.addFlight(fl));
-			   
-			   // If the assignment is complete, then mark it as such
-			   if (assign.isComplete()) {
-			      SetAssignment fawdao = new SetAssignment(con);
-			      fawdao.complete(assign);
-			      ctx.setAttribute("assignComplete", Boolean.TRUE, REQUEST);
-			   }
+				List<FlightReport> flights = rdao.getByAssignment(assign.getID(), SystemData.get("airline.db"));
+				flights.forEach(fl -> assign.addFlight(fl));
+
+				// If the assignment is complete, then mark it as such
+				if (assign.isComplete()) {
+					SetAssignment fawdao = new SetAssignment(con);
+					fawdao.complete(assign);
+					ctx.setAttribute("assignComplete", Boolean.TRUE, REQUEST);
+				}
 			}
-			
+
 			// Update PIREP statistics
 			if ((opCode == FlightReport.OK) || (opCode == FlightReport.REJECTED)) {
 				SetAggregateStatistics fstdao = new SetAggregateStatistics(con);
 				fstdao.update(fr);
 			}
-			
+
 			// Write status updates (if any)
 			SetStatusUpdate swdao = new SetStatusUpdate(con);
 			swdao.write(upds);
-			
+
 			// If we're approving an ACARS PIREP, archive the position data
 			if ((opCode == FlightReport.OK) || (opCode == FlightReport.REJECTED)) {
 				int acarsID = fr.getDatabaseID(DatabaseID.ACARS);
@@ -335,7 +339,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 					Collection<? extends RouteEntry> entries = posdao.getXACARSEntries(acarsID);
 					acdao.archive(acarsID, entries);
 				}
-				
+
 				// Write the online track data
 				GetOnlineTrack tdao = new GetOnlineTrack(con);
 				boolean hasTrack = fr.hasAttribute(FlightReport.ATTR_ONLINE_MASK) && tdao.hasTrack(fr.getID());
@@ -346,17 +350,18 @@ public class PIREPDisposalCommand extends AbstractCommand {
 						SetSerializedOnline owdao = new SetSerializedOnline(os);
 						owdao.archive(fr.getID(), onlineEntries);
 					} catch (IOException ie) {
-						throw new DAOException(ie); 
+						throw new DAOException(ie);
 					}
-					
+
 					twdao.purge(fr.getID());
 					ctx.setAttribute("onlineArchive", Boolean.TRUE, REQUEST);
 				}
-				
+
 				// Write the route data
 				boolean hasRoute = ArchiveHelper.getRoute(fr.getID()).exists();
 				if (!hasRoute) {
-					GetACARSData fidao = new GetACARSData(con); GetNavRoute navdao = new GetNavRoute(con);
+					GetACARSData fidao = new GetACARSData(con);
+					GetNavRoute navdao = new GetNavRoute(con);
 					FlightInfo fi = (fr instanceof FDRFlightReport) ? fidao.getInfo(fr.getDatabaseID(DatabaseID.ACARS)) : null;
 					RouteBuilder rb = new RouteBuilder(fr, (fi == null) ? fr.getRoute() : fi.getRoute());
 					navdao.getRouteWaypoints(rb.getRoute(), fr.getAirportD()).forEach(wp -> rb.add(wp));
@@ -369,17 +374,17 @@ public class PIREPDisposalCommand extends AbstractCommand {
 						}
 					}
 				}
-				
+
 				ctx.setAttribute("acarsArchive", Boolean.TRUE, REQUEST);
 			}
-			
+
 			// Commit the transaction
 			ctx.commitTX();
-			
+
 			// Invalidate the pilot again to reflect the new totals
 			if (opCode == FlightReport.OK)
-				CacheManager.invalidate("Pilots", Integer.valueOf(fr.getAuthorID()));				
-			
+				CacheManager.invalidate("Pilots", Integer.valueOf(fr.getAuthorID()));
+
 			// Save the flight report in the request and the Message Context
 			ctx.setAttribute("pirep", fr, REQUEST);
 			mctx.addData("pirep", fr);

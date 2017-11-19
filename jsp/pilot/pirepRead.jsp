@@ -42,7 +42,7 @@ return true;
 <content:googleJS module="charts" />
 <content:json />
 <content:js name="acarsFlightMap" />
-<script>
+<script async>
 golgotha.local.zoomTo = function(lat, lng, zoom) {
 	map.setZoom((zoom == null) ? 12 : zoom);
 	map.panTo({lat:lat, lng:lng});
@@ -183,7 +183,7 @@ golgotha.local.showRunwayChoices = function() {
 <div class="ok bld">FLIGHT LEG DATA LOGGED USING simFDR</div></c:if>
 <c:if test="${fn:isDispatch(pirep)}">
 <div class="pri bld caps">Flight Leg planned using <content:airline /> Dispatch</div></c:if>
-<c:if test="${fn:isDivert(pirep) || isDivert}">
+<c:if test="${isDivert}">
 <div class="warn bld caps">Flight diverted to Non-Scheduled Airport</div></c:if>
 <c:if test="${fn:isDivert(pirep) && !isDivert}">
 <div class="ter bld caps">Flight Leg is completion of Diverted Flight</div></c:if>
@@ -287,7 +287,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 </tr>
 </c:if>
 <c:if test="${isACARS}">
-<tr class="title">
+<tr class="title caps">
  <td colspan="2">SPEED / ALTITUDE DATA<span id="chartToggle" class="und" style="float:right" onclick="void golgotha.util.toggleExpand(this, 'flightDataChart')">COLLAPSE</span></td>
 </tr>
 <tr class="flightDataChart">
@@ -306,6 +306,16 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 </c:if>
 </tr>
 </c:if>
+<c:if test="${access.canHold && isDivert}">
+<tr class="title">
+ <td colspan="2">FLIGHT DIVERSION HANDLING</td>
+</tr>
+<tr>
+ <td class="title">Assign Leg</td>
+ <td class="data"><span class="ita nophone">This flight does not appear to have arrived at its originally filed destination. Click the box below to hold the Flight Report and automatically assign a leg to complete the originally scheduled flight.</span><br />
+<br /><el:box name="holdDivert" value="true" label="Create diversion completion Flight Assignment" /></td>
+</tr>
+</c:if>
 </el:table>
 
 <!-- Button Bar -->
@@ -316,7 +326,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
  <el:cmdbutton url="submit" link="${pirep}" label="SUBMIT FLIGHT REPORT" />
 </c:if>
 <c:if test="${access.canApprove && !scoreCR}">
- <el:cmdbutton url="dispose" link="${pirep}" op="approve" post="true" key="A" label="APPROVE" />
+ <el:cmdbutton url="dispose" link="${pirep}" op="approve" post="true" label="APPROVE" />
 </c:if>
 <c:if test="${access.canHold}">
  <el:cmdbutton url="dispose" link="${pirep}" op="hold" post="true" key="H" label="HOLD" />
@@ -343,10 +353,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
  <el:cmdbutton url="acarsdelete" link="${pirep}" label="DELETE ACARS DATA" />
 </c:if> </c:if>
 <content:filter roles="PIREP,HR,Developer,Operations">
-<c:if test="${isACARS}">
-<span class="nophone"> <el:button label="RUNWAY CHOICES" key="R" onClick="void golgotha.local.showRunwayChoices()" /></span>
- <el:cmdbutton url="gaterecalc" link="${pirep}" label="LOAD GATES" />
-</c:if>
+<c:if test="${isACARS}"><span class="nophone"> <el:button label="RUNWAY CHOICES" key="R" onClick="void golgotha.local.showRunwayChoices()" /></span> <el:cmdbutton url="gaterecalc" link="${pirep}" label="LOAD GATES" /></c:if>
 </content:filter>
 <c:if test="${fn:isDraft(pirep) && (!empty assignmentInfo) && assignAccess.canRelease}">
  <el:cmdbutton url="assignrelease" link="${assignmentInfo}" label="RELEASE ASSIGNMENT" />
