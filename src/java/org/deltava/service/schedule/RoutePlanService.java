@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to create flight plans.
  * @author Luke
- * @version 7.5
+ * @version 8.0
  * @since 2.2
  */
 
@@ -54,27 +54,8 @@ public class RoutePlanService extends WebService {
 		else if (aA == null)
 			throw error(SC_BAD_REQUEST, "Invalid Arrival Airport - " + ctx.getParameter("airportA"), false);
 
-		// Get the Flight Plan generator
-		FlightPlanGenerator fpgen = null;
-		switch (sim) {
-			case XP9:
-			case XP10:
-			case XP11:
-				fpgen = new XP9Generator();
-				break;
-				
-			case P3D:
-			case P3Dv4:
-				fpgen = new P3DGenerator();
-				break;
-		
-			case FS9:
-			case FSX:
-			default:
-				fpgen = new FS9Generator();
-		}
-
 		// Update the flight plan
+		FlightPlanGenerator fpgen = FlightPlanGenerator.create(sim);
 		fpgen.setAirline(SystemData.getAirline(ctx.getParameter("airline")));
 		fpgen.setAirports(aD, aA);
 		fpgen.setCruiseAltitude(alt);
@@ -111,7 +92,7 @@ public class RoutePlanService extends WebService {
 			if (!StringUtils.isEmpty(rte)) {
 				fpgen.setRoute(rte);
 				List<NavigationDataBean> points = dao.getRouteWaypoints(rte, aD);
-				routePoints.addAll(points);
+				routePoints.addAll(GeoUtils.stripDetours(points, 60));
 				rteBuf.append(rte);
 			}
 
@@ -132,9 +113,6 @@ public class RoutePlanService extends WebService {
 			// Add the destination airport
 			routePoints.add(new AirportLocation(aA));
 			
-			// Trim out detours like the route plotter does
-			routePoints = GeoUtils.stripDetours(routePoints, 60);
-
 			// If we're saving a draft PIREP
 			if (saveDraft) {
 				GetAircraft acdao = new GetAircraft(con);
@@ -170,11 +148,11 @@ public class RoutePlanService extends WebService {
 						ai.addAssignment(new AssignmentLeg(dfr));
 						ai.addFlight(dfr);
 					}
-					
-					dfr.setSimulator(sim);
-					dfr.setRank(ctx.getUser().getRank());
-					dfr.setDate(Instant.now());
 				}
+					
+				dfr.setSimulator(sim);
+				dfr.setRank(ctx.getUser().getRank());
+				dfr.setDate(Instant.now());
 				
 				// Save the flight assignment
 				if (ai != null) {
