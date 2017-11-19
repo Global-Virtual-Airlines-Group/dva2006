@@ -1,20 +1,24 @@
-// Copyright 2009, 2010, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.flightplan;
 
 import java.util.Collection;
 
+import org.deltava.beans.Simulator;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
 
 /**
  * An abstract class to describe flight plan generators for simulators and payware aircraft. 
  * @author Luke
- * @version 7.0
+ * @version 8.0
  * @since 2.4
  */
 
 public abstract class FlightPlanGenerator {
-	
+
+	/**
+	 * The airline.
+	 */
 	protected Airline _al;
 	
 	/**
@@ -120,5 +124,30 @@ public abstract class FlightPlanGenerator {
 	@SuppressWarnings("static-method")
 	public String getExtension() {
 		return "pln";
+	}
+	
+	/**
+	 * Returns the appropriate FlightPlanGenerator for a particular Simulator.
+	 * @param sim the Simulator
+	 * @return a FlightPlanGenerator
+	 */
+	public static FlightPlanGenerator create(Simulator sim) {
+		
+		switch (sim) {
+			case XP9:
+			case XP10:
+			case XP11:
+				return new XP9Generator();
+			
+			case P3D:
+			case P3Dv4:
+				return new P3DGenerator();
+	
+			case FSX:
+				return new FSXGenerator();
+				
+			default:
+				return new FS9Generator();
+		}
 	}
 }

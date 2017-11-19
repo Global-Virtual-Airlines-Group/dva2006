@@ -39,6 +39,7 @@
 	<service id="rmap_airports" class="org.deltava.service.schedule.ServicedAirportService" />
 	<service id="rmap_routes" class="org.deltava.service.schedule.RouteService" />
 	<service id="routeplan" class="org.deltava.service.schedule.RoutePlanService" />
+	<service id="draftplan" class="org.deltava.service.schedule.DraftFlightPlanService" />
 	<service id="dsproutes" class="org.deltava.service.schedule.DispatchRouteListService" />
 	<service id="dsproute" class="org.deltava.service.schedule.DispatchRouteMapService" />
 	<service id="troutes" class="org.deltava.service.schedule.TerminalRouteService" />
