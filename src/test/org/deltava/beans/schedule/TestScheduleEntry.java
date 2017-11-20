@@ -74,7 +74,7 @@ public class TestScheduleEntry extends AbstractBeanTestCase {
 		_icn.setTZ(TZInfo.get("Asia/Seoul"));
 		_phx = new Airport("PHX", "KHPX", "Phoenix AZ");
 		_phx.setLocation(33.4342, -112.008);
-		_icn.setTZ(TZInfo.get("US/Arizona"));
+		_phx.setTZ(TZInfo.get("US/Arizona"));
 		_dfw = new Airport("DFW", "KDFW", "Dallas-Fort Worth TX");
 		_dfw.setLocation(32.8956, -97.0367);
 		_dfw.setTZ(TZInfo.get("US/Central"));
@@ -117,16 +117,14 @@ public class TestScheduleEntry extends AbstractBeanTestCase {
 	public void testValidation() {
 		validateInput("leg", Integer.valueOf(-1), IllegalArgumentException.class);
 		validateInput("leg", Integer.valueOf(9), IllegalArgumentException.class);
-		validateInput("flightNumber", Integer.valueOf(-1), IllegalArgumentException.class);
 		validateInput("ID", Integer.valueOf(1), UnsupportedOperationException.class);
-		validateInput("length", Integer.valueOf(-1), IllegalArgumentException.class);
 	}
 
 	public void testNullAirportLength() {
 		_e.setTimeD(LocalDateTime.parse("10:05", df));
 		_e.setTimeA(LocalDateTime.parse("12:05", df));
-		assertEquals(TZInfo.UTC, _e.getTimeD().getZone());
-		assertEquals(TZInfo.UTC, _e.getTimeA().getZone());
+		assertEquals(ZoneOffset.UTC, _e.getTimeD().getZone());
+		assertEquals(ZoneOffset.UTC, _e.getTimeA().getZone());
 	}
 
 	public void testDistance() {
@@ -177,8 +175,8 @@ public class TestScheduleEntry extends AbstractBeanTestCase {
 	public void testLongFlightLength() {
 		_e.setAirportD(_atl);
 		_e.setAirportA(_nrt);
-		assertTrue(_atl.getTZ().getZone().getRules().getDaylightSavings(Instant.now()).getSeconds() > 0);
-		assertFalse(_nrt.getTZ().getZone().getRules().getDaylightSavings(Instant.now()).getSeconds() > 0);
+		assertFalse(_atl.getTZ().getZone().getRules().isDaylightSavings(Instant.now()));
+		assertFalse(_nrt.getTZ().getZone().getRules().isDaylightSavings(Instant.now()));
 		_e.setTimeD(LocalDateTime.parse("10:25", df));
 		_e.setTimeA(LocalDateTime.parse("13:25", df));
 		assertEquals(130, _e.getLength());
@@ -214,13 +212,13 @@ public class TestScheduleEntry extends AbstractBeanTestCase {
 		_e.setAirportA(_eze);
 		_e.setTimeD(LocalDateTime.parse("23:15", df));
 		_e.setTimeA(LocalDateTime.parse("07:50", df));
-		assertEquals(125, _e.getLength());
+		assertEquals(115, _e.getLength());
 
 		_e.setAirportD(_eze);
 		_e.setAirportA(_cdg);
 		_e.setTimeD(LocalDateTime.parse("17:20", df));
 		_e.setTimeA(LocalDateTime.parse("11:15", df));
-		assertEquals(139, _e.getLength());
+		assertEquals(149, _e.getLength());
 	}
 
 	public void testCrossIDL() {
@@ -241,8 +239,9 @@ public class TestScheduleEntry extends AbstractBeanTestCase {
 		_e.setAirportD(_phx);
 		_e.setAirportA(_dfw);
 		_e.setTimeD(LocalDateTime.parse("12:30", df));
-		_e.setTimeA(LocalDateTime.parse("14:26", df));
-		boolean dfwDST = (_dfw.getTZ().getZone().getRules().getDaylightSavings(Instant.now()).getSeconds() > 0);
+		_e.setTimeA(LocalDateTime.parse("15:26", df));
+		assertFalse(_phx.getTZ().getZone().getRules().isDaylightSavings(Instant.now()));
+		boolean dfwDST = _dfw.getTZ().getZone().getRules().isDaylightSavings(Instant.now());
 		int time = dfwDST ? 29 : 19;
 		assertEquals(time, _e.getLength());
 	}
@@ -252,7 +251,7 @@ public class TestScheduleEntry extends AbstractBeanTestCase {
 		_e.setAirportA(_kin);
 		_e.setTimeD(LocalDateTime.parse("14:00", df));
 		_e.setTimeA(LocalDateTime.parse("16:50", df));
-		boolean jfkDST = (_jfk.getTZ().getZone().getRules().getDaylightSavings(Instant.now()).getSeconds() > 0);
+		boolean jfkDST = _jfk.getTZ().getZone().getRules().isDaylightSavings(Instant.now());
 		int time = jfkDST ? 38 : 28;
 		assertEquals(time, _e.getLength());
 	}
