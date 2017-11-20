@@ -79,7 +79,7 @@ public class WaiveCheckRideCommand extends AbstractTestHistoryCommand {
 
 			// Create the check ride record
 			CheckRide cr = new CheckRide(eqType + " Check Ride Waiver");
-			cr.setAuthorID(ctx.getUser().getID());
+			cr.setAuthorID(p.getID());
 			cr.setType(RideType.WAIVER);
 			cr.setDate(Instant.now());
 			cr.setSubmittedOn(cr.getDate());
