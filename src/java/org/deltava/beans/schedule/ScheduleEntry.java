@@ -4,18 +4,15 @@ package org.deltava.beans.schedule;
 import java.time.*;
 
 import org.deltava.beans.*;
-import org.deltava.util.*;
 
 /**
  * A class to store Schedule Entry information.
  * @author Luke
- * @version 7.5
+ * @version 8.0
  * @since 1.0
  */
 
 public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
-	
-	private static final String[] SST = {"Concorde", "TU-144"};
 	
 	private ZonedDateTime _timeD;
 	private ZonedDateTime _timeA;
@@ -38,6 +35,10 @@ public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
 	 */
 	public ScheduleEntry(Airline a, int fNumber, int leg) {
 		super(a, fNumber, leg);
+	}
+	
+	private static ZoneId getAirportTimeZone(Airport a) {
+		return (a == null) ? ZoneOffset.UTC : a.getTZ().getZone();
 	}
 	
 	/**
@@ -136,49 +137,37 @@ public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
 	
 	/**
 	 * Sets the departure time for this flight.
-	 * @param dt the departure time of the flight <i>in local time </i>. The date and time zone are ignored.
+	 * @param dt the departure time of the flight
 	 * @throws NullPointerException if the departure airport is not set
 	 * @see ScheduleEntry#setTimeA(LocalDateTime)
 	 * @see ScheduleEntry#getTimeD()
 	 */
 	public void setTimeD(LocalDateTime dt) {
-		ZoneId tz = (getAirportD() == null) ? ZoneId.systemDefault() : getAirportD().getTZ().getZone();
 		_length = 0; // reset length
-		_timeD = ZonedDateTime.of(dt, tz);
+		_timeD = ZonedDateTime.of(dt, getAirportTimeZone(getAirportD()));
 	}
 
 	/**
 	 * Sets the arrival time for this flight.
-	 * @param dt the arrival time of the flight <i>in local time </i>. The date and time zone are ignored.
+	 * @param dt the arrival time of the flight in local time
 	 * @throws NullPointerException if the arrival airport is not set
 	 * @see ScheduleEntry#setTimeD(LocalDateTime)
 	 * @see ScheduleEntry#getTimeA()
 	 */
 	public void setTimeA(LocalDateTime dt) {
-		ZoneId tz = (getAirportD() == null) ? ZoneId.systemDefault() : getAirportD().getTZ().getZone();
 		_length = 0; // reset length
-		if ((_timeD != null) && (dt.isBefore(_timeD.toLocalDateTime())) && (StringUtils.arrayIndexOf(SST, getEquipmentType()) == -1)) {
-			_timeA = ZonedDateTime.of(dt.plusDays(1), tz);
-			
-			// Check if the flight time is longer than 20 hours, if so go back a day
-			long lengthS = Duration.between(_timeD, _timeA).getSeconds();
-			if (lengthS > 72000)
-				_timeA = ZonedDateTime.of(dt, tz);
-		} else
-			_timeA = ZonedDateTime.of(dt, tz);
+		_timeA = ZonedDateTime.of(dt, getAirportTimeZone(getAirportA())); 
+		if ((_timeD != null) && _timeA.isBefore(_timeD))
+			_timeA = _timeA.plusDays(1);
 	}
 
 	/**
 	 * Sets the length of a flight leg.
 	 * @param len the length of a leg, <i>in hours mulitiplied by ten</i>.
-	 * @throws IllegalArgumentException if len is negative
 	 * @see ScheduleEntry#getLength()
 	 */
 	public void setLength(int len) {
-		if (len < 0)
-			throw new IllegalArgumentException("Invalid Flight Length - " + len);
-
-		_length = len;
+		_length = Math.max(0, len);
 	}
 
 	/**
@@ -224,9 +213,11 @@ public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
 		return null;
 	}
 	
-	/**
-	 * Returns the hash code of the flight code.
-	 */
+	@Override
+	public String toString() {
+		return getFlightCode();
+	}
+	
 	@Override
 	public int hashCode() {
 		return getFlightCode().hashCode();
