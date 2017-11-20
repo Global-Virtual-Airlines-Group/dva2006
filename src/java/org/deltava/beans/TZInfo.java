@@ -1,17 +1,15 @@
-// Copyright 2005, 2007, 2008, 2010, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2010, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
 import java.text.*;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.time.format.TextStyle;
 
 /**
  * A class for dealing with Time Zones.
  * @author Luke
- * @version 7.2
+ * @version 8.0
  * @since 1.0
  */
 
@@ -93,7 +91,7 @@ public class TZInfo implements java.io.Serializable, ComboAlias, Comparable<TZIn
 	}
 
 	/**
-	 * Returns the JVM ID of the underlying Java TimeZone object
+	 * Returns the JVM ID of the underlying Java TimeZone object.
 	 * @return The Java TimeZone ID
 	 * @see TimeZone#getID()
 	 */
@@ -103,7 +101,7 @@ public class TZInfo implements java.io.Serializable, ComboAlias, Comparable<TZIn
 	}
 
 	/**
-	 * Returns the abbreviation of this Time Zone
+	 * Returns the abbreviation of this Time Zone.
 	 * @return The user-supplied abbreviation, or <b>null </b> if none provided
 	 */
 	public String getAbbr() {
@@ -111,7 +109,7 @@ public class TZInfo implements java.io.Serializable, ComboAlias, Comparable<TZIn
 	}
 
 	/**
-	 * Returns this Time Zone's name
+	 * Returns this Time Zone's name.
 	 * @return The name of the time zone; if no user-supplied name is present then use the Java name
 	 */
 	public String getName() {
@@ -176,6 +174,9 @@ public class TZInfo implements java.io.Serializable, ComboAlias, Comparable<TZIn
 		return _tz.hashCode();
 	}
 
+	/**
+	 * Resets the list of time zones. For unit testing only.
+	 */
 	protected static void reset() {
 		_timeZones.clear();
 	}
