@@ -11,21 +11,21 @@ if [ "$2" != "" ]; then
         USER="$2"
 fi
 
-OPTS="-avr --progress --address=172.31.10.29 --bwlimit=4096"
+OPTS="-avr --progress --bwlimit=6144"
 
 # Back up base files
 cd /home/backup
-rsync $OPTS --delete cfg/* $USER@$1:~/cfg 
-rsync $OPTS --delete db/* $USER@$1:~/db
-rsync $OPTS sites/*.tar.gz $USER@$1:~/sites
-rsync $OPTS --delete /home/www/pos_archive/* $USER@$1:~/archive
+rsync $OPTS -e 'ssh -o BindAddress=172.31.10.29' --delete cfg/* $USER@$1:~/cfg 
+rsync $OPTS -e 'ssh -o BindAddress=172.31.10.29' --delete db/* $USER@$1:~/db
+rsync $OPTS -e 'ssh -o BindAddress=172.31.10.29' sites/*.tar.gz $USER@$1:~/sites
+rsync $OPTS -e 'ssh -o BindAddress=172.31.10.29' --delete /home/www/pos_archive/* $USER@$1:~/archive
 
 # Backup logs via rsync
-rsync $OPTS logs/* $USER@$1:~/httplogs
-rsync $OPTS --delete --exclude=svn.revision_base svn/* $USER@$1:~/svn
+rsync $OPTS -e 'ssh -o BindAddress=172.31.10.29' httplogs/* $USER@$1:~/httplogs
+rsync $OPTS -e 'ssh -o BindAddress=172.31.10.29' --delete --exclude=svn.revision_base svn/* $USER@$1:~/svn
 
 # Backup library
-rsync $OPTS --delete /home/www/library/* $USER@$1:~/library
+rsync $OPTS -e 'ssh -o BindAddress=172.31.10.29' --delete /home/www/library/* $USER@$1:~/library
 
 # Exit with success
 exit 0
