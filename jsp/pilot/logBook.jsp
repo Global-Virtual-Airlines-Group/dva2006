@@ -34,11 +34,11 @@
 <view:table cmd="logbook">
 <!-- Title Header Bar -->
 <tr class="title">
-<c:set var="cspan" value="${access.canPreApprove ? 4 : 6}" scope="page" />
+<c:set var="cspan" value="${access.canPreApprove ? 4 : 7}" scope="page" />
  <td colspan="${cspan}" class="caps left"><span class="nophone">PILOT LOGBOOK FOR </span>${pilot.rank.name} ${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if>
 <c:if test="${showCSV}"><span class="nophone"> - <a href="mylogbook.ws?id=${pilot.hexID}">CSV Download</a></span></c:if></td>
 <c:if test="${access.canPreApprove}">
- <td class="nophone" colspan="2"><el:cmd url="preapprove" link="${pilot}" className="title">PRE-APPROVE FLIGHT</el:cmd></td>
+ <td class="nophone" colspan="3"><el:cmd url="preapprove" link="${pilot}" className="title">PRE-APPROVE FLIGHT</el:cmd></td>
 </c:if>
 </tr>
 
@@ -47,7 +47,7 @@
 <tr class="title">
  <td colspan="2"><span class="nophone">AIRCRAFT <el:combo name="eqType" size="1" idx="*" options="${eqTypes}" value="${param.eqType}" firstEntry="-" /></span></td>
  <td><el:cmd url="logcalendar" link="${pilot}">CALENDAR</el:cmd></td>
- <td colspan="3" class="right nophone">FROM <el:combo name="airportD" size="1" idx="*" options="${airports}" value="${param.airportD}" firstEntry="-" /> TO
+ <td colspan="4" class="right nophone">FROM <el:combo name="airportD" size="1" idx="*" options="${airports}" value="${param.airportD}" firstEntry="-" /> TO
  <el:combo name="airportA" size="1" idx="*" options="${airports}" value="${param.airportA}" firstEntry="-" /> SORT BY
  <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${viewContext.sortType}" />
  <el:button type="submit" label="FILTER" /></td>
@@ -60,7 +60,8 @@
  <td class="nophone" style="width:10%">INFO</td>
  <td style="width:15%">FLIGHT NUMBER</td>
  <td class="nophone" style="width:40%">AIRPORT NAMES</td>
- <td style="width:10%">EQUIPMENT</td>
+ <td>EQUIPMENT</td>
+ <td class="nophone">SIMULATOR</td>
  <td class="nophone">DURATION</td>
 </tr>
 
@@ -78,16 +79,17 @@
  <td class="small nophone">${pirep.airportD.name} (<el:cmd url="airportinfo" linkID="${pirep.airportD.IATA}" className="plain" authOnly="true"><fmt:airport airport="${pirep.airportD}" /></el:cmd>) - 
  ${pirep.airportA.name} (<el:cmd url="airportinfo" linkID="${pirep.airportA.IATA}" className="plain" authOnly="true"><fmt:airport airport="${pirep.airportA}" /></el:cmd>)</td>
  <td class="sec">${pirep.equipmentType}</td>
+ <td class="nophone ter small">${pirep.simulator}</td>
  <td class="nophone"><fmt:duration duration="${(pirep.length > 0) ? pirep.duration : null}" t="HH:mm"  default="-" /></td>
 </view:row>
 <c:if test="${comments && (!empty pirep.remarks)}">
 <view:row entry="${pirep}">
- <td colspan="6" class="left">${pirep.remarks}</td>
+ <td colspan="7" class="left">${pirep.remarks}</td>
 </view:row>
 </c:if>
 </c:forEach>
 <tr class="title">
- <td colspan="6"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br /></view:scrollbar>
+ <td colspan="7"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br /></view:scrollbar>
 <view:legend width="120" labels="Draft,Submitted,Held,Approved,Rejected,Check Ride,Flight Academy" classes="opt2,opt1,warn, ,err,opt3,opt4" /></td>
 </tr>
 </view:table>
