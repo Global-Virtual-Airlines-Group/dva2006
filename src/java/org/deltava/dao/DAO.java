@@ -12,7 +12,7 @@ import org.deltava.beans.GeoLocation;
 /**
  * A JDBC Data Access Object. DAOs are used to read and write persistent data to JDBC data sources.
  * @author Luke
- * @version 8.0
+ * @version 8.1
  * @since 1.0
  */
 
@@ -84,7 +84,7 @@ public abstract class DAO {
 	 * @return the WKT point
 	 */
 	protected static String formatLocation(GeoLocation loc) {
-		return String.format("POINT(%1$,.4f %2$,.4f)", new Double(loc.getLatitude()), new Double(loc.getLongitude()));
+		return String.format("POINT(%1$,.4f %2$,.4f)", Double.valueOf(loc.getLatitude()), Double.valueOf(loc.getLongitude()));
 	}
 
 	/**
