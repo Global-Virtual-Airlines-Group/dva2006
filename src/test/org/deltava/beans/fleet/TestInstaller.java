@@ -57,7 +57,7 @@ public class TestInstaller extends AbstractBeanTestCase {
     }
     
     public void testValidation() {
-       validateInput("size", new Long(120400), IllegalStateException.class);
+       validateInput("size", Long.valueOf(120400), IllegalStateException.class);
         validateInput("description", null, NullPointerException.class);
         validateInput("security", Integer.valueOf(-1), IllegalArgumentException.class);
         validateInput("security", Integer.valueOf(31), IllegalArgumentException.class);
@@ -109,7 +109,7 @@ public class TestInstaller extends AbstractBeanTestCase {
         assertEquals("warn", i2.getRowClassName());
         
         setBean(i2);
-        validateInput("size", new Long(-1), IllegalArgumentException.class);
-        checkProperty("size", new Long(102400));
+        validateInput("size", Long.valueOf(-1), IllegalArgumentException.class);
+        checkProperty("size", Long.valueOf(102400));
     }
 }

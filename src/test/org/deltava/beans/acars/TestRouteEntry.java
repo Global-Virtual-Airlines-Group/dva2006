@@ -42,8 +42,8 @@ protected void tearDown() throws Exception {
       checkProperty("airSpeed", Integer.valueOf(251));
       checkProperty("groundSpeed", Integer.valueOf(275));
       checkProperty("verticalSpeed", Integer.valueOf(-175));
-      checkProperty("n1", new Double(75.1));
-      checkProperty("n2", new Double(85.1));
+      checkProperty("n1", Double.valueOf(75.1));
+      checkProperty("n2", Double.valueOf(85.1));
    }
    
    public void testValidation() {
@@ -57,10 +57,10 @@ protected void tearDown() throws Exception {
       validateInput("groundSpeed", Integer.valueOf(1501), IllegalArgumentException.class);
       validateInput("verticalSpeed", Integer.valueOf(-7001), IllegalArgumentException.class);
       validateInput("verticalSpeed", Integer.valueOf(7001), IllegalArgumentException.class);
-      validateInput("n1", new Double(-0.1), IllegalArgumentException.class);
-      validateInput("n1", new Double(115.1), IllegalArgumentException.class);
-      validateInput("n2", new Double(-0.1), IllegalArgumentException.class);
-      validateInput("n2", new Double(115.1), IllegalArgumentException.class);
+      validateInput("n1", Double.valueOf(-0.1), IllegalArgumentException.class);
+      validateInput("n1", Double.valueOf(115.1), IllegalArgumentException.class);
+      validateInput("n2", Double.valueOf(-0.1), IllegalArgumentException.class);
+      validateInput("n2", Double.valueOf(115.1), IllegalArgumentException.class);
    }
    
    public void testComparator() {

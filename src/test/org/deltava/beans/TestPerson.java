@@ -84,7 +84,7 @@ public class TestPerson extends AbstractBeanTestCase {
         _p.setAirportCodeType(Airport.Code.IATA);
         assertEquals(0, _p.getAirportCodeType().ordinal());
         checkProperty("emailAccess", Integer.valueOf(1));
-        checkProperty("legacyHours", new Double(238.1));
+        checkProperty("legacyHours", Double.valueOf(238.1));
         checkProperty("createdOn", Instant.now());
         checkProperty("lastLogin", Instant.now());
         checkProperty("lastLogoff", Instant.now());
@@ -158,6 +158,6 @@ public class TestPerson extends AbstractBeanTestCase {
         validateInput("emailAccess", Integer.valueOf(-1), IllegalArgumentException.class);
         validateInput("emailAccess", Integer.valueOf(11), IllegalArgumentException.class);
         validateInput("status", Integer.valueOf(-1), IllegalArgumentException.class);
-        validateInput("legacyHours", new Double(-1), IllegalArgumentException.class);
+        validateInput("legacyHours", Double.valueOf(-1), IllegalArgumentException.class);
     }
 }
