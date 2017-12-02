@@ -42,7 +42,7 @@ public class TestQuantityFormatTag extends AbstractTagTestCase {
     public void testTagProperties() throws Exception {
         _tag.setPageContext(_ctx);
         _tag.setFmt("#00.0");
-        _tag.setValue(new Long(2));
+        _tag.setValue(Long.valueOf(2));
         _tag.setSingle("bauble");
         assertSkipBody(_tag.doStartTag());
         assertEvalPage(_tag.doEndTag());
@@ -52,7 +52,7 @@ public class TestQuantityFormatTag extends AbstractTagTestCase {
     public void testPlural() throws Exception {
         _tag.setPageContext(_ctx);
         _tag.setFmt("#0");
-        _tag.setValue(new Long(2));
+        _tag.setValue(Long.valueOf(2));
         _tag.setSingle("bauble");
         _tag.setPlural("baublez");
         assertSkipBody(_tag.doStartTag());
@@ -63,7 +63,7 @@ public class TestQuantityFormatTag extends AbstractTagTestCase {
     public void testZero() throws Exception {
         _tag.setPageContext(_ctx);
         _tag.setFmt("#0");
-        _tag.setValue(new Long(0));
+        _tag.setValue(Long.valueOf(0));
         _tag.setSingle("bauble");
         _tag.setPlural("baublez");
         _tag.setZero("baubles");

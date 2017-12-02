@@ -40,10 +40,10 @@ public class TestPilot extends AbstractBeanTestCase {
         
         checkProperty("ID", Integer.valueOf(123));
         checkProperty("legs", Integer.valueOf(100));
-        checkProperty("hours", new Double(323.3));
-        checkProperty("miles", new Long(12345));
+        checkProperty("hours", Double.valueOf(323.3));
+        checkProperty("miles", Long.valueOf(12345));
         checkProperty("onlineLegs", Integer.valueOf(101));
-        checkProperty("onlineHours", new Double(323.4));
+        checkProperty("onlineHours", Double.valueOf(323.4));
         checkProperty("lastFlight", Instant.now());
         checkProperty("hasSignature", Boolean.valueOf(true));
         checkProperty("showSignatures", Boolean.valueOf(true));
@@ -162,10 +162,10 @@ public class TestPilot extends AbstractBeanTestCase {
     	validateInput("status", Integer.valueOf(81), IllegalArgumentException.class);
     	validateInput("status", "XXX", IllegalArgumentException.class);
     	validateInput("legs", Integer.valueOf(-1), IllegalArgumentException.class);
-    	validateInput("hours", new Double(-1.1), IllegalArgumentException.class);
+    	validateInput("hours", Double.valueOf(-1.1), IllegalArgumentException.class);
     	validateInput("onlineLegs", Integer.valueOf(-1), IllegalArgumentException.class);
-    	validateInput("onlineHours", new Double(-1.1), IllegalArgumentException.class);
-    	validateInput("miles", new Long(-1), IllegalArgumentException.class);
+    	validateInput("onlineHours", Double.valueOf(-1.1), IllegalArgumentException.class);
+    	validateInput("miles", Long.valueOf(-1), IllegalArgumentException.class);
     	
     	try {
     		_p.setPilotCode("DVAXXX");

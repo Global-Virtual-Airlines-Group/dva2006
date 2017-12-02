@@ -40,7 +40,7 @@ public class TestIntegerFormatTag extends AbstractTagTestCase {
     public void testTagProperties() throws Exception {
         _tag.setPageContext(_ctx);
         _tag.setFmt("#00.0");
-        _tag.setValue(new Long(2));
+        _tag.setValue(Long.valueOf(2));
         assertEvalPage(_tag.doEndTag());
         assertEquals("02", _jspOut.toString());
     }

@@ -57,7 +57,7 @@ protected void tearDown() throws Exception {
    }
    
    public void testValidation() {
-      validateInput("connectionID", new Long(-1), IllegalArgumentException.class);
+      validateInput("connectionID", Long.valueOf(-1), IllegalArgumentException.class);
       validateInput("pilotID", Integer.valueOf(-1), IllegalArgumentException.class);
       validateInput("FSVersion", Integer.valueOf(-1), IllegalArgumentException.class);
       validateInput("FSVersion", Integer.valueOf(2010), IllegalArgumentException.class);

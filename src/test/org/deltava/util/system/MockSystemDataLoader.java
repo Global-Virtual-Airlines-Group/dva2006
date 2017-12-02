@@ -13,8 +13,8 @@ public class MockSystemDataLoader implements SystemDataLoader {
         results.put("stringVar", "STRING");
         results.put("boolVar", Boolean.valueOf(true));
         results.put("intVar", Integer.valueOf(43));
-        results.put("longVar", new Long(23));
-        results.put("doubleVar", new Double(3.1415926));
+        results.put("longVar", Long.valueOf(23));
+        results.put("doubleVar", Double.valueOf(3.1415926));
         results.put("airline.code", "DVA");
         return results;
     }

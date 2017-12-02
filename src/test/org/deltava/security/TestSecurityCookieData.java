@@ -30,8 +30,8 @@ public class TestSecurityCookieData extends AbstractBeanTestCase {
     public void testProperties() throws InterruptedException {
         assertEquals("cn=Luke,ou=dva,o=sce", _cData.getUserID());
         assertFalse(_cData.isExpired());
-        checkProperty("expiryDate", new Long(System.currentTimeMillis()));
-        checkProperty("loginDate", new Long(System.currentTimeMillis()));
+        checkProperty("expiryDate", Long.valueOf(System.currentTimeMillis()));
+        checkProperty("loginDate", Long.valueOf(System.currentTimeMillis()));
         checkProperty("remoteAddr", "127.0.0.1");
         Thread.sleep(100);
         assertTrue(_cData.isExpired());

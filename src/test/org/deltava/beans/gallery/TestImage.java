@@ -44,7 +44,7 @@ public class TestImage extends AbstractBeanTestCase {
         checkProperty("authorID", Integer.valueOf(117));
         checkProperty("createdOn", Instant.now());
         checkProperty("fleet", Boolean.valueOf(true));
-        checkProperty("score", new Double(3.1));
+        checkProperty("score", Double.valueOf(3.1));
         checkProperty("voteCount", Integer.valueOf(16));
         assertFalse(_img.hasLiked(null));
     }
@@ -63,8 +63,8 @@ public class TestImage extends AbstractBeanTestCase {
         validateInput("type", Integer.valueOf(-1), IllegalArgumentException.class);
         validateInput("type", Integer.valueOf(21), IllegalArgumentException.class);
         validateInput("voteCount", Integer.valueOf(-1), IllegalArgumentException.class);
-        validateInput("score", new Double(-1), IllegalArgumentException.class);
-        validateInput("score", new Double(10.1), IllegalArgumentException.class);
+        validateInput("score", Double.valueOf(-1), IllegalArgumentException.class);
+        validateInput("score", Double.valueOf(10.1), IllegalArgumentException.class);
 
         // Set properties for state checking
         _img.setSize(10235);
@@ -83,7 +83,7 @@ public class TestImage extends AbstractBeanTestCase {
         _img.addLike(1);
         _img.addLike(2);
         validateInput("voteCount", Integer.valueOf(123), IllegalStateException.class);
-        validateInput("score", new Double(1.2), IllegalStateException.class);
+        validateInput("score", Double.valueOf(1.2), IllegalStateException.class);
     }
 
     public void testGIF() throws IOException {
