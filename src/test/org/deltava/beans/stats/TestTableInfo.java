@@ -28,19 +28,19 @@ public class TestTableInfo extends AbstractBeanTestCase {
 
     public void testProperties() {
         assertEquals("TABLE", _info.getName());
-        checkProperty("size", new Long(123400));
+        checkProperty("size", Long.valueOf(123400));
         assertEquals(0, _info.getRows());
         assertEquals(0, _info.getAverageRowLength());
         checkProperty("rows", Integer.valueOf(1234));
-        checkProperty("indexSize", new Long(125632));
+        checkProperty("indexSize", Long.valueOf(125632));
         assertEquals(100, _info.getAverageRowLength());
         assertEquals(_info.getName().hashCode(), _info.hashCode());
     }
     
     public void testValidation() {
         validateInput("rows", Integer.valueOf(-1), IllegalArgumentException.class);
-        validateInput("size", new Long(-1), IllegalArgumentException.class);
-        validateInput("indexSize", new Long(-1), IllegalArgumentException.class);
+        validateInput("size", Long.valueOf(-1), IllegalArgumentException.class);
+        validateInput("indexSize", Long.valueOf(-1), IllegalArgumentException.class);
     }
     
     public void testComparator() {

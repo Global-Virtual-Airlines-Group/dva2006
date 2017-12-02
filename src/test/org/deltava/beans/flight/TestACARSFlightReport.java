@@ -59,8 +59,8 @@ public class TestACARSFlightReport extends AbstractBeanTestCase {
         checkProperty("takeoffSpeed", Integer.valueOf(123));
         checkProperty("landingSpeed", Integer.valueOf(113));
         checkProperty("landingVSpeed", Integer.valueOf(-123));
-        checkProperty("landingN1", new Double(23.2));
-        checkProperty("takeoffN1", new Double(93.1));
+        checkProperty("landingN1", Double.valueOf(23.2));
+        checkProperty("takeoffN1", Double.valueOf(93.1));
         checkProperty("time1X", Integer.valueOf(421));
         checkProperty("time2X", Integer.valueOf(422));
         checkProperty("time4X", Integer.valueOf(424));
@@ -88,10 +88,10 @@ public class TestACARSFlightReport extends AbstractBeanTestCase {
         validateInput("takeoffFuel", Integer.valueOf(-1), IllegalArgumentException.class);
         validateInput("taxiWeight", Integer.valueOf(0), IllegalArgumentException.class);
         validateInput("taxiFuel", Integer.valueOf(-1), IllegalArgumentException.class);
-        validateInput("landingN1", new Double(-1), IllegalArgumentException.class);
-        validateInput("landingN1", new Double(141), IllegalArgumentException.class);
-        validateInput("takeoffN1", new Double(-1), IllegalArgumentException.class);
-        validateInput("takeoffN1", new Double(141), IllegalArgumentException.class);
+        validateInput("landingN1", Double.valueOf(-1), IllegalArgumentException.class);
+        validateInput("landingN1", Double.valueOf(141), IllegalArgumentException.class);
+        validateInput("takeoffN1", Double.valueOf(-1), IllegalArgumentException.class);
+        validateInput("takeoffN1", Double.valueOf(141), IllegalArgumentException.class);
         validateInput("takeoffDistance", Integer.valueOf(-1), IllegalArgumentException.class);
         validateInput("landingDistance", Integer.valueOf(-1), IllegalArgumentException.class);
         validateInput("time1X", Integer.valueOf(-1), IllegalArgumentException.class);
