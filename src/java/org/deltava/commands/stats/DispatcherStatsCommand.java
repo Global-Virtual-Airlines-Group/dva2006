@@ -1,4 +1,4 @@
-// Copyright 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to display ACARS Dispatcher statistics.
  * @author Luke
- * @version 7.1
+ * @version 8.1
  * @since 3.6
  */
 
@@ -65,7 +65,7 @@ public class DispatcherStatsCommand extends AbstractCommand {
 		
 		// Display dates
 		ctx.setAttribute("range", dr, REQUEST);
-		ctx.setAttribute("totalHours", new Double(dr.getLength() / 3600000.0), REQUEST);
+		ctx.setAttribute("totalHours", Double.valueOf(dr.getLength() / 3600000.0), REQUEST);
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
