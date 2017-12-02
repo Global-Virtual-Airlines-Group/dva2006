@@ -30,7 +30,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to display diagnostic infomration.
  * @author Luke
- * @version 7.4
+ * @version 8.1
  * @since 1.0
  */
 
@@ -113,7 +113,7 @@ public class DiagnosticCommand extends AbstractCommand {
 		ctx.setAttribute("totalMemory", Long.valueOf(rt.totalMemory()), REQUEST);
 		ctx.setAttribute("maxMemory", Long.valueOf(rt.maxMemory()), REQUEST);
 		ctx.setAttribute("freeMemory", Long.valueOf(rt.freeMemory()), REQUEST);
-		ctx.setAttribute("pctMemory", new Double(100 - (Math.round(rt.freeMemory() * 100.0 / rt.totalMemory()))), REQUEST);
+		ctx.setAttribute("pctMemory", Double.valueOf(100 - (Math.round(rt.freeMemory() * 100.0 / rt.totalMemory()))), REQUEST);
 
 		// Get time zone info
 		ZoneId tz = ZoneId.systemDefault();

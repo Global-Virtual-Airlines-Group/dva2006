@@ -1,4 +1,4 @@
-// Copyright 2007, 2009, 2010, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009, 2010, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.Collection;
@@ -22,7 +22,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to approve Flight Reports and Check Rides across Airlines.
  * @author Luke
- * @version 7.0
+ * @version 8.1
  * @since 2.0
  */
 
@@ -85,7 +85,7 @@ public class ExternalPIREPApprovalCommand extends AbstractCommand {
 			
 			// Set message context objects
 			ctx.setAttribute("pilot", p, REQUEST);
-			mctx.addData("flightLength", new Double(fr.getLength() / 10.0));
+			mctx.addData("flightLength", Double.valueOf(fr.getLength() / 10.0));
 			mctx.addData("flightDate", StringUtils.format(fr.getDate(), "MM/dd/yyyy"));
 			mctx.addData("pilot", p);
 			

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to retrieve Airline statistics.
  * @author Luke
- * @version 7.0
+ * @version 8.1
  * @since 1.0
  */
 
@@ -176,7 +176,7 @@ public class GetStatistics extends DAO  {
 		Collection<Float> keys = new ArrayList<Float>();
 		float portion = (100.0f / splitInto);
 		for (int x = 1; x <= splitInto; x++)
-			keys.add(new Float(x * portion));
+			keys.add(Float.valueOf(x * portion));
 
 		try {
 			// Get total Active Pilots
@@ -228,9 +228,8 @@ public class GetStatistics extends DAO  {
 	 */
 	public Collection<MembershipTotals> getJoinStats() throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT ROUND(DATEDIFF(CURDATE(), CREATED) / 30 + 1) * 30 AS MEMAGE, "
-					+ "DATE_SUB(CURDATE(), INTERVAL ROUND(DATEDIFF(CURDATE(), CREATED) / 30 + 1) * 30 DAY) AS MEMDT, "
-					+ "COUNT(ID) FROM PILOTS WHERE ((STATUS=?) OR (STATUS=?)) GROUP BY MEMAGE ORDER BY MEMAGE DESC");
+			prepareStatementWithoutLimits("SELECT ROUND(DATEDIFF(CURDATE(), CREATED) / 30 + 1) * 30 AS MEMAGE, DATE_SUB(CURDATE(), INTERVAL ROUND(DATEDIFF(CURDATE(), CREATED) / 30 + 1) * 30 DAY) AS MEMDT, "
+				+ "COUNT(ID) FROM PILOTS WHERE ((STATUS=?) OR (STATUS=?)) GROUP BY MEMAGE ORDER BY MEMAGE DESC");
 			_ps.setInt(1, Pilot.ACTIVE);
 			_ps.setInt(2, Pilot.ON_LEAVE);
 
@@ -245,7 +244,6 @@ public class GetStatistics extends DAO  {
 				}
 			}
 
-			// Clean up and return
 			_ps.close();
 			return results;
 		} catch (SQLException se) {

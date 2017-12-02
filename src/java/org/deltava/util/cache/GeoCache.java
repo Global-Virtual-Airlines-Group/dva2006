@@ -1,14 +1,14 @@
 // Copyright 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
-import java.math.BigDecimal;
+import java.math.*;
 
 import org.deltava.beans.GeoLocation;
 
 /**
  * An interface for caches that cache data based on geographic locations.
  * @author Luke
- * @version 7.4
+ * @version 8.1
  * @since 7.3
  * @param <T> the Cacheable object type 
  */
@@ -61,11 +61,10 @@ public interface GeoCache<T extends Cacheable> {
 	 */
 	default String createGeoKey(GeoLocation loc) {
 		BigDecimal inc = new BigDecimal(Double.toString(getRoundingAmount()));
-		BigDecimal lat = new BigDecimal(Double.toString(loc.getLatitude())).divide(inc, 0, BigDecimal.ROUND_HALF_DOWN).multiply(inc);
-		BigDecimal lng = new BigDecimal(Double.toString(loc.getLongitude())).divide(inc, 0, BigDecimal.ROUND_HALF_DOWN).multiply(inc);
+		BigDecimal lat = new BigDecimal(Double.toString(loc.getLatitude())).divide(inc, 0, RoundingMode.HALF_DOWN).multiply(inc);
+		BigDecimal lng = new BigDecimal(Double.toString(loc.getLongitude())).divide(inc, 0, RoundingMode.HALF_DOWN).multiply(inc);
 		StringBuilder buf = new StringBuilder(lat.toString());
-		buf.append('@');
-		buf.append(lng.toString());
+		buf.append('@').append(lng.toString());
 		return buf.toString();
 	}
 }

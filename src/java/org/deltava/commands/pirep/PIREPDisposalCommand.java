@@ -33,7 +33,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Flight Report status changes.
  * @author Luke
- * @version 8.0
+ * @version 8.1
  * @since 1.0
  */
 
@@ -144,7 +144,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			// Set message context objects
 			Collection<StatusUpdate> upds = new ArrayList<StatusUpdate>();
 			ctx.setAttribute("pilot", p, REQUEST);
-			mctx.addData("flightLength", new Double(fr.getLength() / 10.0));
+			mctx.addData("flightLength", Double.valueOf(fr.getLength() / 10.0));
 			mctx.addData("flightDate", StringUtils.format(fr.getDate(), p.getDateFormat()));
 			mctx.addData("pilot", p);
 			fr.setStatus(opCode);
@@ -161,8 +161,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 
 				// Load accomplishments - only save the ones we don't meet yet
 				GetAccomplishment accdao = new GetAccomplishment(con);
-				Collection<Accomplishment> accs = accdao.getAll().stream()
-						.filter(a -> (acchelper.has(a) == AccomplishmentHistoryHelper.Result.NOTYET)).collect(Collectors.toList());
+				Collection<Accomplishment> accs = accdao.getAll().stream().filter(a -> (acchelper.has(a) == AccomplishmentHistoryHelper.Result.NOTYET)).collect(Collectors.toList());
 
 				// Add the approved PIREP
 				acchelper.add(fr);

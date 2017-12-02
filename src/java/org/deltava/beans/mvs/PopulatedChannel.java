@@ -1,4 +1,4 @@
-// Copyright 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.mvs;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.Pilot;
  * A bean to store user/warning/channel mappings. This class is unsynchronized and callers
  * should perform their own synchronization to ensure thread safety.
  * @author Luke
- * @version 7.0
+ * @version 8.1
  * @since 4.0
  */
 
@@ -57,8 +57,7 @@ public class PopulatedChannel implements java.io.Serializable {
 	 * @param usr the Pilot to add
 	 */
 	public void add(long conID, Pilot usr) {
-		Long key = new Long(conID);
-		_users.put(key, usr);
+		_users.put(Long.valueOf(conID), usr);
 	}
 	
 	/**
@@ -67,7 +66,7 @@ public class PopulatedChannel implements java.io.Serializable {
 	 * @return TRUE if the connection is in the channel, otherwise FALSE
 	 */
 	public boolean contains(long conID) {
-		return _users.containsKey(new Long(conID));
+		return _users.containsKey(Long.valueOf(conID));
 	}
 	
 	/**
@@ -85,7 +84,7 @@ public class PopulatedChannel implements java.io.Serializable {
 	 * @return TRUE if the user was removed, otherwise FALSE
 	 */
 	public boolean remove(long conID) {
-		return (_users.remove(new Long(conID)) != null);
+		return (_users.remove(Long.valueOf(conID)) != null);
 	}
 	
 	/**

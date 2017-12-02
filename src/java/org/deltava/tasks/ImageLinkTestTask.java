@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to validate the integrity of Water Cooler Image URLs.
  * @author Luke
- * @version 7.4
+ * @version 8.1
  * @since 1.0
  */
 
@@ -170,10 +170,10 @@ public class ImageLinkTestTask extends Task {
 				if (updTimes.containsKey(id)) {
 					long time = updTimes.get(id).longValue();
 					time = Math.max(System.currentTimeMillis(), time + 1000);
-					updTimes.put(id, new Long(time));
+					updTimes.put(id, Long.valueOf(time));
 					upd.setDate(Instant.ofEpochMilli(time));
 				} else {
-					updTimes.put(id, new Long(System.currentTimeMillis()));
+					updTimes.put(id, Long.valueOf(System.currentTimeMillis()));
 					upd.setDate(Instant.now());
 				}
 				
@@ -182,7 +182,6 @@ public class ImageLinkTestTask extends Task {
 				wdao.disable(img.getThreadID(), img.getID());
 			}
 			
-			// Commit
 			ctx.commitTX();
 		} catch (DAOException de) {
 			ctx.rollbackTX();
