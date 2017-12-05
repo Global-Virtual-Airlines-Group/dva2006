@@ -193,7 +193,7 @@
  <td class="data" colspan="${cspan}"><fmt:weight value="${pirep.totalFuel}" longUnits="true" /></td>
 </tr>
 </c:if>
-<c:if test="${(pirep.paxWeight > 0) || (pirep.cargoWeight > 0)}">
+<c:if test="${!isXACARS && ((pirep.paxWeight > 0) || (pirep.cargoWeight > 0))}">
 <tr>
  <td class="label">Payload Weight</td>
  <td class="data" colspan="${cspan}"><c:if test="${pirep.paxWeight > 0}"><fmt:weight value="${pirep.paxWeight}" /> passengers, </c:if><fmt:weight value="${pirep.cargoWeight}" /> baggage/cargo</td>
