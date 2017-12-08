@@ -1,18 +1,19 @@
-// Copyright 2004, 2005, 2006, 2007, 2010, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007, 2010, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
+import java.io.*;
 import java.util.*;
-import java.io.IOException;
 import java.sql.Connection;
 
 import org.apache.log4j.Logger;
+
 import org.deltava.beans.Person;
 import org.deltava.util.*;
 
 /**
  * An abstract Authenticator that supports multiple authenticators.
  * @author Luke
- * @version 7.2
+ * @version 8.1
  * @since 1.0
  */
 
@@ -51,8 +52,8 @@ public abstract class MultiAuthenticator extends SQLAuthenticator {
 	protected void init(String propsFile, String authPrefix) throws SecurityException {
 
 		Properties props = new Properties();
-		try {
-			props.load(ConfigLoader.getStream(propsFile));
+		try (InputStream in = ConfigLoader.getStream(propsFile)) {
+			props.load(in);
 		} catch (IOException ie) {
 			throw new SecurityException(ie.getMessage());
 		}
@@ -60,7 +61,7 @@ public abstract class MultiAuthenticator extends SQLAuthenticator {
 		// Initialize the source authenticator
 		try {
 			Class<?> sc = Class.forName(props.getProperty(authPrefix + ".src"));
-			_src = (Authenticator) sc.newInstance();
+			_src = (Authenticator) sc.getDeclaredConstructor().newInstance();
 			_src.init(props.getProperty(authPrefix + ".src.properties"));
 		} catch (Exception e) {
 			throw new SecurityException("Error loading Source - " + e.getMessage(), e);
@@ -71,7 +72,7 @@ public abstract class MultiAuthenticator extends SQLAuthenticator {
 		for (String cName : classes) {
 			try {
 				Class<?> dc = Class.forName(cName);
-				Authenticator auth = (Authenticator) dc.newInstance();
+				Authenticator auth = (Authenticator) dc.getDeclaredConstructor().newInstance();
 				auth.init(props.getProperty(authPrefix + ".dst.properties"));
 				_dst.add(auth);
 			} catch (Exception e) {
@@ -184,8 +185,7 @@ public abstract class MultiAuthenticator extends SQLAuthenticator {
 	}
 
 	/**
-	 * Returns whether this Authenticator will accept a new User. This defaults to TRUE, although subclasses may override
-	 * this default.
+	 * Returns whether this Authenticator will accept a new User. This defaults to TRUE, although subclasses may override this default.
 	 * @return TRUE always
 	 */
 	@Override
