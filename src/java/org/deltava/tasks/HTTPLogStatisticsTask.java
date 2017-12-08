@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.io.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to aggregate HTTP log statistics.
  * @author Luke
- * @version 7.0
+ * @version 8.1
  * @since 1.0
  */
 
@@ -59,7 +59,7 @@ public class HTTPLogStatisticsTask extends Task {
 	}
 
 	/**
-	 * Executes the Task. This will parse through HTTP server log entries and aggregate the statistics.
+	 * Executes the Task.
 	 */
 	@Override
 	protected void execute(TaskContext ctx) {
@@ -113,7 +113,6 @@ public class HTTPLogStatisticsTask extends Task {
 			}
 		}
 
-		// Log completion
 		log.info("Processing Complete");
 	}
 
@@ -123,7 +122,7 @@ public class HTTPLogStatisticsTask extends Task {
 	private LogParser initParser(String className) {
 		try {
 			Class<?> c = Class.forName(className);
-			return (LogParser) c.newInstance();
+			return (LogParser) c.getDeclaredConstructor().newInstance();
 		} catch (Exception e) {
 			log.error("Cannot load " + className + " - " + e.getClass().getName(), e);
 		}

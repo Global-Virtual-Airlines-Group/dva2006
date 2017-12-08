@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.system;
 
 import java.io.*;
@@ -15,7 +15,7 @@ import org.deltava.util.StringUtils;
  * A singleton object containing all of the configuration data for the application. This object is internally synchronized
  * to allow thread-safe read and write access to the configuration data.
  * @author Luke
- * @version 4.2
+ * @version 8.1
  * @since 1.0
  */
 
@@ -49,9 +49,8 @@ public final class SystemData implements Serializable {
 		SystemDataLoader loader = null;
 		try {
 			Class<?> ldClass = Class.forName(loaderClassName);
-			loader = (SystemDataLoader) ldClass.newInstance();
-			if (log.isDebugEnabled())
-				log.debug("Instantiated " + loaderClassName);
+			loader = (SystemDataLoader) ldClass.getDeclaredConstructor().newInstance();
+			log.debug("Instantiated " + loaderClassName);
 		} catch (Exception e) {
 			loader = new XMLSystemDataLoader();
 			log.info("Using default loader class " + loader.getClass().getSimpleName());
