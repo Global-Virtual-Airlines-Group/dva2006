@@ -26,7 +26,7 @@ import com.newrelic.api.agent.NewRelic;
 /**
  * The main command controller. This is the application's brain stem.
  * @author Luke
- * @version 7.2
+ * @version 8.1
  * @since 1.0
  */
 
@@ -301,6 +301,7 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 			else
 				usrName = req.getUserPrincipal().getName();
 
+			log.log(logLevel, "Error on " + req.getRequestURI());
 			log.log(logLevel, usrName + " executing " + cmd.getName() + " - " + e.getMessage(), logStackDump ? e : null);
 
 			// Redirect to the error page
