@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2012, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taskman;
 
 import java.io.*;
@@ -14,7 +14,7 @@ import org.deltava.util.ConfigLoader;
 /**
  * A utility class to load Scheduled Tasks from an XML configuration file.
  * @author Luke
- * @version 4.2
+ * @version 8.1
  * @since 1.0
  */
 
@@ -57,33 +57,26 @@ public class TaskFactory {
 
       // Parse through the tasks
       Collection<Task> results = new HashSet<Task>();
-      for (Iterator<Element> i = root.getChildren("task").iterator(); i.hasNext(); ) {
-         Element e = i.next();
+      for (Element e : root.getChildren("task")) {
          String id = e.getAttributeValue("id");
          String className = e.getChildTextTrim("class");
          
          // Instantiate the task and set the interval
          try {
             Class<?> c = Class.forName(className);
-            Task t = (Task) c.newInstance();
+            Task t = (Task) c.getDeclaredConstructor().newInstance();
             t.setID(id);
             t.setEnabled(Boolean.valueOf(e.getAttributeValue("enabled")).booleanValue());
-            if (log.isDebugEnabled())
-            	log.debug(id + " enabled = " + t.getEnabled());
+           	log.debug(id + " enabled = " + t.getEnabled());
             
             // Load the time
             Element te = e.getChild("time");
-            if (te != null) {
-            	for (Iterator<Element> ti = te.getChildren().iterator(); ti.hasNext(); ) {
-            		Element tte = ti.next();
-            		t.setRunTimes(tte.getName(), tte.getTextNormalize());
-            	}
-            } else { 
+            if (te == null) {
             	log.warn("No time specified for " + c.getName());
             	t.setEnabled(false);
-            }
-            
-            // Add to results
+            } else
+            	te.getChildren().forEach(tte -> t.setRunTimes(tte.getName(), tte.getTextNormalize()));
+
             results.add(t);
         } catch (ClassNotFoundException cnfe) {
             log.error("Cannot find class " + className);

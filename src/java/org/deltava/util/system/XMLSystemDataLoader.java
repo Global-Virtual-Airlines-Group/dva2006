@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2007, 2009, 2010, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007, 2009, 2010, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.system;
 
 import org.jdom2.*;
@@ -15,7 +15,7 @@ import org.deltava.util.ConfigLoader;
 /**
  * A SystemData loader that parses an XML file.
  * @author Luke
- * @version 7.0
+ * @version 8.1
  * @since 1.0
  */
 
@@ -112,7 +112,7 @@ public class XMLSystemDataLoader implements SystemDataLoader {
         // If we're a sorted set, return a TreeSet instead of a HashSet
         Collection<Object> results = null;
         try {
-            results = (Collection<Object>) Class.forName(className).newInstance();
+            results = (Collection<Object>) Class.forName(className).getDeclaredConstructor().newInstance();
         } catch (Exception e) {
         	results = new ArrayList<Object>();
         }
@@ -134,11 +134,8 @@ public class XMLSystemDataLoader implements SystemDataLoader {
      * @see XMLSystemDataLoader#getElementWithType(Element)
      */
     protected static Map<String, Object> processMap(Element root) {
-        Map<String, Object> results = new HashMap<String, Object>();
-
-        // Iterate through the child elements
-        for (Iterator<Element> i = root.getChildren().iterator(); i.hasNext();) {
-            Element e = i.next();
+        Map<String, Object> results = new LinkedHashMap<String, Object>();
+        for (Element e: root.getChildren()) {
             Object value = getElementWithType(e);
             results.put(e.getName(), value);
         }
@@ -153,10 +150,7 @@ public class XMLSystemDataLoader implements SystemDataLoader {
      */
     protected void process(String rName, Element re) {
     	String rootName = (rName.length() > 0) ? rName + "." : rName;
-
-        // Iterate through this entry's children
-        for (Iterator<Element> i = re.getChildren().iterator(); i.hasNext();) {
-            Element e = i.next();
+        for (Element e : re.getChildren()) {
             String eType = e.getName();
 
             /* The rules for recursive processing are this; if the element is a list or map, then we process

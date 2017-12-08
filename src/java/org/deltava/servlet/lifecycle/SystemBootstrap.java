@@ -33,7 +33,7 @@ import org.gvagroup.jdbc.*;
 /**
  * The System bootstrap loader, that fires when the servlet container is started or stopped.
  * @author Luke
- * @version 7.3
+ * @version 8.1
  * @since 1.0
  */
 
@@ -102,8 +102,8 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 		String authClass = SystemData.get("security.auth");
 		try {
 			Class<?> c = Class.forName(authClass);
+			Authenticator auth = (Authenticator) c.getDeclaredConstructor().newInstance();
 			log.debug("Loaded class " + authClass);
-			Authenticator auth = (Authenticator) c.newInstance();
 
 			// Initialize and store in the servlet context
 			auth.init(Authenticator.DEFAULT_PROPS_FILE);

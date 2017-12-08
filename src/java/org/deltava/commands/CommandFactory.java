@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.io.*;
@@ -14,7 +14,7 @@ import org.deltava.util.*;
 /**
  * A factory class to initalize the web command map.
  * @author Luke
- * @version 7.2
+ * @version 8.1
  * @since 1.0
  */
 
@@ -30,10 +30,7 @@ public class CommandFactory {
 	 * Helper method to parse comma-delimited list of roles.
 	 */
 	private static Collection<String> getRoles(String roleNames) {
-		if (StringUtils.isEmpty(roleNames))
-			return Collections.singleton("*");
-
-		return new TreeSet<String>(StringUtils.split(roleNames, ","));
+		return StringUtils.isEmpty(roleNames) ? Collections.singleton("*") : new TreeSet<String>(StringUtils.split(roleNames, ","));
 	}
 
 	/**
@@ -67,8 +64,7 @@ public class CommandFactory {
 		// Parse through the commands
 		Map<String, Command> results = new LinkedHashMap<String, Command>();
 		List<Element> cmds = root.getChildren("command");
-		for (Iterator<Element> i = cmds.iterator(); i.hasNext();) {
-			Element e = i.next();
+		for (Element e : cmds) {
 			String cmdID = e.getAttributeValue("id").trim();
 			String cmdClassName = e.getChildTextTrim("class");
 
@@ -79,7 +75,7 @@ public class CommandFactory {
 				Command cmd = null;
 				try {
 					Class<?> c = Class.forName(cmdClassName);
-					cmd = (Command) c.newInstance();
+					cmd = (Command) c.getDeclaredConstructor().newInstance();
 					if (log.isDebugEnabled())
 						log.debug("Loaded command " + cmdID);
 
@@ -91,9 +87,7 @@ public class CommandFactory {
 					results.put(cmdID.toLowerCase(), cmd);
 					if (log.isDebugEnabled())
 						log.debug("Initialized command " + cmdID);
-				} catch (ClassNotFoundException cnfe) {
-					log.error("Cannot find class " + cmdClassName + " for " + cmdID);
-				} catch (NoClassDefFoundError ncde) {
+				} catch (ClassNotFoundException | NoClassDefFoundError cnfe) {
 					log.error("Cannot find class " + cmdClassName + " for " + cmdID);
 				} catch (Exception ex) {
 					log.error("Cannot start " + cmdID + " - " + ex.getClass().getName());
