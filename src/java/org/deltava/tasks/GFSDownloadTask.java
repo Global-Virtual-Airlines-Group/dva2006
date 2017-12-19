@@ -1,4 +1,4 @@
-// Copyright 2013, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2013, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.io.*;
@@ -18,8 +18,8 @@ import org.deltava.dao.redis.*;
 import org.deltava.taskman.*;
 
 import org.deltava.util.*;
+import org.deltava.util.ftp.*;
 import org.deltava.util.tile.*;
-import org.deltava.util.ftp.FTPConnection;
 import org.deltava.util.system.SystemData;
 
 import org.gvagroup.tile.*;
@@ -27,7 +27,7 @@ import org.gvagroup.tile.*;
 /**
  * A scheduled task to download GFS global forecast data.
  * @author Luke
- * @version 7.1
+ * @version 8.1
  * @since 5.2
  */
 
@@ -76,9 +76,9 @@ public class GFSDownloadTask extends Task {
 						if (wd.getJetStreamSpeed() < 25)
 							continue;
 						
-						int c = Math.min(255, wd.getJetStreamSpeed() + 48);
+						int c = Math.min(255, wd.getJetStreamSpeed() + 40);
 						if (wd.getJetStreamSpeed() > 60) {
-							int r = Math.min(255, c+30);
+							int r = Math.min(255, c+24);
 							int g = (wd.getJetStreamSpeed() > 120) ? Math.min(255, c+32): c;
 							Color rgb = new Color(r,g,c);
 							img.setRGB(x, y, rgb.getRGB());
@@ -110,9 +110,10 @@ public class GFSDownloadTask extends Task {
 	 */
 	@Override
 	protected void execute(TaskContext ctx) {
+		
+		File outF = new File(SystemData.get("weather.cache"), "gfs.grib"); Instant dt = null;
 		try {
-			File outF = new File(SystemData.get("weather.cache"), "gfs.grib");
-			String host = SystemData.get("weather.gfs.host"); Instant dt = null;
+			String host = SystemData.get("weather.gfs.host");
 			try (FTPConnection con = new FTPConnection(host)) {
 				con.connect("anonymous", SystemData.get("airline.mail.webmaster"));
 				log.info("Connected to " + host);
@@ -137,9 +138,13 @@ public class GFSDownloadTask extends Task {
 					}
 				}
 			}
+		} catch (FTPClientException | IOException e) {
+			log.error("Error processing GFS data - " + e.getMessage(), e);
+			return;
+		}
 			
-			// Save the winds
-			GetWAFSData dao = new GetWAFSData(outF.getAbsolutePath());
+		// Save the winds
+		try (GetWAFSData dao = new GetWAFSData(outF.getAbsolutePath())) {
 			try {
 				long startTime = System.currentTimeMillis();
 				SetWinds wwdao = new SetWinds();
