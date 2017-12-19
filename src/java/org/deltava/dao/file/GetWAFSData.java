@@ -1,4 +1,4 @@
-// Copyright 2013, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2013, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -16,11 +16,11 @@ import ucar.unidata.io.RandomAccessFile;
 /**
  * A Data Access Object to load WAFS GRIB2 winds aloft data. 
  * @author Luke
- * @version 7.0
+ * @version 8.1
  * @since 5.2
  */
 
-public class GetWAFSData extends DAO {
+public class GetWAFSData extends DAO implements Closeable {
 	
 	// GRIB layer offets - temp, U, V
 	// LOW(875, 4000), MIDLOW(625, 12000), MID(475, 20000), LOJET(325, 28000), JET(275, 32000), HIGH(225, 38000);
@@ -131,12 +131,12 @@ public class GetWAFSData extends DAO {
 				}
 			}
 			
-			_raf.close();
-			_raf = null;
 			gr.addAll(Arrays.asList(results));
 			return gr;
 		} catch (IOException ie) {
 			throw new DAOException(ie);
+		} finally {
+			close();
 		}
 	}
 	
@@ -144,14 +144,14 @@ public class GetWAFSData extends DAO {
 	 * Finalizer to clean up the file handle.
 	 */
 	@Override
-	protected void finalize() {
+	public void close() {
 		try {
-			if (_raf != null) {
+			if (_raf != null)
 				_raf.close();
-				_raf = null;
-			}
 		} catch (Exception e) {
 			// empty
+		} finally {
+			_raf = null;
 		}
 	}
 }
