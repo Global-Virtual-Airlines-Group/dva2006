@@ -236,7 +236,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			AssignmentInfo assign = (fr.getDatabaseID(DatabaseID.ASSIGN) == 0) ? null : fadao.get(fr.getDatabaseID(DatabaseID.ASSIGN));
 			if (assign != null) {
 				List<FlightReport> flights = rdao.getByAssignment(assign.getID(), SystemData.get("airline.db"));
-				flights.forEach(fl -> assign.addFlight(fl));
+				flights.forEach(assign::addFlight);
 			}
 
 			// Diversion handling
@@ -255,6 +255,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 				dfr.setAirportA(fInfo.getAirportA());
 				dfr.setRank(p.getRank());
 				dfr.setAuthorID(fr.getAuthorID());
+				dfr.setDate(Instant.now());
 				dfr.setEquipmentType(fr.getEquipmentType());
 				dfr.setAttribute(FlightReport.ATTR_HISTORIC, fr.hasAttribute(FlightReport.ATTR_HISTORIC));
 				dfr.setAttribute(FlightReport.ATTR_DIVERT, true);
