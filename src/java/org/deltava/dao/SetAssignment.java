@@ -10,7 +10,7 @@ import org.deltava.beans.flight.*;
 /**
  * A Data Access Object to create and update Flight Assignments.
  * @author Luke
- * @version 8.0
+ * @version 8.1
  * @since 1.0
  */
 
@@ -41,7 +41,7 @@ public class SetAssignment extends DAO {
       try {
          startTransaction();
          prepareStatement(sqlBuf.toString());
-         _ps.setInt(1, a.getStatus());
+         _ps.setInt(1, a.getStatus().ordinal());
          _ps.setInt(2, a.getEventID());
          _ps.setInt(3, a.getPilotID());
          _ps.setTimestamp(4, createTimestamp(a.getAssignDate()));
@@ -82,7 +82,7 @@ public class SetAssignment extends DAO {
 
       try {
          prepareStatement(sqlBuf.toString());
-         _ps.setInt(1, AssignmentInfo.RESERVED);
+         _ps.setInt(1, AssignmentStatus.RESERVED.ordinal());
          _ps.setInt(2, pilotID);
          _ps.setInt(3, a.getID());
          executeUpdate(1);
@@ -124,7 +124,7 @@ public class SetAssignment extends DAO {
    public void complete(AssignmentInfo ai) throws DAOException {
       try {
          prepareStatement("UPDATE ASSIGNMENTS SET STATUS=?, COMPLETED_ON=NOW() WHERE (ID=?)");
-         _ps.setInt(1, AssignmentInfo.COMPLETE);
+         _ps.setInt(1, AssignmentStatus.COMPLETE.ordinal());
          _ps.setInt(2, ai.getID());
          executeUpdate(1);
       } catch (SQLException se) {
@@ -143,7 +143,7 @@ public class SetAssignment extends DAO {
          
          // Release the assignment
          prepareStatement("UPDATE ASSIGNMENTS SET PILOT_ID=0, STATUS=?, ASSIGNED_ON=NULL WHERE (ID=?)");
-         _ps.setInt(1, AssignmentInfo.AVAILABLE);
+         _ps.setInt(1, AssignmentStatus.AVAILABLE.ordinal());
          _ps.setInt(2, a.getID());
          executeUpdate(1);
          
@@ -175,12 +175,12 @@ public class SetAssignment extends DAO {
       try {
          startTransaction();
 
-         // Prepare statement to delete legs
+         // Delete legs
          prepareStatement("DELETE FROM ASSIGNLEGS WHERE (ID=?)");
          _ps.setInt(1, a.getID());
          executeUpdate(0);
 
-         // Prepare statement to delete assignment
+         // Delete assignment
          prepareStatement("DELETE FROM ASSIGNMENTS WHERE (ID=?)");
          _ps.setInt(1, a.getID());
          executeUpdate(1);
@@ -199,8 +199,6 @@ public class SetAssignment extends DAO {
          _ps.setInt(2, FlightReport.DRAFT);
          _ps.setInt(3, FlightReport.REJECTED);
          executeUpdate(0);
-
-         // Commit the transaction
          commitTransaction();
       } catch (SQLException se) {
          rollbackTransaction();

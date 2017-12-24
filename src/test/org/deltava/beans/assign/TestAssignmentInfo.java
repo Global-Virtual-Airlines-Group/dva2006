@@ -32,16 +32,16 @@ public class TestAssignmentInfo extends AbstractBeanTestCase {
 
     public void testProperties() {
         assertEquals("B737-300", _info.getEquipmentType());
-        assertEquals(AssignmentInfo.AVAILABLE, _info.getStatus());
+        assertEquals(AssignmentStatus.AVAILABLE, _info.getStatus());
         checkProperty("pilotID", Integer.valueOf(0));
         checkProperty("pilotID", Integer.valueOf(8012));
         checkProperty("eventID", Integer.valueOf(0));
         checkProperty("eventID", Integer.valueOf(1234));
-        checkProperty("status", Integer.valueOf(AssignmentInfo.RESERVED));
+        checkProperty("status", AssignmentStatus.RESERVED);
         checkProperty("assignDate", Instant.now());
         checkProperty("completionDate", Instant.now());
-        _info.setStatus("Complete");
-        assertEquals(AssignmentInfo.COMPLETE, _info.getStatus());
+        _info.setStatus(AssignmentStatus.COMPLETE);
+        assertEquals(AssignmentStatus.COMPLETE, _info.getStatus());
         assertEquals("opt3", _info.getRowClassName());
         
         Pilot p = new Pilot("John", "Smith");

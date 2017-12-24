@@ -1,4 +1,4 @@
-// Copyright 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.sql.Connection;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to build multi-leg flight assignments.
  * @author Luke
- * @version 7.0
+ * @version 8.1
  * @since 4.1
  */
 
@@ -37,7 +37,7 @@ public class RouteAssignmentBuildCommand extends AbstractCommand {
 		info.setAssignDate(Instant.now());
 		info.setRandom(true);
 		info.setPurgeable(true);
-		info.setStatus(AssignmentInfo.RESERVED);
+		info.setStatus(AssignmentStatus.RESERVED);
 		
 		// Get equipment override
 		String eqOv = ctx.getParameter("eqOverride");

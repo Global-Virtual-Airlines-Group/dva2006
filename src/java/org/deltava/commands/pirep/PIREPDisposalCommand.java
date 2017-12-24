@@ -264,7 +264,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 				// Create a new flight assignment
 				AssignmentInfo newAssign = new AssignmentInfo(fr.getEquipmentType());
 				newAssign.setPilotID(fr.getAuthorID());
-				newAssign.setStatus(AssignmentInfo.RESERVED);
+				newAssign.setStatus(AssignmentStatus.RESERVED);
 				newAssign.setRandom(true);
 				newAssign.setPurgeable(true);
 				newAssign.setAssignDate(Instant.now());

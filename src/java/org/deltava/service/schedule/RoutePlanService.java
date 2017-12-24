@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to create flight plans.
  * @author Luke
- * @version 8.0
+ * @version 8.1
  * @since 2.2
  */
 
@@ -143,7 +143,7 @@ public class RoutePlanService extends WebService {
 						// Create a flight assignment
 						ai = new AssignmentInfo(ac.getName());
 						ai.setPilotID(ctx.getUser());
-						ai.setStatus(AssignmentInfo.RESERVED);
+						ai.setStatus(AssignmentStatus.RESERVED);
 						ai.setAssignDate(Instant.now());
 						ai.addAssignment(new AssignmentLeg(dfr));
 						ai.addFlight(dfr);

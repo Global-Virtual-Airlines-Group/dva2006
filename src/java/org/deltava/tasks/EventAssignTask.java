@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to automatically assign flghts to Online Event participants.
  * @author Luke
- * @version 7.5
+ * @version 8.1
  * @since 1.0
  */
 
@@ -112,7 +112,7 @@ public class EventAssignTask extends Task {
 						ai.setAssignDate(Instant.now());
 						ai.setPilotID(s.getPilotID());
 						ai.setEventID(e.getID());
-						ai.setStatus(AssignmentInfo.RESERVED);
+						ai.setStatus(AssignmentStatus.RESERVED);
 						
 						// Get the airline
 						Airline a = SystemData.getAirline(usrData.getAirlineCode());
