@@ -1,4 +1,4 @@
-// Copyright 2005, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
@@ -12,12 +12,10 @@ import org.deltava.dao.*;
 
 import org.deltava.security.command.AssignmentAccessControl;
 
-import org.deltava.util.ComboUtils;
-
 /**
  * A Web Site Command to display a Pilot's Flight Assignments.
  * @author Luke
- * @version 7.0
+ * @version 8.1
  * @since 1.0
  */
 
@@ -53,9 +51,8 @@ public void execute(CommandContext ctx) throws CommandException {
          pilots.put(Integer.valueOf(ctx.getUser().getID()), ctx.getUser());
          ctx.setAttribute("pilots", pilots, REQUEST);
          
-         // Save statuses and access controllers
+         // Save access controllers
          ctx.setAttribute("accessList", accessList, REQUEST);
-         ctx.setAttribute("statuses", ComboUtils.fromArray(AssignmentInfo.STATUS), REQUEST);
       } catch (DAOException de) {
          throw new CommandException(de);
       } finally {

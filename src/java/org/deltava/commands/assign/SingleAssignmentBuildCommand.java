@@ -1,11 +1,11 @@
-// Copyright 2008, 2009, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
 import java.sql.Connection;
 import java.time.Instant;
 
-import org.deltava.beans.assign.AssignmentInfo;
+import org.deltava.beans.assign.*;
 import org.deltava.beans.flight.*;
 
 import org.deltava.commands.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
  * A Web Site Command to build a flight assignment that consists of a single leg selected at random from the last
  * Airport the Pilot completed a flight to in the selected aircraft.
  * @author Luke
- * @version 7.0
+ * @version 8.1
  * @since 2.2
  */
 
@@ -45,7 +45,7 @@ public class SingleAssignmentBuildCommand extends AbstractCommand {
 		// Update the flight assignment
 		info.setAssignDate(Instant.now());
 		info.setPilotID(ctx.getUser());
-		info.setStatus(AssignmentInfo.RESERVED);
+		info.setStatus(AssignmentStatus.RESERVED);
 		info.setRandom(true);
 		info.setPurgeable(true);
 

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to assign Flights for an Online Event.
  * @author Luke
- * @version 7.0
+ * @version 8.1
  * @since 1.0
  */
 
@@ -86,7 +86,7 @@ public class EventAssignCommand extends AbstractCommand {
 				ai.setAssignDate(Instant.now());
 				ai.setPilotID(s.getPilotID());
 				ai.setEventID(e.getID());
-				ai.setStatus(AssignmentInfo.RESERVED);
+				ai.setStatus(AssignmentStatus.RESERVED);
 				
 				// Calculate the flight number
 				int flightID = usr.getPilotNumber();

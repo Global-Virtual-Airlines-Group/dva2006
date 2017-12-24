@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Schedule Task to automatically release Flight Assignments.
  * @author Luke
- * @version 7.0
+ * @version 8.1
  * @since 1.0
  */
 
@@ -45,7 +45,7 @@ public class AssignmentPurgeTask extends Task {
 
 			// Get the assignments
 			GetAssignment rdao = new GetAssignment(con);
-			Collection<AssignmentInfo> assignments = rdao.getByStatus(AssignmentInfo.RESERVED);
+			Collection<AssignmentInfo> assignments = rdao.getByStatus(AssignmentStatus.RESERVED);
 
 			// Check the open assignments
 			GetPilot pdao = new GetPilot(con);

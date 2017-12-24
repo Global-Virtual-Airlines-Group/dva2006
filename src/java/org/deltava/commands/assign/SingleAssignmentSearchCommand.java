@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2011, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
  * A Web Site Command to search the schedule to build a flight assignment that consists of a single leg selected at
  * random from the last Airport the Pilot completed a flight to in the selected aircraft.
  * @author Luke
- * @version 7.0
+ * @version 8.1
  * @since 2.2
  */
 
@@ -52,7 +52,7 @@ public class SingleAssignmentSearchCommand extends AbstractCommand {
 			List<AssignmentInfo> assignments = dao.getByPilot(ctx.getUser().getID());
 			for (Iterator<AssignmentInfo> i = assignments.iterator(); i.hasNext() && !hasOpen;) {
 				AssignmentInfo a = i.next();
-				hasOpen = hasOpen || (a.getStatus() == AssignmentInfo.RESERVED);
+				hasOpen = hasOpen || (a.getStatus() == AssignmentStatus.RESERVED);
 			}
 
 			// If we have an open assignment, abort

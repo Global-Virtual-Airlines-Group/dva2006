@@ -1,15 +1,15 @@
-// Copyright 2005, 2006, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.Pilot;
-import org.deltava.beans.assign.AssignmentInfo;
+import org.deltava.beans.assign.*;
 
 import org.deltava.security.SecurityContext;
 
 /**
  * An Access Controller for Flight Assignments.
  * @author Luke
- * @version 7.0
+ * @version 8.1
  * @since 1.0
  */
 
@@ -36,7 +36,7 @@ public class AssignmentAccessControl extends AccessControl {
 	 * Calculates access rights.
 	 */
    @Override
-public void validate() {
+   public void validate() {
       validateContext();
       
       // Calculate generic access
@@ -49,12 +49,12 @@ public void validate() {
       
       // Get state variables
       boolean isMine = (_assign.getPilotID() == p.getID());
-      boolean isAvailable = (_assign.getStatus() == AssignmentInfo.AVAILABLE);
+      boolean isAvailable = (_assign.getStatus() == AssignmentStatus.AVAILABLE);
       boolean isAssignAdmin = _canCreateAvailable || (_assign.getEventID() != 0 && _ctx.isUserInRole("Event")); 
       
       // Calculate access roles
       _canReserve = isAvailable && (p.hasRating(_assign.getEquipmentType()));
-      _canRelease = (_assign.getStatus() == AssignmentInfo.RESERVED) && (isMine || isAssignAdmin);
+      _canRelease = (_assign.getStatus() == AssignmentStatus.RESERVED) && (isMine || isAssignAdmin);
       _canDelete = isAvailable && _ctx.isUserInRole("Admin");
    }
    

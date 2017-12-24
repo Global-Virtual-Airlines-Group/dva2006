@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
  * A Data Access Object to load Flight Assignments. All calls in this DAO will populate the legs for any returned Flight
  * Assignments, but will <i>not </i> populate any Flight Reports.
  * @author Luke
- * @version 7.2
+ * @version 8.1
  * @since 1.0
  */
 
@@ -69,7 +69,6 @@ public class GetAssignment extends DAO {
 			prepareStatementWithoutLimits("SELECT L.* FROM ASSIGNMENTS A, ASSIGNLEGS L WHERE (A.ID=L.ID) AND (A.PILOT_ID=?)");
 			_ps.setInt(1, pilotID);
 			loadLegs(results);
-
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -78,22 +77,21 @@ public class GetAssignment extends DAO {
 	
 	/**
 	 * Returns all Flight Assignments with a particular status.
-	 * @param status the status code
+	 * @param status the AssignmentStatus
 	 * @return a List of AssignmentInfo beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<AssignmentInfo> getByStatus(int status) throws DAOException {
+	public List<AssignmentInfo> getByStatus(AssignmentStatus status) throws DAOException {
 		try {
 			// Load the assignment info
 			prepareStatement("SELECT * FROM ASSIGNMENTS WHERE (STATUS=?) ORDER BY ASSIGNED_ON DESC");
-			_ps.setInt(1, status);
+			_ps.setInt(1, status.ordinal());
 			List<AssignmentInfo> results = loadInfo();
 
 			// Load the legs
-			prepareStatementWithoutLimits("SELECT L.* FROM ASSIGNMENTS A, ASSIGNLEGS L WHERE (A.ID=L.ID) AND " + "(A.STATUS=?)");
-			_ps.setInt(1, status);
+			prepareStatementWithoutLimits("SELECT L.* FROM ASSIGNMENTS A, ASSIGNLEGS L WHERE (A.ID=L.ID) AND (A.STATUS=?)");
+			_ps.setInt(1, status.ordinal());
 			loadLegs(results);
-
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -120,7 +118,6 @@ public class GetAssignment extends DAO {
 			prepareStatementWithoutLimits("SELECT L.* FROM " + db + ".ASSIGNMENTS A, " + db + ".ASSIGNLEGS L WHERE (A.ID=L.ID) AND (A.EVENT_ID=?)");
 			_ps.setInt(1, eventID);
 			loadLegs(results);
-
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -130,15 +127,15 @@ public class GetAssignment extends DAO {
 	/**
 	 * Return all Flight Assignment for a particular aircraft type and status.
 	 * @param eqType the Equipment type
-	 * @param status the status code, or -1 if none
+	 * @param status the AssignmentStatus
 	 * @return a List of AssignmentInfo beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<AssignmentInfo> getByEquipmentType(String eqType, int status) throws DAOException {
+	public List<AssignmentInfo> getByEquipmentType(String eqType, AssignmentStatus status) throws DAOException {
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM ASSIGNMENTS WHERE (EQTYPE=?)");
-		if (status != -1)
+		if (status != null)
 			sqlBuf.append(" AND (STATUS=?)");
 		
 		sqlBuf.append(" ORDER BY STATUS, ASSIGNED_ON DESC");
@@ -147,8 +144,8 @@ public class GetAssignment extends DAO {
 			// Load the assignment info
 			prepareStatement(sqlBuf.toString());
 			_ps.setString(1, eqType);
-			if (status != -1)
-				_ps.setInt(2, status);
+			if (status != null)
+				_ps.setInt(2, status.ordinal());
 			
 			List<AssignmentInfo> results = loadInfo();
 
@@ -192,7 +189,7 @@ public class GetAssignment extends DAO {
 			while (rs.next()) {
 				AssignmentInfo info = new AssignmentInfo(rs.getString(5));
 				info.setID(rs.getInt(1));
-				info.setStatus(rs.getInt(2));
+				info.setStatus(AssignmentStatus.values()[rs.getInt(2)]);
 				info.setPilotID(rs.getInt(3));
 				info.setEventID(rs.getInt(4));
 				info.setAssignDate(toInstant(rs.getTimestamp(6)));

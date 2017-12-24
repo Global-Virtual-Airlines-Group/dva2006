@@ -34,6 +34,7 @@ golgotha.local.setStatus = function(combo) {
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:enum var="statuses" className="org.deltava.beans.assign.AssignmentStatus" />
 
 <!-- Main Body Frame -->
 <content:region id="main">

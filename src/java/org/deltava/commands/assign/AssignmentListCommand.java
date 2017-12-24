@@ -1,26 +1,20 @@
-// Copyright 2005, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.assign.AssignmentInfo;
+import org.deltava.beans.assign.*;
 
 import org.deltava.commands.*;
-
-import org.deltava.dao.GetAssignment;
-import org.deltava.dao.GetPilot;
-import org.deltava.dao.DAOException;
+import org.deltava.dao.*;
 
 import org.deltava.security.command.AssignmentAccessControl;
-
-import org.deltava.util.ComboUtils;
-import org.deltava.util.StringUtils;
 
 /**
  * A Web Site Command to list Flight Assignments.
  * @author Luke
- * @version 7.0
+ * @version 8.1
  * @since 1.0
  */
 
@@ -38,8 +32,7 @@ public class AssignmentListCommand extends AbstractViewCommand {
       ViewContext<AssignmentInfo> vc = initView(ctx, AssignmentInfo.class);
       
       // Get status and equipment type
-      String status = ctx.getParameter("status");
-      int statusCode = StringUtils.arrayIndexOf(AssignmentInfo.STATUS, status);
+      AssignmentStatus as = AssignmentStatus.fromName(ctx.getParameter("status"));
       String eqType = ctx.getParameter("eqType");
       if ("-".equals(eqType))
     	  eqType = null;
@@ -56,12 +49,12 @@ public class AssignmentListCommand extends AbstractViewCommand {
          dao.setQueryStart(vc.getStart());
          
          // Figure out what call to make
-         if ((status != null) && (eqType == null))
-            vc.setResults(dao.getByStatus(statusCode));
+         if ((as != null) && (eqType == null))
+            vc.setResults(dao.getByStatus(as));
          else if (eqType != null)
-            vc.setResults(dao.getByEquipmentType(eqType, statusCode));
+            vc.setResults(dao.getByEquipmentType(eqType, as));
          else
-            vc.setResults(dao.getByStatus(AssignmentInfo.AVAILABLE));
+            vc.setResults(dao.getByStatus(AssignmentStatus.AVAILABLE));
          
          // Build a Collection of access controllers and Pilot IDs
          Collection<Integer> pilotIDs = new HashSet<Integer>();
@@ -80,8 +73,7 @@ public class AssignmentListCommand extends AbstractViewCommand {
          GetPilot pdao = new GetPilot(con);
          ctx.setAttribute("pilots", pdao.getByID(pilotIDs, "PILOTS"), REQUEST);
          
-         // Save statuses and controllers
-         ctx.setAttribute("statuses", ComboUtils.fromArray(AssignmentInfo.STATUS), REQUEST);
+         // Save access controllers
          ctx.setAttribute("accessList", accessList, REQUEST);
       } catch (DAOException de) {
          throw new CommandException(de);
