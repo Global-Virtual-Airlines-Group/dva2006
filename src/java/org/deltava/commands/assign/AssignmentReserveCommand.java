@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to reserve a Flight Assignment.
  * @author Luke
- * @version 7.0
+ * @version 8.1
  * @since 1.0
  */
 
@@ -30,7 +30,6 @@ public class AssignmentReserveCommand extends AbstractCommand {
 	 */
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
-
 		CommandResult result = ctx.getResult();
 		try {
 			Connection con = ctx.getConnection();
@@ -46,7 +45,7 @@ public class AssignmentReserveCommand extends AbstractCommand {
 			List<AssignmentInfo> assignments = dao.getByPilot(ctx.getUser().getID());
 			for (Iterator<AssignmentInfo> i = assignments.iterator(); i.hasNext() && !hasOpen;) {
 				AssignmentInfo a = i.next();
-				hasOpen = hasOpen || (a.getStatus() == AssignmentInfo.RESERVED);
+				hasOpen = hasOpen || (a.getStatus() == AssignmentStatus.RESERVED);
 			}
 
 			// If we have an open assignment, abort
@@ -72,26 +71,19 @@ public class AssignmentReserveCommand extends AbstractCommand {
 
 			// Write the Flight Reports
 			SetFlightReport fwdao = new SetFlightReport(con);
-			for (Iterator<AssignmentLeg> i = assign.getAssignments().iterator(); i.hasNext();) {
-				AssignmentLeg leg = i.next();
-
-				// Create a draft PIREP from the assignment leg
+			for (AssignmentLeg leg : assign.getAssignments()) {
 				FlightReport fr = new FlightReport(leg);
 				fr.setRank(ctx.getUser().getRank());
 				fr.setDatabaseID(DatabaseID.PILOT, ctx.getUser().getID());
 				fr.setDatabaseID(DatabaseID.ASSIGN, assign.getID());
 				fr.setEquipmentType(assign.getEquipmentType());
 				fr.setDate(Instant.now());
-
-				// Save the flight report
 				fwdao.write(fr);
 				assign.addFlight(fr);
 			}
 			
-			// Commit the transaction
-			ctx.commitTX();
-
 			// Save the assignment in the request
+			ctx.commitTX();
 			ctx.setAttribute("assign", assign, REQUEST);
 		} catch (DAOException de) {
 			ctx.rollbackTX();

@@ -11,25 +11,16 @@ import org.deltava.beans.schedule.RoutePair;
 /**
  * A class to store Flight Assignments.
  * @author Luke
- * @version 8.0
+ * @version 8.1
  * @since 1.0
  */
 
 public class AssignmentInfo extends DatabaseBean implements ViewEntry {
 	
-    public static final int AVAILABLE = 0;
-    public static final int RESERVED = 1;
-    public static final int COMPLETE = 2;
-    
-    /**
-     * Assignment status names.
-     */
-    public static final String[] STATUS = {"Available", "Assigned", "Complete"};
-
     private final String _eqType;
     private int _pilotID;
     private int _eventID;
-    private int _status;
+    private AssignmentStatus _status;
     
     private Instant _assignedOn;
     private Instant _completedOn;
@@ -98,11 +89,10 @@ public class AssignmentInfo extends DatabaseBean implements ViewEntry {
 
     /**
      * Returns the status of this Assignment.
-     * @return the status code
-     * @see AssignmentInfo#setStatus(int)
-     * @see AssignmentInfo#setStatus(String)
+     * @return the AssignmentStatus
+     * @see AssignmentInfo#setStatus(AssignmentStatus)
      */
-    public int getStatus() {
+    public AssignmentStatus getStatus() {
         return _status;
     }
     
@@ -217,31 +207,11 @@ public class AssignmentInfo extends DatabaseBean implements ViewEntry {
     
     /**
      * Updates the status of this Flight Assignment.
-     * @param status the status code
-     * @see AssignmentInfo#setStatus(String)
+     * @param status the AssignmentStatus
      * @see AssignmentInfo#getStatus()
      */
-    public void setStatus(int status) {
+    public void setStatus(AssignmentStatus status) {
         _status = status;
-    }
-    
-    /**
-     * Updates the status of this Flight Assignment.
-     * @param status the status type name
-     * @throws IllegalArgumentException if an invalid type name
-     * @see AssignmentInfo#setStatus(int)
-     * @see AssignmentInfo#getStatus()
-     */
-    public void setStatus(String status) {
-        for (int x = 0; x < STATUS.length; x++) {
-            if (STATUS[x].equals(status)) {
-                _status = x;
-                return;
-            }
-        }
-        
-        // If we got this far, it wasn't matched
-        throw new IllegalArgumentException("Invalid Flight Assignment status - " + status);
     }
     
     /**
@@ -295,7 +265,7 @@ public class AssignmentInfo extends DatabaseBean implements ViewEntry {
      */
     @SuppressWarnings("unlikely-arg-type")
 	public void remove(RoutePair rp) {
-    	FlightReport dfr  = null;
+    	FlightReport dfr = null;
     	for (Iterator<FlightReport> i = _flights.iterator(); i.hasNext(); ) {
     		FlightReport fr = i.next();
     		if ((fr.getStatus() == FlightReport.DRAFT) && fr.matches(rp)) {
@@ -304,7 +274,7 @@ public class AssignmentInfo extends DatabaseBean implements ViewEntry {
     		}
     	}
     	
-    	for (Iterator<AssignmentLeg> i = _assignments.iterator(); i.hasNext(); ) {
+    	for (Iterator<AssignmentLeg> i = _assignments.iterator(); (dfr != null) && i.hasNext(); ) {
     		AssignmentLeg al = i.next();
     		if (al.matches(dfr) && al.equals(dfr))
     			i.remove();
@@ -318,6 +288,6 @@ public class AssignmentInfo extends DatabaseBean implements ViewEntry {
     @Override
     public String getRowClassName() {
     	final String[] ROW_CLASSES = {null, "opt2", "opt3"};
-    	return ROW_CLASSES[_status];
+    	return ROW_CLASSES[_status.ordinal()];
     }
 }

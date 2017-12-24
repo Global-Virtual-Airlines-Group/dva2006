@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to build a Flight Assignment.
  * @author Luke
- * @version 7.0
+ * @version 8.1
  * @since 1.0
  */
 
@@ -68,7 +68,7 @@ public class BuildCommand extends AbstractCommand {
 			if (info == null) {
 				info = new AssignmentInfo(ff.getEquipmentType());
 				info.setPilotID(ctx.getUser());
-				info.setStatus(AssignmentInfo.RESERVED);
+				info.setStatus(AssignmentStatus.RESERVED);
 				info.setRandom(true);
 				info.setPurgeable(true);
 				info.setAssignDate(Instant.now());
