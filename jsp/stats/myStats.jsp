@@ -104,6 +104,9 @@ golgotha.local.validate = function(f) {
  <td><div id="landingSpd" style="width:100%; height:350px;"></div></td>
  <td><div id="landingSct" style="width:100%; height:350px;"></div></td>
 </tr>
+<tr>
+ <td colspan="2"><div id="stageStats" style="width:100%; height:320px;"></div></td>
+</tr>
 
 <!-- Button Bar -->
 <tr class="title">
@@ -132,7 +135,19 @@ xmlreq.onreadystatechange = function() {
 	data.addColumn('number','Flight Legs');
 	data.addRows(statsData.eqCount);
 	chart.draw(data,{title:'Flights by Equipment Type',is3D:true,legend:'none',theme:'maximized'});
-	
+
+	// Display stage by date chart
+	var chart = new google.visualization.ColumnChart(document.getElementById('stageStats'));
+	var data = new google.visualization.DataTable();
+	statsData.calendar.forEach(function(e) { e[0] = new Date(e[0]); });
+	data.addColumn('date', 'Date');
+	for (var st = 1; st <= statsData.maxStage; st++)
+		data.addColumn('number', 'Stage ' + st);
+
+	data.addRows(statsData.calendar);
+	var mnStyle = {gridlines:{color:'#cce'},minorGridlines:{count:12},title:'Month',format:'MMMM yyyy'};
+	chart.draw(data,{title:'Flights by Date/Stage',isStacked:true,fontSize:10,hAxis:mnStyle,vAxis:{title:'Flight Legs'}});
+
 	// Display the vertical speed chart
 	var chart = new google.visualization.BarChart(document.getElementById('landingSpd'));
 	var data = new google.visualization.DataTable();
@@ -143,7 +158,7 @@ xmlreq.onreadystatechange = function() {
 	data.addColumn('number','Too Soft');
 	data.addRows(statsData.landingSpd);
 	chart.draw(data,{title:'Touchdown Speeds',isStacked:true,colors:['red','orange','green','blue'],legend:'none',vAxis:lgStyle});
-	
+
 	// Display the vertical speed/runway distance chart
 	var chart = new google.visualization.ScatterChart(document.getElementById('landingSct'));
 	var data = new google.visualization.DataTable();
@@ -156,7 +171,7 @@ xmlreq.onreadystatechange = function() {
 	var hX = {title:'Distance from Threshold (feet)',textStyle:lgStyle};
 	var yX = {title:'Landing Speed (feet/min)',textStyle:lgStyle};
 	chart.draw(data,{title:'Flight Quality vs. Landing Data',colors:['red','orange','green','blue'],legend:{textStyle:lgStyle},hAxis:hX,vAxis:yX});
-	
+
 	// Display quality breakdown chart
 	var chart = new google.visualization.PieChart(document.getElementById('qualBreakdown'));
 	var data = new google.visualization.DataTable();
