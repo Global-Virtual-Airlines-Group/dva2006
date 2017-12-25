@@ -18,7 +18,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to display a Pilot's Flight Report statistics to a Google chart.
  * @author Luke
- * @version 7.3
+ * @version 8.1
  * @since 2.1
  */
 
@@ -43,11 +43,14 @@ public class MyFlightsService extends WebService {
 
 		// Get the Flight Report statistics
 		Collection<FlightStatsEntry> results = null; 
+		Collection<StageStatsEntry> stageStats = null;
 		Collection<LandingStatistics> landings = null;
 		Map<Integer, Integer> vsStats = null;
 		try {
+			// Load statistics
 			GetFlightReportStatistics stdao = new GetFlightReportStatistics(ctx.getConnection());
 			results = stdao.getPIREPStatistics(userID, FlightStatsSort.LEGS, FlightStatsGroup.EQ);
+			stageStats = stdao.getStageStatistics(userID, FlightStatsGroup.MONTH);
 			vsStats = stdao.getLandingCounts(userID, 50);
 			landings = stdao.getLandingData(userID);
 		} catch (DAOException de) {
@@ -121,7 +124,21 @@ public class MyFlightsService extends WebService {
 			jo.append("landingQuality", ea);
 		}
 		
+		// Create flights by Date
+		int maxStage = stageStats.stream().mapToInt(StageStatsEntry::getMaxStage).max().orElse(1);
+		jo.put("maxStage", maxStage);
+		JSONArray jdo = new JSONArray();
+		for (StageStatsEntry entry : stageStats) {
+			JSONArray da = new JSONArray();
+			da.put(entry.getLabel());
+			for (int x = 1; x <= maxStage; x++)
+				da.put(entry.getLegs(x));
+
+			jdo.put(da);
+		}
+		
 		// Dump the JSON to the output stream
+		jo.put("calendar", jdo);
 		try {
 			ctx.setContentType("application/json", "UTF-8");
 			ctx.setExpiry(600);
