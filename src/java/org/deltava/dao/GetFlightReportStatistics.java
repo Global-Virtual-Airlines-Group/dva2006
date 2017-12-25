@@ -528,7 +528,7 @@ public class GetFlightReportStatistics extends DAO {
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT ");
 		sqlBuf.append(grp.getSQL());
-		sqlBuf.append(" AS LABEL, IFNULL(ES.STAGE, 1) AS STG, COUNT(F.ID) AS LEGS, SUM(F.FLIGHT_TIME) AS HRS FROM PIREPS F LEFT JOIN EQSTAGES ES ON (F.EQTYPE=ES.EQTYPE) WHERE (F.STATUS=?) ");
+		sqlBuf.append(" AS LABEL, IFNULL(ES.MAXSTAGE, 1) AS STG, COUNT(F.ID) AS LEGS, SUM(F.FLIGHT_TIME) AS HRS FROM PIREPS F LEFT JOIN EQSTAGES ES ON (F.EQTYPE=ES.RATED_EQ) WHERE (F.STATUS=?) ");
 		if (pilotID != 0)
 			sqlBuf.append("AND (F.PILOT_ID=?) ");
 		sqlBuf.append("GROUP BY LABEL, STG ORDER BY F.DATE, STG");
