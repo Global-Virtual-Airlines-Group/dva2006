@@ -15,12 +15,12 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to retrieve Flight Report statistics.
  * @author Luke
- * @version 7.5
+ * @version 8.1
  * @since 2.1
  */
 
 public class GetFlightReportStatistics extends DAO {
-	
+
 	private static final int MAX_VSPEED = -2500;
 	private static final int OPT_VSPEED = -225;
 	private static final Cache<CacheableCollection<LandingStatistics>> _cache = CacheManager.getCollection(LandingStatistics.class, "LandingStats");
@@ -324,14 +324,12 @@ public class GetFlightReportStatistics extends DAO {
 	public Map<Integer, Integer> getLandingCounts(int pilotID, int range) throws DAOException {
 		
 		// Init the Map
-		final Integer ZERO = Integer.valueOf(0);
 		Map<Integer, Integer> results = new TreeMap<Integer, Integer>();
 		for (int x = MAX_VSPEED; x <= 0; x += range)
-			results.put(Integer.valueOf(x), ZERO);
+			results.put(Integer.valueOf(x), Integer.valueOf(0));
 		
 		try {
-			prepareStatementWithoutLimits("SELECT DISTINCT ROUND(VSPEED / ?) * ? AS RNG, COUNT(ID) "
-				+ "FROM FLIGHTSTATS_LANDING WHERE (PILOT_ID=?) AND (VSPEED>?) GROUP BY RNG");
+			prepareStatementWithoutLimits("SELECT DISTINCT ROUND(VSPEED / ?) * ? AS RNG, COUNT(ID) FROM FLIGHTSTATS_LANDING WHERE (PILOT_ID=?) AND (VSPEED>?) GROUP BY RNG");
 			_ps.setInt(1, range);
 			_ps.setInt(2, range);
 			_ps.setInt(3, pilotID);
@@ -349,7 +347,7 @@ public class GetFlightReportStatistics extends DAO {
 		// Trim out any without a value
 		for (Iterator<Map.Entry<Integer, Integer>> i = results.entrySet().iterator(); i.hasNext(); ) {
 			Map.Entry<Integer, Integer> me = i.next();
-			if (me.getValue() == ZERO)
+			if (me.getValue().intValue() == 0)
 				i.remove();
 			else
 				return results;
@@ -513,6 +511,50 @@ public class GetFlightReportStatistics extends DAO {
 			
 			_ps.close();
 			return count;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns flight statistics by date and stage.
+	 * @param pilotID the Pilot's database ID or zero for all pilots
+	 * @param grp the statistics grouping option
+	 * @return a Collection of StageStatsEntry beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<StageStatsEntry> getStageStatistics(int pilotID, FlightStatsGroup grp) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT ");
+		sqlBuf.append(grp.getSQL());
+		sqlBuf.append(" AS LABEL, IFNULL(ES.STAGE, 1) AS STG, COUNT(F.ID) AS LEGS, SUM(F.FLIGHT_TIME) AS HRS FROM PIREPS F LEFT JOIN EQSTAGES ES ON (F.EQTYPE=ES.EQTYPE) WHERE (F.STATUS=?) ");
+		if (pilotID != 0)
+			sqlBuf.append("AND (F.PILOT_ID=?) ");
+		sqlBuf.append("GROUP BY LABEL, STG ORDER BY F.DATE, STG");
+		
+		try {
+			prepareStatement(sqlBuf.toString());
+			_ps.setInt(1, FlightReport.OK);
+			if (pilotID != 0)
+				_ps.setInt(2, pilotID);
+			
+			// Execute the query
+			Collection<StageStatsEntry> results = new ArrayList<StageStatsEntry>(); StageStatsEntry sse = null;
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					String label = rs.getString(1);
+					if ((sse == null) || !sse.getLabel().equals(label)) {
+						sse = new StageStatsEntry(label);
+						results.add(sse);
+					}
+					
+					sse.setStage(rs.getInt(2), rs.getInt(3), rs.getDouble(4));
+				}
+			}
+			
+			_ps.close();
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
