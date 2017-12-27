@@ -14,6 +14,7 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <content:js name="examTake" />
 <c:if test="${fn:isRoutePlot(question)}">
@@ -24,6 +25,7 @@
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:sysdata var="ourAirline" name="airline.code" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -54,9 +56,7 @@
 <tr>
  <td class="label">Statistics</td>
 <c:if test="${question.totalAnswers > 0}">
- <td class="data">Answered <fmt:int value="${question.totalAnswers}" /> times,
- <fmt:int value="${question.correctAnswers}" /> correctly 
- (<fmt:dec value="${question.correctAnswers / question.totalAnswers * 100}" />%)</td>
+ <td class="data">Answered <fmt:int value="${question.totalAnswers}" /> times, <fmt:int value="${question.correctAnswers}" /> correctly (<fmt:dec value="${question.correctAnswers / question.totalAnswers * 100}" />%)</td>
 </c:if>
 <c:if test="${question.totalAnswers == 0}">
  <td class="data bld">This Question has never been included in a Pilot Examination</td>
@@ -86,12 +86,11 @@
 </c:if>
 <tr>
  <td class="label">&nbsp;</td>
-<c:if test="${question.active}">
- <td class="data ter bld caps">Question is Available</td>
-</c:if>
-<c:if test="${!question.active}">
- <td class="data error bld caps">Question is Not Available</td>
-</c:if>
+ <td class="data">
+<c:if test="${question.active}"><span class="ter bld caps">Examination Question is Available</span></c:if>
+<c:if test="${!question.active}"><span class="error bld caps">Examination Question is Not Available</span></c:if>
+<c:if test="${airlineCode != question.owner.code}"><br /><span class="bld caps">Examination Question managed by <span class="pri">${question.owner.name}</span></span></c:if>
+ </td>
 </tr>
 <%@ include file="/jsp/auditLog.jspf" %>
 </el:table>
@@ -99,11 +98,8 @@
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:cmdbutton url="qprofile" link="${question}" op="edit" label="EDIT QUESTION" />
-<c:if test="${access.canDelete && (question.totalAnswers == 0)}">
- <el:cmdbutton url="qpdelete" link="${question}" label="DELETE QUESTION" />
-</c:if>
-</td>
+ <td>&nbsp;<c:if test="${access.canEdit}"><el:cmdbutton url="qprofile" link="${question}" op="edit" label="EDIT QUESTION" /></c:if>
+<c:if test="${access.canDelete && (question.totalAnswers == 0)}"> <el:cmdbutton url="qpdelete" link="${question}" label="DELETE QUESTION" /></c:if></td>
 </tr>
 </el:table>
 <content:copyright />
@@ -111,7 +107,7 @@
 </content:page>
 <content:googleAnalytics />
 <c:if test="${fn:isRoutePlot(question)}">
-<script id="mapInit">
+<script id="mapInit" async>
 <map:point var="mapC" point="${question.midPoint}" />
 
 // Create map
