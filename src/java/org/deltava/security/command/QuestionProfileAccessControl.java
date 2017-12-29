@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2013, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.testing.QuestionProfile;
@@ -10,7 +10,7 @@ import org.deltava.util.system.SystemData;
 /**
  * An Access Controller for Examination Question Profiles.
  * @author Luke
- * @version 7.2
+ * @version 8.1
  * @since 1.0
  */
 
@@ -43,14 +43,15 @@ public class QuestionProfileAccessControl extends AccessControl {
 		validateContext();
 
 		// Calculate access variables
+		String aCode = SystemData.get("airline.code");
 		final boolean isHR = _ctx.isUserInRole("HR");
 		final boolean isTestAdmin = _ctx.isUserInRole("TestAdmin") || _ctx.isUserInRole("AcademyAudit") || _ctx.isUserInRole("AcademyAdmin");
-		final boolean isOurs = (_qp == null) || SystemData.get("airline.code").equals(_qp.getOwner().getCode());
+		final boolean isOurs = (_qp == null) || aCode.equals(_qp.getOwner().getCode());
 
 		_canCreate = isHR || isTestAdmin;
 		_canRead = isHR || _ctx.isUserInRole("Examination") || isTestAdmin;
-		_canInclude = (_qp != null) && _qp.getAirlines().contains(SystemData.getApp(SystemData.get("airline.code"))) && (isHR || isTestAdmin);
-		_canEdit = (_qp == null) ? _canCreate : (isOurs && _canInclude);
+		_canInclude = (_qp != null) && _qp.getAirlines().contains(SystemData.getApp(aCode)) && (isHR || isTestAdmin);
+		_canEdit = (_qp == null) ? _canCreate : (isOurs || _canInclude);
 		_canDelete = isHR && isOurs && (_qp != null) && (_qp.getTotalAnswers() == 0);
 		if (!_canRead)
 			throw new AccessControlException("Cannot view Question Profile");
