@@ -16,21 +16,21 @@
 <content:favicon />
 <content:js name="common" />
 <content:js name="examTake" />
-<script type="text/javascript">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
-golgotha.form.validate({f:f.question, l:20, 'Question Text'});
+golgotha.form.validate({f:f.question, l:20, t:'Question Text'});
 golgotha.form.validate({f:f.correct, l:3, t:'Correct Answer to this Question'});
-golgotha.form.validate({f:f.imgData, ext:['gif','jpg','png'], t:'Image Resource'});
+golgotha.form.validate({f:f.imgData, ext:['gif','jpg','png'], t:'Image Resource', empty:true});
 golgotha.form.validate({f:f.owner, t:'Owner'});
 golgotha.form.validate({f:f.airline, min:1, t:'Airline'});
 
 // Validate multiple choice
 <c:if test="${empty question}">
 if ((f.isMultiChoice) && (f.isMultiChoice.checked))
-	golgotha.form.validate({f:f.correctChoice, t:'Correct Answer to this Question'});
-</c:if>
+	golgotha.form.validate({f:f.correctChoice, t:'Correct Answer to this Question'});</c:if>
 <c:if test="${!empty question && isMC}">
 golgotha.form.validate({f:f.correctChoice, t:'Correct Answer to this Question'});</c:if>
 golgotha.form.submit(f);
@@ -106,19 +106,21 @@ return true;
 </tr>
 <tr>
  <td class="label">Airlines</td>
- <td class="data"><el:check name="airline" width="175" options="${airlines}" className="req" checked="${question.airlines}" /></td>
+ <td class="data"><el:check name="airlines" width="175" options="${airlines}" className="req" checked="${question.airlines}" /></td>
 </tr>
 <tr>
  <td class="label top">Pilot Examinations</td>
- <td class="data"><el:check name="examNames" idx="*" cols="5" width="200" newLine="true" className="small" checked="${question.exams}" options="${examNames}" /></td>
+ <td class="data"><el:check name="examNames" idx="*" cols="5" width="225" newLine="true" className="small" checked="${question.exams}" options="${examNames}" />
+<c:if test="${!empty otherExamNames}" >
+<br /><br /><hr />
+<span class="ita">This Examination Question is also included in the following Examinations managed by other Airlines:</span><br /><br />
+<span class="ita"><fmt:list value="${otherExamNames}" delim=", " /></span></c:if></td>
 </tr>
 <c:if test="${!empty question}">
 <tr>
  <td class="label">Statistics</td>
 <c:if test="${question.totalAnswers > 0}">
- <td class="data">Answered <fmt:int value="${question.totalAnswers}" /> times,
- <fmt:int value="${question.correctAnswers}" /> correctly 
- (<fmt:dec value="${question.correctAnswers / question.totalAnswers * 100}" />%)</td>
+ <td class="data">Answered <fmt:int value="${question.totalAnswers}" /> times, <fmt:int value="${question.correctAnswers}" /> correctly (<fmt:dec value="${question.correctAnswers / question.totalAnswers * 100}" />%)</td>
 </c:if>
 <c:if test="${question.totalAnswers == 0}">
  <td class="data bld">This Question has never been included in a Pilot Examination</td>
@@ -127,8 +129,7 @@ return true;
 <c:if test="${question.size > 0}">
 <tr>
  <td class="label">Image Information</td>
- <td class="data"><span class="pri bld">${question.typeName}</span> image, <fmt:int value="${question.size}" />
- bytes <span class="sec">(<fmt:int value="${question.width}" /> x <fmt:int value="${question.height}" />
+ <td class="data"><span class="pri bld">${question.typeName}</span> image, <fmt:int value="${question.size}" /> bytes <span class="sec">(<fmt:int value="${question.width}" /> x <fmt:int value="${question.height}" />
  pixels)</span> <el:link className="pri bld small" url="javascript:void golgotha.exam.viewImage(${question.width},${question.height})">VIEW IMAGE</el:link></td>
 </tr>
 </c:if>

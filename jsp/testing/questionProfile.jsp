@@ -89,7 +89,7 @@
  <td class="data">
 <c:if test="${question.active}"><span class="ter bld caps">Examination Question is Available</span></c:if>
 <c:if test="${!question.active}"><span class="error bld caps">Examination Question is Not Available</span></c:if>
-<c:if test="${airlineCode != question.owner.code}"><br /><span class="bld caps">Examination Question managed by <span class="pri">${question.owner.name}</span></span></c:if>
+<c:if test="${ourAirline != question.owner.code}"><br /><span class="bld caps">Examination Question managed by <span class="pri">${question.owner.name}</span></span></c:if>
  </td>
 </tr>
 <%@ include file="/jsp/auditLog.jspf" %>

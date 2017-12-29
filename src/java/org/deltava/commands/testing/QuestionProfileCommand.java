@@ -2,12 +2,13 @@
 package org.deltava.commands.testing;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.Connection;
 
-import org.deltava.beans.AuditLog;
-import org.deltava.beans.FileUpload;
+import org.deltava.beans.*;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.Airport;
+import org.deltava.beans.system.AirlineInformation;
 import org.deltava.beans.testing.*;
 
 import org.deltava.commands.*;
@@ -15,14 +16,14 @@ import org.deltava.comparators.AirportComparator;
 import org.deltava.dao.*;
 
 import org.deltava.security.command.QuestionProfileAccessControl;
-import org.deltava.util.BeanUtils;
-import org.deltava.util.StringUtils;
+
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to support the modification of Examination Question Profiles.
  * @author Luke
- * @version 7.4
+ * @version 8.1
  * @since 1.0
  */
 
@@ -101,15 +102,18 @@ public class QuestionProfileCommand extends AbstractAuditFormCommand {
 				throw securityException("Cannot modify Examination Question Profile");
 
 			// Load the fields from the request
+			Collection<String> myExamNames = new HashSet<String>(ctx.getParameters("examNames", Collections.emptySet())); 
 			qp.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
-			Collection<String> examNames = ctx.getParameters("examNames");
-			if (examNames != null)
-				qp.setExams(examNames);
-			else
-				qp.setExams(Collections.emptySet());
+			qp.setAirlines(ctx.getParameters("airlines", Collections.emptySet()).stream().map(ac -> SystemData.getApp(ac)).filter(Objects::nonNull).collect(Collectors.toSet()));
+			
+			// Check if we are in any exams for airlines not included
+			GetExamProfiles epdao = new GetExamProfiles(con); final QuestionProfile fqp = qp; 
+			Collection<ExamProfile> qExams = epdao.getAllExamProfiles().stream().filter(exp -> fqp.getExams().contains(exp.getName())).collect(Collectors.toSet());
+			myExamNames.addAll(qExams.stream().filter(ep -> fqp.getAirlines().contains(ep.getOwner())).map(ExamProfile::getName).collect(Collectors.toSet())); // load exams from other airlines
+			qp.setExams(myExamNames);
 			
 			// Check audit log
-			Collection<BeanUtils.PropertyChange> delta = BeanUtils.getDelta(oqp, qp);
+			Collection<BeanUtils.PropertyChange> delta = BeanUtils.getDelta(oqp, qp, "inputStream");
 			AuditLog ae = AuditLog.create(qp, delta, ctx.getUser().getID());
 
 			// Start a transaction
@@ -130,11 +134,9 @@ public class QuestionProfileCommand extends AbstractAuditFormCommand {
 			}
 			
 			// Write audit log
+			ctx.setAttribute("question", qp, REQUEST);
 			writeAuditLog(ctx, ae);
 			ctx.commitTX();
-
-			// Save the question in the request
-			ctx.setAttribute("question", qp, REQUEST);
 		} catch (DAOException de) {
 			ctx.rollbackTX();
 			throw new CommandException(de);
@@ -159,8 +161,7 @@ public class QuestionProfileCommand extends AbstractAuditFormCommand {
 	 */
 	@Override
 	protected void execEdit(CommandContext ctx) throws CommandException {
-		boolean doEdit = false;
-		boolean isRP = false;
+		boolean doEdit = false; boolean isRP = false;
 		try {
 			Connection con = ctx.getConnection();
 
@@ -181,16 +182,17 @@ public class QuestionProfileCommand extends AbstractAuditFormCommand {
 			ctx.setAttribute("access", access, REQUEST);
 			readAuditLog(ctx, qp);
 
-			// Determine if the user uses IATA/ICAO codes
-			boolean useIATA = (ctx.getUser().getAirportCodeType() == Airport.Code.IATA);
-			ctx.setAttribute("useIATA", Boolean.valueOf(useIATA), REQUEST);
-
-			// Get exam names
+			// Get exam names - if we're editing,
+			AirlineInformation ourAirline = SystemData.getApp(null);
 			GetExamProfiles epdao = new GetExamProfiles(con);
-			if (doEdit)
-				ctx.setAttribute("examNames", epdao.getAllExamProfiles(), REQUEST);
-			else
-				ctx.setAttribute("examNames", epdao.getExamProfiles(), REQUEST);
+			Collection<ExamProfile> allExams = epdao.getAllExamProfiles();
+			Collection<ExamProfile> myExams = allExams.stream().filter(ex -> ex.getOwner().equals(ourAirline)).collect(Collectors.toList());
+			if (doEdit) {
+				ctx.setAttribute("examNames", myExams, REQUEST);
+				if (qp != null)
+					ctx.setAttribute("otherExamNames", CollectionUtils.getDelta(allExams, myExams).stream().filter(ex -> qp.getExams().contains(ex.getName())).collect(Collectors.toSet()), REQUEST);
+			} else
+				ctx.setAttribute("examNames", myExams, REQUEST);
 
 			// Set the center of the map
 			if (qp == null) {
