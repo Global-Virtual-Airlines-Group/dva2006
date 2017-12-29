@@ -1,6 +1,7 @@
 // Copyright 2007, 2008, 2009, 2010, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
+import java.time.*;
 import java.util.*;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -50,7 +51,7 @@ public class MyFlightsService extends WebService {
 			// Load statistics
 			GetFlightReportStatistics stdao = new GetFlightReportStatistics(ctx.getConnection());
 			results = stdao.getPIREPStatistics(userID, FlightStatsSort.LEGS, FlightStatsGroup.EQ);
-			stageStats = stdao.getStageStatistics(userID, FlightStatsGroup.MONTH);
+			stageStats = stdao.getStageStatistics(userID);
 			vsStats = stdao.getLandingCounts(userID, 50);
 			landings = stdao.getLandingData(userID);
 		} catch (DAOException de) {
@@ -130,7 +131,10 @@ public class MyFlightsService extends WebService {
 		JSONArray jdo = new JSONArray();
 		for (StageStatsEntry entry : stageStats) {
 			JSONArray da = new JSONArray();
-			da.put(entry.getLabel());
+			LocalDateTime ldt = LocalDateTime.ofInstant(entry.getDate(), ZoneOffset.UTC);
+			JSONObject dto = new JSONObject();
+			dto.put("y", ldt.getYear()); dto.put("m", ldt.getMonthValue()); dto.put("d", ldt.getDayOfMonth());
+			da.put(dto);
 			for (int x = 1; x <= maxStage; x++)
 				da.put(entry.getLegs(x));
 

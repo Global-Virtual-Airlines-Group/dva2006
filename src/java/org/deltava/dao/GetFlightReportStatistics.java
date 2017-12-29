@@ -3,6 +3,7 @@ package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
+import java.time.Instant;
 
 import org.deltava.beans.*;
 import org.deltava.beans.flight.FlightReport;
@@ -519,19 +520,16 @@ public class GetFlightReportStatistics extends DAO {
 	/**
 	 * Returns flight statistics by date and stage.
 	 * @param pilotID the Pilot's database ID or zero for all pilots
-	 * @param grp the statistics grouping option
 	 * @return a Collection of StageStatsEntry beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<StageStatsEntry> getStageStatistics(int pilotID, FlightStatsGroup grp) throws DAOException {
+	public Collection<StageStatsEntry> getStageStatistics(int pilotID) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT ");
-		sqlBuf.append(grp.getSQL());
-		sqlBuf.append(" AS LABEL, IFNULL(ES.MAXSTAGE, 1) AS STG, COUNT(F.ID) AS LEGS, SUM(F.FLIGHT_TIME) AS HRS FROM PIREPS F LEFT JOIN EQSTAGES ES ON (F.EQTYPE=ES.RATED_EQ) WHERE (F.STATUS=?) ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT DATE_SUB(F.DATE, INTERVAL (DAY(F.DATE)-1) DAY) AS LABEL, IFNULL(ES.MAXSTAGE, 1) AS STG, COUNT(F.ID) AS LEGS, SUM(F.FLIGHT_TIME) AS HRS FROM PIREPS F LEFT JOIN EQSTAGES ES ON (F.EQTYPE=ES.RATED_EQ) WHERE (F.STATUS=?) ");
 		if (pilotID != 0)
 			sqlBuf.append("AND (F.PILOT_ID=?) ");
-		sqlBuf.append("GROUP BY LABEL, STG ORDER BY F.DATE, STG");
+		sqlBuf.append("GROUP BY LABEL, STG ORDER BY LABEL, STG");
 		
 		try {
 			prepareStatement(sqlBuf.toString());
@@ -543,9 +541,9 @@ public class GetFlightReportStatistics extends DAO {
 			Collection<StageStatsEntry> results = new ArrayList<StageStatsEntry>(); StageStatsEntry sse = null;
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
-					String label = rs.getString(1);
-					if ((sse == null) || !sse.getLabel().equals(label)) {
-						sse = new StageStatsEntry(label);
+					Instant dt = toInstant(rs.getTimestamp(1));
+					if ((sse == null) || !sse.getDate().equals(dt)) {
+						sse = new StageStatsEntry(dt);
 						results.add(sse);
 					}
 					
