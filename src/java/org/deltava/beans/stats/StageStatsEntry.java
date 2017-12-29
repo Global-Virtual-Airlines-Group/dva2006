@@ -2,6 +2,8 @@
 package org.deltava.beans.stats;
 
 import java.util.*;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 import org.deltava.util.Tuple;
 
@@ -16,24 +18,24 @@ public class StageStatsEntry implements java.io.Serializable {
 
 	private static final Tuple<Integer, Double> ZERO = Tuple.create(Integer.valueOf(0), Double.valueOf(0));
 	
-	private final String _label;
+	private final Instant _dt;
 	private final SortedMap<Integer, Tuple<Integer, Double>> _legs = new TreeMap<Integer, Tuple<Integer, Double>>();
 
 	/**
 	 * Creates the bean.
-	 * @param l the label
+	 * @param dt the date/time
 	 */
-	public StageStatsEntry(String l) {
+	public StageStatsEntry(Instant dt) {
 		super();
-		_label = l;
+		_dt = dt.truncatedTo(ChronoUnit.DAYS);
 	}
 	
 	/**
-	 * Returns the label.
-	 * @return the label
+	 * Returns the date.
+	 * @return the date
 	 */
-	public String getLabel() {
-		return _label;
+	public Instant getDate() {
+		return _dt;
 	}
 	
 	/**
@@ -74,6 +76,6 @@ public class StageStatsEntry implements java.io.Serializable {
 	
 	@Override
 	public int hashCode() {
-		return _label.hashCode();
+		return _dt.hashCode();
 	}
 }

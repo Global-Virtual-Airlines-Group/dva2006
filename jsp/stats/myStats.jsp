@@ -105,7 +105,7 @@ golgotha.local.validate = function(f) {
  <td><div id="landingSct" style="width:100%; height:350px;"></div></td>
 </tr>
 <tr>
- <td colspan="2"><div id="stageStats" style="width:100%; height:320px;"></div></td>
+ <td colspan="2"><div id="stageStats" style="width:100%; height:340px;"></div></td>
 </tr>
 
 <!-- Button Bar -->
@@ -135,18 +135,6 @@ xmlreq.onreadystatechange = function() {
 	data.addColumn('number','Flight Legs');
 	data.addRows(statsData.eqCount);
 	chart.draw(data,{title:'Flights by Equipment Type',is3D:true,legend:'none',theme:'maximized'});
-
-	// Display stage by date chart
-	var chart = new google.visualization.ColumnChart(document.getElementById('stageStats'));
-	var data = new google.visualization.DataTable();
-	statsData.calendar.forEach(function(e) { e[0] = new Date(e[0]); });
-	data.addColumn('date', 'Date');
-	for (var st = 1; st <= statsData.maxStage; st++)
-		data.addColumn('number', 'Stage ' + st);
-
-	data.addRows(statsData.calendar);
-	var mnStyle = {gridlines:{color:'#cce'},minorGridlines:{count:12},title:'Month',format:'MMMM yyyy'};
-	chart.draw(data,{title:'Flights by Date/Stage',isStacked:true,fontSize:10,hAxis:mnStyle,vAxis:{title:'Flight Legs'}});
 
 	// Display the vertical speed chart
 	var chart = new google.visualization.BarChart(document.getElementById('landingSpd'));
@@ -178,7 +166,19 @@ xmlreq.onreadystatechange = function() {
 	data.addColumn('string','Landing Quality');
 	data.addColumn('number','Flight Legs');	
 	data.addRows(statsData.landingQuality);
-	chart.draw(data,{title:'Landing Assessments',is3D:true,colors:['green','orange','red'],theme:'maximized'});	
+	chart.draw(data,{title:'Landing Assessments',is3D:true,colors:['green','orange','red'],theme:'maximized'});
+
+	// Display stage by date chart
+	var chart = new google.visualization.ColumnChart(document.getElementById('stageStats'));
+	var data = new google.visualization.DataTable();
+	data.addColumn('date', 'Month');
+	for (var st = 1; st <= statsData.maxStage; st++)
+		data.addColumn('number', 'Stage ' + st);
+
+	statsData.calendar.forEach(function(e) { var dt = e[0]; e[0] = new Date(dt.y, dt.m, dt.d, 12, 0, 0); });
+	data.addRows(statsData.calendar);
+	var mnStyle = {gridlines:{color:'#cce'},minorGridlines:{count:12},title:'Month',format:'MMMM yyyy'};
+	chart.draw(data,{title:'Flights by Date/Stage',isStacked:true,fontSize:10,hAxis:mnStyle,vAxis:{title:'Flight Legs'},width:'100%'});
 	return true;
 };
 
