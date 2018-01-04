@@ -1,12 +1,14 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.*;
 
 import org.deltava.beans.TZInfo;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
+import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
@@ -14,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Airport data.
  * @author Luke
- * @version 7.0
+ * @version 8.1
  * @since 1.0
  */
 
@@ -49,11 +51,9 @@ public class GetAirport extends DAO {
 	 */
 	public Airport get(String code) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT A.*, ND.ALTITUDE, ND.REGION, IFNULL(MAX(R.LENGTH), MAX(RND.ALTITUDE)), "
-				+ "COUNT(DISTINCT GA.NAME) AS GCNT FROM common.AIRPORTS A LEFT JOIN common.NAVDATA ND ON "
-				+ "((ND.CODE=A.ICAO) AND (ND.ITEMTYPE=?)) LEFT JOIN common.RUNWAYS R ON (A.ICAO=R.ICAO) LEFT JOIN "
-				+ "common.NAVDATA RND ON ((RND.CODE=A.ICAO) AND (RND.ITEMTYPE=?)) LEFT JOIN common.GATE_AIRLINES GA "
-				+ "ON (GA.ICAO=A.ICAO) WHERE ((A.ICAO=?) OR (A.IATA=?)) GROUP BY A.IATA LIMIT 1");
+			prepareStatementWithoutLimits("SELECT A.*, ND.ALTITUDE, ND.REGION, IFNULL(MAX(R.LENGTH), MAX(RND.ALTITUDE)), COUNT(DISTINCT GA.NAME) AS GCNT FROM common.AIRPORTS A "
+				+ "LEFT JOIN common.NAVDATA ND ON ((ND.CODE=A.ICAO) AND (ND.ITEMTYPE=?)) LEFT JOIN common.RUNWAYS R ON (A.ICAO=R.ICAO) LEFT JOIN common.NAVDATA RND "
+				+ "ON ((RND.CODE=A.ICAO) AND (RND.ITEMTYPE=?)) LEFT JOIN common.GATE_AIRLINES GA ON (GA.ICAO=A.ICAO) WHERE ((A.ICAO=?) OR (A.IATA=?)) GROUP BY A.IATA LIMIT 1");
 			_ps.setInt(1, Navaid.AIRPORT.ordinal());
 			_ps.setInt(2, Navaid.RUNWAY.ordinal());
 			_ps.setString(3, code.toUpperCase());
@@ -107,11 +107,9 @@ public class GetAirport extends DAO {
 	public Collection<Airport> getByAirline(Airline al, String sortBy) throws DAOException {
 		
 		// Build SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT A.*, ND.ALTITUDE, ND.REGION, IFNULL(MAX(R.LENGTH), MAX(RND.ALTITUDE)), "
-			+ "COUNT(DISTINCT GA.NAME) AS GCNT FROM common.AIRPORTS A LEFT JOIN common.AIRPORT_AIRLINE AA ON ((AA.APPCODE=?) AND "
-			+ "(A.IATA=AA.IATA)) LEFT JOIN common.NAVDATA ND ON ((ND.CODE=A.ICAO) AND (ND.ITEMTYPE=?)) LEFT JOIN common.RUNWAYS R "
-			+ "ON (A.ICAO=R.ICAO) LEFT JOIN common.NAVDATA RND ON ((RND.CODE=A.ICAO) AND (RND.ITEMTYPE=?)) LEFT JOIN "
-			+ "common.GATE_AIRLINES GA ON (A.ICAO=GA.ICAO) WHERE ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT A.*, ND.ALTITUDE, ND.REGION, IFNULL(MAX(R.LENGTH), MAX(RND.ALTITUDE)), COUNT(DISTINCT GA.NAME) AS GCNT FROM common.AIRPORTS A "
+			+ "LEFT JOIN common.AIRPORT_AIRLINE AA ON ((AA.APPCODE=?) AND (A.IATA=AA.IATA)) LEFT JOIN common.NAVDATA ND ON ((ND.CODE=A.ICAO) AND (ND.ITEMTYPE=?)) "
+			+ "LEFT JOIN common.RUNWAYS R ON (A.ICAO=R.ICAO) LEFT JOIN common.NAVDATA RND ON ((RND.CODE=A.ICAO) AND (RND.ITEMTYPE=?)) LEFT JOIN common.GATE_AIRLINES GA ON (A.ICAO=GA.ICAO) WHERE ");
 		sqlBuf.append((al == null) ? "(AA.CODE IS NULL)" : "(AA.CODE=?)");
 		sqlBuf.append(" GROUP BY A.IATA");
 		if (!StringUtils.isEmpty(sortBy)) {
@@ -190,18 +188,18 @@ public class GetAirport extends DAO {
 	 */
 	public Collection<Airport> getEventAirports() throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT EA.AIRPORT_D, EA.AIRPORT_A FROM events.EVENT_AIRPORTS EA, events.EVENTS E "
-				+ "WHERE (E.ID=EA.ID) AND (E.ENDTIME > NOW())");
+			Collection<Airline> airlines = SystemData.getApps().stream().map(AirlineInformation::getCode).map(c -> SystemData.getAirline(c)).filter(Objects::nonNull).collect(Collectors.toSet());
+			prepareStatementWithoutLimits("SELECT EA.AIRPORT_D, EA.AIRPORT_A FROM events.EVENT_AIRPORTS EA, events.EVENTS E WHERE (E.ID=EA.ID) AND (E.ENDTIME > NOW())");
 			
 			// Execute the query
 			Collection<Airport> results = new LinkedHashSet<Airport>();
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
 					Airport aD = (Airport) SystemData.getAirport(rs.getString(1)).clone();
-					aD.addAirlineCode(_appCode);
+					airlines.forEach(al -> aD.addAirlineCode(al.getCode()));
 					results.add(aD);
 					Airport aA = (Airport) SystemData.getAirport(rs.getString(2)).clone();
-					aA.addAirlineCode(_appCode);
+					airlines.forEach(al -> aA.addAirlineCode(al.getCode()));
 					results.add(aA);
 				}
 			}
@@ -245,11 +243,9 @@ public class GetAirport extends DAO {
 	public Map<String, Airport> getAll() throws DAOException {
 		Map<String, Airport> results = new HashMap<String, Airport>();
 		try {
-			prepareStatementWithoutLimits("SELECT A.*, ND.ALTITUDE, ND.REGION, IFNULL(MAX(R.LENGTH), MAX(RND.ALTITUDE)), "
-				+ "COUNT(DISTINCT GA.NAME) AS GCNT FROM common.AIRPORTS A LEFT JOIN common.NAVDATA ND ON "
-				+ "((ND.CODE=A.ICAO) AND (ND.ITEMTYPE=?)) LEFT JOIN common.NAVDATA RND ON ((RND.CODE=A.ICAO) AND "
-				+ "(RND.ITEMTYPE=?)) LEFT JOIN common.RUNWAYS R ON (A.ICAO=R.ICAO) LEFT JOIN common.GATE_AIRLINES GA "
-				+ "ON (GA.ICAO=A.ICAO) GROUP BY A.IATA");
+			prepareStatementWithoutLimits("SELECT A.*, ND.ALTITUDE, ND.REGION, IFNULL(MAX(R.LENGTH), MAX(RND.ALTITUDE)), COUNT(DISTINCT GA.NAME) AS GCNT FROM common.AIRPORTS A "
+				+ "LEFT JOIN common.NAVDATA ND ON ((ND.CODE=A.ICAO) AND (ND.ITEMTYPE=?)) LEFT JOIN common.NAVDATA RND ON ((RND.CODE=A.ICAO) AND (RND.ITEMTYPE=?)) "
+				+ "LEFT JOIN common.RUNWAYS R ON (A.ICAO=R.ICAO) LEFT JOIN common.GATE_AIRLINES GA ON (GA.ICAO=A.ICAO) GROUP BY A.IATA");
 			_ps.setInt(1, Navaid.AIRPORT.ordinal());
 			_ps.setInt(2, Navaid.RUNWAY.ordinal());
 			
@@ -335,8 +331,7 @@ public class GetAirport extends DAO {
 	public Map<Airline, Integer> getAirportCounts() throws DAOException {
 		try {
 			Map<Airline, Integer> results = new LinkedHashMap<Airline, Integer>();
-			prepareStatementWithoutLimits("SELECT CODE, COUNT(DISTINCT IATA) AS CNT FROM common.AIRPORT_AIRLINE "
-				+ "GROUP BY CODE ORDER BY CNT DESC");
+			prepareStatementWithoutLimits("SELECT CODE, COUNT(DISTINCT IATA) AS CNT FROM common.AIRPORT_AIRLINE GROUP BY CODE ORDER BY CNT DESC");
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
 					Airline al = SystemData.getAirline(rs.getString(1));
