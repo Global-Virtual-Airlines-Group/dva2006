@@ -106,7 +106,7 @@ public class AirportInformationCommand extends AbstractCommand {
 		ctx.setAttribute("airports", airports, REQUEST);
 		
 		// Calculate sunrise / sunset
-		ZonedDateTime zdt = ZonedDateTime.of(LocalDateTime.now(), a.getTZ().getZone());
+		ZonedDateTime zdt = ZonedDateTime.ofInstant(Instant.now(), a.getTZ().getZone());
 		ctx.setAttribute("sunrise", SunriseSunset.getSunrise(a, zdt), REQUEST);
 		ctx.setAttribute("sunset", SunriseSunset.getSunset(a, zdt), REQUEST);
 		ctx.setAttribute("localTime", zdt, REQUEST);

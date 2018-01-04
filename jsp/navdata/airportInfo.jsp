@@ -62,13 +62,13 @@ golgotha.local.update = function(combo) {
 <td class="data pri bld caps">Continuous ${isSummer ? 'Daylight' : 'Darkness'}</td>
 </c:when> 
 <c:when test="${empty sunrise}">
- <td class="data sec bld">Continuous Darkness begins at <fmt:date date="${sunset}" fmt="t" /></td>
+ <td class="data sec bld">Continuous Darkness begins at <fmt:date date="${sunset}" fmt="t" tz="${airport.TZ}" /></td>
 </c:when>
 <c:when test="${empty sunset}">
- <td class="data sec bld">Continuous Daylight begins at <fmt:date date="${sunrise}" fmt="t" /></td>
+ <td class="data sec bld">Continuous Daylight begins at <fmt:date date="${sunrise}" fmt="t" tz="${airport.TZ}" /></td>
 </c:when>
 <c:otherwise>
- <td class="data">Sun rises at <fmt:date date="${sunrise}" fmt="t" />, sets at <fmt:date date="${sunset}" fmt="t" /></td>
+ <td class="data">Sun rises at <fmt:date date="${sunrise}" fmt="t" tz="${airport.TZ}" />, sets at <fmt:date date="${sunset}" fmt="t" tz="${airport.TZ}" /></td>
 </c:otherwise>
 </c:choose>
 </tr>
