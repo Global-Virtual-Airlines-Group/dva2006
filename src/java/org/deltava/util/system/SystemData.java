@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.system;
 
 import java.io.*;
@@ -262,8 +262,7 @@ public final class SystemData implements Serializable {
 	}
 	
 	/**
-	 * Returns information about all virtual airlines on this server. The current virtual airline will
-	 * be the first member of this collection.
+	 * Returns information about all virtual airlines on this server. The current virtual airline will be the first member of this collection.
 	 * @return a Collection of AirlineInformation beans
 	 */
 	public static Collection<AirlineInformation> getApps() {
@@ -272,7 +271,10 @@ public final class SystemData implements Serializable {
 		
 		Map<?, ?> apps = (Map<?, ?>) getObject("apps");
 		Collection<AirlineInformation> results = new LinkedHashSet<AirlineInformation>();
-		results.add(getApp(get("airline.code")));
+		AirlineInformation thisAirline = getApp(get("airline.code"));
+		if (thisAirline != null)
+			results.add(thisAirline);
+		
 		for (Iterator<?> i = apps.values().iterator(); i.hasNext(); )
 			results.add((AirlineInformation) i.next());
 		
