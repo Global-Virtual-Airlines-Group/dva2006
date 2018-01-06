@@ -1,12 +1,15 @@
-// Copyright 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.io.*;
+import java.util.*;
+import java.nio.file.*;
+import java.nio.file.attribute.*;
 
 /**
  * A utility class for filesystem functions. 
  * @author Luke
- * @version 7.0
+ * @version 8.1
  * @since 4.2
  */
 
@@ -30,9 +33,8 @@ public class FileUtils {
 		
 		File newest = null;
 		for (int x = 0; x < files.length; x++) {
-			File f = files[x];
-			if ((newest == null) || (f.lastModified() > newest.lastModified()))
-				newest = f;
+			if ((newest == null) || (files[x].lastModified() > newest.lastModified()))
+				newest = files[x];
 		}
 		
 		return newest;
@@ -54,5 +56,43 @@ public class FileUtils {
 	            String n = name.toLowerCase();
 	            return n.startsWith(p) && n.endsWith(e);
 	          }};
+	}
+	
+	/**
+	 * Sets the owner and group membership for a file.
+	 * @param f the File
+	 * @param owner the owner name
+	 * @param group the group name
+	 * @throws IOException if an error occurs 
+	 */
+	public static void setOwner(File f, String owner, String group) throws IOException {
+		Path p = f.toPath();
+		UserPrincipalLookupService lookupService = FileSystems.getDefault().getUserPrincipalLookupService();
+		if (!StringUtils.isEmpty(group)) {
+			GroupPrincipal grp = lookupService.lookupPrincipalByGroupName(group);
+			Files.setAttribute(p, "posix:group", grp, LinkOption.NOFOLLOW_LINKS);
+		}
+		
+		if (!StringUtils.isEmpty(owner)) {
+			UserPrincipal usr = lookupService.lookupPrincipalByName(owner);
+			Files.setOwner(p, usr);
+		}
+	}
+	
+	/**
+	 * Sets the permissions for a file.
+	 * @param f the File
+	 * @param permissions the permission names
+	 * @throws IOException if an error occurs
+	 * @see PosixFilePermission
+	 */
+	public static void setPermissions(File f, String... permissions) throws IOException {
+		
+		// Parse permission names
+		Set<PosixFilePermission> perms = new HashSet<PosixFilePermission>();
+		for (int x = 0; x < permissions.length; x++) 
+			perms.add(PosixFilePermission.valueOf(permissions[x]));
+		
+		Files.setPosixFilePermissions(f.toPath(), perms);
 	}
 }
