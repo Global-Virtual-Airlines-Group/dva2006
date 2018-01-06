@@ -719,10 +719,10 @@
 		<enabled type="Boolean">true</enabled>
 		<max_offline_size type="Integer">4096000</max_offline_size>
 
-		<!-- Archive settings -->
+		<!-- Archive file permissions -->
 		<archive>
-			<path>/home/backup/acars</path>		
-			<buckets type="Integer">384</buckets>
+			<owner>dva</owner>
+			<group>users</group>
 		</archive>
 
 		<!-- Live map settings -->
