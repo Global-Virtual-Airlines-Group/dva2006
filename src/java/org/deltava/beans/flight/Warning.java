@@ -19,17 +19,17 @@ public enum Warning {
 	private final FlightScore _score;
 
 	/**
-	 * 
-	 * @param description
+	 * Creates the warning with an Acceptable score.
+	 * @param description the warning text
 	 */
 	Warning(String description) {
 		this(description, FlightScore.ACCEPTABLE);
 	}
 	
 	/**
-	 * 
-	 * @param description
-	 * @param score
+	 * Creates a warning.
+	 * @param description the warning text
+	 * @param score the FlightScore maximum
 	 */
 	Warning(String description, FlightScore score) {
 		_desc = description;
