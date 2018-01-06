@@ -1,8 +1,7 @@
-// Copyright 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import org.deltava.beans.acars.ACARSRouteEntry;
 import org.deltava.beans.navdata.Runway;
@@ -11,7 +10,7 @@ import org.deltava.beans.schedule.Aircraft;
 /**
  * A bean to store data used to generate a Flight Score. 
  * @author Luke
- * @version 8.0
+ * @version 8.1
  * @since 8.0
  */
 
@@ -23,6 +22,21 @@ public class ScorePackage {
 	private final Runway _rA;
 	
 	private final Collection<ACARSRouteEntry> _data = new ArrayList<ACARSRouteEntry>();
+	
+	private FlightScore _result = FlightScore.INCOMPLETE;
+	
+	/**
+	 * Comparator to sort warnings by severity in addition to ordinal.
+	 */
+	static class WarningComparator implements Comparator<Warning> {
+
+		@Override
+		public int compare(Warning w0, Warning w1) {
+			
+			int tmpResult = w0.getScore().compareTo(w1.getScore());
+			return (tmpResult == 0) ? w0.compareTo(w1) : tmpResult;
+		}
+	}
 	
 	/**
 	 * Creates a Flight Scoring package.
@@ -92,6 +106,24 @@ public class ScorePackage {
 	 * @return a Collection of Warnings
 	 */
 	public Collection<Warning> getWarnings() {
-		return _data.stream().map(ACARSRouteEntry::getWarnings).flatMap(Collection::stream).collect(Collectors.toSet());
+		Collection<Warning> results = new TreeSet<Warning>(new WarningComparator());
+		_data.stream().map(ACARSRouteEntry::getWarnings).flatMap(Collection::stream).filter(w -> w.getScore() != FlightScore.OPTIMAL).forEach(results::add);
+		return results;
+	}
+	
+	/**
+	 * Returns the flight's score.
+	 * @return the FlightScore
+	 */
+	public FlightScore getResult() {
+		return _result;
+	}
+	
+	/**
+	 * Updates the flight's score.
+	 * @param fs the FlightScore
+	 */
+	void setResult(FlightScore fs) {
+		_result = fs;
 	}
 }
