@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -26,7 +26,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display the Pilot Center.
  * @author Luke
- * @version 8.0
+ * @version 8.1
  * @since 1.0
  */
 
@@ -111,8 +111,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			// Load all PIREPs and save the latest PIREP as a separate bean in the request
 			frdao.setQueryMax(10); FlightReport lastFlight = null;
 			List<FlightReport> results = frdao.getByPilot(p.getID(), new ScheduleSearchCriteria("SUBMITTED DESC"));
-			for (Iterator<FlightReport> i = results.iterator(); i.hasNext();) {
-				FlightReport fr = i.next();
+			for (FlightReport fr : results) {
 				if ((fr.getStatus() != FlightReport.DRAFT) && (fr.getStatus() != FlightReport.REJECTED)) {
 					lastFlight = fr;
 					ctx.setAttribute("lastFlight", fr, REQUEST);
@@ -148,10 +147,11 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 
 			// Get the PIREP disposal queue sizes
 			if (ctx.isUserInRole("PIREP")) {
+				boolean isAcademy = ctx.isUserInRole("Instructor") || ctx.isUserInRole("AcademyAdmin") || ctx.isUserInRole("AcademyAudit");
 				String eqType = ctx.isUserInRole("HR") ? null : p.getEquipmentType();
 				GetFlightReportQueue frqdao = new GetFlightReportQueue(con);
 				ctx.setAttribute("pirepQueueStats", frqdao.getDisposalQueueStats(eqType), REQUEST);
-				ctx.setAttribute("checkRideQueueSize", Integer.valueOf(prdao.getCheckRideQueueSize(eqType)), REQUEST);
+				ctx.setAttribute("checkRideQueueSize", Integer.valueOf(prdao.getCheckRideQueueSize(eqType, isAcademy)), REQUEST);
 			}
 			
 			// Initialize the testing history helper and check for test lockout

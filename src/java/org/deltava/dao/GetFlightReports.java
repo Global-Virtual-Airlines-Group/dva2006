@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Flight Reports.
  * @author Luke
- * @version 8.0
+ * @version 8.1
  * @since 1.0
  */
 
@@ -144,10 +144,8 @@ public class GetFlightReports extends DAO {
 	public List<FlightReport> getByStatus(Collection<Integer> status, String orderBy) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, PC.REMARKS, APR.*, GROUP_CONCAT(ER.EQTYPE) "
-			+ "FROM PILOTS P, PIREPS PR LEFT JOIN PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ACARS_PIREPS "
-			+ "APR ON (PR.ID=APR.ID) LEFT JOIN EQRATINGS ER ON (ER.RATED_EQ=PR.EQTYPE) AND "
-			+ "(ER.RATING_TYPE=?) WHERE (P.ID=PR.PILOT_ID) AND (");
+		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, PC.REMARKS, APR.*, GROUP_CONCAT(ER.EQTYPE) FROM PILOTS P, PIREPS PR LEFT JOIN PIREP_COMMENT PC ON (PR.ID=PC.ID) "
+			+ "LEFT JOIN ACARS_PIREPS APR ON (PR.ID=APR.ID) LEFT JOIN EQRATINGS ER ON (ER.RATED_EQ=PR.EQTYPE) AND (ER.RATING_TYPE=?) WHERE (P.ID=PR.PILOT_ID) AND (");
 		for (Iterator<Integer> i = status.iterator(); i.hasNext();) {
 			Integer st = i.next();
 			sqlBuf.append("(PR.STATUS=");
@@ -172,24 +170,28 @@ public class GetFlightReports extends DAO {
 	/**
 	 * Returns the number of Flight Reports awaiting disposition.
 	 * @param eqType the equipment type, or null if all
+	 * @param includeAcademy TRUE if Flight Academy check rides should be counted, otherwise FALSE
 	 * @return the number Check Ride Flight Reports in SUBMITTED status
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public int getCheckRideQueueSize(String eqType) throws DAOException {
+	public int getCheckRideQueueSize(String eqType, boolean includeAcademy) throws DAOException {
 		
 		// Build the SQL Statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT COUNT(F.ID) FROM PIREPS F, EQRATINGS R WHERE "
-				+ "(F.EQTYPE=R.RATED_EQ) AND (R.RATING_TYPE=?) AND (F.STATUS=?) AND ((F.ATTR & ?) > 0)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT COUNT(F.ID) FROM PIREPS F, EQRATINGS R WHERE (F.EQTYPE=R.RATED_EQ) AND (R.RATING_TYPE=?) AND (F.STATUS=?) AND ((F.ATTR & ?) > 0)");
+		if (!includeAcademy)
+			sqlBuf.append(" AND ((F.ATTR & ?) > 0)");
 		if (eqType != null)
 			sqlBuf.append(" AND (R.EQTYPE=?)");
 		
 		try {
-			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setInt(1, EquipmentType.Rating.PRIMARY.ordinal());
-			_ps.setInt(2, FlightReport.SUBMITTED);
-			_ps.setInt(3, FlightReport.ATTR_CHECKRIDE);
+			prepareStatementWithoutLimits(sqlBuf.toString()); int param = 0;
+			_ps.setInt(++param, EquipmentType.Rating.PRIMARY.ordinal());
+			_ps.setInt(++param, FlightReport.SUBMITTED);
+			_ps.setInt(++param, FlightReport.ATTR_CHECKRIDE);
+			if (!includeAcademy)
+				_ps.setInt(++param, FlightReport.ATTR_ACADEMY);
 			if (eqType != null)
-				_ps.setString(4, eqType);
+				_ps.setString(++param, eqType);
 
 			// Execute the query
 			int results = 0;
@@ -303,9 +305,8 @@ public class GetFlightReports extends DAO {
 	 */
 	public List<FlightReport> getLogbookCalendar(int id, java.time.Instant startDate, int days) throws DAOException {
 		try {
-			prepareStatement("SELECT PR.*, PC.COMMENTS, PC.REMARKS, APR.* FROM PIREPS PR LEFT JOIN PIREP_COMMENT PC "
-				+ "ON (PR.ID=PC.ID) LEFT JOIN ACARS_PIREPS APR ON (PR.ID=APR.ID) WHERE (PR.PILOT_ID=?) AND "
-				+ "(PR.DATE >= ?) AND (PR.DATE < DATE_ADD(?, INTERVAL ? DAY)) ORDER BY PR.DATE, PR.ID");
+			prepareStatement("SELECT PR.*, PC.COMMENTS, PC.REMARKS, APR.* FROM PIREPS PR LEFT JOIN PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ACARS_PIREPS APR ON (PR.ID=APR.ID) "
+				+ "WHERE (PR.PILOT_ID=?) AND (PR.DATE >= ?) AND (PR.DATE < DATE_ADD(?, INTERVAL ? DAY)) ORDER BY PR.DATE, PR.ID");
 			_ps.setInt(1, id);
 			_ps.setTimestamp(2, createTimestamp(startDate));
 			_ps.setTimestamp(3, createTimestamp(startDate));
@@ -402,17 +403,15 @@ public class GetFlightReports extends DAO {
 	public void getOnlineTotals(Map<Integer, Pilot> pilots, String dbName) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT FR.PILOT_ID, COUNT(IF((FR.ATTR & ?) != 0, FR.FLIGHT_TIME, NULL)) AS OC, "
-				+ "ROUND(SUM(IF((FR.ATTR & ?) != 0, FR.FLIGHT_TIME, 0)), 1) AS OH, COUNT(IF((FR.ATTR & ?) != 0, FR.FLIGHT_TIME, NULL)) "
-				+ "AS AC, ROUND(SUM(IF((FR.ATTR & ?) != 0, FR.FLIGHT_TIME, 0)), 1) AS AH, COUNT(IF(FR.EVENT_ID > 0, FR.ID, NULL)) "
-				+ "AS EC, ROUND(SUM(IF(FR.EVENT_ID > 0, FR.FLIGHT_TIME, 0)), 1) AS EH FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT FR.PILOT_ID, COUNT(IF((FR.ATTR & ?) != 0, FR.FLIGHT_TIME, NULL)) AS OC, ROUND(SUM(IF((FR.ATTR & ?) != 0, FR.FLIGHT_TIME, 0)), 1) AS OH, "
+			+ "COUNT(IF((FR.ATTR & ?) != 0, FR.FLIGHT_TIME, NULL)) AS AC, ROUND(SUM(IF((FR.ATTR & ?) != 0, FR.FLIGHT_TIME, 0)), 1) AS AH, COUNT(IF(FR.EVENT_ID > 0, FR.ID, NULL)) AS EC, "
+			+ "ROUND(SUM(IF(FR.EVENT_ID > 0, FR.FLIGHT_TIME, 0)), 1) AS EH FROM ");
 		sqlBuf.append(formatDBName(dbName));
 		sqlBuf.append(".PIREPS FR WHERE (FR.STATUS=?) AND FR.PILOT_ID IN (");
 
 		// Append the Pilot IDs
 		int setSize = 0;
-		for (Iterator<Pilot> i = pilots.values().iterator(); i.hasNext();) {
-			Pilot p = i.next();
+		for (Pilot p : pilots.values()) {
 			if ((p.getACARSLegs() < 0) || (p.getOnlineLegs() < 0)) {
 				setSize++;
 				sqlBuf.append(String.valueOf(p.getID()));
@@ -446,8 +445,7 @@ public class GetFlightReports extends DAO {
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
 					Pilot p = pilots.get(Integer.valueOf(rs.getInt(1)));
-					if (p == null)
-						continue;
+					if (p == null) continue;
 					
 					p.setOnlineLegs(rs.getInt(2));
 					p.setOnlineHours(rs.getDouble(3));
@@ -464,13 +462,7 @@ public class GetFlightReports extends DAO {
 		}
 		
 		// Set to zero
-		for (Iterator<Pilot> i = pilots.values().iterator(); i.hasNext();) {
-			Pilot p = i.next();
-			if ((p.getACARSLegs() < 0) || (p.getOnlineLegs() < 0)) {
-				p.setACARSLegs(Math.max(0, p.getACARSLegs()));
-				p.setOnlineLegs(Math.max(0, p.getOnlineLegs()));
-			}
-		}
+		pilots.values().forEach(p -> { p.setACARSLegs(Math.max(0, p.getACARSLegs())); p.setOnlineLegs(Math.max(0, p.getOnlineLegs())); });
 	}
 
 	/**
@@ -493,8 +485,7 @@ public class GetFlightReports extends DAO {
 		sqlBuf.append(db);
 		sqlBuf.append(".PIREP_ROUTE PRT ON (PR.ID=PRT.ID) LEFT JOIN ");
 		sqlBuf.append(db);
-		sqlBuf.append(".SCHEDULE S ON (S.AIRLINE=PR.AIRLINE) AND (S.FLIGHT=PR.FLIGHT) AND (S.LEG=PR.LEG) AND "
-				+ "(S.AIRPORT_D=PR.AIRPORT_D) AND (S.AIRPORT_A=PR.AIRPORT_A) WHERE (PR.PILOT_ID=?) AND (PR.STATUS=?)");
+		sqlBuf.append(".SCHEDULE S ON (S.AIRLINE=PR.AIRLINE) AND (S.FLIGHT=PR.FLIGHT) AND (S.LEG=PR.LEG) AND (S.AIRPORT_D=PR.AIRPORT_D) AND (S.AIRPORT_A=PR.AIRPORT_A) WHERE (PR.PILOT_ID=?) AND (PR.STATUS=?)");
 
 		// Add departure/arrival airports if specified
 		if (rp != null)
@@ -523,8 +514,7 @@ public class GetFlightReports extends DAO {
 	 */
 	public Collection<RouteStats> getRoutePairs(int pilotID) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT DISTINCT AIRPORT_D, AIRPORT_A, COUNT(ID) AS CNT FROM "
-				+ "PIREPS WHERE (PILOT_ID=?) AND (STATUS=?) GROUP BY AIRPORT_D, AIRPORT_A");
+			prepareStatementWithoutLimits("SELECT DISTINCT AIRPORT_D, AIRPORT_A, COUNT(ID) AS CNT FROM PIREPS WHERE (PILOT_ID=?) AND (STATUS=?) GROUP BY AIRPORT_D, AIRPORT_A");
 			_ps.setInt(1, pilotID);
 			_ps.setInt(2, FlightReport.OK);
 			
