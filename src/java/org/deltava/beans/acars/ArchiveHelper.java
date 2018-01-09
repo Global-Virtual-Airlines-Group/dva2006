@@ -57,6 +57,16 @@ public class ArchiveHelper {
 		File path = new File(SystemData.get("path.archive"), hash); path.mkdirs();
 		return new File(path, Integer.toHexString(id) + ".onl");
 	}
+	
+	/**
+	 * Returns a buffered Input stream to a File.
+	 * @param f the File
+	 * @return an InputStream
+	 * @throws IOException if an I/O error occurs
+	 */
+	public static InputStream getStream(File f) throws IOException {
+		return new BufferedInputStream(new FileInputStream(f));
+	}
 
 	/**
 	 * Sets permissions on an archive file.
