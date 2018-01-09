@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import static org.gvagroup.acars.ACARSFlags.*;
@@ -19,7 +19,7 @@ import org.deltava.dao.file.GetSerializedPosition;
 /**
  * A Data Access Object to load ACARS position data.
  * @author Luke
- * @version 8.0
+ * @version 8.1
  * @since 4.1
  */
 
@@ -172,7 +172,7 @@ public class GetACARSPositions extends GetACARSData {
 		
 		// Validate CRC-32
 		byte[] rawData = null; CRC32 crc = new CRC32();
-		try (InputStream is = new FileInputStream(f)) {
+		try (InputStream is = ArchiveHelper.getStream(f)) {
 			try (ByteArrayOutputStream out = new ByteArrayOutputStream(8192)) {
 				byte[] buffer = new byte[8192];
 				int bytesRead = is.read(buffer);

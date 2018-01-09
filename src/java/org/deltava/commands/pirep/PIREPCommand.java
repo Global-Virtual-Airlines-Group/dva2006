@@ -478,7 +478,7 @@ public class PIREPCommand extends AbstractFormCommand {
 					
 					// Get the flight score
 					ScorePackage pkg = new ScorePackage(acInfo, afr, info.getRunwayD(), info.getRunwayA());
-					if ((ctx.isUserInRole("PIREP") || afr.hasAttribute(FlightReport.ATTR_CHECKRIDE)) && (afr.getFDR() != Recorder.XACARS)) {
+					if (afr.hasAttribute(FlightReport.ATTR_CHECKRIDE) && (afr.getFDR() != Recorder.XACARS)) {
 						GetACARSPositions posdao = new GetACARSPositions(con);
 						Collection<GeospaceLocation> positions = posdao.getRouteEntries(info.getID(), true, info.getArchived());
 						positions.stream().filter(ACARSRouteEntry.class::isInstance).map(ACARSRouteEntry.class::cast).forEach(pkg::add);
@@ -529,7 +529,7 @@ public class PIREPCommand extends AbstractFormCommand {
 					// Load the serialized route
 					Collection<NavigationDataBean> rtePoints = new ArrayList<NavigationDataBean>();
 					if (ArchiveHelper.getRoute(fr.getID()).exists()) {
-						try (InputStream in = new FileInputStream(ArchiveHelper.getRoute(fr.getID()))) {
+						try (InputStream in = ArchiveHelper.getStream(ArchiveHelper.getRoute(fr.getID()))) {
 							GetSerializedRoute rtdao = new GetSerializedRoute(in);
 							rtePoints.addAll(rtdao.read());
 						} catch (IOException ie) {
@@ -619,7 +619,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				File f = ArchiveHelper.getOnline(fr.getID());
 				Collection<PositionData> pd = new ArrayList<PositionData>();
 				if (f.exists()) {
-					try (InputStream in = new FileInputStream(f)) {
+					try (InputStream in = ArchiveHelper.getStream(f)) {
 						GetSerializedOnline stdao = new GetSerializedOnline(in);
 						pd.addAll(stdao.read());
 					} catch (IOException ie) {
