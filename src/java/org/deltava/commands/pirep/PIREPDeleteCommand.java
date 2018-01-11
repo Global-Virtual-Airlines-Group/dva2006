@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2010, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010, 2015, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.io.File;
@@ -15,7 +15,7 @@ import org.deltava.security.command.PIREPAccessControl;
 /**
  * A Web Site Command to delete Flight Reports.
  * @author Luke
- * @version 7.0
+ * @version 8.1
  * @since 1.0
  */
 
@@ -67,7 +67,7 @@ public class PIREPDeleteCommand extends AbstractCommand {
 			wdao.delete(ctx.getID());
 			
 			// Update statistics
-			if (fr.getStatus() == FlightReport.OK) {
+			if (fr.getStatus() == FlightStatus.OK) {
 				SetAggregateStatistics stwdao = new SetAggregateStatistics(con);
 				stwdao.update(fr);
 			}

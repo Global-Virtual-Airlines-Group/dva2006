@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
 import org.deltava.beans.acars.Restriction;
-import org.deltava.beans.flight.FlightReport;
+import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.Airport;
 import org.deltava.beans.stats.DatedAccomplishmentID;
 import org.deltava.beans.system.AirlineInformation;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
  * A DAO to support reading Pilot object(s) from the database. This class contains methods to read an individual Pilot
  * from the database; implementing subclasses typically add methods to retrieve Lists of pilots based on particular criteria.
  * @author Luke
- * @version 8.0
+ * @version 8.1
  * @since 1.0
  */
 
@@ -54,7 +54,7 @@ abstract class PilotReadDAO extends DAO {
 		try {
 			prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE), S.EXT, S.MODIFIED FROM PILOTS P LEFT JOIN PIREPS F "
 				+ "ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) LEFT JOIN SIGNATURES S ON (P.ID=S.ID) WHERE (P.ID=?) GROUP BY P.ID LIMIT 1");
-			_ps.setInt(1, FlightReport.OK);
+			_ps.setInt(1, FlightStatus.OK.ordinal());
 			_ps.setInt(2, id);
 
 			// Execute the query and get the result
@@ -95,7 +95,7 @@ abstract class PilotReadDAO extends DAO {
 
 		try {
 			prepareStatement(sqlBuf.toString());
-			_ps.setInt(1, FlightReport.OK);
+			_ps.setInt(1, FlightStatus.OK.ordinal());
 			_ps.setString(2, fullName);
 
 			// Execute the query and get the result
@@ -202,7 +202,7 @@ abstract class PilotReadDAO extends DAO {
 			List<Pilot> uncached = null;
 			try {
 				prepareStatementWithoutLimits(sqlBuf.toString());
-				_ps.setInt(1, FlightReport.OK);
+				_ps.setInt(1, FlightStatus.OK.ordinal());
 				uncached = execute();
 
 				// Convert to a map and load ratings/roles

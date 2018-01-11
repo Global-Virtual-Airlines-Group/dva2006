@@ -1,17 +1,17 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 
-import org.deltava.beans.flight.FlightReport;
+import org.deltava.beans.flight.*;
 
 import org.deltava.util.cache.*;
 
 /**
  * A Data Access Object to get Flight Report IDs for Pilot recognition.
  * @author Luke
- * @version 6.3
+ * @version 8.1
  * @since 1.0
  */
 
@@ -195,11 +195,10 @@ public class GetFlightReportRecognition extends DAO {
 	 */
 	public int getPromotionCount(int pilotID, String eqType) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT COUNT(PR.ID) FROM PIREPS PR, PROMO_EQ PE WHERE (PR.ID=PE.ID) "
-					+ "AND (PR.PILOT_ID=?) AND (PE.EQTYPE=?) AND (PR.STATUS=?) LIMIT 1");
+			prepareStatementWithoutLimits("SELECT COUNT(PR.ID) FROM PIREPS PR, PROMO_EQ PE WHERE (PR.ID=PE.ID) AND (PR.PILOT_ID=?) AND (PE.EQTYPE=?) AND (PR.STATUS=?) LIMIT 1");
 			_ps.setInt(1, pilotID);
 			_ps.setString(2, eqType);
-			_ps.setInt(3, FlightReport.OK);
+			_ps.setInt(3, FlightStatus.OK.ordinal());
 
 			// Execute the query
 			int results = 0;

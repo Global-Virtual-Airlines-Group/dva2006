@@ -1,4 +1,4 @@
- // Copyright 2010, 2011, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+ // Copyright 2010, 2011, 2014, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import java.time.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to determine what Accomplishments a Pilot has achieved. 
  * @author Luke
- * @version 8.0
+ * @version 8.1
  * @since 3.2
  */
 
@@ -229,7 +229,7 @@ public class AccomplishmentHistoryHelper {
 	 * @param fr a FlightReport bean
 	 */
 	public void add(FlightReport fr) {
-		if (fr.getStatus() == FlightReport.OK) {
+		if (fr.getStatus() == FlightStatus.OK) {
 			_pireps.add(fr);
 			_totals.add(fr);
 		}

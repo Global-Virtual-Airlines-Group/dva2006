@@ -216,7 +216,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			wdao.write(fr);
 			
 			// If the flight is already approved, recalc statistics
-			if (fr.getStatus() == FlightReport.OK) {
+			if (fr.getStatus() == FlightStatus.OK) {
 				SetAggregateStatistics swdao = new SetAggregateStatistics(con);
 				swdao.update(fr);
 			}
@@ -405,10 +405,10 @@ public class PIREPCommand extends AbstractFormCommand {
 			int disposalID = fr.getDatabaseID(DatabaseID.DISPOSAL);
 			Pilot dPilot = (disposalID != 0) ? pdao.get(disposalID) : null;
 			if (dPilot != null) {
-				String msg = FlightReport.STATUS[fr.getStatus()] + " - by " + dPilot.getName();
+				String msg = fr.getStatus().getDescription() + " - by " + dPilot.getName();
 				ctx.setAttribute("statusMsg", msg, REQUEST);
 			} else
-				ctx.setAttribute("statusMsg", FlightReport.STATUS[fr.getStatus()], REQUEST);
+				ctx.setAttribute("statusMsg", fr.getStatus().getDescription(), REQUEST);
 
 			// If this PIREP was flown as part of an event, get its information
 			GetEvent evdao = new GetEvent(con);
@@ -417,7 +417,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				ctx.setAttribute("event", evdao.get(eventID), REQUEST);
 			
 			// If this PIREP is part of a flight assignment and a draft, load the assignment
-			if ((fr.getStatus() == FlightReport.DRAFT) && (fr.getDatabaseID(DatabaseID.ASSIGN) != 0)) {
+			if ((fr.getStatus() == FlightStatus.DRAFT) && (fr.getDatabaseID(DatabaseID.ASSIGN) != 0)) {
 				GetAssignment fadao = new GetAssignment(con);
 				AssignmentInfo assign = fadao.get(fr.getDatabaseID(DatabaseID.ASSIGN));
 				
@@ -615,7 +615,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			// Load the online track
 			GetOnlineTrack tdao = new GetOnlineTrack(con);
 			boolean hasTrack = tdao.hasTrack(fr.getID());
-			if (hasTrack || (fr.hasAttribute(FlightReport.ATTR_ONLINE_MASK) && (fr.getStatus() != FlightReport.DRAFT))) {
+			if (hasTrack || (fr.hasAttribute(FlightReport.ATTR_ONLINE_MASK) && (fr.getStatus() != FlightStatus.DRAFT))) {
 				File f = ArchiveHelper.getOnline(fr.getID());
 				Collection<PositionData> pd = new ArrayList<PositionData>();
 				if (f.exists()) {

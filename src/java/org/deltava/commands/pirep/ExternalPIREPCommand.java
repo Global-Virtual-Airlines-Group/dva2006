@@ -1,4 +1,4 @@
-// Copyright 2007, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009, 2010, 2011, 2012, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to allow cross-Airline Check Ride PIREPs to be viewed and evaluated.
  * @author Luke
- * @version 5.0
+ * @version 8.1
  * @since 2.0
  */
 
@@ -74,10 +74,10 @@ public class ExternalPIREPCommand extends AbstractCommand {
 			UserData dud = (disposalID == 0) ? null : uddao.get(disposalID);
 			Pilot dPilot = pdao.get(dud);
 			if (dPilot != null) {
-				String msg = FlightReport.STATUS[fr.getStatus()] + " - by " + dPilot.getName();
+				String msg = fr.getStatus().getDescription() + " - by " + dPilot.getName();
 				ctx.setAttribute("statusMsg", msg, REQUEST);
 			} else
-				ctx.setAttribute("statusMsg", FlightReport.STATUS[fr.getStatus()], REQUEST);
+				ctx.setAttribute("statusMsg", fr.getStatus().getDescription(), REQUEST);
 			
 			// Get the pilot/PIREP beans in the request
 			ctx.setAttribute("pilot", p, REQUEST);

@@ -1,13 +1,13 @@
-// Copyright 2005, 2006, 2009, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2012, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
-import org.deltava.beans.flight.FlightReport;
+import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.Airport;
 
 /**
  * A comparator to sort Flight Reports.
  * @author Luke
- * @version 8.0
+ * @version 8.1
  * @since 1.0
  */
 
@@ -55,9 +55,9 @@ public class FlightReportComparator extends AbstractComparator<FlightReport> {
     	int tmpResult;
         switch (_comparisonType) {
             case DATE:
-                if (f1.getStatus() == FlightReport.DRAFT)
+                if (f1.getStatus() == FlightStatus.DRAFT)
                     return -1;
-                else if (f2.getStatus() == FlightReport.DRAFT)
+                else if (f2.getStatus() == FlightStatus.DRAFT)
                     return 1;
                 else {
                 	tmpResult = f1.getDate().compareTo(f2.getDate());

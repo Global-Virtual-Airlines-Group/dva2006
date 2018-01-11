@@ -1,4 +1,4 @@
-// Copyright 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A Data Access Object to update Flight Statistics. 
  * @author Luke
- * @version 7.5
+ * @version 8.1
  * @since 6.2
  */
 
@@ -57,7 +57,7 @@ public class SetAggregateStatistics extends DAO {
 			prepareStatementWithoutLimits("DELETE FROM FLIGHTSTATS_LANDING WHERE (ID=?)");
 			_ps.setInt(1, fr.getID());
 			executeUpdate(0);
-			if (fr.getStatus() != FlightReport.OK)
+			if (fr.getStatus() != FlightStatus.OK)
 				return;
 			
 			prepareStatementWithoutLimits("INSERT INTO FLIGHTSTATS_LANDING (SELECT PR.ID, PR.PILOT_ID, PR.EQTYPE, DATE(APR.LANDING_TIME), "
@@ -96,7 +96,7 @@ public class SetAggregateStatistics extends DAO {
 		_ps.setInt(12, Simulator.XP9.getCode());
 		_ps.setInt(13, Simulator.XP10.getCode());
 		_ps.setInt(14, Simulator.XP11.getCode());
-		_ps.setInt(15, FlightReport.OK);
+		_ps.setInt(15, FlightStatus.OK.ordinal());
 		_ps.setInt(16, pilotID);
 		executeUpdate(0);
 	}
@@ -109,7 +109,7 @@ public class SetAggregateStatistics extends DAO {
 		_ps.setInt(2, fr.getAuthorID());
 		executeUpdate(0);
 		
-		if (fr.getStatus() == FlightReport.OK) {
+		if (fr.getStatus() == FlightStatus.OK) {
 			prepareStatementWithoutLimits("REPLACE INTO FLIGHTSTATS_PILOT_DAY (DATE, PILOT_ID) VALUES (?, ?)");
 			_ps.setTimestamp(1, createTimestamp(fr.getDate()));
 			_ps.setInt(2, fr.getAuthorID());
@@ -131,7 +131,7 @@ public class SetAggregateStatistics extends DAO {
 		
 		prepareStatementWithoutLimits("INSERT INTO FLIGHTSTATS_ROUTES (SELECT PILOT_ID, AIRPORT_D, AIRPORT_A, COUNT(ID), MAX(DATE) FROM "
 			+ "PIREPS WHERE (STATUS=?) AND (PILOT_ID=?) AND (AIRPORT_D=?) AND (AIRPORT_A=?) HAVING (PILOT_ID<>NULL))");
-		_ps.setInt(1, FlightReport.OK);
+		_ps.setInt(1, FlightStatus.OK.ordinal());
 		_ps.setInt(2, pilotID);
 		_ps.setString(3, rp.getAirportD().getIATA());
 		_ps.setString(4, rp.getAirportA().getIATA());
@@ -165,7 +165,7 @@ public class SetAggregateStatistics extends DAO {
 		_ps.setInt(14, Simulator.XP10.getCode());
 		_ps.setInt(15, Simulator.XP11.getCode());
 		_ps.setBoolean(16, isDeparture);
-		_ps.setInt(17, FlightReport.OK);
+		_ps.setInt(17, FlightStatus.OK.ordinal());
 		_ps.setString(18, a.getIATA());
 		executeUpdate(1);
 	}
@@ -194,7 +194,7 @@ public class SetAggregateStatistics extends DAO {
 		_ps.setInt(12, Simulator.XP9.getCode());
 		_ps.setInt(13, Simulator.XP10.getCode());
 		_ps.setInt(14, Simulator.XP11.getCode());
-		_ps.setInt(15, FlightReport.OK);
+		_ps.setInt(15, FlightStatus.OK.ordinal());
 		_ps.setTimestamp(16, createTimestamp(dt));
 		executeUpdate(1);
 	}
@@ -223,7 +223,7 @@ public class SetAggregateStatistics extends DAO {
 		_ps.setInt(12, Simulator.XP9.getCode());
 		_ps.setInt(13, Simulator.XP10.getCode());
 		_ps.setInt(14, Simulator.XP11.getCode());
-		_ps.setInt(15, FlightReport.OK);
+		_ps.setInt(15, FlightStatus.OK.ordinal());
 		_ps.setString(16, eqType);
 		executeUpdate(1);
 	}

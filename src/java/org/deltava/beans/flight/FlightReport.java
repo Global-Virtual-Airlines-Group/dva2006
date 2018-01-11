@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.util.*;
@@ -10,23 +10,11 @@ import org.deltava.beans.schedule.Airline;
 /**
  * A class for dealing with PIREP data.
  * @author Luke
- * @version 8.0
+ * @version 8.1
  * @since 1.0
  */
 
 public class FlightReport extends Flight implements AuthoredBean, CalendarEntry, ViewEntry {
-
-	public static final int DRAFT = 0;
-	public static final int SUBMITTED = 1;
-	public static final int HOLD = 2;
-	public static final int OK = 3;
-	public static final int REJECTED = 4;
-
-	/**
-	 * Valid PIREP statuses.
-	 */
-	public static final String STATUS[] = { "Draft", "Submitted", "Hold", "OK", "Rejected" };
-	private static final String[] ROW_CLASSES = { "opt2", "opt1", "warn", null, "err" };
 
 	/**
 	 * Flight flown without Equipment Type Rating.
@@ -167,7 +155,7 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 	private Instant _submittedOn;
 	private Instant _disposedOn;
 	private int _length;
-	private int _status = FlightReport.DRAFT;
+	private FlightStatus _status = FlightStatus.DRAFT;
 	private Simulator _fsVersion = Simulator.UNKNOWN;
 	private int _attr;
 	private int _pax;
@@ -340,23 +328,12 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 	/**
 	 * Returns the status of this Flight Report.
 	 * @return the status of this PIREP
-	 * @see FlightReport#getStatusName()
-	 * @see FlightReport#setStatus(int)
-	 * @see FlightReport#setStatus(String)
+	 * @see FlightReport#setStatus(FlightStatus)
 	 */
-	public int getStatus() {
+	public FlightStatus getStatus() {
 		return _status;
 	}
 
-	/**
-	 * Status description of this Flight Report, for JSPs.
-	 * @return the status name
-	 * @see FlightReport#getStatus()
-	 */
-	public String getStatusName() {
-		return STATUS[getStatus()];
-	}
-	
 	/**
 	 * Returns the Online Network used on this Flight.
 	 * @return an OnlineNetwork enum, or null
@@ -497,35 +474,12 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 	}
 
 	/**
-	 * Sets the status code of this Flight Report.
-	 * @param status the new Status Code for this Flight Report
-	 * @throws IllegalArgumentException if the status code is negative or invalid
-	 * @see FlightReport#setStatus(String)
-	 * @see FlightReport#getStatus()
-	 */
-	public void setStatus(int status) {
-		if ((status < 0) || (status >= FlightReport.STATUS.length))
-			throw new IllegalArgumentException("Invalid PIREP status - " + status);
-
-		_status = status;
-	}
-
-	/**
 	 * Sets the status of this Flight Report.
-	 * @param status the new Status for this Flight Report
-	 * @throws IllegalArgumentException if the status code is not in Flight.STATUS
-	 * @see FlightReport#setStatus(int)
+	 * @param status the new FlightStatus for this Flight Report
 	 * @see FlightReport#getStatus()
 	 */
-	public void setStatus(String status) {
-		for (int x = 0; x < FlightReport.STATUS.length; x++) {
-			if (FlightReport.STATUS[x].equals(status)) {
-				setStatus(x);
-				return;
-			}
-		}
-
-		throw new IllegalArgumentException("Invalid PIREP status - " + status);
+	public void setStatus(FlightStatus status) {
+		_status = status;
 	}
 
 	/**
@@ -639,6 +593,6 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 		if (hasAttribute(ATTR_CHECKRIDE))
 			return "opt3";
 		
-		return ROW_CLASSES[_status];
+		return _status.getRowClassName();
 	}
 }

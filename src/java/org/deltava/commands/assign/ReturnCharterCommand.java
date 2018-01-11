@@ -1,4 +1,4 @@
-// Copyright 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2014, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
@@ -50,7 +50,7 @@ public class ReturnCharterCommand extends AbstractCommand {
 			List<FlightReport> results = frdao.getByPilot(p.getID(), new ScheduleSearchCriteria("SUBMITTED DESC"));
 			FlightReport lf = null;
 			for (FlightReport fr : results) {
-				if ((fr.getStatus() != FlightReport.DRAFT) && (fr.getStatus() != FlightReport.REJECTED)) {
+				if ((fr.getStatus() != FlightStatus.DRAFT) && (fr.getStatus() != FlightStatus.REJECTED)) {
 					lf = fr;
 					ctx.setAttribute("lastFlight", fr, REQUEST);
 					break;

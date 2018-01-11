@@ -1,4 +1,4 @@
-// Copyright 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.time.Instant;
@@ -9,7 +9,7 @@ import org.deltava.beans.flight.*;
 /**
  * A utility class to convert XACARS Flight Information records into Flight Reports.
  * @author Luke
- * @version 7.0
+ * @version 8.1
  * @since 4.1
  */
 
@@ -55,7 +55,7 @@ public final class XACARSFlightHelper {
 		xfr.setLoadFactor(inf.getLoadFactor());
 		xfr.setRoute(inf.getRoute());
 		xfr.setNetwork(inf.getNetwork());
-		xfr.setStatus(FlightReport.SUBMITTED);
+		xfr.setStatus(FlightStatus.SUBMITTED);
 		
 		// ACARS-specific data
 		xfr.setStartTime(inf.getStartTime());

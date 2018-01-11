@@ -32,7 +32,7 @@ protected void tearDown() throws Exception {
    }
 
    public void testPIREPAccess() throws Exception {
-      assertEquals(FlightReport.DRAFT, _fr.getStatus());
+      assertEquals(FlightStatus.DRAFT, _fr.getStatus());
       _user.addRole("PIREP");
       _ac.validate();
       
@@ -43,7 +43,7 @@ protected void tearDown() throws Exception {
       assertFalse(_ac.getCanReject());
       assertFalse(_ac.getCanDispose());
       
-      _fr.setStatus(FlightReport.SUBMITTED);
+      _fr.setStatus(FlightStatus.SUBMITTED);
       _ac.validate();
 
       assertTrue(_ac.getCanEdit());
@@ -53,7 +53,7 @@ protected void tearDown() throws Exception {
       assertTrue(_ac.getCanReject());
       assertTrue(_ac.getCanDispose());
       
-      _fr.setStatus(FlightReport.HOLD);
+      _fr.setStatus(FlightStatus.HOLD);
       _ac.validate();
       
       assertTrue(_ac.getCanEdit());
@@ -63,7 +63,7 @@ protected void tearDown() throws Exception {
       assertTrue(_ac.getCanReject());
       assertTrue(_ac.getCanDispose());
 
-      _fr.setStatus(FlightReport.OK);
+      _fr.setStatus(FlightStatus.OK);
       _ac.validate();
 
       assertFalse(_ac.getCanEdit());
@@ -73,7 +73,7 @@ protected void tearDown() throws Exception {
       assertFalse(_ac.getCanReject());
       assertFalse(_ac.getCanDispose());
       
-      _fr.setStatus(FlightReport.REJECTED);
+      _fr.setStatus(FlightStatus.REJECTED);
       _ac.validate();
 
       assertFalse(_ac.getCanEdit());
@@ -85,7 +85,7 @@ protected void tearDown() throws Exception {
    }
    
    public void testHRAccess() throws Exception {
-      assertEquals(FlightReport.DRAFT, _fr.getStatus());
+      assertEquals(FlightStatus.DRAFT, _fr.getStatus());
       _user.addRole("HR");
       _ac.validate();
 
@@ -96,7 +96,7 @@ protected void tearDown() throws Exception {
       assertFalse(_ac.getCanReject());
       assertFalse(_ac.getCanDispose());
       
-      _fr.setStatus(FlightReport.SUBMITTED);
+      _fr.setStatus(FlightStatus.SUBMITTED);
       _ac.validate();
 
       assertTrue(_ac.getCanEdit());
@@ -106,7 +106,7 @@ protected void tearDown() throws Exception {
       assertTrue(_ac.getCanReject());
       assertTrue(_ac.getCanDispose());
       
-      _fr.setStatus(FlightReport.HOLD);
+      _fr.setStatus(FlightStatus.HOLD);
       _ac.validate();
       
       assertTrue(_ac.getCanEdit());
@@ -116,7 +116,7 @@ protected void tearDown() throws Exception {
       assertTrue(_ac.getCanReject());
       assertTrue(_ac.getCanDispose());
 
-      _fr.setStatus(FlightReport.OK);
+      _fr.setStatus(FlightStatus.OK);
       _ac.validate();
 
       assertTrue(_ac.getCanEdit());
@@ -126,7 +126,7 @@ protected void tearDown() throws Exception {
       assertTrue(_ac.getCanReject());
       assertTrue(_ac.getCanDispose());
 
-      _fr.setStatus(FlightReport.REJECTED);
+      _fr.setStatus(FlightStatus.REJECTED);
       _ac.validate();
 
       assertTrue(_ac.getCanEdit());
@@ -139,7 +139,7 @@ protected void tearDown() throws Exception {
    
    public void testOurAccess() throws Exception {
       _fr.setDatabaseID(DatabaseID.PILOT, _user.getID());
-      assertEquals(FlightReport.DRAFT, _fr.getStatus());
+      assertEquals(FlightStatus.DRAFT, _fr.getStatus());
       _user.addRole("Pilot");
       _ac.validate();
       
@@ -152,7 +152,7 @@ protected void tearDown() throws Exception {
       assertFalse(_ac.getCanReject());
       assertFalse(_ac.getCanDispose());
       
-      _fr.setStatus(FlightReport.SUBMITTED);
+      _fr.setStatus(FlightStatus.SUBMITTED);
       _ac.validate();
       
       assertTrue(_ac.getOurFlight());

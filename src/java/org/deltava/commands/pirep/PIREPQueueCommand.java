@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -15,13 +15,13 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to display Flight Reports awaiting disposition.
  * @author Luke
- * @version 7.0
+ * @version 8.1
  * @since 1.0
  */
 
 public class PIREPQueueCommand extends AbstractViewCommand {
 	
-	private static final Collection<Integer> PENDING = Arrays.asList(Integer.valueOf(FlightReport.SUBMITTED), Integer.valueOf(FlightReport.HOLD));
+	private static final Collection<FlightStatus> PENDING = Arrays.asList(FlightStatus.SUBMITTED, FlightStatus.HOLD);
 
 	private static final String MY_EQ_SORT = "IF(IFNULL(LOCATE(?,GROUP_CONCAT(ER.EQTYPE)),0)=0,1,0), PR.DATE, PR.SUBMITTED, PR.ID";
 	private static final String[] SORT_CODES = {"PR.DATE, PR.SUBMITTED, PR.ID", "P.LASTNAME, P.FIRSTNAME, PR.SUBMITTED", "PR.EQTYPE, PR.DATE, PR.SUBMITTED", "$MYEQ"};
@@ -75,7 +75,7 @@ public class PIREPQueueCommand extends AbstractViewCommand {
 			Collection<FlightReport> myHeld = new ArrayList<FlightReport>();
 			for (Iterator<FlightReport> i = vc.getResults().iterator(); i.hasNext(); ) {
 				FlightReport fr = i.next();
-				if ((fr.getStatus() == FlightReport.HOLD) && (fr.getDatabaseID(DatabaseID.DISPOSAL) == ctx.getUser().getID())) {
+				if ((fr.getStatus() == FlightStatus.HOLD) && (fr.getDatabaseID(DatabaseID.DISPOSAL) == ctx.getUser().getID())) {
 					myHeld.add(fr);
 					i.remove();
 				} else if (myEQ.getPrimaryRatings().contains(fr.getEquipmentType())) {

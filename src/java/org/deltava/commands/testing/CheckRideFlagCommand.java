@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to retroactively flag a Flight Report as a Check Ride.
  * @author Luke
- * @version 8.0
+ * @version 8.1
  * @since 1.0
  */
 
@@ -124,8 +124,8 @@ public class CheckRideFlagCommand extends AbstractTestHistoryCommand {
 			// Update the flight report
 			fr.setAttribute(FlightReport.ATTR_CHECKRIDE, true);
 			fr.setAttribute(FlightReport.ATTR_NOTRATED, false);
-			if (fr.getStatus() == FlightReport.HOLD)
-				fr.setStatus(FlightReport.SUBMITTED);
+			if (fr.getStatus() == FlightStatus.HOLD)
+				fr.setStatus(FlightStatus.SUBMITTED);
 			
 			// Start the transaction
 			ctx.startTX();

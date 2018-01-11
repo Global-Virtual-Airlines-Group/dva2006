@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2012, 2013, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2012, 2013, 2014, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -107,7 +107,7 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 			cr.setStatus(TestStatus.SCORED);
 			
 			// Update the flight report
-			int pirepStatus = Boolean.valueOf(ctx.getParameter("frApprove")).booleanValue() ? FlightReport.OK : FlightReport.REJECTED;
+			FlightStatus pirepStatus = Boolean.valueOf(ctx.getParameter("frApprove")).booleanValue() ? FlightStatus.OK : FlightStatus.REJECTED;
 			fr.setStatus(pirepStatus);
 			if (ctx.getParameter("dComments") != null)
 				fr.setComments(ctx.getParameter("dComments"));
@@ -126,7 +126,7 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 			
 			// Load the flights for accomplishment purposes
 			Collection<StatusUpdate> upds = new ArrayList<StatusUpdate>();
-			if (fr.getStatus() == FlightReport.OK) {
+			if (fr.getStatus() == FlightStatus.OK) {
 				Collection<FlightReport> flights = rdao.getByPilot(p.getID(), null);
 				rdao.getCaptEQType(flights);
 				AccomplishmentHistoryHelper acchelper = new AccomplishmentHistoryHelper(p);

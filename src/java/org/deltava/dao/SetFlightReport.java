@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access object to write Flight Reports to the database.
  * @author Luke
- * @version 8.0
+ * @version 8.1
  * @since 1.0
  */
 
@@ -63,18 +63,18 @@ public class SetFlightReport extends DAO {
 	 * @param db the database name
 	 * @param usr the Person updating the Flight Report
 	 * @param pirep the Flight Report
-	 * @param statusCode the new Flight Report status code
+	 * @param status the new FlightStatus
 	 * @throws DAOException if a JDBC error occurs
 	 * @throws NullPointerException if pirep is null
 	 */
-	public void dispose(String db, Person usr, FlightReport pirep, int statusCode) throws DAOException {
+	public void dispose(String db, Person usr, FlightReport pirep, FlightStatus status) throws DAOException {
 		String dbName = formatDBName(db);
 		try {
 			startTransaction();
 
 			// Write the PIREP
 			prepareStatementWithoutLimits("UPDATE " + dbName + ".PIREPS SET STATUS=?, ATTR=?, DISPOSAL_ID=?, DISPOSED=NOW() WHERE (ID=?)");
-			_ps.setInt(1, statusCode);
+			_ps.setInt(1, status.ordinal());
 			_ps.setInt(2, pirep.getAttributes());
 			_ps.setInt(3, (usr == null) ? 0 : usr.getID());
 			_ps.setInt(4, pirep.getID());
@@ -107,7 +107,7 @@ public class SetFlightReport extends DAO {
 		prepareStatement(sqlBuf.toString());
 		_ps.setInt(1, fr.getDatabaseID(DatabaseID.PILOT));
 		_ps.setString(2, fr.getRank().getName());
-		_ps.setInt(3, fr.getStatus());
+		_ps.setInt(3, fr.getStatus().ordinal());
 		_ps.setTimestamp(4, createTimestamp(fr.getDate()));
 		_ps.setString(5, fr.getAirline().getCode());
 		_ps.setInt(6, fr.getFlightNumber());
@@ -139,7 +139,7 @@ public class SetFlightReport extends DAO {
 
 		// Set the prepared statement parameters
 		prepareStatement(sqlBuf.toString());
-		_ps.setInt(1, fr.getStatus());
+		_ps.setInt(1, fr.getStatus().ordinal());
 		_ps.setTimestamp(2, createTimestamp(fr.getDate()));
 		_ps.setString(3, fr.getAirline().getCode());
 		_ps.setInt(4, fr.getFlightNumber());

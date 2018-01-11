@@ -1,4 +1,4 @@
-// Copyright 2014, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2014, 2015, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display route tracks between airports.
  * @author Luke
- * @version 7.3
+ * @version 8.1
  * @since 5.4
  */
 
@@ -69,7 +69,7 @@ public class MyTrackService extends WebService {
 			flights.addAll(frdao.getByPilot(userID, ssa));
 			
 			// Filter out non-ACARS and sort
-			flights.removeIf(fr -> (!fr.hasAttribute(FlightReport.ATTR_ACARS) || (fr.getStatus() != FlightReport.OK)));
+			flights.removeIf(fr -> (!fr.hasAttribute(FlightReport.ATTR_ACARS) || (fr.getStatus() != FlightStatus.OK)));
 			Comparator<FlightReport> fc = new FlightReportComparator(0).reversed();
 			flights.sort(fc);
 			if (flights.size() > MAX_FLIGHTS)

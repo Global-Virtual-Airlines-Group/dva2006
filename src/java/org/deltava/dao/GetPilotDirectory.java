@@ -1,11 +1,11 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.*;
-import org.deltava.beans.flight.FlightReport;
+import org.deltava.beans.flight.*;
 
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to obtain user Directory information for Pilots.
  * @author Luke
- * @version 6.4
+ * @version 8.1
  * @since 1.0
  */
 
@@ -48,10 +48,9 @@ public class GetPilotDirectory extends GetPilot implements PersonUniquenessDAO {
 			return null;
 
 		try {
-			prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), "
-				+ "MAX(F.DATE), S.EXT, S.MODIFIED FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) "
-				+ "LEFT JOIN SIGNATURES S ON (P.ID=S.ID) WHERE (P.PILOT_ID=?) GROUP BY P.ID");
-			_ps.setInt(1, FlightReport.OK);
+			prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE), S.EXT, S.MODIFIED FROM PILOTS P "
+				+ "LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) LEFT JOIN SIGNATURES S ON (P.ID=S.ID) WHERE (P.PILOT_ID=?) GROUP BY P.ID");
+			_ps.setInt(1, FlightStatus.OK.ordinal());
 			_ps.setInt(2, Integer.parseInt(code.toString()));
 
 			// Execute the query and get return value

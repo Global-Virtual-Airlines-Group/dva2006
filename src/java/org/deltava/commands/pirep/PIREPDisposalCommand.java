@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.io.*;
@@ -58,6 +58,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 		if (opCode < 2)
 			throw new CommandException("Invalid Operation - " + opName, false);
 
+		FlightStatus op = FlightStatus.values()[opCode];
 		ctx.setAttribute("opName", opName, REQUEST);
 
 		// Initialize the Message Context
@@ -83,20 +84,20 @@ public class PIREPDisposalCommand extends AbstractCommand {
 
 			// Determine if we can perform the operation in question and set a request attribute
 			boolean isOK = false;
-			switch (opCode) {
-			case FlightReport.HOLD:
+			switch (op) {
+			case HOLD:
 				ctx.setAttribute("isHold", Boolean.TRUE, REQUEST);
 				mctx.setTemplate(mtdao.get("PIREPHOLD"));
 				isOK = access.getCanHold();
 				break;
 
-			case FlightReport.OK:
+			case OK:
 				ctx.setAttribute("isApprove", Boolean.TRUE, REQUEST);
 				mctx.setTemplate(mtdao.get("PIREPAPPROVE"));
 				isOK = access.getCanApprove();
 				break;
 
-			case FlightReport.REJECTED:
+			case REJECTED:
 				ctx.setAttribute("isReject", Boolean.TRUE, REQUEST);
 				mctx.setTemplate(mtdao.get("PIREPREJECT"));
 				isOK = access.getCanReject();
@@ -147,13 +148,13 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			mctx.addData("flightLength", Double.valueOf(fr.getLength() / 10.0));
 			mctx.addData("flightDate", StringUtils.format(fr.getDate(), p.getDateFormat()));
 			mctx.addData("pilot", p);
-			fr.setStatus(opCode);
+			fr.setStatus(FlightStatus.values()[opCode]);
 
 			// Start a JDBC transaction
 			ctx.startTX();
 
 			// Load the flights for accomplishment purposes
-			if (opCode == FlightReport.OK) {
+			if (op == FlightStatus.OK) {
 				Collection<FlightReport> pireps = rdao.getByPilot(p.getID(), null);
 				rdao.getCaptEQType(pireps);
 				AccomplishmentHistoryHelper acchelper = new AccomplishmentHistoryHelper(p);
@@ -229,7 +230,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 
 			// Get the write DAO and update/dispose of the PIREP
 			SetFlightReport wdao = new SetFlightReport(con);
-			wdao.dispose(SystemData.get("airline.db"), ctx.getUser(), fr, opCode);
+			wdao.dispose(SystemData.get("airline.db"), ctx.getUser(), fr, op);
 
 			// If this is part of a flight assignment, load it
 			GetAssignment fadao = new GetAssignment(con);
@@ -241,7 +242,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 
 			// Diversion handling
 			boolean doDivert = Boolean.valueOf(ctx.getParameter("holdDivert")).booleanValue();
-			if (doDivert && (opCode == FlightReport.HOLD) && (fr instanceof ACARSFlightReport)) {
+			if (doDivert && (op == FlightStatus.HOLD) && (fr instanceof ACARSFlightReport)) {
 				GetACARSData fidao = new GetACARSData(con);
 				FlightInfo fInfo = fidao.getInfo(fr.getDatabaseID(DatabaseID.ACARS));
 
@@ -278,7 +279,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			}
 
 			// If we're approving and have not assigned a Pilot Number yet, assign it
-			if ((opCode == FlightReport.OK) && (p.getPilotNumber() == 0)) {
+			if ((op == FlightStatus.OK) && (p.getPilotNumber() == 0)) {
 				SetPilot pwdao = new SetPilot(con);
 				pwdao.assignID(p, SystemData.get("airline.db"));
 				ctx.setAttribute("assignID", Boolean.TRUE, REQUEST);
@@ -305,7 +306,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			}
 
 			// If we're approving the PIREP and it's part of a Flight Assignment, check completion
-			if (((opCode == FlightReport.OK) || (opCode == FlightReport.REJECTED)) && (assign != null)) {
+			if (((op == FlightStatus.OK) || (op == FlightStatus.REJECTED)) && (assign != null)) {
 				List<FlightReport> flights = rdao.getByAssignment(assign.getID(), SystemData.get("airline.db"));
 				flights.forEach(fl -> assign.addFlight(fl));
 
@@ -318,7 +319,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			}
 
 			// Update PIREP statistics
-			if ((opCode == FlightReport.OK) || (opCode == FlightReport.REJECTED)) {
+			if ((op == FlightStatus.OK) || (op == FlightStatus.REJECTED)) {
 				SetAggregateStatistics fstdao = new SetAggregateStatistics(con);
 				fstdao.update(fr);
 			}
@@ -328,7 +329,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			swdao.write(upds);
 
 			// If we're approving an ACARS PIREP, archive the position data
-			if ((opCode == FlightReport.OK) || (opCode == FlightReport.REJECTED)) {
+			if ((op == FlightStatus.OK) || (op == FlightStatus.REJECTED)) {
 				int acarsID = fr.getDatabaseID(DatabaseID.ACARS);
 				GetACARSPositions posdao = new GetACARSPositions(con);
 				SetACARSArchive acdao = new SetACARSArchive(con);
@@ -382,7 +383,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			ctx.commitTX();
 
 			// Invalidate the pilot again to reflect the new totals
-			if (opCode == FlightReport.OK)
+			if (op == FlightStatus.OK)
 				CacheManager.invalidate("Pilots", Integer.valueOf(fr.getAuthorID()));
 
 			// Save the flight report in the request and the Message Context
@@ -396,7 +397,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 		}
 
 		// Send a notification message
-		if ((opCode != FlightReport.OK) || (p.hasNotifyOption(Notification.PIREP))) {
+		if ((op != FlightStatus.OK) || p.hasNotifyOption(Notification.PIREP)) {
 			Mailer mailer = new Mailer(ctx.getUser());
 			mailer.setContext(mctx);
 			mailer.send(p);
