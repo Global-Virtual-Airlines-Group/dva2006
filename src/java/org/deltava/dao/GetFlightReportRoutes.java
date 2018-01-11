@@ -1,10 +1,10 @@
-// Copyright 2010, 2011, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2014, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 
-import org.deltava.beans.flight.FlightReport;
+import org.deltava.beans.flight.*;
 import org.deltava.beans.navdata.TerminalRoute;
 import org.deltava.beans.schedule.*;
 
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load flight routes from approved Flight Reports. 
  * @author Luke
- * @version 7.0
+ * @version 8.1
  * @since 3.3
  */
 
@@ -66,7 +66,7 @@ public class GetFlightReportRoutes extends DAO {
 			prepareStatement(sqlBuf.toString());
 			_ps.setString(1, rp.getAirportD().getIATA());
 			_ps.setString(2, rp.getAirportA().getIATA());
-			_ps.setInt(3, FlightReport.OK);
+			_ps.setInt(3, FlightStatus.OK.ordinal());
 			
 			// Execute the query
 			int maxCount = 0; boolean doMore = true; int id = 0;

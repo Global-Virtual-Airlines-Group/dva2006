@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2014, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2014, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -6,7 +6,7 @@ import java.sql.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.event.*;
-import org.deltava.beans.flight.FlightReport;
+import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.RoutePair;
 
 import org.deltava.util.CollectionUtils;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Online Event data.
  * @author Luke
- * @version 7.2
+ * @version 8.1
  * @since 1.0
  */
 
@@ -264,7 +264,7 @@ public class GetEvent extends DAO {
 			// Load from Flight Reports
 			prepareStatementWithoutLimits("SELECT EVENT_ID FROM PIREPS WHERE (EVENT_ID>0) AND (PILOT_ID=?) AND (STATUS=?)");
 			_ps.setInt(1, userID);
-			_ps.setInt(2, FlightReport.OK);
+			_ps.setInt(2, FlightStatus.OK.ordinal());
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next())
 					IDs.add(Integer.valueOf(rs.getInt(1)));

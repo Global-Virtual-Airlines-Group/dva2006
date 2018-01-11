@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -7,7 +7,7 @@ import java.time.*;
 import java.time.temporal.ChronoUnit;
 
 import org.deltava.beans.*;
-import org.deltava.beans.flight.FlightReport;
+import org.deltava.beans.flight.*;
 import org.deltava.beans.stats.*;
 
 import org.deltava.util.cache.*;
@@ -59,7 +59,7 @@ public class GetStatistics extends DAO  {
 				_ps.setInt(1, FlightReport.ATTR_ONLINE_MASK);
 				_ps.setInt(2, FlightReport.ATTR_ONLINE_MASK);
 				_ps.setInt(3, FlightReport.ATTR_ONLINE_MASK);
-				_ps.setInt(4, FlightReport.OK);
+				_ps.setInt(4, FlightStatus.OK.ordinal());
 
 				// Count all airline totals
 				try (ResultSet rs = _ps.executeQuery()) {
@@ -93,7 +93,7 @@ public class GetStatistics extends DAO  {
 				_ps.setTimestamp(5, yt);
 				_ps.setTimestamp(6, yt);
 				_ps.setTimestamp(7, yt);
-				_ps.setInt(8, FlightReport.OK);
+				_ps.setInt(8, FlightStatus.OK.ordinal());
 
 				// Do the query
 				try (ResultSet rs = _ps.executeQuery()) {

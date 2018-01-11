@@ -1,16 +1,16 @@
-// Copyright 2005, 2008, 2009, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2008, 2009, 2011, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.List;
 
 import org.deltava.beans.*;
-import org.deltava.beans.flight.FlightReport;
+import org.deltava.beans.flight.*;
 
 /**
  * A Data Access Object to retrieve ACARS Flight Reports from the database.
  * @author Luke
- * @version 7.0
+ * @version 8.1
  * @since 1.0
  */
 
@@ -32,8 +32,7 @@ public class GetFlightReportACARS extends GetFlightReports {
 	 */
 	public List<FlightReport> getByEvent(int id) throws DAOException {
 		try {
-			prepareStatement("SELECT PR.*, PC.COMMENTS, PC.REMARKS, APR.* FROM PIREPS PR, ACARS_PIREPS APR "
-				+ "LEFT JOIN PIREP_COMMENT PC ON (APR.ID=PC.ID) WHERE (PR.ID=APR.ID) AND (PR.EVENT_ID=?)");
+			prepareStatement("SELECT PR.*, PC.COMMENTS, PC.REMARKS, APR.* FROM PIREPS PR, ACARS_PIREPS APR LEFT JOIN PIREP_COMMENT PC ON (APR.ID=PC.ID) WHERE (PR.ID=APR.ID) AND (PR.EVENT_ID=?)");
 			_ps.setInt(1, id);
 			return execute();
 		} catch (SQLException se) {
@@ -49,8 +48,7 @@ public class GetFlightReportACARS extends GetFlightReports {
 	 */
 	public List<FlightReport> getByDate(java.time.Instant dt) throws DAOException {
 		try {
-			prepareStatement("SELECT PR.*, PC.COMMENTS, PC.REMARKS, APR.* FROM PIREPS PR, ACARS_PIREPS APR "
-				+ "LEFT JOIN PIREP_COMMENT PC ON (APR.ID=PC.ID) WHERE (PR.ID=APR.ID) AND (PR.DATE=DATE(?))");
+			prepareStatement("SELECT PR.*, PC.COMMENTS, PC.REMARKS, APR.* FROM PIREPS PR, ACARS_PIREPS APR LEFT JOIN PIREP_COMMENT PC ON (APR.ID=PC.ID) WHERE (PR.ID=APR.ID) AND (PR.DATE=DATE(?))");
 			_ps.setTimestamp(1, createTimestamp(dt));
 			return execute();
 		} catch (SQLException se) {
@@ -68,8 +66,7 @@ public class GetFlightReportACARS extends GetFlightReports {
 	public List<FlightReport> getByPilot(int id, String orderBy) throws DAOException {
 
 		// Build the statement
-		StringBuilder buf = new StringBuilder("SELECT PR.*, PC.COMMENTS, PC.REMARKS, APR.* FROM (PIREPS PR, ACARS_PIREPS APR) "
-			+ "LEFT JOIN PIREP_COMMENT PC ON (APR.ID=PC.ID) WHERE (PR.ID=APR.ID) AND (PR.PILOT_ID=?)");
+		StringBuilder buf = new StringBuilder("SELECT PR.*, PC.COMMENTS, PC.REMARKS, APR.* FROM (PIREPS PR, ACARS_PIREPS APR) LEFT JOIN PIREP_COMMENT PC ON (APR.ID=PC.ID) WHERE (PR.ID=APR.ID) AND (PR.PILOT_ID=?)");
 		if (orderBy != null) {
 			buf.append(" ORDER BY PR.");
 			buf.append(orderBy);
@@ -102,16 +99,14 @@ public class GetFlightReportACARS extends GetFlightReports {
 		sqlBuf.append(db);
 		sqlBuf.append(".ACARS_PIREPS APR LEFT JOIN ");
 		sqlBuf.append(db);
-		sqlBuf.append(".PIREP_COMMENT PC ON (APR.ID=PC.ID) WHERE (PR.ID=APR.ID) AND (PR.PILOT_ID=?) "
-				+ "AND (PR.SUBMITTED > DATE_SUB(NOW(), INTERVAL ? MINUTE)) AND (PR.STATUS=?) AND "
-				+ "(PR.AIRLINE=?) AND (PR.FLIGHT=?) AND (PR.LEG=?) AND (PR.AIRPORT_D=?) AND (PR.AIRPORT_A=?) "
-				+ "AND (PR.EQTYPE=?)");
+		sqlBuf.append(".PIREP_COMMENT PC ON (APR.ID=PC.ID) WHERE (PR.ID=APR.ID) AND (PR.PILOT_ID=?) AND (PR.SUBMITTED > DATE_SUB(NOW(), INTERVAL ? MINUTE)) AND (PR.STATUS=?) AND "
+			+ "(PR.AIRLINE=?) AND (PR.FLIGHT=?) AND (PR.LEG=?) AND (PR.AIRPORT_D=?) AND (PR.AIRPORT_A=?) AND (PR.EQTYPE=?)");
 		
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
 			_ps.setInt(1, pilotID);
 			_ps.setInt(2, 20);
-			_ps.setInt(3, FlightReport.SUBMITTED);
+			_ps.setInt(3, FlightStatus.SUBMITTED.ordinal());
 			_ps.setString(4, f.getAirline().getCode());
 			_ps.setInt(5, f.getFlightNumber());
 			_ps.setInt(6, f.getLeg());

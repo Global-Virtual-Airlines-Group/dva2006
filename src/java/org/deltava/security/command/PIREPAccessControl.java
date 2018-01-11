@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2014, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.Pilot;
@@ -10,7 +10,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An access controller for Flight Report operations.
  * @author Luke
- * @version 7.0
+ * @version 8.1
  * @since 1.0
  */
 
@@ -65,16 +65,16 @@ public class PIREPAccessControl extends AccessControl {
 		}
 		
 		// Set role variables
-		final int status = _pirep.getStatus();
+		final FlightStatus status = _pirep.getStatus();
 		final boolean isAcademy = _ctx.isUserInRole("Instructor") || _ctx.isUserInRole("AcademyAdmin");
 		final boolean isPirep = _pirep.hasAttribute(FlightReport.ATTR_ACADEMY) ? isAcademy : _ctx.isUserInRole("PIREP");
 		_ourPIREP = _ctx.isAuthenticated() && (_pirep.getDatabaseID(DatabaseID.PILOT) == _ctx.getUser().getID());
 		
 		// Set status variables
-		final boolean isDraft = (status == FlightReport.DRAFT);
-		final boolean isSubmitted = (status == FlightReport.SUBMITTED);
-		final boolean isRejected = (status == FlightReport.REJECTED);
-		final boolean isHeld = (status == FlightReport.HOLD);
+		final boolean isDraft = (status == FlightStatus.DRAFT);
+		final boolean isSubmitted = (status == FlightStatus.SUBMITTED);
+		final boolean isRejected = (status == FlightStatus.REJECTED);
+		final boolean isHeld = (status == FlightStatus.HOLD);
 
 		// Check if held by us
 		final int disposalID = _pirep.getDatabaseID(DatabaseID.DISPOSAL);
@@ -84,19 +84,18 @@ public class PIREPAccessControl extends AccessControl {
 
 		// Check if we can submit/hold/approve/reject/edit the PIREP
 		_canSubmit = isDraft && (_ourPIREP || isPirep || isHR) && !noManual;
-		_canHold = (isSubmitted && (isPirep || isHR)) || ((status == FlightReport.OK) && isHR);
-		_canApprove = ((isPirep || isHR) && canReleaseHold && (isSubmitted || (status == FlightReport.HOLD)) || (isHR && isRejected));
-		_canReject = !isRejected && canReleaseHold && (_canApprove || (isHR && (status == FlightReport.OK)));
+		_canHold = (isSubmitted && (isPirep || isHR)) || ((status == FlightStatus.OK) && isHR);
+		_canApprove = ((isPirep || isHR) && canReleaseHold && (isSubmitted || (status == FlightStatus.HOLD)) || (isHR && isRejected));
+		_canReject = !isRejected && canReleaseHold && (_canApprove || (isHR && (status == FlightStatus.OK)));
 		_canRelease = (isHeld && _ctx.isAuthenticated() && canReleaseHold);
 		_canEdit = _canSubmit || _canHold || _canApprove || _canReject || _canRelease;
 		_canViewComments = isHR || isPirep || _ourPIREP;
-		_canUpdateComments = (isHR || isDisposedByMe) && (isRejected || isHeld || (status == FlightReport.OK));
+		_canUpdateComments = (isHR || isDisposedByMe) && (isRejected || isHeld || (status == FlightStatus.OK));
 		
 		// Get the flight assignment ID
 		final boolean isCheckRide = _pirep.hasAttribute(FlightReport.ATTR_CHECKRIDE);
 		final boolean isAssigned = (_pirep.getDatabaseID(DatabaseID.ASSIGN) > 0);
-		_canDelete = (_ourPIREP && !isAssigned && !isCheckRide && (isDraft || isSubmitted)) || (_ctx.isUserInRole("Admin") && 
-				((isRejected && isAssigned) || !isAssigned));
+		_canDelete = (_ourPIREP && !isAssigned && !isCheckRide && (isDraft || isSubmitted)) || (_ctx.isUserInRole("Admin") && ((isRejected && isAssigned) || !isAssigned));
 	}
 
 	/**

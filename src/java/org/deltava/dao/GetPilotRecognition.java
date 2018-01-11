@@ -1,11 +1,11 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2015, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.*;
-import org.deltava.beans.flight.FlightReport;
+import org.deltava.beans.flight.*;
 import org.deltava.beans.hr.*;
 
 import org.deltava.util.cache.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Acccess Object to read Pilots that have achieved certain accomplishments.
  * @author Luke
- * @version 7.2
+ * @version 8.1
  * @since 1.0
  */
 
@@ -99,7 +99,7 @@ public class GetPilotRecognition extends GetPilot {
     	
        try {
     	   prepareStatement(buf.toString());
-          _ps.setInt(1, FlightReport.OK);
+          _ps.setInt(1, FlightStatus.OK.ordinal());
           _ps.setInt(2, Rank.C.ordinal());
           _ps.setBoolean(3, true);
           _ps.setInt(4, Pilot.ACTIVE);
@@ -131,7 +131,7 @@ public class GetPilotRecognition extends GetPilot {
     			+ "STATUS_UPDATES SU ON (P.ID=SU.PILOT_ID) AND (SU.TYPE=?) LEFT JOIN NOMINATIONS N ON (P.ID=N.ID) AND "
     			+ "(N.QUARTER=?) WHERE (P.RANKING=?) AND (P.STATUS=?) AND (P.CREATED < DATE_SUB(CURDATE(), INTERVAL ? DAY)) "
     			+ "GROUP BY P.ID HAVING (SC=0) AND (NOMSTATUS=?) AND (LEGS>=?)");
-    		_ps.setInt(1, FlightReport.OK);
+    		_ps.setInt(1, FlightStatus.OK.ordinal());
     		_ps.setInt(2, Nomination.Status.PENDING.ordinal());
     		_ps.setInt(3, StatusUpdate.SR_CAPTAIN);
     		_ps.setInt(4, new Quarter().getYearQuarter());

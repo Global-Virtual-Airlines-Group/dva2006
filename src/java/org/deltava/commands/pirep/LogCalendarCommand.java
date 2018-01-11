@@ -1,11 +1,11 @@
-// Copyright 2008, 2010, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2010, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
 import java.util.stream.Collectors;
 import java.sql.Connection;
 
-import org.deltava.beans.flight.FlightReport;
+import org.deltava.beans.flight.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -13,7 +13,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to display a Pilot's log book in a Calendar. 
  * @author Luke
- * @version 8.0
+ * @version 8.1
  * @since 2.2
  */
 
@@ -43,7 +43,7 @@ public class LogCalendarCommand extends AbstractCalendarCommand {
             
             // Get the flight reports
             GetFlightReports prdao = new GetFlightReports(con);
-            Collection<FlightReport> pireps = prdao.getLogbookCalendar(id, cctx.getStartDate(), cctx.getDays()).stream().filter(fr -> (fr.getStatus() != FlightReport.DRAFT)).collect(Collectors.toList());
+            Collection<FlightReport> pireps = prdao.getLogbookCalendar(id, cctx.getStartDate(), cctx.getDays()).stream().filter(fr -> (fr.getStatus() != FlightStatus.DRAFT)).collect(Collectors.toList());
             prdao.getCaptEQType(pireps);
 			ctx.setAttribute("pireps", pireps, REQUEST);
 		} catch (DAOException de) {

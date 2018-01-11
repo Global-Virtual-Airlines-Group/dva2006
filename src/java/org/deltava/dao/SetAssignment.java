@@ -1,4 +1,4 @@
-// Copyright 2005, 2009, 2010, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2010, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -150,7 +150,7 @@ public class SetAssignment extends DAO {
          // Delete the draft Flight Reports
          prepareStatement("DELETE FROM PIREPS WHERE (ASSIGN_ID=?) AND (STATUS=?)");
          _ps.setInt(1, a.getID());
-         _ps.setInt(2, FlightReport.DRAFT);
+         _ps.setInt(2, FlightStatus.DRAFT.ordinal());
          executeUpdate(0);
 
          // Clear the Flight Reports
@@ -188,16 +188,16 @@ public class SetAssignment extends DAO {
          // Clear the Flown Flight Reports
          prepareStatement("UPDATE PIREPS SET ASSIGN_ID=0 WHERE (ASSIGN_ID=?) AND (STATUS IN (?, ?, ?))");
          _ps.setInt(1, a.getID());
-         _ps.setInt(2, FlightReport.OK);
-         _ps.setInt(3, FlightReport.SUBMITTED);
-         _ps.setInt(4, FlightReport.HOLD);
+         _ps.setInt(2, FlightStatus.OK.ordinal());
+         _ps.setInt(3, FlightStatus.SUBMITTED.ordinal());
+         _ps.setInt(4, FlightStatus.HOLD.ordinal());
          executeUpdate(0);
          
          // Delete the incomplete/rejected Flight Reports
          prepareStatement("DELETE FROM PIREPS WHERE (ASSIGN_ID=?) AND ((STATUS=?) OR (STATUS=?))");
          _ps.setInt(1, a.getID());
-         _ps.setInt(2, FlightReport.DRAFT);
-         _ps.setInt(3, FlightReport.REJECTED);
+         _ps.setInt(2, FlightStatus.DRAFT.ordinal());
+         _ps.setInt(3, FlightStatus.REJECTED.ordinal());
          executeUpdate(0);
          commitTransaction();
       } catch (SQLException se) {

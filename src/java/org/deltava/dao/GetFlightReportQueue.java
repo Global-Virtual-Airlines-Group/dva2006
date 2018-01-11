@@ -1,16 +1,16 @@
-// Copyright 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2015, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 
+import org.deltava.beans.flight.*;
 import org.deltava.beans.EquipmentType;
-import org.deltava.beans.flight.FlightReport;
 import org.deltava.beans.stats.DisposalQueueStats;
 
 /**
  * A Data Access Object to return Flight Report disposal queue information.
  * @author Luke
- * @version 7.1
+ * @version 8.1
  * @since 5.0
  */
 
@@ -33,9 +33,8 @@ public class GetFlightReportQueue extends DAO {
 	public DisposalQueueStats getDisposalQueueStats(String eqType) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT COUNT(PR.ID) AS CNT, AVG(TIMESTAMPDIFF(HOUR,PR.SUBMITTED,NOW())) AS AV, "
-				+ "MAX(TIMESTAMPDIFF(HOUR,PR.SUBMITTED,NOW())) AS MX, MIN(TIMESTAMPDIFF(HOUR,PR.SUBMITTED,NOW())) AS MN FROM "
-				+ "PIREPS PR");
+		StringBuilder sqlBuf = new StringBuilder("SELECT COUNT(PR.ID) AS CNT, AVG(TIMESTAMPDIFF(HOUR,PR.SUBMITTED,NOW())) AS AV, MAX(TIMESTAMPDIFF(HOUR,PR.SUBMITTED,NOW())) AS MX, "
+			+ "MIN(TIMESTAMPDIFF(HOUR,PR.SUBMITTED,NOW())) AS MN FROM PIREPS PR");
 		if (eqType != null)
 			sqlBuf.append(", EQRATINGS ER WHERE (PR.EQTYPE=ER.RATED_EQ) AND (ER.RATING_TYPE=?) AND (ER.EQTYPE=?) AND");
 		else
@@ -47,10 +46,10 @@ public class GetFlightReportQueue extends DAO {
 			if (eqType != null) {
 				_ps.setInt(1, EquipmentType.Rating.PRIMARY.ordinal());
 				_ps.setString(2, eqType);
-				_ps.setInt(3, FlightReport.SUBMITTED);
+				_ps.setInt(3, FlightStatus.SUBMITTED.ordinal());
 				_ps.setInt(4, FlightReport.ATTR_CHECKRIDE);
 			} else {
-				_ps.setInt(1, FlightReport.SUBMITTED);
+				_ps.setInt(1, FlightStatus.SUBMITTED.ordinal());
 				_ps.setInt(2, FlightReport.ATTR_CHECKRIDE);
 			}
 
@@ -64,9 +63,8 @@ public class GetFlightReportQueue extends DAO {
 
 			_ps.close();
 			
-			prepareStatementWithoutLimits("SELECT ER.EQTYPE, COUNT(PR.ID) AS CNT FROM PIREPS PR, EQRATINGS ER WHERE (PR.STATUS=?) "
-					+ "AND (PR.EQTYPE=ER.RATED_EQ) AND (ER.RATING_TYPE=?) GROUP BY ER.EQTYPE ORDER BY CNT DESC, ER.EQTYPE");
-			_ps.setInt(1, FlightReport.SUBMITTED);
+			prepareStatementWithoutLimits("SELECT ER.EQTYPE, COUNT(PR.ID) AS CNT FROM PIREPS PR, EQRATINGS ER WHERE (PR.STATUS=?) AND (PR.EQTYPE=ER.RATED_EQ) AND (ER.RATING_TYPE=?) GROUP BY ER.EQTYPE ORDER BY CNT DESC, ER.EQTYPE");
+			_ps.setInt(1, FlightStatus.SUBMITTED.ordinal());
 			_ps.setInt(2, EquipmentType.Rating.PRIMARY.ordinal());
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next())

@@ -1,18 +1,18 @@
-// Copyright 2005, 2007, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009, 2011, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.Pilot;
-import org.deltava.beans.flight.FlightReport;
+import org.deltava.beans.flight.*;
 import org.deltava.beans.system.InactivityPurge;
 
 /**
  * A Data Access Object to read Inactivity purge entries. This DAO extends PilotReadDAO since it is used
  * to query pilots who may not have an Inactivity purge table entry, but are eligible for one.
  * @author Luke
- * @version 4.1
+ * @version 8.1
  * @since 1.0
  */
 
@@ -94,7 +94,7 @@ public class GetInactivity extends PilotReadDAO {
 					+ "LEFT JOIN exams.EXAMS E ON ((E.PILOT_ID=P.ID) AND (E.CREATED_ON > DATE_SUB(NOW(), INTERVAL ? DAY))) WHERE "
 					+ "(P.STATUS=?) AND P.LAST_LOGIN < DATE_SUB(NOW(), INTERVAL ? DAY) GROUP BY P.ID HAVING (FLIGHTS=0) AND "
 					+ "(POSTS<?) AND (EXAMS=0)");
-			_ps.setInt(1, FlightReport.OK);
+			_ps.setInt(1, FlightStatus.OK.ordinal());
 			_ps.setInt(2, activityDays);
 			_ps.setInt(3, activityDays);
 			_ps.setInt(4, activityDays);
@@ -107,7 +107,7 @@ public class GetInactivity extends PilotReadDAO {
 		}
 	}
 	
-	/**
+	/*
 	 * Helper method to parse Inactivity result sets.
 	 */
 	private List<InactivityPurge> executeInactivity() throws SQLException {

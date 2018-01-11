@@ -130,7 +130,7 @@ public class GetFlightReports extends DAO {
 	 * @return a List of FlightReports in the specified statuses
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<FlightReport> getByStatus(Collection<Integer> status) throws DAOException {
+	public List<FlightReport> getByStatus(Collection<FlightStatus> status) throws DAOException {
 		return getByStatus(status, null);
 	}
 
@@ -141,15 +141,15 @@ public class GetFlightReports extends DAO {
 	 * @return a List of FlightReports in the specified statuses
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<FlightReport> getByStatus(Collection<Integer> status, String orderBy) throws DAOException {
+	public List<FlightReport> getByStatus(Collection<FlightStatus> status, String orderBy) throws DAOException {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, PC.REMARKS, APR.*, GROUP_CONCAT(ER.EQTYPE) FROM PILOTS P, PIREPS PR LEFT JOIN PIREP_COMMENT PC ON (PR.ID=PC.ID) "
 			+ "LEFT JOIN ACARS_PIREPS APR ON (PR.ID=APR.ID) LEFT JOIN EQRATINGS ER ON (ER.RATED_EQ=PR.EQTYPE) AND (ER.RATING_TYPE=?) WHERE (P.ID=PR.PILOT_ID) AND (");
-		for (Iterator<Integer> i = status.iterator(); i.hasNext();) {
-			Integer st = i.next();
+		for (Iterator<FlightStatus> i = status.iterator(); i.hasNext();) {
+			FlightStatus st = i.next();
 			sqlBuf.append("(PR.STATUS=");
-			sqlBuf.append(st.toString());
+			sqlBuf.append(st.ordinal());
 			sqlBuf.append(')');
 			if (i.hasNext())
 				sqlBuf.append(" OR ");
@@ -186,7 +186,7 @@ public class GetFlightReports extends DAO {
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString()); int param = 0;
 			_ps.setInt(++param, EquipmentType.Rating.PRIMARY.ordinal());
-			_ps.setInt(++param, FlightReport.SUBMITTED);
+			_ps.setInt(++param, FlightStatus.SUBMITTED.ordinal());
 			_ps.setInt(++param, FlightReport.ATTR_CHECKRIDE);
 			if (!includeAcademy)
 				_ps.setInt(++param, FlightReport.ATTR_ACADEMY);
@@ -223,7 +223,7 @@ public class GetFlightReports extends DAO {
 		
 		try {
 			prepareStatement(buf.toString());
-			_ps.setInt(1, FlightReport.HOLD);
+			_ps.setInt(1, FlightStatus.HOLD.ordinal());
 			_ps.setInt(2, pilotID);
 			
 			int results = 0;
@@ -372,7 +372,7 @@ public class GetFlightReports extends DAO {
 					_ps.setString(++idx, criteria.getAirportD().getIATA());
 				if (criteria.getAirportA() != null)
 					_ps.setString(++idx, criteria.getAirportA().getIATA());
-				_ps.setInt(++idx, FlightReport.DRAFT);
+				_ps.setInt(++idx, FlightStatus.DRAFT.ordinal());
 			}
 			
 			return execute();
@@ -439,7 +439,7 @@ public class GetFlightReports extends DAO {
 			_ps.setInt(2, FlightReport.ATTR_ONLINE_MASK);
 			_ps.setInt(3, FlightReport.ATTR_ACARS);
 			_ps.setInt(4, FlightReport.ATTR_ACARS);
-			_ps.setInt(5, FlightReport.OK);
+			_ps.setInt(5, FlightStatus.OK.ordinal());
 
 			// Execute the query
 			try (ResultSet rs = _ps.executeQuery()) {
@@ -494,7 +494,7 @@ public class GetFlightReports extends DAO {
 		try {
 			prepareStatement(sqlBuf.toString());
 			_ps.setInt(1, pilotID);
-			_ps.setInt(2, FlightReport.DRAFT);
+			_ps.setInt(2, FlightStatus.DRAFT.ordinal());
 			if (rp != null) {
 				_ps.setString(3, rp.getAirportD().getIATA());
 				_ps.setString(4, rp.getAirportA().getIATA());
@@ -516,7 +516,7 @@ public class GetFlightReports extends DAO {
 		try {
 			prepareStatementWithoutLimits("SELECT DISTINCT AIRPORT_D, AIRPORT_A, COUNT(ID) AS CNT FROM PIREPS WHERE (PILOT_ID=?) AND (STATUS=?) GROUP BY AIRPORT_D, AIRPORT_A");
 			_ps.setInt(1, pilotID);
-			_ps.setInt(2, FlightReport.OK);
+			_ps.setInt(2, FlightStatus.OK.ordinal());
 			
 			// Execute the query
 			Map<String, RouteStats> results = new HashMap<String, RouteStats>();
@@ -556,12 +556,12 @@ public class GetFlightReports extends DAO {
 
 			// Iterate throught the results
 			while (rs.next()) {
-				int status = rs.getInt(4);
+				FlightStatus status = FlightStatus.values()[rs.getInt(4)];
 				int attr = rs.getInt(13);
 				boolean isACARS = (hasACARS && (rs.getInt(26) != 0));
 				boolean isXACARS = isACARS && ((attr & FlightReport.ATTR_XACARS) != 0);
 				boolean isSimFDR = isACARS && ((attr & FlightReport.ATTR_SIMFDR) != 0);
-				boolean isDraft = (hasSchedTimes && (status == FlightReport.DRAFT));
+				boolean isDraft = (hasSchedTimes && (status == FlightStatus.DRAFT));
 
 				// Build the PIREP as a standard one, or an ACARS pirep
 				Airline a = SystemData.getAirline(rs.getString(6));

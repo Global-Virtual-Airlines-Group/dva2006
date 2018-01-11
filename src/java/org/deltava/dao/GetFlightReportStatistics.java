@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -6,7 +6,7 @@ import java.util.*;
 import java.time.Instant;
 
 import org.deltava.beans.*;
-import org.deltava.beans.flight.FlightReport;
+import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.stats.*;
 
@@ -125,7 +125,7 @@ public class GetFlightReportStatistics extends DAO {
 			prepareStatement(buf.toString());
 			_ps.setBoolean(++pos, true);
 			_ps.setBoolean(++pos, false);
-			_ps.setInt(++pos, FlightReport.OK);
+			_ps.setInt(++pos, FlightStatus.OK.ordinal());
 			if (!allFlights)
 				_ps.setInt(++pos, FlightReport.ATTR_ACARS);
 			if (_dayFilter > 0)
@@ -177,7 +177,7 @@ public class GetFlightReportStatistics extends DAO {
 			int pos = 0;
 			prepareStatement(buf.toString());
 			_ps.setInt(++pos, OPT_VSPEED);
-			_ps.setInt(++pos, FlightReport.OK);
+			_ps.setInt(++pos, FlightStatus.OK.ordinal());
 			if (eqType != null)
 				_ps.setString(++pos, eqType);
 			if (_dayFilter > 0)
@@ -233,7 +233,7 @@ public class GetFlightReportStatistics extends DAO {
 			_ps.setBoolean(1, false);
 			_ps.setInt(2, FlightReport.MIN_ACARS_CLIENT);
 			_ps.setInt(3, pilotID);
-			_ps.setInt(4, FlightReport.OK);
+			_ps.setInt(4, FlightStatus.OK.ordinal());
 			_ps.setInt(5, OPT_VSPEED);
 
 			// Execute the query
@@ -388,7 +388,7 @@ public class GetFlightReportStatistics extends DAO {
 			_ps.setInt(4, FlightReport.ATTR_HISTORIC);
 			_ps.setInt(5, FlightReport.ATTR_DISPATCH);
 			_ps.setInt(6, FlightReport.ATTR_ONLINE_MASK);
-			_ps.setInt(7, FlightReport.OK);
+			_ps.setInt(7, FlightStatus.OK.ordinal());
 			_ps.setString(8, eqType);
 			_ps.setInt(9, EquipmentType.Rating.PRIMARY.ordinal());
 			if (_dayFilter > 0)
@@ -436,7 +436,7 @@ public class GetFlightReportStatistics extends DAO {
 			_ps.setInt(4, FlightReport.ATTR_HISTORIC);
 			_ps.setInt(5, FlightReport.ATTR_DISPATCH);
 			_ps.setInt(6, FlightReport.ATTR_ONLINE_MASK);
-			_ps.setInt(7, FlightReport.OK);
+			_ps.setInt(7, FlightStatus.OK.ordinal());
 			_ps.setInt(8, FlightReport.ATTR_CHARTER);
 			
 			// Check the cache
@@ -466,7 +466,7 @@ public class GetFlightReportStatistics extends DAO {
 	public int getPassengers(int pilotID) throws DAOException {
 		try {
 			prepareStatementWithoutLimits("SELECT SUM(PAX) FROM PIREPS WHERE (STATUS=?) AND (PILOT_ID=?)");
-			_ps.setInt(1, FlightReport.OK);
+			_ps.setInt(1, FlightStatus.OK.ordinal());
 			_ps.setInt(2, pilotID);
 			
 			int result = 0;
@@ -498,7 +498,7 @@ public class GetFlightReportStatistics extends DAO {
 		try {
 			prepareStatement(sqlBuf.toString());
 			_ps.setInt(1, pilotID);
-			_ps.setInt(2, FlightReport.OK);
+			_ps.setInt(2, FlightStatus.OK.ordinal());
 			_ps.setInt(3, FlightReport.ATTR_CHARTER);
 			if (days > 0)
 				_ps.setInt(4, days);
@@ -533,7 +533,7 @@ public class GetFlightReportStatistics extends DAO {
 		
 		try {
 			prepareStatement(sqlBuf.toString());
-			_ps.setInt(1, FlightReport.OK);
+			_ps.setInt(1, FlightStatus.OK.ordinal());
 			if (pilotID != 0)
 				_ps.setInt(2, pilotID);
 			
@@ -593,7 +593,7 @@ public class GetFlightReportStatistics extends DAO {
 			_ps.setInt(++param, FlightReport.ATTR_HISTORIC);
 			_ps.setInt(++param, FlightReport.ATTR_DISPATCH);
 			_ps.setInt(++param, FlightReport.ATTR_ONLINE_MASK);
-			_ps.setInt(++param, FlightReport.OK);
+			_ps.setInt(++param, FlightStatus.OK.ordinal());
 			if (pilotID != 0)
 				_ps.setInt(++param, pilotID);
 			

@@ -1,4 +1,4 @@
-// Copyright 2006, 2010, 2011, 2012, 2014, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010, 2011, 2012, 2014, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.academy;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to extract information from a user's Flight Academy history.
  * @author Luke
- * @version 7.2
+ * @version 8.1
  * @since 1.0
  */
 
@@ -130,7 +130,7 @@ public final class AcademyHistoryHelper {
 	 * @param flights a Collection of FlightReport beans
 	 */
 	public void addFlights(Collection<FlightReport> flights) {
-		flights.stream().filter(fr -> ((fr.getStatus() == FlightReport.OK) && fr.hasAttribute(FlightReport.ATTR_FDR_MASK))).forEach(fr -> _flights.add(fr));
+		flights.stream().filter(fr -> ((fr.getStatus() == FlightStatus.OK) && fr.hasAttribute(FlightReport.ATTR_FDR_MASK))).forEach(_flights::add);
 	}
 	
 	/**

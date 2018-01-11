@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import java.time.temporal.ChronoUnit;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
-import org.deltava.beans.flight.FlightReport;
+import org.deltava.beans.flight.*;
 
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A helper class to extract information from a user's examination/check ride history.
  * @author Luke
- * @version 8.0
+ * @version 8.1
  * @since 1.0
  */
 
@@ -241,7 +241,7 @@ public final class TestingHistoryHelper {
 	public int getFlightLegs(EquipmentType eq) {
 		int result = 0;
 		for (FlightReport fr : _pireps) {
-			if (fr.getStatus() == FlightReport.OK) {
+			if (fr.getStatus() == FlightStatus.OK) {
 				if ((eq == null) || (fr.getCaptEQType().contains(eq.getName())))
 					result++;
 			}

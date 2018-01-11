@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to release a Flight Assignment.
  * @author Luke
- * @version 7.0
+ * @version 8.1
  * @since 1.0
  */
 
@@ -51,15 +51,14 @@ public class AssignmentReleaseCommand extends AbstractCommand {
 
 			// Get the PIREP write DAO and init counters
 			SetFlightReport fwdao = new SetFlightReport(con);
-			int flightsDeleted = 0;
-			int flightsUpdated = 0;
+			int flightsDeleted = 0; int flightsUpdated = 0;
 			
 			// Start the database transaction
 			ctx.startTX();
 
 			// Delete PIREPs in draft status, and remove the Assignment ID for the others
 			for (FlightReport fr : pireps) {
-				if (fr.getStatus() == FlightReport.DRAFT) {
+				if (fr.getStatus() == FlightStatus.DRAFT) {
 					fwdao.delete(fr.getID());
 					flightsDeleted++;
 				} else {
