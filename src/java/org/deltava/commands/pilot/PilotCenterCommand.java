@@ -7,10 +7,10 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
 import org.deltava.beans.*;
+import org.deltava.beans.flight.*;
 import org.deltava.beans.testing.*;
 import org.deltava.beans.academy.*;
 import org.deltava.beans.acars.Restriction;
-import org.deltava.beans.flight.FlightReport;
 import org.deltava.beans.hr.TransferRequest;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.system.*;
@@ -112,7 +112,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			frdao.setQueryMax(10); FlightReport lastFlight = null;
 			List<FlightReport> results = frdao.getByPilot(p.getID(), new ScheduleSearchCriteria("SUBMITTED DESC"));
 			for (FlightReport fr : results) {
-				if ((fr.getStatus() != FlightReport.DRAFT) && (fr.getStatus() != FlightReport.REJECTED)) {
+				if ((fr.getStatus() != FlightStatus.DRAFT) && (fr.getStatus() != FlightStatus.REJECTED)) {
 					lastFlight = fr;
 					ctx.setAttribute("lastFlight", fr, REQUEST);
 					break;

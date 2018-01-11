@@ -6,9 +6,8 @@ import java.util.*;
 import junit.framework.Test;
 import org.hansel.CoverageDecorator;
 
-import org.deltava.beans.flight.FlightReport;
-import org.deltava.beans.schedule.Airline;
-import org.deltava.beans.schedule.Airport;
+import org.deltava.beans.flight.*;
+import org.deltava.beans.schedule.*;
 
 public class TestPilot extends AbstractBeanTestCase {
 	
@@ -194,7 +193,7 @@ public class TestPilot extends AbstractBeanTestCase {
     	assertEquals(0, _p.getOnlineLegs());
     	assertEquals(0.0, _p.getOnlineHours() , 0.001);
     	
-    	fr.setStatus(FlightReport.OK);
+    	fr.setStatus(FlightStatus.OK);
     	assertEquals(1.1, _p.getHours() , 0.001);
     	
     	assertEquals(0.0, _p.getOnlineHours(), 0.001);

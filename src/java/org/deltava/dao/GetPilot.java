@@ -1,18 +1,18 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2013, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2013, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.*;
-import org.deltava.beans.flight.FlightReport;
+import org.deltava.beans.flight.*;
 
 import org.deltava.util.*;
 
 /**
  * A Data Access Object to get Pilots from the database, for use in roster operations.
  * @author Luke
- * @version 8.0
+ * @version 8.1
  * @since 1.0
  */
 
@@ -77,7 +77,7 @@ public class GetPilot extends PilotReadDAO {
 
 		try {
 			prepareStatement(sqlBuf.toString());
-			_ps.setInt(1, FlightReport.OK);
+			_ps.setInt(1, FlightStatus.OK.ordinal());
 			_ps.setInt(2, pilotCode);
 
 			// Execute the query and get the result
@@ -114,7 +114,7 @@ public class GetPilot extends PilotReadDAO {
 		sql.append((orderBy != null) ? orderBy.toUpperCase() : "P.PILOT_ID");
 		try {
 			prepareStatement(sql.toString());
-			_ps.setInt(1, FlightReport.OK);
+			_ps.setInt(1, FlightStatus.OK.ordinal());
 			_ps.setInt(2, Pilot.ACTIVE);
 			return execute();
 		} catch (SQLException se) {
@@ -151,7 +151,7 @@ public class GetPilot extends PilotReadDAO {
 		try {
 			int pos = 0;
 			prepareStatement(sqlBuf.toString());	
-			_ps.setInt(++pos, FlightReport.OK);
+			_ps.setInt(++pos, FlightStatus.OK.ordinal());
 			_ps.setString(++pos, eq.getName());
 			if (showActive)
 				_ps.setInt(++pos, Pilot.ACTIVE);
@@ -174,7 +174,7 @@ public class GetPilot extends PilotReadDAO {
 		try {
 			prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE), S.EXT, S.MODIFIED FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) "
 				+ "LEFT JOIN SIGNATURES S ON (P.ID=S.ID) WHERE (P.RANKING=?) AND (P.STATUS=?) GROUP BY P.ID");
-			_ps.setInt(1, FlightReport.OK);
+			_ps.setInt(1, FlightStatus.OK.ordinal());
 			_ps.setString(2, rank.getName());
 			_ps.setInt(3, Pilot.ACTIVE);
 			return execute();
@@ -200,7 +200,7 @@ public class GetPilot extends PilotReadDAO {
 		try {
 			prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE) FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) WHERE "
 				+ "(LEFT(P.LASTNAME, 1)=?) GROUP BY P.ID ORDER BY P.LASTNAME");
-			_ps.setInt(1, FlightReport.OK);
+			_ps.setInt(1, FlightStatus.OK.ordinal());
 			_ps.setString(2, letter.substring(0, 1).toUpperCase());
 			return execute();
 		} catch (SQLException se) {
@@ -218,7 +218,7 @@ public class GetPilot extends PilotReadDAO {
 		try {
 			prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE) FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) WHERE "
 				+ "(P.STATUS=?) GROUP BY P.ID ORDER BY P.CREATED");
-			_ps.setInt(1, FlightReport.OK);
+			_ps.setInt(1, FlightStatus.OK.ordinal());
 			_ps.setInt(2, status);
 			return execute();
 		} catch (SQLException se) {
@@ -234,7 +234,7 @@ public class GetPilot extends PilotReadDAO {
 	public List<Pilot> getPilots() throws DAOException {
 		try {
 			prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE) FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) GROUP BY P.ID");
-			_ps.setInt(1, FlightReport.OK);
+			_ps.setInt(1, FlightStatus.OK.ordinal());
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);

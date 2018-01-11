@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.functions;
 
 import java.util.Iterator;
@@ -8,7 +8,7 @@ import org.deltava.beans.flight.*;
 /**
  * A JSP Function Library to define Flight Report-related functions.
  * @author Luke
- * @version 8.0
+ * @version 8.1
  * @since 1.0
  */
 
@@ -117,10 +117,10 @@ public class FlightReportFunctions {
 	 * Returns if this Flight Report is a Draft.
 	 * @param fr the Flight Report
 	 * @return TRUE if the Flight is in Draft status, otherwise FALSE
-	 * @see FlightReport#DRAFT
+	 * @see FlightStatus#DRAFT
 	 */
 	public static boolean isDraft(FlightReport fr) {
-		return (fr != null) && (fr.getStatus() == FlightReport.DRAFT);
+		return (fr != null) && (fr.getStatus() == FlightStatus.DRAFT);
 	}
 
 	/**

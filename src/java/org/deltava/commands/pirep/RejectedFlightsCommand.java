@@ -1,4 +1,4 @@
-// Copyright 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to view rejected Flight Reports.
  * @author Luke
- * @version 7.0
+ * @version 8.1
  * @since 5.1
  */
 
@@ -46,7 +46,7 @@ public class RejectedFlightsCommand extends AbstractViewCommand {
 			dao.setQueryMax(vc.getCount());
 			
 			// Get the PIREPs and load the promotion type
-			vc.setResults(dao.getByStatus(Collections.singleton(Integer.valueOf(FlightReport.REJECTED)), vc.getSortType()));
+			vc.setResults(dao.getByStatus(Collections.singleton(FlightStatus.REJECTED), vc.getSortType()));
 			dao.getCaptEQType(vc.getResults());
 			
 			// Get the Pilot IDs

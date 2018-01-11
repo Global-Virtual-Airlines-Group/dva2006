@@ -1,4 +1,4 @@
-// Copyright 2007, 2009, 2010, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009, 2010, 2012, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.Collection;
@@ -103,7 +103,7 @@ public class ExternalPIREPApprovalCommand extends AbstractCommand {
 			ctx.startTX();
 			
 			// Get the PIREP write DAO and approve the PIREP
-			int pirepStatus = crApproved ? FlightReport.OK : FlightReport.REJECTED;
+			FlightStatus pirepStatus = crApproved ? FlightStatus.OK : FlightStatus.REJECTED;
 			SetFlightReport wdao = new SetFlightReport(con);
 			wdao.dispose(ud.getDB(), ctx.getUser(), fr, pirepStatus);
 			

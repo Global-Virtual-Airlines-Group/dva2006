@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2008, 2009, 2010, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2008, 2009, 2010, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.assign;
 
 import java.util.*;
@@ -119,7 +119,7 @@ public class AssignmentInfo extends DatabaseBean implements ViewEntry {
      * @return TRUE if all assignment flights are complete, otherwise FALS
      */
     public boolean isComplete() {
-    	return _flights.stream().allMatch(fr -> ((fr.getStatus() == FlightReport.OK) || (fr.getStatus() == FlightReport.REJECTED)));
+    	return _flights.stream().allMatch(fr -> ((fr.getStatus() == FlightStatus.OK) || (fr.getStatus() == FlightStatus.REJECTED)));
     }
     
     /**
@@ -268,7 +268,7 @@ public class AssignmentInfo extends DatabaseBean implements ViewEntry {
     	FlightReport dfr = null;
     	for (Iterator<FlightReport> i = _flights.iterator(); i.hasNext(); ) {
     		FlightReport fr = i.next();
-    		if ((fr.getStatus() == FlightReport.DRAFT) && fr.matches(rp)) {
+    		if ((fr.getStatus() == FlightStatus.DRAFT) && fr.matches(rp)) {
     			dfr = fr;
     			i.remove();
     		}

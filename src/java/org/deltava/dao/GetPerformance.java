@@ -1,20 +1,20 @@
-// Copyright 2006, 2007, 2008, 2009, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 
-import static org.deltava.beans.flight.FlightReport.*;
-
+import org.deltava.beans.flight.*;
 import org.deltava.beans.testing.TestStatus;
 import org.deltava.beans.stats.PerformanceMetrics;
+
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to load performance data from the database.
  * @author Luke
- * @version 7.2
+ * @version 8.1
  * @since 1.0
  */
 
@@ -76,7 +76,7 @@ public class GetPerformance extends DAO {
 		
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setInt(1, OK);
+			_ps.setInt(1, FlightStatus.OK.ordinal());
 			_ps.setInt(2, startDays);
 			_ps.setInt(3, endDays);
 			if (_userID > 0)
@@ -182,11 +182,11 @@ public class GetPerformance extends DAO {
 		
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString()); int pos = 0;
-			_ps.setInt(++pos, OK);
+			_ps.setInt(++pos, FlightStatus.OK.ordinal());
 			_ps.setInt(++pos, startDays);
 			_ps.setInt(++pos, endDays);
 			if (isACARS)
-			_ps.setInt(++pos, ATTR_ACARS);
+				_ps.setInt(++pos, FlightReport.ATTR_ACARS);
 			if (_userID > 0)
 				_ps.setInt(++pos, _userID);
 			

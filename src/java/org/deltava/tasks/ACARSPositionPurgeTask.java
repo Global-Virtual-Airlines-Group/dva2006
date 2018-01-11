@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to purge orphaned ACARS position entries.
  * @author Luke
- * @version 5.0
+ * @version 8.1
  * @since 3.2
  */
 
@@ -104,7 +104,7 @@ public class ACARSPositionPurgeTask extends Task {
 						int purgeCount = wdao.deletePositions(id);
 						ctx.commitTX();
 						log.warn("Flight ID " + id + " has no PIREP, purged " + purgeCount + " poistions");
-					} else if ((afr.getStatus() == FlightReport.OK) || (afr.getStatus() == FlightReport.REJECTED)) {
+					} else if ((afr.getStatus() == FlightStatus.OK) || (afr.getStatus() == FlightStatus.REJECTED)) {
 						Collection<ACARSRouteEntry> entries = dao.getRouteEntries(id, false);
 						arcdao.archive(id, entries);
 						log.warn("Flight ID " + id + " is not archived, moved " + entries.size() + " poistions");

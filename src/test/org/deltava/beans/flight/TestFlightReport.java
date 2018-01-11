@@ -57,12 +57,9 @@ public class TestFlightReport extends AbstractBeanTestCase {
         checkProperty("leg", Integer.valueOf(_fr.getLeg()));
         checkProperty("length", Integer.valueOf(21));
         checkProperty("status", Integer.valueOf(2));
-        assertEquals(FlightReport.STATUS[_fr.getStatus()], _fr.getStatusName());
         checkProperty("FSVersion", Integer.valueOf(2002));
         _fr.setSimulator(Simulator.FS9);
         assertEquals(Simulator.FS9, _fr.getSimulator());
-        _fr.setStatus("Hold");
-        assertEquals(FlightReport.HOLD, _fr.getStatus());
     }
     
     public void testValidation() {
@@ -157,14 +154,6 @@ public class TestFlightReport extends AbstractBeanTestCase {
         assertFalse(_fr.equals(f3));
         assertFalse(_fr.equals(f4));
         assertTrue(_fr.compareTo(f4) < 0);
-    }
-    
-    public void testViewEntry() {
-       String[] ROW_CLASSES = {"opt2", "opt1", "warn", null, "err"};
-       for (int x = 0; x < ROW_CLASSES.length; x++) {
-          _fr.setStatus(x);
-          assertEquals(ROW_CLASSES[x], _fr.getRowClassName());
-       }
     }
     
     public void testFromFlight() {
