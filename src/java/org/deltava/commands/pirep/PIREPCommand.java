@@ -403,12 +403,8 @@ public class PIREPCommand extends AbstractFormCommand {
 
 			// Get the pilot who approved/rejected this PIREP
 			int disposalID = fr.getDatabaseID(DatabaseID.DISPOSAL);
-			Pilot dPilot = (disposalID != 0) ? pdao.get(disposalID) : null;
-			if (dPilot != null) {
-				String msg = fr.getStatus().getDescription() + " - by " + dPilot.getName();
-				ctx.setAttribute("statusMsg", msg, REQUEST);
-			} else
-				ctx.setAttribute("statusMsg", fr.getStatus().getDescription(), REQUEST);
+			if (disposalID != 0)
+				ctx.setAttribute("disposedBy", pdao.get(disposalID), REQUEST);
 
 			// If this PIREP was flown as part of an event, get its information
 			GetEvent evdao = new GetEvent(con);

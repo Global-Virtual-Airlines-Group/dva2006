@@ -173,7 +173,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Status</td>
- <td class="data bld sec">${!empty pirep ? pirep.statusName : 'NEW'} <c:if test="${fn:AssignID(pirep) > 0}"><span class="ter bld">FLIGHT ASSIGNMENT</span></c:if></td>
+ <td class="data bld sec">${!empty pirep ? pirep.status.description : 'NEW'} <c:if test="${fn:AssignID(pirep) > 0}"><span class="ter bld">FLIGHT ASSIGNMENT</span></c:if></td>
 </tr>
 <c:choose>
 <c:when test="${!isAssign}">

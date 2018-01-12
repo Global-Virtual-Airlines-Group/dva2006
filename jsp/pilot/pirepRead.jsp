@@ -108,7 +108,7 @@ golgotha.local.showRunwayChoices = function() {
 </content:filter>
 <tr>
  <td class="label">Status</td>
- <td class="data bld sec">${statusMsg}<c:if test="${!empty pirep.disposedOn}"> on <fmt:date date="${pirep.disposedOn}" /></c:if> 
+ <td class="data bld"><span class="sec">${pirep.status}</span><c:if test="${!empty disposedBy}"> - by ${disposedBy.name}</c:if><c:if test="${!empty pirep.disposedOn}"> on <fmt:date date="${pirep.disposedOn}" /></c:if> 
 <c:if test="${fn:AssignID(pirep) > 0}"> <span class="ter bld">FLIGHT ASSIGNMENT</span></c:if>
 <content:authUser anonymous="false"><c:if test="${fn:isDraft(pirep)}"> - <el:cmd url="routeplot" link="${pirep}">Plot Route</el:cmd><c:if test="${!empty pirep.route}"> - <a href="draftplan.ws?id=${pirep.hexID}" rel="nofollow">Download Flight Plan</a></c:if></c:if></content:authUser></td>
 </tr>
