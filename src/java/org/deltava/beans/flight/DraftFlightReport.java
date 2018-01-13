@@ -1,4 +1,4 @@
-// Copyright 2010, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2012, 2015, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.time.*;
@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A class to store draft Flight Report data, with scheduled departure/arrival times. 
  * @author Luke
- * @version 7.2
+ * @version 8.1
  * @since 2.8
  */
 
@@ -92,5 +92,11 @@ public class DraftFlightReport extends FlightReport implements FlightTimes {
 		buf.append(' ');
 		buf.append(getAirportA().getTZ());
 		return buf.toString();
+	}
+	
+	@Override
+	public Duration getDuration() {
+		Duration d = Duration.between(_timeD.toInstant(), _timeA.toInstant());
+		return d.isNegative() ? d.negated() : d;
 	}
 }
