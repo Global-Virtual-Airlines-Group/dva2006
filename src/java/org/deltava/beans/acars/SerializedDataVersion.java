@@ -1,15 +1,15 @@
-// Copyright 2012, 2014, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2014, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 /**
  * An enumeration to store serialized ACARS position data version information.
  * @author Luke
- * @version 7.3
+ * @version 8.2
  * @since 4.1
  */
 
 public enum SerializedDataVersion {
-	ACARS(1, false), XACARS(1, true), ACARSv2(2, false), ACARSv3(3, false), ACARSv4(4, false), ACARSv41(4, false);
+	ACARS(1, false), XACARS(1, true), ACARSv2(2, false), ACARSv3(3, false), ACARSv4(4, false), ACARSv41(4, false), ACARSv5(5, false);
 
 	private final int _version;
 	private final boolean _isXACARS;
