@@ -67,6 +67,7 @@ public class AircraftCommand extends AbstractAuditFormCommand {
 			a.setMaxTakeoffWeight(StringUtils.parse(ctx.getParameter("maxTWeight"), 0));
 			a.setMaxLandingWeight(StringUtils.parse(ctx.getParameter("maxLWeight"), 0));
 			a.setIATA(StringUtils.split(ctx.getParameter("iataCodes"), "\n"));
+			a.setICAO(ctx.getParameter("icao"));
 			a.setHistoric(Boolean.valueOf(ctx.getParameter("isHistoric")).booleanValue());
 			a.setETOPS(Boolean.valueOf(ctx.getParameter("isETOPS")).booleanValue());
 			a.setUseSoftRunways(Boolean.valueOf(ctx.getParameter("useSoftRwy")).booleanValue());
