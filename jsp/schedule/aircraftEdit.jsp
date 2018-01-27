@@ -11,8 +11,9 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script type="text/javascript">
+<script>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -20,6 +21,7 @@ golgotha.form.validate({f:f.name, l:3, t:'Aircraft Name'});
 golgotha.form.validate({f:f.fullName, l:5, t:'Aircraft Full Name'});
 golgotha.form.validate({f:f.family, l:2, t:'Aircraft Family Code'});
 golgotha.form.validate({f:f.range, min:1, t:'Aircraft Range'});
+golgotha.form.validate({f:f.icao, min:3, t:'ICAO Equipment Code'});
 golgotha.form.validate({f:f.seats, min:0, t:'Passenger Capacity'});
 golgotha.form.validate({f:f.maxWeight, min:1, t:'Maximum Weight'});
 golgotha.form.validate({f:f.maxZFW, min:1, t:'Maximum Zero Fuel Weight'});
@@ -85,6 +87,10 @@ return true;
 <tr>
  <td class="label top">IATA Equipment Code(s)</td>
  <td class="data"><el:textbox name="iataCodes" idx="*" width="30" height="3">${iataCodes}</el:textbox></td>
+</tr>
+<tr>
+ <td class="label">ICAO Equipment Code</td>
+ <td class="data"><el:text name="icao" idx="*" required="true" size="3" max="4" value="${aircraft.ICAO}" /></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
