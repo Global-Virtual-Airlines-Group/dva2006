@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to parse simFDR submitted flight reports.
  * @author Luke
- * @version 8.1
+ * @version 8.2
  * @since 7.0
  */
 
@@ -70,14 +70,15 @@ final class OfflineFlightParser {
 		inf.setAirportL(SystemData.getAirport(ie.getChildTextTrim("airportL")));
 		inf.setRemoteAddr(ie.getChildTextTrim("remoteAddr"));
 		inf.setRemoteHost(ie.getChildTextTrim("remoteHost"));
-		inf.setFDR(Recorder.SIMFDR);
 		inf.setFlightCode(cs);
 		inf.setRoute(ie.getChildTextTrim("route"));
+		inf.setAutopilotType(AutopilotType.from(ie.getChildTextTrim("autopilotType")));
 		of.setInfo(inf);
 		
 		// Load simulator
 		String sim = ie.getChildTextTrim("sim");
 		inf.setSimulator(Simulator.fromName(sim, Simulator.UNKNOWN));
+		inf.setFDR(Recorder.SIMFDR); // needs to be set after simulator
 		if (inf.getSimulator() == Simulator.UNKNOWN)
 			log.warn("Unknown simulator version - " + sim);
 		

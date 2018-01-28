@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -8,13 +8,13 @@ import org.deltava.beans.*;
 import org.deltava.beans.flight.Recorder;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
-
+import org.deltava.beans.system.OperatingSystem;
 import org.deltava.util.*;
 
 /**
  * A bean to store ACARS Flight Information records.
  * @author Luke
- * @version 8.0
+ * @version 8.2
  * @since 1.0
  */
 
@@ -48,6 +48,9 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 	private Simulator _fsVersion;
 	private int _simMajor;
 	private int _simMinor;
+	private OperatingSystem _os = OperatingSystem.WINDOWS;
+	private boolean _is64Bit;
+	private AutopilotType _ap;
 	
 	private boolean _offline;
 	private boolean _scheduleValidated;
@@ -268,6 +271,15 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 	public String getRemarks() {
 		return _remarks;
 	}
+	
+	/**
+	 * Returns the type of Autopilot used in the aircraft.
+	 * @return an AutopilotType
+	 * @see FlightInfo#setAutopilotType(AutopilotType)
+	 */
+	public AutopilotType getAutopilotType() {
+		return _ap;
+	}
 
 	/**
 	 * Returns the Simulator used in this flight.
@@ -292,6 +304,22 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 	 */
 	public int getSimMinor() {
 		return _simMinor;
+	}
+	
+	/**
+	 * Returns the underlying simulator platform.
+	 * @return an OperatingSystem
+	 */
+	public OperatingSystem getPlatform() {
+		return _os;
+	}
+	
+	/**
+	 * Returns whether the simulator platform is 64-bit.
+	 * @return TRUE if 64-bit, otherwise FALSE
+	 */
+	public boolean getIs64Bit() {
+		return _is64Bit;
 	}
 
 	/**
@@ -674,6 +702,15 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 	public void setPassengers(int pax) {
 		_pax = Math.max(0, pax);
 	}
+	
+	/**
+	 * Updates the autopilot type used in the aircraft.
+	 * @param ap an AutoPilotType
+	 * @see FlightInfo#getAutopilotType()
+	 */
+	public void setAutopilotType(AutopilotType ap) {
+		_ap = ap;
+	}
 
 	/**
 	 * Updates the Simulator used in this flight.
@@ -684,6 +721,8 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 		_fsVersion = sim;
 		if ((sim == Simulator.XP9) || (sim == Simulator.XP10))
 			_fdr = Recorder.XACARS;
+		else if (sim == Simulator.P3Dv4)
+			_is64Bit = true;
 	}
 
 	/**
@@ -694,6 +733,22 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 	public void setSimulatorVersion(int major, int minor) {
 		_simMajor = Math.max(1, major);
 		_simMinor = Math.max(0, minor);
+	}
+	
+	/**
+	 * Updates the underlying simulator platform.
+	 * @param os an OperatingSystem
+	 */
+	public void setPlatform(OperatingSystem os) {
+		_os = os;
+	}
+	
+	/**
+	 * Updates whether the simulator is a 64-bit application.
+	 * @param is64 TRUE if 64-bit, otherwise FALSE
+	 */
+	public void setIs64Bit(boolean is64) {
+		_is64Bit = is64;
 	}
 
 	/**
