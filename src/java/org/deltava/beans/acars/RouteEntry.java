@@ -1,9 +1,8 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
+import java.util.*;
 import java.time.Instant;
-import java.util.Collection;
-import java.util.Iterator;
 
 import org.deltava.beans.*;
 import org.deltava.beans.flight.Warning;
@@ -11,18 +10,16 @@ import org.deltava.beans.navdata.AirspaceType;
 
 import org.deltava.util.StringUtils;
 
-import static org.gvagroup.acars.ACARSFlags.*;
-
 /**
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
- * @version 8.0
+ * @version 8.2
  * @since 1.0
  */
 
 public abstract class RouteEntry extends ACARSMapEntry implements GeospaceLocation, CalendarEntry {
 
-	private Instant _date;
+	private final Instant _date;
 	private FlightPhase _phase;
 	private AirspaceType _asType = AirspaceType.E;
 
@@ -78,8 +75,8 @@ public abstract class RouteEntry extends ACARSMapEntry implements GeospaceLocati
 	/**
 	 * Returns the ACARS flags for this entry.
 	 * @return the flags
-	 * @see RouteEntry#isFlagSet(int)
-	 * @see RouteEntry#setFlag(int, boolean)
+	 * @see RouteEntry#isFlagSet(ACARSFlags)
+	 * @see RouteEntry#setFlag(ACARSFlags, boolean)
 	 * @see RouteEntry#setFlags(int)
 	 */
 	public int getFlags() {
@@ -184,14 +181,14 @@ public abstract class RouteEntry extends ACARSMapEntry implements GeospaceLocati
 
 	/**
 	 * Returns if an ACARS flag was set.
-	 * @param attrMask the flag attribute mask
+	 * @param flag the ACARSFlag
 	 * @return TRUE if the flag(s) were set, otherwise FALSE
 	 * @see RouteEntry#getFlags()
-	 * @see RouteEntry#setFlag(int, boolean)
+	 * @see RouteEntry#setFlag(ACARSFlags, boolean)
 	 * @see RouteEntry#setFlags(int)
 	 */
-	public boolean isFlagSet(int attrMask) {
-		return ((_flags & attrMask) != 0);
+	public boolean isFlagSet(ACARSFlags flag) {
+		return flag.has(_flags);
 	}
 
 	/**
@@ -280,22 +277,22 @@ public abstract class RouteEntry extends ACARSMapEntry implements GeospaceLocati
 
 	/**
 	 * Sets or clears an ACARS flag.
-	 * @param attrMask the attribute mask
+	 * @param flag the ACARS
 	 * @param isSet TRUE if the flag is set, FALSE if it is cleared
 	 * @see RouteEntry#setFlags(int)
 	 * @see RouteEntry#getFlags()
-	 * @see RouteEntry#isFlagSet(int)
+	 * @see RouteEntry#isFlagSet(ACARSFlags)
 	 */
-	public void setFlag(int attrMask, boolean isSet) {
-		_flags = (isSet) ? (_flags | attrMask) : (_flags & (~attrMask));
+	public void setFlag(ACARSFlags flag, boolean isSet) {
+		_flags = (isSet) ? (_flags | flag.getMask()) : (_flags & (~flag.getMask()));
 	}
 
 	/**
 	 * Sets all ACARS flags for this entry.
 	 * @param flags the flags
-	 * @see RouteEntry#setFlag(int, boolean)
+	 * @see RouteEntry#setFlag(ACARSFlags, boolean)
 	 * @see RouteEntry#getFlags()
-	 * @see RouteEntry#isFlagSet(int)
+	 * @see RouteEntry#isFlagSet(ACARSFlags)
 	 */
 	public void setFlags(int flags) {
 		_flags = flags;
@@ -355,25 +352,18 @@ public abstract class RouteEntry extends ACARSMapEntry implements GeospaceLocati
 		return _date.compareTo(re2.getDate());
 	}
 
-	/**
-	 * Return the Google Maps icon color.
-	 */
 	@Override
 	public String getIconColor() {
-		if (isFlagSet(FLAG_TOUCHDOWN))
+		if (ACARSFlags.TOUCHDOWN.has(_flags))
 			return PURPLE;
 		else if (isWarning())
 			return RED;
-		else if (isFlagSet(FLAG_AP_ANY))
+		else if (ACARSFlags.hasAP(_flags))
 			return WHITE;
 
 		return GREY;
 	}
 
-	/**
-	 * Returns the default Google Maps infobox text.
-	 * @return an HTML String
-	 */
 	@Override
 	public String getInfoBox() {
 		StringBuilder buf = new StringBuilder(192);
@@ -399,7 +389,7 @@ public abstract class RouteEntry extends ACARSMapEntry implements GeospaceLocati
 		buf.append(" degrees<br />");
 
 		// Add Pause/Stall/Warning flags
-		if (isFlagSet(FLAG_PAUSED))
+		if (ACARSFlags.PAUSED.has(_flags))
 			buf.append("<span class=\"error\">FLIGHT PAUSED</span><br />");
 		Collection<Warning> warns = getWarnings();
 		if (!warns.isEmpty()) {

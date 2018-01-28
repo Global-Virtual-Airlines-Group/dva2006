@@ -76,6 +76,7 @@ public class FlightDataEarthService extends GoogleEarthService {
 				int id = i.next().intValue();
 				FlightInfo info = dao.getInfo(id); Collection<Airspace> airspaces = new LinkedHashSet<Airspace>();
 				if (info != null) {
+					// FIXME: Whatabout XACARS?
 					Collection<? extends RouteEntry> routeData = dao.getRouteEntries(id, info.getArchived()); 
 					GeoLocation lastLoc = info.getAirportD();
 					for (RouteEntry rt : routeData) {

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -14,12 +14,10 @@ import org.deltava.service.*;
 
 import org.deltava.util.StringUtils;
 
-import static org.gvagroup.acars.ACARSFlags.*;
-
 /**
  * A Web Service to return ACARS flight data parameters.
  * @author Luke
- * @version 7.2
+ * @version 8.2
  * @since 1.0
  */
 
@@ -49,8 +47,10 @@ public class FlightDataExportService extends WebService {
 				return SC_NOT_FOUND;
 			else if ((info.getFDR() == Recorder.XACARS) && !info.getArchived())
 				routeData.addAll(dao.getXACARSEntries(id));
-			else
-				routeData.addAll(dao.getRouteEntries(id, info.getArchived()));
+			else {
+				final AutopilotType apType = info.getAutopilotType();
+				dao.getRouteEntries(id, info.getArchived()).stream().forEach(re -> { re.setAutopilotType(apType); routeData.add(re); });
+			}
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		} finally {
@@ -59,8 +59,8 @@ public class FlightDataExportService extends WebService {
 
 		// Write the CSV header
 		if (info.getFDR() != Recorder.XACARS) {
-			ctx.println("Date/Time,Latitude,Longitude,Altitude,Heading,Air Speed,Ground Speed,Mach,Vertical Speed,N1,N2,Bank,Pitch,Flaps,"
-				+ "WindSpeed,WindHdg,Temperature,Pressure,Visibility,FuelFlow,Fuel,Gs,AOA,AP,ALT,AT,FrameRate,VAS,NAV1,NAV2,COM1,ATC1,COM2,ATC2,WARN");
+			ctx.println("Date/Time,Latitude,Longitude,Altitude,Heading,Air Speed,Ground Speed,Mach,Vertical Speed,N1,N2,Bank,Pitch,Flaps,WindSpeed,WindHdg,Temperature,Pressure,Visibility,"
+				+"FuelFlow,Fuel,Weight,Gs,AOA,AP,ALT,AT,FrameRate,VAS,NAV1,NAV2,COM1,ATC1,COM2,ATC2,WARN");
 		} else
 			ctx.println("Date/Time,Latitude,Longitude,Altitude,Heading,Air Speed,Ground Speed,Mach,WindSpeed,WindHdg,Fuel");
 
@@ -161,28 +161,30 @@ public class FlightDataExportService extends WebService {
 		buf.append(',');
 		buf.append(StringUtils.format(entry.getFuelRemaining(), "###0"));
 		buf.append(',');
+		buf.append((entry.getWeight() == 0) ? "" : StringUtils.format(entry.getWeight(), "###0"));
+		buf.append(',');
 		buf.append(StringUtils.format(entry.getG(), "#0.000"));
 		buf.append(',');
 		buf.append(StringUtils.format(entry.getAOA(), "##0.000"));
 		buf.append(',');
-		if (entry.isFlagSet(FLAG_AP_NAV))
+		if (entry.isFlagSet(ACARSFlags.AP_NAV))
 			buf.append("NAV");
-		else if (entry.isFlagSet(FLAG_AP_HDG))
+		else if (entry.isFlagSet(ACARSFlags.AP_HDG))
 			buf.append("HDG");
-		else if (entry.isFlagSet(FLAG_AP_APR))
+		else if (entry.isFlagSet(ACARSFlags.AP_APR))
 			buf.append("APR");
-		else if (entry.isFlagSet(FLAG_AP_LNAV))
+		else if (entry.isFlagSet(ACARSFlags.AP_LNAV))
 			buf.append("LNAV");
 		
 		buf.append(',');
-		buf.append(entry.isFlagSet(FLAG_AP_ALT) ? "ALT," : ",");
-		if (entry.isFlagSet(FLAG_AT_IAS))
+		buf.append(entry.isFlagSet(ACARSFlags.AP_ALT) ? "ALT," : ",");
+		if (entry.isFlagSet(ACARSFlags.AT_IAS))
 			buf.append("IAS");
-		else if (entry.isFlagSet(FLAG_AT_MACH))
+		else if (entry.isFlagSet(ACARSFlags.AT_MACH))
 			buf.append("MACH");
-		else if (entry.isFlagSet(FLAG_AT_FLCH))
+		else if (entry.isFlagSet(ACARSFlags.AT_FLCH))
 			buf.append("FLCH");
-		else if (entry.isFlagSet(FLAG_AT_VNAV))
+		else if (entry.isFlagSet(ACARSFlags.AT_VNAV))
 			buf.append("VNAV");
 		
 		buf.append(',');
@@ -211,9 +213,9 @@ public class FlightDataExportService extends WebService {
 		} else
 			buf.append(",,");
 		
-		if (entry.isFlagSet(FLAG_STALL))
+		if (entry.isFlagSet(ACARSFlags.STALL))
 			buf.append("STALL");
-		else if (entry.isFlagSet(FLAG_OVERSPEED))
+		else if (entry.isFlagSet(ACARSFlags.OVERSPEED))
 			buf.append("OVERSPEED");
 		
 		return buf.toString();

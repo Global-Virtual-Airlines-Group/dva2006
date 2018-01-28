@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -9,12 +9,10 @@ import org.deltava.beans.schedule.*;
 
 import org.deltava.util.StringUtils;
 
-import org.gvagroup.acars.ACARSFlags;
-
 /**
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
- * @version 7.5
+ * @version 8.2
  * @since 1.0
  */
 
@@ -145,9 +143,9 @@ public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 
 	@Override
 	public final String getIconColor() {
-		if (isFlagSet(ACARSFlags.FLAG_PAUSED) || isWarning())
+		if (isFlagSet(ACARSFlags.PAUSED) || isWarning())
 			return RED;
-		else if (isFlagSet(ACARSFlags.FLAG_ONGROUND))
+		else if (isFlagSet(ACARSFlags.ONGROUND))
 			return WHITE;
 		else if (getVerticalSpeed() > 100)
 			return ORANGE;
@@ -273,7 +271,7 @@ public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 			buf.append(_network.toString());
 			buf.append("</span>");
 		}
-		if (isFlagSet(ACARSFlags.FLAG_ONGROUND)) {
+		if (isFlagSet(ACARSFlags.ONGROUND)) {
 			buf.append("<br />Flight Phase: <span class=\"bld\">");
 			buf.append(_phaseName);
 			buf.append("</span>");
