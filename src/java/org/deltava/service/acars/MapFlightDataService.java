@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -22,7 +22,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display ACARS Flight Report data.
  * @author Luke
- * @version 7.3
+ * @version 8.2
  * @since 1.0
  */
 
@@ -48,8 +48,8 @@ public class MapFlightDataService extends WebService {
 			GetACARSPositions dao = new GetACARSPositions(con);
 			FlightInfo info = dao.getInfo(id);
 			if (info == null)
-				routePoints = Collections.emptyList();
-			else if ((info.getFDR() == Recorder.XACARS) && !info.getArchived())
+				throw error(SC_NOT_FOUND, "Invalid ACARS Flight ID");
+			if ((info.getFDR() == Recorder.XACARS) && !info.getArchived())
 				routePoints = dao.getXACARSEntries(id);
 			else
 				routePoints = dao.getRouteEntries(id, false, info.getArchived());
@@ -58,6 +58,9 @@ public class MapFlightDataService extends WebService {
 			GetAirspace asdao = new GetAirspace(con);
 			for (GeospaceLocation rt : routePoints) {
 				ACARSRouteEntry re = (rt instanceof ACARSRouteEntry) ? (ACARSRouteEntry) rt : null;
+				if (re != null)
+					re.setAutopilotType(info.getAutopilotType());
+				
 				Airspace a = Airspace.isRestricted(rt);
 				if (a != null)
 					airspaces.add(a);
