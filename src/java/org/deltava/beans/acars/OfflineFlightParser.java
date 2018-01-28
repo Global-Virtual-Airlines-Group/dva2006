@@ -18,14 +18,14 @@ import org.jdom2.input.*;
 import org.deltava.beans.*;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.*;
-
+import org.deltava.beans.system.OperatingSystem;
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A utility class to parse XML-format offline Flight Reports.
  * @author Luke
- * @version 8.1
+ * @version 8.2
  * @since 2.4
  */
 
@@ -93,7 +93,7 @@ public final class OfflineFlightParser {
 		inf.setVersion(clientVersion);
 		inf.setClientBuild(clientBuild);
 		inf.setOffline(true);
-		inf.setFDR(Recorder.ACARS);
+		inf.setAutopilotType(AutopilotType.from(ie.getChildTextTrim("autopilotType")));
 		inf.setBeta(StringUtils.parse(re.getAttributeValue("beta"), 0));
 		inf.setEquipmentType(ie.getChildTextTrim("equipment"));
 		inf.setStartTime(StringUtils.parseInstant(ie.getChildTextTrim("startTime"), "MM/dd/yyyy HH:mm:ss"));
@@ -113,9 +113,12 @@ public final class OfflineFlightParser {
 		result.setSTAR(ie.getChildTextTrim("star"));
 		result.setInfo(inf);
 		
-		// Load simulator
+		// Load simulator and platform
+		inf.setPlatform(OperatingSystem.values()[StringUtils.parse(ie.getChildTextTrim("platform"), 0)]);
+		inf.setIs64Bit(Boolean.valueOf(ie.getChildTextTrim("is64Bit")).booleanValue());
 		String sim = ie.getChildTextTrim("fs_ver");
 		inf.setSimulator(Simulator.fromName(sim, Simulator.UNKNOWN));
+		inf.setFDR(Recorder.ACARS); // need to set after sim
 		if (inf.getSimulator() == Simulator.UNKNOWN)
 			log.warn("Unknown simulator version - " + sim);
 		
