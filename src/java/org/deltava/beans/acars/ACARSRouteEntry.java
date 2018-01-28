@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -10,13 +10,11 @@ import org.deltava.beans.servinfo.Controller;
 
 import org.deltava.util.StringUtils;
 
-import static org.gvagroup.acars.ACARSFlags.*;
-
 /**
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
  * @author Rahul
- * @version 8.0
+ * @version 8.2
  * @since 1.0
  */
 
@@ -39,6 +37,7 @@ public class ACARSRouteEntry extends RouteEntry {
 	private int _flaps;
 	private int _frameRate;
 	private int _simRate;
+	private int _weight;
 	
 	private Instant _simTime;
 	
@@ -52,8 +51,10 @@ public class ACARSRouteEntry extends RouteEntry {
 	
 	private int _vasFree;
 
-	private static final int[] AP_FLAGS = { FLAG_AP_APR, FLAG_AP_HDG, FLAG_AP_NAV, FLAG_AP_ALT, FLAG_AP_GPS , FLAG_AP_LNAV};
+	private static final ACARSFlags[] AP_FLAGS = { ACARSFlags.AP_APR, ACARSFlags.AP_HDG, ACARSFlags.AP_NAV, ACARSFlags.AP_ALT, ACARSFlags.AP_GPS , ACARSFlags.AP_LNAV};
 	private static final String[] AP_FLAG_NAMES = { "APR", "HDG", "NAV", "ALT", "GPS", "LNAV" };
+	
+	private AutopilotType _ap = AutopilotType.DEFAULT;
 	
 	/**
 	 * Creates a new ACARS Route Entry bean.
@@ -119,6 +120,15 @@ public class ACARSRouteEntry extends RouteEntry {
 	 */
 	public int getFuelFlow() {
 		return _fuelFlow;
+	}
+	
+	/**
+	 * Returns the aircraft weight.
+	 * @return the weight in pounds
+	 * @see ACARSRouteEntry#setWeight(int)
+	 */
+	public int getWeight() {
+		return _weight;
 	}
 
 	/**
@@ -310,26 +320,18 @@ public class ACARSRouteEntry extends RouteEntry {
 	/**
 	 * Updates the aircraft's bank angle.
 	 * @param b the bank in degrees
-	 * @throws IllegalArgumentException if b < -90 or > 90
 	 * @see ACARSRouteEntry#getBank()
 	 */
 	public void setBank(double b) {
-		if ((b < -170) || (b > 170))
-			throw new IllegalArgumentException("Bank angle cannot be < -170 or > 170 degrees");
-
-		_bank = b;
+		_bank = Math.max(-178, Math.min(178, b));
 	}
 
 	/**
 	 * Updates the aircraft's vertical speed.
 	 * @param speed the speed in feet per minute
-	 * @throws IllegalArgumentException if speed < -12000 or speed > 12000
 	 * @see ACARSRouteEntry#getGroundSpeed()
 	 */
 	public void setVerticalSpeed(int speed) {
-		if ((speed < -12000) || (speed > 12000))
-			throw new IllegalArgumentException("Vertical speed cannot be < -12000 or > 12000 - " + speed);
-
 		_vSpeed = speed;
 	}
 
@@ -361,6 +363,15 @@ public class ACARSRouteEntry extends RouteEntry {
 	}
 	
 	/**
+	 * Updates the aircraft weight.
+	 * @param w the weight in pounds
+	 * @see ACARSRouteEntry#getWeight()
+	 */
+	public void setWeight(int w) {
+		_weight = Math.max(0, w);
+	}
+	
+	/**
 	 * Updates the Flight Simulator frame rate.
 	 * @param rate the rendered frames per second
 	 * @see ACARSRouteEntry#getFrameRate()
@@ -389,7 +400,6 @@ public class ACARSRouteEntry extends RouteEntry {
 	/**
 	 * Updates the aircraft's flap detent position.
 	 * @param flapDetent the detent position
-	 * @throws IllegalArgumentException if flapDetent is negative or > 100
 	 * @see ACARSRouteEntry#getFlaps()
 	 */
 	public void setFlaps(int flapDetent) {
@@ -483,6 +493,14 @@ public class ACARSRouteEntry extends RouteEntry {
 		_vasFree = kb;
 	}
 	
+	/**
+	 * Updates the aircraft autopilot type.
+	 * @param ap the AutopilotType
+	 */
+	public void setAutopilotType(AutopilotType ap) {
+		_ap = ap;
+	}
+	
 	private String getATCData(int idx) {
 		StringBuilder buf = new StringBuilder();
 		Controller ctr = (idx == 1) ? _atc1 : _atc2;
@@ -520,22 +538,22 @@ public class ACARSRouteEntry extends RouteEntry {
 			warns.add(Warning.TAXISPEED);
 		if (getFuelRemaining() < 20)
 			warns.add(Warning.NOFUEL);
-		if (isFlagSet(FLAG_STALL))
+		if (isFlagSet(ACARSFlags.STALL))
 			warns.add(Warning.STALL);
-		if (isFlagSet(FLAG_OVERSPEED))
+		if (isFlagSet(ACARSFlags.OVERSPEED))
 			warns.add(Warning.OVERSPEED);
 		if ((getAltitude() > 45000) && (getMach() < 1.05))
 			warns.add(Warning.ALTITUDE);
 		if (getAirspace().isRestricted())
 			warns.add(Warning.AIRSPACE);
-		if (isFlagSet(FLAG_GEARDOWN) && (getAirSpeed() > 250))
+		if (isFlagSet(ACARSFlags.GEARDOWN) && (getAirSpeed() > 250))
 			warns.add(Warning.GEARSPEED);
-		if (!isFlagSet(FLAG_GEARDOWN)) {
-			if (isFlagSet(FLAG_ONGROUND) || ((_vSpeed < 100) && (_radarAlt < 1000)))
+		if (!isFlagSet(ACARSFlags.GEARDOWN)) {
+			if (isFlagSet(ACARSFlags.ONGROUND) || ((_vSpeed < 100) && (_radarAlt < 1000)))
 				warns.add(Warning.GEARUP);
 		}
 			
-		if (isFlagSet(FLAG_CRASH))
+		if (isFlagSet(ACARSFlags.CRASH))
 			warns.add(Warning.CRASH);
 		
 		return warns;
@@ -546,11 +564,11 @@ public class ACARSRouteEntry extends RouteEntry {
 	 */
 	@Override
 	public String getIconColor() {
-		if (isFlagSet(FLAG_TOUCHDOWN))
+		if (isFlagSet(ACARSFlags.TOUCHDOWN))
 			return PURPLE;
 		else if (isWarning())
 			return RED;
-		else if (isFlagSet(FLAG_AP_ANY))
+		else if (ACARSFlags.hasAP(getFlags()))
 			return WHITE;
 
 		return GREY;
@@ -640,23 +658,23 @@ public class ACARSRouteEntry extends RouteEntry {
 		}
 
 		// Add afterburner/gear if deployed
-		if (isFlagSet(FLAG_AFTERBURNER))
+		if (isFlagSet(ACARSFlags.AFTERBURNER))
 			buf.append("<span class=\"bld ita\">AFTERBURNER</span><br />");
-		if (isFlagSet(FLAG_GEARDOWN) && !isFlagSet(FLAG_ONGROUND))
+		if (isFlagSet(ACARSFlags.GEARDOWN) && !isFlagSet(ACARSFlags.ONGROUND))
 			buf.append("<span class=\"ita\">GEAR DOWN</span><br />");
-		if (isFlagSet(FLAG_SPARMED)) {
+		if (isFlagSet(ACARSFlags.SP_ARMED)) {
 			buf.append("<span class=\"ita\">");
-			buf.append(isFlagSet(FLAG_ONGROUND) ? "SPOILERS" : "SPEED BRAKES");
+			buf.append(isFlagSet(ACARSFlags.ONGROUND) ? "SPOILERS" : "SPEED BRAKES");
 			buf.append("</span><br />");
 		}
 
 		// Add Autopilot flags if set
-		if (isFlagSet(FLAG_AP_ANY)) {
-			buf.append("Autopilot: ");
+		if (ACARSFlags.hasAP(getFlags())) {
+			buf.append("Autopilot:");
 			for (int x = 0; x < AP_FLAGS.length; x++) {
 				if (isFlagSet(AP_FLAGS[x])) {
-					buf.append(AP_FLAG_NAMES[x]);
 					buf.append(' ');
+					buf.append(AP_FLAG_NAMES[x]);
 				}
 			}
 
@@ -664,17 +682,17 @@ public class ACARSRouteEntry extends RouteEntry {
 		}
 
 		// Add Autothrottle flags if set
-		if (isFlagSet(FLAG_AT_VNAV))
-			buf.append("Autothrottle: VNAV<br />");
-		else if (isFlagSet(FLAG_AT_FLCH))
+		if (isFlagSet(ACARSFlags.AT_VNAV))
+			buf.append((_ap == AutopilotType.MD) ? "Autothrottle: FMS<br />" : "Autothrottle: VNAV<br />");
+		else if (isFlagSet(ACARSFlags.AT_FLCH))
 			buf.append("Autothrottle: FLCH<br />");
-		else if (isFlagSet(FLAG_AT_IAS))
+		else if (isFlagSet(ACARSFlags.AT_IAS))
 			buf.append("Autothrottle: IAS<br />");
-		else if (isFlagSet(FLAG_AT_MACH))
+		else if (isFlagSet(ACARSFlags.AT_MACH))
 			buf.append("Autothrottle: MACH<br />");
 		
 		// Add Pause/Stall/VAS/Warning flags
-		if (isFlagSet(FLAG_PAUSED))
+		if (isFlagSet(ACARSFlags.PAUSED))
 			buf.append("<span class=\"error\">FLIGHT PAUSED</span><br />");
 		if ((_frameRate > 0) && (_frameRate <= 8)) {
 			buf.append("<br /><span class=\"warn\">FRAME RATE - ");
@@ -703,7 +721,7 @@ public class ACARSRouteEntry extends RouteEntry {
 		}
 		
 		// Add Thrust Reverser flags if set
-		if (isFlagSet(FLAG_REVERSETHRUST) && isFlagSet(FLAG_ONGROUND))
+		if (isFlagSet(ACARSFlags.REVERSE) && isFlagSet(ACARSFlags.ONGROUND))
 			buf.append("<span class=\"ita\">THRUST REVERSERS</span><br />");
 		
 		// Add ATC info

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2012, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2012, 2015, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -13,12 +13,10 @@ import org.deltava.beans.GeoLocation;
 import org.deltava.util.*;
 import org.deltava.util.color.GoogleEarthColor;
 
-import static org.gvagroup.acars.ACARSFlags.*;
-
 /**
  * An abstract class to support Web Services rendering ACARS data in Google Earth. 
  * @author Luke
- * @version 7.3
+ * @version 8.2
  * @since 1.0
  */
 
@@ -84,7 +82,7 @@ public abstract class GoogleEarthService extends org.deltava.service.WebService 
 
 		// Create the actual point
 		Element pe = new Element("Point");
-		if (entry.isFlagSet(FLAG_ONGROUND)) {
+		if (entry.isFlagSet(ACARSFlags.ONGROUND)) {
 			pe.addContent(XMLUtils.createElement("altitudeMode", "clampToGround"));
 			pe.addContent(XMLUtils.createElement("coordinates", GeoUtils.format2D(entry)));
 		} else if (entry.getRadarAltitude() < 1000) {
@@ -163,7 +161,7 @@ public abstract class GoogleEarthService extends org.deltava.service.WebService 
 			ps.addContent(pis);
 			pe.addContent(ps);
 			Element pp = new Element("Point");
-			if (entry.isFlagSet(FLAG_ONGROUND)) {
+			if (entry.isFlagSet(ACARSFlags.ONGROUND)) {
 				pp.addContent(XMLUtils.createElement("coordinates", GeoUtils.format2D(entry)));
 				pp.addContent(XMLUtils.createElement("altitudeMode", "clampToGround"));
 			} else if (entry.getRadarAltitude() < 1000) {

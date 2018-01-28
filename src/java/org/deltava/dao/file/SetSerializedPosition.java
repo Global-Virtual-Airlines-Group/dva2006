@@ -1,4 +1,4 @@
-// Copyright 2012, 2014, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2014, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -12,7 +12,7 @@ import org.deltava.dao.DAOException;
 /**
  * A Data Access Object to serialize ACARS position records.
  * @author Luke
- * @version 7.3
+ * @version 8.2
  * @since 4.1
  */
 
@@ -35,7 +35,7 @@ public class SetSerializedPosition extends WriteableDAO {
 	public void archivePositions(int flightID, Collection<? extends RouteEntry> positions) throws DAOException {
 		if (positions.isEmpty()) return;
 		RouteEntry re = positions.iterator().next();
-		SerializedDataVersion ver = (re instanceof ACARSRouteEntry) ? SerializedDataVersion.ACARSv41 : SerializedDataVersion.XACARS;
+		SerializedDataVersion ver = (re instanceof ACARSRouteEntry) ? SerializedDataVersion.ACARSv5 : SerializedDataVersion.XACARS;
 		try (DataOutputStream out = new DataOutputStream(_os)) {
 			out.writeShort(ver.ordinal());
 			out.writeInt(flightID);
@@ -85,7 +85,8 @@ public class SetSerializedPosition extends WriteableDAO {
 		out.writeInt(re.getPressure()); // v3
 		out.writeLong(re.getSimUTC().toEpochMilli()); // v3
 		out.writeInt(re.getVASFree()); // v4
-		out.writeShort(re.getAirspace().ordinal()); //v41
+		out.writeShort(re.getAirspace().ordinal()); // v41
+		out.writeInt(re.getWeight()); // v42
 		out.writeUTF((re.getNAV1() == null) ? "" : re.getNAV1());
 		out.writeUTF((re.getNAV2() == null) ? "" : re.getNAV2());
 		

@@ -1,14 +1,12 @@
-// Copyright 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
 
-import org.gvagroup.acars.ACARSFlags;
-
 /**
  * A bean to track fuel usage and in-flight refueling on ACARS flights.
  * @author Luke
- * @version 4.1
+ * @version 8.2
  * @since 3.7
  */
 
@@ -66,7 +64,7 @@ public class FuelUse {
 			if (lastFuel != 0) {
 				int fuelDelta = (lastFuel - fuel);
 				if (fuelDelta < -MAX_DELTA) {
-					if (!re.isFlagSet(ACARSFlags.FLAG_ONGROUND))
+					if (!re.isFlagSet(ACARSFlags.ONGROUND))
 						fu.setRefuel(true);
 				} else if (fuelDelta > 0)
 					fu.addFuelUse(fuelDelta);

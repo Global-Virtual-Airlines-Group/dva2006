@@ -21,12 +21,10 @@ import org.deltava.security.command.PIREPAccessControl;
 
 import org.deltava.util.system.SystemData;
 
-import org.gvagroup.acars.ACARSFlags;
-
 /**
  * A Web Site Command to recalculate takeoff and touchdown points. 
  * @author Luke
- * @version 8.1
+ * @version 8.2
  * @since 3.1
  */
 
@@ -71,7 +69,7 @@ public class UpdateTouchdownCommand extends AbstractCommand {
 				try (InputStream in = ArchiveHelper.getStream(ArchiveHelper.getPositions(info.getID()))) {
 					try (InputStream gi = new GZIPInputStream(in, 8192)) {
 						GetSerializedPosition psdao = new GetSerializedPosition(gi);
-						tdEntries = psdao.read().stream().filter(re -> re.isFlagSet(ACARSFlags.FLAG_TOUCHDOWN)).collect(Collectors.toList());
+						tdEntries = psdao.read().stream().filter(re -> re.isFlagSet(ACARSFlags.TOUCHDOWN)).collect(Collectors.toList());
 					}
 				} catch (IOException ie) {
 					throw new DAOException(ie);

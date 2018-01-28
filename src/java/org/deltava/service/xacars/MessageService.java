@@ -1,4 +1,4 @@
-// Copyright 2011, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2014, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.xacars;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -16,12 +16,10 @@ import org.deltava.dao.*;
 import org.deltava.service.*;
 import org.deltava.util.*;
 
-import org.gvagroup.acars.ACARSFlags;
-
 /**
  * The XACARS status message Web Service. 
  * @author Luke
- * @version 7.0
+ * @version 8.2
  * @since 4.1
  */
 
@@ -29,14 +27,13 @@ public class MessageService extends XAService {
 
 	private static final Logger log = Logger.getLogger(MessageService.class);
 	
-	/**
+	/*
 	 * XACARS message types.
 	 */
 	private enum MessageType {
-		PR("Position"), AR("Altitude"), WX("Weather"), QA("Start"), QB("Takeoff"), QC("Landing"),
-		QD("End"), QM("Statistics"), CM("User Message");
+		PR("Position"), AR("Altitude"), WX("Weather"), QA("Start"), QB("Takeoff"), QC("Landing"), QD("End"), QM("Statistics"), CM("User Message");
 		
-		private String _name;
+		private final String _name;
 		
 		MessageType(String name) {
 			_name = name;
@@ -47,7 +44,7 @@ public class MessageService extends XAService {
 		}
 	}
 	
-	/**
+	/*
 	 * Helper class to calculate average N1/N2 values.
 	 */
 	private class EngineInfo {
@@ -127,7 +124,7 @@ public class MessageService extends XAService {
 			// Parse the position data
 			XARouteEntry re = new XARouteEntry(null, Instant.now());
 			re.setFlightID(inf.getID());
-			re.setFlag(ACARSFlags.FLAG_ONGROUND, (inf.getPhase() != FlightPhase.AIRBORNE));
+			re.setFlag(ACARSFlags.ONGROUND, (inf.getPhase() != FlightPhase.AIRBORNE));
 			List<String > data = StringUtils.split(msgData.substring(pos + 9) , "/");
 			for (String cmdEntry : data) {
 				pos = cmdEntry.indexOf(' ');
@@ -210,7 +207,7 @@ public class MessageService extends XAService {
 					
 				case QB:
 					writePosition = true;
-					re.setFlag(ACARSFlags.FLAG_TOUCHDOWN, true);
+					re.setFlag(ACARSFlags.TOUCHDOWN, true);
 					inf.setTakeoffTime(re.getDate());
 					inf.setTakeoffFuel(re.getFuelRemaining());
 					inf.setTakeoffWeight(re.getFuelRemaining() + zfw);
@@ -226,7 +223,7 @@ public class MessageService extends XAService {
 					
 				case QC:
 					writePosition = true;
-					re.setFlag(ACARSFlags.FLAG_TOUCHDOWN, true);
+					re.setFlag(ACARSFlags.TOUCHDOWN, true);
 					inf.setLandingTime(re.getDate());
 					inf.setLandingFuel(re.getFuelRemaining());
 					inf.setLandingWeight(re.getFuelRemaining() + zfw);

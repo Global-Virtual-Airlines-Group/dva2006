@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,15 +9,13 @@ import org.deltava.beans.acars.*;
 import org.deltava.beans.flight.Recorder;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
-
+import org.deltava.beans.system.OperatingSystem;
 import org.deltava.util.system.SystemData;
-
-import static org.gvagroup.acars.ACARSFlags.*;
 
 /**
  * A Data Access Object to load ACARS information.
  * @author Luke
- * @version 8.0
+ * @version 8.2
  * @since 1.0
  */
 
@@ -71,7 +69,7 @@ public class GetACARSData extends DAO {
 		try {
 			prepareStatement("SELECT REPORT_TIME, LAT, LNG, B_ALT, HEADING, VSPEED FROM acars.POSITIONS WHERE (FLIGHT_ID=?) AND ((FLAGS & ?) > 0) ORDER BY REPORT_TIME");
 			_ps.setInt(1, flightID);
-			_ps.setInt(2, FLAG_TOUCHDOWN);
+			_ps.setInt(2, ACARSFlags.TOUCHDOWN.getMask());
 			
 			// Execute the query
 			List<ACARSRouteEntry> results = new ArrayList<ACARSRouteEntry>();
@@ -149,7 +147,7 @@ public class GetACARSData extends DAO {
 					 if (lastFuel != 0) {
 						 int fuelDelta = (lastFuel - fuel); 
 						 if (fuelDelta < -FuelUse.MAX_DELTA) {
-							 boolean isAirborne = ((rs.getInt(2) & FLAG_ONGROUND) != 0);
+							 boolean isAirborne = !ACARSFlags.ONGROUND.has(rs.getInt(2)); 
 							 if (!isAirborne)
 								 use.setRefuel(true);
 						 } else if (fuelDelta > 0)
@@ -302,11 +300,8 @@ public class GetACARSData extends DAO {
 	 */
 	public ConnectionEntry getConnection(long conID) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT C.ID, C.PILOT_ID, C.DATE, C.ENDDATE, INET6_NTOA(C.REMOTE_ADDR), "
-				+ "C.REMOTE_HOST, C.CLIENT_BUILD, C.BETA_BUILD FROM acars.CONS C WHERE (C.ID=CONV(?,10,16)) LIMIT 1");
+			prepareStatementWithoutLimits("SELECT C.ID, C.PILOT_ID, C.DATE, C.ENDDATE, INET6_NTOA(C.REMOTE_ADDR), C.REMOTE_HOST, C.CLIENT_BUILD, C.BETA_BUILD FROM acars.CONS C WHERE (C.ID=CONV(?,10,16)) LIMIT 1");
 			_ps.setLong(1, conID);
-
-			// Get the first entry, or null
 			List<ConnectionEntry> results = executeConnectionInfo();
 			return results.isEmpty() ? null : results.get(0);
 		} catch (SQLException se) {
@@ -400,9 +395,12 @@ public class GetACARSData extends DAO {
 				info.setSimulatorVersion(rs.getInt(25), rs.getInt(26));
 				info.setTXCode(rs.getInt(27));
 				info.setLoadFactor(rs.getDouble(28));
-				info.setRemoteAddr(rs.getString(29));
-				info.setRouteID(rs.getInt(30));
-				info.setDispatcherID(rs.getInt(31));
+				info.setAutopilotType(AutopilotType.values()[rs.getInt(29)]);
+				info.setPlatform(OperatingSystem.values()[rs.getInt(30)]);
+				info.setIs64Bit(rs.getBoolean(31));
+				info.setRemoteAddr(rs.getString(32));
+				info.setRouteID(rs.getInt(33));
+				info.setDispatcherID(rs.getInt(34));
 				results.add(info);
 			}
 		}

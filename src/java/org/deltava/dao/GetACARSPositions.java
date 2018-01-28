@@ -1,8 +1,6 @@
 // Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
-import static org.gvagroup.acars.ACARSFlags.*;
-
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -19,7 +17,7 @@ import org.deltava.dao.file.GetSerializedPosition;
 /**
  * A Data Access Object to load ACARS position data.
  * @author Luke
- * @version 8.1
+ * @version 8.2
  * @since 4.1
  */
 
@@ -64,7 +62,7 @@ public class GetACARSPositions extends GetACARSData {
 		try {
 			prepareStatementWithoutLimits("SELECT REPORT_TIME, LAT, LNG, B_ALT, R_ALT, HEADING, PITCH, BANK, ASPEED, GSPEED, VSPEED, MACH, N1, N2, FLAPS, "
 				+ "WIND_HDG, WIND_SPEED, TEMP, PRESSURE, VIZ, FUEL, FUELFLOW, AOA, GFORCE, FLAGS, FRAMERATE, SIM_RATE, SIM_TIME, PHASE, NAV1, NAV2, VAS, "
-				+ "ASTYPE FROM acars.POSITIONS WHERE (FLIGHT_ID=?) ORDER BY REPORT_TIME");
+				+ "WEIGHT, ASTYPE FROM acars.POSITIONS WHERE (FLIGHT_ID=?) ORDER BY REPORT_TIME");
 			_ps.setInt(1, flightID);
 
 			// Execute the query
@@ -103,10 +101,11 @@ public class GetACARSPositions extends GetACARSData {
 					entry.setNAV1(rs.getString(30));
 					entry.setNAV2(rs.getString(31));
 					entry.setVASFree(rs.getInt(32));
-					entry.setAirspace(AirspaceType.values()[rs.getInt(33)]);
+					entry.setWeight(rs.getInt(33));
+					entry.setAirspace(AirspaceType.values()[rs.getInt(34)]);
 
 					// Add to results - or just log a GeoPosition if we're on the ground
-					if (entry.isFlagSet(FLAG_ONGROUND) && !entry.isFlagSet(FLAG_TOUCHDOWN) && !includeOnGround && !entry.isWarning())
+					if (entry.isFlagSet(ACARSFlags.ONGROUND) && !entry.isFlagSet(ACARSFlags.TOUCHDOWN) && !includeOnGround && !entry.isWarning())
 						results.put(ts, pos);
 					else
 						results.put(ts, entry);
@@ -197,7 +196,7 @@ public class GetACARSPositions extends GetACARSData {
 			GetSerializedPosition psdao = new GetSerializedPosition(gi);
 			Collection<? extends RouteEntry> entries = psdao.read();
 			for (RouteEntry entry : entries) {
-				if (entry.isFlagSet(FLAG_ONGROUND) && !entry.isFlagSet(FLAG_TOUCHDOWN) && !includeOnGround && !entry.isWarning())
+				if (entry.isFlagSet(ACARSFlags.ONGROUND) && !entry.isFlagSet(ACARSFlags.TOUCHDOWN) && !includeOnGround && !entry.isWarning())
 					results.add(new GeoPosition(entry));
 				else
 					results.add(entry);
