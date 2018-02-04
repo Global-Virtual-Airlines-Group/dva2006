@@ -7,7 +7,7 @@
 <c:set var="isXACARS" value="${fn:isXACARS(pirep)}" scope="page" />
 <!-- ACARS PIREP Data -->
 <tr class="title">
- <td class="caps" colspan="${cspan + 1}"><content:airline /> ACARS FLIGHT DATA</td>
+ <td class="caps" colspan="${cspan + 1}"><span class="nophone"><content:airline /> </span>ACARS FLIGHT DATA</td>
 </tr>
 <c:if test="${fn:ACARS_ID(pirep) > 0}">
 <tr>
@@ -197,7 +197,8 @@
 <c:if test="${!isXACARS && ((pirep.paxWeight > 0) || (pirep.cargoWeight > 0))}">
 <tr>
  <td class="label">Payload Weight</td>
- <td class="data" colspan="${cspan}"><c:if test="${pirep.paxWeight > 0}"><fmt:weight value="${pirep.paxWeight}" /> passengers, </c:if><fmt:weight value="${pirep.cargoWeight}" /> baggage/cargo</td>
+ <td class="data" colspan="${cspan}"><c:if test="${pirep.paxWeight > 0}"><fmt:weight value="${pirep.paxWeight}" /> passengers, </c:if><fmt:weight value="${pirep.cargoWeight}" /> baggage/cargo
+<c:if test="${pirep.paxWeight > 0}"> (Passenger Load: <span class="sec bld caps">${flightInfo.loadType.name}</span>)</c:if></td>
 </tr>
 </c:if>
 <tr>

@@ -66,6 +66,7 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 	private int _txCode;
 	private double _loadFactor;
 	private int _pax;
+	private LoadType _loadType = LoadType.RANDOM;
 
 	private RouteEntry _lastPosition;
 	private SortedSet<RouteEntry> _routeData;
@@ -386,6 +387,15 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 	}
 	
 	/**
+	 * Returns the mechanism used to generate the load factor.
+	 * @return a LoadType
+	 * @see FlightInfo#setLoadType(LoadType)
+	 */
+	public LoadType getLoadType() {
+		return _loadType;
+	}
+	
+	/**
 	 * Returns the number of position records associated with this Flight.
 	 * @return the number of positions
 	 * @see FlightInfo#setPositionCount(int)
@@ -701,6 +711,15 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 	 */
 	public void setPassengers(int pax) {
 		_pax = Math.max(0, pax);
+	}
+	
+	/**
+	 * Updates the mechanism used to generate the load factor for this flight.
+	 * @param lt a LoadType
+	 * @see FlightInfo#getLoadType()
+	 */
+	public void setLoadType(LoadType lt) {
+		_loadType = lt;
 	}
 	
 	/**
