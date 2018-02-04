@@ -398,9 +398,10 @@ public class GetACARSData extends DAO {
 				info.setAutopilotType(AutopilotType.values()[rs.getInt(29)]);
 				info.setPlatform(OperatingSystem.values()[rs.getInt(30)]);
 				info.setIs64Bit(rs.getBoolean(31));
-				info.setRemoteAddr(rs.getString(32));
-				info.setRouteID(rs.getInt(33));
-				info.setDispatcherID(rs.getInt(34));
+				info.setLoadType(LoadType.values()[rs.getInt(32)]);
+				info.setRemoteAddr(rs.getString(33));
+				info.setRouteID(rs.getInt(34));
+				info.setDispatcherID(rs.getInt(35));
 				results.add(info);
 			}
 		}
