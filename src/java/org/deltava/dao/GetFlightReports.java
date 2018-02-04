@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Flight Reports.
  * @author Luke
- * @version 8.1
+ * @version 8.2
  * @since 1.0
  */
 
@@ -179,7 +179,7 @@ public class GetFlightReports extends DAO {
 		// Build the SQL Statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT COUNT(F.ID) FROM PIREPS F, EQRATINGS R WHERE (F.EQTYPE=R.RATED_EQ) AND (R.RATING_TYPE=?) AND (F.STATUS=?) AND ((F.ATTR & ?) > 0)");
 		if (!includeAcademy)
-			sqlBuf.append(" AND ((F.ATTR & ?) > 0)");
+			sqlBuf.append(" AND ((F.ATTR & ?) = 0)");
 		if (eqType != null)
 			sqlBuf.append(" AND (R.EQTYPE=?)");
 		
