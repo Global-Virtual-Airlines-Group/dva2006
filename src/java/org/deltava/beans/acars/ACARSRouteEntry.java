@@ -669,7 +669,8 @@ public class ACARSRouteEntry extends RouteEntry {
 		}
 
 		// Add Autopilot flags if set
-		if (ACARSFlags.hasAP(getFlags())) {
+		boolean managedVerticalSpeed = isFlagSet(ACARSFlags.AP_MGVERT);
+		if (ACARSFlags.hasAP(getFlags()) || (ACARSFlags.hasAT(getFlags()) && managedVerticalSpeed)) {
 			buf.append("Autopilot:");
 			for (int x = 0; x < AP_FLAGS.length; x++) {
 				if (isFlagSet(AP_FLAGS[x])) {
@@ -678,13 +679,15 @@ public class ACARSRouteEntry extends RouteEntry {
 				}
 			}
 
+			if (isFlagSet(ACARSFlags.AT_VNAV)) buf.append(" VNAV");
+			if (isFlagSet(ACARSFlags.AT_FLCH)) buf.append(" FLCH");
 			buf.append("<br />");
 		}
 
 		// Add Autothrottle flags if set
-		if (isFlagSet(ACARSFlags.AT_VNAV))
+		if (isFlagSet(ACARSFlags.AT_VNAV) && !managedVerticalSpeed)
 			buf.append((_ap == AutopilotType.MD) ? "Autothrottle: FMS<br />" : "Autothrottle: VNAV<br />");
-		else if (isFlagSet(ACARSFlags.AT_FLCH))
+		else if (isFlagSet(ACARSFlags.AT_FLCH) && !managedVerticalSpeed)
 			buf.append("Autothrottle: FLCH<br />");
 		else if (isFlagSet(ACARSFlags.AT_IAS))
 			buf.append("Autothrottle: IAS<br />");
