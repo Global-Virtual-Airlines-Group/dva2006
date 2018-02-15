@@ -1,6 +1,6 @@
 #!/bin/bash
 # Tomcat upgrade script
-# (c) 2006, 2010, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+# (c) 2006, 2010, 2012, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 
 # Check the version argument is preset
 if [ "$1" == "" ]
@@ -44,6 +44,7 @@ ln -s /usr/local/bin/jsvc bin/jsvc
 # Create the logging symlink
 rm -r logs
 ln -s /var/log/tomcat logs
+ln -s /dev/shm/tomcat temp
 
 # Copy over common libraries
 echo "Copying libraries"
@@ -61,9 +62,9 @@ chmod 775 conf/Catalina
 
 # Change permissions
 echo "Changing file permissions"
-chgrp www temp work
+chgrp www work
 chgrp users lib
-chmod 775 lib temp work
+chmod 775 lib work
 chown -R www webapps/manager
 
 # Switch to /usr/local
