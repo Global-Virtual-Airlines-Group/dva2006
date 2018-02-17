@@ -14,7 +14,6 @@
 	<classpathentry kind="lib" path="lib/deploy/grib-8.0.29.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/unidataCommon-4.2.20.jar"/>
 	<classpathentry kind="lib" path="lib/jsp-api-2.3.jar"/>
-	<classpathentry kind="lib" path="lib/servlet-api-3.1.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jstl-api-1.2.1.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jdom-2.0.6.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-codec-1.10.jar"/>
@@ -34,6 +33,7 @@
 	<classpathentry kind="lib" path="lib/deploy/javax.activation-1.20.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-2.23.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/json-20180130.jar"/>
+	<classpathentry kind="lib" path="lib/servlet-api-4.0.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="module" value="true"/>
