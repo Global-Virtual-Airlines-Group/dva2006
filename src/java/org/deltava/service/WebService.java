@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2015, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import org.deltava.util.StringUtils;
@@ -9,7 +9,7 @@ import com.newrelic.api.agent.Trace;
  * Web Services are designed to be light-weight objects that are instantiated using a no-argument constructor
  * and then passed a request and a response.
  * @author Luke
- * @version 7.2
+ * @version 8.2
  * @since 1.0
  */
 
@@ -40,14 +40,6 @@ public abstract class WebService {
     */
    public boolean isLogged() {
 	   return true;
-   }
-   
-   /**
-    * Returns whether the service requires an SSL connection.
-    * @return TRUE if SSL required, otherwise FALSE
-    */
-   public boolean requiresSSL() {
-	   return false;
    }
    
    /**
