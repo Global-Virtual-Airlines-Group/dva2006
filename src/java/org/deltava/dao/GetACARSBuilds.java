@@ -1,17 +1,20 @@
-// Copyright 2011, 2012, 2013, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2013, 2015, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
+import java.time.Instant;
 
 import org.deltava.beans.acars.*;
+import org.deltava.beans.flight.FlightStatus;
+import org.deltava.beans.stats.ClientBuildStats;
 
 import org.deltava.util.StringUtils;
 
 /**
  * A Data Access Object to load ACARS build data. 
  * @author Luke
- * @version 7.0
+ * @version 8.2
  * @since 4.1
  */
 
@@ -202,6 +205,38 @@ public class GetACARSBuilds extends DAO {
 			
 			_ps.close();
 			return isOK;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Loads ACARS client statistics.
+	 * @return a Collection of ClientBuildStats beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<ClientBuildStats> getBuildStatistics() throws DAOException {
+		try {
+			prepareStatement("SELECT DATE(DATE_SUB(F.CREATED, INTERVAL DAYS(F.CREATED) DAY)) AS DT, F.CLIENT_BUILD, COUNT(F.ID), SUM(P.FLIGHT_TIME) FROM PIREPS P, ACARS_PIREPS AP, "
+				+ "acars.FLIGHTS F WHERE (P.ID=AP.ID) AND (F.ID=AP.ACARS_ID) AND (P.STATUS=?) GROUP BY DT, F.CLIENT_BUILD");
+			_ps.setInt(1, FlightStatus.OK.ordinal());
+			
+			Collection<ClientBuildStats> results = new ArrayList<ClientBuildStats>();
+			try (ResultSet rs = _ps.executeQuery()) {
+				ClientBuildStats stats = null;
+				while (rs.next()) {
+					Instant dt = toInstant(rs.getTimestamp(1));
+					if ((stats == null) || !dt.equals(stats.getDate())) {
+						stats = new ClientBuildStats(dt);
+						results.add(stats);
+					}
+					
+					stats.addCount(rs.getInt(2), rs.getInt(3), rs.getDouble(4));
+				}
+			}
+			
+			_ps.close();
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

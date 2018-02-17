@@ -1,7 +1,6 @@
-// Copyright 2007, 2008, 2009, 2010, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010, 2012, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
-import java.time.*;
 import java.util.*;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -13,13 +12,12 @@ import org.deltava.beans.stats.*;
 
 import org.deltava.dao.*;
 import org.deltava.service.*;
-
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 
 /**
  * A Web Service to display a Pilot's Flight Report statistics to a Google chart.
  * @author Luke
- * @version 8.1
+ * @version 8.2
  * @since 2.1
  */
 
@@ -131,10 +129,7 @@ public class MyFlightsService extends WebService {
 		JSONArray jdo = new JSONArray();
 		for (StageStatsEntry entry : stageStats) {
 			JSONArray da = new JSONArray();
-			LocalDateTime ldt = LocalDateTime.ofInstant(entry.getDate(), ZoneOffset.UTC);
-			JSONObject dto = new JSONObject();
-			dto.put("y", ldt.getYear()); dto.put("m", ldt.getMonthValue()); dto.put("d", ldt.getDayOfMonth());
-			da.put(dto);
+			da.put(JSONUtils.format(entry.getDate()));
 			for (int x = 1; x <= maxStage; x++)
 				da.put(entry.getLegs(x));
 

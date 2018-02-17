@@ -679,8 +679,8 @@ public class ACARSRouteEntry extends RouteEntry {
 				}
 			}
 
-			if (isFlagSet(ACARSFlags.AT_VNAV)) buf.append(" VNAV");
-			if (isFlagSet(ACARSFlags.AT_FLCH)) buf.append(" FLCH");
+			if (managedVerticalSpeed && isFlagSet(ACARSFlags.AT_VNAV)) buf.append(" VNAV");
+			if (managedVerticalSpeed && isFlagSet(ACARSFlags.AT_FLCH)) buf.append(" FLCH");
 			buf.append("<br />");
 		}
 

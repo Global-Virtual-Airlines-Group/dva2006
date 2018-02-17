@@ -1,14 +1,16 @@
-// Copyright 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import org.json.*;
+
+import java.time.*;
 
 import org.deltava.beans.GeoLocation;
 
 /**
  * A utility class for dealing with JSON objects. 
  * @author Luke
- * @version 7.3
+ * @version 8.2
  * @since 7.3
  */
 
@@ -42,5 +44,17 @@ public class JSONUtils {
 		jo.put("lat", loc.getLatitude());
 		jo.put("lng", loc.getLongitude());
 		return jo;
+	}
+	
+	/**
+	 * Converts an Instant into a JSON object with day/month/year components.
+	 * @param dt the Instant
+	 * @return a JSONobject
+	 */
+	public static JSONObject format(Instant dt) {
+		LocalDateTime ldt = LocalDateTime.ofInstant(dt, ZoneOffset.UTC);
+		JSONObject dto = new JSONObject();
+		dto.put("y", ldt.getYear()); dto.put("m", ldt.getMonthValue()); dto.put("d", ldt.getDayOfMonth());
+		return dto;
 	}
 }
