@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright 2005, 2006, 2008, 2010, 2011, 2012, 2013, 2014, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved. -->
+<!-- Copyright 2005, 2006, 2008, 2010, 2011, 2012, 2013, 2014, 2015, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved. -->
 <project default="deploy">
     <target name="javadoc" description="Build the Golgotha JavaDoc">
 		<mkdir dir="${java.io.tmpdir}/javadoc" />
-        <javadoc destdir="${java.io.tmpdir}/javadoc" access="package" source="1.9" target="1.9" use="false" useexternalfile="true" notree="false" nonavbar="false" noindex="false" splitindex="true" 
+        <javadoc destdir="${java.io.tmpdir}/javadoc" access="package" source="1.9" use="false" useexternalfile="true" notree="false" nonavbar="false" noindex="false" splitindex="true" 
         	author="true" version="true" nodeprecatedlist="false" nodeprecated="false">
         	<fileset dir=".">
         		<include name="src/java/**/*.java" />
@@ -22,7 +22,7 @@
    	    	</classpath>
         	
            	<doctitle><![CDATA[<h2>Golgotha API Documentation</h2>]]></doctitle>
-			<bottom><![CDATA[<i>Copyright &#169; 2004-2017 Global Virtual Airlines Group. All Rights Reserved.</i>]]></bottom>
+			<bottom><![CDATA[<i>Copyright &#169; 2004-2018 Global Virtual Airlines Group. All Rights Reserved.</i>]]></bottom>
         </javadoc>
     	
 		<!-- TAR up the JavaDoc -->
@@ -44,18 +44,14 @@
     	<property name="javadoc.ssh.user" value="${user.name}" />
 
     	<!-- Clean out the JavaDoc -->
-    	<sshexec keyfile="${javadoc.ssh.key}" username="${javadoc.ssh.user}" trust="yes"
-    		host="${javadoc.ssh.server}" timeout="37500" failonerror="no" port="${javadoc.ssh.port}"
-    		command="rm -rf ${javadoc.ssh.path.javadoc}/*" />
+    	<sshexec keyfile="${javadoc.ssh.key}" username="${javadoc.ssh.user}" trust="yes" host="${javadoc.ssh.server}" timeout="37500" failonerror="no" port="${javadoc.ssh.port}" command="rm -rf ${javadoc.ssh.path.javadoc}/*" />
 
     	<!-- Upload the JavaDoc archive -->
     	<scp todir="${javadoc.ssh.user}@${javadoc.ssh.server}:/tmp" trust="yes" verbose="yes" port="${javadoc.ssh.port}" keyfile="${javadoc.ssh.key}" localfile="${java.io.tmpdir}/golgotha_javadoc.tar.bz2" />
 
     	<!-- Explode the JavaDoc -->
-    	<sshexec keyfile="${javadoc.ssh.key}" username="${javadoc.ssh.user}" trust="yes" host="${javadoc.ssh.server}" timeout="37500" failonerror="no" port="${javadoc.ssh.port}"
-    		command="cd ${javadoc.ssh.path.javadoc} ; tar xvfj /tmp/golgotha_javadoc.tar.bz2" />
-		<sshexec keyfile="${javadoc.ssh.key}" username="${javadoc.ssh.user}" trust="yes" host="${javadoc.ssh.server}" timeout="12500" failonerror="no" port="${javadoc.ssh.port}"
-    	    command="rm /tmp/golgotha_javadoc.tar.bz2" />
+    	<sshexec keyfile="${javadoc.ssh.key}" username="${javadoc.ssh.user}" trust="yes" host="${javadoc.ssh.server}" timeout="37500" failonerror="no" port="${javadoc.ssh.port}" command="cd ${javadoc.ssh.path.javadoc} ; tar xvfj /tmp/golgotha_javadoc.tar.bz2" />
+		<sshexec keyfile="${javadoc.ssh.key}" username="${javadoc.ssh.user}" trust="yes" host="${javadoc.ssh.server}" timeout="12500" failonerror="no" port="${javadoc.ssh.port}" command="rm /tmp/golgotha_javadoc.tar.bz2" />
 
     	<!-- Clean out the temp folder -->
     	<delete dir="${java.io.tmpdir}/javadoc" />
@@ -275,7 +271,6 @@
 		<scp todir="${webapp.dev.user}@${webapp.dev.server}:${webapp.dev.path.common}"
 			port="${webapp.dev.port}" verbose="yes" trust="yes" keyfile="${webapp.dev.key}">
 			<fileset dir="lib/deploy" includes="*.jar">
-				<exclude name="spymemcached*.jar" />
 				<modified seldirs="false" algorithm="digest" update="true" delayupdate="false">
 					<param name="algorithm.algorithm" value="MD5" />
 					<param name="cache.cachefile" value="../.local_data/jar.cache.dev.txt" />
@@ -290,13 +285,6 @@
 				<include name="golgotha.jar" />
 	 			<include name="golgotha_web.jar" />
 				<include name="golgotha_jsp.jar" />
-				<modified seldirs="false" algorithm="digest" update="true" delayupdate="false">
-					<param name="algorithm.algorithm" value="MD5" />
-					<param name="cache.cachefile" value="../.local_data/jar.cache.dev.txt" />
-				</modified>
-			</fileset>
-			<fileset dir="lib/deploy">
-				<include name="spymemcached*.jar" />
 				<modified seldirs="false" algorithm="digest" update="true" delayupdate="false">
 					<param name="algorithm.algorithm" value="MD5" />
 					<param name="cache.cachefile" value="../.local_data/jar.cache.dev.txt" />
