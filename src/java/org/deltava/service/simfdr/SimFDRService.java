@@ -1,4 +1,4 @@
-// Copyright 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.simfdr;
 
 import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service that authenticates using the simFDR user account. 
  * @author Luke
- * @version 7.2
+ * @version 8.2
  * @since 7.0
  */
 
@@ -53,14 +53,5 @@ abstract class SimFDRService extends WebService {
 	@Override
 	public final boolean isSecure() {
 		return false;
-	}
-	
-	/**
-	 * Returns whether this web service requires an SSL connection.
-	 * @return TRUE always
-	 */
-	@Override
-	public final boolean requiresSSL() {
-		return true;
 	}
 }

@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2011, 2012, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2011, 2012, 2014, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.util.*;
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A servlet to handle Web Service data requests.
  * @author Luke
- * @version 7.2
+ * @version 8.2
  * @since 1.0
  */
 
@@ -90,13 +90,8 @@ public class WebServiceServlet extends BasicAuthServlet {
 			return;
 		}
 		
-		// Check if we need SSL
+		// Set transaction name
 		NewRelic.setTransactionName("Web Service", svc.getClass().getSimpleName());
-		if (!req.isSecure() && svc.requiresSSL()) {
-			log.info("Redirecting " + req.getRequestURI() + " to secure connection");
-			rsp.sendRedirect("https://" + req.getServerName() + req.getRequestURI());
-			return;
-		}
 
 		// Check if we need to be authenticated
 		Pilot usr = (Pilot) req.getUserPrincipal();
