@@ -218,7 +218,7 @@ public class GetACARSBuilds extends DAO {
 	public Collection<ClientBuildStats> getBuildStatistics() throws DAOException {
 		try {
 			prepareStatement("SELECT DATE(DATE_SUB(F.CREATED, INTERVAL DAYS(F.CREATED) DAY)) AS DT, F.CLIENT_BUILD, COUNT(F.ID), SUM(P.FLIGHT_TIME) FROM PIREPS P, ACARS_PIREPS AP, "
-				+ "acars.FLIGHTS F WHERE (P.ID=AP.ID) AND (F.ID=AP.ACARS_ID) AND (P.STATUS=?) GROUP BY DT, F.CLIENT_BUILD");
+				+ "acars.FLIGHTS F WHERE (P.ID=AP.ID) AND (F.ID=AP.ACARS_ID) AND (P.STATUS=?) GROUP BY DT DESC, F.CLIENT_BUILD");
 			_ps.setInt(1, FlightStatus.OK.ordinal());
 			
 			Collection<ClientBuildStats> results = new ArrayList<ClientBuildStats>();
