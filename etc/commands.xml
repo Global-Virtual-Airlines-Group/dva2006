@@ -527,6 +527,12 @@
 		<roles>*</roles>
 	</command>
 
+	<command id="acarsbuildstats">
+		<name>ACARS Client Build Statistics</name>
+		<class>org.deltava.commands.stats.ClientStatsCommand</class>
+		<roles>Developer,Operations,HR</roles>
+	</command>
+
 	<command id="httpstats">
 		<name>HTTP Statistics</name>
 		<class>org.deltava.commands.stats.ServerStatsCommand</class>
