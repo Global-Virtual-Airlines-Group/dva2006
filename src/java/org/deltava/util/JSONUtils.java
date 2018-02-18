@@ -54,7 +54,7 @@ public class JSONUtils {
 	public static JSONObject format(Instant dt) {
 		LocalDateTime ldt = LocalDateTime.ofInstant(dt, ZoneOffset.UTC);
 		JSONObject dto = new JSONObject();
-		dto.put("y", ldt.getYear()); dto.put("m", ldt.getMonthValue()); dto.put("d", ldt.getDayOfMonth());
+		dto.put("y", ldt.getYear()); dto.put("m", ldt.getMonthValue() - 1); dto.put("d", ldt.getDayOfMonth());
 		return dto;
 	}
 }

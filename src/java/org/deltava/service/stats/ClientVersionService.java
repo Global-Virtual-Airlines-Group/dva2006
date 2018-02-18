@@ -32,12 +32,11 @@ public class ClientVersionService extends WebService {
 	public int execute(ServiceContext ctx) throws ServiceException {
 		
 		// Get count
-		int months = StringUtils.parse(ctx.getParameter("count"), 12);
+		int weeks = StringUtils.parse(ctx.getParameter("count"), 12);
 		final Collection<ClientBuildStats> stats = new ArrayList<ClientBuildStats>();
 		try {
 			GetACARSBuilds dao = new GetACARSBuilds(ctx.getConnection());
-			dao.setQueryMax(months);
-			stats.addAll(dao.getBuildStatistics());
+			stats.addAll(dao.getBuildStatistics(weeks));
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		} finally {
@@ -50,28 +49,29 @@ public class ClientVersionService extends WebService {
 		
 		// Build the JSON object
 		JSONObject jo = new JSONObject();
+		jo.put("builds", new JSONArray(builds));
+		jo.put("weeks", weeks);
 		JSONArray ja = new JSONArray();
-		jo.put("months", months);
-		jo.put("stas", ja);
+		jo.put("stats", ja);
 		for (ClientBuildStats entry : stats) {
-			JSONArray ea = new JSONArray();
-			ea.put(JSONUtils.format(entry.getDate()));
+			JSONObject eo = new JSONObject();
+			eo.put("week", JSONUtils.format(entry.getDate()));
 			for (Integer b : builds) {
-				JSONArray ba = new JSONArray();
+				JSONObject bo = new JSONObject();
 				Tuple<Integer, Double> data = entry.getCount(b.intValue());
-				ba.put((data == null) ? 0 : data.getLeft().intValue());
-				ba.put((data == null) ? 0 : data.getRight().doubleValue());
-				ea.put(ba);
+				bo.put("legs", (data == null) ? 0 : data.getLeft().intValue());
+				bo.put("hours", (data == null) ? 0 : data.getRight().doubleValue());
+				eo.put(b.toString(), bo);
 			}
 			
-			ja.put(ea);
+			ja.put(eo);
 		}
 		
 		// Dump the JSON to the output stream
 		JSONUtils.ensureArrayPresent(jo, "stats");
 		try {
 			ctx.setContentType("application/json", "UTF-8");
-			ctx.setExpiry(60);
+			ctx.setExpiry(600);
 			ctx.println(jo.toString());
 			ctx.commit();
 		} catch (Exception e) {

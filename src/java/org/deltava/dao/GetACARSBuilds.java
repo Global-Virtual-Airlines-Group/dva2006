@@ -6,7 +6,7 @@ import java.util.*;
 import java.time.Instant;
 
 import org.deltava.beans.acars.*;
-import org.deltava.beans.flight.FlightStatus;
+import org.deltava.beans.flight.*;
 import org.deltava.beans.stats.ClientBuildStats;
 
 import org.deltava.util.StringUtils;
@@ -211,20 +211,24 @@ public class GetACARSBuilds extends DAO {
 	}
 	
 	/**
-	 * Loads ACARS client statistics.
+	 * Loads ACARS client build statistics by week.
+	 * @param weeks the number of weeks to load
 	 * @return a Collection of ClientBuildStats beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<ClientBuildStats> getBuildStatistics() throws DAOException {
+	public Collection<ClientBuildStats> getBuildStatistics(int weeks) throws DAOException {
 		try {
-			prepareStatement("SELECT DATE(DATE_SUB(F.CREATED, INTERVAL DAYS(F.CREATED) DAY)) AS DT, F.CLIENT_BUILD, COUNT(F.ID), SUM(P.FLIGHT_TIME) FROM PIREPS P, ACARS_PIREPS AP, "
-				+ "acars.FLIGHTS F WHERE (P.ID=AP.ID) AND (F.ID=AP.ACARS_ID) AND (P.STATUS=?) GROUP BY DT DESC, F.CLIENT_BUILD");
-			_ps.setInt(1, FlightStatus.OK.ordinal());
+			prepareStatementWithoutLimits("SELECT DATE(DATE_SUB(F.CREATED, INTERVAL WEEKDAY(F.CREATED) DAY)) AS DT, F.CLIENT_BUILD, COUNT(F.ID), SUM(P.FLIGHT_TIME) FROM PIREPS P, "
+				+ "ACARS_PIREPS AP, acars.FLIGHTS F WHERE (F.CREATED > DATE_SUB(CURDATE(), INTERVAL ? MONTH)) AND (P.ID=AP.ID) AND (F.ID=AP.ACARS_ID) AND (P.STATUS=?) AND "
+				+ "(F.FDR=?) GROUP BY DT DESC, F.CLIENT_BUILD");
+			_ps.setInt(1, weeks + 2);
+			_ps.setInt(2, FlightStatus.OK.ordinal());
+			_ps.setInt(3, Recorder.ACARS.ordinal());
 			
 			Collection<ClientBuildStats> results = new ArrayList<ClientBuildStats>();
 			try (ResultSet rs = _ps.executeQuery()) {
 				ClientBuildStats stats = null;
-				while (rs.next()) {
+				while (rs.next() && (results.size() < weeks)) {
 					Instant dt = toInstant(rs.getTimestamp(1));
 					if ((stats == null) || !dt.equals(stats.getDate())) {
 						stats = new ClientBuildStats(dt);

@@ -14,7 +14,7 @@ import org.deltava.commands.*;
 
 public class ClientStatsCommand extends AbstractCommand {
 	
-	private static final List<String> MONTHS = List.of("12", "24", "36", "48", "96", "120", "144", "160");
+	private static final List<String> WEEKS = List.of("8", "12", "26", "52", "78", "104", "156");
 
 	/**
 	 * Execute the command.
@@ -25,7 +25,7 @@ public class ClientStatsCommand extends AbstractCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Save options
-		ctx.setAttribute("months", MONTHS, REQUEST);
+		ctx.setAttribute("weeks", WEEKS, REQUEST);
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
