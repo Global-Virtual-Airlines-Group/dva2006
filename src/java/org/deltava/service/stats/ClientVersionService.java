@@ -4,7 +4,6 @@ package org.deltava.service.stats;
 import static javax.servlet.http.HttpServletResponse.*;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import org.json.*;
 
@@ -46,6 +45,8 @@ public class ClientVersionService extends WebService {
 		}
 		
 		// Build the list of builds
+		Collection<Integer> builds = new TreeSet<Integer>();
+		stats.stream().map(ClientBuildStats::getBuilds).flatMap(Collection::stream).forEach(builds::add);
 		
 		// Build the JSON object
 		JSONObject jo = new JSONObject();
@@ -55,6 +56,13 @@ public class ClientVersionService extends WebService {
 		for (ClientBuildStats entry : stats) {
 			JSONArray ea = new JSONArray();
 			ea.put(JSONUtils.format(entry.getDate()));
+			for (Integer b : builds) {
+				JSONArray ba = new JSONArray();
+				Tuple<Integer, Double> data = entry.getCount(b.intValue());
+				ba.put((data == null) ? 0 : data.getLeft().intValue());
+				ba.put((data == null) ? 0 : data.getRight().doubleValue());
+				ea.put(ba);
+			}
 			
 			ja.put(ea);
 		}
