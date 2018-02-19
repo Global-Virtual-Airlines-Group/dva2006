@@ -228,7 +228,7 @@ public class GetACARSBuilds extends DAO {
 			Collection<ClientBuildStats> results = new ArrayList<ClientBuildStats>();
 			try (ResultSet rs = _ps.executeQuery()) {
 				ClientBuildStats stats = null;
-				while (rs.next() && (results.size() < weeks)) {
+				while (rs.next() && (results.size() <= weeks)) {
 					Instant dt = toInstant(rs.getTimestamp(1));
 					if ((stats == null) || !dt.equals(stats.getDate())) {
 						stats = new ClientBuildStats(dt);
