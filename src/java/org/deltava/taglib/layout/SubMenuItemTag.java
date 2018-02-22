@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2013 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2013, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.layout;
 
 import javax.servlet.jsp.*;
@@ -7,7 +7,7 @@ import javax.servlet.jsp.tagext.TagSupport;
 /**
  * A JSP tag to render CSS sub-menu items.
  * @author Luke
- * @version 5.2
+ * @version 8.2
  * @since 2.6
  */
 
@@ -45,7 +45,7 @@ public class SubMenuItemTag extends MenuElementTag {
 	@Override
 	public int doEndTag() throws JspException {
 		try {
-			pageContext.getOut().print(_renderTable ? "</td></tr>" : "</li>");
+			pageContext.getOut().println(_renderTable ? "</td></tr>" : "</li>");
 		} catch (Exception e) {
 			throw new JspException(e);
 		} finally {

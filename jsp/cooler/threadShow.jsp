@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<%@ page session="false" %>
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8"  session="false" trimDirectiveWhitespaces="true" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
@@ -9,7 +8,7 @@
 <content:sysdata var="forumName" name="airline.forum" />
 <html lang="en">
 <head>
-<title><content:airline /> ${forumName} - <fmt:text value="${thread.subject}" /></title>
+<title><content:airline />&nbsp; ${forumName} - <fmt:text value="${thread.subject}" /></title>
 <content:canonical convertID="true" />
 <content:css name="main" />
 <content:css name="cooler" />
@@ -30,7 +29,7 @@
 <content:js name="common" />
 <content:filter roles="Moderator"><content:js name="datePicker" /></content:filter>
 <c:if test="${!empty img}"><content:js name="imgLike" /></c:if>
-<script type="text/javascript">
+<script>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -194,7 +193,7 @@ APPLICANT<br />
  <fmt:date date="${msg.createdOn}" d="MMMM dd yyyy" /><span class="phone"> by <span class="pri bld">${pilot.name}</span></span>
 <content:filter roles="Moderator,HR"><span class="nophone">
  from ${msg.remoteHost} (${msg.remoteAddr}
-<c:if test="${!empty ipInfo}"> <el:flag countryCode="${ipInfo.country.code}" caption="${ipInfo.location}" /> ${ipInfo.location}</c:if>)
+<c:if test="${!empty ipInfo}">&nbsp;<el:flag countryCode="${ipInfo.country.code}" caption="${ipInfo.location}" />&nbsp;${ipInfo.location}</c:if>)
 <c:if test="${msg.contentWarning}"> <span class="error bld">CONTENT WARNING</span></c:if>
 </span></content:filter></td>
 <c:if test="${showPostTools}">

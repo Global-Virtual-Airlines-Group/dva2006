@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<%@ page session="false" %>
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8"  session="false" trimDirectiveWhitespaces="true" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
@@ -14,11 +13,12 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <c:set var="formURL" value="job.do" scope="page" />
 <c:choose>
 <c:when test="${access.canApply}">
 <c:set var="formURL" value="jobapply.do" scope="page" />
-<script type="text/javascript">
+<script>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -30,7 +30,7 @@ return true;
 </c:when>
 <c:when test="${access.canShortlist}">
 <c:set var="formURL" value="jobsl.do" scope="page" />
-<script type="text/javascript">
+<script>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -42,7 +42,7 @@ return true;
 </c:when>
 <c:when test="${access.canSelect}">
 <c:set var="formURL" value="jobapprove.do" scope="page" />
-<script type="text/javascript">
+<script>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -53,12 +53,12 @@ return true;
 </script>
 </c:when>
 <c:otherwise>
-<script type="text/javascript">
+<script>
 golgotha.local.validate = function(f) { return false; };
 </script>
 </c:otherwise>
 </c:choose>
-<script type="text/javascript">
+<script>
 golgotha.local.toggleBody = function(id)
 {
 var row = document.getElementById('desc' + id);

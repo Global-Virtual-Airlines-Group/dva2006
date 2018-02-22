@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<%@ page session="false" %>
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8"  session="false" trimDirectiveWhitespaces="true" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
@@ -27,20 +26,17 @@
 <c:when test="${isAirport && isCreate}">
 <div class="updateHdr">Airport Added</div>
 <br />
-The airport ${airport.name} (<fmt:airport airport="${airport}" />) has been added to the
-<content:airline /> Flight Schedule.<br />
+The airport ${airport.name} (<fmt:airport airport="${airport}" />) has been added to the <content:airline /> Flight Schedule.<br />
 </c:when>
 <c:when test="${isAirport && isUpdate}">
 <div class="updateHdr">Airport Updated</div>
 <br />
-The airport ${airport.name} (<fmt:airport airport="${airport}" />) has been updated in the
-<content:airline /> Flight Schedule.<br />
+The airport ${airport.name} (<fmt:airport airport="${airport}" />) has been updated in the <content:airline /> Flight Schedule.<br />
 </c:when>
 <c:when test="${isAirport && isDelete}">
 <div class="updateHdr">Airport Deleted</div>
 <br />
-The airport ${airport.name} (<fmt:airport airport="${airport}" />) has been removed from the
-<content:airline /> Flight Schedule.<br />
+The airport ${airport.name} (<fmt:airport airport="${airport}" />) has been removed from the <content:airline /> Flight Schedule.<br />
 </c:when>
 <c:when test="${isAirline}">
 <div class="updateHdr">Airline Updated</div>
@@ -50,8 +46,7 @@ The airline ${airline.name} has been updated in the <content:airline /> Flight S
 <c:when test="${isFlights}">
 <div class="updateHdr">Flight Schedule Updated</div>
 <br />
-The <content:airline /> Flight Schedule has been updated. <fmt:int value="${entryCount}" /> Schedule entries 
-have been imported into the database. <c:if test="${doPurge}"><span class="sec">The database was purged 
+The <content:airline /> Flight Schedule has been updated. <fmt:int value="${entryCount}" /> Schedule entries have been imported into the database. <c:if test="${doPurge}"><span class="sec">The database was purged 
 before new entries were uploaded.</span></c:if><br />
 <c:if test="${!empty errors}">
 <br />
@@ -66,8 +61,7 @@ ${error}<br />
 <c:when test="${!empty scheduleEntry}">
 <div class="updateHdr">Flight Schedule Updated</div>
 <br />
-The <content:airline /> Flight Schedule has been updated. Flight ${scheduleEntry.flightCode} has been
-${isCreate ? 'added into' : 'updated in'} the database.<br />
+The <content:airline /> Flight Schedule has been updated. Flight ${scheduleEntry.flightCode} has been ${isCreate ? 'added into' : 'updated in'} the database.<br />
 <br />
 To review this schedule entry, <el:cmd url="sched" op="edit" linkID="${scheduleEntry.flightCode}" className="sec bld">Click Here</el:cmd>.<br />
 To view flights between ${scheduleEntry.airportD.name} (<fmt:airport airport="${scheduleEntry.airportD}" />) and ${scheduleEntry.airportA.name} (<fmt:airport airport="${scheduleEntry.airportA}" />),
@@ -76,8 +70,7 @@ To view flights between ${scheduleEntry.airportD.name} (<fmt:airport airport="${
 <c:when test="${scheduleSync}">
 <div class="updateHdr">Flight Schedule Synchronized</div>
 <br />
-The <content:airline /> Flight Schedule has been updated by synchronizing <span class="sec bld">${airline.name}</span> schedule entries from 
- the <span class="pri bld">${src.name}</span> Flight Schedule.<br />
+The <content:airline /> Flight Schedule has been updated by synchronizing <span class="sec bld">${airline.name}</span> schedule entries from  the <span class="pri bld">${src.name}</span> Flight Schedule.<br />
 <br />
 <c:if test="${entriesPurged > 0}">
 <fmt:int value="${entriesPurged}" /> Flight Schedule entries were purged prior to the synchronization.<br /></c:if>

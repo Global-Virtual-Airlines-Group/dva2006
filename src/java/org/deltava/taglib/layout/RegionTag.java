@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2011, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2011, 2015, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.layout;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import javax.servlet.jsp.tagext.*;
 /**
  * A JSP tag to render page layouts in a user-specific way.
  * @author Luke
- * @version 6.3
+ * @version 8.2
  * @since 1.0
  */
 
@@ -69,7 +69,7 @@ public class RegionTag extends TagSupport {
 				out.print(i.hasNext() ? "\" " : "\"");
 			}
 
-			out.print('>');
+			out.println('>');
 		} catch (Exception e) {
 			throw new JspException(e);
 		}
@@ -85,7 +85,7 @@ public class RegionTag extends TagSupport {
 	@Override
 	public int doEndTag() throws JspException {
 		try {
-			pageContext.getOut().print("</div>");
+			pageContext.getOut().println("</div>");
 		} catch (Exception e) {
 			throw new JspException(e);
 		} finally {

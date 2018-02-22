@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<%@ page session="false" %>
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8"  session="false" trimDirectiveWhitespaces="true" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
@@ -16,7 +15,7 @@
 <content:favicon />
 <content:js name="common" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script type="text/javascript">
+<script>
 golgotha.local.validate = function(f)
 {
 <c:if test="${access.canComment || access.canUpdateStatus}">
@@ -150,17 +149,13 @@ Template <el:combo name="rspTemplate" className="small" firstEntry="-" options="
 <tr>
  <td>
 <c:if test="${access.canUpdateStatus}">
-<el:cmdbutton ID="EditButton" label="EDIT ISSUE" url="hdissue" op="edit" link="${issue}" />
-</c:if>
+<el:cmdbutton label="EDIT ISSUE" url="hdissue" op="edit" link="${issue}" /></c:if>
 <c:if test="${access.canComment}">
- <el:button ID="CommentButton" type="submit" label="SAVE NEW COMMENT" />
-</c:if>
+&nbsp;<el:button type="submit" label="SAVE NEW COMMENT" /></c:if>
 <c:if test="${access.canUpdateContent}">
- <el:cmdbutton ID="UpdateButton" label="UPDATE ISSUE/COMMENTS" url="hdupdate" post="true" link="${issue}" />
-</c:if>
+&nbsp;<el:cmdbutton label="UPDATE ISSUE/COMMENTS" url="hdupdate" post="true" link="${issue}" /></c:if>
 <c:if test="${access.canClose}">
- <el:cmdbutton ID="CloseButton" label="CLOSE ISSUE" url="hdclose" link="${issue}" />
-</c:if>
+&nbsp;<el:cmdbutton label="CLOSE ISSUE" url="hdclose" link="${issue}" /></c:if>
  </td>
 </tr>
 </el:table>

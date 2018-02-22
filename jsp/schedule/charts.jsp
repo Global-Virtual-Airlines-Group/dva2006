@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<%@ page session="false" %>
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8"  session="false" trimDirectiveWhitespaces="true" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
@@ -19,7 +18,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <fmt:aptype var="useICAO" />
-<script type="text/javascript">
+<script>
 golgotha.local.updateAirport = function() { return document.forms[0].submit(); };
 golgotha.local.validate = function(f) { return (f.id.selectedIndex > 0); };
 
@@ -117,7 +116,7 @@ golgotha.onDOMReady(function() { return golgotha.airportLoad.setHelpers(document
 <c:if test="${anyPDF}">
 <!-- Download Acrobat link -->
 <tr>
- <td><a href="http://www.adobe.com/products/acrobat/readstep2.html" rel="external"><el:img src="library/getacro.png" className="noborder" caption="Download Adobe Acrobat Reader" /></a></td>
+ <td><a href="https://www.adobe.com/products/acrobat/readstep2.html" rel="external"><el:img src="library/getacro.png" className="noborder" caption="Download Adobe Acrobat Reader" /></a></td>
  <td colspan="6">Some approach charts require <span class="pri bld">Adobe Acrobat Reader</span> to be viewed. If you are having difficulties viewing our charts, please click on the link to the left
  to download the latest version of Adobe Acrobat Reader. This is a free download.</td>
 </tr>

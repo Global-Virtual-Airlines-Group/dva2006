@@ -1,4 +1,4 @@
-// Copyright 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.layout;
 
 import javax.servlet.jsp.*;
@@ -9,7 +9,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP tag to render a top level menu item in a JSP tag.
  * @author Luke
- * @version 7.0
+ * @version 8.2
  * @since 2.6
  */
 
@@ -87,7 +87,7 @@ public class MenuItemTag extends MenuElementTag {
 	public int doEndTag() throws JspException {
 		try {
 			if (!_renderTable)
-				pageContext.getOut().print("</span></li></ul>");
+				pageContext.getOut().println("</span></li></ul>");
 		} catch (Exception e) {
 			throw new JspException(e);
 		} finally {

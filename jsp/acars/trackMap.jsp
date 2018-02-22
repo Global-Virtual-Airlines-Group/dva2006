@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<%@ page session="false" %>
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8"  session="false" trimDirectiveWhitespaces="true" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
@@ -21,7 +20,7 @@
 <style>
 select.localAP { background-color:#000810; }
 </style>
-<script type="text/javascript">
+<script>
 golgotha.maps.track = golgotha.maps.track || {};
 golgotha.maps.track.ShapeLayer = function(tx, minZ, maxZ)
 {
@@ -94,13 +93,12 @@ google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
 var airportCoords = {};
 <c:forEach var="ap" items="${localAP}">
 airportCoords['${ap.ICAO}'] = <map:point point="${ap}" /></c:forEach>
-golgotha.maps.track.selectLocal = function(combo)
-{
-if (combo.selectedIndex < 1) return false;
-var o = combo[combo.selectedIndex];
-var ll = airportCoords[o.getAttribute('icao')];
-if (ll != null) map.panTo(ll);
-return true;
+golgotha.maps.track.selectLocal = function(combo) {
+	if (combo.selectedIndex < 1) return false;
+	var o = combo[combo.selectedIndex];
+	var ll = airportCoords[o.getAttribute('icao')];
+	if (ll != null) map.panTo(ll);
+	return true;
 };
 </script>
 </body>

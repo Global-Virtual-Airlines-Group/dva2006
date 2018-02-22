@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<%@ page session="false" %>
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8"  session="false" trimDirectiveWhitespaces="true" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
@@ -219,7 +218,7 @@ golgotha.local.resizeBriefing = function(maxRows) {
  <td class="pri bld">${pilot.pilotCode}</td>
 </c:if>
  <td><el:profile location="${pilotLoc}">${pilot.name}</el:profile>
-<c:if test="${!empty pilotCerts}"><span class="ter bld nophone"><fmt:list value="${pilotCerts}" delim=", " /></span></c:if>
+<c:if test="${!empty pilotCerts}"> <span class="ter bld nophone"><fmt:list value="${pilotCerts}" delim=", " /></span></c:if>
 <c:if test="${!empty pilotRatings}"> <span class="sec nophone"><fmt:list value="${pilotRatings}" delim=", " /></span></c:if>
 </td>
  <td class="sec bld nophone">${signup.equipmentType}</td>

@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<%@ page session="false" %>
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8"  session="false" trimDirectiveWhitespaces="true" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <html lang="en">
@@ -9,6 +8,7 @@
 <content:css name="main" />
 <content:pics />
 <content:favicon />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -20,8 +20,7 @@
 <content:region id="main">
 <div class="updateHdr">Confirm Flight Report Deletion</div>
 <br />
-This <content:airline /> Flight Report is about to be deleted. Are you sure you want to do this? This
-operation <span class="bld">cannot be undone</span>.<br />
+This <content:airline /> Flight Report is about to be deleted. Are you sure you want to do this? This operation <span class="bld">cannot be undone</span>.<br />
 <br />
 To return to the Flight Report, <el:cmd url="pirep" link="${pirep}" className="sec bld">Click Here</el:cmd>.<br />
 <br />

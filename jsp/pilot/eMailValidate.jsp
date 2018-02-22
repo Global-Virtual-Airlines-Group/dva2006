@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<%@ page session="false" %>
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8"  session="false" trimDirectiveWhitespaces="true" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
@@ -13,8 +12,9 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:sysdata var="badDomains" name="registration.reject_domain" />
-<script type="text/javascript">
+<script>
 <fmt:jsarray var="golgotha.form.invalidDomains" items="${badDomains}" />
 golgotha.local.validate = function(f)
 {
@@ -73,15 +73,12 @@ e-mail message, into the space provided below.</td>
 </tr>
 <tr>
 <c:if test="${empty addr || (!addr.isValid)}">
- <td colspan="2" class="pri bld left">Your e-mail address is currently marked as invalid. One condition for 
-membership here at <content:airline /> is providing a valid e-mail address. Please provide your e-mail address 
+ <td colspan="2" class="pri bld left">Your e-mail address is currently marked as invalid. One condition for membership here at <content:airline /> is providing a valid e-mail address. Please provide your e-mail address 
 in the space provided below.</td>
 </c:if>
 <c:if test="${!empty addr && (addr.isValid)}">
- <td colspan="2" class="pri bld left">Your e-mail address is currently marked as invalid. One condition for 
-membership here at <content:airline /> is providing a valid e-mail address. You should have received an e-mail 
-message in your mailbox at ${addr.address} with a validation code. Please provide the validation code in the 
-space below.</td>
+ <td colspan="2" class="pri bld left">Your e-mail address is currently marked as invalid. One condition for membership here at <content:airline /> is providing a valid e-mail address. You should have received an e-mail 
+message in your mailbox at ${addr.address} with a validation code. Please provide the validation code in the space below.</td>
 </c:if>
 </tr>
 </c:otherwise>

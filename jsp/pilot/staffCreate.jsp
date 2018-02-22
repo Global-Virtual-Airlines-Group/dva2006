@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<%@ page session="false" %>
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8"  session="false" trimDirectiveWhitespaces="true" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <html lang="en">
@@ -10,17 +9,17 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script type="text/javascript">
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-golgotha.form.validate({f:f.staffTitle, l:10, t:'Staff Title'});
-golgotha.form.validate({f:f.staffArea, t:'Department Name'});
-golgotha.form.validate({f:f.staffBody, l:30, t:'Staff Biographical Profile'});
-golgotha.form.validate({f:f.staffSort, min:1, t:'Staff Profile Sort Order'});
-golgotha.form.submit(f);
-return true;
+<script>
+golgotha.local.validate = function(f) {
+	if (!golgotha.form.check()) return false;
+	golgotha.form.validate({f:f.staffTitle, l:10, t:'Staff Title'});
+	golgotha.form.validate({f:f.staffArea, t:'Department Name'});
+	golgotha.form.validate({f:f.staffBody, l:30, t:'Staff Biographical Profile'});
+	golgotha.form.validate({f:f.staffSort, min:1, t:'Staff Profile Sort Order'});
+	golgotha.form.submit(f);
+	return true;
 };
 </script>
 </head>

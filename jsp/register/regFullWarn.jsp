@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<%@ page session="false" %>
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8"  session="false" trimDirectiveWhitespaces="true" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
@@ -27,16 +26,13 @@
 <content:region id="main">
 <div class="updateHdr">Pilot Registration Delay</div>
 <br />
-<content:airline /> currently has over <fmt:int value="${airlineSize}" /> active Pilots. In order to more 
-effectively serve our members, we restrict Pilot Registration once we have over <fmt:int value="${maxPilots}" /> 
+<content:airline /> currently has over <fmt:int value="${airlineSize}" /> active Pilots. In order to more effectively serve our members, we restrict Pilot Registration once we have over <fmt:int value="${maxPilots}" /> 
 Pilots. Therefore, there may be a delay before your application is processed.<br />
 <br />
-<span class="pri bld">If you are a former <content:airline /> Pilot who has been marked Retired or Inactive, 
-you do NOT need to register again.</span> To reactivate your membership at <content:airline />, please
+<span class="pri bld">If you are a former <content:airline /> Pilot who has been marked Retired or Inactive, you do NOT need to register again.</span> To reactivate your membership at <content:airline />, please
 <el:cmd url="register" op="dupe" className="sec bld">Click Here</el:cmd>.<br />
 <br />
-If you still wish to apply for membership at <content:airline />, we welcome your interest. Please submit your application. We 
-will contact you at the email address on your application when there is an opening.<br />
+If you still wish to apply for membership at <content:airline />, we welcome your interest. Please submit your application. We will contact you at the email address on your application when there is an opening.<br />
 <br />
 
 <!-- Button Bar -->

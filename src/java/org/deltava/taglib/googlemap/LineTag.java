@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2012, 2013, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2012, 2013, 2015, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import javax.servlet.jsp.*;
@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP Tag to generate a Google Maps GPolyline created out of GMarkers.
  * @author Luke
- * @version 6.3
+ * @version 8.2
  * @since 1.0
  */
 
@@ -115,7 +115,7 @@ public class LineTag extends GoogleMapEntryTag {
 			out.print(StringUtils.format(_transparency, "0.00"));
 			out.print(",strokeWidth:");
 			out.print(String.valueOf(_width));
-			out.print("})");
+			out.println("});");
 		} catch (Exception e) {
 			throw new JspException(e);
 		} finally {

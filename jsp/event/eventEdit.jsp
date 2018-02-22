@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<%@ page session="false" %>
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8"  session="false" trimDirectiveWhitespaces="true" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
@@ -20,37 +19,35 @@
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
 <fmt:aptype var="useICAO" />
-<script type="text/javascript">
-golgotha.local.updateSignups = function()
-{
-var f = document.forms[0];
-var tg = !f.canSignup.checked;
-golgotha.util.disable(f.closeDate, tg);
-golgotha.util.disable(f.closeTime, tg);
-golgotha.util.disable(f.airportD, tg);
-golgotha.util.disable(f.airportA, tg);
-golgotha.util.disable(f.adCode, tg);
-golgotha.util.disable(f.aaCode, tg);
-golgotha.util.disable(f.route, tg);
-golgotha.util.disable(f.routeName, tg);
-golgotha.util.disable(f.maxSignups, tg);
-golgotha.util.disable(f.signupURL, tg);
-golgotha.util.disable('CloseCalendarButton', tg);
-return true;
+<script>
+golgotha.local.updateSignups = function() {
+	var f = document.forms[0];
+	var tg = !f.canSignup.checked;
+	golgotha.util.disable(f.closeDate, tg);
+	golgotha.util.disable(f.closeTime, tg);
+	golgotha.util.disable(f.airportD, tg);
+	golgotha.util.disable(f.airportA, tg);
+	golgotha.util.disable(f.adCode, tg);
+	golgotha.util.disable(f.aaCode, tg);
+	golgotha.util.disable(f.route, tg);
+	golgotha.util.disable(f.routeName, tg);
+	golgotha.util.disable(f.maxSignups, tg);
+	golgotha.util.disable(f.signupURL, tg);
+	golgotha.util.disable('CloseCalendarButton', tg);
+	return true;
 };
 
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-golgotha.form.validate({f:f.name, l:5, t:'Event Name'});
-golgotha.form.validate({f:f.airportD, t:'Departure Airport'});
-golgotha.form.validate({f:f.airportA, t:'Destination Airport'});
-golgotha.form.validate({f:f.route, l:5, t:'Default Route'});
-golgotha.form.validate({f:f.airline, min:1, t:'Participating Airline'});
-golgotha.form.validate({f:f.briefing, l:15, t:'Flight Briefing'});
-golgotha.form.validate({f:f.bannerImg, ext:['jpg','png','gif'], t:'Banner Image', empty:true});
-golgotha.form.submit(f);
-return true;
+golgotha.local.validate = function(f) {
+	if (!golgotha.form.check()) return false;
+	golgotha.form.validate({f:f.name, l:5, t:'Event Name'});
+	golgotha.form.validate({f:f.airportD, t:'Departure Airport'});
+	golgotha.form.validate({f:f.airportA, t:'Destination Airport'});
+	golgotha.form.validate({f:f.route, l:5, t:'Default Route'});
+	golgotha.form.validate({f:f.airline, min:1, t:'Participating Airline'});
+	golgotha.form.validate({f:f.briefing, l:15, t:'Flight Briefing'});
+	golgotha.form.validate({f:f.bannerImg, ext:['jpg','png','gif'], t:'Banner Image', empty:true});
+	golgotha.form.submit(f);
+	return true;
 };
 
 golgotha.onDOMReady(function() {
@@ -97,12 +94,12 @@ golgotha.onDOMReady(function() {
 <tr>
  <td class="label">Event Starts on</td>
  <td class="data"><el:text name="startDate" required="true" idx="*" size="10" max="10" value="${fn:dateFmt(startTime, 'MM/dd/yyyy')}" /> at <el:text name="startTime" required="true"  idx="*" size="4" max="5" value="${fn:dateFmt(startTime, 'HH:mm')}" />
-&nbsp;<el:button label="CALENDAR" onClick="void show_calendar('forms[0].startDate')" /> <span class="small">All dates/times are ${user.TZ.name}. (Format: ${dateFmt} HH:mm)</span></td>
+&nbsp;<el:button label="CALENDAR" onClick="void show_calendar('forms[0].startDate')" />&nbsp;<span class="small">All dates/times are ${user.TZ.name}. (Format: ${dateFmt} HH:mm)</span></td>
 </tr>
 <tr>
  <td class="label">Event Ends on</td>
  <td class="data"><el:text name="endDate" required="true" idx="*" size="10" max="10" value="${fn:dateFmt(endTime, 'MM/dd/yyyy')}" /> at <el:text name="endTime" required="true" idx="*" size="4" max="5" value="${fn:dateFmt(endTime, 'HH:mm')}" />
-&nbsp;<el:button label="CALENDAR" onClick="void show_calendar('forms[0].endDate')" /> <span class="small">All dates/times are ${user.TZ.name}. (Format: ${dateFmt} HH:mm)</span></td>
+&nbsp;<el:button label="CALENDAR" onClick="void show_calendar('forms[0].endDate')" />&nbsp;<span class="small">All dates/times are ${user.TZ.name}. (Format: ${dateFmt} HH:mm)</span></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
@@ -119,7 +116,7 @@ golgotha.onDOMReady(function() {
 <tr>
  <td class="label">Signups Close at</td>
  <td class="data"><el:text name="closeDate" required="true" idx="*" size="10" max="10" value="${fn:dateFmt(signupDeadline, 'MM/dd/yyyy')}" /> at <el:text name="closeTime" idx="*" size="4" max="5" value="${fn:dateFmt(signupDeadline, 'HH:mm')}" className="req" />
-&nbsp;<el:button ID="CloseCalendarButton" label="CALENDAR" onClick="void show_calendar('forms[0].closeDate')" /> <span class="small">Your time zone is ${user.TZ.name}.</span></td>
+&nbsp;<el:button ID="CloseCalendarButton" label="CALENDAR" onClick="void show_calendar('forms[0].closeDate')" />&nbsp;<span class="small">Your time zone is ${user.TZ.name}.</span></td>
 </tr>
 <c:if test="${event.hasBanner}">
 <tr>

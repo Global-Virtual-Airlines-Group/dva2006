@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<%@ page session="false" %>
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8"  session="false" trimDirectiveWhitespaces="true" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
@@ -13,7 +12,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script type="text/javascript">
+<script>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -51,15 +50,8 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-Welcome to <content:airline />! In order to access the secure areas of our web site, please enter your first and last 
-name <c:if test="${!empty dupeUsers}">or your User ID </c:if>and password. Your browser must be able to accept cookies 
-from <span class="sec bld">${domain}</span> in order to log into our web site.<br />
-<content:secure secure="false">
-<content:serverName var="serverName" />
-<br />
-<span class="ita">You don't appear to be using an encrypted connection. In order to secure your user data, you may want to log in to
- the <content:airline /> web site using our <a href="https://${serverName}/login.do" class="pri bld">secure login page.</a></span><br />
-</content:secure>
+Welcome to <content:airline />! In order to access the secure areas of our web site, please enter your first and last name <c:if test="${!empty dupeUsers}">or your User ID </c:if>and password. Your browser must be 
+able to accept cookies from <span class="sec bld">${domain}</span> in order to log into our web site.<br />
 <br />
 <el:form method="post" action="login.do" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
@@ -68,8 +60,7 @@ from <span class="sec bld">${domain}</span> in order to log into our web site.<b
 </tr>
 <tr>
  <td class="label">First / Last Name</td>
- <td class="data"><el:text name="firstName" idx="*" size="10" max="16" required="true" value="${fname}" />
-  <el:text name="lastName" idx="*" size="16" max="24" required="true" value="${lname}" /></td>
+ <td class="data"><el:text name="firstName" idx="*" size="10" max="16" required="true" value="${fname}" />&nbsp;<el:text name="lastName" idx="*" size="16" max="24" required="true" value="${lname}" /></td>
 </tr>
 <tr>
  <td class="label">Password</td>
@@ -102,8 +93,7 @@ from <span class="sec bld">${domain}</span> in order to log into our web site.<b
  <td><el:button ID="SubmitButton" label="LOG IN" type="submit" /></td>
 </tr>
 </el:table>
-<el:text name="jsOK" type="hidden" value="" />
-<el:text name="redirectTo" type="hidden" value="${(empty referTo) ? param.redirectTo : referTo}" />
+<el:text name="jsOK" type="hidden" value="" /><el:text name="redirectTo" type="hidden" value="${(empty referTo) ? param.redirectTo : referTo}" />
 <c:if test="${empty dupeUsers}"><el:text name="pilotCode" type="hidden" value="${pilotCode}" /></c:if>
 </el:form>
 <br />

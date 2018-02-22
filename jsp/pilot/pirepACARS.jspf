@@ -23,8 +23,8 @@
  <td class="data" colspan="${cspan}">${flightInfo.FDR.toString()} Build <fmt:int value="${pirep.clientBuild}" /><c:if test="${pirep.beta > 0}"> (Beta <fmt:int value="${pirep.beta}" />)</c:if>
 <c:if test="${!empty flightInfo}"> 
 <content:filter roles="HR"><span class="nophone"> from ${flightInfo.remoteHost}
-<c:if test="${!empty ipInfo}"> <el:flag countryCode="${ipInfo.country.code}" caption="${ipInfo.location}" /> ${ipInfo.location}</c:if></span></content:filter></c:if>
-<c:if test="${pirep.hasReload}"> <span class="small ita bld">(Flight Restore)</span></c:if></td>
+<c:if test="${!empty ipInfo}">&nbsp;<el:flag countryCode="${ipInfo.country.code}" caption="${ipInfo.location}" /> ${ipInfo.location}</c:if></span></content:filter></c:if>
+<c:if test="${pirep.hasReload}">&nbsp;<span class="small ita bld">(Flight Restore)</span></c:if></td>
 </tr>
 </c:if>
 <c:if test="${isXACARS}">
@@ -33,7 +33,7 @@
  <td class="data" colspan="${cspan}">XACARS ${pirep.majorVersion}.${pirep.minorVersion}
 <c:if test="${!empty flightInfo}"> 
 <content:filter roles="HR"><span class="nophone"> from ${flightInfo.remoteHost}
-<c:if test="${!empty ipInfo}"> <el:flag countryCode="${ipInfo.country.code}" caption="${ipInfo.location}" /> ${ipInfo.location}</c:if></span></content:filter></c:if></td>
+<c:if test="${!empty ipInfo}">&nbsp;<el:flag countryCode="${ipInfo.country.code}" caption="${ipInfo.location}" />&nbsp;${ipInfo.location}</c:if></span></content:filter></c:if></td>
 </tr>
 </c:if>
 <c:if test="${!isXACARS}">
@@ -41,7 +41,7 @@
 <c:if test="${!empty pirep.FDE}">
 <tr>
  <td class="label">FDE File</td>
- <td class="data" colspan="${cspan}">${pirep.FDE}<c:if test="${!empty pirep.aircraftCode}"> ${pirep.aircraftCode}</c:if></td>
+ <td class="data" colspan="${cspan}">${pirep.FDE}<c:if test="${!empty pirep.aircraftCode}">&nbsp;${pirep.aircraftCode}</c:if></td>
 </tr>
 </c:if></content:filter>
 <c:if test="${!empty pirep.SDK && (pirep.SDK != 'Generic')}">
@@ -66,7 +66,7 @@
 <tr>
  <td class="label">Start Time</td>
  <td class="data" colspan="${cspan}"><c:if test="${!empty gate}"><span class="sec bld">${gate.name}</span>, </c:if>
-<fmt:date className="bld" date="${pirep.startTime}" /><c:if test="${!empty gate}"> <a href="javascript:void golgotha.local.zoomTo(${gate.latitude}, ${gate.longitude}, 15)">Zoom<span class="nophone"> to Gate</span></a></c:if></td>
+<fmt:date className="bld" date="${pirep.startTime}" /><c:if test="${!empty gate}">&nbsp;<a href="javascript:void golgotha.local.zoomTo(${gate.latitude}, ${gate.longitude}, 15)">Zoom<span class="nophone"> to Gate</span></a></c:if></td>
 </tr>
 <tr>
  <td class="label">Taxi from Gate</td>
@@ -168,7 +168,7 @@
  <span class="sec bld">(ILS ${pirep.landingCategory})</span></c:if>
  <fmt:weight value="${pirep.landingWeight}" /> total, <fmt:weight value="${pirep.landingFuel}" /> fuel
 <c:if test="${acLoaded && (pirep.landingWeight > acInfo.maxLandingWeight)}">
- <span class="small bld">(<fmt:weight value="${pirep.landingWeight - acInfo.maxLandingWeight}" /> overweight)</span></c:if>
+&nbsp;<span class="small bld">(<fmt:weight value="${pirep.landingWeight - acInfo.maxLandingWeight}" /> overweight)</span></c:if>
 <c:if test="${access.canDispose && (pirep.landingLocation.latitude == 0.0) && (pirep.landingLocation.longitude == 0.0)}">
  | <el:cmd url="updtd" link="${flightInfo}">RECALCULATE TOUCHDOWN POINT</el:cmd></c:if></td>
 </tr>

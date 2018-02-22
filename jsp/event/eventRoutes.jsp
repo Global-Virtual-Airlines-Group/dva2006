@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<%@ page session="false" %>
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8"  session="false" trimDirectiveWhitespaces="true" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
@@ -17,7 +16,7 @@
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
 <fmt:aptype var="useICAO" />
-<script type="text/javascript">
+<script>
 <fmt:jsarray var="routeIDs" items="${routeIDs}" />
 golgotha.local.validate = function(f)
 {
@@ -72,8 +71,8 @@ golgotha.onDOMReady(function() {
  <td class="label top" rowspan="${hasName ? '4' : '3'}">Route #<fmt:int value="${route.routeID}" /></td>
 <c:if test="${hasName}">
  <td colspan="3" class="data"><el:text name="routeName${route.routeID}" idx="*" className="pri bld req" size="80" max="144" value="${route.name}" /></td> 
-</tr>
 </c:if>
+</tr>
 <tr>
  <td class="data" colspan="3">${route.airportD.name} (<fmt:airport airport="${route.airportD}" />) 
 - ${route.airportA.name} (<fmt:airport airport="${route.airportA}" />)</td>

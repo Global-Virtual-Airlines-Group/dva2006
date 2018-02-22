@@ -1,6 +1,5 @@
-<!DOCTYPE toRwyshtml>
-<%@ page session="false" %>
-<%@ page contentType="text/html; charset=UTF-8" %>
+<!DOCTYPE html>
+<%@ page contentType="text/html; charset=UTF-8"  session="false" trimDirectiveWhitespaces="true" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
@@ -43,7 +42,7 @@ golgotha.local.update = function(combo) {
 <el:form action="airportinfo.do" method="get" validate="return false">
 <el:table className="form">
 <tr class="title caps">
- <td colspan="2"><span class="nophone"><content:airline /> </span>AIRPORT INFORMATION - ${airport.name} (<fmt:airport airport="${airport}" />)</td>
+ <td colspan="2"><span class="nophone"><content:airline />&nbsp;</span>AIRPORT INFORMATION - ${airport.name} (<fmt:airport airport="${airport}" />)</td>
  <td style="width:35%" class="nophone right">AIRPORT <el:combo name="id" size="1" idx="*" value="${airport}" options="${airports}"  onChange="void golgotha.local.update(this)" />
  <el:text name="idCode" size="3" max="4" className="caps" value="${airport.ICAO}" onBlur="void document.forms[0].id.setAirport(this.value, true)" /></td>
 </tr>
@@ -138,7 +137,7 @@ golgotha.local.update = function(combo) {
 <content:copyright />
 </content:region>
 </content:page>
-<script id="mapInit">
+<script id="mapInit" async>
 <map:point var="golgotha.local.mapC" point="${airport}" />
 <map:bounds var="golgotha.local.mapBounds" items="${rwys}" />
 
