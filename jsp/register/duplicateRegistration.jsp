@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<%@ page session="false" %>
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8"  session="false" trimDirectiveWhitespaces="true" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
@@ -13,16 +12,15 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script type="text/javascript">
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-golgotha.form.validate({f:f.firstName, l:3, t:'First (given) Name'});
-golgotha.form.validate({f:f.lastName, l:2, t:'Last (family) Name'});
-golgotha.form.validate({f:f.email, addr:true, t:'E-Mail Address'});
-golgotha.form.validate({f:f.msgText, l:10, t:'Message to Human Resources'});
-golgotha.form.submit(f);
-return true;
+<script>
+golgotha.local.validate = function(f) {
+	if (!golgotha.form.check()) return false;
+	golgotha.form.validate({f:f.firstName, l:3, t:'First (given) Name'});
+	golgotha.form.validate({f:f.lastName, l:2, t:'Last (family) Name'});
+	golgotha.form.validate({f:f.email, addr:true, t:'E-Mail Address'});
+	golgotha.form.validate({f:f.msgText, l:10, t:'Message to Human Resources'});
+	golgotha.form.submit(f);
+	return true;
 };
 </script>
 </head>

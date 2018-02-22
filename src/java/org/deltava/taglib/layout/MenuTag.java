@@ -66,7 +66,7 @@ public class MenuTag extends MenuElementTag {
 			try {
 				JspWriter out = pageContext.getOut();
 				if (ContentHelper.containsContent(pageContext, "JS", "common"))
-					out.println("<script type=\"text/javascript\">golgotha.nav.sideMenu = true;</script>");
+					out.println("<script async>golgotha.nav.sideMenu = true;</script>");
 				
 				out.print("<table class=\"nav\"><tbody>");
 			} catch (Exception e) {
@@ -90,7 +90,7 @@ public class MenuTag extends MenuElementTag {
 	public int doEndTag() throws JspException {
 		try {
 			if (_renderTable)
-				pageContext.getOut().print("</tbody></table>");
+				pageContext.getOut().println("</tbody></table>");
 		} catch (Exception e) {
 			throw new JspException(e);
 		} finally {

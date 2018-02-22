@@ -1,7 +1,5 @@
 <!DOCTYPE html>
-<%@ page session="false" %>
-<%@ page contentType="text/html; charset=UTF-8" %>
-<%@ page isErrorPage="true" %>
+<%@ page contentType="text/html; charset=UTF-8"  session="false" trimDirectiveWhitespaces="true" isErrorPage="true" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <html lang="en">
@@ -22,11 +20,10 @@
 <content:region id="main">
 <div class="updateHdr"><content:airline /> JAVASCRIPT DISABLED</div>
 <br />
-You appear to have disabled JavaScript execution in your web browser. You must have JavaScript enabled in 
-order to visit the <content:airline /> web site. We have an extensive number of dynamic web features to enhance
-your experience here, which require JavaScript to operate correctly.<br />
+You appear to have disabled JavaScript execution in your web browser. You must have JavaScript enabled in order to visit the <content:airline /> web site. 
+We have an extensive number of dynamic web features to enhance your experience here which require JavaScript to operate correctly.<br />
 <br />
-Please <el:cmd url="login" className="sec bld">click here</el:cmd> to return to the login page.<br />
+Please <el:cmd url="login" className="sec bld">Click Here</el:cmd> to return to the login page.<br />
 <br />
 <content:copyright />
 </content:region>

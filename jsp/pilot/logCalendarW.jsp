@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<%@ page session="false" %>
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8"  session="false" trimDirectiveWhitespaces="true" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
@@ -18,7 +17,7 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script type="text/javascript">
+<script>
 golgotha.local.switchType = function(combo) {
 	self.location = '/logcalendar.do?op=' + escape(golgotha.form.getCombo(combo)) + '&id=${pilot.hexID}&startDate=<fmt:date fmt="d" d="MM/dd/yyyy" date="${startDate}" />';
 	return true;

@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<%@ page session="false" %>
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8"  session="false" trimDirectiveWhitespaces="true" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
@@ -26,8 +25,7 @@
 <!-- Virtual Server Updated -->
 <div class="updateHdr">TeamSpeak 2 Virtual Server Updated</div>
 <br />
-The TeamSpeak 2 Virtual Server <span class="sec bld">${server.name}</span> on port ${server.port} has been 
-successfully updated.<br />
+The TeamSpeak 2 Virtual Server <span class="sec bld">${server.name}</span> on port ${server.port} has been successfully updated.<br />
 <c:if test="${!empty msgs}">
 <br />
 <span class="small">
@@ -41,8 +39,7 @@ ${msg}<br />
 <!-- Virtual Server Deleted -->
 <div class="updateHdr">TeamSpeak 2 Virtual Server Deleted</div>
 <br />
-The TeamSpeak 2 Virtual Server <span class="sec bld">${server.name}</span> on port ${server.port} has been 
-deleted. All existing client credentials have been removed from the database.<br />
+The TeamSpeak 2 Virtual Server <span class="sec bld">${server.name}</span> on port ${server.port} has been deleted. All existing client credentials have been removed from the database.<br />
 </c:if>
 <br />
 To return to the list of TeamSpeak 2 virtual servers, <el:cmd url="ts2servers" className="sec bld">Click Here</el:cmd>.<br />

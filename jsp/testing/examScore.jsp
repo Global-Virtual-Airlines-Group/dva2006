@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<%@ page session="false" %>
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8"  session="false" trimDirectiveWhitespaces="true" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
@@ -20,13 +19,12 @@
 <c:if test="${hasQImages || exam.routePlot}">
 <content:js name="examTake" /></c:if>
 <content:googleAnalytics eventSupport="true" />
-<script type="text/javascript">
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-if (!confirm('Have you scored all Questions? Hit OK to submit.')) return false;
-golgotha.form.submit(f);
-return true;
+<script>
+golgotha.local.validate = function(f) {
+	if (!golgotha.form.check()) return false;
+	if (!confirm('Have you scored all Questions? Hit OK to submit.')) return false;
+	golgotha.form.submit(f);
+	return true;
 };
 </script>
 </head>

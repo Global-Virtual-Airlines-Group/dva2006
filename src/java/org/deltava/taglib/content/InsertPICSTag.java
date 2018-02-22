@@ -1,4 +1,4 @@
-// Copyright 2005, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2012, 2015, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import javax.servlet.jsp.*;
@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to insert an PICS-1.1 content rating.
  * @author Luke
- * @version 6.1
+ * @version 8.2
  * @since 1.0
  */
 
@@ -86,7 +86,7 @@ public class InsertPICSTag extends TagSupport {
 				out.print(url);
 				out.print("\" r (");
 				out.print(SystemData.get("content.safesurf"));
-				out.print("))\'>");
+				out.println("))\'>");
 			}
 		} catch (Exception e) {
 			throw new JspException(e);

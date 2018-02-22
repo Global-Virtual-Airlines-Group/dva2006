@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<%@ page session="false" %>
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8"  session="false" trimDirectiveWhitespaces="true" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
@@ -15,7 +14,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:sysdata var="badDomains" name="registration.reject_domain" />
-<script type="text/javascript">
+<script>
 <fmt:jsarray var="golgotha.form.invalidDomains" items="${badDomains}" />
 golgotha.local.validate = function(f)
 {
@@ -62,8 +61,7 @@ return true;
  <td colspan="2">E-Mail Address Validation Failure</td>
 </tr>
 <tr>
- <td class="pri bld left" colspan="2">You have supplied an incorrect e-mail address validation code. Your 
-e-mail address threfore cannot be validated. Please type in the validation code you received within the 
+ <td class="pri bld left" colspan="2">You have supplied an incorrect e-mail address validation code. Your e-mail address threfore cannot be validated. Please type in the validation code you received within the 
 e-mail message, into the space provided below.</td>
 </tr>
 </c:when>
@@ -72,12 +70,10 @@ e-mail message, into the space provided below.</td>
  <td colspan="2">E-Mail Address Validation</td>
 </tr>
 <tr>
- <td class="left" colspan="2">In order for your application to <content:airline /> to be approved, you must 
-provide us with a valid e-mail address. We have sent you an e-mail message to the address you provided when 
+ <td class="left" colspan="2">In order for your application to <content:airline /> to be approved, you must provide us with a valid e-mail address. We have sent you an e-mail message to the address you provided when 
 registering with an activation code. Please enter that application code now to validate your e-mail address.<br />
 <br />
-If you have provided us an incorrect e-mail address or you have not received the e-mail message, you can 
-update your address and/or send a new validation e-mail.</td>
+If you have provided us an incorrect e-mail address or you have not received the e-mail message, you can update your address and/or send a new validation e-mail.</td>
 </tr>
 </c:otherwise>
 </c:choose>

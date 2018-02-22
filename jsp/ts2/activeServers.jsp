@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<%@ page session="false" %>
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8"  session="false" trimDirectiveWhitespaces="true" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
@@ -25,8 +24,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<content:airline /> uses TeamSpeak 2 for our private voice infrastructure. Teamspeak is a high-fidelity 
-<span class="ita">freeware</span> voice client that runs on 32-bit Windows, Macintosh and Linux systems, and 
+<content:airline /> uses TeamSpeak 2 for our private voice infrastructure. Teamspeak is a high-fidelity <span class="ita">freeware</span> voice client that runs on 32-bit Windows, Macintosh and Linux systems, and 
 <content:airline /> operates several TeamSpeak 2 servers for the use of our members.<br />
 <br />
 <el:table className="view">

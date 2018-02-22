@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<%@ page session="false" %>
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8"  session="false" trimDirectiveWhitespaces="true" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
@@ -10,6 +9,7 @@
 <content:css name="main" />
 <content:pics />
 <content:favicon />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -23,8 +23,7 @@
 <c:when test="${isImport}">
 <div class="updateHdr">Preferred Routes Imported</div>
 <br />
-The Federal Aviation Administration Preferred Routes database (in CSV format) has been successfully
-imported into the database. <fmt:int value="${routeCount}" /> Preferred Routes have been successfully
+The Federal Aviation Administration Preferred Routes database (in CSV format) has been successfully imported into the database. <fmt:int value="${routeCount}" /> Preferred Routes have been successfully
 added to the database.<br />
 <c:if test="${!empty warnings}">
 <br />

@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<%@ page session="false" %>
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8"  session="false" trimDirectiveWhitespaces="true" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
@@ -22,7 +21,7 @@
 <content:json /></c:if>
 <content:googleAnalytics eventSupport="true" />
 <c:set var="onLoad" value="golgotha.exam.showRemaining(10)" scope="page" />
-<script type="text/javascript">
+<script>
 golgotha.exam.expiry = ${exam.expiryDate.toEpochMilli()};
 <c:if test="${exam.routePlot}">
 golgotha.exam.rpQuestions = ${rpQuestions};

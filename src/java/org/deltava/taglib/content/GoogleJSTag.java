@@ -1,4 +1,4 @@
-// Copyright 2012, 2013, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2013, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import javax.servlet.jsp.*;
@@ -9,7 +9,7 @@ import org.deltava.taglib.ContentHelper;
 /**
  * A JSP tag to embed the Google asynchronous JavaScript API. 
  * @author Luke
- * @version 7.3
+ * @version 8.2
  * @since 5.0
  */
 
@@ -45,7 +45,7 @@ public class GoogleJSTag extends TagSupport {
 			
 			out.print("://www.gstatic.com/");
 			out.print(_module);
-			out.print("/loader.js\"></script>");
+			out.println("/loader.js\"></script>");
 		} catch (Exception e) {
 			throw new JspException(e);
 		}
