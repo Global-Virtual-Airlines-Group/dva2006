@@ -1,7 +1,5 @@
 <!DOCTYPE html>
-<%@ page session="false" %>
-<%@ page contentType="text/html; charset=UTF-8" %>
-<%@ page isErrorPage="true" %>
+<%@ page contentType="text/html; charset=UTF-8"  session="false" trimDirectiveWhitespaces="true" isErrorPage="true" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <html lang="en">
 <head>
@@ -22,10 +20,9 @@
 <content:region id="main">
 <div class="updateHdr"><content:airline /> DATABASE CONNECTION POOL FULL</div>
 <br />
-The database Connection Pool is full. This means that our database server is currently overloaded and 
-needs a few minutes to get settled down. Please wait a few minutes and try again.<br />
+The database Connection Pool is full. This means that our database server is currently overloaded and needs a few minutes to get settled down. Please wait a few minutes and try again.<br />
 <br />
-Attempting to refresh this page right away will most likely make the problem worse.<br />
+Attempting to refresh this page right away will likely make the problem worse.<br />
 <br />
 <content:copyright />
 </content:region>

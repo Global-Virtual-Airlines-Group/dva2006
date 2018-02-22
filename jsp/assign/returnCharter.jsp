@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<%@ page session="false" %>
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8"  session="false" trimDirectiveWhitespaces="true" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
@@ -16,17 +15,16 @@
 <content:js name="common" />
 <content:js name="airportRefresh" />
 <fmt:aptype var="useICAO" />
-<script type="text/javascript">
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-golgotha.form.validate({f:f.eqType, t:'Equipment Type'});
-golgotha.form.validate({f:f.flight, min:1, t:'Flight Number'});
-golgotha.form.validate({f:f.airline, t:'Airline'});
-golgotha.form.validate({f:f.airportD, t:'Departure Airport'});
-golgotha.form.validate({f:f.airportA, t:'Arrival Airport'});
-golgotha.form.submit(f);
-return true;
+<script>
+golgotha.local.validate = function(f) {
+	if (!golgotha.form.check()) return false;
+	golgotha.form.validate({f:f.eqType, t:'Equipment Type'});
+	golgotha.form.validate({f:f.flight, min:1, t:'Flight Number'});
+	golgotha.form.validate({f:f.airline, t:'Airline'});
+	golgotha.form.validate({f:f.airportD, t:'Departure Airport'});
+	golgotha.form.validate({f:f.airportA, t:'Arrival Airport'});
+	golgotha.form.submit(f);
+	return true;
 };
 
 golgotha.onDOMReady(function() {

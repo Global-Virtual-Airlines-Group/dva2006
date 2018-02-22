@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<%@ page session="false" %>
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8"  session="false" trimDirectiveWhitespaces="true" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
@@ -26,19 +25,16 @@
 <content:region id="main">
 <el:table className="view">
 <tr class="title caps">
- <td class="left" colspan="2"><span class="nophone"><content:airline /> </span>HELP DESK</td>
+ <td class="left" colspan="2"><span class="nophone"><content:airline />&nbsp;</span>HELP DESK</td>
 </tr>
 <tr>
- <td colspan="2">Welcome to the <content:airline /> Help Desk. This is designed as your single point of 
-contact for questions and answers regarding our virtual airline community. We have collection a number 
-of sources of information to allow you to discover more about our airline. If you still have questions, 
-please feel free to <el:cmd url="hdissue" op="edit" className="sec bld">ask a new Question</el:cmd> and 
-one of our volunteer staff will answer it soon.</td>
+ <td colspan="2">Welcome to the <content:airline /> Help Desk. This is designed as your single point of contact for questions and answers regarding our virtual airline community. We have collection a number 
+of sources of information to allow you to discover more about our airline.<br />
+If you still have questions, please feel free to <el:cmd url="hdissue" op="edit" className="sec bld">ask a new Question</el:cmd> and one of our volunteer staff will answer it soon.</td>
 </tr>
 <tr>
 <td style="min-width:156px;"><el:cmd url="doclibrary" className="pri bld">Document Library</el:cmd></td>
- <td class="left">The <content:airline /> Document Library is a valuable resource for learning
- more about all aspects of our operations. All documents require Adobe Acrobat Reader 6.0 or above.</td>
+ <td class="left">The <content:airline /> Document Library is a valuable resource for learning more about all aspects of our operations. All documents require Adobe Acrobat Reader.</td>
 </tr>
 <tr>
 <td><el:cmd url="faq" className="pri bld">Frequently Asked Questions</el:cmd></td>
@@ -46,8 +42,7 @@ one of our volunteer staff will answer it soon.</td>
 </tr>
 <tr>
  <td><el:cmd url="hdsearch" className="pri bld">Help Desk Search</el:cmd></td>
- <td class="left">Have a question or a problem? Chances are you're not the first person to need help.
- You can search the Help Desk to see if other people have had the same Issue, and how it was resolved.</td>
+ <td class="left">Have a question or a problem? Chances are you're not the first person to need help. You can search the Help Desk to see if other people have had the same Issue, and how it was resolved.</td>
 </tr>
 <content:filter roles="HR">
 <tr>

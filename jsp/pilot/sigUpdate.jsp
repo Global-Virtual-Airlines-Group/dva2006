@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<%@ page session="false" %>
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8"  session="false" trimDirectiveWhitespaces="true" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
@@ -13,13 +12,12 @@
 <content:css name="form" />
 <content:pics />
 <content:favicon />
-<script type="text/javascript">
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-golgotha.form.validate({f:f.coolerImg, ext:['gif','jpg','png'], t:'Signature Image'});
-golgotha.form.submit(f);
-return true;
+<script>
+golgotha.local.validate = function(f) {
+	if (!golgotha.form.check()) return false;
+	golgotha.form.validate({f:f.coolerImg, ext:['gif','jpg','png'], t:'Signature Image'});
+	golgotha.form.submit(f);
+	return true;
 };
 </script>
 </head>
@@ -43,8 +41,7 @@ return true;
 <tr>
  <td class="label">Signature Image</td>
  <td class="data"><el:file name="coolerImg" className="small" idx="*" size="96" max="144" /><br />
- <span class="small sec">The maximum size for a signature image is <fmt:int value="${sigX}" />x<fmt:int value="${sigY}" /> 
-pixels, and the maximum file size is <fmt:int value="${sigSize}" />K.</span>
+ <span class="small sec">The maximum size for a signature image is <fmt:int value="${sigX}" />x<fmt:int value="${sigY}" /> pixels, and the maximum file size is <fmt:int value="${sigSize}" />K.</span>
 <content:hasmsg>
 <br />
 <span class="error bld"><content:sysmsg /></span>

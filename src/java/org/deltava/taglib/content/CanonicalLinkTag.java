@@ -1,4 +1,4 @@
-// Copyright 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import javax.servlet.jsp.*;
@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP tag to generate canonical URLs for a page.
  * @author Luke
- * @version 6.0
+ * @version 8.2
  * @since 6.0
  */
 
@@ -86,7 +86,7 @@ public class CanonicalLinkTag extends TagSupport {
 				JspWriter jw = pageContext.getOut();
 				jw.print("<link rel=\"canonical\" href=\"");
 				jw.print(_url);
-				jw.print("\">");
+				jw.println("\">");
 			}
 		} catch (Exception e) {
 			throw new JspException(e);

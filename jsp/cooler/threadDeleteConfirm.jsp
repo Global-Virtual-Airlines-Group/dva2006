@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<%@ page session="false" %>
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8"  session="false" trimDirectiveWhitespaces="true" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <content:sysdata var="forumName" name="airline.forum" />
@@ -23,8 +22,7 @@
 <content:region id="main">
 <div class="updateHdr">Confirm ${forumName} Discussion Thread Deletion</div>
 <br />
-This <content:airline /> ${forumName} discussion thread is about to be deleted. Are you sure you want to do this? This
-operation <span class="bld">cannot be undone</span>.<br />
+This <content:airline /> ${forumName} discussion thread is about to be deleted. Are you sure you want to do this? This operation <span class="bld">cannot be undone</span>.<br />
 <br />
 To return to the discussion thread, <el:cmd url="thread" link="${thread}" className="sec bld">Click Here</el:cmd>.<br />
 <br />

@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<%@ page session="false" %>
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8"  session="false" trimDirectiveWhitespaces="true" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <html lang="en">
@@ -25,14 +24,13 @@
 <content:region id="main">
 <div class="updateHdr">NO AVAILABLE SCHEDULED ONLINE EVENTS</div>
 <br />
-At the moment, no <content:airline /> Online Events are currently available for signup. Please be sure to check 
-back often - Events are often scheduled on short notice. <content:airline /> typically holds one 
+At the moment, no <content:airline /> Online Events are currently available for signup. Please be sure to check back often - Events are often scheduled on short notice. <content:airline /> typically holds one 
 major event per month, and ad hoc events approximately once every seven to ten days.<br />
 <br />
 <el:table>
 <tr>
- <td><el:link url="http://www.vatsim.net/" target="_NEW"><el:img src="network/${vatsimImg}" className="noborder" caption="VATSIM" /></el:link></td>
- <td><el:link url="http://www.ivao.aero/" target="_NEW"><el:img src="network/${ivaoImg}" className="noborder" caption="IVAO" /></el:link></td>
+ <td><el:link url="https://www.vatsim.net/" target="_NEW"><el:img src="network/${vatsimImg}" className="noborder" caption="VATSIM" /></el:link></td>
+ <td><el:link url="https://www.ivao.aero/" target="_NEW"><el:img src="network/${ivaoImg}" className="noborder" caption="IVAO" /></el:link></td>
 </tr>
 </el:table>
 <br />

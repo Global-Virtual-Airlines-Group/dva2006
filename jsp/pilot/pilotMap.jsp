@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<%@ page session="false" %>
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8"  session="false" trimDirectiveWhitespaces="true" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
@@ -21,7 +20,7 @@
 <content:googleAnalytics eventSupport="true" />
 <content:js name="progressBar" />
 <content:filter roles="HR">
-<script type="text/javascript">
+<script>
 golgotha.pilotMap.deleteMarker = function(id)
 {
 var xmlreq = new XMLHttpRequest();
@@ -95,7 +94,7 @@ return true;
 <content:copyright />
 </content:region>
 </content:page>
-<script id="mapInit" defer>
+<script id="mapInit" async>
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
 <map:marker var="hq" point="${hq}" />
 var mapOpts = {center:golgotha.local.mapC, zoom:6, minZoom:2, maxZoom:11, streetViewControl:false, clickableIcons:false, scrollwheel:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};

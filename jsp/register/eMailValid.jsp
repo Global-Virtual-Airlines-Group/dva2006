@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<%@ page session="false" %>
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8"  session="false" trimDirectiveWhitespaces="true" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <html lang="en">
 <head>
@@ -21,8 +20,7 @@
 <content:region id="main">
 <div class="updateHdr">E-Mail Address Validated</div>
 <br />
-${applicant.firstName}, thank you for successfully verifying your e-mail address. 
-This is an important step in the registration process at <content:airline />.<br />
+${applicant.firstName}, thank you for successfully verifying your e-mail address. This is an important step in the registration process at <content:airline />.<br />
 <br />
 <content:copyright />
 </content:region>

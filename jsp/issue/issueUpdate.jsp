@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<%@ page session="false" %>
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8"  session="false" trimDirectiveWhitespaces="true" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
@@ -9,8 +8,9 @@
 <title><content:airline /> Issue Updated</title>
 <content:pics />
 <content:favicon />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:css name="main" />
-<meta http-equiv="refresh" content="3;url=/issue.do?id=${issue.hexID}&amp;op=read" />
+<meta http-equiv="refresh" content="3;url=/issue.do?id=${issue.hexID}" />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -27,8 +27,7 @@
 The new Issue <span class="pri bld">${issue.subject}</span> has been created.<br />
 <c:if test="${emailSent}">
 <br />
-An e-mail notification has been sent to ${assignee.name} at ${assignee.email} informing him or her of this
-new Issue.<br />
+An e-mail notification has been sent to ${assignee.name} at ${assignee.email} informing him or her of this new Issue.<br />
 </c:if>
 </c:when>
 <c:when test="${isComment}">
@@ -39,8 +38,7 @@ The Issue <span class="pri bld">${issue.subject}</span> has been modified.<br />
 </c:otherwise>
 </c:choose>
 <br />
-The Issue will automatically be displayed within 3 seconds. If your browser does not return to the Issue 
-or you are impatient, you can <el:cmd className="sec bld" url="issue" link="${issue}" op="read">click here</el:cmd>
+The Issue will automatically be displayed within 3 seconds. If your browser does not return to the Issue, you can <el:cmd className="sec bld" url="issue" link="${issue}" op="read">click here</el:cmd>
 to display the Issue.<br />
 <br />
 To view all open Issues, <el:cmd className="sec bld" url="issues" op="Open">Click Here</el:cmd>.<br />

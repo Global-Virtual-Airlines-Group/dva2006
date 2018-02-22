@@ -1,7 +1,5 @@
 <!DOCTYPE html>
-<%@ page session="false" %>
-<%@ page buffer="32kb" autoFlush="true" %> 
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8"  session="false" trimDirectiveWhitespaces="true" buffer="32kb" autoFlush="true" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
@@ -109,7 +107,7 @@ golgotha.local.showRunwayChoices = function() {
 <tr>
  <td class="label">Status</td>
  <td class="data bld"><span class="sec">${pirep.status}</span><c:if test="${!empty disposedBy}"> - by ${disposedBy.name}</c:if><c:if test="${!empty pirep.disposedOn}"> on <fmt:date date="${pirep.disposedOn}" /></c:if> 
-<c:if test="${fn:AssignID(pirep) > 0}"> <span class="ter bld">FLIGHT ASSIGNMENT</span></c:if>
+<c:if test="${fn:AssignID(pirep) > 0}">&nbsp;<span class="ter bld">FLIGHT ASSIGNMENT</span></c:if>
 <content:authUser anonymous="false"><c:if test="${fn:isDraft(pirep)}"> - <el:cmd url="routeplot" link="${pirep}">Plot Route</el:cmd><c:if test="${!empty pirep.route}"> - <a href="draftplan.ws?id=${pirep.hexID}" rel="nofollow">Download Flight Plan</a></c:if></c:if></content:authUser></td>
 </tr>
 <c:if test="${!empty pirep.submittedOn}">
@@ -157,7 +155,7 @@ golgotha.local.showRunwayChoices = function() {
 <c:if test="${!fn:isDraft(pirep)}">
 <tr>
  <td class="label">Simulator</td>
- <td class="data sec bld">${pirep.simulator.name}<c:if test="${flightInfo.simMajor > 1}"> <content:simVersion sim="${pirep.simulator}" major ="${flightInfo.simMajor}" minor="${flightInfo.simMinor}" /></c:if></td>
+ <td class="data sec bld">${pirep.simulator.name}<c:if test="${flightInfo.simMajor > 1}">&nbsp;<content:simVersion sim="${pirep.simulator}" major ="${flightInfo.simMajor}" minor="${flightInfo.simMinor}" /></c:if></td>
 </tr>
 </c:if>
 <c:if test="${access.canDispose && fn:isOnline(pirep)}">
@@ -224,7 +222,7 @@ golgotha.local.showRunwayChoices = function() {
 <c:if test="${pirep.length > 0}">
 <tr>
  <td class="label">Logged Time</td>
- <td class="data"><fmt:dec value="${pirep.length / 10.0}" /> hours<c:if test="${avgTime > 0}"> <span class="ita">(average time: <fmt:dec value="${avgTime / 10.0}" /> hours)</span></c:if></td>
+ <td class="data"><fmt:dec value="${pirep.length / 10.0}" /> hours<c:if test="${avgTime > 0}">&nbsp;<span class="ita">(average time: <fmt:dec value="${avgTime / 10.0}" /> hours)</span></c:if></td>
 </tr>
 </c:if>
 <c:if test="${!empty onlineTrack}">
@@ -233,8 +231,7 @@ golgotha.local.showRunwayChoices = function() {
 <c:set var="onlinePctClass" value="${(onlinePct < 50) ? 'warn bld' : 'visible'}" scope="page" />
 <tr>
  <td class="label">Estimated Online Time</td>
- <td class="data"><fmt:int value="${onlineTime / 3600}" />:<fmt:int value="${(onlineTime % 3600) / 60}" fmt="00" />,
- <span class="${onlinePctClass}">(<fmt:dec value="${onlinePct}" fmt="#00.0" />% of flight)</span></td>
+ <td class="data"><fmt:int value="${onlineTime / 3600}" />:<fmt:int value="${(onlineTime % 3600) / 60}" fmt="00" />, <span class="${onlinePctClass}">(<fmt:dec value="${onlinePct}" fmt="#00.0" />% of flight)</span></td>
 </tr>
 </c:if>
 <c:if test="${pirep.passengers > 0}">
@@ -323,44 +320,35 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 <tr>
  <td>&nbsp;
 <c:if test="${access.canSubmit}">
- <el:cmdbutton url="submit" link="${pirep}" label="SUBMIT FLIGHT REPORT" />
-</c:if>
+&nbsp;<el:cmdbutton url="submit" link="${pirep}" label="SUBMIT FLIGHT REPORT" /></c:if>
 <c:if test="${access.canApprove && !scoreCR}">
- <el:cmdbutton url="dispose" link="${pirep}" op="approve" post="true" label="APPROVE" />
-</c:if>
+&nbsp;<el:cmdbutton url="dispose" link="${pirep}" op="approve" post="true" label="APPROVE" /></c:if>
 <c:if test="${access.canHold}">
- <el:cmdbutton url="dispose" link="${pirep}" op="hold" post="true" key="H" label="HOLD" />
-</c:if>
+&nbsp;<el:cmdbutton url="dispose" link="${pirep}" op="hold" post="true" key="H" label="HOLD" /></c:if>
 <c:if test="${access.canRelease}">
- <el:cmdbutton url="release" link="${pirep}" post="true" label="RELEASE HOLD" />
-</c:if>
+&nbsp;<el:cmdbutton url="release" link="${pirep}" post="true" label="RELEASE HOLD" /></c:if>
 <c:if test="${access.canReject && (!fn:isCheckFlight(pirep) || !fn:pending(checkRide))}">
- <el:cmdbutton url="dispose" link="${pirep}" op="reject" post="true" label="REJECT" />
+&nbsp;<el:cmdbutton url="dispose" link="${pirep}" op="reject" post="true" label="REJECT" />
 <c:if test="${isACARS && (empty checkRide)}"><content:filter roles="HR,PIREP,Operations">
- <el:cmdbutton url="crflag" link="${pirep}" label="MARK AS CHECK RIDE" />
-</content:filter></c:if>
+&nbsp;<el:cmdbutton url="crflag" link="${pirep}" label="MARK AS CHECK RIDE" /></content:filter></c:if>
 </c:if>
 <c:if test="${access.canDispose && (empty checkRide)}">
 <c:set var="bLabel" value="${(fn:sizeof(pirep.captEQType) == 0) ? 'SET' : 'CLEAR'}" scope="page" />
- <el:cmdbutton url="promotoggle" link="${pirep}" label="${bLabel} PROMOTION FLAG" />
-</c:if>
+&nbsp;<el:cmdbutton url="promotoggle" link="${pirep}" label="${bLabel} PROMOTION FLAG" /></c:if>
 <c:if test="${access.canEdit}">
- <el:cmdbutton url="pirep" link="${pirep}" op="edit" key="E" label="EDIT REPORT" />
-</c:if>
+&nbsp;<el:cmdbutton url="pirep" link="${pirep}" op="edit" key="E" label="EDIT REPORT" /></c:if>
 <c:if test="${access.canDelete}">
- <el:cmdbutton url="pirepdelete" link="${pirep}" label="DELETE REPORT" />
+&nbsp;<el:cmdbutton url="pirepdelete" link="${pirep}" label="DELETE REPORT" />
 <c:if test="${isACARS}">
- <el:cmdbutton url="acarsdelete" link="${pirep}" label="DELETE ACARS DATA" />
-</c:if> </c:if>
+&nbsp;<el:cmdbutton url="acarsdelete" link="${pirep}" label="DELETE ACARS DATA" /></c:if>
+&nbsp;</c:if>
 <content:filter roles="PIREP,HR,Developer,Operations">
-<c:if test="${isACARS}"><span class="nophone"> <el:button label="RUNWAY CHOICES" key="R" onClick="void golgotha.local.showRunwayChoices()" /></span> <el:cmdbutton url="gaterecalc" link="${pirep}" label="LOAD GATES" /></c:if>
+<c:if test="${isACARS}"><span class="nophone">&nbsp;<el:button label="RUNWAY CHOICES" key="R" onClick="void golgotha.local.showRunwayChoices()" /></span> <el:cmdbutton url="gaterecalc" link="${pirep}" label="LOAD GATES" /></c:if>
 </content:filter>
 <c:if test="${fn:isDraft(pirep) && (!empty assignmentInfo) && assignAccess.canRelease}">
- <el:cmdbutton url="assignrelease" link="${assignmentInfo}" label="RELEASE ASSIGNMENT" />
-</c:if>
+&nbsp;<el:cmdbutton url="assignrelease" link="${assignmentInfo}" label="RELEASE ASSIGNMENT" /></c:if>
 <c:if test="${access.canUpdateComments}">
- <el:cmdbutton url="updcomments" link="${pirep}" post="true" label="UPDATE COMMENTS" /> 
-</c:if></td>
+&nbsp;<el:cmdbutton url="updcomments" link="${pirep}" post="true" label="UPDATE COMMENTS" /></c:if></td>
 </tr>
 </el:table>
 </el:form>

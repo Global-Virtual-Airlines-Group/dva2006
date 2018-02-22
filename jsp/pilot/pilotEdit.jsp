@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<%@ page session="false" %>
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8"  session="false" trimDirectiveWhitespaces="true" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
@@ -23,7 +22,7 @@
 <content:sysdata var="defaultTFormat" name="time.time_format" />
 <content:sysdata var="defaultDFormat" name="time.date_format" />
 <fmt:aptype var="useICAO" />
-<script type="text/javascript">
+<script>
 golgotha.local.hasSignature = ${pilot.hasSignature};
 golgotha.local.validate = function(f)
 {
@@ -244,7 +243,7 @@ golgotha.onDOMReady(function() {
 <c:otherwise>
 <tr>
  <td class="label">E-Mail Address</td>
- <td colspan="${cspan}" class="data">${pilot.email} <el:cmd url="emailupd" className="pri small">Change my e-mail Address</el:cmd></td>
+ <td colspan="${cspan}" class="data">${pilot.email} &nbsp;<el:cmd url="emailupd" className="pri small">Change my e-mail Address</el:cmd></td>
 </tr>
 </c:otherwise>
 </c:choose>
@@ -302,9 +301,8 @@ pixels, and the maximum file size is <fmt:int value="${sigSize}" /> bytes.</span
 </tr>
 <tr>
  <td class="label">Date/Time Format</td>
- <td colspan="${cspan}" class="data"><el:text name="df" value="${pilot.dateFormat}"  required="true" size="15" max="25" />
- <el:text name="tf" value="${pilot.timeFormat}" required="true" size="9" max="9" />
- <el:button ID="DTDefaultButton" onClick="void golgotha.local.setDefaultFormats()" label="RESET" /></td>
+ <td colspan="${cspan}" class="data"><el:text name="df" value="${pilot.dateFormat}"  required="true" size="15" max="25" />&nbsp;<el:text name="tf" value="${pilot.timeFormat}" required="true" size="9" max="9" />
+  <el:button ID="DTDefaultButton" onClick="void golgotha.local.setDefaultFormats()" label="RESET" /></td>
 </tr>
 <tr>
  <td class="label">Number Format</td>

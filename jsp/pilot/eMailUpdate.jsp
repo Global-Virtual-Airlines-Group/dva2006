@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<%@ page session="false" %>
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8"  session="false" trimDirectiveWhitespaces="true" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
@@ -13,16 +12,16 @@
 <content:js name="common" />
 <content:pics />
 <content:favicon />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:sysdata var="badDomains" name="registration.reject_domain" />
-<script type="text/javascript">
+<script>
 <fmt:jsarray var="golgotha.form.invalidDomains" items="${badDomains}" />
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-golgotha.form.validate({f:f.code, l:8, t:'E-Mail Validation Code'});
-golgotha.form.validate({f:f.email, addr:true, t:'E-Mail Address'});
-golgotha.form.submit(f);
-return true;
+golgotha.local.validate = function(f) {
+	if (!golgotha.form.check()) return false;
+	golgotha.form.validate({f:f.code, l:8, t:'E-Mail Validation Code'});
+	golgotha.form.validate({f:f.email, addr:true, t:'E-Mail Address'});
+	golgotha.form.submit(f);
+	return true;
 };
 </script>
 </head>
@@ -40,9 +39,7 @@ return true;
  <td colspan="2" class="left">UPDATE E-MAIL ADDRESS</td>
 </tr>
 <tr>
- <td colspan="2" class="pri bld left">A condition of membership at <content:airline /> is providing a valid, 
-verified e-mail address. If you change your e-mail address, the new address must be validated before you can 
-log in again.</td>
+ <td colspan="2" class="pri bld left">A condition of membership at <content:airline /> is providing a valid, verified e-mail address. If you change your e-mail address, the new address must be validated before you can log in again.</td>
 </tr>
 <tr>
  <td class="label">E-Mail Address</td>
