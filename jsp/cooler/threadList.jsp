@@ -8,7 +8,7 @@
 <content:sysdata var="forumName" name="airline.forum" />
 <html lang="en">
 <head>
-<title><content:airline /> ${forumName}</title>
+<title><content:airline />&nbsp;${forumName}</title>
 <meta http-equiv="REFRESH" content="300" />
 <content:sysdata var="airlineName" name="airline.name" />
 <content:css name="main" />
