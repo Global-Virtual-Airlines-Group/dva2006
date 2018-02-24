@@ -79,7 +79,7 @@ golgotha.local.expandSection = function(id) {
 <div id="eSignup${event.hexID}" class="small"<c:if test="${eventLargeSignup}"> style="display:none;"</c:if>>
 <c:forEach var="signup" items="${event.signups}">
 <c:set var="pilot" value="${pilots[signup.pilotID]}" scope="page" />
-${pilot.name} <c:if test="${!empty pilot.pilotCode}">(${pilot.pilotCode})<br /></c:if>
+${pilot.name} <c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})<br /></c:if>
 </c:forEach>
 </div>
 </c:if>
