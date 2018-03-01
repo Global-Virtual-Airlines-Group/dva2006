@@ -77,7 +77,7 @@ golgotha.local.sortBy = function(combo) {
 </c:forEach>
 <c:if test="${empty pilots}">
 <tr>
- <td colspan="6" class="pri bld caps">NO CURRENTLY LOGGED IN <span class="nophone"><content:airline /> </span>USERS</td>
+ <td colspan="6" class="pri bld caps">NO CURRENTLY LOGGED IN <span class="nophone"><content:airline />&nbsp;</span>USERS</td>
 </tr>
 </c:if>
 <tr class="title">
