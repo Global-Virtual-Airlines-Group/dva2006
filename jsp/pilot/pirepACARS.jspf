@@ -154,14 +154,14 @@
 </c:if>
 <tr>
  <td class="label">Landing Information</td>
- <td class="data" colspan="${cspan}"><fmt:int value="${pirep.landingSpeed}" /> knots,<c:if test="${!isXACARS}"> <fmt:int value="${pirep.landingVSpeed}" />
+ <td class="data" colspan="${cspan}"><fmt:int value="${pirep.landingSpeed}" /> knots,<c:if test="${!isXACARS}">&nbsp;<fmt:int value="${pirep.landingVSpeed}" />
  feet/minute<c:if test="${pirep.landingG > 0.0}"> (<fmt:dec value="${pirep.landingG}" fmt="#0.0000" />G)</c:if>,</c:if>
 <c:choose>
 <c:when test="${pirep.landingN1 > 150}">
- <fmt:int value="${pirep.landingN1}" /> RPM,
+&nbsp;<fmt:int value="${pirep.landingN1}" /> RPM,
 </c:when>
 <c:otherwise>
- <fmt:dec value="${pirep.landingN1}" />% N<sub>1</sub>,
+&nbsp;<fmt:dec value="${pirep.landingN1}" />% N<sub>1</sub>,
 </c:otherwise>
 </c:choose>
 <c:if test="${!isXACARS && (pirep.landingCategory != 'NONE')}">
