@@ -5,7 +5,7 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <html lang="en">
 <head>
-<title><content:airline /> ${library} Library Updated</title>
+<title><content:airline />&nbsp;${library} Library Updated</title>
 <content:css name="main" />
 <content:js name="common" />
 <content:pics />
