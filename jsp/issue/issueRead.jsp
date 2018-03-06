@@ -59,7 +59,7 @@ golgotha.local.toggleCheckbox = function() {
 </tr>
 <tr>
  <td class="label">Assigned To</td>
- <td class="data bld"><el:profile location="${assigneeLoc}" className="plain">${assignee.name}</el:profile> (${assignee.pilotCode})</td>
+ <td class="data bld"><el:profile location="${assigneeLoc}" className="plain">${assignee.name}</el:profile>&nbsp;(${assignee.pilotCode})</td>
 </tr>
 <tr>
  <td class="label">Issue Status</td>
