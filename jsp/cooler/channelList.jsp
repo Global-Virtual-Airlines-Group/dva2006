@@ -8,7 +8,7 @@
 <content:sysdata var="forumName" name="airline.forum" />
 <html lang="en">
 <head>
-<title><content:airline /> ${forumName}</title>
+<title><content:airline />&nbsp;${forumName}</title>
 <content:css name="main" />
 <content:css name="view" />
 <content:js name="common" />
