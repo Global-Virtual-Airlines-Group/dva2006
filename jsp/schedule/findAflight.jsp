@@ -218,8 +218,8 @@ golgotha.onDOMReady(function() {
  <td><el:box name="addFA" value="${flight.flightCode}" label="" /></td>
  <td class="pri bld">${flight.flightCode}</td>
  <td class="sec bld">${flight.equipmentType}</td>
- <td class="small">${flight.airportD.name} <span class="nophone">(<el:cmd url="airportinfo" linkID="${flight.airportD.IATA}"><fmt:airport airport="${flight.airportD}" /></el:cmd>)</span> to
- ${flight.airportA.name} <span class="nophone">(<el:cmd url="airportinfo" linkID="${flight.airportA.IATA}"><fmt:airport airport="${flight.airportA}" /></el:cmd>)</span></td>
+ <td class="small">${flight.airportD.name}&nbsp;<span class="nophone">(<el:cmd url="airportinfo" linkID="${flight.airportD.IATA}"><fmt:airport airport="${flight.airportD}" /></el:cmd>)</span> to
+ ${flight.airportA.name}&nbsp;<span class="nophone">(<el:cmd url="airportinfo" linkID="${flight.airportA.IATA}"><fmt:airport airport="${flight.airportA}" /></el:cmd>)</span></td>
 <c:if test="${param.showUTCTimes}">
  <td class="nophone"><fmt:date fmt="t" t="HH:mm" tzName="UTC" date="${flight.timeD}" /> UTC</td>
  <td class="nophone"><fmt:date fmt="t" t="HH:mm" tzName="UTC" date="${flight.timeA}" /> UTC</td>
