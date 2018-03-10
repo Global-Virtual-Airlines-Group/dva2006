@@ -73,13 +73,8 @@ window.setTimeout(function() {
 return true;
 };
 
-golgotha.ff.updateSort = function(cb) {
-	return golgotha.util.disable('sortDesc', !golgotha.form.comboSet(cb));
-};
-
-golgotha.ff.refreshAirports = function() {
-	updateAirline(document.forms[0].airline);
-};
+golgotha.ff.updateSort = function(cb) { return golgotha.util.disable('sortDesc', !golgotha.form.comboSet(cb)); };
+golgotha.ff.refreshAirports = function() { updateAirline(document.forms[0].airline); };
 
 golgotha.ff.refreshNV = function(checkbox, cboName, isDest)
 {
@@ -141,11 +136,9 @@ golgotha.onDOMReady(function() {
 </tr>
 <tr>
  <td class="label">Flight Number / Leg</td>
- <td class="data"><el:text name="flightNumber" idx="*" size="3" max="4" />
- <el:text name="flightLeg" idx="*" size="1" max="1" value="${fafCriteria.leg == 0 ? '' : fafCriteria.leg}" /></td>
+ <td class="data"><el:text name="flightNumber" idx="*" size="3" max="4" /> <el:text name="flightLeg" idx="*" size="1" max="1" value="${fafCriteria.leg == 0 ? '' : fafCriteria.leg}" /></td>
  <td class="label">Distance</td>
- <td class="data"><el:text name="distance" idx="*" size="4" max="4" value="${fafCriteria.distance < 1 ? '' : fafCriteria.distance}" />
- +/- <el:text name="distRange" idx="*" size="4" max="4" value="${fafCriteria.distance < 1 ? '' : fafCriteria.distanceRange}" /> miles</td>
+ <td class="data"><el:text name="distance" idx="*" size="4" max="4" value="${fafCriteria.distance < 1 ? '' : fafCriteria.distance}" /> +/- <el:text name="distRange" idx="*" size="4" max="4" value="${fafCriteria.distance < 1 ? '' : fafCriteria.distanceRange}" /> miles</td>
 </tr>
 <tr>
  <td class="label">Departing from</td>
@@ -165,11 +158,9 @@ golgotha.onDOMReady(function() {
 </tr>
 <tr>
  <td class="label">Sort Flights by</td>
- <td class="data"><el:combo name="sortType" idx="*" size="1" options="${sortTypes}" value="${param.sortType}" onChange="void golgotha.ff.updateSort(this)" />
- <el:box ID="sortDesc" name="sortDesc" idx="*" value="true" checked="${param.sortDesc}" label="Descending" /></td>
+ <td class="data"><el:combo name="sortType" idx="*" size="1" options="${sortTypes}" value="${param.sortType}" onChange="void golgotha.ff.updateSort(this)" /> <el:box ID="sortDesc" name="sortDesc" idx="*" value="true" checked="${param.sortDesc}" label="Descending" /></td>
  <td class="label">Maximum Results</td>
- <td class="data"><el:text name="maxResults" idx="*" size="2" max="3" value="${empty fafCriteria ? 25 : fafCriteria.maxResults}" />
- total, <el:text name="maxFlights" idx="*" size="2" max="2" value="${fafCriteria.flightsPerRoute}" /> preferred between airports</td>
+ <td class="data"><el:text name="maxResults" idx="*" size="2" max="3" value="${empty fafCriteria ? 25 : fafCriteria.maxResults}" /> total, <el:text name="maxFlights" idx="*" size="2" max="2" value="${fafCriteria.flightsPerRoute}" /> preferred between airports</td>
 </tr>
 <tr>
  <td class="label">Frequency</td>
@@ -236,7 +227,7 @@ golgotha.onDOMReady(function() {
 
 <!-- Button Bar -->
 <tr class="title">
- <td colspan="9">SET EQUIPMENT <el:combo name="eqOverride" size="1" firstEntry="-" options="${myEQ}" /> <el:button type="submit" label="ADD TO FLIGHT ASSIGNMENT" /> <el:cmdbutton url="resetassign" label="RESET RESULTS" /></td>
+ <td colspan="9">SET EQUIPMENT <el:combo name="eqOverride" size="1" firstEntry="-" options="${myEQ}" /> <el:button type="submit" label="ADD TO FLIGHT ASSIGNMENT" />&nbsp;<el:cmdbutton url="resetassign" label="RESET RESULTS" /></td>
 </tr>
 </el:table>
 </el:form>
