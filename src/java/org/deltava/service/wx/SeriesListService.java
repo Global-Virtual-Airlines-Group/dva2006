@@ -1,4 +1,4 @@
-// Copyright 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.wx;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -18,7 +18,7 @@ import org.deltava.service.*;
 /**
  * A Web Service to display TWC weather tile data.
  * @author Luke
- * @version 8.0
+ * @version 8.2
  * @since 8.0
  */
 
@@ -36,6 +36,7 @@ public class SeriesListService extends WebService {
 		Collection<WeatherTileLayer> layers = null;
 		try {
 			GetWeatherTileLayers dao = new GetWeatherTileLayers();
+			dao.setReadTimeout(7500);
 			layers = dao.getLayers();
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
