@@ -85,7 +85,7 @@ return true;
 <!-- Issue Data -->
 <tr>
  <td class="label">Reported by</td>
- <td class="data"><el:cmd url="profile" link="${author}" className="bld plain">${author.name}</el:cmd> <b>(${empty author.pilotCode ? 'NEW PILOT' : author.pilotCode})</b> on <fmt:date date="${issue.createdOn}" /></td>
+ <td class="data"><el:cmd url="profile" link="${author}" className="bld plain">${author.name}</el:cmd>&nbsp;<b>(${empty author.pilotCode ? 'NEW PILOT' : author.pilotCode})</b> on <fmt:date date="${issue.createdOn}" /></td>
 </tr>
 <tr>
  <td class="label">Assigned To</td>
