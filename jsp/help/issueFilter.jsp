@@ -35,7 +35,7 @@ golgotha.local.update = function(combo) {
 <tr class="title">
  <td colspan="3" class="left caps"><content:airline /> HELP DESK ISSUES</td>
  <td colspan="3" class="right"><el:box name="activeOnly" idx="*" value="true" checked="${param.activeOnly}" label="Active Issues Only" />
- FILTER BY ${isAuthor ? 'AUTHOR' : 'ASSIGNEE'} <el:combo name="id" idx="*" size="1" options="${authors}" firstEntry="-" value="${param.id}" onChange="void golgotha.local.update(this)" /></td>
+ FILTER BY ${isAuthor ? 'AUTHOR' : 'ASSIGNEE'}&nbsp;<el:combo name="id" idx="*" size="1" options="${authors}" firstEntry="-" value="${param.id}" onChange="void golgotha.local.update(this)" /></td>
 </tr>
 
 <!-- Table Header Bar -->
