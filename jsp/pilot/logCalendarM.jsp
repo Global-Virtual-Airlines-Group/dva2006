@@ -35,7 +35,7 @@ golgotha.local.switchType = function(combo) {
 <el:form action="logcalendar.do" link="${pilot}" method="get" validate="return false">
 <el:table className="form">
 <tr class="title">
- <td style="width:80%" class="caps">PILOT LOGBOOK FOR ${pilot.rank.name} ${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if> - <fmt:date fmt="d" date="${startDate}" d="MMMM yyyy" /></td>
+ <td style="width:80%" class="caps">PILOT LOGBOOK FOR ${pilot.rank.name}&nbsp;${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if> - <fmt:date fmt="d" date="${startDate}" d="MMMM yyyy" /></td>
  <td class="right">CALENDAR TYPE <el:combo name="op" size="1" idx="*" options="${typeOptions}" value="30" onChange="void golgotha.local.switchType(this)" /></td>
 </tr>
 </el:table>

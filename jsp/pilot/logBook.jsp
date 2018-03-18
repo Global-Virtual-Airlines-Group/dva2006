@@ -34,7 +34,7 @@
 <!-- Title Header Bar -->
 <tr class="title">
 <c:set var="cspan" value="${access.canPreApprove ? 4 : 7}" scope="page" />
- <td colspan="${cspan}" class="caps left"><span class="nophone">PILOT LOGBOOK FOR </span>${pilot.rank.name}  ${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if>
+ <td colspan="${cspan}" class="caps left"><span class="nophone">PILOT LOGBOOK FOR </span>${pilot.rank.name}&nbsp;${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if>
 <c:if test="${showCSV}"><span class="nophone"> - <a href="mylogbook.ws?id=${pilot.hexID}">CSV Download</a></span></c:if></td>
 <c:if test="${access.canPreApprove}">
  <td class="nophone" colspan="3"><el:cmd url="preapprove" link="${pilot}" className="title">PRE-APPROVE FLIGHT</el:cmd></td>
