@@ -14,14 +14,13 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script type="text/javascript">
-golgotha.local.validate = function(f)
-{
+<script>
+golgotha.local.validate = function(f) {
 <c:if test="${access.canComment}">
-if (!golgotha.form.check()) return false;
-golgotha.form.validate({f:f.comment, l:10, t:'Issue Comments'});
-golgotha.form.submit(f);</c:if>
-return ${access.canComment};
+	if (!golgotha.form.check()) return false;
+	golgotha.form.validate({f:f.comment, l:10, t:'Issue Comments'});
+	golgotha.form.submit(f);</c:if>
+	return ${access.canComment};
 };
 
 golgotha.local.toggleCheckbox = function() {
@@ -54,7 +53,7 @@ golgotha.local.toggleCheckbox = function() {
 <!-- Issue Data -->
 <tr>
  <td class="label">Reported by</td>
- <td class="data"><el:profile location="${authorLoc}" className="bld plain">${author.name}</el:profile><c:if test="${!empty author.pilotCode}"> <b>(${author.pilotCode})</b></c:if>
+ <td class="data"><el:profile location="${authorLoc}" className="bld plain">${author.name}</el:profile><c:if test="${!empty author.pilotCode}">&nbsp;<b>(${author.pilotCode})</b></c:if>
  on <fmt:date date="${issue.createdOn}" /></td>
 </tr>
 <tr>
@@ -109,8 +108,7 @@ golgotha.local.toggleCheckbox = function() {
  <td class="data top"><fmt:msg value="${comment.comments}" bbCode="true" />
 <c:if test="${!empty comment.name}">
 <hr />
-Attached File: <span class="pri bld">${comment.name}</span> (<fmt:int value="${comment.size / 1024}" />K)
- <a href="/issue/${issue.hexID}/${comment.hexID}">Click to download</a></c:if></td>
+Attached File: <span class="pri bld">${comment.name}</span> (<fmt:int value="${comment.size / 1024}" />K) <a href="/issue/${issue.hexID}/${comment.hexID}">Click to download</a></c:if></td>
 </tr>
 </c:forEach>
 </c:if>
@@ -138,14 +136,11 @@ Attached File: <span class="pri bld">${comment.name}</span> (<fmt:int value="${c
 <tr>
  <td>&nbsp;
 <c:if test="${access.canEdit}">
- <el:cmdbutton ID="EditButton" label="EDIT ISSUE" url="issue" op="edit" key="E" link="${issue}" />
-</c:if>
+<el:cmdbutton ID="EditButton" label="EDIT ISSUE" url="issue" op="edit" key="E" link="${issue}" /></c:if>
 <c:if test="${access.canComment}">
- <el:button ID="CommentButton" type="submit" key="S" label="SAVE NEW COMMENT" />
-</c:if>
+&nbsp;<el:button ID="CommentButton" type="submit" key="S" label="SAVE NEW COMMENT" /></c:if>
 <c:if test="${access.canResolve}">
- <el:cmdbutton ID="ConvertButton" label="CONVERT TO HELP DESK ISSUE" url="issueconvert" link="${issue}" />
-</c:if>
+&nbsp;<el:cmdbutton ID="ConvertButton" label="CONVERT TO HELP DESK ISSUE" url="issueconvert" link="${issue}" /></c:if>
  </td>
 </tr>
 </el:table>
