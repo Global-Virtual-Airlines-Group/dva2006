@@ -44,5 +44,5 @@
 
 <!-- Table Footer Bar -->
 <tr class="title">
- <td colspan="12"><view:scrollbar><view:pgUp /> <view:pgDn /></view:scrollbar>&nbsp;</td>
+ <td colspan="12"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
 </tr>
