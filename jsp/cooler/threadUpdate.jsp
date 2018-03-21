@@ -7,7 +7,7 @@
 <content:sysdata var="forumName" name="airline.forum" />
 <html lang="en">
 <head>
-<title><content:airline /> ${forumName} Thread</title>
+<title><content:airline />&nbsp;${forumName} Thread</title>
 <content:css name="main" />
 <content:js name="common" />
 <content:pics />
@@ -54,12 +54,10 @@ This ${forumName} discussion thread has also been unlocked. All users authorized
 <!-- New Thread Message -->
 <div class="updateHdr">${forumName} Message Thread Created</div>
 <br />
-This new ${forumName} discussion thread has been posted in the <span class="sec bld">&quot;${thread.channel}&quot;</span>
-channel. All users authorized to read and create posts in this channel may participate.<br />
+This new ${forumName} discussion thread has been posted in the <span class="sec bld">&quot;${thread.channel}&quot;</span> channel. All users authorized to read and create posts in this channel may participate.<br />
 <c:if test="${isNotify}">
 <br />
-You have signed up for response notifications. Each time a new response is posted in this ${forumName} discussion thread, you will 
-receive an e-mail notification. You can turn notifications off at any time by returning to the discussion thread.<br />
+You have signed up for response notifications. Each time a new response is posted in this ${forumName} discussion thread, you will receive an e-mail notification. You can turn notifications off at any time by returning to the discussion thread.<br />
 </c:if>
 <c:if test="${hasImage}">
 <br />
@@ -77,8 +75,7 @@ Your image has been scaled to match the ${forumName} limits, and some loss of im
 <!-- New Response Message -->
 <div class="updateHdr">${forumName} Message ${isReply ? 'Post' : 'Vote'} Created</div>
 <br />
-Your response has been posted to the discussion thread <span class="pri bld">&quot;${thread.subject}&quot;</span>. Thank you for 
-your participation in the <content:airline /> ${forumName}!<br />
+Your response has been posted to the discussion thread <span class="pri bld">&quot;${thread.subject}&quot;</span>. Thank you for your participation in the <content:airline />&nbsp;${forumName}!<br />
 <c:if test="${!empty notifyMsgs}">
 <br />
 <fmt:int value="${notifyMsgs}" /> individuals have received e-mail notifications of this new ${forumName} discussion thread response.<br />
@@ -106,8 +103,7 @@ The discussion thread <span class="pri bld">&quot;${thread.subject}&quot;</span>
 <!-- Thread Moved -->
 <div class="updateHdr">${forumName} Message Thread Moved</div>
 <br />
-The discussion thread <span class="pri bld">&quot;${thread.subject}&quot;</span> has been moved to the channel 
-<span class="sec bld">${newChannel}</span>.<br />
+The discussion thread <span class="pri bld">&quot;${thread.subject}&quot;</span> has been moved to the channel <span class="sec bld">${newChannel}</span>.<br />
 </c:if>
 <br />
 <c:if test="${!isDelete}">
