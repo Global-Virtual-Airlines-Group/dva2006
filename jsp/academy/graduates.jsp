@@ -15,7 +15,7 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script type="text/javascript">
+<script>
 golgotha.local.setType = function() { return document.forms[0].submit(); };
 </script>
 </head>
@@ -31,7 +31,7 @@ golgotha.local.setType = function() { return document.forms[0].submit(); };
 <el:form action="graduates.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <view:table cmd="graduates">
 <tr class="title">
- <td colspan="3" class="left caps"><span class="nophone"><content:airline /> </span>FLIGHT ACADEMY GRADUATES</td>
+ <td colspan="3" class="left caps"><span class="nophone"><content:airline />&nbsp;</span>FLIGHT ACADEMY GRADUATES</td>
  <td colspan="5" class="right">SELECT COURSE <el:combo name="cert" idx="*" size="1" options="${certs}" firstEntry="-" value="${param.cert}" onChange="void golgotha.local.setType()" /></td>
 </tr>
 
