@@ -13,7 +13,7 @@
 <content:favicon />
 <content:js name="common" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script type="text/javascript">
+<script>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
@@ -91,7 +91,7 @@ return true;
 <tr>
  <td class="label top">Check Ride #<fmt:int value="${rideCount}" /></td>
  <td class="data">Assigned on <fmt:date fmt="d" date="${checkRide.date}" /> in ${checkRide.equipmentType}
- <a href="javascript:void golgotha.local.toggleBody(${rideCount}, 'D')"><span id="toggleD${rideCount}">View</span> Description</a>
+&nbsp;<a href="javascript:void golgotha.local.toggleBody(${rideCount}, 'D')"><span id="toggleD${rideCount}">View</span> Description</a>
 <c:if test="${hasComments}">
  <a href="javascript:void golgotha.local.toggleBody(${rideCount}, 'C')"><span id="toggleC${rideCount}">View</span> Comments</a></c:if><br />
 <c:choose>
@@ -186,30 +186,23 @@ return true;
 <tr>
  <td><el:cmdbutton ID="ProfileButton" url="profile" link="${pilot}" label="VIEW PROFILE" />
 <c:if test="${!empty checkRide}">
- <el:cmdbutton ID="CheckRideButton" url="checkride" link="${checkRide}" label="VIEW CHECK RIDE" />
-</c:if>
+&nbsp;<el:cmdbutton ID="CheckRideButton" url="checkride" link="${checkRide}" label="VIEW CHECK RIDE" /></c:if>
 <c:if test="${access.canAssignRide}">
- <el:button ID="AssignButton" type="submit" label="ASSIGN CHECK RIDE" />
-</c:if>
+&nbsp;<el:button ID="AssignButton" type="submit" label="ASSIGN CHECK RIDE" /></c:if>
 <c:if test="${access.canApprove}">
- <el:button ID="ApproveButton" type="submit" label="APPROVE TRANSFER" />
-</c:if>
+&nbsp;<el:button ID="ApproveButton" type="submit" label="APPROVE TRANSFER" /></c:if>
 <c:if test="${access.canReject}">
- <el:cmdbutton ID="RejectButton" url="txreqreject" link="${txReq}" post="true" label="REJECT TRANSFER" />
-</c:if>
+&nbsp;<el:cmdbutton ID="RejectButton" url="txreqreject" link="${txReq}" post="true" label="REJECT TRANSFER" /></c:if>
 <c:if test="${access.canToggleRatings}">
 <c:set var="tgLabel" value="${txReq.ratingOnly ? 'CONVERT TO PROGRAM CHANGE' : 'CONVERT TO RATINGS ONLY'}" scope="page" />
- <el:cmdbutton ID="ToggleButton" url="txreqtoggle" link="${txReq}" label="${tgLabel}" /> 
-</c:if>
+&nbsp;<el:cmdbutton ID="ToggleButton" url="txreqtoggle" link="${txReq}" label="${tgLabel}" /></c:if>
 <c:if test="${access.canDelete}">
- <el:cmdbutton ID="DeleteButton" url="txreqdelete" link="${txReq}" label="DELETE TRANSFER" />
-</c:if>
+&nbsp;<el:cmdbutton ID="DeleteButton" url="txreqdelete" link="${txReq}" label="DELETE TRANSFER" /></c:if>
  </td>
 </tr>
 </el:table>
 <c:if test="${access.canAssignRide}">
-<el:text type="hidden" name="eqType" value="${eqType.name}" />
-</c:if>
+<el:text type="hidden" name="eqType" value="${eqType.name}" /></c:if>
 </el:form>
 <br />
 <content:copyright />
