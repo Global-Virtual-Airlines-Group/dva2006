@@ -124,7 +124,7 @@ golgotha.local.toggleBody = function(id) {
 <el:cmdbutton url="checkride" link="${checkRide}" op="edit" label="RESCORE EXAMINATION" />
 </c:if> 
 <c:if test="${access.canDelete}">
-<el:cmdbutton url="examdelete" link="${checkRide}" op="checkride" label="DELETE CHECK RIDE${fn:isWaiver(checkRide) ? ' WAIVER' : ''}" />
+&nbsp;<el:cmdbutton url="examdelete" link="${checkRide}" op="checkride" label="DELETE CHECK RIDE${fn:isWaiver(checkRide) ? ' WAIVER' : ''}" />
 </c:if>
  </td>
 </tr>
