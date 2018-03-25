@@ -57,7 +57,7 @@ return true;
 <el:table className="form">
 <!-- Pilot Title Bar -->
 <tr class="title caps">
- <td colspan="${cspan + 1}">${pilot.rank.name} ${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if>
+ <td colspan="${cspan + 1}">${pilot.rank.name}&nbsp;${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if>
 <c:if test="${access.canEdit}"> - <el:cmd url="profile" op="edit" link="${pilot}">EDIT PROFILE</el:cmd></c:if></td>
 </tr>
 
@@ -355,37 +355,26 @@ Applicant profile for ${pilot.name}.</td>
 <tr>
  <td>
 <c:if test="${!crossDB}">
-<el:cmdbutton url="logbook" op="log" link="${pilot}" key="L" label="LOG BOOK" />
-</c:if>
+<el:cmdbutton url="logbook" op="log" link="${pilot}" key="L" label="LOG BOOK" /></c:if>
 <c:if test="${access.canEdit}">
- <el:cmdbutton url="profile" link="${pilot}" op="edit" key="E" label="EDIT PROFILE" />
-</c:if>
+&nbsp;<el:cmdbutton url="profile" link="${pilot}" op="edit" key="E" label="EDIT PROFILE" /></c:if>
 <c:if test="${access.canTransfer}">
- <el:cmdbutton url="txairline" link="${pilot}" label="INTER-AIRLINE TRANSFER" />
-</c:if>
+&nbsp;<el:cmdbutton url="txairline" link="${pilot}" label="INTER-AIRLINE TRANSFER" /></c:if>
 <c:if test="${access.canAssignRide}">
- <el:cmdbutton url="nakedassign" link="${pilot}" label="ASSIGN CHECK RIDE" />
-</c:if>
+&nbsp;<el:cmdbutton url="nakedassign" link="${pilot}" label="ASSIGN CHECK RIDE" /></c:if>
 <c:if test="${canSigAuth}">
- <el:cmdbutton url="sigauth" link="${pilot}" label="APPROVE SIGNATURE" />
-</c:if>
+&nbsp;<el:cmdbutton url="sigauth" link="${pilot}" label="APPROVE SIGNATURE" /></c:if>
 <c:if test="${!crossDB && !pilot.isInvalid()}">
 <content:filter roles="HR,PIREP,Examination">
- <el:cmdbutton url="invalidate" link="${pilot}" label="INVALIDATE E-MAIL" />
-</content:filter>
+&nbsp;<el:cmdbutton url="invalidate" link="${pilot}" label="INVALIDATE E-MAIL" /></content:filter>
 <content:filter roles="HR">
- <el:cmdbutton url="statuscomment" link="${pilot}" key="C" label="COMMENT" />
-</content:filter>
+&nbsp;<el:cmdbutton url="statuscomment" link="${pilot}" key="C" label="COMMENT" /></content:filter>
 <c:if test="${access.canInactivate}">
- <el:cmdbutton url="suspend" link="${pilot}" label="SUSPEND" />
- <el:cmdbutton url="retire" link="${pilot}" label="RETIRE" />
-</c:if>
+&nbsp;<el:cmdbutton url="suspend" link="${pilot}" label="SUSPEND" /> <el:cmdbutton url="retire" link="${pilot}" label="RETIRE" /></c:if>
 <c:if test="${access.canActivate}">
- <el:cmdbutton url="activate" link="${pilot}" label="ACTIVATE" />
-</c:if>
+&nbsp;<el:cmdbutton url="activate" link="${pilot}" label="ACTIVATE" /></c:if>
 <content:filter roles="Admin">
- <el:cmdbutton url="su" link="${pilot}" key="S" label="SWITCH TO USER" />
-</content:filter>
+&nbsp;<el:cmdbutton url="su" link="${pilot}" key="S" label="SWITCH TO USER" /></content:filter>
 </c:if>
 </td>
 </tr>
