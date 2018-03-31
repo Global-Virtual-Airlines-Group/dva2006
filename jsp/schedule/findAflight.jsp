@@ -136,7 +136,7 @@ golgotha.onDOMReady(function() {
 </tr>
 <tr>
  <td class="label">Flight Number / Leg</td>
- <td class="data"><el:text name="flightNumber" idx="*" size="3" max="4" /> <el:text name="flightLeg" idx="*" size="1" max="1" value="${fafCriteria.leg == 0 ? '' : fafCriteria.leg}" /></td>
+ <td class="data"><el:text name="flightNumber" idx="*" size="3" max="4" />&nbsp;<el:text name="flightLeg" idx="*" size="1" max="1" value="${fafCriteria.leg == 0 ? '' : fafCriteria.leg}" /></td>
  <td class="label">Distance</td>
  <td class="data"><el:text name="distance" idx="*" size="4" max="4" value="${fafCriteria.distance < 1 ? '' : fafCriteria.distance}" /> +/- <el:text name="distRange" idx="*" size="4" max="4" value="${fafCriteria.distance < 1 ? '' : fafCriteria.distanceRange}" /> miles</td>
 </tr>
