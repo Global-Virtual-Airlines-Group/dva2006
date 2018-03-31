@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.servinfo;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -18,7 +18,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display FIR boundaries on a map.
  * @author Luke
- * @version 7.5
+ * @version 8.2
  * @since 3.2
  */
 
@@ -83,8 +83,9 @@ public class FIRInfoService extends WebService {
 		}
 		
 		// Dump the JSON to the output stream
-		boolean isJSONP = !StringUtils.isEmpty(ctx.getParameter("jsonp"));
+		JSONUtils.ensureArrayPresent(jo, "firs");
 		try {
+			boolean isJSONP = !StringUtils.isEmpty(ctx.getParameter("jsonp"));
 			ctx.setContentType(isJSONP ? "application/javascript": "application/json", "UTF-8");
 			ctx.setExpiry(7200);
 			ctx.println(jo.toString());
