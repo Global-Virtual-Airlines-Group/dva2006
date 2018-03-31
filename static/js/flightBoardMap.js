@@ -113,7 +113,7 @@ xmlreq.onreadystatechange = function() {
 	golgotha.flightBoard.infoClose();
 	var js = JSON.parse(xmlreq.responseText);
 	golgotha.flightBoard.selectedRoute = [];
-	firs.forEach(function(fe) {
+	js.firs.forEach(function(fe) {
 		if (fe.border.length == 0) return false;
 		fe.border.push(fe.border[0]);
 		golgotha.flightBoard.selectedRoute.push(new google.maps.Polygon({map:map, paths:[fe.border], strokeColor:'#efefff', strokeWeight:1, stokeOpacity:0.85, fillColor:'#7f7f80', fillOpacity:0.25, zIndex:golgotha.maps.z.POLYGON}));
