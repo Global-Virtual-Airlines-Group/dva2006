@@ -157,7 +157,7 @@
 	</task>
 
 	<!-- Raw Schedule load -->
-	<task id="schedfilter" enabled="true">
+	<task id="schedfilter" enabled="false">
 		<class>org.deltava.tasks.ScheduleFilterTask</class>
 		<time>
 			<min>0</min>
