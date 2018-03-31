@@ -1,10 +1,8 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
-
-import org.apache.log4j.Logger;
 
 import org.deltava.beans.schedule.*;
 
@@ -16,34 +14,47 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to search the Flight Schedule.
  * @author Luke
- * @version 6.4
+ * @version 8.2
  * @since 1.0
  */
 
 public class GetScheduleSearch extends GetSchedule {
 	
-	private static final Logger log = Logger.getLogger(GetScheduleSearch.class);
+	private static enum ParamTypes {
+		BASE, HAVING, ALL
+	}
 	
-	private class SearchParams {
+	private static class SearchParams {
 		private final String _sql;
 		private final List<String> _params = new ArrayList<String>();
+		private final List<String> _endParams = new ArrayList<String>();
 		
 		SearchParams(String sql, Collection<String> params) {
-			super();
 			_sql = sql;
 			_params.addAll(params);
 		}
 		
-		public int size() {
-			return _params.size();
+		public void addEndParameter(String param) {
+			_endParams.add(param);
 		}
 		
 		public String getSQL() {
 			return _sql;
 		}
 		
-		public String getParameter(int idx) {
-			return _params.get(idx);
+		public List<String> getParams(ParamTypes t) {
+			switch (t) {
+			case ALL:
+				List<String> result = new ArrayList<String>(_params);
+				result.addAll(_endParams);
+				return result;
+				
+			case HAVING:
+				return _endParams;
+				
+			default:
+				return _params;
+			}
 		}
 	}
 
@@ -55,10 +66,10 @@ public class GetScheduleSearch extends GetSchedule {
 		super(c);
 	}
 
-	/**
+	/*
 	 * Helper method to build search parameters.
 	 */
-	private SearchParams build(ScheduleSearchCriteria criteria) {
+	private static SearchParams build(ScheduleSearchCriteria criteria) {
 		Collection<String> conditions = new LinkedHashSet<String>();
 		List<String> params = new ArrayList<String>();
 		
@@ -129,11 +140,6 @@ public class GetScheduleSearch extends GetSchedule {
 			params.add("0");
 		}
 		
-		if (criteria.getRouteLegs() > -1)
-			params.add(String.valueOf(criteria.getRouteLegs()));
-		if (criteria.getLastFlownInterval() > -1)
-			params.add(String.valueOf(criteria.getLastFlownInterval()));
-		
 		// Check to include unvisited airports only
 		if (criteria.getPilotID() > 0) {
 			if (criteria.getNotVisitedD()) {
@@ -175,7 +181,14 @@ public class GetScheduleSearch extends GetSchedule {
 				cndBuf.append(')');
 		}
 		
-		return new SearchParams(cndBuf.toString(), params);
+		// Add to end params since these are included in a HAVING clause
+		SearchParams result = new SearchParams(cndBuf.toString(), params);
+		if (criteria.getRouteLegs() > -1)
+			result.addEndParameter(String.valueOf(criteria.getRouteLegs()));
+		if (criteria.getLastFlownInterval() > -1)
+			result.addEndParameter(String.valueOf(criteria.getLastFlownInterval()));
+		
+		return result;
 	}
 
 	/**
@@ -221,10 +234,10 @@ public class GetScheduleSearch extends GetSchedule {
 		buf.append(ssc.getSortBy());
 		
 		try {
-			prepareStatement(buf.toString());
-			_ps.setInt(1, ssc.getPilotID());
-			for (int x = 1; x <= spm.size(); x++)
-				_ps.setString(x + 1, spm.getParameter(x - 1));
+			prepareStatement(buf.toString()); 
+			_ps.setInt(1, ssc.getPilotID()); int ofs = 1;
+			for (String p : spm.getParams(ParamTypes.ALL))
+				_ps.setString(++ofs, p);
 			
 			return execute();
 		} catch (SQLException se) {
@@ -257,11 +270,11 @@ public class GetScheduleSearch extends GetSchedule {
 		buf.append(spm.getSQL());
 		buf.append(" GROUP BY S.AIRPORT_D, S.AIRPORT_A");
 		if (havingParams.size() > 0)
-			buf.append(" HAVING");
+			buf.append(" HAVING ");
 		for (Iterator<String> i = havingParams.iterator(); i.hasNext(); ) {
 			buf.append(i.next());
 			if (i.hasNext())
-				buf.append(" AND");
+				buf.append(" AND ");
 		}
 		
 		buf.append(" ORDER BY ");
@@ -269,9 +282,9 @@ public class GetScheduleSearch extends GetSchedule {
 		
 		try {
 			prepareStatement(buf.toString());
-			_ps.setInt(1, ssc.getPilotID());
-			for (int x = 1; x <= spm.size(); x++)
-				_ps.setString(x + 1, spm.getParameter(x - 1));
+			_ps.setInt(1, ssc.getPilotID()); int ofs = 1;
+			for (String p : spm.getParams(ParamTypes.ALL))
+				_ps.setString(++ofs, p);
 			
 			// Execute the query
 			Airline al = SystemData.getAirline(SystemData.get("airline.code"));
@@ -294,10 +307,16 @@ public class GetScheduleSearch extends GetSchedule {
 		buf.append(db);
 		buf.append(".FLIGHTSTATS_ROUTES FSR ON ((FSR.PILOT_ID=?) AND (FSR.AIRPORT_D=S.AIRPORT_D) AND (FSR.AIRPORT_A=S.AIRPORT_A)) WHERE ");
 		buf.append(spm.getSQL());
-		buf.append(" AND (S.AIRPORT_D=?) AND (S.AIRPORT_A=?) GROUP BY S.AIRLINE, S.FLIGHT, S.LEG ");
-		if (ssc.getDispatchOnly())
-			buf.append("HAVING (RCNT>0) ");
-		buf.append("LIMIT ");
+		buf.append(" AND (S.AIRPORT_D=?) AND (S.AIRPORT_A=?) GROUP BY S.AIRLINE, S.FLIGHT, S.LEG");
+		if (havingParams.size() > 0)
+			buf.append(" HAVING ");
+		for (Iterator<String> i = havingParams.iterator(); i.hasNext(); ) {
+			buf.append(i.next());
+			if (i.hasNext())
+				buf.append(" AND ");
+		}
+
+		buf.append(" LIMIT ");
 		buf.append(ssc.getFlightsPerRoute());
 
 		// Prepare the satement and execute the query
@@ -305,16 +324,18 @@ public class GetScheduleSearch extends GetSchedule {
 		try {
 			for (RoutePair fr : rts) {
 				prepareStatementWithoutLimits(buf.toString());
-				_ps.setInt(1, ssc.getPilotID());
-				for (int x = 1; x <= spm.size(); x++)
-					_ps.setString(x + 1, spm.getParameter(x - 1));
+				_ps.setInt(1, ssc.getPilotID()); int ofs = 1;
+				for (String p : spm.getParams(ParamTypes.BASE))
+					_ps.setString(++ofs, p);
 					
-				_ps.setString(spm.size() + 2, fr.getAirportD().getIATA());
-				_ps.setString(spm.size() + 3, fr.getAirportA().getIATA());
+				_ps.setString(++ofs, fr.getAirportD().getIATA());
+				_ps.setString(++ofs, fr.getAirportA().getIATA());
+				for (String p : spm.getParams(ParamTypes.HAVING))
+					_ps.setString(++ofs, p);
+			
 				entries.put(fr, execute());
 			}
 		} catch (SQLException se) {
-			log.error(spm.size() + " " + spm);
 			throw new DAOException(se);
 		}
 		
@@ -322,11 +343,9 @@ public class GetScheduleSearch extends GetSchedule {
 		List<ScheduleEntry> results = new ArrayList<ScheduleEntry>(_queryMax + 2);
 		for (Iterator<List<ScheduleEntry>> i = entries.values().iterator(); i.hasNext() && (results.size() < _queryMax); ) {
 			List<ScheduleEntry> entryList = i.next();
-			int flightsAdded = 0;
-			for (Iterator<ScheduleEntry> ei = entryList.iterator(); ei.hasNext() && (flightsAdded < ssc.getFlightsPerRoute()); ) {
+			int flightsAdded = -1;
+			for (Iterator<ScheduleEntry> ei = entryList.iterator(); ei.hasNext() && (flightsAdded < ssc.getFlightsPerRoute()); flightsAdded++)
 				results.add(ei.next());
-				flightsAdded++;
-			}
 		}
 
 		// Do a sort - check for descending sort
@@ -337,7 +356,7 @@ public class GetScheduleSearch extends GetSchedule {
 			results.sort(ssc.getSortBy().endsWith("DESC") ? cmp.reversed() : cmp);
 		} else
 			Collections.shuffle(results);
-			
+
 		return results;
 	}
 }
