@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A helper class to extract information from a user's examination/check ride history.
  * @author Luke
- * @version 8.1
+ * @version 8.2
  * @since 1.0
  */
 
@@ -76,6 +76,9 @@ public final class TestingHistoryHelper {
 		}
 	}
 	
+	/**
+	 * Status exception class.
+	 */
 	static class PromotionIneligibilityException extends IneligibilityException {
 		PromotionIneligibilityException(String msg) {
 			super(msg);
@@ -365,6 +368,14 @@ public final class TestingHistoryHelper {
 		// If we require a checkride, ensure we have a minimum number of legs
 		if (!canRequestSwitch())
 			throw new PromotionIneligibilityException("Has not completed " + (_myEQ.getPromotionLegs() / 2) + " legs for promotion");
+		
+		// Check if we have a pending check ride somewhere else
+		for (Test t : _tests) {
+			if ((t instanceof CheckRide) && (t.getStatus() != TestStatus.SCORED)) {
+				CheckRide cr = (CheckRide) t;
+				throw new PromotionIneligibilityException("Has unscored " + cr.getEquipmentType() + " Check Ride");
+			}
+		}
 		
 		if (_usr.getProficiencyCheckRides() && hasCheckRide(eq, RideType.CHECKRIDE))
 			return RideType.CURRENCY;
