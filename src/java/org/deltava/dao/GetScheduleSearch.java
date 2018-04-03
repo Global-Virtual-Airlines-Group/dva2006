@@ -219,7 +219,9 @@ public class GetScheduleSearch extends GetSchedule {
 		buf.append(formatDBName(ssc.getDBName()));
 		buf.append(".SCHEDULE S LEFT JOIN acars.ROUTES R ON ((S.AIRPORT_D=R.AIRPORT_D) AND (S.AIRPORT_A=R.AIRPORT_A) AND (R.ACTIVE=1)) LEFT JOIN ");
 		buf.append(formatDBName(ssc.getDBName()));
-		buf.append(".FLIGHTSTATS_ROUTES FSR ON ((FSR.PILOT_ID=?) AND (FSR.AIRPORT_D=S.AIRPORT_D) AND (FSR.AIRPORT_A=S.AIRPORT_A)) WHERE ");
+		buf.append(".FLIGHTSTATS_ROUTES FSR ON ((FSR.PILOT_ID=?) AND (FSR.AIRPORT_D=S.AIRPORT_D) AND (FSR.AIRPORT_A=S.AIRPORT_A)) ");
+		if (!StringUtils.isEmpty(spm.getSQL()))
+			buf.append("WHERE ");
 		buf.append(spm.getSQL());
 		buf.append(" GROUP BY S.AIRLINE, S.FLIGHT, S.LEG ");
 		if (havingParams.size() > 0)
@@ -266,7 +268,9 @@ public class GetScheduleSearch extends GetSchedule {
 		buf.append(db);
 		buf.append(".SCHEDULE S LEFT JOIN acars.ROUTES R ON ((S.AIRPORT_D=R.AIRPORT_D) AND (S.AIRPORT_A=R.AIRPORT_A) AND (R.ACTIVE=1)) LEFT JOIN ");
 		buf.append(db);		
-		buf.append(".FLIGHTSTATS_ROUTES FSR ON ((FSR.PILOT_ID=?) AND (FSR.AIRPORT_D=S.AIRPORT_D) AND (FSR.AIRPORT_A=S.AIRPORT_A)) WHERE ");		
+		buf.append(".FLIGHTSTATS_ROUTES FSR ON ((FSR.PILOT_ID=?) AND (FSR.AIRPORT_D=S.AIRPORT_D) AND (FSR.AIRPORT_A=S.AIRPORT_A)) ");
+		if (!StringUtils.isEmpty(spm.getSQL()))
+			buf.append("WHERE ");
 		buf.append(spm.getSQL());
 		buf.append(" GROUP BY S.AIRPORT_D, S.AIRPORT_A");
 		if (havingParams.size() > 0)
@@ -305,7 +309,9 @@ public class GetScheduleSearch extends GetSchedule {
 		buf.append(db);
 		buf.append(".SCHEDULE S LEFT JOIN acars.ROUTES R ON ((S.AIRPORT_D=R.AIRPORT_D) AND (S.AIRPORT_A=R.AIRPORT_A) AND (R.ACTIVE=1)) LEFT JOIN ");
 		buf.append(db);
-		buf.append(".FLIGHTSTATS_ROUTES FSR ON ((FSR.PILOT_ID=?) AND (FSR.AIRPORT_D=S.AIRPORT_D) AND (FSR.AIRPORT_A=S.AIRPORT_A)) WHERE ");
+		buf.append(".FLIGHTSTATS_ROUTES FSR ON ((FSR.PILOT_ID=?) AND (FSR.AIRPORT_D=S.AIRPORT_D) AND (FSR.AIRPORT_A=S.AIRPORT_A)) ");
+		if (!StringUtils.isEmpty(spm.getSQL()))
+			buf.append("WHERE ");
 		buf.append(spm.getSQL());
 		buf.append(" AND (S.AIRPORT_D=?) AND (S.AIRPORT_A=?) GROUP BY S.AIRLINE, S.FLIGHT, S.LEG");
 		if (havingParams.size() > 0)
