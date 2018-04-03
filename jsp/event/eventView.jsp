@@ -218,8 +218,8 @@ golgotha.local.resizeBriefing = function(maxRows) {
  <td class="pri bld">${pilot.pilotCode}</td>
 </c:if>
  <td><el:profile location="${pilotLoc}">${pilot.name}</el:profile>
-<c:if test="${!empty pilotCerts}"> <span class="ter bld nophone"><fmt:list value="${pilotCerts}" delim=", " /></span></c:if>
-<c:if test="${!empty pilotRatings}"> <span class="sec nophone"><fmt:list value="${pilotRatings}" delim=", " /></span></c:if>
+<c:if test="${!empty pilotCerts}">&nbsp;<span class="ter bld nophone"><fmt:list value="${pilotCerts}" delim=", " /></span></c:if>
+<c:if test="${!empty pilotRatings}">&nbsp;<span class="sec nophone"><fmt:list value="${pilotRatings}" delim=", " /></span></c:if>
 </td>
  <td class="sec bld nophone">${signup.equipmentType}</td>
  <td class="pri bld">${fn:networkID(pilot, event.network)}</td>
