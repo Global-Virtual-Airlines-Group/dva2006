@@ -19,6 +19,8 @@ public class FuelUse {
 	
 	private int _totalFuel;
 	private boolean _hasRefuel;
+	
+	private final Collection<String> _msgs = new ArrayList<String>();
 
 	/**
 	 * Returns whether refueling occured in-flight.
@@ -34,6 +36,14 @@ public class FuelUse {
 	 */
 	public int getTotalFuel() {
 		return _totalFuel;
+	}
+	
+	/**
+	 * Returns any warning messages.
+	 * @return a Collection of messages
+	 */
+	public Collection<String> getMessages() {
+		return _msgs;
 	}
 
 	/**
@@ -62,10 +72,10 @@ public class FuelUse {
 		for (RouteEntry re : positions) {
 			int fuel = re.getFuelRemaining();
 			if (lastFuel != 0) {
-				int fuelDelta = (lastFuel - fuel);
-				if (fuelDelta < -MAX_DELTA) {
-					if (!re.isFlagSet(ACARSFlags.ONGROUND))
-						fu.setRefuel(true);
+				int fuelDelta = (lastFuel - fuel); boolean onGround = re.isFlagSet(ACARSFlags.ONGROUND);
+				if ((fuelDelta < -MAX_DELTA) && !onGround) {
+					fu._msgs.add("Added " + -fuelDelta + " lbs at " + re.getDate() + ", onGround=" + onGround);
+					fu._hasRefuel = true;
 				} else if (fuelDelta > 0)
 					fu.addFuelUse(fuelDelta);
 			}
