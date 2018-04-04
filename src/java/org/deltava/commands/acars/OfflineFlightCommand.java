@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import java.io.*;
@@ -32,7 +32,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to allow users to submit Offline Flight Reports.
  * @author Luke
- * @version 8.0
+ * @version 8.2
  * @since 2.4
  */
 
@@ -354,6 +354,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 			FuelUse fuelUse = FuelUse.validate(positions);
 			afr.setAttribute(FlightReport.ATTR_REFUELWARN, fuelUse.getRefuel());
 			afr.setTotalFuel(fuelUse.getTotalFuel());
+			fuelUse.getMessages().forEach(fuelMsg -> comments.add("SYSTEM: " + fuelMsg));
 
 			// Check the schedule database and check the route pair
 			FlightTime avgHours = sdao.getFlightTime(afr);
