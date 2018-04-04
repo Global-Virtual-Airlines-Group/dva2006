@@ -1,4 +1,4 @@
-// Copyright 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.simfdr;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -30,7 +30,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to process simFDR submitted Flight Reports.
  * @author Luke
- * @version 7.5
+ * @version 8.2
  * @since 7.0
  */
 
@@ -197,6 +197,7 @@ public class FlightSubmitService extends SimFDRService {
 			FuelUse fuelUse = FuelUse.validate(ofr.getPositions());
 			fr.setAttribute(FlightReport.ATTR_REFUELWARN, fuelUse.getRefuel());
 			fr.setTotalFuel(fuelUse.getTotalFuel());
+			fuelUse.getMessages().forEach(fuelMsg -> comments.add("SYSTEM: " + fuelMsg));
 			
 			// Check the schedule database and check the route pair
 			GetSchedule sdao = new GetSchedule(con);
