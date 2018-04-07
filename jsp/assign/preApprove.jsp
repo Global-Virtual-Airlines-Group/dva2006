@@ -18,17 +18,16 @@
 <content:googleAnalytics eventSupport="true" />
 <fmt:aptype var="useICAO" />
 <script>
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-golgotha.form.validate({f:f.eqType, t:'Equipment Type'});
-golgotha.form.validate({f:f.flight, min:1, t:'Flight Number'});
-golgotha.form.validate({f:f.leg, min:1, t:'Flight Leg'});
-golgotha.form.validate({f:f.airline, t:'Airline'});
-golgotha.form.validate({f:f.airportD, t:'Departure Airport'});
-golgotha.form.validate({f:f.airportA, t:'Arrival Airport'});
-golgotha.form.submit(f);
-return true;
+golgotha.local.validate = function(f) {
+	if (!golgotha.form.check()) return false;
+	golgotha.form.validate({f:f.eqType, t:'Equipment Type'});
+	golgotha.form.validate({f:f.flight, min:1, t:'Flight Number'});
+	golgotha.form.validate({f:f.leg, min:1, t:'Flight Leg'});
+	golgotha.form.validate({f:f.airline, t:'Airline'});
+	golgotha.form.validate({f:f.airportD, t:'Departure Airport'});
+	golgotha.form.validate({f:f.airportA, t:'Arrival Airport'});
+	golgotha.form.submit(f);
+	return true;
 };
 
 golgotha.local.changeAirline = function(combo) {
@@ -85,8 +84,7 @@ golgotha.onDOMReady(function() {
 <c:set var="flightNumber" value="${assignPilot.pilotNumber % 10000}" scope="request" />
 <tr>
  <td class="label">Flight / Leg</td>
- <td class="data"><el:text name="flight" idx="*" size="4" max="4" className="pri bld req" value="${flightNumber}" />
- <el:text name="leg" idx="*" size="1" max="1" className="req" value="1" /></td>
+ <td class="data"><el:text name="flight" idx="*" size="4" max="4" className="pri bld req" value="${flightNumber}" />&nbsp;<el:text name="leg" idx="*" size="1" max="1" className="req" value="1" /></td>
 </tr>
 <tr>
  <td class="label">Departing from</td>
