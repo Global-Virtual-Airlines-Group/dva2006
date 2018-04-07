@@ -166,7 +166,7 @@
 </c:choose>
 <c:if test="${!isXACARS && (pirep.landingCategory != 'NONE')}">
  <span class="sec bld">(ILS ${pirep.landingCategory})</span></c:if>
- <fmt:weight value="${pirep.landingWeight}" /> total, <fmt:weight value="${pirep.landingFuel}" /> fuel
+&nbsp;<fmt:weight value="${pirep.landingWeight}" /> total, <fmt:weight value="${pirep.landingFuel}" /> fuel
 <c:if test="${acLoaded && (pirep.landingWeight > acInfo.maxLandingWeight)}">
 &nbsp;<span class="small bld">(<fmt:weight value="${pirep.landingWeight - acInfo.maxLandingWeight}" /> overweight)</span></c:if>
 <c:if test="${access.canDispose && (pirep.landingLocation.latitude == 0.0) && (pirep.landingLocation.longitude == 0.0)}">
