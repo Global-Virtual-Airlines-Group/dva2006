@@ -25,8 +25,8 @@
 <br />
 <c:if test="${!empty navCycleID}">Navigation Data Cycle <span class="pri bld">${navCycleID}</span> Imported<br />
 <br /></c:if>
-<c:if test="${purgeCount > 0}"><fmt:int value="${purgeCount}" /> ${navaidType.name} records purged. </c:if><fmt:int value="${entryCount}" /> 
-<c:if test="${legacyCount > 0}"> current and <fmt:int value="${legacyCount}" /> legacy</c:if> ${navaidType.name} records loaded. <fmt:int value="${regionCount}" /> records have had the proper ICAO region code set after import.<br />
+<c:if test="${purgeCount > 0}"><fmt:int value="${purgeCount}" />&nbsp;${navaidType.name} records purged. </c:if><fmt:int value="${entryCount}" /> 
+<c:if test="${legacyCount > 0}"> current and <fmt:int value="${legacyCount}" /> legacy</c:if>&nbsp;${navaidType.name} records loaded. <fmt:int value="${regionCount}" /> records have had the proper ICAO region code set after import.<br />
 <br />
 <c:choose>
 <c:when test="${navData}">
