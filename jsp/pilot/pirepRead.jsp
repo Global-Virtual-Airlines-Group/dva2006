@@ -80,7 +80,7 @@ golgotha.local.showRunwayChoices = function() {
 <el:form action="${act}" method="post" link="${lnk}" validate="${validation}">
 <el:table className="form">
 <tr class="title">
- <td class="caps" colspan="2">FLIGHT ${pirep.flightCode} <c:if test="${!fn:isDraft(pirep)}">FLOWN ON <fmt:date fmt="d" date="${pirep.date}" /></c:if><span class="nophone"> by <el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></span></td>
+ <td class="caps" colspan="2">FLIGHT ${pirep.flightCode}&nbsp;<c:if test="${!fn:isDraft(pirep)}">FLOWN ON <fmt:date fmt="d" date="${pirep.date}" /></c:if><span class="nophone"> by <el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></span></td>
 </tr>
 
 <!-- Pirep Data -->
