@@ -261,7 +261,7 @@ There <fmt:is value="${pirepQueueStats.size}" />  currently <fmt:quantity value=
 <c:if test="${myPirepQueueSize > 0}"><br /><span class="${queueClass}">There are currently <fmt:quantity value="${myPirepQueueSize}" single="Flight Report" /> awaiting 
 review flown using equipment in the ${pilot.equipmentType} program.</span></c:if>
 <c:if test="${checkRideQueueSize > 0}"><br />
-<span class="pri bld">There <fmt:is value="${checkRideQueueSize}" /> <fmt:quantity value="${checkRideQueueSize}" single="Check Ride" />
+<span class="pri bld">There <fmt:is value="${checkRideQueueSize}" />&nbsp;<fmt:quantity value="${checkRideQueueSize}" single="Check Ride" />
 <content:filter roles="!HR"> in the ${pilot.equipmentType} program</content:filter> awaiting review.</span></c:if></td>
 </tr>
 </content:filter>
@@ -288,7 +288,7 @@ requests here, assign Check Rides, and complete the Promotion Process.<c:if test
  <td class="mid"><el:cmd className="bld" url="examqueue">Submitted Examinations</el:cmd></td>
  <td class="data">You can view and score submitted Pilot Examinations.<c:if test="${examQueueSize > 0}"><br />
 <br />
-<b>There <fmt:is value="${examQueueSize}" /> <fmt:quantity value="${examQueueSize}" single="submitted Examination" /> awaiting evaluation.</b></c:if></td>
+<b>There <fmt:is value="${examQueueSize}" />&nbsp;<fmt:quantity value="${examQueueSize}" single="submitted Examination" /> awaiting evaluation.</b></c:if></td>
 </tr>
 </content:filter>
 </content:filter>
