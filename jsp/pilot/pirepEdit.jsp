@@ -190,8 +190,7 @@ return true;
 </c:choose>
 <tr>
  <td class="label">Flight Number / Leg</td>
- <td class="data"><el:int name="flightNumber" idx="*" size="3" min="1" max="9999" required="true" value="${pirep.flightNumber}" />
- <el:int name="flightLeg" idx="*" size="1" min="1" max="8" required="true" value="${pirep.leg}" /></td>
+ <td class="data"><el:int name="flightNumber" idx="*" size="3" min="1" max="9999" required="true" value="${pirep.flightNumber}" />&nbsp;<el:int name="flightLeg" idx="*" size="1" min="1" max="8" required="true" value="${pirep.leg}" /></td>
 </tr>
 <tr>
  <td class="label">Equipment Type</td>
