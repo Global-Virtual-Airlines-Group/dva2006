@@ -86,7 +86,7 @@ golgotha.local.showRunwayChoices = function() {
 <!-- Pirep Data -->
 <tr>
  <td class="label">Pilot Code / Rank</td>
- <td class="data"><c:if test="${!empty pilot.pilotCode}">${pilot.pilotCode} </c:if>(${pilot.rank.name}, ${pilot.equipmentType}) - <el:cmd url="logbook" link="${pilot}">VIEW LOG BOOK</el:cmd></td>
+ <td class="data"><c:if test="${!empty pilot.pilotCode}">${pilot.pilotCode}&nbsp;</c:if>(${pilot.rank.name}, ${pilot.equipmentType}) - <el:cmd url="logbook" link="${pilot}">VIEW LOG BOOK</el:cmd></td>
 </tr>
 <content:filter roles="HR,PIREP,Examination,Operations">
 <tr>
