@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2011, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2014, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.beans.GeoLocation;
 /**
  * A JDBC Data Access Object. DAOs are used to read and write persistent data to JDBC data sources.
  * @author Luke
- * @version 8.1
+ * @version 8.2
  * @since 1.0
  */
 
@@ -55,13 +55,12 @@ public abstract class DAO {
 	 * connection is false, we assume that manual commits are being used and any internal transaction management is
 	 * automatically disabled.</i>
 	 * @param c the JDBC connection to use
-	 * @see DAO#setManualCommit(boolean)
 	 */
 	public DAO(Connection c) {
 		super();
 		_c = c;
 		try {
-			setManualCommit(!c.getAutoCommit());
+			_manualCommit  = !c.getAutoCommit();
 		} catch (Exception e) {
 			// empty
 		}
@@ -85,16 +84,6 @@ public abstract class DAO {
 	 */
 	protected static String formatLocation(GeoLocation loc) {
 		return String.format("POINT(%1$,.4f %2$,.4f)", Double.valueOf(loc.getLatitude()), Double.valueOf(loc.getLongitude()));
-	}
-
-	/**
-	 * Tells the Data Access Object that all transaction control will be handled by the calling code, for use in
-	 * transactions that require calling several DAOs in sequence. Any DAO commit or rollback operations will not have
-	 * any effect.
-	 * @param doManual TRUE if the calling code handles commits/rollbacks, otherwise FALSE
-	 */
-	public void setManualCommit(boolean doManual) {
-		_manualCommit = doManual;
 	}
 
 	/**
@@ -239,10 +228,7 @@ public abstract class DAO {
 	 */
 	protected static String formatDBName(String db) {
 		int ofs = db.indexOf('.');
-		if (ofs == -1)
-			return db.toLowerCase();
-		
-		return db.substring(0, ofs).toLowerCase();
+		return (ofs == -1) ? db.toLowerCase() : db.substring(0, ofs).toLowerCase();
 	}
 
 	/**

@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A Data Access Object to update Flight Statistics. 
  * @author Luke
- * @version 8.1
+ * @version 8.2
  * @since 6.2
  */
 
@@ -60,9 +60,8 @@ public class SetAggregateStatistics extends DAO {
 			if (fr.getStatus() != FlightStatus.OK)
 				return;
 			
-			prepareStatementWithoutLimits("INSERT INTO FLIGHTSTATS_LANDING (SELECT PR.ID, PR.PILOT_ID, PR.EQTYPE, DATE(APR.LANDING_TIME), "
-				+ "PR.AIRPORT_A, APR.LANDING_VSPEED, CAST(R.DISTANCE AS SIGNED) FROM PIREPS PR, ACARS_PIREPS APR, acars.RWYDATA R WHERE "
-				+ "(APR.ID=PR.ID) AND (APR.ACARS_ID=R.ID) AND (R.ISTAKEOFF=?) AND (R.DISTANCE<?) AND (PR.ID=?))");
+			prepareStatementWithoutLimits("INSERT INTO FLIGHTSTATS_LANDING (SELECT PR.ID, PR.PILOT_ID, PR.EQTYPE, DATE(APR.LANDING_TIME), PR.AIRPORT_A, APR.LANDING_VSPEED, "
+				+ "CAST(R.DISTANCE AS SIGNED) FROM PIREPS PR, ACARS_PIREPS APR, acars.RWYDATA R WHERE (APR.ID=PR.ID) AND (APR.ACARS_ID=R.ID) AND (R.ISTAKEOFF=?) AND (R.DISTANCE<?) AND (PR.ID=?))");
 			_ps.setBoolean(1, false);
 			_ps.setInt(2, 22500);
 			_ps.setInt(3, fr.getID());
@@ -76,12 +75,11 @@ public class SetAggregateStatistics extends DAO {
 	 * Updates flight statistics for a particular Pilot.
 	 */
 	private void updatePilot(int pilotID) throws SQLException {
-		prepareStatementWithoutLimits("REPLACE INTO FLIGHTSTATS_PILOT (SELECT PILOT_ID, COUNT(DISTANCE) AS LEGS, SUM(IF((ATTR & ?) > 0, 1, 0)) AS ACARS, "
-			+ "SUM(IF((ATTR & ?) > 0, 1, 0)) AS VATSIM, SUM(IF((ATTR & ?) > 0, 1, 0)) AS IVAO, SUM(IF((ATTR & ?) > 0, 1, 0)) AS HIST, SUM(IF((ATTR & ?) > 0, 1, 0)) AS DSP, "
-			+ "SUM(DISTANCE) AS MILES, SUM(FLIGHT_TIME) AS HOURS, 1 AS PIDS, AVG(LOADFACTOR), SUM(PAX), SUM(IF(FSVERSION=?,1,0)) AS FS7, "
-			+ "SUM(IF(FSVERSION=?,1,0)) AS FS8, SUM(IF(FSVERSION=?,1,0)) AS FS9, SUM(IF(FSVERSION=?,1,0)) AS FSX, SUM(IF(FSVERSION=?,1,0)) AS P3D, "
-			+ "SUM(IF(FSVERSION=?,1,0)) AS P3Dv4, SUM(IF(FSVERSION=?,1,IF(FSVERSION=?,1,0))) AS XP, SUM(IF(FSVERSION=?,1,0)) AS XP11, SUM(IF(FSVERSION=0,1,0)) AS FSO "
-			+ "FROM PIREPS WHERE (STATUS=?) AND (PILOT_ID=?) HAVING (PILOT_ID<>NULL))");
+		prepareStatementWithoutLimits("REPLACE INTO FLIGHTSTATS_PILOT (SELECT PILOT_ID, COUNT(DISTANCE) AS LEGS, SUM(IF((ATTR & ?) > 0, 1, 0)) AS ACARS, SUM(IF((ATTR & ?) > 0, 1, 0)) AS VATSIM, "
+			+ "SUM(IF((ATTR & ?) > 0, 1, 0)) AS IVAO, SUM(IF((ATTR & ?) > 0, 1, 0)) AS HIST, SUM(IF((ATTR & ?) > 0, 1, 0)) AS DSP, SUM(DISTANCE) AS MILES, SUM(FLIGHT_TIME) AS HOURS, 1 AS PIDS, "
+			+ "AVG(LOADFACTOR), SUM(PAX), SUM(IF(FSVERSION=?,1,0)) AS FS7, SUM(IF(FSVERSION=?,1,0)) AS FS8, SUM(IF(FSVERSION=?,1,0)) AS FS9, SUM(IF(FSVERSION=?,1,0)) AS FSX, "
+			+ "SUM(IF(FSVERSION=?,1,0)) AS P3D, SUM(IF(FSVERSION=?,1,0)) AS P3Dv4, SUM(IF(FSVERSION=?,1,IF(FSVERSION=?,1,0))) AS XP, SUM(IF(FSVERSION=?,1,0)) AS XP11, SUM(IF(FSVERSION=0,1,0)) AS FSO "
+			+ "FROM PIREPS WHERE (STATUS=?) AND (PILOT_ID=?) HAVING (PILOT_ID IS NOT NULL))");
 		_ps.setInt(1, FlightReport.ATTR_ACARS);
 		_ps.setInt(2, FlightReport.ATTR_VATSIM);
 		_ps.setInt(3, FlightReport.ATTR_IVAO);
@@ -129,8 +127,8 @@ public class SetAggregateStatistics extends DAO {
 		_ps.setString(3, rp.getAirportA().getIATA());
 		executeUpdate(0);
 		
-		prepareStatementWithoutLimits("INSERT INTO FLIGHTSTATS_ROUTES (SELECT PILOT_ID, AIRPORT_D, AIRPORT_A, COUNT(ID), MAX(DATE) FROM "
-			+ "PIREPS WHERE (STATUS=?) AND (PILOT_ID=?) AND (AIRPORT_D=?) AND (AIRPORT_A=?) HAVING (PILOT_ID<>NULL))");
+		prepareStatementWithoutLimits("INSERT INTO FLIGHTSTATS_ROUTES (SELECT PILOT_ID, AIRPORT_D, AIRPORT_A, COUNT(ID), MAX(DATE) FROM PIREPS WHERE (STATUS=?) AND "
+			+ "(PILOT_ID=?) AND (AIRPORT_D=?) AND (AIRPORT_A=?) HAVING (PILOT_ID IS NOT NULL))");
 		_ps.setInt(1, FlightStatus.OK.ordinal());
 		_ps.setInt(2, pilotID);
 		_ps.setString(3, rp.getAirportD().getIATA());
