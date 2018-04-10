@@ -7,7 +7,7 @@
 <c:set var="isXACARS" value="${fn:isXACARS(pirep)}" scope="page" />
 <!-- ACARS PIREP Data -->
 <tr class="title">
- <td class="caps" colspan="${cspan + 1}"><span class="nophone"><content:airline /> </span>ACARS FLIGHT DATA</td>
+ <td class="caps" colspan="${cspan + 1}"><span class="nophone"><content:airline />&nbsp;</span>ACARS FLIGHT DATA</td>
 </tr>
 <c:if test="${fn:ACARS_ID(pirep) > 0}">
 <tr>
