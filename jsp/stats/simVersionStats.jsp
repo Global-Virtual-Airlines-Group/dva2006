@@ -65,7 +65,9 @@
 <c:set var="entryNumber" value="${entryNumber + 1}" scope="page" />
 <c:set var="eLegs" value="${stat.versionLegs}" scope ="page" />
 <c:set var="has64" value="${eLegs['P3Dv4'] > 0}" scope="page" />
+<c:set var="hasP3D3" value="${eLegs['P3D'] > 0}" scope="page" />
 <c:set var="hasXP11" value="${eLegs['XP11'] > 0}" scope="page" />
+<c:set var="hasXP10" value="${eLegs['XP10'] > 0}" scope="page" />
 <c:set var="hasFS2K" value="${eLegs['FS2000'] > 0}" scope="page" />
  <td class="sec bld small"><fmt:int value="${entryNumber}" /></td>
  <td class="pri bld">${stat.label}</td>
@@ -73,9 +75,9 @@
  <td class="pri bld"><fmt:int value="${stat.legs}" /></td>
  <td class="sec bld nophone"><fmt:distance value="${stat.distance}" /></td>
  <td class="small"><fmt:int value="${eLegs['FSX']}" /> (<fmt:dec value="${eLegs['FSX'] * 100.0 / stat.legs}" />%)</td>
- <td class="small"><c:if test="${has64}"><fmt:int value="${eLegs['P3Dv4']}" /> + </c:if><fmt:int value="${eLegs['P3D']}" /> (<fmt:dec value="${(eLegs['P3D'] + eLegs['P3Dv4']) * 100.0 / stat.legs}" />%)</td>
+ <td class="small"><c:if test="${has64}"><fmt:int value="${eLegs['P3Dv4']}" /></c:if><c:if test="${hasP3D3 && has64}"> + </c:if><c:if test="${hasP3D3}"><fmt:int value="${eLegs['P3D']}" /></c:if> (<fmt:dec value="${(eLegs['P3D'] + eLegs['P3Dv4']) * 100.0 / stat.legs}" />%)</td>
  <td class="small"><fmt:int value="${eLegs['FS9']}" /> (<fmt:dec value="${eLegs['FS9'] * 100.0 / stat.legs}" />%)</td>
- <td class="small nophone"><c:if test="${hasXP11}"><fmt:int value="${eLegs['XP11']}" /> + </c:if><fmt:int value="${eLegs['XP10']}" /> (<fmt:dec value="${(eLegs['XP10'] + eLegs['XP11']) * 100.0 / stat.legs}" />%)</td>
+ <td class="small nophone"><c:if test="${hasXP11}"><fmt:int value="${eLegs['XP11']}" /></c:if><c:if test="${hasXP11 && hasXP10}"> + </c:if><c:if test="${hasXP10}"><fmt:int value="${eLegs['XP10']}" /></c:if> (<fmt:dec value="${(eLegs['XP10'] + eLegs['XP11']) * 100.0 / stat.legs}" />%)</td>
  <td class="small nophone"><fmt:int value="${eLegs['FS2002']}" />&nbsp;<c:if test="${hasFS2K}">/ <fmt:int value="${eLegs['FS2000']}" />&nbsp;</c:if>(<fmt:dec value="${(eLegs['FS2002'] + eLegs['FS2000']) * 100.0 / stat.legs}" />%)</td>
  <td class="small nophone"><fmt:int value="${eLegs['UNKNOWN']}" /> (<fmt:dec value="${eLegs['UNKNOWN'] * 100.0 / stat.legs}" />%)</td>
 </view:row>
