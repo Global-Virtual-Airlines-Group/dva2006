@@ -42,9 +42,10 @@ chmod 644 bin/*.xml
 ln -s /usr/local/bin/jsvc bin/jsvc
 
 # Create the logging symlink
-rm -r logs
+rm -rf logs temp work
 ln -s /var/log/tomcat logs
 ln -s /dev/shm/tomcat temp
+ln -s /dev/shm/tomcat work
 
 # Copy over common libraries
 echo "Copying libraries"
@@ -62,9 +63,8 @@ chmod 775 conf/Catalina
 
 # Change permissions
 echo "Changing file permissions"
-chgrp www work
 chgrp users lib
-chmod 775 lib work
+chmod 775 lib
 chown -R www webapps/manager
 
 # Switch to /usr/local
