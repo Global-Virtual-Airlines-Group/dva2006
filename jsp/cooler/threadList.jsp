@@ -73,8 +73,8 @@ golgotha.local.setChannel = function(combo) {
 <c:if test="${thread.image != 0}"><el:img caption="Image" x="20" y="20" src="cooler/icon_img.png" />&nbsp;</c:if>
 <c:if test="${thread.locked}"><el:img caption="Thread Locked" x="20" y="20" src="cooler/icon_lock.png" />&nbsp;</c:if>
 <c:if test="${thread.poll}"><el:img caption="Pilot Poll" x="20" y="20" src="cooler/icon_poll.png" />&nbsp;</c:if>
-<c:if test="${!empty thread.stickyUntil}">STICKY:</c:if>
- <el:cmd url="thread" link="${thread}"><fmt:text value="${thread.subject}" /></el:cmd></td>
+<c:if test="${!empty thread.stickyUntil}">STICKY:&nbsp;</c:if>
+<el:cmd url="thread" link="${thread}"><fmt:text value="${thread.subject}" /></el:cmd></td>
  <td class="nophone"><el:profile location="${authorLoc}" className="pri bld">${author.name}</el:profile></td>
  <td class="nophone"><fmt:int value="${thread.views}" /></td>
  <td class="nophone"><fmt:int value="${thread.postCount}" /></td>
