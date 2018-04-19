@@ -159,7 +159,7 @@ You have not achieved any Pilot Accomplishments yet.
 You have achieved the following Accomplishments:<br />
 <br />
 <c:forEach var="a" items="${accs}">
-<fmt:accomplish accomplish="${a}" className="bld" />, (<fmt:int value="${a.value}" /> ${a.unit.name}) on <span class="bld"><fmt:date date="${a.date}" fmt="d" /></span><br />
+<fmt:accomplish accomplish="${a}" className="bld" />, (<fmt:int value="${a.value}" />&nbsp;${a.unit.name}) on <span class="bld"><fmt:date date="${a.date}" fmt="d" /></span><br />
 </c:forEach></c:if>
 <br />
 To view a map of Airports to visit to complete Accomplishments, <el:cmd url="accairportmap" className="sec bld">Click Here</el:cmd>.</td>
