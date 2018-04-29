@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2007, 2009, 2011, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007, 2009, 2011, 2012, 2015, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import org.deltava.beans.*;
@@ -7,11 +7,11 @@ import org.deltava.beans.system.*;
 /**
  * A bean to store data about a User session.
  * @author Luke
- * @version 7.2
+ * @version 8.2
  * @since 1.0
  */
 
-public class UserSession implements java.io.Serializable, ViewEntry, Comparable<UserSession> {
+public class UserSession implements java.io.Serializable, Comparable<UserSession> {
 
 	private final String _sessionID;
 	private final String _userAgent;
@@ -86,16 +86,8 @@ public class UserSession implements java.io.Serializable, ViewEntry, Comparable<
 		return _p.getName();
 	}
 	
-	/**
-	 * Compares two user sessions by comparing their users.
-	 */
 	@Override
 	public int compareTo(UserSession usr2) {
 		return _p.compareTo(usr2._p);
-	}
-
-	@Override
-	public String getRowClassName() {
-		return _isSSL ? "opt2" : null;
 	}
 }
