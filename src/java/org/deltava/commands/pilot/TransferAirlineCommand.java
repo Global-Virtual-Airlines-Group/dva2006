@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2010, 2012, 2013, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010, 2012, 2013, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
  * A Web Site Command to transfer pilots to a different airline.
  * @author James
  * @author Luke
- * @version 7.4
+ * @version 8.2
  * @since 1.0
  */
 
@@ -231,7 +231,7 @@ public class TransferAirlineCommand extends AbstractCommand {
 			
 			// Reset the authenticator
 			if (auth instanceof SQLAuthenticator)
-				((SQLAuthenticator) auth).clearConnection();
+				((SQLAuthenticator) auth).close();
 			
 			// Commit transaction
 			ctx.commitTX();

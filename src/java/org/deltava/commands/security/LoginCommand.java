@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2013, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2013, 2014, 2015, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.util.*;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to Authenticate users.
  * @author Luke
- * @version 7.2
+ * @version 8.2
  * @since 1.0
  */
 
@@ -157,10 +157,10 @@ public class LoginCommand extends AbstractCommand {
 			// Get the authenticator and try to authenticate
 			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
 			if (auth instanceof SQLAuthenticator) {
-				SQLAuthenticator sqlAuth = (SQLAuthenticator) auth;
-				sqlAuth.setConnection(con);
-				sqlAuth.authenticate(p, ctx.getParameter("pwd"));
-				sqlAuth.clearConnection();
+				try (SQLAuthenticator sqlAuth = (SQLAuthenticator) auth) {
+					sqlAuth.setConnection(con);
+					sqlAuth.authenticate(p, ctx.getParameter("pwd"));
+				}
 			} else
 				auth.authenticate(p, ctx.getParameter("pwd"));
 

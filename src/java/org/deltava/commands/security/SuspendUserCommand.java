@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2015, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.sql.Connection;
@@ -19,7 +19,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to lock out a user.
  * @author Luke
- * @version 6.1
+ * @version 8.2
  * @since 1.0
  */
 
@@ -37,7 +37,6 @@ public class SuspendUserCommand extends AbstractCommand {
 		
 		// Get the result
 		CommandResult result = ctx.getResult();
-		
 		Pilot usr = null;
 		try {
 			Connection con = ctx.getConnection();
@@ -89,14 +88,13 @@ public class SuspendUserCommand extends AbstractCommand {
 			// Get the authenticator
 			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
 			if (auth instanceof SQLAuthenticator) {
-				SQLAuthenticator sqlAuth = (SQLAuthenticator) auth;
-				sqlAuth.setConnection(con);
-				sqlAuth.disable(usr);
-				sqlAuth.clearConnection();
+				try (SQLAuthenticator sqlAuth = (SQLAuthenticator) auth) {
+					sqlAuth.setConnection(con);
+					sqlAuth.disable(usr);
+				}
 			} else
 				auth.disable(usr);
 			
-			// Commit the transaction
 			ctx.commitTX();
 		} catch (DAOException de) {
 			ctx.rollbackTX();

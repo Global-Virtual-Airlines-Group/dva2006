@@ -52,7 +52,7 @@ public class TestApacheSQLAuthenticator extends SQLTestCase {
 		_auth.authenticate(usr, "password");
 		_auth.remove(usr);
 		assertFalse(_auth.contains(usr));
-		_auth.clearConnection();
+		_auth.close();
 		returnConnection(c);
 	}
 }
