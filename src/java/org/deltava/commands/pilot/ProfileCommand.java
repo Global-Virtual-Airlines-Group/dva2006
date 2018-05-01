@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -33,7 +33,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to handle editing/saving Pilot Profiles.
  * @author Luke
- * @version 8.0
+ * @version 8.2
  * @since 1.0
  */
 
@@ -507,10 +507,10 @@ public class ProfileCommand extends AbstractFormCommand {
 					// Rename the user in the Directory if it's not just a case-sensitivity issue
 					Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
 					if (auth instanceof SQLAuthenticator) {
-						SQLAuthenticator sqlAuth = (SQLAuthenticator) auth;
-						sqlAuth.setConnection(con);
-						sqlAuth.rename(p, newDN);
-						sqlAuth.clearConnection();
+						try (SQLAuthenticator sqlAuth = (SQLAuthenticator) auth) {
+							sqlAuth.setConnection(con);
+							sqlAuth.rename(p, newDN);
+						}
 					} else
 						auth.rename(p, newDN);
 
@@ -593,14 +593,12 @@ public class ProfileCommand extends AbstractFormCommand {
 				// Remove the user from any destination directories
 				Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
 				if (auth instanceof MultiAuthenticator) {
-					MultiAuthenticator mAuth = (MultiAuthenticator) auth;
-					if (auth instanceof SQLAuthenticator) {
-						SQLAuthenticator sqlAuth = (SQLAuthenticator) auth;
-						sqlAuth.setConnection(con);
+					try (MultiAuthenticator mAuth = (MultiAuthenticator) auth) {
+						if (auth instanceof SQLAuthenticator)
+							((SQLAuthenticator) auth).setConnection(con);
+					
 						mAuth.removeDestination(p);
-						sqlAuth.clearConnection();
-					} else
-						mAuth.removeDestination(p);
+					}
 				}
 			}
 
@@ -620,10 +618,10 @@ public class ProfileCommand extends AbstractFormCommand {
 
 				Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
 				if (auth instanceof SQLAuthenticator) {
-					SQLAuthenticator sqlAuth = (SQLAuthenticator) auth;
-					sqlAuth.setConnection(con);
-					sqlAuth.updatePassword(p, p.getPassword());
-					sqlAuth.clearConnection();
+					try (SQLAuthenticator sqlAuth = (SQLAuthenticator) auth) {
+						sqlAuth.setConnection(con);
+						sqlAuth.updatePassword(p, p.getPassword());
+					}
 				} else
 					auth.updatePassword(p, p.getPassword());
 

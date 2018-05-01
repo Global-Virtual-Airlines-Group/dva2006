@@ -1,4 +1,4 @@
-// Copyright 2010, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2015, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.sql.Connection;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to retire a User. 
  * @author Luke
- * @version 6.1
+ * @version 8.2
  * @since 3.0
  */
 
@@ -70,14 +70,13 @@ public class RetireUserCommand extends AbstractCommand {
 			// Get the authenticator
 			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
 			if (auth instanceof SQLAuthenticator) {
-				SQLAuthenticator sqlAuth = (SQLAuthenticator) auth;
-				sqlAuth.setConnection(con);
-				sqlAuth.disable(usr);
-				sqlAuth.clearConnection();
+				try (SQLAuthenticator sqlAuth = (SQLAuthenticator) auth) {
+					sqlAuth.setConnection(con);
+					sqlAuth.disable(usr);
+				}
 			} else
 				auth.disable(usr);
 			
-			// Commit the transaction
 			ctx.commitTX();
 		} catch (DAOException de) {
 			ctx.rollbackTX();

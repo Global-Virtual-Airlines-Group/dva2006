@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2015, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to merge two pilot profiles.
  * @author Luke
- * @version 8.0
+ * @version 8.2
  * @since 1.0
  */
 
@@ -208,7 +208,7 @@ public class DuplicatePilotMergeCommand extends AbstractCommand {
 				}
 				
 				if (auth instanceof SQLAuthenticator)
-					((SQLAuthenticator) auth).clearConnection();
+					((SQLAuthenticator) auth).close();
 			
 				// Get the message template
 				GetMessageTemplate mtdao = new GetMessageTemplate(con);

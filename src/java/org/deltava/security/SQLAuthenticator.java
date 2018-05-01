@@ -1,20 +1,20 @@
-// Copyright 2007, 2009, 2010, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009, 2010, 2012, 2015, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
+import java.io.*;
 import java.sql.*;
 import java.util.Properties;
-import java.io.IOException;
 
 import org.deltava.util.ConfigLoader;
 
 /**
  * An abstract class to support Authenticators that use a JDBC Connection Pool.
  * @author Luke
- * @version 6.0
+ * @version 8.2
  * @since 1.0
  */
 
-public abstract class SQLAuthenticator implements Authenticator {
+public abstract class SQLAuthenticator implements Authenticator, Closeable {
 	
 	protected final Properties _props = new Properties();
 	private final ThreadLocal<Connection> _con = new ThreadLocal<Connection>();
@@ -30,7 +30,8 @@ public abstract class SQLAuthenticator implements Authenticator {
 	/**
 	 * Clears the JDBC connection for an Authenticator to use.
 	 */
-	public void clearConnection() {
+	@Override
+	public void close() {
 		_con.remove();
 	}
 

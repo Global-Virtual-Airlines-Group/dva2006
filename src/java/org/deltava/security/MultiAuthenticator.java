@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2007, 2010, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007, 2010, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.io.*;
@@ -13,7 +13,7 @@ import org.deltava.util.*;
 /**
  * An abstract Authenticator that supports multiple authenticators.
  * @author Luke
- * @version 8.1
+ * @version 8.2
  * @since 1.0
  */
 
@@ -120,7 +120,7 @@ public abstract class MultiAuthenticator extends SQLAuthenticator {
 		for (int x = 0; x < auths.length; x++) {
 			Authenticator auth = auths[x];
 			if (auth instanceof SQLAuthenticator)
-				((SQLAuthenticator) auth).clearConnection();
+				((SQLAuthenticator) auth).close();
 		}
 	}
 
