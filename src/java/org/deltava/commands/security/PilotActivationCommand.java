@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2015, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.sql.Connection;
@@ -19,7 +19,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to reactivate a Pilot.
  * @author Luke
- * @version 7.2
+ * @version 8.2
  * @since 1.0
  */
 
@@ -137,14 +137,13 @@ public class PilotActivationCommand extends AbstractCommand {
 			// Get the authenticator and update the password
 			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
 			if (auth instanceof SQLAuthenticator) {
-				SQLAuthenticator sqlAuth = (SQLAuthenticator) auth;
-				sqlAuth.setConnection(con);
-				if (auth.contains(p))
-					sqlAuth.updatePassword(p, p.getPassword());
-				else
-					sqlAuth.add(p, p.getPassword());
-				
-				sqlAuth.clearConnection();
+				try (SQLAuthenticator sqlAuth = (SQLAuthenticator) auth) {
+					sqlAuth.setConnection(con);
+					if (auth.contains(p))
+						sqlAuth.updatePassword(p, p.getPassword());
+					else
+						sqlAuth.add(p, p.getPassword());
+				}
 			} else {
 				if (auth.contains(p))
 					auth.updatePassword(p, p.getPassword());
@@ -157,10 +156,10 @@ public class PilotActivationCommand extends AbstractCommand {
 			
 			// Get the authenticator and chcek
 			if (auth instanceof SQLAuthenticator) {
-				SQLAuthenticator sqlAuth = (SQLAuthenticator) auth;
-				sqlAuth.setConnection(con);
-				sqlAuth.authenticate(p, p.getPassword());
-				sqlAuth.clearConnection();
+				try (SQLAuthenticator sqlAuth = (SQLAuthenticator) auth) {
+					sqlAuth.setConnection(con);
+					sqlAuth.authenticate(p, p.getPassword());
+				}
 			} else
 				auth.authenticate(p, p.getPassword());
 			

@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2010, 2012, 2014, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2010, 2012, 2014, 2015, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.sql.Connection;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A servlet that supports basic HTTP authentication.
  * @author Luke
- * @version 7.3
+ * @version 8.2
  * @since 1.0
  */
 
@@ -67,10 +67,10 @@ abstract class BasicAuthServlet extends GenericServlet {
 			// Authenticate the user
 			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
 			if (auth instanceof SQLAuthenticator) {
-				SQLAuthenticator sqlAuth = (SQLAuthenticator) auth;
-				sqlAuth.setConnection(con);
-				sqlAuth.authenticate(usr, tkns.nextToken());
-				sqlAuth.clearConnection();
+				try (SQLAuthenticator sqlAuth = (SQLAuthenticator) auth) {
+					sqlAuth.setConnection(con);
+					sqlAuth.authenticate(usr, tkns.nextToken());
+				}
 			} else
 				auth.authenticate(usr, tkns.nextToken());
 			

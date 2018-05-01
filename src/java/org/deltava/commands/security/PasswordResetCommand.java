@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2015, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.util.List;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to reset users' passwords.
  * @author Luke
- * @version 7.0
+ * @version 8.2
  * @since 1.0
  */
 
@@ -147,7 +147,7 @@ public class PasswordResetCommand extends AbstractCommand {
 			// Validate the password
 			auth.authenticate(usr, newPwd);
 			if (auth instanceof SQLAuthenticator)
-				((SQLAuthenticator)auth).clearConnection();
+				((SQLAuthenticator)auth).close();
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 			ctx.setMessage("Error updating password for " + usr.getDN() + " - " + e.getMessage());

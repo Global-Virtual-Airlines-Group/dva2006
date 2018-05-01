@@ -1,4 +1,4 @@
-// Copyright 2011, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.xacars;
 
 import java.sql.Connection;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to support XACARS HTTP requests.
  * @author Luke
- * @version 7.3
+ * @version 8.2
  * @since 4.1
  */
 
@@ -100,10 +100,10 @@ public abstract class XAService extends WebService {
 			// Authenticate the user
 			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
 			if (auth instanceof SQLAuthenticator) {
-				SQLAuthenticator sqlAuth = (SQLAuthenticator) auth;
-				sqlAuth.setConnection(con);
-				sqlAuth.authenticate(usr, pwd);
-				sqlAuth.clearConnection();
+				try (SQLAuthenticator sqlAuth = (SQLAuthenticator) auth) {
+					sqlAuth.setConnection(con);
+					sqlAuth.authenticate(usr, pwd);
+				}
 			} else
 				auth.authenticate(usr, pwd);
 			
