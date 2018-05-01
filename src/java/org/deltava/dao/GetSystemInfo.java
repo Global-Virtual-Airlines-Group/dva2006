@@ -1,4 +1,4 @@
-// Copyright 2005, 2011, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2011, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.beans.stats.*;
 /**
  * A Data Access Object to retrieve ACARS System Information data.
  * @author Luke
- * @version 7.5
+ * @version 8.2
  * @since 1.0
  */
 
@@ -74,7 +74,7 @@ public class GetSystemInfo extends DAO {
 			
 			SystemInformation inf = results.get(0);
 			if (sim != Simulator.UNKNOWN) {
-				prepareStatementWithoutLimits("SELECT BRIDGE FROM acars.SIMINFO WHERE (ID=?) AND (SIM=?) AND (CREATED <= ?) LIMIT 1");
+				prepareStatementWithoutLimits("SELECT BRIDGE FROM acars.SIMINFO WHERE (ID=?) AND (SIM=?) AND (CREATED <= ?) ORDER BY CREATED DESC LIMIT 1");
 				_ps.setInt(1, id);
 				_ps.setInt(2, sim.ordinal());
 				_ps.setTimestamp(3, createTimestamp(dt));
