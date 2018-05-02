@@ -15,7 +15,7 @@
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script type="text/javascript">
+<script>
 golgotha.local.sortBy = function(combo) {
 	self.location = '/users.do?sortOpt=' + escape(golgotha.form.getCombo(combo));
 	return true;
@@ -60,7 +60,7 @@ golgotha.local.sortBy = function(combo) {
  <td class="sec">${pilot.equipmentType}</td>
 <c:choose>
 <c:when test="${isHR && (!empty session.addressInfo)}">
- <td class="small"><el:flag countryCode="${session.addressInfo.country.code}" /> ${session.addressInfo.location}</td>
+ <td class="small"><el:flag countryCode="${session.addressInfo.country.code}" />&nbsp;${session.addressInfo.location}</td>
 </c:when>
 <c:otherwise>
  <td>${pilot.location}</td>
