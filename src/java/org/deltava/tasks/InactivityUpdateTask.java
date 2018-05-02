@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to disable Users who have not logged in within a period of time.
  * @author Luke
- * @version 7.4
+ * @version 8.2
  * @since 1.0
  */
 
@@ -156,14 +156,12 @@ public class InactivityUpdateTask extends Task {
 					
 					// Remove the user from any destination directories
 					if (auth instanceof MultiAuthenticator) {
-						MultiAuthenticator mAuth = (MultiAuthenticator) auth;
-						if (auth instanceof SQLAuthenticator) {
-							SQLAuthenticator sqlAuth = (SQLAuthenticator) auth;
-							sqlAuth.setConnection(con);
+						try (MultiAuthenticator mAuth = (MultiAuthenticator) auth) {
+							if (auth instanceof SQLAuthenticator)
+								((SQLAuthenticator) auth).setConnection(con);
+						
 							mAuth.removeDestination(p);
-							sqlAuth.clearConnection();
-						} else
-							mAuth.removeDestination(p);
+						}
 					}
 					
 					// Remove the inactivity entry
