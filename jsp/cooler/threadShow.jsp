@@ -95,7 +95,7 @@ return true;
 <content:serverName var="serverName" />
 <content:sysdata var="imgPath" name="path.img" />
 <content:protocol var="reqProtocol" />
-<c:set var="postCount" value="${fn:sizeof(thread.posts)}" scope="page" />
+<c:set var="postCount" value="${thread.posts.size()}" scope="page" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -103,8 +103,7 @@ return true;
 <el:table className="thread form">
 <!-- Thread Header -->
 <tr class="title">
- <td colspan="3" class="left caps"><span class="nophone"><el:cmd className="title" url="channels"><content:airline />
- ${forumName}</el:cmd> | <el:cmd className="title" url="channel" linkID="${thread.channel}">${thread.channel}</el:cmd> |
+ <td colspan="3" class="left caps"><span class="nophone"><el:cmd className="title" url="channels"><content:airline />&nbsp;${forumName}</el:cmd> | <el:cmd className="title" url="channel" linkID="${thread.channel}">${thread.channel}</el:cmd> |
  </span><fmt:text value="${thread.subject}" /><c:if test="${access.canReport}">
  ( <el:cmd url="threadreport" link="${thread}" className="small">WARN MODERATORS</el:cmd> )</c:if></td>
 </tr>
@@ -256,40 +255,32 @@ APPLICANT<br />
 <tr class="pri bld mid nophone">
  <td colspan="3">
 <c:if test="${access.canLock}">
- <el:cmdbutton label="LOCK" url="threadlock" link="${thread}" op="lock" />
- <el:cmdbutton label="HIDE" url="threadlock" link="${thread}" op="hide" />
-</c:if>
+<el:cmdbutton label="LOCK" url="threadlock" link="${thread}" op="lock" />
+&nbsp;<el:cmdbutton label="HIDE" url="threadlock" link="${thread}" op="hide" /></c:if>
 <c:if test="${access.canUnlock}">
- <el:cmdbutton label="UNLOCK" url="threadunlock" link="${thread}" op="unlock" />
- <el:cmdbutton label="UNHIDE" url="threadunlock" link="${thread}" op="unhide" />
-</c:if>
+&nbsp;<el:cmdbutton label="UNLOCK" url="threadunlock" link="${thread}" op="unlock" />
+&nbsp;<el:cmdbutton label="UNHIDE" url="threadunlock" link="${thread}" op="unhide" /></c:if>
 <c:if test="${imgAccess.canDelete}">
- <el:cmdbutton ID="ImgDeleteButton" label="DELETE IMAGE" url="imgdelete" link="${img}" />
-</c:if>
+&nbsp;<el:cmdbutton ID="ImgDeleteButton" label="DELETE IMAGE" url="imgdelete" link="${img}" /></c:if>
 <c:if test="${access.canRelinkImages}">
- <el:cmdbutton label="RESTORE IMAGE LINKS" url="restoreimglinks" link="${thread}" />
-</c:if>
+&nbsp;<el:cmdbutton label="RESTORE IMAGE LINKS" url="restoreimglinks" link="${thread}" /></c:if>
 <content:filter roles="Moderator"><c:if test="${contentWarn || (thread.reportCount > 0)}">
- <el:cmdbutton label="CLEAR WARNINGS" url="clearcontentwarn" link="${thread}" />
+&nbsp;<el:cmdbutton label="CLEAR WARNINGS" url="clearcontentwarn" link="${thread}" />
 </c:if></content:filter>
 <c:if test="${access.canUnstick}">
- <el:cmdbutton label="UNSTICK" url="unstick" link="${thread}" />
-</c:if>
+&nbsp;<el:cmdbutton label="UNSTICK" url="unstick" link="${thread}" /></c:if>
 <c:if test="${access.canDelete}">
- <el:cmdbutton label="DELETE THREAD" url="threadkill" link="${thread}" />
-</c:if>
+&nbsp;<el:cmdbutton label="DELETE THREAD" url="threadkill" link="${thread}" /></c:if>
 <content:filter roles="Moderator">
- MOVE TO <el:combo name="newChannel" idx="*" size="1" options="${channels}" firstEntry="-" value="${thread.channel}" />
- <el:cmdbutton label="MOVE" url="threadmove" post="true" link="${thread}" />
+&nbsp;MOVE TO <el:combo name="newChannel" idx="*" size="1" options="${channels}" firstEntry="-" value="${thread.channel}" /> <el:cmdbutton label="MOVE" url="threadmove" post="true" link="${thread}" />
 </content:filter></td>
 </tr>
 <content:filter roles="Moderator">
 <tr class="nophone">
 <td class="pri mid bld" colspan="3">MARK THIS THREAD STICKY UNTIL
-&nbsp;<el:text name="stickyDate" idx="*" size="10" max="10" value="${fn:dateFmt(stickyDate, dateFmt)}" />
- at <el:text name="stickyTime" idx="*" size="4" max="5" value="${fn:dateFmt(stickyDate, 'HH:mm')}" />
+&nbsp;<el:text name="stickyDate" idx="*" size="10" max="10" value="${fn:dateFmt(stickyDate, dateFmt)}" /> at <el:text name="stickyTime" idx="*" size="4" max="5" value="${fn:dateFmt(stickyDate, 'HH:mm')}" />
 <c:if test="${dateFmt == 'MM/dd/yyyy'}">
- <el:button label="CALENDAR" onClick="void show_calendar('forms[0].stickyDate')" /></c:if> <el:cmdbutton label="STICK" url="threadstick" post="true" link="${thread}" /> <span class="small">Your time zone is ${user.TZ.name}.</span></td>
+&nbsp;<el:button label="CALENDAR" onClick="void show_calendar('forms[0].stickyDate')" /></c:if> <el:cmdbutton label="STICK" url="threadstick" post="true" link="${thread}" />&nbsp;<span class="small">Your time zone is ${user.TZ.name}.</span></td>
 </tr>
 </content:filter>
 </c:if>
@@ -303,7 +294,7 @@ APPLICANT<br />
 notification each time a reply is posted in this Thread.
 <el:cmdbutton url="notifytoggle" link="${thread}" label="${doNotify ? 'DISABLE' : 'ENABLE'} NOTIFICATIONS" /> 
 <content:filter roles="Moderator">
-<c:if test="${!empty notify.IDs}"><el:cmdbutton url="notifyclear" link="${thread}" label="RESET NOTIFICATIONS" /></c:if>
+<c:if test="${!empty notify.IDs}">&nbsp;<el:cmdbutton url="notifyclear" link="${thread}" label="RESET NOTIFICATIONS" /></c:if>
 </content:filter></td>
 </tr>
 </content:filter>
