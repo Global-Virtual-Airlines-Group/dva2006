@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -14,7 +14,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to read Navigation data.
  * @author Luke
- * @version 8.0
+ * @version 8.3
  * @since 1.0
  */
 
@@ -319,7 +319,7 @@ public class GetNavData extends DAO {
 		try {
 			prepareStatement("SELECT ND.*, ST_Distance(LL, ST_PointFromText(?,?)) AS DST FROM common.NAVDATA ND WHERE (ND.ITEMTYPE=?) HAVING (DST<?) ORDER BY DST");
 			_ps.setString(1, formatLocation(loc));
-			_ps.setInt(2, GEO_SRID);
+			_ps.setInt(2, WGS84_SRID);
 			_ps.setInt(3, Navaid.INT.ordinal());
 			_ps.setDouble(4, distance / GeoLocation.DEGREE_MILES);
 			return execute();
@@ -343,7 +343,7 @@ public class GetNavData extends DAO {
 		try {
 			prepareStatement("SELECT ND.*, ST_Distance(LL, ST_PointFromText(?,?)) AS DST FROM common.NAVDATA ND WHERE (ND.ITEMTYPE<=?) HAVING (DST<?) ORDER BY DST");
 			_ps.setString(1, formatLocation(loc));
-			_ps.setInt(2, GEO_SRID);
+			_ps.setInt(2, WGS84_SRID);
 			_ps.setInt(3, Navaid.NDB.ordinal());
 			_ps.setDouble(4, distance / GeoLocation.DEGREE_MILES); // convert to degrees
 			return execute();

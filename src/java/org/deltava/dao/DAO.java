@@ -12,7 +12,7 @@ import org.deltava.beans.GeoLocation;
 /**
  * A JDBC Data Access Object. DAOs are used to read and write persistent data to JDBC data sources.
  * @author Luke
- * @version 8.2
+ * @version 8.3
  * @since 1.0
  */
 
@@ -48,7 +48,7 @@ public abstract class DAO {
 	/**
 	 * The SRID used for geolocation queries.
 	 */
-	protected static final int GEO_SRID = 3587;
+	protected static final int WGS84_SRID = 4326;
 
 	/**
 	 * Creates a Data Access Object with access to a particular connection. <i>If the autoCommit property for the JDBC
@@ -83,7 +83,7 @@ public abstract class DAO {
 	 * @return the WKT point
 	 */
 	protected static String formatLocation(GeoLocation loc) {
-		return String.format("POINT(%1$,.4f %2$,.4f)", Double.valueOf(loc.getLatitude()), Double.valueOf(loc.getLongitude()));
+		return String.format("POINT(%1$,.4f %2$,.4f)", Double.valueOf(loc.getLongitude()), Double.valueOf(loc.getLatitude()));
 	}
 
 	/**
