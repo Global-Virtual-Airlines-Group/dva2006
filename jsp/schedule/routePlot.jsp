@@ -91,7 +91,7 @@ golgotha.local.validate = function(f) {
  <td class="label">Arriving at</td>
  <td class="data"><el:combo name="airportA" className="req" size="1" idx="*" options="${airportsA}" firstEntry="-" value="${flight.airportA}" onChange="void golgotha.routePlot.updateRoute(true)" />
  <el:airportCode combo="airportA" airport="${flight.airportA}" idx="*" />
-<c:if test="${!empty flight.airportA}"> <el:cmd url="airportInfo" linkID="${flight.airportA.ICAO}" className="small" target="_new">Airport Information</el:cmd></c:if></td>
+<c:if test="${!empty flight.airportA}">&nbsp;<el:cmd url="airportInfo" linkID="${flight.airportA.ICAO}" className="small" target="_new">Airport Information</el:cmd></c:if></td>
 </tr>
 <tr id="gatesA" style="display:none;">
  <td class="label">Arrival Gate</td>
