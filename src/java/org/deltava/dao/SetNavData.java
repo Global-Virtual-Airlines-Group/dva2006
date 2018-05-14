@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2011, 2012, 2013, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2011, 2012, 2013, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.navdata.*;
 /**
  * A Data Access Object to update Navigation data.
  * @author Luke
- * @version 8.0
+ * @version 8.3
  * @since 1.0
  */
 
@@ -39,7 +39,7 @@ public class SetNavData extends DAO {
 			_ps.setDouble(3, ndata.getLatitude());
 			_ps.setDouble(4, ndata.getLongitude());
 			_ps.setString(9, formatLocation(ndata));
-			_ps.setInt(10, GEO_SRID);
+			_ps.setInt(10, WGS84_SRID);
 			switch (ndata.getType()) {
 			case VOR:
 				VOR vor = (VOR) ndata;
@@ -99,7 +99,7 @@ public class SetNavData extends DAO {
 			_ps.setInt(2, a.getSequence());
 			_ps.setBoolean(8, a.isHighLevel());
 			_ps.setBoolean(9, a.isLowLevel());
-			_ps.setInt(11, GEO_SRID);
+			_ps.setInt(11, WGS84_SRID);
 
 			// Write the waypoints
 			int x = 1;
@@ -147,7 +147,7 @@ public class SetNavData extends DAO {
 			_ps.setString(1, tr.getICAO());
 			_ps.setInt(2, tr.getType().ordinal());
 			_ps.setInt(3, tr.getSequence());
-			_ps.setInt(10, GEO_SRID);
+			_ps.setInt(10, WGS84_SRID);
 			for (int x = 0; x < wps.size(); x++) {
 				NavigationDataBean ai = wps.get(x);
 				_ps.setInt(4, x + 1);

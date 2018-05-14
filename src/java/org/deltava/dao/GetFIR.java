@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2012, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -16,7 +16,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load FIR data.
  * @author Luke
- * @version 7.3
+ * @version 8.3
  * @since 3.2
  */
 
@@ -147,7 +147,7 @@ public class GetFIR extends DAO {
 		try {
 			prepareStatementWithoutLimits("SELECT ID, OCEANIC FROM common.FIR WHERE ST_Contains(data, ST_PointFromText(?,?))");
 			_ps.setString(1, pt);
-			_ps.setInt(2, GEO_SRID);
+			_ps.setInt(2, WGS84_SRID);
 			
 			String id = null; boolean isOceanic = false;
 			try (ResultSet rs = _ps.executeQuery()) {
@@ -163,7 +163,7 @@ public class GetFIR extends DAO {
 			
 			prepareStatementWithoutLimits("SELECT ID, OCEANIC FROM common.FIR WHERE ST_Intersects(data, ST_PointFromText(?,?))");
 			_ps.setString(1, pt);
-			_ps.setInt(2, GEO_SRID);
+			_ps.setInt(2, WGS84_SRID);
 			try (ResultSet rs = _ps.executeQuery()) {
 				if (rs.next()) {
 					id = rs.getString(1);

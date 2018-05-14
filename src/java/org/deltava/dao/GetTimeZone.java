@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2010, 2011, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2010, 2011, 2015, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.beans.*;
 /**
  * A Data Access Object for loading Time Zones.
  * @author Luke
- * @version 7.0
+ * @version 8.4
  * @since 1.0
  */
 
@@ -61,7 +61,7 @@ public class GetTimeZone extends DAO {
     		ZoneId tz = null;
     		prepareStatementWithoutLimits("SELECT NAME FROM geoip.TZ WHERE ST_Contains(DATA, ST_PointFromText(?,?))");
     		_ps.setString(1, pt);
-    		_ps.setInt(2, GEO_SRID);
+    		_ps.setInt(2, WGS84_SRID);
     		try (ResultSet rs = _ps.executeQuery()) {
     			if (rs.next()) tz = ZoneId.of(rs.getString(1));
     		}
@@ -69,7 +69,7 @@ public class GetTimeZone extends DAO {
     		if (tz == null) {
     			prepareStatementWithoutLimits("SELECT NAME FROM geoip.TZ WHERE ST_Intersects(DATA, ST_PointFromText(?,?))");
     			_ps.setString(1, pt);
-        		_ps.setInt(2, GEO_SRID);
+        		_ps.setInt(2, WGS84_SRID);
         		try (ResultSet rs = _ps.executeQuery()) {
         			if (rs.next()) tz = ZoneId.of(rs.getString(1));
         		}
