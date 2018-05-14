@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import com.vividsolutions.jts.geom.*;
 /**
  * A utility class for performing geocoding operations.
  * @author Luke
- * @version 7.3
+ * @version 8.3
  * @since 1.0
  */
 
@@ -526,7 +526,7 @@ public class GeoUtils {
 	 * @return a JTS Coordinate
 	 */
 	public static Coordinate toCoordinate(GeoLocation loc) {
-		return new Coordinate(loc.getLatitude(), loc.getLongitude());
+		return new Coordinate(loc.getLongitude(), loc.getLatitude());
 	}
 	
 	/**
@@ -535,6 +535,6 @@ public class GeoUtils {
 	 * @return a GeoLocation
 	 */
 	public static GeoLocation fromCoordinate(Coordinate c) {
-		return  new GeoPosition(c.x, c.y);
+		return  new GeoPosition(c.y, c.x);
 	}
 }

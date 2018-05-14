@@ -1,4 +1,4 @@
-// Copyright 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -14,7 +14,7 @@ import org.deltava.util.GeoUtils;
 /**
  * A Data Access Object to write Airspace boundaries to the database.
  * @author Luke
- * @version 7.3
+ * @version 8.3
  * @since 7.3
  */
 
@@ -47,9 +47,9 @@ public class SetAirspace extends DAO {
 			_ps.setInt(7, a.getMaxAltitude());
 			WKTWriter ww = new WKTWriter();
 			_ps.setString(8, ww.write(geo.getCentroid()));
-			_ps.setInt(9, GEO_SRID);
+			_ps.setInt(9, WGS84_SRID);
 			_ps.setString(10, ww.write(geo));
-			_ps.setInt(11, GEO_SRID);
+			_ps.setInt(11, WGS84_SRID);
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);

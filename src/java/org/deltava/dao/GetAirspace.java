@@ -1,4 +1,4 @@
-// Copyright 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -17,7 +17,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load Airspace boundaries from the database. 
  * @author Luke
- * @version 7.3
+ * @version 8.3
  * @since 7.3
  */
 
@@ -91,7 +91,7 @@ public class GetAirspace extends DAO {
 		try {
 			prepareStatementWithoutLimits("SELECT ID, COUNTRY FROM common.AIRSPACE FORCE INDEX (AS_ALT_IDX) WHERE ST_Contains(DATA, ST_PointFromText(?,?)) AND (MIN_ALT<=?) AND (MAX_ALT>=?) AND (EXCLUSION=?) ORDER BY TYPE");
 			_ps.setString(1, formatLocation(loc));
-			_ps.setInt(2, GEO_SRID);
+			_ps.setInt(2, WGS84_SRID);
 			_ps.setBoolean(3, false);
 			_ps.setInt(4, loc.getAltitude());
 			_ps.setInt(5, loc.getAltitude());

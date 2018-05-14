@@ -3,7 +3,7 @@ CREATE TABLE TZ (
  ID                SMALLINT UNSIGNED NOT NULL DEFAULT 1,
  LAT               DECIMAL(8,4) NOT NULL,
  LNG               DECIMAL(8,4) NOT NULL,
- CTR               POINT NOT NULL,
+ CTR               POINT NOT NULL SRID 4326,
  DATA              POLYGON NOT NULL,
  PRIMARY KEY (NAME, ID),
  SPATIAL KEY geo_tz(DATA)

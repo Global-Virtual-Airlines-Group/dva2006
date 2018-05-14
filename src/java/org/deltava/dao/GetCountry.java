@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load ISO-3316 country codes and perform geolocation.
  * @author Luke
- * @version 7.4
+ * @version 8.3
  * @since 3.2
  */
 
@@ -68,7 +68,7 @@ public class GetCountry extends DAO {
 		try {
 			prepareStatementWithoutLimits("SELECT CODE FROM common.COUNTRY WHERE ST_Contains(DATA, ST_PointFromText(?,?)) LIMIT 1");
 			_ps.setString(1, formatLocation(loc));
-			_ps.setInt(2, GEO_SRID);
+			_ps.setInt(2, WGS84_SRID);
 			
 			try (ResultSet rs = _ps.executeQuery()) {
 				if (rs.next())

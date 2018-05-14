@@ -1,4 +1,4 @@
-// Copyright 2009, 2011, 2012, 2013, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2011, 2012, 2013, 2015, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load weather data from the database.
  * @author Luke
- * @version 7.0
+ * @version 8.3
  * @since 2.7
  */
 
@@ -70,12 +70,11 @@ public class GetWeather extends DAO {
 	 */
 	public METAR getMETAR(GeoLocation loc, int distance) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT M.DATE, M.DATA, M.ILS, M.AIRPORT, ND.LATITUDE, ND.LONGITUDE, ND.ALTITUDE "
-				+ "FROM common.METARS M LEFT JOIN common.NAVDATA ND ON (M.AIRPORT=ND.CODE) AND (ND.ITEMTYPE=?) ORDER BY "
-				+ "ST_Distance(LOC, ST_PointFromText(?, ?)) LIMIT 1");
+			prepareStatementWithoutLimits("SELECT M.DATE, M.DATA, M.ILS, M.AIRPORT, ND.LATITUDE, ND.LONGITUDE, ND.ALTITUDE FROM common.METARS M LEFT JOIN "
+				+ "common.NAVDATA ND ON (M.AIRPORT=ND.CODE) AND (ND.ITEMTYPE=?) ORDER BY ST_Distance(LOC, ST_PointFromText(?, ?)) LIMIT 1");
 			_ps.setInt(1, Navaid.AIRPORT.ordinal());
 			_ps.setString(2, formatLocation(loc));
-			_ps.setInt(3, GEO_SRID);
+			_ps.setInt(3, WGS84_SRID);
 			
 			// Load the METAR
 			METAR m = null;
