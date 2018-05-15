@@ -83,7 +83,7 @@ public abstract class DAO {
 	 * @return the WKT point
 	 */
 	protected static String formatLocation(GeoLocation loc) {
-		return String.format("POINT(%1$,.4f %2$,.4f)", Double.valueOf(loc.getLongitude()), Double.valueOf(loc.getLatitude()));
+		return String.format("POINT(%1$,.4f %2$,.4f)", Double.valueOf(loc.getLatitude()), Double.valueOf(loc.getLongitude()));
 	}
 
 	/**
