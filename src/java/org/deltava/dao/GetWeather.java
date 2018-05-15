@@ -71,7 +71,7 @@ public class GetWeather extends DAO {
 	public METAR getMETAR(GeoLocation loc, int distance) throws DAOException {
 		try {
 			prepareStatementWithoutLimits("SELECT M.DATE, M.DATA, M.ILS, M.AIRPORT, ND.LATITUDE, ND.LONGITUDE, ND.ALTITUDE FROM common.METARS M LEFT JOIN "
-				+ "common.NAVDATA ND ON (M.AIRPORT=ND.CODE) AND (ND.ITEMTYPE=?) ORDER BY ST_Distance(LOC, ST_PointFromText(?, ?)) LIMIT 1");
+				+ "common.NAVDATA ND ON (M.AIRPORT=ND.CODE) AND (ND.ITEMTYPE=?) ORDER BY ST_Distance_Sphere(LOC, ST_PointFromText(?, ?)) LIMIT 1");
 			_ps.setInt(1, Navaid.AIRPORT.ordinal());
 			_ps.setString(2, formatLocation(loc));
 			_ps.setInt(3, WGS84_SRID);

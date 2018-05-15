@@ -317,7 +317,7 @@ public class GetNavData extends DAO {
 			throw new IllegalArgumentException("Invalid distance -  " + distance);
 
 		try {
-			prepareStatement("SELECT ND.*, ST_Distance(LL, ST_PointFromText(?,?)) AS DST FROM common.NAVDATA ND WHERE (ND.ITEMTYPE=?) HAVING (DST<?) ORDER BY DST");
+			prepareStatement("SELECT ND.*, ST_Distance_Sphere(LL, ST_PointFromText(?,?)) AS DST FROM common.NAVDATA ND WHERE (ND.ITEMTYPE=?) HAVING (DST<?) ORDER BY DST");
 			_ps.setString(1, formatLocation(loc));
 			_ps.setInt(2, WGS84_SRID);
 			_ps.setInt(3, Navaid.INT.ordinal());
@@ -341,7 +341,7 @@ public class GetNavData extends DAO {
 			throw new IllegalArgumentException("Invalid distance -  " + distance);
 
 		try {
-			prepareStatement("SELECT ND.*, ST_Distance(LL, ST_PointFromText(?,?)) AS DST FROM common.NAVDATA ND WHERE (ND.ITEMTYPE<=?) HAVING (DST<?) ORDER BY DST");
+			prepareStatement("SELECT ND.*, ST_Distance_Sphere(LL, ST_PointFromText(?,?)) AS DST FROM common.NAVDATA ND WHERE (ND.ITEMTYPE<=?) HAVING (DST<?) ORDER BY DST");
 			_ps.setString(1, formatLocation(loc));
 			_ps.setInt(2, WGS84_SRID);
 			_ps.setInt(3, Navaid.NDB.ordinal());
