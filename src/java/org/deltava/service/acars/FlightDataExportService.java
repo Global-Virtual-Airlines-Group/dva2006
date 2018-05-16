@@ -17,7 +17,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to return ACARS flight data parameters.
  * @author Luke
- * @version 8.2
+ * @version 8.3
  * @since 1.0
  */
 
@@ -60,7 +60,7 @@ public class FlightDataExportService extends WebService {
 		// Write the CSV header
 		if (info.getFDR() != Recorder.XACARS) {
 			ctx.println("Date/Time,Latitude,Longitude,Altitude,Heading,Air Speed,Ground Speed,Mach,Vertical Speed,N1,N2,Bank,Pitch,Flaps,WindSpeed,WindHdg,Temperature,Pressure,Visibility,"
-				+"FuelFlow,Fuel,Weight,Gs,AOA,AP,ALT,AT,FrameRate,VAS,NAV1,NAV2,COM1,ATC1,COM2,ATC2,WARN");
+				+"FuelFlow,Fuel,Weight,Gs,AOA,AP,ALT,AT,FrameRate,VAS,NAV1,NAV2,ADF1,ADF2,COM1,ATC1,COM2,ATC2,WARN");
 		} else
 			ctx.println("Date/Time,Latitude,Longitude,Altitude,Heading,Air Speed,Ground Speed,Mach,WindSpeed,WindHdg,Fuel");
 
@@ -196,6 +196,10 @@ public class FlightDataExportService extends WebService {
 		buf.append(entry.getNAV1());
 		buf.append(',');
 		buf.append(entry.getNAV2());
+		buf.append(',');
+		buf.append(StringUtils.isEmpty(entry.getADF1()) ? "-" : entry.getADF1());
+		buf.append(',');
+		buf.append(StringUtils.isEmpty(entry.getADF2()) ? "-" : entry.getADF2());
 		buf.append(',');
 		if (entry.getATC1() != null) {
 			buf.append(entry.getCOM1());
