@@ -17,7 +17,7 @@ import org.deltava.dao.file.GetSerializedPosition;
 /**
  * A Data Access Object to load ACARS position data.
  * @author Luke
- * @version 8.2
+ * @version 8.3
  * @since 4.1
  */
 
@@ -61,8 +61,8 @@ public class GetACARSPositions extends GetACARSData {
 	private List<GeospaceLocation> getLiveEntries(int flightID, boolean includeOnGround) throws DAOException {
 		try {
 			prepareStatementWithoutLimits("SELECT REPORT_TIME, LAT, LNG, B_ALT, R_ALT, HEADING, PITCH, BANK, ASPEED, GSPEED, VSPEED, MACH, N1, N2, FLAPS, "
-				+ "WIND_HDG, WIND_SPEED, TEMP, PRESSURE, VIZ, FUEL, FUELFLOW, AOA, GFORCE, FLAGS, FRAMERATE, SIM_RATE, SIM_TIME, PHASE, NAV1, NAV2, VAS, "
-				+ "WEIGHT, ASTYPE FROM acars.POSITIONS WHERE (FLIGHT_ID=?) ORDER BY REPORT_TIME");
+				+ "WIND_HDG, WIND_SPEED, TEMP, PRESSURE, VIZ, FUEL, FUELFLOW, AOA, GFORCE, FLAGS, FRAMERATE, SIM_RATE, SIM_TIME, PHASE, NAV1, NAV2, "
+				+ "ADF1, ADF2, VAS, WEIGHT, ASTYPE FROM acars.POSITIONS WHERE (FLIGHT_ID=?) ORDER BY REPORT_TIME");
 			_ps.setInt(1, flightID);
 
 			// Execute the query
@@ -100,9 +100,11 @@ public class GetACARSPositions extends GetACARSData {
 					entry.setPhase(rs.getInt(29));
 					entry.setNAV1(rs.getString(30));
 					entry.setNAV2(rs.getString(31));
-					entry.setVASFree(rs.getInt(32));
-					entry.setWeight(rs.getInt(33));
-					entry.setAirspace(AirspaceType.values()[rs.getInt(34)]);
+					entry.setADF1(rs.getString(32));
+					entry.setADF2(rs.getString(33));
+					entry.setVASFree(rs.getInt(34));
+					entry.setWeight(rs.getInt(35));
+					entry.setAirspace(AirspaceType.values()[rs.getInt(36)]);
 
 					// Add to results - or just log a GeoPosition if we're on the ground
 					if (entry.isFlagSet(ACARSFlags.ONGROUND) && !entry.isFlagSet(ACARSFlags.TOUCHDOWN) && !includeOnGround && !entry.isWarning())

@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
  * @author Rahul
- * @version 8.2
+ * @version 8.3
  * @since 1.0
  */
 
@@ -46,6 +46,8 @@ public class ACARSRouteEntry extends RouteEntry {
 	
 	private String _com1;
 	private String _com2;	
+	private String _adf1;
+	private String _adf2;
 	private Controller _atc1;
 	private Controller _atc2;
 	
@@ -251,6 +253,24 @@ public class ACARSRouteEntry extends RouteEntry {
 	 */
 	public String getCOM2() {
 		return _com2;
+	}
+	
+	/**
+	 * Returns the ADF1 frequency.
+	 * @return the frequency
+	 * @see ACARSRouteEntry#setADF1(String)
+	 */
+	public String getADF1() {
+		return _adf1;
+	}
+	
+	/**
+	 * Returns the ADF2 frequency.
+	 * @return the frequency
+	 * @see ACARSRouteEntry#setADF2(String)
+	 */
+	public String getADF2() {
+		return _adf2;
 	}
 	
 	/**
@@ -464,6 +484,24 @@ public class ACARSRouteEntry extends RouteEntry {
 	 */
 	public void setNAV2(String freq) {
 		_nav2 = freq;
+	}
+	
+	/**
+	 * Sets the ADF1 radio frequency.
+	 * @param freq the frequency
+	 * @see ACARSRouteEntry#getADF1()
+	 */
+	public void setADF1(String freq) {
+		_adf1 = freq;
+	}
+	
+	/**
+	 * Sets the ADF2 radio frequency.
+	 * @param freq the frequency
+	 * @see ACARSRouteEntry#getADF2()
+	 */
+	public void setADF2(String freq) {
+		_adf2 = freq;
 	}
 	
 	/**
