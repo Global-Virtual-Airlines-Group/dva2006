@@ -12,7 +12,7 @@ import org.deltava.dao.DAOException;
 /**
  * A Data Access Object to serialize ACARS position records.
  * @author Luke
- * @version 8.2
+ * @version 8.3
  * @since 4.1
  */
 
@@ -35,7 +35,7 @@ public class SetSerializedPosition extends WriteableDAO {
 	public void archivePositions(int flightID, Collection<? extends RouteEntry> positions) throws DAOException {
 		if (positions.isEmpty()) return;
 		RouteEntry re = positions.iterator().next();
-		SerializedDataVersion ver = (re instanceof ACARSRouteEntry) ? SerializedDataVersion.ACARSv5 : SerializedDataVersion.XACARS;
+		SerializedDataVersion ver = (re instanceof ACARSRouteEntry) ? SerializedDataVersion.ACARSv6 : SerializedDataVersion.XACARS;
 		try (DataOutputStream out = new DataOutputStream(_os)) {
 			out.writeShort(ver.ordinal());
 			out.writeInt(flightID);
@@ -89,6 +89,8 @@ public class SetSerializedPosition extends WriteableDAO {
 		out.writeInt(re.getWeight()); // v42
 		out.writeUTF((re.getNAV1() == null) ? "" : re.getNAV1());
 		out.writeUTF((re.getNAV2() == null) ? "" : re.getNAV2());
+		out.writeUTF((re.getADF1() == null) ? "" : re.getADF1()); // v6
+		out.writeUTF((re.getADF2() == null) ? "" : re.getADF2()); // v6
 		
 		// Write ATC1
 		Controller atc = re.getATC1();
