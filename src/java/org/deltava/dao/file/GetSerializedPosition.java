@@ -100,9 +100,7 @@ public class GetSerializedPosition extends DAO {
 			
 			if (version.getVersion() > 5) {
 				String adf1 = in.readUTF();
-				String adf2 = in.readUTF();
 				re.setADF1(StringUtils.isEmpty(adf1) ? null : adf1);
-				re.setADF2(StringUtils.isEmpty(adf2) ? null : adf2);
 			}
 			
 			// Check for ATC1

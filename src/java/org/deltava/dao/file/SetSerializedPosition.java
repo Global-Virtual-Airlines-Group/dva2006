@@ -90,7 +90,6 @@ public class SetSerializedPosition extends WriteableDAO {
 		out.writeUTF((re.getNAV1() == null) ? "" : re.getNAV1());
 		out.writeUTF((re.getNAV2() == null) ? "" : re.getNAV2());
 		out.writeUTF((re.getADF1() == null) ? "" : re.getADF1()); // v6
-		out.writeUTF((re.getADF2() == null) ? "" : re.getADF2()); // v6
 		
 		// Write ATC1
 		Controller atc = re.getATC1();
