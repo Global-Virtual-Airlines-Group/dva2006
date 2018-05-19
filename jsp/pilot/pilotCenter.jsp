@@ -70,7 +70,7 @@
 
 <!-- Pilot Information -->
 <tr class="title caps">
- <td colspan="2">PILOT CENTER - ${pilot.rank.name}  ${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></td>
+ <td colspan="2">PILOT CENTER - ${pilot.rank.name}&nbsp;${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></td>
 </tr>
 <tr>
  <td class="sideLabel mid"><el:cmd className="bld" url="profile" link="${pilot}" op="edit">Edit My Profile</el:cmd></td>
