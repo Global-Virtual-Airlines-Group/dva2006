@@ -316,12 +316,14 @@ public class GetNavData extends DAO {
 		if ((distance < 0) || (distance > 1000))
 			throw new IllegalArgumentException("Invalid distance -  " + distance);
 
+		// Convert to meters
+		int dstM = (int)(distance * DistanceUnit.KM.getFactor() * 1000);
 		try {
 			prepareStatement("SELECT ND.*, ST_Distance_Sphere(LL, ST_PointFromText(?,?)) AS DST FROM common.NAVDATA ND WHERE (ND.ITEMTYPE=?) HAVING (DST<?) ORDER BY DST");
 			_ps.setString(1, formatLocation(loc));
 			_ps.setInt(2, WGS84_SRID);
 			_ps.setInt(3, Navaid.INT.ordinal());
-			_ps.setDouble(4, distance / GeoLocation.DEGREE_MILES);
+			_ps.setInt(4, dstM);
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -339,13 +341,15 @@ public class GetNavData extends DAO {
 	public Collection<NavigationDataBean> getObjects(GeoLocation loc, int distance) throws DAOException {
 		if ((distance < 0) || (distance > 1500))
 			throw new IllegalArgumentException("Invalid distance -  " + distance);
-
+		
+		// Convert to meters
+		int dstM = (int)(distance * DistanceUnit.KM.getFactor() * 1000);
 		try {
 			prepareStatement("SELECT ND.*, ST_Distance_Sphere(LL, ST_PointFromText(?,?)) AS DST FROM common.NAVDATA ND WHERE (ND.ITEMTYPE<=?) HAVING (DST<?) ORDER BY DST");
 			_ps.setString(1, formatLocation(loc));
 			_ps.setInt(2, WGS84_SRID);
 			_ps.setInt(3, Navaid.NDB.ordinal());
-			_ps.setDouble(4, distance / GeoLocation.DEGREE_MILES); // convert to degrees
+			_ps.setInt(4, dstM);
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
