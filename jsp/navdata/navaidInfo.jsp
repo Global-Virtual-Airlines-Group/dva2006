@@ -26,18 +26,17 @@ golgotha.local.validate = function(f) {
 	return true;
 };
 
-golgotha.local.zoomTo = function(combo)
-{
-var idx = combo.selectedIndex;
-if ((idx < 0) || (idx >= golgotha.local.navaids.length)) return false;
+golgotha.local.zoomTo = function(combo) {
+	var idx = combo.selectedIndex;
+	if ((idx < 0) || (idx >= golgotha.local.navaids.length)) return false;
 
-// Pan the map
-var mrk = golgotha.local.navaids[idx];
-map.panTo(mrk.getPosition());
-golgotha.local.mapC = mrk.getPosition();
-golgotha.local.loadWaypoints();
-google.maps.event.trigger(mrk, 'click');
-return true;
+	// Pan the map
+	var mrk = golgotha.local.navaids[idx];
+	map.panTo(mrk.getPosition());
+	golgotha.local.mapC = mrk.getPosition();
+	golgotha.local.loadWaypoints();
+	google.maps.event.trigger(mrk, 'click');
+	return true;
 };
 
 golgotha.local.loadWaypoints = function()
@@ -60,26 +59,23 @@ var xmlreq = new XMLHttpRequest();
 xmlreq.open('get', 'navaidsearch.ws?airports=true&lat=' + lat + '&lng=' + lng + '&range=' + Math.min(1000, Math.round(range)), true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
-	
-	var js = JSON.parse(xreq.responseText);
-	var wps = xe.getElementsByTagName('waypoint');
-	for (var i = 0; i < js.items.length; i++) {
-		var wp = js.items[i];
-		if (wp.code == '${param.navaidCode}') continue;
+	var js = JSON.parse(xmlreq.responseText);
+	js.items.forEach(function(wp) {
+		if (wp.code == '${param.navaidCode}') return;
 		var mrk;
-		if (wp.getAttribute('pal'))
+		if (wp.pal)
 			mrk = new golgotha.maps.IconMarker({pal:wp.pal, icon:wp.icon, info:wp.info}, wp.ll);
 		else
 			mrk = new golgotha.maps.Marker({color:wp.color, info:wp.info, label:wp.code}, wp.ll);
 
-		mrk.minZoom = 6; mrk.code = wo.code;
+		mrk.minZoom = 6; mrk.code = wp.code;
 		if (wp.type == 'Airport')
 			mrk.minZoom = 7;
 		else if (wp.type == 'Intersection')
 			mrk.minZoom = 8;
 
 		golgotha.local.sMarkers.addMarker(mrk, mrk.minZoom);
-	}
+	});
 
 	golgotha.form.clear();
 	return true;
@@ -152,7 +148,7 @@ return true;
 <map:point var="golgotha.local.mapC" point="${mapCenter}" />
 
 // Build the map
-var mapOpts = {center:golgotha.local.mapC, minZoom:6, zoom:8, scrollwheel:false, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
+var mapOpts = {center:golgotha.local.mapC, minZoom:6, zoom:8, scrollwheel:true, streetViewControl:false, clickableIcons:false, mapTypeControlOptions:{mapTypeIds:golgotha.maps.DEFAULT_TYPES}};
 var map = new golgotha.maps.Map(document.getElementById('googleMap'), mapOpts);
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
