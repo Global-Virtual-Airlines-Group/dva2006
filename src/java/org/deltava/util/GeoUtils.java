@@ -526,7 +526,7 @@ public class GeoUtils {
 	 * @return a JTS Coordinate
 	 */
 	public static Coordinate toCoordinate(GeoLocation loc) {
-		return new Coordinate(loc.getLongitude(), loc.getLatitude());
+		return new Coordinate(loc.getLatitude(), loc.getLongitude());
 	}
 	
 	/**
@@ -535,6 +535,6 @@ public class GeoUtils {
 	 * @return a GeoLocation
 	 */
 	public static GeoLocation fromCoordinate(Coordinate c) {
-		return  new GeoPosition(c.y, c.x);
+		return  new GeoPosition(c.x, c.y);
 	}
 }
