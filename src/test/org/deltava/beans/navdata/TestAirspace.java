@@ -3,6 +3,7 @@ package org.deltava.beans.navdata;
 import java.util.*;
 
 import org.deltava.beans.*;
+import org.deltava.beans.schedule.Country;
 import org.deltava.beans.schedule.GeoPosition;
 import org.deltava.util.GeoUtils;
 
@@ -13,6 +14,7 @@ public class TestAirspace extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
+		Country.init("US", "USA", "North America");
 	}
 
 	public static void testContains() {
@@ -32,6 +34,7 @@ public class TestAirspace extends TestCase {
 		
 		Airspace a = new Airspace("P-1", AirspaceType.P);
 		a.setBorder(locs);
+		a.setCountry(Country.get("US"));
 		assertTrue(a.contains(gl));
 
 		// Load into prohibited
