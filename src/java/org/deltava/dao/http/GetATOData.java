@@ -1,4 +1,4 @@
-// Copyright 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import static java.net.HttpURLConnection.HTTP_OK;
@@ -21,7 +21,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to read VATSIM Authorized Training Organization data.
  * @author Luke
- * @version 7.2
+ * @version 8.3
  * @since 7.2
  */
 
@@ -30,6 +30,7 @@ public class GetATOData extends DAO {
 	private static final Logger log = Logger.getLogger(GetATOData.class);
 	
 	private static final Cache<CacheableCollection<PilotRating>> _rCache = CacheManager.getCollection(PilotRating.class, "ATORatings");
+	private static final Cache<CacheableCollection<PilotRating>> _rpCache = CacheManager.getCollection(PilotRating.class, "ATOPilotRatings");
 	private static final Cache<CacheableCollection<Certificate>> _insCache = CacheManager.getCollection(Certificate.class, "ATOInstructors");
 	
 	/**
@@ -39,8 +40,18 @@ public class GetATOData extends DAO {
 	 * @throws DAOException if an error occurs
 	 */
 	public Collection<PilotRating> get(String cid) throws DAOException {
-		int id = StringUtils.parse(cid, 0);
-		return getCertificates().stream().filter(c -> (c.getID() == id)).collect(Collectors.toList());
+		final int id = StringUtils.parse(cid, 0);
+		if (id == 0)
+			return Collections.emptySet();
+		
+		CacheableCollection<PilotRating> certs = _rpCache.get(Integer.valueOf(id));
+		if (certs == null) {
+			certs = new CacheableSet<PilotRating>(Integer.valueOf(id));
+			getCertificates().stream().filter(c -> (c.getID() == id)).forEach(certs::add);
+			_rpCache.add(certs);
+		}
+		
+		return certs.clone();
 	}
 	
 	/**
@@ -50,7 +61,7 @@ public class GetATOData extends DAO {
 	 * @throws DAOException if an error occurs
 	 */
 	public Collection<Certificate> getInstructor(String cid) throws DAOException {
-		int id = StringUtils.parse(cid, 0);
+		final int id = StringUtils.parse(cid, 0);
 		return getInstructors().stream().filter(c -> (c.getID() == id)).collect(Collectors.toList());
 	}
 
@@ -122,16 +133,21 @@ public class GetATOData extends DAO {
 			for (int x = 0; x < ja.length(); x++) {
 				JSONObject co = ja.getJSONObject(x);
 				String cid = co.optString("pilot_name", null);
-				if (cid == null) continue;
+				JSONObject ro = co.optJSONObject("rating");
+				if ((ro == null) || (cid == null)) continue;
 				
-				JSONObject ao = co.getJSONObject("ato");
-				int id = StringUtils.parse(cid.substring(cid.lastIndexOf('(') + 1, cid.lastIndexOf(')')), 0);
-				PilotRating r = new PilotRating(id, co.getJSONObject("rating").getString("name"));
-				r.setName(cid.substring(0, cid.indexOf(" (")));
-				r.setIssueDate(Instant.parse(co.getString("created_at")));
-				r.setInstructorID(co.getJSONObject("user").getInt("cid"));
-				r.setATO(ao.getString("name"), ao.getString("url"));
-				results.add(r);
+				try {
+					JSONObject ao = co.getJSONObject("ato");
+					int id = StringUtils.parse(cid.substring(cid.lastIndexOf('(') + 1, cid.lastIndexOf(')')), 0);
+					PilotRating r = new PilotRating(id, ro.getString("name"));
+					r.setName(cid.substring(0, cid.indexOf(" (")));
+					r.setIssueDate(Instant.parse(co.getString("created_at")));
+					r.setInstructorID(co.getJSONObject("user").getInt("cid"));
+					r.setATO(ao.getString("name"), ao.getString("url"));
+					results.add(r);
+				} catch (JSONException je) {
+					log.warn(je.getMessage() + " at " + x);
+				}
 			}
 
 			_rCache.add(results);
