@@ -9,7 +9,7 @@ package org.deltava.beans.acars;
  */
 
 public enum SerializedDataVersion {
-	ACARS(1, false), XACARS(1, true), ACARSv2(2, false), ACARSv3(3, false), ACARSv4(4, false), ACARSv41(4, false), ACARSv5(5, false), ACARSv6(6, true);
+	ACARS(1, false), XACARS(1, true), ACARSv2(2, false), ACARSv3(3, false), ACARSv4(4, false), ACARSv41(4, false), ACARSv5(5, false), ACARSv6(6, false);
 
 	private final int _version;
 	private final boolean _isXACARS;
