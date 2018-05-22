@@ -21,7 +21,6 @@
 	<classpathentry kind="lib" path="lib/jsp-api-2.3.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jstl-api-1.2.1.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jdom-2.0.6.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/commons-codec-1.10.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jts-1.8.jar"/>
 	<classpathentry kind="lib" path="lib/shapefilereader-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/jdbf-1.2.jar"/>
@@ -40,5 +39,6 @@
 	<classpathentry kind="lib" path="lib/servlet-api-4.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jstl-1.2.3.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-5.1.46-bin.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/commons-codec-1.11.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
