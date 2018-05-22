@@ -4,9 +4,10 @@ package org.deltava.dao;
 import java.sql.*;
 import java.util.*;
 
-import org.apache.commons.codec.digest.Crypt;
+import org.apache.commons.codec.digest.UnixCrypt;
 
 import org.deltava.beans.system.IMAPConfiguration;
+import org.deltava.crypt.SaltMine;
 
 /**
  * A Data Access Object to update Pilot IMAP data.
@@ -130,9 +131,10 @@ public class SetPilotEMail extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void updatePassword(int id, String pwd) throws DAOException {
+		String salt = SaltMine.generate(2);
 		try {
 			prepareStatement("UPDATE postfix.mailbox SET crypt_pw=?, sha_pw=SHA1(?) WHERE (ID=?)");
-			_ps.setString(1, Crypt.crypt(pwd));
+			_ps.setString(1, UnixCrypt.crypt(pwd, salt));
 			_ps.setString(2, pwd);
 			_ps.setInt(3, id);
 			executeUpdate(1);
