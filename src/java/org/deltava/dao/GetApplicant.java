@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.*;
 /**
  * A Data Access Object to read Applicant data.
  * @author Luke
- * @version 8.0
+ * @version 8.3
  * @since 1.0
  */
 
@@ -385,7 +385,7 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 	public Collection<Integer> checkSoundex(Person usr, String dbName) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT ID, SOUNDEX(?) AS TARGET, SOUNDEX(LASTNAME COLLATE utf8_general_ci) AS SX FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT ID, SOUNDEX(?) AS TARGET, SOUNDEX(LASTNAME COLLATE utf8mb4_unicode_ci) AS SX FROM ");
 		sqlBuf.append(formatDBName(dbName));
 		sqlBuf.append(".APPLICANTS WHERE (ID<>?) AND (STATUS<>?) HAVING ((LEFT(SX, LENGTH(TARGET))=TARGET) OR "
 				+ "(LEFT(TARGET, LENGTH(SX))=SX)) ORDER BY ID");
