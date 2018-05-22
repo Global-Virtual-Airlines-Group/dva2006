@@ -31,7 +31,7 @@ golgotha.local.sort = function() { return document.forms[0].submit(); };
 <view:table cmd="roster">
 <!-- Table Sort Combo Bar -->
 <tr class="title">
- <td colspan="3" class="left caps"><span class="nophone"><content:airline /> </span>PILOT ROSTER</td>
+ <td colspan="3" class="left caps"><span class="nophone"><content:airline />&nbsp;</span>PILOT ROSTER</td>
  <td colspan="5" class="right">PROGRAM <el:combo name="eqType" size="1" idx="*" options="${eqTypes}" firstEntry="All Programs" value="${param.eqType}" onChange="void golgotha.local.sort()" />
 <span class="nophone"> SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${viewContext.sortType}" onChange="void golgotha.local.sort()" /></span></td>
 </tr>

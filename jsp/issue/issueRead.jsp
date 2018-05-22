@@ -92,7 +92,7 @@ golgotha.local.toggleCheckbox = function() {
 
 <!-- Issue Comments -->
 <tr class="title caps left">
- <td colspan="2"><c:if test="${fn:sizeof(issue.comments) > 1}"><fmt:int value="${fn:sizeof(issue.comments)}" /> </c:if>ISSUE COMMENTS</td>
+ <td colspan="2"><c:if test="${fn:sizeof(issue.comments) > 1}"><fmt:int value="${fn:sizeof(issue.comments)}" />&nbsp;</c:if>ISSUE COMMENTS</td>
 </tr>
 <c:if test="${empty issue.comments}">
 <tr class="pri bld mid caps">
