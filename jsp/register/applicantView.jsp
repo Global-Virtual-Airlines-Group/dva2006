@@ -14,7 +14,7 @@
 <content:favicon />
 <content:js name="common" />
 <content:json />
-<script type="text/javascript">
+<script>
 golgotha.local.validate = function(f)
 {
 <c:if test="${access.canApprove}">
@@ -244,7 +244,7 @@ ${dupe.rank.name} <el:cmd url="profile" link="${dupe}" className="bld">${dupe.na
 <c:if test="${!empty addrInfo}">
 <tr>
  <td class="label">IP Address Info</td>
- <td class="data">${addrInfo} <el:flag countryCode="${addrInfo.country.code}" caption="${addrInfo.country.name}" /> ${addrInfo.location}</td>
+ <td class="data">${addrInfo}&nbspl;<el:flag countryCode="${addrInfo.country.code}" caption="${addrInfo.country.name}" />&nbsp;${addrInfo.location}</td>
 </tr>
 </c:if>
 <c:if test="${!empty applicant.comments}">
@@ -321,23 +321,17 @@ Stage <fmt:int value="${eqStage}" />: ${eqStagePref}<br /></c:forEach></td>
 <tr>
  <td>&nbsp;
 <c:if test="${access.canApprove}">
- <el:button ID="HireButton" type="submit" label="HIRE APPLICANT" />
-</c:if>
+<el:button ID="HireButton" type="submit" label="HIRE APPLICANT" /></c:if>
 <c:if test="${access.canEdit}">
- <el:cmdbutton ID="EditButton" url="applicant" op="edit" link="${applicant}" label="EDIT APPLICANT" />
-</c:if>
+&nbsp;<el:cmdbutton url="applicant" op="edit" link="${applicant}" label="EDIT APPLICANT" /></c:if>
 <c:if test="${access.canReject}">
- <el:cmdbutton ID="RejectButton" url="appreject" link="${applicant}" label="REJECT" />
-</c:if>
+&nbsp;<el:cmdbutton url="appreject" link="${applicant}" label="REJECT" /></c:if>
 <c:if test="${!empty questionnaire}">
- <el:cmdbutton ID="QuestionnaireButton" url="questionnaire" link="${questionnaire}" label="QUESTIONNAIRE" />
-</c:if>
+&nbsp;<el:cmdbutton url="questionnaire" link="${questionnaire}" label="QUESTIONNAIRE" /></c:if>
 <c:if test="${access.canNotify}">
- <el:cmdbutton ID="ResendButton" url="welcome" link="${applicant}" label="RESEND WELCOME MESSAGE" />
-</c:if>
+&nbsp;<el:cmdbutton url="welcome" link="${applicant}" label="RESEND WELCOME MESSAGE" /></c:if>
 <c:if test="${access.canDelete}">
- <el:cmdbutton ID="DeleteButton" url="appdelete" link="${applicant}" label="DELETE" />
-</c:if>
+&nbsp;<el:cmdbutton url="appdelete" link="${applicant}" label="DELETE" /></c:if>
  </td>
 </tr>
 </el:table>
