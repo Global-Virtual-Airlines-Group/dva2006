@@ -15,14 +15,13 @@
 <content:js name="common" />
 <content:json />
 <script>
-golgotha.local.validate = function(f)
-{
+golgotha.local.validate = function(f) {
 <c:if test="${access.canApprove}">
-if (!golgotha.form.check()) return false;
-golgotha.form.validate({f:f.eqType, t:'Equipment Program'});
-golgotha.form.validate({f:f.rank, t:'Rank'});
-golgotha.form.submit(f);</c:if>
-return ${access.canApprove};
+	if (!golgotha.form.check()) return false;
+	golgotha.form.validate({f:f.eqType, t:'Equipment Program'});
+	golgotha.form.validate({f:f.rank, t:'Rank'});
+	golgotha.form.submit(f);</c:if>
+	return ${access.canApprove};
 }
 <c:if test="${access.canApprove}">
 golgotha.local.checkVATSIMData = function(id, name)
@@ -41,7 +40,7 @@ xmlreq.onreadystatechange = function() {
 	// Parse the JSON
 	var s = document.getElementById('validationInfo');
 	var js = JSON.parse(xmlreq.responseText);
-	s.innerHTML = 'Name : ' + js.name + 'Active : ' + js.active + 'E-Mail Domain : ' + js.domain;
+	s.innerHTML = 'Name : ' + js.name + ' Active : ' + js.active + ' E-Mail Domain : ' + js.domain;
 	golgotha.util.display('ValidateButton', false);
 	return true;
 };
@@ -244,7 +243,7 @@ ${dupe.rank.name} <el:cmd url="profile" link="${dupe}" className="bld">${dupe.na
 <c:if test="${!empty addrInfo}">
 <tr>
  <td class="label">IP Address Info</td>
- <td class="data">${addrInfo}&nbspl;<el:flag countryCode="${addrInfo.country.code}" caption="${addrInfo.country.name}" />&nbsp;${addrInfo.location}</td>
+ <td class="data">${addrInfo}&nbsp;<el:flag countryCode="${addrInfo.country.code}" caption="${addrInfo.country.name}" />&nbsp;${addrInfo.location}</td>
 </tr>
 </c:if>
 <c:if test="${!empty applicant.comments}">
