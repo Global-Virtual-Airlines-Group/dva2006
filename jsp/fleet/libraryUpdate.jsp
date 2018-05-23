@@ -24,7 +24,7 @@
 <!-- ${library} Library entry Created/Updated -->
 <div class="updateHdr">${library} Library Entry ${fileAdded? 'Added' : 'Updated'}</div>
 <br />
-This <content:airline /> ${library} Library entry has been successfully ${fileAdded? 'added' : 'updated'}.<br />
+This <content:airline />&nbsp;${library} Library entry has been successfully ${fileAdded? 'added' : 'updated'}.<br />
 </c:if>
 <c:if test="${isDelete}">
 <!-- ${library} Library entry Deleted -->
