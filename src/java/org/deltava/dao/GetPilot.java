@@ -12,7 +12,7 @@ import org.deltava.util.*;
 /**
  * A Data Access Object to get Pilots from the database, for use in roster operations.
  * @author Luke
- * @version 8.1
+ * @version 8.3
  * @since 1.0
  */
 
@@ -108,7 +108,7 @@ public class GetPilot extends PilotReadDAO {
 	public List<Pilot> getActivePilots(String orderBy) throws DAOException {
 
 		StringBuilder sql = new StringBuilder("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1) AS HOURS, MAX(F.DATE) AS LASTFLIGHT FROM PILOTS P "
-			+ "LEFT JOIN PIREPS F ON ((F.STATUS=?) AND (P.ID=F.PILOT_ID)) WHERE (P.STATUS=?) AND (P.PILOT_ID > 0) GROUP BY P.ID ORDER BY ");
+			+ "LEFT JOIN PIREPS F ON ((F.STATUS=?) AND (P.ID=F.PILOT_ID)) LEFT JOIN STAFF S ON (P.ID=S.ID) WHERE (P.STATUS=?) AND (P.PILOT_ID > 0) GROUP BY P.ID ORDER BY ");
 
 		// Add sort by column
 		sql.append((orderBy != null) ? orderBy.toUpperCase() : "P.PILOT_ID");
@@ -139,7 +139,7 @@ public class GetPilot extends PilotReadDAO {
 		sqlBuf.append(dbName);
 		sqlBuf.append(".PILOTS P LEFT JOIN ");
 		sqlBuf.append(dbName);
-		sqlBuf.append(".PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) WHERE (P.EQTYPE=?)");
+		sqlBuf.append(".PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) LEFT JOIN STAFF S ON (P.ID=S.ID) WHERE (P.EQTYPE=?)");
 		if (showActive)
 			sqlBuf.append(" AND (P.STATUS=?)");
 		if (rank != null)
@@ -156,7 +156,7 @@ public class GetPilot extends PilotReadDAO {
 			if (showActive)
 				_ps.setInt(++pos, Pilot.ACTIVE);
 			if (rank != null)
-				_ps.setString(++pos, rank.getName());
+				_ps.setInt(++pos, rank.ordinal());
 			
 			return execute();
 		} catch (SQLException se) {

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to update Pilot profiles.
  * @author Luke
- * @version 8.0
+ * @version 8.3
  * @since 1.0
  */
 
@@ -80,7 +80,7 @@ public class SetPilot extends PilotWriteDAO {
 			_ps.setInt(22, p.getDistanceType().ordinal());
 			_ps.setInt(23, p.getWeightType().ordinal());
 			_ps.setInt(24, p.getMapType().ordinal());
-			_ps.setString(25, p.getRank().getName());
+			_ps.setInt(25, p.getRank().ordinal());
 			_ps.setString(26, p.getEquipmentType());
 			_ps.setInt(27, p.getStatus());
 			_ps.setBoolean(28, p.getNoExams());

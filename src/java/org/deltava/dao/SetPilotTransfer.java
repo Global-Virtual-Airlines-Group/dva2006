@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.*;
 /**
  * A Data Access Object to transfer pilots between Airlines.
  * @author Luke
- * @version 8.0
+ * @version 8.3
  * @since 1.0
  */
 
@@ -56,7 +56,7 @@ public class SetPilotTransfer extends SetPilot {
 			_ps.setDouble(7, p.getLegacyHours());
 			_ps.setString(8, p.getHomeAirport());
 			_ps.setString(9, p.getEquipmentType());
-			_ps.setString(10, p.getRank().getName());
+			_ps.setInt(10, p.getRank().ordinal());
 			_ps.setString(11, p.getNetworkID(OnlineNetwork.VATSIM));
 			_ps.setString(12, p.getNetworkID(OnlineNetwork.IVAO));
 			_ps.setString(13, p.getNetworkID(OnlineNetwork.PILOTEDGE));

@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
  * A DAO to support reading Pilot object(s) from the database. This class contains methods to read an individual Pilot
  * from the database; implementing subclasses typically add methods to retrieve Lists of pilots based on particular criteria.
  * @author Luke
- * @version 8.1
+ * @version 8.3
  * @since 1.0
  */
 
@@ -267,7 +267,8 @@ abstract class PilotReadDAO extends DAO {
 				p.setLegacyHours(rs.getDouble(9));
 				p.setHomeAirport(rs.getString(10));
 				p.setEquipmentType(rs.getString(11));
-				p.setRank(Rank.fromName(rs.getString(12)));
+				p.setRank(Rank.values()[rs.getInt(12)]);
+				//p.setRank(Rank.fromName(rs.getString(12)));
 				p.setNetworkID(OnlineNetwork.VATSIM, rs.getString(13));
 				p.setNetworkID(OnlineNetwork.IVAO, rs.getString(14));
 				p.setNetworkID(OnlineNetwork.PILOTEDGE, rs.getString(15));
