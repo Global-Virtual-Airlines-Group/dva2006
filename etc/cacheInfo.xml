@@ -28,7 +28,7 @@
 	<!-- VATSIM caches -->
 	<cache id="ATORatings" expires="28800" remote="true" />
 	<cache id="ATOInstructors" expires="28800" remote="true" />
-	<cahe id="ATOPilotRatings" expires="3600" max="256" />
+	<cache id="ATOPilotRatings" expires="3600" max="256" />
 	<cache id="OnlineIDs" max="4" expires="3600" />
 
 	<!-- ACARS caches -->
