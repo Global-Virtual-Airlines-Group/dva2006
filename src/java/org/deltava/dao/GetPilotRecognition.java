@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Acccess Object to read Pilots that have achieved certain accomplishments.
  * @author Luke
- * @version 8.1
+ * @version 8.3
  * @since 1.0
  */
 
@@ -103,7 +103,7 @@ public class GetPilotRecognition extends GetPilot {
           _ps.setInt(2, Rank.C.ordinal());
           _ps.setBoolean(3, true);
           _ps.setInt(4, Pilot.ACTIVE);
-          _ps.setString(5, Rank.FO.getName());
+          _ps.setInt(5, Rank.FO.ordinal());
           _ps.setInt(6, Rank.C.ordinal());
           if (eqType != null)
         	  _ps.setString(7, eqType);
@@ -126,16 +126,14 @@ public class GetPilotRecognition extends GetPilot {
     		return results.clone();
     	
     	try {
-    		prepareStatementWithoutLimits("SELECT P.ID, (SELECT COUNT(DISTINCT F.ID) FROM PIREPS F WHERE (P.ID=F.PILOT_ID) "
-    			+ "AND (F.STATUS=?)) AS LEGS, COUNT(SU.PILOT_ID) AS SC, IFNULL(N.STATUS, ?) AS NOMSTATUS FROM PILOTS P LEFT JOIN "
-    			+ "STATUS_UPDATES SU ON (P.ID=SU.PILOT_ID) AND (SU.TYPE=?) LEFT JOIN NOMINATIONS N ON (P.ID=N.ID) AND "
-    			+ "(N.QUARTER=?) WHERE (P.RANKING=?) AND (P.STATUS=?) AND (P.CREATED < DATE_SUB(CURDATE(), INTERVAL ? DAY)) "
-    			+ "GROUP BY P.ID HAVING (SC=0) AND (NOMSTATUS=?) AND (LEGS>=?)");
+    		prepareStatementWithoutLimits("SELECT P.ID, (SELECT COUNT(DISTINCT F.ID) FROM PIREPS F WHERE (P.ID=F.PILOT_ID) AND (F.STATUS=?)) AS LEGS, COUNT(SU.PILOT_ID) AS SC, "
+    			+ "IFNULL(N.STATUS, ?) AS NOMSTATUS FROM PILOTS P LEFT JOIN STATUS_UPDATES SU ON (P.ID=SU.PILOT_ID) AND (SU.TYPE=?) LEFT JOIN NOMINATIONS N ON (P.ID=N.ID) AND "
+    			+ "(N.QUARTER=?) WHERE (P.RANKING=?) AND (P.STATUS=?) AND (P.CREATED < DATE_SUB(CURDATE(), INTERVAL ? DAY)) GROUP BY P.ID HAVING (SC=0) AND (NOMSTATUS=?) AND (LEGS>=?)");
     		_ps.setInt(1, FlightStatus.OK.ordinal());
     		_ps.setInt(2, Nomination.Status.PENDING.ordinal());
     		_ps.setInt(3, StatusUpdate.SR_CAPTAIN);
     		_ps.setInt(4, new Quarter().getYearQuarter());
-    		_ps.setString(5, Rank.C.getName());
+    		_ps.setInt(5, Rank.C.ordinal());
     		_ps.setInt(6, Pilot.ACTIVE);
     		_ps.setInt(7, SystemData.getInt("users.sc.minAge", 90));
     		_ps.setInt(8, Nomination.Status.PENDING.ordinal());
