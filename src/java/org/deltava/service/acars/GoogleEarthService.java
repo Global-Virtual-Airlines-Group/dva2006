@@ -16,11 +16,11 @@ import org.deltava.util.color.GoogleEarthColor;
 /**
  * An abstract class to support Web Services rendering ACARS data in Google Earth. 
  * @author Luke
- * @version 8.2
+ * @version 8.3
  * @since 1.0
  */
 
-public abstract class GoogleEarthService extends org.deltava.service.WebService {
+abstract class GoogleEarthService extends org.deltava.service.WebService {
 
 	protected static final GoogleEarthColor[] COLORS = {new GoogleEarthColor(208, 184, 0), new GoogleEarthColor(0, 205, 0), new GoogleEarthColor(240, 48, 48), 
 		new GoogleEarthColor(80, 192, 240), new GoogleEarthColor(240, 16, 240), new GoogleEarthColor(0, 240, 240), new GoogleEarthColor(240, 240, 64) };
@@ -185,7 +185,7 @@ public abstract class GoogleEarthService extends org.deltava.service.WebService 
 	 * @param isVisible TRUE if the element is visible, otherwise FALSE
 	 * @return a KML element containing the Airspace entry
 	 */
-	protected static Element createAirpsace(Airspace a, boolean isVisible) {
+	protected static Element createAirspace(Airspace a, boolean isVisible) {
 
 		// Create the box
 		Element rle = new Element("Placemark");
@@ -289,8 +289,6 @@ public abstract class GoogleEarthService extends org.deltava.service.WebService 
 		
 		// Save the route text after the description
 		rle.addContent(XMLUtils.createElement("description", StringUtils.listConcat(routeText, " "), true));
-		
-		// Return the element
 		return fe;
 	}
 }
