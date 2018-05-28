@@ -132,10 +132,10 @@ public class GetAirspace extends DAO {
 	}
 	
 	/*
-	 * Helper method to load airpsace from code collections.
+	 * Helper method to load airspace from code collections.
 	 */
 	private List<Airspace> load(Collection<Tuple<String, Country>> codes) throws DAOException {
-		List<Airspace> results = new ArrayList<Airspace>();
+		List<Airspace> results = new ArrayList<Airspace>(codes.size() + 2);
 		for (Tuple<String, Country> id : codes)
 			results.addAll(get(id.getLeft(), id.getRight()));
 		
