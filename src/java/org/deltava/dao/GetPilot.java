@@ -175,7 +175,7 @@ public class GetPilot extends PilotReadDAO {
 			prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE), S.EXT, S.MODIFIED FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) "
 				+ "LEFT JOIN SIGNATURES S ON (P.ID=S.ID) WHERE (P.RANKING=?) AND (P.STATUS=?) GROUP BY P.ID");
 			_ps.setInt(1, FlightStatus.OK.ordinal());
-			_ps.setString(2, rank.getName());
+			_ps.setInt(2, rank.ordinal());
 			_ps.setInt(3, Pilot.ACTIVE);
 			return execute();
 		} catch (SQLException se) {
