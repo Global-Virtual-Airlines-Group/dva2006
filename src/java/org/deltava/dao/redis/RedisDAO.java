@@ -1,22 +1,22 @@
-// Copyright 2012, 2013, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2013, 2014, 2015, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.redis;
 
 /**
  * A Data Access Object to read and write from Redis. 
  * @author Luke
- * @version 7.1
+ * @version 8.3
  * @since 5.0
  */
 
-public abstract class RedisDAO {
+abstract class RedisDAO {
 	
 	protected int _expiry;
 	private String _bucket;
 
 	/**
-	 * Creates a memcached bucket:key key.
+	 * Creates a Redis bucket:key key.
 	 * @param key an object key
-	 * @return a memcached key
+	 * @return a Redis key
 	 */
 	protected String createKey(Object key) {
 		StringBuilder buf = new StringBuilder(_bucket).append(':');
@@ -24,7 +24,7 @@ public abstract class RedisDAO {
 	}
 	
 	/**
-	 * Sets the memcached bucket to store in. Bucket names will be chained together with a colon.
+	 * Sets the Redis bucket to store in. Bucket names will be chained together with a colon.
 	 * @param buckets the bucket name(s)
 	 */
 	public void setBucket(Object... buckets) {
