@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2008, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2008, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A class to support Web Site Commands.
  * @author Luke
- * @version 7.2
+ * @version 8.3
  * @since 1.0
  */
 
@@ -50,6 +50,14 @@ public abstract class AbstractCommand implements Command {
 		ce.setForwardURL("/jsp/error/securityViolation.jsp");
 		ce.setWarning(true);
 		ce.setStatusCode(403);
+		return ce;
+	}
+	
+	protected static CommandException forgottenException() {
+		CommandException ce = new CommandException("Blocked for Legal Reasons", false);
+		ce.setForwardURL("/jsp/error/securityViolation.jsp");
+		ce.setWarning(true);
+		ce.setStatusCode(451);
 		return ce;
 	}
 
