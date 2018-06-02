@@ -1,4 +1,4 @@
-// Copyright 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.redis;
 
 import org.apache.log4j.Logger;
@@ -12,7 +12,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to save temporary ACARS track data to Redis.
  * @author Luke
- * @version 7.3
+ * @version 8.3
  * @since 7.0
  */
 
@@ -23,14 +23,15 @@ public class SetTrack extends RedisDAO {
 
 	/**
 	 * Adds a route entry to Redis.
+	 * @param isACARS TRUE if ACARS, FALSE if simFDR
 	 * @param flightID the Flight ID
 	 * @param gl a GeoLocation
 	 */
 	@SuppressWarnings("unchecked")
-	public void write(int flightID, GeoLocation gl) {
-		setBucket("acarsTrack");
-		String rawKey = String.valueOf(flightID);
-		String key = createKey(rawKey);
+	public void write(boolean isACARS, String flightID, GeoLocation gl) {
+		setBucket("track", isACARS ? "acars" : "simFDR");
+		String rawKey = flightID.intern();
+		String key = createKey(flightID);
 
 		try {
 			synchronized (rawKey) {
@@ -51,17 +52,17 @@ public class SetTrack extends RedisDAO {
 
 	/**
 	 * Deletes a track from the cache.
+	 * @param isACARS TRUE if ACARS, FALSE if simFDR
 	 * @param flightID the Flight ID
 	 */
-	public void clear(int flightID) {
-		String rawKey = String.valueOf(flightID);
+	public void clear(boolean isACARS, String flightID) {
 		try {
-			setBucket("acarsTrack");
-			RedisUtils.delete(createKey(rawKey));
+			setBucket("track", isACARS ? "acars" : "simFDR");
+			RedisUtils.delete(createKey(flightID));
 		} catch (Exception e) {
 			log.warn(StringUtils.isEmpty(e.getMessage()) ? e.getClass().getSimpleName() : e.getMessage());
 		} finally {
-			_casCache.remove(rawKey);	
+			_casCache.remove(flightID);	
 		}
 	}
 }
