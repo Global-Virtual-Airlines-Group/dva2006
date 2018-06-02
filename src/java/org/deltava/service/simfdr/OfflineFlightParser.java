@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to parse simFDR submitted flight reports.
  * @author Luke
- * @version 8.2
+ * @version 8.3
  * @since 7.0
  */
 
@@ -118,44 +118,9 @@ final class OfflineFlightParser {
 		Element ppe = re.getChild("positions");
 		List<Element> pL = (ppe != null) ? ppe.getChildren("position") : null;
 		if (!CollectionUtils.isEmpty(pL) && (pL != null)) {
-			for (Iterator<Element> i = pL.iterator(); i.hasNext();) {
-				Element pe = i.next();
+			for (Element pe : pL) {
 				try {
-					GeoLocation loc = new GeoPosition(Double.parseDouble(pe.getAttributeValue("lat")), Double.parseDouble(pe.getAttributeValue("lng")));
-					ACARSRouteEntry pos = new ACARSRouteEntry(StringUtils.parseEpoch(pe.getAttributeValue("date")), loc);
-					pos.setVASFree(StringUtils.parse(pe.getAttributeValue("vasFree", "0"), 0));
-					pos.setSimUTC(StringUtils.parseEpoch(pe.getAttributeValue("simDate")));
-					if (pos.getSimUTC() == null)
-						pos.setSimUTC(pos.getDate());
-					
-					pos.setAltitude(StringUtils.parse(pe.getChildTextTrim("msl"), 0));
-					pos.setRadarAltitude(StringUtils.parse(pe.getChildTextTrim("agl"), 0));
-					pos.setHeading(StringUtils.parse(pe.getChildTextTrim("hdg"), 0));
-					pos.setAirSpeed(StringUtils.parse(pe.getChildTextTrim("aSpeed"), 0));
-					pos.setGroundSpeed(StringUtils.parse(pe.getChildTextTrim("gSpeed"), 0));
-					pos.setVerticalSpeed(StringUtils.parse(pe.getChildTextTrim("vSpeed"), 0));
-					pos.setPitch(Double.parseDouble(pe.getChildTextTrim("pitch")));
-					pos.setBank(Double.parseDouble(pe.getChildTextTrim("bank")));
-					pos.setMach(Double.parseDouble(pe.getChildTextTrim("mach")));
-					pos.setN1(Double.parseDouble(pe.getChildTextTrim("avgN1")));
-					pos.setN2(Double.parseDouble(pe.getChildTextTrim("avgN2")));
-					pos.setAOA(Double.parseDouble(pe.getChildTextTrim("aoa")));
-					pos.setG(Double.parseDouble(pe.getChildTextTrim("g")));
-					pos.setFuelFlow(StringUtils.parse(pe.getChildTextTrim("fuelFlow"), 0));
-					pos.setPhase(StringUtils.parse(pe.getChildTextTrim("phase"), 0));
-					pos.setSimRate(StringUtils.parse(pe.getChildTextTrim("simRate"), 0));
-					pos.setFlaps(StringUtils.parse(pe.getChildTextTrim("flaps"), 0));
-					pos.setFuelRemaining(StringUtils.parse(pe.getChildTextTrim("totalFuel"), 0));
-					pos.setWindHeading(StringUtils.parse(pe.getChildTextTrim("windHdg"), 0));
-					pos.setWindSpeed(StringUtils.parse(pe.getChildTextTrim("windSpeed"), 0));
-					pos.setPressure(StringUtils.parse(pe.getChildTextTrim("pressure"), 0));
-					pos.setVisibility(StringUtils.parse(pe.getChildTextTrim("viz"), 0.0d));
-					pos.setTemperature(StringUtils.parse(pe.getChildTextTrim("temp"), 0));
-					pos.setFrameRate(StringUtils.parse(pe.getChildTextTrim("frameRate"), 0));
-					pos.setFlags(StringUtils.parse(pe.getChildTextTrim("flags"), 0));
-					pos.setNAV1(pe.getChildTextTrim("nav1"));
-					pos.setNAV2(pe.getChildTextTrim("nav2"));
-					of.addPosition(pos);
+					of.addPosition(parsePosition(pe));
 				} catch (Exception e) {
 					log.error("Error loading Position Report - " + e.getMessage(), e);
 				}
@@ -209,5 +174,50 @@ final class OfflineFlightParser {
 		afr.setTime(4, StringUtils.parse(ie.getChildTextTrim("time4X"), 0));
 		of.setFlightReport(afr);
 		return of;
+	}
+	
+	/**
+	 * Parses a simFDR XML position entry.
+	 * @param pe the position Element
+	 * @return an ACARSRouteEntry
+	 */
+	static ACARSRouteEntry parsePosition(Element pe) {
+		
+		GeoLocation loc = new GeoPosition(Double.parseDouble(pe.getAttributeValue("lat")), Double.parseDouble(pe.getAttributeValue("lng")));
+		ACARSRouteEntry pos = new ACARSRouteEntry(StringUtils.parseEpoch(pe.getAttributeValue("date")), loc);
+		pos.setVASFree(StringUtils.parse(pe.getAttributeValue("vasFree", "0"), 0));
+		pos.setSimUTC(StringUtils.parseEpoch(pe.getAttributeValue("simDate")));
+		if (pos.getSimUTC() == null)
+			pos.setSimUTC(pos.getDate());
+		
+		pos.setAltitude(StringUtils.parse(pe.getChildTextTrim("msl"), 0));
+		pos.setRadarAltitude(StringUtils.parse(pe.getChildTextTrim("agl"), 0));
+		pos.setHeading(StringUtils.parse(pe.getChildTextTrim("hdg"), 0));
+		pos.setAirSpeed(StringUtils.parse(pe.getChildTextTrim("aSpeed"), 0));
+		pos.setGroundSpeed(StringUtils.parse(pe.getChildTextTrim("gSpeed"), 0));
+		pos.setVerticalSpeed(StringUtils.parse(pe.getChildTextTrim("vSpeed"), 0));
+		pos.setPitch(Double.parseDouble(pe.getChildTextTrim("pitch")));
+		pos.setBank(Double.parseDouble(pe.getChildTextTrim("bank")));
+		pos.setMach(Double.parseDouble(pe.getChildTextTrim("mach")));
+		pos.setN1(Double.parseDouble(pe.getChildTextTrim("avgN1")));
+		pos.setN2(Double.parseDouble(pe.getChildTextTrim("avgN2")));
+		pos.setAOA(Double.parseDouble(pe.getChildTextTrim("aoa")));
+		pos.setG(Double.parseDouble(pe.getChildTextTrim("g")));
+		pos.setFuelFlow(StringUtils.parse(pe.getChildTextTrim("fuelFlow"), 0));
+		pos.setPhase(StringUtils.parse(pe.getChildTextTrim("phase"), 0));
+		pos.setSimRate(StringUtils.parse(pe.getChildTextTrim("simRate"), 0));
+		pos.setFlaps(StringUtils.parse(pe.getChildTextTrim("flaps"), 0));
+		pos.setFuelRemaining(StringUtils.parse(pe.getChildTextTrim("totalFuel"), 0));
+		pos.setWindHeading(StringUtils.parse(pe.getChildTextTrim("windHdg"), 0));
+		pos.setWindSpeed(StringUtils.parse(pe.getChildTextTrim("windSpeed"), 0));
+		pos.setPressure(StringUtils.parse(pe.getChildTextTrim("pressure"), 0));
+		pos.setVisibility(StringUtils.parse(pe.getChildTextTrim("viz"), 0.0d));
+		pos.setTemperature(StringUtils.parse(pe.getChildTextTrim("temp"), 0));
+		pos.setFrameRate(StringUtils.parse(pe.getChildTextTrim("frameRate"), 0));
+		pos.setFlags(StringUtils.parse(pe.getChildTextTrim("flags"), 0));
+		pos.setNAV1(pe.getChildTextTrim("nav1"));
+		pos.setNAV2(pe.getChildTextTrim("nav2"));
+		pos.setADF1(pe.getChildTextTrim("adf1"));
+		return pos;
 	}
 }
