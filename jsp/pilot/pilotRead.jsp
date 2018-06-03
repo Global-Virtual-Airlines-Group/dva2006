@@ -379,7 +379,7 @@ Applicant profile for ${pilot.name}.</td>
 <c:if test="${access.canActivate}">
 &nbsp;<el:cmdbutton url="activate" link="${pilot}" label="ACTIVATE" /></c:if>
 <content:filter roles="Admin">
-&nbsp;<c:if test="${!pilot.isForgotten}"><el:cmdbutton url="forget" link="${pilot}">FORGET</el:cmdbutton>&nbsp;</c:if><el:cmdbutton url="su" link="${pilot}" key="S" label="SWITCH TO USER" /></content:filter>
+&nbsp;<c:if test="${!pilot.isForgotten}"><el:cmdbutton url="forget" link="${pilot}" label="FORGET"></el:cmdbutton>&nbsp;</c:if><el:cmdbutton url="su" link="${pilot}" label="SWITCH TO USER" /></content:filter>
 </c:if>
 </td>
 </tr>
