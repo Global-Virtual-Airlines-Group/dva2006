@@ -571,6 +571,19 @@
 	</tag>
 
 	<tag>
+		<description>Pilot Name Filter Tag, to hide GDPR-forgotten Pilot names</description>
+		<name>pilotName</name>
+		<tag-class>org.deltava.taglib.content.PilotNameTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<name>pilot</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>org.deltava.beans.Pilot</type>
+		</attribute>
+	</tag>
+
+	<tag>
 		<description>System Message Filter Tag, to display content if the system message is set</description>
 		<name>hasmsg</name>
 		<tag-class>org.deltava.taglib.content.SystemMessageFilterTag</tag-class>

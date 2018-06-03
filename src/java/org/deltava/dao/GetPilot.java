@@ -284,7 +284,7 @@ public class GetPilot extends PilotReadDAO {
 		sqlBuf.append(db);
 		sqlBuf.append(".RATINGS R, ");
 		sqlBuf.append(db);	
-		sqlBuf.append(".PILOTS P WHERE (P.ID=R.ID) AND ");
+		sqlBuf.append(".PILOTS P WHERE (P.ID=R.ID) AND (P.FORGOTTEN=?) ");
 		
         // Aggregate the search terms
         if (!CollectionUtils.isEmpty(ratings)) {
@@ -308,7 +308,8 @@ public class GetPilot extends PilotReadDAO {
 
 		Collection<Integer> IDs = new HashSet<Integer>();
 		try {
-			prepareStatement(sqlBuf.toString()); int idx = 0;
+			prepareStatement(sqlBuf.toString()); int idx = 1;
+			_ps.setBoolean(1, false);
 			if (fName != null)
 				_ps.setString(++idx, fName);
 			if (lName != null)

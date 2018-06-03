@@ -467,8 +467,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			}
 
 			// Update the pilot name
-			boolean nameChanged = (!p.getFirstName().equals(ctx.getParameter("firstName")))
-					|| (!p.getLastName().equals(ctx.getParameter("lastName")));
+			boolean nameChanged = (!p.getFirstName().equals(ctx.getParameter("firstName"))) || (!p.getLastName().equals(ctx.getParameter("lastName")));
 			if ((p_access.getCanChangeStatus() || p_access.getCanChangeRoles()) && nameChanged) {
 				Pilot p2 = p.cloneExceptID();
 				p2.setFirstName(ctx.getParameter("firstName"));
@@ -787,6 +786,8 @@ public class ProfileCommand extends AbstractFormCommand {
 			// Get the access controller
 			PilotAccessControl access = crossDB ? new CrossAppPilotAccessControl(ctx, p) : new PilotAccessControl(ctx, p);
 			access.validate();
+			if (!access.getCanView())
+				throw forgottenException();
 
 			// Check if we can view examinations
 			if (access.getCanViewExams()) {

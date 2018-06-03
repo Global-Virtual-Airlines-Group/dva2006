@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2011, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2011, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import java.time.ZonedDateTime;
@@ -12,13 +12,13 @@ import java.net.URLEncoder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 
-import org.deltava.beans.DatabaseBean;
+import org.deltava.beans.*;
 import org.deltava.util.StringUtils;
 
 /**
  * A JSP tag to create a link to a Web Site Command.
  * @author Luke
- * @version 7.3
+ * @version 8.3
  * @since 1.0
  */
 
@@ -48,8 +48,16 @@ public class CommandLinkTag extends LinkTag {
 	 * @param db a {@link DatabaseBean} with the proper database ID
 	 */
 	public void setLink(DatabaseBean db) {
-		if (db != null)
-			_cmdParams.put("id", db.getHexID());
+		if (db != null) {
+			if (db instanceof Pilot) {
+				Pilot p = (Pilot) db;
+				HttpServletRequest req = (HttpServletRequest) pageContext.getRequest();
+				_disableLink |= (p.getIsForgotten() && !req.isUserInRole("HR"));
+			}
+			
+			if (!_disableLink)
+				_cmdParams.put("id", db.getHexID());
+		}
 	}
 	
 	/**

@@ -41,10 +41,8 @@ runway threshold (30% if available) and the standard deviation of those distance
 <!-- Table top Header bar -->
 <tr class="title">
  <td class="left caps" colspan="3"><content:airline /> LANDING STATISTICS</td>
- <td class="right" colspan="6">MINIMUM <el:text name="legCount" idx="*" size="1" max="2" value="${legCount}" /> 
-FLIGHTS WITHIN <el:combo name="days" idx="*" size="1" options="${dateFilter}" value="${param.days}" /> 
-IN <el:combo name="eqType" idx="*" size="1" options="${eqTypes}" value="${param.eqType}" />
-<el:button ID="SearchButton" type="submit" label="GO" /></td>
+ <td class="right" colspan="6">MINIMUM <el:text name="legCount" idx="*" size="1" max="2" value="${legCount}" /> FLIGHTS WITHIN <el:combo name="days" idx="*" size="1" options="${dateFilter}" value="${param.days}" /> 
+IN <el:combo name="eqType" idx="*" size="1" options="${eqTypes}" value="${param.eqType}" /><el:button ID="SearchButton" type="submit" label="GO" /></td>
 </tr>
 <c:if test="${!empty viewContext.results}">
 <!-- Table Header Bar-->
@@ -67,7 +65,7 @@ IN <el:combo name="eqType" idx="*" size="1" options="${eqTypes}" value="${param.
 <c:set var="entryNumber" value="${entryNumber + 1}" scope="page" />
 <tr>
  <td class="sec bld">${entryNumber}</td>
- <td class="pri bld">${pilot.name}</td>
+ <td class="pri bld"><content:pilotName pilot="${pilot}">${pilot.name}</content:pilotName></td>
  <td>${pilot.rank.name}, ${pilot.equipmentType}</td>
  <td><fmt:int value="${entry.legs}" /></td>
  <td><fmt:dec value="${entry.hours}" /></td>
