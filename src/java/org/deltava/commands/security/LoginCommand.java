@@ -2,6 +2,7 @@
 package org.deltava.commands.security;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -11,6 +12,7 @@ import java.time.Instant;
 import javax.servlet.http.*;
 
 import org.apache.log4j.Logger;
+
 import org.deltava.beans.*;
 import org.deltava.beans.system.*;
 import org.deltava.commands.*;
@@ -22,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to Authenticate users.
  * @author Luke
- * @version 8.2
+ * @version 8.3
  * @since 1.0
  */
 
@@ -123,7 +125,7 @@ public class LoginCommand extends AbstractCommand {
 
 			// Get the Pilot's Directory Name
 			GetPilotDirectory dao = new GetPilotDirectory(con);
-			List<Pilot> users = dao.getByName(fullName.toString(), SystemData.get("airline.db"));
+			List<Pilot> users = dao.getByName(fullName.toString(), SystemData.get("airline.db")).stream().filter(usr -> !usr.getIsForgotten()).collect(Collectors.toList());
 			if (users.size() == 0) {
 				log.warn("Unknown User Name - \"" + fullName + "\"");
 				throw new SecurityException("Unknown User Name - \"" + fullName + "\"");

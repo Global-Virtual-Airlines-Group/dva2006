@@ -199,9 +199,10 @@ public class GetPilot extends PilotReadDAO {
 
 		try {
 			prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE) FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) WHERE "
-				+ "(LEFT(P.LASTNAME, 1)=?) GROUP BY P.ID ORDER BY P.LASTNAME");
+				+ "(LEFT(P.LASTNAME, 1)=?) AND (P.FORGOTTEN=?) GROUP BY P.ID ORDER BY P.LASTNAME");
 			_ps.setInt(1, FlightStatus.OK.ordinal());
 			_ps.setString(2, letter.substring(0, 1).toUpperCase());
+			_ps.setBoolean(3, false);
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -217,9 +218,10 @@ public class GetPilot extends PilotReadDAO {
 	public List<Pilot> getPilotsByStatus(int status) throws DAOException {
 		try {
 			prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE) FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) WHERE "
-				+ "(P.STATUS=?) GROUP BY P.ID ORDER BY P.CREATED");
+				+ "(P.STATUS=?) AND (P.FORGOTTEN=?) GROUP BY P.ID ORDER BY P.CREATED");
 			_ps.setInt(1, FlightStatus.OK.ordinal());
 			_ps.setInt(2, status);
+			_ps.setBoolean(3, false);
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -233,8 +235,10 @@ public class GetPilot extends PilotReadDAO {
 	 */
 	public List<Pilot> getPilots() throws DAOException {
 		try {
-			prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE) FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) GROUP BY P.ID");
+			prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE) FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) "
+				+ "WHERE (P.FORGOTTEN=?) GROUP BY P.ID");
 			_ps.setInt(1, FlightStatus.OK.ordinal());
+			_ps.setBoolean(2, false);
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
