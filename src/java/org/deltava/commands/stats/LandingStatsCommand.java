@@ -1,4 +1,4 @@
-// Copyright 2007, 2009, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009, 2015, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -14,14 +14,13 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to display landing statistics.
  * @author Luke
- * @version 7.0
+ * @version 8.3
  * @since 2.1
  */
 
 public class LandingStatsCommand extends AbstractViewCommand {
 	
-	private static final List<?> DATE_FILTER = ComboUtils.fromArray(new String[] { "All Landings", "30 Days", "60 Days",
-		"90 Days", "180 Days", "365 Days" }, new String[] { "0", "30", "60", "90", "180", "365" });
+	private static final List<?> DATE_FILTER = ComboUtils.fromArray(new String[] { "All Landings", "30 Days", "60 Days", "90 Days", "180 Days", "365 Days" }, new String[] { "0", "30", "60", "90", "180", "365" });
 
 	/**
 	 * Executes the command.
@@ -33,7 +32,7 @@ public class LandingStatsCommand extends AbstractViewCommand {
 		
 		// Load the view context and minimum landings
 		ViewContext<LandingStatistics> vc = initView(ctx, LandingStatistics.class, 50);
-		int minLegs = Math.max(0, StringUtils.parse(ctx.getParameter("legCount"), 20));
+		int minLegs = Math.max(0, StringUtils.parse(ctx.getParameter("legCount"), 200));
 		ctx.setAttribute("legCount", Integer.valueOf(minLegs), REQUEST);
 		
 		// Check equipment type
