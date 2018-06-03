@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.StringUtils;
 /**
  * A class for storing Pilot information.
  * @author Luke
- * @version 8.0
+ * @version 8.3
  * @since 1.0
  */
 
@@ -84,6 +84,7 @@ public class Pilot extends Person implements ComboAlias, Cloneable {
 	private boolean _showNavBar;
 	private boolean _isPermanent;
 	private boolean _profCheckRides;
+	private boolean _isForgotten;
 
 	/**
 	 * Creates a Pilot object with a given first and last name, converted to "proper case".
@@ -242,6 +243,15 @@ public class Pilot extends Person implements ComboAlias, Cloneable {
 	 */
 	public boolean getIsPermanent() {
 		return _isPermanent;
+	}
+	
+	/**
+	 * Returns whether the Pilot has been marked as "forgotten" for GDPR reasons.
+	 * @return TRUE if forgotten, otherwise FALSE
+	 * @see Pilot#setIsForgotten(boolean)
+	 */
+	public boolean getIsForgotten() {
+		return _isForgotten;
 	}
 	
 	/**
@@ -546,6 +556,15 @@ public class Pilot extends Person implements ComboAlias, Cloneable {
 	 */
 	public void setIsPermanent(boolean isPerm) {
 		_isPermanent = isPerm;
+	}
+	
+	/**
+	 * Marks this Pilot account as Forgotten for GDPR purposes.
+	 * @param isForgotten TRUE if forgotten, otherwise FALSE
+	 * @see Pilot#getIsForgotten()
+	 */
+	public void setIsForgotten(boolean isForgotten) {
+		_isForgotten = isForgotten;
 	}
 	
 	/**

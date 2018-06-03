@@ -7,7 +7,7 @@
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html lang="en">
 <head>
-<title>${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></title>
+<title><content:pilotName pilot="${pilot}">${pilot.name}</content:pilotName><c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></title>
 <content:expire expires="15" />
 <content:canonical convertID="true" />
 <content:css name="main" />
@@ -57,11 +57,16 @@ return true;
 <el:table className="form">
 <!-- Pilot Title Bar -->
 <tr class="title caps">
- <td colspan="${cspan + 1}">${pilot.rank.name}&nbsp;${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if>
+ <td colspan="${cspan + 1}"><content:pilotName pilot="${pilot}">${pilot.rank.name}&nbsp;${pilot.name}</content:pilotName><c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if>
 <c:if test="${access.canEdit}"> - <el:cmd url="profile" op="edit" link="${pilot}">EDIT PROFILE</el:cmd></c:if></td>
 </tr>
 
 <!-- Pilot Data -->
+<c:if test="${pilot.isForgotten}">
+<tr>
+<td colspan="${cspan + 1}" class="pri bld mid caps">This Pilot's data has been hidden per European Union GPDR regulations.</td>
+</tr> 
+</c:if>
 <tr>
  <td class="label">Pilot Status</td>
  <td colspan="${cspan}" class="data sec bld">${pilot.statusName}
@@ -374,7 +379,7 @@ Applicant profile for ${pilot.name}.</td>
 <c:if test="${access.canActivate}">
 &nbsp;<el:cmdbutton url="activate" link="${pilot}" label="ACTIVATE" /></c:if>
 <content:filter roles="Admin">
-&nbsp;<el:cmdbutton url="su" link="${pilot}" key="S" label="SWITCH TO USER" /></content:filter>
+&nbsp;<c:if test="${!pilot.isForgotten}"><el:cmdbutton url="forget" link="${pilot}">FORGET</el:cmdbutton>&nbsp;</c:if><el:cmdbutton url="su" link="${pilot}" key="S" label="SWITCH TO USER" /></content:filter>
 </c:if>
 </td>
 </tr>
