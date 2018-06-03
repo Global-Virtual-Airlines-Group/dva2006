@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.*;
@@ -8,7 +8,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An access controller for Pilot profile operations.
  * @author Luke
- * @version 7.0
+ * @version 8.3
  * @since 1.0
  */
 
@@ -17,6 +17,7 @@ public class PilotAccessControl extends AccessControl {
 	protected final Pilot _p;
 
 	private boolean _isOurs;
+	private boolean _canView;
 	private boolean _canViewEmail;
 	private boolean _canTakeLeave;
 	private boolean _canEdit;
@@ -52,6 +53,7 @@ public class PilotAccessControl extends AccessControl {
 			return;
 
 		// Get the currently logged in user. If not logged in, just check e-mail access
+		_canView = !_p.getIsForgotten() || _ctx.isUserInRole("Admin") || _ctx.isUserInRole("HR");
 		if (!_ctx.isAuthenticated()) {
 			_canViewEmail = (_p.getEmailAccess() == Person.SHOW_EMAIL);
 			return;
@@ -63,22 +65,19 @@ public class PilotAccessControl extends AccessControl {
 		int status = _p.getStatus();
 		
 		// Check if we can view e-mail
-		_canViewEmail = (_p.getEmailAccess() != Person.HIDE_EMAIL) || isHR || _isOurs ||
-			_ctx.isUserInRole("Event") || _ctx.isUserInRole("Instructor") || _ctx.isUserInRole("PIREP") ||
-			_ctx.isUserInRole("Signature");
+		_canViewEmail = (_p.getEmailAccess() != Person.HIDE_EMAIL) || isHR || _isOurs || _ctx.isUserInRole("Event") || _ctx.isUserInRole("Instructor") || _ctx.isUserInRole("PIREP") || _ctx.isUserInRole("Signature");
 
 		// Set parameters
-		_canEdit = (_isOurs || isHR);
+		_canEdit = (_isOurs || isHR) && !_p.getIsForgotten();
 		_canChangeSignature = _canEdit || _ctx.isUserInRole("Signature");
 		_canViewExams = _isOurs || _ctx.isUserInRole("Examination") || _ctx.isUserInRole("Instructor") || isHR;
 		_canAssignRide = (isHR || _ctx.isUserInRole("Examination")) && (_p.getStatus() == Pilot.ACTIVE);
 		_canChangeStatus = isHR;
 		_canTakeLeave = (status == Pilot.ACTIVE) && (_isOurs || _canChangeStatus);
 		_canChangeRoles = _ctx.isUserInRole("Admin");
-		_canTransfer = _canChangeStatus && (status != Pilot.TRANSFERRED);
+		_canTransfer = _canChangeStatus && (status != Pilot.TRANSFERRED) && !_p.getIsForgotten();
 		_canInactivate = _canChangeStatus && !_isOurs && ((status == Pilot.ACTIVE) || (status == Pilot.ON_LEAVE));
-		_canActivate = _canChangeStatus && ((status == Pilot.INACTIVE) || (status == Pilot.RETIRED) || 
-				(status == Pilot.SUSPENDED));
+		_canActivate = _canChangeStatus && ((status == Pilot.INACTIVE) || (status == Pilot.RETIRED) || (status == Pilot.SUSPENDED)) && !_p.getIsForgotten();
 
 		// Check Promotion access
 		boolean isSameProgram = _ctx.getUser().getEquipmentType().equals(_p.getEquipmentType());
@@ -92,6 +91,14 @@ public class PilotAccessControl extends AccessControl {
 		// Check if there's an IMAP mailbox profile in the reuqest
 		Object mProfile = _ctx.getRequest().getAttribute("emailCfg");
 		_canChangeMailProfile = ((mProfile != null) && isHR) || ((mProfile == null) && _ctx.isUserInRole("Admin")); 
+	}
+	
+	/**
+	 * Returns whether the pilot profile can be viewed.
+	 * @return TRUE if viewable, otherwise FALSE
+	 */
+	public boolean getCanView() {
+		return _canView;
 	}
 
 	/**

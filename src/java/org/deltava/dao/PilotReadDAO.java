@@ -284,45 +284,46 @@ abstract class PilotReadDAO extends DAO {
 				p.setHasDefaultSignature(rs.getBoolean(25));
 				p.setShowNewPosts(rs.getBoolean(26));
 				p.setIsPermanent(rs.getBoolean(27));
-				p.setProficiencyCheckRides(rs.getBoolean(28));
-				p.setUIScheme(rs.getString(29));
-				p.setShowNavBar(rs.getBoolean(30));
-				p.setViewCount(rs.getInt(31));
-				p.setLoginHost(rs.getString(32));
-				p.setDateFormat(rs.getString(33));
-				p.setTimeFormat(rs.getString(34));
-				p.setNumberFormat(rs.getString(35));
-				p.setAirportCodeType(Airport.Code.values()[rs.getInt(36)]);
-				p.setDistanceType(DistanceUnit.values()[rs.getInt(37)]);
-				p.setWeightType(WeightUnit.values()[rs.getInt(38)]);
-				p.setMapType(MapType.values()[rs.getInt(39)]);
-				p.setNoExams(rs.getBoolean(40));
-				p.setNoVoice(rs.getBoolean(41));
-				p.setNoCooler(rs.getBoolean(42));
-				p.setNoTimeCompression(rs.getBoolean(43));
-				p.setACARSRestriction(Restriction.values()[rs.getInt(44)]);
-				p.setEmailInvalid(rs.getBoolean(45));
-				p.setLDAPName(rs.getString(46));
-				p.setMotto(rs.getString(47));
+				p.setIsForgotten(rs.getBoolean(28));
+				p.setProficiencyCheckRides(rs.getBoolean(29));
+				p.setUIScheme(rs.getString(30));
+				p.setShowNavBar(rs.getBoolean(31));
+				p.setViewCount(rs.getInt(32));
+				p.setLoginHost(rs.getString(33));
+				p.setDateFormat(rs.getString(34));
+				p.setTimeFormat(rs.getString(35));
+				p.setNumberFormat(rs.getString(36));
+				p.setAirportCodeType(Airport.Code.values()[rs.getInt(37)]);
+				p.setDistanceType(DistanceUnit.values()[rs.getInt(38)]);
+				p.setWeightType(WeightUnit.values()[rs.getInt(39)]);
+				p.setMapType(MapType.values()[rs.getInt(40)]);
+				p.setNoExams(rs.getBoolean(41));
+				p.setNoVoice(rs.getBoolean(42));
+				p.setNoCooler(rs.getBoolean(43));
+				p.setNoTimeCompression(rs.getBoolean(44));
+				p.setACARSRestriction(Restriction.values()[rs.getInt(45)]);
+				p.setEmailInvalid(rs.getBoolean(46));
+				p.setLDAPName(rs.getString(47));
+				p.setMotto(rs.getString(48));
 
-				// Check if this result set has columns 48-51, which is the PIREP totals
-				if (columnCount > 50) {
-					p.setLegs(rs.getInt(48));
-					p.setMiles(rs.getLong(49));
-					p.setHours(rs.getDouble(50));
-					p.setLastFlight(expandDate(rs.getDate(51)));
+				// Check if this result set has columns 49-52, which is the PIREP totals
+				if (columnCount > 51) {
+					p.setLegs(rs.getInt(49));
+					p.setMiles(rs.getLong(50));
+					p.setHours(rs.getDouble(51));
+					p.setLastFlight(expandDate(rs.getDate(52)));
 				}
 
-				// Check if this result set has columns 52/53, which is the signature extension
-				if (columnCount > 52) {
-					p.setSignatureExtension(rs.getString(52));
-					p.setSignatureModified(toInstant(rs.getTimestamp(53)));
+				// Check if this result set has columns 53/54, which is the signature data
+				if (columnCount > 53) {
+					p.setSignatureExtension(rs.getString(53));
+					p.setSignatureModified(toInstant(rs.getTimestamp(54)));
 				}
 
-				// Check if this result set has columns 54/55, which are online legs/hours
-				if (columnCount > 54) {
-					p.setOnlineLegs(rs.getInt(54));
-					p.setOnlineHours(rs.getDouble(55));
+				// Check if this result set has columns 55/56, which are online legs/hours
+				if (columnCount > 55) {
+					p.setOnlineLegs(rs.getInt(55));
+					p.setOnlineHours(rs.getDouble(56));
 				}
 
 				results.add(p);

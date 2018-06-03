@@ -52,7 +52,7 @@ golgotha.local.sort = function() { return document.forms[0].submit(); };
 <c:forEach var="pilot" items="${viewContext.results}">
 <tr>
  <td class="pri bld">${pilot.pilotCode}</td>
- <td><el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></td>
+ <td><content:pilotName pilot="${pilot}"><el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></content:pilotName></td>
  <td class="sec bld">${pilot.equipmentType}</td>
  <td class="pri bld">${pilot.rank.name}</td>
  <td class="sec nophone">${pilot.homeAirport}</td>

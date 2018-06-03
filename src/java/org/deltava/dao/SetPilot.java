@@ -49,8 +49,8 @@ public class SetPilot extends PilotWriteDAO {
 		sqlBuf.append(formatDBName(db));
 		sqlBuf.append(".PILOTS SET EMAIL=?, LOCATION=?, LEGACY_HOURS=?, HOME_AIRPORT=?, VATSIM_ID=?, IVAO_ID=?, PE_ID=?, TZ=?, NOTIFY=?, SHOW_EMAIL=?, SHOW_WC_SIG=?, SHOW_WC_SSHOTS=?, "
 			+ "SHOW_DEF_SIG=?, SHOW_NEW_POSTS=?, UISCHEME=?, NAVBAR=?, VIEWSIZE=?, DFORMAT=?, TFORMAT=?, NFORMAT=?, AIRPORTCODE=?, DISTANCEUNITS=?, WEIGHTUNITS=?, MAPTYPE=?, "
-			+ "RANKING=?, EQTYPE=?, STATUS=?, NOEXAMS=?, NOVOICE=?, NOCOOLER=?, NOTIMECOMPRESS=?, ACARS_RESTRICT=?, EMAIL_INVALID=?, UID=?, MOTTO=?, PERMANENT=?, PROF_CR=?, FIRSTNAME=?, "
-			+ "LASTNAME=? WHERE (ID=?)");
+			+ "RANKING=?, EQTYPE=?, STATUS=?, NOEXAMS=?, NOVOICE=?, NOCOOLER=?, NOTIMECOMPRESS=?, ACARS_RESTRICT=?, EMAIL_INVALID=?, UID=?, MOTTO=?, PERMANENT=?, FORGOTTEN=?, PROF_CR=?, "
+			+ "FIRSTNAME=?, LASTNAME=? WHERE (ID=?)");
 
 		try {
 			// This involves a lot of reads and writes, so its written as a single transaction
@@ -92,10 +92,11 @@ public class SetPilot extends PilotWriteDAO {
 			_ps.setString(34, p.getLDAPName());
 			_ps.setString(35, p.getMotto());
 			_ps.setBoolean(36, p.getIsPermanent());
-			_ps.setBoolean(37, p.getProficiencyCheckRides());
-			_ps.setString(38, p.getFirstName());
-			_ps.setString(39, p.getLastName());
-			_ps.setInt(40, p.getID());
+			_ps.setBoolean(37, p.getIsForgotten());
+			_ps.setBoolean(38, p.getProficiencyCheckRides());
+			_ps.setString(39, p.getFirstName());
+			_ps.setString(40, p.getLastName());
+			_ps.setInt(41, p.getID());
 			executeUpdate(1);
 
 			// Update the roles/ratings
