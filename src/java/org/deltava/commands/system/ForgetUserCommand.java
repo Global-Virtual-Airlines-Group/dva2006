@@ -54,6 +54,8 @@ public class ForgetUserCommand extends AbstractCommand {
 			
 			// Forget the user
 			p.setIsForgotten(true);
+			p.setEmailInvalid(true);
+			p.setEmailAccess(Person.HIDE_EMAIL);
 			if ((p.getStatus() == Pilot.ACTIVE) || (p.getStatus() == Pilot.ON_LEAVE)) {
 				p.setStatus(Pilot.RETIRED);
 				upd = new StatusUpdate(p.getID(), StatusUpdate.STATUS_CHANGE);
