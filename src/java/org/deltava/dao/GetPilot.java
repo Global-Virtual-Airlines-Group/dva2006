@@ -284,7 +284,7 @@ public class GetPilot extends PilotReadDAO {
 		sqlBuf.append(db);
 		sqlBuf.append(".RATINGS R, ");
 		sqlBuf.append(db);	
-		sqlBuf.append(".PILOTS P WHERE (P.ID=R.ID) AND (P.FORGOTTEN=?) ");
+		sqlBuf.append(".PILOTS P WHERE (P.ID=R.ID) AND (P.FORGOTTEN=?) AND ");
 		
         // Aggregate the search terms
         if (!CollectionUtils.isEmpty(ratings)) {

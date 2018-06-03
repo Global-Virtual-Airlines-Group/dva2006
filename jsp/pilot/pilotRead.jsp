@@ -58,15 +58,11 @@ return true;
 <!-- Pilot Title Bar -->
 <tr class="title caps">
  <td colspan="${cspan + 1}"><content:pilotName pilot="${pilot}">${pilot.rank.name}&nbsp;${pilot.name}</content:pilotName><c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if>
-<c:if test="${access.canEdit}"> - <el:cmd url="profile" op="edit" link="${pilot}">EDIT PROFILE</el:cmd></c:if></td>
+<c:if test="${access.canEdit}"> - <el:cmd url="profile" op="edit" link="${pilot}">EDIT PROFILE</el:cmd></c:if>
+<c:if test="${pilot.isForgotten}">This Pilot's data has been hidden per European Union GPDR regulations</c:if></td>
 </tr>
 
 <!-- Pilot Data -->
-<c:if test="${pilot.isForgotten}">
-<tr>
-<td colspan="${cspan + 1}" class="pri bld mid caps">This Pilot's data has been hidden per European Union GPDR regulations.</td>
-</tr> 
-</c:if>
 <tr>
  <td class="label">Pilot Status</td>
  <td colspan="${cspan}" class="data sec bld">${pilot.statusName}
