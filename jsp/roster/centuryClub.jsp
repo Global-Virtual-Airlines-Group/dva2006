@@ -23,9 +23,8 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-The <content:airline /> &quot;Century Club&quot; recognizes those pilots who over the course of their career with our airline have demonstrated a superior level of commitment
- and dedication, demonstrated by over one hundred logged flight legs. Over the years, the &quot;Century Club&quot; has expanded into a number of levels as our pilots have logged more
- flights.<br />
+The <content:airline /> &quot;Century Club&quot; recognizes those pilots who over the course of their career with our airline have demonstrated a superior level of commitment  and dedication, demonstrated by over one hundred logged flight legs. 
+ Over the years, the &quot;Century Club&quot; has expanded into a number of levels as our pilots have logged more flights.<br />
 <br />
 <view:table cmd="centuryclub">
 <!-- Table Header Bar-->
@@ -54,8 +53,15 @@ The <content:airline /> &quot;Century Club&quot; recognizes those pilots who ove
 <c:set var="entryNumber" value="${entryNumber + 1}" scope="page" />
 <tr>
  <td class="sec bld"><fmt:int value="${entryNumber}" /></td>
+<c:choose>
+<c:when test="${!pilot.isForgotten}" >
  <td class="pri bld">${pilot.pilotCode}</td>
  <td><el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></td>
+</c:when>
+<c:otherwise>
+ <td colspan="2"><content:airline /> Pilot</td>
+</c:otherwise>
+</c:choose>
  <td class="sec bld nophone">${pilot.equipmentType}</td>
  <td class="pri bld nophone">${pilot.rank.name}</td>
  <td><fmt:int value="${pilot.legs}" /></td>
