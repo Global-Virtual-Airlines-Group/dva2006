@@ -41,7 +41,7 @@ runway threshold (30% if available) and the standard deviation of those distance
 <!-- Table top Header bar -->
 <tr class="title">
  <td class="left caps" colspan="3"><content:airline /> LANDING STATISTICS</td>
- <td class="right" colspan="6">MINIMUM <el:text name="legCount" idx="*" size="1" max="2" value="${legCount}" /> FLIGHTS WITHIN <el:combo name="days" idx="*" size="1" options="${dateFilter}" value="${param.days}" /> 
+ <td class="right" colspan="6">MINIMUM <el:text name="legCount" idx="*" size="2" max="3" value="${legCount}" /> FLIGHTS WITHIN <el:combo name="days" idx="*" size="1" options="${dateFilter}" value="${param.days}" /> 
 IN <el:combo name="eqType" idx="*" size="1" options="${eqTypes}" value="${param.eqType}" /><el:button ID="SearchButton" type="submit" label="GO" /></td>
 </tr>
 <c:if test="${!empty viewContext.results}">
