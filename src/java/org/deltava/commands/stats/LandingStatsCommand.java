@@ -32,7 +32,7 @@ public class LandingStatsCommand extends AbstractViewCommand {
 		
 		// Load the view context and minimum landings
 		ViewContext<LandingStatistics> vc = initView(ctx, LandingStatistics.class, 50);
-		int minLegs = Math.max(0, StringUtils.parse(ctx.getParameter("legCount"), 200));
+		int minLegs = Math.max(0, StringUtils.parse(ctx.getParameter("legCount"), 20));
 		ctx.setAttribute("legCount", Integer.valueOf(minLegs), REQUEST);
 		
 		// Check equipment type
