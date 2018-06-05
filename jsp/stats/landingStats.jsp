@@ -15,6 +15,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <script>
+golgotha.local.update = function() { return document.forms[0].submit(); };
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.legCount, min:5, t:'Minimum Number of Landings'});
@@ -32,17 +33,15 @@ golgotha.local.validate = function(f) {
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="landingstats.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
-The members of <content:airline /> are a skilled group - and they can prove it. Below is a list of pilots 
-who consistently achieve the smoothest landings. This list is ordered by both average touchdown speed (which  
-counts for 30% of the ordering) and the standard deviation of those speeds (20%), the distance from the 
-runway threshold (30% if available) and the standard deviation of those distances (the remaining 20%).<br />
+The members of <content:airline /> are a skilled group - and they can prove it. Below is a list of pilots who consistently achieve the smoothest landings. This list is ordered by both average touchdown speed (which  
+counts for 30% of the ordering) and the standard deviation of those speeds (20%), the distance from the runway threshold (30% if available) and the standard deviation of those distances (the remaining 20%).<br />
 <br />
 <el:table className="view">
 <!-- Table top Header bar -->
 <tr class="title">
  <td class="left caps" colspan="3"><content:airline /> LANDING STATISTICS</td>
- <td class="right" colspan="6">MINIMUM <el:text name="legCount" idx="*" size="2" max="3" value="${legCount}" /> FLIGHTS WITHIN <el:combo name="days" idx="*" size="1" options="${dateFilter}" value="${param.days}" /> 
-IN <el:combo name="eqType" idx="*" size="1" options="${eqTypes}" value="${param.eqType}" /><el:button ID="SearchButton" type="submit" label="GO" /></td>
+ <td class="right" colspan="6">TOP <el:text name="viewCount" idx="*" size="2" max ="3" value="${viewContext.count}" /> PILOTS WITH A MINIMUM OF <el:text name="legCount" idx="*" size="2" max="3" value="${legCount}" /> FLIGHTS
+ WITHIN <el:combo name="days" idx="*" size="1" options="${dateFilter}" value="${dayFilter}" /> IN <el:combo name="eqType" idx="*" size="1" options="${eqTypes}" value="${param.eqType}" /><el:button ID="SearchButton" type="submit" label="GO" /></td>
 </tr>
 <c:if test="${!empty viewContext.results}">
 <!-- Table Header Bar-->

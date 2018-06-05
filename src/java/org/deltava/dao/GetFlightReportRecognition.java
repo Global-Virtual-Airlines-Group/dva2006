@@ -11,7 +11,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to get Flight Report IDs for Pilot recognition.
  * @author Luke
- * @version 8.1
+ * @version 8.3
  * @since 1.0
  */
 
@@ -49,13 +49,12 @@ public class GetFlightReportRecognition extends DAO {
 	public List<Integer> getGreasedLandings() throws DAOException {
 		
 		// Check the cache
-		CacheableList<Integer> results = _cache.get("ALL" + _dayFilter);
-		if (results != null)
-			return results;
+		CacheableList<Integer> results = _cache.get("ALL!" + _dayFilter);
+		if ((results != null) && (results.size() >= _queryMax))
+			return results.clone().subList(0, _queryMax);
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT ID, (((ABS(?-VSPEED) * 3) + (ABS(?-RWYDISTANCE) * 2)) / 5) AS FACT "
-			+ "FROM FLIGHTSTATS_LANDING ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT ID, (((ABS(?-VSPEED) * 3) + (ABS(?-RWYDISTANCE) * 2)) / 5) AS FACT FROM FLIGHTSTATS_LANDING ");
 		if (_dayFilter > 0)
 			sqlBuf.append(" WHERE (DATE > DATE_SUB(NOW(), INTERVAL ? DAY))");
 		sqlBuf.append(" ORDER BY FACT, DATE DESC");
@@ -68,7 +67,7 @@ public class GetFlightReportRecognition extends DAO {
 				_ps.setInt(3, _dayFilter);
 
 			// Add to the cache
-			results = new CacheableList<Integer>("ALL" + _dayFilter);
+			results = new CacheableList<Integer>("ALL!" + _dayFilter);
 			results.addAll(execute());
 			_cache.add(results);
 			return results;
@@ -85,13 +84,12 @@ public class GetFlightReportRecognition extends DAO {
 	public List<Integer> getStaffReports() throws DAOException {
 		
 		// Check the cache
-		CacheableList<Integer> results = _cache.get("STAFF" + _dayFilter);
-		if (results != null)
-			return results;
+		CacheableList<Integer> results = _cache.get("STAFF!" + _dayFilter);
+		if ((results != null) && (results.size() >= _queryMax))
+			return results.clone().subList(0, _queryMax);
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT L.ID, (((ABS(?-L.VSPEED) * 3) + (ABS(?-L.RWYDISTANCE) * 2)) / 5) AS FACT "
-			+ "FROM STAFF S LEFT JOIN FLIGHTSTATS_LANDING L ON (L.PILOT_ID=S.ID)"); 
+		StringBuilder sqlBuf = new StringBuilder("SELECT L.ID, (((ABS(?-L.VSPEED) * 3) + (ABS(?-L.RWYDISTANCE) * 2)) / 5) AS FACT FROM STAFF S LEFT JOIN FLIGHTSTATS_LANDING L ON (L.PILOT_ID=S.ID)"); 
 		if (_dayFilter > 0)
 			sqlBuf.append(" WHERE (L.DATE > DATE_SUB(NOW(), INTERVAL ? DAY))");
 		sqlBuf.append(" ORDER BY FACT, L.DATE DESC");
@@ -104,7 +102,7 @@ public class GetFlightReportRecognition extends DAO {
 				_ps.setInt(3, _dayFilter);
 
 			// Add to the cache
-			results = new CacheableList<Integer>("STAFF" + _dayFilter);
+			results = new CacheableList<Integer>("STAFF!" + _dayFilter);
 			results.addAll(execute());
 			_cache.add(results);
 			return results;
@@ -122,13 +120,12 @@ public class GetFlightReportRecognition extends DAO {
 	public List<Integer> getGreasedLandings(String eqType) throws DAOException {
 		
 		// Check the cache
-		CacheableList<Integer> results = _cache.get("EQ" + eqType + "$" + _dayFilter);
-		if (results != null)
-			return results;
+		CacheableList<Integer> results = _cache.get("EQ!" + eqType + "$" + _dayFilter);
+		if ((results != null) && (results.size() >= _queryMax))
+			return results.clone().subList(0, _queryMax);
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT ID, (((ABS(?-VSPEED) * 3) + (ABS(?-RWYDISTANCE) * 2)) / 5) AS FACT "
-			+ "FROM FLIGHTSTATS_LANDING WHERE (EQTYPE=?)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT ID, (((ABS(?-VSPEED) * 3) + (ABS(?-RWYDISTANCE) * 2)) / 5) AS FACT FROM FLIGHTSTATS_LANDING WHERE (EQTYPE=?)");
 		if (_dayFilter > 0)
 			sqlBuf.append("AND (DATE > DATE_SUB(NOW(), INTERVAL ? DAY))");
 		sqlBuf.append(" ORDER BY FACT, DATE DESC");
@@ -142,7 +139,7 @@ public class GetFlightReportRecognition extends DAO {
 				_ps.setInt(4, _dayFilter);
 			
 			// Add to the cache
-			results = new CacheableList<Integer>("EQ" + eqType + "$" + _dayFilter);
+			results = new CacheableList<Integer>("EQ!" + eqType + "$" + _dayFilter);
 			results.addAll(execute());
 			_cache.add(results);
 			return results;

@@ -39,10 +39,9 @@ distance down the runway.<br />
 <el:table className="view">
 <!-- Table top Header bar -->
 <tr class="title">
- <td class="left caps" colspan="3"><span class="nophone"><content:airline /> </span>OPTIMAL LANDINGS</td>
- <td class="right" colspan="5">TOP <el:text name="viewCount" idx="*" size="1" max="2" value="${viewContext.count}" /> 
-FLIGHTS <span class="nophone">WITHIN <el:combo name="days" idx="*" size="1" options="${dateFilter}" value="${daysBack}" onChange="void golgotha.local.update()" /></span> IN  
-<el:combo name="eqType" idx="*" size="1" options="${eqTypes}" value="${param.eqType}" onChange="void golgotha.local.update()" /><span class="nophone"><el:button ID="SearchButton" type="submit" label="GO" /></span></td>
+ <td class="left caps" colspan="3"><span class="nophone"><content:airline />&nbsp;</span>OPTIMAL LANDINGS</td>
+ <td class="right" colspan="5">TOP <el:text name="viewCount" idx="*" size="1" max="2" value="${viewContext.count}" /> FLIGHTS <span class="nophone">WITHIN <el:combo name="days" idx="*" size="1" options="${dateFilter}" value="${daysBack}" onChange="void golgotha.local.update()" /></span> 
+ IN <el:combo name="eqType" idx="*" size="1" options="${eqTypes}" value="${param.eqType}" onChange="void golgotha.local.update()" /><span class="nophone"><el:button ID="SearchButton" type="submit" label="GO" /></span></td>
 </tr>
 
 <!-- Table Header Bar-->
