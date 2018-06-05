@@ -77,6 +77,7 @@
 	<service id="simfdr_eq" class="org.deltava.service.simfdr.AvailableEquipmentService" />
 	<service id="simfdr_airports" class="org.deltava.service.simfdr.ValidAirportService" />
 	<service id="simfdr" class="org.deltava.service.simfdr.FlightSubmitService" />
+	<service id="simfdr_posupd" class="org.deltava.service.simfdr.PositionUpdateService" />
 
 	<!-- XACARS Offline PIREP Services -->
 	<service id="xaddr" class="org.deltava.service.xacars.XAddressService" />
