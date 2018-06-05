@@ -32,8 +32,10 @@ public class LandingStatsCommand extends AbstractViewCommand {
 		
 		// Load the view context and minimum landings
 		ViewContext<LandingStatistics> vc = initView(ctx, LandingStatistics.class, 50);
-		int minLegs = Math.max(0, StringUtils.parse(ctx.getParameter("legCount"), 20));
+		int dayFilter = StringUtils.parse(ctx.getParameter("days"), 30);
+		int minLegs = Math.max(10, StringUtils.parse(ctx.getParameter("legCount"), 100));
 		ctx.setAttribute("legCount", Integer.valueOf(minLegs), REQUEST);
+		ctx.setAttribute("dayFilter", Integer.valueOf(dayFilter), REQUEST);
 		
 		// Check equipment type
 		String eqType = ctx.getParameter("eqType");
@@ -44,7 +46,7 @@ public class LandingStatsCommand extends AbstractViewCommand {
 			
 			// Get the DAO and the results
 			GetFlightReportStatistics dao = new GetFlightReportStatistics(con);
-			dao.setDayFilter(StringUtils.parse(ctx.getParameter("days"), 30));
+			dao.setDayFilter(dayFilter);
 			dao.setQueryStart(vc.getStart());
 			dao.setQueryMax(vc.getCount());
 			vc.setResults(dao.getLandings(eqType, minLegs));

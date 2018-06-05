@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to retrieve Flight Report statistics.
  * @author Luke
- * @version 8.1
+ * @version 8.3
  * @since 2.1
  */
 
@@ -24,7 +24,7 @@ public class GetFlightReportStatistics extends DAO {
 
 	private static final int MAX_VSPEED = -2500;
 	private static final int OPT_VSPEED = -225;
-	private static final Cache<CacheableCollection<LandingStatistics>> _cache = CacheManager.getCollection(LandingStatistics.class, "LandingStats");
+	private static final Cache<CacheableList<LandingStatistics>> _cache = CacheManager.getCollection(LandingStatistics.class, "LandingStats");
 	private static final Cache<CacheableCollection<FlightStatsEntry>> _statCache = CacheManager.getCollection(FlightStatsEntry.class, "FlightStats");
 	
 	private int _dayFilter;
@@ -221,15 +221,13 @@ public class GetFlightReportStatistics extends DAO {
 
 		// Check the cache
 		StatsCacheKey key = new StatsCacheKey("$PILOTIND", pilotID);
-		CacheableCollection<LandingStatistics> results = _cache.get(key);
-		if (results != null)
-			return results.clone();
+		CacheableList<LandingStatistics> results = _cache.get(key);
+		if ((results != null) && (results.size() >= _queryMax))
+			return results.clone().subList(0, _queryMax);
 
 		try {
-			prepareStatement("SELECT PR.EQTYPE, APR.LANDING_VSPEED, RD.DISTANCE, RD.LENGTH FROM PIREPS PR, "
-				+ "ACARS_PIREPS APR, acars.RWYDATA RD WHERE (APR.ACARS_ID=RD.ID) AND (RD.ISTAKEOFF=?) AND "
-				+ "(APR.CLIENT_BUILD>?) AND (RD.DISTANCE<RD.LENGTH) AND (APR.ID=PR.ID) AND (PR.PILOT_ID=?) "
-				+ "AND (PR.STATUS=?) ORDER BY ABS(? - APR.LANDING_VSPEED)");
+			prepareStatement("SELECT PR.EQTYPE, APR.LANDING_VSPEED, RD.DISTANCE, RD.LENGTH FROM PIREPS PR, ACARS_PIREPS APR, acars.RWYDATA RD WHERE (APR.ACARS_ID=RD.ID) AND "
+				+ "(RD.ISTAKEOFF=?) AND (APR.CLIENT_BUILD>?) AND (RD.DISTANCE<RD.LENGTH) AND (APR.ID=PR.ID) AND (PR.PILOT_ID=?) AND (PR.STATUS=?) ORDER BY ABS(? - APR.LANDING_VSPEED)");
 			_ps.setBoolean(1, false);
 			_ps.setInt(2, FlightReport.MIN_ACARS_CLIENT);
 			_ps.setInt(3, pilotID);
@@ -268,9 +266,9 @@ public class GetFlightReportStatistics extends DAO {
 		
 		// Check the cache
 		StatsCacheKey key = new StatsCacheKey("$PILOT", pilotID);
-		CacheableCollection<LandingStatistics> results = _cache.get(key);
-		if (results != null)
-			return results.clone();
+		CacheableList<LandingStatistics> results = _cache.get(key);
+		if ((results != null) && (results.size() >= _queryMax))
+			return results.clone().subList(0, _queryMax);
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT L.EQTYPE, COUNT(L.ID) AS CNT, ROUND(SUM(PR.FLIGHT_TIME),1) AS HRS, AVG(L.VSPEED) AS VS, "
