@@ -1,17 +1,15 @@
-// Copyright 2005, 2006, 2007, 2008, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2012, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
+
+import org.deltava.beans.*;
 
 import org.deltava.security.SecurityContext;
 
-import org.deltava.beans.Person;
-import org.deltava.beans.Pilot;
-
 /**
- * An access controller for Pilot profile operations performed by users in another
- * airline. This is designed to allow HR staffs in one airline to review the status of
- * a Pilot before a Transfer.
+ * An access controller for Pilot profile operations performed by users in another airline. This is designed to allow HR staffs in one 
+ * airline to review the status of a Pilot before a Transfer.
  * @author Luke
- * @version 7.0
+ * @version 8.3
  * @since 1.0
  */
 
@@ -42,6 +40,15 @@ public final class CrossAppPilotAccessControl extends PilotAccessControl {
 		_canViewEmail = _ctx.isAuthenticated() ? _ctx.isUserInRole("HR") : (_p.getEmailAccess() == Person.SHOW_EMAIL);
 	}
 
+	/**
+	 * Returns if we can view the Pilot's profile.
+	 * @return TRUE if not forgotten, otherwise FALSE
+	 */
+	@Override
+	public boolean getCanView() {
+		return !_p.getIsForgotten() || _ctx.isUserInRole("Admin");
+	}
+	
 	/**
 	 * Returns if we are currently accessing our own profile.
 	 * @return FALSE
