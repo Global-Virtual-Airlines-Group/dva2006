@@ -53,7 +53,7 @@ public class PilotAccessControl extends AccessControl {
 			return;
 
 		// Get the currently logged in user. If not logged in, just check e-mail access
-		_canView = !_p.getIsForgotten() || _ctx.isUserInRole("Admin") || _ctx.isUserInRole("HR");
+		_canView = !_p.getIsForgotten() || _ctx.isUserInRole("HR");
 		if (!_ctx.isAuthenticated()) {
 			_canViewEmail = (_p.getEmailAccess() == Person.SHOW_EMAIL);
 			return;
