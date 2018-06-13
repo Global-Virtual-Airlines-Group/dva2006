@@ -43,8 +43,15 @@ public class ForgetUserCommand extends AbstractCommand {
 			if (!ac.getCanEdit())
 				throw securityException("Not Authorized");
 			
-			// Status updats
+			// Status updates
 			Collection<StatusUpdate> upds = new ArrayList<StatusUpdate>();
+			if ((p.getStatus() == Pilot.ACTIVE) || (p.getStatus() == Pilot.ON_LEAVE)) {
+				p.setStatus(Pilot.RETIRED);
+				StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.STATUS_CHANGE);
+				upd.setAuthorID(ctx.getUser().getID());
+				upd.setDescription("Pilot Retired");
+				upds.add(upd);
+			}
 			
 			// Write status update
 			StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.STATUS_CHANGE);
@@ -56,12 +63,6 @@ public class ForgetUserCommand extends AbstractCommand {
 			p.setIsForgotten(true);
 			p.setEmailInvalid(true);
 			p.setEmailAccess(Person.HIDE_EMAIL);
-			if ((p.getStatus() == Pilot.ACTIVE) || (p.getStatus() == Pilot.ON_LEAVE)) {
-				p.setStatus(Pilot.RETIRED);
-				upd = new StatusUpdate(p.getID(), StatusUpdate.STATUS_CHANGE);
-				upd.setDescription("Pilot Retired");
-				upds.add(upd);
-			}
 			
 			// Save the user and commit
 			ctx.startTX();
