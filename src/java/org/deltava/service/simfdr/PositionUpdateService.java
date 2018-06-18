@@ -7,6 +7,7 @@ import java.sql.Connection;
 
 import org.deltava.beans.Pilot;
 import org.deltava.beans.acars.*;
+import org.deltava.beans.flight.Recorder;
 import org.deltava.beans.flight.SimFDRFlightReport;
 
 import org.deltava.dao.*;
@@ -15,6 +16,7 @@ import org.deltava.dao.redis.SetTrack;
 import org.deltava.service.*;
 
 import org.deltava.util.UserID;
+import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -25,6 +27,8 @@ import org.deltava.util.system.SystemData;
  */
 
 public class PositionUpdateService extends SimFDRService {
+	
+	private static final Cache<CacheableMap<String, MapRouteEntry>> _simFDRFlightCache = CacheManager.getMap(String.class, MapRouteEntry.class, "simFDRFlightID");
 
 	/**
 	 * Executes the Web Service.
@@ -67,6 +71,7 @@ public class PositionUpdateService extends SimFDRService {
 		// Build the Map entry
 		ACARSRouteEntry re = info.getPositions().first(); FlightInfo inf = info.getInfo();
 		MapRouteEntry result = new MapRouteEntry(re.getDate(), re, p, info.getInfo().getEquipmentType());
+		result.setRecorder(Recorder.SIMFDR);
 		result.setSimulator(inf.getSimulator());
 		result.setAutopilotType(inf.getAutopilotType());
 		result.setClientBuild(info.getFlightReport().getClientBuild(), info.getFlightReport().getBeta());
@@ -97,10 +102,20 @@ public class PositionUpdateService extends SimFDRService {
 		result.setVisibility(re.getVisibility());
 		result.setNAV1(re.getNAV1());
 		result.setNAV2(re.getNAV2());
+		result.setADF1(re.getADF1());
+		
+		// Get the track IDs
+		CacheableMap<String, MapRouteEntry> trackIDs = _simFDRFlightCache.get(MapRouteEntry.class);
+		if (trackIDs == null)
+			trackIDs = new CacheableMap<String, MapRouteEntry>(MapRouteEntry.class);
+		
+		// Add our ID
+		trackIDs.put(flightID, result);
 		
 		// Save the position update and return
 		SetTrack twdao = new SetTrack();
 		twdao.write(false, flightID, result);
+		_simFDRFlightCache.add(trackIDs);
 		return SC_OK;
 	}
 
