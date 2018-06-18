@@ -1,4 +1,4 @@
-// Copyright 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import java.security.Principal;
@@ -13,7 +13,7 @@ import org.deltava.beans.schedule.Airport.Code;
 /**
  * A JSP tag to render airport code text boxes.
  * @author Luke
- * @version 6.0
+ * @version 8.1
  * @since 6.0
  */
 
@@ -72,6 +72,7 @@ public class AirportCodeTag extends InputTag {
 		setName(_comboName + "Code");
 		setMax((_codeType == Code.IATA) ? 3 : 4);
 		setSize(3);
+		setAutoComplete(false);
 		if (_a != null)
 			_value = (_codeType == Code.IATA) ? _a.getIATA() : _a.getICAO();
 		
