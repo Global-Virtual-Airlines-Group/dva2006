@@ -136,9 +136,9 @@ golgotha.onDOMReady(function() {
 </tr>
 <tr>
  <td class="label">Flight Number / Leg</td>
- <td class="data"><el:text name="flightNumber" idx="*" size="3" max="4" />&nbsp;<el:text name="flightLeg" idx="*" size="1" max="1" value="${fafCriteria.leg == 0 ? '' : fafCriteria.leg}" /></td>
+ <td class="data"><el:text name="flightNumber" idx="*" size="3" max="4" autoComplete="false" />&nbsp;<el:text name="flightLeg" idx="*" size="1" max="1" value="${fafCriteria.leg == 0 ? '' : fafCriteria.leg}" autoComplete="false" /></td>
  <td class="label">Distance</td>
- <td class="data"><el:text name="distance" idx="*" size="4" max="4" value="${fafCriteria.distance < 1 ? '' : fafCriteria.distance}" /> +/- <el:text name="distRange" idx="*" size="4" max="4" value="${fafCriteria.distance < 1 ? '' : fafCriteria.distanceRange}" /> miles</td>
+ <td class="data"><el:text name="distance" idx="*" size="4" max="4" value="${fafCriteria.distance < 1 ? '' : fafCriteria.distance}" autoComplete="false" /> +/- <el:text name="distRange" idx="*" size="4" max="4" value="${fafCriteria.distance < 1 ? '' : fafCriteria.distanceRange}" autoComplete="false" /> miles</td>
 </tr>
 <tr>
  <td class="label">Departing from</td>
@@ -160,13 +160,13 @@ golgotha.onDOMReady(function() {
  <td class="label">Sort Flights by</td>
  <td class="data"><el:combo name="sortType" idx="*" size="1" options="${sortTypes}" value="${param.sortType}" onChange="void golgotha.ff.updateSort(this)" /> <el:box ID="sortDesc" name="sortDesc" idx="*" value="true" checked="${param.sortDesc}" label="Descending" /></td>
  <td class="label">Maximum Results</td>
- <td class="data"><el:text name="maxResults" idx="*" size="2" max="3" value="${empty fafCriteria ? 25 : fafCriteria.maxResults}" /> total, <el:text name="maxFlights" idx="*" size="2" max="2" value="${fafCriteria.flightsPerRoute}" /> preferred between airports</td>
+ <td class="data"><el:text name="maxResults" idx="*" size="2" max="3" value="${empty fafCriteria ? 25 : fafCriteria.maxResults}" autoComplete="false" /> total, <el:text name="maxFlights" idx="*" size="2" max="2" value="${fafCriteria.flightsPerRoute}" autoComplete="false" /> preferred between airports</td>
 </tr>
 <tr>
  <td class="label">Frequency</td>
- <td class="data">Show Routes flown no more than <el:text name="maxRouteLegs" size="2" max="3" value="${(empty fafCriteria || (fafCriteria.routeLegs < 0)) ? '' : fafCriteria.routeLegs}" /> times</td>
+ <td class="data">Show Routes flown no more than <el:text name="maxRouteLegs" size="2" max="3" value="${(empty fafCriteria || (fafCriteria.routeLegs < 0)) ? '' : fafCriteria.routeLegs}" autoComplete="false" /> times</td>
  <td class="label">Recent Routes</td>
- <td class="data">Show Routes flown at least <el:text name="maxLastFlown" size="2" max="4" value="${(empty fafCriteria || (fafCriteria.lastFlownInterval < 0)) ? '' : fafCriteria.lastFlownInterval}" /> days ago</td>
+ <td class="data">Show Routes flown at least <el:text name="maxLastFlown" size="2" max="4" value="${(empty fafCriteria || (fafCriteria.lastFlownInterval < 0)) ? '' : fafCriteria.lastFlownInterval}" autoComplete="false" /> days ago</td>
 </tr>
 <tr>
  <td class="label top">Search Options</td>
