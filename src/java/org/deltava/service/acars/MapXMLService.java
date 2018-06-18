@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.io.*;
@@ -19,7 +19,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to provide XML-formatted ACARS position data for Google Maps.
  * @author Luke
- * @version 7.3
+ * @version 8.3
  * @since 1.0
  */
 
@@ -77,11 +77,12 @@ public class MapXMLService extends WebService {
 			// Add tabs
 			if (entry instanceof TabbedMapEntry) {
 				TabbedMapEntry tme = (TabbedMapEntry) entry;
-				e.setAttribute("tabs", String.valueOf(tme.getTabNames().size()));
-				for (int x = 0; x < tme.getTabNames().size(); x++) {
+				Map<String, String> tabInfo = tme.getTabs();
+				e.setAttribute("tabs", String.valueOf(tabInfo.size()));
+				for (Map.Entry<String, String> me : tabInfo.entrySet()) {
 					Element te = new Element("tab");
-					te.setAttribute("name", tme.getTabNames().get(x));
-					te.addContent(new CDATA(tme.getTabContents().get(x)));
+					te.setAttribute("name", me.getKey());
+					te.addContent(new CDATA(me.getValue()));
 					e.addContent(te);
 				}
 			} else {
