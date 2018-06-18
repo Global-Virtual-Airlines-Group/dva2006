@@ -5,6 +5,7 @@ import java.util.*;
 import java.time.Instant;
 
 import org.deltava.beans.*;
+import org.deltava.beans.flight.Recorder;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.util.StringUtils;
@@ -12,14 +13,12 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
- * @version 8.2
+ * @version 8.3
  * @since 1.0
  */
 
 public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 	
-	private static final List<String> TAB_NAMES = Collections.unmodifiableList(Arrays.asList("Pilot", "Flight Data"));
-
 	private String _eqType;
 	private String _flightNumber;
 	private Airport _airportD;
@@ -29,6 +28,7 @@ public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 	private boolean _checkRide;
 	private boolean _dispatchRoute;
 	private String _phaseName;
+	private Recorder _fdr = Recorder.ACARS;
 	
 	private Country _c;
 	private String _tailCode;
@@ -106,6 +106,14 @@ public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 	}
 	
 	/**
+	 * Updates the Flight Data Recorder used to generate this entry.
+	 * @param fdr a Recorder
+	 */
+	public void setRecorder(Recorder fdr) {
+		_fdr = fdr;
+	}
+	
+	/**
 	 * Updates the load factor for this flight.
 	 * @param lf the load factor
 	 */
@@ -129,6 +137,10 @@ public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 		_sim = s;
 	}
 	
+	/**
+	 * Updates what Country's airspace this entry is in.
+	 * @param c a Country
+	 */
 	public void setCountry(Country c) {
 		_c = c;
 	}
@@ -186,6 +198,12 @@ public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 		buf.append(")<br />");
 		buf.append("Using ");
 		buf.append(_sim.getName());
+		if (_fdr != Recorder.ACARS) {
+			buf.append(" and <span class=\"ter\">");
+			buf.append(_fdr.toString());
+			buf.append("</span>");
+		}
+		
 		buf.append("<br />");
 		if (_network != null) {
 			buf.append("Flight operated online using <span class=\"sec bld\">");
@@ -202,13 +220,8 @@ public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 	}
 
 	@Override
-	public final List<String> getTabNames() {
-		return TAB_NAMES;
-	}
-
-	@Override
-	public final List<String> getTabContents() {
-		List<String> results = new ArrayList<String>();
+	public final LinkedHashMap<String, String> getTabs() {
+		LinkedHashMap<String, String> results = new LinkedHashMap<String, String>();
 
 		// Build Pilot information
 		StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox acarsFlight\"><span class=\"pri bld\">");
@@ -291,10 +304,10 @@ public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 		}
 		
 		buf.append("</div>");
-		results.add(buf.toString());
+		results.put("Pilot", buf.toString());
 		
 		// Add Flight information
-		results.add(super.getInfoBox());
+		results.put("Flight Data", super.getInfoBox());
 		return results;
 	}
 }

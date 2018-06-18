@@ -1,7 +1,8 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.io.*;
+import java.time.Instant;
 import java.util.*;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -15,15 +16,18 @@ import org.deltava.dao.ipc.GetACARSPool;
 
 import org.deltava.service.*;
 import org.deltava.util.*;
+import org.deltava.util.cache.*;
 
 /**
  * A Web Service to provide JSON-formatted ACARS position data for Google Maps.
  * @author Luke
- * @version 7.3
+ * @version 8.3
  * @since 1.0
  */
 
 public class MapJSONService extends WebService {
+	
+	private static final Cache<CacheableMap<String, MapRouteEntry>> _simFDRFlightCache = CacheManager.getMap(String.class, MapRouteEntry.class, "simFDRFlightID");
 	
 	/**
 	 * Executes the Web Service.
@@ -39,8 +43,28 @@ public class MapJSONService extends WebService {
 		Collection<ACARSMapEntry> entries = acdao.getEntries();
 		if (entries == null)
 			entries = Collections.emptyList();
+		
+		// Get the simFDR tracks
+		CacheableMap<String, MapRouteEntry> trackIDs = _simFDRFlightCache.get(MapRouteEntry.class);
+		if (trackIDs == null)
+			trackIDs = new CacheableMap<String, MapRouteEntry>(MapRouteEntry.class);
+		
+		// Trim out any old cache entries
+		Instant purgeDate = Instant.now().minusSeconds(1800); boolean entriesPurged = false;
+		for (Iterator<Map.Entry<String, MapRouteEntry>> i = trackIDs.entrySet().iterator(); i.hasNext(); ) {
+			Map.Entry<String, MapRouteEntry> me = i.next();
+			if (me.getValue().getDate().isBefore(purgeDate)) {
+				i.remove();
+				entriesPurged = true;
+			}
+		}
+		
+		// Write back if we've updated the cache
+		if (entriesPurged)
+			_simFDRFlightCache.add(trackIDs);
 
 		// Add the items
+		entries.addAll(trackIDs.values());
 		JSONObject jo = new JSONObject();
 		for (ACARSMapEntry entry : entries) {
 			JSONObject eo = new JSONObject();
@@ -71,10 +95,10 @@ public class MapJSONService extends WebService {
 			// Add tabs
 			if (entry instanceof TabbedMapEntry) {
 				TabbedMapEntry tme = (TabbedMapEntry) entry;
-				for (int x = 0; x < tme.getTabNames().size(); x++) {
+				for (Map.Entry<String, String> me : tme.getTabs().entrySet()) {
 					JSONObject to = new JSONObject();
-					to.put("name", tme.getTabNames().get(x));
-					to.put("content", tme.getTabContents().get(x));
+					to.put("name", me.getKey());
+					to.put("content", me.getValue());
 					eo.append("tabs", to);
 				}
 			} else {
