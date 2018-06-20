@@ -262,13 +262,20 @@ public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 		buf.append(_airportA.getICAO());
 		buf.append(")<br />Using <span class=\"pri\">");
 		buf.append(_sim.getName());
-		buf.append("</span><br /><br />ACARS Flight <span class=\"bld\">");
-		buf.append(StringUtils.format(getID(), "#,##0"));
-		buf.append("</span>");
-		if (!StringUtils.isEmpty(_tailCode)) {
-			buf.append(" <span class=\"small\">(a/c ");
-			buf.append(_tailCode);
-			buf.append(")</span>");
+		
+		if (_fdr != Recorder.ACARS) {
+			buf.append("</span> and <span class=\"ter\">");
+			buf.append(_fdr.toString());
+			buf.append("</span><br />");
+		} else {
+			buf.append("</span><br /><br />ACARS Flight <span class=\"bld\">");
+			buf.append(StringUtils.format(getID(), "#,##0"));
+			buf.append("</span>");
+			if (!StringUtils.isEmpty(_tailCode)) {
+				buf.append(" <span class=\"small\">(a/c ");
+				buf.append(_tailCode);
+				buf.append(")</span>");
+			}
 		}
 		
 		if (_pax > 0) {
