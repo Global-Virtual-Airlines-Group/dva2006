@@ -52,7 +52,7 @@ public class GetSerializedPosition extends DAO {
 		for (int x = 0; x < size; x++) {
 			GeoPosition gp = new GeoPosition(in.readDouble(), in.readDouble());
 			ACARSRouteEntry re = new ACARSRouteEntry(Instant.ofEpochMilli(in.readLong()), gp);
-			re.setPhase(in.readShort());
+			re.setPhase(FlightPhase.values()[in.readShort()]);
 			re.setFlags(in.readInt());
 			re.setAltitude(in.readInt());
 			re.setHeading(in.readShort());
@@ -137,7 +137,7 @@ public class GetSerializedPosition extends DAO {
 		for (int x = 0; x < size; x++) {
 			GeoPosition gp = new GeoPosition(in.readDouble(), in.readDouble());
 			XARouteEntry re = new XARouteEntry(gp, Instant.ofEpochMilli(in.readLong()));
-			re.setPhase(in.readShort());
+			re.setPhase(FlightPhase.values()[in.readShort()]);
 			re.setFlags(in.readInt());
 			re.setAltitude(in.readInt());
 			re.setHeading(in.readShort());

@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to parse XML-format offline Flight Reports.
  * @author Luke
- * @version 8.2
+ * @version 8.3
  * @since 2.4
  */
 
@@ -159,7 +159,7 @@ public final class OfflineFlightParser {
 					pos.setAOA(parse(pe.getChildTextTrim("aoa")));
 					pos.setG(parse(pe.getChildTextTrim("g")));
 					pos.setFuelFlow(StringUtils.parse(pe.getChildTextTrim("fuelFlow"), 0));
-					pos.setPhase(StringUtils.parse(pe.getChildTextTrim("phase"), 0));
+					pos.setPhase(FlightPhase.fromString(pe.getChildTextTrim("phase")));
 					pos.setSimRate(StringUtils.parse(pe.getChildTextTrim("simRate"), 0));
 					pos.setFlaps(StringUtils.parse(pe.getChildTextTrim("flaps"), 0));
 					pos.setFuelRemaining(StringUtils.parse(pe.getChildTextTrim("fuel"), 0));

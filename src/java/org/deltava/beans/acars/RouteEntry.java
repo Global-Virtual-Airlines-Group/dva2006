@@ -13,7 +13,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
- * @version 8.2
+ * @version 8.3
  * @since 1.0
  */
 
@@ -148,21 +148,10 @@ public abstract class RouteEntry extends ACARSMapEntry implements GeospaceLocati
 	/**
 	 * Returns the flight phase.
 	 * @return the phase code
-	 * @see RouteEntry#getPhaseName()
-	 * @see RouteEntry#setPhase(int)
+	 * @see RouteEntry#setPhase(FlightPhase)
 	 */
 	public FlightPhase getPhase() {
 		return _phase;
-	}
-	
-	/**
-	 * Returns the flight phase name for display in a JSP or HTML.
-	 * @return the phase name
-	 * @see RouteEntry#getPhase()
-	 * @see RouteEntry#setPhase(int)
-	 */
-	public String getPhaseName() {
-		return _phase.getName();
 	}
 	
 	/**
@@ -264,15 +253,11 @@ public abstract class RouteEntry extends ACARSMapEntry implements GeospaceLocati
 
 	/**
 	 * Updates the flight phase.
-	 * @param phase the phase code
-	 * @throws IllegalArgumentException if phase is invalid
+	 * @param phase the FlightPhase
 	 * @see RouteEntry#getPhase()
 	 */
-	public void setPhase(int phase) {
-		if ((phase < 0) || (phase >= FlightPhase.values().length))
-			throw new IllegalArgumentException("Invalid Flight phase - " + phase);
-		
-		_phase = FlightPhase.values()[phase];
+	public void setPhase(FlightPhase phase) {
+		_phase = phase;
 	}
 
 	/**

@@ -19,7 +19,7 @@ import org.deltava.util.*;
 /**
  * The XACARS status message Web Service. 
  * @author Luke
- * @version 8.2
+ * @version 8.3
  * @since 4.1
  */
 
@@ -265,7 +265,7 @@ public class MessageService extends XAService {
 			writePosition &= GeoUtils.isValid(re);
 			if (writePosition) {
 				log.info("IAS = " +  re.getAirSpeed() + " TAS = " + re.getGroundSpeed() + " MACH = " + re.getMach() + " GS = " + gs);
-				re.setPhase(inf.getPhase().ordinal());
+				re.setPhase(inf.getPhase());
 				xwdao.write(re);
 			}
 			
