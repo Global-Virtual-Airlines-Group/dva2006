@@ -3,19 +3,20 @@ package org.deltava.service.simfdr;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
+import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.Pilot;
 import org.deltava.beans.acars.*;
-import org.deltava.beans.flight.Recorder;
-import org.deltava.beans.flight.SimFDRFlightReport;
+import org.deltava.beans.flight.*;
+import org.deltava.beans.schedule.Aircraft;
 
 import org.deltava.dao.*;
 import org.deltava.dao.redis.SetTrack;
 
 import org.deltava.service.*;
 
-import org.deltava.util.UserID;
+import org.deltava.util.*;
 import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
 
@@ -42,7 +43,7 @@ public class PositionUpdateService extends SimFDRService {
 		
 		// Get the XML
 		OfflineFlight<SimFDRFlightReport, ACARSRouteEntry> info = null;
-		String flightID = ctx.getRequest().getHeader("X-simFDR-FlightID");
+		StringBuilder flightID = new StringBuilder(ctx.getRequest().getHeader("X-simFDR-FlightID"));
 		try {
 			info = OfflineFlightParser.create(ctx.getBody());
 		} catch (Exception e) {
@@ -62,11 +63,28 @@ public class PositionUpdateService extends SimFDRService {
 				p = pdao.get(id.getUserID());
 			if (p == null)
 				throw error(SC_NOT_FOUND, "Unknown Pilot - " + id, false);
+			
+			// Load the aircraft type
+			GetAircraft acdao = new GetAircraft(con);
+			SimFDRFlightReport fr = info.getFlightReport();
+			Aircraft a = acdao.getIATA(fr.getAircraftCode());
+			Collection<String> iataCodes = StringUtils.split(fr.getIATACodes(), ",");
+			for (Iterator<String> i = iataCodes.iterator(); (i.hasNext() && (a == null)); )
+				a = acdao.getIATA(i.next());
+		
+			if (a != null) {
+				fr.setEquipmentType(a.getName()); 
+				info.getInfo().setEquipmentType(a.getName());
+			}
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		} finally {
 			ctx.release();
 		}
+		
+		// Add the userID to the flight ID to guarantee uniqueness
+		flightID.append('-').append(p.getHexID());
+		
 		
 		// Build the Map entry
 		ACARSRouteEntry re = info.getPositions().first(); FlightInfo inf = info.getInfo();
@@ -110,11 +128,11 @@ public class PositionUpdateService extends SimFDRService {
 			trackIDs = new CacheableMap<String, MapRouteEntry>(MapRouteEntry.class);
 		
 		// Add our ID
-		trackIDs.put(flightID, result);
+		trackIDs.put(flightID.toString(), result);
 		
 		// Save the position update and return
 		SetTrack twdao = new SetTrack();
-		twdao.write(false, flightID, result);
+		twdao.write(false, flightID.toString(), result);
 		_simFDRFlightCache.add(trackIDs);
 		return SC_OK;
 	}
