@@ -1,4 +1,4 @@
-// Copyright 2011, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object for reading XACARS data from the database.
  * @author Luke
- * @version 8.0
+ * @version 8.3
  * @since 4.1
  */
 
@@ -116,7 +116,7 @@ public class GetXACARS extends DAO {
 					pos.setVerticalSpeed(rs.getInt(10));
 					pos.setMach(rs.getDouble(11));
 					pos.setFuelRemaining(rs.getInt(12));
-					pos.setPhase(rs.getInt(13));
+					pos.setPhase(FlightPhase.values()[rs.getInt(13)]);
 					pos.setWindHeading(rs.getInt(14));
 					pos.setWindSpeed(rs.getInt(15));
 					results.add(pos);

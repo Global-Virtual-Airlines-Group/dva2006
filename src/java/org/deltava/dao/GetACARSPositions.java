@@ -97,7 +97,7 @@ public class GetACARSPositions extends GetACARSData {
 					entry.setFrameRate(rs.getInt(26));
 					entry.setSimRate(rs.getInt(27));
 					entry.setSimUTC(toInstant(rs.getTimestamp(28)));
-					entry.setPhase(rs.getInt(29));
+					entry.setPhase(FlightPhase.values()[rs.getInt(29)]);
 					entry.setNAV1(rs.getString(30));
 					entry.setNAV2(rs.getString(31));
 					entry.setADF1(rs.getString(32));
@@ -232,7 +232,7 @@ public class GetACARSPositions extends GetACARSData {
 					re.setVerticalSpeed(rs.getInt(9));
 					re.setMach(rs.getDouble(10));
 					re.setFuelRemaining(rs.getInt(11));
-					re.setPhase(rs.getInt(12));
+					re.setPhase(FlightPhase.values()[rs.getInt(12)]);
 					re.setFlags(rs.getInt(13));
 					re.setWindHeading(rs.getInt(14));
 					re.setWindSpeed(rs.getInt(15));

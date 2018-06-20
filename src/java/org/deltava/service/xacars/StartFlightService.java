@@ -1,4 +1,4 @@
-// Copyright 2011, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.xacars;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * The XACARS Start Flight service.
  * @author Luke
- * @version 7.3
+ * @version 8.3
  * @since 4.1
  */
 
@@ -75,7 +75,7 @@ public class StartFlightService extends XAService {
 		pos.setHeading(StringUtils.parse(data.get(12), 0));
 		pos.setAltitude(StringUtils.parse(data.get(7), 0));
 		pos.setFuelRemaining(StringUtils.parse(data.get(11), 0));
-		pos.setPhase(info.getPhase().ordinal());
+		pos.setPhase(info.getPhase());
 		
 		try {
 			// Authenticate the user
