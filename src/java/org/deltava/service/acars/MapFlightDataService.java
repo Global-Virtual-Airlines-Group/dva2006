@@ -22,7 +22,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display ACARS Flight Report data.
  * @author Luke
- * @version 8.2
+ * @version 8.3
  * @since 1.0
  */
 
@@ -48,7 +48,7 @@ public class MapFlightDataService extends WebService {
 			GetACARSPositions dao = new GetACARSPositions(con);
 			FlightInfo info = dao.getInfo(id);
 			if (info == null)
-				throw error(SC_NOT_FOUND, "Invalid ACARS Flight ID");
+				throw error(SC_NOT_FOUND, "Invalid ACARS Flight ID", false);
 			if ((info.getFDR() == Recorder.XACARS) && !info.getArchived())
 				routePoints = dao.getXACARSEntries(id);
 			else
