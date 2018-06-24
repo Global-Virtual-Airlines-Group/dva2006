@@ -93,8 +93,11 @@ public class GetRunwayMapping extends DAO {
 			prepareStatement("SELECT DISTINCT ICAO FROM common.RUNWAY_RENUMBER");
 			Collection<Airport> results = new ArrayList<Airport>();
 			try (ResultSet rs = _ps.executeQuery()) {
-				while (rs.next())
-					results.add(SystemData.getAirport(rs.getString(1)));
+				while (rs.next()) {
+					Airport a = SystemData.getAirport(rs.getString(1));
+					if (a != null)
+						results.add(a);
+				}
 			}
 			
 			_ps.close();
