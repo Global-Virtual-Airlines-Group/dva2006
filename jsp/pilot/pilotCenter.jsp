@@ -787,6 +787,10 @@ aircraft types, for easy reuse when assigning a Check Ride to a pilot.</td>
  <td class="data">You can import and purge AIRAC data stored within the <content:airline /> Navigation Data database. AIRAC data can be imported in one of three ways - Navigation Aids, Airways and Terminal Routes (SIDs / STARs).</td>
 </tr>
 <tr>
+ <td class="mid"><el:cmd className="bld" url="rwymappings">Runway Mappings</el:cmd></td>
+ <td class="data">As runways get renumbered over time due to magnetic drift, you can update runway mappings between the simulators and the real world.</td>
+</tr>
+<tr>
  <td class="mid"><el:cmd className="bld" url="airspaceimport">Airspace Data</el:cmd></td>
  <td class="data">You can import and update airspace boundary definitions in the <content:airline /> Navigation Data database.</td>
 </tr>
