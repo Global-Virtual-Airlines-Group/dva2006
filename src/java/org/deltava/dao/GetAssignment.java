@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2011, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2011, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
  * A Data Access Object to load Flight Assignments. All calls in this DAO will populate the legs for any returned Flight
  * Assignments, but will <i>not </i> populate any Flight Reports.
  * @author Luke
- * @version 8.1
+ * @version 8.3
  * @since 1.0
  */
 
@@ -51,18 +51,27 @@ public class GetAssignment extends DAO {
 			throw new DAOException(se);
 		}
 	}
-
+	
 	/**
 	 * Returns all Flight Assignments for a particular Pilot.
 	 * @param pilotID the Pilot's database ID
+	 * @param st an AssignmentStatus, or null for all
 	 * @return a List of AssignmentInfo beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<AssignmentInfo> getByPilot(int pilotID) throws DAOException {
+	public List<AssignmentInfo> getByPilot(int pilotID, AssignmentStatus st) throws DAOException {
 		try {
 			// Load the assignment info
-			prepareStatement("SELECT * FROM ASSIGNMENTS WHERE (PILOT_ID=?) ORDER BY ASSIGNED_ON DESC");
+			StringBuilder buf = new StringBuilder("SELECT * FROM ASSIGNMENTS WHERE (PILOT_ID=?) ");
+			if (st != null)
+				buf.append("AND (STATUS=?) ");
+			
+			buf.append("ORDER BY ASSIGNED_ON DESC");
+			prepareStatement(buf.toString());
 			_ps.setInt(1, pilotID);
+			if (st != null)
+				_ps.setInt(2,  st.ordinal());
+			
 			List<AssignmentInfo> results = loadInfo();
 
 			// Load the legs
@@ -106,7 +115,6 @@ public class GetAssignment extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<AssignmentInfo> getByEvent(int eventID, String dbName) throws DAOException {
-		
 		String db = formatDBName(dbName);
 		try {
 			// Load the assignment info
