@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2012, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.ipc;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Data Access Object to cache IPC calls for ACARS Connection Pool data. 
  * @author Luke
- * @version 7.0
+ * @version 8.3
  * @since 2.3
  */
 
@@ -29,13 +29,13 @@ public class GetACARSPool {
 	 * @return a Collection of Map entries
 	 */
 	public Collection<ACARSMapEntry> getEntries() {
-		Collection<ACARSMapEntry> entries = _cache.get(GetACARSPool.class);
+		CacheableCollection<ACARSMapEntry> entries = _cache.get(GetACARSPool.class);
 		if (entries != null)
-			return entries;
+			return entries.clone();
 		
 		try {
 			reload();
-			return _cache.get(GetACARSPool.class);
+			return _cache.get(GetACARSPool.class).clone();
 		} catch (IllegalStateException ise) {
 			return Collections.emptyList();
 		}
@@ -47,7 +47,7 @@ public class GetACARSPool {
 	 */
 	public Collection<Integer> getFlightIDs() {
 		CacheableCollection<Integer> ids = _idCache.get(GetACARSPool.class);
-		if (ids != null) return ids;
+		if (ids != null) return ids.clone();
 		
 		try {
 			reload();
