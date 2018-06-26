@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
  * A Web Site Command to search the schedule to build a flight assignment that consists of a single leg selected at
  * random from the last Airport the Pilot completed a flight to in the selected aircraft.
  * @author Luke
- * @version 8.1
+ * @version 8.3
  * @since 2.2
  */
 
@@ -46,17 +46,10 @@ public class SingleAssignmentSearchCommand extends AbstractCommand {
 		try {
 			Connection con = ctx.getConnection();
 
-			// Check if we have any other open flight assignments
-			boolean hasOpen = false;
+			// Check if we have any other open flight assignments, if so abort
 			GetAssignment dao = new GetAssignment(con);
-			List<AssignmentInfo> assignments = dao.getByPilot(ctx.getUser().getID());
-			for (Iterator<AssignmentInfo> i = assignments.iterator(); i.hasNext() && !hasOpen;) {
-				AssignmentInfo a = i.next();
-				hasOpen = hasOpen || (a.getStatus() == AssignmentStatus.RESERVED);
-			}
-
-			// If we have an open assignment, abort
-			if (hasOpen) {
+			List<AssignmentInfo> assignments = dao.getByPilot(ctx.getUser().getID(), AssignmentStatus.RESERVED);
+			if (!assignments.isEmpty()) {
 				ctx.release();
 				result.setURL("/jsp/assign/assignOpen.jsp");
 				result.setSuccess(true);

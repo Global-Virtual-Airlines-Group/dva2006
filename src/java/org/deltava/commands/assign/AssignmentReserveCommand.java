@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2010, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to reserve a Flight Assignment.
  * @author Luke
- * @version 8.1
+ * @version 8.3
  * @since 1.0
  */
 
@@ -40,16 +40,9 @@ public class AssignmentReserveCommand extends AbstractCommand {
 			if (assign == null)
 				throw notFoundException("Invalid Flight Assignment - " + ctx.getID());
 
-			// Check if we have any other open flight assignments
-			boolean hasOpen = false;
-			List<AssignmentInfo> assignments = dao.getByPilot(ctx.getUser().getID());
-			for (Iterator<AssignmentInfo> i = assignments.iterator(); i.hasNext() && !hasOpen;) {
-				AssignmentInfo a = i.next();
-				hasOpen = hasOpen || (a.getStatus() == AssignmentStatus.RESERVED);
-			}
-
 			// If we have an open assignment, abort
-			if (hasOpen) {
+			List<AssignmentInfo> assignments = dao.getByPilot(ctx.getUser().getID(), AssignmentStatus.RESERVED);
+			if (!assignments.isEmpty()) {
 				ctx.release();
 				result.setURL("/jsp/assign/assignOpen.jsp");
 				result.setSuccess(true);
