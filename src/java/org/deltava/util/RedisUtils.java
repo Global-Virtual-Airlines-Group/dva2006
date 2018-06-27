@@ -1,4 +1,4 @@
-// Copyright 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.io.*;
@@ -11,7 +11,7 @@ import redis.clients.jedis.*;
 /**
  * A utility class for Redis operations.
  * @author Luke
- * @version 7.4
+ * @version 8.3
  * @since 6.1
  */
 
@@ -28,6 +28,8 @@ public class RedisUtils {
 	 * The Jedis connection pool.
 	 */
 	protected static JedisPool _client;
+	
+	private static int _db;
 
 	// static class
 	private RedisUtils() {
@@ -86,12 +88,17 @@ public class RedisUtils {
 	/**
 	 * Initializes the Redis connection.
 	 * @param addr the address of the Redis server
+	 * @param db the Redis database
+	 * @param poolName the connection pool name
 	 */
-	public static synchronized void init(String addr) {
+	public static synchronized void init(String addr, int db, String poolName) {
 		if (_client != null) return;
 		try {
 			JedisPoolConfig config = new JedisPoolConfig();
 			config.setMaxIdle(1); config.setMinIdle(1);
+			config.setJmxEnabled(true);
+			config.setJmxNamePrefix("Redis");
+			config.setJmxNameBase(poolName);
 			config.setMaxWaitMillis(50);
 			config.setMaxTotal(12);
 			config.setMinEvictableIdleTimeMillis(5000);
@@ -100,8 +107,9 @@ public class RedisUtils {
 			config.setTestWhileIdle(true);
 			config.setTimeBetweenEvictionRunsMillis(30000);
 			_client = new JedisPool(config, addr, 6379);
+			_db = Math.max(0, db);
 			write(LATENCY_KEY, 864000, String.valueOf((System.currentTimeMillis() / 1000) + (3600 * 24 * 365)));
-			log.info("Initialized");
+			log.info("Initialized using database " + _db);
 		} catch (Exception e) {
 			throw new IllegalStateException(e);
 		}
@@ -194,7 +202,9 @@ public class RedisUtils {
 	 */
 	public static Jedis getConnection() {
 		checkConnection();
-		return _client.getResource();
+		Jedis jc = _client.getResource();
+		jc.select(_db);
+		return jc;
 	}
 	
 	/**
