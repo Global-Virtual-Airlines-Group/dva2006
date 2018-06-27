@@ -17,7 +17,7 @@ public class TestRedisCache extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		PropertyConfigurator.configure("data/log4j.test.properties");
-		RedisUtils.init("192.168.0.2");
+		RedisUtils.init("192.168.0.2", 2, "JUnit");
 		_cache = new RedisCache<Cacheable>("test", 1);
 		assertNotNull(_cache);
 	}
