@@ -44,7 +44,7 @@ golgotha.local.validate = function(f) {
 <el:form action="acarsinstUpdate.do" op="save" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
- <td colspan="2"><span class="nophone"><content:airline /> </span>ACARS INCREMENTAL INSTALLER UPDATE</td>
+ <td colspan="2"><span class="nophone"><content:airline />&nbsp;</span>ACARS INCREMENTAL INSTALLER UPDATE</td>
 </tr>
 <tr id="selectFile">
  <td class="label top">Installer</td>

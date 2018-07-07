@@ -73,7 +73,7 @@ golgotha.local.download = function() {
 <el:form action="fleetlibrary.do" method="get" validate="return false">
 <el:table className="form">
 <tr class="title">
- <td class="caps"><span class="nophone"><content:airline /> </span>FLEET LIBRARY</td>
+ <td class="caps"><span class="nophone"><content:airline />&nbsp;</span>FLEET LIBRARY</td>
  <td class="right"><span class="nophone">SELECT </span><el:combo name="instName" idx="1" size="1" firstEntry="[ INSTALLER ]" options="${fleet}" onChange="void golgotha.local.selectAC(this)" /></td>
 </tr>
 <tr>

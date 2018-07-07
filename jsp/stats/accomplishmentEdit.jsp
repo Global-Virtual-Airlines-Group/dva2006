@@ -112,7 +112,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Label color</td>
- <td class="data"><el:text name="color" idx="*" className="color bld req" size="6" max="8" value="${ap.hexColor}" /> <span class="small">Click on the text box for a color picker.</span></td>
+ <td class="data"><el:text name="color" idx="*" className="color bld req" size="6" max="8" value="${ap.hexColor}" />&nbsp;<span class="small">Click on the text box for a color picker.</span></td>
 </tr>
 <tr id="valueBox" style="display:none;" class="valueRow">
  <td class="label top">Valid Values</td>

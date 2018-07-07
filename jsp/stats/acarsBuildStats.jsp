@@ -26,7 +26,7 @@
 <el:form action="acarsbuilds.do" method="post" validate="return false">
 <el:table className="form">
 <tr class="title caps">
- <td colspan="2"><span class="nophone"><content:airline /> </span>ACARS CLIENT BUILD STATSITICS</td>
+ <td colspan="2"><span class="nophone"><content:airline />&nbsp;</span>ACARS CLIENT BUILD STATSITICS</td>
 </tr>
 <tr>
  <td class="label">Number of Weeks</td>
@@ -88,11 +88,7 @@ golgotha.local.renderChart = function(cnt) {
 	for (var x = 0; x < cnt; x++) {
 		var st = cd.stats[x]; var l = []; var h = [];
 		l.push(st.week); h.push(st.week);
-		cd.builds.forEach(function(b) {
-			l.push(st[b].legs);
-			h.push(st[b].hours);
-		});
-		
+		cd.builds.forEach(function(b) { l.push(st[b].legs); h.push(st[b].hours); });
 		lData.addRow(l); hData.addRow(h);
 	}
 

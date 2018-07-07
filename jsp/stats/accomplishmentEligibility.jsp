@@ -26,7 +26,7 @@
 <content:region id="main">
 <el:table className="view">
 <tr class="title caps">
- <td colspan="3" class="left"><span class="nophone"><content:airline /> </span>ACCOMPLISHMENT ELIGIBILITY FOR <span class="nophone">${pilot.name} </span><c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></td>
+ <td colspan="3" class="left"><span class="nophone"><content:airline />&nbsp;</span>ACCOMPLISHMENT ELIGIBILITY FOR <span class="nophone">${pilot.name} </span><c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></td>
 </tr>
 <!-- Table Header Bar -->
 <tr class="title caps">

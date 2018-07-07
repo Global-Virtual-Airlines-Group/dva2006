@@ -247,7 +247,7 @@ This is also a good time to review <content:airline />'s <el:cmd url="privacy" c
 </tr>
 <tr>
  <td class="label">Legacy Flight Hours</td>
- <td class="data" colspan="${cspan}"><el:text name="legacyHours" idx="*" size="4" max="7" value="${param.legacyHours}" /> <span class="ita">For reference only.</span></td>
+ <td class="data" colspan="${cspan}"><el:text name="legacyHours" idx="*" size="4" max="7" value="${param.legacyHours}" />&nbsp;<span class="ita">For reference only.</span></td>
 </tr>
 <tr>
  <td class="label">Verification URL</td>

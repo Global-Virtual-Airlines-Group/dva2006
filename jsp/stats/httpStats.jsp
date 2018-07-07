@@ -33,7 +33,7 @@ golgotha.local.sortBy = function(combo) {
 <el:form action="httpstats.do" method="get" validate="return false">
 <view:table cmd="httpstats">
 <tr class="title">
- <td colspan="3" class="left"><span class="nophone"><content:airline /> </span>HTTP SERVER STATISTICS</td>
+ <td colspan="3" class="left"><span class="nophone"><content:airline />&nbsp;</span>HTTP SERVER STATISTICS</td>
  <td colspan="3" class="right">SORT BY 
 <el:combo name="sortType" size="1" idx="1" options="${sortTypes}" value="${viewContext.sortType}" onChange="void golgotha.local.sortBy(this)" /></td>
 </tr>
