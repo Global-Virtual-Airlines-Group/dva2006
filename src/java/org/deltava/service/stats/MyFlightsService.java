@@ -6,7 +6,7 @@ import java.util.*;
 import static javax.servlet.http.HttpServletResponse.*;
 
 import org.json.*;
-
+import org.deltava.beans.Simulator;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.stats.*;
 
@@ -17,7 +17,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display a Pilot's Flight Report statistics to a Google chart.
  * @author Luke
- * @version 8.2
+ * @version 8.3
  * @since 2.1
  */
 
@@ -43,6 +43,7 @@ public class MyFlightsService extends WebService {
 		// Get the Flight Report statistics
 		Collection<FlightStatsEntry> results = null; 
 		Collection<StageStatsEntry> stageStats = null;
+		Collection<SimStatsEntry> simStats = null;
 		Collection<LandingStatistics> landings = null;
 		Map<Integer, Integer> vsStats = null;
 		try {
@@ -50,6 +51,7 @@ public class MyFlightsService extends WebService {
 			GetFlightReportStatistics stdao = new GetFlightReportStatistics(ctx.getConnection());
 			results = stdao.getPIREPStatistics(userID, FlightStatsSort.LEGS, FlightStatsGroup.EQ);
 			stageStats = stdao.getStageStatistics(userID);
+			simStats = stdao.getSimulatorStatistics(userID);
 			vsStats = stdao.getLandingCounts(userID, 50);
 			landings = stdao.getLandingData(userID);
 		} catch (DAOException de) {
@@ -123,7 +125,7 @@ public class MyFlightsService extends WebService {
 			jo.append("landingQuality", ea);
 		}
 		
-		// Create flights by Date
+		// Create stage/flights by Month
 		int maxStage = stageStats.stream().mapToInt(StageStatsEntry::getMaxStage).max().orElse(1);
 		jo.put("maxStage", maxStage);
 		JSONArray jdo = new JSONArray();
@@ -136,8 +138,22 @@ public class MyFlightsService extends WebService {
 			jdo.put(da);
 		}
 		
+		// Create sim/flights by Month
+		int maxSim = simStats.stream().map(SimStatsEntry::getMaxSimulator).mapToInt(Simulator::ordinal).max().orElse(1);
+		jo.put("maxSim", maxSim);
+		JSONArray jso = new JSONArray();
+		for (SimStatsEntry entry : simStats) {
+			JSONArray da = new JSONArray();
+			da.put(JSONUtils.format(entry.getDate()));
+			for (int x = 0; x <= maxSim; x++)
+				da.put(entry.getLegs(Simulator.values()[x]));
+			
+			jso.put(da);
+		}
+		
 		// Dump the JSON to the output stream
 		jo.put("calendar", jdo);
+		jo.put("simCalendar", jso);
 		try {
 			ctx.setContentType("application/json", "UTF-8");
 			ctx.setExpiry(600);

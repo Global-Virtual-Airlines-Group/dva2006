@@ -34,6 +34,7 @@ golgotha.local.validate = function(f) {
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:enum var="sortTypes" className="org.deltava.beans.stats.FlightStatsSort" exclude="PIDS" />
 <content:enum var="groupTypes" className="org.deltava.beans.stats.FlightStatsGroup" exclude="PILOT,AP" />
+<content:enum var="simNames" className="org.deltava.beans.Simulator" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -41,7 +42,7 @@ golgotha.local.validate = function(f) {
 <!-- All Flight Report statistics -->
 <view:table cmd="mystats">
 <tr class="title">
- <td colspan="6" class="left caps"><span class="nophone"><content:airline /> </span>FLIGHT STATISTICS FOR ${pilot.name}<span class="nophone"> - <fmt:int value="${totalLegs}" /> FLIGHTS</span></td>
+ <td colspan="6" class="left caps"><span class="nophone"><content:airline />&nbsp;</span>FLIGHT STATISTICS FOR ${pilot.name}<span class="nophone"> - <fmt:int value="${totalLegs}" /> FLIGHTS</span></td>
  <td colspan="6" class="right">GROUP BY <el:combo name="groupType" size="1" idx="*" options="${groupTypes}" value="${groupType}" onChange="void golgotha.local.updateSort()" />
  SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${viewContext.sortType}" onChange="void golgotha.local.updateSort()" /></td>
 </tr>
@@ -106,6 +107,9 @@ golgotha.local.validate = function(f) {
 <tr>
  <td colspan="2"><div id="stageStats" style="width:100%; height:340px;"></div></td>
 </tr>
+<tr>
+ <td colspan="2"><div id="simStats" style="width:100%; height:340px;"></div></td>
+</tr>
 
 <!-- Button Bar -->
 <tr class="title">
@@ -118,10 +122,11 @@ golgotha.local.validate = function(f) {
 </content:region>
 </content:page>
 <script async>
+<fmt:jsarray var="golgotha.local.simulators" items="${simNames}" />
 google.charts.load('current', {'packages':['corechart']});
 google.charts.setOnLoadCallback(function() {
 var xmlreq = new XMLHttpRequest();
-xmlreq.open('GET', 'mystats.ws?id=${pilot.hexID}', true);
+xmlreq.open('get', 'mystats.ws?id=${pilot.hexID}', true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	var statsData = JSON.parse(xmlreq.responseText);
@@ -178,6 +183,17 @@ xmlreq.onreadystatechange = function() {
 	data.addRows(statsData.calendar);
 	var mnStyle = {gridlines:{color:'#cce'},minorGridlines:{count:12},title:'Month',format:'MMMM yyyy'};
 	chart.draw(data,{title:'Flights by Date/Stage',isStacked:true,fontSize:10,hAxis:mnStyle,vAxis:{title:'Flight Legs'},width:'100%'});
+
+	// Display sim by date chart
+	var chart = new google.visualization.ColumnChart(document.getElementById('simStats'));
+	var data = new google.visualization.DataTable();
+	data.addColumn('date', 'Month');
+	for (var st = 0; st <= statsData.maxSim; st++)
+		data.addColumn('number', golgotha.local.simulators[st]);
+	
+	statsData.simCalendar.forEach(function(e) { var dt = e[0]; e[0] = new Date(dt.y, dt.m, dt.d, 12, 0, 0); });
+	data.addRows(statsData.simCalendar);
+	chart.draw(data,{title:'Flights by Date/Simulator',isStacked:true,fontSize:10,hAxis:mnStyle,vAxis:{title:'Flight Legs'},width:'100%'});
 	return true;
 };
 
