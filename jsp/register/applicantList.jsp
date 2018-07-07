@@ -35,7 +35,7 @@ golgotha.local.sort = function(combo) {
 <el:form action="applicants.do" method="get" validate="return false">
 <view:table cmd="applicants">
 <tr class="title caps">
- <td class="left" colspan="3"><span class="nophone"><content:airline /> </span>PILOT APPLICATIONS</td>
+ <td class="left" colspan="3"><span class="nophone"><content:airline />&nbsp;</span>PILOT APPLICATIONS</td>
  <td class="right" colspan="3">AIRLINE SIZE - <fmt:int value="${airlineSize}" /> PILOTS<span class="nophone">, MAX <fmt:int value="${maxSize}" /></span></td>
 </tr>
 
