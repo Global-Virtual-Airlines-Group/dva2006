@@ -1,14 +1,15 @@
-// Copyright 2005, 2007, 2009, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009, 2010, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.deltava.beans.ComboAlias;
 
 /**
  * A utility class to generate combobox lists.
  * @author Luke
- * @version 7.0
+ * @version 8.3
  * @since 1.0
  * @see ComboAlias
  */
@@ -21,8 +22,8 @@ public class ComboUtils {
 
     private static class ComboAliasImpl implements ComboAlias, Comparable<ComboAlias> {
         
-        private String _name;
-        private String _alias;
+        private final String _name;
+        private final String _alias;
         
         ComboAliasImpl(String name, String alias) {
             super();
@@ -47,10 +48,7 @@ public class ComboUtils {
         @Override
 		public int compareTo(ComboAlias c2) {
         	int tmpResult = _name.compareTo(c2.getComboName());
-        	if (tmpResult == 0)
-        		tmpResult = _alias.compareTo(c2.getComboAlias());
-        	
-        	return tmpResult;
+        	return (tmpResult == 0) ? _alias.compareTo(c2.getComboAlias()) : tmpResult;
         }
         
         @Override
@@ -80,11 +78,9 @@ public class ComboUtils {
      * @return a List of ComboAlias objects
      */
     public static List<ComboAlias> fromArray(Enum<?>... names) {
-        List<ComboAlias> results = new ArrayList<ComboAlias>(names.length);
-        for (int x = 0; x < names.length; x++) {
-        	Enum<?> e = names[x];
-        	results.add(new ComboAliasImpl(e.name()));
-        }
+        List<ComboAlias> results = new ArrayList<ComboAlias>(names.length + 2);
+        for (int x = 0; x < names.length; x++)
+        	results.add(new ComboAliasImpl(names[x].name()));
     	
     	return results;
     }
@@ -114,11 +110,7 @@ public class ComboUtils {
      * @return a List of ComboAlias objects
      */
     public static List<ComboAlias> fromList(Collection<?> names) {
-        List<ComboAlias> results = new ArrayList<ComboAlias>(names.size());
-        for (Iterator<?> i = names.iterator(); i.hasNext(); )
-            results.add(new ComboAliasImpl(String.valueOf(i.next())));
-        
-        return results;
+        return names.stream().map(n -> new ComboAliasImpl(String.valueOf(n))).collect(Collectors.toList());
     }
     
     /**
@@ -130,13 +122,7 @@ public class ComboUtils {
      * @see Object#toString()
      */
     public static List<ComboAlias> fromMap(Map<String, Object> names) {
-        List<ComboAlias> results = new ArrayList<ComboAlias>(names.size());
-        for (Iterator<Map.Entry<String, Object>> i = names.entrySet().iterator(); i.hasNext(); ) {
-            Map.Entry<String, Object> me = i.next();
-            results.add(new ComboAliasImpl(me.getKey(), me.getValue().toString()));
-        }
-        
-        return results;
+        return names.entrySet().stream().map(me -> new ComboAliasImpl(me.getKey(), String.valueOf(me.getValue()))).collect(Collectors.toList());
     }
     
     /**
