@@ -226,7 +226,7 @@ public class GetFlightReportStatistics extends DAO {
 			return results.clone().subList(0, _queryMax);
 
 		try {
-			prepareStatement("SELECT PR.EQTYPE, APR.LANDING_VSPEED, RD.DISTANCE, RD.LENGTH FROM PIREPS PR, ACARS_PIREPS APR, acars.RWYDATA RD WHERE (APR.ACARS_ID=RD.ID) AND "
+			prepareStatement("SELECT PR.EQTYPE, APR.LANDING_VSPEED, RD.DISTANCE, RD.LENGTH, PR.ID FROM PIREPS PR, ACARS_PIREPS APR, acars.RWYDATA RD WHERE (APR.ACARS_ID=RD.ID) AND "
 				+ "(RD.ISTAKEOFF=?) AND (APR.CLIENT_BUILD>?) AND (RD.DISTANCE<RD.LENGTH) AND (APR.ID=PR.ID) AND (PR.PILOT_ID=?) AND (PR.STATUS=?) ORDER BY ABS(? - APR.LANDING_VSPEED)");
 			_ps.setBoolean(1, false);
 			_ps.setInt(2, FlightReport.MIN_ACARS_CLIENT);
@@ -239,7 +239,7 @@ public class GetFlightReportStatistics extends DAO {
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
 					LandingStatistics ls = new LandingStatistics(null, rs.getString(1));
-					ls.setID(pilotID);
+					ls.setID(rs.getInt(5));
 					ls.setLegs(1);
 					ls.setAverageSpeed(rs.getInt(2));
 					ls.setAverageDistance(rs.getInt(3));
@@ -546,6 +546,47 @@ public class GetFlightReportStatistics extends DAO {
 					}
 					
 					sse.setStage(rs.getInt(2), rs.getInt(3), rs.getDouble(4));
+				}
+			}
+			
+			_ps.close();
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns simulator statistics by date and stage.
+	 * @param pilotID the Pilot's database ID or zero for all pilots
+	 * @return a Collection of SimStatsEntry beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<SimStatsEntry> getSimulatorStatistics(int pilotID) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT DATE_SUB(F.DATE, INTERVAL (DAY(F.DATE)-1) DAY) AS LABEL, F.FSVERSION, COUNT(F.ID) AS LEGS, SUM(F.FLIGHT_TIME) AS HRS FROM PIREPS F WHERE (F.STATUS=?) ");
+		if (pilotID != 0)
+			sqlBuf.append("AND (F.PILOT_ID=?) ");
+		sqlBuf.append("GROUP BY LABEL, F.FSVERSION ORDER BY LABEL, F.FSVERSION");
+		
+		try {
+			prepareStatement(sqlBuf.toString());
+			_ps.setInt(1, FlightStatus.OK.ordinal());
+			if (pilotID != 0)
+				_ps.setInt(2, pilotID);
+
+			// Execute the query
+			Collection<SimStatsEntry> results = new ArrayList<SimStatsEntry>(); SimStatsEntry sse = null;
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					Instant dt = toInstant(rs.getTimestamp(1));
+					if ((sse == null) || !sse.getDate().equals(dt)) {
+						sse = new SimStatsEntry(dt);
+						results.add(sse);
+					}
+					
+					sse.setSimulator(Simulator.fromVersion(rs.getInt(2), Simulator.UNKNOWN), rs.getInt(3), rs.getDouble(4));
 				}
 			}
 			
