@@ -27,7 +27,7 @@
 <content:region id="main">
 <view:table cmd="mynewairports">
 <tr class="title">
- <td colspan="4" class="left caps"><span class="nophone"><content:airline /> </span>UNVISITED AIRPORTS FOR ${pilot.name}</td>
+ <td colspan="4" class="left caps"><span class="nophone"><content:airline />&nbsp;</span>UNVISITED AIRPORTS FOR ${pilot.name}</td>
  <td><el:cmd url="mynewairports" op="map">MAP</el:cmd>
  <td>&nbsp;</td>
 </tr>
@@ -61,8 +61,7 @@
 </c:when>
 <c:when test="${srcSize < 3}">
  <td class="left small nophone">
-<c:forEach var="srcAp" items="${srcList}" varStatus="srcStatus">
-${srcAp.name} (<fmt:airport airport="${srcAp}" />)<c:if test="${!srcStatus.last}">, </c:if></c:forEach>
+<c:forEach var="srcAp" items="${srcList}" varStatus="srcStatus">${srcAp.name} (<fmt:airport airport="${srcAp}" />)<c:if test="${!srcStatus.last}">, </c:if></c:forEach>
  </td>
 </c:when>
 <c:otherwise>

@@ -19,7 +19,7 @@
 <content:json />
 <content:js name="airportRefresh" />
 <fmt:aptype var="useICAO" />
-<script type="text/javascript">
+<script>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.airportD, t:'Departure Airport'});
@@ -72,7 +72,7 @@ golgotha.onDOMReady(function() {
 <el:form method="post" action="routeassign.do" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
- <td colspan="2"><span class="nophone"><content:airline /> </span>FLIGHT ASSIGNMENT ROUTE SEARCH</td>
+ <td colspan="2"><span class="nophone"><content:airline />&nbsp;</span>FLIGHT ASSIGNMENT ROUTE SEARCH</td>
 </tr>
 <tr>
  <td class="label">Departing from</td>

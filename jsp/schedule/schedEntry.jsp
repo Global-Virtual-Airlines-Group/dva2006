@@ -122,7 +122,7 @@ You can search for the next available Flight Leg. <el:button ID="LegSearchButton
 <tr class="airportRow">
  <td class="label">Departing From</td>
  <td class="data"><el:combo name="airportD" size="1" options="${airports}" required="true" value="${entry.airportD}" onChange="void this.updateAirportCode()" />
- <el:airportCode combo="airportD" idx="*" airport="${entry.airportD}" /> at <el:text name="timeD" idx="*" size="4" max="5" value="${fn:dateFmt(entry.timeD, 'HH:mm')}" /> <span class="small">Local Time (Format: HH:mm)</span></td>
+ <el:airportCode combo="airportD" idx="*" airport="${entry.airportD}" /> at <el:text name="timeD" idx="*" size="4" max="5" value="${fn:dateFmt(entry.timeD, 'HH:mm')}" />&nbsp;<span class="small">Local Time (Format: HH:mm)</span></td>
 </tr>
 <content:hasmsg>
 <tr>
@@ -133,7 +133,7 @@ You can search for the next available Flight Leg. <el:button ID="LegSearchButton
 <tr class="airportRow">
  <td class="label">Arriving At</td>
  <td class="data"><el:combo name="airportA" size="1" options="${airports}" required="true" value="${entry.airportA}" onChange="void this.updateAirportCode()" />
- <el:airportCode combo="airportA" idx="*" airport="${entry.airportA}" /> at <el:text name="timeA" idx="*" size="4" max="5" value="${fn:dateFmt(entry.timeA, 'HH:mm')}" /> <span class="small">Local Time (Format: HH:mm)</span></td>
+ <el:airportCode combo="airportA" idx="*" airport="${entry.airportA}" /> at <el:text name="timeA" idx="*" size="4" max="5" value="${fn:dateFmt(entry.timeA, 'HH:mm')}" />&nbsp;<span class="small">Local Time (Format: HH:mm)</span></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
