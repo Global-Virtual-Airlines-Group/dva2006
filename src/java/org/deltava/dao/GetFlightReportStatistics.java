@@ -611,7 +611,7 @@ public class GetFlightReportStatistics extends DAO {
 		StringBuilder sqlBuf = new StringBuilder("SELECT ");
 		if (grp.isAirportGroup()) {
 			sqlBuf.append("AP.NAME");
-			sqlBuf.append(getAirportJoinSQL(grp.getSQL().replace("AP.", "F.")));
+			sqlBuf.append(getAirportJoinSQL(grp.getSQL()));
 		} else {
 			sqlBuf.append(grp.getSQL());
 			sqlBuf.append(grp.isPilotGroup() ? getPilotJoinSQL() : getSQL());
