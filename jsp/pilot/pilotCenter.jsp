@@ -275,7 +275,7 @@ review flown using equipment in the ${pilot.equipmentType} program.</span></c:if
  <td class="data">Pilots wishing to switch Equipment Programs can submit transfer requests once  they have met the necessary requirements for a new Equipment Program. You can view these transfer 
 requests here, assign Check Rides, and complete the Promotion Process.<c:if test="${txQueueSize > 0}"><br />
 <br />
-<span class="ita">There <fmt:is value="${txQueueSize}" /> <fmt:quantity value="${txQueueSize}" single="pending Transfer Request" />.</span></c:if></td>
+<span class="ita">There <fmt:is value="${txQueueSize}" />&nbsp;<fmt:quantity value="${txQueueSize}" single="pending Transfer Request" />.</span></c:if></td>
 </tr>
 <tr>
  <td class="mid bld"><el:cmd url="promoqueue">Promotion Queue</el:cmd></td>
