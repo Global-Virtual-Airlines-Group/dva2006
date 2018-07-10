@@ -40,6 +40,8 @@ public class SingleAssignmentSearchCommand extends AbstractCommand {
 		criteria.setDBName(SystemData.get("airline.db"));
 		criteria.setDistance(StringUtils.parse(ctx.getParameter("maxLength"), 0));
 		criteria.setDistanceRange(StringUtils.parse(ctx.getParameter("maxLengthRange"), 0));
+		criteria.setNotVisitedA(Boolean.valueOf(ctx.getParameter("avoidVisitedDestination")).booleanValue());
+		criteria.setExcludeHistoric(Boolean.valueOf(ctx.getParameter("avoidHistorical")).booleanValue());
 
 		// Get total legs to load
 		int totalLegs = Math.min(8, Math.max(1, StringUtils.parse(ctx.getParameter("legs"), 1)));
@@ -60,15 +62,13 @@ public class SingleAssignmentSearchCommand extends AbstractCommand {
 			GetFlightReports prdao = new GetFlightReports(con);
 			prdao.setQueryMax(10);
 			List<FlightReport> pireps = prdao.getByPilot(ctx.getUser().getID(), new ScheduleSearchCriteria("SUBMITTED DESC"));
-			for (Iterator<FlightReport> i = pireps.iterator(); (criteria.getAirportD() == null) && i.hasNext();) {
-				FlightReport fr = i.next();
-				if ((fr.getStatus() != FlightStatus.DRAFT) && (fr.getStatus() != FlightStatus.REJECTED))
-					criteria.setAirportD(fr.getAirportA());
-			}
+			Optional<FlightReport> ofr = pireps.stream().filter(fr -> ((fr.getStatus() == FlightStatus.OK) || (fr.getStatus() == FlightStatus.SUBMITTED))).findFirst();
 
 			// If no last airport, abort
-			if (criteria.getAirportD() == null)
+			if (!ofr.isPresent())
 				throw notFoundException("No flights logged");
+			
+			criteria.setAirportD(ofr.get().getAirportA());
 			
 			// Save the user
 			ctx.setAttribute("pilot", ctx.getUser(), REQUEST);

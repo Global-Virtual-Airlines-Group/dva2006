@@ -34,6 +34,7 @@ public class ScheduleSearchCriteria extends Flight {
 	private boolean _includeAcademy;
 	private boolean _dispatchRouteCounts;
 	private boolean _dispatchOnly;
+	private boolean _excludeHistoric;
 	private int _maxPerRoute;
 	
 	private int _pilotID;
@@ -126,6 +127,14 @@ public class ScheduleSearchCriteria extends Flight {
 	
 	public boolean getCheckDispatch() {
 		return _dispatchRouteCounts;
+	}
+	
+	/**
+	 * Returns whether to exclude historic flights from the search.
+	 * @return TRUE if excluding historic flights, otherwise FALSE
+	 */
+	public boolean getExcludeHistoric() {
+		return _excludeHistoric;
 	}
 
 	/**
@@ -321,6 +330,14 @@ public class ScheduleSearchCriteria extends Flight {
 	 */
 	public void setCheckDispatchRoutes(boolean checkDispatch) {
 		_dispatchRouteCounts = checkDispatch;
+	}
+	
+	/**
+	 * Excludes historic flights form the search.
+	 * @param exHistoric TRUE if excluding historic flights, otherwise FALSE
+	 */
+	public void setExcludeHistoric(boolean exHistoric) {
+		_excludeHistoric = exHistoric;
 	}
 	
 	/**

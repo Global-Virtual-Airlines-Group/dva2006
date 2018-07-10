@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to search the Flight Schedule.
  * @author Luke
- * @version 8.2
+ * @version 8.3
  * @since 1.0
  */
 
@@ -137,6 +137,12 @@ public class GetScheduleSearch extends GetSchedule {
 		// Check whether to include Flight Academy flights
 		if (!criteria.getIncludeAcademy()) {
 			conditions.add("S.ACADEMY=?");
+			params.add("0");
+		}
+		
+		// Check whether to exclude historic flights
+		if (criteria.getExcludeHistoric()) {
+			conditions.add("S.HISTORIC=?");
 			params.add("0");
 		}
 		
