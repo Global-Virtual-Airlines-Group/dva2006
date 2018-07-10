@@ -50,6 +50,11 @@ golgotha.local.validate = function(f) {
  <td class="data"><el:text name="maxLength" idx="*" size="4" max="4" value="${(criteria.distance < 1) ? '' : criteria.distance}" />
  +/- <el:text name="maxLengthRange" idx="*" size="3" max="4" value="${(criteria.distance < 1) ? '' : criteria.distanceRange}" /> miles</td>
 </tr>
+<tr>
+ <td class="label top">Search Options</td>
+ <td class="data" colspan="3"><el:box name="avoidHistorical" idx="*" value="true" checked="${param.avoidHistorical}" label="Exclude Historic Legs" /><br />
+<el:box name="avoidVisitedDestination" idx="*" value="true"  checked="${critieria.notVisitedA}" label="Exclude Visited Destination Airports" /></td>
+</tr>
 </el:table>
 
 <!-- Search Results -->
@@ -72,8 +77,7 @@ golgotha.local.validate = function(f) {
 <view:row entry="${flight}">
  <td class="pri bld">${flight.flightCode}</td>
  <td class="sec bld">${flight.equipmentType}</td>
- <td class="small">${flight.airportD.name} (<fmt:airport airport="${flight.airportD}" />) to
- ${flight.airportA.name} (<fmt:airport airport="${flight.airportA}" />)</td>
+ <td class="small">${flight.airportD.name} (<fmt:airport airport="${flight.airportD}" />) to ${flight.airportA.name} (<fmt:airport airport="${flight.airportA}" />)</td>
  <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${flight.airportD.TZ}" date="${flight.timeD}" /></td>
  <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${flight.airportA.TZ}" date="${flight.timeA}" /></td>
  <td class="sec nophone"><fmt:distance value="${flight.distance}" /></td>
@@ -82,8 +86,7 @@ golgotha.local.validate = function(f) {
 </c:if>
 <c:if test="${empty entries}">
 <tr>
- <td colspan="6" class="pri bld caps">NO FLIGHTS MATCHING YOUR CRITERIA WERE FOUND FROM ${criteria.airportD.name}
- (<fmt:airport airport="${criteria.airportD}" />)</td>
+ <td colspan="6" class="pri bld caps">NO FLIGHTS MATCHING YOUR CRITERIA WERE FOUND FROM ${criteria.airportD.name} (<fmt:airport airport="${criteria.airportD}" />)</td>
 </tr>
 </c:if>
 </el:table>
