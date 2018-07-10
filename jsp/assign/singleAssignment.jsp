@@ -60,7 +60,7 @@ golgotha.local.validate = function(f) {
 <!-- Search Results -->
 <el:table className="view">
 <tr class="title caps">
- <td colspan="6" class="left">PROPOSED FLIGHT FROM ${criteria.airportD.name} (<fmt:airport airport="${criteria.airportD}" />)</td> 
+ <td colspan="6" class="left">PROPOSED <fmt:quantity value="${entries.size()}" single="flight" /><span class="nophone"> FROM ${criteria.airportD.name} (<fmt:airport airport="${criteria.airportD}" />)</span></td> 
 </tr>
 <c:if test="${!empty entries}">
 <!-- Search Results Header Bar -->
