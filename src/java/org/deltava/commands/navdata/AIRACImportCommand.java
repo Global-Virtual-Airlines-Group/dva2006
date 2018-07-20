@@ -13,7 +13,7 @@ import org.deltava.dao.*;
 
 import org.deltava.security.command.ScheduleAccessControl;
 
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 import org.deltava.util.cache.CacheManager;
 
 /**
@@ -67,22 +67,26 @@ public class AIRACImportCommand extends NavDataImportCommand {
 			throw notFoundException("Unknown Data File - " + navData.getName());
 		
 		Navaid nt = Navaid.values()[navaidType];
-		List<String> errors = new ArrayList<String>();
+		List<String> errors = new ArrayList<String>(); 
+		Map<String, Long> timings = new LinkedHashMap<String, Long>();
 		int entryCount = 0; int regionCount = 0; CycleInfo newCycle = null;
 		try (InputStream is = navData.getInputStream()) {
 			Connection con = ctx.getConnection();
 			ctx.startTX();
 			
 			// Get the write DAO
+			TaskTimer tt = new TaskTimer();
 			SetNavData dao = new SetNavData(con);
 			dao.setQueryTimeout(90);
 			ctx.setAttribute("purgeCount", Integer.valueOf(dao.purge(nt)), REQUEST);
-			dao.setQueryTimeout(30);
+			timings.put("Purge", Long.valueOf(tt.stop()));
+			dao.setQueryTimeout(30); tt.start();
 			ctx.setAttribute("legacyCount", Integer.valueOf(dao.updateLegacy(nt)), REQUEST);
+			timings.put("UpdateLegacy", Long.valueOf(tt.stop()));
 
 			// Iterate through the file
 			LineNumberReader br = new LineNumberReader(new InputStreamReader(is));
-			String txtData = br.readLine();
+			String txtData = br.readLine(); tt.start();
 			while (txtData != null) {
 				boolean isComment = txtData.startsWith(";"); 
 				if ((newCycle == null) && isComment) {
@@ -196,8 +200,10 @@ public class AIRACImportCommand extends NavDataImportCommand {
 			}
 
 			// Update the regions
-			dao.setQueryTimeout(150);
+			timings.put("Load", Long.valueOf(tt.stop()));
+			dao.setQueryTimeout(150); tt.start();
 			regionCount = dao.updateRegions(nt);
+			timings.put("UpdateRegions", Long.valueOf(tt.stop()));
 			
 			// Write the cycle ID and commit
 			if (newCycle != null) {
@@ -221,6 +227,7 @@ public class AIRACImportCommand extends NavDataImportCommand {
 		CacheManager.invalidate("NavRoute");
 		
 		// Set status attributes
+		ctx.setAttribute("timings", timings, REQUEST);
 		ctx.setAttribute("entryCount", Integer.valueOf(entryCount), REQUEST);
 		ctx.setAttribute("regionCount", Integer.valueOf(regionCount), REQUEST);
 		ctx.setAttribute("navaidType", nt, REQUEST);
