@@ -75,7 +75,9 @@ public class AIRACImportCommand extends NavDataImportCommand {
 			
 			// Get the write DAO
 			SetNavData dao = new SetNavData(con);
+			dao.setQueryTimeout(90);
 			ctx.setAttribute("purgeCount", Integer.valueOf(dao.purge(nt)), REQUEST);
+			dao.setQueryTimeout(30);
 			ctx.setAttribute("legacyCount", Integer.valueOf(dao.updateLegacy(nt)), REQUEST);
 
 			// Iterate through the file
@@ -194,7 +196,7 @@ public class AIRACImportCommand extends NavDataImportCommand {
 			}
 
 			// Update the regions
-			dao.setQueryTimeout(120);
+			dao.setQueryTimeout(150);
 			regionCount = dao.updateRegions(nt);
 			
 			// Write the cycle ID and commit
