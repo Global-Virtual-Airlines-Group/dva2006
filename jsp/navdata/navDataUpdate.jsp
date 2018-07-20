@@ -44,6 +44,9 @@ data was purged prior to the import.</span></c:if><br />
 Airspace boundary data has been imported into the <content:airline /> Navigation Database. This data will be avialable for all pilots.<br />
 </c:when>
 </c:choose>
+<c:if test="${!empty timings}">
+<br />Import timings:
+<c:forEach var="entry" items="${timings}" varStatus="tStatus">${entry.key} = <fmt:int value="${entry.value}" />ms<c:if test="${!tStatus.last}">, </c:if></c:forEach><br /></c:if>
 <c:if test="${!empty errors}">
 <br />
 The following errors occurred during the import of this AIRAC data file:<br />

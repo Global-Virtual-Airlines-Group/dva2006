@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2012, 2013, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2012, 2013, 2015, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.io.*;
@@ -16,14 +16,14 @@ import org.deltava.dao.*;
 
 import org.deltava.security.command.ScheduleAccessControl;
 
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 import org.deltava.util.cache.CacheManager;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to import Terminal Routes in PSS format.
  * @author Luke
- * @version 6.4
+ * @version 8.3
  * @since 2.0
  */
 
@@ -73,6 +73,7 @@ public class TerminalRouteImportCommand extends NavDataImportCommand {
 			throw notFoundException("Unknown Data File - " + navData.getName());
 
 		List<String> errors = new ArrayList<String>();
+		Map<String, Long> timings = new LinkedHashMap<String, Long>();
 		TerminalRoute.Type rt = TerminalRoute.Type.values()[routeType];
 		boolean doPurge = Boolean.valueOf(ctx.getParameter("doPurge")).booleanValue();
 		int entryCount = 0; LineNumberReader br = null;
@@ -81,9 +82,9 @@ public class TerminalRouteImportCommand extends NavDataImportCommand {
 			
 			// Iterate through the file
 			TerminalRoute tr = null; 
-			Collection<String> IDs = new HashSet<String>();
-			Collection<String> trIDs = new HashSet<String>();
+			Collection<String> IDs = new HashSet<String>(); Collection<String> trIDs = new HashSet<String>();
 			Collection<TerminalRoute> results = new ArrayList<TerminalRoute>();
+			TaskTimer tt = new TaskTimer();
 			String txtData = br.readLine(); String lastAirport = null; int seq = 0;
 			while (txtData != null) {
 				if (txtData.startsWith("[")) {
@@ -139,6 +140,8 @@ public class TerminalRouteImportCommand extends NavDataImportCommand {
 				txtData = br.readLine();
 			}
 			
+			timings.put("Load", Long.valueOf(tt.stop()));
+			
 			// Get a connection
 			Connection con = ctx.getConnection();
 			ctx.startTX();
@@ -146,11 +149,14 @@ public class TerminalRouteImportCommand extends NavDataImportCommand {
 			// Get the write DAO and purge the table
 			SetNavData dao = new SetNavData(con);
 			if (doPurge) {
+				tt.start();
 				int purgeCount = dao.purgeTerminalRoutes(rt);
+				timings.put("Purge", Long.valueOf(tt.stop()));
 				ctx.setAttribute("purgeCount", Integer.valueOf(purgeCount), REQUEST);	
 			}
 
 			// Write the entries
+			tt.start();
 			for (TerminalRoute trt : results) {
 				if (trt.getTransition() == null) {
 					errors.add(trt.getName() + " (" + trt.getICAO() + ") has no transition");
@@ -162,8 +168,10 @@ public class TerminalRouteImportCommand extends NavDataImportCommand {
 			}
 			
 			// Update the waypoint types
+			timings.put("Write", Long.valueOf(tt.stop()));
 			dao.setQueryTimeout(75);
 			int regionCount = dao.updateTRWaypoints();
+			timings.put("UpdateRegions", Long.valueOf(tt.stop()));
 			ctx.setAttribute("regionCount", Integer.valueOf(regionCount), REQUEST);
 			
 			// Commit
@@ -183,6 +191,7 @@ public class TerminalRouteImportCommand extends NavDataImportCommand {
 		CacheManager.invalidate("NavRoute");
 		
 		// Set status attributes
+		ctx.setAttribute("timings", timings, REQUEST);
 		ctx.setAttribute("entryCount", Integer.valueOf(entryCount), REQUEST);
 		ctx.setAttribute("isImport", Boolean.TRUE, REQUEST);
 		ctx.setAttribute("doPurge", Boolean.valueOf(doPurge), REQUEST);
