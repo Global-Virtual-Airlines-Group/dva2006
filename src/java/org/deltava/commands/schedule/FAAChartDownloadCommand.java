@@ -1,4 +1,4 @@
-// Copyright 2012, 2013, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2013, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.io.File;
@@ -24,14 +24,14 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to manually download FAA approach charts.
  * @author Luke
- * @version 8.0
+ * @version 8.3
  * @since 5.0
  */
 
 public class FAAChartDownloadCommand extends AbstractCommand {
 	
-	private static final String[] MONTH_NAMES = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December", "Extra Cycle" };
-	private static final List<ComboAlias> MONTHS = ComboUtils.fromArray(MONTH_NAMES, new String[] {"01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13"});
+	private static final String[] MONTH_NAMES = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December", "Extra Cycle", "Extra Cycle 2" };
+	private static final List<ComboAlias> MONTHS = ComboUtils.fromArray(MONTH_NAMES, new String[] {"01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14"});
 	
 	private class ChartLoader implements Runnable {
 		protected final Logger log = Logger.getLogger(ChartLoader.class);
