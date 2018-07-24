@@ -139,7 +139,9 @@ public class GetPilot extends PilotReadDAO {
 		sqlBuf.append(dbName);
 		sqlBuf.append(".PILOTS P LEFT JOIN ");
 		sqlBuf.append(dbName);
-		sqlBuf.append(".PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) LEFT JOIN STAFF S ON (P.ID=S.ID) WHERE (P.EQTYPE=?)");
+		sqlBuf.append(".PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) LEFT JOIN ");
+		sqlBuf.append(dbName);
+		sqlBuf.append(".STAFF S ON (P.ID=S.ID) WHERE (P.EQTYPE=?)");
 		if (showActive)
 			sqlBuf.append(" AND (P.STATUS=?)");
 		if (rank != null)
