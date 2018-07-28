@@ -1,4 +1,4 @@
-// Copyright 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.gvagroup.common.*;
 /**
  * A utility class to handle centralized cache registration and invalidation.
  * @author Luke
- * @version 7.4
+ * @version 8.3
  * @since 5.0
  */
 
@@ -153,7 +153,7 @@ public class CacheManager {
 		}
 		
 		cache = new NullCache<T>();
-		log.info("Registered cache " + id + ", null cache");
+		log.warn("Registered cache " + id + ", null cache");
 		addCache(id, cache);
 		return cache;
 	}
