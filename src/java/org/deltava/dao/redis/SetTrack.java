@@ -19,7 +19,7 @@ import org.deltava.util.cache.*;
 public class SetTrack extends RedisDAO {
 
 	private static final Logger log = Logger.getLogger(SetTrack.class);
-	private static final Cache<CacheableCollection<GeoLocation>> _casCache = CacheManager.getCollection(GeoLocation.class, "ACARSTrackCAS");
+	private static final Cache<CacheableList<GeoLocation>> _casCache = CacheManager.getCollection(GeoLocation.class, "ACARSTrackCAS");
 
 	/**
 	 * Adds a route entry to Redis.
@@ -31,19 +31,23 @@ public class SetTrack extends RedisDAO {
 	public void write(boolean isACARS, String flightID, GeoLocation gl) {
 		setBucket("track", isACARS ? "acars" : "simFDR");
 		String rawKey = flightID.intern();
-		String key = createKey(flightID);
+		String key = createKey(rawKey);
 
 		try {
 			synchronized (rawKey) {
-				CacheableCollection<GeoLocation> data = _casCache.get(rawKey);
+				CacheableList<GeoLocation> data = _casCache.get(rawKey);
 				if (data == null)
-					data = (CacheableCollection<GeoLocation>) RedisUtils.get(key);
+					data = (CacheableList<GeoLocation>) RedisUtils.get(key);
 				if (data == null)
 					data = new CacheableList<GeoLocation>(rawKey);
-
-				data.add(new GeoPosition(gl));
+				
+				// Check to make sure position has changed
+				int distance = GeoUtils.distanceFeet(gl, data.get(data.size() - 1));
+				if (distance > 10)
+					data.add(new GeoPosition(gl));
+				
 				_casCache.add(data);
-				RedisUtils.write(key, 900, data);
+				RedisUtils.write(key, 600, data);
 			}
 		} catch (Exception e) {
 			log.warn(StringUtils.isEmpty(e.getMessage()) ? e.getClass().getSimpleName() : e.getMessage());
