@@ -50,7 +50,7 @@ public class MapJSONService extends WebService {
 			trackIDs = new CacheableMap<String, MapRouteEntry>(MapRouteEntry.class);
 		
 		// Trim out any old cache entries
-		Instant purgeDate = Instant.now().minusSeconds(1800); boolean entriesPurged = false;
+		Instant purgeDate = Instant.now().minusSeconds(900); boolean entriesPurged = false;
 		for (Iterator<Map.Entry<String, MapRouteEntry>> i = trackIDs.entrySet().iterator(); i.hasNext(); ) {
 			Map.Entry<String, MapRouteEntry> me = i.next();
 			if (me.getValue().getDate().isBefore(purgeDate)) {
