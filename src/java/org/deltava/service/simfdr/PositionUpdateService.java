@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
 import org.deltava.beans.Pilot;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.flight.*;
-import org.deltava.beans.schedule.Aircraft;
+import org.deltava.beans.schedule.*;
 
 import org.deltava.dao.*;
 import org.deltava.dao.redis.SetTrack;
@@ -34,6 +34,7 @@ public class PositionUpdateService extends SimFDRService {
 	private static final Logger log = Logger.getLogger(PositionUpdateService.class);
 	
 	private static final Cache<CacheableMap<String, MapRouteEntry>> _simFDRFlightCache = CacheManager.getMap(String.class, MapRouteEntry.class, "simFDRFlightID");
+	private static final GeoCache<CacheableString> _geoCache = CacheManager.getGeo(CacheableString.class, "GeoCountry");
 
 	/**
 	 * Executes the Web Service.
@@ -54,7 +55,7 @@ public class PositionUpdateService extends SimFDRService {
 			throw error(SC_BAD_REQUEST, e.getMessage());
 		}
 		
-		Pilot p  = null;
+		Pilot p  = null; ACARSRouteEntry re = info.getPositions().first(); Country c = null;
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -80,6 +81,14 @@ public class PositionUpdateService extends SimFDRService {
 				fr.setEquipmentType(a.getName()); 
 				info.getInfo().setEquipmentType(a.getName());
 			}
+			
+			// Get airspace
+			CacheableString countryCode = _geoCache.get(re);
+			if (countryCode == null) {
+				GetCountry cdao = new GetCountry(con);
+				c = cdao.find(re, true);
+			} else
+				c = Country.get(countryCode.getValue());
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		} finally {
@@ -90,9 +99,10 @@ public class PositionUpdateService extends SimFDRService {
 		flightID.append('-').append(p.getHexID());
 		
 		// Build the Map entry
-		ACARSRouteEntry re = info.getPositions().first(); FlightInfo inf = info.getInfo();
+		FlightInfo inf = info.getInfo();
 		MapRouteEntry result = new MapRouteEntry(re.getDate(), re, p, info.getInfo().getEquipmentType());
 		result.setRecorder(Recorder.SIMFDR);
+		result.setCountry(c);
 		result.setExternalID(flightID.toString());
 		result.setSimulator(inf.getSimulator());
 		result.setAutopilotType(inf.getAutopilotType());
