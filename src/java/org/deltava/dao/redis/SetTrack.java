@@ -42,11 +42,9 @@ public class SetTrack extends RedisDAO {
 					data = new CacheableList<GeoLocation>(rawKey);
 				
 				// Check to make sure position has changed
-				if (data.size() > 0) {
-					int distance = GeoUtils.distanceFeet(gl, data.get(data.size() - 1));
-					if (distance > 10)
-						data.add(new GeoPosition(gl));
-				}
+				int distance = data.isEmpty() ? Integer.MAX_VALUE : GeoUtils.distanceFeet(gl, data.get(data.size() - 1));
+				if (distance > 10)
+					data.add(new GeoPosition(gl));
 				
 				_casCache.add(data);
 				RedisUtils.write(key, 600, data);
