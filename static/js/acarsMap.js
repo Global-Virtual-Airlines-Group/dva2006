@@ -35,7 +35,8 @@ xmlreq.onreadystatechange = function() {
 		else if (a.color)
 			mrk = new golgotha.maps.Marker({color:a.color}, a.ll);
 
-		mrk.flight_id = a.flight_id;
+		mrk.isExternal = a.hasOwnProperty('external_id');
+		mrk.flight_id = mrk.isExternal ? a.external_id : a.flight_id;
 		mrk.isBusy = a.busy;
 		if (a.tabs.length == 0)
 			mrk.infoLabel = a.info;
@@ -208,7 +209,7 @@ golgotha.maps.acars.showFlightProgress = function(marker, doProgress, doRoute)
 {
 // Build the XML Requester
 var xreq = new XMLHttpRequest();
-xreq.open('GET', 'acars_progress_json.ws?id=' + marker.flight_id + '&time=' + golgotha.util.getTimestamp(3000) + '&route=' + doRoute, true);
+xreq.open('GET', 'acars_progress_json.ws?id=' + marker.flight_id + '&time=' + golgotha.util.getTimestamp(3000) + '&route=' + doRoute + '&isExternal=' + marker.isExternal, true);
 xreq.onreadystatechange = function() {
 	if ((xreq.readyState != 4) || (xreq.status != 200)) return false;
 

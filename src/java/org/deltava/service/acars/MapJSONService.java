@@ -84,7 +84,7 @@ public class MapJSONService extends WebService {
 				eo.put("range", (gme.getRange() > 5000) ? 0 : gme.getRange());
 			} else if ((entry.getID() == 0) && (entry instanceof MapRouteEntry)) {
 				MapRouteEntry mrte = (MapRouteEntry) entry;
-				eo.put("flight_id", mrte.getExternalID());
+				eo.put("external_id", mrte.getExternalID());
 			} else
 				eo.put("flight_id", entry.getID());
 			
