@@ -14,6 +14,7 @@ import org.deltava.beans.flight.Recorder;
 
 import org.deltava.dao.*;
 import org.deltava.dao.redis.GetTrack;
+
 import org.deltava.service.*;
 import org.deltava.util.*;
 
@@ -36,8 +37,9 @@ public class MapProgressJSONService extends WebService {
 	public int execute(ServiceContext ctx) throws ServiceException {
 
 		// Get the Flight ID
-		int id = StringUtils.parse(ctx.getParameter("id"), 0);
-		if (id < 1)
+		String id = ctx.getParameter("id"); boolean isExternal = Boolean.valueOf(ctx.getParameter("isExternal")).booleanValue();
+		int acarsID = StringUtils.parse(id, 0);
+		if ((acarsID < 1) && !isExternal) 
 			return SC_NOT_FOUND;
 
 		// Determine if we show the route
@@ -49,15 +51,17 @@ public class MapProgressJSONService extends WebService {
 		final List<GeoLocation> tempPoints = new ArrayList<GeoLocation>();
 		try {
 			Connection con = ctx.getConnection();
-			GetACARSPositions dao = new GetACARSPositions(con);
-			FlightInfo info = dao.getInfo(id);
-			if ((info != null) && (info.getFDR() == Recorder.XACARS))
-				routePoints.addAll(dao.getXACARSEntries(id));
-			else if (info != null)
-				routePoints.addAll(dao.getRouteEntries(id, false, false));
+			GetACARSPositions dao = new GetACARSPositions(con); FlightInfo info = null; GetTrack tkdao = new GetTrack();
+			if (!isExternal) {
+				info = dao.getInfo(acarsID);
+				if ((info != null) && (info.getFDR() == Recorder.XACARS))
+					routePoints.addAll(dao.getXACARSEntries(acarsID));
+				else if (info != null)
+					routePoints.addAll(dao.getRouteEntries(acarsID, false, false));
+			} else
+				tempPoints.addAll(tkdao.getTrack(false, id));
 			
 			// Get temporary waypoints
-			GetTrack tkdao = new GetTrack();
 			tempPoints.addAll(tkdao.getTrack(true, String.valueOf(id)));
 			if (!routePoints.isEmpty())
 				tempPoints.add(0, routePoints.get(routePoints.size() - 1));
