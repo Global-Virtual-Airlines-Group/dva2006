@@ -30,6 +30,8 @@ public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 	private String _phaseName;
 	private Recorder _fdr = Recorder.ACARS;
 	
+	private String _externalID;
+	
 	private Country _c;
 	private String _tailCode;
 	
@@ -47,6 +49,14 @@ public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 		super(dt, gl);
 		_usr = usr;
 		_eqType = eqType;
+	}
+	
+	/**
+	 * Returns the external flight ID, used by clients such as simFDR.
+	 * @return the ID
+	 */
+	public String getExternalID() {
+		return _externalID;
 	}
 
 	/**
@@ -151,6 +161,14 @@ public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 	 */
 	public void setTailCode(String tailCode) {
 		_tailCode = tailCode;
+	}
+
+	/**
+	 * Sets the external flight ID, for use by third-party clients such as simFDR.
+	 * @param id the ID
+	 */
+	public void setExternalID(String id) {
+		_externalID = id;
 	}
 
 	@Override

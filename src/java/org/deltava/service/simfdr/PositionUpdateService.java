@@ -93,6 +93,7 @@ public class PositionUpdateService extends SimFDRService {
 		ACARSRouteEntry re = info.getPositions().first(); FlightInfo inf = info.getInfo();
 		MapRouteEntry result = new MapRouteEntry(re.getDate(), re, p, info.getInfo().getEquipmentType());
 		result.setRecorder(Recorder.SIMFDR);
+		result.setExternalID(flightID.toString());
 		result.setSimulator(inf.getSimulator());
 		result.setAutopilotType(inf.getAutopilotType());
 		result.setClientBuild(info.getFlightReport().getClientBuild(), info.getFlightReport().getBeta());
