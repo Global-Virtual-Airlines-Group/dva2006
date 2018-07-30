@@ -47,7 +47,7 @@ public class SetTrack extends RedisDAO {
 					data.add(new GeoPosition(gl));
 				
 				_casCache.add(data);
-				RedisUtils.write(key, 600, data);
+				RedisUtils.write(key, 3600, data);
 			}
 		} catch (Exception e) {
 			log.warn(StringUtils.isEmpty(e.getMessage()) ? e.getClass().getSimpleName() : e.getMessage());
