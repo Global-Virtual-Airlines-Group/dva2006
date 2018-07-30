@@ -22,21 +22,25 @@ import org.deltava.beans.schedule.*;
 import org.deltava.comparators.GeoComparator;
 
 import org.deltava.dao.*;
+import org.deltava.dao.redis.SetTrack;
 import org.deltava.service.*;
 
 import org.deltava.util.*;
+import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Service to process simFDR submitted Flight Reports.
  * @author Luke
- * @version 8.2
+ * @version 8.3
  * @since 7.0
  */
 
 public class FlightSubmitService extends SimFDRService {
 	
 	private static final Logger log = Logger.getLogger(FlightSubmitService.class);
+	
+	private static final Cache<CacheableMap<String, MapRouteEntry>> _simFDRFlightCache = CacheManager.getMap(String.class, MapRouteEntry.class, "simFDRFlightID");
 
 	/**
 	 * Executes the Web Service.
@@ -50,6 +54,7 @@ public class FlightSubmitService extends SimFDRService {
 		
 		// Get the XML
 		String xml = ctx.getBody();
+		StringBuilder flightID = new StringBuilder(ctx.getRequest().getHeader("X-simFDR-FlightID"));
 		OfflineFlight<SimFDRFlightReport, ACARSRouteEntry> ofr = OfflineFlightParser.create(xml);
 		SimFDRFlightReport fr = ofr.getFlightReport();
 		try {
@@ -66,6 +71,7 @@ public class FlightSubmitService extends SimFDRService {
 				throw error(SC_NOT_FOUND, "Unknown Pilot - " + id, false);
 			
 			// Save user ID
+			flightID.append('-').append(p.getHexID());
 			ofr.getInfo().setAuthorID(p.getID());
 			fr.setAuthorID(p.getID()); fr.setRank(p.getRank());
 			
@@ -297,6 +303,17 @@ public class FlightSubmitService extends SimFDRService {
 		} finally {
 			ctx.release();
 		}
+		
+		// Get the track IDs
+		CacheableMap<String, MapRouteEntry> trackIDs = _simFDRFlightCache.get(MapRouteEntry.class);
+		if (trackIDs == null)
+			trackIDs = new CacheableMap<String, MapRouteEntry>(MapRouteEntry.class);
+		
+		// Clear the track
+		trackIDs.remove(flightID.toString());
+		SetTrack twdao = new SetTrack();
+		twdao.clear(false, flightID.toString());
+		_simFDRFlightCache.add(trackIDs);
 		
 		// Build response
 		Document doc = new Document();
