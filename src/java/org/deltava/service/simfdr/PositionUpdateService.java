@@ -6,8 +6,6 @@ import static javax.servlet.http.HttpServletResponse.*;
 import java.util.*;
 import java.sql.Connection;
 
-import org.apache.log4j.Logger;
-
 import org.deltava.beans.Pilot;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.flight.*;
@@ -30,8 +28,6 @@ import org.deltava.util.system.SystemData;
  */
 
 public class PositionUpdateService extends SimFDRService {
-	
-	private static final Logger log = Logger.getLogger(PositionUpdateService.class);
 	
 	private static final Cache<CacheableMap<String, MapRouteEntry>> _simFDRFlightCache = CacheManager.getMap(String.class, MapRouteEntry.class, "simFDRFlightID");
 	private static final GeoCache<CacheableString> _geoCache = CacheManager.getGeo(CacheableString.class, "GeoCountry");
@@ -142,10 +138,7 @@ public class PositionUpdateService extends SimFDRService {
 			trackIDs = new CacheableMap<String, MapRouteEntry>(MapRouteEntry.class);
 		
 		// Add our ID
-		if (trackIDs.put(flightID.toString(), result) == null)
-			log.info("Added new simFDR Flight " + flightID);
-		else
-			log.info("Updated simFDR Flight " + flightID);
+		trackIDs.put(flightID.toString(), result);
 		
 		// Save the position update and return
 		SetTrack twdao = new SetTrack();
