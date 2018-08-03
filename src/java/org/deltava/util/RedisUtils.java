@@ -164,11 +164,9 @@ public class RedisUtils {
 		byte[] rawKey = encodeKey(key);
 		byte[] data = write(value);
 		try (Jedis jc = getConnection()) {
-			if (expiry > 864000) {
-				jc.set(rawKey, data);
-				jc.expireAt(rawKey, expiry);
-			} else
-				jc.setex(rawKey, (int) expiry, data);	
+			long expTime = (expiry < 864000) ? (expiry + (System.currentTimeMillis() / 1000)) : expiry;
+			jc.set(rawKey, data);
+			jc.expireAt(rawKey, expTime);
 		}
 	}
 
