@@ -79,6 +79,7 @@ final class OfflineFlightParser {
 		String sim = ie.getChildTextTrim("sim");
 		inf.setSimulator(Simulator.fromName(sim, Simulator.UNKNOWN));
 		inf.setFDR(Recorder.SIMFDR); // needs to be set after simulator
+		inf.setSimulatorVersion(StringUtils.parse(ie.getChildTextTrim("simMajor"), 0), StringUtils.parse(ie.getChildTextTrim("simMinor"), 0));
 		if (inf.getSimulator() == Simulator.UNKNOWN)
 			log.warn("Unknown simulator version - " + sim);
 		
