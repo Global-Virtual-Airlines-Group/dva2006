@@ -215,6 +215,8 @@ You have flown <fmt:int value="${pilot.totalLegs}" /> flights and <fmt:dec value
 <content:airline /> and our partner airlines.<br /></c:if>
 <c:if test="${totalPax > 0}">
 You have carried <fmt:int value="${totalPax}" /> passengers on your flights.<br /></c:if>
+<c:if test="${pilot.legacyHours > 0}">
+You have <fmt:dec value="${pilot.legacyHours}" />hours logged at another virtual airline.<br /></c:if>
 <c:if test="${!empty lastFlight}">
 <br />
 Your last flight was on <fmt:date className="sec bld" date="${lastFlight.date}" fmt="d" />:<br />
