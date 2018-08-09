@@ -225,15 +225,15 @@ return true;
 </tr>
 <tr class="acarsClient" style="display:none;">
  <td class="label">Locale / Time Zone</td>
- <td colspan="${cspan + 1}" class="data">${acarsClientInfo.locale} <span class="ita">Time Zone: ${acarsClientInfo.timeZone}</span></td>
+ <td colspan="${cspan + 1}" class="data">${acarsClientInfo.locale}&nbsp;<span class="ita">Time Zone: ${acarsClientInfo.timeZone}</span></td>
 </tr>
 <tr class="acarsClient" style="display:none;">
  <td class="label">CPU Information</td>
- <td colspan="${cspan + 1}" class="data">${acarsClientInfo.CPU} <span class="sec small ita">(<fmt:int value="${acarsClientInfo.cores}" /> cores, <fmt:int value="${acarsClientInfo.threads}" /> threads)</span></td>
+ <td colspan="${cspan + 1}" class="data">${acarsClientInfo.CPU}&nbsp;<span class="sec small ita">(<fmt:int value="${acarsClientInfo.cores}" /> cores, <fmt:int value="${acarsClientInfo.threads}" /> threads)</span></td>
 </tr>
 <tr class="acarsClient" style="display:none;">
  <td class="label">GPU Information</td>
- <td colspan="${cspan + 1}" class="data">${acarsClientInfo.GPU} <span class="small ita">(<fmt:int value="${acarsClientInfo.videoMemorySize}" /> KB, ${acarsClientInfo.width}x${acarsClientInfo.height}x${acarsClientInfo.colorDepth}, ${acarsClientInfo.screenCount} screens)</span></td>
+ <td colspan="${cspan + 1}" class="data">${acarsClientInfo.GPU}&nbsp;<span class="small ita">(<fmt:int value="${acarsClientInfo.videoMemorySize}" /> KB, ${acarsClientInfo.width}x${acarsClientInfo.height}x${acarsClientInfo.colorDepth}, ${acarsClientInfo.screenCount} screens)</span></td>
 </tr>
 <tr class="acarsClient" style="display:none;">
  <td class="label">GPU Driver</td>
