@@ -198,9 +198,9 @@ return true;
 <c:if test="${ts2Client.serverID != 0}">
 <c:set var="ts2Server" value="${ts2Servers[ts2Client.serverID]}" scope="page" />
 <span class="sec bld">${ts2Server.name}</span> (Port ${ts2Server.port}) - ${ts2Server.description}
-<c:if test="${ts2Client.autoVoice}"> <span class="ter small bld">AUTO-VOICE</span></c:if>
-<c:if test="${ts2Client.serverOperator}"> <span class="sec small bld">SERVER OPERATOR</span></c:if>
-<c:if test="${ts2Client.serverAdmin}"> <span class="pri small bld">SERVER ADMINISTRATOR</span></c:if><br />
+<c:if test="${ts2Client.autoVoice}">&nbsp;<span class="ter small bld">AUTO-VOICE</span></c:if>
+<c:if test="${ts2Client.serverOperator}">&nbsp;<span class="sec small bld">SERVER OPERATOR</span></c:if>
+<c:if test="${ts2Client.serverAdmin}">&nbsp;<span class="pri small bld">SERVER ADMINISTRATOR</span></c:if><br />
 </c:if></c:forEach></td>
 </tr>
 </content:filter></c:if>
