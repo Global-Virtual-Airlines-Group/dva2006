@@ -4,8 +4,6 @@ package org.deltava.dao;
 import java.sql.*;
 import java.util.*;
 
-import org.apache.log4j.Logger;
-
 import org.deltava.beans.*;
 import org.deltava.beans.flight.*;
 
@@ -22,8 +20,6 @@ import org.deltava.util.system.SystemData;
 
 public class SetFlightReport extends DAO {
 	
-	private static final Logger log = Logger.getLogger(SetFlightReport.class);
-
 	/**
 	 * Initialize the Data Access Object.
 	 * @param c the JDBC connection to use
@@ -241,7 +237,7 @@ public class SetFlightReport extends DAO {
 		// Delete the existing records
 		prepareStatementWithoutLimits("DELETE FROM " + dbName + ".PROMO_EQ WHERE (ID=?)");
 		_ps.setInt(1, id);
-		int rowsDeleted = executeUpdate(0);
+		executeUpdate(0);
 
 		// Queue the new records
 		prepareStatementWithoutLimits("INSERT INTO " + dbName + ".PROMO_EQ (ID, EQTYPE) VALUES (?, ?)");
@@ -251,9 +247,7 @@ public class SetFlightReport extends DAO {
 			_ps.addBatch();
 		}
 
-		int rowsAdded = executeBatchUpdate(1, eqTypes.size());
-		if (rowsAdded != rowsDeleted)
-			log.warn("PromoEQ changed on Flight " + id + " was " + rowsDeleted + ", now " + rowsAdded);
+		executeBatchUpdate(1, eqTypes.size());
 	}
 
 	/*
