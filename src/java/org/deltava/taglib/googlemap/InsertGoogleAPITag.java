@@ -25,14 +25,16 @@ import org.deltava.util.system.SystemData;
 public class InsertGoogleAPITag extends TagSupport {
 
 	static final String API_VER_ATTR_NAME = "$googleMapAPIVersion$";
+	private static final List<String> CYCLES = List.of("weekly", "quarterly");
 	
 	private static final int MIN_API_VERSION = 3;
-	private static final String DEFAULT_V3_MINOR = "33";
+	private static final String DEFAULT_V3_MINOR = "34";
 	
 	private static final String V3_API_URL = "maps.googleapis.com/maps/api/js?v=";
 	
 	private int _majorVersion = MIN_API_VERSION;
 	private String _minorVersion;
+	private String _cycle;
 	private final Collection<String> _libraries = new LinkedHashSet<String>();
 	
 	/**
@@ -52,6 +54,17 @@ public class InsertGoogleAPITag extends TagSupport {
 	}
 	
 	/**
+	 * Sets the Google Maps release cycle to use.
+	 * @param c the cycle name
+	 */
+	public void setCycle(String c) {
+		if (c != null) {
+			String lc = c.toLowerCase();
+			_cycle = CYCLES.contains(lc) ? lc : null;
+		}
+	}
+	
+	/**
 	 * Sets the Google Maps v3 libraries to load.
 	 * @param libList a comma-separated list of libraries.
 	 */
@@ -68,6 +81,7 @@ public class InsertGoogleAPITag extends TagSupport {
 		_libraries.clear();
 		_majorVersion = MIN_API_VERSION;
 		_minorVersion = null;
+		_cycle = null;
 	}
 
 	/**
@@ -84,7 +98,7 @@ public class InsertGoogleAPITag extends TagSupport {
 		
 		// Translate stable/release v3 to minor version
 		APIUsage.track(APIUsage.Type.DYNAMIC);
-		if ((_majorVersion == 3) && (_minorVersion == null))
+		if ((_majorVersion == 3) && (_minorVersion == null) && (_cycle == null))
 			_minorVersion = DEFAULT_V3_MINOR;
 		
 		// Insert the API version
@@ -97,12 +111,15 @@ public class InsertGoogleAPITag extends TagSupport {
 			
 			out.print("://");
 			out.print(V3_API_URL);
-			out.print(String.valueOf(_majorVersion));
-			if (_minorVersion != null) {
-				out.print('.');
-				out.print(_minorVersion);
-			}
-
+			if (_cycle == null) {
+				out.print(String.valueOf(_majorVersion));
+				if (_minorVersion != null) {
+					out.print('.');
+					out.print(_minorVersion);
+				}
+			} else
+				out.print(_cycle);
+			
 			if (!_libraries.isEmpty()) {
 				out.print("&libraries=");
 				for (Iterator<String> i = _libraries.iterator(); i.hasNext(); ) {
@@ -120,6 +137,8 @@ public class InsertGoogleAPITag extends TagSupport {
 			JSONObject mco = new JSONObject();
 			mco.put("IMG_PATH", SystemData.get("path.img"));
 			mco.put("API", _majorVersion);
+			mco.putOpt("cycle", _cycle);
+			mco.putOpt("minor", _minorVersion);
 			mco.put("protocol", pageContext.getRequest().isSecure() ? "https" : "http");
 			mco.put("tileHost", SystemData.get("weather.tileHost"));
 			mco.put("seriesData", Collections.emptyMap());
