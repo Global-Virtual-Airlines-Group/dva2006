@@ -174,7 +174,7 @@
 		<!-- Precompile the files -->
 		<mkdir dir="${java.io.tmpdir}/src/jsp" />
 		<copy file="WEB-INF/web_core.xml" tofile="${basedir}/WEB-INF/web.xml" />
-	    <jasper2 package="org.deltava" uriroot="${basedir}" verbose="0" poolingEnabled="true" xpoweredBy="false" validateXml="false" compilerTargetVM="1.10" compilerSourceVM="1.10" threadCount="2.0C"
+	    <jasper2 package="org.deltava" uriroot="${basedir}" verbose="0" poolingEnabled="true" xpoweredBy="false" validateXml="false" compilerTargetVM="1.10" compilerSourceVM="1.10" threadCount="1.0C"
 	    	webXmlFragment="${jspc.webXMLInc}" trimSpaces="FALSE" outputDir="${java.io.tmpdir}/src/jsp" />
 		<delete file="${basedir}/WEB-INF/web.xml" />
 
@@ -193,6 +193,9 @@
 		<loadfile property="webXmlFragment" srcFile="${jspc.webXMLInc}" />
 		<copy file="WEB-INF/web_core.xml" tofile="${java.io.tmpdir}/build/web.xml" />
 		<replace file="${java.io.tmpdir}/build/web.xml" token="&lt;!-- [INSERT FRAGMENT HERE] --&gt;" value="${webXmlFragment}" />
+		
+		<!-- validate the web.xml -->
+		<xmlvalidate file="${java.io.tmpdir}/build/web.xml" lenient="true" />
 		
 		<property name="task.compile" value="true" />
 	</target>
