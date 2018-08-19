@@ -8,7 +8,7 @@
 <content:sysdata var="forumName" name="airline.forum" />
 <html lang="en">
 <head>
-<title><content:airline />&nbsp; ${forumName} - <fmt:text value="${thread.subject}" /></title>
+<title><content:airline />&nbsp;${forumName} - <fmt:text value="${thread.subject}" /></title>
 <content:canonical convertID="true" />
 <content:css name="main" />
 <content:css name="cooler" />
