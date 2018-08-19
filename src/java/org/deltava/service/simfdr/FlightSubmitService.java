@@ -77,7 +77,7 @@ public class FlightSubmitService extends SimFDRService {
 			
 			// Create comments field
 			Collection<String> comments = new LinkedHashSet<String>();
-			comments.add("SYSTEM: Submitted for " + p.getName() + " by simFDR");
+			comments.add("SYSTEM: Submitted for " + p.getName() + " by simFDR from " + ctx.getRequest().getRemoteHost());
 			
 			// Check for Draft PIREPs by this Pilot
 			GetFlightReports prdao = new GetFlightReports(con);
