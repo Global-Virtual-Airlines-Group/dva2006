@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2015, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import java.io.*;
@@ -8,7 +8,7 @@ import javax.servlet.http.*;
 /**
  * An invocation/security context object for Web Services.
  * @author Luke
- * @version 7.0
+ * @version 8.3
  * @since 1.0
  */
 
@@ -99,7 +99,7 @@ public class ServiceContext extends org.deltava.commands.HTTPContext {
 		String buf = _buf.toString();
 		_rsp.setContentLength(buf.getBytes("UTF-8").length);
 		_rsp.getWriter().print(buf);
-		_rsp.flushBuffer();
+		//_rsp.flushBuffer(); // this seems to strip content-length
 	}
 
 	/**
