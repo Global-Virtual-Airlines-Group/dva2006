@@ -1,7 +1,6 @@
-// Copyright 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
-import java.util.*;
 import java.time.DayOfWeek;
 
 import org.deltava.beans.Flight;
@@ -11,15 +10,14 @@ import org.deltava.util.StringUtils;
 /**
  * A Schedule Entry with code share and day of week data. 
  * @author Luke
- * @version 8.0
+ * @version 8.3
  * @since 8.0
  */
 
 public class RawScheduleEntry extends ScheduleEntry {
 
 	private String _codeShare;
-	private String _tailCode;
-	private final Collection<DayOfWeek> _days = new TreeSet<DayOfWeek>();
+	private DayOfWeek _day;
 	
 	/**
 	 * Creates the bean.
@@ -48,27 +46,19 @@ public class RawScheduleEntry extends ScheduleEntry {
 	}
 	
 	/**
-	 * Returns the tail code of the aircraft used for this flight.
-	 * @return the aircraft tail code, or null if unknown
+	 * Returns the day of the week this flight is operated on.
+	 * @return a DayOfWeek enum
 	 */
-	public String getTailCode() {
-		return _tailCode;
-	}
-	
-	/**
-	 * Returns the days of the week this flight is operated on.
-	 * @return a Collection of DayOfWeek enums
-	 */
-	public Collection<DayOfWeek> getDays() {
-		return _days;
+	public DayOfWeek getDay() {
+		return _day;
 	}
 
 	/**
-	 * Adds a day of the week that this flight is operated on.
+	 * Sets the day of the week that this flight is operated on.
 	 * @param d a DayOfWeek enum
 	 */
-	public void addDay(DayOfWeek d) {
-		_days.add(d);
+	public void setDay(DayOfWeek d) {
+		_day = d;
 	}
 	
 	/**
@@ -78,13 +68,5 @@ public class RawScheduleEntry extends ScheduleEntry {
 	public void setCodeShare(String flightCode) {
 		if (!StringUtils.isEmpty(flightCode))
 			_codeShare = flightCode;
-	}
-	
-	/**
-	 * Updates the aircraft registration code for this flight.
-	 * @param code the aircraft tail code
-	 */
-	public void setTailCode(String code) {
-		_tailCode = code;
 	}
 }
