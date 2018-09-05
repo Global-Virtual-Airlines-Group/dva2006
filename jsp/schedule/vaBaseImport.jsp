@@ -2,6 +2,7 @@
 <%@ page contentType="text/html; charset=UTF-8"  session="false" trimDirectiveWhitespaces="true" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html lang="en">
 <head>
 <title><content:airline /> VABase Schedule Import</title>
@@ -10,6 +11,7 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
+<content:js name="datePicker" />
 <script>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
@@ -30,15 +32,15 @@ golgotha.local.validate = function(f) {
 <el:form action="vaimport.do" method="post" allowUpload="true" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title">
- <td colspan="2">VABase FLIGHT SCHEDULE DATA IMPORT</td>
+ <td colspan="2">FLIGHT SCHEDULE DATA IMPORT</td>
 </tr>
 <tr>
- <td class="label top">Upload Data File</td>
+ <td class="label">Upload Data File</td>
  <td class="data"><el:file name="csvData" idx="*" className="small req" size="80" max="144" /></td>
 </tr>
 <tr>
- <td class="label">&nbsp;</td>
- <td class="data"><el:box name="isTailCodes" value="true" label="This is VABase Fleet Tail Code data" /></td>
+ <td class="label">Effective Date</td>
+ <td class="data"><el:text name="startDate" required="true" idx="*" size="10" max="10" value="${fn:dateFmt(today, 'MM/dd/yyyy')}" /> <el:button label="CALENDAR" onClick="void show_calendar('forms[0].startDate')" /></td>
 </tr>
 </el:table>
 

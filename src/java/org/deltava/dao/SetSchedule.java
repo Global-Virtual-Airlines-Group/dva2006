@@ -8,7 +8,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A Data Access Object to update the Flight Schedule.
  * @author Luke
- * @version 8.0
+ * @version 8.3
  * @since 1.0
  */
 
@@ -62,32 +62,17 @@ public class SetSchedule extends DAO {
 	 */
 	public void writeRaw(RawScheduleEntry rse) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("REPLACE INTO RAW_SCHEDULE (AIRLINE, FLIGHT, AIRPORT_D, AIRPORT_A, EQTYPE, TIME_D, TIME_A, DAYS, CS_MASTER) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-			_ps.setString(1, rse.getAirline().getCode());
-			_ps.setInt(2, rse.getFlightNumber());
-			_ps.setString(3, rse.getAirportD().getIATA());
-			_ps.setString(4, rse.getAirportA().getIATA());
-			_ps.setString(5, rse.getEquipmentType());
-			_ps.setTimestamp(6, Timestamp.valueOf(rse.getTimeD().toLocalDateTime()));
-			_ps.setTimestamp(7, Timestamp.valueOf(rse.getTimeA().toLocalDateTime()));
-			_ps.setInt(8, rse.getDays().stream().mapToInt(d -> (1 << d.ordinal())).sum()); // bitmask field
-			_ps.setString(9, rse.getCodeShare());
-			executeUpdate(1);
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-	
-	/**
-	 * Writes a tailcode/equipment mapping from a schedule provider to the database.
-	 * @param tc a TailCode bean
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public void write(TailCode tc) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("REPLACE INTO RAW_SCHEDULE_AC (TAILCODE, EQTYPE) VALUES (?, ?)");
-			_ps.setString(1, tc.getTailCode());
-			_ps.setString(2, tc.getEquipmentType());
+			prepareStatementWithoutLimits("REPLACE INTO RAW_SCHEDULE (DAY, AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A, EQTYPE, TIME_D, TIME_A, CODESHARE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			_ps.setInt(1, rse.getDay().ordinal());
+			_ps.setString(2, rse.getAirline().getCode());
+			_ps.setInt(3, rse.getFlightNumber());
+			_ps.setInt(4, rse.getLeg());
+			_ps.setString(5, rse.getAirportD().getIATA());
+			_ps.setString(6, rse.getAirportA().getIATA());
+			_ps.setString(7, rse.getEquipmentType());
+			_ps.setTimestamp(8, Timestamp.valueOf(rse.getTimeD().toLocalDateTime()));
+			_ps.setTimestamp(9, Timestamp.valueOf(rse.getTimeA().toLocalDateTime()));
+			_ps.setString(10, rse.getCodeShare());
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
