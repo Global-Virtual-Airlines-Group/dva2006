@@ -275,7 +275,7 @@ public class LoginCommand extends AbstractCommand {
 			UserPool.add(p, s.getId(), addrInfo, userAgent, isSecure);
 			
 			// Check if we need to save maximum users
-			if (UserPool.getMaxSizeDate().isAfter(maxUserDate)) {
+			if ((maxUserDate == null) || UserPool.getMaxSizeDate().isAfter(maxUserDate)) {
 				String prefix = SystemData.get("airline.code").toLowerCase();
 				SetMetadata mdwdao = new SetMetadata(con);
 				mdwdao.write(prefix + ".users.max.count", String.valueOf(UserPool.getMaxSize()));
