@@ -1,24 +1,27 @@
-// Copyright 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
-import java.util.Collection;
+import java.util.*;
+import java.time.*;
 import java.sql.Connection;
-import java.time.Instant;
 
 import org.deltava.beans.FileUpload;
 import org.deltava.beans.schedule.*;
+
+import org.deltava.comparators.ScheduleEntryComparator;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.dao.file.GetVABaseSchedule;
 
 import org.deltava.security.command.ScheduleAccessControl;
+
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to upload a VABase-format flight schedule.
  * @author Luke
- * @version 8.0
+ * @version 8.3
  * @since 8.0
  */
 
@@ -41,39 +44,75 @@ public class VABaseImportCommand extends AbstractCommand {
 		// If we are not uploading a CSV file, then redirect to the JSP
 		FileUpload csvData = ctx.getFile("csvData");
 		if (csvData == null) {
+			ctx.setAttribute("today", Instant.now(), REQUEST);
 			CommandResult result = ctx.getResult();
 			result.setURL("/jsp/schedule/vaBaseImport.jsp");
 			result.setSuccess(true);
 			return;
 		}
-
-		boolean isTailCodes = Boolean.valueOf(ctx.getParameter("isTailCodes")).booleanValue();
+		
+		// Get the start date
+		Instant startTime = parseDateTime(ctx, "start");
+		LocalDateTime startDate = (startTime == null) ? null : LocalDateTime.ofInstant(startTime, ZoneOffset.UTC);
+		
 		try {
 			Connection con = ctx.getConnection();
 			GetVABaseSchedule idao = new GetVABaseSchedule(csvData.getInputStream());
 			
 			// Load aircraft codes
 			GetAircraft acdao = new GetAircraft(con);
+			idao.setStartDate(startDate);
 			idao.setAircraft(acdao.getAircraftTypes());
 			idao.setAirlines(SystemData.getAirlines().values());
 			
-			SetSchedule swdao = new SetSchedule(con);
-			ctx.startTX();
+			// Build the collection by day
+			Map<DayOfWeek, List<RawScheduleEntry>> dayEntries = new HashMap<DayOfWeek, List<RawScheduleEntry>>(); 
+			List.of(DayOfWeek.values()).forEach(dow -> dayEntries.put(dow, new ArrayList<RawScheduleEntry>()));
+			ScheduleEntryComparator scmp = new ScheduleEntryComparator(ScheduleEntryComparator.DTIME);
 			
-			if (isTailCodes) {
-				Collection<TailCode> codes = idao.getTailCodes();
-				for (TailCode tc : codes)
-					swdao.write(tc);
-			} else {
-				Collection<ScheduleEntry> entries = idao.process();
-				swdao.purgeRaw();
-				for (ScheduleEntry se : entries)
-					swdao.writeRaw((RawScheduleEntry) se);
+			// Load the schedule and Group based on flight code
+			idao.process().stream().map(RawScheduleEntry.class::cast).forEach(rse -> dayEntries.get(rse.getDay()).add(rse));
+
+			// Sort by departure time
+			Collection<RawScheduleEntry> updatedLegs = new ArrayList<RawScheduleEntry>();
+			for (List<RawScheduleEntry> entries : dayEntries.values()) {
+				Map<String, Collection<RawScheduleEntry>> sortedEntries = new TreeMap<String, Collection<RawScheduleEntry>>();	
+				for (RawScheduleEntry rse : entries) {
+					String k = rse.getFlightCode();
+					Collection<RawScheduleEntry> bucket = sortedEntries.get(k);
+					if (bucket == null) {
+						bucket = new TreeSet<RawScheduleEntry>(scmp);
+						sortedEntries.put(k, bucket);
+					}
+					
+					bucket.add(rse);
+				}
+
+				// Set the leg number
+				for (Collection<RawScheduleEntry> bucket : sortedEntries.values()) {
+					int leg = 1;
+					for (RawScheduleEntry rse : bucket) {
+						rse.setLeg(leg);
+						leg++;
+						updatedLegs.add(rse);
+					}
+				}
 			}
+			
+			ctx.startTX();
+			SetSchedule swdao = new SetSchedule(con);
+			swdao.purgeRaw();
+			for (RawScheduleEntry se : updatedLegs)
+				swdao.writeRaw(se);
 			
 			// Check if anything has been imported
 			GetRawSchedule rsdao = new GetRawSchedule(con);
 			ctx.setAttribute("hasRawSchedule", Boolean.valueOf(rsdao.hasEntries(Instant.now())), REQUEST);
+			
+			// Write metadata
+			String aCode = SystemData.get("airline.code").toLowerCase();
+			SetMetadata mdwdao = new SetMetadata(con);
+			mdwdao.write(aCode + ".schedule.vaBaseDate", startTime);
 			
 			// Set status attributes
 			ctx.setAttribute("msgs", idao.getErrorMessages(), REQUEST);
@@ -89,7 +128,6 @@ public class VABaseImportCommand extends AbstractCommand {
 		}
 		
 		// Set status attributes
-		ctx.setAttribute("isTailCode", Boolean.valueOf(isTailCodes), REQUEST);
 		ctx.setAttribute("isImport", Boolean.TRUE, REQUEST);
 		
 		// Forward to the JSP
