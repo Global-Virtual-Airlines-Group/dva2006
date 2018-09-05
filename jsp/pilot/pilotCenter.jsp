@@ -773,7 +773,7 @@ aircraft types, for easy reuse when assigning a Check Ride to a pilot.</td>
 <c:if test="${vaBaseEnabled}">
 <tr>
  <td class="mid"><el:cmd className="bld" url="vaimport">VABase Schedule Import</el:cmd><br />
-<el:cmd className="bld" url="vafilter">VABase Schedule Load</el:cmd></td>
+<el:cmd className="bld" url="schedfilter">VABase Schedule Load</el:cmd></td>
  <td class="data">You can import a VABase-formatted airline schedule into the <content:airline /> flight schedule, and load the current day's flights.</td>
 </tr>
 </c:if>

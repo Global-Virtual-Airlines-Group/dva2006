@@ -733,9 +733,9 @@
 		<roles>Schedule,Operations</roles>
 	</command>
 
-	<command id="vafilter">
-		<name>VABase Schedule Filter</name>
-		<class>org.deltava.commands.schedule.VABaseFilterCommand</class>
+	<command id="schedfilter">
+		<name>Schedule Filter</name>
+		<class>org.deltava.commands.schedule.ScheduleFilterCommand</class>
 		<roles>Schedule,Operations</roles>
 	</command>
 
