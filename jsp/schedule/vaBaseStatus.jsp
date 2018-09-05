@@ -22,27 +22,9 @@
 <content:region id="main">
 <el:table className="form">
 <c:choose>
-<c:when test="${isImport && isTailCode}">
-<tr class="title">
- <td colspan="2">VABase FLEET IMPORT STATUS</td>
-</tr>
-<c:if test="${!empty msgs}">
-<tr>
- <td class="label top">Import Messages</td>
- <td class="data"><c:forEach var="msg" items="${msgs}">
-<fmt:text value="${msg}" /><br /></c:forEach></td>
-</tr>
-</c:if>
-<c:if test="${!empty eqTypes}">
-<tr>
- <td class="label top">Invalid Equipment</td>
- <td class="data"><fmt:list value="${eqTypes}" delim=", " /></td>
-</tr>
-</c:if>
-</c:when>
 <c:when test="${isImport}">
-<tr class="title">
- <td colspan="2">VABase FLIGHT SCHEDULE IMPORT STATUS</td>
+<tr class="title caps">
+ <td colspan="2"><content:airline /> FLIGHT SCHEDULE IMPORT STATUS</td>
 </tr>
 <c:if test="${!empty msgs}">
 <tr>
@@ -73,8 +55,8 @@ Invalid Airport Code - <el:cmd url="airport" linkID="${code}" op="edit" target="
 </c:if>
 </c:when>
 <c:when test="${isFilter}">
-<tr class="title">
- <td colspan="2">VABase FLIGHT SCHEDULE FILTER STATUS</td>
+<tr class="title caps">
+ <td colspan="2"><content:airline /> FLIGHT SCHEDULE FILTER STATUS</td>
 </tr>
 <tr>
  <td colspan="2" class="mid pri bld">Filter complete. <fmt:int value="${entriesLoaded}" /> Flight Schedule entries loaded.</td>
@@ -86,7 +68,7 @@ Invalid Airport Code - <el:cmd url="airport" linkID="${code}" op="edit" target="
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:cmdbutton url="vaimport" label="IMPORT FLIGHT SCHEDULE DATA" /><c:if test="${hasRawSchedule}"> <el:cmdbutton url="vafilter" label="LOAD TODAY'S FLIGHT SCHEDULE" /></c:if></td>
+ <td><el:cmdbutton url="vaimport" label="IMPORT FLIGHT SCHEDULE DATA" /><c:if test="${hasRawSchedule}">&nbsp;<el:cmdbutton url="schedfilter" label="LOAD TODAY'S FLIGHT SCHEDULE" /></c:if></td>
 </tr>
 </el:table>
 </c:if>
