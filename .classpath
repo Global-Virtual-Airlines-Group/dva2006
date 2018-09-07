@@ -38,7 +38,7 @@
 	<classpathentry kind="lib" path="lib/deploy/json-20180130.jar"/>
 	<classpathentry kind="lib" path="lib/servlet-api-4.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jstl-1.2.3.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-5.1.46-bin.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-codec-1.11.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-5.1.47-bin.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
