@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A Data Access Object to update Flight Statistics. 
  * @author Luke
- * @version 8.2
+ * @version 8.4
  * @since 6.2
  */
 
@@ -146,7 +146,7 @@ public class SetAggregateStatistics extends DAO {
 			+ "SUM(DISTANCE) AS MILES, SUM(FLIGHT_TIME) AS HOURS, COUNT(DISTINCT PILOT_ID) AS PIDS, AVG(LOADFACTOR), SUM(PAX), SUM(IF(FSVERSION=?,1,0)) AS FS7, "
 			+ "SUM(IF(FSVERSION=?,1,0)) AS FS8, SUM(IF(FSVERSION=?,1,0)) AS FS9, SUM(IF(FSVERSION=?,1,0)) AS FSX, SUM(IF(FSVERSION=?,1,0)) AS P3D, "
 			+ "SUM(IF(FSVERSION=?,1,0)) AS P3Dv4, SUM(IF(FSVERSION=?,1,IF(FSVERSION=?,1,0))) AS XP, SUM(IF(FSVERSION=?,1,0)) AS XP11, SUM(IF(FSVERSION=0,1,0)) AS FSO, "
-			+ "? FROM PIREPS WHERE (STATUS=?) AND (" + apColumn + "=?))");
+			+ "? FROM PIREPS WHERE (STATUS=?) AND (" + apColumn + "=?) (HAVING ACARS IS NOT NULL))");
 		_ps.setString(1, a.getIATA());
 		_ps.setInt(2, FlightReport.ATTR_ACARS);
 		_ps.setInt(3, FlightReport.ATTR_VATSIM);
@@ -206,7 +206,7 @@ public class SetAggregateStatistics extends DAO {
 			+ "SUM(DISTANCE) AS MILES, SUM(FLIGHT_TIME) AS HOURS, COUNT(DISTINCT PILOT_ID) AS PIDS, AVG(LOADFACTOR), SUM(PAX), SUM(IF(FSVERSION=?,1,0)) AS FS7, "
 			+ "SUM(IF(FSVERSION=?,1,0)) AS FS8, SUM(IF(FSVERSION=?,1,0)) AS FS9, SUM(IF(FSVERSION=?,1,0)) AS FSX, SUM(IF(FSVERSION=?,1,0)) AS P3D, "
 			+ "SUM(IF(FSVERSION=?,1,0)) AS P3Dv4, SUM(IF(FSVERSION=?,1,IF(FSVERSION=?,1,0))) AS XP, SUM(IF(FSVERSION=?,1,0)) AS XP11, SUM(IF(FSVERSION=0,1,0)) AS FSO "
-			+ "FROM PIREPS WHERE (STATUS=?) AND (EQTYPE=?))");
+			+ "FROM PIREPS WHERE (STATUS=?) AND (EQTYPE=?) HAVING (EQTYPE IS NOT NULL))");
 		_ps.setInt(1, FlightReport.ATTR_ACARS);
 		_ps.setInt(2, FlightReport.ATTR_VATSIM);
 		_ps.setInt(3, FlightReport.ATTR_IVAO);
