@@ -47,12 +47,16 @@ golgotha.local.update = function(combo) {
  <el:text name="idCode" size="3" max="4" className="caps" value="${airport.ICAO}" onBlur="void document.forms[0].id.setAirport(this.value, true)" /></td>
 </tr>
 <tr>
+ <td class="label">IATA / ICAO Codes</td>
+ <td class="data" colspan="2"><span class="pri bld">${airport.IATA}</span> / <span class="sec bld">${airport.ICAO}</span></td>
+</tr>
+<tr>
  <td class="label">Location</td>
  <td class="data" colspan="2"><fmt:geo pos="${airport}" /> (<fmt:int value="${airport.altitude}" /> feet MSL) - <c:if test="${!empty airport.state}">${airport.state.name}, </c:if>${airport.country.name} <el:flag countryCode="${airport.country.code}" /></td>
 </tr>
 <tr>
  <td class="label">Time Zone</td>
- <td class="data" colspan="2">${airport.TZ} <span class="small ita">(Current local time: <fmt:date date="${localTime}" tz="${airport.TZ}" t="HH:mm" />)</span>
+ <td class="data" colspan="2">${airport.TZ} <span class="ita">(Current local time: <fmt:date date="${localTime}" tz="${airport.TZ}" t="HH:mm" />)</span>
 </tr>
 <tr>
  <td class="label">Sunrise / Sunset</td>
