@@ -146,7 +146,7 @@ public class SetAggregateStatistics extends DAO {
 			+ "SUM(DISTANCE) AS MILES, SUM(FLIGHT_TIME) AS HOURS, COUNT(DISTINCT PILOT_ID) AS PIDS, AVG(LOADFACTOR), SUM(PAX), SUM(IF(FSVERSION=?,1,0)) AS FS7, "
 			+ "SUM(IF(FSVERSION=?,1,0)) AS FS8, SUM(IF(FSVERSION=?,1,0)) AS FS9, SUM(IF(FSVERSION=?,1,0)) AS FSX, SUM(IF(FSVERSION=?,1,0)) AS P3D, "
 			+ "SUM(IF(FSVERSION=?,1,0)) AS P3Dv4, SUM(IF(FSVERSION=?,1,IF(FSVERSION=?,1,0))) AS XP, SUM(IF(FSVERSION=?,1,0)) AS XP11, SUM(IF(FSVERSION=0,1,0)) AS FSO, "
-			+ "? FROM PIREPS WHERE (STATUS=?) AND (" + apColumn + "=?) (HAVING ACARS IS NOT NULL))");
+			+ "? FROM PIREPS WHERE (STATUS=?) AND (" + apColumn + "=?) HAVING (ACARS IS NOT NULL))");
 		_ps.setString(1, a.getIATA());
 		_ps.setInt(2, FlightReport.ATTR_ACARS);
 		_ps.setInt(3, FlightReport.ATTR_VATSIM);
@@ -165,7 +165,7 @@ public class SetAggregateStatistics extends DAO {
 		_ps.setBoolean(16, isDeparture);
 		_ps.setInt(17, FlightStatus.OK.ordinal());
 		_ps.setString(18, a.getIATA());
-		executeUpdate(1);
+		executeUpdate(0);
 	}
 	
 	/*
@@ -194,7 +194,7 @@ public class SetAggregateStatistics extends DAO {
 		_ps.setInt(14, Simulator.XP11.getCode());
 		_ps.setInt(15, FlightStatus.OK.ordinal());
 		_ps.setTimestamp(16, createTimestamp(dt));
-		executeUpdate(1);
+		executeUpdate(0);
 	}
 	
 	/*
@@ -223,6 +223,6 @@ public class SetAggregateStatistics extends DAO {
 		_ps.setInt(14, Simulator.XP11.getCode());
 		_ps.setInt(15, FlightStatus.OK.ordinal());
 		_ps.setString(16, eqType);
-		executeUpdate(1);
+		executeUpdate(0);
 	}
 }
