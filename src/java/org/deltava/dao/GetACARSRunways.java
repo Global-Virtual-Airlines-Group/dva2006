@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load popular runways for takeoff and landing.
  * @author Luke
- * @version 8.0
+ * @version 8.4
  * @since 2.6
  */
 
@@ -113,9 +113,9 @@ public class GetACARSRunways extends DAO {
 			return rwys.clone();
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT ND.NAME, ND.CODE, ND.LATITUDE, ND.LONGITUDE, ND.ALTITUDE, ND.HDG, IFNULL(ND.FREQ, ?), COUNT(R.ID) AS CNT FROM acars.FLIGHTS F, "
-			+ "acars.RWYDATA R LEFT JOIN common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND (R.RUNWAY=RR.OLDCODE)) LEFT JOIN common.NAVDATA ND ON ((ND.CODE=R.ICAO) AND "
-			+ "(ND.NAME=IFNULL(RR.NEWCODE, R.RUNWAY)) AND (ND.ITEMTYPE=?)) WHERE (F.ID=R.ID) AND (R.ISTAKEOFF=?) AND (ND.NAME IS NOT NULL) ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT ND.NAME, ND.CODE, ND.LATITUDE, ND.LONGITUDE, ND.ALTITUDE, ND.HDG, IFNULL(ND.FREQ, ?), RR.OLDCODE, COUNT(R.ID) AS CNT "
+			+ "FROM acars.FLIGHTS F, acars.RWYDATA R LEFT JOIN common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND (R.RUNWAY=RR.OLDCODE)) LEFT JOIN common.NAVDATA ND "
+			+ "ON ((ND.CODE=R.ICAO) AND (ND.NAME=IFNULL(RR.NEWCODE, R.RUNWAY)) AND (ND.ITEMTYPE=?)) WHERE (F.ID=R.ID) AND (R.ISTAKEOFF=?) AND (ND.NAME IS NOT NULL) ");
 		if (aD != null)
 			sqlBuf.append("AND (F.AIRPORT_D=?) ");
 		if (aA != null)
@@ -144,7 +144,8 @@ public class GetACARSRunways extends DAO {
 					r.setLength(rs.getInt(5));
 					r.setHeading(rs.getInt(6));
 					r.setFrequency(rs.getString(7));
-					r.setUseCount(rs.getInt(8));
+					r.setNewCode(rs.getString(8));
+					r.setUseCount(rs.getInt(9));
 					max = Math.max(max, r.getUseCount());
 					
 					// Determine percentage - default to 10%, if we have more than 7,500 flights use 20%
