@@ -53,8 +53,7 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="hasSSL" className="small" label="Airline web site supports SSL" value="true" checked="${aInfo.SSL}" /><br />
-<el:box name="canTX" className="small" label="Airline allows inbound Pilot transfers" value="true" checked="${aInfo.canTransfer}" /><br />
+ <td class="data"><el:box name="canTX" className="small" label="Airline allows inbound Pilot transfers" value="true" checked="${aInfo.canTransfer}" /><br />
 <el:box name="historicRestrict" className="small" label="Historic Routes require Historic Aircraft" value="true" checked="${aInfo.historicRestricted}" /></td>
 </tr>
 <%@ include file="/jsp/auditLog.jspf" %>
