@@ -76,11 +76,7 @@ public class RouteAssignmentSearchCommand extends AbstractCommand {
 				ssc.setAirportA(rtp.getAirportA());
 				ssc.setLeg(0);
 				ssc.setCheckDispatchRoutes(true);
-				for (Iterator<Aircraft> i = myEQTypes.iterator(); i.hasNext(); ) {
-					Aircraft a = i.next();
-					if ((a.getRange() > 0) && ((rtp.getDistance() + 250) > a.getRange()))
-						i.remove();
-				}
+				myEQTypes.removeIf(a -> (a.getRange() > 0) && ((rtp.getDistance() + 250) > a.getRange()));
 				
 				Collection<ScheduleEntry> entries = sdao.search(ssc);
 				Collection<ScheduleEntry> filteredEntries = entries.stream().filter(se -> filter(se, rp.getType())).collect(Collectors.toList());
