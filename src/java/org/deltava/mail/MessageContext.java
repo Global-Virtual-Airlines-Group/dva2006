@@ -1,4 +1,4 @@
-// Copyright 2004, 2007, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2007, 2012, 2015, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.mail;
 
 import java.lang.reflect.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A class to store and retrieve message context data.
  * @author Luke
- * @version 7.0
+ * @version 8.4
  * @since 1.0
  */
 
@@ -53,7 +53,7 @@ public class MessageContext {
     	// Initialize predefined variables
     	_aInfo = SystemData.getApp(aCode);
     	_data.put("airline", _aInfo.getName());
-   		_data.put("url", (_aInfo.getSSL() ? "https" : "http") + "://www." + _aInfo.getDomain() + "/");
+   		_data.put("url", "https://www." + _aInfo.getDomain() + "/");
     }
     
     /**

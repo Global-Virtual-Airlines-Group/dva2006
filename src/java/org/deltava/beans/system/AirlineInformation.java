@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2010, 2012, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2010, 2012, 2015, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 import org.deltava.beans.*;
@@ -8,7 +8,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store information about other virtual airlines.
  * @author Luke
- * @version 7.5
+ * @version 8.4
  * @since 1.0
  */
 
@@ -20,7 +20,6 @@ public class AirlineInformation implements Comparable<AirlineInformation>, Audit
    private String _domain;
    private boolean _canTransfer;
    private boolean _histRestricted;
-   private boolean _hasSSL;
 
    /**
     * Creates a new Airline Information bean.
@@ -89,15 +88,6 @@ public class AirlineInformation implements Comparable<AirlineInformation>, Audit
    }
    
    /**
-    * Returns whether the Airline has an SSL-enabled web site.
-    * @return TRUE if SSL enabled, otherwise FALSE
-    * @see AirlineInformation#setSSL(boolean)
-    */
-   public boolean getSSL() {
-	   return _hasSSL;
-   }
-   
-   /**
     * Updates the Airline domain name. The domain will be converted to lowercase.
     * @param domain the domain name
     * @throws NullPointerException if domain is null
@@ -133,15 +123,6 @@ public class AirlineInformation implements Comparable<AirlineInformation>, Audit
     */
    public void setHistoricRestricted(boolean isRestricted) {
 	   _histRestricted = isRestricted;
-   }
-   
-   /**
-    * Updates whether this Airline has an SSL-enabled web site. 
-    * @param hasSSL TRUE if the Airline has SSL, otherwise FALSE
-    * @see AirlineInformation#getSSL()
-    */
-   public void setSSL(boolean hasSSL) {
-	   _hasSSL = hasSSL;
    }
    
    @Override
