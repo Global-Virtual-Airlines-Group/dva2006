@@ -1,8 +1,8 @@
 // Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.simfdr;
 
-import java.time.Instant;
 import java.util.*;
+import java.time.*;
 import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to parse simFDR submitted flight reports.
  * @author Luke
- * @version 8.3
+ * @version 8.4
  * @since 7.0
  */
 
@@ -32,6 +32,14 @@ final class OfflineFlightParser {
 	// singleton
 	private OfflineFlightParser() {
 		super();
+	}
+	
+	private static Instant safeParseInstant(String dt, String fmt) {
+		try {
+			return StringUtils.parseInstant(dt, fmt);
+		} catch (Exception e) {
+			return null;
+		}
 	}
 	
 	/**
@@ -134,6 +142,8 @@ final class OfflineFlightParser {
 		afr.setTakeoffTime(StringUtils.parseEpoch(ie.getChildTextTrim("takeoffTime")));
 		afr.setLandingTime(StringUtils.parseEpoch(ie.getChildTextTrim("landingTime")));
 		afr.setEndTime(StringUtils.parseEpoch(ie.getChildTextTrim("endTime")));
+		afr.setDepartureTime(safeParseInstant(ie.getChildTextTrim("startSimTime"), "MM/dd/yyyy HH:mm:ss"));
+		afr.setArrivalTime(safeParseInstant(ie.getChildTextTrim("gateSimTime"), "MM/dd/yyyy HH:mm:ss"));
 		inf.setStartTime(afr.getStartTime());
 		inf.setEndTime(afr.getEndTime());
 

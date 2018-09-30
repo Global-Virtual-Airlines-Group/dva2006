@@ -2,12 +2,9 @@
 package org.deltava.beans.acars;
 
 import java.util.*;
+import java.time.*;
+import java.time.format.*;
 import java.io.StringReader;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
 
 import org.apache.log4j.Logger;
@@ -19,13 +16,14 @@ import org.deltava.beans.*;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.system.OperatingSystem;
+
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A utility class to parse XML-format offline Flight Reports.
  * @author Luke
- * @version 8.3
+ * @version 8.4
  * @since 2.4
  */
 
@@ -42,6 +40,14 @@ public final class OfflineFlightParser {
 	private static double parse(String xml) {
 		String x = xml.contains(",") ? xml.replace(',', '.') : xml;
 		return Double.parseDouble(x);
+	}
+	
+	private static Instant safeParseInstant(String dt, String fmt) {
+		try {
+			return StringUtils.parseInstant(dt, fmt);
+		} catch (Exception e) {
+			return null;
+		}
 	}
 	
 	/**
@@ -214,6 +220,8 @@ public final class OfflineFlightParser {
 		afr.setTakeoffTime(StringUtils.parseInstant(ie.getChildTextTrim("takeoffTime"), "MM/dd/yyyy HH:mm:ss"));
 		afr.setLandingTime(StringUtils.parseInstant(ie.getChildTextTrim("landingTime"), "MM/dd/yyyy HH:mm:ss"));
 		afr.setEndTime(StringUtils.parseInstant(ie.getChildTextTrim("gateTime"), "MM/dd/yyyy HH:mm:ss"));
+		afr.setDepartureTime(safeParseInstant(ie.getChildTextTrim("startSimTime"), "MM/dd/yyyy HH:mm:ss"));
+		afr.setArrivalTime(safeParseInstant(ie.getChildTextTrim("gateSimTime"), "MM/dd/yyyy HH:mm:ss"));
 
 		// Set the weights/speeds
 		afr.setPaxWeight(StringUtils.parse(ie.getChildTextTrim("paxWeight"), 0));

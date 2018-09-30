@@ -206,8 +206,8 @@ public class FlightSubmitService extends SimFDRService {
 			fuelUse.getMessages().forEach(fuelMsg -> comments.add("SYSTEM: " + fuelMsg));
 			
 			// Check the schedule database and check the route pair
-			GetSchedule sdao = new GetSchedule(con);
-			FlightTime avgHours = sdao.getFlightTime(fr);
+			GetScheduleSearch sdao = new GetScheduleSearch(con);
+			FlightTime avgHours = sdao.getFlightTime(fr); ScheduleEntry onTimeEntry = null;
 			boolean isAssignment = (fr.getDatabaseID(DatabaseID.ASSIGN) != 0);
 			boolean isEvent = (fr.getDatabaseID(DatabaseID.EVENT) != 0);
 			if ((avgHours.getType() == RoutePairType.UNKNOWN) && !isAssignment && !isEvent)
@@ -217,6 +217,13 @@ public class FlightSubmitService extends SimFDRService {
 				int maxHours = (int) ((avgHours.getFlightTime() * 1.15) + (SystemData.getDouble("users.pirep.pad_hours", 0) * 10));
 				if ((fr.getLength() < minHours) || (fr.getLength() > maxHours))
 					fr.setAttribute(FlightReport.ATTR_TIMEWARN, true);
+				
+				// Calculate timeliness of flight
+				ScheduleSearchCriteria ssc = new ScheduleSearchCriteria("TIME_D"); ssc.setDBName(SystemData.get("airline.db"));
+				ssc.setAirportD(fr.getAirportD()); ssc.setAirportA(fr.getAirportA());
+				OnTimeHelper oth = new OnTimeHelper(sdao.search(ssc));
+				fr.setOnTime(oth.validate(fr));
+				onTimeEntry = oth.getScheduleEntry();
 			}
 			
 			// Calculate average frame rate
@@ -294,6 +301,12 @@ public class FlightSubmitService extends SimFDRService {
 			fwdao.writeACARS(fr, SystemData.get("airline.db"));
 			if (fwdao.updatePaxCount(fr.getID(), SystemData.get("airline.db")))
 				log.warn("Update Passnger count for PIREP #" + fr.getID());
+			
+			// Write ontime data if there is any
+			if (fr.getOnTime() != OnTime.UNKNOWN) {
+				SetACARSOnTime aowdao = new SetACARSOnTime(con);
+				aowdao.write(fr, onTimeEntry);
+			}
 			
 			// Commit
 			ctx.commitTX();

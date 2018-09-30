@@ -13,6 +13,7 @@ import org.deltava.comparators.AirportComparator;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
+import org.deltava.util.CollectionUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -38,8 +39,7 @@ public class RunwayMappingsCommand extends AbstractViewCommand {
 			GetRunwayMapping rmdao = new GetRunwayMapping(con);
 			SortedSet<Airport> airports = new TreeSet<Airport>(new AirportComparator(AirportComparator.NAME));
 			airports.addAll(rmdao.getAirports());
-			Map<String, Airport> allAirports = new HashMap<String, Airport>();
-			airports.forEach(a -> allAirports.put(a.getICAO(), a));
+			Map<String, Airport> allAirports = CollectionUtils.createMap(airports, Airport::getICAO);
 
 			// Save in request
 			ctx.setAttribute("airports", airports, REQUEST);

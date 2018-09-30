@@ -1,8 +1,8 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
-import java.time.Duration;
 import java.util.*;
+import java.time.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.*;
@@ -10,11 +10,11 @@ import org.deltava.beans.schedule.*;
 /**
  * A class for storing ACARS-submitted Flight Reports.
  * @author Luke
- * @version 8.0
+ * @version 8.4
  * @since 1.0
  */
 
-public class ACARSFlightReport extends FDRFlightReport {
+public class ACARSFlightReport extends FDRFlightReport implements FlightTimes {
 	
     private final Map<Long, Integer> _time = new HashMap<Long, Integer>();
     
@@ -24,6 +24,10 @@ public class ACARSFlightReport extends FDRFlightReport {
     private String _fde;
     private String _code;
     private String _sdk;
+    
+    private Instant _departureTime;
+    private Instant _arrivalTime;
+    private OnTime _onTime = OnTime.UNKNOWN;
     
     private int _paxWeight;
     private int _cargoWeight;
@@ -186,6 +190,32 @@ public class ACARSFlightReport extends FDRFlightReport {
 	public int getCargoWeight() {
 		return _cargoWeight;
 	}
+	
+	/**
+	 * Returns the flight start date/time in the simulator. 
+	 * @return the departure date/time
+	 */
+	@Override
+	public ZonedDateTime getTimeD() {
+		return (_departureTime == null) ? null : ZonedDateTime.ofInstant(_departureTime, getAirportD().getTZ().getZone());
+	}
+	
+	/**
+	 * Returns the flight arrival date/time in the simulator.
+	 * @return the arrival date/time
+	 */
+	@Override
+	public ZonedDateTime getTimeA() {
+		return (_arrivalTime == null) ? null : ZonedDateTime.ofInstant(_arrivalTime, getAirportA().getTZ().getZone());
+	}
+	
+	/**
+	 * Returns whether the flight matched the schedule times.
+	 * @return an OnTime enumeration
+	 */
+	public OnTime getOnTime() {
+		return _onTime;
+	}
     
     /**
      * Updates the G-Forces at touchdown.
@@ -295,5 +325,29 @@ public class ACARSFlightReport extends FDRFlightReport {
 	 */
 	public void setCargoWeight(int wt) {
 		_cargoWeight = Math.max(0, wt);
+	}
+	
+	/**
+	 * Updates the departure date/time.
+	 * @param dt the departure date/time
+	 */
+	public void setDepartureTime(Instant dt) {
+		_departureTime = dt;
+	}
+
+	/**
+	 * Updates the arrival date/time.
+	 * @param dt the arrival date/time
+	 */
+	public void setArrivalTime(Instant dt) {
+		_arrivalTime = dt;
+	}
+
+	/**
+	 * Updates whether the flight was on time.
+	 * @param o an OnTime value
+	 */
+	public void setOnTime(OnTime o) {
+		_onTime = o;
 	}
 }
