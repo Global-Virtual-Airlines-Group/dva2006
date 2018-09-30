@@ -313,7 +313,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 			}
 			
 			// Check if it's a Flight Academy flight
-			GetSchedule sdao = new GetSchedule(con);
+			GetScheduleSearch sdao = new GetScheduleSearch(con);
 			ScheduleEntry sEntry = sdao.get(afr);
 			boolean isAcademy = ((sEntry != null) && sEntry.getAcademy());
 			Course c = null;
@@ -341,7 +341,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 			ETOPSResult etopsClass = ETOPSHelper.classify(positions); 
 			afr.setAttribute(FlightReport.ATTR_ETOPSWARN, ETOPSHelper.validate(a, etopsClass.getResult()));
 			if (afr.hasAttribute(FlightReport.ATTR_ETOPSWARN))
-				comments.add("ETOPS classificataion: " + String.valueOf(etopsClass));
+				comments.add("ETOPS classificataion: " + etopsClass);
 			
 			// Check prohibited airspace
 			Collection<Airspace> rstAirspaces = AirspaceHelper.classify(positions, false);
@@ -357,7 +357,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 			fuelUse.getMessages().forEach(fuelMsg -> comments.add("SYSTEM: " + fuelMsg));
 
 			// Check the schedule database and check the route pair
-			FlightTime avgHours = sdao.getFlightTime(afr);
+			FlightTime avgHours = sdao.getFlightTime(afr); ScheduleEntry onTimeEntry = null;
 			boolean isAssignment = (afr.getDatabaseID(DatabaseID.ASSIGN) != 0);
 			boolean isEvent = (afr.getDatabaseID(DatabaseID.EVENT) != 0);
 			if ((avgHours.getType() == RoutePairType.UNKNOWN) && !inf.isScheduleValidated() && !isAssignment && !isEvent)
@@ -367,6 +367,13 @@ public class OfflineFlightCommand extends AbstractCommand {
 				int maxHours = (int) ((avgHours.getFlightTime() * 1.15) + (SystemData.getDouble("users.pirep.pad_hours", 0) * 10));
 				if ((afr.getLength() < minHours) || (afr.getLength() > maxHours))
 					afr.setAttribute(FlightReport.ATTR_TIMEWARN, true);
+				
+				// Calculate timeliness of flight
+				ScheduleSearchCriteria ssc = new ScheduleSearchCriteria("TIME_D");
+				ssc.setAirportD(afr.getAirportD()); ssc.setAirportA(afr.getAirportA()); ssc.setDBName(SystemData.get("airline.db"));
+				OnTimeHelper oth = new OnTimeHelper(sdao.search(ssc));
+				afr.setOnTime(oth.validate(afr));
+				onTimeEntry = oth.getScheduleEntry();
 			}
 			
 			// Calculate average frame rate
@@ -486,6 +493,12 @@ public class OfflineFlightCommand extends AbstractCommand {
 			fwdao.writeACARS(afr, SystemData.get("airline.db"));
 			if (fwdao.updatePaxCount(afr.getID(), SystemData.get("airline.db")))
 				log.warn("Update Passnger count for PIREP #" + afr.getID());
+			
+			// Write ontime data if there is any
+			if (afr.getOnTime() != OnTime.UNKNOWN) {
+				SetACARSOnTime aowdao = new SetACARSOnTime(con);
+				aowdao.write(afr, onTimeEntry);
+			}
 			
 			// Commit
 			ctx.commitTX();

@@ -66,12 +66,12 @@
 <tr>
  <td class="label">Start Time</td>
  <td class="data" colspan="${cspan}"><c:if test="${!empty gate}"><span class="sec bld">${gate.name}</span>, </c:if>
-<fmt:date className="bld" date="${pirep.startTime}" /><c:if test="${!empty gate}">&nbsp;<a href="javascript:void golgotha.local.zoomTo(${gate.latitude}, ${gate.longitude}, 15)">Zoom<span class="nophone"> to Gate</span></a></c:if></td>
+<fmt:date className="bld" date="${pirep.startTime}" /><c:if test="${!empty gate}">&nbsp;<a href="javascript:void golgotha.local.zoomTo(${gate.latitude}, ${gate.longitude}, 15)">Zoom<span class="nophone"> to Gate</span></a></c:if>
+<c:if test="${!empty pirep.timeD}">&nbsp;<span class="ita">Simulator date/time: <fmt:date t="HH:mm" date="${pirep.timeD}" className="bld" /></span></c:if></td>
 </tr>
 <tr>
  <td class="label">Taxi from Gate</td>
- <td class="data" colspan="${cspan}"><fmt:date date="${pirep.taxiTime}" />, <fmt:weight value="${pirep.taxiWeight}" />
- total, <fmt:weight value="${pirep.taxiFuel}" /> fuel<c:if test="${acLoaded && (pirep.taxiWeight > acInfo.maxWeight)}"> 
+ <td class="data" colspan="${cspan}"><fmt:date date="${pirep.taxiTime}" />, <fmt:weight value="${pirep.taxiWeight}" /> total, <fmt:weight value="${pirep.taxiFuel}" /> fuel<c:if test="${acLoaded && (pirep.taxiWeight > acInfo.maxWeight)}"> 
  <span class="small bld">(<fmt:weight value="${pirep.taxiWeight - acInfo.maxWeight}" /> overweight)</span></c:if></td>
 </tr>
 <tr>
@@ -175,7 +175,8 @@
 <c:if test="${pirep.endTime.isAfter(pirep.landingTime)}">
 <tr>
  <td class="label">Arrival Time</td>
- <td class="data" colspan="${cspan}"><fmt:date className="bld" date="${pirep.endTime}" />, (<fmt:int value="${fn:delta(pirep.startTime, pirep.endTime) / 60}" /> minutes after start)</td>
+ <td class="data" colspan="${cspan}"><fmt:date className="bld" date="${pirep.endTime}" />, (<fmt:int value="${fn:delta(pirep.startTime, pirep.endTime) / 60}" /> minutes after start)
+<c:if test="${!empty pirep.timeA}"> <span class="ita">Simulator date/time: <fmt:date t="HH:mm" date="${pirep.timeA}" className="bld" /></span></c:if></td>
 </tr>
 </c:if>
 <c:if test="${pirep.gateFuel > 0}">
@@ -236,6 +237,13 @@
 <tr>
  <td class="label">Average Frame Rate</td>
  <td class="data" colspan="${cspan}"><fmt:dec value="${pirep.averageFrameRate}" /> frames per second</td>
+</tr>
+</c:if>
+<c:if test="${fn:hasOnTime(pirep) && (!empty onTimeEntry)}">
+<tr>
+ <td class="label">On-Time Performance</td>
+ <td class="data" colspan="${cspan}"><span class="${pirep.onTime.rowClassName} bld">${pirep.onTime}</span> - <span class="small ita nophone">Compared to <span class="bld">${onTimeEntry}</span> (departs
+ <fmt:date fmt="t" t="HH:mm" tz="${pirep.airportD.TZ}" date="${onTimeEntry.timeD}" />, arrives <fmt:date fmt="t" t="HH:mm" tz="${pirep.airportA.TZ}" date="${onTimeEntry.timeA}" />)</span></td>
 </tr>
 </c:if>
 <content:filter roles="PIREP,Operations,Instructor,Examiner,HR">

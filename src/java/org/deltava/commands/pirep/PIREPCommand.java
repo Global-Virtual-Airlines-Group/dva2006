@@ -490,6 +490,15 @@ public class PIREPCommand extends AbstractFormCommand {
 						ctx.setAttribute("ipInfo", ipdao.get(info.getRemoteAddr()), REQUEST);
 					}
 					
+					// Get on-time data
+					if (afr.getFDR() != Recorder.XACARS) {
+						ACARSFlightReport acfr = (ACARSFlightReport) afr;
+						if (acfr.getOnTime() != OnTime.UNKNOWN) {
+							GetACARSOnTime aotdao = new GetACARSOnTime(con);
+							ctx.setAttribute("onTimeEntry", aotdao.getOnTime(acfr), REQUEST);
+						}
+					}
+					
 					// Get system info
 					if (ctx.isUserInRole("Developer") || ctx.isUserInRole("Operations")) {
 						GetSystemInfo sysdao = new GetSystemInfo(con);

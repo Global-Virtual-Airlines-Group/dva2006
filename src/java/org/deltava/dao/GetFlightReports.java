@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Flight Reports.
  * @author Luke
- * @version 8.2
+ * @version 8.4
  * @since 1.0
  */
 
@@ -54,13 +54,15 @@ public class GetFlightReports extends DAO {
 
 		// Build the SQL statement
 		String db = formatDBName(dbName);
-		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, PC.REMARKS, APR.* FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, PC.REMARKS, APR.*, AO.ONTIME FROM ");
 		sqlBuf.append(db);
 		sqlBuf.append(".PIREPS PR LEFT JOIN ");
 		sqlBuf.append(db);
 		sqlBuf.append(".PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ");
 		sqlBuf.append(db);
-		sqlBuf.append(".ACARS_PIREPS APR ON (PR.ID=APR.ID) WHERE (PR.ID=?) LIMIT 1");
+		sqlBuf.append(".ACARS_PIREPS APR ON (PR.ID=APR.ID) LEFT JOIN ");
+		sqlBuf.append(db);
+		sqlBuf.append(".ACARS_ONTIME AO ON (PR.ID=AO.ID) WHERE (PR.ID=?) LIMIT 1");
 
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
@@ -92,13 +94,15 @@ public class GetFlightReports extends DAO {
 
 		// Build the SQL statement
 		String db = formatDBName(dbName);
-		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, PC.REMARKS, APR.* FROM (");
+		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, PC.REMARKS, APR.*, AO.ONTIME FROM (");
 		sqlBuf.append(db);
 		sqlBuf.append(".PIREPS PR, ");
 		sqlBuf.append(db);
 		sqlBuf.append(".ACARS_PIREPS APR) LEFT JOIN ");
 		sqlBuf.append(db);
-		sqlBuf.append(".PIREP_COMMENT PC ON (PR.ID=PC.ID) WHERE (APR.ID=PR.ID) AND (APR.ACARS_ID=?) LIMIT 1");
+		sqlBuf.append(".PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ");
+		sqlBuf.append(db);
+		sqlBuf.append(".PIREP_ONTIME AO (ON PR.ID=AO.ID) WHERE (APR.ID=PR.ID) AND (APR.ACARS_ID=?) LIMIT 1");
 
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
@@ -553,6 +557,7 @@ public class GetFlightReports extends DAO {
 			boolean hasComments = (md.getColumnCount() > 23);
 			boolean hasSchedTimes = (!hasACARS && (md.getColumnCount() > 25));
 			boolean hasDraftRoute = (hasSchedTimes && (md.getColumnCount() > 26));
+			boolean hasOnTime = (md.getColumnCount() > 70);
 
 			// Iterate throught the results
 			while (rs.next()) {
@@ -654,8 +659,7 @@ public class GetFlightReports extends DAO {
 				if (isACARS && !isXACARS) {
 					ACARSFlightReport ap = (ACARSFlightReport) p;
 					ap.setLandingG(rs.getDouble(45));
-					int ils = rs.getInt(53);
-					ap.setLandingCategory(ILSCategory.values()[ils]);
+					ap.setLandingCategory(ILSCategory.values()[rs.getInt(53)]);
 					ap.setPaxWeight(rs.getInt(58));
 					ap.setCargoWeight(rs.getInt(59));
 					ap.setTime(0, rs.getInt(60));
@@ -669,6 +673,8 @@ public class GetFlightReports extends DAO {
 					ap.setAverageFrameRate(rs.getInt(68) / 10d);
 					ap.setClientBuild(rs.getInt(69));
 					ap.setBeta(rs.getInt(70));
+					if (hasOnTime)
+						ap.setOnTime(OnTime.values()[rs.getInt(71)]);
 				} else if (isXACARS) {
 					XACARSFlightReport ap = (XACARSFlightReport) p;
 					ap.setMajorVersion(rs.getInt(69));

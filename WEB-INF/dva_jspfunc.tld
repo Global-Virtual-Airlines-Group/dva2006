@@ -243,6 +243,13 @@
 		<function-signature>boolean isDivert(org.deltava.beans.flight.FlightReport)</function-signature>
 	</function>
 
+	<!-- Check for On-Time data -->
+	<function>
+		<name>hasOnTime</name>
+		<function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>
+		<function-signature>boolean hasOnTime(org.deltava.beans.flight.FlightReport)</function-signature>
+	</function>
+
 	<!-- Check for Unknown Route flag -->
 	<function>
 		<name>routeWarn</name>
