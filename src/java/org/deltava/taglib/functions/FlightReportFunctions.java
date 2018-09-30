@@ -8,7 +8,7 @@ import org.deltava.beans.flight.*;
 /**
  * A JSP Function Library to define Flight Report-related functions.
  * @author Luke
- * @version 8.1
+ * @version 8.4
  * @since 1.0
  */
 
@@ -171,6 +171,15 @@ public class FlightReportFunctions {
 	 */
 	public static boolean isDivert(FlightReport fr) {
 		return (fr != null) && fr.hasAttribute(FlightReport.ATTR_DIVERT);
+	}
+	
+	/**
+	 * Returns if this Flight has On-Time data.
+	 * @param fr the FlightReport
+	 * @return TRUE if OnTime data is present, otherwise FALSE
+	 */
+	public static boolean hasOnTime(FlightReport fr) {
+		return (fr != null) && (fr instanceof ACARSFlightReport) && (((ACARSFlightReport) fr).getOnTime() != OnTime.UNKNOWN);
 	}
 
 	/**
