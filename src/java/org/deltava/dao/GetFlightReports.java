@@ -102,7 +102,7 @@ public class GetFlightReports extends DAO {
 		sqlBuf.append(db);
 		sqlBuf.append(".PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ");
 		sqlBuf.append(db);
-		sqlBuf.append(".PIREP_ONTIME AO ON (PR.ID=AO.ID) WHERE (APR.ID=PR.ID) AND (APR.ACARS_ID=?) LIMIT 1");
+		sqlBuf.append(".ACARS_ONTIME AO ON (PR.ID=AO.ID) WHERE (APR.ID=PR.ID) AND (APR.ACARS_ID=?) LIMIT 1");
 
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
