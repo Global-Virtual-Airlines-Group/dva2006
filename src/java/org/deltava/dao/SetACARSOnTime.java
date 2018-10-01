@@ -25,13 +25,20 @@ public class SetACARSOnTime extends DAO {
 
 	/**
 	 * Writes ACARS on-time data to the database.
+	 * @param db the database name
 	 * @param afr the ACARSFlightReport
 	 * @param entry the matched ScheduleEntry
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void write(ACARSFlightReport afr, ScheduleEntry entry) throws DAOException {
+	public void write(String db, ACARSFlightReport afr, ScheduleEntry entry) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("REPLACE INTO ");
+		sqlBuf.append(formatDBName(db));
+		sqlBuf.append(".ACARS_ONTIME VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		
 		try {
-			prepareStatementWithoutLimits("REPLACE INTO ACARS_ONTIME VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			prepareStatementWithoutLimits(sqlBuf.toString());
 			_ps.setInt(1, afr.getID());
 			_ps.setInt(2, afr.getOnTime().ordinal());
 			_ps.setString(3, entry.getAirline().getCode());
@@ -42,21 +49,6 @@ public class SetACARSOnTime extends DAO {
 			_ps.setTimestamp(8, createTimestamp(afr.getTimeD().toInstant()));
 			_ps.setTimestamp(9, createTimestamp(afr.getTimeA().toInstant()));
 			executeUpdate(1);
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-	
-	/**
-	 * Deletes ACARS on-time data from the database.
-	 * @param id the Flight Report database ID
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public void delete(int id) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("DELETE FROM ACARS_ONTIME WHERE (ID=?)");
-			_ps.setInt(1, id);
-			executeUpdate(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
