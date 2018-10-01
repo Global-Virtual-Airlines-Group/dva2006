@@ -32,7 +32,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to allow users to submit Offline Flight Reports.
  * @author Luke
- * @version 8.2
+ * @version 8.4
  * @since 2.4
  */
 
@@ -497,7 +497,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 			// Write ontime data if there is any
 			if (afr.getOnTime() != OnTime.UNKNOWN) {
 				SetACARSOnTime aowdao = new SetACARSOnTime(con);
-				aowdao.write(afr, onTimeEntry);
+				aowdao.write(SystemData.get("airline.db"), afr, onTimeEntry);
 			}
 			
 			// Commit
