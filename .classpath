@@ -25,7 +25,6 @@
 	<classpathentry kind="lib" path="lib/jdbf-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/newrelic-api.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jedis-2.9.0.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/commons-pool2-2.4.2.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/slf4j-api-1.7.25.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/slf4j-simple-1.7.25.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-beanutils-1.9.3.jar"/>
@@ -38,5 +37,6 @@
 	<classpathentry kind="lib" path="lib/servlet-api-4.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-codec-1.11.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-5.1.47-bin.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/commons-pool2-2.6.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
