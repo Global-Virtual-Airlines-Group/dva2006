@@ -148,8 +148,9 @@ public class GetFlightReports extends DAO {
 	public List<FlightReport> getByStatus(Collection<FlightStatus> status, String orderBy) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, PC.REMARKS, APR.*, GROUP_CONCAT(ER.EQTYPE) FROM PILOTS P, PIREPS PR LEFT JOIN PIREP_COMMENT PC ON (PR.ID=PC.ID) "
-			+ "LEFT JOIN ACARS_PIREPS APR ON (PR.ID=APR.ID) LEFT JOIN EQRATINGS ER ON (ER.RATED_EQ=PR.EQTYPE) AND (ER.RATING_TYPE=?) WHERE (P.ID=PR.PILOT_ID) AND (");
+		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, PC.REMARKS, APR.*, AO.ONTIME, GROUP_CONCAT(ER.EQTYPE) FROM PILOTS P, PIREPS PR LEFT JOIN PIREP_COMMENT PC ON "
+			+ "(PR.ID=PC.ID) LEFT JOIN ACARS_PIREPS APR ON (PR.ID=APR.ID) LEFT JOIN ACARS_ONTIME AO ON (PR.ID=AO.ID) LEFT JOIN EQRATINGS ER ON ((ER.RATED_EQ=PR.EQTYPE) AND (ER.RATING_TYPE=?)) "
+			+ "WHERE (P.ID=PR.PILOT_ID) AND (");
 		for (Iterator<FlightStatus> i = status.iterator(); i.hasNext();) {
 			FlightStatus st = i.next();
 			sqlBuf.append("(PR.STATUS=");
