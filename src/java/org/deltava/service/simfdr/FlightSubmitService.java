@@ -32,7 +32,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to process simFDR submitted Flight Reports.
  * @author Luke
- * @version 8.3
+ * @version 8.4
  * @since 7.0
  */
 
@@ -305,7 +305,7 @@ public class FlightSubmitService extends SimFDRService {
 			// Write ontime data if there is any
 			if (fr.getOnTime() != OnTime.UNKNOWN) {
 				SetACARSOnTime aowdao = new SetACARSOnTime(con);
-				aowdao.write(fr, onTimeEntry);
+				aowdao.write(SystemData.get("airline.db"), fr, onTimeEntry);
 			}
 			
 			// Commit
