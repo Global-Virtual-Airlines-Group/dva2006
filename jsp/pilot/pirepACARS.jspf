@@ -67,7 +67,7 @@
  <td class="label">Start Time</td>
  <td class="data" colspan="${cspan}"><c:if test="${!empty gate}"><span class="sec bld">${gate.name}</span>, </c:if>
 <fmt:date className="bld" date="${pirep.startTime}" /><c:if test="${!empty gate}">&nbsp;<a href="javascript:void golgotha.local.zoomTo(${gate.latitude}, ${gate.longitude}, 15)">Zoom<span class="nophone"> to Gate</span></a></c:if>
-<c:if test="${fn:hasOnTime(pirep) && (!empty pirep.timeD)}">&nbsp;<span class="ita">Simulator date/time: <fmt:date t="HH:mm" date="${pirep.timeD}" className="bld" /></span></c:if></td>
+<c:if test="${fn:hasOnTime(pirep) && (!empty pirep.timeD)}">&nbsp;<span class="ita">Simulator date/time: <fmt:date t="HH:mm" date="${pirep.timeD}" tz="${pirep.airportD.TZ}" className="bld" /></span></c:if></td>
 </tr>
 <tr>
  <td class="label">Taxi from Gate</td>
@@ -176,7 +176,7 @@
 <tr>
  <td class="label">Arrival Time</td>
  <td class="data" colspan="${cspan}"><fmt:date className="bld" date="${pirep.endTime}" />, (<fmt:int value="${fn:delta(pirep.startTime, pirep.endTime) / 60}" /> minutes after start)
-<c:if test="${fn:hasOnTime(pirep) && (!empty pirep.timeA)}"> <span class="ita">Simulator date/time: <fmt:date t="HH:mm" date="${pirep.timeA}" className="bld" /></span></c:if></td>
+<c:if test="${fn:hasOnTime(pirep) && (!empty pirep.timeA)}"> <span class="ita">Simulator date/time: <fmt:date t="HH:mm" date="${pirep.timeA}" tz="${pirep.airportA.TZ}" className="bld" /></span></c:if></td>
 </tr>
 </c:if>
 <c:if test="${pirep.gateFuel > 0}">
