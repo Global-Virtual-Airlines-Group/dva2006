@@ -38,5 +38,6 @@
 	<classpathentry kind="lib" path="lib/deploy/commons-codec-1.11.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-5.1.47-bin.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-pool2-2.6.0.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/taglibs-standard-impl-1.2.5.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
