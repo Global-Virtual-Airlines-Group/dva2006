@@ -34,14 +34,6 @@ final class OfflineFlightParser {
 		super();
 	}
 	
-	private static Instant safeParseInstant(String dt, String fmt) {
-		try {
-			return StringUtils.parseInstant(dt, fmt);
-		} catch (Exception e) {
-			return null;
-		}
-	}
-	
 	/**
 	 * Parses an Offline Flight XML document.
 	 * @param xml the XML to parse
@@ -142,8 +134,8 @@ final class OfflineFlightParser {
 		afr.setTakeoffTime(StringUtils.parseEpoch(ie.getChildTextTrim("takeoffTime")));
 		afr.setLandingTime(StringUtils.parseEpoch(ie.getChildTextTrim("landingTime")));
 		afr.setEndTime(StringUtils.parseEpoch(ie.getChildTextTrim("endTime")));
-		afr.setDepartureTime(safeParseInstant(ie.getChildTextTrim("startSimTime"), "MM/dd/yyyy HH:mm:ss"));
-		afr.setArrivalTime(safeParseInstant(ie.getChildTextTrim("gateSimTime"), "MM/dd/yyyy HH:mm:ss"));
+		afr.setDepartureTime(StringUtils.parseEpoch(ie.getChildTextTrim("startSimTime")));
+		afr.setArrivalTime(StringUtils.parseEpoch(ie.getChildTextTrim("gateSimTime")));
 		inf.setStartTime(afr.getStartTime());
 		inf.setEndTime(afr.getEndTime());
 
@@ -157,6 +149,9 @@ final class OfflineFlightParser {
 		afr.setLandingCategory(ILSCategory.get(ie.getChildTextTrim("landingCat")));
 		afr.setGateFuel(StringUtils.parse(ie.getChildTextTrim("gateFuel"), 0));
 		afr.setGateWeight(StringUtils.parse(ie.getChildTextTrim("gateWeight"), 0));
+		afr.setPaxWeight(StringUtils.parse(ie.getChildTextTrim("paxWeight"), 0));
+		afr.setCargoWeight(StringUtils.parse(ie.getChildTextTrim("cargoWeight"), 0));
+		afr.setPassengers(StringUtils.parse(ie.getChildTextTrim("pax"), 0));
 		
 		// Set the takeoff position
 		afr.setTakeoffN1(Double.parseDouble(ie.getChildTextTrim("takeoffN1")));
