@@ -17,12 +17,14 @@ import junit.framework.TestCase;
 
 public class XPlaneRunwayLoader extends TestCase {
 	
-	private static final String JDBC_URL = "jdbc:mysql://localhost/common?useSSL=false";
+	private static final String JDBC_URL = "jdbc:mysql://sirius.sce.net/common?useSSL=false";
 	private static final double M_TO_MI = 0.000621371;
 	
 	private static final Surface[] SFCS = new Surface[] { Surface.UNKNOWN, Surface.ASPHALT, Surface.CONCRETE, Surface.GRASS,
 			Surface.DIRT, Surface.GRAVEL, Surface.UNKNOWN, Surface.UNKNOWN, Surface.UNKNOWN, Surface.UNKNOWN, Surface.UNKNOWN,
 			Surface.UNKNOWN, Surface.SAND, Surface.WATER, Surface.ICE, Surface.UNKNOWN };
+	
+	private static final int WGS84_SRID = 4326;
 	
 	private Logger log;
 	
@@ -44,10 +46,14 @@ public class XPlaneRunwayLoader extends TestCase {
 		LogManager.shutdown();
 		super.tearDown();
 	}
+	
+	private static String formatLocation(GeoLocation loc) {
+		return String.format("POINT(%1$,.4f %2$,.4f)", Double.valueOf(loc.getLatitude()), Double.valueOf(loc.getLongitude()));
+	}
 
 	public void testLoadXPRunways() throws Exception {
 		
-		File f = new File("/Users/luke/apt.dat");
+		File f = new File("C:\\Temp\\apt.dat");
 		assertTrue(f.exists());
 		
 		// Load existing airport codes
@@ -65,7 +71,7 @@ public class XPlaneRunwayLoader extends TestCase {
 		
 		String apCode = null;
 		Collection<Runway> rwys = new ArrayList<Runway>();
-		try (LineNumberReader lr = new LineNumberReader(new FileReader(f))) {
+		try (LineNumberReader lr = new LineNumberReader(new FileReader(f), 65536)) {
 			// Header
 			String data = lr.readLine(); final List<String> dd = new ArrayList<String>();
 			do {
@@ -126,22 +132,24 @@ public class XPlaneRunwayLoader extends TestCase {
 		try (Connection c = DriverManager.getConnection(JDBC_URL, "luke", "test")) {
 			c.setAutoCommit(false);
 			try (PreparedStatement ps = c.prepareStatement("DELETE FROM common.RUNWAYS WHERE (SIMVERSION=?)")) {
-				ps.setInt(1, Simulator.XP10.getCode());
+				ps.setInt(1, Simulator.XP11.getCode());
 				ps.executeUpdate();
 			}
 
 			int rowsWritten = 0;
-			try (PreparedStatement ps = c.prepareStatement("INSERT INTO common.RUNWAYS VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+			try (PreparedStatement ps = c.prepareStatement("INSERT INTO common.RUNWAYS VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ST_PointFromText(?,?))")) {
 				for (Runway r : rwys) {
 					ps.setString(1, r.getCode());
 					ps.setString(2, r.getName());
-					ps.setInt(3, Simulator.XP10.getCode());
+					ps.setInt(3, Simulator.XP11.getCode());
 					ps.setDouble(4, r.getLatitude());
 					ps.setDouble(5, r.getLongitude());
 					ps.setInt(6, r.getHeading());
 					ps.setInt(7, r.getLength());
 					ps.setDouble(8, 0);
 					ps.setInt(9, r.getSurface().ordinal());
+					ps.setString(10, formatLocation(r));
+					ps.setInt(11, WGS84_SRID);
 					ps.addBatch(); rowsWritten++;
 					if ((rowsWritten % 100) == 0) {
 						ps.executeBatch();
