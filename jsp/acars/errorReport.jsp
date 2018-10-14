@@ -60,7 +60,7 @@
 </c:if>
 <tr>
  <td class="label">Reported from</td>
- <td class="data">${err.remoteAddr} (${err.remoteHost}) <c:if test="${!empty ipInfo}"> <el:flag countryCode="${ipInfo.country.code}" caption="${ipInfo.location}" />
+ <td class="data">${err.remoteAddr} (${err.remoteHost}) <c:if test="${!empty ipInfo}">&nbsp;<el:flag countryCode="${ipInfo.country.code}" caption="${ipInfo.location}" />
  ${ipInfo.location}</c:if></td>
 </tr>
 <c:if test="${!empty err.stackDump}">
@@ -100,11 +100,11 @@ ${k} = ${stateData[k]}<br /></c:forEach></td>
 </tr>
 <tr>
  <td class="label">CPU Information</td>
- <td class="data">${acarsClientInfo.CPU} <span class="sec small ita">(<fmt:int value="${acarsClientInfo.cores}" /> cores, <fmt:int value="${acarsClientInfo.threads}" /> threads)</span></td>
+ <td class="data">${acarsClientInfo.CPU}&nbsp;<span class="sec small ita">(<fmt:int value="${acarsClientInfo.cores}" /> cores, <fmt:int value="${acarsClientInfo.threads}" /> threads)</span></td>
 </tr>
 <tr>
  <td class="label">GPU Information</td>
- <td class="data">${acarsClientInfo.GPU} <span class="small ita">(<fmt:int value="${acarsClientInfo.videoMemorySize}" /> KB, ${acarsClientInfo.width}x${acarsClientInfo.height}x${acarsClientInfo.colorDepth}, ${acarsClientInfo.screenCount} screens)</span></td>
+ <td class="data">${acarsClientInfo.GPU}&nbsp;<span class="small ita">(<fmt:int value="${acarsClientInfo.videoMemorySize}" /> KB, ${acarsClientInfo.width}x${acarsClientInfo.height}x${acarsClientInfo.colorDepth}, ${acarsClientInfo.screenCount} screens)</span></td>
 </tr>
 <tr>
  <td class="label">GPU Driver</td>
