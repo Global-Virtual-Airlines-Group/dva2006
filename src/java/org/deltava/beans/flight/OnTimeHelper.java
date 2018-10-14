@@ -65,10 +65,10 @@ public class OnTimeHelper {
 	
 	/**
 	 * Determines whether a flight was on time.
-	 * @param fr an ACARSFlightReport
+	 * @param fr a FlightTimes object
 	 * @return an OnTime enumeration
 	 */
-	public OnTime validate(ACARSFlightReport fr) {
+	public OnTime validate(FlightTimes fr) {
 
 		if ((fr.getTimeD() == null) || (fr.getTimeA() == null))
 			return OnTime.UNKNOWN;
@@ -80,12 +80,11 @@ public class OnTimeHelper {
 		}
 		
 		// See if we match the exact flight num, otherwise sort based on closest
-		@SuppressWarnings("unlikely-arg-type")
-		Optional<ScheduleEntry> ose = _flights.stream().filter(se -> se.equals(fr)).findFirst();
+		Optional<ScheduleEntry> ose = _flights.stream().filter(se -> se.equals(fr) && filter(se, fr)).findFirst();
 		if (!ose.isPresent()) {
 			SortedSet<ScheduleEntry> entries = new TreeSet<ScheduleEntry>(new ClosestFlight(fr));
 			entries.addAll(_flights);
-			ose = entries.stream().filter(se -> Duration.between(se.getTimeD(),  fr.getTimeD()).abs().toMinutes() < _depToleranceMinutes).findFirst();
+			ose = entries.stream().filter(se -> filter(se, fr)).findFirst();
 		}
 		
 		if (!ose.isPresent())
@@ -98,5 +97,10 @@ public class OnTimeHelper {
 			return OnTime.EARLY;
 		
 		return (d.abs().toMinutes() > 5) ? OnTime.LATE : OnTime.ONTIME;
+	}
+	
+	private boolean filter(FlightTimes se, FlightTimes fr) {
+		long dMin = Duration.between(se.getTimeD(), fr.getTimeD()).toMinutes();
+		return (dMin > (_depToleranceMinutes / -2)) && (dMin < _depToleranceMinutes);
 	}
 }
