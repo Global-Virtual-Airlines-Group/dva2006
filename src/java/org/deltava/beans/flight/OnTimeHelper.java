@@ -93,10 +93,10 @@ public class OnTimeHelper {
 		// Get time delta
 		_entry = ose.get();
 		Duration d = Duration.between(_entry.getTimeA(), fr.getTimeA());
-		if (d.isNegative())
-			return OnTime.EARLY;
+		if (!d.isNegative() && !d.isZero())
+			return OnTime.LATE;
 		
-		return (d.abs().toMinutes() > 5) ? OnTime.LATE : OnTime.ONTIME;
+		return (d.abs().toMinutes() > 10) ? OnTime.EARLY: OnTime.ONTIME;
 	}
 	
 	private boolean filter(FlightTimes se, FlightTimes fr) {
