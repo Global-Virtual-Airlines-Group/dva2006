@@ -85,17 +85,14 @@ public class TestOnTimeHelper extends TestCase {
 		
 		// Build the mock flight report
 		ZonedDateTime timeD = ZonedDateTime.of(LocalDateTime.parse("13:56", df), _lax.getTZ().getZone());
-		ZonedDateTime timeA = ZonedDateTime.of(LocalDateTime.parse("09:13", df), _ams.getTZ().getZone());
-		if (timeA.isBefore(timeD))
-			timeA = timeA.plusDays(1);
-		
+		ZonedDateTime timeA = ZonedDateTime.of(LocalDateTime.parse("09:13", df), _ams.getTZ().getZone()).plusDays(1);
 		MockFlightTimes fr = new MockFlightTimes(timeD, timeA);
 		
 		// Check
 		OnTimeHelper oth = new OnTimeHelper(Collections.singleton(se));
 		OnTime ot = oth.validate(fr);
 		assertNotNull(ot);
-		assertTrue(ot != OnTime.UNKNOWN);
+		assertEquals(OnTime.LATE, ot);
 		assertNotNull(oth.getScheduleEntry());
 		assertSame(oth.getScheduleEntry(), se);
 	}
@@ -112,9 +109,6 @@ public class TestOnTimeHelper extends TestCase {
 		// Build the mock flight report
 		ZonedDateTime timeD = ZonedDateTime.of(LocalDateTime.parse("18:02", df), _mco.getTZ().getZone());
 		ZonedDateTime timeA = ZonedDateTime.of(LocalDateTime.parse("18:44", df), _mia.getTZ().getZone());
-		if (timeA.isBefore(timeD))
-			timeA = timeA.plusDays(1);
-		
 		MockFlightTimes fr = new MockFlightTimes(timeD, timeA);
 		
 		OnTimeHelper oth = new OnTimeHelper(Collections.singleton(se));
@@ -122,5 +116,42 @@ public class TestOnTimeHelper extends TestCase {
 		assertNotNull(ot);
 		assertEquals(OnTime.UNKNOWN, ot);
 		assertNull(oth.getScheduleEntry());
+	}
+	
+	public void testOnTime() {
+		
+		// Build the schedule entry
+		ScheduleEntry se = new ScheduleEntry(_klm, 602, 1);
+		se.setAirportD(_lax);
+		se.setAirportA(_ams);
+		se.setTimeD(LocalDateTime.parse("13:50", df));
+		se.setTimeA(LocalDateTime.parse("09:05", df));
+		
+		// Build the early flight report
+		ZonedDateTime timeD = ZonedDateTime.of(LocalDateTime.parse("13:56", df), _lax.getTZ().getZone());
+		ZonedDateTime timeA = ZonedDateTime.of(LocalDateTime.parse("08:45", df), _ams.getTZ().getZone()).plusDays(1);
+		MockFlightTimes efr = new MockFlightTimes(timeD, timeA);
+		
+		// Build the ontime flight report
+		timeD = ZonedDateTime.of(LocalDateTime.parse("13:56", df), _lax.getTZ().getZone());
+		timeA = ZonedDateTime.of(LocalDateTime.parse("09:00", df), _ams.getTZ().getZone()).plusDays(1);
+		MockFlightTimes ofr = new MockFlightTimes(timeD, timeA);
+		
+		// Build the late flight report
+		timeD = ZonedDateTime.of(LocalDateTime.parse("13:56", df), _lax.getTZ().getZone());
+		timeA = ZonedDateTime.of(LocalDateTime.parse("09:06", df), _ams.getTZ().getZone()).plusDays(1);
+		MockFlightTimes lfr = new MockFlightTimes(timeD, timeA);
+		
+		// Check
+		OnTimeHelper oth = new OnTimeHelper(Collections.singleton(se));
+		OnTime ot = oth.validate(efr);
+		assertNotNull(ot);
+		assertEquals(OnTime.EARLY, ot);
+		ot = oth.validate(ofr);
+		assertNotNull(ot);
+		assertEquals(OnTime.ONTIME, ot);
+		ot = oth.validate(lfr);
+		assertNotNull(ot);
+		assertEquals(OnTime.LATE, ot);
 	}
 }
