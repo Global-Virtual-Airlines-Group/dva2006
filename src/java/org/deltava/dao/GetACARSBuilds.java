@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to load ACARS build data. 
  * @author Luke
- * @version 8.2
+ * @version 8.4
  * @since 4.1
  */
 
@@ -129,7 +129,7 @@ public class GetACARSBuilds extends DAO {
 	 */
 	public boolean isValid(ClientInfo inf, AccessRole role) throws DAOException {
 		try {
-			prepareStatement("SELECT COUNT(*) FROM acars.VERSION_INFO WHERE (NAME=?) AND (VER=?) AND (DATA<=?)");
+			prepareStatementWithoutLimits("SELECT COUNT(*) FROM acars.VERSION_INFO WHERE (NAME=?) AND (VER=?) AND (DATA<=?)");
 			_ps.setInt(2, inf.getVersion());
 			_ps.setInt(3, inf.getClientBuild());
 			if (role == AccessRole.CONNECT) {
@@ -146,7 +146,7 @@ public class GetACARSBuilds extends DAO {
 						_ps.setString(1, "minBuild");
 				}
 			} else
-				_ps.setString(1, "minUpload");
+				_ps.setString(1, inf.isBeta() ? "minUploadBeta" : "minUpload");
 
 			// Check if the build is OK
 			boolean isOK = false;
