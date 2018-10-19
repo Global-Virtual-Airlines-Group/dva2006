@@ -367,7 +367,7 @@ if ((!sd.seriesNames) || (!sd.seriesInfo)) return false;
 var displayedLayers = this.getDisplayed(); this.clear();
 for (var layerName = sd.seriesNames.pop(); (layerName != null); layerName = sd.seriesNames.pop()) {
 	var layerData = sd.seriesInfo[layerName];
-	if (layerData.nativeZoom == null) continue;
+	if ((layerData.nativeZoom == null) || (!(layerData.series instanceof Array))) continue;
 	if (layerData.maxZoom == null) layerData.maxZoom = layerData.nativeZoom + 7;
 	if (layerData.sizes == null) layerData.sizes = [256];
 	var dl = displayedLayers[layerName] || {layers:[], data:[]};
@@ -421,14 +421,8 @@ for (var layerName = sd.seriesNames.pop(); (layerName != null); layerName = sd.s
 	this.layers.data[layerName] = slices;
 }
 
-// Remove displayed layers
-for (var x = 0; x < dl.layers.length; x++) {
-	var ov = dl.layers[x];
-	if (ov != null)
-		ov.setMap(null);
-}
-
-// Fire event handlers
+// Remove displayed layers and Fire event handlers
+dl.layers.forEach(function(ov) { if (ov != null) ov.setMap(null); });
 for (var l = this.onLoad.pop(); (l != null); l = this.onLoad.pop())
 	l.call(this);
 	
@@ -519,10 +513,8 @@ for (var ldoc = sd.body.pop(); (ldoc != null); ldoc = sd.body.pop()) {
 	this.layers.data[layerName] = slices;
 }
 
-// Remove displayed layers
+// Remove displayed layers and Fire event handlers
 dl.layers.forEach(function(ov) { if (ov != null) ov.setMap(null); });
-
-// Fire event handlers
 for (var l = this.onLoad.pop(); (l != null); l = this.onLoad.pop())
 	l.call(this);
 	
