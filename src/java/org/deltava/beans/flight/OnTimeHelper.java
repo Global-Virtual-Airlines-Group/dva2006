@@ -26,7 +26,6 @@ public class OnTimeHelper {
 		private final ZonedDateTime _srcTime;
 		
 		ClosestFlight(FlightTimes ft) {
-			super();
 			_srcTime = ft.getTimeD();
 		}
 
@@ -63,35 +62,34 @@ public class OnTimeHelper {
 		_depToleranceMinutes = Math.max(1,  minutes);
 	}
 	
+	private ScheduleEntry getClosestScheduleEntry(FlightTimes ft) {
+		LocalDate dld = ft.getTimeD().toLocalDate(); LocalDate ald = (ft.getTimeA() == null) ? dld : ft.getTimeA().toLocalDate();
+		_flights.forEach(se -> { se.setTimeD(LocalDateTime.of(dld, se.getTimeD().toLocalTime())); se.setTimeA(LocalDateTime.of(ald, se.getTimeA().toLocalTime())); });
+		
+		Optional<ScheduleEntry> ose = _flights.stream().filter(se -> se.equals(ft) || filter(se.getTimeD(), ft.getTimeD())).findFirst();
+		if (!ose.isPresent()) {
+			SortedSet<ScheduleEntry> entries = new TreeSet<ScheduleEntry>(new ClosestFlight(ft));
+			entries.addAll(_flights);
+			ose = entries.stream().filter(se -> filter(se.getTimeD(), ft.getTimeD())).findFirst();
+		}
+		
+		return ose.orElse(null);
+	}
+		
 	/**
 	 * Determines whether a flight was on time.
 	 * @param fr a FlightTimes object
 	 * @return an OnTime enumeration
 	 */
 	public OnTime validate(FlightTimes fr) {
-
 		if ((fr.getTimeD() == null) || (fr.getTimeA() == null))
 			return OnTime.UNKNOWN;
-		
-		LocalDate dld = fr.getTimeD().toLocalDate(); LocalDate ald = fr.getTimeA().toLocalDate();
-		for (ScheduleEntry se : _flights) {
-			se.setTimeD(LocalDateTime.of(dld, se.getTimeD().toLocalTime()));
-			se.setTimeA(LocalDateTime.of(ald, se.getTimeA().toLocalTime()));
-		}
-		
-		// See if we match the exact flight num, otherwise sort based on closest
-		Optional<ScheduleEntry> ose = _flights.stream().filter(se -> se.equals(fr) && filter(se, fr)).findFirst();
-		if (!ose.isPresent()) {
-			SortedSet<ScheduleEntry> entries = new TreeSet<ScheduleEntry>(new ClosestFlight(fr));
-			entries.addAll(_flights);
-			ose = entries.stream().filter(se -> filter(se, fr)).findFirst();
-		}
-		
-		if (!ose.isPresent())
+
+		// Get the closest schedule entry
+		_entry = getClosestScheduleEntry(fr);
+		if (_entry == null)
 			return OnTime.UNKNOWN;
 
-		// Get time delta
-		_entry = ose.get();
 		Duration d = Duration.between(_entry.getTimeA(), fr.getTimeA());
 		if (!d.isNegative() && !d.isZero())
 			return OnTime.LATE;
@@ -99,8 +97,29 @@ public class OnTimeHelper {
 		return (d.abs().toMinutes() > 10) ? OnTime.EARLY: OnTime.ONTIME;
 	}
 	
-	private boolean filter(FlightTimes se, FlightTimes fr) {
-		long dMin = Duration.between(se.getTimeD(), fr.getTimeD()).toMinutes();
+	/**
+	 * Determines whether a flight is departing on time.
+	 * @param fr a FlightTimesl object
+	 * @return an OnTime enumeration
+	 */
+	public OnTime validateDeparture(FlightTimes fr) {
+		if (fr.getTimeD() == null)
+			return OnTime.UNKNOWN;
+		
+		// Get the closest schedule entry
+		_entry = getClosestScheduleEntry(fr);
+		if (_entry == null)
+			return OnTime.UNKNOWN;
+		
+		Duration d = Duration.between(_entry.getTimeD(), fr.getTimeD());
+		if (!d.isNegative() && !d.isZero())
+			return OnTime.LATE;
+		
+		return (d.abs().toMinutes() > 10) ? OnTime.EARLY: OnTime.ONTIME;
+	}
+	
+	private boolean filter(ZonedDateTime scheduledDeparture, ZonedDateTime actualDeparture) {
+		long dMin = Duration.between(scheduledDeparture, actualDeparture).toMinutes();
 		return (dMin > (_depToleranceMinutes / -2)) && (dMin < _depToleranceMinutes);
 	}
 }
