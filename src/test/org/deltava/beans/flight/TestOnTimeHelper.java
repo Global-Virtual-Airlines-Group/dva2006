@@ -154,4 +154,38 @@ public class TestOnTimeHelper extends TestCase {
 		assertNotNull(ot);
 		assertEquals(OnTime.LATE, ot);
 	}
+	
+	public void testDepartureCheck() {
+		
+		// Build the schedule entry
+		ScheduleEntry se = new ScheduleEntry(_klm, 602, 1);
+		se.setAirportD(_lax);
+		se.setAirportA(_ams);
+		se.setTimeD(LocalDateTime.parse("13:50", df));
+		se.setTimeA(LocalDateTime.parse("09:05", df));
+		
+		// Build the early flight report
+		ZonedDateTime timeD = ZonedDateTime.of(LocalDateTime.parse("13:39", df), _lax.getTZ().getZone());
+		MockFlightTimes efr = new MockFlightTimes(timeD, null);
+		
+		// Build the ontime flight report
+		timeD = ZonedDateTime.of(LocalDateTime.parse("13:50", df), _lax.getTZ().getZone());
+		MockFlightTimes ofr = new MockFlightTimes(timeD, null);
+		
+		// Build the late flight report
+		timeD = ZonedDateTime.of(LocalDateTime.parse("13:56", df), _lax.getTZ().getZone());
+		MockFlightTimes lfr = new MockFlightTimes(timeD, null);
+		
+		// Check
+		OnTimeHelper oth = new OnTimeHelper(Collections.singleton(se));
+		OnTime ot = oth.validateDeparture(efr);
+		assertNotNull(ot);
+		assertEquals(OnTime.EARLY, ot);
+		ot = oth.validateDeparture(ofr);
+		assertNotNull(ot);
+		assertEquals(OnTime.ONTIME, ot);
+		ot = oth.validateDeparture(lfr);
+		assertNotNull(ot);
+		assertEquals(OnTime.LATE, ot);
+	}
 }
