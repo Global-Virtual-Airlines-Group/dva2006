@@ -39,9 +39,6 @@
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:protocol var="reqProtocol" />
 <content:sysdata var="infoEmail" name="airline.mail.info" />
-<content:sysdata var="partnerName" name="airline.partner.name" />
-<content:sysdata var="partnerURL" name="airline.partner.url" />
-<content:sysdata var="partnerLoc" name="airline.partner.location" />
 <content:sysdata var="fbClientID" name="users.facebook.id" />
 
 <!-- Main Body Frame -->
@@ -67,8 +64,6 @@ Thanks for doing your part to move the Internet forward to IPv6!</span>
 <content:filter roles="!Pilot">
 Please feel free to browse around our web site. Once you join the <content:airline /> active pilot roster, you may submit flight reports and contribute to our discussion forums and image library. If you are interested in 
 a serious virtual airline, designed for both the experienced pilot and the novice (and all of us that are in between!) we welcome your interest. <el:cmd url="register" className="pri bld">Click Here to join <content:airline />.</el:cmd><br />
-<br />
-If you are interested in a virtual airline with primarily ${partnerLoc} operations, we encourage you to visit our sister airline <a rel="external" target="_new" href="${reqProtocol}://${partnerURL}/" class="sec bld">${partnerName}</a>.<br />
 <br /></content:filter>
 <!-- Dynamic Content Type ${dynContentType} -->
 <c:if test="${noUpcomingEvents}"><!-- No upcoming Online Events, skipped --></c:if>
