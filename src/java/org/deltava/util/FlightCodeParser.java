@@ -1,4 +1,4 @@
-// Copyright 2005, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2010, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import org.deltava.beans.schedule.*;
@@ -8,7 +8,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to parse flight codes.
  * @author Luke
- * @version 3.3
+ * @version 8.4
  * @since 1.0
  */
 
@@ -25,6 +25,16 @@ public class FlightCodeParser {
 	 * @return the Schedule entry, or null
 	 */
 	public static ScheduleEntry parse(String fCode) {
+		return parse(fCode, SystemData.get("airline.code"));
+	}
+	
+	/**
+	 * Parses a flight code into a schedule entry. 
+	 * @param fCode the flight Code
+	 * @param defaultAirlineCode the default airline code to use
+	 * @return the Schedule entry, or null
+	 */
+	public static ScheduleEntry parse(String fCode, String defaultAirlineCode) {
 		if (StringUtils.isEmpty(fCode))
 			return null;
 		
@@ -45,7 +55,7 @@ public class FlightCodeParser {
 		
 		// Do default airline
 		if (aCode.length() == 0)
-			aCode.append(SystemData.get("airline.code"));
+			aCode.append(defaultAirlineCode);
 		
 		// Generate the entry
 		Airline a = SystemData.getAirline(aCode.toString());
