@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2015, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load an exported Flight Schedule.
  * @author Luke
- * @version 7.0
+ * @version 8.4
  * @since 1.0
  */
 
@@ -79,7 +79,7 @@ public class GetSchedule extends ScheduleLoadDAO {
 						entry.setTimeD(LocalDateTime.of(today, LocalTime.parse(tkns.nextToken(), _tf)));
 						entry.setAirportA(getAirport(tkns.nextToken(), br.getLineNumber()));
 						entry.setTimeA(LocalDateTime.of(today, LocalTime.parse(tkns.nextToken(), _tf)));
-						if ((entry.getAirportD() == null) || (entry.getAirportA() == null))
+						if (!entry.isPopulated())
 							throw new IllegalArgumentException("Invalid Airport Code");
 
 						// Discard distance
