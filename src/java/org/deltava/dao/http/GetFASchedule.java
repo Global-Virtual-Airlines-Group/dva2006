@@ -1,4 +1,4 @@
-// Copyright 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * Loads airline schedule data from FlightAware.
  * @author Luke
- * @version 8.0
+ * @version 8.4
  * @since 8.0
  */
 
@@ -100,7 +100,7 @@ public class GetFASchedule extends FlightAwareDAO {
 				
 				sce.setAirportD(SystemData.getAirport(fo.optString("origin")));
 				sce.setAirportA(SystemData.getAirport(fo.optString("destination")));
-				if ((sce.getAirportD() == null) || (sce.getAirportA() == null)) {
+				if (!sce.isPopulated()) {
 					if (sce.getAirportD() == null) _unknownAirports.add(fo.optString("origin"));
 					if (sce.getAirportA() == null) _unknownAirports.add(fo.optString("destination"));
 					log.warn("Unknown airport pair - [ " + fo.optString("origin") + " / " + fo.optString("destination") + " ]");
