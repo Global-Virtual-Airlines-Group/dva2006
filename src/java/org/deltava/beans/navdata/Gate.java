@@ -1,4 +1,4 @@
-// Copyright 2012, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2014, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.schedule.Airline;
 /**
  * A bean to store airport Gate information.
  * @author Luke
- * @version 8.0
+ * @version 8.4
  * @since 5.1
  */
 
@@ -17,6 +17,10 @@ public class Gate extends NavigationDataBean implements UseCount {
 
 	public enum Type {
 		GATE, PARKING, DOCK;
+		
+		public String getDescription() {
+			return name().substring(0, 1).concat(name().substring(1).toLowerCase());
+		}
 	}
 	
 	private int _heading;
@@ -213,7 +217,7 @@ public class Gate extends NavigationDataBean implements UseCount {
 		buf.append('!').append(getName());
 		return buf.toString().hashCode();
 	}
-
+	
 	@Override
 	public boolean equals(Object o) {
 		return ((o instanceof Gate) && (hashCode() == o.hashCode()));
