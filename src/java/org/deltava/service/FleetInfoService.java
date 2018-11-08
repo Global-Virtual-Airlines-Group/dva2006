@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2015, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import java.io.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display Fleet Library Information.
  * @author Luke
- * @version 6.1
+ * @version 8.4
  * @since 1.0
  */
 
@@ -47,24 +47,22 @@ public class FleetInfoService extends WebService {
 		ctx.print("options=");
 		ctx.println(SystemData.get("airline.name"));
 		ctx.println("\n[" + SystemData.get("airline.name") + "]");
-		ctx.print("host=");
-		ctx.println(ctx.getRequest().getServerName());
+		ctx.print("host=dl.");
+		ctx.println(SystemData.get("airline.domain"));
 		ctx.println("path=/install");
 		ctx.println("\n[currentMirror]");
-		ctx.print("host=");
-		ctx.println(ctx.getRequest().getServerName());
+		ctx.print("host=dl.");
+		ctx.println(SystemData.get("airline.domain"));
 		ctx.println("path=/install");
 		
 		// Write installer version info
 		ctx.println("\n[versionInfo]");
 		for (Installer fe : entries) {
-			if (fe.getCode() != null) {
-				ctx.print(fe.getCode());
-				ctx.print("=");
-				ctx.print(String.valueOf(fe.getMajorVersion()));
-				ctx.print(String.valueOf(fe.getMinorVersion()));
-				ctx.println(String.valueOf(fe.getSubVersion()));
-			}
+			ctx.print(fe.getCode());
+			ctx.print("=");
+			ctx.print(String.valueOf(fe.getMajorVersion()));
+			ctx.print(String.valueOf(fe.getMinorVersion()));
+			ctx.println(String.valueOf(fe.getSubVersion()));
 		}
 
 		try {
