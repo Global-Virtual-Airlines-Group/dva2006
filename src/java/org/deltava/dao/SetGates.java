@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.Airline;
 /**
  * A Data Access Object to write Gate data. 
  * @author Luke
- * @version 8.1
+ * @version 8.4
  * @since 6.3
  */
 
@@ -44,6 +44,7 @@ public class SetGates extends DAO {
 			executeBatchUpdate(0, 0);
 			
 			// Write gate data
+			int totalWrites = gates.stream().filter(g -> g.getAirlines().size() > 0).mapToInt(g -> g.getAirlines().size()).sum();
 			prepareStatement("INSERT INTO common.GATE_AIRLINES (ICAO, NAME, AIRLINE, INTL) VALUES (?, ?, ?, ?)");
 			for (Gate g : gates) {
 				_ps.setString(1, g.getCode());
@@ -55,7 +56,7 @@ public class SetGates extends DAO {
 				}
 			}
 			
-			executeBatchUpdate(1, gates.size());
+			executeBatchUpdate(1, totalWrites);
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
