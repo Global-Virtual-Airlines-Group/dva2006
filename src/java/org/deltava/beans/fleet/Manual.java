@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2010, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010, 2015, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.fleet;
 
 import java.io.File;
@@ -7,7 +7,7 @@ import java.util.*;
 /**
  * A bean to store information about Manuals.
  * @author Luke
- * @version 6.0
+ * @version 8.4
  * @since 1.0
  */
 
@@ -60,6 +60,14 @@ public class Manual extends FleetEntry {
      */
     public Collection<String> getCertifications() {
     	return _certs;
+    }
+    
+    /**
+     * Returns the document type.
+     * @return a DocumentType
+     */
+    public DocumentType getType() {
+    	return DocumentType.fromFilename(getFileName());
     }
     
     /**
