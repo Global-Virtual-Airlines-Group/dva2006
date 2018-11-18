@@ -550,7 +550,8 @@
 	</path>
 	
 	<smtp>
-		<server>localhost</server>
+		<server>nephele.gvagroup.org</server>
+		<tls type="Boolean">false</tls>
 		<errors-to>webmaster@deltava.org</errors-to>
 		<testMode type="Boolean">false</testMode>
 		<imap>
