@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP Tag to insert a JavaScript link to the Google Maps API.
  * @author Luke
- * @version 8.3
+ * @version 8.4
  * @since 1.0
  */
 
@@ -28,7 +28,7 @@ public class InsertGoogleAPITag extends TagSupport {
 	private static final List<String> CYCLES = List.of("weekly", "quarterly");
 	
 	private static final int MIN_API_VERSION = 3;
-	private static final String DEFAULT_V3_MINOR = "34";
+	private static final String DEFAULT_CYCLE = "quarterly";
 	
 	private static final String V3_API_URL = "maps.googleapis.com/maps/api/js?v=";
 	
@@ -99,17 +99,13 @@ public class InsertGoogleAPITag extends TagSupport {
 		// Translate stable/release v3 to minor version
 		APIUsage.track(APIUsage.Type.DYNAMIC);
 		if ((_majorVersion == 3) && (_minorVersion == null) && (_cycle == null))
-			_minorVersion = DEFAULT_V3_MINOR;
+			_cycle = DEFAULT_CYCLE;
 		
 		// Insert the API version
 		pageContext.setAttribute(API_VER_ATTR_NAME, Integer.valueOf(_majorVersion), PageContext.REQUEST_SCOPE);
 		try {
 			JspWriter out = pageContext.getOut();
-			out.print("<script src=\"http");
-			if (pageContext.getRequest().isSecure())
-				out.print('s');
-			
-			out.print("://");
+			out.print("<script src=\"https://");
 			out.print(V3_API_URL);
 			if (_cycle == null) {
 				out.print(String.valueOf(_majorVersion));
