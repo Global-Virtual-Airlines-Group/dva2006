@@ -28,7 +28,7 @@ if (!golgotha.form.check()) return false;
 golgotha.form.validate({f:f.title, l:10, t:'Manual Title'});
 golgotha.form.validate({f:f.version, min:1, t:'Revision Number'});
 golgotha.form.validate({f:f.desc, l:10, t:'Description'});
-golgotha.form.validate({f:f.file, ext:['pdf,xls'], t:'Uploaded Manual', empty:${!empty entry}});
+golgotha.form.validate({f:f.file, ext:['pdf','xls'], t:'Uploaded Manual', empty:${!empty entry}});
 <c:if test="${empty entry}">
 var fileParts = f.file.value.split('\\');
 var fName = fileParts[fileParts.length - 1].toLowerCase();
@@ -116,7 +116,7 @@ return true;
 <c:if test="${!empty certs}">
 <tr>
  <td class="label top">Flight Academy Certifications</td>
- <td class="data"><el:check name="certNames" width="150" cols="4" className="small" newLine="true" checked="${entry.certifications}" options="${certs}" /></td>
+ <td class="data"><el:check name="certNames" width="175" cols="4" className="small" newLine="true" checked="${entry.certifications}" options="${certs}" /></td>
 </tr>
 <el:text type="hidden" name="hasCerts" value="true" readOnly="true" />
 </c:if>
