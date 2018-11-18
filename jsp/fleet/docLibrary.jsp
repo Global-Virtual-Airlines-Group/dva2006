@@ -5,7 +5,6 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html lang="en">
 <head>
 <title><content:airline /> Document Library</title>
@@ -44,12 +43,13 @@
 </tr>
 
 <!-- Table Data Section -->
-<c:forEach var="airline" items="${fn:keys(docs)}">
+<c:forEach var="airline" items="${docs.keySet()}">
 <tr class="title caps">
  <td colspan="7" class="left">DOCUMENT LIBRARY - ${airline.name}</td>
 </tr>
 <c:forEach var="doc" items="${docs[airline]}">
 <c:set var="ac" value="${accessMap[doc]}" scope="page" />
+<c:set var="docType" value="${doc.type}" scope="page" />
 <view:row entry="${doc}">
 <c:if test="${ac.canEdit}">
  <td class="pri bld"><el:cmd url="doclib" linkID="${doc.fileName}" op="edit">${doc.name}</el:cmd></td>
@@ -57,7 +57,17 @@
 <c:if test="${!ac.canEdit}">
  <td class="pri bld"><el:link url="/library/${doc.fileName}">${doc.name}</el:link></td>
 </c:if>
- <td><el:link url="/library/${doc.fileName}"><el:img src="library/adobe.png" className="noborder" caption="Download PDF manual" x="36" y="36" /></el:link></td>
+<c:choose>
+<c:when test="${docType.name() == 'XLS'}">
+<td><el:link url="/library/${doc.fileName}"><el:img src="library/excel.png" className="noborder" caption="Download ${docType.description}" x="32" y="32" /></el:link></td>
+</c:when>
+<c:when test="${docType.name() == 'PDF'}">
+<td><el:link url="/library/${doc.fileName}"><el:img src="library/adobe.png" className="noborder" caption="Download ${docType.description}" x="32" y="32" /></el:link></td>
+</c:when>
+<c:otherwise>
+<td><el:link url="/library/${doc.fileName}"><el:img src="library/download.png" className="noborder" caption="Download File" x="32" y="32" /></el:link></td>
+</c:otherwise>
+</c:choose>
  <td class="sec bld nophone"><fmt:int value="${doc.size / 1024}" />K</td>
  <td class="small nophone"><fmt:date fmt="d" default="N/A" date="${doc.lastModified}" /></td>
  <td class="bld nophone"><fmt:int value="${doc.version}" /></td>
