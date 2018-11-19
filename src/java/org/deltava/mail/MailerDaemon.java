@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2012, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.mail;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
  * A daemon thread to send e-mail messages in the background. SMTP messages are not designed for critical information;
  * they are designed to fail silently on an error.
  * @author Luke
- * @version 7.0
+ * @version 8.4
  * @since 1.0
  */
 
@@ -109,8 +109,15 @@ public class MailerDaemon implements Runnable {
 		log.info("Starting");
 
 		// Set the SMTP server
-		Properties props = System.getProperties();
-		props.setProperty("mail.smtp.host", SystemData.get("smtp.server"));
+		Properties props = new Properties(System.getProperties());
+		props.put("mail.smtp.host", SystemData.get("smtp.server"));
+		if (SystemData.getBoolean("smtp.tls")) {
+			log.info("Enabling SMTP over TLS");
+			props.put("mail.smtp.port", "465");
+			props.put("mail.smtp.ssl.enable", "true");
+			props.put("mail.smtp.starttls.enable", "true");
+		}
+		
 		while (!Thread.currentThread().isInterrupted()) {
 			try {
 				SMTPEnvelope env = _queue.take();
