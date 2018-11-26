@@ -89,8 +89,9 @@ public class OnTimeHelper {
 		_entry = getClosestScheduleEntry(fr);
 		if (_entry == null)
 			return OnTime.UNKNOWN;
-
-		Duration d = Duration.between(_entry.getTimeA(), fr.getTimeA());
+		
+		// Adjust the arrival time by one minute
+		Duration d = Duration.between(_entry.getTimeA().plusMinutes(1), fr.getTimeA());
 		if (!d.isNegative() && !d.isZero())
 			return OnTime.LATE;
 		
@@ -111,7 +112,7 @@ public class OnTimeHelper {
 		if (_entry == null)
 			return OnTime.UNKNOWN;
 		
-		Duration d = Duration.between(_entry.getTimeD(), fr.getTimeD());
+		Duration d = Duration.between(_entry.getTimeD().plusMinutes(1), fr.getTimeD());
 		if (!d.isNegative() && !d.isZero())
 			return OnTime.LATE;
 		
