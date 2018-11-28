@@ -62,7 +62,7 @@ return true;
 
 <!-- Header Bar -->
 <tr class="title caps">
- <td colspan="${cspan}" class="left"><content:airline /> ${qtr} SENIOR CAPTAIN NOMINATIONS</td>
+ <td colspan="${cspan}" class="left"><content:airline />&nbsp;${qtr} SENIOR CAPTAIN NOMINATIONS</td>
 </tr>
 <tr>
  <td colspan="${cspan}" class="left">Promotion to the rank of <content:airline /> Senior Captain is the highest rank available for pilots without being involved in the day to day operations  
@@ -99,7 +99,7 @@ We look forward to your help in recognizing those who make <content:airline /> a
 <c:set var="noms" value="${allNoms[nomStatus]}" scope="page" />
 <c:if test="${!empty noms}">
 <tr class="title caps">
- <td class="left" colspan="${cspan}"><fmt:int value="${fn:sizeof(noms)}" /> ${nomStatus} PILOTS - <a id="toggleAll" href="javascript:void golgotha.sc.toggleAll()">SHOW ALL COMMENTS</a></td>
+ <td class="left" colspan="${cspan}"><fmt:int value="${fn:sizeof(noms)}" />&nbsp;${nomStatus} PILOTS - <a id="toggleAll" href="javascript:void golgotha.sc.toggleAll()">SHOW ALL COMMENTS</a></td>
 </tr>
 <c:forEach var="nom" items="${noms}">
 <c:set var="pilot" value="${pilots[nom.ID]}" scope="page" />
@@ -126,7 +126,7 @@ We look forward to your help in recognizing those who make <content:airline /> a
 </content:filter>
 <c:if test="${!empty myEQNoms}">
 <tr class="title caps">
- <td class="left" colspan="${cspan}"><fmt:int value="${fn:sizeof(myEQNoms)}" /> ${user.equipmentType} PILOTS NOMINATED</td>
+ <td class="left" colspan="${cspan}"><fmt:int value="${fn:sizeof(myEQNoms)}" />&nbsp;${user.equipmentType} PILOTS NOMINATED</td>
 </tr>
 <c:forEach var="nom" items="${myEQNoms}">
 <c:set var="pilot" value="${pilots[nom.ID]}" scope="page" />
