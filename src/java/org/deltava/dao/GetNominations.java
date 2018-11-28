@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.hr.*;
 /**
  * A Data Access Object to load Senior Captain nominations.
  * @author Luke
- * @version 7.0
+ * @version 8.4
  * @since 3.3
  */
 
@@ -131,7 +131,7 @@ public class GetNominations extends DAO {
 			+ "NOMINATION_COMMENTS NC WHERE (N.ID=?) AND (N.ID=NC.ID) AND (N.QUARTER=NC.QUARTER)");
 		if (q != null)
 			buf.append("AND (N.QUARTER=?) ");
-		buf.append("GROUP BY N.QUARTER DESC HAVING (CREATED IS NOT NULL) LIMIT 1");
+		buf.append("GROUP BY N.QUARTER  HAVING (CREATED IS NOT NULL) ORDER BY N.QUARTER DESC LIMIT 1");
 		
 		try {
 			prepareStatementWithoutLimits(buf.toString());
@@ -179,7 +179,7 @@ public class GetNominations extends DAO {
 		}
 	}
 	
-	/**
+	/*
 	 * Helper method to parse Nomination result sets.
 	 */
 	private List<Nomination> execute() throws SQLException {
@@ -200,12 +200,11 @@ public class GetNominations extends DAO {
 		return results;
 	}
 
-	/**
+	/*
 	 * Helper method to load Nomination comments.
 	 */
 	private void loadComments(Nomination n) throws SQLException {
-		prepareStatementWithoutLimits("SELECT AUTHOR, SUPPORT, CREATED, BODY FROM NOMINATION_COMMENTS "
-				+ "WHERE (ID=?) AND (QUARTER=?)");
+		prepareStatementWithoutLimits("SELECT AUTHOR, SUPPORT, CREATED, BODY FROM NOMINATION_COMMENTS WHERE (ID=?) AND (QUARTER=?)");
 		_ps.setInt(1, n.getID());
 		_ps.setInt(2, n.getQuarter().getYearQuarter());
 		try (ResultSet rs = _ps.executeQuery()) {
