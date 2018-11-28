@@ -41,7 +41,7 @@ return true;
 <el:form action="scnominate.do" op="save" method="post" link="${nom}" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
- <td colspan="${cspan + 1}"><content:airline /> SENIOR CAPTAIN NOMINATION - ${pilot.rank.name} ${pilot.name} (${pilot.pilotCode}) - ${nom.quarter}</td>
+ <td colspan="${cspan + 1}"><content:airline /> SENIOR CAPTAIN NOMINATION - ${pilot.rank.name}&nbsp;${pilot.name} (${pilot.pilotCode}) - ${nom.quarter}</td>
 </tr>
 <tr>
  <td class="label">Current Program</td>
