@@ -79,8 +79,8 @@ if (lnk == null) return false;
 var visible = false;
 var rows = golgotha.util.getElementsByClass('nc-' + id);
 for (var r = rows.pop(); (r != null); r = rows.pop()) {
-	visible = (row.style.display != 'none');
-	golgotha.util.display(row, !visible);
+	visible = (r.style.display != 'none');
+	golgotha.util.display(r, !visible);
 }
 
 lnk.innerHTML = visible ? ' + ' : ' - ';
@@ -90,8 +90,8 @@ return true;
 golgotha.sc.toggleAll = function()
 {
 var lnks = golgotha.util.getElementsByClass('ncToggle');	
-for (var l = lnks.pop(); (lnk != null); l = lnks.pop())
-	lnk.onclick(lnk.id.substring(2));
+for (var l = lnks.pop(); (l != null); l = lnks.pop())
+	l.onclick(l.id.substring(2));
 	
 return true;
 };
