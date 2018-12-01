@@ -30,13 +30,11 @@
 <script>
 var loaders = {};
 loaders.series = new golgotha.maps.SeriesLoader();
-loaders.fr = new golgotha.maps.LayerLoader('Fronts', golgotha.maps.fronts.FrontParser);
 loaders.series.setData('twcRadarHcMosaic', 0.45, 'wxRadar');
 loaders.series.setData('temp', 0.275, 'wxTemp');
 loaders.series.setData('windSpeed', 0.325, 'wxWind', 256, true);
 loaders.series.setData('windSpeedGust', 0.375, 'wxGust', 256, true);
 loaders.series.onload(function() { golgotha.util.enable('#selImg'); });
-loaders.fr.onload(function() { golgotha.util.enable('selFronts'); });
 
 golgotha.routePlot.keepRoute = ${fn:length(flight.route) > 0};
 golgotha.local.validate = function(f) {
@@ -233,7 +231,6 @@ ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Wind Gusts', dis
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Clouds', disabled:true, c:'selImg'}, function() { return loaders.series.getLatest('sat'); }));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Lo Jetstream'}, ljsl));
 ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Hi Jetstream'}, hjsl));
-ctls.push(new golgotha.maps.LayerSelectControl({map:map, title:'Fronts', disabled:true, id:'selFronts'}, function() { return loaders.fr.getLayer(); }));
 ctls.push(new golgotha.maps.LayerClearControl(map));
 
 // Display the copyright notice and text boxes
@@ -247,7 +244,6 @@ golgotha.routePlot.aGates = new MarkerManager(map, {maxZoom:17});
 // Load data async once tiles are loaded
 google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
 	loaders.series.loadGinsu();
-	golgotha.util.createScript({id:'wuFronts', url:'//api.wunderground.com/api/${wuAPI}/fronts/view.json?callback=loaders.fr.load', async:true});
 	google.maps.event.trigger(map, 'maptypeid_changed');
 });
 </script>
