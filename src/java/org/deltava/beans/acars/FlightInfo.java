@@ -14,7 +14,7 @@ import org.deltava.util.*;
 /**
  * A bean to store ACARS Flight Information records.
  * @author Luke
- * @version 8.2
+ * @version 8.4
  * @since 1.0
  */
 
@@ -45,11 +45,12 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 	private String _route;
 	private String _remarks;
 
-	private Simulator _fsVersion;
+	private Simulator _sim;
 	private int _simMajor;
 	private int _simMinor;
 	private OperatingSystem _os = OperatingSystem.WINDOWS;
-	private boolean _is64Bit;
+	private boolean _isSim64Bit;
+	private boolean _isACARS64Bit;
 	private AutopilotType _ap;
 	
 	private boolean _offline;
@@ -288,7 +289,7 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 	 * @see FlightInfo#setSimulator(Simulator)
 	 */
 	public Simulator getSimulator() {
-		return _fsVersion;
+		return _sim;
 	}
 	
 	/**
@@ -319,8 +320,16 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 	 * Returns whether the simulator platform is 64-bit.
 	 * @return TRUE if 64-bit, otherwise FALSE
 	 */
-	public boolean getIs64Bit() {
-		return _is64Bit;
+	public boolean getIsSim64Bit() {
+		return _isSim64Bit;
+	}
+	
+	/**
+	 * Returns whether the ACARS client is 64-bit.
+	 * @return TRUE if 64-bit, otherwise FALSE
+	 */
+	public boolean getIsACARS64Bit() {
+		return _isACARS64Bit;
 	}
 
 	/**
@@ -737,11 +746,11 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 	 * @see FlightInfo#getSimulator()
 	 */
 	public void setSimulator(Simulator sim) {
-		_fsVersion = sim;
+		_sim = sim;
 		if ((sim == Simulator.XP9) || (sim == Simulator.XP10))
 			_fdr = Recorder.XACARS;
-		else if (sim == Simulator.P3Dv4)
-			_is64Bit = true;
+		else if ((sim == Simulator.P3Dv4) || (sim == Simulator.XP11))
+			_isSim64Bit = true;
 	}
 
 	/**
@@ -766,8 +775,17 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 	 * Updates whether the simulator is a 64-bit application.
 	 * @param is64 TRUE if 64-bit, otherwise FALSE
 	 */
-	public void setIs64Bit(boolean is64) {
-		_is64Bit = is64;
+	public void setIsSim64Bit(boolean is64) {
+		if ((_sim != Simulator.P3Dv4) && (_sim != Simulator.XP11))
+			_isSim64Bit = is64;
+	}
+	
+	/**
+	 * Updates whether ACARS is a 64-bit application.
+	 * @param is64 TRUE if 64-bit, otherwise FALSE
+	 */
+	public void setIsACARS64Bit(boolean is64) {
+		_isACARS64Bit = is64;
 	}
 
 	/**
