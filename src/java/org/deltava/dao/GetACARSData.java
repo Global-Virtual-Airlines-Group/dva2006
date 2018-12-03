@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load ACARS information.
  * @author Luke
- * @version 8.2
+ * @version 8.4
  * @since 1.0
  */
 
@@ -397,11 +397,12 @@ public class GetACARSData extends DAO {
 				info.setLoadFactor(rs.getDouble(28));
 				info.setAutopilotType(AutopilotType.values()[rs.getInt(29)]);
 				info.setPlatform(OperatingSystem.values()[rs.getInt(30)]);
-				info.setIs64Bit(rs.getBoolean(31));
-				info.setLoadType(LoadType.values()[rs.getInt(32)]);
-				info.setRemoteAddr(rs.getString(33));
-				info.setRouteID(rs.getInt(34));
-				info.setDispatcherID(rs.getInt(35));
+				info.setIsSim64Bit(rs.getBoolean(31));
+				info.setIsACARS64Bit(rs.getBoolean(32));
+				info.setLoadType(LoadType.values()[rs.getInt(33)]);
+				info.setRemoteAddr(rs.getString(34));
+				info.setRouteID(rs.getInt(35));
+				info.setDispatcherID(rs.getInt(36));
 				results.add(info);
 			}
 		}

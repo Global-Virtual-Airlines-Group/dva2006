@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.beans.navdata.*;
  * A Data Access Object to write ACARS data. This is used outside of the ACARS server by classes that need to simulate
  * ACARS server writes without having access to the ACARS server message bean code.
  * @author Luke
- * @version 8.0
+ * @version 8.4
  * @since 1.0
  */
 
@@ -34,11 +34,11 @@ public class SetACARSData extends DAO {
 		try {
 			// Prepare the statement
 			if (info.getID() == 0)
-				prepareStatement("INSERT INTO acars.FLIGHTS (FLIGHT_NUM, CREATED, END_TIME, EQTYPE, CRUISE_ALT, AIRPORT_D, AIRPORT_A, AIRPORT_L, ROUTE, REMARKS, FSVERSION, OFFLINE, "
-					+ "PIREP, FDR, REMOTE_HOST, REMOTE_ADDR, CLIENT_BUILD, BETA_BUILD, SIM_MAJOR, SIM_MINOR, PILOT_ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, INET6_ATON(?), ?, ?, ?, ?, ?)");
+				prepareStatement("INSERT INTO acars.FLIGHTS (FLIGHT_NUM, CREATED, END_TIME, EQTYPE, CRUISE_ALT, AIRPORT_D, AIRPORT_A, AIRPORT_L, ROUTE, REMARKS, FSVERSION, OFFLINE, PIREP, FDR, "
+					+ "REMOTE_HOST, REMOTE_ADDR, CLIENT_BUILD, BETA_BUILD, SIM_MAJOR, SIM_MINOR, IS64, ACARS64, PILOT_ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, INET6_ATON(?), ?, ?, ?, ?, ?, ?, ?)");
 			else
-				prepareStatement("UPDATE acars.FLIGHTS SET FLIGHT_NUM=?, CREATED=?, END_TIME=?, EQTYPE=?, CRUISE_ALT=?, AIRPORT_D=?, AIRPORT_A=?, AIRPORT_L=?, ROUTE=?, REMARKS=?, "
-					+ "FSVERSION=?, OFFLINE=?, PIREP=?, FDR=?, REMOTE_HOST=?, REMOTE_ADDR=INET6_ATON(?), CLIENT_BUILD=?, BETA_BUILD=?, SIM_MAJOR=?, SIM_MINOR=?, PILOT_ID=? WHERE (ID=?)");
+				prepareStatement("UPDATE acars.FLIGHTS SET FLIGHT_NUM=?, CREATED=?, END_TIME=?, EQTYPE=?, CRUISE_ALT=?, AIRPORT_D=?, AIRPORT_A=?, AIRPORT_L=?, ROUTE=?, REMARKS=?, FSVERSION=?, "
+					+ "OFFLINE=?, PIREP=?, FDR=?, REMOTE_HOST=?, REMOTE_ADDR=INET6_ATON(?), CLIENT_BUILD=?, BETA_BUILD=?, SIM_MAJOR=?, SIM_MINOR=?, IS64=?, ACARS64=?, PILOT_ID=? WHERE (ID=?)");
 			
 			// Write the flight info record
 			_ps.setString(1, info.getFlightCode());
@@ -61,9 +61,11 @@ public class SetACARSData extends DAO {
 			_ps.setInt(18, info.getBeta());
 			_ps.setInt(19, info.getSimMajor());
 			_ps.setInt(20, info.getSimMinor());
-			_ps.setInt(21, info.getAuthorID());
+			_ps.setBoolean(21, info.getIsSim64Bit());
+			_ps.setBoolean(22, info.getIsACARS64Bit());
+			_ps.setInt(23, info.getAuthorID());
 			if (info.getID() != 0)
-				_ps.setInt(22, info.getID());
+				_ps.setInt(24, info.getID());
 			
 			executeUpdate(1);
 
@@ -211,8 +213,7 @@ public class SetACARSData extends DAO {
 			startTransaction();
 
 			// Write the Route
-			prepareStatementWithoutLimits("REPLACE INTO acars.FLIGHT_SIDSTAR (ID, TYPE, NAME, TRANSITION, "
-				+ "RUNWAY) VALUES (?, ?, ?, ?, ?)");
+			prepareStatementWithoutLimits("REPLACE INTO acars.FLIGHT_SIDSTAR (ID, TYPE, NAME, TRANSITION, RUNWAY) VALUES (?, ?, ?, ?, ?)");
 			_ps.setInt(1, id);
 			_ps.setInt(2, tr.getType().ordinal());
 			_ps.setString(3, tr.getName());
