@@ -121,9 +121,10 @@ public final class OfflineFlightParser {
 		
 		// Load simulator and platform
 		inf.setPlatform(OperatingSystem.values()[StringUtils.parse(ie.getChildTextTrim("platform"), 0)]);
-		inf.setIs64Bit(Boolean.valueOf(ie.getChildTextTrim("is64Bit")).booleanValue());
 		String sim = ie.getChildTextTrim("fs_ver");
 		inf.setSimulator(Simulator.fromName(sim, Simulator.UNKNOWN));
+		inf.setIsSim64Bit(Boolean.valueOf(ie.getChildTextTrim("is64Bit")).booleanValue());
+		inf.setIsACARS64Bit(Boolean.valueOf(ie.getChildTextTrim("isACARS64Bit")).booleanValue());
 		inf.setFDR(Recorder.ACARS); // need to set after sim
 		if (inf.getSimulator() == Simulator.UNKNOWN)
 			log.warn("Unknown simulator version - " + sim);

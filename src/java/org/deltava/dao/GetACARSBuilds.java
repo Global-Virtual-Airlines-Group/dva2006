@@ -220,7 +220,7 @@ public class GetACARSBuilds extends DAO {
 		try {
 			prepareStatementWithoutLimits("SELECT DATE(DATE_SUB(F.CREATED, INTERVAL WEEKDAY(F.CREATED) DAY)) AS DT, F.CLIENT_BUILD, COUNT(F.ID), SUM(P.FLIGHT_TIME) FROM PIREPS P, "
 				+ "ACARS_PIREPS AP, acars.FLIGHTS F WHERE (F.CREATED > DATE_SUB(CURDATE(), INTERVAL ? MONTH)) AND (P.ID=AP.ID) AND (F.ID=AP.ACARS_ID) AND (P.STATUS=?) AND "
-				+ "(F.FDR=?) GROUP BY DT DESC, F.CLIENT_BUILD");
+				+ "(F.FDR=?) GROUP BY DT, F.CLIENT_BUILD ORDER BY DT DESC, F.CLIENT_BUILD");
 			_ps.setInt(1, weeks + 2);
 			_ps.setInt(2, FlightStatus.OK.ordinal());
 			_ps.setInt(3, Recorder.ACARS.ordinal());
