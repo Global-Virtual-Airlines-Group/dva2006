@@ -4,7 +4,6 @@ package org.deltava.dao.http;
 import static java.net.HttpURLConnection.HTTP_OK;
 
 import java.io.*;
-import java.net.SocketTimeoutException;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.time.Instant;
@@ -21,7 +20,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to read VATSIM Authorized Training Organization data.
  * @author Luke
- * @version 8.3
+ * @version 8.4
  * @since 7.2
  */
 
@@ -102,7 +101,7 @@ public class GetATOData extends DAO {
 
 			_insCache.add(results);
 			return results.clone();
-		} catch (SocketTimeoutException ste) {
+		} catch (java.net.SocketTimeoutException | javax.net.ssl.SSLException ste) {
 			log.warn("VATSIM Instructors - " +  ste.getMessage());
 			return Collections.emptySet();
 		} catch (IOException ie) {
@@ -152,7 +151,7 @@ public class GetATOData extends DAO {
 
 			_rCache.add(results);
 			return results.clone();
-		} catch (SocketTimeoutException ste) {
+		} catch (java.net.SocketTimeoutException | javax.net.ssl.SSLException ste) {
 			log.warn("VATSIM Certificates - " +  ste.getMessage());
 			return Collections.emptySet();
 		} catch (IOException ie) {
