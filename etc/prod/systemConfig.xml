@@ -214,7 +214,7 @@
 	<!-- JDBC data source configuration -->
 	<jdbc>
 		<driver>com.mysql.jdbc.Driver</driver>
-		<url>jdbc:mysql://mysql.deltava.org/dva</url>
+		<url>jdbc:mysql://mysql.gva.aws/dva</url>
 		<user>dva</user>
 		<pwd>***REMOVED***</pwd>
 		
@@ -350,7 +350,7 @@
 			<validation_url>https://cert.vatsim.net/vatsimnet/idstatus.php</validation_url>
 			<rating_url>https://ptd.vatsim.net/certifications</rating_url>
 			<banner>vatsim.gif</banner>
-			<url>http://www.vatsim.net/</url>
+			<url>https://www.vatsim.net/</url>
 			<local>
 				<status>/var/cache/servinfo/vatsim.status</status>
 				<info>/var/cache/servinfo/vatsim.info</info>
@@ -359,7 +359,7 @@
 		
         <pilotedge>
             <banner>pilotedge.png</banner>
-            <url>http://www.pilotedge.net/</url>
+            <url>https://www.pilotedge.net/</url>
             <local>
                 <info>/var/cache/servinfo/pilotedge.info</info>
             </local>
@@ -368,7 +368,7 @@
 		<ivao>
 			<status_url>http://www.ivao.aero/whazzup/status.txt</status_url>
 			<banner>ivao.png</banner>
-			<url>http://www.ivao.aero/</url>
+			<url>https://www.ivao.aero/</url>
 			<local>
 				<status>/var/cache/servinfo/ivao.status</status>
 				<info>/var/cache/servinfo/ivao.info</info>
@@ -550,7 +550,7 @@
 	</path>
 	
 	<smtp>
-		<server>nephele.gvagroup.org</server>
+		<server>mail.gva.aws</server>
 		<tls type="Boolean">false</tls>
 		<errors-to>webmaster@deltava.org</errors-to>
 		<testMode type="Boolean">false</testMode>
