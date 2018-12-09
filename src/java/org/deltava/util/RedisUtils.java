@@ -11,7 +11,7 @@ import redis.clients.jedis.*;
 /**
  * A utility class for Redis operations.
  * @author Luke
- * @version 8.3
+ * @version 8.4
  * @since 6.1
  */
 
@@ -164,7 +164,7 @@ public class RedisUtils {
 		byte[] rawKey = encodeKey(key);
 		byte[] data = write(value);
 		try (Jedis jc = getConnection()) {
-			long expTime = (expiry < 864000) ? (expiry + (System.currentTimeMillis() / 1000)) : expiry;
+			long expTime = (expiry <= 864000) ? (expiry + (System.currentTimeMillis() / 1000)) : expiry;
 			jc.set(rawKey, data);
 			jc.expireAt(rawKey, expTime);
 		}
