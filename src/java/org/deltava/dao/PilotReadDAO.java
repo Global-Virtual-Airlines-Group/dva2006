@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
  * A DAO to support reading Pilot object(s) from the database. This class contains methods to read an individual Pilot
  * from the database; implementing subclasses typically add methods to retrieve Lists of pilots based on particular criteria.
  * @author Luke
- * @version 8.3
+ * @version 8.4
  * @since 1.0
  */
 
@@ -228,22 +228,6 @@ abstract class PilotReadDAO extends DAO {
 		return CollectionUtils.createMap(results, Pilot::getID);
 	}
 	
-	/**
-	 * Helper method to extract database ID data from the result set.
-	 * @return a List of database IDs
-	 * @throws SQLException if an error occurs
-	 */
-	protected List<Integer> executeIDs() throws SQLException {
-		Collection<Integer> results = new LinkedHashSet<Integer>();
-		try (ResultSet rs = _ps.executeQuery()) {
-			while (rs.next())
-				results.add(Integer.valueOf(rs.getInt(1)));	
-		}
-		
-		_ps.close();
-		return new ArrayList<Integer>(results);
-	}
-
 	/**
 	 * Query pilot objects from the database, assuming a pre-prepared statement.
 	 * @return a List of Pilot objects
