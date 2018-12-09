@@ -33,16 +33,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Flight Report status changes.
  * @author Luke
- * @version 8.1
+ * @version 8.4
  * @since 1.0
  */
 
 public class PIREPDisposalCommand extends AbstractCommand {
 
 	private static final Logger log = Logger.getLogger(PIREPDisposalCommand.class);
-
-	// Operation constants
-	private static final String[] OPNAMES = { "", "", "hold", "approve", "reject" };
 
 	/**
 	 * Executes the command.
@@ -54,12 +51,10 @@ public class PIREPDisposalCommand extends AbstractCommand {
 
 		// Get the operation
 		String opName = (String) ctx.getCmdParameter(Command.OPERATION, null);
-		int opCode = StringUtils.arrayIndexOf(OPNAMES, opName);
-		if (opCode < 2)
-			throw new CommandException("Invalid Operation - " + opName, false);
-
-		FlightStatus op = FlightStatus.values()[opCode];
 		ctx.setAttribute("opName", opName, REQUEST);
+		FlightStatus op = FlightStatus.fromVerb(opName);
+		if (op == null)
+			throw new CommandException("Invalid Operation - " + opName, false);
 
 		// Initialize the Message Context
 		MessageContext mctx = new MessageContext();
@@ -104,7 +99,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 				break;
 
 			default:
-				throw new IllegalArgumentException("Invalid Op Code - " + opCode);
+				throw new IllegalArgumentException("Invalid Status - " + op);
 			}
 
 			// If we cannot perform the operation, then stop
@@ -148,7 +143,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			mctx.addData("flightLength", Double.valueOf(fr.getLength() / 10.0));
 			mctx.addData("flightDate", StringUtils.format(fr.getDate(), p.getDateFormat()));
 			mctx.addData("pilot", p);
-			fr.setStatus(FlightStatus.values()[opCode]);
+			fr.setStatus(op);
 
 			// Start a JDBC transaction
 			ctx.startTX();
@@ -158,7 +153,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 				Collection<FlightReport> pireps = rdao.getByPilot(p.getID(), null);
 				rdao.getCaptEQType(pireps);
 				AccomplishmentHistoryHelper acchelper = new AccomplishmentHistoryHelper(p);
-				pireps.forEach(pr -> acchelper.add(pr));
+				pireps.forEach(acchelper::add);
 
 				// Load accomplishments - only save the ones we don't meet yet
 				GetAccomplishment accdao = new GetAccomplishment(con);
@@ -308,7 +303,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			// If we're approving the PIREP and it's part of a Flight Assignment, check completion
 			if (((op == FlightStatus.OK) || (op == FlightStatus.REJECTED)) && (assign != null)) {
 				List<FlightReport> flights = rdao.getByAssignment(assign.getID(), SystemData.get("airline.db"));
-				flights.forEach(fl -> assign.addFlight(fl));
+				flights.forEach(assign::addFlight);
 
 				// If the assignment is complete, then mark it as such
 				if (assign.isComplete()) {
