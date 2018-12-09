@@ -360,20 +360,6 @@ public class GetCoolerThreads extends DAO {
 	}
 	
 	/*
-	 * Helper method to load thread IDs.
-	 */
-	private Collection<Integer> executeIDs() throws SQLException {
-		Collection<Integer> IDs = new LinkedHashSet<Integer>();
-		try (ResultSet rs = _ps.executeQuery()) {
-			while (rs.next())
-				IDs.add(Integer.valueOf(rs.getInt(1)));
-		}
-		
-		_ps.close();
-		return IDs;
-	}
-	
-	/*
 	 * Helper method to load result rows.
 	 */
 	private List<MessageThread> execute() throws SQLException {

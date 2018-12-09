@@ -3,6 +3,10 @@ package org.deltava.dao;
 
 import java.sql.*;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.concurrent.atomic.LongAdder;
 
 import org.apache.log4j.Logger;
@@ -12,7 +16,7 @@ import org.deltava.beans.GeoLocation;
 /**
  * A JDBC Data Access Object. DAOs are used to read and write persistent data to JDBC data sources.
  * @author Luke
- * @version 8.3
+ * @version 8.4
  * @since 1.0
  */
 
@@ -164,6 +168,22 @@ public abstract class DAO {
 	 */
 	protected static Timestamp createTimestamp(Instant i) {
 		return (i == null) ? null : new Timestamp(i.toEpochMilli());
+	}
+	
+	/**
+	 * Helper method to extract database ID data from the result set.
+	 * @return a List of database IDs
+	 * @throws SQLException if an error occurs
+	 */
+	protected List<Integer> executeIDs() throws SQLException {
+		Collection<Integer> results = new LinkedHashSet<Integer>();
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next())
+				results.add(Integer.valueOf(rs.getInt(1)));	
+		}
+		
+		_ps.close();
+		return new ArrayList<Integer>(results);
 	}
 
 	/**

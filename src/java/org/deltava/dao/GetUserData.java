@@ -90,10 +90,8 @@ public class GetUserData extends DAO {
 			return ud;
 
 		try {
-			prepareStatementWithoutLimits("SELECT UD.*, AI.DOMAIN, AI.DBNAME, GROUP_CONCAT(DISTINCT XDB.ID SEPARATOR ?) "
-				+ "AS IDS FROM common.AIRLINEINFO AI, common.USERDATA UD LEFT JOIN common.XDB_IDS XDB ON "
-				+ "((UD.ID=XDB.ID) OR (UD.ID=XDB.OTHER_ID)) WHERE (UD.AIRLINE=AI.CODE) AND (UD.ID=?) GROUP BY "
-				+ "UD.ID LIMIT 1");
+			prepareStatementWithoutLimits("SELECT UD.*, AI.DOMAIN, AI.DBNAME, GROUP_CONCAT(DISTINCT XDB.ID SEPARATOR ?) AS IDS FROM common.AIRLINEINFO AI, common.USERDATA UD "
+				+ "LEFT JOIN common.XDB_IDS XDB ON ((UD.ID=XDB.ID) OR (UD.ID=XDB.OTHER_ID)) WHERE (UD.AIRLINE=AI.CODE) AND (UD.ID=?) GROUP BY UD.ID LIMIT 1");
 			_ps.setString(1, ",");
 			_ps.setInt(2, id);
 			List<UserData> results = execute();
@@ -111,13 +109,9 @@ public class GetUserData extends DAO {
 	 */
 	public UserDataMap getByThread(int threadID) throws DAOException {
 		try {
-			prepareStatement("SELECT UD.*, AI.DOMAIN, AI.DBNAME, GROUP_CONCAT(DISTINCT XDB.ID SEPARATOR ?) AS IDS "
-					+ "FROM common.AIRLINEINFO AI, common.USERDATA UD LEFT JOIN common.XDB_IDS XDB ON "
-					+ "((UD.ID=XDB.ID) OR (UD.ID=XDB.OTHER_ID)) LEFT JOIN common.COOLER_POSTS P ON (P.AUTHOR_ID=UD.ID) "
-					+ "WHERE (UD.AIRLINE=AI.CODE) AND (P.THREAD_ID=?) GROUP BY UD.ID");
-			_ps.setString(1, ",");
-			_ps.setInt(2, threadID);
-			return new UserDataMap(execute());
+			prepareStatement("SELECT DISTINCT AUTHOR_ID FROM common.COOLER_POSTS WHERE (THREAD_ID=?)");
+			_ps.setInt(1, threadID);
+			return get(executeIDs());
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -131,13 +125,9 @@ public class GetUserData extends DAO {
 	 */
 	public UserDataMap getByEvent(int eventID) throws DAOException {
 		try {
-			prepareStatement("SELECT UD.*, AI.DOMAIN, AI.DBNAME, GROUP_CONCAT(DISTINCT XDB.ID SEPARATOR ?) AS IDS "
-					+ "FROM common.AIRLINEINFO AI, common.USERDATA UD LEFT JOIN common.XDB_IDS XDB ON"
-					+ "((XDB.ID=UD.ID) OR (XDB.OTHER_ID=UD.ID)) LEFT JOIN events.EVENT_SIGNUPS ES ON (ES.PILOT_ID=UD.ID) "
-					+ "WHERE (UD.AIRLINE=AI.CODE) AND (ES.ID=?) GROUP BY UD.ID");
-			_ps.setString(1, ",");
-			_ps.setInt(2, eventID);
-			return new UserDataMap(execute());
+			prepareStatement("SELECT DISTINCT PILOT_ID FROM events.EVENT_SIGNUPS WHERE (ID=?)");
+			_ps.setInt(1, eventID);
+			return get(executeIDs());
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -152,9 +142,8 @@ public class GetUserData extends DAO {
 	public UserDataMap get(Collection<Integer> ids) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT UD.*, AI.DOMAIN, AI.DBNAME, GROUP_CONCAT(DISTINCT XDB.ID "
-				+ "SEPARATOR ?) AS IDS FROM common.AIRLINEINFO AI, common.USERDATA UD LEFT JOIN common.XDB_IDS XDB "
-				+ "ON ((XDB.ID=UD.ID) OR (XDB.OTHER_ID=UD.ID)) WHERE (UD.AIRLINE=AI.CODE) AND (UD.ID IN (");
+		StringBuilder sqlBuf = new StringBuilder("SELECT UD.*, AI.DOMAIN, AI.DBNAME, GROUP_CONCAT(DISTINCT XDB.ID SEPARATOR ?) AS IDS FROM common.AIRLINEINFO AI, "
+			+ "common.USERDATA UD LEFT JOIN common.XDB_IDS XDB ON ((XDB.ID=UD.ID) OR (XDB.OTHER_ID=UD.ID)) WHERE (UD.AIRLINE=AI.CODE) AND (UD.ID IN (");
 
 		// Strip out entries already in the cache
 		if (log.isDebugEnabled())
@@ -216,8 +205,8 @@ public class GetUserData extends DAO {
 				// Get the crossdomain IDs
 				Collection<String> xdb_ids = StringUtils.split(rs.getString(6), ",");
 				if (xdb_ids != null) {
-					for (Iterator<String> i = xdb_ids.iterator(); i.hasNext();) {
-						int xdb_id = StringUtils.parse(i.next(), 0);
+					for (String xid : xdb_ids) {
+						int xdb_id = StringUtils.parse(xid, 0);
 						if (xdb_id > 0)
 							usr.addID(xdb_id);
 					}

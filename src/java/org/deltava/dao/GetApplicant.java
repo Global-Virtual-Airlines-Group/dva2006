@@ -402,20 +402,6 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 	}
 	
 	/*
-	 * Helper method to extract database ID data from the result set.
-	 */
-	private List<Integer> executeIDs() throws SQLException {
-		Collection<Integer> results = new LinkedHashSet<Integer>();
-		try (ResultSet rs = _ps.executeQuery()) {
-			while (rs.next())
-				results.add(Integer.valueOf(rs.getInt(1)));
-		}
-		
-		_ps.close();
-		return new ArrayList<Integer>(results);
-	}
-	
-	/*
 	 * Helper method to populate stage program choices.
 	 */
 	private void loadStageChoices(Applicant a) throws SQLException {

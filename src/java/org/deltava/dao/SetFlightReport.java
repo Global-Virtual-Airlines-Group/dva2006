@@ -4,6 +4,8 @@ package org.deltava.dao;
 import java.sql.*;
 import java.util.*;
 
+import org.apache.log4j.Logger;
+
 import org.deltava.beans.*;
 import org.deltava.beans.flight.*;
 
@@ -14,11 +16,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access object to write Flight Reports to the database.
  * @author Luke
- * @version 8.3
+ * @version 8.4
  * @since 1.0
  */
 
 public class SetFlightReport extends DAO {
+	
+	private static final Logger log = Logger.getLogger(SetFlightReport.class);
 	
 	/**
 	 * Initialize the Data Access Object.
@@ -81,7 +85,7 @@ public class SetFlightReport extends DAO {
 			executeUpdate(1);
 			
 			// Save the promotion equipment types and comments
-			writePromoEQ(pirep.getID(), dbName, pirep.getCaptEQType());
+			writePromoEQ(pirep.getID(), dbName, pirep.getCaptEQType(), true);
 			writeComments(pirep, dbName);
 			commitTransaction();
 		} catch (SQLException se) {
@@ -185,7 +189,7 @@ public class SetFlightReport extends DAO {
 	public void setPromoEQ(int id, Collection<String> eqTypes) throws DAOException {
 		try {
 			startTransaction();
-			writePromoEQ(id, SystemData.get("airline.db"), eqTypes);
+			writePromoEQ(id, SystemData.get("airline.db"), eqTypes, false);
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -232,22 +236,25 @@ public class SetFlightReport extends DAO {
 	/*
 	 * Helper method to write promotion equipment types.
 	 */
-	private void writePromoEQ(int id, String dbName, Collection<String> eqTypes) throws SQLException {
+	// FIXME: Remove logDelta when we figure this out
+	private void writePromoEQ(int id, String dbName, Collection<String> eqTypes, boolean logDelta) throws SQLException {
 		
 		// Delete the existing records
 		prepareStatementWithoutLimits("DELETE FROM " + dbName + ".PROMO_EQ WHERE (ID=?)");
 		_ps.setInt(1, id);
-		executeUpdate(0);
+		int oldEQCount = executeUpdate(0);
 
 		// Queue the new records
 		prepareStatementWithoutLimits("INSERT INTO " + dbName + ".PROMO_EQ (ID, EQTYPE) VALUES (?, ?)");
 		_ps.setInt(1, id);
-		for (Iterator<String> i = eqTypes.iterator(); i.hasNext();) {
-			_ps.setString(2, i.next());
+		for (String eqType : eqTypes) {
+			_ps.setString(2, eqType);
 			_ps.addBatch();
 		}
 
 		executeBatchUpdate(1, eqTypes.size());
+		if (logDelta && (oldEQCount != eqTypes.size()))
+			log.warn("Pirep " + id + " had " + oldEQCount + " promotion entries, now has " + eqTypes);
 	}
 
 	/*
@@ -328,12 +335,12 @@ public class SetFlightReport extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(FlightReport fr, String db) throws DAOException {
-		String dbName = formatDBName(db);
+		String dbName = formatDBName(db); boolean isNew = (fr.getID() == 0);
 		try {
 			startTransaction();
 			writeCore(fr, dbName);
 			writeComments(fr, dbName);
-			writePromoEQ(fr.getID(), dbName, fr.getCaptEQType());
+			writePromoEQ(fr.getID(), dbName, fr.getCaptEQType(), !isNew);
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -348,7 +355,7 @@ public class SetFlightReport extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void writeACARS(FDRFlightReport fr, String dbName) throws DAOException {
-		String db = formatDBName(dbName);
+		String db = formatDBName(dbName); boolean isNew = (fr.getID() == 0);
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("REPLACE INTO ");
@@ -364,7 +371,7 @@ public class SetFlightReport extends DAO {
 			// Write the regular fields
 			writeCore(fr, db);
 			writeComments(fr, db);
-			writePromoEQ(fr.getID(), db, fr.getCaptEQType());
+			writePromoEQ(fr.getID(), db, fr.getCaptEQType(), !isNew);
 
 			// Write the ACARS fields
 			prepareStatementWithoutLimits(sqlBuf.toString());
