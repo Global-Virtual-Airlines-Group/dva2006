@@ -702,13 +702,13 @@
 		<class>org.deltava.commands.schedule.ScheduleImportCommand</class>
 		<roles>Schedule,Operations</roles>
 	</command>
-
+<!--
 	<command id="schedsync">
 		<name>Schedule Sync</name>
 		<class>org.deltava.commands.schedule.ScheduleSyncCommand</class>
 		<roles>Schedule,Operations</roles>
 	</command>
-
+-->
 	<command id="usvcairports">
 		<name>Unserviced Airports</name>
 		<class>org.deltava.commands.schedule.UnservicedAirportsCommand</class>
