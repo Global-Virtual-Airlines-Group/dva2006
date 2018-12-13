@@ -1,0 +1,12 @@
+{
+	"SubscribeURL": "https://sns.us-east-1.amazonaws.com/?Action=ConfirmSubscription&TopicArn=arn:aws:sns:us-east-1:028411232270:smtp-info-dva&Token=2336412f37fb687f5d51e6e241da92fcfe288ef82da0b407bd2f841a1d8983aba352ca54ae3bf0a98d3aec6e1ab9202e2163555477d99921646f5f7647fc1fdbb4b8f6b02199ca93bdbbfbf03d10b2708c5bd586ff9658e1bfa8c2e8766e595afd5eb4e918e091507b78647e939ac809",
+	"SignatureVersion": "1",
+	"Type": "SubscriptionConfirmation",
+	"TopicArn": "arn:aws:sns:us-east-1:028411232270:smtp-info-dva",
+	"Message": "You have chosen to subscribe to the topic arn:aws:sns:us-east-1:028411232270:smtp-info-dva.\nTo confirm the subscription, visit the SubscribeURL included in this message.",
+	"Signature": "QWnrqY7ydciVUvqoL50qaVwx9e3c2whWR+vps9mAOvPy3X/U8Xf+UPQh1GjfDNl48iPdxkKavzHT7NSCvt4FivSgGQArqzDeYBGy3HllMauCIUVC0CxWfxN3QYx6M9nrIRfcOTOg3C4IDo/UwC7q+6J/O8O8SaXGO+8L40AWLZFE15RYAO0bQCzAV3oAoX/ZdnM3murTFxgPhUfEBQsuhlVAYY/uelSv7vLApIBrL5EHEOHMLUVTIUyvvKHDHJk8f3j2jJwPs6QejBfBIQsbCMvjClo1Qpy1DLPR2PdtwNqeMej+6B2jHp1uocXDVSeaYKpoO/vWCs7LspSofOqlKA==",
+	"Token": "2336412f37fb687f5d51e6e241da92fcfe288ef82da0b407bd2f841a1d8983aba352ca54ae3bf0a98d3aec6e1ab9202e2163555477d99921646f5f7647fc1fdbb4b8f6b02199ca93bdbbfbf03d10b2708c5bd586ff9658e1bfa8c2e8766e595afd5eb4e918e091507b78647e939ac809",
+	"Timestamp": "2018-12-10T01:41:36.420Z",
+	"SigningCertURL": "https://sns.us-east-1.amazonaws.com/SimpleNotificationService-ac565b8b1a6c5d002d285f9598aa1d9b.pem",
+	"MessageId": "b5ccd2e3-45ef-4c87-9133-61dca9385ef5"
+}
