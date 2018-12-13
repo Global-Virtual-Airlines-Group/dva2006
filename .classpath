@@ -30,7 +30,6 @@
 	<classpathentry kind="lib" path="lib/deploy/commons-beanutils-1.9.3.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-logging-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-collections-3.2.2.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/javax.mail-1.6.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/javax.activation-1.20.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-2.23.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/json-20180130.jar"/>
@@ -39,5 +38,6 @@
 	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-5.1.47-bin.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-pool2-2.6.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/taglibs-standard-impl-1.2.5.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/javax.mail-1.6.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
