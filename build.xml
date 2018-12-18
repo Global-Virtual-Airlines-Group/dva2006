@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright 2005, 2006, 2008, 2010, 2011, 2012, 2013, 2014, 2015, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved. -->
 <project default="deploy">
+	
+	<!-- Lowercase function -->
+	<scriptdef language="javascript" name="lower">
+		<attribute name="string" /> 
+		<attribute name="to" />
+			project.setProperty(attributes.get("to"),attributes.get("string").toLowerCase());
+	</scriptdef>
+
     <target name="javadoc" description="Build the Golgotha JavaDoc">
 		<mkdir dir="${java.io.tmpdir}/javadoc" />
         <javadoc destdir="${java.io.tmpdir}/javadoc" access="package" source="1.10" use="false" useexternalfile="true" notree="false" nonavbar="false" noindex="false" splitindex="true" 
@@ -41,7 +49,7 @@
    			</filterchain>
    		</loadproperties>
     	<property name="javadoc.ssh.port" value="22" />
-    	<property name="javadoc.ssh.user" value="${user.name}" />
+    	<lower string="${user.name}" to="javadoc.ssh.user" />
 
     	<!-- Clean out the JavaDoc -->
     	<sshexec keyfile="${javadoc.ssh.key}" username="${javadoc.ssh.user}" trust="yes" host="${javadoc.ssh.server}" timeout="37500" failonerror="no" port="${javadoc.ssh.port}" command="rm -rf ${javadoc.ssh.path.javadoc}/*" />
@@ -254,9 +262,9 @@
 	<target name="deploy" depends="jspc,minify" description="Deploy to development environment">
 		<loadproperties srcFile="data/build_deploy.properties" />
 		<property name="webapp.dev.port" value="22" />
-		<property name="webapp.dev.user" value="${user.name}" />
+		<lower string="${user.name}" to="webapp.dev.user" />
 		<property name="http.dev.port" value="22" />
-		<property name="http.dev.user" value="${user.name}" />
+		<lower string="${user.name}" to="http.dev.user" />
 		<mkdir dir="../.local_data" />
 
 		<!-- Upload the web configuration -->
@@ -338,8 +346,8 @@
 		<loadproperties srcFile="data/build_deploy.properties" />
 		<property name="webapp.ssh.port" value="22" />
 		<property name="mail.ssh.port" value="22" />
-		<property name="webapp.ssh.user" value="${user.name}" />
-		<property name="mail.ssh.user" value="${user.name}" />
+		<lower string="${user.name}" to="webapp.ssh.user" />
+		<lower string="${user.name}" to="mail.ssh.user" />
 		<mkdir dir="../.local_data" />
 
 		<!-- Upload the scripts to web server -->
@@ -367,9 +375,9 @@
 	<target name="prod_deploy" depends="jspc,minify" description="Deploy to Production environment">
 		<loadproperties srcFile="data/build_deploy.properties" />
 		<property name="webapp.ssh.port" value="22" />
-		<property name="webapp.ssh.user" value="${user.name}" />
+		<lower string="${user.name}" to="webapp.ssh.user" />
 		<property name="http.ssh.port" value="22" />
-		<property name="http.ssh.user" value="${user.name}" />
+		<lower string="${user.name}" to="http.ssh.user" />
 		<mkdir dir="../.local_data" />
 
 		<!-- Upload the web configuration -->
@@ -515,7 +523,7 @@
 		<!-- Upload to the web site -->
 		<loadproperties srcFile="data/build_deploy.properties" />
 		<property name="golgotha.ssh.port" value="22" />
-		<property name="golgotha.ssh.user" value="${user.name}" />
+		<lower string="${user.name}" to="golgotha.ssh.user" />
 		
 		<scp todir="${golgotha.ssh.user}@${golgotha.ssh.server}:${golgotha.ssh.path}" verbose="yes"
 			port="${golgotha.ssh.port}" trust="yes" keyfile="${golgotha.ssh.key}">
