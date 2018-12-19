@@ -12,7 +12,7 @@ import org.deltava.util.*;
 /**
  * A Data Access Object to get Pilots from the database, for use in roster operations.
  * @author Luke
- * @version 8.3
+ * @version 8.5
  * @since 1.0
  */
 
@@ -45,12 +45,29 @@ public class GetPilot extends PilotReadDAO {
 	 * @return a List of Pilots
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<Pilot> getCurrencyPilots() throws DAOException {
+	public Collection<Pilot> getCurrencyPilots() throws DAOException {
 		try {
-			prepareStatement("SELECT * FROM PILOTS WHERE (PROF_CR=?) AND (STATUS=?)");
+			prepareStatement("SELECT ID FROM PILOTS WHERE (PROF_CR=?) AND (STATUS=?)");
 			_ps.setBoolean(1, true);
 			_ps.setInt(2, Pilot.ACTIVE);
-			return execute();
+			return getByID(executeIDs(), "PILOTS").values();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Gets a Pilot based on e-mail address.
+	 * @param eMail the e-mail address
+	 * @return a Pilot, or null if not found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Pilot getByEMail(String eMail) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("SELECT ID FROM PILOTS WHERE (EMAIL=?) LIMIT 1");
+			_ps.setString(1, eMail);
+			List<Integer> IDs = executeIDs();
+			return IDs.isEmpty() ? null : get(IDs.get(0).intValue());
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
