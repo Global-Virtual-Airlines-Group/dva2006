@@ -1,4 +1,4 @@
-// Copyright 2012, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
@@ -13,7 +13,7 @@ import org.deltava.dao.DAOException;
 /**
  * A Data Access Object to download a file via HTTP. 
  * @author Luke
- * @version 8.0
+ * @version 8.5
  * @since 5.0
  */
 
@@ -66,7 +66,7 @@ public class GetURL extends DAO {
 			// Download the file
 			try (InputStream in = getIn()) {
 				try (OutputStream out = new FileOutputStream(_outFile)) {
-					byte[] buffer = new byte[65536];
+					byte[] buffer = new byte[16384];
 					int bytesRead = in.read(buffer);
 					while (bytesRead > 0) {
 						out.write(buffer, 0, bytesRead);
@@ -76,6 +76,35 @@ public class GetURL extends DAO {
 			}
 			
 			return outF;
+		} catch (IOException ie) {
+			throw new DAOException(ie);
+		} finally {
+			reset();
+		}
+	}
+	
+	/**
+	 * Loads a URL into a buffer.
+	 * @return the buffer
+	 * @throws DAOException if an error occurs
+	 */
+	public byte[] load() throws DAOException {
+		try {
+			init(_url);
+			
+			// Download the file
+			try (InputStream in = getIn()) {
+				try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+					byte[] buffer = new byte[16384];
+					int bytesRead = in.read(buffer);
+					while (bytesRead > 0) {
+						out.write(buffer, 0, bytesRead);
+						bytesRead = in.read(buffer);
+					}
+					
+					return out.toByteArray();
+				}
+			}
 		} catch (IOException ie) {
 			throw new DAOException(ie);
 		} finally {
