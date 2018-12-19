@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2014, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.mail;
 
 import java.io.UnsupportedEncodingException;
@@ -14,17 +14,18 @@ import org.deltava.beans.EMailAddress;
 /**
  * A bean to aggregate SMTP message information.
  * @author Luke
- * @version 7.0
+ * @version 8.5
  * @since 1.0
  */
 
 class SMTPEnvelope implements java.io.Serializable, Cloneable, Comparable<SMTPEnvelope> {
 
-	private EMailAddress _msgFrom;
+	private final EMailAddress _msgFrom;
 	private final Collection<Address> _msgTo = new LinkedHashSet<Address>();
 	private final Collection<Address> _copyTo = new LinkedHashSet<Address>();
+	private final Map<String, String> _hdrs = new HashMap<String, String>();
 	
-	private Instant _createdOn = Instant.now();
+	private final Instant _createdOn = Instant.now();
 
 	private String _subject;
 	private String _body;
@@ -114,6 +115,15 @@ class SMTPEnvelope implements java.io.Serializable, Cloneable, Comparable<SMTPEn
 	public Address[] getRecipients() {
 		return _msgTo.toArray(new InternetAddress[0]);
 	}
+	
+	/**
+	 * Returns the message headers.
+	 * @return a Map of headers
+	 * @see SMTPEnvelope#addHeader(String, String)
+	 */
+	public Map<String, String> getHeaders() {
+		return Collections.unmodifiableMap(_hdrs);
+	}
 
 	/**
 	 * Returns if the envelope has any recipients.
@@ -177,6 +187,16 @@ class SMTPEnvelope implements java.io.Serializable, Cloneable, Comparable<SMTPEn
 			}
 		}
 	}
+	
+	/**
+	 * Adds a header to the message.
+	 * @param name the header name
+	 * @param value the header value
+	 * @see SMTPEnvelope#getHeaders()
+	 */
+	public void addHeader(String name, String value) {
+		_hdrs.put(name, name);
+	}
 
 	/**
 	 * Clears the recipient list and overwrites it with a single address.
@@ -235,7 +255,7 @@ class SMTPEnvelope implements java.io.Serializable, Cloneable, Comparable<SMTPEn
 		SMTPEnvelope result = new SMTPEnvelope(_msgFrom);
 		result._msgTo.addAll(_msgTo);
 		result._copyTo.addAll(_copyTo);
-		result._createdOn = _createdOn;
+		result._hdrs.putAll(_hdrs);
 		result.setContentType(_contentType);
 		result.setAttachment(_attach);
 		result.setSubject(_subject);
@@ -243,10 +263,11 @@ class SMTPEnvelope implements java.io.Serializable, Cloneable, Comparable<SMTPEn
 		return result;
 	}
 
-	/**
-	 * Returns a string representation of the envelope.
-	 * @return the recipient name/address
-	 */
+	@Override
+	public int hashCode() {
+		return toString().hashCode();
+	}
+	
 	@Override
 	public String toString() {
 		if (_msgTo.isEmpty())

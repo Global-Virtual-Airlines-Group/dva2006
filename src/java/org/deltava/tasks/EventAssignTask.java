@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -15,14 +15,13 @@ import org.deltava.beans.schedule.Airline;
 import org.deltava.dao.*;
 import org.deltava.mail.*;
 import org.deltava.taskman.*;
-
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Scheduled Task to automatically assign flghts to Online Event participants.
  * @author Luke
- * @version 8.1
+ * @version 8.5
  * @since 1.0
  */
 
@@ -60,7 +59,7 @@ public class EventAssignTask extends Task {
 			Connection con = ctx.getConnection();
 			
 			// Determining who we are operating as
-			EMailAddress from = Mailer.makeAddress(SystemData.get("airline.mail.events"), SystemData.get("airline.name") + " Events");
+			EMailAddress from = MailUtils.makeAddress(SystemData.get("airline.mail.events"), SystemData.get("airline.name") + " Events");
 			String aCode = SystemData.get("airline.code");
 			
 			// Get the DAOs
@@ -176,8 +175,7 @@ public class EventAssignTask extends Task {
 
 						// Get the addresses to send to
 						Collection<EMailAddress> addrs = new LinkedHashSet<EMailAddress>();
-						for (String addr : e.getContactAddrs())
-							addrs.add(Mailer.makeAddress(addr));
+						e.getContactAddrs().forEach(addr -> addrs.add(MailUtils.makeAddress(addr)));
 						
 						// Send the message
 						Mailer mailer = new Mailer(from);

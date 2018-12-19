@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2010, 2012, 2013, 2014, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010, 2012, 2013, 2014, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.util.Collection;
@@ -15,13 +15,13 @@ import org.deltava.mail.*;
 
 import org.deltava.security.AddressValidationHelper;
 
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to update a registered Pilot's e-mail address.
  * @author Luke
- * @version 8.0
+ * @version 8.5
  * @since 1.0
  */
 
@@ -120,7 +120,7 @@ public class UpdateEmailCommand extends AbstractCommand {
 		mctxt.addData("user", p);
 		
 		// Send the e-mail message
-		EMailAddress newAddr = Mailer.makeAddress(av.getAddress(), p.getName());
+		EMailAddress newAddr = MailUtils.makeAddress(av.getAddress(), p.getName());
 		Mailer mailer = new Mailer(SystemData.getBoolean("smtp.testMode") ? newAddr : null);
 		mailer.setContext(mctxt);
 		mailer.send(newAddr);
