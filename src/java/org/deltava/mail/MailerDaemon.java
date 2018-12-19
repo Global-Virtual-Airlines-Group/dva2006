@@ -59,6 +59,8 @@ public class MailerDaemon implements Runnable {
 			imsg.addHeader("Errors-to", SystemData.get("smtp.errors-to"));
 			imsg.setSubject(env.getSubject(), "UTF-8");
 			imsg.setRecipients(javax.mail.Message.RecipientType.TO, env.getRecipients());
+			for (Map.Entry<String, String> he : env.getHeaders().entrySet())
+				imsg.addHeader(he.getKey(), he.getValue());
 			if (env.getCopyTo() != null)
 				imsg.addRecipients(javax.mail.Message.RecipientType.CC, env.getCopyTo());
 		} catch (Exception e) {

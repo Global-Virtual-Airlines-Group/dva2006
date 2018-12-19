@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.sql.Connection;
@@ -12,13 +12,13 @@ import org.deltava.mail.*;
 
 import org.deltava.security.AddressValidationHelper;
 
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to resend an e-mail validation message.
  * @author Luke
- * @version 7.0
+ * @version 8.5
  * @since 1.0
  */
 
@@ -65,7 +65,7 @@ public class ResendValidationCommand extends AbstractCommand {
 			}
 				
 			// Create the address
-			EMailAddress addr = Mailer.makeAddress(av.getAddress(), ctx.getUser().getName()); 
+			EMailAddress addr = MailUtils.makeAddress(av.getAddress(), ctx.getUser().getName()); 
 				
 			// Send the message
 			Mailer mailer = new Mailer(SystemData.getBoolean("smtp.testMode") ? addr : null);

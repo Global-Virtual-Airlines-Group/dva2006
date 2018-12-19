@@ -1,7 +1,8 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.time.*;
 import java.sql.Connection;
 
@@ -23,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to save Online Events.
  * @author Luke
- * @version 8.0
+ * @version 8.5
  * @since 1.0
  */
 
@@ -136,9 +137,7 @@ public class EventSaveCommand extends AbstractCommand {
 			// See which charts have been selected
 			Collection<String> selectedCharts = ctx.getParameters("charts");
 			if (selectedCharts != null) {
-				Collection<Integer> chartIDs = new HashSet<Integer>();
-				for (Iterator<String> i = selectedCharts.iterator(); i.hasNext(); )
-					chartIDs.add(Integer.valueOf(StringUtils.parseHex(i.next())));
+				Collection<Integer> chartIDs = selectedCharts.stream().map(id -> Integer.valueOf(StringUtils.parseHex(id))).collect(Collectors.toSet());
 
 				// Load the charts
 				e.getCharts().clear();
@@ -150,8 +149,8 @@ public class EventSaveCommand extends AbstractCommand {
 			Collection<String> addrs = StringUtils.split(ctx.getParameter("contactAddrs"), "\n");
 			if (!CollectionUtils.isEmpty(addrs)) {
 				e.getContactAddrs().clear();
-				for (Iterator<String> i = addrs.iterator(); i.hasNext(); )
-					e.addContactAddr(i.next());
+				for (String addr : addrs)
+					e.addContactAddr(addr);
 			}
 
 			// Save the event in the request
@@ -235,8 +234,7 @@ public class EventSaveCommand extends AbstractCommand {
 				GetPilotNotify pdao = new GetPilotNotify(con);
 				Collection<EMailAddress> pilots = pdao.getNotifications(Notification.EVENT);
 				if (pilots != null) {
-					for (Iterator<String> i = e.getContactAddrs().iterator(); i.hasNext(); )
-						pilots.add(Mailer.makeAddress(i.next()));
+					e.getContactAddrs().forEach(addr -> pilots.add(MailUtils.makeAddress(addr)));
 					
 					Mailer mailer = new Mailer(ctx.getUser());
 					mailer.setContext(mctxt);
