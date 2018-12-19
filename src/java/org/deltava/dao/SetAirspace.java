@@ -14,7 +14,7 @@ import org.deltava.util.GeoUtils;
 /**
  * A Data Access Object to write Airspace boundaries to the database.
  * @author Luke
- * @version 8.3
+ * @version 8.5
  * @since 7.3
  */
 
@@ -37,7 +37,7 @@ public class SetAirspace extends DAO {
 		
 		Geometry geo = GeoUtils.toGeometry(a.getBorder());
 		try {
-			prepareStatementWithoutLimits("REPLACE INTO common.AIRSPACE (ID, NAME, COUNTRY, TYPE, EXCLUSION, MIN_ALT, MAX_ALT, CTR, DATA) VALUES (?, ?, ?, ?, ?, ?, ?, ST_GeomFromText(?, ?), ST_GeomFromText(?, ?))");
+			prepareStatementWithoutLimits("REPLACE INTO common.AIRSPACE (ID, NAME, COUNTRY, TYPE, EXCLUSION, MIN_ALT, MAX_ALT, LATITUDE, LONGITUDE, DATA) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ST_GeomFromText(?, ?))");
 			_ps.setString(1, a.getID());
 			_ps.setString(2, a.getName());
 			_ps.setString(3, a.getCountry().getCode());
@@ -45,9 +45,9 @@ public class SetAirspace extends DAO {
 			_ps.setBoolean(5, a.isExclusion());
 			_ps.setInt(6, a.getMinAltitude());
 			_ps.setInt(7, a.getMaxAltitude());
+			_ps.setDouble(8, a.getLatitude());
+			_ps.setDouble(9,  a.getLongitude());
 			WKTWriter ww = new WKTWriter();
-			_ps.setString(8, ww.write(geo.getCentroid()));
-			_ps.setInt(9, WGS84_SRID);
 			_ps.setString(10, ww.write(geo));
 			_ps.setInt(11, WGS84_SRID);
 			executeUpdate(1);
