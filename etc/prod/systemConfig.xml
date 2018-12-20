@@ -641,6 +641,11 @@
 			<maxAge type="Integer">24</maxAge>
 		</promotion>
 
+		<!-- System messages -->
+		<system>
+			<channel>DVA System Notifications</channel>
+		</system>
+
 		<maxreports type="Integer">3</maxreports>
 		<search>
 			<idx>/var/search</idx>

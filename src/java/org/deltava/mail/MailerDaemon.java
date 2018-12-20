@@ -121,7 +121,7 @@ public class MailerDaemon implements Runnable {
 		Properties props = new Properties(System.getProperties());
 		props.put("mail.smtp.host", SystemData.get("smtp.server"));
 		if (SystemData.getBoolean("smtp.tls")) {
-			log.info("Enabling SMTP over TLS");
+			log.info("Enabling SMTP over TLS - " + (isAnon ? "anonymous" : "using credentials"));
 			props.put("mail.smtp.port", "465");
 			props.put("mail.smtp.starttls.enable", "true");
 		}
