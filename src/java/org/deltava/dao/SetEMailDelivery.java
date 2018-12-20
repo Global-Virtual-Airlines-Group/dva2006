@@ -1,0 +1,46 @@
+// Copyright 2018 Global Virtual Airlines Group. All Rights Reserved.
+package org.deltava.dao;
+
+import java.sql.*;
+
+import org.deltava.beans.system.EMailDelivery;
+
+/**
+ * A Data Access Object to handle message delivery reports.
+ * @author Luke
+ * @version 8.5
+ * @since 8.5
+ */
+
+public class SetEMailDelivery extends DAO {
+
+	/**
+	 * Initializes the Data Access Object.
+	 * @param c the JDBC connection to use
+	 */
+	public SetEMailDelivery(Connection c) {
+		super(c);
+	}
+
+	/**
+	 * Writes an e-mail delivery report to the database.
+	 * @param dv the EMailDelivery
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void write(EMailDelivery dv) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("INSERT INTO EMAIL_DELIVERY (ID, SEND_TIME, RCPT_TIME, EMAIL, PROCESS_TIME, REMOTE_ADDR, REMOTE_HOST, RESPONSE) VALUES (?, ?, ?, ?, ?, INET6_ATON(?), ?, ?)");
+			_ps.setInt(1, dv.getID());
+			_ps.setTimestamp(2, createTimestamp(dv.getSendTime()));
+			_ps.setTimestamp(3, createTimestamp(dv.getDeliveryTime()));
+			_ps.setString(4, dv.getEmail());
+			_ps.setInt(5, dv.getProcessTime());
+			_ps.setString(6, dv.getRemoteAddress());
+			_ps.setString(7, dv.getRemoteHost());
+			_ps.setString(8, dv.getResponse());
+			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+}
