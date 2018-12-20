@@ -195,7 +195,7 @@ class SMTPEnvelope implements java.io.Serializable, Cloneable, Comparable<SMTPEn
 	 * @see SMTPEnvelope#getHeaders()
 	 */
 	public void addHeader(String name, String value) {
-		_hdrs.put(name, name);
+		_hdrs.put(name, value);
 	}
 
 	/**
