@@ -1,0 +1,11 @@
+{
+	"SignatureVersion": "1",
+	"Type": "Notification",
+	"TopicArn": "arn:aws:sns:us-east-1:028411232270:smtp-info-dva",
+	"Message": "{\"notificationType\":\"Delivery\",\"mail\":{\"timestamp\":\"2018-12-20T16:21:53.830Z\",\"source\":\"hr@deltava.org\",\"sourceArn\":\"arn:aws:ses:us-east-1:028411232270:identity/deltava.org\",\"sourceIp\":\"34.195.168.67\",\"sendingAccountId\":\"028411232270\",\"messageId\":\"01000167cc6c6026-4e9ea370-4ab3-4ccd-9967-57cdf7c4fe9d-000000\",\"destination\":[\"carlospenajr1989@yahoo.com\"]},\"delivery\":{\"timestamp\":\"2018-12-20T16:21:54.994Z\",\"processingTimeMillis\":1164,\"recipients\":[\"carlospenajr1989@yahoo.com\"],\"smtpResponse\":\"250 ok dirdel\",\"remoteMtaIp\":\"98.137.159.28\",\"reportingMTA\":\"a8-80.smtp-out.amazonses.com\"}}",
+	"UnsubscribeURL": "https://sns.us-east-1.amazonaws.com/?Action=Unsubscribe&SubscriptionArn=arn:aws:sns:us-east-1:028411232270:smtp-info-dva:1e2c218d-20dd-44f4-b652-5c70d7bc6e03",
+	"Signature": "Xk8M/nW+1/ZsSvR9fYvCzB0ukXhBBvfdqp5sArvnzDobQzYABGTjmrQnIBDn/Kb9VsjJLFtrj9yhTWJkrcLjnX9fPdbtmKYOJAYg7GLxPU1f7WGFc8kYx3LJVm1gmgFjEqpLBK9mhrXwqG3apPKtp8x+6wM59Me0eCeIEV6kRyHMTY2vipSxK6Mm3QCY9Iagq+NFBk7tWvk9VCaIU0AGCKt1o+fBBe0mHRJnBHmvvHZgx/kZF67LOH6bFha+giGkSlMSZ74VfaMfbeKiPwtn//qxP1pv39JJH5NhKMyLpA2ferxAS+b0D3P6LvNI0OIhP27CV2I+p8HvjIGR+28bhg==",
+	"Timestamp": "2018-12-20T16:21:55.046Z",
+	"SigningCertURL": "https://sns.us-east-1.amazonaws.com/SimpleNotificationService-ac565b8b1a6c5d002d285f9598aa1d9b.pem",
+	"MessageId": "33661a38-58d3-5653-b6a9-4ead9b308cec"
+}
