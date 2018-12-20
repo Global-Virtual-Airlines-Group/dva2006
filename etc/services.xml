@@ -125,4 +125,8 @@
 	<service id="taf" class="org.deltava.service.wx.TAFService" />
 	<service id="airportwx" class="org.deltava.service.wx.AirportWeatherService" />
 	<service id="tileseries" class="org.deltava.service.wx.SeriesListService" />
+	
+	<!-- AWS Services -->
+	<service id="sesfeedback" class="org.deltava.service.aws.SESFeedbackService" />
+	<service id="sesdeliver" class="org.deltava.service.aws.SESDeliveryService" />
 </services>
