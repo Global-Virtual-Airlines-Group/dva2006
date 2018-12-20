@@ -1,6 +1,8 @@
 // Copyright 2005, 2006, 2007, 2009, 2012, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.mail;
 
+import static javax.mail.Message.RecipientType.*;
+
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -10,13 +12,14 @@ import javax.mail.internet.*;
 
 import org.apache.log4j.Logger;
 
+import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A daemon thread to send e-mail messages in the background. SMTP messages are not designed for critical information;
  * they are designed to fail silently on an error.
  * @author Luke
- * @version 8.4
+ * @version 8.5
  * @since 1.0
  */
 
@@ -25,16 +28,19 @@ public class MailerDaemon implements Runnable {
 	private static final Logger log = Logger.getLogger(MailerDaemon.class);
 
 	private static final BlockingQueue<SMTPEnvelope> _queue = new PriorityBlockingQueue<SMTPEnvelope>();
-
-	/**
-	 * Returns the thread name.
-	 * @return the tread name
-	 */
-	@Override
-	public String toString() {
-		return SystemData.get("airline.code") + " Mailer Daemon";
+	
+	private static class SMTPAuth extends Authenticator {
+		
+		SMTPAuth() {
+			super();
+		}
+		
+		@Override
+		public PasswordAuthentication getPasswordAuthentication() {
+			return new PasswordAuthentication(SystemData.get("mail.smtp.user"), SystemData.get("mail.smtp.pwd"));
+		}
 	}
-
+	
 	/**
 	 * Queues an SMTP message for mailing by the daemon.
 	 * @param env the SMTP envelope
@@ -56,13 +62,13 @@ public class MailerDaemon implements Runnable {
 		MimeMessage imsg = new MimeMessage(s);
 		try {
 			imsg.setFrom(new InternetAddress(env.getFrom().getEmail(), env.getFrom().getName()));
-			imsg.addHeader("Errors-to", SystemData.get("smtp.errors-to"));
+			imsg.addHeader("Errors-to", SystemData.get("mail.smtp.errors-to"));
 			imsg.setSubject(env.getSubject(), "UTF-8");
-			imsg.setRecipients(javax.mail.Message.RecipientType.TO, env.getRecipients());
+			imsg.setRecipients(TO, env.getRecipients());
 			for (Map.Entry<String, String> he : env.getHeaders().entrySet())
 				imsg.addHeader(he.getKey(), he.getValue());
 			if (env.getCopyTo() != null)
-				imsg.addRecipients(javax.mail.Message.RecipientType.CC, env.getCopyTo());
+				imsg.addRecipients(CC, env.getCopyTo());
 		} catch (Exception e) {
 			log.error("Error setting message headers - " + e.getMessage(), e);
 			return;
@@ -109,6 +115,7 @@ public class MailerDaemon implements Runnable {
 	@Override
 	public void run() {
 		log.info("Starting");
+		boolean isAnon = StringUtils.isEmpty(SystemData.get("smtp.user"));
 
 		// Set the SMTP server
 		Properties props = new Properties(System.getProperties());
@@ -116,7 +123,6 @@ public class MailerDaemon implements Runnable {
 		if (SystemData.getBoolean("smtp.tls")) {
 			log.info("Enabling SMTP over TLS");
 			props.put("mail.smtp.port", "465");
-			props.put("mail.smtp.ssl.enable", "true");
 			props.put("mail.smtp.starttls.enable", "true");
 		}
 		
@@ -126,7 +132,7 @@ public class MailerDaemon implements Runnable {
 
 				// Generate a session to the STMP server
 				try {
-					Session s = Session.getInstance(props);
+					Session s = isAnon ? Session.getInstance(props) : Session.getInstance(props, new SMTPAuth());
 					s.setDebug(SystemData.getBoolean("smtp.testMode"));
 
 					// Loop through the messages if we have them
@@ -143,5 +149,14 @@ public class MailerDaemon implements Runnable {
 		}
 
 		log.info("Stopping");
+	}
+	
+	/**
+	 * Returns the thread name.
+	 * @return the tread name
+	 */
+	@Override
+	public String toString() {
+		return SystemData.get("airline.code") + " Mailer Daemon";
 	}
 }
