@@ -30,14 +30,13 @@ public class MailerDaemon implements Runnable {
 	private static final BlockingQueue<SMTPEnvelope> _queue = new PriorityBlockingQueue<SMTPEnvelope>();
 	
 	private static class SMTPAuth extends Authenticator {
-		
 		SMTPAuth() {
 			super();
 		}
 		
 		@Override
 		public PasswordAuthentication getPasswordAuthentication() {
-			return new PasswordAuthentication(SystemData.get("mail.smtp.user"), SystemData.get("mail.smtp.pwd"));
+			return new PasswordAuthentication(SystemData.get("smtp.user"), SystemData.get("smtp.pwd"));
 		}
 	}
 	
@@ -62,7 +61,7 @@ public class MailerDaemon implements Runnable {
 		MimeMessage imsg = new MimeMessage(s);
 		try {
 			imsg.setFrom(new InternetAddress(env.getFrom().getEmail(), env.getFrom().getName()));
-			imsg.addHeader("Errors-to", SystemData.get("mail.smtp.errors-to"));
+			imsg.addHeader("Errors-to", SystemData.get("smtp.errors-to"));
 			imsg.setSubject(env.getSubject(), "UTF-8");
 			imsg.setRecipients(TO, env.getRecipients());
 			for (Map.Entry<String, String> he : env.getHeaders().entrySet())
@@ -120,9 +119,11 @@ public class MailerDaemon implements Runnable {
 		// Set the SMTP server
 		Properties props = new Properties(System.getProperties());
 		props.put("mail.smtp.host", SystemData.get("smtp.server"));
+		props.put("mail.smtp.auth", String.valueOf(!isAnon));
+		props.put("mail.transport.protocol", "smtp");
 		if (SystemData.getBoolean("smtp.tls")) {
 			log.info("Enabling SMTP over TLS - " + (isAnon ? "anonymous" : "using credentials"));
-			props.put("mail.smtp.port", "465");
+			props.put("mail.smtp.port", "587");
 			props.put("mail.smtp.starttls.enable", "true");
 		}
 		
