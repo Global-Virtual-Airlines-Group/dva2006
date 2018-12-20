@@ -4,16 +4,16 @@ package org.deltava.beans.system;
 /**
  * An interface to store version info constants.
  * @author Luke
- * @version 8.4
+ * @version 8.5
  * @since 1.0
  */
 
 public interface VersionInfo {
 
     public static final int MAJOR = 8;
-    public static final int MINOR = 4;
+    public static final int MINOR = 5;
     
-    public static final int BUILD = 679;
+    public static final int BUILD = 680;
     
     public static final String TXT_COPYRIGHT = "Copyright 2004 - 2018 Global Virtual Airlines Group. All Rights Reserved.";
     public static final String HTML_COPYRIGHT = "Copyright &copy; 2004 - 2018 <a rel=\"external\" class=\"small\" href=\"https://www.gvagroup.org/\">Global Virtual Airlines Group</a>. All Rights Reserved.";
