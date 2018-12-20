@@ -18,6 +18,7 @@ public class EMailDelivery extends DatabaseBean {
 	private final Instant _deliveryTime;
 	private String _addr;
 	private int _processTime;
+	private String _msgID;
 	
 	private String _remoteAddr;
 	private String _remoteHost;
@@ -41,6 +42,14 @@ public class EMailDelivery extends DatabaseBean {
 	 */
 	public Instant getDeliveryTime() {
 		return _deliveryTime;
+	}
+	
+	/**
+	 * Returns the e-mail message ID.
+	 * @return the ID
+	 */
+	public String getMessageID() {
+		return _msgID;
 	}
 	
 	/**
@@ -97,6 +106,14 @@ public class EMailDelivery extends DatabaseBean {
 	 */
 	public void setEmail(String addr) {
 		_addr = addr;
+	}
+	
+	/**
+	 * Updates the message ID.
+	 * @param id the e-mail message ID
+	 */
+	public void setMessageID(String id) {
+		_msgID = id;
 	}
 	
 	/**

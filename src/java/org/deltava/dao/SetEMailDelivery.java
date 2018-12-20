@@ -29,15 +29,16 @@ public class SetEMailDelivery extends DAO {
 	 */
 	public void write(EMailDelivery dv) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("INSERT INTO EMAIL_DELIVERY (ID, SEND_TIME, RCPT_TIME, EMAIL, PROCESS_TIME, REMOTE_ADDR, REMOTE_HOST, RESPONSE) VALUES (?, ?, ?, ?, ?, INET6_ATON(?), ?, ?)");
+			prepareStatementWithoutLimits("REPLACE INTO EMAIL_DELIVERY (ID, MSG_ID, SEND_TIME, RCPT_TIME, EMAIL, PROCESS_TIME, REMOTE_ADDR, REMOTE_HOST, RESPONSE) VALUES (?, ?, ?, ?, ?, ?, INET6_ATON(?), ?, ?)");
 			_ps.setInt(1, dv.getID());
-			_ps.setTimestamp(2, createTimestamp(dv.getSendTime()));
-			_ps.setTimestamp(3, createTimestamp(dv.getDeliveryTime()));
-			_ps.setString(4, dv.getEmail());
-			_ps.setInt(5, dv.getProcessTime());
-			_ps.setString(6, dv.getRemoteAddress());
-			_ps.setString(7, dv.getRemoteHost());
-			_ps.setString(8, dv.getResponse());
+			_ps.setString(2, dv.getMessageID());
+			_ps.setTimestamp(3, createTimestamp(dv.getSendTime()));
+			_ps.setTimestamp(4, createTimestamp(dv.getDeliveryTime()));
+			_ps.setString(5, dv.getEmail());
+			_ps.setInt(6, dv.getProcessTime());
+			_ps.setString(7, dv.getRemoteAddress());
+			_ps.setString(8, dv.getRemoteHost());
+			_ps.setString(9, dv.getResponse());
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
