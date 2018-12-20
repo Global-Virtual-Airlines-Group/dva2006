@@ -553,7 +553,11 @@
 	
 	<!-- SMTP Server configuration -->
 	<smtp>
-		<server>localhost</server>
+		<server>email-smtp.us-east-1.amazonaws.com</server>
+		<tls type="Boolean">true</tls>
+		<user>AKIAIEJ5ZVSVUD26YCPA</user>
+		<pwd>AhU8YMg83cLd6ZpGVV1vJ2VM2kHSiu6x7KLRBPt3SWLy</pwd>
+		
 		<errors-to>webmaster@sce.net</errors-to>
 		<testMode type="Boolean">true</testMode>
 		<imap>
@@ -637,7 +641,12 @@
 			<channel>Pilot Achievements and Promotions</channel>
 			<maxAge type="Integer">24</maxAge>
 		</promotion>
-		
+
+		<!-- System messages -->
+		<system>
+			<channel>DVA System Notifications</channel>
+		</system>
+
 		<maxreports type="Integer">2</maxreports>
 		<search>
 			<idx>/var/search</idx>
