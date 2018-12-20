@@ -67,6 +67,7 @@ public class SESDeliveryService extends SNSReceiverService {
 				EMailDelivery dv = new EMailDelivery(p.getID(), deliveryTime);
 				dv.setSendTime(sendTime);
 				dv.setEmail(addr);
+				dv.setMessageID(mo.getString("messageId"));
 				dv.setProcessTime(dvo.optInt("processingTimeMillis", 0));
 				dv.setRemoteAddress(dvo.optString("remoteMtaIp", "0.0.0.0"));
 				dv.setRemoteHost(dvo.optString("reportingMTA", "Unknown"));

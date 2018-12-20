@@ -32,7 +32,7 @@ public class GetEMailDelivery extends DAO {
 	 */
 	public List<EMailDelivery> getByPilot(int pilotID) throws DAOException {
 		try {
-			prepareStatement("SELECT ID, SEND_TIME, RCPT_TIME, EMAIL, PROCESS_TIME, INET6_NTOA(REMOTE_ADDR), REMOTE_HOST, RESPONSE FROM EMAIL_DELIVERY WHERE (ID=?) ORDER BY SEND_TIME");
+			prepareStatement("SELECT ID, MSG_ID, SEND_TIME, RCPT_TIME, EMAIL, PROCESS_TIME, INET6_NTOA(REMOTE_ADDR), REMOTE_HOST, RESPONSE FROM EMAIL_DELIVERY WHERE (ID=?) ORDER BY SEND_TIME");
 			_ps.setInt(1, pilotID);
 			return execute();
 		} catch (SQLException se) {
@@ -48,7 +48,7 @@ public class GetEMailDelivery extends DAO {
 	 */
 	public List<EMailDelivery> getByDate(Instant dt) throws DAOException {
 		try {
-			prepareStatement("SELECT ID, SEND_TIME, RCPT_TIME, EMAIL, PROCESS_TIME, INET6_NTOA(REMOTE_ADDR), REMOTE_HOST, RESPONSE FROM EMAIL_DELIVERY WHERE DATE(SEND_TIME)=DATE(?) ORDER BY SEND_TIME");
+			prepareStatement("SELECT ID, MSG_ID, SEND_TIME, RCPT_TIME, EMAIL, PROCESS_TIME, INET6_NTOA(REMOTE_ADDR), REMOTE_HOST, RESPONSE FROM EMAIL_DELIVERY WHERE DATE(SEND_TIME)=DATE(?) ORDER BY SEND_TIME");
 			_ps.setTimestamp(1, createTimestamp(dt));
 			return execute();
 		} catch (SQLException se) {
@@ -64,7 +64,7 @@ public class GetEMailDelivery extends DAO {
 	 */
 	public List<EMailDelivery> getByDomain(String domain) throws DAOException {
 		try {
-			prepareStatement("SELECT ID, SEND_TIME, RCPT_TIME, EMAIL, PROCESS_TIME, INET6_NTOA(REMOTE_ADDR), REMOTE_HOST, RESPONSE FROM EMAIL_DELIVERY WHERE (ADDR LIKE ?) ORDER BY SEND_TIME");
+			prepareStatement("SELECT ID, MSG_ID, SEND_TIME, RCPT_TIME, EMAIL, PROCESS_TIME, INET6_NTOA(REMOTE_ADDR), REMOTE_HOST, RESPONSE FROM EMAIL_DELIVERY WHERE (ADDR LIKE ?) ORDER BY SEND_TIME");
 			_ps.setString(1, "%" + domain);
 			return execute();
 		} catch (SQLException se) {
@@ -79,13 +79,14 @@ public class GetEMailDelivery extends DAO {
 		List<EMailDelivery> results = new ArrayList<EMailDelivery>();
 		try (ResultSet rs = _ps.executeQuery()) {
 			while (rs.next()) {
-				EMailDelivery dv = new EMailDelivery(rs.getInt(1), toInstant(rs.getTimestamp(3)));
-				dv.setSendTime(toInstant(rs.getTimestamp(2)));
-				dv.setEmail(rs.getString(4));
-				dv.setProcessTime(rs.getInt(5));
-				dv.setRemoteAddress(rs.getString(6));
-				dv.setRemoteHost(rs.getString(7));
-				dv.setResponse(rs.getString(8));
+				EMailDelivery dv = new EMailDelivery(rs.getInt(1), toInstant(rs.getTimestamp(4)));
+				dv.setMessageID(rs.getString(2));
+				dv.setSendTime(toInstant(rs.getTimestamp(3)));
+				dv.setEmail(rs.getString(5));
+				dv.setProcessTime(rs.getInt(6));
+				dv.setRemoteAddress(rs.getString(7));
+				dv.setRemoteHost(rs.getString(8));
+				dv.setResponse(rs.getString(9));
 				results.add(dv);
 			}
 		}
