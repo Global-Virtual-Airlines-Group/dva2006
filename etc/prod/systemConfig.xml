@@ -550,8 +550,11 @@
 	</path>
 	
 	<smtp>
-		<server>mail.gva.aws</server>
-		<tls type="Boolean">false</tls>
+		<server>email-smtp.us-east-1.amazonaws.com</server>
+		<tls type="Boolean">true</tls>
+		<user>AKIAIEJ5ZVSVUD26YCPA</user>
+		<pwd>AhU8YMg83cLd6ZpGVV1vJ2VM2kHSiu6x7KLRBPt3SWLy</pwd>
+	
 		<errors-to>webmaster@deltava.org</errors-to>
 		<testMode type="Boolean">false</testMode>
 		<imap>
