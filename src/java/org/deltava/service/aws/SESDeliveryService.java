@@ -38,12 +38,13 @@ public class SESDeliveryService extends SNSReceiverService {
 	protected int execute(SNSContext ctx) throws ServiceException {
 		
 		SNSPayload sns = ctx.getPayload();
-		String type = sns.getBody().getString("notificationType").toLowerCase();
+		JSONObject msgo = new JSONObject(sns.getBody().getString("Message"));
+		String type = msgo.optString("notificationType").toLowerCase();
 		if (!"delivery".equals(type))
 			throw error(SC_BAD_REQUEST, "Invalid notification type - " + type);
 		
-		JSONObject mo = sns.getBody().getJSONObject("mail");
-		JSONObject dvo = sns.getBody().optJSONObject("delivery");
+		JSONObject mo = msgo.getJSONObject("mail");
+		JSONObject dvo = msgo.optJSONObject("delivery");
 		JSONArray ra = mo.getJSONArray("destination");
 		Instant sendTime  = Instant.from(DateTimeFormatter.ISO_DATE_TIME.parse(mo.getString("timestamp")));
 		Instant deliveryTime = Instant.from(DateTimeFormatter.ISO_DATE_TIME.parse(dvo.getString("timestamp")));

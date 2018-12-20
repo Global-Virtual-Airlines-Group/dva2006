@@ -40,8 +40,9 @@ public class SESFeedbackService extends SNSReceiverService {
 		String channelName = SystemData.get("cooler.system.channel");
 
 		SNSPayload sns = ctx.getPayload();
-		String type = sns.getBody().getString("notificationType").toLowerCase();
-		JSONObject mo = sns.getBody().getJSONObject("mail");
+		JSONObject msgo = new JSONObject(sns.getBody().getString("Message"));
+		String type = msgo.getString("notificationType").toLowerCase();
+		JSONObject mo = msgo.getJSONObject("mail");
 		try {
 			Connection con = ctx.getConnection();
 			GetPilot pdao = new GetPilot(con);
@@ -63,7 +64,7 @@ public class SESFeedbackService extends SNSReceiverService {
 				mt.setChannel(c.getName());
 				
 				StringBuilder buf = new StringBuilder("Amazon SES bounce notification\n\n");
-				JSONObject bo = sns.getBody().getJSONObject("bounce");
+				JSONObject bo = msgo.getJSONObject("bounce");
 				buf.append("Type: ");
 				buf.append(bo.optString("bounceType", "?")).append(" / ");
 				buf.append(bo.optString("bounceSubType", "?")).append("\n\n");
@@ -101,7 +102,7 @@ public class SESFeedbackService extends SNSReceiverService {
 				mt.setStickyUntil(Instant.now().plusSeconds(86400));
 				
 				buf = new StringBuilder("Amazon SES complaint notification\n\n");
-				JSONObject co = sns.getBody().getJSONObject("complaint");
+				JSONObject co = msgo.getJSONObject("complaint");
 				if (co.has("complaintFeedbackType"))
 					buf.append("Type: ").append(co.getString("complaintFeedbackType")).append("\n");
 				if (co.has("userAgent"))
