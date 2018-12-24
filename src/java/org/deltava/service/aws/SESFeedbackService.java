@@ -5,6 +5,7 @@ import static javax.servlet.http.HttpServletResponse.*;
 
 import java.sql.Connection;
 import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 
 import org.apache.log4j.Logger;
 
@@ -12,7 +13,8 @@ import org.json.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.cooler.*;
-
+import org.deltava.beans.system.DeliveryType;
+import org.deltava.beans.system.EMailDelivery;
 import org.deltava.dao.*;
 import org.deltava.service.*;
 
@@ -47,6 +49,7 @@ public class SESFeedbackService extends SNSReceiverService {
 			Connection con = ctx.getConnection();
 			GetPilot pdao = new GetPilot(con);
 			SetCoolerMessage cwdao = new SetCoolerMessage(con);
+			SetEMailDelivery dvwdao = new SetEMailDelivery(con);
 			
 			// Get the Channel
 			GetCoolerChannels cdao = new GetCoolerChannels(con);
@@ -77,6 +80,10 @@ public class SESFeedbackService extends SNSReceiverService {
 						buf.append(ro.getString("emailAddress"));
 						buf.append(" (UNKNOWN) - ");
 					} else {
+						EMailDelivery dv = new EMailDelivery(DeliveryType.BOUNCE, p.getID(), Instant.now());
+						dv.setSendTime(Instant.from(DateTimeFormatter.ISO_DATE_TIME.parse(bo.getString("timestamp"))));
+						dv.setEmail(ro.getString("emailAddress"));
+						
 						buf.append(p.getName());
 						buf.append(" (").append(p.getPilotCode()).append(") - ");
 					}
@@ -99,6 +106,7 @@ public class SESFeedbackService extends SNSReceiverService {
 
 			case "complaint":
 				mt = new MessageThread("Amazon SES complaint notification");
+				mt.setChannel(c.getName());
 				mt.setStickyUntil(Instant.now().plusSeconds(86400));
 				
 				buf = new StringBuilder("Amazon SES complaint notification\n\n");
@@ -116,6 +124,12 @@ public class SESFeedbackService extends SNSReceiverService {
 						buf.append(ro.getString("emailAddress"));
 						buf.append(" (UNKNOWN)\n");
 					} else {
+						EMailDelivery dv = new EMailDelivery(DeliveryType.COMPLAINT, p.getID(), Instant.now());
+						dv.setSendTime(Instant.from(DateTimeFormatter.ISO_DATE_TIME.parse(co.getString("timestamp"))));
+						dv.setEmail(ro.getString("emailAddress"));
+						dv.setResponse(co.getString("complaintFeedbackType"));
+						dvwdao.write(dv);
+						
 						buf.append(p.getName());
 						buf.append(" (").append(p.getPilotCode()).append(")\n");
 					}
