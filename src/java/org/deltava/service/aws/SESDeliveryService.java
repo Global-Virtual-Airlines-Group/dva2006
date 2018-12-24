@@ -12,6 +12,7 @@ import org.json.*;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.Pilot;
+import org.deltava.beans.system.DeliveryType;
 import org.deltava.beans.system.EMailDelivery;
 
 import org.deltava.dao.*;
@@ -46,7 +47,7 @@ public class SESDeliveryService extends SNSReceiverService {
 		JSONObject mo = msgo.getJSONObject("mail");
 		JSONObject dvo = msgo.optJSONObject("delivery");
 		JSONArray ra = mo.getJSONArray("destination");
-		Instant sendTime  = Instant.from(DateTimeFormatter.ISO_DATE_TIME.parse(mo.getString("timestamp")));
+		Instant sendTime = Instant.from(DateTimeFormatter.ISO_DATE_TIME.parse(mo.getString("timestamp")));
 		Instant deliveryTime = Instant.from(DateTimeFormatter.ISO_DATE_TIME.parse(dvo.getString("timestamp")));
 		
 		try {
@@ -64,7 +65,7 @@ public class SESDeliveryService extends SNSReceiverService {
 				}
 				
 				log.info("Received delivery report for " + p.getName() + "[ " + p.getEmail() + " ]");
-				EMailDelivery dv = new EMailDelivery(p.getID(), deliveryTime);
+				EMailDelivery dv = new EMailDelivery(DeliveryType.DELIVER, p.getID(), deliveryTime);
 				dv.setSendTime(sendTime);
 				dv.setEmail(addr);
 				dv.setMessageID(mo.getString("messageId"));
