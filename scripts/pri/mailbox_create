@@ -1,11 +1,11 @@
 #!/bin/bash
 # IMAP Remote Mailbox directory creation script
-# (c) 2015 Global Virtual Airlines Group. All Rights Reserved.
+# (c) 2015, 2018 Global Virtual Airlines Group. All Rights Reserved.
 
 HOST=$3
 if [ "$HOST" == "" ]
 then
- HOST="nephele.gvagroup.org"
+ HOST="nephele.gva.aws"
 fi
 
 # Run the mailbox create command on another server
