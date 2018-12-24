@@ -72,4 +72,16 @@ public class MailUtils {
 	public static EMailAddress makeAddress(String addr) {
 		return makeAddress(addr, addr);
 	}
+
+	/**
+	 * Retrieves the domain within an e-mail address.
+	 * @param addr the address
+	 * @return the domain, or null if none
+	 */
+	public static String getDomain(String addr) {
+		int pos = addr.lastIndexOf('@');
+		if (pos == -1) return null;
+		
+		return addr.substring(pos + 1).toLowerCase();
+	}
 }
