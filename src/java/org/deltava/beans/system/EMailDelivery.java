@@ -3,7 +3,7 @@ package org.deltava.beans.system;
 
 import java.time.Instant;
 
-import org.deltava.beans.DatabaseBean;
+import org.deltava.beans.*;
 
 /**
  * A bean to track e-mail delivery.
@@ -12,8 +12,9 @@ import org.deltava.beans.DatabaseBean;
  * @since 8.5
  */
 
-public class EMailDelivery extends DatabaseBean {
+public class EMailDelivery extends DatabaseBean implements ViewEntry {
 	
+	private final DeliveryType _type;
 	private Instant _sendTime;
 	private final Instant _deliveryTime;
 	private String _addr;
@@ -27,11 +28,13 @@ public class EMailDelivery extends DatabaseBean {
 
 	/**
 	 * Creates the bean.
+	 * @param type the DeliveryType
 	 * @param pilotID the recipient's database ID
 	 * @param deliveryTime the delivery date/time
 	 */
-	public EMailDelivery(int pilotID, Instant deliveryTime) {
+	public EMailDelivery(DeliveryType type, int pilotID, Instant deliveryTime) {
 		super();
+		_type = type;
 		setID(pilotID);
 		_deliveryTime = deliveryTime;
 	}
@@ -42,6 +45,14 @@ public class EMailDelivery extends DatabaseBean {
 	 */
 	public Instant getDeliveryTime() {
 		return _deliveryTime;
+	}
+	
+	/**
+	 * Returns the notification type.
+	 * @return the DeliveryType
+	 */
+	public DeliveryType getType() {
+		return _type;
 	}
 	
 	/**
@@ -154,5 +165,17 @@ public class EMailDelivery extends DatabaseBean {
 	 */
 	public void setResponse(String msg) {
 		_response = msg;
+	}
+	
+	@Override
+	public String getRowClassName() {
+		switch (_type) {
+		case BOUNCE:
+			return "warn";
+		case COMPLAINT:
+			return "error";
+		default:
+			return null;
+		}
 	}
 }
