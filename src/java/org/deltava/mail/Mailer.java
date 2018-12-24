@@ -32,7 +32,8 @@ public class Mailer {
 	 */
 	public Mailer(EMailAddress from) {
 		super();
-		_env = new SMTPEnvelope((from == null) ? MailUtils.makeAddress(SystemData.get("airline.mail.webmaster"), SystemData.get("airline.name")) : from);
+		boolean isOurs = (from != null) && MailUtils.getDomain(from.getEmail()).equalsIgnoreCase(SystemData.get("airline.domain"));
+		_env = new SMTPEnvelope(!isOurs ? MailUtils.makeAddress(SystemData.get("airline.mail.webmaster"), SystemData.get("airline.name")) : from);
 	}
 
 	/**
