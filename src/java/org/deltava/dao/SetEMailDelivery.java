@@ -29,7 +29,7 @@ public class SetEMailDelivery extends DAO {
 	 */
 	public void write(EMailDelivery dv) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("REPLACE INTO EMAIL_DELIVERY (ID, MSG_ID, SEND_TIME, RCPT_TIME, EMAIL, PROCESS_TIME, NOTIFY_TYPE, REMOTE_ADDR, REMOTE_HOST, RESPONSE) VALUES (?, ?, ?, ?, ?, ?, INET6_ATON(?), ?, ?)");
+			prepareStatementWithoutLimits("REPLACE INTO EMAIL_DELIVERY (ID, MSG_ID, SEND_TIME, RCPT_TIME, EMAIL, PROCESS_TIME, NOTIFY_TYPE, REMOTE_ADDR, REMOTE_HOST, RESPONSE) VALUES (?, ?, ?, ?, ?, ?, ?, INET6_ATON(?), ?, ?)");
 			_ps.setInt(1, dv.getID());
 			_ps.setString(2, dv.getMessageID());
 			_ps.setTimestamp(3, createTimestamp(dv.getSendTime()));
