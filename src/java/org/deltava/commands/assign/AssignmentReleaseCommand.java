@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to release a Flight Assignment.
  * @author Luke
- * @version 8.1
+ * @version 8.5
  * @since 1.0
  */
 
@@ -49,28 +49,12 @@ public class AssignmentReleaseCommand extends AbstractCommand {
 			GetFlightReports frdao = new GetFlightReports(con);
 			Collection<FlightReport> pireps = frdao.getByAssignment(ctx.getID(), SystemData.get("airline.db"));
 
-			// Get the PIREP write DAO and init counters
-			SetFlightReport fwdao = new SetFlightReport(con);
-			int flightsDeleted = 0; int flightsUpdated = 0;
-			
-			// Start the database transaction
-			ctx.startTX();
-
 			// Delete PIREPs in draft status, and remove the Assignment ID for the others
-			for (FlightReport fr : pireps) {
-				if (fr.getStatus() == FlightStatus.DRAFT) {
-					fwdao.delete(fr.getID());
-					flightsDeleted++;
-				} else {
-					fr.setDatabaseID(DatabaseID.ASSIGN, 0);
-					fwdao.write(fr);
-					flightsUpdated++;
-				}
-			}
+			int flightsDeleted = (int) pireps.stream().filter(fr -> (fr.getStatus() == FlightStatus.DRAFT)).count();
 
 			// Save the totals
 			ctx.setAttribute("flightsDeleted", Integer.valueOf(flightsDeleted), REQUEST);
-			ctx.setAttribute("flightsUpdated",Integer.valueOf(flightsUpdated), REQUEST);
+			ctx.setAttribute("flightsUpdated",Integer.valueOf(pireps.size() - flightsDeleted), REQUEST);
 
 			// Delete or release the Assignment
 			SetAssignment wdao = new SetAssignment(con);
@@ -81,11 +65,7 @@ public class AssignmentReleaseCommand extends AbstractCommand {
 				wdao.delete(assign);
 				ctx.setAttribute("isDelete", Boolean.TRUE, REQUEST);
 			}
-
-			// Commit the transaction
-			ctx.commitTX();
 		} catch (DAOException de) {
-			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
