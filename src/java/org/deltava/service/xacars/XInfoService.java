@@ -1,4 +1,4 @@
-// Copyright 2011, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2014, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.xacars;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * The XACARS Flight Information Web Service.
  * @author Luke
- * @version 7.0
+ * @version 8.5
  * @since 4.1
  */
 
@@ -88,10 +88,7 @@ public class XInfoService extends XAService {
 				if (a == null) {
 					Collection<Aircraft> allEQ = adao.getAircraftTypes();
 					Map<String, Aircraft> acIATA = new HashMap<String, Aircraft>();
-					for (Aircraft ac : allEQ) {
-						for (String iata : ac.getIATA())
-							acIATA.put(iata, ac);
-					}
+					allEQ.forEach(ac -> ac.getIATA().forEach(iata -> acIATA.put(iata, ac)));
 					
 					a = acIATA.get(fr.getEquipmentType()); 
 					if (a == null)

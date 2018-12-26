@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to support XACARS HTTP requests.
  * @author Luke
- * @version 8.2
+ * @version 8.5
  * @since 4.1
  */
 
@@ -71,11 +71,14 @@ public abstract class XAService extends WebService {
 	protected static Simulator getSimulator(ServiceContext ctx) {
 
 		String data = ctx.getParameter("DATA1");
-		if ((data == null) || (data.indexOf('_') == -1))
+		if ((data == null) || (data.indexOf('_') == -1)) {
+			log.warn("Unknown simulator - " + data);
 			return Simulator.UNKNOWN;
+		}
 		
 		int pos = data.indexOf('_');
 		String sim = data.substring(pos + 1, data.indexOf('|', pos));
+		log.info("Valid simulator " + sim);
 		return sim.contains("MSFS") ? Simulator.FSX : Simulator.XP10;
 	}
 	
