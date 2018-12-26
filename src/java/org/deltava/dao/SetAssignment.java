@@ -10,7 +10,7 @@ import org.deltava.beans.flight.*;
 /**
  * A Data Access Object to create and update Flight Assignments.
  * @author Luke
- * @version 8.1
+ * @version 8.5
  * @since 1.0
  */
 
@@ -157,8 +157,6 @@ public class SetAssignment extends DAO {
          prepareStatement("UPDATE PIREPS SET ASSIGN_ID=0 WHERE (ASSIGN_ID=?)");
          _ps.setInt(1, a.getID());
          executeUpdate(0);
-         
-         // Commit the transaction
          commitTransaction();
       } catch (SQLException se) {
          rollbackTransaction();
@@ -175,6 +173,18 @@ public class SetAssignment extends DAO {
       try {
          startTransaction();
 
+         // Clear the flown Flight Reports
+         prepareStatement("UPDATE PIREPS SET ASSIGN_ID=0 WHERE (ASSIGN_ID=?) AND (STATUS<>?)");
+         _ps.setInt(1, a.getID());
+         _ps.setInt(2, FlightStatus.DRAFT.ordinal());
+         executeUpdate(0);
+         
+         // Delete the incomplete/rejected Flight Reports
+         prepareStatement("DELETE FROM PIREPS WHERE (ASSIGN_ID=?) AND (STATUS=?)");
+         _ps.setInt(1, a.getID());
+         _ps.setInt(2, FlightStatus.DRAFT.ordinal());
+         executeUpdate(0);
+
          // Delete legs
          prepareStatement("DELETE FROM ASSIGNLEGS WHERE (ID=?)");
          _ps.setInt(1, a.getID());
@@ -184,21 +194,6 @@ public class SetAssignment extends DAO {
          prepareStatement("DELETE FROM ASSIGNMENTS WHERE (ID=?)");
          _ps.setInt(1, a.getID());
          executeUpdate(1);
-         
-         // Clear the Flown Flight Reports
-         prepareStatement("UPDATE PIREPS SET ASSIGN_ID=0 WHERE (ASSIGN_ID=?) AND (STATUS IN (?, ?, ?))");
-         _ps.setInt(1, a.getID());
-         _ps.setInt(2, FlightStatus.OK.ordinal());
-         _ps.setInt(3, FlightStatus.SUBMITTED.ordinal());
-         _ps.setInt(4, FlightStatus.HOLD.ordinal());
-         executeUpdate(0);
-         
-         // Delete the incomplete/rejected Flight Reports
-         prepareStatement("DELETE FROM PIREPS WHERE (ASSIGN_ID=?) AND ((STATUS=?) OR (STATUS=?))");
-         _ps.setInt(1, a.getID());
-         _ps.setInt(2, FlightStatus.DRAFT.ordinal());
-         _ps.setInt(3, FlightStatus.REJECTED.ordinal());
-         executeUpdate(0);
          commitTransaction();
       } catch (SQLException se) {
          rollbackTransaction();
