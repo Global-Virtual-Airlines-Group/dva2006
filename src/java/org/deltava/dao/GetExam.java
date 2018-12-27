@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Acces Object for loading Examination/Check Ride data.
  * @author Luke
- * @version 8.0
+ * @version 8.5
  * @since 1.0
  */
 
@@ -322,7 +322,7 @@ public class GetExam extends DAO {
 		if (examName != null)
 			sqlBuf.append("AND (E.NAME=?) ");
 		
-		sqlBuf.append("GROUP BY E.ID DESC");
+		sqlBuf.append("GROUP BY E.ID ORDER BY E.ID DESC");
 		
 		try {
 			prepareStatement(sqlBuf.toString());
