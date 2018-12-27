@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load ACARS information.
  * @author Luke
- * @version 8.4
+ * @version 8.5
  * @since 1.0
  */
 
@@ -127,44 +127,6 @@ public class GetACARSData extends DAO {
 		}
 	}
 	
-	/**
-	 * Checks if in-flight refueling was used on a Flight.
-	 * @param flightID the ACARS Flight ID
-	 * @return a {@link FuelUse} bean with fuel data
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public FuelUse checkRefuel(int flightID) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT FUEL, FLAGS FROM acars.POSITIONS WHERE (FLIGHT_ID=?) ORDER BY REPORT_TIME");
-			_ps.setInt(1, flightID);
-			
-			// Execute the query
-			FuelUse use = new FuelUse();
-			try (ResultSet rs = _ps.executeQuery()) {
-				 int lastFuel = 0;
-				 while (rs.next()) {
-					 int fuel = rs.getInt(1);
-					 if (lastFuel != 0) {
-						 int fuelDelta = (lastFuel - fuel); 
-						 if (fuelDelta < -FuelUse.MAX_DELTA) {
-							 boolean isAirborne = !ACARSFlags.ONGROUND.has(rs.getInt(2)); 
-							 if (!isAirborne)
-								 use.setRefuel(true);
-						 } else if (fuelDelta > 0)
-							 use.addFuelUse(fuelDelta);
-					 }
-				
-					 lastFuel = fuel;
-				 }
-			}
-			
-			_ps.close();
-			return use;
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-
 	/**
 	 * Returns the filed route for a particular ACARS flight.
 	 * @param flightID the ACARS flight ID
