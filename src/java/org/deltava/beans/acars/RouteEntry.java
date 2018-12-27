@@ -13,11 +13,11 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
- * @version 8.3
+ * @version 8.5
  * @since 1.0
  */
 
-public abstract class RouteEntry extends ACARSMapEntry implements GeospaceLocation, CalendarEntry {
+public abstract class RouteEntry extends ACARSMapEntry implements GeospaceLocation, CalendarEntry, FuelChecker {
 
 	private final Instant _date;
 	private FlightPhase _phase;
@@ -141,6 +141,7 @@ public abstract class RouteEntry extends ACARSMapEntry implements GeospaceLocati
 	 * @return the fuel in pounds
 	 * @see RouteEntry#setFuelRemaining(int)
 	 */
+	@Override
 	public int getFuelRemaining() {
 		return _fuelRemaining;
 	}
@@ -176,6 +177,7 @@ public abstract class RouteEntry extends ACARSMapEntry implements GeospaceLocati
 	 * @see RouteEntry#setFlag(ACARSFlags, boolean)
 	 * @see RouteEntry#setFlags(int)
 	 */
+	@Override
 	public boolean isFlagSet(ACARSFlags flag) {
 		return flag.has(_flags);
 	}

@@ -67,14 +67,14 @@ public class FuelUse {
 	 * @param positions a Collection of RouteEntry beans
 	 * @return a FuelUse bean
 	 */
-	public static FuelUse validate(Collection<? extends RouteEntry> positions) {
+	public static FuelUse validate(Collection<? extends FuelChecker> positions) {
 		FuelUse fu = new FuelUse(); int lastFuel = 0;
-		for (RouteEntry re : positions) {
-			int fuel = re.getFuelRemaining();
+		for (FuelChecker fc : positions) {
+			int fuel = fc.getFuelRemaining();
 			if (lastFuel != 0) {
-				int fuelDelta = (lastFuel - fuel); boolean onGround = re.isFlagSet(ACARSFlags.ONGROUND);
+				int fuelDelta = (lastFuel - fuel); boolean onGround = fc.isFlagSet(ACARSFlags.ONGROUND);
 				if ((fuelDelta < -MAX_DELTA) && !onGround) {
-					fu._msgs.add("Added " + -fuelDelta + " lbs at " + re.getDate() + ", onGround=" + onGround);
+					fu._msgs.add("Added " + -fuelDelta + " lbs at " + fc.getDate() + ", onGround=" + onGround);
 					fu._hasRefuel = true;
 				} else if (fuelDelta > 0)
 					fu.addFuelUse(fuelDelta);
