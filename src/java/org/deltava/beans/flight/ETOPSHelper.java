@@ -1,4 +1,4 @@
-// Copyright 2011, 2012, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2014, 2015, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.GeoUtils;
 /**
  * A utility class to do ETOPS validation.
  * @author Luke
- * @version 7.0
+ * @version 8.5
  * @since 4.1
  */
 
@@ -167,9 +167,7 @@ public final class ETOPSHelper {
 
 			// Get ETOPS classification
 			ETOPS e = ETOPS.getClassification(dist);
-			if (e == null)
-				return null;
-			else if (e.ordinal() > result.ordinal()) {
+			if (e.ordinal() > result.ordinal()) {
 				msgs.add(e.toString() + " - " + airports[0].toString() + " - " + dist + " > " + result.getRange());
 				result = e;
 			}

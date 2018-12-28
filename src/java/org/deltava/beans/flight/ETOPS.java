@@ -1,16 +1,15 @@
-// Copyright 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 /**
  * An enumeration of ETOPS classifications. 
  * @author Luke
- * @version 4.1
+ * @version 8.5
  * @since 4.1
  */
 
 public enum ETOPS {
-	ETOPS60(60), ETOPS75(75), ETOPS90(90), ETOPS120(120), ETOPS138(138), ETOPS180(180), 
-		ETOPS207(207), ETOPS240(240), ETOPS330(330);
+	ETOPS60(60), ETOPS75(75), ETOPS90(90), ETOPS120(120), ETOPS138(138), ETOPS180(180), ETOPS207(207), ETOPS240(240), ETOPS330(330), INVALID(-1);
 	
 	// ETOPS rule speed - 389kts
 	private static final int EO_SPEED = 389;
@@ -50,6 +49,6 @@ public enum ETOPS {
 				return e;
 		}
 		
-		return null;
+		return INVALID;
 	}
 }
