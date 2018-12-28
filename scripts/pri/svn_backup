@@ -3,7 +3,7 @@
 # (c) 2005, 2007, 2008, 2009, 2010, 2012, 2013, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
 
 # Set archiving options
-arc_util="pbzip2 -9 -p4 -c"
+arc_util="pbzip2 -9 -p2 -c"
 
 # Goto backup directory
 cd /home/backup/svn
@@ -139,6 +139,16 @@ if [ "`cat /tmp/svn.revision`" -gt "12000" ] ;then
  fi
 
  echo 12000 > /tmp/svn.revision_base
+fi
+
+# If we have more than 13k revisions, back them up
+if [ "`cat /tmp/svn.revision`" -gt "13000" ] ;then
+ if [ ! -f "/home/backup/svn/svn_120xx.bz2" ] ;then
+  echo 'Backing up revisions 12000-12999'
+  svnadmin dump /home/svn --incremental --revision 12000:12999 | $arc_util > svn_120xx.bz2
+ fi
+
+ echo 13000 > /tmp/svn.revision_base
 fi
 
 # Back up the last revisions
