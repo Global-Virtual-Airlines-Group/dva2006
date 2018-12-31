@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to parse simFDR submitted flight reports.
  * @author Luke
- * @version 8.4
+ * @version 8.5
  * @since 7.0
  */
 
@@ -64,6 +64,7 @@ final class OfflineFlightParser {
 		FlightInfo inf = new FlightInfo(0);
 		inf.setVersion(StringUtils.parse(re.getAttributeValue("version"), 2));
 		inf.setClientBuild(StringUtils.parse(re.getAttributeValue("build"), 1));
+		inf.setIsACARS64Bit(Boolean.valueOf(re.getAttributeValue("is64Bit")).booleanValue());
 		inf.setBeta(StringUtils.parse(re.getAttributeValue("beta"), 0));
 		inf.setAirportD(SystemData.getAirport(ie.getChildTextTrim("airportD")));
 		inf.setAirportA(SystemData.getAirport(ie.getChildTextTrim("airportA")));
