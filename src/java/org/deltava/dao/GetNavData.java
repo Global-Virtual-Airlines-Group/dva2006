@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -14,7 +14,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to read Navigation data.
  * @author Luke
- * @version 8.3
+ * @version 8.5
  * @since 1.0
  */
 
@@ -246,10 +246,10 @@ public class GetNavData extends DAO {
 		Collection<Runway> results = new HashSet<Runway>();
 		try {
 			if (sim != Simulator.UNKNOWN) {
-				prepareStatementWithoutLimits("SELECT R.*, RR.NEWCODE FROM common.RUNWAYS R LEFT JOIN common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND (R.NAME=RR.OLDCODE)) "
-					+ "WHERE (R.ICAO=?) AND (R.SIMVERSION=?)");	
+				Simulator s = (sim.ordinal() < Simulator.FS9.ordinal()) ? Simulator.FS9 : sim;
+				prepareStatementWithoutLimits("SELECT R.*, RR.NEWCODE FROM common.RUNWAYS R LEFT JOIN common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND (R.NAME=RR.OLDCODE)) WHERE (R.ICAO=?) AND (R.SIMVERSION=?)");	
 				_ps.setString(1, a.getICAO());
-				_ps.setInt(2, Math.max(2004, sim.getCode()));
+				_ps.setInt(2, s.getCode());
 				try (ResultSet rs = _ps.executeQuery()) {
 					while (rs.next()) {
 						Runway r = new Runway(rs.getDouble(4), rs.getDouble(5));
