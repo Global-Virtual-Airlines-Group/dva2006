@@ -47,7 +47,7 @@ public class SESFeedbackService extends SNSReceiverService {
 		JSONObject mo = msgo.getJSONObject("mail");
 		try {
 			Connection con = ctx.getConnection();
-			GetPilot pdao = new GetPilot(con);
+			GetPilotDirectory pdao = new GetPilotDirectory(con);
 			SetCoolerMessage cwdao = new SetCoolerMessage(con);
 			SetEMailDelivery dvwdao = new SetEMailDelivery(con);
 			
@@ -57,7 +57,7 @@ public class SESFeedbackService extends SNSReceiverService {
 			if (c == null)
 				throw new DAOException("Unknown notification Channel - " + channelName);
 			
-			Message msg = new Message(ctx.getUser().getID());
+			Message msg = new Message(pdao.getByCode(SystemData.get("users.tasks_by")).getID());
 			msg.setRemoteAddr("127.0.0.1");
 			msg.setRemoteHost("localhost");
 			
