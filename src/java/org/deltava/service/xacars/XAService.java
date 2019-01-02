@@ -1,4 +1,4 @@
-// Copyright 2011, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2015, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.xacars;
 
 import java.sql.Connection;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
  * @since 4.1
  */
 
-public abstract class XAService extends WebService {
+abstract class XAService extends WebService {
 
 	private static final Logger log = Logger.getLogger(XAService.class);
 
@@ -73,7 +73,8 @@ public abstract class XAService extends WebService {
 		String data = ctx.getParameter("DATA1");
 		if ((data == null) || (data.indexOf('_') == -1)) {
 			log.warn("Unknown simulator - " + data);
-			return Simulator.UNKNOWN;
+			log(ctx);
+			return Simulator.XP10;
 		}
 		
 		int pos = data.indexOf('_');
