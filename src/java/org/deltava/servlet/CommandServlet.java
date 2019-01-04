@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.util.*;
@@ -26,7 +26,7 @@ import com.newrelic.api.agent.NewRelic;
 /**
  * The main command controller. This is the application's brain stem.
  * @author Luke
- * @version 8.1
+ * @version 8.5
  * @since 1.0
  */
 
@@ -70,7 +70,7 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 			tlog.info("Started");
 			while (!isInterrupted()) {
 				try {
-					sleep(5000);
+					sleep(10000);
 				} catch (InterruptedException ie) {
 					interrupt();
 					tlog.warn("Interrupted");
@@ -88,10 +88,8 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 						swdao.logCommands(entries);
 						if (tlog.isDebugEnabled())
 							tlog.debug("Wrote command statistics");
-					} catch (DAOException de) {
+					} catch (ConnectionPoolException | DAOException de) {
 						tlog.warn("Error writing command result staitistics - " + de.getMessage());
-					} catch (ConnectionPoolException cpe) {
-						tlog.warn("Error writing command result staitistics - " + cpe.getMessage());
 					} finally {
 						pool.release(c);
 						_cmdLogPool.clear();
@@ -297,7 +295,7 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 			// Log the error
 			String usrName = null;
 			if (req.getUserPrincipal() == null)
-				usrName = "Anonymous (" + req.getRemoteHost() + ")";
+				usrName = (isSpider ? "Spider" : "Anonymous") + " (" + req.getRemoteHost() + ")";
 			else
 				usrName = req.getUserPrincipal().getName();
 
