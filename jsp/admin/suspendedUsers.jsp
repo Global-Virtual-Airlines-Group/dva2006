@@ -49,8 +49,8 @@
  <td class="nophone"><fmt:date fmt="d" date="${pilot.lastFlight}" default="N/A" /></td>
  <td class="nophone"><fmt:int value="${pilot.legs}" /></td>
 <c:if test="${!empty upd}">
-<c:set var="duration" value="${(now.toEpochMilli() - upd.createdOn.toEpochMilli()) / 86400000}" scope="page" />
- <td class="bld"><fmt:date fmt="d" date="${upd.createdOn}" /></td>
+<c:set var="duration" value="${(now.toEpochMilli() - upd.date.toEpochMilli()) / 86400000}" scope="page" />
+ <td class="bld"><fmt:date fmt="d" date="${upd.date}" /></td>
  <td class="pri bld"><fmt:int value="${duration}" /> DAYS</td>
 </c:if>
 <c:if test="${empty upd}">
