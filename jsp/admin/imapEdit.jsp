@@ -61,7 +61,7 @@ golgotha.local.validate = function(f) {
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="IMAPAllowSMTP" idx="*" value="true" checked="${mb.allowSMTP}" label="Allow direct connections from third-party mail clients" /><br />
- <el:box name="IMAPActive" idx="*" value="true" checked="${mb.active}" label="Mailbox is Active" /></td>
+<el:box name="IMAPActive" idx="*" value="true" checked="${mb.active}" label="Mailbox is Active" /></td>
 </tr>
 <%@ include file="/jsp/auditLog.jspf" %>
 </el:table>
@@ -71,7 +71,7 @@ golgotha.local.validate = function(f) {
 <tr>
  <td><el:button ID="SaveButton" type="submit" label="SAVE IMAP MAILBOX" />
 <c:if test="${!empty mb.address}">
- <el:cmdbutton ID="DeleteButton" url="imapdelete" link="${mb}" label="DELETE IMAP MAILBOX" /> 
+&nbsp;<el:cmdbutton ID="DeleteButton" url="imapdelete" link="${mb}" label="DELETE IMAP MAILBOX" /> 
 </c:if></td>
 </tr>
 </el:table>
