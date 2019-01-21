@@ -87,7 +87,7 @@
  <td class="data">
 <c:if test="${!empty rwy}">
 <c:set var="fromEnd" value="${rwy.length - rwy.distance}" scope="page" /> 
-<span class="pri bld">${rwy.name}</span> (${rwy.surface.name} - <fmt:int value="${rwy.length}" /> feet,
+<span class="pri bld">${rwy.currentName}</span> (${rwy.surface.name} - <fmt:int value="${rwy.length}" /> feet,
 <c:choose>
 <c:when test="${fromEnd < 1}"> <span class="bld error"><fmt:int value="${fromEnd * -1}" /> feet past end</span>)</c:when>
 <c:when test="${fromEnd < 1000}"> <span class="bld"><fmt:int value="${fromEnd}" /> feet from end</span>)</c:when>
@@ -137,7 +137,7 @@
  <td class="data">
 <c:if test="${!empty rwy}">
 <c:set var="fromEnd" value="${rwy.length - rwy.distance}" scope="page" />
- <span class="pri bld">${rwy.name}</span> (${rwy.surface.name} - <fmt:int value="${rwy.length}" /> feet,
+ <span class="pri bld">${rwy.currentName}</span> (${rwy.surface.name} - <fmt:int value="${rwy.length}" /> feet,
 <c:choose>
 <c:when test="${fromEnd < 1}"> <span class="bld error"><fmt:int value="${fromEnd * -1}" /> feet past end</span>)</c:when>
 <c:when test="${fromEnd < 2500}"> <span class="pri bld"><fmt:int value="${fromEnd}" /> feet from end</span>)</c:when>

@@ -3,6 +3,7 @@ package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.deltava.beans.*;
 import org.deltava.beans.navdata.*;
@@ -121,8 +122,7 @@ public class GetNavData extends DAO {
 		
 		// Convert the results
 		result = new NavigationDataMap();
-		for (Iterator<NavigationDataBean> i = codeResults.getAll().iterator(); i.hasNext(); ) {
-			NavigationDataBean nd = i.next();
+		for (NavigationDataBean nd : codeResults.getAll()) {
 			GeoLocation loc = GeoUtils.bearingPoint(nd, distance, hdg);
 			NavigationDataBean nd2 = new Intersection(code, loc.getLatitude(), loc.getLongitude());
 			nd2.setRegion(nd.getRegion());
@@ -144,8 +144,7 @@ public class GetNavData extends DAO {
 		
 		// Get all entries with the code
 		NavigationDataMap results = get(code);
-		for (Iterator<NavigationDataBean> i = results.getAll().iterator(); i.hasNext(); ) {
-			NavigationDataBean nd = i.next();
+		for (NavigationDataBean nd : results.getAll()) {
 			if (nd instanceof AirportLocation)
 				return (AirportLocation) nd;
 		}
@@ -185,8 +184,8 @@ public class GetNavData extends DAO {
 			rw = rw.substring(2);
 		
 		try {
-			prepareStatement("SELECT ?, R.ICAO, R.LATITUDE, R.LONGITUDE, N.FREQ, R.LENGTH, R.NAME, R.HDG, N.REGION, NULL AS LL, R.MAGVAR, IFNULL(R.SURFACE, ?), RR.NEWCODE FROM "
-				+ "common.RUNWAYS R LEFT JOIN common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND (R.NAME=RR.OLDCODE)) LEFT JOIN common.NAVDATA N ON ((N.CODE=R.ICAO) "
+			prepareStatement("SELECT ?, R.ICAO, R.LATITUDE, R.LONGITUDE, N.FREQ, R.LENGTH, R.NAME, R.HDG, N.REGION, NULL AS LL, R.MAGVAR, IFNULL(R.SURFACE, ?), RR.NEWCODE, R.SIMVERSION "
+				+ "FROM common.RUNWAYS R LEFT JOIN common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND (R.NAME=RR.OLDCODE)) LEFT JOIN common.NAVDATA N ON ((N.CODE=R.ICAO) "
 				+ "AND (N.NAME=IFNULL(RR.NEWCODE,R.NAME)) AND (N.ITEMTYPE=?)) WHERE (R.ICAO=?) AND (R.NAME=?) AND (R.SIMVERSION=?)");
 			_ps.setInt(1, Navaid.RUNWAY.ordinal());
 			_ps.setInt(2, Surface.UNKNOWN.ordinal());
@@ -211,7 +210,7 @@ public class GetNavData extends DAO {
 	public List<Runway> getRunways(ICAOAirport a, Simulator sim) throws DAOException {
 		Simulator s = (sim == null) ? Simulator.FSX : sim;
 		try {
-			prepareStatement("SELECT ?, R.ICAO, R.LATITUDE, R.LONGITUDE, N.FREQ, R.LENGTH, R.NAME, R.HDG, N.REGION, NULL AS LL, R.MAGVAR, IFNULL(R.SURFACE, ?), RR.NEWCODE FROM "
+			prepareStatement("SELECT ?, R.ICAO, R.LATITUDE, R.LONGITUDE, N.FREQ, R.LENGTH, R.NAME, R.HDG, N.REGION, NULL AS LL, R.MAGVAR, IFNULL(R.SURFACE, ?), RR.NEWCODE, R.SIMVERSION FROM "
 				+ "common.RUNWAYS R LEFT JOIN common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND (R.NAME=RR.OLDCODE)) LEFT JOIN common.NAVDATA N ON "
 				+ "((N.CODE=R.ICAO) AND (N.NAME=IFNULL(RR.NEWCODE,R.NAME)) AND (N.ITEMTYPE=?)) WHERE (R.ICAO=?) AND (R.SIMVERSION=?)");
 			_ps.setInt(1, Navaid.RUNWAY.ordinal());
@@ -220,13 +219,7 @@ public class GetNavData extends DAO {
 			_ps.setString(4, a.getICAO());
 			_ps.setInt(5, s.getCode());
 			List<NavigationDataBean> results = execute();
-			List<Runway> runways = new ArrayList<Runway>();
-			for (NavigationDataBean nd : results) {
-				if (nd instanceof Runway)
-					runways.add((Runway) nd);
-			}
-			
-			return runways;
+			return results.stream().filter(Runway.class::isInstance).map(Runway.class::cast).collect(Collectors.toList());
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -261,6 +254,7 @@ public class GetNavData extends DAO {
 						r.setSurface(Surface.values()[rs.getInt(9)]);
 						// LL
 						r.setNewCode(rs.getString(11));
+						r.setSimulator(s);
 						results.add(r);
 					}
 				}
@@ -411,8 +405,10 @@ public class GetNavData extends DAO {
 						if (cc > 11) {
 							rwy.setMagVar(rs.getDouble(11));
 							rwy.setSurface(Surface.values()[rs.getInt(12)]);
-							if (cc > 12) 
+							if (cc > 12) {
 								rwy.setNewCode(rs.getString(13));
+								rwy.setSimulator(Simulator.fromVersion(rs.getInt(14), Simulator.UNKNOWN));
+							}
 						}
 						
 						obj = rwy;
