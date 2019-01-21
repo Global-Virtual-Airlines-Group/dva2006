@@ -426,7 +426,7 @@ xreq.onreadystatechange = function() {
 
 	// Build the Data
 	var data = new google.visualization.DataTable();
-	data.addColumn('datetime', 'Date/Time');
+	data.addColumn('datetime', 'Date/Time (UTC)');
 	data.addColumn('number', 'Ground Speed');
 	data.addColumn('number', 'Altitude');
 <c:if test="${!isXACARS}">    data.addColumn('number', 'Ground Elevation');</c:if>

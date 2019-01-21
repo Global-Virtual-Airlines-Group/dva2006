@@ -66,7 +66,7 @@ public class FlightStatsService extends WebService {
 			GeoLocation loc = i.next();
 			if (loc instanceof ACARSRouteEntry) {
 				ACARSRouteEntry ae = (ACARSRouteEntry) loc;
-				fwdTime &= ae.getSimUTC().isAfter(lt);
+				fwdTime &= !ae.getSimUTC().isBefore(lt); // equal or after
 				lt = ae.getSimUTC();
 			}
 		}
