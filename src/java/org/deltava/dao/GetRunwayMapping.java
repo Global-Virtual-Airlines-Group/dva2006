@@ -1,4 +1,4 @@
-// Copyright 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,12 +12,12 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to read runway renumbering data. 
  * @author Luke
- * @version 8.3
+ * @version 8.5
  * @since 8.3
  */
 
 public class GetRunwayMapping extends DAO {
-
+	
 	/**
 	 * Initializes the Data Access Object.
 	 * @param c the JDBC connection to use
@@ -34,25 +34,8 @@ public class GetRunwayMapping extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public RunwayMapping get(ICAOAirport a, String oldCode) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT NEWCODE FROM common.RUNWAY_RENUMBER WHERE (ICAO=?) AND (OLDCODE=?) LIMIT 1");
-			_ps.setString(1,  a.getICAO());
-			_ps.setString(2, oldCode);
-			
-			RunwayMapping rm = null;
-			try (ResultSet rs = _ps.executeQuery()) {
-				if (rs.next()) {
-					rm = new RunwayMapping(a.getICAO());
-					rm.setOldCode(oldCode);
-					rm.setNewCode(rs.getString(1));
-				}
-			}
-			
-			_ps.close();
-			return rm;
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
+		Collection<RunwayMapping> maps = getAll(a);
+		return maps.stream().filter(rm -> (rm.getOldCode().equalsIgnoreCase(oldCode))).findAny().orElse(null);
 	}
 
 	/**
@@ -66,7 +49,7 @@ public class GetRunwayMapping extends DAO {
 			prepareStatement("SELECT OLDCODE, NEWCODE FROM common.RUNWAY_RENUMBER WHERE (ICAO=?)");
 			_ps.setString(1,  a.getICAO());
 			
-			Collection<RunwayMapping> results = new TreeSet<RunwayMapping>();
+			Collection<RunwayMapping> results = new ArrayList<RunwayMapping>();
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
 					RunwayMapping rm = new RunwayMapping(a.getICAO());

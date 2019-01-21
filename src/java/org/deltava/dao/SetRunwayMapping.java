@@ -1,4 +1,4 @@
-// Copyright 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,12 +8,12 @@ import org.deltava.beans.navdata.RunwayMapping;
 /**
  * A Data Access Object to update runway mappings in the database. 
  * @author Luke
- * @version 8.3
+ * @version 8.5
  * @since 8.3
  */
 
 public class SetRunwayMapping extends DAO {
-
+	
 	/**
 	 * Initializes the Data Access Object.
 	 * @param c the JDBC connection to use
@@ -38,17 +38,16 @@ public class SetRunwayMapping extends DAO {
 			throw new DAOException(se);
 		}
 	}
-	
+
 	/**
-	 * Removes a runway mapping from the database. 
-	 * @param rm a RunwayMapping
+	 * Clears all Runway mappings for a particular Airport from the database. 
+	 * @param icao the ICAO code
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void delete(RunwayMapping rm) throws DAOException {
+	public void clear(String icao) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("DELETE FROM common.RUNWAY_RENUMBER WHERE (ICAO=?) AND (OLDCODE=?)");
-			_ps.setString(1, rm.getICAO());
-			_ps.setString(2, rm.getOldCode());
+			prepareStatementWithoutLimits("DELETE FROM common.RUNWAY_RENUMBER WHERE (ICAO=?)");
+			_ps.setString(1, icao);
 			executeUpdate(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);

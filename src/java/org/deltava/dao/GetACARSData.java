@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -203,24 +203,27 @@ public class GetACARSData extends DAO {
 			
 			// Fetch the takeoff and landing runways
 			if (info.getHasPIREP()) {
-				prepareStatementWithoutLimits("SELECT R.*, IFNULL(ND.HDG, 0), ND.FREQ, RW.MAGVAR, IFNULL(RW.SURFACE, ?), RR.NEWCODE FROM acars.RWYDATA R LEFT JOIN common.RUNWAYS RW ON "
-					+ "((RW.ICAO=R.ICAO) AND (RW.NAME=R.RUNWAY) AND (RW.SIMVERSION=?)) LEFT JOIN common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND (R.RUNWAY=RR.OLDCODE)) LEFT JOIN "
-					+ "common.NAVDATA ND ON ((R.ICAO=ND.CODE) AND (IFNULL(RR.NEWCODE,R.RUNWAY)=ND.NAME) AND (ND.ITEMTYPE=?)) WHERE (R.ID=?) LIMIT 2");
+				prepareStatementWithoutLimits("SELECT R.*, IFNULL(ND.HDG, 0), ND.FREQ, RW.MAGVAR, IFNULL(RW.SURFACE, ?), IFNULL(RR.OLDCODE, R.RUNWAY) FROM acars.RWYDATA R "
+					+ "LEFT JOIN common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND (R.RUNWAY=RR.NEWCODE)) LEFT JOIN common.RUNWAYS RW ON ((RW.ICAO=R.ICAO) AND "
+					+ "(RW.NAME=IFNULL(RR.OLDCODE, R.RUNWAY)) AND (RW.SIMVERSION=?)) LEFT JOIN common.NAVDATA ND ON ((R.ICAO=ND.CODE) AND (R.RUNWAY=ND.NAME) AND (ND.ITEMTYPE=?)) WHERE (R.ID=?) LIMIT 2");
 				_ps.setInt(1, Surface.UNKNOWN.ordinal());
 				_ps.setInt(2, Math.max(2004, info.getSimulator().getCode()));
 				_ps.setInt(3, Navaid.RUNWAY.ordinal());
 				_ps.setInt(4, flightID);
 				try (ResultSet rs = _ps.executeQuery()) {
 					while (rs.next()) {
+						String simCode = rs.getString(13); String currentCode = rs.getString(3);
 						Runway r = new Runway(rs.getDouble(4), rs.getDouble(5));
 						r.setCode(rs.getString(2));
-						r.setName(rs.getString(3));
+						r.setName(simCode);
 						r.setLength(rs.getInt(6));
 						r.setHeading(rs.getInt(9));
 						r.setFrequency(rs.getString(10));
 						r.setMagVar(rs.getDouble(11));
 						r.setSurface(Surface.values()[rs.getInt(12)]);
-						r.setNewCode(rs.getString(13));
+						r.setSimulator(info.getSimulator());
+						if (!currentCode.equals(simCode))
+							r.setNewCode(currentCode);
 						if (rs.getBoolean(8))
 							info.setRunwayD(new RunwayDistance(r, rs.getInt(7)));
 						else

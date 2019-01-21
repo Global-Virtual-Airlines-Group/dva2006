@@ -1,10 +1,9 @@
-// Copyright 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.Simulator;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.Airport;
 
@@ -19,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display runway mappings.
  * @author Luke
- * @version 8.3
+ * @version 8.5
  * @since 8.3
  */
 
@@ -60,9 +59,9 @@ public class RunwayMappingsCommand extends AbstractViewCommand {
 				Map<String, Runway> rwys = new HashMap<String, Runway>();
 				GetNavData navdao = new GetNavData(con);
 				for (RunwayMapping rm : vctx.getResults()) {
-					Runway r = navdao.getRunway(a, rm.getNewCode(), Simulator.UNKNOWN);
+					Runway r = navdao.getRunway(a, rm.getOldCode(), null);
 					if (r != null)
-						rwys.put(r.getCode(), r);
+						rwys.put(r.getName(), r);
 				}
 				
 				ctx.setAttribute("runways", rwys, REQUEST);

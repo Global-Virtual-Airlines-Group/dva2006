@@ -1,13 +1,14 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2014, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import org.deltava.beans.ComboAlias;
+import org.deltava.beans.Simulator;
 import org.deltava.util.StringUtils;
 
 /**
  * A bean to store Runway information.
  * @author Luke
- * @version 8.0
+ * @version 8.5
  * @since 1.0
  */
 
@@ -16,6 +17,7 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 	private int _length;
 	private int _heading;
 	
+	private Simulator _sim = Simulator.UNKNOWN;
 	private Surface _sfc = Surface.UNKNOWN;
 	private double _magVar;
 	
@@ -28,6 +30,14 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 	 */
 	public Runway(double lat, double lon) {
 		super(Navaid.RUNWAY, lat, lon);
+	}
+	
+	/**
+	 * Returns the runway code, or the new code if updated.
+	 * @return the latest runway code
+	 */
+	public String getCurrentName() {
+		return StringUtils.isEmpty(_newCode) ? super.getName() : _newCode;
 	}
 
 	/**
@@ -69,9 +79,19 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 	/**
 	 * Returns the updated code for this Runway.
 	 * @return the new code, or null if none
+	 * @see Runway#setNewCode(String)
 	 */
 	public String getNewCode() {
 		return _newCode;
+	}
+	
+	/**
+	 * Returns the simulator this runway exists in.
+	 * @return a Simulator
+	 * @see Runway#setSimulator(Simulator)
+	 */
+	public Simulator getSimulator() {
+		return _sim;
 	}
 
 	/**
@@ -105,6 +125,15 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 	 */
 	public void setSurface(Surface s) {
 		_sfc = s;
+	}
+	
+	/**
+	 * Updates the Simulator which this runway exists in.
+	 * @param sim a Simulator, or UNKNOWN for any
+	 * @see Runway#getSimulator()
+	 */
+	public void setSimulator(Simulator sim) {
+		_sim = sim;
 	}
 	
 	/**
@@ -168,6 +197,12 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 	public String getInfoBox() {
 		StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox navdata\">");
 		buf.append(getHTMLTitle());
+		if (_newCode != null) {
+			buf.append("<span class=\"ita\">Renumbered to <span class=\"sec bld\">");
+			buf.append(_newCode);
+			buf.append("</span></span><br />");
+		}
+		
 		buf.append("Heading: ");
 		buf.append(StringUtils.format(_heading, "000"));
 		buf.append("<br />Length: ");
@@ -190,6 +225,12 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 	public String getComboName() {
 		StringBuilder buf = new StringBuilder("Runway ");
 		buf.append(getName());
+		if (_newCode != null) {
+			buf.append(" [now ");
+			buf.append(_newCode);
+			buf.append(']');
+		}
+		
 		buf.append(" (");
 		buf.append(getLength());
 		buf.append(" feet - ");
