@@ -66,7 +66,7 @@ public class FlightStatsService extends WebService {
 			GeoLocation loc = i.next();
 			if (loc instanceof ACARSRouteEntry) {
 				ACARSRouteEntry ae = (ACARSRouteEntry) loc;
-				fwdTime &= !ae.getSimUTC().isBefore(lt); // equal or after
+				fwdTime &= (ae.getSimUTC() != null) && !ae.getSimUTC().isBefore(lt); // equal or after
 				lt = ae.getSimUTC();
 			}
 		}
@@ -101,6 +101,7 @@ public class FlightStatsService extends WebService {
 		maxSpeed = (maxSpeed + 100 - (maxSpeed % 100));
 		jo.put("maxAlt", maxAlt);
 		jo.put("maxSpeed", maxSpeed);
+		jo.put("isSimTime", fwdTime);
 		JSONUtils.ensureArrayPresent(jo, "data");
 		
 		// Dump to the output stream
