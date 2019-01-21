@@ -422,6 +422,7 @@ xreq.onreadystatechange = function() {
 	}
 
 	var statsData = JSON.parse(xreq.responseText);
+	if (statsData.isSimTime) console.log('Using simulator date/time');
 	statsData.data.forEach(function(e) { e[0] = new Date(e[0]); });
 
 	// Build the Data
