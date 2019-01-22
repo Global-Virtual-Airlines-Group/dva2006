@@ -217,7 +217,7 @@ a serious virtual airline, designed for both the experienced pilot and the novic
 <c:forEach var="pilot" items="${latestPilots}">
 <tr>
  <td class="priB mid">${pilot.pilotCode}</td>
- <td class="def mid">${pilot.rank.name} ${pilot.name} (${pilot.equipmentType})</td>
+ <td class="def mid">${pilot.rank.name}&nbsp;${pilot.name} (${pilot.equipmentType})</td>
 </tr>
 </c:forEach>
 </el:table>
