@@ -1,8 +1,7 @@
-// Copyright 2008, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2012, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
-import java.util.*;
 
 import org.jdom2.*;
 import org.jdom2.input.*;
@@ -15,19 +14,22 @@ import org.deltava.beans.stats.GeocodeResult;
 import org.deltava.dao.DAOException;
 
 import org.deltava.util.StringUtils;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to do reverse geocoding using the Google HTTP API. The GeoLocation
- * URL is http://maps.google.com/maps/geo?q=(lat),(long)&sensor=false&key=(key)
+ * URL is https://maps.google.com/maps/geo?q=(lat),(long)&sensor=false&key=(key)
  * @author Luke
- * @version 4.2
+ * @version 8.6
  * @since 2.3
  */
 
 public class GetGoogleGeocode extends DAO {
 	
 	private InputStream getStream(GeoLocation loc) throws IOException {
-		StringBuilder buf = new StringBuilder("http://maps.googleapis.com/maps/api/geocode/xml?sensor=false&oe=utf-8&address=");
+		StringBuilder buf = new StringBuilder("https://maps.googleapis.com/maps/api/geocode/xml?sensor=false&oe=utf-8&key=");
+		buf.append(SystemData.get("security.key.google"));
+		buf.append("&address=");
 		buf.append(loc.getLatitude());
 		buf.append(',');
 		buf.append(loc.getLongitude());
@@ -63,10 +65,7 @@ public class GetGoogleGeocode extends DAO {
 		
 		GeocodeResult result = new GeocodeResult();
 		result.setAddress(addr);
-		for (Iterator<Element> i = rse.getDescendants(new ElementFilter("address_component")); i.hasNext(); ) {
-			Element ace = i.next();
-			
-			// Get the details
+		for (Element ace : rse.getDescendants(new ElementFilter("address_component"))) {
 			String type = ace.getChildTextTrim("type");
 			if (type == null)
 				continue;
