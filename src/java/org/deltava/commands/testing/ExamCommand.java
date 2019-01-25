@@ -64,11 +64,7 @@ public class ExamCommand extends AbstractCommand {
 			// Load the route plotting question numbers and Terminal Route choices
 			GetNavRoute navdao = new GetNavRoute(con);
 			Collection<Integer> rpQuestions = new TreeSet<Integer>();
-			for (Iterator<Question> i = ex.getQuestions().iterator(); i.hasNext();) {
-				Question q = i.next();
-				if (q instanceof RoutePlot)
-					rpQuestions.add(Integer.valueOf(q.getNumber()));
-			}
+			ex.getQuestions().stream().filter(RoutePlot.class::isInstance).map(Question::getNumber).forEach(rpQuestions::add);
 
 			// Display answers only if we have the necessary role
 			int activeExamID = dao.getActiveExam(ctx.getUser().getID());

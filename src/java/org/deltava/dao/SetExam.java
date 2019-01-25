@@ -70,11 +70,12 @@ public class SetExam extends DAO {
 		executeUpdate(1);
 		
 		// Write question text
-		prepareStatementWithoutLimits("INSERT INTO exams.EXAMQANSWERS (EXAM_ID, QUESTION_NO, QUESTION, CORRECT_ANSWER) VALUES (?, ?, ?, ?)");
+		prepareStatementWithoutLimits("INSERT INTO exams.EXAMQANSWERS (EXAM_ID, QUESTION_NO, QUESTION, REFERENCE, CORRECT_ANSWER) VALUES (?, ?, ?, ?, ?)");
 		_ps.setInt(1, id);
 		_ps.setInt(2, q.getNumber());
 		_ps.setString(3, q.getQuestion());
-		_ps.setString(4, q.getCorrectAnswer());
+		_ps.setString(4, q.getReference());
+		_ps.setString(5, q.getCorrectAnswer());
 		executeUpdate(1);
 		
 		// Write child tables

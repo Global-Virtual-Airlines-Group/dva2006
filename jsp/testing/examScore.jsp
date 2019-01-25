@@ -58,8 +58,7 @@ golgotha.local.validate = function(f) {
 <c:if test="${lateH > 0}"><fmt:int value="${lateH}" /> hours, </c:if>
 <c:if test="${lateM > 0}"><fmt:int value="${lateM}" /> minutes, </c:if>
 <c:if test="${lateS > 0}"><fmt:int value="${lateS}" /> seconds</c:if> late</span>
-</c:if>
- </td>
+</c:if></td>
 </tr>
 </c:if>
 
@@ -73,10 +72,15 @@ golgotha.local.validate = function(f) {
  <td class="label top" rowspan="${hasImage ? 3 : 2}">Question #<fmt:int value="${q.number}" /></td>
  <td class="data ${mcCSS}">${q.question}</td>
 </tr>
+<c:if test="${!empty q.reference}">
+<tr>
+ <td class="label">Reference</td>
+ <td class="data ita">${q.reference}</td>
+</tr>
+</c:if>
 <c:if test="${hasImage}">
 <tr>
- <td class="data small">RESOURCE - <span class="pri bld">${q.typeName}</span> image, <fmt:int value="${q.size}" />
- bytes <span class="sec">(<fmt:int value="${q.width}" /> x <fmt:int value="${q.height}" /> pixels)</span>
+ <td class="data small">RESOURCE - <span class="pri bld">${q.typeName}</span> image, <fmt:int value="${q.size}" /> bytes <span class="sec">(<fmt:int value="${q.width}" /> x <fmt:int value="${q.height}" /> pixels)</span>
  <el:link className="pri bld" url="javascript:void golgotha.exam.viewImage('${q.hexID}', ${q.width}, ${q.height})">VIEW IMAGE</el:link></td>
 </tr>
 </c:if>

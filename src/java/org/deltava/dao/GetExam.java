@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Acces Object for loading Examination/Check Ride data.
  * @author Luke
- * @version 8.5
+ * @version 8.6
  * @since 1.0
  */
 
@@ -46,24 +46,24 @@ public class GetExam extends DAO {
 
 			// Load the questions for this examination
 			Examination e = results.get(0);
-			prepareStatementWithoutLimits("SELECT EQ.QUESTION_ID, EQ.QUESTION_NO, EQA.QUESTION, EQA.CORRECT_ANSWER, EQA.ANSWER, EQ.CORRECT, COUNT(MQ.SEQ), QI.TYPE, QI.SIZE, QI.X, QI.Y, RQ.AIRPORT_D, RQ.AIRPORT_A "
-				+ "FROM exams.EXAMQANSWERS EQA, exams.EXAMQUESTIONS EQ LEFT JOIN exams.EXAMQUESTIONSM MQ ON (EQ.EXAM_ID=MQ.EXAM_ID) AND (EQ.QUESTION_ID=MQ.QUESTION_ID) LEFT JOIN exams.QUESTIONIMGS "
-				+ "QI ON (EQ.QUESTION_ID=QI.ID) LEFT JOIN exams.EXAMQUESTIONSRP RQ ON (EQ.EXAM_ID=RQ.EXAM_ID) AND (EQ.QUESTION_ID=RQ.QUESTION_ID) WHERE (EQ.EXAM_ID=EQA.EXAM_ID) AND (EQ.EXAM_ID=?) "
-				+ "AND (EQ.QUESTION_NO=EQA.QUESTION_NO) GROUP BY EQ.QUESTION_ID, EQ.QUESTION_NO ORDER BY EQ.QUESTION_NO");
+			prepareStatementWithoutLimits("SELECT EQ.QUESTION_ID, EQ.QUESTION_NO, EQA.QUESTION, EQA.CORRECT_ANSWER, EQA.REFERENCE, EQA.ANSWER, EQ.CORRECT, COUNT(MQ.SEQ), QI.TYPE, QI.SIZE, QI.X, QI.Y, RQ.AIRPORT_D, "
+				+ "RQ.AIRPORT_A FROM exams.EXAMQANSWERS EQA, exams.EXAMQUESTIONS EQ LEFT JOIN exams.EXAMQUESTIONSM MQ ON (EQ.EXAM_ID=MQ.EXAM_ID) AND (EQ.QUESTION_ID=MQ.QUESTION_ID) LEFT JOIN exams.QUESTIONIMGS "
+				+ "QI ON (EQ.QUESTION_ID=QI.ID) LEFT JOIN exams.EXAMQUESTIONSRP RQ ON (EQ.EXAM_ID=RQ.EXAM_ID) AND (EQ.QUESTION_ID=RQ.QUESTION_ID) WHERE (EQ.EXAM_ID=EQA.EXAM_ID) AND (EQ.EXAM_ID=?) AND "
+				+ "(EQ.QUESTION_NO=EQA.QUESTION_NO) GROUP BY EQ.QUESTION_ID, EQ.QUESTION_NO ORDER BY EQ.QUESTION_NO");
 			_ps.setInt(1, id);
 
 			// Execute the query
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
-					boolean isMC = (rs.getInt(7) > 0);
-					boolean isRP = (rs.getString(13) != null);
+					boolean isMC = (rs.getInt(8) > 0);
+					boolean isRP = (rs.getString(14) != null);
 
 					// Create the question
 					Question q = null;
 					if (isRP) {
 						RoutePlotQuestion rpq = new RoutePlotQuestion(rs.getString(3));
-						rpq.setAirportD(SystemData.getAirport(rs.getString(12)));
-						rpq.setAirportA(SystemData.getAirport(rs.getString(13)));
+						rpq.setAirportD(SystemData.getAirport(rs.getString(13)));
+						rpq.setAirportA(SystemData.getAirport(rs.getString(14)));
 						q = rpq;
 					} else if (isMC)
 						q = new MultiChoiceQuestion(rs.getString(3));
@@ -74,13 +74,14 @@ public class GetExam extends DAO {
 					q.setID(rs.getInt(1));
 					q.setNumber(rs.getInt(2));
 					q.setCorrectAnswer(rs.getString(4));
-					q.setAnswer(rs.getString(5));
-					q.setCorrect(rs.getBoolean(6));
-					if (rs.getInt(9) > 0) {
-						q.setType(rs.getInt(8));
-						q.setSize(rs.getInt(9));
-						q.setWidth(rs.getInt(10));
-						q.setHeight(rs.getInt(11));
+					q.setReference(rs.getString(5));
+					q.setAnswer(rs.getString(6));
+					q.setCorrect(rs.getBoolean(7));
+					if (rs.getInt(10) > 0) {
+						q.setType(rs.getInt(9));
+						q.setSize(rs.getInt(10));
+						q.setWidth(rs.getInt(11));
+						q.setHeight(rs.getInt(12));
 					}
 
 					e.addQuestion(q);
