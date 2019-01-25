@@ -1,8 +1,7 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
-import java.util.Iterator;
 
 import org.deltava.beans.testing.*;
 import org.deltava.beans.system.AirlineInformation;
@@ -10,7 +9,7 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * A Data Access Object to write Examination Question profiles to the database. 
  * @author Luke
- * @version 8.0
+ * @version 8.6
  * @since 3.6
  */
 
@@ -36,20 +35,21 @@ public class SetExamQuestion extends DAO {
 			
 			// Prepare different statements for INSERT and UPDATE operations
 			if (qp.getID() == 0) {
-				prepareStatementWithoutLimits("INSERT INTO exams.QUESTIONINFO (QUESTION, CORRECT, ACTIVE, AIRLINE) VALUES (?, ?, ?, ?)");
-				_ps.setString(4, qp.getOwner().getCode());
+				prepareStatementWithoutLimits("INSERT INTO exams.QUESTIONINFO (QUESTION, CORRECT, REFERENCE, ACTIVE, AIRLINE) VALUES (?, ?, ?, ?, ?)");
+				_ps.setString(5, qp.getOwner().getCode());
 			} else {
 				prepareStatementWithoutLimits("DELETE FROM exams.QUESTIONAIRLINES WHERE (ID=?)");
 				_ps.setInt(1, qp.getID());
 				executeUpdate(0);
-				prepareStatement("UPDATE exams.QUESTIONINFO SET QUESTION=?, CORRECT=?, ACTIVE=? WHERE (ID=?)");
-				_ps.setInt(4, qp.getID());
+				prepareStatementWithoutLimits("UPDATE exams.QUESTIONINFO SET QUESTION=?, CORRECT=?, REFERENCE=?, ACTIVE=? WHERE (ID=?)");
+				_ps.setInt(5, qp.getID());
 			}
 
 			// Set prepared statement and write the question
 			_ps.setString(1, qp.getQuestion());
 			_ps.setString(2, qp.getCorrectAnswer());
-			_ps.setBoolean(3, qp.getActive());
+			_ps.setString(3, qp.getReference());
+			_ps.setBoolean(4, qp.getActive());
 			executeUpdate(1);
 
 			// If this is a new question profile, get the ID back from the database and write stats, otherwise clear the exam names
@@ -74,8 +74,8 @@ public class SetExamQuestion extends DAO {
 			// Write the exam names
 			prepareStatementWithoutLimits("INSERT INTO exams.QE_INFO (QUESTION_ID, EXAM_NAME) VALUES (?, ?)");
 			_ps.setInt(1, qp.getID());
-			for (Iterator<String> i = qp.getExams().iterator(); i.hasNext();) {
-				_ps.setString(2, i.next());
+			for (String examName : qp.getExams()) {
+				_ps.setString(2, examName);
 				_ps.addBatch();
 			}
 
@@ -143,8 +143,8 @@ public class SetExamQuestion extends DAO {
 			// Write the exam names
 			prepareStatementWithoutLimits("INSERT INTO exams.QE_INFO (QUESTION_ID, EXAM_NAME) VALUES (?, ?)");
 			_ps.setInt(1, qp.getID());
-			for (Iterator<String> i = qp.getExams().iterator(); i.hasNext();) {
-				_ps.setString(2, i.next());
+			for (String examName : qp.getExams()) {
+				_ps.setString(2, examName);
 				_ps.addBatch();
 			}
 

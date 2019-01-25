@@ -40,14 +40,19 @@
 <c:if test="${fn:isMultiChoice(question)}">
 <tr>
  <td class="label top">Answer Choices</td>
- <td class="data"><c:forEach var="choice" items="${question.choices}">${choice}<br />
-</c:forEach></td>
+ <td class="data"><c:forEach var="choice" items="${question.choices}">${choice}<br /></c:forEach></td>
 </tr>
 </c:if>
 <tr>
  <td class="label">Correct Answer</td>
  <td class="data bld">${question.correctAnswer}</td>
 </tr>
+<c:if test="${!empty question.reference}">
+<tr>
+ <td class="label">Reference</td>
+ <td class="data ita">${question.reference}</td>
+</tr>
+</c:if>
 <tr>
  <td class="label top">Pilot Examinations</td>
  <td class="data small"><fmt:list value="${question.exams}" delim=", " /></td>
