@@ -63,12 +63,17 @@
 </tr>
 <c:if test="${hasImage}">
 <tr>
- <td class="data small">RESOURCE - <span class="pri bld">${q.typeName}</span> image, <fmt:int value="${q.size}" />
- bytes <span class="sec">(<fmt:int value="${q.width}" /> x <fmt:int value="${q.height}" /> pixels)</span>
+ <td class="data small">RESOURCE - <span class="pri bld">${q.typeName}</span> image, <fmt:int value="${q.size}" /> bytes <span class="sec">(<fmt:int value="${q.width}" /> x <fmt:int value="${q.height}" /> pixels)</span>
  <el:link className="pri bld" url="javascript:void golgotha.exam.viewImage('${q.hexID}', ${q.width}, ${q.height})">VIEW IMAGE</el:link></td>
 </tr>
 </c:if>
 <c:if test="${showAnswers}">
+<c:if test="${!empty q.reference}">
+<tr>
+ <td class="label">Reference</td>
+ <td class="data ita">${q.reference}</td>
+</tr>
+</c:if>
 <tr>
  <td class="data"><span class="sec small">${q.correctAnswer}</span>
  <c:if test="${!empty qProfile}"> - <fmt:int value="${qProfile.correctAnswers}" /> / <fmt:int value="${qProfile.totalAnswers}" />
@@ -125,7 +130,7 @@
 </content:region>
 </content:page>
 <c:if test="${exam.routePlot}">
-<script id="mapInit" defer>
+<script id="mapInit" async>
 golgotha.exam.maps = [];
 <c:forEach var="q" items="${exam.questions}"><c:if test="${fn:isRoutePlot(q)}">
 <c:set var="answerRoute" value="${aRoutes[q.number]}" scope="page" />

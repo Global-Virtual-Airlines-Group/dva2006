@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2012, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import org.deltava.beans.ImageBean;
@@ -6,7 +6,7 @@ import org.deltava.beans.ImageBean;
 /**
  * A class to store examination question information.
  * @author Luke
- * @version 8.0
+ * @version 8.6
  * @since 1.0
  */
 
@@ -19,6 +19,8 @@ public class Question extends ImageBean {
     
     private String _correctAnswer;
     private String _userAnswer;
+    private String _reference;
+    
     private int _number;
     private boolean _correct;
     
@@ -51,12 +53,21 @@ public class Question extends ImageBean {
     }
     
     /**
-     * Returns the User's answer to the Question
+     * Returns the User's answer to the Question.
      * @return the answer
      * @see Question#setAnswer(String)
      */
     public String getAnswer() {
         return _userAnswer;
+    }
+    
+    /**
+     * Returns an optional reference to the correct answer.
+     * @return a citation
+     * @see Question#setReference(String)
+     */
+    public String getReference() {
+    	return _reference;
     }
     
     /**
@@ -101,6 +112,15 @@ public class Question extends ImageBean {
      */
     public void setAnswer(String answer) {
         _userAnswer = answer;
+    }
+    
+    /**
+     * Sets the reference to the correct answer to this Question.
+     * @param ref a citation
+     * @see Question#getReference()
+     */
+    public void setReference(String ref) {
+    	_reference = ref;
     }
     
     /**

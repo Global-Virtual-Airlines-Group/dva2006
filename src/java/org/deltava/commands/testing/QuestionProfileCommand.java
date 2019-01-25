@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to support the modification of Examination Question Profiles.
  * @author Luke
- * @version 8.1
+ * @version 8.6
  * @since 1.0
  */
 
@@ -105,6 +105,7 @@ public class QuestionProfileCommand extends AbstractAuditFormCommand {
 			Collection<String> myExamNames = new HashSet<String>(ctx.getParameters("examNames", Collections.emptySet())); 
 			qp.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
 			qp.setAirlines(ctx.getParameters("airlines", Collections.emptySet()).stream().map(ac -> SystemData.getApp(ac)).filter(Objects::nonNull).collect(Collectors.toSet()));
+			qp.setReference(ctx.getParameter("reference"));
 			
 			// Check if we are in any exams for airlines not included
 			GetExamProfiles epdao = new GetExamProfiles(con); final QuestionProfile fqp = qp; 

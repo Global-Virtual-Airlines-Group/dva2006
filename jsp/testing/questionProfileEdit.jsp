@@ -100,6 +100,10 @@ return true;
 </tr>
 </c:if>
 <tr>
+ <td class="label top">Reference</td>
+ <td class="data"><el:textbox name="reference" idx="*" width="80%" height="2">${question.reference}</el:textbox></td>
+</tr>
+<tr>
  <td class="label">Owner Airline</td>
  <td class="data"><el:combo name="owner" idx="*" size="1" className="req" firstEntry="-" options="${airlines}" value="${question.owner}" /></td>
 </tr>
