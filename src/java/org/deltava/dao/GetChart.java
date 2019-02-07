@@ -1,4 +1,4 @@
-//Copyright 2005, 2006, 2007, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+//Copyright 2005, 2006, 2007, 2011, 2012, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object for Approach Charts.
  * @author Luke
- * @version 7.0
+ * @version 8.6
  * @since 1.0
  */
 
@@ -31,8 +31,7 @@ public class GetChart extends DAO {
 	 */
 	public List<Airport> getAirports() throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT DISTINCT C.ICAO FROM common.CHARTS C, common.AIRPORTS A "
-					+ "WHERE (C.ICAO=A.ICAO) ORDER BY A.NAME");
+			prepareStatementWithoutLimits("SELECT DISTINCT C.ICAO FROM common.CHARTS C, common.AIRPORTS A WHERE (C.ICAO=A.ICAO) ORDER BY A.NAME");
 			List<Airport> results = new ArrayList<Airport>();
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
@@ -50,23 +49,24 @@ public class GetChart extends DAO {
 	}
 
 	/**
-	 * Returns the average age of external charts for a particular Airport.
-	 * @param a the Airport
-	 * @return the maximum age in days, or -1 if not found
+	 * Returns the average age of charts.
+	 * @return a Map of maximum ages in days, keyed by Airport
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public int getMaxAge(Airport a) throws DAOException {
+	public Map<Airport, Integer> getMaxAges() throws DAOException {
 		try {
-			prepareStatement("SELECT IFNULL(MAX(TIMESTAMPDIFF(DAY, LASTMODIFIED, NOW())), -1) FROM common.CHARTS WHERE (ICAO=?)");
-			_ps.setString(1, a.getICAO());
-			int result = -1;
+			prepareStatement("SELECT ICAO, IFNULL(MAX(TIMESTAMPDIFF(DAY, LASTMODIFIED, NOW())), -1) AS AGE FROM common.CHARTS GROUP BY ICAO");
+			Map<Airport, Integer> results = new LinkedHashMap<Airport, Integer>();
 			try (ResultSet rs = _ps.executeQuery()) {
-				if (rs.next())
-					result = rs.getInt(1);
+				while (rs.next()) {
+					Airport a = SystemData.getAirport(rs.getString(1));
+					if (a != null)
+						results.put(a,  Integer.valueOf(rs.getInt(2)));
+				}
 			}
 
 			_ps.close();
-			return result;
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -81,8 +81,7 @@ public class GetChart extends DAO {
 	 */
 	public List<Chart> getCharts(Airport a) throws DAOException {
 		try {
-			prepareStatement("SELECT C.*, CU.SOURCE, CU.URL, CU.EXTERNAL_ID FROM common.CHARTS C LEFT JOIN "
-				+ "common.CHARTURLS CU ON (C.ID=CU.ID) WHERE (C.ICAO=?) ORDER BY C.NAME");
+			prepareStatement("SELECT C.*, CU.SOURCE, CU.URL, CU.EXTERNAL_ID FROM common.CHARTS C LEFT JOIN common.CHARTURLS CU ON (C.ID=CU.ID) WHERE (C.ICAO=?) ORDER BY C.NAME");
 			_ps.setString(1, a.getICAO());
 			return execute();
 		} catch (SQLException se) {

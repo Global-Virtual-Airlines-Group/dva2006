@@ -55,25 +55,6 @@ public class TestAirCharts extends TestCase {
 		super.tearDown();
 	}
 	
-	public void testCountryList() throws DAOException {
-		
-		GetAirCharts acdao = new GetAirCharts();
-		Collection<Country> countries = acdao.getCountries();
-		assertNotNull(countries);
-		log.info("Loaded " + countries.size() + " countries");
-		assertTrue(countries.contains(Country.get("US")));
-		assertTrue(countries.contains(Country.get("IL")));
-	}
-	
-	public void testAirportList() throws DAOException {
-		
-		GetAirCharts acdao = new GetAirCharts();
-		Collection<Airport> airports = acdao.getAirports(Country.get("IL"));
-		assertNotNull(airports);
-		log.info("Loaded " + airports.size() + " airports");
-		assertTrue(airports.contains(_tlv));
-	}
-	
 	public void testChartList() throws DAOException {
 		
 		GetAirCharts acdao = new GetAirCharts();
