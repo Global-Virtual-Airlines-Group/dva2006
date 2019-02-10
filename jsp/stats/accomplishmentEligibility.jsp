@@ -40,7 +40,7 @@
 <c:set var="msg" value="${accs[acc]}" scope="page" />
 <view:row entry="${msg}">
  <td class="bld"><fmt:accomplish accomplish="${acc}" /></td>
- <td class="sec nophone"><fmt:int value="${acc.value}" /> ${acc.unit.name}</td>
+ <td class="sec nophone"><fmt:int value="${acc.value}" />&nbsp;${acc.unit.name}</td>
 <c:choose>
 <c:when test="${msg.achieved}">
  <td class="pri bld left">${pilotName} achieved this Accomplishment on <fmt:date fmt="d" date="${acc.date}" />.</td>
@@ -50,8 +50,8 @@
 <fmt:list value="${acc.choices}" delim=", " /> required to achieve this Accomplishment.</td>
 </c:when>
 <c:when test="${!empty msg.missing}">
- <td class="left">${pilotName} achieved <fmt:int value="${msg.progress}" /> of the <fmt:int value="${acc.value}" /> ${acc.unit.name} required to
- achieve this Accomplishment. The following ${acc.unit.name} are still required for this Accomplishment: 
+ <td class="left">${pilotName} achieved <fmt:int value="${msg.progress}" /> of the <fmt:int value="${acc.value}" />&nbsp;${acc.unit.name} required to achieve this Accomplishment.<br/>
+The following ${acc.unit.name} are still required for this Accomplishment: 
 <c:forEach var="item" items="${msg.missing}" varStatus="missingStatus"><c:choose>
 <c:when test="${msg.missingClass.simpleName == 'State'}">${item.name}<c:if test="${!missingStatus.last}">, </c:if></c:when>
 <c:when test="${msg.missingClass.simpleName == 'Airport'}">${item.name} (<fmt:airport airport="${item}" />)<c:if test="${!missingStatus.last}">, </c:if></c:when>
@@ -61,7 +61,7 @@
 </c:choose></c:forEach>.</td> 
 </c:when>
 <c:otherwise>
- <td class="left">${pilotName} achieved <fmt:int value="${msg.progress}" /> of the <fmt:int value="${acc.value}" /> ${acc.unit.name} required to achieve this Accomplishment.</td>
+ <td class="left">${pilotName} achieved <fmt:int value="${msg.progress}" /> of the <fmt:int value="${acc.value}" />&nbsp;${acc.unit.name} required to achieve this Accomplishment.</td>
 </c:otherwise>
 </c:choose>
 </view:row>
