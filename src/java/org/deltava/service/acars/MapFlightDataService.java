@@ -38,8 +38,9 @@ public class MapFlightDataService extends WebService {
    public int execute(ServiceContext ctx) throws ServiceException {
       
 		// Get the DAO and the route data
-		int id = StringUtils.parse(ctx.getParameter("id"), 0); FlightInfo info = null;
-		Collection<? extends GeospaceLocation> routePoints = null;
+		int id = StringUtils.parse(ctx.getParameter("id"), 0); boolean loadAirspace = Boolean.valueOf(ctx.getParameter("showAirspace")).booleanValue();
+		Collection<? extends GeospaceLocation> routePoints = null; FlightInfo info = null;
+		Collection<Airspace> airspaces = new LinkedHashSet<Airspace>();
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -52,6 +53,28 @@ public class MapFlightDataService extends WebService {
 				routePoints = dao.getXACARSEntries(id);
 			else
 				routePoints = dao.getRouteEntries(id, false, info.getArchived());
+				
+			// Check airspace
+			GetAirspace asdao = new GetAirspace(con);
+			for (GeospaceLocation rt : routePoints) {
+				ACARSRouteEntry re = (rt instanceof ACARSRouteEntry) ? (ACARSRouteEntry) rt : null;
+				if (re != null)
+					re.setAutopilotType(info.getAutopilotType());
+				
+				Airspace a = Airspace.isRestricted(rt);
+				if (a != null)
+					airspaces.add(a);
+				if (rt.getAltitude() > 18000) {
+					if (re != null)
+						re.setAirspace((a == null) ? AirspaceType.fromAltitude(re.getRadarAltitude(), re.getAltitude()) : a.getType());
+				} else if (loadAirspace) {
+					List<Airspace> aSpaces = asdao.find(rt);
+					airspaces.addAll(aSpaces);
+					airspaces.addAll(Airspace.findRestricted(rt, 10));
+					if (re != null)
+						re.setAirspace(aSpaces.isEmpty() ? AirspaceType.fromAltitude(re.getRadarAltitude(), re.getAltitude()) : aSpaces.get(0).getType());
+				}
+			}
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		} finally {
@@ -59,7 +82,7 @@ public class MapFlightDataService extends WebService {
 		}
 		
 		// Check airspace
-		Collection<Airspace> airspaces = new LinkedHashSet<Airspace>(); GeospaceLocation lastLoc = null;
+		GeospaceLocation lastLoc = null;
 		for (GeospaceLocation rt : routePoints) {
 			ACARSRouteEntry re = (rt instanceof ACARSRouteEntry) ? (ACARSRouteEntry) rt : null;
 			if (re != null)
