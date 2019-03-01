@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -22,7 +22,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display ACARS Flight Report data.
  * @author Luke
- * @version 8.3
+ * @version 8.6
  * @since 1.0
  */
 
@@ -38,47 +38,45 @@ public class MapFlightDataService extends WebService {
    public int execute(ServiceContext ctx) throws ServiceException {
       
 		// Get the DAO and the route data
-		int id = StringUtils.parse(ctx.getParameter("id"), 0);
+		int id = StringUtils.parse(ctx.getParameter("id"), 0); FlightInfo info = null;
 		Collection<? extends GeospaceLocation> routePoints = null;
-		Collection<Airspace> airspaces = new LinkedHashSet<Airspace>();
 		try {
 			Connection con = ctx.getConnection();
 			
 			// Load flight data
 			GetACARSPositions dao = new GetACARSPositions(con);
-			FlightInfo info = dao.getInfo(id);
+			info = dao.getInfo(id);
 			if (info == null)
 				throw error(SC_NOT_FOUND, "Invalid ACARS Flight ID", false);
 			if ((info.getFDR() == Recorder.XACARS) && !info.getArchived())
 				routePoints = dao.getXACARSEntries(id);
 			else
 				routePoints = dao.getRouteEntries(id, false, info.getArchived());
-				
-			// Check airspace
-			GetAirspace asdao = new GetAirspace(con);
-			for (GeospaceLocation rt : routePoints) {
-				ACARSRouteEntry re = (rt instanceof ACARSRouteEntry) ? (ACARSRouteEntry) rt : null;
-				if (re != null)
-					re.setAutopilotType(info.getAutopilotType());
-				
-				Airspace a = Airspace.isRestricted(rt);
-				if (a != null)
-					airspaces.add(a);
-				if (rt.getAltitude() > 18000) {
-					if (re != null)
-						re.setAirspace((a == null) ? AirspaceType.fromAltitude(re.getRadarAltitude(), re.getAltitude()) : a.getType());
-				} else {
-					List<Airspace> aSpaces = asdao.find(rt);
-					airspaces.addAll(aSpaces);
-					airspaces.addAll(Airspace.findRestricted(rt, 10));
-					if (re != null)
-						re.setAirspace(aSpaces.isEmpty() ? AirspaceType.fromAltitude(re.getRadarAltitude(), re.getAltitude()) : aSpaces.get(0).getType());
-				}
-			}
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		} finally {
 			ctx.release();
+		}
+		
+		// Check airspace
+		Collection<Airspace> airspaces = new LinkedHashSet<Airspace>(); GeospaceLocation lastLoc = null;
+		for (GeospaceLocation rt : routePoints) {
+			ACARSRouteEntry re = (rt instanceof ACARSRouteEntry) ? (ACARSRouteEntry) rt : null;
+			if (re != null)
+				re.setAutopilotType(info.getAutopilotType());
+			
+			Airspace a = Airspace.isRestricted(rt);
+			if (a != null)
+				airspaces.add(a);
+			if ((rt.getAltitude() > 18000) && (re != null))
+				re.setAirspace((a == null) ? AirspaceType.fromAltitude(re.getRadarAltitude(), re.getAltitude()) : a.getType());
+			else if (GeoUtils.distanceFeet(rt, lastLoc) > 52800) {
+				airspaces.addAll(Airspace.findRestricted(rt, 10));
+				if (re != null)
+					re.setAirspace((a == null) ? AirspaceType.fromAltitude(re.getRadarAltitude(), re.getAltitude()) : a.getType());
+			}
+			
+			lastLoc = rt;
 		}
 		
 		// Write the positions - Gracefully handle geopositions - don't append a color and let the JS handle this
