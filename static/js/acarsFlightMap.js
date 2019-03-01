@@ -1,6 +1,6 @@
 golgotha.maps.acarsFlight = golgotha.maps.acarsFlight || {selectedFIRs:[], routePoints:[], routeMarkers:[], airspace:[], asPolygons:[]}; 
 golgotha.maps.acarsFlight.airspaceColors = {'P':{c:'#ee1010',tx:0.4,z:10}, 'R':{c:'#adad10',tx:0.2,z:5}, 'B':{c:'#10e0e0',tx:0.1,z:0}, 'C':{c:'#ffa018', tx:0.125,z:1}, 'D':{c:'#608040', tx:0.175,z:2}};
-golgotha.maps.acarsFlight.getACARSData = function(pirepID, doToggle)
+golgotha.maps.acarsFlight.getACARSData = function(pirepID, doToggle, showAirspace)
 {
 // Disable checkboxes
 var f = document.forms[0];
@@ -8,7 +8,7 @@ f.showFDR.disabled = true; f.showRoute.disabled = true; f.showAirspace.disabled 
 
 // Build the XML Requester
 var xmlreq = new XMLHttpRequest();
-xmlreq.open('GET', 'acars_pirep.ws?id=' + pirepID, true);
+xmlreq.open('get', 'acars_pirep.ws?id=' + pirepID + '&showAirspace=' + showAirspace, true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	var js = JSON.parse(xmlreq.responseText);
@@ -88,7 +88,7 @@ golgotha.maps.acarsFlight.toggleAirspace = function(show) {
 golgotha.maps.acarsFlight.showFIR = function(code)
 {
 var xmlreq = new XMLHttpRequest();
-xmlreq.open('GET', 'fir.ws?id=' + code, true);
+xmlreq.open('get', 'fir.ws?id=' + code, true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	var js = JSON.parse(xmlreq.responseText);

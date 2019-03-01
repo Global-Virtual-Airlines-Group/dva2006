@@ -382,7 +382,7 @@ google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
 <map:line var="golgotha.maps.acarsFlight.gRoute" src="golgotha.maps.acarsFlight.routePoints" color="#4080af" width="3" transparency="0.75" geodesic="true" />
 </c:if>
 <c:if test="${empty mapRoute && isACARS}">
-golgotha.maps.acarsFlight.getACARSData(${fn:ACARS_ID(pirep)}, ${access.canApprove});
+golgotha.maps.acarsFlight.getACARSData(${fn:ACARS_ID(pirep)}, ${access.canApprove}, ${!empty user});
 </c:if>
 <c:if test="${!empty filedRoute}">
 <map:points var="golgotha.maps.acarsFlight.filedPoints" items="${filedRoute}" />
