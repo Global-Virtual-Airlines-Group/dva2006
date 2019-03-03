@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2010, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2010, 2012, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to edit Online Events.
  * @author Luke
- * @version 7.0
+ * @version 8.6
  * @since 1.0
  */
 
@@ -66,6 +66,7 @@ public class EventEditCommand extends AbstractCommand {
 			
 			// Save the access controller
 			ctx.setAttribute("access", access, REQUEST);
+			ctx.setAttribute("myAirline", Collections.singleton(e.getOwner()), REQUEST);
 			
 			// Redirect to the JSP
 			result.setURL("/jsp/event/eventEdit.jsp");
@@ -95,26 +96,15 @@ public class EventEditCommand extends AbstractCommand {
 			// Get all of the charts for this event
 			GetChart cdao = new GetChart(con);
 			Map<Airport, Collection<Chart>> charts = new TreeMap<Airport, Collection<Chart>>();
-			for (Iterator<Airport> i = e.getAirports().iterator(); i.hasNext(); ) {
-				Airport a = i.next();
+			for (Airport a: e.getAirports()) {
 				List<Chart> aCharts = cdao.getCharts(a);
-				if (aCharts.isEmpty())
-					continue;
+				if (aCharts.isEmpty()) continue;
 				
 				// Remove SID charts from destinations, and STAR charts from origins
-				if (!e.isDestination(a)) {
-					for (Iterator<Chart> ci = aCharts.iterator(); ci.hasNext(); ) {
-						Chart ch = ci.next();
-						if (ch.getType() == Chart.Type.STAR)
-							ci.remove();
-					}
-				} else if (!e.isOrigin(a)) {
-					for (Iterator<Chart> ci = aCharts.iterator(); ci.hasNext(); ) {
-						Chart ch = ci.next();
-						if (ch.getType() == Chart.Type.SID)
-							ci.remove();
-					}
-				}
+				if (!e.isDestination(a))
+					aCharts.removeIf(ch -> ch.getType() == Chart.Type.STAR);
+				else if (!e.isOrigin(a))
+					aCharts.removeIf(ch -> ch.getType() == Chart.Type.SID);
 				
 				charts.put(a, aCharts);
 			}
