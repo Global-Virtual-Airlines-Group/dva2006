@@ -10,7 +10,8 @@
 <c:set var="author" value="${auditAuthors[logEntry.authorID]}" scope="page" />
 <tr class="auditLogEntry" style="display:none;">
  <td class="mid"><fmt:date date="${logEntry.date}" t="HH:mm" /></td>
- <td class="small">Modified by <span class="pri bld">${author.name}</span> (<span class="bld">${author.pilotCode}</span>)<span class="nophone"> from ${logEntry.remoteHost} (${logEntry.remoteAddr}<c:if test="${!empty ipInfo}"> <el:flag countryCode="${ipInfo.country.code}" caption="${ipInfo.location}" /> ${ipInfo.location}</c:if>)</span><br />
+ <td class="small">Modified by <span class="pri bld">${author.name}</span> (<span class="bld">${author.pilotCode}</span>)<span class="nophone"> from ${logEntry.remoteHost} (${logEntry.remoteAddr}
+<c:if test="${!empty ipInfo}">&nbsp;<el:flag countryCode="${ipInfo.country.code}" caption="${ipInfo.location}" />&nbsp;${ipInfo.location}</c:if>)</span><br />
 <fmt:text value="${logEntry.description}"></fmt:text></td>
 </tr>
 </c:forEach>
