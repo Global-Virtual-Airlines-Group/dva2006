@@ -26,7 +26,7 @@
 <content:region id="main">
 <div class="updateHdr"><content:airline /> Pilot Profile Updated</div>
 <br />
-The Pilot Profile for ${pilot.rank.name} ${pilot.name} has been successfully updated.<br />
+The Pilot Profile for ${pilot.rank.name}&nbsp;${pilot.name} has been successfully updated.<br />
 <br />
 <content:hasmsg>
 <div class="error bld"><content:sysmsg /></div><br />
