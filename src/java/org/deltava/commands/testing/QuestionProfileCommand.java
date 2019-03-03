@@ -110,7 +110,7 @@ public class QuestionProfileCommand extends AbstractAuditFormCommand {
 			// Check if we are in any exams for airlines not included
 			GetExamProfiles epdao = new GetExamProfiles(con); final QuestionProfile fqp = qp; 
 			Collection<ExamProfile> qExams = epdao.getAllExamProfiles().stream().filter(exp -> fqp.getExams().contains(exp.getName())).collect(Collectors.toSet());
-			myExamNames.addAll(qExams.stream().filter(ep -> fqp.getAirlines().contains(ep.getOwner())).map(ExamProfile::getName).collect(Collectors.toSet())); // load exams from other airlines
+			myExamNames.addAll(qExams.stream().filter(ep -> (!fqp.getOwner().equals(ep.getOwner()) && fqp.getAirlines().contains(ep.getOwner()))).map(ExamProfile::getName).collect(Collectors.toSet())); // load exams from other airlines
 			qp.setExams(myExamNames);
 			
 			// Check audit log
