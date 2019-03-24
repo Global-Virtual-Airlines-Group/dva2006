@@ -1,4 +1,4 @@
-// Copyright 2011, 2012, 2013, 2015, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2013, 2015, 2016, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to load ACARS build data. 
  * @author Luke
- * @version 8.4
+ * @version 8.6
  * @since 4.1
  */
 
@@ -129,9 +129,9 @@ public class GetACARSBuilds extends DAO {
 	 */
 	public boolean isValid(ClientInfo inf, AccessRole role) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT COUNT(*) FROM acars.VERSION_INFO WHERE (NAME=?) AND (VER=?) AND (DATA<=?)");
+			prepareStatementWithoutLimits("SELECT COUNT(*) FROM acars.VERSION_INFO WHERE (NAME=?) AND (VER=?) AND (DATA<?)");
 			_ps.setInt(2, inf.getVersion());
-			_ps.setInt(3, inf.getClientBuild());
+			_ps.setInt(3, inf.getClientBuild() + 1);
 			if (role == AccessRole.CONNECT) {
 				switch (inf.getClientType()) {
 					case DISPATCH: 
