@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2011, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.security.SecurityContext;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * An Access Controller for Water Cooler channels.
  * @author Luke
- * @version 7.0
+ * @version 8.6
  * @since 1.0
  */
 
@@ -60,13 +60,15 @@ public class CoolerChannelAccessControl extends AccessControl {
         _canAccess = true;
         if (_c != null) {
         	_canAccess = RoleUtils.hasAccess(_ctx.getRoles(), _c.getReadRoles()) || RoleUtils.hasAccess(_ctx.getRoles(), _c.getWriteRoles());
-        	if (!_ctx.isAuthenticated())
+        	if (!_ctx.isAuthenticated()) {
+        		_canAccess &= _c.getAirlines().contains(SystemData.get("airline.code")); 
         		return;
+        	}
         	
         	// Get the pilot code; if none use the default
         	UserID id = new UserID(usr.getPilotCode());
         	String airlineCode = StringUtils.isEmpty(usr.getPilotCode()) ? SystemData.get("airline.code") : id.getAirlineCode();
-        	_canAccess &= (_c.getAirlines().contains(airlineCode.toUpperCase()));
+        	_canAccess &= _c.getAirlines().contains(airlineCode.toUpperCase());
         }
         
         // Check if we're locked out
