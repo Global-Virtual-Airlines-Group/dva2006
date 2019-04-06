@@ -125,7 +125,7 @@ ${k} = ${stateData[k]}<br /></c:forEach></td>
 </tr>
 <tr>
  <td class="label">Locale / Time Zone</td>
- <td class="data">${acarsClientInfo.locale} <span class="ita">Time Zone: ${acarsClientInfo.timeZone}</span></td>
+ <td class="data">${acarsClientInfo.locale}&nbsp;<span class="ita">Time Zone: ${acarsClientInfo.timeZone}</span></td>
 </tr>
 <tr>
  <td class="label">CPU Information</td>
