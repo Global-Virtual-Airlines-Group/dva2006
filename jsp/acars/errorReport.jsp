@@ -15,6 +15,22 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
+<script>
+golgotha.local.loadLog = function(id)
+{
+var xmlreq = new XMLHttpRequest();
+xmlreq.open('get', '/error_log/' + id, true);
+xmlreq.onreadystatechange = function() {
+	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
+	var td = document.getElementById('logData');
+	td.innerText = xmlreq.responseText;
+	return true;
+};
+	
+xmlreq.send(null);
+return true;
+};
+</script>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -52,17 +68,23 @@
  <td class="label">Simulator</td>
  <td class="data bld">${err.simulator.name}</td>
 </tr>
-<c:if test="${!empty err.FSUIPCVersion}">
+<c:if test="${!empty err.pluginVersion}">
 <tr>
- <td class="label">FSUIPC Version</td>
- <td class="data">${err.FSUIPCVersion}</td>
+ <td class="label">Simulator Plugin</td>
+ <td class="data">${err.pluginVersion}</td>
+</tr>
+</c:if>
+<c:if test="${!empty err.bridgeVersion}">
+<tr>
+ <td class="label">Simulator Bridge</td>
+ <td class="data">${err.bridgeVersion}</td>
 </tr>
 </c:if>
 <tr>
  <td class="label">Reported from</td>
  <td class="data">${err.remoteAddr} (${err.remoteHost})<c:if test="${!empty ipInfo}">&nbsp;<el:flag countryCode="${ipInfo.country.code}" caption="${ipInfo.location}" />&nbsp;${ipInfo.location}</c:if></td>
 </tr>
-<c:if test="${!empty err.stackDump}">
+<c:if test="${!empty err.stackDump && !err.isInfo}">
 <tr>
  <td class="label top">Error Information</td>
  <td class="data"><fmt:text value="${err.stackDump}" /></td>
@@ -75,12 +97,20 @@
 ${k} = ${stateData[k]}<br /></c:forEach></td>
 </tr>
 </c:if>
-<c:if test="${err.isLoaded()}">
+<c:choose>
+<c:when test="${err.isLoaded() && !err.isInfo}">
 <tr>
  <td class="label">Application Log</td>
  <td class="data"><span class="pri bld">acars_error${err.ID}.log</span> (<fmt:int value="${err.size / 1024}" />K) <a href="/error_log/${err.hexID}">Click to download</a></td>
 </tr>
-</c:if>
+</c:when>
+<c:when test="${err.isLoaded()}">
+<tr>
+ <td class="label top">Application Log</td>
+ <td id="logData" class="data small"><a href="javascript:golgotha.local.loadLog('${err.hexID}')">SHOW LOG DATA</a></td>
+</tr>
+</c:when>
+</c:choose>
 <c:if test="${!empty acarsClientInfo}">
 <tr class="title caps">
  <td colspan="2">SYSTEM INFORMATION AS OF <fmt:date fmt="d" date="${acarsClientInfo.date}"  /></td>

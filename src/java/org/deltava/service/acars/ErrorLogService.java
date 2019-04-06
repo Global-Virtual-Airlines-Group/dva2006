@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2012, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.io.*;
@@ -20,7 +20,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to log ACARS client errors.
  * @author Luke
- * @version 7.3
+ * @version 8.6
  * @since 1.0
  */
 
@@ -48,7 +48,8 @@ public class ErrorLogService extends WebService {
 		err.setClientBuild(StringUtils.parse(ctx.getParameter("clientBuild"), 1));
 		err.setBeta(StringUtils.parse(ctx.getParameter("beta"), 0));
 		err.setSimulator(Simulator.fromName(ctx.getParameter("fsVersion"), Simulator.UNKNOWN));
-		err.setFSUIPCVersion(ctx.getParameter("fsuipcVersion"));
+		err.setPluginVersion(ctx.getParameter("fsuipcVersion"));
+		err.setBridgeVersion(ctx.getParameter("bridgeVersion"));
 		err.setRemoteAddr(ctx.getRequest().getRemoteAddr());
 		err.setRemoteHost(ctx.getRequest().getRemoteHost());
 		err.setOSVersion(ctx.getParameter("os"));
@@ -57,6 +58,7 @@ public class ErrorLogService extends WebService {
 		err.setLocale(ctx.getParameter("locale"));
 		err.setTimeZone(ctx.getParameter("tz"));
 		err.setStateData(ctx.getParameter("stateData"));
+		err.setIsInfo(Boolean.valueOf(ctx.getParameter("isInfo")).booleanValue() || err.getMessage().startsWith("ACARS Client Log"));
 		err.setClientType(ClientType.PILOT);
 		if (err.getClientBuild() < 75) {
 			err.setClientType(ClientType.DISPATCH);

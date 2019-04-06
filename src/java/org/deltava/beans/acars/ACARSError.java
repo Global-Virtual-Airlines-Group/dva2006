@@ -1,4 +1,4 @@
-// Copyright 2006, 2009, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2012, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.time.Instant;
@@ -6,13 +6,13 @@ import java.time.Instant;
 import org.deltava.beans.*;
 
 /**
- * A bean to store ACARS error dumps.
+ * A bean to store ACARS client error logs.
  * @author Luke
- * @version 7.3
+ * @version 8.6
  * @since 1.0
  */
 
-public class ACARSError extends DatabaseBlobBean implements ClientVersion, AuthoredBean {
+public class ACARSError extends DatabaseBlobBean implements ClientVersion, AuthoredBean, ViewEntry {
 	
 	private int _userID;
 	private Instant _createdOn;
@@ -23,7 +23,8 @@ public class ACARSError extends DatabaseBlobBean implements ClientVersion, Autho
 	private int _beta;
 	
 	private Simulator _sim;
-	private String _fsuipcVersion;
+	private String _pluginVersion;
+	private String _bridgeVersion;
 	
 	private ClientType _type;
 	
@@ -37,6 +38,8 @@ public class ACARSError extends DatabaseBlobBean implements ClientVersion, Autho
 	private String _clrVersion;
 	private String _locale;
 	private String _tz;
+	
+	private boolean _isInfo;
 	
 	/**
 	 * Creates a new error data bean.
@@ -148,6 +151,14 @@ public class ACARSError extends DatabaseBlobBean implements ClientVersion, Autho
 	}
 	
 	/**
+	 * Returns whether this is an informational submission only.
+	 * @return TRUE if informational, otherwise FALSE
+	 */
+	public boolean getIsInfo() {
+		return _isInfo;
+	}
+	
+	/**
 	 * Returns the ACARS client type.
 	 * @return the ClienTtype
 	 * @see ACARSError#setClientType(ClientType)
@@ -177,12 +188,21 @@ public class ACARSError extends DatabaseBlobBean implements ClientVersion, Autho
 	}
 	
 	/**
-	 * Returns the version of FSUIPC used by the client.
-	 * @return the FSUIPC version
-	 * @see ACARSError#setFSUIPCVersion(String)
+	 * Returns the version of simulator plugin used by the client.
+	 * @return the version
+	 * @see ACARSError#setPluginVersion(String)
 	 */
-	public String getFSUIPCVersion() {
-		return _fsuipcVersion;
+	public String getPluginVersion() {
+		return _pluginVersion;
+	}
+	
+	/**
+	 * Returns the version of simulator bridge used by the client.
+	 * @return the version
+	 * @see ACARSError#setBridgeVersion(String)
+	 */
+	public String getBridgeVersion() {
+		return _bridgeVersion;
 	}
 	
 	/**
@@ -224,6 +244,14 @@ public class ACARSError extends DatabaseBlobBean implements ClientVersion, Autho
 	public void setAuthorID(int id) {
 		validateID(_userID, id);
 		_userID = id;
+	}
+	
+	/**
+	 * Updates whether this is an informational log message.
+	 * @param isInfo TRUE if informational, otherwise FALSE
+	 */
+	public void setIsInfo(boolean isInfo) {
+		_isInfo = isInfo;
 	}
 	
 	/**
@@ -281,12 +309,21 @@ public class ACARSError extends DatabaseBlobBean implements ClientVersion, Autho
 	}
 	
 	/**
-	 * Updates the version of FSUIPC used by the client.
-	 * @param ver the FSUIPC version
-	 * @see ACARSError#getFSUIPCVersion()
+	 * Updates the version of simulator plugin used by the client.
+	 * @param ver the plugin version
+	 * @see ACARSError#getPluginVersion()
 	 */
-	public void setFSUIPCVersion(String ver) {
-		_fsuipcVersion = ver;
+	public void setPluginVersion(String ver) {
+		_pluginVersion = ver;
+	}
+	
+	/**
+	 * Updates the version of the Brdige used by the client.
+	 * @param ver the Bridge version
+	 * @see ACARSError#getBridgeVersion()
+	 */
+	public void setBridgeVersion(String ver) {
+		_bridgeVersion = ver;
 	}
 	
 	/**
@@ -377,5 +414,10 @@ public class ACARSError extends DatabaseBlobBean implements ClientVersion, Autho
 	 */
 	public void setStateData(String data) {
 		_stateData = data;
+	}
+
+	@Override
+	public String getRowClassName() {
+		return _isInfo ? "opt2" : null;
 	}
 }
