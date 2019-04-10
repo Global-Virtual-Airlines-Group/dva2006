@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.io.*;
@@ -33,7 +33,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Flight Report status changes.
  * @author Luke
- * @version 8.4
+ * @version 8.6
  * @since 1.0
  */
 
@@ -110,6 +110,13 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			Collection<String> comments = new LinkedHashSet<String>();
 			if (ctx.getParameter("dComments") != null)
 				comments.add(ctx.getParameter("dComments"));
+			
+			// Update Online Network
+			OnlineNetwork newNetwork = OnlineNetwork.fromName(ctx.getParameter("network"));
+			if ((newNetwork != fr.getNetwork()) ) {
+				comments.add("Updated online network from " + fr.getNetwork() + " to " + newNetwork);
+				fr.setNetwork(newNetwork);
+			}
 
 			// Get the Pilot object
 			GetPilot pdao = new GetPilot(con);
@@ -206,20 +213,6 @@ public class PIREPDisposalCommand extends AbstractCommand {
 							}
 						}
 					}
-				}
-
-				// Figure out what network the flight was flown on and ensure we have an ID
-				OnlineNetwork net = null;
-				try {
-					net = OnlineNetwork.valueOf(ctx.getParameter("network").toUpperCase());
-					if (!p.hasNetworkID(net))
-						throw new IllegalStateException("No " + net + " ID for " + p.getName());
-				} catch (Exception e) {
-					net = null;
-					if (!StringUtils.isEmpty(e.getMessage()))
-						log.warn(e.getMessage());
-				} finally {
-					fr.setNetwork(net);
 				}
 			}
 
