@@ -7,7 +7,7 @@
 <content:sysdata var="forumName" name="airline.forum" />
 <html lang="en">
 <head>
-<title>New <content:airline /> ${forumName} Disucssion Thread</title>
+<title>New <content:airline /> ${forumName}&nbsp;Disucssion Thread</title>
 <content:css name="main" />
 <content:css name="form" />
 <content:pics />
