@@ -349,6 +349,11 @@ Applicant profile for ${pilot.name}.</td>
 <c:set var="statusCollapse" value="${fn:sizeof(statusUpdates) >= 15}" scope="page" />
 </content:authUser>
 <%@ include file="/jsp/pilot/pilotStatusUpdate.jspf" %>
+<content:authUser>
+<c:set var="showDeliveryToggle" value="true" scope="page" />
+<c:set var="deliveryCollapse" value="${fn:sizeof(emailDelivery) >= 15}" scope="page" />
+</content:authUser>
+<%@ include file="/jsp/pilot/pilotEMailDelivery.jspf" %>
 </el:table>
 
 <!-- Button Bar -->
