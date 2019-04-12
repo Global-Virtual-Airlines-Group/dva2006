@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -33,7 +33,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to handle editing/saving Pilot Profiles.
  * @author Luke
- * @version 8.2
+ * @version 8.6
  * @since 1.0
  */
 
@@ -893,6 +893,12 @@ public class ProfileCommand extends AbstractFormCommand {
 				GetTS2Data ts2dao = new GetTS2Data(con);
 				ctx.setAttribute("ts2Servers", CollectionUtils.createMap(ts2dao.getServers(p.getRoles()), Server::getID), REQUEST);
 				ctx.setAttribute("ts2Clients", ts2dao.getUsers(p.getID()), REQUEST);
+			}
+			
+			// Get email delivery data
+			if (ctx.isUserInRole("Developer") || ctx.isUserInRole("Operations") || ctx.isUserInRole("HR")) {
+				GetEMailDelivery eddao = new GetEMailDelivery(con);
+				ctx.setAttribute("emailDelivery", eddao.getByPilot(p.getID()), REQUEST);
 			}
 			
 			// Load if signature validated
