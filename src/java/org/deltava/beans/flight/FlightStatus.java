@@ -1,4 +1,4 @@
-// Copyright 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import org.deltava.beans.ViewEntry;
@@ -6,23 +6,27 @@ import org.deltava.beans.ViewEntry;
 /**
  * An enumeration to store Flight Report states. 
  * @author Luke
- * @version 8.4
+ * @version 8.6
  * @since 8.1
  */
 
 public enum FlightStatus implements ViewEntry {
-	DRAFT("opt2", ""), SUBMITTED("opt1", ""), HOLD("warn", "hold"), OK(null, "approve"), REJECTED("err", "reject");
+	DRAFT("opt2", "", false), SUBMITTED("opt1", "", false), HOLD("warn", "hold", false), OK(null, "approve", true), REJECTED("err", "reject", true);
 
 	private final String _viewClass;
 	private final String _verb;
+	private final boolean _isComplete;
 	
 	/**
 	 * Creates the enumeration value.
 	 * @param viewClass the row CSS class name
+	 * @param verb the verb name
+	 * @param isComplete TRUE if a final status, otherwise FALSE
 	 */
-	FlightStatus(String viewClass, String verb) {
+	FlightStatus(String viewClass, String verb, boolean isComplete) {
 		_viewClass = viewClass;
 		_verb = verb;
+		_isComplete = isComplete;
 	}
 	
 	/**
@@ -39,6 +43,14 @@ public enum FlightStatus implements ViewEntry {
 	 */
 	public String getVerb() {
 		return _verb;
+	}
+	
+	/**
+	 * Returns whether this is a final state for a Flight Report.
+	 * @return TRUE if final, otherwise FALSE
+	 */
+	public boolean getIsComplete() {
+		return _isComplete;
 	}
 
 	@Override
