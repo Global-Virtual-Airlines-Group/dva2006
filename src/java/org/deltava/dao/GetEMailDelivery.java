@@ -1,4 +1,4 @@
-// Copyright 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.beans.system.EMailDelivery;
 /**
  * A Data Access Object to load e-mail delivery reports from the database.
  * @author Luke
- * @version 8.5
+ * @version 8.6
  * @since 8.5
  */
 
@@ -33,7 +33,7 @@ public class GetEMailDelivery extends DAO {
 	 */
 	public List<EMailDelivery> getByPilot(int pilotID) throws DAOException {
 		try {
-			prepareStatement("SELECT ID, MSG_ID, SEND_TIME, RCPT_TIME, EMAIL, PROCESS_TIME, NOTIFY_TYPE, INET6_NTOA(REMOTE_ADDR), REMOTE_HOST, RESPONSE FROM EMAIL_DELIVERY WHERE (ID=?) ORDER BY SEND_TIME");
+			prepareStatement("SELECT ID, MSG_ID, SEND_TIME, RCPT_TIME, EMAIL, PROCESS_TIME, NOTIFY_TYPE, INET6_NTOA(REMOTE_ADDR), REMOTE_HOST, RESPONSE FROM EMAIL_DELIVERY WHERE (ID=?) ORDER BY SEND_TIME DESC");
 			_ps.setInt(1, pilotID);
 			return execute();
 		} catch (SQLException se) {
