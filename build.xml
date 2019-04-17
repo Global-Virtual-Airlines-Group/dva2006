@@ -122,7 +122,7 @@
 		
 		<!-- Compile the code -->
 		<mkdir dir="${java.io.tmpdir}/build/classes" />
-		<javac srcdir="src/java" destdir="${java.io.tmpdir}/build/classes" debug="true" includeantruntime="false" debuglevel="lines,vars,source" source="1.10" target="1.10" compiler="modern" fork="true">
+		<javac srcdir="src/java" destdir="${java.io.tmpdir}/build/classes" debug="true" includeantruntime="false" debuglevel="lines,vars,source" source="12" target="12" compiler="modern" fork="true">
 			<compilerarg value="-Xlint:unchecked,deprecation,finally" />
 	    	<classpath id="javac.classpath">
 				<pathelement path="${classpath}" />
@@ -182,13 +182,13 @@
 		<!-- Precompile the files -->
 		<mkdir dir="${java.io.tmpdir}/src/jsp" />
 		<copy file="WEB-INF/web_core.xml" tofile="${basedir}/WEB-INF/web.xml" />
-	    <jasper2 package="org.deltava" uriroot="${basedir}" verbose="0" poolingEnabled="true" xpoweredBy="false" validateXml="false" compilerTargetVM="1.10" compilerSourceVM="1.10" threadCount="1.0C"
+	    <jasper2 package="org.deltava" uriroot="${basedir}" verbose="0" poolingEnabled="true" xpoweredBy="false" validateXml="false" compilerTargetVM="1.12" compilerSourceVM="1.12" threadCount="1.0C"
 	    	webXmlFragment="${jspc.webXMLInc}" trimSpaces="FALSE" outputDir="${java.io.tmpdir}/src/jsp" />
 		<delete file="${basedir}/WEB-INF/web.xml" />
 
 		<!-- Compile the files -->
 		<mkdir dir="${java.io.tmpdir}/build/jsp" />
-		<javac srcdir="${java.io.tmpdir}/src/jsp" destdir="${java.io.tmpdir}/build/jsp" compiler="modern" debug="on" debuglevel="source" target="1.10" source="1.10" includeantruntime="false" fork="true">
+		<javac srcdir="${java.io.tmpdir}/src/jsp" destdir="${java.io.tmpdir}/build/jsp" compiler="modern" debug="on" debuglevel="source" target="12" source="12" includeantruntime="false" fork="true">
 			<compilerarg value="-Xlint:deprecation,finally" />
 			<classpath refid="jspc.classpath" />
 			<include name="org/deltava/jsp/**/*.java" />
