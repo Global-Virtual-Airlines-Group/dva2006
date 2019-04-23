@@ -1,4 +1,4 @@
-// Copyright 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.aws;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to handle Amazone SES feedback SNS messages.
  * @author Luke
- * @version 8.5
+ * @version 8.6
  * @since 8.5
  */
 
@@ -83,6 +83,7 @@ public class SESFeedbackService extends SNSReceiverService {
 						EMailDelivery dv = new EMailDelivery(DeliveryType.BOUNCE, p.getID(), Instant.now());
 						dv.setSendTime(Instant.from(DateTimeFormatter.ISO_DATE_TIME.parse(bo.getString("timestamp"))));
 						dv.setEmail(ro.getString("emailAddress"));
+						dv.setResponse(ro.optString("diagnosticCode"));
 						
 						buf.append(p.getName());
 						buf.append(" (").append(p.getPilotCode()).append(") - ");
