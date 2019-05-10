@@ -1,9 +1,10 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2013, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.sql.Connection;
 import java.time.Instant;
 
+import org.deltava.beans.Inclusion;
 import org.deltava.beans.schedule.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -12,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to browse the Flight Schedule.
  * @author Luke
- * @version 7.0
+ * @version 8.6
  * @since 1.0
  */
 
@@ -37,7 +38,7 @@ public class ScheduleBrowseCommand extends AbstractViewCommand {
 		criteria.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
 		criteria.setSortBy("AIRPORT_D, AIRPORT_A");
 		criteria.setDBName(SystemData.get("airline.db"));
-		criteria.setIncludeAcademy(ctx.isUserInRole("Instructor") || ctx.isUserInRole("Schedule") || ctx.isUserInRole("HR") || ctx.isUserInRole("AcademyAudit") || ctx.isUserInRole("AcademyAdmin"));
+		criteria.setIncludeAcademy(ctx.isUserInRole("Instructor") || ctx.isUserInRole("Schedule") || ctx.isUserInRole("HR") || ctx.isUserInRole("AcademyAudit") || ctx.isUserInRole("AcademyAdmin") ? Inclusion.ALL : Inclusion.EXCLUDE);
 
 		// Save the search criteria
 		ctx.setAttribute("airportD", aD, REQUEST);
