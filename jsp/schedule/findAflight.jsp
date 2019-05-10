@@ -65,6 +65,7 @@ var f = document.forms[0];
 var cfg = golgotha.airportLoad.config.clone();
 cfg.airline = golgotha.form.getCombo(cb);
 golgotha.airportLoad.changeAirline([f.airportD], cfg);
+golgotha.util.show('historicOpts', !golgotha.form.comboSet(f.airline));
 window.setTimeout(function() {
 	var cfg2 = cfg.clone();
     cfg2.dst = true;
@@ -120,6 +121,7 @@ golgotha.onDOMReady(function() {
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:sysdata var="acarsEnabled" name="acars.enabled" />
+<content:enum var="inclusionOpts" className="org.deltava.beans.Inclusion" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -171,10 +173,12 @@ golgotha.onDOMReady(function() {
 <tr>
  <td class="label top">Search Options</td>
  <td class="data top"><el:box name="myEQTypes" value="true" checked="${param.myEQTypes}" label="My rated Equipment Types" onChange="golgotha.airportLoad.config.myRated = this.checked" /><br />
-<el:box name="showUTCTimes" value="true" checked="${param.showUTCTimes}" label="Show Departure/Arrival Times as UTC" /></td>
+<el:box name="showUTCTimes" value="true" checked="${param.showUTCTimes}" label="Show Departure/Arrival Times as UTC" />
+<span id="historicOpts"><br />
+Historic Flights - <el:combo name="historicOnly" options="${inclusionOpts}" value="${param.historicOnly}" size="1" idx="*" /></span></td>
  <td class="label top">ACARS Dispatch</td>
  <td class="data top"><el:box name="checkDispatch" idx="*" value="true" checked="${empty fafCriteria ? true : fafCriteria.checkDispatch}" label="Display Dispatch route count" /><br />
- <el:box name="dispatchOnly" idx="*" value="true" checked="${fafCriteria.dispatchOnly}" label="Flights with Dispatch routes only" /></td>
+Dispatch Flights - <el:combo name="dispatchOnly" options="${inclusionOpts}" value="${fafCriteria.dispatchOnly}" size="1" idx="*" /></td>
 </tr>
 <tr class="title mid">
  <td colspan="4"><el:button type="submit" label="SEARCH FLIGHT SCHEDULE" /></td>

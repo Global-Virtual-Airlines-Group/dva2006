@@ -1,9 +1,10 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 
+import org.deltava.beans.Inclusion;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.comparators.ScheduleEntryComparator;
@@ -14,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to search the Flight Schedule.
  * @author Luke
- * @version 8.3
+ * @version 8.6
  * @since 1.0
  */
 
@@ -135,15 +136,15 @@ public class GetScheduleSearch extends GetSchedule {
 		}
 		
 		// Check whether to include Flight Academy flights
-		if (!criteria.getIncludeAcademy()) {
+		if (criteria.getIncludeAcademy() != Inclusion.ALL) {
 			conditions.add("S.ACADEMY=?");
-			params.add("0");
+			params.add((criteria.getIncludeAcademy() == Inclusion.INCLUDE) ? "1" : "0");
 		}
 		
 		// Check whether to exclude historic flights
-		if (criteria.getExcludeHistoric()) {
+		if (criteria.getExcludeHistoric() != Inclusion.ALL) {
 			conditions.add("S.HISTORIC=?");
-			params.add("0");
+			params.add((criteria.getExcludeHistoric() == Inclusion.INCLUDE) ? "1" : "0");
 		}
 		
 		// Check to include unvisited airports only
@@ -208,13 +209,13 @@ public class GetScheduleSearch extends GetSchedule {
 	}
 
 	private List<ScheduleEntry> searchRoutes(ScheduleSearchCriteria ssc) throws DAOException {
-		if (ssc.getDispatchOnly())
+		if (ssc.getDispatchOnly() == Inclusion.INCLUDE)
 			ssc.setCheckDispatchRoutes(true);
 		
 		// Load all of the flights that match the criteria
 		SearchParams spm = build(ssc);
 		Collection<String> havingParams = new ArrayList<String>();
-		if (ssc.getDispatchOnly())
+		if (ssc.getDispatchOnly() == Inclusion.INCLUDE)
 			havingParams.add(" (RCNT>0)");
 		if (ssc.getRouteLegs() > -1)
 			havingParams.add(" (FCNT<=?)");
@@ -254,14 +255,14 @@ public class GetScheduleSearch extends GetSchedule {
 	}
 	
 	private List<ScheduleEntry> searchRoutePairs(ScheduleSearchCriteria ssc) throws DAOException {
-		if (ssc.getDispatchOnly())
+		if (ssc.getDispatchOnly() == Inclusion.INCLUDE)
 			ssc.setCheckDispatchRoutes(true);
 		
 		// Get route pairs
 		SearchParams spm = build(ssc);
 		Collection<String> havingParams = new ArrayList<String>();
 		Collection<RoutePair> rts = new LinkedHashSet<RoutePair>();
-		if (ssc.getDispatchOnly())
+		if (ssc.getDispatchOnly() == Inclusion.INCLUDE)
 			havingParams.add(" (RCNT>0)");
 		if (ssc.getRouteLegs() > -1)
 			havingParams.add(" (FCNT<=?)");
