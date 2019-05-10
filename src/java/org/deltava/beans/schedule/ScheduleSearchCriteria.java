@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2013, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2013, 2014, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -12,16 +12,14 @@ import org.deltava.util.ComboUtils;
 /**
  * A bean to store search criteria for the Flight Schedule.
  * @author Luke
- * @version 7.5
+ * @version 8.6
  * @since 1.0
  */
 
 public class ScheduleSearchCriteria extends Flight {
 
-	private static final String[] SORT_NAMES = {"Random", "Flight Number", "Equipment Type", "Origin", "Destination",
-			"Departure Time", "Arrival Time", "Length", "Distance", "Flight Count", "Last Flown"};
-	public static final String[] SORT_CODES = {"RAND()", "FLIGHT", "EQTYPE", "AIRPORT_D", "AIRPORT_A", "TIME_D",
-			"TIME_A", "FLIGHT_TIME", "DISTANCE", "FCNT", "LF"};
+	private static final String[] SORT_NAMES = {"Random", "Flight Number", "Equipment Type", "Origin", "Destination", "Departure Time", "Arrival Time", "Length", "Distance", "Flight Count", "Last Flown"};
+	public static final String[] SORT_CODES = {"RAND()", "FLIGHT", "EQTYPE", "AIRPORT_D", "AIRPORT_A", "TIME_D", "TIME_A", "FLIGHT_TIME", "DISTANCE", "FCNT", "LF"};
 	public static final List<?> SORT_OPTIONS = ComboUtils.fromArray(SORT_NAMES, SORT_CODES);
 
 	public static final List<?> HOURS = ComboUtils.fromArray(new String[] { "-", "Midnight", "1 AM", "2 AM", "3 AM", "4 AM", "5 AM", "6 AM", "7 AM", "8 AM", "9 AM", "10 AM", "11 AM", "Noon", "1 PM", "2 PM", "3 PM", "4 PM",
@@ -31,10 +29,10 @@ public class ScheduleSearchCriteria extends Flight {
 	private int _distanceRange = 150;
 	private int _length;
 	private int _maxResults;
-	private boolean _includeAcademy;
+	private Inclusion _includeAcademy;
 	private boolean _dispatchRouteCounts;
-	private boolean _dispatchOnly;
-	private boolean _excludeHistoric;
+	private Inclusion _dispatchOnly;
+	private Inclusion _excludeHistoric;
 	private int _maxPerRoute;
 	
 	private int _pilotID;
@@ -94,14 +92,6 @@ public class ScheduleSearchCriteria extends Flight {
 	}
 	
 	/**
-	 * Returns whether to include Flight Academy flights in the search.
-	 * @return TRUE if including Flight Academy flights, otherwise FALSE
-	 */
-	public boolean getIncludeAcademy() {
-		return _includeAcademy;
-	}
-	
-	/**
 	 * Returns the Pilot ID, if filtering for unvisited airports.
 	 * @return the Pilot's database ID
 	 */
@@ -131,18 +121,26 @@ public class ScheduleSearchCriteria extends Flight {
 	
 	/**
 	 * Returns whether to exclude historic flights from the search.
-	 * @return TRUE if excluding historic flights, otherwise FALSE
+	 * @return an Inclusion
 	 */
-	public boolean getExcludeHistoric() {
+	public Inclusion getExcludeHistoric() {
 		return _excludeHistoric;
 	}
 
 	/**
 	 * Returns whether to search for flights with dispatch flight plans.
-	 * @return TRUE if restricted to route pairs with dispatch plans, otherwise FALSE
+	 * @return an Inclusion
 	 */
-	public boolean getDispatchOnly() {
+	public Inclusion getDispatchOnly() {
 		return _dispatchOnly;
+	}
+	
+	/**
+	 * Returns whether to include Flight Academy flights in the search.
+	 * @return an Inclusion
+	 */
+	public Inclusion getIncludeAcademy() {
+		return _includeAcademy;
 	}
 	
 	/**
@@ -318,9 +316,9 @@ public class ScheduleSearchCriteria extends Flight {
 	
 	/**
 	 * Includes Flight Academy flights in the search.
-	 * @param doInclude TRUE if Academy flights should be included, otherwise FALSE
+	 * @param doInclude an Inclusion
 	 */
-	public void setIncludeAcademy(boolean doInclude) {
+	public void setIncludeAcademy(Inclusion doInclude) {
 		_includeAcademy = doInclude;
 	}
 	
@@ -334,17 +332,17 @@ public class ScheduleSearchCriteria extends Flight {
 	
 	/**
 	 * Excludes historic flights form the search.
-	 * @param exHistoric TRUE if excluding historic flights, otherwise FALSE
+	 * @param exHistoric an Inclusion
 	 */
-	public void setExcludeHistoric(boolean exHistoric) {
+	public void setExcludeHistoric(Inclusion exHistoric) {
 		_excludeHistoric = exHistoric;
 	}
 	
 	/**
 	 * Includes only flights between airports that have a Dispatch route in the database.
-	 * @param dspOnly TRUE if Dispatch-only, otherwise FALSE
+	 * @param dspOnly an Inclusion
 	 */
-	public void setDispatchOnly(boolean dspOnly) {
+	public void setDispatchOnly(Inclusion dspOnly) {
 		_dispatchOnly = dspOnly;
 	}
 	
