@@ -29,6 +29,7 @@ golgotha.local.validate = function(f) {
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:enum var="inclusionOpts" className="org.deltava.beans.Inclusion" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -52,7 +53,7 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr>
  <td class="label top">Search Options</td>
- <td class="data" colspan="3"><el:box name="avoidHistorical" idx="*" value="true" checked="${param.avoidHistorical}" label="Exclude Historic Legs" /><br />
+ <td class="data" colspan="3">Historic Flights - <el:combo name="avoidHistorical" idx="*" size="1" options="${inclusionOpts}" value="${param.avoidHistorical}" /><br />
 <el:box name="avoidVisitedDestination" idx="*" value="true"  checked="${critieria.notVisitedA}" label="Exclude Visited Destination Airports" /></td>
 </tr>
 </el:table>

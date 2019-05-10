@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.time.*;
@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.sql.Connection;
 
+import org.deltava.beans.Inclusion;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.commands.*;
@@ -18,12 +19,12 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to search the Flight Schedule.
  * @author Luke
- * @version 7.2
+ * @version 8.6
  * @since 1.0
  */
 
 public class FindFlightCommand extends AbstractCommand {
-
+	
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
@@ -84,9 +85,10 @@ public class FindFlightCommand extends AbstractCommand {
 		criteria.setHourD(StringUtils.parse(ctx.getParameter("hourD"), -1));
 		criteria.setDBName(SystemData.get("airline.db"));
 		criteria.setCheckDispatchRoutes(Boolean.valueOf(ctx.getParameter("checkDispatch")).booleanValue());
-		criteria.setDispatchOnly(Boolean.valueOf(ctx.getParameter("dispatchOnly")).booleanValue());
+		criteria.setExcludeHistoric((a != null) ? Inclusion.ALL : Inclusion.parse(ctx.getParameter("historicOnly")));
+		criteria.setDispatchOnly(Inclusion.parse(ctx.getParameter("dispatchOnly")));
 		criteria.setFlightsPerRoute(StringUtils.parse(ctx.getParameter("maxFlights"), 0));
-		criteria.setIncludeAcademy(ctx.isUserInRole("Instructor") || ctx.isUserInRole("Schedule") || ctx.isUserInRole("HR") || ctx.isUserInRole("Operations"));
+		criteria.setIncludeAcademy(ctx.isUserInRole("Instructor") || ctx.isUserInRole("Schedule") || ctx.isUserInRole("HR") || ctx.isUserInRole("Operations") ? Inclusion.ALL : Inclusion.EXCLUDE);
 		criteria.setPilotID(ctx.getUser().getID());
 		criteria.setLastFlownInterval(StringUtils.parse(ctx.getParameter("maxLastFlown"), -1));
 		criteria.setRouteLegs(StringUtils.parse(ctx.getParameter("maxRouteLegs"), -1));
