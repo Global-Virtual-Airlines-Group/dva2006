@@ -1,4 +1,4 @@
-// Copyright 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.time.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A utility class to calculate on-time statistics for a flight.
  * @author Luke
- * @version 8.4
+ * @version 8.6
  * @since 8.4
  */
 
@@ -66,7 +66,7 @@ public class OnTimeHelper {
 		LocalDate dld = ft.getTimeD().toLocalDate(); LocalDate ald = (ft.getTimeA() == null) ? dld : ft.getTimeA().toLocalDate();
 		_flights.forEach(se -> { se.setTimeD(LocalDateTime.of(dld, se.getTimeD().toLocalTime())); se.setTimeA(LocalDateTime.of(ald, se.getTimeA().toLocalTime())); });
 		
-		Optional<ScheduleEntry> ose = _flights.stream().filter(se -> se.equals(ft) || filter(se.getTimeD(), ft.getTimeD())).findFirst();
+		Optional<ScheduleEntry> ose = _flights.stream().filter(se -> filter(se, ft) || filter(se.getTimeD(), ft.getTimeD())).findFirst();
 		if (!ose.isPresent()) {
 			SortedSet<ScheduleEntry> entries = new TreeSet<ScheduleEntry>(new ClosestFlight(ft));
 			entries.addAll(_flights);
@@ -122,5 +122,14 @@ public class OnTimeHelper {
 	private boolean filter(ZonedDateTime scheduledDeparture, ZonedDateTime actualDeparture) {
 		long dMin = Duration.between(scheduledDeparture, actualDeparture).toMinutes();
 		return (dMin > (_depToleranceMinutes / -2)) && (dMin < _depToleranceMinutes);
+	}
+	
+	private static boolean filter(ScheduleEntry se, FlightTimes ft) {
+		
+		// If not a flight number, just include
+		if (!(ft instanceof FlightNumber)) return true;
+		
+		FlightNumber fn = (FlightNumber) ft;
+		return (FlightNumber.compare(se, fn) == 0);
 	}
 }
