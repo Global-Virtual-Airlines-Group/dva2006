@@ -1,9 +1,11 @@
-// Copyright 2005, 2006, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.sql.Connection;
 
+import org.deltava.beans.Flight;
 import org.deltava.beans.schedule.ScheduleEntry;
+
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
@@ -14,7 +16,7 @@ import org.deltava.util.FlightCodeParser;
 /**
  * A Web Site Command to delete Flight Schedule entries.
  * @author Luke
- * @version 7.0
+ * @version 8.6
  * @since 1.0
  */
 
@@ -30,7 +32,7 @@ public class ScheduleDeleteCommand extends AbstractCommand {
 
 		// Get the old flight ID
 		String fCode = (String) ctx.getCmdParameter(ID, null);
-		ScheduleEntry id = FlightCodeParser.parse(fCode);
+		Flight id = FlightCodeParser.parse(fCode);
 		if (id == null)
 			throw notFoundException("Invalid Flight Code - " + fCode);
 

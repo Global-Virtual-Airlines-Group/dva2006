@@ -1,4 +1,4 @@
-// Copyright 2011, 2012, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.xacars;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -7,7 +7,7 @@ import java.util.*;
 import java.sql.Connection;
 import java.time.Instant;
 
-import org.deltava.beans.Pilot;
+import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.schedule.*;
 
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * The XACARS Start Flight service.
  * @author Luke
- * @version 8.3
+ * @version 8.6
  * @since 4.1
  */
 
@@ -53,13 +53,13 @@ public class StartFlightService extends XAService {
 		}
 		
 		// Parse the flight data
-		ScheduleEntry se = FlightCodeParser.parse(data.get(2));
-		if (se.getAirline() == null) {
+		Flight f = FlightCodeParser.parse(data.get(2));
+		if (f.getAirline() == null) {
 			ctx.print("0|Invalid Airline - " + data.get(2));
 			return SC_OK;
 		}
 		
-		XAFlightInfo info = new XAFlightInfo(se.getAirline(), se.getFlightNumber());
+		XAFlightInfo info = new XAFlightInfo(f.getAirline(), f.getFlightNumber());
 		info.setEquipmentType(data.get(3));
 		info.setAirportD(SystemData.getAirport(rte.get(0)));
 		info.setAirportA(SystemData.getAirport(rte.get(rte.size() - 1)));

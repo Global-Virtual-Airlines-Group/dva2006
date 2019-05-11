@@ -1,6 +1,7 @@
 // Copyright 2005, 2009, 2010, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
+import org.deltava.beans.Flight;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.util.system.SystemData;
@@ -24,7 +25,7 @@ public class FlightCodeParser {
 	 * @param fCode the flight Code
 	 * @return the Schedule entry, or null
 	 */
-	public static ScheduleEntry parse(String fCode) {
+	public static Flight parse(String fCode) {
 		return parse(fCode, SystemData.get("airline.code"));
 	}
 	
@@ -34,7 +35,7 @@ public class FlightCodeParser {
 	 * @param defaultAirlineCode the default airline code to use
 	 * @return the Schedule entry, or null
 	 */
-	public static ScheduleEntry parse(String fCode, String defaultAirlineCode) {
+	public static Flight parse(String fCode, String defaultAirlineCode) {
 		if (StringUtils.isEmpty(fCode))
 			return null;
 		
@@ -59,7 +60,7 @@ public class FlightCodeParser {
 		
 		// Generate the entry
 		Airline a = SystemData.getAirline(aCode.toString());
-		int fNum = StringUtils.parse(fNumber.toString(), 1);
+		int fNum = Math.min(9999, StringUtils.parse(fNumber.toString(), 1));
 		int lNum = (lPos < 1) ? 1 : StringUtils.parse(fCode.substring(lPos + 5), 1);
 		return new ScheduleEntry(a, fNum, lNum);
 	}
