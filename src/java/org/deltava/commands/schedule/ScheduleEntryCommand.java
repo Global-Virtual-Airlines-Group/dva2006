@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -7,6 +7,7 @@ import java.time.format.*;
 import java.time.temporal.*;
 import java.sql.Connection;
 
+import org.deltava.beans.Flight;
 import org.deltava.beans.schedule.*;
 import org.deltava.comparators.AirportComparator;
 
@@ -21,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update Schedule entries.
  * @author Luke
- * @version 7.0
+ * @version 8.6
  * @since 1.0
  */
 
@@ -39,7 +40,7 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 
 		// Get the old flight ID
 		String fCode = (String) ctx.getCmdParameter(ID, null);
-		ScheduleEntry id = FlightCodeParser.parse(fCode);
+		Flight id = FlightCodeParser.parse(fCode);
 
 		// Check our access
 		ScheduleAccessControl ac = new ScheduleAccessControl(ctx);
@@ -152,7 +153,7 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 
 		// Get the flight ID
 		String fCode = (String) ctx.getCmdParameter(ID, null);
-		ScheduleEntry id = FlightCodeParser.parse(fCode);
+		Flight id = FlightCodeParser.parse(fCode);
 		
 		// Get the Schedule entry
 		try {

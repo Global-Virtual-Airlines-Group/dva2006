@@ -1,4 +1,4 @@
-// Copyright 2011, 2014, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2014, 2016, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.xacars;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * The XACARS Flight Information Web Service.
  * @author Luke
- * @version 8.5
+ * @version 8.6
  * @since 4.1
  */
 
@@ -42,7 +42,7 @@ public class XInfoService extends XAService {
 
 		// Try and parse the flight code and user ID
 		UserID uid = new UserID(ctx.getParameter("DATA4"));
-		ScheduleEntry f = FlightCodeParser.parse(ctx.getParameter("DATA2"));
+		Flight f = FlightCodeParser.parse(ctx.getParameter("DATA2"));
 		FlightReport fr = null;
 		try {
 			Connection con = ctx.getConnection();
@@ -122,7 +122,7 @@ public class XInfoService extends XAService {
 				ctx.println(fr.getAirportD().getICAO());
 				ctx.println(fr.getAirportA().getICAO());
 				ctx.println("");				// alternate
-				ctx.println("");				// TODO: add route using dispatch
+				ctx.println("");
 				ctx.println(String.valueOf(fr.getPassengers()));
 				ctx.println("0");			// cargo
 				ctx.println("IFR");
