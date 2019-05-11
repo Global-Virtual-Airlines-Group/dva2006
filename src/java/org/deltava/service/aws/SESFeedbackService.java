@@ -84,6 +84,7 @@ public class SESFeedbackService extends SNSReceiverService {
 						dv.setSendTime(Instant.from(DateTimeFormatter.ISO_DATE_TIME.parse(bo.getString("timestamp"))));
 						dv.setEmail(ro.getString("emailAddress"));
 						dv.setResponse(ro.optString("diagnosticCode"));
+						dv.setMessageID(bo.optString("feedbackId", "?"));
 						
 						buf.append(p.getName());
 						buf.append(" (").append(p.getPilotCode()).append(") - ");
@@ -129,6 +130,7 @@ public class SESFeedbackService extends SNSReceiverService {
 						dv.setSendTime(Instant.from(DateTimeFormatter.ISO_DATE_TIME.parse(co.getString("timestamp"))));
 						dv.setEmail(ro.getString("emailAddress"));
 						dv.setResponse(co.getString("complaintFeedbackType"));
+						dv.setMessageID(co.optString("feedbackId", "?"));
 						dvwdao.write(dv);
 						
 						buf.append(p.getName());
