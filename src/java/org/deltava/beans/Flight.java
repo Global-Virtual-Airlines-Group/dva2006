@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2008, 2009, 2011, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2008, 2009, 2011, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.text.*;
@@ -9,11 +9,11 @@ import org.deltava.beans.schedule.*;
 /**
  * A class to store Flight information.
  * @author Luke
- * @version 8.0
+ * @version 8.6
  * @since 1.0
  */
 
-public abstract class Flight extends DatabaseBean implements RoutePair {
+public abstract class Flight extends DatabaseBean implements RoutePair, FlightNumber {
 
     private final NumberFormat df = new DecimalFormat("#000");
 
@@ -50,11 +50,7 @@ public abstract class Flight extends DatabaseBean implements RoutePair {
      */
     public abstract Duration getDuration();
 
-    /**
-     * Returns the Airline for the Flight.
-     * @return the Airline
-     * @see Flight#setAirline(Airline)
-     */
+    @Override
     public Airline getAirline() {
         return _airline;
     }
@@ -62,6 +58,7 @@ public abstract class Flight extends DatabaseBean implements RoutePair {
     /**
      * Returns a text representation of the Flight in the format "CODE### Leg #".
      * @return the flight code
+     * @see Flight#getShortCode()
      * @see Flight#toString()
      */
     public String getFlightCode() {
@@ -71,21 +68,24 @@ public abstract class Flight extends DatabaseBean implements RoutePair {
         buf.append(String.valueOf(_leg));
         return buf.toString();
     }
-
+    
     /**
-     * Returns the Flight Number for the Flight
-     * @return the Flight Number
-     * @see Flight#setFlightNumber(int)
+     * Returns the Flight code without the leg.
+     * @return the flight code
+     * @see Flight#getFlightCode()
      */
+    public String getShortCode() {
+    	StringBuilder buf = new StringBuilder(_airline.getCode());
+        buf.append(df.format(_flightNumber));
+        return buf.toString();
+    }
+
+    @Override
     public int getFlightNumber() {
         return _flightNumber;
     }
 
-    /**
-     * Returns the Leg Number for the Flight
-     * @return the Leg Number
-     * @see Flight#setLeg(int)
-     */
+    @Override
     public int getLeg() {
         return _leg;
     }
@@ -190,21 +190,12 @@ public abstract class Flight extends DatabaseBean implements RoutePair {
     /**
      * Compares this Flight to another Flight object by comparing Airline, Flight Number and Leg.
      * @param o2 the object to compare with
-     * @throws ClassCastException if o2 is not a Flight object
+     * @throws ClassCastException if o2 is not a FlightNumber object
      * @see Comparable#compareTo(Object)
      */
     @Override
     public int compareTo(Object o2) {
-        Flight f2 = (Flight) o2;
-
-        // Compare the airline code
-        int tmpResult = _airline.compareTo(f2._airline);
-        if (tmpResult != 0)
-            return tmpResult;
-
-        // Compare the flight number and leg
-        tmpResult = Integer.compare(_flightNumber, f2._flightNumber);
-        return (tmpResult != 0) ? tmpResult : Integer.compare(_leg, f2._leg);
+    	return FlightNumber.compare(this, (FlightNumber) o2);
     }
 
     /**
@@ -212,7 +203,7 @@ public abstract class Flight extends DatabaseBean implements RoutePair {
      */
     @Override
     public boolean equals(Object o) {
-    	return (o instanceof Flight) && (compareTo(o) == 0);
+    	return (o instanceof FlightNumber) && (compareTo(o) == 0);
     }
 
     /**
