@@ -1,4 +1,4 @@
-// Copyright 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 
 import org.json.*;
 
+import org.deltava.beans.Flight;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.dao.DAOException;
@@ -20,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * Loads airline schedule data from FlightAware.
  * @author Luke
- * @version 8.4
+ * @version 8.6
  * @since 8.0
  */
 
@@ -90,9 +91,9 @@ public class GetFASchedule extends FlightAwareDAO {
 			for (int x = 0; x < data.length(); x++) {
 				JSONObject fo = data.getJSONObject(x);
 				
-				ScheduleEntry se = FlightCodeParser.parse(fo.getString("ident"));
-				RawScheduleEntry sce = new RawScheduleEntry(se.getAirline(), se.getFlightNumber(), 1);
-				if (se.getAirline() == null) {
+				Flight f = FlightCodeParser.parse(fo.getString("ident"));
+				RawScheduleEntry sce = new RawScheduleEntry(f.getAirline(), f.getFlightNumber(), 1);
+				if (f.getAirline() == null) {
 					_unknownAirlines.add(fo.getString("ident"));
 					log.warn("Unknown airline " + fo.getString("ident"));
 					continue;
