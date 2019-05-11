@@ -81,6 +81,12 @@
 		<roles>Pilot</roles>
 	</command>
 
+	<command id="ratingcount">
+		<name>Pilot Rating Counts</name>
+		<class>org.deltava.commands.pilot.RatingCountCommand</class>
+		<roles>HR,Operations</roles>
+	</command>
+
 	<command id="scnomcenter">
 		<name>Senior Captain Nomination Center</name>	
 		<class>org.deltava.commands.pilot.NominationCenterCommand</class>

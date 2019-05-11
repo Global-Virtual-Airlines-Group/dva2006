@@ -1,4 +1,4 @@
-// Copyright 2008, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2010, 2011, 2012, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,10 +10,9 @@ import org.deltava.beans.testing.*;
 import org.deltava.util.CollectionUtils;
 
 /**
- * A Data Access Object to load Pilot IDs for Pilots who meet the entrance
- * qualifications for an Equipment Type program.
+ * A Data Access Object to load Pilot IDs for Pilots who meet the entrance qualifications for an Equipment Type program.
  * @author Luke
- * @version 5.0
+ * @version 8.6
  * @since 2.3
  */
 
@@ -28,22 +27,20 @@ public class GetExamQualifications extends DAO {
 	}
 
 	/**
-	 * Returns the database IDs for all Pilots who meet the entrance criteria for this
-	 * equipment type program.
+	 * Returns the database IDs for all Pilots who meet the entrance criteria for an equipment type program.
 	 * @param eq the EquipmentType bean
 	 * @return a Collection of database IDs
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Integer> getRatedPilots(EquipmentType eq) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT DISTINCT PILOT_ID FROM exams.CHECKRIDES "
-					+ "WHERE (STATUS=?) AND (PASS=?) AND (EQTYPE=?)");
+			prepareStatementWithoutLimits("SELECT DISTINCT PILOT_ID FROM exams.CHECKRIDES WHERE (STATUS=?) AND (PASS=?) AND (EQTYPE=?)");
 			_ps.setInt(1, TestStatus.SCORED.ordinal());
 			_ps.setBoolean(2, true);
 			_ps.setString(3, eq.getName());
 			
 			// Load checkrides
-			Collection<Integer> crIDs = new HashSet<Integer>();
+			Collection<Integer> crIDs = new LinkedHashSet<Integer>();
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next())
 					crIDs.add(Integer.valueOf(rs.getInt(1)));
@@ -57,8 +54,7 @@ public class GetExamQualifications extends DAO {
 				return crIDs;
 
 			// Build the SQL statement
-			StringBuilder buf = new StringBuilder("SELECT PILOT_ID, COUNT(ID) AS CNT FROM exams.EXAMS "
-					+ "WHERE (STATUS=?) AND (PASS=?) AND (");
+			StringBuilder buf = new StringBuilder("SELECT PILOT_ID, COUNT(ID) AS CNT FROM exams.EXAMS WHERE (STATUS=?) AND (PASS=?) AND (");
 			for (Iterator<String> i = examNames.iterator(); i.hasNext(); ) {
 				i.next();
 				buf.append("(NAME=?)");
@@ -78,7 +74,7 @@ public class GetExamQualifications extends DAO {
 			_ps.setInt(++pos, examNames.size());
 			
 			// Load exams
-			Collection<Integer> examIDs = new HashSet<Integer>();
+			Collection<Integer> examIDs = new LinkedHashSet<Integer>();
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next())
 					examIDs.add(Integer.valueOf(rs.getInt(1)));
@@ -88,6 +84,30 @@ public class GetExamQualifications extends DAO {
 			
 			// Return the union of the two
 			return CollectionUtils.union(examIDs, crIDs);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns the database IDs for all Pilots who currently have a specific aircraft rating. 
+	 * @param acType the aircraft type
+	 * @return a Collection of database IDs
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Integer> getRatedPilots(String acType) throws DAOException {
+		try {
+			prepareStatement("SELECT ID FROM RATINGS WHERE (RATING=?)");
+			_ps.setString(1, acType);
+			
+			Collection<Integer> results = new LinkedHashSet<Integer>();
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+					results.add(Integer.valueOf(rs.getInt(1)));
+			}
+			
+			_ps.close();
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

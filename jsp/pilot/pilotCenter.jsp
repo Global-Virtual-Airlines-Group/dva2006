@@ -655,8 +655,11 @@ pilot Certification.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="eqtypes">Equipment Type Programs</el:cmd></td>
- <td class="data">You can add new equipment programs, or modify existing programs to change Chief Pilots, automatic additional ratings or equipment types for flight legs
- that qualify for promotion to Captain.</td>
+ <td class="data">You can add new equipment programs, or modify existing programs to change Chief Pilots, automatic additional ratings or equipment types for flight legs that qualify for promotion to Captain.</td>
+</tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="ratingcount">Pilot Rating Counts</el:cmd></td>
+ <td class="data">You can view statistics on the number of pilots qualifying for a rating and/or rated in a particular aircraft type.</td>
 </tr>
 </content:filter>
 <content:filter roles="HR,Operations,PIREP">
@@ -707,9 +710,7 @@ pilot Certification.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="eprofiles">Examination Profiles</el:cmd></td>
- <td class="data">You can add new written examinations or modify the examinations to
- change the number of questions, passing score, or additional ratings granted upon
- successful completion of an examination.</td>
+ <td class="data">You can add new written examinations or modify the examinations to change the number of questions, passing score, or additional ratings granted upon successful completion of an examination.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="qprofiles" linkID="ALL">Examination Question Profiles</el:cmd></td>
@@ -721,8 +722,7 @@ pilot Certification.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="crscripts">Check Ride Scripts</el:cmd></td>
- <td class="data">Check Ride scripts allow you to save pre-defined check ride descriptions for different 
-aircraft types, for easy reuse when assigning a Check Ride to a pilot.</td>
+ <td class="data">Check Ride scripts allow you to save pre-defined check ride descriptions for different aircraft types, for easy reuse when assigning a Check Ride to a pilot.</td>
 </tr>
 </content:filter>
 
