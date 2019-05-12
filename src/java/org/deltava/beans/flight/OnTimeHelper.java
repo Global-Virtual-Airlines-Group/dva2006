@@ -66,13 +66,15 @@ public class OnTimeHelper {
 		LocalDate dld = ft.getTimeD().toLocalDate(); LocalDate ald = (ft.getTimeA() == null) ? dld : ft.getTimeA().toLocalDate();
 		_flights.forEach(se -> { se.setTimeD(LocalDateTime.of(dld, se.getTimeD().toLocalTime())); se.setTimeA(LocalDateTime.of(ald, se.getTimeA().toLocalTime())); });
 		
-		Optional<ScheduleEntry> ose = _flights.stream().filter(se -> filter(se, ft) || filter(se.getTimeD(), ft.getTimeD())).findFirst();
-		if (!ose.isPresent()) {
-			SortedSet<ScheduleEntry> entries = new TreeSet<ScheduleEntry>(new ClosestFlight(ft));
-			entries.addAll(_flights);
-			ose = entries.stream().filter(se -> filter(se.getTimeD(), ft.getTimeD())).findFirst();
+		// Filter for matching flight # and close range
+		if (ft instanceof FlightNumber) {
+			FlightNumber fn = (FlightNumber) ft;
+			Optional<ScheduleEntry> ose = _flights.stream().filter(se -> (FlightNumber.compare(se, fn, false) == 0) && matchDeparture(se.getTimeD(), ft.getTimeD())).findFirst();
+			if (ose.isPresent())
+				return ose.get();
 		}
 		
+		Optional<ScheduleEntry> ose = _flights.stream().sorted(new ClosestFlight(ft)).filter(se -> matchDeparture(se.getTimeD(), ft.getTimeD())).findFirst();
 		return ose.orElse(null);
 	}
 		
@@ -119,17 +121,8 @@ public class OnTimeHelper {
 		return (d.abs().toMinutes() > 10) ? OnTime.EARLY: OnTime.ONTIME;
 	}
 	
-	private boolean filter(ZonedDateTime scheduledDeparture, ZonedDateTime actualDeparture) {
+	private boolean matchDeparture(ZonedDateTime scheduledDeparture, ZonedDateTime actualDeparture) {
 		long dMin = Duration.between(scheduledDeparture, actualDeparture).toMinutes();
 		return (dMin > (_depToleranceMinutes / -2)) && (dMin < _depToleranceMinutes);
-	}
-	
-	private static boolean filter(ScheduleEntry se, FlightTimes ft) {
-		
-		// If not a flight number, just include
-		if (!(ft instanceof FlightNumber)) return true;
-		
-		FlightNumber fn = (FlightNumber) ft;
-		return (FlightNumber.compare(se, fn) == 0);
 	}
 }
