@@ -297,7 +297,7 @@ public abstract class FDRFlightReport extends FlightReport {
     /**
      * Returns the time that the aircraft was airborne for this flight.
      * @return the Duration the aircraft was airborne
-     * @throws IllegalStateException if either the landing or takeoff time are not set
+     * @throws NullPointerException if either the landing or takeoff time are not set
      * @see FDRFlightReport#setTakeoffTime(Instant)
      * @see FDRFlightReport#setLandingTime(Instant)
      */
@@ -308,12 +308,32 @@ public abstract class FDRFlightReport extends FlightReport {
     /**
      * Returns the total time of the flight.
      * @return the total Duration
-     * @throws IllegalStateException if either the start or end time are not set
+     * @throws NullPointerException if either the start or end time are not set
      * @see FDRFlightReport#setStartTime(Instant)
      * @see FDRFlightReport#setEndTime(Instant)
      */
     public Duration getBlockTime() {
        	return Duration.between(getStartTime(), getEndTime());
+    }
+    
+    /**
+     * Returns the outbound taxi time.
+     * @return the taxi Duration
+     * @throws NullPointerException if either taxi time or takeoff time are not set
+     */
+    public Duration getTaxiOutTime() {
+    	Duration d = Duration.between(getTaxiTime(), getTakeoffTime());
+    	return (d.abs().toMinutes() < 120) ? d : null; 
+    }
+    
+    /**
+     * Returns the inbound taxi time.
+     * @return the taxi Duration
+     * @throws NullPointerException if either landing time or end time are not set
+     */
+    public Duration getTaxiInTime() {
+    	Duration d = Duration.between(getLandingTime(), getEndTime());
+    	return (d.abs().toMinutes() < 120) ? d : null;
     }
 
     /**
