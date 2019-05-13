@@ -13,8 +13,7 @@
 <tr>
  <td class="label">ACARS Flight ID</td>
  <td class="data" colspan="${cspan}"><fmt:int value="${fn:ACARS_ID(pirep)}" /> (<fmt:int value="${flightInfo.positionCount}" /> position records)
-<span class="nophone"> Download ACARS data into <a href="acars_data.ws?id=${fn:ACARS_ID(pirep)}">Microsoft Excel</a>
- | <a href="acars_earth.ws?id=${fn:ACARS_ID(pirep)}&amp;showData=true&amp;showRoute=true">Google Earth</a></span></td>
+<span class="nophone"> Download ACARS data into <a href="acars_data.ws?id=${fn:ACARS_ID(pirep)}">Microsoft Excel</a> | <a href="acars_earth.ws?id=${fn:ACARS_ID(pirep)}&amp;showData=true&amp;showRoute=true">Google Earth</a></span></td>
 </tr>
 </c:if>
 <c:if test="${!isXACARS && (pirep.clientBuild > 0)}">
@@ -74,11 +73,16 @@
  <td class="data" colspan="${cspan}"><fmt:date date="${pirep.taxiTime}" />, <fmt:weight value="${pirep.taxiWeight}" /> total, <fmt:weight value="${pirep.taxiFuel}" /> fuel<c:if test="${acLoaded && (pirep.taxiWeight > acInfo.maxWeight)}"> 
  <span class="small bld">(<fmt:weight value="${pirep.taxiWeight - acInfo.maxWeight}" /> overweight)</span></c:if></td>
 </tr>
+<c:if test="${!empty avgTaxiOutTime && !empty pirep.taxiOutTime}">
+<tr>
+ <td class="label">Outbound Taxi Time</td>
+ <td class="data" colspan="${cspan}"><fmt:duration t="[H:]mm:ss" className="sec" duration="${pirep.taxiOutTime}" /><span class="ita nophone"> (average: <fmt:duration t="mm:ss" duration="${avgTaxiOutTime}" />)</span></td>
+</tr>
+</c:if>
 <tr>
  <td class="label">Takeoff Time</td>
  <td class="data" colspan="${cspan}"><fmt:date className="bld" date="${pirep.takeoffTime}" />, 
-(<fmt:int value="${fn:delta(pirep.startTime, pirep.takeoffTime) / 60}" /> minutes after start)
- <a href="javascript:void golgotha.local.zoomTo(${pirep.takeoffLocation.latitude}, ${pirep.takeoffLocation.longitude})">Zoom <span class="nophone">to Takeoff</span></a></td>
+(<fmt:int value="${fn:delta(pirep.startTime, pirep.takeoffTime) / 60}" /> minutes after start) <a href="javascript:void golgotha.local.zoomTo(${pirep.takeoffLocation.latitude}, ${pirep.takeoffLocation.longitude})">Zoom <span class="nophone">to Takeoff</span></a></td>
 </tr>
 <c:if test="${(pirep.takeoffLocation.latitude != 0.0) && (pirep.takeoffLocation.longitude != 0.0)}">
 <c:set var="rwy" value="${flightInfo.runwayD}" scope="page" />
@@ -127,8 +131,7 @@
 <tr>
  <td class="label">Landing Time</td>
  <td class="data" colspan="${cspan}"><fmt:date className="bld" date="${pirep.landingTime}" />, 
-(<fmt:int value="${fn:delta(pirep.startTime, pirep.landingTime) / 60}" /> minutes after start)
- <a href="javascript:void golgotha.local.zoomTo(${pirep.landingLocation.latitude}, ${pirep.landingLocation.longitude})">Zoom<span class="nophone"> to Landing</span></a></td>
+(<fmt:int value="${fn:delta(pirep.startTime, pirep.landingTime) / 60}" /> minutes after start) <a href="javascript:void golgotha.local.zoomTo(${pirep.landingLocation.latitude}, ${pirep.landingLocation.longitude})">Zoom<span class="nophone"> to Landing</span></a></td>
 </tr>
 <c:if test="${(pirep.landingLocation.latitude != 0.0) && (pirep.landingLocation.longitude != 0.0)}">
 <c:set var="rwy" value="${flightInfo.runwayA}" scope="page" />
@@ -177,6 +180,12 @@
  <td class="label">Arrival Time</td>
  <td class="data" colspan="${cspan}"><fmt:date className="bld" date="${pirep.endTime}" />, (<fmt:int value="${fn:delta(pirep.startTime, pirep.endTime) / 60}" /> minutes after start)
 <c:if test="${fn:hasOnTime(pirep) && (!empty pirep.timeA)}"> <span class="ita">Simulator date/time: <fmt:date t="HH:mm" date="${pirep.timeA}" tz="${pirep.airportA.TZ}" className="bld" /></span></c:if></td>
+</tr>
+</c:if>
+<c:if test="${!empty avgTaxiInTime && !empty pirep.taxiInTime}">
+<tr>
+ <td class="label">Inbound Taxi Time</td>
+ <td class="data" colspan="${cspan}"><fmt:duration t="[H:]mm:ss" className="sec" duration="${pirep.taxiInTime}" /><span class="ita nophone"> (average: <fmt:duration t="mm:ss" duration="${avgTaxiInTime}" />)</span></td>
 </tr>
 </c:if>
 <c:if test="${pirep.gateFuel > 0}">
@@ -251,8 +260,7 @@
 <c:set var="warnings" value="${flightScore.warnings}" scope="page" />
 <tr>
  <td class="label">Flight Score</td>
- <td class="data caps" colspan="${cspan}"><span style="color:${flightScore.result.color}" class="bld">${flightScore.result}</span>
-<c:if test="${!empty warnings}"> - Warnings: <span class="warn bld"><fmt:list value="${warnings}" delim=", " /></span></c:if></td>
+ <td class="data caps" colspan="${cspan}"><span style="color:${flightScore.result.color}" class="bld">${flightScore.result}</span><c:if test="${!empty warnings}"> - Warnings: <span class="warn bld"><fmt:list value="${warnings}" delim=", " /></span></c:if></td>
 </tr>
 </c:if>
 </content:filter>
