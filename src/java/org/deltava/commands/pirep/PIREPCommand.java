@@ -4,7 +4,7 @@ package org.deltava.commands.pirep;
 import java.io.*;
 import java.util.*;
 import java.time.*;
-import java.time.temporal.ChronoField;
+import java.time.temporal.*;
 import java.sql.Connection;
 
 import org.apache.log4j.Logger;
@@ -522,6 +522,11 @@ public class PIREPCommand extends AbstractFormCommand {
 						else
 							info.setGateA(g);
 					}
+					
+					// Load taxi times
+					GetACARSTaxiTimes ttdao = new GetACARSTaxiTimes(con);
+					ctx.setAttribute("avgTaxiInTime", Duration.of(ttdao.getTaxiInTime(afr.getAirportA(), SystemData.get("airline.db")), ChronoUnit.SECONDS), REQUEST);
+					ctx.setAttribute("avgTaxiOutTime", Duration.of(ttdao.getTaxiOutTime(afr.getAirportD(), SystemData.get("airline.db")), ChronoUnit.SECONDS), REQUEST);
 					
 					// Build the route
 					RouteBuilder rb = new RouteBuilder(fr, info.getRoute());
