@@ -3,7 +3,10 @@ package org.deltava.dao;
 
 import java.sql.*;
 
+import org.deltava.beans.flight.FlightStatus;
 import org.deltava.beans.schedule.Airport;
+
+import org.deltava.util.cache.*;
 
 /**
  * A Data Access Object to calculate average taxi times. 
@@ -14,12 +17,21 @@ import org.deltava.beans.schedule.Airport;
 
 public class GetACARSTaxiTimes extends DAO {
 
+	private static final Cache<CacheableLong> _cache = CacheManager.get(CacheableLong.class, "TaxiTime");
+	
 	/**
 	 * Initializes the Data Access Object.
 	 * @param c the JDBC Connection to use
 	 */
 	public GetACARSTaxiTimes(Connection c) {
 		super(c);
+	}
+	
+	private static String buildCacheKey(Airport a, String db, boolean isDeparture) {
+		StringBuilder buf = new StringBuilder(db);
+		buf.append('!').append(a.getICAO());
+		buf.append('!').append(isDeparture ? 'D' : 'A');
+		return buf.toString();
 	}
 
 	/**
@@ -31,16 +43,23 @@ public class GetACARSTaxiTimes extends DAO {
 	 */
 	public int getTaxiOutTime(Airport a, String db) throws DAOException {
 		
+		// Check the cache
+		String key = buildCacheKey(a, db, true);
+		CacheableLong depTime = _cache.get(key);
+		if (depTime != null)
+			return (int) depTime.getValue();
+		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT AVG(TIMESTAMPDIFF(SECOND, TAXI_TIME, TAKEOFF_TIME)) AS TX_TKO FROM ");
 		sqlBuf.append(formatDBName(db));
 		sqlBuf.append(".ACARS_PIREPS AP, ");
 		sqlBuf.append(formatDBName(db));
-		sqlBuf.append(".PIREPS P WHERE (AP.ID=P.ID) AND (AP.TAXI_TIME < AP.TAKEOFF_TIME) AND (AP.TAKEOFF_TIME < DATE_ADD(AP.TAXI_TIME, INTERVAL 2 HOUR)) AND (P.AIRPORT_D=?)");
+		sqlBuf.append(".PIREPS P WHERE (AP.ID=P.ID) AND (AP.TAXI_TIME < AP.TAKEOFF_TIME) AND (AP.TAKEOFF_TIME < DATE_ADD(AP.TAXI_TIME, INTERVAL 2 HOUR)) AND (P.AIRPORT_D=?) AND (P.STATUS=?)");
 		
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
 			_ps.setString(1, a.getIATA());
+			_ps.setInt(2, FlightStatus.OK.ordinal());
 			
 			int result = -1;
 			try (ResultSet rs = _ps.executeQuery()) {
@@ -49,6 +68,7 @@ public class GetACARSTaxiTimes extends DAO {
 			}
 			
 			_ps.close();
+			_cache.add(new CacheableLong(key, result));
 			return result;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -64,16 +84,23 @@ public class GetACARSTaxiTimes extends DAO {
 	 */
 	public int getTaxiInTime(Airport a, String db) throws DAOException {
 		
+		// Check the cache
+		String key = buildCacheKey(a, db, false);
+		CacheableLong arrTime = _cache.get(key);
+		if (arrTime != null)
+			return (int) arrTime.getValue();
+		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT AVG(TIMESTAMPDIFF(SECOND, LANDING_TIME, END_TIME)) AS TX_LND FROM ");
 		sqlBuf.append(formatDBName(db));
 		sqlBuf.append(".ACARS_PIREPS AP, ");
 		sqlBuf.append(formatDBName(db));
-		sqlBuf.append(".PIREPS P WHERE (AP.ID=P.ID) AND (AP.LANDING_TIME < AP.END_TIME) AND (AP.END_TIME < DATE_ADD(AP.LANDING_TIME, INTERVAL 2 HOUR)) AND (P.AIRPORT_A=?)");
+		sqlBuf.append(".PIREPS P WHERE (AP.ID=P.ID) AND (AP.LANDING_TIME < AP.END_TIME) AND (AP.END_TIME < DATE_ADD(AP.LANDING_TIME, INTERVAL 2 HOUR)) AND (P.AIRPORT_A=?) AND (P.STATUS=?)");
 		
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
 			_ps.setString(1, a.getIATA());
+			_ps.setInt(2, FlightStatus.OK.ordinal());
 			
 			int result = -1;
 			try (ResultSet rs = _ps.executeQuery()) {
@@ -82,6 +109,7 @@ public class GetACARSTaxiTimes extends DAO {
 			}
 			
 			_ps.close();
+			_cache.add(new CacheableLong(key, result));
 			return result;
 		} catch (SQLException se) {
 			throw new DAOException(se);
