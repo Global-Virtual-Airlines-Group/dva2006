@@ -1,15 +1,15 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.io.Serializable;
 import java.sql.Connection;
-import java.time.Instant;
-import java.time.ZoneId;
+import java.time.*;
 import java.time.format.TextStyle;
 
 import org.apache.log4j.Logger;
-
+import org.deltava.beans.acars.CommandStats;
 import org.deltava.beans.servlet.ServletScoreboard;
 
 import org.deltava.commands.*;
@@ -22,15 +22,15 @@ import org.deltava.taskman.TaskScheduler;
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
+import org.gvagroup.jdbc.*;
 import org.gvagroup.acars.ACARSAdminInfo;
 import org.gvagroup.ipc.PoolWorkerInfo;
-import org.gvagroup.jdbc.*;
 import org.gvagroup.common.SharedData;
 
 /**
  * A Web Site Command to display diagnostic infomration.
  * @author Luke
- * @version 8.1
+ * @version 8.6
  * @since 1.0
  */
 
@@ -79,6 +79,12 @@ public class DiagnosticCommand extends AbstractCommand {
 			// Get the acars worker info data and save in the request
 			PoolWorkerInfo acarsInfo = (PoolWorkerInfo) SharedData.get(SharedData.ACARS_DAEMON);
 			ctx.setAttribute("workers", acarsInfo.getWorkers(), REQUEST);
+			
+			// Get ACARS command stats
+			Map<?, ?> cmdStats = (Map<?, ?>) IPCUtils.reserialize(SharedData.get(SharedData.ACARS_CMDSTATS));
+			List<CommandStats> cmdStatsInfo = cmdStats.values().stream().map(CommandStats.class::cast).filter(st -> (st.getCount() > 0)).collect(Collectors.toList());
+			cmdStatsInfo.sort(null); Collections.reverse(cmdStatsInfo);
+			ctx.setAttribute("acarsCmdStats", cmdStatsInfo, REQUEST);
 
 			// Save the ACARS statistics in the request
 			try {

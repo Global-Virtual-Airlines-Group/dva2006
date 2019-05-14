@@ -140,3 +140,29 @@ writes / message, <fmt:dec value="${udp.bytesOut / udp.bufferWrites}" fmt="###0.
 </c:forEach>
 </el:table>
 </c:if>
+<c:if test="${!empty acarsCmdStats}">
+<!-- ACARS Command Statistics -->
+<el:table className="view">
+<tr class="title">
+ <td class="left caps" colspan="4">ACARS COMMAND STATISTICS</td>
+</tr>
+
+<!-- Table Header Bar -->
+<tr class="title">
+ <td style="width:45%">COMMAND NAME</td> 
+ <td style="width:15%">INVOCATIONS</td>
+ <td style="width:20%">AVERAGE TIME</td>
+ <td style="width:20%">MAXIMUM TIME</td>
+ </tr>
+ 
+ <!-- Table Command Data -->
+ <c:forEach var="cmd" items="${acarsCmdStats}">
+<view:row entry="${cmd}">
+ <td class="bld">${cmd.name}</td>
+ <td class="pri bld"><fmt:int value="${cmd.count}"  /> / <fmt:int value="${cmd.successCount}" /></td> 
+ <td class="sec bld"><fmt:int value="${cmd.avgTime}" /> ms (<fmt:int value="${cmd.avgBackEndTime}" /> ms db)</td>
+ <td><fmt:int value="${cmd.maxTime}" /> ms (<fmt:int value="${cmd.maxBackEndTime}" /> ms db)</td>
+</view:row> 
+ </c:forEach>
+</el:table>
+</c:if>
