@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -15,11 +15,11 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display Pilots eligible for Promotion.
  * @author Luke
- * @version 7.0
+ * @version 8.6
  * @since 1.0
  */
 
-public class PromotionQueueCommand extends AbstractCommand {
+public class PromotionQueueCommand extends AbstractViewCommand {
 
 	/**
 	 * Executes the command.
@@ -30,20 +30,22 @@ public class PromotionQueueCommand extends AbstractCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Get the equipment type
+		ViewContext<Pilot> vc = initView(ctx, Pilot.class);
 		String eqType = ctx.isUserInRole("HR") ? null : ctx.getUser().getEquipmentType();
-		Collection<Pilot> pilots = null;
 		try {
 			Connection con = ctx.getConnection();
 			
 			// Load the queue
 			GetPilotRecognition dao = new GetPilotRecognition(con);
+			dao.setQueryStart(vc.getStart());
+			dao.setQueryMax(vc.getCount());
 			Collection<Integer> IDs = dao.getPromotionQueue(eqType);
 			Map<Integer, Pilot> queue = dao.getByID(IDs, "PILOTS");
 			
 			// Load PIREP totals
 			GetFlightReports prdao = new GetFlightReports(con);
 			prdao.getOnlineTotals(queue, SystemData.get("airline.db"));
-			pilots = queue.values();
+			vc.setResults(queue.values());
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
@@ -52,7 +54,7 @@ public class PromotionQueueCommand extends AbstractCommand {
 
 		// Check pilot access
 		Map<Integer, AccessControl> accessMap = new HashMap<Integer, AccessControl>();
-		for (Pilot p : pilots) {
+		for (Pilot p : vc.getResults()) {
 			PilotAccessControl access = new PilotAccessControl(ctx, p);
 			access.validate();
 			accessMap.put(Integer.valueOf(p.getID()), access);
@@ -60,7 +62,6 @@ public class PromotionQueueCommand extends AbstractCommand {
 
 		// Save pilot access
 		ctx.setAttribute("accessMap", accessMap, REQUEST);
-		ctx.setAttribute("queue", pilots, REQUEST);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
