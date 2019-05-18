@@ -38,7 +38,7 @@
 </tr>
 
 <!-- Table Pilot Data -->
-<c:forEach var="pilot" items="${queue}">
+<c:forEach var="pilot" items="${viewContext.results}">
 <c:set var="access" value="${accessMap[pilot.ID]}" scope="page" />
 <view:row entry="${pilot}">
 <c:if test="${access.canPromote}">
@@ -59,7 +59,7 @@
 
 <!-- Bottom Bar -->
 <tr class="title caps">
- <td colspan="${isHR ? 8 : 9 }">&nbsp;</td>
+ <td colspan="${isHR ? 8 : 9 }"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
 </tr>
 </el:table>
 <content:copyright />
