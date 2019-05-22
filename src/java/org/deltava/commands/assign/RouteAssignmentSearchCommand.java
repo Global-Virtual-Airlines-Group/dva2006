@@ -1,30 +1,30 @@
-// Copyright 2012, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
 import java.util.stream.Collectors;
 import java.sql.Connection;
 
-import org.deltava.beans.ComboAlias;
+import org.deltava.beans.*;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
-import org.deltava.util.*;
+import org.deltava.util.ComboUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to build a Flight Assignment from a multi-leg route.
  * @author Luke
- * @version 7.5
+ * @version 8.6
  * @since 4.1
  */
 
 public class RouteAssignmentSearchCommand extends AbstractCommand {
 	
-	private static final int DEFAULT_COST = 400;
-	private static final Collection<ComboAlias> BIAS_OPTS = ComboUtils.fromArray(new String[] { "Avoid Historic Routes",  "No Preference", "Prefer Historic Routes"}, new String[] {"850", String.valueOf(DEFAULT_COST), "50"});
+	private static final Collection<ComboAlias> INCLUDE_OPTS = ComboUtils.fromArray(new String[] {"All Flights", "Only Historic Flights", "Only Current Flights" }, 
+			new String[] {Inclusion.ALL.name(), Inclusion.INCLUDE.name(), Inclusion.EXCLUDE.name() });
 	
 	/**
 	 * Executes the command.
@@ -36,32 +36,28 @@ public class RouteAssignmentSearchCommand extends AbstractCommand {
 		
 		// Get command result
 		CommandResult result = ctx.getResult();
-		ctx.setAttribute("biasOpts", BIAS_OPTS, REQUEST);
 		result.setURL("/jsp/assign/routeSearch.jsp");
+		ctx.setAttribute("inclusionOpts", INCLUDE_OPTS, REQUEST);
 		if (ctx.getParameter("airportD") == null) {
 			result.setSuccess(true);	
 			return;
 		}
 		
 		// Get the route pair and type
-		int historicCost = StringUtils.parse(ctx.getParameter("historicBias"), DEFAULT_COST);
+		Inclusion allowHistoric = Inclusion.parse(ctx.getParameter("includeHistoric"));
 		ScheduleRoute rp = new ScheduleRoute(SystemData.getAirport(ctx.getParameter("airportD")), SystemData.getAirport(ctx.getParameter("airportA")));
-		rp.setType((historicCost == DEFAULT_COST) ? RoutePairType.HYBRID : (historicCost > DEFAULT_COST) ? RoutePairType.PRESENT : RoutePairType.HISTORIC);
+		rp.setType((allowHistoric == Inclusion.ALL) ? RoutePairType.HYBRID : (allowHistoric == Inclusion.EXCLUDE) ? RoutePairType.PRESENT : RoutePairType.HISTORIC);
 		try {
 			Connection con = ctx.getConnection();
 			
 			// Load aircraft for the user
-			Collection<Aircraft> myEQTypes = new TreeSet<Aircraft>();
 			GetAircraft acdao = new GetAircraft(con);
-			for (String eqType : ctx.getUser().getRatings()) {
-				Aircraft ac = acdao.get(eqType);
-				myEQTypes.add(ac);
-			}
+			Collection<Aircraft> myEQTypes = new TreeSet<Aircraft>(acdao.getAircraftTypes(ctx.getUser().getID()));
 			
 			// Load all route pairs
-			RoutePathHelper rph = new RoutePathHelper(400, historicCost);
+			RoutePathHelper rph = new RoutePathHelper(400, 800);
 			GetScheduleSearch sdao = new GetScheduleSearch(con);
-			rph.setLinks(sdao.getRoutePairs());
+			rph.setLinks(sdao.getRoutePairs(allowHistoric));
 			
 			// Figure out the routes
 			Collection<RoutePair> rts = rph.getShortestPath(rp);
@@ -75,6 +71,7 @@ public class RouteAssignmentSearchCommand extends AbstractCommand {
 				ssc.setAirportD(rtp.getAirportD());
 				ssc.setAirportA(rtp.getAirportA());
 				ssc.setLeg(0);
+				ssc.setExcludeHistoric(allowHistoric);
 				ssc.setCheckDispatchRoutes(true);
 				myEQTypes.removeIf(a -> (a.getRange() > 0) && ((rtp.getDistance() + 250) > a.getRange()));
 				

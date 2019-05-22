@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -6,7 +6,7 @@ import java.util.*;
 import java.time.*;
 import java.time.temporal.*;
 
-import org.deltava.beans.Flight;
+import org.deltava.beans.*;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.util.system.SystemData;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to search the Flight Schedule.
  * @author Luke
- * @version 7.5
+ * @version 8.6
  * @since 1.0
  */
 
@@ -361,14 +361,26 @@ public class GetSchedule extends DAO {
 	}
 	
 	/**
-	 * Returns all Airports and the Airports they are directly connected to. 
+	 * Returns all Airports and the Airports they are directly connected to.
+	 * @param includeHistoric an Inclusion to exclude/include Historic flights 
 	 * @return a Collection of ScheduleRoutes
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<ScheduleRoute> getRoutePairs() throws DAOException {
+	public Collection<ScheduleRoute> getRoutePairs(Inclusion includeHistoric) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT AIRPORT_D, AIRPORT_A, COUNT(FLIGHT), SUM(HISTORIC) FROM SCHEDULE ");
+		if (includeHistoric != Inclusion.ALL)
+			sqlBuf.append("WHERE (HISTORIC=?) ");
+		
+		sqlBuf.append("GROUP BY AIRPORT_D, AIRPORT_A");
+		
 		try {
 			Collection<ScheduleRoute> results = new ArrayList<ScheduleRoute>();
-			prepareStatementWithoutLimits("SELECT AIRPORT_D, AIRPORT_A, COUNT(FLIGHT), SUM(HISTORIC) FROM SCHEDULE GROUP BY AIRPORT_D, AIRPORT_A");
+			prepareStatementWithoutLimits(sqlBuf.toString());
+			if (includeHistoric != Inclusion.ALL)
+				_ps.setBoolean(1, (includeHistoric == Inclusion.INCLUDE));
+			
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
 					ScheduleRoute rp = new ScheduleRoute(SystemData.getAirport(rs.getString(1)), SystemData.getAirport(rs.getString(2)));

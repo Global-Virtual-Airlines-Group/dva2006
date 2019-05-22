@@ -86,7 +86,7 @@ golgotha.onDOMReady(function() {
 </tr>
 <tr>
  <td class="label">Historic Routes</td>
- <td class="data"><el:combo name="historicBias" size="1" idx="*" options="${biasOpts}" value="${param.historicBias}" /></td>
+ <td class="data"><el:combo name="includeHistoric" size="1" idx="*" options="${inclusionOpts}" value="${param.includeHistoric}" /></td>
 </tr>
 
 <!-- Button Bar -->
