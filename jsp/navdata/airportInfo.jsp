@@ -19,6 +19,7 @@
 <content:js name="airportRefresh" />
 <content:js name="gateInfo" />
 <content:json />
+<content:googleJS module="charts" />
 <map:api version="3" />
 <fmt:aptype var="useICAO" />
 <content:protocol var="proto" />
@@ -52,11 +53,11 @@ golgotha.local.update = function(combo) {
 </tr>
 <tr>
  <td class="label">Location</td>
- <td class="data" colspan="2"><fmt:geo pos="${airport}" /> (<fmt:int value="${airport.altitude}" /> feet MSL) - <c:if test="${!empty airport.state}">${airport.state.name}, </c:if>${airport.country.name} <el:flag countryCode="${airport.country.code}" /></td>
+ <td class="data" colspan="2"><fmt:geo pos="${airport}" /> (<fmt:int value="${airport.altitude}" /> feet MSL) - <c:if test="${!empty airport.state}">${airport.state.name}, </c:if>${airport.country.name}&nbsp;<el:flag countryCode="${airport.country.code}" /></td>
 </tr>
 <tr>
  <td class="label">Time Zone</td>
- <td class="data" colspan="2">${airport.TZ} <span class="ita">(Current local time: <fmt:date date="${localTime}" tz="${airport.TZ}" t="HH:mm" />)</span>
+ <td class="data" colspan="2">${airport.TZ}<span class="ita"> (Current local time: <fmt:date date="${localTime}" tz="${airport.TZ}" t="HH:mm" />)</span>
 </tr>
 <tr>
  <td class="label">Sunrise / Sunset</td>
@@ -77,7 +78,7 @@ golgotha.local.update = function(combo) {
 </tr>
 <c:if test="${!empty airlines}">
 <tr>
- <td class="label">Airlines Served</td>
+ <td class="label top">Airlines Served</td>
  <td class="data" colspan="2"><fmt:list value="${airlines}" delim=", " /></td>
 </tr>
 </c:if>
@@ -121,6 +122,10 @@ golgotha.local.update = function(combo) {
 </tr>
 </c:if>
 </content:filter>
+<tr id="flightTimeChart" style="display:none;">
+ <td class="label top">Flight Time Distribution</td>
+ <td class="data"><div id="ftChart" style="height:250px;"></div></td>
+</tr>
 <tr>
  <td class="label">Gate Legend</td>
  <td class="data"><span class="small"><img src="${proto}://maps.google.com/mapfiles/kml/pal2/icon56.png" alt="Our Gate"  width="16" height="16" /><content:airline /> Domestic Gates
@@ -160,6 +165,35 @@ google.maps.event.addListener(map, 'zoom_changed', function() {
 });
 
 golgotha.onDOMReady(function() { golgotha.gate.load('${airport.ICAO}'); golgotha.airportLoad.setHelpers(document.forms[0].id); });
+</script>
+<script id="chartInit" async>
+google.charts.load('current', {'packages':['corechart']});
+var xmlreq = new XMLHttpRequest();
+xmlreq.open('get', 'ftstats.ws?airport=${airport.ICAO}', true);
+xmlreq.onreadystatechange = function() {
+	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
+	var js = JSON.parse(xmlreq.responseText);
+	var lgStyle = {color:'black',fontName:'Verdana',fontSize:8};
+	
+	// Display the chart
+	var fC = new google.visualization.ColumnChart(document.getElementById('ftChart'));
+	var fData = new google.visualization.DataTable(); 
+	var nf = new google.visualization.NumberFormat({pattern:'00'});
+	fData.addColumn('number', 'Hour of Day'); nf.format(fData, 0); 
+	fData.addColumn('number', 'Domestic Departures'); fData.addColumn('number', 'International Departures');
+	fData.addColumn('number', 'Domestic Arrivals'); fData.addColumn('number', 'International Arrivals');
+	js.flights.forEach(function(h) {
+		var d = [h.hour, h.dd, h.di, h.ad, h.ai];
+		fData.addRow(d);
+	});
+
+	golgotha.util.display('flightTimeChart', true);
+	var mnStyle = {gridlines:{color:'#cce'},title:'Hour of Day',format:'##:00'};
+	fC.draw(fData,{title:'Flights by Hour of Day',isStacked:true,fontSize:10,hAxis:mnStyle,vAxis:{title:'Flight Legs'},width:'100%'});
+	return true;
+};
+
+google.charts.setOnLoadCallback(function() { xmlreq.send(null); });
 </script>
 <content:googleAnalytics />
 </body>

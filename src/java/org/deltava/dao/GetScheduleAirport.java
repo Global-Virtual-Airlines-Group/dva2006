@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2011, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Schedule route data.
  * @author Luke
- * @version 4.1
+ * @version 8.6
  * @since 1.0
  */
 
@@ -44,8 +44,66 @@ public class GetScheduleAirport extends DAO {
 	public Collection<Airport> getDestinationAirports(Airline al) throws DAOException {
 		return getAirports("AIRPORT_A", al);
 	}
-
+	
 	/**
+	 * Returns departing flight statistics for a particular Airport.
+	 * @param a the Airport
+	 * @return a Collection of ScheduleStatsEntry beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<ScheduleStatsEntry> getDepartureStatistics(Airport a) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("SELECT HOUR(S.TIME_D) AS HR, COUNT(S.FLIGHT) AS CNT, SUM(IF(DA.COUNTRY=AA.COUNTRY,1,0)) AS DOMESTIC FROM SCHEDULE S LEFT JOIN "
+				+ "common.AIRPORTS DA ON (S.AIRPORT_D=DA.IATA) LEFT JOIN common.AIRPORTS AA ON (S.AIRPORT_A=AA.IATA) WHERE (S.AIRPORT_D=?) GROUP BY HR ORDER BY HR");
+			_ps.setString(1, a.getIATA());
+			
+			Collection<ScheduleStatsEntry> results = new ArrayList<ScheduleStatsEntry>();
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					ScheduleStatsEntry entry = new ScheduleStatsEntry(rs.getInt(1));
+					int total = rs.getInt(2); int domestic = rs.getInt(3);
+					entry.setDepartureLegs(domestic, total - domestic);
+					results.add(entry);
+				}
+			}
+			
+			_ps.close();
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns arriving flight statistics for a particular Airport.
+	 * @param a the Airport
+	 * @return a Collection of ScheduleStatsEntry beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<ScheduleStatsEntry> getArrivalStatistics(Airport a) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("SELECT HOUR(S.TIME_A) AS HR, COUNT(S.FLIGHT) AS CNT, SUM(IF(DA.COUNTRY=AA.COUNTRY,1,0)) AS DOMESTIC FROM SCHEDULE S LEFT JOIN "
+				+ "common.AIRPORTS DA ON (S.AIRPORT_D=DA.IATA) LEFT JOIN common.AIRPORTS AA ON (S.AIRPORT_A=AA.IATA) WHERE (S.AIRPORT_A=?) GROUP BY HR ORDER BY HR");
+			_ps.setString(1, a.getIATA());
+			
+			Collection<ScheduleStatsEntry> results = new ArrayList<ScheduleStatsEntry>();
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					ScheduleStatsEntry entry = new ScheduleStatsEntry(rs.getInt(1));
+					int total = rs.getInt(2); int domestic = rs.getInt(3);
+					entry.setArrivalLegs(domestic, total - domestic);
+					results.add(entry);
+				}
+			}
+
+			_ps.close();
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+
+	/*
 	 * Returns origin/departure airports for an airline.
 	 */
 	private Collection<Airport> getAirports(String fName, Airline al) throws DAOException {
@@ -109,7 +167,7 @@ public class GetScheduleAirport extends DAO {
 		}
 	}
 	
-	/**
+	/*
 	 * Helper method to parse Airport result sets.
 	 */
 	private List<Airport> execute() throws SQLException {
