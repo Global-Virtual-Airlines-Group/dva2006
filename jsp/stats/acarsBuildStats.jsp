@@ -80,8 +80,8 @@ golgotha.local.renderChart = function(cnt) {
 	var lgStyle = {color:'black',fontName:'Verdana',fontSize:8};
 
 	// Display the chart
-	var lC = new google.visualization.ColumnChart(document.getElementById("clientLegs"));
-	var hC = new google.visualization.ColumnChart(document.getElementById("clientHours"));
+	var lC = new google.visualization.ColumnChart(document.getElementById('clientLegs'));
+	var hC = new google.visualization.ColumnChart(document.getElementById('clientHours'));
 	var lData = new google.visualization.DataTable(); var hData = new google.visualization.DataTable();
 	lData.addColumn('date', 'Week'); hData.addColumn('date', 'Week');
 	cd.builds.forEach(function(b) { lData.addColumn('number', 'Build ' + b); hData.addColumn('number', 'Build ' + b); });
@@ -93,7 +93,7 @@ golgotha.local.renderChart = function(cnt) {
 	}
 
 	golgotha.util.display('chartLegs', true); golgotha.util.display('chartHours', true);
-	var mnStyle = {gridlines:{color:'#cce'},minorGridlines:{count:12},title:'Month',format:'MMMM yyyy'};
+	var mnStyle = {gridlines:{color:'#cce'},minorGridlines:{count:cnt},title:'Month',format:'MMMM yyyy'};
 	lC.draw(lData,{title:'Flights by Build/Week',isStacked:true,fontSize:10,hAxis:mnStyle,vAxis:{title:'Flight Legs'},width:'100%'});
 	hC.draw(hData,{title:'Hours by Build/Week',isStacked:true,fontSize:10,hAxis:mnStyle,vAxis:{title:'Flight Hours'},width:'100%'});
 	golgotha.form.clear(document.forms[0]);
