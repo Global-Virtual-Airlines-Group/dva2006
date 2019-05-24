@@ -57,7 +57,7 @@ golgotha.local.update = function(combo) {
 </tr>
 <tr>
  <td class="label">Time Zone</td>
- <td class="data" colspan="2">${airport.TZ}<span class="ita"> (Current local time: <fmt:date date="${localTime}" tz="${airport.TZ}" t="HH:mm" />)</span>
+ <td class="data" colspan="2">${airport.TZ}<span class="ita"> (Current local time: <fmt:date date="${localTime}" tz="${airport.TZ}" t="HH:mm" />)</span></td>
 </tr>
 <tr>
  <td class="label">Sunrise / Sunset</td>
