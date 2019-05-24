@@ -162,18 +162,6 @@
 	</tag>
 
 	<tag>
-		<description>Protocol tag, for saving the request protocol into a request variable</description>
-		<name>protocol</name>
-		<tag-class>org.deltava.taglib.content.RequestProtocolTag</tag-class>
-		<body-content>empty</body-content>
-		<attribute>
-			<name>var</name>
-			<required>true</required>
-			<rtexprvalue>false</rtexprvalue>
-		</attribute>
-	</tag>
-
-	<tag>
 		<description>Server Name tag, for saving the URL host into a request variable</description>
 		<name>serverName</name>
 		<tag-class>org.deltava.taglib.content.ServerNameTag</tag-class>
