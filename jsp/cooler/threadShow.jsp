@@ -94,7 +94,6 @@ return true;
 <content:browser human="true"><c:set var="isHuman" value="true" scope="page" /></content:browser>
 <content:serverName var="serverName" />
 <content:sysdata var="imgPath" name="path.img" />
-<content:protocol var="reqProtocol" />
 <c:set var="postCount" value="${thread.posts.size()}" scope="page" />
 
 <!-- Main Body Frame -->
@@ -224,7 +223,7 @@ APPLICANT<br />
 <c:set var="sigImgHost" value="${(pilotLoc.domain == ourDomain) ? serverName : pilotLoc.domain}" scope="page" />
 <c:if test="${pilotLoc.domain != ourDomain}"><c:set var="sigImgHost" value="www.${sigImgHost}" scope="page" /></c:if>
 <el:table className="${pilotLoc.airlineCode}_defaultSig nophone"><tr>
- <td valign="bottom" class="sig" style="background-image: url(${reqProtocol}://${sigImgHost}/${imgPath}/sig/${fn:lower(pilot.equipmentType)}.png);">
+ <td valign="bottom" class="sig" style="background-image: url(https://${sigImgHost}/${imgPath}/sig/${fn:lower(pilot.equipmentType)}.png);">
  <div class="${pilotLoc.airlineCode}_defaultSigText"><h2>${pilot.name}</h2><span class="pri bld ${pilotLoc.airlineCode}_defaultSig caps">${pilot.rank.name}, ${pilot.equipmentType}</span></div>
  </td>
 </tr></el:table>
