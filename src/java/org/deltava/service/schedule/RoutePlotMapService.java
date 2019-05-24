@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import static javax.servlet.http.HttpServletResponse.*;
 
 import org.json.*;
 
-import org.deltava.beans.Simulator;
+import org.deltava.beans.*;
 import org.deltava.beans.acars.DispatchRoute;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.navdata.*;
@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display plotted flight routes with SID/STAR/Airway data.
  * @author Luke
- * @version 7.5
+ * @version 8.6
  * @since 1.0
  */
 
@@ -323,6 +323,7 @@ public class RoutePlotMapService extends MapPlotService {
 			if  ((a != null) && (a.getTakeoffRunwayLength() > r.getLength())) continue;
 			JSONObject ro = new JSONObject();
 			ro.put("code", r.getComboAlias());
+			ro.put("useCount", (r instanceof UseCount) ? ((UseCount) r).getUseCount() : 0);
 			
 			// Build the label
 			StringBuilder buf = new StringBuilder("Runway ");
