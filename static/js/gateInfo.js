@@ -118,6 +118,20 @@ golgotha.gate.updateAirline = function(combo) {
 	return true;
 };
 
+golgotha.gate.filter = function(gateIDs) {
+
+	var allGates = golgotha.gate.gates.concat(golgotha.gate.ourGates);
+	allGates.forEach(function(g) {
+		var isVisible = (gateIDs.length == 0) || gateIDs.contains(g.id);
+		if (isVisible)
+			g.show();
+		else
+			g.hide();
+	});
+
+	return true;
+};
+
 golgotha.gate.toggleOurs = function() {
 	if (!golgotha.gate.airline) return false;
 	var g = golgotha.gate.data[this.gateID];
@@ -142,5 +156,25 @@ golgotha.gate.toggleIntl = function() {
 	golgotha.gate.markDirty(this.gateID);
 	golgotha.util.display('saveLink', true);
 	golgotha.gate.reload(golgotha.gate.airline);
+	return true;
+};
+
+golgotha.local.updateAirportA = function(combo, departureICAO) {
+	if (!golgotha.form.comboSet(combo)) {
+		golgotha.gate.filter([]);
+		return true;
+	}
+
+	var xreq = new XMLHttpRequest();
+	xreq.open('get', 'gates.ws?id=' + departureICAO + '&aa=' + golgotha.form.getCombo(combo), true);
+	xreq.onreadystatechange = function() {
+		if ((xreq.readyState != 4) || (xreq.status != 200)) return false;
+		var jsData = JSON.parse(xreq.responseText); var ids = [];
+		jsData.gates.forEach(function(id) { ids.push(id); });	
+		golgotha.gate.filter(ids);
+		return true;
+	}
+
+	xreq.send(null);
 	return true;
 };

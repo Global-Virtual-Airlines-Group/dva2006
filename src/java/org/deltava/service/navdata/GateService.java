@@ -1,4 +1,4 @@
-// Copyright 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.navdata;
 
 import java.util.*;
@@ -9,8 +9,7 @@ import org.json.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.navdata.*;
-import org.deltava.beans.schedule.Airline;
-import org.deltava.beans.schedule.Airport;
+import org.deltava.beans.schedule.*;
 
 import org.deltava.dao.*;
 import org.deltava.service.*;
@@ -21,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to return preferred airport Gate data. 
  * @author Luke
- * @version 7.3
+ * @version 8.6
  * @since 6.3
  */
 
@@ -36,7 +35,8 @@ public class GateService extends WebService {
 	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 		
-		// Get the airport
+		// Get the airport(s)
+		Airport aa = SystemData.getAirport(ctx.getParameter("aa"));
 		Airport a = SystemData.getAirport(ctx.getParameter("id"));
 		if (a == null)
 			return SC_NOT_FOUND;
@@ -46,8 +46,11 @@ public class GateService extends WebService {
 		Collection<Gate> gates = new LinkedHashSet<Gate>();
 		try {
 			GetGates gdao = new GetGates(ctx.getConnection());
-			gates.addAll(gdao.getPopularGates(a, sim));
-			gates.addAll(gdao.getAllGates(a, sim));
+			if (aa == null) {
+				gates.addAll(gdao.getPopularGates(a, sim));
+				gates.addAll(gdao.getAllGates(a, sim));
+			} else
+				gates.addAll(gdao.getPopularGates(new ScheduleRoute(a, aa), sim, true));
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		} finally {
@@ -58,6 +61,10 @@ public class GateService extends WebService {
 		JSONObject jo = new JSONObject();
 		jo.put("icao", a.getICAO());
 		jo.put("ll", JSONUtils.format(a));
+		if (aa != null) {
+			jo.put("icao2", aa.getICAO());
+			jo.put("ll2", JSONUtils.format(aa));
+		}
 		
 		// Write gates
 		for (Gate g : gates) {

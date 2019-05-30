@@ -1,4 +1,4 @@
-// Copyright 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.time.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display Airport runway and gate information.
  * @author Luke
- * @version 7.4
+ * @version 8.6
  * @since 6.3
  */
 
@@ -73,6 +73,10 @@ public class AirportInformationCommand extends AbstractCommand {
 			ctx.setAttribute("toRwys", toRwys, REQUEST);
 			ctx.setAttribute("ldgRwys", ldgRwys, REQUEST);
 			ctx.setAttribute("invalidRwys", invalidRwys, REQUEST);
+			
+			// Save destinations
+			GetScheduleAirport sadao = new GetScheduleAirport(con);
+			ctx.setAttribute("connectingAirports", sadao.getConnectingAirports(a, true, null), REQUEST);
 
 			// Determine valid runways for winds
 			Collection<String> validRunwayIDs = new HashSet<String>();
