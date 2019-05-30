@@ -22,7 +22,6 @@
 <content:googleJS module="charts" />
 <map:api version="3" />
 <fmt:aptype var="useICAO" />
-<content:protocol var="proto" />
 <script>
 golgotha.local.update = function(combo) {
 	self.location = '/airportinfo.do?id=' + golgotha.form.getCombo(combo);
@@ -85,8 +84,7 @@ golgotha.local.update = function(combo) {
 <c:if test="${!empty wx}">
 <tr>
  <td class="label top">Current Weather</td>
- <td class="data" colspan="2"><c:if test="${wx.windSpeed > 0}">Winds <fmt:int value="${wx.windDirection}"  fmt="000" />&deg;, <fmt:int value="${wx.windSpeed}" /> kts<c:if test="${wx.windGust > wx.windSpeed}">, gusting to
- <fmt:int value="${wx.windGust}" /> kts</c:if>
+ <td class="data" colspan="2"><c:if test="${wx.windSpeed > 0}">Winds <fmt:int value="${wx.windDirection}"  fmt="000" />&deg;, <fmt:int value="${wx.windSpeed}" /> kts<c:if test="${wx.windGust > wx.windSpeed}">, gusting to <fmt:int value="${wx.windGust}" /> kts</c:if>
  <br /></c:if>${wx.data}</td>
 </tr>
 </c:if>
@@ -126,12 +124,18 @@ golgotha.local.update = function(combo) {
  <td class="label top">Flight Time Distribution</td>
  <td class="data"><div id="ftChart" style="height:250px;"></div></td>
 </tr>
+<c:if test="${!empty connectingAirports}">
+<tr>
+ <td class="label">Connecting Airport</td>
+ <td class="data" colspan="2"><el:combo name="airportA" size="1" idx="*" firstEntry="[ SELECT AIRPORT ]" options="${connectingAirports}" onChange="void golgotha.local.updateAirportA(this, '${airport.ICAO}')" /></td>
+</tr>
+</c:if>
 <tr>
  <td class="label">Gate Legend</td>
- <td class="data"><span class="small"><img src="${proto}://maps.google.com/mapfiles/kml/pal2/icon56.png" alt="Our Gate"  width="16" height="16" /><content:airline /> Domestic Gates
- | <img src="${proto}://maps.google.com/mapfiles/kml/pal2/icon48.png" alt="International Gate"  width="16" height="16" /><content:airline /> International Gates
- | <img src="${proto}://maps.google.com/mapfiles/kml/pal3/icon52.png" alt="Frequently Used Gate"  width="16" height="16" /> Frequently Used Gates
- | <img src="${proto}://maps.google.com/mapfiles/kml/pal3/icon60.png" alt="Other Gate"  width="16" height="16" /> Other Gates</span></td>
+ <td class="data"><span class="small"><img src="https://maps.google.com/mapfiles/kml/pal2/icon56.png" alt="Our Gate"  width="16" height="16" />&nbsp;<content:airline /> Domestic Gates
+ | <img src="https://maps.google.com/mapfiles/kml/pal2/icon48.png" alt="International Gate"  width="16" height="16" />&nbsp;<content:airline /> International Gates
+ | <img src="https://maps.google.com/mapfiles/kml/pal3/icon52.png" alt="Frequently Used Gate"  width="16" height="16" /> Frequently Used Gates
+ | <img src="https://maps.google.com/mapfiles/kml/pal3/icon60.png" alt="Other Gate"  width="16" height="16" /> Other Gates</span></td>
  <td class="mid">&nbsp;<content:filter roles="Schedule,Operations"><c:if test="${!empty airlines}"><a id="editLink" href="javascript:void golgotha.gate.edit()">EDIT GATE DATA</a>
 <el:combo ID="airlineCombo" name="airline"  size="1" idx="*" options="${airlines}" firstEntry="[ AIRLINE ]"  style="display:none;" onChange="void golgotha.gate.updateAirline(this)" />
 <a id="saveLink" style="display:none;" href="javascript:void golgotha.gate.save()">SAVE GATE DATA</a>
