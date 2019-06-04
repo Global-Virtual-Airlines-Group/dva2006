@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2010, 2011, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010, 2011, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.hr;
 
 import java.util.*;
@@ -10,22 +10,18 @@ import org.deltava.beans.*;
  * A class to store Equipment Program transfer requests. Since a checkride may be required for switches to
  * additional equipment programs, this bean may also be used to track check ride workflows.
  * @author Luke
- * @version 7.5
+ * @version 8.6
  * @since 1.0
  */
 
 public class TransferRequest extends DatabaseBean implements ViewEntry {
 
-	public static final int PENDING = 1;
-	public static final int ASSIGNED = 2;
-	public static final int OK = 3;
-
-	private static final String[] STATUS = { "New", "Pending Check Ride", "Check Ride Assigned", "Complete" };
-
 	private final SortedSet<Integer> _checkRideIDs = new TreeSet<Integer>();
 	private boolean _crSubmitted;
 	
-	private int _status;
+	private Simulator _sim = Simulator.UNKNOWN;
+	
+	private TransferStatus _status;
 	private final String _eqType;
 	private String _acType;
 	private Instant _date;
@@ -92,23 +88,12 @@ public class TransferRequest extends DatabaseBean implements ViewEntry {
 	/**
 	 * Returns the status of this Transfer Request.
 	 * @return the status code
-	 * @see TransferRequest#setStatus(int)
-	 * @see TransferRequest#getStatusName()
+	 * @see TransferRequest#setStatus(TransferStatus)
 	 */
-	public int getStatus() {
+	public TransferStatus getStatus() {
 		return _status;
 	}
 
-	/**
-	 * Returns the status of this Transfer Request.
-	 * @return the status name
-	 * @see TransferRequest#getStatus()
-	 * @see TransferRequest#setStatus(int)
-	 */
-	public String getStatusName() {
-		return STATUS[getStatus()];
-	}
-	
 	/**
 	 * Returns whether the associated Check Ride has been submitted.
 	 * @return TRUE if the Check Ride was submitted or graded, otherwise FALSE
@@ -125,6 +110,15 @@ public class TransferRequest extends DatabaseBean implements ViewEntry {
 	 */
 	public boolean getRatingOnly() {
 		return _ratingOnly;
+	}
+	
+	/**
+	 * Returns the Pilot's preferred Simulator.
+	 * @return a Simulator enum
+	 * @see TransferRequest#setSimulator(Simulator)
+	 */
+	public Simulator getSimulator() {
+		return _sim;
 	}
 
 	/**
@@ -170,15 +164,10 @@ public class TransferRequest extends DatabaseBean implements ViewEntry {
 
 	/**
 	 * Updates the status of this Transfer Request.
-	 * @param status the new status code
-	 * @throws IllegalArgumentException if status is negative or invalid
+	 * @param status the new TransferStatus
 	 * @see TransferRequest#getStatus()
-	 * @see TransferRequest#getStatusName()
 	 */
-	public void setStatus(int status) {
-		if ((status < 0) || (status >= STATUS.length))
-			throw new IllegalArgumentException("Invalid Transfer Request status - " + status);
-
+	public void setStatus(TransferStatus status) {
 		_status = status;
 	}
 	
@@ -189,6 +178,15 @@ public class TransferRequest extends DatabaseBean implements ViewEntry {
 	 */
 	public void setRatingOnly(boolean ratingOnly) {
 		_ratingOnly = ratingOnly;
+	}
+	
+	/**
+	 * Updates the Pilot's preferred simulator.
+	 * @param sim a Simulator
+	 * @see TransferRequest#getSimulator()
+	 */
+	public void setSimulator(Simulator sim) {
+		_sim = sim;
 	}
 
 	/**
@@ -207,9 +205,9 @@ public class TransferRequest extends DatabaseBean implements ViewEntry {
 	 */
 	@Override
 	public String getRowClassName() {
-		if (_status == ASSIGNED)
+		if (_status == TransferStatus.ASSIGNED)
 			return _crSubmitted ? "opt3" : "opt1";
 			
-		return (_status == 1) ? "opt2" : null;
+		return (_status == TransferStatus.PENDING) ? "opt2" : null;
 	}
 }

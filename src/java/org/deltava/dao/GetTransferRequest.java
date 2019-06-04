@@ -1,18 +1,19 @@
-// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.testing.TestStatus;
+import org.deltava.beans.Simulator;
 import org.deltava.beans.hr.TransferRequest;
-
+import org.deltava.beans.hr.TransferStatus;
 import org.deltava.util.CollectionUtils;
 
 /**
  * A Data Access Object to read Pilot Transfer requests.
  * @author Luke
- * @version 7.5
+ * @version 8.6
  * @since 1.0
  */
 
@@ -145,7 +146,7 @@ public class GetTransferRequest extends DAO {
 			prepareStatementWithoutLimits("SELECT TX.* FROM TXREQUESTS TX LEFT JOIN TXRIDES TC ON (TX.ID=TC.ID) LEFT JOIN exams.CHECKRIDES CR ON (TC.CHECKRIDE_ID=CR.ID) WHERE "
 				+ "(TX.CREATED < DATE_SUB(NOW(), INTERVAL ? DAY)) AND (TX.STATUS<>?) AND (CR.STATUS<>?) AND (CR.STATUS<>?) ORDER BY TX.CREATED");
 			_ps.setInt(1, minAge);
-			_ps.setInt(2, TransferRequest.OK);
+			_ps.setInt(2, TransferStatus.COMPLETE.ordinal());
 			_ps.setInt(3, TestStatus.SUBMITTED.ordinal());
 			_ps.setInt(4, TestStatus.SCORED.ordinal());
 			List<TransferRequest> results = execute();
@@ -211,10 +212,11 @@ public class GetTransferRequest extends DAO {
 		try (ResultSet rs = _ps.executeQuery()) {
 			while (rs.next()) {
 				TransferRequest txreq = new TransferRequest(rs.getInt(1), rs.getString(3));
-				txreq.setStatus(rs.getInt(2));
+				txreq.setStatus(TransferStatus.values()[rs.getInt(2)]);
 				txreq.setAircraftType(rs.getString(4));
 				txreq.setDate(toInstant(rs.getTimestamp(5)));
 				txreq.setRatingOnly(rs.getBoolean(6));
+				txreq.setSimulator(Simulator.fromVersion(rs.getInt(7), Simulator.UNKNOWN));
 				results.add(txreq);
 			}
 		}
