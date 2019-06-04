@@ -7,7 +7,7 @@
 <c:set var="reqType" value="${isRating ? 'Additional Rating' : 'Equipment Transfer'}" scope="page" />
 <html lang="en">
 <head>
-<title>New <content:airline /> ${reqType} Request</title>
+<title>New <content:airline />&nbsp;${reqType} Request</title>
 <content:css name="main" />
 <content:css name="form" />
 <content:pics />
@@ -19,6 +19,7 @@
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.eqType, t:'Equipment Program to transfer into'});
+	golgotha.form.validate({f:f.sim, min:1, t:'Preferred Simulator version'});
 	golgotha.form.submit(f);
 	return true;
 };
@@ -63,7 +64,7 @@ golgotha.local.updateAircraft = function(combo) {
 </tr>
 <tr>
  <td class="label">Preferred Simulator</td>
- <td class="data"><el:radio name="sim" required="true" idx="*" options="${fsVersions}" /></td>
+ <td class="data"><el:check type="radio" name="sim" width="195" idx="*" options="${fsVersions}" /></td>
 </tr>
 <tr id="acType" style="display:none;">
  <td class="label">Preferred Aircraft</td>
