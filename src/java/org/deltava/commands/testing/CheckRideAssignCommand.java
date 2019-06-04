@@ -1,12 +1,12 @@
-// Copyright 2005, 2006, 2007, 2011, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2011, 2012, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.sql.Connection;
 import java.time.Instant;
 
 import org.deltava.beans.*;
+import org.deltava.beans.hr.*;
 import org.deltava.beans.testing.*;
-import org.deltava.beans.hr.TransferRequest;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to assign Check Rides.
  * @author Luke
- * @version 8.0
+ * @version 8.6
  * @since 1.0
  */
 
@@ -120,7 +120,7 @@ public class CheckRideAssignCommand extends AbstractTestHistoryCommand {
 
 			// Update the transfer request
 			txreq.addCheckRideID(cr.getID());
-			txreq.setStatus(TransferRequest.ASSIGNED);
+			txreq.setStatus(TransferStatus.ASSIGNED);
 
 			// Save the transfer request
 			SetTransferRequest txwdao = new SetTransferRequest(con);

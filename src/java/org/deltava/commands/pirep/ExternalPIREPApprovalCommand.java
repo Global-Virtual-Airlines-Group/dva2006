@@ -1,4 +1,4 @@
-// Copyright 2007, 2009, 2010, 2012, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009, 2010, 2012, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.Collection;
@@ -8,7 +8,7 @@ import java.time.Instant;
 import org.deltava.beans.*;
 import org.deltava.beans.acars.ACARSRouteEntry;
 import org.deltava.beans.flight.*;
-import org.deltava.beans.hr.TransferRequest;
+import org.deltava.beans.hr.*;
 import org.deltava.beans.testing.*;
 
 import org.deltava.commands.*;
@@ -22,7 +22,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to approve Flight Reports and Check Rides across Airlines.
  * @author Luke
- * @version 8.1
+ * @version 8.6
  * @since 2.0
  */
 
@@ -124,15 +124,12 @@ public class ExternalPIREPApprovalCommand extends AbstractCommand {
 			// If we are approving the checkride, then approve the transfer request
 			if (txreq != null) {
 				mctx.addData("txReq", txreq);
-				txreq.setStatus(cr.getPassFail() ? TransferRequest.OK : TransferRequest.PENDING);
+				txreq.setStatus(cr.getPassFail() ? TransferStatus.COMPLETE : TransferStatus.PENDING);
 
 				// Write the transfer request
 				SetTransferRequest txwdao = new SetTransferRequest(con);
 				txwdao.update(txreq);
 			}
-			
-			// If we're approving and we have hit a century club milestone, log it
-			// FIXME: Accomplishments do not work across airlines
 			
 			// Commit the transaction
 			ctx.commitTX();

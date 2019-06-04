@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -6,7 +6,7 @@ import java.sql.Connection;
 
 import org.deltava.beans.flight.*;
 import org.deltava.beans.academy.*;
-import org.deltava.beans.hr.TransferRequest;
+import org.deltava.beans.hr.*;
 import org.deltava.beans.testing.*;
 
 import org.deltava.commands.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to retroactively flag a Flight Report as a Check Ride.
  * @author Luke
- * @version 8.1
+ * @version 8.6
  * @since 1.0
  */
 
@@ -141,7 +141,7 @@ public class CheckRideFlagCommand extends AbstractTestHistoryCommand {
 			// Update the transfer request
 			if (newCR && (tx != null)) {
 				tx.addCheckRideID(cr.getID());
-				tx.setStatus(TransferRequest.ASSIGNED);
+				tx.setStatus(TransferStatus.ASSIGNED);
 				
 				// Save the transfer request
 				SetTransferRequest twdao = new SetTransferRequest(con);

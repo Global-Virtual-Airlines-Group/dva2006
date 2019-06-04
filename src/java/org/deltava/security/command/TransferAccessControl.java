@@ -1,14 +1,14 @@
-// Copyright 2005, 2006, 2008, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
-import org.deltava.beans.hr.TransferRequest;
+import org.deltava.beans.hr.*;
 
 import org.deltava.security.SecurityContext;
 
 /**
  * An Access Controller for equipment program Transfer Requests.
  * @author Luke
- * @version 7.0
+ * @version 8.6
  * @since 1.0
  */
 
@@ -50,12 +50,12 @@ public class TransferAccessControl extends AccessControl {
          throw new AccessControlException("Cannot view Transfer Request");
 
       // Set access rights
-      int status = _treq.getStatus();
+      TransferStatus status = _treq.getStatus();
       _canToggleRatings = (isMine || isExam || isPIREP);
-      _canApprove = (status == TransferRequest.OK) && isPIREP;
-      _canAssignRide = (status == TransferRequest.PENDING) && isExam;
+      _canApprove = (status == TransferStatus.COMPLETE) && isPIREP;
+      _canAssignRide = (status == TransferStatus.PENDING) && isExam;
       _canReject = isPIREP || isExam;
-      _canDelete = isHR || isOps || (isMine && (status != TransferRequest.ASSIGNED));
+      _canDelete = isHR || isOps || (isMine && (status != TransferStatus.ASSIGNED));
    }
 
    /**

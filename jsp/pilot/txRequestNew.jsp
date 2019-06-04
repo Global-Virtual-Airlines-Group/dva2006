@@ -48,6 +48,7 @@ golgotha.local.updateAircraft = function(combo) {
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:empty var="emptyList" />
+<content:enum var="fsVersions" className="org.deltava.beans.Simulator" exclude="UNKNOWN,FS98,FS2000,FS2002,XP9" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -59,6 +60,10 @@ golgotha.local.updateAircraft = function(combo) {
 <tr>
  <td class="label">Equipment Program</td>
  <td class="data"><el:combo name="eqType" idx="*" size="1" options="${availableEQ}" required="true" firstEntry="[ EQUIPMENT PROGRAM ]" onChange="void golgotha.local.updateAircraft(this)" /></td>
+</tr>
+<tr>
+ <td class="label">Preferred Simulator</td>
+ <td class="data"><el:radio name="sim" required="true" idx="*" options="${fsVersions}" /></td>
 </tr>
 <tr id="acType" style="display:none;">
  <td class="label">Preferred Aircraft</td>
