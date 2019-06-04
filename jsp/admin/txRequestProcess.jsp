@@ -64,12 +64,16 @@ return true;
  <td class="data">${pilot.rank.name}, ${pilot.equipmentType} (Stage <fmt:int value="${currentEQ.stage}" />)</td>
 </tr>
 <tr>
+ <td class="label">Preferred Simulator</td>
+ <td class="data bld">${txReq.simulator.name}</td>
+</tr>
+<tr>
  <td class="label">Preferred Aircraft</td>
  <td class="data sec bld">${txReq.aircraftType}</td>
 </tr>
 <tr>
  <td class="label">Transfer Status</td>
- <td class="data"><span class="sec bld">${txReq.statusName}</span> (Created on <fmt:date t="HH:mm" date="${txReq.date}" />)</td>
+ <td class="data"><span class="sec bld">${txReq.status.description}</span> (Created on <fmt:date t="HH:mm" date="${txReq.date}" />)</td>
 </tr>
 <c:if test="${txReq.ratingOnly}">
 <tr>
@@ -132,14 +136,11 @@ return true;
 <c:if test="${!txReq.ratingOnly}">
 <tr>
  <td class="label">Transfer to</td>
- <td class="data"><el:combo name="eqType" idx="*" size="1" firstEntry="-" className="req" options="${activeEQ}" value="${eqType}" />
- as <el:combo name="rank" idx="*" size="1" options="${newRanks}" className="req" firstEntry="-" /></td>
+ <td class="data"><el:combo name="eqType" idx="*" size="1" firstEntry="-" className="req" options="${activeEQ}" value="${eqType}" /> as <el:combo name="rank" idx="*" size="1" options="${newRanks}" className="req" firstEntry="-" /></td>
 </tr>
 <tr>
  <td class="label">Promotion to Captain</td>
- <td class="data">Examination Status <b>${captExam ? 'PASSED' : 'NOT PASSED'}</b>, Flight Legs completed
- = <fmt:int value="${promoLegs}" />.<c:if test="${captOK}"><span class="ter bld caps"> ELIGIBLE FOR PROMOTION
- TO CAPTAIN</span></c:if></td>
+ <td class="data">Examination Status <b>${captExam ? 'PASSED' : 'NOT PASSED'}</b>, Flight Legs completed = <fmt:int value="${promoLegs}" />.<c:if test="${captOK}"><span class="ter bld caps"> ELIGIBLE FOR PROMOTION TO CAPTAIN</span></c:if></td>
 </tr>
 </c:if>
 <tr>
