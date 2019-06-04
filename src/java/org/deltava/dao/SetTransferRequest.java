@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2011, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2011, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to write equipment program Transfer Requests.
  * @author Luke
- * @version 8.0
+ * @version 8.6
  * @since 1.0
  */
 
@@ -34,12 +34,13 @@ public class SetTransferRequest extends DAO {
 		String db = formatDBName(dbName);
 		try {
 			startTransaction();
-            prepareStatement("INSERT INTO " + db + ".TXREQUESTS (STATUS, EQTYPE, ACTYPE, CREATED, RATING_ONLY, ID) VALUES (?, ?, ?, NOW(), ?, ?)");
-            _ps.setInt(1, txreq.getStatus());
+            prepareStatement("INSERT INTO " + db + ".TXREQUESTS (STATUS, EQTYPE, ACTYPE, CREATED, RATING_ONLY, SIM, ID) VALUES (?, ?, ?, NOW(), ?, ?, ?)");
+            _ps.setInt(1, txreq.getStatus().ordinal());
             _ps.setString(2, txreq.getEquipmentType());
             _ps.setString(3, txreq.getAircraftType());
             _ps.setBoolean(4, txreq.getRatingOnly());
-            _ps.setInt(5, txreq.getID());
+            _ps.setInt(5,  txreq.getSimulator().getCode());
+            _ps.setInt(6, txreq.getID());
             executeUpdate(1);
             
 			// Write check ride IDs
@@ -59,13 +60,14 @@ public class SetTransferRequest extends DAO {
 	public void update(TransferRequest txreq) throws DAOException {
 		try {
 			startTransaction();
-			prepareStatement("UPDATE TXREQUESTS SET STATUS=?, EQTYPE=?, ACTYPE=?, CREATED=?, RATING_ONLY=? WHERE (ID=?)");
-			_ps.setInt(1, txreq.getStatus());
+			prepareStatement("UPDATE TXREQUESTS SET STATUS=?, EQTYPE=?, ACTYPE=?, CREATED=?, RATING_ONLY=?, SIM=? WHERE (ID=?)");
+			_ps.setInt(1, txreq.getStatus().ordinal());
 			_ps.setString(2, txreq.getEquipmentType());
 			_ps.setString(3, txreq.getAircraftType());
 			_ps.setTimestamp(4, createTimestamp(txreq.getDate()));
 			_ps.setBoolean(5, txreq.getRatingOnly());
-			_ps.setInt(6, txreq.getID());
+			_ps.setInt(6, txreq.getSimulator().getCode());
+			_ps.setInt(7, txreq.getID());
 			executeUpdate(1);
 			
 			// Write check ride IDs

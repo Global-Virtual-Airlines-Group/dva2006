@@ -1,11 +1,11 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
-import org.deltava.beans.hr.TransferRequest;
+import org.deltava.beans.hr.*;
 import org.deltava.beans.testing.*;
 
 import org.deltava.commands.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to request a transfer to a different Equipment program.
  * @author Luke
- * @version 7.5
+ * @version 8.6
  * @since 1.0
  */
 
@@ -102,6 +102,7 @@ public class TransferRequestCommand extends AbstractTestHistoryCommand {
 			EquipmentType eq = activeEQ.get(eqType);
 			TransferRequest txreq = new TransferRequest(p.getID(), eqType);
 			txreq.setAircraftType(ctx.getParameter("acType"));
+			txreq.setSimulator(Simulator.fromName(ctx.getParameter("sim"), Simulator.UNKNOWN));
 			if (!eq.getOwner().getCode().equals(SystemData.get("airline.code")))
 				txreq.setRatingOnly(true);
 			else
@@ -114,9 +115,9 @@ public class TransferRequestCommand extends AbstractTestHistoryCommand {
 			// Set status to approved if we can transfter
 			try {
 				testHistory.canSwitchTo(eq);
-				txreq.setStatus(TransferRequest.OK);
+				txreq.setStatus(TransferStatus.COMPLETE);
 			} catch (IneligibilityException ie) {
-				txreq.setStatus(TransferRequest.PENDING);
+				txreq.setStatus(TransferStatus.PENDING);
 			}
 			
 			// Set mailer variables
