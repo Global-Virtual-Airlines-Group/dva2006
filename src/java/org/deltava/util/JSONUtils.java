@@ -1,4 +1,4 @@
-// Copyright 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import org.json.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.GeoLocation;
 /**
  * A utility class for dealing with JSON objects. 
  * @author Luke
- * @version 8.2
+ * @version 8.6
  * @since 7.3
  */
 
@@ -26,9 +26,9 @@ public class JSONUtils {
 	 * @param o the JSONObject
 	 * @param names the property names
 	 */
-	public static void ensureArrayPresent(JSONObject o, String...names) {
+	public static void ensureArrayPresent(JSONObject o, Object...names) {
 		for (int x = 0; x < names.length; x++) {
-			String name = names[x];
+			String name = String.valueOf(names[x]);
 			if (!o.has(name))
 				o.put(name, new JSONArray());
 		}
