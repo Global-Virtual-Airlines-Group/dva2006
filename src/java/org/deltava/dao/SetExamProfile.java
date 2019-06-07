@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -6,10 +6,12 @@ import java.sql.*;
 import org.deltava.beans.testing.*;
 import org.deltava.beans.system.AirlineInformation;
 
+import org.deltava.util.StringUtils;
+
 /**
  * A Data Access Object for writing Examination Profiles and Check Ride scripts.
  * @author Luke
- * @version 8.0
+ * @version 8.6
  * @since 1.0
  */
 
@@ -144,11 +146,12 @@ public class SetExamProfile extends DAO {
 	 */
 	public void write(EquipmentRideScript sc) throws DAOException {
 		try {
-			prepareStatement("REPLACE INTO CR_DESCS (EQTYPE, EQPROGRAM, CURRENCY, BODY) VALUES (?, ?, ?, ?)");
+			prepareStatementWithoutLimits("REPLACE INTO CR_DESCS (EQTYPE, EQPROGRAM, CURRENCY, SIMS, BODY) VALUES (?, ?, ?, ?, ?)");
 			_ps.setString(1, sc.getEquipmentType());
 			_ps.setString(2, sc.getProgram());
 			_ps.setBoolean(3, sc.getIsCurrency());
-			_ps.setString(4, sc.getDescription());
+			_ps.setString(4, StringUtils.listConcat(sc.getSimulators(), ","));
+			_ps.setString(5, sc.getDescription());
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);

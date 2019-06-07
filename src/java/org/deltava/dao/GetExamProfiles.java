@@ -1,18 +1,19 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 
+import org.deltava.beans.Simulator;
 import org.deltava.beans.testing.*;
 
-import org.deltava.util.CollectionUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to read examination configuration data.
  * @author Luke
- * @version 8.0
+ * @version 8.6
  * @since 1.0
  */
 
@@ -118,7 +119,9 @@ public class GetExamProfiles extends DAO {
 				if (rs.next()) {
 					result = new EquipmentRideScript(rs.getString(2), rs.getString(1));
 					result.setIsCurrency(rs.getBoolean(3));
-					result.setDescription(rs.getString(4));
+					List<String> sims = StringUtils.split(rs.getString(4), ",");
+					sims.stream().map(c -> Simulator.fromName(c, Simulator.UNKNOWN)).filter(s -> (s != Simulator.UNKNOWN)).forEach(result::addSimulator);
+					result.setDescription(rs.getString(5));
 				}
 			}
 
@@ -142,7 +145,9 @@ public class GetExamProfiles extends DAO {
 				while (rs.next()) {
 					EquipmentRideScript sc = new EquipmentRideScript(rs.getString(2), rs.getString(1));
 					sc.setIsCurrency(rs.getBoolean(3));
-					sc.setDescription(rs.getString(4));
+					sc.setDescription(rs.getString(5));
+					List<String> sims = StringUtils.split(rs.getString(4), ",");
+					sims.stream().map(c -> Simulator.fromName(c, Simulator.UNKNOWN)).filter(s -> (s != Simulator.UNKNOWN)).forEach(sc::addSimulator);
 					results.add(sc);
 				}
 			}
@@ -154,27 +159,6 @@ public class GetExamProfiles extends DAO {
 		}
 	}
 	
-	/**
-	 * Returns all available equipment/aircraft script combinations. 
-	 * @return a Map of Collections of aircraft names, keyed by equipment profile
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public Map<String, Collection<String>> getAircraftScripts() throws DAOException {
-		try {
-			Map<String, Collection<String>> results = new LinkedHashMap<String, Collection<String>>();
-			prepareStatementWithoutLimits("SELECT EQPROGRAM, EQTYPE FROM CR_DESCS");
-			try (ResultSet rs = _ps.executeQuery()) {
-				while (rs.next())
-					CollectionUtils.addMapCollection(results, rs.getString(1), rs.getString(2));
-			}
-			
-			_ps.close();
-			return results;
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-
 	/*
 	 * Helper method to parse ExamProfile result sets.
 	 */

@@ -1,18 +1,19 @@
-// Copyright 2006, 2007, 2010, 2011, 2014, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2010, 2011, 2014, 2015, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.OnlineNetwork;
+import org.deltava.beans.Simulator;
 import org.deltava.beans.academy.*;
-
+import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to load Flight Academy Certifications and Check Ride scripts. 
  * @author Luke
- * @version 7.2
+ * @version 8.6
  * @since 1.0
  */
 
@@ -174,7 +175,9 @@ public class GetAcademyCertifications extends DAO {
 		try (ResultSet rs = _ps.executeQuery()) {
 			while (rs.next()) {
 				AcademyRideScript sc = new AcademyRideScript(rs.getString(1), rs.getInt(2));
-				sc.setDescription(rs.getString(3));
+				sc.setDescription(rs.getString(4));
+				List<String> sims = StringUtils.split(rs.getString(3), ",");
+				sims.stream().map(c -> Simulator.fromName(c, Simulator.UNKNOWN)).filter(s -> (s != Simulator.UNKNOWN)).forEach(sc::addSimulator);
 				results.add(sc);
 			}
 		}
