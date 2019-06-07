@@ -1,10 +1,11 @@
-// Copyright 2010, 2014, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2014, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.sql.Connection;
 import java.util.Collection;
+import java.util.Collections;
 
-import org.deltava.beans.AuditLog;
+import org.deltava.beans.*;
 import org.deltava.beans.academy.*;
 
 import org.deltava.commands.*;
@@ -17,7 +18,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to handle Flight Academy Check Ride scripts.
  * @author Luke
- * @version 7.4
+ * @version 8.6
  * @since 3.4
  */
 
@@ -59,6 +60,7 @@ public class RideScriptCommand extends AbstractAuditFormCommand {
 				sc = new AcademyRideScript(c.getName(), StringUtils.parse(ctx.getParameter("seq"), 1));
 				
 			sc.setDescription(ctx.getParameter("body"));
+			ctx.getParameters("sims", Collections.emptySet()).stream().map(s ->Simulator.fromName(s, Simulator.UNKNOWN)).filter(s -> (s != Simulator.UNKNOWN)).forEach(sc::addSimulator);
 			
 			// Check audit log
 			Collection<BeanUtils.PropertyChange> delta = BeanUtils.getDelta(oldSC, sc);

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2011, 2014, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010, 2011, 2014, 2015, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object for Flight Academy Certifications and Check Ride Scripts.
  * @author Luke
- * @version 8.0
+ * @version 8.6
  * @since 3.4
  */
 
@@ -80,8 +80,7 @@ public class SetAcademyCertification extends DAO {
 			startTransaction();
 			
 			// Write the profile
-			prepareStatementWithoutLimits("UPDATE exams.CERTS SET NAME=?, ABBR=?, STAGE=?, PREREQ=?, ACTIVE=?, AUTO_ENROLL=?, VISIBLE=?, CHECKRIDES=?, EQPROGRAM=?, "
-				+ "FLIGHTCOUNT=?, NETWORK=?, RATINGCODE=?, DESCRIPTION=? WHERE (NAME=?)");
+			prepareStatementWithoutLimits("UPDATE exams.CERTS SET NAME=?, ABBR=?, STAGE=?, PREREQ=?, ACTIVE=?, AUTO_ENROLL=?, VISIBLE=?, CHECKRIDES=?, EQPROGRAM=?, FLIGHTCOUNT=?, NETWORK=?, RATINGCODE=?, DESCRIPTION=? WHERE (NAME=?)");
 			_ps.setString(1, c.getName());
 			_ps.setString(2, c.getCode());
 			_ps.setInt(3, c.getStage());
@@ -157,10 +156,11 @@ public class SetAcademyCertification extends DAO {
 	 */
 	public void write(AcademyRideScript sc) throws DAOException {
 		try {
-			prepareStatement("REPLACE INTO exams.CERTRIDE_SCRIPTS (CERTNAME, IDX, BODY) VALUES (?, ?, ?)");
+			prepareStatementWithoutLimits("REPLACE INTO exams.CERTRIDE_SCRIPTS (CERTNAME, IDX, SIMS, BODY) VALUES (?, ?, ?, ?)");
 			_ps.setString(1, sc.getCertificationName());
 			_ps.setInt(2, sc.getIndex());
-			_ps.setString(3, sc.getDescription());
+			_ps.setString(3, StringUtils.listConcat(sc.getSimulators(), ","));
+			_ps.setString(4, sc.getDescription());
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
