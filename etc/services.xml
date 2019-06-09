@@ -72,6 +72,7 @@
 	<service id="answer" class="org.deltava.service.exam.TextService" />
 	<service id="examplot" class="org.deltava.service.exam.RoutePlotService" />
 	<service id="ridecount" class="org.deltava.service.exam.AcademyRideCountService" />
+	<service id="crsims" class="org.deltava.service.exam.CheckRideSimulatorService" />
 	
 	<!-- simFDR Services -->
 	<service id="simfdr_user" class="org.deltava.service.simfdr.UserListService" />

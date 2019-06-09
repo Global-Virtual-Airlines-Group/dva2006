@@ -14,42 +14,58 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
+<content:json />
 <script>
-<fmt:js var="golgotha.local.eqACMap" object="${eqAircraft}" />
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.eqType, t:'Equipment Program to transfer into'});
-	golgotha.form.validate({f:f.sim, min:1, t:'Preferred Simulator version'});
+	golgotha.form.validate({f:f.sim, t:'Preferred Simulator version'});
 	golgotha.form.submit(f);
 	return true;
 };
 
+golgotha.local.loadAircraft = function() {
+	var xreq = new XMLHttpRequest();
+	xreq.open('get', 'crsims.ws');
+	xreq.onreadystatechange = function() {
+		if ((xreq.readyState != 4) || (xreq.status != 200)) return false;
+		golgotha.local.eqACMap = JSON.parse(xreq.responseText);
+		return true;
+	};
+
+	xreq.send(null);
+};
+
 golgotha.local.updateAircraft = function(combo) {
-	var eq = golgotha.form.getCombo(combo);
+	var f = combo.form; var eq = golgotha.form.getCombo(combo);
 	var acTypes = golgotha.local.eqACMap[eq];
-	if (!acTypes) {
+	if (!acTypes || !golgotha.form.comboSet(f.sim)) {
 		golgotha.util.display('acType', false);
 		return false;
 	}
-
+	
+	// Get check rides for sim
+	var simTypes = acTypes[golgotha.form.getCombo(f.sim)];
+	simTypes = (simTypes instanceof Array) ? simTypes : [simTypes];
 	var acc = document.forms[0].acType;
-	acc.options.length = acTypes.length + 1;
-	for (var x = 0; x < acTypes.length; x++)
-		acc.options[x + 1] = new Option(acTypes[x], acTypes[x]);
+	acc.options.length = simTypes.length + 1;
+	for (var x = 0; x < simTypes.length; x++)
+		acc.options[x + 1] = new Option(simTypes[x], simTypes[x]);
 
-	golgotha.util.display('acType', (acTypes.length > 1));
-	acc.selectedIndex = (acTypes.length > 1) ? 0 : 1;
+	golgotha.util.display('acType', (simTypes.length > 1));
+	acc.selectedIndex = (simTypes.length > 1) ? 0 : 1;
 	return true;
 };
 </script>
 </head>
 <content:copyright visible="false" />
-<body>
+<body onload="void golgotha.local.loadAircraft()">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:empty var="emptyList" />
-<content:enum var="fsVersions" className="org.deltava.beans.Simulator" exclude="UNKNOWN,FS98,FS2000,FS2002,XP9" />
+<c:if test="${empty availableSims}">
+<content:enum var="availableSims" className="org.deltava.beans.Simulator" exclude="UNKNOWN,FS98,FS2000,FS2002,XP9" /></c:if>
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -64,7 +80,7 @@ golgotha.local.updateAircraft = function(combo) {
 </tr>
 <tr>
  <td class="label">Preferred Simulator</td>
- <td class="data"><el:check type="radio" name="sim" width="195" idx="*" options="${fsVersions}" /></td>
+ <td class="data"><el:combo name="sim" size="1" idx="*" firstEntry="[ SELECT SIMULATOR ]" options="${availableSims}" onChange="void golgotha.local.updateAircraft(this.form.eqType)" /></td>
 </tr>
 <tr id="acType" style="display:none;">
  <td class="label">Preferred Aircraft</td>

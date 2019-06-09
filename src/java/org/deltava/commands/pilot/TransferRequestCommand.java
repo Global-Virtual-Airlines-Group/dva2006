@@ -72,16 +72,13 @@ public class TransferRequestCommand extends AbstractTestHistoryCommand {
 				}
 			}
 			
-			// Load available scripts
-			GetExamProfiles eqpdao = new GetExamProfiles(con);
-			ctx.setAttribute("eqAircraft", eqpdao.getAircraftScripts(), REQUEST);
-
 			// If we're just doing a GET, then redirect to the JSP
 			String eqType = ctx.getParameter("eqType");
 			if (eqType == null) {
 				ctx.release();
 				ctx.setAttribute("availableEQ", activeEQ.values(), REQUEST);
 				ctx.setAttribute("isEmpty", Boolean.valueOf(activeEQ.isEmpty()), REQUEST);
+				ctx.setAttribute("availableSims", testHistory.getSimulators(90), REQUEST);
 
 				// Forward to the JSP
 				result.setURL(activeEQ.isEmpty() ? "/jsp/admin/txRequestUpdate.jsp" : "/jsp/pilot/txRequestNew.jsp");
