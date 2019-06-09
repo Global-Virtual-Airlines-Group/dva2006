@@ -20,6 +20,7 @@ if (!golgotha.form.check()) return false;
 golgotha.form.validate({f:f.cert, t:'Flight Academy Certification'});
 golgotha.form.validate({f:f.seq, t:'Check Ride Number'});
 golgotha.form.validate({f:f.body, l:15, t:'Check Ride content'});
+golgotha.form.validate({f:f.sims, min:1, t:'Available Simulator'});
 golgotha.form.submit(f);
 return true;
 };
@@ -59,6 +60,7 @@ return true;
 <%@ include file="/jsp/academy/header.jspf" %> 
 <%@ include file="/jsp/academy/sideMenu.jspf" %>
 <content:empty var="emptyList" />
+<content:enum var="fsVersions" className="org.deltava.beans.Simulator" exclude="UNKNOWN,FS98,FS2000,FS2002,XP9" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -77,6 +79,10 @@ return true;
  <td class="label">Check Ride #</td>
  <td class="data"><el:combo name="seq" idx="*" size="1" required="true" options="${emptyList}" firstEntry="-" value="${sc.idx}" /></td>
 </tr>
+<tr>
+ <td class="label top">Available Simulators</td>
+ <td class="data"><el:check name="sims" idx="*" width="200" cols="3" newLine="true" className="small" checked="${sc.simulators}" options="${fsVersions}" /></td>
+</tr>
 <tr id="noNewRides" style="display:none;">
  <td class="error mid bld caps" colspan="2">All Check Ride Scripts for this Flight Academy Course have been created. You must edit or delete an existing Check Ride Script.</td>
 </tr>
@@ -93,7 +99,7 @@ return true;
 <tr>
  <td><el:button ID="SaveButton" type="submit" label="SAVE CHECK RIDE SCRIPT" />
 <c:if test="${access.canDelete}">
- <el:cmdbutton ID="DeleteButton" url="arscriptdelete" linkID="${sc.certificationName}" label="DELETE CHECK RIDE SCRIPT" />
+&nbsp;<el:cmdbutton ID="DeleteButton" url="arscriptdelete" linkID="${sc.certificationName}" label="DELETE CHECK RIDE SCRIPT" />
 </c:if></td>
 </tr>
 </el:table>

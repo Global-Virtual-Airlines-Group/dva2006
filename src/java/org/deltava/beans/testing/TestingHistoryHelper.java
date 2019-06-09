@@ -243,6 +243,7 @@ public final class TestingHistoryHelper {
 	 */
 	public int getFlightLegs(EquipmentType eq) {
 		int result = 0;
+		long fVal = _pireps.stream().filter(fr -> (fr.getStatus() == FlightStatus.OK)).filter(fr -> ((eq == null) || fr.getCaptEQType().contains(eq.getName()))).count();
 		for (FlightReport fr : _pireps) {
 			if (fr.getStatus() == FlightStatus.OK) {
 				if ((eq == null) || (fr.getCaptEQType().contains(eq.getName())))
@@ -250,7 +251,22 @@ public final class TestingHistoryHelper {
 			}
 		}
 
+		if (fVal != result)
+			throw new IllegalStateException("fval = " + fVal + " result = " + result);
+		
 		return result;
+	}
+	
+	/**
+	 * Returns all Simulators used by a Pilot within a specified number of days.
+	 * @param days the number of days
+	 * @return a Collection of Simulators
+	 */
+	public Collection<Simulator> getSimulators(int days) {
+		Instant minDate = Instant.now().minus(days, ChronoUnit.DAYS).truncatedTo(ChronoUnit.DAYS);
+		List<Simulator> sims = _pireps.stream().filter(fr -> (fr.getSimulator() != Simulator.UNKNOWN)).filter(fr -> minDate.isBefore(fr.getDate())).map(FlightReport::getSimulator).collect(Collectors.toList());
+		Collections.reverse(sims);
+		return new LinkedHashSet<Simulator>(sims);
 	}
 
 	/**
