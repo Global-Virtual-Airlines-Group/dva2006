@@ -121,18 +121,18 @@ public class GetScheduleSearch extends GetSchedule {
 		}
 
 		// Set departure/arrival time criteria +/- 2 hours
-		if (criteria.getHourD() != -1) {
-			conditions.add("S.TIME_D >= ?");
-			conditions.add("S.TIME_D <= ?");
-			params.add(StringUtils.format(criteria.getHourD() - 1, "00") + ":00\'");
-			params.add(StringUtils.format(criteria.getHourD() + 1, "00") + ":00\'");
+		if (criteria.getHourD() >= 0) {
+			conditions.add("HOUR(S.TIME_D) >= ?");
+			conditions.add("HOUR(S.TIME_D) < ?");
+			params.add(String.valueOf(criteria.getHourD() - 1));
+			params.add(String.valueOf(criteria.getHourD() + 1));
 		}
 
-		if (criteria.getHourA() != -1) {
-			conditions.add("S.TIME_A >= ?");
-			conditions.add("S.TIME_A <= ?");
-			params.add(StringUtils.format(criteria.getHourA() - 1, "00") + ":00\'");
-			params.add(StringUtils.format(criteria.getHourA() + 1, "00") + ":00\'");
+		if (criteria.getHourA() >= 0) {
+			conditions.add("HOUR(S.TIME_A) >= ?");
+			conditions.add("HOUR(S.TIME_A) < ?");
+			params.add(String.valueOf(criteria.getHourA() - 1));
+			params.add(String.valueOf(criteria.getHourA() + 1));
 		}
 		
 		// Check whether to include Flight Academy flights
