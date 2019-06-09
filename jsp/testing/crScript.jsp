@@ -18,6 +18,7 @@ golgotha.local.validate = function(f) {
     if (!golgotha.form.check()) return false;
     golgotha.form.validate({f:f.eqType, t:'Aircraft Type'});
     golgotha.form.validate({f:f.programType, t:'Equipment Program'});
+    golgotha.form.validate({f:f.sims, min:1, t:'Available Simulator'});
     golgotha.form.validate({f:f.msgText, l:15, t:'Check Ride content'});
     golgotha.form.submit(f);
     return true;
@@ -43,6 +44,7 @@ golgotha.local.updateEQ = function(combo) {
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:empty var="emptyList" />
 <content:sysdata var="currencyEnabled" name="testing.currency.enabled" />
+<content:enum var="fsVersions" className="org.deltava.beans.Simulator" exclude="UNKNOWN,FS98,FS2000,FS2002,XP9" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -59,6 +61,10 @@ golgotha.local.updateEQ = function(combo) {
 <tr>
  <td class="label">Aircraft Type</td>
  <td class="data"><el:combo name="eqType" idx="*" size="1" required="true" options="${(empty script) ? emptyList : acTypes[script.program]}" firstEntry="[ AIRCRAFT TYPE ]" value="${script.equipmentType}" /></td>
+</tr>
+<tr>
+ <td class="label top">Available Simulators</td>
+ <td class="data"><el:check name="sims" idx="*" width="200" cols="3" newLine="true" className="small" checked="${sc.simulators}" options="${fsVersions}" /></td>
 </tr>
 <c:if test="${currencyEnabled}">
 <tr>
@@ -78,7 +84,7 @@ golgotha.local.updateEQ = function(combo) {
 <tr>
  <td><el:button ID="SaveButton" type="submit" label="SAVE CHECK RIDE SCRIPT" />
 <c:if test="${access.canDelete}">
- <el:cmdbutton ID="DeleteButton" url="crscriptdelete" linkID="${script.equipmentType}" label="DELETE CHECK RIDE SCRIPT" />
+&nbsp;<el:cmdbutton ID="DeleteButton" url="crscriptdelete" linkID="${script.equipmentType}" label="DELETE CHECK RIDE SCRIPT" />
 </c:if></td>
 </tr>
 </el:table>

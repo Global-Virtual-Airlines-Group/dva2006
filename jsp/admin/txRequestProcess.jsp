@@ -14,29 +14,27 @@
 <content:js name="common" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <script>
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-if (f.action.indexOf('txreqdelete.do') == -1) {
-	golgotha.form.validate({f:f.crType, t:'Aircraft Type'});
-	golgotha.form.validate({f:f.rank, t:'Rank in the new Equipment Program'});
-	if ((f.eqType) && (f.eqType.options))
-		golgotha.form.validate({f:f.eqType, t:'Equimpment Program'});
-} else
-	golgotha.form.validate({f:f.rejectComments, l:2, t:'Rejection Comments'});
+golgotha.local.validate = function(f) {
+	if (!golgotha.form.check()) return false;
+	if (f.action.indexOf('txreqdelete.do') == -1) {
+		golgotha.form.validate({f:f.crType, t:'Aircraft Type'});
+		golgotha.form.validate({f:f.rank, t:'Rank in the new Equipment Program'});
+		if ((f.eqType) && (f.eqType.options))
+			golgotha.form.validate({f:f.eqType, t:'Equimpment Program'});
+	} else
+		golgotha.form.validate({f:f.rejectComments, l:2, t:'Rejection Comments'});
 
-golgotha.form.submit(f);
-return true;
+	golgotha.form.submit(f);
+	return true;
 };
 
-golgotha.local.toggleBody = function(id, type)
-{
-var row = document.getElementById('body' + type + id);
-var linkDesc = document.getElementById('toggle' + type + id);
-var visible = (row.style.display != 'none');
-golgotha.util.display(row, !visible);
-linkDesc.innerHTML = visible ? 'View' : 'Hide';
-return true;
+golgotha.local.toggleBody = function(id, type) {
+	var row = document.getElementById('body' + type + id);
+	var linkDesc = document.getElementById('toggle' + type + id);
+	var visible = (row.style.display != 'none');
+	golgotha.util.display(row, !visible);
+	linkDesc.innerHTML = visible ? 'View' : 'Hide';
+	return true;
 };
 </script>
 </head>
@@ -160,7 +158,9 @@ return true;
 </c:if>
 <tr>
  <td class="label">Equipment Type</td>
- <td class="data"><el:combo name="crType" idx="*" size="1" firstEntry="-" className="req" options="${eqType.primaryRatings}" value="${txreq.aircraftType}" /></td>
+ <td class="data"><el:combo name="crType" idx="*" size="1" firstEntry="-" className="req" options="${eqType.primaryRatings}" value="${txreq.aircraftType}" />
+ <span class="small ita">Check Ride script(s) exist for <c:forEach var="rs" items="${eqScripts}" varStatus="ls">
+ <c:set var="isMySim" value="${rs.simulators.contains(txReq.simulator) }" scope="page" /><span class="${isMySim ? 'sec ' : ''}bld">${rs.equipmentType}</span><c:if test="${!ls.last}">, </c:if></c:forEach></span></td>
 </tr>
 <tr>
  <td class="label top">Comments</td>

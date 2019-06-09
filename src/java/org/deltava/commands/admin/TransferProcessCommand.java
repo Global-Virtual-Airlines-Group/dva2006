@@ -2,6 +2,7 @@
 package org.deltava.commands.admin;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
@@ -115,6 +116,13 @@ public class TransferProcessCommand extends AbstractCommand {
 			newRatings.addAll(newEQ.getPrimaryRatings());
 			newRatings.addAll(newEQ.getSecondaryRatings());
 			ctx.setAttribute("newRatings", newRatings, REQUEST);
+			
+			// Load available check ride scripts
+			if (access.getCanAssignRide()) {
+				GetExamProfiles epdao = new GetExamProfiles(con);
+				Collection<EquipmentRideScript> crScripts = epdao.getScripts().stream().filter(rs -> rs.getProgram().equals(newEQ.getName())).collect(Collectors.toList());
+				ctx.setAttribute("eqScripts", crScripts, REQUEST);
+			}
 			
 			// Get all aircraft types
 			GetAircraft acdao = new GetAircraft(con);
