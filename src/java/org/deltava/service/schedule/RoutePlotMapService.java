@@ -97,7 +97,7 @@ public class RoutePlotMapService extends MapPlotService {
 			// Add the departure airport
 			if (dr.getAirportD() != null) {
 				Collection<Gate> dGates = new LinkedHashSet<Gate>();
-				Collection<Gate> allGates = gdao.getGates(dr.getAirportD(), sim); 
+				Collection<Gate> allGates = dr.isPopulated() ? gdao.getPopularGates(dr, sim, true) : gdao.getGates(dr.getAirportD(), sim); 
 				dGates.addAll(filter(allGates, dr.getAirline(), isIntl));
 				if (dGates.size() < 2) {
 					Collection<Gate> popGates = gdao.getPopularGates(dr, sim, true);

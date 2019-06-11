@@ -1,4 +1,4 @@
-// Copyright 2012, 2015, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2015, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Airport gate information. 
  * @author Luke
- * @version 8.4
+ * @version 8.6
  * @since 5.1
  */
 
@@ -77,6 +77,7 @@ public class GetGates extends DAO {
 	 */
 	public List<Gate> getPopularGates(RoutePair rp, Simulator sim, boolean isDeparture) throws DAOException {
 		
+		//TODO : run an explain query on these to ensure we are optimized
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT G.*, IFNULL(GROUP_CONCAT(DISTINCT GA.AIRLINE),'') AS AL, IFNULL(GA.INTL,0) AS INTL, ND.REGION, COUNT(GD.ID) AS CNT FROM acars.FLIGHTS F, "
 			+ "acars.GATEDATA GD, common.GATES G LEFT JOIN common.GATE_AIRLINES GA ON (G.ICAO=GA.ICAO) AND (G.NAME=GA.NAME) LEFT JOIN common.NAVDATA ND ON (G.ICAO=ND.CODE) AND "
@@ -115,9 +116,9 @@ public class GetGates extends DAO {
 	 */
 	public Gate getGate(ICAOAirport a, Simulator sim, String code) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT G.*, IFNULL(GROUP_CONCAT(GA.AIRLINE),''), GA.INTL, ND.REGION FROM common.GATES G LEFT JOIN common.GATE_AIRLINES GA ON (G.ICAO=GA.ICAO) "
-				+ "AND (G.NAME=GA.NAME) LEFT JOIN common.NAVDATA ND ON (G.ICAO=ND.CODE) AND (ND.ITEMTYPE=?) WHERE (G.ICAO=?) AND (G.NAME=?) AND (G.SIMVERSION>=?) GROUP BY G.NAME "
-				+ "ORDER BY G.SIMVERSION");
+			prepareStatementWithoutLimits("SELECT G.*, IFNULL(GROUP_CONCAT(GA.AIRLINE),''), GA.INTL, ND.REGION, COUNT(GD.ID) AS CNT FROM acars.GATEDATA GD, common.GATES G "
+				+ "LEFT JOIN common.GATE_AIRLINES GA ON (G.ICAO=GA.ICAO) AND (G.NAME=GA.NAME) LEFT JOIN common.NAVDATA ND ON (G.ICAO=ND.CODE) AND (ND.ITEMTYPE=?) WHERE "
+				+ "(G.ICAO=?) AND (G.NAME=?) AND (GD.ICAO=G.ICAO) AND (GD.GATE=G.NAME) AND (G.SIMVERSION>=?) GROUP BY G.NAME ORDER BY G.SIMVERSION");
 			_ps.setInt(1, Navaid.AIRPORT.ordinal());
 			_ps.setString(2, a.getICAO());
 			_ps.setString(3, code);
@@ -155,8 +156,9 @@ public class GetGates extends DAO {
 	 */
 	public List<Gate> getGates(ICAOAirport a, Simulator sim) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT G.*, IFNULL(GROUP_CONCAT(GA.AIRLINE),''), GA.INTL, ND.REGION FROM common.GATES G LEFT JOIN common.GATE_AIRLINES GA ON (G.ICAO=GA.ICAO) "
-				+ "AND (G.NAME=GA.NAME) LEFT JOIN common.NAVDATA ND ON (G.ICAO=ND.CODE) AND (ND.ITEMTYPE=?) WHERE (G.ICAO=?) AND (G.SIMVERSION=?) GROUP BY G.NAME");
+			prepareStatementWithoutLimits("SELECT G.*, IFNULL(GROUP_CONCAT(GA.AIRLINE),''), GA.INTL, ND.REGION, COUNT(GD.ID) AS CNT FROM acars.GATEDATA GD, common.GATES G "
+				+ "LEFT JOIN common.GATE_AIRLINES GA ON (G.ICAO=GA.ICAO) AND (G.NAME=GA.NAME) LEFT JOIN common.NAVDATA ND ON (G.ICAO=ND.CODE) AND (ND.ITEMTYPE=?) "
+				+ "WHERE (G.ICAO=?) AND (GD.ICAO=G.ICAO) AND (GD.GATE=G.NAME) AND (G.SIMVERSION=?) GROUP BY G.NAME ORDER BY CNT DESC");
 			_ps.setInt(1, Navaid.AIRPORT.ordinal());
 			_ps.setString(2, a.getICAO());
 			_ps.setInt(3, sim.getCode());
