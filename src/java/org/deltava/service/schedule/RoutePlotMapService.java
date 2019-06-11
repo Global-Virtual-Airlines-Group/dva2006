@@ -58,7 +58,7 @@ public class RoutePlotMapService extends MapPlotService {
 		Collection<Runway> runways = new LinkedHashSet<Runway>();
 		Collection<WeatherDataBean> wxs = new ArrayList<WeatherDataBean>();
 		List<Airport> alternates = new ArrayList<Airport>();
-		Collection<Gate> gates = new TreeSet<Gate>(new GateComparator(GateComparator.USAGE)); 
+		Collection<Gate> gates = new TreeSet<Gate>(new GateComparator(GateComparator.USAGE).reversed()); 
 		Collection<NavigationDataBean> routePoints = new LinkedHashSet<NavigationDataBean>();
 		
 		// Get the departure/arrival airports
@@ -97,13 +97,12 @@ public class RoutePlotMapService extends MapPlotService {
 			// Add the departure airport
 			if (dr.getAirportD() != null) {
 				Collection<Gate> dGates = new LinkedHashSet<Gate>();
-				Collection<Gate> allGates = dr.isPopulated() ? gdao.getPopularGates(dr, sim, true) : gdao.getGates(dr.getAirportD(), sim); 
-				dGates.addAll(filter(allGates, dr.getAirline(), isIntl));
+				Collection<Gate> popGates = dr.isPopulated() ? gdao.getPopularGates(dr, sim, true) : gdao.getGates(dr.getAirportD(), sim); 
+				dGates.addAll(filter(popGates, dr.getAirline(), isIntl));
 				if (dGates.size() < 2) {
-					Collection<Gate> popGates = gdao.getPopularGates(dr, sim, true);
 					dGates.addAll(popGates);
 					if (dGates.size() < 3)
-						dGates.addAll(allGates);
+						dGates.addAll(gdao.getGates(dr.getAirportD(), sim));
 				}
 				
 				gates.addAll(dGates);
@@ -185,13 +184,12 @@ public class RoutePlotMapService extends MapPlotService {
 			if (dr.getAirportA() != null) {
 				routePoints.add(new AirportLocation(dr.getAirportA()));
 				Collection<Gate> aGates = new LinkedHashSet<Gate>();
-				Collection<Gate> allGates = gdao.getGates(dr.getAirportA(), sim); 
-				aGates.addAll(filter(allGates, dr.getAirline(), isIntl));
+				Collection<Gate> popGates = dr.isPopulated() ? gdao.getPopularGates(dr, sim, false) : gdao.getGates(dr.getAirportA(), sim); 
+				aGates.addAll(filter(popGates, dr.getAirline(), isIntl));
 				if (aGates.size() < 2) {
-					Collection<Gate> popGates = gdao.getPopularGates(dr, sim, false);
 					aGates.addAll(popGates);
 					if (aGates.size() < 3)
-						aGates.addAll(allGates);
+						aGates.addAll(gdao.getGates(dr.getAirportA(), sim));
 				}
 				
 				gates.addAll(aGates);
