@@ -15,7 +15,7 @@
  <td colspan="2">SENT / DELIVERED</td>
  <td>ADDRESS</td>
  <td>OUTBOUND SERVER</td>
- <td>RESPONSE</td>
+ <td colspan="2">RESPONSE</td>
 </tr>
 
 <!-- Pilot Email Delivery Data -->
@@ -25,7 +25,7 @@
  <td colspan="2"><fmt:date date="${ed.sendTime}" t="HH:mm" /> - <fmt:date date="${ed.deliveryTime}" t="HH:mm" />&nbsp;<span class="small ita">(<fmt:int value="${ed.processTime}" /> ms)</span></td>
  <td>${ed.email}</td>
  <td class="small">${ed.remoteHost}</td>
- <td class="small">${ed.response}</td>
+ <td colspan="2" class="small">${ed.response}</td>
 </tr>
 </c:forEach>
 </c:if>
