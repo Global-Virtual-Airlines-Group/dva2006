@@ -73,7 +73,7 @@ combo.options.length = data.length + 1;
 combo.options[0] = new Option('-', '');
 for (var i = 0; i < data.length; i++) {
 	var g = data[i];
-	var o = new Option(g.name + ' (Used ' + g.useCount + 'x)', g.name);
+	var o = new Option(g.name + ' (' + g.useCount + ' flights)', g.name);
 	o.ll = g.ll;
 	combo.options[i+1] = o; 
 	if (oldCode == g.name) combo.selectedIndex = (i+1);
