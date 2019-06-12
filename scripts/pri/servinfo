@@ -1,6 +1,6 @@
 #!/bin/bash
 # ServInfo download script
-# (c) 2006, 2009, 2010, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+# (c) 2006, 2009, 2010, 2012, 2015, 2019 Global Virtual Airlines Group. All Rights Reserved.
 
 # Set the file to download to
 if [ -z "$2" ]; then
@@ -17,7 +17,7 @@ fi
 # Get the status URL
 TrimCount=1
 if [ "IVAO" == "$1" ]; then
- StatusURL="http://www.ivao.aero/whazzup/status.txt"
+ StatusURL="https://www.ivao.aero/whazzup/status.txt"
  network="ivao"
 else
  StatusURL="https://status.vatsim.net/status.txt"
@@ -29,8 +29,18 @@ StatusFile=$(echo -n "$StatusURL" | cut -d / -f $StatusFileField)
 
 # Check if we're already downloading or reading
 if [ -f "/tmp/$network.isactive" ]; then
- echo "$network data is busy!"
- sleep 1.5
+ CurrentDate=$(date +%s)
+ FlagDate=$(stat -c "%Y" /tmp/$network.isactive)
+ FlagAge=$(($CurrentDate - $FlagDate))
+
+ echo "$network data is busy! ($FlagAge seconds)"
+ if [ "$FlagAge" -ge 120 ]; then
+  rm /tmp/$network.isactive
+  echo "Clearing stuck $network download"
+ else
+  sleep 2.5
+ fi
+
  if [ -f "/tmp/$network.isactive" ]; then
   echo "Already downloading $network data!"
   exit 2
