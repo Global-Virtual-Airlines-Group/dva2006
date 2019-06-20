@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2012, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
@@ -13,13 +13,16 @@ import org.deltava.beans.schedule.GeoPosition;
 /**
  * A String utility class.
  * @author Luke
- * @version 7.2
+ * @version 8.6
  * @since 1.0
  */
 
 public final class StringUtils {
 
 	private static final String UPPER_AFTER = " \'-";
+	
+	private static final String RESERVED_CHARS = "<>&\"\'\\\n:";
+	private static final String[] REPLACE_ENTITIES = new String[] {"&lt;", "&gt;", "&amp;", "&quot;", "&#039;", "&#092;", "<br />\n", "&#58;"};
 
 	// We're a singleton, alone and lonely
 	private StringUtils() {
@@ -61,28 +64,15 @@ public final class StringUtils {
 	 * @return the formatted string, null if s is null
 	 */
 	public static String stripInlineHTML(String s) {
-		if (s == null)
-			return null;
+		if (s == null) return null;
 
-		StringBuilder buf = new StringBuilder(s.length());
+		StringBuilder buf = new StringBuilder(s.length() + 16);
 		for (int x = 0; x < s.length(); x++) {
 			char c = s.charAt(x);
-			if (c == '<')
-				buf.append("&lt;");
-			else if (c == '>')
-				buf.append("&gt;");
-			else if (c == '&')
-				buf.append("&amp;");
-			else if (c == '\"')
-				buf.append("&quot;");
-			else if (c == '\'')
-				buf.append("&#039;");
-			else if (c == '\\')
-				buf.append("&#092;");
-			else if (c == '\n') {
-				buf.append("<br />");
-				buf.append(System.getProperty("line.separator"));
-			} else
+			int pos = RESERVED_CHARS.indexOf(c);
+			if (pos > -1)
+				buf.append(REPLACE_ENTITIES[pos]);
+			else
 				buf.append(c);
 		}
 

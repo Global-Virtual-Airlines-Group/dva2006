@@ -31,7 +31,7 @@ public class TestStringUtils extends TestCase {
     public void testStripInllineHTML() {
         assertEquals("&lt;IMG&gt;", StringUtils.stripInlineHTML("<IMG>"));
         assertEquals("&amp; &quot; &#039; &#092;", StringUtils.stripInlineHTML("& \" \' \\"));
-        assertEquals("XX<br />" + System.getProperty("line.separator"), StringUtils.stripInlineHTML("XX\n"));
+        assertEquals("XX<br />\n", StringUtils.stripInlineHTML("XX\n"));
         assertEquals(null, StringUtils.stripInlineHTML(null));
     }
     
