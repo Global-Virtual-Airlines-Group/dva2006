@@ -306,7 +306,7 @@ ${acarsClientInfo.GPU}&nbsp;<span class="small ita">(<fmt:int value="${acarsClie
 <c:if test="${!empty acarsTimerInfo}">
 <tr class="acarsDiagData">
  <td class="label top">ACARS Client Timers</td>
- <td class="data"><c:forEach var="tt" items="${acarsTimerInfo}" varStatus="ttStatus"><span class="bld">${tt.name}</span> <fmt:int value="${tt.Count}" />x Avg:<fmt:dec value="${tt.average / tt.tickSize}" />ms
+ <td class="data"><c:forEach var="tt" items="${acarsTimerInfo}" varStatus="ttStatus"><span class="bld">${tt.name}</span> <fmt:int value="${tt.count}" />x Avg:<fmt:dec value="${tt.average / tt.tickSize}" />ms
  Min/Max=<fmt:dec value="${tt.min / tt.tickSize}" />/<fmt:dec value="${tt.max / tt.tickSize}" />ms<c:if test="${!ttStatus.last}"><br /></c:if></c:forEach></td>
 </tr>
 </c:if>
@@ -319,7 +319,7 @@ ${acarsClientInfo.GPU}&nbsp;<span class="small ita">(<fmt:int value="${acarsClie
 </tr>
 <tr>
 <c:if test="${access.canDispose || access.canUpdateComments}">
- <td colspan="2" class="data"><el:textbox name="dComments" width="100" height="5">${pirep.comments}</el:textbox></td></c:if>
+ <td colspan="2" class="data"><el:textbox name="dComments" width="85%" height="5">${pirep.comments}</el:textbox></td></c:if>
 <c:if test="${!access.canDispose && !access.canUpdateComments && access.canViewComments}">
  <td colspan="2" class="data"><fmt:msg value="${pirep.comments}" bbCode="true" /></td></c:if>
 </tr>
