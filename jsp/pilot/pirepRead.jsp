@@ -290,17 +290,38 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 <tr class="flightDataChart">
  <td colspan="2"><div id="flightChart" style="height:285px"></div></td>
 </tr>
+<c:if test="${!empty acarsTimerInfo || !empty acarsClientInfo}">
+<tr class="title caps">
+ <td colspan="2">ACARS CLIENT DIAGNOSTIC DATA <span id="diagToggle" class="und" style="float:right" onclick="void golgotha.util.toggleExpand(this, 'acarsDiagData')">COLLAPSE</span></td>
+</tr>
+<c:if test="${!empty acarsClientInfo}">
+<tr class="acarsDiagData">
+ <td class="label top">System Information</td>
+ <td class="data"><fmt:windows version="${acarsClientInfo.OSVersion}" /> (<fmt:int value="${acarsClientInfo.memorySize}" />KB memory) <span class="ita">as of <fmt:date fmt="d" date="${acarsClientInfo.date}" /></span><br />
+.NET <span class="bld">${acarsClientInfo.dotNETVersion}</span> <span class="small">CLR: ${acarsClientInfo.CLRVersion}</span><br />
+${acarsClientInfo.CPU}&nbsp;<span class="sec small ita">(<fmt:int value="${acarsClientInfo.cores}" /> cores, <fmt:int value="${acarsClientInfo.threads}" /> threads)</span><br />
+${acarsClientInfo.GPU}&nbsp;<span class="small ita">(<fmt:int value="${acarsClientInfo.videoMemorySize}" /> KB, ${acarsClientInfo.width}x${acarsClientInfo.height}x${acarsClientInfo.colorDepth}, ${acarsClientInfo.screenCount} screens)</span></td>
+</tr>
+</c:if>
+<c:if test="${!empty acarsTimerInfo}">
+<tr class="acarsDiagData">
+ <td class="label top">ACARS Client Timers</td>
+ <td class="data"><c:forEach var="tt" items="${acarsTimerInfo}" varStatus="ttStatus"><span class="bld">${tt.name}</span> <fmt:int value="${tt.Count}" />x Avg:<fmt:dec value="${tt.average / tt.tickSize}" />ms
+ Min/Max=<fmt:dec value="${tt.min / tt.tickSize}" />/<fmt:dec value="${tt.max / tt.tickSize}" />ms<c:if test="${!ttStatus.last}"><br /></c:if></c:forEach></td>
+</tr>
+</c:if>
+</c:if>
 </c:if>
 </content:browser>
 <c:if test="${!scoreCR && (access.canDispose || ((access.canViewComments || access.canUpdateComments) && (!empty pirep.comments)))}">
+<tr class="title caps">
+ <td colspan="2">REVIEWER COMMENTS</td>
+</tr>
 <tr>
- <td class="label top">Reviewer Comments</td>
 <c:if test="${access.canDispose || access.canUpdateComments}">
- <td class="data"><el:textbox name="dComments" width="100" height="5">${pirep.comments}</el:textbox></td>
-</c:if>
+ <td colspan="2" class="data"><el:textbox name="dComments" width="100" height="5">${pirep.comments}</el:textbox></td></c:if>
 <c:if test="${!access.canDispose && !access.canUpdateComments && access.canViewComments}">
- <td class="data"><fmt:msg value="${pirep.comments}" bbCode="true" /></td>
-</c:if>
+ <td colspan="2" class="data"><fmt:msg value="${pirep.comments}" bbCode="true" /></td></c:if>
 </tr>
 </c:if>
 <c:if test="${access.canHold && isDivert}">
