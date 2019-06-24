@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2012, 2014, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012, 2014, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled task to update cached FlightAware routes.
  * @author Luke
- * @version 8.0
+ * @version 8.6
  * @since 2.6
  */
 
@@ -93,6 +93,7 @@ public class CachedRouteUpdateTask extends Task {
 					}
 					
 					ctx.commitTX();
+					fwdao.reset();
 				}
 			}
 		} catch (DAOException de) {
