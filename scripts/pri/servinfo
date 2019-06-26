@@ -2,6 +2,11 @@
 # ServInfo download script
 # (c) 2006, 2009, 2010, 2012, 2015, 2019 Global Virtual Airlines Group. All Rights Reserved.
 
+function log {
+ logTime=$(date +'%m/%d/%Y %H:%M:%S')
+ echo "$logTime $1"
+}
+
 # Set the file to download to
 if [ -z "$2" ]; then
  echo "servinfo <network> <path> [verbose] ..."
@@ -33,16 +38,17 @@ if [ -f "/tmp/$network.isactive" ]; then
  FlagDate=$(stat -c "%Y" /tmp/$network.isactive)
  FlagAge=$(($CurrentDate - $FlagDate))
 
- echo "$network data is busy! ($FlagAge seconds)"
+ log "$network data is busy! ($FlagAge seconds)"
  if [ "$FlagAge" -ge 120 ]; then
   rm /tmp/$network.isactive
-  echo "Clearing stuck $network download"
+  rm -rf /tmp/$network
+  log "Clearing stuck $network download"
  else
   sleep 2.5
  fi
 
  if [ -f "/tmp/$network.isactive" ]; then
-  echo "Already downloading $network data!"
+  log "Already downloading $network data!"
   exit 2
  else
   echo active > /tmp/$network.isactive
@@ -65,7 +71,7 @@ if [ -f "/tmp/$network/$StatusFile" ]; then
  cp -f /tmp/$network/$StatusFile $2/$network.status
  touch -r /tmp/$network/$StatusFile $2/$network.status
 else
- echo "Invalid $network status data!"
+ log "Invalid $network status data!"
 fi
 
 # Parse status file
@@ -95,13 +101,13 @@ wget $MyURL -N --timeout=10 --tries=5 $QuietOpt
 if [ -f "/tmp/$network/$InfoFile" ]; then
  LastModDL=$(stat -c %Y /tmp/$network/$InfoFile)
  if [ "$LastMod" -ge "$LastModDL" ]; then
-  echo "Downloaded file is same/older!"
+  log "Downloaded file is same/older!"
  else
   cp /tmp/$network/$InfoFile $2/$network.info
   touch -r /tmp/$network/$InfoFile $2/$network.info
  fi 
 else
- echo "Invalid $network traffic data!"
+ log "Invalid $network traffic data!"
 fi
 
 # Clean up temp files
