@@ -1,6 +1,11 @@
 #!/bin/bash
 # ServInfo direct download script
-# (c) 2006, 2009, 2010, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+# (c) 2006, 2009, 2010, 2012, 2015, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+
+function log {
+ logTime=$(date +'%m/%d/%Y %H:%M:%S')
+ echo "$logTime $1"
+}
 
 # Set the file to download to
 if [ -z "$2" ]; then
@@ -20,16 +25,16 @@ if [ "PilotEdge" == "$1" ]; then
  InfoFile="vspro.dat"
  network="pilotedge"
 else
- echo "Unknown network - $1"
+ log "Unknown network - $1"
  exit 3
 fi
 
 # Check if we're already downloading or reading
 if [ -f "/tmp/$network.isactive" ]; then
- echo "$network data is busy!"
+ log "$network data is busy!"
  sleep 1.5
  if [ -f "/tmp/$network.isactive" ]; then
-  echo "Already downloading $network data!"
+  log "Already downloading $network data!"
   exit 2
  else
   echo active > /tmp/$network.isactive
@@ -53,13 +58,13 @@ wget $MyURL -N --timeout=10 --tries=5 $QuietOpt
 if [ -f "/tmp/$network/$InfoFile" ]; then
  LastModDL=$(stat -c %Y /tmp/$network/$InfoFile)
  if [ "$LastMod" -ge "$LastModDL" ]; then
-  echo "Downloaded file is same/older!"
+  log "Downloaded file is same/older!"
  else
   cp /tmp/$network/$InfoFile $2/$network.info
   touch -r /tmp/$network/$InfoFile $2/$network.info
  fi 
 else
- echo "Invalid $network traffic data!"
+ log "Invalid $network traffic data!"
 fi
 
 # Clean up temp files
