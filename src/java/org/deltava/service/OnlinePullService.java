@@ -29,7 +29,7 @@ public class OnlinePullService extends WebService {
 	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 		
-		Instant pullDate = StringUtils.parseInstant(ctx.getParameter("d"), "yyyyMMddHHmmss");
+		Instant pullDate = StringUtils.parseInstant(ctx.getParameter("d").trim(), "yyyyMMddHHmmss");
 		try {
 			SetOnlineTrack twdao = new SetOnlineTrack(ctx.getConnection());
 			twdao.writePull(OnlineNetwork.fromName(ctx.getParameter("net")), pullDate);
