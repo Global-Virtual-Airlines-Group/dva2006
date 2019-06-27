@@ -1,10 +1,11 @@
-// Copyright 2009, 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
+import java.time.Instant;
 
-import org.deltava.beans.OnlineNetwork;
+import org.deltava.beans.*;
 import org.deltava.beans.schedule.Airport;
 import org.deltava.beans.servinfo.PositionData;
 
@@ -14,12 +15,47 @@ import org.deltava.beans.servinfo.PositionData;
  * from the online track database which contains information for all Airlines populated from the ServInfo feed by the 
  * {@link org.deltava.tasks.OnlineTrackTask} scheduled task. 
  * @author Luke
- * @version 7.0
+ * @version 8.6
  * @since 2.4
  */
 
 public class GetOnlineTrack extends DAO {
+	
+	private static final long MAX_FETCH_INTERVAL = 180_000;
 
+	public class NetworkOutage implements TimeSpan {
+		private final Instant _startTime;
+		private final Instant _endTime;
+		
+		NetworkOutage(Instant startTime, Instant endTime) {
+			super();
+			_startTime = startTime;
+			_endTime = endTime;
+		}
+
+		@Override
+		public Instant getDate() {
+			return _startTime;
+		}
+
+		@Override
+		public int compareTo(Object o2) {
+			TimeSpan ts2 = (TimeSpan) o2;
+			int tmpResult = _startTime.compareTo(ts2.getStartTime());
+			return (tmpResult == 0) ? _endTime.compareTo(ts2.getEndTime()) : tmpResult;
+		}
+
+		@Override
+		public Instant getStartTime() {
+			return _startTime;
+		}
+
+		@Override
+		public Instant getEndTime() {
+			return _endTime;
+		}
+	}
+	
 	/**
 	 * Initializes the Data Access Object.
 	 * @param c the JDBC connection to use
@@ -94,8 +130,7 @@ public class GetOnlineTrack extends DAO {
 	 */
 	public Collection<PositionData> getRaw(int trackID) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT OD.*, OT.USER_ID FROM online.TRACKS OT, online.TRACKDATA OD WHERE "
-				+ "(OT.ID=?) AND (OT.ID=OD.ID) ORDER BY OD.REPORT_TIME");
+			prepareStatementWithoutLimits("SELECT OD.*, OT.USER_ID FROM online.TRACKS OT, online.TRACKDATA OD WHERE (OT.ID=?) AND (OT.ID=OD.ID) ORDER BY OD.REPORT_TIME");
 			_ps.setInt(1, trackID);
 			
 			// Execute the query
@@ -169,6 +204,41 @@ public class GetOnlineTrack extends DAO {
 			
 			_ps.close();
 			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Displays any data collection outages occurring within a given time span.
+	 * @param network the OnlineNetwork
+	 * @param startTime the start date/time
+	 * @param endTime the end date/time
+	 * @return a Collection of TimeSpan beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<TimeSpan> getOutages(OnlineNetwork network, Instant startTime, Instant endTime) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("SELECT PULLTIME FROM online.TRACK_PULLS WHERE (NETWORK=?) AND (PULLTIME>=?) AND (PULLTIME<=?) ORDER BY PULLTIME");
+			_ps.setString(1, network.toString());
+			_ps.setTimestamp(2, createTimestamp(startTime));
+			_ps.setTimestamp(3, createTimestamp(endTime));
+			
+			Collection<TimeSpan> results = new ArrayList<TimeSpan>();
+			Instant lastPull = startTime;
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					Instant pt = toInstant(rs.getTimestamp(1));
+					long delta = pt.toEpochMilli() - lastPull.toEpochMilli();
+					if (delta > MAX_FETCH_INTERVAL)
+						results.add(new NetworkOutage(lastPull.plusSeconds(60), pt));
+					
+					lastPull = pt;
+				}
+			}
+			
+			_ps.close();
+			return Collections.emptyList();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

@@ -1,8 +1,9 @@
-// Copyright 2009, 2010, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
+import java.time.Instant;
 
 import org.deltava.beans.OnlineNetwork;
 import org.deltava.beans.schedule.Airport;
@@ -11,7 +12,7 @@ import org.deltava.beans.servinfo.PositionData;
 /**
  * A Data Access Object to write VATSIM/IVAO/PilotEdge Online tracks.
  * @author Luke
- * @version 8.0
+ * @version 8.6
  * @since 2.4
  */
 
@@ -68,6 +69,23 @@ public class SetOnlineTrack extends DAO {
 			_ps.setInt(5, pd.getAltitude());
 			_ps.setInt(6, pd.getHeading());
 			_ps.setInt(7, pd.getAirSpeed());
+			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Records a ServInfo info pull.
+	 * @param net the OnlineNetwork
+	 * @param fetchTime the fetch date/time in UTC
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void writePull(OnlineNetwork net, Instant fetchTime) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("REPLACE INTO online.TRACK_PULLS (NETWORK, PULLTIME) VALUES (?, ?)");
+			_ps.setString(1, net.toString());
+			_ps.setTimestamp(2, createTimestamp(fetchTime));
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
