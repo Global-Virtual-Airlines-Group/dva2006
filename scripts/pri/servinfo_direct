@@ -62,6 +62,8 @@ if [ -f "/tmp/$network/$InfoFile" ]; then
  else
   cp /tmp/$network/$InfoFile $2/$network.info
   touch -r /tmp/$network/$InfoFile $2/$network.info
+  ValidTime=$(grep "UPDATE = " $2/$network.info | cut -d' ' -f 3)
+  wget -O /dev/null -q --timeout=5 --tries=3 "https://www.deltava.org/networkpull.ws?net=$network&d=$ValidTime"
  fi 
 else
  log "Invalid $network traffic data!"
