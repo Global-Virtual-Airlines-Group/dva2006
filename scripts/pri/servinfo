@@ -85,7 +85,6 @@ RandomLine=$((1 + ($UpperBound * $RANDOM) / (32767 + 1) ))
 # Use sed to grab the random line and get rid of the trailing newline
 MyURL=$(sed -n "$RandomLine{p;q;}" "/tmp/$network/urls")
 URLSize=$(echo -n "$MyURL" | wc -c | sed "s/ //g")
-# URLSize=`expr $URLSize "-" $TrimCount`
 MyURL=$(echo -n "$MyURL" | cut -b 1-${URLSize} | tr -d "\r")
 FileField=$(echo -n "$MyURL" | awk -F / '{print NF}')
 InfoFile=$(echo -n "$MyURL" | cut -d / -f $FileField)
@@ -105,6 +104,8 @@ if [ -f "/tmp/$network/$InfoFile" ]; then
  else
   cp /tmp/$network/$InfoFile $2/$network.info
   touch -r /tmp/$network/$InfoFile $2/$network.info
+  ValidTime=$(grep "UPDATE = " $2/$network.info | cut -d' ' -f 3)
+  wget -O /dev/null -q --timeout=5 --tries=3 "https://www.deltava.org/networkpull.ws?net=$network&d=$ValidTime"
  fi 
 else
  log "Invalid $network traffic data!"
