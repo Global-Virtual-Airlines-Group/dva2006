@@ -153,9 +153,9 @@ golgotha.onDOMReady(function() {
  <el:box name="nVA" value="true" className="small" checked="${param.nVA}" label="Only include unvisited Airports" onChange="void golgotha.ff.refreshNV(this, 'airportA', true)" /></span></td>
 </tr>
 <tr>
- <td class="label">Departure Time (+/- 2h)</td>
+ <td class="label">Departure Time (+/- 1h)</td>
  <td class="data"><el:combo name="hourD" idx="*" size="1" options="${hours}" value="${fafCriteria.hourD}" /></td>
- <td class="label">Arrival Time (+/- 2h)</td>
+ <td class="label">Arrival Time (+/- 1h)</td>
  <td class="data"><el:combo name="hourA" idx="*" size="1" options="${hours}" value="${fafCriteria.hourA}" /></td>
 </tr>
 <tr>
@@ -190,7 +190,7 @@ Dispatch Flights - <el:combo name="dispatchOnly" options="${inclusionOpts}" valu
 <el:table className="view">
 <!-- Search Results Data -->
 <tr class="title caps">
- <td colspan="9" class="left"><span class="nophone">FLIGHT SCHEDULE </span>SEARCH RESULTS<c:if test="${!empty importDate}"> - IMPORTED ON <fmt:date date="${importDate}" t="HH:mm" /></c:if>
+ <td colspan="9" class="left"><span class="nophone"><fmt:int value="${fafResults.size()}" /> FLIGHT SCHEDULE </span>SEARCH RESULTS<c:if test="${!empty importDate}"> - IMPORTED ON <fmt:date date="${importDate}" t="HH:mm" /></c:if>
 <c:if test="${!empty effectiveDate}"> REPLAY OF <fmt:date date="${effectiveDate}" fmt="d" tzName="UTC" /></c:if></td>
 </tr>
 
@@ -260,7 +260,8 @@ Dispatch Flights - <el:combo name="dispatchOnly" options="${inclusionOpts}" valu
 <tr>
  <td class="pri bld">${flight.flightCode}</td>
  <td class="sec bld">${flight.equipmentType}</td>
- <td class="small">${flight.airportD.name} (<el:cmd url="airportinfo" linkID="${flight.airportD.IATA}"><fmt:airport airport="${flight.airportD}" /></el:cmd>) to ${flight.airportA.name} (<el:cmd url="airportinfo" linkID="${flight.airportA.IATA}"><fmt:airport airport="${flight.airportA}" /></el:cmd>)</td>
+ <td class="small"><span class="nophone">${flight.airportD.name}</span> (<el:cmd url="airportinfo" linkID="${flight.airportD.IATA}"><fmt:airport airport="${flight.airportD}" /></el:cmd>) to <span class="nophone">${flight.airportA.name}</span>
+  (<el:cmd url="airportinfo" linkID="${flight.airportA.IATA}"><fmt:airport airport="${flight.airportA}" /></el:cmd>)</td>
 <c:if test="${param.showUTCTimes}">
  <td class="nophone"><fmt:date fmt="t" t="HH:mm" tzName="UTC" date="${flight.timeD}" /> UTC</td>
  <td class="nophone"><fmt:date fmt="t" t="HH:mm" tzName="UTC" date="${flight.timeA}" /> UTC</td>
