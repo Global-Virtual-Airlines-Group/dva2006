@@ -1,4 +1,4 @@
-// Copyright 2010, 2012, 2014, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2012, 2014, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -13,9 +13,9 @@ import org.deltava.dao.*;
 import org.deltava.util.system.SystemData;
 
 /**
- * A Web Site Command to display VATSIM/IVAO FSD server information.
+ * A Web Site Command to display Online Network FSD server information.
  * @author Luke
- * @version 7.5
+ * @version 8.6
  * @since 3.4
  */
 
@@ -30,12 +30,9 @@ public class NetworkServersCommand extends AbstractCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Get the network name
-		OnlineNetwork net = OnlineNetwork.valueOf(SystemData.get("online.default_network"));
-		try {
-			net = OnlineNetwork.valueOf(ctx.getParameter("id").toUpperCase());
-		} catch (Exception e) {
-			// empty
-		}
+		OnlineNetwork net = OnlineNetwork.fromName(ctx.getParameter("id"));
+		if (net == null)
+			net = OnlineNetwork.valueOf(SystemData.get("online.default_network"));
 
 		// Get the network info
 		NetworkInfo info = ServInfoHelper.getInfo(net);
