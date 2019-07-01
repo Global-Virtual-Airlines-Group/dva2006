@@ -848,6 +848,12 @@
 		<roles>*</roles>
 	</command>
 
+	<command id="networkoutages">
+		<name>Online Network Data Outages</name>
+		<class>org.deltava.commands.event.NetworkOutageCalendarCommand</class>
+		<roles>*</roles>
+	</command>
+
 	<command id="event">
 		<name>View Event</name>
 		<class>org.deltava.commands.event.EventCommand</class>
