@@ -15,6 +15,7 @@ import org.deltava.beans.assign.*;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.testing.*;
+import org.deltava.beans.servinfo.NetworkOutage;
 import org.deltava.beans.servinfo.OnlineTime;
 import org.deltava.beans.servinfo.PositionData;
 import org.deltava.beans.schedule.*;
@@ -650,6 +651,7 @@ public class PIREPCommand extends AbstractFormCommand {
 						try {
 							GetVRouteData vddao = new GetVRouteData();
 							pd = vddao.getPositions(p, fr.getAirportD(), fr.getAirportA());
+							ctx.setAttribute("vRouteData", Boolean.valueOf(pd.size() > 0), REQUEST);
 						} catch (DAOException de) {
 							log.warn("Cannot download VRoute position data - " + de.getMessage());
 						}
@@ -680,6 +682,13 @@ public class PIREPCommand extends AbstractFormCommand {
 							ctx.commitTX();
 						}
 					}
+				}
+				
+				// Check for data outages
+				if (fr.hasAttribute(FlightReport.ATTR_FDR_MASK) && (ac.getCanDispose() || ctx.isUserInRole("PIREP") || ctx.isUserInRole("Operations"))) {
+					FDRFlightReport ffr = (FDRFlightReport) fr;
+					Collection<NetworkOutage> networkOutages = NetworkOutage.calculate(fr.getNetwork(), tdao.getFetches(fr.getNetwork(), ffr.getStartTime(), ffr.getEndTime()), 120);
+					ctx.setAttribute("networkOutages", networkOutages, REQUEST);
 				}
 				
 				// Calculate the online time
