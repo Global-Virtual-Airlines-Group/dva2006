@@ -1,4 +1,4 @@
-// Copyright 2006, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010, 2011, 2012, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to extract Flight Schedule data.
  * @author Luke
- * @version 5.0
+ * @version 8.6
  * @since 1.0
  */
 
@@ -119,8 +119,7 @@ public class GetScheduleInfo extends DAO {
 	public AirportServiceMap getRoutePairs() throws DAOException {
 		AirportServiceMap svcMap = new AirportServiceMap();
 		try {
-			prepareStatementWithoutLimits("SELECT DISTINCT AIRLINE, AIRPORT_D, AIRPORT_A FROM SCHEDULE "
-					+ "ORDER BY AIRPORT_D, AIRPORT_A");
+			prepareStatementWithoutLimits("SELECT DISTINCT AIRLINE, AIRPORT_D, AIRPORT_A FROM SCHEDULE ORDER BY AIRPORT_D, AIRPORT_A");
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
 					Airline a = SystemData.getAirline(rs.getString(1));
@@ -169,14 +168,38 @@ public class GetScheduleInfo extends DAO {
 	 */
 	public Collection<Country> getCountries() throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT DISTINCT A.COUNTRY FROM common.AIRPORTS A, SCHEDULE S WHERE "
-					+ "(A.IATA=S.AIRPORT_D) OR (A.IATA=S.AIRPORT_A)");
-			
-			// Execute the Query
+			prepareStatementWithoutLimits("SELECT DISTINCT A.COUNTRY FROM common.AIRPORTS A, SCHEDULE S WHERE (A.IATA=S.AIRPORT_D) OR (A.IATA=S.AIRPORT_A)");
 			Collection<Country> results = new LinkedHashSet<Country>();
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next())
 					results.add(Country.get(rs.getString(1)));
+			}
+			
+			_ps.close();
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns the number of flights in the schedule per Airline.
+	 * @param dbName the database name
+	 * @return a Map of Integers, keyed by Airline
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Map<Airline, Integer> getAirlineCounts(String dbName) throws DAOException {
+		
+		StringBuilder buf = new StringBuilder("SELECT AIRLINE, COUNT(*) AS CNT FROM ");
+		buf.append(formatDBName(dbName));
+		buf.append(".SCHEDULE GROUP BY AIRLINE ORDER BY AIRLINE");
+		
+		try {
+			prepareStatementWithoutLimits(buf.toString());
+			Map<Airline, Integer> results = new LinkedHashMap<Airline, Integer>();
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+					results.put(SystemData.getAirline(rs.getString(1)), Integer.valueOf(rs.getInt(2)));
 			}
 			
 			_ps.close();

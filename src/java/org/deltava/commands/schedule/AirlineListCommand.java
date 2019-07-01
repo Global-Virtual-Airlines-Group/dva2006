@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2012, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -9,10 +9,12 @@ import org.deltava.beans.schedule.Airline;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
+import org.deltava.util.system.SystemData;
+
 /**
  * A Web Site Command to display Airline profiles. 
  * @author Luke
- * @version 5.0
+ * @version 8.6
  * @since 1.0
  */
 
@@ -36,6 +38,10 @@ public class AirlineListCommand extends AbstractCommand {
 			// Get airport counts
 			GetAirport apdao = new GetAirport(con);
 			ctx.setAttribute("apCount", apdao.getAirportCounts(), REQUEST);
+			
+			// Get flight counts
+			GetScheduleInfo sdao = new GetScheduleInfo(con);
+			ctx.setAttribute("fCount", sdao.getAirlineCounts(SystemData.get("airline.db")), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
