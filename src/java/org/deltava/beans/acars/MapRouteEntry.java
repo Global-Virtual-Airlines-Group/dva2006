@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
- * @version 8.3
+ * @version 8.6
  * @since 1.0
  */
 
@@ -312,6 +312,17 @@ public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 		if (isFlagSet(ACARSFlags.ONGROUND)) {
 			buf.append("<br />Flight Phase: <span class=\"bld\">");
 			buf.append(_phaseName);
+			if (getGroundOperations() > 0) {
+				buf.append(" (");
+				for (GroundOperations op : GroundOperations.values()) {
+					if (op.has(getGroundOperations()))
+						buf.append(op.getDescription()).append(' ');
+				}
+				
+				buf.setLength(buf.length() - 1);
+				buf.append(')');
+			}
+			
 			buf.append("</span>");
 		} else {
 			buf.append("<br /><span class=\"small\">Currently in ");

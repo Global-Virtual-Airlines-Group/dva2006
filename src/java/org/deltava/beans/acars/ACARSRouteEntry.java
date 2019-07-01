@@ -51,6 +51,8 @@ public class ACARSRouteEntry extends RouteEntry {
 	private Controller _atc2;
 	
 	private int _vasFree;
+	
+	private int _groundOps;
 
 	private static final ACARSFlags[] AP_FLAGS = { ACARSFlags.AP_APR, ACARSFlags.AP_HDG, ACARSFlags.AP_NAV, ACARSFlags.AP_ALT, ACARSFlags.AP_GPS , ACARSFlags.AP_LNAV};
 	private static final String[] AP_FLAG_NAMES = { "APR", "HDG", "NAV", "ALT", "GPS", "LNAV" };
@@ -291,6 +293,16 @@ public class ACARSRouteEntry extends RouteEntry {
 	}
 	
 	/**
+	 * Returns the ground operations flag(s).
+	 * @return the GroundOperations flags
+	 * @see ACARSRouteEntry#setGroundOperations(int)
+	 * @see GroundOperations
+	 */
+	public int getGroundOperations() {
+		return _groundOps;
+	}
+	
+	/**
 	 * Updates the aircraft's altitude above <i>ground level</i>.
 	 * @param alt the altitude in feet AGL
 	 * @see ACARSRouteEntry#getRadarAltitude()
@@ -513,6 +525,16 @@ public class ACARSRouteEntry extends RouteEntry {
 	}
 	
 	/**
+	 * Updates the Ground Operations flag(s).
+	 * @param ops a flags bitmask
+	 * @see ACARSRouteEntry#getGroundOperations()
+	 * @see GroundOperations
+	 */
+	public void setGroundOperations(int ops) {
+		_groundOps = ops;
+	}
+	
+	/**
 	 * Updates the aircraft autopilot type.
 	 * @param ap the AutopilotType
 	 */
@@ -690,12 +712,10 @@ public class ACARSRouteEntry extends RouteEntry {
 		// Add Autopilot flags if set
 		boolean managedVerticalSpeed = isFlagSet(ACARSFlags.AP_MGVERT);
 		if (ACARSFlags.hasAP(getFlags()) || (ACARSFlags.hasAT(getFlags()) && managedVerticalSpeed)) {
-			buf.append("Autopilot:");
+			buf.append("Autopilot: ");
 			for (int x = 0; x < AP_FLAGS.length; x++) {
-				if (isFlagSet(AP_FLAGS[x])) {
-					buf.append(' ');
-					buf.append(AP_FLAG_NAMES[x]);
-				}
+				if (isFlagSet(AP_FLAGS[x]))
+					buf.append(' ').append(AP_FLAG_NAMES[x]);
 			}
 
 			if (managedVerticalSpeed && isFlagSet(ACARSFlags.AT_VNAV)) buf.append(" VNAV");
