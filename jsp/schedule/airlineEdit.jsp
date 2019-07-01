@@ -13,6 +13,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
 <script>
+<fmt:jsarray var="golgotha.local.airlines" items="${autoAppCodes}" />
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.name, l:6, t:'Airline Name'});
@@ -21,10 +22,16 @@ golgotha.local.validate = function(f) {
 	golgotha.form.submit(f);
 	return true;
 };
+
+golgotha.local.makeReadOnly = function() {
+	var f = document.forms[0];
+	f.airlines.forEach(function(cb) { cb.disabled = golgotha.local.airlines.contains(cb.value); });
+	return true;
+};
 </script>
 </head>
 <content:copyright visible="false" />
-<body>
+<body onload="void golgotha.local.makeReadOnly()">
 <content:page>
 <%@ include file="/jsp/schedule/header.jspf" %> 
 <%@ include file="/jsp/schedule/sideMenu.jspf" %>
@@ -51,7 +58,9 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr>
  <td class="label top">Web Applications</td>
- <td class="data"><el:check name="airlines" width="180" options="${airlines}" checked="${airline.applications}" /></td>
+ <td class="data"><c:if test="${!empty autoAppCodes}">
+<span class="sec bld ita small">Some Virtual Airlines have flights in their Schedule with this Airline, and cannot be disabled:</span> <span class="pri bld small"><fmt:list value="${autoAppCodes}" delim=", " /></span><br /></c:if>
+<el:check name="airlines" width="180" options="${airlines}" checked="${airline.applications}" /></td>
 </tr>
 <c:if test="${airportCount > 0}">
 <tr>

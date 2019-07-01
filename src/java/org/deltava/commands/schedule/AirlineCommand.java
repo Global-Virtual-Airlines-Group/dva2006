@@ -1,16 +1,18 @@
-// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2015, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.AuditLog;
-import org.deltava.beans.MapEntry;
+import org.deltava.beans.*;
 import org.deltava.beans.schedule.Airline;
+import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+
 import org.deltava.util.*;
+import org.deltava.util.system.SystemData;
 
 import org.gvagroup.common.*;
 
@@ -50,9 +52,8 @@ public class AirlineCommand extends AbstractAuditFormCommand {
 				oa = BeanUtils.clone(a);
 				a.setCode(ctx.getParameter("code"));
 				a.setName(ctx.getParameter("name"));
-			} else {
+			} else
 				a = new Airline(ctx.getParameter("code"), ctx.getParameter("name")); 
-			}
 			
 			// Update the airline from the request
 			a.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
@@ -61,6 +62,14 @@ public class AirlineCommand extends AbstractAuditFormCommand {
 			a.setCodes(StringUtils.split(ctx.getParameter("altCodes"), "\n"));
 			a.setScheduleSync(Boolean.valueOf(ctx.getParameter("sync")).booleanValue());
 			a.setHistoric(Boolean.valueOf(ctx.getParameter("historic")).booleanValue());
+			
+			// Add airlines that have flights in their schedule
+			GetScheduleInfo sidao = new GetScheduleInfo(con);
+			for (AirlineInformation ai : SystemData.getApps()) {
+				boolean hasFlights = sidao.getAirlineCounts(ai.getDB()).containsKey(a);
+				if (hasFlights)
+					a.addApp(ai.getCode());
+			}
 			
 			// Check audit log
 			Collection<BeanUtils.PropertyChange> delta = BeanUtils.getDelta(oa, a);
@@ -109,12 +118,9 @@ public class AirlineCommand extends AbstractAuditFormCommand {
 	@Override
 	protected void execEdit(CommandContext ctx) throws CommandException {
 
-		// Get the airline code
-		String aCode = (String) ctx.getCmdParameter(Command.ID, null);
-		boolean isNew = (aCode == null);
-
 		// If we're editing an existing airline, load it
-		if (!isNew) {
+		String aCode = (String) ctx.getCmdParameter(Command.ID, null);
+		if (aCode != null) {
 			try {
 				Connection con = ctx.getConnection();
 
@@ -129,8 +135,21 @@ public class AirlineCommand extends AbstractAuditFormCommand {
 					
 					// Get airports
 					GetAirport apdao = new GetAirport(con);
-					Integer apCount = apdao.getAirportCounts().get(a);
-					ctx.setAttribute("airportCount", (apCount == null) ? Integer.valueOf(0) : apCount, REQUEST);
+					Integer apCount = apdao.getAirportCounts().getOrDefault(a, Integer.valueOf(0));
+					ctx.setAttribute("airportCount", apCount, REQUEST);
+					
+					// Get other airlines
+					GetScheduleInfo sidao = new GetScheduleInfo(con); Collection<String> appCodes = new HashSet<String>();
+					for (AirlineInformation ai : SystemData.getApps()) {
+						boolean hasFlights = sidao.getAirlineCounts(ai.getDB()).containsKey(a);
+						if (hasFlights) {
+							a.addApp(ai.getCode());
+							appCodes.add(ai.getCode());
+						}
+					}
+					
+					appCodes.remove(SystemData.get("airline.code"));
+					ctx.setAttribute("autoAppCodes", appCodes, REQUEST);
 				}
 			} catch (DAOException de) {
 				throw new CommandException(de);
@@ -140,7 +159,7 @@ public class AirlineCommand extends AbstractAuditFormCommand {
 		}
 		
 		// Save airline colors
-		ctx.setAttribute("colors", Arrays.asList(MapEntry.COLORS), REQUEST);
+		ctx.setAttribute("colors", List.of(MapEntry.COLORS), REQUEST);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
