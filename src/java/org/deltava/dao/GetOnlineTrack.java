@@ -6,8 +6,8 @@ import java.util.*;
 import java.time.Instant;
 
 import org.deltava.beans.*;
+import org.deltava.beans.servinfo.*;
 import org.deltava.beans.schedule.Airport;
-import org.deltava.beans.servinfo.PositionData;
 
 /**
  * A Data Access Object to load VATSIM/IVAO data tracks. This DAO can load from the ONLINE_TRACKS table
@@ -20,41 +20,6 @@ import org.deltava.beans.servinfo.PositionData;
  */
 
 public class GetOnlineTrack extends DAO {
-	
-	private static final long MAX_FETCH_INTERVAL = 180_000;
-
-	public class NetworkOutage implements TimeSpan {
-		private final Instant _startTime;
-		private final Instant _endTime;
-		
-		NetworkOutage(Instant startTime, Instant endTime) {
-			super();
-			_startTime = startTime;
-			_endTime = endTime;
-		}
-
-		@Override
-		public Instant getDate() {
-			return _startTime;
-		}
-
-		@Override
-		public int compareTo(Object o2) {
-			TimeSpan ts2 = (TimeSpan) o2;
-			int tmpResult = _startTime.compareTo(ts2.getStartTime());
-			return (tmpResult == 0) ? _endTime.compareTo(ts2.getEndTime()) : tmpResult;
-		}
-
-		@Override
-		public Instant getStartTime() {
-			return _startTime;
-		}
-
-		@Override
-		public Instant getEndTime() {
-			return _endTime;
-		}
-	}
 	
 	/**
 	 * Initializes the Data Access Object.
@@ -210,35 +175,54 @@ public class GetOnlineTrack extends DAO {
 	}
 	
 	/**
-	 * Displays any data collection outages occurring within a given time span.
+	 * Displays data collections occurring within a given time span.
 	 * @param network the OnlineNetwork
 	 * @param startTime the start date/time
 	 * @param endTime the end date/time
-	 * @return a Collection of TimeSpan beans
+	 * @return a Collection of fetch Instants
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<TimeSpan> getOutages(OnlineNetwork network, Instant startTime, Instant endTime) throws DAOException {
+	public Collection<Instant> getFetches(OnlineNetwork network, Instant startTime, Instant endTime) throws DAOException {
 		try {
 			prepareStatementWithoutLimits("SELECT PULLTIME FROM online.TRACK_PULLS WHERE (NETWORK=?) AND (PULLTIME>=?) AND (PULLTIME<=?) ORDER BY PULLTIME");
 			_ps.setString(1, network.toString());
 			_ps.setTimestamp(2, createTimestamp(startTime));
 			_ps.setTimestamp(3, createTimestamp(endTime));
 			
-			Collection<TimeSpan> results = new ArrayList<TimeSpan>();
-			Instant lastPull = startTime;
+			Collection<Instant> results = new ArrayList<Instant>();
 			try (ResultSet rs = _ps.executeQuery()) {
-				while (rs.next()) {
-					Instant pt = toInstant(rs.getTimestamp(1));
-					long delta = pt.toEpochMilli() - lastPull.toEpochMilli();
-					if (delta > MAX_FETCH_INTERVAL)
-						results.add(new NetworkOutage(lastPull.plusSeconds(60), pt));
-					
-					lastPull = pt;
-				}
+				while (rs.next())
+					results.add(toInstant(rs.getTimestamp(1)));
 			}
 			
 			_ps.close();
-			return Collections.emptyList();
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns all Online Networks with an outage in a given time frame.
+	 * @param startTime the start date/time
+	 * @param endTime the end date/time
+	 * @return a Collection of OnlineNetwork beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<OnlineNetwork> getFetchNetworks(Instant startTime, Instant endTime) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("SELECT DISTINCT NETWORK FROM online.TRACK_PULLS WHERE (PULLTIME>=?) AND (PULLTIME<=?)");
+			_ps.setTimestamp(1, createTimestamp(startTime));
+			_ps.setTimestamp(2, createTimestamp(endTime));
+			
+			Collection<OnlineNetwork> networks = new HashSet<OnlineNetwork>();
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+					networks.add(OnlineNetwork.fromName(rs.getString(1)));
+			}
+			
+			_ps.close();
+			return networks;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
