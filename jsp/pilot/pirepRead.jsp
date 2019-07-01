@@ -98,8 +98,7 @@ golgotha.local.showRunwayChoices = function() {
 <c:if test="${!empty vatsimID}">
 <tr>
  <td class="label">VATSIM ID</td>
- <td class="data"><span class="bld">${vatsimID}</span><c:if test="${empty onlineTrack}"> - View flight log at <el:link url="http://www.vataware.com/pilot.cfm?cid=${vatsimID}" target="_new" external="true">
-<el:img src="vataware.png" className="noborder" x="50" y="16" caption="View VATAWARE Flight Log" /></el:link></c:if></td>
+ <td class="data"><span class="bld">${vatsimID}</span><c:if test="${empty onlineTrack}"> - View flight log at <el:link url="https://vatstats.net/pilots/${vatsimID}" target="_new" external="true">VATSTATS</el:link></c:if></td>
 </tr>
 </c:if>
 </c:if>
@@ -232,6 +231,12 @@ golgotha.local.showRunwayChoices = function() {
 <tr>
  <td class="label">Estimated Online Time</td>
  <td class="data"><fmt:int value="${onlineTime / 3600}" />:<fmt:int value="${(onlineTime % 3600) / 60}" fmt="00" />, <span class="${onlinePctClass}">(<fmt:dec value="${onlinePct}" fmt="#00.0" />% of flight)</span></td>
+</tr>
+</c:if>
+<c:if test="${!empty networkOutages}">
+<tr>
+ <td class="label">${pirep.network} Outages</td>
+ <td class="data warn bld"><c:forEach var="outage" items="${networkOutages}" varStatus="otStatus"><fmt:date date="${outage.startTime}" t="HH:mm" d="MM/dd" /> - <fmt:date date="${outage.endTime}" t="HH:mm" d="MM/dd" /><c:if test="${!otStatus.last}">, </c:if></c:forEach></td>
 </tr>
 </c:if>
 <c:if test="${pirep.passengers > 0}">
