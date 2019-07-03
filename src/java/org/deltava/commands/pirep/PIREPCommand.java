@@ -518,13 +518,7 @@ public class PIREPCommand extends AbstractFormCommand {
 					
 					// Load the gates
 					GetGates gdao = new GetGates(con);
-					Collection<Gate> gates = gdao.get(info.getID());
-					for (Gate g : gates) {
-						if (g.getCode().equals(info.getAirportD().getICAO()))
-							info.setGateD(g);
-						else
-							info.setGateA(g);
-					}
+					gdao.populate(info);
 					
 					// Load taxi times
 					GetACARSTaxiTimes ttdao = new GetACARSTaxiTimes(con);
@@ -685,7 +679,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				}
 				
 				// Check for data outages
-				if (fr.hasAttribute(FlightReport.ATTR_FDR_MASK) && (ac.getCanDispose() || ctx.isUserInRole("PIREP") || ctx.isUserInRole("Operations"))) {
+				if (fr.hasAttribute(FlightReport.ATTR_FDR_MASK) && (fr.getNetwork( ) != null) && (ac.getCanDispose() || ctx.isUserInRole("PIREP") || ctx.isUserInRole("Operations"))) {
 					FDRFlightReport ffr = (FDRFlightReport) fr;
 					Collection<NetworkOutage> networkOutages = NetworkOutage.calculate(fr.getNetwork(), tdao.getFetches(fr.getNetwork(), ffr.getStartTime(), ffr.getEndTime()), 120);
 					ctx.setAttribute("networkOutages", networkOutages, REQUEST);
