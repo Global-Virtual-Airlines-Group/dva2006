@@ -5,8 +5,10 @@ import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.Simulator;
+import org.deltava.beans.acars.FlightInfo;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
+
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
@@ -28,19 +30,23 @@ public class GetGates extends DAO {
 	}
 	
 	/**
-	 * Loads a specific gate for a flight.
-	 * @param flightID the ACARS Flight ID
-	 * @return a List of Gates
+	 * Loads specific gates for an ACARS Flight.
+	 * @param info the ACARS FlightInfo bean
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<Gate> get(int flightID) throws DAOException {
+	public void populate(FlightInfo info) throws DAOException {
 		try {
 			prepareStatement("SELECT G.*, IFNULL(GROUP_CONCAT(GA.AIRLINE),''), GA.INTL, ND.REGION FROM acars.FLIGHTS F, acars.GATEDATA FG, common.GATES G LEFT JOIN common.GATE_AIRLINES GA ON "
 				+ "(G.ICAO=GA.ICAO) AND (G.NAME=GA.NAME) LEFT JOIN common.NAVDATA ND ON (G.ICAO=ND.CODE) AND (ND.ITEMTYPE=?) WHERE (F.ID=?) AND (F.ID=FG.ID) AND (G.SIMVERSION=F.FSVERSION) "
 				+ "AND (G.ICAO=FG.ICAO) AND (G.NAME=FG.GATE) GROUP BY G.NAME ORDER BY FG.ISDEPARTURE");
 			_ps.setInt(1, Navaid.AIRPORT.ordinal());
-			_ps.setInt(2, flightID);
-			return execute();
+			_ps.setInt(2, info.getID());
+			for (Gate g : execute()) {
+				if (g.getCode().equals(info.getAirportD().getICAO()))
+					info.setGateD(g);
+				else
+					info.setGateA(g);
+			}
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -77,7 +83,6 @@ public class GetGates extends DAO {
 	 */
 	public List<Gate> getPopularGates(RoutePair rp, Simulator sim, boolean isDeparture) throws DAOException {
 		
-		//TODO : run an explain query on these to ensure we are optimized
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT G.*, IFNULL(GROUP_CONCAT(DISTINCT GA.AIRLINE),'') AS AL, IFNULL(GA.INTL,0) AS INTL, ND.REGION, COUNT(GD.ID) AS CNT FROM acars.FLIGHTS F, "
 			+ "acars.GATEDATA GD, common.GATES G LEFT JOIN common.GATE_AIRLINES GA ON (G.ICAO=GA.ICAO) AND (G.NAME=GA.NAME) LEFT JOIN common.NAVDATA ND ON (G.ICAO=ND.CODE) AND "
