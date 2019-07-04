@@ -463,6 +463,19 @@
 	</tag>
 
 	<tag>
+		<description>Capabilities tag, used to format Aircraft/Simulator capabilities</description>
+		<name>capabilities</name>
+		<tag-class>org.deltava.taglib.format.CapabilitiesFormatTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<name>map</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.lang.Long</type>
+		</attribute>
+	</tag>
+
+	<tag>
 		<description>GeoPosition tag, used to format geographic coordinates</description>
 		<name>geo</name>
 		<tag-class>org.deltava.taglib.format.GeoFormatTag</tag-class>
