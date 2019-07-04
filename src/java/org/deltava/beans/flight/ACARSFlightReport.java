@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A class for storing ACARS-submitted Flight Reports.
  * @author Luke
- * @version 8.4
+ * @version 8.6
  * @since 1.0
  */
 
@@ -24,6 +24,7 @@ public class ACARSFlightReport extends FDRFlightReport implements FlightTimes {
     private String _fde;
     private String _code;
     private String _sdk;
+    private long _capabilities;
     
     private Instant _departureTime;
     private Instant _arrivalTime;
@@ -192,6 +193,14 @@ public class ACARSFlightReport extends FDRFlightReport implements FlightTimes {
 	}
 	
 	/**
+	 * Returns the aircraft/simulator capabilities flags.
+	 * @return the Capabilities flag bitmap
+	 */
+	public long getCapabilities() {
+		return _capabilities;
+	}
+	
+	/**
 	 * Returns the flight start date/time in the simulator. 
 	 * @return the departure date/time
 	 */
@@ -309,6 +318,14 @@ public class ACARSFlightReport extends FDRFlightReport implements FlightTimes {
 	 */
 	public void setSDK(String sdk) {
 		_sdk = sdk;
+	}
+	
+	/**
+	 * Sets aircraft/sim capabilities flags.
+	 * @param cap the Capabilities flags
+	 */
+	public void setCapabilities(long cap) {
+		_capabilities = cap;
 	}
 	
 	/**

@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to parse XML-format offline Flight Reports.
  * @author Luke
- * @version 8.4
+ * @version 8.6
  * @since 2.4
  */
 
@@ -208,6 +208,7 @@ public final class OfflineFlightParser {
 		afr.setAircraftCode(ie.getChildTextTrim("code"));
 		afr.setFDE(ae.getChildTextTrim("airFile"));
 		afr.setSDK(ae.getChildTextTrim("sdk"));
+		afr.setCapabilities(Long.parseUnsignedLong(ae.getAttributeValue("capabilities", "0")));
 		afr.setClientBuild(inf.getClientBuild());
 		afr.setBeta(inf.getBeta());
 		afr.setNetwork(OnlineNetwork.fromName(ie.getChildTextTrim("network")));
