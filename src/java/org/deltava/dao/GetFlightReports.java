@@ -558,7 +558,7 @@ public class GetFlightReports extends DAO {
 			boolean hasComments = (md.getColumnCount() > 23);
 			boolean hasSchedTimes = (!hasACARS && (md.getColumnCount() > 25));
 			boolean hasDraftRoute = (hasSchedTimes && (md.getColumnCount() > 26));
-			boolean hasOnTime = (md.getColumnCount() > 70);
+			boolean hasOnTime = (md.getColumnCount() > 71);
 
 			// Iterate throught the results
 			while (rs.next()) {
@@ -670,16 +670,17 @@ public class GetFlightReports extends DAO {
 					ap.setFDE(rs.getString(64));
 					ap.setAircraftCode(rs.getString(65));
 					ap.setSDK(rs.getString(66));
-					ap.setHasReload(rs.getBoolean(67));
-					ap.setAverageFrameRate(rs.getInt(68) / 10d);
-					ap.setClientBuild(rs.getInt(69));
-					ap.setBeta(rs.getInt(70));
+					ap.setCapabilities(rs.getLong(67));
+					ap.setHasReload(rs.getBoolean(68));
+					ap.setAverageFrameRate(rs.getInt(69) / 10d);
+					ap.setClientBuild(rs.getInt(70));
+					ap.setBeta(rs.getInt(71));
 					if (hasOnTime)
-						ap.setOnTime(OnTime.values()[rs.getInt(71)]);
+						ap.setOnTime(OnTime.values()[rs.getInt(72)]);
 				} else if (isXACARS) {
 					XACARSFlightReport ap = (XACARSFlightReport) p;
-					ap.setMajorVersion(rs.getInt(69));
-					ap.setMinorVersion(rs.getInt(70));
+					ap.setMajorVersion(rs.getInt(70));
+					ap.setMinorVersion(rs.getInt(71));
 				}
 
 				results.add(p);

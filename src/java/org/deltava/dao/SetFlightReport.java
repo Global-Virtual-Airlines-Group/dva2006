@@ -356,7 +356,7 @@ public class SetFlightReport extends DAO {
 		sqlBuf.append(".ACARS_PIREPS (ID, ACARS_ID, START_TIME, TAXI_TIME, TAXI_WEIGHT, TAXI_FUEL, TAKEOFF_TIME, TAKEOFF_DISTANCE, TAKEOFF_SPEED, TAKEOFF_N1, TAKEOFF_HDG, TAKEOFF_LAT, TAKEOFF_LNG, "
 			+ "TAKEOFF_ALT, TAKEOFF_WEIGHT, TAKEOFF_FUEL, LANDING_TIME, LANDING_DISTANCE, LANDING_SPEED, LANDING_VSPEED, LANDING_N1, LANDING_HDG, LANDING_LAT, LANDING_LNG, LANDING_ALT, LANDING_WEIGHT, "
 			+ "LANDING_FUEL, END_TIME, GATE_WEIGHT, GATE_FUEL, TOTAL_FUEL, TIME_0X, TIME_1X, TIME_2X, TIME_4X, FDE, CODE, SDK, RELOAD, CLIENT_BUILD, BETA_BUILD, LANDING_G, LANDING_CAT, FRAMERATE, PAX_WEIGHT, "
-			+ "CARGO_WEIGHT) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			+ "CARGO_WEIGHT, CAPABILITIES) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		try {
 			startTransaction();
@@ -418,6 +418,7 @@ public class SetFlightReport extends DAO {
 				_ps.setInt(44, (int)(afr.getAverageFrameRate() * 10));
 				_ps.setInt(45, afr.getPaxWeight());
 				_ps.setInt(46, afr.getCargoWeight());
+				_ps.setLong(47, afr.getCapabilities());
 			} else if (fr instanceof XACARSFlightReport) {
 				XACARSFlightReport xfr = (XACARSFlightReport) fr;
 				_ps.setInt(32, 0);
@@ -435,9 +436,9 @@ public class SetFlightReport extends DAO {
 				_ps.setInt(44, 0);
 				_ps.setInt(45, 0);
 				_ps.setInt(46, 0);
+				_ps.setLong(47, 0);
 			}
 
-			// Commit the transaction
 			executeUpdate(1);
 			commitTransaction();
 		} catch (SQLException se) {
