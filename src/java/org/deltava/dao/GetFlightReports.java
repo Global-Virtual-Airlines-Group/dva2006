@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Flight Reports.
  * @author Luke
- * @version 8.4
+ * @version 8.6
  * @since 1.0
  */
 
@@ -68,15 +68,13 @@ public class GetFlightReports extends DAO {
 			prepareStatementWithoutLimits(sqlBuf.toString());
 			_ps.setInt(1, id);
 
-			// Execute the query, if nothing returned then give back null
-			List<FlightReport> results = execute();
-			if (results.size() == 0)
-				return null;
+			// Execute the query, if nothing returned then give back null, otherwise load primary eq types and route
+			FlightReport fr = execute().stream().findFirst().orElse(null);
+			if (fr != null) {
+				fr.setCaptEQType(getCaptEQType(fr.getID(), dbName));
+				fr.setRoute(getRoute(fr.getID(), dbName));
+			}
 
-			// Get the primary equipment types
-			FlightReport fr = results.get(0);
-			fr.setCaptEQType(getCaptEQType(fr.getID(), dbName));
-			fr.setRoute(getRoute(fr.getID(), dbName));
 			return fr;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -109,12 +107,9 @@ public class GetFlightReports extends DAO {
 			_ps.setInt(1, acarsID);
 
 			// Execute the query, if nothing returned then give back null
-			List<FlightReport> results = execute();
-			if (results.size() == 0)
-				return null;
+			FlightReport fr = execute().stream().findFirst().orElse(null);
 
 			// Check that it's really an ACARSFlightReport object
-			FlightReport fr = results.get(0);
 			if (!(fr instanceof FDRFlightReport))
 				return null;
 
@@ -506,6 +501,39 @@ public class GetFlightReports extends DAO {
 			}
 
 			return execute();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Retrieves held/submitted Flight diversions for a particular Pilot.
+	 * @param a the Airport diverted to
+	 * @param pilotID the Pilot's database ID
+	 * @param db the database
+	 * @return a FlightReport, or null if not found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public FlightReport getDiversion(Airport a, int pilotID, String db) throws DAOException {
+		
+		// Build the SQL statement
+		String dbName = formatDBName(db);
+		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, PC.REMARKS, APR.* FROM ");
+		sqlBuf.append(dbName);
+		sqlBuf.append(".PIREPS PR LEFT JOIN ");
+		sqlBuf.append(db);
+		sqlBuf.append(".PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ");
+		sqlBuf.append(db);
+		sqlBuf.append(".ACARS_PIREPS APR ON (PR.ID=APR.ID) WHERE (PR.PILOT_ID=?) AND (PR.AIRPORT_A=?) AND ((PR.STATUS=?) OR (PR.STATUS=?)) AND ((PR.ATTR & ?) > 0)");
+		
+		try {
+			prepareStatementWithoutLimits(sqlBuf.toString());
+			_ps.setInt(1, pilotID);
+			_ps.setString(2, a.getIATA());
+			_ps.setInt(3, FlightStatus.HOLD.ordinal());
+			_ps.setInt(4, FlightStatus.SUBMITTED.ordinal());
+			_ps.setInt(5, FlightReport.ATTR_DIVERT);
+			return execute().stream().findFirst().orElse(null);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
