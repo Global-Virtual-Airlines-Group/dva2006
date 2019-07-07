@@ -208,7 +208,7 @@ public final class OfflineFlightParser {
 		afr.setAircraftCode(ie.getChildTextTrim("code"));
 		afr.setFDE(ae.getChildTextTrim("airFile"));
 		afr.setSDK(ae.getChildTextTrim("sdk"));
-		afr.setCapabilities(Long.parseUnsignedLong(ae.getAttributeValue("capabilities", "0")));
+		afr.setCapabilities(StringUtils.parse(ae.getAttributeValue("capabilities", "0"), 0, true));
 		afr.setClientBuild(inf.getClientBuild());
 		afr.setBeta(inf.getBeta());
 		afr.setNetwork(OnlineNetwork.fromName(ie.getChildTextTrim("network")));

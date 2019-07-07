@@ -105,7 +105,7 @@ final class OfflineFlightParser {
 		afr.setHasReload(Boolean.valueOf(ie.getChildTextTrim("hasRestore")).booleanValue());
 		afr.setFDE(ie.getChildTextTrim("airFile"));
 		afr.setSDK(ie.getChildTextTrim("sdk"));
-		afr.setCapabilities(Long.parseUnsignedLong(ie.getAttributeValue("capabilities", "0")));
+		afr.setCapabilities(StringUtils.parse(ie.getAttributeValue("capabilities", "0"), 0, true));
 		afr.setNetwork(OnlineNetwork.fromName(ie.getChildTextTrim("network")));
 		afr.setRemarks(ie.getChildTextTrim("remarks"));
 		afr.setClientBuild(inf.getClientBuild());
