@@ -43,6 +43,24 @@ public class TestStringUtils extends TestCase {
     	assertEquals("A,B,CD", StringUtils.listConcat(l, ","));
     }
     
+    public void testIntParse() {
+    	assertEquals(0, StringUtils.parse("0", 1));
+    	assertEquals(-2, StringUtils.parse("-2", 0));
+    	assertEquals(255, StringUtils.parse("0xFF", 0));
+    	assertEquals(254, StringUtils.parse("0xfE", 0));
+    	assertEquals(0, StringUtils.parse("FF", 0));
+    	assertEquals(-1, StringUtils.parse(null, -1));
+    }
+    
+    public void testLongParse() {
+    	assertEquals(0, StringUtils.parse("0", 1, false));
+    	assertEquals(-2, StringUtils.parse("-2", 0, false));
+    	assertEquals(1, StringUtils.parse("-2", 1, true));
+    	assertEquals(0, StringUtils.parse("FF", 0, false));
+    	assertEquals(0, StringUtils.parse("0xFFFF", 0, false));
+    	assertEquals(-1, StringUtils.parse(null, -1, false));
+    }
+    
     public void testPropertyName() {
     	assertEquals("getProperty", StringUtils.getPropertyMethod("property"));
     	assertEquals("getProperty", StringUtils.getPropertyMethod("Property"));
