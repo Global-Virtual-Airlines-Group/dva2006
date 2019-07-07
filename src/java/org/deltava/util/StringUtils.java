@@ -122,17 +122,31 @@ public final class StringUtils {
 	}
 
 	/**
-	 * Parses a string and converts into an integer.
+	 * Parses a string and converts into a 32-bit integer.
 	 * @param value the value to convert
 	 * @param defaultValue the default value
 	 * @return the value parsed into a number, or the default value if conversion fails
 	 */
 	public static int parse(String value, int defaultValue) {
-		if (isEmpty(value))
-			return defaultValue;
-
+		if (isEmpty(value)) return defaultValue;
 		try {
 			return parseHex(value);
+		} catch (NumberFormatException nfe) {
+			return defaultValue;
+		}
+	}
+	
+	/**
+	 * Parses a string and converts into a 64-bit integer.
+	 * @param value the value to convert
+	 * @param defaultValue the default value
+	 * @param isUnsigned TRUE to treat as an unsigned integer, otherwise FALSE
+	 * @return the value parsed into a number, or the default value if conversion fails
+	 */
+	public static long parse(String value, long defaultValue, boolean isUnsigned) {
+		if (isEmpty(value)) return defaultValue;
+		try {
+			return isUnsigned ? Long.parseUnsignedLong(value) : Long.parseLong(value);
 		} catch (NumberFormatException nfe) {
 			return defaultValue;
 		}
@@ -145,9 +159,7 @@ public final class StringUtils {
 	 * @return the value parsed into a number, or the default value if conversion fails
 	 */
 	public static double parse(String value, double defaultValue) {
-		if (isEmpty(value))
-			return defaultValue;
-		
+		if (isEmpty(value)) return defaultValue;
 		try {
 			return Double.parseDouble(value);
 		} catch (NumberFormatException nfe) {
