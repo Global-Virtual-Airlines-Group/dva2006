@@ -31,8 +31,19 @@ fi
 
 # Check if we're already downloading or reading
 if [ -f "/tmp/$network.isactive" ]; then
- log "$network data is busy!"
- sleep 1.5
+ CurrentDate=$(date +%s)
+ FlagDate=$(stat -c "%Y" /tmp/$network.isactive)
+ FlagAge=$(($CurrentDate - $FlagDate))
+
+ log "$network data is busy! ($FlagAge seconds)"
+ if [ "$FlagAge" -ge 120 ]; then
+  rm /tmp/$network.isactive
+  rm -rf /tmp/$network
+  log "Clearing stuck $network download"
+ else
+  sleep 2.5
+ fi
+ 
  if [ -f "/tmp/$network.isactive" ]; then
   log "Already downloading $network data!"
   exit 2
