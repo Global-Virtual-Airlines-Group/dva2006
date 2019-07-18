@@ -1,9 +1,9 @@
-// Copyright 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
-import java.util.*;
 
+import org.deltava.beans.acars.ArchivedRoute;
 import org.deltava.beans.navdata.*;
 
 import org.deltava.dao.DAOException;
@@ -11,7 +11,7 @@ import org.deltava.dao.DAOException;
 /**
  * A Data Access Object to read serialized route data.
  * @author Luke
- * @version 7.0
+ * @version 8.6
  * @since 7.0
  */
 
@@ -26,19 +26,20 @@ public class GetSerializedRoute extends DAO {
 	}
 
 	/**
-	 * Deserializes simFDR route entries.
-	 * @return a Collection of NavigationDataBeans
+	 * Deserializes ACARS route entries.
+	 * @return an ArchivedRoute bean
 	 * @throws DAOException if an I/O error occurs
 	 */
-	public List<NavigationDataBean> read() throws DAOException {
+	public ArchivedRoute read() throws DAOException {
 		try (DataInputStream in = new DataInputStream(new BufferedInputStream(getStream(), 4096))) {
 			short ver = in.readShort();
-			in.readInt(); // flight ID
+			int flightID = in.readInt(); // flight ID
+			int airacVersion = (ver > 2) ? in.readInt() : -1;
+			ArchivedRoute rt = new ArchivedRoute(flightID, airacVersion);
 			if (ver == 0)
-				return Collections.emptyList();
+				return rt;
 
 			int size = in.readInt();
-			List<NavigationDataBean> results = new ArrayList<NavigationDataBean>(size + 2);
 			for (int x = 0; x < size; x++) {
 				Navaid nt = Navaid.values()[in.readShort()];
 				NavigationDataBean ndb = NavigationDataBean.create(nt, in.readDouble(), in.readDouble());
@@ -49,10 +50,10 @@ public class GetSerializedRoute extends DAO {
 				if (ndb instanceof NavigationFrequencyBean)
 					((NavigationFrequencyBean) ndb).setFrequency(in.readUTF());
 				
-				results.add(ndb);
+				rt.addWaypoint(ndb);
 			}
 				
-			return results;
+			return rt;
 		} catch (IOException ie) {
 			throw new DAOException(ie);
 		}
