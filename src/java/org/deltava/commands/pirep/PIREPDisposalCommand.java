@@ -353,7 +353,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 					GetNavRoute navdao = new GetNavRoute(con);
 					FlightInfo fi = (fr instanceof FDRFlightReport) ? fidao.getInfo(fr.getDatabaseID(DatabaseID.ACARS)) : null;
 					RouteBuilder rb = new RouteBuilder(fr, (fi == null) ? fr.getRoute() : fi.getRoute());
-					navdao.getRouteWaypoints(rb.getRoute(), fr.getAirportD()).forEach(wp -> rb.add(wp));
+					navdao.getRouteWaypoints(rb.getRoute(), fr.getAirportD()).forEach(rb::add);
 					if (rb.hasData()) {
 						try (OutputStream os = new FileOutputStream(ArchiveHelper.getRoute(fr.getID()))) {
 							SetSerializedRoute rtw = new SetSerializedRoute(os);

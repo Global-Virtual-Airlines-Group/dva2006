@@ -1,9 +1,9 @@
-// Copyright 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
-import java.util.Collection;
 
+import org.deltava.beans.acars.ArchivedRoute;
 import org.deltava.beans.navdata.*;
 
 import org.deltava.dao.DAOException;
@@ -11,7 +11,7 @@ import org.deltava.dao.DAOException;
 /**
  * A Data Access Object to serialize route data.
  * @author Luke
- * @version 7.0
+ * @version 8.6
  * @since 7.0
  */
 
@@ -26,18 +26,18 @@ public class SetSerializedRoute extends WriteableDAO {
 	}
 	
 	/**
-	 * Serializes simFDR Route records. This will NOT write SID/STAR waypoint entries.
-	 * @param flightID the Flight ID
-	 * @param entries a Collection of NavigationDataBean beans
+	 * Serializes ACARS Route records. This will NOT write SID/STAR waypoint entries.
+	 * @param rt the ArchivedRoute bean
 	 * @throws DAOException if an I/O error occurs
 	 */
-	public void archive(int flightID, Collection<NavigationDataBean> entries) throws DAOException {
-		if (entries.isEmpty()) return;
+	public void archive(ArchivedRoute rt) throws DAOException {
+		if (rt.getSize() == 0) return;
 		try (DataOutputStream out = new DataOutputStream(_os)) {
-			out.writeShort(2);
-			out.writeInt(flightID);
-			out.writeInt(entries.size());
-			for (NavigationDataBean nd : entries) {
+			out.writeShort(3);
+			out.writeInt(rt.getID());
+			out.writeInt(rt.getAIRACVersion());
+			out.writeInt(rt.getSize());
+			for (NavigationDataBean nd : rt.getWaypoints()) {
 				out.writeShort(nd.getType().ordinal());
 				out.writeDouble(nd.getLatitude());
 				out.writeDouble(nd.getLongitude());
