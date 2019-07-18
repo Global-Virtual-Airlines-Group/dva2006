@@ -16,6 +16,8 @@ import org.deltava.dao.DAOException;
  */
 
 public class SetSerializedRoute extends WriteableDAO {
+	
+	private static final short DATA_VERSION = 3;
 
 	/**
 	 * Initializes the Data Access Object.
@@ -33,7 +35,7 @@ public class SetSerializedRoute extends WriteableDAO {
 	public void archive(ArchivedRoute rt) throws DAOException {
 		if (rt.getSize() == 0) return;
 		try (DataOutputStream out = new DataOutputStream(_os)) {
-			out.writeShort(3);
+			out.writeShort(DATA_VERSION);
 			out.writeInt(rt.getID());
 			out.writeInt(rt.getAIRACVersion());
 			out.writeInt(rt.getSize());
