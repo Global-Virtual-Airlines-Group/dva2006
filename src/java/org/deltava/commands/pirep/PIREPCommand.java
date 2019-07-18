@@ -536,9 +536,13 @@ public class PIREPCommand extends AbstractFormCommand {
 					// Load the serialized route
 					Collection<NavigationDataBean> rtePoints = new ArrayList<NavigationDataBean>();
 					if (ArchiveHelper.getRoute(fr.getID()).exists()) {
+						GetNavCycle ncdao = new GetNavCycle(con);
 						try (InputStream in = ArchiveHelper.getStream(ArchiveHelper.getRoute(fr.getID()))) {
 							GetSerializedRoute rtdao = new GetSerializedRoute(in);
-							rtePoints.addAll(rtdao.read());
+							ArchivedRoute arcRt = rtdao.read();
+							rtePoints.addAll(arcRt.getWaypoints());
+							if (arcRt.getAIRACVersion() > 0)
+								ctx.setAttribute("routeCycleInfo", ncdao.getCycle(String.valueOf(arcRt.getAIRACVersion())), REQUEST);
 						} catch (IOException ie) {
 							log.error("Error loading serialized route - " + ie.getMessage(), ie);
 						}

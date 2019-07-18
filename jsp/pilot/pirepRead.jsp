@@ -273,10 +273,10 @@ golgotha.local.showRunwayChoices = function() {
 <c:if test="${isACARS}"><el:box name="showFDR" idx="*" onChange="void map.toggle(golgotha.maps.acarsFlight.routeMarkers, this.checked)" label="Flight Data" checked="false" /> 
 <el:box name="showAirspace" idx="*" onChange="void golgotha.maps.acarsFlight.toggleAirspace(this.checked)" label="Airspace Boundaries" checked="false" /> </c:if>
 <c:if test="${!empty filedRoute}"><el:box name="showFPlan" idx="*" onChange="void map.toggle(golgotha.maps.acarsFlight.gfRoute, this.checked)" label="Flight Plan" checked="true" /> </c:if>
-<el:box name="showFPMarkers" idx="*" onChange="void map.toggle(golgotha.maps.acarsFlight.filedMarkers, this.checked)" label="Navaid Markers" checked="true" />
-<c:if test="${!empty onlineTrack}"> <el:box name="showOTrack" idx="*" onChange="void map.toggle(golgotha.maps.acarsFlight.otRoute, this.checked)" label="Online Track" checked="false" />
- <el:box name="showOMarkers" idx="*" onChange="void map.toggle(golgotha.maps.acarsFlight.otMarkers, this.checked)" label="Online Data" checked="false" /></c:if>
-</span></td>
+<el:box name="showFPMarkers" idx="*" onChange="void map.toggle(golgotha.maps.acarsFlight.filedMarkers, this.checked)" label="Navaid Markers" checked="true" /></span>
+<c:if test="${!empty routeCycleInfo}"> <span class="small ita nophone">(Cycle <span class="pri bld">${routeCycleInfo.ID}</span> released <fmt:date date="${routeCycleInfo.releasedOn}" fmt="d" />)</span></c:if>
+<c:if test="${!empty onlineTrack}"><span class="bld"> <el:box name="showOTrack" idx="*" onChange="void map.toggle(golgotha.maps.acarsFlight.otRoute, this.checked)" label="Online Track" checked="false" />
+ <el:box name="showOMarkers" idx="*" onChange="void map.toggle(golgotha.maps.acarsFlight.otMarkers, this.checked)" label="Online Data" checked="false" /></span></c:if></td>
 </tr>
 <tr>
  <td colspan="2"><map:div ID="googleMap" height="575" /></td>

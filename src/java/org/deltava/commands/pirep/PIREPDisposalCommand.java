@@ -351,13 +351,17 @@ public class PIREPDisposalCommand extends AbstractCommand {
 				if (!hasRoute) {
 					GetACARSData fidao = new GetACARSData(con);
 					GetNavRoute navdao = new GetNavRoute(con);
+					GetMetadata mddao = new GetMetadata(con);
 					FlightInfo fi = (fr instanceof FDRFlightReport) ? fidao.getInfo(fr.getDatabaseID(DatabaseID.ACARS)) : null;
 					RouteBuilder rb = new RouteBuilder(fr, (fi == null) ? fr.getRoute() : fi.getRoute());
 					navdao.getRouteWaypoints(rb.getRoute(), fr.getAirportD()).forEach(rb::add);
 					if (rb.hasData()) {
+						String currentCycle = mddao.get("navdata.cycle");
+						ArchivedRoute arcRt = new ArchivedRoute(fr.getID(), StringUtils.parse(currentCycle, -1));
+						rb.getPoints().forEach(arcRt::addWaypoint);
 						try (OutputStream os = new FileOutputStream(ArchiveHelper.getRoute(fr.getID()))) {
 							SetSerializedRoute rtw = new SetSerializedRoute(os);
-							rtw.archive(fr.getID(), rb.getPoints());
+							rtw.archive(arcRt);
 						} catch (IOException ie) {
 							log.warn("Error writing serialized route data", ie);
 						}
