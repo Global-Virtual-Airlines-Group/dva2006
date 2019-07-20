@@ -9,7 +9,7 @@ package org.deltava.beans.acars;
  */
 
 public enum GroundOperations {
-	CATERING(0, "Catering"), FUEL(1, "Fueling"), DEICE(2, "De-Icing"), BOARD(3, "Boarding"), DEBOARD(4, "Deboarding");
+	CATERING(0, "Catering"), FUEL(1, "Fueling"), DEICE(2, "De-Icing"), BOARD(3, "Boarding"), DEBOARD(4, "Deboarding"), LOAD(5, "Loading"), UNLOAD(6, "Unloading");
 	
 	private final int _mask;
 	private final String _desc;
