@@ -1,6 +1,7 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
+import java.math.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -13,7 +14,7 @@ import com.vividsolutions.jts.geom.*;
 /**
  * A utility class for performing geocoding operations.
  * @author Luke
- * @version 8.3
+ * @version 8.6
  * @since 1.0
  */
 
@@ -519,6 +520,37 @@ public class GeoUtils {
 		
 		return results;
 	}
+
+	/**
+	 * Rounds a GeoLocation <i>down</i> to a specific number of decimal places.
+	 * @param loc a GeoLocation
+	 * @param precision the preicison amount
+	 * @return a GeoLocation
+	 */
+	public static GeoLocation round(GeoLocation loc, double precision) {
+		BigDecimal inc = new BigDecimal(Double.toString(precision));
+		BigDecimal lat = new BigDecimal(Double.toString(loc.getLatitude())).divide(inc, 0, RoundingMode.DOWN).multiply(inc);
+		BigDecimal lng = new BigDecimal(Double.toString(loc.getLongitude())).divide(inc, 0, RoundingMode.DOWN).multiply(inc);
+		return new GeoPosition(lat.doubleValue(), lng.doubleValue());
+	}
+	
+	/**
+	 * Creates a rounded bounding box around a specific GeoLocation.
+	 * @param loc a GeoLocation
+	 * @param precision the preicision amount
+	 * @return a Collection of GeoLocations
+	 */
+	public static List<GeoLocation> createRoundedBox(GeoLocation loc, double precision) {
+		List<GeoLocation> locs = new ArrayList<GeoLocation>();
+		GeoLocation l1 = round(loc, precision);
+		double lat2 = l1.getLatitude() + ((l1.getLatitude() < 0) ? -precision : precision);
+		double lng2 = l1.getLongitude() + ((l1.getLongitude() < 0) ? -precision : precision);
+		locs.add(l1);
+		locs.add(new GeoPosition(l1.getLatitude(), lng2));
+		locs.add(new GeoPosition(lat2, lng2));
+		locs.add(new GeoPosition(lat2, l1.getLongitude()));
+		return locs;
+	}
 	
 	/**
 	 * Converts a GeoLocation to a JTS Coordinate.
@@ -535,6 +567,6 @@ public class GeoUtils {
 	 * @return a GeoLocation
 	 */
 	public static GeoLocation fromCoordinate(Coordinate c) {
-		return  new GeoPosition(c.x, c.y);
+		return new GeoPosition(c.x, c.y);
 	}
 }
