@@ -106,7 +106,6 @@ public class TestGeoUtils extends TestCase {
 	}
 	
 	public void testGeometry() {
-		
 		List<GeoLocation> locs = Arrays.asList(new GeoPosition(40, -110), new GeoPosition(40, -111), new GeoPosition(39, -111), new GeoPosition(39, -110));
 		
 		Geometry g = GeoUtils.toGeometry(locs);
@@ -118,5 +117,49 @@ public class TestGeoUtils extends TestCase {
 		assertEquals(locs.size() + 1, locs2.size());
 		for (int x = 0; x < locs.size(); x++)
 			assertTrue(locs.get(x).equals(locs2.get(x)));
+	}
+	
+	public void testRound() {
+		GeoLocation loc = new GeoPosition(45.2566, -87.2215);
+		GeoLocation loc2 = GeoUtils.round(loc, 0.01);
+		assertNotNull(loc2);
+		assertEquals(45.25, loc2.getLatitude(), 0.0001);
+		assertEquals(-87.22, loc2.getLongitude(), 0.0001);
+		
+		GeoLocation loc3 = new GeoPosition(-45.2566, 87.2215);
+		GeoLocation loc4 = GeoUtils.round(loc3, 0.01);
+		assertNotNull(loc4);
+		assertEquals(-45.25, loc4.getLatitude(), 0.0001);
+		assertEquals(87.22, loc4.getLongitude(), 0.0001);
+	}
+	
+	public void testRoundBox() {
+		final double PRECISION = 0.01;
+		
+		GeoLocation loc = new GeoPosition(45.2566, -87.2215);
+		GeoLocation rl1 = GeoUtils.round(loc, PRECISION);
+		List<GeoLocation> box1 = GeoUtils.createRoundedBox(loc, PRECISION);
+		assertNotNull(box1);
+		assertEquals(4, box1.size());
+		assertEquals(0, GeoUtils.distance(rl1, box1.get(0)));
+		assertEquals(rl1.getLatitude(), box1.get(1).getLatitude(), 0.0001);
+		assertEquals(rl1.getLongitude() - PRECISION, box1.get(1).getLongitude(), 0.0001);
+		assertEquals(rl1.getLatitude() + PRECISION, box1.get(2).getLatitude(), 0.0001);
+		assertEquals(rl1.getLongitude() - PRECISION, box1.get(2).getLongitude(), 0.0001);
+		assertEquals(rl1.getLatitude() + PRECISION, box1.get(3).getLatitude(), 0.0001);
+		assertEquals(rl1.getLongitude(), box1.get(3).getLongitude(), 0.0001);
+		
+		GeoLocation loc2 = new GeoPosition(-45.2566, 87.2215);
+		GeoLocation rl2 = GeoUtils.round(loc2, PRECISION);
+		List<GeoLocation> box2 = GeoUtils.createRoundedBox(loc2, PRECISION);
+		assertNotNull(box2);
+		assertEquals(4, box2.size());
+		assertEquals(0, GeoUtils.distance(rl2, box2.get(0)));
+		assertEquals(rl2.getLatitude(), box2.get(1).getLatitude(), 0.0001);
+		assertEquals(rl2.getLongitude() + PRECISION, box2.get(1).getLongitude(), 0.0001);
+		assertEquals(rl2.getLatitude() - PRECISION, box2.get(2).getLatitude(), 0.0001);
+		assertEquals(rl2.getLongitude() + PRECISION, box2.get(2).getLongitude(), 0.0001);
+		assertEquals(rl2.getLatitude() - PRECISION, box2.get(3).getLatitude(), 0.0001);
+		assertEquals(rl2.getLongitude(), box2.get(3).getLongitude(), 0.0001);
 	}
 }
