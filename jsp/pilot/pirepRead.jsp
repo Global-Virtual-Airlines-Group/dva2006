@@ -311,8 +311,8 @@ ${acarsClientInfo.GPU}&nbsp;<span class="small ita">(<fmt:int value="${acarsClie
 <c:if test="${!empty acarsTimerInfo}">
 <tr class="acarsDiagData">
  <td class="label top">ACARS Client Timers</td>
- <td class="data"><c:forEach var="tt" items="${acarsTimerInfo}" varStatus="ttStatus"><span class="bld">${tt.name}</span> <fmt:int value="${tt.count}" />x Avg:<fmt:dec value="${tt.average / tt.tickSize}" />ms
- Min/Max=<fmt:dec value="${tt.min / tt.tickSize}" />/<fmt:dec value="${tt.max / tt.tickSize}" />ms<c:if test="${!ttStatus.last}"><br /></c:if></c:forEach></td>
+ <td class="data"><c:forEach var="tt" items="${acarsTimerInfo}" varStatus="ttStatus"><span class="bld">${tt.name}</span> <fmt:int value="${tt.count}" />x Avg:<fmt:dec value="${tt.average / tt.tickSize}" fmt="#0.00" />ms
+ Min/Max=<fmt:dec value="${tt.min / tt.tickSize}" fmt="#0.00" />/<fmt:dec value="${tt.max / tt.tickSize}" fmt="#0.00" />ms<c:if test="${!ttStatus.last}"><br /></c:if></c:forEach></td>
 </tr>
 </c:if>
 </c:if>
