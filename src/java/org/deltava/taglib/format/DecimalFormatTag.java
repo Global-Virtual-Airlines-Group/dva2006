@@ -1,12 +1,10 @@
-// Copyright 2005, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
-
-import java.text.DecimalFormat;
 
 /**
  * A JSP tag to support the rendering of formatted decimal values.
  * @author Luke
- * @version 7.0
+ * @version 8.6
  * @since 1.0
  */
 
@@ -18,19 +16,9 @@ public class DecimalFormatTag extends NumberFormatTag {
      * Initializes the tag and the number formatter.
      */
     public DecimalFormatTag() {
-        super();
-        _nF = new DecimalFormat(DEFAULT_PATTERN);
-        _nF.setDecimalSeparatorAlwaysShown(true);
+        super(DEFAULT_PATTERN);
     }
     
-    /**
-     * Sets the value to format. <i>This is a nasty hack for Tomcat 6.0.18+ EL casting.</i>
-     * @param value the value to format
-     */
-    public void setValue(Float value) {
-        super.setValue(value);
-    }
-
     /**
      * Resets this tag's data when its lifecycle is complete.
      */
