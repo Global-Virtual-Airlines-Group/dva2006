@@ -1,4 +1,4 @@
-// Copyright 2004, 2007, 2009, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2007, 2009, 2013, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import java.text.*;
@@ -8,21 +8,24 @@ import javax.servlet.jsp.*;
 /**
  * A JSP tag to support the rendering of formatted numeric values.
  * @author Luke
- * @version 7.0
+ * @version 8.6
  * @since 1.0
  */
 
-public abstract class NumberFormatTag extends UserSettingsTag {
+abstract class NumberFormatTag extends UserSettingsTag {
 
-    protected DecimalFormat _nF;
+    protected final DecimalFormat _nF;
     protected Number _value;
     protected String _className;
     
     /**
      * Initializes the tag.
+     * @param pattern the formatting pattern to use
      */
-    public NumberFormatTag() {
+    public NumberFormatTag(String pattern) {
         super();
+        _nF = new DecimalFormat(pattern);
+        _nF.setDecimalSeparatorAlwaysShown(false);
     }
     
     /**

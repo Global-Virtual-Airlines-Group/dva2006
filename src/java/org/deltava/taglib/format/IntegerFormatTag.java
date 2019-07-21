@@ -1,14 +1,12 @@
-// Copyright 2004, 2007, 2009, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2007, 2009, 2010, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
-
-import java.text.DecimalFormat;
 
 import javax.servlet.jsp.JspException;
 
 /**
  * A JSP tag to support the rendering of formatted integer values.
  * @author Luke
- * @version 7.0
+ * @version 8.6
  * @since 1.0
  */
 
@@ -20,9 +18,7 @@ public class IntegerFormatTag extends NumberFormatTag {
      * Initializes the tag and the number formatter.
      */
     public IntegerFormatTag() {
-        super();
-        _nF = new DecimalFormat(DEFAULT_PATTERN);
-        _nF.setDecimalSeparatorAlwaysShown(false);
+        super(DEFAULT_PATTERN);
         _nF.setParseIntegerOnly(true);
     }
     
