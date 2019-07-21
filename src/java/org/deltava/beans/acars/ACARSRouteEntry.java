@@ -621,7 +621,7 @@ public class ACARSRouteEntry extends RouteEntry {
 	 */
 	@Override
 	public String getInfoBox() {
-		StringBuilder buf = new StringBuilder(256);
+		StringBuilder buf = new StringBuilder(384);
 		buf.append("<div class=\"mapInfoBox acarsFlight\">Position: <span class=\"bld\">");
 		buf.append(StringUtils.format(_pos, true, GeoLocation.ALL));
 		buf.append("</span><br />Time: ");
@@ -718,8 +718,8 @@ public class ACARSRouteEntry extends RouteEntry {
 					buf.append(' ').append(AP_FLAG_NAMES[x]);
 			}
 
-			if (managedVerticalSpeed && isFlagSet(ACARSFlags.AT_VNAV)) buf.append(" VNAV");
-			if (managedVerticalSpeed && isFlagSet(ACARSFlags.AT_FLCH)) buf.append(" FLCH");
+			if (managedVerticalSpeed && isFlagSet(ACARSFlags.AT_VNAV)) buf.append((_ap == AutopilotType.MD) ? " PROF" : " VNAV");
+			if (managedVerticalSpeed && isFlagSet(ACARSFlags.AT_FLCH)) buf.append((_ap == AutopilotType.MD) ? " FMS" : " FLCH");
 			buf.append("<br />");
 		}
 
