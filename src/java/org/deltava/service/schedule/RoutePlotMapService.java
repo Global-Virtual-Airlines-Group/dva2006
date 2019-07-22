@@ -205,10 +205,11 @@ public class RoutePlotMapService extends MapPlotService {
 				// If the selected alternate isn't in the list, clear it
 				if (dr.getAirportL() != null) {
 					boolean noAlt = true;
-					for (Iterator<Airport> i = alternates.iterator(); noAlt && i.hasNext(); ) {
-						Airport ap = i.next();
-						if (ap.getICAO().equals(dr.getAirportL().getICAO()))
+					for (Airport ap : alternates) {
+						if (ap.getICAO().equals(dr.getAirportL().getICAO())) {
 							noAlt = false;
+							break;
+						}
 					}
 				
 					if (noAlt)
@@ -277,7 +278,8 @@ public class RoutePlotMapService extends MapPlotService {
 			eo.put("warning", false);
 		
 		// Check for restricted Airspace
-		Collection<Airspace> rsts = AirspaceHelper.classify(dr, true);
+		TaskTimer tt = new TaskTimer();
+		Collection<Airspace> rsts = AirspaceHelper.classify(dr, true); tt.stop();
 		for (Airspace r : rsts) {
 			JSONObject ao = new JSONObject();
 			ao.put("id", r.getID());
@@ -362,6 +364,7 @@ public class RoutePlotMapService extends MapPlotService {
 		// Dump the XML to the output stream
 		try {
 			ctx.setContentType("application/json", "utf-8");
+			ctx.setHeader("X-Airspace-Time", (int) tt.getMillis());
 			ctx.println(jo.toString(1));
 			ctx.commit();
 		} catch (IOException ie) {
