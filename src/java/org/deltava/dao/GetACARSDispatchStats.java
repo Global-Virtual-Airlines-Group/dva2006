@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.beans.stats.DispatchStatistics;
 /**
  * A Data Access Object to load Dispatcher Activity statistics. 
  * @author Luke
- * @version 7.1
+ * @version 8.6
  * @since 3.2
  */
 
@@ -37,8 +37,7 @@ public class GetACARSDispatchStats extends DAO {
 		
 		try {
 			// Load hours
-			prepareStatement("SELECT SUM(UNIX_TIMESTAMP(ENDDATE)-UNIX_TIMESTAMP(DATE)) / 3600 AS HRS FROM "
-					+ "acars.CONS WHERE (PILOT_ID=?) AND (ENDDATE IS NOT NULL)");
+			prepareStatement("SELECT SUM(UNIX_TIMESTAMP(ENDDATE)-UNIX_TIMESTAMP(DATE)) / 3600 AS HRS FROM acars.CONS WHERE (PILOT_ID=?) AND (ENDDATE IS NOT NULL)");
 			_ps.setInt(1, p.getID());
 			try (ResultSet rs = _ps.executeQuery()) {
 				if (rs.next())
@@ -69,8 +68,8 @@ public class GetACARSDispatchStats extends DAO {
 	 */
 	public Collection<DispatchStatistics> getTopDispatchers(DateRange dr) throws DAOException {
 		try {
-			prepareStatement("SELECT PILOT_ID, SUM(UNIX_TIMESTAMP(IFNULL(ENDDATE, NOW()))-UNIX_TIMESTAMP(DATE)) / 3600 AS HRS "
-				+ "FROM acars.CONS WHERE (DATE >= ?) AND (ENDDATE<?) GROUP BY PILOT_ID ORDER BY HRS DESC");
+			prepareStatement("SELECT PILOT_ID, SUM(UNIX_TIMESTAMP(IFNULL(ENDDATE, NOW()))-UNIX_TIMESTAMP(DATE)) / 3600 AS HRS FROM acars.CONS WHERE "
+				+ "(DATE >= ?) AND (ENDDATE<?) GROUP BY PILOT_ID ORDER BY HRS DESC");
 			_ps.setTimestamp(1, createTimestamp(dr.getStartDate()));
 			_ps.setTimestamp(2, createTimestamp(dr.getEndDate()));
 			
@@ -87,8 +86,8 @@ public class GetACARSDispatchStats extends DAO {
 			_ps.close();
 			
 			// Load the Legs
-			prepareStatement("SELECT FD.DISPATCHER_ID, COUNT(FD.ID) FROM acars.FLIGHT_DISPATCHER FD, acars.FLIGHTS F WHERE "
-				+ " (F.ID=FD.ID) AND (F.CREATED >= ?) AND (F.CREATED<?) GROUP BY FD.DISPATCHER_ID");
+			prepareStatement("SELECT FD.DISPATCHER_ID, COUNT(FD.ID) FROM acars.FLIGHT_DISPATCHER FD, acars.FLIGHTS F WHERE (F.ID=FD.ID) AND (F.CREATED >= ?) "
+				+ "AND (F.CREATED<?) GROUP BY FD.DISPATCHER_ID");
 			_ps.setTimestamp(1, createTimestamp(dr.getStartDate()));
 			_ps.setTimestamp(2, createTimestamp(dr.getEndDate()));
 			try (ResultSet rs = _ps.executeQuery()) {
@@ -111,7 +110,7 @@ public class GetACARSDispatchStats extends DAO {
 	 * @return a Collection of DateRange beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<DateRange> getDispatchRanges() throws DAOException {
+	public List<DateRange> getDispatchRanges() throws DAOException {
 		try {
 			prepareStatementWithoutLimits("SELECT DISTINCT MONTH(F.CREATED), YEAR(F.CREATED) FROM acars.FLIGHTS F, acars.FLIGHT_DISPATCHER FD WHERE (F.ID=FD.ID) ORDER BY F.CREATED");
 			
@@ -128,26 +127,18 @@ public class GetACARSDispatchStats extends DAO {
 				}
 			}
 			
-			// Clean up and merge
 			_ps.close();
+			
+			// Add today and merge
+			DateRange cdr = DateRange.createMonth(ZonedDateTime.now());
+			if (!results.contains(cdr))
+				results.add(cdr);
+			
 			Collections.reverse(results);
 			results.addAll(years);
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
-		}
-	}
-	
-	/**
-	 * Loads Dispatch totals for a group of Pilots.
-	 * @param pilots a Map of Pilots, keyed by database ID
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public void getDispatchTotals(Map<Integer, Pilot> pilots) throws DAOException {
-		for (Map.Entry<Integer, Pilot> me : pilots.entrySet()) {
-			Pilot p = me.getValue();
-			if (p.getDispatchFlights() < 0)
-				getDispatchTotals(p);
 		}
 	}
 }

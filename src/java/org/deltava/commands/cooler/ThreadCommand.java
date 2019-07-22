@@ -150,7 +150,9 @@ public class ThreadCommand extends AbstractCommand {
 				if (UserData.isPilotTable(dbTableName)) {
 					Map<Integer, Pilot> pilots = pdao.getByID(udm.getByTable(dbTableName), dbTableName);
 					prdao.getOnlineTotals(pilots, dbTableName);
-					dspstdao.getDispatchTotals(pilots);
+					for (Pilot p : pilots.values())
+						dspstdao.getDispatchTotals(p);
+					
 					users.putAll(pilots);
 					accs.putAll(accdao.get(pilots, dbTableName));
 				} else
