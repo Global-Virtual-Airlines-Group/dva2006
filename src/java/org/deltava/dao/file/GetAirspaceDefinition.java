@@ -1,4 +1,4 @@
-// Copyright 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -17,7 +17,7 @@ import org.deltava.util.*;
 /**
  * A Data Access Object to load OpenAir airspace definition files.
  * @author Luke
- * @version 7.3
+ * @version 8.6
  * @since 7.3
  */
 
@@ -99,7 +99,7 @@ public class GetAirspaceDefinition extends DAO {
 				case "DB": // draw arc between points; convert to angles and radius
 					List<String> params = StringUtils.split(data, ",");
 					GeoLocation gl1 = parseLL(params.get(0)); GeoLocation gl2 = parseLL(params.get(1));
-					double a1 = GeoUtils.course(ctr, gl1); double a2 = GeoUtils.course(ctr, gl2); double dst = GeoUtils.distance(ctr, gl1);
+					double a1 = GeoUtils.course(ctr, gl1); double a2 = GeoUtils.course(ctr, gl2); double dst = ctr.distanceTo(gl1);
 					a.setBorder(drawArc(ctr, dst, a1, a2, isClockwise));
 					break;
 					

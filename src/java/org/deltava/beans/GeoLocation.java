@@ -1,10 +1,10 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 /**
  * An interface to mark objects that contain a latitude/longitude pair.
  * @author Luke
- * @version 1.0
+ * @version 8.6
  * @since 1.0
  */
 
@@ -54,4 +54,28 @@ public interface GeoLocation {
 	 * @return the longitude in degrees
 	 */
 	public double getLongitude();
+	
+	/**
+	 * Calculates the distance between two GeoLocations
+	 * @param gp2 the other GeoLocations
+	 * @return The distance in statute miles between the two positions, or -1 if gp2 is null
+	 */
+	default int distanceTo(GeoLocation gp2) {
+	   if (gp2 == null) return -1;
+
+		// Convert the latitude to radians
+		double lat1 = Math.toRadians(getLatitude());
+		double lat2 = Math.toRadians(gp2.getLatitude());
+
+		// Get the longitude difference in radians
+		double lngDiff = Math.toRadians(Math.abs(getLongitude() - gp2.getLongitude()));
+
+		// Do the math - this makes my head hurt
+		double p1 = StrictMath.sin(lat1) * StrictMath.sin(lat2);
+		double p2 = StrictMath.cos(lat1) * StrictMath.cos(lat2) * StrictMath.cos(lngDiff);
+		double distD = Math.toDegrees(Math.acos(p1 + p2));
+
+		// Convert to miles and return
+		return (int) StrictMath.round(distD * DEGREE_MILES);
+	}
 }

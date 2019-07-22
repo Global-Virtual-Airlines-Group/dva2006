@@ -4,7 +4,7 @@ import java.util.*;
 
 import junit.framework.TestCase;
 
-import org.deltava.beans.GeoLocation;
+import org.deltava.beans.*;
 import org.deltava.beans.schedule.GeoPosition;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -38,9 +38,9 @@ public class TestGeoUtils extends TestCase {
 		GeoLocation l1 = new GeoPosition(0.00, 0.00);
 		
 		GeoLocation l2 = GeoUtils.bearingPoint(l1, GeoLocation.DEGREE_MILES, 90);
-		assertEquals(GeoLocation.DEGREE_MILES, GeoUtils.distance(l1, l2), 0.5);
+		assertEquals(GeoLocation.DEGREE_MILES, l1.distanceTo(l2), 0.5);
 		GeoLocation l3 = GeoUtils.bearingPoint(l1, 15, -40);
-		assertEquals(15, GeoUtils.distance(l1, l3), 0.5);
+		assertEquals(15, l1.distanceTo(l3), 0.5);
 	}
 	
 	public void testCourse() {
@@ -97,6 +97,8 @@ public class TestGeoUtils extends TestCase {
 	public void testXACARS() {
 		GeoLocation loc = GeoUtils.parseXACARS("N40 37.3453 W73 47.117");
 		assertNotNull(loc);
+		assertEquals(40, (int)loc.getLatitude());
+		assertEquals(-73, (int)loc.getLongitude());
 	}
 	
 	public void testIsValid() {
@@ -131,35 +133,5 @@ public class TestGeoUtils extends TestCase {
 		assertNotNull(loc4);
 		assertEquals(-45.25, loc4.getLatitude(), 0.0001);
 		assertEquals(87.22, loc4.getLongitude(), 0.0001);
-	}
-	
-	public void testRoundBox() {
-		final double PRECISION = 0.01;
-		
-		GeoLocation loc = new GeoPosition(45.2566, -87.2215);
-		GeoLocation rl1 = GeoUtils.round(loc, PRECISION);
-		List<GeoLocation> box1 = GeoUtils.createRoundedBox(loc, PRECISION);
-		assertNotNull(box1);
-		assertEquals(4, box1.size());
-		assertEquals(0, GeoUtils.distance(rl1, box1.get(0)));
-		assertEquals(rl1.getLatitude(), box1.get(1).getLatitude(), 0.0001);
-		assertEquals(rl1.getLongitude() - PRECISION, box1.get(1).getLongitude(), 0.0001);
-		assertEquals(rl1.getLatitude() + PRECISION, box1.get(2).getLatitude(), 0.0001);
-		assertEquals(rl1.getLongitude() - PRECISION, box1.get(2).getLongitude(), 0.0001);
-		assertEquals(rl1.getLatitude() + PRECISION, box1.get(3).getLatitude(), 0.0001);
-		assertEquals(rl1.getLongitude(), box1.get(3).getLongitude(), 0.0001);
-		
-		GeoLocation loc2 = new GeoPosition(-45.2566, 87.2215);
-		GeoLocation rl2 = GeoUtils.round(loc2, PRECISION);
-		List<GeoLocation> box2 = GeoUtils.createRoundedBox(loc2, PRECISION);
-		assertNotNull(box2);
-		assertEquals(4, box2.size());
-		assertEquals(0, GeoUtils.distance(rl2, box2.get(0)));
-		assertEquals(rl2.getLatitude(), box2.get(1).getLatitude(), 0.0001);
-		assertEquals(rl2.getLongitude() + PRECISION, box2.get(1).getLongitude(), 0.0001);
-		assertEquals(rl2.getLatitude() - PRECISION, box2.get(2).getLatitude(), 0.0001);
-		assertEquals(rl2.getLongitude() + PRECISION, box2.get(2).getLongitude(), 0.0001);
-		assertEquals(rl2.getLatitude() - PRECISION, box2.get(3).getLatitude(), 0.0001);
-		assertEquals(rl2.getLongitude(), box2.get(3).getLongitude(), 0.0001);
 	}
 }

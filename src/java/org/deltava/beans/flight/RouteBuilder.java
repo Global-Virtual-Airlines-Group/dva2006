@@ -1,4 +1,4 @@
-// Copyright 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.*;
 /**
  * A utility class to build a flight route.
  * @author Luke
- * @version 8.0
+ * @version 8.6
  * @since 7.0
  */
 
@@ -64,11 +64,6 @@ public class RouteBuilder implements RoutePair {
 	@Override
 	public Airport getAirportA() {
 		return _aA;
-	}
-	
-	@Override
-	public int getDistance() {
-		return GeoUtils.distance(_aD, _aA);
 	}
 	
 	/**

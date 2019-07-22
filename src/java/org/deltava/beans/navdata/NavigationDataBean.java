@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2012, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store common properties for Navigation Database objects.
  * @author Luke
- * @version 8.0
+ * @version 8.6
  * @since 1.0
  */
 
@@ -68,15 +68,6 @@ public abstract class NavigationDataBean implements Cloneable, Cacheable, Compar
 	@Override
 	public final double getLongitude() {
 		return _gp.getLongitude();
-	}
-
-	/**
-	 * Returns the distance from this point to another point.
-	 * @param loc the point
-	 * @return the distance in miles
-	 */
-	public final int distanceTo(GeoLocation loc) {
-		return _gp.distanceTo(loc);
 	}
 
 	/**
