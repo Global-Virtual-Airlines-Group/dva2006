@@ -1,4 +1,4 @@
-// Copyright 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.time.*;
@@ -9,7 +9,7 @@ import org.deltava.util.*;
 /**
  * A bean to store date/time ranges.
  * @author Luke
- * @version 7.1
+ * @version 8.6
  * @since 3.6
  */
 
@@ -50,7 +50,7 @@ public class DateRange implements java.io.Serializable, Comparable<DateRange>, C
 		ZonedDateTime zdt2 = zdt.truncatedTo(ChronoUnit.DAYS);
 		ZonedDateTime sd = zdt2.minusDays(zdt2.get(ChronoField.DAY_OF_YEAR) - 1);
 		ZonedDateTime ed = sd.plus(1, ChronoUnit.YEARS);
-		return new DateRange(sd.toInstant(), ed.toInstant(), StringUtils.format(zdt, "MMMM yyyy"));
+		return new DateRange(sd.toInstant(), ed.toInstant(), StringUtils.format(zdt, "yyyy"));
 	}
 	
 	/**
@@ -126,10 +126,7 @@ public class DateRange implements java.io.Serializable, Comparable<DateRange>, C
 	 * @return TRUE if contained, otherwise FALSE
 	 */
 	public boolean contains(Instant dt) {
-		if (dt == null)
-			return false;
-		
-		return (!dt.isBefore(_startDate) && !dt.isAfter(_endDate));
+		return (dt == null) ? false : (!dt.isBefore(_startDate) && !dt.isAfter(_endDate));
 	}
 	
 	/**
@@ -162,8 +159,7 @@ public class DateRange implements java.io.Serializable, Comparable<DateRange>, C
 	@Override
 	public String toString() {
 		StringBuilder buf = new StringBuilder(_startDate.toString());
-		buf.append('-');
-		buf.append(_endDate.toString());
+		buf.append('-').append(_endDate.toString());
 		return buf.toString();
 	}
 
@@ -173,10 +169,7 @@ public class DateRange implements java.io.Serializable, Comparable<DateRange>, C
 	@Override
 	public int compareTo(DateRange dr2) {
 		int tmpResult = _startDate.compareTo(dr2._startDate);
-		if (tmpResult == 0)
-			tmpResult = _endDate.compareTo(dr2._endDate);
-		
-		return tmpResult;
+		return (tmpResult == 0) ? _endDate.compareTo(dr2._endDate) : tmpResult;
 	}
 	
 	@Override
