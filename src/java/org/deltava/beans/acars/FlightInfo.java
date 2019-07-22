@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -9,12 +9,13 @@ import org.deltava.beans.flight.Recorder;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.system.OperatingSystem;
+
 import org.deltava.util.*;
 
 /**
  * A bean to store ACARS Flight Information records.
  * @author Luke
- * @version 8.4
+ * @version 8.6
  * @since 1.0
  */
 
@@ -246,14 +247,6 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 	 */
 	public TerminalRoute getSTAR() {
 		return _star;
-	}
-
-	/**
-	 * Returns the distance between the Airports.
-	 */
-	@Override
-	public int getDistance() {
-		return GeoUtils.distance(_airportD, _airportA);
 	}
 
 	/**

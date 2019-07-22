@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012, 2015, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -24,7 +24,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to format ACARS flight data for Google Earth.
  * @author Luke
- * @version 7.3
+ * @version 8.6
  * @since 1.0
  */
 
@@ -76,12 +76,11 @@ public class FlightDataEarthService extends GoogleEarthService {
 				int id = i.next().intValue();
 				FlightInfo info = dao.getInfo(id); Collection<Airspace> airspaces = new LinkedHashSet<Airspace>();
 				if (info != null) {
-					// FIXME: Whatabout XACARS?
 					Collection<? extends RouteEntry> routeData = dao.getRouteEntries(id, info.getArchived()); 
 					GeoLocation lastLoc = info.getAirportD();
 					for (RouteEntry rt : routeData) {
 						int distance = (rt.getRadarAltitude() < 2500) ? 2 : (rt.getGroundSpeed() / 120);
-						if ((lastLoc == null) || (GeoUtils.distance(rt, lastLoc) > distance)) {
+						if ((lastLoc == null) || (rt.distanceTo(lastLoc) > distance)) {
 							airspaces.addAll(asdao.find(rt));
 							airspaces.addAll(Airspace.findRestricted(rt, (rt.getGroundSpeed() / 90)));
 							lastLoc = rt;

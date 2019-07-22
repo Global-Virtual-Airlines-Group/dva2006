@@ -14,7 +14,6 @@ import org.deltava.beans.stats.GeocodeResult;
 import org.deltava.dao.*;
 import org.deltava.dao.http.GetGoogleGeocode;
 
-import org.deltava.util.GeoUtils;
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
@@ -82,7 +81,7 @@ public class SetLocations extends TestCase {
 				try {
 					GetGoogleGeocode gcdao = new GetGoogleGeocode();
 					gr = gcdao.getGeoData(loc);
-					int distance = GeoUtils.distance(loc, gr);
+					int distance = loc.distanceTo(gr);
 					if ((distance < 30) && (gr != null)) {
 						log.warn("Setting " + usr.getName() + " home town to " + gr.getCityState());
 						pwdao.setHomeTown(e.getKey().intValue(), gr);
