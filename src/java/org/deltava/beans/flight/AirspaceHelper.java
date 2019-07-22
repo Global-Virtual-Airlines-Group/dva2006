@@ -1,4 +1,4 @@
-// Copyright 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.GeoUtils;
 /**
  * A utility class to perform Restricted Airspace validation.
  * @author Luke
- * @version 7.5
+ * @version 8.6
  * @since 7.3
  */
 
@@ -38,7 +38,7 @@ public final class AirspaceHelper {
 	 * @return a Collection of entered Airspace beans
 	 */
 	public static Collection<Airspace> classify(PopulatedRoute pr, boolean includeRestricted) {
-		if ((pr.getAirportD() == null) || (pr.getAirportA() == null))
+		if (!pr.isPopulated())
 			return Collections.emptySet();
 
 		// Caluclate approximate cruise alttiude
