@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store aggregated network information.
  * @author Luke
- * @version 7.0
+ * @version 8.6
  * @since 1.0
  */
 
@@ -137,7 +137,7 @@ public class NetworkInfo implements Cacheable {
     		}
     		
     		// Add if we're not too far away
-    		if (GeoUtils.distance(gl, c.getPosition()) <= maxDistance)
+    		if (gl.distanceTo(c.getPosition()) <= maxDistance)
     			results.add(c);
     	}
     	

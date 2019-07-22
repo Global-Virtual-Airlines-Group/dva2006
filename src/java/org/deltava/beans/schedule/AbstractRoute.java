@@ -1,15 +1,14 @@
-// Copyright 2012, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2014, 2015, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
 
 import org.deltava.beans.*;
-import org.deltava.util.GeoUtils;
 
 /**
  * A bean to store route frequency data.
  * @author Luke
- * @version 6.0
+ * @version 8.6
  * @since 4.1
  */
 
@@ -67,11 +66,6 @@ public abstract class AbstractRoute implements RoutePair, MapEntry {
 	 */
 	public Collection<? extends GeoLocation> getPoints() {
 		return Arrays.asList(_aD, _aA);
-	}
-
-	@Override
-	public int getDistance() {
-		return GeoUtils.distance(_aD, _aA);
 	}
 
 	/**

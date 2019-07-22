@@ -1,4 +1,4 @@
-// Copyright 2011, 2014, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2014, 2016, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.xacars;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -19,7 +19,7 @@ import org.deltava.util.*;
 /**
  * The XACARS status message Web Service. 
  * @author Luke
- * @version 8.3
+ * @version 8.6
  * @since 4.1
  */
 
@@ -215,7 +215,7 @@ public class MessageService extends XAService {
 					inf.setTakeoffSpeed(re.getAirSpeed());
 					inf.setTakeoffLocation(re);
 					inf.setTakeoffN1(nX.getN1());
-					inf.setTakeoffDistance(GeoUtils.distance(re, inf.getAirportD()));
+					inf.setTakeoffDistance(re.distanceTo(inf.getAirportD()));
 					inf.setClimbPhase(ClimbPhase.CLIMB);
 					inf.setPhase(FlightPhase.AIRBORNE);
 					xwdao.update(inf);
@@ -231,7 +231,7 @@ public class MessageService extends XAService {
 					inf.setLandingSpeed(re.getAirSpeed());
 					inf.setLandingLocation(re);
 					inf.setLandingN1(nX.getN1());
-					inf.setLandingDistance(GeoUtils.distance(re, inf.getAirportD()));
+					inf.setLandingDistance(re.distanceTo(inf.getAirportA()));
 					inf.setPhase(FlightPhase.TAXIIN);
 					inf.setClimbPhase(ClimbPhase.UNKNOWN);
 					xwdao.update(inf);

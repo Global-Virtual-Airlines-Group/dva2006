@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2012, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import org.deltava.beans.*;
@@ -6,7 +6,7 @@ import org.deltava.beans.*;
 /**
  * A class for working with latitude/longitude pairs.
  * @author Luke
- * @version 7.0
+ * @version 8.6
  * @since 1.0
  */
 
@@ -181,31 +181,6 @@ public class GeoPosition implements GeospaceLocation, java.io.Serializable {
 	}
 	
 	/**
-	 * Calculates the distance between two GeoPositions.
-	 * @param gp2 the other position
-	 * @return The distance in statute miles between the two positions, or -1 if gp2 is null
-	 */
-	public int distanceTo(GeoLocation gp2) {
-	   if (gp2 == null)
-	      return -1;
-
-		// Convert the latitude to radians
-		double lat1 = Math.toRadians(getLatitude());
-		double lat2 = Math.toRadians(gp2.getLatitude());
-
-		// Get the longitude difference in radians
-		double lngDiff = Math.toRadians(Math.abs(getLongitude() - gp2.getLongitude()));
-
-		// Do the math - this makes my head hurt
-		double p1 = StrictMath.sin(lat1) * StrictMath.sin(lat2);
-		double p2 = StrictMath.cos(lat1) * StrictMath.cos(lat2) * StrictMath.cos(lngDiff);
-		double distD = Math.toDegrees(Math.acos(p1 + p2));
-
-		// Convert to miles and return
-		return (int) StrictMath.round(distD * DEGREE_MILES);
-	}
-
-	/**
 	 * Calculates the midpoint of a Great Circle route between two GeoPositions.
 	 * @param gp2 the other Position
 	 * @return a GeoPosition storing the midpoint between the two positions
@@ -241,7 +216,10 @@ public class GeoPosition implements GeospaceLocation, java.io.Serializable {
 	 */
 	@Override
 	public boolean equals(Object o2) {
-		return (o2 instanceof GeoPosition) ? (distanceTo((GeoPosition) o2) < 1) : false;
+		if (!(o2 instanceof GeoLocation)) return false;
+		if (o2 == this) return true;
+		GeoLocation l2 = (GeoLocation) o2;
+		return (Math.abs(l2.getLatitude() - _lat) < 0.0001) && (Math.abs(l2.getLongitude() - _lon) < 0.0001);  
 	}
 	
 	@Override
@@ -249,9 +227,6 @@ public class GeoPosition implements GeospaceLocation, java.io.Serializable {
 		return toString().hashCode();
 	}
 	
-	/**
-	 * Returns the latitude/longitude of the point.
-	 */
 	@Override
 	public String toString() {
 		StringBuilder buf = new StringBuilder(String.valueOf(_lat));

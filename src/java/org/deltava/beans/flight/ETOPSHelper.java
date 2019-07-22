@@ -1,4 +1,4 @@
-// Copyright 2011, 2012, 2014, 2015, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2014, 2015, 2016, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.GeoUtils;
 /**
  * A utility class to do ETOPS validation.
  * @author Luke
- * @version 8.5
+ * @version 8.6
  * @since 4.1
  */
 
@@ -150,14 +150,14 @@ public final class ETOPSHelper {
 		Collection<String> msgs = new LinkedHashSet<String>();
 		while (i.hasNext()) {
 			GeoLocation pos = i.next();
-			int gap = GeoUtils.distance(cmp.getLocation(), pos);
+			int gap = pos.distanceTo(cmp.getLocation());
 			if (gap > 30) {
 				cmp = new GeoComparator(pos);
 				Arrays.sort(airports, cmp);
 			}
 
 			// Get the distance to the closest airport
-			int dist = GeoUtils.distance(pos, airports[0]);
+			int dist = pos.distanceTo(airports[0]);
 			if (dist > maxDistance) {
 				maxDistance = dist;
 				closestAirports[0] = airports[0];
@@ -198,7 +198,7 @@ public final class ETOPSHelper {
 			entries.add(lastPos);
 			while (i.hasNext()) {
 				GeoLocation pos = i.next();
-				int dist = GeoUtils.distance(lastPos, pos);
+				int dist = lastPos.distanceTo(pos);
 				if (dist > 30)
 					entries.addAll(GeoUtils.greatCircle(lastPos, pos, 30));
 				else

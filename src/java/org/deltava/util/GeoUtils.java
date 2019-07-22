@@ -252,19 +252,7 @@ public class GeoUtils {
 	 * @return a Collection of GeoLocations
 	 */
 	public static List<GeoLocation> neighbors(GeoLocation gl, Collection<? extends GeoLocation> points, int distance) {
-		GeoPosition gp = new GeoPosition(gl);
-		return points.stream().filter(pt -> (gp.distanceTo(pt) < distance)).collect(Collectors.toList());
-	}
-	
-	/**
-	 * Calculates the distance between two points.
-	 * @param start the start position
-	 * @param end the end position
-	 * @return the distance between the two points, in miles
-	 * @see GeoPosition#distanceTo(GeoLocation)
-	 */
-	public static int distance(GeoLocation start, GeoLocation end) {
-		return new GeoPosition(start).distanceTo(end);
+		return points.stream().filter(pt -> (gl.distanceTo(pt) < distance)).collect(Collectors.toList());
 	}
 
 	/**
@@ -384,7 +372,7 @@ public class GeoUtils {
 		LinkedList<T> locs = new LinkedList<T>(entries);
 		if (entries.size() > 3) {
 			GeoLocation lastP = locs.getFirst(); GeoLocation dest = locs.getLast();
-			int distance = GeoUtils.distance(lastP, dest);
+			int distance = lastP.distanceTo(dest);
 			int distThreshold = Math.min(250, Math.max(minDetour, distance / 10));
 
 			// Strip out any points that are too far out of the way
@@ -393,10 +381,10 @@ public class GeoUtils {
 				GeoLocation gl = locs.get(x);
 				GeoLocation next = locs.get(x+1);
 
- 				int d0 = distance(lastP, gl);
-				int d1 = distance(lastP, next);
-				int d2 = d0 + distance(gl, next);
-				int d3 = distance(lastP, dest);
+ 				int d0 = lastP.distanceTo(gl);
+				int d1 = lastP.distanceTo(next);
+				int d2 = d0 + gl.distanceTo(next);
+				int d3 = lastP.distanceTo(dest);
 				
 				if (d2 > (d1 + distThreshold))
 					deletedItems.add(gl);
@@ -408,7 +396,6 @@ public class GeoUtils {
 					lastP = gl;
 			}
 			
-			// Remove the stripped-out points
 			locs.removeAll(deletedItems);
 		}
 		
@@ -532,24 +519,6 @@ public class GeoUtils {
 		BigDecimal lat = new BigDecimal(Double.toString(loc.getLatitude())).divide(inc, 0, RoundingMode.DOWN).multiply(inc);
 		BigDecimal lng = new BigDecimal(Double.toString(loc.getLongitude())).divide(inc, 0, RoundingMode.DOWN).multiply(inc);
 		return new GeoPosition(lat.doubleValue(), lng.doubleValue());
-	}
-	
-	/**
-	 * Creates a rounded bounding box around a specific GeoLocation.
-	 * @param loc a GeoLocation
-	 * @param precision the preicision amount
-	 * @return a Collection of GeoLocations
-	 */
-	public static List<GeoLocation> createRoundedBox(GeoLocation loc, double precision) {
-		List<GeoLocation> locs = new ArrayList<GeoLocation>();
-		GeoLocation l1 = round(loc, precision);
-		double lat2 = l1.getLatitude() + ((l1.getLatitude() < 0) ? -precision : precision);
-		double lng2 = l1.getLongitude() + ((l1.getLongitude() < 0) ? -precision : precision);
-		locs.add(l1);
-		locs.add(new GeoPosition(l1.getLatitude(), lng2));
-		locs.add(new GeoPosition(lat2, lng2));
-		locs.add(new GeoPosition(lat2, l1.getLongitude()));
-		return locs;
 	}
 	
 	/**

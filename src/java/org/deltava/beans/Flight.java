@@ -99,20 +99,6 @@ public abstract class Flight extends DatabaseBean implements RoutePair, FlightNu
         return _eqType;
     }
 
-    /**
-     * Returns the distance of this flight, between the two airports's positions.
-     * @return the distance in nautical miles between the two airports
-     * @throws IllegalStateException if either airport is not set
-     * @see GeoPosition#distanceTo(GeoLocation)
-     */
-    @Override
-    public int getDistance() {
-        if ((_airportA == null) || (_airportD == null))
-            throw new IllegalStateException("Both Airports are not set");
-
-        return _airportA.getPosition().distanceTo(_airportD.getPosition());
-    }
-
     @Override
     public Airport getAirportA() {
         return _airportA;
@@ -123,15 +109,6 @@ public abstract class Flight extends DatabaseBean implements RoutePair, FlightNu
         return _airportD;
     }
     
-    /**
-     * Returns whether this Flight's route matches a particular Route Pair.
-     * @param rp a RoutePair
-     * @return TRUE if the departure and arrival Airports are the same, otherwise FALSE
-     */
-    public boolean matches(RoutePair rp) {
-    	return (_airportD.equals(rp.getAirportD()) && _airportA.equals(rp.getAirportA()));
-    }
-
     /**
      * Set the Airline for this flight.
      * @param a the Airline

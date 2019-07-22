@@ -1,15 +1,14 @@
-// Copyright 2008, 2009, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2011, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.time.Instant;
 
 import org.deltava.beans.*;
-import org.deltava.util.GeoUtils;
 
 /**
  * An abstract class to store common Flight Route information.
  * @author Luke
- * @version 7.0
+ * @version 8.6
  * @since 2.2
  */
 
@@ -59,14 +58,6 @@ public abstract class FlightRoute extends DatabaseBean implements RoutePair, Com
 	 */
 	public String getSTAR() {
 		return _star;
-	}
-	
-	/**
-	 * Returns the distance between the airports.
-	 */
-	@Override
-	public int getDistance() {
-		return GeoUtils.distance(_airportD, _airportA);
 	}
 	
 	/**
