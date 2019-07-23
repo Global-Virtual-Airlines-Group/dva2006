@@ -1,4 +1,4 @@
-// Copyright 2011, 2012, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2014, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.xacars;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -33,7 +33,7 @@ import org.deltava.util.system.SystemData;
 /**
  * The XACARS Flight Report Web Service. 
  * @author Luke
- * @version 7.5
+ * @version 8.6
  * @since 4.1
  */
 
@@ -234,7 +234,7 @@ public class XPIREPService extends XAService {
 				LandingRunways lr = navdao.getBestRunway(inf.getAirportD(), xfr.getSimulator(), xfr.getTakeoffLocation(), xfr.getTakeoffHeading());
 				Runway r = lr.getBestRunway();
 				if (r != null) {
-					int dist = GeoUtils.distanceFeet(r, xfr.getTakeoffLocation());
+					int dist = r.distanceFeet(xfr.getTakeoffLocation());
 					fi.setRunwayD(new RunwayDistance(r, dist));
 				}
 			}
@@ -244,7 +244,7 @@ public class XPIREPService extends XAService {
 				LandingRunways lr = navdao.getBestRunway(xfr.getAirportA(), xfr.getSimulator(), xfr.getLandingLocation(), xfr.getLandingHeading());
 				Runway r = lr.getBestRunway();
 				if (r != null) {
-					int dist = GeoUtils.distanceFeet(r, xfr.getLandingLocation());
+					int dist = r.distanceFeet(xfr.getLandingLocation());
 					fi.setRunwayA(new RunwayDistance(r, dist));
 				}
 			}

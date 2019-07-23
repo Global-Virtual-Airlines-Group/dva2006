@@ -15,7 +15,6 @@ import org.deltava.beans.schedule.GeoPosition;
 
 import org.deltava.dao.*;
 
-import org.deltava.util.GeoUtils;
 import org.deltava.util.system.SystemData;
 
 public class RunwayLoader extends TestCase {
@@ -133,7 +132,7 @@ public class RunwayLoader extends TestCase {
 				if (info.getRunwayD() != null)
 					log.warn("For Flight " + info.getID() + " runwayD was " + info.getRunwayD().getCode() + ", now" + rwyD.getCode());
 				
-				int dist = GeoUtils.distanceFeet(rwyD, tdEntries.get(0));
+				int dist = rwyD.distanceFeet(tdEntries.get(0));
 				if (dist < 65520) {
 					info.setRunwayD(new RunwayDistance(rwyD, dist));
 					newData = true;
@@ -146,7 +145,7 @@ public class RunwayLoader extends TestCase {
 				if (info.getRunwayA() != null)
 					log.warn("For Flight " + info.getID() + " runwayA was " + info.getRunwayA().getCode() + ", now" + rwyA.getCode());
 					
-				int dist = GeoUtils.distanceFeet(rwyA, tdEntries.get(1));
+				int dist = rwyA.distanceFeet(tdEntries.get(1));
 				if (dist < 65520) {
 					info.setRunwayA(new RunwayDistance(rwyA, dist));
 					newData = true;

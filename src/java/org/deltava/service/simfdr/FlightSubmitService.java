@@ -1,4 +1,4 @@
-// Copyright 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.simfdr;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -32,7 +32,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to process simFDR submitted Flight Reports.
  * @author Luke
- * @version 8.4
+ * @version 8.6
  * @since 7.0
  */
 
@@ -245,7 +245,7 @@ public class FlightSubmitService extends SimFDRService {
 			LandingRunways lr = navdao.getBestRunway(fr.getAirportD(), fr.getSimulator(), fr.getTakeoffLocation(), fr.getTakeoffHeading());
 			Runway r = lr.getBestRunway();
 			if (r != null) {
-				int dist = GeoUtils.distanceFeet(r, fr.getTakeoffLocation());
+				int dist = r.distanceFeet(fr.getTakeoffLocation());
 				rD = new RunwayDistance(r, dist);
 				if (r.getLength() < a.getTakeoffRunwayLength())
 					fr.setAttribute(FlightReport.ATTR_RWYWARN, true);
@@ -258,7 +258,7 @@ public class FlightSubmitService extends SimFDRService {
 			lr = navdao.getBestRunway(fr.getAirportA(), fr.getSimulator(), fr.getLandingLocation(), fr.getLandingHeading());
 			r = lr.getBestRunway();
 			if (r != null) {
-				int dist = GeoUtils.distanceFeet(r, fr.getLandingLocation());
+				int dist = r.distanceFeet(fr.getLandingLocation());
 				rA = new RunwayDistance(r, dist);
 				if (r.getLength() < a.getLandingRunwayLength())
 					fr.setAttribute(FlightReport.ATTR_RWYWARN, true);

@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.List;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to manually update the departure and arrival runways for an ACARS flight.
  * @author Luke
- * @version 7.0
+ * @version 8.6
  * @since 3.0
  */
 
@@ -67,12 +67,12 @@ public class UpdateRunwayCommand extends AbstractCommand {
 			// Check if we've changed anything
 			boolean isUpdated = false;
 			if ((rD != null) && (!rD.equals(info.getRunwayD()))) {
-				int dist = GeoUtils.distanceFeet(rD, afr.getTakeoffLocation());
+				int dist = rD.distanceFeet(afr.getTakeoffLocation());
 				info.setRunwayD(new RunwayDistance(rD, dist));
 				isUpdated = true;
 			}
 			if ((rA != null) && (!rA.equals(info.getRunwayA()))) {
-				int dist = GeoUtils.distanceFeet(rA, afr.getLandingLocation());
+				int dist = rA.distanceFeet(afr.getLandingLocation());
 				info.setRunwayA(new RunwayDistance(rA, dist));
 				isUpdated = true;
 			}

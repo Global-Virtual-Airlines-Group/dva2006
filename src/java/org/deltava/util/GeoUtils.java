@@ -256,35 +256,6 @@ public class GeoUtils {
 	}
 
 	/**
-	 * Calculates the distance between two points in feet.
-	 * @param l1 the first GeoLocation
-	 * @param l2 the second GeoLocation
-	 * @return the distance <i>in feet</i>, or -1 if l1 or l2 are null
-	 * @see GeoPosition#distanceTo(GeoLocation)
-	 */
-	public static int distanceFeet(GeoLocation l1, GeoLocation l2) {
-
-		// Do null check
-		if ((l1 == null) || (l2 == null))
-			return -1;
-		
-		// Convert the latitude to radians
-		double lat1 = Math.toRadians(l1.getLatitude());
-		double lat2 = Math.toRadians(l2.getLatitude());
-		
-		// Get the longitude difference in radians
-		double lngDiff = Math.toRadians(Math.abs(l1.getLongitude() - l2.getLongitude()));
-		
-		// Do the math - this makes my head hurt
-		double p1 = StrictMath.sin(lat1) * StrictMath.sin(lat2);
-		double p2 = StrictMath.cos(lat1) * StrictMath.cos(lat2) * StrictMath.cos(lngDiff);
-		double distD = Math.toDegrees(Math.acos(p1 + p2));
-		
-		// Convert to miles and return
-		return (int) StrictMath.round(distD * GeoLocation.DEGREE_MILES * 5280);
-	}
-	
-	/**
 	 * Calculates the course between two points.
 	 * @param l1 the first GeoLocation
 	 * @param l2 the second GeoLocation
@@ -302,8 +273,7 @@ public class GeoUtils {
 		
 		// Do the math - this makes my head hurt
 		double y = StrictMath.sin(lng2-lng1) * StrictMath.cos(lat2);
-		double x = StrictMath.cos(lat1) * StrictMath.sin(lat2) - StrictMath.sin(lat1) * 
-				StrictMath.cos(lat2) * StrictMath.cos(lng2-lng1);
+		double x = StrictMath.cos(lat1) * StrictMath.sin(lat2) - StrictMath.sin(lat1) * StrictMath.cos(lat2) * StrictMath.cos(lng2-lng1);
 		
 		// Calcualte the degrees
 		double crs = Math.toDegrees(StrictMath.atan2(y, x) % (Math.PI * 2));

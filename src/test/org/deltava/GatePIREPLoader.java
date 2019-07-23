@@ -16,7 +16,6 @@ import org.deltava.comparators.GeoComparator;
 
 import org.deltava.dao.*;
 
-import org.deltava.util.GeoUtils;
 import org.deltava.util.system.SystemData;
 
 public class GatePIREPLoader extends TestCase {
@@ -111,7 +110,7 @@ public class GatePIREPLoader extends TestCase {
 			dGates.addAll(gdao.getAllGates(fr.getAirportD(), fi.getSimulator()));
 			if (!dGates.isEmpty()) {
 				Gate g = dGates.first();
-				int dist = GeoUtils.distanceFeet(dgc.getLocation(), g);
+				int dist = g.distanceFeet(dgc.getLocation());
 				if (dist < 2250)
 					gD = g;
 				
@@ -124,7 +123,7 @@ public class GatePIREPLoader extends TestCase {
 			aGates.addAll(gdao.getAllGates(fr.getAirportA(), fi.getSimulator()));
 			if (!aGates.isEmpty()) {
 				Gate g = aGates.first();
-				int dist = GeoUtils.distanceFeet(agc.getLocation(), g);
+				int dist = g.distanceFeet(agc.getLocation());
 				if (dist < 2250)
 					gA = g;
 				
