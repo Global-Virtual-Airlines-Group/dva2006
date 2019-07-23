@@ -49,6 +49,12 @@ public abstract class Flight extends DatabaseBean implements RoutePair, FlightNu
      * @return a Duration
      */
     public abstract Duration getDuration();
+    
+    // Visible for EL purposes
+	@Override
+	public int getDistance() {
+		return isPopulated() ? _airportD.distanceTo(_airportA) : -1;
+	}
 
     @Override
     public Airline getAirline() {
