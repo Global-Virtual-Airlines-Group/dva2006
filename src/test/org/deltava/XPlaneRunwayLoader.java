@@ -103,7 +103,7 @@ public class XPlaneRunwayLoader extends TestCase {
 				// Get runway position, heading, length
 				GeoLocation gl1 = new GeoPosition(StringUtils.parse(dd.get(8), 0.0d), StringUtils.parse(dd.get(9), 0.0d));
 				GeoLocation gl2 = new GeoPosition(StringUtils.parse(dd.get(17), 0.0d), StringUtils.parse(dd.get(18), 0.0d));
-				int l = GeoUtils.distanceFeet(gl1, gl2); double hdg = GeoUtils.course(gl1, gl2);
+				int l = gl1.distanceFeet(gl2); double hdg = GeoUtils.course(gl1, gl2);
 
 				// Get displaced threshold lengths (if any)
 				double dt1 = StringUtils.parse(dd.get(10), 0.0d);

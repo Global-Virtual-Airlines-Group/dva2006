@@ -12,7 +12,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to save temporary ACARS track data to Redis.
  * @author Luke
- * @version 8.5
+ * @version 8.6
  * @since 7.0
  */
 
@@ -42,7 +42,7 @@ public class SetTrack extends RedisDAO {
 					data = new CacheableList<GeoLocation>(rawKey);
 				
 				// Check to make sure position has changed
-				int distance = data.isEmpty() ? Integer.MAX_VALUE : GeoUtils.distanceFeet(gl, data.get(data.size() - 1));
+				int distance = data.isEmpty() ? Integer.MAX_VALUE : gl.distanceFeet(data.get(data.size() - 1));
 				if (distance > 10)
 					data.add(new GeoPosition(gl));
 				

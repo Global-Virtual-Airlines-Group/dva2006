@@ -1,4 +1,4 @@
-// Copyright 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.sql.Connection;
@@ -12,12 +12,10 @@ import org.deltava.dao.*;
 
 import org.deltava.security.command.PIREPAccessControl;
 
-import org.deltava.util.GeoUtils;
-
 /**
  * A Web Site Command to recalculate the runways used.
  * @author Luke
- * @version 7.0
+ * @version 8.6
  * @since 4.0
  */
 
@@ -66,7 +64,7 @@ public class RunwayCalculateCommand extends AbstractCommand {
 				LandingRunways lr = navdao.getBestRunway(afr.getAirportD(), afr.getSimulator(), afr.getTakeoffLocation(), afr.getTakeoffHeading());
 				Runway r = lr.getBestRunway();
 				if (r != null) {
-					int dist = GeoUtils.distanceFeet(r, afr.getTakeoffLocation());
+					int dist = r.distanceFeet(afr.getTakeoffLocation());
 					rD = new RunwayDistance(r, dist);
 					isUpdated = !rD.equals(info.getRunwayD());
 				}
@@ -78,7 +76,7 @@ public class RunwayCalculateCommand extends AbstractCommand {
 				LandingRunways lr = navdao.getBestRunway(afr.getAirportA(), afr.getSimulator(), afr.getLandingLocation(), afr.getLandingHeading());
 				Runway r = lr.getBestRunway();
 				if (r != null) {
-					int dist = GeoUtils.distanceFeet(r, afr.getLandingLocation());
+					int dist = r.distanceFeet(afr.getLandingLocation());
 					rA = new RunwayDistance(r, dist);
 					isUpdated |= !rA.equals(info.getRunwayA());
 				}
