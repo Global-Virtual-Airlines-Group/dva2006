@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2010, 2011, 2012, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2010, 2011, 2012, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
 import java.util.Comparator;
@@ -6,18 +6,16 @@ import java.util.Comparator;
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.schedule.GeoPosition;
 
-import org.deltava.util.GeoUtils;
-
 /**
  * A comparator to sort geographic locations by their distance from a fixed point.
  * @author Luke
- * @version 8.0
+ * @version 8.6
  * @since 1.0
  */
 
 public class GeoComparator implements Comparator<GeoLocation>, java.io.Serializable {
 
-	private final GeoPosition _point;
+	private final GeoLocation _point;
 	private final boolean _useFeet;
 
 	/**
@@ -36,7 +34,7 @@ public class GeoComparator implements Comparator<GeoLocation>, java.io.Serializa
 	public GeoComparator(GeoLocation loc, boolean useFeet) {
 		super();
 		_useFeet = useFeet;
-		_point = (loc == null) ? new GeoPosition(0, 0) : new GeoPosition(loc);
+		_point = (loc == null) ? new GeoPosition(0, 0) : loc;
 	}
 
 	/**
@@ -49,8 +47,8 @@ public class GeoComparator implements Comparator<GeoLocation>, java.io.Serializa
 
 	@Override
 	public int compare(GeoLocation l1, GeoLocation l2) {
-		int d1 = _useFeet ? GeoUtils.distanceFeet(_point, l1) : _point.distanceTo(l1);
-		int d2 = _useFeet ? GeoUtils.distanceFeet(_point, l2) : _point.distanceTo(l2);
+		int d1 = _useFeet ? _point.distanceFeet(l1) : _point.distanceTo(l1);
+		int d2 = _useFeet ? _point.distanceFeet(l2) : _point.distanceTo(l2);
 		return Integer.compare(d1, d2);
 	}
 }

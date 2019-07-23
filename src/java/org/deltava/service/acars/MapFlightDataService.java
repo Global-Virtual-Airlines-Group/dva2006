@@ -93,7 +93,7 @@ public class MapFlightDataService extends WebService {
 				airspaces.add(a);
 			if ((rt.getAltitude() > 18000) && (re != null))
 				re.setAirspace((a == null) ? AirspaceType.fromAltitude(re.getRadarAltitude(), re.getAltitude()) : a.getType());
-			else if (GeoUtils.distanceFeet(rt, lastLoc) > 52800) {
+			else if (rt.distanceFeet(lastLoc) > 52800) {
 				airspaces.addAll(Airspace.findRestricted(rt, 10));
 				if (re != null)
 					re.setAirspace((a == null) ? AirspaceType.fromAltitude(re.getRadarAltitude(), re.getAltitude()) : a.getType());

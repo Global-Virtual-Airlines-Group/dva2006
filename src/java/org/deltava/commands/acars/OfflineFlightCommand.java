@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import java.io.*;
@@ -32,7 +32,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to allow users to submit Offline Flight Reports.
  * @author Luke
- * @version 8.4
+ * @version 8.6
  * @since 2.4
  */
 
@@ -390,7 +390,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 				LandingRunways lr = navdao.getBestRunway(inf.getAirportD(), afr.getSimulator(), afr.getTakeoffLocation(), afr.getTakeoffHeading());
 				Runway r = lr.getBestRunway();
 				if (r != null) {
-					int dist = GeoUtils.distanceFeet(r, afr.getTakeoffLocation());
+					int dist = r.distanceFeet(afr.getTakeoffLocation());
 					rD = new RunwayDistance(r, dist);
 					afr.setAttribute(FlightReport.ATTR_RWYWARN, (r.getLength() < a.getTakeoffRunwayLength()));
 					afr.setAttribute(FlightReport.ATTR_RWYSFCWARN, (!r.getSurface().isHard() && !a.getUseSoftRunways()));
@@ -403,7 +403,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 				LandingRunways lr = navdao.getBestRunway(afr.getAirportA(), afr.getSimulator(), afr.getLandingLocation(), afr.getLandingHeading());
 				Runway r = lr.getBestRunway();
 				if (r != null) {
-					int dist = GeoUtils.distanceFeet(r, afr.getLandingLocation());
+					int dist = r.distanceFeet(afr.getLandingLocation());
 					rA = new RunwayDistance(r, dist);
 					afr.setAttribute(FlightReport.ATTR_RWYWARN, (r.getLength() < a.getLandingRunwayLength()));
 					afr.setAttribute(FlightReport.ATTR_RWYSFCWARN, (!r.getSurface().isHard() && !a.getUseSoftRunways()));
