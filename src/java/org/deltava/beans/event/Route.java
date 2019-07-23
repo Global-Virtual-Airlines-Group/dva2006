@@ -58,6 +58,12 @@ public class Route extends DatabaseBean implements ComboAlias, ViewEntry, RouteP
 	public Airport getAirportD() {
 		return _airportD;
 	}
+	
+    // Visible for EL purposes
+	@Override
+	public int getDistance() {
+		return isPopulated() ? _airportD.distanceTo(_airportA) : -1;
+	}
 
 	/**
 	 * Returns the Route name.
