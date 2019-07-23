@@ -24,6 +24,7 @@ public final class AirspaceHelper {
 	
 	private static final Logger log = Logger.getLogger(AirspaceHelper.class);
 	
+	private static final int SEGMENT_SIZE = 75;
 	private static final int CLIMB_RATE = 500;
 
 	// static
@@ -45,19 +46,36 @@ public final class AirspaceHelper {
 		final int cruiseAlt = Math.min(35000, (pr.getDistance() / 2) * CLIMB_RATE);
 		
 		// Turn into great circle route and approximte climb / descent at 500 ft/mile
-		Collection<GeospaceLocation> locs = new ArrayList<GeospaceLocation>();
+		List<GeoLocation> rawGC = new ArrayList<GeoLocation>();
 		GeoLocation lastLoc = pr.getAirportD();
+		
+		// Break the whole route into segments
 		for (GeoLocation loc : pr.getWaypoints()) {
-			int apDistance = Math.min(GeoUtils.distance(loc, pr.getAirportD()), GeoUtils.distance(loc, pr.getAirportA()));
-			int maxDistance = (pr.getWaypoints().size() < 4) ? 25 : Math.max(1, Math.min(20, apDistance / 5));
+			if (loc.distanceTo(lastLoc) > SEGMENT_SIZE)
+				rawGC.addAll(GeoUtils.greatCircle(lastLoc, loc, SEGMENT_SIZE));
+			else
+				rawGC.add(loc);
+		
+			lastLoc = loc;
+		}
 			
-			int dist = GeoUtils.distance(lastLoc, loc);
+		// Now do the altitude checks
+		Collection<GeospaceLocation> locs = new ArrayList<GeospaceLocation>(rawGC.size());
+		for (GeoLocation loc : rawGC) {
+			final int apDistance = Math.min(loc.distanceTo(pr.getAirportD()), loc.distanceTo(pr.getAirportA()));
+			int maxDistance = (pr.getWaypoints().size() < 4) ? 30 : Math.max(1, Math.min(20, apDistance / 5));
+			int dist = lastLoc.distanceTo(loc);
+			
 			if (dist > maxDistance)
-				GeoUtils.greatCircle(lastLoc, loc, maxDistance).stream().map(l -> { 
-					int posDst = Math.min(GeoUtils.distance(l, pr.getAirportD()), GeoUtils.distance(l, pr.getAirportA()));
-					int posAlt = Math.max(1000, Math.min(cruiseAlt, posDst * CLIMB_RATE));
-					return new GeoPosition(l.getLatitude(), l.getLongitude(), posAlt); }
-				).forEachOrdered(locs::add);
+				GeoUtils.greatCircle(lastLoc, loc, maxDistance).stream().map(l -> {
+					if (apDistance < SEGMENT_SIZE) {
+						int posDst = Math.min(l.distanceTo(pr.getAirportD()), l.distanceTo(pr.getAirportA()));
+						int posAlt = Math.max(1000, Math.min(cruiseAlt, posDst * CLIMB_RATE));
+						return new GeoPosition(l.getLatitude(), l.getLongitude(), posAlt);
+					}
+					
+					return new GeoPosition(l.getLatitude(), l.getLongitude(), cruiseAlt);
+				}).forEachOrdered(locs::add);
 			else
 				locs.add(new GeoPosition(loc.getLatitude(), loc.getLongitude(), Math.max(1000, Math.min(cruiseAlt, apDistance * CLIMB_RATE))));
 			
