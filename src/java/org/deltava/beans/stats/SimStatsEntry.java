@@ -8,7 +8,7 @@ import org.deltava.beans.Simulator;
 /**
  * A bean to store Simulator version statistics entries. 
  * @author Luke
- * @version 8.3
+ * @version 8.6
  * @since 8.1
  */
 
@@ -20,14 +20,6 @@ public class SimStatsEntry extends LegHoursStatsEntry<Simulator> {
 	 */
 	public SimStatsEntry(Instant dt) {
 		super(dt);
-	}
-	
-	/**
-	 * Returns the maximum Simulator in this bean.
-	 * @return the highest Simulator
-	 */
-	public Simulator getMaxSimulator() {
-		return getMaxKey();
 	}
 	
 	/**

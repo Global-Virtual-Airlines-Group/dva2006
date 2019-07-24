@@ -10,7 +10,7 @@ import org.deltava.util.Tuple;
 /**
  * A bean to store ordered statistics entries that contain a key value plus hours/legs. 
  * @author Luke
- * @version 8.3
+ * @version 8.6
  * @param <K> The sort key
  * @since 8.3
  */
@@ -37,6 +37,14 @@ abstract class LegHoursStatsEntry<K extends Comparable<K>> implements java.io.Se
 	 */
 	public Instant getDate() {
 		return _dt;
+	}
+	
+	/**
+	 * Returns tthe available keys.
+	 * @return a Collection of keys
+	 */
+	public Collection<K> getKeys() {
+		return _legs.keySet();
 	}
 	
 	/**

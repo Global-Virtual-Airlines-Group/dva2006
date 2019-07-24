@@ -2,6 +2,7 @@
 package org.deltava.service.stats;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
@@ -132,6 +133,7 @@ public class MyFlightsService extends WebService {
 		for (StageStatsEntry entry : stageStats) {
 			JSONArray da = new JSONArray();
 			da.put(JSONUtils.format(entry.getDate()));
+			
 			for (int x = 1; x <= maxStage; x++)
 				da.put(entry.getLegs(x));
 
@@ -139,15 +141,13 @@ public class MyFlightsService extends WebService {
 		}
 		
 		// Create sim/flights by Month
-		int maxSim = simStats.stream().map(SimStatsEntry::getMaxSimulator).mapToInt(Simulator::ordinal).max().orElse(1);
-		jo.put("maxSim", maxSim);
+		Collection<Simulator> sims = simStats.stream().flatMap(ss -> ss.getKeys().stream()).collect(Collectors.toCollection(TreeSet::new));
+		jo.put("maxSim", sims.size());
 		JSONArray jso = new JSONArray();
 		for (SimStatsEntry entry : simStats) {
 			JSONArray da = new JSONArray();
 			da.put(JSONUtils.format(entry.getDate()));
-			for (int x = 0; x <= maxSim; x++)
-				da.put(entry.getLegs(Simulator.values()[x]));
-			
+			sims.forEach(s -> da.put(entry.getLegs(s)));
 			jso.put(da);
 		}
 		
