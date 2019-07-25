@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to retrieve Flight Report statistics.
  * @author Luke
- * @version 8.3
+ * @version 8.6
  * @since 2.1
  */
 
@@ -222,7 +222,7 @@ public class GetFlightReportStatistics extends DAO {
 		// Check the cache
 		StatsCacheKey key = new StatsCacheKey("$PILOTIND", pilotID);
 		CacheableList<LandingStatistics> results = _cache.get(key);
-		if ((results != null) && (results.size() >= _queryMax))
+		if ((results != null) && (_queryMax > 0) && (results.size() >= _queryMax))
 			return results.clone().subList(0, _queryMax);
 
 		try {
@@ -267,7 +267,7 @@ public class GetFlightReportStatistics extends DAO {
 		// Check the cache
 		StatsCacheKey key = new StatsCacheKey("$PILOT", pilotID);
 		CacheableList<LandingStatistics> results = _cache.get(key);
-		if ((results != null) && (results.size() >= _queryMax))
+		if ((results != null) && (_queryMax > 0) && (results.size() >= _queryMax))
 			return results.clone().subList(0, _queryMax);
 		
 		// Build the SQL statement
