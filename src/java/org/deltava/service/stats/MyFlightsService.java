@@ -142,7 +142,7 @@ public class MyFlightsService extends WebService {
 		
 		// Create sim/flights by Month
 		Collection<Simulator> sims = simStats.stream().flatMap(ss -> ss.getKeys().stream()).collect(Collectors.toCollection(TreeSet::new));
-		jo.put("maxSim", sims.size());
+		sims.forEach(s -> jo.append("sims", s.name()));
 		JSONArray jso = new JSONArray();
 		for (SimStatsEntry entry : simStats) {
 			JSONArray da = new JSONArray();

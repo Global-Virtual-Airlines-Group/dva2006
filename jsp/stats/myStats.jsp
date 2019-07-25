@@ -34,7 +34,6 @@ golgotha.local.validate = function(f) {
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:enum var="sortTypes" className="org.deltava.beans.stats.FlightStatsSort" exclude="PIDS" />
 <content:enum var="groupTypes" className="org.deltava.beans.stats.FlightStatsGroup" exclude="PILOT,AP" />
-<content:enum var="simNames" className="org.deltava.beans.Simulator" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -122,7 +121,6 @@ golgotha.local.validate = function(f) {
 </content:region>
 </content:page>
 <script async>
-<fmt:jsarray var="golgotha.local.simulators" items="${simNames}" />
 google.charts.load('current', {'packages':['corechart']});
 google.charts.setOnLoadCallback(function() {
 var xmlreq = new XMLHttpRequest();
@@ -188,9 +186,7 @@ xmlreq.onreadystatechange = function() {
 	var chart = new google.visualization.ColumnChart(document.getElementById('simStats'));
 	var data = new google.visualization.DataTable();
 	data.addColumn('date', 'Month');
-	for (var st = 0; st <= statsData.maxSim; st++)
-		data.addColumn('number', golgotha.local.simulators[st]);
-	
+	statsData.sims.forEach(function(s) { data.addColumn('number', s); });
 	statsData.simCalendar.forEach(function(e) { var dt = e[0]; e[0] = new Date(dt.y, dt.m, dt.d, 12, 0, 0); });
 	data.addRows(statsData.simCalendar);
 	chart.draw(data,{title:'Flights by Date/Simulator',isStacked:true,fontSize:10,hAxis:mnStyle,vAxis:{title:'Flight Legs'},width:'100%'});
