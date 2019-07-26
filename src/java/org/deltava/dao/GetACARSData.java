@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load ACARS information.
  * @author Luke
- * @version 8.5
+ * @version 8.6
  * @since 1.0
  */
 
@@ -151,34 +151,6 @@ public class GetACARSData extends DAO {
 	}
 
 	/**
-	 * Searches for a duplicate flight ID created at the same time by the same user.
-	 * @param id the ACARS flight ID
-	 * @return the duplicate flight ID, or zero if none found
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public int getDuplicateID(int id) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT F.ID FROM acars.FLIGHTS F WHERE (F.CREATED=(SELECT CREATED FROM acars.FLIGHTS WHERE (ID=?) LIMIT 1)) AND "
-				+ "(F.PILOT_ID=(SELECT PILOT_ID FROM acars.FLIGHTS WHERE (ID=?) LIMIT 1)) AND (F.ID<>?) ORDER BY F.ID LIMIT 1");
-			_ps.setInt(1, id);
-			_ps.setInt(2, id);
-			_ps.setInt(3, id);
-			
-			// Execute the query
-			int dupeID = 0;
-			try (ResultSet rs = _ps.executeQuery()) {
-				if (rs.next())
-					dupeID = rs.getInt(1);
-			}
-			
-			_ps.close();
-			return dupeID;
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-	
-	/**
 	 * Returns information about a particular ACARS flight.
 	 * @param flightID the ACARS flight ID
 	 * @return the Flight Information, nor null if not found
@@ -203,9 +175,9 @@ public class GetACARSData extends DAO {
 			
 			// Fetch the takeoff and landing runways
 			if (info.getHasPIREP()) {
-				prepareStatementWithoutLimits("SELECT R.*, IFNULL(ND.HDG, 0), ND.FREQ, RW.MAGVAR, IFNULL(RW.SURFACE, ?), IFNULL(RR.OLDCODE, R.RUNWAY) FROM acars.RWYDATA R "
-					+ "LEFT JOIN common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND (R.RUNWAY=RR.NEWCODE)) LEFT JOIN common.RUNWAYS RW ON ((RW.ICAO=R.ICAO) AND "
-					+ "(RW.NAME=IFNULL(RR.OLDCODE, R.RUNWAY)) AND (RW.SIMVERSION=?)) LEFT JOIN common.NAVDATA ND ON ((R.ICAO=ND.CODE) AND (R.RUNWAY=ND.NAME) AND (ND.ITEMTYPE=?)) WHERE (R.ID=?) LIMIT 2");
+				prepareStatementWithoutLimits("SELECT R.*, IFNULL(ND.HDG, 0), ND.FREQ, RW.MAGVAR, IFNULL(RW.SURFACE, ?), IFNULL(RR.OLDCODE, R.RUNWAY) FROM acars.RWYDATA R LEFT JOIN "
+					+ "common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND (R.RUNWAY=RR.NEWCODE)) LEFT JOIN common.RUNWAYS RW ON ((RW.ICAO=R.ICAO) AND (RW.NAME=IFNULL(RR.OLDCODE, R.RUNWAY)) "
+					+ "AND (RW.SIMVERSION=?)) LEFT JOIN common.NAVDATA ND ON ((R.ICAO=ND.CODE) AND (R.RUNWAY=ND.NAME) AND (ND.ITEMTYPE=?)) WHERE (R.ID=?) LIMIT 2");
 				_ps.setInt(1, Surface.UNKNOWN.ordinal());
 				_ps.setInt(2, Math.max(2004, info.getSimulator().getCode()));
 				_ps.setInt(3, Navaid.RUNWAY.ordinal());
