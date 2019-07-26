@@ -313,6 +313,13 @@
 		<function-signature>boolean hasWarn(org.deltava.beans.flight.FlightReport)</function-signature>
 	</function>
 
+	<!-- Check for visible sim Capabilities -->
+	<function>
+		<name>hasCapabilities</name>
+		<function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>	
+		<function-signature>boolean hasVisibleCapabilities(org.deltava.beans.flight.FlightReport)</function-signature>
+	</function>
+
 	<!-- Check for Check Ride -->
 	<function>
 		<name>isCheckRide</name>
