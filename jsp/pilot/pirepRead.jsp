@@ -235,8 +235,8 @@ golgotha.local.showRunwayChoices = function() {
 </c:if>
 <c:if test="${!empty networkOutages}">
 <tr>
- <td class="label">${pirep.network} Outages</td>
- <td class="data warn bld"><c:forEach var="outage" items="${networkOutages}" varStatus="otStatus"><fmt:date date="${outage.startTime}" t="HH:mm" d="MM/dd" /> - <fmt:date date="${outage.endTime}" t="HH:mm" d="MM/dd" /><c:if test="${!otStatus.last}">, </c:if></c:forEach></td>
+ <td class="label top">${pirep.network} Outages</td>
+ <td class="data small bld"><c:forEach var="outage" items="${networkOutages}" varStatus="otStatus"><fmt:date date="${outage.startTime}" t="HH:mm" d="MM/dd" /> - <fmt:date date="${outage.endTime}" t="HH:mm" d="MM/dd" /><c:if test="${!otStatus.last}">, </c:if></c:forEach></td>
 </tr>
 </c:if>
 <c:if test="${pirep.passengers > 0}">
