@@ -1,14 +1,15 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.functions;
 
-import java.util.Iterator;
-
+import org.deltava.beans.acars.Capabilities;
 import org.deltava.beans.flight.*;
+
+import org.deltava.util.StringUtils;
 
 /**
  * A JSP Function Library to define Flight Report-related functions.
  * @author Luke
- * @version 8.4
+ * @version 8.6
  * @since 1.0
  */
 
@@ -274,11 +275,27 @@ public class FlightReportFunctions {
 
 	/**
 	 * Returns if this Flight counts towards promotion to Captain.
-	 * @param fr the Flight Report
+	 * @param fr the FlightReport
 	 * @return TRUE if the Leg counts towards promotion, otherwise FALSE
 	 */
 	public static boolean promoLeg(FlightReport fr) {
 		return (fr != null) && (!fr.getCaptEQType().isEmpty());
+	}
+	
+	/**
+	 * Returns if this Flight has visible aircraft capabilities.
+	 * @param fr the FlightReport
+	 * @return TRUE if it has visible Capabilities flags, otherwise FALSE
+	 */
+	public static boolean hasVisibleCapabilities(FlightReport fr) {
+		if (!(fr instanceof ACARSFlightReport)) return false;
+		long flags = ((ACARSFlightReport) fr).getCapabilities();
+		for (Capabilities c : Capabilities.values()) {
+			if (c.isVisible() && c.has(flags))
+				return true;
+		}
+		
+		return false;
 	}
 
 	/**
@@ -287,17 +304,7 @@ public class FlightReportFunctions {
 	 * @return a comma-delimited string of Equipment Program names
 	 */
 	public static String promoTypes(FlightReport fr) {
-		StringBuilder buf = new StringBuilder();
-		if (fr != null) {
-			for (Iterator<String> i = fr.getCaptEQType().iterator(); i.hasNext();) {
-				String eqType = i.next();
-				buf.append(eqType);
-				if (i.hasNext())
-					buf.append(',');
-			}
-		}
-
-		return buf.toString();
+		return StringUtils.listConcat(fr.getCaptEQType(), ",");
 	}
 
 	/**

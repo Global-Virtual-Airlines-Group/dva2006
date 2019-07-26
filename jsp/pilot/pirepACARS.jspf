@@ -49,7 +49,7 @@
  <td class="data" colspan="${cspan}">${pirep.SDK}<c:if test="${!empty acarsClientInfo.bridgeInfo}" ><span class="small nophone"> (Using ${acarsClientInfo.bridgeInfo} simulator Bridge)</span></c:if></td>
 </tr>
 </c:if>
-<c:if test="${pirep.capabilities != 0}">
+<c:if test="${fn:hasCapabilities(pirep)}">
 <tr>
  <td class="label">Capabilities</td>
  <td class="data" colspan="${cspan}" class="sec bld"><fmt:capabilities map="${pirep.capabilities}" /></td>
