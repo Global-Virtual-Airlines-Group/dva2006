@@ -138,7 +138,7 @@ golgotha.maps.acars.showEarth = function() {
  <td class="data"><span id="wxLoading" class="small" style="width:150px;">None</span></td>
 </tr>
 <tr>
- <td class="data" colspan="4"><map:div ID="googleMap" height="550" /><div id="copyright" class="small mapTextLabel"></div><div id="mapStatus" class="small mapTextLabel"></div>
+ <td class="data" colspan="4"><map:div ID="googleMap" height="500" /><div id="copyright" class="small mapTextLabel"></div><div id="mapStatus" class="small mapTextLabel"></div>
 <div id="zoomLevel" class="small mapTextLabel"></div><div id="seriesRefresh" class="small mapTextLabel"></div></td>
 </tr>
 </el:table>
@@ -146,7 +146,7 @@ golgotha.maps.acars.showEarth = function() {
 <!-- Button Bar -->
 <el:table className="bar">
 <tr class="title">
- <td><el:button ID="RefreshButton" onClick="void golgotha.maps.acars.reloadData(false)" label="REFRESH ACARS DATA" />&nbsp;<el:button ID="SettingsButton" onClick="void golgotha.maps.acars.saveSettings()" label="SAVE SETTINGS" />&nbsp;
+ <td><el:button ID="RefreshButton" onClick="void golgotha.maps.acars.reloadData(false)" label="REFRESH ACARS DATA" />&nbsp;<el:button ID="SettingsButton" onClick="void golgotha.maps.acars.saveSettings()" label="SAVE SETTINGS" />
 <el:button ID="ClearButton" onClick="void golgotha.maps.acars.clearSettings()" label="CLEAR SETTINGS" />&nbsp;<el:button ID="EarthButton" onClick="void golgotha.maps.acars.showEarth()" label="DISPLAY IN GOOGLE EARTH" /></td>
 </tr>
 </el:table>
