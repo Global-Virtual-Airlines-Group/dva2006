@@ -72,6 +72,12 @@ public class TestStringUtils extends TestCase {
        assertEquals("0x20", StringUtils.formatHex(32));
     }
     
+    public void testFilter() {
+    	assertEquals("foo", StringUtils.filter("foo", Character::isAlphabetic));
+    	assertEquals("", StringUtils.filter("123", Character::isAlphabetic));
+    	assertEquals("123", StringUtils.filter("123f", Character::isDigit));
+    }
+    
     public void testIsEmpty() {
        assertFalse(StringUtils.isEmpty("ASDSAD"));
        assertTrue(StringUtils.isEmpty(""));
