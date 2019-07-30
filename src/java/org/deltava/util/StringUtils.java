@@ -2,6 +2,7 @@
 package org.deltava.util;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.text.*;
 import java.time.*;
 import java.time.format.*;
@@ -55,6 +56,18 @@ public final class StringUtils {
 				buf.append(Character.toLowerCase(c));
 		}
 
+		return buf.toString();
+	}
+	
+	public static String filter(String s, Predicate<Character> p) {
+		if (s == null) return null;
+		StringBuilder buf = new StringBuilder();
+		for (int x = 0; x < s.length(); x++) {
+			char c = s.charAt(x);
+			if (p.test(Character.valueOf(c)))
+				buf.append(c);
+		}
+		
 		return buf.toString();
 	}
 
