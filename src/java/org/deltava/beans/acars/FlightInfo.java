@@ -52,7 +52,7 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 	private OperatingSystem _os = OperatingSystem.WINDOWS;
 	private boolean _isSim64Bit;
 	private boolean _isACARS64Bit;
-	private AutopilotType _ap;
+	private AutopilotType _ap = AutopilotType.DEFAULT;
 	
 	private boolean _offline;
 	private boolean _scheduleValidated;
