@@ -34,10 +34,10 @@
 	<classpathentry kind="lib" path="lib/deploy/json-20180130.jar"/>
 	<classpathentry kind="lib" path="lib/servlet-api-4.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-codec-1.11.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-5.1.47-bin.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-pool2-2.6.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/taglibs-standard-impl-1.2.5.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/javax.mail-1.6.2.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-2.24.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-5.1.48-bin.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
