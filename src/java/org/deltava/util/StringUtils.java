@@ -3,6 +3,7 @@ package org.deltava.util;
 
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.text.*;
 import java.time.*;
 import java.time.format.*;
@@ -31,7 +32,7 @@ public final class StringUtils {
 	}
 
 	/**
-	 * A null-safe mechanism to check if a String is null or empty
+	 * A null-safe mechanism to check if a String is null or empty.
 	 * @param s the String to check
 	 * @return TRUE if s is null or empty, otherwise FALSE
 	 */
@@ -59,6 +60,12 @@ public final class StringUtils {
 		return buf.toString();
 	}
 	
+	/**
+	 * Filters a string by passing in a character filtering Predicate.
+	 * @param s the string
+	 * @param p the Predicate
+	 * @return the filtered string, or null
+	 */
 	public static String filter(String s, Predicate<Character> p) {
 		if (s == null) return null;
 		StringBuilder buf = new StringBuilder();
@@ -99,9 +106,7 @@ public final class StringUtils {
 	 * @return the delimited value stirng
 	 */
 	public static String listConcat(Collection<?> values, String delim) {
-		if (values == null)
-			return "";
-		
+		if (values == null) return "";
 		StringBuilder buf = new StringBuilder(64);
 		for (Iterator<?> i = values.iterator(); i.hasNext();) {
 			buf.append(String.valueOf(i.next()));
@@ -120,7 +125,9 @@ public final class StringUtils {
 	 * @return the name of the get method for this property
 	 */
 	public static String getPropertyMethod(String pName) {
-		return "get" + pName.substring(0, 1).toUpperCase() + pName.substring(1);
+		StringBuilder buf = new StringBuilder("get");
+		buf.append(Character.toUpperCase(pName.charAt(0)));
+		return buf.append(pName.substring(1)).toString();
 	}
 
 	/**
@@ -400,7 +407,7 @@ public final class StringUtils {
 			return s.toString();
 
 		// Strip out the characters
-		StringBuilder buf = new StringBuilder(s.length());
+		StringBuilder buf = new StringBuilder(s.length() + 4);
 		for (int x = 0; x < s.length(); x++) {
 			char c = s.charAt(x);
 			if (chars.indexOf(c) == -1)
@@ -416,17 +423,7 @@ public final class StringUtils {
 	 * @return a List of Strings
 	 */
 	public static List<String> nullTrim(Collection<String> s) {
-		if (s == null)
-			return null;
-		
-		List<String> results = new ArrayList<String>();
-		for (String st : s) {
-			String s2 = isEmpty(st) ? null : st.trim();
-			if (s2 != null)
-				results.add(s2);
-		}
-		
-		return results;
+		return (s == null) ? null : s.stream().filter(e -> !isEmpty(e)).collect(Collectors.toList());
 	}
 	
 	/**
