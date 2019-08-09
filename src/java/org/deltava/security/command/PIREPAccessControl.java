@@ -48,7 +48,7 @@ public class PIREPAccessControl extends AccessControl {
 		validateContext();
 		
 		// Check if we can submit non-ACARS PIREPs
-		boolean noManual = (_ctx.getUser().getACARSRestriction() == Restriction.NOMANUAL);
+		boolean noManual = _ctx.isAuthenticated() && (_ctx.getUser().getACARSRestriction() == Restriction.NOMANUAL);
 
 		// Get PIREP creation access, and abort if no PIREP provided
 		final boolean isHR = _ctx.isUserInRole("HR") || _ctx.isUserInRole("Operations");
