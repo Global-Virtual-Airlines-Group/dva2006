@@ -1,7 +1,6 @@
-// Copyright 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
-import org.deltava.beans.Pilot;
 import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.security.SecurityContext;
@@ -9,7 +8,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An access controller for Virtual Airlines application profiles.
  * @author Luke
- * @version 5.0
+ * @version 8.6
  * @since 5.0
  */
 
@@ -39,8 +38,7 @@ public class AirlineInformationAccessControl extends AccessControl {
 		
 		// Detect our airline
 		if (!_ctx.isAuthenticated()) return;
-		Pilot usr = (Pilot) _ctx.getUser();
-		boolean isOurs = usr.getPilotCode().startsWith(_aInfo.getCode());
+		boolean isOurs = _ctx.getUser().getPilotCode().startsWith(_aInfo.getCode());
 		
 		_canRead =  _ctx.isUserInRole("HR");
 		_canEdit = isOurs && _ctx.isUserInRole("Admin"); 

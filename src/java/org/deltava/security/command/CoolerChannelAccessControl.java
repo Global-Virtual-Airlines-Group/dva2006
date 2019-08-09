@@ -1,10 +1,9 @@
 // Copyright 2005, 2006, 2008, 2011, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
-import org.deltava.security.SecurityContext;
-
-import org.deltava.beans.Pilot;
 import org.deltava.beans.cooler.Channel;
+
+import org.deltava.security.SecurityContext;
 
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
@@ -53,9 +52,6 @@ public class CoolerChannelAccessControl extends AccessControl {
 	public void validate() {
        validateContext();
        
-       // Get the user
-       Pilot usr = (Pilot) _ctx.getUser();
-       
         // Validate that we can access the channel
         _canAccess = true;
         if (_c != null) {
@@ -66,13 +62,13 @@ public class CoolerChannelAccessControl extends AccessControl {
         	}
         	
         	// Get the pilot code; if none use the default
-        	UserID id = new UserID(usr.getPilotCode());
-        	String airlineCode = StringUtils.isEmpty(usr.getPilotCode()) ? SystemData.get("airline.code") : id.getAirlineCode();
+        	UserID id = new UserID(_ctx.getUser().getPilotCode());
+        	String airlineCode = StringUtils.isEmpty(_ctx.getUser().getPilotCode()) ? SystemData.get("airline.code") : id.getAirlineCode();
         	_canAccess &= _c.getAirlines().contains(airlineCode.toUpperCase());
         }
         
         // Check if we're locked out
-        boolean isLocked = ((usr != null) && usr.getNoCooler());
+        boolean isLocked = ((_ctx.getUser() != null) && _ctx.getUser().getNoCooler());
         boolean isClosed = (_c != null) && !_c.getAllowNewPosts() && !_ctx.isUserInRole("Admin");
         
         // Set state objects

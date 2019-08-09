@@ -1,7 +1,6 @@
-// Copyright 2005, 2006, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
-import org.deltava.beans.Pilot;
 import org.deltava.beans.testing.EquipmentRideScript;
 
 import org.deltava.security.SecurityContext;
@@ -9,13 +8,13 @@ import org.deltava.security.SecurityContext;
 /**
  * An access controller for Equipment Program Check Ride scripts.
  * @author Luke
- * @version 3.4
+ * @version 8.6
  * @since 1.0
  */
 
 public class EquipmentRideScriptAccessControl extends AccessControl {
 
-	private EquipmentRideScript _sc;
+	private final EquipmentRideScript _sc;
 
 	private boolean _canCreate;
 	private boolean _canEdit;
@@ -55,8 +54,7 @@ public class EquipmentRideScriptAccessControl extends AccessControl {
 		_canDelete = isHR || isOps;
 		
 		// Allow edits if we are in the same eq program
-		Pilot usr = (Pilot) _ctx.getUser();
-		_canEdit = isOps || isHR || (usr.getEquipmentType().equals(_sc.getProgram()));
+		_canEdit = isOps || isHR || (_ctx.getUser().getEquipmentType().equals(_sc.getProgram()));
 	}
 
 	/**

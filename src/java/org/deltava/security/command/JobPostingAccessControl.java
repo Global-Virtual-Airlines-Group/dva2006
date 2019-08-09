@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import java.time.Instant;
@@ -14,13 +14,13 @@ import org.deltava.util.*;
 /**
  * An access controller for Job Postings.
  * @author Luke
- * @version 7.0
+ * @version 8.6
  * @since 3.4
  */
 
 public class JobPostingAccessControl extends AccessControl {
 	
-	private static final List<String> STAFF_ROLES = Arrays.asList("HR", "Instructor", "PIREP", "Examination", "Event", "AcademyAdmin", "Schedule");
+	private static final List<String> STAFF_ROLES = List.of("HR", "Instructor", "PIREP", "Examination", "Event", "AcademyAdmin", "Schedule");
 	
 	private final JobPosting _jp;
 	
@@ -59,7 +59,7 @@ public class JobPostingAccessControl extends AccessControl {
 			return;
 		
 		// Check we're staff
-		Pilot p = (Pilot) _ctx.getUser();
+		Pilot p = _ctx.getUser();
 		boolean isHireMgr = _ctx.isAuthenticated() && (p.getID() == _jp.getHireManagerID());
 		boolean isStaff = _ctx.isAuthenticated() && (p.getRank().isCP() || RoleUtils.hasAccess(p.getRoles(), STAFF_ROLES));
 		boolean canRead = (_jp.getStatus() == JobPosting.OPEN) || isHireMgr || isHR;
