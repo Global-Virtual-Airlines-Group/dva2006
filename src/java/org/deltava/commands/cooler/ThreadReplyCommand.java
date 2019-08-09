@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -22,7 +22,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to handle Water Cooler response posting and editing.
  * @author Luke
- * @version 7.2
+ * @version 8.6
  * @since 1.0
  */
 
@@ -44,7 +44,7 @@ public class ThreadReplyCommand extends AbstractCommand {
 		
 		// Determine if we are editing the last post
 		boolean doEdit = Boolean.valueOf(ctx.getParameter("doEdit")).booleanValue();
-		Map<UserData, Person> notifyList = new LinkedHashMap<UserData, Person>();
+		Map<UserData, Pilot> notifyList = new LinkedHashMap<UserData, Pilot>();
 		try {
 			Connection con = ctx.getConnection();
 
@@ -102,8 +102,8 @@ public class ThreadReplyCommand extends AbstractCommand {
 
 				// Filter out users who can no longer read this thread
 				MultiUserSecurityContext sctx = new MultiUserSecurityContext(ctx);
-				for (Iterator<Person> i = notifyList.values().iterator(); i.hasNext();) {
-					Person usr = i.next();
+				for (Iterator<Pilot> i = notifyList.values().iterator(); i.hasNext();) {
+					Pilot usr = i.next();
 					sctx.setUser(usr);
 
 					// Validate this user's access
@@ -166,7 +166,7 @@ public class ThreadReplyCommand extends AbstractCommand {
 
 		// Send the notification messages
 		if (!notifyList.isEmpty()) {
-			for (Map.Entry<UserData, Person> me : notifyList.entrySet()) {
+			for (Map.Entry<UserData, Pilot> me : notifyList.entrySet()) {
 			
 				// Create the mailer
 				Mailer mailer = new Mailer(null);

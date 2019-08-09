@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2010, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2010, 2015, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.IOException;
@@ -7,7 +7,7 @@ import java.util.*;
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
 
-import org.deltava.beans.Person;
+import org.deltava.beans.Pilot;
 import org.deltava.beans.servlet.ServletScoreboard;
 
 import org.gvagroup.jdbc.ConnectionPool;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A class storing common servlet helper methods.
  * @author Luke
- * @version 6.3
+ * @version 8.6
  * @since 1.0
  */
 
@@ -30,8 +30,7 @@ abstract class GenericServlet extends HttpServlet {
 	 */
 	protected class ServletSecurityContext implements SecurityContext {
 
-		private final List<String> ANONYMOUS_ROLES = Arrays.asList("Anonymous");
-
+		private final List<String> ANONYMOUS_ROLES = List.of("Anonymous");
 		private final HttpServletRequest _req;
 
 		public ServletSecurityContext(HttpServletRequest req) {
@@ -40,8 +39,8 @@ abstract class GenericServlet extends HttpServlet {
 		}
 
 		@Override
-		public Person getUser() {
-			return (Person) _req.getUserPrincipal();
+		public Pilot getUser() {
+			return (Pilot) _req.getUserPrincipal();
 		}
 
 		@Override

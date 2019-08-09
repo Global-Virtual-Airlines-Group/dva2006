@@ -1,14 +1,15 @@
-// Copyright 2005, 2006, 2009, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2012, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
-import org.deltava.security.SecurityContext;
-
+import org.deltava.beans.*;
 import org.deltava.beans.system.Issue;
+
+import org.deltava.security.SecurityContext;
 
 /**
  * An Access Controller for Issue Tracking.
  * @author Luke
- * @version 7.0
+ * @version 8.6
  * @since 1.0
  */
 
@@ -41,10 +42,12 @@ public final class IssueAccessControl extends AccessControl {
 		validateContext();
 
 		// Set issue creation access
+		Person p = _ctx.getUser();
 		boolean isDev = _ctx.isUserInRole("Developer");
-		boolean isStaff = isDev || _ctx.isUserInRole("PIREP") || _ctx.isUserInRole("Operations") || _ctx.isUserInRole("HR") ||
-			_ctx.isUserInRole("Examination") || _ctx.isUserInRole("Instructor");
-		_canCreate = isStaff;
+		boolean isStaff = isDev || _ctx.isUserInRole("PIREP") || _ctx.isUserInRole("Operations") || _ctx.isUserInRole("HR") || _ctx.isUserInRole("Examination") || _ctx.isUserInRole("Instructor");
+		boolean hasLegs = (p instanceof Pilot) && (((Pilot) p).getLegs() > 5);
+		
+		_canCreate = isStaff || hasLegs;
 		if (!_ctx.isAuthenticated()) {
 			_canRead = (_i == null) ? true : (_i.getSecurity() == Issue.SECURITY_PUBLIC);
 			return;

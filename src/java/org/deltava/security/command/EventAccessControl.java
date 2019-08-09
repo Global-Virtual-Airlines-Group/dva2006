@@ -1,7 +1,6 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
-import org.deltava.beans.Pilot;
 import org.deltava.beans.event.*;
 import org.deltava.beans.system.AirlineInformation;
 
@@ -12,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * An Access Controller for Online Events.
  * @author Luke
- * @version 7.0
+ * @version 8.6
  * @since 1.0
  */
 
@@ -55,8 +54,7 @@ public class EventAccessControl extends AccessControl {
 			return;
 
 		// Check if we have a network address
-		Pilot p = (Pilot) _ctx.getUser();
-		boolean hasID = p.hasNetworkID(_ev.getNetwork());
+		boolean hasID = _ctx.getUser().hasNetworkID(_ev.getNetwork());
 		boolean isOurs = _ev.getOwner().getCode().equals(SystemData.get("airline.code"));
 		
 		// Check if we can participate
