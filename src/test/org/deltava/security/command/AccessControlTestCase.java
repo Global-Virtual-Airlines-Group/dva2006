@@ -7,7 +7,7 @@ import javax.servlet.http.*;
 import com.kizna.servletunit.*;
 import junit.framework.TestCase;
 
-import org.deltava.beans.Person;
+import org.deltava.beans.Pilot;
 import org.deltava.security.SecurityContext;
 
 public abstract class AccessControlTestCase extends TestCase {
@@ -20,10 +20,10 @@ public abstract class AccessControlTestCase extends TestCase {
 	   
 	   private final List<String> ANONYMOUS_ROLES = Arrays.asList(new String[] {"Anonymous"});
 	   
-	   private Person _usr;
-	   private HttpServletRequest _req;
+	   private Pilot _usr;
+	   private final HttpServletRequest _req;
 	   
-	   public AccessControlContext(Person usr, HttpServletRequest req) {
+	   public AccessControlContext(Pilot usr, HttpServletRequest req) {
 	      super();
 	      _usr = usr;
 	      _req = req;
@@ -35,7 +35,7 @@ public abstract class AccessControlTestCase extends TestCase {
 	   }
 
 	   @Override
-	   public Person getUser() {
+	   public Pilot getUser() {
 	      return _usr;
 	   }
 

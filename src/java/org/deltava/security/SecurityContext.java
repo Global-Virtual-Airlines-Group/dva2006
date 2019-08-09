@@ -1,15 +1,15 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.util.Collection;
 import javax.servlet.http.HttpServletRequest;
 
-import org.deltava.beans.Person;
+import org.deltava.beans.Pilot;
 
 /**
  * An interface used by access controllers to query context data to determine access. 
  * @author Luke
- * @version 1.0
+ * @version 8.6
  * @since 1.0
  */
 
@@ -25,7 +25,7 @@ public interface SecurityContext {
     * Returns the currently authenticated user.
     * @return the user's Person object, or null if anonymous
     */
-   public Person getUser();
+   public Pilot getUser();
    
    /**
     * Returns all the roles for the currently authenticated user.

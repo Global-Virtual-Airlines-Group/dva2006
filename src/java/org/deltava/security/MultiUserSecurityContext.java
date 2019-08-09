@@ -1,22 +1,22 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.deltava.beans.Person;
+import org.deltava.beans.Pilot;
 
 /**
  * A security context that allows user swapping to test access by multiple users to a single object.
  * @author Luke
- * @version 7.0
+ * @version 8.6
  * @since 3.6
  */
 
 public class MultiUserSecurityContext implements SecurityContext {
 
-	private Person _usr;
+	private Pilot _usr;
 	private final HttpServletRequest _req;
 
 	/**
@@ -30,7 +30,7 @@ public class MultiUserSecurityContext implements SecurityContext {
 	}
 
 	@Override
-	public Person getUser() {
+	public Pilot getUser() {
 		return _usr;
 	}
 
@@ -46,7 +46,7 @@ public class MultiUserSecurityContext implements SecurityContext {
 
 	@Override
 	public Collection<String> getRoles() {
-		return isAuthenticated() ? getUser().getRoles() : new HashSet<String>();
+		return isAuthenticated() ? _usr.getRoles() : Collections.emptySet();
 	}
 
 	@Override
@@ -58,7 +58,7 @@ public class MultiUserSecurityContext implements SecurityContext {
 	 * Overrides the user.
 	 * @param usr the User object
 	 */
-	public void setUser(Person usr) {
+	public void setUser(Pilot usr) {
 		_usr = usr;
 	}
 }

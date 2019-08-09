@@ -1,4 +1,4 @@
-// Copyright 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.Pilot;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * An access controller for Senior Captain nominations. 
  * @author Luke
- * @version 7.0
+ * @version 8.6
  * @since 3.3
  */
 
@@ -58,10 +58,9 @@ public class NominationAccessControl extends AccessControl {
 		boolean isStaff = _ctx.isUserInRole("HR") || _ctx.isUserInRole("Operations") || _ctx.isUserInRole("PIREP") ||
 			_ctx.isUserInRole("Event") || _ctx.isUserInRole("Instructor") || _ctx.isUserInRole("AcademyAdmin");
 		
-		Pilot usr = (Pilot) _ctx.getUser();
+		Pilot usr = _ctx.getUser();
 		int daysActive = (int) ((System.currentTimeMillis() - usr.getCreatedOn().toEpochMilli()) / 86400_000);
-		_canNominate = isStaff || (usr.getLegs() > SystemData.getInt("users.sc.minFlights", 5)) && 
-			(daysActive > SystemData.getInt("users.sc.minAge", 120));
+		_canNominate = isStaff || (usr.getLegs() > SystemData.getInt("users.sc.minFlights", 5)) && (daysActive > SystemData.getInt("users.sc.minAge", 120));
 		_canNominateUnlimited = usr.getRank().isCP() || isStaff;
 		if (_n == null)
 			return;

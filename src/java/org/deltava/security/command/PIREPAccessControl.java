@@ -1,7 +1,6 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2014, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2014, 2016, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
-import org.deltava.beans.Pilot;
 import org.deltava.beans.acars.Restriction;
 import org.deltava.beans.flight.*;
 
@@ -10,7 +9,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An access controller for Flight Report operations.
  * @author Luke
- * @version 8.1
+ * @version 8.6
  * @since 1.0
  */
 
@@ -49,11 +48,7 @@ public class PIREPAccessControl extends AccessControl {
 		validateContext();
 		
 		// Check if we can submit non-ACARS PIREPs
-		boolean noManual = false;
-		if (_ctx.isUserInRole("Pilot")) {
-			Pilot usr = (Pilot) _ctx.getUser();
-			noManual = (usr.getACARSRestriction() == Restriction.NOMANUAL);
-		}
+		boolean noManual = (_ctx.getUser().getACARSRestriction() == Restriction.NOMANUAL);
 
 		// Get PIREP creation access, and abort if no PIREP provided
 		final boolean isHR = _ctx.isUserInRole("HR") || _ctx.isUserInRole("Operations");
