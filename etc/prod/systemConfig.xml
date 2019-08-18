@@ -580,6 +580,7 @@
 			<domain>att.net</domain>
 			<domain>sbcglobal.net</domain>
 			<domain>bellsouth.net</domain>
+			<domain>yahoo.com</domain>
 		</list>
 
 		<auto_reject type="Integer">5</auto_reject>
