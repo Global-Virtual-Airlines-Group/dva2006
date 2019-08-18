@@ -114,7 +114,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			// Update Online Network
 			OnlineNetwork newNetwork = OnlineNetwork.fromName(ctx.getParameter("network"));
 			if ((newNetwork != fr.getNetwork()) ) {
-				comments.add("Updated online network from " + fr.getNetwork() + " to " + ((newNetwork == null) ? "Offline" : newNetwork));
+				comments.add("Updated online network from " + fr.getNetwork() + " to " + ((newNetwork == null) ? "Offline" : newNetwork) + " by " + ctx.getUser().getName());
 				fr.setNetwork(newNetwork);
 			}
 
