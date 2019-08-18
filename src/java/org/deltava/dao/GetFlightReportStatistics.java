@@ -40,6 +40,11 @@ public class GetFlightReportStatistics extends DAO {
 			return _inactiveRoutes;
 		}
 		
+		@Override
+		public int getDistance() {
+			return isPopulated() ? getAirportD().distanceTo(getAirportA()) : -1;
+		}
+		
 		public void setInactiveRoutes(int cnt) {
 			_inactiveRoutes = cnt; 
 		}
