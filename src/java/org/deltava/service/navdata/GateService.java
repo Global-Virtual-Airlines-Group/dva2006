@@ -47,7 +47,7 @@ public class GateService extends WebService {
 		try {
 			GetGates gdao = new GetGates(ctx.getConnection());
 			if (aa == null) {
-				gates.addAll(gdao.getPopularGates(a, sim));
+				gates.addAll(gdao.getGates(a, sim));
 				gates.addAll(gdao.getAllGates(a, sim));
 			} else
 				gates.addAll(gdao.getPopularGates(new ScheduleRoute(a, aa), sim, true));
