@@ -116,7 +116,7 @@ public class GetGates extends DAO {
 			sqlBuf.append("AND (F.AIRPORT_D=?) ");
 		if (rp.getAirportA() != null)
 			sqlBuf.append("AND (F.AIRPORT_A=?) ");
-		sqlBuf.append("GROUP BY G.NAME ORDER BY CNT DESC");
+		sqlBuf.append("GROUP BY G.NAME");
 		
 		try {
 			int pos = 0;
@@ -130,7 +130,7 @@ public class GetGates extends DAO {
 			if (rp.getAirportA() != null)
 				_ps.setString(++pos, rp.getAirportA().getIATA());
 			
-			return execute();
+			return CollectionUtils.sort(execute(), CMP);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -172,7 +172,7 @@ public class GetGates extends DAO {
 	private List<Gate> execute() throws SQLException {
 		List<Gate> results = new ArrayList<Gate>();
 		try (ResultSet rs = _ps.executeQuery()) {
-			boolean hasCounts = (rs.getMetaData().getColumnCount() > 9); int max = 0;
+			boolean hasUseCount = (rs.getMetaData().getColumnCount() > 9);
 			while (rs.next()) {
 				Gate g = new Gate(rs.getDouble(4), rs.getDouble(5));
 				g.setCode(rs.getString(1));
@@ -181,16 +181,10 @@ public class GetGates extends DAO {
 				StringUtils.split(rs.getString(7), ",").stream().map(SystemData::getAirline).filter(Objects::nonNull).forEach(g::addAirline);
 				g.setIntl(rs.getBoolean(8));
 				g.setRegion(rs.getString(9));
-				if (hasCounts) {
-					int useCount = rs.getInt(10);
-					g.setUseCount(useCount);
-					max = Math.max(max, useCount);					
-					if ((useCount > (max / 8)) || (max < 20))
-						results.add(g);
-					else
-						break;					
-				} else
-					results.add(g);
+				if (hasUseCount)
+					g.setUseCount(rs.getInt(10));
+				
+				results.add(g);
 			}
 		}
 		
