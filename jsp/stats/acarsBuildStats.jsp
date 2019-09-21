@@ -54,21 +54,21 @@ google.charts.load('current', {'packages':['corechart']});
 golgotha.local.showChart = function(cb) {
 	if (!golgotha.form.comboSet(cb)) return false;
 	golgotha.form.submit(cb.form);
-	var months = golgotha.form.getCombo(cb);
-	if ((golgotha.local.chartData) && (golgotha.local.chartData.months >= months)) return golgotha.local.renderChart(months);
+	const weeks = golgotha.form.getCombo(cb);
+	if ((golgotha.local.chartData) && (golgotha.local.chartData.weeks >= weeks)) return golgotha.local.renderChart(weeks);
 
 	var xmlreq = new XMLHttpRequest();
-	xmlreq.open('get', 'acarsbuildstats.ws?count=' + months, true);
+	xmlreq.open('get', 'acarsbuildstats.ws?count=' + weeks, true);
 	xmlreq.onreadystatechange = function() {
 		if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) {
 			golgotha.form.clear(cb.form);
 			return false;
 		}
 
-		var js = JSON.parse(xmlreq.responseText);
-		js.stats.forEach(function(e) { var dt = e.week; e.week= new Date(dt.y, dt.m, dt.d, 12, 0, 0); });
+		const js = JSON.parse(xmlreq.responseText);
+		js.stats.forEach(function(e) { const dt = e.week; e.week= new Date(dt.y, dt.m, dt.d, 12, 0, 0); });
 		golgotha.local.chartData = js; //.reverse();
-		return golgotha.local.renderChart(months);
+		return golgotha.local.renderChart(weeks);
 	};
 
 	xmlreq.send(null);
@@ -77,23 +77,23 @@ golgotha.local.showChart = function(cb) {
 
 golgotha.local.renderChart = function(cnt) {
 	var cd = golgotha.local.chartData;
-	var lgStyle = {color:'black',fontName:'Verdana',fontSize:8};
+	const lgStyle = {color:'black',fontName:'Verdana',fontSize:8};
 
 	// Display the chart
-	var lC = new google.visualization.ColumnChart(document.getElementById('clientLegs'));
-	var hC = new google.visualization.ColumnChart(document.getElementById('clientHours'));
-	var lData = new google.visualization.DataTable(); var hData = new google.visualization.DataTable();
+	const lC = new google.visualization.ColumnChart(document.getElementById('clientLegs'));
+	const hC = new google.visualization.ColumnChart(document.getElementById('clientHours'));
+	const lData = new google.visualization.DataTable(); const hData = new google.visualization.DataTable();
 	lData.addColumn('date', 'Week'); hData.addColumn('date', 'Week');
 	cd.builds.forEach(function(b) { lData.addColumn('number', 'Build ' + b); hData.addColumn('number', 'Build ' + b); });
 	for (var x = 0; x < cnt; x++) {
-		var st = cd.stats[x]; var l = []; var h = [];
+		const st = cd.stats[x]; const l = []; const h = [];
 		l.push(st.week); h.push(st.week);
 		cd.builds.forEach(function(b) { l.push(st[b].legs); h.push(st[b].hours); });
 		lData.addRow(l); hData.addRow(h);
 	}
 
 	golgotha.util.display('chartLegs', true); golgotha.util.display('chartHours', true);
-	var mnStyle = {gridlines:{color:'#cce'},minorGridlines:{count:cnt},title:'Month',format:'MMMM yyyy'};
+	const mnStyle = {title:'Week',format:'MM/dd'};
 	lC.draw(lData,{title:'Flights by Build/Week',isStacked:true,fontSize:10,hAxis:mnStyle,vAxis:{title:'Flight Legs'},width:'100%'});
 	hC.draw(hData,{title:'Hours by Build/Week',isStacked:true,fontSize:10,hAxis:mnStyle,vAxis:{title:'Flight Hours'},width:'100%'});
 	golgotha.form.clear(document.forms[0]);
