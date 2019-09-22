@@ -4,7 +4,7 @@ package org.deltava.dao;
 import java.sql.*;
 import java.util.*;
 
-import org.deltava.beans.schedule.Aircraft;
+import org.deltava.beans.schedule.*;
 import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.util.cache.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Aircraft data.
  * @author Luke
- * @version 8.0
+ * @version 8.7
  * @since 1.0
  */
 
@@ -145,11 +145,11 @@ public class GetAircraft extends DAO {
 				a.setFuelFlow(rs.getInt(13));
 				a.setBaseFuel(rs.getInt(14));
 				a.setTaxiFuel(rs.getInt(15));
-				a.setTanks(Aircraft.TankType.PRIMARY, rs.getInt(16));
-				a.setPct(Aircraft.TankType.PRIMARY, rs.getInt(17));
-				a.setTanks(Aircraft.TankType.SECONDARY, rs.getInt(18));
-				a.setPct(Aircraft.TankType.SECONDARY, rs.getInt(19));
-				a.setTanks(Aircraft.TankType.OTHER, rs.getInt(20));
+				a.setTanks(TankType.PRIMARY, rs.getInt(16));
+				a.setPct(TankType.PRIMARY, rs.getInt(17));
+				a.setTanks(TankType.SECONDARY, rs.getInt(18));
+				a.setPct(TankType.SECONDARY, rs.getInt(19));
+				a.setTanks(TankType.OTHER, rs.getInt(20));
 				a.setMaxWeight(rs.getInt(21));
 				a.setMaxTakeoffWeight(rs.getInt(22));
 				a.setMaxLandingWeight(rs.getInt(23));

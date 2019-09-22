@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to update Airport and Airline information.
  * @author Luke
- * @version 8.0
+ * @version 8.7
  * @since 8.0
  */
 
@@ -301,11 +301,11 @@ public class SetAirportAirline extends DAO {
 			_ps.setInt(13, a.getFuelFlow());
 			_ps.setInt(14, a.getBaseFuel());
 			_ps.setInt(15, a.getTaxiFuel());
-			_ps.setInt(16, a.getTanks(Aircraft.TankType.PRIMARY));
-			_ps.setInt(17, a.getPct(Aircraft.TankType.PRIMARY));
-			_ps.setInt(18, a.getTanks(Aircraft.TankType.SECONDARY));
-			_ps.setInt(19, a.getPct(Aircraft.TankType.SECONDARY));
-			_ps.setInt(20, a.getTanks(Aircraft.TankType.OTHER));
+			_ps.setInt(16, a.getTanks(TankType.PRIMARY));
+			_ps.setInt(17, a.getPct(TankType.PRIMARY));
+			_ps.setInt(18, a.getTanks(TankType.SECONDARY));
+			_ps.setInt(19, a.getPct(TankType.SECONDARY));
+			_ps.setInt(20, a.getTanks(TankType.OTHER));
 			_ps.setInt(21, a.getMaxWeight());
 			_ps.setInt(22, a.getMaxTakeoffWeight());
 			_ps.setInt(23, a.getMaxLandingWeight());
@@ -354,11 +354,11 @@ public class SetAirportAirline extends DAO {
 			_ps.setInt(8, a.getFuelFlow());
 			_ps.setInt(9, a.getBaseFuel());
 			_ps.setInt(10, a.getTaxiFuel());
-			_ps.setInt(11, a.getTanks(Aircraft.TankType.PRIMARY));
-			_ps.setInt(12, a.getPct(Aircraft.TankType.PRIMARY));
-			_ps.setInt(13, a.getTanks(Aircraft.TankType.SECONDARY));
-			_ps.setInt(14, a.getPct(Aircraft.TankType.SECONDARY));
-			_ps.setInt(15, a.getTanks(Aircraft.TankType.OTHER));
+			_ps.setInt(11, a.getTanks(TankType.PRIMARY));
+			_ps.setInt(12, a.getPct(TankType.PRIMARY));
+			_ps.setInt(13, a.getTanks(TankType.SECONDARY));
+			_ps.setInt(14, a.getPct(TankType.SECONDARY));
+			_ps.setInt(15, a.getTanks(TankType.OTHER));
 			_ps.setBoolean(16, a.getETOPS());
 			_ps.setInt(17, a.getMaxWeight());
 			_ps.setInt(18, a.getMaxTakeoffWeight());

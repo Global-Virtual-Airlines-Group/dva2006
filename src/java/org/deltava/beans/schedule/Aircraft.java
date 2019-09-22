@@ -13,27 +13,11 @@ import org.deltava.util.cache.Cacheable;
  * A bean to store Aircraft type information and ACARS fuel profiles. Fuel is loaded in ACARS in the order of primary, secondary
  * and other tanks, and each Microsoft Flight Simulator fuel tank can be assigned to one of these three tank types.
  * @author Luke
- * @version 8.0
+ * @version 8.7
  * @since 1.0
  */
 
 public class Aircraft implements Comparable<Aircraft>, Auditable, Cacheable, ViewEntry {
-
-	/**
-	 * Enumeration for fuel tank types.
-	 */
-	public enum TankType {
-		PRIMARY, SECONDARY, OTHER;
-		
-		public String getDescription() {
-			return toString();
-		}
-		
-		@Override
-		public String toString() {
-			return name().substring(0, 1) + name().substring(1).toLowerCase();
-		}
-	}
 
 	private String _name;
 	private String _fullName;
