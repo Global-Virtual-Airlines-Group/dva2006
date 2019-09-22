@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -13,12 +13,14 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A class for storing Airline information.
  * @author Luke
- * @version 7.4
+ * @version 8.7
  * @since 1.0
  */
 
 public class Airline implements ComboAlias, Auditable, Comparable<Airline>, Cacheable, ViewEntry {
 
+	private static final long serialVersionUID = -3414064162790178546L;
+	
 	private String _code;
 	private String _name;
 	private String _color;
@@ -223,8 +225,7 @@ public class Airline implements ComboAlias, Auditable, Comparable<Airline>, Cach
 	public void setCodes(Collection<String> codes) {
 		_codes.clear();
 		_codes.add(_code);
-		for (Iterator<String> i = codes.iterator(); i.hasNext(); )
-			addCode(i.next());
+		codes.forEach(c -> addCode(c));
 	}
 
 	@Override
@@ -234,10 +235,7 @@ public class Airline implements ComboAlias, Auditable, Comparable<Airline>, Cach
 
 	@Override
 	public String getComboName() {
-		StringBuilder buf = new StringBuilder(getCode());
-		buf.append(" - ");
-		buf.append(getName());
-		return buf.toString();
+		return _name;
 	}
 
 	/**
@@ -250,9 +248,6 @@ public class Airline implements ComboAlias, Auditable, Comparable<Airline>, Cach
 	    _name = name.trim();
 	}
 	
-	/**
-	 * Airline object comparator - compare the codes.
-	 */
 	@Override
 	public int compareTo(Airline a2) {
 		return _code.compareTo(a2._code);
@@ -268,9 +263,6 @@ public class Airline implements ComboAlias, Auditable, Comparable<Airline>, Cach
 		return _code.hashCode();
 	}
 	
-	/**
-	 * Returns the airline code.
-	 */
 	@Override
 	public String toString() {
 		return _code;
