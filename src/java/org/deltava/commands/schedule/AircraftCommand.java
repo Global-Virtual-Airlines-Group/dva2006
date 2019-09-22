@@ -1,11 +1,11 @@
-// Copyright 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.AuditLog;
-import org.deltava.beans.schedule.Aircraft;
+import org.deltava.beans.schedule.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Aircraft profiles.
  * @author Luke
- * @version 8.0
+ * @version 8.7
  * @since 1.0
  */
 
@@ -80,11 +80,11 @@ public class AircraftCommand extends AbstractAuditFormCommand {
 			a.setFuelFlow(StringUtils.parse(ctx.getParameter("fuelFlow"), 0));
 			a.setBaseFuel(StringUtils.parse(ctx.getParameter("baseFuel"), 0));
 			a.setTaxiFuel(StringUtils.parse(ctx.getParameter("taxiFuel"), 0));
-			a.setTanks(Aircraft.TankType.PRIMARY, ctx.getParameters("pTanks"));
-			a.setPct(Aircraft.TankType.PRIMARY, StringUtils.parse(ctx.getParameter("pPct"), 100));
-			a.setTanks(Aircraft.TankType.SECONDARY, ctx.getParameters("sTanks"));
-			a.setPct(Aircraft.TankType.SECONDARY, StringUtils.parse(ctx.getParameter("sPct"), 0));
-			a.setTanks(Aircraft.TankType.OTHER, ctx.getParameters("oTanks"));
+			a.setTanks(TankType.PRIMARY, ctx.getParameters("pTanks"));
+			a.setPct(TankType.PRIMARY, StringUtils.parse(ctx.getParameter("pPct"), 100));
+			a.setTanks(TankType.SECONDARY, ctx.getParameters("sTanks"));
+			a.setPct(TankType.SECONDARY, StringUtils.parse(ctx.getParameter("sPct"), 0));
+			a.setTanks(TankType.OTHER, ctx.getParameters("oTanks"));
 			
 			// Update the web applications
 			a.clearApps();
