@@ -1,4 +1,4 @@
-// Copyright 2012, 2014, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2014, 2015, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.schedule.Airline;
 /**
  * A bean to store airport Gate information.
  * @author Luke
- * @version 8.4
+ * @version 8.7
  * @since 5.1
  */
 
@@ -38,6 +38,22 @@ public class Gate extends NavigationDataBean implements UseCount {
 	 */
 	public Gate(double lat, double lon) {
 		super(Navaid.GATE, lat, lon);
+	}
+	
+	/**
+	 * Clones an existing gate.
+	 * @param g the Gate
+	 */
+	public Gate(Gate g) {
+		this(g.getLatitude(), g.getLongitude());
+		setCode(g.getCode());
+		setName(g.getName());
+		setRegion(g.getRegion());
+		_heading = g._heading;
+		_number = g._number;
+		_useCount = g._useCount;
+		_isInternational = g._isInternational;
+		_airlines.addAll(g._airlines);
 	}
 	
 	/**
