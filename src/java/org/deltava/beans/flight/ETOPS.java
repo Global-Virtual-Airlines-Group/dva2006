@@ -65,7 +65,7 @@ public enum ETOPS implements ComboAlias {
 
 	@Override
 	public String getComboAlias() {
-		return String.valueOf(_time);
+		return String.valueOf((this == INVALID) ? -1 : ordinal());
 	}
 
 	@Override
