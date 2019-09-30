@@ -27,10 +27,10 @@ golgotha.ff.validate = function(f)
 if (!golgotha.form.check()) return false;
 
 // Check that at least one option was selected
-var eqOK = golgotha.form.comboSet(f.eqType);
-var alOK = golgotha.form.comboSet(f.airline);
-var adOK = golgotha.form.comboSet(f.airportD);
-var aaOK = golgotha.form.comboSet(f.airportA);
+const eqOK = golgotha.form.comboSet(f.eqType);
+const alOK = golgotha.form.comboSet(f.airline);
+const adOK = golgotha.form.comboSet(f.airportD);
+const aaOK = golgotha.form.comboSet(f.airportA);
 if (eqOK || adOK || aaOK || alOK) {
 	golgotha.form.submit(f);
 	return true;
@@ -61,13 +61,13 @@ return true;
 </c:if>
 golgotha.ff.updateAirline = function(cb)
 {
-var f = document.forms[0];
-var cfg = golgotha.airportLoad.config.clone();
+const f = document.forms[0];
+const cfg = golgotha.airportLoad.config.clone();
 cfg.airline = golgotha.form.getCombo(cb);
 golgotha.airportLoad.changeAirline([f.airportD], cfg);
 golgotha.util.show('historicOpts', !golgotha.form.comboSet(f.airline));
 window.setTimeout(function() {
-	var cfg2 = cfg.clone();
+	const cfg2 = cfg.clone();
     cfg2.dst = true;
     golgotha.airportLoad.changeAirline([f.airportA], cfg2);
 }, 250);
@@ -79,16 +79,16 @@ golgotha.ff.refreshAirports = function() { updateAirline(document.forms[0].airli
 
 golgotha.ff.refreshNV = function(checkbox, cboName, isDest)
 {
-var f = checkbox.form;
-var srcA = golgotha.form.getCombo(f.airportD);
-var cfg = golgotha.airportLoad.config.clone();
+const f = checkbox.form;
+const srcA = golgotha.form.getCombo(f.airportD);
+const cfg = golgotha.airportLoad.config.clone();
 cfg.airline = golgotha.form.getCombo(f.airline); cfg.notVisited = checkbox.checked;
 if (isDest && (srcA != null) && (srcA != '')) {
 	cfg.dst = true;	
 	cfg.code = srcA;
 }
 
-var cbo = f[cboName];
+const cbo = f[cboName];
 if (cbo) {
 	cbo.notVisited = cfg.notVisited;
 	cbo.loadAirports(cfg);
@@ -98,12 +98,13 @@ return true;
 };
 
 golgotha.onDOMReady(function() {
-	var f = document.forms[0];
-	var cfg = golgotha.airportLoad.config;
+	const f = document.forms[0];
+	const cfg = golgotha.airportLoad.config;
 	cfg.doICAO = ${useICAO};
 	cfg.myRated = f.myEQTypes.checked;
 	golgotha.airportLoad.setHelpers(f.airportD);
 	golgotha.airportLoad.setHelpers(f.airportA);
+	f.airline.updateAirlineCode = golgotha.airportLoad.updateAirlineCode;
 	<c:if test="${!empty fafCriteria}">
 	f.airportD.updateAirportCode();
 	f.airportA.updateAirportCode();</c:if>
@@ -132,7 +133,8 @@ golgotha.onDOMReady(function() {
 </tr>
 <tr>
  <td class="label">Airline</td>
- <td class="data"><el:combo name="airline" size="1" idx="*" firstEntry="-" options="${airlines}" value="${empty fafCriteria ? airline : fafCriteria.airline}" onChange="void golgotha.ff.updateAirline(this)" /></td>
+ <td class="data"><el:combo name="airline" size="1" idx="*" firstEntry="-" options="${airlines}" value="${empty fafCriteria ? airline : fafCriteria.airline}" onChange="this.updateAirlineCode(); void golgotha.ff.updateAirline(this)" />
+ <el:text name="airlineCode" size="2" max="3" idx="*" onChange="void golgotha.airportLoad.setAirline(document.forms[0].airline, this, true)" /></td>
  <td class="label">Equipment</td>
  <td class="data"><el:combo name="eqType" size="1" idx="*" firstEntry="-" options="${allEQ}" value="${param.myEQTypes ? '-' : fafCriteria.equipmentType}" /></td>
 </tr>
