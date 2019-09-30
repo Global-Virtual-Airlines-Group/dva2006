@@ -68,17 +68,16 @@ golgotha.local.initDateCombos = function(mCombo, dCombo, d) {
 	return true;
 };
 
-golgotha.local.setDaysInMonth = function(combo)
-{
-var dCombo = document.forms[0].dateD;
-var daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-var dd = dCombo.selectedIndex;
-dCombo.options.length = daysInMonth[combo.selectedIndex];
-for (var x = 1; x <= daysInMonth[combo.selectedIndex]; x++)
-	dCombo.options[x-1] = new Option(x);
+golgotha.local.setDaysInMonth = function(combo) {
+	const dCombo = document.forms[0].dateD;
+	const daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+	const dd = dCombo.selectedIndex;
+	dCombo.options.length = daysInMonth[combo.selectedIndex];
+	for (var x = 1; x <= daysInMonth[combo.selectedIndex]; x++)
+		dCombo.options[x-1] = new Option(x);
 
-dCombo.selectedIndex = Math.min(dd, dCombo.options.length - 1);
-return true;
+	dCombo.selectedIndex = Math.min(dd, dCombo.options.length - 1);
+	return true;
 };
 
 golgotha.local.loadAirports = function()
@@ -86,7 +85,7 @@ golgotha.local.loadAirports = function()
 var f = document.forms[0];
 if (f.airline.selectedIndex != 0) {
 	golgotha.airportLoad.config.airline = golgotha.form.getCombo(f.airline);
-	var cfg = golgotha.airportLoad.config.clone();
+	let cfg = golgotha.airportLoad.config.clone();
 	cfg.add = golgotha.form.getCombo(f.airportD); 
 	f.airportD.loadAirports(cfg);
 	cfg = golgotha.airportLoad.config.clone();
@@ -109,22 +108,22 @@ golgotha.onDOMReady(function() {
 
 golgotha.local.hoursCalc = function(f)
 {
-var h = parseInt(f.tmpHours.value);
-var m = parseInt(f.tmpMinutes.value);
+const h = parseInt(f.tmpHours.value);
+const m = parseInt(f.tmpMinutes.value);
 if ((h == Number.NaN) || (m == Number.NaN)) {
-    var fe = (h == Number.NaN) ? f.tmpHours : f.tmpMinutes;
+	const fe = (h == Number.NaN) ? f.tmpHours : f.tmpMinutes;
     throw new golgotha.event.ValidationError('Please fill in both Hours and Minutes.', fe);
 }
     
 if ((h < 0) || (m < 0)) {
-    var fe = (h < 0) ? f.tmpHours : f.tmpMinutes;
+	const fe = (h < 0) ? f.tmpHours : f.tmpMinutes;
     throw new golgotha.event.ValidationError('Hours and minutes cannnot be negative.', fe);
 }
 
 // Turn into a single number
-var tmpHours = (h + (m / 60));
-var hrs = Math.round(tmpHours * 10) / 10;
-var combo = f.flightTime;
+const tmpHours = (h + (m / 60));
+const hrs = Math.round(tmpHours * 10) / 10;
+const combo = f.flightTime;
 for (x = 0; x < combo.options.length; x++) {
     var opt = combo.options[x];
     if (opt.text == hrs) {
@@ -135,6 +134,8 @@ for (x = 0; x < combo.options.length; x++) {
 
 return true;
 };
+
+golgotha.onDOMReady(function() { document.forms[0].airline.updateAirlineCode = golgotha.airportLoad.updateAirlineCode; });
 <content:browser html4="true">
 // Set PIREP date limitations
 <fmt:jsdate var="fwdLimit" date="${forwardDateLimit}" />
@@ -178,7 +179,8 @@ return true;
 <c:when test="${!isAssign}">
 <tr>
  <td class="label">Airline Name</td>
- <td class="data"><el:combo name="airline" idx="*" size="1" options="${airlines}" value="${pirep.airline}" onChange="void golgotha.local.loadAirports()" className="req" firstEntry="[ AIRLINE ]" /></td>
+ <td class="data"><el:combo name="airline" idx="*" size="1" options="${airlines}" value="${pirep.airline}" onChange="this.updateAirlineCode(); golgotha.local.loadAirports()" className="req" firstEntry="[ AIRLINE ]" />
+ <el:text name="airlineCode" size="2" max="3" idx="*" onChange="void golgotha.airportLoad.setAirline(document.forms[0].airline, this, true)" /></td>
 </tr>
 </c:when>
 <c:otherwise>
@@ -275,8 +277,8 @@ return true;
 </content:page>
 <content:browser html4="true">
 <script id="dateInit" async>
-var f = document.forms[0];
-var d = new Date(${pirepYear},${pirepMonth},${pirepDay},0,0,0);
+const f = document.forms[0];
+const d = new Date(${pirepYear},${pirepMonth},${pirepDay},0,0,0);
 golgotha.local.initDateCombos(f.dateM, f.dateD, d);
 f.tmpHours.value = Math.round(f.tmpHours.value - 0.5);
 </script></content:browser>
