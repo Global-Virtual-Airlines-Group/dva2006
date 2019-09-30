@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2012, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2012, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to plot a flight route.
  * @author Luke
- * @version 8.1
+ * @version 8.7
  * @since 1.0
  */
 
@@ -54,12 +54,12 @@ public class RoutePlotCommand extends AbstractCommand {
 				// Get aircraft profile and SID runways
 				GetNavRoute navdao = new GetNavRoute(con);
 				Aircraft a = acdao.get(dfr.getEquipmentType());
+				AircraftPolicyOptions opts = a.getOptions(SystemData.get("airline.code"));
 				Collection<String> sidRwys = navdao.getSIDRunways(dfr.getAirportD());
 				
 				// Get departure runways
 				GetACARSRunways rwdao = new GetACARSRunways(con);
-				List<Runway> runways = rwdao.getPopularRunways(dfr.getAirportD(), dfr.getAirportA(), true).stream().filter(r -> r.getLength() > a.getTakeoffRunwayLength())
-						.filter(r -> sidRwys.contains("RW" + r.getName())).collect(Collectors.toList());
+				List<Runway> runways = rwdao.getPopularRunways(dfr.getAirportD(), dfr.getAirportA(), true).stream().filter(r -> r.getLength() > opts.getTakeoffRunwayLength()).filter(r -> sidRwys.contains("RW" + r.getName())).collect(Collectors.toList());
 				
 				// Sort based on wind
 				GetWeather wxdao = new GetWeather(con);

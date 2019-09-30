@@ -33,7 +33,7 @@ import org.deltava.util.system.SystemData;
 /**
  * The XACARS Flight Report Web Service. 
  * @author Luke
- * @version 8.6
+ * @version 8.7
  * @since 4.1
  */
 
@@ -195,10 +195,11 @@ public class XPIREPService extends XAService {
 				xfr.setRemarks(xfr.getRemarks() + " (Invalid equipment: " + xfr.getEquipmentType());
 				xfr.setEquipmentType(usr.getEquipmentType());
 			} else {
+				AircraftPolicyOptions opts = a.getOptions(SystemData.get("airline.code"));
 				xfr.setAttribute(FlightReport.ATTR_HISTORIC, a.getHistoric());
 				
 				// Check for excessive distance
-				if (xfr.getDistance() > a.getRange())
+				if (xfr.getDistance() > opts.getRange())
 					xfr.setAttribute(FlightReport.ATTR_RANGEWARN, true);
 
 				// Check for excessive weight

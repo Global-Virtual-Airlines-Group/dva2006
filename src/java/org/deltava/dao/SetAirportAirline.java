@@ -5,7 +5,6 @@ import java.sql.*;
 import java.util.Iterator;
 
 import org.deltava.beans.schedule.*;
-import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.util.StringUtils;
 import org.deltava.util.cache.CacheManager;
@@ -284,47 +283,32 @@ public class SetAirportAirline extends DAO {
 	public void create(Aircraft a) throws DAOException {
 		try {
 			startTransaction();
-			prepareStatement("INSERT INTO common.AIRCRAFT (NAME, FULLNAME, FAMILY, ACRANGE, ICAO, IATA, HISTORIC, ETOPS, SEATS, ENGINES, ENGINE_TYPE, CRUISE_SPEED, FUEL_FLOW, BASE_FUEL, TAXI_FUEL, PRI_TANKS, PRI_PCT, "
-				+ "SEC_TANKS, SEC_PCT, OTHER_TANKS, MAX_WEIGHT, MAX_TWEIGHT, MAX_LWEIGHT, MAX_ZFW, TO_RWLENGTH, LN_RWLENGTH, SOFT_RWY) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			prepareStatement("INSERT INTO common.AIRCRAFT (NAME, FULLNAME, FAMILY, ICAO, IATA, HISTORIC, ENGINES, ENGINE_TYPE, CRUISE_SPEED, FUEL_FLOW, BASE_FUEL, TAXI_FUEL, PRI_TANKS, PRI_PCT, SEC_TANKS, SEC_PCT, "
+				+ "OTHER_TANKS, MAX_WEIGHT, MAX_TWEIGHT, MAX_LWEIGHT, MAX_ZFW) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setString(1, a.getName());
 			_ps.setString(2, a.getFullName());
 			_ps.setString(3, a.getFamily());
-			_ps.setInt(4, a.getRange());
-			_ps.setString(5, a.getICAO());
-			_ps.setString(6, StringUtils.listConcat(a.getIATA(), ","));
-			_ps.setBoolean(7, a.getHistoric());
-			_ps.setBoolean(8, a.getETOPS());
-			_ps.setInt(9, a.getSeats());
-			_ps.setByte(10, a.getEngines());
-			_ps.setString(11, a.getEngineType());
-			_ps.setInt(12, a.getCruiseSpeed());
-			_ps.setInt(13, a.getFuelFlow());
-			_ps.setInt(14, a.getBaseFuel());
-			_ps.setInt(15, a.getTaxiFuel());
-			_ps.setInt(16, a.getTanks(TankType.PRIMARY));
-			_ps.setInt(17, a.getPct(TankType.PRIMARY));
-			_ps.setInt(18, a.getTanks(TankType.SECONDARY));
-			_ps.setInt(19, a.getPct(TankType.SECONDARY));
-			_ps.setInt(20, a.getTanks(TankType.OTHER));
-			_ps.setInt(21, a.getMaxWeight());
-			_ps.setInt(22, a.getMaxTakeoffWeight());
-			_ps.setInt(23, a.getMaxLandingWeight());
-			_ps.setInt(24, a.getMaxZeroFuelWeight());
-			_ps.setInt(25, a.getTakeoffRunwayLength());
-			_ps.setInt(26, a.getLandingRunwayLength());
-			_ps.setBoolean(27, a.getUseSoftRunways());
+			_ps.setString(4, a.getICAO());
+			_ps.setString(5, StringUtils.listConcat(a.getIATA(), ","));
+			_ps.setBoolean(6, a.getHistoric());
+			_ps.setByte(7, a.getEngines());
+			_ps.setString(8, a.getEngineType());
+			_ps.setInt(9, a.getCruiseSpeed());
+			_ps.setInt(10, a.getFuelFlow());
+			_ps.setInt(11, a.getBaseFuel());
+			_ps.setInt(12, a.getTaxiFuel());
+			_ps.setInt(13, a.getTanks(TankType.PRIMARY));
+			_ps.setInt(14, a.getPct(TankType.PRIMARY));
+			_ps.setInt(15, a.getTanks(TankType.SECONDARY));
+			_ps.setInt(16, a.getPct(TankType.SECONDARY));
+			_ps.setInt(17, a.getTanks(TankType.OTHER));
+			_ps.setInt(18, a.getMaxWeight());
+			_ps.setInt(19, a.getMaxTakeoffWeight());
+			_ps.setInt(20, a.getMaxLandingWeight());
+			_ps.setInt(21, a.getMaxZeroFuelWeight());
 			executeUpdate(1);
 			
-			// Add the webapps
-			prepareStatement("INSERT INTO common.AIRCRAFT_AIRLINE (NAME, AIRLINE) VALUES (?, ?)");
-			_ps.setString(1, a.getName());
-			for (AirlineInformation ai : a.getApps()) {
-				_ps.setString(2, ai.getCode());
-				_ps.addBatch();
-			}
-			
-			// Execute and commit
-			executeBatchUpdate(1, a.getApps().size());
+			writeAppData(a);
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -341,37 +325,31 @@ public class SetAirportAirline extends DAO {
 	public void update(Aircraft a, String oldName) throws DAOException {
 		try {
 			startTransaction();
-			prepareStatement("UPDATE common.AIRCRAFT SET ACRANGE=?, IATA=?, ICAO=?, HISTORIC=?, ENGINES=?, ENGINE_TYPE=?, CRUISE_SPEED=?, FUEL_FLOW=?, BASE_FUEL=?, TAXI_FUEL=?, "
-				+ "PRI_TANKS=?, PRI_PCT=?, SEC_TANKS=?, SEC_PCT=?, OTHER_TANKS=?, ETOPS=?, MAX_WEIGHT=?, MAX_TWEIGHT=?, MAX_LWEIGHT=?, MAX_ZFW=?, SEATS=?, TO_RWLENGTH=?, "
-				+ "LN_RWLENGTH=?, FULLNAME=?, FAMILY=?, SOFT_RWY=?, NAME=? WHERE (NAME=?)");
-			_ps.setInt(1, a.getRange());
-			_ps.setString(2, StringUtils.listConcat(a.getIATA(), ",").replace("\r", ""));
-			_ps.setString(3, a.getICAO());
-			_ps.setBoolean(4, a.getHistoric());
-			_ps.setByte(5, a.getEngines());
-			_ps.setString(6, a.getEngineType());
-			_ps.setInt(7, a.getCruiseSpeed());
-			_ps.setInt(8, a.getFuelFlow());
-			_ps.setInt(9, a.getBaseFuel());
-			_ps.setInt(10, a.getTaxiFuel());
-			_ps.setInt(11, a.getTanks(TankType.PRIMARY));
-			_ps.setInt(12, a.getPct(TankType.PRIMARY));
-			_ps.setInt(13, a.getTanks(TankType.SECONDARY));
-			_ps.setInt(14, a.getPct(TankType.SECONDARY));
-			_ps.setInt(15, a.getTanks(TankType.OTHER));
-			_ps.setBoolean(16, a.getETOPS());
-			_ps.setInt(17, a.getMaxWeight());
-			_ps.setInt(18, a.getMaxTakeoffWeight());
-			_ps.setInt(19, a.getMaxLandingWeight());
-			_ps.setInt(20, a.getMaxZeroFuelWeight());
-			_ps.setInt(21, a.getSeats());
-			_ps.setInt(22, a.getTakeoffRunwayLength());
-			_ps.setInt(23, a.getLandingRunwayLength());
-			_ps.setString(24, a.getFullName());
-			_ps.setString(25, a.getFamily());
-			_ps.setBoolean(26, a.getUseSoftRunways());
-			_ps.setString(27, a.getName());
-			_ps.setString(28, oldName);
+			prepareStatement("UPDATE common.AIRCRAFT SET IATA=?, ICAO=?, HISTORIC=?, ENGINES=?, ENGINE_TYPE=?, CRUISE_SPEED=?, FUEL_FLOW=?, BASE_FUEL=?, TAXI_FUEL=?, "
+				+ "PRI_TANKS=?, PRI_PCT=?, SEC_TANKS=?, SEC_PCT=?, OTHER_TANKS=?, MAX_WEIGHT=?, MAX_TWEIGHT=?, MAX_LWEIGHT=?, MAX_ZFW=?, FULLNAME=?, FAMILY=?, "
+				+ "NAME=? WHERE (NAME=?)");
+			_ps.setString(1, StringUtils.listConcat(a.getIATA(), ",").replace("\r", ""));
+			_ps.setString(2, a.getICAO());
+			_ps.setBoolean(3, a.getHistoric());
+			_ps.setByte(4, a.getEngines());
+			_ps.setString(5, a.getEngineType());
+			_ps.setInt(6, a.getCruiseSpeed());
+			_ps.setInt(7, a.getFuelFlow());
+			_ps.setInt(8, a.getBaseFuel());
+			_ps.setInt(9, a.getTaxiFuel());
+			_ps.setInt(10, a.getTanks(TankType.PRIMARY));
+			_ps.setInt(11, a.getPct(TankType.PRIMARY));
+			_ps.setInt(12, a.getTanks(TankType.SECONDARY));
+			_ps.setInt(13, a.getPct(TankType.SECONDARY));
+			_ps.setInt(14, a.getTanks(TankType.OTHER));
+			_ps.setInt(15, a.getMaxWeight());
+			_ps.setInt(16, a.getMaxTakeoffWeight());
+			_ps.setInt(17, a.getMaxLandingWeight());
+			_ps.setInt(18, a.getMaxZeroFuelWeight());
+			_ps.setString(19, a.getFullName());
+			_ps.setString(20, a.getFamily());
+			_ps.setString(21, a.getName());
+			_ps.setString(22, oldName);
 			executeUpdate(1);
 
 			// Clean out the webapps
@@ -380,15 +358,7 @@ public class SetAirportAirline extends DAO {
 			executeUpdate(0);
 			
 			// Add the webapps
-			prepareStatement("INSERT INTO common.AIRCRAFT_AIRLINE (NAME, AIRLINE) VALUES (?, ?)");
-			_ps.setString(1, a.getName());
-			for (AirlineInformation ai : a.getApps()) {
-				_ps.setString(2, ai.getCode());
-				_ps.addBatch();
-			}
-			
-			// Execute and commit
-			executeBatchUpdate(1, a.getApps().size());
+			writeAppData(a);
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -421,5 +391,24 @@ public class SetAirportAirline extends DAO {
 			rollbackTransaction();
 			throw new DAOException(se);
 		}
+	}
+	
+	private void writeAppData(Aircraft a) throws SQLException {
+
+		prepareStatement("INSERT INTO common.AIRCRAFT_AIRLINE (NAME, AIRLINE, ACRANGE, ETOPS, SEATS, TO_RWLENGTH, LN_RWLENGTH, SOFT_RWY) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+		_ps.setString(1, a.getName());
+		for (String appCode : a.getApps()) {
+			AircraftPolicyOptions opts = a.getOptions(appCode);
+			_ps.setString(2, appCode);
+			_ps.setInt(3, opts.getRange());
+			_ps.setInt(4, opts.getETOPS().ordinal());
+			_ps.setInt(5, opts.getSeats());
+			_ps.setInt(6, opts.getTakeoffRunwayLength());
+			_ps.setInt(7, opts.getLandingRunwayLength());
+			_ps.setBoolean(8, opts.getUseSoftRunways());
+			_ps.addBatch();
+		}
+		
+		executeBatchUpdate(1, a.getApps().size());
 	}
 }

@@ -1,4 +1,4 @@
-// Copyright 2014, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2014, 2015, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to pre-Approve a return flight charter when no schulede entry exists. 
  * @author Luke
- * @version 8.1
+ * @version 8.7
  * @since 5.2
  */
 
@@ -84,8 +84,8 @@ public class ReturnCharterCommand extends AbstractCommand {
 				
 				Collection<Aircraft> acTypes = acdao.getAircraftTypes();
 				for (Iterator<Aircraft> i = acTypes.iterator(); i.hasNext(); ) {
-					Aircraft ac = i.next();
-					if (ac.getRange() < lf.getDistance())
+					Aircraft ac = i.next(); AircraftPolicyOptions opts = ac.getOptions(SystemData.get("airline.code"));
+					if (opts.getRange() < lf.getDistance())
 						i.remove();
 					else if (!p.hasRating(ac.getName()))
 						i.remove();
@@ -100,7 +100,8 @@ public class ReturnCharterCommand extends AbstractCommand {
 
 			// Validate the aircraft
 			Aircraft ac = acdao.get(ctx.getParameter("eqType"));
-			if ((ac == null) || (ac.getRange() < lf.getDistance())) {
+			AircraftPolicyOptions opts = (ac == null) ? null : ac.getOptions(SystemData.get("airline.code"));
+			if ((ac == null) || (opts == null) || (opts.getRange() < lf.getDistance())) {
 				ctx.setAttribute("eqType", ac, REQUEST);
 				ctx.setAttribute("rangeWarning", Boolean.TRUE, REQUEST);
 				ctx.release();

@@ -35,7 +35,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle editing/saving Flight Reports.
  * @author Luke
- * @version 8.6
+ * @version 8.7
  * @since 1.0
  */
 
@@ -151,8 +151,9 @@ public class PIREPCommand extends AbstractFormCommand {
 			GetAircraft acdao = new GetAircraft(con);
 			Aircraft aInfo = acdao.get(fr.getEquipmentType());
 			if (aInfo != null) {
+				AircraftPolicyOptions opts = aInfo.getOptions(SystemData.get("airline.code"));
 				fr.setAttribute(FlightReport.ATTR_HISTORIC, aInfo.getHistoric());
-				fr.setAttribute(FlightReport.ATTR_RANGEWARN, (fr.getDistance() > aInfo.getRange()));
+				fr.setAttribute(FlightReport.ATTR_RANGEWARN, (fr.getDistance() > opts.getRange()));
 				
 				// Check for excessive weight
 				if (fr instanceof ACARSFlightReport) {
@@ -167,7 +168,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				
 				// If the passengers are non-zero, update the count
 				if (fr.getPassengers() != 0) {
-					int newPax = (int) Math.round(aInfo.getSeats() * fr.getLoadFactor());
+					int newPax = (int) Math.round(opts.getSeats() * fr.getLoadFactor());
 					if (newPax != fr.getPassengers()) {
 						log.warn("Updated passengers for PIREP #" + fr.getID() + " from " + fr.getPassengers() + " to " + newPax);
 						fr.setPassengers(newPax);
@@ -474,7 +475,8 @@ public class PIREPCommand extends AbstractFormCommand {
 						ctx.setAttribute("acInfo", acInfo, REQUEST);
 					
 					// Get the flight score
-					ScorePackage pkg = new ScorePackage(acInfo, afr, info.getRunwayD(), info.getRunwayA());
+					AircraftPolicyOptions opts = (acInfo == null) ? null : acInfo.getOptions(SystemData.get("airline.code"));
+					ScorePackage pkg = new ScorePackage(acInfo, afr, info.getRunwayD(), info.getRunwayA(), opts);
 					if (afr.hasAttribute(FlightReport.ATTR_CHECKRIDE) && (afr.getFDR() != Recorder.XACARS)) {
 						GetACARSPositions posdao = new GetACARSPositions(con);
 						Collection<GeospaceLocation> positions = posdao.getRouteEntries(info.getID(), true, info.getArchived());

@@ -32,14 +32,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to process simFDR submitted Flight Reports.
  * @author Luke
- * @version 8.6
+ * @version 8.7
  * @since 7.0
  */
 
 public class FlightSubmitService extends SimFDRService {
 	
 	private static final Logger log = Logger.getLogger(FlightSubmitService.class);
-	
 	private static final Cache<CacheableMap<String, MapRouteEntry>> _simFDRFlightCache = CacheManager.getMap(String.class, MapRouteEntry.class, "simFDRFlightID");
 
 	/**
@@ -107,6 +106,7 @@ public class FlightSubmitService extends SimFDRService {
 			}
 			
 			// Check if this Flight Report counts for promotion
+			AircraftPolicyOptions opts = a.getOptions(SystemData.get("airline.code"));
 			fr.setEquipmentType(a.getName()); ofr.getInfo().setEquipmentType(a.getName());
 			GetEquipmentType eqdao = new GetEquipmentType(con);
 			Collection<String> promoEQ = eqdao.getPrimaryTypes(SystemData.get("airline.db"), fr.getEquipmentType());
@@ -168,7 +168,7 @@ public class FlightSubmitService extends SimFDRService {
 				fr.setAttribute(FlightReport.ATTR_NOTRATED, !fr.hasAttribute(FlightReport.ATTR_CHECKRIDE));
 			
 			// Check for excessive distance
-			if (fr.getDistance() > a.getRange())
+			if (fr.getDistance() > opts.getRange())
 				fr.setAttribute(FlightReport.ATTR_RANGEWARN, true);
 
 			// Check for excessive weight
@@ -179,7 +179,7 @@ public class FlightSubmitService extends SimFDRService {
 			
 			// Check ETOPS
 			ETOPSResult etopsClass = ETOPSHelper.classify(ofr.getPositions()); 
-			fr.setAttribute(FlightReport.ATTR_ETOPSWARN, ETOPSHelper.validate(a, etopsClass.getResult()));
+			fr.setAttribute(FlightReport.ATTR_ETOPSWARN, ETOPSHelper.validate(opts, etopsClass.getResult()));
 			if (fr.hasAttribute(FlightReport.ATTR_ETOPSWARN))
 				comments.add("ETOPS classificataion: " + String.valueOf(etopsClass));
 			
@@ -195,7 +195,7 @@ public class FlightSubmitService extends SimFDRService {
 			if (eInfo != null) {
 				LoadFactor lf = new LoadFactor(eInfo);
 				double loadFactor = lf.generate(fr.getSubmittedOn());
-				fr.setPassengers((int) Math.round(a.getSeats() * loadFactor));
+				fr.setPassengers((int) Math.round(opts.getSeats() * loadFactor));
 				fr.setLoadFactor(loadFactor);
 			}
 			
@@ -247,9 +247,9 @@ public class FlightSubmitService extends SimFDRService {
 			if (r != null) {
 				int dist = r.distanceFeet(fr.getTakeoffLocation());
 				rD = new RunwayDistance(r, dist);
-				if (r.getLength() < a.getTakeoffRunwayLength())
+				if (r.getLength() < opts.getTakeoffRunwayLength())
 					fr.setAttribute(FlightReport.ATTR_RWYWARN, true);
-				if (!r.getSurface().isHard() && !a.getUseSoftRunways())
+				if (!r.getSurface().isHard() && !opts.getUseSoftRunways())
 					fr.setAttribute(FlightReport.ATTR_RWYSFCWARN, true);
 			}
 
@@ -260,9 +260,9 @@ public class FlightSubmitService extends SimFDRService {
 			if (r != null) {
 				int dist = r.distanceFeet(fr.getLandingLocation());
 				rA = new RunwayDistance(r, dist);
-				if (r.getLength() < a.getLandingRunwayLength())
+				if (r.getLength() < opts.getLandingRunwayLength())
 					fr.setAttribute(FlightReport.ATTR_RWYWARN, true);
-				if (!r.getSurface().isHard() && !a.getUseSoftRunways())
+				if (!r.getSurface().isHard() && !opts.getUseSoftRunways())
 					fr.setAttribute(FlightReport.ATTR_RWYSFCWARN, true);
 			}
 			
