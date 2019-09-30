@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * The XACARS Flight Information Web Service.
  * @author Luke
- * @version 8.6
+ * @version 8.7
  * @since 4.1
  */
 
@@ -100,9 +100,10 @@ public class XInfoService extends XAService {
 				// Get load factor and passengers
 				EconomyInfo eInfo = (EconomyInfo) SystemData.getObject(SystemData.ECON_DATA);
 				if (eInfo != null) {
+					AircraftPolicyOptions opts = a.getOptions(SystemData.get("airline.code"));
 					LoadFactor lf = new LoadFactor(eInfo);
 					double loadFactor = lf.generate();
-					fr.setPassengers((int) Math.round(a.getSeats() * loadFactor));
+					fr.setPassengers((int) Math.round(opts.getSeats() * loadFactor));
 					fr.setLoadFactor(loadFactor);
 				}
 			}

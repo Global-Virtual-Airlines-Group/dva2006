@@ -42,23 +42,23 @@
 </tr>
 <tr>
  <td class="label">Maximum Range</td>
- <td class="data"><fmt:distance value="${aircraft.range}" longUnits="true" className="pri bld" /></td>
+ <td class="data"><fmt:distance value="${opts.range}" longUnits="true" className="pri bld" /></td>
 </tr>
-<c:if test="${aircraft.takeoffRunwayLength > 0}">
+<c:if test="${opts.takeoffRunwayLength > 0}">
 <tr>
  <td class="label">Minimum Takeoff Runway Length</td>
- <td class="data"><fmt:int value="${aircraft.takeoffRunwayLength}" /> feet</td>
+ <td class="data"><fmt:int value="${opts.takeoffRunwayLength}" /> feet</td>
 </tr>
 </c:if>
-<c:if test="${aircraft.landingRunwayLength > 0}">
+<c:if test="${opts.landingRunwayLength > 0}">
 <tr>
  <td class="label">Minimum Landing Runway Length</td>
- <td class="data"><fmt:int value="${aircraft.landingRunwayLength}" /> feet</td>
+ <td class="data"><fmt:int value="${opts.landingRunwayLength}" /> feet</td>
 </tr>
 </c:if>
 <tr>
  <td class="label">Passenger Capacity</td>
- <td class="data"><fmt:int value="${aircraft.seats}" /> seats</td>
+ <td class="data"><fmt:int value="${opts.seats}" /> seats</td>
 </tr>
 <c:if test="${!empty aircraft.IATA}">
 <tr>
@@ -66,13 +66,13 @@
  <td class="data"><fmt:list value="${aircraft.IATA}" delim=", " /></td>
 </tr>
 </c:if>
-<c:if test="${aircraft.historic || aircraft.ETOPS || aircraft.useSoftRunways}">
+<c:if test="${aircraft.historic || isETOPS || opts.useSoftRunways}">
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data"><c:if test="${aircraft.historic}"><span class="sec bld caps">This is a Historic Aircraft</span>
-<c:if test="${aircraft.ETOPS || aircraft.useSoftRunways}"><br /></c:if></c:if>
-<c:if test="${aircraft.ETOPS}"><span class="ter bld caps">This Aircraft is ETOPS-rated</span>
-<c:if test="${aircraft.useSoftRunways}"><span class="bld caps">This Aircraft is authroized for soft runway operation</span></c:if></c:if></td>
+<c:if test="${aircraft.ETOPS || opts.useSoftRunways}"><br /></c:if></c:if>
+<c:if test="${isETOPS}"><span class="ter bld caps">This Aircraft is ETOPS-rated (${opts.ETOPS})</span>
+<c:if test="${opts.useSoftRunways}"><span class="bld caps">This Aircraft is authroized for soft runway operation</span></c:if></c:if></td>
 </tr>
 </c:if>
 <tr class="title caps">

@@ -4,8 +4,8 @@ package org.deltava.dao;
 import java.sql.*;
 import java.util.*;
 
+import org.deltava.beans.flight.ETOPS;
 import org.deltava.beans.schedule.*;
-import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.util.cache.*;
 import org.deltava.util.StringUtils;
@@ -133,30 +133,24 @@ public class GetAircraft extends DAO {
 				Aircraft a = new Aircraft(rs.getString(1));
 				a.setFullName(rs.getString(2));
 				a.setFamily(rs.getString(3));
-				a.setRange(rs.getInt(4));
-				a.setIATA(StringUtils.split(rs.getString(5), ","));
-				a.setICAO(rs.getString(6));
-				a.setHistoric(rs.getBoolean(7));
-				a.setETOPS(rs.getBoolean(8));
-				a.setSeats(rs.getInt(9));
-				a.setEngines(rs.getByte(10));
-				a.setEngineType(rs.getString(11));
-				a.setCruiseSpeed(rs.getInt(12));
-				a.setFuelFlow(rs.getInt(13));
-				a.setBaseFuel(rs.getInt(14));
-				a.setTaxiFuel(rs.getInt(15));
-				a.setTanks(TankType.PRIMARY, rs.getInt(16));
-				a.setPct(TankType.PRIMARY, rs.getInt(17));
-				a.setTanks(TankType.SECONDARY, rs.getInt(18));
-				a.setPct(TankType.SECONDARY, rs.getInt(19));
-				a.setTanks(TankType.OTHER, rs.getInt(20));
-				a.setMaxWeight(rs.getInt(21));
-				a.setMaxTakeoffWeight(rs.getInt(22));
-				a.setMaxLandingWeight(rs.getInt(23));
-				a.setMaxZeroFuelWeight(rs.getInt(24));
-				a.setTakeoffRunwayLength(rs.getInt(25));
-				a.setLandingRunwayLength(rs.getInt(26));
-				a.setUseSoftRunways(rs.getBoolean(27));
+				a.setIATA(StringUtils.split(rs.getString(4), ","));
+				a.setICAO(rs.getString(5));
+				a.setHistoric(rs.getBoolean(6));
+				a.setEngines(rs.getByte(7));
+				a.setEngineType(rs.getString(8));
+				a.setCruiseSpeed(rs.getInt(9));
+				a.setFuelFlow(rs.getInt(10));
+				a.setBaseFuel(rs.getInt(11));
+				a.setTaxiFuel(rs.getInt(12));
+				a.setTanks(TankType.PRIMARY, rs.getInt(13));
+				a.setPct(TankType.PRIMARY, rs.getInt(14));
+				a.setTanks(TankType.SECONDARY, rs.getInt(15));
+				a.setPct(TankType.SECONDARY, rs.getInt(16));
+				a.setTanks(TankType.OTHER, rs.getInt(17));
+				a.setMaxWeight(rs.getInt(18));
+				a.setMaxTakeoffWeight(rs.getInt(19));
+				a.setMaxLandingWeight(rs.getInt(20));
+				a.setMaxZeroFuelWeight(rs.getInt(21));
 				results.put(a.getName(), a);
 			}
 		}
@@ -167,11 +161,16 @@ public class GetAircraft extends DAO {
 		prepareStatementWithoutLimits("SELECT * FROM common.AIRCRAFT_AIRLINE");
 		try (ResultSet rs = _ps.executeQuery()) {
 			while (rs.next()) {
-				String alCode = rs.getString(2);
 				Aircraft a = results.get(rs.getString(1));
-				AirlineInformation al = SystemData.getApp(alCode);
-				if ((al != null) && (a != null))
-					a.addApp(al);
+				if (a == null) continue;
+				AircraftPolicyOptions opts = new AircraftPolicyOptions(a.getName(), rs.getString(2));
+				opts.setRange(rs.getInt(3));
+				opts.setETOPS(ETOPS.fromCode(rs.getInt(4)));
+				opts.setSeats(rs.getInt(5));
+				opts.setTakeoffRunwayLength(rs.getInt(6));
+				opts.setLandingRunwayLength(rs.getInt(7));
+				opts.setUseSoftRunways(rs.getBoolean(8));
+				a.addApp(opts);
 			}
 		}
 

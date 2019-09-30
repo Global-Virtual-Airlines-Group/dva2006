@@ -1,4 +1,4 @@
-// Copyright 2012, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2015, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
  * A helper class to calculate diversion airports. Airports are given a score based on maximum
  * runway length in excess of minimums and distance from the destination.
  * @author Luke
- * @version 8.0
+ * @version 8.7
  * @since 4.2
  */
 
@@ -22,13 +22,19 @@ public class AlternateAirportHelper {
 	
 	// Optimum distance from destination in miles
 	private static final int MIN_DEST_DELTA = 55;
+	
+	private final String _appCode;
 
-	// static class
-	private AlternateAirportHelper() {
+	/**
+	 * Creates the helper
+	 * @param appCode the virtual airline code
+	 */
+	public AlternateAirportHelper(String appCode) {
 		super();
+		_appCode = appCode;
 	}
 	
-	private static class Score implements Comparable<Score> {
+	private class Score implements Comparable<Score> {
 		private final int _distance;
 		private final int _airlineScore;
 		private final int _aggScore;
@@ -62,7 +68,7 @@ public class AlternateAirportHelper {
 	 * @param dst the destination Airport (or current position)
 	 * @return a List of Airports, sorted by distance from the destination
 	 */
-	public static List<Airport> calculateAlternates(Aircraft ac, GeoLocation dst) {
+	public List<Airport> calculateAlternates(Aircraft ac, GeoLocation dst) {
 		
 		int maxDistance = ac.getCruiseSpeed() * 3 / 4;
 		TreeSet<Airport> airports = new TreeSet<Airport>(new GeoComparator(dst));
@@ -70,11 +76,12 @@ public class AlternateAirportHelper {
 		String dstCode = (dst instanceof ICAOAirport) ? ((ICAOAirport) dst).getICAO() : null;
 		
 		// Filter airports
+		AircraftPolicyOptions opts = ac.getOptions(_appCode);
 		Map<Score, Airport> results = new TreeMap<Score, Airport>(Collections.reverseOrder());
 		for (Airport ap : airports) {
 			int airlines = ap.getAirlineCodes().size();
 			int distance = ap.getPosition().distanceTo(dst);
-			int rwyDelta = (ap.getMaximumRunwayLength() - ac.getTakeoffRunwayLength());
+			int rwyDelta = (ap.getMaximumRunwayLength() - opts.getTakeoffRunwayLength());
 			if ((distance > maxDistance) && (results.size() > 2))
 				break;
 			if ((rwyDelta < 0) || (ap.getICAO().equals(dstCode)))

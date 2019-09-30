@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to build a Flight Assignment from a multi-leg route.
  * @author Luke
- * @version 8.6
+ * @version 8.7
  * @since 4.1
  */
 
@@ -63,6 +63,7 @@ public class RouteAssignmentSearchCommand extends AbstractCommand {
 			Collection<RoutePair> rts = rph.getShortestPath(rp);
 			
 			// Load the flights
+			String airlineCode = SystemData.get("airline.code");
 			Map<Airport, Collection<ScheduleEntry>> results = new LinkedHashMap<Airport, Collection<ScheduleEntry>>(); int totalDistance = 0;
 			for (RoutePair rtp : rts) {
 				totalDistance += rtp.getDistance();
@@ -73,7 +74,12 @@ public class RouteAssignmentSearchCommand extends AbstractCommand {
 				ssc.setLeg(0);
 				ssc.setExcludeHistoric(allowHistoric);
 				ssc.setCheckDispatchRoutes(true);
-				myEQTypes.removeIf(a -> (a.getRange() > 0) && ((rtp.getDistance() + 250) > a.getRange()));
+				for (Iterator<Aircraft> i = myEQTypes.iterator(); i.hasNext(); ) {
+					Aircraft a = i.next();
+					AircraftPolicyOptions opts = a.getOptions(airlineCode);
+					if ((opts.getRange() > 0) && ((rtp.getDistance() + 250) > opts.getRange()))
+						i.remove();
+				}
 				
 				Collection<ScheduleEntry> entries = sdao.search(ssc);
 				Collection<ScheduleEntry> filteredEntries = entries.stream().filter(se -> filter(se, rp.getType())).collect(Collectors.toList());

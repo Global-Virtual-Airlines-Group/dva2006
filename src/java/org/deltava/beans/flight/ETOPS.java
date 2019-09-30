@@ -1,14 +1,16 @@
-// Copyright 2011, 2012, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
+
+import org.deltava.beans.ComboAlias;
 
 /**
  * An enumeration of ETOPS classifications. 
  * @author Luke
- * @version 8.5
+ * @version 8.7
  * @since 4.1
  */
 
-public enum ETOPS {
+public enum ETOPS implements ComboAlias {
 	ETOPS60(60), ETOPS75(75), ETOPS90(90), ETOPS120(120), ETOPS138(138), ETOPS180(180), ETOPS207(207), ETOPS240(240), ETOPS330(330), INVALID(-1);
 	
 	// ETOPS rule speed - 389kts
@@ -50,5 +52,24 @@ public enum ETOPS {
 		}
 		
 		return INVALID;
+	}
+	
+	/**
+	 * Mechanism to calculate value from ordinal while using -1 for invalid.
+	 * @param code the ETOPS ordinal, or -1 for invalid
+	 * @return an ETOPS
+	 */
+	public static ETOPS fromCode(int code) {
+		return (code < 0) ? INVALID : values()[code];
+	}
+
+	@Override
+	public String getComboAlias() {
+		return String.valueOf(_time);
+	}
+
+	@Override
+	public String getComboName() {
+		return name();
 	}
 }

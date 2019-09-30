@@ -22,12 +22,9 @@ public class Aircraft implements Comparable<Aircraft>, Auditable, Cacheable, Vie
 	private String _name;
 	private String _fullName;
 	private boolean _historic;
-	private boolean _etops;
-	private boolean _useSoftRunway;
 	
 	private String _family;
 
-	private int _maxRange;
 	private byte _engineCount;
 	private String _engineType;
 	private int _cruiseSpeed;
@@ -40,18 +37,13 @@ public class Aircraft implements Comparable<Aircraft>, Auditable, Cacheable, Vie
 	private int _maxTakeoffWeight;
 	private int _maxLandingWeight;
 	
-	private int _seats;
-	
-	private int _toRunwayLength;
-	private int _lndRunwayLength;
-	
 	// Fuel Tank loading codes and percentages
 	private int[] _tankCodes = { 0, 0, 0 };
 	private int[] _tankPct = { 0, 0, 0 };
 
 	private String _icao;
 	private final Collection<String> _iataCodes = new TreeSet<String>();
-	private final Collection<AirlineInformation> _airlines = new HashSet<AirlineInformation>();
+	private final Map<String, AircraftPolicyOptions> _airlineInfo = new HashMap<String, AircraftPolicyOptions>();
 
 	/**
 	 * Initializes the bean.
@@ -82,15 +74,6 @@ public class Aircraft implements Comparable<Aircraft>, Auditable, Cacheable, Vie
 	}
 
 	/**
-	 * Returns the maximum range of the aircraft.
-	 * @return the range in miles
-	 * @see Aircraft#setRange(int)
-	 */
-	public int getRange() {
-		return _maxRange;
-	}
-	
-	/**
 	 * Returns the aircraft's ICAO equipmnet code.
 	 * @return the ICAO equipment code
 	 * @see Aircraft#setICAO(String)
@@ -116,24 +99,6 @@ public class Aircraft implements Comparable<Aircraft>, Auditable, Cacheable, Vie
 	 */
 	public boolean getHistoric() {
 		return _historic;
-	}
-	
-	/**
-	 * Returns whether this aircraft can use soft runways.
-	 * @return TRUE if soft runways available, otherwise FALSE
-	 * @see Aircraft#setUseSoftRunways(boolean)
-	 */
-	public boolean getUseSoftRunways() {
-		return _useSoftRunway;
-	}
-	
-	/**
-	 * Returns whether the aircraft is ETOPS-qualified.
-	 * @return TRUE if this is ETOPS-rated, otherwise FALSE
-	 * @see Aircraft#setETOPS(boolean)
-	 */
-	public boolean getETOPS() {
-		return (_etops && (_engineCount == 2));
 	}
 	
 	/**
@@ -200,58 +165,34 @@ public class Aircraft implements Comparable<Aircraft>, Auditable, Cacheable, Vie
 	}
 	
 	/**
-	 * Returns the number of seats on the aircraft.
-	 * @return the number of seats
-	 * @see Aircraft#setSeats(int)
-	 */
-	public int getSeats() {
-		return _seats;
-	}
-	
-	/**
-	 * Returns the Aircraft's minimum takeoff runway length.
-	 * @return the runway length in feet
-	 * @see Aircraft#setTakeoffRunwayLength(int)
-	 */
-	public int getTakeoffRunwayLength() {
-		return _toRunwayLength;
-	}
-	
-	/**
-	 * Returns the Aircraft's minimum landing runway length.
-	 * @return the runway length in feet
-	 * @see Aircraft#setLandingRunwayLength(int)
-	 */
-	public int getLandingRunwayLength() {
-		return _lndRunwayLength;
-	}
-
-	/**
 	 * Returns all web applications using this aircraft type.
 	 * @return a Collection of AirlineInformation beans
 	 * @see Aircraft#isUsed(String)
-	 * @see Aircraft#addApp(AirlineInformation)
+	 * @see Aircraft#addApp(AircraftPolicyOptions)
 	 * @see AirlineInformation
 	 */
-	public Collection<AirlineInformation> getApps() {
-		return new LinkedHashSet<AirlineInformation>(_airlines);
+	public Collection<String> getApps() {
+		return _airlineInfo.keySet();
 	}
-
+	
+	/**
+	 * Returns policy options for this Aircraft for a specific virtual airline.
+	 * @param appCode the virtual airline code
+	 * @return an AircraftPolicyOptions bean, or null if airline not found
+	 */
+	public AircraftPolicyOptions getOptions(String appCode) {
+		return _airlineInfo.get(appCode);
+	}
+	
 	/**
 	 * Returns whether a particular web application uses this aircraft type.
 	 * @param code the web application airline code
 	 * @return TRUE if the aircraft is used by this web application, otherwise FALSE
 	 * @see Aircraft#getApps()
-	 * @see Aircraft#addApp(AirlineInformation)
+	 * @see Aircraft#addApp(AircraftPolicyOptions)
 	 */
 	public boolean isUsed(String code) {
-		for (Iterator<AirlineInformation> i = _airlines.iterator(); i.hasNext();) {
-			AirlineInformation ai = i.next();
-			if (ai.getCode().equalsIgnoreCase(code))
-				return true;
-		}
-
-		return false;
+		return _airlineInfo.containsKey(code.toUpperCase().trim());
 	}
 
 	/**
@@ -348,20 +289,21 @@ public class Aircraft implements Comparable<Aircraft>, Auditable, Cacheable, Vie
 	
 	/**
 	 * Marks this aircraft type as used by a particular web application.
-	 * @param ai the AirlineInformation bean
+	 * @param opts the AirlinePolicyOptions bean
 	 * @see Aircraft#isUsed(String)
 	 * @see Aircraft#getApps()
-	 * @see AirlineInformation
+	 * @see AircraftPolicyOptions
 	 */
-	public void addApp(AirlineInformation ai) {
-		_airlines.add(ai);
+	public void addApp(AircraftPolicyOptions opts) {
+		_airlineInfo.put(opts.getCode(), opts);
 	}
 
 	/**
-	 * Clears the web applications used with this aircraft type.
+	 * Removes a web application from this aircraft type.
+	 * @param appCode the virtual airline code
 	 */
-	public void clearApps() {
-		_airlines.clear();
+	public void removeApp(String appCode) {
+		_airlineInfo.remove(appCode);
 	}
 
 	/**
@@ -393,15 +335,6 @@ public class Aircraft implements Comparable<Aircraft>, Auditable, Cacheable, Vie
 	public void setFamily(String family) {
 		_family = family.toUpperCase();
 	}
-	
-	/**
-	 * Updates the maximum range of the aircraft.
-	 * @param range the range in miles
-	 * @see Aircraft#getRange()
-	 */
-	public void setRange(int range) {
-		_maxRange = Math.max(0, range);
-	}
 
 	/**
 	 * Updates whether this aircraft is a Historic type.
@@ -410,23 +343,6 @@ public class Aircraft implements Comparable<Aircraft>, Auditable, Cacheable, Vie
 	 */
 	public void setHistoric(boolean isHistoric) {
 		_historic = isHistoric;
-	}
-	
-	/**
-	 * Updates whether this aircraft can use soft runways.
-	 * @param sr TRUE if soft runways available, otherwise FALSE
-	 * @see Aircraft#getUseSoftRunways()
-	 */
-	public void setUseSoftRunways(boolean sr) {
-		_useSoftRunway = sr;
-	}
-	
-	/**
-	 * Updates whether this aircraft is ETOPS-rated.
-	 * @param isETOPS TRUE if ETOPS-rated, otherwise FALSE
-	 */
-	public void setETOPS(boolean isETOPS) {
-		_etops = isETOPS;
 	}
 	
 	/**
@@ -465,24 +381,6 @@ public class Aircraft implements Comparable<Aircraft>, Auditable, Cacheable, Vie
 		_maxLandingWeight = Math.min(_maxWeight, Math.max(0, weight));
 	}
 
-	/**
-	 * Updates the minimum takeoff runway length of the Aircraft.
-	 * @param len the runway length in feet
-	 * @see Aircraft#getTakeoffRunwayLength()
-	 */
-	public void setTakeoffRunwayLength(int len) {
-		_toRunwayLength = Math.max(0, len);
-	}
-	
-	/**
-	 * Updates the minimum landing runway length of the Aircraft.
-	 * @param len the runway length in feet
-	 * @see Aircraft#getLandingRunwayLength()
-	 */
-	public void setLandingRunwayLength(int len) {
-		_lndRunwayLength = Math.max(0, len);
-	}
-	
 	/**
 	 * Updates the aircraft's ICAO code.
 	 * @param code the ICAO code
@@ -576,21 +474,12 @@ public class Aircraft implements Comparable<Aircraft>, Auditable, Cacheable, Vie
 	}
 	
 	/**
-	 * Updates the number of seats on the aircraft.
-	 * @param seats the number of seats
-	 * @see Aircraft#getSeats()
-	 */
-	public void setSeats(int seats) {
-		_seats = Math.max(0, seats);
-	}
-
-	/**
 	 * Updates the tank usage percentage for a particular fuel tank type.
 	 * @param tt the TankType
 	 * @param pct the percentage required to be filled before filling the next tank type
 	 * @throws IllegalArgumentException if tankType is invalid
 	 * @see Aircraft#getPct(TankType)
-	 */
+	 */	
 	public void setPct(TankType tt, int pct) {
 		_tankPct[tt.ordinal()] = Math.min(100, Math.max(0, pct));
 	}
@@ -628,7 +517,7 @@ public class Aircraft implements Comparable<Aircraft>, Auditable, Cacheable, Vie
 				_tankCodes[tt.ordinal()] |= (1 << t.code());
 		}
 	}
-
+	
 	@Override
 	public int compareTo(Aircraft a2) {
 		return _name.compareTo(a2._name);

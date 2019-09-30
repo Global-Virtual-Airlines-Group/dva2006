@@ -1,4 +1,4 @@
-// Copyright 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Serivce to export the Flight Schedule in PFPX format. 
  * @author Luke
- * @version 7.2
+ * @version 8.7
  * @since 6.1
  */
 
@@ -93,6 +93,7 @@ public class PFPXScheduleService extends DownloadService {
 			Aircraft ac = acInfo.get(se.getEquipmentType());
 			if (ac == null) continue;
 			
+			AircraftPolicyOptions opts = ac.getOptions(SystemData.get("airline.code"));
 			Element fe = new Element("FLIGHT");
 			fe.addContent(XMLUtils.createElement("Airline", se.getAirline().getCode()));
 			fe.addContent(XMLUtils.createElement("FlightNumber", String.valueOf(se.getFlightNumber())));
@@ -103,7 +104,7 @@ public class PFPXScheduleService extends DownloadService {
 			fe.addContent(XMLUtils.createElement("MLW", String.valueOf(ac.getMaxLandingWeight())));
 			fe.addContent(XMLUtils.createElement("STD", StringUtils.format(se.getTimeD(), "MM/dd/yyyy HH:mm")));
 			fe.addContent(XMLUtils.createElement("STA", StringUtils.format(se.getTimeA(), "MM/dd/yyyy HH:mm")));
-			fe.addContent(XMLUtils.createElement("MaxPax", String.valueOf(ac.getSeats())));
+			fe.addContent(XMLUtils.createElement("MaxPax", String.valueOf(opts.getSeats())));
 			fe.addContent(XMLUtils.createElement("MaxCargo", "-1"));
 			fe.addContent(XMLUtils.createElement("Type", "1"));
 			fe.addContent(XMLUtils.createElement("Repetative", "1"));

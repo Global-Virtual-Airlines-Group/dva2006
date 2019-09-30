@@ -91,7 +91,7 @@ public class LoadPassengerCounts extends TestCase {
 
 			// Calculate passengers/load factor
 			double loadFactor = lf.generate(rs.getTimestamp(2).toInstant());
-			int pax = (int) Math.round(a.getSeats() * loadFactor);
+			int pax = (int) Math.round(a.getOptions(SystemData.get("airline.code")).getSeats() * loadFactor);
 			
 			// Update
 			ps2.setInt(1, pax);

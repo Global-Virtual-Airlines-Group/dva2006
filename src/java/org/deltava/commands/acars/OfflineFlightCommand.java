@@ -32,7 +32,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to allow users to submit Offline Flight Reports.
  * @author Luke
- * @version 8.6
+ * @version 8.7
  * @since 2.4
  */
 
@@ -288,13 +288,14 @@ public class OfflineFlightCommand extends AbstractCommand {
 				throw notFoundException("Invalid equipment type - " + afr.getEquipmentType());
 			
 			// Check if the user is rated to fly the aircraft
+			AircraftPolicyOptions opts = a.getOptions(SystemData.get("airline.code"));
 			afr.setAttribute(FlightReport.ATTR_HISTORIC, a.getHistoric());
 			EquipmentType eq = eqdao.get(p.getEquipmentType());
 			if (!p.getRatings().contains(afr.getEquipmentType()) && !eq.getRatings().contains(afr.getEquipmentType()))
 				afr.setAttribute(FlightReport.ATTR_NOTRATED, !afr.hasAttribute(FlightReport.ATTR_CHECKRIDE));
 
 			// Check for excessive distance and diversion
-			afr.setAttribute(FlightReport.ATTR_RANGEWARN, (afr.getDistance() > a.getRange()));
+			afr.setAttribute(FlightReport.ATTR_RANGEWARN, (afr.getDistance() > opts.getRange()));
 			afr.setAttribute(FlightReport.ATTR_DIVERT, !afr.getAirportA().equals(inf.getAirportA()));
 
 			// Check for excessive weight
@@ -308,7 +309,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 			if (eInfo != null) {
 				LoadFactor lf = new LoadFactor(eInfo);
 				double loadFactor = lf.generate(afr.getSubmittedOn());
-				afr.setPassengers((int) Math.round(a.getSeats() * loadFactor));
+				afr.setPassengers((int) Math.round(opts.getSeats() * loadFactor));
 				afr.setLoadFactor(loadFactor);
 			}
 			
@@ -339,7 +340,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 			
 			// Check ETOPS
 			ETOPSResult etopsClass = ETOPSHelper.classify(positions); 
-			afr.setAttribute(FlightReport.ATTR_ETOPSWARN, ETOPSHelper.validate(a, etopsClass.getResult()));
+			afr.setAttribute(FlightReport.ATTR_ETOPSWARN, ETOPSHelper.validate(opts, etopsClass.getResult()));
 			if (afr.hasAttribute(FlightReport.ATTR_ETOPSWARN))
 				comments.add("ETOPS classificataion: " + etopsClass);
 			
@@ -392,8 +393,8 @@ public class OfflineFlightCommand extends AbstractCommand {
 				if (r != null) {
 					int dist = r.distanceFeet(afr.getTakeoffLocation());
 					rD = new RunwayDistance(r, dist);
-					afr.setAttribute(FlightReport.ATTR_RWYWARN, (r.getLength() < a.getTakeoffRunwayLength()));
-					afr.setAttribute(FlightReport.ATTR_RWYSFCWARN, (!r.getSurface().isHard() && !a.getUseSoftRunways()));
+					afr.setAttribute(FlightReport.ATTR_RWYWARN, (r.getLength() < opts.getTakeoffRunwayLength()));
+					afr.setAttribute(FlightReport.ATTR_RWYSFCWARN, (!r.getSurface().isHard() && !opts.getUseSoftRunways()));
 				}
 			}
 
@@ -405,8 +406,8 @@ public class OfflineFlightCommand extends AbstractCommand {
 				if (r != null) {
 					int dist = r.distanceFeet(afr.getLandingLocation());
 					rA = new RunwayDistance(r, dist);
-					afr.setAttribute(FlightReport.ATTR_RWYWARN, (r.getLength() < a.getLandingRunwayLength()));
-					afr.setAttribute(FlightReport.ATTR_RWYSFCWARN, (!r.getSurface().isHard() && !a.getUseSoftRunways()));
+					afr.setAttribute(FlightReport.ATTR_RWYWARN, (r.getLength() < opts.getLandingRunwayLength()));
+					afr.setAttribute(FlightReport.ATTR_RWYSFCWARN, (!r.getSurface().isHard() && !opts.getUseSoftRunways()));
 				}
 			}
 			

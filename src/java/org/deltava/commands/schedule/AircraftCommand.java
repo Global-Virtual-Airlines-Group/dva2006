@@ -5,6 +5,7 @@ import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.AuditLog;
+import org.deltava.beans.flight.ETOPS;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.commands.*;
@@ -61,7 +62,6 @@ public class AircraftCommand extends AbstractAuditFormCommand {
 			// Update the aircraft from the request
 			a.setFullName(ctx.getParameter("fullName"));
 			a.setFamily(ctx.getParameter("family"));
-			a.setRange(StringUtils.parse(ctx.getParameter("range"), 0));
 			a.setMaxWeight(StringUtils.parse(ctx.getParameter("maxWeight"), 0));
 			a.setMaxZeroFuelWeight(StringUtils.parse(ctx.getParameter("maxZFW"), 0));
 			a.setMaxTakeoffWeight(StringUtils.parse(ctx.getParameter("maxTWeight"), 0));
@@ -69,11 +69,6 @@ public class AircraftCommand extends AbstractAuditFormCommand {
 			a.setIATA(StringUtils.split(ctx.getParameter("iataCodes"), "\n"));
 			a.setICAO(ctx.getParameter("icao"));
 			a.setHistoric(Boolean.valueOf(ctx.getParameter("isHistoric")).booleanValue());
-			a.setETOPS(Boolean.valueOf(ctx.getParameter("isETOPS")).booleanValue());
-			a.setUseSoftRunways(Boolean.valueOf(ctx.getParameter("useSoftRwy")).booleanValue());
-			a.setSeats(StringUtils.parse(ctx.getParameter("seats"), 0));
-			a.setTakeoffRunwayLength(StringUtils.parse(ctx.getParameter("toRunwayLength"), 0));
-			a.setLandingRunwayLength(StringUtils.parse(ctx.getParameter("lndRunwayLength"), 0));
 			a.setEngines((byte) StringUtils.parse(ctx.getParameter("engineCount"), 2));
 			a.setEngineType(ctx.getParameter("engineType"));
 			a.setCruiseSpeed(StringUtils.parse(ctx.getParameter("cruiseSpeed"), 0));
@@ -87,12 +82,18 @@ public class AircraftCommand extends AbstractAuditFormCommand {
 			a.setTanks(TankType.OTHER, ctx.getParameters("oTanks"));
 			
 			// Update the web applications
-			a.clearApps();
-			Collection<String> apps = ctx.getParameters("airlines");
-			if (apps != null) {
-				for (Iterator<String> i = apps.iterator(); i.hasNext(); )
-					a.addApp(SystemData.getApp(i.next()));
-			}
+			boolean useWithApp = Boolean.valueOf(ctx.getParameter("useAircraft")).booleanValue();
+			if (useWithApp) {
+				AircraftPolicyOptions opts = new AircraftPolicyOptions(a.getName(), SystemData.get("airline.code"));
+				opts.setRange(StringUtils.parse(ctx.getParameter("range"), 0));
+				opts.setETOPS(ETOPS.fromCode(StringUtils.parse(ctx.getParameter("isETOPS"), 0)));
+				opts.setUseSoftRunways(Boolean.valueOf(ctx.getParameter("useSoftRwy")).booleanValue());
+				opts.setSeats(StringUtils.parse(ctx.getParameter("seats"), 0));
+				opts.setTakeoffRunwayLength(StringUtils.parse(ctx.getParameter("toRunwayLength"), 0));
+				opts.setLandingRunwayLength(StringUtils.parse(ctx.getParameter("lndRunwayLength"), 0));
+				a.addApp(opts);
+			} else
+				a.removeApp(SystemData.get("airline.code"));
 			
 			// Check audit log
 			Collection<BeanUtils.PropertyChange> delta = BeanUtils.getDelta(oa, a);
@@ -153,6 +154,7 @@ public class AircraftCommand extends AbstractAuditFormCommand {
 				readAuditLog(ctx, a);
 				
 				ctx.setAttribute("aircraft", a, REQUEST);
+				ctx.setAttribute("opts", a.getOptions(SystemData.get("airline.code")), REQUEST);
 				ctx.setAttribute("iataCodes", StringUtils.listConcat(a.getIATA(), "\n"), REQUEST);
 			} catch (DAOException de) {
 				throw new CommandException(de);
@@ -189,7 +191,10 @@ public class AircraftCommand extends AbstractAuditFormCommand {
 
 			// Save request variables
 			readAuditLog(ctx, a);
+			AircraftPolicyOptions opts = a.getOptions(SystemData.get("airline.code"));
 			ctx.setAttribute("aircraft", a, REQUEST);
+			ctx.setAttribute("opts", opts, REQUEST);
+			ctx.setAttribute("isETOPS", Boolean.valueOf(opts.getETOPS() != ETOPS.INVALID), REQUEST);
 			ctx.setAttribute("access", ac, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
