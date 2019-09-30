@@ -7,7 +7,7 @@
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <html lang="en">
 <head>
-<title><content:airline /> Schedule - Aircraft</title>
+<title><content:airline /> Aircraft Profiles</title>
 <content:css name="main" />
 <content:css name="view" />
 <content:js name="common" />
@@ -20,6 +20,7 @@
 <content:page>
 <%@ include file="/jsp/schedule/header.jspf" %> 
 <%@ include file="/jsp/schedule/sideMenu.jspf" %>
+<content:sysdata var="appCode" name="airline.code" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -29,7 +30,7 @@
 <tr class="title">
  <td style="width:15%">AIRCRAFT NAME</td>
  <td class="nophone" style="width:20%">IATA CODE(S)</td>
- <td class="nophone" style="width:8%">&nbsp;</td>
+ <td class="nophone" style="width:8%">ETOPS</td>
  <td class="nophone" style="width:10%">WEIGHT</td>
  <td style="width:10%">RANGE</td>
  <td class="nophone" style="width:10%">SEATS</td>
@@ -40,19 +41,20 @@
 <!-- Table Aircraft Data -->
 <c:forEach var="aircraft" items="${viewContext.results}">
 <c:set var="access" value="${accessMap[aircraft]}" scope="page" />
+<c:set var="opts" value="${aircraft.getOptions(appCode)}" scope="page" />
 <view:row entry="${aircraft}">
 <c:set var="opName" value="${access.canEdit ? 'edit' : null}" scope="page" />
  <td><el:cmd url="aircraft" linkID="${aircraft.name}" op="${opName}" className="pri bld">${aircraft.name}</el:cmd></td>
  <td class="nophone"><fmt:list value="${aircraft.IATA}" delim=", " /></td>
- <td class="small pri bld nophone">${aircraft.ETOPS ? 'ETOPS' : '&nbsp;'}</td>
+ <td class="small pri bld nophone">${(opts.ETOPS.time > 0) ? opts.ETOPS : '&nbsp;'}</td>
 <c:if test="${aircraft.maxWeight > 0}">
  <td class="small sec bld nophone">OK</td>
 </c:if>
 <c:if test="${aircraft.maxWeight == 0}">
  <td class="small nophone">N / A</td>
 </c:if>
- <td class="pri bld"><fmt:distance value="${aircraft.range}" /></td>
- <td class="nophone"><fmt:int value="${aircraft.seats}" /></td>
+ <td class="pri bld"><fmt:distance value="${opts.range}" /></td>
+ <td class="nophone"><fmt:int value="${opts.seats}" /></td>
  <td colspan="2" class="sec"><fmt:list value="${aircraft.apps}" delim=", " /></td>
 </view:row>
 </c:forEach>

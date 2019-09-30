@@ -1,4 +1,4 @@
-// Copyright 2012, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import org.deltava.beans.Helper;
@@ -9,7 +9,7 @@ import org.deltava.beans.stats.LandingStatistics;
 /**
  * A utility class to grade flights.
  * @author Luke
- * @version 8.1
+ * @version 8.7
  * @since 5.1
  */
 
@@ -89,9 +89,9 @@ public class FlightScorer {
 			fs = FlightScore.max(fs, FlightScore.DANGEROUS);
 		else if (fr.getGateFuel() < pkg.getAircraft().getBaseFuel())
 			fs = FlightScore.max(fs, FlightScore.DANGEROUS);
-		else if ((pkg.getRunwayD() != null) && (pkg.getRunwayD().getLength() < pkg.getAircraft().getTakeoffRunwayLength()))
+		else if ((pkg.getRunwayD() != null) && (pkg.getRunwayD().getLength() < pkg.getOptions().getTakeoffRunwayLength()))
 			fs = FlightScore.max(fs, FlightScore.DANGEROUS);
-		else if ((pkg.getRunwayA() != null) && (pkg.getRunwayA().getLength() < pkg.getAircraft().getLandingRunwayLength()))
+		else if ((pkg.getRunwayA() != null) && (pkg.getRunwayA().getLength() < pkg.getOptions().getLandingRunwayLength()))
 			fs = FlightScore.max(fs, FlightScore.DANGEROUS);
 		
 		FlightScore es = FlightScore.OPTIMAL;

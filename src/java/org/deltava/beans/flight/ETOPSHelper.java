@@ -14,7 +14,7 @@ import org.deltava.util.GeoUtils;
 /**
  * A utility class to do ETOPS validation.
  * @author Luke
- * @version 8.6
+ * @version 8.7
  * @since 4.1
  */
 
@@ -22,7 +22,6 @@ import org.deltava.util.GeoUtils;
 public final class ETOPSHelper {
 
 	private static final List<Airport> _airports = new ArrayList<Airport>();
-	private static final Aircraft DUMMY = new Aircraft("ETOPS") {{ setEngines((byte) 2); }};
 	
 	private static class WarningPoint extends NavigationDataBean {
 		
@@ -99,25 +98,21 @@ public final class ETOPSHelper {
 	 */
 	public static synchronized void init(Collection<Airport> airports) {
 		_airports.clear();
-		Collection<Airport> apSet = new HashSet<Airport>(airports);
-		_airports.addAll(apSet);
+		_airports.addAll(new HashSet<Airport>(airports));
 	}
 
 	/**
 	 * Validates whether an ETOPS classification should trigger an ETOPS warning.
-	 * @param ap the Aircraft used, or null for a generic 2-engine aircraft
+	 * @param opts the AircraftPolicyOptions used
 	 * @param e the ETOPS classification
 	 * @return TRUE if an ETOPS warning should be triggered, otherwise FALSE
 	 * @throws NullPointerException if rp is null
 	 */
-	public static boolean validate(Aircraft ap, ETOPS e) {
-		Aircraft a =  (ap == null) ? DUMMY : ap;
+	public static boolean validate(AircraftPolicyOptions opts, ETOPS e) {
 
 		// Check if aircraft is ETOPS or >2 engines
 		int maxTime = 90;
-		if (a.getName().startsWith("B727-"))
-			maxTime = 120;
-		else if (a.getETOPS() || (a.getEngines() > 2))
+		if ((opts != null) && (opts.getETOPS() == ETOPS.INVALID))
 			return false;
 		else if (e == null)
 			return true;

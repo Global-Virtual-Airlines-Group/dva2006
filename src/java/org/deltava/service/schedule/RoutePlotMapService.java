@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display plotted flight routes with SID/STAR/Airway data.
  * @author Luke
- * @version 8.6
+ * @version 8.7
  * @since 1.0
  */
 
@@ -197,7 +197,8 @@ public class RoutePlotMapService extends MapPlotService {
 				tRoutes.addAll(stars);
 				
 				if (a != null) {
-					alternates.addAll(AlternateAirportHelper.calculateAlternates(a, dr.getAirportA()));
+					AlternateAirportHelper hlp = new AlternateAirportHelper(SystemData.get("airline.code"));
+					alternates.addAll(hlp.calculateAlternates(a, dr.getAirportA()));
 					if (alternates.size() > 10)
 						alternates.subList(10, alternates.size()).clear();
 				}
@@ -251,7 +252,8 @@ public class RoutePlotMapService extends MapPlotService {
 		jo.put("etops", eo);
 		eo.put("rating", er.getResult().toString());
 		eo.put("time", er.getResult().getTime());
-		if (req.optBoolean("etopsCheck", true) && ETOPSHelper.validate(a, er.getResult())) {
+		AircraftPolicyOptions opts = (a == null) ? null : a.getOptions(SystemData.get("airline.code"));
+		if (req.optBoolean("etopsCheck", true) && ETOPSHelper.validate(opts, er.getResult())) {
 			ETOPS erng = (a != null) && (a.getEngines() == 3) ? ETOPS.ETOPS120 : ETOPS.ETOPS90;
 			eo.put("range", erng.getRange());
 			eo.put("warning", true);
@@ -320,7 +322,7 @@ public class RoutePlotMapService extends MapPlotService {
 		
 		// Add runways
 		for (Runway r : runways) {
-			if  ((a != null) && (a.getTakeoffRunwayLength() > r.getLength())) continue;
+			if  ((opts != null) && (opts.getTakeoffRunwayLength() > r.getLength())) continue;
 			JSONObject ro = new JSONObject();
 			ro.put("code", r.getComboAlias());
 			ro.put("useCount", (r instanceof UseCount) ? ((UseCount) r).getUseCount() : 0);

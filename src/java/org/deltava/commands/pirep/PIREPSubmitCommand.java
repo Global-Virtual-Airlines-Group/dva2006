@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -26,7 +26,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Fligt Report submissions.
  * @author Luke
- * @version 8.1
+ * @version 8.7
  * @since 1.0
  */
 
@@ -160,7 +160,8 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			// Check the range
 			GetAircraft acdao = new GetAircraft(con);
 			Aircraft a = acdao.get(pirep.getEquipmentType());
-			if (pirep.getDistance() > a.getRange()) {
+			AircraftPolicyOptions opts = a.getOptions(SystemData.get("airline.code"));
+			if (pirep.getDistance() > opts.getRange()) {
 				pirep.setAttribute(FlightReport.ATTR_RANGEWARN, true);
 				ctx.setAttribute("rangeWarning", Boolean.TRUE, REQUEST);
 			}
@@ -168,7 +169,7 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			// Check ETOPS
 			Collection<GeoLocation> gc = GeoUtils.greatCircle(pirep.getAirportD(), pirep.getAirportA(), 25);
 			ETOPSResult er = ETOPSHelper.classify(gc);
-			pirep.setAttribute(FlightReport.ATTR_ETOPSWARN, ETOPSHelper.validate(a, er.getResult()));
+			pirep.setAttribute(FlightReport.ATTR_ETOPSWARN, ETOPSHelper.validate(opts, er.getResult()));
 			if (pirep.hasAttribute(FlightReport.ATTR_ETOPSWARN))
 				comments.add("ETOPS classificataion: " + String.valueOf(er));
 			
@@ -177,7 +178,7 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			if (eInfo != null) {
 				LoadFactor lf = new LoadFactor(eInfo);
 				double loadFactor = lf.generate(pirep.getSubmittedOn());
-				pirep.setPassengers((int) Math.round(a.getSeats() * loadFactor));
+				pirep.setPassengers((int) Math.round(opts.getSeats() * loadFactor));
 				pirep.setLoadFactor(loadFactor);
 			}
 
