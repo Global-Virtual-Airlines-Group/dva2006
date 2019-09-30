@@ -40,12 +40,18 @@ golgotha.local.validate = function(f) {
 	return true;
 };
 
+golgotha.local.showETOPS = function() {
+	const eCount = parseInt(document.forms[0].engineCount.value);
+	const r = document.getElementById('etopsRow');
+	golgotha.util.display(r, (eCount == 2));
+};
+
 golgotha.local.useAircraft = function(isUsed) {
 	const rows = golgotha.util.getElementsByClass('aircraftOpts', 'tr');
 	rows.forEach(function(r) { golgotha.util.display(r, isUsed); });
 };
 
-golgotha.onDOMReady(function() { golgotha.local.useAircraft(${!empty opts}); });
+golgotha.onDOMReady(function() { golgotha.local.useAircraft(${!empty opts}); golgotha.local.showETOPS(); });
 </script>
 </head>
 <content:copyright visible="false" />
@@ -111,7 +117,7 @@ golgotha.onDOMReady(function() { golgotha.local.useAircraft(${!empty opts}); });
  <td class="label">Minimum Landing Runway Length</td>
  <td class="data"><el:text name="lndRunwayLength" idx="*" required="true" size="4" max="5" value="${opts.landingRunwayLength}" /> feet</td>
 </tr>
-<tr class="aircraftOpts">
+<tr class="aircraftOpts" id="etopsRow">
  <td class="label">ETOPS Rating</td>
  <td class="data"><el:combo name="etops" idx="*" required="true" size="1" options="${etopsRatings}" value="${opts.ETOPS}" /></td>
 </tr>
@@ -143,7 +149,7 @@ golgotha.onDOMReady(function() { golgotha.local.useAircraft(${!empty opts}); });
 </tr>
 <tr>
  <td class="label">Engine Information</td>
- <td class="data"><el:text name="engineCount" idx="*" size="1" max="1" value="${aircraft.engines}" className="bld" required="true" />
+ <td class="data"><el:text name="engineCount" idx="*" size="1" max="1" value="${aircraft.engines}" className="bld" required="true" onChange="void golgotha.local.showETOPS(this)" />
  x <el:text name="engineType" idx="*" size="16" max="32" value="${aircraft.engineType}" required="true" /></td>
 </tr>
 <tr>

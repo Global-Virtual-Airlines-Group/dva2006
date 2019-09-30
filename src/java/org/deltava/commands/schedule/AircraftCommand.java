@@ -86,7 +86,7 @@ public class AircraftCommand extends AbstractAuditFormCommand {
 			if (useWithApp) {
 				AircraftPolicyOptions opts = new AircraftPolicyOptions(a.getName(), SystemData.get("airline.code"));
 				opts.setRange(StringUtils.parse(ctx.getParameter("range"), 0));
-				opts.setETOPS(ETOPS.fromCode(StringUtils.parse(ctx.getParameter("isETOPS"), 0)));
+				opts.setETOPS((a.getEngines() == 2) ? ETOPS.values()[StringUtils.parse(ctx.getParameter("etops"), ETOPS.INVALID.ordinal())] : ETOPS.INVALID);
 				opts.setUseSoftRunways(Boolean.valueOf(ctx.getParameter("useSoftRwy")).booleanValue());
 				opts.setSeats(StringUtils.parse(ctx.getParameter("seats"), 0));
 				opts.setTakeoffRunwayLength(StringUtils.parse(ctx.getParameter("toRunwayLength"), 0));
