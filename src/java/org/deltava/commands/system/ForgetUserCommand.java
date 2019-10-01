@@ -1,4 +1,4 @@
-// Copyright 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.security.command.PilotAccessControl;
 /**
  * A Web Site Command to mark a Pilot as "forgotten" for GDPR purposes. 
  * @author Luke
- * @version 8.3
+ * @version 8.7
  * @since 8.3
  */
 
@@ -47,14 +47,14 @@ public class ForgetUserCommand extends AbstractCommand {
 			Collection<StatusUpdate> upds = new ArrayList<StatusUpdate>();
 			if ((p.getStatus() == Pilot.ACTIVE) || (p.getStatus() == Pilot.ON_LEAVE)) {
 				p.setStatus(Pilot.RETIRED);
-				StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.STATUS_CHANGE);
+				StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.STATUS_CHANGE);
 				upd.setAuthorID(ctx.getUser().getID());
 				upd.setDescription("Pilot Retired");
 				upds.add(upd);
 			}
 			
 			// Write status update
-			StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.STATUS_CHANGE);
+			StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.STATUS_CHANGE);
 			upd.setAuthorID(ctx.getUser().getID());
 			upd.setDescription("User Forgotten");
 			upds.add(upd);

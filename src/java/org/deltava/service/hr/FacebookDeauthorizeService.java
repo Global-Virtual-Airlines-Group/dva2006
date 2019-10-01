@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.hr;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -28,7 +28,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to handle Facecbook deauthorization requests.
  * @author Luke
- * @version 3.4
+ * @version 8.7
  * @since 3.4
  */
 
@@ -93,7 +93,7 @@ public class FacebookDeauthorizeService extends WebService {
 				p.setIMHandle(IMAddress.FBTOKEN, null);
 				
 				// Create status update bean
-				StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.EXT_AUTH);
+				StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.EXT_AUTH);
 				upd.setDescription("Facebook Deauthorize Callback");
 				upd.setAuthorID(p.getID());
 				

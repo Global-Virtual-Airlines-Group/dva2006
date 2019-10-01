@@ -33,7 +33,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Flight Report status changes.
  * @author Luke
- * @version 8.6
+ * @version 8.7
  * @since 1.0
  */
 
@@ -175,7 +175,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 					Accomplishment a = i.next();
 					if (acchelper.has(a) != AccomplishmentHistoryHelper.Result.NOTYET) {
 						acwdao.achieve(p.getID(), a, Instant.now());
-						StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.RECOGNITION);
+						StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.RECOGNITION);
 						upd.setAuthorID(ctx.getUser().getID());
 						upd.setDescription("Joined " + a.getName());
 						upds.add(upd);
@@ -273,7 +273,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 				ctx.setAttribute("assignID", Boolean.TRUE, REQUEST);
 
 				// Create status update
-				StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.STATUS_CHANGE);
+				StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.STATUS_CHANGE);
 				upd.setAuthorID(ctx.getUser().getID());
 				upd.setDescription("Assigned Pilot ID " + p.getPilotCode());
 				upds.add(upd);

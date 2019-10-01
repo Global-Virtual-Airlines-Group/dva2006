@@ -1,4 +1,4 @@
-// Copyright 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -17,14 +17,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to display daily promotions in the Water Cooler. 
  * @author Luke
- * @version 7.0
+ * @version 8.7
  * @since 3.6
  */
 
 public class PromotionListTask extends Task {
 	
-	private static final List<Integer> UPD_TYPES = Arrays.asList(Integer.valueOf(StatusUpdate.CERT_ADD), Integer.valueOf(StatusUpdate.RECOGNITION), 
-			Integer.valueOf(StatusUpdate.EXTPROMOTION), Integer.valueOf(StatusUpdate.INTPROMOTION));
+	private static final List<UpdateType> UPD_TYPES = List.of(UpdateType.CERT_ADD, UpdateType.RECOGNITION, UpdateType.EXTPROMOTION, UpdateType.INTPROMOTION);
 
 	/**
 	 * Initializes the Task.
@@ -58,10 +57,8 @@ public class PromotionListTask extends Task {
 			// Load the updates
 			GetStatusUpdate sudao = new GetStatusUpdate(con);
 			Collection<StatusUpdate> upds = new ArrayList<StatusUpdate>();
-			for (Iterator<Integer> i = UPD_TYPES.iterator(); i.hasNext(); ) {
-				int updType = i.next().intValue();
+			for (UpdateType updType : UPD_TYPES)
 				upds.addAll(sudao.getByType(updType, SystemData.getInt("cooler.promotion.maxAge", 24)));
-			}
 			
 			// Create the message
 			log.info("Recording " + upds.size() + " Pilot Recognition entries in Forum");

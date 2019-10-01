@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2015, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2015, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to merge two pilot profiles.
  * @author Luke
- * @version 8.2
+ * @version 8.7
  * @since 1.0
  */
 
@@ -102,7 +102,7 @@ public class DuplicatePilotMergeCommand extends AbstractCommand {
 
 				// Create a status update
 				if (p.getID() != usr.getID()) {
-					StatusUpdate su = new StatusUpdate(p.getID(), StatusUpdate.STATUS_CHANGE);
+					StatusUpdate su = new StatusUpdate(p.getID(), UpdateType.STATUS_CHANGE);
 					su.setAuthorID(ctx.getUser().getID());
 					su.setDescription("Merged into " + usr.getName() + " (" + usr.getPilotCode() + ")");
 					sUpdates.add(su);
@@ -111,7 +111,7 @@ public class DuplicatePilotMergeCommand extends AbstractCommand {
 					if (mergeFlights) {
 						int flightsMerged = mgdao.mergeFlights(p, usr);
 						if (flightsMerged > 0) {
-							su = new StatusUpdate(usr.getID(), StatusUpdate.COMMENT);
+							su = new StatusUpdate(usr.getID(), UpdateType.COMMENT);
 							su.setAuthorID(ctx.getUser().getID());
 							su.setDescription("Merged " + flightsMerged + " Flights from " + p.getName() + " (" + p.getPilotCode() + ")");
 							sUpdates.add(su);
@@ -122,7 +122,7 @@ public class DuplicatePilotMergeCommand extends AbstractCommand {
 					if (mergeExams) {
 						int examsMerged = mgdao.mergeExams(p, usr);
 						if (examsMerged > 0) {
-							su = new StatusUpdate(usr.getID(), StatusUpdate.COMMENT);
+							su = new StatusUpdate(usr.getID(), UpdateType.COMMENT);
 							su.setAuthorID(ctx.getUser().getID());
 							su.setDescription("Merged " + examsMerged + " Examinations from " + p.getName() + " (" + p.getPilotCode() + ")");
 							sUpdates.add(su);
@@ -133,7 +133,7 @@ public class DuplicatePilotMergeCommand extends AbstractCommand {
 					if (mergeCRs) {
 						int ridesMerged = mgdao.mergeCheckRides(p, usr);
 						if (ridesMerged > 0) {
-							su = new StatusUpdate(usr.getID(), StatusUpdate.COMMENT);
+							su = new StatusUpdate(usr.getID(), UpdateType.COMMENT);
 							su.setAuthorID(ctx.getUser().getID());
 							su.setDescription("Merged " + ridesMerged + " Check Rides from " + p.getName() + " (" + p.getPilotCode() + ")");
 							sUpdates.add(su);
@@ -144,7 +144,7 @@ public class DuplicatePilotMergeCommand extends AbstractCommand {
 					if (mergeFA) {
 						int coursesMerged = mgdao.mergeCourses(p, usr);
 						if (coursesMerged > 0) {
-							su = new StatusUpdate(usr.getID(), StatusUpdate.COMMENT);
+							su = new StatusUpdate(usr.getID(), UpdateType.COMMENT);
 							su.setAuthorID(ctx.getUser().getID());
 							su.setDescription("Merged " + coursesMerged + " Flight Academy Courses from " + p.getName() + " (" + p.getPilotCode() + ")");
 							sUpdates.add(su);
@@ -171,7 +171,7 @@ public class DuplicatePilotMergeCommand extends AbstractCommand {
 			}
 			
 			// Create a status update listing source users
-			StatusUpdate su = new StatusUpdate(usr.getID(), StatusUpdate.STATUS_CHANGE);
+			StatusUpdate su = new StatusUpdate(usr.getID(), UpdateType.STATUS_CHANGE);
 			su.setAuthorID(ctx.getUser().getID());
 			su.setDescription(StringUtils.listConcat(oldNames, ", ") + " merged");
 			sUpdates.add(su);

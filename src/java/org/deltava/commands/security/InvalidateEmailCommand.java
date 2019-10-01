@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2014, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.sql.Connection;
@@ -14,7 +14,7 @@ import org.deltava.security.AddressValidationHelper;
 /**
  * A Web Site Command to invalidate a user's e-mail address.
  * @author Luke
- * @version 5.2
+ * @version 8.7
  * @since 1.0
  */
 
@@ -48,7 +48,7 @@ public class InvalidateEmailCommand extends AbstractCommand {
             addrValid.setInvalid(true);
             
             // Create the status entry
-            StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.COMMENT);
+            StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.COMMENT);
             upd.setAuthorID(ctx.getUser().getID());
             upd.setDescription("E-Mail Address Invalidated");
             

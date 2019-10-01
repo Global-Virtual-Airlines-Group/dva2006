@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2013, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2013, 2014, 2015, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.main;
 
 import java.util.*;
@@ -23,7 +23,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to display the home page.
  * @author Luke
- * @version 7.0
+ * @version 8.7
  * @since 1.0
  */
 
@@ -163,10 +163,10 @@ public class HomeCommand extends AbstractCommand {
 					sudao.setQueryMax(5);
 					Collection<StatusUpdate> upds = null;
 					if (contentType == DynContent.CENTURY_CLUB) {
-						upds = sudao.getByType(StatusUpdate.RECOGNITION);
+						upds = sudao.getByType(UpdateType.RECOGNITION);
 						ctx.setAttribute("centuryClub", upds, REQUEST);
 					} else {
-						upds = sudao.getByType(StatusUpdate.EXTPROMOTION);
+						upds = sudao.getByType(UpdateType.EXTPROMOTION);
 						ctx.setAttribute("promotions", upds, REQUEST);
 					}
 					

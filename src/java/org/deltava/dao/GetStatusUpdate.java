@@ -1,15 +1,15 @@
-// Copyright 2005, 2006, 2007, 2008, 2011, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 
-import org.deltava.beans.StatusUpdate;
+import org.deltava.beans.*;
 
 /**
  * A Data Access Object to read Status Update log entries.
  * @author Luke
- * @version 7.4
+ * @version 8.7
  * @since 1.0
  */
 
@@ -52,13 +52,13 @@ public class GetStatusUpdate extends DAO {
 	 * @param id the Pilot's database ID
 	 * @return TRUE if the Pilot has a StatusUpdate entry promoting to Senior Captain, otherwise FALSE
 	 * @throws DAOException if a JDBC error occurs
-	 * @see StatusUpdate#SR_CAPTAIN
+	 * @see UpdateType#SR_CAPTAIN
 	 */
 	public boolean isSeniorCaptain(int id) throws DAOException {
 		try {
 			prepareStatement("SELECT COUNT(*) FROM STATUS_UPDATES WHERE (PILOT_ID=?) AND (TYPE=?)");
 			_ps.setInt(1, id);
-			_ps.setInt(2, StatusUpdate.SR_CAPTAIN);
+			_ps.setInt(2, UpdateType.SR_CAPTAIN.ordinal());
 			
 			// Execute the Query
 			boolean isSC = false;
@@ -80,7 +80,7 @@ public class GetStatusUpdate extends DAO {
 	 * @return a List of StatusUpdate beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<StatusUpdate> getByType(int updateType) throws DAOException {
+	public List<StatusUpdate> getByType(UpdateType updateType) throws DAOException {
 		return getByType(updateType, 0);
 	}
 	
@@ -91,7 +91,7 @@ public class GetStatusUpdate extends DAO {
 	 * @return a List of StatusUpdate beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<StatusUpdate> getByType(int updateType, int maxHours) throws DAOException {
+	public List<StatusUpdate> getByType(UpdateType updateType, int maxHours) throws DAOException {
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM STATUS_UPDATES WHERE (TYPE=?)");
@@ -101,7 +101,7 @@ public class GetStatusUpdate extends DAO {
 		
 		try {
 			prepareStatement(sqlBuf.toString());
-			_ps.setInt(1, updateType);
+			_ps.setInt(1, updateType.ordinal());
 			if (maxHours > 0)
 				_ps.setInt(2, maxHours);
 			
@@ -118,7 +118,7 @@ public class GetStatusUpdate extends DAO {
 		List<StatusUpdate> results = new ArrayList<StatusUpdate>();
 		try (ResultSet rs = _ps.executeQuery()) {
 			while (rs.next()) {
-				StatusUpdate upd = new StatusUpdate(rs.getInt(1), rs.getInt(4));
+				StatusUpdate upd = new StatusUpdate(rs.getInt(1), UpdateType.values()[rs.getInt(4)]);
 				upd.setDate(rs.getTimestamp(2).toInstant());
 				upd.setAuthorID(rs.getInt(3));
 				upd.setDescription(rs.getString(5));

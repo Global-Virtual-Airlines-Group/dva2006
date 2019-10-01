@@ -1,4 +1,4 @@
-// Copyright 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to display Suspended users.
  * @author Luke
- * @version 7.0
+ * @version 8.7
  * @since 2.2
  */
 
@@ -44,7 +44,7 @@ public class SuspendedUserListCommand extends AbstractViewCommand {
 			// Load the status updates
 			Map<Integer, StatusUpdate> updates = new HashMap<Integer, StatusUpdate>();
 			GetStatusUpdate sudao = new GetStatusUpdate(con);
-			Collection<StatusUpdate> upds = sudao.getByType(StatusUpdate.SUSPENDED);
+			Collection<StatusUpdate> upds = sudao.getByType(UpdateType.SUSPENDED);
 			for (StatusUpdate upd : upds) {
 				Integer id = Integer.valueOf(upd.getID());
 				if (IDs.contains(id)) {
