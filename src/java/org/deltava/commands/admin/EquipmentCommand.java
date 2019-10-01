@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2013, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2013, 2015, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to edit Equipment Type profiles. 
  * @author Luke
- * @version 7.4
+ * @version 8.7
  * @since 1.0
  */
 
@@ -126,12 +126,7 @@ public class EquipmentCommand extends AbstractAuditFormCommand {
 			Collection<String> aCodes = ctx.getParameters("airline");
 			if (aCodes != null) {
 				Collection<AirlineInformation> airlines = new HashSet<AirlineInformation>();
-				for (Iterator<String> i = aCodes.iterator(); i.hasNext(); ) {
-					AirlineInformation ai = SystemData.getApp(i.next());
-					if (ai != null)
-						airlines.add(ai);
-				}
-				
+				aCodes.stream().map(code -> SystemData.getApp(code)).filter(Objects::nonNull).forEach(airlines::add);
 				eq.setAirlines(airlines);
 			}
 			
@@ -170,11 +165,10 @@ public class EquipmentCommand extends AbstractAuditFormCommand {
 				
 				// Add ratings to each pilot
 				SetPilot pwdao = new SetPilot(con);
-				for (Iterator<Pilot> i = pilots.iterator(); i.hasNext(); ) {
-					Pilot p = i.next();
+				for (Pilot p : pilots) {
 					Collection<String> addedRatings = CollectionUtils.getDelta(newRatings, p.getRatings());
 					if (!addedRatings.isEmpty()) {
-						StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.RATING_ADD);
+						StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.RATING_ADD);
 						upd.setAuthorID(ctx.getUser().getID());
 						upd.setDescription("Added " + StringUtils.listConcat(addedRatings, ", ") + " after Equipment Program update");
 						updates.add(upd);

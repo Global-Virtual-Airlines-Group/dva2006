@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2013, 2014, 2015, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2013, 2014, 2015, 2016, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.util.*;
@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to Authenticate users.
  * @author Luke
- * @version 8.3
+ * @version 8.7
  * @since 1.0
  */
 
@@ -241,7 +241,7 @@ public class LoginCommand extends AbstractCommand {
 
 			// Mark as returned from leave
 			if (returnToActive) {
-				StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.STATUS_CHANGE);
+				StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.STATUS_CHANGE);
 				upd.setAuthorID(p.getID());
 				upd.setDescription("Returned from Leave of Absence");
 				sudao.write(upd);

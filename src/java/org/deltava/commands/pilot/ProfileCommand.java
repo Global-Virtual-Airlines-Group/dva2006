@@ -33,7 +33,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to handle editing/saving Pilot Profiles.
  * @author Luke
- * @version 8.6
+ * @version 8.7
  * @since 1.0
  */
 
@@ -172,7 +172,7 @@ public class ProfileCommand extends AbstractFormCommand {
 				if (coolerPostsLocked != p.getNoCooler()) {
 					p.setNoCooler(coolerPostsLocked);
 					String forumName = SystemData.get("airline.forum");
-					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.COMMENT);
+					StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.COMMENT);
 					upd.setAuthorID(ctx.getUser().getID());
 					upd.setDescription(forumName + " posts " + (coolerPostsLocked ? "locked out" : "enabled"));
 					updates.add(upd);
@@ -183,7 +183,7 @@ public class ProfileCommand extends AbstractFormCommand {
 				boolean examsLocked = Boolean.valueOf(ctx.getParameter("noExams")).booleanValue();
 				if (examsLocked != p.getNoExams()) {
 					p.setNoExams(examsLocked);
-					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.COMMENT);
+					StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.COMMENT);
 					upd.setAuthorID(ctx.getUser().getID());
 					upd.setDescription(examsLocked ? "Testing Center locked out" : "Testing Center enabled");
 					updates.add(upd);
@@ -194,7 +194,7 @@ public class ProfileCommand extends AbstractFormCommand {
 				boolean voiceLocked = Boolean.valueOf(ctx.getParameter("noVoice")).booleanValue();
 				if (voiceLocked != p.getNoVoice()) {
 					p.setNoVoice(voiceLocked);
-					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.COMMENT);
+					StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.COMMENT);
 					upd.setAuthorID(ctx.getUser().getID());
 					upd.setDescription(examsLocked ? "Voice access locked out" : "Voice access enabled");
 					updates.add(upd);
@@ -205,7 +205,7 @@ public class ProfileCommand extends AbstractFormCommand {
 				Restriction newACARSRest = Restriction.valueOf(ctx.getParameter("ACARSrestrict"));
 				if (newACARSRest != p.getACARSRestriction()) {
 					p.setACARSRestriction(newACARSRest);
-					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.COMMENT);
+					StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.COMMENT);
 					upd.setAuthorID(ctx.getUser().getID());
 					upd.setDescription("ACARS restrictions set to " + p.getACARSRestriction().getName());
 					updates.add(upd);
@@ -216,7 +216,7 @@ public class ProfileCommand extends AbstractFormCommand {
 				boolean compressLocked = Boolean.valueOf(ctx.getParameter("noTimeCompress")).booleanValue();
 				if (compressLocked != p.getNoTimeCompression()) {
 					p.setNoTimeCompression(compressLocked);
-					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.COMMENT);
+					StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.COMMENT);
 					upd.setAuthorID(ctx.getUser().getID());
 					upd.setDescription(compressLocked ? "Time Compression locked out" : "Time Compression enabled");
 					updates.add(upd);
@@ -227,7 +227,7 @@ public class ProfileCommand extends AbstractFormCommand {
 				boolean newPermAccount = Boolean.valueOf(ctx.getParameter("permAccount")).booleanValue();
 				if (newPermAccount != p.getIsPermanent()) {
 					p.setIsPermanent(newPermAccount);
-					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.STATUS_CHANGE);
+					StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.STATUS_CHANGE);
 					upd.setAuthorID(ctx.getUser().getID());
 					upd.setDescription("Permanent account flag " + (newPermAccount ? "Set" : "Cleared"));
 					updates.add(upd);
@@ -280,11 +280,11 @@ public class ProfileCommand extends AbstractFormCommand {
 
 					// Write the status update
 					if (rcmp.compare() > 0) {
-						int promoType = StatusUpdate.INTPROMOTION;
+						UpdateType promoType = UpdateType.INTPROMOTION;
 						if (newSC)
-							promoType = StatusUpdate.SR_CAPTAIN;
+							promoType = UpdateType.SR_CAPTAIN;
 						else if (eqChange)
-							promoType = StatusUpdate.EXTPROMOTION;
+							promoType = UpdateType.EXTPROMOTION;
 
 						// Build the status update
 						StatusUpdate upd = new StatusUpdate(p.getID(), promoType);
@@ -292,7 +292,7 @@ public class ProfileCommand extends AbstractFormCommand {
 						upd.setDescription("Promoted to " + newRank + ", " + newEQ);
 						updates.add(upd);
 					} else {
-						StatusUpdate upd = new StatusUpdate(p.getID(), newSC ? StatusUpdate.SR_CAPTAIN : StatusUpdate.RANK_CHANGE);
+						StatusUpdate upd = new StatusUpdate(p.getID(), newSC ? UpdateType.SR_CAPTAIN : UpdateType.RANK_CHANGE);
 						upd.setAuthorID(ctx.getUser().getID());
 						upd.setDescription("Rank Changed to " + newRank + ", " + newEQ);
 						updates.add(upd);
@@ -309,7 +309,7 @@ public class ProfileCommand extends AbstractFormCommand {
 					p.addRatings(addedRatings);
 
 					// Note the changed ratings
-					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.RATING_ADD);
+					StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.RATING_ADD);
 					upd.setAuthorID(ctx.getUser().getID());
 					upd.setDescription("Ratings added: " + StringUtils.listConcat(addedRatings, ", "));
 					updates.add(upd);
@@ -323,7 +323,7 @@ public class ProfileCommand extends AbstractFormCommand {
 					p.removeRatings(removedRatings);
 
 					// Note the changed ratings
-					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.RATING_REMOVE);
+					StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.RATING_REMOVE);
 					upd.setAuthorID(ctx.getUser().getID());
 					upd.setDescription("Ratings removed: " + StringUtils.listConcat(removedRatings, ", "));
 					updates.add(upd);
@@ -348,7 +348,7 @@ public class ProfileCommand extends AbstractFormCommand {
 					p.addRoles(addedRoles);
 
 					// Note the changed roles
-					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.SECURITY_ADD);
+					StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.SECURITY_ADD);
 					upd.setAuthorID(ctx.getUser().getID());
 					upd.setDescription("Roles added: " + StringUtils.listConcat(addedRoles, ", "));
 					updates.add(upd);
@@ -361,7 +361,7 @@ public class ProfileCommand extends AbstractFormCommand {
 					p.removeRoles(removedRoles);
 
 					// Note the changed roles
-					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.SECURITY_REMOVE);
+					StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.SECURITY_REMOVE);
 					upd.setAuthorID(ctx.getUser().getID());
 					upd.setDescription("Roles removed: " + StringUtils.listConcat(removedRoles, ", "));
 					updates.add(upd);
@@ -408,7 +408,7 @@ public class ProfileCommand extends AbstractFormCommand {
 						}
 						
 						// Write status update
-						StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.COMMENT);
+						StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.COMMENT);
 						upd.setAuthorID(ctx.getUser().getID());
 						upd.setDescription("Approved Signature");
 						updates.add(upd);
@@ -442,7 +442,7 @@ public class ProfileCommand extends AbstractFormCommand {
 				// Update the staff profile table
 				SetStaff swdao = new SetStaff(con);
 				if (removeStaffProfile) {
-					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.COMMENT);
+					StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.COMMENT);
 					upd.setAuthorID(ctx.getUser().getID());
 					upd.setDescription("Staff Profile removed");
 					updates.add(upd);
@@ -498,7 +498,7 @@ public class ProfileCommand extends AbstractFormCommand {
 					String newDN = "cn=" + p2.getName() + ",o=" + SystemData.get("airline.code");
 
 					// Create the status update
-					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.STATUS_CHANGE);
+					StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.STATUS_CHANGE);
 					upd.setAuthorID(ctx.getUser().getID());
 					upd.setDescription("Renamed from " + p.getName() + " to " + p2.getName());
 					updates.add(upd);

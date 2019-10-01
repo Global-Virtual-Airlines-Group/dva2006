@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2015, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2015, 2016, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.sql.Connection;
@@ -19,7 +19,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to reactivate a Pilot.
  * @author Luke
- * @version 8.2
+ * @version 8.7
  * @since 1.0
  */
 
@@ -111,7 +111,7 @@ public class PilotActivationCommand extends AbstractCommand {
 			mctx.setTemplate(mtdao.get("USERACTIVATE"));
 
 			// Create the status update entry
-			StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.STATUS_CHANGE);
+			StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.STATUS_CHANGE);
 			upd.setAuthorID(ctx.getUser().getID());
 			upd.setDescription("Returned to Active status");
 

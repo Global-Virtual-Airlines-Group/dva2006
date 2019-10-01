@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to disable Users who have not logged in within a period of time.
  * @author Luke
- * @version 8.2
+ * @version 8.7
  * @since 1.0
  */
 
@@ -109,7 +109,7 @@ public class InactivityUpdateTask extends Task {
 						log.warn("Marking " + p.getName() + " Inactive after " + ip.getInterval() + " days");
 
 					// Create the StatusUpdate bean
-					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.STATUS_CHANGE);
+					StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.STATUS_CHANGE);
 					upd.setAuthorID(ctx.getUser().getID());
 					if (noWarn)
 						upd.setDescription("Marked Inactive due to no participation within " + inactiveDays + " days");
@@ -200,7 +200,7 @@ public class InactivityUpdateTask extends Task {
 					ctx.startTX();
 					
 					// Create the StatusUpdate bean
-					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.INACTIVITY);
+					StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.INACTIVITY);
 					upd.setAuthorID(ctx.getUser().getID());
 					upd.setDescription("Sent Reminder due to no logins within " + notifyDays + " days");
 					sudao.write(upd);

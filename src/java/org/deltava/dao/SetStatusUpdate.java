@@ -1,17 +1,17 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 
-import org.deltava.beans.StatusUpdate;
+import org.deltava.beans.*;
 
 import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to write status updates for a Pilot to the database.
  * @author Luke
- * @version 8.0
+ * @version 8.7
  * @since 1.0
  */
 
@@ -52,7 +52,7 @@ public class SetStatusUpdate extends DAO {
 			_ps.setInt(1, update.getID());
 			_ps.setInt(2, update.getAuthorID());
 			_ps.setTimestamp(3, createTimestamp(update.getDate()));
-			_ps.setInt(4, update.getType());
+			_ps.setInt(4, update.getType().ordinal());
 			_ps.setString(5, update.getDescription());
 			executeUpdate(1);
 		} catch (SQLException se) {
@@ -84,7 +84,7 @@ public class SetStatusUpdate extends DAO {
 				_ps.setInt(1, upd.getID());
 				_ps.setInt(2, upd.getAuthorID());
 				_ps.setTimestamp(3, createTimestamp(upd.getDate()));
-				_ps.setInt(4, upd.getType());
+				_ps.setInt(4, upd.getType().ordinal());
 				_ps.setString(5, upd.getDescription());
 				_ps.addBatch();
 			}
@@ -107,7 +107,7 @@ public class SetStatusUpdate extends DAO {
 		try {
 			prepareStatement("DELETE FROM STATUS_UPDATES WHERE (PILOT_ID=?) AND (TYPE=?) AND (CREATED > DATE_SUB(NOW(), INTERVAL 24 HOUR))");
 			_ps.setInt(1, id);
-			_ps.setInt(2, StatusUpdate.LOA);
+			_ps.setInt(2, UpdateType.LOA.ordinal());
 			executeUpdate(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);

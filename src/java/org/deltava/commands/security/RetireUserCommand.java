@@ -1,4 +1,4 @@
-// Copyright 2010, 2015, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2015, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.sql.Connection;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to retire a User. 
  * @author Luke
- * @version 8.2
+ * @version 8.7
  * @since 3.0
  */
 
@@ -50,7 +50,7 @@ public class RetireUserCommand extends AbstractCommand {
 			usr.setStatus(Pilot.RETIRED);
 			
 			// Log the change
-			StatusUpdate upd = new StatusUpdate(usr.getID(), StatusUpdate.STATUS_CHANGE);
+			StatusUpdate upd = new StatusUpdate(usr.getID(), UpdateType.STATUS_CHANGE);
 			upd.setAuthorID(ctx.getUser().getID());
 			upd.setDescription("User Retired");
 			

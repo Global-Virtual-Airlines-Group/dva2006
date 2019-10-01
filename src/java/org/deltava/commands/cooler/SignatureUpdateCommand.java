@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2011, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.io.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update a Pilot's Water Cooler signature image.
  * @author Luke
- * @version 4.0
+ * @version 8.7
  * @since 1.0
  */
 
@@ -103,7 +103,7 @@ public class SignatureUpdateCommand extends AbstractCommand {
 			// Write the data
 			SetSignatureImage wdao = new SetSignatureImage(con);
 			if (isAuth) {
-				StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.COMMENT);
+				StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.COMMENT);
 				upd.setAuthorID(ctx.getUser().getID());
 				upd.setDescription("Approved Signature");
 	

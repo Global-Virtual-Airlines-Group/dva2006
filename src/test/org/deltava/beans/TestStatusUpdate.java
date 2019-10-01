@@ -16,7 +16,7 @@ public class TestStatusUpdate extends AbstractBeanTestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		_upd = new StatusUpdate(1, StatusUpdate.INTPROMOTION);
+		_upd = new StatusUpdate(1, UpdateType.INTPROMOTION);
 		setBean(_upd);
 	}
 
@@ -28,8 +28,7 @@ public class TestStatusUpdate extends AbstractBeanTestCase {
 	
 	public void testProperties() {
 		assertEquals(1, _upd.getID());
-		assertEquals(StatusUpdate.INTPROMOTION, _upd.getType());
-		assertEquals(StatusUpdate.TYPES[StatusUpdate.INTPROMOTION], _upd.getTypeName());
+		assertEquals(UpdateType.INTPROMOTION, _upd.getType());
 		checkProperty("firstName", "John");
 		checkProperty("lastName", "Smith");
 		checkProperty("authorID", Integer.valueOf(1234));
@@ -47,7 +46,7 @@ public class TestStatusUpdate extends AbstractBeanTestCase {
 		Instant now = Instant.now();
 		_upd.setDate(now);
 		
-		StatusUpdate upd2 = new StatusUpdate(2, 1);
+		StatusUpdate upd2 = new StatusUpdate(2, UpdateType.INTPROMOTION);
 		upd2.setDate(now.plusMillis(5));
 		
 		assertTrue(_upd.compareTo(upd2) < 0);

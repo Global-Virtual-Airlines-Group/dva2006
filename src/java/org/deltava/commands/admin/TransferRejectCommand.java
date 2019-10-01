@@ -1,10 +1,9 @@
-// Copyright 2005, 2006, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2011, 2012, 2017 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.sql.Connection;
 
-import org.deltava.beans.Pilot;
-import org.deltava.beans.StatusUpdate;
+import org.deltava.beans.*;
 import org.deltava.beans.testing.*;
 import org.deltava.beans.hr.TransferRequest;
 
@@ -17,7 +16,7 @@ import org.deltava.security.command.TransferAccessControl;
 /**
  * A Web Site Command to reject Equipment Profile transfer requests.
  * @author Luke
- * @version 5.0
+ * @version 8.7
  * @since 1.0
  */
 
@@ -58,10 +57,9 @@ public class TransferRejectCommand extends AbstractCommand {
 				throw notFoundException("Invalid Pilot - " + txreq.getID());
 			
 			// Make a status update
-			StatusUpdate upd = new StatusUpdate(txreq.getID(), StatusUpdate.COMMENT);
+			StatusUpdate upd = new StatusUpdate(txreq.getID(), UpdateType.COMMENT);
 			upd.setAuthorID(ctx.getUser().getID());
-			upd.setDescription("Transfer Request to " + txreq.getEquipmentType() + " program Rejected after "
-					+ txreq.getCheckRideIDs().size() + " check rides");
+			upd.setDescription("Transfer Request to " + txreq.getEquipmentType() + " program Rejected after " + txreq.getCheckRideIDs().size() + " check rides");
 			
 			// Save the pilot for the message context
 			mctxt.addData("pilot", usr);
@@ -87,8 +85,6 @@ public class TransferRejectCommand extends AbstractCommand {
 			if ((cr != null) && (cr.getStatus() == TestStatus.NEW)) {
 			   SetExam exwdao = new SetExam(con);
 			   exwdao.delete(cr);
-			   
-			   // Set status attribute
 			   ctx.setAttribute("checkRideDelete", Boolean.TRUE, REQUEST);
 			}
 

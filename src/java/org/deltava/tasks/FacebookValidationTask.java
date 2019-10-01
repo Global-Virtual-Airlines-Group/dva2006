@@ -1,4 +1,4 @@
-// Copyright 2011, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -24,7 +24,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Scheduled Task to validate Facebook security tokens.
  * @author Luke
- * @version 7.4
+ * @version 8.7
  * @since 3.6
  */
 
@@ -126,7 +126,7 @@ public class FacebookValidationTask extends Task {
 				p.setIMHandle(IMAddress.FBTOKEN, null);
 				
 				// Create status update
-				StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.EXT_AUTH);
+				StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.EXT_AUTH);
 				upd.setAuthorID(ctx.getUser().getID());
 				upd.setDate(Instant.now());
 				upd.setDescription("Clearing Facebook Token after errors");

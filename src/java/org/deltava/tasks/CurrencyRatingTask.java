@@ -1,4 +1,4 @@
-// Copyright 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to update Pilot ratings based on currency Check Rides.
  * @author Luke
- * @version 8.0
+ * @version 8.7
  * @since 8.0
  */
 
@@ -81,7 +81,7 @@ public class CurrencyRatingTask extends Task {
 				Collection<StatusUpdate> upds = new ArrayList<StatusUpdate>();
 				if (newEQ.isEmpty()) {
 					p.setProficiencyCheckRides(false);
-					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.CURRENCY);
+					StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.CURRENCY);
 					upd.setAuthorID(ctx.getUser().getID());
 					upd.setDescription("Proficiency Check Rides disabled, no current ratings");
 					upds.add(upd);
@@ -99,12 +99,12 @@ public class CurrencyRatingTask extends Task {
 					log.info(p.getName() + " removed " + removedRatings + " ratings");
 					p.removeRatings(removedRatings);
 					
-					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.CURRENCY);
+					StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.CURRENCY);
 					upd.setAuthorID(ctx.getUser().getID());
 					upd.setDescription("Lost rating in " + myEQ.getName() + ", switching to " + newET.getName());
 					upds.add(upd);
 					
-					upd = new StatusUpdate(p.getID(), StatusUpdate.RATING_REMOVE);
+					upd = new StatusUpdate(p.getID(), UpdateType.RATING_REMOVE);
 					upd.setAuthorID(ctx.getUser().getID());
 					upd.setDescription("Ratings removed: " + StringUtils.listConcat(removedRatings, ", "));
 					upds.add(upd);
@@ -113,7 +113,7 @@ public class CurrencyRatingTask extends Task {
 					p.removeRatings(removedRatings);
 					log.info(p.getName() + " removed " + removedRatings + " ratings");
 					
-					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.RATING_REMOVE);
+					StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.RATING_REMOVE);
 					upd.setAuthorID(ctx.getUser().getID());
 					upd.setDescription("Ratings removed: " + StringUtils.listConcat(removedRatings, ", "));
 					upds.add(upd);

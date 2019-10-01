@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2015, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2015, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.sql.Connection;
@@ -19,7 +19,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to lock out a user.
  * @author Luke
- * @version 8.2
+ * @version 8.7
  * @since 1.0
  */
 
@@ -68,7 +68,7 @@ public class SuspendUserCommand extends AbstractCommand {
 			usr.setStatus(Pilot.SUSPENDED);
 			
 			// Log the change
-			StatusUpdate upd = new StatusUpdate(usr.getID(), StatusUpdate.SUSPENDED);
+			StatusUpdate upd = new StatusUpdate(usr.getID(), UpdateType.SUSPENDED);
 			upd.setAuthorID(ctx.getUser().getID());
 			upd.setDescription(ctx.getParameter("comment"));
 			
