@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to automatically purge old Transfer Requests.
  * @author Luke
- * @version 7.0
+ * @version 8.7
  * @since 1.0
  */
 
@@ -54,15 +54,13 @@ public class TransferPurgeTask extends Task {
 			SetExam exwdao = new SetExam(con);
 			SetStatusUpdate swdao = new SetStatusUpdate(con);
 			SetTransferRequest txwdao = new SetTransferRequest(con);
-			for (Iterator<TransferRequest> i = oldTX.iterator(); i.hasNext(); ) {
-				TransferRequest tx = i.next();
+			for (TransferRequest tx : oldTX) {
 				Pilot p = pdao.get(tx.getID());
 
 				// Make a status update
-				StatusUpdate upd = new StatusUpdate(tx.getID(), StatusUpdate.COMMENT);
+				StatusUpdate upd = new StatusUpdate(tx.getID(), UpdateType.COMMENT);
 				upd.setAuthorID(ctx.getUser().getID());
-				upd.setDescription("Transfer to " + tx.getEquipmentType() + " program purged after " + purgeInterval + " days and "
-						+ tx.getCheckRideIDs().size() + " check rides");
+				upd.setDescription("Transfer to " + tx.getEquipmentType() + " program purged after " + purgeInterval + " days and " + tx.getCheckRideIDs().size() + " check rides");
 				
 				// Get the check ride (if any) and then delete
 				CheckRide cr = exdao.getCheckRide(tx.getLatestCheckRideID());

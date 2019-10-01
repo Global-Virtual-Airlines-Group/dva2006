@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2015, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2015, 2016, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Acccess Object to read Pilots that have achieved certain accomplishments.
  * @author Luke
- * @version 8.3
+ * @version 8.7
  * @since 1.0
  */
 
@@ -131,7 +131,7 @@ public class GetPilotRecognition extends GetPilot {
     			+ "(N.QUARTER=?) WHERE (P.RANKING=?) AND (P.STATUS=?) AND (P.CREATED < DATE_SUB(CURDATE(), INTERVAL ? DAY)) GROUP BY P.ID HAVING (SC=0) AND (NOMSTATUS=?) AND (LEGS>=?)");
     		_ps.setInt(1, FlightStatus.OK.ordinal());
     		_ps.setInt(2, Nomination.Status.PENDING.ordinal());
-    		_ps.setInt(3, StatusUpdate.SR_CAPTAIN);
+    		_ps.setInt(3, UpdateType.SR_CAPTAIN.ordinal());
     		_ps.setInt(4, new Quarter().getYearQuarter());
     		_ps.setInt(5, Rank.C.ordinal());
     		_ps.setInt(6, Pilot.ACTIVE);

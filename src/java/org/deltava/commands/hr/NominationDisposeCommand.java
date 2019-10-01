@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.hr;
 
 import java.sql.Connection;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to approve or reject Senior Captain nominations.
  * @author Luke
- * @version 7.0
+ * @version 8.7
  * @since 3.3
  */
 
@@ -61,7 +61,7 @@ public class NominationDisposeCommand extends AbstractCommand {
 			
 			// Set status
 			n.setStatus(isApproved ? Status.APPROVED : Status.REJECTED);
-			StatusUpdate upd = new StatusUpdate(p.getID(), isApproved ? StatusUpdate.SR_CAPTAIN : StatusUpdate.COMMENT);
+			StatusUpdate upd = new StatusUpdate(p.getID(), isApproved ? UpdateType.SR_CAPTAIN : UpdateType.COMMENT);
 			upd.setAuthorID(ctx.getUser().getID());
 			if (isApproved && isCaptain)
 				upd.setDescription("Promoted to " + Rank.SC);

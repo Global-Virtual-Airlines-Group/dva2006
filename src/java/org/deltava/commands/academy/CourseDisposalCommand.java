@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2011, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010, 2011, 2012, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to change a Flight Academy Course's status.
  * @author Luke
- * @version 7.2
+ * @version 8.7
  * @since 1.0
  */
 
@@ -78,14 +78,13 @@ public class CourseDisposalCommand extends AbstractCommand {
 			// Load our exams
 			GetExam exdao = new GetExam(con);
 			List<CheckRide> rides = exdao.getAcademyCheckRides(c.getID());
-			for (CheckRide cr : rides)
-				c.addCheckRide(cr);
+			rides.forEach(c::addCheckRide);
 			
 			// Get the Message Template DAO
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
 			
 			// Create the status update bean
-			StatusUpdate upd = new StatusUpdate(c.getPilotID(), StatusUpdate.ACADEMY);
+			StatusUpdate upd = new StatusUpdate(c.getPilotID(), (op == Status.COMPLETE) ? UpdateType.CERT_ADD : UpdateType.ACADEMY);
 			upd.setAuthorID(ctx.getUser().getID());
 
 			// Check our access
@@ -114,7 +113,6 @@ public class CourseDisposalCommand extends AbstractCommand {
 					break;
 					
 				case COMPLETE :
-					upd.setType(StatusUpdate.CERT_ADD);
 					if (crt.getVisible())
 						upd.setDescription("Obtained " + c.getName() + " Flight Academy certification");
 					else

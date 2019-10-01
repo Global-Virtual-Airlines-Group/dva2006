@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.main;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to display Pilot accomplishments.
  * @author Luke
- * @version 7.0
+ * @version 8.7
  * @since 1.0
  */
 
@@ -24,7 +24,6 @@ public class PilotRecognitionCommand extends AbstractCommand {
      */
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
-
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -37,15 +36,14 @@ public class PilotRecognitionCommand extends AbstractCommand {
 			Map<String, Collection<StatusUpdate>> updates = new HashMap<String, Collection<StatusUpdate>>();
 			
 			// Get promotions and rank changes
-			updates.put("promotions", dao.getByType(StatusUpdate.EXTPROMOTION));
-			updates.put("rankChanges", dao.getByType(StatusUpdate.INTPROMOTION));
-			updates.put("ratingChanges", dao.getByType(StatusUpdate.RATING_ADD));
-			updates.put("academyCerts", dao.getByType(StatusUpdate.CERT_ADD));
-			updates.put("recognition", dao.getByType(StatusUpdate.RECOGNITION));
+			updates.put("promotions", dao.getByType(UpdateType.EXTPROMOTION));
+			updates.put("rankChanges", dao.getByType(UpdateType.INTPROMOTION));
+			updates.put("ratingChanges", dao.getByType(UpdateType.RATING_ADD));
+			updates.put("academyCerts", dao.getByType(UpdateType.CERT_ADD));
+			updates.put("recognition", dao.getByType(UpdateType.RECOGNITION));
 			
 			// Get pilot IDs and save in the request
-			for (Iterator<Map.Entry<String, Collection<StatusUpdate>>> i = updates.entrySet().iterator(); i.hasNext(); ) {
-				Map.Entry<String, Collection<StatusUpdate>> me = i.next();
+			for (Map.Entry<String, Collection<StatusUpdate>> me : updates.entrySet()) {
 				ctx.setAttribute(me.getKey(), me.getValue(), REQUEST);
 				me.getValue().forEach(upd -> IDs.add(Integer.valueOf(upd.getID())));
 			}

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2010, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.sql.Connection;
@@ -14,7 +14,7 @@ import org.deltava.security.command.PilotAccessControl;
 /**
  * A Web Site Command to promote a Pilot to Captain.
  * @author Luke
- * @version 7.0
+ * @version 8.7
  * @since 1.0
  */
 
@@ -64,7 +64,7 @@ public class PromoteCommand extends AbstractTestHistoryCommand {
 			usr.setRank(isSC ? Rank.SC : Rank.C);
 			
 			// Create the status update bean
-			StatusUpdate upd = new StatusUpdate(usr.getID(), StatusUpdate.INTPROMOTION);
+			StatusUpdate upd = new StatusUpdate(usr.getID(), UpdateType.INTPROMOTION);
 			upd.setAuthorID(ctx.getUser().getID());
 			upd.setDescription("Promoted to " + usr.getRank() + ", " + usr.getEquipmentType());
 			

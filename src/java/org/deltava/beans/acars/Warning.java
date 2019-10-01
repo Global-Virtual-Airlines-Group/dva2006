@@ -1,14 +1,14 @@
-// Copyright 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.beans.mvs;
+// Copyright 2011, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+package org.deltava.beans.acars;
 
 import java.time.Instant;
 
 import org.deltava.beans.*;
 
 /**
- * A bean to store MVS warnings.
+ * A bean to store ACARS content warnings.
  * @author Luke
- * @version 7.0
+ * @version 8.7
  * @since 4.0
  */
 
@@ -16,16 +16,19 @@ public class Warning extends DatabaseBean implements AuthoredBean, CalendarEntry
 	
 	private int _authorID;
 	private Instant _dt;
+	private final int _score;
 
 	/**
 	 * Creates the bean.
 	 * @param userID the datbase ID of the user being warned
 	 * @param authorID the database ID of the user warning
+	 * @param score the warnings core
 	 */
-	public Warning(int userID, int authorID) {
+	public Warning(int userID, int authorID, int score) {
 		super();
 		setID(userID);
 		setAuthorID(authorID);
+		_score = Math.max(0, score);
 	}
 	
 	@Override
@@ -36,6 +39,14 @@ public class Warning extends DatabaseBean implements AuthoredBean, CalendarEntry
 	@Override
 	public int getAuthorID() {
 		return _authorID;
+	}
+	
+	/**
+	 * Returns the warning score.
+	 * @return the score
+	 */
+	public int getScore() {
+		return _score;
 	}
 
 	@Override

@@ -1,7 +1,6 @@
-// Copyright 2006, 2010, 2011, 2012, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010, 2011, 2012, 2014, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
-import java.util.*;
 import java.sql.Connection;
 import java.time.Instant;
 
@@ -16,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to enroll a Pilot in a Flight Academy course.
  * @author Luke
- * @version 7.0
+ * @version 8.7
  * @since 1.0
  */
 
@@ -57,7 +56,7 @@ public class EnrollCommand extends AbstractAcademyHistoryCommand {
 				throw securityException("Must have " + minFlights + " flights to enroll");
 			
 			// Create the status entry
-			StatusUpdate upd = new StatusUpdate(ctx.getUser().getID(), StatusUpdate.ACADEMY);
+			StatusUpdate upd = new StatusUpdate(ctx.getUser().getID(), UpdateType.ACADEMY);
 			upd.setAuthorID(ctx.getUser().getID());
 			upd.setDescription("Requested enrollment in " + cert.getName());
 			
@@ -66,8 +65,7 @@ public class EnrollCommand extends AbstractAcademyHistoryCommand {
 			c.setStatus(Status.PENDING);
 			c.setStartDate(Instant.now());
 			c.setRideCount(cert.getRideCount());
-			for (Iterator<CertificationRequirement> i = cert.getRequirements().iterator(); i.hasNext(); ) {
-				CertificationRequirement req = i.next();
+			for (CertificationRequirement req : cert.getRequirements()) {
 				CourseProgress cp = new CourseProgress(0, req.getID());
 				cp.setText(req.getText());
 				cp.setExamName(req.getExamName());

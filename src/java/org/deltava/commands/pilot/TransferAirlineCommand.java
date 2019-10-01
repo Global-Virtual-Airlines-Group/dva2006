@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2010, 2012, 2013, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010, 2012, 2013, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -18,16 +18,14 @@ import org.deltava.mail.*;
 import org.deltava.security.*;
 import org.deltava.security.command.*;
 
-import org.deltava.util.CollectionUtils;
-import org.deltava.util.PasswordGenerator;
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to transfer pilots to a different airline.
  * @author James
  * @author Luke
- * @version 8.2
+ * @version 8.7
  * @since 1.0
  */
 
@@ -127,7 +125,7 @@ public class TransferAirlineCommand extends AbstractCommand {
 			SetStatusUpdate sudao = new SetStatusUpdate(con);
 
 			// Create the status update
-			StatusUpdate su = new StatusUpdate(p.getID(), StatusUpdate.AIRLINE_TX);
+			StatusUpdate su = new StatusUpdate(p.getID(), UpdateType.AIRLINE_TX);
 			su.setAuthorID(ctx.getUser().getID());
 			su.setDescription("Transferred to " + aInfo.getName());
 			sudao.write(su);
@@ -192,13 +190,13 @@ public class TransferAirlineCommand extends AbstractCommand {
 				wdao.write(newUser, aInfo.getDB());
 
 			// Create the second status update
-			su = new StatusUpdate(newUser.getID(), StatusUpdate.AIRLINE_TX);
+			su = new StatusUpdate(newUser.getID(), UpdateType.AIRLINE_TX);
 			su.setAuthorID(ctx.getUser().getID());
 			su.setDescription("Transferred from " + SystemData.get("airline.name"));
 			sudao.write(aInfo.getDB(), su);
 			
 			// List new ratings
-			su = new StatusUpdate(newUser.getID(), StatusUpdate.RATING_ADD);
+			su = new StatusUpdate(newUser.getID(), UpdateType.RATING_ADD);
 			su.setAuthorID(ctx.getUser().getID());
 			su.setDate(Instant.now().plusSeconds(1));
 			su.setDescription("Ratings added: " + StringUtils.listConcat(newRatings, ", "));

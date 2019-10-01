@@ -1,4 +1,4 @@
-// Copyright 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to purge old Currency Check Rides.
  * @author Luke
- * @version 8.0
+ * @version 8.7
  * @since 8.0
  */
 
@@ -56,7 +56,7 @@ public class CurrencyRidePurgeTask extends Task {
 				Pilot p = pdao.get(cr.getAuthorID());
 				
 				// Make a status update
-				StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.CURRENCY);
+				StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.CURRENCY);
 				upd.setAuthorID(ctx.getUser().getID());
 				upd.setDescription("Currency Ride canceled after " + purgeInterval + " days");
 				

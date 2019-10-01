@@ -1,4 +1,4 @@
-// Copyright 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to disable Proficiency Check Rides for a Pilot.
  * @author Luke
- * @version 8.0
+ * @version 8.7
  * @since 8.0
  */
 
@@ -54,7 +54,7 @@ public class ProficiencyRideDisableCommand extends AbstractTestHistoryCommand {
 
 			// Status update
 			Collection<StatusUpdate> upds = new ArrayList<StatusUpdate>();
-			StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.CURRENCY);
+			StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.CURRENCY);
 			upd.setAuthorID(ctx.getUser().getID());
 			upd.setDescription("Disabled currency Check Rides");
 			upds.add(upd);
@@ -65,7 +65,7 @@ public class ProficiencyRideDisableCommand extends AbstractTestHistoryCommand {
 			ctx.setAttribute("newRatings", newRatings, REQUEST);
 			ctx.setAttribute("ratingDelta", ratingDelta, REQUEST);
 			if (!ratingDelta.isEmpty()) {
-				StatusUpdate upd2 = new StatusUpdate(p.getID(), StatusUpdate.RATING_ADD);
+				StatusUpdate upd2 = new StatusUpdate(p.getID(), UpdateType.RATING_ADD);
 				upd2.setAuthorID(ctx.getUser().getID());
 				upd2.setDescription("Ratings added: " + StringUtils.listConcat(ratingDelta, ", "));
 				upds.add(upd2);

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to Approve equipment program Transfers.
  * @author Luke
- * @version 7.1
+ * @version 8.7
  * @since 1.0
  */
 
@@ -109,13 +109,13 @@ public class TransferApproveCommand extends AbstractCommand {
 				// Write the promotion status update
 				if (rCmp.compare() >= 0) {
 					isPromotion = true;
-					int promoType = eqChange ? StatusUpdate.EXTPROMOTION : StatusUpdate.INTPROMOTION;
+					UpdateType promoType = eqChange ? UpdateType.EXTPROMOTION : UpdateType.INTPROMOTION;
 					StatusUpdate upd = new StatusUpdate(usr.getID(), promoType);
 					upd.setAuthorID(ctx.getUser().getID());
 					upd.setDescription("Promoted to " + usr.getRank() + ", " + usr.getEquipmentType());
 					updates.add(upd);
 				} else {
-					StatusUpdate upd = new StatusUpdate(usr.getID(), StatusUpdate.RANK_CHANGE);
+					StatusUpdate upd = new StatusUpdate(usr.getID(), UpdateType.RANK_CHANGE);
 					upd.setAuthorID(ctx.getUser().getID());
 					upd.setDescription("Rank changed to " + usr.getRank() + ", " + usr.getEquipmentType());
 					updates.add(upd);
@@ -134,7 +134,7 @@ public class TransferApproveCommand extends AbstractCommand {
 			Collection<String> addedRatings = CollectionUtils.getDelta(newRatings, usr.getRatings());
 			if (!addedRatings.isEmpty()) {
 				ctx.setAttribute("addedRatings", addedRatings, REQUEST);
-				StatusUpdate upd = new StatusUpdate(usr.getID(), StatusUpdate.RATING_ADD);
+				StatusUpdate upd = new StatusUpdate(usr.getID(), UpdateType.RATING_ADD);
 				upd.setAuthorID(ctx.getUser().getID());
 				upd.setDescription("Ratings added: " + StringUtils.listConcat(addedRatings, ", "));
 				updates.add(upd);
@@ -148,7 +148,7 @@ public class TransferApproveCommand extends AbstractCommand {
 				usr.removeRatings(removedRatings);
 
 				// Note the changed ratings
-				StatusUpdate upd = new StatusUpdate(usr.getID(), StatusUpdate.RATING_REMOVE);
+				StatusUpdate upd = new StatusUpdate(usr.getID(), UpdateType.RATING_REMOVE);
 				upd.setAuthorID(ctx.getUser().getID());
 				upd.setDescription("Ratings removed: " + StringUtils.listConcat(removedRatings, ", "));
 				updates.add(upd);

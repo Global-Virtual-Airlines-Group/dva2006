@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2010, 2012, 2014, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010, 2012, 2014, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.util.*;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to hire new Applicants as Pilots.
  * @author Luke
- * @version 8.2
+ * @version 8.7
  * @since 1.0
  */
 
@@ -138,13 +138,13 @@ public class ApplicantApproveCommand extends AbstractCommand {
 			exwdao.write(cr);
 
 			// Create a StatusUpdate for the registration
-			StatusUpdate upd = new StatusUpdate(a.getPilotID(), StatusUpdate.STATUS_CHANGE);
+			StatusUpdate upd = new StatusUpdate(a.getPilotID(), UpdateType.STATUS_CHANGE);
 			upd.setAuthorID(ctx.getUser().getID());
 			upd.setDate(a.getCreatedOn());
 			upd.setDescription("Pilot Application Submitted");
 
 			// Create a StatusUpdate for the hire
-			StatusUpdate upd2 = new StatusUpdate(a.getPilotID(), StatusUpdate.STATUS_CHANGE);
+			StatusUpdate upd2 = new StatusUpdate(a.getPilotID(), UpdateType.STATUS_CHANGE);
 			upd2.setAuthorID(ctx.getUser().getID());
 			upd2.setDescription("Applicant Approved, Pilot Hired");
 

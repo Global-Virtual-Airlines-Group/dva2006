@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to save Status History commands for a Pilot.
  * @author Luke
- * @version 7.0
+ * @version 8.7
  * @since 1.0
  */
 
@@ -73,7 +73,7 @@ public class StatusCommentCommand extends AbstractCommand {
 			}
 
 			// Create a new comment
-			StatusUpdate upd = new StatusUpdate(usr.getID(), StatusUpdate.COMMENT);
+			StatusUpdate upd = new StatusUpdate(usr.getID(), UpdateType.COMMENT);
 			upd.setAuthorID(ctx.getUser().getID());
 			upd.setDescription(ctx.getParameter("comment"));
 			

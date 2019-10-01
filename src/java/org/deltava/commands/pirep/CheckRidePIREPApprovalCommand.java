@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to approve Flight Reports and Check Rides.
  * @author Luke
- * @version 8.6
+ * @version 8.7
  * @since 1.0
  */
 
@@ -150,7 +150,7 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 				for (Iterator<Accomplishment> i = accs.iterator(); i.hasNext(); ) {
 					Accomplishment a = i.next();
 					if (acchelper.has(a) == Result.MEET) {
-						StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.RECOGNITION);
+						StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.RECOGNITION);
 						upd.setAuthorID(ctx.getUser().getID());
 						upd.setDescription("Joined " + a.getName());
 						upds.add(upd);

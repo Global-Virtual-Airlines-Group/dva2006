@@ -1,4 +1,4 @@
-// Copyright 2010, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2012, 2015, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.util.*;
@@ -22,7 +22,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to handle Facebook authorization commands.
  * @author Luke
- * @version 6.0
+ * @version 8.7
  * @since 3.4
  */
 
@@ -93,7 +93,7 @@ public class FacebookAuthCommand extends AbstractCommand {
 			
 			// Create status update
 			Collection<StatusUpdate> upds = new ArrayList<StatusUpdate>();
-			StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.EXT_AUTH);
+			StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.EXT_AUTH);
 			upd.setDescription("Facebook Authorized");
 			upd.setAuthorID(p.getID());
 			upds.add(upd);
@@ -107,7 +107,7 @@ public class FacebookAuthCommand extends AbstractCommand {
 					ctx.setAttribute("fbPageAuth", Boolean.TRUE, REQUEST);
 					
 					// Create status update
-					StatusUpdate upd2 = new StatusUpdate(p.getID(), StatusUpdate.EXT_AUTH);
+					StatusUpdate upd2 = new StatusUpdate(p.getID(), UpdateType.EXT_AUTH);
 					upd2.setDescription("Facebook Page Publishing Authorized");
 					upd2.setAuthorID(p.getID());
 					upds.add(upd2);
