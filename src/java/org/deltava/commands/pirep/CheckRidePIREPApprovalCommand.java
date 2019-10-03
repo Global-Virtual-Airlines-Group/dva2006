@@ -2,6 +2,7 @@
 package org.deltava.commands.pirep;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.sql.Connection;
 import java.time.Instant;
 
@@ -46,7 +47,9 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 		mctx.addData("user", ctx.getUser());
 
 		// Get the checkride approval
-		boolean crApproved = Boolean.valueOf(ctx.getParameter("crApprove")).booleanValue();
+		boolean flightApproved = Boolean.valueOf(ctx.getParameter("frApprove")).booleanValue();
+		CheckRideScoreOptions scoreAction = CheckRideScoreOptions.values()[StringUtils.parse(ctx.getParameter("crApprove"), 0)];
+		boolean isScored = (scoreAction != CheckRideScoreOptions.NONE);
 		Pilot p = null;
 		try {
 			Connection con = ctx.getConnection();
@@ -76,7 +79,7 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 			access.validate();
 			ExamAccessControl crAccess = new ExamAccessControl(ctx, cr, ud);
 			crAccess.validate();
-			if (!crAccess.getCanScore())
+			if (!crAccess.getCanScore() && isScored)
 				throw securityException("Cannot score Check Ride");
 
 			// Validate that we can approve the flight Report, OR its Academy and we can approve the checkride
@@ -90,7 +93,8 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 
 			// Get the Message Template
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
-			mctx.setTemplate(mtdao.get(crApproved ? "CRPASS" : "CRFAIL"));
+			if (isScored)
+				mctx.setTemplate(mtdao.get((scoreAction == CheckRideScoreOptions.PASS) ? "CRPASS" : "CRFAIL"));
 
 			// Set message context objects
 			ctx.setAttribute("pilot", p, REQUEST);
@@ -99,15 +103,17 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 			mctx.addData("pilot", p);
 
 			// Update the checkride
-			cr.setScore(crApproved);
-			cr.setScoredOn(Instant.now());
-			cr.setScorerID(ctx.getUser().getID());
-			cr.setSubmittedOn(fr.getSubmittedOn());
-			cr.setFlightID(fr.getDatabaseID(DatabaseID.ACARS));
-			cr.setStatus(TestStatus.SCORED);
+			if (isScored) {
+				cr.setScore(scoreAction == CheckRideScoreOptions.PASS);
+				cr.setScoredOn(Instant.now());
+				cr.setScorerID(ctx.getUser().getID());
+				cr.setSubmittedOn(fr.getSubmittedOn());
+				cr.setFlightID(fr.getDatabaseID(DatabaseID.ACARS));
+				cr.setStatus(TestStatus.SCORED);
+			}
 			
 			// Update the flight report
-			FlightStatus pirepStatus = Boolean.valueOf(ctx.getParameter("frApprove")).booleanValue() ? FlightStatus.OK : FlightStatus.REJECTED;
+			FlightStatus pirepStatus = flightApproved ? FlightStatus.OK : FlightStatus.REJECTED;
 			fr.setStatus(pirepStatus);
 			if (ctx.getParameter("dComments") != null)
 				fr.setComments(ctx.getParameter("dComments"));
@@ -130,19 +136,12 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 				Collection<FlightReport> flights = rdao.getByPilot(p.getID(), null);
 				rdao.getCaptEQType(flights);
 				AccomplishmentHistoryHelper acchelper = new AccomplishmentHistoryHelper(p);
-				flights.forEach(pirep -> acchelper.add(pirep));
+				flights.forEach(acchelper::add);
 			
-				// Load accomplishments
+				// Load accomplishments and only save the ones we don't meet yet
 				GetAccomplishment accdao = new GetAccomplishment(con);
-				Collection<Accomplishment> accs = accdao.getAll();
+				Collection<Accomplishment> accs = accdao.getAll().stream().filter(a -> acchelper.has(a) == Result.NOTYET).collect(Collectors.toSet());
 			
-				// Loop through each accomplishment and only save the ones we don't meet yet
-				for (Iterator<Accomplishment> i = accs.iterator(); i.hasNext(); ) {
-					Accomplishment a = i.next();
-					if (acchelper.has(a) != Result.NOTYET)
-						i.remove();
-				}
-				
 				// Add the approved PIREP
 				acchelper.add(fr);
 
@@ -171,8 +170,7 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 						// Write the entry
 						SetFacebookData fbwdao = new SetFacebookData();
 						fbwdao.setWarnMode(true);
-						for (Iterator<Accomplishment> i = accs.iterator(); i.hasNext(); ) {
-							Accomplishment a = i.next();
+						for (Accomplishment a : accs) {
 							fbctxt.addData("accomplish", a);
 							NewsEntry nws = new NewsEntry(fbctxt.getBody());
 							fbwdao.reset();
@@ -209,11 +207,13 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 			}
 
 			// Get the CheckRide write DAO and update the checkride
-			SetExam ewdao = new SetExam(con);
-			ewdao.write(cr);
+			if (isScored) {
+				SetExam ewdao = new SetExam(con);
+				ewdao.write(cr);
+			}
 
 			// If we are approving the checkride, then approve the transfer request
-			if (txreq != null) {
+			if (isScored && (txreq != null)) {
 				mctx.addData("txReq", txreq);
 				txreq.setStatus(cr.getPassFail() ? TransferStatus.COMPLETE : TransferStatus.PENDING);
 
@@ -227,11 +227,12 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 			swdao.write(upds);
 
 			// Commit the transaction
-			ctx.commitTX();
+			//ctx.commitTX();
 
 			// Save the flight report/checkride in the request and the Message Context
-			ctx.setAttribute("isApprove", Boolean.valueOf(crApproved), REQUEST);
-			ctx.setAttribute("isReject", Boolean.valueOf(!crApproved), REQUEST);
+			ctx.setAttribute("isApprove", Boolean.valueOf(flightApproved), REQUEST);
+			ctx.setAttribute("isReject", Boolean.valueOf(!flightApproved), REQUEST);
+			ctx.setAttribute("checkRideScored", Boolean.valueOf(scoreAction != CheckRideScoreOptions.NONE), REQUEST);
 			ctx.setAttribute("pirep", fr, REQUEST);
 			ctx.setAttribute("checkRide", cr, REQUEST);
 			mctx.addData("pirep", fr);

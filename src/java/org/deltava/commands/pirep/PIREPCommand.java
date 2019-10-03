@@ -49,10 +49,6 @@ public class PIREPCommand extends AbstractFormCommand {
 	private static final List<ComboAlias> months = ComboUtils.fromArray(new String[] { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" }, 
 			new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" });
 
-	// Check ride approval values
-	private static final List<ComboAlias> crApprove = ComboUtils.fromArray(new String[] { "PASSED", "UNSATISFACTORY" }, new String[] { "true", "false" });
-	private static final List<ComboAlias> frApprove = ComboUtils.fromArray(new String[] {"APPROVE", "REJECT"}, new String[] {"true", "false"});
-
 	/**
 	 * Initialize the command.
 	 * @param id the Command ID
@@ -604,13 +600,7 @@ public class PIREPCommand extends AbstractFormCommand {
 					try {
 						crAccess = new ExamAccessControl(ctx, cr, null);
 						crAccess.validate();
-
-						// Save the access controller
 						ctx.setAttribute("crAccess", crAccess, REQUEST);
-						if (crAccess.getCanScore()) {
-							ctx.setAttribute("crPassFail", crApprove, REQUEST);
-							ctx.setAttribute("pirepApprove", frApprove, REQUEST);
-						}
 
 						// Allow Examiner to score the PIREP even if they otherwise couldn't
 						boolean canScoreCR = crAccess.getCanScore() && (cr.getStatus() == TestStatus.SUBMITTED);
@@ -620,7 +610,6 @@ public class PIREPCommand extends AbstractFormCommand {
 						ctx.setAttribute("scoreCR", Boolean.FALSE, REQUEST);
 					}
 
-					// Save the checkride
 					ctx.setAttribute("checkRide", cr, REQUEST);
 				}
 			}
