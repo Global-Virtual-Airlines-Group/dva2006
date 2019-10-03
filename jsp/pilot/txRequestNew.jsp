@@ -25,7 +25,7 @@ golgotha.local.validate = function(f) {
 };
 
 golgotha.local.loadAircraft = function() {
-	var xreq = new XMLHttpRequest();
+	const xreq = new XMLHttpRequest();
 	xreq.open('get', 'crsims.ws');
 	xreq.onreadystatechange = function() {
 		if ((xreq.readyState != 4) || (xreq.status != 200)) return false;
@@ -37,23 +37,24 @@ golgotha.local.loadAircraft = function() {
 };
 
 golgotha.local.updateAircraft = function(combo) {
-	var f = combo.form; var eq = golgotha.form.getCombo(combo);
-	var acTypes = golgotha.local.eqACMap[eq];
+	const f = combo.form; const acc = f.acType; const eq = golgotha.form.getCombo(combo);
+	const acTypes = golgotha.local.eqACMap[eq];
 	if (!acTypes || !golgotha.form.comboSet(f.sim)) {
 		golgotha.util.display('acType', false);
+		acc.required = false;
 		return false;
 	}
 	
 	// Get check rides for sim
-	var simTypes = acTypes[golgotha.form.getCombo(f.sim)];
+	let simTypes = acTypes[golgotha.form.getCombo(f.sim)];
 	simTypes = (simTypes instanceof Array) ? simTypes : [simTypes];
-	var acc = document.forms[0].acType;
 	acc.options.length = simTypes.length + 1;
 	for (var x = 0; x < simTypes.length; x++)
 		acc.options[x + 1] = new Option(simTypes[x], simTypes[x]);
 
 	golgotha.util.display('acType', (simTypes.length > 1));
 	acc.selectedIndex = (simTypes.length > 1) ? 0 : 1;
+	acc.required = (simTypes.length > 1);
 	return true;
 };
 </script>
