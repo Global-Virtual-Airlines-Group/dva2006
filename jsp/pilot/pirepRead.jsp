@@ -353,7 +353,7 @@ ${acarsClientInfo.GPU}&nbsp;<span class="small ita">(<fmt:int value="${acarsClie
 &nbsp;<el:cmdbutton url="dispose" link="${pirep}" op="hold" post="true" key="H" label="HOLD" /></c:if>
 <c:if test="${access.canRelease}">
 &nbsp;<el:cmdbutton url="release" link="${pirep}" post="true" label="RELEASE HOLD" /></c:if>
-<c:if test="${access.canReject && (!fn:isCheckFlight(pirep) || !fn:pending(checkRide))}">
+<c:if test="${access.canReject && (!fn:isCheckFlight(pirep) || !fn:pending(checkRide)) && !scoreCR}">
 &nbsp;<el:cmdbutton url="dispose" link="${pirep}" op="reject" post="true" label="REJECT" />
 <c:if test="${isACARS && (empty checkRide)}"><content:filter roles="HR,PIREP,Operations">
 &nbsp;<el:cmdbutton url="crflag" link="${pirep}" label="MARK AS CHECK RIDE" /></content:filter></c:if>

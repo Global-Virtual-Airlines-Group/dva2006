@@ -29,32 +29,26 @@
 This <content:airline /> Flight Report has been successfully and saved in the database.<br />
 <c:if test="${isCreated}">
 <br />
-<span class="err">Please note that you must <span class="bld und">SUBMIT</span> a Flight Report if you
-want the flight hours and flight leg to be credited towards your flight totals here at <content:airline />. 
+<span class="err">Please note that you must <span class="bld und">SUBMIT</span> a Flight Report if you want the flight hours and flight leg to be credited towards your flight totals here at <content:airline />. 
 To Submit this Flight Report for approval,</span> <el:cmd className="sec bld" url="submit" link="${pirep}">Click Here</el:cmd>.<br />
 </c:if>
 </c:if>
 <c:if test="${isSubmitted}">
 <div class="updateHdr">Flight Report Submitted</div>
 <br />
-This <content:airline /> Flight Report has been submitted for review and approval. Once this Report
-has been approved, your flight legs and hours will be automatically updated and you will be notified
-via e-mail.<br />
+This <content:airline /> Flight Report has been submitted for review and approval. Once this Report has been approved, your flight legs and hours will be automatically updated and you will be notified via e-mail.<br />
 <c:if test="${captEQ}">
 <br />
-This Flight Leg counts as one of the <fmt:int className="sec bld" value="${promoteLegs}" /> Flight Legs 
-required for promotion to Captain in the <span class="pri bld">${eqType.name}</span> program.<br />
+This Flight Leg counts as one of the <fmt:int className="sec bld" value="${promoteLegs}" /> Flight Legs required for promotion to Captain in the <span class="pri bld">${eqType.name}</span> program.<br />
 </c:if>
 <c:if test="${notRated}">
 <br />
-<span class="warn bld">You do not appear to have a type rating in the ${pirep.equipmentType}. This may be
-the result of our database being out of date or otherwise inaccurate.</span> This may cause a delay in your
+<span class="warn bld">You do not appear to have a type rating in the ${pirep.equipmentType}. This may be the result of our database being out of date or otherwise inaccurate.</span> This may cause a delay in your
 Flight Report being approved. Please be aware that we cannot credit flights flown using unrated aircraft.<br />
 </c:if>
 <c:if test="${unknownRoute}">
 <br />
-<span class="warn bld">Your flight between ${pirep.airportD.name} and ${pirep.airportA.name} does not
-currently appear in the <content:airline /> flight schedule.</span> This may cause a delay in your
+<span class="warn bld">Your flight between ${pirep.airportD.name} and ${pirep.airportA.name} does not currently appear in the <content:airline /> flight schedule.</span> This may cause a delay in your
 Flight Report being approved.<br />
 </c:if>
 <c:if test="${timeWarning}">
@@ -77,8 +71,7 @@ This may cause a delay in your Flight Report being approved.<br />
 <br />
 This Flight Report has been approved, and an e-mail message has been sent to ${pilot.name}.<br />
 <c:if test="${assignID}">
-This Pilot has been assigned a Pilot ID and seniority number at <content:airline />. The new Pilot ID 
-for ${pilot.name} is <b>${pilot.pilotCode}</b>.<br />
+This Pilot has been assigned a Pilot ID and seniority number at <content:airline />. The new Pilot ID for ${pilot.name} is <b>${pilot.pilotCode}</b>.<br />
 </c:if>
 <c:if test="${!empty accomplishments}">
 <br />
@@ -96,18 +89,15 @@ This flight was flown using the ${pirep.network} online network, and track data 
 <c:if test="${acarsArchive}">
 This flight was logged using <content:airline /> ACARS software, and all position data has been archived for later retrieval.<br />
 <br /></c:if>
-<c:if test="${!empty checkRide}">
+<c:if test="${checkRideScored && (!empty checkRide)}">
 <br />
-This Flight Report is for a <b>${checkRide.name}</b>, and this Check Ride has been graded as part
-of the approval process for this Flight Report. This Check Ride has been <span class="sec bld">
-${checkRide.passFail ? 'APPROVED' : 'REJECTED' }</span>.<br />
+This Flight Report is for a <b>${checkRide.name}</b>, and this Check Ride has been graded as part of the approval process for this Flight Report. This Check Ride has been <span class="sec bld"> ${checkRide.passFail ? 'APPROVED' : 'REJECTED' }</span>.<br />
 </c:if>
 </c:if>
 <c:if test="${isHold}">
 <div class="updateHdr">Flight Report Held</div>
 <br />
-This Flight Report has been marked as &quot;On Hold&quot; and an e-mail message has been sent to
-${pilot.name}. Please work to resolve any issues with this Flight Report within the next few days.<br />
+This Flight Report has been marked as &quot;On Hold&quot; and an e-mail message has been sent to ${pilot.name}. Please work to resolve any issues with this Flight Report within the next few days.<br />
 </c:if>
 <c:if test="${isReject}">
 <div class="updateHdr">Flight Report Rejected</div>
