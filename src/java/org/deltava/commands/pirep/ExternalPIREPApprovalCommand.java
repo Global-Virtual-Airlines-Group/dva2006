@@ -22,7 +22,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to approve Flight Reports and Check Rides across Airlines.
  * @author Luke
- * @version 8.6
+ * @version 8.7
  * @since 2.0
  */
 
@@ -41,7 +41,9 @@ public class ExternalPIREPApprovalCommand extends AbstractCommand {
 		mctx.addData("user", ctx.getUser());
 		
 		// Get the checkride / flight approval
-		boolean crApproved = Boolean.valueOf(ctx.getParameter("crApprove")).booleanValue();
+		boolean flightApproved = Boolean.valueOf(ctx.getParameter("frApprove")).booleanValue();
+		CheckRideScoreOptions scoreAction = CheckRideScoreOptions.values()[StringUtils.parse(ctx.getParameter("crApprove"), 0)];
+		boolean isScored = (scoreAction != CheckRideScoreOptions.NONE);
 		Pilot p = null;
 		try {
 			Connection con = ctx.getConnection();
@@ -76,7 +78,8 @@ public class ExternalPIREPApprovalCommand extends AbstractCommand {
 			
 			// Get the Message Template
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
-			mctx.setTemplate(mtdao.get(crApproved ? "CRPASS" : "CRFAIL"));
+			if (isScored)
+				mctx.setTemplate(mtdao.get((scoreAction == CheckRideScoreOptions.PASS) ? "CRPASS" : "CRFAIL"));
 			
 			// Get the number of approved flights (we load it here since the disposed PIREP will be uncommitted)
 			/* int pirepCount = p.getLegs();
@@ -90,12 +93,15 @@ public class ExternalPIREPApprovalCommand extends AbstractCommand {
 			mctx.addData("pilot", p);
 			
 			// Update the checkride
-			cr.setScore(crApproved);
-			cr.setScoredOn(Instant.now());
-			cr.setScorerID(ctx.getUser().getID());
-			cr.setSubmittedOn(fr.getSubmittedOn());
-			cr.setFlightID(fr.getDatabaseID(DatabaseID.ACARS));
-			cr.setStatus(TestStatus.SCORED);
+			if (isScored) {
+				cr.setScore(scoreAction == CheckRideScoreOptions.PASS);
+				cr.setScoredOn(Instant.now());
+				cr.setScorerID(ctx.getUser().getID());
+				cr.setSubmittedOn(fr.getSubmittedOn());
+				cr.setFlightID(fr.getDatabaseID(DatabaseID.ACARS));
+				cr.setStatus(TestStatus.SCORED);
+			}
+			
 			if (ctx.getParameter("dComments") != null)
 				fr.setComments(ctx.getParameter("dComments"));
 			
@@ -103,7 +109,7 @@ public class ExternalPIREPApprovalCommand extends AbstractCommand {
 			ctx.startTX();
 			
 			// Get the PIREP write DAO and approve the PIREP
-			FlightStatus pirepStatus = crApproved ? FlightStatus.OK : FlightStatus.REJECTED;
+			FlightStatus pirepStatus = flightApproved ? FlightStatus.OK : FlightStatus.REJECTED;
 			SetFlightReport wdao = new SetFlightReport(con);
 			wdao.dispose(ud.getDB(), ctx.getUser(), fr, pirepStatus);
 			
@@ -135,8 +141,9 @@ public class ExternalPIREPApprovalCommand extends AbstractCommand {
 			ctx.commitTX();
 
 			// Save the flight report/checkride in the request and the Message Context
-			ctx.setAttribute("isApprove", Boolean.valueOf(crApproved), REQUEST);
-			ctx.setAttribute("isReject", Boolean.valueOf(!crApproved), REQUEST);
+			ctx.setAttribute("isApprove", Boolean.valueOf(flightApproved), REQUEST);
+			ctx.setAttribute("isReject", Boolean.valueOf(!flightApproved), REQUEST);
+			ctx.setAttribute("checkRideScored", Boolean.valueOf(scoreAction != CheckRideScoreOptions.NONE), REQUEST);
 			ctx.setAttribute("pirep", fr, REQUEST);
 			ctx.setAttribute("checkRide", cr, REQUEST);
 			mctx.addData("pirep", fr);
