@@ -22,9 +22,8 @@
 <!-- Pilot Status History Data -->
 <c:forEach var="update" items="${statusUpdates}">
 <c:set var="author" value="${authors[update.authorID]}" scope="page" />
-<c:set var="isPrivate" value="${(update.type == 0)}" scope="page" />
-<c:set var="isSuspended" value="${(update.type == 15)}" scope="page" />
-<c:if test="${!isPrivate || isHR}">
+<c:set var="isSuspended" value="${(update.type == UpdateType.SUSPENDED)}" scope="page" />
+<c:if test="${!update.type.isHidden || isHR}">
 <tr class="mid statusUpd"<c:if test="${statusCollapse}"> style="display:none;"</c:if>>
  <td class="pri bld"><fmt:date fmt="d" date="${update.date}" /></td>
 <c:if test="${!isSuspended || isHR}">
@@ -34,7 +33,7 @@
  <td colspan="2">User Account Suspended</td>
 </c:if>
  <td class="pri" colspan="2">${author.name}</td> 
- <td class="sec" colspan="2">${update.typeName}</td>
+ <td class="sec" colspan="2">${update.type.description}</td>
 </tr>
 </c:if>
 </c:forEach>

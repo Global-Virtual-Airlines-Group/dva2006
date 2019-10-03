@@ -49,7 +49,7 @@ public enum UpdateType {
 	 * Returns whether updates of this type should be hidden to non-HR users.
 	 * @return TRUE if hidden, otherwise FALSE
 	 */
-	public boolean isHidden() {
+	public boolean getIsHidden() {
 		return _isHidden;
 	}
 }
