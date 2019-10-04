@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access object to write Flight Reports to the database.
  * @author Luke
- * @version 8.6
+ * @version 8.7
  * @since 1.0
  */
 
@@ -207,22 +207,34 @@ public class SetFlightReport extends DAO {
 	}
 	
 	/**
-	 * Updates passenger count based on load factor.
-	 * @param id the Flight Report database ID
-	 * @param dbName the database name
+	 * Updates passenger count for a flight report in the current airline.
+	 * @param pirepID the Flight Report database ID
 	 * @return TRUE if the passenger count was updated, otherwise FALSE
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public boolean updatePaxCount(int id, String dbName) throws DAOException {
+	public boolean updatePaxCount(int pirepID) throws DAOException {
+		UserData ud = new UserData(SystemData.get("airline.db"), "PILOTS", SystemData.get("airline.domain"));
+		return updatePaxCount(pirepID, ud);
+	}
+	
+	/**
+	 * Updates passenger count based on load factor.
+	 * @param pirepID the Flight Report database ID
+	 * @param ud the Pilot's UserData object
+	 * @return TRUE if the passenger count was updated, otherwise FALSE
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public boolean updatePaxCount(int pirepID, UserData ud) throws DAOException {
 		
 		// Build the SQL statement
 		StringBuilder buf = new StringBuilder("UPDATE ");
-		buf.append(formatDBName(dbName));
-		buf.append(".PIREPS P, common.AIRCRAFT A SET P.PAX=ROUND(A.SEATS*P.LOADFACTOR, 0) WHERE (P.ID=?) AND (P.EQTYPE=A.NAME) AND (ABS(P.PAX-(A.SEATS*P.LOADFACTOR))>1)");
+		buf.append(formatDBName(ud.getDB()));
+		buf.append(".PIREPS P, common.AIRCRAFT_AIRLINE A SET P.PAX=ROUND(AA.SEATS*P.LOADFACTOR, 0) WHERE (P.ID=?) AND (P.EQTYPE=AA.NAME) AND (AA.AIRLINE=?) AND (ABS(P.PAX-(AA.SEATS*P.LOADFACTOR))>1)");
 		
 		try {
 			prepareStatementWithoutLimits(buf.toString());
-			_ps.setInt(1, id);
+			_ps.setInt(1, pirepID);
+			_ps.setString(2, ud.getAirlineCode());
 			return (executeUpdate(0) > 0);
 		} catch (SQLException se) {
 			throw new DAOException(se);

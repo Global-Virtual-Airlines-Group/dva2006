@@ -299,7 +299,7 @@ public class FlightSubmitService extends SimFDRService {
 			SetFlightReport fwdao = new SetFlightReport(con);
 			fwdao.write(fr);
 			fwdao.writeACARS(fr, SystemData.get("airline.db"));
-			if (fwdao.updatePaxCount(fr.getID(), SystemData.get("airline.db")))
+			if (fwdao.updatePaxCount(fr.getID()))
 				log.warn("Update Passnger count for PIREP #" + fr.getID());
 			
 			// Write ontime data if there is any
