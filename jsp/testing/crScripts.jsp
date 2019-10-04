@@ -56,7 +56,8 @@ span.el {
 <c:if test="${access.canEdit}"><el:cmd url="crscript" linkID="${sc.auditID}" op="edit">${sc.equipmentType}</el:cmd></c:if>
 <c:if test="${!access.canEdit}"><span class="pri bld">${sc.equipmentType}</span></c:if>
 <c:if test="${sc.isCurrency}"><br />
-<span class="ter bld small">CURRENCY</span></c:if></td>
+<span class="ter bld small">CURRENCY</span></c:if>
+<c:if test="${!empty sc.simulators}"><br /><br /><span class="small"><c:forEach var="sim" items="${sc.simulators}" varStatus="vs">${sim.name()}<c:if test="${!vs.last}">, </c:if></c:forEach></span></c:if></td>
  <td class="sec bld">${sc.program}</td>
  <td class="small left nophone" colspan="2"><span class="el"><fmt:msg value="${sc.description}" bbCode="true" /></span></td>
 </view:row>

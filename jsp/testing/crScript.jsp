@@ -64,7 +64,7 @@ golgotha.local.updateEQ = function(combo) {
 </tr>
 <tr>
  <td class="label top">Available Simulators</td>
- <td class="data"><el:check name="sims" idx="*" width="200" cols="3" newLine="true" className="small" checked="${sc.simulators}" options="${fsVersions}" /></td>
+ <td class="data"><el:check name="sims" idx="*" width="200" cols="3" newLine="true" className="small" checked="${script.simulators}" options="${fsVersions}" /></td>
 </tr>
 <c:if test="${currencyEnabled}">
 <tr>
