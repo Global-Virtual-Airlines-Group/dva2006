@@ -295,7 +295,7 @@ public class XPIREPService extends XAService {
 			SetFlightReport fwdao = new SetFlightReport(con);
 			fwdao.write(xfr);
 			fwdao.writeACARS(xfr, SystemData.get("airline.db"));
-			if (fwdao.updatePaxCount(xfr.getID(), SystemData.get("airline.db")))
+			if (fwdao.updatePaxCount(xfr.getID()))
 				log.warn("Update Passnger count for PIREP #" + xfr.getID());
 			
 			// Write the check ride if necessary
