@@ -229,7 +229,7 @@ public class SetFlightReport extends DAO {
 		// Build the SQL statement
 		StringBuilder buf = new StringBuilder("UPDATE ");
 		buf.append(formatDBName(ud.getDB()));
-		buf.append(".PIREPS P, common.AIRCRAFT_AIRLINE A SET P.PAX=ROUND(AA.SEATS*P.LOADFACTOR, 0) WHERE (P.ID=?) AND (P.EQTYPE=AA.NAME) AND (AA.AIRLINE=?) AND (ABS(P.PAX-(AA.SEATS*P.LOADFACTOR))>1)");
+		buf.append(".PIREPS P, common.AIRCRAFT_AIRLINE AA SET P.PAX=ROUND(AA.SEATS*P.LOADFACTOR, 0) WHERE (P.ID=?) AND (P.EQTYPE=AA.NAME) AND (AA.AIRLINE=?) AND (ABS(P.PAX-(AA.SEATS*P.LOADFACTOR))>1)");
 		
 		try {
 			prepareStatementWithoutLimits(buf.toString());
