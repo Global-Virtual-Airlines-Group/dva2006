@@ -492,7 +492,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 			SetFlightReport fwdao = new SetFlightReport(con);
 			fwdao.write(afr);
 			fwdao.writeACARS(afr, SystemData.get("airline.db"));
-			if (fwdao.updatePaxCount(afr.getID(), SystemData.get("airline.db")))
+			if (fwdao.updatePaxCount(afr.getID()))
 				log.warn("Update Passnger count for PIREP #" + afr.getID());
 			
 			// Write ontime data if there is any
