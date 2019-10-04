@@ -227,7 +227,7 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 			swdao.write(upds);
 
 			// Commit the transaction
-			//ctx.commitTX();
+			ctx.commitTX();
 
 			// Save the flight report/checkride in the request and the Message Context
 			ctx.setAttribute("isApprove", Boolean.valueOf(flightApproved), REQUEST);
