@@ -70,7 +70,7 @@
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data"><c:if test="${aircraft.historic}"><span class="sec bld caps">This is a Historic Aircraft</span>
-<c:if test="${opts.ETOPS || opts.useSoftRunways}"><br /></c:if></c:if>
+<c:if test="${isETOPS || opts.useSoftRunways}"><br /></c:if></c:if>
 <c:if test="${isETOPS}"><span class="ter bld caps">This Aircraft is ETOPS-rated (${opts.ETOPS})</span>
 <c:if test="${opts.useSoftRunways}"><span class="bld caps">This Aircraft is authroized for soft runway operation</span></c:if></c:if></td>
 </tr>
