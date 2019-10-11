@@ -14,14 +14,14 @@ public enum ETOPS implements ComboAlias {
 	ETOPS60(60), ETOPS75(75), ETOPS90(90), ETOPS120(120), ETOPS138(138), ETOPS180(180), ETOPS207(207), ETOPS240(240), ETOPS330(330), INVALID(-1);
 	
 	// ETOPS rule speed - 389kts
-	private static final int EO_SPEED = 389;
+	private static final double EO_SPEED = (389 * 1.15078); // convert kts to mph
 	
 	private final int _time;
 	private final int _range;
 	
 	ETOPS(int time) {
 		_time = time;
-		_range = _time * EO_SPEED / 60; // Range is speed * time * .8;  (X * 4/5/60 == X / 75)
+		_range = (int)Math.round(time / EO_SPEED / 60f); // Range is speed * time * .8;  (X * 4/5/60 == X / 75)
 	}
 
 	/**
