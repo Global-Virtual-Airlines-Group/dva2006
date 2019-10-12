@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to parse XML-format offline Flight Reports.
  * @author Luke
- * @version 8.6
+ * @version 8.7
  * @since 2.4
  */
 
@@ -177,6 +177,7 @@ public final class OfflineFlightParser {
 					pos.setVisibility(StringUtils.parse(pe.getChildTextTrim("viz"), 0.0));
 					pos.setFrameRate(StringUtils.parse(pe.getChildTextTrim("frameRate"), 0));
 					pos.setFlags(StringUtils.parse(pe.getChildTextTrim("flags"), 0));
+					pos.setNetworkConnected(Boolean.valueOf(pe.getChildTextTrim("networkConnected")).booleanValue());
 					pos.setNAV1(pe.getChildTextTrim("nav1"));
 					pos.setNAV2(pe.getChildTextTrim("nav2"));
 					
