@@ -1,4 +1,4 @@
-// Copyright 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.time.Instant;
@@ -8,7 +8,7 @@ import org.deltava.beans.DatabaseBean;
 /**
  * A bean to store ACARS position archive metadata.
  * @author Luke
- * @version 7.0
+ * @version 8.7
  * @since 6.2
  */
 
@@ -18,6 +18,7 @@ public class ArchiveMetadata extends DatabaseBean {
 	private Instant _archivedOn;
 	private long _crc;
 	private int _size;
+	private SerializedDataVersion _fmt;
 
 	/**
 	 * Creates the bean.
@@ -59,6 +60,14 @@ public class ArchiveMetadata extends DatabaseBean {
 	public int getPositionCount() {
 		return _positionCount;
 	}
+	
+	/**
+	 * Returns the data format used to archive this flight data.
+	 * @return a SerializedDataVersion, or null if unknown
+	 */
+	public SerializedDataVersion getFormat() {
+		return _fmt;
+	}
 
 	/**
 	 * Updates the CRC32 value for the archived data.
@@ -90,5 +99,13 @@ public class ArchiveMetadata extends DatabaseBean {
 	 */
 	public void setPositionCount(int cnt) {
 		_positionCount = Math.max(0, cnt);
+	}
+	
+	/**
+	 * Updates the serialization format used in this archived flight.
+	 * @param ver a SerializedDataVersion, or null if unknown
+	 */
+	public void setFormat(SerializedDataVersion ver) {
+		_fmt = ver;
 	}
 }
