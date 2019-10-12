@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to parse simFDR submitted flight reports.
  * @author Luke
- * @version 8.6
+ * @version 8.7
  * @since 7.0
  */
 
@@ -223,6 +223,7 @@ final class OfflineFlightParser {
 		pos.setTemperature(StringUtils.parse(pe.getChildTextTrim("temp"), 0));
 		pos.setFrameRate(StringUtils.parse(pe.getChildTextTrim("frameRate"), 0));
 		pos.setFlags(StringUtils.parse(pe.getChildTextTrim("flags"), 0));
+		pos.setNetworkConnected(Boolean.valueOf(pe.getChildTextTrim("networkConnected")).booleanValue());
 		pos.setNAV1(pe.getChildTextTrim("nav1"));
 		pos.setNAV2(pe.getChildTextTrim("nav2"));
 		pos.setADF1(pe.getChildTextTrim("adf1"));
