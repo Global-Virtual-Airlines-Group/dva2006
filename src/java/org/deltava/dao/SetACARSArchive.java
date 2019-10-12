@@ -1,4 +1,4 @@
-// Copyright 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2015, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.io.*;
@@ -14,7 +14,7 @@ import org.deltava.dao.file.SetSerializedPosition;
 /**
  * A Data Access Object to write to the ACARS position archive.
  * @author Luke
- * @version 7.2
+ * @version 8.7
  * @since 4.1
  */
 
@@ -67,7 +67,7 @@ public class SetACARSArchive extends DAO {
 				try (ByteArrayOutputStream os = new ByteArrayOutputStream(10240)) {
 					try (OutputStream bos = new GZIPOutputStream(os, 8192)) {
 						SetSerializedPosition psdao = new SetSerializedPosition(bos);
-						psdao.archivePositions(flightID, positions);
+						md.setFormat(psdao.archivePositions(flightID, positions));
 						data = os.toByteArray();
 					}
 					
@@ -100,11 +100,12 @@ public class SetACARSArchive extends DAO {
 	 */
 	public void update(ArchiveMetadata md) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("REPLACE INTO acars.ARCHIVE (ID, CNT, SIZE, CRC, ARCHIVED) VALUES (?, ?, ?, ?, ?)");
+			prepareStatementWithoutLimits("REPLACE INTO acars.ARCHIVE (ID, CNT, SIZE, CRC, ARCHIVED, FMT) VALUES (?, ?, ?, ?, ?, ?)");
 			_ps.setInt(1, md.getID());
 			_ps.setInt(2, md.getPositionCount());
 			_ps.setInt(3, md.getSize());
 			_ps.setLong(4, md.getCRC32());
+			_ps.setInt(5, (md.getFormat() == null) ? -1 : md.getFormat().ordinal());
 			_ps.setTimestamp(5, createTimestamp(md.getArchivedOn()));
 			executeUpdate(1);
 		} catch (SQLException se) {
