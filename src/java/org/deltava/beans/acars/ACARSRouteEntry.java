@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
  * @author Rahul
- * @version 8.6
+ * @version 8.7
  * @since 1.0
  */
 
@@ -53,6 +53,7 @@ public class ACARSRouteEntry extends RouteEntry {
 	private int _vasFree;
 	
 	private int _groundOps;
+	private boolean _networkConnected;
 
 	private static final ACARSFlags[] AP_FLAGS = { ACARSFlags.AP_APR, ACARSFlags.AP_HDG, ACARSFlags.AP_NAV, ACARSFlags.AP_ALT, ACARSFlags.AP_GPS , ACARSFlags.AP_LNAV};
 	private static final String[] AP_FLAG_NAMES = { "APR", "HDG", "NAV", "ALT", "GPS", "LNAV" };
@@ -303,6 +304,15 @@ public class ACARSRouteEntry extends RouteEntry {
 	}
 	
 	/**
+	 * Returns if the client is connected to an Online Network.
+	 * @return TRUE if connected, otherwise FALSE
+	 * @see ACARSRouteEntry#setNetworkConnected(boolean)
+	 */
+	public boolean getNetworkConnected() {
+		return _networkConnected;
+	}
+	
+	/**
 	 * Updates the aircraft's altitude above <i>ground level</i>.
 	 * @param alt the altitude in feet AGL
 	 * @see ACARSRouteEntry#getRadarAltitude()
@@ -532,6 +542,15 @@ public class ACARSRouteEntry extends RouteEntry {
 	 */
 	public void setGroundOperations(int ops) {
 		_groundOps = ops;
+	}
+	
+	/**
+	 * Updates whether the user is connected to an Online Network.
+	 * @param isConnected TRUE if connected, otherwise FALSE
+	 * @see ACARSRouteEntry#getNetworkConnected()
+	 */
+	public void setNetworkConnected(boolean isConnected) {
+		_networkConnected = isConnected;
 	}
 	
 	/**
