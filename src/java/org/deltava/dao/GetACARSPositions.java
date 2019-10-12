@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.io.*;
@@ -17,7 +17,7 @@ import org.deltava.dao.file.GetSerializedPosition;
 /**
  * A Data Access Object to load ACARS position data.
  * @author Luke
- * @version 8.3
+ * @version 8.7
  * @since 4.1
  */
 
@@ -62,7 +62,7 @@ public class GetACARSPositions extends GetACARSData {
 		try {
 			prepareStatementWithoutLimits("SELECT REPORT_TIME, LAT, LNG, B_ALT, R_ALT, HEADING, PITCH, BANK, ASPEED, GSPEED, VSPEED, MACH, N1, N2, FLAPS, "
 				+ "WIND_HDG, WIND_SPEED, TEMP, PRESSURE, VIZ, FUEL, FUELFLOW, AOA, GFORCE, FLAGS, FRAMERATE, SIM_RATE, SIM_TIME, PHASE, NAV1, NAV2, "
-				+ "ADF1, VAS, WEIGHT, ASTYPE, GNDFLAGS FROM acars.POSITIONS WHERE (FLIGHT_ID=?) ORDER BY REPORT_TIME");
+				+ "ADF1, VAS, WEIGHT, ASTYPE, GNDFLAGS, NET_CONNECTED FROM acars.POSITIONS WHERE (FLIGHT_ID=?) ORDER BY REPORT_TIME");
 			_ps.setInt(1, flightID);
 
 			// Execute the query
@@ -105,6 +105,7 @@ public class GetACARSPositions extends GetACARSData {
 					entry.setWeight(rs.getInt(34));
 					entry.setAirspace(AirspaceType.values()[rs.getInt(35)]);
 					entry.setGroundOperations(rs.getInt(36));
+					entry.setNetworkConnected(rs.getBoolean(37));
 
 					// Add to results - or just log a GeoPosition if we're on the ground
 					if (entry.isFlagSet(ACARSFlags.ONGROUND) && !entry.isFlagSet(ACARSFlags.TOUCHDOWN) && !includeOnGround && !entry.isWarning())
