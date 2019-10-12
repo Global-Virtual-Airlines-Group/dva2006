@@ -9,11 +9,15 @@
 <tr class="title">
  <td class="caps" colspan="${cspan + 1}"><span class="nophone"><content:airline />&nbsp;</span>ACARS FLIGHT DATA</td>
 </tr>
-<c:if test="${fn:ACARS_ID(pirep) > 0}">
 <tr>
  <td class="label">ACARS Flight ID</td>
  <td class="data" colspan="${cspan}"><fmt:int value="${fn:ACARS_ID(pirep)}" /> (<fmt:int value="${flightInfo.positionCount}" /> position records)
 <span class="nophone"> Download ACARS data into <a href="acars_data.ws?id=${fn:ACARS_ID(pirep)}">Microsoft Excel</a> | <a href="acars_earth.ws?id=${fn:ACARS_ID(pirep)}&amp;showData=true&amp;showRoute=true">Google Earth</a></span></td>
+</tr>
+<c:if test="${!empty archiveMetadata}">
+<tr>
+ <td class="label">Archive Information</td>
+ <td class="data" colspan="${cspan}"><span class="pri bld">${archiveMetadata.format}</span> <span class="small nophone"><fmt:int value="${archiveMetadata.size / 1024}" />K, <span class="ita">CRC32 = ${Long.toHexString(archiveMetadata.CRC32)}</span></span></td>
 </tr>
 </c:if>
 <c:if test="${!isXACARS && (pirep.clientBuild > 0)}">
