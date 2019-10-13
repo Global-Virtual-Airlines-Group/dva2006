@@ -105,8 +105,8 @@ public class SetACARSArchive extends DAO {
 			_ps.setInt(2, md.getPositionCount());
 			_ps.setInt(3, md.getSize());
 			_ps.setLong(4, md.getCRC32());
-			_ps.setInt(5, (md.getFormat() == null) ? -1 : md.getFormat().ordinal());
 			_ps.setTimestamp(5, createTimestamp(md.getArchivedOn()));
+			_ps.setInt(6, (md.getFormat() == null) ? -1 : md.getFormat().ordinal());
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
