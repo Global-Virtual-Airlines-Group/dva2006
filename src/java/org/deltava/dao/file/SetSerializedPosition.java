@@ -1,4 +1,4 @@
-// Copyright 2012, 2014, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2014, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -12,7 +12,7 @@ import org.deltava.dao.DAOException;
 /**
  * A Data Access Object to serialize ACARS position records.
  * @author Luke
- * @version 8.3
+ * @version 8.7
  * @since 4.1
  */
 
@@ -30,12 +30,13 @@ public class SetSerializedPosition extends WriteableDAO {
 	 * Serializes ACARS position records.
 	 * @param flightID the ACARS Flight ID
 	 * @param positions a Collection of ACARSRouteEntry beans
+	 * @return the SerializedDataVersion used to archive these position records, or null if none
 	 * @throws DAOException if an I/O error occurs
 	 */
-	public void archivePositions(int flightID, Collection<? extends RouteEntry> positions) throws DAOException {
-		if (positions.isEmpty()) return;
+	public SerializedDataVersion archivePositions(int flightID, Collection<? extends RouteEntry> positions) throws DAOException {
+		if (positions.isEmpty()) return null;
 		RouteEntry re = positions.iterator().next();
-		SerializedDataVersion ver = (re instanceof ACARSRouteEntry) ? SerializedDataVersion.ACARSv6 : SerializedDataVersion.XACARS;
+		SerializedDataVersion ver = (re instanceof ACARSRouteEntry) ? SerializedDataVersion.ACARSv7 : SerializedDataVersion.XACARS;
 		try (DataOutputStream out = new DataOutputStream(_os)) {
 			out.writeShort(ver.ordinal());
 			out.writeInt(flightID);
@@ -49,6 +50,8 @@ public class SetSerializedPosition extends WriteableDAO {
 		} catch (IOException ie) {
 			throw new DAOException(ie);
 		}
+		
+		return ver;
 	}
 	
 	/*
@@ -90,6 +93,7 @@ public class SetSerializedPosition extends WriteableDAO {
 		out.writeUTF((re.getNAV1() == null) ? "" : re.getNAV1());
 		out.writeUTF((re.getNAV2() == null) ? "" : re.getNAV2());
 		out.writeUTF((re.getADF1() == null) ? "" : re.getADF1()); // v6
+		out.writeBoolean(re.getNetworkConnected()); // v7
 		
 		// Write ATC1
 		Controller atc = re.getATC1();
