@@ -13,7 +13,7 @@ public enum Capabilities {
 	FMC_LOAD(5, "FMC Fuel/Passenger Loaidng"), ANNOUNCE(6, "Cabin Announcements"), AFTERBURNER(7, "Afterburner"), JETWAY(8, "Jetway Control"), 
 	FMC(9, "FMC", true), VPILOT(10, "vPilot", true), XIVAP(11, "X-IvAp", true), IVAP(12, "IvAp", true);
 	
-	private final int _mask;
+	private final long _mask;
 	private final String _desc;
 	private final boolean _show;
 	
@@ -36,7 +36,7 @@ public enum Capabilities {
 	 * Returns the bitmask for this flag.
 	 * @return the bitmask
 	 */
-	public int getMask() {
+	public long getMask() {
 		return _mask;
 	}
 	
