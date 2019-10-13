@@ -9,14 +9,19 @@ package org.deltava.beans.acars;
  */
 
 public enum Capabilities {
-	GSX(0, "FSDT GSX", true), RAAS(1, "RAAS", true), XSB(2, "XSquawkbox",true), FUEL_LOAD(3, "Fuel Loading"), PAX_LOAD(4, "Passenger Loading"), 
+	GSX(0, "GSX", true), RAAS(1, "RAAS", true), XSB(2, "XSquawkbox",true), FUEL_LOAD(3, "Fuel Loading"), PAX_LOAD(4, "Passenger Loading"), 
 	FMC_LOAD(5, "FMC Fuel/Passenger Loaidng"), ANNOUNCE(6, "Cabin Announcements"), AFTERBURNER(7, "Afterburner"), JETWAY(8, "Jetway Control"), 
-	FMC(9, "FMC", true), VPILOT(10, "vPilot", true);
+	FMC(9, "FMC", true), VPILOT(10, "vPilot", true), XIVAP(11, "X-IvAp", true), IVAP(12, "IvAp", true);
 	
 	private final int _mask;
 	private final String _desc;
 	private final boolean _show;
 	
+	/**
+	 * Creates a nonvisible capability.
+	 * @param bit the bit flag
+	 * @param desc the description
+	 */
 	Capabilities(int bit, String desc) {
 		this(bit, desc, false);
 	}
@@ -36,7 +41,7 @@ public enum Capabilities {
 	}
 	
 	/**
-	 * Returns the description for this Ground Operation.
+	 * Returns the description for this Capability.
 	 * @return the description
 	 */
 	public String getDescription() {
