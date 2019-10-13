@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load ACARS information.
  * @author Luke
- * @version 8.6
+ * @version 8.7
  * @since 1.0
  */
 
@@ -37,7 +37,7 @@ public class GetACARSData extends DAO {
 	 */
 	public ArchiveMetadata getArchiveInfo(int flightID) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT CNT, SIZE, CRC, ARCHIVED FROM acars.ARCHIVE WHERE (ID=?) LIMIT 1");
+			prepareStatementWithoutLimits("SELECT CNT, SIZE, CRC, ARCHIVED, FMT FROM acars.ARCHIVE WHERE (ID=?) LIMIT 1");
 			_ps.setInt(1, flightID);
 			
 			ArchiveMetadata md = null;
@@ -48,6 +48,7 @@ public class GetACARSData extends DAO {
 					md.setSize(rs.getInt(2));
 					md.setCRC32(rs.getLong(3));
 					md.setArchivedOn(rs.getTimestamp(4).toInstant());
+					md.setFormat(SerializedDataVersion.fromCode(rs.getInt(5)));
 				}
 			}
 			
