@@ -5,10 +5,12 @@ import java.io.*;
 import java.util.*;
 import java.util.zip.*;
 import java.text.*;
+import java.time.Instant;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
 import org.jdom2.*;
+import org.apache.log4j.Logger;
 
 import org.deltava.beans.navdata.*;
 
@@ -23,11 +25,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display Terminal Route data to ACARS clients.
  * @author Luke
- * @version 8.6
+ * @version 8.7
  * @since 2.4
  */
 
 public class XMLTerminalRouteService extends DownloadService {
+	
+	private static final Logger log = Logger.getLogger(XMLTerminalRouteService.class);
 	
 	private Metadata _md;
 
@@ -35,6 +39,7 @@ public class XMLTerminalRouteService extends DownloadService {
 		private final String _hash;
 		private final String _hashType;
 		private int _airportCount;
+		private final Instant _created = Instant.now();
 		
 		protected Metadata(String hash, String hashType) {
 			super();
@@ -52,6 +57,10 @@ public class XMLTerminalRouteService extends DownloadService {
 		
 		public int getAirportCount() {
 			return _airportCount;
+		}
+		
+		public Instant getCreatedOn() {
+			return _created;
 		}
 		
 		public void setAirportCount(int cnt) {
@@ -75,8 +84,19 @@ public class XMLTerminalRouteService extends DownloadService {
 		// Check if the file exists
 		File cacheDir = new File(SystemData.get("schedule.cache"));
 		File f = new File(cacheDir, "sidstar.zip");
-		long age = f.exists() ? (System.currentTimeMillis() - f.lastModified()) : Long.MAX_VALUE;
-
+		long age = Long.MAX_VALUE;
+		if (f.exists()) {
+			Instant fileAge = Instant.ofEpochMilli(f.lastModified());
+			age = System.currentTimeMillis() - f.lastModified();
+			if ((_md != null) && fileAge.isAfter(_md.getCreatedOn())) {
+				log.warn("Terminal Routes updated, clearing metadata");
+				_md = null;
+			}
+		} else if (_md != null) {
+			log.warn("Terminal Routes deleted, clearing metadata");
+			_md = null;
+		}
+		
 		// Check the cache
 		if ((age < 3600_000) && (f.length() > 10240) && (_md != null)) {
 			ctx.setHeader("Content-disposition", "attachment; filename=xmlsidstar.zip");
@@ -101,8 +121,7 @@ public class XMLTerminalRouteService extends DownloadService {
 		}
 
 		// Format routes
-		int apCount = 0;
-		final NumberFormat df = new DecimalFormat("#0.000000");
+		int apCount = 0; final NumberFormat df = new DecimalFormat("#0.000000");
 		try {
 			Document doc = null;
 			String lastAirport = null;
