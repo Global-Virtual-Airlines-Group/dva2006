@@ -208,14 +208,16 @@ public class GetNavAirway extends GetNavData {
 		
 		// Build the SQL statement
 		StringBuilder buf = new StringBuilder("SELECT DISTINCT CONCAT_WS('.', SS.NAME, SS.TRANSITION, SS.RUNWAY), IF(SS.RUNWAY=?, 0, 1) AS PRF "
-			+ "FROM common.SIDSTAR_META SS LEFT JOIN common.SIDSTAR_WAYPOINTS SW ON (SS.ICAO=SW.ICAO) AND (SS.ID=SW.ID) WHERE (SS.ICAO=?) "
-			+ "AND (SS.TYPE=?) AND ");
+			+ "FROM common.SIDSTAR_META SS LEFT JOIN common.SIDSTAR_WAYPOINTS SW ON (SS.ICAO=SW.ICAO) AND (SS.ID=SW.ID) AND (SS.TYPE=SW.TYPE) "
+			+ "WHERE (SS.ICAO=?) AND (SS.TYPE=?) AND ");
 		buf.append(name.contains("%") ? "(SS.NAME LIKE ?)" : "(SS.NAME=?)");
 		if (wp != null)
 			buf.append(" AND (SW.WAYPOINT=?) ");
 		if (rwy != null)
 			buf.append("AND ((SS.RUNWAY=?) OR (SS.RUNWAY=?))");
-		buf.append(" ORDER BY PRF, SW.SEQ");
+		buf.append(" ORDER BY PRF, SW.SEQ ");
+		if (t == TerminalRoute.Type.SID)
+			buf.append("DESC");
 		
 		try {
 			int pos = 0;
