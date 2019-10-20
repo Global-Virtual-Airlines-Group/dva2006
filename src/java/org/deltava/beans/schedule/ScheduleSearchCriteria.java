@@ -12,7 +12,7 @@ import org.deltava.util.ComboUtils;
 /**
  * A bean to store search criteria for the Flight Schedule.
  * @author Luke
- * @version 8.6
+ * @version 8.7
  * @since 1.0
  */
 
@@ -31,8 +31,8 @@ public class ScheduleSearchCriteria extends Flight {
 	private int _maxResults;
 	private Inclusion _includeAcademy;
 	private boolean _dispatchRouteCounts;
-	private Inclusion _dispatchOnly;
-	private Inclusion _excludeHistoric;
+	private Inclusion _dispatchOnly = Inclusion.ALL;
+	private Inclusion _excludeHistoric = Inclusion.ALL;
 	private int _maxPerRoute;
 	
 	private int _pilotID;
