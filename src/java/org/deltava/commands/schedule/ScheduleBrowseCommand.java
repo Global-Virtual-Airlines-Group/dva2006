@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to browse the Flight Schedule.
  * @author Luke
- * @version 8.6
+ * @version 8.7
  * @since 1.0
  */
 
