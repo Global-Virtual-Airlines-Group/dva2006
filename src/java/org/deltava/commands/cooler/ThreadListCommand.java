@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2012, 2014, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2012, 2014, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -11,15 +11,14 @@ import org.deltava.beans.system.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
-import org.deltava.security.command.CoolerChannelAccessControl;
-import org.deltava.security.command.CoolerThreadAccessControl;
+import org.deltava.security.command.*;
 
 import org.deltava.util.system.SystemData;
 
 /**
  * A web site command to display Message Threads in a Water Cooler channel.
  * @author Luke
- * @version 7.5
+ * @version 8.7
  * @since 1.0
  */
 
@@ -35,7 +34,7 @@ public class ThreadListCommand extends AbstractViewCommand {
 
 		// Get the user for the channel list
 		Pilot p = ctx.getUser();
-		AirlineInformation airline = SystemData.getApp(SystemData.get("airline.code"));
+		AirlineInformation airline = SystemData.getApp(null);
 
 		// Check if we want to display image threads
 		boolean showImgThreads = ctx.isAuthenticated() ? p.getShowSSThreads() : true;
@@ -65,10 +64,10 @@ public class ThreadListCommand extends AbstractViewCommand {
 			cAccess.validate();
 			ctx.setAttribute("channelAccess", cAccess, REQUEST);
 
-			// Get the Message Threads for this channel - add by 10% for filtering
+			// Get the Message Threads for this channel - add by 200% for filtering
 			GetCoolerThreads tdao = new GetCoolerThreads(con);
 			tdao.setQueryStart(vc.getStart());
-			tdao.setQueryMax(vc.getCount() * 2);
+			tdao.setQueryMax(vc.getCount() * 3);
 
 			// Figure out what message threads to display
 			List<MessageThread> threads = null;
@@ -142,7 +141,7 @@ public class ThreadListCommand extends AbstractViewCommand {
 
 			// Save in the view context - If threads is still larger than the max, then cut it off
 			vc.setResults((threads.size() > vc.getCount()) ? threads.subList(0, vc.getCount()) : threads);
-			ctx.setExpiry(10);
+			ctx.setExpiry(5);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
