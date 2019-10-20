@@ -39,6 +39,7 @@ public class ScheduleBrowseCommand extends AbstractViewCommand {
 		criteria.setSortBy("AIRPORT_D, AIRPORT_A");
 		criteria.setDBName(SystemData.get("airline.db"));
 		criteria.setIncludeAcademy(ctx.isUserInRole("Instructor") || ctx.isUserInRole("Schedule") || ctx.isUserInRole("HR") || ctx.isUserInRole("AcademyAudit") || ctx.isUserInRole("AcademyAdmin") ? Inclusion.ALL : Inclusion.EXCLUDE);
+		criteria.setExcludeHistoric(Inclusion.ALL);
 
 		// Save the search criteria
 		ctx.setAttribute("airportD", aD, REQUEST);
