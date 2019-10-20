@@ -54,7 +54,7 @@ golgotha.local.setNetwork = function(combo) {
  <td class="pri bld">${srv.name}</td>
  <td class="bld">${srv.address}</td>
 <c:if test="${!empty ipInfo}">
- <td class="nophone" ><el:flag countryCode="${ipInfo.country.code}" caption="${ipInfo.location}" /> ${ipInfo.location}</td>
+ <td class="nophone" ><el:flag countryCode="${ipInfo.country.code}" caption="${ipInfo.location}" />&nbsp;${ipInfo.location}</td>
 </c:if>
 <c:if test="${empty ipInfo}">
  <td>${srv.location}</td>

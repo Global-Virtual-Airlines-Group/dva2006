@@ -55,7 +55,7 @@
  <td class="nophone"><fmt:int value="${channel.viewCount}" /></td>
 <c:set var="post" value="${posts[channel.lastThreadID]}" scope="page" />
 <c:set var="author" value="${authors[post.authorID]}" scope="page" />
- <td class="right"><span class="small nophone">${author.rank.name} </span><span class="pri bld small">${author.name}</span>
+ <td class="right"><span class="small nophone">${author.rank.name}&nbsp;</span><span class="pri bld small">${author.name}</span>
  <span class="small nophone"><c:if test="${!empty author.pilotCode}">(${author.pilotCode}) </c:if>at
  <fmt:date date="${post.createdOn}" /></span><br />
  in <el:cmd url="thread" linkID="${post.threadID}" className="bld">${post.subject}</el:cmd></td>
