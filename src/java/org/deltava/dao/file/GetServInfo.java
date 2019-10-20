@@ -1,10 +1,9 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
 import java.util.*;
 import java.time.Instant;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.log4j.Logger;
 
@@ -15,7 +14,7 @@ import org.deltava.beans.schedule.Airport;
 
 import org.deltava.dao.*;
 
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -96,7 +95,7 @@ public class GetServInfo extends DAO {
 	public NetworkInfo getInfo(OnlineNetwork network) throws DAOException {
 		try (LineNumberReader br = getReader()) {
 			NetworkInfo info = new NetworkInfo(network);
-			Map<String, AtomicInteger> serverCons = new HashMap<String, AtomicInteger>();
+			Map<String, MutableInteger> serverCons = new HashMap<String, MutableInteger>();
 			String iData = br.readLine();
 			while (iData != null) {
 				if ((iData.length() > 7) && (iData.charAt(0) == '!')) {
@@ -161,11 +160,11 @@ public class GetServInfo extends DAO {
 										}
 										
 										// Set server
-										AtomicInteger srvCnt = serverCons.get(c.getServer());
+										MutableInteger srvCnt = serverCons.get(c.getServer());
 										if (srvCnt == null)
-											serverCons.put(c.getServer(), new AtomicInteger(1));
+											serverCons.put(c.getServer(), new MutableInteger(1));
 										else
-											srvCnt.incrementAndGet();
+											srvCnt.inc();
 										
 										info.add(c);
 									} catch (Exception e) {
@@ -216,11 +215,11 @@ public class GetServInfo extends DAO {
 										}
 										
 										// Set server
-										AtomicInteger srvCnt = serverCons.get(p.getServer());
+										MutableInteger srvCnt = serverCons.get(p.getServer());
 										if (srvCnt == null)
-											serverCons.put(p.getServer(), new AtomicInteger(1));
+											serverCons.put(p.getServer(), new MutableInteger(1));
 										else
-											srvCnt.incrementAndGet();
+											srvCnt.inc();
 
 										// Add to results
 										if (p.getID() != 0)
@@ -239,11 +238,11 @@ public class GetServInfo extends DAO {
 							String name = tk.nextToken();
 							try {
 								Server srv = new Server(name);
-								srv.setAddress(tk.nextToken());
+								srv.setAddress(tk.nextToken().trim());
 								srv.setLocation(tk.nextToken());
 								srv.setComment(tk.nextToken());
-								AtomicInteger srvCnt = serverCons.get(srv.getName());
-								srv.setConnections((srvCnt ==  null) ? 0 : srvCnt.intValue());
+								MutableInteger srvCnt = serverCons.get(srv.getName());
+								srv.setConnections((srvCnt ==  null) ? 0 : srvCnt.getValue().intValue());
 								info.add(srv);
 							} catch (Exception e) {
 								log.info("Error parsing server data for " + name + " - " + e.getMessage());
