@@ -1,4 +1,4 @@
- // Copyright 2010, 2011, 2014, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+ // Copyright 2010, 2011, 2014, 2015, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import java.time.*;
@@ -12,12 +12,13 @@ import org.deltava.beans.stats.AccomplishUnit.Data;
 
 import org.deltava.comparators.FlightReportComparator;
 
+import org.deltava.util.MutableInteger;
 import org.deltava.util.system.SystemData;
 
 /**
  * A utility class to determine what Accomplishments a Pilot has achieved. 
  * @author Luke
- * @version 8.1
+ * @version 8.7
  * @since 3.2
  */
 
@@ -34,33 +35,6 @@ public class AccomplishmentHistoryHelper {
 	private final Pilot _usr;
 	private final Collection<FlightReport> _pireps = new TreeSet<FlightReport>(new FlightReportComparator(FlightReportComparator.DATE));
 	private final Collection<DispatchConnectionEntry> _cons = new TreeSet<DispatchConnectionEntry>();
-	
-	private static class MutableInteger {
-		private int _value;
-		
-		MutableInteger(int value) {
-			super();
-			_value = value;
-		}
-		
-		public void inc() {
-			_value++;
-		}
-		
-		public Integer getValue() {
-			return Integer.valueOf(_value);
-		}
-		
-		@Override
-		public String toString() {
-			return String.valueOf(_value);
-		}
-		
-		@Override
-		public int hashCode() {
-			return _value;
-		}
-	}
 	
 	private static class AccomplishmentCounter {
 
