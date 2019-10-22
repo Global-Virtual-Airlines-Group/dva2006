@@ -17,24 +17,13 @@ public enum UpdateType {
 	CURRENCY("Currency Policy");
 	
 	private final String _desc;
-	private final boolean _isHidden;
-	
-	/**
-	 * Creates a public enumeration value.
-	 * @param desc the description
-	 */
-	UpdateType(String desc) {
-		this(desc, false);
-	}
 	
 	/**
 	 * Creates an enumeration value.
 	 * @param desc the description
-	 * @param isHidden TRUE if private, otherwise FALSE
 	 */
-	UpdateType(String desc, boolean isHidden) {
+	UpdateType(String desc) {
 		_desc = desc;
-		_isHidden = isHidden;
 	}
 	
 	/**
@@ -50,6 +39,6 @@ public enum UpdateType {
 	 * @return TRUE if hidden, otherwise FALSE
 	 */
 	public boolean getIsHidden() {
-		return _isHidden;
+		return (this == COMMENT);
 	}
 }
