@@ -2,6 +2,7 @@
 package org.deltava.service.schedule;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.io.IOException;
 import java.sql.Connection;
 
@@ -48,14 +49,9 @@ public class AirportListService extends WebService {
 			
 			// Check for not visited airports
 			if (Boolean.valueOf(ctx.getParameter("notVisited")).booleanValue() && ctx.isAuthenticated()) {
-				Collection<Airport> myAirports = new HashSet<Airport>();
-				
 				GetFlightReports frdao = new GetFlightReports(con);
-				Collection<? extends RoutePair> routes = frdao.getRoutePairs(ctx.getUser().getID());
-				for (RoutePair rp : routes) {
-					myAirports.add(rp.getAirportD());
-					myAirports.add(rp.getAirportA());
-				}
+				Collection<? extends RoutePair> routes = frdao.getRoutePairs(ctx.getUser().getID(), 0);
+				Collection<Airport> myAirports = routes.stream().flatMap(rp -> List.of(rp.getAirportD(), rp.getAirportA()).stream()).collect(Collectors.toCollection(LinkedHashSet::new));
 				
 				// Add academy airports
 				GetSchedule sdao = new GetSchedule(con);
