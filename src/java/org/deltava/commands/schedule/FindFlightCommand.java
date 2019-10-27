@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to search the Flight Schedule.
  * @author Luke
- * @version 8.6
+ * @version 8.7
  * @since 1.0
  */
 
@@ -138,11 +138,9 @@ public class FindFlightCommand extends AbstractCommand {
 				GetScheduleAirport adao = new GetScheduleAirport(con);
 				Collection<Airport> dsts = adao.getConnectingAirports(criteria.getAirportD(), true, criteria.getAirline());
 				if (criteria.getNotVisitedA()) {
-					Collection<Airport> myAirports = new HashSet<Airport>();
-					
 					GetFlightReports frdao = new GetFlightReports(con);
-					Collection<? extends RoutePair> routes = frdao.getRoutePairs(ctx.getUser().getID());
-					routes.forEach(rp -> { myAirports.add(rp.getAirportD()); myAirports.add(rp.getAirportA()); });
+					Collection<? extends RoutePair> routes = frdao.getRoutePairs(ctx.getUser().getID(), 0);
+					Collection<Airport> myAirports = routes.stream().flatMap(rp -> List.of(rp.getAirportD(), rp.getAirportA()).stream()).collect(Collectors.toCollection(LinkedHashSet::new));
 					
 					AirportFilter fl = new NOTFilter(new IATAFilter(myAirports));
 					ctx.setAttribute("airportsA", fl.filter(dsts), REQUEST);
