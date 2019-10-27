@@ -26,23 +26,27 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
+<el:form action="myroutemap.do" method="get" validate="return false"> 
 <el:table className="form">
 <tr class="title caps">
- <td colspan="2"><content:airline /> ROUTE HISTORY FOR ${pilot.name}<span id="isLoading"></span></td>
+ <td colspan="4"><content:airline /> ROUTE HISTORY FOR ${pilot.name}<span id="isLoading"></span></td>
 </tr>
 <tr>
  <td class="label">Map Legend</td>
  <td class="data"><map:legend color="blue" legend="Airports" /> <map:legend color="white" legend="Home Airport" /></td>
+ <td class="label">Date Range</td>
+ <td class="data"><el:combo name="days" options="${dateOptions}" size="1" idx="*" value="0" onChange="void golgotha.routeMap.updateDates(this)" /></td>
 </tr>
 <tr>
- <td colspan="2"><map:div ID="googleMap" height="510" /></td>
+ <td colspan="4"><map:div ID="googleMap" height="510" /></td>
 </tr>
 </el:table>
+</el:form>
 <br />
 <content:copyright />
 </content:region>
 </content:page>
-<script id="mapInit">
+<script id="mapInit" async>
 <map:point var="golgotha.local.mapC" point="${home}" />
 var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
 var mapOpts = {center:golgotha.local.mapC, minZoom:2, zoom:3, scrollwheel:false, clickableIcons:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
@@ -58,7 +62,7 @@ google.maps.event.addListener(map, 'click', function() { map.infoWindow.close();
 airportH.setMap(map);
 
 golgotha.routeMap.id = '${pilot.hexID}';
-google.maps.event.addListenerOnce(map, 'tilesloaded', function() { golgotha.routeMap.load(); });
+google.maps.event.addListenerOnce(map, 'tilesloaded', function() { golgotha.routeMap.load(0); });
 </script>
 <content:googleAnalytics />
 </body>
