@@ -25,9 +25,9 @@ golgotha.local.validate = function(f) {
 };
 
 golgotha.local.updateEQ = function(combo) {
-	var eq = golgotha.form.getCombo(combo);
-	var acTypes = golgotha.local.eqACMap[eq];
-	var acc = document.forms[0].eqType;
+	const eq = golgotha.form.getCombo(combo);
+	const acTypes = golgotha.local.eqACMap[eq];
+	const acc = document.forms[0].eqType;
 	acc.options.length = acTypes.length + 1;
 	acc.selectedIndex = 0;
 	for (var x = 0; x < acTypes.length; x++)
@@ -73,6 +73,10 @@ golgotha.local.updateEQ = function(combo) {
 </tr>
 </c:if>
 <tr>
+ <td class="label">&nbsp;</td>
+ <td class="data"><el:box name="isDefault" value="true" className="small" label="This is the default check ride script for the Equipment Program" checked="${script.isDefault}" /></td>
+</tr>
+<tr>
  <td class="label top">Script Text</td>
  <td class="data"><el:textbox name="msgText" idx="*" width="90%" height="5" resize="true" className="req">${script.description}</el:textbox></td>
 </tr>
@@ -83,9 +87,7 @@ golgotha.local.updateEQ = function(combo) {
 <el:table className="bar">
 <tr>
  <td><el:button ID="SaveButton" type="submit" label="SAVE CHECK RIDE SCRIPT" />
-<c:if test="${access.canDelete}">
-&nbsp;<el:cmdbutton ID="DeleteButton" url="crscriptdelete" linkID="${script.equipmentType}" label="DELETE CHECK RIDE SCRIPT" />
-</c:if></td>
+<c:if test="${access.canDelete}">&nbsp;<el:cmdbutton ID="DeleteButton" url="crscriptdelete" linkID="${script.equipmentType}" label="DELETE CHECK RIDE SCRIPT" /></c:if></td>
 </tr>
 </el:table>
 </el:form>

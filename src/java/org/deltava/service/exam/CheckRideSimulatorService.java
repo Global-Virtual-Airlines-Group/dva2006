@@ -18,7 +18,7 @@ import org.deltava.util.JSONUtils;
 /**
  * A Web Service to display available Check Ride program/aircraft/simulator combinations.
  * @author Luke
- * @version 8.6
+ * @version 8.7
  * @since 8.6
  */
 
@@ -55,7 +55,7 @@ public class CheckRideSimulatorService extends WebService {
 			}
 			
 			final JSONObject fpo = epo; 
-			Collection<Simulator> sims = sc.getSimulators().isEmpty() ? DEFAULT_SIMS : sc.getSimulators();
+			Collection<Simulator> sims = sc.getSimulators().isEmpty() || sc.getIsDefault() ? DEFAULT_SIMS : sc.getSimulators();
 			sims.forEach(s -> fpo.accumulate(s.name(), sc.getEquipmentType()));
 			JSONUtils.ensureArrayPresent(epo, DEFAULT_SIMS.toArray());
 		}

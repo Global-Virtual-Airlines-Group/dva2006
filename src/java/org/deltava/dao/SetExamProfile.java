@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object for writing Examination Profiles and Check Ride scripts.
  * @author Luke
- * @version 8.6
+ * @version 8.7
  * @since 1.0
  */
 
@@ -97,8 +97,7 @@ public class SetExamProfile extends DAO {
 			startTransaction();
 
 			// Write the exam profile
-			prepareStatement("INSERT INTO exams.EXAMINFO (NAME, STAGE, QUESTIONS, PASS_SCORE, TIME, ACTIVE, "
-					+ "EQTYPE, MIN_STAGE, ACADEMY, NOTIFY, AIRLINE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			prepareStatement("INSERT INTO exams.EXAMINFO (NAME, STAGE, QUESTIONS, PASS_SCORE, TIME, ACTIVE, EQTYPE, MIN_STAGE, ACADEMY, NOTIFY, AIRLINE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setString(1, ep.getName());
 			_ps.setInt(2, ep.getStage());
 			_ps.setInt(3, ep.getSize());
@@ -146,12 +145,13 @@ public class SetExamProfile extends DAO {
 	 */
 	public void write(EquipmentRideScript sc) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("REPLACE INTO CR_DESCS (EQTYPE, EQPROGRAM, CURRENCY, SIMS, BODY) VALUES (?, ?, ?, ?, ?)");
+			prepareStatementWithoutLimits("REPLACE INTO CR_DESCS (EQTYPE, EQPROGRAM, CURRENCY, ISDEFAULT, SIMS, BODY) VALUES (?, ?, ?, ?, ?, ?)");
 			_ps.setString(1, sc.getEquipmentType());
 			_ps.setString(2, sc.getProgram());
 			_ps.setBoolean(3, sc.getIsCurrency());
-			_ps.setString(4, StringUtils.listConcat(sc.getSimulators(), ","));
-			_ps.setString(5, sc.getDescription());
+			_ps.setBoolean(4, sc.getIsDefault());
+			_ps.setString(5, StringUtils.listConcat(sc.getSimulators(), ","));
+			_ps.setString(6, sc.getDescription());
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
