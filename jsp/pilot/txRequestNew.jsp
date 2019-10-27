@@ -81,7 +81,7 @@ golgotha.local.updateAircraft = function(combo) {
 </tr>
 <tr>
  <td class="label">Preferred Simulator</td>
- <td class="data"><el:combo name="sim" size="1" idx="*" firstEntry="[ SELECT SIMULATOR ]" options="${availableSims}" onChange="void golgotha.local.updateAircraft(this.form.eqType)" /></td>
+ <td class="data"><el:combo name="sim" size="1" idx="*" required="true" firstEntry="[ SELECT SIMULATOR ]" options="${availableSims}" onChange="void golgotha.local.updateAircraft(this.form.eqType)" /></td>
 </tr>
 <tr id="acType" style="display:none;">
  <td class="label">Preferred Aircraft</td>

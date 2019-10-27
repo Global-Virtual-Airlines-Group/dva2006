@@ -1,10 +1,10 @@
-// Copyright 2005, 2009, 2010, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2010, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 /**
  * A bean to store Check Ride scripts.
  * @author Luke
- * @version 8.0
+ * @version 8.7
  * @since 1.0
  */
 
@@ -12,6 +12,7 @@ public class EquipmentRideScript extends CheckRideScript {
 
 	private String _eqType;
 	private boolean _isCurrency;
+	private boolean _isDefault;
 
 	/**
 	 * Creates a new Check Ride script.
@@ -43,12 +44,22 @@ public class EquipmentRideScript extends CheckRideScript {
 	}
 	
 	/**
-	 * Returns whether this is a currency check ride script
+	 * Returns whether this is a currency check ride script.
 	 * @return TRUE if a currency check ride script, otherwise FALSE
 	 * @see EquipmentRideScript#setIsCurrency(boolean)
 	 */
 	public boolean getIsCurrency() {
 		return _isCurrency;
+	}
+	
+	/**
+	 * Returns whether this is the default script for a particular equipment program. This will be used even if there is no
+	 * script for the user-requested equipment/simulator combination.
+	 * @return TRUE if the default script, otherwise FALSE
+	 * @see EquipmentRideScript#setIsDefault(boolean)
+	 */
+	public boolean getIsDefault() {
+		return _isDefault;
 	}
 	
 	/**
@@ -68,6 +79,15 @@ public class EquipmentRideScript extends CheckRideScript {
 	 */
 	public void setIsCurrency(boolean isCurrency) {
 		_isCurrency = isCurrency;
+	}
+	
+	/**
+	 * Sets whether this is the default check ride script for an equipment program.
+	 * @param isDefault TRUE if default, otherwise FALSE
+	 * @see EquipmentRideScript#getIsDefault()
+	 */
+	public void setIsDefault(boolean isDefault) {
+		_isDefault = isDefault;
 	}
 
 	/**
