@@ -542,14 +542,24 @@ public class GetFlightReports extends DAO {
 	/**
 	 * Returns the city pairs flown by a particular Pilot.
 	 * @param pilotID the Pilot database ID
+	 * @param days the number of days back to search
 	 * @return a Collection of RoutePair beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<RouteStats> getRoutePairs(int pilotID) throws DAOException {
+	public Collection<RouteStats> getRoutePairs(int pilotID, int days) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT DISTINCT AIRPORT_D, AIRPORT_A, COUNT(ID) AS CNT FROM PIREPS WHERE (PILOT_ID=?) AND (STATUS=?) ");
+		if (days > 0)
+			sqlBuf.append("AND (DATE>DATE_SUB(CURDATE(), INTERVAL ? DAY)) ");
+		sqlBuf.append("GROUP BY AIRPORT_D, AIRPORT_A");
+		
 		try {
-			prepareStatementWithoutLimits("SELECT DISTINCT AIRPORT_D, AIRPORT_A, COUNT(ID) AS CNT FROM PIREPS WHERE (PILOT_ID=?) AND (STATUS=?) GROUP BY AIRPORT_D, AIRPORT_A");
+			prepareStatementWithoutLimits(sqlBuf.toString());
 			_ps.setInt(1, pilotID);
 			_ps.setInt(2, FlightStatus.OK.ordinal());
+			if (days > 0)
+				_ps.setInt(3, days);
 			
 			// Execute the query
 			Map<String, RouteStats> results = new HashMap<String, RouteStats>();
