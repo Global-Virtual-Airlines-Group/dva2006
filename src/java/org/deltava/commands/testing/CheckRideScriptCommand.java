@@ -17,7 +17,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to update Check Ride scripts.
  * @author Luke
- * @version 8.6
+ * @version 8.7
  * @since 1.0
  */
 
@@ -48,6 +48,7 @@ public class CheckRideScriptCommand extends AbstractAuditFormCommand {
 			sc.setDescription(ctx.getParameter("msgText"));
 			sc.setEquipmentType(ctx.getParameter("eqType"));
 			sc.setIsCurrency(isCurrency);
+			sc.setIsDefault(Boolean.valueOf(ctx.getParameter("isDefault")).booleanValue());
 			ctx.getParameters("sims", Collections.emptySet()).stream().map(s ->Simulator.fromName(s, Simulator.UNKNOWN)).filter(s -> (s != Simulator.UNKNOWN)).forEach(sc::addSimulator);
 
 			// Calculate our access
