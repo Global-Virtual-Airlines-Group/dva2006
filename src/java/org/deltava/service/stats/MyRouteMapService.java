@@ -1,12 +1,12 @@
-// Copyright 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2014, 2015, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.json.*;
-
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.stats.RouteStats;
 
@@ -17,7 +17,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display a Pilot's Flight Report routes to a Google map.
  * @author Luke
- * @version 6.0
+ * @version 8.7
  * @since 5.4
  */
 
@@ -37,12 +37,15 @@ public class MyRouteMapService extends WebService {
 		int id = StringUtils.parse(ctx.getParameter("id"), 0);
 		if ((ctx.isUserInRole("PIREP") || ctx.isUserInRole("HR")) && (id > 0))
 			userID = id;
+		
+		// Get the date range
+		int days = StringUtils.parse(ctx.getParameter("days"), 0);
 
-		// Get the routes
+		// Get the routes and the earliest flight
 		List<RouteStats> routes = new ArrayList<RouteStats>();
 		try {
 			GetFlightReports frdao = new GetFlightReports(ctx.getConnection());
-			routes.addAll(frdao.getRoutePairs(userID));
+			routes.addAll(frdao.getRoutePairs(userID, days));
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
 		} finally {
@@ -50,16 +53,11 @@ public class MyRouteMapService extends WebService {
 		}
 		
 		// Get the airports
-		Airport.Code ac = ctx.getUser().getAirportCodeType();
-		Collection<Airport> airports = new LinkedHashSet<Airport>();
-		for (RoutePair rp : routes) {
-			airports.add(rp.getAirportD());
-			airports.add(rp.getAirportA());
-		}
+		Collection<Airport> airports = routes.stream().flatMap(rp -> List.of(rp.getAirportD(), rp.getAirportA()).stream()).collect(Collectors.toCollection(LinkedHashSet::new));
 		
 		// Create the response
 		Collections.sort(routes, Collections.reverseOrder());
-		int max = Math.max(1, routes.get(0).getFlights());
+		int max = routes.isEmpty() ? 0 : Math.max(1, routes.get(0).getFlights());
 		JSONObject jo = new JSONObject();
 
 		// Add airports
@@ -67,7 +65,7 @@ public class MyRouteMapService extends WebService {
 			JSONObject ao = new JSONObject();
 			ao.put("ll", JSONUtils.format(a));
 			ao.put("icao", a.getICAO());
-			ao.put("code", (ac == Airport.Code.ICAO) ? a.getICAO() : a.getIATA());
+			ao.put("code", (ctx.getUser().getAirportCodeType() == Airport.Code.ICAO) ? a.getICAO() : a.getIATA());
 			ao.put("name", a.getName());
 			ao.put("desc", a.getInfoBox());
 			jo.append("airports", ao);
