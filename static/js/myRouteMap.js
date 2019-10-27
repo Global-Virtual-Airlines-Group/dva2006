@@ -54,12 +54,18 @@ golgotha.routeMap.showAirport = function(a, isDST) {
 	return true;
 };
 
+// Update date filter
+golgotha.routeMap.updateDates = function(cb) {
+	const days = golgotha.form.getCombo(cb);
+	return golgotha.routeMap.load(days);
+};
+
 // Load airport/route data
-golgotha.routeMap.load = function() {
+golgotha.routeMap.load = function(days) {
 	if (this.busy) return false;
 	var xmlreq = new XMLHttpRequest();
 	golgotha.util.setHTML('isLoading', ' - LOADING...');
-	xmlreq.open('get', 'myroutemap.ws?id=' + this.id, true);
+	xmlreq.open('get', 'myroutemap.ws?id=' + this.id + '&days=' + days, true);
 	xmlreq.onreadystatechange = function() {
 		if (xmlreq.readyState != 4) return false;
 		if (xmlreq.status != 200) {
@@ -70,6 +76,7 @@ golgotha.routeMap.load = function() {
 
 		var js = JSON.parse(xmlreq.responseText);
 		golgotha.util.setHTML('isLoading', '');
+		map.removeMarkers(golgotha.routeMap.routes);
 		js.airports.forEach(function(a) {
 			var mrk = new golgotha.maps.Marker({color:'blue', map:map, label:a.code, zIndex:golgotha.maps.z.POLYLINE+10}, a.ll);
 			mrk.icao = a.icao; mrk.desc = a.desc;
