@@ -1,4 +1,4 @@
-// Copyright 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2015, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display airports a Pilot has not flown to.
  * @author Luke
- * @version 6.0
+ * @version 8.7
  * @since 4.0
  */
 
@@ -84,11 +84,8 @@ public class NewAirportListCommand extends AbstractCommand {
 
 			// Load airports
 			GetFlightReports frdao = new GetFlightReports(con);
-			Collection<? extends RoutePair> routes = frdao.getRoutePairs(userID);
-			for (RoutePair rp : routes) {
-				myAirports.add(rp.getAirportD());
-				myAirports.add(rp.getAirportA());
-			}
+			Collection<? extends RoutePair> routes = frdao.getRoutePairs(userID, 0);
+			routes.stream().flatMap(rp -> List.of(rp.getAirportD(), rp.getAirportA()).stream()).forEach(myAirports::add);
 			
 			// Add academy airports
 			GetSchedule sdao = new GetSchedule(con);
