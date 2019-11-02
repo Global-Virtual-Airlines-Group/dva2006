@@ -39,7 +39,7 @@ public class CIDRBlock {
     private InetAddress _endAddress;
     private final int _prefixLength;
 
-    public CIDRBlock(String cidrAddr) throws UnknownHostException {
+    public CIDRBlock(String cidrAddr) {
     	super();
         _cidr = cidrAddr;
 
@@ -48,11 +48,13 @@ public class CIDRBlock {
         if (index > -1) {
             String addressPart = _cidr.substring(0, index);
             String networkPart = _cidr.substring(index + 1);
-
-            _inetAddress = InetAddress.getByName(addressPart);
-            _prefixLength = Integer.parseInt(networkPart);
-
-            calculate();
+            try {
+            	_inetAddress = InetAddress.getByName(addressPart);
+            	_prefixLength = Integer.parseInt(networkPart);
+            	calculate();
+            } catch (UnknownHostException uhe) {
+            	throw new IllegalStateException(uhe.getMessage());
+            }
         } else
             throw new IllegalArgumentException("not an valid CIDR format!");
     }
@@ -75,9 +77,8 @@ public class CIDRBlock {
 
         byte[] startIpArr = toBytes(startIp.toByteArray(), targetSize);
         byte[] endIpArr = toBytes(endIp.toByteArray(), targetSize);
-
-        _startAddress = InetAddress.getByAddress(startIpArr);
-        _endAddress = InetAddress.getByAddress(endIpArr);
+       	_startAddress = InetAddress.getByAddress(startIpArr);
+       	_endAddress = InetAddress.getByAddress(endIpArr);
     }
 
     private static byte[] toBytes(byte[] array, int targetSize) {
@@ -115,15 +116,31 @@ public class CIDRBlock {
     	return _prefixLength;
     }
 
-    public boolean isInRange(String ipAddress) throws UnknownHostException {
-        InetAddress address = InetAddress.getByName(ipAddress);
-        BigInteger start = new BigInteger(1, _startAddress.getAddress());
-        BigInteger end = new BigInteger(1, _endAddress.getAddress());
-        BigInteger target = new BigInteger(1, address.getAddress());
+    public boolean isInRange(String ipAddress) {
+    	try {
+    		InetAddress address = InetAddress.getByName(ipAddress);
+    		BigInteger start = new BigInteger(1, _startAddress.getAddress());
+    		BigInteger end = new BigInteger(1, _endAddress.getAddress());
+    		BigInteger target = new BigInteger(1, address.getAddress());
 
-        int st = start.compareTo(target);
-        int te = target.compareTo(end);
-
-        return (st == -1 || st == 0) && (te == -1 || te == 0);
+    		int st = start.compareTo(target);
+    		int te = target.compareTo(end);
+    		return (st == -1 || st == 0) && (te == -1 || te == 0);
+    	} catch (UnknownHostException uhe) {
+    		throw new IllegalArgumentException(ipAddress);
+    	}
+    }
+    
+    @Override
+    public int hashCode() {
+    	return toString().hashCode();
+    }
+    
+    @Override
+    public String toString() {
+    	StringBuilder buf = new StringBuilder(getNetworkAddress());
+    	buf.append('/');
+    	buf.append(_prefixLength);
+    	return buf.toString();
     }
 }
