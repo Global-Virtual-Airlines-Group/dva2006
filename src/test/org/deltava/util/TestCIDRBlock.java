@@ -2,10 +2,10 @@ package org.deltava.util;
 
 import junit.framework.TestCase;
 
-public class TesstCIDRBlock extends TestCase {
+public class TestCIDRBlock extends TestCase {
 
 	@SuppressWarnings("static-method")
-	public void testIPv4() throws Exception {
+	public void testIPv4() {
 		
 		CIDRBlock cb = new CIDRBlock("205.206.207.0/24");
 		assertNotNull(cb);
@@ -27,7 +27,7 @@ public class TesstCIDRBlock extends TestCase {
 	}
 	
 	@SuppressWarnings("static-method")
-	public void testIPv6() throws Exception {
+	public void testIPv6() {
 		
 		CIDRBlock cb = new CIDRBlock("2600:1702:1621:3cbf::2/64");
 		assertNotNull(cb);
