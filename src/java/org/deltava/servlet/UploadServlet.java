@@ -1,4 +1,4 @@
-// Copyright 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A servlet to support file uploads.
  * @author Luke
- * @version 7.5
+ * @version 8.7
  * @since 7.5
  */
 
@@ -80,7 +80,7 @@ public class UploadServlet extends BasicAuthServlet {
 		try (RandomAccessFile raf = new RandomAccessFile(info.getTempFile(), "rw")) {
 			raf.seek((chunk - 1) * (long) info.getChunkSize()); // Seek to position
 
-			int totalRead = 0; byte[] bytes = new byte[262144];
+			int totalRead = 0; byte[] bytes = new byte[Math.min(info.getChunkSize(), 262144)];
 			try (InputStream is = p.getInputStream()) {
 				int r = is.read(bytes);
 				while (r != -1) {
@@ -111,9 +111,9 @@ public class UploadServlet extends BasicAuthServlet {
 				rw.print("Complete");
 			} else
 				rw.print("Uploaded " + chunk);
+		} finally {
+			cleanTempFiles();	
 		}
-		
-		cleanTempFiles();
 	}
 
 	/**
