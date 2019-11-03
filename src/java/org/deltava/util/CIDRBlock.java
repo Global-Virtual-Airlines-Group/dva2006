@@ -30,7 +30,7 @@ import java.util.*;
 /**
  * A class that enables to get an IP range from CIDR specification. It supports both IPv4 and IPv6.
  */
-public class CIDRBlock {
+public class CIDRBlock implements java.io.Serializable {
 	
     private final String _cidr;
 
