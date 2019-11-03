@@ -1,4 +1,4 @@
-// Copyright 2009, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2012, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 import org.deltava.beans.GeoLocation;
@@ -9,36 +9,32 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store IP address block information.
  * @author Luke
- * @version 7.0
+ * @version 8.7
  * @since 2.5
  */
 
-public abstract class IPBlock implements Cacheable, GeoLocation, Comparable<IPBlock> {
+public class IPBlock implements Cacheable, GeoLocation, Comparable<IPBlock> {
 	
 	private final GeoPosition _loc = new GeoPosition(0, 0);
 	
 	private final int _id;
-	private final String _baseAddr;
-	private final String _endAddr;
-	private final int _bits;
+	private final CIDRBlock _cidr;
 	
 	private Country _country;
 	private String _region;
 	private String _city;
+	
+	private int _radius;
 
 	/**
 	 * Initializes the bean.
 	 * @param id the block ID
-	 * @param start the start IP address
-	 * @param end the ending IP address
-	 * @param size the CIDR size in bits
+	 * @param cidr the CIDRBlock address
 	 */
-	protected IPBlock(int id, String start, String end, int size) {
+	public IPBlock(int id, String cidr) {
 		super();
 		_id = id;
-		_baseAddr = start;
-		_endAddr = end;
-		_bits = size;
+		_cidr = new CIDRBlock(cidr);
 	}
 
 	/**
@@ -46,7 +42,7 @@ public abstract class IPBlock implements Cacheable, GeoLocation, Comparable<IPBl
 	 * @return the base IP address
 	 */
 	public String getAddress() {
-		return _baseAddr;
+		return _cidr.getNetworkAddress();
 	}
 	
 	/**
@@ -54,7 +50,7 @@ public abstract class IPBlock implements Cacheable, GeoLocation, Comparable<IPBl
 	 * @return the last IP address
 	 */
 	public String getLastAddress() {
-		return _endAddr;
+		return _cidr.getBroadcastAddress();
 	}
 	
 	/**
@@ -62,7 +58,7 @@ public abstract class IPBlock implements Cacheable, GeoLocation, Comparable<IPBl
 	 * @return the size of the block in bits
 	 */
 	public int getBits() {
-		return _bits;
+		return _cidr.getPrefixLength();
 	}
 	
 	/**
@@ -78,14 +74,16 @@ public abstract class IPBlock implements Cacheable, GeoLocation, Comparable<IPBl
 	 * @return the number of addresses in the block
 	 */
 	public int getSize() {
-		return 1 << (getType().getBits() - _bits);
+		return (1 << getType().getBits() - _cidr.getPrefixLength());
 	}
 	
 	/**
 	 * Returns the IP address type.
 	 * @return an IPAddress
 	 */
-	public abstract IPAddress getType();
+	public IPAddress getType() {
+		return _cidr.isIPv6() ? IPAddress.IPV6 : IPAddress.IPV4;
+	}
 	
 	/**
 	 * Returns the country associated with this IP address.
@@ -130,6 +128,14 @@ public abstract class IPBlock implements Cacheable, GeoLocation, Comparable<IPBl
 		return buf.toString();
 	}
 	
+	/**
+	 * Returns the geolocation accuracy radius.
+	 * @return the radius in miles
+	 */
+	public int getRadius() {
+		return _radius;
+	}
+	
 	@Override
 	public double getLatitude() {
 		return _loc.getLatitude();
@@ -145,7 +151,9 @@ public abstract class IPBlock implements Cacheable, GeoLocation, Comparable<IPBl
 	 * @param addr the IP address
 	 * @return TRUE if the block contains the address, otherwise FALSE
 	 */
-	public abstract boolean contains(String addr);
+	public boolean contains(String addr) {
+		return _cidr.isInRange(addr);
+	}
 
 	/**
 	 * Updates the country associated with this address block.
@@ -184,6 +192,14 @@ public abstract class IPBlock implements Cacheable, GeoLocation, Comparable<IPBl
 		_loc.setLongitude(lng);
 	}
 	
+	/**
+	 * Sets the geolocaiton accuracy radius.
+	 * @param radius the radius in miles 
+	 */
+	public void setRadius(int radius) {
+		_radius = radius;
+	}
+	
 	@Override
 	public Object cacheKey() {
 		return Long.valueOf(_id);
@@ -192,5 +208,16 @@ public abstract class IPBlock implements Cacheable, GeoLocation, Comparable<IPBl
 	@Override
 	public int hashCode() {
 		return toString().hashCode();
+	}
+	
+	@Override
+	public String toString() {
+		return _cidr.toString();
+	}
+
+	@Override
+	public int compareTo(IPBlock o) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }
