@@ -876,8 +876,9 @@ pilot Certification.</td>
 </content:filter>
 <content:filter roles="Developer,Operations">
 <tr>
- <td class="mid"><el:cmd className="bld" url="ip6import">IPv6 Netblock Import</el:cmd></td>
- <td class="data">You can import GeoCities IPv6 City network block data files into the database.</td>
+ <td class="mid"><el:cmd className="bld" url="ipimport">IP Network Block Import</el:cmd><br />
+ <el:cmd className="bld" url="ipgeoimport">IP Network Location Import</el:cmd></td>
+ <td class="data">You can import MaxMind GeoCity network block and location data files into the database.</td>
 </tr>
 </content:filter>
 <content:filter roles="HR,Developer">
