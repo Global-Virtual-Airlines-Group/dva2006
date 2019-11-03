@@ -17,7 +17,6 @@ public class IPLocation extends DatabaseBean {
 	private String _region;
 	private String _regionCode;
 	private String _city;
-	private TZInfo _tz;
 	
 	/**
 	 * Creates a location bean.
@@ -62,14 +61,6 @@ public class IPLocation extends DatabaseBean {
 	}
 	
 	/**
-	 * Returns the time zone.
-	 * @return the TZInfo for the time zone
-	 */
-	public TZInfo getTZ() {
-		return _tz;
-	}
-
-	/**
 	 * Updates the country.
 	 * @param c a Country
 	 */
@@ -99,13 +90,5 @@ public class IPLocation extends DatabaseBean {
 	 */
 	public void setCityName(String name) {
 		_city = name;
-	}
-	
-	/**
-	 * Updates the time zone.
-	 * @param tz a TZInfo bean
-	 */
-	public void setTZ(TZInfo tz) {
-		_tz = tz;
 	}
 }

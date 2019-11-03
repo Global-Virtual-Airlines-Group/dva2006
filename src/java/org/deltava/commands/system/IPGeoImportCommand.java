@@ -6,7 +6,6 @@ import java.util.*;
 import java.util.zip.GZIPInputStream;
 import java.sql.Connection;
 
-import org.deltava.beans.*;
 import org.deltava.beans.schedule.Country;
 import org.deltava.beans.system.IPLocation;
 
@@ -65,7 +64,7 @@ public class IPGeoImportCommand extends AbstractCommand {
 								break;
 
 							List<String> tkns = StringUtils.split(data, ",");
-							if (tkns.size() < 14) {
+							if (tkns.size() < 11) {
 								msgs.add("Invalid token count (" + tkns.size() + ", expected 14) at Line " + lr.getLineNumber());
 								continue;
 							}
@@ -77,11 +76,12 @@ public class IPGeoImportCommand extends AbstractCommand {
 							if (tkns.get(6).length() > 3) {
 								msgs.add("Invalid region code at Line " + lr.getLineNumber() + " - " + tkns.get(6));
 								loc.setRegionCode("");
-							} else
+							} else {
 								loc.setRegionCode(tkns.get(6));
+								loc.setRegion(removeCSVQuotes(tkns.get(7)));
+							}
 
-							loc.setCityName(tkns.get(10));
-							loc.setTZ(TZInfo.get(tkns.get(12)));
+							loc.setCityName(removeCSVQuotes(tkns.get(10)));
 							ipwdao.write(loc);
 							locCount++;
 						}
@@ -93,7 +93,6 @@ public class IPGeoImportCommand extends AbstractCommand {
 			IPLocation loc = new IPLocation(Integer.MAX_VALUE);
 			loc.setCountry(Country.UNKNOWN);
 			loc.setCityName("");
-			loc.setTZ(TZInfo.UTC);
 			ipwdao.write(loc);
 			ctx.commitTX();
 		} catch (IOException | DAOException ie) {
@@ -114,5 +113,14 @@ public class IPGeoImportCommand extends AbstractCommand {
 		result.setType(ResultType.REQREDIRECT);
 		result.setURL("/jsp/admin/ipUpdate.jsp");
 		result.setSuccess(true);
+	}
+	
+	/**
+	 * Helper method to parse CSV-quoted strings.
+	 */
+	private static String removeCSVQuotes(String s) {
+		if ((s == null) || (s.length() < 2)) return s;
+		boolean leadingQ = (s.charAt(0) == '"');
+		return s.substring(leadingQ ? 1 : 0, s.length() - (leadingQ ? 1 : 2));
 	}
 }
