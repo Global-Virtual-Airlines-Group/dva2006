@@ -53,7 +53,7 @@ public class AccomplishmentHistoryHelper {
 		private final Collection<Airport> _airportA = new HashSet<Airport>();
 		private final Collection<Airline> _airlines = new HashSet<Airline>();
 		private final Collection<Country> _countries = new TreeSet<Country>();
-		private final Collection<String> _conts = new TreeSet<String>();
+		private final Collection<Continent> _conts = new TreeSet<Continent>();
 		private final Collection<State> _states = new TreeSet<State>();
 		private final Map<String, MutableInteger> _eqLegs = new TreeMap<String, MutableInteger>();
 		private final Map<String, MutableInteger> _pLegs = new TreeMap<String, MutableInteger>();
@@ -121,7 +121,7 @@ public class AccomplishmentHistoryHelper {
 			return _countries;
 		}
 		
-		public Collection<String> getContinents() {
+		public Collection<Continent> getContinents() {
 			return _conts;
 		}
 		

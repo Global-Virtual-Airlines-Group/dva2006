@@ -3,6 +3,7 @@ package org.deltava.beans.navdata;
 import java.util.*;
 
 import org.deltava.beans.*;
+import org.deltava.beans.schedule.Continent;
 import org.deltava.beans.schedule.Country;
 import org.deltava.beans.schedule.GeoPosition;
 import org.deltava.util.GeoUtils;
@@ -14,7 +15,7 @@ public class TestAirspace extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		Country.init("US", "USA", "North America");
+		Country.init("US", "USA", Continent.NA);
 	}
 
 	public static void testContains() {
