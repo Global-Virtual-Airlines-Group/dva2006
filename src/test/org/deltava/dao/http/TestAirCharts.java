@@ -1,4 +1,3 @@
-// Copyright 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.util.*;
@@ -27,8 +26,8 @@ public class TestAirCharts extends TestCase {
 		PropertyConfigurator.configure("etc/log4j.test.properties");
 		log = Logger.getLogger(TestAirCharts.class);
 		
-		Country.init("US", "United States", "North America");
-		Country.init("IL", "Israel", "Asia");
+		Country.init("US", "United States", Continent.NA);
+		Country.init("IL", "Israel", Continent.AS);
 		SystemData.init();
 		
 		final Airport a = new Airport("ATL", "KATL", "Atlanta GA");
