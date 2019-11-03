@@ -13,6 +13,7 @@ import org.deltava.commands.*;
 import org.deltava.dao.*;
 
 import org.deltava.util.StringUtils;
+import org.deltava.util.cache.CacheManager;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -103,6 +104,9 @@ public class IPGeoImportCommand extends AbstractCommand {
 			if (f.exists())
 				f.delete();
 		}
+		
+		// Purge the IP info cache
+		CacheManager.invalidate("IPInfo");
 
 		// Set status attributes
 		ctx.setAttribute("msgs", msgs, REQUEST);
@@ -115,12 +119,12 @@ public class IPGeoImportCommand extends AbstractCommand {
 		result.setSuccess(true);
 	}
 	
-	/**
+	/*
 	 * Helper method to parse CSV-quoted strings.
 	 */
 	private static String removeCSVQuotes(String s) {
 		if ((s == null) || (s.length() < 2)) return s;
 		boolean leadingQ = (s.charAt(0) == '"');
-		return s.substring(leadingQ ? 1 : 0, s.length() - (leadingQ ? 1 : 2));
+		return s.substring(leadingQ ? 1 : 0, s.length() - (leadingQ ? 2 : 1));
 	}
 }
