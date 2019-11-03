@@ -34,7 +34,7 @@
 <el:form action="flightboard.do" method="get" validate="return false">
 <el:table className="form">
 <tr class="title">
- <td style="width:40%" class="left caps"><span class="nophone"><content:airline /> ${network} </span>ONLINE PILOTS<span id="isLoading"></span></td>
+ <td style="width:40%" class="left caps"><span class="nophone">${network}&nbsp;</span>ONLINE PILOTS<span id="isLoading"></span></td>
  <td style="width:15%" class="mid"><el:cmd url="flightboard" linkID="${network}">FLIGHT BOARD</el:cmd></td>
  <td class="right">SELECT NETWORK <el:combo name="networkName" size="1" idx="1" onChange="void golgotha.flightBoard.setNetwork(this)" options="${networks}" value="${network}" />
 <span id="userSelect" class="nophone" style="display:none;"> ZOOM TO <el:combo ID="usrID" name="usrID" idx="*" options="${emptyList}" firstEntry="-" onChange="void golgotha.flightBoard.zoomTo(this)" /></span></td>

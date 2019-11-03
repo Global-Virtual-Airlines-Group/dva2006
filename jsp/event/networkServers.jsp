@@ -7,7 +7,7 @@
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <html lang="en">
 <head>
-<title><content:airline /> ${netInfo.network} Server Information</title>
+<title><content:airline />&nbsp;${netInfo.network}&nbsp;Server Information</title>
 <content:css name="main" />
 <content:css name="form" />
 <content:css name="view" />
