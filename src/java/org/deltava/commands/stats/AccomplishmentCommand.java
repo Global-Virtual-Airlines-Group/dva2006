@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Accomplishment profiles. 
  * @author Luke
- * @version 8.0
+ * @version 8.7
  * @since 3.2
  */
 
@@ -163,7 +163,7 @@ public class AccomplishmentCommand extends AbstractAuditFormCommand {
 		ctx.setAttribute("airlines", SystemData.getAirlines().values(), REQUEST);
 		ctx.setAttribute("units", Arrays.asList(AccomplishUnit.values()), REQUEST);
 		ctx.setAttribute("states", Arrays.asList(State.values()), REQUEST);
-		ctx.setAttribute("continents", Country.getContinents(), REQUEST);
+		ctx.setAttribute("continents", Continent.values(), REQUEST);
 		
 		// Get the Accomplishment code - if we're new, check if the airport exists
 		boolean isNew = (ctx.getID() == 0);

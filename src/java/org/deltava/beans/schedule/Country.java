@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.ComboAlias;
 /**
  * A bean to store country names and ISO-3316 codes.
  * @author Luke
- * @version 7.5
+ * @version 8.7
  * @since 3.2
  */
 
@@ -17,27 +17,28 @@ public class Country implements java.io.Serializable, Comparable<Country>, Combo
 	/**
 	 * International Airspace.
 	 */
-	public static final Country INTL = new Country("??", "International", "");
+	public static final Country INTL = new Country("??", "International", null);
+	
+	/**
+	 * Unknown Country.
+	 */
+	public static final Country UNKNOWN = new Country("ZZ", "Unknown", null);
 
-	private static final Map<String, Country> _countries = new TreeMap<String, Country>() {{ put(INTL.getCode(), INTL); }};
-	private static final Collection<String> _continents = new TreeSet<String>();
+	private static final Map<String, Country> _countries = new TreeMap<String, Country>() {{ put(INTL.getCode(), INTL); put(UNKNOWN.getCode(), UNKNOWN); }};
 	
 	private final String _code;
 	private final String _name;
-	private final String _continent;
+	private final Continent _continent;
 	
 	/**
 	 * Initializes a country bean.
 	 * @param code the ISO-3316 country code
 	 * @param name the country name
-	 * @param cont the continent name
+	 * @param cont the continent
 	 */
-	public static synchronized void init(String code, String name, String cont) {
+	public static synchronized void init(String code, String name, Continent cont) {
 		Country c = new Country(code, name, cont);
-		if (!_countries.containsKey(c.getCode())) {
-			_countries.put(c.getCode(), c);
-			_continents.add(cont);
-		}
+		_countries.putIfAbsent(c.getCode(), c);
 	}
 	
 	/**
@@ -47,7 +48,7 @@ public class Country implements java.io.Serializable, Comparable<Country>, Combo
 	 * @throws NullPointerException if code is null
 	 */
 	public static Country get(String code) {
-		return _countries.get(code.toUpperCase());
+		return _countries.getOrDefault(code.toUpperCase(), Country.UNKNOWN);
 	}
 	
 	/**
@@ -59,21 +60,13 @@ public class Country implements java.io.Serializable, Comparable<Country>, Combo
 	}
 	
 	/**
-	 * Returns all Continents.
-	 * @return a Collection of Continent names
-	 */
-	public static Collection<String> getContinents() {
-		return new ArrayList<String>(_continents);
-	}
-	
-	/**
 	 * Creates the bean. This is private so no country can be initialized twice.
 	 * @param code the ISO-3316 country code
 	 * @param name the country name
-	 * @param cont the continent name
+	 * @param cont the Continent
 	 * @throws NullPointerException if code is null
 	 */
-	private Country(String code, String name, String cont) {
+	private Country(String code, String name, Continent cont) {
 		super();
 		_code = code.toUpperCase().trim();
 		_name = name;
@@ -97,10 +90,10 @@ public class Country implements java.io.Serializable, Comparable<Country>, Combo
 	}
 	
 	/**
-	 * Returns the continent name.
+	 * Returns the continent.
 	 * @return the continent
 	 */
-	public String getContinent() {
+	public Continent getContinent() {
 		return _continent;
 	}
 	
