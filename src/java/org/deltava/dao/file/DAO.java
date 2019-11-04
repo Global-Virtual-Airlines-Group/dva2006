@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2010, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2010, 2014, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -7,13 +7,13 @@ import java.nio.charset.StandardCharsets;
 /**
  * An abstract class to support stream-based Data Access Objects.
  * @author Luke
- * @version 5.4
+ * @version 9.0
  * @since 1.0
  */
 
 public abstract class DAO {
 
-	private InputStream _is;
+	private final InputStream _is;
 	private int _size = 10240;
 
 	/**
