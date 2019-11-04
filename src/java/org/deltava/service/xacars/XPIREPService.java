@@ -13,16 +13,12 @@ import org.apache.log4j.Logger;
 import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.event.Event;
-import org.deltava.beans.fb.NewsEntry;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.testing.*;
 
 import org.deltava.dao.*;
-import org.deltava.dao.http.SetFacebookData;
-
-import org.deltava.mail.MessageContext;
 
 import org.deltava.service.*;
 
@@ -33,7 +29,7 @@ import org.deltava.util.system.SystemData;
 /**
  * The XACARS Flight Report Web Service. 
  * @author Luke
- * @version 8.7
+ * @version 9.0
  * @since 4.1
  */
 
@@ -307,30 +303,6 @@ public class XPIREPService extends XAService {
 			
 			// Commit and ACK
 			ctx.commitTX();
-			
-			// Post Facebook notification
-			if (usr.hasIM(IMAddress.FBTOKEN)) {
-				String proto = SystemData.getBoolean("security.ssl") ? "https" : "http";
-				String baseURL = proto + "://" + SystemData.get("airline.url") + "/";
-				MessageContext mctxt = new MessageContext();
-				mctxt.addData("user", usr);
-				mctxt.addData("pirep", xfr);
-				
-				// Load the template and generate the body text
-				GetMessageTemplate mtdao = new GetMessageTemplate(con);
-				mctxt.setTemplate(mtdao.get("FBPIREP"));
-				
-				NewsEntry nws = new NewsEntry(mctxt.getBody(), baseURL + "pirep.do?id=" + xfr.getHexID());
-				nws.setImageURL(baseURL + SystemData.get("path.img") + "/fbIcon.png");
-				nws.setLinkCaption(xfr.getFlightCode());
-				
-				// Post to user's feed
-				SetFacebookData fbwdao = new SetFacebookData();
-				fbwdao.setWarnMode(true);
-				fbwdao.setToken(usr.getIMHandle(IMAddress.FBTOKEN));
-				fbwdao.write(nws);
-			}
-			
 			ctx.print("1|Flight Report Saved");
 		} catch (Exception e) {
 			log.error(((usr == null) ? "Anonymous" : usr.getName()) + " - " + e.getMessage(), e);
