@@ -8,7 +8,6 @@ import java.time.Instant;
 
 import org.deltava.beans.*;
 import org.deltava.beans.acars.ACARSRouteEntry;
-import org.deltava.beans.fb.NewsEntry;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.hr.*;
 import org.deltava.beans.stats.*;
@@ -17,7 +16,6 @@ import org.deltava.beans.testing.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-import org.deltava.dao.http.SetFacebookData;
 import org.deltava.mail.*;
 
 import org.deltava.security.command.*;
@@ -28,7 +26,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to approve Flight Reports and Check Rides.
  * @author Luke
- * @version 8.7
+ * @version 9.0
  * @since 1.0
  */
 
@@ -158,35 +156,8 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 				}
 				
 				// Log Accomplishments
-				if (!accs.isEmpty()) {
+				if (!accs.isEmpty())
 					ctx.setAttribute("accomplishments", accs, REQUEST);
-				
-					// Write Facebook update
-					if (!StringUtils.isEmpty(SystemData.get("users.facebook.id"))) {
-						MessageContext fbctxt = new MessageContext();
-						fbctxt.addData("user", p);
-						fbctxt.setTemplate(mtdao.get("FBACCOMPLISH"));
-						
-						// Write the entry
-						SetFacebookData fbwdao = new SetFacebookData();
-						fbwdao.setWarnMode(true);
-						for (Accomplishment a : accs) {
-							fbctxt.addData("accomplish", a);
-							NewsEntry nws = new NewsEntry(fbctxt.getBody());
-							fbwdao.reset();
-							
-							// Write to user feed or app page
-							if (p.hasIM(IMAddress.FBTOKEN)) {
-								fbwdao.setToken(p.getIMHandle(IMAddress.FBTOKEN));
-								fbwdao.write(nws);
-							} else {
-								fbwdao.setAppID(SystemData.get("users.facebook.pageID"));
-								fbwdao.setToken(SystemData.get("users.facebook.pageToken"));
-								fbwdao.writeApp(nws);	
-							}
-						}
-					}
-				}
 			}
 			
 			// Start a JDBC transaction
