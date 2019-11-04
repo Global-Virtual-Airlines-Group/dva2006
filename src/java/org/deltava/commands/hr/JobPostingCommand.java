@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.hr;
 
 import java.util.*;
@@ -6,13 +6,11 @@ import java.sql.Connection;
 import java.time.Instant;
 
 import org.deltava.beans.*;
-import org.deltava.beans.fb.NewsEntry;
 import org.deltava.beans.hr.*;
 
 import org.deltava.commands.*;
 import org.deltava.comparators.*;
 import org.deltava.dao.*;
-import org.deltava.dao.http.SetFacebookData;
 import org.deltava.mail.*;
 
 import org.deltava.security.MultiUserSecurityContext;
@@ -24,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Job Postings.
  * @author Luke
- * @version 8.0
+ * @version 9.0
  * @since 3.4
  */
 
@@ -99,25 +97,6 @@ public class JobPostingCommand extends AbstractFormCommand {
 			// Save the posting
 			SetJobs jwdao = new SetJobs(con);
 			jwdao.write(jp);
-			
-			// Write Facebook update
-			if (isNew && !StringUtils.isEmpty(SystemData.get("users.facebook.id"))) {
-				MessageContext fbctxt = new MessageContext();
-				GetMessageTemplate mtdao = new GetMessageTemplate(con);
-				fbctxt.setTemplate(mtdao.get("FBNEWJOB"));
-				
-				// Init the FB DAO
-				if (fbctxt.getTemplate() != null) {
-					SetFacebookData fbwdao = new SetFacebookData();
-					fbwdao.setWarnMode(true);
-					fbwdao.setAppID(SystemData.get("users.facebook.pageID"));		
-					fbwdao.setToken(SystemData.get("users.facebook.pageToken"));
-				
-					// Create the news entry
-					NewsEntry nws = new NewsEntry(fbctxt.getBody());
-					fbwdao.writeApp(nws);
-				}
-			}
 			
 			// Save in status
 			mctxt.addData("job", jp);

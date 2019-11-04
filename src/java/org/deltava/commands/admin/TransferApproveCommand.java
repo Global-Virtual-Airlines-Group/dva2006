@@ -5,25 +5,22 @@ import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
-import org.deltava.beans.fb.NewsEntry;
 import org.deltava.beans.hr.TransferRequest;
 
 import org.deltava.comparators.RankComparator;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-import org.deltava.dao.http.*;
 import org.deltava.mail.*;
 
 import org.deltava.security.command.TransferAccessControl;
 
 import org.deltava.util.*;
-import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to Approve equipment program Transfers.
  * @author Luke
- * @version 8.7
+ * @version 9.0
  * @since 1.0
  */
 
@@ -79,7 +76,6 @@ public class TransferApproveCommand extends AbstractCommand {
 			boolean isSC = stdao.isSeniorCaptain(usr.getID());
 
 			// Check if we're switching programs
-			boolean isPromotion = false;
 			String eqType = ctx.getParameter("eqType");
 			Rank rank = Rank.fromName(ctx.getParameter("rank"));
 			if (eqType != null) {
@@ -108,7 +104,6 @@ public class TransferApproveCommand extends AbstractCommand {
 
 				// Write the promotion status update
 				if (rCmp.compare() >= 0) {
-					isPromotion = true;
 					UpdateType promoType = eqChange ? UpdateType.EXTPROMOTION : UpdateType.INTPROMOTION;
 					StatusUpdate upd = new StatusUpdate(usr.getID(), promoType);
 					upd.setAuthorID(ctx.getUser().getID());
@@ -179,28 +174,6 @@ public class TransferApproveCommand extends AbstractCommand {
 			// Delete the transfer request
 			SetTransferRequest txwdao = new SetTransferRequest(con);
 			txwdao.delete(usr.getID());
-			
-			// Write Facebook updates
-			if (!StringUtils.isEmpty(SystemData.get("users.facebook.id")) && isPromotion) {
-				MessageContext fbctxt = new MessageContext();
-				fbctxt.addData("user", usr);
-				fbctxt.setTemplate(mtdao.get("FBPROMOTE"));
-				NewsEntry nws = new NewsEntry(fbctxt.getBody());
-				
-				// Write to user feed or app page
-				SetFacebookData fbwdao = new SetFacebookData();
-				fbwdao.setWarnMode(true);
-				if (usr.hasIM(IMAddress.FBTOKEN)) {
-					fbwdao.setToken(usr.getIMHandle(IMAddress.FBTOKEN));
-					fbwdao.write(nws);
-				} else {
-					fbwdao.setAppID(SystemData.get("users.facebook.pageID"));
-					fbwdao.setToken(SystemData.get("users.facebook.pageToken"));
-					fbwdao.writeApp(nws);
-				}
-			}
-
-			// Commit the transaction
 			ctx.commitTX();
 
 			// Write status attributes to the request
