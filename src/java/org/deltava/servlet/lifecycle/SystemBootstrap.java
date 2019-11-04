@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.lifecycle;
 
 import java.io.*;
@@ -10,7 +10,6 @@ import javax.servlet.*;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.econ.EconomyInfo;
-import org.deltava.beans.fb.FacebookCredentials;
 import org.deltava.beans.flight.ETOPSHelper;
 import org.deltava.beans.navdata.Airspace;
 import org.deltava.beans.schedule.Airport;
@@ -33,7 +32,7 @@ import org.gvagroup.jdbc.*;
 /**
  * The System bootstrap loader, that fires when the servlet container is started or stopped.
  * @author Luke
- * @version 8.3
+ * @version 9.0
  * @since 1.0
  */
 
@@ -179,23 +178,6 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 			GetMetadata mddao = new GetMetadata(c);
 			UserPool.init(StringUtils.parse(mddao.get(prefix + ".users.max.count"), 0), StringUtils.parseInstant(mddao.get(prefix + ".users.max.date"), "MM/dd/yyyy HH:mm"));
 			
-			// Load facebook credentials
-			if (!StringUtils.isEmpty(SystemData.get("users.facebook.id"))) {
-				GetFacebookPageToken fbpdao = new GetFacebookPageToken(c);
-				List<String> pageTokens = fbpdao.getAllTokens();
-				String pageToken = pageTokens.isEmpty() ? null : pageTokens.get(0);
-				if (!StringUtils.isEmpty(pageToken))
-					SystemData.add("users.facebook.pageToken", pageToken);
-				
-				// Set FB credentials
-				FacebookCredentials creds = new FacebookCredentials(SystemData.get("users.facebook.id"));
-				creds.setPageID(SystemData.get("users.facebook.pageID"));
-				creds.setPageToken(pageToken);
-				creds.setIconURL("http://" + SystemData.get("airline.url") + "/" + SystemData.get("path.img") + "/fbIcon.png");
-				SharedData.addData(SharedData.FB_CREDS + SystemData.get("airline.code"), creds);
-				log.info("Loaded Facebook application credentials");
-			}
-
 			// Load TS2 server info if enabled
 			if (SystemData.getBoolean("airline.voice.ts2.enabled") && SystemData.getBoolean("acars.enabled")) {
 				SetTS2Data ts2wdao = new SetTS2Data(c);
