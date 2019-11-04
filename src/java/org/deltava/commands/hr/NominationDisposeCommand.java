@@ -4,25 +4,20 @@ package org.deltava.commands.hr;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
-import org.deltava.beans.fb.NewsEntry;
 import org.deltava.beans.hr.Nomination;
 import org.deltava.beans.hr.Nomination.Status;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-import org.deltava.dao.http.SetFacebookData;
 
-import org.deltava.mail.MessageContext;
 import org.deltava.security.command.NominationAccessControl;
 
-import org.deltava.util.StringUtils;
 import org.deltava.util.cache.CacheManager;
-import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to approve or reject Senior Captain nominations.
  * @author Luke
- * @version 8.7
+ * @version 9.0
  * @since 3.3
  */
 
@@ -82,27 +77,6 @@ public class NominationDisposeCommand extends AbstractCommand {
 				p.setRank(Rank.SC);
 				SetPilot pwdao = new SetPilot(con);
 				pwdao.write(p);
-				
-				// Write Facebook update
-				if (!StringUtils.isEmpty(SystemData.get("users.facebook.id"))) {
-					GetMessageTemplate mtdao = new GetMessageTemplate(con);
-					MessageContext fbctxt = new MessageContext();
-					fbctxt.addData("user", p);
-					fbctxt.setTemplate(mtdao.get("FBPROMOTE"));
-					NewsEntry nws = new NewsEntry(fbctxt.getBody());
-				
-					// Write to user or app page
-					SetFacebookData fbwdao = new SetFacebookData();
-					fbwdao.setWarnMode(true);
-					if (p.hasIM(IMAddress.FBTOKEN)) {	
-						fbwdao.setToken(p.getIMHandle(IMAddress.FBTOKEN));
-						fbwdao.write(nws);
-					} else {
-						fbwdao.setAppID(SystemData.get("users.facebook.pageID"));
-						fbwdao.setToken(SystemData.get("users.facebook.pageToken"));
-						fbwdao.writeApp(nws);
-					}
-				}
 			}
 			
 			// Update Status
