@@ -38,7 +38,6 @@
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:sysdata var="infoEmail" name="airline.mail.info" />
-<content:sysdata var="fbClientID" name="users.facebook.id" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -224,20 +223,8 @@ a serious virtual airline, designed for both the experienced pilot and the novic
 <br />
 If you have questions or comments, please direct them to our Corporate Offices at <a href="mailto:${infoEmail}">${infoEmail}</a>.<br />
 <br />
-<c:choose>
-<c:when test="${empty fbClientID}">
-<div class="mid nophone"><a rel="nofollow" href="http://www.vatsim.net/"><el:img src="network/vatsim_button.png" caption="VATSIM Partner Airline" className="noborder" /></a></div>
-</c:when>
-<c:otherwise>
-<content:browser human="true">
-<div class="nophone" style="float:right; margin-right:70px;">
-<iframe src="https://www.facebook.com/plugins/like.php?href=https%3A%2F%2Fwww.deltava.org%2F&amp;send=false&amp;layout=standard&amp;width=300&amp;show_faces=false&amp;font=tahoma&amp;colorscheme=light&amp;action=recommend&amp;height=62&amp;appId=${fbClientID}" style="border:none; overflow:hidden; width:350px; height:62px;"></iframe>
-</div>
-</content:browser>
 <div class="nophone" style="float:left; margin-left:70px;"><a rel="nofollow" href="http://www.vatsim.net/"><el:img src="network/vatsim_button.png" caption="VATSIM Partner Airline" className="noborder" /></a></div>
 <div class="nophone" style="clear:both;"></div>
-</c:otherwise>
-</c:choose>
 <br />
 <content:copyright />
 </content:region>
