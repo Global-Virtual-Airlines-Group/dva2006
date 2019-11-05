@@ -249,18 +249,6 @@
 		<roles>*</roles>
 	</command>
 	
-	<command id="fbauth">
-		<name>Facebook User Authorize</name>
-		<class>org.deltava.commands.security.FacebookAuthCommand</class>
-		<roles>Pilot</roles>
-	</command>
-
-	<command id="fbdeauth">
-		<name>Facebook User Clear</name>
-		<class>org.deltava.commands.security.FacebookClearCommand</class>
-		<roles>Pilot</roles>
-	</command>	
-
 	<command id="privacy">
 		<name>Privacy Policy</name>
 		<class>org.deltava.commands.help.PrivacyInfoCommand</class>
