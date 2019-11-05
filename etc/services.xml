@@ -9,9 +9,6 @@
 	<!-- Image Gallery Services -->
 	<service id="imglike" class="org.deltava.service.ImageLikeService" />
 
-	<!-- Facebook Services -->
-	<service id="fbdeauth" class="org.deltava.service.hr.FacebookDeauthorizeService" />
-
 	<!-- Help Desk Services -->
 	<service id="hdrsptmp" class="org.deltava.service.IssueTemplateService" />
 
