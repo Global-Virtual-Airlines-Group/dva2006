@@ -17,7 +17,6 @@
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<content:sysdata var="fbClientID" name="users.facebook.id" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -53,12 +52,6 @@ identities in asking the site for access to personally identifiable information 
 <content:airline /> members have the option of making their e-mail addresses visible to all users (including anonymous users), other <content:airline /> members or <content:airline /> staff only. Any Instant Messaging addresses provided to
 us by our members will be made visible according to the same privacy settings.<br />
 <br />
-<c:if test="${!empty fbClientID}">
-<content:airline /> has its own Facebook application. You can give this application access to retrieve your e-mail address and publish to your Facebook news feed even when you are not logged in to the <content:airline /> web site. Doing so
-allows us to publish information about your completed ACARS flights or any promotions or accomplishments you achieve as a member here at <content:airline />. You can opt out of this at any time through Facebook by removing our application's
-rights to read/write your profile information.<br />
-<br />
-</c:if>
 <div class="sec bld">Collection of Information by Third-Party Sites and Sponsors</div>
 <br />
 Some of our sites contain links to other sites whose information practices may be different than ours. You should consult the other sites' privacy notices, as we have no control over information that is submitted to, or collected
