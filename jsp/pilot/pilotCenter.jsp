@@ -54,9 +54,6 @@
 <content:sysdata var="scMaxNoms" name="users.sc.maxNominations" default="5" />
 <content:sysdata var="scMinFlights" name="users.sc.minFlights" default="5" />
 <content:sysdata var="scMinAge" name="users.sc.minAge" default="120" />
-<content:sysdata var="fbAuthURL" name="users.facebook.url.authorize" />
-<content:sysdata var="fbClientID" name="users.facebook.id" />
-<content:sysdata var="fbPageID" name="users.facebook.pageID" />
 <content:sysdata var="faaChartURL" name="schedule.chart.url.faa.meta" />
 <content:sysdata var="currencyEnabled" name="testing.currency.enabled" />
 <content:sysdata var="currencySelfEnroll" name="testing.currency.selfenroll" />
@@ -96,27 +93,6 @@ You are visiting today from <span class="bld">${req.remoteHost}</span> (${req.re
 <span class="ita">For privacy reasons, your specific location will be altered by a random number of miles each time the <content:airline /> Pilot Board is viewed.</span></td>
 </c:if>
 </tr>
-<content:filter roles="Facebook">
-<c:set var="fbPermissions" value="${fn:splice(fbPerms, ',')}" scope="page" />
-<c:if test="${!empty fbPageID}"><c:set var="fbPermissions" value="${fbPermissions},manage_pages" scope="page" /></c:if>
-<script type="text/javascript" async>
-golgotha.local.fbAuthorize = function() {
-	var URLflags = 'height=360,width=860,menubar=no,toolbar=no,status=no,scrollbars=no,resizable=no';
-	return window.open('${fbAuthURL}?client_id=${fbClientID}&redirect_uri=https://${req.serverName}/fbauth.do&scope=${fbPermissions}&display=popup', 'fbAuth', URLflags);
-};
-</script>
-<tr>
- <td class="mid"><a class="bld" href="javascript:void golgotha.local.fbAuthorize()">Authorize Us</a></td>
-<c:choose>
-<c:when test="${fn:hasIM(pilot, 'FB')}">
- <td class="data"><span class="pri bld">The Facebook authorization token you have given <content:airline /> has expired.</span> Further updates to your Facebook wall cannot be made until <content:airline /> has been authorized to publish to Facebook.</td>
-</c:when>
-<c:otherwise>
- <td class="data">If you are a Facebook member, you can connect to Facebook and allow <content:airline /> to post updates about your virtual career to your Facebook wall<c:if test="${acarsEnabled}">, as well as information about your flights flown using <content:airline /> ACARS</c:if>.</td>
-</c:otherwise>
-</c:choose>
-</tr>
-</content:filter>
 <c:if test="${access.canTakeLeave}">
 <content:sysdata var="inactivity_days" name="users.inactive_days" />
 <tr>
