@@ -3,15 +3,15 @@ golgotha.maps.acarsFlight.airspaceColors = {'P':{c:'#ee1010',tx:0.4,z:10}, 'R':{
 golgotha.maps.acarsFlight.getACARSData = function(pirepID, doToggle, showAirspace)
 {
 // Disable checkboxes
-var f = document.forms[0];
+	const f = document.forms[0];
 f.showFDR.disabled = true; f.showRoute.disabled = true; f.showAirspace.disabled = true;
 
 // Build the XML Requester
-var xmlreq = new XMLHttpRequest();
+const xmlreq = new XMLHttpRequest();
 xmlreq.open('get', 'acars_pirep.ws?id=' + pirepID + '&showAirspace=' + showAirspace, true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
-	var js = JSON.parse(xmlreq.responseText);
+	const js = JSON.parse(xmlreq.responseText);
 	js.positions.forEach(function(p) {
 		var mrk;
 		golgotha.maps.acarsFlight.routePoints.push(p.ll);
@@ -59,14 +59,14 @@ return true;
 
 golgotha.maps.acarsFlight.hideATC = function() {
 	while (golgotha.maps.acarsFlight.selectedFIRs.length > 0) {
-		var mrk = golgotha.maps.acarsFlight.selectedFIRs.shift();
+		let mrk = golgotha.maps.acarsFlight.selectedFIRs.shift();
 		mrk.setMap(null);
 	}
 };
 
 golgotha.maps.acarsFlight.showAPP = function(ctr, range) {
 	golgotha.maps.acarsFlight.hideATC();
-	var c = new google.maps.Circle({map:map, center:ctr, radius:golgotha.maps.miles2Meter(range), strokeColor:'#efefff', strokeWeight:1, strokeOpacity:0.85, fillColor:'#7f7f80', fillOpacity:0.25, zIndex:golgotha.maps.z.POLYGON});
+	const c = new google.maps.Circle({map:map, center:ctr, radius:golgotha.maps.miles2Meter(range), strokeColor:'#efefff', strokeWeight:1, strokeOpacity:0.85, fillColor:'#7f7f80', fillOpacity:0.25, zIndex:golgotha.maps.z.POLYGON});
 	golgotha.maps.acarsFlight.selectedFIRs.push(c);
 };
 
@@ -87,11 +87,11 @@ golgotha.maps.acarsFlight.toggleAirspace = function(show) {
 
 golgotha.maps.acarsFlight.showFIR = function(code)
 {
-var xmlreq = new XMLHttpRequest();
+const xmlreq = new XMLHttpRequest();
 xmlreq.open('get', 'fir.ws?id=' + code, true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
-	var js = JSON.parse(xmlreq.responseText);
+	const js = JSON.parse(xmlreq.responseText);
 	golgotha.maps.acarsFlight.hideATC();
 	js.firs.forEach(function(fe) {
 		if (fe.border.length == 0) return false;

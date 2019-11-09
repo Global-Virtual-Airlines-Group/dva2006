@@ -41,7 +41,7 @@ golgotha.airportLoad.setHelpers = function(combo, addSIDSTARHook) {
 golgotha.airportLoad.updateAirlineCode = function() {
 	let txt = this.form[this.name + 'Code'];
 	if (!txt) return false;
-	var o = this.options[this.selectedIndex];
+	const o = this.options[this.selectedIndex];
 	txt.value = o.value;
 	return true;
 };
@@ -49,14 +49,14 @@ golgotha.airportLoad.updateAirlineCode = function() {
 golgotha.airportLoad.updateAirportCode = function() {
 	let txt = this.form[this.name + 'Code'];
 	if (!txt) return false;
-	let o = this.options[this.selectedIndex];
+	const o = this.options[this.selectedIndex];
 	txt.value = golgotha.airportLoad.config.getCode(o);
 	return true;
 };
 
 golgotha.airportLoad.updateOrigin = function(combo) {
-	let f = document.forms[0];
-	let cfg = golgotha.airportLoad.config.clone();
+	const f = document.forms[0];
+	const cfg = golgotha.airportLoad.config.clone();
 	cfg.useSched = true; cfg.notVisited = combo.notVisited; cfg.dst = true;
 	cfg.airline = golgotha.form.getCombo(f.airline); 
 	cfg.code = (combo.selectedIndex > 0) ? golgotha.form.getCombo(combo) : null;
@@ -67,7 +67,7 @@ golgotha.airportLoad.updateOrigin = function(combo) {
 golgotha.airportLoad.setAirline = function(cb, sender, fireEvent) {
 	let code = sender.value;
 	if (code.length < 2) {
-		var oldIdx = cb.selectedIndex; cb.selectedIndex = 0;
+		const oldIdx = cb.selectedIndex; cb.selectedIndex = 0;
 		if (fireEvent && cb.onchange && (oldIdx != 0)) cb.onchange();
 		return true;
 	}
@@ -88,7 +88,7 @@ golgotha.airportLoad.setAirline = function(cb, sender, fireEvent) {
 golgotha.airportLoad.setAirport = function(code, fireEvent, sender) {
 	if (code == null) return false;
 	if (code.length < 2) {
-		let oldIdx = this.selectedIndex; this.selectedIndex = 0;
+		const oldIdx = this.selectedIndex; this.selectedIndex = 0;
 		if (fireEvent && this.onchange && (oldIdx != 0)) this.onchange();
 		return true;
 	}
@@ -110,11 +110,11 @@ golgotha.airportLoad.setAirport = function(code, fireEvent, sender) {
 golgotha.airportLoad.setOptions = function(combo, data, opts) {
 	combo.options.length = data.length + 1;
 	combo.options[0] = new Option('-', '');
-	let codeAttr = (opts.doICAO) ? 'icao' : 'iata';
+	const codeAttr = (opts.doICAO) ? 'icao' : 'iata';
 	for (var i = 0; i < data.length; i++) {
-		let a = data[i];
-		let apCode = a[codeAttr];
-		let opt = new Option(a.name + ' (' + apCode + ')', apCode);
+		const a = data[i];
+		const apCode = a[codeAttr];
+		const opt = new Option(a.name + ' (' + apCode + ')', apCode);
 		opt.airport = a;
 		combo.options[i+1] = opt;
 	}
@@ -124,15 +124,15 @@ golgotha.airportLoad.setOptions = function(combo, data, opts) {
 
 golgotha.airportLoad.loadAirports = function(opts)
 {
-let oldCode = golgotha.form.getCombo(this); let combo = this;
-let xmlreq = new XMLHttpRequest();
+const oldCode = golgotha.form.getCombo(this); let combo = this;
+const xmlreq = new XMLHttpRequest();
 xmlreq.open('GET', 'airports.ws?' + opts.URLParams(), true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
-	let o = combo.options[combo.selectedIndex];
-	let oldCodes = ((o) && (o.airport)) ? [o.airport.iata, o.airport.icao] : [null];
-	let isChanged = (oldCodes.indexOf(oldCode) < 0);
-	let jsData = JSON.parse(xmlreq.responseText);
+	const o = combo.options[combo.selectedIndex];
+	const oldCodes = ((o) && (o.airport)) ? [o.airport.iata, o.airport.icao] : [null];
+	const isChanged = (oldCodes.indexOf(oldCode) < 0);
+	const jsData = JSON.parse(xmlreq.responseText);
 	golgotha.airportLoad.setOptions(combo, jsData, opts);
 	combo.setAirport(oldCode, isChanged);
 	combo.disabled = false;
@@ -147,13 +147,13 @@ return true;
 
 golgotha.airportLoad.loadSIDSTAR = function(code, type)
 {
-let oldValue = golgotha.form.getCombo(this); let combo = this;
-let xmlreq = new XMLHttpRequest();
+const oldValue = golgotha.form.getCombo(this); let combo = this;
+const xmlreq = new XMLHttpRequest();
 xmlreq.open('GET', 'troutes.ws?airportD=' + code + '&airportA=' + code, true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
-	let js = JSON.parse(xmlreq.responseText);
-	let jsData = js[type];
+	const js = JSON.parse(xmlreq.responseText);
+	const jsData = js[type];
 	combo.options.length = jsData.length + 1;
 	combo.options[0] = new Option('-', '');
 	for (var i = 0; i < trs.length; i++)
@@ -183,8 +183,8 @@ golgotha.airportLoad.massageSelects = function(root) {
 };
 
 golgotha.airportLoad.codeMassage = function() {
-	let e = window.event;
-	let c = e.which || e.keyCode;
+	const e = window.event;
+	const c = e.which || e.keyCode;
 	if (((c > 64) && (c < 91)) || ((c > 96) && (c < 123)))
 		return true;
 

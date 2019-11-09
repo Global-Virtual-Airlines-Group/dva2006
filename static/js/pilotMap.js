@@ -2,11 +2,11 @@ golgotha.pilotMap = golgotha.pilotMap || {queue:[], mrks:[], heatMapData:[]};
 
 golgotha.pilotMap.generateXMLRequest = function()
 {
-var xmlreq = new XMLHttpRequest();
+const xmlreq = new XMLHttpRequest();
 xmlreq.open('get', 'pilotmap.ws', true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
-	var js = JSON.parse(xmlreq.responseText);
+	const js = JSON.parse(xmlreq.responseText);
 	js.forEach(function(p) { 
 		golgotha.pilotMap.queue.push(p);
 		golgotha.pilotMap.heatMapData.push(new google.maps.LatLng(p.ll.lat, p.ll.lng));
@@ -14,13 +14,13 @@ xmlreq.onreadystatechange = function() {
 
 	map.removeMarkers(golgotha.pilotMap.mrks);
 	golgotha.pilotMap.hmap.setData(golgotha.pilotMap.heatMapData);
-	var batchSize = Math.round(golgotha.pilotMap.queue.length / 50);
+	const batchSize = Math.round(golgotha.pilotMap.queue.length / 50);
 	golgotha.pilotMap.pBar.start(100);
 	window.setTimeout(golgotha.pilotMap.load, 2, batchSize);
 	return true;
 };
 
-var f = document.forms[0];
+const f = document.forms[0];
 golgotha.util.setHTML('isLoading', ' - LOADING...');
 golgotha.util.disable(f.noFilter);
 golgotha.util.disable(f.eqType);
@@ -30,11 +30,11 @@ return xmlreq;
 
 golgotha.pilotMap.load = function(batchSize)
 {
-var cnt = 0;
-var a = golgotha.pilotMap.queue.pop();
+let cnt = 0;
+let a = golgotha.pilotMap.queue.pop();
 golgotha.pilotMap.pBar.updateBar(2);
 while ((cnt < batchSize) && (a != null)) {
-	var mrk = new golgotha.maps.Marker({map:map, color:a.color}, a.ll);
+	const mrk = new golgotha.maps.Marker({map:map, color:a.color}, a.ll);
 	mrk.infoLabel = a.info; mrk.ID = a.id; mrk.rank = a.rank; mrk.eqType = a.eqType;
 
 	// Set the the click handler and add to the list
@@ -63,14 +63,14 @@ return true;
 golgotha.pilotMap.updateMarkers = function()
 {
 // Get the rank/program values
-var f = document.forms[0];
-var checkRank = (f.rank.selectedIndex > 0);
-var checkEQ = (f.eqType.selectedIndex > 0);
-var rank = checkRank ? f.rank.options[f.rank.selectedIndex].text : null;
-var eqType = checkEQ ? f.eqType.options[f.eqType.selectedIndex].text : null;
+const f = document.forms[0];
+const checkRank = (f.rank.selectedIndex > 0);
+const checkEQ = (f.eqType.selectedIndex > 0);
+const rank = checkRank ? f.rank.options[f.rank.selectedIndex].text : null;
+const eqType = checkEQ ? f.eqType.options[f.eqType.selectedIndex].text : null;
 
 // Build the queue
-var batchSize = Math.round(golgotha.pilotMap.mrks.length / 50);
+const batchSize = Math.round(golgotha.pilotMap.mrks.length / 50);
 golgotha.pilotMap.pBar.start(100);
 golgotha.pilotMap.queue = golgotha.pilotMap.mrks.slice();
 window.setTimeout(golgotha.pilotMap.mrkUpdate, 2, rank, eqType, batchSize);
@@ -79,12 +79,12 @@ return true;
 
 golgotha.pilotMap.mrkUpdate = function(rank, eqType, batchSize)
 {
-var cnt = 0;
-var mrk = golgotha.pilotMap.queue.pop();
+let cnt = 0;
+let mrk = golgotha.pilotMap.queue.pop();
 golgotha.pilotMap.pBar.updateBar(2);
 while ((cnt < batchSize) && (mrk != null)) {
-	var rankOK = (rank == null) || (mrk.rank == rank);
-	var eqOK = (eqType == null) || (mrk.eqType == eqType);
+	const rankOK = (rank == null) || (mrk.rank == rank);
+	const eqOK = (eqType == null) || (mrk.eqType == eqType);
 
 	mrk.setMap((rankOK && eqOK) ? map : null);
 	cnt++;
@@ -105,13 +105,13 @@ return true;
 golgotha.pilotMap.updateMapOptions = function(opt)
 {
 golgotha.event.beacon('Pilot Map', 'Switch Type');
-var isHeatMap = (opt.value != 'MAP');
+const isHeatMap = (opt.value != 'MAP');
 map.toggle(golgotha.pilotMap.mrks, isHeatMap);
 golgotha.pilotMap.hmap.setMap(isHeatMap ? null : map);
 hq.setMap(isHeatMap ? map : null);
 
 // Toggle filter rows
-var rows = golgotha.util.getElementsByClass('locFilter');
+const rows = golgotha.util.getElementsByClass('locFilter');
 rows.forEach(function(r) { golgotha.util.display(r, isHeatMap); }); 
 return true;
 };

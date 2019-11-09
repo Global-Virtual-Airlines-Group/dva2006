@@ -2,7 +2,7 @@ golgotha.flightBoard = golgotha.flightBoard || {atc:[], pilots:[], months:['Jan'
 
 golgotha.flightBoard.updateMap = function(isAuto)
 {
-var xmlreq = new XMLHttpRequest();
+const xmlreq = new XMLHttpRequest();
 xmlreq.open('GET', 'si_data.ws?network=' + golgotha.flightBoard.network + '&time=' + golgotha.util.getTimestamp(5000) + '&atc=true', true);
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
@@ -13,19 +13,19 @@ xmlreq.onreadystatechange = function() {
 
 	map.clearOverlays();
 	golgotha.util.display('userSelect', false);
-	var cbo = document.getElementById('usrID');
-	var selectedATC = cbo.options[cbo.selectedIndex].value;
+	const cbo = document.getElementById('usrID');
+	const selectedATC = cbo.options[cbo.selectedIndex].value;
 	cbo.options.length = 1;
-	var js = JSON.parse(xmlreq.responseText);
+	const js = JSON.parse(xmlreq.responseText);
 
 	// Display effective date
-	var dt = new Date(js.date);
+	const dt = new Date(js.date);
 	golgotha.util.setHTML('isLoading', ' - VALID AS OF ' + golgotha.flightBoard.months[dt.getMonth()] + ' ' + dt.getDate() + ' ' + dt.getFullYear() + ' ' + dt.getHours() + ':' + dt.getMinutes());
 
 	// Display pilots
 	golgotha.flightBoard.pilots.length = 0;
 	js.pilots.forEach(function(wp) {
-		var mrk = new golgotha.maps.Marker({color:wp.color, info:wp.info, map:map}, wp.ll);
+		const mrk = new golgotha.maps.Marker({color:wp.color, info:wp.info, map:map}, wp.ll);
 		mrk.networkID = wp.id; mrk.callsign = wp.callsign;
 		google.maps.event.addListener(mrk, 'click', function() { golgotha.flightBoard.infoClose(); golgotha.flightBoard.showRoute(this.networkID); });
 		golgotha.flightBoard.pilots[mrk.callsign] = mrk;
@@ -33,7 +33,7 @@ xmlreq.onreadystatechange = function() {
 
 	// Display controllers
 	js.atc.forEach(function(cp) {
-		var mrk = new golgotha.maps.Marker({color:cp.color, info:cp.info, map:map}, cp.ll);
+		const mrk = new golgotha.maps.Marker({color:cp.color, info:cp.info, map:map}, cp.ll);
 		mrk.networkID = cp.id; mrk.callsign = cp.callsign;
 		if ((cp.type == 'CTR') || (cp.type == 'FSS'))
 			google.maps.event.addListener(mrk, 'click', function() { golgotha.flightBoard.infoClose(); golgotha.flightBoard.showFIR(this.callsign); });
@@ -45,7 +45,7 @@ xmlreq.onreadystatechange = function() {
 		golgotha.flightBoard.atc[mrk.callsign] = mrk;
 
 		// Add to ATC list
-		var o = new Option(mrk.callsign, mrk.callsign);
+		const o = new Option(mrk.callsign, mrk.callsign);
 		o.mrk = mrk;
 		try {
 			cbo.add(o, null);
@@ -88,7 +88,7 @@ return true;
 };
 
 golgotha.flightBoard.zoomTo = function(combo) {
-	var opt = combo.options[combo.selectedIndex];
+	const opt = combo.options[combo.selectedIndex];
 	if ((!opt) || (opt.mrk == null)) return false;	
 	map.panTo(opt.mrk.getPosition());
 	google.maps.event.trigger(opt.mrk, 'click');
@@ -106,12 +106,12 @@ golgotha.flightBoard.showAPP = function(mrk) {
 
 golgotha.flightBoard.showFIR = function(code)
 {
-var xmlreq = new XMLHttpRequest();
+const xmlreq = new XMLHttpRequest();
 xmlreq.open('GET', 'fir.ws?id=' + code, true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	golgotha.flightBoard.infoClose();
-	var js = JSON.parse(xmlreq.responseText);
+	const js = JSON.parse(xmlreq.responseText);
 	golgotha.flightBoard.selectedRoute = [];
 	js.firs.forEach(function(fe) {
 		if (fe.border.length == 0) return false;
@@ -128,12 +128,12 @@ return true;
 
 golgotha.flightBoard.showRoute = function(pilotID)
 {
-var xreq = new XMLHttpRequest();
+const xreq = new XMLHttpRequest();
 xreq.open('GET', 'si_route.ws?network=' + golgotha.flightBoard.network + '&id=' + pilotID + '&time=' + golgotha.util.getTimestamp(5000), true);
 xreq.onreadystatechange = function() {
 	if ((xreq.readyState != 4) || (xreq.status != 200)) return false;
 	golgotha.flightBoard.infoClose();
-	var js = JSON.parse(xreq.responseText);
+	const js = JSON.parse(xreq.responseText);
 	if (js.route instanceof Array)
 		golgotha.flightBoard.selectedRoute = new google.maps.Polyline({map:map, path:js.route, strokeColor:'#af8040', strokeWeight:2, strokeOpacity:0.625, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
 	if (js.track instanceof Array)
@@ -141,7 +141,7 @@ xreq.onreadystatechange = function() {
 	if (js.waypoints instanceof Array) {
 		golgotha.flightBoard.waypoints = [];
 		js.waypoints.forEach(function(wp) {
-			var mrk = new golgotha.maps.IconMarker({map:map, pal:wp.pal, icon:wp.icon, info:wp.info, opacity:0.55}, wp.ll);
+			const mrk = new golgotha.maps.IconMarker({map:map, pal:wp.pal, icon:wp.icon, info:wp.info, opacity:0.55}, wp.ll);
 			golgotha.flightBoard.waypoints.push(mrk);
 		});
 	}
