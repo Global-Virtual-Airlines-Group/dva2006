@@ -90,6 +90,9 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:enum var="units" className="org.deltava.beans.stats.AccomplishUnit" />
+<content:enum var="states" className="org.deltava.beans.schedule.State" />
+<content:enum var="continents" className="org.deltava.beans.schedule.Continent" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
