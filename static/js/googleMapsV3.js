@@ -36,7 +36,7 @@ golgotha.maps.util.Timer.prototype.start = function() {
 
 golgotha.maps.util.Timer.prototype.stop = function() {
 	if (this.startTime == null) return -1;	
-	var now = new Date();
+	const now = new Date();
 	this.runTime = (now.getTime() - this.startTime.getTime());
 	this.startTime = null;
 	return this.runTime;
@@ -44,11 +44,11 @@ golgotha.maps.util.Timer.prototype.stop = function() {
 
 // Resize map based on window size
 golgotha.maps.util.resize = function() {
-	var wh = window.innerHeight	|| document.documentElement.clientHeight || document.body.clientHeight;
-	var ratio = wh / 800;
-	var divs = golgotha.util.getElementsByClass('googleMapV3', 'div');
+	const wh = window.innerHeight	|| document.documentElement.clientHeight || document.body.clientHeight;
+	const ratio = wh / 800;
+	const divs = golgotha.util.getElementsByClass('googleMapV3', 'div');
 	for (var d = divs.pop(); (d != null); d = divs.pop()) {
-		var h = d.getAttribute('h');
+		const h = d.getAttribute('h');
 		if (h != null)
 			d.style.height = Math.max(200, Math.floor(h * ratio)) + 'px';
 	}
@@ -81,8 +81,8 @@ golgotha.maps.degreesToMiles = function(d) { return d * 69.172 };
 // Set best text color for map types
 golgotha.maps.TEXT_COLOR = {roadmap:'#002010', satellite:'#efefef', terrain:'#002010', hybrid:'#efefef', acars_trackmap:'#dfefef'};
 golgotha.maps.updateMapText = function () {
-	var newColor = golgotha.maps.TEXT_COLOR[this.getMapTypeId()];
-	var elements = golgotha.util.getElementsByClass('mapTextLabel');
+	const newColor = golgotha.maps.TEXT_COLOR[this.getMapTypeId()];
+	const elements = golgotha.util.getElementsByClass('mapTextLabel');
 	elements.forEach(function(e) { e.style.color = newColor; });
 	return true;
 };
@@ -103,7 +103,7 @@ golgotha.maps.setMap = function(map) {
 };
 
 // Track instances
-golgotha.maps.Map = function(div, opts) { var m = new google.maps.Map(div, opts); golgotha.maps.instances.push(m); return m; };
+golgotha.maps.Map = function(div, opts) { const m = new google.maps.Map(div, opts); golgotha.maps.instances.push(m); return m; };
 
 // Track overlays
 google.maps.Marker.prototype.setMap_OLD = google.maps.Marker.prototype.setMap;
@@ -140,7 +140,7 @@ google.maps.Map.prototype.addMarkers = function(mrks) {
 	if (!mrks) return false;
 	mrks = (mrks instanceof Array) ? mrks : [mrks];
 	for (var x = 0; x < mrks.length; x++) {
-		var mrk = mrks[x];
+		const mrk = mrks[x];
 		if (mrk.setMap) mrk.setMap(this);
 	}
 
@@ -151,7 +151,7 @@ google.maps.Map.prototype.removeMarkers = function(mrks) {
 	if (!mrks) return false;
 	mrks = (mrks instanceof Array) ? mrks : [mrks];
 	for (var x = 0; x < mrks.length; x++) {
-		var mrk = mrks[x];
+		const mrk = mrks[x];
 		if ((mrk.getMap) && (mrk.setMap) && (mrk.getMap() == this)) mrk.setMap(null);
 	}
 	
@@ -199,7 +199,7 @@ google.maps.Map.prototype.clearSelects = function(cl) {
 	cl = (cl instanceof Array) ? cl : [cl];
 	this.clearLayers();
 	for (var x = 0; x < cl.length; x++) {
-		var lsc = golgotha.util.getElementsByClass(cl[x], 'div', map.getDiv());
+		const lsc = golgotha.util.getElementsByClass(cl[x], 'div', map.getDiv());
 		lsc.forEach(function(dv) {
 			if (!dv.isSelected) return false;
 			google.maps.event.trigger(dv, 'click');
@@ -213,20 +213,20 @@ google.maps.Map.prototype.clearSelects = function(cl) {
 // Prototype to calculate visible tile addresses for map
 google.maps.Map.prototype.getVisibleTiles = function(zoom, sz)
 {
-var bnds = this.getBounds();
-var nw = new google.maps.LatLng(bnds.getNorthEast().lat(), bnds.getSouthWest().lng());
-var se = new google.maps.LatLng(bnds.getSouthWest().lat(), bnds.getNorthEast().lng());
+const bnds = this.getBounds();
+const nw = new google.maps.LatLng(bnds.getNorthEast().lat(), bnds.getSouthWest().lng());
+const se = new google.maps.LatLng(bnds.getSouthWest().lat(), bnds.getNorthEast().lng());
 
 // Get the pixel points of the tiles
 if (sz == null) sz = golgotha.maps.TILE_SIZE;
-var p = map.getProjection(); if (!zoom) zoom = map.getZoom();
-var nwp = p.fromLatLngToPoint(nw); nwp.x = Math.round(nwp.x << zoom); nwp.y = Math.round(nwp.y << zoom);
-var sep = p.fromLatLngToPoint(se); sep.x = Math.round(sep.x << zoom); sep.y = Math.round(sep.y << zoom);
-var nwAddr = new google.maps.Point((nwp.x / sz.width), (nwp.y / sz.height));
-var seAddr = new google.maps.Point((sep.x / sz.width), (sep.y / sz.height));
+const p = map.getProjection(); if (!zoom) zoom = map.getZoom();
+const nwp = p.fromLatLngToPoint(nw); nwp.x = Math.round(nwp.x << zoom); nwp.y = Math.round(nwp.y << zoom);
+const sep = p.fromLatLngToPoint(se); sep.x = Math.round(sep.x << zoom); sep.y = Math.round(sep.y << zoom);
+const nwAddr = new google.maps.Point((nwp.x / sz.width), (nwp.y / sz.height));
+const seAddr = new google.maps.Point((sep.x / sz.width), (sep.y / sz.height));
 
 // Load the tile addresses
-var tiles = [];
+let tiles = [];
 for (var x = nwAddr.x; x <= seAddr.x; x++) {
 	for (var y = nwAddr.y; y <= seAddr.y; y++)
 		tiles.push(new google.maps.Point(x, y));
@@ -236,7 +236,7 @@ return tiles;
 };
 
 golgotha.maps.CreateButtonDiv = function(txt) {
-	var btn = document.createElement('div');
+	const btn = document.createElement('div');
 	btn.className = 'layerSelect';
 	if (txt.length > 9)
 		btn.style.width = '8em';
@@ -250,8 +250,8 @@ golgotha.maps.CreateButtonDiv = function(txt) {
 };
 
 golgotha.maps.SelectControl = function(title, onSelect, onClear, ctx) {
-	var container = document.createElement('div'); 
-	var btn = golgotha.maps.CreateButtonDiv(title); 
+	const container = document.createElement('div'); 
+	const btn = golgotha.maps.CreateButtonDiv(title); 
 	container.appendChild(btn);
 	if (ctx == null) ctx = window;
 	google.maps.event.addDomListener(btn, 'click', function() {
@@ -270,8 +270,8 @@ golgotha.maps.SelectControl = function(title, onSelect, onClear, ctx) {
 };
 
 golgotha.maps.LayerSelectControl = function(opts, layers) {
-	var container = document.createElement('div');
-	var btn = golgotha.maps.CreateButtonDiv(opts.title);
+	const container = document.createElement('div');
+	const btn = golgotha.maps.CreateButtonDiv(opts.title);
 	container.appendChild(btn);
 	container.enable = function() { btn.disabled = false; golgotha.util.removeClass(btn, 'disabled'); };	
 	if (opts.disabled) { btn.disabled = true; golgotha.util.addClass(btn, 'disabled'); }
@@ -288,9 +288,9 @@ golgotha.maps.LayerSelectControl = function(opts, layers) {
 			btn.isSelected = true;
 		}
 
-		var ovL = this.layerFunc(); if (!(ovL instanceof Array)) ovL = [ovL];
+		let ovL = this.layerFunc(); if (!(ovL instanceof Array)) ovL = [ovL];
 		for (var x = 0; x < ovL.length; x++) {
-			var ov = ovL[x];
+			const ov = ovL[x];
 			if ((ov.getMap != null) && (ov.getMap() != null) && (ov.getMap() != opts.map))
 				return true;
 
@@ -311,8 +311,8 @@ golgotha.maps.LayerSelectControl = function(opts, layers) {
 
 golgotha.maps.LayerClearControl = function(map, opts) {
 	opts = opts || {};
-	var container = document.createElement('div');
-	var btn = golgotha.maps.CreateButtonDiv('None');
+	const container = document.createElement('div');
+	const btn = golgotha.maps.CreateButtonDiv('None');
 	btn.className = 'layerClear';
 	container.appendChild(btn);
 	if (opts.id != null) container.setAttribute('id', opts.id);
@@ -351,7 +351,7 @@ golgotha.maps.ShapeLayer.prototype.setMap = function(m) {
 		this.map = null;
 		golgotha.maps.ovLayers.remove(this);
 		for (var x = 0; x < m.overlayMapTypes.getLength(); x++) {
-			var l = m.overlayMapTypes.getAt(x);
+			const l = m.overlayMapTypes.getAt(x);
 			if (l == this) {
 				m.overlayMapTypes.removeAt(x);
 				return true;
@@ -364,7 +364,7 @@ golgotha.maps.ShapeLayer.prototype.setMap = function(m) {
 
 // Arbitrary marker layer
 golgotha.maps.MarkerLayer = function(opts, name) {
-	var l = {opts:opts, name:name, mrks:[], map:null};
+	let l = {opts:opts, name:name, mrks:[], map:null};
 	l.getMap = function() { return this.map; };
 	l.setMap = function(m) { this.map = m; for (var x = 0; x < this.mrks.length; x++) this.mrks[x].setMap(m); };
 	l.set = function(k, v) { this.opts[k] = v; };
@@ -372,8 +372,8 @@ golgotha.maps.MarkerLayer = function(opts, name) {
 	l.add = function(m) { if (!this.mrks.contains(m)) this.mrks.push(m); };
 	l.remove = function(m) { this.mrks.remove(m); };
 	l.getTextDate = function() {
-		var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-		var d = this.timestamp; if (d == null) return '';
+		const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+		const d = this.timestamp; if (d == null) return '';
 		return d.getDate() + '-' + months[d.getMonth()] + '-' + d.getFullYear() + '  ' + d.getHours() + ':' + ((d.getMinutes() < 10) ? '0' + d.getMinutes() : d.getMinutes());	
 	};
 	
@@ -388,8 +388,8 @@ golgotha.maps.Marker = function(opts, pt) {
 		hasLabel = false;
 	}
 	
-	var icn = new google.maps.MarkerImage('/' + golgotha.maps.IMG_PATH + '/maps/point_' + opts.color + '.png', null, null, null, golgotha.maps.PIN_SIZE);
-	var mrkOpts = {position:pt, icon:icn, shadow:golgotha.maps.DEFAULT_SHADOW, zIndex:golgotha.maps.z.MARKER};
+	const icn = new google.maps.MarkerImage('/' + golgotha.maps.IMG_PATH + '/maps/point_' + opts.color + '.png', null, null, null, golgotha.maps.PIN_SIZE);
+	let mrkOpts = {position:pt, icon:icn, shadow:golgotha.maps.DEFAULT_SHADOW, zIndex:golgotha.maps.z.MARKER};
 	mrkOpts.opacity = (opts.opacity) ? opts.opacity : 1.0;
 	if (hasLabel) {
 		mrkOpts.labelClass = 'mapMarkerLabel';
@@ -401,7 +401,7 @@ golgotha.maps.Marker = function(opts, pt) {
 		mrkOpts.labelAnchor = new google.maps.Point((opts.label.length * 3), 0);
 	}
 	
-	var mrk = hasLabel ? new MarkerWithLabel(mrkOpts) : new google.maps.Marker(mrkOpts);
+	const mrk = hasLabel ? new MarkerWithLabel(mrkOpts) : new google.maps.Marker(mrkOpts);
 	if (opts.info != null) {
 		mrk.info = opts.info;	
 		google.maps.event.addListener(mrk, 'click', function() { map.infoWindow.setContent(this.info); map.infoWindow.open(map, this); });	
@@ -413,20 +413,20 @@ golgotha.maps.Marker = function(opts, pt) {
 
 golgotha.maps.IconMarker = function(opts, pt) {
 	if (opts == null) opts = {pal:0, icon:0};
-	var imgBase = null;
+	let imgBase = null;
 	if (opts.pal > 0)
 		imgBase = self.location.protocol + '//maps.google.com/mapfiles/kml/pal' + opts.pal + '/icon' + opts.icon;
 	else
 		imgBase = '/' + golgotha.maps.IMG_PATH + '/maps/pal' + opts.pal + '/icon' + opts.icon;
 
-	var icn = new google.maps.MarkerImage(imgBase + '.png', null, null, golgotha.maps.ICON_ANCHOR, golgotha.maps.S_ICON_SIZE);
-	var shd = new google.maps.MarkerImage(imgBase + 's.png', null, null, golgotha.maps.ICON_ANCHOR, golgotha.maps.S_ICON_SHADOW_SIZE);
-	var mrkOpts = {position:pt, icon:icn, shadow:shd, zIndex:golgotha.maps.z.MARKER};
+	const icn = new google.maps.MarkerImage(imgBase + '.png', null, null, golgotha.maps.ICON_ANCHOR, golgotha.maps.S_ICON_SIZE);
+	const shd = new google.maps.MarkerImage(imgBase + 's.png', null, null, golgotha.maps.ICON_ANCHOR, golgotha.maps.S_ICON_SHADOW_SIZE);
+	let mrkOpts = {position:pt, icon:icn, shadow:shd, zIndex:golgotha.maps.z.MARKER};
 	mrkOpts.opacity = (opts.opacity) ? opts.opacity : 1.0;
 	if (opts.label != null)
 		mrkOpts.label = opts.label;
 
-	var mrk = new google.maps.Marker(mrkOpts);
+	const mrk = new google.maps.Marker(mrkOpts);
 	if (opts.info != null) {
 		mrk.info = opts.info;
 		google.maps.event.addListener(mrk, 'click', function() { map.infoWindow.setContent(this.info); map.infoWindow.open(map, this); });
@@ -453,7 +453,7 @@ if (this.parser == null) {
 }
 	
 // Get layer data and add markers
-var l = new golgotha.maps.MarkerLayer({}, this.name); var ld = null;
+let l = new golgotha.maps.MarkerLayer({}, this.name); let ld = null;
 if (data != null) {
 	try {
 		ld = this.parser(data);
@@ -475,7 +475,7 @@ if (data != null) {
 
 // If we're displaying the layer, refresh it
 if ((this.ovLayer != null) && (this.ovLayer.getMap() != null)) {
-	var ol = this.ovLayer;
+	const ol = this.ovLayer;
 	l.setMap(ol.getMap());
 	window.setTimeout(function() { ol.setMap(null); }, 10);
 }
@@ -518,8 +518,8 @@ return true;
 golgotha.maps.util.updateTab = function(ofs, size)
 {
 if ((ofs < 0) || (ofs > this.tabs.length)) ofs = 0;
-var tab = this.tabs[ofs];
-var txt = '<div ';
+const tab = this.tabs[ofs];
+let txt = '<div ';
 if (!size) size = this.tabSize;
 if (size) {
 	txt += ' style="width:';
@@ -541,9 +541,9 @@ return true;
 
 golgotha.maps.util.renderTabChoices = function(tabs, selectedOfs)
 {
-var txt = '<span class="tabMenu">';
+let txt = '<span class="tabMenu">';
 for (var x = 0; x < tabs.length; x++) {
-	var tab = tabs[x];
+	const tab = tabs[x];
 	if (x != selectedOfs) {
 		txt += '<a href="javascript:void map.infoWindow.marker.updateTab(' + x + ')">';
 		txt += tab.name;

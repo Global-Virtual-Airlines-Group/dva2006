@@ -11,15 +11,15 @@ golgotha.gate.toggleAirline = function(al) {
 
 golgotha.gate.load = function(id, forceReload)
 {
-var url = 'gates.ws?id=' + id;
+let url = 'gates.ws?id=' + id;
 if (forceReload == true)
 	url += '&time=' + golgotha.util.getTimestamp(3000);
 
-var xreq = new XMLHttpRequest();
+const xreq = new XMLHttpRequest();
 xreq.open('get', url, true);
 xreq.onreadystatechange = function() {
 	if ((xreq.readyState != 4) || (xreq.status != 200)) return false;
-	var jsData = JSON.parse(xreq.responseText);
+	const jsData = JSON.parse(xreq.responseText);
 	golgotha.gate.id = jsData.icao; golgotha.gate.ids = [];
 	jsData.gates.forEach(function(g) { golgotha.gate.data[g.id] = g; golgotha.gate.ids.push(g.id); });
 	golgotha.gate.reload();
@@ -37,8 +37,8 @@ golgotha.gate.reload = function(al) {
 	map.removeMarkers(golgotha.gate.ourGates);
 	golgotha.gate.gates = []; golgotha.gate.ourGates = [];
 	golgotha.gate.ids.forEach(function(id) {
-		var g = golgotha.gate.data[id]; var opts = golgotha.gate.icons.other;
-		var isOurs = (((al == null) && (g.airlines.length > 0)) || g.airlines.contains(al));
+		const g = golgotha.gate.data[id]; let opts = golgotha.gate.icons.other;
+		const isOurs = (((al == null) && (g.airlines.length > 0)) || g.airlines.contains(al));
 		if (isOurs && g.isIntl)
 			opts = golgotha.gate.icons.intl;
 		else if (isOurs)
@@ -46,9 +46,9 @@ golgotha.gate.reload = function(al) {
 		else if (g.useCount > 0)
 			opts = golgotha.gate.icons.pop;
 
-		var mrk = new golgotha.maps.IconMarker({pal:opts.pal, icon:opts.icon, opacity:opts.tx, info:g.info}, g.ll);
+		const mrk = new golgotha.maps.IconMarker({pal:opts.pal, icon:opts.icon, opacity:opts.tx, info:g.info}, g.ll);
 		mrk.gateID = id; g.toggleAirline = golgotha.gate.toggleAirline;
-		var dst = isOurs ? golgotha.gate.ourGates : golgotha.gate.gates;
+		const dst = isOurs ? golgotha.gate.ourGates : golgotha.gate.gates;
 		if (golgotha.gate.isEdit) {
 			google.maps.event.addListener(mrk, 'dblclick', golgotha.gate.toggleOurs);
 			if (isOurs)
@@ -76,7 +76,7 @@ golgotha.gate.edit = function() {
 
 golgotha.gate.save = function()
 {
-var xreq = new XMLHttpRequest();
+const xreq = new XMLHttpRequest();
 xreq.open('post', 'gateupdate.ws?id=' + golgotha.gate.id, true);
 xreq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
 xreq.onreadystatechange = function() {
@@ -93,7 +93,7 @@ xreq.onreadystatechange = function() {
 };
 
 // Convert associative array to object
-var data = [];
+let data = [];
 golgotha.gate.isDirty.forEach(function(k) { var gd = golgotha.gate.data[k]; data.push({id:k,airlines:gd.airlines,intl:gd.isIntl}); });
 xreq.send('data=' + JSON.stringify(data));
 return true;
@@ -107,11 +107,11 @@ golgotha.gate.updateAirline = function(combo) {
 		return false;
 	}
 
-	var alName = combo.options[combo.selectedIndex].text;
+	let alName = combo.options[combo.selectedIndex].text;
 	if (alName.indexOf('- ') > 0)
 		alName = alName.substring(alName.indexOf('- ') + 2);
 
-	var name = document.getElementById('airlineName');
+	const name = document.getElementById('airlineName');
 	name.innerHTML = alName;
 	golgotha.gate.airline = golgotha.form.getCombo(combo);
 	golgotha.gate.reload(golgotha.gate.airline);
@@ -119,10 +119,9 @@ golgotha.gate.updateAirline = function(combo) {
 };
 
 golgotha.gate.filter = function(gateIDs) {
-
-	var allGates = golgotha.gate.gates.concat(golgotha.gate.ourGates);
+	const allGates = golgotha.gate.gates.concat(golgotha.gate.ourGates);
 	allGates.forEach(function(g) {
-		var isVisible = (gateIDs.length == 0) || gateIDs.contains(g.id);
+		const isVisible = (gateIDs.length == 0) || gateIDs.contains(g.id);
 		if (isVisible)
 			g.show();
 		else
@@ -134,8 +133,8 @@ golgotha.gate.filter = function(gateIDs) {
 
 golgotha.gate.toggleOurs = function() {
 	if (!golgotha.gate.airline) return false;
-	var g = golgotha.gate.data[this.gateID];
-	var isOurs = g.toggleAirline(golgotha.gate.airline);
+	const g = golgotha.gate.data[this.gateID];
+	const isOurs = g.toggleAirline(golgotha.gate.airline);
 	if (!isOurs)
 		g.isIntl &= (g.airlines.length > 0);
 
@@ -147,8 +146,8 @@ golgotha.gate.toggleOurs = function() {
 
 golgotha.gate.toggleIntl = function() {
 	if (!golgotha.gate.airline) return false;
-	var g = golgotha.gate.data[this.gateID];
-	var isOurs = g.airlines.contains(golgotha.gate.airline);
+	const g = golgotha.gate.data[this.gateID];
+	const isOurs = g.airlines.contains(golgotha.gate.airline);
 	if (!isOurs)
 		g.airlines.push(golgotha.gate.airline);
 	
@@ -165,11 +164,11 @@ golgotha.local.updateAirportA = function(combo, departureICAO) {
 		return true;
 	}
 
-	var xreq = new XMLHttpRequest();
+	const xreq = new XMLHttpRequest();
 	xreq.open('get', 'gates.ws?id=' + departureICAO + '&aa=' + golgotha.form.getCombo(combo), true);
 	xreq.onreadystatechange = function() {
 		if ((xreq.readyState != 4) || (xreq.status != 200)) return false;
-		var jsData = JSON.parse(xreq.responseText); var ids = [];
+		const jsData = JSON.parse(xreq.responseText); let ids = [];
 		jsData.gates.forEach(function(id) { ids.push(id); });	
 		golgotha.gate.filter(ids);
 		return true;

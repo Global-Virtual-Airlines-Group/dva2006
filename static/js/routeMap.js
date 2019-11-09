@@ -13,7 +13,7 @@ if (!golgotha.form.comboSet(combo)) {
 }
 
 // Check if we have cached airports
-var aCode = golgotha.form.getCombo(combo);
+const aCode = golgotha.form.getCombo(combo);
 golgotha.routeMap.aps = golgotha.routeMap.airports[aCode];
 if (golgotha.routeMap.aps) {
 	map.addMarkers(golgotha.routeMap.aps);
@@ -23,19 +23,19 @@ if (golgotha.routeMap.aps) {
 
 // Build the XML Requester
 golgotha.util.setHTML('isLoading', ' - LOADING...');
-var xmlreq = new XMLHttpRequest();
-xmlreq.open('GET', 'rmap_airports.ws?airline=' + aCode, true);
+const xmlreq = new XMLHttpRequest();
+xmlreq.open('get', 'rmap_airports.ws?airline=' + aCode, true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	golgotha.util.setHTML('isLoading', ' - REDRAWING...');
 	golgotha.routeMap.aps = [];
-	var f = document.forms[0];
+	const f = document.forms[0];
 
 	// Parse the JSON
-	var js = JSON.parse(xmlreq.responseText);
+	const js = JSON.parse(xmlreq.responseText);
 	for (var x = 0; x < js.airports.length; x++) {
-		var a = js.airports[x];
-		var mrk = new golgotha.maps.Marker({color:a.color}, a.ll);
+		const a = js.airports[x];
+		const mrk = new golgotha.maps.Marker({color:a.color}, a.ll);
 		mrk.icao = a.icao; mrk.iata = a.iata;
 		mrk.infoShow = golgotha.routeMap.showRoutes;
 		mrk.infoLabel = a.info;
@@ -61,21 +61,21 @@ golgotha.routeMap.showRoutes = function()
 golgotha.util.setHTML('isLoading', ' - LOADING...');
 
 // Get the airline code
-var aCombo = document.getElementById('airlineCode');
-var aCode = aCombo.options[aCombo.selectedIndex].value;
+const aCombo = document.getElementById('airlineCode');
+const aCode = aCombo.options[aCombo.selectedIndex].value;
 map.removeMarkers(golgotha.routeMap.routes);
 map.closeWindow();
 
 // Build the XML Requester
-var xmlreq = new XMLHttpRequest();
-xmlreq.open('GET', 'rmap_routes.ws?icao=' + this.icao + '&airline=' + aCode, true);
+const xmlreq = new XMLHttpRequest();
+xmlreq.open('get', 'rmap_routes.ws?icao=' + this.icao + '&airline=' + aCode, true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	golgotha.util.setHTML('isLoading', ' - REDRAWING...');
 	golgotha.routeMap.routes.length = 0;
 
 	// Parse the JSON
-	var js = JSON.parse(xmlreq.responseText);
+	const js = JSON.parse(xmlreq.responseText);
 	js.routes.forEach(function(rt) {
 		if (rt.airline != aCode) return false;
 		var routeLine = new google.maps.Polyline({map:map, path:rt.positions, strokeColor:rt.color, strokeWeight:2, strokeOpacity:0.8, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
@@ -89,7 +89,7 @@ xmlreq.onreadystatechange = function() {
 };
 
 xmlreq.send(null);
-var showInfo = document.getElementById('showInfo');
+const showInfo = document.getElementById('showInfo');
 if ((showInfo) && (showInfo.checked)) {
 	map.infoWindow.setContent(this.infoLabel);
 	map.infoWindow.open(map, this);

@@ -1,7 +1,7 @@
 golgotha.maps.acars = golgotha.maps.acars || {acPositions:[], dcPositions:[], routeData:null, routeWaypoints:null, tempData:null, routeMarkers:[]};
 golgotha.maps.acars.generateXMLRequest = function()
 {
-var xmlreq = new XMLHttpRequest();
+const xmlreq = new XMLHttpRequest();
 xmlreq.open('get', 'acars_map_json.ws?time=' + golgotha.util.getTimestamp(3000), true);
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
@@ -19,17 +19,17 @@ xmlreq.onreadystatechange = function() {
 	golgotha.maps.acars.acPositions.length = 0;
 	golgotha.maps.acars.dcPositions.length = 0;
 	golgotha.util.display('userSelect', false);
-	var cbo = document.forms[0].usrID;
+	const cbo = document.forms[0].usrID;
 	if (cbo != null) {
 		selectedPilot = cbo.options[cbo.selectedIndex].value;
 		cbo.options.length = 1;
 	}
 
 	// Parse the JSON
-	var js = JSON.parse(xmlreq.responseText);
+	const js = JSON.parse(xmlreq.responseText);
 	if (js.aircraft.length > 0) golgotha.event.beacon('ACARS', 'Aircraft Positions');
 	for (var i = 0; i < js.aircraft.length; i++) {
-		var a = js.aircraft[i]; var mrk;
+		const a = js.aircraft[i]; var mrk;
 		if (a.pal)
 			mrk = new golgotha.maps.IconMarker({pal:a.pal, icon:a.icon}, a.ll);
 		else if (a.color)
@@ -47,11 +47,11 @@ xmlreq.onreadystatechange = function() {
 
 		// Add the user ID
 		if ((a.pilot) && (cbo != null)) {
-			var lbl = a.pilot.name;
+			let lbl = a.pilot.name;
 			if (a.pilot.code != null)
 				lbl = lbl + ' (' + a.pilot.code + ')';
 
-			var o = new Option(lbl, a.pilot.code);
+			let o = new Option(lbl, a.pilot.code);
 			o.mrk = mrk;
 			try {
 				cbo.add(o, null);
@@ -70,7 +70,7 @@ xmlreq.onreadystatechange = function() {
 
 	if (js.dispatch.length > 0) golgotha.event.beacon('ACARS', 'Dispatch Positions');
 	for (var i = 0; i < js.dispatch.length; i++) {
-		var d = js.dispatch[i]; var mrk;
+		const d = js.dispatch[i]; var mrk;
 		if (d.pal)
 			mrk = new golgotha.maps.IconMarker({pal:d.pal, icon:d.icon}, d.ll);
 		else if (d.color)
@@ -87,7 +87,7 @@ xmlreq.onreadystatechange = function() {
 
 		// Add the user ID
 		if ((d.pilot) && (cbo != null)) {
-			var o = new Option(d.pilot.name + ' (' + d.pilot.code + '/Dispatcher)', d.pilot.code);
+			let o = new Option(d.pilot.name + ' (' + d.pilot.code + '/Dispatcher)', d.pilot.code);
 			o.mrk = mrk;
 			try {
 				cbo.add(o, null);
@@ -108,7 +108,7 @@ xmlreq.onreadystatechange = function() {
 	golgotha.util.disable('EarthButton', (js.aircraft.length == 0));
 
 	// Display dispatch status
-	var de = document.getElementById('dispatchStatus');
+	const de = document.getElementById('dispatchStatus');
 	if ((de) && (js.dispatch.length > 0)) {
 		de.className = 'ter bld caps';
 		de.innerHTML = 'Dispatcher Currently Online';
@@ -131,10 +131,10 @@ return xmlreq;
 golgotha.maps.acars.clickAircraft = function(e)
 {
 // Check what info we display
-var f = document.forms[0];
-var isProgress = f.showProgress.checked;
-var isRoute = f.showRoute.checked;
-var isInfo = f.showInfo.checked;
+const f = document.forms[0];
+const isProgress = f.showProgress.checked;
+const isRoute = f.showRoute.checked;
+const isInfo = f.showInfo.checked;
 golgotha.event.beacon('ACARS', 'Flight Info');
 
 // Display the info - show tab 0
@@ -162,8 +162,8 @@ return true;
 golgotha.maps.acars.clickDispatch = function(e)
 {
 // Check what info we display
-var f = document.forms[0];
-var isInfo = f.showInfo.checked;
+const f = document.forms[0];
+const isInfo = f.showInfo.checked;
 golgotha.event.beacon('ACARS', 'Dispatch Info');
 
 // Display the info
@@ -207,16 +207,15 @@ return true;
 
 golgotha.maps.acars.showFlightProgress = function(marker, doProgress, doRoute)
 {
-// Build the XML Requester
-var xreq = new XMLHttpRequest();
+const xreq = new XMLHttpRequest();
 xreq.open('GET', 'acars_progress_json.ws?id=' + marker.flight_id + '&time=' + golgotha.util.getTimestamp(3000) + '&route=' + doRoute + '&isExternal=' + marker.isExternal, true);
 xreq.onreadystatechange = function() {
 	if ((xreq.readyState != 4) || (xreq.status != 200)) return false;
 
 	// Draw the flight route
-	var js = JSON.parse(xreq.responseText);
+	const js = JSON.parse(xreq.responseText);
 	if (doRoute) {
-		var waypoints = [];
+		let waypoints = [];
 		js.waypoints.forEach(function(wp) { 
 			waypoints.push(wp.ll); var mrk;
 			if (wp.pal)
@@ -246,19 +245,19 @@ return true;
 };
 
 golgotha.maps.acars.getServiceRange = function(marker, range) {
-	var bC = marker.isBusy ? '#c02020' : '#20c060';
-	var fC = marker.isBusy ? '#802020' : '#208040';
-	var fOp = marker.isBusy ? 0.1 : 0.2;
+	const bC = marker.isBusy ? '#c02020' : '#20c060';
+	const fC = marker.isBusy ? '#802020' : '#208040';
+	const fOp = marker.isBusy ? 0.1 : 0.2;
 	return new google.maps.Circle({center:marker.getPosition(), radius:golgotha.maps.miles2Meter(range), strokeColor:bC, strokeWeight:1, strokeOpacity:0.65, fillColor:fC, fillOpacity:fOp, zIndex:golgotha.maps.z.POLYGON});
 };
 
 golgotha.maps.acars.zoomTo = function(combo)
 {
-var opt = combo.options[combo.selectedIndex];
+const opt = combo.options[combo.selectedIndex];
 if ((!opt) || (opt.mrk == null)) return false;
 
 // Check if we zoom or just pan
-var f = document.forms[0];
+const f = document.forms[0];
 if (f.zoomToPilot.checked) map.setZoom(9);
 
 // Pan to the marker

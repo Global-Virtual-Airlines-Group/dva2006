@@ -1,8 +1,8 @@
 golgotha.exam = golgotha.exam || {isExpired:false, rpInfo:[]};
 golgotha.exam.getElementsById = function(id, eName)
 {
-var elements = [];
-var all = document.getElementsByTagName((eName == null) ? '*' : eName);
+let elements = [];
+const all = document.getElementsByTagName((eName == null) ? '*' : eName);
 for (var x = 0; x < all.length; x++) {
 	if (all[x].id == id)
 		elements.push(all[x]);
@@ -16,13 +16,13 @@ golgotha.local.validate = function(f)
 if (!golgotha.form.check()) return false;
 
 // Check if all questions were answered
-var isOK = true; var qNum = 1;
-var a = golgotha.exam.getElementsById('A' + qNum);
+let isOK = true; let qNum = 1;
+const a = golgotha.exam.getElementsById('A' + qNum);
 while (isOK && (a.length > 0)) {
 	if (a.length == 1)
 		isOK = (isOK && (a[0].value.length > 1));
 	else {
-		var checkCount = 0;
+		let checkCount = 0;
 		for (var x = 0; x < a.length; x++) {
 			if (a[x].checked)
 				checkCount++;
@@ -59,9 +59,9 @@ return null;
 
 golgotha.exam.showRemaining = function(interval)
 {
-var now = new Date();
-var tr = document.getElementById('timeRemaining');
-var secondsLeft = (golgotha.exam.expiry - now.getTime() + golgotha.exam.timeOffset) / 1000;
+const now = new Date();
+const tr = document.getElementById('timeRemaining');
+const secondsLeft = (golgotha.exam.expiry - now.getTime() + golgotha.exam.timeOffset) / 1000;
 if (!tr) return false;
 
 // Update the text color
@@ -85,7 +85,7 @@ return window.setTimeout(golgotha.exam.showRemaining, interval * 1000, interval)
 
 golgotha.exam.saveAnswer = function(qNum, id)
 {
-var txtbox = golgotha.exam.getElementsById('A' + qNum);
+const txtbox = golgotha.exam.getElementsById('A' + qNum);
 if (!txtbox) return false;
 if (txtbox.length == 1) {
 	txtbox[0].oldBorder = txtbox[0].style.border;
@@ -93,8 +93,8 @@ if (txtbox.length == 1) {
 }
 
 // Create the AJAX request
-var xmlreq = new XMLHttpRequest();
-xmlreq.open('POST', 'answer.ws?id=' + id + '&q=' + qNum + '&date=' + golgotha.util.getTimestamp(100));
+const xmlreq = new XMLHttpRequest();
+xmlreq.open('post', 'answer.ws?id=' + id + '&q=' + qNum + '&date=' + golgotha.util.getTimestamp(100));
 xmlreq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=utf-8');
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
@@ -107,7 +107,7 @@ xmlreq.onreadystatechange = function() {
 };
 
 // Save the answer
-var answer = golgotha.exam.getAnswer(txtbox);
+const answer = golgotha.exam.getAnswer(txtbox);
 if (answer != null) {
 	xmlreq.send('answer=' + escape(answer));
 	golgotha.event.beacon('Examination', 'Submit Answer');
@@ -116,18 +116,16 @@ if (answer != null) {
 return true;
 };
 
-golgotha.exam.viewImage = function(id, x, y)
-{
-var flags = 'height=' + (y+45) + ',width=' + (x+45) + ',menubar=no,toolbar=no,status=yes,scrollbars=yes';
-return window.open('/exam_rsrc/' + id, 'questionImage', flags);
+golgotha.exam.viewImage = function(id, x, y) {
+	return window.open('/exam_rsrc/' + id, 'questionImage', 'height=' + (y+45) + ',width=' + (x+45) + ',menubar=no,toolbar=no,status=yes,scrollbars=yes');
 };
 
 golgotha.exam.updateMap = function(rpq)
 {
-var xmlreq = new XMLHttpRequest();
-xmlreq.open('POST', 'examplot.ws?id=' + rpq.examID + '&q=' + rpq.idx + '&date=' + golgotha.util.getTimestamp(100), true);
+const xmlreq = new XMLHttpRequest();
+xmlreq.open('post', 'examplot.ws?id=' + rpq.examID + '&q=' + rpq.idx + '&date=' + golgotha.util.getTimestamp(100), true);
 xmlreq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=utf-8');
-var txtbox = golgotha.exam.getElementsById('A' + rpq.idx);
+const txtbox = golgotha.exam.getElementsById('A' + rpq.idx);
 if (!txtbox) return false;
 if (txtbox.length == 1) {
 	txtbox[0].oldBorder = txtbox[0].style.border;
@@ -140,9 +138,9 @@ xmlreq.onreadystatechange = function() {
 	rpq.map.clearOverlays();
 
 	// Draw the markers and load the codes
-	var positions = [];
-	var codes = [];
-	var js = JSON.parse(xmlreq.responseText);
+	let positions = [];
+	let codes = [];
+	const js = JSON.parse(xmlreq.responseText);
 	js.positions.forEach(function(wp) {
 		positions.push(wp.ll);
 		codes.push(wp.code);
@@ -153,7 +151,7 @@ xmlreq.onreadystatechange = function() {
 	});
 	
 	// Draw the route
-	var rt = new google.maps.Polyline({map:rpq.map, path:positions, strokeColor:'#4080af', strokeWeight:1.65, strokeOpacity:0.8, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
+	const rt = new google.maps.Polyline({map:rpq.map, path:positions, strokeColor:'#4080af', strokeWeight:1.65, strokeOpacity:0.8, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
 
 	// Save the codes
 	if (txtbox.length == 1) {

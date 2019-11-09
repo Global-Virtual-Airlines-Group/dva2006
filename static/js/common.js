@@ -13,10 +13,10 @@ golgotha.event.ValidationError = function(msg, el) { var e = new golgotha.event.
 golgotha.util.getElementsByClass = function(cName, eName, parent)
 {
 if (parent == null) parent = document;
-var elements = [];
-var all = parent.getElementsByTagName((eName == null) ? '*' : eName);
+let elements = [];
+const all = parent.getElementsByTagName((eName == null) ? '*' : eName);
 for (var x = 0; x < all.length; x++) {
-	var cl = all[x].className;
+	const cl = all[x].className;
 	if (cl.split && (cl.split(' ').indexOf(cName) > -1))
 		elements.push(all[x]);
 }
@@ -27,7 +27,7 @@ return elements;
 golgotha.util.addClass = function(e, cl)
 {
 	if (!e) return false;
-	var c = e.className.split(' ');
+	let c = e.className.split(' ');
 	if (c.indexOf(cl) < 0) c.push(cl);
 	e.className = (c.length == 0) ? '' : c.join(' ');
 	return true;
@@ -35,15 +35,15 @@ golgotha.util.addClass = function(e, cl)
 
 golgotha.util.removeClass = function(e, cl) {
 	if (!e) return false;
-	var c = e.className.split(' ');
-	var hasClass = c.remove(cl);
+	let c = e.className.split(' ');
+	const hasClass = c.remove(cl);
 	e.className = (c.length == 0) ? '' : c.join(' ');
 	return hasClass;
 };
 
 golgotha.util.hasClass = function(e, cl) {
 	if (!e) return false;
-	var c = e.className.split(' ');
+	let c = e.className.split(' ');
 	return c.remove(cl);
 };
 
@@ -72,10 +72,10 @@ golgotha.util.display = function(e, isVisible) {
 golgotha.util.getStyle = function(sheet, cl) {
 	if (golgotha.util.oldIE) return null;
 	for (var x = 0; x < document.styleSheets.length; x++) {
-		var ss = document.styleSheets[x];
+		const ss = document.styleSheets[x];
 		if ((ss.href == null) || (ss.href.indexOf(sheet) == -1)) continue;
 		for (var y = 0; y < ss.cssRules.length; y++) {
-			var cs = ss.cssRules[y];
+			const cs = ss.cssRules[y];
 			if ((cs.selectorText) && (cs.style) && (cs.selectorText.indexOf(cl) > -1))
 				return cs.style.color;
 		}
@@ -92,19 +92,18 @@ golgotha.util.setHTML = function(e, content) {
 };
 
 golgotha.form.resizeAll = function() {
-	var boxes = golgotha.util.getElementsByClass('resizable');
-	for (var x = 0; x < boxes.length; x++) golgotha.form.resize(boxes[x]);
+	const boxes = golgotha.util.getElementsByClass('resizable');
+	boxes.forEach(function(b) { golgotha.form.resize(boxes[x]); });
 	return true;
 };
 
-golgotha.form.resize = function(textbox)
-{
-if ((!textbox) || (textbox.clientHeight >= textbox.scrollHeight)) return false;
-textbox.style.height = textbox.scrollHeight + 'px';
-if (textbox.clientHeight < textbox.scrollHeight)
-	textbox.style.height = (textbox.scrollHeight * 2 - textbox.clientHeight) + 'px';
+golgotha.form.resize = function(textbox) {
+	if ((!textbox) || (textbox.clientHeight >= textbox.scrollHeight)) return false;
+	textbox.style.height = textbox.scrollHeight + 'px';
+	if (textbox.clientHeight < textbox.scrollHeight)
+		textbox.style.height = (textbox.scrollHeight * 2 - textbox.clientHeight) + 'px';
 
-return true;
+	return true;
 };
 
 golgotha.form.comboSet = function(combo) { return ((combo) && (combo.selectedIndex > 0)); };
@@ -112,7 +111,7 @@ golgotha.form.setCombo = function(combo, entryValue)
 {
 if (!combo) return false;
 for (var x = 0; x < combo.options.length; x++) {
-	var opt = combo.options[x];
+	const opt = combo.options[x];
 	if ((opt.value == entryValue) || (opt.text == entryValue)) {
 		combo.selectedIndex = x;
 		return true;
@@ -131,7 +130,7 @@ golgotha.form.getCombo = function(combo) {
 golgotha.util.isFunction = function(o) { return !!(o && o.constructor && o.call && o.apply); };
 golgotha.util.createScript = function(opts)
 {
-var url = opts.url;
+let url = opts.url;
 if (url.substring(0, 2) == '//')
 	url = self.location.protocol + url;
 else if (url.indexOf('http') != 0)
@@ -143,7 +142,7 @@ if (url.indexOf(golgotha.maps.wxHost) > -1) {
 	url += api;
 }
 	
-var sc = document.createElement('script');
+let sc = document.createElement('script');
 sc.setAttribute('id', opts.id);
 sc.src = url;
 if (opts.async) sc.setAttribute('async', 'true');
@@ -159,15 +158,15 @@ return true;
 golgotha.util.enable = function(n) {
 	n = (n instanceof Array) ? n : [n];
 	for (var x = 0; x < n.length; x++) {
-		var ci = n[x];
+		const ci = n[x];
 		if (ci.style) {
 			if (ci.enable) ci.enable();
 		} else if (ci.charAt(0) == '#') {
-			var ee = golgotha.util.getElementsByClass(ci.substring(1));
+			let ee = golgotha.util.getElementsByClass(ci.substring(1));
 			for (var e = ee.pop(); (e != null); e = ee.pop())
 				if (e.enable) e.enable();
 		} else {
-			var e = document.getElementById(ci); 
+			let e = document.getElementById(ci); 
 			if ((e) && (e.enable)) e.enable();
 		}
 	}
@@ -186,7 +185,7 @@ golgotha.attach = function(f, name) {
 };
 
 golgotha.getChild = function(e, name) {
-	var children = e.getElementsByTagName(name);
+	const children = e.getElementsByTagName(name);
 	return (children.length == 0) ? null : children[0];
 };
 
@@ -195,7 +194,7 @@ if (window.Element != undefined)
 
 golgotha.getCDATA = function(e)
 {
-var child = e.firstChild;	
+let child = e.firstChild;	
 while ((child != null) && (child.nodeType != 4))
 	child = child.nextSibling;
 
@@ -208,7 +207,7 @@ if (window.Element != undefined)
 // IE9 hack for setTimeout
 if (document.all && !window.setTimeout.isPolyfill)
 {
-	var __nativeST__ = window.setTimeout;
+	const __nativeST__ = window.setTimeout;
 	window.setTimeout = function (vCallback, nDelay /*, argumentToPass1, argumentToPass2, etc. */) {
 		var aArgs = Array.prototype.slice.call(arguments, 2);
 	    return __nativeST__(vCallback instanceof Function ? function () { vCallback.apply(null, aArgs); } : vCallback, nDelay);
@@ -253,22 +252,22 @@ golgotha.form.check = function() { return (golgotha.form.isSubmitted != true); }
 golgotha.form.submit = function(f) {
 	golgotha.form.isSubmitted = true;
 	if (f != null) {
-		var ies = golgotha.util.getElementsByClass('button', 'input', f);
+		let ies = golgotha.util.getElementsByClass('button', 'input', f);
 		for (var e = ies.pop(); (e != null); e = ies.pop())
 			e.disabled = true;
 	}
 	
-	var dv = document.getElementById('spinner');
+	const dv = document.getElementById('spinner');
 	if (!dv) return true;
 	
 	// Add background
-	var sb = document.createElement('div');
+	const sb = document.createElement('div');
 	sb.setAttribute('id', 'spinnerBack');
 	document.body.appendChild(sb);
 	
 	// Add spinner message
-	var w = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
-	var h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+	const w = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+	const h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
 	dv.style.top = ((h - 160) / 2) + 'px';
 	dv.style.left = ((w - 185) / 2) + 'px';
 	dv.style.display = '';
@@ -277,12 +276,12 @@ golgotha.form.submit = function(f) {
 
 golgotha.form.clear = function(f) {
 	golgotha.form.isSubmitted = false;
-	var sb = document.getElementById('spinnerBack');
+	const sb = document.getElementById('spinnerBack');
 	if (sb) document.body.removeChild(sb);
-	var dv = document.getElementById('spinner');
+	const dv = document.getElementById('spinner');
 	if (dv) dv.style.display = 'none';
 	if (f != null) {
-		var ies = golgotha.util.getElementsByClass('button', 'input', f);
+		let ies = golgotha.util.getElementsByClass('button', 'input', f);
 		for (var e = ies.pop(); (e != null); e = ies.pop())
 			e.disabled = false;
 	}
@@ -293,8 +292,8 @@ golgotha.form.clear = function(f) {
 golgotha.form.get = function(url) { golgotha.form.submit(); self.location = '/' + url; return true; };
 golgotha.form.post = function(url)
 {
-var f = document.forms[0];
-var oldaction = f.action;
+const f = document.forms[0];
+const oldaction = f.action;
 f.action = url;
  
 // Execute the form validation - if any
@@ -331,7 +330,7 @@ if ('addr' in opts) return golgotha.form.validateEMail(opts.f, opts.t);
 if ('l' in opts) return golgotha.form.validateText(opts.f, opts.l, opts.t);
 if (!opts.f) return true;
 if ('min' in opts) {
-	var vf = ((0 in opts.f) || (opts.f.type == 'checkbox')) ? golgotha.form.validateCheckBox : golgotha.form.validateNumber;
+	const vf = ((0 in opts.f) || (opts.f.type == 'checkbox')) ? golgotha.form.validateCheckBox : golgotha.form.validateNumber;
 	return vf(opts.f, opts.min, opts.t);
 }
 
@@ -347,7 +346,7 @@ golgotha.form.validateText = function(t, min, title) {
 
 golgotha.form.validateNumber = function(t, minValue, title) {
 	if ((!t) || (t.disabled)) return true;
-	var i = parseFloat(t.value);
+	const i = parseFloat(t.value);
 	if ((t.value.length < 1) || (i == Number.NaN))
 		throw new golgotha.event.ValidationError('Please provide a numeric ' + title + '.', t);
 	if (i < minValue)
@@ -359,13 +358,13 @@ golgotha.form.validateNumber = function(t, minValue, title) {
 golgotha.form.validateEMail = function(t, title)
 {
 if (!golgotha.form.validateText(t, 5, title)) return false;
-var pattern = /^[\w](([_\.\-\+]?[\w]+)*)@([\w]+)(([\.-]?[\w]+)*)\.([A-Za-z]{2,})$/;
+const pattern = /^[\w](([_\.\-\+]?[\w]+)*)@([\w]+)(([\.-]?[\w]+)*)\.([A-Za-z]{2,})$/;
 if (!pattern.test(t.value))
 	throw new golgotha.event.ValidationError('Please provide a valid ' + title + '.', t);
 
 // Validate e-mail domain
-var addr = t.value;
-var usrDomain = addr.substring(addr.indexOf('@') + 1, addr.length);
+const addr = t.value;
+const usrDomain = addr.substring(addr.indexOf('@') + 1, addr.length);
 for (var x = 0; x < golgotha.form.invalidDomains.length; x++) {
 	if (usrDomain == golgotha.form.invalidDomains[x])
 		throw new golgotha.event.ValidationError('Your e-mail address (' + addr + ') contains a forbidden domain - ' + golgotha.form.invalidDomains[x], t);
@@ -382,7 +381,7 @@ golgotha.form.validateCombo = function(c, title) {
 golgotha.form.validateFile = function(f, extTypes, title, allowBlank) {
 	if ((!f) || (f.disabled)) return true;
 	if (allowBlank && (f.value.length == 0)) return true;
-	var ext = f.value.substring(f.value.lastIndexOf('.') + 1).toLowerCase();
+	const ext = f.value.substring(f.value.lastIndexOf('.') + 1).toLowerCase();
 	for (var e = extTypes.pop(); (e != null); e = extTypes.pop())
 		if (ext == e) return true;
 
@@ -392,7 +391,7 @@ golgotha.form.validateFile = function(f, extTypes, title, allowBlank) {
 golgotha.form.validateCheckBox = function(cb, min, title)
 {
 if ((!cb) || (!cb.length)) return true;
-var cnt = 0;
+let cnt = 0;
 for (var x = 0; ((x < cb.length) && (cnt < min)); x++)
 	if (cb[x].checked) cnt++;
 
@@ -402,9 +401,9 @@ throw new golgotha.event.ValidationError('At least ' + min + ' ' + title + ' mus
 
 golgotha.util.toggleExpand = function(lnk, className)
 {
-var isDisplayed = (lnk.innerHTML == 'COLLAPSE');
+const isDisplayed = (lnk.innerHTML == 'COLLAPSE');
 lnk.innerHTML = isDisplayed ? 'EXPAND' : 'COLLAPSE';
-var rows = golgotha.util.getElementsByClass(className);
+const rows = golgotha.util.getElementsByClass(className);
 for (var r = rows.pop(); (r != null); r = rows.pop())
 	r.style.display = isDisplayed ? 'none' : '';
 
@@ -412,11 +411,11 @@ return true;
 };
 
 golgotha.nav.toggleMenu = function(e, force) {
-	var nv = document.getElementById('nav');
+	const nv = document.getElementById('nav');
 	if (!golgotha.util.hasClass(nv, 'navside')) return false;
-	var sm = document.getElementById('navmenu');
-	var m = document.getElementById('main');
-	var showMenu = (force != null) ? force : !golgotha.util.hasClass(sm, 'show');
+	const sm = document.getElementById('navmenu');
+	const m = document.getElementById('main');
+	const showMenu = (force != null) ? force : !golgotha.util.hasClass(sm, 'show');
 	if (showMenu) {
 		golgotha.util.addClass(sm, 'show');
 		golgotha.util.addClass(m, 'hide');
@@ -429,9 +428,9 @@ golgotha.nav.toggleMenu = function(e, force) {
 };
 
 golgotha.nav.toggleBar = function(e) {
-	var nv = document.getElementById('nav');
+	const nv = document.getElementById('nav');
 	if (!golgotha.util.hasClass(nv, 'navbar')) return false;
-	var hdrs = golgotha.util.getElementsByClass('submenuTitle', 'li', document.getElementById('navmenu'));
+	const hdrs = golgotha.util.getElementsByClass('submenuTitle', 'li', document.getElementById('navmenu'));
 	for (var h = hdrs.pop(); (h != null); h = hdrs.pop())
 		golgotha.util.removeClass(h, 'show');
 
@@ -440,8 +439,8 @@ golgotha.nav.toggleBar = function(e) {
 
 golgotha.nav.initMenu = function() {
 	if (!golgotha.nav.sideMenu) return false;
-	var hdrs = golgotha.util.getElementsByClass('mm', null, document.getElementById('header'));
-    var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0)
+	const hdrs = golgotha.util.getElementsByClass('mm', null, document.getElementById('header'));
+	const w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0)
     for (var hdr = hdrs.pop(); (hdr != null); hdr = hdrs.pop()) {
     	if ((w <= 800) && !hdr.hasMenu) {
     		hdr.hasMenu = true;
@@ -456,9 +455,9 @@ golgotha.nav.initMenu = function() {
 };
 
 golgotha.nav.initBar = function() {
-	var nv = document.getElementById('nav');
+	const nv = document.getElementById('nav');
 	if (!golgotha.util.hasClass(nv, 'navbar')) return false;
-	var hdrs = golgotha.util.getElementsByClass('submenuTitle', 'li', document.getElementById('navmenu'));
+	const hdrs = golgotha.util.getElementsByClass('submenuTitle', 'li', document.getElementById('navmenu'));
 	for (var h = hdrs.pop(); (h != null); h = hdrs.pop())
 		h.addEventListener('click', golgotha.nav.toggleBar);
 
