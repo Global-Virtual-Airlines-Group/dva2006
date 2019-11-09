@@ -113,7 +113,7 @@ golgotha.onDOMReady(function() {
 <content:enum var="distanceUnits" className="org.deltava.beans.DistanceUnit" />
 <content:enum var="weightUnits" className="org.deltava.beans.WeightUnit" />
 <content:enum var="acTypes" className="org.deltava.beans.schedule.Airport$Code" />
-<content:enum var="fsVersions" className="org.deltava.beans.Simulator" exclude="FS98,FS2000,FS2002,XP9" />
+<content:enum var="fsVersions" className="org.deltava.beans.Simulator" exclude="FS98,FS2000,FS2002,XP9,UNKNOWN" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -169,7 +169,7 @@ This is also a good time to review <content:airline />'s <el:cmd url="privacy" c
 <tr>
  <td class="label">Home Airport</td>
  <td class="data" colspan="${cspan}"><el:combo name="homeAirport" size="1" idx="*" options="${emptyList}" className="req" firstEntry="-" value="${param.homeAirport}" onChange="void this.updateAirportCode()" />
- <el:text name="homeAirportCode" ID="homeAirportCode" size="3" max="4" onBlur="void document.forms[0].homeAirport.setAirport(this.value)" /></td>
+ <el:text name="homeAirportCode" ID="homeAirportCode" size="3" max="4" idx="*" onBlur="void document.forms[0].homeAirport.setAirport(this.value)" /></td>
 </tr>
 <tr>
  <td class="label">Location</td>
@@ -208,7 +208,7 @@ This is also a good time to review <content:airline />'s <el:cmd url="privacy" c
 </tr>
 <tr>
  <td class="label">Flight Simulator</td>
- <td class="data" colspan="${cspan}"><el:check type="radio" name="fsVersion" idx="*" width="125" options="${fsVersions}" value="FS2004" /></td>
+ <td class="data" colspan="${cspan}"><el:check type="radio" name="fsVersion" idx="*" width="180" className="small" options="${fsVersions}" /></td>
 </tr>
 <tr>
  <td class="label">Time Zone</td>
