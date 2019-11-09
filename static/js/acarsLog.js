@@ -3,7 +3,7 @@ golgotha.local.validate = function(f)
 if (!golgotha.form.check()) return false;
 
 // Do different validation depending on the search type
-var isOK = false;
+let isOK = false;
 if (f.pilotCode.value.length > 0) { 
 	golgotha.form.validate({f:f.pilotCode, l:4, t:'Pilot Code'});
 	isOK = true;

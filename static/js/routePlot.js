@@ -4,7 +4,7 @@ golgotha.routePlot.gatesVisible = function () { return (this.dGates.visible() ||
 golgotha.routePlot.airspaceColors = {'P':{c:'#ee1010',tx:0.4}, 'R':{c:'#adad10',tx:0.2}, 'B':{c:'#10e0e0',tx:0.1}, 'C':{c:'#ffa018', tx:0.125}, 'D':{c:'#608040', tx:0.175}};
 golgotha.routePlot.getAJAXParams = function()
 {
-var f = document.forms[0]; var o = {runways:true};
+const f = document.forms[0]; let o = {runways:true};
 o.airportD = golgotha.form.getCombo(f.airportD);
 if (golgotha.form.comboSet(f.airportA)) o.airportA = golgotha.form.getCombo(f.airportA);
 if (golgotha.form.comboSet(f.airportL)) o.airportL = golgotha.form.getCombo(f.airportL);
@@ -29,8 +29,8 @@ return o;
 };
 
 golgotha.routePlot.generateGate = function(g, al) {
-	var isOurs = (al) && g.airlines.contains(al.code);
-	var opts = golgotha.routePlot.gateIcons.other;
+	const isOurs = (al) && g.airlines.contains(al.code);
+	let opts = golgotha.routePlot.gateIcons.other;
 	if (isOurs && g.isIntl)
 		opts = golgotha.routePlot.gateIcons.intl;
 	else if (isOurs)
@@ -38,7 +38,7 @@ golgotha.routePlot.generateGate = function(g, al) {
 	else if (g.useCount > 0)
 		opts = golgotha.routePlot.gateIcons.pop;
 
-	var gmrk = new golgotha.maps.IconMarker(opts, g.ll);
+	const gmrk = new golgotha.maps.IconMarker(opts, g.ll);
 	gmrk.gate = g.name;
 	return gmrk;
 };
@@ -47,13 +47,13 @@ golgotha.routePlot.updateRoutes = function(combo, data)
 {
 // Save the old value
 if (!combo) return false;
-var oldCode = golgotha.form.getCombo(combo);
+const oldCode = golgotha.form.getCombo(combo);
 
 // Update the combobox choices
 combo.options.length = data.length + 1;
 combo.options[0] = new Option('-', '');
 for (var i = 0; i < data.length; i++) {
-	var e = data[i];
+	const e = data[i];
 	combo.options[i+1] = new Option(e.label, e.code);
 	if ((oldCode == e.code) || (oldCode == e.label)) combo.selectedIndex = (i+1);
 }
@@ -66,14 +66,14 @@ golgotha.routePlot.updateGates = function(combo, data)
 {
 // Save the old value
 if (!combo) return false;
-var oldCode = golgotha.form.getCombo(combo);
+const oldCode = golgotha.form.getCombo(combo);
 
 // Update the combobox choices
 combo.options.length = data.length + 1;
 combo.options[0] = new Option('-', '');
 for (var i = 0; i < data.length; i++) {
-	var g = data[i];
-	var o = new Option(g.name + ' (' + g.useCount + ' flights)', g.name);
+	const g = data[i];
+	const o = new Option(g.name + ' (' + g.useCount + ' flights)', g.name);
 	o.ll = g.ll;
 	combo.options[i+1] = o; 
 	if (oldCode == g.name) combo.selectedIndex = (i+1);
@@ -85,7 +85,7 @@ return true;
 golgotha.routePlot.plotMap = function(myParams)
 {
 if (!golgotha.form.check()) return false;	
-var xmlreq = new XMLHttpRequest();
+const xmlreq = new XMLHttpRequest();
 xmlreq.open('post', 'routeplot.ws', true);
 xmlreq.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
 xmlreq.onreadystatechange = function() {
@@ -98,8 +98,8 @@ xmlreq.onreadystatechange = function() {
 	
 	// Draw the markers
 	map.clearOverlays();
-	var positions = [];
-	var js = JSON.parse(xmlreq.responseText);
+	let positions = [];
+	const js = JSON.parse(xmlreq.responseText);
 	js.positions.forEach(function(wp) {
 		positions.push(wp.ll);
 		if (wp.pal)
@@ -109,10 +109,10 @@ xmlreq.onreadystatechange = function() {
 	});
 	
 	// Draw the route
-	var rt = new google.maps.Polyline({map:map, path:positions, strokeColor:'#4080af', strokeWeight:2, strokeOpacity:0.8, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
+	const rt = new google.maps.Polyline({map:map, path:positions, strokeColor:'#4080af', strokeWeight:2, strokeOpacity:0.8, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
 
 	// Get the midpoint and center the map
-	var f = document.forms[0];
+	const f = document.forms[0];
 	if ((js.midPoint) && (js.distance) && (!f.noRecenter.checked)) {
 		map.setCenter(js.midPoint.ll);
 		map.setZoom(golgotha.maps.util.getDefaultZoom(js.distance));
@@ -123,7 +123,7 @@ xmlreq.onreadystatechange = function() {
 	if (js.airportA) golgotha.routePlot.aGates.mapCenter = js.airportA;
 
 	// Set the distance
-	var dstE = document.getElementById('rtDistance');
+	const dstE = document.getElementById('rtDistance');
 	if ((dstE) && (js.distance > 0))
 		dstE.innerHTML = ' - ' + js.distance + ' miles';
 	else if (dstE)
@@ -140,29 +140,29 @@ xmlreq.onreadystatechange = function() {
 	golgotha.util.display('stars', (js.star.length > 0));
 
 	// Display ETOPS rating
-	var etopsSpan = document.getElementById('rtETOPS');
+	const etopsSpan = document.getElementById('rtETOPS');
 	if (js.etops.warning || (js.etops.time > 75))
 		etopsSpan.innerHTML = ' - ' + js.etops.rating;
 
 	// Check for ETOPS warning
 	if (js.etops.warning) {
 		etopsSpan.innerHTML += ', AICRAFT IS RATED ' + js.etops.aircraftRating;
-		var wmrk = new golgotha.maps.IconMarker({pal:js.etops.warnPoint.pal, icon:js.etops.warnPoint.icon, info:js.etops.warnPoint.info, map:map}, js.etops.warnPoint.ll);
-		var crng = golgotha.maps.miles2Meter(js.etops.range);
+		const wmrk = new golgotha.maps.IconMarker({pal:js.etops.warnPoint.pal, icon:js.etops.warnPoint.icon, info:js.etops.warnPoint.info, map:map}, js.etops.warnPoint.ll);
+		const crng = golgotha.maps.miles2Meter(js.etops.range);
 
 		// Draw the circle and line
 		js.etops.airports.forEach(function(a) {
-			var apmrk = new golgotha.maps.IconMarker({pal:a.pal, icon:a.icon, info:a.info, map:map}, a.ll);
-			var c = new google.maps.Circle({map:map, center:a.ll,radius:crng,fillColor:'#601010',fillOpacity:0.15,strokeColor:'darkred',strokeOpacity:0.4,strokeWeight:1,zIndex:golgotha.maps.z.POLYLINE});
-			var wl = new google.maps.Polyline({map:map, path:[a.ll,js.etops.warnPoint.ll],strokeColor:'red',strokeOpacity:0.55,strokeWeight:1.15,zIndex:golgotha.maps.z.POLYLINE+1})
+			const apmrk = new golgotha.maps.IconMarker({pal:a.pal, icon:a.icon, info:a.info, map:map}, a.ll);
+			const c = new google.maps.Circle({map:map, center:a.ll,radius:crng,fillColor:'#601010',fillOpacity:0.15,strokeColor:'darkred',strokeOpacity:0.4,strokeWeight:1,zIndex:golgotha.maps.z.POLYLINE});
+			const wl = new google.maps.Polyline({map:map, path:[a.ll,js.etops.warnPoint.ll],strokeColor:'red',strokeOpacity:0.55,strokeWeight:1.15,zIndex:golgotha.maps.z.POLYLINE+1})
 		});
 	}
 	
 	// Check for restricted airspace
-	golgotha.routePlot.rsts = []; var asIDs = [];
+	golgotha.routePlot.rsts = []; let asIDs = [];
 	js.airspace.forEach(function(as) {
-		var c = golgotha.routePlot.airspaceColors[as.type];
-		var p = new google.maps.Polygon({map:map, paths:[as.border], strokeColor:c.c, strokeWeight:1, strokeOpacity:c.tx, fillColor:'#802020', fillOpacity:0.2, zIndex:golgotha.maps.z.POLYGON});
+		const c = golgotha.routePlot.airspaceColors[as.type];
+		const p = new google.maps.Polygon({map:map, paths:[as.border], strokeColor:c.c, strokeWeight:1, strokeOpacity:c.tx, fillColor:'#802020', fillOpacity:0.2, zIndex:golgotha.maps.z.POLYGON});
 		p.info = as.info; p.ll = as.ll;
 		google.maps.event.addListener(p, 'click', function() { map.infoWindow.setContent(this.info); map.infoWindow.open(map); map.infoWindow.setPosition(this.ll); });
 		golgotha.routePlot.rsts.push(p);
@@ -176,7 +176,7 @@ xmlreq.onreadystatechange = function() {
 	// Load the alternate list
 	golgotha.util.display('airportL', (js.alternates.length > 0));
 	if (js.alternates.length > 0) {
-		var oldAL = golgotha.form.getCombo(f.airportL);
+		const oldAL = golgotha.form.getCombo(f.airportL);
 		golgotha.airportLoad.setOptions(f.airportL, js.alternates, golgotha.airportLoad.config);
 		if (!f.airportL.setAirport(oldAL))
 			f.airportLCode.value = '';
@@ -200,16 +200,16 @@ xmlreq.onreadystatechange = function() {
 	golgotha.util.display('wxDr', false);
 	golgotha.util.display('wxAr', false);
 	js.wx.forEach(function(wx) {
-		var isTAF = (wx.type == 'taf');
+		const isTAF = (wx.type == 'taf');
 		if (!isTAF) {
 			golgotha.util.display((wx.dst ? 'wxAr' : 'wxDr'), true);
-			var metarSpan = document.getElementById(wx.dst ? 'wxAmetar' : 'wxDmetar');
+			const metarSpan = document.getElementById(wx.dst ? 'wxAmetar' : 'wxDmetar');
 			golgotha.util.display(metarSpan, true);
 			if (metarSpan)
 				metarSpan.innerHTML = wx.info;
 		} else {
 			golgotha.util.display((wx.dst ? 'wxAr' : 'wxDr'), true);
-			var tafSpan = document.getElementById('wxAtaf');
+			const tafSpan = document.getElementById('wxAtaf');
 			golgotha.util.display(tafSpan, true);
 			if (tafSpan)
 				tafSpan.innerHTML = wx.info;
@@ -234,8 +234,8 @@ return true;
 golgotha.routePlot.searchRoutes = function()
 {
 golgotha.util.disable('SearchButton');
-var o = {};
-var f = document.forms[0];
+let o = {};
+const f = document.forms[0];
 o.airportD = f.airportD.options[f.airportD.selectedIndex].value;
 o.airportA = f.airportA.options[f.airportA.selectedIndex].value;
 o.runway = f.runway.options[f.runway.selectedIndex].value;
@@ -243,7 +243,7 @@ o.external = (f.external) ? f.external.checked : false;
 o.faReload = (f.forceFAReload) ? f.forceFAReload.checked : false;
 
 // Generate an XMLHTTP request
-var xmlreq = new XMLHttpRequest();
+const xmlreq = new XMLHttpRequest();
 xmlreq.open('post', 'dsproutes.ws', true);
 xmlreq.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
 xmlreq.onreadystatechange = function() {
@@ -256,13 +256,13 @@ xmlreq.onreadystatechange = function() {
 	}
 
 	// Load the SID/STAR list
-	var js = JSON.parse(xmlreq.responseText);
-	var cbo = f.routes;
+	const js = JSON.parse(xmlreq.responseText);
+	const cbo = f.routes;
 	cbo.options.length = js.routes.length + 1;
 	cbo.options[0] = new Option('-', '');
 	for (var x = 0; x < js.routes.length; x++) {
-		var rt = js.routes[x];
-		var opt = new Option(rt.name, rt.waypoints);
+		const rt = js.routes[x];
+		let opt = new Option(rt.name, rt.waypoints);
 		opt.routeID = rt.id;
 		opt.SID = rt.sid;
 		opt.STAR = rt.star;
@@ -286,7 +286,7 @@ return true;
 
 golgotha.routePlot.setRoute = function(combo)
 {
-var f = document.forms[0];
+	const f = document.forms[0];
 if (combo.selectedIndex < 1) {
 	f.cruiseAlt.value = '';
 	if (!golgotha.routePlot.keepRoute) {
@@ -305,7 +305,7 @@ if (combo.selectedIndex < 1) {
 
 // Update the route
 try {
-	var opt = combo.options[combo.selectedIndex];
+	const opt = combo.options[combo.selectedIndex];
 	f.cruiseAlt.value = opt.altitude;
 	f.route.value = opt.value;
 	f.comments.value = opt.comments ? opt.comments : '';
@@ -325,7 +325,7 @@ return true;
 
 golgotha.routePlot.updateRoute = function(airportsChanged, rwyChanged)
 {
-var f = document.forms[0];
+const f = document.forms[0];
 golgotha.routePlot.routeUpdated = true;
 if (rwyChanged) {
 	f.runway.selectedIndex = 0;
@@ -357,20 +357,20 @@ golgotha.routePlot.toggleGates = function(gts) {
 
 golgotha.routePlot.download = function() {
 	if (!golgotha.form.wrap(golgotha.local.validate, document.forms[0])) return false;
-	var xmlreq = new XMLHttpRequest();
+	const xmlreq = new XMLHttpRequest();
 	xmlreq.open('post', '/routeplan.ws', true);
 	xmlreq.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 	xmlreq.responseType = 'blob';
 	xmlreq.onreadystatechange = function() {
 		if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
-		var ct = xmlreq.getResponseHeader('Content-Type');
-		var b = new Blob([xmlreq.response], {type: ct.substring(0, ct.indexOf(';')), endings:'native'});
+		const ct = xmlreq.getResponseHeader('Content-Type');
+		const b = new Blob([xmlreq.response], {type: ct.substring(0, ct.indexOf(';')), endings:'native'});
 		saveAs(b, xmlreq.getResponseHeader('X-Plan-Filename'));
 		return true;
 	};
 
 	// Parse parameters
-	var params = []; var o = golgotha.routePlot.getAJAXParams();
+	let params = []; const o = golgotha.routePlot.getAJAXParams();
 	for (p in o) {
 		if (o.hasOwnProperty(p))
 			params.push(p + '=' + o[p]);
