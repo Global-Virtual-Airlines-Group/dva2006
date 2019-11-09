@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
  * A daemon thread to send e-mail messages in the background. SMTP messages are not designed for critical information;
  * they are designed to fail silently on an error.
  * @author Luke
- * @version 8.7
+ * @version 9.0
  * @since 1.0
  */
 
@@ -123,7 +123,7 @@ public class MailerDaemon implements Runnable {
 		props.put("mail.transport.protocol", "smtp");
 		if (SystemData.getBoolean("smtp.tls")) {
 			log.info("Enabling SMTP over TLS - " + (isAnon ? "anonymous" : "using credentials"));
-			props.put("mail.smtp.port", "587");
+			props.put("mail.smtp.port", String.valueOf(SystemData.getInt("smtp.port", 587)));
 			props.put("mail.smtp.starttls.enable", "true");
 		}
 		
