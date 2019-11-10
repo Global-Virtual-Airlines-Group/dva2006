@@ -23,10 +23,9 @@
 <div class="updateHdr">Dispatch Routes Updated</div>
 <br />
 <c:if test="${updateCount == 0}">
-No <content:airline /> ACARS Dispatch Routes have had their SID or STAR updated.<br />
-</c:if>
+No <content:airline /> ACARS Dispatch Routes have had their SID or STAR updated.<br /></c:if>
 <c:if test="${updateCount > 0}">
-<fmt:int value="${updateCount}" /> <content:airline /> ACARS Dispatch Routes had their SID or STAR updated. The following changes were made:<br />
+<fmt:int value="${updateCount}" />&nbsp;<content:airline /> ACARS Dispatch Routes had their SID or STAR updated. The following changes were made:<br />
 <br />
 <c:forEach var="msg" items="${msgs}">
 ${msg}<br />
@@ -34,8 +33,7 @@ ${msg}<br />
 </c:if>
 <hr />
 <br />
-<c:if test="${isPreview}"><span class="pri bld">This is a preview.</span> To save these changes to the database, 
- <el:cmd url="dsptrouteupdate" op="save" className="sec bld">Click Here</el:cmd>.<br /></c:if>
+<c:if test="${isPreview}"><span class="pri bld">This is a preview.</span> To save these changes to the database, <el:cmd url="dsptrouteupdate" op="save" className="sec bld">Click Here</el:cmd>.<br /></c:if>
 To return to the <content:airline /> Pilot Center, <el:cmd url="pilotcenter" className="sec bld">Click Here</el:cmd>.<br />
 <br />
 <content:copyright />
