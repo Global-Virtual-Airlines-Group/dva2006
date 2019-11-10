@@ -27,7 +27,7 @@ golgotha.local.validate = function(f) {
 golgotha.local.checkVATSIMData = function(id, name)
 {
 golgotha.util.disable('ValidateButton');
-var xmlreq = new XMLHttpRequest();
+const xmlreq = new XMLHttpRequest();
 xmlreq.open('GET', 'vatsim_info.ws?id=' + id + '&name=' + escape(name));
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
@@ -38,8 +38,8 @@ xmlreq.onreadystatechange = function() {
 	}
 
 	// Parse the JSON
-	var s = document.getElementById('validationInfo');
-	var js = JSON.parse(xmlreq.responseText);
+	const s = document.getElementById('validationInfo');
+	const js = JSON.parse(xmlreq.responseText);
 	s.innerHTML = 'Name : ' + js.name + ' Active : ' + js.active + ' E-Mail Domain : ' + js.domain;
 	golgotha.util.display('ValidateButton', false);
 	return true;
@@ -80,7 +80,7 @@ return true;
 <tr>
  <td class="data">
 <c:forEach var="dupe" items="${nameMatches}">
-${dupe.rank.name} <el:cmd url="profile" link="${dupe}" className="bld">${dupe.name}</el:cmd><c:if test="${!empty dupe.pilotCode}"> ${dupe.pilotCode}</c:if><br />
+${dupe.rank.name}&nbsp;<el:cmd url="profile" link="${dupe}" className="bld">${dupe.name}</el:cmd><c:if test="${!empty dupe.pilotCode}"> ${dupe.pilotCode}</c:if><br />
 </c:forEach></td>
 </tr>
 </c:if>
