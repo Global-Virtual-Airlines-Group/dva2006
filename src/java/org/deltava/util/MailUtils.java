@@ -1,4 +1,4 @@
-// Copyright 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import org.deltava.beans.EMailAddress;
@@ -6,7 +6,7 @@ import org.deltava.beans.EMailAddress;
 /**
  * A utility class for e-mail.
  * @author Luke
- * @version 8.5
+ * @version 9.0
  * @since 8.5
  */
 
@@ -52,6 +52,17 @@ public class MailUtils {
 	// static class
 	private MailUtils() {
 		super();
+	}
+	
+	/**
+	 * Utility method to create an e-mail address object.
+	 * @param addr the recipient address
+	 * @param domain the domain name
+	 * @param name the recipient name
+	 * @return an EMailAddress object
+	 */
+	public static EMailAddress makeAddress(String addr, String domain, String name) {
+		return makeAddress(addr + "@" + domain, name);
 	}
 
 	/**
