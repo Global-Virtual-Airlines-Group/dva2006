@@ -113,7 +113,8 @@ public class MailerDaemon implements Runnable {
 	 */
 	@Override
 	public void run() {
-		log.info("Starting");
+		String code = SystemData.get("airline.code");
+		log.info("Starting " + code);
 		boolean isAnon = StringUtils.isEmpty(SystemData.get("smtp.user"));
 
 		// Set the SMTP server
@@ -135,7 +136,7 @@ public class MailerDaemon implements Runnable {
 				try {
 					Session s = isAnon ? Session.getInstance(props) : Session.getInstance(props, new SMTPAuth());
 					s.setDebug(SystemData.getBoolean("smtp.testMode"));
-					log.info("Connected to " + props.getProperty("mail.smtp.host") + ":" + props.getProperty("mail.smtp.port", "25"));
+					log.info(code + " connected to " + props.getProperty("mail.smtp.host") + ":" + props.getProperty("mail.smtp.port", "25"));
 
 					// Loop through the messages if we have them
 					while (env != null) {
