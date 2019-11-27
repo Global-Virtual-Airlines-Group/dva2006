@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to update Airport and Airline information.
  * @author Luke
- * @version 8.7
+ * @version 9.0
  * @since 8.0
  */
 
@@ -37,38 +37,40 @@ public class SetAirportAirline extends DAO {
 			startTransaction();
 			
 			// Write the airline data
-			prepareStatement("INSERT INTO common.AIRLINES (CODE, NAME, COLOR, ACTIVE, SYNC, HISTORIC) VALUES (?, ?, ?, ?, ?, ?)");
-			_ps.setString(1, al.getCode());
-			_ps.setString(2, al.getName());
-			_ps.setString(3, al.getColor());
-			_ps.setBoolean(4, al.getActive());
-			_ps.setBoolean(5, al.getScheduleSync());
-			_ps.setBoolean(6, al.getHistoric());
-			executeUpdate(1);
+			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.AIRLINES (CODE, NAME, COLOR, ACTIVE, SYNC, HISTORIC) VALUES (?, ?, ?, ?, ?, ?)")) {
+				ps.setString(1, al.getCode());
+				ps.setString(2, al.getName());
+				ps.setString(3, al.getColor());
+				ps.setBoolean(4, al.getActive());
+				ps.setBoolean(5, al.getScheduleSync());
+				ps.setBoolean(6, al.getHistoric());
+				executeUpdate(ps, 1);
+			}
 			
 			// Write the alternate codes
-			prepareStatement("INSERT INTO common.AIRLINE_CODES (CODE, ALTCODE) VALUES (?, ?)");
-			_ps.setString(1, al.getCode());
-			for (String code : al.getCodes()) {
-				if (!code.equals(al.getCode())) {
-					_ps.setString(2, code);
-					_ps.addBatch();
+			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.AIRLINE_CODES (CODE, ALTCODE) VALUES (?, ?)")) {
+				ps.setString(1, al.getCode());
+				for (String code : al.getCodes()) {
+					if (!code.equals(al.getCode())) {
+						ps.setString(2, code);
+						ps.addBatch();
+					}
 				}
-			}
 			
-			// Execute update
-			executeBatchUpdate(1, 0);
+				executeUpdate(ps, 1, 0);
+			}
 			
 			// Write the webapp data
-			prepareStatement("INSERT INTO common.APP_AIRLINES (CODE, APPCODE) VALUES (?, ?)");
-			_ps.setString(1, al.getCode());
-			for (Iterator<String> i = al.getApplications().iterator(); i.hasNext(); ) {
-				_ps.setString(2, i.next());
-				_ps.addBatch();
+			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.APP_AIRLINES (CODE, APPCODE) VALUES (?, ?)")) {
+				ps.setString(1, al.getCode());
+				for (Iterator<String> i = al.getApplications().iterator(); i.hasNext(); ) {
+					ps.setString(2, i.next());
+					ps.addBatch();
+				}
+			
+				executeUpdate(ps, 1, al.getApplications().size());
 			}
 			
-			// Write and commit
-			executeBatchUpdate(1, al.getApplications().size());
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -87,47 +89,53 @@ public class SetAirportAirline extends DAO {
 			startTransaction();
 			
 			// Clear the alternate code data
-			prepareStatementWithoutLimits("DELETE FROM common.AIRLINE_CODES WHERE (CODE=?)");
-			_ps.setString(1, oldCode);
-			executeUpdate(0);
+			try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM common.AIRLINE_CODES WHERE (CODE=?)")) {
+				ps.setString(1, oldCode);
+				executeUpdate(ps, 0);
+			}
 			
 			// Clear the webapp data
-			prepareStatementWithoutLimits("DELETE FROM common.APP_AIRLINES WHERE (CODE=?)");
-			_ps.setString(1, oldCode);
-			executeUpdate(0);
+			try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM common.APP_AIRLINES WHERE (CODE=?)")) {
+				ps.setString(1, oldCode);
+				executeUpdate(ps, 0);
+			}
 			
 			// Write the airline data
-			prepareStatement("UPDATE common.AIRLINES SET NAME=?, COLOR=?, ACTIVE=?, CODE=?, SYNC=?, HISTORIC=? WHERE (CODE=?)");
-			_ps.setString(1, al.getName());
-			_ps.setString(2, al.getColor());
-			_ps.setBoolean(3, al.getActive());
-			_ps.setString(4, al.getCode());
-			_ps.setBoolean(5, al.getScheduleSync());
-			_ps.setBoolean(6, al.getHistoric());
-			_ps.setString(7, oldCode);
-			executeUpdate(1);
+			try (PreparedStatement ps = prepare("UPDATE common.AIRLINES SET NAME=?, COLOR=?, ACTIVE=?, CODE=?, SYNC=?, HISTORIC=? WHERE (CODE=?)")) {
+				ps.setString(1, al.getName());
+				ps.setString(2, al.getColor());
+				ps.setBoolean(3, al.getActive());
+				ps.setString(4, al.getCode());
+				ps.setBoolean(5, al.getScheduleSync());
+				ps.setBoolean(6, al.getHistoric());
+				ps.setString(7, oldCode);
+				executeUpdate(ps, 1);
+			}
 			
 			// Write the alternate codes
-			prepareStatement("INSERT INTO common.AIRLINE_CODES (CODE, ALTCODE) VALUES (?, ?)");
-			_ps.setString(1, al.getCode());
-			for (String code : al.getCodes()) {
-				if (!code.equals(al.getCode())) {
-					_ps.setString(2, code);
-					_ps.addBatch();
+			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.AIRLINE_CODES (CODE, ALTCODE) VALUES (?, ?)")) {
+				ps.setString(1, al.getCode());
+				for (String code : al.getCodes()) {
+					if (!code.equals(al.getCode())) {
+						ps.setString(2, code);
+						ps.addBatch();
+					}
 				}
-			}
 			
-			executeBatchUpdate(1, 0);
+				executeUpdate(ps, 1, 0);
+			}
 			
 			// Write the webapp data
-			prepareStatement("INSERT INTO common.APP_AIRLINES (CODE, APPCODE) VALUES (?, ?)");
-			_ps.setString(1, al.getCode());
-			for (String code : al.getApplications()) {
-				_ps.setString(2, code);
-				_ps.addBatch();
-			}
+			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.APP_AIRLINES (CODE, APPCODE) VALUES (?, ?)")) {
+				ps.setString(1, al.getCode());
+				for (String code : al.getApplications()) {
+					ps.setString(2, code);
+					ps.addBatch();
+				}
 
-			executeBatchUpdate(1, al.getApplications().size());
+				executeUpdate(ps, 1, al.getApplications().size());
+			}
+			
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -145,37 +153,40 @@ public class SetAirportAirline extends DAO {
 			startTransaction();
 
 			// Write the airport data
-			prepareStatement("INSERT INTO common.AIRPORTS (IATA, ICAO, TZ, NAME, COUNTRY, LATITUDE, LONGITUDE, ADSE, OLDCODE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-			_ps.setString(1, a.getIATA());
-			_ps.setString(2, a.getICAO());
-			_ps.setString(3, a.getTZ().getID());
-			_ps.setString(4, a.getName());
-			_ps.setString(5, a.getCountry().getCode());
-			_ps.setDouble(6, a.getLatitude());
-			_ps.setDouble(7, a.getLongitude());
-			_ps.setBoolean(8, a.getADSE());
-			_ps.setString(9, a.getSupercededAirport());
-			executeUpdate(1);
+			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.AIRPORTS (IATA, ICAO, TZ, NAME, COUNTRY, LATITUDE, LONGITUDE, ADSE, OLDCODE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+				ps.setString(1, a.getIATA());
+				ps.setString(2, a.getICAO());
+				ps.setString(3, a.getTZ().getID());
+				ps.setString(4, a.getName());
+				ps.setString(5, a.getCountry().getCode());
+				ps.setDouble(6, a.getLatitude());
+				ps.setDouble(7, a.getLongitude());
+				ps.setBoolean(8, a.getADSE());
+				ps.setString(9, a.getSupercededAirport());
+				executeUpdate(ps, 1);
+			}
 			
 			// Write superceded airport
 			if (a.getSupercededAirport() != null) {
-				prepareStatement("UPDATE common.AIRPORTS SET OLDCODE=? WHERE (IATA=?)");
-				_ps.setString(1, a.getIATA());
-				_ps.setString(2, a.getSupercededAirport());
-				executeUpdate(1);
+				try (PreparedStatement ps = prepare("UPDATE common.AIRPORTS SET OLDCODE=? WHERE (IATA=?)")) {
+					ps.setString(1, a.getIATA());
+					ps.setString(2, a.getSupercededAirport());
+					executeUpdate(ps, 1);
+				}
 			}
 
 			// Write the airline data
-			prepareStatement("INSERT INTO common.AIRPORT_AIRLINE (CODE, IATA, APPCODE) VALUES (?, ?, ?)");
-			_ps.setString(2, a.getIATA());
-			_ps.setString(3, SystemData.get("airline.code"));
-			for (String aCode : a.getAirlineCodes()) {
-				_ps.setString(1, aCode);
-				_ps.addBatch();
-			}
+			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.AIRPORT_AIRLINE (CODE, IATA, APPCODE) VALUES (?, ?, ?)")) {
+				ps.setString(2, a.getIATA());
+				ps.setString(3, SystemData.get("airline.code"));
+				for (String aCode : a.getAirlineCodes()) {
+					ps.setString(1, aCode);
+					ps.addBatch();
+				}
 
-			// Execute and commit
-			executeBatchUpdate(1, a.getAirlineCodes().size());
+				executeUpdate(ps, 1, a.getAirlineCodes().size());
+			}
+			
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -195,46 +206,53 @@ public class SetAirportAirline extends DAO {
 			startTransaction();
 
 			// Update the airport data
-			prepareStatement("UPDATE common.AIRPORTS SET ICAO=?, TZ=?, NAME=?, LATITUDE=?, LONGITUDE=?, IATA=?, ADSE=?, COUNTRY=?, OLDCODE=? WHERE (IATA=?)");
-			_ps.setString(1, a.getICAO());
-			_ps.setString(2, a.getTZ().getID());
-			_ps.setString(3, a.getName());
-			_ps.setDouble(4, a.getLatitude());
-			_ps.setDouble(5, a.getLongitude());
-			_ps.setString(6, a.getIATA());
-			_ps.setBoolean(7, a.getADSE());
-			_ps.setString(8, a.getCountry().getCode());
-			_ps.setString(9, a.getSupercededAirport());
-			_ps.setString(10, oc);
-			executeUpdate(1);
+			try (PreparedStatement ps = prepare("UPDATE common.AIRPORTS SET ICAO=?, TZ=?, NAME=?, LATITUDE=?, LONGITUDE=?, IATA=?, ADSE=?, COUNTRY=?, OLDCODE=? WHERE (IATA=?)")) {
+				ps.setString(1, a.getICAO());
+				ps.setString(2, a.getTZ().getID());
+				ps.setString(3, a.getName());
+				ps.setDouble(4, a.getLatitude());
+				ps.setDouble(5, a.getLongitude());
+				ps.setString(6, a.getIATA());
+				ps.setBoolean(7, a.getADSE());
+				ps.setString(8, a.getCountry().getCode());
+				ps.setString(9, a.getSupercededAirport());
+				ps.setString(10, oc);
+				executeUpdate(ps, 1);
+			}
 			
 			// Ensure the superceded airports are interchangeable
 			if (a.getSupercededAirport() != null) {
-				prepareStatement("UPDATE common.AIRPORTS SET OLDCODE=? WHERE (IATA=?)");
-				_ps.setString(2, a.getSupercededAirport());
-			} else
-				prepareStatement("UPDATE common.AIRPORTS SET OLDCODE=NULL WHERE (OLDCODE=?)");
-
-			_ps.setString(1, a.getIATA());
-			executeUpdate(0);
+				try (PreparedStatement ps = prepare("UPDATE common.AIRPORTS SET OLDCODE=? WHERE (IATA=?)")) {
+					ps.setString(1, a.getIATA());	
+					ps.setString(2, a.getSupercededAirport());
+					executeUpdate(ps, 0);
+				}
+			} else {
+				try (PreparedStatement ps = prepare("UPDATE common.AIRPORTS SET OLDCODE=NULL WHERE (OLDCODE=?)")) {
+					ps.setString(1, a.getIATA());
+					executeUpdate(ps, 0);
+				}
+			}
 			
 			// Clear out the airlines
-			prepareStatement("DELETE FROM common.AIRPORT_AIRLINE WHERE (IATA=?) AND (APPCODE=?)");
-			_ps.setString(1, oc);
-			_ps.setString(2, SystemData.get("airline.code"));
-			executeUpdate(0);
-
-			// Write the airline data
-			prepareStatement("INSERT INTO common.AIRPORT_AIRLINE (CODE, IATA, APPCODE) VALUES (?, ?, ?)");
-			_ps.setString(2, a.getIATA());
-			_ps.setString(3, SystemData.get("airline.code"));
-			for (String aCode : a.getAirlineCodes()) {
-				_ps.setString(1, aCode);
-				_ps.addBatch();
+			try (PreparedStatement ps = prepare("DELETE FROM common.AIRPORT_AIRLINE WHERE (IATA=?) AND (APPCODE=?)")) {
+				ps.setString(1, oc);
+				ps.setString(2, SystemData.get("airline.code"));
+				executeUpdate(ps, 0);
 			}
 
-			// Execute and commit
-			executeBatchUpdate(1, a.getAirlineCodes().size());
+			// Write the airline data
+			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.AIRPORT_AIRLINE (CODE, IATA, APPCODE) VALUES (?, ?, ?)")) {
+				ps.setString(2, a.getIATA());
+				ps.setString(3, SystemData.get("airline.code"));
+				for (String aCode : a.getAirlineCodes()) {
+					ps.setString(1, aCode);
+					ps.addBatch();
+				}
+
+				executeUpdate(ps, 1, a.getAirlineCodes().size());
+			}
+			
 			commitTransaction();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -249,10 +267,9 @@ public class SetAirportAirline extends DAO {
 	 * @throws NullPointerException if a is null
 	 */
 	public void delete(Airport a) throws DAOException {
-		try {
-			prepareStatement("DELETE FROM common.AIRPORTS WHERE (IATA=?)");
-			_ps.setString(1, a.getIATA());
-			executeUpdate(1);
+		try (PreparedStatement ps = prepare("DELETE FROM common.AIRPORTS WHERE (IATA=?)")) {
+			ps.setString(1, a.getIATA());
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -266,10 +283,9 @@ public class SetAirportAirline extends DAO {
 	 * @throws NullPointerException if a is null
 	 */
 	public void delete(Airline a) throws DAOException {
-		try {
-			prepareStatement("DELETE FROM common.AIRLINES WHERE (CODE=?)");
-			_ps.setString(1, a.getCode());
-			executeUpdate(1);
+		try (PreparedStatement ps = prepare("DELETE FROM common.AIRLINES WHERE (CODE=?)")) {
+			ps.setString(1, a.getCode());
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -283,30 +299,31 @@ public class SetAirportAirline extends DAO {
 	public void create(Aircraft a) throws DAOException {
 		try {
 			startTransaction();
-			prepareStatement("INSERT INTO common.AIRCRAFT (NAME, FULLNAME, FAMILY, ICAO, IATA, HISTORIC, ENGINES, ENGINE_TYPE, CRUISE_SPEED, FUEL_FLOW, BASE_FUEL, TAXI_FUEL, PRI_TANKS, PRI_PCT, SEC_TANKS, SEC_PCT, "
-				+ "OTHER_TANKS, MAX_WEIGHT, MAX_TWEIGHT, MAX_LWEIGHT, MAX_ZFW) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-			_ps.setString(1, a.getName());
-			_ps.setString(2, a.getFullName());
-			_ps.setString(3, a.getFamily());
-			_ps.setString(4, a.getICAO());
-			_ps.setString(5, StringUtils.listConcat(a.getIATA(), ","));
-			_ps.setBoolean(6, a.getHistoric());
-			_ps.setByte(7, a.getEngines());
-			_ps.setString(8, a.getEngineType());
-			_ps.setInt(9, a.getCruiseSpeed());
-			_ps.setInt(10, a.getFuelFlow());
-			_ps.setInt(11, a.getBaseFuel());
-			_ps.setInt(12, a.getTaxiFuel());
-			_ps.setInt(13, a.getTanks(TankType.PRIMARY));
-			_ps.setInt(14, a.getPct(TankType.PRIMARY));
-			_ps.setInt(15, a.getTanks(TankType.SECONDARY));
-			_ps.setInt(16, a.getPct(TankType.SECONDARY));
-			_ps.setInt(17, a.getTanks(TankType.OTHER));
-			_ps.setInt(18, a.getMaxWeight());
-			_ps.setInt(19, a.getMaxTakeoffWeight());
-			_ps.setInt(20, a.getMaxLandingWeight());
-			_ps.setInt(21, a.getMaxZeroFuelWeight());
-			executeUpdate(1);
+			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.AIRCRAFT (NAME, FULLNAME, FAMILY, ICAO, IATA, HISTORIC, ENGINES, ENGINE_TYPE, CRUISE_SPEED, FUEL_FLOW, BASE_FUEL, TAXI_FUEL, "
+				+ "PRI_TANKS, PRI_PCT, SEC_TANKS, SEC_PCT, OTHER_TANKS, MAX_WEIGHT, MAX_TWEIGHT, MAX_LWEIGHT, MAX_ZFW) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+				ps.setString(1, a.getName());
+				ps.setString(2, a.getFullName());
+				ps.setString(3, a.getFamily());
+				ps.setString(4, a.getICAO());
+				ps.setString(5, StringUtils.listConcat(a.getIATA(), ","));
+				ps.setBoolean(6, a.getHistoric());
+				ps.setByte(7, a.getEngines());
+				ps.setString(8, a.getEngineType());
+				ps.setInt(9, a.getCruiseSpeed());
+				ps.setInt(10, a.getFuelFlow());
+				ps.setInt(11, a.getBaseFuel());
+				ps.setInt(12, a.getTaxiFuel());
+				ps.setInt(13, a.getTanks(TankType.PRIMARY));
+				ps.setInt(14, a.getPct(TankType.PRIMARY));
+				ps.setInt(15, a.getTanks(TankType.SECONDARY));
+				ps.setInt(16, a.getPct(TankType.SECONDARY));
+				ps.setInt(17, a.getTanks(TankType.OTHER));
+				ps.setInt(18, a.getMaxWeight());
+				ps.setInt(19, a.getMaxTakeoffWeight());
+				ps.setInt(20, a.getMaxLandingWeight());
+				ps.setInt(21, a.getMaxZeroFuelWeight());
+				executeUpdate(ps, 1);
+			}
 			
 			writeAppData(a);
 			commitTransaction();
@@ -325,37 +342,38 @@ public class SetAirportAirline extends DAO {
 	public void update(Aircraft a, String oldName) throws DAOException {
 		try {
 			startTransaction();
-			prepareStatement("UPDATE common.AIRCRAFT SET IATA=?, ICAO=?, HISTORIC=?, ENGINES=?, ENGINE_TYPE=?, CRUISE_SPEED=?, FUEL_FLOW=?, BASE_FUEL=?, TAXI_FUEL=?, "
-				+ "PRI_TANKS=?, PRI_PCT=?, SEC_TANKS=?, SEC_PCT=?, OTHER_TANKS=?, MAX_WEIGHT=?, MAX_TWEIGHT=?, MAX_LWEIGHT=?, MAX_ZFW=?, FULLNAME=?, FAMILY=?, "
-				+ "NAME=? WHERE (NAME=?)");
-			_ps.setString(1, StringUtils.listConcat(a.getIATA(), ",").replace("\r", ""));
-			_ps.setString(2, a.getICAO());
-			_ps.setBoolean(3, a.getHistoric());
-			_ps.setByte(4, a.getEngines());
-			_ps.setString(5, a.getEngineType());
-			_ps.setInt(6, a.getCruiseSpeed());
-			_ps.setInt(7, a.getFuelFlow());
-			_ps.setInt(8, a.getBaseFuel());
-			_ps.setInt(9, a.getTaxiFuel());
-			_ps.setInt(10, a.getTanks(TankType.PRIMARY));
-			_ps.setInt(11, a.getPct(TankType.PRIMARY));
-			_ps.setInt(12, a.getTanks(TankType.SECONDARY));
-			_ps.setInt(13, a.getPct(TankType.SECONDARY));
-			_ps.setInt(14, a.getTanks(TankType.OTHER));
-			_ps.setInt(15, a.getMaxWeight());
-			_ps.setInt(16, a.getMaxTakeoffWeight());
-			_ps.setInt(17, a.getMaxLandingWeight());
-			_ps.setInt(18, a.getMaxZeroFuelWeight());
-			_ps.setString(19, a.getFullName());
-			_ps.setString(20, a.getFamily());
-			_ps.setString(21, a.getName());
-			_ps.setString(22, oldName);
-			executeUpdate(1);
+			try (PreparedStatement ps = prepare("UPDATE common.AIRCRAFT SET IATA=?, ICAO=?, HISTORIC=?, ENGINES=?, ENGINE_TYPE=?, CRUISE_SPEED=?, FUEL_FLOW=?, BASE_FUEL=?, TAXI_FUEL=?, "
+				+ "PRI_TANKS=?, PRI_PCT=?, SEC_TANKS=?, SEC_PCT=?, OTHER_TANKS=?, MAX_WEIGHT=?, MAX_TWEIGHT=?, MAX_LWEIGHT=?, MAX_ZFW=?, FULLNAME=?, FAMILY=?, NAME=? WHERE (NAME=?)")) {
+				ps.setString(1, StringUtils.listConcat(a.getIATA(), ",").replace("\r", ""));
+				ps.setString(2, a.getICAO());
+				ps.setBoolean(3, a.getHistoric());
+				ps.setByte(4, a.getEngines());
+				ps.setString(5, a.getEngineType());
+				ps.setInt(6, a.getCruiseSpeed());
+				ps.setInt(7, a.getFuelFlow());
+				ps.setInt(8, a.getBaseFuel());
+				ps.setInt(9, a.getTaxiFuel());
+				ps.setInt(10, a.getTanks(TankType.PRIMARY));
+				ps.setInt(11, a.getPct(TankType.PRIMARY));
+				ps.setInt(12, a.getTanks(TankType.SECONDARY));
+				ps.setInt(13, a.getPct(TankType.SECONDARY));
+				ps.setInt(14, a.getTanks(TankType.OTHER));
+				ps.setInt(15, a.getMaxWeight());
+				ps.setInt(16, a.getMaxTakeoffWeight());
+				ps.setInt(17, a.getMaxLandingWeight());
+				ps.setInt(18, a.getMaxZeroFuelWeight());
+				ps.setString(19, a.getFullName());
+				ps.setString(20, a.getFamily());
+				ps.setString(21, a.getName());
+				ps.setString(22, oldName);
+				executeUpdate(ps, 1);
+			}
 
 			// Clean out the webapps
-			prepareStatementWithoutLimits("DELETE FROM common.AIRCRAFT_AIRLINE WHERE (NAME=?)");
-			_ps.setString(1, a.getName());
-			executeUpdate(0);
+			try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM common.AIRCRAFT_AIRLINE WHERE (NAME=?)")) {
+				ps.setString(1, a.getName());
+				executeUpdate(ps, 0);
+			}
 			
 			// Add the webapps
 			writeAppData(a);
@@ -375,17 +393,21 @@ public class SetAirportAirline extends DAO {
 	public void remapAirportAirlines() throws DAOException {
 		try {
 			startTransaction();
-			prepareStatementWithoutLimits("DELETE FROM common.AIRPORT_AIRLINE WHERE (APPCODE=?)");
-			_ps.setString(1, SystemData.get("airline.code"));
-			executeUpdate(0);
+			try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM common.AIRPORT_AIRLINE WHERE (APPCODE=?)")) {
+				ps.setString(1, SystemData.get("airline.code"));
+				executeUpdate(ps, 0);
+			}
 			
-			prepareStatementWithoutLimits("INSERT INTO common.AIRPORT_AIRLINE (SELECT DISTINCT AIRLINE, AIRPORT_D, ? FROM SCHEDULE)");
-			_ps.setString(1, SystemData.get("airline.code"));
-			executeUpdate(0);
+			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.AIRPORT_AIRLINE (SELECT DISTINCT AIRLINE, AIRPORT_D, ? FROM SCHEDULE)")) {
+				ps.setString(1, SystemData.get("airline.code"));
+				executeUpdate(ps, 0);
+			}
 			
-			prepareStatementWithoutLimits("REPLACE INTO common.AIRPORT_AIRLINE (SELECT DISTINCT AIRLINE, AIRPORT_D, ? FROM SCHEDULE)");
-			_ps.setString(1, SystemData.get("airline.code"));
-			executeUpdate(0);
+			try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO common.AIRPORT_AIRLINE (SELECT DISTINCT AIRLINE, AIRPORT_D, ? FROM SCHEDULE)")) {
+				ps.setString(1, SystemData.get("airline.code"));
+				executeUpdate(ps, 0);
+			}
+			
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -394,21 +416,21 @@ public class SetAirportAirline extends DAO {
 	}
 	
 	private void writeAppData(Aircraft a) throws SQLException {
-
-		prepareStatement("INSERT INTO common.AIRCRAFT_AIRLINE (NAME, AIRLINE, ACRANGE, ETOPS, SEATS, TO_RWLENGTH, LN_RWLENGTH, SOFT_RWY) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-		_ps.setString(1, a.getName());
-		for (String appCode : a.getApps()) {
-			AircraftPolicyOptions opts = a.getOptions(appCode);
-			_ps.setString(2, appCode);
-			_ps.setInt(3, opts.getRange());
-			_ps.setInt(4, opts.getETOPS().ordinal());
-			_ps.setInt(5, opts.getSeats());
-			_ps.setInt(6, opts.getTakeoffRunwayLength());
-			_ps.setInt(7, opts.getLandingRunwayLength());
-			_ps.setBoolean(8, opts.getUseSoftRunways());
-			_ps.addBatch();
-		}
+		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.AIRCRAFT_AIRLINE (NAME, AIRLINE, ACRANGE, ETOPS, SEATS, TO_RWLENGTH, LN_RWLENGTH, SOFT_RWY) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")) {
+			ps.setString(1, a.getName());
+			for (String appCode : a.getApps()) {
+				AircraftPolicyOptions opts = a.getOptions(appCode);
+				ps.setString(2, appCode);
+				ps.setInt(3, opts.getRange());
+				ps.setInt(4, opts.getETOPS().ordinal());
+				ps.setInt(5, opts.getSeats());
+				ps.setInt(6, opts.getTakeoffRunwayLength());
+				ps.setInt(7, opts.getLandingRunwayLength());
+				ps.setBoolean(8, opts.getUseSoftRunways());
+				ps.addBatch();
+			}
 		
-		executeBatchUpdate(1, a.getApps().size());
+			executeUpdate(ps, 1, a.getApps().size());
+		}
 	}
 }

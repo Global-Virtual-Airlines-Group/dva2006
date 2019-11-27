@@ -10,7 +10,7 @@ import org.deltava.beans.acars.ACARSError;
 /**
  * A Data Access Object to load ACARS client error logs.
  * @author Luke
- * @version 8.6
+ * @version 9.0
  * @since 1.0
  */
 
@@ -30,15 +30,13 @@ public class GetACARSErrors extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Integer> getBuilds() throws DAOException {
-		try {
-			prepareStatement("SELECT DISTINCT CLIENT_BUILD FROM acars.ERRORS ORDER BY CLIENT_BUILD");
+		try (PreparedStatement ps = prepare("SELECT DISTINCT CLIENT_BUILD FROM acars.ERRORS ORDER BY CLIENT_BUILD")) {
 			Collection<Integer> results = new ArrayList<Integer>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
 					results.add(Integer.valueOf(rs.getInt(1)));
 			}
 			
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -51,16 +49,14 @@ public class GetACARSErrors extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Integer> getPilots() throws DAOException {
-		try {
-			prepareStatement("SELECT DISTINCT USERID FROM acars.ERRORS");
+		try (PreparedStatement ps = prepare("SELECT DISTINCT USERID FROM acars.ERRORS")) {
 			Collection<Integer> results = new ArrayList<Integer>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
 					results.add(Integer.valueOf(rs.getInt(1)));
+				
+				return results;
 			}
-			
-			_ps.close();
-			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -73,11 +69,9 @@ public class GetACARSErrors extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public ACARSError get(int id) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT *, INET6_NTOA(REMOTE_ADDR) FROM acars.ERRORS WHERE (ID=?) LIMIT 1");
-			_ps.setInt(1, id);
-			List<ACARSError> results = execute();
-			return results.isEmpty() ? null : results.get(0);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT *, INET6_NTOA(REMOTE_ADDR) FROM acars.ERRORS WHERE (ID=?) LIMIT 1")) {
+			ps.setInt(1, id);
+			return execute(ps).stream().findFirst().orElse(null);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -90,10 +84,9 @@ public class GetACARSErrors extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<ACARSError> getByPilot(int id) throws DAOException {
-		try {
-			prepareStatement("SELECT *, INET6_NTOA(REMOTE_ADDR) FROM acars.ERRORS WHERE (USERID=?) ORDER BY CREATED_ON");
-			_ps.setInt(1, id);
-			return execute();
+		try (PreparedStatement ps = prepare("SELECT *, INET6_NTOA(REMOTE_ADDR) FROM acars.ERRORS WHERE (USERID=?) ORDER BY CREATED_ON")) {
+			ps.setInt(1, id);
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -106,10 +99,9 @@ public class GetACARSErrors extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<ACARSError> getByBuild(int build) throws DAOException {
-		try {
-			prepareStatement("SELECT *, INET6_NTOA(REMOTE_ADDR) FROM acars.ERRORS WHERE (CLIENT_BUILD=?) ORDER BY CREATED_ON");
-			_ps.setInt(1, build);
-			return execute();
+		try (PreparedStatement ps = prepare("SELECT *, INET6_NTOA(REMOTE_ADDR) FROM acars.ERRORS WHERE (CLIENT_BUILD=?) ORDER BY CREATED_ON")) {
+			ps.setInt(1, build);
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -121,9 +113,8 @@ public class GetACARSErrors extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<ACARSError> getAll() throws DAOException {
-		try {
-			prepareStatement("SELECT *, INET6_NTOA(REMOTE_ADDR) FROM acars.ERRORS ORDER BY CREATED_ON");
-			return execute();
+		try (PreparedStatement ps = prepare("SELECT *, INET6_NTOA(REMOTE_ADDR) FROM acars.ERRORS ORDER BY CREATED_ON")) {
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -132,9 +123,9 @@ public class GetACARSErrors extends DAO {
 	/*
 	 * Helper method to parse ACARS client error result sets.
 	 */
-	private List<ACARSError> execute() throws SQLException {
-		List<ACARSError> results = new ArrayList<ACARSError>();
-		try (ResultSet rs = _ps.executeQuery()) {
+	private static List<ACARSError> execute(PreparedStatement ps) throws SQLException {
+		try (ResultSet rs = ps.executeQuery()) {
+			List<ACARSError> results = new ArrayList<ACARSError>();
 			while (rs.next()) {
 				ACARSError err = new ACARSError(rs.getInt(2), rs.getString(17));
 				err.setID(rs.getInt(1));
@@ -158,9 +149,8 @@ public class GetACARSErrors extends DAO {
 				err.setRemoteAddr(rs.getString(21));
 				results.add(err);
 			}
+			
+			return results;
 		}
-		
-		_ps.close();
-		return results;
 	}
 }

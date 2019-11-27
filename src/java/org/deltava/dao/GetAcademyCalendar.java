@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2011, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.academy.*;
 /**
  * A Data Access Object to load Flight Academy calendars.
  * @author Luke
- * @version 7.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -31,14 +31,9 @@ public class GetAcademyCalendar extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public InstructionSession getSession(int id) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT C.CERTNAME, C.PILOT_ID, I.* FROM exams.COURSES C, exams.INSCALENDAR I "
-					+ "WHERE (C.ID=I.COURSE) AND (I.ID=?) LIMIT 1");
-			_ps.setInt(1, id);
-			
-			// Execute the query, if empty return null
-			List<InstructionSession> results = executeCalendar();
-			return results.isEmpty() ? null : results.get(0);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT C.CERTNAME, C.PILOT_ID, I.* FROM exams.COURSES C, exams.INSCALENDAR I WHERE (C.ID=I.COURSE) AND (I.ID=?) LIMIT 1")) {
+			ps.setInt(1, id);
+			return executeCalendar(ps).stream().findFirst().orElse(null);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -68,18 +63,17 @@ public class GetAcademyCalendar extends DAO {
 		
 		sqlBuf.append("ORDER BY STARTTIME");
 		
-		int param = 0;
-		try {
-			prepareStatement(sqlBuf.toString());
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			int param = 0;
 			if (dr != null) {
-				_ps.setTimestamp(++param, createTimestamp(dr.getStartDate()));
-				_ps.setTimestamp(++param, createTimestamp(dr.getEndDate()));
+				ps.setTimestamp(++param, createTimestamp(dr.getStartDate()));
+				ps.setTimestamp(++param, createTimestamp(dr.getEndDate()));
 			}
 			
 			if (insID > 0)
-				_ps.setInt(++param, insID);
+				ps.setInt(++param, insID);
 			
-			return executeBusy();
+			return executeBusy(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -92,10 +86,9 @@ public class GetAcademyCalendar extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<InstructionBusy> getBusyTime(int instructorID) throws DAOException {
-		try {
-			prepareStatement("SELECT * FROM exams.INSBUSY WHERE (INSTRUCTOR_ID=?) ORDER BY STARTTIME");
-			_ps.setInt(1, instructorID);
-			return executeBusy();
+		try (PreparedStatement ps = prepare("SELECT * FROM exams.INSBUSY WHERE (INSTRUCTOR_ID=?) ORDER BY STARTTIME")) {
+			ps.setInt(1, instructorID);
+			return executeBusy(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -108,14 +101,9 @@ public class GetAcademyCalendar extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public InstructionFlight getFlight(int id) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT I.*, C.CERTNAME, C.PILOT_ID FROM exams.INSLOG I, exams.COURSES C "
-				+ "WHERE (I.COURSE=C.ID) AND (I.ID=?) LIMIT 1");
-			_ps.setInt(1, id);
-			
-			// Execute the query, if empty return null
-			List<InstructionFlight> results = executeFlightCalendar();
-			return results.isEmpty() ? null : results.get(0);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT I.*, C.CERTNAME, C.PILOT_ID FROM exams.INSLOG I, exams.COURSES C WHERE (I.COURSE=C.ID) AND (I.ID=?) LIMIT 1")) {
+			ps.setInt(1, id);
+			return executeFlightCalendar(ps).stream().findFirst().orElse(null);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -136,13 +124,9 @@ public class GetAcademyCalendar extends DAO {
 
 		sqlBuf.append("ORDER BY STARTDATE");
 
-		try {
-			prepareStatement(sqlBuf.toString());
-			if (courseID != 0)
-				_ps.setInt(1, courseID);
-
-			// Execute the query
-			return executeFlightCalendar();
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			if (courseID != 0) ps.setInt(1, courseID);
+			return executeFlightCalendar(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -164,12 +148,9 @@ public class GetAcademyCalendar extends DAO {
 
 		sqlBuf.append("ORDER BY I.STARTTIME");
 
-		try {
-			prepareStatement(sqlBuf.toString());
-			if (courseID != 0)
-				_ps.setInt(1, courseID);
-
-			return executeCalendar();
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			if (courseID != 0) ps.setInt(1, courseID);
+			return executeCalendar(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -185,8 +166,7 @@ public class GetAcademyCalendar extends DAO {
 	public Collection<InstructionFlight> getFlightCalendar(int pilotID, DateRange dr) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT I.*, C.CERTNAME, C.PILOT_ID FROM exams.INSLOG I, exams.COURSES C "
-				+ "WHERE (C.ID=I.COURSE) ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT I.*, C.CERTNAME, C.PILOT_ID FROM exams.INSLOG I, exams.COURSES C WHERE (C.ID=I.COURSE) ");
 		if (dr != null)
 			sqlBuf.append("AND (I.STARTTIME >=?) AND (I.STARTTIME < ?) ");
 		if (pilotID != 0)
@@ -194,20 +174,19 @@ public class GetAcademyCalendar extends DAO {
 
 		sqlBuf.append("ORDER BY I.STARTDATE DESC");
 		
-		int param = 0;
-		try {
-			prepareStatement(sqlBuf.toString());
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			int param = 0;
 			if (dr != null) {
-				_ps.setTimestamp(++param, createTimestamp(dr.getStartDate()));
-				_ps.setTimestamp(++param, createTimestamp(dr.getEndDate()));
+				ps.setTimestamp(++param, createTimestamp(dr.getStartDate()));
+				ps.setTimestamp(++param, createTimestamp(dr.getEndDate()));
 			}
 			
 			if (pilotID != 0) {
-				_ps.setInt(++param, pilotID);
-				_ps.setInt(++param, pilotID);
+				ps.setInt(++param, pilotID);
+				ps.setInt(++param, pilotID);
 			}
 			
-			return executeFlightCalendar();
+			return executeFlightCalendar(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -223,37 +202,33 @@ public class GetAcademyCalendar extends DAO {
 	public Collection<InstructionSession> getSessionCalendar(int pilotID, DateRange dr) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT C.CERTNAME, C.PILOT_ID, I.* FROM exams.COURSES C, "
-			+ "exams.INSCALENDAR I WHERE (C.ID=I.COURSE) AND (I.STARTTIME >=?) AND (I.STARTTIME < ?) "
-			+ "AND (I.STATUS != ?) ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT C.CERTNAME, C.PILOT_ID, I.* FROM exams.COURSES C, exams.INSCALENDAR I WHERE (C.ID=I.COURSE) AND (I.STARTTIME >=?) AND (I.STARTTIME < ?) AND (I.STATUS != ?) ");
 		if (pilotID != 0)
 			sqlBuf.append("AND ((C.PILOT_ID=?) OR (I.INSTRUCTOR_ID=?)) ");
 				
 		sqlBuf.append("ORDER BY I.STARTTIME");
 		
-		try {
-			prepareStatement(sqlBuf.toString());
-			_ps.setTimestamp(1, createTimestamp(dr.getStartDate()));
-			_ps.setTimestamp(2, createTimestamp(dr.getEndDate()));
-			_ps.setInt(3, InstructionSession.CANCELED);
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setTimestamp(1, createTimestamp(dr.getStartDate()));
+			ps.setTimestamp(2, createTimestamp(dr.getEndDate()));
+			ps.setInt(3, InstructionSession.CANCELED);
 			if (pilotID != 0) {
-				_ps.setInt(4, pilotID);
-				_ps.setInt(5, pilotID);
+				ps.setInt(4, pilotID);
+				ps.setInt(5, pilotID);
 			}
 			
-			return executeCalendar();
+			return executeCalendar(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 	}
 
-	/**
+	/*
 	 * Helper method to parse InstructionSession result sets.
 	 */
-	private List<InstructionSession> executeCalendar() throws SQLException {
-
+	private static List<InstructionSession> executeCalendar(PreparedStatement ps) throws SQLException {
 		List<InstructionSession> results = new ArrayList<InstructionSession>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
 				InstructionSession s = new InstructionSession(rs.getInt(3), rs.getInt(4));
 				s.setName(rs.getString(1));
@@ -268,17 +243,15 @@ public class GetAcademyCalendar extends DAO {
 			}
 		}
 	
-		// Clean up and return
-		_ps.close();
 		return results;
 	}
 	
-	/**
+	/*
 	 * Helper method to parse InstructionFlight result sets.
 	 */
-	private List<InstructionFlight> executeFlightCalendar() throws SQLException {
+	private static List<InstructionFlight> executeFlightCalendar(PreparedStatement ps) throws SQLException {
 		List<InstructionFlight> results = new ArrayList<InstructionFlight>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			boolean hasCourseInfo = (rs.getMetaData().getColumnCount() > 7);
 			while (rs.next()) {
 				InstructionFlight entry = new InstructionFlight(rs.getInt(2), rs.getInt(3));
@@ -296,16 +269,15 @@ public class GetAcademyCalendar extends DAO {
 			}
 		}
 
-		_ps.close();
 		return results;
 	}
 	
-	/**
+	/*
 	 * Helper method to parse InstructionBusy result sets.
 	 */
-	private List<InstructionBusy> executeBusy() throws SQLException {
+	private static List<InstructionBusy> executeBusy(PreparedStatement ps) throws SQLException {
 		List<InstructionBusy> results = new ArrayList<InstructionBusy>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
 				InstructionBusy ib = new InstructionBusy(rs.getInt(1));
 				ib.setStartTime(toInstant(rs.getTimestamp(2)));
@@ -315,7 +287,6 @@ public class GetAcademyCalendar extends DAO {
 			}
 		}
 		
-		_ps.close();
 		return results;
 	}
 }

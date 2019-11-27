@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.help.ResponseTemplate;
 /**
  * A Data Access Object for Help Desk response templates. 
  * @author Luke
- * @version 4.1
+ * @version 9.0
  * @since 3.2
  */
 
@@ -30,11 +30,9 @@ public class GetHelpTemplate extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public ResponseTemplate get(String title) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT TITLE, BODY FROM HELPDESK_RSPTMP WHERE (TITLE=?) LIMIT 1");
-			_ps.setString(1, title);
-			List<ResponseTemplate> results = execute();
-			return results.isEmpty() ? null : results.get(0);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT TITLE, BODY FROM HELPDESK_RSPTMP WHERE (TITLE=?) LIMIT 1")) {
+			ps.setString(1, title);
+			return execute(ps).stream().findFirst().orElse(null);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -46,20 +44,19 @@ public class GetHelpTemplate extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<ResponseTemplate> getAll() throws DAOException {
-		try {
-			prepareStatement("SELECT TITLE, BODY FROM HELPDESK_RSPTMP ORDER BY TITLE");
-			return execute();
+		try (PreparedStatement ps = prepare("SELECT TITLE, BODY FROM HELPDESK_RSPTMP ORDER BY TITLE")) {
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}		
 	}
 	
-	/**
+	/*
 	 * Helper method to parse response template result sets.
 	 */
-	private List<ResponseTemplate> execute() throws SQLException {
+	private static List<ResponseTemplate> execute(PreparedStatement ps) throws SQLException {
 		List<ResponseTemplate> results = new ArrayList<ResponseTemplate>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
 				ResponseTemplate tmp = new ResponseTemplate();
 				tmp.setTitle(rs.getString(1));
@@ -68,7 +65,6 @@ public class GetHelpTemplate extends DAO {
 			}
 		}
 		
-		_ps.close();
 		return results;
 	}
 }

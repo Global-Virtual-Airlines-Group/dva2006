@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Data Access Object to load Online Help and Help Desk entries.
  * @author Luke
- * @version 7.2
+ * @version 9.0
  * @since 1.0
  */
 
@@ -32,32 +32,29 @@ public class GetHelp extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Issue getIssue(int id) throws DAOException {
+		Issue i = null;
 		try {
-			prepareStatementWithoutLimits("SELECT * FROM HELPDESK WHERE (ID=?) LIMIT 1");
-			_ps.setInt(1, id);
-
-			// Do the query and return the first result
-			List<Issue> results = executeIssue();
-			if (results.isEmpty())
-				return null;
-
-			// Get the issue
-			Issue i = results.get(0);
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM HELPDESK WHERE (ID=?) LIMIT 1")) {
+				ps.setInt(1, id);
+				i = executeIssue(ps).stream().findFirst().orElse(null);
+			}
+		
+			if (i == null) return null;
 
 			// Load the comments
-			prepareStatementWithoutLimits("SELECT * FROM HELPDESK_COMMENTS WHERE (ID=?) ORDER BY CREATED_ON");
-			_ps.setInt(1, id);
-			try (ResultSet rs = _ps.executeQuery()) {
-				while (rs.next()) {
-					IssueComment ic = new IssueComment(rs.getInt(2));
-					ic.setCreatedOn(rs.getTimestamp(3).toInstant());
-					ic.setFAQ(rs.getBoolean(4));
-					ic.setBody(rs.getString(5));
-					i.addComment(ic);
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM HELPDESK_COMMENTS WHERE (ID=?) ORDER BY CREATED_ON")) {
+				ps.setInt(1, id);
+				try (ResultSet rs = ps.executeQuery()) {
+					while (rs.next()) {
+						IssueComment ic = new IssueComment(rs.getInt(2));
+						ic.setCreatedOn(rs.getTimestamp(3).toInstant());
+						ic.setFAQ(rs.getBoolean(4));
+						ic.setBody(rs.getString(5));
+						i.addComment(ic);
+					}
 				}
 			}
 
-			_ps.close();
 			return i;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -70,11 +67,9 @@ public class GetHelp extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Issue> getAll() throws DAOException {
-		try {
-			prepareStatement("SELECT I.*, COUNT(IC.ID), MAX(IC.CREATED_ON), (SELECT AUTHOR FROM "
-					+ "HELPDESK_COMMENTS IC WHERE (I.ID=IC.ID) ORDER BY IC.CREATED_ON DESC LIMIT 1) AS LC FROM "
-					+ "HELPDESK I LEFT JOIN HELPDESK_COMMENTS IC ON (I.ID=IC.ID) GROUP BY I.ID ORDER BY I.CREATED_ON");
-			return executeIssue();
+		try (PreparedStatement ps = prepare("SELECT I.*, COUNT(IC.ID), MAX(IC.CREATED_ON), (SELECT AUTHOR FROM HELPDESK_COMMENTS IC WHERE (I.ID=IC.ID) ORDER BY IC.CREATED_ON DESC LIMIT 1) AS LC FROM "
+			+ "HELPDESK I LEFT JOIN HELPDESK_COMMENTS IC ON (I.ID=IC.ID) GROUP BY I.ID ORDER BY I.CREATED_ON")) {
+			return executeIssue(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -86,15 +81,13 @@ public class GetHelp extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Integer> getAuthors() throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT DISTINCT AUTHOR FROM HELPDESK");
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT DISTINCT AUTHOR FROM HELPDESK")) {
 			Collection<Integer> results = new HashSet<Integer>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
 					results.add(Integer.valueOf(rs.getInt(1)));
 			}
 			
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -107,15 +100,13 @@ public class GetHelp extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Integer> getAssignees() throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT DISTINCT ASSIGNEDTO FROM HELPDESK WHERE (ASSIGNEDTO<>0)");
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT DISTINCT ASSIGNEDTO FROM HELPDESK WHERE (ASSIGNEDTO<>0)")) {
 			Collection<Integer> results = new LinkedHashSet<Integer>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
 					results.add(Integer.valueOf(rs.getInt(1)));
 			}
 			
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -134,10 +125,8 @@ public class GetHelp extends DAO {
 	public Collection<Issue> getByPilot(int authorID, int assigneeID, boolean showPublic, boolean activeOnly) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT I.*, COUNT(IC.ID), MAX(IC.CREATED_ON), (SELECT AUTHOR "
-				+ "FROM HELPDESK_COMMENTS IC WHERE (I.ID=IC.ID) ORDER BY IC.CREATED_ON DESC LIMIT 1) AS LC "
-				+ "FROM HELPDESK I LEFT JOIN HELPDESK_COMMENTS IC ON (I.ID=IC.ID) WHERE ((I.AUTHOR=?) OR "
-				+ "(I.ASSIGNEDTO=?) ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT I.*, COUNT(IC.ID), MAX(IC.CREATED_ON), (SELECT AUTHOR FROM HELPDESK_COMMENTS IC WHERE (I.ID=IC.ID) ORDER BY IC.CREATED_ON DESC LIMIT 1) AS LC "
+			+ "FROM HELPDESK I LEFT JOIN HELPDESK_COMMENTS IC ON (I.ID=IC.ID) WHERE ((I.AUTHOR=?) OR (I.ASSIGNEDTO=?) ");
 		if (showPublic)
 			sqlBuf.append("OR (I.ISPUBLIC=?)");
 		sqlBuf.append(") ");
@@ -146,17 +135,16 @@ public class GetHelp extends DAO {
 
 		sqlBuf.append("GROUP BY I.ID ORDER BY I.STATUS, I.CREATED_ON");
 
-		try {
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			int pos = 0;
-			prepareStatement(sqlBuf.toString());
-			_ps.setInt(++pos, authorID);
-			_ps.setInt(++pos, assigneeID);
+			ps.setInt(++pos, authorID);
+			ps.setInt(++pos, assigneeID);
 			if (showPublic)
-				_ps.setBoolean(++pos, true);
+				ps.setBoolean(++pos, true);
 			if (activeOnly)
-				_ps.setInt(++pos, Issue.CLOSED);
+				ps.setInt(++pos, Issue.CLOSED);
 
-			return executeIssue();
+			return executeIssue(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -168,13 +156,10 @@ public class GetHelp extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Issue> getActive() throws DAOException {
-		try {
-			prepareStatement("SELECT I.*, COUNT(IC.ID), MAX(IC.CREATED_ON), (SELECT AUTHOR FROM "
-					+ "HELPDESK_COMMENTS IC WHERE (I.ID=IC.ID) ORDER BY IC.CREATED_ON DESC LIMIT 1) AS LC FROM "
-					+ "HELPDESK I LEFT JOIN HELPDESK_COMMENTS IC ON (I.ID=IC.ID) WHERE (I.STATUS=?) GROUP BY "
-					+ "I.ID ORDER BY I.CREATED_ON");
-			_ps.setInt(1, Issue.OPEN);
-			return executeIssue();
+		try (PreparedStatement ps = prepare("SELECT I.*, COUNT(IC.ID), MAX(IC.CREATED_ON), (SELECT AUTHOR FROM HELPDESK_COMMENTS IC WHERE (I.ID=IC.ID) ORDER BY IC.CREATED_ON DESC LIMIT 1) AS LC FROM "
+			+ "HELPDESK I LEFT JOIN HELPDESK_COMMENTS IC ON (I.ID=IC.ID) WHERE (I.STATUS=?) GROUP BY I.ID ORDER BY I.CREATED_ON")) {
+			ps.setInt(1, Issue.OPEN);
+			return executeIssue(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -187,9 +172,11 @@ public class GetHelp extends DAO {
 	 */
 	public Collection<Issue> getFAQ() throws DAOException {
 		try {
-			prepareStatement("SELECT * FROM HELPDESK WHERE (ISFAQ=?)");
-			_ps.setBoolean(1, true);
-			Map<Integer, Issue> results = CollectionUtils.createMap(executeIssue(), Issue::getID);
+			Map<Integer, Issue> results = new HashMap<Integer, Issue>();
+			try (PreparedStatement ps = prepare("SELECT * FROM HELPDESK WHERE (ISFAQ=?)")) {
+				ps.setBoolean(1, true);
+				results.putAll(CollectionUtils.createMap(executeIssue(ps), Issue::getID));
+			}
 
 			// Build the FAQ answer comments query
 			if (!results.isEmpty()) {
@@ -203,23 +190,22 @@ public class GetHelp extends DAO {
 
 				// Execute the Query
 				sqlBuf.append(')');
-				prepareStatementWithoutLimits(sqlBuf.toString());
-				try (ResultSet rs = _ps.executeQuery()) {
-					while (rs.next()) {
-						IssueComment ic = new IssueComment(rs.getInt(2));
-						ic.setID(rs.getInt(1));
-						ic.setCreatedOn(rs.getTimestamp(3).toInstant());
-						ic.setFAQ(rs.getBoolean(4));
-						ic.setBody(rs.getString(5));
+				try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+					try (ResultSet rs = ps.executeQuery()) {
+						while (rs.next()) {
+							IssueComment ic = new IssueComment(rs.getInt(2));
+							ic.setID(rs.getInt(1));
+							ic.setCreatedOn(rs.getTimestamp(3).toInstant());
+							ic.setFAQ(rs.getBoolean(4));
+							ic.setBody(rs.getString(5));
 
-						// Stuff into issue
-						Issue i = results.get(Integer.valueOf(ic.getID()));
-						if (i != null)
+							// Stuff into issue
+							Issue i = results.get(Integer.valueOf(ic.getID()));
+							if (i != null)
 							i.addComment(ic);
+						}
 					}
 				}
-
-				_ps.close();
 			}
 
 			return results.values();
@@ -238,21 +224,19 @@ public class GetHelp extends DAO {
 	public List<Issue> search(String searchStr, boolean includeComments) throws DAOException {
 	
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT I.*, MAX(IC.CREATED_ON) AS LC, COUNT(IC.ID) AS CC FROM "
-				+ "HELPDESK I LEFT JOIN HELPDESK_COMMENTS IC ON (I.ID=IC.ID) WHERE ((LOCATE(?, I.SUBJECT) > 0) "
-				+ "OR (LOCATE(?, I.BODY) > 0)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT I.*, MAX(IC.CREATED_ON) AS LC, COUNT(IC.ID) AS CC FROM HELPDESK I LEFT JOIN HELPDESK_COMMENTS IC ON (I.ID=IC.ID) WHERE ((LOCATE(?, I.SUBJECT) > 0) "
+			+ "OR (LOCATE(?, I.BODY) > 0)");
 		if (includeComments)
 			sqlBuf.append(" OR (LOCATE(?, IC.BODY) > 0)");
 		sqlBuf.append(") GROUP BY I.ID ORDER BY I.ISFAQ DESC, I.STATUS DESC, I.CREATED_ON");
 		
-		try {
-			prepareStatement(sqlBuf.toString());
-			_ps.setString(1, searchStr);
-			_ps.setString(2, searchStr);
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setString(1, searchStr);
+			ps.setString(2, searchStr);
 			if (includeComments)
-				_ps.setString(3, searchStr);
+				ps.setString(3, searchStr);
 			
-			return executeIssue();
+			return executeIssue(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -261,9 +245,9 @@ public class GetHelp extends DAO {
 	/*
 	 * Helper method to parse Issue result sets.
 	 */
-	private List<Issue> executeIssue() throws SQLException {
+	private static List<Issue> executeIssue(PreparedStatement ps) throws SQLException {
 		List<Issue> results = new ArrayList<Issue>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			boolean hasCount = (rs.getMetaData().getColumnCount() > 12);
 			while (rs.next()) {
 				Issue i = new Issue(rs.getString(9));
@@ -286,7 +270,6 @@ public class GetHelp extends DAO {
 			}
 		}
 
-		_ps.close();
 		return results;
 	}
 }

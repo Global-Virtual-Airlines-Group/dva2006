@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object for Oceanic Routes.
  * @author Luke
- * @version 7.2
+ * @version 9.0
  * @since 1.0
  */
 
@@ -32,9 +32,8 @@ public class GetOceanicRoute extends GetNavAirway {
      * @throws DAOException if a JDBC error occurs
      */
     public List<OceanicNOTAM> getOceanic() throws DAOException {
-        try {
-            prepareStatement("SELECT * FROM common.OCEANIC ORDER BY VALID_DATE DESC");
-            return execute();
+    	try (PreparedStatement ps = prepare("SELECT * FROM common.OCEANIC ORDER BY VALID_DATE DESC")) {
+            return execute(ps);
         } catch (SQLException se) {
             throw new DAOException(se);
         }
@@ -48,14 +47,10 @@ public class GetOceanicRoute extends GetNavAirway {
      * @throws DAOException if a JDBC error occurs
      */
     public OceanicNOTAM get(OceanicTrackInfo.Type routeType, java.time.Instant vd) throws DAOException {
-    	try {
-    		prepareStatementWithoutLimits("SELECT * FROM common.OCEANIC WHERE (ROUTETYPE=?) AND (VALID_DATE=DATE(?)) LIMIT 1");
-    		_ps.setInt(1, routeType.ordinal());
-    		_ps.setTimestamp(2, createTimestamp(vd));
-    		
-    		// Get the results and return the first element
-    		List<OceanicNOTAM> results = execute();
-    		return (results.size() == 0) ? null : results.get(0);
+    	try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM common.OCEANIC WHERE (ROUTETYPE=?) AND (VALID_DATE=DATE(?)) LIMIT 1")) {
+    		ps.setInt(1, routeType.ordinal());
+    		ps.setTimestamp(2, createTimestamp(vd));
+    		return execute(ps).stream().findFirst().orElse(null);
     	} catch (SQLException se) {
     		throw new DAOException(se);
     	}
@@ -64,9 +59,9 @@ public class GetOceanicRoute extends GetNavAirway {
     /*
      * Helper method to load Oceanic Route data.
      */
-    private List<OceanicNOTAM> execute() throws SQLException {
+    private static List<OceanicNOTAM> execute(PreparedStatement ps) throws SQLException {
     	List<OceanicNOTAM> results = new ArrayList<OceanicNOTAM>();
-        try (ResultSet rs = _ps.executeQuery()) {
+        try (ResultSet rs = ps.executeQuery()) {
         	while (rs.next()) {
         		OceanicTrackInfo.Type rType = OceanicTrackInfo.Type.values()[rs.getInt(1)];
         		OceanicNOTAM or = new OceanicNOTAM(rType, expandDate(rs.getDate(2)));
@@ -76,7 +71,6 @@ public class GetOceanicRoute extends GetNavAirway {
         	}
         }	
         	
-        _ps.close();
         return results;
     }
     
@@ -87,16 +81,14 @@ public class GetOceanicRoute extends GetNavAirway {
      * @throws DAOException if a JDBC error occurs
      */
     public Collection<java.time.Instant> getOceanicTrackDates(OceanicTrackInfo.Type routeType) throws DAOException {
-    	try {
-    		prepareStatement("SELECT DISTINCT VALID_DATE FROM common.OCEANIC_ROUTES WHERE (ROUTETYPE=?) ORDER BY VALID_DATE DESC");
-    		_ps.setInt(1, routeType.ordinal());
+    	try (PreparedStatement ps = prepare("SELECT DISTINCT VALID_DATE FROM common.OCEANIC_ROUTES WHERE (ROUTETYPE=?) ORDER BY VALID_DATE DESC")) {
+    		ps.setInt(1, routeType.ordinal());
     		Collection<java.time.Instant> results = new LinkedHashSet<java.time.Instant>();
-    		try (ResultSet rs = _ps.executeQuery()) {
+    		try (ResultSet rs = ps.executeQuery()) {
     			while (rs.next())
     				results.add(Instant.ofEpochMilli(rs.getDate(1).getTime()));
     		}
     		
-    		_ps.close();
     		return results;
     	} catch (SQLException se) {
     		throw new DAOException(se);
@@ -121,18 +113,17 @@ public class GetOceanicRoute extends GetNavAirway {
     	
     	sqlBuf.append(" ORDER BY TRACK, SEQ");
     	
-    	try {
-    		prepareStatementWithoutLimits(sqlBuf.toString());
-    		_ps.setInt(1, routeType.ordinal());
+    	try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+    		ps.setInt(1, routeType.ordinal());
     		if (dt != null)
-    			_ps.setTimestamp(2, createTimestamp(dt));
+    			ps.setTimestamp(2, createTimestamp(dt));
     		else
-    			_ps.setInt(2, routeType.ordinal());
+    			ps.setInt(2, routeType.ordinal());
     		
     		// Execute the query
     		OceanicTrack trk = null;
     		Collection<OceanicTrack> tmpResults = new ArrayList<OceanicTrack>();
-    		try (ResultSet rs = _ps.executeQuery()) {
+    		try (ResultSet rs = ps.executeQuery()) {
     			while (rs.next()) {
     				String newTrack = rs.getString(3);
     				if ((trk == null) || (!newTrack.equals(trk.getTrack()))) {
@@ -146,8 +137,6 @@ public class GetOceanicRoute extends GetNavAirway {
     				trk.addWaypoint(np);
     			}
     		}
-    		
-    		_ps.close();
     		
     		// Now populate the waypoint data using a different prepared statement
     		DailyOceanicTracks results = new DailyOceanicTracks(routeType, dt);

@@ -1,4 +1,4 @@
-// Copyright 2005, 2009, 2010, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2010, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.flight.*;
 /**
  * A Data Access Object to create and update Flight Assignments.
  * @author Luke
- * @version 8.5
+ * @version 9.0
  * @since 1.0
  */
 
@@ -40,16 +40,17 @@ public class SetAssignment extends DAO {
 
       try {
          startTransaction();
-         prepareStatement(sqlBuf.toString());
-         _ps.setInt(1, a.getStatus().ordinal());
-         _ps.setInt(2, a.getEventID());
-         _ps.setInt(3, a.getPilotID());
-         _ps.setTimestamp(4, createTimestamp(a.getAssignDate()));
-         _ps.setString(5, a.getEquipmentType());
-         _ps.setBoolean(6, a.isRepeating());
-         _ps.setBoolean(7, a.isRandom());
-         _ps.setBoolean(8, a.isPurgeable());
-         executeUpdate(1);
+         try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+        	 ps.setInt(1, a.getStatus().ordinal());
+        	 ps.setInt(2, a.getEventID());
+        	 ps.setInt(3, a.getPilotID());
+        	 ps.setTimestamp(4, createTimestamp(a.getAssignDate()));
+        	 ps.setString(5, a.getEquipmentType());
+        	 ps.setBoolean(6, a.isRepeating());
+        	 ps.setBoolean(7, a.isRandom());
+        	 ps.setBoolean(8, a.isPurgeable());
+        	 executeUpdate(ps, 1);
+         }
 
          // Update the ID
          a.setID(getNewID());
@@ -80,12 +81,11 @@ public class SetAssignment extends DAO {
       sqlBuf.append(formatDBName(db));
       sqlBuf.append(".ASSIGNMENTS SET ASSIGNED_ON=NOW(), STATUS=?, PILOT_ID=? WHERE (ID=?)");
 
-      try {
-         prepareStatement(sqlBuf.toString());
-         _ps.setInt(1, AssignmentStatus.RESERVED.ordinal());
-         _ps.setInt(2, pilotID);
-         _ps.setInt(3, a.getID());
-         executeUpdate(1);
+      try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+         ps.setInt(1, AssignmentStatus.RESERVED.ordinal());
+         ps.setInt(2, pilotID);
+         ps.setInt(3, a.getID());
+         executeUpdate(ps, 1);
       } catch (SQLException se) {
          throw new DAOException(se);
       }
@@ -100,20 +100,21 @@ public class SetAssignment extends DAO {
       StringBuilder sqlBuf = new StringBuilder("REPLACE INTO ");
       sqlBuf.append(formatDBName(db));
       sqlBuf.append(".ASSIGNLEGS (ID, AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A) VALUES (?, ?, ?, ?, ?, ?)");
-      prepareStatement(sqlBuf.toString());
-      _ps.setInt(1, assignID);
+      try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+    	  ps.setInt(1, assignID);
 
-      // Write the legs
-      for (AssignmentLeg leg : legs) {
-         _ps.setString(2, leg.getAirline().getCode());
-         _ps.setInt(3, leg.getFlightNumber());
-         _ps.setInt(4, leg.getLeg());
-         _ps.setString(5, leg.getAirportD().getIATA());
-         _ps.setString(6, leg.getAirportA().getIATA());
-         _ps.addBatch();
+    	  // Write the legs
+    	  for (AssignmentLeg leg : legs) {
+    		  ps.setString(2, leg.getAirline().getCode());
+    		  ps.setInt(3, leg.getFlightNumber());
+    		  ps.setInt(4, leg.getLeg());
+    		  ps.setString(5, leg.getAirportD().getIATA());
+    		  ps.setString(6, leg.getAirportA().getIATA());
+    		  ps.addBatch();
+    	  }
+
+    	  executeUpdate(ps, 1, legs.size());
       }
-
-      executeBatchUpdate(1, legs.size());
    }
 
    /**
@@ -122,11 +123,10 @@ public class SetAssignment extends DAO {
     * @throws DAOException if a JDBC error occurs
     */
    public void complete(AssignmentInfo ai) throws DAOException {
-      try {
-         prepareStatement("UPDATE ASSIGNMENTS SET STATUS=?, COMPLETED_ON=NOW() WHERE (ID=?)");
-         _ps.setInt(1, AssignmentStatus.COMPLETE.ordinal());
-         _ps.setInt(2, ai.getID());
-         executeUpdate(1);
+	   try (PreparedStatement ps = prepare("UPDATE ASSIGNMENTS SET STATUS=?, COMPLETED_ON=NOW() WHERE (ID=?)")) {
+         ps.setInt(1, AssignmentStatus.COMPLETE.ordinal());
+         ps.setInt(2, ai.getID());
+         executeUpdate(ps, 1);
       } catch (SQLException se) {
          throw new DAOException(se);
       }
@@ -142,21 +142,25 @@ public class SetAssignment extends DAO {
          startTransaction();
          
          // Release the assignment
-         prepareStatement("UPDATE ASSIGNMENTS SET PILOT_ID=0, STATUS=?, ASSIGNED_ON=NULL WHERE (ID=?)");
-         _ps.setInt(1, AssignmentStatus.AVAILABLE.ordinal());
-         _ps.setInt(2, a.getID());
-         executeUpdate(1);
+         try (PreparedStatement ps = prepare("UPDATE ASSIGNMENTS SET PILOT_ID=0, STATUS=?, ASSIGNED_ON=NULL WHERE (ID=?)")) {
+        	 ps.setInt(1, AssignmentStatus.AVAILABLE.ordinal());
+        	 ps.setInt(2, a.getID());
+        	 executeUpdate(ps, 1);
+         }
          
          // Delete the draft Flight Reports
-         prepareStatement("DELETE FROM PIREPS WHERE (ASSIGN_ID=?) AND (STATUS=?)");
-         _ps.setInt(1, a.getID());
-         _ps.setInt(2, FlightStatus.DRAFT.ordinal());
-         executeUpdate(0);
+         try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM PIREPS WHERE (ASSIGN_ID=?) AND (STATUS=?)")) {
+        	 ps.setInt(1, a.getID());
+        	 ps.setInt(2, FlightStatus.DRAFT.ordinal());
+        	 executeUpdate(ps, 0);
+         }
 
          // Clear the Flight Reports
-         prepareStatement("UPDATE PIREPS SET ASSIGN_ID=0 WHERE (ASSIGN_ID=?)");
-         _ps.setInt(1, a.getID());
-         executeUpdate(0);
+         try (PreparedStatement ps = prepare("UPDATE PIREPS SET ASSIGN_ID=0 WHERE (ASSIGN_ID=?)")) {
+        	 ps.setInt(1, a.getID());
+        	 executeUpdate(ps, 0);
+         }
+         
          commitTransaction();
       } catch (SQLException se) {
          rollbackTransaction();
@@ -174,26 +178,31 @@ public class SetAssignment extends DAO {
          startTransaction();
 
          // Clear the flown Flight Reports
-         prepareStatement("UPDATE PIREPS SET ASSIGN_ID=0 WHERE (ASSIGN_ID=?) AND (STATUS<>?)");
-         _ps.setInt(1, a.getID());
-         _ps.setInt(2, FlightStatus.DRAFT.ordinal());
-         executeUpdate(0);
+         try (PreparedStatement ps = prepareWithoutLimits("UPDATE PIREPS SET ASSIGN_ID=0 WHERE (ASSIGN_ID=?) AND (STATUS<>?)")) {
+        	 ps.setInt(1, a.getID());
+        	 ps.setInt(2, FlightStatus.DRAFT.ordinal());
+        	 executeUpdate(ps, 0);
+         }
          
          // Delete the incomplete/rejected Flight Reports
-         prepareStatement("DELETE FROM PIREPS WHERE (ASSIGN_ID=?) AND (STATUS=?)");
-         _ps.setInt(1, a.getID());
-         _ps.setInt(2, FlightStatus.DRAFT.ordinal());
-         executeUpdate(0);
+         try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM PIREPS WHERE (ASSIGN_ID=?) AND (STATUS=?)")) {
+        	 ps.setInt(1, a.getID());
+        	 ps.setInt(2, FlightStatus.DRAFT.ordinal());
+        	 executeUpdate(ps, 0);
+         }
 
          // Delete legs
-         prepareStatement("DELETE FROM ASSIGNLEGS WHERE (ID=?)");
-         _ps.setInt(1, a.getID());
-         executeUpdate(0);
+         try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM ASSIGNLEGS WHERE (ID=?)")) {
+        	 ps.setInt(1, a.getID());
+        	 executeUpdate(ps, 0);
+         }
 
          // Delete assignment
-         prepareStatement("DELETE FROM ASSIGNMENTS WHERE (ID=?)");
-         _ps.setInt(1, a.getID());
-         executeUpdate(1);
+         try (PreparedStatement ps = prepare("DELETE FROM ASSIGNMENTS WHERE (ID=?)")) {
+        	 ps.setInt(1, a.getID());
+        	 executeUpdate(ps, 1);
+         }
+         
          commitTransaction();
       } catch (SQLException se) {
          rollbackTransaction();

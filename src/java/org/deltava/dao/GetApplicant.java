@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.*;
 /**
  * A Data Access Object to read Applicant data.
  * @author Luke
- * @version 8.3
+ * @version 9.0
  * @since 1.0
  */
 
@@ -38,17 +38,13 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Applicant get(int id) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT *, INET6_NTOA(REGADDR) FROM APPLICANTS WHERE (ID=?) LIMIT 1");
-			_ps.setInt(1, id);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT *, INET6_NTOA(REGADDR) FROM APPLICANTS WHERE (ID=?) LIMIT 1")) {
+			ps.setInt(1, id);
 
 			// Get results, return first or null
-			List<Applicant> results = execute();
-			Applicant a = null;
-			if (!results.isEmpty()) {
-				a = results.get(0);
+			Applicant a = execute(ps).stream().findFirst().orElse(null);
+			if (a != null)
 				loadStageChoices(a);
-			}
 			
 			return a;
 		} catch (SQLException se) {
@@ -64,12 +60,11 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Applicant> getByName(String fName, String lName) throws DAOException {
-		try {
-			prepareStatement("SELECT *, INET6_NTOA(REGADDR) FROM APPLICANTS WHERE (STATUS=?) AND (FIRSTNAME LIKE ?) AND (LASTNAME LIKE ?)");
-			_ps.setInt(1, Applicant.PENDING);
-			_ps.setString(2, fName);
-			_ps.setString(3, lName);
-			return execute();
+		try (PreparedStatement ps = prepare("SELECT *, INET6_NTOA(REGADDR) FROM APPLICANTS WHERE (STATUS=?) AND (FIRSTNAME LIKE ?) AND (LASTNAME LIKE ?)")) {
+			ps.setInt(1, Applicant.PENDING);
+			ps.setString(2, fName);
+			ps.setString(3, lName);
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -82,13 +77,9 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Applicant getByPilotID(int pilotID) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT *, INET6_NTOA(REGADDR) FROM APPLICANTS WHERE (PILOT_ID=?) LIMIT 1");
-			_ps.setInt(1, pilotID);
-
-			// Get results, return first or null
-			List<Applicant> results = execute();
-			return results.isEmpty() ? null : results.get(0);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT *, INET6_NTOA(REGADDR) FROM APPLICANTS WHERE (PILOT_ID=?) LIMIT 1")) {
+			ps.setInt(1, pilotID);
+			return execute(ps).stream().findFirst().orElse(null);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -104,7 +95,6 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Map<Integer, Applicant> getByID(Collection<?> ids, String tableName) throws DAOException {
-
 		List<Applicant> results = new ArrayList<Applicant>();
 		log.debug("Raw set size = " + ids.size());
 
@@ -131,9 +121,8 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 
 			sqlBuf.append("))");
 			List<Applicant> uncached = null;
-			try {
-				prepareStatementWithoutLimits(sqlBuf.toString());
-				uncached = execute();
+			try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+				uncached = execute(ps);
 				for (Applicant a : uncached)
 					loadStageChoices(a);
 			} catch (SQLException se) {
@@ -153,13 +142,11 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Applicant get(UserData ud) throws DAOException {
-		if (ud == null)
-			return null;
+		if (ud == null) return null;
 
 		// Get a map from the table, and get the first value
 		Map<Integer, Applicant> pilots = getByID(Collections.singleton(ud), ud.getDB() + "." + ud.getTable());
-		Iterator<Applicant> i = pilots.values().iterator();
-		return i.hasNext() ? i.next() : null;
+		return pilots.values().stream().findFirst().orElse(null);
 	}
 
 	/**
@@ -186,13 +173,9 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Applicant getFromDirectory(String directoryName) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT *, INET6_NTOA(REGADDR) FROM APPLICANTS WHERE (LDAP_DN=?) LIMIT 1");
-			_ps.setString(1, directoryName);
-
-			// Get results, return first or null
-			List<Applicant> results = execute();
-			return results.isEmpty() ? null : results.get(0);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT *, INET6_NTOA(REGADDR) FROM APPLICANTS WHERE (LDAP_DN=?) LIMIT 1")) {
+			ps.setString(1, directoryName);
+			return execute(ps).stream().findFirst().orElse(null);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -212,10 +195,9 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 		if (!Character.isLetter(letter.charAt(0)))
 			throw new IllegalArgumentException("Invalid Lastname Letter - " + letter);
 
-		try {
-			prepareStatement("SELECT *, INET6_NTOA(REGADDR) FROM APPLICANTS WHERE (LEFT(LASTNAME, 1)=?) ORDER BY CREATED DESC");
-			_ps.setString(1, letter.substring(0, 1).toUpperCase());
-			return execute();
+		try (PreparedStatement ps = prepare("SELECT *, INET6_NTOA(REGADDR) FROM APPLICANTS WHERE (LEFT(LASTNAME, 1)=?) ORDER BY CREATED DESC")) {
+			ps.setString(1, letter.substring(0, 1).toUpperCase());
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -237,10 +219,9 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 			sqlBuf.append(orderBy);
 		}
 
-		try {
-			prepareStatement(sqlBuf.toString());
-			_ps.setInt(1, status);
-			return execute();
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setInt(1, status);
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -253,12 +234,10 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<Applicant> getByEquipmentType(String eqType) throws DAOException {
-		try {
-			prepareStatement("SELECT *, INET6_NTOA(REGADDR) FROM APPLICANTS WHERE (STATUS=?) AND "
-					+ "(EQTYPE=?) ORDER BY LASTNAME");
-			_ps.setInt(1, Applicant.APPROVED);
-			_ps.setString(2, eqType);
-			return execute();
+		try (PreparedStatement ps = prepare("SELECT *, INET6_NTOA(REGADDR) FROM APPLICANTS WHERE (STATUS=?) AND (EQTYPE=?) ORDER BY LASTNAME")) {
+			ps.setInt(1, Applicant.APPROVED);
+			ps.setString(2, eqType);
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -272,22 +251,13 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public boolean isIPRegistered(String addr, int days) throws DAOException {
-		try {
-			prepareStatement("SELECT COUNT(DISTINCT ID) FROM APPLICANTS WHERE (STATUS <> ?) AND "
-					+ "(REGADDR=INET6_ATON(?)) AND (CREATED > DATE_SUB(NOW(), INTERVAL ? DAY))");
-			_ps.setInt(1, Applicant.REJECTED);
-			_ps.setString(2, addr);
-			_ps.setInt(3, Math.max(1, days));
-			
-			// Execute the query
-			boolean result = false;
-			try (ResultSet rs = _ps.executeQuery()) {
-				if (rs.next())
-					result = (rs.getInt(1) > 0);
+		try (PreparedStatement ps = prepare("SELECT COUNT(DISTINCT ID) FROM APPLICANTS WHERE (STATUS <> ?) AND (REGADDR=INET6_ATON(?)) AND (CREATED > DATE_SUB(NOW(), INTERVAL ? DAY))")) {
+			ps.setInt(1, Applicant.REJECTED);
+			ps.setString(2, addr);
+			ps.setInt(3, Math.max(1, days));
+			try (ResultSet rs = ps.executeQuery()) {
+				return rs.next() && (rs.getInt(1) > 0);
 			}
-			
-			_ps.close();
-			return result;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -327,18 +297,17 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 		if (days > 0)
 			sqlBuf.append(" AND (CREATED > DATE_SUB(NOW(), INTERVAL ? DAY))");
 
-		try {
-			prepareStatementWithoutLimits(sqlBuf.toString());
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 			int param = 0;
-			_ps.setInt(++param, Applicant.PENDING);
-			_ps.setString(++param, p.getFirstName());
-			_ps.setString(++param, p.getLastName());
+			ps.setInt(++param, Applicant.PENDING);
+			ps.setString(++param, p.getFirstName());
+			ps.setString(++param, p.getLastName());
 			if (!StringUtils.isEmpty(p.getEmail()))
-				_ps.setString(++param, p.getEmail());
+				ps.setString(++param, p.getEmail());
 			if (days > 0)
-				_ps.setInt(++param, days);
+				ps.setInt(++param, days);
 			
-			return executeIDs();
+			return executeIDs(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -359,14 +328,12 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT IF(PILOT_ID, PILOT_ID, ID) FROM ");
 		sqlBuf.append(formatDBName(dbName));
-		sqlBuf.append(".APPLICANTS A WHERE (REGADDR >= INET6_ATON(?)) AND "
-				+ "(REGADDR <= INET6_ATON(?)) ORDER BY CREATED DESC");
+		sqlBuf.append(".APPLICANTS A WHERE (REGADDR >= INET6_ATON(?)) AND (REGADDR <= INET6_ATON(?)) ORDER BY CREATED DESC");
 		
-		try {
-			prepareStatement(sqlBuf.toString());
-			_ps.setString(1, addrBlock.getAddress());
-			_ps.setString(2, addrBlock.getLastAddress());
-			return executeIDs();
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setString(1, addrBlock.getAddress());
+			ps.setString(2, addrBlock.getLastAddress());
+			return executeIDs(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -387,15 +354,13 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT ID, SOUNDEX(?) AS TARGET, SOUNDEX(LASTNAME COLLATE utf8mb4_unicode_ci) AS SX FROM ");
 		sqlBuf.append(formatDBName(dbName));
-		sqlBuf.append(".APPLICANTS WHERE (ID<>?) AND (STATUS<>?) HAVING ((LEFT(SX, LENGTH(TARGET))=TARGET) OR "
-				+ "(LEFT(TARGET, LENGTH(SX))=SX)) ORDER BY ID");
+		sqlBuf.append(".APPLICANTS WHERE (ID<>?) AND (STATUS<>?) HAVING ((LEFT(SX, LENGTH(TARGET))=TARGET) OR (LEFT(TARGET, LENGTH(SX))=SX)) ORDER BY ID");
 
-		try {
-			prepareStatement(sqlBuf.toString());
-			_ps.setString(1, usr.getLastName());
-			_ps.setInt(2, usr.getID());
-			_ps.setInt(3, Applicant.REJECTED);
-			return executeIDs();
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setString(1, usr.getLastName());
+			ps.setInt(2, usr.getID());
+			ps.setInt(3, Applicant.REJECTED);
+			return executeIDs(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -406,22 +371,21 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 	 */
 	private void loadStageChoices(Applicant a) throws SQLException {
 
-		prepareStatementWithoutLimits("SELECT * FROM APPLICANT_STAGE_CHOICES WHERE (ID=?)");
-		_ps.setInt(1, a.getID());
-		try (ResultSet rs = _ps.executeQuery()) {
-			while (rs.next())
-				a.setTypeChoice(rs.getInt(2), rs.getString(3));
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM APPLICANT_STAGE_CHOICES WHERE (ID=?)")) {
+			ps.setInt(1, a.getID());
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next())
+					a.setTypeChoice(rs.getInt(2), rs.getString(3));
+			}
 		}
-		
-		_ps.close();
 	}
 
 	/*
 	 * Helper method to extract appliacnt data from the result set.
 	 */
-	private List<Applicant> execute() throws SQLException {
+	private static List<Applicant> execute(PreparedStatement ps) throws SQLException {
 		List<Applicant> results = new ArrayList<Applicant>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
 				Applicant a = new Applicant(rs.getString(4), rs.getString(5));
 				a.setID(rs.getInt(1));
@@ -461,7 +425,6 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 			}
 		}
 
-		_ps.close();
 		return results;
 	}
 }

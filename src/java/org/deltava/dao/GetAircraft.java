@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2011, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2011, 2012, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -14,12 +14,12 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Aircraft data.
  * @author Luke
- * @version 8.7
+ * @version 9.0
  * @since 1.0
  */
 
 public class GetAircraft extends DAO {
-	
+
 	private static final Cache<Aircraft> _cache = CacheManager.get(Aircraft.class, "AircraftInfo");
 
 	/**
@@ -29,7 +29,7 @@ public class GetAircraft extends DAO {
 	public GetAircraft(Connection c) {
 		super(c);
 	}
-	
+
 	/**
 	 * Loads a particular aircraft profile.
 	 * @param name the aircraft name
@@ -38,19 +38,16 @@ public class GetAircraft extends DAO {
 	 */
 	public Aircraft get(String name) throws DAOException {
 		Aircraft a = _cache.get(name);
-		if (a != null)
-			return a;
-		
-		try {
-			prepareStatementWithoutLimits("SELECT * FROM common.AIRCRAFT WHERE (NAME=?) LIMIT 1");
-			_ps.setString(1, name);
-			List<Aircraft> results = execute();
-			return results.isEmpty() ? null : results.get(0);
+		if (a != null) return a;
+
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM common.AIRCRAFT WHERE (NAME=?) LIMIT 1")) {
+			ps.setString(1, name);
+			return execute(ps).stream().findFirst().orElse(null);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 	}
-	
+
 	/**
 	 * Loads a particular aircraft by IATA code.
 	 * @param iataCode the IATA code
@@ -58,11 +55,9 @@ public class GetAircraft extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Aircraft getIATA(String iataCode) throws DAOException {
-		try {
-			prepareStatement("SELECT * FROM common.AIRCRAFT WHERE (INSTR(IATA, ?) > 0)");
-			_ps.setString(1, iataCode);
-			List<Aircraft> results = execute();
-			return results.isEmpty() ? null : results.get(0);
+		try (PreparedStatement ps = prepare("SELECT * FROM common.AIRCRAFT WHERE (INSTR(IATA, ?) > 0)")) {
+			ps.setString(1, iataCode);
+			return execute(ps).stream().findFirst().orElse(null);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -74,9 +69,8 @@ public class GetAircraft extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<Aircraft> getAll() throws DAOException {
-		try {
-			prepareStatement("SELECT * FROM common.AIRCRAFT");
-			return execute();
+		try (PreparedStatement ps = prepare("SELECT * FROM common.AIRCRAFT")) {
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -98,15 +92,14 @@ public class GetAircraft extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Aircraft> getAircraftTypes(String airlineCode) throws DAOException {
-		try {
-			prepareStatement("SELECT A.* FROM common.AIRCRAFT A, common.AIRCRAFT_AIRLINE AA WHERE (A.NAME=AA.NAME) AND (AA.AIRLINE=?)");
-			_ps.setString(1, airlineCode);
-			return execute();
+		try (PreparedStatement ps = prepare("SELECT A.* FROM common.AIRCRAFT A, common.AIRCRAFT_AIRLINE AA WHERE (A.NAME=AA.NAME) AND (AA.AIRLINE=?)")) {
+			ps.setString(1, airlineCode);
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 	}
-	
+
 	/**
 	 * Returns aircraft used by a particular pilot.
 	 * @param pilotID the Pilot database ID
@@ -114,21 +107,20 @@ public class GetAircraft extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Aircraft> getAircraftTypes(int pilotID) throws DAOException {
-		try {
-			prepareStatement("SELECT DISTINCT A.* FROM common.AIRCRAFT A, PIREPS PR WHERE (A.NAME=PR.EQTYPE) AND (PR.PILOT_ID=?) ORDER BY A.NAME");
-			_ps.setInt(1, pilotID);
-			return execute();
+		try (PreparedStatement ps = prepare("SELECT DISTINCT A.* FROM common.AIRCRAFT A, PIREPS PR WHERE (A.NAME=PR.EQTYPE) AND (PR.PILOT_ID=?) ORDER BY A.NAME")) {
+			ps.setInt(1, pilotID);
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 	}
-	
+
 	/*
 	 * Helper method to process result sets.
 	 */
-	private List<Aircraft> execute() throws SQLException {
+	private List<Aircraft> execute(PreparedStatement ps) throws SQLException {
 		Map<String, Aircraft> results = new LinkedHashMap<String, Aircraft>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
 				Aircraft a = new Aircraft(rs.getString(1));
 				a.setFullName(rs.getString(2));
@@ -155,27 +147,25 @@ public class GetAircraft extends DAO {
 			}
 		}
 
-		_ps.close();
-
 		// Load the webapp data
-		prepareStatementWithoutLimits("SELECT * FROM common.AIRCRAFT_AIRLINE");
-		try (ResultSet rs = _ps.executeQuery()) {
-			while (rs.next()) {
-				Aircraft a = results.get(rs.getString(1));
-				if (a == null) continue;
-				AircraftPolicyOptions opts = new AircraftPolicyOptions(a.getName(), rs.getString(2));
-				opts.setRange(rs.getInt(3));
-				opts.setETOPS(ETOPS.fromCode(rs.getInt(4)));
-				opts.setSeats(rs.getInt(5));
-				opts.setTakeoffRunwayLength(rs.getInt(6));
-				opts.setLandingRunwayLength(rs.getInt(7));
-				opts.setUseSoftRunways(rs.getBoolean(8));
-				a.addApp(opts);
+		try (PreparedStatement ps2 = prepareWithoutLimits("SELECT * FROM common.AIRCRAFT_AIRLINE")) {
+			try (ResultSet rs = ps2.executeQuery()) {
+				while (rs.next()) {
+					Aircraft a = results.get(rs.getString(1));
+					if (a == null)
+						continue;
+					AircraftPolicyOptions opts = new AircraftPolicyOptions(a.getName(), rs.getString(2));
+					opts.setRange(rs.getInt(3));
+					opts.setETOPS(ETOPS.fromCode(rs.getInt(4)));
+					opts.setSeats(rs.getInt(5));
+					opts.setTakeoffRunwayLength(rs.getInt(6));
+					opts.setLandingRunwayLength(rs.getInt(7));
+					opts.setUseSoftRunways(rs.getBoolean(8));
+					a.addApp(opts);
+				}
 			}
 		}
 
-		_ps.close();
-		
 		// Add to cache and return
 		List<Aircraft> ac = new ArrayList<Aircraft>(results.values());
 		ac.forEach(_cache::add);

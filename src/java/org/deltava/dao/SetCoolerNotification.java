@@ -1,4 +1,4 @@
-// Copyright 2005, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2008, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -6,7 +6,7 @@ import java.sql.*;
 /**
  * A Data Access Object to update Water Cooler thread notification entries.
  * @author Luke
- * @version 2.1
+ * @version 9.0
  * @since 1.0
  */
 
@@ -26,10 +26,9 @@ public class SetCoolerNotification extends DAO {
     * @throws DAOException if a JDBC error occurs
     */
    public void clear(int threadID) throws DAOException {
-      try {
-         prepareStatementWithoutLimits("DELETE FROM common.COOLER_NOTIFY WHERE (THREAD_ID=?)");
-         _ps.setInt(1, threadID);
-         executeUpdate(0);
+	   try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM common.COOLER_NOTIFY WHERE (THREAD_ID=?)")) {
+         ps.setInt(1, threadID);
+         executeUpdate(ps, 0);
       } catch (SQLException se) {
          throw new DAOException(se);
       }
@@ -42,11 +41,10 @@ public class SetCoolerNotification extends DAO {
     * @throws DAOException if a JDBC error occurs
     */
    public void add(int threadID, int userID) throws DAOException {
-      try {
-         prepareStatement("REPLACE INTO common.COOLER_NOTIFY (THREAD_ID, USER_ID, CREATED) VALUES (?, ?, NOW())");
-         _ps.setInt(1, threadID);
-         _ps.setInt(2, userID);
-         executeUpdate(1);
+	   try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO common.COOLER_NOTIFY (THREAD_ID, USER_ID, CREATED) VALUES (?, ?, NOW())")) {
+         ps.setInt(1, threadID);
+         ps.setInt(2, userID);
+         executeUpdate(ps, 1);
       } catch (SQLException se) {
          throw new DAOException(se);
       }
@@ -59,11 +57,10 @@ public class SetCoolerNotification extends DAO {
     * @throws DAOException if a JDBC error occurs
     */
    public void delete(int threadID, int userID) throws DAOException {
-      try {
-         prepareStatement("DELETE FROM common.COOLER_NOTIFY WHERE (THREAD_ID=?) AND (USER_ID=?)");
-         _ps.setInt(1, threadID);
-         _ps.setInt(2, userID);
-         executeUpdate(0);
+	   try (PreparedStatement ps = prepare("DELETE FROM common.COOLER_NOTIFY WHERE (THREAD_ID=?) AND (USER_ID=?)")) {
+         ps.setInt(1, threadID);
+         ps.setInt(2, userID);
+         executeUpdate(ps, 0);
       } catch (SQLException se) {
          throw new DAOException(se);
       }

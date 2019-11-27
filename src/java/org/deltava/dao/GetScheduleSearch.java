@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to search the Flight Schedule.
  * @author Luke
- * @version 8.6
+ * @version 9.0
  * @since 1.0
  */
 
@@ -242,13 +242,12 @@ public class GetScheduleSearch extends GetSchedule {
 		buf.append(" ORDER BY ");
 		buf.append(ssc.getSortBy());
 		
-		try {
-			prepareStatement(buf.toString()); 
-			_ps.setInt(1, ssc.getPilotID()); int ofs = 1;
+		try (PreparedStatement ps = prepare(buf.toString())) { 
+			ps.setInt(1, ssc.getPilotID()); int ofs = 1;
 			for (String p : spm.getParams(ParamTypes.ALL))
-				_ps.setString(++ofs, p);
+				ps.setString(++ofs, p);
 			
-			return execute();
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -291,22 +290,19 @@ public class GetScheduleSearch extends GetSchedule {
 		buf.append(" ORDER BY ");
 		buf.append(ssc.getSortBy());
 		
-		try {
-			prepareStatement(buf.toString());
-			_ps.setInt(1, ssc.getPilotID()); int ofs = 1;
+		try (PreparedStatement ps = prepare(buf.toString())) {
+			ps.setInt(1, ssc.getPilotID()); int ofs = 1;
 			for (String p : spm.getParams(ParamTypes.ALL))
-				_ps.setString(++ofs, p);
+				ps.setString(++ofs, p);
 			
 			// Execute the query
 			Airline al = SystemData.getAirline(SystemData.get("airline.code"));
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					RoutePair fr = new ScheduleRoute(al, SystemData.getAirport(rs.getString(1)), SystemData.getAirport(rs.getString(2)));
 					rts.add(fr);
 				}
 			}
-		
-			_ps.close();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -336,17 +332,18 @@ public class GetScheduleSearch extends GetSchedule {
 		Map<RoutePair, List<ScheduleEntry>> entries = new LinkedHashMap<>();
 		try {
 			for (RoutePair fr : rts) {
-				prepareStatementWithoutLimits(buf.toString());
-				_ps.setInt(1, ssc.getPilotID()); int ofs = 1;
-				for (String p : spm.getParams(ParamTypes.BASE))
-					_ps.setString(++ofs, p);
+				try (PreparedStatement ps = prepareWithoutLimits(buf.toString())) {
+					ps.setInt(1, ssc.getPilotID()); int ofs = 1;
+					for (String p : spm.getParams(ParamTypes.BASE))
+						ps.setString(++ofs, p);
 					
-				_ps.setString(++ofs, fr.getAirportD().getIATA());
-				_ps.setString(++ofs, fr.getAirportA().getIATA());
-				for (String p : spm.getParams(ParamTypes.HAVING))
-					_ps.setString(++ofs, p);
+					ps.setString(++ofs, fr.getAirportD().getIATA());
+					ps.setString(++ofs, fr.getAirportA().getIATA());
+					for (String p : spm.getParams(ParamTypes.HAVING))
+						ps.setString(++ofs, p);
 			
-				entries.put(fr, execute());
+					entries.put(fr, execute(ps));
+				}
 			}
 		} catch (SQLException se) {
 			throw new DAOException(se);

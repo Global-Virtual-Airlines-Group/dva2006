@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load performance data from the database.
  * @author Luke
- * @version 8.1
+ * @version 9.0
  * @since 1.0
  */
 
@@ -74,15 +74,14 @@ public class GetPerformance extends DAO {
 			sqlBuf.append("AND (DISPOSAL_ID=?) ");
 		sqlBuf.append("GROUP BY CATNAME ORDER BY CATNAME");
 		
-		try {
-			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setInt(1, FlightStatus.OK.ordinal());
-			_ps.setInt(2, startDays);
-			_ps.setInt(3, endDays);
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+			ps.setInt(1, FlightStatus.OK.ordinal());
+			ps.setInt(2, startDays);
+			ps.setInt(3, endDays);
 			if (_userID > 0)
-				_ps.setInt(4, _userID);
+				ps.setInt(4, _userID);
 			
-			return execute();
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -107,16 +106,15 @@ public class GetPerformance extends DAO {
 			sqlBuf.append("AND (GRADED_BY=?) ");
 		sqlBuf.append("GROUP BY CATNAME");
 		
-		try {
-			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setInt(1, TestStatus.SCORED.ordinal());
-			_ps.setString(2, SystemData.get("airline.code"));
-			_ps.setInt(3, startDays);
-			_ps.setInt(4, endDays);
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+			ps.setInt(1, TestStatus.SCORED.ordinal());
+			ps.setString(2, SystemData.get("airline.code"));
+			ps.setInt(3, startDays);
+			ps.setInt(4, endDays);
 			if (_userID > 0)
-				_ps.setInt(5, _userID);
+				ps.setInt(5, _userID);
 
-			return execute();
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -143,17 +141,16 @@ public class GetPerformance extends DAO {
 		
 		sqlBuf.append("GROUP BY CATNAME");
 
-		try {
-			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setInt(1, TestStatus.SCORED.ordinal());
-			_ps.setString(2, SystemData.get("airline.code"));
-			_ps.setInt(3, startDays);
-			_ps.setInt(4, endDays);
-			_ps.setString(5, "Initial Hire");
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+			ps.setInt(1, TestStatus.SCORED.ordinal());
+			ps.setString(2, SystemData.get("airline.code"));
+			ps.setInt(3, startDays);
+			ps.setInt(4, endDays);
+			ps.setString(5, "Initial Hire");
 			if (_userID > 0)
-				_ps.setInt(6, _userID);
+				ps.setInt(6, _userID);
 
-			return execute();
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -180,17 +177,17 @@ public class GetPerformance extends DAO {
 			sqlBuf.append("AND (DISPOSAL_ID=?)" );
 		sqlBuf.append("GROUP BY CATNAME ORDER BY CATNAME");
 		
-		try {
-			prepareStatementWithoutLimits(sqlBuf.toString()); int pos = 0;
-			_ps.setInt(++pos, FlightStatus.OK.ordinal());
-			_ps.setInt(++pos, startDays);
-			_ps.setInt(++pos, endDays);
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+			int pos = 0;
+			ps.setInt(++pos, FlightStatus.OK.ordinal());
+			ps.setInt(++pos, startDays);
+			ps.setInt(++pos, endDays);
 			if (isACARS)
-				_ps.setInt(++pos, FlightReport.ATTR_ACARS);
+				ps.setInt(++pos, FlightReport.ATTR_ACARS);
 			if (_userID > 0)
-				_ps.setInt(++pos, _userID);
+				ps.setInt(++pos, _userID);
 			
-			return execute();
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -199,10 +196,10 @@ public class GetPerformance extends DAO {
 	/*
 	 * Helper method to parse result sets.
 	 */
-	private List<PerformanceMetrics> execute() throws SQLException {
+	private List<PerformanceMetrics> execute(PreparedStatement ps) throws SQLException {
 		List<PerformanceMetrics> results = new ArrayList<PerformanceMetrics>();
 		boolean isPilotID = isPilotID();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
 				PerformanceMetrics pm = new PerformanceMetrics(rs.getString(1));
 				pm.setAverage(rs.getDouble(2));
@@ -218,7 +215,6 @@ public class GetPerformance extends DAO {
 			}
 		}
 		
-		_ps.close();
 		return results;
 	}
 }

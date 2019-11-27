@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.acars.*;
 /**
  * A Data Access Object to read the ACARS Dispatcher service calendar.
  * @author Luke
- * @version 7.0
+ * @version 9.0
  * @since 2.2
  */
 
@@ -31,13 +31,11 @@ public class GetDispatchCalendar extends GetACARSData {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<ConnectionEntry> getDispatchConnections(DateRange dr) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT C.ID, C.PILOT_ID, C.DATE, C.ENDDATE, INET6_NTOA(C.REMOTE_ADDR), "
-				+ "C.REMOTE_HOST, C.CLIENT_BUILD, C.BETA_BUILD FROM acars.CONS C WHERE (C.DATE > ?) AND "
-				+ "(C.DATE < ?) ORDER BY C.ID");
-			_ps.setTimestamp(1, createTimestamp(dr.getStartDate()));
-			_ps.setTimestamp(2, createTimestamp(dr.getEndDate()));
-			return executeConnectionInfo();
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT C.ID, C.PILOT_ID, C.DATE, C.ENDDATE, INET6_NTOA(C.REMOTE_ADDR), C.REMOTE_HOST, C.CLIENT_BUILD, C.BETA_BUILD FROM acars.CONS C "
+			+ "WHERE (C.DATE > ?) AND (C.DATE < ?) ORDER BY C.ID")) {
+			ps.setTimestamp(1, createTimestamp(dr.getStartDate()));
+			ps.setTimestamp(2, createTimestamp(dr.getEndDate()));
+			return executeConnectionInfo(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -50,16 +48,13 @@ public class GetDispatchCalendar extends GetACARSData {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<FlightInfo> getDispatchedFlights(DispatchConnectionEntry ce) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT F.*, INET6_NTOA(F.REMOTE_ADDR), FD.ROUTE_ID, "
-				+ "FDR.DISPATCHER_ID FROM acars.FLIGHTS F LEFT JOIN acars.FLIGHT_DISPATCH FD ON (F.ID=FD.ID) "
-				+ "LEFT JOIN acars.FLIGHT_DISPATCHER FDR ON (F.ID=FDR.ID) WHERE (FDR.DISPATCHER_ID=?) AND "
-				+ "(F.CREATED >= ?) AND (F.CREATED < DATE_ADD(?, INTERVAL ? MINUTE))");
-			_ps.setInt(1, ce.getPilotID());
-			_ps.setTimestamp(2, createTimestamp(ce.getStartTime()));
-			_ps.setTimestamp(3, createTimestamp(ce.getEndTime()));
-			_ps.setInt(4, 20);
-			return executeFlightInfo();
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT F.*, INET6_NTOA(F.REMOTE_ADDR), FD.ROUTE_ID, FDR.DISPATCHER_ID FROM acars.FLIGHTS F LEFT JOIN acars.FLIGHT_DISPATCH FD ON (F.ID=FD.ID) "
+				+ "LEFT JOIN acars.FLIGHT_DISPATCHER FDR ON (F.ID=FDR.ID) WHERE (FDR.DISPATCHER_ID=?) AND (F.CREATED >= ?) AND (F.CREATED < DATE_ADD(?, INTERVAL ? MINUTE))")) {
+			ps.setInt(1, ce.getPilotID());
+			ps.setTimestamp(2, createTimestamp(ce.getStartTime()));
+			ps.setTimestamp(3, createTimestamp(ce.getEndTime()));
+			ps.setInt(4, 20);
+			return executeFlightInfo(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -73,14 +68,12 @@ public class GetDispatchCalendar extends GetACARSData {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<FlightInfo> getDispatchedFlights(int id, DateRange dr) throws DAOException {
-		try {
-			prepareStatement("SELECT F.*, INET6_NTOA(F.REMOTE_ADDR), FD.ROUTE_ID, FDR.DISPATCHER_ID FROM "
-				+ "acars.FLIGHT_DISPATCHER FDR, acars.FLIGHTS F LEFT JOIN acars.FLIGHT_DISPATCH FD ON (F.ID=FD.ID) "
-				+ "WHERE (F.ID=FDR.ID) AND (FDR.DISPATCHER_ID=?) AND (F.CREATED >= ?) AND (F.CREATED < ?)");
-			_ps.setInt(1, id);
-			_ps.setTimestamp(2, createTimestamp(dr.getStartDate()));
-			_ps.setTimestamp(3, createTimestamp(dr.getEndDate()));
-			return executeFlightInfo();
+		try (PreparedStatement ps = prepare("SELECT F.*, INET6_NTOA(F.REMOTE_ADDR), FD.ROUTE_ID, FDR.DISPATCHER_ID FROM acars.FLIGHT_DISPATCHER FDR, acars.FLIGHTS F LEFT JOIN acars.FLIGHT_DISPATCH FD "
+			+ "ON (F.ID=FD.ID) WHERE (F.ID=FDR.ID) AND (FDR.DISPATCHER_ID=?) AND (F.CREATED >= ?) AND (F.CREATED < ?)")) {
+			ps.setInt(1, id);
+			ps.setTimestamp(2, createTimestamp(dr.getStartDate()));
+			ps.setTimestamp(3, createTimestamp(dr.getEndDate()));
+			return executeFlightInfo(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -93,11 +86,9 @@ public class GetDispatchCalendar extends GetACARSData {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public DispatchScheduleEntry get(int id) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT * FROM acars.DSP_SCHEDULE WHERE (ID=?) LIMIT 1");
-			_ps.setInt(1, id);
-			List<DispatchScheduleEntry> results = execute();
-			return results.isEmpty() ? null : results.get(0);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM acars.DSP_SCHEDULE WHERE (ID=?) LIMIT 1")) {
+			ps.setInt(1, id);
+			return execute(ps).stream().findFirst().orElse(null);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -127,18 +118,16 @@ public class GetDispatchCalendar extends GetACARSData {
 		sqlBuf.append("ORDER BY STARTTIME");
 		
 		int param = 0;
-		try {
-			prepareStatement(sqlBuf.toString());
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			if (dr != null) {
-				_ps.setTimestamp(++param, createTimestamp(dr.getStartDate()));
-				_ps.setTimestamp(++param, createTimestamp(dr.getEndDate()));
+				ps.setTimestamp(++param, createTimestamp(dr.getStartDate()));
+				ps.setTimestamp(++param, createTimestamp(dr.getEndDate()));
 			}
 			
 			if (dispatcherID > 0)
-				_ps.setInt(++param, dispatcherID);
+				ps.setInt(++param, dispatcherID);
 			
-			// Execute the query
-			return execute();
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -147,9 +136,9 @@ public class GetDispatchCalendar extends GetACARSData {
 	/*
 	 * Helper method to parse result sets.
 	 */
-	private List<DispatchScheduleEntry> execute() throws SQLException {
+	private static List<DispatchScheduleEntry> execute(PreparedStatement ps) throws SQLException {
 		List<DispatchScheduleEntry> results = new ArrayList<DispatchScheduleEntry>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
 				DispatchScheduleEntry e = new DispatchScheduleEntry(rs.getInt(2));
 				e.setStartTime(toInstant(rs.getTimestamp(3)));
@@ -160,7 +149,6 @@ public class GetDispatchCalendar extends GetACARSData {
 			}
 		}
 		
-		_ps.close();
 		return results;
  	}
 }

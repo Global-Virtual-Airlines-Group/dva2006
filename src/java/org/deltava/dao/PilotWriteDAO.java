@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2010, 2016, 2017  Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2010, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to support writing Pilot objects to the database.
  * @author Luke
- * @version 8.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -37,22 +37,23 @@ public abstract class PilotWriteDAO extends DAO {
 
 		// Clear existing roles
 		String dbName = formatDBName(db);
-		prepareStatementWithoutLimits("DELETE FROM " + dbName + ".ROLES WHERE (ID=?)");
-		_ps.setInt(1, id);
-		executeUpdate(0);
-
-		// Write the roles to the database - don't add the "pilot" role
-		prepareStatementWithoutLimits("INSERT INTO " + dbName + ".ROLES (ID, ROLE) VALUES (?, ?)");
-		_ps.setInt(1, id);
-		for (Iterator<String> i = roles.iterator(); i.hasNext();) {
-			String role = i.next();
-			if (!"Pilot".equals(role)) {
-				_ps.setString(2, role);
-				_ps.addBatch();
-			}
+		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM " + dbName + ".ROLES WHERE (ID=?)")) {
+			ps.setInt(1, id);
+			executeUpdate(ps, 0);
 		}
 
-		executeBatchUpdate(1, 0);
+		// Write the roles to the database - don't add the "pilot" role
+		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO " + dbName + ".ROLES (ID, ROLE) VALUES (?, ?)")) {
+			ps.setInt(1, id);
+			for (String role : roles) {
+				if (!"Pilot".equals(role)) {
+					ps.setString(2, role);
+					ps.addBatch();
+				}
+			}
+			
+			executeUpdate(ps, 1, 0);
+		}
 	}
 
 	/**
@@ -68,20 +69,22 @@ public abstract class PilotWriteDAO extends DAO {
 		// Clear existing ratings
 		String dbName = formatDBName(db);
 		if (doClear) {
-			prepareStatementWithoutLimits("DELETE FROM " + dbName + ".RATINGS WHERE (ID=?)");
-			_ps.setInt(1, id);
-			executeUpdate(0);
+			try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM " + dbName + ".RATINGS WHERE (ID=?)")) {
+				ps.setInt(1, id);
+				executeUpdate(ps, 0);
+			}
 		}
 
 		// Write the ratings to the database
-		prepareStatementWithoutLimits("REPLACE INTO " + dbName + ".RATINGS (ID, RATING) VALUES (?, ?)");
-		_ps.setInt(1, id);
-		for (Iterator<String> i = ratings.iterator(); i.hasNext();) {
-			_ps.setString(2, i.next());
-			_ps.addBatch();
-		}
+		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO " + dbName + ".RATINGS (ID, RATING) VALUES (?, ?)")) {
+			ps.setInt(1, id);
+			for (String r : ratings) {
+				ps.setString(2, r);
+				ps.addBatch();
+			}
 
-		executeBatchUpdate(1, ratings.size());
+			executeUpdate(ps, 1, ratings.size());
+		}
 	}
 	
 	/**
@@ -97,21 +100,23 @@ public abstract class PilotWriteDAO extends DAO {
 		// Clear existing ratings
 		String dbName = formatDBName(db);
 		if (doClear) {
-			prepareStatementWithoutLimits("DELETE FROM " + dbName + ".PILOT_IMADDR WHERE (ID=?)");
-			_ps.setInt(1, id);
-			executeUpdate(0);
+			try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM " + dbName + ".PILOT_IMADDR WHERE (ID=?)")) {
+				ps.setInt(1, id);
+				executeUpdate(ps, 0);
+			}
 		}
 		
 		// Write the IM addrs to the database
-		prepareStatementWithoutLimits("REPLACE INTO " + dbName + ".PILOT_IMADDR (ID, TYPE, ADDR) VALUES (?, ?, ?)");
-		_ps.setInt(1, id);
-		for (Map.Entry<IMAddress, String> me : addrs.entrySet()) {
-			_ps.setString(2, me.getKey().toString());
-			_ps.setString(3, me.getValue());
-			_ps.addBatch();
-		}
+		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO " + dbName + ".PILOT_IMADDR (ID, TYPE, ADDR) VALUES (?, ?, ?)")) {
+			ps.setInt(1, id);
+			for (Map.Entry<IMAddress, String> me : addrs.entrySet()) {
+				ps.setString(2, me.getKey().toString());
+				ps.setString(3, me.getValue());
+				ps.addBatch();
+			}
 		
-		executeBatchUpdate(1, addrs.size());
+			executeUpdate(ps, 1, addrs.size());
+		}
 	}
 	
 	/**
@@ -121,17 +126,18 @@ public abstract class PilotWriteDAO extends DAO {
 	 * @throws SQLException if a JDBC error occurs
 	 */
 	protected void writeAlias(int id, String uid) throws SQLException {
-		if (!SystemData.getBoolean("security.auth_alias"))
-			return;
+		if (!SystemData.getBoolean("security.auth_alias")) return;
 		
 		// Write the alias
-		prepareStatementWithoutLimits((uid == null) ? "DELETE FROM common.AUTH_ALIAS WHERE (ID=?)" : "REPLACE INTO common.AUTH_ALIAS (ID, USERID) VALUES (?, ?)");
-		_ps.setInt(1, id);
-		if (uid != null)
-			_ps.setString(2, uid);
+		try (PreparedStatement ps = prepareWithoutLimits((uid == null) ? "DELETE FROM common.AUTH_ALIAS WHERE (ID=?)" : "REPLACE INTO common.AUTH_ALIAS (ID, USERID) VALUES (?, ?)")) {
+			ps.setInt(1, id);
+			if (uid != null)
+				ps.setString(2, uid);
 		
-		executeUpdate(0);
-		CacheManager.invalidate("Pilots", Integer.valueOf(id));
+			executeUpdate(ps, 0);
+		} finally {
+			CacheManager.invalidate("Pilots", Integer.valueOf(id));
+		}
 	}
 	
 	/**
@@ -141,11 +147,10 @@ public abstract class PilotWriteDAO extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void setStatus(int id, int status) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("UPDATE PILOTS SET STATUS=? WHERE (ID=?)");
-			_ps.setInt(1, status);
-			_ps.setInt(2, id);
-			executeUpdate(1);
+		try (PreparedStatement ps = prepareWithoutLimits("UPDATE PILOTS SET STATUS=? WHERE (ID=?)")) {
+			ps.setInt(1, status);
+			ps.setInt(2, id);
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		} finally {

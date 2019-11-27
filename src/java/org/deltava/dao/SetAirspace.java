@@ -1,4 +1,4 @@
-// Copyright 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -14,7 +14,7 @@ import org.deltava.util.GeoUtils;
 /**
  * A Data Access Object to write Airspace boundaries to the database.
  * @author Luke
- * @version 8.5
+ * @version 9.0
  * @since 7.3
  */
 
@@ -34,23 +34,21 @@ public class SetAirspace extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(Airspace a) throws DAOException {
-		
 		Geometry geo = GeoUtils.toGeometry(a.getBorder());
-		try {
-			prepareStatementWithoutLimits("REPLACE INTO common.AIRSPACE (ID, NAME, COUNTRY, TYPE, EXCLUSION, MIN_ALT, MAX_ALT, LATITUDE, LONGITUDE, DATA) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ST_GeomFromText(?, ?))");
-			_ps.setString(1, a.getID());
-			_ps.setString(2, a.getName());
-			_ps.setString(3, a.getCountry().getCode());
-			_ps.setInt(4, a.getType().ordinal());
-			_ps.setBoolean(5, a.isExclusion());
-			_ps.setInt(6, a.getMinAltitude());
-			_ps.setInt(7, a.getMaxAltitude());
-			_ps.setDouble(8, a.getLatitude());
-			_ps.setDouble(9,  a.getLongitude());
+		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO common.AIRSPACE (ID, NAME, COUNTRY, TYPE, EXCLUSION, MIN_ALT, MAX_ALT, LATITUDE, LONGITUDE, DATA) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ST_GeomFromText(?, ?))")) {
+			ps.setString(1, a.getID());
+			ps.setString(2, a.getName());
+			ps.setString(3, a.getCountry().getCode());
+			ps.setInt(4, a.getType().ordinal());
+			ps.setBoolean(5, a.isExclusion());
+			ps.setInt(6, a.getMinAltitude());
+			ps.setInt(7, a.getMaxAltitude());
+			ps.setDouble(8, a.getLatitude());
+			ps.setDouble(9,  a.getLongitude());
 			WKTWriter ww = new WKTWriter();
-			_ps.setString(10, ww.write(geo));
-			_ps.setInt(11, WGS84_SRID);
-			executeUpdate(1);
+			ps.setString(10, ww.write(geo));
+			ps.setInt(11, WGS84_SRID);
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -63,10 +61,9 @@ public class SetAirspace extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public int clear(Country c) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("DELETE FROM common.AIRSPACE WHERE (COUNTRY=?)");
-			_ps.setString(1, c.getCode());
-			return executeUpdate(0);
+		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM common.AIRSPACE WHERE (COUNTRY=?)")) {
+			ps.setString(1, c.getCode());
+			return executeUpdate(ps, 0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

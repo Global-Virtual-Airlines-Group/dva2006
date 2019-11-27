@@ -1,4 +1,4 @@
-// Copyright 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.servinfo.*;
 /**
  * A Data Access Object to write aggregated VATSIM and IVAO usage data.
  * @author Luke
- * @version 8.0
+ * @version 9.0
  * @since 6.1
  */
 
@@ -38,18 +38,17 @@ public class SetOnlineTime extends DAO {
 		sqlBuf.append(net.name());
 		sqlBuf.append("_STATS (ID, DATE, CALLSIGN, USETIME, RATING) VALUES (?, CURDATE(), ?, ?, ?) ON DUPLICATE KEY UPDATE USETIME=USETIME+?");
 		
-		try {
-			prepareStatementWithoutLimits(sqlBuf.toString());
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 			for (ConnectedUser usr : users) {
-				_ps.setInt(1, usr.getID());
-				_ps.setString(2, usr.getCallsign());
-				_ps.setInt(3, interval);
-				_ps.setInt(4, (usr.getType() == NetworkUser.Type.PILOT) ? 0 : usr.getRating().ordinal());
-				_ps.setInt(5, interval);
-				_ps.addBatch();
+				ps.setInt(1, usr.getID());
+				ps.setString(2, usr.getCallsign());
+				ps.setInt(3, interval);
+				ps.setInt(4, (usr.getType() == NetworkUser.Type.PILOT) ? 0 : usr.getRating().ordinal());
+				ps.setInt(5, interval);
+				ps.addBatch();
 			}
 			
-			executeBatchUpdate(1, users.size());
+			executeUpdate(ps, 1, users.size());
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -63,25 +62,28 @@ public class SetOnlineTime extends DAO {
 	public void writeRatings(Collection<PilotRating> ratings) throws DAOException {
 		try {
 			startTransaction();
-			prepareStatementWithoutLimits("INSERT INTO online.RATINGS (ID, NETWORK, RATING, CREATED, UPDATED, INS_ID, ATO) VALUES (?, ?, ?, ?, NOW(), ?, ?) ON DUPLICATE KEY UPDATE UPDATED=NOW()");
-			int cnt = 0;
-			for (PilotRating pr : ratings) {
-				_ps.setInt(1, pr.getID());
-				_ps.setString(2, pr.getNetwork().toString());
-				_ps.setString(3, pr.getRatingCode());
-				_ps.setTimestamp(4, createTimestamp(pr.getIssueDate()));
-				_ps.setInt(5, pr.getInstructor());
-				_ps.setString(6, pr.getATOName());
-				_ps.addBatch();
-				cnt++;
-				if ((cnt % 100) == 0) {
-					_ps.executeBatch();
-					cnt = 0;
+			
+			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO online.RATINGS (ID, NETWORK, RATING, CREATED, UPDATED, INS_ID, ATO) VALUES (?, ?, ?, ?, NOW(), ?, ?) ON DUPLICATE KEY UPDATE UPDATED=NOW()")) {
+				int cnt = 0;
+				for (PilotRating pr : ratings) {
+					ps.setInt(1, pr.getID());
+					ps.setString(2, pr.getNetwork().toString());
+					ps.setString(3, pr.getRatingCode());
+					ps.setTimestamp(4, createTimestamp(pr.getIssueDate()));
+					ps.setInt(5, pr.getInstructor());
+					ps.setString(6, pr.getATOName());
+					ps.addBatch();
+					cnt++;
+					if ((cnt % 100) == 0) {
+						ps.executeBatch();
+						cnt = 0;
+					}
 				}
+			
+				if (cnt > 0)
+					executeUpdate(ps, 1, cnt);
 			}
 			
-			if (cnt > 0)
-				executeBatchUpdate(1, cnt);
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();

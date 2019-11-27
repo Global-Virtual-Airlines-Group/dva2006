@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2011, 2012, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -15,7 +15,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to load TeamSpeak 2 configuration data.
  * @author Luke
- * @version 7.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -54,11 +54,9 @@ public class GetTS2Data extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Channel getChannel(int id) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT * FROM teamspeak.ts2_channels WHERE (i_channel_id=?) LIMIT 1");
-			_ps.setInt(1, id);
-			List<Channel> results = executeChannels();
-			return results.isEmpty() ? null : results.get(0);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM teamspeak.ts2_channels WHERE (i_channel_id=?) LIMIT 1")) {
+			ps.setInt(1, id);
+			return executeChannels(ps).stream().findFirst().orElse(null);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -70,9 +68,8 @@ public class GetTS2Data extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Channel> getChannels() throws DAOException {
-		try {
-			prepareStatement("SELECT * FROM teamspeak.ts2_channels ORDER BY i_channel_server_id");
-			return executeChannels();
+		try (PreparedStatement ps = prepare("SELECT * FROM teamspeak.ts2_channels ORDER BY i_channel_server_id")) {
+			return executeChannels(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -85,10 +82,9 @@ public class GetTS2Data extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<Client> getUsers(int id) throws DAOException {
-		try {
-			prepareStatement("SELECT * FROM teamspeak.ts2_clients WHERE (i_client_id=?)");
-			_ps.setInt(1, id);
-			return executeUsers();
+		try (PreparedStatement ps = prepare("SELECT * FROM teamspeak.ts2_clients WHERE (i_client_id=?)")) {
+			ps.setInt(1, id);
+			return executeUsers(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -100,9 +96,8 @@ public class GetTS2Data extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Client> getUsers() throws DAOException {
-		try {
-			prepareStatement("SELECT * FROM teamspeak.ts2_clients ORDER BY s_client_name");
-			return executeUsers();
+		try (PreparedStatement ps = prepare("SELECT * FROM teamspeak.ts2_clients ORDER BY s_client_name")) {
+			return executeUsers(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -115,10 +110,9 @@ public class GetTS2Data extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Client> getUsersByServer(int serverID) throws DAOException {
-		try {
-			prepareStatement("SELECT * FROM teamspeak.ts2_clients WHERE (i_client_server_id=?) ORDER BY s_client_name");
-			_ps.setInt(1, serverID);
-			return executeUsers();
+		try (PreparedStatement ps = prepare("SELECT * FROM teamspeak.ts2_clients WHERE (i_client_server_id=?) ORDER BY s_client_name")) {
+			ps.setInt(1, serverID);
+			return executeUsers(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -130,10 +124,9 @@ public class GetTS2Data extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Server> getServers() throws DAOException {
-		try {
-			prepareStatement("SELECT i_server_id, s_server_name, s_server_welcomemessage, i_server_maxusers, i_server_udpport, s_server_password, b_server_active, dt_server_created, s_server_description, "
-				+ "b_server_no_acars FROM teamspeak.ts2_servers");
-			return executeServers();
+		try (PreparedStatement ps = prepare("SELECT i_server_id, s_server_name, s_server_welcomemessage, i_server_maxusers, i_server_udpport, s_server_password, b_server_active, dt_server_created, "
+			+ "s_server_description, b_server_no_acars FROM teamspeak.ts2_servers")) {
+			return executeServers(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -146,13 +139,10 @@ public class GetTS2Data extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Server> getServers(int id) throws DAOException {
-		try {
-			prepareStatement("SELECT DISTINCT s.i_server_id, s.s_server_name, s.s_server_welcomemessage, "
-					+ "s.i_server_maxusers, s.i_server_udpport, s.s_server_password, s.b_server_active, s.dt_server_created, "
-					+ "s.s_server_description, b_server_no_acars FROM teamspeak.ts2_servers s, teamspeak.ts2_clients c "
-					+ "WHERE (c.i_client_id=?) AND (s.i_server_id=c.i_client_server_id)");
-			_ps.setInt(1, id);
-			return executeServers();
+		try (PreparedStatement ps = prepare("SELECT DISTINCT s.i_server_id, s.s_server_name, s.s_server_welcomemessage, s.i_server_maxusers, s.i_server_udpport, s.s_server_password, s.b_server_active, "
+			+ "s.dt_server_created, s.s_server_description, b_server_no_acars FROM teamspeak.ts2_servers s, teamspeak.ts2_clients c WHERE (c.i_client_id=?) AND (s.i_server_id=c.i_client_server_id)")) {
+			ps.setInt(1, id);
+			return executeServers(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -182,9 +172,8 @@ public class GetTS2Data extends DAO {
 
 		sqlBuf.append(')');
 
-		try {
-			prepareStatement(sqlBuf.toString());
-			return executeServers();
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			return executeServers(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -197,13 +186,10 @@ public class GetTS2Data extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Server getServer(int id) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT i_server_id, s_server_name, s_server_welcomemessage, i_server_maxusers, i_server_udpport, s_server_password, b_server_active, dt_server_created, s_server_description, "
-				+ "b_server_no_acars FROM teamspeak.ts2_servers WHERE (i_server_id=?) LIMIT 1");
-			_ps.setInt(1, id);
-			
-			List<Server> results = executeServers();
-			return results.isEmpty() ? null : results.get(0);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT i_server_id, s_server_name, s_server_welcomemessage, i_server_maxusers, i_server_udpport, s_server_password, b_server_active, "
+			+ "dt_server_created, s_server_description, b_server_no_acars FROM teamspeak.ts2_servers WHERE (i_server_id=?) LIMIT 1")) {
+			ps.setInt(1, id);
+			return executeServers(ps).stream().findFirst().orElse(null);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -212,9 +198,9 @@ public class GetTS2Data extends DAO {
 	/*
 	 * Helper method to parse Channel result sets.
 	 */
-	private List<Channel> executeChannels() throws SQLException {
+	private static List<Channel> executeChannels(PreparedStatement ps) throws SQLException {
 		List<Channel> results = new ArrayList<Channel>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
 				Channel c = new Channel(rs.getString(10));
 				c.setID(rs.getInt(1));
@@ -232,19 +218,18 @@ public class GetTS2Data extends DAO {
 			}
 		}
 
-		_ps.close();
 		return results;
 	}
 
 	/*
 	 * Helper method to parse User result sets.
 	 */
-	private List<Client> executeUsers() throws SQLException {
+	private List<Client> executeUsers(PreparedStatement ps) throws SQLException {
 		Map<String, Client> results = new HashMap<String, Client>();
 		Collection<Integer> userIDs = new HashSet<Integer>();
 
 		// Execute the query
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
 				Client usr = new Client(rs.getString(4));
 				usr.setID(rs.getInt(1));
@@ -259,8 +244,6 @@ public class GetTS2Data extends DAO {
 			}
 		}
 
-		_ps.close();
-
 		// Load client privileges
 		if (!results.isEmpty()) {
 			StringBuilder buf = new StringBuilder("SELECT * FROM teamspeak.ts2_channel_privileges WHERE (i_cp_client_id ");
@@ -274,33 +257,35 @@ public class GetTS2Data extends DAO {
 				buf.append("))");
 			}
 			
-			prepareStatementWithoutLimits(buf.toString());
-			try (ResultSet rs = _ps.executeQuery()) {
-				while (rs.next()) {
-					// Build the key
-					StringBuilder keyBuf = new StringBuilder(String.valueOf(rs.getInt(4)));
-					keyBuf.append('-');
-					keyBuf.append(String.valueOf(rs.getInt(2)));
+			try (PreparedStatement ps2 = prepareWithoutLimits(buf.toString())) {
+				try (ResultSet rs = ps2.executeQuery()) {
+					while (rs.next()) {
+						// Build the key
+						StringBuilder keyBuf = new StringBuilder(String.valueOf(rs.getInt(4)));
+						keyBuf.append('-');
+						keyBuf.append(String.valueOf(rs.getInt(2)));
 				
-					// Get the client record
-					Client c = results.get(keyBuf.toString());
-					if (c != null) {
-						c.setServerAdmin(rs.getInt(5) == -1);
-						c.setServerOperator(rs.getInt(6) == -1);
-						c.setAutoVoice(rs.getInt(7) == -1);
+						// Get the client record
+						Client c = results.get(keyBuf.toString());
+						if (c != null) {
+							c.setServerAdmin(rs.getInt(5) == -1);
+							c.setServerOperator(rs.getInt(6) == -1);
+							c.setAutoVoice(rs.getInt(7) == -1);
+						}
 					}
 				}
 			}
-
-			_ps.close();
 		}
 
 		return new ArrayList<Client>(results.values());
 	}
 
-	private List<Server> executeServers() throws SQLException {
+	/*
+	 * Helper method to parse TS2 server result sets.
+	 */
+	private List<Server> executeServers(PreparedStatement ps) throws SQLException {
 		Map<Integer, Server> results = new TreeMap<Integer, Server>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
 				Server srv = new Server(rs.getString(2));
 				srv.setID(rs.getInt(1));
@@ -316,36 +301,34 @@ public class GetTS2Data extends DAO {
 			}
 		}
 
-		_ps.close();
-
 		// Load roles for each server
-		prepareStatementWithoutLimits("SELECT * FROM teamspeak.ts2_server_roles");
-		try (ResultSet rs = _ps.executeQuery()) {
-			while (rs.next()) {
-				Server srv = results.get(Integer.valueOf(rs.getInt(1)));
-				if (srv == null)
-					continue;
+		try (PreparedStatement ps2 = prepareWithoutLimits("SELECT * FROM teamspeak.ts2_server_roles")) {
+			try (ResultSet rs = ps2.executeQuery()) {
+				while (rs.next()) {
+					Server srv = results.get(Integer.valueOf(rs.getInt(1)));
+					if (srv == null)
+						continue;
 				
-				String role = rs.getString(2);
-				srv.addRole(ServerAccess.ACCESS, role);
-				if (rs.getBoolean(3))
-					srv.addRole(ServerAccess.ADMIN, role);
-				if (rs.getBoolean(4))
-					srv.addRole(ServerAccess.OPERATOR, role);
-				if (rs.getBoolean(5))
-					srv.addRole(ServerAccess.VOICE, role);
+					String role = rs.getString(2);
+					srv.addRole(ServerAccess.ACCESS, role);
+					if (rs.getBoolean(3))
+						srv.addRole(ServerAccess.ADMIN, role);
+					if (rs.getBoolean(4))
+						srv.addRole(ServerAccess.OPERATOR, role);
+					if (rs.getBoolean(5))
+						srv.addRole(ServerAccess.VOICE, role);
+				}
 			}
 		}
 
-		_ps.close();
-
 		// Load servers
-		prepareStatementWithoutLimits("SELECT * FROM teamspeak.ts2_channels ORDER BY s_channel_name");
-		Collection<Channel> channels = executeChannels();
-		for (Channel c : channels) {
-			Server srv = results.get(Integer.valueOf(c.getServerID()));
-			if (srv != null)
-				srv.addChannel(c);
+		try (PreparedStatement ps2 = prepareWithoutLimits("SELECT * FROM teamspeak.ts2_channels ORDER BY s_channel_name")) {
+			Collection<Channel> channels = executeChannels(ps2);
+			for (Channel c : channels) {
+				Server srv = results.get(Integer.valueOf(c.getServerID()));
+				if (srv != null)
+					srv.addChannel(c);
+			}
 		}
 
 		return new ArrayList<Server>(results.values());

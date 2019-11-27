@@ -10,7 +10,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to write equipment program Transfer Requests.
  * @author Luke
- * @version 8.6
+ * @version 9.0
  * @since 1.0
  */
 
@@ -34,14 +34,15 @@ public class SetTransferRequest extends DAO {
 		String db = formatDBName(dbName);
 		try {
 			startTransaction();
-            prepareStatement("INSERT INTO " + db + ".TXREQUESTS (STATUS, EQTYPE, ACTYPE, CREATED, RATING_ONLY, SIM, ID) VALUES (?, ?, ?, NOW(), ?, ?, ?)");
-            _ps.setInt(1, txreq.getStatus().ordinal());
-            _ps.setString(2, txreq.getEquipmentType());
-            _ps.setString(3, txreq.getAircraftType());
-            _ps.setBoolean(4, txreq.getRatingOnly());
-            _ps.setInt(5,  txreq.getSimulator().getCode());
-            _ps.setInt(6, txreq.getID());
-            executeUpdate(1);
+			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO " + db + ".TXREQUESTS (STATUS, EQTYPE, ACTYPE, CREATED, RATING_ONLY, SIM, ID) VALUES (?, ?, ?, NOW(), ?, ?, ?)")) {
+				ps.setInt(1, txreq.getStatus().ordinal());
+				ps.setString(2, txreq.getEquipmentType());
+				ps.setString(3, txreq.getAircraftType());
+				ps.setBoolean(4, txreq.getRatingOnly());
+				ps.setInt(5,  txreq.getSimulator().getCode());
+				ps.setInt(6, txreq.getID());
+            	executeUpdate(ps, 1);
+			}
             
 			// Write check ride IDs
 			writeRides(txreq, db);
@@ -60,15 +61,16 @@ public class SetTransferRequest extends DAO {
 	public void update(TransferRequest txreq) throws DAOException {
 		try {
 			startTransaction();
-			prepareStatement("UPDATE TXREQUESTS SET STATUS=?, EQTYPE=?, ACTYPE=?, CREATED=?, RATING_ONLY=?, SIM=? WHERE (ID=?)");
-			_ps.setInt(1, txreq.getStatus().ordinal());
-			_ps.setString(2, txreq.getEquipmentType());
-			_ps.setString(3, txreq.getAircraftType());
-			_ps.setTimestamp(4, createTimestamp(txreq.getDate()));
-			_ps.setBoolean(5, txreq.getRatingOnly());
-			_ps.setInt(6, txreq.getSimulator().getCode());
-			_ps.setInt(7, txreq.getID());
-			executeUpdate(1);
+			try (PreparedStatement ps = prepare("UPDATE TXREQUESTS SET STATUS=?, EQTYPE=?, ACTYPE=?, CREATED=?, RATING_ONLY=?, SIM=? WHERE (ID=?)")) {
+				ps.setInt(1, txreq.getStatus().ordinal());
+				ps.setString(2, txreq.getEquipmentType());
+				ps.setString(3, txreq.getAircraftType());
+				ps.setTimestamp(4, createTimestamp(txreq.getDate()));
+				ps.setBoolean(5, txreq.getRatingOnly());
+				ps.setInt(6, txreq.getSimulator().getCode());
+				ps.setInt(7, txreq.getID());
+				executeUpdate(ps, 1);
+			}
 			
 			// Write check ride IDs
 			writeRides(txreq, formatDBName(SystemData.get("airline.db")));
@@ -85,19 +87,21 @@ public class SetTransferRequest extends DAO {
 	private void writeRides(TransferRequest txreq, String db) throws SQLException {
 		
 		// Clear the check rides
-		prepareStatementWithoutLimits("DELETE FROM " + db + ".TXRIDES WHERE (ID=?)");
-		_ps.setInt(1, txreq.getID());
-		executeUpdate(0);
-		
-		// Write the check rides
-		prepareStatementWithoutLimits("INSERT INTO " + db + ".TXRIDES (ID, CHECKRIDE_ID) VALUES (?, ?)");
-		_ps.setInt(1, txreq.getID());
-		for (Integer ID : txreq.getCheckRideIDs()) {
-			_ps.setInt(2, ID.intValue());
-			_ps.addBatch();
+		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM " + db + ".TXRIDES WHERE (ID=?)")) {
+			ps.setInt(1, txreq.getID());
+			executeUpdate(ps, 0);
 		}
 		
-		executeBatchUpdate(1, txreq.getCheckRideIDs().size());
+		// Write the check rides
+		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO " + db + ".TXRIDES (ID, CHECKRIDE_ID) VALUES (?, ?)")) {
+			ps.setInt(1, txreq.getID());
+			for (Integer ID : txreq.getCheckRideIDs()) {
+				ps.setInt(2, ID.intValue());
+				ps.addBatch();
+			}
+		
+			executeUpdate(ps, 1, txreq.getCheckRideIDs().size());
+		}
 	}
 
 	/**
@@ -106,10 +110,9 @@ public class SetTransferRequest extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void delete(int pilotID) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("DELETE FROM TXREQUESTS WHERE (ID=?)");
-			_ps.setInt(1, pilotID);
-			executeUpdate(0);
+		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM TXREQUESTS WHERE (ID=?)")) {
+			ps.setInt(1, pilotID);
+			executeUpdate(ps, 0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

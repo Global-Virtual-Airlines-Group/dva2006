@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -15,7 +15,7 @@ import com.enterprisedt.util.debug.Logger;
 /**
  * A Data Access Object to load navigation route and airway data.
  * @author Luke
- * @version 7.2
+ * @version 9.0
  * @since 1.0
  */
 
@@ -67,23 +67,21 @@ public class GetNavAirway extends GetNavData {
 		if (tkCount > 3)
 			sqlBuf.append(" AND (ICAO=?)");
 
-		try {
-			prepareStatementWithoutLimits(sqlBuf.toString());
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 			if (tkCount < 4) {
-				_ps.setString(1, tkns.nextToken().toUpperCase());
-				_ps.setString(2, tkns.nextToken().toUpperCase());
+				ps.setString(1, tkns.nextToken().toUpperCase());
+				ps.setString(2, tkns.nextToken().toUpperCase());
 				if (tkns.hasMoreTokens())
-					_ps.setString(3, tkns.nextToken().toUpperCase());
+					ps.setString(3, tkns.nextToken().toUpperCase());
 			} else {
-				_ps.setString(4, tkns.nextToken().toUpperCase());
-				_ps.setString(1, tkns.nextToken().toUpperCase());
-				_ps.setString(2, tkns.nextToken().toUpperCase());
-				_ps.setString(3, tkns.nextToken().toUpperCase());
+				ps.setString(4, tkns.nextToken().toUpperCase());
+				ps.setString(1, tkns.nextToken().toUpperCase());
+				ps.setString(2, tkns.nextToken().toUpperCase());
+				ps.setString(3, tkns.nextToken().toUpperCase());
 			}
 
 			// Execute the query
-			List<TerminalRoute> results = executeSIDSTAR();
-			result = results.isEmpty() ? null : results.get(0);
+			result = executeSIDSTAR(ps).stream().findFirst().orElse(null);
 			loadWaypoints(result);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -144,16 +142,14 @@ public class GetNavAirway extends GetNavData {
 		sqlBuf.append(parts.get(0).contains("%") ? " LIKE " : "=");
 		sqlBuf.append("?) AND (TRANSITION=?) AND (RUNWAY=?)");
 
-		try {
-			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setString(1, a.getICAO());
-			_ps.setString(2, parts.get(0).toUpperCase());
-			_ps.setString(3, parts.get(1).toUpperCase());
-			_ps.setString(4, parts.get(2).toUpperCase());
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+			ps.setString(1, a.getICAO());
+			ps.setString(2, parts.get(0).toUpperCase());
+			ps.setString(3, parts.get(1).toUpperCase());
+			ps.setString(4, parts.get(2).toUpperCase());
 
 			// Execute the query
-			List<TerminalRoute> results = executeSIDSTAR();
-			tr = results.isEmpty() ? null : results.get(0);
+			tr = executeSIDSTAR(ps).stream().findFirst().orElse(null);
 			loadWaypoints(tr);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -170,10 +166,8 @@ public class GetNavAirway extends GetNavData {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<TerminalRoute> getRouteNames() throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT ICAO, TYPE, NAME, TRANSITION, RUNWAY FROM common.SIDSTAR_META ORDER BY ICAO, NAME, TRANSITION");
-			List<TerminalRoute> results = executeSIDSTAR();
-			return results;
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT ICAO, TYPE, NAME, TRANSITION, RUNWAY FROM common.SIDSTAR_META ORDER BY ICAO, NAME, TRANSITION")) {
+			return executeSIDSTAR(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -218,30 +212,29 @@ public class GetNavAirway extends GetNavData {
 		buf.append(" ORDER BY PRF, SW.SEQ ");
 		if (t == TerminalRoute.Type.SID)
 			buf.append("DESC");
-		
+
+		String code = null;
 		try {
-			int pos = 0;
-			prepareStatementWithoutLimits(buf.toString());
-			_ps.setString(++pos, "ALL");
-			_ps.setString(++pos, a.getICAO());
-			_ps.setInt(++pos, t.ordinal());
-			_ps.setString(++pos, name);
-			if (wp != null)
-				_ps.setString(++pos, wp);
-			if (rwy != null) {
-				_ps.setString(++pos, "ALL");
-				_ps.setString(++pos, rwy);
+			try (PreparedStatement ps = prepareWithoutLimits(buf.toString())) { 
+				int pos = 0;
+				ps.setString(++pos, "ALL");
+				ps.setString(++pos, a.getICAO());
+				ps.setInt(++pos, t.ordinal());
+				ps.setString(++pos, name);
+				if (wp != null)
+					ps.setString(++pos, wp);
+				if (rwy != null) {
+					ps.setString(++pos, "ALL");
+					ps.setString(++pos, rwy);
+				}
+			
+				// Execute the query
+				try (ResultSet rs = ps.executeQuery()) {
+					if (rs.next())
+						code = rs.getString(1);
+				}
 			}
-			
-			// Execute the query
-			String code = null;
-			try (ResultSet rs = _ps.executeQuery()) {
-				if (rs.next())
-					code = rs.getString(1);
-			}
-			
-			_ps.close();
-			
+
 			// Fetch the route itself
 			log.info("Found " + code);
 			return getRoute(a, t, code);
@@ -263,14 +256,13 @@ public class GetNavAirway extends GetNavData {
 		if (results != null)
 			return results;
 		
-		try {
-			prepareStatementWithoutLimits("SELECT DISTINCT RUNWAY FROM common.SIDSTAR_META WHERE (ICAO=?) AND (TYPE=?) ORDER BY RUNWAY");
-			_ps.setString(1, a.getICAO());
-			_ps.setInt(2, TerminalRoute.Type.SID.ordinal());
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT DISTINCT RUNWAY FROM common.SIDSTAR_META WHERE (ICAO=?) AND (TYPE=?) ORDER BY RUNWAY")) {
+			ps.setString(1, a.getICAO());
+			ps.setInt(2, TerminalRoute.Type.SID.ordinal());
 			
 			// Execute the query
 			results = new CacheableSet<String>(a.getICAO());
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					String rwy = rs.getString(1);
 					if (!"ALL".equals(rwy))
@@ -278,7 +270,6 @@ public class GetNavAirway extends GetNavData {
 				}
 			}
 			
-			_ps.close();
 			_rwCache.add(results);
 			return results;
 		} catch (SQLException se) {
@@ -293,13 +284,32 @@ public class GetNavAirway extends GetNavData {
 	 */
 	public Collection<TerminalRoute> getAll() throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT * FROM common.SIDSTAR_META ORDER BY ICAO, NAME, TRANSITION, RUNWAY");
-			_ps.setFetchSize(2500);
-			Collection<TerminalRoute> results = executeSIDSTAR();
-			for (TerminalRoute tr : results)
-				loadWaypoints(tr);
+			Map<String, TerminalRoute> routes = new TreeMap<String, TerminalRoute>();
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM common.SIDSTAR_META ORDER BY ICAO, NAME, TRANSITION, RUNWAY")) {
+				ps.setFetchSize(2500);
+				for (TerminalRoute tr : executeSIDSTAR(ps)) {
+					String key = tr.getICAO() + "." + tr.getType().ordinal() + "." + tr.getSequence(); 
+					routes.put(key, tr);
+				}
+			}
 			
-			return results;
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM common.SIDSTAR_WAYPOINTS ORDER BY ICAO, TYPE, ID, SEQ")) {
+				ps.setFetchSize(5000);
+				try (ResultSet rs = ps.executeQuery()) {
+					while (rs.next()) {
+						Navaid nt = Navaid.values()[rs.getInt(6)];
+						NavigationDataBean nd = NavigationDataBean.create(nt, rs.getDouble(7), rs.getDouble(8));
+						nd.setCode(rs.getString(5));
+						nd.setRegion(rs.getString(9));
+						String key = rs.getString(1) + "." + rs.getInt(2) + "." + rs.getInt(3); 
+						TerminalRoute tr = routes.get(key);
+						if (tr != null)
+							tr.addWaypoint(nd);
+					}
+				}
+			}
+			
+			return routes.values();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -314,18 +324,16 @@ public class GetNavAirway extends GetNavData {
 	 */
 	public Collection<TerminalRoute> getRoutes(ICAOAirport a, TerminalRoute.Type t) throws DAOException {
 		List<TerminalRoute> results = null;
-		try {
-			prepareStatementWithoutLimits("SELECT * FROM common.SIDSTAR_META WHERE (ICAO=?) AND (TYPE=?) ORDER BY NAME, TRANSITION, RUNWAY");
-			_ps.setString(1, a.getICAO());
-			_ps.setInt(2, t.ordinal());
-			results = executeSIDSTAR();
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM common.SIDSTAR_META WHERE (ICAO=?) AND (TYPE=?) ORDER BY NAME, TRANSITION, RUNWAY")) {
+			ps.setString(1, a.getICAO());
+			ps.setInt(2, t.ordinal());
+			results = executeSIDSTAR(ps);
 			for (TerminalRoute tr : results)
 				loadWaypoints(tr);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 
-		// Add to the cache and return
 		_rCache.addAll(results);
 		return results;
 	}
@@ -344,14 +352,12 @@ public class GetNavAirway extends GetNavData {
 			return results;
 
 		results = new CacheableList<Airway>(name);
-		try {
-			prepareStatement("SELECT ID, WAYPOINT, WPTYPE, LATITUDE, LONGITUDE, REGION, FREQ, HIGH, LOW "
-				+ "FROM common.AIRWAYS WHERE (NAME=?) ORDER BY ID, SEQ");
-			_ps.setString(1, name.toUpperCase());
+		try (PreparedStatement ps = prepare("SELECT ID, WAYPOINT, WPTYPE, LATITUDE, LONGITUDE, REGION, FREQ, HIGH, LOW FROM common.AIRWAYS WHERE (NAME=?) ORDER BY ID, SEQ")) {
+			ps.setString(1, name.toUpperCase());
 
 			// Execute the query
 			Airway a = null; int lastID = -1;
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					int id = rs.getInt(1);
 					if ((a == null) || (id != lastID)) {
@@ -373,12 +379,10 @@ public class GetNavAirway extends GetNavData {
 				}
 			}
 
-			_ps.close();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 
-		// Add to the cache
 		_aCache.add(results);
 		return results;
 	}
@@ -388,29 +392,28 @@ public class GetNavAirway extends GetNavData {
 	 */
 	private void loadWaypoints(TerminalRoute tr) throws SQLException {
 		if (tr == null) return;
-		prepareStatementWithoutLimits("SELECT * FROM common.SIDSTAR_WAYPOINTS WHERE (ICAO=?) AND (TYPE=?) AND (ID=?) ORDER BY SEQ");
-		_ps.setString(1,  tr.getICAO());
-		_ps.setInt(2, tr.getType().ordinal());
-		_ps.setInt(3, tr.getSequence());
-		try (ResultSet rs = _ps.executeQuery()) {
-			while (rs.next()) {
-				Navaid nt = Navaid.values()[rs.getInt(6)];
-				NavigationDataBean nd = NavigationDataBean.create(nt, rs.getDouble(7), rs.getDouble(8));
-				nd.setCode(rs.getString(5));
-				nd.setRegion(rs.getString(9));
-				tr.addWaypoint(nd);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM common.SIDSTAR_WAYPOINTS WHERE (ICAO=?) AND (TYPE=?) AND (ID=?) ORDER BY SEQ")) {
+			ps.setString(1,  tr.getICAO());
+			ps.setInt(2, tr.getType().ordinal());
+			ps.setInt(3, tr.getSequence());
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					Navaid nt = Navaid.values()[rs.getInt(6)];
+					NavigationDataBean nd = NavigationDataBean.create(nt, rs.getDouble(7), rs.getDouble(8));
+					nd.setCode(rs.getString(5));
+					nd.setRegion(rs.getString(9));
+					tr.addWaypoint(nd);
+				}
 			}
 		}
-		
-		_ps.close();
 	}
 	
 	/*
 	 * Helper method to iterate through a SIDSTAR_META result set.
 	 */
-	private List<TerminalRoute> executeSIDSTAR() throws SQLException {
+	private static List<TerminalRoute> executeSIDSTAR(PreparedStatement ps) throws SQLException {
 		List<TerminalRoute> results = new ArrayList<TerminalRoute>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
 				TerminalRoute.Type rt = TerminalRoute.Type.values()[rs.getInt(5)];
 				TerminalRoute tr = new TerminalRoute(rs.getString(1), rs.getString(2), rt);
@@ -422,7 +425,6 @@ public class GetNavAirway extends GetNavData {
 			}
 		}
 		
-		_ps.close();
 		return results;
 	}
 }

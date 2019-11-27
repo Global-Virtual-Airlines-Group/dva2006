@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load popular runways for takeoff and landing.
  * @author Luke
- * @version 8.4
+ * @version 9.0
  * @since 2.6
  */
 
@@ -122,21 +122,20 @@ public class GetACARSRunways extends DAO {
 			sqlBuf.append("AND (F.AIRPORT_A=?) ");
 		sqlBuf.append("GROUP BY ND.NAME ORDER BY CNT DESC");
 		
-		try {
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 			int pos = 0;
-			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setString(++pos, "-");
-			_ps.setInt(++pos, Navaid.RUNWAY.ordinal());
-			_ps.setBoolean(++pos, isTakeoff);
+			ps.setString(++pos, "-");
+			ps.setInt(++pos, Navaid.RUNWAY.ordinal());
+			ps.setBoolean(++pos, isTakeoff);
 			if (aD != null)
-				_ps.setString(++pos, aD.getIATA());
+				ps.setString(++pos, aD.getIATA());
 			if (aA != null)
-				_ps.setString(++pos, aA.getIATA());
+				ps.setString(++pos, aA.getIATA());
 			
 			// Execute the Query
 			int max = 0;
 			Collection<Runway> results = new LinkedHashSet<Runway>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					SelectableRunway r = new SelectableRunway(rs.getDouble(3), rs.getDouble(4));
 					r.setName(rs.getString(1));
@@ -157,8 +156,6 @@ public class GetACARSRunways extends DAO {
 				}
 			}
 				
-			_ps.close();
-			
 			// Add to the cache and return
 			rwys = new CacheableList<Runway>(key);
 			rwys.addAll(results);

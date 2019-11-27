@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to obtain user Directory information for Pilots.
  * @author Luke
- * @version 8.1
+ * @version 9.0
  * @since 1.0
  */
 
@@ -44,18 +44,15 @@ public class GetPilotDirectory extends GetPilot implements PersonUniquenessDAO {
 		}
 
 		// If we have no numbers, then abort
-		if (code.length() == 0)
-			return null;
+		if (code.length() == 0) return null;
 
-		try {
-			prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE), S.EXT, S.MODIFIED FROM PILOTS P "
-				+ "LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) LEFT JOIN SIGNATURES S ON (P.ID=S.ID) WHERE (P.PILOT_ID=?) GROUP BY P.ID");
-			_ps.setInt(1, FlightStatus.OK.ordinal());
-			_ps.setInt(2, Integer.parseInt(code.toString()));
+		try (PreparedStatement ps =  prepare("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE), S.EXT, S.MODIFIED FROM PILOTS P "
+				+ "LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) LEFT JOIN SIGNATURES S ON (P.ID=S.ID) WHERE (P.PILOT_ID=?) GROUP BY P.ID")) {
+			ps.setInt(1, FlightStatus.OK.ordinal());
+			ps.setInt(2, Integer.parseInt(code.toString()));
 
 			// Execute the query and get return value
-			List<Pilot> results = execute();
-			Pilot result = (results.size() == 0) ? null : results.get(0);
+			Pilot result = execute(ps).stream().findFirst().orElse(null);
 			if (result == null)
 				return null;
 			
@@ -100,17 +97,16 @@ public class GetPilotDirectory extends GetPilot implements PersonUniquenessDAO {
 		if (days > 0)
 			sqlBuf.append(" AND (CREATED > DATE_SUB(CURDATE(), INTERVAL ? DAY))");
 
-		try {
-			prepareStatementWithoutLimits(sqlBuf.toString());
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 			int param = 0;
-			_ps.setString(++param, p.getFirstName());
-			_ps.setString(++param, p.getLastName());
+			ps.setString(++param, p.getFirstName());
+			ps.setString(++param, p.getLastName());
 			if (!StringUtils.isEmpty(p.getEmail()))
-				_ps.setString(++param, p.getEmail());
+				ps.setString(++param, p.getEmail());
 			if (days > 0)
-				_ps.setInt(++param, days);
+				ps.setInt(++param, days);
 			
-			return executeIDs();
+			return executeIDs(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -130,11 +126,10 @@ public class GetPilotDirectory extends GetPilot implements PersonUniquenessDAO {
 		sqlBuf.append(formatDBName(dbName));
 		sqlBuf.append(".PILOTS WHERE (ID<>?) AND (EMAIL=?)");
 		
-		try {
-			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setInt(1, usr.getID());
-			_ps.setString(2, usr.getEmail());
-			return executeIDs();
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+			ps.setInt(1, usr.getID());
+			ps.setString(2, usr.getEmail());
+			return executeIDs(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -147,10 +142,9 @@ public class GetPilotDirectory extends GetPilot implements PersonUniquenessDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Map<Integer, Pilot> getByIMAddress(String addr) throws DAOException {
-		try {
-			prepareStatement("SELECT ID FROM PILOT_IMADDR WHERE (ADDR=?)");
-			_ps.setString(1, addr);
-			return getByID(executeIDs(), "PILOTS");
+		try (PreparedStatement ps = prepare("SELECT ID FROM PILOT_IMADDR WHERE (ADDR=?)")) {
+			ps.setString(1, addr);
+			return getByID(executeIDs(ps), "PILOTS");
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -162,10 +156,9 @@ public class GetPilotDirectory extends GetPilot implements PersonUniquenessDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Pilot> getPermanent() throws DAOException {
-		try {
-			prepareStatement("SELECT ID FROM PILOTS WHERE (PERMANENT=?)");
-			_ps.setBoolean(1, true);
-			return getByID(executeIDs(), "PILOTS").values();
+		try (PreparedStatement ps = prepare("SELECT ID FROM PILOTS WHERE (PERMANENT=?)")) {
+			ps.setBoolean(1, true);
+			return getByID(executeIDs(ps), "PILOTS").values();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -178,10 +171,9 @@ public class GetPilotDirectory extends GetPilot implements PersonUniquenessDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Map<Integer, Pilot> getByIMType(IMAddress addr) throws DAOException {
-		try {
-			prepareStatement("SELECT ID FROM PILOT_IMADDR WHERE (TYPE=?)");
-			_ps.setString(1, addr.toString());
-			return getByID(executeIDs(), "PILOTS");
+		try (PreparedStatement ps = prepare("SELECT ID FROM PILOT_IMADDR WHERE (TYPE=?)")) {
+			ps.setString(1, addr.toString());
+			return getByID(executeIDs(ps), "PILOTS");
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -220,13 +212,12 @@ public class GetPilotDirectory extends GetPilot implements PersonUniquenessDAO {
 		
 		sqlBuf.append("GROUP BY P.ID");
 
-		try {
-			prepareStatement(sqlBuf.toString());
-			_ps.setString(1, roleName);
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setString(1, roleName);
 			if (activeOnly)
-				_ps.setInt(2, Pilot.ACTIVE);
+				ps.setInt(2, Pilot.ACTIVE);
 			
-			return new ArrayList<Pilot>(getByID(executeIDs(), "PILOTS").values());
+			return new ArrayList<Pilot>(getByID(executeIDs(ps), "PILOTS").values());
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -260,14 +251,13 @@ public class GetPilotDirectory extends GetPilot implements PersonUniquenessDAO {
 
 		sqlBuf.append(" HAVING ((LEFT(SX, LENGTH(TARGET))=TARGET) OR (LEFT(TARGET, LENGTH(SX))=SX)) ORDER BY ID");
 
-		try {
-			prepareStatement(sqlBuf.toString());
-			_ps.setString(1, usr.getLastName());
-			_ps.setInt(2, usr.getID());
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setString(1, usr.getLastName());
+			ps.setInt(2, usr.getID());
 			if (appPilotID > 0)
-				_ps.setInt(3, appPilotID);
+				ps.setInt(3, appPilotID);
 
-			return executeIDs();
+			return executeIDs(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

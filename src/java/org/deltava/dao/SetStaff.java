@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.Staff;
 /**
  * A Data Access Object to write Staff Profiles to the database.
  * @author Luke
- * @version 1.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -28,15 +28,14 @@ public class SetStaff extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(Staff s) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("REPLACE INTO STAFF (ID, TITLE, SORT_ORDER, BIO, AREA) VALUES (?, ?, ?, ?, ?)");
-			_ps.setInt(1, s.getID());
-			_ps.setString(2, s.getTitle());
-			_ps.setInt(3, s.getSortOrder());
-			_ps.setString(4, s.getBody());
-			_ps.setString(5, s.getArea());
+		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO STAFF (ID, TITLE, SORT_ORDER, BIO, AREA) VALUES (?, ?, ?, ?, ?)")) {
+			ps.setInt(1, s.getID());
+			ps.setString(2, s.getTitle());
+			ps.setInt(3, s.getSortOrder());
+			ps.setString(4, s.getBody());
+			ps.setString(5, s.getArea());
 			
-			executeUpdate(1);
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -48,10 +47,9 @@ public class SetStaff extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void delete(int id) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("DELETE FROM STAFF WHERE (ID=?)");
-			_ps.setInt(1, id);
-			executeUpdate(1);
+		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM STAFF WHERE (ID=?)")) {
+			ps.setInt(1, id);
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

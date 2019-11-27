@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2010, 2011, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.fleet.Resource;
 /**
  * A Data Access Object to load Web Resource data.
  * @author Luke
- * @version 4.1
+ * @version 9.0
  * @since 1.0
  */
 
@@ -30,11 +30,9 @@ public class GetResources extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Resource get(int id) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT * FROM common.RESOURCES WHERE (ID=?) LIMIT 1");
-			_ps.setInt(1, id);
-			List<Resource> results = execute();
-			return results.isEmpty() ? null : results.get(0);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM common.RESOURCES WHERE (ID=?) LIMIT 1")) {
+			ps.setInt(1, id);
+			return execute(ps).stream().findFirst().orElse(null);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -57,12 +55,11 @@ public class GetResources extends DAO {
 		sqlBuf.append("ORDER BY ");
 		sqlBuf.append(orderBy);
 		
-		try {
-			prepareStatement(sqlBuf.toString());
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			if (catName != null)
-				_ps.setString(1, catName);
+				ps.setString(1, catName);
 			
-			return execute();
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -86,25 +83,24 @@ public class GetResources extends DAO {
 		sqlBuf.append("ORDER BY ");
 		sqlBuf.append(orderBy);
 		
-		try {
-			prepareStatement(sqlBuf.toString());
-			_ps.setBoolean(1, true);
-			_ps.setInt(2, id);
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setBoolean(1, true);
+			ps.setInt(2, id);
 			if (catName != null)
-				_ps.setString(3, catName);
+				ps.setString(3, catName);
 			
-			return execute();
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 	}
 	
-	/**
+	/*
 	 * Helper method to parse result sets.
 	 */
-	private List<Resource> execute() throws SQLException {
+	private static List<Resource> execute(PreparedStatement ps) throws SQLException {
 		List<Resource> results = new ArrayList<Resource>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
 				Resource r = new Resource(rs.getString(2));
 				r.setID(rs.getInt(1));
@@ -120,7 +116,6 @@ public class GetResources extends DAO {
 			}
 		}
 		
-		_ps.close();
 		return results;
 	}
 }

@@ -1,4 +1,4 @@
-// Copyright 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.stats.*;
 /**
  * A Data Access Object to read aggregated Flight Report statistics. 
  * @author Luke
- * @version 7.5
+ * @version 9.0
  * @since 6.2
  */
 
@@ -49,10 +49,9 @@ public class GetAggregateStatistics extends DAO {
 		sqlBuf.append(" GROUP BY LABEL ORDER BY ");
 		sqlBuf.append(s.getSQL());
 		
-		try {
-			prepareStatement(sqlBuf.toString());
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			Collection<FlightStatsEntry> results = new ArrayList<FlightStatsEntry>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					FlightStatsEntry entry = new FlightStatsEntry(rs.getString(1), rs.getInt(2), rs.getDouble(3), rs.getInt(4));
 					entry.setFSVersionLegs(Simulator.FS2000, rs.getInt(5));
@@ -70,7 +69,6 @@ public class GetAggregateStatistics extends DAO {
 				}
 			}
 
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -99,9 +97,8 @@ public class GetAggregateStatistics extends DAO {
 		sqlBuf.append("GROUP BY AP.NAME ORDER BY ");
 		sqlBuf.append(s.getSQL());
 		
-		try {
-			prepareStatement(sqlBuf.toString());
-			return execute();
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -141,12 +138,11 @@ public class GetAggregateStatistics extends DAO {
 		sqlBuf.append(" GROUP BY LABEL ORDER BY ");
 		sqlBuf.append(s.getSQL());
 
-		try {
-			prepareStatement(sqlBuf.toString());
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			if (grp.isAirportGroup() && (grp != FlightStatsGroup.AP))
-				_ps.setBoolean(1, (grp == FlightStatsGroup.AD));
+				ps.setBoolean(1, (grp == FlightStatsGroup.AD));
 			
-			return execute();
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -155,9 +151,9 @@ public class GetAggregateStatistics extends DAO {
 	/*
 	 * Helper method to parse stats entry result sets.
 	 */
-	private List<FlightStatsEntry> execute() throws SQLException {
-		List<FlightStatsEntry> results = new ArrayList<FlightStatsEntry>();
-		try (ResultSet rs = _ps.executeQuery()) {
+	private static List<FlightStatsEntry> execute(PreparedStatement ps) throws SQLException {
+		try (ResultSet rs = ps.executeQuery()) {
+			List<FlightStatsEntry> results = new ArrayList<FlightStatsEntry>();
 			while (rs.next()) {
 				FlightStatsEntry entry = new FlightStatsEntry(rs.getString(1), rs.getInt(2), rs.getDouble(3), rs.getInt(4));
 				entry.setHistoricLegs(rs.getInt(5));
@@ -179,9 +175,8 @@ public class GetAggregateStatistics extends DAO {
 				entry.setPilotIDs(rs.getInt(21));
 				results.add(entry);
 			}
+			
+			return results;
 		}
-
-		_ps.close();
-		return results;
 	}
 }

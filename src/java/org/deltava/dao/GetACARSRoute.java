@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2011, 2012, 2014, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2011, 2012, 2014, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load stored ACARS dispatch routes.
  * @author Luke
- * @version 7.2
+ * @version 9.0
  * @since 2.0
  */
 
@@ -35,12 +35,11 @@ public class GetACARSRoute extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public DispatchRoute getRoute(int id) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT * FROM acars.ROUTES WHERE (ID=?) LIMIT 1");
-			_ps.setInt(1, id);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM acars.ROUTES WHERE (ID=?) LIMIT 1")) {
+			ps.setInt(1, id);
 			
 			// Execute the query
-			List<DispatchRoute> results = execute();
+			List<DispatchRoute> results = execute(ps);
 			if (results.isEmpty())
 				return null;
 			
@@ -58,15 +57,13 @@ public class GetACARSRoute extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Integer> getAuthorIDs() throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT DISTINCT AUTHOR FROM acars.ROUTES");
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT DISTINCT AUTHOR FROM acars.ROUTES")) {
 			Collection<Integer> results = new HashSet<Integer>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
 					results.add(Integer.valueOf(rs.getInt(1)));
 			}
 			
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -88,13 +85,12 @@ public class GetACARSRoute extends DAO {
 			sqlBuf.append("WHERE (ACTIVE=?) ");
 		sqlBuf.append("ORDER BY ID");
 		
-		try {
-			prepareStatement(sqlBuf.toString());
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			if (activeOnly)
-				_ps.setBoolean(1, true);
+				ps.setBoolean(1, true);
 
 			// Execute the Query and load routes
-			Collection<DispatchRoute> results = execute();
+			Collection<DispatchRoute> results = execute(ps);
 			if (loadWP)
 				loadRoutes(results);
 			
@@ -110,17 +106,15 @@ public class GetACARSRoute extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Airport> getAirports() throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT DISTINCT AIRPORT_D, AIRPORT_A FROM acars.ROUTES");
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT DISTINCT AIRPORT_D, AIRPORT_A FROM acars.ROUTES")) {
 			Collection<Airport> results = new HashSet<Airport>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					results.add(SystemData.getAirport(rs.getString(1)));
 					results.add(SystemData.getAirport(rs.getString(2)));
 				}
 			}
 			
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -134,12 +128,9 @@ public class GetACARSRoute extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<DispatchRoute> getByAuthor(int authorID) throws DAOException {
-		try {
-			prepareStatement("SELECT * FROM acars.ROUTES WHERE (AUTHOR=?) ORDER BY CREATEDON");
-			_ps.setInt(1, authorID);
-			
-			// Execute the Query and load routes
-			Collection<DispatchRoute> results = execute();
+		try (PreparedStatement ps = prepare("SELECT * FROM acars.ROUTES WHERE (AUTHOR=?) ORDER BY CREATEDON")) {
+			ps.setInt(1, authorID);
+			Collection<DispatchRoute> results = execute(ps);
 			loadRoutes(results);
 			return results;
 		} catch (SQLException se) {
@@ -172,18 +163,17 @@ public class GetACARSRoute extends DAO {
 		}
 		sqlBuf.append(" ORDER BY USED DESC");
 		
-		try {
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			int param = 0;
-			prepareStatement(sqlBuf.toString());
 			if (rp.getAirportD() != null)
-				_ps.setString(++param, rp.getAirportD().getIATA());
+				ps.setString(++param, rp.getAirportD().getIATA());
 			if (rp.getAirportA() != null)
-				_ps.setString(++param, rp.getAirportA().getIATA());
+				ps.setString(++param, rp.getAirportA().getIATA());
 			if (activeOnly)
-				_ps.setBoolean(++param, true);
+				ps.setBoolean(++param, true);
 			
 			// Execute the Query and load routes
-			Collection<DispatchRoute> results = execute();
+			Collection<DispatchRoute> results = execute(ps);
 			loadRoutes(results);
 			return results;
 		} catch (SQLException se) {
@@ -199,24 +189,16 @@ public class GetACARSRoute extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public int hasDuplicate(RoutePair rp, String route) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT R.ID, GROUP_CONCAT(RW.CODE ORDER BY RW.SEQ SEPARATOR ?) "
-					+ "AS WPS FROM acars.ROUTES R LEFT JOIN acars.ROUTE_WP RW ON (R.ID=RW.ID) WHERE "
-					+ "(R.AIRPORT_D=?) AND (R.AIRPORT_A=?) AND (R.ACTIVE=?) GROUP BY R.ID HAVING (WPS=?) LIMIT 1");
-			_ps.setString(1, " ");
-			_ps.setString(2, rp.getAirportD().getIATA());
-			_ps.setString(3, rp.getAirportA().getIATA());
-			_ps.setBoolean(4, true);
-			_ps.setString(5, route);
-			
-			// Do the query
-			int id = 0;
-			try (ResultSet rs = _ps.executeQuery()) {
-				if (rs.next()) id = rs.getInt(1);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT R.ID, GROUP_CONCAT(RW.CODE ORDER BY RW.SEQ SEPARATOR ?) AS WPS FROM acars.ROUTES R LEFT JOIN acars.ROUTE_WP RW "
+			+ "ON (R.ID=RW.ID) WHERE (R.AIRPORT_D=?) AND (R.AIRPORT_A=?) AND (R.ACTIVE=?) GROUP BY R.ID HAVING (WPS=?) LIMIT 1")) {
+			ps.setString(1, " ");
+			ps.setString(2, rp.getAirportD().getIATA());
+			ps.setString(3, rp.getAirportA().getIATA());
+			ps.setBoolean(4, true);
+			ps.setString(5, route);
+			try (ResultSet rs = ps.executeQuery()) {
+				return rs.next() ? rs.getInt(1) : 0;
 			}
-			
-			_ps.close();
-			return id;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -225,9 +207,9 @@ public class GetACARSRoute extends DAO {
 	/*
 	 * Helper method to parse result sets.
 	 */
-	private List<DispatchRoute> execute() throws SQLException {
+	private static List<DispatchRoute> execute(PreparedStatement ps) throws SQLException {
 		List<DispatchRoute> results = new ArrayList<DispatchRoute>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
 				DispatchRoute rp = new DispatchRoute();
 				rp.setID(rs.getInt(1));
@@ -250,7 +232,6 @@ public class GetACARSRoute extends DAO {
 			}
 		}
 		
-		_ps.close();
 		return results;
 	}
 	
@@ -258,8 +239,7 @@ public class GetACARSRoute extends DAO {
 	 * Helper method to load route waypoints.
 	 */
 	private void loadRoutes(Collection<DispatchRoute> routes) throws SQLException {
-		if (routes.isEmpty())
-			return;
+		if (routes.isEmpty()) return;
 		
 		StringBuilder buf = new StringBuilder("SELECT * FROM acars.ROUTE_WP WHERE ID IN (");
 		for (Iterator<DispatchRoute> i = routes.iterator(); i.hasNext(); ) {
@@ -270,14 +250,12 @@ public class GetACARSRoute extends DAO {
 		}
 		
 		buf.append(") ORDER BY ID, SEQ");
-		prepareStatementWithoutLimits(buf.toString());
-		
-		// Execute the query
-		Map<Integer, DispatchRoute> data = CollectionUtils.createMap(routes, DispatchRoute::getID);
-		try (ResultSet rs = _ps.executeQuery()) {
-			while (rs.next()) {
-				DispatchRoute rp = data.get(Integer.valueOf(rs.getInt(1)));
-				if (rp != null) {
+		try (PreparedStatement ps = prepareWithoutLimits(buf.toString())) {
+			Map<Integer, DispatchRoute> data = CollectionUtils.createMap(routes, DispatchRoute::getID);
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					DispatchRoute rp = data.get(Integer.valueOf(rs.getInt(1)));
+					if (rp == null)  continue;
 					double lat = rs.getDouble(5);
 					double lng = rs.getDouble(6);
 					Navaid nt = Navaid.values()[rs.getInt(4)];
@@ -285,10 +263,8 @@ public class GetACARSRoute extends DAO {
 					nd.setCode(rs.getString(3));
 					nd.setRegion(rs.getString(8));
 					rp.addWaypoint(nd, rs.getString(7));
-				}	
+				}
 			}
 		}
-		
-		_ps.close();
 	}
 }

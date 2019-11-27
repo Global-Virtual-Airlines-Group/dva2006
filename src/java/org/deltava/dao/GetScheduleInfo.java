@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to extract Flight Schedule data.
  * @author Luke
- * @version 8.6
+ * @version 9.0
  * @since 1.0
  */
 
@@ -57,22 +57,20 @@ public class GetScheduleInfo extends DAO {
 
 		sqlBuf.append(" ORDER BY FLIGHT");
 
-		try {
-			prepareStatement(sqlBuf.toString());
-			_ps.setString(1, a.getCode());
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setString(1, a.getCode());
 			if (start > 0)
-				_ps.setInt(2, start);
+				ps.setInt(2, start);
 			if (end > 0)
-				_ps.setInt(3, end);
+				ps.setInt(3, end);
 
 			// Execute the query
 			Collection<Integer> results = new LinkedHashSet<Integer>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
 					results.add(Integer.valueOf(rs.getInt(1)));
 			}
-
-			_ps.close();
+			
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -85,26 +83,14 @@ public class GetScheduleInfo extends DAO {
 	 * @param flightNumber the flight number
 	 * @return the next available leg number
 	 * @throws DAOException if a JDBC error occurs
-	 * @throws IllegalArgumentException if flightNumber is zero or negative
 	 */
 	public int getNextLeg(Airline a, int flightNumber) throws DAOException {
-		if (flightNumber < 1)
-			throw new IllegalArgumentException("Invalid Flight Number -  " + flightNumber);
-
-		try {
-			prepareStatement("SELECT MAX(LEG) FROM SCHEDULE WHERE (AIRLINE=?) AND (FLIGHT=?)");
-			_ps.setString(1, a.getCode());
-			_ps.setInt(2, flightNumber);
-
-			// Do the query
-			int leg = 1;
-			try (ResultSet rs = _ps.executeQuery()) {
-				if (rs.next())
-					leg = rs.getInt(1) + 1;
+		try (PreparedStatement ps = prepare("SELECT MAX(LEG) FROM SCHEDULE WHERE (AIRLINE=?) AND (FLIGHT=?)")) {
+			ps.setString(1, a.getCode());
+			ps.setInt(2, flightNumber);
+			try (ResultSet rs = ps.executeQuery()) {
+				return rs.next() ? rs.getInt(1) + 1 : 1;
 			}
-
-			_ps.close();
-			return leg;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -118,9 +104,8 @@ public class GetScheduleInfo extends DAO {
 	 */
 	public AirportServiceMap getRoutePairs() throws DAOException {
 		AirportServiceMap svcMap = new AirportServiceMap();
-		try {
-			prepareStatementWithoutLimits("SELECT DISTINCT AIRLINE, AIRPORT_D, AIRPORT_A FROM SCHEDULE ORDER BY AIRPORT_D, AIRPORT_A");
-			try (ResultSet rs = _ps.executeQuery()) {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT DISTINCT AIRLINE, AIRPORT_D, AIRPORT_A FROM SCHEDULE ORDER BY AIRPORT_D, AIRPORT_A")) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					Airline a = SystemData.getAirline(rs.getString(1));
 					svcMap.add(a, SystemData.getAirport(rs.getString(2)));
@@ -128,7 +113,6 @@ public class GetScheduleInfo extends DAO {
 				}
 			}
 			
-			_ps.close();
 			return svcMap;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -147,13 +131,11 @@ public class GetScheduleInfo extends DAO {
 		if (result != null)
 			return (int) result.getValue();
 		
-		try {
-			prepareStatement("SELECT COUNT(*) FROM SCHEDULE");
-			try (ResultSet rs = _ps.executeQuery()) {
+		try (PreparedStatement ps = prepare("SELECT COUNT(*) FROM SCHEDULE")) {
+			try (ResultSet rs = ps.executeQuery()) {
 				result = new CacheableLong(GetSchedule.class, rs.next() ? rs.getInt(1) : 0);
 			}
 
-			_ps.close();
 			_schedSizeCache.add(result);
 			return (int) result.getValue();
 		} catch (SQLException se) {
@@ -167,15 +149,13 @@ public class GetScheduleInfo extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Country> getCountries() throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT DISTINCT A.COUNTRY FROM common.AIRPORTS A, SCHEDULE S WHERE (A.IATA=S.AIRPORT_D) OR (A.IATA=S.AIRPORT_A)");
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT DISTINCT A.COUNTRY FROM common.AIRPORTS A, SCHEDULE S WHERE (A.IATA=S.AIRPORT_D) OR (A.IATA=S.AIRPORT_A)")) {
 			Collection<Country> results = new LinkedHashSet<Country>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
 					results.add(Country.get(rs.getString(1)));
 			}
 			
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -194,15 +174,13 @@ public class GetScheduleInfo extends DAO {
 		buf.append(formatDBName(dbName));
 		buf.append(".SCHEDULE GROUP BY AIRLINE ORDER BY AIRLINE");
 		
-		try {
-			prepareStatementWithoutLimits(buf.toString());
+		try (PreparedStatement ps = prepareWithoutLimits(buf.toString())) {
 			Map<Airline, Integer> results = new LinkedHashMap<Airline, Integer>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
 					results.put(SystemData.getAirline(rs.getString(1)), Integer.valueOf(rs.getInt(2)));
 			}
 			
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);

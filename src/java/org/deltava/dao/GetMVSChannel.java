@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load permanent voice channel data.
  * @author Luke
- * @version 5.0
+ * @version 9.0
  * @since 4.0
  */
 
@@ -32,14 +32,12 @@ public class GetMVSChannel extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Channel get(int id) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT * FROM acars.CHANNELS WHERE (ID=?) LIMIT 1");
-			_ps.setInt(1, id);
-			List<Channel> results = execute();
-			if (results.isEmpty())
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM acars.CHANNELS WHERE (ID=?) LIMIT 1")) {
+			ps.setInt(1, id);
+			Channel c = execute(ps).stream().findFirst().orElse(null);
+			if (c == null)
 				return null;
 			
-			Channel c = results.get(0);
 			loadRoles(c);
 			loadAirlines(c);
 			return c;
@@ -55,14 +53,12 @@ public class GetMVSChannel extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Channel get(String name) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT * FROM acars.CHANNELS WHERE (NAME=?) LIMIT 1");
-			_ps.setString(1, name);
-			List<Channel> results = execute();
-			if (results.isEmpty())
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM acars.CHANNELS WHERE (NAME=?) LIMIT 1")) {
+			ps.setString(1, name);
+			Channel c = execute(ps).stream().findFirst().orElse(null);
+			if (c == null)
 				return null;
 			
-			Channel c = results.get(0);
 			loadRoles(c);
 			loadAirlines(c);
 			return c;
@@ -77,9 +73,8 @@ public class GetMVSChannel extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Channel> getAll() throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT * FROM acars.CHANNELS ORDER BY NAME");
-			List<Channel> results = execute();
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM acars.CHANNELS ORDER BY NAME")) {
+			List<Channel> results = execute(ps);
 			for (Channel c : results) {
 				loadRoles(c);
 				loadAirlines(c);
@@ -91,12 +86,12 @@ public class GetMVSChannel extends DAO {
 		}
 	}
 	
-	/**
+	/*
 	 * Helper method to parse Channel result sets.
 	 */
-	private List<Channel> execute() throws SQLException {
+	private static List<Channel> execute(PreparedStatement ps) throws SQLException {
 		List<Channel> results = new ArrayList<Channel>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
 				Channel c = new Channel(rs.getString(2));
 				c.setID(rs.getInt(1));
@@ -109,37 +104,34 @@ public class GetMVSChannel extends DAO {
 			}
 		}
 
-		_ps.close();
 		return results;
 	}
 	
-	/**
-	 * Helper method to load channel airlines
+	/*
+	 * Helper method to load channel airlines.
 	 */
 	private void loadAirlines(Channel c) throws SQLException {
-		prepareStatementWithoutLimits("SELECT CODE FROM acars.CHANNEL_AIRLINES WHERE (ID=?)");
-		_ps.setInt(1, c.getID());
-		try (ResultSet rs = _ps.executeQuery()) {
-			while (rs.next())
-				c.addAirline(SystemData.getApp(rs.getString(1)));
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT CODE FROM acars.CHANNEL_AIRLINES WHERE (ID=?)")) {
+			ps.setInt(1, c.getID());
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next())
+					c.addAirline(SystemData.getApp(rs.getString(1)));
+			}
 		}
-		
-		_ps.close();
 	}
 	
-	/**
+	/*
 	 * Helper method to load channel access roles.
 	 */
 	private void loadRoles(Channel c) throws SQLException {
-		prepareStatementWithoutLimits("SELECT TYPE, ROLE FROM acars.CHANNEL_ROLES WHERE (ID=?)");
-		_ps.setInt(1, c.getID());
-		try (ResultSet rs = _ps.executeQuery()) {
-			while (rs.next()) {
-				Channel.Access a = Channel.Access.values()[rs.getInt(1)];
-				c.addRole(a, rs.getString(2));
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT TYPE, ROLE FROM acars.CHANNEL_ROLES WHERE (ID=?)")) {
+			ps.setInt(1, c.getID());
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					Channel.Access a = Channel.Access.values()[rs.getInt(1)];
+					c.addRole(a, rs.getString(2));
+				}
 			}
 		}
-		
-		_ps.close();
 	}
 }

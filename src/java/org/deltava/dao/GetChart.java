@@ -10,7 +10,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object for Approach Charts.
  * @author Luke
- * @version 8.6
+ * @version 9.0
  * @since 1.0
  */
 
@@ -30,10 +30,9 @@ public class GetChart extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<Airport> getAirports() throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT DISTINCT C.ICAO FROM common.CHARTS C, common.AIRPORTS A WHERE (C.ICAO=A.ICAO) ORDER BY A.NAME");
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT DISTINCT C.ICAO FROM common.CHARTS C, common.AIRPORTS A WHERE (C.ICAO=A.ICAO) ORDER BY A.NAME")) {
 			List<Airport> results = new ArrayList<Airport>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					Airport a = SystemData.getAirport(rs.getString(1));
 					if (a != null)
@@ -41,7 +40,6 @@ public class GetChart extends DAO {
 				}
 			}
 
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -54,10 +52,9 @@ public class GetChart extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Map<Airport, Integer> getMaxAges() throws DAOException {
-		try {
-			prepareStatement("SELECT ICAO, IFNULL(MAX(TIMESTAMPDIFF(DAY, LASTMODIFIED, NOW())), -1) AS AGE FROM common.CHARTS GROUP BY ICAO");
+		try (PreparedStatement ps = prepare("SELECT ICAO, IFNULL(MAX(TIMESTAMPDIFF(DAY, LASTMODIFIED, NOW())), -1) AS AGE FROM common.CHARTS GROUP BY ICAO")) {
 			Map<Airport, Integer> results = new LinkedHashMap<Airport, Integer>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					Airport a = SystemData.getAirport(rs.getString(1));
 					if (a != null)
@@ -65,7 +62,6 @@ public class GetChart extends DAO {
 				}
 			}
 
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -80,10 +76,9 @@ public class GetChart extends DAO {
 	 * @see GetChart#getCharts(Airport)
 	 */
 	public List<Chart> getCharts(Airport a) throws DAOException {
-		try {
-			prepareStatement("SELECT C.*, CU.SOURCE, CU.URL, CU.EXTERNAL_ID FROM common.CHARTS C LEFT JOIN common.CHARTURLS CU ON (C.ID=CU.ID) WHERE (C.ICAO=?) ORDER BY C.NAME");
-			_ps.setString(1, a.getICAO());
-			return execute();
+		try (PreparedStatement ps = prepare("SELECT C.*, CU.SOURCE, CU.URL, CU.EXTERNAL_ID FROM common.CHARTS C LEFT JOIN common.CHARTURLS CU ON (C.ID=CU.ID) WHERE (C.ICAO=?) ORDER BY C.NAME")) {
+			ps.setString(1, a.getICAO());
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -96,11 +91,9 @@ public class GetChart extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<Chart> getChartsByEvent(int eventID) throws DAOException {
-		try {
-			prepareStatement("SELECT C.*, CU.SOURCE, CU.URL, CU.EXTERNAL_ID FROM events.EVENT_CHARTS EC, common.CHARTS C "
-				+ "LEFT JOIN common.CHARTURLS CU ON (C.ID=CU.ID) WHERE (EC.ID=?) AND (C.ID=EC.CHART) ORDER BY C.NAME");
-			_ps.setInt(1, eventID);
-			return execute();
+		try (PreparedStatement ps = prepare("SELECT C.*, CU.SOURCE, CU.URL, CU.EXTERNAL_ID FROM events.EVENT_CHARTS EC, common.CHARTS C LEFT JOIN common.CHARTURLS CU ON (C.ID=CU.ID) WHERE (EC.ID=?) AND (C.ID=EC.CHART) ORDER BY C.NAME")) {
+			ps.setInt(1, eventID);
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -113,12 +106,9 @@ public class GetChart extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Chart get(int id) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT C.*, CU.SOURCE, CU.URL, CU.EXTERNAL_ID FROM common.CHARTS C LEFT JOIN "
-				+ "common.CHARTURLS CU ON (C.ID=CU.ID) WHERE (C.ID=?) LIMIT 1");
-			_ps.setInt(1, id);
-			List<Chart> results = execute();
-			return (results.isEmpty()) ? null : results.get(0);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT C.*, CU.SOURCE, CU.URL, CU.EXTERNAL_ID FROM common.CHARTS C LEFT JOIN common.CHARTURLS CU ON (C.ID=CU.ID) WHERE (C.ID=?) LIMIT 1")) {
+			ps.setInt(1, id);
+			return execute(ps).stream().findFirst().orElse(null);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -133,8 +123,7 @@ public class GetChart extends DAO {
 	public Collection<Chart> getByIDs(Collection<Integer> IDs) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT C.*, CU.SOURCE, CU.URL, CU.EXTERNAL_ID FROM common.CHARTS C "
-			+ "LEFT JOIN common.CHARTURLS CU ON (C.ID=CU.ID) WHERE (C.ID IN (");
+		StringBuilder sqlBuf = new StringBuilder("SELECT C.*, CU.SOURCE, CU.URL, CU.EXTERNAL_ID FROM common.CHARTS C LEFT JOIN common.CHARTURLS CU ON (C.ID=CU.ID) WHERE (C.ID IN (");
 		for (Iterator<Integer> i = IDs.iterator(); i.hasNext();) {
 			Integer id = i.next();
 			sqlBuf.append(String.valueOf(id));
@@ -145,9 +134,8 @@ public class GetChart extends DAO {
 		sqlBuf.append("))");
 		setQueryMax(IDs.size());
 
-		try {
-			prepareStatement(sqlBuf.toString());
-			return execute();
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -161,18 +149,16 @@ public class GetChart extends DAO {
 	 * @see ExternalChart#getExternalID()
 	 */
 	public Map<String, Integer> getChartIDs(Collection<String> externalIDs) throws DAOException {
-		try {
+		try (PreparedStatement ps = prepare("SELECT ID FROM common.CHARTURLS WHERE (EXTERNAL_ID=?)")) {
 			Map<String, Integer> results = new HashMap<String, Integer>();
-			prepareStatement("SELECT ID FROM common.CHARTURLS WHERE (EXTERNAL_ID=?)");
 			for (String id : externalIDs) {
-				_ps.setString(1, id);
-				try (ResultSet rs = _ps.executeQuery()) {
+				ps.setString(1, id);
+				try (ResultSet rs = ps.executeQuery()) {
 					if (rs.next())
 						results.put(id, Integer.valueOf(rs.getInt(1)));
 				}
 			}
 
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -182,9 +168,9 @@ public class GetChart extends DAO {
 	/*
 	 * Helper method to load chart metadata.
 	 */
-	private List<Chart> execute() throws SQLException {
+	private static List<Chart> execute(PreparedStatement ps) throws SQLException {
 		List<Chart> results = new ArrayList<Chart>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			boolean hasExt = (rs.getMetaData().getColumnCount() > 10);
 			while (rs.next()) {
 				String url = hasExt ? rs.getString(11) : null;
@@ -208,7 +194,6 @@ public class GetChart extends DAO {
 			}
 		}
 
-		_ps.close();
 		return results;
 	}
 }
