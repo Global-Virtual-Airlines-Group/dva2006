@@ -39,5 +39,7 @@
 	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-2.24.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-5.1.48-bin.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jedis-3.1.0.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/pdfbox-2.0.17.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/fontbox-2.0.17.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
