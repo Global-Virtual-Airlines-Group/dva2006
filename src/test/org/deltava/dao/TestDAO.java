@@ -17,25 +17,12 @@ public class TestDAO extends AbstractBeanTestCase {
             super(c);
         }
         
-        public int getQueryTimeout() {
-            return _queryTimeout;
-        }
-        
-        public void initStatement(String sql) throws SQLException {
-        	prepareStatement(sql);
-        }
-        
         public int getQueryStart() {
             return _queryStart;
         }
         
         public int getQueryMax() {
             return _queryMax;
-        }
-        
-        public void execute() throws SQLException {
-        	_ps.execute();
-        	_ps.close();
         }
     }
     
@@ -46,21 +33,23 @@ public class TestDAO extends AbstractBeanTestCase {
         }
     	
     	public void testExecuteUpdate(int id, int v, int expected) throws SQLException {
-    		prepareStatement("INSERT INTO UPD_TEST VALUES (?, ?)");
-  			_ps.setInt(1, id);
-   			_ps.setInt(2, v);
-   			executeUpdate(expected);
+    		try (PreparedStatement ps = prepare("INSERT INTO UPD_TEST VALUES (?, ?)")) {
+    			ps.setInt(1, id);
+    			ps.setInt(2, v);
+    			executeUpdate(ps, expected);
+    		}
     	}
     	
     	public void testExecuteBatchUpdate(int[] ids, int expected) throws SQLException {
-    		prepareStatement("INSERT INTO UPD_TEST VALUES (?, ?)");
-    		for (int x = 0; x < ids.length; x++) {
-    			_ps.setInt(1, ids[x]);
-    			_ps.setInt(2, x);
-    			_ps.addBatch();
-    		}
+    		try (PreparedStatement ps = prepare("INSERT INTO UPD_TEST VALUES (?, ?)")) {
+    			for (int x = 0; x < ids.length; x++) {
+    				ps.setInt(1, ids[x]);
+    				ps.setInt(2, x);
+    				ps.addBatch();
+    			}
     		
-    		executeBatchUpdate(0, expected);
+    			executeUpdate(ps, 0, expected);
+    		}
     	}
     }
     
@@ -83,25 +72,6 @@ public class TestDAO extends AbstractBeanTestCase {
         super.tearDown();
     }
 
-    public void testQueryTimeout() {
-        try {
-        	_dao.setQueryTimeout(1);
-            _dao.initStatement("DO SLEEP(3)");
-        } catch (SQLException se) {
-            fail("Cannot prepare statement - " + se.getMessage());
-        }
-        
-        assertEquals(1, _dao.getQueryTimeout());
-        
-        // Execute and check for failure
-        try {
-        	_dao.execute();
-        	fail("SQLException expected");
-        } catch (SQLException se) {
-        	assertEquals(0, se.getErrorCode());
-        }
-    }
-    
     public void testLimits() {
         _dao.setQueryMax(30);
         _dao.setQueryStart(1);
