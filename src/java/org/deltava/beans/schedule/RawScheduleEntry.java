@@ -1,23 +1,28 @@
-// Copyright 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
-import java.time.DayOfWeek;
-
-import org.deltava.beans.Flight;
+import java.util.*;
+import java.time.*;
 
 import org.deltava.util.StringUtils;
 
 /**
  * A Schedule Entry with code share and day of week data. 
  * @author Luke
- * @version 8.3
+ * @version 9.0
  * @since 8.0
  */
 
 public class RawScheduleEntry extends ScheduleEntry {
 
+	private String _src;
+	private int _line;
+	
+	private LocalDate _startDate;
+	private LocalDate _endDate;
+	
 	private String _codeShare;
-	private DayOfWeek _day;
+	private final Collection<DayOfWeek> _days = new TreeSet<DayOfWeek>();
 	
 	/**
 	 * Creates the bean.
@@ -27,14 +32,6 @@ public class RawScheduleEntry extends ScheduleEntry {
 	 */
 	public RawScheduleEntry(Airline a, int fNumber, int leg) {
 		super(a, fNumber, leg);
-	}
-	
-	/**
-	 * Creates the bean from an existing Flight Number.
-	 * @param f a Flight
-	 */
-	public RawScheduleEntry(Flight f) {
-		super(f.getAirline(), f.getFlightNumber(), f.getLeg());
 	}
 
 	/**
@@ -49,16 +46,88 @@ public class RawScheduleEntry extends ScheduleEntry {
 	 * Returns the day of the week this flight is operated on.
 	 * @return a DayOfWeek enum
 	 */
-	public DayOfWeek getDay() {
-		return _day;
+	public Collection<DayOfWeek> getDays() {
+		return _days;
+	}
+	
+	/**
+	 * Returns a bitmap of the days operated.
+	 * @return a bitmap of ordinal values
+	 */
+	public int getDayMap() {
+		int bitmap = 0;
+		for (DayOfWeek d : _days)
+			bitmap |= (1 << d.ordinal());
+		
+		return bitmap; 
+	}
+	
+	/**
+	 * Returns the line number of this entry in the original source.
+	 * @return the line number
+	 */
+	public int getLineNumber() {
+		return _line;
+	}
+	
+	/**
+	 * Returns the original source name.
+	 * @return the source
+	 */
+	public String getSource() {
+		return _src;
+	}
+	
+	/**
+	 * Returns the start of the operating range.
+	 * @return the range start date
+	 */
+	public LocalDate getStartDate() {
+		return _startDate;
+	}
+	
+	/**
+	 * Returns the end of the operating range.
+	 * @return the range end date
+	 */
+	public LocalDate getEndDate() {
+		return _endDate;
+	}
+	
+	/**
+	 * Returns if a flight is operated on a particular date.
+	 * @param ld the operating date
+	 * @return TRUE if the flight is operated on this date, otherwise FALSE
+	 */
+	public boolean operatesOn(LocalDate ld) {
+		return _days.contains(ld.getDayOfWeek()) && !ld.isBefore(_startDate) && !ld.isAfter(_endDate);
 	}
 
 	/**
 	 * Sets the day of the week that this flight is operated on.
-	 * @param d a DayOfWeek enum
+	 * @param bitmap a DayOfWeek bitmap
 	 */
-	public void setDay(DayOfWeek d) {
-		_day = d;
+	public void setDayMap(int bitmap) {
+		for (DayOfWeek d : DayOfWeek.values()) {
+			if ((bitmap & (1 << d.ordinal())) != 0)
+				_days.add(d);		
+		}
+	}
+	
+	/**
+	 * Updates the start of the operating range.
+	 * @param d the range start date
+	 */
+	public void setStartDate(LocalDate d) {
+		_startDate = d;
+	}
+	
+	/**
+	 * Updates the end of the operating range.
+	 * @param d the range end date
+	 */
+	public void setEndDate(LocalDate d) {
+		_endDate = d;
 	}
 	
 	/**
@@ -68,5 +137,41 @@ public class RawScheduleEntry extends ScheduleEntry {
 	public void setCodeShare(String flightCode) {
 		if (!StringUtils.isEmpty(flightCode))
 			_codeShare = flightCode;
+	}
+	
+	/**
+	 * Updates the source of this entry.
+	 * @param src the source name
+	 */
+	public void setSource(String src) {
+		_src = src;
+	}
+	
+	/**
+	 * Updates the source file line number for this entry.
+	 * @param ln the line number
+	 */
+	public void setLineNumber(int ln) {
+		_line = ln;
+	}
+	
+	/**
+	 * Converts a RawScheduleEntry to a ScheduleEntry for the current date. 
+	 * @param dt today as a LocalDate
+	 * @return a SceduleEntry, or null if the flight does not operate
+	 */
+	public ScheduleEntry toToday(LocalDate dt) {
+		if (!operatesOn(dt)) return null;
+		
+		ScheduleEntry se = new ScheduleEntry(getAirline(), getFlightNumber(), getLeg());
+		se.setAirportD(getAirportD());
+		se.setAirportA(getAirportA());
+		se.setEquipmentType(getEquipmentType());
+		se.setTimeD(LocalDateTime.of(dt, getTimeD().toLocalTime()));
+		se.setTimeA(LocalDateTime.of(dt, getTimeA().toLocalTime()));
+		se.setAcademy(getAcademy());
+		se.setCanPurge(getCanPurge());
+		se.setHistoric(getHistoric());
+		return se;
 	}
 }
