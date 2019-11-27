@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012, 2015, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Accomplishment profiles.
  * @author Luke
- * @version 6.3
+ * @version 9.0
  * @since 3.2
  */
 
@@ -63,11 +63,10 @@ public class GetAccomplishment extends DAO {
 		sqlBuf.append(db);
 		sqlBuf.append(".PILOT_ACCOMPLISHMENTS PA ON (A.ID=PA.AC_ID) WHERE (A.ID=?) AND (AI.DBNAME=?) GROUP BY A.ID LIMIT 1");
 		
-		try {
-			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setInt(1, id);
-			_ps.setString(2, db);
-			try (ResultSet rs = _ps.executeQuery()) {
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+			ps.setInt(1, id);
+			ps.setString(2, db);
+			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next()) {
 					a = new Accomplishment(rs.getString(2));
 					a.setID(rs.getInt(1));
@@ -83,7 +82,6 @@ public class GetAccomplishment extends DAO {
 				}
 			}
 			
-			_ps.close();
 			return a;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -97,18 +95,13 @@ public class GetAccomplishment extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<Accomplishment> getByUnit(AccomplishUnit u) throws DAOException {
-		try {
-			prepareStatement("SELECT ID FROM ACCOMPLISHMENTS WHERE (UNIT=?) ORDER BY VAL");
-			_ps.setInt(1, u.ordinal());
-			
-			// Execute the query
+		try (PreparedStatement ps = prepare("SELECT ID FROM ACCOMPLISHMENTS WHERE (UNIT=?) ORDER BY VAL")) {
+			ps.setInt(1, u.ordinal());
 			Collection<Integer> IDs = new LinkedHashSet<Integer>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
 					IDs.add(Integer.valueOf(rs.getInt(1)));
 			}
-			
-			_ps.close();
 			
 			// Load the accomplishments 
 			List<Accomplishment> results = new ArrayList<Accomplishment>();
@@ -131,11 +124,9 @@ public class GetAccomplishment extends DAO {
 	 */
 	public Collection<Accomplishment> getAll() throws DAOException {
 		AirlineInformation ai = SystemData.getApp(SystemData.get("airline.code"));
-		try {
-			prepareStatement("SELECT A.*, COUNT(DISTINCT PA.PILOT_ID) AS CNT FROM ACCOMPLISHMENTS A "
-				+ "LEFT JOIN PILOT_ACCOMPLISHMENTS PA ON (A.ID=PA.AC_ID) GROUP BY A.ID ORDER BY A.UNIT, A.VAL");
+		try (PreparedStatement ps = prepare("SELECT A.*, COUNT(DISTINCT PA.PILOT_ID) AS CNT FROM ACCOMPLISHMENTS A LEFT JOIN PILOT_ACCOMPLISHMENTS PA ON (A.ID=PA.AC_ID) GROUP BY A.ID ORDER BY A.UNIT, A.VAL")) {
 			Collection<Accomplishment> results = new ArrayList<Accomplishment>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					Accomplishment a = new Accomplishment(rs.getString(2));
 					a.setID(rs.getInt(1));
@@ -152,7 +143,6 @@ public class GetAccomplishment extends DAO {
 				}
 			}
 			
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -187,20 +177,12 @@ public class GetAccomplishment extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public boolean has(int pilotID, Accomplishment a) throws DAOException {
-		try {
-			prepareStatement("SELECT DATE FROM PILOT_ACCOMPLISHMENTS WHERE (PILOT_ID=?) AND (AC_ID=?)");
-			_ps.setInt(1, pilotID);
-			_ps.setInt(2, a.getID());
-			
-			// Execute the query
-			boolean isOK = false;
-			try (ResultSet rs = _ps.executeQuery()) {
-				if (rs.next())
-					isOK = (rs.getTimestamp(1) != null);
+		try (PreparedStatement ps = prepare("SELECT DATE FROM PILOT_ACCOMPLISHMENTS WHERE (PILOT_ID=?) AND (AC_ID=?)")) {
+			ps.setInt(1, pilotID);
+			ps.setInt(2, a.getID());
+			try (ResultSet rs = ps.executeQuery()) {
+				return rs.next() ? (rs.getTimestamp(1) != null) : false;
 			}
-			
-			_ps.close();
-			return isOK;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

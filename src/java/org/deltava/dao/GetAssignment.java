@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2011, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2011, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
  * A Data Access Object to load Flight Assignments. All calls in this DAO will populate the legs for any returned Flight
  * Assignments, but will <i>not </i> populate any Flight Reports.
  * @author Luke
- * @version 8.3
+ * @version 9.0
  * @since 1.0
  */
 
@@ -36,17 +36,19 @@ public class GetAssignment extends DAO {
 	public AssignmentInfo get(int id) throws DAOException {
 		try {
 			// Load the assignment info
-			prepareStatement("SELECT * FROM ASSIGNMENTS WHERE (ID=?)");
-			_ps.setInt(1, id);
-			List<AssignmentInfo> results = loadInfo();
+			List<AssignmentInfo> results = new ArrayList<AssignmentInfo>();
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM ASSIGNMENTS WHERE (ID=?) LIMIT 1")) {
+				ps.setInt(1, id);
+				results.addAll(loadInfo(ps));
+			}
 
 			// Load the legs
-			prepareStatementWithoutLimits("SELECT * FROM ASSIGNLEGS WHERE (ID=?)");
-			_ps.setInt(1, id);
-			loadLegs(results);
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM ASSIGNLEGS WHERE (ID=?)")) {
+				ps.setInt(1, id);
+				loadLegs(ps, results);
+			}
 
-			// Return results, or null if none found
-			return results.isEmpty() ? null : results.get(0);
+			return results.stream().findFirst().orElse(null);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -67,17 +69,22 @@ public class GetAssignment extends DAO {
 				buf.append("AND (STATUS=?) ");
 			
 			buf.append("ORDER BY ASSIGNED_ON DESC");
-			prepareStatement(buf.toString());
-			_ps.setInt(1, pilotID);
-			if (st != null)
-				_ps.setInt(2,  st.ordinal());
 			
-			List<AssignmentInfo> results = loadInfo();
+			List<AssignmentInfo> results = new ArrayList<AssignmentInfo>();
+			try (PreparedStatement ps = prepare(buf.toString())) {
+				ps.setInt(1, pilotID);
+				if (st != null)
+					ps.setInt(2,  st.ordinal());
+			
+				results.addAll(loadInfo(ps));
+			}
 
 			// Load the legs
-			prepareStatementWithoutLimits("SELECT L.* FROM ASSIGNMENTS A, ASSIGNLEGS L WHERE (A.ID=L.ID) AND (A.PILOT_ID=?)");
-			_ps.setInt(1, pilotID);
-			loadLegs(results);
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT L.* FROM ASSIGNMENTS A, ASSIGNLEGS L WHERE (A.ID=L.ID) AND (A.PILOT_ID=?)")) {
+				ps.setInt(1, pilotID);
+				loadLegs(ps, results);
+			}
+			
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -93,14 +100,18 @@ public class GetAssignment extends DAO {
 	public List<AssignmentInfo> getByStatus(AssignmentStatus status) throws DAOException {
 		try {
 			// Load the assignment info
-			prepareStatement("SELECT * FROM ASSIGNMENTS WHERE (STATUS=?) ORDER BY ASSIGNED_ON DESC");
-			_ps.setInt(1, status.ordinal());
-			List<AssignmentInfo> results = loadInfo();
+			List<AssignmentInfo> results = new ArrayList<AssignmentInfo>();
+			try (PreparedStatement ps = prepare("SELECT * FROM ASSIGNMENTS WHERE (STATUS=?) ORDER BY ASSIGNED_ON DESC")) {
+				ps.setInt(1, status.ordinal());
+				results.addAll(loadInfo(ps));
+			}
 
 			// Load the legs
-			prepareStatementWithoutLimits("SELECT L.* FROM ASSIGNMENTS A, ASSIGNLEGS L WHERE (A.ID=L.ID) AND (A.STATUS=?)");
-			_ps.setInt(1, status.ordinal());
-			loadLegs(results);
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT L.* FROM ASSIGNMENTS A, ASSIGNLEGS L WHERE (A.ID=L.ID) AND (A.STATUS=?)")) {
+				ps.setInt(1, status.ordinal());
+				loadLegs(ps, results);
+			}
+			
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -118,14 +129,18 @@ public class GetAssignment extends DAO {
 		String db = formatDBName(dbName);
 		try {
 			// Load the assignment info
-			prepareStatement("SELECT * FROM " + db + ".ASSIGNMENTS WHERE (EVENT_ID=?)");
-			_ps.setInt(1, eventID);
-			List<AssignmentInfo> results = loadInfo();
+			List<AssignmentInfo> results = new ArrayList<AssignmentInfo>();
+			try (PreparedStatement ps = prepare("SELECT * FROM " + db + ".ASSIGNMENTS WHERE (EVENT_ID=?)")) {
+				ps.setInt(1, eventID);
+				results.addAll(loadInfo(ps));
+			}
 
 			// Load the legs
-			prepareStatementWithoutLimits("SELECT L.* FROM " + db + ".ASSIGNMENTS A, " + db + ".ASSIGNLEGS L WHERE (A.ID=L.ID) AND (A.EVENT_ID=?)");
-			_ps.setInt(1, eventID);
-			loadLegs(results);
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT L.* FROM " + db + ".ASSIGNMENTS A, " + db + ".ASSIGNLEGS L WHERE (A.ID=L.ID) AND (A.EVENT_ID=?)");) {
+				ps.setInt(1, eventID);
+				loadLegs(ps, results);
+			}
+			
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -148,19 +163,23 @@ public class GetAssignment extends DAO {
 		
 		sqlBuf.append(" ORDER BY STATUS, ASSIGNED_ON DESC");
 		
-		try {
+		try  {
 			// Load the assignment info
-			prepareStatement(sqlBuf.toString());
-			_ps.setString(1, eqType);
-			if (status != null)
-				_ps.setInt(2, status.ordinal());
+			List<AssignmentInfo> results = new ArrayList<AssignmentInfo>();
+			try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+				ps.setString(1, eqType);
+				if (status != null)
+					ps.setInt(2, status.ordinal());
 			
-			List<AssignmentInfo> results = loadInfo();
+				results.addAll(loadInfo(ps));
+			}
 
 			// Load the legs
-			prepareStatementWithoutLimits("SELECT L.* FROM ASSIGNMENTS A, ASSIGNLEGS L WHERE (A.ID=L.ID) AND (A.EQTYPE=?)");
-			_ps.setString(1, eqType);
-			loadLegs(results);
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT L.* FROM ASSIGNMENTS A, ASSIGNLEGS L WHERE (A.ID=L.ID) AND (A.EQTYPE=?)")) {
+				ps.setString(1, eqType);
+				loadLegs(ps, results);
+			}
+			
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -173,15 +192,13 @@ public class GetAssignment extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<String> getEquipmentTypes() throws DAOException {
-		try {
-			prepareStatement("SELECT DISTINCT EQTYPE FROM ASSIGNMENTS ORDER BY EQTYPE");
-			Collection<String> results = new ArrayList<String>();
-			try (ResultSet rs = _ps.executeQuery()) {
+		try (PreparedStatement ps = prepare("SELECT DISTINCT EQTYPE FROM ASSIGNMENTS ORDER BY EQTYPE")) {
+			Collection<String> results = new LinkedHashSet<String>();
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
 					results.add(rs.getString(1));
 			}
 			
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -191,9 +208,9 @@ public class GetAssignment extends DAO {
 	/*
 	 * Helper method to process the assignment info result set.
 	 */
-	private List<AssignmentInfo> loadInfo() throws SQLException {
+	private static List<AssignmentInfo> loadInfo(PreparedStatement ps) throws SQLException {
 		List<AssignmentInfo> results = new ArrayList<AssignmentInfo>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
 				AssignmentInfo info = new AssignmentInfo(rs.getString(5));
 				info.setID(rs.getInt(1));
@@ -209,20 +226,18 @@ public class GetAssignment extends DAO {
 			}
 		}
 
-		_ps.close();
 		return results;
 	}
 
 	/*
 	 * Helper method to process the assignment legs result set.
 	 */
-	private void loadLegs(List<AssignmentInfo> assignments) throws SQLException {
-		if (assignments.isEmpty())
-			return;
+	private static void loadLegs(PreparedStatement ps, List<AssignmentInfo> assignments) throws SQLException {
+		if (assignments.isEmpty()) return;
 
 		// Execute the Query
 		Map<Integer, AssignmentInfo> infoMap = CollectionUtils.createMap(assignments, AssignmentInfo::getID);
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
 				int assignID = rs.getInt(1);
 				AssignmentInfo info = infoMap.get(Integer.valueOf(assignID));
@@ -236,7 +251,5 @@ public class GetAssignment extends DAO {
 				}
 			}
 		}
-
-		_ps.close();
 	}
 }

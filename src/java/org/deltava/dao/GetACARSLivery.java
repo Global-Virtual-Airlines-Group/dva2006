@@ -1,4 +1,4 @@
-// Copyright 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2011, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to read ACARS multi-player livery profiles.
  * @author Luke
- * @version 4.1
+ * @version 9.0
  * @since 2.2
  */
 
@@ -35,15 +35,13 @@ public class GetACARSLivery extends DAO {
 	 * @throws NullPointerException if a or code are null
 	 */
 	public Livery get(Airline a, String code) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT NAME, ISDEFAULT FROM acars.LIVERIES WHERE (AIRLINE=?) "
-					+ "AND (LIVERY=?) LIMIT 1");
-			_ps.setString(1, a.getCode());
-			_ps.setString(2, code);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT NAME, ISDEFAULT FROM acars.LIVERIES WHERE (AIRLINE=?) AND (LIVERY=?) LIMIT 1")) {
+			ps.setString(1, a.getCode());
+			ps.setString(2, code);
 			
 			// Execute the query
 			Livery l = null;
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next()) {
 					l = new Livery(a, code);
 					l.setDescription(rs.getString(1));
@@ -51,7 +49,6 @@ public class GetACARSLivery extends DAO {
 				}
 			}
 			
-			_ps.close();
 			return l;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -72,14 +69,13 @@ public class GetACARSLivery extends DAO {
 			buf.append("WHERE (AIRLINE=?) ");
 		buf.append("ORDER BY AIRLINE, ISDEFAULT DESC, LIVERY");
 		
-		try {
-			prepareStatement(buf.toString());
+		try (PreparedStatement ps = prepare(buf.toString())) {
 			if (a != null)
-				_ps.setString(1, a.getCode());
+				ps.setString(1, a.getCode());
 			
 			// Execute the query
 			Collection<Livery> results = new ArrayList<Livery>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					Livery l = new Livery(SystemData.getAirline(rs.getString(1)), rs.getString(2));
 					l.setDescription(rs.getString(3));
@@ -88,7 +84,6 @@ public class GetACARSLivery extends DAO {
 				}
 			}
 			
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);

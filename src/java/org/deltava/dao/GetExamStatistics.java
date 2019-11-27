@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Examination and Check Ride statistics.
  * @author Luke
- * @version 5.0
+ * @version 9.0
  * @since 3.0
  */
 
@@ -45,19 +45,16 @@ public class GetExamStatistics extends DAO {
 		sqlBuf.append(SystemData.get("airline.db"));
 		sqlBuf.append(".PILOTS P WHERE (C.GRADED_BY=P.ID) AND (C.STATUS=?)");
 		
-		try {
-			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setInt(1, TestStatus.SCORED.ordinal());
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+			ps.setInt(1, TestStatus.SCORED.ordinal());
 			
 			// Execute the query
 			results = new CacheableSet<Integer>(CheckRide.class);
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
 					results.add(Integer.valueOf(rs.getInt(1)));
 			}
 			
-			// Clean up and return
-			_ps.close();
 			_cache.add(results);
 			return results.clone();
 		} catch (SQLException se) {
@@ -82,20 +79,17 @@ public class GetExamStatistics extends DAO {
 		sqlBuf.append(SystemData.get("airline.db"));
 		sqlBuf.append(".PILOTS P WHERE (E.GRADED_BY=P.ID) AND (E.STATUS=?) AND (E.AUTOSCORE=?)");
 		
-		try {
-			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setInt(1, TestStatus.SCORED.ordinal());
-			_ps.setBoolean(2, false);
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+			ps.setInt(1, TestStatus.SCORED.ordinal());
+			ps.setBoolean(2, false);
 			
 			// Execute the query
 			results = new CacheableSet<Integer>(Examination.class);
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
 					results.add(Integer.valueOf(rs.getInt(1)));
 			}
 			
-			// Clean up and return
-			_ps.close();
 			_cache.add(results);
 			return results.clone();
 		} catch (SQLException se) {
@@ -137,17 +131,16 @@ public class GetExamStatistics extends DAO {
 			sqlBuf.append("AND (C.GRADED_BY=?)");
 		sqlBuf.append("GROUP BY LBL, SUBLBL");
 		
-		try {
-			prepareStatement(sqlBuf.toString());
-			_ps.setString(1, SystemData.get("airline.code"));
-			_ps.setBoolean(2, false);
-			_ps.setInt(3, TestStatus.SCORED.ordinal());
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setString(1, SystemData.get("airline.code"));
+			ps.setBoolean(2, false);
+			ps.setInt(3, TestStatus.SCORED.ordinal());
 			if (scorerID > 0)
-				_ps.setInt(4, scorerID);
+				ps.setInt(4, scorerID);
 			
 			// Execute the query
 			Collection<ExamStatsEntry> results = new ArrayList<ExamStatsEntry>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					ExamStatsEntry entry = new ExamStatsEntry(rs.getString(1));
 					entry.setSubLabel(rs.getString(3));
@@ -158,7 +151,6 @@ public class GetExamStatistics extends DAO {
 				}
 			}
 			
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -208,20 +200,19 @@ public class GetExamStatistics extends DAO {
 		sqlBuf.append(", ");
 		sqlBuf.append(subLabel.startsWith("DATE") ? "DT DESC" : "LBL");
 		
-		try {
-			prepareStatement(sqlBuf.toString());
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			int pos = 0;
-			_ps.setInt(++pos, TestStatus.SCORED.ordinal());
+			ps.setInt(++pos, TestStatus.SCORED.ordinal());
 			if (academyOnly)
-				_ps.setBoolean(++pos, true);
+				ps.setBoolean(++pos, true);
 			if (scorerID > 0)
-				_ps.setInt(++pos, scorerID);
+				ps.setInt(++pos, scorerID);
 			if (eqProgram != null)
-				_ps.setString(++pos, eqProgram);
+				ps.setString(++pos, eqProgram);
 			
 			// Execute the query
 			Collection<ExamStatsEntry> results = new ArrayList<ExamStatsEntry>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					ExamStatsEntry entry = new ExamStatsEntry(rs.getString(1));
 					entry.setSubLabel(rs.getString(3));
@@ -232,7 +223,6 @@ public class GetExamStatistics extends DAO {
 				}
 			}
 			
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);

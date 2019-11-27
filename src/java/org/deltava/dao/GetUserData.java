@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load cross-application User data.
  * @author Luke
- * @version 8.4
+ * @version 9.0
  * @since 1.0
  */
 
@@ -44,11 +44,9 @@ public class GetUserData extends DAO {
 	 */
 	public AirlineInformation get(String code) throws DAOException {
 		if (code == null) return null;
-		try {
-			prepareStatementWithoutLimits("SELECT * FROM common.AIRLINEINFO WHERE (CODE=?) LIMIT 1");
-			_ps.setString(1, code.toUpperCase());
-			List<AirlineInformation> results = executeAirlineInfo();
-			return results.isEmpty() ? null : results.get(0);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM common.AIRLINEINFO WHERE (CODE=?) LIMIT 1")) {
+			ps.setString(1, code.toUpperCase());
+			return executeAirlineInfo(ps).stream().findFirst().orElse(null);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -62,9 +60,8 @@ public class GetUserData extends DAO {
 	 */
 	public Map<String, AirlineInformation> getAirlines(boolean includeSelf) throws DAOException {
 		Collection<AirlineInformation> results = null;
-		try {
-			prepareStatementWithoutLimits("SELECT * FROM common.AIRLINEINFO ORDER BY CODE");
-			results = executeAirlineInfo();
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM common.AIRLINEINFO ORDER BY CODE")) {
+			results = executeAirlineInfo(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -89,13 +86,11 @@ public class GetUserData extends DAO {
 		if (ud != null)
 			return ud;
 
-		try {
-			prepareStatementWithoutLimits("SELECT UD.*, AI.DOMAIN, AI.DBNAME, GROUP_CONCAT(DISTINCT XDB.ID SEPARATOR ?) AS IDS FROM common.AIRLINEINFO AI, common.USERDATA UD "
-				+ "LEFT JOIN common.XDB_IDS XDB ON ((UD.ID=XDB.ID) OR (UD.ID=XDB.OTHER_ID)) WHERE (UD.AIRLINE=AI.CODE) AND (UD.ID=?) GROUP BY UD.ID LIMIT 1");
-			_ps.setString(1, ",");
-			_ps.setInt(2, id);
-			List<UserData> results = execute();
-			return results.isEmpty() ? null : results.get(0);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT UD.*, AI.DOMAIN, AI.DBNAME, GROUP_CONCAT(DISTINCT XDB.ID SEPARATOR ?) AS IDS FROM common.AIRLINEINFO AI, common.USERDATA UD "
+			+ "LEFT JOIN common.XDB_IDS XDB ON ((UD.ID=XDB.ID) OR (UD.ID=XDB.OTHER_ID)) WHERE (UD.AIRLINE=AI.CODE) AND (UD.ID=?) GROUP BY UD.ID LIMIT 1")) {
+			ps.setString(1, ",");
+			ps.setInt(2, id);
+			return execute(ps).stream().findFirst().orElse(null);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -108,10 +103,9 @@ public class GetUserData extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public UserDataMap getByThread(int threadID) throws DAOException {
-		try {
-			prepareStatement("SELECT DISTINCT AUTHOR_ID FROM common.COOLER_POSTS WHERE (THREAD_ID=?)");
-			_ps.setInt(1, threadID);
-			return get(executeIDs());
+		try (PreparedStatement ps = 	prepare("SELECT DISTINCT AUTHOR_ID FROM common.COOLER_POSTS WHERE (THREAD_ID=?)")) {
+			ps.setInt(1, threadID);
+			return get(executeIDs(ps));
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -124,10 +118,9 @@ public class GetUserData extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public UserDataMap getByEvent(int eventID) throws DAOException {
-		try {
-			prepareStatement("SELECT DISTINCT PILOT_ID FROM events.EVENT_SIGNUPS WHERE (ID=?)");
-			_ps.setInt(1, eventID);
-			return get(executeIDs());
+		try (PreparedStatement ps = prepare("SELECT DISTINCT PILOT_ID FROM events.EVENT_SIGNUPS WHERE (ID=?)")) {
+			ps.setInt(1, eventID);
+			return get(executeIDs(ps));
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -176,10 +169,9 @@ public class GetUserData extends DAO {
 
 			// Execute the query
 			setQueryMax(querySize);
-			try {
-				prepareStatementWithoutLimits(sqlBuf.toString());
-				_ps.setString(1, ",");
-				Map<Integer, UserData> results = CollectionUtils.createMap(execute(), UserData::getID);
+			try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+				ps.setString(1, ",");
+				Map<Integer, UserData> results = CollectionUtils.createMap(execute(ps), UserData::getID);
 				result.putAll(results);
 			} catch (SQLException se) {
 				throw new DAOException(se);
@@ -192,9 +184,9 @@ public class GetUserData extends DAO {
 	/*
 	 * Helper method to iterate through the result set.
 	 */
-	private List<UserData> execute() throws SQLException {
+	private static List<UserData> execute(PreparedStatement ps) throws SQLException {
 		List<UserData> results = new ArrayList<UserData>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
 				UserData usr = new UserData(rs.getInt(1));
 				usr.setAirlineCode(rs.getString(2));
@@ -212,23 +204,20 @@ public class GetUserData extends DAO {
 					}
 				}
 
-				// Add to results and the cache
 				results.add(usr);
 				_usrCache.add(usr);
 			}
 		}
 
-		// Clean up and return
-		_ps.close();
 		return results;
 	}
 
 	/*
 	 * Helper method to iterate through AirlineInformation result sets.
 	 */
-	private List<AirlineInformation> executeAirlineInfo() throws SQLException {
+	private static List<AirlineInformation> executeAirlineInfo(PreparedStatement ps) throws SQLException {
 		List<AirlineInformation> results = new ArrayList<AirlineInformation>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
 				AirlineInformation info = new AirlineInformation(rs.getString(1), rs.getString(2));
 				info.setDB(rs.getString(3));
@@ -239,7 +228,6 @@ public class GetUserData extends DAO {
 			}
 		}
 
-		_ps.close();
 		return results;
 	}
 }

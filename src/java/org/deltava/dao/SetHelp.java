@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2010, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2010, 2011, 2012, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.help.*;
 /**
  * A Data Access Object to update Online Help entries and Help Desk Issues.
  * @author Luke
- * @version 7.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -28,11 +28,10 @@ public class SetHelp extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(ResponseTemplate rsp) throws DAOException {
-		try {
-			prepareStatement("REPLACE INTO HELPDESK_RSPTMP (TITLE, BODY) VALUES (?, ?)");
-			_ps.setString(1, rsp.getTitle());
-			_ps.setString(2, rsp.getBody());
-			executeUpdate(1);
+		try (PreparedStatement ps = prepare("REPLACE INTO HELPDESK_RSPTMP (TITLE, BODY) VALUES (?, ?)")) {
+			ps.setString(1, rsp.getTitle());
+			ps.setString(2, rsp.getBody());
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -46,31 +45,30 @@ public class SetHelp extends DAO {
 	public void write(Issue i) throws DAOException {
 		try {
 			if (i.getID() == 0) {
-				prepareStatement("INSERT INTO HELPDESK (AUTHOR, ASSIGNEDTO, CREATED_ON, STATUS, ISPUBLIC, "
-						+ "SUBJECT, BODY) VALUES (?, ?, ?, ?, ?, ?, ?)");
-				_ps.setInt(1, i.getAuthorID());
-				_ps.setInt(2, i.getAssignedTo());
-				_ps.setTimestamp(3, createTimestamp(i.getCreatedOn()));
-				_ps.setInt(4, i.getStatus());
-				_ps.setBoolean(5, i.getPublic());
-				_ps.setString(6, i.getSubject());
-				_ps.setString(7, i.getBody());
-			} else {
-				prepareStatement("UPDATE HELPDESK SET STATUS=?, ASSIGNEDTO=?, RESOLVED_ON=?, ISPUBLIC=?, "
-						+ "SUBJECT=?, BODY=? WHERE (ID=?)");
-				_ps.setInt(1, i.getStatus());
-				_ps.setInt(2, i.getAssignedTo());
-				_ps.setTimestamp(3, createTimestamp(i.getResolvedOn()));
-				_ps.setBoolean(4, i.getPublic());
-				_ps.setString(5, i.getSubject());
-				_ps.setString(6, i.getBody());
-				_ps.setInt(7, i.getID());
-			}
-
-			// Update the issue
-			executeUpdate(1);
-			if (i.getID() == 0)
+				try (PreparedStatement ps = prepare("INSERT INTO HELPDESK (AUTHOR, ASSIGNEDTO, CREATED_ON, STATUS, ISPUBLIC, SUBJECT, BODY) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
+					ps.setInt(1, i.getAuthorID());
+					ps.setInt(2, i.getAssignedTo());
+					ps.setTimestamp(3, createTimestamp(i.getCreatedOn()));
+					ps.setInt(4, i.getStatus());
+					ps.setBoolean(5, i.getPublic());
+					ps.setString(6, i.getSubject());
+					ps.setString(7, i.getBody());
+					executeUpdate(ps, 1);
+				}
+				
 				i.setID(getNewID());
+			} else {
+				try (PreparedStatement ps = prepare("UPDATE HELPDESK SET STATUS=?, ASSIGNEDTO=?, RESOLVED_ON=?, ISPUBLIC=?, SUBJECT=?, BODY=? WHERE (ID=?)")) {
+					ps.setInt(1, i.getStatus());
+					ps.setInt(2, i.getAssignedTo());
+					ps.setTimestamp(3, createTimestamp(i.getResolvedOn()));
+					ps.setBoolean(4, i.getPublic());
+					ps.setString(5, i.getSubject());
+					ps.setString(6, i.getBody());
+					ps.setInt(7, i.getID());
+					executeUpdate(ps, 1);
+				}
+			}
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -82,13 +80,12 @@ public class SetHelp extends DAO {
 	 * @throws DAOException if a JDBC error occurss
 	 */
 	public void write(IssueComment ic) throws DAOException {
-		try {
-			prepareStatement("INSERT INTO HELPDESK_COMMENTS (ID, AUTHOR, CREATED_ON, BODY) VALUES (?, ?, ?, ?)");
-			_ps.setInt(1, ic.getID());
-			_ps.setInt(2, ic.getAuthorID());
-			_ps.setTimestamp(3, createTimestamp(ic.getCreatedOn()));
-			_ps.setString(4, ic.getBody());
-			executeUpdate(1);
+		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO HELPDESK_COMMENTS (ID, AUTHOR, CREATED_ON, BODY) VALUES (?, ?, ?, ?)")) {
+			ps.setInt(1, ic.getID());
+			ps.setInt(2, ic.getAuthorID());
+			ps.setTimestamp(3, createTimestamp(ic.getCreatedOn()));
+			ps.setString(4, ic.getBody());
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -105,31 +102,35 @@ public class SetHelp extends DAO {
 			startTransaction();
 			
 			// Clear the answer
-			prepareStatementWithoutLimits("UPDATE HELPDESK_COMMENTS SET ISFAQ=? WHERE (ID=?) AND (ISFAQ=?)");
-			_ps.setBoolean(1, false);
-			_ps.setInt(2, id);
-			_ps.setBoolean(3, true);
-			executeUpdate(0);
+			try (PreparedStatement ps = prepareWithoutLimits("UPDATE HELPDESK_COMMENTS SET ISFAQ=? WHERE (ID=?) AND (ISFAQ=?)")) {
+				ps.setBoolean(1, false);
+				ps.setInt(2, id);
+				ps.setBoolean(3, true);
+				executeUpdate(ps, 0);
+			}
 			
 			// Update the FAQ
-			prepareStatement("UPDATE HELPDESK SET ISFAQ=? WHERE (ID=?)");
-			_ps.setBoolean(1, (createdOn != null));
-			_ps.setInt(2, id);
-			executeUpdate(1);
+			try (PreparedStatement ps = prepare("UPDATE HELPDESK SET ISFAQ=? WHERE (ID=?)")) {
+				ps.setBoolean(1, (createdOn != null));
+				ps.setInt(2, id);
+				executeUpdate(ps, 1);
+			}
 			
 			// Set the FAQ answer, or clear the flag
 			if (createdOn != null) {
-				prepareStatement("UPDATE HELPDESK_COMMENTS SET ISFAQ=? WHERE (ID=?) AND (CREATED_ON=?)");
-				_ps.setBoolean(1, true);
-				_ps.setInt(2, id);
-				_ps.setTimestamp(3, createTimestamp(createdOn));
-				executeUpdate(1);
+				try (PreparedStatement ps = prepare("UPDATE HELPDESK_COMMENTS SET ISFAQ=? WHERE (ID=?) AND (CREATED_ON=?)")) {
+					ps.setBoolean(1, true);
+					ps.setInt(2, id);
+					ps.setTimestamp(3, createTimestamp(createdOn));
+					executeUpdate(ps, 1);
+				}
 			} else {
-				prepareStatementWithoutLimits("UPDATE HELPDESK_COMMENTS SET ISFAQ=? WHERE (ID=?) AND (ISFAQ=?)");
-				_ps.setBoolean(1, false);
-				_ps.setInt(2, id);
-				_ps.setBoolean(3, true);
-				executeUpdate(0);
+				try (PreparedStatement ps = prepareWithoutLimits("UPDATE HELPDESK_COMMENTS SET ISFAQ=? WHERE (ID=?) AND (ISFAQ=?)")) {
+					ps.setBoolean(1, false);
+					ps.setInt(2, id);
+					ps.setBoolean(3, true);
+					executeUpdate(ps, 0);
+				}
 			}
 			
 			commitTransaction();
@@ -145,10 +146,9 @@ public class SetHelp extends DAO {
 	 * @throws DAOException if a JDBC error occurss
 	 */
 	public void delete(int id) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("DELETE FROM HELPDESK WHERE (ID=?)");
-			_ps.setInt(1, id);
-			executeUpdate(0);
+		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM HELPDESK WHERE (ID=?)")) {
+			ps.setInt(1, id);
+			executeUpdate(ps, 0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -160,10 +160,9 @@ public class SetHelp extends DAO {
 	 * @throws DAOException if a JDBC error occurss
 	 */
 	public void deleteTemplate(String title) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("DELETE FROM HELPDESK_RSPTMP WHERE (TITLE=?)");
-			_ps.setString(1, title);
-			executeUpdate(0);
+		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM HELPDESK_RSPTMP WHERE (TITLE=?)")) {
+			ps.setString(1, title);
+			executeUpdate(ps, 0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -180,30 +179,30 @@ public class SetHelp extends DAO {
 			startTransaction();
 			
 			// Remove it from the FAQ if this is the FAQ answer
-			prepareStatement("SELECT COUNT(*) FROM HELPDESK_COMMENTS WHERE (ID=?) AND (ISFAQ=?) AND (CREATED_ON=?)");
-			_ps.setInt(1, issueID);
-			_ps.setBoolean(2, true);
-			_ps.setTimestamp(3, createTimestamp(createdOn));
-			
-			// Do the check
 			boolean isFAQAnswer = false;
-			try (ResultSet rs = _ps.executeQuery()) {
-				if (rs.next())
-					isFAQAnswer = (rs.getInt(1) == 1);
+			try (PreparedStatement ps = prepare("SELECT COUNT(*) FROM HELPDESK_COMMENTS WHERE (ID=?) AND (ISFAQ=?) AND (CREATED_ON=?)")) {
+				ps.setInt(1, issueID);
+				ps.setBoolean(2, true);
+				ps.setTimestamp(3, createTimestamp(createdOn));
+				try (ResultSet rs = ps.executeQuery()) {
+					isFAQAnswer = rs.next() && (rs.getInt(1) > 0);
+				}
 			}
 			
 			// Delete the comment
-			prepareStatementWithoutLimits("DELETE FROM HELPDESK_COMMENTS WHERE (ID=?) AND (CREATED_ON=?)");
-			_ps.setInt(1, issueID);
-			_ps.setTimestamp(2, createTimestamp(createdOn));
-			executeUpdate(1);
+			try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM HELPDESK_COMMENTS WHERE (ID=?) AND (CREATED_ON=?)")) {
+				ps.setInt(1, issueID);
+				ps.setTimestamp(2, createTimestamp(createdOn));
+				executeUpdate(ps, 1);
+			}
 			
 			// If we are the FAQ answer, clear the FAQ flag from the Issue
 			if (isFAQAnswer) {
-				prepareStatementWithoutLimits("UPDATE HELPDESK SET ISFAQ=? WHERE (ID=?)");
-				_ps.setBoolean(1, false);
-				_ps.setInt(2, issueID);
-				executeUpdate(0);
+				try (PreparedStatement ps = prepareWithoutLimits("UPDATE HELPDESK SET ISFAQ=? WHERE (ID=?)")) {
+					ps.setBoolean(1, false);
+					ps.setInt(2, issueID);
+					executeUpdate(ps, 0);
+				}
 			}
 			
 			commitTransaction();

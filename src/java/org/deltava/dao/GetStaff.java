@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2011, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.Staff;
 /**
  * A Data Access Object to return Staff Profiles.
  * @author Luke
- * @version 8.3
+ * @version 9.0
  * @since 1.0
  */
 
@@ -31,11 +31,10 @@ public class GetStaff extends DAO {
      * @throws DAOException if a JDBC error occurs
      */
     public Staff get(int id) throws DAOException {
-        try {
-            prepareStatementWithoutLimits("SELECT P.FIRSTNAME, P.LASTNAME, P.EMAIL, P.EQTYPE, P.RANKING, S.* FROM STAFF S, PILOTS P WHERE (S.ID=P.ID) AND (S.ID=?) LIMIT 1");
-            _ps.setInt(1, id);
+    	try (PreparedStatement ps = prepareWithoutLimits("SELECT P.FIRSTNAME, P.LASTNAME, P.EMAIL, P.EQTYPE, P.RANKING, S.* FROM STAFF S, PILOTS P WHERE (S.ID=P.ID) AND (S.ID=?) LIMIT 1")) {
+            ps.setInt(1, id);
             Staff s = null;
-            try (ResultSet rs = _ps.executeQuery()) {
+            try (ResultSet rs = ps.executeQuery()) {
             	if (rs.next()) {
             		s = new Staff(rs.getString(1), rs.getString(2));
             		s.setEmail(rs.getString(3));
@@ -49,7 +48,6 @@ public class GetStaff extends DAO {
             	}
             }
             
-            _ps.close();
             return s;
         } catch (SQLException se) {
             throw new DAOException(se);
@@ -62,10 +60,9 @@ public class GetStaff extends DAO {
      * @throws DAOException if a JDBC error occurs
      */
     public Collection<Staff> getStaff() throws DAOException {
-        try {
-            prepareStatementWithoutLimits("SELECT P.FIRSTNAME, P.LASTNAME, P.EMAIL, P.EQTYPE, P.RANKING, S.* FROM STAFF S, PILOTS P WHERE (S.ID=P.ID)");
+    	try (PreparedStatement ps = prepareWithoutLimits("SELECT P.FIRSTNAME, P.LASTNAME, P.EMAIL, P.EQTYPE, P.RANKING, S.* FROM STAFF S, PILOTS P WHERE (S.ID=P.ID)")) {
             Collection<Staff> results = new ArrayList<Staff>();
-            try (ResultSet rs = _ps.executeQuery()) {
+            try (ResultSet rs = ps.executeQuery()) {
             	while (rs.next()) {
             		Staff s = new Staff(rs.getString(1), rs.getString(2));
             		s.setEmail(rs.getString(3));
@@ -80,7 +77,6 @@ public class GetStaff extends DAO {
             	}
             }
             
-            _ps.close();
             return results;
         } catch (SQLException se) {
             throw new DAOException(se);

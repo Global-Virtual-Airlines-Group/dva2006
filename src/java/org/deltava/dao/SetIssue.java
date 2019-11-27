@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2011, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2011, 2014, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.system.*;
 /**
  * A Data Access Object to update development Issues.
  * @author Luke
- * @version 5.2
+ * @version 9.0
  * @since 1.0
  */
 
@@ -26,42 +26,48 @@ public class SetIssue extends DAO {
 	 * Helper method to initialize the prepared statement for INSERTs.
 	 */
 	private void insert(Issue i) throws SQLException {
-		prepareStatement("INSERT INTO common.ISSUES (ID, AUTHOR, ASSIGNEDTO, CREATED, RESOLVED, SUBJECT, "
-				+ "DESCRIPTION, AREA, PRIORITY, STATUS, TYPE, SECURITY, MAJOR, MINOR) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-		_ps.setInt(1, i.getID());
-		_ps.setInt(2, i.getAuthorID());
-		_ps.setInt(3, i.getAssignedTo());
-		_ps.setTimestamp(4, createTimestamp(i.getCreatedOn()));
-		_ps.setTimestamp(5, (i.getStatus() == Issue.STATUS_OPEN) ? null : createTimestamp(i.getResolvedOn()));
-		_ps.setString(6, i.getSubject());
-		_ps.setString(7, i.getDescription());
-		_ps.setInt(8, i.getArea());
-		_ps.setInt(9, i.getPriority());
-		_ps.setInt(10, i.getStatus());
-		_ps.setInt(11, i.getType());
-		_ps.setInt(12, i.getSecurity());
-		_ps.setInt(13, i.getMajorVersion());
-		_ps.setInt(14, i.getMinorVersion());
+		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.ISSUES (ID, AUTHOR, ASSIGNEDTO, CREATED, RESOLVED, SUBJECT, "
+			+ "DESCRIPTION, AREA, PRIORITY, STATUS, TYPE, SECURITY, MAJOR, MINOR) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+				ps.setInt(1, i.getID());
+				ps.setInt(2, i.getAuthorID());
+				ps.setInt(3, i.getAssignedTo());
+				ps.setTimestamp(4, createTimestamp(i.getCreatedOn()));
+				ps.setTimestamp(5, (i.getStatus() == Issue.STATUS_OPEN) ? null : createTimestamp(i.getResolvedOn()));
+				ps.setString(6, i.getSubject());
+				ps.setString(7, i.getDescription());
+				ps.setInt(8, i.getArea());
+				ps.setInt(9, i.getPriority());
+				ps.setInt(10, i.getStatus());
+				ps.setInt(11, i.getType());
+				ps.setInt(12, i.getSecurity());
+				ps.setInt(13, i.getMajorVersion());
+				ps.setInt(14, i.getMinorVersion());
+				executeUpdate(ps, 1);
+		}
+		
+		i.setID(getNewID());
 	}
 
 	/*
 	 * Helper method to initialize the prepared statement for UPDATEs.
 	 */
 	private void update(Issue i) throws SQLException {
-		prepareStatement("UPDATE common.ISSUES SET ASSIGNEDTO=?, RESOLVED=?, SUBJECT=?, DESCRIPTION=?, "
-				+ "AREA=?, PRIORITY=?, STATUS=?, TYPE=?, SECURITY=?, MAJOR=?, MINOR=? WHERE (ID=?)");
-		_ps.setInt(1, i.getAssignedTo());
-		_ps.setTimestamp(2, (i.getStatus() == Issue.STATUS_OPEN) ? null : createTimestamp(i.getResolvedOn()));
-		_ps.setString(3, i.getSubject());
-		_ps.setString(4, i.getDescription());
-		_ps.setInt(5, i.getArea());
-		_ps.setInt(6, i.getPriority());
-		_ps.setInt(7, i.getStatus());
-		_ps.setInt(8, i.getType());
-		_ps.setInt(9, i.getSecurity());
-		_ps.setInt(10, i.getMajorVersion());
-		_ps.setInt(11, i.getMinorVersion());
-		_ps.setInt(12, i.getID());
+		try (PreparedStatement ps = prepare("UPDATE common.ISSUES SET ASSIGNEDTO=?, RESOLVED=?, SUBJECT=?, DESCRIPTION=?, "
+				+ "AREA=?, PRIORITY=?, STATUS=?, TYPE=?, SECURITY=?, MAJOR=?, MINOR=? WHERE (ID=?)")) {
+			ps.setInt(1, i.getAssignedTo());
+			ps.setTimestamp(2, (i.getStatus() == Issue.STATUS_OPEN) ? null : createTimestamp(i.getResolvedOn()));
+			ps.setString(3, i.getSubject());
+			ps.setString(4, i.getDescription());
+			ps.setInt(5, i.getArea());
+			ps.setInt(6, i.getPriority());
+			ps.setInt(7, i.getStatus());
+			ps.setInt(8, i.getType());
+			ps.setInt(9, i.getSecurity());
+			ps.setInt(10, i.getMajorVersion());
+			ps.setInt(11, i.getMinorVersion());
+			ps.setInt(12, i.getID());
+			executeUpdate(ps, 1);
+		}
 	}
 
 	/**
@@ -79,12 +85,8 @@ public class SetIssue extends DAO {
 			else
 				update(i);
 
-			executeUpdate(1);
-
 			// If we wrote a new Issue, don't bother with the comments but get the issue ID
-			if (i.getID() == 0)
-				i.setID(getNewID());
-			else {
+			if (i.getID() != 0) {
 				for (IssueComment ic : i.getComments()) {
 					if (ic.getID() == 0)
 						write(ic);
@@ -106,22 +108,24 @@ public class SetIssue extends DAO {
 	public void write(IssueComment ic) throws DAOException {
 		try {
 			startTransaction();
-			prepareStatementWithoutLimits("INSERT INTO common.ISSUE_COMMENTS (ISSUE_ID, AUTHOR, CREATED, "
-					+ "COMMENTS) VALUES (?, ?, NOW(), ?)");
-			_ps.setInt(1, ic.getIssueID());
-			_ps.setInt(2, ic.getAuthorID());
-			_ps.setString(3, ic.getComments());
-			executeUpdate(1);
+			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.ISSUE_COMMENTS (ISSUE_ID, AUTHOR, CREATED, COMMENTS) VALUES (?, ?, NOW(), ?)")) {
+				ps.setInt(1, ic.getIssueID());
+				ps.setInt(2, ic.getAuthorID());
+				ps.setString(3, ic.getComments());
+				executeUpdate(ps, 1);
+			}
+			
 			ic.setID(getNewID());
 			
 			// Write file if necessary
 			if (ic.isLoaded()) {
-				prepareStatementWithoutLimits("INSERT INTO common.ISSUE_FILES (ID, SIZE, NAME, BODY) VALUES (?, ?, ?, ?)");
-				_ps.setInt(1, ic.getID());
-				_ps.setInt(2, ic.getSize());
-				_ps.setString(3, ic.getName());
-				_ps.setBinaryStream(4, ic.getInputStream(), ic.getSize());
-				executeUpdate(1);
+				try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.ISSUE_FILES (ID, SIZE, NAME, BODY) VALUES (?, ?, ?, ?)")) {
+					ps.setInt(1, ic.getID());
+					ps.setInt(2, ic.getSize());
+					ps.setString(3, ic.getName());
+					ps.setBinaryStream(4, ic.getInputStream(), ic.getSize());
+					executeUpdate(ps, 1);
+				}
 			}
 			
 			commitTransaction();

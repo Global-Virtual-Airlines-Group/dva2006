@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Schedule route data.
  * @author Luke
- * @version 8.6
+ * @version 9.0
  * @since 1.0
  */
 
@@ -52,13 +52,12 @@ public class GetScheduleAirport extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<ScheduleStatsEntry> getDepartureStatistics(Airport a) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT HOUR(S.TIME_D) AS HR, COUNT(S.FLIGHT) AS CNT, SUM(IF(DA.COUNTRY=AA.COUNTRY,1,0)) AS DOMESTIC FROM SCHEDULE S LEFT JOIN "
-				+ "common.AIRPORTS DA ON (S.AIRPORT_D=DA.IATA) LEFT JOIN common.AIRPORTS AA ON (S.AIRPORT_A=AA.IATA) WHERE (S.AIRPORT_D=?) GROUP BY HR ORDER BY HR");
-			_ps.setString(1, a.getIATA());
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT HOUR(S.TIME_D) AS HR, COUNT(S.FLIGHT) AS CNT, SUM(IF(DA.COUNTRY=AA.COUNTRY,1,0)) AS DOMESTIC FROM SCHEDULE S LEFT JOIN "
+				+ "common.AIRPORTS DA ON (S.AIRPORT_D=DA.IATA) LEFT JOIN common.AIRPORTS AA ON (S.AIRPORT_A=AA.IATA) WHERE (S.AIRPORT_D=?) GROUP BY HR ORDER BY HR")) {
+			ps.setString(1, a.getIATA());
 			
 			Collection<ScheduleStatsEntry> results = new ArrayList<ScheduleStatsEntry>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					ScheduleStatsEntry entry = new ScheduleStatsEntry(rs.getInt(1));
 					int total = rs.getInt(2); int domestic = rs.getInt(3);
@@ -67,7 +66,6 @@ public class GetScheduleAirport extends DAO {
 				}
 			}
 			
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -81,13 +79,12 @@ public class GetScheduleAirport extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<ScheduleStatsEntry> getArrivalStatistics(Airport a) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT HOUR(S.TIME_A) AS HR, COUNT(S.FLIGHT) AS CNT, SUM(IF(DA.COUNTRY=AA.COUNTRY,1,0)) AS DOMESTIC FROM SCHEDULE S LEFT JOIN "
-				+ "common.AIRPORTS DA ON (S.AIRPORT_D=DA.IATA) LEFT JOIN common.AIRPORTS AA ON (S.AIRPORT_A=AA.IATA) WHERE (S.AIRPORT_A=?) GROUP BY HR ORDER BY HR");
-			_ps.setString(1, a.getIATA());
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT HOUR(S.TIME_A) AS HR, COUNT(S.FLIGHT) AS CNT, SUM(IF(DA.COUNTRY=AA.COUNTRY,1,0)) AS DOMESTIC FROM SCHEDULE S LEFT JOIN "
+				+ "common.AIRPORTS DA ON (S.AIRPORT_D=DA.IATA) LEFT JOIN common.AIRPORTS AA ON (S.AIRPORT_A=AA.IATA) WHERE (S.AIRPORT_A=?) GROUP BY HR ORDER BY HR")) {
+			ps.setString(1, a.getIATA());
 			
 			Collection<ScheduleStatsEntry> results = new ArrayList<ScheduleStatsEntry>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					ScheduleStatsEntry entry = new ScheduleStatsEntry(rs.getInt(1));
 					int total = rs.getInt(2); int domestic = rs.getInt(3);
@@ -96,7 +93,6 @@ public class GetScheduleAirport extends DAO {
 				}
 			}
 
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -119,12 +115,11 @@ public class GetScheduleAirport extends DAO {
 		
 		sqlBuf.append(" ORDER BY A.NAME");
 
-		try {
-			prepareStatement(sqlBuf.toString());
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			if (al != null)
-				_ps.setString(1, al.getCode());
+				ps.setString(1, al.getCode());
 
-			return execute();
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -155,13 +150,12 @@ public class GetScheduleAirport extends DAO {
 		
 		sqlBuf.append(" ORDER BY A.NAME");
 
-		try {
-			prepareStatement(sqlBuf.toString());
-			_ps.setString(1, a.getIATA());
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setString(1, a.getIATA());
 			if (al != null)
-				_ps.setString(2, al.getCode());
+				ps.setString(2, al.getCode());
 
-			return execute();
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -170,9 +164,9 @@ public class GetScheduleAirport extends DAO {
 	/*
 	 * Helper method to parse Airport result sets.
 	 */
-	private List<Airport> execute() throws SQLException {
+	private static List<Airport> execute(PreparedStatement ps) throws SQLException {
 		List<Airport> results = new ArrayList<Airport>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
 				Airport ap = SystemData.getAirport(rs.getString(1));
 				if (ap != null)
@@ -180,7 +174,6 @@ public class GetScheduleAirport extends DAO {
 			}
 		}
 		
-		_ps.close();
 		return results;
 	}
 }

@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009, 2011, 2012, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to retrieve e-Mail message templates.
  * @author Luke
- * @version 5.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -38,12 +38,8 @@ public class GetMessageTemplate extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public MessageTemplate get(String name) throws DAOException {
-		
-		// Check the cache
 		MessageTemplate result = _cache.get(name);
-		if (result != null)
-			return result;
-		
+		if (result != null) return result;
 		return get(SystemData.get("airline.db"), name);
 	}
 
@@ -62,12 +58,11 @@ public class GetMessageTemplate extends DAO {
 		sqlBuf.append(".MSG_TEMPLATES WHERE (NAME=?) LIMIT 1");
 		
 		MessageTemplate result = null;
-		try {
-			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setString(1, name.toUpperCase());
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+			ps.setString(1, name.toUpperCase());
 
 			// Get the results, if we get back a null, log a warning, otherwise update the cache
-			List<MessageTemplate> results = execute();
+			List<MessageTemplate> results = execute(ps);
 			if (!results.isEmpty()) {
 				result = results.get(0);
 				_cache.add(result);
@@ -86,9 +81,8 @@ public class GetMessageTemplate extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<MessageTemplate> getAll() throws DAOException {
-		try {
-			prepareStatement("SELECT * FROM MSG_TEMPLATES");
-			return execute();
+		try (PreparedStatement ps = prepare("SELECT * FROM MSG_TEMPLATES")) {
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -97,9 +91,9 @@ public class GetMessageTemplate extends DAO {
 	/*
 	 * Helper method to parse the result set.
 	 */
-	private List<MessageTemplate> execute() throws SQLException {
+	private static List<MessageTemplate> execute(PreparedStatement ps) throws SQLException {
 		List<MessageTemplate> results = new ArrayList<MessageTemplate>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
 				MessageTemplate mt = new MessageTemplate(rs.getString(1));
 				mt.setSubject(rs.getString(2));
@@ -110,7 +104,6 @@ public class GetMessageTemplate extends DAO {
 			}
 		}
 
-		_ps.close();
 		return results;
 	}
 }

@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2014, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2014, 2016, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load flight routes from approved Flight Reports. 
  * @author Luke
- * @version 8.1
+ * @version 9.0
  * @since 3.3
  */
 
@@ -58,20 +58,18 @@ public class GetFlightReportRoutes extends DAO {
 		sqlBuf.append(db);
 		sqlBuf.append(".PIREPS PR LEFT JOIN ");
 		sqlBuf.append(db);
-		sqlBuf.append(".ACARS_PIREPS APR ON (PR.ID=APR.ID) LEFT JOIN acars.FLIGHTS F ON (APR.ACARS_ID=F.ID) WHERE "
-			+ "(PR.ID=PRT.ID) AND (P.ID=PR.PILOT_ID) AND (PR.AIRPORT_D=?) AND (PR.AIRPORT_A=?) AND (PR.STATUS=?) "
-			+ "AND (F.CRUISE_ALT IS NOT NULL) GROUP BY PRT.ROUTE ORDER BY CNT DESC, PR.SUBMITTED");
+		sqlBuf.append(".ACARS_PIREPS APR ON (PR.ID=APR.ID) LEFT JOIN acars.FLIGHTS F ON (APR.ACARS_ID=F.ID) WHERE (PR.ID=PRT.ID) AND (P.ID=PR.PILOT_ID) AND (PR.AIRPORT_D=?) AND "
+			+ "(PR.AIRPORT_A=?) AND (PR.STATUS=?) AND (F.CRUISE_ALT IS NOT NULL) GROUP BY PRT.ROUTE ORDER BY CNT DESC, PR.SUBMITTED");
 		
-		try {
-			prepareStatement(sqlBuf.toString());
-			_ps.setString(1, rp.getAirportD().getIATA());
-			_ps.setString(2, rp.getAirportA().getIATA());
-			_ps.setInt(3, FlightStatus.OK.ordinal());
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setString(1, rp.getAirportD().getIATA());
+			ps.setString(2, rp.getAirportA().getIATA());
+			ps.setInt(3, FlightStatus.OK.ordinal());
 			
 			// Execute the query
 			int maxCount = 0; boolean doMore = true; int id = 0;
 			Collection<FlightRoute> results = new ArrayList<FlightRoute>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next() && doMore) {
 					ExternalRoute rt = new ExternalRoute("ACARS");
 					rt.setID(++id);
@@ -110,7 +108,6 @@ public class GetFlightReportRoutes extends DAO {
 				}
 			}
 			
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);

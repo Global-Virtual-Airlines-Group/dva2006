@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to load ACARS build data. 
  * @author Luke
- * @version 8.6
+ * @version 9.0
  * @since 4.1
  */
 
@@ -35,14 +35,13 @@ public class GetACARSBuilds extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public ClientInfo getLatestBeta(ClientVersion ver) throws DAOException {
-		try {
-			prepareStatement("SELECT DATA FROM acars.VERSION_INFO WHERE (NAME=?) AND (VER=?) AND (DATA LIKE ?)");
-			_ps.setString(1, "beta");
-			_ps.setInt(2, ver.getVersion());
-			_ps.setString(3, "%.%");
+		try (PreparedStatement ps = prepare("SELECT DATA FROM acars.VERSION_INFO WHERE (NAME=?) AND (VER=?) AND (DATA LIKE ?)")) {
+			ps.setString(1, "beta");
+			ps.setInt(2, ver.getVersion());
+			ps.setString(3, "%.%");
 			
 			ClientInfo inf = null;
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next()) {
 					String info = rs.getString(1);
 					int pos = info.indexOf('.');
@@ -52,7 +51,6 @@ public class GetACARSBuilds extends DAO {
 				}
 			}
 			
-			_ps.close();
 			return inf;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -77,33 +75,31 @@ public class GetACARSBuilds extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public ClientInfo getLatestBuild(ClientInfo info, boolean isForced) throws DAOException {
-		try {
-			prepareStatement("SELECT DATA FROM acars.VERSION_INFO WHERE (NAME=?) AND (VER=?)");
-			_ps.setInt(2, info.getVersion());
+		try (PreparedStatement ps = prepare("SELECT DATA FROM acars.VERSION_INFO WHERE (NAME=?) AND (VER=?)")) {
+			ps.setInt(2, info.getVersion());
 			switch (info.getClientType()) {
 				case DISPATCH:
-					_ps.setString(1, isForced ? "latestDispatch" : "forcedDispatch");
+					ps.setString(1, isForced ? "latestDispatch" : "forcedDispatch");
 					break;
 			
 				case ATC:
-					_ps.setString(1, isForced ? "forcedATC" : "latestATC");
+					ps.setString(1, isForced ? "forcedATC" : "latestATC");
 					break;
 					
 				case PILOT:
 				default:
-					_ps.setString(1, isForced ? "forced" : "latest");
+					ps.setString(1, isForced ? "forced" : "latest");
 					break;
 			}
 			
 			ClientInfo inf = null;
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next()) {
 					inf = new ClientInfo(info.getVersion(), Integer.valueOf(rs.getString(1)).intValue());
 					inf.setClientType(info.getClientType());
 				}
 			}
 			
-			_ps.close();
 			return inf;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -128,39 +124,40 @@ public class GetACARSBuilds extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public boolean isValid(ClientInfo inf, AccessRole role) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT COUNT(*) FROM acars.VERSION_INFO WHERE (NAME=?) AND (VER=?) AND (DATA<?)");
-			_ps.setInt(2, inf.getVersion());
-			_ps.setInt(3, inf.getClientBuild() + 1);
+		boolean isOK = false;
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT COUNT(*) FROM acars.VERSION_INFO WHERE (NAME=?) AND (VER=?) AND (DATA<?)")) {
+			ps.setInt(2, inf.getVersion());
+			ps.setInt(3, inf.getClientBuild() + 1);
 			if (role == AccessRole.CONNECT) {
 				switch (inf.getClientType()) {
 					case DISPATCH: 
-						_ps.setString(1, "minDispatch");
+						ps.setString(1, "minDispatch");
 						break;
 					
 					case ATC:
-						_ps.setString(1, "minATC");
+						ps.setString(1, "minATC");
 						break;
 				
 					default:
-						_ps.setString(1, "minBuild");
+						ps.setString(1, "minBuild");
 				}
 			} else
-				_ps.setString(1, inf.isBeta() ? "minUploadBeta" : "minUpload");
+				ps.setString(1, inf.isBeta() ? "minUploadBeta" : "minUpload");
 
 			// Check if the build is OK
-			boolean isOK = false;
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				isOK = rs.next() ? (rs.getInt(1) > 0) : false;
 			}
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
 			
-			// Check the beta version
-			_ps.close();
-			if (isOK && inf.isBeta() && !inf.isDispatch()) {
-				prepareStatement("SELECT DATA FROM acars.VERSION_INFO WHERE (NAME=?) AND (VER=?)");
-				_ps.setString(1, (role == AccessRole.CONNECT) ? "minBeta" : "minUploadBeta");
-				_ps.setInt(2, inf.getVersion());
-				try (ResultSet rs = _ps.executeQuery()) {
+		// Check the beta version
+		if (isOK && inf.isBeta() && !inf.isDispatch()) {
+			try (PreparedStatement ps = prepare("SELECT DATA FROM acars.VERSION_INFO WHERE (NAME=?) AND (VER=?)")) {
+				ps.setString(1, (role == AccessRole.CONNECT) ? "minBeta" : "minUploadBeta");
+				ps.setInt(2, inf.getVersion());
+				try (ResultSet rs = ps.executeQuery()) {
 					if (rs.next()) {
 						String info = rs.getString(1);
 						int bld = StringUtils.parse(info.substring(0, info.indexOf('.')), Integer.MAX_VALUE);
@@ -169,14 +166,12 @@ public class GetACARSBuilds extends DAO {
 					} else
 						isOK = false;
 				}
-				
-				_ps.close();
+			} catch (SQLException se) {
+				throw new DAOException(se);
 			}
-			
-			return isOK;
-		} catch (SQLException se) {
-			throw new DAOException(se);
 		}
+			
+		return isOK;
 	}
 	
 	/**
@@ -186,13 +181,12 @@ public class GetACARSBuilds extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public boolean isDispatchAvailable(ClientVersion inf) throws DAOException {
-		try {
-			prepareStatement("SELECT DATA FROM acars.VERSION_INFO WHERE (NAME=?) AND (VER=?)");
-			_ps.setString(1, "noDispatch");
-			_ps.setInt(2, inf.getVersion());
+		try (PreparedStatement ps = prepare("SELECT DATA FROM acars.VERSION_INFO WHERE (NAME=?) AND (VER=?)")) {
+			ps.setString(1, "noDispatch");
+			ps.setInt(2, inf.getVersion());
 			
 			boolean isOK = true;
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next()) {
 					List<String> builds = StringUtils.split(rs.getString(1), ",");
 					for (Iterator<String> i = builds.iterator(); isOK && i.hasNext(); ) {
@@ -203,7 +197,6 @@ public class GetACARSBuilds extends DAO {
 				}
 			}
 			
-			_ps.close();
 			return isOK;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -217,16 +210,15 @@ public class GetACARSBuilds extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<ClientBuildStats> getBuildStatistics(int weeks) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT DATE(DATE_SUB(F.CREATED, INTERVAL WEEKDAY(F.CREATED) DAY)) AS DT, F.CLIENT_BUILD, COUNT(F.ID), SUM(P.FLIGHT_TIME) FROM PIREPS P, "
-				+ "ACARS_PIREPS AP, acars.FLIGHTS F WHERE (F.CREATED > DATE_SUB(CURDATE(), INTERVAL ? MONTH)) AND (P.ID=AP.ID) AND (F.ID=AP.ACARS_ID) AND (P.STATUS=?) AND "
-				+ "(F.FDR=?) GROUP BY DT, F.CLIENT_BUILD ORDER BY DT DESC, F.CLIENT_BUILD");
-			_ps.setInt(1, weeks + 2);
-			_ps.setInt(2, FlightStatus.OK.ordinal());
-			_ps.setInt(3, Recorder.ACARS.ordinal());
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT DATE(DATE_SUB(F.CREATED, INTERVAL WEEKDAY(F.CREATED) DAY)) AS DT, F.CLIENT_BUILD, COUNT(F.ID), SUM(P.FLIGHT_TIME) FROM PIREPS P, "
+			+ "ACARS_PIREPS AP, acars.FLIGHTS F WHERE (F.CREATED > DATE_SUB(CURDATE(), INTERVAL ? MONTH)) AND (P.ID=AP.ID) AND (F.ID=AP.ACARS_ID) AND (P.STATUS=?) AND (F.FDR=?) GROUP BY "
+			+ "DT, F.CLIENT_BUILD ORDER BY DT DESC, F.CLIENT_BUILD")) {
+			ps.setInt(1, weeks + 2);
+			ps.setInt(2, FlightStatus.OK.ordinal());
+			ps.setInt(3, Recorder.ACARS.ordinal());
 			
 			Collection<ClientBuildStats> results = new ArrayList<ClientBuildStats>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				ClientBuildStats stats = null;
 				while (rs.next() && (results.size() <= weeks)) {
 					Instant dt = toInstant(rs.getTimestamp(1));
@@ -239,7 +231,6 @@ public class GetACARSBuilds extends DAO {
 				}
 			}
 			
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);

@@ -1,4 +1,4 @@
-// Copyright 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.schedule.ScheduleEntry;
 /**
  * A Data Access Object to write ACARS on-time data to the database.
  * @author Luke
- * @version 8.4
+ * @version 9.0
  * @since 8.4
  */
 
@@ -37,18 +37,17 @@ public class SetACARSOnTime extends DAO {
 		sqlBuf.append(formatDBName(db));
 		sqlBuf.append(".ACARS_ONTIME VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 		
-		try {
-			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setInt(1, afr.getID());
-			_ps.setInt(2, afr.getOnTime().ordinal());
-			_ps.setString(3, entry.getAirline().getCode());
-			_ps.setInt(4, entry.getFlightNumber());
-			_ps.setInt(5, entry.getLeg());
-			_ps.setTimestamp(6, Timestamp.valueOf(entry.getTimeD().toLocalDateTime()));
-			_ps.setTimestamp(7, Timestamp.valueOf(entry.getTimeA().toLocalDateTime()));
-			_ps.setTimestamp(8, createTimestamp(afr.getTimeD().toInstant()));
-			_ps.setTimestamp(9, createTimestamp(afr.getTimeA().toInstant()));
-			executeUpdate(1);
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+			ps.setInt(1, afr.getID());
+			ps.setInt(2, afr.getOnTime().ordinal());
+			ps.setString(3, entry.getAirline().getCode());
+			ps.setInt(4, entry.getFlightNumber());
+			ps.setInt(5, entry.getLeg());
+			ps.setTimestamp(6, Timestamp.valueOf(entry.getTimeD().toLocalDateTime()));
+			ps.setTimestamp(7, Timestamp.valueOf(entry.getTimeA().toLocalDateTime()));
+			ps.setTimestamp(8, createTimestamp(afr.getTimeD().toInstant()));
+			ps.setTimestamp(9, createTimestamp(afr.getTimeA().toInstant()));
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

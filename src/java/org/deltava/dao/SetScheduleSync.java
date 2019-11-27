@@ -1,4 +1,4 @@
-// Copyright 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2015, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.schedule.Airline;
 /**
  * A Data Access Object to synchronize flight schedules.
  * @author Luke
- * @version 6.0
+ * @version 9.0
  * @since 6.0
  */
 
@@ -33,16 +33,14 @@ public class SetScheduleSync extends DAO {
 	public int copy(Airline al, boolean canPurge, String srcDB) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("INSERT INTO SCHEDULE (SELECT AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A, DISTANCE, EQTYPE, "
-				+ "FLIGHT_TIME, TIME_D, TIME_A, HISTORIC, ?, ACADEMY FROM ");
+		StringBuilder sqlBuf = new StringBuilder("INSERT INTO SCHEDULE (SELECT AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A, DISTANCE, EQTYPE, FLIGHT_TIME, TIME_D, TIME_A, HISTORIC, ?, ACADEMY FROM ");
 		sqlBuf.append(formatDBName(srcDB));
 		sqlBuf.append(".SCHEDULE WHERE (AIRLINE=?))");
 		
-		try {
-			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setBoolean(1, canPurge);
-			_ps.setString(2, al.getCode());
-			return executeUpdate(0);
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+			ps.setBoolean(1, canPurge);
+			ps.setString(2, al.getCode());
+			return executeUpdate(ps, 0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -56,10 +54,9 @@ public class SetScheduleSync extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public int purge(Airline al) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("DELETE FROM SCHEDULE WHERE (AIRLINE=?)");
-			_ps.setString(1, al.getCode());
-			return executeUpdate(0);
+		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM SCHEDULE WHERE (AIRLINE=?)")) {
+			ps.setString(1, al.getCode());
+			return executeUpdate(ps, 0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}		

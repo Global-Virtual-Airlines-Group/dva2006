@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2010, 2011, 2012, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.cache.CacheManager;
 /**
  * A Data Access Object to merge a Pilot's data into another.
  * @author Luke
- * @version 5.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -36,11 +36,10 @@ public class SetPilotMerge extends PilotWriteDAO {
     * @throws DAOException if a JDBC error occurs
     */
    public int mergeFlights(Pilot oldUser, Pilot newUser) throws DAOException {
-	   try {
-		   prepareStatementWithoutLimits("UPDATE PIREPS SET PILOT_ID=? WHERE (PILOT_ID=?)");
-		   _ps.setInt(1, newUser.getID());
-		   _ps.setInt(2, oldUser.getID());
-		   int rowsUpdated = executeUpdate(0);
+	   try (PreparedStatement ps = prepareWithoutLimits("UPDATE PIREPS SET PILOT_ID=? WHERE (PILOT_ID=?)")) {
+		   ps.setInt(1, newUser.getID());
+		   ps.setInt(2, oldUser.getID());
+		   int rowsUpdated = executeUpdate(ps, 0);
 		   if (rowsUpdated > 0)
 			   log.info("Moved " + rowsUpdated + " Flight Reports from " + oldUser.getName() + " to " + newUser.getName());
 		   
@@ -61,11 +60,10 @@ public class SetPilotMerge extends PilotWriteDAO {
     * @throws DAOException if a JDBC error occurs
     */
    public int mergeExams(Pilot oldUser, Pilot newUser) throws DAOException {
-	   try {
-		   prepareStatementWithoutLimits("UPDATE exams.EXAMS SET PILOT_ID=? WHERE (PILOT_ID=?)");
-		   _ps.setInt(1, newUser.getID());
-	       _ps.setInt(2, oldUser.getID());
-	       int rowsUpdated = executeUpdate(0);
+	   try (PreparedStatement ps = prepareWithoutLimits("UPDATE exams.EXAMS SET PILOT_ID=? WHERE (PILOT_ID=?)")) {
+		   ps.setInt(1, newUser.getID());
+	       ps.setInt(2, oldUser.getID());
+	       int rowsUpdated = executeUpdate(ps, 0);
 	       if (rowsUpdated > 0)
 	    	   log.info("Moved " + rowsUpdated + " Examinations from " + oldUser.getName() + " to " + newUser.getName());
 	         
@@ -86,11 +84,10 @@ public class SetPilotMerge extends PilotWriteDAO {
     * @throws DAOException if a JDBC error occurs
     */
    public int mergeCheckRides(Pilot oldUser, Pilot newUser) throws DAOException {
-	   try {
-	       prepareStatementWithoutLimits("UPDATE exams.CHECKRIDES SET PILOT_ID=? WHERE (PILOT_ID=?)");
-	       _ps.setInt(1, newUser.getID());
-	       _ps.setInt(2, oldUser.getID());
-	       int rowsUpdated = executeUpdate(0);
+	   try (PreparedStatement ps = prepareWithoutLimits("UPDATE exams.CHECKRIDES SET PILOT_ID=? WHERE (PILOT_ID=?)")) {
+	       ps.setInt(1, newUser.getID());
+	       ps.setInt(2, oldUser.getID());
+	       int rowsUpdated = executeUpdate(ps, 0);
 	       if (rowsUpdated > 0)
 	    	   log.info("Moved " + rowsUpdated + " Check Rides from " + oldUser.getName() + " to " + newUser.getName());
 	       
@@ -111,11 +108,10 @@ public class SetPilotMerge extends PilotWriteDAO {
     * @throws DAOException if a JDBC error occurs
     */
    public int mergeCourses(Pilot oldUser, Pilot newUser) throws DAOException {
-	   try {
-		   prepareStatementWithoutLimits("UPDATE exams.COURSES SET PILOT_ID=? WHERE (PILOT_ID=?)");
-	       _ps.setInt(1, newUser.getID());
-	       _ps.setInt(2, oldUser.getID());
-	       int rowsUpdated = executeUpdate(0);
+	   try (PreparedStatement ps = prepareWithoutLimits("UPDATE exams.COURSES SET PILOT_ID=? WHERE (PILOT_ID=?)")) {
+	       ps.setInt(1, newUser.getID());
+	       ps.setInt(2, oldUser.getID());
+	       int rowsUpdated = executeUpdate(ps, 0);
 	       if (rowsUpdated > 0)
 	    	   log.info("Moved " + rowsUpdated + " Check Rides from " + oldUser.getName() + " to " + newUser.getName());
 		   

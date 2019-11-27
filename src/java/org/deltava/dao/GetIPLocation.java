@@ -12,7 +12,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to geo-locate IP addresses.
  * @author Luke
- * @version 8.7
+ * @version 9.0
  * @since 2.5
  */
 
@@ -49,23 +49,23 @@ public class GetIPLocation extends DAO {
 					return result;
 			}
 			
-			prepareStatementWithoutLimits("SELECT B.ID, INET6_NTOA(B.BLOCK_START), B.BITS, B.LAT, B.LNG, B.RADIUS, L.COUNTRY, L.REGION, L.CITY FROM geoip.BLOCKS B LEFT JOIN "
-				+ "geoip.LOCATIONS L ON (B.LOCATION_ID=L.ID) WHERE (B.BLOCK_START <= INET6_ATON(?)) ORDER BY B.BLOCK_START DESC LIMIT 1");
-			_ps.setString(1, a.getHostAddress());
-			try (ResultSet rs = _ps.executeQuery()) {
-				if (rs.next()) {
-					result = new IPBlock(rs.getInt(1), rs.getString(2) + "/" + rs.getString(3));
-					result.setLocation(rs.getDouble(4), rs.getDouble(5));
-					result.setRadius(rs.getInt(6));
-					result.setCountry(Country.get(rs.getString(7)));
-					result.setRegion(rs.getString(8));
-					result.setCity(rs.getString(9));
-					_cache.add(result);
-					_blockCache.add(new CacheWrapper<Object>(a.getHostAddress(), result.cacheKey()));
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT B.ID, INET6_NTOA(B.BLOCK_START), B.BITS, B.LAT, B.LNG, B.RADIUS, L.COUNTRY, L.REGION, L.CITY FROM geoip.BLOCKS B LEFT JOIN "
+				+ "geoip.LOCATIONS L ON (B.LOCATION_ID=L.ID) WHERE (B.BLOCK_START <= INET6_ATON(?)) ORDER BY B.BLOCK_START DESC LIMIT 1")) {
+				ps.setString(1, a.getHostAddress());
+				try (ResultSet rs = ps.executeQuery()) {
+					if (rs.next()) {
+						result = new IPBlock(rs.getInt(1), rs.getString(2) + "/" + rs.getString(3));
+						result.setLocation(rs.getDouble(4), rs.getDouble(5));
+						result.setRadius(rs.getInt(6));
+						result.setCountry(Country.get(rs.getString(7)));
+						result.setRegion(rs.getString(8));
+						result.setCity(rs.getString(9));
+						_cache.add(result);
+						_blockCache.add(new CacheWrapper<Object>(a.getHostAddress(), result.cacheKey()));
+					}
 				}
 			}
 			
-			_ps.close();
 			return result;
 		} catch (UnknownHostException | SQLException ee) {
 			throw new DAOException(ee);

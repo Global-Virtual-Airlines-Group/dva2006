@@ -1,4 +1,4 @@
-// Copyright 2013, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2013, 2015, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to retrieve app-specific metadata.
  * @author Luke
- * @version 7.0
+ * @version 9.0
  * @since 5.1
  */
 
@@ -49,17 +49,15 @@ public class GetMetadata extends DAO {
 		if (v != null)
 			return v.getValue();
 		
-		try {
-			prepareStatementWithoutLimits("SELECT DATA FROM common.METADATA WHERE (ID=?) LIMIT 1");
-			_ps.setString(1, key);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT DATA FROM common.METADATA WHERE (ID=?) LIMIT 1")) {
+			ps.setString(1, key);
 			
 			String result = defaultValue;
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next())
 					result = rs.getString(1);
 			}
 			
-			_ps.close();
 			_cache.add(new CacheableString(key, result));
 			return result;
 		} catch (SQLException se) {
@@ -105,18 +103,16 @@ public class GetMetadata extends DAO {
 		if (prefix != null)
 			sqlBuf.append("WHERE (ID LIKE ?) ");
 		
-		try {
-			prepareStatement(sqlBuf.toString());
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			if (prefix != null)
-				_ps.setString(1, prefix + ".%");
+				ps.setString(1, prefix + ".%");
 			
 			Map<String, String> results = new LinkedHashMap<String, String>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
 					results.put(rs.getString(1), rs.getString(2));
 			}
 
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);

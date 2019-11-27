@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2011, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2011, 2015, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.schedule.Airline;
 /**
  * A Data Access Object to load Airline codes and names.
  * @author Luke
- * @version 6.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -29,9 +29,8 @@ public class GetAirline extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Map<String, Airline> getAll() throws DAOException {
-		try {
-			prepareStatement("SELECT * FROM common.AIRLINES ORDER BY CODE");
-			return execute();
+		try (PreparedStatement ps = prepare("SELECT * FROM common.AIRLINES ORDER BY CODE")) {
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -43,10 +42,9 @@ public class GetAirline extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Map<String, Airline> getActive() throws DAOException {
-		try {
-			prepareStatement("SELECT * FROM common.AIRLINES WHERE (ACTIVE=?) ORDER BY CODE");
-			_ps.setBoolean(1, true);
-			return execute();
+		try (PreparedStatement ps = prepare("SELECT * FROM common.AIRLINES WHERE (ACTIVE=?) ORDER BY CODE")) {
+			ps.setBoolean(1, true);
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -60,12 +58,11 @@ public class GetAirline extends DAO {
 	 * @throws NullPointerException if code is null
 	 */
 	public Airline get(String code) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT * FROM common.AIRLINES WHERE (CODE=?) LIMIT 1");
-			_ps.setString(1, code.toUpperCase());
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM common.AIRLINES WHERE (CODE=?) LIMIT 1")) {
+			ps.setString(1, code.toUpperCase());
 
 			// Execute the query, if nothing matches return null
-			Map<String, Airline> results = execute();
+			Map<String, Airline> results = execute(ps);
 			return results.isEmpty() ? null : results.get(code.toUpperCase());
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -75,9 +72,9 @@ public class GetAirline extends DAO {
 	/*
 	 * Helper method to parse Airline result sets.
 	 */
-	private Map<String, Airline> execute() throws SQLException {
+	private Map<String, Airline> execute(PreparedStatement ps) throws SQLException {
 		Map<String, Airline> results = new LinkedHashMap<String, Airline>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
 				Airline a = new Airline(rs.getString(1), rs.getString(2));
 				a.setColor(rs.getString(3));
@@ -88,31 +85,28 @@ public class GetAirline extends DAO {
 			}
 		}
 
-		_ps.close();
-		
 		// Load alternate codes
-		prepareStatementWithoutLimits("SELECT * FROM common.AIRLINE_CODES");
-		try (ResultSet rs = _ps.executeQuery()) {
-			while (rs.next()) {
-				Airline a = results.get(rs.getString(1).trim());
-				if (a != null)
-					a.addCode(rs.getString(2));
+		try (PreparedStatement ps2 = prepareWithoutLimits("SELECT * FROM common.AIRLINE_CODES")) {
+			try (ResultSet rs = ps2.executeQuery()) {
+				while (rs.next()) {
+					Airline a = results.get(rs.getString(1).trim());
+					if (a != null)
+						a.addCode(rs.getString(2));
+				}
 			}
 		}
 		
-		_ps.close();
-
 		// Load web app information
-		prepareStatementWithoutLimits("SELECT UCASE(CODE), UCASE(APPCODE) FROM common.APP_AIRLINES");
-		try (ResultSet rs = _ps.executeQuery()) {
-			while (rs.next()) {
-				Airline a = results.get(rs.getString(1).trim());
-				if (a != null)
-					a.addApp(rs.getString(2));
+		try (PreparedStatement ps2 = prepareWithoutLimits("SELECT UCASE(CODE), UCASE(APPCODE) FROM common.APP_AIRLINES")) {
+			try (ResultSet rs = ps2.executeQuery()) {
+				while (rs.next()) {
+					Airline a = results.get(rs.getString(1).trim());
+					if (a != null)
+						a.addApp(rs.getString(2));
+				}
 			}
 		}
 
-		_ps.close();
 		return results;
 	}
 }

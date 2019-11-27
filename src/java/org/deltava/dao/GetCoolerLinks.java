@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2011, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008, 2011, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.cooler.LinkedImage;
 /**
  * A Data Access Object to load Water Cooler image links.
  * @author Luke
- * @version 7.3
+ * @version 9.0
  * @since 1.0
  */
 
@@ -29,17 +29,13 @@ public class GetCoolerLinks extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Integer> getThreads() throws DAOException {
-		try {
-			prepareStatement("SELECT DISTINCT ID FROM common.COOLER_IMGURLS ORDER BY ID");
-			
-			// Execute the query
+		try (PreparedStatement ps = prepare("SELECT DISTINCT ID FROM common.COOLER_IMGURLS ORDER BY ID")) {
 			Collection<Integer> results = new LinkedHashSet<Integer>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
 					results.add(Integer.valueOf(rs.getInt(1)));
 			}
 			
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -60,15 +56,13 @@ public class GetCoolerLinks extends DAO {
 		if (!includeDisabled)
 			buf.append(" AND (DISABLED=?)");
 		
-		try {
-			prepareStatementWithoutLimits(buf.toString());
-			_ps.setInt(1, id);
+		try (PreparedStatement ps = prepareWithoutLimits(buf.toString())) {
+			ps.setInt(1, id);
 			if (!includeDisabled)
-				_ps.setBoolean(2, false);
+				ps.setBoolean(2, false);
 			
-			// Execute the query
 			Collection<LinkedImage> results = new TreeSet<LinkedImage>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					LinkedImage img = new LinkedImage(rs.getInt(1), rs.getString(2));
 					img.setDescription(rs.getString(3));
@@ -78,7 +72,6 @@ public class GetCoolerLinks extends DAO {
 				}
 			}
 			
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2013, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2013, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.beans.servlet.CommandLog;
 /**
  * A Data Access Object to write system logging (user commands, tasks) entries.
  * @author Luke
- * @version 8.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -32,24 +32,23 @@ public class SetSystemData extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void logCommands(Collection<CommandLog> entries) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("INSERT INTO SYS_COMMANDS (CMDDATE, PILOT_ID, REMOTE_ADDR, REMOTE_HOST, NAME, RESULT, TOTAL_TIME, BE_TIME, SUCCESS) "
-				+ "VALUES (?, ?, INET6_ATON(?), ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE CMDDATE=?");
+		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO SYS_COMMANDS (CMDDATE, PILOT_ID, REMOTE_ADDR, REMOTE_HOST, NAME, RESULT, TOTAL_TIME, BE_TIME, SUCCESS) "
+				+ "VALUES (?, ?, INET6_ATON(?), ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE CMDDATE=?")) {
 			for (CommandLog log : entries) {
-				_ps.setTimestamp(1, createTimestamp(log.getDate()));
-				_ps.setInt(2, log.getPilotID());
-				_ps.setString(3, log.getRemoteAddr());
-				_ps.setString(4, log.getRemoteHost());
-				_ps.setString(5, log.getName());
-				_ps.setString(6, log.getResult());
-				_ps.setLong(7, log.getTime());
-				_ps.setLong(8, log.getBackEndTime());
-				_ps.setBoolean(9, log.getSuccess());
-				_ps.setTimestamp(10, createTimestamp(log.getDate()));
-				_ps.addBatch();
+				ps.setTimestamp(1, createTimestamp(log.getDate()));
+				ps.setInt(2, log.getPilotID());
+				ps.setString(3, log.getRemoteAddr());
+				ps.setString(4, log.getRemoteHost());
+				ps.setString(5, log.getName());
+				ps.setString(6, log.getResult());
+				ps.setLong(7, log.getTime());
+				ps.setLong(8, log.getBackEndTime());
+				ps.setBoolean(9, log.getSuccess());
+				ps.setTimestamp(10, createTimestamp(log.getDate()));
+				ps.addBatch();
 			}
 
-			executeBatchUpdate(1, entries.size());
+			executeUpdate(ps, 1, entries.size());
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -62,11 +61,10 @@ public class SetSystemData extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void logTaskExecution(String name, long execTime) throws DAOException {
-	   try {
-	      prepareStatement("REPLACE INTO SYS_TASKS (ID, LASTRUN, RUNTIME) VALUES (?, NOW(), ?)");
-	      _ps.setString(1, name);
-	      _ps.setLong(2, execTime);
-	      executeUpdate(1);
+		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO SYS_TASKS (ID, LASTRUN, RUNTIME) VALUES (?, NOW(), ?)")) {
+	      ps.setString(1, name);
+	      ps.setLong(2, execTime);
+	      executeUpdate(ps, 1);
 	   } catch (SQLException se) {
 	      throw new DAOException(se);
 	   }
@@ -89,12 +87,9 @@ public class SetSystemData extends DAO {
 		sqlBuf.append(colName.toUpperCase());
 		sqlBuf.append(" < DATE_SUB(NOW(), INTERVAL ? DAY))");
 		
-		try {
-			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setInt(1, days);
-			int rowsDeleted = _ps.executeUpdate();
-			_ps.close();
-			return rowsDeleted;
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+			ps.setInt(1, days);
+			return ps.executeUpdate();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -116,13 +111,12 @@ public class SetSystemData extends DAO {
 		sqlBuf.append(formatDBName(dbName));
 		sqlBuf.append(".SYS_LOGINS (ID, REMOTE_ADDR, REMOTE_HOST, LOGINS) VALUES (?, INET6_ATON(?), ?, 1) ON DUPLICATE KEY UPDATE LOGINS=LOGINS+1, REMOTE_HOST=?");
 		
-		try {
-			prepareStatement(sqlBuf.toString());
-			_ps.setInt(1, id);
-			_ps.setString(2, addr);
-			_ps.setString(3, host);
-			_ps.setString(4, h);
-			executeUpdate(1);
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setInt(1, id);
+			ps.setString(2, addr);
+			ps.setString(3, host);
+			ps.setString(4, h);
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -135,14 +129,13 @@ public class SetSystemData extends DAO {
 	 */
 	public void write(TZInfo tz) throws DAOException {
 		ZoneRules zr = tz.getZone().getRules(); Instant now = Instant.now();
-		try {
-			prepareStatement("INSERT INTO common.TZ (CODE, NAME, ABBR, GMT_OFFSET, DST) VALUES (?, ?, ?, ?, ?)");
-			_ps.setString(1, tz.getID());
-			_ps.setString(2, tz.getName());
-			_ps.setString(3, tz.getAbbr());
-			_ps.setInt(4, zr.getStandardOffset(now).getTotalSeconds());
-			_ps.setBoolean(5, (zr.nextTransition(now) != null));
-			executeUpdate(1);
+		try (PreparedStatement ps =  prepareWithoutLimits("INSERT INTO common.TZ (CODE, NAME, ABBR, GMT_OFFSET, DST) VALUES (?, ?, ?, ?, ?)")) {
+			ps.setString(1, tz.getID());
+			ps.setString(2, tz.getName());
+			ps.setString(3, tz.getAbbr());
+			ps.setInt(4, zr.getStandardOffset(now).getTotalSeconds());
+			ps.setBoolean(5, (zr.nextTransition(now) != null));
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -156,15 +149,14 @@ public class SetSystemData extends DAO {
 	 */
 	public void update(String oldID, TZInfo tz) throws DAOException {
 		ZoneRules zr = tz.getZone().getRules(); Instant now = Instant.now();
-		try {
-			prepareStatement("UPDATE common.TZ SET CODE=?, NAME=?, ABBR=?, GMT_OFFSET=?, DST=? WHERE (CODE=?)");
-			_ps.setString(1, tz.getID());
-			_ps.setString(2, tz.getName());
-			_ps.setString(3, tz.getAbbr());
-			_ps.setInt(4, zr.getStandardOffset(now).getTotalSeconds());
-			_ps.setBoolean(5, (zr.nextTransition(now) != null));
-			_ps.setString(6, oldID);
-			executeUpdate(1);
+		try (PreparedStatement ps = prepare("UPDATE common.TZ SET CODE=?, NAME=?, ABBR=?, GMT_OFFSET=?, DST=? WHERE (CODE=?)")) {
+			ps.setString(1, tz.getID());
+			ps.setString(2, tz.getName());
+			ps.setString(3, tz.getAbbr());
+			ps.setInt(4, zr.getStandardOffset(now).getTotalSeconds());
+			ps.setBoolean(5, (zr.nextTransition(now) != null));
+			ps.setString(6, oldID);
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

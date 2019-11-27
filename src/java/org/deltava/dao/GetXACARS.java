@@ -1,4 +1,4 @@
-// Copyright 2011, 2012, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object for reading XACARS data from the database.
  * @author Luke
- * @version 8.3
+ * @version 9.0
  * @since 4.1
  */
 
@@ -37,21 +37,13 @@ public class GetXACARS extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public int getID(int userID, Flight f) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT ID FROM xacars.FLIGHTS WHERE (PILOT_ID=?) AND (AIRLINE=?) AND (FLIGHT=?) ORDER BY START_TIME DESC LIMIT 1");
-			_ps.setInt(1, userID);
-			_ps.setString(2, f.getAirline().getCode());
-			_ps.setInt(3, f.getFlightNumber());
-			
-			// Do the query
-			int flightID = 0;
-			try (ResultSet rs = _ps.executeQuery()) {
-				if (rs.next())
-					flightID = rs.getInt(1);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT ID FROM xacars.FLIGHTS WHERE (PILOT_ID=?) AND (AIRLINE=?) AND (FLIGHT=?) ORDER BY START_TIME DESC LIMIT 1")) {
+			ps.setInt(1, userID);
+			ps.setString(2, f.getAirline().getCode());
+			ps.setInt(3, f.getFlightNumber());
+			try (ResultSet rs = ps.executeQuery()) {
+				return rs.next() ? rs.getInt(1) : 0;
 			}
-
-			_ps.close();
-			return flightID;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -64,13 +56,9 @@ public class GetXACARS extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public XAFlightInfo getFlight(int id) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT * FROM xacars.FLIGHTS WHERE (ID=?) LIMIT 1");
-			_ps.setInt(1, id);
-			
-			// Execute the query
-			List<XAFlightInfo> results = execute();
-			return results.isEmpty() ? null : results.get(0);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM xacars.FLIGHTS WHERE (ID=?) LIMIT 1")) {
+			ps.setInt(1, id);
+			return execute(ps).stream().findFirst().orElse(null);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -82,11 +70,10 @@ public class GetXACARS extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<XAFlightInfo> getActive() throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT F.*, MAX(P.REPORT_TIME) AS LATPOS FROM xacars.FLIGHTS F, xacars.POSITIONS P WHERE (F.ID=P.FLIGHT_ID) GROUP BY F.ID "
-				+ "HAVING (LASTPOS > DATE_SUB(NOW(), INTERVAL ? MINUTE))");
-			_ps.setInt(1, 30);
-			return execute();
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT F.*, MAX(P.REPORT_TIME) AS LATPOS FROM xacars.FLIGHTS F, xacars.POSITIONS P WHERE (F.ID=P.FLIGHT_ID) GROUP BY F.ID "
+				+ "HAVING (LASTPOS > DATE_SUB(NOW(), INTERVAL ? MINUTE))")) {
+			ps.setInt(1, 30);
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -99,13 +86,12 @@ public class GetXACARS extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<XARouteEntry> getPositions(int flightID) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT * FROM xacars.POSITIONS WHERE (FLIGHT_ID=?) ORDER BY REPORT_TIME");
-			_ps.setInt(1, flightID);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM xacars.POSITIONS WHERE (FLIGHT_ID=?) ORDER BY REPORT_TIME")) {
+			ps.setInt(1, flightID);
 			
 			// Execute the query
 			Collection<XARouteEntry> results = new ArrayList<XARouteEntry>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					Instant dt = Instant.ofEpochMilli(rs.getTimestamp(2).getTime() + rs.getInt(3));
 					XARouteEntry pos = new XARouteEntry(new GeoPosition(rs.getDouble(4), rs.getDouble(5), rs.getInt(6)), dt);
@@ -123,7 +109,6 @@ public class GetXACARS extends DAO {
 				}
 			}
 			
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -133,9 +118,9 @@ public class GetXACARS extends DAO {
 	/*
 	 * Helper method to parse Flight Info result sets.
 	 */
-	private List<XAFlightInfo> execute() throws SQLException {
+	private static List<XAFlightInfo> execute(PreparedStatement ps) throws SQLException {
 		List<XAFlightInfo> results = new ArrayList<XAFlightInfo>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
 				XAFlightInfo inf = new XAFlightInfo(SystemData.getAirline(rs.getString(3)), rs.getInt(4));
 				inf.setID(rs.getInt(1));
@@ -174,7 +159,6 @@ public class GetXACARS extends DAO {
 			}
 		}
 		
-		_ps.close();
 		return results;
 	}
 }

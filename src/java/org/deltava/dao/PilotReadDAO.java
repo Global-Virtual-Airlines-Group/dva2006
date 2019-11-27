@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
  * A DAO to support reading Pilot object(s) from the database. This class contains methods to read an individual Pilot
  * from the database; implementing subclasses typically add methods to retrieve Lists of pilots based on particular criteria.
  * @author Luke
- * @version 8.4
+ * @version 9.0
  * @since 1.0
  */
 
@@ -51,17 +51,14 @@ abstract class PilotReadDAO extends DAO {
 		if (p != null)
 			return p;
 
-		try {
-			prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE), S.EXT, S.MODIFIED FROM PILOTS P LEFT JOIN PIREPS F "
-				+ "ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) LEFT JOIN SIGNATURES S ON (P.ID=S.ID) WHERE (P.ID=?) GROUP BY P.ID LIMIT 1");
-			_ps.setInt(1, FlightStatus.OK.ordinal());
-			_ps.setInt(2, id);
+		try (PreparedStatement ps = prepare("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE), S.EXT, S.MODIFIED FROM PILOTS P LEFT JOIN PIREPS F "
+				+ "ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) LEFT JOIN SIGNATURES S ON (P.ID=S.ID) WHERE (P.ID=?) GROUP BY P.ID LIMIT 1")) {
+			ps.setInt(1, FlightStatus.OK.ordinal());
+			ps.setInt(2, id);
 
 			// Execute the query and get the result
-			List<Pilot> results = execute();
-			p = (results.size() == 0) ? null : results.get(0);
-			if (p == null)
-				return null;
+			p = execute(ps).stream().findFirst().orElse(null);
+			if (p == null) return null;
 
 			// Add roles/ratings
 			loadChildRows(p, SystemData.get("airline.db"));
@@ -93,13 +90,12 @@ abstract class PilotReadDAO extends DAO {
 		sqlBuf.append(db);
 		sqlBuf.append(".SIGNATURES S ON (P.ID=S.ID) WHERE (CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME)=?) GROUP BY P.ID");
 
-		try {
-			prepareStatement(sqlBuf.toString());
-			_ps.setInt(1, FlightStatus.OK.ordinal());
-			_ps.setString(2, fullName);
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setInt(1, FlightStatus.OK.ordinal());
+			ps.setString(2, fullName);
 
 			// Execute the query and get the result
-			Map<Integer, Pilot> results = CollectionUtils.createMap(execute(), Pilot::getID);
+			Map<Integer, Pilot> results = CollectionUtils.createMap(execute(ps), Pilot::getID);
 			loadIMAddrs(results, dbName);
 			loadRatings(results, dbName);
 			loadRoles(results, dbName);
@@ -120,13 +116,12 @@ abstract class PilotReadDAO extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Pilot get(UserData ud) throws DAOException {
-		if (ud == null)
-			return null;
+		if (ud == null) return null;
 
 		// Get a map from the table, and get the first value
 		Map<Integer, Pilot> pilots = getByID(Collections.singleton(ud), ud.getDB() + "." + ud.getTable());
-		Iterator<Pilot> i = pilots.values().iterator();
-		return i.hasNext() ? i.next() : null;
+		Map.Entry<Integer, Pilot> me = pilots.entrySet().stream().findFirst().orElse(null);
+		return (me == null) ? null : me.getValue();
 	}
 	
 	/**
@@ -200,10 +195,9 @@ abstract class PilotReadDAO extends DAO {
 
 			sqlBuf.append(")) GROUP BY P.ID");
 			List<Pilot> uncached = null;
-			try {
-				prepareStatementWithoutLimits(sqlBuf.toString());
-				_ps.setInt(1, FlightStatus.OK.ordinal());
-				uncached = execute();
+			try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+				ps.setInt(1, FlightStatus.OK.ordinal());
+				uncached = execute(ps);
 
 				// Convert to a map and load ratings/roles
 				Map<Integer, Pilot> ucMap = CollectionUtils.createMap(uncached, Pilot::getID);
@@ -230,15 +224,16 @@ abstract class PilotReadDAO extends DAO {
 	
 	/**
 	 * Query pilot objects from the database, assuming a pre-prepared statement.
+	 * @param ps a PreparedStatement
 	 * @return a List of Pilot objects
 	 * @throws SQLException if a JDBC error occurs
 	 */
-	protected final List<Pilot> execute() throws SQLException {
+	protected static final List<Pilot> execute(PreparedStatement ps) throws SQLException {
 		String airlineCode = SystemData.get("airline.code");
 		List<Pilot> results = new ArrayList<Pilot>();
 
 		// Get the pilot info from the list
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			int columnCount = rs.getMetaData().getColumnCount();
 			while (rs.next()) {
 				Pilot p = new Pilot(rs.getString(3), rs.getString(4));
@@ -314,7 +309,6 @@ abstract class PilotReadDAO extends DAO {
 			}
 		}
 
-		_ps.close();
 		return results;
 	}
 	
@@ -357,16 +351,15 @@ abstract class PilotReadDAO extends DAO {
 		sqlBuf.append("))");
 
 		// Execute the query
-		prepareStatementWithoutLimits(sqlBuf.toString());
-		try (ResultSet rs = _ps.executeQuery()) {
-			while (rs.next()) {
-				Pilot p = pilots.get(Integer.valueOf(rs.getInt(1)));
-				if (p != null)
-					p.addAccomplishmentID(new DatedAccomplishmentID(toInstant(rs.getTimestamp(3)), rs.getInt(2)));
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					Pilot p = pilots.get(Integer.valueOf(rs.getInt(1)));
+					if (p != null)
+						p.addAccomplishmentID(new DatedAccomplishmentID(toInstant(rs.getTimestamp(3)), rs.getInt(2)));
+				}
 			}
 		}
-		
-		_ps.close();
 	}
 	
 	/**
@@ -393,16 +386,15 @@ abstract class PilotReadDAO extends DAO {
 		sqlBuf.append("))");
 
 		// Execute the query
-		prepareStatementWithoutLimits(sqlBuf.toString());
-		try (ResultSet rs = _ps.executeQuery()) {
-			while (rs.next()) {
-				Pilot p = pilots.get(Integer.valueOf(rs.getInt(1)));
-				if (p != null)
-					p.addRole(rs.getString(2));
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					Pilot p = pilots.get(Integer.valueOf(rs.getInt(1)));
+					if (p != null)
+						p.addRole(rs.getString(2));
+				}
 			}
 		}
-
-		_ps.close();
 	}
 
 	/**
@@ -429,23 +421,22 @@ abstract class PilotReadDAO extends DAO {
 		sqlBuf.append("))");
 		
 		// Execute the query
-		prepareStatementWithoutLimits(sqlBuf.toString());
-		try (ResultSet rs = _ps.executeQuery()) {
-			while (rs.next()) {
-				Pilot p = pilots.get(Integer.valueOf(rs.getInt(1)));
-				if (p != null) {
-					String imType = rs.getString(2);
-					try {
-						IMAddress addrType = IMAddress.valueOf(imType);
-						p.setIMHandle(addrType, rs.getString(3));
-					} catch (Exception e) {
-						log.warn("Unknown IM address type - " + imType);
-					}
-				}	
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					Pilot p = pilots.get(Integer.valueOf(rs.getInt(1)));
+					if (p != null) {
+						String imType = rs.getString(2);
+						try {
+							IMAddress addrType = IMAddress.valueOf(imType);
+							p.setIMHandle(addrType, rs.getString(3));
+						} catch (Exception e) {
+							log.warn("Unknown IM address type - " + imType);
+						}
+					}	
+				}
 			}
 		}
-		
-		_ps.close();
 	}
 	
 	/**
@@ -471,17 +462,15 @@ abstract class PilotReadDAO extends DAO {
 
 		sqlBuf.append("))");
 
-		// Execute the query
-		prepareStatementWithoutLimits(sqlBuf.toString());
-		try (ResultSet rs = _ps.executeQuery()) {
-			while (rs.next()) {
-				Pilot p = pilots.get(Integer.valueOf(rs.getInt(1)));
-				if (p != null)
-					p.addRating(rs.getString(2));
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					Pilot p = pilots.get(Integer.valueOf(rs.getInt(1)));
+					if (p != null)
+						p.addRating(rs.getString(2));
+				}
 			}
 		}
-
-		_ps.close();
 	}
 	
 	/**
@@ -497,10 +486,8 @@ abstract class PilotReadDAO extends DAO {
 		for (Iterator<?> i = apps.values().iterator(); i.hasNext();) {
 			AirlineInformation info = (AirlineInformation) i.next();
 			if (dbName.equals(info.getDB())) {
-				for (Iterator<Pilot> uci = pilots.iterator(); uci.hasNext();) {
-					Pilot p = uci.next();
+				for (Pilot p : pilots)
 					p.setPilotCode(info.getCode() + String.valueOf(p.getPilotNumber()));
-				}
 
 				break;
 			}

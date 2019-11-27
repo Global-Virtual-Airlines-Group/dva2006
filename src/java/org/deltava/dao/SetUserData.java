@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2012, 2015, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2012, 2015, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.cache.CacheManager;
 /**
  * A Data Access Object to write cross-applicaton User data.
  * @author Luke
- * @version 8.4
+ * @version 9.0
  * @since 1.0
  */
 
@@ -33,32 +33,36 @@ public class SetUserData extends DAO {
 	public void write(UserData usr) throws DAOException {
 		try {
 			startTransaction();
-			prepareStatement("INSERT INTO common.USERDATA (ID, AIRLINE, TABLENAME) VALUES (?, ?, ?)");
-			_ps.setInt(1, usr.getID());
-			_ps.setString(2, usr.getAirlineCode());
-			_ps.setString(3, usr.getTable());
-			executeUpdate(1);
+			
+			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.USERDATA (ID, AIRLINE, TABLENAME) VALUES (?, ?, ?)")) {
+				ps.setInt(1, usr.getID());
+				ps.setString(2, usr.getAirlineCode());
+				ps.setString(3, usr.getTable());
+				executeUpdate(ps, 1);
+			}
+			
 			usr.setID(getNewID());
 			
 			// Write the child rows if present
-			prepareStatement("REPLACE INTO common.XDB_IDS (ID, OTHER_ID) VALUES(?, ?)");
-			for (Iterator<Integer> i = usr.getIDs().iterator(); i.hasNext(); ) {
-				int id = i.next().intValue();
-				if (id != usr.getID()) {
-					CacheManager.invalidate("UserData", Integer.valueOf(id));
-					_ps.setInt(1, usr.getID());
-					_ps.setInt(2, id);
-					_ps.addBatch();
+			try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO common.XDB_IDS (ID, OTHER_ID) VALUES(?, ?)")) {
+				for (Iterator<Integer> i = usr.getIDs().iterator(); i.hasNext(); ) {
+					int id = i.next().intValue();
+					if (id != usr.getID()) {
+						CacheManager.invalidate("UserData", Integer.valueOf(id));
+						ps.setInt(1, usr.getID());
+						ps.setInt(2, id);
+						ps.addBatch();
 					
-					// Create the reverse mapping
-					_ps.setInt(1, id);
-					_ps.setInt(2, usr.getID());
-					_ps.addBatch();
+						// Create the reverse mapping
+						ps.setInt(1, id);
+						ps.setInt(2, usr.getID());
+						ps.addBatch();
+					}
 				}
+			
+				executeUpdate(ps, 1, 0);
 			}
 			
-			// Write child rows and commit
-			executeBatchUpdate(1, 0);
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -72,10 +76,9 @@ public class SetUserData extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void delete(int id) throws DAOException {
-		try {
-			prepareStatement("DELETE FROM common.USERDATA WHERE (ID=?)");
-			_ps.setInt(1, id);
-			executeUpdate(1);
+		try (PreparedStatement ps = prepare("DELETE FROM common.USERDATA WHERE (ID=?)")) {
+			ps.setInt(1, id);
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		} finally {
@@ -89,14 +92,13 @@ public class SetUserData extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void update(AirlineInformation info) throws DAOException {
-		try {
-			prepareStatement("UPDATE common.AIRLINEINFO SET NAME=?, DOMAIN=?, CAN_TX=?, HIST_RESTRICT=? WHERE (CODE=?)");
-			_ps.setString(1, info.getName());
-			_ps.setString(2, info.getDomain());
-			_ps.setBoolean(3, info.getCanTransfer());
-			_ps.setBoolean(4, info.getHistoricRestricted());
-			_ps.setString(5, info.getCode());
-			executeUpdate(1);
+		try (PreparedStatement ps = prepare("UPDATE common.AIRLINEINFO SET NAME=?, DOMAIN=?, CAN_TX=?, HIST_RESTRICT=? WHERE (CODE=?)")) {
+			ps.setString(1, info.getName());
+			ps.setString(2, info.getDomain());
+			ps.setBoolean(3, info.getCanTransfer());
+			ps.setBoolean(4, info.getHistoricRestricted());
+			ps.setString(5, info.getCode());
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		} finally {

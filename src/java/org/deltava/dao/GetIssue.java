@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2011, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.system.*;
 /**
  * A Data Access object to retrieve Issues and Issue Comments.
  * @author Luke
- * @version 7.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -30,12 +30,11 @@ public class GetIssue extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Issue get(int id) throws DAOException {
-		try {
-			prepareStatement("SELECT * FROM common.ISSUES WHERE (ID=?)");
-			_ps.setInt(1, id);
+		try (PreparedStatement ps = prepare("SELECT * FROM common.ISSUES WHERE (ID=?)")) {
+			ps.setInt(1, id);
 			
 			// Execute the query - return null if nothing found
-			List<Issue> results = execute();
+			List<Issue> results = execute(ps);
 			if (results.size() == 0)
 				return null;
 			
@@ -58,19 +57,17 @@ public class GetIssue extends DAO {
 	public List<Issue> getAll(String sortBy, int area) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT I.*, MAX(IC.CREATED) AS LC, COUNT(IC.ID) AS CC "
-				+ "FROM common.ISSUES I LEFT JOIN common.ISSUE_COMMENTS IC ON (I.ID=IC.ISSUE_ID)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT I.*, MAX(IC.CREATED) AS LC, COUNT(IC.ID) AS CC FROM common.ISSUES I LEFT JOIN common.ISSUE_COMMENTS IC ON (I.ID=IC.ISSUE_ID)");
 		if (area >= 0)
 			sqlBuf.append(" WHERE (I.AREA=?)");
 		sqlBuf.append(" GROUP BY I.ID ORDER BY ");
 		sqlBuf.append(sortBy);
 		
-		try {
-			prepareStatement(sqlBuf.toString());
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			if (area >= 0)
-				_ps.setInt(1, area);
+				ps.setInt(1, area);
 				
-			return execute();
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -83,15 +80,13 @@ public class GetIssue extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<Issue> getUserIssues(int id) throws DAOException {
-		try {
-			prepareStatement("SELECT I.*, MAX(IC.CREATED) AS LC, COUNT(IC.ID) AS CC FROM common.ISSUES I "
-			      + "LEFT JOIN common.ISSUE_COMMENTS IC ON (I.ID=IC.ISSUE_ID) WHERE ((I.AUTHOR=?) OR "
-			      + "(I.ASSIGNEDTO=?)) AND ((I.STATUS=?) OR (I.STATUS=?)) GROUP BY I.ID ORDER BY I.STATUS, LC DESC");
-			_ps.setInt(1, id);
-			_ps.setInt(2, id);
-			_ps.setInt(3, Issue.STATUS_OPEN);
-			_ps.setInt(4, Issue.STATUS_DEFERRED);
-			return execute();
+		try (PreparedStatement ps = prepare("SELECT I.*, MAX(IC.CREATED) AS LC, COUNT(IC.ID) AS CC FROM common.ISSUES I LEFT JOIN common.ISSUE_COMMENTS IC ON (I.ID=IC.ISSUE_ID) WHERE ((I.AUTHOR=?) OR "
+			      + "(I.ASSIGNEDTO=?)) AND ((I.STATUS=?) OR (I.STATUS=?)) GROUP BY I.ID ORDER BY I.STATUS, LC DESC")) {
+			ps.setInt(1, id);
+			ps.setInt(2, id);
+			ps.setInt(3, Issue.STATUS_OPEN);
+			ps.setInt(4, Issue.STATUS_DEFERRED);
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -108,20 +103,18 @@ public class GetIssue extends DAO {
 	public List<Issue> getByStatus(int status, int area, String sortType) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT I.*, MAX(IC.CREATED) AS LC, COUNT(IC.ID) AS CC FROM "
-				+ "common.ISSUES I LEFT JOIN common.ISSUE_COMMENTS IC ON (I.ID=IC.ISSUE_ID) WHERE (I.STATUS=?)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT I.*, MAX(IC.CREATED) AS LC, COUNT(IC.ID) AS CC FROM common.ISSUES I LEFT JOIN common.ISSUE_COMMENTS IC ON (I.ID=IC.ISSUE_ID) WHERE (I.STATUS=?)");
 		if (area >= 0)
 			sqlBuf.append(" AND (I.AREA=?)");
 		sqlBuf.append(" GROUP BY I.ID ORDER BY ");
 		sqlBuf.append(sortType);
 		
-		try {
-			prepareStatement(sqlBuf.toString());
-			_ps.setInt(1, status);
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setInt(1, status);
 			if (area >= 0)
-				_ps.setInt(2, area);
+				ps.setInt(2, area);
 			
-			return execute();
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -139,9 +132,8 @@ public class GetIssue extends DAO {
 	public List<Issue> search(String searchStr, int status, int area, boolean includeComments) throws DAOException {
 	
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT I.*, MAX(IC.CREATED) AS LC, COUNT(IC.ID) AS CC "
-				+ "FROM common.ISSUES I LEFT JOIN common.ISSUE_COMMENTS IC ON (I.ID=IC.ISSUE_ID) "
-				+ "WHERE ((LOCATE(?, I.DESCRIPTION) > 0)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT I.*, MAX(IC.CREATED) AS LC, COUNT(IC.ID) AS CC FROM common.ISSUES I LEFT JOIN common.ISSUE_COMMENTS IC ON (I.ID=IC.ISSUE_ID) "
+			+ "WHERE ((LOCATE(?, I.DESCRIPTION) > 0)");
 		sqlBuf.append(includeComments ? " OR (LOCATE(?, IC.COMMENTS) > 0))" : ")");
 		if (status >= 0)
 			sqlBuf.append(" AND (I.STATUS=?)");
@@ -150,18 +142,17 @@ public class GetIssue extends DAO {
 			
 		sqlBuf.append(" GROUP BY I.ID");
 		
-		try {
-			prepareStatement(sqlBuf.toString());
-			_ps.setString(1, searchStr);
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setString(1, searchStr);
 			int pos = 1;
 			if (includeComments)
-				_ps.setString(++pos, searchStr);
+				ps.setString(++pos, searchStr);
 			if (status >= 0)
-				_ps.setInt(++pos, status);
+				ps.setInt(++pos, status);
 			if (area >= 0)
-				_ps.setInt(++pos, area);
+				ps.setInt(++pos, area);
 			
-			return execute();
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -174,13 +165,12 @@ public class GetIssue extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public IssueComment getFile(int fileID) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT SIZE, NAME, BODY FROM common.ISSUE_FILES WHERE (ID=?) LIMIT 1");
-			_ps.setInt(1, fileID);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT SIZE, NAME, BODY FROM common.ISSUE_FILES WHERE (ID=?) LIMIT 1")) {
+			ps.setInt(1, fileID);
 			
 			// Execute the query
 			IssueComment ic = null;
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next()) {
 					ic = new IssueComment(fileID, "");
 					ic.setSize(rs.getInt(1));
@@ -189,7 +179,6 @@ public class GetIssue extends DAO {
 				}
 			}
 			
-			_ps.close();
 			return ic;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -200,37 +189,33 @@ public class GetIssue extends DAO {
 	 * Helper method to return all comments for a particular issue.
 	 */
 	private void loadComments(Issue i) throws SQLException {
-		prepareStatementWithoutLimits("SELECT IC.ID, IC.AUTHOR, IC.CREATED, IC.COMMENTS, IFNULL(IFL.SIZE, -1), IFL.NAME "
-			+ "FROM common.ISSUE_COMMENTS IC LEFT JOIN common.ISSUE_FILES IFL ON (IC.ID=IFL.ID) WHERE (IC.ISSUE_ID=?) "
-			+ "ORDER BY IC.CREATED");
-		_ps.setInt(1, i.getID());
-		
-		// Execute the query
-		try (ResultSet rs = _ps.executeQuery()) {
-			while (rs.next()) {
-				IssueComment ic = new IssueComment(rs.getInt(1), rs.getString(4));
-				ic.setIssueID(i.getID());
-				ic.setAuthorID(rs.getInt(2));
-				ic.setCreatedOn(rs.getTimestamp(3).toInstant());
-				int size = rs.getInt(5);
-				if (size > 0) {
-					ic.setSize(size);
-					ic.setName(rs.getString(6));
-				}
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT IC.ID, IC.AUTHOR, IC.CREATED, IC.COMMENTS, IFNULL(IFL.SIZE, -1), IFL.NAME FROM common.ISSUE_COMMENTS IC LEFT JOIN common.ISSUE_FILES IFL "
+			+ "ON (IC.ID=IFL.ID) WHERE (IC.ISSUE_ID=?) ORDER BY IC.CREATED")) {
+			ps.setInt(1, i.getID());
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					IssueComment ic = new IssueComment(rs.getInt(1), rs.getString(4));
+					ic.setIssueID(i.getID());
+					ic.setAuthorID(rs.getInt(2));
+					ic.setCreatedOn(rs.getTimestamp(3).toInstant());
+					int size = rs.getInt(5);
+					if (size > 0) {
+						ic.setSize(size);
+						ic.setName(rs.getString(6));
+					}
 			
-				i.add(ic);
+					i.add(ic);
+				}
 			}
 		}
-		
-		_ps.close();
 	}
 	
 	/*
 	 * Helper method to parse Issue result sets.
 	 */
-	private List<Issue> execute() throws SQLException {
+	private static List<Issue> execute(PreparedStatement ps) throws SQLException {
 		List<Issue> results = new ArrayList<Issue>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			boolean hasCommentCount = (rs.getMetaData().getColumnCount() > 15);
 			while (rs.next()) {
 				Issue i = new Issue(rs.getInt(1), rs.getString(6));
@@ -255,7 +240,6 @@ public class GetIssue extends DAO {
 			}
 		}
 
-		_ps.close();
 		return results;
 	}
 }

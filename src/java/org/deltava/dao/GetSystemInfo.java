@@ -1,4 +1,4 @@
-// Copyright 2005, 2011, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2011, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.beans.stats.*;
 /**
  * A Data Access Object to retrieve ACARS System Information data.
  * @author Luke
- * @version 8.2
+ * @version 9.0
  * @since 1.0
  */
 
@@ -31,16 +31,10 @@ public class GetSystemInfo extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public int getTotals() throws DAOException {
-		try {
-			int result = 0;
-			prepareStatementWithoutLimits("SELECT COUNT(*) FROM acars.SYSINFO");
-			try (ResultSet rs = _ps.executeQuery()) {
-				if (rs.next())
-					result = rs.getInt(1);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT COUNT(*) FROM acars.SYSINFO")) {
+			try (ResultSet rs = ps.executeQuery()) {
+				return rs.next() ? rs.getInt(1): 0;
 			}
-			
-			_ps.close();
-			return result;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -66,27 +60,24 @@ public class GetSystemInfo extends DAO {
 	 */
 	public SystemInformation get(int id, Simulator sim, Instant dt) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT * from acars.SYSINFO WHERE (ID=?) LIMIT 1");
-			_ps.setInt(1, id);
-			List<SystemInformation> results = execute();
-			if (results.isEmpty())
-				return null;
+			SystemInformation inf = null;
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT * from acars.SYSINFO WHERE (ID=?) LIMIT 1")) {
+				ps.setInt(1, id);	
+				inf = execute(ps).stream().findFirst().orElse(null);
+			}
 			
-			SystemInformation inf = results.get(0);
-			if (sim != Simulator.UNKNOWN) {
-				prepareStatementWithoutLimits("SELECT BRIDGE FROM acars.SIMINFO WHERE (ID=?) AND (SIM=?) AND (CREATED <= ?) ORDER BY CREATED DESC LIMIT 1");
-				_ps.setInt(1, id);
-				_ps.setInt(2, sim.ordinal());
-				_ps.setTimestamp(3, createTimestamp(dt));
-			
-				try (ResultSet rs = _ps.executeQuery()) {
-					if (rs.next()) {
-						inf.setSimulator(sim);
-						inf.setBridgeInfo(rs.getString(1));
+			if ((inf != null) && (sim != Simulator.UNKNOWN)) {
+				try (PreparedStatement ps = prepareWithoutLimits("SELECT BRIDGE FROM acars.SIMINFO WHERE (ID=?) AND (SIM=?) AND (CREATED <= ?) ORDER BY CREATED DESC LIMIT 1")) {
+					ps.setInt(1, id);
+					ps.setInt(2, sim.ordinal());
+					ps.setTimestamp(3, createTimestamp(dt));
+					try (ResultSet rs = ps.executeQuery()) {
+						if (rs.next()) {
+							inf.setSimulator(sim);
+							inf.setBridgeInfo(rs.getString(1));
+						}
 					}
 				}
-			
-				_ps.close();
 			}
 			
 			return inf;
@@ -112,15 +103,13 @@ public class GetSystemInfo extends DAO {
 		sqlBuf.append(" ORDER BY ");
 		sqlBuf.append(sortLabel ? "LABEL" : "TTL DESC");
 
-		try {
-			prepareStatement(sqlBuf.toString());
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			List<SystemStatistics<Integer>> results = new ArrayList<SystemStatistics<Integer>>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
 					results.add(new SystemStatistics<Integer>(rs.getString(1), Integer.valueOf(rs.getInt(2))));
 			}
 
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -130,9 +119,9 @@ public class GetSystemInfo extends DAO {
 	/*
 	 * Helper method to iterate through the result set.
 	 */
-	private List<SystemInformation> execute() throws SQLException {
+	private static List<SystemInformation> execute(PreparedStatement ps) throws SQLException {
 		List<SystemInformation> results = new ArrayList<SystemInformation>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
 				SystemInformation sysinfo = new SystemInformation(rs.getInt(1));
 				sysinfo.setDate(rs.getTimestamp(2).toInstant());
@@ -159,7 +148,6 @@ public class GetSystemInfo extends DAO {
 			}
 		}
 
-		_ps.close();
 		return results;
 	}
 }

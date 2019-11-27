@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to write Applicants to the database.
  * @author Luke
- * @version 8.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -31,11 +31,10 @@ public class SetApplicant extends PilotWriteDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void reject(Applicant a) throws DAOException {
-		try {
-			prepareStatement("UPDATE APPLICANTS SET STATUS=? WHERE (ID=?)");
-			_ps.setInt(1, Applicant.REJECTED);
-			_ps.setInt(2, a.getID());
-			executeUpdate(1);
+		try (PreparedStatement ps = prepare("UPDATE APPLICANTS SET STATUS=? WHERE (ID=?)")) {
+			ps.setInt(1, Applicant.REJECTED);
+			ps.setInt(2, a.getID());
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -50,76 +49,76 @@ public class SetApplicant extends PilotWriteDAO {
 		try {
 			startTransaction();
 
-			// Prepare an INSERT or UPDATE statement
+			// Write the USERDATA Object
 			if (a.getID() == 0) {
-				// Write the USERDATA Object
-				prepareStatement("INSERT INTO common.USERDATA (AIRLINE, TABLENAME) VALUES (?, ?)");
-				_ps.setString(1, SystemData.get("airline.code"));
-				_ps.setString(2, "APPLICANTS");
-				executeUpdate(1);
-
+				try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.USERDATA (AIRLINE, TABLENAME) VALUES (?, ?)")) {
+					ps.setString(1, SystemData.get("airline.code"));
+					ps.setString(2, "APPLICANTS");
+					executeUpdate(ps, 1);
+				}
+				
 				// Get the new applicant ID
 				a.setID(getNewID());
-				prepareStatement("INSERT INTO APPLICANTS (STATUS, FIRSTNAME, LASTNAME, EMAIL, LOCATION, VATSIM_ID, IVAO_ID, PE_ID, LEGACY_HOURS, LEGACY_URL, LEGACY_OK, "
-					+ "HOME_AIRPORT, NOTIFY, SHOW_EMAIL, CREATED, REGHOSTNAME, REGADDR, DFORMAT, TFORMAT, NFORMAT, AIRPORTCODE, DISTANCEUNITS, SIM_VERSION, TZ, "
-					+ "UISCHEME, COMMENTS, HR_COMMENTS, ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, INET6_ATON(?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-				_ps.setString(27, a.getHRComments());
-				_ps.setInt(28, a.getID());
 			} else {
 				// Delete stage choices
-				prepareStatementWithoutLimits("DELETE FROM APPLICANT_STAGE_CHOICES WHERE (ID=?)");
-				_ps.setInt(1, a.getID());
-				executeUpdate(0);
-				
-				// Create the UPDATE statement
-				prepareStatement("UPDATE APPLICANTS SET STATUS=?, FIRSTNAME=?, LASTNAME=?, EMAIL=?, LOCATION=?, VATSIM_ID=?, IVAO_ID=?, PE_ID=?, LEGACY_HOURS=?, "
-					+ "LEGACY_URL=?, LEGACY_OK=?, HOME_AIRPORT=?, NOTIFY=?, SHOW_EMAIL=?, CREATED=?, REGHOSTNAME=?, REGADDR=INET6_ATON(?), DFORMAT=?, TFORMAT=?, "
-					+ "NFORMAT=?, AIRPORTCODE=?, DISTANCEUNITS=?, SIM_VERSION=?, TZ=?, UISCHEME=?, COMMENTS=?, EQTYPE=?, RANKING=?, HR_COMMENTS=? WHERE (ID=?)");
-				_ps.setString(27, a.getEquipmentType());
-				_ps.setString(28, a.getRank().getName());
-				_ps.setString(29, a.getHRComments());
-				_ps.setInt(30, a.getID());
+				try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM APPLICANT_STAGE_CHOICES WHERE (ID=?)")) {
+					ps.setInt(1, a.getID());
+					executeUpdate(ps, 0);
+				}
 			}
 
-			// Set the fields
-			_ps.setInt(1, a.getStatus());
-			_ps.setString(2, a.getFirstName());
-			_ps.setString(3, a.getLastName());
-			_ps.setString(4, a.getEmail());
-			_ps.setString(5, a.getLocation());
-			_ps.setString(6, a.getNetworkID(OnlineNetwork.VATSIM));
-			_ps.setString(7, a.getNetworkID(OnlineNetwork.IVAO));
-			_ps.setString(8, a.getNetworkID(OnlineNetwork.PILOTEDGE));
-			_ps.setDouble(9, a.getLegacyHours());
-			_ps.setString(10, a.getLegacyURL());
-			_ps.setBoolean(11, a.getLegacyVerified());
-			_ps.setString(12, a.getHomeAirport());
-			_ps.setInt(13, a.getNotifyCode());
-			_ps.setInt(14, a.getEmailAccess());
-			_ps.setTimestamp(15, createTimestamp(a.getCreatedOn()));
-			_ps.setString(16, a.getRegisterHostName());
-			_ps.setString(17, a.getRegisterAddress());
-			_ps.setString(18, a.getDateFormat());
-			_ps.setString(19, a.getTimeFormat());
-			_ps.setString(20, a.getNumberFormat());
-			_ps.setInt(21, a.getAirportCodeType().ordinal());
-			_ps.setInt(22, a.getDistanceType().ordinal());
-			_ps.setInt(23, a.getSimVersion().ordinal());
-			_ps.setString(24, a.getTZ().getID());
-			_ps.setString(25, a.getUIScheme());
-			_ps.setString(26, a.getComments());
-			executeUpdate(1);
-			
-			// Write the stage choices
-			prepareStatementWithoutLimits("INSERT INTO APPLICANT_STAGE_CHOICES (ID, STAGE, EQTYPE) VALUES (?, ?, ?)");
-			_ps.setInt(1, a.getID());
-			for (Map.Entry<Long, String> me : a.getTypeChoices().entrySet()) {
-				_ps.setInt(2, me.getKey().intValue());
-				_ps.setString(3, me.getValue());
-				_ps.addBatch();
+			try (PreparedStatement ps = prepare("INSERT INTO APPLICANTS (STATUS, FIRSTNAME, LASTNAME, EMAIL, LOCATION, VATSIM_ID, IVAO_ID, PE_ID, LEGACY_HOURS, LEGACY_URL, LEGACY_OK, HOME_AIRPORT, "
+				+ "NOTIFY, SHOW_EMAIL, CREATED, REGHOSTNAME, REGADDR, DFORMAT, TFORMAT, NFORMAT, AIRPORTCODE, DISTANCEUNITS, SIM_VERSION, TZ, UISCHEME, COMMENTS, HR_COMMENTS, ID) VALUES "
+				+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, INET6_ATON(?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE STATUS=VALUES(STATUS), FIRSTNAME=VALUES(FIRSTNAME), LASTNAME=VALUES(LASTNAME), "
+				+ "EMAIL=VALUES(EMAIL), LOCATION=VALUES(LOCATION), VATSIM_ID=VALUES(VATSIM_ID), IVAO_ID=VALUES(IVAO_ID), PE_ID=VALUES(PE_ID), LEGACY_HOURS=VALUES(LEGACY_HOURS), LEGACY_URL=VALUES(LEGACY_URL), "
+				+ "LEGACY_OK=VALUES(LEGACY_OK), HOME_AIRPORT=VALUES(HOME_AIRPORT), NOTIFY=VALUES(NOTIFY), SHOW_EMAIL=VALUES(SHOW_EMAIL), DFORMAT=VALUES(DFORMAT), TFORMAT=VALUES(TFORMAT), "
+				+ "NFORMAT=VALUES(NFORMAT), AIRPORTCODE=VALUES(AIRPORTCODE), DISTANCEUNITS=VALUES(DISTANCEUNITS), SIM_VERSION=VALUES(SIM_VERSION), TZ=VALUES(TZ), UISCHEME=VALUES(UISCHEME), "
+				+ "EQTYPE=?, RANKING=?, HR_COMMENTS=VALUES(HR_COMMENTS)")) {
+				ps.setInt(1, a.getStatus());
+				ps.setString(2, a.getFirstName());
+				ps.setString(3, a.getLastName());
+				ps.setString(4, a.getEmail());
+				ps.setString(5, a.getLocation());
+				ps.setString(6, a.getNetworkID(OnlineNetwork.VATSIM));
+				ps.setString(7, a.getNetworkID(OnlineNetwork.IVAO));
+				ps.setString(8, a.getNetworkID(OnlineNetwork.PILOTEDGE));
+				ps.setDouble(9, a.getLegacyHours());
+				ps.setString(10, a.getLegacyURL());
+				ps.setBoolean(11, a.getLegacyVerified());
+				ps.setString(12, a.getHomeAirport());
+				ps.setInt(13, a.getNotifyCode());
+				ps.setInt(14, a.getEmailAccess());
+				ps.setTimestamp(15, createTimestamp(a.getCreatedOn()));
+				ps.setString(16, a.getRegisterHostName());
+				ps.setString(17, a.getRegisterAddress());
+				ps.setString(18, a.getDateFormat());
+				ps.setString(19, a.getTimeFormat());
+				ps.setString(20, a.getNumberFormat());
+				ps.setInt(21, a.getAirportCodeType().ordinal());
+				ps.setInt(22, a.getDistanceType().ordinal());
+				ps.setInt(23, a.getSimVersion().ordinal());
+				ps.setString(24, a.getTZ().getID());
+				ps.setString(25, a.getUIScheme());
+				ps.setString(26, a.getComments());
+				ps.setString(27, a.getHRComments());
+				ps.setInt(28, a.getID());
+				ps.setString(29, a.getEquipmentType());
+				ps.setString(30, (a.getRank() == null) ? null : a.getRank().getName());
+				executeUpdate(ps, 1);
 			}
 			
-			executeBatchUpdate(1, a.getTypeChoices().size());
+			// Write the stage choices
+			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO APPLICANT_STAGE_CHOICES (ID, STAGE, EQTYPE) VALUES (?, ?, ?)")) {
+				ps.setInt(1, a.getID());
+				for (Map.Entry<Long, String> me : a.getTypeChoices().entrySet()) {
+					ps.setInt(2, me.getKey().intValue());
+					ps.setString(3, me.getValue());
+					ps.addBatch();
+				}
+			
+				executeUpdate(ps, 1, a.getTypeChoices().size());
+			}
+			
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -133,14 +132,13 @@ public class SetApplicant extends PilotWriteDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void hire(Applicant a) throws DAOException {
-		try {
-			prepareStatement("UPDATE APPLICANTS SET STATUS=?, PILOT_ID=?, RANKING=?, EQTYPE=? WHERE (ID=?)");
-			_ps.setInt(1, Applicant.APPROVED);
-			_ps.setInt(2, a.getPilotID());
-			_ps.setString(3, a.getRank().getName());
-			_ps.setString(4, a.getEquipmentType());
-			_ps.setInt(5, a.getID());
-			executeUpdate(1);
+		try (PreparedStatement ps = prepare("UPDATE APPLICANTS SET STATUS=?, PILOT_ID=?, RANKING=?, EQTYPE=? WHERE (ID=?)")) {
+			ps.setInt(1, Applicant.APPROVED);
+			ps.setInt(2, a.getPilotID());
+			ps.setString(3, a.getRank().getName());
+			ps.setString(4, a.getEquipmentType());
+			ps.setInt(5, a.getID());
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -153,10 +151,9 @@ public class SetApplicant extends PilotWriteDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void delete(int id) throws DAOException {
-		try {
-			prepareStatement("DELETE FROM APPLICANTS WHERE (ID=?)");
-			_ps.setInt(1, id);
-			executeUpdate(1);
+		try (PreparedStatement ps = prepare("DELETE FROM APPLICANTS WHERE (ID=?)")) {
+			ps.setInt(1, id);
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

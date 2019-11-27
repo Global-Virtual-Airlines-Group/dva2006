@@ -12,7 +12,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load ISO-3316 country codes and perform geolocation.
  * @author Luke
- * @version 8.7
+ * @version 9.0
  * @since 3.2
  */
 
@@ -34,17 +34,15 @@ public class GetCountry extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public int initAll() throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT CODE, NAME, CONTINENT FROM common.COUNTRY");
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT CODE, NAME, CONTINENT FROM common.COUNTRY")) {
 			int rowsLoaded = 0;
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					Country.init(rs.getString(1), rs.getString(2), Continent.valueOf(rs.getString(3)));
 					rowsLoaded++;
 				}
 			}
 			
-			_ps.close();
 			return rowsLoaded;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -66,18 +64,14 @@ public class GetCountry extends DAO {
 		if (id != null)
 			return Country.get(id.getValue());
 		
-		try {
-			prepareStatementWithoutLimits("SELECT CODE FROM common.COUNTRY_GEO WHERE ST_Contains(DATA, ST_PointFromText(?,?)) LIMIT 1");
-			_ps.setString(1, formatLocation(loc));
-			_ps.setInt(2, WGS84_SRID);
-			
-			try (ResultSet rs = _ps.executeQuery()) {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT CODE FROM common.COUNTRY_GEO WHERE ST_Contains(DATA, ST_PointFromText(?,?)) LIMIT 1")) {
+			ps.setString(1, formatLocation(loc));
+			ps.setInt(2, WGS84_SRID);
+			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next())
 					id = new CacheableString(rs.getString(1), rs.getString(1));
 			}
 
-			_ps.close();
-			
 			// Add to cache
 			if (id != null) {
 				_cache.add(loc, id);

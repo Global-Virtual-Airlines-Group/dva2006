@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to read examination configuration data.
  * @author Luke
- * @version 8.7
+ * @version 9.0
  * @since 1.0
  */
 
@@ -34,15 +34,14 @@ public class GetExamProfiles extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public ExamProfile getExamProfile(String examName) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT * FROM exams.EXAMINFO WHERE (NAME=?) LIMIT 1");
-			_ps.setString(1, examName);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM exams.EXAMINFO WHERE (NAME=?) LIMIT 1")) {
+			ps.setString(1, examName);
 
 			// Execute the query - return null if not found
-			List<ExamProfile> results = execute();
+			List<ExamProfile> results = execute(ps);
 			loadAirlines(results);
 			loadScorers(results);
-			return results.isEmpty() ? null : results.get(0);
+			return results.stream().findFirst().orElse(null);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -54,9 +53,8 @@ public class GetExamProfiles extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<ExamProfile> getAllExamProfiles() throws DAOException {
-		try {
-			prepareStatement("SELECT * FROM exams.EXAMINFO ORDER BY STAGE, NAME");
-			List<ExamProfile> results = execute();
+		try (PreparedStatement ps = prepare("SELECT * FROM exams.EXAMINFO ORDER BY STAGE, NAME")) {
+			List<ExamProfile> results = execute(ps);
 			loadAirlines(results);
 			loadScorers(results);
 			return results;
@@ -71,10 +69,9 @@ public class GetExamProfiles extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<ExamProfile> getExamProfiles() throws DAOException {
-		try {
-			prepareStatement("SELECT E.* FROM exams.EXAMINFO E, exams.EXAM_AIRLINES EA WHERE (E.NAME=EA.NAME) AND (EA.AIRLINE=?) ORDER BY E.STAGE, E.NAME");
-			_ps.setString(1, SystemData.get("airline.code"));
-			List<ExamProfile> results = execute();
+		try (PreparedStatement ps = prepare("SELECT E.* FROM exams.EXAMINFO E, exams.EXAM_AIRLINES EA WHERE (E.NAME=EA.NAME) AND (EA.AIRLINE=?) ORDER BY E.STAGE, E.NAME")) {
+			ps.setString(1, SystemData.get("airline.code"));
+			List<ExamProfile> results = execute(ps);
 			loadAirlines(results);
 			loadScorers(results);
 			return results;
@@ -90,11 +87,10 @@ public class GetExamProfiles extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<ExamProfile> getExamProfiles(boolean isAcademy) throws DAOException {
-		try {
-			prepareStatement("SELECT E.* FROM exams.EXAMINFO E, exams.EXAM_AIRLINES EA WHERE (E.NAME=EA.NAME) AND (E.ACADEMY=?) AND (EA.AIRLINE=?) ORDER BY E.STAGE, E.NAME");
-			_ps.setBoolean(1, isAcademy);
-			_ps.setString(2, SystemData.get("airline.code"));
-			List<ExamProfile> results = execute();
+		try (PreparedStatement ps = prepare("SELECT E.* FROM exams.EXAMINFO E, exams.EXAM_AIRLINES EA WHERE (E.NAME=EA.NAME) AND (E.ACADEMY=?) AND (EA.AIRLINE=?) ORDER BY E.STAGE, E.NAME")) {
+			ps.setBoolean(1, isAcademy);
+			ps.setString(2, SystemData.get("airline.code"));
+			List<ExamProfile> results = execute(ps);
 			loadAirlines(results);
 			loadScorers(results);
 			return results;
@@ -110,12 +106,11 @@ public class GetExamProfiles extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public EquipmentRideScript getScript(EquipmentRideScriptKey key) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT * FROM CR_DESCS WHERE (EQTYPE=?) AND (CURRENCY=?) LIMIT 1");
-			_ps.setString(1, key.getEquipmentType());
-			_ps.setBoolean(2, key.isCurrency());
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM CR_DESCS WHERE (EQTYPE=?) AND (CURRENCY=?) LIMIT 1")) {
+			ps.setString(1, key.getEquipmentType());
+			ps.setBoolean(2, key.isCurrency());
 			EquipmentRideScript result = null;
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next()) {
 					result = new EquipmentRideScript(rs.getString(2), rs.getString(1));
 					result.setIsCurrency(rs.getBoolean(3));
@@ -126,7 +121,6 @@ public class GetExamProfiles extends DAO {
 				}
 			}
 
-			_ps.close();
 			return result;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -139,10 +133,9 @@ public class GetExamProfiles extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<EquipmentRideScript> getScripts() throws DAOException {
-		try {
-			prepareStatement("SELECT * FROM CR_DESCS");
+		try (PreparedStatement ps = prepare("SELECT * FROM CR_DESCS")) {
 			List<EquipmentRideScript> results = new ArrayList<EquipmentRideScript>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					EquipmentRideScript sc = new EquipmentRideScript(rs.getString(2), rs.getString(1));
 					sc.setIsCurrency(rs.getBoolean(3));
@@ -154,7 +147,6 @@ public class GetExamProfiles extends DAO {
 				}
 			}
 
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -164,9 +156,9 @@ public class GetExamProfiles extends DAO {
 	/*
 	 * Helper method to parse ExamProfile result sets.
 	 */
-	private List<ExamProfile> execute() throws SQLException {
+	private static List<ExamProfile> execute(PreparedStatement ps) throws SQLException {
 		List<ExamProfile> results = new ArrayList<ExamProfile>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
 				ExamProfile ep = new ExamProfile(rs.getString(1));
 				ep.setStage(rs.getInt(2));
@@ -183,7 +175,6 @@ public class GetExamProfiles extends DAO {
 			}
 		}
 
-		_ps.close();
 		return results;
 	}
 
@@ -209,16 +200,15 @@ public class GetExamProfiles extends DAO {
 		sqlBuf.append(')');
 
 		// Execute the query
-		prepareStatementWithoutLimits(sqlBuf.toString());
-		try (ResultSet rs = _ps.executeQuery()) {
-			while (rs.next()) {
-				ExamProfile ep = exams.get(rs.getString(1));
-				if (ep != null)
-					ep.addAirline(SystemData.getApp(rs.getString(2)));
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					ExamProfile ep = exams.get(rs.getString(1));
+					if (ep != null)
+						ep.addAirline(SystemData.getApp(rs.getString(2)));
+				}
 			}
 		}
-
-		_ps.close();
 	}
 	
 	/*
@@ -243,15 +233,14 @@ public class GetExamProfiles extends DAO {
 		sqlBuf.append(')');
 		
 		// Execute the query
-		prepareStatementWithoutLimits(sqlBuf.toString());
-		try (ResultSet rs = _ps.executeQuery()) {
-			while (rs.next()) {
-				ExamProfile ep = exams.get(rs.getString(1));
-				if (ep != null)
-					ep.addScorerID(rs.getInt(2));
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					ExamProfile ep = exams.get(rs.getString(1));
+					if (ep != null)
+						ep.addScorerID(rs.getInt(2));
+				}
 			}
 		}
-		
-		_ps.close();
 	}
 }

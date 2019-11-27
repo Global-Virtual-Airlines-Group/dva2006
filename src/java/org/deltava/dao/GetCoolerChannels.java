@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load Water Cooler channel profiles.
  * @author Luke
- * @version 7.2
+ * @version 9.0
  * @since 1.0
  */
 
@@ -34,7 +34,6 @@ public class GetCoolerChannels extends DAO {
 	 * Helper class to allow displaying of last subject in a channel.
 	 */
 	public class LastPostMessage extends Message {
-
 		private String _subject;
 
 		LastPostMessage(int authorID) {
@@ -58,19 +57,14 @@ public class GetCoolerChannels extends DAO {
 	 */
 	public Channel get(String channelName) throws DAOException {
 		Channel c = _cache.get(channelName);
-		if (c != null)
-			return c;
+		if (c != null) return c;
 
-		try {
-			prepareStatementWithoutLimits("SELECT * FROM common.COOLER_CHANNELS WHERE (CHANNEL=?) LIMIT 1");
-			_ps.setString(1, channelName);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM common.COOLER_CHANNELS WHERE (CHANNEL=?) LIMIT 1")) {
+			ps.setString(1, channelName);
 
 			// Execute the query - if nothing is returned, return null
-			try (ResultSet rs = _ps.executeQuery()) {
-				if (!rs.next()) {
-					_ps.close();
-					return null;
-				}
+			try (ResultSet rs = ps.executeQuery()) {
+				if (!rs.next()) return null;
 
 				// Initialize the channel
 				c = new Channel(channelName);
@@ -78,8 +72,6 @@ public class GetCoolerChannels extends DAO {
 				c.setActive(rs.getBoolean(3));
 				c.setAllowNewPosts(rs.getBoolean(4));
 			}
-
-			_ps.close();
 
 			// Load the roles and airlines
 			Map<String, Channel> results = new HashMap<String, Channel>();
@@ -106,24 +98,22 @@ public class GetCoolerChannels extends DAO {
 		StringBuilder sqlBuf = new StringBuilder("SELECT C.*, (SELECT T.ID FROM common.COOLER_THREADS T WHERE ");
 		if (!showHidden)
 			sqlBuf.append("(T.HIDDEN=?) AND ");
-		sqlBuf.append("(T.CHANNEL=C.CHANNEL) ORDER BY T.LASTUPDATE DESC LIMIT 1) AS LT, SUM(T.POSTS), "
-				+ "COUNT(DISTINCT T.ID), SUM(T.VIEWS) FROM common.COOLER_CHANNELS C LEFT JOIN common.COOLER_THREADS T "
-				+ "ON (T.CHANNEL=C.CHANNEL) ");
+		sqlBuf.append("(T.CHANNEL=C.CHANNEL) ORDER BY T.LASTUPDATE DESC LIMIT 1) AS LT, SUM(T.POSTS), COUNT(DISTINCT T.ID), SUM(T.VIEWS) FROM common.COOLER_CHANNELS C LEFT JOIN "
+			+ "common.COOLER_THREADS T ON (T.CHANNEL=C.CHANNEL) ");
 		if (!showInactive)
 			sqlBuf.append("WHERE (C.ACTIVE=?) ");
 		sqlBuf.append("GROUP BY C.CHANNEL");
 
 		Map<String, Channel> results = new TreeMap<String, Channel>();
-		try {
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 			int pos = 0;
-			prepareStatementWithoutLimits(sqlBuf.toString());
 			if (!showHidden)
-				_ps.setBoolean(++pos, false);
+				ps.setBoolean(++pos, false);
 			if (!showInactive)
-				_ps.setBoolean(++pos, true);
+				ps.setBoolean(++pos, true);
 
 			// Execute the query - we store results in a map for now
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					Channel c = new Channel(rs.getString(1));
 					c.setDescription(rs.getString(2));
@@ -133,13 +123,9 @@ public class GetCoolerChannels extends DAO {
 					c.setPostCount(rs.getInt(6));
 					c.setThreadCount(rs.getInt(7));
 					c.setViewCount(rs.getInt(8));
-
-					// Add to the results with the channel name as the key
 					results.put(c.getName(), c);
 				}
 			}
-
-			_ps.close();
 
 			// Load the roles and airlines
 			loadInfo(results);
@@ -192,34 +178,24 @@ public class GetCoolerChannels extends DAO {
 		return channels;
 	}
 
-	/**
+	/*
 	 * Helper method to load Channel roles and airlines.
 	 */
 	private void loadInfo(Map<String, Channel> channels) throws SQLException {
-
-		// prepare SQL statement
-		if (channels.size() == 1) {
-			prepareStatementWithoutLimits("SELECT * FROM common.COOLER_CHANNELINFO WHERE (CHANNEL=?)");
-			Channel c = channels.values().iterator().next();
-			_ps.setString(1, c.getName());
-		} else
-			prepareStatementWithoutLimits("SELECT * FROM common.COOLER_CHANNELINFO");
-
-		// Execute the query
-		try (ResultSet rs = _ps.executeQuery()) {
-			while (rs.next()) {
-				Channel c = channels.get(rs.getString(1));
-				if (c != null) {
-					Channel.InfoType inf = Channel.InfoType.values()[rs.getInt(2)];
-					if (inf == Channel.InfoType.AIRLINE)
-						c.addAirline(rs.getString(3));
-					else
-						c.addRole(inf, rs.getString(3));
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM common.COOLER_CHANNELINFO")) {
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					Channel c = channels.get(rs.getString(1));
+					if (c != null) {
+						Channel.InfoType inf = Channel.InfoType.values()[rs.getInt(2)];
+						if (inf == Channel.InfoType.AIRLINE)
+							c.addAirline(rs.getString(3));
+						else
+							c.addRole(inf, rs.getString(3));
+					}
 				}
 			}
 		}
-
-		_ps.close();
 	}
 
 	/**
@@ -247,9 +223,8 @@ public class GetCoolerChannels extends DAO {
 		// Close and prepare the statement
 		List<Message> results = new ArrayList<Message>();
 		sqlBuf.append("))");
-		try {
-			prepareStatementWithoutLimits(sqlBuf.toString());
-			try (ResultSet rs = _ps.executeQuery()) {
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					LastPostMessage msg = new LastPostMessage(rs.getInt(13));
 					msg.setThreadID(rs.getInt(1));
@@ -259,8 +234,6 @@ public class GetCoolerChannels extends DAO {
 					results.add(msg);
 				}
 			}
-
-			_ps.close();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

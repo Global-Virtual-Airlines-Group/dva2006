@@ -11,7 +11,7 @@ import org.deltava.beans.system.EMailDelivery;
 /**
  * A Data Access Object to load e-mail delivery reports from the database.
  * @author Luke
- * @version 8.6
+ * @version 9.0
  * @since 8.5
  */
 
@@ -32,10 +32,9 @@ public class GetEMailDelivery extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<EMailDelivery> getByPilot(int pilotID) throws DAOException {
-		try {
-			prepareStatement("SELECT ID, MSG_ID, SEND_TIME, RCPT_TIME, EMAIL, PROCESS_TIME, NOTIFY_TYPE, INET6_NTOA(REMOTE_ADDR), REMOTE_HOST, RESPONSE FROM EMAIL_DELIVERY WHERE (ID=?) ORDER BY SEND_TIME DESC");
-			_ps.setInt(1, pilotID);
-			return execute();
+		try (PreparedStatement ps = prepare("SELECT ID, MSG_ID, SEND_TIME, RCPT_TIME, EMAIL, PROCESS_TIME, NOTIFY_TYPE, INET6_NTOA(REMOTE_ADDR), REMOTE_HOST, RESPONSE FROM EMAIL_DELIVERY WHERE (ID=?) ORDER BY SEND_TIME DESC")) {
+			ps.setInt(1, pilotID);
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -48,10 +47,9 @@ public class GetEMailDelivery extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<EMailDelivery> getByDate(Instant dt) throws DAOException {
-		try {
-			prepareStatement("SELECT ID, MSG_ID, SEND_TIME, RCPT_TIME, EMAIL, PROCESS_TIME, NOTIFY_TYPE, INET6_NTOA(REMOTE_ADDR), REMOTE_HOST, RESPONSE FROM EMAIL_DELIVERY WHERE DATE(SEND_TIME)=DATE(?) ORDER BY SEND_TIME");
-			_ps.setTimestamp(1, createTimestamp(dt));
-			return execute();
+		try (PreparedStatement ps = prepare("SELECT ID, MSG_ID, SEND_TIME, RCPT_TIME, EMAIL, PROCESS_TIME, NOTIFY_TYPE, INET6_NTOA(REMOTE_ADDR), REMOTE_HOST, RESPONSE FROM EMAIL_DELIVERY WHERE DATE(SEND_TIME)=DATE(?) ORDER BY SEND_TIME")) {
+			ps.setTimestamp(1, createTimestamp(dt));
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -64,10 +62,9 @@ public class GetEMailDelivery extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<EMailDelivery> getByDomain(String domain) throws DAOException {
-		try {
-			prepareStatement("SELECT ID, MSG_ID, SEND_TIME, RCPT_TIME, EMAIL, PROCESS_TIME, NOTIFY_TYPE, INET6_NTOA(REMOTE_ADDR), REMOTE_HOST, RESPONSE FROM EMAIL_DELIVERY WHERE (ADDR LIKE ?) ORDER BY SEND_TIME");
-			_ps.setString(1, "%" + domain);
-			return execute();
+		try (PreparedStatement ps = prepare("SELECT ID, MSG_ID, SEND_TIME, RCPT_TIME, EMAIL, PROCESS_TIME, NOTIFY_TYPE, INET6_NTOA(REMOTE_ADDR), REMOTE_HOST, RESPONSE FROM EMAIL_DELIVERY WHERE (ADDR LIKE ?) ORDER BY SEND_TIME")) {
+			ps.setString(1, "%" + domain);
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -76,9 +73,9 @@ public class GetEMailDelivery extends DAO {
 	/*
 	 * Helper method to parse result sets.
 	 */
-	private List<EMailDelivery> execute() throws SQLException {
+	private static List<EMailDelivery> execute(PreparedStatement ps) throws SQLException {
 		List<EMailDelivery> results = new ArrayList<EMailDelivery>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
 				EMailDelivery dv = new EMailDelivery(DeliveryType.values()[rs.getInt(7)], rs.getInt(1), toInstant(rs.getTimestamp(4)));
 				dv.setMessageID(rs.getString(2));
@@ -92,7 +89,6 @@ public class GetEMailDelivery extends DAO {
 			}
 		}
 		
-		_ps.close();
 		return results;
 	}
 }

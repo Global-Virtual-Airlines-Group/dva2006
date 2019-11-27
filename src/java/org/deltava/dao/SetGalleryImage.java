@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2012, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.gallery.*;
 /**
  * A Data Access Object to write Picture Gallery images.
  * @author Luke
- * @version 5.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -29,23 +29,23 @@ public class SetGalleryImage extends DAO {
 	 * @throws IllegalArgumentException if the buffer is empty
 	 */
 	public void write(Image img) throws DAOException {
-	   if (img.getSize() == 0)
-	      throw new IllegalArgumentException("Empty Image Buffer");
-	   
+		if (img.getSize() == 0)
+			throw new IllegalArgumentException("Empty Image Buffer");
+
 		try {
-			prepareStatement("INSERT INTO GALLERY (PILOT_ID, NAME, DESCRIPTION, DATE, TYPE, X, Y, SIZE, IMG, FLEET) "
-					+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-			_ps.setInt(1, img.getAuthorID());
-			_ps.setString(2, img.getName());
-			_ps.setString(3, img.getDescription());
-			_ps.setTimestamp(4, createTimestamp(img.getCreatedOn()));
-			_ps.setInt(5, img.getType());
-			_ps.setInt(6, img.getWidth());
-			_ps.setInt(7, img.getHeight());
-			_ps.setInt(8, img.getSize());
-			_ps.setBinaryStream(9, img.getInputStream(), img.getSize());
-			_ps.setBoolean(10, img.getFleet());
-			executeUpdate(1);
+			try (PreparedStatement ps = prepare("INSERT INTO GALLERY (PILOT_ID, NAME, DESCRIPTION, DATE, TYPE, X, Y, SIZE, IMG, FLEET) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+				ps.setInt(1, img.getAuthorID());
+				ps.setString(2, img.getName());
+				ps.setString(3, img.getDescription());
+				ps.setTimestamp(4, createTimestamp(img.getCreatedOn()));
+				ps.setInt(5, img.getType());
+				ps.setInt(6, img.getWidth());
+				ps.setInt(7, img.getHeight());
+				ps.setInt(8, img.getSize());
+				ps.setBinaryStream(9, img.getInputStream(), img.getSize());
+				ps.setBoolean(10, img.getFleet());
+				executeUpdate(ps, 1);
+			}
 
 			// Get the new image ID
 			img.setID(getNewID());
@@ -60,15 +60,12 @@ public class SetGalleryImage extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void update(Image img) throws DAOException {
-		try {
-			prepareStatement("UPDATE GALLERY SET NAME=?, DESCRIPTION=?, FLEET=? WHERE (ID=?)");
-			_ps.setString(1, img.getName());
-			_ps.setString(2, img.getDescription());
-			_ps.setBoolean(3, img.getFleet());
-			_ps.setInt(4, img.getID());
-			
-			// Update the database
-			executeUpdate(1);
+		try (PreparedStatement ps = prepare("UPDATE GALLERY SET NAME=?, DESCRIPTION=?, FLEET=? WHERE (ID=?)")) {
+			ps.setString(1, img.getName());
+			ps.setString(2, img.getDescription());
+			ps.setBoolean(3, img.getFleet());
+			ps.setInt(4, img.getID());
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -76,16 +73,15 @@ public class SetGalleryImage extends DAO {
 
 	/**
 	 * Writes a new Image Like to the database.
-	 * @param userID the database ID of the Person liking the Image 
+	 * @param userID the database ID of the Person liking the Image
 	 * @param imgID the image database ID
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void like(int userID, int imgID) throws DAOException {
-		try {
-			prepareStatement("INSERT INTO GALLERYSCORE (IMG_ID, PILOT_ID) VALUES (?, ?)");
-			_ps.setInt(1, imgID);
-			_ps.setInt(2, userID);
-			executeUpdate(1);
+		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO GALLERYSCORE (IMG_ID, PILOT_ID) VALUES (?, ?)")) {
+			ps.setInt(1, imgID);
+			ps.setInt(2, userID);
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -99,17 +95,19 @@ public class SetGalleryImage extends DAO {
 	public void delete(int id) throws DAOException {
 		try {
 			startTransaction();
-			
+
 			// Delete the Image
-			prepareStatement("DELETE FROM GALLERY WHERE (ID=?)");
-			_ps.setInt(1, id);
-			executeUpdate(0);
-			
+			try (PreparedStatement ps = prepare("DELETE FROM GALLERY WHERE (ID=?)")) {
+				ps.setInt(1, id);
+				executeUpdate(ps, 0);
+			}
+
 			// Update any Water Cooler threads that link to this.
-			prepareStatement("UPDATE common.COOLER_THREADS SET IMAGE_ID=0 WHERE (IMAGE_ID=?)");
-			_ps.setInt(1, id);
-			executeUpdate(0);
-			
+			try (PreparedStatement ps = prepareWithoutLimits("UPDATE common.COOLER_THREADS SET IMAGE_ID=0 WHERE (IMAGE_ID=?)")) {
+				ps.setInt(1, id);
+				executeUpdate(ps, 0);
+			}
+
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -124,11 +122,10 @@ public class SetGalleryImage extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void delete(int imgID, int pilotID) throws DAOException {
-		try {
-			prepareStatement("DELETE FROM GALLERYSCORE WHERE (IMG_ID=?) AND (PILOT_ID=?)");
-			_ps.setInt(1, imgID);
-			_ps.setInt(2, pilotID);
-			executeUpdate(1);
+		try (PreparedStatement ps = prepare("DELETE FROM GALLERYSCORE WHERE (IMG_ID=?) AND (PILOT_ID=?)")) {
+			ps.setInt(1, imgID);
+			ps.setInt(2, pilotID);
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

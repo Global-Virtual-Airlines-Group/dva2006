@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2011, 2012, 2013, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2011, 2012, 2013, 2015, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.navdata.*;
 /**
  * A Data Access Object to update Navigation data.
  * @author Luke
- * @version 8.3
+ * @version 9.0
  * @since 1.0
  */
 
@@ -25,62 +25,62 @@ public class SetNavData extends DAO {
 
 	/**
 	 * Writes an entry to the Navigation Data table.
-	 * @param ndata the NavigationDataBean to write
+	 * @param nds a Collection of NavigationDataBeans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void write(NavigationDataBean ndata) throws DAOException {
-		try {
-			// Prepare the statement if not already done
-			if ((_ps == null) || _ps.isClosed())
-				prepareStatement("INSERT INTO common.NAVDATA (ITEMTYPE, CODE, LATITUDE, LONGITUDE, FREQ, ALTITUDE, NAME, HDG, LL) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ST_PointFromText(?,?))");
+	public void write(Collection<NavigationDataBean> nds) throws DAOException {
+		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.NAVDATA (ITEMTYPE, CODE, LATITUDE, LONGITUDE, FREQ, ALTITUDE, NAME, HDG, LL) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ST_PointFromText(?,?))")) {
+			for (NavigationDataBean nd : nds) {
+				ps.setInt(1, nd.getType().ordinal());
+				ps.setString(2, nd.getCode());
+				ps.setDouble(3, nd.getLatitude());
+				ps.setDouble(4, nd.getLongitude());
+				ps.setString(9, formatLocation(nd));
+				ps.setInt(10, WGS84_SRID);
+				switch (nd.getType()) {
+				case VOR:
+					VOR vor = (VOR) nd;
+					ps.setString(5, vor.getFrequency());
+					ps.setInt(6, 0);
+					ps.setString(7, vor.getName());
+					ps.setInt(8, 0);
+					break;
 
-			_ps.setInt(1, ndata.getType().ordinal());
-			_ps.setString(2, ndata.getCode());
-			_ps.setDouble(3, ndata.getLatitude());
-			_ps.setDouble(4, ndata.getLongitude());
-			_ps.setString(9, formatLocation(ndata));
-			_ps.setInt(10, WGS84_SRID);
-			switch (ndata.getType()) {
-			case VOR:
-				VOR vor = (VOR) ndata;
-				_ps.setString(5, vor.getFrequency());
-				_ps.setInt(6, 0);
-				_ps.setString(7, vor.getName());
-				_ps.setInt(8, 0);
-				break;
+				case NDB:
+					NDB ndb = (NDB) nd;
+					ps.setString(5, ndb.getFrequency());
+					ps.setInt(6, 0);
+					ps.setString(7, ndb.getName());
+					ps.setInt(8, 0);
+					break;
 
-			case NDB:
-				NDB ndb = (NDB) ndata;
-				_ps.setString(5, ndb.getFrequency());
-				_ps.setInt(6, 0);
-				_ps.setString(7, ndb.getName());
-				_ps.setInt(8, 0);
-				break;
+				case AIRPORT:
+					AirportLocation al = (AirportLocation) nd;
+					ps.setString(5, "-");
+					ps.setInt(6, al.getAltitude());
+					ps.setString(7, al.getName());
+					ps.setInt(8, 0);
+					break;
 
-			case AIRPORT:
-				AirportLocation al = (AirportLocation) ndata;
-				_ps.setString(5, "-");
-				_ps.setInt(6, al.getAltitude());
-				_ps.setString(7, al.getName());
-				_ps.setInt(8, 0);
-				break;
-
-			case RUNWAY:
-				Runway rwy = (Runway) ndata;
-				_ps.setString(5, rwy.getFrequency());
-				_ps.setInt(6, rwy.getLength());
-				_ps.setString(7, rwy.getName());
-				_ps.setInt(8, rwy.getHeading());
-				break;
-
-			default:
-				_ps.setString(5, "-");
-				_ps.setInt(6, 0);
-				_ps.setString(7, "-");
-				_ps.setInt(8, 0);
+				case RUNWAY:
+					Runway rwy = (Runway) nd;
+					ps.setString(5, rwy.getFrequency());
+					ps.setInt(6, rwy.getLength());
+					ps.setString(7, rwy.getName());
+					ps.setInt(8, rwy.getHeading());
+					break;
+					
+				default:
+					ps.setString(5, "-");
+					ps.setInt(6, 0);
+					ps.setString(7, "-");
+					ps.setInt(8, 0);
+				}
+				
+				ps.addBatch();
 			}
 
-			_ps.executeUpdate();
+			executeUpdate(ps, 1, nds.size());
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -93,28 +93,27 @@ public class SetNavData extends DAO {
 	 * @see SetNavData#writeRoute(TerminalRoute)
 	 */
 	public void write(Airway a) throws DAOException {
-		try {
-			prepareStatement("INSERT INTO common.AIRWAYS (NAME, ID, SEQ, WAYPOINT, WPTYPE, LATITUDE, LONGITUDE, HIGH, LOW, LL) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ST_PointFromText(?,?))");
-			_ps.setString(1, a.getCode());
-			_ps.setInt(2, a.getSequence());
-			_ps.setBoolean(8, a.isHighLevel());
-			_ps.setBoolean(9, a.isLowLevel());
-			_ps.setInt(11, WGS84_SRID);
+		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.AIRWAYS (NAME, ID, SEQ, WAYPOINT, WPTYPE, LATITUDE, LONGITUDE, HIGH, LOW, LL) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ST_PointFromText(?,?))")) {
+			ps.setString(1, a.getCode());
+			ps.setInt(2, a.getSequence());
+			ps.setBoolean(8, a.isHighLevel());
+			ps.setBoolean(9, a.isLowLevel());
+			ps.setInt(11, WGS84_SRID);
 
 			// Write the waypoints
 			int x = 1;
 			for (NavigationDataBean ai : a.getWaypoints()) {
-				_ps.setInt(3, x + 1);
-				_ps.setString(4, ai.getCode());
-				_ps.setInt(5, ai.getType().ordinal());
-				_ps.setDouble(6, ai.getLatitude());
-				_ps.setDouble(7, ai.getLongitude());
-				_ps.setString(10, formatLocation(ai));
-				_ps.addBatch();
+				ps.setInt(3, x + 1);
+				ps.setString(4, ai.getCode());
+				ps.setInt(5, ai.getType().ordinal());
+				ps.setDouble(6, ai.getLatitude());
+				ps.setDouble(7, ai.getLongitude());
+				ps.setString(10, formatLocation(ai));
+				ps.addBatch();
 				x++;
 			}
 
-			executeBatchUpdate(1, a.getWaypoints().size());
+			executeUpdate(ps, 1, a.getWaypoints().size());
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -131,35 +130,38 @@ public class SetNavData extends DAO {
 			startTransaction();
 			
 			// Write metadata
-			prepareStatement("REPLACE INTO common.SIDSTAR_META (ICAO, ID, TYPE, NAME, TRANSITION, RUNWAY, CAN_PURGE) VALUES (?, ?, ?, ?, ?, ?, ?)");
-			_ps.setString(1, tr.getICAO());
-			_ps.setInt(2, tr.getSequence());
-			_ps.setInt(3, tr.getType().ordinal());
-			_ps.setString(4, tr.getName());
-			_ps.setString(5, tr.getTransition());
-			_ps.setString(6, tr.getRunway());
-			_ps.setBoolean(7, tr.getCanPurge());
-			executeUpdate(1);
+			try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO common.SIDSTAR_META (ICAO, ID, TYPE, NAME, TRANSITION, RUNWAY, CAN_PURGE) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
+				ps.setString(1, tr.getICAO());
+				ps.setInt(2, tr.getSequence());
+				ps.setInt(3, tr.getType().ordinal());
+				ps.setString(4, tr.getName());
+				ps.setString(5, tr.getTransition());
+				ps.setString(6, tr.getRunway());
+				ps.setBoolean(7, tr.getCanPurge());
+				executeUpdate(ps, 1);
+			}
 
 			// Write the waypoints
 			List<NavigationDataBean> wps = tr.getWaypoints();
-			prepareStatementWithoutLimits("INSERT INTO common.SIDSTAR_WAYPOINTS (ICAO, TYPE, ID, SEQ, WAYPOINT, WPTYPE, LATITUDE, LONGITUDE, LL) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ST_PointFromText(?,?))");
-			_ps.setString(1, tr.getICAO());
-			_ps.setInt(2, tr.getType().ordinal());
-			_ps.setInt(3, tr.getSequence());
-			_ps.setInt(10, WGS84_SRID);
-			for (int x = 0; x < wps.size(); x++) {
-				NavigationDataBean ai = wps.get(x);
-				_ps.setInt(4, x + 1);
-				_ps.setString(5, ai.getCode());
-				_ps.setInt(6, ai.getType().ordinal());
-				_ps.setDouble(7, ai.getLatitude());
-				_ps.setDouble(8, ai.getLongitude());
-				_ps.setString(9, formatLocation(ai));
-				_ps.addBatch();
-			}
+			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.SIDSTAR_WAYPOINTS (ICAO, TYPE, ID, SEQ, WAYPOINT, WPTYPE, LATITUDE, LONGITUDE, LL) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ST_PointFromText(?,?))")) {
+				ps.setString(1, tr.getICAO());
+				ps.setInt(2, tr.getType().ordinal());
+				ps.setInt(3, tr.getSequence());
+				ps.setInt(10, WGS84_SRID);
+				for (int x = 0; x < wps.size(); x++) {
+					NavigationDataBean ai = wps.get(x);
+					ps.setInt(4, x + 1);
+					ps.setString(5, ai.getCode());
+					ps.setInt(6, ai.getType().ordinal());
+					ps.setDouble(7, ai.getLatitude());
+					ps.setDouble(8, ai.getLongitude());
+					ps.setString(9, formatLocation(ai));
+					ps.addBatch();
+				}
 
-			executeBatchUpdate(1, wps.size());
+				executeUpdate(ps, 1, wps.size());
+			}
+			
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -173,10 +175,9 @@ public class SetNavData extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public int updateAirwayWaypoints() throws DAOException {
-		try {
-			prepareStatementWithoutLimits("UPDATE common.AIRWAYS A, common.NAVDATA ND SET A.WPTYPE=ND.ITEMTYPE, A.FREQ=ND.FREQ, A.REGION=ND.REGION WHERE (A.WAYPOINT=ND.CODE) AND "
-				+ "(ABS(A.LATITUDE-ND.LATITUDE)<0.0001) AND (ABS(A.LONGITUDE-ND.LONGITUDE)<0.0001)");
-			return executeUpdate(1);
+		try (PreparedStatement ps = prepareWithoutLimits("UPDATE common.AIRWAYS A, common.NAVDATA ND SET A.WPTYPE=ND.ITEMTYPE, A.FREQ=ND.FREQ, A.REGION=ND.REGION WHERE (A.WAYPOINT=ND.CODE) AND "
+				+ "(ABS(A.LATITUDE-ND.LATITUDE)<0.0001) AND (ABS(A.LONGITUDE-ND.LONGITUDE)<0.0001)")) {
+			return executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -188,10 +189,9 @@ public class SetNavData extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public int updateTRWaypoints() throws DAOException {
-		try {
-			prepareStatementWithoutLimits("UPDATE common.SIDSTAR_WAYPOINTS TR, common.NAVDATA ND SET TR.WPTYPE=ND.ITEMTYPE, TR.REGION=ND.REGION WHERE (TR.WAYPOINT=ND.CODE) AND "
-				+"(ABS(TR.LATITUDE-ND.LATITUDE)<0.001) AND (ABS(TR.LONGITUDE-ND.LONGITUDE)<0.001)");
-			return executeUpdate(1);
+		try (PreparedStatement ps = prepareWithoutLimits("UPDATE common.SIDSTAR_WAYPOINTS TR, common.NAVDATA ND SET TR.WPTYPE=ND.ITEMTYPE, TR.REGION=ND.REGION WHERE (TR.WAYPOINT=ND.CODE) AND "
+				+"(ABS(TR.LATITUDE-ND.LATITUDE)<0.001) AND (ABS(TR.LONGITUDE-ND.LONGITUDE)<0.001)")) {
+			return executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -204,11 +204,10 @@ public class SetNavData extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public int updateRegions(Navaid navaidType) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("UPDATE common.NAVDATA ND, common.NAVREGIONS NR SET ND.REGION=NR.REGION WHERE (ROUND(ND.LATITUDE,0)=NR.LATITUDE) AND (ROUND(ND.LONGITUDE,0)=NR.LONGITUDE) "
-				+ "AND (ND.REGION IS NULL) AND (ND.ITEMTYPE=?)");
-			_ps.setInt(1, navaidType.ordinal());
-			return executeUpdate(0);
+		try (PreparedStatement ps = prepareWithoutLimits("UPDATE common.NAVDATA ND, common.NAVREGIONS NR SET ND.REGION=NR.REGION WHERE (ROUND(ND.LATITUDE,0)=NR.LATITUDE) AND "
+			+ "(ROUND(ND.LONGITUDE,0)=NR.LONGITUDE) AND (ND.REGION IS NULL) AND (ND.ITEMTYPE=?)")) {
+			ps.setInt(1, navaidType.ordinal());
+			return executeUpdate(ps, 0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -221,10 +220,9 @@ public class SetNavData extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public int updateLegacy(Navaid navaidType) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("REPLACE INTO common.NAVDATA (SELECT * FROM common.NAVLEGACY WHERE (ITEMTYPE=?))");
-			_ps.setInt(1, navaidType.ordinal());
-			return executeUpdate(0);
+		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO common.NAVDATA (SELECT * FROM common.NAVLEGACY WHERE (ITEMTYPE=?))")) {
+			ps.setInt(1, navaidType.ordinal());
+			return executeUpdate(ps, 0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -236,16 +234,14 @@ public class SetNavData extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void delete(TerminalRoute tr) throws DAOException {
-		if (tr == null)
-			return;
-		try {
-			prepareStatementWithoutLimits("DELETE FROM common.SIDSTAR_META WHERE (ITEMTYPE=?) AND (ICAO=?) " + "AND (NAME=?) AND (TRANSITION=?) AND (RUNWAY=?)");
-			_ps.setInt(1, tr.getType().ordinal());
-			_ps.setString(2, tr.getICAO());
-			_ps.setString(3, tr.getName());
-			_ps.setString(4, tr.getTransition());
-			_ps.setString(5, tr.getRunway());
-			executeUpdate(1);
+		if (tr == null) return;
+		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM common.SIDSTAR_META WHERE (ITEMTYPE=?) AND (ICAO=?) " + "AND (NAME=?) AND (TRANSITION=?) AND (RUNWAY=?)")) {
+			ps.setInt(1, tr.getType().ordinal());
+			ps.setString(2, tr.getICAO());
+			ps.setString(3, tr.getName());
+			ps.setString(4, tr.getTransition());
+			ps.setString(5, tr.getRunway());
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -258,10 +254,9 @@ public class SetNavData extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public int purge(Navaid navaidType) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("DELETE FROM common.NAVDATA WHERE (ITEMTYPE=?)");
-			_ps.setInt(1, navaidType.ordinal());
-			return executeUpdate(0);
+		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM common.NAVDATA WHERE (ITEMTYPE=?)")) {
+			ps.setInt(1, navaidType.ordinal());
+			return executeUpdate(ps, 0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -273,9 +268,8 @@ public class SetNavData extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public int purgeAirways() throws DAOException {
-		try {
-			prepareStatementWithoutLimits("TRUNCATE common.AIRWAYS");
-			return executeUpdate(0);
+		try (PreparedStatement ps = prepareWithoutLimits("TRUNCATE common.AIRWAYS")) {
+			return executeUpdate(ps, 0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -288,11 +282,10 @@ public class SetNavData extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public int purgeTerminalRoutes(TerminalRoute.Type routeType) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("DELETE FROM common.SIDSTAR_META WHERE (TYPE=?) AND (CAN_PURGE=?)");
-			_ps.setInt(1, routeType.ordinal());
-			_ps.setBoolean(2, true);
-			return executeUpdate(0);
+		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM common.SIDSTAR_META WHERE (TYPE=?) AND (CAN_PURGE=?)")) {
+			ps.setInt(1, routeType.ordinal());
+			ps.setBoolean(2, true);
+			return executeUpdate(ps, 0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

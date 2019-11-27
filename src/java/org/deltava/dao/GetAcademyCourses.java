@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to load Flight Academy course data. 
  * @author Luke
- * @version 7.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -34,21 +34,15 @@ public class GetAcademyCourses extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Course get(int id) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT C.*, CR.STAGE, CR.ABBR FROM exams.COURSES C, exams.CERTS CR WHERE "
-					+ "(C.CERTNAME=CR.NAME) AND (C.ID=?) LIMIT 1");
-			_ps.setInt(1, id);
-			
-			// Execute the query
-			List<Course> results = execute();
-			if (results.isEmpty())
-				return null;
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT C.*, CR.STAGE, CR.ABBR FROM exams.COURSES C, exams.CERTS CR WHERE (C.CERTNAME=CR.NAME) AND (C.ID=?) LIMIT 1")) {
+			ps.setInt(1, id);
+			Course c = execute(ps).stream().findFirst().orElse(null);
+			if (c == null) return null;
 			
 			// Get the course and load from the child tables
-			Course result = results.get(0);
-			loadComments(result);
-			loadProgress(result);
-			return result;
+			loadComments(c);
+			loadProgress(c);
+			return c;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -61,11 +55,9 @@ public class GetAcademyCourses extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Course> getByName(String name) throws DAOException {
-		try {
-			prepareStatement("SELECT C.*, CR.STAGE, CR.ABBR FROM exams.COURSES C, exams.CERTS CR WHERE (C.CERTNAME=CR.NAME) "
-					+ "AND (C.NAME=?)");
-			_ps.setString(1, name);
-			return execute();
+		try (PreparedStatement ps = prepare("SELECT C.*, CR.STAGE, CR.ABBR FROM exams.COURSES C, exams.CERTS CR WHERE (C.CERTNAME=CR.NAME) AND (C.NAME=?)")) {
+			ps.setString(1, name);
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -82,8 +74,7 @@ public class GetAcademyCourses extends DAO {
 			return Collections.emptyList();
 		
 		// Build SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT C.*, CR.STAGE, CR.ABBR FROM exams.COURSES C, exams.CERTS CR, "
-				+ "exams.COURSERIDES CRR WHERE (C.CERTNAME=CR.NAME) AND (CRR.COURSE=C.ID) AND (CRR.CHECKRIDE IN (");
+		StringBuilder sqlBuf = new StringBuilder("SELECT C.*, CR.STAGE, CR.ABBR FROM exams.COURSES C, exams.CERTS CR, exams.COURSERIDES CRR WHERE (C.CERTNAME=CR.NAME) AND (CRR.COURSE=C.ID) AND (CRR.CHECKRIDE IN (");
 		for (Iterator<Integer> i = ids.iterator(); i.hasNext(); ) {
 			Integer id = i.next();
 			sqlBuf.append(id.toString());
@@ -92,9 +83,8 @@ public class GetAcademyCourses extends DAO {
 		}
 		
 		sqlBuf.append("))");
-		try {
-			prepareStatement(sqlBuf.toString());
-			return execute();
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -107,12 +97,10 @@ public class GetAcademyCourses extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Course> getByPilot(int pilotID) throws DAOException {
-		try {
-			prepareStatement("SELECT C.*, CR.STAGE, CR.ABBR, MAX(CC.CREATED) FROM exams.CERTS CR, exams.COURSES C "
-					+ "LEFT JOIN exams.COURSECHAT CC ON (C.ID=CC.COURSE_ID) WHERE (C.CERTNAME=CR.NAME) "
-					+ "AND (C.PILOT_ID=?) GROUP BY C.ID ORDER BY C.STARTDATE");
-			_ps.setInt(1, pilotID);
-			return execute();
+		try (PreparedStatement ps = prepare("SELECT C.*, CR.STAGE, CR.ABBR, MAX(CC.CREATED) FROM exams.CERTS CR, exams.COURSES C LEFT JOIN exams.COURSECHAT CC ON (C.ID=CC.COURSE_ID) "
+			+ "WHERE (C.CERTNAME=CR.NAME) AND (C.PILOT_ID=?) GROUP BY C.ID ORDER BY C.STARTDATE")) {
+			ps.setInt(1, pilotID);
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -126,14 +114,12 @@ public class GetAcademyCourses extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Course> getByInstructor(int instructorID, String sortBy) throws DAOException {
-		try {
-			prepareStatement("SELECT C.*, CR.STAGE, CR.ABBR, MAX(CC.CREATED) AS LC FROM exams.CERTS CR, "
-				+ "exams.COURSES C LEFT JOIN exams.COURSECHAT CC ON (C.ID=CC.COURSE_ID) WHERE (C.CERTNAME=CR.NAME) "
-				+ "AND (C.INSTRUCTOR_ID=?) AND ((C.STATUS=?) OR (C.STATUS=?)) GROUP BY C.ID ORDER BY " + sortBy);
-			_ps.setInt(1, instructorID);
-			_ps.setInt(2, Status.PENDING.ordinal());
-			_ps.setInt(3, Status.STARTED.ordinal());
-			return execute();
+		try (PreparedStatement ps = prepare("SELECT C.*, CR.STAGE, CR.ABBR, MAX(CC.CREATED) AS LC FROM exams.CERTS CR, exams.COURSES C LEFT JOIN exams.COURSECHAT CC ON (C.ID=CC.COURSE_ID) "
+			+ "WHERE (C.CERTNAME=CR.NAME) AND (C.INSTRUCTOR_ID=?) AND ((C.STATUS=?) OR (C.STATUS=?)) GROUP BY C.ID ORDER BY " + sortBy)) {
+			ps.setInt(1, instructorID);
+			ps.setInt(2, Status.PENDING.ordinal());
+			ps.setInt(3, Status.STARTED.ordinal());
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -149,22 +135,20 @@ public class GetAcademyCourses extends DAO {
 	public Collection<Course> getCompleted(int pilotID, String sortBy) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT C.*, CR.STAGE, CR.ABBR, MAX(CC.CREATED) AS LC FROM exams.CERTS CR, "
-			+ "exams.COURSES C LEFT JOIN exams.COURSECHAT CC ON (C.ID=CC.COURSE_ID) WHERE (C.STATUS=?) AND "
-			+ "(C.CERTNAME=CR.NAME)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT C.*, CR.STAGE, CR.ABBR, MAX(CC.CREATED) AS LC FROM exams.CERTS CR, exams.COURSES C LEFT JOIN exams.COURSECHAT CC ON "
+			+ "(C.ID=CC.COURSE_ID) WHERE (C.STATUS=?) AND (C.CERTNAME=CR.NAME)");
 		if (pilotID != 0)
 			sqlBuf.append(" AND (C.PILOT_ID=?)");
 		
 		sqlBuf.append(" GROUP BY C.ID ORDER BY ");
 		sqlBuf.append(sortBy);
 		
-		try {
-			prepareStatement(sqlBuf.toString());
-			_ps.setInt(1, Status.COMPLETE.ordinal());
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setInt(1, Status.COMPLETE.ordinal());
 			if (pilotID != 0)
-				_ps.setInt(2, pilotID);
+				ps.setInt(2, pilotID);
 			
-			return execute();
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -181,9 +165,8 @@ public class GetAcademyCourses extends DAO {
 	public Collection<Course> getByStatus(Status s, String sortBy, Certification c) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT C.*, CR.STAGE, CR.ABBR, MAX(CC.CREATED) AS LC FROM exams.CERTS CR, "
-				+ "exams.COURSES C LEFT JOIN exams.COURSECHAT CC ON (C.ID=CC.COURSE_ID) WHERE (C.CERTNAME=CR.NAME) "
-				+ "AND (C.STATUS=?) ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT C.*, CR.STAGE, CR.ABBR, MAX(CC.CREATED) AS LC FROM exams.CERTS CR, exams.COURSES C LEFT JOIN exams.COURSECHAT CC ON "
+			+ "(C.ID=CC.COURSE_ID) WHERE (C.CERTNAME=CR.NAME) AND (C.STATUS=?) ");
 		if (c != null)
 			sqlBuf.append("AND (C.CERTNAME=?) ");
 		sqlBuf.append("GROUP BY C.ID ");
@@ -192,13 +175,12 @@ public class GetAcademyCourses extends DAO {
 			sqlBuf.append(sortBy);
 		}
 		
-		try {
-			prepareStatement(sqlBuf.toString());
-			_ps.setInt(1, s.ordinal());
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setInt(1, s.ordinal());
 			if (c != null)
-				_ps.setString(2, c.getName());
+				ps.setString(2, c.getName());
 			
-			return execute();
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -210,15 +192,12 @@ public class GetAcademyCourses extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Course> getCompletionQueue() throws DAOException {
-		try {
-			prepareStatement("SELECT C.*, CRT.STAGE, CRT.ABBR, MAX(CC.CREATED) AS LC, COUNT(CP.SEQ) AS REQCNT, "
-				+ "SUM(IF(CP.COMPLETE,1,0)) AS CREQCNT, SUM(CR.PASS) AS CRCNT FROM (exams.CERTS CRT, exams.COURSES C) "
-				+ "LEFT JOIN exams.COURSEPROGRESS CP ON (C.ID=CP.ID) LEFT JOIN exams.COURSERIDES CCR ON (C.ID=CCR.COURSE) "
-				+ "LEFT JOIN exams.CHECKRIDES CR ON (CR.ID=CCR.CHECKRIDE) LEFT JOIN exams.COURSECHAT CC ON "
-				+ "(C.ID=CC.COURSE_ID) WHERE (CRT.NAME=C.CERTNAME) AND (C.STATUS=?) GROUP BY C.ID HAVING "
-				+ "(REQCNT=CREQCNT) AND (C.CHECKRIDES=CRCNT) ORDER BY LC DESC");
-			_ps.setInt(1, Status.STARTED.ordinal());
-			return execute();
+		try (PreparedStatement ps = prepare("SELECT C.*, CRT.STAGE, CRT.ABBR, MAX(CC.CREATED) AS LC, COUNT(CP.SEQ) AS REQCNT, SUM(IF(CP.COMPLETE,1,0)) AS CREQCNT, SUM(CR.PASS) AS CRCNT "
+			+ "FROM (exams.CERTS CRT, exams.COURSES C) LEFT JOIN exams.COURSEPROGRESS CP ON (C.ID=CP.ID) LEFT JOIN exams.COURSERIDES CCR ON (C.ID=CCR.COURSE) LEFT JOIN exams.CHECKRIDES CR "
+			+ "ON (CR.ID=CCR.CHECKRIDE) LEFT JOIN exams.COURSECHAT CC ON (C.ID=CC.COURSE_ID) WHERE (CRT.NAME=C.CERTNAME) AND (C.STATUS=?) GROUP BY C.ID HAVING (REQCNT=CREQCNT) AND "
+			+ "(C.CHECKRIDES=CRCNT) ORDER BY LC DESC")) {
+			ps.setInt(1, Status.STARTED.ordinal());
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -237,8 +216,7 @@ public class GetAcademyCourses extends DAO {
 		
 		// Build the SQL statement
 		Map<Integer, Integer> xdbIDs = new HashMap<Integer, Integer>();
-		StringBuilder sqlBuf = new StringBuilder("SELECT C.PILOT_ID, CR.ABBR FROM exams.COURSES C, exams.CERTS CR WHERE "
-				+ "(CR.NAME=C.CERTNAME) AND (C.STATUS=?) AND (C.PILOT_ID IN (");
+		StringBuilder sqlBuf = new StringBuilder("SELECT C.PILOT_ID, CR.ABBR FROM exams.COURSES C, exams.CERTS CR WHERE (CR.NAME=C.CERTNAME) AND (C.STATUS=?) AND (C.PILOT_ID IN (");
 		for (Iterator<?> i = ids.iterator(); i.hasNext(); ) {
 			Object rawID = i.next();
 			if (rawID instanceof Integer)
@@ -264,10 +242,9 @@ public class GetAcademyCourses extends DAO {
 		sqlBuf.append("ORDER BY C.PILOT_ID, CR.STAGE");
 		
 		Map<Integer, Collection<String>> results = new HashMap<Integer, Collection<String>>();
-		try {
-			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setInt(1, Status.COMPLETE.ordinal());
-			try (ResultSet rs = _ps.executeQuery()) {
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+			ps.setInt(1, Status.COMPLETE.ordinal());
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					Integer id = Integer.valueOf(rs.getInt(1));
 					String cert = rs.getString(2);
@@ -278,8 +255,6 @@ public class GetAcademyCourses extends DAO {
 						CollectionUtils.addMapCollection(results, xdbID, cert);
 				}
 			}
-			
-			_ps.close();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -296,14 +271,12 @@ public class GetAcademyCourses extends DAO {
 	public Collection<Course> getAll(String sortBy) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT C.*, CR.STAGE, CR.ABBR, MAX(CC.CREATED) AS LC FROM exams.CERTS CR, "
-				+ "exams.COURSES C LEFT JOIN exams.COURSECHAT CC ON (C.ID=CC.COURSE_ID) WHERE (C.CERTNAME=CR.NAME) "
-				+ "GROUP BY C.ID ORDER BY ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT C.*, CR.STAGE, CR.ABBR, MAX(CC.CREATED) AS LC FROM exams.CERTS CR, exams.COURSES C LEFT JOIN exams.COURSECHAT CC ON "
+			+ "(C.ID=CC.COURSE_ID) WHERE (C.CERTNAME=CR.NAME) GROUP BY C.ID ORDER BY ");
 		sqlBuf.append(sortBy);
 		
-		try {
-			prepareStatement(sqlBuf.toString());
-			return execute();
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -312,9 +285,9 @@ public class GetAcademyCourses extends DAO {
 	/*
 	 * Helper method to parse Course result sets.
 	 */
-	private List<Course> execute() throws SQLException {
+	private static List<Course> execute(PreparedStatement ps) throws SQLException {
 		List<Course> results = new ArrayList<Course>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			boolean hasLastChat = (rs.getMetaData().getColumnCount() > 10);
 			while (rs.next()) {
 				Course c = new Course(rs.getString(2), rs.getInt(3));
@@ -333,7 +306,6 @@ public class GetAcademyCourses extends DAO {
 			}
 		}
 		
-		_ps.close();
 		return results;
 	}
 	
@@ -341,38 +313,36 @@ public class GetAcademyCourses extends DAO {
 	 * Helper method to load comments for a Course.
 	 */
 	private void loadComments(Course c) throws SQLException {
-		prepareStatementWithoutLimits("SELECT * FROM exams.COURSECHAT WHERE (COURSE_ID=?)");
-		_ps.setInt(1, c.getID());
-		try (ResultSet rs = _ps.executeQuery()) {
-			while (rs.next()) {
-				CourseComment cc = new CourseComment(c.getID(), rs.getInt(2));
-				cc.setCreatedOn(rs.getTimestamp(3).toInstant());
-				cc.setText(rs.getString(4));
-				c.addComment(cc);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM exams.COURSECHAT WHERE (COURSE_ID=?)")) {
+			ps.setInt(1, c.getID());
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					CourseComment cc = new CourseComment(c.getID(), rs.getInt(2));
+					cc.setCreatedOn(rs.getTimestamp(3).toInstant());
+					cc.setText(rs.getString(4));
+					c.addComment(cc);
+				}
 			}
 		}
-		
-		_ps.close();
 	}
 	
 	/*
 	 * Helper method to load progress for a Course.
 	 */
 	private void loadProgress(Course c) throws SQLException {
-		prepareStatementWithoutLimits("SELECT * FROM exams.COURSEPROGRESS WHERE (ID=?) ORDER BY SEQ");
-		_ps.setInt(1, c.getID());
-		try (ResultSet rs = _ps.executeQuery()) {
-			while (rs.next()) {
-				CourseProgress cp = new CourseProgress(c.getID(), rs.getInt(2));
-				cp.setAuthorID(rs.getInt(3));
-				cp.setText(rs.getString(4));
-				cp.setExamName(rs.getString(5));
-				cp.setComplete(rs.getBoolean(6));
-				cp.setCompletedOn(toInstant(rs.getTimestamp(7)));
-				c.addProgress(cp);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM exams.COURSEPROGRESS WHERE (ID=?) ORDER BY SEQ")) {
+			ps.setInt(1, c.getID());
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					CourseProgress cp = new CourseProgress(c.getID(), rs.getInt(2));
+					cp.setAuthorID(rs.getInt(3));
+					cp.setText(rs.getString(4));
+					cp.setExamName(rs.getString(5));
+					cp.setComplete(rs.getBoolean(6));
+					cp.setCompletedOn(toInstant(rs.getTimestamp(7)));
+					c.addProgress(cp);
+				}
 			}
 		}
-		
-		_ps.close();
 	}
 }

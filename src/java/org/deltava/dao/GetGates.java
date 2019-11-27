@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Airport gate information. 
  * @author Luke
- * @version 8.6
+ * @version 9.0
  * @since 5.1
  */
 
@@ -54,13 +54,12 @@ public class GetGates extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void populate(FlightInfo info) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT G.*, IFNULL(GROUP_CONCAT(DISTINCT GA.AIRLINE),''), GA.INTL, ND.REGION FROM acars.FLIGHTS F, acars.GATEDATA FG, common.GATES G "
-				+ "LEFT JOIN common.GATE_AIRLINES GA ON (G.ICAO=GA.ICAO) AND (G.NAME=GA.NAME) LEFT JOIN common.NAVDATA ND ON (G.ICAO=ND.CODE) AND (ND.ITEMTYPE=?) WHERE "
-				+ "(F.ID=?) AND (F.ID=FG.ID) AND (G.SIMVERSION=F.FSVERSION) AND (G.ICAO=FG.ICAO) AND (G.NAME=FG.GATE) GROUP BY G.NAME LIMIT 2");
-			_ps.setInt(1, Navaid.AIRPORT.ordinal());
-			_ps.setInt(2, info.getID());
-			execute().forEach(g -> populateFlight(info, g));
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT G.*, IFNULL(GROUP_CONCAT(DISTINCT GA.AIRLINE),''), GA.INTL, ND.REGION FROM acars.FLIGHTS F, acars.GATEDATA FG, common.GATES G "
+			+ "LEFT JOIN common.GATE_AIRLINES GA ON (G.ICAO=GA.ICAO) AND (G.NAME=GA.NAME) LEFT JOIN common.NAVDATA ND ON (G.ICAO=ND.CODE) AND (ND.ITEMTYPE=?) WHERE (F.ID=?) AND "
+			+ "(F.ID=FG.ID) AND (G.SIMVERSION=F.FSVERSION) AND (G.ICAO=FG.ICAO) AND (G.NAME=FG.GATE) GROUP BY G.NAME LIMIT 2")) {
+			ps.setInt(1, Navaid.AIRPORT.ordinal());
+			ps.setInt(2, info.getID());
+			execute(ps).forEach(g -> populateFlight(info, g));
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -81,15 +80,14 @@ public class GetGates extends DAO {
 		if (results != null)
 			return CollectionUtils.sort(results, CMP); // this already clones the src
 
-		try {
-			prepareStatementWithoutLimits("SELECT G.*, IFNULL(GROUP_CONCAT(DISTINCT GA.AIRLINE),''), GA.INTL, ND.REGION, COUNT(GD.ID) AS CNT FROM acars.GATEDATA GD, common.GATES G LEFT JOIN "
-				+ "common.GATE_AIRLINES GA ON (G.ICAO=GA.ICAO) AND (G.NAME=GA.NAME) LEFT JOIN common.NAVDATA ND ON (G.ICAO=ND.CODE) AND (ND.ITEMTYPE=?) WHERE (GD.ICAO=?) AND "
-				+ "(G.ICAO=GD.ICAO) AND (G.NAME=GD.GATE) AND (G.SIMVERSION=?) GROUP BY G.NAME");
-			_ps.setInt(1, Navaid.AIRPORT.ordinal());
-			_ps.setString(2, a.getICAO());
-			_ps.setInt(3, sim.getCode());
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT G.*, IFNULL(GROUP_CONCAT(DISTINCT GA.AIRLINE),''), GA.INTL, ND.REGION, COUNT(GD.ID) AS CNT FROM acars.GATEDATA GD, common.GATES G "
+			+ "LEFT JOIN common.GATE_AIRLINES GA ON (G.ICAO=GA.ICAO) AND (G.NAME=GA.NAME) LEFT JOIN common.NAVDATA ND ON (G.ICAO=ND.CODE) AND (ND.ITEMTYPE=?) WHERE (GD.ICAO=?) AND "
+			+ "(G.ICAO=GD.ICAO) AND (G.NAME=GD.GATE) AND (G.SIMVERSION=?) GROUP BY G.NAME")) {
+			ps.setInt(1, Navaid.AIRPORT.ordinal());
+			ps.setString(2, a.getICAO());
+			ps.setInt(3, sim.getCode());
 			results = new CacheableSet<Gate>(key);
-			results.addAll(execute());
+			results.addAll(execute(ps));
 			
 			// Add to cache
 			_cache.add(results);
@@ -125,20 +123,19 @@ public class GetGates extends DAO {
 			sqlBuf.append("AND (F.AIRPORT_A=?) ");
 		sqlBuf.append("GROUP BY G.NAME");
 		
-		try {
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) { 
 			int pos = 0;
-			prepareStatement(sqlBuf.toString());
-			_ps.setInt(++pos, Navaid.AIRPORT.ordinal());
-			_ps.setString(++pos, (isDeparture ? rp.getAirportD() : rp.getAirportA()).getICAO());
-			_ps.setBoolean(++pos, isDeparture);
-			_ps.setInt(++pos, sim.getCode());
+			ps.setInt(++pos, Navaid.AIRPORT.ordinal());
+			ps.setString(++pos, (isDeparture ? rp.getAirportD() : rp.getAirportA()).getICAO());
+			ps.setBoolean(++pos, isDeparture);
+			ps.setInt(++pos, sim.getCode());
 			if (rp.getAirportD() != null)
-				_ps.setString(++pos, rp.getAirportD().getIATA());
+				ps.setString(++pos, rp.getAirportD().getIATA());
 			if (rp.getAirportA() != null)
-				_ps.setString(++pos, rp.getAirportA().getIATA());
+				ps.setString(++pos, rp.getAirportA().getIATA());
 			
 			results = new CacheableSet<Gate>(key);
-			results.addAll(execute());
+			results.addAll(execute(ps));
 			_cache.add(results);
 			return CollectionUtils.sort(results, CMP);
 		} catch (SQLException se) {
@@ -180,9 +177,9 @@ public class GetGates extends DAO {
 	/*
 	 * Helper method to parse Gate result sets.
 	 */
-	private List<Gate> execute() throws SQLException {
+	private static List<Gate> execute(PreparedStatement ps) throws SQLException {
 		List<Gate> results = new ArrayList<Gate>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			boolean hasUseCount = (rs.getMetaData().getColumnCount() > 9);
 			while (rs.next()) {
 				Gate g = new Gate(rs.getDouble(4), rs.getDouble(5));
@@ -197,7 +194,6 @@ public class GetGates extends DAO {
 			}
 		}
 		
-		_ps.close();
 		return results;
 	}
 }

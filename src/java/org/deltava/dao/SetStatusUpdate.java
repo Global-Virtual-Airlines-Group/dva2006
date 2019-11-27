@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to write status updates for a Pilot to the database.
  * @author Luke
- * @version 8.7
+ * @version 9.0
  * @since 1.0
  */
 
@@ -47,14 +47,13 @@ public class SetStatusUpdate extends DAO {
 	   sqlBuf.append(formatDBName(dbName));
 	   sqlBuf.append(".STATUS_UPDATES (PILOT_ID, AUTHOR_ID, CREATED, TYPE, REMARKS) VALUES (?, ?, ?, ?, ?)");
 	   
-		try {
-			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setInt(1, update.getID());
-			_ps.setInt(2, update.getAuthorID());
-			_ps.setTimestamp(3, createTimestamp(update.getDate()));
-			_ps.setInt(4, update.getType().ordinal());
-			_ps.setString(5, update.getDescription());
-			executeUpdate(1);
+	   try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+			ps.setInt(1, update.getID());
+			ps.setInt(2, update.getAuthorID());
+			ps.setTimestamp(3, createTimestamp(update.getDate()));
+			ps.setInt(4, update.getType().ordinal());
+			ps.setString(5, update.getDescription());
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -66,30 +65,30 @@ public class SetStatusUpdate extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(Collection<StatusUpdate> updates) throws DAOException {
-		if (updates.isEmpty())
-			return;
+		if (updates.isEmpty()) return;
 		
 		try {
 			startTransaction();
-			prepareStatementWithoutLimits("INSERT INTO STATUS_UPDATES (PILOT_ID, AUTHOR_ID, CREATED, TYPE, REMARKS) VALUES (?, ?, ?, ?, ?)");
-			
-			long lastUpdateTime = 0;
-			for (StatusUpdate upd : updates) {
-				if (upd.getDate().toEpochMilli() <= lastUpdateTime)
-					upd.setDate(upd.getDate().plusMillis(2));
+			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO STATUS_UPDATES (PILOT_ID, AUTHOR_ID, CREATED, TYPE, REMARKS) VALUES (?, ?, ?, ?, ?)")) {
+				long lastUpdateTime = 0;
+				for (StatusUpdate upd : updates) {
+					if (upd.getDate().toEpochMilli() <= lastUpdateTime)
+						upd.setDate(upd.getDate().plusMillis(2));
 					
-				lastUpdateTime = upd.getDate().toEpochMilli();
+					lastUpdateTime = upd.getDate().toEpochMilli();
 				
-				// Write the data
-				_ps.setInt(1, upd.getID());
-				_ps.setInt(2, upd.getAuthorID());
-				_ps.setTimestamp(3, createTimestamp(upd.getDate()));
-				_ps.setInt(4, upd.getType().ordinal());
-				_ps.setString(5, upd.getDescription());
-				_ps.addBatch();
-			}
+					// Write the data
+					ps.setInt(1, upd.getID());
+					ps.setInt(2, upd.getAuthorID());
+					ps.setTimestamp(3, createTimestamp(upd.getDate()));
+					ps.setInt(4, upd.getType().ordinal());
+					ps.setString(5, upd.getDescription());
+					ps.addBatch();
+				}
 
-			executeBatchUpdate(1, updates.size());
+				executeUpdate(ps, 1, updates.size());
+			}
+			
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -104,11 +103,10 @@ public class SetStatusUpdate extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void clearLOA(int id) throws DAOException {
-		try {
-			prepareStatement("DELETE FROM STATUS_UPDATES WHERE (PILOT_ID=?) AND (TYPE=?) AND (CREATED > DATE_SUB(NOW(), INTERVAL 24 HOUR))");
-			_ps.setInt(1, id);
-			_ps.setInt(2, UpdateType.LOA.ordinal());
-			executeUpdate(0);
+		try (PreparedStatement ps = prepare("DELETE FROM STATUS_UPDATES WHERE (PILOT_ID=?) AND (TYPE=?) AND (CREATED > DATE_SUB(NOW(), INTERVAL 24 HOUR))")) {
+			ps.setInt(1, id);
+			ps.setInt(2, UpdateType.LOA.ordinal());
+			executeUpdate(ps, 0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

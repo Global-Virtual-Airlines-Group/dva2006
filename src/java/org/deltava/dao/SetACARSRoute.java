@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2012, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2012, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.navdata.NavigationDataBean;
 /**
  * A Data Access Object to write ACARS Dispatcher routes.
  * @author Luke
- * @version 8.0
+ * @version 9.0
  * @since 2.2
  */
 
@@ -34,52 +34,53 @@ public class SetACARSRoute extends DAO {
 			startTransaction();
 			
 			// Prepare the statement
-			if (rp.getID() != 0) {
-				prepareStatement("UPDATE acars.ROUTES SET AUTHOR=?, AIRLINE=?, AIRPORT_D=?, AIRPORT_A=?, AIRPORT_L=?, ALTITUDE=?, SID=?, STAR=?, REMARKS=?, ROUTE=? WHERE (ID=?)");
-				_ps.setInt(11, rp.getID());
-			} else
-				prepareStatementWithoutLimits("INSERT INTO acars.ROUTES (AUTHOR, AIRLINE, AIRPORT_D, AIRPORT_A, AIRPORT_L, ALTITUDE, SID, STAR, BUILD, REMARKS, ROUTE, USED, CREATEDON) VALUES "
-					+ "(?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, 0, NOW())");	
+			try (PreparedStatement ps = prepare("INSERT INTO acars.ROUTES (AUTHOR, AIRLINE, AIRPORT_D, AIRPORT_A, AIRPORT_L, ALTITUDE, SID, STAR, BUILD, REMARKS, ROUTE, USED, CREATEDON, ID) "
+				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, 0, NOW(), ?) ON DUPLICATE KEY UPDATE AUTHOR=VALUES(AUTHOR), AIRLINE=VALUES(AIRLINE), AIRPORT_D=VALUES(AIRPORT_D), AIRPORT_A=VALUES(AIRPORT_A), "
+				+ "ALTITUDE=VALUES(ALTITUDE), SID=VALUES(SID), STAR=VALUES(STAR), REMARKS=VALUES(REMARKS), ROUTE=VALUES(ROUTE)")) {
 			
-			// Write the route
-			_ps.setInt(1, rp.getAuthorID());
-			_ps.setString(2, rp.getAirline().getCode());
-			_ps.setString(3, rp.getAirportD().getIATA());
-			_ps.setString(4, rp.getAirportA().getIATA());
-			_ps.setString(5, (rp.getAirportL() == null) ? null : rp.getAirportL().getIATA());
-			_ps.setString(6, rp.getCruiseAltitude());
-			_ps.setString(7, rp.getSID());
-			_ps.setString(8, rp.getSTAR());
-			_ps.setString(9, rp.getComments());
-			_ps.setString(10, rp.getRoute());
-			executeUpdate(1);
+				// Write the route
+				ps.setInt(1, rp.getAuthorID());
+				ps.setString(2, rp.getAirline().getCode());
+				ps.setString(3, rp.getAirportD().getIATA());
+				ps.setString(4, rp.getAirportA().getIATA());
+				ps.setString(5, (rp.getAirportL() == null) ? null : rp.getAirportL().getIATA());
+				ps.setString(6, rp.getCruiseAltitude());
+				ps.setString(7, rp.getSID());
+				ps.setString(8, rp.getSTAR());
+				ps.setString(9, rp.getComments());
+				ps.setString(10, rp.getRoute());
+				ps.setInt(11, rp.getID());
+				executeUpdate(ps, 1);
+			}
 			
 			// Clear the waypoints if necessary
 			if (rp.getID() != 0) {
-				prepareStatementWithoutLimits("DELETE FROM acars.ROUTE_WP WHERE (ID=?)");
-				_ps.setInt(1, rp.getID());
-				executeUpdate(0);	
+				try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM acars.ROUTE_WP WHERE (ID=?)")) {
+					ps.setInt(1, rp.getID());
+					executeUpdate(ps, 0);
+				}
 			} else
 				rp.setID(getNewID());
 			
 			// Save the waypoints
 			int seq = -1;
-			prepareStatementWithoutLimits("INSERT INTO acars.ROUTE_WP (ID, SEQ, CODE, ITEMTYPE, LATITUDE, LONGITUDE, AIRWAY, REGION) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-			_ps.setInt(1, rp.getID());
-			for (Iterator<NavigationDataBean> i = rp.getWaypoints().iterator(); i.hasNext(); ) {
-				NavigationDataBean nd = i.next();
-				_ps.setInt(2, ++seq);
-				_ps.setString(3, nd.getCode());
-				_ps.setInt(4, nd.getType().ordinal());
-				_ps.setDouble(5, nd.getLatitude());
-				_ps.setDouble(6, nd.getLongitude());
-				_ps.setString(7, nd.isInTerminalRoute() ? null : nd.getAirway());
-				_ps.setString(8, nd.getRegion());
-				_ps.addBatch();
+			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO acars.ROUTE_WP (ID, SEQ, CODE, ITEMTYPE, LATITUDE, LONGITUDE, AIRWAY, REGION) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")) {
+				ps.setInt(1, rp.getID());
+				for (Iterator<NavigationDataBean> i = rp.getWaypoints().iterator(); i.hasNext(); ) {
+					NavigationDataBean nd = i.next();
+					ps.setInt(2, ++seq);
+					ps.setString(3, nd.getCode());
+					ps.setInt(4, nd.getType().ordinal());
+					ps.setDouble(5, nd.getLatitude());
+					ps.setDouble(6, nd.getLongitude());
+					ps.setString(7, nd.isInTerminalRoute() ? null : nd.getAirway());
+					ps.setString(8, nd.getRegion());
+					ps.addBatch();
+				}
+				
+				executeUpdate(ps, 1, rp.getWaypoints().size());
 			}
-
-			// Write and commit
-			executeBatchUpdate(1, rp.getWaypoints().size());
+			
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -94,11 +95,10 @@ public class SetACARSRoute extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void activate(int id, boolean isActive) throws DAOException {
-		try {
-			prepareStatement("UPDATE acars.ROUTES SET ACTIVE=? WHERE (ID=?)");
-			_ps.setBoolean(1, isActive);
-			_ps.setInt(2, id);
-			executeUpdate(1);
+		try (PreparedStatement ps = prepare("UPDATE acars.ROUTES SET ACTIVE=? WHERE (ID=?)")) {
+			ps.setBoolean(1, isActive);
+			ps.setInt(2, id);
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -110,10 +110,9 @@ public class SetACARSRoute extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void delete(int id) throws DAOException {
-		try {
-			prepareStatement("DELETE FROM acars.ROUTES WHERE (ID=?)");
-			_ps.setInt(1, id);
-			executeUpdate(0);
+		try (PreparedStatement ps = prepare("DELETE FROM acars.ROUTES WHERE (ID=?)")) {
+			ps.setInt(1, id);
+			executeUpdate(ps, 0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
