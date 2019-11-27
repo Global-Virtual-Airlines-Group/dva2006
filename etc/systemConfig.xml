@@ -553,9 +553,9 @@
 	
 	<!-- SMTP Server configuration -->
 	<smtp>
-		<server>sirius.sce.net</server>
-		<port type="Integer">465</port>
-		<tls type="Boolean">true</tls>
+		<server>localhost</server>
+		<port type="Integer">25</port>
+		<tls type="Boolean">false</tls>
 
 		<errors-to>webmaster@sce.net</errors-to>
 		<testMode type="Boolean">true</testMode>
