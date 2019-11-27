@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2013, 2015, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2013, 2015, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.io.*;
@@ -19,7 +19,7 @@ import org.deltava.util.cache.CacheManager;
 /**
  * A Web Site Command to import Navigation data in PSS format.
  * @author Luke
- * @version 8.3
+ * @version 9.0
  * @since 1.0
  */
 
@@ -85,6 +85,7 @@ public class AIRACImportCommand extends NavDataImportCommand {
 			timings.put("UpdateLegacy", Long.valueOf(tt.stop()));
 
 			// Iterate through the file
+			Collection<NavigationDataBean> nds = new ArrayList<NavigationDataBean>();
 			LineNumberReader br = new LineNumberReader(new InputStreamReader(is));
 			String txtData = br.readLine(); tt.start();
 			while (txtData != null) {
@@ -184,12 +185,14 @@ public class AIRACImportCommand extends NavDataImportCommand {
 						errors.add("Error at line " + br.getLineNumber() + ": " + nfe.getMessage());
 						errors.add(txtData);
 					} 
-
+					
 					// Write the bean, and log any errors
-					if (nd != null) {
+					if (nd != null) nds.add(nd);
+					if (nds.size() > 40) {
+						entryCount += nds.size();
 						try {
-							dao.write(nd);
-							entryCount++;
+							dao.write(nds);
+							nds.clear();
 						} catch (DAOException de) {
 							errors.add("Error at line " + br.getLineNumber() + ": " + de.getMessage());
 						}
@@ -197,6 +200,12 @@ public class AIRACImportCommand extends NavDataImportCommand {
 				}
 				
 				txtData = br.readLine();
+			}
+			
+			// Flush
+			if (!nds.isEmpty()) {
+				dao.write(nds);
+				entryCount += nds.size();
 			}
 
 			// Update the regions
