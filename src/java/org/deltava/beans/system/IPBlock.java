@@ -217,7 +217,6 @@ public class IPBlock implements Cacheable, GeoLocation, Comparable<IPBlock> {
 
 	@Override
 	public int compareTo(IPBlock o) {
-		// TODO Auto-generated method stub
-		return 0;
+		return Integer.compare(_id, o._id);
 	}
 }
