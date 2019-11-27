@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to retrieve Flight Report statistics.
  * @author Luke
- * @version 8.6
+ * @version 9.0
  * @since 2.1
  */
 
@@ -125,22 +125,21 @@ public class GetFlightReportStatistics extends DAO {
 			buf.append("AND (RCNT=0) ");
 		buf.append("ORDER BY CNT DESC");
 		
-		try {
+		try (PreparedStatement ps = prepare(buf.toString())) {
 			int pos = 0;
-			prepareStatement(buf.toString());
-			_ps.setBoolean(++pos, true);
-			_ps.setBoolean(++pos, false);
-			_ps.setInt(++pos, FlightStatus.OK.ordinal());
+			ps.setBoolean(++pos, true);
+			ps.setBoolean(++pos, false);
+			ps.setInt(++pos, FlightStatus.OK.ordinal());
 			if (!allFlights)
-				_ps.setInt(++pos, FlightReport.ATTR_ACARS);
+				ps.setInt(++pos, FlightReport.ATTR_ACARS);
 			if (_dayFilter > 0)
-				_ps.setInt(++pos, _dayFilter);	
-			_ps.setInt(++pos, 5);
+				ps.setInt(++pos, _dayFilter);	
+			ps.setInt(++pos, 5);
 			
 			// Execute the query
 			Airline a = SystemData.getAirline(SystemData.get("airline.code"));
 			Collection<ScheduleRoute> results = new ArrayList<ScheduleRoute>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					DispatchScheduleRoute rp = new DispatchScheduleRoute(a, SystemData.getAirport(rs.getString(1)), SystemData.getAirport(rs.getString(2)));
 					rp.setFlights(rs.getInt(3));
@@ -150,7 +149,6 @@ public class GetFlightReportStatistics extends DAO {
 				}
 			}
 			
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -167,31 +165,29 @@ public class GetFlightReportStatistics extends DAO {
 	public Collection<LandingStatistics> getLandings(String eqType, int minLandings) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder buf = new StringBuilder("SELECT P.ID, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME) AS PNAME, COUNT(L.ID) AS CNT, "
-			+ "ROUND(SUM(PR.FLIGHT_TIME),1) AS HRS, AVG(L.VSPEED) AS VS, STDDEV_POP(L.VSPEED) AS SD, AVG(L.RWYDISTANCE) AS DST, "
-			+ "STDDEV_POP(L.RWYDISTANCE) AS DSD, IFNULL(IF(STDDEV_POP(L.RWYDISTANCE) < 20, NULL, (ABS(AVG(L.RWYDISTANCE))*3 + "
-			+ "STDDEV_POP(L.RWYDISTANCE)*2)/15), 650) + (ABS(AVG(ABS(? - L.VSPEED))*3) + STDDEV_POP(L.VSPEED)*2) AS FACT FROM "
-			+ "PILOTS P, PIREPS PR, FLIGHTSTATS_LANDING L WHERE (PR.ID=L.ID) AND (PR.PILOT_ID=P.ID) AND (PR.STATUS=?) ");
+		StringBuilder buf = new StringBuilder("SELECT P.ID, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME) AS PNAME, COUNT(L.ID) AS CNT, ROUND(SUM(PR.FLIGHT_TIME),1) AS HRS, AVG(L.VSPEED) AS VS, "
+			+ "STDDEV_POP(L.VSPEED) AS SD, AVG(L.RWYDISTANCE) AS DST, STDDEV_POP(L.RWYDISTANCE) AS DSD, IFNULL(IF(STDDEV_POP(L.RWYDISTANCE) < 20, NULL, (ABS(AVG(L.RWYDISTANCE))*3 + "
+			+ "STDDEV_POP(L.RWYDISTANCE)*2)/15), 650) + (ABS(AVG(ABS(? - L.VSPEED))*3) + STDDEV_POP(L.VSPEED)*2) AS FACT FROM PILOTS P, PIREPS PR, FLIGHTSTATS_LANDING L WHERE "
+			+ "(PR.ID=L.ID) AND (PR.PILOT_ID=P.ID) AND (PR.STATUS=?) ");
 		if (eqType != null)
 			buf.append("AND (PR.EQTYPE=?) ");
 		if (_dayFilter > 0)
 			buf.append("AND (PR.DATE > DATE_SUB(NOW(), INTERVAL ? DAY)) ");
 		buf.append("GROUP BY P.ID HAVING (CNT>=?) ORDER BY FACT");
 		
-		try {
+		try (PreparedStatement ps = prepare(buf.toString())) {
 			int pos = 0;
-			prepareStatement(buf.toString());
-			_ps.setInt(++pos, OPT_VSPEED);
-			_ps.setInt(++pos, FlightStatus.OK.ordinal());
+			ps.setInt(++pos, OPT_VSPEED);
+			ps.setInt(++pos, FlightStatus.OK.ordinal());
 			if (eqType != null)
-				_ps.setString(++pos, eqType);
+				ps.setString(++pos, eqType);
 			if (_dayFilter > 0)
-				_ps.setInt(++pos, _dayFilter);
-			_ps.setInt(++pos, minLandings);
+				ps.setInt(++pos, _dayFilter);
+			ps.setInt(++pos, minLandings);
 			
 			// Execute the query
 			List<LandingStatistics> results = new ArrayList<LandingStatistics>(32);
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					LandingStatistics ls = new LandingStatistics(rs.getString(2), null);
 					ls.setID(rs.getInt(1));
@@ -209,7 +205,6 @@ public class GetFlightReportStatistics extends DAO {
 				}
 			}
 			
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -230,18 +225,17 @@ public class GetFlightReportStatistics extends DAO {
 		if ((results != null) && (_queryMax > 0) && (results.size() >= _queryMax))
 			return results.clone().subList(0, _queryMax);
 
-		try {
-			prepareStatement("SELECT PR.EQTYPE, APR.LANDING_VSPEED, RD.DISTANCE, RD.LENGTH, PR.ID FROM PIREPS PR, ACARS_PIREPS APR, acars.RWYDATA RD WHERE (APR.ACARS_ID=RD.ID) AND "
-				+ "(RD.ISTAKEOFF=?) AND (APR.CLIENT_BUILD>?) AND (RD.DISTANCE<RD.LENGTH) AND (APR.ID=PR.ID) AND (PR.PILOT_ID=?) AND (PR.STATUS=?) ORDER BY ABS(? - APR.LANDING_VSPEED)");
-			_ps.setBoolean(1, false);
-			_ps.setInt(2, FlightReport.MIN_ACARS_CLIENT);
-			_ps.setInt(3, pilotID);
-			_ps.setInt(4, FlightStatus.OK.ordinal());
-			_ps.setInt(5, OPT_VSPEED);
+		try (PreparedStatement ps = prepare("SELECT PR.EQTYPE, APR.LANDING_VSPEED, RD.DISTANCE, RD.LENGTH, PR.ID FROM PIREPS PR, ACARS_PIREPS APR, acars.RWYDATA RD WHERE (APR.ACARS_ID=RD.ID) AND "
+			+ "(RD.ISTAKEOFF=?) AND (APR.CLIENT_BUILD>?) AND (RD.DISTANCE<RD.LENGTH) AND (APR.ID=PR.ID) AND (PR.PILOT_ID=?) AND (PR.STATUS=?) ORDER BY ABS(? - APR.LANDING_VSPEED)")) {
+			ps.setBoolean(1, false);
+			ps.setInt(2, FlightReport.MIN_ACARS_CLIENT);
+			ps.setInt(3, pilotID);
+			ps.setInt(4, FlightStatus.OK.ordinal());
+			ps.setInt(5, OPT_VSPEED);
 
 			// Execute the query
 			results = new CacheableList<LandingStatistics>(key);
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					LandingStatistics ls = new LandingStatistics(null, rs.getString(1));
 					ls.setID(rs.getInt(5));
@@ -253,7 +247,6 @@ public class GetFlightReportStatistics extends DAO {
 				}
 			}
 			
-			_ps.close();
 			_cache.add(results);
 			return results.clone();
 		} catch (SQLException se) {
@@ -276,23 +269,22 @@ public class GetFlightReportStatistics extends DAO {
 			return results.clone().subList(0, _queryMax);
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT L.EQTYPE, COUNT(L.ID) AS CNT, ROUND(SUM(PR.FLIGHT_TIME),1) AS HRS, AVG(L.VSPEED) AS VS, "
-			+ "STDDEV_POP(L.VSPEED) AS SD, AVG(L.RWYDISTANCE) AS DST, STDDEV_POP(L.RWYDISTANCE) AS DSD, (ABS(AVG(ABS(?-L.VSPEED))*3)+"
-			+ "STDDEV_POP(L.VSPEED)*2) AS FACT FROM PIREPS PR, FLIGHTSTATS_LANDING L WHERE (PR.ID=L.ID) AND (L.PILOT_ID=?) ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT L.EQTYPE, COUNT(L.ID) AS CNT, ROUND(SUM(PR.FLIGHT_TIME),1) AS HRS, AVG(L.VSPEED) AS VS, STDDEV_POP(L.VSPEED) AS SD, "
+			+ "AVG(L.RWYDISTANCE) AS DST, STDDEV_POP(L.RWYDISTANCE) AS DSD, (ABS(AVG(ABS(?-L.VSPEED))*3)+STDDEV_POP(L.VSPEED)*2) AS FACT FROM PIREPS PR, FLIGHTSTATS_LANDING L "
+			+ "WHERE (PR.ID=L.ID) AND (L.PILOT_ID=?) ");
 		if (_dayFilter > 0)
 			sqlBuf.append("AND (PR.DATE > DATE_SUB(NOW(), INTERVAL ? DAY)) ");
 		sqlBuf.append("GROUP BY L.EQTYPE HAVING (CNT>1) ORDER BY FACT");
 		
-		try {
-			prepareStatement(sqlBuf.toString());
-			_ps.setInt(1, OPT_VSPEED);
-			_ps.setInt(2, pilotID);
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setInt(1, OPT_VSPEED);
+			ps.setInt(2, pilotID);
 			if (_dayFilter > 0)
-				_ps.setInt(3, _dayFilter);
+				ps.setInt(3, _dayFilter);
 			
 			// Execute the query
 			results = new CacheableList<LandingStatistics>(key);
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					LandingStatistics ls = new LandingStatistics(null, rs.getString(1));
 					ls.setID(pilotID);
@@ -310,7 +302,6 @@ public class GetFlightReportStatistics extends DAO {
 				}
 			}
 			
-			_ps.close();
 			_cache.add(results);
 			return results.clone();
 		} catch (SQLException se) {
@@ -332,18 +323,16 @@ public class GetFlightReportStatistics extends DAO {
 		for (int x = MAX_VSPEED; x <= 0; x += range)
 			results.put(Integer.valueOf(x), Integer.valueOf(0));
 		
-		try {
-			prepareStatementWithoutLimits("SELECT DISTINCT ROUND(VSPEED / ?) * ? AS RNG, COUNT(ID) FROM FLIGHTSTATS_LANDING WHERE (PILOT_ID=?) AND (VSPEED>?) GROUP BY RNG");
-			_ps.setInt(1, range);
-			_ps.setInt(2, range);
-			_ps.setInt(3, pilotID);
-			_ps.setInt(4, MAX_VSPEED);
-			try (ResultSet rs = _ps.executeQuery()) {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT DISTINCT ROUND(VSPEED / ?) * ? AS RNG, COUNT(ID) FROM FLIGHTSTATS_LANDING WHERE (PILOT_ID=?) AND (VSPEED>?) GROUP BY RNG")) {
+			ps.setInt(1, range);
+			ps.setInt(2, range);
+			ps.setInt(3, pilotID);
+			ps.setInt(4, MAX_VSPEED);
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
 					results.put(Integer.valueOf(rs.getInt(1)), Integer.valueOf(rs.getInt(2)));
 			}
 			
-			_ps.close();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -383,31 +372,28 @@ public class GetFlightReportStatistics extends DAO {
 		sqlBuf.append(" GROUP BY LABEL ORDER BY ");
 		sqlBuf.append(orderBy);
 		
-		try {
-			prepareStatement(sqlBuf.toString());
-			_ps.setInt(1, FlightReport.ATTR_ACARS);
-			_ps.setInt(2, FlightReport.ATTR_VATSIM);
-			_ps.setInt(3, FlightReport.ATTR_IVAO);
-			_ps.setInt(4, FlightReport.ATTR_HISTORIC);
-			_ps.setInt(5, FlightReport.ATTR_DISPATCH);
-			_ps.setInt(6, FlightReport.ATTR_ONLINE_MASK);
-			_ps.setInt(7, FlightStatus.OK.ordinal());
-			_ps.setString(8, eqType);
-			_ps.setInt(9, EquipmentType.Rating.PRIMARY.ordinal());
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setInt(1, FlightReport.ATTR_ACARS);
+			ps.setInt(2, FlightReport.ATTR_VATSIM);
+			ps.setInt(3, FlightReport.ATTR_IVAO);
+			ps.setInt(4, FlightReport.ATTR_HISTORIC);
+			ps.setInt(5, FlightReport.ATTR_DISPATCH);
+			ps.setInt(6, FlightReport.ATTR_ONLINE_MASK);
+			ps.setInt(7, FlightStatus.OK.ordinal());
+			ps.setString(8, eqType);
+			ps.setInt(9, EquipmentType.Rating.PRIMARY.ordinal());
 			if (_dayFilter > 0)
-				_ps.setInt(10, _dayFilter);
+				ps.setInt(10, _dayFilter);
 			
 			// Check the cache
-			String cacheKey = getCacheKey(_ps.toString());
+			String cacheKey = getCacheKey(ps.toString());
 			CacheableCollection<FlightStatsEntry> results = _statCache.get(cacheKey);
-			if (results != null) {
-				_ps.close();
+			if (results != null)
 				return results.clone();
-			}
 			
 			// Do the query
 			results = new CacheableList<FlightStatsEntry>(cacheKey);
-			results.addAll(execute());
+			results.addAll(execute(ps));
 			_statCache.add(results);
 			return results.clone();
 		} catch (SQLException se) {
@@ -431,28 +417,25 @@ public class GetFlightReportStatistics extends DAO {
 		sqlBuf.append("AND ((F.ATTR & ?) > 0) GROUP BY LABEL ORDER BY ");
 		sqlBuf.append(s.getSQL());
 		
-		try {
-			prepareStatement(sqlBuf.toString());
-			_ps.setInt(1, FlightReport.ATTR_ACARS);
-			_ps.setInt(2, FlightReport.ATTR_VATSIM);
-			_ps.setInt(3, FlightReport.ATTR_IVAO);
-			_ps.setInt(4, FlightReport.ATTR_HISTORIC);
-			_ps.setInt(5, FlightReport.ATTR_DISPATCH);
-			_ps.setInt(6, FlightReport.ATTR_ONLINE_MASK);
-			_ps.setInt(7, FlightStatus.OK.ordinal());
-			_ps.setInt(8, FlightReport.ATTR_CHARTER);
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setInt(1, FlightReport.ATTR_ACARS);
+			ps.setInt(2, FlightReport.ATTR_VATSIM);
+			ps.setInt(3, FlightReport.ATTR_IVAO);
+			ps.setInt(4, FlightReport.ATTR_HISTORIC);
+			ps.setInt(5, FlightReport.ATTR_DISPATCH);
+			ps.setInt(6, FlightReport.ATTR_ONLINE_MASK);
+			ps.setInt(7, FlightStatus.OK.ordinal());
+			ps.setInt(8, FlightReport.ATTR_CHARTER);
 			
 			// Check the cache
-			String cacheKey = getCacheKey(_ps.toString());
+			String cacheKey = getCacheKey(ps.toString());
 			CacheableCollection<FlightStatsEntry> results = _statCache.get(cacheKey);
-			if (results != null) {
-				_ps.close();
+			if (results != null)
 				return results.clone();
-			}
 			
 			// Get the results
 			results = new CacheableList<FlightStatsEntry>(cacheKey);
-			results.addAll(execute());
+			results.addAll(execute(ps));
 			_statCache.add(results);
 			return results.clone();
 		} catch (SQLException se) {
@@ -467,18 +450,12 @@ public class GetFlightReportStatistics extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public int getPassengers(int pilotID) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT SUM(PAX) FROM PIREPS WHERE (STATUS=?) AND (PILOT_ID=?)");
-			_ps.setInt(1, FlightStatus.OK.ordinal());
-			_ps.setInt(2, pilotID);
-			
-			int result = 0;
-			try (ResultSet rs = _ps.executeQuery()) {
-				result = rs.next() ? rs.getInt(1) : 0;
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT SUM(PAX) FROM PIREPS WHERE (STATUS=?) AND (PILOT_ID=?)")) {
+			ps.setInt(1, FlightStatus.OK.ordinal());
+			ps.setInt(2, pilotID);
+			try (ResultSet rs = ps.executeQuery()) {
+				return rs.next() ? rs.getInt(1) : 0;
 			}
-			
-			_ps.close();
-			return result;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -498,23 +475,16 @@ public class GetFlightReportStatistics extends DAO {
 		if (days > 0)
 			sqlBuf.append(" AND (DATE >= DATE_SUB(CURDATE(), INTERVAL ? DAY))");
 		
-		try {
-			prepareStatement(sqlBuf.toString());
-			_ps.setInt(1, pilotID);
-			_ps.setInt(2, FlightStatus.OK.ordinal());
-			_ps.setInt(3, FlightReport.ATTR_CHARTER);
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setInt(1, pilotID);
+			ps.setInt(2, FlightStatus.OK.ordinal());
+			ps.setInt(3, FlightReport.ATTR_CHARTER);
 			if (days > 0)
-				_ps.setInt(4, days);
+				ps.setInt(4, days);
 			
-			// Execute the query
-			int count = 0;
-			try (ResultSet rs = _ps.executeQuery()) {
-				if (rs.next())
-					count = rs.getInt(1);
+			try (ResultSet rs = ps.executeQuery()) {
+				return rs.next() ? rs.getInt(1) : 0;
 			}
-			
-			_ps.close();
-			return count;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -534,15 +504,14 @@ public class GetFlightReportStatistics extends DAO {
 			sqlBuf.append("AND (F.PILOT_ID=?) ");
 		sqlBuf.append("GROUP BY LABEL, STG ORDER BY LABEL, STG");
 		
-		try {
-			prepareStatement(sqlBuf.toString());
-			_ps.setInt(1, FlightStatus.OK.ordinal());
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setInt(1, FlightStatus.OK.ordinal());
 			if (pilotID != 0)
-				_ps.setInt(2, pilotID);
+				ps.setInt(2, pilotID);
 			
 			// Execute the query
 			Collection<StageStatsEntry> results = new ArrayList<StageStatsEntry>(); StageStatsEntry sse = null;
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					Instant dt = toInstant(rs.getTimestamp(1));
 					if ((sse == null) || !sse.getDate().equals(dt)) {
@@ -554,7 +523,6 @@ public class GetFlightReportStatistics extends DAO {
 				}
 			}
 			
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -575,15 +543,14 @@ public class GetFlightReportStatistics extends DAO {
 			sqlBuf.append("AND (F.PILOT_ID=?) ");
 		sqlBuf.append("GROUP BY LABEL, F.FSVERSION ORDER BY LABEL, F.FSVERSION");
 		
-		try {
-			prepareStatement(sqlBuf.toString());
-			_ps.setInt(1, FlightStatus.OK.ordinal());
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setInt(1, FlightStatus.OK.ordinal());
 			if (pilotID != 0)
-				_ps.setInt(2, pilotID);
+				ps.setInt(2, pilotID);
 
 			// Execute the query
 			Collection<SimStatsEntry> results = new ArrayList<SimStatsEntry>(); SimStatsEntry sse = null;
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					Instant dt = toInstant(rs.getTimestamp(1));
 					if ((sse == null) || !sse.getDate().equals(dt)) {
@@ -595,7 +562,6 @@ public class GetFlightReportStatistics extends DAO {
 				}
 			}
 			
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -628,31 +594,27 @@ public class GetFlightReportStatistics extends DAO {
 		sqlBuf.append("GROUP BY LABEL ORDER BY ");
 		sqlBuf.append(s.getSQL());
 
-		try {
-			prepareStatement(sqlBuf.toString());
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			int param = 0;
-			_ps.setInt(++param, FlightReport.ATTR_ACARS);
-			_ps.setInt(++param, FlightReport.ATTR_VATSIM);
-			_ps.setInt(++param, FlightReport.ATTR_IVAO);
-			_ps.setInt(++param, FlightReport.ATTR_HISTORIC);
-			_ps.setInt(++param, FlightReport.ATTR_DISPATCH);
-			_ps.setInt(++param, FlightReport.ATTR_ONLINE_MASK);
-			_ps.setInt(++param, FlightStatus.OK.ordinal());
+			ps.setInt(++param, FlightReport.ATTR_ACARS);
+			ps.setInt(++param, FlightReport.ATTR_VATSIM);
+			ps.setInt(++param, FlightReport.ATTR_IVAO);
+			ps.setInt(++param, FlightReport.ATTR_HISTORIC);
+			ps.setInt(++param, FlightReport.ATTR_DISPATCH);
+			ps.setInt(++param, FlightReport.ATTR_ONLINE_MASK);
+			ps.setInt(++param, FlightStatus.OK.ordinal());
 			if (pilotID != 0)
-				_ps.setInt(++param, pilotID);
+				ps.setInt(++param, pilotID);
 			
 			// Check the cache
-			String cacheKey = getCacheKey(_ps.toString());
+			String cacheKey = getCacheKey(ps.toString());
 			CacheableCollection<FlightStatsEntry> results = _statCache.get(cacheKey);
-			if (results != null) {
-				_ps.close();
-				_ps = null;
+			if (results != null)
 				return results.clone();
-			}
 			
 			// Get the results
 			results = new CacheableList<FlightStatsEntry>(cacheKey);
-			results.addAll(execute());
+			results.addAll(execute(ps));
 			_statCache.add(results);
 			return results.clone();
 		} catch (SQLException se) {
@@ -663,9 +625,9 @@ public class GetFlightReportStatistics extends DAO {
 	/*
 	 * Helper method to parse stats entry result sets.
 	 */
-	private List<FlightStatsEntry> execute() throws SQLException {
+	private static List<FlightStatsEntry> execute(PreparedStatement ps) throws SQLException {
 		List<FlightStatsEntry> results = new ArrayList<FlightStatsEntry>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
 				FlightStatsEntry entry = new FlightStatsEntry(rs.getString(1), rs.getInt(2), rs.getDouble(4), rs.getInt(3));
 				entry.setACARSLegs(rs.getInt(7));
@@ -680,7 +642,6 @@ public class GetFlightReportStatistics extends DAO {
 			}
 		}
 
-		_ps.close();
 		return results;
 	}
 	

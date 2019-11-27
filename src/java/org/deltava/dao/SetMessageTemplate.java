@@ -1,4 +1,4 @@
-// Copyright 2005, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2012, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.util.cache.CacheManager;
 /**
  * A Data Access Object to write e-mail Message Templates.
  * @author Luke
- * @version 5.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -29,14 +29,13 @@ public class SetMessageTemplate extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(MessageTemplate mt) throws DAOException {
-		try {
-			prepareStatement("REPLACE INTO MSG_TEMPLATES (NAME, SUBJECT, DESCRIPTION, BODY, ISHTML) VALUES (?, ?, ?, ?, ?)");
-			_ps.setString(1, mt.getName());
-			_ps.setString(2, mt.getSubject());
-			_ps.setString(3, mt.getDescription());
-			_ps.setString(4, mt.getBody());
-			_ps.setBoolean(5, mt.getIsHTML());
-			executeUpdate(1);
+		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO MSG_TEMPLATES (NAME, SUBJECT, DESCRIPTION, BODY, ISHTML) VALUES (?, ?, ?, ?, ?)")) {
+			ps.setString(1, mt.getName());
+			ps.setString(2, mt.getSubject());
+			ps.setString(3, mt.getDescription());
+			ps.setString(4, mt.getBody());
+			ps.setBoolean(5, mt.getIsHTML());
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		} finally {
@@ -50,10 +49,9 @@ public class SetMessageTemplate extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void delete(String name) throws DAOException {
-		try {
-			prepareStatement("DELETE FROM MSG_TEMPLATES WHERE (NAME=?)");
-			_ps.setString(1, name);
-			executeUpdate(1);
+		try (PreparedStatement ps = prepare("DELETE FROM MSG_TEMPLATES WHERE (NAME=?)")) {
+			ps.setString(1, name);
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		} finally {

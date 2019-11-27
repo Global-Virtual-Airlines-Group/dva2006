@@ -1,4 +1,4 @@
-// Copyright 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2011, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.Pilot;
 /**
  * A Data Access Object to load Online Event signup totals.
  * @author Luke
- * @version 4.1
+ * @version 9.0
  * @since 2.4
  */
 
@@ -31,13 +31,9 @@ public class GetEventSignups extends DAO {
 	public void getSignupTotals(Map<Integer, Pilot> pilots) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT ES.PILOT_ID, COUNT(ES.ID) FROM events.EVENT_SIGNUPS ES "
-				+ "WHERE ES.PILOT_ID IN (");
-		
-		// Append the Pilot IDs
+		StringBuilder sqlBuf = new StringBuilder("SELECT ES.PILOT_ID, COUNT(ES.ID) FROM events.EVENT_SIGNUPS ES WHERE ES.PILOT_ID IN (");
 		int setSize = 0;
-		for (Iterator<Pilot> i = pilots.values().iterator(); i.hasNext();) {
-			Pilot p = i.next();
+		for (Pilot p : pilots.values()) {
 			if (p.getEventSignups() == -1) {
 				setSize++;
 				sqlBuf.append(p.getID());
@@ -55,17 +51,14 @@ public class GetEventSignups extends DAO {
 		if (setSize == 0)
 			return;
 		
-		try {
-			prepareStatementWithoutLimits(sqlBuf.toString());
-			try (ResultSet rs = _ps.executeQuery()) {
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					Pilot p = pilots.get(Integer.valueOf(rs.getInt(1)));
 					if (p != null)
 						p.setEventSignups(rs.getInt(2));
 				}
 			}
-			
-			_ps.close();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

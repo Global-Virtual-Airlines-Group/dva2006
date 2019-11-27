@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2013, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2013, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Data Access Object for loading system data (Session/Command/HTTP log tables) and Registration blocks.
  * @author Luke
- * @version 7.2
+ * @version 9.0
  * @since 1.0
  */
 
@@ -37,12 +37,9 @@ public class GetSystemData extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<HTTPStatistics> getHTTPStats(String orderBy) throws DAOException {
-		try {
-			prepareStatement("SELECT * FROM SYS_HTTPLOG ORDER BY " + orderBy);
-
-			// Execute the query
+		try (PreparedStatement ps = prepare("SELECT * FROM SYS_HTTPLOG ORDER BY " + orderBy)) {
 			List<HTTPStatistics> results = new ArrayList<HTTPStatistics>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					HTTPStatistics stats = new HTTPStatistics(expandDate(rs.getDate(1)));
 					stats.setRequests(rs.getInt(2));
@@ -53,7 +50,6 @@ public class GetSystemData extends DAO {
 				}
 			}
 
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -73,15 +69,12 @@ public class GetSystemData extends DAO {
 		if (totals != null)
 			return totals;
 
-		try {
-			prepareStatement("SELECT SUM(REQUESTS), SUM(HOMEHITS), SUM(BANDWIDTH) FROM SYS_HTTPLOG");
-			try (ResultSet rs = _ps.executeQuery()) {
+		try (PreparedStatement ps = prepare("SELECT SUM(REQUESTS), SUM(HOMEHITS), SUM(BANDWIDTH) FROM SYS_HTTPLOG")) {
+			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next())
 					totals = new HTTPTotals(rs.getInt(1), rs.getInt(2), rs.getLong(3));
 			}
 
-			// Add to the cache and return
-			_ps.close();
 			_cache.add(totals);
 			return totals;
 		} catch (SQLException se) {
@@ -96,13 +89,11 @@ public class GetSystemData extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<CommandLog> getCommands(String remoteAddr) throws DAOException {
-		try {
-			prepareStatement("SELECT CMDDATE, PILOT_ID, INET6_NTOA(REMOTE_ADDR), REMOTE_HOST, NAME, RESULT, "
-				+ "TOTAL_TIME, BE_TIME, SUCCESS FROM SYS_COMMANDS WHERE (UCASE(REMOTE_ADDR)=?) OR "
-				+ "(INET6_ATON(?)=REMOTE_ADDR) ORDER BY CMDDATE DESC");
-			_ps.setString(1, remoteAddr.toUpperCase());
-			_ps.setString(2, remoteAddr.toUpperCase());
-			return executeCommandLog();
+		try (PreparedStatement ps = prepare("SELECT CMDDATE, PILOT_ID, INET6_NTOA(REMOTE_ADDR), REMOTE_HOST, NAME, RESULT, TOTAL_TIME, BE_TIME, SUCCESS FROM SYS_COMMANDS "
+			+ "WHERE (UCASE(REMOTE_ADDR)=?) OR (INET6_ATON(?)=REMOTE_ADDR) ORDER BY CMDDATE DESC")) {
+			ps.setString(1, remoteAddr.toUpperCase());
+			ps.setString(2, remoteAddr.toUpperCase());
+			return executeCommandLog(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -132,9 +123,8 @@ public class GetSystemData extends DAO {
 
 		sqlBuf.append(") ORDER BY CMDDATE DESC");
 
-		try {
-			prepareStatement(sqlBuf.toString());
-			return executeCommandLog();
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			return executeCommandLog(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -143,9 +133,9 @@ public class GetSystemData extends DAO {
 	/*
 	 * Helper method to retrieve command log entries.
 	 */
-	private List<CommandLog> executeCommandLog() throws SQLException {
+	private static List<CommandLog> executeCommandLog(PreparedStatement ps) throws SQLException {
 		List<CommandLog> results = new ArrayList<CommandLog>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
 				CommandLog cmd = new CommandLog(rs.getTimestamp(1).toInstant());
 				cmd.setPilotID(rs.getInt(2));
@@ -160,7 +150,6 @@ public class GetSystemData extends DAO {
 			}
 		}
 
-		_ps.close();
 		return results;
 	}
 
@@ -173,15 +162,13 @@ public class GetSystemData extends DAO {
 	public Collection<CommandStatsEntry> getCommandStats(String orderBy) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT NAME, AVG(TOTAL_TIME) AS AVGT, AVG(BE_TIME) AS BE, "
-				+ "MAX(TOTAL_TIME) AS MAXTOTAL, MAX(BE_TIME) AS MAXBE, SUM(SUCCESS) AS SC, "
-				+ "COUNT(SUCCESS) AS TC FROM SYS_COMMANDS GROUP BY NAME ORDER BY ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT NAME, AVG(TOTAL_TIME) AS AVGT, AVG(BE_TIME) AS BE, MAX(TOTAL_TIME) AS MAXTOTAL, MAX(BE_TIME) AS MAXBE, SUM(SUCCESS) AS SC, "
+			+ "COUNT(SUCCESS) AS TC FROM SYS_COMMANDS GROUP BY NAME ORDER BY ");
 		sqlBuf.append(orderBy);
 
 		List<CommandStatsEntry> results = new ArrayList<CommandStatsEntry>();
-		try {
-			prepareStatement(sqlBuf.toString());
-			try (ResultSet rs = _ps.executeQuery()) {
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					CommandStatsEntry stat = new CommandStatsEntry(rs.getString(1));
 					stat.setAvgTime(rs.getInt(2));
@@ -194,7 +181,6 @@ public class GetSystemData extends DAO {
 				}
 			}
 
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -207,15 +193,13 @@ public class GetSystemData extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Map<String, TaskLastRun> getTaskExecution() throws DAOException {
-		try {
-			Collection<TaskLastRun> results = new ArrayList<TaskLastRun>();
-			prepareStatementWithoutLimits("SELECT * FROM SYS_TASKS");
-			try (ResultSet rs = _ps.executeQuery()) {
+		Collection<TaskLastRun> results = new ArrayList<TaskLastRun>();
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM SYS_TASKS")) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
 					results.add(new TaskLastRun(rs.getString(1), toInstant(rs.getTimestamp(2)), rs.getLong(3)));
 			}
 
-			_ps.close();
 			return CollectionUtils.createMap(results, TaskLastRun::getName);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -229,17 +213,11 @@ public class GetSystemData extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public java.time.Instant getLastRun(String taskID) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT LASTRUN FROM SYS_TASKS WHERE (ID=?) LIMIT 1");
-			_ps.setString(1, taskID);
-			java.time.Instant lastRun = null;
-			try (ResultSet rs = _ps.executeQuery()) { 
-				if (rs.next())
-					lastRun = toInstant(rs.getTimestamp(1));
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT LASTRUN FROM SYS_TASKS WHERE (ID=?) LIMIT 1")) {
+			ps.setString(1, taskID);
+			try (ResultSet rs = ps.executeQuery()) { 
+				return rs.next() ? toInstant(rs.getTimestamp(1)) : null;
 			}
-			
-			_ps.close();
-			return lastRun;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

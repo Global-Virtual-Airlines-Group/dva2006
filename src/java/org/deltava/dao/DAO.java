@@ -1,12 +1,9 @@
-// Copyright 2005, 2006, 2007, 2008, 2011, 2014, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2014, 2015, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
+import java.util.*;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.concurrent.atomic.LongAdder;
 
 import org.apache.log4j.Logger;
@@ -16,7 +13,7 @@ import org.deltava.beans.GeoLocation;
 /**
  * A JDBC Data Access Object. DAOs are used to read and write persistent data to JDBC data sources.
  * @author Luke
- * @version 8.4
+ * @version 9.0
  * @since 1.0
  */
 
@@ -45,11 +42,6 @@ public abstract class DAO {
 	protected int _queryTimeout = 45;
 
 	/**
-	 * A prepared statement that can be used to perform SQL queries.
-	 */
-	protected transient PreparedStatement _ps;
-	
-	/**
 	 * The SRID used for geolocation queries.
 	 */
 	protected static final int WGS84_SRID = 4326;
@@ -77,7 +69,7 @@ public abstract class DAO {
 	 * @param dt a JDBC Date
 	 * @return a Java date/time
 	 */
-	protected static java.time.Instant expandDate(Date dt) {
+	protected static java.time.Instant expandDate(java.sql.Date dt) {
 		return (dt == null) ? null : Instant.ofEpochMilli(dt.getTime()).plusSeconds(12 * 3600);
 	}
 	
@@ -118,23 +110,25 @@ public abstract class DAO {
 	 * Initialize the prepared statement with an arbitrary SQL statement. This statement appends LIMIT start,max to the
 	 * SQL before preparing the statement if this is a SELECT statement.
 	 * @param sql the SQL statement to initialize the prepared statement with
+	 * @return the PreparedStatement
 	 * @throws SQLException if the prepared statement is invalid
 	 * @throws NullPointerException if the SQL string is null
-	 * @see DAO#prepareStatementWithoutLimits(String)
+	 * @see DAO#prepareWithoutLimits(String)
 	 */
-	protected void prepareStatement(String sql) throws SQLException {
+	protected PreparedStatement prepare(String sql) throws SQLException {
 
 		// Build the SQL statement with the limits if we are doing a select
 		if (sql.startsWith("SELECT")) {
 			StringBuilder buf = new StringBuilder(sql);
 			if (_queryMax > 0)
-				buf.append(" LIMIT ").append(String.valueOf(_queryMax));
+				buf.append(" LIMIT ").append(_queryMax);
 			if (_queryStart > 0)
-				buf.append(" OFFSET ").append(String.valueOf(_queryStart));
+				buf.append(" OFFSET ").append(_queryStart);
 			
-			prepareStatementWithoutLimits(buf.toString());
-		} else
-			prepareStatementWithoutLimits(sql);
+			return prepareWithoutLimits(buf.toString());
+		}
+
+		return prepareWithoutLimits(sql);
 	}
 
 	/**
@@ -142,14 +136,16 @@ public abstract class DAO {
 	 * limitations. This is useful where a DAO might make multiple queries on the database and only needs to limit a
 	 * subset of these queries
 	 * @param sql the SQL statement to initialize the prepared statement with
+	 * @return the PreparedStatement
 	 * @throws SQLException if the prepared statement is invalid
-	 * @see DAO#prepareStatement(String)
+	 * @see DAO#prepare(String)
 	 */
-	protected void prepareStatementWithoutLimits(String sql) throws SQLException {
-		_ps = _c.prepareStatement(sql);
-		_ps.setQueryTimeout(_queryTimeout);
-		_ps.setFetchSize((_queryMax == 0) ? 500 : Math.min(250, _queryMax + 10));
+	protected PreparedStatement prepareWithoutLimits(String sql) throws SQLException {
+		PreparedStatement ps = _c.prepareStatement(sql);
+		ps.setQueryTimeout(_queryTimeout);
+		ps.setFetchSize((_queryMax == 0) ? 500 : Math.min(250, _queryMax + 10));
 		_queryCount.increment();
+		return ps;
 	}
 	
 	/**
@@ -172,59 +168,56 @@ public abstract class DAO {
 	
 	/**
 	 * Helper method to extract database ID data from the result set.
+	 * @param ps a PreparedStatement
 	 * @return a List of database IDs
 	 * @throws SQLException if an error occurs
 	 */
-	protected List<Integer> executeIDs() throws SQLException {
+	protected static List<Integer> executeIDs(PreparedStatement ps) throws SQLException {
 		Collection<Integer> results = new LinkedHashSet<Integer>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			while (rs.next())
 				results.add(Integer.valueOf(rs.getInt(1)));	
 		}
-		
-		_ps.close();
+			
 		return new ArrayList<Integer>(results);
 	}
 
 	/**
-	 * Executes an UPDATE transaction on the prepared statement, and throws a {@link SQLException}if less than the
-	 * expected number of rows were updated. The prepared statement is closed in either circumstance.
+	 * Executes an UPDATE transaction on a prepared statement, and throws a {@link SQLException}if less than the expected number of rows were updated.
+	 * @param ps a PreparedStatement
 	 * @param minUpdateCount the minimum number of rows to update
 	 * @return the actual number of rows updated
 	 * @throws SQLException if the update fails due to a JDBC error, or if less than the expected number of rows were updated
 	 */
-	protected int executeUpdate(int minUpdateCount) throws SQLException {
-		try (PreparedStatement ps = _ps) {
-			int rowsUpdated = _ps.executeUpdate();
-			if (rowsUpdated < minUpdateCount)
-				throw new SQLException("Unexpected Update count - " + rowsUpdated + ", expected " + minUpdateCount);
+	protected static int executeUpdate(PreparedStatement ps, int minUpdateCount) throws SQLException {
+		int rowsUpdated = ps.executeUpdate();
+		if (rowsUpdated < minUpdateCount)
+			throw new SQLException("Unexpected Update count - " + rowsUpdated + ", expected " + minUpdateCount);
 
-			return rowsUpdated;
-		}
+		return rowsUpdated;
 	}
 	
 	/**
-	 * Executes an batched UPDATE transaction on the prepared statement, and throws a {@link SQLException}if less than the
-	 * expected number of rows were updated per batch entry. The prepared statement is closed in either circumstance.
+	 * Executes an batched UPDATE transaction on a prepared statement, and throws a {@link SQLException}if less than the
+	 * expected number of rows were updated per batch entry.
+	 * @param ps a PreparedStatement
 	 * @param minPerUpdate the minimum number of rows to update per batch entry
 	 * @param minTotal the minimum number of rows to update across the entry batch
 	 * @return the actual number of rows updated
 	 * @throws SQLException if the update fails due to a JDBC error, or if less than the expected number of rows were updated
 	 */
-	protected int executeBatchUpdate(int minPerUpdate, int minTotal) throws SQLException {
-		try (PreparedStatement ps = _ps) {
-			int[] rowsUpdated = _ps.executeBatch(); int totalRows = 0;
-			for (int x = 0; x < rowsUpdated.length; x++) {
-				totalRows += rowsUpdated[x];
-				if (rowsUpdated[x] < minPerUpdate)
-					throw new SQLException("Unexpected Update count at batch entry " + x + " - " + rowsUpdated[x] + ", expected " + minPerUpdate);
-			}
-			
-			if (totalRows < minTotal)
-				throw new SQLException("Unexpected Update count - " + totalRows + ", expected " + minTotal);
-			
-			return totalRows;
+	protected static int executeUpdate(PreparedStatement ps, int minPerUpdate, int minTotal) throws SQLException {
+		int[] rowsUpdated = ps.executeBatch(); int totalRows = 0;
+		for (int x = 0; x < rowsUpdated.length; x++) {
+			totalRows += rowsUpdated[x];
+			if (rowsUpdated[x] < minPerUpdate)
+				throw new SQLException("Unexpected Update count at batch entry " + x + " - " + rowsUpdated[x] + ", expected " + minPerUpdate);
 		}
+			
+		if (totalRows < minTotal)
+			throw new SQLException("Unexpected Update count - " + totalRows + ", expected " + minTotal);
+			
+		return totalRows;
 	}
 
 	/**

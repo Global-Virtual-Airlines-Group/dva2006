@@ -9,7 +9,7 @@ import org.deltava.beans.*;
 /**
  * A Data Access Object to read Status Update log entries.
  * @author Luke
- * @version 8.7
+ * @version 9.0
  * @since 1.0
  */
 
@@ -38,10 +38,9 @@ public class GetStatusUpdate extends DAO {
 		sqlBuf.append(formatDBName(dbName));
 		sqlBuf.append(".STATUS_UPDATES WHERE (PILOT_ID=?) ORDER BY CREATED DESC");
 		
-		try {
-			prepareStatement(sqlBuf.toString());
-			_ps.setInt(1, id);
-			return execute();
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setInt(1, id);
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -55,20 +54,12 @@ public class GetStatusUpdate extends DAO {
 	 * @see UpdateType#SR_CAPTAIN
 	 */
 	public boolean isSeniorCaptain(int id) throws DAOException {
-		try {
-			prepareStatement("SELECT COUNT(*) FROM STATUS_UPDATES WHERE (PILOT_ID=?) AND (TYPE=?)");
-			_ps.setInt(1, id);
-			_ps.setInt(2, UpdateType.SR_CAPTAIN.ordinal());
-			
-			// Execute the Query
-			boolean isSC = false;
-			try (ResultSet rs = _ps.executeQuery()) {
-				if (rs.next())
-					isSC = (rs.getInt(1) > 0);
+		try (PreparedStatement ps = prepare("SELECT COUNT(*) FROM STATUS_UPDATES WHERE (PILOT_ID=?) AND (TYPE=?)")) {
+			ps.setInt(1, id);
+			ps.setInt(2, UpdateType.SR_CAPTAIN.ordinal());
+			try (ResultSet rs = ps.executeQuery()) {
+				return rs.next() ? (rs.getInt(1) > 0) : false;
 			}
-			
-			_ps.close();
-			return isSC;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -99,13 +90,12 @@ public class GetStatusUpdate extends DAO {
 			sqlBuf.append(" AND (CREATED > DATE_SUB(NOW(), INTERVAL ? HOUR))");
 		sqlBuf.append(" ORDER BY CREATED DESC");
 		
-		try {
-			prepareStatement(sqlBuf.toString());
-			_ps.setInt(1, updateType.ordinal());
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setInt(1, updateType.ordinal());
 			if (maxHours > 0)
-				_ps.setInt(2, maxHours);
+				ps.setInt(2, maxHours);
 			
-			return execute();
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -114,9 +104,9 @@ public class GetStatusUpdate extends DAO {
 	/*
 	 * Private helper method to load data from the table.
 	 */
-	private List<StatusUpdate> execute() throws SQLException {
+	private static List<StatusUpdate> execute(PreparedStatement ps) throws SQLException {
 		List<StatusUpdate> results = new ArrayList<StatusUpdate>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
 				StatusUpdate upd = new StatusUpdate(rs.getInt(1), UpdateType.values()[rs.getInt(4)]);
 				upd.setDate(rs.getTimestamp(2).toInstant());
@@ -126,7 +116,6 @@ public class GetStatusUpdate extends DAO {
 			}
 		}
 		
-		_ps.close();
 		return results;
 	}
 }

@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009, 2012, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to track user logins and logouts.
  * @author Luke
- * @version 5.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -48,12 +48,11 @@ public class SetPilotLogin extends PilotWriteDAO {
 		StringBuilder sqlBuf = new StringBuilder("UPDATE ");
 		sqlBuf.append(formatDBName(dbName));
 		sqlBuf.append(".PILOTS SET LAST_LOGIN=NOW(), LOGINHOSTNAME=?, LOGINS=LOGINS+1, STATUS=? WHERE (ID=?) LIMIT 1");
-		try {
-			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setString(1, hostName);
-			_ps.setInt(2, Pilot.ACTIVE);
-			_ps.setInt(3, id);
-			executeUpdate(1);
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+			ps.setString(1, hostName);
+			ps.setInt(2, Pilot.ACTIVE);
+			ps.setInt(3, id);
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		} finally {
@@ -67,10 +66,9 @@ public class SetPilotLogin extends PilotWriteDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void logout(int id) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("UPDATE PILOTS SET LAST_LOGOFF=NOW() WHERE (ID=?)");
-			_ps.setInt(1, id);
-			executeUpdate(1);
+		try (PreparedStatement ps = prepareWithoutLimits("UPDATE PILOTS SET LAST_LOGOFF=NOW() WHERE (ID=?)")) {
+			ps.setInt(1, id);
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		} finally {

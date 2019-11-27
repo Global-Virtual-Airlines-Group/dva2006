@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.crypt.MessageDigester;
 /**
  * A Data Access Object to write Approach Charts.
  * @author Luke
- * @version 5.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -44,45 +44,41 @@ public class SetChart extends DAO {
 			startTransaction();
 
 			// Write the metadata
-			if (c.getID() == 0)
-				prepareStatementWithoutLimits("INSERT INTO common.CHARTS (ICAO, TYPE, IMGFORMAT, NAME, SIZE, LASTMODIFIED, HASH) "
-					+ "VALUES (?, ?, ?, ?, ?, ?, ?)");
-			else
-				prepareStatementWithoutLimits("UPDATE common.CHARTS SET ICAO=?, TYPE=?, IMGFORMAT=?, NAME=?, SIZE=?, LASTMODIFIED=?, "
-					+ "HASH=? WHERE (ID=?)");
-			
-			_ps.setString(1, c.getAirport().getICAO());
-			_ps.setInt(2, c.getType().ordinal());
-			_ps.setInt(3, c.getImgType().ordinal());
-			_ps.setString(4, c.getName());
-			_ps.setInt(5, c.getSize());
-			_ps.setTimestamp(6, createTimestamp(c.getLastModified()));
-			_ps.setString(7, md5);
-			if (c.getID() != 0)
-				_ps.setInt(8, c.getID());
-			executeUpdate(1);
+			try (PreparedStatement ps = prepare("INSERT INTO common.CHARTS (ICAO, TYPE, IMGFORMAT, NAME, SIZE, LASTMODIFIED, HASH, ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE "
+				+ "ICAO=VALUES(ICAO), TYPE=VALUES(TYPE), IMGFORMAT=VALUES(IMGFORMAT), NAME=VALUES(NAME), SIZE=VALUES(SIZE), LASTMODIFIED=VALUES(LASTMODIFIED), HASH=VALUES(HASH)")) {
+				ps.setString(1, c.getAirport().getICAO());
+				ps.setInt(2, c.getType().ordinal());
+				ps.setInt(3, c.getImgType().ordinal());
+				ps.setString(4, c.getName());
+				ps.setInt(5, c.getSize());
+				ps.setTimestamp(6, createTimestamp(c.getLastModified()));
+				ps.setString(7, md5);
+				ps.setInt(8, c.getID());
+				executeUpdate(ps, 1);
+			}
 
 			// Get the database ID
-			if (c.getID() == 0)
-				c.setID(getNewID());
+			if (c.getID() == 0) c.setID(getNewID());
 			
 			// Write the image
 			if (c.isLoaded()) {
-				prepareStatementWithoutLimits("REPLACE INTO common.CHARTIMGS (ID, IMG) VALUES (?, ?)");
-				_ps.setInt(1, c.getID());
-				_ps.setBinaryStream(2, c.getInputStream(), c.getSize());
-				executeUpdate(1);
+				try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO common.CHARTIMGS (ID, IMG) VALUES (?, ?)")) {
+					ps.setInt(1, c.getID());
+					ps.setBinaryStream(2, c.getInputStream(), c.getSize());
+					executeUpdate(ps, 1);
+				}
 			}
 			
 			// Write the URL
 			if (c.getIsExternal()) {
 				ExternalChart ec = (ExternalChart) c;
-				prepareStatementWithoutLimits("REPLACE INTO common.CHARTURLS (ID, SOURCE, URL, EXTERNAL_ID) VALUES (?, ?, ?, ?)");
-				_ps.setInt(1, ec.getID());
-				_ps.setString(2, ec.getSource());
-				_ps.setString(3, ec.getURL());
-				_ps.setString(4, ec.getExternalID());
-				executeUpdate(1);
+				try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO common.CHARTURLS (ID, SOURCE, URL, EXTERNAL_ID) VALUES (?, ?, ?, ?)")) {
+					ps.setInt(1, ec.getID());
+					ps.setString(2, ec.getSource());
+					ps.setString(3, ec.getURL());
+					ps.setString(4, ec.getExternalID());
+					executeUpdate(ps, 1);
+				}
 			}
 			
 			commitTransaction();
@@ -100,14 +96,13 @@ public class SetChart extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void update(Chart c) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("UPDATE common.CHARTS SET ICAO=?, NAME=?, TYPE=?, LASTMODIFIED=? WHERE (ID=?)");
-			_ps.setString(1, c.getAirport().getICAO());
-			_ps.setString(2, c.getName());
-			_ps.setInt(3, c.getType().ordinal());
-			_ps.setTimestamp(4, createTimestamp(c.getLastModified()));
-			_ps.setInt(5, c.getID());
-			executeUpdate(1);
+		try (PreparedStatement ps = prepareWithoutLimits("UPDATE common.CHARTS SET ICAO=?, NAME=?, TYPE=?, LASTMODIFIED=? WHERE (ID=?)")) {
+			ps.setString(1, c.getAirport().getICAO());
+			ps.setString(2, c.getName());
+			ps.setInt(3, c.getType().ordinal());
+			ps.setTimestamp(4, createTimestamp(c.getLastModified()));
+			ps.setInt(5, c.getID());
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -127,15 +122,19 @@ public class SetChart extends DAO {
 			String md5 = MessageDigester.convert(md5data);
 			
 			startTransaction();
-			prepareStatementWithoutLimits("UPDATE common.CHARTS SET LASTMODIFIED=NOW(), SIZE=?, HASH=? WHERE (ID=?)");
-			_ps.setInt(1, c.getSize());
-			_ps.setString(2, md5);
-			_ps.setInt(3, c.getID());
-			executeUpdate(1);
-			prepareStatementWithoutLimits("REPLACE INTO common.CHARTIMGS (ID, IMG) VALUES (?, ?)");
-			_ps.setInt(1, c.getID());
-			_ps.setBinaryStream(2, c.getInputStream(), c.getSize());
-			executeUpdate(1);
+			try (PreparedStatement ps = prepareWithoutLimits("UPDATE common.CHARTS SET LASTMODIFIED=NOW(), SIZE=?, HASH=? WHERE (ID=?)")) {
+				ps.setInt(1, c.getSize());
+				ps.setString(2, md5);
+				ps.setInt(3, c.getID());
+				executeUpdate(ps, 1);
+			}
+			
+			try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO common.CHARTIMGS (ID, IMG) VALUES (?, ?)")) {
+				ps.setInt(1, c.getID());
+				ps.setBinaryStream(2, c.getInputStream(), c.getSize());
+				executeUpdate(ps, 1);
+			}
+			
 			commitTransaction();
 		} catch (IOException | SQLException se) {
 			rollbackTransaction();
@@ -149,10 +148,9 @@ public class SetChart extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void logUse(Chart c) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("UPDATE common.CHARTS SET USECOUNT=USECOUNT+1 WHERE (ID=?)");
-			_ps.setInt(1, c.getID());
-			executeUpdate(0);
+		try (PreparedStatement ps = prepareWithoutLimits("UPDATE common.CHARTS SET USECOUNT=USECOUNT+1 WHERE (ID=?)")) {
+			ps.setInt(1, c.getID());
+			executeUpdate(ps, 0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -164,10 +162,9 @@ public class SetChart extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void delete(int id) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("DELETE FROM common.CHARTS WHERE (ID=?)");
-			_ps.setInt(1, id);
-			executeUpdate(1);
+		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM common.CHARTS WHERE (ID=?)")) {
+			ps.setInt(1, id);
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

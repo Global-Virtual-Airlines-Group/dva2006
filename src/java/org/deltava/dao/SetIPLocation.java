@@ -9,7 +9,7 @@ import org.deltava.beans.system.*;
 /**
  * A Data Access Object to write IP netblock data.
  * @author Luke
- * @version 8.7
+ * @version 9.0
  * @since 5.2
  */
 
@@ -29,15 +29,14 @@ public class SetIPLocation extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(IPLocation loc) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("INSERT INTO geoip.LOCATIONS (ID, COUNTRY, REGION, REGION_NAME, CITY) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY "
-				+ "UPDATE COUNTRY=VALUES(COUNTRY), REGION=VALUES(REGION), REGION_NAME=VALUES(REGION_NAME), CITY=VALUES(CITY)");
-			_ps.setInt(1, loc.getID());
-			_ps.setString(2, loc.getCountry().getCode());
-			_ps.setString(3, loc.getRegionCode());
-			_ps.setString(4, loc.getRegion());
-			_ps.setString(5, loc.getCityName());
-			executeUpdate(1);
+		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO geoip.LOCATIONS (ID, COUNTRY, REGION, REGION_NAME, CITY) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY "
+				+ "UPDATE COUNTRY=VALUES(COUNTRY), REGION=VALUES(REGION), REGION_NAME=VALUES(REGION_NAME), CITY=VALUES(CITY)")) {
+			ps.setInt(1, loc.getID());
+			ps.setString(2, loc.getCountry().getCode());
+			ps.setString(3, loc.getRegionCode());
+			ps.setString(4, loc.getRegion());
+			ps.setString(5, loc.getCityName());
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -49,21 +48,20 @@ public class SetIPLocation extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(Collection<IPBlock> blocks) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("REPLACE INTO geoip.BLOCKS (ID, BLOCK_START, BLOCK_END, BITS, LOCATION_ID, LAT, LNG, RADIUS) VALUES (?, INET6_ATON(?), INET6_ATON(?), ?, ?, ?, ?, ?)");
+		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO geoip.BLOCKS (ID, BLOCK_START, BLOCK_END, BITS, LOCATION_ID, LAT, LNG, RADIUS) VALUES (?, INET6_ATON(?), INET6_ATON(?), ?, ?, ?, ?, ?)")) {
 			for (IPBlock ib : blocks) {
-				_ps.setInt(1, ib.getID());
-				_ps.setString(2, ib.getAddress());
-				_ps.setString(3, ib.getLastAddress());
-				_ps.setInt(4, ib.getBits());
-				_ps.setInt(5, Integer.parseInt(ib.getCity()));
-				_ps.setDouble(6, ib.getLatitude());
-				_ps.setDouble(7, ib.getLongitude());
-				_ps.setInt(8, ib.getRadius());
-				_ps.addBatch();
+				ps.setInt(1, ib.getID());
+				ps.setString(2, ib.getAddress());
+				ps.setString(3, ib.getLastAddress());
+				ps.setInt(4, ib.getBits());
+				ps.setInt(5, Integer.parseInt(ib.getCity()));
+				ps.setDouble(6, ib.getLatitude());
+				ps.setDouble(7, ib.getLongitude());
+				ps.setInt(8, ib.getRadius());
+				ps.addBatch();
 			}
 			
-			executeBatchUpdate(1, blocks.size());
+			executeUpdate(ps, 1, blocks.size());
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

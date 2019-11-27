@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -16,7 +16,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load FIR data.
  * @author Luke
- * @version 8.3
+ * @version 9.0
  * @since 3.2
  */
 
@@ -59,28 +59,27 @@ public class GetFIR extends DAO {
 		fir = _cache.get(cacheKey);
 		if (fir != null)
 			return fir;
-		
+	
 		try {
-			prepareStatementWithoutLimits("SELECT F.ID, F.NAME, F.OCEANIC, ST_AsWKT(F.DATA) FROM common.FIR F LEFT JOIN common.FIRALIAS FA "
-				+ "ON (F.ID=FA.ID) WHERE (F.ID=?) OR (FA.ALIAS=?) ORDER BY IF(F.OCEANIC=?, 0, 1) LIMIT 1");
-			_ps.setString(1, id);
-			_ps.setString(2, id);
-			_ps.setBoolean(3, isOceanic);
-			
-			// Execute the query
 			Geometry geo = null;
-			try (ResultSet rs = _ps.executeQuery()) {
-				if (rs.next()) {
-					WKTReader wr = new WKTReader();
-					fir = new FIR(rs.getString(1));
-					fir.setName(rs.getString(2));
-					fir.setOceanic(rs.getBoolean(3));
-					fir.setAux(fir.getName().contains(" Aux"));
-					geo = wr.read(rs.getString(4));
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT F.ID, F.NAME, F.OCEANIC, ST_AsWKT(F.DATA) FROM common.FIR F LEFT JOIN common.FIRALIAS FA ON (F.ID=FA.ID) WHERE (F.ID=?) OR (FA.ALIAS=?) ORDER BY IF(F.OCEANIC=?, 0, 1) LIMIT 1")) {
+				ps.setString(1, id);
+				ps.setString(2, id);
+				ps.setBoolean(3, isOceanic);
+			
+				// Execute the query
+				try (ResultSet rs = ps.executeQuery()) {
+					if (rs.next()) {
+						WKTReader wr = new WKTReader();
+						fir = new FIR(rs.getString(1));
+						fir.setName(rs.getString(2));
+						fir.setOceanic(rs.getBoolean(3));
+						fir.setAux(fir.getName().contains(" Aux"));
+						geo = wr.read(rs.getString(4));
+					}
 				}
 			}
 				
-			_ps.close();
 			if ((fir == null) || (geo == null))
 				return null;
 			
@@ -88,18 +87,17 @@ public class GetFIR extends DAO {
 			fir.setBorder(GeoUtils.fromGeometry(geo));
 				
 			// Load aliases
-			prepareStatementWithoutLimits("SELECT ALIAS FROM common.FIRALIAS WHERE (ID=?) AND (OCEANIC=?)");
-			_ps.setString(1, fir.getID());
-			_ps.setBoolean(2, fir.isOceanic());				
-			try (ResultSet rs = _ps.executeQuery()) {
-				while (rs.next()) {
-					fir.addAlias(rs.getString(1));
-					_idCache.add(new CacheableString(id, rs.getString(1)));
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT ALIAS FROM common.FIRALIAS WHERE (ID=?) AND (OCEANIC=?)")) {
+				ps.setString(1, fir.getID());
+				ps.setBoolean(2, fir.isOceanic());				
+				try (ResultSet rs = ps.executeQuery()) {
+					while (rs.next()) {
+						fir.addAlias(rs.getString(1));
+						_idCache.add(new CacheableString(id, rs.getString(1)));
+					}
 				}
 			}
 				
-			// Clean up and add to cache
-			_ps.close();
 			_cache.add(fir);
 			return fir;
 		} catch (SQLException | ParseException se) {
@@ -114,14 +112,11 @@ public class GetFIR extends DAO {
 	 */
 	public Collection<FIR> getAll() throws DAOException {
 		Collection<Tuple<String, Boolean>> IDs = new ArrayList<Tuple<String,Boolean>>(400);
-		try {
-			prepareStatementWithoutLimits("SELECT ID, OCEANIC FROM common.FIR ORDER BY ID");
-			try (ResultSet rs = _ps.executeQuery()) {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT ID, OCEANIC FROM common.FIR ORDER BY ID")) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
 					IDs.add(Tuple.create(rs.getString(1), Boolean.valueOf(rs.getBoolean(2))));
 			}
-			
-			_ps.close();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -145,33 +140,32 @@ public class GetFIR extends DAO {
 	public FIR search(GeoLocation loc) throws DAOException {
 		String pt = formatLocation(loc);
 		try {
-			prepareStatementWithoutLimits("SELECT ID, OCEANIC FROM common.FIR WHERE ST_Contains(data, ST_PointFromText(?,?))");
-			_ps.setString(1, pt);
-			_ps.setInt(2, WGS84_SRID);
-			
 			String id = null; boolean isOceanic = false;
-			try (ResultSet rs = _ps.executeQuery()) {
-				if (rs.next()) {
-					id = rs.getString(1);
-					isOceanic = rs.getBoolean(2);
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT ID, OCEANIC FROM common.FIR WHERE ST_Contains(data, ST_PointFromText(?,?))")) {
+				ps.setString(1, pt);
+				ps.setInt(2, WGS84_SRID);
+				try (ResultSet rs = ps.executeQuery()) {
+					if (rs.next()) {
+						id = rs.getString(1);
+						isOceanic = rs.getBoolean(2);
+					}
 				}
 			}
-			
-			_ps.close();
+				
 			if (id != null)
 				return get(id, isOceanic);
 			
-			prepareStatementWithoutLimits("SELECT ID, OCEANIC FROM common.FIR WHERE ST_Intersects(data, ST_PointFromText(?,?))");
-			_ps.setString(1, pt);
-			_ps.setInt(2, WGS84_SRID);
-			try (ResultSet rs = _ps.executeQuery()) {
-				if (rs.next()) {
-					id = rs.getString(1);
-					isOceanic = rs.getBoolean(2);
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT ID, OCEANIC FROM common.FIR WHERE ST_Intersects(data, ST_PointFromText(?,?))")) {
+				ps.setString(1, pt);
+				ps.setInt(2, WGS84_SRID);
+				try (ResultSet rs = ps.executeQuery()) {
+					if (rs.next()) {
+						id = rs.getString(1);
+						isOceanic = rs.getBoolean(2);
+					}
 				}
 			}
 
-			_ps.close();
 			return (id == null) ? null : get(id, isOceanic);
 		} catch (SQLException se) {
 			throw new DAOException(se);

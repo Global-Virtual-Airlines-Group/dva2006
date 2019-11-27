@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to read runway renumbering data. 
  * @author Luke
- * @version 8.5
+ * @version 9.0
  * @since 8.3
  */
 
@@ -45,12 +45,11 @@ public class GetRunwayMapping extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<RunwayMapping> getAll(ICAOAirport a) throws DAOException {
-		try {
-			prepareStatement("SELECT OLDCODE, NEWCODE FROM common.RUNWAY_RENUMBER WHERE (ICAO=?)");
-			_ps.setString(1,  a.getICAO());
+		try (PreparedStatement ps = prepare("SELECT OLDCODE, NEWCODE FROM common.RUNWAY_RENUMBER WHERE (ICAO=?)")) {
+			ps.setString(1,  a.getICAO());
 			
 			Collection<RunwayMapping> results = new ArrayList<RunwayMapping>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					RunwayMapping rm = new RunwayMapping(a.getICAO());
 					rm.setOldCode(rs.getString(1));
@@ -59,7 +58,6 @@ public class GetRunwayMapping extends DAO {
 				}
 			}
 			
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -72,10 +70,9 @@ public class GetRunwayMapping extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Airport> getAirports() throws DAOException {
-		try {
-			prepareStatement("SELECT DISTINCT ICAO FROM common.RUNWAY_RENUMBER");
+		try (PreparedStatement ps = prepare("SELECT DISTINCT ICAO FROM common.RUNWAY_RENUMBER")) {
 			Collection<Airport> results = new ArrayList<Airport>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					Airport a = SystemData.getAirport(rs.getString(1));
 					if (a != null)
@@ -83,7 +80,6 @@ public class GetRunwayMapping extends DAO {
 				}
 			}
 			
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);

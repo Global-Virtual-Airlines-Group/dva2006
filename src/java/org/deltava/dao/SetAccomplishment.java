@@ -1,4 +1,4 @@
-// Copyright 2010, 2014, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2014, 2015, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.util.cache.CacheManager;
 /**
  * A Data Access Object to save Accomplishment profiles.
  * @author Luke
- * @version 6.1
+ * @version 9.0
  * @since 3.2
  */
 
@@ -31,24 +31,19 @@ public class SetAccomplishment extends DAO {
 	 */
 	public void write(Accomplishment a) throws DAOException {
 		try {
-			if (a.getID() != 0) {
-				prepareStatementWithoutLimits("UPDATE ACCOMPLISHMENTS SET NAME=?, UNIT=?, VAL=?, COLOR=?, "
-						+ "CHOICES=?, ACTIVE=?, ALWAYS_SHOW=? WHERE (ID=?)");
-				_ps.setInt(8, a.getID());
-			} else
-				prepareStatementWithoutLimits("INSERT INTO ACCOMPLISHMENTS (NAME, UNIT, VAL, COLOR, CHOICES, "
-						+ "ACTIVE, ALWAYS_SHOW) VALUES (?, ?, ?, ?, ?, ?, ?)");
+			try (PreparedStatement ps = prepare("INSERT INTO ACCOMPLISHMENTS (NAME, UNIT, VAL, COLOR, CHOICES, ACTIVE, ALWAYS_SHOW) VALUES (?, ?, ?, ?, ?, ?, ?) ON DUPCATE KEY UPDATE "
+				+ "NAME=VALUES(NAME), UNIT=VALUES(UNIT), VAL=VALUES(VAL), COLOR=VALUES(COLOR), CHOICES=VALUES(CHOICES), ACTIVE=VALUES(ACTIVE), ALWAYS_SHOW=VALUES(ALWAYS_SHOW)")) {
+				ps.setString(1, a.getName());
+				ps.setInt(2, a.getUnit().ordinal());
+				ps.setInt(3, a.getValue());
+				ps.setInt(4, a.getColor());
+				ps.setString(5, a.getChoices().isEmpty() ? null : StringUtils.listConcat(a.getChoices(), ","));
+				ps.setBoolean(6, a.getActive());
+				ps.setBoolean(7, a.getAlwaysDisplay());
+				executeUpdate(ps, 1);
+			}
 			
-			_ps.setString(1, a.getName());
-			_ps.setInt(2, a.getUnit().ordinal());
-			_ps.setInt(3, a.getValue());
-			_ps.setInt(4, a.getColor());
-			_ps.setString(5, a.getChoices().isEmpty() ? null : StringUtils.listConcat(a.getChoices(), ","));
-			_ps.setBoolean(6, a.getActive());
-			_ps.setBoolean(7, a.getAlwaysDisplay());
-			executeUpdate(1);
-			if (a.getID() == 0)
-				a.setID(getNewID());
+			if (a.getID() == 0) a.setID(getNewID());
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		} finally {
@@ -64,12 +59,11 @@ public class SetAccomplishment extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void achieve(int pilotID, Accomplishment a, java.time.Instant dt) throws DAOException {
-		try {
-			prepareStatement("REPLACE INTO PILOT_ACCOMPLISHMENTS (PILOT_ID, AC_ID, DATE) VALUES (?, ?, ?)");
-			_ps.setInt(1, pilotID);
-			_ps.setInt(2, a.getID());
-			_ps.setTimestamp(3, createTimestamp(dt));
-			executeUpdate(1);
+		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO PILOT_ACCOMPLISHMENTS (PILOT_ID, AC_ID, DATE) VALUES (?, ?, ?)")) {
+			ps.setInt(1, pilotID);
+			ps.setInt(2, a.getID());
+			ps.setTimestamp(3, createTimestamp(dt));
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -82,11 +76,10 @@ public class SetAccomplishment extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void clearAchievement(int pilotID, Accomplishment a) throws DAOException {
-		try {
-			prepareStatement("DELETE FROM PILOT_ACCOMPLISHMENTS WHERE (PILOT_ID=?) AND (AC_ID=?)");
-			_ps.setInt(1, pilotID);
-			_ps.setInt(2, a.getID());
-			executeUpdate(0);
+		try (PreparedStatement ps = prepare("DELETE FROM PILOT_ACCOMPLISHMENTS WHERE (PILOT_ID=?) AND (AC_ID=?)")) {
+			ps.setInt(1, pilotID);
+			ps.setInt(2, a.getID());
+			executeUpdate(ps, 0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -98,10 +91,9 @@ public class SetAccomplishment extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void delete(int id) throws DAOException {
-		try {
-			prepareStatement("DELETE FROM ACCOMPLISHMENTS WHERE (ID=?)");
-			_ps.setInt(1, id);
-			executeUpdate(1);
+		try (PreparedStatement ps = prepare("DELETE FROM ACCOMPLISHMENTS WHERE (ID=?)")) {
+			ps.setInt(1, id);
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		} finally {

@@ -12,7 +12,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object for Flight Academy Certifications and Check Ride Scripts.
  * @author Luke
- * @version 8.6
+ * @version 9.0
  * @since 3.4
  */
 
@@ -36,22 +36,23 @@ public class SetAcademyCertification extends DAO {
 			startTransaction();
 			
 			// Write the certification entry
-			prepareStatementWithoutLimits("INSERT INTO exams.CERTS (NAME, ABBR, STAGE, PREREQ, ACTIVE, AUTO_ENROLL, VISIBLE, CHECKRIDES, EQPROGRAM, FLIGHTCOUNT, NETWORK, "
-				+ "NETWORK, RATINGCODE, DESCRIPTION) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-			_ps.setString(1, c.getName());
-			_ps.setString(2, c.getCode());
-			_ps.setInt(3, c.getStage());
-			_ps.setInt(4, c.getReqs());
-			_ps.setBoolean(5, c.getActive());
-			_ps.setBoolean(6, c.getAutoEnroll());
-			_ps.setBoolean(7, c.getVisible());
-			_ps.setInt(8, c.getRideCount());
-			_ps.setString(9, c.getEquipmentProgram());
-			_ps.setInt(10, c.getFlightCount());
-			_ps.setString(11, (c.getNetwork() == null) ? null : c.getNetwork().name());
-			_ps.setString(12, c.getNetworkRatingCode());
-			_ps.setString(13, c.getDescription());
-			executeUpdate(1);
+			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO exams.CERTS (NAME, ABBR, STAGE, PREREQ, ACTIVE, AUTO_ENROLL, VISIBLE, CHECKRIDES, EQPROGRAM, FLIGHTCOUNT, NETWORK, "
+				+ "NETWORK, RATINGCODE, DESCRIPTION) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+				ps.setString(1, c.getName());
+				ps.setString(2, c.getCode());
+				ps.setInt(3, c.getStage());
+				ps.setInt(4, c.getReqs());
+				ps.setBoolean(5, c.getActive());
+				ps.setBoolean(6, c.getAutoEnroll());
+				ps.setBoolean(7, c.getVisible());
+				ps.setInt(8, c.getRideCount());
+				ps.setString(9, c.getEquipmentProgram());
+				ps.setInt(10, c.getFlightCount());
+				ps.setString(11, (c.getNetwork() == null) ? null : c.getNetwork().name());
+				ps.setString(12, c.getNetworkRatingCode());
+				ps.setString(13, c.getDescription());
+				executeUpdate(ps, 1);
+			}
 			
 			// If we've got a pre-req, write it
 			if (c.getReqs() == Certification.REQ_SPECIFIC)
@@ -80,50 +81,56 @@ public class SetAcademyCertification extends DAO {
 			startTransaction();
 			
 			// Write the profile
-			prepareStatementWithoutLimits("UPDATE exams.CERTS SET NAME=?, ABBR=?, STAGE=?, PREREQ=?, ACTIVE=?, AUTO_ENROLL=?, VISIBLE=?, CHECKRIDES=?, EQPROGRAM=?, FLIGHTCOUNT=?, NETWORK=?, RATINGCODE=?, DESCRIPTION=? WHERE (NAME=?)");
-			_ps.setString(1, c.getName());
-			_ps.setString(2, c.getCode());
-			_ps.setInt(3, c.getStage());
-			_ps.setInt(4, c.getReqs());
-			_ps.setBoolean(5, c.getActive());
-			_ps.setBoolean(6, c.getAutoEnroll());
-			_ps.setBoolean(7, c.getVisible());
-			_ps.setInt(8, c.getRideCount());
-			_ps.setString(9, c.getEquipmentProgram());
-			_ps.setInt(10, c.getFlightCount());
-			_ps.setString(11, (c.getNetwork() == null) ? null : c.getNetwork().name());
-			_ps.setString(12, c.getNetworkRatingCode());
-			_ps.setString(13, c.getDescription());
-			_ps.setString(14, name);
-			executeUpdate(1);
+			try (PreparedStatement ps = prepareWithoutLimits("UPDATE exams.CERTS SET NAME=?, ABBR=?, STAGE=?, PREREQ=?, ACTIVE=?, AUTO_ENROLL=?, VISIBLE=?, CHECKRIDES=?, EQPROGRAM=?, FLIGHTCOUNT=?, NETWORK=?, RATINGCODE=?, DESCRIPTION=? WHERE (NAME=?)")) {
+				ps.setString(1, c.getName());
+				ps.setString(2, c.getCode());
+				ps.setInt(3, c.getStage());
+				ps.setInt(4, c.getReqs());
+				ps.setBoolean(5, c.getActive());
+				ps.setBoolean(6, c.getAutoEnroll());
+				ps.setBoolean(7, c.getVisible());
+				ps.setInt(8, c.getRideCount());
+				ps.setString(9, c.getEquipmentProgram());
+				ps.setInt(10, c.getFlightCount());
+				ps.setString(11, (c.getNetwork() == null) ? null : c.getNetwork().name());
+				ps.setString(12, c.getNetworkRatingCode());
+				ps.setString(13, c.getDescription());
+				ps.setString(14, name);
+				executeUpdate(ps, 1);
+			}
 			
 			// Write the pre-requisite
 			writePrereq(c.getName(), c.getReqCert());
 			
 			// Clear the exams
-			prepareStatementWithoutLimits("DELETE FROM exams.CERTEXAMS WHERE (CERTNAME=?)");
-			_ps.setString(1, c.getName());
-			executeUpdate(0);
+			try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM exams.CERTEXAMS WHERE (CERTNAME=?)")) {
+				ps.setString(1, c.getName());
+				executeUpdate(ps, 0);
+			}
 			
 			// Clear the roles
-			prepareStatementWithoutLimits("DELETE FROM exams.CERTROLES WHERE (CERTNAME=?)");
-			_ps.setString(1, c.getName());
-			executeUpdate(0);
+			try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM exams.CERTROLES WHERE (CERTNAME=?)")) {
+				ps.setString(1, c.getName());
+				executeUpdate(ps, 0);
+			}
 			
 			// Clear the requirements
-			prepareStatementWithoutLimits("DELETE FROM exams.CERTREQS WHERE (CERTNAME=?)");
-			_ps.setString(1, c.getName());
-			executeUpdate(0);
+			try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM exams.CERTREQS WHERE (CERTNAME=?)")) {
+				ps.setString(1, c.getName());
+				executeUpdate(ps, 0);
+			}
 			
 			// Clear the Apps
-			prepareStatementWithoutLimits("DELETE FROM exams.CERTAPPS WHERE (CERTNAME=?)");
-			_ps.setString(1, c.getName());
-			executeUpdate(0);
+			try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM exams.CERTAPPS WHERE (CERTNAME=?)")) {
+				ps.setString(1, c.getName());
+				executeUpdate(ps, 0);
+			}
 			
 			// Clear the check ride EQ
-			prepareStatementWithoutLimits("DELETE FROM exams.CERTEQ WHERE (CERTNAME=?)");
-			_ps.setString(1, c.getName());
-			executeUpdate(0);
+			try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM exams.CERTEQ WHERE (CERTNAME=?)")) {
+				ps.setString(1, c.getName());
+				executeUpdate(ps, 0);
+			}
 			
 			// Write the exams/roles
 			writeExams(c.getName(), c.getExamNames());
@@ -132,16 +139,18 @@ public class SetAcademyCertification extends DAO {
 			writeEQ(c.getName(), c.getRideEQ());
 			
 			// Write the requirements
-			prepareStatementWithoutLimits("INSERT INTO exams.CERTREQS (CERTNAME, SEQ, EXAMNAME, REQENTRY) VALUES (?, ?, ?, ?)");
-			_ps.setString(1, c.getName());
-			for (CertificationRequirement req : c.getRequirements()) {
-				_ps.setInt(2, req.getID());
-				_ps.setString(3, req.getExamName());
-				_ps.setString(4, req.getText());
-				_ps.addBatch();
+			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO exams.CERTREQS (CERTNAME, SEQ, EXAMNAME, REQENTRY) VALUES (?, ?, ?, ?)")) {
+				ps.setString(1, c.getName());
+				for (CertificationRequirement req : c.getRequirements()) {
+					ps.setInt(2, req.getID());
+					ps.setString(3, req.getExamName());
+					ps.setString(4, req.getText());
+					ps.addBatch();
+				}
+			
+				executeUpdate(ps, 1, c.getRequirements().size());
 			}
 			
-			executeBatchUpdate(1, c.getRequirements().size());
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -155,13 +164,12 @@ public class SetAcademyCertification extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(AcademyRideScript sc) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("REPLACE INTO exams.CERTRIDE_SCRIPTS (CERTNAME, IDX, SIMS, BODY) VALUES (?, ?, ?, ?)");
-			_ps.setString(1, sc.getCertificationName());
-			_ps.setInt(2, sc.getIndex());
-			_ps.setString(3, StringUtils.listConcat(sc.getSimulators(), ","));
-			_ps.setString(4, sc.getDescription());
-			executeUpdate(1);
+		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO exams.CERTRIDE_SCRIPTS (CERTNAME, IDX, SIMS, BODY) VALUES (?, ?, ?, ?)")) {
+			ps.setString(1, sc.getCertificationName());
+			ps.setInt(2, sc.getIndex());
+			ps.setString(3, StringUtils.listConcat(sc.getSimulators(), ","));
+			ps.setString(4, sc.getDescription());
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -173,10 +181,9 @@ public class SetAcademyCertification extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void delete(String certName) throws DAOException {
-		try {
-			prepareStatement("DELETE FROM exams.CERTS WHERE (NAME=?)");
-			_ps.setString(1, certName);
-			executeUpdate(1);
+		try (PreparedStatement ps = prepare("DELETE FROM exams.CERTS WHERE (NAME=?)")) {
+			ps.setString(1, certName);
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -188,11 +195,10 @@ public class SetAcademyCertification extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void deleteScript(AcademyRideID id) throws DAOException {
-		try {
-			prepareStatement("DELETE FROM exams.CERTRIDE_SCRIPTS WHERE (CERTNAME=?) AND (IDX=?)");
-			_ps.setString(1, id.getName());
-			_ps.setInt(2, id.getIndex());
-			executeUpdate(1);
+		try (PreparedStatement ps = prepare("DELETE FROM exams.CERTRIDE_SCRIPTS WHERE (CERTNAME=?) AND (IDX=?)")) {
+			ps.setString(1, id.getName());
+			ps.setInt(2, id.getIndex());
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -203,14 +209,16 @@ public class SetAcademyCertification extends DAO {
 	 */
 	private void writePrereq(String certName, String prereqAbbr) throws SQLException {
 		if (!StringUtils.isEmpty(prereqAbbr)) {
-			prepareStatementWithoutLimits("REPLACE INTO exams.CERTPREREQ (NAME, ABBR) VALUES (?, ?)");
-			_ps.setString(1, certName);
-			_ps.setString(2, prereqAbbr);
-			executeUpdate(1);
+			try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO exams.CERTPREREQ (NAME, ABBR) VALUES (?, ?)")) {
+				ps.setString(1, certName);
+				ps.setString(2, prereqAbbr);
+				executeUpdate(ps, 1);
+			}
 		} else {
-			prepareStatementWithoutLimits("DELETE FROM exams.CERTPREREQ WHERE (NAME=?)");
-			_ps.setString(1, certName);
-			executeUpdate(0);
+			try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM exams.CERTPREREQ WHERE (NAME=?)")) {
+				ps.setString(1, certName);
+				executeUpdate(ps, 0);
+			}
 		}
 	}
 	
@@ -218,55 +226,59 @@ public class SetAcademyCertification extends DAO {
 	 * Helper method to write security role names.
 	 */
 	private void writeRoles(String certName, Collection<String> roles) throws SQLException {
-		prepareStatementWithoutLimits("INSERT INTO exams.CERTROLES (CERTNAME, ROLE) VALUES (?, ?)");
-		_ps.setString(1, certName);
-		for (String role : roles) {
-			_ps.setString(2, role);
-			_ps.addBatch();			
-		}
+		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO exams.CERTROLES (CERTNAME, ROLE) VALUES (?, ?)")) {
+			ps.setString(1, certName);
+			for (String role : roles) {
+				ps.setString(2, role);
+				ps.addBatch();			
+			}
 		
-		executeBatchUpdate(1, roles.size());
+			executeUpdate(ps, 1, roles.size());
+		}
 	}
 	
 	/*
 	 * Helper method to write exam names.
 	 */
 	private void writeExams(String certName, Collection<String> exams) throws SQLException {
-		prepareStatementWithoutLimits("INSERT INTO exams.CERTEXAMS (CERTNAME, EXAMNAME) VALUES (?, ?)");
-		_ps.setString(1, certName);
-		for (String exam : exams) {
-			_ps.setString(2, exam);
-			_ps.addBatch();
-		}
+		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO exams.CERTEXAMS (CERTNAME, EXAMNAME) VALUES (?, ?)")) {
+			ps.setString(1, certName);
+			for (String exam : exams) {
+				ps.setString(2, exam);
+				ps.addBatch();
+			}
 		
-		executeBatchUpdate(1, exams.size());
+			executeUpdate(ps, 1, exams.size());
+		}
 	}
 	
 	/*
 	 * Helper method to write virtual ailrine names.
 	 */
 	private void writeApps(String certName, Collection<AirlineInformation> airlines) throws SQLException {
-		prepareStatementWithoutLimits("INSERT INTO exams.CERTAPPS (CERTNAME, AIRLINE) VALUES (?, ?)");
-		_ps.setString(1, certName);
-		for (AirlineInformation ai : airlines) {
-			_ps.setString(2, ai.getCode());
-			_ps.addBatch();
-		}
+		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO exams.CERTAPPS (CERTNAME, AIRLINE) VALUES (?, ?)")) {
+			ps.setString(1, certName);
+			for (AirlineInformation ai : airlines) {
+				ps.setString(2, ai.getCode());
+				ps.addBatch();
+			}
 
-		executeBatchUpdate(1, airlines.size());
+			executeUpdate(ps, 1, airlines.size());
+		}
 	}
 	
 	/*
 	 * Helper method to write check ride equipment types.
 	 */
 	private void writeEQ(String certName, Collection<String> eqTypes) throws SQLException {
-		prepareStatementWithoutLimits("INSERT INTO exams.CERTEQ (CERTNAME, EQTYPE) VALUES (?, ?)");
-		_ps.setString(1, certName);
-		for (String eqType : eqTypes) {
-			_ps.setString(2, eqType);
-			_ps.addBatch();
-		}
+		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO exams.CERTEQ (CERTNAME, EQTYPE) VALUES (?, ?)")) {
+			ps.setString(1, certName);
+			for (String eqType : eqTypes) {
+				ps.setString(2, eqType);
+				ps.addBatch();
+			}
 
-		executeBatchUpdate(1, eqTypes.size());
+			executeUpdate(ps, 1, eqTypes.size());
+		}
 	}
 }

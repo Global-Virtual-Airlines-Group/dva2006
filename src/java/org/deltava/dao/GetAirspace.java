@@ -1,4 +1,4 @@
-// Copyright 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -17,7 +17,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load Airspace boundaries from the database. 
  * @author Luke
- * @version 8.3
+ * @version 9.0
  * @since 7.3
  */
 
@@ -48,12 +48,11 @@ public class GetAirspace extends DAO {
 		if (results != null)
 			return results.clone();
 		
-		try {
-			prepareStatement("SELECT ID, NAME, COUNTRY, TYPE, EXCLUSION, MIN_ALT, MAX_ALT, ST_AsWKT(DATA) FROM common.AIRSPACE WHERE (ID=?) AND (COUNTRY=?)");
-			_ps.setString(1, id);
-			_ps.setString(2, c.getCode());
+		try (PreparedStatement ps = prepare("SELECT ID, NAME, COUNTRY, TYPE, EXCLUSION, MIN_ALT, MAX_ALT, ST_AsWKT(DATA) FROM common.AIRSPACE WHERE (ID=?) AND (COUNTRY=?)")) {
+			ps.setString(1, id);
+			ps.setString(2, c.getCode());
 			results = new CacheableList<Airspace>(key);
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				Geometry geo = null; WKTReader wr = new WKTReader();
 				while (rs.next()) {
 					Airspace a = new Airspace(rs.getString(1), AirspaceType.values()[rs.getInt(4)]);
@@ -70,7 +69,6 @@ public class GetAirspace extends DAO {
 				}
 			}
 			
-			_ps.close();
 			if (!results.isEmpty())
 				_cache.add(results);
 				
@@ -88,19 +86,16 @@ public class GetAirspace extends DAO {
 	 */
 	public List<Airspace> find(GeospaceLocation loc) throws DAOException {
 		Collection<Tuple<String, Country>> codes = new ArrayList<Tuple<String, Country>>();
-		try {
-			prepareStatementWithoutLimits("SELECT ID, COUNTRY FROM common.AIRSPACE FORCE INDEX (AS_ALT_IDX) WHERE ST_Contains(DATA, ST_PointFromText(?,?)) AND (MIN_ALT<=?) AND (MAX_ALT>=?) AND (EXCLUSION=?) ORDER BY TYPE");
-			_ps.setString(1, formatLocation(loc));
-			_ps.setInt(2, WGS84_SRID);
-			_ps.setBoolean(3, false);
-			_ps.setInt(4, loc.getAltitude());
-			_ps.setInt(5, loc.getAltitude());
-			try (ResultSet rs = _ps.executeQuery()) {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT ID, COUNTRY FROM common.AIRSPACE FORCE INDEX (AS_ALT_IDX) WHERE ST_Contains(DATA, ST_PointFromText(?,?)) AND (MIN_ALT<=?) AND (MAX_ALT>=?) AND (EXCLUSION=?) ORDER BY TYPE")) {
+			ps.setString(1, formatLocation(loc));
+			ps.setInt(2, WGS84_SRID);
+			ps.setBoolean(3, false);
+			ps.setInt(4, loc.getAltitude());
+			ps.setInt(5, loc.getAltitude());
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
 					codes.add(Tuple.create(rs.getString(1), Country.get(rs.getString(2))));
 			}
-			
-			_ps.close();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -115,15 +110,12 @@ public class GetAirspace extends DAO {
 	 */
 	public List<Airspace> getRestricted() throws DAOException {
 		Collection<Tuple<String, Country>> codes = new ArrayList<Tuple<String, Country>>();
-		try {
-			prepareStatementWithoutLimits("SELECT ID, COUNTRY FROM common.AIRSPACE WHERE (TYPE<=?)");
-			_ps.setInt(1, AirspaceType.R.ordinal());
-			try (ResultSet rs = _ps.executeQuery()) {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT ID, COUNTRY FROM common.AIRSPACE WHERE (TYPE<=?)")) {
+			ps.setInt(1, AirspaceType.R.ordinal());
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
 					codes.add(Tuple.create(rs.getString(1), Country.get(rs.getString(2))));
 			}
-			
-			_ps.close();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

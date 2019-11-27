@@ -1,4 +1,4 @@
-// Copyright 2005, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2014, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.system.AddressValidation;
 /**
  * A Data Access Object to write e-mail address validation data to the database.
  * @author Luke
- * @version 5.2
+ * @version 9.0
  * @since 1.0
  */
 
@@ -28,13 +28,12 @@ public class SetAddressValidation extends DAO {
     * @throws DAOException if a JDBC error occurs
     */
    public void write(AddressValidation addr) throws DAOException {
-      try {
-         prepareStatement("REPLACE INTO EMAIL_VALIDATION (ID, EMAIL, HASH, VALID) VALUES (?, ?, ?, ?)");
-         _ps.setInt(1, addr.getID());
-         _ps.setString(2, addr.getAddress());
-         _ps.setString(3, addr.getHash());
-         _ps.setBoolean(4, addr.getIsValid());
-         executeUpdate(1);
+	   try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO EMAIL_VALIDATION (ID, EMAIL, HASH, VALID) VALUES (?, ?, ?, ?)")) {
+         ps.setInt(1, addr.getID());
+         ps.setString(2, addr.getAddress());
+         ps.setString(3, addr.getHash());
+         ps.setBoolean(4, addr.getIsValid());
+         executeUpdate(ps, 1);
       } catch (SQLException se) {
          throw new DAOException(se);
       }
@@ -46,10 +45,9 @@ public class SetAddressValidation extends DAO {
     * @throws DAOException if a JDBC error occurs
     */
    public void delete(int id) throws DAOException {
-      try {
-         prepareStatement("DELETE FROM EMAIL_VALIDATION WHERE (ID=?)");
-         _ps.setInt(1, id);
-         executeUpdate(0);
+	   try (PreparedStatement ps = prepare("DELETE FROM EMAIL_VALIDATION WHERE (ID=?)")) {
+         ps.setInt(1, id);
+         executeUpdate(ps, 0);
       } catch (SQLException se) {
          throw new DAOException(se);
       }

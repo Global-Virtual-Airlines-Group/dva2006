@@ -1,4 +1,4 @@
-// Copyright 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2013, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.navdata.CycleInfo;
 /**
  * A Data Access Object to load chart/navigation data cycle update dates. 
  * @author Luke
- * @version 7.0
+ * @version 9.0
  * @since 5.1
  */
 
@@ -30,17 +30,14 @@ public class GetNavCycle extends DAO {
 	 * @throws DAOException if a JDBC erorr occurs
 	 */
 	public CycleInfo getCycle(String id) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT ID, RELEASED FROM common.NAVCYCLE WHERE (ID=?) LIMIT 1");
-			_ps.setString(1, id);
-			
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT ID, RELEASED FROM common.NAVCYCLE WHERE (ID=?) LIMIT 1")) {
+			ps.setString(1, id);
 			CycleInfo cycle = null;
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next())
 					cycle = new CycleInfo(rs.getString(1), rs.getTimestamp(2).toInstant());
 			}
 
-			_ps.close();
 			return cycle;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -54,17 +51,14 @@ public class GetNavCycle extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public CycleInfo getCycle(java.time.Instant dt) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT ID, RELEASED FROM common.NAVCYCLE WHERE (RELEASED<?) ORDER BY RELEASED DESC LIMIT 1");
-			_ps.setTimestamp(1, createTimestamp(dt));
-			
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT ID, RELEASED FROM common.NAVCYCLE WHERE (RELEASED<?) ORDER BY RELEASED DESC LIMIT 1")) {
+			ps.setTimestamp(1, createTimestamp(dt));
 			CycleInfo cycle = null;
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next())
 					cycle = new CycleInfo(rs.getString(1), rs.getTimestamp(2).toInstant());
 			}
 			
-			_ps.close();
 			return cycle;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -77,15 +71,13 @@ public class GetNavCycle extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<CycleInfo> getFuture() throws DAOException {
-		try {
-			prepareStatement("SELECT ID, RELEASED FROM common.NAVCYCLE WHERE (RELEASED>=CURDATE()) ORDER BY RELEASED");
+		try (PreparedStatement ps = prepare("SELECT ID, RELEASED FROM common.NAVCYCLE WHERE (RELEASED>=CURDATE()) ORDER BY RELEASED")) {
 			Collection<CycleInfo> results = new ArrayList<CycleInfo>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
 					results.add(new CycleInfo(rs.getString(1), rs.getTimestamp(2).toInstant()));
 			}
 			
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);

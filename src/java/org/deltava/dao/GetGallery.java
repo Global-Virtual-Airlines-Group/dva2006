@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2011, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2011, 2012, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Image Gallery data.
  * @author Luke
- * @version 7.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -53,27 +53,25 @@ public class GetGallery extends DAO {
 		sqlBuf.append(".GALLERY G LEFT JOIN common.COOLER_THREADS T ON (G.ID=T.IMAGE_ID) WHERE (G.ID=?) LIMIT 1");
 		
 		try {
-			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setInt(1, id);
-
-			// Execute the query - return null if no image found
 			Image img = null;
-			try (ResultSet rs = _ps.executeQuery()) {
-				if (rs.next()) {
-					img = new Image(rs.getString(1), rs.getString(2));
-					img.setID(id);
-					img.setType(rs.getInt(3));
-					img.setWidth(rs.getInt(4));
-					img.setHeight(rs.getInt(5));
-					img.setSize(rs.getInt(6));
-					img.setCreatedOn(rs.getTimestamp(7).toInstant());
-					img.setFleet(rs.getBoolean(8));
-					img.setAuthorID(rs.getInt(9));
-					img.setThreadID(rs.getInt(10));
+			try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+				ps.setInt(1, id);
+				try (ResultSet rs = ps.executeQuery()) {
+					if (rs.next()) {
+						img = new Image(rs.getString(1), rs.getString(2));
+						img.setID(id);
+						img.setType(rs.getInt(3));
+						img.setWidth(rs.getInt(4));
+						img.setHeight(rs.getInt(5));
+						img.setSize(rs.getInt(6));
+						img.setCreatedOn(rs.getTimestamp(7).toInstant());
+						img.setFleet(rs.getBoolean(8));
+						img.setAuthorID(rs.getInt(9));
+						img.setThreadID(rs.getInt(10));
+					}
 				}
 			}
 
-			_ps.close();
 			if (img == null)
 				return null;
 
@@ -81,14 +79,14 @@ public class GetGallery extends DAO {
 			sqlBuf = new StringBuilder("SELECT PILOT_ID FROM ");
 			sqlBuf.append(db);
 			sqlBuf.append(".GALLERYSCORE WHERE (IMG_ID=?)");
-			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setInt(1, id);
-			try (ResultSet rs = _ps.executeQuery()) {
-				while (rs.next())
-					img.addLike(rs.getInt(1));
+			try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+				ps.setInt(1, id);
+				try (ResultSet rs = ps.executeQuery()) {
+					while (rs.next())
+						img.addLike(rs.getInt(1));
+				}
 			}
 
-			_ps.close();
 			return img;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -101,12 +99,10 @@ public class GetGallery extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<Image> getFleetGallery() throws DAOException {
-		try {
-			prepareStatement("SELECT I.NAME, I.DESCRIPTION, I.ID, I.PILOT_ID, I.DATE, I.FLEET, I.TYPE, I.X, I.Y, I.SIZE, "
-				+ "(SELECT COUNT(PILOT_ID) FROM GALLERYSCORE WHERE (IMG_ID=I.ID)) AS LC FROM GALLERY I WHERE "
-				+"(I.FLEET=?) ORDER BY I.NAME");
-			_ps.setBoolean(1, true);
-			return execute();
+		try (PreparedStatement ps = prepare("SELECT I.NAME, I.DESCRIPTION, I.ID, I.PILOT_ID, I.DATE, I.FLEET, I.TYPE, I.X, I.Y, I.SIZE, "
+			+ "(SELECT COUNT(PILOT_ID) FROM GALLERYSCORE WHERE (IMG_ID=I.ID)) AS LC FROM GALLERY I WHERE (I.FLEET=?) ORDER BY I.NAME")) {
+			ps.setBoolean(1, true);
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -119,12 +115,10 @@ public class GetGallery extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<Image> getPictureGallery(java.time.Instant dt) throws DAOException {
-		try {
-			prepareStatement("SELECT I.NAME, I.DESCRIPTION, I.ID, I.PILOT_ID, I.DATE, I.FLEET, I.TYPE, I.X, "
-				+ "I.Y, I.SIZE, (SELECT COUNT(PILOT_ID) FROM GALLERYSCORE WHERE (IMG_ID=I.ID)) AS LC FROM "
-				+ "GALLERY I WHERE (DATE(I.DATE)=DATE(?)) ORDER BY I.DATE");
-			_ps.setTimestamp(1, createTimestamp(dt));
-			return execute();
+		try (PreparedStatement ps = prepare("SELECT I.NAME, I.DESCRIPTION, I.ID, I.PILOT_ID, I.DATE, I.FLEET, I.TYPE, I.X, I.Y, I.SIZE, "
+			+ "(SELECT COUNT(PILOT_ID) FROM GALLERYSCORE WHERE (IMG_ID=I.ID)) AS LC FROM GALLERY I WHERE (DATE(I.DATE)=DATE(?)) ORDER BY I.DATE")) {
+			ps.setTimestamp(1, createTimestamp(dt));
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -150,15 +144,14 @@ public class GetGallery extends DAO {
 		sqlBuf.append("ORDER BY ");
 		sqlBuf.append(orderBy);
 
-		try {
-			prepareStatement(sqlBuf.toString());
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			if (month != null) {
 				StringTokenizer tkns = new StringTokenizer(month, " ");
-				_ps.setString(1, tkns.nextToken());
-				_ps.setInt(2, StringUtils.parse(tkns.nextToken(), ZonedDateTime.now().getYear()));
+				ps.setString(1, tkns.nextToken());
+				ps.setInt(2, StringUtils.parse(tkns.nextToken(), ZonedDateTime.now().getYear()));
 			}
 
-			return execute();
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -170,16 +163,13 @@ public class GetGallery extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<String> getMonths() throws DAOException {
-		try {
-			prepareStatement("SELECT DISTINCT CONCAT_WS(' ', MONTHNAME(DATE), YEAR(DATE)) FROM GALLERY "
-					+ "ORDER BY DATE DESC");
+		try (PreparedStatement ps = prepare("SELECT DISTINCT CONCAT_WS(' ', MONTHNAME(DATE), YEAR(DATE)) FROM GALLERY ORDER BY DATE DESC")) {
 			Collection<String> results = new LinkedHashSet<String>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
 					results.add(rs.getString(1));
 			}
 
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -189,9 +179,9 @@ public class GetGallery extends DAO {
 	/*
 	 * Helper method to parse Image result sets.
 	 */
-	private List<Image> execute() throws SQLException {
+	private static List<Image> execute(PreparedStatement ps) throws SQLException {
 		List<Image> results = new ArrayList<Image>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			boolean hasLikes = (rs.getMetaData().getColumnCount() > 10);
 			boolean hasThreadInfo = (rs.getMetaData().getColumnCount() > 11); 
 			while (rs.next()) {
@@ -213,7 +203,6 @@ public class GetGallery extends DAO {
 			}
 		}
 
-		_ps.close();
 		return results;
 	}
 }

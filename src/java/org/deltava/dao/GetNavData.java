@@ -15,7 +15,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to read Navigation data.
  * @author Luke
- * @version 8.5
+ * @version 9.0
  * @since 1.0
  */
 
@@ -60,10 +60,9 @@ public class GetNavData extends DAO {
 		NavigationDataMap ndmap = new NavigationDataMap();
 		ndmap.setCacheKey(c);
 		
-		try {
-			prepareStatement("SELECT * FROM common.NAVDATA WHERE (CODE=?) ORDER BY ITEMTYPE");
-			_ps.setString(1, c);
-			ndmap.addAll(execute());
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM common.NAVDATA WHERE (CODE=?) ORDER BY ITEMTYPE")) {
+			ps.setString(1, c);
+			ndmap.addAll(execute(ps));
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -159,10 +158,9 @@ public class GetNavData extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<NavigationDataBean> getAll(Navaid type) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT * FROM common.NAVDATA WHERE (ITEMTYPE=?)");
-			_ps.setInt(1, type.ordinal());
-			return execute();
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM common.NAVDATA WHERE (ITEMTYPE=?)")) {
+			ps.setInt(1, type.ordinal());
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -183,17 +181,16 @@ public class GetNavData extends DAO {
 		if (rw.startsWith("RW"))
 			rw = rw.substring(2);
 		
-		try {
-			prepareStatement("SELECT ?, R.ICAO, R.LATITUDE, R.LONGITUDE, N.FREQ, R.LENGTH, R.NAME, R.HDG, N.REGION, NULL AS LL, R.MAGVAR, IFNULL(R.SURFACE, ?), RR.NEWCODE, R.SIMVERSION "
-				+ "FROM common.RUNWAYS R LEFT JOIN common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND (R.NAME=RR.OLDCODE)) LEFT JOIN common.NAVDATA N ON ((N.CODE=R.ICAO) "
-				+ "AND (N.NAME=IFNULL(RR.NEWCODE,R.NAME)) AND (N.ITEMTYPE=?)) WHERE (R.ICAO=?) AND (R.NAME=?) AND (R.SIMVERSION=?)");
-			_ps.setInt(1, Navaid.RUNWAY.ordinal());
-			_ps.setInt(2, Surface.UNKNOWN.ordinal());
-			_ps.setInt(3, Navaid.RUNWAY.ordinal());
-			_ps.setString(4, a.getICAO());
-			_ps.setString(5, rw);
-			_ps.setInt(6, s.getCode());
-			List<NavigationDataBean> results = execute();
+		try (PreparedStatement ps = prepare("SELECT ?, R.ICAO, R.LATITUDE, R.LONGITUDE, N.FREQ, R.LENGTH, R.NAME, R.HDG, N.REGION, NULL AS LL, R.MAGVAR, IFNULL(R.SURFACE, ?), RR.NEWCODE, "
+			+ "R.SIMVERSION FROM common.RUNWAYS R LEFT JOIN common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND (R.NAME=RR.OLDCODE)) LEFT JOIN common.NAVDATA N ON ((N.CODE=R.ICAO) "
+			+ "AND (N.NAME=IFNULL(RR.NEWCODE,R.NAME)) AND (N.ITEMTYPE=?)) WHERE (R.ICAO=?) AND (R.NAME=?) AND (R.SIMVERSION=?)")) {
+			ps.setInt(1, Navaid.RUNWAY.ordinal());
+			ps.setInt(2, Surface.UNKNOWN.ordinal());
+			ps.setInt(3, Navaid.RUNWAY.ordinal());
+			ps.setString(4, a.getICAO());
+			ps.setString(5, rw);
+			ps.setInt(6, s.getCode());
+			List<NavigationDataBean> results = execute(ps);
 			return results.isEmpty() ? null : (Runway) results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -209,16 +206,15 @@ public class GetNavData extends DAO {
 	 */
 	public List<Runway> getRunways(ICAOAirport a, Simulator sim) throws DAOException {
 		Simulator s = (sim == null) ? Simulator.FSX : sim;
-		try {
-			prepareStatement("SELECT ?, R.ICAO, R.LATITUDE, R.LONGITUDE, N.FREQ, R.LENGTH, R.NAME, R.HDG, N.REGION, NULL AS LL, R.MAGVAR, IFNULL(R.SURFACE, ?), RR.NEWCODE, R.SIMVERSION FROM "
-				+ "common.RUNWAYS R LEFT JOIN common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND (R.NAME=RR.OLDCODE)) LEFT JOIN common.NAVDATA N ON "
-				+ "((N.CODE=R.ICAO) AND (N.NAME=IFNULL(RR.NEWCODE,R.NAME)) AND (N.ITEMTYPE=?)) WHERE (R.ICAO=?) AND (R.SIMVERSION=?)");
-			_ps.setInt(1, Navaid.RUNWAY.ordinal());
-			_ps.setInt(2, Surface.UNKNOWN.ordinal());
-			_ps.setInt(3, Navaid.RUNWAY.ordinal());
-			_ps.setString(4, a.getICAO());
-			_ps.setInt(5, s.getCode());
-			List<NavigationDataBean> results = execute();
+		try (PreparedStatement ps = prepare("SELECT ?, R.ICAO, R.LATITUDE, R.LONGITUDE, N.FREQ, R.LENGTH, R.NAME, R.HDG, N.REGION, NULL AS LL, R.MAGVAR, IFNULL(R.SURFACE, ?), RR.NEWCODE, "
+			+ "R.SIMVERSION FROM common.RUNWAYS R LEFT JOIN common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND (R.NAME=RR.OLDCODE)) LEFT JOIN common.NAVDATA N ON "
+			+ "((N.CODE=R.ICAO) AND (N.NAME=IFNULL(RR.NEWCODE,R.NAME)) AND (N.ITEMTYPE=?)) WHERE (R.ICAO=?) AND (R.SIMVERSION=?)")) {
+			ps.setInt(1, Navaid.RUNWAY.ordinal());
+			ps.setInt(2, Surface.UNKNOWN.ordinal());
+			ps.setInt(3, Navaid.RUNWAY.ordinal());
+			ps.setString(4, a.getICAO());
+			ps.setInt(5, s.getCode());
+			List<NavigationDataBean> results = execute(ps);
 			return results.stream().filter(Runway.class::isInstance).map(Runway.class::cast).collect(Collectors.toList());
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -240,35 +236,31 @@ public class GetNavData extends DAO {
 		try {
 			if (sim != Simulator.UNKNOWN) {
 				Simulator s = (sim.ordinal() < Simulator.FS9.ordinal()) ? Simulator.FS9 : sim;
-				prepareStatementWithoutLimits("SELECT R.*, RR.NEWCODE FROM common.RUNWAYS R LEFT JOIN common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND (R.NAME=RR.OLDCODE)) WHERE (R.ICAO=?) AND (R.SIMVERSION=?)");	
-				_ps.setString(1, a.getICAO());
-				_ps.setInt(2, s.getCode());
-				try (ResultSet rs = _ps.executeQuery()) {
-					while (rs.next()) {
-						Runway r = new Runway(rs.getDouble(4), rs.getDouble(5));
-						r.setCode(rs.getString(1));
-						r.setName(rs.getString(2));
-						r.setHeading(rs.getInt(6));
-						r.setLength(rs.getInt(7));
-						r.setMagVar(rs.getDouble(8));
-						r.setSurface(Surface.values()[rs.getInt(9)]);
-						// LL
-						r.setNewCode(rs.getString(11));
-						r.setSimulator(s);
-						results.add(r);
+				try (PreparedStatement ps = prepareWithoutLimits("SELECT R.*, RR.NEWCODE FROM common.RUNWAYS R LEFT JOIN common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND (R.NAME=RR.OLDCODE)) WHERE (R.ICAO=?) AND (R.SIMVERSION=?)")) {	
+					ps.setString(1, a.getICAO());
+					ps.setInt(2, s.getCode());
+					try (ResultSet rs = ps.executeQuery()) {
+						while (rs.next()) {
+							Runway r = new Runway(rs.getDouble(4), rs.getDouble(5));
+							r.setCode(rs.getString(1));
+							r.setName(rs.getString(2));
+							r.setHeading(rs.getInt(6));
+							r.setLength(rs.getInt(7));
+							r.setMagVar(rs.getDouble(8));
+							r.setSurface(Surface.values()[rs.getInt(9)]);
+							// LL
+							r.setNewCode(rs.getString(11));
+							r.setSimulator(s);
+							results.add(r);
+						}
 					}
 				}
-				
-				_ps.close();
 			}
 			
-			prepareStatementWithoutLimits("SELECT * FROM common.NAVDATA WHERE (ITEMTYPE=?) AND (CODE=?)");
-			_ps.setInt(1, Navaid.RUNWAY.ordinal());
-			_ps.setString(2, a.getICAO());
-			Collection<NavigationDataBean> r2 = execute();
-			for (NavigationDataBean nd : r2) {
-				if (nd.getType() == Navaid.RUNWAY)
-					results.add((Runway) nd);
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM common.NAVDATA WHERE (ITEMTYPE=?) AND (CODE=?)")) {
+				ps.setInt(1, Navaid.RUNWAY.ordinal());
+				ps.setString(2, a.getICAO());
+				execute(ps).stream().filter(Runway.class::isInstance).map(Runway.class::cast).forEach(results::add);
 			}
 		} catch (SQLException se) { 
 			throw new DAOException(se);
@@ -312,13 +304,12 @@ public class GetNavData extends DAO {
 
 		// Convert to meters
 		int dstM = (int)(distance * DistanceUnit.KM.getFactor() * 1000);
-		try {
-			prepareStatement("SELECT ND.*, ST_Distance_Sphere(LL, ST_PointFromText(?,?)) AS DST FROM common.NAVDATA ND WHERE (ND.ITEMTYPE=?) HAVING (DST<?) ORDER BY DST");
-			_ps.setString(1, formatLocation(loc));
-			_ps.setInt(2, WGS84_SRID);
-			_ps.setInt(3, Navaid.INT.ordinal());
-			_ps.setInt(4, dstM);
-			return execute();
+		try (PreparedStatement ps = prepare("SELECT ND.*, ST_Distance_Sphere(LL, ST_PointFromText(?,?)) AS DST FROM common.NAVDATA ND WHERE (ND.ITEMTYPE=?) HAVING (DST<?) ORDER BY DST")) {
+			ps.setString(1, formatLocation(loc));
+			ps.setInt(2, WGS84_SRID);
+			ps.setInt(3, Navaid.INT.ordinal());
+			ps.setInt(4, dstM);
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -338,13 +329,12 @@ public class GetNavData extends DAO {
 		
 		// Convert to meters
 		int dstM = (int)(distance * DistanceUnit.KM.getFactor() * 1000);
-		try {
-			prepareStatement("SELECT ND.*, ST_Distance_Sphere(LL, ST_PointFromText(?,?)) AS DST FROM common.NAVDATA ND WHERE (ND.ITEMTYPE<=?) HAVING (DST<?) ORDER BY DST");
-			_ps.setString(1, formatLocation(loc));
-			_ps.setInt(2, WGS84_SRID);
-			_ps.setInt(3, Navaid.NDB.ordinal());
-			_ps.setInt(4, dstM);
-			return execute();
+		try (PreparedStatement ps = prepare("SELECT ND.*, ST_Distance_Sphere(LL, ST_PointFromText(?,?)) AS DST FROM common.NAVDATA ND WHERE (ND.ITEMTYPE<=?) HAVING (DST<?) ORDER BY DST")) {
+			ps.setString(1, formatLocation(loc));
+			ps.setInt(2, WGS84_SRID);
+			ps.setInt(3, Navaid.NDB.ordinal());
+			ps.setInt(4, dstM);
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -353,9 +343,9 @@ public class GetNavData extends DAO {
 	/*
 	 * Helper method to iterate through a NAVDATA result set.
 	 */
-	private List<NavigationDataBean> execute() throws SQLException {
+	private static List<NavigationDataBean> execute(PreparedStatement ps) throws SQLException {
 		List<NavigationDataBean> results = new ArrayList<NavigationDataBean>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			ResultSetMetaData md = rs.getMetaData();
 			while (rs.next()) {
 				NavigationDataBean obj = null;
@@ -421,7 +411,6 @@ public class GetNavData extends DAO {
 			}
 		}
 
-		_ps.close();
 		return results;
 	}
 }

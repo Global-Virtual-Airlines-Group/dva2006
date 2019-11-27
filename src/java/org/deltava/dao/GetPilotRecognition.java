@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Acccess Object to read Pilots that have achieved certain accomplishments.
  * @author Luke
- * @version 8.7
+ * @version 9.0
  * @since 1.0
  */
 
@@ -49,10 +49,9 @@ public class GetPilotRecognition extends GetPilot {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Pilot> getByAccomplishment(int id) throws DAOException {
-		try {
-			prepareStatement("SELECT PILOT_ID FROM PILOT_ACCOMPLISHMENTS WHERE (AC_ID=?)");
-			_ps.setInt(1, id);
-			Collection<Integer> IDs = executeIDs();
+		try (PreparedStatement ps = prepare("SELECT PILOT_ID FROM PILOT_ACCOMPLISHMENTS WHERE (AC_ID=?)")) {
+			ps.setInt(1, id);
+			Collection<Integer> IDs = executeIDs(ps);
 			return getByID(IDs, "PILOTS").values();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -97,17 +96,16 @@ public class GetPilotRecognition extends GetPilot {
         if (eqType != null)
         	buf.append(" AND (P.EQTYPE=?)");
     	
-       try {
-    	   prepareStatement(buf.toString());
-          _ps.setInt(1, FlightStatus.OK.ordinal());
-          _ps.setInt(2, Rank.C.ordinal());
-          _ps.setBoolean(3, true);
-          _ps.setInt(4, Pilot.ACTIVE);
-          _ps.setInt(5, Rank.FO.ordinal());
-          _ps.setInt(6, Rank.C.ordinal());
+        try (PreparedStatement ps = prepare(buf.toString())) {
+          ps.setInt(1, FlightStatus.OK.ordinal());
+          ps.setInt(2, Rank.C.ordinal());
+          ps.setBoolean(3, true);
+          ps.setInt(4, Pilot.ACTIVE);
+          ps.setInt(5, Rank.FO.ordinal());
+          ps.setInt(6, Rank.C.ordinal());
           if (eqType != null)
-        	  _ps.setString(7, eqType);
-          return executeIDs();
+        	  ps.setString(7, eqType);
+          return executeIDs(ps);
        } catch (SQLException se) {
           throw new DAOException(se);
        }
@@ -125,21 +123,20 @@ public class GetPilotRecognition extends GetPilot {
     	if (results != null)
     		return results.clone();
     	
-    	try {
-    		prepareStatementWithoutLimits("SELECT P.ID, (SELECT COUNT(DISTINCT F.ID) FROM PIREPS F WHERE (P.ID=F.PILOT_ID) AND (F.STATUS=?)) AS LEGS, COUNT(SU.PILOT_ID) AS SC, "
-    			+ "IFNULL(N.STATUS, ?) AS NOMSTATUS FROM PILOTS P LEFT JOIN STATUS_UPDATES SU ON (P.ID=SU.PILOT_ID) AND (SU.TYPE=?) LEFT JOIN NOMINATIONS N ON (P.ID=N.ID) AND "
-    			+ "(N.QUARTER=?) WHERE (P.RANKING=?) AND (P.STATUS=?) AND (P.CREATED < DATE_SUB(CURDATE(), INTERVAL ? DAY)) GROUP BY P.ID HAVING (SC=0) AND (NOMSTATUS=?) AND (LEGS>=?)");
-    		_ps.setInt(1, FlightStatus.OK.ordinal());
-    		_ps.setInt(2, Nomination.Status.PENDING.ordinal());
-    		_ps.setInt(3, UpdateType.SR_CAPTAIN.ordinal());
-    		_ps.setInt(4, new Quarter().getYearQuarter());
-    		_ps.setInt(5, Rank.C.ordinal());
-    		_ps.setInt(6, Pilot.ACTIVE);
-    		_ps.setInt(7, SystemData.getInt("users.sc.minAge", 90));
-    		_ps.setInt(8, Nomination.Status.PENDING.ordinal());
-    		_ps.setInt(9, SystemData.getInt("users.sc.minFlights", 5));
+    	try (PreparedStatement ps = prepareWithoutLimits("SELECT P.ID, (SELECT COUNT(DISTINCT F.ID) FROM PIREPS F WHERE (P.ID=F.PILOT_ID) AND (F.STATUS=?)) AS LEGS, COUNT(SU.PILOT_ID) AS SC, "
+   			+ "IFNULL(N.STATUS, ?) AS NOMSTATUS FROM PILOTS P LEFT JOIN STATUS_UPDATES SU ON (P.ID=SU.PILOT_ID) AND (SU.TYPE=?) LEFT JOIN NOMINATIONS N ON (P.ID=N.ID) AND "
+   			+ "(N.QUARTER=?) WHERE (P.RANKING=?) AND (P.STATUS=?) AND (P.CREATED < DATE_SUB(CURDATE(), INTERVAL ? DAY)) GROUP BY P.ID HAVING (SC=0) AND (NOMSTATUS=?) AND (LEGS>=?)")) {
+    		ps.setInt(1, FlightStatus.OK.ordinal());
+    		ps.setInt(2, Nomination.Status.PENDING.ordinal());
+    		ps.setInt(3, UpdateType.SR_CAPTAIN.ordinal());
+    		ps.setInt(4, new Quarter().getYearQuarter());
+    		ps.setInt(5, Rank.C.ordinal());
+    		ps.setInt(6, Pilot.ACTIVE);
+    		ps.setInt(7, SystemData.getInt("users.sc.minAge", 90));
+    		ps.setInt(8, Nomination.Status.PENDING.ordinal());
+    		ps.setInt(9, SystemData.getInt("users.sc.minFlights", 5));
     		results = new CacheableSet<Integer>(GetPilotRecognition.class);
-    		results.addAll(executeIDs());
+    		results.addAll(executeIDs(ps));
     	} catch (SQLException se) {
     		throw new DAOException(se);
     	}

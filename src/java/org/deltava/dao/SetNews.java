@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.Notice;
 /**
  * A Data Access Object to write System News and NOTAMs to the database.
  * @author Luke
- * @version 1.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -29,27 +29,18 @@ public class SetNews extends DAO {
     * @throws DAOException if a JDBC error occ 
     */
    public void write(News n) throws DAOException {
-      try {
-         // Prepare the INSERT or UPDATE statement
-         if (n.getID() == 0) {
-            prepareStatement("INSERT INTO NEWS (PILOT_ID, DATE, SUBJECT, BODY) VALUES (?, ?, ?, ?)");
-         } else {
-            prepareStatement("UPDATE NEWS SET PILOT_ID=?, DATE=?, SUBJECT=?, BODY=? WHERE (ID=?)");
-            _ps.setInt(5, n.getID());
-         }
+	   try {
+		   try (PreparedStatement ps = prepare("INSERT INTO NEWS (PILOT_ID, DATE, SUBJECT, BODY, ID) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE PILOT_ID=VALUES(PILOT_ID), DATE=VALUES(DATE), "
+				+ " SUBJECT=VALUES(SUBJECT), BODY=VALUES(BODY)")) {
+			   ps.setInt(1, n.getAuthorID());
+			   ps.setTimestamp(2, createTimestamp(n.getDate()));
+			   ps.setString(3, n.getSubject());
+			   ps.setString(4, n.getBody());
+			   ps.setInt(5, n.getID());
+			   executeUpdate(ps, 1);
+		   }
          
-         // Set field values
-         _ps.setInt(1, n.getAuthorID());
-         _ps.setTimestamp(2, createTimestamp(n.getDate()));
-         _ps.setString(3, n.getSubject());
-         _ps.setString(4, n.getBody());
-         
-         // Write to the database
-         executeUpdate(1);
-         
-         // Update the object if we're creating
-         if (n.getID() == 0)
-            n.setID(getNewID());
+         if (n.getID() == 0) n.setID(getNewID());
       } catch (SQLException se) {
          throw new DAOException(se);
       }
@@ -62,30 +53,19 @@ public class SetNews extends DAO {
     */
    public void write(Notice n) throws DAOException {
       try {
-         // prepare the INSERT or UPDATE statement
-         if (n.getID() == 0) {
-            prepareStatement("INSERT INTO NOTAMS (PILOT_ID, EFFDATE, SUBJECT, BODY, ACTIVE, ISHTML) "
-            		+ "VALUES (?, ?, ?, ?, ?, ?)");   
-         } else {
-            prepareStatement("UPDATE NOTAMS SET PILOT_ID=?, EFFDATE=?, SUBJECT=?, BODY=?, ACTIVE=?, "
-            		+ "ISHTML=? WHERE (ID=?)");
-            _ps.setInt(7, n.getID());
-         }
+    	  try (PreparedStatement ps = prepare("INSERT INTO NOTAMS (PILOT_ID, EFFDATE, SUBJECT, BODY, ACTIVE, ISHTML, ID)  VALUES (?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE PILOT_ID=VALUES(PILOT_ID), "
+    			  + "EFFDATE=VALUES(EFFDATE), SUBJECT=VALUES(SUBJECT), BODY=VALUES(BODY), ACTIVE=VALUES(ACTIVE), ISHTML=VALUES(ISHTML)")) {
+    		  ps.setInt(1, n.getAuthorID());
+    		  ps.setTimestamp(2, createTimestamp(n.getDate()));
+    		  ps.setString(3, n.getSubject());
+    		  ps.setString(4, n.getBody());
+    		  ps.setBoolean(5, n.getActive());
+    		  ps.setBoolean(6, n.getIsHTML());
+    		  ps.setInt(7, n.getID());
+    		  executeUpdate(ps, 1);
+    	  }
          
-         // Set field values
-         _ps.setInt(1, n.getAuthorID());
-         _ps.setTimestamp(2, createTimestamp(n.getDate()));
-         _ps.setString(3, n.getSubject());
-         _ps.setString(4, n.getBody());
-         _ps.setBoolean(5, n.getActive());
-         _ps.setBoolean(6, n.getIsHTML());
-         
-         // Write to the database
-         executeUpdate(1);
-         
-         // Update the object if we're creating
-         if (n.getID() == 0)
-            n.setID(getNewID());
+         if (n.getID() == 0) n.setID(getNewID());
       } catch (SQLException se) {
          throw new DAOException(se);
       }
@@ -104,10 +84,9 @@ public class SetNews extends DAO {
       sqlBuf.append(isNOTAM ? "NOTAMS" : "NEWS");
       sqlBuf.append(" WHERE (ID=?)");
       
-      try {
-         prepareStatement(sqlBuf.toString());
-         _ps.setInt(1, id);
-         executeUpdate(1);
+      try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+         ps.setInt(1, id);
+         executeUpdate(ps, 1);
       } catch (SQLException se) {
          throw new DAOException(se);
       }

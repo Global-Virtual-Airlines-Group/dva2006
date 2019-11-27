@@ -12,7 +12,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Data Access Object to load Pilot IDs for Pilots who meet the entrance qualifications for an Equipment Type program.
  * @author Luke
- * @version 8.6
+ * @version 9.0
  * @since 2.3
  */
 
@@ -34,19 +34,17 @@ public class GetExamQualifications extends DAO {
 	 */
 	public Collection<Integer> getRatedPilots(EquipmentType eq) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT DISTINCT PILOT_ID FROM exams.CHECKRIDES WHERE (STATUS=?) AND (PASS=?) AND (EQTYPE=?)");
-			_ps.setInt(1, TestStatus.SCORED.ordinal());
-			_ps.setBoolean(2, true);
-			_ps.setString(3, eq.getName());
-			
 			// Load checkrides
 			Collection<Integer> crIDs = new LinkedHashSet<Integer>();
-			try (ResultSet rs = _ps.executeQuery()) {
-				while (rs.next())
-					crIDs.add(Integer.valueOf(rs.getInt(1)));
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT DISTINCT PILOT_ID FROM exams.CHECKRIDES WHERE (STATUS=?) AND (PASS=?) AND (EQTYPE=?)")) {
+				ps.setInt(1, TestStatus.SCORED.ordinal());
+				ps.setBoolean(2, true);
+				ps.setString(3, eq.getName());
+				try (ResultSet rs = ps.executeQuery()) {
+					while (rs.next())
+						crIDs.add(Integer.valueOf(rs.getInt(1)));
+				}
 			}
-			
-			_ps.close();
 			
 			// Check for FO exams
 			Collection<String> examNames = eq.getExamNames(Rank.FO);
@@ -64,23 +62,21 @@ public class GetExamQualifications extends DAO {
 			
 			buf.append(") GROUP BY PILOT_ID HAVING (CNT>=?)");
 			
-			// Init the SQL statement
-			int pos = 0;
-			prepareStatementWithoutLimits(buf.toString());
-			_ps.setInt(++pos, TestStatus.SCORED.ordinal());
-			_ps.setBoolean(++pos, true);
-			for (String eName : examNames)
-				_ps.setString(++pos, eName);
-			_ps.setInt(++pos, examNames.size());
+			// Load exam IDs
+			Collection<Integer> examIDs = new LinkedHashSet<Integer>(); int pos = 0;
+			try (PreparedStatement ps = prepareWithoutLimits(buf.toString())) {
+				ps.setInt(++pos, TestStatus.SCORED.ordinal());
+				ps.setBoolean(++pos, true);
+				for (String eName : examNames)
+					ps.setString(++pos, eName);
+				ps.setInt(++pos, examNames.size());
 			
-			// Load exams
-			Collection<Integer> examIDs = new LinkedHashSet<Integer>();
-			try (ResultSet rs = _ps.executeQuery()) {
-				while (rs.next())
-					examIDs.add(Integer.valueOf(rs.getInt(1)));
+				// Load exams
+				try (ResultSet rs = ps.executeQuery()) {
+					while (rs.next())
+						examIDs.add(Integer.valueOf(rs.getInt(1)));
+				}
 			}
-			
-			_ps.close();
 			
 			// Return the union of the two
 			return CollectionUtils.union(examIDs, crIDs);
@@ -96,17 +92,14 @@ public class GetExamQualifications extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Integer> getRatedPilots(String acType) throws DAOException {
-		try {
-			prepareStatement("SELECT ID FROM RATINGS WHERE (RATING=?)");
-			_ps.setString(1, acType);
-			
+		try (PreparedStatement ps = prepare("SELECT ID FROM RATINGS WHERE (RATING=?)")) {
+			ps.setString(1, acType);
 			Collection<Integer> results = new LinkedHashSet<Integer>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
 					results.add(Integer.valueOf(rs.getInt(1)));
 			}
 			
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);

@@ -1,4 +1,4 @@
-// Copyright 2008, 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2010, 2011, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.acars.Bandwidth;
 /**
  * A Data Access Object to load ACARS bandwidth statistics. 
  * @author Luke
- * @version 7.0
+ * @version 9.0
  * @since 2.1
  */
 
@@ -29,11 +29,9 @@ public class GetACARSBandwidth extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Bandwidth getLatest() throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT * FROM acars.BANDWIDTH WHERE (DURATION=?) ORDER BY PERIOD DESC LIMIT 1");
-			_ps.setInt(1, 1);
-			List<Bandwidth> results = execute();
-			return results.isEmpty() ? null : results.get(0);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM acars.BANDWIDTH WHERE (DURATION=?) ORDER BY PERIOD DESC LIMIT 1")) {
+			ps.setInt(1, 1);
+			return execute(ps).stream().findFirst().orElse(null);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -45,10 +43,9 @@ public class GetACARSBandwidth extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<Bandwidth> getHourly() throws DAOException {
-		try {
-			prepareStatement("SELECT * FROM acars.BANDWIDTH WHERE (DURATION=?) ORDER BY PERIOD DESC");
-			_ps.setInt(1, 60);
-			return execute();
+		try (PreparedStatement ps = prepare("SELECT * FROM acars.BANDWIDTH WHERE (DURATION=?) ORDER BY PERIOD DESC")) {
+			ps.setInt(1, 60);
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -60,10 +57,9 @@ public class GetACARSBandwidth extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<Bandwidth> getDaily() throws DAOException {
-		try {
-			prepareStatement("SELECT DATE(PERIOD) AS DT, 1440, AVG(CONS), SUM(BYTES_IN), SUM(BYTES_OUT), SUM(MSGS_IN), SUM(MSGS_OUT), "
-				+ "MAX(PEAK_CONS), MAX(PEAK_BYTES), MAX(PEAK_MSGS), SUM(ERRORS), SUM(BYTES_SAVED) FROM acars.BANDWIDTH GROUP BY DT DESC");
-			return execute();
+		try (PreparedStatement ps = prepare("SELECT DATE(PERIOD) AS DT, 1440, AVG(CONS), SUM(BYTES_IN), SUM(BYTES_OUT), SUM(MSGS_IN), SUM(MSGS_OUT), "
+			+ "MAX(PEAK_CONS), MAX(PEAK_BYTES), MAX(PEAK_MSGS), SUM(ERRORS), SUM(BYTES_SAVED) FROM acars.BANDWIDTH GROUP BY DT DESC")) {
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -72,9 +68,9 @@ public class GetACARSBandwidth extends DAO {
 	/*
 	 * Helper method to parse result sets.
 	 */
-	private List<Bandwidth> execute() throws SQLException {
+	private static List<Bandwidth> execute(PreparedStatement ps) throws SQLException {
 		List<Bandwidth> results = new ArrayList<Bandwidth>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
 				Bandwidth bw = new Bandwidth(toInstant(rs.getTimestamp(1)));
 				bw.setInterval(rs.getInt(2));
@@ -90,7 +86,6 @@ public class GetACARSBandwidth extends DAO {
 			}
 		}
 		
-		_ps.close();
 		return results;
 	}
 }

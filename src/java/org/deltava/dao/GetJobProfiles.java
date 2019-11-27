@@ -1,4 +1,4 @@
-// Copyright 2010, 2011, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.hr.*;
 /**
  * A Data Access Object to read Job applications and profiles from the database.
  * @author Luke
- * @version 7.0
+ * @version 9.0
  * @since 3.4
  */
 
@@ -30,12 +30,9 @@ public class GetJobProfiles extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Profile getProfile(int id) throws DAOException {
-		try {
-			prepareStatement("SELECT JP.*, P.FIRSTNAME, P.LASTNAME FROM JOBAPROFILES JP, PILOTS P "
-				+ "WHERE (JP.ID=P.ID) AND (JP.ID=?)");
-			_ps.setInt(1, id);
-			List<Profile> results = execute();
-			return results.isEmpty() ? null : results.get(0);
+		try (PreparedStatement ps = prepare("SELECT JP.*, P.FIRSTNAME, P.LASTNAME FROM JOBAPROFILES JP, PILOTS P WHERE (JP.ID=P.ID) AND (JP.ID=?)")) {
+			ps.setInt(1, id);
+			return execute(ps).stream().findFirst().orElse(null);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -47,10 +44,8 @@ public class GetJobProfiles extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Profile> getProfiles() throws DAOException {
-		try {
-			prepareStatement("SELECT JP.*, P.FIRSTNAME, P.LASTNAME FROM JOBAPROFILES JP, PILOTS P "
-					+ "WHERE (JP.ID=P.ID) ORDER BY P.LASTNAME, P.FIRSTNAME");
-			return execute();
+		try (PreparedStatement ps = prepare("SELECT JP.*, P.FIRSTNAME, P.LASTNAME FROM JOBAPROFILES JP, PILOTS P WHERE (JP.ID=P.ID) ORDER BY P.LASTNAME, P.FIRSTNAME")) {
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -59,9 +54,9 @@ public class GetJobProfiles extends DAO {
 	/*
 	 * Helper method for Profile result sets.
 	 */
-	private List<Profile> execute() throws SQLException {
+	private static List<Profile> execute(PreparedStatement ps) throws SQLException {
 		List<Profile> results = new ArrayList<Profile>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
 				Profile p = new Profile(rs.getInt(1));
 				p.setCreatedOn(rs.getTimestamp(2).toInstant());
@@ -73,7 +68,6 @@ public class GetJobProfiles extends DAO {
 			}
 		}
 		
-		_ps.close();
 		return results;
 	}
 }

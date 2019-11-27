@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2012, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.util.cache.CacheManager;
 /**
  * A Data Access Object to write Signature Images.
  * @author Luke
- * @version 5.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -35,16 +35,14 @@ public class SetSignatureImage extends DAO {
 	 * @see Pilot#getHasSignature()
 	 */
 	public void write(Pilot p, int x, int y, String ext, boolean isApproved) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("REPLACE INTO SIGNATURES (ID, WC_SIG, X, Y, EXT, ISAPPROVED, "
-					+ "MODIFIED) VALUES (?, ?, ?, ?, LCASE(?), ?, NOW())");
-			_ps.setInt(1, p.getID());
-			_ps.setBinaryStream(2, p.getInputStream(), p.getSize());
-			_ps.setInt(3, x);
-			_ps.setInt(4, y);
-			_ps.setString(5, ext);
-			_ps.setBoolean(6, isApproved);
-			executeUpdate(1);
+		try (PreparedStatement ps = 	prepareWithoutLimits("REPLACE INTO SIGNATURES (ID, WC_SIG, X, Y, EXT, ISAPPROVED, MODIFIED) VALUES (?, ?, ?, ?, LCASE(?), ?, NOW())")) {
+			ps.setInt(1, p.getID());
+			ps.setBinaryStream(2, p.getInputStream(), p.getSize());
+			ps.setInt(3, x);
+			ps.setInt(4, y);
+			ps.setString(5, ext);
+			ps.setBoolean(6, isApproved);
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		} finally {
@@ -58,10 +56,9 @@ public class SetSignatureImage extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void delete(int pilotID) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("DELETE FROM SIGNATURES WHERE (ID=?)");
-			_ps.setInt(1, pilotID);
-			executeUpdate(0);
+		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM SIGNATURES WHERE (ID=?)")) {
+			ps.setInt(1, pilotID);
+			executeUpdate(ps, 0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		} finally {

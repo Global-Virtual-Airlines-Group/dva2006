@@ -1,4 +1,4 @@
-// Copyright 2005, 2008, 2009, 2011, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2008, 2009, 2011, 2016, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.flight.*;
 /**
  * A Data Access Object to retrieve ACARS Flight Reports from the database.
  * @author Luke
- * @version 8.1
+ * @version 9.0
  * @since 1.0
  */
 
@@ -31,10 +31,9 @@ public class GetFlightReportACARS extends GetFlightReports {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<FlightReport> getByEvent(int id) throws DAOException {
-		try {
-			prepareStatement("SELECT PR.*, PC.COMMENTS, PC.REMARKS, APR.* FROM PIREPS PR, ACARS_PIREPS APR LEFT JOIN PIREP_COMMENT PC ON (APR.ID=PC.ID) WHERE (PR.ID=APR.ID) AND (PR.EVENT_ID=?)");
-			_ps.setInt(1, id);
-			return execute();
+		try (PreparedStatement ps = prepare("SELECT PR.*, PC.COMMENTS, PC.REMARKS, APR.* FROM PIREPS PR, ACARS_PIREPS APR LEFT JOIN PIREP_COMMENT PC ON (APR.ID=PC.ID) WHERE (PR.ID=APR.ID) AND (PR.EVENT_ID=?)")) {
+			ps.setInt(1, id);
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -47,10 +46,9 @@ public class GetFlightReportACARS extends GetFlightReports {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<FlightReport> getByDate(java.time.Instant dt) throws DAOException {
-		try {
-			prepareStatement("SELECT PR.*, PC.COMMENTS, PC.REMARKS, APR.* FROM PIREPS PR, ACARS_PIREPS APR LEFT JOIN PIREP_COMMENT PC ON (APR.ID=PC.ID) WHERE (PR.ID=APR.ID) AND (PR.DATE=DATE(?))");
-			_ps.setTimestamp(1, createTimestamp(dt));
-			return execute();
+		try (PreparedStatement ps = prepare("SELECT PR.*, PC.COMMENTS, PC.REMARKS, APR.* FROM PIREPS PR, ACARS_PIREPS APR LEFT JOIN PIREP_COMMENT PC ON (APR.ID=PC.ID) WHERE (PR.ID=APR.ID) AND (PR.DATE=DATE(?))")) {
+			ps.setTimestamp(1, createTimestamp(dt));
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -72,10 +70,9 @@ public class GetFlightReportACARS extends GetFlightReports {
 			buf.append(orderBy);
 		}
 
-		try {
-			prepareStatement(buf.toString());
-			_ps.setInt(1, id);
-			return execute();
+		try (PreparedStatement ps = prepare(buf.toString())) {
+			ps.setInt(1, id);
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -102,18 +99,17 @@ public class GetFlightReportACARS extends GetFlightReports {
 		sqlBuf.append(".PIREP_COMMENT PC ON (APR.ID=PC.ID) WHERE (PR.ID=APR.ID) AND (PR.PILOT_ID=?) AND (PR.SUBMITTED > DATE_SUB(NOW(), INTERVAL ? MINUTE)) AND (PR.STATUS=?) AND "
 			+ "(PR.AIRLINE=?) AND (PR.FLIGHT=?) AND (PR.LEG=?) AND (PR.AIRPORT_D=?) AND (PR.AIRPORT_A=?) AND (PR.EQTYPE=?)");
 		
-		try {
-			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setInt(1, pilotID);
-			_ps.setInt(2, 20);
-			_ps.setInt(3, FlightStatus.SUBMITTED.ordinal());
-			_ps.setString(4, f.getAirline().getCode());
-			_ps.setInt(5, f.getFlightNumber());
-			_ps.setInt(6, f.getLeg());
-			_ps.setString(7, f.getAirportD().getIATA());
-			_ps.setString(8, f.getAirportA().getIATA());
-			_ps.setString(9, f.getEquipmentType());
-			return execute();
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+			ps.setInt(1, pilotID);
+			ps.setInt(2, 20);
+			ps.setInt(3, FlightStatus.SUBMITTED.ordinal());
+			ps.setString(4, f.getAirline().getCode());
+			ps.setInt(5, f.getFlightNumber());
+			ps.setInt(6, f.getLeg());
+			ps.setString(7, f.getAirportD().getIATA());
+			ps.setString(8, f.getAirportA().getIATA());
+			ps.setString(9, f.getEquipmentType());
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -138,10 +134,9 @@ public class GetFlightReportACARS extends GetFlightReports {
 		sqlBuf.append(db);
 		sqlBuf.append(".PIREP_COMMENT PC ON (APR.ID=PC.ID) WHERE (PR.ID=APR.ID) AND (APR.ACARS_ID=?)");
 		
-		try {
-			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setInt(1, acarsID);
-			return execute();
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+			ps.setInt(1, acarsID);
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

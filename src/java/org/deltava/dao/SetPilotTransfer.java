@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2015, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.*;
 /**
  * A Data Access Object to transfer pilots between Airlines.
  * @author Luke
- * @version 8.3
+ * @version 9.0
  * @since 1.0
  */
 
@@ -46,38 +46,39 @@ public class SetPilotTransfer extends SetPilot {
 			startTransaction();
 
 			// Write the new Pilot object
-			prepareStatement(sqlBuf.toString());
-			_ps.setString(1, p.getFirstName());
-			_ps.setString(2, p.getLastName());
-			_ps.setInt(3, Pilot.ACTIVE);
-			_ps.setString(4, p.getDN());
-			_ps.setString(5, p.getEmail());
-			_ps.setString(6, p.getLocation());
-			_ps.setDouble(7, p.getLegacyHours());
-			_ps.setString(8, p.getHomeAirport());
-			_ps.setString(9, p.getEquipmentType());
-			_ps.setInt(10, p.getRank().ordinal());
-			_ps.setString(11, p.getNetworkID(OnlineNetwork.VATSIM));
-			_ps.setString(12, p.getNetworkID(OnlineNetwork.IVAO));
-			_ps.setString(13, p.getNetworkID(OnlineNetwork.PILOTEDGE));
-			_ps.setTimestamp(14, createTimestamp(p.getCreatedOn()));
-			_ps.setInt(15, p.getLoginCount());
-			_ps.setTimestamp(16, createTimestamp(p.getLastLogin()));
-			_ps.setTimestamp(17, createTimestamp(p.getLastLogoff()));
-			_ps.setString(18, p.getTZ().getID());
-			_ps.setInt(19, p.getNotifyCode());
-			_ps.setInt(20, p.getEmailAccess());
-			_ps.setString(21, p.getUIScheme());
-			_ps.setInt(22, p.getViewCount());
-			_ps.setString(23, p.getLoginHost());
-			_ps.setString(24, p.getDateFormat());
-			_ps.setString(25, p.getTimeFormat());
-			_ps.setString(26, p.getNumberFormat());
-			_ps.setInt(27, p.getAirportCodeType().ordinal());
-			_ps.setInt(28, p.getDistanceType().ordinal());
-			_ps.setBoolean(29, (p instanceof Applicant) ? true : ((Pilot) p).getShowNavBar());
-			_ps.setInt(30, id);
-			executeUpdate(1);
+			try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+				ps.setString(1, p.getFirstName());
+				ps.setString(2, p.getLastName());
+				ps.setInt(3, Pilot.ACTIVE);
+				ps.setString(4, p.getDN());
+				ps.setString(5, p.getEmail());
+				ps.setString(6, p.getLocation());
+				ps.setDouble(7, p.getLegacyHours());
+				ps.setString(8, p.getHomeAirport());
+				ps.setString(9, p.getEquipmentType());
+				ps.setInt(10, p.getRank().ordinal());
+				ps.setString(11, p.getNetworkID(OnlineNetwork.VATSIM));
+				ps.setString(12, p.getNetworkID(OnlineNetwork.IVAO));
+				ps.setString(13, p.getNetworkID(OnlineNetwork.PILOTEDGE));
+				ps.setTimestamp(14, createTimestamp(p.getCreatedOn()));
+				ps.setInt(15, p.getLoginCount());
+				ps.setTimestamp(16, createTimestamp(p.getLastLogin()));
+				ps.setTimestamp(17, createTimestamp(p.getLastLogoff()));
+				ps.setString(18, p.getTZ().getID());
+				ps.setInt(19, p.getNotifyCode());
+				ps.setInt(20, p.getEmailAccess());
+				ps.setString(21, p.getUIScheme());
+				ps.setInt(22, p.getViewCount());
+				ps.setString(23, p.getLoginHost());
+				ps.setString(24, p.getDateFormat());
+				ps.setString(25, p.getTimeFormat());
+				ps.setString(26, p.getNumberFormat());
+				ps.setInt(27, p.getAirportCodeType().ordinal());
+				ps.setInt(28, p.getDistanceType().ordinal());
+				ps.setBoolean(29, (p instanceof Applicant) ? true : ((Pilot) p).getShowNavBar());
+				ps.setInt(30, id);
+				executeUpdate(ps, 1);
+			}
 
 			// Write the ratings - don't bother writing roles
 			writeRatings(id, ratings, dbName, false);

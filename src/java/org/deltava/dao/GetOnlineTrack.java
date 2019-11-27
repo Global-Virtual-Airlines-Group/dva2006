@@ -15,7 +15,7 @@ import org.deltava.beans.schedule.Airport;
  * from the online track database which contains information for all Airlines populated from the ServInfo feed by the 
  * {@link org.deltava.tasks.OnlineTrackTask} scheduled task. 
  * @author Luke
- * @version 8.6
+ * @version 9.0
  * @since 2.4
  */
 
@@ -40,25 +40,17 @@ public class GetOnlineTrack extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public int getTrackID(int pilotID, OnlineNetwork net, java.time.Instant dt, Airport aD, Airport aA) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT OT.ID FROM online.TRACKS OT WHERE (OT.USER_ID=?) AND (OT.AIRPORT_D=?) AND (OT.AIRPORT_A=?) "
-					+ "AND (OT.NETWORK=?) AND (OT.CREATED_ON > DATE_SUB(?, INTERVAL ? HOUR)) ORDER BY OT.ID DESC LIMIT 1");
-			_ps.setInt(1, pilotID);
-			_ps.setString(2, aD.getICAO());
-			_ps.setString(3, aA.getICAO());
-			_ps.setString(4, net.toString());
-			_ps.setTimestamp(5, createTimestamp(dt));
-			_ps.setInt(6, 18);
-			
-			// Execute the query
-			int id = 0;
-			try (ResultSet rs = _ps.executeQuery()) {
-				if (rs.next())
-					id = rs.getInt(1);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT OT.ID FROM online.TRACKS OT WHERE (OT.USER_ID=?) AND (OT.AIRPORT_D=?) AND (OT.AIRPORT_A=?) "
+					+ "AND (OT.NETWORK=?) AND (OT.CREATED_ON > DATE_SUB(?, INTERVAL ? HOUR)) ORDER BY OT.ID DESC LIMIT 1")) {
+			ps.setInt(1, pilotID);
+			ps.setString(2, aD.getICAO());
+			ps.setString(3, aA.getICAO());
+			ps.setString(4, net.toString());
+			ps.setTimestamp(5, createTimestamp(dt));
+			ps.setInt(6, 18);
+			try (ResultSet rs = ps.executeQuery()) {
+				return rs.next() ? rs.getInt(1) : 0;
 			}
-			
-			_ps.close();
-			return id;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -71,17 +63,11 @@ public class GetOnlineTrack extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public String getRoute(int trackID) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT ROUTE FROM online.TRACKS WHERE (ID=?) LIMIT 1");
-			_ps.setInt(1, trackID);
-			String route = null;
-			try (ResultSet rs = _ps.executeQuery()) {
-				if (rs.next())
-					route = rs.getString(1);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT ROUTE FROM online.TRACKS WHERE (ID=?) LIMIT 1")) {
+			ps.setInt(1, trackID);
+			try (ResultSet rs = ps.executeQuery()) {
+				return rs.next() ? rs.getString(1) : null;
 			}
-			
-			_ps.close();
-			return route;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -94,13 +80,11 @@ public class GetOnlineTrack extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<PositionData> getRaw(int trackID) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT OD.*, OT.USER_ID FROM online.TRACKS OT, online.TRACKDATA OD WHERE (OT.ID=?) AND (OT.ID=OD.ID) ORDER BY OD.REPORT_TIME");
-			_ps.setInt(1, trackID);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT OD.*, OT.USER_ID FROM online.TRACKS OT, online.TRACKDATA OD WHERE (OT.ID=?) AND (OT.ID=OD.ID) ORDER BY OD.REPORT_TIME")) {
+			ps.setInt(1, trackID);
 			
-			// Execute the query
 			List<PositionData> results = new ArrayList<PositionData>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					PositionData pd = new PositionData(rs.getTimestamp(2).toInstant());
 					pd.setFlightID(rs.getInt(1));
@@ -112,7 +96,6 @@ public class GetOnlineTrack extends DAO {
 				}
 			}
 			
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -126,17 +109,11 @@ public class GetOnlineTrack extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public boolean hasTrack(int pirepID) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT PILOT_ID FROM ONLINE_TRACK WHERE (PIREP_ID=?) LIMIT 1");
-			_ps.setInt(1, pirepID);
-			boolean hasTrack = false;
-			try (ResultSet rs = _ps.executeQuery()) {
-				if (rs.next())
-					hasTrack = (rs.getInt(1) != 0);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT PILOT_ID FROM ONLINE_TRACK WHERE (PIREP_ID=?) LIMIT 1")) {
+			ps.setInt(1, pirepID);
+			try (ResultSet rs = ps.executeQuery()) {
+				return rs.next() && (rs.getInt(1) != 0);
 			}
-			
-			_ps.close();
-			return hasTrack;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -149,13 +126,12 @@ public class GetOnlineTrack extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<PositionData> get(int pirepID) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT * FROM ONLINE_TRACK WHERE (PIREP_ID=?) ORDER BY DATE");
-			_ps.setInt(1, pirepID);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM ONLINE_TRACK WHERE (PIREP_ID=?) ORDER BY DATE")) {
+			ps.setInt(1, pirepID);
 			
 			// Execute the query
 			List<PositionData> results = new ArrayList<PositionData>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					PositionData pd = new PositionData(rs.getTimestamp(3).toInstant());
 					pd.setPilotID(rs.getInt(1));
@@ -167,7 +143,6 @@ public class GetOnlineTrack extends DAO {
 				}
 			}
 			
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -183,19 +158,17 @@ public class GetOnlineTrack extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Instant> getFetches(OnlineNetwork network, Instant startTime, Instant endTime) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT PULLTIME FROM online.TRACK_PULLS WHERE (NETWORK=?) AND (PULLTIME>=?) AND (PULLTIME<=?) ORDER BY PULLTIME");
-			_ps.setString(1, network.toString());
-			_ps.setTimestamp(2, createTimestamp(startTime));
-			_ps.setTimestamp(3, createTimestamp(endTime));
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT PULLTIME FROM online.TRACK_PULLS WHERE (NETWORK=?) AND (PULLTIME>=?) AND (PULLTIME<=?) ORDER BY PULLTIME")) {
+			ps.setString(1, network.toString());
+			ps.setTimestamp(2, createTimestamp(startTime));
+			ps.setTimestamp(3, createTimestamp(endTime));
 			
 			Collection<Instant> results = new ArrayList<Instant>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
 					results.add(toInstant(rs.getTimestamp(1)));
 			}
 			
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -210,18 +183,16 @@ public class GetOnlineTrack extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<OnlineNetwork> getFetchNetworks(Instant startTime, Instant endTime) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT DISTINCT NETWORK FROM online.TRACK_PULLS WHERE (PULLTIME>=?) AND (PULLTIME<=?)");
-			_ps.setTimestamp(1, createTimestamp(startTime));
-			_ps.setTimestamp(2, createTimestamp(endTime));
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT DISTINCT NETWORK FROM online.TRACK_PULLS WHERE (PULLTIME>=?) AND (PULLTIME<=?)")) {
+			ps.setTimestamp(1, createTimestamp(startTime));
+			ps.setTimestamp(2, createTimestamp(endTime));
 			
 			Collection<OnlineNetwork> networks = new HashSet<OnlineNetwork>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
 					networks.add(OnlineNetwork.fromName(rs.getString(1)));
 			}
 			
-			_ps.close();
 			return networks;
 		} catch (SQLException se) {
 			throw new DAOException(se);

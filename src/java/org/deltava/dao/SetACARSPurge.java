@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 /**
  * A Data Access Object to purge ACARS data.
  * @author Luke
- * @version 4.2
+ * @version 9.0
  * @since 3.2
  */
 
@@ -32,10 +32,9 @@ public class SetACARSPurge extends SetACARSLog {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public int purgeMessages(int hours) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("DELETE FROM acars.MESSAGES WHERE (DATE < DATE_SUB(NOW(), INTERVAL ? HOUR))");
-			_ps.setInt(1, hours);
-			return executeUpdate(0);
+		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM acars.MESSAGES WHERE (DATE < DATE_SUB(NOW(), INTERVAL ? HOUR))")) {
+			ps.setInt(1, hours);
+			return executeUpdate(ps, 0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -53,24 +52,21 @@ public class SetACARSPurge extends SetACARSLog {
 			startTransaction();
 			
 			// Get IDs to purge
-			prepareStatementWithoutLimits("SELECT F.ID FROM acars.FLIGHTS F LEFT JOIN acars.FLIGHT_DISPATCHER FD ON "
-					+ "(F.ID=FD.ID) WHERE (F.PIREP=?) AND (F.ARCHIVED=?) AND (F.CREATED < DATE_SUB(NOW(), "
-					+ "INTERVAL ? HOUR)) AND (IFNULL(FD.DISPATCHER_ID, ?)=?)");
-			_ps.setBoolean(1, false);
-			_ps.setBoolean(2, false);
-			_ps.setInt(3, hours);
-			_ps.setInt(4, 0);
-			_ps.setInt(5, 0);
-			
-			// Execute the query
 			Collection<Integer> results = new LinkedHashSet<Integer>();
-			try (ResultSet rs = _ps.executeQuery()) {
-				while (rs.next())	
-					results.add(Integer.valueOf(rs.getInt(1)));
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT F.ID FROM acars.FLIGHTS F LEFT JOIN acars.FLIGHT_DISPATCHER FD ON (F.ID=FD.ID) WHERE (F.PIREP=?) AND (F.ARCHIVED=?) "
+				+ "AND (F.CREATED < DATE_SUB(NOW(), INTERVAL ? HOUR)) AND (IFNULL(FD.DISPATCHER_ID, ?)=?)")) {
+				ps.setBoolean(1, false);
+				ps.setBoolean(2, false);
+				ps.setInt(3, hours);
+				ps.setInt(4, 0);
+				ps.setInt(5, 0);
+				try (ResultSet rs = ps.executeQuery()) {
+					while (rs.next())	
+						results.add(Integer.valueOf(rs.getInt(1)));
+				}
 			}
 			
-			// Clean up and remove active
-			_ps.close();
+			// Remove active
 			results.removeAll(activeIDs);
 
 			// Purge the ones we want to
@@ -95,10 +91,9 @@ public class SetACARSPurge extends SetACARSLog {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public int purgeTakeoffs(int hours) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("DELETE FROM acars.TOLAND WHERE (EVENT_TIME < DATE_SUB(NOW(), INTERVAL ? HOUR))");
-			_ps.setInt(1, hours);
-			return executeUpdate(0);
+		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM acars.TOLAND WHERE (EVENT_TIME < DATE_SUB(NOW(), INTERVAL ? HOUR))")) {
+			ps.setInt(1, hours);
+			return executeUpdate(ps, 0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -115,14 +110,17 @@ public class SetACARSPurge extends SetACARSLog {
 			startTransaction();
 			
 			// Purge positions
-			prepareStatementWithoutLimits("DELETE FROM acars.POSITIONS WHERE (FLIGHT_ID=?)");
-			_ps.setInt(1, flightID);
-			int posCount = executeUpdate(0);
+			int posCount = 0;
+			try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM acars.POSITIONS WHERE (FLIGHT_ID=?)")) {
+				ps.setInt(1, flightID);
+				posCount = executeUpdate(ps, 0);
+			}
 			
 			// Purge ATC
-			prepareStatementWithoutLimits("DELETE FROM acars.POSITION_ATC WHERE (FLIGHT_ID=?)");
-			_ps.setInt(1, flightID);
-			executeUpdate(0);
+			try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM acars.POSITION_ATC WHERE (FLIGHT_ID=?)")) {
+				ps.setInt(1, flightID);
+				executeUpdate(ps, 0);
+			}
 			
 			commitTransaction();
 			return posCount;

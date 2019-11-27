@@ -14,7 +14,7 @@ import org.deltava.dao.file.SetSerializedPosition;
 /**
  * A Data Access Object to write to the ACARS position archive.
  * @author Luke
- * @version 8.7
+ * @version 9.0
  * @since 4.1
  */
 
@@ -39,26 +39,30 @@ public class SetACARSArchive extends DAO {
 			startTransaction();
 			
 			// Delete the existing flight data
-			prepareStatementWithoutLimits("DELETE FROM acars.POSITIONS WHERE (FLIGHT_ID=?)");
-			_ps.setInt(1, flightID);
-			executeUpdate(0);
+			try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM acars.POSITIONS WHERE (FLIGHT_ID=?)")) {
+				ps.setInt(1, flightID);
+				executeUpdate(ps, 0);
+			}
 			
 			// Delete the existing XACARS flight data
-			prepareStatementWithoutLimits("DELETE FROM acars.POSITION_XARCHIVE WHERE (FLIGHT_ID=?)");
-			_ps.setInt(1, flightID);
-			executeUpdate(0);
+			try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM acars.POSITION_XARCHIVE WHERE (FLIGHT_ID=?)")) {
+				ps.setInt(1, flightID);
+				executeUpdate(ps, 0);
+			}
 			
 			// Delete the ATC data
-			prepareStatementWithoutLimits("DELETE FROM acars.POSITION_ATC WHERE (FLIGHT_ID=?)");
-			_ps.setInt(1, flightID);
-			executeUpdate(0);
+			try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM acars.POSITION_ATC WHERE (FLIGHT_ID=?)")) {
+				ps.setInt(1, flightID);
+				executeUpdate(ps, 0);
+			}
 
 			// Mark the flight as archived
-			prepareStatementWithoutLimits("UPDATE acars.FLIGHTS SET ARCHIVED=?, PIREP=? WHERE (ID=?)");
-			_ps.setBoolean(1, true);
-			_ps.setBoolean(2, true);
-			_ps.setInt(3, flightID);
-			executeUpdate(0);
+			try (PreparedStatement ps = prepareWithoutLimits("UPDATE acars.FLIGHTS SET ARCHIVED=?, PIREP=? WHERE (ID=?)")) {
+				ps.setBoolean(1, true);
+				ps.setBoolean(2, true);
+				ps.setInt(3, flightID);
+				executeUpdate(ps, 0);
+			}
 
 			// Write the serialized data
 			if (positions.size() > 0) {
@@ -99,15 +103,14 @@ public class SetACARSArchive extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void update(ArchiveMetadata md) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("REPLACE INTO acars.ARCHIVE (ID, CNT, SIZE, CRC, ARCHIVED, FMT) VALUES (?, ?, ?, ?, ?, ?)");
-			_ps.setInt(1, md.getID());
-			_ps.setInt(2, md.getPositionCount());
-			_ps.setInt(3, md.getSize());
-			_ps.setLong(4, md.getCRC32());
-			_ps.setTimestamp(5, createTimestamp(md.getArchivedOn()));
-			_ps.setInt(6, (md.getFormat() == null) ? -1 : md.getFormat().ordinal());
-			executeUpdate(1);
+		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO acars.ARCHIVE (ID, CNT, SIZE, CRC, ARCHIVED, FMT) VALUES (?, ?, ?, ?, ?, ?)")) {
+			ps.setInt(1, md.getID());
+			ps.setInt(2, md.getPositionCount());
+			ps.setInt(3, md.getSize());
+			ps.setLong(4, md.getCRC32());
+			ps.setTimestamp(5, createTimestamp(md.getArchivedOn()));
+			ps.setInt(6, (md.getFormat() == null) ? -1 : md.getFormat().ordinal());
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -119,10 +122,9 @@ public class SetACARSArchive extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void delete(int flightID) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("DELETE FROM acars.ARCHIVE WHERE (ID=?)");
-			_ps.setInt(1, flightID);
-			executeUpdate(0);
+		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM acars.ARCHIVE WHERE (ID=?)")) {
+			ps.setInt(1, flightID);
+			executeUpdate(ps, 0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

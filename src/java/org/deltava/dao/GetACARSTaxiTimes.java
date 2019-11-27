@@ -11,7 +11,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to calculate average taxi times. 
  * @author Luke
- * @version 8.6
+ * @version 9.0
  * @since 8.6
  */
 
@@ -56,18 +56,16 @@ public class GetACARSTaxiTimes extends DAO {
 		sqlBuf.append(formatDBName(db));
 		sqlBuf.append(".PIREPS P WHERE (AP.ID=P.ID) AND (AP.TAXI_TIME < AP.TAKEOFF_TIME) AND (AP.TAKEOFF_TIME < DATE_ADD(AP.TAXI_TIME, INTERVAL 2 HOUR)) AND (P.AIRPORT_D=?) AND (P.STATUS=?)");
 		
-		try {
-			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setString(1, a.getIATA());
-			_ps.setInt(2, FlightStatus.OK.ordinal());
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+			ps.setString(1, a.getIATA());
+			ps.setInt(2, FlightStatus.OK.ordinal());
 			
 			int result = -1;
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next())
 					result = rs.getInt(1);
 			}
 			
-			_ps.close();
 			_cache.add(new CacheableLong(key, result));
 			return result;
 		} catch (SQLException se) {
@@ -97,18 +95,16 @@ public class GetACARSTaxiTimes extends DAO {
 		sqlBuf.append(formatDBName(db));
 		sqlBuf.append(".PIREPS P WHERE (AP.ID=P.ID) AND (AP.LANDING_TIME < AP.END_TIME) AND (AP.END_TIME < DATE_ADD(AP.LANDING_TIME, INTERVAL 2 HOUR)) AND (P.AIRPORT_A=?) AND (P.STATUS=?)");
 		
-		try {
-			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setString(1, a.getIATA());
-			_ps.setInt(2, FlightStatus.OK.ordinal());
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+			ps.setString(1, a.getIATA());
+			ps.setInt(2, FlightStatus.OK.ordinal());
 			
 			int result = -1;
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next())
 					result = rs.getInt(1);
 			}
 			
-			_ps.close();
 			_cache.add(new CacheableLong(key, result));
 			return result;
 		} catch (SQLException se) {

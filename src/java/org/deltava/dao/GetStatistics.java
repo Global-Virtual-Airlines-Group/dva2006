@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to retrieve Airline statistics.
  * @author Luke
- * @version 8.1
+ * @version 9.0
  * @since 1.0
  */
 
@@ -40,7 +40,6 @@ public class GetStatistics extends DAO  {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public AirlineTotals getAirlineTotals() throws DAOException {
-
 		synchronized (GetStatistics.class) {
 			// Check the cache
 			AirlineTotals result = _aCache.get(AirlineTotals.class);
@@ -49,79 +48,73 @@ public class GetStatistics extends DAO  {
 
 			result = new AirlineTotals(Instant.now());
 			try {
-				// Create prepared statement
-				prepareStatement("SELECT COUNT(P.ID), ROUND(SUM(P.FLIGHT_TIME), 1), SUM(P.DISTANCE), "
-						+ "SUM(IF((P.ATTR & ?) > 0, 1, 0)), ROUND(SUM(IF((P.ATTR & ?) > 0, P.FLIGHT_TIME, 0)), 1), "
-						+ "SUM(IF((P.ATTR & ?) > 0, P.DISTANCE, 0)), COUNT(AP.ACARS_ID), "
-						+ "ROUND(SUM(IF(AP.ACARS_ID, P.FLIGHT_TIME, 0)), 1), SUM(IF(AP.ACARS_ID, P.DISTANCE, 0)) "
-						+ "FROM PIREPS P LEFT JOIN ACARS_PIREPS AP ON (P.ID=AP.ID) WHERE (P.STATUS=?)");
-				_ps.setQueryTimeout(25);
-				_ps.setInt(1, FlightReport.ATTR_ONLINE_MASK);
-				_ps.setInt(2, FlightReport.ATTR_ONLINE_MASK);
-				_ps.setInt(3, FlightReport.ATTR_ONLINE_MASK);
-				_ps.setInt(4, FlightStatus.OK.ordinal());
+				try (PreparedStatement ps = prepare("SELECT COUNT(P.ID), ROUND(SUM(P.FLIGHT_TIME), 1), SUM(P.DISTANCE), SUM(IF((P.ATTR & ?) > 0, 1, 0)), ROUND(SUM(IF((P.ATTR & ?) > 0, P.FLIGHT_TIME, 0)), 1), "
+					+ "SUM(IF((P.ATTR & ?) > 0, P.DISTANCE, 0)), COUNT(AP.ACARS_ID), ROUND(SUM(IF(AP.ACARS_ID, P.FLIGHT_TIME, 0)), 1), SUM(IF(AP.ACARS_ID, P.DISTANCE, 0)) FROM PIREPS P LEFT JOIN "
+					+ "ACARS_PIREPS AP ON (P.ID=AP.ID) WHERE (P.STATUS=?)")) {
+					ps.setQueryTimeout(25);
+					ps.setInt(1, FlightReport.ATTR_ONLINE_MASK);
+					ps.setInt(2, FlightReport.ATTR_ONLINE_MASK);
+					ps.setInt(3, FlightReport.ATTR_ONLINE_MASK);
+					ps.setInt(4, FlightStatus.OK.ordinal());
 
-				// Count all airline totals
-				try (ResultSet rs = _ps.executeQuery()) {
-					if (rs.next()) {
-						result.setTotalLegs(rs.getInt(1));
-						result.setTotalHours(rs.getDouble(2));
-						result.setTotalMiles(rs.getLong(3));
-						result.setOnlineLegs(rs.getInt(4));
-						result.setOnlineHours(rs.getDouble(5));
-						result.setOnlineMiles(rs.getLong(6));
-						result.setACARSLegs(rs.getInt(7));
-						result.setACARSHours(rs.getDouble(8));
-						result.setACARSMiles(rs.getInt(9));
+					// Count all airline totals
+					try (ResultSet rs = ps.executeQuery()) {
+						if (rs.next()) {
+							result.setTotalLegs(rs.getInt(1));
+							result.setTotalHours(rs.getDouble(2));
+							result.setTotalMiles(rs.getLong(3));
+							result.setOnlineLegs(rs.getInt(4));
+							result.setOnlineHours(rs.getDouble(5));
+							result.setOnlineMiles(rs.getLong(6));
+							result.setACARSLegs(rs.getInt(7));
+							result.setACARSHours(rs.getDouble(8));
+							result.setACARSMiles(rs.getInt(9));
+						}
 					}
 				}
-
-				_ps.close();
 
 				// Get MTD/YTD start dates
 				Timestamp mt = new Timestamp(ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS).withDayOfMonth(1).toEpochSecond() * 1000); 
 				Timestamp yt = new Timestamp(ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS).withDayOfYear(1).toEpochSecond() * 1000);
 
 				// Count MTD/YTD totals
-				prepareStatement("SELECT SUM(IF((DATE >= ?), 1, 0)), ROUND(SUM(IF((DATE >= ?), FLIGHT_TIME, 0))), SUM(IF((DATE >= ?), DISTANCE, 0)), SUM(IF((DATE >= ?), 1, 0)), ROUND(SUM(IF((DATE >= ?), FLIGHT_TIME, 0))), "
-						+ "SUM(IF((DATE >= ?), DISTANCE, 0)) FROM PIREPS WHERE (DATE >= ?) AND (STATUS=?)");
-				_ps.setQueryTimeout(10);
-				_ps.setTimestamp(1, mt);
-				_ps.setTimestamp(2, mt);
-				_ps.setTimestamp(3, mt);
-				_ps.setTimestamp(4, yt);
-				_ps.setTimestamp(5, yt);
-				_ps.setTimestamp(6, yt);
-				_ps.setTimestamp(7, yt);
-				_ps.setInt(8, FlightStatus.OK.ordinal());
+				try (PreparedStatement ps = prepare("SELECT SUM(IF((DATE >= ?), 1, 0)), ROUND(SUM(IF((DATE >= ?), FLIGHT_TIME, 0))), SUM(IF((DATE >= ?), DISTANCE, 0)), SUM(IF((DATE >= ?), 1, 0)), "
+					+ "ROUND(SUM(IF((DATE >= ?), FLIGHT_TIME, 0))), SUM(IF((DATE >= ?), DISTANCE, 0)) FROM PIREPS WHERE (DATE >= ?) AND (STATUS=?)")) {
+					ps.setQueryTimeout(10);
+					ps.setTimestamp(1, mt);
+					ps.setTimestamp(2, mt);
+					ps.setTimestamp(3, mt);
+					ps.setTimestamp(4, yt);
+					ps.setTimestamp(5, yt);
+					ps.setTimestamp(6, yt);
+					ps.setTimestamp(7, yt);
+					ps.setInt(8, FlightStatus.OK.ordinal());
 
-				// Do the query
-				try (ResultSet rs = _ps.executeQuery()) {
-					if (rs.next()) {
-						result.setMTDLegs(rs.getInt(1));
-						result.setMTDHours(rs.getDouble(2));
-						result.setMTDMiles(rs.getInt(3));
-						result.setYTDLegs(rs.getInt(4));
-						result.setYTDHours(rs.getDouble(5));
-						result.setYTDMiles(rs.getInt(6));
+					// Do the query
+					try (ResultSet rs = ps.executeQuery()) {
+						if (rs.next()) {
+							result.setMTDLegs(rs.getInt(1));
+							result.setMTDHours(rs.getDouble(2));
+							result.setMTDMiles(rs.getInt(3));
+							result.setYTDLegs(rs.getInt(4));
+							result.setYTDHours(rs.getDouble(5));
+							result.setYTDMiles(rs.getInt(6));
+						}
 					}
 				}
-
-				_ps.close();
 
 				// Get Pilot Totals
-				prepareStatement("SELECT COUNT(ID), SUM(CASE STATUS WHEN ? THEN 1 WHEN ? THEN 1 END) FROM PILOTS");
-				_ps.setQueryTimeout(10);
-				_ps.setInt(1, Pilot.ACTIVE);
-				_ps.setInt(2, Pilot.ON_LEAVE);
-				try (ResultSet rs = _ps.executeQuery()) {
-					if (rs.next()) {
-						result.setTotalPilots(rs.getInt(1));
-						result.setActivePilots(rs.getInt(2));
+				try (PreparedStatement ps = prepare("SELECT COUNT(ID), SUM(CASE STATUS WHEN ? THEN 1 WHEN ? THEN 1 END) FROM PILOTS")) {
+					ps.setQueryTimeout(10);
+					ps.setInt(1, Pilot.ACTIVE);
+					ps.setInt(2, Pilot.ON_LEAVE);
+					try (ResultSet rs = ps.executeQuery()) {
+						if (rs.next()) {
+							result.setTotalPilots(rs.getInt(1));
+							result.setActivePilots(rs.getInt(2));
+						}
 					}
 				}
-						
-				_ps.close();
 			} catch (SQLException se) {
 				throw new DAOException(se);
 			}
@@ -145,20 +138,12 @@ public class GetStatistics extends DAO  {
 		sqlBuf.append(formatDBName(dbName));
 		sqlBuf.append(".PILOTS WHERE ((STATUS=?) OR (STATUS=?))");
 
-		try {
-			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setInt(1, Pilot.ACTIVE);
-			_ps.setInt(2, Pilot.ON_LEAVE);
-
-			// Execute the query
-			int result = 0;
-			try (ResultSet rs = _ps.executeQuery()) {
-				if (rs.next())
-					result = rs.getInt(1);
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+			ps.setInt(1, Pilot.ACTIVE);
+			ps.setInt(2, Pilot.ON_LEAVE);
+			try (ResultSet rs = ps.executeQuery()) {
+				return rs.next() ? rs.getInt(1) : 0;
 			}
-
-			_ps.close();
-			return result;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -180,21 +165,17 @@ public class GetStatistics extends DAO  {
 
 		try {
 			// Get total Active Pilots
-			prepareStatementWithoutLimits("SELECT COUNT(*) FROM PILOTS WHERE ((STATUS=?) OR (STATUS=?))");
-			_ps.setInt(1, Pilot.ACTIVE);
-			_ps.setInt(2, Pilot.ON_LEAVE);
-
-			// Execute the Query
 			int totalSize = 0;
-			try (ResultSet rs = _ps.executeQuery()) {
-				if (rs.next())
-					totalSize = rs.getInt(1);
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT COUNT(*) FROM PILOTS WHERE ((STATUS=?) OR (STATUS=?))")) {
+				ps.setInt(1, Pilot.ACTIVE);
+				ps.setInt(2, Pilot.ON_LEAVE);
+				try (ResultSet rs = ps.executeQuery()) {
+					totalSize = rs.next() ? rs.getInt(1) : 0;
+				}
 			}
 			
-			_ps.close();
-			if (totalSize == 0)
-				return Collections.emptyMap();
-
+			if (totalSize == 0) return Collections.emptyMap();
+			
 			// Build the quantiles
 			Map<Integer, java.time.Instant> results = new LinkedHashMap<Integer, java.time.Instant>();
 			for (Iterator<Float> i = keys.iterator(); i.hasNext();) {
@@ -202,17 +183,14 @@ public class GetStatistics extends DAO  {
 
 				// Prepare the statement
 				setQueryStart(Math.round(totalSize * key / 100));
-				prepareStatementWithoutLimits("SELECT CREATED FROM PILOTS WHERE ((STATUS=?) OR (STATUS=?)) ORDER BY CREATED LIMIT 1");
-				_ps.setInt(1, Pilot.ACTIVE);
-				_ps.setInt(2, Pilot.ON_LEAVE);
-
-				// Execute the Query
-				try (ResultSet rs = _ps.executeQuery()) {
-					if (rs.next())
-						results.put(Integer.valueOf(Math.round(key)), rs.getTimestamp(1).toInstant());
+				try (PreparedStatement ps = prepareWithoutLimits("SELECT CREATED FROM PILOTS WHERE ((STATUS=?) OR (STATUS=?)) ORDER BY CREATED LIMIT 1")) {
+					ps.setInt(1, Pilot.ACTIVE);
+					ps.setInt(2, Pilot.ON_LEAVE);
+					try (ResultSet rs = ps.executeQuery()) {
+						if (rs.next())
+							results.put(Integer.valueOf(Math.round(key)), rs.getTimestamp(1).toInstant());
+					}
 				}
-
-				_ps.close();
 			}
 
 			return results;
@@ -227,15 +205,14 @@ public class GetStatistics extends DAO  {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<MembershipTotals> getJoinStats() throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT ROUND(DATEDIFF(CURDATE(), CREATED) / 30 + 1) * 30 AS MEMAGE, DATE_SUB(CURDATE(), INTERVAL ROUND(DATEDIFF(CURDATE(), CREATED) / 30 + 1) * 30 DAY) AS MEMDT, "
-				+ "COUNT(ID) FROM PILOTS WHERE ((STATUS=?) OR (STATUS=?)) GROUP BY MEMAGE ORDER BY MEMAGE DESC");
-			_ps.setInt(1, Pilot.ACTIVE);
-			_ps.setInt(2, Pilot.ON_LEAVE);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT ROUND(DATEDIFF(CURDATE(), CREATED) / 30 + 1) * 30 AS MEMAGE, DATE_SUB(CURDATE(), INTERVAL ROUND(DATEDIFF(CURDATE(), CREATED) / 30 + 1) * 30 DAY) AS MEMDT, "
+			+ "COUNT(ID) FROM PILOTS WHERE ((STATUS=?) OR (STATUS=?)) GROUP BY MEMAGE ORDER BY MEMAGE DESC")) {
+			ps.setInt(1, Pilot.ACTIVE);
+			ps.setInt(2, Pilot.ON_LEAVE);
 
 			// Execute the Query
 			Collection<MembershipTotals> results = new ArrayList<MembershipTotals>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					MembershipTotals mt = new MembershipTotals(rs.getTimestamp(2).toInstant());
 					mt.setID(rs.getInt(1));
@@ -244,7 +221,6 @@ public class GetStatistics extends DAO  {
 				}
 			}
 
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -289,14 +265,12 @@ public class GetStatistics extends DAO  {
 		sqlBuf.append((ids.size() == 1) ? ")" : "))");
 		sqlBuf.append(" GROUP BY AUTHOR_ID");
 
-		try {
-			prepareStatementWithoutLimits(sqlBuf.toString());
-			try (ResultSet rs = _ps.executeQuery()) {
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
 					results.put(Integer.valueOf(rs.getInt(1)), Long.valueOf(rs.getInt(2)));
 			}
 
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -316,14 +290,11 @@ public class GetStatistics extends DAO  {
 		if (result != null)
 			return result.getValue();
 
-		try {
-			prepareStatementWithoutLimits("SELECT COUNT(*) FROM common.COOLER_POSTS WHERE (CREATED > DATE_SUB(NOW(), INTERVAL ? DAY)) LIMIT 1");
-			_ps.setInt(1, days);
-			try (ResultSet rs = _ps.executeQuery()) {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT COUNT(*) FROM common.COOLER_POSTS WHERE (CREATED > DATE_SUB(NOW(), INTERVAL ? DAY)) LIMIT 1")) {
+			ps.setInt(1, days);
+			try (ResultSet rs = ps.executeQuery()) {
 				result = new CacheableLong(Integer.valueOf(days), rs.next() ? rs.getInt(1) : 0);
 			}
-
-			_ps.close();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

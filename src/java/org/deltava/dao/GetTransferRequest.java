@@ -13,7 +13,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Data Access Object to read Pilot Transfer requests.
  * @author Luke
- * @version 8.6
+ * @version 9.0
  * @since 1.0
  */
 
@@ -34,14 +34,13 @@ public class GetTransferRequest extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public TransferRequest get(int pilotID) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT * FROM TXREQUESTS WHERE (ID=?) LIMIT 1");
-			_ps.setInt(1, pilotID);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM TXREQUESTS WHERE (ID=?) LIMIT 1")) {
+			ps.setInt(1, pilotID);
 
 			// Execute the query, if empty return null
-			List<TransferRequest> results = execute();
+			List<TransferRequest> results = execute(ps);
 			loadCheckRides(results);
-			return results.isEmpty() ? null : results.get(0);
+			return results.stream().findFirst().orElse(null);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -56,25 +55,23 @@ public class GetTransferRequest extends DAO {
 	public boolean hasTransfer(int pilotID) throws DAOException {
 		try {
 			Collection<String> dbNames = new LinkedHashSet<String>();
-			prepareStatementWithoutLimits("SELECT DISTINCT DBNAME FROM common.AIRLINEINFO");
-			try (ResultSet rs = _ps.executeQuery()) {
-				while (rs.next())
-					dbNames.add(rs.getString(1));
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT DISTINCT DBNAME FROM common.AIRLINEINFO")) {
+				try (ResultSet rs = ps.executeQuery()) {
+					while (rs.next())
+						dbNames.add(rs.getString(1));
+				}
 			}
-			
-			_ps.close();
 			
 			// Iterate through the databases to find out if they have a checkride
 			boolean hasTX = false;
 			for (Iterator<String> i = dbNames.iterator(); !hasTX && i.hasNext(); ) {
 				String db = formatDBName(i.next());
-				prepareStatementWithoutLimits("SELECT COUNT(*) FROM " + db + ".TXREQUESTS WHERE (ID=?)");
-				_ps.setInt(1, pilotID);
-				try (ResultSet rs = _ps.executeQuery()) {
-					hasTX = rs.next() ? (rs.getInt(1) > 0) : false;
+				try (PreparedStatement ps = prepareWithoutLimits("SELECT COUNT(*) FROM " + db + ".TXREQUESTS WHERE (ID=?)")) {
+					ps.setInt(1, pilotID);
+					try (ResultSet rs = ps.executeQuery()) {
+						hasTX = rs.next() ? (rs.getInt(1) > 0) : false;
+					}
 				}
-					
-				_ps.close();
 			}
 			
 			return hasTX;
@@ -96,20 +93,13 @@ public class GetTransferRequest extends DAO {
 		if (eqType != null)
 			buf.append(" WHERE (EQTYPE=?)");
 		
-		try {
-			prepareStatementWithoutLimits(buf.toString());
+		try (PreparedStatement ps = prepareWithoutLimits(buf.toString())) {
 			if (eqType != null)
-				_ps.setString(1, eqType);
+				ps.setString(1, eqType);
 			
-			// Execute the query
-			int result = 0;
-			try (ResultSet rs = _ps.executeQuery()) {
-				if (rs.next())
-					result = rs.getInt(1);
+			try (ResultSet rs = ps.executeQuery()) {
+				return rs.next() ? rs.getInt(1) : 0;
 			}
-			
-			_ps.close();
-			return result;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -122,12 +112,11 @@ public class GetTransferRequest extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public TransferRequest getByCheckRide(int checkRideID) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT TX.* FROM TXREQUESTS TX LEFT JOIN TXRIDES TC ON (TX.ID=TC.ID) WHERE (TC.CHECKRIDE_ID=?) LIMIT 1");
-			_ps.setInt(1, checkRideID);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT TX.* FROM TXREQUESTS TX LEFT JOIN TXRIDES TC ON (TX.ID=TC.ID) WHERE (TC.CHECKRIDE_ID=?) LIMIT 1")) {
+			ps.setInt(1, checkRideID);
 
 			// Execute the query, if empty return null
-			List<TransferRequest> results = execute();
+			List<TransferRequest> results = execute(ps);
 			loadCheckRides(results);
 			return results.isEmpty() ? null : results.get(0);
 		} catch (SQLException se) {
@@ -142,14 +131,13 @@ public class GetTransferRequest extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<TransferRequest> getAged(int minAge) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT TX.* FROM TXREQUESTS TX LEFT JOIN TXRIDES TC ON (TX.ID=TC.ID) LEFT JOIN exams.CHECKRIDES CR ON (TC.CHECKRIDE_ID=CR.ID) WHERE "
-				+ "(TX.CREATED < DATE_SUB(NOW(), INTERVAL ? DAY)) AND (TX.STATUS<>?) AND (CR.STATUS<>?) AND (CR.STATUS<>?) ORDER BY TX.CREATED");
-			_ps.setInt(1, minAge);
-			_ps.setInt(2, TransferStatus.COMPLETE.ordinal());
-			_ps.setInt(3, TestStatus.SUBMITTED.ordinal());
-			_ps.setInt(4, TestStatus.SCORED.ordinal());
-			List<TransferRequest> results = execute();
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT TX.* FROM TXREQUESTS TX LEFT JOIN TXRIDES TC ON (TX.ID=TC.ID) LEFT JOIN exams.CHECKRIDES CR ON (TC.CHECKRIDE_ID=CR.ID) WHERE "
+				+ "(TX.CREATED < DATE_SUB(NOW(), INTERVAL ? DAY)) AND (TX.STATUS<>?) AND (CR.STATUS<>?) AND (CR.STATUS<>?) ORDER BY TX.CREATED")) {
+			ps.setInt(1, minAge);
+			ps.setInt(2, TransferStatus.COMPLETE.ordinal());
+			ps.setInt(3, TestStatus.SUBMITTED.ordinal());
+			ps.setInt(4, TestStatus.SCORED.ordinal());
+			List<TransferRequest> results = execute(ps);
 			loadCheckRides(results);
 			return results;
 		} catch (SQLException se) {
@@ -169,9 +157,8 @@ public class GetTransferRequest extends DAO {
 		StringBuilder sqlBuf = new StringBuilder("SELECT DISTINCT TX.* FROM TXREQUESTS TX LEFT JOIN TXRIDES TC ON (TX.ID=TC.ID) LEFT JOIN exams.CHECKRIDES CR ON (TC.CHECKRIDE_ID=CR.ID) ORDER BY ");
 		sqlBuf.append((orderBy != null) ? orderBy : "TX.STATUS DESC, CR.STATUS DESC, TX.CREATED DESC");
 		
-		try {
-			prepareStatement(sqlBuf.toString());
-			List<TransferRequest> results = execute();
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			List<TransferRequest> results = execute(ps);
 			loadCheckRides(results);
 			return results;
 		} catch (SQLException se) {
@@ -189,14 +176,12 @@ public class GetTransferRequest extends DAO {
 	public List<TransferRequest> getByEQ(String eqType, String orderBy) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT DISTINCT TX.* FROM TXREQUESTS TX LEFT JOIN TXRIDES TC ON "
-			+ "(TX.ID=TC.ID) LEFT JOIN exams.CHECKRIDES CR ON (TC.CHECKRIDE_ID=CR.ID) WHERE (TX.EQTYPE=?) ORDER BY ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT DISTINCT TX.* FROM TXREQUESTS TX LEFT JOIN TXRIDES TC ON (TX.ID=TC.ID) LEFT JOIN exams.CHECKRIDES CR ON (TC.CHECKRIDE_ID=CR.ID) WHERE (TX.EQTYPE=?) ORDER BY ");
 		sqlBuf.append((orderBy != null) ? orderBy : "TX.STATUS DESC, CR.STATUS DESC, TX.CREATED DESC");
 		
-		try {
-			prepareStatement(sqlBuf.toString());
-			_ps.setString(1, eqType);
-			List<TransferRequest> results = execute();
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setString(1, eqType);
+			List<TransferRequest> results = execute(ps);
 			loadCheckRides(results);
 			return results;
 		} catch (SQLException se) {
@@ -207,9 +192,9 @@ public class GetTransferRequest extends DAO {
 	/*
 	 * Helper method to iterate through the result set.
 	 */
-	private List<TransferRequest> execute() throws SQLException {
+	private static List<TransferRequest> execute(PreparedStatement ps) throws SQLException {
 		List<TransferRequest> results = new ArrayList<TransferRequest>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
 				TransferRequest txreq = new TransferRequest(rs.getInt(1), rs.getString(3));
 				txreq.setStatus(TransferStatus.values()[rs.getInt(2)]);
@@ -221,7 +206,6 @@ public class GetTransferRequest extends DAO {
 			}
 		}
 
-		_ps.close();
 		return results;
 	}
 	
@@ -233,8 +217,7 @@ public class GetTransferRequest extends DAO {
 		if (txreqs.isEmpty())
 			return;
 		
-		StringBuilder sqlBuf = new StringBuilder("SELECT TC.ID, CR.ID, CR.STATUS FROM TXRIDES TC LEFT JOIN "
-			+ "exams.CHECKRIDES CR ON (TC.CHECKRIDE_ID=CR.ID) WHERE TC.ID IN (");
+		StringBuilder sqlBuf = new StringBuilder("SELECT TC.ID, CR.ID, CR.STATUS FROM TXRIDES TC LEFT JOIN exams.CHECKRIDES CR ON (TC.CHECKRIDE_ID=CR.ID) WHERE TC.ID IN (");
 		for (Iterator<TransferRequest> i = txreqs.iterator(); i.hasNext(); ) {
 			TransferRequest tx = i.next();
 			sqlBuf.append(tx.getID());
@@ -243,20 +226,17 @@ public class GetTransferRequest extends DAO {
 		}
 		
 		sqlBuf.append(") ORDER BY CR.ID");
-		prepareStatement(sqlBuf.toString());
-		
-		// Execute the query
-		try (ResultSet rs = _ps.executeQuery()) {
-			while (rs.next()) {
-				TransferRequest tx = reqs.get(Integer.valueOf(rs.getInt(1)));
-				if (tx != null) {
-					tx.addCheckRideID(rs.getInt(2));
-					if (!tx.getCheckRideSubmitted())
-						tx.setCheckRideSubmitted(rs.getInt(3) == TestStatus.SUBMITTED.ordinal());
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					TransferRequest tx = reqs.get(Integer.valueOf(rs.getInt(1)));
+					if (tx != null) {
+						tx.addCheckRideID(rs.getInt(2));
+						if (!tx.getCheckRideSubmitted())
+							tx.setCheckRideSubmitted(rs.getInt(3) == TestStatus.SUBMITTED.ordinal());
+					}
 				}
 			}
 		}
-		
-		_ps.close();
 	}
 }

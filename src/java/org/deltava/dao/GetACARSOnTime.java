@@ -1,4 +1,4 @@
-// Copyright 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load ACARS on-time data from the database.  
  * @author Luke
- * @version 8.4
+ * @version 9.0
  * @since 8.4
  */
 
@@ -33,12 +33,11 @@ public class GetACARSOnTime extends DAO {
 	public ScheduleEntry getOnTime(ACARSFlightReport afr) throws DAOException {
 		if (afr.getOnTime() == OnTime.UNKNOWN) return null;
 		
-		try {
-			prepareStatementWithoutLimits("SELECT AIRLINE, FLIGHT, LEG, TIME_D, TIME_A, ATIME_D, ATIME_A FROM ACARS_ONTIME WHERE (ID=?) LIMIT 1");
-			_ps.setInt(1, afr.getID());
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT AIRLINE, FLIGHT, LEG, TIME_D, TIME_A, ATIME_D, ATIME_A FROM ACARS_ONTIME WHERE (ID=?) LIMIT 1")) {
+			ps.setInt(1, afr.getID());
 			
 			ScheduleEntry se = null;
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next()) {
 					se = new ScheduleEntry(SystemData.getAirline(rs.getString(1)), rs.getInt(2), rs.getInt(3));
 					se.setAirportD(afr.getAirportD()); se.setAirportA(afr.getAirportA());
@@ -49,7 +48,6 @@ public class GetACARSOnTime extends DAO {
 				}
 			}
 			
-			_ps.close();
 			return se;
 		} catch (SQLException se) {
 			throw new DAOException(se);

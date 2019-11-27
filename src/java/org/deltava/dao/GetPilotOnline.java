@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2010, 2011, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2010, 2011, 2012, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load Pilot data for Online Network operations.
  * @author Luke
- * @version 7.2
+ * @version 9.0
  * @since 1.0
  */
 
@@ -45,21 +45,18 @@ public class GetPilotOnline extends PilotReadDAO {
 		if (results != null)
 			return new LinkedHashMap<String, Integer>(results); 
 		
-		try {
-			// Prepare the statement
-			String colName = (network == OnlineNetwork.PILOTEDGE ? "PE" : network.toString()) + "_ID";
-			prepareStatement("SELECT ID, " + colName + " FROM PILOTS WHERE ((STATUS=?) OR (STATUS=?)) AND (" + colName + " IS NOT NULL)");
-			_ps.setInt(1, Pilot.ACTIVE);
-			_ps.setInt(2, Pilot.ON_LEAVE);
+		String colName = (network == OnlineNetwork.PILOTEDGE ? "PE" : network.toString()) + "_ID";
+		try (PreparedStatement ps = prepare("SELECT ID, " + colName + " FROM PILOTS WHERE ((STATUS=?) OR (STATUS=?)) AND (" + colName + " IS NOT NULL)")) {
+			ps.setInt(1, Pilot.ACTIVE);
+			ps.setInt(2, Pilot.ON_LEAVE);
 			
 			// Execute the Query
 			results = new CacheableMap<String, Integer>(network);
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
 					results.put(rs.getString(2), Integer.valueOf(rs.getInt(1)));
 			}
 			
-			_ps.close();
 			_idCache.add(results);
 			return new LinkedHashMap<String, Integer>(results); 
 		} catch (SQLException se) {
@@ -83,11 +80,10 @@ public class GetPilotOnline extends PilotReadDAO {
 		sqlBuf.append(colName);
 		sqlBuf.append(") > 0)");
 		
-		try {
-			prepareStatement(sqlBuf.toString());
-			_ps.setInt(1, Pilot.ACTIVE);
-			_ps.setInt(2, Pilot.ON_LEAVE);
-			return getByID(executeIDs(), "PILOTS").values();
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setInt(1, Pilot.ACTIVE);
+			ps.setInt(2, Pilot.ON_LEAVE);
+			return getByID(executeIDs(ps), "PILOTS").values();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

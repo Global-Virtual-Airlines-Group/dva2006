@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.gvagroup.tile.TileAddress;
 /**
  * A Data Access Object to retrieve image data from the database.
  * @author Luke
- * @version 7.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -37,11 +37,10 @@ public class GetImage extends DAO {
      * @throws DAOException if a JDBC error occurs
      */
     private byte[] execute(int id, String sql) throws DAOException {
-        try {
-            prepareStatementWithoutLimits(sql);
-            _ps.setInt(1, id);
+    	try (PreparedStatement ps = prepareWithoutLimits(sql)) {
+            ps.setInt(1, id);
             byte[] imgBuffer = null;
-            try (ResultSet rs = _ps.executeQuery()) {
+            try (ResultSet rs = ps.executeQuery()) {
             	if (rs.next()) {
             		imgBuffer = rs.getBytes(1);
             		if (rs.getMetaData().getColumnCount() > 1) {
@@ -51,7 +50,6 @@ public class GetImage extends DAO {
             	}
             }
             
-            _ps.close();
             return imgBuffer;
         } catch (SQLException se) {
             throw new DAOException(se);
@@ -88,16 +86,15 @@ public class GetImage extends DAO {
     	sqlBuf.append(formatDBName(dbName));
     	sqlBuf.append(".SIGNATURES WHERE (ID=?) LIMIT 1");
     	
+    	java.time.Instant dt = null;
     	try {
-    		prepareStatement(sqlBuf.toString());
-    		_ps.setInt(1, id);
-    		java.time.Instant dt = null;
-    		try (ResultSet rs = _ps.executeQuery()) {
-    			if (rs.next())
-    				dt = toInstant(rs.getTimestamp(1));
+    		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+    			ps.setInt(1, id);
+    			try (ResultSet rs = ps.executeQuery()) {
+    				if (rs.next())
+    					dt = toInstant(rs.getTimestamp(1));
+    			}
     		}
-    		
-    		_ps.close();
     		
     		// Update the cache and return
     		if (dt != null)
@@ -174,21 +171,17 @@ public class GetImage extends DAO {
     	if (img != null)
     		return img.getData();
     	
-    	try {
-    		prepareStatementWithoutLimits("SELECT IMG FROM acars.TRACKS WHERE (X=?) AND (Y=?) AND (Z=?) LIMIT 1");
-    		_ps.setInt(1, addr.getX());
-    		_ps.setInt(2, addr.getY());
-    		_ps.setInt(3, addr.getLevel());
+    	try (PreparedStatement ps = prepareWithoutLimits("SELECT IMG FROM acars.TRACKS WHERE (X=?) AND (Y=?) AND (Z=?) LIMIT 1")) {
+    		ps.setInt(1, addr.getX());
+    		ps.setInt(2, addr.getY());
+    		ps.setInt(3, addr.getLevel());
     		
     		byte[] results = null;
-    		try (ResultSet rs = _ps.executeQuery()) {
+    		try (ResultSet rs = ps.executeQuery()) {
     			if (rs.next())
     				results = rs.getBytes(1);
     		}
 
-    		_ps.close();
-    		
-    		// Put in cache
     		_trackCache.add(new CacheableBlob(cacheKey, results));
     		return results;
     	} catch (SQLException se) {
@@ -203,18 +196,11 @@ public class GetImage extends DAO {
      * @throws DAOException if a JDBC error occurs
      */
     public boolean isSignatureAuthorized(int id) throws DAOException {
-    	try {
-    		prepareStatementWithoutLimits("SELECT ISAPPROVED FROM SIGNATURES WHERE (ID=?) LIMIT 1");
-    		_ps.setInt(1, id);
-    		
-    		boolean isOK = false;
-    		try (ResultSet rs = _ps.executeQuery()) {
-    			if (rs.next())
-    				isOK = rs.getBoolean(1);
+    	try (PreparedStatement ps = prepareWithoutLimits("SELECT ISAPPROVED FROM SIGNATURES WHERE (ID=?) LIMIT 1")) {
+    		ps.setInt(1, id);
+    		try (ResultSet rs = ps.executeQuery()) {
+    			return rs.next() && rs.getBoolean(1);
     		}
-    		
-    		_ps.close();
-    		return isOK;
     	} catch (SQLException se) {
     		throw new DAOException(se);
     	}

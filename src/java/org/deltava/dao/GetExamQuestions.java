@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to retrieve Examination questions.
  * @author Luke
- * @version 8.6
+ * @version 9.0
  * @since 2.1
  */
 
@@ -34,86 +34,82 @@ public class GetExamQuestions extends DAO {
 	 */
 	public QuestionProfile getQuestionProfile(int id) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT Q.*, QS.TOTAL, QS.CORRECT, COUNT(MQ.ID), QI.TYPE, QI.SIZE, QI.X, QI.Y, RQ.AIRPORT_D, RQ.AIRPORT_A FROM exams.QUESTIONINFO Q "
-				+ "LEFT JOIN exams.QUESTIONSTATS QS ON (Q.ID=QS.ID) LEFT JOIN exams.QUESTIONIMGS QI ON (Q.ID=QI.ID) LEFT JOIN exams.QUESTIONMINFO MQ ON (MQ.ID=Q.ID) "
-				+ "LEFT JOIN exams.QUESTIONRPINFO RQ ON (RQ.ID=Q.ID) WHERE (Q.ID=?) GROUP BY Q.ID LIMIT 1");
-			_ps.setInt(1, id);
-
-			// Execute the Query
 			QuestionProfile qp = null; boolean isMultiChoice = false;
-			try (ResultSet rs = _ps.executeQuery()) {
-				if (!rs.next()) {
-					_ps.close();
-					return null;
-				}
-			
-				// Check if we are multiple choice/have an image
-				isMultiChoice = (rs.getInt(9) > 0);
-				boolean isImage = (rs.getInt(11) > 0);
-				boolean isRP = (rs.getString(15) != null);
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT Q.*, QS.TOTAL, QS.CORRECT, COUNT(MQ.ID), QI.TYPE, QI.SIZE, QI.X, QI.Y, RQ.AIRPORT_D, RQ.AIRPORT_A FROM "
+				+ "exams.QUESTIONINFO Q LEFT JOIN exams.QUESTIONSTATS QS ON (Q.ID=QS.ID) LEFT JOIN exams.QUESTIONIMGS QI ON (Q.ID=QI.ID) LEFT JOIN exams.QUESTIONMINFO MQ "
+				+ "ON (MQ.ID=Q.ID) LEFT JOIN exams.QUESTIONRPINFO RQ ON (RQ.ID=Q.ID) WHERE (Q.ID=?) GROUP BY Q.ID LIMIT 1")) {
+				ps.setInt(1, id);
 
-				// Populate the Question Profile
-				if (isRP) {
-					RoutePlotQuestionProfile rpqp = new RoutePlotQuestionProfile(rs.getString(2));
-					rpqp.setAirportD(SystemData.getAirport(rs.getString(14)));
-					rpqp.setAirportA(SystemData.getAirport(rs.getString(15)));
-					qp = rpqp;
-				} else if (isMultiChoice)
-					qp = new MultiChoiceQuestionProfile(rs.getString(2));
-				else
-					qp = new QuestionProfile(rs.getString(2));
-			
-				qp.setID(rs.getInt(1));
-				qp.setCorrectAnswer(rs.getString(3));
-				qp.setReference(rs.getString(4));
-				qp.setActive(rs.getBoolean(5));
-				qp.setOwner(SystemData.getApp(rs.getString(6)));
-				qp.setTotalAnswers(rs.getInt(7));
-				qp.setCorrectAnswers(rs.getInt(8));
+				// Execute the Query
+				try (ResultSet rs = ps.executeQuery()) {
+					if (rs.next()) {
+						isMultiChoice = (rs.getInt(9) > 0);
+						boolean isImage = (rs.getInt(11) > 0);
+						boolean isRP = (rs.getString(15) != null);
 
-				// Load image data
-				if (isImage) {
-					qp.setType(rs.getInt(10));
-					qp.setSize(rs.getInt(11));
-					qp.setWidth(rs.getInt(12));
-					qp.setHeight(rs.getInt(13));
+						// Populate the Question Profile
+						if (isRP) {
+							RoutePlotQuestionProfile rpqp = new RoutePlotQuestionProfile(rs.getString(2));
+							rpqp.setAirportD(SystemData.getAirport(rs.getString(14)));
+							rpqp.setAirportA(SystemData.getAirport(rs.getString(15)));
+							qp = rpqp;
+						} else if (isMultiChoice)
+							qp = new MultiChoiceQuestionProfile(rs.getString(2));
+						else
+							qp = new QuestionProfile(rs.getString(2));
+			
+						qp.setID(rs.getInt(1));
+						qp.setCorrectAnswer(rs.getString(3));
+						qp.setReference(rs.getString(4));
+						qp.setActive(rs.getBoolean(5));
+						qp.setOwner(SystemData.getApp(rs.getString(6)));
+						qp.setTotalAnswers(rs.getInt(7));
+						qp.setCorrectAnswers(rs.getInt(8));
+
+						// Load image data
+						if (isImage) {
+							qp.setType(rs.getInt(10));
+							qp.setSize(rs.getInt(11));
+							qp.setWidth(rs.getInt(12));
+							qp.setHeight(rs.getInt(13));
+						}
+					}
 				}
 			}
-
-			_ps.close();
 			
+			if (qp == null)
+				return null;
+
 			// Load airlines
-			prepareStatementWithoutLimits("SELECT AIRLINE FROM exams.QUESTIONAIRLINES WHERE (ID=?)");
-			_ps.setInt(1, qp.getID());
-			try (ResultSet rs = _ps.executeQuery()) {
-				while (rs.next())
-					qp.addAirline(SystemData.getApp(rs.getString(1)));
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT AIRLINE FROM exams.QUESTIONAIRLINES WHERE (ID=?)")) {
+				ps.setInt(1, qp.getID());
+				try (ResultSet rs = ps.executeQuery()) {
+					while (rs.next())
+						qp.addAirline(SystemData.getApp(rs.getString(1)));
+				}
 			}
 			
-			_ps.close();
-
 			// Get multiple choice choices
 			if (isMultiChoice) {
 				MultiChoiceQuestionProfile mqp = (MultiChoiceQuestionProfile) qp;
-				prepareStatementWithoutLimits("SELECT ANSWER FROM exams.QUESTIONMINFO WHERE (ID=?) ORDER BY SEQ");
-				_ps.setInt(1, qp.getID());
-				try (ResultSet rs = _ps.executeQuery()) {
-					while (rs.next())
-					mqp.addChoice(rs.getString(1));	
+				try (PreparedStatement ps = prepareWithoutLimits("SELECT ANSWER FROM exams.QUESTIONMINFO WHERE (ID=?) ORDER BY SEQ")) {
+					ps.setInt(1, qp.getID());
+					try (ResultSet rs = ps.executeQuery()) {
+						while (rs.next())
+							mqp.addChoice(rs.getString(1));	
+					}
 				}
-
-				_ps.close();
 			}
 			
 			// Get the exams for this question
-			prepareStatementWithoutLimits("SELECT QE.EXAM_NAME FROM exams.QE_INFO QE WHERE (QE.QUESTION_ID=?)");
-			_ps.setInt(1, id);
-			try (ResultSet rs = _ps.executeQuery()) {
-				while (rs.next())
-				qp.addExam(rs.getString(1));	
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT QE.EXAM_NAME FROM exams.QE_INFO QE WHERE (QE.QUESTION_ID=?)")) {
+				ps.setInt(1, id);
+				try (ResultSet rs = ps.executeQuery()) {
+					while (rs.next())
+						qp.addExam(rs.getString(1));	
+				}
 			}
 
-			_ps.close();
 			return qp;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -136,13 +132,12 @@ public class GetExamQuestions extends DAO {
 			sqlBuf.append("WHERE (QE.EXAM_NAME=?) ");
 		sqlBuf.append("GROUP BY Q.ID");
 		
-		try {
-			prepareStatement(sqlBuf.toString());
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			if (exam != null)
-				_ps.setString(1, exam.getName());
+				ps.setString(1, exam.getName());
 			
 			// Load results
-			List<QuestionProfile> results = execute();
+			List<QuestionProfile> results = execute(ps);
 			if (exam != null)
 				loadMultiChoice(exam.getName(), results);
 
@@ -168,13 +163,12 @@ public class GetExamQuestions extends DAO {
 		sqlBuf.append(")	LEFT JOIN exams.QUESTIONIMGS QI ON (Q.ID=QI.ID) LEFT JOIN exams.QUESTIONMINFO MQ ON (Q.ID=MQ.ID) "
 			+ "LEFT JOIN exams.QUESTIONRPINFO RQ ON (Q.ID=RQ.ID) WHERE (Q.ACTIVE=?) GROUP BY Q.ID ORDER BY QS.TOTAL DESC");
 		
-		try {
-			prepareStatement(sqlBuf.toString());
-			_ps.setBoolean(1, true);
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setBoolean(1, true);
 			if (isAcademy)
-				_ps.setBoolean(2, true);
+				ps.setBoolean(2, true);
 			
-			List<QuestionProfile> results = execute();
+			List<QuestionProfile> results = execute(ps);
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -192,25 +186,22 @@ public class GetExamQuestions extends DAO {
 	public List<QuestionProfile> getResults(boolean isDesc, boolean isAcademy, int minExams) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT Q.*, QS.TOTAL, QS.CORRECT, COUNT(MQ.ID), QI.TYPE, QI.SIZE, QI.X, "
-			+ "QI.Y, RQ.AIRPORT_D, RQ.AIRPORT_A FROM exams.QUESTIONINFO Q LEFT JOIN exams.QUESTIONSTATS QS ON "
-			+ "((Q.ID=QS.ID)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT Q.*, QS.TOTAL, QS.CORRECT, COUNT(MQ.ID), QI.TYPE, QI.SIZE, QI.X, QI.Y, RQ.AIRPORT_D, RQ.AIRPORT_A FROM exams.QUESTIONINFO Q "
+			+ "LEFT JOIN exams.QUESTIONSTATS QS ON ((Q.ID=QS.ID)");
 		if (isAcademy)
 			sqlBuf.append(" AND (QS.ACADEMY=?)");
-		sqlBuf.append(") LEFT JOIN exams.QUESTIONIMGS QI ON (Q.ID=QI.ID) LEFT JOIN exams.QUESTIONMINFO MQ ON "
-			+ "(Q.ID=MQ.ID) LEFT JOIN exams.QUESTIONRPINFO RQ ON (Q.ID=RQ.ID) WHERE (Q.ACTIVE=?) GROUP BY Q.ID "
-			+ "HAVING (QS.TOTAL>=?) ORDER BY (QS.CORRECT/QS.TOTAL)");
+		sqlBuf.append(") LEFT JOIN exams.QUESTIONIMGS QI ON (Q.ID=QI.ID) LEFT JOIN exams.QUESTIONMINFO MQ ON (Q.ID=MQ.ID) LEFT JOIN exams.QUESTIONRPINFO RQ ON (Q.ID=RQ.ID) "
+			+ "WHERE (Q.ACTIVE=?) GROUP BY Q.ID HAVING (QS.TOTAL>=?) ORDER BY (QS.CORRECT/QS.TOTAL)");
 		if (isDesc)
 			sqlBuf.append(" DESC");
 		
-		try {
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) { 
 			int param = 0;
-			prepareStatement(sqlBuf.toString());
 			if (isAcademy)
-				_ps.setBoolean(++param, true);
-			_ps.setBoolean(++param, true);
-			_ps.setInt(++param, Math.max(1, minExams));
-			List<QuestionProfile> results = execute();
+				ps.setBoolean(++param, true);
+			ps.setBoolean(++param, true);
+			ps.setInt(++param, Math.max(1, minExams));
+			List<QuestionProfile> results = execute(ps);
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -242,26 +233,22 @@ public class GetExamQuestions extends DAO {
 	public List<QuestionProfile> getQuestionPool(ExamProfile exam, boolean isRandom, int pilotID) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT Q.*, QS.TOTAL, QS.CORRECT, COUNT(MQ.ID), QI.TYPE, QI.SIZE, "
-			+ "QI.X, QI.Y, RQ.AIRPORT_D, RQ.AIRPORT_A, COUNT(EQ.EXAM_ID)+(RAND()*3) AS CNT FROM exams.QE_INFO QE, "
-			+ "exams.QUESTIONINFO Q LEFT JOIN exams.QUESTIONSTATS QS ON (Q.ID=QS.ID) LEFT JOIN exams.QUESTIONIMGS QI "
-			+ "ON (Q.ID=QI.ID) LEFT JOIN exams.QUESTIONMINFO MQ ON (Q.ID=MQ.ID) LEFT JOIN exams.QUESTIONRPINFO RQ "
-			+ "ON (Q.ID=RQ.ID) LEFT JOIN exams.EXAMS E ON (E.PILOT_ID=?) LEFT JOIN exams.EXAMQUESTIONS EQ ON "
-			+ "(EQ.QUESTION_ID=Q.ID) AND (EQ.EXAM_ID=E.ID) WHERE (Q.ID=QE.QUESTION_ID) AND (Q.ACTIVE=?) AND "
-			+ "(QE.EXAM_NAME=?) GROUP BY Q.ID ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT Q.*, QS.TOTAL, QS.CORRECT, COUNT(MQ.ID), QI.TYPE, QI.SIZE, QI.X, QI.Y, RQ.AIRPORT_D, RQ.AIRPORT_A, COUNT(EQ.EXAM_ID)+(RAND()*3) AS CNT "
+			+ "FROM exams.QE_INFO QE, exams.QUESTIONINFO Q LEFT JOIN exams.QUESTIONSTATS QS ON (Q.ID=QS.ID) LEFT JOIN exams.QUESTIONIMGS QI ON (Q.ID=QI.ID) LEFT JOIN exams.QUESTIONMINFO MQ "
+			+ "ON (Q.ID=MQ.ID) LEFT JOIN exams.QUESTIONRPINFO RQ ON (Q.ID=RQ.ID) LEFT JOIN exams.EXAMS E ON (E.PILOT_ID=?) LEFT JOIN exams.EXAMQUESTIONS EQ ON (EQ.QUESTION_ID=Q.ID) AND "
+			+ "(EQ.EXAM_ID=E.ID) WHERE (Q.ID=QE.QUESTION_ID) AND (Q.ACTIVE=?) AND (QE.EXAM_NAME=?) GROUP BY Q.ID ");
 		if (pilotID > 0)
 			sqlBuf.append("ORDER BY CNT");
 		else if (isRandom)
 			sqlBuf.append("ORDER BY RAND()");
 		sqlBuf.append(" LIMIT ?");
 
-		try {
-			prepareStatement(sqlBuf.toString());
-			_ps.setInt(1, pilotID);
-			_ps.setBoolean(2, true);
-			_ps.setString(3, exam.getName());
-			_ps.setInt(4, exam.getSize());
-			List<QuestionProfile> results = execute();
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setInt(1, pilotID);
+			ps.setBoolean(2, true);
+			ps.setString(3, exam.getName());
+			ps.setInt(4, exam.getSize());
+			List<QuestionProfile> results = execute(ps);
 			loadMultiChoice(exam.getName(), results);
 			return results;
 		} catch (SQLException se) {
@@ -272,9 +259,9 @@ public class GetExamQuestions extends DAO {
 	/*
 	 * Helper method to load Question result sets.
 	 */
-	private List<QuestionProfile> execute() throws SQLException {
+	private static List<QuestionProfile> execute(PreparedStatement ps) throws SQLException {
 		List<QuestionProfile> results = new ArrayList<QuestionProfile>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
 				boolean isMultiChoice = (rs.getInt(9) > 0);
 				boolean isRP = (rs.getString(15) != null);
@@ -311,7 +298,6 @@ public class GetExamQuestions extends DAO {
 			}
 		}
 		
-		_ps.close();
 		return results;
 	}
 	
@@ -320,16 +306,15 @@ public class GetExamQuestions extends DAO {
 	 */
 	private void loadMultiChoice(String examName, Collection<QuestionProfile> qs) throws SQLException {
 		Map<Integer, QuestionProfile> resultMap = CollectionUtils.createMap(qs, QuestionProfile::getID);
-		prepareStatementWithoutLimits("SELECT MQ.* FROM exams.QUESTIONMINFO MQ, exams.QUESTIONINFO Q, exams.QE_INFO QE WHERE (Q.ID=QE.QUESTION_ID) AND (Q.ID=MQ.ID) AND (QE.EXAM_NAME=?) ORDER BY MQ.ID, MQ.SEQ");
-		_ps.setString(1, examName);
-		try (ResultSet rs = _ps.executeQuery()) {
-			while (rs.next()) {
-				MultiChoiceQuestionProfile mqp = (MultiChoiceQuestionProfile) resultMap.get(Integer.valueOf(rs.getInt(1)));
-				if (mqp != null)
-					mqp.addChoice(rs.getString(3));
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT MQ.* FROM exams.QUESTIONMINFO MQ, exams.QUESTIONINFO Q, exams.QE_INFO QE WHERE (Q.ID=QE.QUESTION_ID) AND (Q.ID=MQ.ID) AND (QE.EXAM_NAME=?) ORDER BY MQ.ID, MQ.SEQ")) {
+			ps.setString(1, examName);
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					MultiChoiceQuestionProfile mqp = (MultiChoiceQuestionProfile) resultMap.get(Integer.valueOf(rs.getInt(1)));
+					if (mqp != null)
+						mqp.addChoice(rs.getString(3));
+				}
 			}
 		}
-
-		_ps.close();
 	}
 }

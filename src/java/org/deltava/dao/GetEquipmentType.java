@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to retrieve equipment type profiles.
  * @author Luke
- * @version 8.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -51,19 +51,16 @@ public class GetEquipmentType extends DAO {
 		try {
 			String db = dbName;
 			if (dbName == null) {
-				prepareStatementWithoutLimits("SELECT AI.DBNAME, CASE AI.DBNAME WHEN ? THEN 1 ELSE 0 END AS SRT FROM "
-						+ "common.AIRLINEINFO AI, common.EQPROGRAMS EP WHERE (EP.OWNER=AI.CODE) AND (EP.EQTYPE=?) "
-						+ "ORDER BY SRT DESC LIMIT 1");
-				_ps.setString(1, SystemData.get("airline.db"));
-				_ps.setString(2, eqType);
-			
-				// Execute the query
-				try (ResultSet rs = _ps.executeQuery()) {
-					if (rs.next())
-						db = rs.getString(1);
+				try (PreparedStatement ps = prepareWithoutLimits("SELECT AI.DBNAME, CASE AI.DBNAME WHEN ? THEN 1 ELSE 0 END AS SRT FROM common.AIRLINEINFO AI, common.EQPROGRAMS EP "
+					+ "WHERE (EP.OWNER=AI.CODE) AND (EP.EQTYPE=?) ORDER BY SRT DESC LIMIT 1")) {
+					ps.setString(1, SystemData.get("airline.db"));
+					ps.setString(2, eqType);
+					try (ResultSet rs = ps.executeQuery()) {
+						if (rs.next())
+							db = rs.getString(1);
+					}
 				}
 				
-				_ps.close();
 				if (db == null)
 					return null;
 			}
@@ -78,23 +75,22 @@ public class GetEquipmentType extends DAO {
 			sqlBuf.append(db);
 			sqlBuf.append(".EQTYPES EQ, common.EQPROGRAMS EP, common.AIRLINEINFO AI WHERE (EP.EQTYPE=EQ.EQTYPE) AND (EP.OWNER=AI.CODE) AND (AI.DBNAME=?) AND (EQ.EQTYPE=?) LIMIT 1");
 
-			// Prepare the statement
-			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setString(1, db);
-			_ps.setString(2, eqType);
+			try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+				ps.setString(1, db);
+				ps.setString(2, eqType);
 
-			// Execute the query - if we get nothing back, then return null
-			List<EquipmentType> results = execute();
-			if (results.isEmpty())
-				return null;
+				// Execute the query - if we get nothing back, then return null
+				List<EquipmentType> results = execute(ps);
+				if (results.isEmpty()) return null;
 
-			// Get the ratings/exams
-			loadRatings(results, db);
-			loadExams(results, db);
-			loadAirlines(results);
-			loadSize(results, db);
-			_cache.addAll(results);
-			return results.get(0);
+				// Get the ratings/exams
+				loadRatings(results, db);
+				loadExams(results, db);
+				loadAirlines(results);
+				loadSize(results, db);
+				_cache.addAll(results);
+				return results.get(0);
+			}
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -113,17 +109,11 @@ public class GetEquipmentType extends DAO {
 		sqlBuf.append(formatDBName(dbName));
 		sqlBuf.append(".EQTYPES WHERE (ISDEFAULT=?) LIMIT 1");
 		
-		try {
-			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setBoolean(1, true);
-			String eqName = null;
-			try (ResultSet rs = _ps.executeQuery()) {
-				if (rs.next())
-					eqName = rs.getString(1);
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+			ps.setBoolean(1, true);
+			try (ResultSet rs = ps.executeQuery()) {
+				return rs.next() ? rs.getString(1) : null;
 			}
-			
-			_ps.close();
-			return eqName;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -144,13 +134,12 @@ public class GetEquipmentType extends DAO {
 		sqlBuf.append(db);
 		sqlBuf.append(".EQTYPES EQ WHERE (EP.OWNER=AI.CODE) AND (AI.DBNAME=?) AND (EP.EQTYPE=EQ.EQTYPE) AND (EP.STAGE=?) ORDER BY EP.STAGE, EQ.EQTYPE");
 		
-		try {
-			prepareStatement(sqlBuf.toString());
-			_ps.setString(1, db);
-			_ps.setInt(2, stage);
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setString(1, db);
+			ps.setInt(2, stage);
 
 			// Return results
-			List<EquipmentType> results = execute();
+			List<EquipmentType> results = execute(ps);
 			loadRatings(results, db);
 			loadExams(results, db);
 			loadAirlines(results);
@@ -170,26 +159,20 @@ public class GetEquipmentType extends DAO {
 	 */
 	public Collection<EquipmentType> getAvailable(String aCode) throws DAOException {
 		try {
-			// Get the programs to load
-			prepareStatementWithoutLimits("SELECT DISTINCT AI.DBNAME FROM common.AIRLINEINFO AI, "
-				+ "common.EQPROGRAMS EP, common.EQAIRLINES EA WHERE (AI.CODE=EP.OWNER) AND "
-				+ "(EP.EQTYPE=EA.EQTYPE) AND (EP.OWNER=EA.OWNER) AND (EA.AIRLINE=?)");
-			_ps.setString(1, aCode);
-			
-			// Execute the query
+			// Get the databases/airlines
 			Collection<String> dbs = new LinkedHashSet<String>();
-			try (ResultSet rs = _ps.executeQuery()) {
-				while (rs.next())
-					dbs.add(rs.getString(1));
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT DISTINCT AI.DBNAME FROM common.AIRLINEINFO AI, common.EQPROGRAMS EP, common.EQAIRLINES EA WHERE (AI.CODE=EP.OWNER) AND "
+				+ "(EP.EQTYPE=EA.EQTYPE) AND (EP.OWNER=EA.OWNER) AND (EA.AIRLINE=?)")) {
+				ps.setString(1, aCode);
+				try (ResultSet rs = ps.executeQuery()) {
+					while (rs.next())
+						dbs.add(formatDBName(rs.getString(1)));
+				}
 			}
-			
-			_ps.close();
 			
 			// Loop through the databases and load the programs
 			Collection<EquipmentType> results = new ArrayList<EquipmentType>();
-			for (Iterator<String> i = dbs.iterator(); i.hasNext(); ) {
-				String db = formatDBName(i.next());
-				
+			for (String db : dbs) {
 				// Build the SQL statement
 				StringBuilder buf = new StringBuilder("SELECT DISTINCT EQ.*, EP.OWNER, EP.STAGE FROM ");
 				buf.append(db);
@@ -197,18 +180,19 @@ public class GetEquipmentType extends DAO {
 					+ "(EP.OWNER=AI.CODE) AND (AI.DBNAME=?) AND (EP.EQTYPE=EQ.EQTYPE) AND (EP.OWNER=EA.OWNER) AND (EP.EQTYPE=EA.EQTYPE) AND (EA.AIRLINE=?)");
 				
 				// Prepare the statement and execute
-				prepareStatementWithoutLimits(buf.toString());
-				_ps.setBoolean(1, true);
-				_ps.setString(2, db.toLowerCase());
-				_ps.setString(3, aCode);
-				Collection<EquipmentType> exams = execute();
-				
-				// Load child rows and add
-				loadRatings(exams, db);
-				loadExams(exams, db);
-				loadAirlines(exams);
-				loadSize(exams, db);
-				results.addAll(new TreeSet<EquipmentType>(exams));
+				try (PreparedStatement ps = prepareWithoutLimits(buf.toString())) {
+					ps.setBoolean(1, true);
+					ps.setString(2, db.toLowerCase());
+					ps.setString(3, aCode);
+					Collection<EquipmentType> exams = execute(ps);
+					
+					// Load child rows and add
+					loadRatings(exams, db);
+					loadExams(exams, db);
+					loadAirlines(exams);
+					loadSize(exams, db);
+					results.addAll(new TreeSet<EquipmentType>(exams));
+				}
 			}
 			
 			return results;
@@ -232,11 +216,10 @@ public class GetEquipmentType extends DAO {
 		sqlBuf.append(db);
 		sqlBuf.append(".EQTYPES EQ WHERE (AI.DBNAME=?) AND (EP.OWNER=AI.CODE) AND (EP.EQTYPE=EQ.EQTYPE) AND (EQ.ACTIVE=?) ORDER BY EP.STAGE, EQ.EQTYPE");
 
-		try {
-			prepareStatement(sqlBuf.toString());
-			_ps.setString(1, db);
-			_ps.setBoolean(2, true);
-			List<EquipmentType> results = execute();
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setString(1, db);
+			ps.setBoolean(2, true);
+			List<EquipmentType> results = execute(ps);
 			loadRatings(results, db);
 			loadExams(results, db);
 			loadAirlines(results);
@@ -263,11 +246,10 @@ public class GetEquipmentType extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<EquipmentType> getAll() throws DAOException {
-		try {
+		try (PreparedStatement ps = prepare("SELECT EQ.*, EP.OWNER, EP.STAGE FROM EQTYPES EQ, common.EQPROGRAMS EP WHERE (EQ.EQTYPE=EP.EQTYPE) AND (EP.OWNER=?) ORDER BY EP.STAGE, EQ.EQTYPE")) {
 			String db = SystemData.get("airline.db");
-			prepareStatement("SELECT EQ.*, EP.OWNER, EP.STAGE FROM EQTYPES EQ, common.EQPROGRAMS EP WHERE (EQ.EQTYPE=EP.EQTYPE) AND (EP.OWNER=?) ORDER BY EP.STAGE, EQ.EQTYPE");
-			_ps.setString(1, SystemData.get("airline.code"));
-			List<EquipmentType> results = execute();
+			ps.setString(1, SystemData.get("airline.code"));
+			List<EquipmentType> results = execute(ps);
 			loadRatings(results, db);
 			loadExams(results, db);
 			loadSize(results, db);
@@ -291,19 +273,16 @@ public class GetEquipmentType extends DAO {
 		sqlBuf.append(formatDBName(dbName));
 		sqlBuf.append(".EQRATINGS WHERE (RATING_TYPE=?) AND (RATED_EQ=?) ORDER BY EQTYPE");
 
-		try {
-			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setInt(1, EquipmentType.Rating.PRIMARY.ordinal());
-			_ps.setString(2, eqType);
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+			ps.setInt(1, EquipmentType.Rating.PRIMARY.ordinal());
+			ps.setString(2, eqType);
 
-			// Execute the query
 			Collection<String> results = new LinkedHashSet<String>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
 					results.add(rs.getString(1));
 			}
 
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -317,22 +296,18 @@ public class GetEquipmentType extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Integer> getPilotsWithMissingRatings(EquipmentType eq) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT P.ID, COUNT(R.RATING) AS PCNT, (SELECT COUNT(RATED_EQ) FROM EQRATINGS "
-				+ "WHERE (EQTYPE=?)) AS EQCNT FROM PILOTS P LEFT JOIN RATINGS R ON (P.ID=R.ID) AND (R.RATING IN (SELECT RATED_EQ "
-				+ "FROM EQRATINGS WHERE (EQTYPE=?))) WHERE (P.EQTYPE=?) GROUP BY P.ID HAVING (PCNT<EQCNT)");
-			_ps.setString(1, eq.getName());
-			_ps.setString(2, eq.getName());
-			_ps.setString(3, eq.getName());
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT P.ID, COUNT(R.RATING) AS PCNT, (SELECT COUNT(RATED_EQ) FROM EQRATINGS WHERE (EQTYPE=?)) AS EQCNT FROM PILOTS P "
+			+ "LEFT JOIN RATINGS R ON (P.ID=R.ID) AND (R.RATING IN (SELECT RATED_EQ FROM EQRATINGS WHERE (EQTYPE=?))) WHERE (P.EQTYPE=?) GROUP BY P.ID HAVING (PCNT<EQCNT)")) {
+			ps.setString(1, eq.getName());
+			ps.setString(2, eq.getName());
+			ps.setString(3, eq.getName());
 
-			// Execute the query
 			Collection<Integer> results = new LinkedHashSet<Integer>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
 					results.add(Integer.valueOf(rs.getInt(1)));	
 			}
 
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -344,25 +319,24 @@ public class GetEquipmentType extends DAO {
 	 */
 	private void loadRatings(Collection<EquipmentType> eTypes, String db) throws SQLException {
 		Map<String, EquipmentType> types = CollectionUtils.createMap(eTypes, EquipmentType::getName);
-		prepareStatementWithoutLimits("SELECT * FROM " + db + ".EQRATINGS");
-		try (ResultSet rs = _ps.executeQuery()) {
-			while (rs.next()) {
-				EquipmentType eq = types.get(rs.getString(1));
-				if (eq != null) {
-					EquipmentType.Rating rt = EquipmentType.Rating.values()[rs.getInt(2)];
-					switch (rt) {
-					case PRIMARY:
-						eq.addPrimaryRating(rs.getString(3));
-						break;
-
-					default:
-						eq.addSecondaryRating(rs.getString(3));
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM " + db + ".EQRATINGS")) {
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					EquipmentType eq = types.get(rs.getString(1));
+					if (eq != null) {
+						EquipmentType.Rating rt = EquipmentType.Rating.values()[rs.getInt(2)];
+						switch (rt) {
+						case PRIMARY:
+							eq.addPrimaryRating(rs.getString(3));
+							break;
+							
+						default:
+							eq.addSecondaryRating(rs.getString(3));
+						}
 					}
 				}
 			}
 		}
-		
-		_ps.close();
 	}
 
 	/*
@@ -370,19 +344,18 @@ public class GetEquipmentType extends DAO {
 	 */
 	private void loadExams(Collection<EquipmentType> eTypes, String db) throws SQLException {
 		Map<String, EquipmentType> types = CollectionUtils.createMap(eTypes, EquipmentType::getName);
-		prepareStatementWithoutLimits("SELECT EQTYPE, EXAMTYPE, EXAM FROM " + db + ".EQEXAMS");
-		try (ResultSet rs = _ps.executeQuery()) {
-			while (rs.next()) {
-				EquipmentType eq = types.get(rs.getString(1));
-				if (eq != null) {
-					Rank rnk = Rank.values()[rs.getInt(2)];
-					if (rnk.ordinal() <= Rank.C.ordinal())
-						eq.addExam(rnk, rs.getString(3));
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT EQTYPE, EXAMTYPE, EXAM FROM " + db + ".EQEXAMS")) {
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					EquipmentType eq = types.get(rs.getString(1));
+					if (eq != null) {
+						Rank rnk = Rank.values()[rs.getInt(2)];
+						if (rnk.ordinal() <= Rank.C.ordinal())
+							eq.addExam(rnk, rs.getString(3));
+					}
 				}
 			}
 		}
-		
-		_ps.close();
 	}
 	
 	/*
@@ -390,17 +363,16 @@ public class GetEquipmentType extends DAO {
 	 */
 	private void loadAirlines(Collection<EquipmentType> eTypes) throws SQLException {
 		Map<String, EquipmentType> types = CollectionUtils.createMap(eTypes, EquipmentType::getName);
-		prepareStatementWithoutLimits("SELECT EQTYPE, OWNER, AIRLINE FROM common.EQAIRLINES");
-		try (ResultSet rs = _ps.executeQuery()) {
-			while (rs.next()) {
-				EquipmentType eq = types.get(rs.getString(1));
-				String ownerCode = rs.getString(2);
-				if ((eq != null) && (eq.getOwner().getCode().equals(ownerCode)))
-					eq.addAirline(SystemData.getApp(rs.getString(3)));
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT EQTYPE, OWNER, AIRLINE FROM common.EQAIRLINES")) {
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					EquipmentType eq = types.get(rs.getString(1));
+					String ownerCode = rs.getString(2);
+					if ((eq != null) && (eq.getOwner().getCode().equals(ownerCode)))
+						eq.addAirline(SystemData.getApp(rs.getString(3)));
+				}
 			}
 		}
-		
-		_ps.close();
 	}
 	
 	/*
@@ -408,25 +380,24 @@ public class GetEquipmentType extends DAO {
 	 */
 	private void loadSize(Collection<EquipmentType> eTypes, String db) throws SQLException {
 		Map<String, EquipmentType> types = CollectionUtils.createMap(eTypes, EquipmentType::getName);
-		prepareStatementWithoutLimits("SELECT P.EQTYPE, COUNT(P.ID) FROM " + db + ".PILOTS P WHERE (P.STATUS=?) GROUP BY P.EQTYPE");
-		_ps.setInt(1, Pilot.ACTIVE);
-		try (ResultSet rs = _ps.executeQuery()) {
-			while (rs.next()) {
-				EquipmentType eq = types.get(rs.getString(1));
-				if (eq != null)
-					eq.setSize(rs.getInt(2));
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT P.EQTYPE, COUNT(P.ID) FROM " + db + ".PILOTS P WHERE (P.STATUS=?) GROUP BY P.EQTYPE")) {
+			ps.setInt(1, Pilot.ACTIVE);
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					EquipmentType eq = types.get(rs.getString(1));
+					if (eq != null)
+						eq.setSize(rs.getInt(2));
+				}
 			}
 		}
-			
-		_ps.close();
 	}
 
 	/*
 	 * Helper method to iterate through the result set.
 	 */
-	private List<EquipmentType> execute() throws SQLException {
+	private static List<EquipmentType> execute(PreparedStatement ps) throws SQLException {
 		List<EquipmentType> results = new ArrayList<EquipmentType>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {	
 				EquipmentType eq = new EquipmentType(rs.getString(1));
 				eq.setCPID(rs.getInt(2));
@@ -447,7 +418,6 @@ public class GetEquipmentType extends DAO {
 			}
 		}
 
-		_ps.close();
 		return results;
 	}
 }

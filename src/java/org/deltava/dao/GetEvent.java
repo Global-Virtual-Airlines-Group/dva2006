@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2014, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2012, 2014, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Online Event data.
  * @author Luke
- * @version 8.1
+ * @version 9.0
  * @since 1.0
  */
 
@@ -35,13 +35,10 @@ public class GetEvent extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<Event> getFutureEvents() throws DAOException {
-		try {
-			prepareStatement("SELECT E.* FROM events.EVENTS E, events.AIRLINES EA WHERE "
-					+ "(E.STARTTIME > NOW()) AND (E.STATUS != ?) AND (E.ID=EA.ID) AND (EA.AIRLINE=?) "
-					+ "ORDER BY E.STARTTIME");
-			_ps.setInt(1, Status.CANCELED.ordinal());
-			_ps.setString(2, SystemData.get("airline.code"));
-			List<Event> results = execute();
+		try (PreparedStatement ps = prepare("SELECT E.* FROM events.EVENTS E, events.AIRLINES EA WHERE (E.STARTTIME > NOW()) AND (E.STATUS != ?) AND (E.ID=EA.ID) AND (EA.AIRLINE=?) ORDER BY E.STARTTIME")) {
+			ps.setInt(1, Status.CANCELED.ordinal());
+			ps.setString(2, SystemData.get("airline.code"));
+			List<Event> results = execute(ps);
 			
 			// Load the airports
 			Map<Integer, Event> eMap = CollectionUtils.createMap(results, Event::getID);
@@ -59,16 +56,14 @@ public class GetEvent extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<Event> getAssignableEvents() throws DAOException {
-		try {
+		try (PreparedStatement ps = prepare("SELECT E.* FROM events.EVENTS E, events.AIRLINES EA WHERE (E.ID=EA.ID) AND (E.SU_DEADLINE < ?) AND (E.ENDTIME > ?) AND (E.STATUS != ?) AND (EA.AIRLINE=?) "
+			+ "ORDER BY E.STARTTIME DESC")) {
 			Timestamp now = new Timestamp(System.currentTimeMillis());
-			prepareStatement("SELECT E.* FROM events.EVENTS E, events.AIRLINES EA WHERE (E.ID=EA.ID) AND "
-					+ "(E.SU_DEADLINE < ?) AND (E.ENDTIME > ?) AND (E.STATUS != ?) AND (EA.AIRLINE=?) "
-					+ "ORDER BY E.STARTTIME DESC");
-			_ps.setTimestamp(1, now);
-			_ps.setTimestamp(2, now);
-			_ps.setInt(3, Status.CANCELED.ordinal());
-			_ps.setString(4, SystemData.get("airline.code"));
-			List<Event> results = execute();
+			ps.setTimestamp(1, now);
+			ps.setTimestamp(2, now);
+			ps.setInt(3, Status.CANCELED.ordinal());
+			ps.setString(4, SystemData.get("airline.code"));
+			List<Event> results = execute(ps);
 			
 			// Load the airports
 			Map<Integer, Event> eMap = CollectionUtils.createMap(results, Event::getID);
@@ -95,26 +90,17 @@ public class GetEvent extends DAO {
 	 */
 	public int getPossibleEvent(RoutePair fr, OnlineNetwork net, java.time.Instant dt) throws DAOException {
 		if (net == null) return 0;
-		try {
-			prepareStatementWithoutLimits("SELECT E.ID FROM events.EVENTS E, events.EVENT_AIRPORTS EA, events.AIRLINES EAL "
-					+ "WHERE (E.ID=EA.ID) AND (E.ID=EAL.ID) AND (EA.AIRPORT_D=?) AND (EA.AIRPORT_A=?) AND (E.NETWORK=?) AND "
-					+ "(EAL.AIRLINE=?) AND (E.STARTTIME < ?) AND (DATE_ADD(E.ENDTIME, INTERVAL 2 DAY) > ?) ORDER BY E.ID LIMIT 1");
-			_ps.setString(1, fr.getAirportD().getIATA());
-			_ps.setString(2, fr.getAirportA().getIATA());
-			_ps.setInt(3, net.ordinal());
-			_ps.setString(4, SystemData.get("airline.code"));
-			_ps.setTimestamp(5, createTimestamp(dt));
-			_ps.setTimestamp(6, createTimestamp(dt));
-			
-			// Execute the Query
-			int eventID = 0;
-			try (ResultSet rs = _ps.executeQuery()) {
-				if (rs.next())
-					eventID = rs.getInt(1);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT E.ID FROM events.EVENTS E, events.EVENT_AIRPORTS EA, events.AIRLINES EAL WHERE (E.ID=EA.ID) AND (E.ID=EAL.ID) AND (EA.AIRPORT_D=?) "
+			+ "AND (EA.AIRPORT_A=?) AND (E.NETWORK=?) AND (EAL.AIRLINE=?) AND (E.STARTTIME < ?) AND (DATE_ADD(E.ENDTIME, INTERVAL 2 DAY) > ?) ORDER BY E.ID LIMIT 1")) {
+			ps.setString(1, fr.getAirportD().getIATA());
+			ps.setString(2, fr.getAirportA().getIATA());
+			ps.setInt(3, net.ordinal());
+			ps.setString(4, SystemData.get("airline.code"));
+			ps.setTimestamp(5, createTimestamp(dt));
+			ps.setTimestamp(6, createTimestamp(dt));
+			try (ResultSet rs = ps.executeQuery()) {
+				return rs.next() ? rs.getInt(1) : 0;
 			}
-			
-			_ps.close();
-			return eventID;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -127,15 +113,13 @@ public class GetEvent extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<Event> getEventCalendar(DateRange dr) throws DAOException {
-		try {
-			prepareStatement("SELECT E.* FROM events.EVENTS E, events.AIRLINES EA WHERE (E.ID=EA.ID) AND "
-				+ "(E.STARTTIME >= ?) AND (E.STARTTIME <= ?) AND (E.STATUS !=?) AND (EA.AIRLINE=?) "
-				+ "ORDER BY E.STARTTIME");
-			_ps.setTimestamp(1, createTimestamp(dr.getStartDate()));
-			_ps.setTimestamp(2, createTimestamp(dr.getEndDate()));
-			_ps.setInt(3, Status.CANCELED.ordinal());
-			_ps.setString(4, SystemData.get("airline.code"));
-			List<Event> results = execute();
+		try (PreparedStatement ps = prepare("SELECT E.* FROM events.EVENTS E, events.AIRLINES EA WHERE (E.ID=EA.ID) AND (E.STARTTIME >= ?) AND (E.STARTTIME <= ?) AND (E.STATUS !=?) AND (EA.AIRLINE=?) "
+			+ "ORDER BY E.STARTTIME")) {
+			ps.setTimestamp(1, createTimestamp(dr.getStartDate()));
+			ps.setTimestamp(2, createTimestamp(dr.getEndDate()));
+			ps.setInt(3, Status.CANCELED.ordinal());
+			ps.setString(4, SystemData.get("airline.code"));
+			List<Event> results = execute(ps);
 			
 			// Load the airports
 			Map<Integer, Event> eMap = CollectionUtils.createMap(results, Event::getID);
@@ -153,21 +137,12 @@ public class GetEvent extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public boolean hasFutureEvents() throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT E.ID FROM events.EVENTS E, events.AIRLINES EA WHERE (E.ID=EA.ID) "
-					+ "AND (E.STARTTIME > NOW()) AND (E.STATUS != ?) AND (EA.AIRLINE=?) LIMIT 1");
-			_ps.setInt(1, Status.CANCELED.ordinal());
-			_ps.setString(2, SystemData.get("airline.code"));
-			
-			// Execute the query
-			boolean hasEvents = false;
-			try (ResultSet rs = _ps.executeQuery()) {
-				if (rs.next())
-					hasEvents = (rs.getInt(1) > 0);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT E.ID FROM events.EVENTS E, events.AIRLINES EA WHERE (E.ID=EA.ID) AND (E.STARTTIME > NOW()) AND (E.STATUS != ?) AND (EA.AIRLINE=?) LIMIT 1")) {
+			ps.setInt(1, Status.CANCELED.ordinal());
+			ps.setString(2, SystemData.get("airline.code"));
+			try (ResultSet rs = ps.executeQuery()) {
+				return rs.next() && (rs.getInt(1) > 0);
 			}
-			
-			_ps.close();
-			return hasEvents;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -179,10 +154,9 @@ public class GetEvent extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<Event> getEvents() throws DAOException {
-		try {
-			prepareStatement("SELECT E.* FROM events.EVENTS E, events.AIRLINES EA WHERE (E.ID=EA.ID) AND (EA.AIRLINE=?) ORDER BY E.STARTTIME DESC");
-			_ps.setString(1, SystemData.get("airline.code"));
-			List<Event> results = execute();
+		try (PreparedStatement ps = prepare("SELECT E.* FROM events.EVENTS E, events.AIRLINES EA WHERE (E.ID=EA.ID) AND (EA.AIRLINE=?) ORDER BY E.STARTTIME DESC")) {
+			ps.setString(1, SystemData.get("airline.code"));
+			List<Event> results = execute(ps);
 			
 			// Load the airports
 			Map<Integer, Event> eMap = CollectionUtils.createMap(results, Event::getID);
@@ -199,10 +173,8 @@ public class GetEvent extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Event> getWithACARS() throws DAOException {
-		try {
-			prepareStatement("SELECT DISTINCT E.* FROM events.EVENTS E, PIREPS PR, ACARS_PIREPS APR "
-				+ "WHERE (PR.EVENT_ID=E.ID) AND (APR.ID=PR.ID) AND (APR.ACARS_ID <> 0) ORDER BY E.STARTTIME DESC");
-			return execute();
+		try (PreparedStatement ps = prepare("SELECT DISTINCT E.* FROM events.EVENTS E, PIREPS PR, ACARS_PIREPS APR WHERE (PR.EVENT_ID=E.ID) AND (APR.ID=PR.ID) AND (APR.ACARS_ID <> 0) ORDER BY E.STARTTIME DESC")) {
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -216,23 +188,21 @@ public class GetEvent extends DAO {
 	 */
 	public Event get(int id) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT E.*, EB.EXT FROM events.EVENTS E LEFT JOIN events.BANNERS EB ON (E.ID=EB.ID) WHERE (E.ID=?) LIMIT 1");
-			_ps.setInt(1, id);
-
-			// Execute the query and return null if nothing found
-			List<Event> results = execute();
-			if (results.isEmpty())
-				return null;
+			Event e = null;
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT E.*, EB.EXT FROM events.EVENTS E LEFT JOIN events.BANNERS EB ON (E.ID=EB.ID) WHERE (E.ID=?) LIMIT 1")) {
+				ps.setInt(1, id);
+				e = execute(ps).stream().findFirst().orElse(null);
+			}
+			
+			if (e == null) return null;
 
 			// Get the first event and populate it
-			Event e = results.get(0);
 			loadAirlines(e);
 			loadEQTypes(e);
 			loadContactAddrs(e);
 			
 			// Create a map and load the airports
-			Map<Integer, Event> eMap = new HashMap<Integer, Event>();
-			eMap.put(Integer.valueOf(e.getID()), e);
+			Map<Integer, Event> eMap = Collections.singletonMap(Integer.valueOf(e.getID()), e);
 			loadRoutes(eMap);
 			loadSignups(eMap);
 			return e;
@@ -252,25 +222,24 @@ public class GetEvent extends DAO {
 			Collection<Integer> IDs = new TreeSet<Integer>();
 			
 			// Load from signups
-			prepareStatementWithoutLimits("SELECT ID from events.EVENT_SIGNUPS WHERE (PILOT_ID=?)");
-			_ps.setInt(1, userID);
-			try (ResultSet rs = _ps.executeQuery()) {
-				while (rs.next())
-					IDs.add(Integer.valueOf(rs.getInt(1)));
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT ID from events.EVENT_SIGNUPS WHERE (PILOT_ID=?)")) {
+				ps.setInt(1, userID);
+				try (ResultSet rs = ps.executeQuery()) {
+					while (rs.next())
+						IDs.add(Integer.valueOf(rs.getInt(1)));
+				}
 			}
-			
-			_ps.close();
 			
 			// Load from Flight Reports
-			prepareStatementWithoutLimits("SELECT EVENT_ID FROM PIREPS WHERE (EVENT_ID>0) AND (PILOT_ID=?) AND (STATUS=?)");
-			_ps.setInt(1, userID);
-			_ps.setInt(2, FlightStatus.OK.ordinal());
-			try (ResultSet rs = _ps.executeQuery()) {
-				while (rs.next())
-					IDs.add(Integer.valueOf(rs.getInt(1)));
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT EVENT_ID FROM PIREPS WHERE (EVENT_ID>0) AND (PILOT_ID=?) AND (STATUS=?)")) {
+				ps.setInt(1, userID);
+				ps.setInt(2, FlightStatus.OK.ordinal());
+				try (ResultSet rs = ps.executeQuery()) {
+					while (rs.next())
+						IDs.add(Integer.valueOf(rs.getInt(1)));
+				}
 			}
 
-			_ps.close();
 			return IDs;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -281,12 +250,10 @@ public class GetEvent extends DAO {
 	 * Helper method to load event airports/routes.
 	 */
 	private void loadRoutes(Map<Integer, Event> events) throws SQLException {
-		if (events.isEmpty())
-			return;
+		if (events.isEmpty()) return;
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT EA.*, COUNT(ES.PILOT_ID) FROM events.EVENT_AIRPORTS EA "
-				+ "LEFT JOIN events.EVENT_SIGNUPS ES ON (EA.ID=ES.ID) AND (EA.ROUTE_ID=ES.ROUTE_ID) WHERE (EA.ID IN (");
+		StringBuilder sqlBuf = new StringBuilder("SELECT EA.*, COUNT(ES.PILOT_ID) FROM events.EVENT_AIRPORTS EA LEFT JOIN events.EVENT_SIGNUPS ES ON (EA.ID=ES.ID) AND (EA.ROUTE_ID=ES.ROUTE_ID) WHERE (EA.ID IN (");
 		for (Iterator<Integer> i = events.keySet().iterator(); i.hasNext();) {
 			Integer id = i.next();
 			sqlBuf.append(id.toString());
@@ -297,11 +264,11 @@ public class GetEvent extends DAO {
 		sqlBuf.append(")) GROUP BY EA.ID, EA.ROUTE_ID ORDER BY EA.ID");
 
 		// Execute the query
-		prepareStatementWithoutLimits(sqlBuf.toString());
-		try (ResultSet rs = _ps.executeQuery()) {
-			while (rs.next()) {
-				Event e = events.get(Integer.valueOf(rs.getInt(1)));
-				if (e != null) {
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					Event e = events.get(Integer.valueOf(rs.getInt(1)));
+					if (e == null) continue;
 					Route r = new Route(e.getID(), rs.getString(5));
 					r.setRouteID(rs.getInt(2));
 					r.setAirportD(SystemData.getAirport(rs.getString(3)));
@@ -315,16 +282,14 @@ public class GetEvent extends DAO {
 				}
 			}
 		}
-
-		_ps.close();
 	}
 
 	/*
 	 * Helper method to load events.
 	 */
-	private List<Event> execute() throws SQLException {
+	private static List<Event> execute(PreparedStatement ps) throws SQLException {
 		List<Event> results = new ArrayList<Event>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			boolean hasBanner = (rs.getMetaData().getColumnCount() > 11);
 			while (rs.next()) {
 				Event e = new Event(rs.getString(2));
@@ -345,7 +310,6 @@ public class GetEvent extends DAO {
 			}
 		}
 
-		_ps.close();
 		return results;
 	}
 
@@ -353,12 +317,10 @@ public class GetEvent extends DAO {
 	 * Helper method to load signups for an event.
 	 */
 	private void loadSignups(Map<Integer, Event> events) throws SQLException {
-		if (events.isEmpty())
-			return;
+		if (events.isEmpty()) return;
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT ES.*, EA.AIRPORT_D, EA.AIRPORT_A FROM events.EVENT_SIGNUPS ES, "
-				+ "events.EVENT_AIRPORTS EA WHERE (EA.ID=ES.ID) AND (EA.ROUTE_ID=ES.ROUTE_ID) AND (ES.ID IN (");
+		StringBuilder sqlBuf = new StringBuilder("SELECT ES.*, EA.AIRPORT_D, EA.AIRPORT_A FROM events.EVENT_SIGNUPS ES, events.EVENT_AIRPORTS EA WHERE (EA.ID=ES.ID) AND (EA.ROUTE_ID=ES.ROUTE_ID) AND (ES.ID IN (");
 		for (Iterator<Integer> i = events.keySet().iterator(); i.hasNext();) {
 			Integer id = i.next();
 			sqlBuf.append(id.toString());
@@ -369,56 +331,52 @@ public class GetEvent extends DAO {
 		sqlBuf.append("))");
 
 		// Execute the query and load the signups
-		prepareStatementWithoutLimits(sqlBuf.toString());
-		try (ResultSet rs = _ps.executeQuery()) {
-			while (rs.next()) {
-				Signup s = new Signup(rs.getInt(1), rs.getInt(3));
-				s.setRouteID(rs.getInt(2));
-				s.setEquipmentType(rs.getString(4));
-				s.setRemarks(rs.getString(5));
-				s.setAirportD(SystemData.getAirport(rs.getString(6)));
-				s.setAirportA(SystemData.getAirport(rs.getString(7)));
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					Signup s = new Signup(rs.getInt(1), rs.getInt(3));
+					s.setRouteID(rs.getInt(2));
+					s.setEquipmentType(rs.getString(4));
+					s.setRemarks(rs.getString(5));
+					s.setAirportD(SystemData.getAirport(rs.getString(6)));
+					s.setAirportA(SystemData.getAirport(rs.getString(7)));
 
-				// Add to results
-				Event e = events.get(Integer.valueOf(s.getID()));
-				if (e != null)
+					// Add to results
+					Event e = events.get(Integer.valueOf(s.getID()));
+					if (e != null)
 					e.addSignup(s);
+				}
 			}
 		}
-
-		_ps.close();
 	}
 
 	private void loadEQTypes(Event e) throws SQLException {
-		prepareStatementWithoutLimits("SELECT RATING FROM events.EVENT_EQTYPES WHERE (ID=?)");
-		_ps.setInt(1, e.getID());
-		try (ResultSet rs = _ps.executeQuery()) {
-			while (rs.next())
-				e.addEquipmentType(rs.getString(1));
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT RATING FROM events.EVENT_EQTYPES WHERE (ID=?)")) {
+			ps.setInt(1, e.getID());
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next())
+					e.addEquipmentType(rs.getString(1));
+			}
 		}
-
-		_ps.close();
 	}
 	
 	private void loadContactAddrs(Event e) throws SQLException {
-		prepareStatementWithoutLimits("SELECT ADDRESS FROM events.EVENT_CONTACTS WHERE (ID=?)");
-		_ps.setInt(1, e.getID());
-		try (ResultSet rs = _ps.executeQuery()) {
-			while (rs.next())
-				e.addContactAddr(rs.getString(1));
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT ADDRESS FROM events.EVENT_CONTACTS WHERE (ID=?)")) {
+			ps.setInt(1, e.getID());
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next())
+					e.addContactAddr(rs.getString(1));
+			}
 		}
-
-		_ps.close();
 	}
 	
 	private void loadAirlines(Event e) throws SQLException {
-		prepareStatementWithoutLimits("SELECT AIRLINE FROM events.AIRLINES WHERE (ID=?)");
-		_ps.setInt(1, e.getID());
-		try (ResultSet rs = _ps.executeQuery()) {
-			while (rs.next())
-			e.addAirline(SystemData.getApp(rs.getString(1)));	
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT AIRLINE FROM events.AIRLINES WHERE (ID=?)")) {
+			ps.setInt(1, e.getID());
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next())
+					e.addAirline(SystemData.getApp(rs.getString(1)));	
+			}
 		}
-		
-		_ps.close();
 	}
 }

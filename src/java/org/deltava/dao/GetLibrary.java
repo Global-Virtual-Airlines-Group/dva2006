@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2011, 2012, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2011, 2012, 2014, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.io.File;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load metadata from the Fleet/Document Libraries.
  * @author Luke
- * @version 8.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -53,12 +53,11 @@ public class GetLibrary extends DAO {
 			sqlBuf.append(" AND (FA.CODE=?)");
 		sqlBuf.append(" GROUP BY F.NAME");
 
-		try {
-			prepareStatement(sqlBuf.toString());
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			if (!isAdmin)
-				_ps.setString(1, SystemData.get("airline.code"));
+				ps.setString(1, SystemData.get("airline.code"));
 			
-			List<Installer> results = loadInstallers();
+			List<Installer> results = loadInstallers(ps);
 			loadDownloadCounts(results);
 			return results;
 		} catch (SQLException se) {
@@ -81,27 +80,25 @@ public class GetLibrary extends DAO {
 		sqlBuf.append(".FLEET WHERE (FILENAME=?) LIMIT 1");
 
 		try {
-			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setString(1, fName);
-
-			// Get results - if empty return null
-			List<Installer> results = loadInstallers();
-			if (results.isEmpty())
-				return null;
+			List<Installer> results = new ArrayList<Installer>();
+			try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+				ps.setString(1, fName);
+				results.addAll(loadInstallers(ps));
+			}
+		
+			if (results.isEmpty()) return null;
 			
 			// Get airline data
 			loadDownloadCounts(results);
-			Installer i = results.get(0);
-			prepareStatementWithoutLimits("SELECT CODE FROM FLEET_AIRLINE WHERE (FILENAME=?)");
-			_ps.setString(1, fName);
-			
-			// Do the query
-			try (ResultSet rs = _ps.executeQuery()) {
-				while (rs.next())
-					i.addApp(SystemData.getApp(rs.getString(1)));
+			Installer i = results.stream().findFirst().orElse(null);
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT CODE FROM FLEET_AIRLINE WHERE (FILENAME=?)")) {
+				ps.setString(1, fName);
+				try (ResultSet rs = ps.executeQuery()) {
+					while (rs.next())
+						i.addApp(SystemData.getApp(rs.getString(1)));
+				}
 			}
-			
-			_ps.close();
+
 			return i;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -123,27 +120,25 @@ public class GetLibrary extends DAO {
 		sqlBuf.append(".FLEET WHERE (CODE=?) LIMIT 1");
 
 		try {
-			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setString(1, code.toUpperCase());
-
-			// Get results - if empty return null
-			List<Installer> results = loadInstallers();
-			if (results.isEmpty())
-				return null;
+			List<Installer> results = new ArrayList<Installer>();
+			try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+				ps.setString(1, code.toUpperCase());
+				results.addAll(loadInstallers(ps));
+			}
+			
+			if (results.isEmpty()) return null;
 			
 			// Get airline data
 			loadDownloadCounts(results);
-			Installer i = results.get(0);
-			prepareStatementWithoutLimits("SELECT CODE FROM FLEET_AIRLINE WHERE (FILENAME=?)");
-			_ps.setString(1, i.getFileName());
-			
-			// Do the query
-			try (ResultSet rs = _ps.executeQuery()) {
-				while (rs.next())
-					i.addApp(SystemData.getApp(rs.getString(1)));
+			Installer i = results.stream().findFirst().orElse(null);
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT CODE FROM FLEET_AIRLINE WHERE (FILENAME=?)")) {
+				ps.setString(1, i.getFileName());
+				try (ResultSet rs = ps.executeQuery()) {
+					while (rs.next())
+						i.addApp(SystemData.getApp(rs.getString(1)));
+				}
 			}
 			
-			_ps.close();
 			return i;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -157,14 +152,9 @@ public class GetLibrary extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public FileEntry getFile(String fName) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT F.*, COUNT(L.FILENAME) FROM FILES F LEFT JOIN DOWNLOADS L "
-					+ "ON (F.FILENAME=L.FILENAME) WHERE (F.FILENAME=?) GROUP BY F.NAME ORDER BY F.NAME LIMIT 1");
-			_ps.setString(1, fName);
-
-			// Get results - if empty return null
-			List<FileEntry> results = loadFiles(false);
-			return results.isEmpty() ? null : results.get(0);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT F.*, COUNT(L.FILENAME) FROM FILES F LEFT JOIN DOWNLOADS L ON (F.FILENAME=L.FILENAME) WHERE (F.FILENAME=?) GROUP BY F.NAME ORDER BY F.NAME LIMIT 1")) {
+			ps.setString(1, fName);
+			return loadFiles(ps, false).stream().findFirst().orElse(null);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -177,11 +167,9 @@ public class GetLibrary extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Video getVideo(String fName) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT V.*, COUNT(L.FILENAME) FROM exams.VIDEOS V LEFT JOIN DOWNLOADS L "
-					+ "ON (V.FILENAME=L.FILENAME) WHERE (V.FILENAME=?) GROUP BY V.NAME ORDER BY V.NAME LIMIT 1");
-			_ps.setString(1, fName);
-			List<FileEntry> results = loadFiles(true);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT V.*, COUNT(L.FILENAME) FROM exams.VIDEOS V LEFT JOIN DOWNLOADS L ON (V.FILENAME=L.FILENAME) WHERE (V.FILENAME=?) GROUP BY V.NAME ORDER BY V.NAME LIMIT 1")) {
+			ps.setString(1, fName);
+			List<FileEntry> results = loadFiles(ps, true);
 			return (results.isEmpty()) ? null : (Video) results.get(0); 
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -205,9 +193,8 @@ public class GetLibrary extends DAO {
 		sqlBuf.append(db);
 		sqlBuf.append(".DOWNLOADS L ON (F.FILENAME=L.FILENAME) GROUP BY F.NAME ORDER BY F.NAME");
 
-		try {
-			prepareStatement(sqlBuf.toString());
-			return loadFiles(false);
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			return loadFiles(ps, false);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -216,12 +203,12 @@ public class GetLibrary extends DAO {
 	/*
 	 * Helper method to load from the File/Video Library tables.
 	 */
-	private List<FileEntry> loadFiles(boolean isVideo) throws SQLException {
+	private static List<FileEntry> loadFiles(PreparedStatement ps, boolean isVideo) throws SQLException {
 		
 		// Determine the path
 		File p = new File(SystemData.get(isVideo ? "path.video" : "path.userfiles"));
 		List<FileEntry> results = new ArrayList<FileEntry>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			boolean hasTotals = (rs.getMetaData().getColumnCount() > 7);
 			while (rs.next()) {
 				File f = new File(p, rs.getString(1));
@@ -238,16 +225,15 @@ public class GetLibrary extends DAO {
 			}
 		}
 
-		_ps.close();
 		return results;
 	}
 
 	/*
 	 * Helper method to load from the Fleet Library table.
 	 */
-	private List<Installer> loadInstallers() throws SQLException {
+	private static List<Installer> loadInstallers(PreparedStatement ps) throws SQLException {
 		List<Installer> results = new ArrayList<Installer>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			boolean hasTotals = (rs.getMetaData().getColumnCount() > 11);
 			while (rs.next()) {
 				File f = new File(SystemData.get("path.library"), rs.getString(1));
@@ -273,7 +259,6 @@ public class GetLibrary extends DAO {
 			}
 		}
 
-		_ps.close();
 		return results;
 	}
 	
@@ -306,20 +291,17 @@ public class GetLibrary extends DAO {
 		sqlBuf.setLength(sqlBuf.length() - 1);
 		sqlBuf.append(") GROUP BY FILENAME");
 		Map<String, ? extends FleetEntry> is = CollectionUtils.createMap(files, FleetEntry::getFileName);
-		prepareStatement(sqlBuf.toString());
-		
-		// Parse the results
-		try (ResultSet rs = _ps.executeQuery()) {
-			while (rs.next()) {
-				FleetEntry fe = is.get(rs.getString(1));
-				if (fe != null) {
-					fe.setDownloadCount(rs.getInt(2));
-					CacheableLong cnt = new CacheableLong(fe.getFileName(), fe.getDownloadCount());
-					_dlCache.add(cnt);
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					FleetEntry fe = is.get(rs.getString(1));
+					if (fe != null) {
+						fe.setDownloadCount(rs.getInt(2));
+						CacheableLong cnt = new CacheableLong(fe.getFileName(), fe.getDownloadCount());
+						_dlCache.add(cnt);
+					}
 				}
 			}
 		}
-		
-		_ps.close();
 	}
 }

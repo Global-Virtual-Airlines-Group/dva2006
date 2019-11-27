@@ -9,7 +9,7 @@ import org.deltava.beans.acars.TaskTimerData;
 /**
  * A Data Access Object to load ACARS client performance counter data from the database.
  * @author Luke
- * @version 8.6
+ * @version 9.0
  * @since 8.6
  */
 
@@ -30,12 +30,11 @@ public class GetACARSPerformance extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<TaskTimerData> getTimers(int flightID) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT * FROM acars.PERFINFO WHERE (ID=?)");
-			_ps.setInt(1, flightID);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM acars.PERFINFO WHERE (ID=?)")) {
+			ps.setInt(1, flightID);
 			
 			Collection<TaskTimerData> results = new ArrayList<TaskTimerData>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					TaskTimerData ttd = new TaskTimerData(rs.getString(2), rs.getInt(3));
 					ttd.setCount(rs.getLong(4));
@@ -46,7 +45,6 @@ public class GetACARSPerformance extends DAO {
 				}
 			}
 			
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);

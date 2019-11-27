@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2009, 2011, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009, 2011, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.beans.system.InactivityPurge;
  * A Data Access Object to read Inactivity purge entries. This DAO extends PilotReadDAO since it is used
  * to query pilots who may not have an Inactivity purge table entry, but are eligible for one.
  * @author Luke
- * @version 8.1
+ * @version 9.0
  * @since 1.0
  */
 
@@ -33,11 +33,9 @@ public class GetInactivity extends PilotReadDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public InactivityPurge getInactivity(int pilotID) throws DAOException {
-		try {
-			prepareStatement("SELECT * FROM INACTIVITY WHERE (ID=?)");
-			_ps.setInt(1, pilotID);
-			List<InactivityPurge> results = executeInactivity();
-			return results.isEmpty() ? null : results.get(0);
+		try (PreparedStatement ps = prepare("SELECT * FROM INACTIVITY WHERE (ID=?)")) {
+			ps.setInt(1, pilotID);
+			return executeInactivity(ps).stream().findFirst().orElse(null);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -49,12 +47,10 @@ public class GetInactivity extends PilotReadDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<InactivityPurge> getPurgeable() throws DAOException {
-		try {
-			prepareStatement("SELECT I.* FROM INACTIVITY I, PILOTS P WHERE (P.ID=I.ID) AND (I.PURGE_DATE < CURDATE()) "
-					+ "AND ((I.NOTIFY=?) OR (P.LOGINS=?))");
-			_ps.setBoolean(1, true);
-			_ps.setInt(2, 0);
-			return executeInactivity();
+		try (PreparedStatement ps = prepare("SELECT I.* FROM INACTIVITY I, PILOTS P WHERE (P.ID=I.ID) AND (I.PURGE_DATE < CURDATE()) AND ((I.NOTIFY=?) OR (P.LOGINS=?))")) {
+			ps.setBoolean(1, true);
+			ps.setInt(2, 0);
+			return executeInactivity(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -67,12 +63,10 @@ public class GetInactivity extends PilotReadDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Integer> getInactivePilots(int days) throws DAOException {
-		try {
-			prepareStatement("SELECT ID FROM PILOTS WHERE (STATUS=?) AND (DATE_ADD(IFNULL(LAST_LOGIN, " +
-					"DATE_ADD(CREATED, INTERVAL 1 HOUR)), INTERVAL ? DAY) < NOW())");
-			_ps.setInt(1, Pilot.ACTIVE);
-			_ps.setInt(2, days);
-			return executeIDs();
+		try (PreparedStatement ps = prepare("SELECT ID FROM PILOTS WHERE (STATUS=?) AND (DATE_ADD(IFNULL(LAST_LOGIN, DATE_ADD(CREATED, INTERVAL 1 HOUR)), INTERVAL ? DAY) < NOW())")) {
+			ps.setInt(1, Pilot.ACTIVE);
+			ps.setInt(2, days);
+			return executeIDs(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -87,21 +81,18 @@ public class GetInactivity extends PilotReadDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Integer> getRepeatInactive(int loginDays, int activityDays, int minPosts) throws DAOException {
-		try {
-			prepareStatement("SELECT P.ID, COUNT(F.ID) AS FLIGHTS, COUNT(CP.POST_ID) AS POSTS, COUNT(E.ID) AS EXAMS FROM PILOTS P "
-					+ "LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?) AND (F.DATE > DATE_SUB(NOW(), INTERVAL ? DAY))) "
-					+ "LEFT JOIN common.COOLER_POSTS CP ON ((P.ID=CP.AUTHOR_ID) AND (CP.CREATED > DATE_SUB(NOW(), INTERVAL ? DAY))) "
-					+ "LEFT JOIN exams.EXAMS E ON ((E.PILOT_ID=P.ID) AND (E.CREATED_ON > DATE_SUB(NOW(), INTERVAL ? DAY))) WHERE "
-					+ "(P.STATUS=?) AND P.LAST_LOGIN < DATE_SUB(NOW(), INTERVAL ? DAY) GROUP BY P.ID HAVING (FLIGHTS=0) AND "
-					+ "(POSTS<?) AND (EXAMS=0)");
-			_ps.setInt(1, FlightStatus.OK.ordinal());
-			_ps.setInt(2, activityDays);
-			_ps.setInt(3, activityDays);
-			_ps.setInt(4, activityDays);
-			_ps.setInt(5, Pilot.ACTIVE);
-			_ps.setInt(6, loginDays);
-			_ps.setInt(7, minPosts);
-			return executeIDs();
+		try (PreparedStatement ps = prepare("SELECT P.ID, COUNT(F.ID) AS FLIGHTS, COUNT(CP.POST_ID) AS POSTS, COUNT(E.ID) AS EXAMS FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) "
+			+ "AND (F.STATUS=?) AND (F.DATE > DATE_SUB(NOW(), INTERVAL ? DAY))) LEFT JOIN common.COOLER_POSTS CP ON ((P.ID=CP.AUTHOR_ID) AND (CP.CREATED > DATE_SUB(NOW(), INTERVAL ? DAY))) "
+			+ "LEFT JOIN exams.EXAMS E ON ((E.PILOT_ID=P.ID) AND (E.CREATED_ON > DATE_SUB(NOW(), INTERVAL ? DAY))) WHERE (P.STATUS=?) AND P.LAST_LOGIN < DATE_SUB(NOW(), INTERVAL ? DAY) "
+			+ "GROUP BY P.ID HAVING (FLIGHTS=0) AND (POSTS<?) AND (EXAMS=0)")) {
+			ps.setInt(1, FlightStatus.OK.ordinal());
+			ps.setInt(2, activityDays);
+			ps.setInt(3, activityDays);
+			ps.setInt(4, activityDays);
+			ps.setInt(5, Pilot.ACTIVE);
+			ps.setInt(6, loginDays);
+			ps.setInt(7, minPosts);
+			return executeIDs(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -110,9 +101,9 @@ public class GetInactivity extends PilotReadDAO {
 	/*
 	 * Helper method to parse Inactivity result sets.
 	 */
-	private List<InactivityPurge> executeInactivity() throws SQLException {
+	private static List<InactivityPurge> executeInactivity(PreparedStatement ps) throws SQLException {
 		List<InactivityPurge> results = new ArrayList<InactivityPurge>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
 				InactivityPurge ip = new InactivityPurge(rs.getInt(1));
 				ip.setPurgeDate(expandDate(rs.getDate(2)));
@@ -122,7 +113,6 @@ public class GetInactivity extends PilotReadDAO {
 			}
 		}
 		
-		_ps.close();
 		return results;
 	}
 }

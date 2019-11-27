@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2012, 2015, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2012, 2015, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.crypt.SaltMine;
 /**
  * A Data Access Object to update Pilot IMAP data.
  * @author Luke
- * @version 8.3
+ * @version 9.0
  * @since 1.0
  */
 
@@ -33,10 +33,9 @@ public class SetPilotEMail extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void delete(int id) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("DELETE FROM postfix.mailbox WHERE (ID=?)");
-			_ps.setInt(1, id);
-			executeUpdate(0);
+		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM postfix.mailbox WHERE (ID=?)")) {
+			ps.setInt(1, id);
+			executeUpdate(ps, 0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -48,12 +47,11 @@ public class SetPilotEMail extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void disable(int id) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("UPDATE postfix.mailbox SET active=?, allow_smtp=? WHERE (ID=?)");
-			_ps.setBoolean(1, false);
-			_ps.setBoolean(2, false);
-			_ps.setInt(3, id);
-			executeUpdate(0);
+		try (PreparedStatement ps = prepareWithoutLimits("UPDATE postfix.mailbox SET active=?, allow_smtp=? WHERE (ID=?)")) {
+			ps.setBoolean(1, false);
+			ps.setBoolean(2, false);
+			ps.setInt(3, id);
+			executeUpdate(ps, 0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -70,15 +68,16 @@ public class SetPilotEMail extends DAO {
 			startTransaction();
 			
 			// Write the record
-        	prepareStatement("INSERT INTO postfix.mailbox (username, name, maildir, quota, allow_smtp, active, ID) VALUES (?, ?, ?, ?, ?, ?, ?)");
-			_ps.setString(1, cfg.getAddress());
-			_ps.setString(2, name);
-			_ps.setString(3, cfg.getMailDirectory());
-			_ps.setInt(4, cfg.getQuota());
-			_ps.setBoolean(5, cfg.getAllowSMTP());
-			_ps.setBoolean(6, cfg.getActive());
-        	_ps.setInt(7, cfg.getID());
-			executeUpdate(1);
+			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO postfix.mailbox (username, name, maildir, quota, allow_smtp, active, ID) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
+				ps.setString(1, cfg.getAddress());
+				ps.setString(2, name);
+				ps.setString(3, cfg.getMailDirectory());
+				ps.setInt(4, cfg.getQuota());
+				ps.setBoolean(5, cfg.getAllowSMTP());
+				ps.setBoolean(6, cfg.getActive());
+				ps.setInt(7, cfg.getID());
+				executeUpdate(ps, 1);
+			}
 
 			// Write the aliases and commit
 			writeAliases(cfg.getAddress(), cfg.getAliases());
@@ -100,20 +99,22 @@ public class SetPilotEMail extends DAO {
 			startTransaction();
 			
             // Clean out the aliases
-            prepareStatementWithoutLimits("DELETE FROM postfix.alias WHERE (goto=?)");
-            _ps.setString(1, cfg.getAddress());
-            executeUpdate(0);
+			try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM postfix.alias WHERE (goto=?)")) {
+				ps.setString(1, cfg.getAddress());
+				executeUpdate(ps, 0);
+			}
 			
 			// Update the mailbox record
-            prepareStatement("UPDATE postfix.mailbox SET username=?, name=?, maildir=?, quota=?, allow_smtp=?, active=? WHERE (ID=?)");
-			_ps.setString(1, cfg.getAddress());
-			_ps.setString(2, name);
-			_ps.setString(3, cfg.getMailDirectory());
-			_ps.setInt(4, cfg.getQuota());
-			_ps.setBoolean(5, cfg.getAllowSMTP());
-			_ps.setBoolean(6, cfg.getActive());
-        	_ps.setInt(7, cfg.getID());
-			executeUpdate(1);
+			try (PreparedStatement ps = prepare("UPDATE postfix.mailbox SET username=?, name=?, maildir=?, quota=?, allow_smtp=?, active=? WHERE (ID=?)")) {
+				ps.setString(1, cfg.getAddress());
+				ps.setString(2, name);
+				ps.setString(3, cfg.getMailDirectory());
+				ps.setInt(4, cfg.getQuota());
+				ps.setBoolean(5, cfg.getAllowSMTP());
+				ps.setBoolean(6, cfg.getActive());
+				ps.setInt(7, cfg.getID());
+				executeUpdate(ps, 1);
+			}
 			
 			// Write the aliases and commit
 			writeAliases(cfg.getAddress(), cfg.getAliases());
@@ -132,12 +133,11 @@ public class SetPilotEMail extends DAO {
 	 */
 	public void updatePassword(int id, String pwd) throws DAOException {
 		String salt = SaltMine.generate(2);
-		try {
-			prepareStatement("UPDATE postfix.mailbox SET crypt_pw=?, sha_pw=SHA1(?) WHERE (ID=?)");
-			_ps.setString(1, UnixCrypt.crypt(pwd, salt));
-			_ps.setString(2, pwd);
-			_ps.setInt(3, id);
-			executeUpdate(1);
+		try (PreparedStatement ps = prepare("UPDATE postfix.mailbox SET crypt_pw=?, sha_pw=SHA1(?) WHERE (ID=?)")) {
+			ps.setString(1, UnixCrypt.crypt(pwd, salt));
+			ps.setString(2, pwd);
+			ps.setInt(3, id);
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -148,14 +148,15 @@ public class SetPilotEMail extends DAO {
 	 */
 	private void writeAliases(String addr, Collection<String> aliases) throws SQLException {
 		
-		prepareStatementWithoutLimits("INSERT INTO postfix.alias (address, goto, active) VALUES (?, ?, ?)");
-		_ps.setString(2, addr);
-		_ps.setBoolean(3, true);
-		for (String alias : aliases) {
-			_ps.setString(1, alias);
-			_ps.addBatch();
-		}
+		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO postfix.alias (address, goto, active) VALUES (?, ?, ?)")) {
+			ps.setString(2, addr);
+			ps.setBoolean(3, true);
+			for (String alias : aliases) {
+				ps.setString(1, alias);
+				ps.addBatch();
+			}
 
-		executeBatchUpdate(1, aliases.size());
+			executeUpdate(ps, 1, aliases.size());
+		}
 	}
 }

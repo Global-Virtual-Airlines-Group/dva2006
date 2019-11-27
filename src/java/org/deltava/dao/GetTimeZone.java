@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2010, 2011, 2015, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2010, 2011, 2015, 2016, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.beans.*;
 /**
  * A Data Access Object for loading Time Zones.
  * @author Luke
- * @version 8.4
+ * @version 9.0
  * @since 1.0
  */
 
@@ -32,17 +32,15 @@ public class GetTimeZone extends DAO {
      * @throws DAOException if a JDBC error occurs
      */
     public int initAll() throws DAOException {
-        try {
-            prepareStatementWithoutLimits("SELECT CODE, NAME, ABBR FROM common.TZ");
+    	try (PreparedStatement ps = prepareWithoutLimits("SELECT CODE, NAME, ABBR FROM common.TZ")) {
             int rowsLoaded = 0;
-            try (ResultSet rs = _ps.executeQuery()) {
+            try (ResultSet rs = ps.executeQuery()) {
             	while (rs.next()) {
             		TZInfo.init(rs.getString(1), rs.getString(2), rs.getString(3));
             		rowsLoaded++;
             	}
             }
             
-            _ps.close();
             return rowsLoaded;
         } catch (SQLException se) {
             throw new DAOException(se);
@@ -59,20 +57,22 @@ public class GetTimeZone extends DAO {
     	String pt = formatLocation(loc); 
     	try {
     		ZoneId tz = null;
-    		prepareStatementWithoutLimits("SELECT NAME FROM geoip.TZ WHERE ST_Contains(DATA, ST_PointFromText(?,?))");
-    		_ps.setString(1, pt);
-    		_ps.setInt(2, WGS84_SRID);
-    		try (ResultSet rs = _ps.executeQuery()) {
-    			if (rs.next()) tz = ZoneId.of(rs.getString(1));
+    		try (PreparedStatement ps = prepareWithoutLimits("SELECT NAME FROM geoip.TZ WHERE ST_Contains(DATA, ST_PointFromText(?,?))")) {
+    			ps.setString(1, pt);
+    			ps.setInt(2, WGS84_SRID);
+    			try (ResultSet rs = ps.executeQuery()) {
+    				if (rs.next()) tz = ZoneId.of(rs.getString(1));
+    			}
     		}
     		
     		if (tz == null) {
-    			prepareStatementWithoutLimits("SELECT NAME FROM geoip.TZ WHERE ST_Intersects(DATA, ST_PointFromText(?,?))");
-    			_ps.setString(1, pt);
-        		_ps.setInt(2, WGS84_SRID);
-        		try (ResultSet rs = _ps.executeQuery()) {
-        			if (rs.next()) tz = ZoneId.of(rs.getString(1));
-        		}
+    			try (PreparedStatement ps = prepareWithoutLimits("SELECT NAME FROM geoip.TZ WHERE ST_Intersects(DATA, ST_PointFromText(?,?))")) {
+    				ps.setString(1, pt);
+    				ps.setInt(2, WGS84_SRID);
+    				try (ResultSet rs = ps.executeQuery()) {
+    					if (rs.next()) tz = ZoneId.of(rs.getString(1));
+    				}
+    			}
     		}
     		
     		if (tz == null)

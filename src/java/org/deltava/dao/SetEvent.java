@@ -1,8 +1,7 @@
-// Copyright 2005, 2007, 2008, 2011, 2012, 2014, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2011, 2012, 2014, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
-import java.util.*;
 
 import org.deltava.beans.event.*;
 import org.deltava.beans.schedule.*;
@@ -13,7 +12,7 @@ import org.deltava.util.cache.CacheManager;
 /**
  * A Data Access Object to write Online Event data.
  * @author Luke
- * @version 8.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -63,15 +62,13 @@ public class SetEvent extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void signup(Signup s) throws DAOException {
-		try {
-			prepareStatement("REPLACE INTO events.EVENT_SIGNUPS (ID, ROUTE_ID, PILOT_ID, EQTYPE, REMARKS) "
-					+ "VALUES (?, ?, ?, ?, ?)");
-			_ps.setInt(1, s.getID());
-			_ps.setInt(2, s.getRouteID());
-			_ps.setInt(3, s.getPilotID());
-			_ps.setString(4, s.getEquipmentType());
-			_ps.setString(5, s.getRemarks());
-			executeUpdate(1);
+		try (PreparedStatement ps =  prepare("REPLACE INTO events.EVENT_SIGNUPS (ID, ROUTE_ID, PILOT_ID, EQTYPE, REMARKS) VALUES (?, ?, ?, ?, ?)")) {
+			ps.setInt(1, s.getID());
+			ps.setInt(2, s.getRouteID());
+			ps.setInt(3, s.getPilotID());
+			ps.setString(4, s.getEquipmentType());
+			ps.setString(5, s.getRemarks());
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		} finally {
@@ -85,24 +82,22 @@ public class SetEvent extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void save(Route r) throws DAOException {
-		try {
-			prepareStatement("INSERT INTO events.EVENT_AIRPORTS (ID, ROUTE_ID, AIRPORT_D, AIRPORT_A, ROUTE, "
-					+ "RNAV, ACTIVE, MAX_SIGNUPS, NAME) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE "
-					+ "ROUTE=?, RNAV=?, NAME=?, MAX_SIGNUPS=?");
-			_ps.setInt(1, r.getID());
-			_ps.setInt(2, r.getRouteID());
-			_ps.setString(3, r.getAirportD().getIATA());
-			_ps.setString(4, r.getAirportA().getIATA());
-			_ps.setString(5, r.getRoute());
-			_ps.setBoolean(6, r.getIsRNAV());
-			_ps.setBoolean(7, r.getActive());
-			_ps.setInt(8, r.getMaxSignups());
-			_ps.setString(9, r.getName());
-			_ps.setString(10, r.getRoute());
-			_ps.setBoolean(11, r.getIsRNAV());
-			_ps.setString(12, r.getName());
-			_ps.setInt(13, r.getMaxSignups());
-			executeUpdate(1);
+		try (PreparedStatement ps = prepare("INSERT INTO events.EVENT_AIRPORTS (ID, ROUTE_ID, AIRPORT_D, AIRPORT_A, ROUTE, RNAV, ACTIVE, MAX_SIGNUPS, NAME) VALUES "
+			+ "(?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE ROUTE=?, RNAV=?, NAME=?, MAX_SIGNUPS=?")) {
+			ps.setInt(1, r.getID());
+			ps.setInt(2, r.getRouteID());
+			ps.setString(3, r.getAirportD().getIATA());
+			ps.setString(4, r.getAirportA().getIATA());
+			ps.setString(5, r.getRoute());
+			ps.setBoolean(6, r.getIsRNAV());
+			ps.setBoolean(7, r.getActive());
+			ps.setInt(8, r.getMaxSignups());
+			ps.setString(9, r.getName());
+			ps.setString(10, r.getRoute());
+			ps.setBoolean(11, r.getIsRNAV());
+			ps.setString(12, r.getName());
+			ps.setInt(13, r.getMaxSignups());
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -114,10 +109,9 @@ public class SetEvent extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void delete(Event e) throws DAOException {
-		try {
-			prepareStatement("DELETE FROM events.EVENTS WHERE (ID=?)");
-			_ps.setInt(1, e.getID());
-			executeUpdate(1);
+		try (PreparedStatement ps =  prepare("DELETE FROM events.EVENTS WHERE (ID=?)")) {
+			ps.setInt(1, e.getID());
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -129,11 +123,10 @@ public class SetEvent extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void delete(Signup s) throws DAOException {
-		try {
-			prepareStatement("DELETE FROM events.EVENT_SIGNUPS WHERE (ID=?) AND (PILOT_ID=?)");
-			_ps.setInt(1, s.getID());
-			_ps.setInt(2, s.getPilotID());
-			executeUpdate(1);
+		try (PreparedStatement ps = prepare("DELETE FROM events.EVENT_SIGNUPS WHERE (ID=?) AND (PILOT_ID=?)")) {
+			ps.setInt(1, s.getID());
+			ps.setInt(2, s.getPilotID());
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		} finally {
@@ -147,11 +140,10 @@ public class SetEvent extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void delete(Route r) throws DAOException {
-		try {
-			prepareStatement("DELETE FROM events.EVENT_AIRPORTS WHERE (ID=?) AND (ROUTE_ID=?)");
-			_ps.setInt(1, r.getID());
-			_ps.setInt(2, r.getRouteID());
-			executeUpdate(1);
+		try (PreparedStatement ps = prepare("DELETE FROM events.EVENT_AIRPORTS WHERE (ID=?) AND (ROUTE_ID=?)")) {
+			ps.setInt(1, r.getID());
+			ps.setInt(2, r.getRouteID());
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			rollbackTransaction();
 			throw new DAOException(se);
@@ -164,10 +156,9 @@ public class SetEvent extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void deleteBanner(int id) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("DELETE FROM events.BANNERS WHERE (ID=?)");
-			_ps.setInt(1, id);
-			executeUpdate(0);
+		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM events.BANNERS WHERE (ID=?)")) {
+			ps.setInt(1, id);
+			executeUpdate(ps, 0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -179,14 +170,13 @@ public class SetEvent extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void writeBanner(Event e) throws DAOException {
-		try {
-			prepareStatement("REPLACE INTO events.BANNERS (ID, IMG, X, Y, EXT) VALUES (?, ?, ?, ?, LCASE(?))");
-			_ps.setInt(1, e.getID());
-			_ps.setBinaryStream(2, e.getInputStream(), e.getSize());
-			_ps.setInt(3, e.getWidth());
-			_ps.setInt(4, e.getHeight());
-			_ps.setString(5, e.getTypeName());
-			executeUpdate(1);
+		try (PreparedStatement ps = prepare("REPLACE INTO events.BANNERS (ID, IMG, X, Y, EXT) VALUES (?, ?, ?, ?, LCASE(?))")) {
+			ps.setInt(1, e.getID());
+			ps.setBinaryStream(2, e.getInputStream(), e.getSize());
+			ps.setInt(3, e.getWidth());
+			ps.setInt(4, e.getHeight());
+			ps.setString(5, e.getTypeName());
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -198,11 +188,10 @@ public class SetEvent extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void toggle(Route r) throws DAOException {
-		try {
-			prepareStatement("UPDATE events.EVENT_AIRPORTS SET ACTIVE=(NOT ACTIVE) WHERE (ID=?) AND (ROUTE_ID=?)");
-			_ps.setInt(1, r.getID());
-			_ps.setInt(2, r.getRouteID());
-			executeUpdate(1);
+		try (PreparedStatement ps = prepare("UPDATE events.EVENT_AIRPORTS SET ACTIVE=(NOT ACTIVE) WHERE (ID=?) AND (ROUTE_ID=?)")) {
+			ps.setInt(1, r.getID());
+			ps.setInt(2, r.getRouteID());
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -211,48 +200,49 @@ public class SetEvent extends DAO {
 	private void writeCharts(Event e) throws SQLException {
 
 		// Clear airports
-		prepareStatement("DELETE FROM events.EVENT_CHARTS WHERE (ID=?)");
-		_ps.setInt(1, e.getID());
-		executeUpdate(0);
+		try (PreparedStatement ps = prepare("DELETE FROM events.EVENT_CHARTS WHERE (ID=?)")) {
+			ps.setInt(1, e.getID());
+			executeUpdate(ps, 0);
+		}
 
 		// Do nothing if we have an empty list
 		if (e.getCharts().isEmpty())
 			return;
 
 		// Write the charts
-		prepareStatement("INSERT INTO events.EVENT_CHARTS (ID, CHART) VALUES (?, ?)");
-		_ps.setInt(1, e.getID());
-		for (Chart c : e.getCharts()) {
-			_ps.setInt(2, c.getID());
-			_ps.addBatch();
-		}
+		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO events.EVENT_CHARTS (ID, CHART) VALUES (?, ?)")) {
+			ps.setInt(1, e.getID());
+			for (Chart c : e.getCharts()) {
+				ps.setInt(2, c.getID());
+				ps.addBatch();
+			}
 
-		executeBatchUpdate(1, e.getCharts().size());
+			executeUpdate(ps, 1, e.getCharts().size());
+		}
 	}
 
 	private void writeAirports(Event e) throws SQLException {
 
 		// Add the airports
 		int maxRouteID = 0;
-		for (Iterator<Route> i = e.getRoutes().iterator(); i.hasNext();) {
-			Route r = i.next();
+		for (Route r : e.getRoutes()) {
 			maxRouteID = Math.max(maxRouteID, r.getRouteID() + 1);
-			if (r.getRouteID() == 0) {
+			if (r.getRouteID() == 0)
 				r.setRouteID(maxRouteID);
-				prepareStatement("INSERT INTO events.EVENT_AIRPORTS (AIRPORT_D, AIRPORT_A, ROUTE, ACTIVE, RNAV, MAX_SIGNUPS, NAME, ROUTE_ID, ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-			} else
-				prepareStatement("UPDATE events.EVENT_AIRPORTS SET AIRPORT_D=?, AIRPORT_A=?, ROUTE=?, ACTIVE=?, RNAV=?, MAX_SIGNUPS=?, NAME=? WHERE (ROUTE_ID=?) AND (ID=?)");
-
-			_ps.setString(1, r.getAirportD().getIATA());
-			_ps.setString(2, r.getAirportA().getIATA());
-			_ps.setString(3, r.getRoute());
-			_ps.setBoolean(4, r.getActive());
-			_ps.setBoolean(5, r.getIsRNAV());
-			_ps.setInt(6, r.getMaxSignups());
-			_ps.setString(7, r.getName());
-			_ps.setInt(8, r.getRouteID());
-			_ps.setInt(9, e.getID());
-			executeUpdate(1);
+				
+			try (PreparedStatement ps = prepare("INSERT INTO events.EVENT_AIRPORTS (AIRPORT_D, AIRPORT_A, ROUTE, ACTIVE, RNAV, MAX_SIGNUPS, NAME, ROUTE_ID, ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE"
+				+ "AIRPORT_D=VALUES(AIRPORT_D), AIRPORT_A=VALUES(AIRPORT_A), ROUTE=VALUES(ROUTE), ACTIVE=VALUES(ACTIVE), RNAV=VALUES(RNAV), MAX_SIGNUPS=VALUES(MAX_SIGNUPS), NAME=VALUES(NAME)")) {
+				ps.setString(1, r.getAirportD().getIATA());
+				ps.setString(2, r.getAirportA().getIATA());
+				ps.setString(3, r.getRoute());
+				ps.setBoolean(4, r.getActive());
+				ps.setBoolean(5, r.getIsRNAV());
+				ps.setInt(6, r.getMaxSignups());
+				ps.setString(7, r.getName());
+				ps.setInt(8, r.getRouteID());
+				ps.setInt(9, e.getID());
+				executeUpdate(ps, 1);
+			}
 		}
 	}
 
@@ -262,19 +252,21 @@ public class SetEvent extends DAO {
 	private void writeAirlines(Event e) throws SQLException {
 		
 		// Clear airlines
-		prepareStatementWithoutLimits("DELETE FROM events.AIRLINES WHERE (ID=?)");
-		_ps.setInt(1, e.getID());
-		executeUpdate(0);
+		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM events.AIRLINES WHERE (ID=?)")) {
+			ps.setInt(1, e.getID());
+			executeUpdate(ps, 0);
+		}
 		
 		// Add airline codes
-		prepareStatement("INSERT INTO events.AIRLINES (ID, AIRLINE) VALUES (?, ?)");
-		_ps.setInt(1, e.getID());
-		for (AirlineInformation ai : e.getAirlines()) {
-			_ps.setString(2, ai.getCode());
-			_ps.addBatch();
-		}
+		try (PreparedStatement ps = prepare("INSERT INTO events.AIRLINES (ID, AIRLINE) VALUES (?, ?)")) {
+			ps.setInt(1, e.getID());
+			for (AirlineInformation ai : e.getAirlines()) {
+				ps.setString(2, ai.getCode());
+				ps.addBatch();
+			}
 
-		executeBatchUpdate(1, e.getAirlines().size());
+			executeUpdate(ps, 1, e.getAirlines().size());
+		}
 	}
 
 	/*
@@ -283,19 +275,21 @@ public class SetEvent extends DAO {
 	private void writeEQTypes(Event e) throws SQLException {
 
 		// Clear equipment types
-		prepareStatementWithoutLimits("DELETE FROM events.EVENT_EQTYPES WHERE (ID=?)");
-		_ps.setInt(1, e.getID());
-		executeUpdate(0);
-
-		// Add the equipment types
-		prepareStatement("INSERT INTO events.EVENT_EQTYPES (ID, RATING) VALUES (?, ?)");
-		_ps.setInt(1, e.getID());
-		for (String eq : e.getEquipmentTypes()) {
-			_ps.setString(2, eq);
-			_ps.addBatch();
+		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM events.EVENT_EQTYPES WHERE (ID=?)")) {
+			ps.setInt(1, e.getID());
+			executeUpdate(ps, 0);
 		}
 
-		executeBatchUpdate(1, e.getEquipmentTypes().size());
+		// Add the equipment types
+		try (PreparedStatement ps = prepare("INSERT INTO events.EVENT_EQTYPES (ID, RATING) VALUES (?, ?)")) {
+			ps.setInt(1, e.getID());
+			for (String eq : e.getEquipmentTypes()) {
+				ps.setString(2, eq);
+				ps.addBatch();
+			}
+
+			executeUpdate(ps, 1, e.getEquipmentTypes().size());
+		}
 	}
 
 	/*
@@ -304,58 +298,62 @@ public class SetEvent extends DAO {
 	private void writeContactAddrs(Event e) throws SQLException {
 
 		// Clear contacts
-		prepareStatementWithoutLimits("DELETE FROM events.EVENT_CONTACTS WHERE (ID=?)");
-		_ps.setInt(1, e.getID());
-		executeUpdate(0);
-
-		// Create the prepared statement
-		prepareStatement("INSERT INTO events.EVENT_CONTACTS (ID, ADDRESS) VALUES (?, ?)");
-		_ps.setInt(1, e.getID());
-		for (String addr : e.getContactAddrs()) {
-			_ps.setString(2, addr);
-			_ps.addBatch();
+		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM events.EVENT_CONTACTS WHERE (ID=?)")) {
+			ps.setInt(1, e.getID());
+			executeUpdate(ps, 0);
 		}
 
-		executeBatchUpdate(1, e.getContactAddrs().size());
+		// Create the prepared statement
+		try (PreparedStatement ps = prepare("INSERT INTO events.EVENT_CONTACTS (ID, ADDRESS) VALUES (?, ?)")) {
+			ps.setInt(1, e.getID());
+			for (String addr : e.getContactAddrs()) {
+				ps.setString(2, addr);
+				ps.addBatch();
+			}
+
+			executeUpdate(ps, 1, e.getContactAddrs().size());
+		}
 	}
 
 	/*
 	 * Adds a new Online Event to the database.
 	 */
 	private void insert(Event e) throws SQLException {
-		prepareStatement("INSERT INTO events.EVENTS (TITLE, NETWORK, STATUS, STARTTIME, ENDTIME, SU_DEADLINE, BRIEFING, CAN_SIGNUP, SIGNUP_URL, OWNER) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-		_ps.setString(1, e.getName());
-		_ps.setInt(2, e.getNetwork().ordinal());
-		_ps.setInt(3, e.getStatus().ordinal());
-		_ps.setTimestamp(4, createTimestamp(e.getStartTime()));
-		_ps.setTimestamp(5, createTimestamp(e.getEndTime()));
-		_ps.setTimestamp(6, createTimestamp(e.getCanSignup() ? e.getSignupDeadline() : e.getStartTime()));
-		_ps.setString(7, e.getBriefing());
-		_ps.setBoolean(8, e.getCanSignup());
-		_ps.setString(9, e.getSignupURL());
-		_ps.setString(10, e.getOwner().getCode());
+		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO events.EVENTS (TITLE, NETWORK, STATUS, STARTTIME, ENDTIME, SU_DEADLINE, BRIEFING, CAN_SIGNUP, SIGNUP_URL, OWNER) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+			ps.setString(1, e.getName());
+			ps.setInt(2, e.getNetwork().ordinal());
+			ps.setInt(3, e.getStatus().ordinal());
+			ps.setTimestamp(4, createTimestamp(e.getStartTime()));
+			ps.setTimestamp(5, createTimestamp(e.getEndTime()));
+			ps.setTimestamp(6, createTimestamp(e.getCanSignup() ? e.getSignupDeadline() : e.getStartTime()));
+			ps.setString(7, e.getBriefing());
+			ps.setBoolean(8, e.getCanSignup());
+			ps.setString(9, e.getSignupURL());
+			ps.setString(10, e.getOwner().getCode());
 
-		// Execute the update and get the Event ID
-		executeUpdate(1);
-		e.setID(getNewID());
+			// Execute the update and get the Event ID
+			executeUpdate(ps, 1);
+			e.setID(getNewID());
+		}
 	}
 
 	/*
 	 * Updates an existing Online Event in the database.
 	 */
 	private void update(Event e) throws SQLException {
-		prepareStatement("UPDATE events.EVENTS SET TITLE=?, NETWORK=?, STARTTIME=?, ENDTIME=?, SU_DEADLINE=?, BRIEFING=?, CAN_SIGNUP=?, SIGNUP_URL=?, STATUS=?, OWNER=? WHERE (ID=?)");
-		_ps.setString(1, e.getName());
-		_ps.setInt(2, e.getNetwork().ordinal());
-		_ps.setTimestamp(3, createTimestamp(e.getStartTime()));
-		_ps.setTimestamp(4, createTimestamp(e.getEndTime()));
-		_ps.setTimestamp(5, createTimestamp(e.getCanSignup() ? e.getSignupDeadline() : e.getStartTime()));
-		_ps.setString(6, e.getBriefing());
-		_ps.setBoolean(7, e.getCanSignup());
-		_ps.setString(8, e.getSignupURL());
-		_ps.setInt(9, e.getStatus().ordinal());
-		_ps.setString(10, e.getOwner().getCode());
-		_ps.setInt(11, e.getID());
-		executeUpdate(1);
+		try (PreparedStatement ps = prepare("UPDATE events.EVENTS SET TITLE=?, NETWORK=?, STARTTIME=?, ENDTIME=?, SU_DEADLINE=?, BRIEFING=?, CAN_SIGNUP=?, SIGNUP_URL=?, STATUS=?, OWNER=? WHERE (ID=?)")) {
+			ps.setString(1, e.getName());
+			ps.setInt(2, e.getNetwork().ordinal());
+			ps.setTimestamp(3, createTimestamp(e.getStartTime()));
+			ps.setTimestamp(4, createTimestamp(e.getEndTime()));
+			ps.setTimestamp(5, createTimestamp(e.getCanSignup() ? e.getSignupDeadline() : e.getStartTime()));
+			ps.setString(6, e.getBriefing());
+			ps.setBoolean(7, e.getCanSignup());
+			ps.setString(8, e.getSignupURL());
+			ps.setInt(9, e.getStatus().ordinal());
+			ps.setString(10, e.getOwner().getCode());
+			ps.setInt(11, e.getID());
+			executeUpdate(ps, 1);
+		}
 	}
 }

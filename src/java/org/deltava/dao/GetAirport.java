@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Airport data.
  * @author Luke
- * @version 8.1
+ * @version 9.0
  * @since 1.0
  */
 
@@ -51,45 +51,44 @@ public class GetAirport extends DAO {
 	 */
 	public Airport get(String code) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT A.*, ND.ALTITUDE, ND.REGION, IFNULL(MAX(R.LENGTH), MAX(RND.ALTITUDE)), COUNT(DISTINCT GA.NAME) AS GCNT FROM common.AIRPORTS A "
-				+ "LEFT JOIN common.NAVDATA ND ON ((ND.CODE=A.ICAO) AND (ND.ITEMTYPE=?)) LEFT JOIN common.RUNWAYS R ON (A.ICAO=R.ICAO) LEFT JOIN common.NAVDATA RND "
-				+ "ON ((RND.CODE=A.ICAO) AND (RND.ITEMTYPE=?)) LEFT JOIN common.GATE_AIRLINES GA ON (GA.ICAO=A.ICAO) WHERE ((A.ICAO=?) OR (A.IATA=?)) GROUP BY A.IATA LIMIT 1");
-			_ps.setInt(1, Navaid.AIRPORT.ordinal());
-			_ps.setInt(2, Navaid.RUNWAY.ordinal());
-			_ps.setString(3, code.toUpperCase());
-			_ps.setString(4, code.toUpperCase());
-
 			Airport a = null;
-			try (ResultSet rs = _ps.executeQuery()) {
-				if (rs.next()) {
-					a = new Airport(rs.getString(1), rs.getString(2), rs.getString(4));
-					a.setCountry(Country.get(rs.getString(5)));
-					a.setTZ(TZInfo.get(rs.getString(3)));
-					a.setLocation(rs.getDouble(6), rs.getDouble(7));
-					a.setADSE(rs.getBoolean(8));
-					a.setSupercededAirport(rs.getString(9));
-					a.setAltitude(rs.getInt(10));
-					a.setRegion(rs.getString(11));
-					a.setGateData(rs.getInt(13) > 0);
-					int maxRunway = rs.getInt(12);
-					a.setMaximumRunwayLength((maxRunway == 0) ? 2500 : maxRunway);
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT A.*, ND.ALTITUDE, ND.REGION, IFNULL(MAX(R.LENGTH), MAX(RND.ALTITUDE)), COUNT(DISTINCT GA.NAME) AS GCNT FROM common.AIRPORTS A "
+				+ "LEFT JOIN common.NAVDATA ND ON ((ND.CODE=A.ICAO) AND (ND.ITEMTYPE=?)) LEFT JOIN common.RUNWAYS R ON (A.ICAO=R.ICAO) LEFT JOIN common.NAVDATA RND "
+				+ "ON ((RND.CODE=A.ICAO) AND (RND.ITEMTYPE=?)) LEFT JOIN common.GATE_AIRLINES GA ON (GA.ICAO=A.ICAO) WHERE ((A.ICAO=?) OR (A.IATA=?)) GROUP BY A.IATA LIMIT 1")) {
+				ps.setInt(1, Navaid.AIRPORT.ordinal());
+				ps.setInt(2, Navaid.RUNWAY.ordinal());
+				ps.setString(3, code.toUpperCase());
+				ps.setString(4, code.toUpperCase());
+
+				try (ResultSet rs = ps.executeQuery()) {
+					if (rs.next()) {
+						a = new Airport(rs.getString(1), rs.getString(2), rs.getString(4));
+						a.setCountry(Country.get(rs.getString(5)));
+						a.setTZ(TZInfo.get(rs.getString(3)));
+						a.setLocation(rs.getDouble(6), rs.getDouble(7));
+						a.setADSE(rs.getBoolean(8));
+						a.setSupercededAirport(rs.getString(9));
+						a.setAltitude(rs.getInt(10));
+						a.setRegion(rs.getString(11));
+						a.setGateData(rs.getInt(13) > 0);
+						int maxRunway = rs.getInt(12);
+						a.setMaximumRunwayLength((maxRunway == 0) ? 2500 : maxRunway);
+					}
 				}
 			}
 
-			_ps.close();
-			if (a == null)
-				return null;
+			if (a == null) return null;
 
 			// Pull in the airline data
-			prepareStatementWithoutLimits("SELECT CODE FROM common.AIRPORT_AIRLINE WHERE (IATA=?) AND (APPCODE=?)");
-			_ps.setString(1, a.getIATA());
-			_ps.setString(2, _appCode);
-			try (ResultSet rs = _ps.executeQuery()) {
-				while (rs.next())
-					a.addAirlineCode(rs.getString(1));
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT CODE FROM common.AIRPORT_AIRLINE WHERE (IATA=?) AND (APPCODE=?)")) {
+				ps.setString(1, a.getIATA());
+				ps.setString(2, _appCode);
+				try (ResultSet rs = ps.executeQuery()) {
+					while (rs.next())
+						a.addAirlineCode(rs.getString(1));
+				}
 			}
 
-			_ps.close();
 			return a;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -117,17 +116,16 @@ public class GetAirport extends DAO {
 			sqlBuf.append(sortBy);
 		}
 		
-		try {
-			prepareStatement(sqlBuf.toString());
-			_ps.setString(1, _appCode);
-			_ps.setInt(2, Navaid.AIRPORT.ordinal());
-			_ps.setInt(3, Navaid.RUNWAY.ordinal());
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setString(1, _appCode);
+			ps.setInt(2, Navaid.AIRPORT.ordinal());
+			ps.setInt(3, Navaid.RUNWAY.ordinal());
 			if (al != null)
-				_ps.setString(4, al.getCode());
+				ps.setString(4, al.getCode());
 
 			// Execute the query
 			List<Airport> results = new ArrayList<Airport>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					Airport a = new Airport(rs.getString(1), rs.getString(2), rs.getString(4));
 					a.setCountry(Country.get(rs.getString(5)));
@@ -147,7 +145,6 @@ public class GetAirport extends DAO {
 				}
 			}
 
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -161,20 +158,17 @@ public class GetAirport extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Airport> getByPilot(int id) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT DISTINCT AIRPORT_D, AIRPORT_A FROM PIREPS P WHERE (PILOT_ID=?) ORDER BY ID");
-			_ps.setInt(1, id);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT DISTINCT AIRPORT_D, AIRPORT_A FROM PIREPS P WHERE (PILOT_ID=?) ORDER BY ID")) {
+			ps.setInt(1, id);
 			
-			// Execute the query
 			Collection<Airport> results = new LinkedHashSet<Airport>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					results.add(SystemData.getAirport(rs.getString(1)));
 					results.add(SystemData.getAirport(rs.getString(2)));
 				}
 			}
 			
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -187,13 +181,11 @@ public class GetAirport extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Airport> getEventAirports() throws DAOException {
-		try {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT EA.AIRPORT_D, EA.AIRPORT_A FROM events.EVENT_AIRPORTS EA, events.EVENTS E WHERE (E.ID=EA.ID) AND (E.ENDTIME > NOW())")) {
 			Collection<Airline> airlines = SystemData.getApps().stream().map(AirlineInformation::getCode).map(c -> SystemData.getAirline(c)).filter(Objects::nonNull).collect(Collectors.toSet());
-			prepareStatementWithoutLimits("SELECT EA.AIRPORT_D, EA.AIRPORT_A FROM events.EVENT_AIRPORTS EA, events.EVENTS E WHERE (E.ID=EA.ID) AND (E.ENDTIME > NOW())");
 			
-			// Execute the query
 			Collection<Airport> results = new LinkedHashSet<Airport>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					Airport aD = (Airport) SystemData.getAirport(rs.getString(1)).clone();
 					airlines.forEach(al -> aD.addAirlineCode(al.getCode()));
@@ -204,7 +196,6 @@ public class GetAirport extends DAO {
 				}
 			}
 			
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -217,10 +208,9 @@ public class GetAirport extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Airport> getWithTerminalRoutes() throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT DISTINCT ICAO FROM common.SID_STAR");
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT DISTINCT ICAO FROM common.SID_STAR")) {
 			Collection<Airport> results = new LinkedHashSet<Airport>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					Airport a = SystemData.getAirport(rs.getString(1));
 					if (a != null)
@@ -228,7 +218,6 @@ public class GetAirport extends DAO {
 				}
 			}
 			
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -243,53 +232,50 @@ public class GetAirport extends DAO {
 	public Map<String, Airport> getAll() throws DAOException {
 		Map<String, Airport> results = new HashMap<String, Airport>();
 		try {
-			prepareStatementWithoutLimits("SELECT A.*, ND.ALTITUDE, ND.REGION, IFNULL(MAX(R.LENGTH), MAX(RND.ALTITUDE)), COUNT(DISTINCT GA.NAME) AS GCNT FROM common.AIRPORTS A "
-				+ "LEFT JOIN common.NAVDATA ND ON ((ND.CODE=A.ICAO) AND (ND.ITEMTYPE=?)) LEFT JOIN common.NAVDATA RND ON ((RND.CODE=A.ICAO) AND (RND.ITEMTYPE=?)) "
-				+ "LEFT JOIN common.RUNWAYS R ON (A.ICAO=R.ICAO) LEFT JOIN common.GATE_AIRLINES GA ON (GA.ICAO=A.ICAO) GROUP BY A.IATA");
-			_ps.setInt(1, Navaid.AIRPORT.ordinal());
-			_ps.setInt(2, Navaid.RUNWAY.ordinal());
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT A.*, ND.ALTITUDE, ND.REGION, IFNULL(MAX(R.LENGTH), MAX(RND.ALTITUDE)), COUNT(DISTINCT GA.NAME) AS GCNT FROM common.AIRPORTS A "
+					+ "LEFT JOIN common.NAVDATA ND ON ((ND.CODE=A.ICAO) AND (ND.ITEMTYPE=?)) LEFT JOIN common.NAVDATA RND ON ((RND.CODE=A.ICAO) AND (RND.ITEMTYPE=?)) "
+					+ "LEFT JOIN common.RUNWAYS R ON (A.ICAO=R.ICAO) LEFT JOIN common.GATE_AIRLINES GA ON (GA.ICAO=A.ICAO) GROUP BY A.IATA")) {
+				ps.setInt(1, Navaid.AIRPORT.ordinal());
+				ps.setInt(2, Navaid.RUNWAY.ordinal());
 			
-			try (ResultSet rs = _ps.executeQuery()) {
-				while (rs.next()) {
-					Airport a = new Airport(rs.getString(1), rs.getString(2), rs.getString(4));
-					a.setTZ(TZInfo.get(rs.getString(3)));
-					a.setCountry(Country.get(rs.getString(5)));
-					a.setLocation(rs.getDouble(6), rs.getDouble(7));
-					a.setADSE(rs.getBoolean(8));
-					a.setSupercededAirport(rs.getString(9));
-					a.setAltitude(rs.getInt(10));
-					a.setRegion(rs.getString(11));
-					a.setGateData(rs.getInt(13) > 0);
-					int maxRunway = rs.getInt(12);
-					a.setMaximumRunwayLength((maxRunway == 0) ? 2500 : maxRunway);
+				try (ResultSet rs = ps.executeQuery()) {
+					while (rs.next()) {
+						Airport a = new Airport(rs.getString(1), rs.getString(2), rs.getString(4));
+						a.setTZ(TZInfo.get(rs.getString(3)));
+						a.setCountry(Country.get(rs.getString(5)));
+						a.setLocation(rs.getDouble(6), rs.getDouble(7));
+						a.setADSE(rs.getBoolean(8));
+						a.setSupercededAirport(rs.getString(9));
+						a.setAltitude(rs.getInt(10));
+						a.setRegion(rs.getString(11));
+						a.setGateData(rs.getInt(13) > 0);
+						int maxRunway = rs.getInt(12);
+						a.setMaximumRunwayLength((maxRunway == 0) ? 2500 : maxRunway);
 					
-					// Save in the map
-					results.put(a.getIATA(), a);
-					if (!results.containsKey(a.getICAO()))
-						results.put(a.getICAO(), a);
+						// Save in the map
+						results.put(a.getIATA(), a);
+						if (!results.containsKey(a.getICAO()))
+							results.put(a.getICAO(), a);
+					}
 				}
 			}
 
-			_ps.close();
-			
 			// Load the airlines for each airport and execute the query
-			if (!"ALL".equals(_appCode)) {
-				prepareStatementWithoutLimits("SELECT * FROM common.AIRPORT_AIRLINE WHERE (APPCODE=?)");
-				_ps.setString(1, _appCode);
-			} else
-				prepareStatementWithoutLimits("SELECT * FROM common.AIRPORT_AIRLINE");
-			
-			// Iterate through the results
-			try (ResultSet rs = _ps.executeQuery()) {
-				while (rs.next()) {
-					String code = rs.getString(2);
-					Airport a = results.get(code);
-					if (a != null)
-						a.addAirlineCode(rs.getString(1));
+			boolean isAll = "ALL".equalsIgnoreCase(_appCode);
+			try (PreparedStatement ps = prepareWithoutLimits(isAll ? "SELECT * FROM common.AIRPORT_AIRLINE" : "SELECT * FROM common.AIRPORT_AIRLINE WHERE (APPCODE=?)")) {
+				if (!isAll)
+					ps.setString(1, _appCode);
+				
+				try (ResultSet rs = ps.executeQuery()) {
+					while (rs.next()) {
+						String code = rs.getString(2);
+						Airport a = results.get(code);
+						if (a != null)
+							a.addAirlineCode(rs.getString(1));
+					}
 				}
 			}
 
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -303,21 +289,13 @@ public class GetAirport extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public String getICAO(String iata) throws DAOException {
-		if ((iata == null) || (iata.length() != 3))
-			return iata;
+		if ((iata == null) || (iata.length() != 3)) return iata;
 		
-		try {
-			prepareStatementWithoutLimits("SELECT ICAO FROM common.AIRPORT_CODES WHERE (IATA=?) LIMIT 1");
-			_ps.setString(1, iata.toUpperCase());
-			
-			String code = null;
-			try (ResultSet rs = _ps.executeQuery()) {
-				if (rs.next())
-					code = rs.getString(1);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT ICAO FROM common.AIRPORT_CODES WHERE (IATA=?) LIMIT 1")) {
+			ps.setString(1, iata.toUpperCase());
+			try (ResultSet rs = ps.executeQuery()) {
+				return rs.next() ? rs.getString(1) : null;
 			}
-			
-			_ps.close();
-			return code;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -329,10 +307,9 @@ public class GetAirport extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Map<Airline, Integer> getAirportCounts() throws DAOException {
-		try {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT CODE, COUNT(DISTINCT IATA) AS CNT FROM common.AIRPORT_AIRLINE GROUP BY CODE ORDER BY CNT DESC")) {
 			Map<Airline, Integer> results = new LinkedHashMap<Airline, Integer>();
-			prepareStatementWithoutLimits("SELECT CODE, COUNT(DISTINCT IATA) AS CNT FROM common.AIRPORT_AIRLINE GROUP BY CODE ORDER BY CNT DESC");
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					Airline al = SystemData.getAirline(rs.getString(1));
 					if (al != null)
@@ -340,7 +317,6 @@ public class GetAirport extends DAO {
 				}
 			}
 
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);

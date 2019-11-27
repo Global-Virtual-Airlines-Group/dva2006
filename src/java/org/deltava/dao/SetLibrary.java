@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2012, 2014, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2012, 2014, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to write and update Fleet/Document Library metadata.
  * @author Luke
- * @version 8.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -32,11 +32,10 @@ public class SetLibrary extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void download(String fName, int pilotID) throws DAOException {
-		try {
-			prepareStatement("REPLACE INTO DOWNLOADS (FILENAME, DATE, USER_ID) VALUES (?, CURDATE(), ?)");
-			_ps.setString(1, fName);
-			_ps.setInt(2, pilotID);
-			executeUpdate(1);
+		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO DOWNLOADS (FILENAME, DATE, USER_ID) VALUES (?, CURDATE(), ?)")) {
+			ps.setString(1, fName);
+			ps.setInt(2, pilotID);
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -51,38 +50,38 @@ public class SetLibrary extends DAO {
 	public void write(Manual m, boolean isNew) throws DAOException {
 		try {
 			startTransaction();
-			if (isNew)
-				prepareStatement("INSERT INTO DOCS (NAME, FILESIZE, VERSION, SECURITY, BODY, ONREG, IGNORE_CERTS, FILENAME) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-			else
-				prepareStatement("UPDATE DOCS SET NAME=?, FILESIZE=?, VERSION=?, SECURITY=?, BODY=?, ONREG=?, IGNORE_CERTS=? WHERE (FILENAME=?)");
-
-			// Update the prepared statement
-			_ps.setString(1, m.getName());
-			_ps.setLong(2, m.getSize());
-			_ps.setInt(3, m.getMajorVersion());
-			_ps.setInt(4, m.getSecurity().ordinal());
-			_ps.setString(5, m.getDescription());
-			_ps.setBoolean(6, m.getShowOnRegister());
-			_ps.setBoolean(7, m.getIgnoreCertifications());
-			_ps.setString(8, m.getFileName());
-			executeUpdate(1);
+			try (PreparedStatement ps = prepare("INSERT INTO DOCS (NAME, FILESIZE, VERSION, SECURITY, BODY, ONREG, IGNORE_CERTS, FILENAME) VALUES (?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE "
+				+ "NAME=VALUES(NAME), FILESIZE=VALUES(FILESIZE), VERSION=VALUES(VERSION), SECURITY=VALUES(SECURITY), BODY=VALUES(BODY), ONREG=VALUES(ONREG), IGNORE_CERTS=VALUES(IGNORE_CERTS)")) {
+				ps.setString(1, m.getName());
+				ps.setLong(2, m.getSize());
+				ps.setInt(3, m.getMajorVersion());
+				ps.setInt(4, m.getSecurity().ordinal());
+				ps.setString(5, m.getDescription());
+				ps.setBoolean(6, m.getShowOnRegister());
+				ps.setBoolean(7, m.getIgnoreCertifications());
+				ps.setString(8, m.getFileName());
+				executeUpdate(ps, 1);
+			}
 			
 			// Clean out the certification names
 			if (!isNew) {
-				prepareStatementWithoutLimits("DELETE FROM exams.CERTDOCS WHERE (FILENAME=?)");
-				_ps.setString(1, m.getFileName());
-				executeUpdate(0);
+				try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM exams.CERTDOCS WHERE (FILENAME=?)")) {
+					ps.setString(1, m.getFileName());
+					executeUpdate(ps, 0);
+				}
 			}
 			
 			// Write the certification names
-			prepareStatement("INSERT INTO exams.CERTDOCS (FILENAME, CERT) VALUES (?, ?)");
-			_ps.setString(1, m.getFileName());
-			for (String cert : m.getCertifications()) {
-				_ps.setString(2, cert);
-				_ps.addBatch();
+			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO exams.CERTDOCS (FILENAME, CERT) VALUES (?, ?)")) {
+				ps.setString(1, m.getFileName());
+				for (String cert : m.getCertifications()) {
+					ps.setString(2, cert);
+					ps.addBatch();
+				}
+			
+				executeUpdate(ps, 1, m.getCertifications().size());
 			}
 			
-			executeBatchUpdate(1, m.getCertifications().size());
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -96,21 +95,16 @@ public class SetLibrary extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(Newsletter nws) throws DAOException {
-		try {
-			if (nws.getDownloadCount() == 0)
-				prepareStatement("REPLACE INTO NEWSLETTERS (NAME, CATEGORY, FILESIZE, SECURITY, PUBLISHED, BODY, FILENAME) VALUES (?, ?, ?, ?, ?, ?, ?)");
-			else
-				prepareStatement("UPDATE NEWSLETTERS SET NAME=?, CATEGORY=?, FILESIZE=?, SECURITY=?, PUBLISHED=?, BODY=? WHERE (FILENAME=?)");
-			
-			// Update the prepared statement
-			_ps.setString(1, nws.getName());
-			_ps.setString(2, nws.getCategory());
-			_ps.setLong(3, nws.getSize());
-			_ps.setInt(4, nws.getSecurity().ordinal());
-			_ps.setTimestamp(5, createTimestamp(nws.getDate()));
-			_ps.setString(6, nws.getDescription());
-			_ps.setString(7, nws.getFileName());
-			executeUpdate(1);
+		try (PreparedStatement ps = prepare("INSERT INTO NEWSLETTERS (NAME, CATEGORY, FILESIZE, SECURITY, PUBLISHED, BODY, FILENAME) VALUES (?, ?, ?, ?, ?, ?, ?) ON DUPLCATE KEY UPDATE "
+			+ "NAME=VALUES(NAME), CATEGORY=VALUES(CATEGORY), FILESIZE=VALUES(FILESIZE), SECURITY=VALUES(SECURITY), PUBLISHED=VALUES(PUBLISHED), BODY=VALUES(BODY)")) {
+			ps.setString(1, nws.getName());
+			ps.setString(2, nws.getCategory());
+			ps.setLong(3, nws.getSize());
+			ps.setInt(4, nws.getSecurity().ordinal());
+			ps.setTimestamp(5, createTimestamp(nws.getDate()));
+			ps.setString(6, nws.getDescription());
+			ps.setString(7, nws.getFileName());
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -126,39 +120,40 @@ public class SetLibrary extends DAO {
 			startTransaction();
 			
 			// Clean out airline entries
-			prepareStatementWithoutLimits("DELETE FROM FLEET_AIRLINE WHERE (FILENAME=?)");
-			_ps.setString(1, i.getFileName());
-			executeUpdate(0);
+			try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM FLEET_AIRLINE WHERE (FILENAME=?)")) {
+				ps.setString(1, i.getFileName());
+				executeUpdate(ps, 0);
+			}
 			
-			// Prepare the statement
-			if (i.getDownloadCount() == 0)
-				prepareStatement("REPLACE INTO FLEET (NAME, IMG, FILESIZE, MAJOR, MINOR, SUBMINOR, SECURITY, CODE, BODY, FSVERSION, FILENAME) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-			else
-				prepareStatement("UPDATE FLEET SET NAME=?, IMG=?, FILESIZE=?, MAJOR=?, MINOR=?, SUBMINOR=?, SECURITY=?, CODE=?, BODY=?, FSVERSION=? WHERE (FILENAME=?)");
-
-			// Update the prepared statement
-			_ps.setString(1, i.getName());
-			_ps.setString(2, i.getImage());
-			_ps.setLong(3, i.getSize());
-			_ps.setInt(4, i.getMajorVersion());
-			_ps.setInt(5, i.getMinorVersion());
-			_ps.setInt(6, i.getSubVersion());
-			_ps.setInt(7, i.getSecurity().ordinal());
-			_ps.setString(8, i.getCode());
-			_ps.setString(9, i.getDescription());
-			_ps.setString(10, StringUtils.listConcat(i.getFSVersions(), ","));
-			_ps.setString(11, i.getFileName());
-			executeUpdate(1);
+			// Write the entry
+			try (PreparedStatement ps = prepare("INSERT INTO FLEET (NAME, IMG, FILESIZE, MAJOR, MINOR, SUBMINOR, SECURITY, CODE, BODY, FSVERSION, FILENAME) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+				+ "ON DUPLICATE KEY UPDATE NAME=VALUES(NAME), IMG=VALUES(IMG), FILESIZE=VALUES(FILESIZE), MAJOR=VALUES(MAJOR), MINOR=VALUES(MINOR), SUBMINOR=VALUES(SUBMINOR), "
+				+ "CODE=VALUES(CODE), BODY=VALUES(BODY), FSVERSION=VALUES(FSVERSION)")) {
+				ps.setString(1, i.getName());
+				ps.setString(2, i.getImage());
+				ps.setLong(3, i.getSize());
+				ps.setInt(4, i.getMajorVersion());
+				ps.setInt(5, i.getMinorVersion());
+				ps.setInt(6, i.getSubVersion());
+				ps.setInt(7, i.getSecurity().ordinal());
+				ps.setString(8, i.getCode());
+				ps.setString(9, i.getDescription());
+				ps.setString(10, StringUtils.listConcat(i.getFSVersions(), ","));
+				ps.setString(11, i.getFileName());
+				executeUpdate(ps, 1);
+			}
 			
 			// Write the app entries
-			prepareStatement("INSERT INTO FLEET_AIRLINE (FILENAME, CODE) VALUES (?, ?)");
-			_ps.setString(1, i.getFileName());
-			for (AirlineInformation info : i.getApps()) {
-				_ps.setString(2, info.getCode());
-				_ps.addBatch();
-			}
+			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO FLEET_AIRLINE (FILENAME, CODE) VALUES (?, ?)")) {
+				ps.setString(1, i.getFileName());
+				for (AirlineInformation info : i.getApps()) {
+					ps.setString(2, info.getCode());
+					ps.addBatch();
+				}
 
-			executeBatchUpdate(1, i.getApps().size());
+				executeUpdate(ps, 1, i.getApps().size());
+			}
+			
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -172,22 +167,15 @@ public class SetLibrary extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(FileEntry e) throws DAOException {
-		try {
-			if (e.getDownloadCount() == 0)
-				prepareStatement("REPLACE INTO FILES (NAME, FILESIZE, SECURITY, AUTHOR, BODY, FILENAME) VALUES "
-						+ "(?, ?, ?, ?, ?, ?)");
-			else
-				prepareStatement("UPDATE FILES SET NAME=?, FILESIZE=?, SECURITY=?, AUTHOR=?, BODY=? WHERE "
-						+ "(FILENAME=?)");
-
-			// Update the prepared statement
-			_ps.setString(1, e.getName());
-			_ps.setLong(2, e.getSize());
-			_ps.setInt(3, e.getSecurity().ordinal());
-			_ps.setInt(4, e.getAuthorID());
-			_ps.setString(5, e.getDescription());
-			_ps.setString(6, e.getFileName());
-			executeUpdate(1);
+		try (PreparedStatement ps = prepare("INSERT INTO FILES (NAME, FILESIZE, SECURITY, AUTHOR, BODY, FILENAME) VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE "
+			+ "NAME=VALUES(NAME), FILESIZE=VALUES(FILESIZE), SECURITY=VALUES(SECURITY), AUTHOR=VALUES(AUTHOR) BODY=VALUES(BODY)")) {
+			ps.setString(1, e.getName());
+			ps.setLong(2, e.getSize());
+			ps.setInt(3, e.getSecurity().ordinal());
+			ps.setInt(4, e.getAuthorID());
+			ps.setString(5, e.getDescription());
+			ps.setString(6, e.getFileName());
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -199,23 +187,16 @@ public class SetLibrary extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(Video v) throws DAOException {
-		try {
-			if (v.getDownloadCount() == 0)
-				prepareStatement("REPLACE INTO exams.VIDEOS (NAME, FILESIZE, SECURITY, AUTHOR, CATEGORY, BODY, "
-						+ "FILENAME) VALUES (?, ?, ?, ?, ?, ?, ?)");
-			else
-				prepareStatement("UPDATE exams.VIDEOS SET NAME=?, FILESIZE=?, SECURITY=?, AUTHOR=?, CATEGORY=?, "
-						+ "BODY=? WHERE (FILENAME=?)");
-			
-			// Update the prepared statement
-			_ps.setString(1, v.getName());
-			_ps.setLong(2, v.getSize());
-			_ps.setInt(3, v.getSecurity().ordinal());
-			_ps.setInt(4, v.getAuthorID());
-			_ps.setString(5, v.getCategory());
-			_ps.setString(6, v.getDescription());
-			_ps.setString(7, v.getFileName());
-			executeUpdate(1);
+		try (PreparedStatement ps = prepare((v.getDownloadCount() == 0) ? "REPLACE INTO exams.VIDEOS (NAME, FILESIZE, SECURITY, AUTHOR, CATEGORY, BODY, FILENAME) VALUES (?, ?, ?, ?, ?, ?, ?)"
+			: "UPDATE exams.VIDEOS SET NAME=?, FILESIZE=?, SECURITY=?, AUTHOR=?, CATEGORY=?, BODY=? WHERE (FILENAME=?)")) {
+			ps.setString(1, v.getName());
+			ps.setLong(2, v.getSize());
+			ps.setInt(3, v.getSecurity().ordinal());
+			ps.setInt(4, v.getAuthorID());
+			ps.setString(5, v.getCategory());
+			ps.setString(6, v.getDescription());
+			ps.setString(7, v.getFileName());
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -248,16 +229,17 @@ public class SetLibrary extends DAO {
 			startTransaction();
 
 			// Delete the Library entry
-			prepareStatement(sqlBuf.toString());
-			_ps.setString(1, entry.getFileName());
-			executeUpdate(1);
+			try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+				ps.setString(1, entry.getFileName());
+				executeUpdate(ps, 1);
+			}
 
 			// Delete the downloads
-			prepareStatementWithoutLimits("DELETE FROM DOWNLOADS WHERE (FILENAME=?)");
-			_ps.setString(1, entry.getFileName());
-			executeUpdate(0);
+			try (PreparedStatement ps = prepare("DELETE FROM DOWNLOADS WHERE (FILENAME=?)")) {
+				ps.setString(1, entry.getFileName());
+				executeUpdate(ps, 0);
+			}
 
-			// Commit the transaction
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();

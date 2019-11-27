@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to search the Flight Schedule.
  * @author Luke
- * @version 8.6
+ * @version 9.0
  * @since 1.0
  */
 
@@ -56,16 +56,13 @@ public class GetSchedule extends DAO {
 		if (f.getLeg() != 0)
 			sqlBuf.append("AND (LEG=?)");
 		
-		try {
-			prepareStatement(sqlBuf.toString());
-			_ps.setString(1, f.getAirline().getCode());
-			_ps.setInt(2, f.getFlightNumber());
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setString(1, f.getAirline().getCode());
+			ps.setInt(2, f.getFlightNumber());
 			if (f.getLeg() != 0)
-				_ps.setInt(3, f.getLeg());
+				ps.setInt(3, f.getLeg());
 
-			// Execute the query, return null if not found
-			List<ScheduleEntry> results = execute();
-			return (results.size() == 0) ? null : results.get(0);
+			return execute(ps).stream().findFirst().orElse(null);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -107,13 +104,12 @@ public class GetSchedule extends DAO {
 			sqlBuf.append("AND (AIRLINE=?)");
 		sqlBuf.append("ORDER BY AIRLINE, FLIGHT, LEG");
 		
-		try {
-			prepareStatement(sqlBuf.toString());
-			_ps.setString(1, a.getIATA());
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setString(1, a.getIATA());
 			if (al != null)
-				_ps.setString(2, al.getCode());
+				ps.setString(2, al.getCode());
 			
-			return execute();
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -139,23 +135,20 @@ public class GetSchedule extends DAO {
 	 * @throws NullPointerException if airportD or airportA are null
 	 */
 	public Collection<Airline> getAirlines(RoutePair rp) throws DAOException {
-		try {
-			prepareStatement("SELECT DISTINCT AIRLINE FROM SCHEDULE WHERE ((AIRPORT_D=?) OR "
-				+ "(AIRPORT_D=?)) AND ((AIRPORT_A=?) OR (AIRPORT_A=?)) AND (ACADEMY=?)");
-			_ps.setString(1, rp.getAirportD().getIATA());
-			_ps.setString(2, rp.getAirportD().getSupercededAirport());
-			_ps.setString(3, rp.getAirportA().getIATA());
-			_ps.setString(4, rp.getAirportA().getSupercededAirport());
-			_ps.setBoolean(5, false);
+		try (PreparedStatement ps = prepare("SELECT DISTINCT AIRLINE FROM SCHEDULE WHERE ((AIRPORT_D=?) OR (AIRPORT_D=?)) AND ((AIRPORT_A=?) OR (AIRPORT_A=?)) AND (ACADEMY=?)")) {
+			ps.setString(1, rp.getAirportD().getIATA());
+			ps.setString(2, rp.getAirportD().getSupercededAirport());
+			ps.setString(3, rp.getAirportA().getIATA());
+			ps.setString(4, rp.getAirportA().getSupercededAirport());
+			ps.setBoolean(5, false);
 			
 			// Execute the query
 			Collection<Airline> results = new TreeSet<Airline>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
 					results.add(SystemData.getAirline(rs.getString(1)));	
 			}
 			
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -172,22 +165,21 @@ public class GetSchedule extends DAO {
 			Collection<Airport> results = new TreeSet<Airport>();
 			
 			// Select departure airports
-			prepareStatementWithoutLimits("SELECT AIRPORT_D, SUM(1) AS CNT, SUM(ACADEMY) AS FACNT FROM SCHEDULE GROUP BY AIRPORT_D HAVING (CNT=FACNT)");
-			try (ResultSet rs = _ps.executeQuery()) {
-				while (rs.next())
-					results.add(SystemData.getAirport(rs.getString(1)));	
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT AIRPORT_D, SUM(1) AS CNT, SUM(ACADEMY) AS FACNT FROM SCHEDULE GROUP BY AIRPORT_D HAVING (CNT=FACNT)")) {
+				try (ResultSet rs = ps.executeQuery()) {
+					while (rs.next())
+						results.add(SystemData.getAirport(rs.getString(1)));	
+				}
 			}
 			
-			_ps.close();
-			
-			// Arrivate departure airports
-			prepareStatementWithoutLimits("SELECT AIRPORT_A, SUM(1) AS CNT, SUM(ACADEMY) AS FACNT FROM SCHEDULE GROUP BY AIRPORT_A HAVING (CNT=FACNT)");
-			try (ResultSet rs = _ps.executeQuery()) {
-				while (rs.next())
-					results.add(SystemData.getAirport(rs.getString(1)));	
+			// Select arrival airports
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT AIRPORT_A, SUM(1) AS CNT, SUM(ACADEMY) AS FACNT FROM SCHEDULE GROUP BY AIRPORT_A HAVING (CNT=FACNT)")) {
+				try (ResultSet rs = ps.executeQuery()) {
+					while (rs.next())
+						results.add(SystemData.getAirport(rs.getString(1)));
+				}
 			}
 			
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -204,25 +196,22 @@ public class GetSchedule extends DAO {
 	public FlightTime getFlightTime(RoutePair rp, String dbName) throws DAOException {
 
 		// Build the prepared statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT AIRPORT_D, AIRPORT_A, IFNULL(ROUND(AVG(FLIGHT_TIME)), 0), "
-			+ "SUM(1) AS CNT, SUM(HISTORIC) AS HST FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT AIRPORT_D, AIRPORT_A, IFNULL(ROUND(AVG(FLIGHT_TIME)), 0), SUM(1) AS CNT, SUM(HISTORIC) AS HST FROM ");
 		sqlBuf.append(formatDBName(dbName));
-		sqlBuf.append(".SCHEDULE WHERE ((AIRPORT_D=?) OR (AIRPORT_D=?)) AND ((AIRPORT_A=?) OR (AIRPORT_A=?)) "
-			+ "AND (ACADEMY=?) GROUP BY AIRPORT_D, AIRPORT_A ORDER BY IF(AIRPORT_D=?, 0, 1), IF (AIRPORT_A=?, 0, 1)");
+		sqlBuf.append(".SCHEDULE WHERE ((AIRPORT_D=?) OR (AIRPORT_D=?)) AND ((AIRPORT_A=?) OR (AIRPORT_A=?)) AND (ACADEMY=?) GROUP BY AIRPORT_D, AIRPORT_A ORDER BY IF(AIRPORT_D=?, 0, 1), IF (AIRPORT_A=?, 0, 1)");
 		
-		try {
-			prepareStatement(sqlBuf.toString());
-			_ps.setString(1, rp.getAirportD().getIATA());
-			_ps.setString(2, rp.getAirportD().getSupercededAirport());
-			_ps.setString(3, rp.getAirportA().getIATA());
-			_ps.setString(4, rp.getAirportA().getSupercededAirport());
-			_ps.setBoolean(5, false);
-			_ps.setString(6, rp.getAirportD().getIATA());
-			_ps.setString(7, rp.getAirportA().getIATA());
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setString(1, rp.getAirportD().getIATA());
+			ps.setString(2, rp.getAirportD().getSupercededAirport());
+			ps.setString(3, rp.getAirportA().getIATA());
+			ps.setString(4, rp.getAirportA().getSupercededAirport());
+			ps.setBoolean(5, false);
+			ps.setString(6, rp.getAirportD().getIATA());
+			ps.setString(7, rp.getAirportA().getIATA());
 
 			// Execute the Query
 			FlightTime result = null;
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next()) {
 					boolean hasHistoric = (rs.getInt(5) > 0); boolean hasCurrent = (rs.getInt(4) > rs.getInt(5));
 					result = new FlightTime(rs.getInt(3), (hasHistoric && hasCurrent) ? RoutePairType.HYBRID : (hasHistoric ? RoutePairType.HISTORIC : RoutePairType.PRESENT));
@@ -230,7 +219,6 @@ public class GetSchedule extends DAO {
 					result = new FlightTime(0, RoutePairType.UNKNOWN);
 			}
 
-			_ps.close();
 			return result;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -262,26 +250,24 @@ public class GetSchedule extends DAO {
 		String db = formatDBName(dbName);
 		StringBuilder sqlBuf = new StringBuilder("SELECT S.AIRLINE, S.FLIGHT, S.LEG, S.EQTYPE, S.TIME_D, S.TIME_A, A.HISTORIC FROM ");
 		sqlBuf.append(db);
-		sqlBuf.append(".SCHEDULE S, common.AIRLINES A, common.AIRLINEINFO AI WHERE (AI.DBNAME=?) AND (S.AIRLINE=A.CODE) "
-			+ "AND ((S.AIRPORT_D=?) OR (S.AIRPORT_D=?)) AND ((S.AIRPORT_A=?) OR (S.AIRPORT_A=?)) AND (S.ACADEMY=0) "
-			+ "ORDER BY IF(S.AIRPORT_D=?,0,1), IF(S.AIRPORT_A=?,0,1), IF(S.AIRLINE=?,0,IF(S.AIRLINE=AI.CODE,1,2)), "
+		sqlBuf.append(".SCHEDULE S, common.AIRLINES A, common.AIRLINEINFO AI WHERE (AI.DBNAME=?) AND (S.AIRLINE=A.CODE) AND ((S.AIRPORT_D=?) OR (S.AIRPORT_D=?)) AND "
+			+ "((S.AIRPORT_A=?) OR (S.AIRPORT_A=?)) AND (S.ACADEMY=0) ORDER BY IF(S.AIRPORT_D=?,0,1), IF(S.AIRPORT_A=?,0,1), IF(S.AIRLINE=?,0,IF(S.AIRLINE=AI.CODE,1,2)), "
 			+ "IF(A.HISTORIC=1,0,1), ABS(HOUR(S.TIME_D)-?), S.FLIGHT LIMIT 1");
 
-		try {
-			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setString(1, db);
-			_ps.setString(2, sr.getAirportD().getIATA());
-			_ps.setString(3, sr.getAirportD().getSupercededAirport());
-			_ps.setString(4, sr.getAirportA().getIATA());
-			_ps.setString(5, sr.getAirportA().getSupercededAirport());
-			_ps.setString(6, sr.getAirportD().getIATA());
-			_ps.setString(7, sr.getAirportA().getIATA());
-			_ps.setString(8, sr.getAirline().getCode());
-			_ps.setInt(9, hourOfDay);
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+			ps.setString(1, db);
+			ps.setString(2, sr.getAirportD().getIATA());
+			ps.setString(3, sr.getAirportD().getSupercededAirport());
+			ps.setString(4, sr.getAirportA().getIATA());
+			ps.setString(5, sr.getAirportA().getSupercededAirport());
+			ps.setString(6, sr.getAirportD().getIATA());
+			ps.setString(7, sr.getAirportA().getIATA());
+			ps.setString(8, sr.getAirline().getCode());
+			ps.setInt(9, hourOfDay);
 			
 			// Execute the query
 			ScheduleEntry se = null;
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next()) {
 					se = new ScheduleEntry(SystemData.getAirline(rs.getString(1)), rs.getInt(2), rs.getInt(3));
 					se.setEquipmentType(rs.getString(4));
@@ -292,7 +278,6 @@ public class GetSchedule extends DAO {
 				}
 			}
 
-			_ps.close();
 			return se;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -317,20 +302,19 @@ public class GetSchedule extends DAO {
 			+ "AND ((S.AIRPORT_D=?) OR (S.AIRPORT_D=?)) AND ((S.AIRPORT_A=?) OR (S.AIRPORT_A=?)) AND (S.ACADEMY=?) "
 			+ "ORDER BY IF(S.AIRPORT_D=?,0,1), IF(S.AIRPORT_A=?,0,1), IF(S.AIRLINE=AI.CODE,1,0), IF(A.HISTORIC=1,0,1), S.FLIGHT LIMIT 1");
 		
-		try {
-			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setString(1, db);
-			_ps.setString(2, rp.getAirportD().getIATA());
-			_ps.setString(3, rp.getAirportD().getSupercededAirport());
-			_ps.setString(4, rp.getAirportA().getIATA());
-			_ps.setString(5, rp.getAirportA().getSupercededAirport());
-			_ps.setBoolean(6, false);
-			_ps.setString(7, rp.getAirportD().getIATA());
-			_ps.setString(8, rp.getAirportA().getIATA());
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+			ps.setString(1, db);
+			ps.setString(2, rp.getAirportD().getIATA());
+			ps.setString(3, rp.getAirportD().getSupercededAirport());
+			ps.setString(4, rp.getAirportA().getIATA());
+			ps.setString(5, rp.getAirportA().getSupercededAirport());
+			ps.setBoolean(6, false);
+			ps.setString(7, rp.getAirportD().getIATA());
+			ps.setString(8, rp.getAirportA().getIATA());
 			
 			// Execute the query
 			ScheduleEntry f = null;
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next()) {
 					f = new ScheduleEntry(SystemData.getAirline(rs.getString(1)), rs.getInt(2), rs.getInt(3));
 					f.setEquipmentType(rs.getString(4));
@@ -339,7 +323,6 @@ public class GetSchedule extends DAO {
 				}
 			}
 			
-			_ps.close();
 			return f;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -352,9 +335,8 @@ public class GetSchedule extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<ScheduleEntry> export() throws DAOException {
-		try {
-			prepareStatement("SELECT * FROM SCHEDULE ORDER BY AIRLINE, FLIGHT, LEG");
-			return execute();
+		try (PreparedStatement ps = prepare("SELECT * FROM SCHEDULE ORDER BY AIRLINE, FLIGHT, LEG")) {
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -375,13 +357,12 @@ public class GetSchedule extends DAO {
 		
 		sqlBuf.append("GROUP BY AIRPORT_D, AIRPORT_A");
 		
-		try {
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) { 
 			Collection<ScheduleRoute> results = new ArrayList<ScheduleRoute>();
-			prepareStatementWithoutLimits(sqlBuf.toString());
 			if (includeHistoric != Inclusion.ALL)
-				_ps.setBoolean(1, (includeHistoric == Inclusion.INCLUDE));
+				ps.setBoolean(1, (includeHistoric == Inclusion.INCLUDE));
 			
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					ScheduleRoute rp = new ScheduleRoute(SystemData.getAirport(rs.getString(1)), SystemData.getAirport(rs.getString(2)));
 					rp.setFlights(rs.getInt(3));
@@ -391,7 +372,6 @@ public class GetSchedule extends DAO {
 				}
 			}
 			
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -400,12 +380,13 @@ public class GetSchedule extends DAO {
 	
 	/**
 	 * Helper method to query the database.
+	 * @param ps a PreparedStatement
 	 * @return a List of ScheduleEntry beans
 	 * @throws SQLException if an error occurs
 	 */
-	protected List<ScheduleEntry> execute() throws SQLException {
+	protected List<ScheduleEntry> execute(PreparedStatement ps) throws SQLException {
 		List<ScheduleEntry> results = new ArrayList<ScheduleEntry>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			boolean hasDispatch = (rs.getMetaData().getColumnCount() > 13);
 			boolean hasRouteCounts = (rs.getMetaData().getColumnCount() > 15);
 			while (rs.next()) {
@@ -435,7 +416,6 @@ public class GetSchedule extends DAO {
 			}
 		}
 
-		_ps.close();
 		return results;
 	}
 }

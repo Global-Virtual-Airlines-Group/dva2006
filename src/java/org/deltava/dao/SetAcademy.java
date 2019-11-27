@@ -1,15 +1,14 @@
-// Copyright 2006, 2007, 2008, 2010, 2012, 2014, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010, 2012, 2014, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
-import java.util.*;
 
 import org.deltava.beans.academy.*;
 
 /**
  * A Data Access Object to write Flight Academy Course data to the database.
  * @author Luke
- * @version 8.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -31,40 +30,31 @@ public class SetAcademy extends DAO {
 	public void write(Course c) throws DAOException {
 		try {
 			startTransaction();
-			
-			// Prepare the statement
-			if (c.getID() == 0) {
-				prepareStatement("INSERT INTO exams.COURSES (CERTNAME, PILOT_ID, INSTRUCTOR_ID, STATUS, STARTDATE, CHECKRIDES) VALUES (?, ?, ?, ?, ?, ?)");
-				_ps.setInt(6, c.getRideCount());
-			} else {
-				prepareStatement("UPDATE exams.COURSES SET CERTNAME=?, PILOT_ID=?, INSTRUCTOR_ID=?, STATUS=?, STARTDATE=?, ENDDATE=? WHERE (ID=?)");
-				_ps.setTimestamp(6, createTimestamp(c.getEndDate()));
-				_ps.setInt(7, c.getID());
+			try (PreparedStatement ps = prepare("INSERT INTO exams.COURSES (CERTNAME, PILOT_ID, INSTRUCTOR_ID, STATUS, STARTDATE, ENDDATE, CHECKRIDES) VALUES (?, ?, ?, ?, ?, ?, ?) ON DUPCATE KEY UPDATE "
+				+ "CERTNAME=VALUES(CERTNAME), PILOT_ID=VALUES(PILOT_ID), INSTRUCTOR_ID=VALUES(INSTRUCTOR_ID), STATUS=VALUES(STATUS), STARTDATE=VALUES(STARTDATE), DNDDATE=VALUES(ENDDATE)")) {
+				ps.setString(1, c.getName());
+				ps.setInt(2, c.getPilotID());
+				ps.setInt(3, c.getInstructorID());
+				ps.setInt(4, c.getStatus().ordinal());
+				ps.setTimestamp(5, createTimestamp(c.getStartDate()));
+				ps.setTimestamp(6, createTimestamp(c.getEndDate()));
+				ps.setInt(7, c.getRideCount());
+				ps.setInt(7, c.getID());
+				executeUpdate(ps, 1);
 			}
 			
-			// Set parameters and execute
-			_ps.setString(1, c.getName());
-			_ps.setInt(2, c.getPilotID());
-			_ps.setInt(3, c.getInstructorID());
-			_ps.setInt(4, c.getStatus().ordinal());
-			_ps.setTimestamp(5, createTimestamp(c.getStartDate()));
-			executeUpdate(1);
-			
 			// Get the new database ID or clear course progress
-			if (c.getID() == 0)
-				c.setID(getNewID());
-			else if (!c.getProgress().isEmpty()) {
-				prepareStatementWithoutLimits("DELETE FROM exams.COURSEPROGRESS WHERE (ID=?)");
-				_ps.setInt(1, c.getID());
-				executeUpdate(0);
+			if (c.getID() == 0) c.setID(getNewID());
+			if (!c.getProgress().isEmpty()) {
+				try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM exams.COURSEPROGRESS WHERE (ID=?)")) {
+					ps.setInt(1, c.getID());
+					executeUpdate(ps, 0);
+				}
 			}
 			
 			// Write course progress
-			for (Iterator<CourseProgress> i = c.getProgress().iterator(); i.hasNext(); ) {
-				CourseProgress cp = i.next();
-				if (cp.getCourseID() == 0)
-					cp.setCourseID(c.getID());
-				
+			for (CourseProgress cp : c.getProgress()) {
+				if (cp.getCourseID() == 0) cp.setCourseID(c.getID());
 				updateProgress(cp);
 			}
 			
@@ -82,13 +72,12 @@ public class SetAcademy extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void comment(CourseComment cc) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("INSERT INTO exams.COURSECHAT (COURSE_ID, PILOT_ID, CREATED, COMMENTS) VALUES (?, ?, ?, ?)");
-			_ps.setInt(1, cc.getID());
-			_ps.setInt(2, cc.getAuthorID());
-			_ps.setTimestamp(3, createTimestamp(cc.getCreatedOn()));
-			_ps.setString(4, cc.getText());
-			executeUpdate(1);
+		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO exams.COURSECHAT (COURSE_ID, PILOT_ID, CREATED, COMMENTS) VALUES (?, ?, ?, ?)")) {
+			ps.setInt(1, cc.getID());
+			ps.setInt(2, cc.getAuthorID());
+			ps.setTimestamp(3, createTimestamp(cc.getCreatedOn()));
+			ps.setString(4, cc.getText());
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -101,13 +90,12 @@ public class SetAcademy extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void complete(int courseID, int seq) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("UPDATE exams.COURSEPROGRESS SET COMPLETE=?, COMPLETED=NOW() WHERE (ID=?) AND (SEQ=?) AND (COMPLETE=?)");
-			_ps.setBoolean(1, true);
-			_ps.setInt(2, courseID);
-			_ps.setInt(3, seq);
-			_ps.setBoolean(4, false);
-			executeUpdate(1);
+		try (PreparedStatement ps = prepareWithoutLimits("UPDATE exams.COURSEPROGRESS SET COMPLETE=?, COMPLETED=NOW() WHERE (ID=?) AND (SEQ=?) AND (COMPLETE=?)")) {
+			ps.setBoolean(1, true);
+			ps.setInt(2, courseID);
+			ps.setInt(3, seq);
+			ps.setBoolean(4, false);
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -119,16 +107,15 @@ public class SetAcademy extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void updateProgress(CourseProgress cp) throws DAOException {
-		try {
-			prepareStatement("REPLACE INTO exams.COURSEPROGRESS (ID, SEQ, AUTHOR, REQENTRY, EXAMNAME, COMPLETE, COMPLETED) VALUES (?, ?, ?, ?, ?, ?, ?)");
-			_ps.setInt(1, cp.getCourseID());
-			_ps.setInt(2, cp.getID());
-			_ps.setInt(3, cp.getAuthorID());
-			_ps.setString(4, cp.getText());
-			_ps.setString(5, cp.getExamName());
-			_ps.setBoolean(6, cp.getComplete());
-			_ps.setTimestamp(7, createTimestamp(cp.getCompletedOn()));
-			executeUpdate(1);
+		try (PreparedStatement ps = prepare("REPLACE INTO exams.COURSEPROGRESS (ID, SEQ, AUTHOR, REQENTRY, EXAMNAME, COMPLETE, COMPLETED) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
+			ps.setInt(1, cp.getCourseID());
+			ps.setInt(2, cp.getID());
+			ps.setInt(3, cp.getAuthorID());
+			ps.setString(4, cp.getText());
+			ps.setString(5, cp.getExamName());
+			ps.setBoolean(6, cp.getComplete());
+			ps.setTimestamp(7, createTimestamp(cp.getCompletedOn()));
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -142,13 +129,12 @@ public class SetAcademy extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void setStatus(int courseID, Status s, java.time.Instant sd) throws DAOException {
-		try {
-			prepareStatement("UPDATE exams.COURSES SET STATUS=?, STARTDATE=?, ENDDATE=IF(STATUS=?, NOW(), NULL) WHERE (ID=?)");
-			_ps.setInt(1, s.ordinal());
-			_ps.setTimestamp(2, createTimestamp(sd));
-			_ps.setInt(3, Status.COMPLETE.ordinal());
-			_ps.setInt(4, courseID);
-			executeUpdate(1);
+		try (PreparedStatement ps = prepare("UPDATE exams.COURSES SET STATUS=?, STARTDATE=?, ENDDATE=IF(STATUS=?, NOW(), NULL) WHERE (ID=?)")) {
+			ps.setInt(1, s.ordinal());
+			ps.setTimestamp(2, createTimestamp(sd));
+			ps.setInt(3, Status.COMPLETE.ordinal());
+			ps.setInt(4, courseID);
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -161,11 +147,10 @@ public class SetAcademy extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void reassign(int courseID, int newPilotID) throws DAOException {
-		try {
-			prepareStatement("UPDATE exams.COURSES SET PILOT_ID=? WHERE (ID=?)");
-			_ps.setInt(1, newPilotID);
-			_ps.setInt(2, courseID);
-			executeUpdate(1);
+		try (PreparedStatement ps = prepare("UPDATE exams.COURSES SET PILOT_ID=? WHERE (ID=?)")) {
+			ps.setInt(1, newPilotID);
+			ps.setInt(2, courseID);
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -177,10 +162,9 @@ public class SetAcademy extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void delete(int courseID) throws DAOException {
-		try {
-			prepareStatement("DELETE FROM exams.COURSES WHERE (ID=?)");
-			_ps.setInt(1, courseID);
-			executeUpdate(1);
+		try (PreparedStatement ps = prepare("DELETE FROM exams.COURSES WHERE (ID=?)")) {
+			ps.setInt(1, courseID);
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -196,20 +180,22 @@ public class SetAcademy extends DAO {
 			startTransaction();
 			
 			// Clean out the certifications
-			prepareStatementWithoutLimits("DELETE FROM exams.CERTVIDEOS WHERE (FILENAME=?)");
-			_ps.setString(1, video.getFileName());
-			executeUpdate(0);
-			
-			// Add the certifications
-			prepareStatementWithoutLimits("INSERT INTO exams.CERTVIDEOS (CERT, FILENAME) VALUES (?, ?)");
-			_ps.setString(2, video.getFileName());
-			for (Iterator<String> i = video.getCertifications().iterator(); i.hasNext(); ) {
-				_ps.setString(1, i.next());
-				_ps.addBatch();
+			try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM exams.CERTVIDEOS WHERE (FILENAME=?)")) {
+				ps.setString(1, video.getFileName());
+				executeUpdate(ps, 0);
 			}
 			
-			// Execute the batch transaction and commit
-			executeBatchUpdate(1, video.getCertifications().size());
+			// Add the certifications
+			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO exams.CERTVIDEOS (CERT, FILENAME) VALUES (?, ?)")) {
+				ps.setString(2, video.getFileName());
+				for (String certName : video.getCertifications()) {
+					ps.setString(1, certName);
+					ps.addBatch();
+				}
+			
+				executeUpdate(ps, 1, video.getCertifications().size());
+			}
+			
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();

@@ -9,7 +9,7 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * A Data Access Object to write Examination Question profiles to the database. 
  * @author Luke
- * @version 8.6
+ * @version 9.0
  * @since 3.6
  */
 
@@ -35,87 +35,102 @@ public class SetExamQuestion extends DAO {
 			
 			// Prepare different statements for INSERT and UPDATE operations
 			if (qp.getID() == 0) {
-				prepareStatementWithoutLimits("INSERT INTO exams.QUESTIONINFO (QUESTION, CORRECT, REFERENCE, ACTIVE, AIRLINE) VALUES (?, ?, ?, ?, ?)");
-				_ps.setString(5, qp.getOwner().getCode());
+				try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO exams.QUESTIONINFO (QUESTION, CORRECT, REFERENCE, ACTIVE, AIRLINE) VALUES (?, ?, ?, ?, ?)")) {
+					ps.setString(1, qp.getQuestion());
+					ps.setString(2, qp.getCorrectAnswer());
+					ps.setString(3, qp.getReference());
+					ps.setBoolean(4, qp.getActive());
+					ps.setString(5, qp.getOwner().getCode());
+					executeUpdate(ps, 1);
+				}
+				
 			} else {
-				prepareStatementWithoutLimits("DELETE FROM exams.QUESTIONAIRLINES WHERE (ID=?)");
-				_ps.setInt(1, qp.getID());
-				executeUpdate(0);
-				prepareStatementWithoutLimits("UPDATE exams.QUESTIONINFO SET QUESTION=?, CORRECT=?, REFERENCE=?, ACTIVE=? WHERE (ID=?)");
-				_ps.setInt(5, qp.getID());
+				try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM exams.QUESTIONAIRLINES WHERE (ID=?)")) {
+					ps.setInt(1, qp.getID());
+					executeUpdate(ps, 0);
+				}
+				
+				try (PreparedStatement ps = prepare("UPDATE exams.QUESTIONINFO SET QUESTION=?, CORRECT=?, REFERENCE=?, ACTIVE=? WHERE (ID=?)")) {
+					ps.setString(1, qp.getQuestion());
+					ps.setString(2, qp.getCorrectAnswer());
+					ps.setString(3, qp.getReference());
+					ps.setBoolean(4, qp.getActive());
+					ps.setInt(5, qp.getID());
+					executeUpdate(ps, 1);		
+				}
 			}
-
-			// Set prepared statement and write the question
-			_ps.setString(1, qp.getQuestion());
-			_ps.setString(2, qp.getCorrectAnswer());
-			_ps.setString(3, qp.getReference());
-			_ps.setBoolean(4, qp.getActive());
-			executeUpdate(1);
 
 			// If this is a new question profile, get the ID back from the database and write stats, otherwise clear the exam names
 			if (qp.getID() == 0) {
 				qp.setID(getNewID());
-				prepareStatementWithoutLimits("INSERT INTO exams.QUESTIONSTATS (ID, TOTAL, CORRECT) VALUES (?, 0, 0)");
-				_ps.setInt(1, qp.getID());
-				executeUpdate(1);
+				try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO exams.QUESTIONSTATS (ID, TOTAL, CORRECT) VALUES (?, 0, 0)")) {
+					ps.setInt(1, qp.getID());
+					executeUpdate(ps, 1);
+				}
 			} else {
-				prepareStatementWithoutLimits("DELETE FROM exams.QE_INFO WHERE (QUESTION_ID=?)");
-				_ps.setInt(1, qp.getID());
-				executeUpdate(0);
+				try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM exams.QE_INFO WHERE (QUESTION_ID=?)")) {
+					ps.setInt(1, qp.getID());
+					executeUpdate(ps, 0);
+				}
 
 				// Clear out the multiple choice options if we have them
 				if (qp instanceof MultipleChoice) {
-					prepareStatementWithoutLimits("DELETE FROM exams.QUESTIONMINFO WHERE (ID=?)");
-					_ps.setInt(1, qp.getID());
-					executeUpdate(0);
+					try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM exams.QUESTIONMINFO WHERE (ID=?)")) {
+						ps.setInt(1, qp.getID());
+						executeUpdate(ps, 0);
+					}
 				}
 			}
 
 			// Write the exam names
-			prepareStatementWithoutLimits("INSERT INTO exams.QE_INFO (QUESTION_ID, EXAM_NAME) VALUES (?, ?)");
-			_ps.setInt(1, qp.getID());
-			for (String examName : qp.getExams()) {
-				_ps.setString(2, examName);
-				_ps.addBatch();
-			}
+			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO exams.QE_INFO (QUESTION_ID, EXAM_NAME) VALUES (?, ?)")) {
+				ps.setInt(1, qp.getID());
+				for (String examName : qp.getExams()) {
+					ps.setString(2, examName);
+					ps.addBatch();
+				}
 
-			executeBatchUpdate(1, qp.getExams().size());
+				executeUpdate(ps, 1, qp.getExams().size());
+			}
 			
 			// Write the airline names
-			prepareStatementWithoutLimits("INSERT INTO exams.QUESTIONAIRLINES (ID, AIRLINE) VALUES (?, ?)");
-			_ps.setInt(1, qp.getID());
-			for (AirlineInformation ai : qp.getAirlines()) {
-				_ps.setString(2, ai.getCode());
-				_ps.addBatch();
-			}
+			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO exams.QUESTIONAIRLINES (ID, AIRLINE) VALUES (?, ?)")) {
+				ps.setInt(1, qp.getID());
+				for (AirlineInformation ai : qp.getAirlines()) {
+					ps.setString(2, ai.getCode());
+					ps.addBatch();
+				}
 
-			executeBatchUpdate(1, qp.getAirlines().size());
+				executeUpdate(ps, 1, qp.getAirlines().size());
+			}
 
 			// Write the multiple choice entries
 			if (qp instanceof MultipleChoice) {
 				MultipleChoice mq = (MultipleChoice) qp;
-				prepareStatementWithoutLimits("INSERT INTO exams.QUESTIONMINFO (ID, SEQ, ANSWER) VALUES (?, ?, ?)");
-				_ps.setInt(1, qp.getID());
+				try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO exams.QUESTIONMINFO (ID, SEQ, ANSWER) VALUES (?, ?, ?)")) {
+					ps.setInt(1, qp.getID());
 
-				// Write the entries
-				int seq = 0;
-				for (String choice : mq.getChoices()) {
-					_ps.setInt(2, ++seq);
-					_ps.setString(3, choice);
-					_ps.addBatch();
+					// Write the entries
+					int seq = 0;
+					for (String choice : mq.getChoices()) {
+						ps.setInt(2, ++seq);
+						ps.setString(3, choice);
+						ps.addBatch();
+					}
+
+					executeUpdate(ps, 1, mq.getChoices().size());
 				}
-
-				executeBatchUpdate(1, mq.getChoices().size());
 			}
 			
 			// Write the route plot entries
 			if (qp instanceof RoutePlot) {
 				RoutePlot rp = (RoutePlot) qp;
-				prepareStatementWithoutLimits("REPLACE INTO exams.QUESTIONRPINFO (ID, AIRPORT_D, AIRPORT_A) VALUES (?, ?, ?)");
-				_ps.setInt(1, qp.getID());
-				_ps.setString(2, rp.getAirportD().getIATA());
-				_ps.setString(3, rp.getAirportA().getIATA());
-				executeUpdate(1);
+				try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO exams.QUESTIONRPINFO (ID, AIRPORT_D, AIRPORT_A) VALUES (?, ?, ?)")) {
+					ps.setInt(1, qp.getID());
+					ps.setString(2, rp.getAirportD().getIATA());
+					ps.setString(3, rp.getAirportA().getIATA());
+					executeUpdate(ps, 1);
+				}
 			}
 
 			// Commit the transaction
@@ -136,19 +151,22 @@ public class SetExamQuestion extends DAO {
 			startTransaction();
 			
 			// Remove the entries
-			prepareStatementWithoutLimits("DELETE FROM exams.QE_INFO WHERE (QUESTION_ID=?)");
-			_ps.setInt(1, qp.getID());
-			executeUpdate(0);
+			try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM exams.QE_INFO WHERE (QUESTION_ID=?)")) {
+				ps.setInt(1, qp.getID());
+				executeUpdate(ps, 0);
+			}
 			
 			// Write the exam names
-			prepareStatementWithoutLimits("INSERT INTO exams.QE_INFO (QUESTION_ID, EXAM_NAME) VALUES (?, ?)");
-			_ps.setInt(1, qp.getID());
-			for (String examName : qp.getExams()) {
-				_ps.setString(2, examName);
-				_ps.addBatch();
-			}
+			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO exams.QE_INFO (QUESTION_ID, EXAM_NAME) VALUES (?, ?)")) {
+				ps.setInt(1, qp.getID());
+				for (String examName : qp.getExams()) {
+					ps.setString(2, examName);
+					ps.addBatch();
+				}
 
-			executeBatchUpdate(1, qp.getExams().size());
+				executeUpdate(ps, 1, qp.getExams().size());
+			}
+			
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -168,15 +186,14 @@ public class SetExamQuestion extends DAO {
 		if (!qp.isLoaded())
 			throw new IllegalArgumentException("Image Data not loaded");
 
-		try {
-			prepareStatement("REPLACE INTO exams.QUESTIONIMGS (ID, TYPE, X, Y, SIZE, IMG) VALUES (?, ?, ?, ?, ?, ?)");
-			_ps.setInt(1, qp.getID());
-			_ps.setInt(2, qp.getType());
-			_ps.setInt(3, qp.getWidth());
-			_ps.setInt(4, qp.getHeight());
-			_ps.setInt(5, qp.getSize());
-			_ps.setBinaryStream(6, qp.getInputStream(), qp.getSize());
-			executeUpdate(1);
+		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO exams.QUESTIONIMGS (ID, TYPE, X, Y, SIZE, IMG) VALUES (?, ?, ?, ?, ?, ?)")) {
+			ps.setInt(1, qp.getID());
+			ps.setInt(2, qp.getType());
+			ps.setInt(3, qp.getWidth());
+			ps.setInt(4, qp.getHeight());
+			ps.setInt(5, qp.getSize());
+			ps.setBinaryStream(6, qp.getInputStream(), qp.getSize());
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -188,10 +205,9 @@ public class SetExamQuestion extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void clearImage(int id) throws DAOException {
-		try {
-			prepareStatement("DELETE FROM exams.QUESTIONIMGS WHERE (ID=?)");
-			_ps.setInt(1, id);
-			executeUpdate(0);
+		try (PreparedStatement ps = prepare("DELETE FROM exams.QUESTIONIMGS WHERE (ID=?)")) {
+			ps.setInt(1, id);
+			executeUpdate(ps, 0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -203,10 +219,9 @@ public class SetExamQuestion extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void delete(QuestionProfile qp) throws DAOException {
-		try {
-			prepareStatement("DELETE FROM exams.QUESTIONINFO WHERE (ID=?)");
-			_ps.setInt(1, qp.getID());
-			executeUpdate(1);
+		try (PreparedStatement ps = prepare("DELETE FROM exams.QUESTIONINFO WHERE (ID=?)")) {
+			ps.setInt(1, qp.getID());
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

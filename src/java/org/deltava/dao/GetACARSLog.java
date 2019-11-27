@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.acars.*;
 /**
  * A Data Access Object to load ACARS log data.
  * @author Luke
- * @version 7.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -41,10 +41,7 @@ public class GetACARSLog extends GetACARSData {
 			terms.add("(C.DATE < ?)");
 
 		// Build the SQL statement
-		StringBuilder buf = new StringBuilder("SELECT C.ID, C.PILOT_ID, C.DATE, C.ENDDATE, INET6_NTOA(C.REMOTE_ADDR), "
-				+ "C.REMOTE_HOST, C.CLIENT_BUILD, C.BETA_BUILD FROM acars.CONS C ");
-
-		// Add the terms
+		StringBuilder buf = new StringBuilder("SELECT C.ID, C.PILOT_ID, C.DATE, C.ENDDATE, INET6_NTOA(C.REMOTE_ADDR), C.REMOTE_HOST, C.CLIENT_BUILD, C.BETA_BUILD FROM acars.CONS C ");
 		if (!terms.isEmpty()) {
 			buf.append(" WHERE ");
 			for (Iterator<String> i = terms.iterator(); i.hasNext();) {
@@ -56,17 +53,16 @@ public class GetACARSLog extends GetACARSData {
 
 		buf.append(" GROUP BY C.ID ORDER BY C.DATE DESC");
 
-		try {
-			prepareStatement(buf.toString());
+		try (PreparedStatement ps = prepare(buf.toString())) {
 			int psOfs = 0;
 			if (criteria.getPilotID() != 0)
-				_ps.setInt(++psOfs, criteria.getPilotID());
+				ps.setInt(++psOfs, criteria.getPilotID());
 			if (criteria.getStartDate() != null)
-				_ps.setTimestamp(++psOfs, createTimestamp(criteria.getStartDate()));
+				ps.setTimestamp(++psOfs, createTimestamp(criteria.getStartDate()));
 			if (criteria.getEndDate() != null)
-				_ps.setTimestamp(++psOfs, createTimestamp(criteria.getEndDate()));
+				ps.setTimestamp(++psOfs, createTimestamp(criteria.getEndDate()));
 			
-			return executeConnectionInfo();
+			return executeConnectionInfo(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -105,22 +101,21 @@ public class GetACARSLog extends GetACARSData {
 
 		buf.append(" ORDER BY DATE");
 
-		try {
-			prepareStatement(buf.toString());
+		try (PreparedStatement ps = prepare(buf.toString())) {
 			int psOfs = 0;
 			if (criteria.getPilotID() != 0) {
-				_ps.setInt(++psOfs, criteria.getPilotID());
-				_ps.setInt(++psOfs, criteria.getPilotID());
+				ps.setInt(++psOfs, criteria.getPilotID());
+				ps.setInt(++psOfs, criteria.getPilotID());
 			}
 
 			if (criteria.getStartDate() != null)
-				_ps.setTimestamp(++psOfs, createTimestamp(criteria.getStartDate()));
+				ps.setTimestamp(++psOfs, createTimestamp(criteria.getStartDate()));
 			if (criteria.getEndDate() != null)
-				_ps.setTimestamp(++psOfs, createTimestamp(criteria.getEndDate()));
+				ps.setTimestamp(++psOfs, createTimestamp(criteria.getEndDate()));
 			if (searchStr != null)
-				_ps.setString(++psOfs, searchStr);
+				ps.setString(++psOfs, searchStr);
 
-			return executeMsg();
+			return executeMsg(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -144,8 +139,7 @@ public class GetACARSLog extends GetACARSData {
 			terms.add("(F.CREATED < ?)");
 
 		// Build the SQL statement
-		StringBuilder buf = new StringBuilder("SELECT F.*, INET6_NTOA(F.REMOTE_ADDR), FD.ROUTE_ID, "
-			+	"FDR.DISPATCHER_ID FROM acars.FLIGHTS F LEFT JOIN acars.FLIGHT_DISPATCH FD ON (F.ID=FD.ID) "
+		StringBuilder buf = new StringBuilder("SELECT F.*, INET6_NTOA(F.REMOTE_ADDR), FD.ROUTE_ID, FDR.DISPATCHER_ID FROM acars.FLIGHTS F LEFT JOIN acars.FLIGHT_DISPATCH FD ON (F.ID=FD.ID) "
 			+ "LEFT JOIN acars.FLIGHT_DISPATCHER FDR ON (F.ID=FDR.ID)");
 		if (!terms.isEmpty()) {
 			buf.append(" WHERE ");
@@ -158,17 +152,16 @@ public class GetACARSLog extends GetACARSData {
 
 		buf.append(" ORDER BY F.CREATED");
 
-		try {
-			prepareStatement(buf.toString());
+		try (PreparedStatement ps = prepare(buf.toString())) {
 			int psOfs = 0;
 			if (criteria.getPilotID() != 0)
-				_ps.setInt(++psOfs, criteria.getPilotID());
+				ps.setInt(++psOfs, criteria.getPilotID());
 			if (criteria.getStartDate() != null)
-				_ps.setTimestamp(++psOfs, createTimestamp(criteria.getStartDate()));
+				ps.setTimestamp(++psOfs, createTimestamp(criteria.getStartDate()));
 			if (criteria.getEndDate() != null)
-				_ps.setTimestamp(++psOfs, createTimestamp(criteria.getEndDate()));
+				ps.setTimestamp(++psOfs, createTimestamp(criteria.getEndDate()));
 
-			return executeFlightInfo();
+			return executeFlightInfo(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -177,9 +170,9 @@ public class GetACARSLog extends GetACARSData {
 	/*
 	 * Helper method to parse Message result sets.
 	 */
-	private List<TextMessage> executeMsg() throws SQLException {
+	private static List<TextMessage> executeMsg(PreparedStatement ps) throws SQLException {
 		List<TextMessage> results = new ArrayList<TextMessage>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
 				TextMessage msg = new TextMessage(rs.getTimestamp(1).toInstant());
 				msg.setAuthorID(rs.getInt(2));
@@ -189,7 +182,6 @@ public class GetACARSLog extends GetACARSData {
 			}
 		}
 
-		_ps.close();
 		return results;
 	}
 }

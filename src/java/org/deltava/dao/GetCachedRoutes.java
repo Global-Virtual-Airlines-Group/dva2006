@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2014, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load cached external routes from the database.
  * @author Luke
- * @version 7.0
+ * @version 9.0
  * @since 2.6
  */
 
@@ -33,20 +33,12 @@ public class GetCachedRoutes extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public int getAverageAge(RoutePair rp) throws DAOException {
-		try {
-			prepareStatement("SELECT IFNULL(ROUND(AVG(DATEDIFF(NOW(), CREATED))), -1) FROM common.ROUTE_CACHE "
-					+ "WHERE (AIRPORT_D=?) AND (AIRPORT_A=?)");
-			_ps.setString(1, rp.getAirportD().getICAO());
-			_ps.setString(2, rp.getAirportA().getICAO());
-
-			int avgAge = -1;
-			try (ResultSet rs = _ps.executeQuery()) {
-				if (rs.next())
-					avgAge = rs.getInt(1);
+		try (PreparedStatement ps = prepare("SELECT IFNULL(ROUND(AVG(DATEDIFF(NOW(), CREATED))), -1) FROM common.ROUTE_CACHE WHERE (AIRPORT_D=?) AND (AIRPORT_A=?)")) {
+			ps.setString(1, rp.getAirportD().getICAO());
+			ps.setString(2, rp.getAirportA().getICAO());
+			try (ResultSet rs = ps.executeQuery()) {
+				return rs.next() ? rs.getInt(1) : -1;
 			}
-			
-			_ps.close();
-			return avgAge;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -60,15 +52,12 @@ public class GetCachedRoutes extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<? extends FlightRoute> getRoutes(RoutePair rp, boolean includeInternal) throws DAOException {
-		try {
-			prepareStatement("SELECT * FROM common.ROUTE_CACHE WHERE (AIRPORT_D=?) AND (AIRPORT_A=?) "
-					+ "ORDER BY CREATED");
-			_ps.setString(1, rp.getAirportD().getICAO());
-			_ps.setString(2, rp.getAirportA().getICAO());
+		try (PreparedStatement ps = prepare("SELECT * FROM common.ROUTE_CACHE WHERE (AIRPORT_D=?) AND (AIRPORT_A=?) ORDER BY CREATED")) {
+			ps.setString(1, rp.getAirportD().getICAO());
+			ps.setString(2, rp.getAirportA().getICAO());
 			
-			// Execute the query
 			Collection<FlightRoute> results = new ArrayList<FlightRoute>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					ExternalRoute rt = new ExternalRoute(rs.getString(5));
 					rt.setAirportD(SystemData.getAirport(rs.getString(1)));
@@ -101,7 +90,6 @@ public class GetCachedRoutes extends DAO {
 				}
 			}
 			
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);

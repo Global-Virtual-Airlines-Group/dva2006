@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A Data Access Object to update the Flight Schedule.
  * @author Luke
- * @version 8.3
+ * @version 9.0
  * @since 1.0
  */
 
@@ -34,22 +34,21 @@ public class SetSchedule extends DAO {
 		StringBuilder sqlBuf = new StringBuilder(doReplace ? "REPLACE" : "INSERT");
 		sqlBuf.append(" INTO SCHEDULE (AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A, DISTANCE, EQTYPE, FLIGHT_TIME, TIME_D, TIME_A, HISTORIC, CAN_PURGE, ACADEMY) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		try {
-			prepareStatement(sqlBuf.toString());
-			_ps.setString(1, entry.getAirline().getCode());
-			_ps.setInt(2, entry.getFlightNumber());
-			_ps.setInt(3, entry.getLeg());
-			_ps.setString(4, entry.getAirportD().getIATA());
-			_ps.setString(5, entry.getAirportA().getIATA());
-			_ps.setInt(6, entry.getDistance());
-			_ps.setString(7, entry.getEquipmentType());
-			_ps.setInt(8, entry.getLength());
-			_ps.setTimestamp(9, Timestamp.valueOf(entry.getTimeD().toLocalDateTime()));
-			_ps.setTimestamp(10, Timestamp.valueOf(entry.getTimeA().toLocalDateTime()));
-			_ps.setBoolean(11, entry.getHistoric());
-			_ps.setBoolean(12, entry.getCanPurge());
-			_ps.setBoolean(13, entry.getAcademy());
-			executeUpdate(1);
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+			ps.setString(1, entry.getAirline().getCode());
+			ps.setInt(2, entry.getFlightNumber());
+			ps.setInt(3, entry.getLeg());
+			ps.setString(4, entry.getAirportD().getIATA());
+			ps.setString(5, entry.getAirportA().getIATA());
+			ps.setInt(6, entry.getDistance());
+			ps.setString(7, entry.getEquipmentType());
+			ps.setInt(8, entry.getLength());
+			ps.setTimestamp(9, Timestamp.valueOf(entry.getTimeD().toLocalDateTime()));
+			ps.setTimestamp(10, Timestamp.valueOf(entry.getTimeA().toLocalDateTime()));
+			ps.setBoolean(11, entry.getHistoric());
+			ps.setBoolean(12, entry.getCanPurge());
+			ps.setBoolean(13, entry.getAcademy());
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -61,19 +60,22 @@ public class SetSchedule extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void writeRaw(RawScheduleEntry rse) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("REPLACE INTO RAW_SCHEDULE (DAY, AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A, EQTYPE, TIME_D, TIME_A, CODESHARE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-			_ps.setInt(1, rse.getDay().ordinal());
-			_ps.setString(2, rse.getAirline().getCode());
-			_ps.setInt(3, rse.getFlightNumber());
-			_ps.setInt(4, rse.getLeg());
-			_ps.setString(5, rse.getAirportD().getIATA());
-			_ps.setString(6, rse.getAirportA().getIATA());
-			_ps.setString(7, rse.getEquipmentType());
-			_ps.setTimestamp(8, Timestamp.valueOf(rse.getTimeD().toLocalDateTime()));
-			_ps.setTimestamp(9, Timestamp.valueOf(rse.getTimeA().toLocalDateTime()));
-			_ps.setString(10, rse.getCodeShare());
-			executeUpdate(1);
+		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO RAW_SCHEDULE (SRC, SRCLINE, STARTDATE, ENDDATE, DAYS, AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A, EQTYPE, TIME_D, TIME_A, CODESHARE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+			ps.setString(1, rse.getSource());
+			ps.setInt(2, rse.getLineNumber());
+			ps.setTimestamp(3, Timestamp.valueOf(rse.getStartDate().atStartOfDay()));
+			ps.setTimestamp(4, Timestamp.valueOf(rse.getEndDate().atTime(23, 59, 59)));
+			ps.setInt(5, rse.getDayMap());
+			ps.setString(6, rse.getAirline().getCode());
+			ps.setInt(7, rse.getFlightNumber());
+			ps.setInt(8, rse.getLeg());
+			ps.setString(9, rse.getAirportD().getIATA());
+			ps.setString(10, rse.getAirportA().getIATA());
+			ps.setString(11, rse.getEquipmentType());
+			ps.setTimestamp(12, Timestamp.valueOf(rse.getTimeD().toLocalDateTime()));
+			ps.setTimestamp(13, Timestamp.valueOf(rse.getTimeA().toLocalDateTime()));
+			ps.setString(14, rse.getCodeShare());
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -86,12 +88,11 @@ public class SetSchedule extends DAO {
 	 * @throws NullPointerException if entry is null
 	 */
 	public void delete(ScheduleEntry entry) throws DAOException {
-		try {
-			prepareStatement("DELETE FROM SCHEDULE WHERE (AIRLINE=?) AND (FLIGHT=?) AND (LEG=?)");
-			_ps.setString(1, entry.getAirline().getCode());
-			_ps.setInt(2, entry.getFlightNumber());
-			_ps.setInt(3, entry.getLeg());
-			executeUpdate(1);
+		try (PreparedStatement ps = prepare("DELETE FROM SCHEDULE WHERE (AIRLINE=?) AND (FLIGHT=?) AND (LEG=?)")) {
+			ps.setString(1, entry.getAirline().getCode());
+			ps.setInt(2, entry.getFlightNumber());
+			ps.setInt(3, entry.getLeg());
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -108,12 +109,11 @@ public class SetSchedule extends DAO {
 		if (!force)
 			sqlBuf.append(" WHERE (CAN_PURGE=?)");
 
-		try {
-			prepareStatementWithoutLimits(sqlBuf.toString());
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 			if (!force)
-				_ps.setBoolean(1, true);
+				ps.setBoolean(1, true);
 
-			executeUpdate(0);
+			executeUpdate(ps, 0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -121,12 +121,13 @@ public class SetSchedule extends DAO {
 	
 	/**
 	 * Purges entries from the raw Flight Schedule.
+	 * @param src the source name
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void purgeRaw() throws DAOException {
-		try {
-			prepareStatementWithoutLimits("DELETE FROM RAW_SCHEDULE");
-			executeUpdate(0);
+	public void purgeRaw(String src) throws DAOException {
+		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM RAW_SCHEDULE WHERE (SRC=?)")) {
+			ps.setString(1, src);
+			executeUpdate(ps, 0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

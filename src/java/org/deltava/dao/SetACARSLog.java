@@ -8,7 +8,7 @@ import org.deltava.beans.acars.ACARSError;
 /**
  * A Data Access Object to update or remove ACARS log entries.
  * @author Luke
- * @version 8.6
+ * @version 9.0
  * @since 1.0
  */
 
@@ -28,10 +28,9 @@ public class SetACARSLog extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void deleteConnection(long id) throws DAOException {
-		try {
-			prepareStatement("DELETE FROM acars.CONS WHERE (ID=CONV(?,10,16))");
-			_ps.setLong(1, id);
-			executeUpdate(0);
+		try (PreparedStatement ps = prepare("DELETE FROM acars.CONS WHERE (ID=CONV(?,10,16))")) {
+			ps.setLong(1, id);
+			executeUpdate(ps, 0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -43,11 +42,10 @@ public class SetACARSLog extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void deleteInfo(int flightID) throws DAOException {
-		try {
-			prepareStatement("DELETE FROM acars.FLIGHTS WHERE (ID=?) AND (ARCHIVED=?)");
-			_ps.setInt(1, flightID);
-			_ps.setBoolean(2, false);
-			executeUpdate(0);
+		try (PreparedStatement ps = prepare("DELETE FROM acars.FLIGHTS WHERE (ID=?) AND (ARCHIVED=?)")) {
+			ps.setInt(1, flightID);
+			ps.setBoolean(2, false);
+			executeUpdate(ps, 0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -59,29 +57,28 @@ public class SetACARSLog extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void logError(ACARSError err) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("INSERT INTO acars.ERRORS (USERID, CREATED_ON, REMOTE_ADDR, REMOTE_HOST, CLIENT_BUILD, BETA, FS_VERSION, FSUIPC_VERSION, BRIDGE_VERSION, "
-				+ "ISINFO, OS_VERSION, IS64BIT, CLR_VERSION, LOCALE, TZ, ERROR_MSG, STACKDUMP, STATEDATA, LOG) VALUES (?, ?, INET6_ATON(?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-			_ps.setInt(1, err.getAuthorID());
-			_ps.setTimestamp(2, createTimestamp(err.getCreatedOn()));
-			_ps.setString(3, err.getRemoteAddr());
-			_ps.setString(4, err.getRemoteHost());
-			_ps.setInt(5, err.getClientBuild());
-			_ps.setInt(6, err.getBeta());
-			_ps.setInt(7, err.getSimulator().getCode());
-			_ps.setString(8, err.getPluginVersion());
-			_ps.setString(9, err.getBridgeVersion());
-			_ps.setBoolean(10, err.getIsInfo());
-			_ps.setString(11, err.getOSVersion());
-			_ps.setBoolean(12, err.getIs64Bit());
-			_ps.setString(13, err.getCLRVersion());
-			_ps.setString(14, err.getLocale());
-			_ps.setString(15, err.getTimeZone());
-			_ps.setString(16, err.getMessage());
-			_ps.setString(17, err.getStackDump());
-			_ps.setString(18, err.getStateData());
-			_ps.setBinaryStream(19, err.getInputStream());
-			executeUpdate(1);
+		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO acars.ERRORS (USERID, CREATED_ON, REMOTE_ADDR, REMOTE_HOST, CLIENT_BUILD, BETA, FS_VERSION, FSUIPC_VERSION, BRIDGE_VERSION, "
+				+ "ISINFO, OS_VERSION, IS64BIT, CLR_VERSION, LOCALE, TZ, ERROR_MSG, STACKDUMP, STATEDATA, LOG) VALUES (?, ?, INET6_ATON(?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+			ps.setInt(1, err.getAuthorID());
+			ps.setTimestamp(2, createTimestamp(err.getCreatedOn()));
+			ps.setString(3, err.getRemoteAddr());
+			ps.setString(4, err.getRemoteHost());
+			ps.setInt(5, err.getClientBuild());
+			ps.setInt(6, err.getBeta());
+			ps.setInt(7, err.getSimulator().getCode());
+			ps.setString(8, err.getPluginVersion());
+			ps.setString(9, err.getBridgeVersion());
+			ps.setBoolean(10, err.getIsInfo());
+			ps.setString(11, err.getOSVersion());
+			ps.setBoolean(12, err.getIs64Bit());
+			ps.setString(13, err.getCLRVersion());
+			ps.setString(14, err.getLocale());
+			ps.setString(15, err.getTimeZone());
+			ps.setString(16, err.getMessage());
+			ps.setString(17, err.getStackDump());
+			ps.setString(18, err.getStateData());
+			ps.setBinaryStream(19, err.getInputStream());
+			executeUpdate(ps, 1);
 			err.setID(getNewID());
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -94,10 +91,9 @@ public class SetACARSLog extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void deleteError(int id) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("DELETE FROM acars.ERRORS WHERE (ID=?)");
-			_ps.setInt(1, id);
-			executeUpdate(0);
+		try (PreparedStatement ps = 	prepareWithoutLimits("DELETE FROM acars.ERRORS WHERE (ID=?)")) {
+			ps.setInt(1, id);
+			executeUpdate(ps, 0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

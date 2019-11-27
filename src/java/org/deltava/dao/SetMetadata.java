@@ -1,4 +1,4 @@
-// Copyright 2013, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2013, 2015, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,7 +8,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to write app-specific metadata.
  * @author Luke
- * @version 7.0
+ * @version 9.0
  * @since 5.1
  */
 
@@ -31,11 +31,10 @@ public class SetMetadata extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(String key, Object value) throws DAOException {
-		try {
-			prepareStatement("REPLACE INTO common.METADATA (ID, DATA) VALUES (?, ?)");
-			_ps.setString(1, key);
-			_ps.setString(2, (value == null) ? null : value.toString());
-			executeUpdate(1);
+		try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO common.METADATA (ID, DATA) VALUES (?, ?)")) {
+			ps.setString(1, key);
+			ps.setString(2, (value == null) ? null : value.toString());
+			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		} finally {
@@ -60,10 +59,9 @@ public class SetMetadata extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void delete(String key) throws DAOException {
-		try {
-			prepareStatement("DELETE FROM common.METADATA WHERE (ID=?)");
-			_ps.setString(1, key);
-			executeUpdate(0);
+		try (PreparedStatement ps = prepare("DELETE FROM common.METADATA WHERE (ID=?)")) {
+			ps.setString(1, key);
+			executeUpdate(ps, 0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		} finally {

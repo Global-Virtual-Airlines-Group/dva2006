@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2013, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2013, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -17,7 +17,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to retrieve Water Cooler threads and thread notifications.
  * @author Luke
- * @version 7.5
+ * @version 9.0
  * @since 1.0
  */
 
@@ -51,12 +51,11 @@ public class GetCoolerThreads extends DAO {
 			sqlBuf.append(" HAVING (IMGID=0)");
 		sqlBuf.append(" ORDER BY T.SORTDATE DESC");
 
-		try {
-			prepareStatement(sqlBuf.toString());
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			if (channelName != null)
-				_ps.setString(1, channelName);
+				ps.setString(1, channelName);
 			
-			return getByID(executeIDs());
+			return getByID(executeIDs(ps));
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -68,10 +67,8 @@ public class GetCoolerThreads extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<MessageThread> getScreenShots() throws DAOException {
-		try {
-			prepareStatement("SELECT T.ID, IFNULL(I.SEQ, T.IMAGE_ID) AS IMGID FROM common.COOLER_THREADS T LEFT JOIN "
-				+ "common.COOLER_IMGURLS I ON (T.ID=I.ID) AND (I.SEQ=1) HAVING (IMGID > 0) ORDER BY T.SORTDATE DESC");
-			return getByID(executeIDs());
+		try (PreparedStatement ps = prepare("SELECT T.ID, IFNULL(I.SEQ, T.IMAGE_ID) AS IMGID FROM common.COOLER_THREADS T LEFT JOIN common.COOLER_IMGURLS I ON (T.ID=I.ID) AND (I.SEQ=1) HAVING (IMGID > 0) ORDER BY T.SORTDATE DESC")) {
+			return getByID(executeIDs(ps));
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -92,10 +89,9 @@ public class GetCoolerThreads extends DAO {
 			sqlBuf.append(" HAVING (IMGID=0)");
 		sqlBuf.append(" ORDER BY T.SORTDATE DESC");
 
-		try {
-			prepareStatement(sqlBuf.toString());
-			_ps.setInt(1, userID);
-			return getByID(executeIDs());
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setInt(1, userID);
+			return getByID(executeIDs(ps));
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -108,10 +104,9 @@ public class GetCoolerThreads extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<MessageThread> getByNotification(int userID) throws DAOException {
-		try {
-			prepareStatement("SELECT T.ID FROM common.COOLER_NOTIFY N, common.COOLER_THREADS T WHERE (N.USER_ID=?) AND (T.ID=N.THREAD_ID) ORDER BY T.SORTDATE DESC");
-			_ps.setInt(1, userID);
-			return getByID(executeIDs());
+		try (PreparedStatement ps = prepare("SELECT T.ID FROM common.COOLER_NOTIFY N, common.COOLER_THREADS T WHERE (N.USER_ID=?) AND (T.ID=N.THREAD_ID) ORDER BY T.SORTDATE DESC")) {
+			ps.setInt(1, userID);
+			return getByID(executeIDs(ps));
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -129,17 +124,14 @@ public class GetCoolerThreads extends DAO {
 			return getByChannel(null, showImgs);
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT T.ID, IFNULL(I.SEQ, T.IMAGE_ID) AS IMGID FROM "
-			+ "common.COOLER_THREADS T LEFT JOIN common.COOLER_IMGURLS I ON (T.ID=I.ID) AND (I.SEQ=1) "
-			+ "WHERE (T.SORTDATE > ?)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT T.ID, IFNULL(I.SEQ, T.IMAGE_ID) AS IMGID FROM common.COOLER_THREADS T LEFT JOIN common.COOLER_IMGURLS I ON (T.ID=I.ID) AND (I.SEQ=1) WHERE (T.SORTDATE > ?)");
 		if (!showImgs)
 			sqlBuf.append(" HAVING (IMGID=0)");
 		sqlBuf.append(" ORDER BY T.SORTDATE DESC");
 
-		try {
-			prepareStatement(sqlBuf.toString());
-			_ps.setTimestamp(1, createTimestamp(sd));
-			return getByID(executeIDs());
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setTimestamp(1, createTimestamp(sd));
+			return getByID(executeIDs(ps));
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -182,48 +174,46 @@ public class GetCoolerThreads extends DAO {
 
 		// Fetch the thread posts
 		try {
-			prepareStatementWithoutLimits("SELECT POST_ID, AUTHOR_ID, CREATED, INET6_NTOA(REMOTE_ADDR), REMOTE_HOST, MSGBODY, CONTENTWARN FROM common.COOLER_POSTS WHERE (THREAD_ID=?) ORDER BY CREATED");
-			_ps.setInt(1, id);
-			try (ResultSet rs = _ps.executeQuery()) {
-				while (rs.next()) {
-					Message msg = new Message(rs.getInt(2));
-					msg.setThreadID(id);
-					msg.setID(rs.getInt(1));
-					msg.setCreatedOn(rs.getTimestamp(3).toInstant());
-					msg.setRemoteAddr(rs.getString(4));
-					msg.setRemoteHost(rs.getString(5));
-					msg.setBody(rs.getString(6));
-					msg.setContentWarning(rs.getBoolean(7));
-					mt.addPost(msg);
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT POST_ID, AUTHOR_ID, CREATED, INET6_NTOA(REMOTE_ADDR), REMOTE_HOST, MSGBODY, CONTENTWARN FROM common.COOLER_POSTS WHERE (THREAD_ID=?) ORDER BY CREATED")) {
+				ps.setInt(1, id);
+				try (ResultSet rs = ps.executeQuery()) {
+					while (rs.next()) {
+						Message msg = new Message(rs.getInt(2));
+						msg.setThreadID(id);
+						msg.setID(rs.getInt(1));
+						msg.setCreatedOn(rs.getTimestamp(3).toInstant());
+						msg.setRemoteAddr(rs.getString(4));
+						msg.setRemoteHost(rs.getString(5));
+						msg.setBody(rs.getString(6));
+						msg.setContentWarning(rs.getBoolean(7));
+						mt.addPost(msg);
+					}
 				}
 			}
 
-			_ps.close();
-			
 			// Fetch the thread updates
-			prepareStatementWithoutLimits("SELECT CREATED, AUTHOR, MESSAGE FROM common.COOLER_THREADHISTORY WHERE (ID=?)");
-			_ps.setInt(1, id);
-			try (ResultSet rs = _ps.executeQuery()) {
-				while (rs.next()) {
-					ThreadUpdate upd = new ThreadUpdate(id);
-					upd.setDate(rs.getTimestamp(1).toInstant());
-					upd.setAuthorID(rs.getInt(2));
-					upd.setDescription(rs.getString(3));
-					mt.addUpdate(upd);
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT CREATED, AUTHOR, MESSAGE FROM common.COOLER_THREADHISTORY WHERE (ID=?)")) {	
+				ps.setInt(1, id);
+				try (ResultSet rs = ps.executeQuery()) {
+					while (rs.next()) {
+						ThreadUpdate upd = new ThreadUpdate(id);
+						upd.setDate(rs.getTimestamp(1).toInstant());
+						upd.setAuthorID(rs.getInt(2));
+						upd.setDescription(rs.getString(3));
+						mt.addUpdate(upd);
+					}
 				}
 			}
-			
-			_ps.close();
 			
 			// Fetch the thread reports
-			prepareStatementWithoutLimits("SELECT AUTHOR_ID FROM common.COOLER_REPORTS WHERE (THREAD_ID=?)");
-			_ps.setInt(1, id);
-			try (ResultSet rs = _ps.executeQuery()) {
-				while (rs.next())
-					mt.addReportID(rs.getInt(1));
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT AUTHOR_ID FROM common.COOLER_REPORTS WHERE (THREAD_ID=?)")) {
+				ps.setInt(1, id);
+				try (ResultSet rs = ps.executeQuery()) {
+					while (rs.next())
+						mt.addReportID(rs.getInt(1));
+				}
 			}
 
-			_ps.close();
 			return mt;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -238,15 +228,13 @@ public class GetCoolerThreads extends DAO {
 	 */
 	public ThreadNotifications getNotifications(int id) throws DAOException {
 		ThreadNotifications result = new ThreadNotifications(id);
-		try {
-			prepareStatementWithoutLimits("SELECT USER_ID FROM common.COOLER_NOTIFY WHERE (THREAD_ID=?)");
-			_ps.setInt(1, id);
-			try (ResultSet rs = _ps.executeQuery()) {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT USER_ID FROM common.COOLER_NOTIFY WHERE (THREAD_ID=?)")) {
+			ps.setInt(1, id);
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
 					result.addUser(rs.getInt(1));
 			}
 
-			_ps.close();
 			return result;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -283,21 +271,20 @@ public class GetCoolerThreads extends DAO {
 		if (!hasQuery)
 			buf.append("ORDER BY T.LASTUPDATE DESC");
 		
-		try {
-			prepareStatement(buf.toString());
+		try (PreparedStatement ps = prepare(buf.toString())) {
 			int psOfs = 0;
 			if (hasQuery) {
-				_ps.setString(++psOfs, criteria.getSearchTerm());
+				ps.setString(++psOfs, criteria.getSearchTerm());
 				if (criteria.getSearchSubject())
-					_ps.setString(++psOfs, criteria.getSearchTerm());
+					ps.setString(++psOfs, criteria.getSearchTerm());
 			}
 			
 			if (!Channel.ALL.getName().equals(criteria.getChannel()))
-				_ps.setString(++psOfs, criteria.getChannel());
+				ps.setString(++psOfs, criteria.getChannel());
 			if (criteria.getMinimumDate() != null)
-				_ps.setTimestamp(++psOfs, createTimestamp(criteria.getMinimumDate()));
+				ps.setTimestamp(++psOfs, createTimestamp(criteria.getMinimumDate()));
 			
-			return getByID(executeIDs());
+			return getByID(executeIDs(ps));
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -337,8 +324,8 @@ public class GetCoolerThreads extends DAO {
 		
 		// Build the SQL query
 		StringBuilder sqlBuf = new StringBuilder("SELECT DISTINCT T.*, 0, IF(T.STICKY, IF(T.STICKY < NOW(), T.LASTUPDATE, T.STICKY), T.LASTUPDATE) AS SD, COUNT(O.OPT_ID), "
-				+ "IFNULL(I.SEQ, T.IMAGE_ID) AS IMGID FROM common.COOLER_THREADS T LEFT JOIN common.COOLER_POLLS O ON (T.ID=O.ID) LEFT JOIN common.COOLER_IMGURLS I "
-				+ "ON (T.ID=I.ID) AND (I.SEQ=1) WHERE T.ID IN (");
+			+ "IFNULL(I.SEQ, T.IMAGE_ID) AS IMGID FROM common.COOLER_THREADS T LEFT JOIN common.COOLER_POLLS O ON (T.ID=O.ID) LEFT JOIN common.COOLER_IMGURLS I "
+			+ "ON (T.ID=I.ID) AND (I.SEQ=1) WHERE T.ID IN (");
 		for (Iterator<Integer> i = IDs.iterator(); i.hasNext(); ) {
 			Integer id = i.next();
 			sqlBuf.append(id.toString());
@@ -347,9 +334,8 @@ public class GetCoolerThreads extends DAO {
 		}
 		
 		sqlBuf.append(") GROUP BY T.ID");
-		try {
-			prepareStatementWithoutLimits(sqlBuf.toString());
-			results.addAll(execute());
+		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+			results.addAll(execute(ps));
 			
 			// Sort and return
 			Collections.sort(results, cmp);
@@ -362,9 +348,9 @@ public class GetCoolerThreads extends DAO {
 	/*
 	 * Helper method to load result rows.
 	 */
-	private List<MessageThread> execute() throws SQLException {
+	private static List<MessageThread> execute(PreparedStatement ps) throws SQLException {
 		List<MessageThread> results = new ArrayList<MessageThread>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			boolean hasImgCount = (rs.getMetaData().getColumnCount() > 17);
 			while (rs.next()) {
 				MessageThread t = new MessageThread(rs.getString(2));
@@ -392,7 +378,6 @@ public class GetCoolerThreads extends DAO {
 			}
 		}
 
-		_ps.close();
 		return results;
 	}
 }

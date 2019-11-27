@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.io.File;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Documents from the Libraries.
  * @author Luke
- * @version 7.2
+ * @version 9.0
  * @since 1.0
  */
 
@@ -44,10 +44,9 @@ public class GetDocuments extends GetLibrary {
 		sqlBuf.append(db);
 		sqlBuf.append(".DOWNLOADS L ON (D.FILENAME=L.FILENAME) WHERE (D.FILENAME=?) GROUP BY D.NAME");
 
-		try {
-			prepareStatement(sqlBuf.toString());
-			_ps.setString(1, fName);
-			List<Manual> results = loadManuals();
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setString(1, fName);
+			List<Manual> results = loadManuals(ps);
 			if (results.isEmpty())
 				return null;
 			
@@ -77,10 +76,9 @@ public class GetDocuments extends GetLibrary {
 		sqlBuf.append(db);
 		sqlBuf.append(".DOWNLOADS L ON (N.FILENAME=L.FILENAME) WHERE (N.FILENAME=?) GROUP BY N.NAME");
 
-		try {
-			prepareStatement(sqlBuf.toString());
-			_ps.setString(1, fName);
-			List<Newsletter> results = loadNewsletters();
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setString(1, fName);
+			List<Newsletter> results = loadNewsletters(ps);
 			return results.isEmpty() ? null : results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -104,9 +102,8 @@ public class GetDocuments extends GetLibrary {
 		sqlBuf.append(".DOWNLOADS L ON (N.FILENAME=L.FILENAME) GROUP BY N.NAME ORDER BY "
 				+ "N.CATEGORY, N.PUBLISHED DESC");
 
-		try {
-			prepareStatement(sqlBuf.toString());
-			return loadNewsletters();
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			return loadNewsletters(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -119,12 +116,10 @@ public class GetDocuments extends GetLibrary {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Newsletter> getNewslettersByCategory(String catName) throws DAOException {
-		try {
-			prepareStatement("SELECT N.*, COUNT(L.FILENAME) FROM NEWSLETTERS N LEFT JOIN "
-					+ "DOWNLOADS L ON (N.FILENAME=L.FILENAME) WHERE (N.CATEGORY=?) GROUP BY N.NAME "
-					+ "ORDER BY N.PUBLISHED DESC");
-			_ps.setString(1, catName);
-			return loadNewsletters();
+		try (PreparedStatement ps = prepare("SELECT N.*, COUNT(L.FILENAME) FROM NEWSLETTERS N LEFT JOIN DOWNLOADS L ON (N.FILENAME=L.FILENAME) WHERE (N.CATEGORY=?) GROUP BY N.NAME "
+			+ "ORDER BY N.PUBLISHED DESC")) {
+			ps.setString(1, catName);
+			return loadNewsletters(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -160,9 +155,8 @@ public class GetDocuments extends GetLibrary {
 		sqlBuf.append(formatDBName(dbName));
 		sqlBuf.append(".DOCS ORDER BY NAME");
 
-		try {
-			prepareStatement(sqlBuf.toString());
-			Collection<Manual> results = loadManuals();
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			Collection<Manual> results = loadManuals(ps);
 			loadDownloadCounts(results);
 			Map<String, Manual> docMap = CollectionUtils.createMap(results, Manual::getFileName);
 			loadCertifications(docMap);
@@ -186,10 +180,9 @@ public class GetDocuments extends GetLibrary {
 		sqlBuf.append(formatDBName(dbName));
 		sqlBuf.append(".DOCS D WHERE (CD.FILENAME=D.FILENAME) AND (CD.CERT=?) ORDER BY D.NAME");
 		
-		try {
-			prepareStatement(sqlBuf.toString());
-			_ps.setString(1, certName);
-			Collection<Manual> results = loadManuals();
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setString(1, certName);
+			Collection<Manual> results = loadManuals(ps);
 			loadDownloadCounts(results);
 			return results;
 		} catch (SQLException se) {
@@ -201,41 +194,39 @@ public class GetDocuments extends GetLibrary {
 	 * Helper method to load Flight Academy Certifications into Manual beans.
 	 */
 	private void loadCertifications(Map<String, Manual> manuals) throws SQLException {
-		prepareStatementWithoutLimits("SELECT * FROM exams.CERTDOCS");
-		try (ResultSet rs = _ps.executeQuery()) {
-			while (rs.next()) {
-				Manual m = manuals.get(rs.getString(1));
-				if (m != null)
-					m.addCertification(rs.getString(2));
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM exams.CERTDOCS")) {
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					Manual m = manuals.get(rs.getString(1));
+					if (m != null)
+						m.addCertification(rs.getString(2));
+				}
 			}
 		}
-		
-		_ps.close();
 	}
 	
 	/*
 	 * Helper method to return all Flight Academy Certifications associated with a particular Manual.
 	 */
 	private Collection<String> getCertifications(String fileName) throws SQLException {
-		prepareStatementWithoutLimits("SELECT CERT FROM exams.CERTDOCS WHERE (FILENAME=?) ORDER BY CERT");
-		_ps.setString(1, fileName);
-		
-		Collection<String> results = new LinkedHashSet<String>();
-		try (ResultSet rs = _ps.executeQuery()) {
-			while (rs.next())
-				results.add(rs.getString(1));
-		}
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT CERT FROM exams.CERTDOCS WHERE (FILENAME=?) ORDER BY CERT")) {
+			ps.setString(1, fileName);
+			Collection<String> results = new LinkedHashSet<String>();
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next())
+					results.add(rs.getString(1));
+			}
 
-		_ps.close();
-		return results;
+			return results;
+		}
 	}
 
 	/*
 	 * Helper method to load from the Document Library table.
 	 */
-	private List<Manual> loadManuals() throws SQLException {
+	private static List<Manual> loadManuals(PreparedStatement ps) throws SQLException {
 		List<Manual> results = new ArrayList<Manual>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			boolean hasTotals = (rs.getMetaData().getColumnCount() > 8);
 			while (rs.next()) {
 				File f = new File(SystemData.get("path.library"), rs.getString(1));
@@ -255,16 +246,15 @@ public class GetDocuments extends GetLibrary {
 			}
 		}
 
-		_ps.close();
 		return results;
 	}
 
 	/*
 	 * Helper method to load from the Newsletter Library table.
 	 */
-	private List<Newsletter> loadNewsletters() throws SQLException {
+	private static List<Newsletter> loadNewsletters(PreparedStatement ps) throws SQLException {
 		List<Newsletter> results = new ArrayList<Newsletter>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			boolean hasTotals = (rs.getMetaData().getColumnCount() > 7);
 			while (rs.next()) {
 				Newsletter nws = new Newsletter(new File(SystemData.get("path.newsletter"), rs.getString(1)));
@@ -280,7 +270,6 @@ public class GetDocuments extends GetLibrary {
 			}
 		}
 
-		_ps.close();
 		return results;
 	}
 }

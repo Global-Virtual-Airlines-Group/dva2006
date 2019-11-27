@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2011, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2011, 2015, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.io.File;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Videos.
  * @author Luke
- * @version 7.5
+ * @version 9.0
  * @since 1.0
  */
 
@@ -34,9 +34,8 @@ public class GetVideos extends GetLibrary {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Video> getVideos() throws DAOException {
-		try {
-			prepareStatement("SELECT V.*, GROUP_CONCAT(VC.CERT) FROM exams.VIDEOS V LEFT JOIN exams.CERTVIDEOS VC ON (V.FILENAME=VC.FILENAME) GROUP BY V.NAME");
-			return loadVideos();
+		try (PreparedStatement ps = prepare("SELECT V.*, GROUP_CONCAT(VC.CERT) FROM exams.VIDEOS V LEFT JOIN exams.CERTVIDEOS VC ON (V.FILENAME=VC.FILENAME) GROUP BY V.NAME")) {
+			return loadVideos(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -49,10 +48,9 @@ public class GetVideos extends GetLibrary {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Video> getVideos(String certName) throws DAOException {
-		try {
-			prepareStatement("SELECT V.*, GROUP_CONCAT(VC.CERT) FROM exams.VIDEOS V LEFT JOIN exams.CERTVIDEOS VC ON (V.FILENAME=VC.FILENAME) WHERE (VC.CERT=?) GROUP BY V.NAME");
-			_ps.setString(1, certName);
-			return loadVideos();
+		try (PreparedStatement ps = prepare("SELECT V.*, GROUP_CONCAT(VC.CERT) FROM exams.VIDEOS V LEFT JOIN exams.CERTVIDEOS VC ON (V.FILENAME=VC.FILENAME) WHERE (VC.CERT=?) GROUP BY V.NAME")) {
+			ps.setString(1, certName);
+			return loadVideos(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -61,10 +59,10 @@ public class GetVideos extends GetLibrary {
 	/*
 	 * Helper method to parse result sets.
 	 */
-	private List<Video> loadVideos() throws SQLException {
+	private static List<Video> loadVideos(PreparedStatement ps) throws SQLException {
 		List<Video> results = new ArrayList<Video>();
 		File p = new File(SystemData.get("path.video"));
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
 				Video entry = null;
 				File f = new File(p, rs.getString(1)); 
@@ -85,7 +83,6 @@ public class GetVideos extends GetLibrary {
 			}
 		}
 			
-		_ps.close();
 		return results;
 	}
 	
@@ -97,15 +94,13 @@ public class GetVideos extends GetLibrary {
 	 */
 	public Collection<String> getCertifications(String fName) throws DAOException {
 		Collection<String> results = new ArrayList<String>();
-		try {
-			prepareStatementWithoutLimits("SELECT CERT FROM exams.CERTVIDEOS WHERE (FILENAME=?)");
-			_ps.setString(1, fName);
-			try (ResultSet rs = _ps.executeQuery()) {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT CERT FROM exams.CERTVIDEOS WHERE (FILENAME=?)")) {
+			ps.setString(1, fName);
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
 					results.add(rs.getString(1));	
 			}
 			
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);

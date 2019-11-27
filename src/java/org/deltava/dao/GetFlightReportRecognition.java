@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to get Flight Report IDs for Pilot recognition.
  * @author Luke
- * @version 8.3
+ * @version 9.0
  * @since 1.0
  */
 
@@ -59,16 +59,15 @@ public class GetFlightReportRecognition extends DAO {
 			sqlBuf.append(" WHERE (DATE > DATE_SUB(NOW(), INTERVAL ? DAY))");
 		sqlBuf.append(" ORDER BY FACT, DATE DESC");
 
-		try {
-			prepareStatement(sqlBuf.toString());
-			_ps.setInt(1, OPT_VSPEED);
-			_ps.setInt(2, OPT_DISTANCE);
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setInt(1, OPT_VSPEED);
+			ps.setInt(2, OPT_DISTANCE);
 			if (_dayFilter > 0)
-				_ps.setInt(3, _dayFilter);
+				ps.setInt(3, _dayFilter);
 
 			// Add to the cache
 			results = new CacheableList<Integer>("ALL!" + _dayFilter);
-			results.addAll(execute());
+			results.addAll(execute(ps));
 			_cache.add(results);
 			return results;
 		} catch (SQLException se) {
@@ -94,16 +93,15 @@ public class GetFlightReportRecognition extends DAO {
 			sqlBuf.append(" WHERE (L.DATE > DATE_SUB(NOW(), INTERVAL ? DAY))");
 		sqlBuf.append(" ORDER BY FACT, L.DATE DESC");
 
-		try {
-			prepareStatement(sqlBuf.toString());
-			_ps.setInt(1, OPT_VSPEED);
-			_ps.setInt(2, OPT_DISTANCE);
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setInt(1, OPT_VSPEED);
+			ps.setInt(2, OPT_DISTANCE);
 			if (_dayFilter > 0)
-				_ps.setInt(3, _dayFilter);
+				ps.setInt(3, _dayFilter);
 
 			// Add to the cache
 			results = new CacheableList<Integer>("STAFF!" + _dayFilter);
-			results.addAll(execute());
+			results.addAll(execute(ps));
 			_cache.add(results);
 			return results;
 		} catch (SQLException se) {
@@ -130,17 +128,16 @@ public class GetFlightReportRecognition extends DAO {
 			sqlBuf.append("AND (DATE > DATE_SUB(NOW(), INTERVAL ? DAY))");
 		sqlBuf.append(" ORDER BY FACT, DATE DESC");
 		
-		try {
-			prepareStatement(sqlBuf.toString());
-			_ps.setInt(1, OPT_VSPEED);
-			_ps.setInt(2, OPT_DISTANCE);
-			_ps.setString(3, eqType);
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setInt(1, OPT_VSPEED);
+			ps.setInt(2, OPT_DISTANCE);
+			ps.setString(3, eqType);
 			if (_dayFilter > 0)
-				_ps.setInt(4, _dayFilter);
+				ps.setInt(4, _dayFilter);
 			
 			// Add to the cache
 			results = new CacheableList<Integer>("EQ!" + eqType + "$" + _dayFilter);
-			results.addAll(execute());
+			results.addAll(execute(ps));
 			_cache.add(results);
 			return results;
 		} catch (SQLException se) {
@@ -162,21 +159,19 @@ public class GetFlightReportRecognition extends DAO {
 			buf.append(" WHERE (DATE > DATE_SUB(NOW(), INTERVAL ? DAY))");
 		buf.append(" GROUP BY EQTYPE HAVING (CNT >= ?)");
 		
-		try {
+		try (PreparedStatement ps = prepare(buf.toString())) {
 			int pos = 0;
-			prepareStatement(buf.toString());
 			if (_dayFilter > 0)
-				_ps.setInt(++pos, _dayFilter);
-			_ps.setInt(++pos, minLegs);
+				ps.setInt(++pos, _dayFilter);
+			ps.setInt(++pos, minLegs);
 
 			// Execute the query
 			List<String> results = new ArrayList<String>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
 					results.add(rs.getString(1));
 			}
 
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -191,21 +186,13 @@ public class GetFlightReportRecognition extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public int getPromotionCount(int pilotID, String eqType) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT COUNT(PR.ID) FROM PIREPS PR, PROMO_EQ PE WHERE (PR.ID=PE.ID) AND (PR.PILOT_ID=?) AND (PE.EQTYPE=?) AND (PR.STATUS=?) LIMIT 1");
-			_ps.setInt(1, pilotID);
-			_ps.setString(2, eqType);
-			_ps.setInt(3, FlightStatus.OK.ordinal());
-
-			// Execute the query
-			int results = 0;
-			try (ResultSet rs = _ps.executeQuery()) {
-				if (rs.next())
-					results = rs.getInt(1);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT COUNT(PR.ID) FROM PIREPS PR, PROMO_EQ PE WHERE (PR.ID=PE.ID) AND (PR.PILOT_ID=?) AND (PE.EQTYPE=?) AND (PR.STATUS=?) LIMIT 1")) {
+			ps.setInt(1, pilotID);
+			ps.setString(2, eqType);
+			ps.setInt(3, FlightStatus.OK.ordinal());
+			try (ResultSet rs = ps.executeQuery()) {
+				return rs.next() ? rs.getInt(1) : 0;
 			}
-
-			_ps.close();
-			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -214,9 +201,9 @@ public class GetFlightReportRecognition extends DAO {
 	/*
 	 * Helper method to load Flight Report IDs.
 	 */
-	private List<Integer> execute() throws SQLException {
+	private static List<Integer> execute(PreparedStatement ps) throws SQLException {
 		List<Integer> results = new ArrayList<Integer>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			while (rs.next())
 				results.add(Integer.valueOf(rs.getInt(1)));
 		}

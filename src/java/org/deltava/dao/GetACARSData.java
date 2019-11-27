@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load ACARS information.
  * @author Luke
- * @version 8.7
+ * @version 9.0
  * @since 1.0
  */
 
@@ -36,12 +36,11 @@ public class GetACARSData extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public ArchiveMetadata getArchiveInfo(int flightID) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT CNT, SIZE, CRC, ARCHIVED, FMT FROM acars.ARCHIVE WHERE (ID=?) LIMIT 1");
-			_ps.setInt(1, flightID);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT CNT, SIZE, CRC, ARCHIVED, FMT FROM acars.ARCHIVE WHERE (ID=?) LIMIT 1")) {
+			ps.setInt(1, flightID);
 			
 			ArchiveMetadata md = null;
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next()) {
 					md = new ArchiveMetadata(flightID);
 					md.setPositionCount(rs.getInt(1));
@@ -50,10 +49,9 @@ public class GetACARSData extends DAO {
 					md.setArchivedOn(rs.getTimestamp(4).toInstant());
 					md.setFormat(SerializedDataVersion.fromCode(rs.getInt(5)));
 				}
+				
+				return md;
 			}
-			
-			_ps.close();
-			return md;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -67,14 +65,13 @@ public class GetACARSData extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<? extends RouteEntry> getTakeoffLanding(int flightID) throws DAOException {
-		try {
-			prepareStatement("SELECT REPORT_TIME, LAT, LNG, B_ALT, HEADING, VSPEED FROM acars.POSITIONS WHERE (FLIGHT_ID=?) AND ((FLAGS & ?) > 0) ORDER BY REPORT_TIME");
-			_ps.setInt(1, flightID);
-			_ps.setInt(2, ACARSFlags.TOUCHDOWN.getMask());
+		try (PreparedStatement ps = prepare("SELECT REPORT_TIME, LAT, LNG, B_ALT, HEADING, VSPEED FROM acars.POSITIONS WHERE (FLIGHT_ID=?) AND ((FLAGS & ?) > 0) ORDER BY REPORT_TIME")) {
+			ps.setInt(1, flightID);
+			ps.setInt(2, ACARSFlags.TOUCHDOWN.getMask());
 			
 			// Execute the query
-			List<ACARSRouteEntry> results = new ArrayList<ACARSRouteEntry>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
+				List<ACARSRouteEntry> results = new ArrayList<ACARSRouteEntry>();
 				while (rs.next()) {
 					ACARSRouteEntry entry = new ACARSRouteEntry(rs.getTimestamp(1).toInstant(), new GeoPosition(rs.getDouble(2), rs.getDouble(3)));
 					entry.setAltitude(rs.getInt(4));
@@ -82,10 +79,9 @@ public class GetACARSData extends DAO {
 					entry.setVerticalSpeed(rs.getInt(6));
 					results.add(entry);
 				}
+				
+				return results;
 			}
-			
-			_ps.close();
-			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -98,17 +94,14 @@ public class GetACARSData extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public RunwayDistance getLandingRunway(int flightID) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT R.*, IFNULL(ND.HDG, 0), ND.FREQ, RR.NEWCODE FROM acars.RWYDATA R LEFT JOIN common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND "
-				+ "(R.RUNWAY=RR.OLDCODE)) LEFT JOIN common.NAVDATA ND ON (R.ICAO=ND.CODE) AND (IFNULL(RR.NEWCODE,R.RUNWAY)=ND.NAME) AND (ND.ITEMTYPE=?) AND (R.ISTAKEOFF=?) "
-				+ "WHERE (ID=?) LIMIT 1");
-			_ps.setInt(1, Navaid.RUNWAY.ordinal());
-			_ps.setBoolean(2, false);
-			_ps.setInt(3, flightID);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT R.*, IFNULL(ND.HDG, 0), ND.FREQ, RR.NEWCODE FROM acars.RWYDATA R LEFT JOIN common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND "
+			+ "(R.RUNWAY=RR.OLDCODE)) LEFT JOIN common.NAVDATA ND ON (R.ICAO=ND.CODE) AND (IFNULL(RR.NEWCODE,R.RUNWAY)=ND.NAME) AND (ND.ITEMTYPE=?) AND (R.ISTAKEOFF=?) WHERE (ID=?) LIMIT 1")) {
+			ps.setInt(1, Navaid.RUNWAY.ordinal());
+			ps.setBoolean(2, false);
+			ps.setInt(3, flightID);
 			
 			// Execute the query
-			RunwayDistance rd = null;
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next()) {
 					Runway r = new Runway(rs.getDouble(4), rs.getDouble(5));
 					r.setCode(rs.getString(2));
@@ -117,12 +110,11 @@ public class GetACARSData extends DAO {
 					r.setHeading(rs.getInt(9));
 					r.setFrequency(rs.getString(10));
 					r.setNewCode(rs.getString(11));
-					rd = new RunwayDistance(r, rs.getInt(7));
+					return new RunwayDistance(r, rs.getInt(7));
 				}
 			}
 
-			_ps.close();
-			return rd;
+			return null;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -135,16 +127,14 @@ public class GetACARSData extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public String getRoute(int flightID) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT ROUTE from acars.FLIGHTS WHERE (ID=?) LIMIT 1");
-			_ps.setInt(1, flightID);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT ROUTE from acars.FLIGHTS WHERE (ID=?) LIMIT 1")) {
+			ps.setInt(1, flightID);
 			String result = null;
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next())
 					result = rs.getString(1);
 			}
 
-			_ps.close();
 			return result;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -159,15 +149,16 @@ public class GetACARSData extends DAO {
 	 */
 	public FlightInfo getInfo(int flightID) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT F.*, INET6_NTOA(F.REMOTE_ADDR), FD.ROUTE_ID, FDR.DISPATCHER_ID FROM acars.FLIGHTS F LEFT JOIN "
-				+ "acars.FLIGHT_DISPATCH FD ON (F.ID=FD.ID) LEFT JOIN acars.FLIGHT_DISPATCHER FDR ON (F.ID=FDR.ID) WHERE (F.ID=?) LIMIT 1");
-			_ps.setInt(1, flightID);
+			FlightInfo info = null;
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT F.*, INET6_NTOA(F.REMOTE_ADDR), FD.ROUTE_ID, FDR.DISPATCHER_ID FROM acars.FLIGHTS F LEFT JOIN "
+					+ "acars.FLIGHT_DISPATCH FD ON (F.ID=FD.ID) LEFT JOIN acars.FLIGHT_DISPATCHER FDR ON (F.ID=FDR.ID) WHERE (F.ID=?) LIMIT 1")) {
+				ps.setInt(1, flightID);
 
-			// Get the first entry, or null
-			List<FlightInfo> results = executeFlightInfo();
-			FlightInfo info = results.isEmpty() ? null : results.get(0);
-			if (info == null)
-				return null;
+				// Get the first entry, or null
+				info = executeFlightInfo(ps).stream().findFirst().orElse(null);
+				if (info == null)
+					return null;
+			}
 
 			// Get the terminal routes
 			Map<TerminalRoute.Type, TerminalRoute> routes = getTerminalRoutes(info.getID());
@@ -176,35 +167,34 @@ public class GetACARSData extends DAO {
 			
 			// Fetch the takeoff and landing runways
 			if (info.getHasPIREP()) {
-				prepareStatementWithoutLimits("SELECT R.*, IFNULL(ND.HDG, 0), ND.FREQ, RW.MAGVAR, IFNULL(RW.SURFACE, ?), IFNULL(RR.OLDCODE, R.RUNWAY) FROM acars.RWYDATA R LEFT JOIN "
+				try (PreparedStatement ps = prepareWithoutLimits("SELECT R.*, IFNULL(ND.HDG, 0), ND.FREQ, RW.MAGVAR, IFNULL(RW.SURFACE, ?), IFNULL(RR.OLDCODE, R.RUNWAY) FROM acars.RWYDATA R LEFT JOIN "
 					+ "common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND (R.RUNWAY=RR.NEWCODE)) LEFT JOIN common.RUNWAYS RW ON ((RW.ICAO=R.ICAO) AND (RW.NAME=IFNULL(RR.OLDCODE, R.RUNWAY)) "
-					+ "AND (RW.SIMVERSION=?)) LEFT JOIN common.NAVDATA ND ON ((R.ICAO=ND.CODE) AND (R.RUNWAY=ND.NAME) AND (ND.ITEMTYPE=?)) WHERE (R.ID=?) LIMIT 2");
-				_ps.setInt(1, Surface.UNKNOWN.ordinal());
-				_ps.setInt(2, Math.max(2004, info.getSimulator().getCode()));
-				_ps.setInt(3, Navaid.RUNWAY.ordinal());
-				_ps.setInt(4, flightID);
-				try (ResultSet rs = _ps.executeQuery()) {
-					while (rs.next()) {
-						String simCode = rs.getString(13); String currentCode = rs.getString(3);
-						Runway r = new Runway(rs.getDouble(4), rs.getDouble(5));
-						r.setCode(rs.getString(2));
-						r.setName(simCode);
-						r.setLength(rs.getInt(6));
-						r.setHeading(rs.getInt(9));
-						r.setFrequency(rs.getString(10));
-						r.setMagVar(rs.getDouble(11));
-						r.setSurface(Surface.values()[rs.getInt(12)]);
-						r.setSimulator(info.getSimulator());
-						if (!currentCode.equals(simCode))
-							r.setNewCode(currentCode);
-						if (rs.getBoolean(8))
-							info.setRunwayD(new RunwayDistance(r, rs.getInt(7)));
-						else
-							info.setRunwayA(new RunwayDistance(r, rs.getInt(7)));
+					+ "AND (RW.SIMVERSION=?)) LEFT JOIN common.NAVDATA ND ON ((R.ICAO=ND.CODE) AND (R.RUNWAY=ND.NAME) AND (ND.ITEMTYPE=?)) WHERE (R.ID=?) LIMIT 2")) {
+					ps.setInt(1, Surface.UNKNOWN.ordinal());
+					ps.setInt(2, Math.max(2004, info.getSimulator().getCode()));
+					ps.setInt(3, Navaid.RUNWAY.ordinal());
+					ps.setInt(4, flightID);
+					try (ResultSet rs = ps.executeQuery()) {
+						while (rs.next()) {
+							String simCode = rs.getString(13); String currentCode = rs.getString(3);
+							Runway r = new Runway(rs.getDouble(4), rs.getDouble(5));
+							r.setCode(rs.getString(2));
+							r.setName(simCode);
+							r.setLength(rs.getInt(6));
+							r.setHeading(rs.getInt(9));
+							r.setFrequency(rs.getString(10));
+							r.setMagVar(rs.getDouble(11));
+							r.setSurface(Surface.values()[rs.getInt(12)]);
+							r.setSimulator(info.getSimulator());
+							if (!currentCode.equals(simCode))
+								r.setNewCode(currentCode);
+							if (rs.getBoolean(8))
+								info.setRunwayD(new RunwayDistance(r, rs.getInt(7)));
+							else
+								info.setRunwayA(new RunwayDistance(r, rs.getInt(7)));
+						}
 					}
 				}
-
-				_ps.close();
 			}
 			
 			// Count the number of position records
@@ -216,15 +206,15 @@ public class GetACARSData extends DAO {
 			else
 				sql = "SELECT COUNT(*) FROM acars.POSITIONS WHERE (FLIGHT_ID=?)";
 			
-			prepareStatement(sql);
-			_ps.setInt(1, flightID);
-			try (ResultSet rs = _ps.executeQuery()) {
-				if (rs.next())
-					info.setPositionCount(rs.getInt(1));
+			try (PreparedStatement ps = prepare(sql)) {
+				ps.setInt(1, flightID);
+				try (ResultSet rs = ps.executeQuery()) {
+					if (rs.next())
+						info.setPositionCount(rs.getInt(1));
+				}
+				
+				return info;
 			}
-			
-			_ps.close();
-			return info;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -237,11 +227,9 @@ public class GetACARSData extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public ConnectionEntry getConnection(long conID) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT C.ID, C.PILOT_ID, C.DATE, C.ENDDATE, INET6_NTOA(C.REMOTE_ADDR), C.REMOTE_HOST, C.CLIENT_BUILD, C.BETA_BUILD FROM acars.CONS C WHERE (C.ID=CONV(?,10,16)) LIMIT 1");
-			_ps.setLong(1, conID);
-			List<ConnectionEntry> results = executeConnectionInfo();
-			return results.isEmpty() ? null : results.get(0);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT C.ID, C.PILOT_ID, C.DATE, C.ENDDATE, INET6_NTOA(C.REMOTE_ADDR), C.REMOTE_HOST, C.CLIENT_BUILD, C.BETA_BUILD FROM acars.CONS C WHERE (C.ID=CONV(?,10,16)) LIMIT 1")) {
+			ps.setLong(1, conID);
+			return executeConnectionInfo(ps).stream().findFirst().orElse(null);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -255,42 +243,41 @@ public class GetACARSData extends DAO {
 	 */
 	protected Map<TerminalRoute.Type, TerminalRoute> getTerminalRoutes(int id) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT IF(FS.TYPE=?, F.AIRPORT_D, F.AIRPORT_A), FS.* FROM acars.FLIGHTS F, acars.FLIGHT_SIDSTAR FS WHERE (F.ID=?) AND (F.ID=FS.ID)");
-			_ps.setInt(1, TerminalRoute.Type.SID.ordinal());
-			_ps.setInt(2, id);
-
-			// Execute the query
 			Map<TerminalRoute.Type, TerminalRoute> results = new HashMap<TerminalRoute.Type, TerminalRoute>();
-			try (ResultSet rs = _ps.executeQuery()) {
-				while (rs.next()) {
-					TerminalRoute.Type rt = TerminalRoute.Type.values()[rs.getInt(3)];
-					TerminalRoute tr = new TerminalRoute(SystemData.getAirport(rs.getString(1)), rs.getString(4), rt);
-					tr.setTransition(rs.getString(5));
-					tr.setRunway(rs.getString(6));
-					results.put(tr.getType(), tr);
-				}
-			}
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT IF(FS.TYPE=?, F.AIRPORT_D, F.AIRPORT_A), FS.* FROM acars.FLIGHTS F, acars.FLIGHT_SIDSTAR FS WHERE (F.ID=?) AND (F.ID=FS.ID)")) {
+				ps.setInt(1, TerminalRoute.Type.SID.ordinal());
+				ps.setInt(2, id);
 
-			_ps.close();
-
-			// Load the waypoint data
-			prepareStatementWithoutLimits("SELECT TYPE, CODE, WPTYPE, LATITUDE, LONGITUDE, REGION FROM acars.FLIGHT_SIDSTAR_WP WHERE (ID=?) ORDER BY TYPE, SEQ");
-			_ps.setInt(1, id);
-			try (ResultSet rs = _ps.executeQuery()) {
-				while (rs.next()) {
-					TerminalRoute.Type rt = TerminalRoute.Type.values()[rs.getInt(1)];
-					TerminalRoute tr = results.get(rt);
-					if (tr != null) {
-						Navaid nt = Navaid.values()[rs.getInt(3)];
-						NavigationDataBean nd = NavigationDataBean.create(nt, rs.getDouble(4), rs.getDouble(5));
-						nd.setCode(rs.getString(2));
-						nd.setRegion(rs.getString(6));
-						tr.addWaypoint(nd);
+				// Execute the query
+				try (ResultSet rs = ps.executeQuery()) {
+					while (rs.next()) {
+						TerminalRoute.Type rt = TerminalRoute.Type.values()[rs.getInt(3)];
+						TerminalRoute tr = new TerminalRoute(SystemData.getAirport(rs.getString(1)), rs.getString(4), rt);
+						tr.setTransition(rs.getString(5));
+						tr.setRunway(rs.getString(6));
+						results.put(tr.getType(), tr);
 					}
 				}
 			}
 
-			_ps.close();
+			// Load the waypoint data
+			try (PreparedStatement ps = prepareWithoutLimits("SELECT TYPE, CODE, WPTYPE, LATITUDE, LONGITUDE, REGION FROM acars.FLIGHT_SIDSTAR_WP WHERE (ID=?) ORDER BY TYPE, SEQ")) {
+				ps.setInt(1, id);
+				try (ResultSet rs = ps.executeQuery()) {
+					while (rs.next()) {
+						TerminalRoute.Type rt = TerminalRoute.Type.values()[rs.getInt(1)];
+						TerminalRoute tr = results.get(rt);
+						if (tr != null) {
+							Navaid nt = Navaid.values()[rs.getInt(3)];
+							NavigationDataBean nd = NavigationDataBean.create(nt, rs.getDouble(4), rs.getDouble(5));
+							nd.setCode(rs.getString(2));
+							nd.setRegion(rs.getString(6));
+							tr.addWaypoint(nd);
+						}
+					}
+				}
+			}
+
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -299,12 +286,13 @@ public class GetACARSData extends DAO {
 
 	/**
 	 * Helper method to parse Flight Info result sets.
+	 * @param ps a PreparedStatement
 	 * @return a List of FlightInfo beans
 	 * @throws SQLException if an error occurs
 	 */
-	protected List<FlightInfo> executeFlightInfo() throws SQLException {
+	protected static List<FlightInfo> executeFlightInfo(PreparedStatement ps) throws SQLException {
 		List<FlightInfo> results = new ArrayList<FlightInfo>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
 				FlightInfo info = new FlightInfo(rs.getInt(1));
 				info.setAuthorID(rs.getInt(2));
@@ -345,18 +333,18 @@ public class GetACARSData extends DAO {
 			}
 		}
 
-		_ps.close();
 		return results;
 	}
 
 	/**
 	 * Helper method to parse Connection result sets.
+	 * @param ps a PreparedStatement
 	 * @return a List of ConnectionEntry beans
 	 * @throws SQLException if an error occurs
 	 */
-	protected List<ConnectionEntry> executeConnectionInfo() throws SQLException {
+	protected static List<ConnectionEntry> executeConnectionInfo(PreparedStatement ps) throws SQLException {
 		List<ConnectionEntry> results = new ArrayList<ConnectionEntry>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
 				ConnectionEntry entry = new DispatchConnectionEntry(Long.parseLong(rs.getString(1), 16));
 				entry.setAuthorID(rs.getInt(2));
@@ -370,7 +358,6 @@ public class GetACARSData extends DAO {
 			}
 		}
 
-		_ps.close();
 		return results;
 	}
 }

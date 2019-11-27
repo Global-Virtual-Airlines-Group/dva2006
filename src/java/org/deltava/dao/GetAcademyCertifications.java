@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Flight Academy Certifications and Check Ride scripts. 
  * @author Luke
- * @version 8.6
+ * @version 9.0
  * @since 1.0
  */
 
@@ -34,18 +34,15 @@ public class GetAcademyCertifications extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Certification get(String name) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT C.*, CPR.ABBR FROM exams.CERTS C LEFT JOIN exams.CERTPREREQ CPR ON (C.NAME=CPR.NAME) WHERE (C.NAME=?) OR (C.ABBR=?) LIMIT 1");
-			_ps.setString(1, name);
-			_ps.setString(2, name);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT C.*, CPR.ABBR FROM exams.CERTS C LEFT JOIN exams.CERTPREREQ CPR ON (C.NAME=CPR.NAME) WHERE (C.NAME=?) OR (C.ABBR=?) LIMIT 1")) {
+			ps.setString(1, name);
+			ps.setString(2, name);
 			
 			// Execute the query
-			List<Certification> results = execute();
-			if (results.isEmpty())
-				return null;
+			Certification cert = execute(ps).stream().findFirst().orElse(null);
+			if (cert == null) return null;
 			
 			// Get the first cert and load requirements/exams
-			Certification cert = results.get(0);
 			loadRequirements(cert);
 			loadExams(cert);
 			loadRoles(cert);
@@ -63,12 +60,11 @@ public class GetAcademyCertifications extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Certification> getActive() throws DAOException {
-		try {
-			prepareStatement("SELECT C.*, CPR.ABBR, COUNT(CR.SEQ) FROM exams.CERTS C LEFT JOIN exams.CERTPREREQ CPR ON (C.NAME=CPR.NAME) LEFT JOIN exams.CERTREQS CR "
-				+ "ON (C.NAME=CR.CERTNAME) WHERE (C.ACTIVE=?) GROUP BY C.NAME ORDER BY C.STAGE, C.NAME");
-			_ps.setBoolean(1, true);
-			Collection<Certification> results = execute();
-			for (Certification c: results) {
+		try (PreparedStatement ps = prepare("SELECT C.*, CPR.ABBR, COUNT(CR.SEQ) FROM exams.CERTS C LEFT JOIN exams.CERTPREREQ CPR ON (C.NAME=CPR.NAME) LEFT JOIN exams.CERTREQS CR "
+				+ "ON (C.NAME=CR.CERTNAME) WHERE (C.ACTIVE=?) GROUP BY C.NAME ORDER BY C.STAGE, C.NAME")) {
+			ps.setBoolean(1, true);
+			Collection<Certification> results = execute(ps);
+			for (Certification c : results) {
 				loadExams(c);
 				loadRoles(c);
 				loadAirlines(c);
@@ -87,10 +83,9 @@ public class GetAcademyCertifications extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Certification> getAll() throws DAOException {
-		try {
-			prepareStatement("SELECT C.*, CPR.ABBR, COUNT(CR.SEQ) FROM exams.CERTS C LEFT JOIN exams.CERTPREREQ CPR ON (C.NAME=CPR.NAME) LEFT JOIN exams.CERTREQS CR "
-				+ "ON (C.NAME=CR.CERTNAME) GROUP BY C.NAME ORDER BY C.STAGE, C.NAME");
-			Collection<Certification> results = execute();
+		try (PreparedStatement ps = prepare("SELECT C.*, CPR.ABBR, COUNT(CR.SEQ) FROM exams.CERTS C LEFT JOIN exams.CERTPREREQ CPR ON (C.NAME=CPR.NAME) LEFT JOIN exams.CERTREQS CR "
+				+ "ON (C.NAME=CR.CERTNAME) GROUP BY C.NAME ORDER BY C.STAGE, C.NAME")) {
+			Collection<Certification> results = execute(ps);
 			for (Certification c : results) {
 				loadExams(c);
 				loadRoles(c);
@@ -111,11 +106,10 @@ public class GetAcademyCertifications extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Certification> getWithGraduates(boolean visibleOnly) throws DAOException {
-		try {
-			prepareStatement("SELECT C.*, CPR.ABBR, COUNT(CR.SEQ) FROM exams.COURSES CS, exams.CERTS C LEFT JOIN exams.CERTPREREQ CPR ON (C.NAME=CPR.NAME) "
-				+ "LEFT JOIN exams.CERTREQS CR ON (C.NAME=CR.CERTNAME) WHERE (C.NAME=CS.CERTNAME) AND (CS.STATUS=?) GROUP BY C.NAME ORDER BY C.STAGE, C.NAME;");
-			_ps.setInt(1, Status.COMPLETE.ordinal());
-			Collection<Certification> results = execute();
+		try (PreparedStatement ps = prepare("SELECT C.*, CPR.ABBR, COUNT(CR.SEQ) FROM exams.COURSES CS, exams.CERTS C LEFT JOIN exams.CERTPREREQ CPR ON (C.NAME=CPR.NAME) "
+				+ "LEFT JOIN exams.CERTREQS CR ON (C.NAME=CR.CERTNAME) WHERE (C.NAME=CS.CERTNAME) AND (CS.STATUS=?) GROUP BY C.NAME ORDER BY C.STAGE, C.NAME;")) {
+			ps.setInt(1, Status.COMPLETE.ordinal());
+			Collection<Certification> results = execute(ps);
 			for (Iterator<Certification> i = results.iterator(); i.hasNext(); ) {
 				Certification c = i.next();
 				if (visibleOnly && !c.getVisible()) {
@@ -142,12 +136,10 @@ public class GetAcademyCertifications extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public AcademyRideScript getScript(AcademyRideID id) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT * FROM exams.CERTRIDE_SCRIPTS WHERE (CERTNAME=?) AND (IDX=?)");
-			_ps.setString(1, id.getName());
-			_ps.setInt(2, id.getIndex());
-			List<AcademyRideScript> results = executeScript();
-			return results.isEmpty() ? null : results.get(0);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT * FROM exams.CERTRIDE_SCRIPTS WHERE (CERTNAME=?) AND (IDX=?)")) {
+			ps.setString(1, id.getName());
+			ps.setInt(2, id.getIndex());
+			return executeScript(ps).stream().findFirst().orElse(null);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -159,9 +151,8 @@ public class GetAcademyCertifications extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<AcademyRideScript> getScripts() throws DAOException {
-		try {
-			prepareStatement("SELECT * FROM exams.CERTRIDE_SCRIPTS");
-			return executeScript();
+		try (PreparedStatement ps = prepare("SELECT * FROM exams.CERTRIDE_SCRIPTS")) {
+			return executeScript(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}		
@@ -170,9 +161,9 @@ public class GetAcademyCertifications extends DAO {
 	/*
 	 * Helper method to parse Check Ride script result sets.
 	 */
-	private List<AcademyRideScript> executeScript() throws SQLException {
+	private static List<AcademyRideScript> executeScript(PreparedStatement ps) throws SQLException {
 		List<AcademyRideScript> results = new ArrayList<AcademyRideScript>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
 				AcademyRideScript sc = new AcademyRideScript(rs.getString(1), rs.getInt(2));
 				sc.setDescription(rs.getString(4));
@@ -182,16 +173,15 @@ public class GetAcademyCertifications extends DAO {
 			}
 		}
 		
-		_ps.close();
 		return results;
 	}
 	
 	/*
 	 * Helper method to parse Certification result sets.
 	 */
-	private List<Certification> execute() throws SQLException {
+	private static List<Certification> execute(PreparedStatement ps) throws SQLException {
 		List<Certification> results = new ArrayList<Certification>();
-		try (ResultSet rs = _ps.executeQuery()) {
+		try (ResultSet rs = ps.executeQuery()) {
 			boolean hasReqCount = (rs.getMetaData().getColumnCount() > 14);
 			while (rs.next()) {
 				Certification cert = new Certification(rs.getString(1));
@@ -216,7 +206,6 @@ public class GetAcademyCertifications extends DAO {
 			}
 		}
 			
-		_ps.close();
 		return results;
 	}
 	
@@ -224,73 +213,68 @@ public class GetAcademyCertifications extends DAO {
 	 * Helper method to load requirements.
 	 */
 	private void loadRequirements(Certification cert) throws SQLException {
-		prepareStatementWithoutLimits("SELECT SEQ, EXAMNAME, REQENTRY FROM exams.CERTREQS WHERE (CERTNAME=?) ORDER BY SEQ");
-		_ps.setString(1, cert.getName());
-		try (ResultSet rs = _ps.executeQuery()) {
-			while (rs.next()) {
-				CertificationRequirement cr = new CertificationRequirement(rs.getInt(1));
-				cr.setExamName(rs.getString(2));
-				cr.setText(rs.getString(3));
-				cert.addRequirement(cr);
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT SEQ, EXAMNAME, REQENTRY FROM exams.CERTREQS WHERE (CERTNAME=?) ORDER BY SEQ")) {
+			ps.setString(1, cert.getName());
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					CertificationRequirement cr = new CertificationRequirement(rs.getInt(1));
+					cr.setExamName(rs.getString(2));
+					cr.setText(rs.getString(3));
+					cert.addRequirement(cr);
+				}
 			}
 		}
-		
-		_ps.close();
 	}
 	
 	/*
 	 * Helper method to load roles.
 	 */
 	private void loadRoles(Certification cert) throws SQLException {
-		prepareStatementWithoutLimits("SELECT ROLE FROM exams.CERTROLES WHERE (CERTNAME=?)");
-		_ps.setString(1, cert.getName());
-		try (ResultSet rs = _ps.executeQuery()) {
-			while (rs.next())
-				cert.addRole(rs.getString(1));
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT ROLE FROM exams.CERTROLES WHERE (CERTNAME=?)")) {
+			ps.setString(1, cert.getName());
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next())
+					cert.addRole(rs.getString(1));
+			}
 		}
-		
-		_ps.close();
 	}
 
 	/*
 	 * Helper method to load examinations.
 	 */
 	private void loadExams(Certification cert) throws SQLException {
-		prepareStatementWithoutLimits("SELECT EXAMNAME FROM exams.CERTEXAMS WHERE (CERTNAME=?)");
-		_ps.setString(1, cert.getName());
-		try (ResultSet rs = _ps.executeQuery()) {
-			while (rs.next())
-				cert.addExamName(rs.getString(1));
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT EXAMNAME FROM exams.CERTEXAMS WHERE (CERTNAME=?)")) {
+			ps.setString(1, cert.getName());
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next())
+					cert.addExamName(rs.getString(1));
+			}
 		}
-		
-		_ps.close();
 	}
 
 	/*
 	 * Helper method to load virtual airlines.
 	 */
 	private void loadAirlines(Certification cert) throws SQLException {
-		prepareStatementWithoutLimits("SELECT AIRLINE FROM exams.CERTAPPS WHERE (CERTNAME=?)");
-		_ps.setString(1, cert.getName());
-		try (ResultSet rs = _ps.executeQuery()) {
-			while (rs.next())
-				cert.addAirline(SystemData.getApp(rs.getString(1)));
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT AIRLINE FROM exams.CERTAPPS WHERE (CERTNAME=?)")) {
+			ps.setString(1, cert.getName());
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next())
+					cert.addAirline(SystemData.getApp(rs.getString(1)));
+			}
 		}
-		
-		_ps.close();
 	}
 
 	/*
 	 * Helper method to load check ride equipment types.
 	 */
 	private void loadEQ(Certification cert) throws SQLException {
-		prepareStatementWithoutLimits("SELECT EQTYPE FROM exams.CERTEQ WHERE (CERTNAME=?)");
-		_ps.setString(1, cert.getName());
-		try (ResultSet rs = _ps.executeQuery()) {
-			while (rs.next())
-				cert.addRideEQ(rs.getString(1));
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT EQTYPE FROM exams.CERTEQ WHERE (CERTNAME=?)")) {
+			ps.setString(1, cert.getName());
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next())
+					cert.addRideEQ(rs.getString(1));
+			}
 		}
-
-		_ps.close();
 	}
 }

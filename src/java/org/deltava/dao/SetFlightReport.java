@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access object to write Flight Reports to the database.
  * @author Luke
- * @version 8.7
+ * @version 9.0
  * @since 1.0
  */
 
@@ -34,10 +34,9 @@ public class SetFlightReport extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void delete(int id) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("DELETE FROM PIREPS WHERE (ID=?)");
-			_ps.setInt(1, id);
-			executeUpdate(0);
+		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM PIREPS WHERE (ID=?)")) {
+			ps.setInt(1, id);
+			executeUpdate(ps, 0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -49,10 +48,9 @@ public class SetFlightReport extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void deleteACARS(int id) throws DAOException {
-		try {
-			prepareStatement("DELETE FROM ACARS_PIREPS WHERE (ID=?)");
-			_ps.setInt(1, id);
-			executeUpdate(0);
+		try (PreparedStatement ps = prepare("DELETE FROM ACARS_PIREPS WHERE (ID=?)")) {
+			ps.setInt(1, id);
+			executeUpdate(ps, 0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -73,12 +71,13 @@ public class SetFlightReport extends DAO {
 			startTransaction();
 
 			// Write the PIREP
-			prepareStatementWithoutLimits("UPDATE " + dbName + ".PIREPS SET STATUS=?, ATTR=?, DISPOSAL_ID=?, DISPOSED=NOW() WHERE (ID=?)");
-			_ps.setInt(1, status.ordinal());
-			_ps.setInt(2, pirep.getAttributes());
-			_ps.setInt(3, (usr == null) ? 0 : usr.getID());
-			_ps.setInt(4, pirep.getID());
-			executeUpdate(1);
+			try (PreparedStatement ps = prepareWithoutLimits("UPDATE " + dbName + ".PIREPS SET STATUS=?, ATTR=?, DISPOSAL_ID=?, DISPOSED=NOW() WHERE (ID=?)")) {
+				ps.setInt(1, status.ordinal());
+				ps.setInt(2, pirep.getAttributes());
+				ps.setInt(3, (usr == null) ? 0 : usr.getID());
+				ps.setInt(4, pirep.getID());
+				executeUpdate(ps, 1);
+			}
 			
 			// Save the promotion equipment types and comments
 			writePromoEQ(pirep.getID(), dbName, pirep.getCaptEQType());
@@ -104,26 +103,28 @@ public class SetFlightReport extends DAO {
 			+ "SUBMITTED, EVENT_ID, ASSIGN_ID, PAX, LOADFACTOR) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		// Set the prepared statement parameters
-		prepareStatement(sqlBuf.toString());
-		_ps.setInt(1, fr.getDatabaseID(DatabaseID.PILOT));
-		_ps.setString(2, fr.getRank().getName());
-		_ps.setInt(3, fr.getStatus().ordinal());
-		_ps.setTimestamp(4, createTimestamp(fr.getDate()));
-		_ps.setString(5, fr.getAirline().getCode());
-		_ps.setInt(6, fr.getFlightNumber());
-		_ps.setInt(7, fr.getLeg());
-		_ps.setString(8, fr.getAirportD().getIATA());
-		_ps.setString(9, fr.getAirportA().getIATA());
-		_ps.setString(10, fr.getEquipmentType());
-		_ps.setInt(11, fr.getSimulator().getCode());
-		_ps.setInt(12, fr.getAttributes());
-		_ps.setInt(13, fr.getDistance());
-		_ps.setDouble(14, (fr.getLength() / 10.0));
-		_ps.setTimestamp(15, createTimestamp(fr.getSubmittedOn()));
-		_ps.setInt(16, fr.getDatabaseID(DatabaseID.EVENT));
-		_ps.setInt(17, fr.getDatabaseID(DatabaseID.ASSIGN));
-		_ps.setInt(18, fr.getPassengers());
-		_ps.setDouble(19, fr.getLoadFactor());
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setInt(1, fr.getDatabaseID(DatabaseID.PILOT));
+			ps.setString(2, fr.getRank().getName());
+			ps.setInt(3, fr.getStatus().ordinal());
+			ps.setTimestamp(4, createTimestamp(fr.getDate()));
+			ps.setString(5, fr.getAirline().getCode());
+			ps.setInt(6, fr.getFlightNumber());
+			ps.setInt(7, fr.getLeg());
+			ps.setString(8, fr.getAirportD().getIATA());
+			ps.setString(9, fr.getAirportA().getIATA());
+			ps.setString(10, fr.getEquipmentType());
+			ps.setInt(11, fr.getSimulator().getCode());
+			ps.setInt(12, fr.getAttributes());
+			ps.setInt(13, fr.getDistance());
+			ps.setDouble(14, (fr.getLength() / 10.0));
+			ps.setTimestamp(15, createTimestamp(fr.getSubmittedOn()));
+			ps.setInt(16, fr.getDatabaseID(DatabaseID.EVENT));
+			ps.setInt(17, fr.getDatabaseID(DatabaseID.ASSIGN));
+			ps.setInt(18, fr.getPassengers());
+			ps.setDouble(19, fr.getLoadFactor());
+			executeUpdate(ps, 1);
+		}
 	}
 
 	/*
@@ -138,27 +139,29 @@ public class SetFlightReport extends DAO {
 			+ "DISPOSED=?, ASSIGN_ID=?, EVENT_ID=?, PAX=?, LOADFACTOR=? WHERE (ID=?)");
 
 		// Set the prepared statement parameters
-		prepareStatement(sqlBuf.toString());
-		_ps.setInt(1, fr.getStatus().ordinal());
-		_ps.setTimestamp(2, createTimestamp(fr.getDate()));
-		_ps.setString(3, fr.getAirline().getCode());
-		_ps.setInt(4, fr.getFlightNumber());
-		_ps.setInt(5, fr.getLeg());
-		_ps.setString(6, fr.getAirportD().getIATA());
-		_ps.setString(7, fr.getAirportA().getIATA());
-		_ps.setString(8, fr.getEquipmentType());
-		_ps.setInt(9, fr.getSimulator().getCode());
-		_ps.setInt(10, fr.getAttributes());
-		_ps.setInt(11, fr.getDistance());
-		_ps.setDouble(12, (fr.getLength() / 10.0));
-		_ps.setInt(13, fr.getDatabaseID(DatabaseID.DISPOSAL));
-		_ps.setTimestamp(14, createTimestamp(fr.getSubmittedOn()));
-		_ps.setTimestamp(15, createTimestamp(fr.getDisposedOn()));
-		_ps.setInt(16, fr.getDatabaseID(DatabaseID.ASSIGN));
-		_ps.setInt(17, fr.getDatabaseID(DatabaseID.EVENT));
-		_ps.setInt(18, fr.getPassengers());
-		_ps.setDouble(19, fr.getLoadFactor());
-		_ps.setInt(20, fr.getID());
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setInt(1, fr.getStatus().ordinal());
+			ps.setTimestamp(2, createTimestamp(fr.getDate()));
+			ps.setString(3, fr.getAirline().getCode());
+			ps.setInt(4, fr.getFlightNumber());
+			ps.setInt(5, fr.getLeg());
+			ps.setString(6, fr.getAirportD().getIATA());
+			ps.setString(7, fr.getAirportA().getIATA());
+			ps.setString(8, fr.getEquipmentType());
+			ps.setInt(9, fr.getSimulator().getCode());
+			ps.setInt(10, fr.getAttributes());
+			ps.setInt(11, fr.getDistance());
+			ps.setDouble(12, (fr.getLength() / 10.0));
+			ps.setInt(13, fr.getDatabaseID(DatabaseID.DISPOSAL));
+			ps.setTimestamp(14, createTimestamp(fr.getSubmittedOn()));
+			ps.setTimestamp(15, createTimestamp(fr.getDisposedOn()));
+			ps.setInt(16, fr.getDatabaseID(DatabaseID.ASSIGN));
+			ps.setInt(17, fr.getDatabaseID(DatabaseID.EVENT));
+			ps.setInt(18, fr.getPassengers());
+			ps.setDouble(19, fr.getLoadFactor());
+			ps.setInt(20, fr.getID());
+			executeUpdate(ps, 1);
+		}
 	}
 
 	/**
@@ -167,10 +170,9 @@ public class SetFlightReport extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void clearPromoEQ(int id) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("DELETE FROM PROMO_EQ WHERE (ID=?)");
-			_ps.setInt(1, id);
-			executeUpdate(0);
+		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM PROMO_EQ WHERE (ID=?)")) {
+			ps.setInt(1, id);
+			executeUpdate(ps, 0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -231,11 +233,10 @@ public class SetFlightReport extends DAO {
 		buf.append(formatDBName(ud.getDB()));
 		buf.append(".PIREPS P, common.AIRCRAFT_AIRLINE AA SET P.PAX=ROUND(AA.SEATS*P.LOADFACTOR, 0) WHERE (P.ID=?) AND (P.EQTYPE=AA.NAME) AND (AA.AIRLINE=?) AND (ABS(P.PAX-(AA.SEATS*P.LOADFACTOR))>1)");
 		
-		try {
-			prepareStatementWithoutLimits(buf.toString());
-			_ps.setInt(1, pirepID);
-			_ps.setString(2, ud.getAirlineCode());
-			return (executeUpdate(0) > 0);
+		try (PreparedStatement ps = prepareWithoutLimits(buf.toString())) {
+			ps.setInt(1, pirepID);
+			ps.setString(2, ud.getAirlineCode());
+			return (executeUpdate(ps, 0) > 0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -247,19 +248,21 @@ public class SetFlightReport extends DAO {
 	private void writePromoEQ(int id, String dbName, Collection<String> eqTypes) throws SQLException {
 		
 		// Delete the existing records
-		prepareStatementWithoutLimits("DELETE FROM " + dbName + ".PROMO_EQ WHERE (ID=?)");
-		_ps.setInt(1, id);
-		executeUpdate(0);
-
-		// Queue the new records
-		prepareStatementWithoutLimits("INSERT INTO " + dbName + ".PROMO_EQ (ID, EQTYPE) VALUES (?, ?)");
-		_ps.setInt(1, id);
-		for (String eqType : eqTypes) {
-			_ps.setString(2, eqType);
-			_ps.addBatch();
+		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM " + dbName + ".PROMO_EQ WHERE (ID=?)")) {
+			ps.setInt(1, id);
+			executeUpdate(ps, 0);
 		}
 
-		executeBatchUpdate(1, eqTypes.size());
+		// Queue the new records
+		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO " + dbName + ".PROMO_EQ (ID, EQTYPE) VALUES (?, ?)")) {
+			ps.setInt(1, id);
+			for (String eqType : eqTypes) {
+				ps.setString(2, eqType);
+				ps.addBatch();
+			}
+
+			executeUpdate(ps, 1, eqTypes.size());
+		}
 	}
 
 	/*
@@ -273,36 +276,37 @@ public class SetFlightReport extends DAO {
 		else
 			update(fr, dbName);
 
-		// Write the PIREP data into the database; if we are writing a new PIREP get the database ID
-		executeUpdate(1);
+		// If we are writing a new PIREP get the database ID
 		if (fr.getID() == 0)
 			fr.setID(getNewID());
 
 		// Write the route into the database
 		if (!StringUtils.isEmpty(fr.getRoute())) {
-			prepareStatementWithoutLimits("REPLACE INTO " + dbName + ".PIREP_ROUTE (ID, ROUTE) VALUES (?, ?)");
-			_ps.setInt(1, fr.getID());
+			try (PreparedStatement ps = prepareWithoutLimits("REPLACE INTO " + dbName + ".PIREP_ROUTE (ID, ROUTE) VALUES (?, ?)")) {
+				ps.setInt(1, fr.getID());
 			
-			// Strip out anything not a letter or digit
-			String rt = fr.getRoute().toUpperCase();
-			StringBuilder buf = new StringBuilder(); char lastChar = ' ';
-			for (int x = 0; x < rt.length(); x++) {
-				char c = rt.charAt(x);
-				if (Character.isDigit(c) || Character.isLetter(c)) {
-					buf.append(c);
-					lastChar = c;
-				} else if ((Character.isWhitespace(c) || (c == '.')) && !Character.isWhitespace(lastChar)) {
-					buf.append(' ');
-					lastChar = ' ';
+				// Strip out anything not a letter or digit
+				String rt = fr.getRoute().toUpperCase();
+				StringBuilder buf = new StringBuilder(); char lastChar = ' ';
+				for (int x = 0; x < rt.length(); x++) {
+					char c = rt.charAt(x);
+					if (Character.isDigit(c) || Character.isLetter(c)) {
+						buf.append(c);
+						lastChar = c;
+					} else if ((Character.isWhitespace(c) || (c == '.')) && !Character.isWhitespace(lastChar)) {
+						buf.append(' ');
+						lastChar = ' ';
+					}
 				}
-			}
 			
-			_ps.setString(2, buf.toString());
-			executeUpdate(1);
+				ps.setString(2, buf.toString());
+				executeUpdate(ps, 1);
+			}
 		} else {
-			prepareStatementWithoutLimits("DELETE FROM " + dbName + ".PIREP_ROUTE WHERE (ID=?)");
-			_ps.setInt(1, fr.getID());
-			executeUpdate(0);
+			try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM " + dbName + ".PIREP_ROUTE WHERE (ID=?)")) {
+				ps.setInt(1, fr.getID());
+				executeUpdate(ps, 0);
+			}
 		}
 	}
 	
@@ -312,15 +316,17 @@ public class SetFlightReport extends DAO {
 	private void writeComments(FlightReport fr, String dbName) throws SQLException {
 		boolean isEmpty = StringUtils.isEmpty(fr.getRemarks()) && StringUtils.isEmpty(fr.getComments());
 		if (!isEmpty) {
-			prepareStatement("REPLACE INTO " + dbName + ".PIREP_COMMENT (ID, COMMENTS, REMARKS) VALUES (?, ?, ?)");
-			_ps.setInt(1, fr.getID());
-			_ps.setString(2, fr.getComments());
-			_ps.setString(3, fr.getRemarks());
-			executeUpdate(1);
+			try (PreparedStatement ps = prepare("REPLACE INTO " + dbName + ".PIREP_COMMENT (ID, COMMENTS, REMARKS) VALUES (?, ?, ?)")) {
+				ps.setInt(1, fr.getID());
+				ps.setString(2, fr.getComments());
+				ps.setString(3, fr.getRemarks());
+				executeUpdate(ps, 1);
+			}
 		} else {
-			prepareStatement("DELETE FROM " + dbName + ".PIREP_COMMENT WHERE (ID=?)");
-			_ps.setInt(1, fr.getID());
-			executeUpdate(0);
+			try (PreparedStatement ps = prepare("DELETE FROM " + dbName + ".PIREP_COMMENT WHERE (ID=?)")) {
+				ps.setInt(1, fr.getID());
+				executeUpdate(ps, 0);
+			}
 		}
 	}
 
@@ -379,79 +385,81 @@ public class SetFlightReport extends DAO {
 			writePromoEQ(fr.getID(), db, fr.getCaptEQType());
 
 			// Write the ACARS fields
-			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setInt(1, fr.getID());
-			_ps.setInt(2, fr.getDatabaseID(DatabaseID.ACARS));
-			_ps.setTimestamp(3, createTimestamp(fr.getStartTime()));
-			_ps.setTimestamp(4, createTimestamp(fr.getTaxiTime()));
-			_ps.setInt(5, fr.getTaxiWeight());
-			_ps.setInt(6, fr.getTaxiFuel());
-			_ps.setTimestamp(7, createTimestamp(fr.getTakeoffTime()));
-			_ps.setInt(8, fr.getTakeoffDistance());
-			_ps.setInt(9, fr.getTakeoffSpeed());
-			_ps.setDouble(10, fr.getTakeoffN1());
-			_ps.setInt(11, fr.getTakeoffHeading());
-			_ps.setDouble(12, fr.getTakeoffLocation().getLatitude());
-			_ps.setDouble(13, fr.getTakeoffLocation().getLongitude());
-			_ps.setInt(14, fr.getTakeoffLocation().getAltitude());
-			_ps.setInt(15, fr.getTakeoffWeight());
-			_ps.setInt(16, fr.getTakeoffFuel());
-			_ps.setTimestamp(17, createTimestamp(fr.getLandingTime()));
-			_ps.setInt(18, fr.getLandingDistance());
-			_ps.setInt(19, fr.getLandingSpeed());
-			_ps.setInt(20, fr.getLandingVSpeed());
-			_ps.setDouble(21, fr.getLandingN1());
-			_ps.setInt(22, fr.getLandingHeading());
-			_ps.setDouble(23, fr.getLandingLocation().getLatitude());
-			_ps.setDouble(24, fr.getLandingLocation().getLongitude());
-			_ps.setInt(25, fr.getLandingLocation().getAltitude());
-			_ps.setInt(26, fr.getLandingWeight());
-			_ps.setInt(27, fr.getLandingFuel());
-			_ps.setTimestamp(28, createTimestamp(fr.getEndTime()));
-			_ps.setInt(29, fr.getGateWeight());
-			_ps.setInt(30, fr.getGateFuel());
-			_ps.setInt(31, fr.getTotalFuel());
-			
-			// ACARS
-			if (fr instanceof ACARSFlightReport) {
-				ACARSFlightReport afr = (ACARSFlightReport) fr; 
-				_ps.setInt(32, afr.getTime(0));
-				_ps.setInt(33, afr.getTime(1));
-				_ps.setInt(34, afr.getTime(2));
-				_ps.setInt(35, afr.getTime(4));
-				_ps.setString(36, afr.getFDE());
-				_ps.setString(37, afr.getAircraftCode());
-				_ps.setString(38, afr.getSDK());
-				_ps.setBoolean(39, afr.getHasReload());
-				_ps.setInt(40, afr.getClientBuild());
-				_ps.setInt(41, afr.getBeta());
-				_ps.setDouble(42, afr.getLandingG());
-				_ps.setInt(43, afr.getLandingCategory().ordinal());
-				_ps.setInt(44, (int)(afr.getAverageFrameRate() * 10));
-				_ps.setInt(45, afr.getPaxWeight());
-				_ps.setInt(46, afr.getCargoWeight());
-				_ps.setLong(47, afr.getCapabilities());
-			} else if (fr instanceof XACARSFlightReport) {
-				XACARSFlightReport xfr = (XACARSFlightReport) fr;
-				_ps.setInt(32, 0);
-				_ps.setInt(33, 0);
-				_ps.setInt(34, 0);
-				_ps.setInt(35, 0);
-				_ps.setString(36, null);
-				_ps.setString(37, null);
-				_ps.setString(38, null);
-				_ps.setBoolean(39, false);
-				_ps.setInt(40, xfr.getMajorVersion());
-				_ps.setInt(41, xfr.getMinorVersion());
-				_ps.setDouble(42, 0);
-				_ps.setInt(43, 0);
-				_ps.setInt(44, 0);
-				_ps.setInt(45, 0);
-				_ps.setInt(46, 0);
-				_ps.setLong(47, 0);
-			}
+			try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
+				ps.setInt(1, fr.getID());
+				ps.setInt(2, fr.getDatabaseID(DatabaseID.ACARS));
+				ps.setTimestamp(3, createTimestamp(fr.getStartTime()));
+				ps.setTimestamp(4, createTimestamp(fr.getTaxiTime()));
+				ps.setInt(5, fr.getTaxiWeight());
+				ps.setInt(6, fr.getTaxiFuel());
+				ps.setTimestamp(7, createTimestamp(fr.getTakeoffTime()));
+				ps.setInt(8, fr.getTakeoffDistance());
+				ps.setInt(9, fr.getTakeoffSpeed());
+				ps.setDouble(10, fr.getTakeoffN1());
+				ps.setInt(11, fr.getTakeoffHeading());
+				ps.setDouble(12, fr.getTakeoffLocation().getLatitude());
+				ps.setDouble(13, fr.getTakeoffLocation().getLongitude());
+				ps.setInt(14, fr.getTakeoffLocation().getAltitude());
+				ps.setInt(15, fr.getTakeoffWeight());
+				ps.setInt(16, fr.getTakeoffFuel());
+				ps.setTimestamp(17, createTimestamp(fr.getLandingTime()));
+				ps.setInt(18, fr.getLandingDistance());
+				ps.setInt(19, fr.getLandingSpeed());
+				ps.setInt(20, fr.getLandingVSpeed());
+				ps.setDouble(21, fr.getLandingN1());
+				ps.setInt(22, fr.getLandingHeading());
+				ps.setDouble(23, fr.getLandingLocation().getLatitude());
+				ps.setDouble(24, fr.getLandingLocation().getLongitude());
+				ps.setInt(25, fr.getLandingLocation().getAltitude());
+				ps.setInt(26, fr.getLandingWeight());
+				ps.setInt(27, fr.getLandingFuel());
+				ps.setTimestamp(28, createTimestamp(fr.getEndTime()));
+				ps.setInt(29, fr.getGateWeight());
+				ps.setInt(30, fr.getGateFuel());
+				ps.setInt(31, fr.getTotalFuel());
+				
+				// ACARS
+				if (fr instanceof ACARSFlightReport) {
+					ACARSFlightReport afr = (ACARSFlightReport) fr; 
+					ps.setInt(32, afr.getTime(0));
+					ps.setInt(33, afr.getTime(1));
+					ps.setInt(34, afr.getTime(2));
+					ps.setInt(35, afr.getTime(4));
+					ps.setString(36, afr.getFDE());
+					ps.setString(37, afr.getAircraftCode());
+					ps.setString(38, afr.getSDK());
+					ps.setBoolean(39, afr.getHasReload());
+					ps.setInt(40, afr.getClientBuild());
+					ps.setInt(41, afr.getBeta());
+					ps.setDouble(42, afr.getLandingG());
+					ps.setInt(43, afr.getLandingCategory().ordinal());
+					ps.setInt(44, (int)(afr.getAverageFrameRate() * 10));
+					ps.setInt(45, afr.getPaxWeight());
+					ps.setInt(46, afr.getCargoWeight());
+					ps.setLong(47, afr.getCapabilities());
+				} else if (fr instanceof XACARSFlightReport) {
+					XACARSFlightReport xfr = (XACARSFlightReport) fr;
+					ps.setInt(32, 0);
+					ps.setInt(33, 0);
+					ps.setInt(34, 0);
+					ps.setInt(35, 0);
+					ps.setString(36, null);
+					ps.setString(37, null);
+					ps.setString(38, null);
+					ps.setBoolean(39, false);
+					ps.setInt(40, xfr.getMajorVersion());
+					ps.setInt(41, xfr.getMinorVersion());
+					ps.setDouble(42, 0);
+					ps.setInt(43, 0);
+					ps.setInt(44, 0);
+					ps.setInt(45, 0);
+					ps.setInt(46, 0);
+					ps.setLong(47, 0);
+				}
 
-			executeUpdate(1);
+				executeUpdate(ps, 1);
+			}
+			
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
