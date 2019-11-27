@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2011, 2012, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.ipc;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.gvagroup.jdbc.*;
 /**
  * A daemon to listen for inter-process events.
  * @author Luke
- * @version 6.1
+ * @version 9.0
  * @since 1.0
  */
 
@@ -78,10 +78,8 @@ public class IPCDaemon implements Runnable {
 								break;
 						}
 					}
-				} catch (ConnectionPoolException cpe) {
-					log.error(cpe.getMessage(), cpe);
-				} catch (DAOException de) {
-					log.error(de.getMessage(), de);
+				} catch (ConnectionPoolException | DAOException cpde) {
+					log.error(cpde.getMessage(), cpde);
 				} finally {
 					cPool.release(con);
 				}
