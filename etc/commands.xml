@@ -721,12 +721,6 @@
 		<roles>Schedule,Operations</roles>
 	</command>
 
-	<command id="vaimport">
-		<name>VABase Schedule Import</name>
-		<class>org.deltava.commands.schedule.VABaseImportCommand</class>
-		<roles>Schedule,Operations</roles>
-	</command>
-
 	<command id="schedfilter">
 		<name>Schedule Filter</name>
 		<class>org.deltava.commands.schedule.ScheduleFilterCommand</class>
