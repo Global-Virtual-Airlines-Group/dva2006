@@ -445,4 +445,8 @@ public final class StringUtils {
 		
 		return results;
 	}
+	
+	public static CSVTokens parseCSV(String data) {
+		return new CSVTokens(data);
+	}
 }

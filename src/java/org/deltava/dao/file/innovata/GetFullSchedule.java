@@ -1,12 +1,11 @@
-// Copyright 2006, 2007, 2008, 2009, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2012, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file.innovata;
 
 import java.io.*;
 import java.util.*;
 import java.time.*;
 import java.time.format.*;
-import java.time.temporal.ChronoField;
-import java.time.temporal.ChronoUnit;
+import java.time.temporal.*;
 
 import org.apache.log4j.Logger;
 
@@ -15,14 +14,13 @@ import org.deltava.beans.schedule.*;
 import org.deltava.dao.DAOException;
 import org.deltava.dao.file.ScheduleLoadDAO;
 
-import org.deltava.util.CollectionUtils;
-
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to load CSV-format flight schedules from Innovata LLC.
  * @author Luke
- * @version 7.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -153,7 +151,8 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 			br.readLine(); // Skip first line
 			while (br.ready()) {
 				String data = br.readLine();
-				CSVTokens tkns = new CSVTokens(data, br.getLineNumber());
+				CSVTokens tkns = StringUtils.parseCSV(data);
+				tkns.add(String.valueOf(br.getLineNumber()));
 				if (data.startsWith("//")) {
 					if (log.isDebugEnabled())
 						log.debug("Skipping line " + br.getLineNumber() + " - comment");
@@ -194,6 +193,7 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 
 			// Look up the equipment type
 			String eqType = getEquipmentType(entries.get(27));
+			String ln = entries.get(entries.size() - 1);
 
 			// Validate the data
 			boolean isOK = true;
@@ -202,26 +202,26 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 			if (eqType == null) {
 				isOK = false;
 				_invalidEQ.add(entries.get(27));
-				log.warn("Unknown equipment code at Line " + entries.getLineNumber() + " - " + entries.get(27) + " (" + flightCode + ")");
-				_errors.add("Unknown equipment code at Line " + entries.getLineNumber() + " - " + entries.get(27));
+				log.warn("Unknown equipment code at Line " + ln + " - " + entries.get(27) + " (" + flightCode + ")");
+				_errors.add("Unknown equipment code at Line " + ln + " - " + entries.get(27));
 			} else if (airportD == null) {
 				isOK = false;
 				_invalidAP.add(entries.get(14));
-				log.warn("Unknown Airport at Line " + entries.getLineNumber() + " - " + entries.get(14) + " (" + flightCode + ")");
-				_errors.add("Unknown Airport at Line " + entries.getLineNumber() + " - " + entries.get(14));
+				log.warn("Unknown Airport at Line " + ln + " - " + entries.get(14) + " (" + flightCode + ")");
+				_errors.add("Unknown Airport at Line " + ln + " - " + entries.get(14));
 			} else if (airportA == null) {
 				isOK = false;
 				_invalidAP.add(entries.get(22));
-				log.warn("Unknown Airport at Line " + entries.getLineNumber() + " - " + entries.get(22) + " (" + flightCode + ")");
-				_errors.add("Unknown Airport at Line " + entries.getLineNumber() + " - " + entries.get(22));
+				log.warn("Unknown Airport at Line " + ln + " - " + entries.get(22) + " (" + flightCode + ")");
+				_errors.add("Unknown Airport at Line " + ln + " - " + entries.get(22));
 			} else if (a == null) {
 				isOK = false;
 				_invalidAL.add(entries.get(0));
-				log.warn("Unknown airline at Line " + entries.getLineNumber() + " - " + entries.get(0) + " (" + flightCode + ")");
-				_errors.add("Unknown airline at Line " + entries.getLineNumber() + " - " + entries.get(0));
+				log.warn("Unknown airline at Line " + ln + " - " + entries.get(0) + " (" + flightCode + ")");
+				_errors.add("Unknown airline at Line " + ln + " - " + entries.get(0));
 			} else if (!a.getApplications().contains(SystemData.get("airline.code"))) {
 				isOK = false;
-				log.info("Disabled airline at Line " + entries.getLineNumber() + " - " + entries.get(0) + " (" + flightCode + ")");
+				log.info("Disabled airline at Line " + ln + " - " + entries.get(0) + " (" + flightCode + ")");
 			} else if (airportD.getPosition().distanceTo(airportA) < 5) {
 				isOK = false;
 				log.info("Dummy flight from " + airportD.getIATA() + " to " + airportA.getIATA());
