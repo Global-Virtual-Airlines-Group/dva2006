@@ -422,7 +422,6 @@
 			<role>Examination</role>
 			<role>ExamUpdate</role>
 			<role>Event</role>
-			<role>Facebook</role>
 			<role>Fleet</role>
 			<role>HelpDesk</role>
 			<role>HireMgr</role>
@@ -673,24 +672,6 @@
 		<user_cookie_age type="Integer">30</user_cookie_age>
 		<transfer_max type="Integer">21</transfer_max>
 		<checkrde_max type="Integer">3</checkrde_max>
-
-		<facebook>
-			<id>93603160577</id>
-			<pageID>105017132650</pageID>
-			<secret>79fd42ccde86c4d60055b6ddc8501a40</secret>
-			<img>http://www.deltava.org/img/fleet/dva_side.png</img>
-			<url>
-				<accessToken>https://graph.facebook.com/oauth/access_token</accessToken>
-				<authorize>https://graph.facebook.com/oauth/authorize</authorize>
-				<userInfo>https://graph.facebook.com/v2.3/me</userInfo>
-				<feed>https://graph.facebook.com/v2.3/me/feed</feed>
-			</url>
-			<list name="permissions" attr="perm" unique="true">
-			    <perm>public_profile</perm>
-                <perm>publish_actions</perm>
-                <perm>email</perm>
-			</list>
-		</facebook>
 
 		<pirep>
 			<maxDays type="Integer">1</maxDays>
