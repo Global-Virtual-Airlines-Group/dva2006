@@ -1,23 +1,21 @@
-// Copyright 2006, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.dao.file.innovata;
+// Copyright 2006, 2009, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+package org.deltava.util;
 
 import java.util.*;
 
 /**
  * A utility class to parse CSV data.
  * @author Luke
- * @version 7.0
+ * @version 9.0
  * @since 1.0
  */
 
-class CSVTokens implements Comparable<CSVTokens> {
+public class CSVTokens {
 
-	private int _lineNumber;
 	private final List<String> _tkns = new ArrayList<String>();
 
-	CSVTokens(String entry, int line) {
+	CSVTokens(String entry) {
 		super();
-		_lineNumber = line;
 		
 		// Loop through the string
 		int x = 0;
@@ -45,12 +43,12 @@ class CSVTokens implements Comparable<CSVTokens> {
 		}
 	}
 	
-	public int getLineNumber() {
-		return _lineNumber;
-	}
-
 	public String get(int ofs) {
 		return _tkns.get(ofs);
+	}
+	
+	public void add(String value) {
+		_tkns.add(value);
 	}
 	
 	public void set(int ofs, String value) {
@@ -63,19 +61,6 @@ class CSVTokens implements Comparable<CSVTokens> {
 
 	public int size() {
 		return _tkns.size();
-	}
-	
-	@Override
-	public int compareTo(CSVTokens t2) {
-		int tmpResult = _tkns.get(7).compareTo(t2.get(7)); // flight number
-		if (tmpResult == 0)
-			tmpResult = (_tkns.get(10).compareTo(t2.get(10)) * -1); // stops
-		if (tmpResult == 0)
-			tmpResult = _tkns.get(4).compareTo(t2.get(4)); // departure time
-		if (tmpResult == 0)
-			tmpResult = _tkns.get(0).compareTo(t2.get(0)); // start date
-		
-		return (tmpResult == 0) ? _tkns.get(1).compareTo(t2.get(1)) : tmpResult; // end date 
 	}
 	
 	@Override
