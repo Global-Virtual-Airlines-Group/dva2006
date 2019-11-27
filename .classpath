@@ -24,7 +24,6 @@
 	<classpathentry kind="lib" path="lib/shapefilereader-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/jdbf-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/newrelic-api.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/jedis-2.9.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/slf4j-api-1.7.25.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/slf4j-simple-1.7.25.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-beanutils-1.9.3.jar"/>
@@ -39,5 +38,6 @@
 	<classpathentry kind="lib" path="lib/deploy/javax.mail-1.6.2.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-2.24.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-5.1.48-bin.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/jedis-3.1.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
