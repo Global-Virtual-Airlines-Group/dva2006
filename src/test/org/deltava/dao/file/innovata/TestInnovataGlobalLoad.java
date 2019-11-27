@@ -16,7 +16,7 @@ import org.deltava.beans.schedule.*;
 
 import org.deltava.dao.*;
 
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 public class TestInnovataGlobalLoad extends TestCase {
