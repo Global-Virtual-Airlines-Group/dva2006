@@ -47,15 +47,13 @@ public class GetFlightIDs extends DAO {
 		
 		buf.append(" ORDER BY ID");
 		
-		try {
-			prepareStatement(buf.toString());
+		try (PreparedStatement ps = prepare(buf.toString())) {
 			BlockingQueue<Integer> results = new LinkedBlockingQueue<Integer>();
-			try (ResultSet rs = _ps.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
 					results.add(Integer.valueOf(rs.getInt(1)));
 			}
 		
-			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
