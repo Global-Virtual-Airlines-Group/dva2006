@@ -15,7 +15,7 @@ import org.deltava.util.StringUtils;
 
 public class RawScheduleEntry extends ScheduleEntry {
 
-	private String _src;
+	private ScheduleSource _src;
 	private int _line;
 	
 	private LocalDate _startDate;
@@ -71,10 +71,10 @@ public class RawScheduleEntry extends ScheduleEntry {
 	}
 	
 	/**
-	 * Returns the original source name.
-	 * @return the source
+	 * Returns the original source.
+	 * @return the ScheduleSource
 	 */
-	public String getSource() {
+	public ScheduleSource getSource() {
 		return _src;
 	}
 	
@@ -101,6 +101,10 @@ public class RawScheduleEntry extends ScheduleEntry {
 	 */
 	public boolean operatesOn(LocalDate ld) {
 		return _days.contains(ld.getDayOfWeek()) && !ld.isBefore(_startDate) && !ld.isAfter(_endDate);
+	}
+	
+	public void addDayOfWeek(DayOfWeek d) {
+		_days.add(d);
 	}
 
 	/**
@@ -141,9 +145,9 @@ public class RawScheduleEntry extends ScheduleEntry {
 	
 	/**
 	 * Updates the source of this entry.
-	 * @param src the source name
+	 * @param src the ScheduleSource
 	 */
-	public void setSource(String src) {
+	public void setSource(ScheduleSource src) {
 		_src = src;
 	}
 	
