@@ -27,23 +27,49 @@ public class GetRawSchedule extends DAO {
 	}
 	
 	/**
+	 * Returns all raw schedule sources.
+	 * @return a Collection of source names
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<String> getSources() throws DAOException {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT DISTINCT SRC FROM RAW_SCHEDULE")) {
+			Collection<String> results = new LinkedHashSet<String>();
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next())
+					results.add(rs.getString(1));
+			}
+			
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Loads all raw schedule entries for a particular day of the week.
 	 * @param ld the schedule effective date
 	 * @return a Collection of RawScheduleEntry beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<RawScheduleEntry> load(LocalDate ld) throws DAOException {
-		DayOfWeek dow = ld.getDayOfWeek();
-		try (PreparedStatement ps = prepare("SELECT * FROM RAW_SCHEDULE WHERE (STARTDATE<=?) AND (ENDDATE>=?) AND ((DAYS & ?) != 0)")) {
-			ps.setTimestamp(1, Timestamp.valueOf(ld.atStartOfDay()));
-			ps.setTimestamp(2, Timestamp.valueOf(ld.atTime(23, 59, 59)));
-			ps.setInt(3, 1 << dow.ordinal());
+		
+		// Build SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM RAW_SCHEDULE");
+		if (ld != null)
+			sqlBuf.append(" WHERE (STARTDATE<=?) AND (ENDDATE>=?) AND ((DAYS & ?) != 0))");
+		
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			if (ld != null) {
+				ps.setTimestamp(1, Timestamp.valueOf(ld.atStartOfDay()));
+				ps.setTimestamp(2, Timestamp.valueOf(ld.atTime(23, 59, 59)));
+				ps.setInt(3, 1 << ld.getDayOfWeek().ordinal());
+			}
 			
 			List<RawScheduleEntry> results = new ArrayList<RawScheduleEntry>();
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					RawScheduleEntry se = new RawScheduleEntry(SystemData.getAirline(rs.getString(6)), rs.getInt(7), rs.getInt(8));
-					se.setSource(rs.getString(1));
+					se.setSource(ScheduleSource.valueOf(rs.getString(1)));
 					se.setLineNumber(rs.getInt(2));
 					se.setStartDate(rs.getDate(3).toLocalDate());
 					se.setEndDate(rs.getDate(4).toLocalDate());
