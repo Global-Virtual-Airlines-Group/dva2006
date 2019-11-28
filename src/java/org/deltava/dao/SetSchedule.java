@@ -61,7 +61,7 @@ public class SetSchedule extends DAO {
 	 */
 	public void writeRaw(RawScheduleEntry rse) throws DAOException {
 		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO RAW_SCHEDULE (SRC, SRCLINE, STARTDATE, ENDDATE, DAYS, AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A, EQTYPE, TIME_D, TIME_A, CODESHARE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-			ps.setString(1, rse.getSource());
+			ps.setInt(1, rse.getSource().ordinal());
 			ps.setInt(2, rse.getLineNumber());
 			ps.setTimestamp(3, Timestamp.valueOf(rse.getStartDate().atStartOfDay()));
 			ps.setTimestamp(4, Timestamp.valueOf(rse.getEndDate().atTime(23, 59, 59)));
@@ -121,12 +121,12 @@ public class SetSchedule extends DAO {
 	
 	/**
 	 * Purges entries from the raw Flight Schedule.
-	 * @param src the source name
+	 * @param src the ScheduleSource
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void purgeRaw(String src) throws DAOException {
+	public void purgeRaw(ScheduleSource src) throws DAOException {
 		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM RAW_SCHEDULE WHERE (SRC=?)")) {
-			ps.setString(1, src);
+			ps.setInt(1, src.ordinal());
 			executeUpdate(ps, 0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
