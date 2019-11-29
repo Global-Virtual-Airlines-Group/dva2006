@@ -1,4 +1,4 @@
-package org.deltava.dao.file.innovata;
+package org.deltava.dao.file;
 
 import java.io.*;
 import java.sql.*;
@@ -15,7 +15,7 @@ import org.apache.log4j.*;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.dao.*;
-
+import org.deltava.dao.file.GetFullSchedule;
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
@@ -242,17 +242,9 @@ public class TestInnovataGlobalLoad extends TestCase {
 
 		// Load the legs
 		dao.load();
-		Collection<ScheduleEntry> entries = dao.process();
+		Collection<RawScheduleEntry> entries = dao.process();
 		assertNotNull(entries);
+		assertFalse(entries.isEmpty());
 		log.info("Loaded " + entries.size() + " entries");
-		
-		// Save the legs
-		SetSchedule wdao = new SetSchedule(_c);
-		wdao.purge(false);
-		for (Iterator<ScheduleEntry> i = entries.iterator(); i.hasNext(); ) {
-			ScheduleEntry se = i.next();
-			se.setCanPurge(true);
-			wdao.write(se, true);
-		}
 	}
 }
