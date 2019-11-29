@@ -26,39 +26,35 @@ import org.deltava.util.system.SystemData;
 
 public class GetRawPDFSchedule extends ScheduleLoadDAO {
 	
-	private final String _src;
-	
 	private final DateTimeFormatterBuilder _dfb = new DateTimeFormatterBuilder().appendPattern("MMM-d[d]");
 	private final DateTimeFormatter _tf = new DateTimeFormatterBuilder().appendPattern("HH:mm").toFormatter();
-	private LocalDate _startDate = LocalDate.now();
+	private LocalDate _effDate = LocalDate.now();
 	
 	private static final Logger log = Logger.getLogger(GetRawPDFSchedule.class);
 
 	/**
 	 * Initializes the Data Access Object.
-	 * @param src the source name
 	 * @param is the InputStream to read
 	 */
-	public GetRawPDFSchedule(String src, InputStream is) {
-		super(is);
-		_src = src;
+	public GetRawPDFSchedule(InputStream is) {
+		super(ScheduleSource.DELTA, is);
 	}
 	
 	/**
 	 * Sets the flight schedule effective date.
 	 * @param ldt a LocalDateTime
 	 */
-	public void setStartDate(LocalDateTime ldt) {
+	public void setEffectiveDate(LocalDateTime ldt) {
 		if (ldt != null)
-			_startDate = ldt.truncatedTo(ChronoUnit.DAYS).toLocalDate();
+			_effDate = ldt.truncatedTo(ChronoUnit.DAYS).toLocalDate();
 	}
 	
 	@Override
-	public Collection<ScheduleEntry> process() throws DAOException {
-		DateTimeFormatter df = _dfb.parseDefaulting(ChronoField.YEAR, _startDate.getYear()).toFormatter();
+	public Collection<RawScheduleEntry> process() throws DAOException {
+		DateTimeFormatter df = _dfb.parseDefaulting(ChronoField.YEAR, _effDate.getYear()).toFormatter();
 		
 		try (LineNumberReader lr = getReader()) {
-			Collection<ScheduleEntry> results = new ArrayList<ScheduleEntry>();
+			Collection<RawScheduleEntry> results = new ArrayList<RawScheduleEntry>();
 			lr.readLine(); String data = lr.readLine();
 			while (data != null) {
  				CSVTokens csv = StringUtils.parseCSV(data); boolean isOK = true;
@@ -72,10 +68,10 @@ public class GetRawPDFSchedule extends ScheduleLoadDAO {
 				rse.setAirportD(SystemData.getAirport(csv.get(2)));
 				rse.setAirportA(SystemData.getAirport(csv.get(4)));
 				rse.setEquipmentType(getEquipmentType(csv.get(10)));
-				rse.setTimeD(LocalDateTime.of(_startDate, LocalTime.parse(csv.get(3), _tf)));
-				rse.setTimeA(LocalDateTime.of(_startDate, LocalTime.parse(csv.get(5), _tf)));
+				rse.setTimeD(LocalDateTime.of(_effDate, LocalTime.parse(csv.get(3), _tf)));
+				rse.setTimeA(LocalDateTime.of(_effDate, LocalTime.parse(csv.get(5), _tf)));
 				rse.setDayMap(StringUtils.parse(csv.get(6), 0));
-				rse.setSource(_src);
+				rse.setSource(ScheduleSource.DELTA);
 				rse.setLineNumber(lr.getLineNumber());
 
 				LocalDate startDate = "-".equals(csv.get(0)) ? LocalDate.now().minusDays(LocalDate.now().getDayOfYear()) : LocalDate.parse(csv.get(0), df);
@@ -85,24 +81,24 @@ public class GetRawPDFSchedule extends ScheduleLoadDAO {
 				
 				if (rse.getEquipmentType() == null) {
 					isOK = false;
-					_invalidEQ.add(csv.get(10));
+					_status.addInvalidEquipment(csv.get(10));
 					log.warn("Unknown equipment code at Line " + lr.getLineNumber() + " - " + csv.get(10) + " (" + data + ")");
-					_errors.add("Unknown equipment code at Line " + lr.getLineNumber() + " - " + csv.get(10));
+					_status.addMessage("Unknown equipment code at Line " + lr.getLineNumber() + " - " + csv.get(10));
 				} else if (rse.getAirportD() == null) {
 					isOK = false;
-					_invalidAP.add(csv.get(2));
+					_status.addInvalidAirport(csv.get(2));
 					log.warn("Unknown Airport at Line " + lr.getLineNumber() + " - " + csv.get(2) + " (" + data + ")");
-					_errors.add("Unknown Airport at Line " + lr.getLineNumber() + " - " + csv.get(2));
+					_status.addMessage("Unknown Airport at Line " + lr.getLineNumber() + " - " + csv.get(2));
 				} else if (rse.getAirportA() == null) {
 					isOK = false;
-					_invalidAP.add(csv.get(4));
+					_status.addInvalidAirport(csv.get(4));
 					log.warn("Unknown Airport at Line " + lr.getLineNumber() + " - " + csv.get(4) + " (" + data + ")");
-					_errors.add("Unknown Airport at Line " + lr.getLineNumber() + " - " + csv.get(4));
+					_status.addMessage("Unknown Airport at Line " + lr.getLineNumber() + " - " + csv.get(4));
 				} else if (rse.getAirline() == null) {
 					isOK = false;
-					_invalidAL.add(csv.get(7));
+					_status.addInvalidAirline(csv.get(7));
 					log.warn("Unknown airline at Line " + lr.getLineNumber() + " - " + csv.get(7) + " (" + data + ")");
-					_errors.add("Unknown airline at Line " + lr.getLineNumber() + " - " + csv.get(7));
+					_status.addMessage("Unknown airline at Line " + lr.getLineNumber() + " - " + csv.get(7));
 				} else if (!rse.getAirline().getApplications().contains(SystemData.get("airline.code"))) {
 					isOK = false;
 					log.info("Disabled airline at Line " + lr.getLineNumber() + " - " + rse.getAirline().getCode() + " (" + csv.get(7) + ")");
