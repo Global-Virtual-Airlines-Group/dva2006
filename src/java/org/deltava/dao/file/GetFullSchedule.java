@@ -1,5 +1,5 @@
 // Copyright 2006, 2007, 2008, 2009, 2012, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.dao.file.innovata;
+package org.deltava.dao.file;
 
 import java.io.*;
 import java.util.*;
@@ -12,8 +12,6 @@ import org.apache.log4j.Logger;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.dao.DAOException;
-import org.deltava.dao.file.ScheduleLoadDAO;
-
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
@@ -31,9 +29,9 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 	private final DateTimeFormatter _df = new DateTimeFormatterBuilder().appendPattern("dd/MM/yyyy").parseDefaulting(ChronoField.SECOND_OF_DAY, 0).toFormatter();
 	private DateTimeFormatter _tf = new DateTimeFormatterBuilder().appendPattern("H:mm:ss").toFormatter();
 
-	private static final List<String> GROUND_EQ = Arrays.asList("TRN", "BUS", "LMO", "RFS");
-
-	private LocalDateTime _effDate = LocalDateTime.now();
+	private LocalDate _effDate = LocalDate.now();
+	
+	private static final List<String> GROUND_EQ = List.of("TRN", "BUS", "LMO", "RFS");
 
 	private final Collection<CSVTokens> _data = new ArrayList<CSVTokens>();
 	private final Collection<String> _aCodes = new HashSet<String>();
@@ -45,7 +43,7 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 	 * @param is the input stream to read
 	 */
 	public GetFullSchedule(InputStream is) {
-		super(is);
+		super(ScheduleSource.INNOVATA, is);
 	}
 
 	/**
@@ -55,10 +53,7 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 	@Override
 	public void setAirlines(Collection<Airline> airlines) {
 		super.setAirlines(airlines);
-		for (Iterator<Airline> i = airlines.iterator(); i.hasNext();) {
-			Airline a = i.next();
-			_aCodes.addAll(a.getCodes());
-		}
+		airlines.forEach(a -> _aCodes.addAll(a.getCodes()));
 	}
 
 	/**
@@ -89,17 +84,6 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 
 	private boolean include(CSVTokens entries) {
 
-		// Check the date
-		try {
-			LocalDateTime sd = LocalDateTime.parse(entries.get(5), _df);
-			LocalDateTime ed = LocalDateTime.parse(entries.get(6), _df).plusDays(1).minusSeconds(1);
-			if (_effDate.isBefore(sd) || _effDate.isAfter(ed))
-				return false;
-		} catch (Exception e) {
-			log.warn("Invalid start/end date - " + e.getMessage());
-			return false;
-		}
-
 		// Check codeshare operation
 		if ("1".equals(entries.get(48)))
 			return false;
@@ -114,9 +98,11 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 
 		// Check the airline
 		String code = entries.get(0).toUpperCase();
-		boolean isMainLine = _mlCodes.contains(code);
+		if (_mlCodes.contains(code))
+			return true;
+		
 		boolean isCodeShare = false;
-		if (!isMainLine && !_mlCodes.contains(entries.get(3))) {
+		if (!_mlCodes.contains(entries.get(3))) {
 			String csInfo = entries.get(50);
 			for (Iterator<String> i = _csCodes.iterator(); i.hasNext() && !isCodeShare;) {
 				String mlCode = i.next();
@@ -124,7 +110,7 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 			}
 		}
 
-		return isMainLine || isCodeShare;
+		return isCodeShare;
 	}
 
 	/**
@@ -133,7 +119,6 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 	 */
 	public void setEffectiveDate(LocalDateTime dt) {
 		if (dt != null) {
-			_effDate = dt.truncatedTo(ChronoUnit.DAYS);
 			DateTimeFormatterBuilder tfb = new DateTimeFormatterBuilder().appendPattern("H:mm:ss");
 			tfb.parseDefaulting(ChronoField.YEAR, _effDate.getYear()).parseDefaulting(ChronoField.DAY_OF_YEAR, _effDate.getDayOfYear());
 			_tf = tfb.toFormatter();
@@ -175,13 +160,10 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 	 * @throws DAOException if an I/O error occurs
 	 */
 	@Override
-	public Collection<ScheduleEntry> process() throws DAOException {
+	public Collection<RawScheduleEntry> process() throws DAOException {
 
-		Map<String, DailyScheduleEntry> results = new HashMap<String, DailyScheduleEntry>();
-		for (Iterator<CSVTokens> i = _data.iterator(); i.hasNext();) {
-			CSVTokens entries = i.next();
-
-			// Load the Airports
+		Collection<RawScheduleEntry> results = new ArrayList<RawScheduleEntry>();
+		for (CSVTokens entries : _data) {
 			Airport airportD = SystemData.getAirport(entries.get(14));
 			Airport airportA = SystemData.getAirport(entries.get(22));
 			
@@ -201,24 +183,24 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 			String flightCode = entries.get(0) + entries.get(1);
 			if (eqType == null) {
 				isOK = false;
-				_invalidEQ.add(entries.get(27));
+				_status.addInvalidEquipment(entries.get(27));
 				log.warn("Unknown equipment code at Line " + ln + " - " + entries.get(27) + " (" + flightCode + ")");
-				_errors.add("Unknown equipment code at Line " + ln + " - " + entries.get(27));
+				_status.addMessage("Unknown equipment code at Line " + ln + " - " + entries.get(27));
 			} else if (airportD == null) {
 				isOK = false;
-				_invalidAP.add(entries.get(14));
+				_status.addInvalidAirport(entries.get(14));
 				log.warn("Unknown Airport at Line " + ln + " - " + entries.get(14) + " (" + flightCode + ")");
-				_errors.add("Unknown Airport at Line " + ln + " - " + entries.get(14));
+				_status.addMessage("Unknown Airport at Line " + ln + " - " + entries.get(14));
 			} else if (airportA == null) {
 				isOK = false;
-				_invalidAP.add(entries.get(22));
+				_status.addInvalidAirport(entries.get(22));
 				log.warn("Unknown Airport at Line " + ln + " - " + entries.get(22) + " (" + flightCode + ")");
-				_errors.add("Unknown Airport at Line " + ln + " - " + entries.get(22));
+				_status.addMessage("Unknown Airport at Line " + ln + " - " + entries.get(22));
 			} else if (a == null) {
 				isOK = false;
-				_invalidAL.add(entries.get(0));
+				_status.addInvalidAirline(entries.get(0));
 				log.warn("Unknown airline at Line " + ln + " - " + entries.get(0) + " (" + flightCode + ")");
-				_errors.add("Unknown airline at Line " + ln + " - " + entries.get(0));
+				_status.addMessage("Unknown airline at Line " + ln + " - " + entries.get(0));
 			} else if (!a.getApplications().contains(SystemData.get("airline.code"))) {
 				isOK = false;
 				log.info("Disabled airline at Line " + ln + " - " + entries.get(0) + " (" + flightCode + ")");
@@ -236,29 +218,35 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 
 			// Build the Schedule Entry
 			if (isOK) {
-				DailyScheduleEntry entry = new DailyScheduleEntry(a, Integer.parseInt(entries.get(1)), Integer.parseInt(entries.get(46)));
+				RawScheduleEntry entry = new RawScheduleEntry(a, Integer.parseInt(entries.get(1)), Integer.parseInt(entries.get(46)));
 				entry.setAirportD(airportD);
 				entry.setAirportA(airportA);
 				entry.setEquipmentType(eqType);
 				entry.setLength(Integer.parseInt(entries.get(42)) / 6);
-				entry.setDays(dayBuf.toString());
+				for (char c : dayBuf.toString().toCharArray())
+					entry.addDayOfWeek(DayOfWeek.of(Character.getNumericValue(c)));
+				
+				try {
+					entry.setStartDate(LocalDate.parse(entries.get(5), _df));
+					entry.setEndDate(LocalDate.parse(entries.get(6), _df));
+				} catch (Exception pe) {
+					log.warn("Error parsing date - " + pe.getMessage());
+					_status.addMessage("Error parsing date - " + pe.getMessage());
+				}
+					
 				try {
 					entry.setTimeD(LocalDateTime.parse(entries.get(18), _tf));
 					entry.setTimeA(LocalDateTime.parse(entries.get(23), _tf));
 				} catch (Exception pe) {
 					log.warn("Error parsing time - " + pe.getMessage());
-					_errors.add("Error parsing time - " + pe.getMessage());
+					_status.addMessage("Error parsing time - " + pe.getMessage());
 				}
 
-				// Check if we have an entry
-				DailyScheduleEntry e2 = results.get(entry.toString());
-				if ((e2 == null) || (e2.getDays() < entry.getDays())) {
-					validateAirports(entry);
-					results.put(entry.toString(), entry);
-				}
+				validateAirports(entry);
+				results.add(entry);
 			}
 		}
 
-		return new TreeSet<ScheduleEntry>(results.values());
+		return results;
 	}
 }
