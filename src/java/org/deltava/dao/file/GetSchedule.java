@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2015, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2015, 2016, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load an exported Flight Schedule.
  * @author Luke
- * @version 8.4
+ * @version 9.0
  * @since 1.0
  */
 
@@ -28,7 +28,7 @@ public class GetSchedule extends ScheduleLoadDAO {
 	 * @param is the input stream to read
 	 */
 	public GetSchedule(InputStream is) {
-		super(is);
+		super(null, is);
 	}
 
 	/*
@@ -37,8 +37,8 @@ public class GetSchedule extends ScheduleLoadDAO {
 	private Airport getAirport(String code, int line) {
 		Airport a = SystemData.getAirport(code);
 		if (a == null) {
-			_invalidAP.add(code.toUpperCase());
-			_errors.add("Unknown Airport at Line " + line + " - " + code);
+			_status.addInvalidAirport(code.toUpperCase());
+			_status.addMessage("Unknown Airport at Line " + line + " - " + code);
 			a = new Airport(code, code, "Unknown - " + code);
 		}
 
@@ -51,10 +51,10 @@ public class GetSchedule extends ScheduleLoadDAO {
 	 * @throws DAOException if an I/O error occurs
 	 */
 	@Override
-	public Collection<ScheduleEntry> process() throws DAOException {
+	public Collection<RawScheduleEntry> process() throws DAOException {
 		
-		LocalDate today = LocalDateTime.now().toLocalDate();
-		Collection<ScheduleEntry> results = new ArrayList<ScheduleEntry>();
+		LocalDate today = LocalDate.now();
+		Collection<RawScheduleEntry> results = new ArrayList<RawScheduleEntry>();
 		try (LineNumberReader br = new LineNumberReader(getReader())) {
 			while (br.ready()) {
 				String txtData = br.readLine();
@@ -71,7 +71,7 @@ public class GetSchedule extends ScheduleLoadDAO {
 							throw new IllegalArgumentException("Invalid Airline Code - " + aCode);
 
 						// Build the flight number and equipment type
-						ScheduleEntry entry = new ScheduleEntry(a, Integer.parseInt(tkns.nextToken()), Integer.parseInt(tkns.nextToken()));
+						RawScheduleEntry entry = new RawScheduleEntry(a, Integer.parseInt(tkns.nextToken()), Integer.parseInt(tkns.nextToken()));
 						entry.setEquipmentType(tkns.nextToken());
 
 						// Get the airports and times
@@ -89,10 +89,9 @@ public class GetSchedule extends ScheduleLoadDAO {
 						entry.setHistoric(Boolean.valueOf(tkns.nextToken()).booleanValue());
 						entry.setCanPurge(Boolean.valueOf(tkns.nextToken()).booleanValue());
 
-						// Add to results
 						results.add(entry);
 					} catch (Exception e) {
-						_errors.add("Error on line " + br.getLineNumber() + " - " + e.getMessage());
+						_status.addMessage("Error on line " + br.getLineNumber() + " - " + e.getMessage());
 					}
 				}
 			}

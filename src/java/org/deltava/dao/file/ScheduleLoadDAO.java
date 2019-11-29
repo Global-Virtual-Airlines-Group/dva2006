@@ -1,7 +1,8 @@
-// Copyright 2006, 2007, 2009, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.util.*;
+import java.time.*;
 import java.io.InputStream;
 
 import org.deltava.beans.schedule.*;
@@ -9,33 +10,47 @@ import org.deltava.beans.schedule.*;
 import org.deltava.comparators.AirportComparator;
 
 import org.deltava.dao.DAOException;
+
 import org.deltava.util.StringUtils;
 
 /**
  * An abstract class to store common methods for Flight Schedule import Data Access Objects.
  * @author Luke
- * @version 8.0
+ * @version 9.0
  * @since 1.0
  */
 
 public abstract class ScheduleLoadDAO extends DAO {
 
+	protected final ImportStatus _status;
 	protected Map<String, Airline> _airlines;
-	protected final Collection<String> _errors = new ArrayList<String>();
-	
-	protected final Collection<String> _invalidEQ = new TreeSet<String>();
-	protected final Collection<String> _invalidAP = new TreeSet<String>();
-	protected final Collection<String> _invalidAL = new TreeSet<String>();
 	protected final Map<Airline, Collection<Airport>> _unsvcAirports = new TreeMap<Airline, Collection<Airport>>();
 	
 	private final Map<String, Aircraft> _iataMappings = new HashMap<String, Aircraft>();
 
 	/**
+	 * A utility class to store flight data components.
+	 */
+	protected static class FlightData {
+		String startDate;
+		String endDate;
+		String daysOfWeek;
+		String airportD;
+		String airportA;
+		String timeD;
+		String timeA;
+		String flightNumber;
+		String eqType;
+	}
+	
+	/**
 	 * Initializes the Data Access Object.
+	 * @param src the ScheduleSource
 	 * @param is the input stream to read
 	 */
-	protected ScheduleLoadDAO(InputStream is) {
+	protected ScheduleLoadDAO(ScheduleSource src, InputStream is) {
 		super(is);
+		_status = new ImportStatus(src, Instant.now());
 	}
 
 	/**
@@ -65,16 +80,8 @@ public abstract class ScheduleLoadDAO extends DAO {
 	 * @return a Collection of ScheduleEntry beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public abstract Collection<ScheduleEntry> process() throws DAOException;
+	public abstract Collection<RawScheduleEntry> process() throws DAOException;
 
-	/**
-	 * Returns any error messages from the Schedule load.
-	 * @return a Collection of error messages
-	 */
-	public Collection<String> getErrorMessages() {
-		return _errors;
-	}
-	
 	/**
 	 * Returns the Airports that are not serviced by a particular Airline in the schedule.
 	 * @return a Map of Collections of Airports, keyed by Airline
@@ -84,29 +91,13 @@ public abstract class ScheduleLoadDAO extends DAO {
 	}
 	
 	/**
-	 * Returns any invalid IATA equipment codes encountered during the import.
-	 * @return a sorted Collection of IATA equipment codes
+	 * Returns the schedule import results.
+	 * @return an ImportStatus
 	 */
-	public Collection<String> getInvalidEQ() {
-		return _invalidEQ;
+	public ImportStatus getStatus() {
+		return _status;
 	}
 	
-	/**
-	 * Returns any invalid IATA airport codes encountered during the import.
-	 * @return a sorted Collection of IATA airport codes
-	 */
-	public Collection<String> getInvalidAirports() {
-		return _invalidAP;
-	}
-	
-	/**
-	 * Returns any invalid IATA airline codes encountered during the import.
-	 * @return a sorted Collection of IATA airline codes
-	 */
-	public Collection<String> getInvalidAirlines() {
-		return _invalidAL;
-	}
-
 	/**
 	 * Maps an IATA equipment code to an aircraft type.
 	 * @param iataCode the IATA code
@@ -115,6 +106,7 @@ public abstract class ScheduleLoadDAO extends DAO {
 	 * @see ScheduleLoadDAO#setAircraft(Collection)
 	 */
 	protected String getEquipmentType(String iataCode) {
+		if ("EQV".equalsIgnoreCase(iataCode)) return "EQV";
 		Aircraft a = _iataMappings.get(iataCode.toUpperCase());
 		return (a == null) ? null : a.getName();
 	}
@@ -142,13 +134,13 @@ public abstract class ScheduleLoadDAO extends DAO {
 		
 		Airline a = se.getAirline();
 		if (!se.getAirportD().getAirlineCodes().contains(a.getCode())) {
-			_errors.add(a.getName() + " does not serve " + se.getAirportD() + " - " + se.getFlightCode());
+			_status.addMessage(a.getName() + " does not serve " + se.getAirportD() + " - " + se.getFlightCode());
 			getAirportBucket(a).add(se.getAirportD());
 			isOK = false;
 		}
 
 		if (!se.getAirportA().getAirlineCodes().contains(a.getCode())) {
-			_errors.add(a.getName() + " does not serve " + se.getAirportA() + " - " + se.getFlightCode());
+			_status.addMessage(a.getName() + " does not serve " + se.getAirportA() + " - " + se.getFlightCode());
 			getAirportBucket(a).add(se.getAirportA());
 			isOK = false;
 		}
