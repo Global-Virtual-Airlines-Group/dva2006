@@ -4,6 +4,8 @@ package org.deltava.beans.schedule;
 import java.util.*;
 import java.time.*;
 
+import org.deltava.beans.Flight;
+
 import org.deltava.util.StringUtils;
 
 /**
@@ -32,6 +34,14 @@ public class RawScheduleEntry extends ScheduleEntry {
 	 */
 	public RawScheduleEntry(Airline a, int fNumber, int leg) {
 		super(a, fNumber, leg);
+	}
+	
+	/**
+	 * Creates the bean from an existing Flight.
+	 * @param f the Flight
+	 */
+	public RawScheduleEntry(Flight f) {
+		super(f.getAirline(), f.getFlightNumber(), f.getLeg());
 	}
 
 	/**
