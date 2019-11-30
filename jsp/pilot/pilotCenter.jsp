@@ -48,7 +48,6 @@
 <content:sysdata var="academyFlights" name="academy.minFlights" />
 <content:sysdata var="helpDeskEnabled" name="helpdesk.enabled" />
 <content:sysdata var="innovataEnabled" name="schedule.innovata.enabled" />
-<content:sysdata var="vaBaseEnabled" name="schedule.vabase.enabled" />
 <content:sysdata var="hasIMAP" name="smtp.imap.enabled" />
 <content:sysdata var="hasSC" name="users.sc.active" default="false" />
 <content:sysdata var="scMaxNoms" name="users.sc.maxNominations" default="5" />
@@ -743,13 +742,6 @@ pilot Certification.</td>
 <tr>
  <td class="mid"><el:cmd className="bld" url="ivstatus">Innovata Schedule Download Status</el:cmd></td>
  <td class="data">You can view a status report from the last Innovata, LLC schedule download, to list new airports or equipment codes that need to be added to the <content:airline /> Flight Schedule.</td>
-</tr>
-</c:if>
-<c:if test="${vaBaseEnabled}">
-<tr>
- <td class="mid"><el:cmd className="bld" url="vaimport">VABase Schedule Import</el:cmd><br />
-<el:cmd className="bld" url="schedfilter">VABase Schedule Load</el:cmd></td>
- <td class="data">You can import a VABase-formatted airline schedule into the <content:airline /> flight schedule, and load the current day's flights.</td>
 </tr>
 </c:if>
 <tr>
