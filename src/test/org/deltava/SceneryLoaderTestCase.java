@@ -61,57 +61,60 @@ public abstract class SceneryLoaderTestCase extends TestCase {
 	}
 	
 	protected void filterAmpersands(File f) throws IOException {
-		InputStream in = new FileInputStream(f);
-		LineNumberReader lr = new LineNumberReader(new InputStreamReader(in), 524288);
 		File outF = new File(f.getCanonicalPath() + ".new");
-		OutputStream out = new FileOutputStream(outF);
-		PrintWriter pw = new PrintWriter(new BufferedOutputStream(out, 524288));
-		while (lr.ready()) {
-			String data = lr.readLine();
-			int pos = data.indexOf('&');
-			while (pos != -1) {
-				boolean unescaped = (pos > (data.length() - 5));
-				if (!unescaped) {
-					String next4 = data.substring(pos+1, pos+5);
-					unescaped = !"amp;".equals(next4);
-				}
+		try (InputStream in = new FileInputStream(f)) {
+			try (LineNumberReader lr = new LineNumberReader(new InputStreamReader(in), 524288)) {
+				try (OutputStream out = new FileOutputStream(outF)) {
+					try (PrintWriter pw = new PrintWriter(new BufferedOutputStream(out, 524288))) {
+						while (lr.ready()) {
+							String data = lr.readLine();
+							int pos = data.indexOf('&');
+							while (pos != -1) {
+								boolean unescaped = (pos > (data.length() - 5));
+								if (!unescaped) {
+									String next4 = data.substring(pos+1, pos+5);
+									unescaped = !"amp;".equals(next4);
+								}
 				
-				if (unescaped) {
-					StringBuilder buf = new StringBuilder(data.substring(0, pos));
-					buf.append("&amp;");
-					buf.append(data.substring(pos + 1));
-					data = buf.toString();
-				}
+								if (unescaped) {
+									StringBuilder buf = new StringBuilder(data.substring(0, pos));
+									buf.append("&amp;");
+									buf.append(data.substring(pos + 1));
+									data = buf.toString();
+								}
 				
-				pos = data.indexOf('&', pos+1);
+								pos = data.indexOf('&', pos+1);
+							}
+			
+							// Filter unescaped quotes
+							pos = data.indexOf('"');
+							while (pos != -1) {
+								boolean noEscape = (data.charAt(pos -1) == '=');
+								noEscape |= (pos >= data.length() - 1);
+								if (!noEscape) {
+									noEscape |= Character.isWhitespace(data.charAt(pos+1));
+									noEscape |= (data.charAt(pos+1) == '>');
+								}
+				
+								if (!noEscape) {
+									StringBuilder buf = new StringBuilder(data.substring(0, pos));
+									buf.append('\'');	
+									buf.append(data.substring(pos + 1));
+									data = buf.toString();
+								}
+			
+								pos = data.indexOf('"', pos+1);
+							}
+							
+							pw.println(data);
+						}
+						
+						pw.flush();
+					}
+				}
 			}
-			
-			// Filter unescaped quotes
-			pos = data.indexOf('"');
-			while (pos != -1) {
-				boolean noEscape = (data.charAt(pos -1) == '=');
-				noEscape |= (pos >= data.length() - 1);
-				if (!noEscape) {
-					noEscape |= Character.isWhitespace(data.charAt(pos+1));
-					noEscape |= (data.charAt(pos+1) == '>');
-				}
-				
-				if (!noEscape) {
-					StringBuilder buf = new StringBuilder(data.substring(0, pos));
-					buf.append('\'');	
-					buf.append(data.substring(pos + 1));
-					data = buf.toString();
-				}
-			
-				pos = data.indexOf('"', pos+1);
-			}
-			
-			pw.println(data);
 		}
 		
-		in.close();
-		pw.flush();
-		out.close();
 		f.delete();
 		if (!outF.renameTo(f))
 			log.error("Cannot rename " + outF.getName() + " to " + f.getName());

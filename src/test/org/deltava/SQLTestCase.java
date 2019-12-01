@@ -68,28 +68,28 @@ public abstract class SQLTestCase extends TestCase {
 
 		// Load the File
 		StringBuilder buf = new StringBuilder();
-		BufferedReader br = new BufferedReader(new FileReader(ddlFile));
-		while (br.ready()) {
-			buf.append(br.readLine());
-			buf.append('\n');
+		try (BufferedReader br = new BufferedReader(new FileReader(ddlFile))) {
+			while (br.ready()) {
+				buf.append(br.readLine());
+				buf.append('\n');
+			}
 		}
-
-		// Close the file
-		br.close();
 
 		// Execute the DDL
 		Connection c = getSQLConnection();
-		PreparedStatement ps = c.prepareStatement(buf.toString());
-		ps.executeUpdate();
-		ps.close();
+		try (PreparedStatement ps = c.prepareStatement(buf.toString())) {
+			ps.executeUpdate();
+		}
+		
 		returnConnection(c);
 	}
 
 	protected void executeSQL(String sql) throws SQLException {
 		Connection c = getSQLConnection();
-		Statement s = c.createStatement();
-		s.execute(sql);
-		s.close();
+		try (Statement s = c.createStatement()) {
+			s.execute(sql);
+		}
+
 		returnConnection(c);
 	}
 
@@ -119,12 +119,11 @@ public abstract class SQLTestCase extends TestCase {
 		buf.append(')');
 
 		// Prepare the statement
-		PreparedStatement ps = c.prepareStatement(buf.toString());
-		for (int x = 1; x <= values.size(); x++)
-			ps.setString(x, values.get(x - 1));
+		try (PreparedStatement ps = c.prepareStatement(buf.toString())) {
+			for (int x = 1; x <= values.size(); x++)
+				ps.setString(x, values.get(x - 1));
 
-		// Execute the statement and clean up
-		ps.executeUpdate();
-		ps.close();
+			ps.executeUpdate();
+		}
 	}
 }

@@ -79,9 +79,9 @@ public class TestChart extends AbstractBeanTestCase {
     public void testBlobBuffer() throws IOException {
         File f = new File("data/testImage.jpg");
         assertTrue(f.exists());
-        InputStream is = new FileInputStream(f);
-        _c.load(is);
-        is.close();
+        try (InputStream is = new FileInputStream(f)) {
+        	_c.load(is);
+        }
 
         InputStream imgS = _c.getInputStream();
         assertNotNull(imgS);

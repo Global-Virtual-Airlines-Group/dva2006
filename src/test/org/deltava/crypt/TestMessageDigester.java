@@ -88,28 +88,32 @@ public class TestMessageDigester extends TestCase {
 
 		// Load the file and calculate the hash - remember to not load the last two characters
 		File f = new File("data/acars/ACARS Flight O-2006070220.xml");
-		InputStream is = new FileInputStream(f);
-		byte[] data = new byte[(int) f.length()];
-		int size = is.read(data);
-		is.close();
-		assertTrue(size > 10);
-		is = new ByteArrayInputStream(data, 0, size - 2);
-		byte[] tData = _md.digest(is);
-		assertNotNull(tData);
+		byte[] data = new byte[(int) f.length()]; int size = 0;
+		try (InputStream is = new FileInputStream(f)) {
+			size = is.read(data);
+			assertTrue(size > 10);
+		}
+		
+		byte[] tData = null;
+		try (InputStream is = new ByteArrayInputStream(data, 0, size - 2)) {
+			tData = _md.digest(is);
+			assertNotNull(tData);
+		}
 
 		// Load the expected value
-		is = new FileInputStream(new File("data/acars/ACARS Flight O-2006070220.sha"));
-		BufferedReader br = new BufferedReader(new InputStreamReader(is));
-		assertTrue(br.ready());
-		String hash = br.readLine();
-		assertNotNull(hash);
-		byte[] tData2 = MessageDigester.parse(hash);
-		assertNotNull(tData2);
-		br.close();
-
-		// Compare the values
-		assertEquals(tData2.length, tData.length);
-		assertEquals(hash, MessageDigester.convert(tData));
+		try (InputStream is = new FileInputStream(new File("data/acars/ACARS Flight O-2006070220.sha"))) {
+			try (BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
+				assertTrue(br.ready());
+				String hash = br.readLine();
+				assertNotNull(hash);
+				byte[] tData2 = MessageDigester.parse(hash);
+				assertNotNull(tData2);
+				
+				// Compare the values
+				assertEquals(tData2.length, tData.length);
+				assertEquals(hash, MessageDigester.convert(tData));
+			}
+		}
 	}
 
 	@SuppressWarnings("static-method")
