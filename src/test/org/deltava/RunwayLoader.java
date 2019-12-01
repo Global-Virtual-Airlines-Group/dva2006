@@ -22,8 +22,6 @@ public class RunwayLoader extends TestCase {
 	private static Logger log;
 
 	private static final String JDBC_URL = "jdbc:mysql://pollux.gvagroup.org/dva";
-	//private static final String JDBC_URL = "jdbc:mysql://polaris.sce.net/dva";
-	//private static final String JDBC_URL2 = "jdbc:mysql://polaris.sce.net/dva";
 	private static final String JDBC_URL2 = JDBC_URL;
 
 	private Connection _c;
@@ -69,14 +67,13 @@ public class RunwayLoader extends TestCase {
 		// Get the flight IDs
 		log.info("Loading Flights");
 		Collection<Integer> IDs = new LinkedHashSet<Integer>();
-		Statement s = _c.createStatement();
-		s.setFetchSize(3000);
-		ResultSet rs = s.executeQuery("SELECT DISTINCT ID FROM acars.IDS ORDER BY ID");
-		while (rs.next())
-			IDs.add(Integer.valueOf(rs.getInt(1)));
-		
-		rs.close();
-		s.close();
+		try (Statement s = _c.createStatement()) {
+			s.setFetchSize(3000);
+			try (ResultSet rs = s.executeQuery("SELECT DISTINCT ID FROM acars.IDS ORDER BY ID")) {
+				while (rs.next())
+					IDs.add(Integer.valueOf(rs.getInt(1)));
+			}
+		}
 		
 		// Iterate through the flights
 		GetNavRoute navdao = new GetNavRoute(_c2);

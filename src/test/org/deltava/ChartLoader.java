@@ -132,10 +132,11 @@ public class ChartLoader extends TestCase {
 		// Pretty the XML
 		File out = new File(System.getProperty("java.io.tmpdir"), "charts.xml");
 		if (!out.exists()) {
-			PrintWriter pw = new PrintWriter(new FileOutputStream(out));
-			pw.println(XMLUtils.format(_doc));
-			pw.flush();
-			pw.close();
+			try (PrintWriter pw = new PrintWriter(new FileOutputStream(out))) {
+				pw.println(XMLUtils.format(_doc));
+				pw.flush();
+			}
+
 			log.info("Formatted XML data");
 		}
 	}
@@ -150,23 +151,22 @@ public class ChartLoader extends TestCase {
 	
 	private Collection<MD5Chart> loadCharts() throws SQLException {
 		Collection<MD5Chart> results = new ArrayList<MD5Chart>();
-		PreparedStatement ps = _c.prepareStatement("SELECT ID, ICAO, TYPE, IMGFORMAT, NAME, SIZE, HASH "
-				+ "FROM common.CHARTS ORDER BY ID");
-		ps.setFetchSize(100);
-		ResultSet rs = ps.executeQuery();
-		while (rs.next()) {
-			MD5Chart c = new MD5Chart(rs.getString(5), airports.get(rs.getString(2)));
-			c.setID(rs.getInt(1));
-			c.setType(Chart.Type.values()[rs.getInt(3)]);
-			c.setImgType(Chart.ImageType.values()[rs.getInt(4)]);
-			c.setSize(rs.getInt(6));
-			c.setLastModified(java.time.Instant.now());
-			c.setHash(rs.getString(7));
-			results.add(c);
+		try (PreparedStatement ps = _c.prepareStatement("SELECT ID, ICAO, TYPE, IMGFORMAT, NAME, SIZE, HASH FROM common.CHARTS ORDER BY ID")) {
+			ps.setFetchSize(100);
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					MD5Chart c = new MD5Chart(rs.getString(5), airports.get(rs.getString(2)));
+					c.setID(rs.getInt(1));
+					c.setType(Chart.Type.values()[rs.getInt(3)]);
+					c.setImgType(Chart.ImageType.values()[rs.getInt(4)]);
+					c.setSize(rs.getInt(6));
+					c.setLastModified(java.time.Instant.now());
+					c.setHash(rs.getString(7));
+					results.add(c);
+				}
+			}
 		}
 		
-		rs.close();
-		ps.close();
 		return results;
 	}
 

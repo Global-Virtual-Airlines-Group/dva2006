@@ -47,12 +47,13 @@ public abstract class BGLLoaderTestCase extends SceneryLoaderTestCase {
 			Process p = pb.start();
 			int result = p.waitFor();
 			if (result != 0) {
-				InputStream is = new BufferedInputStream(p.getInputStream(), 512);
-				BufferedReader br = new BufferedReader(new InputStreamReader(is));
-				while (br.ready())
-					log.info(br.readLine());
+				try (InputStream is = new BufferedInputStream(p.getInputStream(), 1024)) {
+					try (BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
+						while (br.ready())	
+							log.info(br.readLine());
+					}
+				}
 				
-				is.close();
 				fail("Cannot convert to XML");
 			}
 			
@@ -60,11 +61,12 @@ public abstract class BGLLoaderTestCase extends SceneryLoaderTestCase {
 			Document doc = null;
 			try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(xml)))) {
 				StringWriter xw = new StringWriter();
-				PrintWriter pw = new PrintWriter(xw);
-				while (br.ready()) {
-					String data = br.readLine();
-					data = data.replace('&', '_');
-					pw.println(data);
+				try (PrintWriter pw = new PrintWriter(xw)) {
+					while (br.ready()) {
+						String data = br.readLine();
+						data = data.replace('&', '_');
+						pw.println(data);
+					}
 				}
 			
 				doc = loadXML(new StringReader(xw.toString()));
