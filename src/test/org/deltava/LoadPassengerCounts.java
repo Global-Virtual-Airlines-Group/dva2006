@@ -68,47 +68,46 @@ public class LoadPassengerCounts extends TestCase {
 		Map<String, Aircraft> acCache = new HashMap<String, Aircraft>();
 		LoadFactor lf = new LoadFactor(_econ);
 		
-		PreparedStatement ps2 = _c.prepareStatement("UPDATE PIREPS SET PAX=?, LOADFACTOR=? WHERE (ID=?)");
-		
 		int totalFlights = 0;
-		GetAircraft acdao = new GetAircraft(_c);
-		PreparedStatement ps = _c.prepareStatement("SELECT ID, IFNULL(SUBMITTED, DATE), EQTYPE FROM PIREPS WHERE (LOADFACTOR=0) AND (STATUS<>0)");
-		ps.setFetchSize(100);
-		ResultSet rs = ps.executeQuery();
-		while (rs.next()) {
-			totalFlights++;
-			String eqType = rs.getString(3);
-			Aircraft a = acCache.get(eqType);
-			if (a == null) {
-				a = acdao.get(eqType);
-				if (a == null) {
-					System.out.println("Unknown aircraft type - " + eqType);
-					continue;
-				}
-				
-				acCache.put(eqType, a);
-			}
+		try (PreparedStatement ps2 = _c.prepareStatement("UPDATE PIREPS SET PAX=?, LOADFACTOR=? WHERE (ID=?)")) {
+			GetAircraft acdao = new GetAircraft(_c);
+			try (PreparedStatement ps = _c.prepareStatement("SELECT ID, IFNULL(SUBMITTED, DATE), EQTYPE FROM PIREPS WHERE (LOADFACTOR=0) AND (STATUS<>0)")) {
+				ps.setFetchSize(100);
+				try (ResultSet rs = ps.executeQuery()) {
+					while (rs.next()) {
+						totalFlights++;
+						String eqType = rs.getString(3);
+						Aircraft a = acCache.get(eqType);
+						if (a == null) {
+							a = acdao.get(eqType);
+							if (a == null) {
+								System.out.println("Unknown aircraft type - " + eqType);
+								continue;
+							}
+							
+							acCache.put(eqType, a);
+						}
 
-			// Calculate passengers/load factor
-			double loadFactor = lf.generate(rs.getTimestamp(2).toInstant());
-			int pax = (int) Math.round(a.getOptions(SystemData.get("airline.code")).getSeats() * loadFactor);
+						// Calculate passengers/load factor
+						double loadFactor = lf.generate(rs.getTimestamp(2).toInstant());
+						int pax = (int) Math.round(a.getOptions(SystemData.get("airline.code")).getSeats() * loadFactor);
 			
-			// Update
-			ps2.setInt(1, pax);
-			ps2.setDouble(2, loadFactor);
-			ps2.setInt(3, rs.getInt(1));
-			ps2.addBatch();
-			
-			if ((totalFlights % 50) == 0) {
-				System.out.println(totalFlights + " flights updated");
-				ps2.executeBatch();
-				_c.commit();
+						// Update
+						ps2.setInt(1, pax);
+						ps2.setDouble(2, loadFactor);
+						ps2.setInt(3, rs.getInt(1));
+						ps2.addBatch();
+						
+						if ((totalFlights % 50) == 0) {
+							System.out.println(totalFlights + " flights updated");
+							ps2.executeBatch();
+							_c.commit();
+						}
+					}
+				}
 			}
 		}
 		
-		// Commit
-		ps.close();
-		ps2.close();
 		_c.commit();
 		System.out.println(totalFlights + " flights updated");
 	}
