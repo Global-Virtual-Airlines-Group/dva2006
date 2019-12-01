@@ -50,15 +50,14 @@ public class TestLoadFactorCalculator extends TestCase {
 		info.setHourlyCycleLength(14 * 24);
 		
 		LoadFactor lf = new LoadFactor(info);
-		PrintWriter pw = new PrintWriter(new FileWriter("c:\\temp\\sine.csv"));
-		for (int x = 0; x < 365; x++) {
-			double mainTarget = (Math.sin(x * factor(272)) * info.getAmplitude()) + TARGET_LOAD;
-			double jitter = (Math.cos(x * factor(14)) * info.getAmplitude()) + TARGET_LOAD;
-			double total =  lf.getTargetLoad(zdt.toInstant());
-			pw.println(DF.format(mainTarget * 100) +"," + DF.format(TARGET_LOAD * 100) + "," + DF.format(jitter * 100) + "," + DF.format(total * 100));
-			zdt = zdt.plusDays(1);
+		try (PrintWriter pw = new PrintWriter(new FileWriter("c:\\temp\\sine.csv"))) {
+			for (int x = 0; x < 365; x++) {
+				double mainTarget = (Math.sin(x * factor(272)) * info.getAmplitude()) + TARGET_LOAD;
+				double jitter = (Math.cos(x * factor(14)) * info.getAmplitude()) + TARGET_LOAD;
+				double total =  lf.getTargetLoad(zdt.toInstant());
+				pw.println(DF.format(mainTarget * 100) +"," + DF.format(TARGET_LOAD * 100) + "," + DF.format(jitter * 100) + "," + DF.format(total * 100));
+				zdt = zdt.plusDays(1);
+			}
 		}
-		
-		pw.close();
 	}
 }

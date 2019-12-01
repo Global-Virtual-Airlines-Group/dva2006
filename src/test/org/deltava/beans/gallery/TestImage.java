@@ -90,9 +90,9 @@ public class TestImage extends AbstractBeanTestCase {
         assertEquals("testImage", _img.getName());
         File f = new File("data/testImage.gif");
         assertTrue(f.exists());
-        InputStream is = new FileInputStream(f);
-        _img.load(is);
-        is.close();
+        try (InputStream is = new FileInputStream(f)) {
+        	_img.load(is);
+        }
 
         // Validate the image data is correct
         assertEquals(ImageInfo.FORMAT_GIF, _img.getType());
@@ -109,10 +109,10 @@ public class TestImage extends AbstractBeanTestCase {
         assertEquals("testImage", _img.getName());
         File f = new File("data/testImage.jpg");
         assertTrue(f.exists());
-        InputStream is = new FileInputStream(f);
-        _img.load(is);
-        is.close();
-
+        try (InputStream is = new FileInputStream(f)) {
+        	_img.load(is);
+        }
+        
         // Validate the image data is correct
         assertEquals(ImageInfo.FORMAT_JPEG, _img.getType());
         assertEquals(f.length(), _img.getSize());
@@ -128,9 +128,9 @@ public class TestImage extends AbstractBeanTestCase {
        assertEquals("testImage", _img.getName());
        File f = new File("data/testImage.png");
        assertTrue(f.exists());
-       InputStream is = new FileInputStream(f);
-       _img.load(is);
-       is.close();
+       try (InputStream is = new FileInputStream(f)) {
+    	   _img.load(is);
+       }
 
        // Validate the image data is correct
        assertEquals(ImageInfo.FORMAT_PNG, _img.getType());
@@ -147,10 +147,8 @@ public class TestImage extends AbstractBeanTestCase {
         assertEquals("testImage", _img.getName());
         File f = new File("data/users.txt");
         assertTrue(f.exists());
-        try {
-            InputStream is = new FileInputStream(f);
+        try (InputStream is = new FileInputStream(f)) {
             _img.load(is);
-            is.close();
             fail("UnsupportedOperationException expected");
         } catch (UnsupportedOperationException upe) {
         	// empty

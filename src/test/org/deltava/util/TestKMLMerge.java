@@ -59,8 +59,8 @@ public class TestKMLMerge extends TestCase {
 		}
 		
 		// Write the XML
-		PrintWriter pw = new PrintWriter(new FileWriter("c:\\temp\\firs.kml"));
-		pw.println(XMLUtils.format(_doc));
-		pw.close();
+		try (PrintWriter pw = new PrintWriter(new FileWriter("c:\\temp\\firs.kml"))) {
+			pw.println(XMLUtils.format(_doc));
+		}
 	}
 }
