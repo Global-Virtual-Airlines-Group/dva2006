@@ -109,9 +109,9 @@ public class XPlaneRunwayLoader extends TestCase {
 				double dt1 = StringUtils.parse(dd.get(10), 0.0d);
 				double dt2 = StringUtils.parse(dd.get(19), 0.0d);
 				if (dt1 > 0)
-					gl1 = GeoUtils.bearingPoint(gl1, dt1 * M_TO_MI, hdg);
+					gl1 = GeoUtils.bearingPointS(gl1, dt1 * M_TO_MI, hdg);
 				if (dt2 > 0)
-					gl2 = GeoUtils.bearingPoint(gl2, dt2 * M_TO_MI, GeoUtils.normalize(180 + hdg));
+					gl2 = GeoUtils.bearingPointS(gl2, dt2 * M_TO_MI, GeoUtils.normalize(180 + hdg));
 				
 				Runway r1 = new Runway(gl1.getLatitude(), gl1.getLongitude());
 				r1.setName(dd.get(7)); r1.setCode(apCode); r1.setSurface(s);
@@ -137,7 +137,7 @@ public class XPlaneRunwayLoader extends TestCase {
 			}
 
 			int rowsWritten = 0;
-			try (PreparedStatement ps = c.prepareStatement("INSERT INTO common.RUNWAYS VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ST_PointFromText(?,?))")) {
+			try (PreparedStatement ps = c.prepareStatement("INSERT INTO common.RUNWAYS VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ST_PointFromText(?,?))")) {
 				for (Runway r : rwys) {
 					ps.setString(1, r.getCode());
 					ps.setString(2, r.getName());
@@ -146,10 +146,11 @@ public class XPlaneRunwayLoader extends TestCase {
 					ps.setDouble(5, r.getLongitude());
 					ps.setInt(6, r.getHeading());
 					ps.setInt(7, r.getLength());
-					ps.setDouble(8, 0);
-					ps.setInt(9, r.getSurface().ordinal());
-					ps.setString(10, formatLocation(r));
-					ps.setInt(11, WGS84_SRID);
+					ps.setInt(8, r.getWidth());
+					ps.setDouble(9, 0);
+					ps.setInt(10, r.getSurface().ordinal());
+					ps.setString(11, formatLocation(r));
+					ps.setInt(12, WGS84_SRID);
 					ps.addBatch(); rowsWritten++;
 					if ((rowsWritten % 100) == 0) {
 						ps.executeBatch();
