@@ -226,11 +226,13 @@ public class GeoUtils {
 
 	/**
 	 * Determines the coordinates of a second point on a particular heading from the first. This converts the polar
-	 * coordinates provided into cartesian coordinates, and then adds them to the original point.
+	 * coordinates provided into cartesian coordinates, and then adds them to the original point. <i>THIS ASSUMES
+	 * THE WORLD IS FLAT</b>.
 	 * @param p1 the original point
 	 * @param distance the distance in miles
 	 * @param angle the heading in degrees
-	 * @return a normalized GeoPosition
+	 * @return a GeoLocation
+	 * @see GeoUtils#bearingPointS(GeoLocation, double, double)
 	 */
 	public static GeoLocation bearingPoint(GeoLocation p1, double distance, double angle) {
 
@@ -242,6 +244,27 @@ public class GeoUtils {
 		double lat2 = dst * StrictMath.cos(angrad);
 		double lng2 = dst * StrictMath.sin(angrad);
 		return normalize(p1.getLatitude() + lat2, p1.getLongitude() + lng2);
+	}
+	
+	/**
+	 * Determines the coordinates of a second point on a particular heading from the first, assuming a spherical globe.
+	 * @param p1 the original point
+	 * @param distance the distance in miles
+	 * @param angle the angle in degrees
+	 * @return a GeoLocation
+	 * @see GeoUtils#bearingPoint(GeoLocation, double, double)
+	 */
+	public static GeoLocation bearingPointS(GeoLocation p1, double distance, double angle) {
+
+		// Convert to radians
+		double latR = StrictMath.toRadians(p1.getLatitude());
+		double lngR = StrictMath.toRadians(p1.getLongitude());
+		double angR = StrictMath.toRadians(angle);
+		double dstR = distance / GeoLocation.RADIAN_MILES;
+		
+		double rLat = StrictMath.asin(StrictMath.sin(latR) * StrictMath.cos(dstR) + StrictMath.cos(latR) * StrictMath.sin(dstR) * StrictMath.cos(angR));
+		double rLon = lngR + StrictMath.atan2(StrictMath.sin(angR) * StrictMath.sin(dstR) * StrictMath.cos(latR), StrictMath.cos(dstR) - StrictMath.sin(latR) * StrictMath.sin(rLat));
+        return normalize(StrictMath.toDegrees(rLat), StrictMath.toDegrees(rLon));
 	}
 
 	/**
