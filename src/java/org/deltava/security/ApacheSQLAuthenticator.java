@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2012, 2014, 2015, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010, 2012, 2014, 2015, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.StringUtils;
 /**
  * An Authenticator to authenticate users against Apache2-style database tables.
  * @author Luke
- * @version 7.5
+ * @version 9.0
  * @since 1.0
  */
 
@@ -198,12 +198,16 @@ public class ApacheSQLAuthenticator extends SQLAuthenticator {
 						ps.setString(2, p.getPilotCode());
 						ps.setBoolean(3, true);
 						ps.addBatch();
+						if (log.isDebugEnabled())
+							log.debug("Adding " + p.getPilotCode() + " as alias");
 					}
 					
 					if (!StringUtils.isEmpty(p.getLDAPName())) {
 						ps.setString(2, p.getLDAPName());
 						ps.setBoolean(3, false);
 						ps.addBatch();
+						if (log.isDebugEnabled())
+							log.debug("Adding " + p.getLDAPName() + " as alias");
 					}
 					
 					ps.executeBatch();
