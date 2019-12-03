@@ -18,13 +18,18 @@ import junit.framework.TestCase;
 public class XPlaneRunwayLoader extends TestCase {
 	
 	private static final String JDBC_URL = "jdbc:mysql://sirius.sce.net/common?useSSL=false";
+	
 	private static final double M_TO_MI = 0.000621371;
+	private static final double FT_PER_M = 3.2808399;
 	
 	private static final Surface[] SFCS = new Surface[] { Surface.UNKNOWN, Surface.ASPHALT, Surface.CONCRETE, Surface.GRASS,
 			Surface.DIRT, Surface.GRAVEL, Surface.UNKNOWN, Surface.UNKNOWN, Surface.UNKNOWN, Surface.UNKNOWN, Surface.UNKNOWN,
 			Surface.UNKNOWN, Surface.SAND, Surface.WATER, Surface.ICE, Surface.UNKNOWN };
 	
 	private static final int WGS84_SRID = 4326;
+	
+	private static final Simulator SIM = Simulator.XP11;
+	private static final String DATA_FILE = "apt_xp11.dat";
 	
 	private Logger log;
 	
@@ -34,10 +39,11 @@ public class XPlaneRunwayLoader extends TestCase {
 		
 		// Init Log4j
 		PropertyConfigurator.configure("etc/log4j.test.properties");
-		log = Logger.getLogger(RunwayLoader.class);
+		log = Logger.getLogger(XPlaneRunwayLoader.class);
 		
 		// Connect to the database
 		Class<?> c = Class.forName("com.mysql.jdbc.Driver");
+		DriverManager.setLoginTimeout(3);
 		assertNotNull(c);
 	}
 
@@ -53,7 +59,7 @@ public class XPlaneRunwayLoader extends TestCase {
 
 	public void testLoadXPRunways() throws Exception {
 		
-		File f = new File("C:\\Temp\\apt.dat");
+		File f = new File("E:\\Temp", DATA_FILE);
 		assertTrue(f.exists());
 		
 		// Load existing airport codes
@@ -104,6 +110,9 @@ public class XPlaneRunwayLoader extends TestCase {
 				GeoLocation gl1 = new GeoPosition(StringUtils.parse(dd.get(8), 0.0d), StringUtils.parse(dd.get(9), 0.0d));
 				GeoLocation gl2 = new GeoPosition(StringUtils.parse(dd.get(17), 0.0d), StringUtils.parse(dd.get(18), 0.0d));
 				int l = gl1.distanceFeet(gl2); double hdg = GeoUtils.course(gl1, gl2);
+				
+				// Get width
+				double width = StringUtils.parse(dd.get(0), 45.0);
 
 				// Get displaced threshold lengths (if any)
 				double dt1 = StringUtils.parse(dd.get(10), 0.0d);
@@ -117,31 +126,33 @@ public class XPlaneRunwayLoader extends TestCase {
 				r1.setName(dd.get(7)); r1.setCode(apCode); r1.setSurface(s);
 				r1.setHeading((int) GeoUtils.normalize(hdg));
 				r1.setLength((int)(l - dt1));
+				r1.setWidth((int) Math.round(width * FT_PER_M));
 				rwys.add(r1);
 
 				Runway r2 = new Runway(gl2.getLatitude(), gl2.getLongitude());
 				r2.setName(dd.get(16)); r2.setCode(apCode); r2.setSurface(s);
 				r2.setHeading((int) GeoUtils.normalize(hdg + 180));
 				r2.setLength((int)(l - dt2));
+				r2.setWidth(r1.getWidth());
 				rwys.add(r2);
 				
 			} while (data != null);
 		}
 		
 		// Write data
-		try (Connection c = DriverManager.getConnection(JDBC_URL, "luke", "test")) {
+		try (Connection c = DriverManager.getConnection(JDBC_URL, "luke", "14072")) {
 			c.setAutoCommit(false);
 			try (PreparedStatement ps = c.prepareStatement("DELETE FROM common.RUNWAYS WHERE (SIMVERSION=?)")) {
-				ps.setInt(1, Simulator.XP11.getCode());
+				ps.setInt(1, SIM.getCode());
 				ps.executeUpdate();
 			}
 
 			int rowsWritten = 0;
-			try (PreparedStatement ps = c.prepareStatement("INSERT INTO common.RUNWAYS VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ST_PointFromText(?,?))")) {
+			try (PreparedStatement ps = c.prepareStatement("REPLACE INTO common.RUNWAYS VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ST_PointFromText(?,?))")) {
 				for (Runway r : rwys) {
 					ps.setString(1, r.getCode());
 					ps.setString(2, r.getName());
-					ps.setInt(3, Simulator.XP11.getCode());
+					ps.setInt(3, SIM.getCode());
 					ps.setDouble(4, r.getLatitude());
 					ps.setDouble(5, r.getLongitude());
 					ps.setInt(6, r.getHeading());
