@@ -6,7 +6,7 @@ import org.deltava.beans.navdata.Runway;
 /**
  * A bean to store ACARS takeoff/landing runway data.
  * @author Luke
- * @version 8.5
+ * @version 9.0
  * @since 2.6
  */
 
@@ -24,6 +24,7 @@ public class RunwayDistance extends Runway {
 		setCode(r.getCode());
 		setName(r.getName());
 		setLength(r.getLength());
+		setWidth(r.getWidth());
 		setHeading(r.getHeading());
 		setFrequency(r.getFrequency());
 		setMagVar(r.getMagVar());

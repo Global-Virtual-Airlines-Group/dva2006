@@ -182,7 +182,7 @@ public class GetNavData extends DAO {
 			rw = rw.substring(2);
 		
 		try (PreparedStatement ps = prepare("SELECT ?, R.ICAO, R.LATITUDE, R.LONGITUDE, N.FREQ, R.LENGTH, R.NAME, R.HDG, N.REGION, NULL AS LL, R.MAGVAR, IFNULL(R.SURFACE, ?), RR.NEWCODE, "
-			+ "R.SIMVERSION FROM common.RUNWAYS R LEFT JOIN common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND (R.NAME=RR.OLDCODE)) LEFT JOIN common.NAVDATA N ON ((N.CODE=R.ICAO) "
+			+ "R.SIMVERSION, R.WIDTH FROM common.RUNWAYS R LEFT JOIN common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND (R.NAME=RR.OLDCODE)) LEFT JOIN common.NAVDATA N ON ((N.CODE=R.ICAO) "
 			+ "AND (N.NAME=IFNULL(RR.NEWCODE,R.NAME)) AND (N.ITEMTYPE=?)) WHERE (R.ICAO=?) AND (R.NAME=?) AND (R.SIMVERSION=?)")) {
 			ps.setInt(1, Navaid.RUNWAY.ordinal());
 			ps.setInt(2, Surface.UNKNOWN.ordinal());
@@ -207,7 +207,7 @@ public class GetNavData extends DAO {
 	public List<Runway> getRunways(ICAOAirport a, Simulator sim) throws DAOException {
 		Simulator s = (sim == null) ? Simulator.FSX : sim;
 		try (PreparedStatement ps = prepare("SELECT ?, R.ICAO, R.LATITUDE, R.LONGITUDE, N.FREQ, R.LENGTH, R.NAME, R.HDG, N.REGION, NULL AS LL, R.MAGVAR, IFNULL(R.SURFACE, ?), RR.NEWCODE, "
-			+ "R.SIMVERSION FROM common.RUNWAYS R LEFT JOIN common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND (R.NAME=RR.OLDCODE)) LEFT JOIN common.NAVDATA N ON "
+			+ "R.SIMVERSION, R.WIDTH FROM common.RUNWAYS R LEFT JOIN common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND (R.NAME=RR.OLDCODE)) LEFT JOIN common.NAVDATA N ON "
 			+ "((N.CODE=R.ICAO) AND (N.NAME=IFNULL(RR.NEWCODE,R.NAME)) AND (N.ITEMTYPE=?)) WHERE (R.ICAO=?) AND (R.SIMVERSION=?)")) {
 			ps.setInt(1, Navaid.RUNWAY.ordinal());
 			ps.setInt(2, Surface.UNKNOWN.ordinal());
@@ -246,10 +246,11 @@ public class GetNavData extends DAO {
 							r.setName(rs.getString(2));
 							r.setHeading(rs.getInt(6));
 							r.setLength(rs.getInt(7));
-							r.setMagVar(rs.getDouble(8));
-							r.setSurface(Surface.values()[rs.getInt(9)]);
+							r.setWidth(rs.getInt(8));
+							r.setMagVar(rs.getDouble(9));
+							r.setSurface(Surface.values()[rs.getInt(10)]);
 							// LL
-							r.setNewCode(rs.getString(11));
+							r.setNewCode(rs.getString(12));
 							r.setSimulator(s);
 							results.add(r);
 						}
@@ -398,6 +399,7 @@ public class GetNavData extends DAO {
 							if (cc > 12) {
 								rwy.setNewCode(rs.getString(13));
 								rwy.setSimulator(Simulator.fromVersion(rs.getInt(14), Simulator.UNKNOWN));
+								rwy.setWidth(rs.getInt(15));
 							}
 						}
 						

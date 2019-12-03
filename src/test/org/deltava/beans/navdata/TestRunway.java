@@ -41,18 +41,7 @@ protected void tearDown() throws Exception {
       checkProperty("length", Integer.valueOf(8050));
       checkProperty("name", "Test VOR");
       checkProperty("frequency", "123.35");
-      
-      assertEquals(_rwy.getCode().hashCode(), _rwy.hashCode());
       assertEquals(_rwy.getCode(), _rwy.cacheKey());
-   }
-   
-   public void testValidation() {
-      validateInput("type", Integer.valueOf(-1), IllegalArgumentException.class);
-      validateInput("type", Integer.valueOf(11), IllegalArgumentException.class);
-      validateInput("length", Integer.valueOf(0), IllegalArgumentException.class);
-      validateInput("length", Integer.valueOf(25001), IllegalArgumentException.class);
-      validateInput("heading", Integer.valueOf(-1), IllegalArgumentException.class);
-      validateInput("heading", Integer.valueOf(361), IllegalArgumentException.class);
    }
    
    public void testComparator() {
