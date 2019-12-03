@@ -98,17 +98,13 @@ public class AIRACImportCommand extends NavDataImportCommand {
 							throw new DAOException("Navigation Data Cycle " + newCycle + " is older than loaded cycle " + inf);
 					}
 				} else if (!isComment && (txtData.length() > 5)) {
-					double lat, lon;
 					NavigationDataBean nd = null;
 
 					// Parse each line differently depending on the filename
 					try {
 						switch (nt) {
 						case AIRPORT:
-							lat = Double.parseDouble(txtData.substring(5, 15).trim());
-							lon = Double.parseDouble(txtData.substring(15, 26).trim());
-
-							AirportLocation al = new AirportLocation(lat, lon);
+							AirportLocation al = new AirportLocation(Double.parseDouble(txtData.substring(5, 15).trim()), Double.parseDouble(txtData.substring(15, 26).trim()));
 							al.setCode(txtData.substring(0, 5));
 							al.setAltitude(StringUtils.parse(txtData.substring(27, 32).trim(), 0));
 							al.setName(txtData.substring(34));
@@ -116,10 +112,7 @@ public class AIRACImportCommand extends NavDataImportCommand {
 							break;
 
 						case NDB:
-							lat = Double.parseDouble(txtData.substring(5, 15).trim());
-							lon = Double.parseDouble(txtData.substring(15, 26).trim());
-
-							NDB ndb = new NDB(lat, lon);
+							NDB ndb = new NDB(Double.parseDouble(txtData.substring(5, 15).trim()), Double.parseDouble(txtData.substring(15, 26).trim()));
 							ndb.setCode(txtData.substring(0, 4));
 							ndb.setFrequency(txtData.substring(28, 34).trim());
 							ndb.setName(txtData.substring(36));
@@ -127,29 +120,23 @@ public class AIRACImportCommand extends NavDataImportCommand {
 							break;
 
 						case RUNWAY:
-							lat = Double.parseDouble(txtData.substring(9, 19).trim());
-							lon = Double.parseDouble(txtData.substring(19, 30).trim());
-
-							// Convert runway length from meters to feet
-							int lenM = Integer.parseInt(txtData.substring(35, 40).trim());
-
-							Runway rwy = new Runway(lat, lon);
+							Runway rwy = new Runway(Double.parseDouble(txtData.substring(9, 19).trim()), Double.parseDouble(txtData.substring(19, 30).trim()));
 							rwy.setCode(txtData.substring(0, 5));
 							rwy.setName(txtData.substring(5, 8).toUpperCase());
-							rwy.setHeading(Integer.parseInt(txtData.substring(31, 34).trim()));
-							rwy.setLength((int) Math.round(lenM * 3.2808399));
-							rwy.setFrequency("-");
-							if (txtData.length() > 46)
+							rwy.setLength((int) Math.round(Integer.parseInt(txtData.substring(35, 40).trim()) * 3.2808399)); // Convert runway length from meters to feet
+							if (txtData.length() < 47) {
+								rwy.setFrequency("-");
+								rwy.setHeading(Integer.parseInt(txtData.substring(31, 34).trim()));
+							} else {
 								rwy.setFrequency(txtData.substring(41, 47).trim());
-
+								rwy.setHeading(Integer.parseInt(txtData.substring(48, 51).trim()));
+							}
+							
 							nd = rwy;
 							break;
 
 						case VOR:
-							lat = Double.parseDouble(txtData.substring(5, 15).trim());
-							lon = Double.parseDouble(txtData.substring(15, 26).trim());
-
-							VOR vor = new VOR(lat, lon);
+							VOR vor = new VOR(Double.parseDouble(txtData.substring(5, 15).trim()), Double.parseDouble(txtData.substring(15, 26).trim()));
 							vor.setCode(txtData.substring(0, 5));
 							vor.setFrequency(txtData.substring(28, 34).trim());
 							vor.setName(txtData.substring(36));
@@ -159,23 +146,16 @@ public class AIRACImportCommand extends NavDataImportCommand {
 						case INT:
 							StringTokenizer tkns = new StringTokenizer(txtData, " ");
 							int cnt = tkns.countTokens();
-							if (cnt == 3) {
-								String code = tkns.nextToken();
-								lat = Double.parseDouble(tkns.nextToken());
-								lon = Double.parseDouble(tkns.nextToken());
-								nd = new Intersection(code, lat, lon);
-							} else if ((cnt == 2) && (txtData.indexOf('-') < 8)) {
+							if (cnt == 3)
+								nd = new Intersection(tkns.nextToken(), Double.parseDouble(tkns.nextToken()), Double.parseDouble(tkns.nextToken()));
+							else if ((cnt == 2) && (txtData.indexOf('-') < 8)) {
 								String codeLat = tkns.nextToken();
 								int pos = txtData.indexOf('-');
 								String code = codeLat.substring(0, pos);
-								lat = Double.parseDouble(codeLat.substring(pos).trim());
-								lon = Double.parseDouble(tkns.nextToken());
-								nd = new Intersection(code, lat, lon);
-							} else {
-								lat = Double.parseDouble(txtData.substring(5, 15).trim());
-								lon = Double.parseDouble(txtData.substring(16).trim());
-								nd = new Intersection(txtData.substring(0, 5), lat, lon);
-							}
+								nd = new Intersection(code, Double.parseDouble(codeLat.substring(pos).trim()), Double.parseDouble(tkns.nextToken()));
+							} else
+								nd = new Intersection(txtData.substring(0, 5), Double.parseDouble(txtData.substring(5, 15).trim()), Double.parseDouble(txtData.substring(16).trim()));
+								
 							break;
 							
 						default:
@@ -187,14 +167,16 @@ public class AIRACImportCommand extends NavDataImportCommand {
 					} 
 					
 					// Write the bean, and log any errors
-					if (nd != null) nds.add(nd);
-					if (nds.size() > 40) {
-						entryCount += nds.size();
-						try {
-							dao.write(nds);
-							nds.clear();
-						} catch (DAOException de) {
-							errors.add("Error at line " + br.getLineNumber() + ": " + de.getMessage());
+					if (nd != null) {
+						nds.add(nd);
+						if (nds.size() > 40) {
+							entryCount += nds.size();
+							try {
+								dao.write(nds);
+								nds.clear();
+							} catch (DAOException de) {
+								errors.add("Error at line " + br.getLineNumber() + ": " + de.getMessage());
+							}
 						}
 					}
 				}

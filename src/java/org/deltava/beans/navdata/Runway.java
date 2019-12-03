@@ -1,20 +1,25 @@
 // Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2014, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
-import org.deltava.beans.ComboAlias;
-import org.deltava.beans.Simulator;
-import org.deltava.util.StringUtils;
+import java.util.List;
+
+import com.vividsolutions.jts.geom.*;
+
+import org.deltava.beans.*;
+
+import org.deltava.util.*;
 
 /**
  * A bean to store Runway information.
  * @author Luke
- * @version 8.5
+ * @version 9.0
  * @since 1.0
  */
 
 public class Runway extends NavigationFrequencyBean implements ComboAlias {
 
 	private int _length;
+	private int _width = 175;
 	private int _heading;
 	
 	private Simulator _sim = Simulator.UNKNOWN;
@@ -22,6 +27,8 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 	private double _magVar;
 	
 	private String _newCode;
+	
+	private transient Geometry _geo;
 
 	/**
 	 * Creates a new Runway bean.
@@ -47,6 +54,15 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 	 */
 	public int getLength() {
 		return _length;
+	}
+	
+	/**
+	 * Returns the width of the runway.
+	 * @return the width in feet
+	 * @see Runway#setWidth(int)
+	 */
+	public int getWidth() {
+		return _width;
 	}
 
 	/**
@@ -102,6 +118,15 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 	public void setLength(int len) {
 		_length = Math.max(1, len);
 	}
+	
+	/**
+	 * Updates the width of the runway.
+	 * @param w the width in feet
+	 * @see Runway#getWidth()
+	 */
+	public void setWidth(int w) {
+		_width = Math.max(1, w);
+	}
 
 	/**
 	 * Updates the runway heading.
@@ -151,6 +176,38 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 	 */
 	public void setNewCode(String newCode) {
 		_newCode = newCode;
+	}
+	
+	/**
+	 * Returns if a particular point is on this runway.
+	 * @param loc a GeoLocation
+	 * @return TRUE if on the runway, otherwise FALSE
+	 */
+	public boolean contains(GeoLocation loc) {
+		calculateGeo();
+		GeometryFactory gf = new GeometryFactory();
+		Point pt = gf.createPoint(GeoUtils.toCoordinate(loc));
+		return _geo.contains(pt);
+	}
+	
+	private void calculateGeo() {
+		if (_geo != null)
+			return;
+		
+		double rcpHdg = GeoUtils.normalize(_heading + 180);
+		GeoLocation end = GeoUtils.bearingPointS(this, (_length / GeoLocation.FEET_MILES), _heading);
+		
+        // Calculate runway box
+		double rwyOffsetSize = (450 / GeoLocation.FEET_MILES);
+		double rwyWidthSize = (_width / GeoLocation.FEET_MILES / 2);
+		
+        GeoLocation ofsRwy = GeoUtils.bearingPointS(this, rwyOffsetSize, rcpHdg); GeoLocation ofsEnd = GeoUtils.bearingPointS(end, rwyOffsetSize, _heading);
+        double lHdg = GeoUtils.normalize(_heading - 90); double rHdg = GeoUtils.normalize(_heading + 90);
+        GeoLocation sl = GeoUtils.bearingPointS(ofsRwy, rwyWidthSize, lHdg);
+        GeoLocation sr = GeoUtils.bearingPointS(ofsRwy, rwyWidthSize, rHdg);
+        GeoLocation el = GeoUtils.bearingPointS(ofsEnd, rwyWidthSize, lHdg);
+        GeoLocation er = GeoUtils.bearingPointS(ofsEnd, rwyWidthSize, rHdg);
+		_geo = GeoUtils.toGeometry(List.of(sl, sr, er, el));
 	}
  
 	/**

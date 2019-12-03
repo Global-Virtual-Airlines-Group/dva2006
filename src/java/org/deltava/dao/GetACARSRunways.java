@@ -4,6 +4,7 @@ package org.deltava.dao;
 import java.sql.*;
 import java.util.*;
 
+import org.deltava.beans.Simulator;
 import org.deltava.beans.UseCount;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.Airport;
@@ -113,9 +114,10 @@ public class GetACARSRunways extends DAO {
 			return rwys.clone();
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT ND.NAME, ND.CODE, ND.LATITUDE, ND.LONGITUDE, ND.ALTITUDE, ND.HDG, IFNULL(ND.FREQ, ?), RR.OLDCODE, COUNT(R.ID) AS CNT "
-			+ "FROM acars.FLIGHTS F, acars.RWYDATA R LEFT JOIN common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND (R.RUNWAY=RR.OLDCODE)) LEFT JOIN common.NAVDATA ND "
-			+ "ON ((ND.CODE=R.ICAO) AND (ND.NAME=IFNULL(RR.NEWCODE, R.RUNWAY)) AND (ND.ITEMTYPE=?)) WHERE (F.ID=R.ID) AND (R.ISTAKEOFF=?) AND (ND.NAME IS NOT NULL) ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT ND.NAME, ND.CODE, ND.LATITUDE, ND.LONGITUDE, ND.ALTITUDE, ND.HDG, IFNULL(RW.WIDTH, 150), IFNULL(ND.FREQ, ?), RR.OLDCODE, "
+			+ "COUNT(R.ID) AS CNT FROM acars.FLIGHTS F, acars.RWYDATA R LEFT JOIN common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND (R.RUNWAY=RR.OLDCODE)) LEFT JOIN "
+			+ "common.NAVDATA ND ON ((ND.CODE=R.ICAO) AND (ND.NAME=IFNULL(RR.NEWCODE, R.RUNWAY)) AND (ND.ITEMTYPE=?)) LEFT JOIN common.RUNWAYS RW ON ((ND.CODE=RW.ICAO) "
+			+"AND (ND.NAME=RW.NAME) AND (RW.SIMVERSION=?)) WHERE (F.ID=R.ID) AND (R.ISTAKEOFF=?) AND (ND.NAME IS NOT NULL) ");
 		if (aD != null)
 			sqlBuf.append("AND (F.AIRPORT_D=?) ");
 		if (aA != null)
@@ -126,6 +128,7 @@ public class GetACARSRunways extends DAO {
 			int pos = 0;
 			ps.setString(++pos, "-");
 			ps.setInt(++pos, Navaid.RUNWAY.ordinal());
+			ps.setInt(++pos, Simulator.XP11.getCode());
 			ps.setBoolean(++pos, isTakeoff);
 			if (aD != null)
 				ps.setString(++pos, aD.getIATA());
@@ -142,9 +145,10 @@ public class GetACARSRunways extends DAO {
 					r.setCode(rs.getString(2));
 					r.setLength(rs.getInt(5));
 					r.setHeading(rs.getInt(6));
-					r.setFrequency(rs.getString(7));
-					r.setNewCode(rs.getString(8));
-					r.setUseCount(rs.getInt(9));
+					r.setWidth(rs.getInt(7));
+					r.setFrequency(rs.getString(8));
+					r.setNewCode(rs.getString(9));
+					r.setUseCount(rs.getInt(10));
 					max = Math.max(max, r.getUseCount());
 					
 					// Determine percentage - default to 10%, if we have more than 7,500 flights use 20%
