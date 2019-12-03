@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.*;
  * An authenticator to validate users against a file repository. This should
  * typically be used for testing or backup purposes only.
  * @author Luke
- * @version 7.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -26,8 +26,7 @@ public class FileAuthenticator implements Authenticator {
 	private final Properties _props = new Properties();
 
 	private class UserInfo {
-
-		private String _dn;
+		private final String _dn;
 		private String _pwd;
 		private boolean _enabled = true;
 
@@ -84,15 +83,12 @@ public class FileAuthenticator implements Authenticator {
 			throw new SecurityException(ie.getMessage());
 		}
 
-		try {
-			BufferedReader br = new BufferedReader(new FileReader(new File(_props.getProperty("file.name"))));
+		try (BufferedReader br = new BufferedReader(new FileReader(new File(_props.getProperty("file.name"))))) {
 			while (br.ready()) {
 				UserInfo info = new UserInfo(br.readLine());
 				_users.put(info.getDN(), info);
 				log.debug("Loaded user " + info.getDN());
 			}
-
-			br.close();
 		} catch (IOException ie) {
 			log.warn("Error loading " + _props.getProperty("file.name") + " - "
 					+ ie.getMessage());
@@ -146,14 +142,12 @@ public class FileAuthenticator implements Authenticator {
 		return _users.containsKey(usr.getDN());
 	}
 
-	/**
+	/*
 	 * Writes the user list out to the data file.
 	 */
 	private void save() throws SecurityException {
-		try {
-			PrintWriter pw = new PrintWriter(new FileWriter(new File(_props.getProperty("file.name"))));
-			for (Iterator<UserInfo> i = _users.values().iterator(); i.hasNext();) {
-				UserInfo user = i.next();
+		try (PrintWriter pw = new PrintWriter(new FileWriter(new File(_props.getProperty("file.name"))))) {
+			for (UserInfo user : _users.values()) {
 				pw.print(user.getDN());
 				pw.print(',');
 				pw.println(user.getPassword());
@@ -161,14 +155,11 @@ public class FileAuthenticator implements Authenticator {
 				pw.print(String.valueOf(user.isEnabled()));
 			}
 
-			// Close the file
 			pw.flush();
-			pw.close();
 		} catch (IOException ie) {
 			throw new SecurityException(ie);
 		}
 
-		// Log success
 		log.info("Saved " + _users.size() + " user records");
 	}
 
