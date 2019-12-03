@@ -167,16 +167,16 @@ public class GetACARSData extends DAO {
 			
 			// Fetch the takeoff and landing runways
 			if (info.getHasPIREP()) {
-				try (PreparedStatement ps = prepareWithoutLimits("SELECT R.*, IFNULL(ND.HDG, 0), ND.FREQ, RW.MAGVAR, IFNULL(RW.SURFACE, ?), IFNULL(RR.OLDCODE, R.RUNWAY) FROM acars.RWYDATA R LEFT JOIN "
-					+ "common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND (R.RUNWAY=RR.NEWCODE)) LEFT JOIN common.RUNWAYS RW ON ((RW.ICAO=R.ICAO) AND (RW.NAME=IFNULL(RR.OLDCODE, R.RUNWAY)) "
-					+ "AND (RW.SIMVERSION=?)) LEFT JOIN common.NAVDATA ND ON ((R.ICAO=ND.CODE) AND (R.RUNWAY=ND.NAME) AND (ND.ITEMTYPE=?)) WHERE (R.ID=?) LIMIT 2")) {
+				try (PreparedStatement ps = prepareWithoutLimits("SELECT R.*, IFNULL(ND.HDG, 0), ND.FREQ, RW.MAGVAR, RW.WIDTH, IFNULL(RW.SURFACE, ?), IFNULL(RR.OLDCODE, R.RUNWAY) FROM acars.RWYDATA R LEFT JOIN "
+					+ "common.RUNWAY_RENUMBER RR ON ((R.ICAO=RR.ICAO) AND (R.RUNWAY=RR.NEWCODE)) LEFT JOIN common.RUNWAYS RW ON ((RW.ICAO=R.ICAO) AND (RW.NAME=IFNULL(RR.OLDCODE, R.RUNWAY)) AND "
+					+ "(RW.SIMVERSION=?)) LEFT JOIN common.NAVDATA ND ON ((R.ICAO=ND.CODE) AND (R.RUNWAY=ND.NAME) AND (ND.ITEMTYPE=?)) WHERE (R.ID=?) LIMIT 2")) {
 					ps.setInt(1, Surface.UNKNOWN.ordinal());
 					ps.setInt(2, Math.max(2004, info.getSimulator().getCode()));
 					ps.setInt(3, Navaid.RUNWAY.ordinal());
 					ps.setInt(4, flightID);
 					try (ResultSet rs = ps.executeQuery()) {
 						while (rs.next()) {
-							String simCode = rs.getString(13); String currentCode = rs.getString(3);
+							String simCode = rs.getString(14); String currentCode = rs.getString(3);
 							Runway r = new Runway(rs.getDouble(4), rs.getDouble(5));
 							r.setCode(rs.getString(2));
 							r.setName(simCode);
@@ -184,7 +184,8 @@ public class GetACARSData extends DAO {
 							r.setHeading(rs.getInt(9));
 							r.setFrequency(rs.getString(10));
 							r.setMagVar(rs.getDouble(11));
-							r.setSurface(Surface.values()[rs.getInt(12)]);
+							r.setWidth(rs.getInt(12));
+							r.setSurface(Surface.values()[rs.getInt(13)]);
 							r.setSimulator(info.getSimulator());
 							if (!currentCode.equals(simCode))
 								r.setNewCode(currentCode);
