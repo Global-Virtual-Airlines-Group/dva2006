@@ -6,7 +6,7 @@ import org.deltava.beans.schedule.GeoPosition;
 /**
  * An interface to mark objects that contain a latitude/longitude pair.
  * @author Luke
- * @version 8.6
+ * @version 9.0
  * @since 1.0
  */
 
@@ -16,6 +16,16 @@ public interface GeoLocation {
 	 * Size of a degree in miles.
 	 */
 	public static final double DEGREE_MILES = 69.16;
+	
+	/**
+	 * Size of a mile in feet.
+	 */
+	public static final int FEET_MILES = 5280;
+	
+	/**
+	 * Radius of the Earth in miles.
+	 */
+	public static final int RADIAN_MILES = 3959;
 
 	/**
 	 * Format the Latitude only.
@@ -103,6 +113,6 @@ public interface GeoLocation {
 		double distD = Math.toDegrees(Math.acos(p1 + p2));
 		
 		// Convert to miles and return
-		return (int) StrictMath.round(distD * DEGREE_MILES * 5280);
+		return (int) StrictMath.round(distD * DEGREE_MILES * FEET_MILES);
 	}
 }
