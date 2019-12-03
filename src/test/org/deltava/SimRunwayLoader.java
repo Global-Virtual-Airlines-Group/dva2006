@@ -17,14 +17,14 @@ import org.jdom2.filter.ElementFilter;
 
 public class SimRunwayLoader extends SceneryLoaderTestCase {
 
-	private static final String JDBC_URL = "jdbc:mysql://dev.gvagroup.org/common?rewriteBatchedStatements=true&useSSL=false";
+	private static final String JDBC_URL = "jdbc:mysql://sirius.sce.net/common?rewriteBatchedStatements=true&useSSL=false";
 	private Connection _c;
 
-	private static final String SCENERY_ROOT = "D:\\Program Files\\FS9\\Scenery";
-	private static final String XML_PATH = "E:\\temp\\bgxml_fs9";
+	private static final String SCENERY_ROOT = "D:\\Program Files\\Prepar3Dv4\\Scenery";
+	private static final String XML_PATH = "E:\\temp\\bgxml_p3dv4";
 
 	private static final String BGLXML = "data/bglxml/bglxml.exe";
-	private static final Simulator SIM = Simulator.FS9;
+	private static final Simulator SIM = Simulator.P3Dv4;
 
 	private static final String[] NAMES = { "NORTH", "SOUTH", "EAST", "WEST", "NORTHWEST", "SOUTHEAST", "NORTHEAST", "SOUTHWEST" };
 	private static final String[] CODES = { "N", "S", "E", "W", "NW", "SE", "NE", "SW" };
@@ -53,6 +53,7 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 
 		// Connect to the database
 		Class.forName("com.mysql.jdbc.Driver");
+		DriverManager.setLoginTimeout(3);
 		_c = DriverManager.getConnection(JDBC_URL, "luke", "test");
 		assertNotNull(_c);
 		_c.setAutoCommit(false);
@@ -161,7 +162,7 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 					if (!codes.contains(apCode))
 						continue;
 
-					// log.info("Processing " + apCode + " from " + xmls[x]);
+					log.info("Processing " + apCode + " from " + xmls[x]);
 
 					float magVar = Float.parseFloat(ae.getAttributeValue("magvar", "0.0"));
 					Map<String, Runway> runways = new HashMap<String, Runway>();
@@ -280,7 +281,7 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 							ps.setDouble(5, lng);
 							ps.setInt(6, Math.round(hdg));
 							ps.setInt(7, r.getLength());
-							ps.setInt(8, r.getLength());
+							ps.setInt(8, r.getWidth());
 							ps.setDouble(9, magVar);
 							ps.setInt(10, r.getSurface().ordinal());
 							ps.setString(11, formatLocation(lat, lng));
