@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2012, 2013, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2012, 2013, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.ftp;
 
 import java.io.*;
@@ -12,7 +12,7 @@ import org.deltava.util.*;
 /**
  * A utility class to provide cached access to a remote FTP server.
  * @author Luke
- * @version 7.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -72,8 +72,7 @@ public class FTPCache {
 	public String getNewest(String dirName, FilenameFilter filter) {
 
 		// Init the FTPConnection object
-		FTPConnection con = new FTPConnection(_host);
-		try {
+		try (FTPConnection con = new FTPConnection(_host)) {
 			con.connect(_user, _pwd);
 			log.info("Connected to " + _host);
 			String fileName = con.getNewest(dirName, filter); 
@@ -81,8 +80,6 @@ public class FTPCache {
 				return fileName;
 		} catch (FTPClientException ce) {
 			log.error(ce.getMessage() + " to " + _host);
-		} finally {
-			con.close();
 		}
 
 		// Return the newest from the cache if this has an exception
@@ -107,23 +104,21 @@ public class FTPCache {
 		Instant ldt = cf.isFile() ? Instant.ofEpochMilli(cf.lastModified()) : null;
 
 		// Init the FTPConnection object
-		FTPConnection con = new FTPConnection(_host);
-		con.connect(_user, _pwd);
-		log.info("Connected to " + _host);
+		InputStream is = null;
+		try (FTPConnection con = new FTPConnection(_host)) {
+			con.connect(_user, _pwd);
+			log.info("Connected to " + _host);
 
-		// Check the remote file date
-		Instant rdt = con.getTimestamp("", fileName);
-		if (rdt == null) {
-			if (!cf.exists()) {
-				con.close();	
-				throw new FTPClientException("Cannot find " + fileName + " on local or " + _host);
+			// Check the remote file date
+			Instant rdt = con.getTimestamp("", fileName);
+			if (rdt == null) {
+				if (!cf.exists()) {
+					throw new FTPClientException("Cannot find " + fileName + " on local or " + _host);
+				}
+			
+				rdt = Instant.EPOCH;
 			}
 			
-			rdt = Instant.EPOCH;
-		}
-
-		InputStream is = null;
-		try {
 			if ((ldt == null) || (ldt.isBefore(rdt))) {
 				TaskTimer tt = new TaskTimer();
 				log.info("Downloading " + cf.getName() + ", local=" + ldt + ", remote=" + rdt);
@@ -139,8 +134,6 @@ public class FTPCache {
 			}
 		} catch (IOException ie) {
 			log.warn(ie.getMessage());
-		} finally {
-			con.close();
 		}
 
 		// If we have no input stream, abort
