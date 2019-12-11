@@ -541,7 +541,7 @@
 		<js>js</js>
 		<img>img</img>
 		<library>/home/www/library</library>
-		<files>/home/www/userfiles</files>
+		<userfiles>/home/www/userfiles</userfiles>
 		<httplog>/var/log/www</httplog>
 		<newsletter>/home/www/nws</newsletter>
 		<archive>/home/www/pos_archive</archive>
@@ -746,7 +746,7 @@
 	<!-- Help Desk Data -->
 	<helpdesk>
 		<enabled type="Boolean">true</enabled>
-		<assignto type="Integer">2887</assignto>
+		<assignto type="Integer">10323</assignto>
 		<list name="notify_roles" attr="role" unique="true">
 		</list>
 	</helpdesk>
