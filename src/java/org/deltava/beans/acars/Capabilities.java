@@ -4,14 +4,14 @@ package org.deltava.beans.acars;
 /**
  * An enumeration to store Simulator capabilities.
  * @author Luke
- * @version 8.7
+ * @version 9.0
  * @since 8.6
  */
 
 public enum Capabilities {
-	GSX(0, "GSX", true), RAAS(1, "RAAS", true), XSB(2, "XSquawkbox",true), FUEL_LOAD(3, "Fuel Loading"), PAX_LOAD(4, "Passenger Loading"), 
+	GSX(0, "GSX", true), RAAS(1, "RAAS", true), XSB(2, "XSquawkbox", true), FUEL_LOAD(3, "Fuel Loading"), PAX_LOAD(4, "Passenger Loading"), 
 	FMC_LOAD(5, "FMC Fuel/Passenger Loaidng"), ANNOUNCE(6, "Cabin Announcements"), AFTERBURNER(7, "Afterburner"), JETWAY(8, "Jetway Control"), 
-	FMC(9, "FMC", true), VPILOT(10, "vPilot", true), XIVAP(11, "X-IvAp", true), IVAP(12, "IvAp", true);
+	FMC(9, "FMC", true), VPILOT(10, "vPilot", true), XIVAP(11, "X-IvAp", true), IVAP(12, "IvAp", true), CABINSIZE(13, "Cabin Size"), XPILOT(14, "xPilot", true);
 	
 	private final long _mask;
 	private final String _desc;
