@@ -8,8 +8,6 @@
 <content:sysdata var="academyEnabled" name="academy.enabled" />
 <content:sysdata var="academyFlights" name="academy.minFlights" />
 <content:sysdata var="helpDeskEnabled" name="helpdesk.enabled" />
-<content:sysdata var="innovataEnabled" name="schedule.innovata.enabled" />
-<content:sysdata var="vaBaseEnabled" name="schedule.vabase.enabled" />
 <content:sysdata var="faaChartURL" name="schedule.chart.url.faa" />
 <!-- Top Menu Frame -->
 <content:region id="navmenu">
@@ -42,14 +40,6 @@
  <content:subitem><el:cmd url="routes" op="oceanic">Oceanic Tracks</el:cmd></content:subitem>
  <content:subitem><el:cmd url="schedimport">Schedule Import</el:cmd></content:subitem>
  <content:subitem><el:cmd url="schedexport">Schedule Export</el:cmd></content:subitem>
-<c:if test="${innovataEnabled}">
- <content:subitem><el:cmd url="ivimport">Innovata Download</el:cmd></content:subitem>
- <content:subitem><el:cmd url="ivstatus">Innovata Status</el:cmd></content:subitem>
-</c:if>
-<c:if test="${vaBaseEnabled}">
- <content:subitem><el:cmd url="vaimport">VABase Import</el:cmd></content:subitem>
- <content:subitem><el:cmd url="vafilter">VABase Load</el:cmd></content:subitem>
-</c:if>
  <content:subitem><el:cmd url="schedsync">Synchronize Schedules</el:cmd></content:subitem>
  <content:subitem><el:cmd url="usvcairports">Unserviced Airports</el:cmd></content:subitem>
  <content:subitem><el:cmd url="navimport">Navigation Data</el:cmd></content:subitem>
