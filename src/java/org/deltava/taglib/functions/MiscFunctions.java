@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.functions;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.util.*;
 /**
  * A JSP Function Library to store miscellaneous functions.
  * @author Luke
- * @version 7.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -98,7 +98,7 @@ public class MiscFunctions {
 	 * @see Collection#contains(Object)
 	 */
 	public static <T> boolean contains(Collection<T> c, T obj) {
-		return (c == null) ? false : c.contains(obj);
+		return (c != null) && c.contains(obj);
 	}
 
 	/**
@@ -173,6 +173,8 @@ public class MiscFunctions {
 			zdt = ZonedDateTime.ofInstant((Instant) dt, ZoneOffset.UTC);
 		else if (dt instanceof ZonedDateTime)
 			zdt = (ZonedDateTime) dt;
+		else if (dt instanceof LocalDate)
+			zdt = ZonedDateTime.of((LocalDate) dt, LocalTime.of(0, 0), ZoneOffset.UTC);
 		else if (dt != null)
 			throw new IllegalArgumentException("Unknown temporal type - " + dt.getClass().getName());
 			
@@ -187,9 +189,6 @@ public class MiscFunctions {
 	 * @return the difference in seconds, or 0 if either date is null
 	 */
 	public static long difference(Temporal t1, Temporal t2) {
-		if ((t1 == null) || (t2 == null))
-			return 0;
-
-		return Duration.between(t1, t2).getSeconds();
+		return ((t1 == null) || (t2 == null)) ? 0 : Duration.between(t1, t2).getSeconds();
 	}
 }
