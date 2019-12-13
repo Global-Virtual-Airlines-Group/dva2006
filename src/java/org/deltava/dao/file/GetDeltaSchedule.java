@@ -140,7 +140,7 @@ public class GetDeltaSchedule extends ScheduleLoadDAO {
 		fd.eqType = tkns.get(tkns.size() - 4);
 		fd.timeD = tkns.get(3).toUpperCase() + "M";
 		String tA = tkns.get(5);
-		if (tA.endsWith("+1"))
+		if (tA.endsWith("+1") || tA.endsWith("+2"))
 			tA = tA.substring(0, tA.length() - 2);
 		
 		fd.timeA = tA.toUpperCase() + "M";
