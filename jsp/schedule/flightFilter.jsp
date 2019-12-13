@@ -6,7 +6,7 @@
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html lang="en">
 <head>
-<title><content:airline /> Flight Schedule Import</title>
+<title><content:airline /> Flight Schedule Filter</title>
 <content:css name="main" />
 <content:css name="form" />
 <content:pics />
@@ -15,6 +15,9 @@
 <script>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
+	
+	
+	
 	golgotha.form.submit(f);
 	return true;
 };
@@ -28,25 +31,35 @@ golgotha.local.validate = function(f) {
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="schedsave.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
+<el:form action="schedfilter.do" method="post" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
+<c:if test="${!empty status}">
 <tr class="title caps">
- <td colspan="2">FLIGHT SCHEDULE DATA UPLOAD - STEP TWO</td>
+ <td colspan="2">FLIGHT SCHEDULE IMPORT STATUS</td>
 </tr>
 <tr>
  <td class="label top">Import Results</td>
- <td class="data"><fmt:int value="${fn:sizeof(sessionScope.entries)}" /> Schedule Entries loaded
-<c:if test="${innovataCache}"><br />
-<span class="warn small caps">Cached Innovata, LLC data used - no new data available</span></c:if></td>
+ <td class="data"><fmt:int value="${importCount}" /> RawSchedule Entries loaded from <span class="sec bld">${status.source.description}</span></td>
 </tr>
-<c:if test="${!empty errors}">
+<c:if test="${!empty status.messages}">
 <tr>
- <td class="label top">Import Errors</td>
- <td class="data small"><c:forEach var="error" items="${sessionScope.errors}">
-${error}<br />
-</c:forEach></td>
+ <td class="label top">Import Messages</td>
+ <td class="data small"><c:forEach var="msg" items="${status.messages}">
+ ${msg}<br /></c:forEach></td>
 </tr>
 </c:if>
+</c:if>
+<tr class="title caps">
+ <td colspan="2">FLIGHT SCHEDULE FILTER / IMPORT</td>
+</tr>
+<tr>
+ <td class="label">Sources</td>
+ <td class="data"><el:check width="120" options="${sources}" /></td>
+</tr>
+<tr>
+ <td class="label">Effective Date</td>
+ <td class="data"><el:text name="effDate" size="10" max="10" required="true" value="${today}" /></td>
+</tr>
 <tr>
  <td class="label">Schedule Purge</td>
  <td class="data"><el:box name="doPurge" idx="*" value="true" checked="true" label="Purge existing Schedule Entries" /></td>
@@ -54,7 +67,6 @@ ${error}<br />
 <tr>
  <td class="label top">Import Options</td>
  <td class="data"><el:box name="canPurge" idx="*" value="true" checked="true" label="Mark imported Schedule Entries as Purgeable" /><br />
-<el:box name="isHistoric" idx="*" value="true" label="Mark imported Schedule Entries as Historic Flights" /><br />
 <el:box name="updateAirports" idx="*" value="true" checked="true" label="Update Airport/Airline mappings in database" /></td>
 </tr>
 </el:table>

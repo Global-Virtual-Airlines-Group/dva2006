@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2010, 2012, 2015, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.io.*;
@@ -12,7 +12,7 @@ import org.deltava.beans.schedule.*;
 import org.deltava.commands.*;
 
 import org.deltava.dao.*;
-import org.deltava.dao.file.innovata.*;
+import org.deltava.dao.file.*;
 
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to download and import Innovata LLC schedule data.
  * @author Luke
- * @version 7.2
+ * @version 9.0
  * @since 1.0
  */
 
@@ -67,7 +67,6 @@ public class InnovataDownloadCommand extends ScheduleImportCommand {
 			GetAirline adao = new GetAirline(con);
 			GetAircraft acdao = new GetAircraft(con);
 			GetFullSchedule dao = new GetFullSchedule(is);
-			dao.setEffectiveDate(replayDate);
 			dao.setAircraft(acdao.getAircraftTypes());
 			dao.setAirlines(adao.getActive().values());
 			dao.setMainlineCodes((List<String>) SystemData.getObject("schedule.innovata.primary_codes"));
@@ -77,9 +76,8 @@ public class InnovataDownloadCommand extends ScheduleImportCommand {
 
 			// Load the schedule data
 			dao.load();
-			Collection<ScheduleEntry> schedEntries = dao.process();
-			for (Iterator<ScheduleEntry> si = schedEntries.iterator(); si.hasNext();) {
-				ScheduleEntry entry = si.next();
+			Collection<RawScheduleEntry> schedEntries = dao.process();
+			for (RawScheduleEntry entry : schedEntries) {
 				if (codes.contains(entry.getFlightCode()))
 					msgs.add("Duplicate flight in " + fileName + " - " + entry.getFlightCode());
 
@@ -88,11 +86,11 @@ public class InnovataDownloadCommand extends ScheduleImportCommand {
 			}
 			
 			// Save the error messages
-			msgs.addAll(dao.getErrorMessages());
+			msgs.addAll(dao.getStatus().getErrorMessages());
 			
 			// Save the status
 			SetImportStatus swdao = new SetImportStatus(SystemData.get("schedule.innovata.cache"), "import.status.txt");
-			swdao.write(dao.getInvalidAirlines(), dao.getInvalidAirports(), dao.getInvalidEQ(), msgs);
+			swdao.write(dao.getStatus());
 			
 			// Save schedule metadata
 			SetMetadata mdwdao = new SetMetadata(con);
@@ -109,7 +107,6 @@ public class InnovataDownloadCommand extends ScheduleImportCommand {
 
 			// Save the data in the session
 			ctx.setAttribute("entries", entries, SESSION);
-			ctx.setAttribute("schedType", SCHED_TYPES[INNOVATA], SESSION);
 			ctx.setAttribute("errors", msgs, SESSION);
 		} catch (IOException | DAOException de) {
 			throw new CommandException(de);

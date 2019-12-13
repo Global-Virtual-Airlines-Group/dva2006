@@ -1,8 +1,8 @@
-// Copyright 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
-import java.time.Instant;
+import java.time.*;
 import java.sql.Connection;
 
 import org.deltava.beans.schedule.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to filter the day's raw schedule. 
  * @author Luke
- * @version 8.0
+ * @version 9.0
  * @since 8.0
  */
 
@@ -41,7 +41,7 @@ public class ScheduleFilterTask extends Task {
 			
 			// Load today's entries
 			GetRawSchedule rsdao = new GetRawSchedule(con);
-			List<RawScheduleEntry> entries = rsdao.load(Instant.now());
+			List<RawScheduleEntry> entries = rsdao.load(ScheduleSource.INNOVATA, Instant.now().atZone(ZoneOffset.UTC).toLocalDate());
 			Collections.sort(entries, new ScheduleEntryComparator(ScheduleEntryComparator.FLIGHT_DTIME));
 
 			// Calculate the leg numbers

@@ -27,9 +27,9 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 	private static final Logger log = Logger.getLogger(GetFullSchedule.class);
 	
 	private final DateTimeFormatter _df = new DateTimeFormatterBuilder().appendPattern("dd/MM/yyyy").parseDefaulting(ChronoField.SECOND_OF_DAY, 0).toFormatter();
-	private DateTimeFormatter _tf = new DateTimeFormatterBuilder().appendPattern("H:mm:ss").toFormatter();
+	private final DateTimeFormatter _tf = new DateTimeFormatterBuilder().appendPattern("HH:mm:ss").parseDefaulting(ChronoField.YEAR, LocalDate.now().getYear()).toFormatter();
 
-	private LocalDate _effDate = LocalDate.now();
+	private final int _yearOffset = LocalDate.now().getYear() - 2015;
 	
 	private static final List<String> GROUND_EQ = List.of("TRN", "BUS", "LMO", "RFS");
 
@@ -111,18 +111,6 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 		}
 
 		return isCodeShare;
-	}
-
-	/**
-	 * Sets the effective date of the schedule import. Flights starting after this date (or ending before this date) will not be loaded.
-	 * @param dt the effective date/time
-	 */
-	public void setEffectiveDate(LocalDateTime dt) {
-		if (dt != null) {
-			DateTimeFormatterBuilder tfb = new DateTimeFormatterBuilder().appendPattern("H:mm:ss");
-			tfb.parseDefaulting(ChronoField.YEAR, _effDate.getYear()).parseDefaulting(ChronoField.DAY_OF_YEAR, _effDate.getDayOfYear());
-			_tf = tfb.toFormatter();
-		}
 	}
 
 	/**
@@ -227,16 +215,16 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 					entry.addDayOfWeek(DayOfWeek.of(Character.getNumericValue(c)));
 				
 				try {
-					entry.setStartDate(LocalDate.parse(entries.get(5), _df));
-					entry.setEndDate(LocalDate.parse(entries.get(6), _df));
+					entry.setStartDate(LocalDate.parse(entries.get(5), _df).plusYears(_yearOffset));
+					entry.setEndDate(LocalDate.parse(entries.get(6), _df).plusYears(_yearOffset));
 				} catch (Exception pe) {
 					log.warn("Error parsing date - " + pe.getMessage());
 					_status.addMessage("Error parsing date - " + pe.getMessage());
 				}
 					
 				try {
-					entry.setTimeD(LocalDateTime.parse(entries.get(18), _tf));
-					entry.setTimeA(LocalDateTime.parse(entries.get(23), _tf));
+					entry.setTimeD(LocalDateTime.of(entry.getStartDate(), LocalTime.parse(entries.get(18), _tf)));
+					entry.setTimeA(LocalDateTime.of(entry.getStartDate(), LocalTime.parse(entries.get(23), _tf)));
 				} catch (Exception pe) {
 					log.warn("Error parsing time - " + pe.getMessage());
 					_status.addMessage("Error parsing time - " + pe.getMessage());

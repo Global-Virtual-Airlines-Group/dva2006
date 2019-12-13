@@ -65,6 +65,14 @@ public class ImportStatus {
 	}
 	
 	/**
+	 * Returns whether any invalid data was detected.
+	 * @return TRUE if there are invalid Airlines, Airports, or Equipment, otherwise FALSE
+	 */
+	public boolean getHasInvalidData() {
+		return !(_invalidAP.isEmpty() && _invalidAL.isEmpty() && _invalidEQ.isEmpty());
+	}
+	
+	/**
 	 * Returns the schedule source.
 	 * @return the ScheduleSource
 	 */
