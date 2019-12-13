@@ -5,14 +5,13 @@ import java.io.*;
 import java.util.*;
 import java.util.zip.*;
 import java.time.*;
-import java.time.temporal.ChronoField;
 import java.sql.Connection;
 
 import org.deltava.beans.EMailAddress;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.dao.*;
-import org.deltava.dao.file.innovata.*;
+import org.deltava.dao.file.*;
 import org.deltava.mail.*;
 import org.deltava.taskman.*;
 
@@ -47,15 +46,6 @@ public class ScheduleImportTask extends Task {
 		boolean canPurge = SystemData.getBoolean("schedule.innovata.import.markCanPurge");
 		boolean isHistoric = SystemData.getBoolean("schedule.innovata.import.isHistoric");
 		
-		// Calculate replay date
-		String dt = SystemData.get("schedule.innovata.import.replayDate");
-		LocalDateTime replayDate = StringUtils.isEmpty(dt) ? null : LocalDateTime.ofInstant(StringUtils.parseInstant(dt, "MM/dd/yyyy"), ZoneOffset.UTC);
-		if (replayDate != null) {
-			LocalDateTime now = LocalDateTime.now();
-			int daysToAdjust = now.get(ChronoField.DAY_OF_WEEK) - 1;
-			replayDate = replayDate.plusDays(daysToAdjust);
-		}
-
 		// Get the file name(s) to download and init the cache
 		String fileName = SystemData.get("schedule.innovata.file");
 
@@ -76,7 +66,6 @@ public class ScheduleImportTask extends Task {
 			GetAirline adao = new GetAirline(con);
 			GetAircraft acdao = new GetAircraft(con);
 			GetFullSchedule dao = new GetFullSchedule(is);
-			dao.setEffectiveDate(replayDate);
 			dao.setMainlineCodes((List<String>) SystemData.getObject("schedule.innovata.primary_codes"));
 			dao.setCodeshareCodes((List<String>) SystemData.getObject("schedule.innovata.codeshare_codes"));
 			dao.setAircraft(acdao.getAircraftTypes());
@@ -86,7 +75,7 @@ public class ScheduleImportTask extends Task {
 
 			// Load the schedule data
 			dao.load();
-			Collection<ScheduleEntry> schedEntries = dao.process();
+			Collection<RawScheduleEntry> schedEntries = dao.process();
 			Collection<String> codes = new HashSet<String>();
 			for (ScheduleEntry entry : schedEntries) {
 				if (codes.contains(entry.getFlightCode()))
@@ -103,7 +92,7 @@ public class ScheduleImportTask extends Task {
 
 			// Save error conditions
 			SetImportStatus swdao = new SetImportStatus(SystemData.get("schedule.innovata.cache"), "import.status.txt");
-			swdao.write(dao.getInvalidAirlines(), dao.getInvalidAirports(), dao.getInvalidEQ(), dao.getErrorMessages());
+			swdao.write(dao.getStatus());
 		} catch (IOException | DAOException de) {
 			log.error(de.getMessage(), de);
 			entries.clear();
@@ -161,11 +150,6 @@ public class ScheduleImportTask extends Task {
 			SetMetadata mdwdao = new SetMetadata(con);
 			String aCode = SystemData.get("airline.code").toLowerCase();
 			mdwdao.write(aCode + ".schedule.import", Instant.now());
-			if (replayDate != null)
-				mdwdao.write(aCode + ".schedule.effDate", replayDate.toInstant(ZoneOffset.UTC));
-			else
-				mdwdao.delete(aCode + ".schedule.effDate");
-
 			ctx.commitTX();
 		} catch (DAOException de) {
 			saveError = de;

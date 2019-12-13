@@ -1,19 +1,16 @@
-// Copyright 2005, 2006, 2008, 2010, 2015, 2016 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2010, 2015, 2016, 2019 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.io.*;
 import java.util.*;
 import java.time.Instant;
+import java.time.format.*;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.deltava.beans.schedule.Airport;
-import org.deltava.beans.schedule.ScheduleEntry;
-
+import org.deltava.beans.schedule.*;
 import org.deltava.commands.*;
-
-import org.deltava.dao.GetSchedule;
-import org.deltava.dao.DAOException;
+import org.deltava.dao.*;
 
 import org.deltava.security.command.ScheduleAccessControl;
 
@@ -21,15 +18,15 @@ import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
- * A Web Site command to export Flight Schedule data in CSV format.
+ * A Web Site command to export raw Flight Schedule data in CSV format.
  * @author Luke
- * @version 7.0
+ * @version 9.0
  * @since 1.0
  */
 
 public class ScheduleExportCommand extends AbstractCommand {
 
-   /**
+	/**
     * Executes the command.
     * @param ctx the Command context
     * @throws CommandException if an unhandled error occurs
@@ -42,11 +39,14 @@ public class ScheduleExportCommand extends AbstractCommand {
       access.validate();
       if (!access.getCanExport())
          throw securityException("Cannot export Flight Schedule");
-
-      Collection<ScheduleEntry> results = null;
+      
+      // Get raw schedule entries
+      Collection<RawScheduleEntry> results = new ArrayList<RawScheduleEntry>();
       try {
-         GetSchedule dao = new GetSchedule(ctx.getConnection());
-         results = dao.export();
+    	  GetRawSchedule dao = new GetRawSchedule(ctx.getConnection());
+    	  Collection<ScheduleSourceInfo> srcs = dao.getSources();
+    	  for (ScheduleSourceInfo si : srcs)
+    		  results.addAll(dao.load(si.getSource(), null));
       } catch (DAOException de) {
          throw new CommandException(de);
       } finally {
@@ -57,19 +57,30 @@ public class ScheduleExportCommand extends AbstractCommand {
       String aCode = SystemData.get("airline.code");
       ctx.getResponse().setContentType("text/csv");
       ctx.getResponse().setCharacterEncoding("utf-8");
-      ctx.setHeader("Content-disposition", "attachment; filename=" + aCode.toLowerCase() + "_schedule.csv");
+      ctx.setHeader("Content-disposition", "attachment; filename=" + aCode.toLowerCase() + "_raw_schedule.csv");
+      
+      // Create formatters
+      DateTimeFormatter df = new DateTimeFormatterBuilder().appendPattern("dd MMM").toFormatter();
+      DateTimeFormatter tf = new DateTimeFormatterBuilder().appendPattern("HH:mm").toFormatter();
 
       // Get the airport code type
       boolean doICAO = (ctx.getUser().getAirportCodeType() == Airport.Code.ICAO);
-      try {
+      try (PrintWriter out = ctx.getResponse().getWriter()) {
          // Write the header
-         PrintWriter out = ctx.getResponse().getWriter();
-         out.println("; " + aCode + " Flight Schedule - exported on " + StringUtils.format(Instant.now(), "MM/dd/yyyy HH:mm:ss"));
-         out.println("AIRLINE,NUMBER,LEG,EQTYPE,FROM,DTIME,TO,ATIME,DISTANCE,HISTORIC,PURGE");
+         out.println("; " + aCode + " Flight Schedule - exported on " + StringUtils.format(Instant.now(), "MM/dd/yyyy HH:mm:ss") + " UTC");
+         out.println("SOURCE,LINE,STARTS,ENDS,AIRLINE,NUMBER,LEG,EQTYPE,FROM,DTIME,TO,ATIME,DISTANCE,HISTORIC,PURGE");
 
          // Loop through the results
-         for (ScheduleEntry entry : results) {
-            StringBuilder buf = new StringBuilder(entry.getAirline().getCode());
+         for (RawScheduleEntry entry : results) {
+            StringBuilder buf = new StringBuilder(entry.getSource().name());
+            buf.append(',');
+            buf.append(entry.getLineNumber());
+            buf.append(',');
+            buf.append(df.format(entry.getStartDate()));
+            buf.append(',');
+            buf.append(df.format(entry.getEndDate()));
+            buf.append(',');
+            buf.append(entry.getAirline().getCode());
             buf.append(',');
             buf.append(StringUtils.format(entry.getFlightNumber(), "#000"));
             buf.append(',');
@@ -79,17 +90,17 @@ public class ScheduleExportCommand extends AbstractCommand {
             buf.append(',');
             buf.append(doICAO ? entry.getAirportD().getICAO() : entry.getAirportD().getIATA());
             buf.append(',');
-            buf.append(StringUtils.format(entry.getTimeD(), "HH:mm"));
+            buf.append(tf.format(entry.getTimeD()));
             buf.append(',');
             buf.append(doICAO ? entry.getAirportA().getICAO() : entry.getAirportA().getIATA());
             buf.append(',');
-            buf.append(StringUtils.format(entry.getTimeA(), "HH:mm"));
+            buf.append(tf.format(entry.getTimeA()));
             buf.append(',');
-            buf.append(String.valueOf(entry.getDistance()));
+            buf.append(entry.getDistance());
             buf.append(',');
-            buf.append(String.valueOf(entry.getHistoric()));
+            buf.append(entry.getHistoric());
             buf.append(',');
-            buf.append(String.valueOf(entry.getCanPurge()));
+            buf.append(entry.getCanPurge());
             out.println(buf.toString());
          }
       } catch (IOException ie) {

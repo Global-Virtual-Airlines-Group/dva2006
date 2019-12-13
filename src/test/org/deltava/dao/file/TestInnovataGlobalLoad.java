@@ -24,60 +24,45 @@ public class TestInnovataGlobalLoad extends TestCase {
 	private static Logger log;
 
 	private Connection _c;
+	private static final String JDBC_URL = "jdbc:mysql://sirius.sce.net/dva?useSSL=false";
 
 	private final Collection<String> _aCodes = new HashSet<String>();
 	private Collection<Airline> _airlines;
 
-	private static final List<String> CODES = Arrays.asList("AF", "DL", "JM", "KL", "AM", "NW");
-	private static final List<String> CS_CODES = Arrays.asList("AF");
+	private static final List<String> CODES = List.of("AF", "DL", "JM", "KL", "AM", "NW");
+	private static final List<String> CS_CODES = List.of("AF");
 
 	private final DateTimeFormatter _df = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
 	@Override
-	@SuppressWarnings("unchecked")
 	protected void setUp() throws Exception {
 		PropertyConfigurator.configure("data/log4j.test.properties");
 		log = Logger.getLogger(TestInnovataGlobalLoad.class);
-		
-		// Check for local JDBC properties
-		Properties dbp = new Properties();
-		File f = new File("c:\\temp\\jdbc.properties");
-		if (f.exists())
-			dbp.load(new FileInputStream(f));
-		else
-			dbp.load(new FileInputStream("data/jdbc.properties"));
-		
+
 		// Set SystemData properties
 		SystemData.init("org.deltava.util.system.XMLSystemDataLoader", true);
-		SystemData.add("jdbc.url", dbp.getProperty("url"));
-		SystemData.add("jdbc.user", dbp.getProperty("user"));
-		SystemData.add("jdbc.pwd", dbp.getProperty("password"));
-
-		// Load JDBC properties
-		Properties p = new Properties();
-		p.putAll((Map<String, String>) SystemData.getObject("jdbc.connectProperties"));
-		p.setProperty("user", SystemData.get("jdbc.user"));
-		p.setProperty("password", SystemData.get("jdbc.pwd"));
 
 		// Connect to the database
 		Class.forName(SystemData.get("jdbc.driver"));
-		_c = DriverManager.getConnection(SystemData.get("jdbc.url"), p);
+		DriverManager.setLoginTimeout(3);
+		_c = DriverManager.getConnection(JDBC_URL, "luke", "14072");
 		assertNotNull(_c);
 		log.info("Connected to database");
 		
-		// Load Time zones
+		// Load the airports/time zones
 		GetTimeZone tzdao = new GetTimeZone(_c);
 		tzdao.initAll();
+		GetAirport apdao = new GetAirport(_c);
+		SystemData.add("airports", apdao.getAll());
+		GetAirline aldao = new GetAirline(_c);
+		SystemData.add("airlines", aldao.getAll());
+		GetUserData uddao = new GetUserData(_c);
+		SystemData.add("apps", uddao.getAirlines(true));
 
 		// Load Airlines
 		GetAirline adao = new GetAirline(_c);
 		_airlines = adao.getActive().values();
-		_airlines.forEach(a-> _aCodes.addAll(a.getCodes()));
-		
-		// Load Database information
-		log.info("Loading Cross-Application data");
-		GetUserData uddao = new GetUserData(_c);
-		SystemData.add("apps", uddao.getAirlines(true));
+		_airlines.forEach(a -> _aCodes.addAll(a.getCodes()));
 	}
 
 	@Override
@@ -87,143 +72,122 @@ public class TestInnovataGlobalLoad extends TestCase {
 	}
 
 	/*
-	 * Rules for adding a flight: 1. Range contains today. 2. Airline code is AF or DL and the codeshare field is blank.
-	 * 3. Airline code is a codeshare (ie. NOT AF or DL) and the codeshare info field contains AF or DL.
+	 * Rules for adding a flight: 1. Range contains today. 2. Airline code is AF or DL and the codeshare field is blank. 3. Airline code is
+	 * a codeshare (ie. NOT AF or DL) and the codeshare info field contains AF or DL.
 	 */
 	public void testLoadCSV() throws IOException {
 
-		// Build the file name
-		java.time.Instant d = java.time.Instant.now();
-		File f = new File("c:\\temp\\deltava - " + StringUtils.format(d, "MMM dd") + ".zip");
-		assertTrue(f.exists());
-		ZipFile zip = new ZipFile(f);
-		assertTrue(zip.entries().hasMoreElements());
-		ZipEntry ze = zip.entries().nextElement();
-		assertNotNull(ze);
-
-		// Get output file
-		File of = new File("c:\\temp\\" + StringUtils.format(d, "MMMyy") + ".csv");
-		if (of.exists()) {
-			zip.close();
-			return;
-		}
-		
-		// Create the output file
-		PrintWriter out = new PrintWriter(of);
-		
-		// Get the effective date
-		LocalDateTime now = LocalDateTime.now();
-		
 		// Airline counts
+		LocalDate now = LocalDate.now();
 		Map<String, AtomicInteger> aCount = new TreeMap<String, AtomicInteger>();
-
-		// Load the File
-		int rowCount = 0;
 		Collection<String> neededCodes = new LinkedHashSet<String>();
-		LineNumberReader lr = new LineNumberReader(new InputStreamReader(zip.getInputStream(ze)), 40960);
-		lr.readLine();
-		while (lr.ready()) {
-			String data = lr.readLine();
-			StringTokenizer tkns = new StringTokenizer(data, ",");
-			List<String> entries = new ArrayList<String>(55);
-			while (tkns.hasMoreTokens()) {
-				String tkn = tkns.nextToken();
-				if (tkn.charAt(0) == '\"')
-					tkn = tkn.substring(1, tkn.length() - 1);
 
-				entries.add(tkn);
-			}
+		// Build the file name
+		File f = new File("c:\\temp\\innovata.csv.gz");
+		assertTrue(f.exists());
+		try (GZIPInputStream gzis = new GZIPInputStream(new FileInputStream(f), 16384)) {
 
-			// Check the date
-			LocalDateTime sd = LocalDateTime.parse(entries.get(5), _df);
-			LocalDateTime ed = LocalDateTime.parse(entries.get(6), _df).plusDays(1).minusSeconds(1);
-			boolean isOK = (now.isAfter(sd) && now.isBefore(ed));
+			// Get output file
+			File of = new File("c:\\temp\\innovata.csv");
+			if (of.exists())
+				return;
 
-			// Check codeshare operation
-			boolean isCS = "1".equals(entries.get(48));
+			// Create the output file
+			int yearAdjust = now.getYear() - 2015;
+			try (PrintWriter out = new PrintWriter(of)) {
+				int rowCount = 0;
+				try (LineNumberReader lr = new LineNumberReader(new InputStreamReader(gzis), 40960)) {
+					lr.readLine();
+					while (lr.ready()) {
+						String data = lr.readLine();
+						StringTokenizer tkns = new StringTokenizer(data, ",");
+						List<String> entries = new ArrayList<String>(55);
+						while (tkns.hasMoreTokens()) {
+							String tkn = tkns.nextToken();
+							if (tkn.charAt(0) == '\"')
+								tkn = tkn.substring(1, tkn.length() - 1);
 
-			// Check the airline
-			String code = entries.get(0).toUpperCase();
-			boolean isMainLine = CODES.contains(code);
-			boolean isCodeShare = false;
-			if (isOK && !isMainLine && !CODES.contains(entries.get(3))) {
-				String csInfo = entries.get(50);
-				for (Iterator<String> i = CS_CODES.iterator(); i.hasNext() && !isCodeShare;) {
-					String mlCode = i.next();
-					isCodeShare |= (csInfo.indexOf(mlCode) != -1);
+							entries.add(tkn);
+						}
+
+						// Check the date
+						LocalDate sd = LocalDate.parse(entries.get(5), _df).plusYears(yearAdjust);
+						LocalDate ed = LocalDate.parse(entries.get(6), _df).plusYears(yearAdjust);
+						boolean isOK = !now.isBefore(sd) && !now.isAfter(ed);
+
+						// Check codeshare operation
+						boolean isCS = "1".equals(entries.get(48));
+
+						// Check the airline
+						String code = entries.get(0).toUpperCase();
+						boolean isMainLine = CODES.contains(code);
+						boolean isCodeShare = false;
+						if (isOK && !isMainLine && !CODES.contains(entries.get(3))) {
+							String csInfo = entries.get(50);
+							for (Iterator<String> i = CS_CODES.iterator(); i.hasNext() && !isCodeShare;) {
+								String mlCode = i.next();
+								isCodeShare |= (csInfo.indexOf(mlCode) != -1);
+							}
+						}
+
+						// Add the entry
+						if (isOK && (isMainLine || isCodeShare) && !isCS) {
+							neededCodes.add(code);
+							out.println(data);
+							rowCount++;
+
+							// Add the count
+							AtomicInteger cnt = aCount.get(code);
+							if (cnt == null)
+								aCount.put(code, new AtomicInteger(1));
+							else
+								cnt.incrementAndGet();
+
+							// Log data
+							if ((rowCount % 100) == 0)
+								log.info(rowCount + " entries added");
+						}
+
+						if ((lr.getLineNumber() % 100000) == 0)
+							log.info(lr.getLineNumber() + " rows read");
+					}
 				}
 			}
-
-			// Add the entry
-			if (isOK && (isMainLine || isCodeShare) && !isCS) {
-				neededCodes.add(code);
-				out.println(data);
-				rowCount++;
-				
-				// Add the count
-				AtomicInteger cnt = aCount.get(code);
-				if (cnt == null)
-					aCount.put(code, new AtomicInteger(1));
-				else
-					cnt.incrementAndGet();
-				
-				// Log data
-				if ((rowCount % 100) == 0)
-					log.info(rowCount + " entries added");
-			}
-
-			if ((lr.getLineNumber() % 100000) == 0)
-				log.info(lr.getLineNumber() + " rows read");
 		}
 
-		// Close the streams
-		zip.close();
-		lr.close();
-		out.close();
-		
 		// Log the counts
 		log.info(StringUtils.listConcat(neededCodes, ", "));
 		log.info(aCount);
 	}
-	
+
 	public void testParseCSV() throws Exception {
 
 		// Build the file name
 		java.time.Instant d = java.time.Instant.now();
-		File f = new File("c:\\temp\\deltava - " + StringUtils.format(d, "MMM dd") + ".zip");
+		File f = new File("c:\\temp\\innovata.csv.gz");
 		assertTrue(f.exists());
-		ZipFile zip = new ZipFile(f);
-		assertTrue(zip.entries().hasMoreElements());
-		ZipEntry ze = zip.entries().nextElement();
-		assertNotNull(ze);
+		try (GZIPInputStream gzis = new GZIPInputStream(new FileInputStream(f), 16384)) {
+			GetAircraft acdao = new GetAircraft(_c);
+			GetFullSchedule dao = new GetFullSchedule(gzis);
+			dao.setAircraft(acdao.getAircraftTypes());
+			dao.setMainlineCodes(CODES);
+			dao.setCodeshareCodes(CS_CODES);
 
-		// Get the DAO
-		GetAircraft acdao = new GetAircraft(_c);
-		GetFullSchedule dao = new GetFullSchedule(zip.getInputStream(ze));
-		dao.setEffectiveDate(LocalDateTime.ofInstant(d, ZoneOffset.UTC));
-		dao.setAircraft(acdao.getAircraftTypes());
-		dao.setMainlineCodes(CODES);
-		dao.setCodeshareCodes(CS_CODES);
-		
-		// Load the legs
-		Collection<CSVTokens> tkns = dao.load();
-		zip.close();
-		
-		// Get output file
-		File of = new File("c:\\temp\\" + StringUtils.format(d, "MMMyy") + "2.csv");
-		PrintWriter out = new PrintWriter(of);
-		for (Iterator<CSVTokens> i = tkns.iterator(); i.hasNext(); ) {
-			CSVTokens tkn = i.next();
-			out.println(tkn.toString());
+			// Load the legs
+			Collection<CSVTokens> tkns = dao.load();
+
+			// Get output file
+			File of = new File("c:\\temp\\innovata-" + StringUtils.format(d, "MMMyy") + ".csv");
+			try (PrintWriter out = new PrintWriter(of)) {
+				for (CSVTokens tkn : tkns)
+					out.println(tkn.toString());
+			}
 		}
-		
-		out.close();
 	}
 
 	public void testLoadDAO() throws Exception {
 
-		java.time.Instant d = java.time.Instant.now();
-		File f = new File("c:/temp/" + StringUtils.format(d, "MMMyy") + ".csv");
+		File f = new File("c:\\temp\\innovata.csv.gz");
 		assertTrue(f.exists());
 
 		// Load Airports
@@ -232,19 +196,19 @@ public class TestInnovataGlobalLoad extends TestCase {
 		assertNotNull(airports);
 		assertFalse(airports.isEmpty());
 
-		// Get the DAO
-		GetAircraft acdao = new GetAircraft(_c);
-		GetFullSchedule dao = new GetFullSchedule(new FileInputStream(f));
-		dao.setEffectiveDate(LocalDateTime.ofInstant(d, ZoneOffset.UTC));
-		dao.setAircraft(acdao.getAircraftTypes());
-		dao.setMainlineCodes(CODES);
-		dao.setCodeshareCodes(CS_CODES);
+		try (GZIPInputStream gzis = new GZIPInputStream(new FileInputStream(f), 16384)) {
+			GetAircraft acdao = new GetAircraft(_c);
+			GetFullSchedule dao = new GetFullSchedule(gzis);
+			dao.setAircraft(acdao.getAircraftTypes());
+			dao.setMainlineCodes(CODES);
+			dao.setCodeshareCodes(CS_CODES);
 
-		// Load the legs
-		dao.load();
-		Collection<RawScheduleEntry> entries = dao.process();
-		assertNotNull(entries);
-		assertFalse(entries.isEmpty());
-		log.info("Loaded " + entries.size() + " entries");
+			// Load the legs
+			dao.load();
+			Collection<RawScheduleEntry> entries = dao.process();
+			assertNotNull(entries);
+			assertFalse(entries.isEmpty());
+			log.info("Loaded " + entries.size() + " entries");
+		}
 	}
 }

@@ -5,6 +5,7 @@ import java.io.*;
 
 import org.deltava.dao.DAOException;
 
+import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -56,7 +57,7 @@ public class GetPDFText extends DAO {
 	 * @throws DAOException if an I/O error occurs
 	 */
 	public String getText() throws DAOException {
-		try (PDDocument doc = PDDocument.load(getStream())) {
+		try (PDDocument doc = PDDocument.load(getStream(), MemoryUsageSetting.setupTempFileOnly())) {
 			AccessPermission ap = doc.getCurrentAccessPermission();
 			if (!ap.canExtractContent())
 				throw new IOException("You do not have permission to extract text");
