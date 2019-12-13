@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<%@ page contentType="text/html; charset=UTF-8"  trimDirectiveWhitespaces="true" %>
+<%@ page contentType="text/html; charset=UTF-8"  session="false" trimDirectiveWhitespaces="true" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
@@ -13,12 +13,11 @@
 <content:favicon />
 <content:js name="common" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script type="text/javascript">
-golgotha.local.validate = function(f)
-{
-if (!golgotha.form.check()) return false;
-golgotha.form.submit(f);
-return true;
+<script>
+golgotha.local.validate = function(f) {
+	if (!golgotha.form.check()) return false;
+	golgotha.form.submit(f);
+	return true;
 };
 </script>
 </head>
@@ -42,8 +41,7 @@ return true;
 <!-- Chart cycle data -->
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data">Current Approach / Procedure chart download cycle: <span class="pri bld">${currentCycle}</span>, released on
- <fmt:date fmt="d" date="${currentCycle.releasedOn}" d="EEEE MMMM dd, YYYY" /></td>
+ <td class="data">Current Approach / Procedure chart download cycle: <span class="pri bld">${currentCycle}</span>, released on <fmt:date fmt="d" date="${currentCycle.releasedOn}" d="EEEE MMMM dd, YYYY" /></td>
 </tr>
 </c:if>
 <tr> 
