@@ -122,11 +122,10 @@ public abstract class PilotWriteDAO extends DAO {
 	/**
 	 * Writes a Pilot's alias to the AUTH_ALIAS table if present.
 	 * @param id the Pilot's database ID
-	 * @param pilotCode the Pilot's Pilot ID
-	 * @param uid the alias
+	 * @param aliases an array of aliases
 	 * @throws SQLException if a JDBC error occurs
 	 */
-	protected void writeAlias(int id, String pilotCode, String uid) throws SQLException {
+	protected void writeAlias(int id, String... aliases) throws SQLException {
 		if (!SystemData.getBoolean("security.auth_alias")) return;
 		
 		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM common.AUTH_ALIAS WHERE (ID=?)")) {
@@ -134,20 +133,18 @@ public abstract class PilotWriteDAO extends DAO {
 			executeUpdate(ps, 0);
 		}
 			
-		if (StringUtils.isEmpty(pilotCode)) return;
 		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.AUTH_ALIAS (ID, USERID, ISCODE) VALUES (?, ?, ?)")) {
 			ps.setInt(1, id);
-			ps.setString(2, pilotCode);
-			ps.setBoolean(3, true);
-			ps.addBatch();
-			
-			if (!StringUtils.isEmpty(uid)) {
-				ps.setString(2, uid);	
-				ps.setBoolean(3, false);
-				ps.addBatch();
+			for (int x = 0; x < aliases.length; x++) {
+				String uid = aliases[x];
+				if (!StringUtils.isEmpty(uid)) {
+					ps.setString(2, uid);
+					ps.setBoolean(3, uid.startsWith(SystemData.get("airline.code")));
+					ps.addBatch();
+				}
 			}
 			
-			executeUpdate(ps, 1, StringUtils.isEmpty(uid) ? 1 : 2);
+			executeUpdate(ps, 1, 0);
 		}
 	}
 	
