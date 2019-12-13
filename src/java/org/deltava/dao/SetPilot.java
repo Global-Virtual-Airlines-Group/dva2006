@@ -53,7 +53,6 @@ public class SetPilot extends PilotWriteDAO {
 			+ "FIRSTNAME=?, LASTNAME=? WHERE (ID=?)");
 
 		try {
-			// This involves a lot of reads and writes, so its written as a single transaction
 			startTransaction();
 			try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 				ps.setString(1, p.getEmail());
@@ -104,9 +103,7 @@ public class SetPilot extends PilotWriteDAO {
 			writeRoles(p.getID(), p.getRoles(), db);
 			writeRatings(p.getID(), p.getRatings(), db, true);
 			writeIMAddrs(p.getID(), p.getIMHandle(), db, true);
-			writeAlias(p.getID(), p.getLDAPName());
-
-			// Commit the changes
+			writeAlias(p.getID(), p.getPilotCode(), p.getLDAPName());
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();

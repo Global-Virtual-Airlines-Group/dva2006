@@ -5,7 +5,7 @@ import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.IMAddress;
-
+import org.deltava.util.StringUtils;
 import org.deltava.util.cache.CacheManager;
 import org.deltava.util.system.SystemData;
 
@@ -122,21 +122,32 @@ public abstract class PilotWriteDAO extends DAO {
 	/**
 	 * Writes a Pilot's alias to the AUTH_ALIAS table if present.
 	 * @param id the Pilot's database ID
+	 * @param pilotCode the Pilot's Pilot ID
 	 * @param uid the alias
 	 * @throws SQLException if a JDBC error occurs
 	 */
-	protected void writeAlias(int id, String uid) throws SQLException {
+	protected void writeAlias(int id, String pilotCode, String uid) throws SQLException {
 		if (!SystemData.getBoolean("security.auth_alias")) return;
 		
-		// Write the alias
-		try (PreparedStatement ps = prepareWithoutLimits((uid == null) ? "DELETE FROM common.AUTH_ALIAS WHERE (ID=?)" : "REPLACE INTO common.AUTH_ALIAS (ID, USERID) VALUES (?, ?)")) {
+		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM common.AUTH_ALIAS WHERE (ID=?)")) {
 			ps.setInt(1, id);
-			if (uid != null)
-				ps.setString(2, uid);
-		
 			executeUpdate(ps, 0);
-		} finally {
-			CacheManager.invalidate("Pilots", Integer.valueOf(id));
+		}
+			
+		if (StringUtils.isEmpty(pilotCode)) return;
+		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.AUTH_ALIAS (ID, USERID, ISCODE) VALUES (?, ?, ?)")) {
+			ps.setInt(1, id);
+			ps.setString(2, pilotCode);
+			ps.setBoolean(3, true);
+			ps.addBatch();
+			
+			if (!StringUtils.isEmpty(uid)) {
+				ps.setString(2, uid);	
+				ps.setBoolean(3, false);
+				ps.addBatch();
+			}
+			
+			executeUpdate(ps, 1, StringUtils.isEmpty(uid) ? 1 : 2);
 		}
 	}
 	
