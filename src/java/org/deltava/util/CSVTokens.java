@@ -12,7 +12,7 @@ import java.util.*;
 
 public class CSVTokens {
 
-	private final List<String> _tkns = new ArrayList<String>();
+	private final ArrayList<String> _tkns = new ArrayList<String>(64);
 
 	CSVTokens(String entry) {
 		super();
@@ -47,18 +47,6 @@ public class CSVTokens {
 		return _tkns.get(ofs);
 	}
 	
-	public void add(String value) {
-		_tkns.add(value);
-	}
-	
-	public void set(int ofs, String value) {
-		_tkns.set(ofs, value);
-	}
-
-	public List<String> getAll() {
-		return _tkns;
-	}
-
 	public int size() {
 		return _tkns.size();
 	}

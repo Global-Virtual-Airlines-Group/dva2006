@@ -33,7 +33,6 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 	
 	private static final List<String> GROUND_EQ = List.of("TRN", "BUS", "LMO", "RFS");
 
-	private final Collection<CSVTokens> _data = new ArrayList<CSVTokens>();
 	private final Collection<String> _aCodes = new HashSet<String>();
 	private final Collection<String> _mlCodes = new HashSet<String>();
 	private final Collection<String> _csCodes = new HashSet<String>();
@@ -114,127 +113,116 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 	}
 
 	/**
-	 * Loads the schedule entries from the Input stream.
+	 * Loads the Schedule Entries.
+	 * @return a Collection of RawScheduleEntry beans
 	 * @throws DAOException if an I/O error occurs
-	 * @return a Collection of CSVTokens beans
 	 */
-	public Collection<CSVTokens> load() throws DAOException {
+	@Override
+	public Collection<RawScheduleEntry> process() throws DAOException {
+		Collection<RawScheduleEntry> results = new ArrayList<RawScheduleEntry>();
 		LineNumberReader lr = getReader();
 		try (LineNumberReader br = lr) {
 			br.readLine(); // Skip first line
 			while (br.ready()) {
 				String data = br.readLine();
 				CSVTokens tkns = StringUtils.parseCSV(data);
-				tkns.add(String.valueOf(br.getLineNumber()));
-				if (data.startsWith("//")) {
-					if (log.isDebugEnabled())
-						log.debug("Skipping line " + br.getLineNumber() + " - comment");
-				} else if (tkns.size() < 53)
+				if (data.startsWith("//") && log.isDebugEnabled())
+					log.debug("Skipping line " + br.getLineNumber() + " - comment");
+				else if (tkns.size() < 53)
 					log.warn("Skipping line " + br.getLineNumber() + " - size = " + tkns.size());
-				else if (include(tkns))
-					_data.add(tkns);
+				else if (include(tkns)) {
+					RawScheduleEntry se = parse(tkns);
+					if (se != null) {
+						se.setLineNumber(br.getLineNumber());
+						results.add(se);
+					}
+				}
 			}
 		} catch (Exception e) {
 			log.error("Error at line " + lr.getLineNumber() + " - " + e.getMessage(), e);
 			throw new DAOException(e);
 		}
 
-		return _data;
+		return results;
 	}
 
-	/**
-	 * Loads the Schedule Entries.
-	 * @return a Collection of ScheduleEntry beans
-	 * @throws DAOException if an I/O error occurs
-	 */
-	@Override
-	public Collection<RawScheduleEntry> process() throws DAOException {
+	public RawScheduleEntry parse(CSVTokens entries) {
 
-		Collection<RawScheduleEntry> results = new ArrayList<RawScheduleEntry>();
-		for (CSVTokens entries : _data) {
-			Airport airportD = SystemData.getAirport(entries.get(14));
-			Airport airportA = SystemData.getAirport(entries.get(22));
+		Airport airportD = SystemData.getAirport(entries.get(14));
+		Airport airportA = SystemData.getAirport(entries.get(22));
 			
-			// Ensure all BSL/MLH comes from a common airport.
-			if ((airportD == null) && ("MLH".equals(entries.get(14))))
-				airportD = SystemData.getAirport("BSL");
-			if ((airportA == null) && ("MLH".equals(entries.get(22))))
-				airportA = SystemData.getAirport("BSL");
+		// Ensure all BSL/MLH comes from a common airport.
+		if ((airportD == null) && ("MLH".equals(entries.get(14))))
+			airportD = SystemData.getAirport("BSL");
+		if ((airportA == null) && ("MLH".equals(entries.get(22))))
+			airportA = SystemData.getAirport("BSL");
 
-			// Look up the equipment type
-			String eqType = getEquipmentType(entries.get(27));
-			String ln = entries.get(entries.size() - 1);
+		// Look up the equipment type
+		String eqType = getEquipmentType(entries.get(27));
+		String ln = entries.get(entries.size() - 1);
 
-			// Validate the data
-			boolean isOK = true;
-			Airline a = SystemData.getAirline(entries.get(0));
-			String flightCode = entries.get(0) + entries.get(1);
-			if (eqType == null) {
-				isOK = false;
-				_status.addInvalidEquipment(entries.get(27));
-				log.warn("Unknown equipment code at Line " + ln + " - " + entries.get(27) + " (" + flightCode + ")");
-				_status.addMessage("Unknown equipment code at Line " + ln + " - " + entries.get(27));
-			} else if (airportD == null) {
-				isOK = false;
-				_status.addInvalidAirport(entries.get(14));
-				log.warn("Unknown Airport at Line " + ln + " - " + entries.get(14) + " (" + flightCode + ")");
-				_status.addMessage("Unknown Airport at Line " + ln + " - " + entries.get(14));
-			} else if (airportA == null) {
-				isOK = false;
-				_status.addInvalidAirport(entries.get(22));
-				log.warn("Unknown Airport at Line " + ln + " - " + entries.get(22) + " (" + flightCode + ")");
-				_status.addMessage("Unknown Airport at Line " + ln + " - " + entries.get(22));
-			} else if (a == null) {
-				isOK = false;
-				_status.addInvalidAirline(entries.get(0));
-				log.warn("Unknown airline at Line " + ln + " - " + entries.get(0) + " (" + flightCode + ")");
-				_status.addMessage("Unknown airline at Line " + ln + " - " + entries.get(0));
-			} else if (!a.getApplications().contains(SystemData.get("airline.code"))) {
-				isOK = false;
-				log.info("Disabled airline at Line " + ln + " - " + entries.get(0) + " (" + flightCode + ")");
-			} else if (airportD.getPosition().distanceTo(airportA) < 5) {
-				isOK = false;
-				log.info("Dummy flight from " + airportD.getIATA() + " to " + airportA.getIATA());
-			}
-
-			// Count the number of days this leg operates
-			StringBuilder dayBuf = new StringBuilder();
-			for (int x = 7; x < 14; x++) {
-				if ("1".equals(entries.get(x)))
-					dayBuf.append(String.valueOf(x - 6));
-			}
-
-			// Build the Schedule Entry
-			if (isOK) {
-				RawScheduleEntry entry = new RawScheduleEntry(a, Integer.parseInt(entries.get(1)), Integer.parseInt(entries.get(46)));
-				entry.setAirportD(airportD);
-				entry.setAirportA(airportA);
-				entry.setEquipmentType(eqType);
-				entry.setLength(Integer.parseInt(entries.get(42)) / 6);
-				for (char c : dayBuf.toString().toCharArray())
-					entry.addDayOfWeek(DayOfWeek.of(Character.getNumericValue(c)));
-				
-				try {
-					entry.setStartDate(LocalDate.parse(entries.get(5), _df).plusYears(_yearOffset));
-					entry.setEndDate(LocalDate.parse(entries.get(6), _df).plusYears(_yearOffset));
-				} catch (Exception pe) {
-					log.warn("Error parsing date - " + pe.getMessage());
-					_status.addMessage("Error parsing date - " + pe.getMessage());
-				}
-					
-				try {
-					entry.setTimeD(LocalDateTime.of(entry.getStartDate(), LocalTime.parse(entries.get(18), _tf)));
-					entry.setTimeA(LocalDateTime.of(entry.getStartDate(), LocalTime.parse(entries.get(23), _tf)));
-				} catch (Exception pe) {
-					log.warn("Error parsing time - " + pe.getMessage());
-					_status.addMessage("Error parsing time - " + pe.getMessage());
-				}
-
-				validateAirports(entry);
-				results.add(entry);
-			}
+		// Validate the data
+		boolean isOK = true;
+		Airline a = SystemData.getAirline(entries.get(0));
+		String flightCode = entries.get(0) + entries.get(1);
+		if (eqType == null) {
+			isOK = false;
+			_status.addInvalidEquipment(entries.get(27));
+			log.warn("Unknown equipment code at Line " + ln + " - " + entries.get(27) + " (" + flightCode + ")");
+			_status.addMessage("Unknown equipment code at Line " + ln + " - " + entries.get(27));
+		} else if (airportD == null) {
+			isOK = false;
+			_status.addInvalidAirport(entries.get(14));
+			log.warn("Unknown Airport at Line " + ln + " - " + entries.get(14) + " (" + flightCode + ")");
+			_status.addMessage("Unknown Airport at Line " + ln + " - " + entries.get(14));
+		} else if (airportA == null) {
+			isOK = false;
+			_status.addInvalidAirport(entries.get(22));
+			log.warn("Unknown Airport at Line " + ln + " - " + entries.get(22) + " (" + flightCode + ")");
+			_status.addMessage("Unknown Airport at Line " + ln + " - " + entries.get(22));
+		} else if (a == null) {
+			isOK = false;
+			_status.addInvalidAirline(entries.get(0));
+			log.warn("Unknown airline at Line " + ln + " - " + entries.get(0) + " (" + flightCode + ")");
+			_status.addMessage("Unknown airline at Line " + ln + " - " + entries.get(0));
+		} else if (!a.getApplications().contains(SystemData.get("airline.code"))) {
+			isOK = false;
+			log.info("Disabled airline at Line " + ln + " - " + entries.get(0) + " (" + flightCode + ")");
+		} else if (airportD.getPosition().distanceTo(airportA) < 5) {
+			isOK = false;
+			log.info("Dummy flight from " + airportD.getIATA() + " to " + airportA.getIATA());
 		}
 
-		return results;
+		if (!isOK) return null;
+
+		// Build the Schedule Entry
+		RawScheduleEntry entry = new RawScheduleEntry(a, Integer.parseInt(entries.get(1)), Integer.parseInt(entries.get(46)));
+		entry.setSource(ScheduleSource.INNOVATA);
+		entry.setAirportD(airportD);
+		entry.setAirportA(airportA);
+		entry.setEquipmentType(eqType);
+		entry.setLength(Integer.parseInt(entries.get(42)) / 6);
+		for (int x = 7; x < 14; x++) {
+			if ("1".equals(entries.get(x)))
+				entry.addDayOfWeek(DayOfWeek.of(x - 6));
+		}
+		
+		try {
+			entry.setStartDate(LocalDate.parse(entries.get(5), _df).plusYears(_yearOffset));
+			entry.setEndDate(LocalDate.parse(entries.get(6), _df).plusYears(_yearOffset));
+		} catch (Exception pe) {
+			log.warn("Error parsing date - " + pe.getMessage());
+			_status.addMessage("Error parsing date - " + pe.getMessage());
+		}
+			
+		try {
+			entry.setTimeD(LocalDateTime.of(entry.getStartDate(), LocalTime.parse(entries.get(18), _tf)));
+			entry.setTimeA(LocalDateTime.of(entry.getStartDate(), LocalTime.parse(entries.get(23), _tf)));
+		} catch (Exception pe) {
+			log.warn("Error parsing time - " + pe.getMessage());
+			_status.addMessage("Error parsing time - " + pe.getMessage());
+		}
+
+		return entry;
 	}
 }
