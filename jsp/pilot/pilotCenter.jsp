@@ -47,7 +47,6 @@
 <content:sysdata var="academyEnabled" name="academy.enabled" />
 <content:sysdata var="academyFlights" name="academy.minFlights" />
 <content:sysdata var="helpDeskEnabled" name="helpdesk.enabled" />
-<content:sysdata var="innovataEnabled" name="schedule.innovata.enabled" />
 <content:sysdata var="hasIMAP" name="smtp.imap.enabled" />
 <content:sysdata var="hasSC" name="users.sc.active" default="false" />
 <content:sysdata var="scMaxNoms" name="users.sc.maxNominations" default="5" />
@@ -722,28 +721,21 @@ pilot Certification.</td>
 <el:cmd className="bld" url="schedexport">Export Flight Schedule</el:cmd></td>
  <td class="data">You can import entries into the <content:airline /> Flight Schedule database from a CSV data file. You may also export entries from the Flight Schedule into a CSV data file.</td>
 </tr>
-<tr>
- <td class="mid"><el:cmd className="bld" url="schedsync">Synchronize Flight Schedule</el:cmd></td>
- <td class="data">You may synchronize flight schedules (on an airline by airline basis) with other virtual
- airlines running on this server.</td>
-</tr>
 <c:if test="${!empty faaChartURL}">
 <tr>
  <td class="mid"><el:cmd className="bld" url="faachartdl">FAA Approach Chart Download</el:cmd></td>
- <td class="data">You can import Approach Charts from the FAA web site.</td>
+ <td class="data">You can import United States Approach Charts from the FAA web site.</td>
 </tr>
 </c:if>
-<c:if test="${innovataEnabled}">
 <tr>
- <td class="mid"><el:cmd className="bld" url="ivimport">Innovata Schedule Download</el:cmd></td>
+ <td class="mid"><el:cmd className="bld" url="schedimport">Raw Schedule Import</el:cmd></td>
  <td class="data"><content:airline /> has partnered with Innovata, LLC to provide instant real-world schedule updates which can be downloaded via FTP and imported into the Flight Schedule. If newer
  schedule data is available on Innovata's servers, it will be downloaded.</td>
 </tr>
 <tr>
- <td class="mid"><el:cmd className="bld" url="ivstatus">Innovata Schedule Download Status</el:cmd></td>
- <td class="data">You can view a status report from the last Innovata, LLC schedule download, to list new airports or equipment codes that need to be added to the <content:airline /> Flight Schedule.</td>
+ <td class="mid"><el:cmd className="bld" url="importstatus">Raw Schedule Import Status</el:cmd></td>
+ <td class="data">You can view status reports from the last Raw Schedule imports, to list new airports or equipment codes that need to be added to the <content:airline /> Flight Schedule.</td>
 </tr>
-</c:if>
 <tr>
  <td class="mid"><el:cmd className="bld" url="usvcairports">Unserviced Airports</el:cmd></td>
  <td class="data">As the <content:airline /> Flight Schedule is updated, certain airports may no longer be served by a particular Airline. This will display Airports with no corresponding flights in the
