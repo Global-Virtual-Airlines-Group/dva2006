@@ -27,20 +27,19 @@
  <content:subitem><el:cmd url="airlines">Airlines</el:cmd></content:subitem>
  <content:subitem><el:cmd url="airports">Airports</el:cmd></content:subitem>
  <content:subitem><el:cmd url="aircraftlist">Aircraft</el:cmd></content:subitem>
-<content:filter roles="Admin">
- <content:subitem><el:cmd url="tzones">Time Zones</el:cmd></content:subitem>
-</content:filter>
+<content:filter roles="Admin,Developer">
+ <content:subitem><el:cmd url="tzones">Time Zones</el:cmd></content:subitem></content:filter>
 <content:filter roles="HR">
- <content:subitem><el:cmd url="aInfoList">Virtual Airlines</el:cmd></content:subitem>
-</content:filter>
+ <content:subitem><el:cmd url="aInfoList">Virtual Airlines</el:cmd></content:subitem></content:filter>
  <content:subitem><el:cmd url="charts">Approach Charts</el:cmd></content:subitem>
 <c:if test="${!empty faaChartURL}"><content:filter roles="Operations,Schedule">
  <content:subitem><el:cmd url="faachartdl">FAA Chart Download</el:cmd></content:subitem>
 </content:filter></c:if>
  <content:subitem><el:cmd url="routes" op="oceanic">Oceanic Tracks</el:cmd></content:subitem>
  <content:subitem><el:cmd url="schedimport">Schedule Import</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="schedfilter">Schedule Filter</el:cmd></content:subitem>
  <content:subitem><el:cmd url="schedexport">Schedule Export</el:cmd></content:subitem>
- <content:subitem><el:cmd url="schedsync">Synchronize Schedules</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="importstatus">Import Status</el:cmd></content:subitem>
  <content:subitem><el:cmd url="usvcairports">Unserviced Airports</el:cmd></content:subitem>
  <content:subitem><el:cmd url="navimport">Navigation Data</el:cmd></content:subitem>
 </content:submenu>
