@@ -445,18 +445,7 @@
 
 	<!-- Innovata schedule link data -->
 	<schedule>
-		<vabase>
-			<enabled type="Boolean">true</enabled>
-		</vabase>
 		<innovata>
-			<enabled type="Boolean">true</enabled>
-			<popup>
-				<height type="Integer">600</height>
-				<width type="Integer">600</width>
-				<url>http://www.quicktrip.com/</url>
-			</popup>
-
-			<!-- Primary codes on import -->
 			<list name="primary_codes" attr="code" unique="true">
 				<code>AF</code>
 				<code>DL</code>
@@ -470,20 +459,7 @@
 				<code>DL</code>
 			</list>
 
-            <!-- Local file to import -->			
-			<file>/var/cache/sched/deltava - jan 23.zip</file>
-
-			<!-- Automated import -->
-			<import>
-				<purge type="Boolean">true</purge>
-				<markCanPurge type="Boolean">true</markCanPurge>
-				<isHistoric type="Boolean">false</isHistoric>
-				<minEntries type="Integer">250</minEntries>
-				<replayDate>06/17/2015</replayDate>
-			</import>
-
-			<!-- downloaded file cache -->
-			<cache>/var/cache/sched</cache>
+			<file>/var/cache/sched/innovata.csv.gz</file>
 		</innovata>
 		<cache>/var/cache/sched</cache>
 
