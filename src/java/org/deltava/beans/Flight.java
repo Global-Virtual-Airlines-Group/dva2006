@@ -189,12 +189,13 @@ public abstract class Flight extends DatabaseBean implements RoutePair, FlightNu
     	return (o instanceof FlightNumber) && (compareTo(o) == 0);
     }
 
-    /**
-     * Returns a string representation of the flight - the flight code
-     * @see Flight#getFlightCode()
-     */
     @Override
     public String toString() {
         return getFlightCode();
+    }
+    
+    @Override
+    public int hashCode() {
+    	return getFlightCode().hashCode();
     }
 }
