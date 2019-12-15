@@ -23,6 +23,11 @@ public abstract class ScheduleLoadDAO extends DAO {
 	protected final ImportStatus _status;
 	protected Map<String, Airline> _airlines;
 	
+	/**
+	 * Ground equipment codes.
+	 */
+	protected static final List<String> GROUND_EQ = List.of("TRN", "BUS", "LMO", "RFS");
+	
 	private final Map<String, Aircraft> _iataMappings = new HashMap<String, Aircraft>();
 
 	/**
