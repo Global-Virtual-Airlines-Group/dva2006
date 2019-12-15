@@ -709,15 +709,9 @@
 		<roles>Schedule,Operations</roles>
 	</command>
 
-	<command id="ivimport">
-		<name>Innovata Schedule Download</name>
-		<class>org.deltava.commands.schedule.InnovataDownloadCommand</class>
-		<roles>Schedule,Operations</roles>
-	</command>
-
-	<command id="ivstatus">
-		<name>Innovata Status Display</name>
-		<class>org.deltava.commands.schedule.InnovataStatusCommand</class>
+	<command id="importstatus">
+		<name>Raw Schedule Import Status</name>
+		<class>org.deltava.commands.schedule.ImportStatusCommand</class>
 		<roles>Schedule,Operations</roles>
 	</command>
 

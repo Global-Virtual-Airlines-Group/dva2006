@@ -9,7 +9,7 @@ import org.deltava.commands.*;
 
 import org.deltava.dao.*;
 import org.deltava.dao.file.GetImportStatus;
-
+import org.deltava.util.CollectionUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -35,7 +35,8 @@ public class ImportStatusCommand extends AbstractCommand {
 			// Loop through all import statuses
 			Collection<ImportStatus> results = new ArrayList<ImportStatus>();
 			for (ScheduleSourceInfo inf : srcs) {
-				File f = new File(SystemData.get("schedule.cache"), inf.getSource().name() + ".import.status.txt");
+				String fileName = SystemData.get("airline.code") + "." + inf.getSource().name() + ".import.status.txt";
+				File f = new File(SystemData.get("schedule.cache"), fileName);
 				if (f.exists()) {
 					try (InputStream fs = new FileInputStream(f)) {
 						GetImportStatus dao = new GetImportStatus(fs);
@@ -44,6 +45,7 @@ public class ImportStatusCommand extends AbstractCommand {
 				}
 			}
 			
+			ctx.setAttribute("sourceStats", CollectionUtils.createMap(srcs, ScheduleSourceInfo::getSource), REQUEST);
 			ctx.setAttribute("importStatus", results, REQUEST);
 		} catch (DAOException | IOException de) {
 			throw new CommandException(de);
