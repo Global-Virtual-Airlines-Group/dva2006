@@ -31,8 +31,6 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 
 	private final int _yearOffset = LocalDate.now().getYear() - 2015;
 	
-	private static final List<String> GROUND_EQ = List.of("TRN", "BUS", "LMO", "RFS");
-
 	private final Collection<String> _aCodes = new HashSet<String>();
 	private final Collection<String> _mlCodes = new HashSet<String>();
 	private final Collection<String> _csCodes = new HashSet<String>();
