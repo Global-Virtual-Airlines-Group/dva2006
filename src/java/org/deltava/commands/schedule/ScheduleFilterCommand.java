@@ -2,10 +2,9 @@
 package org.deltava.commands.schedule;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.time.*;
-import java.time.temporal.ChronoField;
 import java.sql.Connection;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 
@@ -36,9 +35,21 @@ public class ScheduleFilterCommand extends AbstractCommand {
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
-		// If we're doing a get, then redirect to the JSP
+		// Load schedule sources
 		CommandResult result = ctx.getResult();
+		try {
+			GetRawSchedule rsdao = new GetRawSchedule(ctx.getConnection());
+			ctx.setAttribute("sources", rsdao.getSources(), REQUEST);
+			ctx.setAttribute("srcAirlines", rsdao.getSourceAirlines(), REQUEST);
+		} catch (DAOException de) {
+			throw new CommandException(de);
+		} finally {
+			ctx.release();
+		}
+
+		// If we're doing a get, then redirect to the JSP
 		if (ctx.getParameters("src") == null) {
+			ctx.setAttribute("today", LocalDate.now(), REQUEST);
 			result.setURL("/jsp/schedule/flightFilter.jsp");
 			result.setSuccess(true);
 			return;
@@ -47,52 +58,58 @@ public class ScheduleFilterCommand extends AbstractCommand {
 		// Load import options
 		boolean doPurge = Boolean.valueOf(ctx.getParameter("doPurge")).booleanValue();
 		boolean canPurge = Boolean.valueOf(ctx.getParameter("canPurge")).booleanValue();
-		boolean isHistoric = Boolean.valueOf(ctx.getParameter("isHistoric")).booleanValue();
 		LocalDate effectiveDate = LocalDate.ofInstant(StringUtils.parseInstant(ctx.getParameter("effDate"), "MM/dd/yyyy"), ZoneOffset.UTC);
-		Collection<ScheduleSource> sources = ctx.getParameters("src", Collections.emptyList()).stream().map(src -> ScheduleSource.valueOf(src)).collect(Collectors.toSet());
+		Collection<ScheduleSource> sources = ctx.getParameters("src", Collections.emptyList()).stream().map(src -> ScheduleSource.valueOf(src)).collect(Collectors.toCollection(TreeSet::new));
+		
+		// Load source/airline mappings
+		Map<ScheduleSource, Collection<Airline>> srcAirlines = new HashMap<ScheduleSource, Collection<Airline>>();
+		for (ScheduleSource src : sources) {
+			Collection<String> srcCodes = ctx.getParameters("airline-" + src.name(), Collections.emptyList()); 
+			srcAirlines.put(src, srcCodes.stream().map(ac -> SystemData.getAirline(ac)).filter(Objects::nonNull).collect(Collectors.toSet()));
+		}
 
 		// Save the entries
-		Collection<RawScheduleEntry> entries = new ArrayList<RawScheduleEntry>();
+		Set<RawScheduleEntry> entries = new LinkedHashSet<RawScheduleEntry>();
 		try {
 			Connection con = ctx.getConnection();
-			
-			// Load the entries
-			GetRawSchedule rawdao = new GetRawSchedule(con);
-			for (ScheduleSource src : sources) {
-				LocalDate srcDate = effectiveDate;
-				if (src == ScheduleSource.INNOVATA) {
-					String dt = SystemData.get("schedule.innovata.import.replayDate");
-					LocalDate ldt = LocalDate.ofInstant(StringUtils.parseInstant(dt, "MM/dd/yyyy"), ZoneOffset.UTC);
-					int daysToAdjust = effectiveDate.get(ChronoField.DAY_OF_WEEK) - 1;
-					srcDate = ldt.plusDays(daysToAdjust);
-				}
-				
-				Collection<RawScheduleEntry> srcEntries = rawdao.load(src, srcDate);
-				entries.addAll(srcEntries);
-				log.info("Loaded " + srcEntries.size() + " " + src.getDescription() + " schedule entries for " + srcDate);
-			}
 
 			// Start the transaction
 			ctx.startTX();
-
-			// Get the DAO and purge if requested
+			
+			// Load the entries, save source mappings
 			SetSchedule dao = new SetSchedule(con);
-			if (doPurge)
-				dao.purge(false);
-
-			// Save the schedule entries
-			for (Iterator<?> i = entries.iterator(); i.hasNext();) {
-				ScheduleEntry se = (ScheduleEntry) i.next();
-				se.setCanPurge(canPurge);
-				se.setHistoric(isHistoric);
-				dao.write(se, false);
+			GetRawSchedule rawdao = new GetRawSchedule(con);
+			for (ScheduleSource src : sources) {
+				Collection<Airline> validAirlines = srcAirlines.getOrDefault(src, Collections.emptyList());
+				Collection<RawScheduleEntry> srcEntries = rawdao.load(src, effectiveDate).stream().filter(se -> validAirlines.contains(se.getAirline())).collect(Collectors.toList());
+				for (Iterator<RawScheduleEntry> i = srcEntries.iterator(); i.hasNext(); ) {
+					RawScheduleEntry rse = i.next();
+					rse.setCanPurge(canPurge);
+					boolean isAdded = entries.add(rse);
+					if (!isAdded) {
+						log.info(rse.getShortCode() + " already exists");
+						i.remove();
+					}
+				}
+				
+				log.info("Loaded " + srcEntries.size() + " " + src.getDescription() + " schedule entries for " + effectiveDate);
+				dao.writeSourceAirlines(src, validAirlines);
 			}
 
+			// Save the schedule entries
+			if (doPurge) dao.purge(false);
+			for (RawScheduleEntry rse : entries)
+				dao.write(rse, false);
+			
+			// Save effective date
+			SetMetadata mdwdao = new SetMetadata(con);
+			String aCode = SystemData.get("airline.code").toLowerCase();
+			mdwdao.write(aCode + ".schedule.effDate", effectiveDate.atStartOfDay().toInstant(ZoneOffset.UTC));
+			
 			// Determine unserviced airports
 			GetScheduleInfo sidao = new GetScheduleInfo(con);
 			AirportServiceMap svcMap = sidao.getRoutePairs();
 			SetAirportAirline awdao = new SetAirportAirline(con);
-				
 			synchronized (SystemData.class) {
 				Collection<Airport> allAirports = SystemData.getAirports().values();
 				for (Airport ap : allAirports) {
@@ -105,7 +122,6 @@ public class ScheduleFilterCommand extends AbstractCommand {
 				}
 			}
 
-			// Commit the transaction
 			ctx.commitTX();
 		} catch (DAOException de) {
 			ctx.rollbackTX();
@@ -113,11 +129,6 @@ public class ScheduleFilterCommand extends AbstractCommand {
 		} finally {
 			ctx.release();
 		}
-
-		// Clean up the session
-		ctx.getSession().removeAttribute("entries");
-		ctx.getSession().removeAttribute("errors");
-		ctx.getSession().removeAttribute("schedType");
 
 		// Save the status
 		ctx.setAttribute("isFlights", Boolean.TRUE, REQUEST);

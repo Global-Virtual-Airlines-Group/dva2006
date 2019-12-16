@@ -6,8 +6,6 @@ import java.time.*;
 
 import org.deltava.beans.Flight;
 
-import org.deltava.util.StringUtils;
-
 /**
  * A Schedule Entry with code share and day of week data. 
  * @author Luke
@@ -17,13 +15,10 @@ import org.deltava.util.StringUtils;
 
 public class RawScheduleEntry extends ScheduleEntry {
 
-	private ScheduleSource _src;
 	private int _line;
-	
 	private LocalDate _startDate;
 	private LocalDate _endDate;
 	
-	private String _codeShare;
 	private final Collection<DayOfWeek> _days = new TreeSet<DayOfWeek>();
 	
 	/**
@@ -44,14 +39,6 @@ public class RawScheduleEntry extends ScheduleEntry {
 		super(f.getAirline(), f.getFlightNumber(), f.getLeg());
 	}
 
-	/**
-	 * If a codeshare, the flight code of the operator's flight.
-	 * @return the flight code, or null if none
-	 */
-	public String getCodeShare() {
-		return _codeShare;
-	}
-	
 	/**
 	 * Returns the day of the week this flight is operated on.
 	 * @return a DayOfWeek enum
@@ -81,14 +68,6 @@ public class RawScheduleEntry extends ScheduleEntry {
 	}
 	
 	/**
-	 * Returns the original source.
-	 * @return the ScheduleSource
-	 */
-	public ScheduleSource getSource() {
-		return _src;
-	}
-	
-	/**
 	 * Returns the start of the operating range.
 	 * @return the range start date
 	 */
@@ -113,6 +92,10 @@ public class RawScheduleEntry extends ScheduleEntry {
 		return _days.contains(ld.getDayOfWeek()) && !ld.isBefore(_startDate) && !ld.isAfter(_endDate);
 	}
 	
+	/**
+	 * Adds a day of the week that this flight is operated on.
+	 * @param d a DayOfWeek
+	 */
 	public void addDayOfWeek(DayOfWeek d) {
 		_days.add(d);
 	}
@@ -145,23 +128,6 @@ public class RawScheduleEntry extends ScheduleEntry {
 	}
 	
 	/**
-	 * If this is a codeshare flight, the flight code of the operator's flight.
-	 * @param flightCode the flight code
-	 */
-	public void setCodeShare(String flightCode) {
-		if (!StringUtils.isEmpty(flightCode))
-			_codeShare = flightCode;
-	}
-	
-	/**
-	 * Updates the source of this entry.
-	 * @param src the ScheduleSource
-	 */
-	public void setSource(ScheduleSource src) {
-		_src = src;
-	}
-	
-	/**
 	 * Updates the source file line number for this entry.
 	 * @param ln the line number
 	 */
@@ -186,6 +152,8 @@ public class RawScheduleEntry extends ScheduleEntry {
 		se.setAcademy(getAcademy());
 		se.setCanPurge(getCanPurge());
 		se.setHistoric(getHistoric());
+		se.setSource(getSource());
+		se.setCodeShare(getCodeShare());
 		return se;
 	}
 }

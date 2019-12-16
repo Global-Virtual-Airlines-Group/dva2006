@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import java.sql.Connection;
+import java.time.LocalDate;
 
 import org.apache.log4j.Logger;
 
@@ -17,7 +18,7 @@ import org.deltava.dao.*;
 import org.deltava.dao.file.*;
 
 import org.deltava.security.command.ScheduleAccessControl;
-
+import org.deltava.util.CollectionUtils;
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
@@ -71,8 +72,9 @@ public class ScheduleImportCommand extends AbstractCommand {
 				switch (ss) {
 				case DELTA:
 					try (InputStream is = parsePDF(f)) {
-						GetRawPDFSchedule dao = new GetRawPDFSchedule(is);
+						GetDeltaSchedule dao = new GetDeltaSchedule(is);
 						dao.setAircraft(acdao.getAircraftTypes());
+						dao.setAirlines(adao.getActive().values());
 						entries.addAll(dao.process());
 						st = dao.getStatus();
 					}
@@ -83,6 +85,7 @@ public class ScheduleImportCommand extends AbstractCommand {
 					try (InputStream is = parsePDF(f)) {
 						GetSkyTeamSchedule dao = new GetSkyTeamSchedule(is);
 						dao.setAircraft(acdao.getAircraftTypes());
+						dao.setAirlines(adao.getActive().values());
 						entries.addAll(dao.process());
 						st = dao.getStatus();
 					}
@@ -96,7 +99,6 @@ public class ScheduleImportCommand extends AbstractCommand {
 						dao.setAirlines(adao.getActive().values());
 						dao.setMainlineCodes((List<String>) SystemData.getObject("schedule.innovata.primary_codes"));
 						dao.setCodeshareCodes((List<String>) SystemData.getObject("schedule.innovata.codeshare_codes"));
-						dao.load();
 						entries.addAll(dao.process());
 						st = dao.getStatus();
 					}
@@ -109,23 +111,36 @@ public class ScheduleImportCommand extends AbstractCommand {
 			}
 			
 			// Find "EQV" entries
-			Collection<RawScheduleEntry> variedEQ = entries.stream().filter(se -> "EQV".equals(se.getEquipmentType())).collect(Collectors.toList());
+			Collection<RawScheduleEntry> variedEQ = entries.stream().filter(ScheduleImportCommand::isVariable).collect(Collectors.toList());
 			Collection<Airline> airlines = variedEQ.stream().map(ScheduleEntry::getAirline).collect(Collectors.toSet());
+			Map<String, Aircraft> allAC = CollectionUtils.createMap(acdao.getAircraftTypes(), Aircraft::getName);
 			
 			// Load equipment types
 			GetScheduleEquipment sedao = new GetScheduleEquipment(con);
-			Map<Airline, List<Aircraft>> airlineEQ = new HashMap<Airline, List<Aircraft>>();
+			Map<Airline, Collection<Aircraft>> airlineEQ = new HashMap<Airline, Collection<Aircraft>>();
 			for (Airline a : airlines) {
-				List<Aircraft> aircraft = new ArrayList<Aircraft>();
+				Collection<Aircraft> aircraft = new LinkedHashSet<Aircraft>();
 				airlineEQ.put(a, aircraft);
 				Collection<String> eqCodes = sedao.getEquipmentTypes(a);
-				for (String eq : eqCodes)
-					aircraft.add(acdao.get(eq));
+				eqCodes.forEach(eq -> aircraft.add(allAC.get(eq)));
 			}
 			
-			String appCode = SystemData.get("airline.code");
-			for (Iterator<RawScheduleEntry> i = variedEQ.iterator(); i.hasNext(); ) {
-				RawScheduleEntry rse = i.next();
+			// Get unvaried
+			entries.stream().filter(se -> !isVariable(se)).forEach(se -> {
+				Collection<Aircraft> ac = airlineEQ.get(se.getAirline());
+				if (ac != null)
+					ac.add(allAC.get(se.getEquipmentType()));
+			});
+			
+			String appCode = SystemData.get("airline.code"); Map<String, Aircraft> pastChoices = new HashMap<String, Aircraft>();
+			for (RawScheduleEntry rse : variedEQ) {
+				Aircraft a = pastChoices.get(rse.getShortCode());
+				if (a != null) {
+					rse.setEquipmentType(a.getName());
+					log.info("Variable equipment for " + rse.getShortCode() + ", reusing " + rse.getEquipmentType());
+					continue;
+				}
+				
 				Collection<String> eqTypes = sedao.getEquipmentTypes(rse, rse.getAirline());
 				if (eqTypes.isEmpty())
 					eqTypes = sedao.getEquipmentTypes(rse, null);
@@ -133,13 +148,12 @@ public class ScheduleImportCommand extends AbstractCommand {
 				if (eqTypes.isEmpty()) {
 					List<Aircraft> possibleEQ = airlineEQ.get(rse.getAirline()).stream().filter(ac -> (ac.getOptions(appCode).getRange() > rse.getDistance())).collect(Collectors.toList());
 					if (!possibleEQ.isEmpty()) {
-						Collections.shuffle(possibleEQ);
-						rse.setEquipmentType(possibleEQ.get(0).getName());
-						log.info("Unknown variable equipment for " + rse.getShortCode() + ", setting to " + rse.getEquipmentType());
-					} else {
-						log.warn("Unknown variable equipment for " + rse.getShortCode() + ", no available aircraft!");
-						i.remove();
-					}
+						Collections.shuffle(possibleEQ); Aircraft ac = possibleEQ.get(0); 
+						rse.setEquipmentType(ac.getName());
+						log.info("Variable equipment for " + rse.getShortCode() + ", using " + rse.getEquipmentType());
+						pastChoices.put(rse.getShortCode(), ac);
+					} else
+						log.warn("Variable equipment for " + rse.getShortCode() + " (" + rse.getAirportD().getIATA() + "-" + rse.getAirportA().getIATA() + "), no available aircraft!");
 				}
 				else
 					rse.setEquipmentType(eqTypes.iterator().next());
@@ -148,9 +162,11 @@ public class ScheduleImportCommand extends AbstractCommand {
 			// Save the data
 			ctx.startTX();
 			SetSchedule swdao = new SetSchedule(con);
-			swdao.purgeRaw(ss);
-			for (RawScheduleEntry rse : entries)
-				swdao.writeRaw(rse);
+			int purgeCount = swdao.purgeRaw(ss); int entryCount = entries.size();
+			for (Iterator<RawScheduleEntry> i = entries.iterator(); i.hasNext(); ) {
+				swdao.writeRaw(i.next());
+				i.remove();
+			}
 			
 			// Load schedule sources
 			GetRawSchedule rsdao = new GetRawSchedule(con);
@@ -163,9 +179,11 @@ public class ScheduleImportCommand extends AbstractCommand {
 
 			// Set status attributes
 			ctx.setAttribute("rawEntryStats", stats, REQUEST);
-			ctx.setAttribute("sources", stats.stream().map(ScheduleSourceInfo::getSource).collect(Collectors.toList()), REQUEST);
+			ctx.setAttribute("sources", stats, REQUEST);
 			ctx.setAttribute("status", st, REQUEST);
-			ctx.setAttribute("importCount", Integer.valueOf(entries.size()), REQUEST);
+			ctx.setAttribute("importCount", Integer.valueOf(entryCount), REQUEST);
+			ctx.setAttribute("purgeCount", Integer.valueOf(purgeCount), REQUEST);
+			ctx.setAttribute("today", LocalDate.now(), REQUEST);
 		} catch (DAOException | IOException de) {
 			ctx.rollbackTX();
 			throw new CommandException(de);
@@ -177,6 +195,10 @@ public class ScheduleImportCommand extends AbstractCommand {
 		result.setURL("/jsp/schedule/flightFilter.jsp");
 		result.setType(ResultType.REQREDIRECT);
 		result.setSuccess(true);
+	}
+	
+	private static boolean isVariable(ScheduleEntry se) {
+		return "EQV".equals(se.getEquipmentType());
 	}
 
 	private static InputStream parsePDF(File f) throws IOException, DAOException {

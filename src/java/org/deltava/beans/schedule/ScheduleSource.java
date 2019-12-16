@@ -11,14 +11,12 @@ import org.deltava.beans.ComboAlias;
  */
 
 public enum ScheduleSource implements ComboAlias {
-	DELTA("Delta PDF", false), SKYTEAM("SkyTeam PDF", false), INNOVATA("Innovata LLC", true);
+	DELTA("Delta PDF"), SKYTEAM("SkyTeam PDF"), INNOVATA("Innovata LLC"), LEGACY("Legacy Schedule"), MANUAL("Manual Entry");
 	
 	private final String _desc;
-	private final boolean _isInternal;
 	
-	ScheduleSource(String desc, boolean isInternal) {
+	ScheduleSource(String desc) {
 		_desc = desc;
-		_isInternal = isInternal;
 	}
 
 	/**
@@ -29,14 +27,6 @@ public enum ScheduleSource implements ComboAlias {
 		return _desc;
 	}
 	
-	/**
-	 * Returns if this is an internal data source.
-	 * @return TRUE if internal, otherwise FALSE
-	 */
-	public boolean isInternal() {
-		return _isInternal;
-	}
-
 	@Override
 	public String getComboAlias() {
 		return name();
@@ -45,5 +35,14 @@ public enum ScheduleSource implements ComboAlias {
 	@Override
 	public String getComboName() {
 		return _desc;
+	}
+	
+	/**
+	 * Creates a Schedule source from a code.
+	 * @param code the code, typically an ordinal value
+	 * @return a ScheduleSource, or null if not found
+	 */
+	public static ScheduleSource fromCode(int code) {
+		return ((code < 0) || (code >= values().length)) ? null : values()[code];
 	}
 }
