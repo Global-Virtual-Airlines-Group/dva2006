@@ -44,6 +44,7 @@
 	<service id="gates" class="org.deltava.service.navdata.GateService" />
 	<service id="gateupdate" class="org.deltava.service.navdata.GateUpdateService" />
 	<service id="ftstats" class="org.deltava.service.schedule.FlightTimeStatsService" />
+	<service id="schedexport" class="org.deltava.service.schedule.ExportService" />
 
 	<!-- Flight Statistics Services -->
 	<service id="mystats" class="org.deltava.service.stats.MyFlightsService" />
