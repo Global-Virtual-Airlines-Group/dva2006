@@ -728,13 +728,13 @@ pilot Certification.</td>
 </tr>
 </c:if>
 <tr>
- <td class="mid"><el:cmd className="bld" url="schedimport">Raw Schedule Import</el:cmd></td>
- <td class="data"><content:airline /> has partnered with Innovata, LLC to provide instant real-world schedule updates which can be downloaded via FTP and imported into the Flight Schedule. If newer
- schedule data is available on Innovata's servers, it will be downloaded.</td>
+ <td class="mid"><el:cmd className="bld" url="schedimport">Raw Schedule Import</el:cmd><br />
+<el:cmd className="bld" url="importstatus">Raw Schedule Import Status</el:cmd></td>
+ <td class="data">You can import raw schedule entries from multiple sources into the database, which can be aggregated and filtered based on effective dates and day of week into the <content:airline /> Flight Schedule.</td>
 </tr>
 <tr>
- <td class="mid"><el:cmd className="bld" url="importstatus">Raw Schedule Import Status</el:cmd></td>
- <td class="data">You can view status reports from the last Raw Schedule imports, to list new airports or equipment codes that need to be added to the <content:airline /> Flight Schedule.</td>
+ <td class="mid"><el:cmd className="bld" url="schedfilter">Raw Schedule Filter</el:cmd></td>
+ <td class="data">You can filter multiple Raw schedule sources based on effective date and day of week into the <content:airline /> Flight Schedule.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="usvcairports">Unserviced Airports</el:cmd></td>
@@ -900,19 +900,6 @@ pilot Certification.</td>
  <td class="mid"><el:cmd className="bld" url="cmdlog">Command Log</el:cmd></td>
  <td class="data">You can view and search for entries in the Command Log database.</td>
 </tr>
-<c:if test="${ts2Enabled}">
-<tr>
- <td class="mid"><el:cmd className="bld" url="ts2servers">TeamSpeak 2 Virtual Servers</el:cmd><br />
-<el:cmd className="bld" url="ts2channels">TeamSpeak 2 Voice Channels</el:cmd></td>
- <td class="data">You can update TeamSpeak 2 virtual server permissions and configurations, and create, edit or delete TeamSpeak 2 voice channels.</td>
-</tr>
-</c:if>
-<c:if test="${mvsEnabled}">
-<tr>
- <td class="mid"><el:cmd className="bld" url="mvschannels">MVS Voice Channels</el:cmd></td>
- <td class="data">You can update Modern Voice Server permanent channels.</td>
-</tr>
-</c:if>
 </content:filter>
 <tr class="title"><td colspan="2">&nbsp;</td></tr>
 </el:table>

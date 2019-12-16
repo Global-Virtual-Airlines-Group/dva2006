@@ -7,6 +7,8 @@ import java.time.format.*;
 import java.time.temporal.*;
 import java.sql.Connection;
 
+import org.json.*;
+
 import org.deltava.beans.Flight;
 import org.deltava.beans.schedule.*;
 import org.deltava.comparators.AirportComparator;
@@ -22,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update Schedule entries.
  * @author Luke
- * @version 8.6
+ * @version 9.0
  * @since 1.0
  */
 
@@ -42,15 +44,7 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 		String fCode = (String) ctx.getCmdParameter(ID, null);
 		Flight id = FlightCodeParser.parse(fCode);
 
-		// Check our access
-		ScheduleAccessControl ac = new ScheduleAccessControl(ctx);
-		ac.validate();
-		if (!ac.getCanEdit())
-			throw securityException("Cannot modify Flight Schedule");
-		
-		// Get command results
 		CommandResult result = ctx.getResult();
-
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -73,6 +67,12 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 				int fNumber = StringUtils.parse(ctx.getParameter("flightNumber"), 1);
 				entry = new ScheduleEntry(a, fNumber, StringUtils.parse(ctx.getParameter("flightLeg"), 1));
 			}
+			
+			// Check our access
+			ScheduleAccessControl ac = new ScheduleAccessControl(ctx, entry);
+			ac.validate();
+			if (!ac.getCanEdit())
+				throw securityException("Cannot modify Flight Schedule entry");
 			
 			// Load the departure airport
 			Airport aD = SystemData.getAirport(ctx.getParameter("airportD"));
@@ -190,6 +190,13 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 		} finally {
 			ctx.release();
 		}
+		
+		// Build JSON object to store historical airlines
+		JSONObject jho = new JSONObject();
+		for (Airline a : SystemData.getAirlines().values())
+			jho.put(a.getCode(), a.getHistoric());
+		
+		ctx.setAttribute("historicAL", jho, REQUEST);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

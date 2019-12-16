@@ -160,31 +160,6 @@ public class TestInnovataGlobalLoad extends TestCase {
 		log.info(aCount);
 	}
 
-	public void testParseCSV() throws Exception {
-
-		// Build the file name
-		java.time.Instant d = java.time.Instant.now();
-		File f = new File("c:\\temp\\innovata.csv.gz");
-		assertTrue(f.exists());
-		try (GZIPInputStream gzis = new GZIPInputStream(new FileInputStream(f), 16384)) {
-			GetAircraft acdao = new GetAircraft(_c);
-			GetFullSchedule dao = new GetFullSchedule(gzis);
-			dao.setAircraft(acdao.getAircraftTypes());
-			dao.setMainlineCodes(CODES);
-			dao.setCodeshareCodes(CS_CODES);
-
-			// Load the legs
-			Collection<CSVTokens> tkns = dao.load();
-
-			// Get output file
-			File of = new File("c:\\temp\\innovata-" + StringUtils.format(d, "MMMyy") + ".csv");
-			try (PrintWriter out = new PrintWriter(of)) {
-				for (CSVTokens tkn : tkns)
-					out.println(tkn.toString());
-			}
-		}
-	}
-
 	public void testLoadDAO() throws Exception {
 
 		File f = new File("c:\\temp\\innovata.csv.gz");
@@ -204,7 +179,6 @@ public class TestInnovataGlobalLoad extends TestCase {
 			dao.setCodeshareCodes(CS_CODES);
 
 			// Load the legs
-			dao.load();
 			Collection<RawScheduleEntry> entries = dao.process();
 			assertNotNull(entries);
 			assertFalse(entries.isEmpty());

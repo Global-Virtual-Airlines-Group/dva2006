@@ -16,7 +16,7 @@ import org.deltava.util.FlightCodeParser;
 /**
  * A Web Site Command to delete Flight Schedule entries.
  * @author Luke
- * @version 8.6
+ * @version 9.0
  * @since 1.0
  */
 
@@ -36,12 +36,6 @@ public class ScheduleDeleteCommand extends AbstractCommand {
 		if (id == null)
 			throw notFoundException("Invalid Flight Code - " + fCode);
 
-		// Check our access
-		ScheduleAccessControl ac = new ScheduleAccessControl(ctx);
-		ac.validate();
-		if (!ac.getCanDelete())
-			throw securityException("Cannot modify Flight Schedule");
-
 		try {
 			Connection con = ctx.getConnection();
 
@@ -50,6 +44,12 @@ public class ScheduleDeleteCommand extends AbstractCommand {
 			ScheduleEntry entry = dao.get(id);
 			if (entry == null)
 				throw notFoundException("Invalid Flight Code - " + fCode);
+			
+			// Check our access
+			ScheduleAccessControl ac = new ScheduleAccessControl(ctx, entry);
+			ac.validate();
+			if (!ac.getCanDelete())
+				throw securityException("Cannot modify Flight Schedule");
 
 			// Delete the entry
 			SetSchedule wdao = new SetSchedule(con);

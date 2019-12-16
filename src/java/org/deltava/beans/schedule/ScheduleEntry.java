@@ -4,11 +4,12 @@ package org.deltava.beans.schedule;
 import java.time.*;
 
 import org.deltava.beans.*;
+import org.deltava.util.StringUtils;
 
 /**
  * A class to store Schedule Entry information.
  * @author Luke
- * @version 8.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -17,6 +18,10 @@ public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
 	private ZonedDateTime _timeD;
 	private ZonedDateTime _timeA;
 	private int _length;
+	
+	private ScheduleSource _src;
+	private String _codeShare;
+	
 	private boolean _historic;
 	private boolean _academy;
 	private boolean _purge;
@@ -125,6 +130,22 @@ public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
 	public boolean getAcademy() {
 		return _academy;
 	}
+	
+	/**
+	 * If a codeshare, the flight code of the operator's flight.
+	 * @return the flight code, or null if none
+	 */
+	public String getCodeShare() {
+		return _codeShare;
+	}
+	
+	/**
+	 * Returns the original source of this Schedule Entry.
+	 * @return the ScheduleSource, or null
+	 */
+	public ScheduleSource getSource() {
+		return _src;
+	}
 
 	/**
 	 * Sets the database ID of this schedule entry. <i>NOT IMPLEMENTED</i>
@@ -197,6 +218,23 @@ public class ScheduleEntry extends Flight implements FlightTimes, ViewEntry {
 	 */
 	public void setAcademy(boolean academy) {
 		_academy = academy;
+	}
+	
+	/**
+	 * If this is a codeshare flight, the flight code of the operator's flight.
+	 * @param flightCode the flight code
+	 */
+	public void setCodeShare(String flightCode) {
+		if (!StringUtils.isEmpty(flightCode))
+			_codeShare = flightCode;
+	}
+	
+	/**
+	 * Updates the source of this entry.
+	 * @param src the ScheduleSource
+	 */
+	public void setSource(ScheduleSource src) {
+		_src = src;
 	}
 	
 	/**
