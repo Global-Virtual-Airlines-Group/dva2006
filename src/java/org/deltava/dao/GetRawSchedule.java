@@ -31,11 +31,46 @@ public class GetRawSchedule extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<ScheduleSourceInfo> getSources() throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("SELECT SRC, COUNT(*) AS TOTAL FROM RAW_SCHEDULE GROUP BY SRC")) {
+		try (PreparedStatement ps = prepareWithoutLimits("SELECT SRC, AIRLINE, COUNT(*) AS TOTAL FROM RAW_SCHEDULE GROUP BY SRC, AIRLINE ORDER BY SRC")) {
 			Collection<ScheduleSourceInfo> results = new LinkedHashSet<ScheduleSourceInfo>();
+			ScheduleSourceInfo inf = null;
 			try (ResultSet rs = ps.executeQuery()) {
-				while (rs.next())
-					results.add(new ScheduleSourceInfo(ScheduleSource.valueOf(rs.getString(1)), rs.getInt(2)));
+				while (rs.next()) {
+					ScheduleSource ss = ScheduleSource.fromCode(rs.getInt(1));
+					if ((inf == null) || (ss != inf.getSource())) {
+						inf = new ScheduleSourceInfo(ss);
+						results.add(inf);
+					}
+					
+					inf.setLegs(SystemData.getAirline(rs.getString(2)), rs.getInt(3));
+				}
+			}
+			
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns the mapping of Airlines to Schedule sources.
+	 * @return a Map of Collections of Airlines, keyed by ScheduleSource
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Map<ScheduleSource, Collection<Airline>> getSourceAirlines() throws DAOException {
+		try (PreparedStatement ps = prepare("SELECT SRC, AIRLINE FROM RAW_SCHEDULE_AIRLINES")) {
+			Map<ScheduleSource, Collection<Airline>> results = new LinkedHashMap<ScheduleSource, Collection<Airline>>();
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					ScheduleSource src = ScheduleSource.fromCode(rs.getInt(1));
+					Collection<Airline> airlines = results.get(src);
+					if (airlines == null) {
+						airlines = new LinkedHashSet<Airline>();
+						results.put(src, airlines);
+					}
+					
+					airlines.add(SystemData.getAirline(rs.getString(2)));
+				}
 			}
 			
 			return results;
@@ -47,7 +82,7 @@ public class GetRawSchedule extends DAO {
 	/**
 	 * Loads all raw schedule entries for a particular day of the week.
 	 * @param src the ScheduleSource
-	 * @param ld the schedule effective date
+	 * @param ld the schedule effective date, or null for all
 	 * @return a Collection of RawScheduleEntry beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
@@ -56,7 +91,7 @@ public class GetRawSchedule extends DAO {
 		// Build SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM RAW_SCHEDULE WHERE (SRC=?)");
 		if (ld != null)
-			sqlBuf.append(" AND (STARTDATE<=?) AND (ENDDATE>=?) AND ((DAYS & ?) != 0))");
+			sqlBuf.append(" AND (STARTDATE<=?) AND (ENDDATE>=?) AND ((DAYS & ?) != 0)");
 		
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			ps.setInt(1, src.ordinal());
@@ -70,7 +105,7 @@ public class GetRawSchedule extends DAO {
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					RawScheduleEntry se = new RawScheduleEntry(SystemData.getAirline(rs.getString(6)), rs.getInt(7), rs.getInt(8));
-					se.setSource(ScheduleSource.valueOf(rs.getString(1)));
+					se.setSource(ScheduleSource.fromCode(rs.getInt(1)));
 					se.setLineNumber(rs.getInt(2));
 					se.setStartDate(rs.getDate(3).toLocalDate());
 					se.setEndDate(rs.getDate(4).toLocalDate());

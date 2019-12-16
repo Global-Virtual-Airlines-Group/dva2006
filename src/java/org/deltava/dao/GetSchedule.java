@@ -248,7 +248,7 @@ public class GetSchedule extends DAO {
 
 		// Build the SQL Statement
 		String db = formatDBName(dbName);
-		StringBuilder sqlBuf = new StringBuilder("SELECT S.AIRLINE, S.FLIGHT, S.LEG, S.EQTYPE, S.TIME_D, S.TIME_A, A.HISTORIC FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT S.AIRLINE, S.FLIGHT, S.LEG, S.EQTYPE, S.TIME_D, S.TIME_A, A.HISTORIC, S.SRC FROM ");
 		sqlBuf.append(db);
 		sqlBuf.append(".SCHEDULE S, common.AIRLINES A, common.AIRLINEINFO AI WHERE (AI.DBNAME=?) AND (S.AIRLINE=A.CODE) AND ((S.AIRPORT_D=?) OR (S.AIRPORT_D=?)) AND "
 			+ "((S.AIRPORT_A=?) OR (S.AIRPORT_A=?)) AND (S.ACADEMY=0) ORDER BY IF(S.AIRPORT_D=?,0,1), IF(S.AIRPORT_A=?,0,1), IF(S.AIRLINE=?,0,IF(S.AIRLINE=AI.CODE,1,2)), "
@@ -275,6 +275,7 @@ public class GetSchedule extends DAO {
 					se.setAirportA(sr.getAirportA());
 					se.setTimeD(rs.getTimestamp(5).toLocalDateTime().plusSeconds(_effDate.getEpochSecond()));
 					se.setTimeA(rs.getTimestamp(6).toLocalDateTime().plusSeconds(_effDate.getEpochSecond()));
+					se.setSource(ScheduleSource.fromCode(rs.getInt(7)));
 				}
 			}
 
@@ -313,17 +314,17 @@ public class GetSchedule extends DAO {
 			ps.setString(8, rp.getAirportA().getIATA());
 			
 			// Execute the query
-			ScheduleEntry f = null;
+			ScheduleEntry se = null;
 			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next()) {
-					f = new ScheduleEntry(SystemData.getAirline(rs.getString(1)), rs.getInt(2), rs.getInt(3));
-					f.setEquipmentType(rs.getString(4));
-					f.setAirportD(rp.getAirportD());
-					f.setAirportA(rp.getAirportA());
+					se = new ScheduleEntry(SystemData.getAirline(rs.getString(1)), rs.getInt(2), rs.getInt(3));
+					se.setEquipmentType(rs.getString(4));
+					se.setAirportD(rp.getAirportD());
+					se.setAirportA(rp.getAirportA());
 				}
 			}
 			
-			return f;
+			return se;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -387,16 +388,16 @@ public class GetSchedule extends DAO {
 	protected List<ScheduleEntry> execute(PreparedStatement ps) throws SQLException {
 		List<ScheduleEntry> results = new ArrayList<ScheduleEntry>();
 		try (ResultSet rs = ps.executeQuery()) {
-			boolean hasDispatch = (rs.getMetaData().getColumnCount() > 13);
-			boolean hasRouteCounts = (rs.getMetaData().getColumnCount() > 15);
+			boolean hasDispatch = (rs.getMetaData().getColumnCount() > 15);
+			boolean hasRouteCounts = (rs.getMetaData().getColumnCount() > 17);
 			while (rs.next()) {
 				ScheduleEntry entry = null;
 				if (hasDispatch) {
 					ScheduleSearchEntry sse = new ScheduleSearchEntry(SystemData.getAirline(rs.getString(1)), rs.getInt(2), rs.getInt(3));
-					sse.setDispatchRoutes(rs.getInt(14));
+					sse.setDispatchRoutes(rs.getInt(16));
 					if (hasRouteCounts) {
-						sse.setFlightCount(rs.getInt(15));
-						sse.setLastFlownOn(rs.getTimestamp(16));
+						sse.setFlightCount(rs.getInt(17));
+						sse.setLastFlownOn(rs.getTimestamp(18));
 					}
 					
 					entry = sse;
@@ -412,6 +413,8 @@ public class GetSchedule extends DAO {
 				entry.setHistoric(rs.getBoolean(11));
 				entry.setCanPurge(rs.getBoolean(12));
 				entry.setAcademy(rs.getBoolean(13));
+				entry.setSource(ScheduleSource.fromCode(rs.getInt(14)));
+				entry.setCodeShare(rs.getString(15));
 				results.add(entry);
 			}
 		}
