@@ -2,6 +2,7 @@
 package org.deltava.dao;
 
 import java.sql.*;
+import java.util.Collection;
 
 import org.deltava.beans.schedule.*;
 
@@ -32,7 +33,7 @@ public class SetSchedule extends DAO {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder(doReplace ? "REPLACE" : "INSERT");
-		sqlBuf.append(" INTO SCHEDULE (AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A, DISTANCE, EQTYPE, FLIGHT_TIME, TIME_D, TIME_A, HISTORIC, CAN_PURGE, ACADEMY) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sqlBuf.append(" INTO SCHEDULE (AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A, DISTANCE, EQTYPE, FLIGHT_TIME, TIME_D, TIME_A, HISTORIC, CAN_PURGE, ACADEMY, SRC, CODESHARE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 			ps.setString(1, entry.getAirline().getCode());
@@ -48,6 +49,8 @@ public class SetSchedule extends DAO {
 			ps.setBoolean(11, entry.getHistoric());
 			ps.setBoolean(12, entry.getCanPurge());
 			ps.setBoolean(13, entry.getAcademy());
+			ps.setInt(14, (entry.getSource() == null) ? -1 : entry.getSource().ordinal());
+			ps.setString(15, entry.getCodeShare());
 			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -120,14 +123,42 @@ public class SetSchedule extends DAO {
 	}
 	
 	/**
-	 * Purges entries from the raw Flight Schedule.
-	 * @param src the ScheduleSource
+	 * Updates the mapping of Raw Schedules sources to Airlines. 
+	 * @param src a ScheduleSource
+	 * @param airlines a Collection of Airline beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void purgeRaw(ScheduleSource src) throws DAOException {
+	public void writeSourceAirlines(ScheduleSource src, Collection<Airline> airlines) throws DAOException {
+		try {
+			try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM RAW_SCHEDULE_AIRLINES WHERE (SRC=?)")) {
+				ps.setInt(1, src.ordinal());
+				executeUpdate(ps, 0);
+			}
+			
+			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO RAW_SCHEDULE_AIRLINES (SRC, AIRLINE) VALUES (?, ?)")) {
+				ps.setInt(1, src.ordinal());
+				for (Airline a : airlines) {
+					ps.setString(2, a.getCode());
+					ps.addBatch();
+				}
+				
+				executeUpdate(ps, 1, airlines.size());
+			}
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Purges entries from the raw Flight Schedule.
+	 * @param src the ScheduleSource
+	 * @return the number of entries deleted
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public int purgeRaw(ScheduleSource src) throws DAOException {
 		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM RAW_SCHEDULE WHERE (SRC=?)")) {
 			ps.setInt(1, src.ordinal());
-			executeUpdate(ps, 0);
+			return executeUpdate(ps, 0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
