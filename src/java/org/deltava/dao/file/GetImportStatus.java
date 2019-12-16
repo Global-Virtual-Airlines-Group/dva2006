@@ -38,12 +38,13 @@ public class GetImportStatus extends DAO {
 			if (!"src".equals(tkns.nextToken()))
 				throw new IllegalArgumentException("Invalid source - " + data);
 			
+			ScheduleSource src = ScheduleSource.valueOf(tkns.nextToken());
 			data = br.readLine();
 			tkns = new StringTokenizer(data, "=");
 			if (!"date".equals(tkns.nextToken()))
 				throw new IllegalArgumentException("Invalid date - " + data);
 			
-			ImportStatus st = new ImportStatus(ScheduleSource.valueOf(tkns.nextToken()), Instant.ofEpochMilli(Long.parseLong(tkns.nextToken()))); 
+			ImportStatus st = new ImportStatus(src, Instant.ofEpochMilli(Long.parseLong(tkns.nextToken()))); 
 			while (br.ready()) {
 				data = br.readLine();
 				tkns = new StringTokenizer(data, "=");

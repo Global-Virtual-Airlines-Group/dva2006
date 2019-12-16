@@ -25,33 +25,21 @@ import org.deltava.util.system.SystemData;
 
 public class GetSkyTeamSchedule extends ScheduleLoadDAO {
 	
-	private final DateTimeFormatterBuilder _dfb = new DateTimeFormatterBuilder().appendPattern("dd MMM");
+	private final DateTimeFormatter _df = new DateTimeFormatterBuilder().appendPattern("dd MMM").parseDefaulting(ChronoField.YEAR, LocalDate.now().getYear()).toFormatter();
 	private final DateTimeFormatter _tf = new DateTimeFormatterBuilder().appendPattern("HH:mm").toFormatter();
 	
-	private LocalDate _effDate = LocalDate.now();
-	
 	private static final Logger log = Logger.getLogger(GetSkyTeamSchedule.class);
-
+	
 	/**
-	 * Initializes the data access Object.
+	 * Initializes the Data Access Object.
 	 * @param is the InputStream to read
 	 */
 	public GetSkyTeamSchedule(InputStream is) {
 		super(ScheduleSource.SKYTEAM, is);
 	}
 	
-	/**
-	 * Sets the flight schedule effective date.
-	 * @param ldt a LocalDateTime
-	 */
-	public void setEffectiveDate(LocalDateTime ldt) {
-		if (ldt != null)
-			_effDate = ldt.truncatedTo(ChronoUnit.DAYS).toLocalDate();
-	}
-
 	@Override
 	public Collection<RawScheduleEntry> process() throws DAOException {
-		DateTimeFormatter df = _dfb.parseDefaulting(ChronoField.YEAR, _effDate.getYear()).toFormatter();
 		
 		boolean isStarted = false; Airport aD = null, aA = null; RawScheduleEntry lastEntry = null;
 		try (LineNumberReader lr = getReader()) {
@@ -81,24 +69,42 @@ public class GetSkyTeamSchedule extends ScheduleLoadDAO {
 						_status.addMessage("Unknown airport at Line " + lr.getLineNumber() + " - " + code);
 						log.warn("Unknown airport at Line " + lr.getLineNumber() + " - " + code);
 					}
-				} else if (Character.isDigit(data.charAt(0)) && Character.isDigit(data.charAt(1)) && (data.length() > 40) && (aD != null) && (aA != null)) {
+				} else if ((data.length() > 40) && Character.isDigit(data.charAt(0)) && Character.isDigit(data.charAt(1)) && (aD != null) && (aA != null)) {
 					FlightData fd = parseFlightLine(data); boolean isOK = true;
-					if (fd.timeA.endsWith("+1"))
-						fd.timeA = fd.timeA.substring(0, fd.timeA.length() - 2);
 					
 					// Check for codeshare
-					if (!fd.flightNumber.endsWith("*")) {
+					if (!fd.flightNumber.endsWith("*") && !GROUND_EQ.contains(fd.eqType)) {
 						RawScheduleEntry se = new RawScheduleEntry(FlightCodeParser.parse(fd.flightNumber));
 						se.setAirportD(aD); se.setAirportA(aA);
 						se.setEquipmentType(getEquipmentType(fd.eqType));
-						se.setTimeD(LocalDateTime.of(_effDate, LocalTime.parse(fd.timeD, _tf)));
-						se.setTimeA(LocalDateTime.of(_effDate, LocalTime.parse(fd.timeA, _tf)));
-						se.setStartDate(LocalDate.parse(fd.startDate, df));
-						se.setEndDate(LocalDate.parse(fd.endDate, df));
 						se.setSource(ScheduleSource.SKYTEAM);
 						se.setLineNumber(lr.getLineNumber());
 						for (char c : fd.daysOfWeek.toCharArray())
 							se.addDayOfWeek(DayOfWeek.of(Character.getNumericValue(c)));
+						
+						// Parse dates/times - if start date is more than 100 days in the past, add a year
+						LocalDate sd = LocalDate.parse(fd.startDate, _df);
+						LocalDate ed = LocalDate.parse(fd.endDate, _df);
+						long deltaDays = sd.toEpochDay() - ed.toEpochDay();
+						if (deltaDays <= -100)
+							sd = sd.plusYears(1);
+						if (ed.isBefore(sd))
+							ed = ed.plusYears(1);
+						
+						LocalDate endDate = sd;
+						if (fd.timeA.endsWith("+1") || fd.timeA.endsWith("+2")) {
+							int days = Character.getNumericValue(fd.timeA.charAt(fd.timeA.length() - 1));
+							fd.timeA = fd.timeA.substring(0, fd.timeA.length() - 2);
+							endDate = endDate.plusDays(days);
+						} else if (fd.timeA.endsWith("+-1")) {
+							fd.timeA = fd.timeA.substring(0, fd.timeA.length() - 3);
+							endDate = endDate.plusDays(-1);
+						}
+
+						se.setStartDate(sd);
+						se.setEndDate(ed);
+						se.setTimeD(LocalDateTime.of(sd, LocalTime.parse(fd.timeD, _tf)));
+						se.setTimeA(LocalDateTime.of(endDate, LocalTime.parse(fd.timeA, _tf)));
 						
 						if (se.getEquipmentType() == null) {
 							isOK = false;
