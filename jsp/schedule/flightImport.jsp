@@ -16,6 +16,12 @@
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.schedType, t:'Schedule Type'});
+	if (golgotha.local.isInnovata) {
+		golgotha.local.uploadComplete = true;
+		golgotha.form.submit(f);
+		return true;
+	}
+
 	golgotha.form.validate({f:f.csvData, ext:['txt,pdf'], t:'Flight Schedule data'});
     if (!golgotha.local.uploadComplete) {
     	f.id.value = golgotha.local.file.file.name;
@@ -45,7 +51,7 @@ golgotha.local.validate = function(f) {
 <el:form action="schedimport.do" method="post" allowUpload="true" validate="return golgotha.form.wrap(golgotha.local.validate, this)">
 <el:table className="form">
 <tr class="title caps">
- <td colspan="2"><content:airline /> RAW SCHEDULE DATA UPLOAD</td>
+ <td colspan="2"><span class="nophone"><content:airline />&nbsp;</span>RAW SCHEDULE DATA UPLOAD</td>
 </tr>
 <tr id="selectFile">
  <td class="label top">Schedule Data</td>
@@ -53,7 +59,7 @@ golgotha.local.validate = function(f) {
 </tr>
 <tr>
  <td class="label">Schedule Format</td>
- <td class="data"><el:combo name="schedType" idx="*" size="1" options="${schedTypes}" required="true" firstEntry="[ SCHEDULE TYPE ]" /></td>
+ <td class="data"><el:combo name="schedType" idx="*" size="1" options="${schedTypes}" required="true" firstEntry="[ SCHEDULE TYPE ]" onChange="void golgotha.local.updateSource(this)" /></td>
 </tr>
 <tr class="progress title caps" style="display:none;">
  <td colspan="2">UPLOAD PROGRESS</td>
@@ -79,7 +85,7 @@ golgotha.local.validate = function(f) {
 <script async>
 golgotha.util.disable('SaveButton', true);
 golgotha.local.r = new Resumable({chunkSize:524288, withCredentials:true, chunkNumberParameterName:'c', chunkSizeParameterName:'cs', totalChunksParameterName:'cc', totalSizeParameterName:'ts', xhrTimeout:25000, fileType:['pdf','txt']});
-var dt = document.getElementById('dropTarget');
+const dt = document.getElementById('dropTarget');
 golgotha.local.r.assignDrop(dt);
 golgotha.local.r.assignBrowse(document.getElementById('SelectButton'));
 golgotha.local.r.on('fileAdded', function(f, ev) {
@@ -91,16 +97,16 @@ golgotha.local.r.on('fileAdded', function(f, ev) {
 
 golgotha.local.pb = new ProgressBar.Line('#progressBar', {color:'#1a4876', text:{value:'', className:'pri', style:{color:'#ffff'}}, fill:'#1a4876'});
 golgotha.local.showProgress = function(doShow) {
-    var pr = golgotha.util.getElementsByClass('progress', 'tr');
+    const pr = golgotha.util.getElementsByClass('progress', 'tr');
     pr.forEach(function(r) { golgotha.util.display(r, doShow); });
 };
 
 golgotha.local.updateProgress = function() {
-    var p = golgotha.local.r.progress();
+    const p = golgotha.local.r.progress();
     golgotha.local.pb.setText(Math.round(p * 100) + '% complete');
-    golgotha.local.pb.animate(p, {duration: 50});
+    golgotha.local.pb.animate(p, {duration:50});
     if (p >= 1) {
-    	var f = document.forms[0];
+    	const f = document.forms[0];
         console.log('Upload Complete');
         golgotha.local.showProgress(false);
         golgotha.local.uploadComplete = true;
@@ -108,9 +114,17 @@ golgotha.local.updateProgress = function() {
         f.submit();
         return true;
     }
-    
-    window.setTimeout(golgotha.local.updateProgress, 65);
+
+    window.setTimeout(golgotha.local.updateProgress, 75);
     return true;
+};
+
+golgotha.local.updateSource = function(cb) {
+	golgotha.local.isInnovata = (golgotha.form.getCombo(cb) == 'INNOVATA');
+	golgotha.util.display(document.getElementById('selectFile'), !golgotha.local.isInnovata);
+	const canEnable = golgotha.local.isInnovata || golgotha.local.file; 
+	golgotha.util.disable(document.getElementById('SaveButton'), !canEnable);
+	return true;
 };
 </script>
 </body>

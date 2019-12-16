@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<%@ page contentType="text/html; charset=UTF-8"  trimDirectiveWhitespaces="true" %>
+<%@ page contentType="text/html; charset=UTF-8"  session="false" trimDirectiveWhitespaces="true" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html lang="en">
 <head>
@@ -15,10 +16,14 @@
 <script>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
-	
-	
-	
+	golgotha.form.validate({f:f.effDate,l:10,t:'Effective Date'});
+	golgotha.form.validate({f:f.src,min:1,t:'Schedule Source'});
 	golgotha.form.submit(f);
+	return true;
+};
+
+golgotha.local.updateSource = function(cb) {
+	golgotha.util.display(document.getElementById('src-' + cb.value), cb.checked);
 	return true;
 };
 </script>
@@ -35,38 +40,41 @@ golgotha.local.validate = function(f) {
 <el:table className="form">
 <c:if test="${!empty status}">
 <tr class="title caps">
- <td colspan="2">FLIGHT SCHEDULE IMPORT STATUS</td>
+ <td colspan="2"><span class="nophone"><content:airline />&nbsp;</span>FLIGHT SCHEDULE IMPORT STATUS</td>
 </tr>
 <tr>
  <td class="label top">Import Results</td>
- <td class="data"><fmt:int value="${importCount}" /> RawSchedule Entries loaded from <span class="sec bld">${status.source.description}</span></td>
+ <td class="data"><fmt:int value="${importCount}" /> Raw Schedule Entries loaded (<fmt:int value="${purgeCount}" /> purged) from <span class="sec bld">${status.source.description}</span></td>
 </tr>
-<c:if test="${!empty status.messages}">
+<c:if test="${!empty status.errorMessages}">
 <tr>
  <td class="label top">Import Messages</td>
- <td class="data small"><c:forEach var="msg" items="${status.messages}">
- ${msg}<br /></c:forEach></td>
+ <td class="data small"><c:forEach var="msg" items="${status.errorMessages}">${msg}<br /></c:forEach></td>
 </tr>
 </c:if>
 </c:if>
 <tr class="title caps">
- <td colspan="2">FLIGHT SCHEDULE FILTER / IMPORT</td>
+ <td colspan="2"><span class="nophone"><content:airline />&nbsp;</span>FLIGHT SCHEDULE FILTER</td>
 </tr>
 <tr>
  <td class="label">Sources</td>
- <td class="data"><el:check width="120" options="${sources}" /></td>
+ <td class="data"><el:check name="src" width="210" options="${sources}" onChange="void golgotha.local.updateSource(this)" /></td>
 </tr>
+<c:forEach var="src" items="${sources}">
+<c:set var="selectedAirlines" value="${srcAirlines[src]}" scope="page" />
+<tr id="src-${src.source}" style="display:none;">
+ <td class="label top">${src.source.description}</td>
+ <td class="data"><el:check name="airline-${src.source}"  width="210" cols="5" newLine="true" options="${src.options}" value="${selectedAirlines}" /></td>
+</tr>
+</c:forEach>
 <tr>
  <td class="label">Effective Date</td>
- <td class="data"><el:text name="effDate" size="10" max="10" required="true" value="${today}" /></td>
-</tr>
-<tr>
- <td class="label">Schedule Purge</td>
- <td class="data"><el:box name="doPurge" idx="*" value="true" checked="true" label="Purge existing Schedule Entries" /></td>
+ <td class="data"><el:text name="effDate" size="9" max="10" required="true" value="${fn:dateFmt(today, 'MM/dd/yyyy')}" /></td>
 </tr>
 <tr>
  <td class="label top">Import Options</td>
- <td class="data"><el:box name="canPurge" idx="*" value="true" checked="true" label="Mark imported Schedule Entries as Purgeable" /><br />
+ <td class="data"><el:box name="doPurge" idx="*" value="true" checked="true" label="Purge existing Schedule Entries" /><br />
+<el:box name="canPurge" idx="*" value="true" checked="true" label="Mark imported Schedule Entries as Purgeable" /><br />
 <el:box name="updateAirports" idx="*" value="true" checked="true" label="Update Airport/Airline mappings in database" /></td>
 </tr>
 </el:table>
@@ -74,10 +82,9 @@ golgotha.local.validate = function(f) {
 <!-- Button bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="submit" label="SAVE FLIGHT SCHEDULE" /></td>
+ <td><el:button type="submit" label="FILTER FLIGHT SCHEDULE" />&nbsp;<el:cmdbutton url="schedimport" label="IMPORT RAW SCHEDULE ENTRIES" /></td>
 </tr>
 </el:table>
-<el:text name="doImport" value="true" type="hidden" readOnly="true" />
 </el:form>
 <br />
 <content:copyright />

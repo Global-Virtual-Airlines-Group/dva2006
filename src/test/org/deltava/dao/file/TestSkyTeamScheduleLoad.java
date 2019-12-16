@@ -67,7 +67,7 @@ public class TestSkyTeamScheduleLoad extends TestCase {
 
 	public void testLoadRaw() throws Exception {
 		
-		File f = new File("C:\\Temp\\Skyteam_Timetable_NA_EU.pdf");
+		File f = new File("C:\\Temp\\Skyteam_Timetable.pdf");
 		assertTrue(f.exists());
 		
 		String txt = null;
