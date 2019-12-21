@@ -177,14 +177,6 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 			String prefix = SystemData.get("airline.code").toLowerCase();
 			GetMetadata mddao = new GetMetadata(c);
 			UserPool.init(StringUtils.parse(mddao.get(prefix + ".users.max.count"), 0), StringUtils.parseInstant(mddao.get(prefix + ".users.max.date"), "MM/dd/yyyy HH:mm"));
-			
-			// Load TS2 server info if enabled
-			if (SystemData.getBoolean("airline.voice.ts2.enabled") && SystemData.getBoolean("acars.enabled")) {
-				SetTS2Data ts2wdao = new SetTS2Data(c);
-				int flagsCleared = ts2wdao.clearActiveFlags();
-				if (flagsCleared > 0)
-					log.warn("Reset " + flagsCleared + " TeamSpeak 2 client activity flags");
-			}
 		} catch (Exception ex) {
 			log.error("Error retrieving data - " + ex.getMessage(), ex);
 		} finally {
@@ -221,23 +213,6 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 		// Shut down the extra threads
 		_daemons.clear();
 		_daemonGroup.interrupt();
-		
-		// If ACARS is enabled, then clean out the active flags
-		if (SystemData.getBoolean("airline.voice.ts2.enabled") && SystemData.getBoolean("acars.enabled")) {
-			Connection c = null;
-			try {
-				c = _jdbcPool.getConnection();
-				SetTS2Data ts2wdao = new SetTS2Data(c);
-				int cnt = ts2wdao.clearActiveFlags();
-				log.info("Reset " + cnt + " TeamSpeak 2 client activity flags");
-			} catch (ConnectionPoolException cpe) {
-				log.error(cpe.getMessage());
-			} catch (DAOException de) {
-				log.error(de.getMessage(), de);
-			} finally {
-				_jdbcPool.release(c);
-			}
-		}
 		
 		// Shut down Redis and JDBC connection pools
 		RedisUtils.shutdown();
