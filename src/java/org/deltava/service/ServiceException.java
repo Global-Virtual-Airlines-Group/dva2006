@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import org.deltava.util.ControllerException;
@@ -6,13 +6,13 @@ import org.deltava.util.ControllerException;
 /**
  * An Exception thrown by Web Services.
  * @author Luke
- * @version 1.0
+ * @version 9.0
  * @since 1.0
  */
 
 public class ServiceException extends ControllerException {
 
-	private int _httpCode;
+	private final int _httpCode;
 
 	/**
 	 * Creates a new Web Service Exception from an existing exception.
@@ -23,6 +23,7 @@ public class ServiceException extends ControllerException {
 	ServiceException(int code, String msg, Throwable t) {
 		super(msg, t);
 		_httpCode = code;
+		setLogStackDump(true);
 	}
 
 	/**
