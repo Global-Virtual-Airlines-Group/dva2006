@@ -1,4 +1,4 @@
-// Copyright 2011, 2014 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2014, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.xacars;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -12,7 +12,7 @@ import org.deltava.util.StringUtils;
 /**
  * The XACARS Address Web Service. 
  * @author Luke
- * @version 5.4
+ * @version 9.0
  * @since 4.1
  */
 
@@ -34,10 +34,10 @@ public class XAddressService extends XAService {
 	 */
 	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
-		int resultCode = SC_OK;
 		
 		// Get command name
 		String cmd = ctx.getParameter("DATA2");
+		int resultCode = SC_OK;
 		try {
 			ctx.setContentType("text/plain", "UTF-8");
 			if (!StringUtils.isEmpty(cmd)) {
@@ -54,10 +54,8 @@ public class XAddressService extends XAService {
 			ctx.commit();
 		} catch (IOException ie) {
 			throw error(SC_INTERNAL_SERVER_ERROR, "I/O Error", false);
-		} catch (ServiceException se) {
-			throw se;
 		} catch (Exception e) {
-			throw error(SC_INTERNAL_SERVER_ERROR, e.getMessage(), true);
+			throw error(SC_INTERNAL_SERVER_ERROR, e.getMessage(), e);
 		}
 		
 		return resultCode;
