@@ -7,6 +7,7 @@ import java.util.*;
 import java.sql.Connection;
 import java.time.Instant;
 
+import org.apache.log4j.Logger;
 import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.schedule.*;
@@ -24,6 +25,8 @@ import org.deltava.util.system.SystemData;
  */
 
 public class StartFlightService extends XAService {
+	
+	private static final Logger log = Logger.getLogger(StartFlightService.class);
 
 	/**
 	 * Executes the Web Service.
@@ -35,10 +38,11 @@ public class StartFlightService extends XAService {
 	public int execute(ServiceContext ctx) throws ServiceException {
 		
 		// Parse the data
-		String rawData = StringUtils.strip("\r\n", ctx.getParameter("DATA3"));
+		String rawData = StringUtils.strip(ctx.getParameter("DATA3"), "\r\n");
 		List<String> data = StringUtils.split(rawData, "|");
 		if ((data == null) || (data.size() < 18)) {
 			ctx.print("0|Invalid Flight Data");
+			log.warn("Invalid flight data - " + rawData + " " + data);
 			return SC_OK;
 		}
 		
