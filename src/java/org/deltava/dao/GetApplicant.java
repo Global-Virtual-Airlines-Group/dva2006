@@ -61,7 +61,7 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 	 */
 	public Collection<Applicant> getByName(String fName, String lName) throws DAOException {
 		try (PreparedStatement ps = prepare("SELECT *, INET6_NTOA(REGADDR) FROM APPLICANTS WHERE (STATUS=?) AND (FIRSTNAME LIKE ?) AND (LASTNAME LIKE ?)")) {
-			ps.setInt(1, Applicant.PENDING);
+			ps.setInt(1, ApplicantStatus.PENDING.ordinal());
 			ps.setString(2, fName);
 			ps.setString(3, lName);
 			return execute(ps);
@@ -205,12 +205,12 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 
 	/**
 	 * Returns all Applicants with a particular status.
-	 * @param status the Applicant status code
+	 * @param status the ApplicantStatus
 	 * @param orderBy the sort column
 	 * @return a List of Applicants
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<Applicant> getByStatus(int status, String orderBy) throws DAOException {
+	public List<Applicant> getByStatus(ApplicantStatus status, String orderBy) throws DAOException {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT *, INET6_NTOA(REGADDR) FROM APPLICANTS WHERE (STATUS=?)");
@@ -220,7 +220,7 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 		}
 
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
-			ps.setInt(1, status);
+			ps.setInt(1, status.ordinal());
 			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -235,7 +235,7 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 	 */
 	public List<Applicant> getByEquipmentType(String eqType) throws DAOException {
 		try (PreparedStatement ps = prepare("SELECT *, INET6_NTOA(REGADDR) FROM APPLICANTS WHERE (STATUS=?) AND (EQTYPE=?) ORDER BY LASTNAME")) {
-			ps.setInt(1, Applicant.APPROVED);
+			ps.setInt(1, ApplicantStatus.APPROVED.ordinal());
 			ps.setString(2, eqType);
 			return execute(ps);
 		} catch (SQLException se) {
@@ -252,7 +252,7 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 	 */
 	public boolean isIPRegistered(String addr, int days) throws DAOException {
 		try (PreparedStatement ps = prepare("SELECT COUNT(DISTINCT ID) FROM APPLICANTS WHERE (STATUS <> ?) AND (REGADDR=INET6_ATON(?)) AND (CREATED > DATE_SUB(NOW(), INTERVAL ? DAY))")) {
-			ps.setInt(1, Applicant.REJECTED);
+			ps.setInt(1, ApplicantStatus.REJECTED.ordinal());
 			ps.setString(2, addr);
 			ps.setInt(3, Math.max(1, days));
 			try (ResultSet rs = ps.executeQuery()) {
@@ -299,7 +299,7 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 
 		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 			int param = 0;
-			ps.setInt(++param, Applicant.PENDING);
+			ps.setInt(++param, ApplicantStatus.PENDING.ordinal());
 			ps.setString(++param, p.getFirstName());
 			ps.setString(++param, p.getLastName());
 			if (!StringUtils.isEmpty(p.getEmail()))
@@ -359,7 +359,7 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			ps.setString(1, usr.getLastName());
 			ps.setInt(2, usr.getID());
-			ps.setInt(3, Applicant.REJECTED);
+			ps.setInt(3, ApplicantStatus.REJECTED.ordinal());
 			return executeIDs(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -389,7 +389,7 @@ public class GetApplicant extends DAO implements PersonUniquenessDAO {
 			while (rs.next()) {
 				Applicant a = new Applicant(rs.getString(4), rs.getString(5));
 				a.setID(rs.getInt(1));
-				a.setStatus(rs.getInt(3));
+				a.setStatus(ApplicantStatus.values()[rs.getInt(3)]);
 				a.setPilotID(rs.getInt(2)); // Status must be populated first
 				a.setEmail(rs.getString(6));
 				a.setLocation(rs.getString(7));

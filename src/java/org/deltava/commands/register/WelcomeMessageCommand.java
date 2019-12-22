@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2012, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2012, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.sql.Connection;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to resent the Applicant welcome message.
  * @author Luke
- * @version 8.2
+ * @version 9.0
  * @since 1.0
  */
 
@@ -62,11 +62,11 @@ public class WelcomeMessageCommand extends AbstractCommand {
 			   mctxt.setTemplate(mtdao.get("USERREGISTER"));
 			   mctxt.addData("questionnaire", ex);
 			   mctxt.addData("applicant", a);
-			} else if ((a.getStatus() == Applicant.PENDING) && (addrValid != null)) {
+			} else if ((a.getStatus() == ApplicantStatus.PENDING) && (addrValid != null)) {
 				mctxt.setTemplate(mtdao.get("APPEMAILUPDATE"));
 				mctxt.addData("applicant", a);
 				mctxt.addData("addrValid", addrValid);
-			} else if (a.getStatus() == Applicant.APPROVED) {
+			} else if (a.getStatus() == ApplicantStatus.APPROVED) {
 				mctxt.addData("applicant", a);
 				mctxt.setTemplate(mtdao.get("APPAPPROVE"));
 				

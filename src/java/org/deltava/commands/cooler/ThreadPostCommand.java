@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2014, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle new Water Cooler message threads.
  * @author Luke
- * @version 7.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -239,7 +239,7 @@ public class ThreadPostCommand extends AbstractCommand {
 				// Validate this user's access to the channel
 				access.updateContext(sctx);
 				access.validate();
-				if (!access.getCanAccess() || (usr.getStatus() != Pilot.ACTIVE))
+				if (!access.getCanAccess() || (usr.getStatus() != PilotStatus.ACTIVE))
 					i.remove();
 			}
 			

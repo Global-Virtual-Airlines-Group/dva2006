@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2011, 2015 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2011, 2015, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.security.command.IssueAccessControl;
 /**
  * A web site command to save new Issue Comments.
  * @author Luke
- * @version 6.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -104,7 +104,7 @@ public class IssueCommentCommand extends AbstractCommand {
 				// Get the pilot profiles
 				GetPilot pdao = new GetPilot(con);
 				Collection<Pilot> pilots = pdao.get(udm).values();
-				pilots = pilots.stream().filter(p -> (p.getStatus() == Pilot.ACTIVE)).collect(Collectors.toList());
+				pilots = pilots.stream().filter(p -> (p.getStatus() == PilotStatus.ACTIVE)).collect(Collectors.toList());
 
 				// Create the e-mail message
 				Mailer mailer = new Mailer(ctx.getUser());

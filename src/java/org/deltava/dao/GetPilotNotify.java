@@ -33,7 +33,7 @@ public class GetPilotNotify extends GetPilot {
     */
    public List<EMailAddress> getNotifications(Notification notificationType) throws DAOException {
 	   try (PreparedStatement ps = prepare("SELECT CONCAT_WS(' ', FIRSTNAME, LASTNAME) AS NM, EMAIL FROM PILOTS WHERE (STATUS=?) AND ((NOTIFY & ?) > 0) ORDER BY LASTNAME, FIRSTNAME")) {
-         ps.setInt(1, Pilot.ACTIVE);
+         ps.setInt(1, PilotStatus.ACTIVE.ordinal());
          ps.setInt(2, notificationType.getCode());
          
          // Execute the query
@@ -57,7 +57,7 @@ public class GetPilotNotify extends GetPilot {
     */
    public Collection<Pilot> gePilots(Notification notificationType) throws DAOException {
 	   try (PreparedStatement ps = prepare("SELECT ID FROM PILOTS WHERE (STATUS=?) AND ((NOTIFY & ?) > 0)")) {
-		   ps.setInt(1, Pilot.ACTIVE);
+		   ps.setInt(1, PilotStatus.ACTIVE.ordinal());
 		   ps.setInt(2, notificationType.getCode());
 		   return getByID(executeIDs(ps), "PILOTS").values();
 	   } catch (SQLException se) {

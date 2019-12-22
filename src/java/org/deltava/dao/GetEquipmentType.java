@@ -381,7 +381,7 @@ public class GetEquipmentType extends DAO {
 	private void loadSize(Collection<EquipmentType> eTypes, String db) throws SQLException {
 		Map<String, EquipmentType> types = CollectionUtils.createMap(eTypes, EquipmentType::getName);
 		try (PreparedStatement ps = prepareWithoutLimits("SELECT P.EQTYPE, COUNT(P.ID) FROM " + db + ".PILOTS P WHERE (P.STATUS=?) GROUP BY P.EQTYPE")) {
-			ps.setInt(1, Pilot.ACTIVE);
+			ps.setInt(1, PilotStatus.ACTIVE.ordinal());
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					EquipmentType eq = types.get(rs.getString(1));

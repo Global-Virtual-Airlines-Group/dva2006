@@ -1,9 +1,9 @@
-// Copyright 2007, 2008, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.sql.Connection;
 
-import org.deltava.beans.Applicant;
+import org.deltava.beans.*;
 import org.deltava.beans.system.AddressValidation;
 
 import org.deltava.commands.*;
@@ -12,7 +12,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command for Applicants to validate their e-mail address.
  * @author Luke
- * @version 7.0
+ * @version 9.0
  * @since 2.0
  */
 
@@ -34,9 +34,7 @@ public class ValidateEMailCommand extends AbstractCommand {
 			// Get the applicant
 			GetApplicant adao = new GetApplicant(con);
 			Applicant a = adao.get(ctx.getID());
-			if ((a == null) || (a.getStatus() != Applicant.PENDING)) {
-				ctx.release();
-				
+			if ((a == null) || (a.getStatus() != ApplicantStatus.PENDING)) {
 				// Redirect to the applicant find page
 				result.setURL("/jsp/register/applicantSearch.jsp");
 				result.setSuccess(true);
@@ -50,7 +48,6 @@ public class ValidateEMailCommand extends AbstractCommand {
 			GetAddressValidation avdao = new GetAddressValidation(con);
 			AddressValidation av = avdao.get(a.getID());
 			if (av == null) {
-				ctx.release();
 				result.setURL("/jsp/register/eMailValid.jsp");
 				result.setSuccess(true);
 				return;
@@ -63,7 +60,6 @@ public class ValidateEMailCommand extends AbstractCommand {
 			// If we haven't provided a code, then just go to the JSP
 			String code = ctx.getParameter("code");
 			if (code == null) {
-				ctx.release();
 				result.setSuccess(true);
 				return;
 			}

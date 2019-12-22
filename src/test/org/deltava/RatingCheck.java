@@ -134,7 +134,7 @@ public class RatingCheck extends TestCase {
 				pw.print(',');
 				pw.print(p.getPilotCode());
 				pw.print(',');
-				pw.print(p.getStatusName());
+				pw.print(p.getStatus().getDescription());
 				pw.print(',');
 				pw.print(p.getRank());
 				pw.print(',');

@@ -66,7 +66,7 @@ matching <content:airline /> Pilots or Applicants with the same name or e-mail a
 </c:if>
 <c:if test="${statusUpdated}">
 <!-- Updated Pilot Status -->
-<li>Pilot Status has been updated. ${pilot.firstName}'s status is now <span class="pri bld">${pilot.statusName}</span>.</li>
+<li>Pilot Status has been updated. ${pilot.firstName}'s status is now <span class="pri bld">${pilot.status.description}</span>.</li>
 </c:if>
 <c:if test="${rankUpdated && !isPromotion}">
 <!-- Updated Pilot Equipment Type and Rank -->

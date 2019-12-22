@@ -142,7 +142,7 @@ golgotha.onDOMReady(function() {
 </tr>
 <tr>
  <td class="label">Pilot Status</td>
- <td colspan="${cspan}" class="data"><span class="pri bld">${pilot.statusName}</span></td>
+ <td colspan="${cspan}" class="data"><span class="pri bld">${pilot.status.description}</span></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>

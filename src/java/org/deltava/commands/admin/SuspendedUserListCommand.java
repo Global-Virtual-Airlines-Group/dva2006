@@ -14,7 +14,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to display Suspended users.
  * @author Luke
- * @version 8.7
+ * @version 9.0
  * @since 2.2
  */
 
@@ -36,7 +36,7 @@ public class SuspendedUserListCommand extends AbstractViewCommand {
 			GetPilot pdao = new GetPilot(con);
 			pdao.setQueryStart(vctx.getStart());
 			pdao.setQueryMax(vctx.getCount());
-			vctx.setResults(pdao.getPilotsByStatus(Pilot.SUSPENDED));
+			vctx.setResults(pdao.getPilotsByStatus(PilotStatus.SUSPENDED));
 			
 			// Load the IDs
 			Collection<Integer> IDs = vctx.getResults().stream().map(Pilot::getID).collect(Collectors.toSet());

@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to retire a User. 
  * @author Luke
- * @version 8.7
+ * @version 9.0
  * @since 3.0
  */
 
@@ -47,7 +47,7 @@ public class RetireUserCommand extends AbstractCommand {
 			ctx.setAttribute("pilot", usr, REQUEST);
 			
 			// Update the pilot status
-			usr.setStatus(Pilot.RETIRED);
+			usr.setStatus(PilotStatus.RETIRED);
 			
 			// Log the change
 			StatusUpdate upd = new StatusUpdate(usr.getID(), UpdateType.STATUS_CHANGE);

@@ -47,11 +47,6 @@ public class TestPilot extends AbstractBeanTestCase {
         checkProperty("hasSignature", Boolean.valueOf(true));
         checkProperty("showSignatures", Boolean.valueOf(true));
         checkProperty("showSSThreads", Boolean.valueOf(true));
-
-        checkProperty("status", Integer.valueOf(3));
-        assertEquals(Pilot.STATUS[3], _p.getStatusName());
-        _p.setStatus(Pilot.STATUS[2]);
-        assertEquals(2, _p.getStatus());
     }
     
     public void testComboAlias() {
@@ -202,13 +197,5 @@ public class TestPilot extends AbstractBeanTestCase {
     	assertEquals(1.1, _p.getOnlineHours(), 0.001);
     	assertEquals(1, _p.getOnlineLegs());
     	assertEquals(fr.getDistance(), _p.getMiles());
-    }
-    
-    public void testViewEntry() {
-       String[] ROW_CLASSES = {null, "opt2", "opt3", "opt1", "err", "warn"};
-       for (int x = 0; x < ROW_CLASSES.length; x++) {
-          _p.setStatus(x);
-          assertEquals(ROW_CLASSES[x], _p.getRowClassName());
-       }
     }
 }

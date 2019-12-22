@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command for Pilots to take a Leave of Absence.
  * @author Luke
- * @version 8.7
+ * @version 9.0
  * @since 1.0
  */
 
@@ -61,8 +61,8 @@ public class LeaveCommand extends AbstractCommand {
 
 			// Update the Pilot's status
 			SetPilot wdao = new SetPilot(con);
-			wdao.setStatus(p.getID(), Pilot.ON_LEAVE);
-			p.setStatus(Pilot.ON_LEAVE);
+			wdao.setStatus(p.getID(), PilotStatus.ONLEAVE);
+			p.setStatus(PilotStatus.ONLEAVE);
 			
 			// Add an inactivity table entry
 			SetInactivity idao = new SetInactivity(con);

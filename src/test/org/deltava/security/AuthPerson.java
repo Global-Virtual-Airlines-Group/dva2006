@@ -1,8 +1,7 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
-import java.util.Collection;
-import java.util.TreeSet;
+import java.util.*;
 
 import org.deltava.beans.Person;
 
@@ -13,11 +12,6 @@ class AuthPerson extends Person {
 	public AuthPerson(String fName, String lName, String dn) {
 		super(fName, lName);
 		setDN(dn);
-	}
-	
-	@Override
-	public String getStatusName() {
-		return "MockPerson";
 	}
 	
 	@Override

@@ -81,7 +81,7 @@ public class SetPilot extends PilotWriteDAO {
 				ps.setInt(24, p.getMapType().ordinal());
 				ps.setInt(25, p.getRank().ordinal());
 				ps.setString(26, p.getEquipmentType());
-				ps.setInt(27, p.getStatus());
+				ps.setInt(27, p.getStatus().ordinal());
 				ps.setBoolean(28, p.getNoExams());
 				ps.setBoolean(29, p.getNoVoice());
 				ps.setBoolean(30, p.getNoCooler());
@@ -100,7 +100,7 @@ public class SetPilot extends PilotWriteDAO {
 			}
 			
 			// Update the roles/ratings
-			writeRoles(p.getID(), p.getRoles(), db);
+			writeRoles(p.getID(), p.getRoleData());
 			writeRatings(p.getID(), p.getRatings(), db, true);
 			writeIMAddrs(p.getID(), p.getIMHandle(), db, true);
 			writeAlias(p.getID(), p.getPilotCode(), p.getLDAPName());

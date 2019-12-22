@@ -70,7 +70,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Applicant Status</td>
- <td class="data sec bld caps">${applicant.statusName}</td>
+ <td class="data sec bld caps">${applicant.status.description}</td>
 </tr>
 <c:if test="${!empty nameMatches}">
 <tr>

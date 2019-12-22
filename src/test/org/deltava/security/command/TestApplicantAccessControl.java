@@ -4,7 +4,7 @@ package org.deltava.security.command;
 import junit.framework.Test;
 import org.hansel.CoverageDecorator;
 
-import org.deltava.beans.Applicant;
+import org.deltava.beans.*;
 
 public class TestApplicantAccessControl extends AccessControlTestCase {
    
@@ -47,7 +47,7 @@ protected void tearDown() throws Exception {
    }
    
    public void testHRAccess() throws Exception {
-      _a.setStatus(Applicant.APPROVED);
+      _a.setStatus(ApplicantStatus.APPROVED);
       _user.addRole("HR");
       _ac.validate();
       assertTrue(_ac.getCanRead());
@@ -55,7 +55,7 @@ protected void tearDown() throws Exception {
       assertFalse(_ac.getCanApprove());
       assertFalse(_ac.getCanReject());
 
-      _a.setStatus(Applicant.PENDING);
+      _a.setStatus(ApplicantStatus.PENDING);
       _ac.validate();
       assertTrue(_ac.getCanRead());
       assertTrue(_ac.getCanEdit());
