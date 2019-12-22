@@ -35,7 +35,8 @@ public class StartFlightService extends XAService {
 	public int execute(ServiceContext ctx) throws ServiceException {
 		
 		// Parse the data
-		List<String> data = StringUtils.split(ctx.getParameter("DATA3"), "|");
+		String rawData = StringUtils.strip("\r\n", ctx.getParameter("DATA3"));
+		List<String> data = StringUtils.split(rawData, "|");
 		if ((data == null) || (data.size() < 18)) {
 			ctx.print("0|Invalid Flight Data");
 			return SC_OK;
