@@ -80,7 +80,7 @@ abstract class XAService extends WebService {
 		int pos = data.indexOf('_');
 		String sim = data.substring(pos + 1, data.indexOf('|', pos));
 		log.info("Valid simulator " + sim);
-		return sim.contains("MSFS") ? Simulator.FSX : Simulator.XP10;
+		return sim.contains("MSFS") ? Simulator.FSX : Simulator.XP11;
 	}
 	
 	/**
