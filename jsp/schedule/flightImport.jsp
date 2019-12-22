@@ -44,7 +44,8 @@ golgotha.local.validate = function(f) {
 <content:page>
 <%@ include file="/jsp/schedule/header.jspf" %> 
 <%@ include file="/jsp/schedule/sideMenu.jspf" %>
-<content:enum var="schedTypes" className="org.deltava.beans.schedule.ScheduleSource" />
+<content:enum var="schedTypes" className="org.deltava.beans.schedule.ScheduleSource" exclude="MANUAL" />
+<content:enum var="importPolicies" className="org.deltava.beans.schedule.ImportPolicy" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -60,6 +61,10 @@ golgotha.local.validate = function(f) {
 <tr>
  <td class="label">Schedule Format</td>
  <td class="data"><el:combo name="schedType" idx="*" size="1" options="${schedTypes}" required="true" firstEntry="[ SCHEDULE TYPE ]" onChange="void golgotha.local.updateSource(this)" /></td>
+</tr>
+<tr>
+ <td class="label">Duration Calculation</td>
+ <td class="data"><el:combo name="importPolicy" idx="*" size="1" options="${importPolicies}" required="true" firstEntry="[ CALCULATION ]" /></td>
 </tr>
 <tr class="progress title caps" style="display:none;">
  <td colspan="2">UPLOAD PROGRESS</td>
