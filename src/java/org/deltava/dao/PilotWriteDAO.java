@@ -4,7 +4,8 @@ package org.deltava.dao;
 import java.sql.*;
 import java.util.*;
 
-import org.deltava.beans.IMAddress;
+import org.deltava.beans.*;
+
 import org.deltava.util.StringUtils;
 import org.deltava.util.cache.CacheManager;
 import org.deltava.util.system.SystemData;
@@ -30,24 +31,22 @@ public abstract class PilotWriteDAO extends DAO {
 	 * Writes a Pilot's security roles to the database.
 	 * @param id the Pilot's database ID
 	 * @param roles a Collection of security role names
-	 * @param db the database to write to
 	 * @throws SQLException if a JDBC error occurs
 	 */
-	protected void writeRoles(int id, Collection<String> roles, String db) throws SQLException {
+	protected void writeRoles(int id, Collection<Role> roles) throws SQLException {
 
 		// Clear existing roles
-		String dbName = formatDBName(db);
-		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM " + dbName + ".ROLES WHERE (ID=?)")) {
+		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM common.AUTH_ROLES WHERE (ID=?)")) {
 			ps.setInt(1, id);
 			executeUpdate(ps, 0);
 		}
 
 		// Write the roles to the database - don't add the "pilot" role
-		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO " + dbName + ".ROLES (ID, ROLE) VALUES (?, ?)")) {
+		try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.AUTH_ROLES (ID, ROLE) VALUES (?, ?)")) {
 			ps.setInt(1, id);
-			for (String role : roles) {
-				if (!"Pilot".equals(role)) {
-					ps.setString(2, role);
+			for (Role r : roles) {
+				if (r.isPersistent()) {
+					ps.setString(2, r.getName());
 					ps.addBatch();
 				}
 			}
@@ -151,12 +150,12 @@ public abstract class PilotWriteDAO extends DAO {
 	/**
 	 * Updates a Pilots' status in the database.
 	 * @param id the pilot database ID
-	 * @param status the pilot status
+	 * @param status the PilotStatus
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void setStatus(int id, int status) throws DAOException {
+	public void setStatus(int id, PilotStatus status) throws DAOException {
 		try (PreparedStatement ps = prepareWithoutLimits("UPDATE PILOTS SET STATUS=? WHERE (ID=?)")) {
-			ps.setInt(1, status);
+			ps.setInt(1, status.ordinal());
 			ps.setInt(2, id);
 			executeUpdate(ps, 1);
 		} catch (SQLException se) {

@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to disable Users who have not logged in within a period of time.
  * @author Luke
- * @version 8.7
+ * @version 9.0
  * @since 1.0
  */
 
@@ -150,7 +150,7 @@ public class InactivityUpdateTask extends Task {
 					}
 
 					// Deactivate the Pilot and the email box
-					p.setStatus(Pilot.INACTIVE);
+					p.setStatus(PilotStatus.INACTIVE);
 					pwdao.write(p);
 					pewdao.disable(p.getID());
 					

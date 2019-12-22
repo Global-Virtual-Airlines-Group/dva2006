@@ -1,11 +1,11 @@
-// Copyright 2005, 2007, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.util.*;
 import java.util.stream.Collectors;
 import java.sql.Connection;
 
-import org.deltava.beans.Applicant;
+import org.deltava.beans.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -16,13 +16,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display applicants.
  * @author Luke
- * @version 7.0
+ * @version 9.0
  * @since 1.0
  */
 
 public class ApplicantListCommand extends AbstractViewCommand {
 	
-	private static final List<String> LETTERS = Arrays.asList("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z");
+	private static final List<String> LETTERS = List.of("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z");
 
 	/**
 	 * Executes the command.
@@ -35,10 +35,7 @@ public class ApplicantListCommand extends AbstractViewCommand {
 		// Initialize the view context
 		ViewContext<Applicant> vc = initView(ctx, Applicant.class);
 		boolean isQueue = false;
-		
-		// Set combobox options
 		ctx.setAttribute("letters", LETTERS, REQUEST);
-		ctx.setAttribute("statuses", ComboUtils.fromArray(Applicant.STATUS), REQUEST);
 
 		try {
 			Connection con = ctx.getConnection();
@@ -53,16 +50,15 @@ public class ApplicantListCommand extends AbstractViewCommand {
 			dao.setQueryMax(vc.getCount());
 			
 			// Figure out which method to call
-			if (ctx.getParameter("status") != null) {
-				int statusCode = StringUtils.arrayIndexOf(Applicant.STATUS, ctx.getParameter("status"));
-				vc.setResults(dao.getByStatus((statusCode == -1) ? Applicant.PENDING : statusCode, "CREATED DESC"));
-			} else if (ctx.getParameter("eqType") != null)
+			if (ctx.getParameter("status") != null)
+				vc.setResults(dao.getByStatus(ApplicantStatus.fromName(ctx.getParameter("status"), ApplicantStatus.PENDING), "CREATED DESC"));
+			else if (ctx.getParameter("eqType") != null)
 				vc.setResults(dao.getByEquipmentType(ctx.getParameter("eqType")));
 			else if (!StringUtils.isEmpty(ctx.getParameter("letter")))
 				vc.setResults(dao.getByLetter(ctx.getParameter("letter")));
 			else {
 				isQueue = true;
-				vc.setResults(dao.getByStatus(Applicant.PENDING, "CREATED DESC"));
+				vc.setResults(dao.getByStatus(ApplicantStatus.PENDING, "CREATED DESC"));
 			}
 			
 			// Get the applicant/pilot IDs

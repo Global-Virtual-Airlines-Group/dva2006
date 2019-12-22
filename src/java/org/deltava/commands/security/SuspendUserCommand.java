@@ -19,7 +19,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to lock out a user.
  * @author Luke
- * @version 8.7
+ * @version 9.0
  * @since 1.0
  */
 
@@ -65,7 +65,7 @@ public class SuspendUserCommand extends AbstractCommand {
 			}
 				
 			// Update the pilot status
-			usr.setStatus(Pilot.SUSPENDED);
+			usr.setStatus(PilotStatus.SUSPENDED);
 			
 			// Log the change
 			StatusUpdate upd = new StatusUpdate(usr.getID(), UpdateType.SUSPENDED);

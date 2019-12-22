@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2016, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.*;
@@ -8,7 +8,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An access controller for Pilot profile operations.
  * @author Luke
- * @version 8.3
+ * @version 9.0
  * @since 1.0
  */
 
@@ -43,9 +43,6 @@ public class PilotAccessControl extends AccessControl {
 		_p = p;
 	}
 
-	/**
-	 * Calculates access rights.
-	 */
 	@Override
 	public void validate() {
 		validateContext();
@@ -62,7 +59,7 @@ public class PilotAccessControl extends AccessControl {
 		// Sets basic role variables
 		_isOurs = (_ctx.getUser().getID() == _p.getID());
 		boolean isHR = _ctx.isUserInRole("HR");
-		int status = _p.getStatus();
+		PilotStatus status = _p.getStatus();
 		
 		// Check if we can view e-mail
 		_canViewEmail = (_p.getEmailAccess() != Person.HIDE_EMAIL) || isHR || _isOurs || _ctx.isUserInRole("Event") || _ctx.isUserInRole("Instructor") || _ctx.isUserInRole("PIREP") || _ctx.isUserInRole("Signature");
@@ -71,13 +68,13 @@ public class PilotAccessControl extends AccessControl {
 		_canEdit = (_isOurs || isHR) && !_p.getIsForgotten();
 		_canChangeSignature = _canEdit || _ctx.isUserInRole("Signature");
 		_canViewExams = _isOurs || _ctx.isUserInRole("Examination") || _ctx.isUserInRole("Instructor") || isHR;
-		_canAssignRide = (isHR || _ctx.isUserInRole("Examination")) && (_p.getStatus() == Pilot.ACTIVE);
+		_canAssignRide = (isHR || _ctx.isUserInRole("Examination")) && (status == PilotStatus.ACTIVE);
 		_canChangeStatus = isHR;
-		_canTakeLeave = (status == Pilot.ACTIVE) && (_isOurs || _canChangeStatus);
+		_canTakeLeave = (status == PilotStatus.ACTIVE) && (_isOurs || _canChangeStatus);
 		_canChangeRoles = _ctx.isUserInRole("Admin");
-		_canTransfer = _canChangeStatus && (status != Pilot.TRANSFERRED) && !_p.getIsForgotten();
-		_canInactivate = _canChangeStatus && !_isOurs && ((status == Pilot.ACTIVE) || (status == Pilot.ON_LEAVE));
-		_canActivate = _canChangeStatus && ((status == Pilot.INACTIVE) || (status == Pilot.RETIRED) || (status == Pilot.SUSPENDED)) && !_p.getIsForgotten();
+		_canTransfer = _canChangeStatus && (status != PilotStatus.TRANSFERRED) && !_p.getIsForgotten();
+		_canInactivate = _canChangeStatus && !_isOurs && ((status == PilotStatus.ACTIVE) || (status == PilotStatus.ONLEAVE));
+		_canActivate = _canChangeStatus && ((status == PilotStatus.INACTIVE) || (status == PilotStatus.RETIRED) || (status == PilotStatus.SUSPENDED)) && !_p.getIsForgotten();
 
 		// Check Promotion access
 		boolean isSameProgram = _ctx.getUser().getEquipmentType().equals(_p.getEquipmentType());

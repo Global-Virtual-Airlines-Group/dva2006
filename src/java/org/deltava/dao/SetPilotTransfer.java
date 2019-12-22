@@ -49,7 +49,7 @@ public class SetPilotTransfer extends SetPilot {
 			try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 				ps.setString(1, p.getFirstName());
 				ps.setString(2, p.getLastName());
-				ps.setInt(3, Pilot.ACTIVE);
+				ps.setInt(3, PilotStatus.ACTIVE.ordinal());
 				ps.setString(4, p.getDN());
 				ps.setString(5, p.getEmail());
 				ps.setString(6, p.getLocation());

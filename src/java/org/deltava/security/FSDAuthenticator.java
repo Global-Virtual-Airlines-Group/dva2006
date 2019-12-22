@@ -1,4 +1,4 @@
-// Copyright 2007, 2009, 2010, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009, 2010, 2012, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.io.*;
@@ -15,7 +15,7 @@ import org.deltava.util.*;
 /**
  * An Authenticator to read/write from FSD certificate files.
  * @author Luke
- * @version 7.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -175,7 +175,7 @@ public class FSDAuthenticator implements Authenticator {
 	 */
 	@Override
 	public boolean accepts(Person usr) {
-		return (getUserLevel(usr) != Rating.DISABLED) && (usr.getStatus() == Pilot.ACTIVE);
+		return (usr instanceof Pilot) && (getUserLevel(usr) != Rating.DISABLED) && (((Pilot)usr).getStatus() == PilotStatus.ACTIVE);
 	}
 
 	/**

@@ -106,8 +106,8 @@ public class GetStatistics extends DAO  {
 				// Get Pilot Totals
 				try (PreparedStatement ps = prepare("SELECT COUNT(ID), SUM(CASE STATUS WHEN ? THEN 1 WHEN ? THEN 1 END) FROM PILOTS")) {
 					ps.setQueryTimeout(10);
-					ps.setInt(1, Pilot.ACTIVE);
-					ps.setInt(2, Pilot.ON_LEAVE);
+					ps.setInt(1, PilotStatus.ACTIVE.ordinal());
+					ps.setInt(2, PilotStatus.ONLEAVE.ordinal());
 					try (ResultSet rs = ps.executeQuery()) {
 						if (rs.next()) {
 							result.setTotalPilots(rs.getInt(1));
@@ -139,8 +139,8 @@ public class GetStatistics extends DAO  {
 		sqlBuf.append(".PILOTS WHERE ((STATUS=?) OR (STATUS=?))");
 
 		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
-			ps.setInt(1, Pilot.ACTIVE);
-			ps.setInt(2, Pilot.ON_LEAVE);
+			ps.setInt(1, PilotStatus.ACTIVE.ordinal());
+			ps.setInt(2, PilotStatus.ONLEAVE.ordinal());
 			try (ResultSet rs = ps.executeQuery()) {
 				return rs.next() ? rs.getInt(1) : 0;
 			}
@@ -167,8 +167,8 @@ public class GetStatistics extends DAO  {
 			// Get total Active Pilots
 			int totalSize = 0;
 			try (PreparedStatement ps = prepareWithoutLimits("SELECT COUNT(*) FROM PILOTS WHERE ((STATUS=?) OR (STATUS=?))")) {
-				ps.setInt(1, Pilot.ACTIVE);
-				ps.setInt(2, Pilot.ON_LEAVE);
+				ps.setInt(1, PilotStatus.ACTIVE.ordinal());
+				ps.setInt(2, PilotStatus.ONLEAVE.ordinal());
 				try (ResultSet rs = ps.executeQuery()) {
 					totalSize = rs.next() ? rs.getInt(1) : 0;
 				}
@@ -184,8 +184,8 @@ public class GetStatistics extends DAO  {
 				// Prepare the statement
 				setQueryStart(Math.round(totalSize * key / 100));
 				try (PreparedStatement ps = prepareWithoutLimits("SELECT CREATED FROM PILOTS WHERE ((STATUS=?) OR (STATUS=?)) ORDER BY CREATED LIMIT 1")) {
-					ps.setInt(1, Pilot.ACTIVE);
-					ps.setInt(2, Pilot.ON_LEAVE);
+					ps.setInt(1, PilotStatus.ACTIVE.ordinal());
+					ps.setInt(2, PilotStatus.ONLEAVE.ordinal());
 					try (ResultSet rs = ps.executeQuery()) {
 						if (rs.next())
 							results.put(Integer.valueOf(Math.round(key)), rs.getTimestamp(1).toInstant());
@@ -207,8 +207,8 @@ public class GetStatistics extends DAO  {
 	public Collection<MembershipTotals> getJoinStats() throws DAOException {
 		try (PreparedStatement ps = prepareWithoutLimits("SELECT ROUND(DATEDIFF(CURDATE(), CREATED) / 30 + 1) * 30 AS MEMAGE, DATE_SUB(CURDATE(), INTERVAL ROUND(DATEDIFF(CURDATE(), CREATED) / 30 + 1) * 30 DAY) AS MEMDT, "
 			+ "COUNT(ID) FROM PILOTS WHERE ((STATUS=?) OR (STATUS=?)) GROUP BY MEMAGE ORDER BY MEMAGE DESC")) {
-			ps.setInt(1, Pilot.ACTIVE);
-			ps.setInt(2, Pilot.ON_LEAVE);
+			ps.setInt(1, PilotStatus.ACTIVE.ordinal());
+			ps.setInt(2, PilotStatus.ONLEAVE.ordinal());
 
 			// Execute the Query
 			Collection<MembershipTotals> results = new ArrayList<MembershipTotals>();

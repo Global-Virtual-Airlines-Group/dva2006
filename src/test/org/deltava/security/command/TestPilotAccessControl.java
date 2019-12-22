@@ -6,6 +6,7 @@ import org.hansel.CoverageDecorator;
 
 import org.deltava.beans.Person;
 import org.deltava.beans.Pilot;
+import org.deltava.beans.PilotStatus;
 
 public class TestPilotAccessControl extends AccessControlTestCase {
 
@@ -98,7 +99,7 @@ protected void tearDown() throws Exception {
    }
    
    public void testMyProfileAccess() throws Exception {
-      assertTrue(_p.getStatus() != Pilot.ON_LEAVE);
+      assertTrue(_p.getStatus() != PilotStatus.ONLEAVE);
       _p.setID(_user.getID());
       _ac.validate();
       
@@ -123,7 +124,7 @@ protected void tearDown() throws Exception {
       assertFalse(_ac.getCanChangeRoles());
       assertTrue(_ac.getCanChangeStaffProfile());
 
-      _p.setStatus(Pilot.ON_LEAVE);
+      _p.setStatus(PilotStatus.ONLEAVE);
       _ac.validate();
       
       assertTrue(_ac.getIsOurs());

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command for processing Applicant Profiles.
  * @author Luke
- * @version 8.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -80,11 +80,9 @@ public class ApplicantCommand extends AbstractFormCommand {
 			a.setRank(Rank.fromName(ctx.getParameter("rank")));
 
 			// Set Notification Options
-			Collection<String> notifyOptions = ctx.getParameters("notifyOption");
-			if (notifyOptions != null) {
-				for (Notification n : Notification.values())
-					a.setNotifyOption(n, notifyOptions.contains(n.name()));
-			}
+			Collection<String> notifyOptions = ctx.getParameters("notifyOption", Collections.emptySet());
+			for (Notification n : Notification.values())
+				a.setNotifyOption(n, notifyOptions.contains(n.name()));
 
 			// Save the applicant in the request
 			ctx.setAttribute("applicant", a, REQUEST);
@@ -325,7 +323,7 @@ public class ApplicantCommand extends AbstractFormCommand {
 				Applicant ap = (Applicant) p;
 				if (persons.containsKey(Integer.valueOf(ap.getPilotID())))
 					i.remove();
-				else if ((ap.getStatus() == Applicant.APPROVED) && (ap.getPilotID() != 0)) {
+				else if ((ap.getStatus() == ApplicantStatus.APPROVED) && (ap.getPilotID() != 0)) {
 					UserData ud = uddao.get(ap.getPilotID());
 					if (ud != null) {
 						addUsers.add(ud);

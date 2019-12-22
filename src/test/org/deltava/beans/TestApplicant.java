@@ -35,7 +35,7 @@ public class TestApplicant extends AbstractBeanTestCase {
         checkProperty("registerHostName", "localhost");
         checkProperty("pilotID", Integer.valueOf(0));
         
-        _a.setStatus(Applicant.APPROVED);
+        _a.setStatus(ApplicantStatus.APPROVED);
         checkProperty("pilotID", Integer.valueOf(2345));
         
         assertNotNull(_a.getRoles());
@@ -48,9 +48,9 @@ public class TestApplicant extends AbstractBeanTestCase {
     public void testValidation() {
     	validateInput("status", Integer.valueOf(-1), IllegalArgumentException.class);
     	validateInput("status", Integer.valueOf(121), IllegalArgumentException.class);
-    	assertFalse(_a.getStatus() == Applicant.APPROVED);
+    	assertFalse(_a.getStatus() == ApplicantStatus.APPROVED);
     	validateInput("pilotID", Integer.valueOf(123), IllegalStateException.class);
-    	 _a.setStatus(Applicant.APPROVED);
+    	 _a.setStatus(ApplicantStatus.APPROVED);
     	validateInput("pilotID", Integer.valueOf(-1), IllegalArgumentException.class);
     	
     	try {
@@ -59,13 +59,5 @@ public class TestApplicant extends AbstractBeanTestCase {
     	} catch (UnsupportedOperationException uoe) {
     		// empty
     	}
-    }
-    
-    public void testViewEntry() {
-       String[] ROW_CLASSES = {"opt1", null, "err"};
-       for (int x = 0; x < ROW_CLASSES.length; x++) {
-          _a.setStatus(x);
-          assertEquals(ROW_CLASSES[x], _a.getRowClassName());
-       }
     }
 }

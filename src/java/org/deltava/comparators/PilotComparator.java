@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2008, 2009, 2010, 2012, 2106, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2008, 2009, 2010, 2012, 2106, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
 import java.time.Instant;
@@ -8,7 +8,7 @@ import org.deltava.beans.*;
 /**
  * A comparator for sorting Pilot objects.
  * @author Luke
- * @version 8.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -23,8 +23,7 @@ public class PilotComparator extends PersonComparator<Pilot> {
     public static final int STATUS = 9;
     public static final int LASTFLIGHT = 10;
     
-    public static final String[] TYPES = { "First Name", "Last Name", "Login Date", "Creation Date", "Pilot Code",
-            "Equipment Type", "Rank", "Flight Legs", "Flight Hours", "Status", "Last Flight"};
+    public static final String[] TYPES = { "First Name", "Last Name", "Login Date", "Creation Date", "Pilot Code", "Equipment Type", "Rank", "Flight Legs", "Flight Hours", "Status", "Last Flight"};
     
     /**
      * Creates a new comparator with a specified comparison type code.
@@ -79,7 +78,7 @@ public class PilotComparator extends PersonComparator<Pilot> {
         		    break;
         		    
         		case STATUS :
-        		    tmpResult = Integer.compare(p1.getStatus(), p2.getStatus());
+        		    tmpResult = p1.getStatus().compareTo(p2.getStatus());
         		    break;
         		    
         		case LASTFLIGHT:

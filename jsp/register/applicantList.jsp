@@ -29,6 +29,7 @@ golgotha.local.sort = function(combo) {
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:sysdata var="maxSize" name="users.max" />
+<content:enum var="statuses" className="org.deltava.beans.ApplicantStatus" />
 
 <!-- Main Body Frame -->
 <content:region id="main">

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.sql.Connection;
@@ -17,7 +17,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to resend an e-mail validation message to an Applicant.
  * @author Luke
- * @version 7.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -46,9 +46,7 @@ public class ResendValidationCommand extends AbstractCommand {
 			// Get the applicant
 			GetApplicant adao = new GetApplicant(con);
 			Applicant a = adao.get(ctx.getID());
-			if ((a == null) || (a.getStatus() != Applicant.PENDING)) {
-				ctx.release();
-				
+			if ((a == null) || (a.getStatus() != ApplicantStatus.PENDING)) {
 				// Redirect to the applicant find page
 				result.setURL("/jsp/register/applicantSearch.jsp");
 				result.setSuccess(true);
@@ -59,7 +57,6 @@ public class ResendValidationCommand extends AbstractCommand {
 			GetAddressValidation avdao = new GetAddressValidation(con); 
 			AddressValidation av = avdao.get(ctx.getID());
 			if (av == null) {
-				ctx.release();
 				result.setURL("/jsp/register/eMailValid.jsp");
 				result.setSuccess(true);
 				return;
@@ -85,8 +82,6 @@ public class ResendValidationCommand extends AbstractCommand {
 				// Save the address validation
 				SetAddressValidation avwdao = new SetAddressValidation(con);
 				avwdao.write(av);
-				
-				// Commit
 				ctx.commitTX();
 			}
 				

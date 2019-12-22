@@ -27,16 +27,6 @@ public class TestPerson extends AbstractBeanTestCase {
         }
         
         @Override
-		public String getStatusName() {
-        	return "MockPerson";
-        }
-        
-        @Override
-		public final void setStatus(int status) {
-            super.setStatus(status);
-        }
-        
-        @Override
 		public void addRole(String roleName) {
             _roles.add(roleName);
         }

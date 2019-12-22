@@ -65,7 +65,7 @@ return true;
 <!-- Pilot Data -->
 <tr>
  <td class="label">Pilot Status</td>
- <td colspan="${cspan}" class="data sec bld">${pilot.statusName}
+ <td colspan="${cspan}" class="data sec bld">${pilot.status.description}
 <c:if test="${access.canChangeStatus}">
 <c:if test="${pilot.noVoice}"> <span class="warn bld">VOICE ACCESS DISABLED</span></c:if>
 <c:if test="${pilot.noExams}"> <span class="warn bld">EXAMINATION ACCESS DISABLED</span></c:if>

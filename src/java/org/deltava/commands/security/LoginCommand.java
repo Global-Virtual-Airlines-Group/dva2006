@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to Authenticate users.
  * @author Luke
- * @version 8.7
+ * @version 9.0
  * @since 1.0
  */
 
@@ -142,7 +142,7 @@ public class LoginCommand extends AbstractCommand {
 				// If we got more than one pilot, filter inactive pilots
 				List<Pilot> activeUsers = new ArrayList<Pilot>();
 				for (Pilot usr : users) {
-					if ((usr.getStatus() == Pilot.ACTIVE) || (usr.getStatus() == Pilot.ON_LEAVE))
+					if ((usr.getStatus() == PilotStatus.ACTIVE) || (usr.getStatus() == PilotStatus.ONLEAVE))
 						activeUsers.add(usr);
 				}
 				
@@ -168,19 +168,19 @@ public class LoginCommand extends AbstractCommand {
 
 			// If we're on leave, then reset the status (SetPilotLogin.login() will write it)
 			boolean returnToActive = false;
-			if (p.getStatus() == Pilot.ON_LEAVE) {
+			if (p.getStatus() == PilotStatus.ONLEAVE) {
 				log.info("Returning " + p.getName() + " from Leave");
 				returnToActive = true;
-				p.setStatus(Pilot.ACTIVE);
-			} else if (p.getStatus() != Pilot.ACTIVE) {
-				if (p.getStatus() == Pilot.SUSPENDED) {
+				p.setStatus(PilotStatus.ACTIVE);
+			} else if (p.getStatus() != PilotStatus.ACTIVE) {
+				if (p.getStatus() == PilotStatus.SUSPENDED) {
 					log.warn(p.getName() + " status = Suspended, setting cookie");
 					Cookie wc = new Cookie("dvaAuthStatus", StringUtils.formatHex(p.getID()));
 					wc.setPath("/");
 					wc.setMaxAge(86400 * 180);
 					ctx.addCookie(wc);
 				} else
-					log.warn(p.getName() + " status = " + p.getStatusName());
+					log.warn(p.getName() + " status = " + p.getStatus().getDescription());
 				
 				throw new SecurityException("You are not an Active Pilot at " + SystemData.get("airline.name"));
 			}

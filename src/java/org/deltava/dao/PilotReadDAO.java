@@ -98,7 +98,7 @@ abstract class PilotReadDAO extends DAO {
 			Map<Integer, Pilot> results = CollectionUtils.createMap(execute(ps), Pilot::getID);
 			loadIMAddrs(results, dbName);
 			loadRatings(results, dbName);
-			loadRoles(results, dbName);
+			loadRoles(results);
 			loadAccomplishments(results, dbName);
 
 			// Add the result to the cache and return
@@ -203,7 +203,7 @@ abstract class PilotReadDAO extends DAO {
 				Map<Integer, Pilot> ucMap = CollectionUtils.createMap(uncached, Pilot::getID);
 				loadIMAddrs(ucMap, dbName);
 				loadRatings(ucMap, dbName);
-				loadRoles(ucMap, dbName);
+				loadRoles(ucMap);
 				loadAccomplishments(ucMap, dbName);
 			} catch (SQLException se) {
 				log.error("Query = " + sqlBuf.toString());
@@ -239,7 +239,7 @@ abstract class PilotReadDAO extends DAO {
 				Pilot p = new Pilot(rs.getString(3), rs.getString(4));
 				p.setID(rs.getInt(1));
 				p.setPilotCode(airlineCode + String.valueOf(rs.getInt(2)));
-				p.setStatus(rs.getInt(5));
+				p.setStatus(PilotStatus.values()[rs.getInt(5)]);
 				p.setDN(rs.getString(6));
 				p.setEmail(rs.getString(7));
 				p.setLocation(rs.getString(8));
@@ -323,7 +323,7 @@ abstract class PilotReadDAO extends DAO {
 		tmpMap.put(Integer.valueOf(p.getID()), p);
 		loadIMAddrs(tmpMap, dbName);
 		loadRatings(tmpMap, dbName);
-		loadRoles(tmpMap, dbName);
+		loadRoles(tmpMap);
 		loadAccomplishments(tmpMap, dbName);
 	}
 
@@ -365,17 +365,13 @@ abstract class PilotReadDAO extends DAO {
 	/**
 	 * Load the security roles for a group of Pilots.
 	 * @param pilots the Map of Pilots, indexed by database ID
-	 * @param dbName the database Name
 	 * @throws SQLException if a JDBC error occurs
 	 */
-	protected final void loadRoles(Map<Integer, Pilot> pilots, String dbName) throws SQLException {
-		if (pilots.isEmpty())
-			return;
+	protected final void loadRoles(Map<Integer, Pilot> pilots) throws SQLException {
+		if (pilots.isEmpty()) return;
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT ID, ROLE FROM ");
-		sqlBuf.append(formatDBName(dbName));
-		sqlBuf.append(".ROLES WHERE (ID IN (");
+		StringBuilder sqlBuf = new StringBuilder("SELECT ID, ROLE FROM common.AUTH_ROLES WHERE (ID IN (");
 		for (Iterator<Integer> i = pilots.keySet().iterator(); i.hasNext();) {
 			Integer id = i.next();
 			sqlBuf.append(id.toString());
@@ -385,7 +381,6 @@ abstract class PilotReadDAO extends DAO {
 
 		sqlBuf.append("))");
 
-		// Execute the query
 		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
@@ -404,8 +399,7 @@ abstract class PilotReadDAO extends DAO {
 	 * @throws SQLException if a JDBC error occurs
 	 */
 	protected final void loadIMAddrs(Map<Integer, Pilot> pilots, String dbName) throws SQLException {
-		if (pilots.isEmpty())
-			return;
+		if (pilots.isEmpty()) return;
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT ID, TYPE, ADDR FROM ");

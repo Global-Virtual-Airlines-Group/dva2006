@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.hr;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -20,7 +20,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to check for duplicate pilot names.
  * @author Luke
- * @version 3.4
+ * @version 9.0
  * @since 3.1
  */
 
@@ -30,11 +30,6 @@ public class DuplicateNameService extends WebService {
 		
 		DupeUser(String fName, String lName) {
 			super(fName, lName);
-		}
-		
-		@Override
-		public String getStatusName() {
-			return "Invalid";
 		}
 		
 		@Override

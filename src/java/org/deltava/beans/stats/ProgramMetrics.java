@@ -1,4 +1,4 @@
-// Copyright 2008, 2010, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2010, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store equipment program-specific statistics.
  * @author Luke
- * @version 7.0
+ * @version 9.0
  * @since 2.1
  */
 
@@ -22,7 +22,7 @@ public class ProgramMetrics implements Cacheable, Comparable<ProgramMetrics> {
 	
 	private final Map<Rank, Integer> _rankCounts = new TreeMap<Rank, Integer>();
 	private final Map<Instant, Integer> _hireCounts = new LinkedHashMap<Instant, Integer>();
-	private final Map<String, Integer> _statusCounts = new TreeMap<String, Integer>();
+	private final Map<PilotStatus, Integer> _statusCounts = new TreeMap<PilotStatus, Integer>();
 	
 	private int _size;
 	private int _maxRankCount = 1;
@@ -54,7 +54,7 @@ public class ProgramMetrics implements Cacheable, Comparable<ProgramMetrics> {
 		if (_eq.getName().equals(p.getEquipmentType())) {
 			addRank(p.getRank());
 			addHireDate(p.getCreatedOn());
-			addStatus(p.getStatusName());
+			addStatus(p.getStatus());
 			_size++;
 		}
 	}
@@ -87,7 +87,7 @@ public class ProgramMetrics implements Cacheable, Comparable<ProgramMetrics> {
 	/*
 	 * Helper method to increment status count.
 	 */
-	private void addStatus(String status) {
+	private void addStatus(PilotStatus status) {
 		Integer cnt = _statusCounts.get(status);
 		if (cnt != null) {
 			_statusCounts.put(status, Integer.valueOf(cnt.intValue() + 1));
@@ -120,7 +120,7 @@ public class ProgramMetrics implements Cacheable, Comparable<ProgramMetrics> {
 		return _maxHireCount;
 	}
 	
-	public Map<String, Integer> getStatusCounts() {
+	public Map<PilotStatus, Integer> getStatusCounts() {
 		return _statusCounts;
 	}
 	

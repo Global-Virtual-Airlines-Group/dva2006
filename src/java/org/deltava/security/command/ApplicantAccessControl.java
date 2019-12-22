@@ -1,15 +1,14 @@
-// Copyright 2005, 2006, 2007, 2012, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2012, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.security.SecurityContext;
 
-import org.deltava.beans.Person;
-import org.deltava.beans.Applicant;
+import org.deltava.beans.*;
 
 /**
  * An Access Controller to support Applicant profile operations.
  * @author Luke
- * @version 7.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -50,15 +49,15 @@ public final class ApplicantAccessControl extends AccessControl {
 		// Sets role variables
 		boolean isOurs = (_ap.getID() == p.getID());
 		boolean isHR = p.isInRole("HR");
-		boolean isPending = (_ap.getStatus() == Applicant.PENDING);
+		boolean isPending = (_ap.getStatus() == ApplicantStatus.PENDING);
 		
 		// Set state variables
 		_canRead = (isOurs || isHR);
 		_canEdit = (isHR && isPending);
-		_canApprove = isHR && (_ap.getStatus() != Applicant.APPROVED);
+		_canApprove = isHR && (_ap.getStatus() != ApplicantStatus.APPROVED);
 		_canReject = _canEdit;
-		_canNotify = isHR && (_ap.getStatus() != Applicant.REJECTED);
-		_canDelete = (isHR && isPending) || (_ctx.isUserInRole("Admin") && (_ap.getStatus() == Applicant.REJECTED));  
+		_canNotify = isHR && (_ap.getStatus() != ApplicantStatus.REJECTED);
+		_canDelete = (isHR && isPending) || (_ctx.isUserInRole("Admin") && (_ap.getStatus() == ApplicantStatus.REJECTED));  
 	}
 
    /**

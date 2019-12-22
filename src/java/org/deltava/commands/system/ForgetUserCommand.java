@@ -13,7 +13,7 @@ import org.deltava.security.command.PilotAccessControl;
 /**
  * A Web Site Command to mark a Pilot as "forgotten" for GDPR purposes. 
  * @author Luke
- * @version 8.7
+ * @version 9.0
  * @since 8.3
  */
 
@@ -45,8 +45,8 @@ public class ForgetUserCommand extends AbstractCommand {
 			
 			// Status updates
 			Collection<StatusUpdate> upds = new ArrayList<StatusUpdate>();
-			if ((p.getStatus() == Pilot.ACTIVE) || (p.getStatus() == Pilot.ON_LEAVE)) {
-				p.setStatus(Pilot.RETIRED);
+			if ((p.getStatus() == PilotStatus.ACTIVE) || (p.getStatus() == PilotStatus.ONLEAVE)) {
+				p.setStatus(PilotStatus.RETIRED);
 				StatusUpdate upd = new StatusUpdate(p.getID(), UpdateType.STATUS_CHANGE);
 				upd.setAuthorID(ctx.getUser().getID());
 				upd.setDescription("Pilot Retired");

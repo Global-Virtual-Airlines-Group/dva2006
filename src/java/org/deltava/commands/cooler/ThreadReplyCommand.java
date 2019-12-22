@@ -22,7 +22,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to handle Water Cooler response posting and editing.
  * @author Luke
- * @version 8.6
+ * @version 9.0
  * @since 1.0
  */
 
@@ -96,7 +96,7 @@ public class ThreadReplyCommand extends AbstractCommand {
 				for (Iterator<Map.Entry<Integer, Pilot>> i = pilots.entrySet().iterator(); i.hasNext(); ) {
 					Map.Entry<Integer, Pilot> me = i.next();
 					UserData ud = udm.get(me.getKey());
-					if ((ud != null) && (me.getValue().getStatus() == Pilot.ACTIVE))
+					if ((ud != null) && (me.getValue().getStatus() == PilotStatus.ACTIVE))
 						notifyList.put(ud, me.getValue());
 				}
 

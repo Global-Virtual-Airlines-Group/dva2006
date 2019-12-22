@@ -4,7 +4,7 @@ package org.deltava.dao;
 import java.sql.*;
 import java.util.*;
 
-import org.deltava.beans.Pilot;
+import org.deltava.beans.*;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.system.InactivityPurge;
 
@@ -64,7 +64,7 @@ public class GetInactivity extends PilotReadDAO {
 	 */
 	public Collection<Integer> getInactivePilots(int days) throws DAOException {
 		try (PreparedStatement ps = prepare("SELECT ID FROM PILOTS WHERE (STATUS=?) AND (DATE_ADD(IFNULL(LAST_LOGIN, DATE_ADD(CREATED, INTERVAL 1 HOUR)), INTERVAL ? DAY) < NOW())")) {
-			ps.setInt(1, Pilot.ACTIVE);
+			ps.setInt(1, PilotStatus.ACTIVE.ordinal());
 			ps.setInt(2, days);
 			return executeIDs(ps);
 		} catch (SQLException se) {
@@ -89,7 +89,7 @@ public class GetInactivity extends PilotReadDAO {
 			ps.setInt(2, activityDays);
 			ps.setInt(3, activityDays);
 			ps.setInt(4, activityDays);
-			ps.setInt(5, Pilot.ACTIVE);
+			ps.setInt(5, PilotStatus.ACTIVE.ordinal());
 			ps.setInt(6, loginDays);
 			ps.setInt(7, minPosts);
 			return executeIDs(ps);

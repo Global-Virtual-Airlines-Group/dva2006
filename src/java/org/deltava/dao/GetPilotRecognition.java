@@ -100,7 +100,7 @@ public class GetPilotRecognition extends GetPilot {
           ps.setInt(1, FlightStatus.OK.ordinal());
           ps.setInt(2, Rank.C.ordinal());
           ps.setBoolean(3, true);
-          ps.setInt(4, Pilot.ACTIVE);
+          ps.setInt(4, PilotStatus.ACTIVE.ordinal());
           ps.setInt(5, Rank.FO.ordinal());
           ps.setInt(6, Rank.C.ordinal());
           if (eqType != null)
@@ -131,7 +131,7 @@ public class GetPilotRecognition extends GetPilot {
     		ps.setInt(3, UpdateType.SR_CAPTAIN.ordinal());
     		ps.setInt(4, new Quarter().getYearQuarter());
     		ps.setInt(5, Rank.C.ordinal());
-    		ps.setInt(6, Pilot.ACTIVE);
+    		ps.setInt(6, PilotStatus.ACTIVE.ordinal());
     		ps.setInt(7, SystemData.getInt("users.sc.minAge", 90));
     		ps.setInt(8, Nomination.Status.PENDING.ordinal());
     		ps.setInt(9, SystemData.getInt("users.sc.minFlights", 5));

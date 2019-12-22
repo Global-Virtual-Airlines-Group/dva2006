@@ -19,7 +19,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to reactivate a Pilot.
  * @author Luke
- * @version 8.7
+ * @version 9.0
  * @since 1.0
  */
 
@@ -100,7 +100,7 @@ public class PilotActivationCommand extends AbstractCommand {
 			// Update the pilot status
 			p.setEmail(ctx.getParameter("eMail"));
 			p.setRank(Rank.fromName(ctx.getParameter("rank")));
-			p.setStatus(Pilot.ACTIVE);
+			p.setStatus(PilotStatus.ACTIVE);
 			p.setEmailInvalid(false);
 
 			// Reset the password

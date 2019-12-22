@@ -15,7 +15,6 @@ import org.deltava.beans.servinfo.Certificate;
 import org.deltava.beans.schedule.Airport;
 import org.deltava.beans.testing.Test;
 import org.deltava.beans.system.*;
-import org.deltava.beans.ts2.*;
 
 import org.deltava.comparators.*;
 import org.deltava.commands.*;
@@ -33,7 +32,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to handle editing/saving Pilot Profiles.
  * @author Luke
- * @version 8.7
+ * @version 9.0
  * @since 1.0
  */
 
@@ -333,7 +332,7 @@ public class ProfileCommand extends AbstractFormCommand {
 
 			// Load the roles from the request and convert to a set to maintain uniqueness
 			Collection<String> newRoles = p_access.getCanChangeRoles() ? ctx.getParameters("securityRoles", new HashSet<String>()) : p.getRoles();
-			newRoles.add("Pilot");
+			newRoles.add(Role.PILOT.getName());
 
 			// Update LDAP name
 			if (p_access.getCanChangeRoles())
@@ -532,58 +531,12 @@ public class ProfileCommand extends AbstractFormCommand {
 				}
 			}
 
-			// Update teamspeak data
-			if ((p.getStatus() == Pilot.ACTIVE) && (!StringUtils.isEmpty(p.getPilotCode()))) {
-				GetTS2Data ts2dao = new GetTS2Data(con);
-				Collection<Server> srvs = ts2dao.getServers(p.getID());
-				Collection<Server> newSrvs = ts2dao.getServers(p.getRoles());
-				java.util.List<Client> usrs = ts2dao.getUsers(p.getID());
-
-				// Get the TS2 password
-				String pwd = usrs.isEmpty() ? "$dummy" : usrs.get(0).getPassword();
-
-				// Determine what TeamSpeak servers to remove us from
-				SetTS2Data ts2wdao = new SetTS2Data(con);
-				Collection<Server> rmvServers = CollectionUtils.getDelta(srvs, newSrvs);
-				for (Server srv : rmvServers) {
-					log.info("Removed " + p.getPilotCode() + " from TeamSpeak server " + srv.getName());
-					ts2wdao.removeUsers(srv, Collections.singleton(Integer.valueOf(p.getID())));
-				}
-
-				// Determine what servers to add us to
-				Collection<Server> addServers = CollectionUtils.getDelta(newSrvs, srvs);
-				if (!addServers.isEmpty()) {
-					Collection<Client> ts2usrs = new HashSet<Client>();
-					for (Server srv : addServers) {
-						log.info("Added " + p.getPilotCode() + " to TeamSpeak server " + srv.getName());
-
-						// Build the client record
-						Client c = new Client(p.getPilotCode());
-						c.setPassword(pwd);
-						c.setID(p.getID());
-						c.addChannels(srv);
-						c.setServerID(srv.getID());
-						c.setAutoVoice(RoleUtils.hasAccess(p.getRoles(), srv.getRoles().get(ServerAccess.VOICE)));
-						c.setServerOperator(RoleUtils.hasAccess(p.getRoles(), srv.getRoles().get(ServerAccess.OPERATOR)));
-						c.setServerAdmin(RoleUtils.hasAccess(p.getRoles(), srv.getRoles().get(ServerAccess.ADMIN)));
-						ts2usrs.add(c);
-					}
-
-					// Add to the servers
-					ts2wdao.write(ts2usrs);
-				}
-			} else if (!StringUtils.isEmpty(p.getPilotCode())) {
-				log.info("Removed " + p.getPilotCode() + " from TeamSpeak servers");
-				SetTS2Data ts2wdao = new SetTS2Data(con);
-				ts2wdao.delete(p.getID());
-			}
-
 			// Write the Pilot profile
 			SetPilot pwdao = new SetPilot(con);
 			pwdao.write(p);
-
+			
 			// If we're marking Inactive/Retired, purge any Inactivity/Address Update records and remove from Child Authenticators
-			if ((p.getStatus() != Pilot.ACTIVE) && (p.getStatus() != Pilot.ON_LEAVE)) {
+			if ((p.getStatus() != PilotStatus.ACTIVE) && (p.getStatus() != PilotStatus.ONLEAVE)) {
 				SetInactivity idao = new SetInactivity(con);
 				SetAddressValidation avwdao = new SetAddressValidation(con);
 				idao.delete(p.getID());
@@ -742,14 +695,6 @@ public class ProfileCommand extends AbstractFormCommand {
 			ctx.release();
 		}
 		
-		// Don't allow manual switching to Suspended if the pilot isn't already in that status
-		if (p.getStatus() != Pilot.SUSPENDED) {
-			java.util.List<ComboAlias> statuses = ComboUtils.fromArray(Pilot.STATUS); 
-			statuses.remove(Pilot.SUSPENDED);
-			ctx.setAttribute("statuses", statuses, REQUEST);
-		} else
-			ctx.setAttribute("statuses", ComboUtils.fromArray(Pilot.STATUS), REQUEST);
-
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
 		result.setURL("/jsp/pilot/pilotEdit.jsp");
@@ -888,13 +833,6 @@ public class ProfileCommand extends AbstractFormCommand {
 					ctx.setAttribute("wcPosts", wcStats.get(Integer.valueOf(p.getID())), REQUEST);
 			}
 
-			// Get TeamSpeak2 data
-			if (SystemData.getBoolean("airline.voice.ts2.enabled") && !crossDB) {
-				GetTS2Data ts2dao = new GetTS2Data(con);
-				ctx.setAttribute("ts2Servers", CollectionUtils.createMap(ts2dao.getServers(p.getRoles()), Server::getID), REQUEST);
-				ctx.setAttribute("ts2Clients", ts2dao.getUsers(p.getID()), REQUEST);
-			}
-			
 			// Get email delivery data
 			if (ctx.isUserInRole("Developer") || ctx.isUserInRole("Operations") || ctx.isUserInRole("HR")) {
 				GetEMailDelivery eddao = new GetEMailDelivery(con);
