@@ -74,7 +74,7 @@ abstract class XAService extends WebService {
 		if ((data == null) || (data.indexOf('_') == -1)) {
 			log.warn("Unknown simulator - " + data);
 			log(ctx);
-			return Simulator.XP10;
+			return Simulator.XP11;
 		}
 		
 		int pos = data.indexOf('_');

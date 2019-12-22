@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * The XACARS Flight Information Web Service.
  * @author Luke
- * @version 8.7
+ * @version 9.0
  * @since 4.1
  */
 
@@ -53,8 +53,8 @@ public class XInfoService extends XAService {
 			Pilot usr = pdao.getPilotByCode(uid.getUserID(), SystemData.get("airline.db"));
 			if (usr == null)
 				throw new InvalidDataException("Unknown User ID");
-			else if (usr.getStatus() != Pilot.ACTIVE) {
-				log.warn(usr.getName() + ", status = " + usr.getStatusName());
+			else if (usr.getStatus() != PilotStatus.ACTIVE) {
+				log.warn(usr.getName() + ", status = " + usr.getStatus().getDescription());
 				throw new InvalidDataException("Inactive User ID");
 			}
 			
