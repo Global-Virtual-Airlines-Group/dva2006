@@ -26,7 +26,7 @@ golgotha.local.setAirportD = function(combo) {
 
 golgotha.local.setAirportA = function(combo)
 {
-var f = document.forms[0];
+const f = document.forms[0];
 if (golgotha.form.comboSet(combo))
 	self.location = '/browse.do?airportD=' + escape(golgotha.form.getCombo(f.airportD)) + '&airportA=' + escape(golgotha.form.getCombo(combo));
 else
@@ -36,7 +36,7 @@ return true;
 };
 
 golgotha.onDOMReady(function() {
-	var f = document.forms[0];
+	const f = document.forms[0];
 	golgotha.airportLoad.setHelpers(f.airportD);
 	golgotha.airportLoad.setHelpers(f.airportA);
 	return true;
@@ -48,7 +48,6 @@ golgotha.onDOMReady(function() {
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<content:attr attr="isSchedule" value="true" roles="Schedule" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -80,8 +79,7 @@ golgotha.onDOMReady(function() {
 <!-- Table Data Section -->
 <c:forEach var="entry" items="${viewContext.results}">
 <view:row entry="${entry}">
-<c:if test="${!isSchedule}"> <td class="pri bld">${entry.flightCode}</td></c:if>
-<c:if test="${isSchedule}"> <td><el:cmd className="bld" url="sched" op="edit" linkID="${entry.flightCode}">${entry.flightCode}</el:cmd></td></c:if>
+ <td class="pri bld">${entry.flightCode}</td>
  <td class="sec bld">${entry.equipmentType}</td>
  <td class="small">${entry.airportD.name} (<el:cmd url="airportinfo" linkID="${entry.airportD.IATA}" className="plain"><fmt:airport airport="${entry.airportD}" /></el:cmd>) to ${entry.airportA.name} (<el:cmd url="airportinfo" linkID="${entry.airportA.IATA}" className="plain"><fmt:airport airport="${entry.airportA}" /></el:cmd>)</td>
  <td class="nophone"><fmt:date fmt="t" t="HH:mm" tz="${entry.airportD.TZ}" date="${entry.timeD}" /></td>
