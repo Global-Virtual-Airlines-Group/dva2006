@@ -1,7 +1,6 @@
 // Copyright 2005, 2006, 2007, 2009, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
-import java.util.*;
 import java.time.*;
 import java.time.format.*;
 import java.time.temporal.*;
@@ -9,9 +8,7 @@ import java.sql.Connection;
 
 import org.json.*;
 
-import org.deltava.beans.Flight;
 import org.deltava.beans.schedule.*;
-import org.deltava.comparators.AirportComparator;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -30,6 +27,7 @@ import org.deltava.util.system.SystemData;
 
 public class ScheduleEntryCommand extends AbstractFormCommand {
 	
+	private final DateTimeFormatter _df = new DateTimeFormatterBuilder().appendPattern("MM/dd[/yyyy]").parseDefaulting(ChronoField.YEAR, LocalDate.now().getYear()).toFormatter();
 	private final DateTimeFormatter _tf = new DateTimeFormatterBuilder().appendPattern("H:mm").parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0).toFormatter();
 
 	/**
@@ -40,32 +38,26 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 	@Override
 	protected void execSave(CommandContext ctx) throws CommandException {
 
-		// Get the old flight ID
-		String fCode = (String) ctx.getCmdParameter(ID, null);
-		Flight id = FlightCodeParser.parse(fCode);
+		// Get the source/line
+		ScheduleSource src = ScheduleSource.valueOf(ctx.getParameter("src"));
+		int srcLine = StringUtils.parse(ctx.getParameter("srcLine"), -1);
+		boolean isNew = (srcLine > 0);
 
-		CommandResult result = ctx.getResult();
 		try {
 			Connection con = ctx.getConnection();
 			
-			// Get schedule effective date
-			GetMetadata mddao = new GetMetadata(con);
-			String aCode = SystemData.get("airline.code").toLowerCase();
-			Instant effDate = mddao.getDate(aCode + ".schedule.effDate").truncatedTo(ChronoUnit.DAYS);
-			ctx.setAttribute("effectiveDate", effDate, REQUEST);
-
 			// Get the existing entry or create a new one
-			GetSchedule dao = new GetSchedule(con);
-			dao.setEffectiveDate(effDate);
-			ScheduleEntry entry = null;
-			if (id != null) {
-				entry = dao.get(id);
+			GetRawSchedule dao = new GetRawSchedule(con);
+			RawScheduleEntry entry = null;
+			if (!isNew) {
+				entry = dao.get(src, srcLine);
 				if (entry == null)
-					throw notFoundException("Invalid Schedule Entry - " + fCode);
+					throw notFoundException("Invalid Schedule Entry - " + src.getDescription() + " Line " + srcLine);
 			} else {
 				Airline a = SystemData.getAirline(ctx.getParameter("airline"));
 				int fNumber = StringUtils.parse(ctx.getParameter("flightNumber"), 1);
-				entry = new ScheduleEntry(a, fNumber, StringUtils.parse(ctx.getParameter("flightLeg"), 1));
+				entry = new RawScheduleEntry(a, fNumber, StringUtils.parse(ctx.getParameter("flightLeg"), 1));
+				entry.setSource(src);
 			}
 			
 			// Check our access
@@ -74,15 +66,15 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 			if (!ac.getCanEdit())
 				throw securityException("Cannot modify Flight Schedule entry");
 			
-			// Load the departure airport
-			Airport aD = SystemData.getAirport(ctx.getParameter("airportD"));
-			if (aD == null)
-				aD = SystemData.getAirport(ctx.getParameter("airportDCode"));
+			// Load the airports
+			entry.setAirportD(SystemData.getAirport(ctx.getParameter("airportD")));
+			entry.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
 			
-			// Load the arrival airport
-			Airport aA = SystemData.getAirport(ctx.getParameter("airportA"));
-			if (aA == null)
-				aA = SystemData.getAirport(ctx.getParameter("airportACode"));
+			// Load start/end dates
+			entry.setStartDate(LocalDate.parse(ctx.getParameter("startDate"), _df));
+			entry.setEndDate(LocalDate.parse(ctx.getParameter("endDate"), _df));
+			if (entry.getEndDate().isAfter(entry.getStartDate()))
+				entry.setEndDate(entry.getEndDate().plusYears(1));
 
 			// Update the entry
 			entry.setEquipmentType(ctx.getParameter("eqType"));
@@ -91,53 +83,30 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 			entry.setAcademy(Boolean.valueOf(ctx.getParameter("isAcademy")).booleanValue());
 			
 			// Parse times
-			LocalTime dt = LocalTime.parse(ctx.getParameter("timeD"), _tf);
-			LocalTime at = LocalTime.parse(ctx.getParameter("timeA"), _tf);
-			entry.setTimeD(LocalDateTime.ofInstant(effDate, ZoneOffset.UTC).plusSeconds(dt.toSecondOfDay()));
-			entry.setTimeA(LocalDateTime.ofInstant(effDate, ZoneOffset.UTC).plusSeconds(at.toSecondOfDay()));
+			entry.setTimeD(LocalDateTime.of(entry.getStartDate(), LocalTime.parse(ctx.getParameter("timeD"), _tf)));
+			entry.setTimeA(LocalDateTime.of(entry.getStartDate(), LocalTime.parse(ctx.getParameter("timeA"), _tf)));
 			
-			// If either airport is null, redirect to the edit page
-			if ((aD == null) || (aA == null)) {
-				ctx.setMessage("Unknown Airport(s)");
-				
-				// Get Airports
-				Collection<Airport> airports = new TreeSet<Airport>(new AirportComparator(AirportComparator.NAME));
-				GetAirport adao = new GetAirport(con);
-				airports.addAll(adao.getByAirline(entry.getAirline(), null));
-
-				// Save the entry and airports in the request
-				ctx.setAttribute("entry", entry, REQUEST);
-				ctx.setAttribute("airports", airports, REQUEST);
-
-				//	Get aircraft types
-				GetAircraft acdao = new GetAircraft(con);
-				ctx.setAttribute("eqTypes", acdao.getAircraftTypes(), REQUEST);
-
-				// Release and redirect
-				ctx.release();
-				result.setURL("/jsp/schedule/schedEntry.jsp");
-				result.setSuccess(true);
-				return;
-			}
-			
-			// Set the airports
-			entry.setAirportD(aD);
-			entry.setAirportA(aA);
+			// Get a line number if manual entry
+			if ((src == ScheduleSource.MANUAL) && (srcLine <= 0))
+				entry.setLineNumber(dao.getNextManualEntryLine());
 			
 			// Write the entry to the database
 			SetSchedule wdao = new SetSchedule(con);
-			wdao.write(entry, (id != null));
+			wdao.writeRaw(entry);
+			ctx.commitTX();
 
 			// Set status attributes
 			ctx.setAttribute("scheduleEntry", entry, REQUEST);
-			ctx.setAttribute((id == null) ? "isCreate" : "isUpdate", Boolean.TRUE, REQUEST);
+			ctx.setAttribute(isNew ? "isCreate" : "isUpdate", Boolean.TRUE, REQUEST);
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
 		}
 
 		// Forward to the JSP
+		CommandResult result = ctx.getResult();
 		result.setType(ResultType.REQREDIRECT);
 		result.setURL("/jsp/schedule/scheduleUpdate.jsp");
 		result.setSuccess(true);
@@ -151,35 +120,19 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 	@Override
 	protected void execEdit(CommandContext ctx) throws CommandException {
 
-		// Get the flight ID
-		String fCode = (String) ctx.getCmdParameter(ID, null);
-		Flight id = FlightCodeParser.parse(fCode);
+		// Get the source/line
+		ScheduleSource src = ScheduleSource.valueOf(ctx.getParameter("src"));
+		int srcLine = StringUtils.parse(ctx.getParameter("srcLine"), -1);
 		
-		// Get the Schedule entry
 		try {
 			Connection con = ctx.getConnection();
-			
-			// Get schedule effective date
-			GetMetadata mddao = new GetMetadata(con);
-			String aCode = SystemData.get("airline.code").toLowerCase();
-			Instant effDate = mddao.getDate(aCode + ".schedule.effDate");
-			ctx.setAttribute("effectiveDate", effDate, REQUEST);
-			
-			if (id != null) {
-				GetSchedule dao = new GetSchedule(con);
-				dao.setEffectiveDate(effDate);
-				ScheduleEntry entry = dao.get(id);
+			if (srcLine > -1) {
+				GetRawSchedule dao = new GetRawSchedule(con);
+				ScheduleEntry entry = dao.get(src, srcLine);
 				if (entry == null)
-					throw notFoundException("Invalid Schedule Entry - " + fCode);
-				
-				// Get Airports
-				Collection<Airport> airports = new TreeSet<Airport>(new AirportComparator(AirportComparator.NAME));
-				GetAirport adao = new GetAirport(con);
-				airports.addAll(adao.getByAirline(entry.getAirline(), null));
+					throw notFoundException("Invalid Schedule Entry - " + src.getDescription() + " Line " + srcLine);
 
-				// Save the entry and airports in the request
 				ctx.setAttribute("entry", entry, REQUEST);
-				ctx.setAttribute("airports", airports, REQUEST);
 			}
 
 			//	Get aircraft types
@@ -193,9 +146,7 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 		
 		// Build JSON object to store historical airlines
 		JSONObject jho = new JSONObject();
-		for (Airline a : SystemData.getAirlines().values())
-			jho.put(a.getCode(), a.getHistoric());
-		
+		SystemData.getAirlines().values().forEach(a -> jho.put(a.getCode(), a.getHistoric()));
 		ctx.setAttribute("historicAL", jho, REQUEST);
 
 		// Forward to the JSP
