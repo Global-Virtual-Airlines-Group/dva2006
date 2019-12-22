@@ -321,12 +321,6 @@
 		<roles>*</roles>
 	</command>
 
-	<command id="ts2vox">
-		<name>TeamSpeak 2 Server Board</name>
-		<class>org.deltava.commands.ts2.ActiveServersCommand</class>
-		<roles>Pilot</roles>
-	</command>
-
 
 	<!-- News/NOTAM Commands -->
 	<command id="news">
@@ -1919,44 +1913,6 @@
 		<name>IP Netblock Location Import</name>	
 		<class>org.deltava.commands.system.IPGeoImportCommand</class>
 		<roles>Operations,Developer</roles>
-	</command>
-
-
-	<!-- Teamspeak Administration commands -->
-	<command id="ts2channels">
-		<name>TeamSpeak Channel List</name>	
-		<class>org.deltava.commands.ts2.ChannelListCommand</class>
-		<roles>Tech</roles>
-	</command>
-
-	<command id="ts2channeldelete">
-		<name>TeamSpeak Channel Delete</name>	
-		<class>org.deltava.commands.ts2.ChannelDeleteCommand</class>
-		<roles>Tech</roles>
-	</command>
-
-	<command id="ts2channel">
-		<name>TeamSpeak Channel</name>	
-		<class>org.deltava.commands.ts2.ChannelCommand</class>
-		<roles>Tech</roles>
-	</command>
-
-	<command id="ts2servers">
-		<name>TeamSpeak Virtual Server List</name>
-		<class>org.deltava.commands.ts2.ServerListCommand</class>
-		<roles>Tech</roles>
-	</command>
-
-	<command id="ts2srvdelete">
-		<name>TeamSpeak Virtual Server Delete</name>	
-		<class>org.deltava.commands.ts2.ServerDeleteCommand</class>
-		<roles>Tech</roles>
-	</command>
-
-	<command id="ts2server">
-		<name>TeamSpeak Virtual Server</name>	
-		<class>org.deltava.commands.ts2.ServerCommand</class>
-		<roles>Tech</roles>
 	</command>
 
 

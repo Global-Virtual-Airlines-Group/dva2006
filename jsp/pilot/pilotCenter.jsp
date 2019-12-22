@@ -34,7 +34,6 @@
 <content:sysdata var="maxHeld" name="users.pirep.maxHeld" default="5" />
 <content:sysdata var="acarsEnabled" name="acars.enabled" />
 <content:sysdata var="fileLibEnabled" name="airline.files.enabled" />
-<content:sysdata var="ts2Enabled" name="airline.voice.ts2.enabled" />
 <content:sysdata var="mvsEnabled" name="airline.voice.mvs.enabled" />
 <content:sysdata var="newsletterEnabled" name="airline.newsletters.enabled" />
 <content:sysdata var="videoEnabled" name="airline.video.enabled" />
