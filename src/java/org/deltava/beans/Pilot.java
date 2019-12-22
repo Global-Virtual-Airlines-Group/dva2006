@@ -1,7 +1,8 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2016, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.time.Instant;
 
 import org.deltava.beans.acars.Restriction;
@@ -12,44 +13,27 @@ import org.deltava.util.StringUtils;
 /**
  * A class for storing Pilot information.
  * @author Luke
- * @version 8.3
+ * @version 9.0
  * @since 1.0
  */
 
 public class Pilot extends Person implements ComboAlias, Cloneable {
 
-	private static final long serialVersionUID = -6034960522937668007L;
+	private static final long serialVersionUID = -6034962522937668007L;
 	
-	/**
-	 * Pilot status codes.
-	 */
-	public static final int ACTIVE = 0;
-	public static final int INACTIVE = 1;
-	public static final int RETIRED = 2;
-	public static final int TRANSFERRED = 3;
-	public static final int SUSPENDED = 4;
-	public static final int ON_LEAVE = 5;
-
-	/**
-	 * Valid pilot statuses.
-	 */
-	public static final String[] STATUS = { "Active", "Inactive", "Retired", "Transferred", "Suspended", "On Leave" };
-
-	private static final String[] ROW_CLASSES = { null, "opt2", "opt3", "opt1", "err", "warn" };
-
 	private String _pCodePrefix;
 	private int _pCodeId;
-
 	private String _ldapID;
 
 	private final Collection<String> _ratings = new TreeSet<String>();
-	private final Collection<String> _roles = new TreeSet<String>();
+	private final Map<String, Role> _roles = new TreeMap<String, Role>();
 	private final Collection<String> _certs = new LinkedHashSet<String>();
 	private final Collection<DatedAccomplishmentID> _accIDs = new TreeSet<DatedAccomplishmentID>();
 
 	private long _miles;
 	private Instant _lastFlight;
 
+	private PilotStatus _status;
 	private String _motto;
 
 	private int _legs;
@@ -95,16 +79,28 @@ public class Pilot extends Person implements ComboAlias, Cloneable {
 	 */
 	public Pilot(String firstName, String lastName) {
 		super(firstName, lastName);
-		_roles.add("Pilot");
+		addRole(Role.PILOT);
 	}
 
-	/**
-	 * Returns the list of security roles this Pilot belongs to.
-	 * @return a sorted List of role Names for this Pilot
-	 */
 	@Override
 	public Collection<String> getRoles() {
-		return _roles;
+		return _roles.values().stream().map(Role::getName).collect(Collectors.toSet());
+	}
+	
+	/**
+	 * Returns the Pilot's status.
+	 * @return a PilotStatus enum
+	 */
+	public PilotStatus getStatus() {
+		return _status;
+	}
+	
+	/**
+	 * Returns role name and persistence data. 
+	 * @return a Collection of Roles
+	 */
+	public Collection<Role> getRoleData() {
+		return _roles.values();
 	}
 
 	/**
@@ -224,18 +220,6 @@ public class Pilot extends Person implements ComboAlias, Cloneable {
 		return _noCooler;
 	}
 
-	/**
-	 * Returns the Pilot's status text for a JSP.
-	 * @return the status name
-	 * @see Person#getStatus()
-	 * @see Pilot#setStatus(int)
-	 * @see Pilot#setStatus(String)
-	 */
-	@Override
-	public String getStatusName() {
-		return Pilot.STATUS[getStatus()];
-	}
-	
 	/**
 	 * Returns whether this Pilot cannot be marked Inactive.
 	 * @return TRUE if a permanent account, otherwise FALSE
@@ -532,21 +516,15 @@ public class Pilot extends Person implements ComboAlias, Cloneable {
 	 */
 	@Override
 	public boolean isInRole(String roleName) {
-		return ("*".equals(roleName) || _roles.contains(roleName) || _roles.contains("Admin"));
+		return ("*".equals(roleName) || _roles.containsKey(roleName) || _roles.containsKey("Admin"));
 	}
 
 	/**
 	 * Update this Pilot's status.
-	 * @param status the new Status code for the Pilot. Use PilotStatus constants if possible
-	 * @throws IllegalArgumentException if the new status is not contained within PilotStatus, or is negative
-	 * @see Person#setStatus(int)
+	 * @param s a PilotStatus
 	 */
-	@Override
-	public final void setStatus(int status) {
-		if (status >= Pilot.STATUS.length)
-			throw new IllegalArgumentException("Invalid Pilot Status - " + status);
-
-		super.setStatus(status);
+	public final void setStatus(PilotStatus s) {
+		_status = s;
 	}
 	
 	/**
@@ -708,17 +686,6 @@ public class Pilot extends Person implements ComboAlias, Cloneable {
 	 */
 	public void setShowNavBar(boolean showNavBar) {
 		_showNavBar = showNavBar;
-	}
-
-	/**
-	 * Update this Pilot's status.
-	 * @param status the new Status description for the Pilot. Use PilotStatus constants if possible
-	 * @throws IllegalArgumentException if the new status is not contained within PilotStatus, or is negative
-	 * @see Person#setStatus(int)
-	 * @see Person#getStatus()
-	 */
-	public final void setStatus(String status) {
-		setStatus(StringUtils.arrayIndexOf(Pilot.STATUS, status));
 	}
 
 	/**
@@ -926,13 +893,13 @@ public class Pilot extends Person implements ComboAlias, Cloneable {
 		_ratings.removeAll(ratings);
 	}
 
-	/**
-	 * Add membership in a security role to this Pilot.
-	 * @param roleName the name of the role
-	 */
 	@Override
 	public void addRole(String roleName) {
-		_roles.add(roleName);
+		addRole(new Role(roleName, true));
+	}
+	
+	private void addRole(Role r) {
+		_roles.put(r.getName(), r);
 	}
 
 	/**
@@ -943,7 +910,7 @@ public class Pilot extends Person implements ComboAlias, Cloneable {
 	 * @see Pilot#removeRoles(Collection)
 	 */
 	public void addRoles(Collection<String> roles) {
-		_roles.addAll(roles);
+		roles.forEach(rn -> addRole(rn));
 	}
 	
 	/**
@@ -963,8 +930,8 @@ public class Pilot extends Person implements ComboAlias, Cloneable {
 	 * @see Pilot#getRoles()
 	 */
 	public void removeRoles(Collection<String> roles) {
-		_roles.removeAll(roles);
-		_roles.add("Pilot");
+		roles.forEach(rn -> _roles.remove(rn));
+		addRole(Role.PILOT);
 	}
 
 	/**
@@ -1033,13 +1000,9 @@ public class Pilot extends Person implements ComboAlias, Cloneable {
 		}
 	}
 
-	/**
-	 * Selects a table row class based upon the Pilot's status.
-	 * @return the row CSS class name
-	 */
 	@Override
 	public String getRowClassName() {
-		return ROW_CLASSES[getStatus()];
+		return _status.getRowClassName();
 	}
 
 	/**
@@ -1066,7 +1029,7 @@ public class Pilot extends Person implements ComboAlias, Cloneable {
 		p2.setNumberFormat(getNumberFormat());
 		p2.setPassword(getPassword());
 		p2.setRank(getRank());
-		p2.setStatus(getStatus());
+		p2._status = _status;
 		p2.setTimeFormat(getTimeFormat());
 		p2.setTZ(getTZ());
 		p2.setUIScheme(getUIScheme());

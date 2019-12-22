@@ -32,7 +32,7 @@ public class SetApplicant extends PilotWriteDAO {
 	 */
 	public void reject(Applicant a) throws DAOException {
 		try (PreparedStatement ps = prepare("UPDATE APPLICANTS SET STATUS=? WHERE (ID=?)")) {
-			ps.setInt(1, Applicant.REJECTED);
+			ps.setInt(1, ApplicantStatus.REJECTED.ordinal());
 			ps.setInt(2, a.getID());
 			executeUpdate(ps, 1);
 		} catch (SQLException se) {
@@ -74,7 +74,7 @@ public class SetApplicant extends PilotWriteDAO {
 				+ "LEGACY_OK=VALUES(LEGACY_OK), HOME_AIRPORT=VALUES(HOME_AIRPORT), NOTIFY=VALUES(NOTIFY), SHOW_EMAIL=VALUES(SHOW_EMAIL), DFORMAT=VALUES(DFORMAT), TFORMAT=VALUES(TFORMAT), "
 				+ "NFORMAT=VALUES(NFORMAT), AIRPORTCODE=VALUES(AIRPORTCODE), DISTANCEUNITS=VALUES(DISTANCEUNITS), SIM_VERSION=VALUES(SIM_VERSION), TZ=VALUES(TZ), UISCHEME=VALUES(UISCHEME), "
 				+ "EQTYPE=?, RANKING=?, HR_COMMENTS=VALUES(HR_COMMENTS)")) {
-				ps.setInt(1, a.getStatus());
+				ps.setInt(1, a.getStatus().ordinal());
 				ps.setString(2, a.getFirstName());
 				ps.setString(3, a.getLastName());
 				ps.setString(4, a.getEmail());
@@ -133,7 +133,7 @@ public class SetApplicant extends PilotWriteDAO {
 	 */
 	public void hire(Applicant a) throws DAOException {
 		try (PreparedStatement ps = prepare("UPDATE APPLICANTS SET STATUS=?, PILOT_ID=?, RANKING=?, EQTYPE=? WHERE (ID=?)")) {
-			ps.setInt(1, Applicant.APPROVED);
+			ps.setInt(1, ApplicantStatus.APPROVED.ordinal());
 			ps.setInt(2, a.getPilotID());
 			ps.setString(3, a.getRank().getName());
 			ps.setString(4, a.getEquipmentType());

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2013, 2014 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2013, 2014 2015, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -13,13 +13,13 @@ import org.deltava.util.StringUtils;
 /**
  * An abstract class storing information about a Person.
  * @author Luke
- * @version 7.2
+ * @version 9.0
  * @since 1.0
  */
 
 public abstract class Person extends DatabaseBlobBean implements Principal, FormattedEMailRecipient, ViewEntry {
 
-	private static final long serialVersionUID = -7815765435601664719L;
+	private static final long serialVersionUID = -7815761435601664719L;
 
 	/**
 	 * Hide e-mail address from all non-staff users.
@@ -51,8 +51,6 @@ public abstract class Person extends DatabaseBlobBean implements Principal, Form
 	private String _location;
 	private String _homeAirport;
 	private TZInfo _tz;
-
-	private int _status;
 
 	private Instant _created = Instant.now();
 
@@ -206,24 +204,6 @@ public abstract class Person extends DatabaseBlobBean implements Principal, Form
 	public Rank getRank() {
 		return _rank;
 	}
-
-	/**
-	 * Return this Person's status. It is up to each implementation to detrmine valid values for this property.
-	 * @return the Person's status code
-	 * @see Person#getStatusName()
-	 * @see Person#setStatus(int)
-	 */
-	public int getStatus() {
-		return _status;
-	}
-	
-	/**
-	 * Returns the Person's status.
-	 * @return the status name
-	 * @see Person#getStatus()
-	 * @see Person#setStatus(int)
-	 */
-	public abstract String getStatusName();
 
 	/**
 	 * Return this Person's Time Zone.
@@ -620,19 +600,6 @@ public abstract class Person extends DatabaseBlobBean implements Principal, Form
 	 */
 	public void setTZ(TZInfo tz) {
 		_tz = (tz == null) ? TZInfo.UTC : tz;
-	}
-
-	/**
-	 * Update this Person's status.
-	 * @param status the new status code. It is up to each implementation to validate this beyond the < 0 check.
-	 * @throws IllegalArgumentException if the new status is negative.
-	 * @see Person#getStatus()
-	 */
-	protected void setStatus(int status) {
-		if (status < 0)
-			throw new IllegalArgumentException("Status cannot be negative");
-
-		_status = status;
 	}
 
 	/**

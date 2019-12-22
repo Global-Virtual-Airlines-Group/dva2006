@@ -47,7 +47,7 @@ public class GetPilot extends PilotReadDAO {
 	public Collection<Pilot> getCurrencyPilots() throws DAOException {
 		try (PreparedStatement ps = prepare("SELECT ID FROM PILOTS WHERE (PROF_CR=?) AND (STATUS=?)")) {
 			ps.setBoolean(1, true);
-			ps.setInt(2, Pilot.ACTIVE);
+			ps.setInt(2, PilotStatus.ACTIVE.ordinal());
 			return getByID(executeIDs(ps), "PILOTS").values();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -125,7 +125,7 @@ public class GetPilot extends PilotReadDAO {
 		sql.append((orderBy != null) ? orderBy.toUpperCase() : "P.PILOT_ID");
 		try (PreparedStatement ps = prepare(sql.toString())) {
 			ps.setInt(1, FlightStatus.OK.ordinal());
-			ps.setInt(2, Pilot.ACTIVE);
+			ps.setInt(2, PilotStatus.ACTIVE.ordinal());
 			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -165,7 +165,7 @@ public class GetPilot extends PilotReadDAO {
 			ps.setInt(++pos, FlightStatus.OK.ordinal());
 			ps.setString(++pos, eq.getName());
 			if (showActive)
-				ps.setInt(++pos, Pilot.ACTIVE);
+				ps.setInt(++pos, PilotStatus.ACTIVE.ordinal());
 			if (rank != null)
 				ps.setInt(++pos, rank.ordinal());
 			
@@ -186,7 +186,7 @@ public class GetPilot extends PilotReadDAO {
 			+ "ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) LEFT JOIN SIGNATURES S ON (P.ID=S.ID) WHERE (P.RANKING=?) AND (P.STATUS=?) GROUP BY P.ID")) {
 			ps.setInt(1, FlightStatus.OK.ordinal());
 			ps.setInt(2, rank.ordinal());
-			ps.setInt(3, Pilot.ACTIVE);
+			ps.setInt(3, PilotStatus.ACTIVE.ordinal());
 			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -220,15 +220,15 @@ public class GetPilot extends PilotReadDAO {
 
 	/**
 	 * Returns Pilots based upon their status.
-	 * @param status the Pilot status
+	 * @param status a PilotStatus
 	 * @return a List of Pilots
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<Pilot> getPilotsByStatus(int status) throws DAOException {
+	public List<Pilot> getPilotsByStatus(PilotStatus status) throws DAOException {
 		try (PreparedStatement ps = prepare("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE) FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) "
 			+ "AND (F.STATUS=?)) WHERE (P.STATUS=?) AND (P.FORGOTTEN=?) GROUP BY P.ID ORDER BY P.CREATED")) {
 			ps.setInt(1, FlightStatus.OK.ordinal());
-			ps.setInt(2, status);
+			ps.setInt(2, status.ordinal());
 			ps.setBoolean(3, false);
 			return execute(ps);
 		} catch (SQLException se) {

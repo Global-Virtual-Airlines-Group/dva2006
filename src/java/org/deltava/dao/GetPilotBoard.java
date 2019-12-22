@@ -74,8 +74,8 @@ public class GetPilotBoard extends DAO {
 	 */
 	public Map<Integer, GeoLocation> getActive() throws DAOException {
 		try (PreparedStatement ps = prepareWithoutLimits("SELECT M.* FROM PILOT_MAP M, PILOTS P WHERE (M.ID=P.ID) AND ((P.STATUS=?) OR (P.STATUS=?)) ORDER BY M.ID")) {
-			ps.setInt(1, Pilot.ACTIVE);
-			ps.setInt(2, Pilot.ON_LEAVE);
+			ps.setInt(1, PilotStatus.ACTIVE.ordinal());
+			ps.setInt(2, PilotStatus.ONLEAVE.ordinal());
 
 			// Execute the query
 			Map<Integer, GeoLocation> results = new LinkedHashMap<Integer, GeoLocation>();

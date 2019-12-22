@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.filter;
 
 import java.io.IOException;
@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A servlet filter to handle persistent authentication cookies.
  * @author Luke
- * @version 7.0
+ * @version 9.0
  * @since 1.0
  * @see SecurityCookieData
  * @see SecurityCookieGenerator
@@ -206,7 +206,7 @@ public class SecurityCookieFilter implements Filter {
 			// Make sure that the pilot is still active
 			if (p != null) {
 				try {
-					if (p.getStatus() == Pilot.ACTIVE) {
+					if (p.getStatus() == PilotStatus.ACTIVE) {
 						String userAgent = hreq.getHeader("user-agent");
 						s.setAttribute(USERAGENT_ATTR_NAME, userAgent);
 						s.setAttribute(USER_ATTR_NAME, p);
@@ -216,7 +216,7 @@ public class SecurityCookieFilter implements Filter {
 						Pilot su = (Pilot) s.getAttribute(SU_ATTR_NAME);
 						UserPool.add((su != null) ? su : p, s.getId(), addrInfo, userAgent, req.isSecure());
 					} else
-						throw new SecurityException(p.getName() + " status = " + p.getStatusName());
+						throw new SecurityException(p.getName() + " status = " + p.getStatus().getDescription());
 				} catch (SecurityException se) {
 					log.error(se.getMessage());
 					hrsp.addCookie(new Cookie(AUTH_COOKIE_NAME, ""));

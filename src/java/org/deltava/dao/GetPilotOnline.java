@@ -47,8 +47,8 @@ public class GetPilotOnline extends PilotReadDAO {
 		
 		String colName = (network == OnlineNetwork.PILOTEDGE ? "PE" : network.toString()) + "_ID";
 		try (PreparedStatement ps = prepare("SELECT ID, " + colName + " FROM PILOTS WHERE ((STATUS=?) OR (STATUS=?)) AND (" + colName + " IS NOT NULL)")) {
-			ps.setInt(1, Pilot.ACTIVE);
-			ps.setInt(2, Pilot.ON_LEAVE);
+			ps.setInt(1, PilotStatus.ACTIVE.ordinal());
+			ps.setInt(2, PilotStatus.ONLEAVE.ordinal());
 			
 			// Execute the Query
 			results = new CacheableMap<String, Integer>(network);
@@ -81,8 +81,8 @@ public class GetPilotOnline extends PilotReadDAO {
 		sqlBuf.append(") > 0)");
 		
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
-			ps.setInt(1, Pilot.ACTIVE);
-			ps.setInt(2, Pilot.ON_LEAVE);
+			ps.setInt(1, PilotStatus.ACTIVE.ordinal());
+			ps.setInt(2, PilotStatus.ONLEAVE.ordinal());
 			return getByID(executeIDs(ps), "PILOTS").values();
 		} catch (SQLException se) {
 			throw new DAOException(se);

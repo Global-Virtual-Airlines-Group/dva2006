@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2009, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009, 2015, 201, 20196 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -6,30 +6,19 @@ import java.util.*;
 /**
  * A class for storing Applicant entries.
  * @author Luke
- * @version 6.4
+ * @version 9.0
  * @since 1.0
  */
 
 public class Applicant extends Person {
 	
-    public static final int PENDING = 0;
-    public static final int APPROVED = 1;
-    public static final int REJECTED = 2;
-    
-    /**
-     * Valid applicant statuses.
-     */
-    public static final String[] STATUS = {"Pending", "Approved", "Rejected"}; 
-    
-    /**
-     * The only security role an Applicant can belong to.
-     */
-    public static final String ROLE = "Applicant";
-    
+	private static final long serialVersionUID = 749820483432058282L;
+
     private int _pilotID;
     private String _legacyURL;
     private boolean _legacyVerified;
     
+    private ApplicantStatus _status;
     private Simulator _simVersion;
     
     private String _registerHostName;
@@ -51,14 +40,13 @@ public class Applicant extends Person {
     }
     
     /**
-     * Returns the status name.
-     * @return &quot;Applicant&quot;
+     * Returns the Applicant's status.
+     * @return an ApplicantStatus enum
      */
-    @Override
-    public String getStatusName() {
-    	return ROLE;
+    public ApplicantStatus getStatus() {
+    	return _status;
     }
-
+    
     /**
      * Returns the URL for legacy hours verification.
      * @return the URL for legacy hours verification, null if not available
@@ -224,7 +212,7 @@ public class Applicant extends Person {
     public void setPilotID(int pilotID) {
        if (pilotID != 0) {
           validateID(_pilotID, pilotID);
-          if (getStatus() != APPROVED)
+          if (_status != ApplicantStatus.APPROVED)
              throw new IllegalStateException("Applicant not Approved");
           
           _pilotID = pilotID;
@@ -232,50 +220,26 @@ public class Applicant extends Person {
     }
     
     /**
-     * Sets the Applicant's status.
-     * @param status the status code
-     * @throws IllegalArgumentException if the status code is negative or invalid
-     * @see Person#setStatus(int)
-     * @see Person#getStatus()
+     * Updates the Applicant's status.
+     * @param s an ApplicantStatus
      */
-    @Override
-    public final void setStatus(int status) {
-       if (status >= Applicant.STATUS.length)
-          throw new IllegalArgumentException("Invalid Applicant Status - " + status);
-
-      super.setStatus(status);
+    public void setStatus(ApplicantStatus s) {
+    	_status = s;
     }
     
-    /**
-     * Add a security role to an Applicant
-     * @param roleName the name of the role
-     * @throws UnsupportedOperationException always thrown since applicants cannot have roles
-     * @see Applicant#getRoles()
-     * @see Applicant#isInRole(String)
-     */
     @Override
     public void addRole(String roleName) {
         throw new UnsupportedOperationException("Applicants cannot be added to Security Roles");
     }
     
-    /**
-     * Queries this applicant's role. Applicants can only be members of a single role - "Applicants"
-     * @return TRUE if the queried role is "Applicant", otherwise FALSE
-     * @see Applicant#getRoles()
-     */
     @Override
     public boolean isInRole(String roleName) {
-        return (Applicant.ROLE.equals(roleName) || "*".equals(roleName));
+        return (Role.APPLICANT.getName().equals(roleName) || "*".equals(roleName));
     }
     
-    /**
-     * Returns the security roles this Applicant belongs to. 
-     * @return a Collection with a single string - Applicant.ROLE.
-     * @see Applicant#isInRole(String) 
-     */
     @Override
     public Collection<String> getRoles() {
-    	return Collections.singleton(ROLE);
+    	return Collections.singleton(Role.APPLICANT.getName());
     }
     
     /**
@@ -286,13 +250,8 @@ public class Applicant extends Person {
     	return new LinkedHashMap<Long, String>(_typeChoices);
     }
     
-    /**
-     * Selects a table row class based upon the Applicant's status.
-     * @return the row CSS class name
-     */
     @Override
     public String getRowClassName() {
-    	final String[] ROW_CLASSES = {"opt1", null, "err"};
-    	return ROW_CLASSES[getStatus()];
+    	return _status.getRowClassName();
     }
 }

@@ -3,7 +3,7 @@ package org.deltava.dao;
 
 import java.sql.*;
 
-import org.deltava.beans.Pilot;
+import org.deltava.beans.*;
 
 import org.deltava.util.cache.CacheManager;
 import org.deltava.util.system.SystemData;
@@ -50,7 +50,7 @@ public class SetPilotLogin extends PilotWriteDAO {
 		sqlBuf.append(".PILOTS SET LAST_LOGIN=NOW(), LOGINHOSTNAME=?, LOGINS=LOGINS+1, STATUS=? WHERE (ID=?) LIMIT 1");
 		try (PreparedStatement ps = prepareWithoutLimits(sqlBuf.toString())) {
 			ps.setString(1, hostName);
-			ps.setInt(2, Pilot.ACTIVE);
+			ps.setInt(2, PilotStatus.ACTIVE.ordinal());
 			ps.setInt(3, id);
 			executeUpdate(ps, 1);
 		} catch (SQLException se) {

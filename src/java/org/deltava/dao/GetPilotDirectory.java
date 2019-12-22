@@ -204,9 +204,7 @@ public class GetPilotDirectory extends GetPilot implements PersonUniquenessDAO {
 		String db = formatDBName(dbName);
 		StringBuilder sqlBuf = new StringBuilder("SELECT P.ID FROM ");
 		sqlBuf.append(db);
-		sqlBuf.append(".PILOTS P LEFT JOIN ");
-		sqlBuf.append(db);
-		sqlBuf.append(".ROLES R ON (P.ID=R.ID) WHERE (R.ROLE=?) ");
+		sqlBuf.append(".PILOTS P LEFT JOIN common.AUTH_ROLES R ON (P.ID=R.ID) WHERE (R.ROLE=?) ");
 		if (activeOnly)
 			sqlBuf.append("AND (P.STATUS=?) ");
 		
@@ -215,7 +213,7 @@ public class GetPilotDirectory extends GetPilot implements PersonUniquenessDAO {
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			ps.setString(1, roleName);
 			if (activeOnly)
-				ps.setInt(2, Pilot.ACTIVE);
+				ps.setInt(2, PilotStatus.ACTIVE.ordinal());
 			
 			return new ArrayList<Pilot>(getByID(executeIDs(ps), "PILOTS").values());
 		} catch (SQLException se) {
@@ -235,8 +233,7 @@ public class GetPilotDirectory extends GetPilot implements PersonUniquenessDAO {
 	public Collection<Integer> checkSoundex(Person usr, String dbName) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder(
-				"SELECT ID, SOUNDEX(?) AS TARGET, SOUNDEX(LASTNAME) AS SX FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT ID, SOUNDEX(?) AS TARGET, SOUNDEX(LASTNAME) AS SX FROM ");
 		sqlBuf.append(formatDBName(dbName));
 		sqlBuf.append(".PILOTS WHERE (ID<>?)");
 

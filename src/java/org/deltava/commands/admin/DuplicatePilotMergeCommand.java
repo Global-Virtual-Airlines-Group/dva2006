@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to merge two pilot profiles.
  * @author Luke
- * @version 8.7
+ * @version 9.0
  * @since 1.0
  */
 
@@ -152,20 +152,20 @@ public class DuplicatePilotMergeCommand extends AbstractCommand {
 					}
 
 					// Migrate the data
-					mgdao.setStatus(p.getID(), Pilot.RETIRED);
+					mgdao.setStatus(p.getID(), PilotStatus.RETIRED);
 					oldNames.add(p.getName());
 				}
 				
 				// If this pilot has the destination pilot code, swap with usr
 				if (p.getPilotNumber() == newID.getUserID()) {
-					if (p.getStatus() == Pilot.ACTIVE)
-						p.setStatus(Pilot.RETIRED);
+					if (p.getStatus() == PilotStatus.ACTIVE)
+						p.setStatus(PilotStatus.RETIRED);
 					
 					if (usr.getPilotNumber() > 0)
 						p.setPilotNumber(usr.getPilotNumber());
 					pwdao.write(p);
-				} else if (p.getStatus() == Pilot.ACTIVE) {
-					p.setStatus(Pilot.RETIRED);
+				} else if (p.getStatus() == PilotStatus.ACTIVE) {
+					p.setStatus(PilotStatus.RETIRED);
 					pwdao.write(p);
 				}
 			}
@@ -177,9 +177,9 @@ public class DuplicatePilotMergeCommand extends AbstractCommand {
 			sUpdates.add(su);
 			
 			// Update the roles and status
-			boolean updatePassword = (usr.getStatus() != Pilot.ACTIVE);
+			boolean updatePassword = (usr.getStatus() != PilotStatus.ACTIVE);
 			usr.addRoles(newRoles);
-			usr.setStatus(Pilot.ACTIVE);
+			usr.setStatus(PilotStatus.ACTIVE);
 			usr.setPilotNumber(newID.getUserID());
 			
 			// Write the pilot profile

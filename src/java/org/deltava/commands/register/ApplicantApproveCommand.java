@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to hire new Applicants as Pilots.
  * @author Luke
- * @version 8.7
+ * @version 9.0
  * @since 1.0
  */
 
@@ -92,7 +92,7 @@ public class ApplicantApproveCommand extends AbstractCommand {
 			uddao.write(uloc);
 
 			// Save the new database ID and status
-			a.setStatus(Applicant.APPROVED);
+			a.setStatus(ApplicantStatus.APPROVED);
 			a.setPilotID(uloc.getID());
 			a.setViewCount(SystemData.getInt("html.table.viewSize"));
 
