@@ -25,6 +25,16 @@ public class XAddressService extends XAService {
 		put("ENDFLIGHT", new EndFlightService());
 		put("MESSAGE", new MessageService());
 	}};
+	
+	private class UnknownService extends XAService {
+
+		@Override
+		public int execute(ServiceContext ctx) throws ServiceException {
+			ctx.print("0|Unknown XACARS Command");
+			log(ctx);
+			return SC_OK;
+		}
+	}
 
 	/**
 	 * Executes the Web Service.
@@ -41,17 +51,11 @@ public class XAddressService extends XAService {
 		try {
 			ctx.setContentType("text/plain", "UTF-8");
 			if (!StringUtils.isEmpty(cmd)) {
-				XAService svc = _svcs.get(cmd.toUpperCase());
-				if (svc != null)
-					resultCode = svc.execute(ctx);
-				else {
-					log(ctx);
-					ctx.print("0|Unknown XACARS Command");
-				}
+				XAService svc = _svcs.getOrDefault(cmd.toUpperCase(), new UnknownService());
+				resultCode = svc.execute(ctx);
+				ctx.commit();
 			} else
 				log(ctx);
-			
-			ctx.commit();
 		} catch (IOException ie) {
 			throw error(SC_INTERNAL_SERVER_ERROR, "I/O Error", false);
 		} catch (Exception e) {
