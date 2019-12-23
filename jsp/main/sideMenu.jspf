@@ -5,7 +5,6 @@
 <content:sysdata var="forumName" name="airline.forum" />
 <content:sysdata var="infoEmail" name="airline.mail.info" />
 <content:sysdata var="acarsEnabled" name="acars.enabled" />
-<content:sysdata var="ts2Enabled" name="airline.voice.ts2.enabled" />
 <content:sysdata var="newsletterEnabled" name="airline.newsletters.enabled" />
 <content:sysdata var="newsletter" name="airline.newsletters.name" />
 <content:sysdata var="academyEnabled" name="academy.enabled" />
