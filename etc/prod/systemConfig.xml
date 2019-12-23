@@ -13,10 +13,6 @@
 		<birthdate>06/10/2001</birthdate>
 		<voice>
 			<url>rw.deltava.org/DAL</url>
-			<ts2>
-				<enabled type="Boolean">true</enabled>
-				<url>teamspeak://ts2.deltava.org</url>
-			</ts2>
 			<mvs>
 				<enabled type="Boolean">true</enabled>
 			</mvs>
