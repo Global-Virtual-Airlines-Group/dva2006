@@ -185,25 +185,6 @@ return true;
 </c:if>
 </tr>
 </c:if>
-<c:if test="${!pilot.noVoice && !empty ts2Clients}"><content:filter roles="HR,Instructor">
-<!-- TeamSpeak 2 Virtual Server access -->
-<tr class="title">
- <td colspan="${cspan + 1}">TEAMSPEAK 2 ACCESS</td>
-</tr>
-<tr>
- <td class="label top">Virtual Servers</td>
- <td colspan="${cspan}" class="data">${pilot.name} has access to the following TeamSpeak 2 Virtual Servers:<br />
-<br />
-<c:forEach var="ts2Client" items="${ts2Clients}">
-<c:if test="${ts2Client.serverID != 0}">
-<c:set var="ts2Server" value="${ts2Servers[ts2Client.serverID]}" scope="page" />
-<span class="sec bld">${ts2Server.name}</span> (Port ${ts2Server.port}) - ${ts2Server.description}
-<c:if test="${ts2Client.autoVoice}">&nbsp;<span class="ter small bld">AUTO-VOICE</span></c:if>
-<c:if test="${ts2Client.serverOperator}">&nbsp;<span class="sec small bld">SERVER OPERATOR</span></c:if>
-<c:if test="${ts2Client.serverAdmin}">&nbsp;<span class="pri small bld">SERVER ADMINISTRATOR</span></c:if><br />
-</c:if></c:forEach></td>
-</tr>
-</content:filter></c:if>
 <c:if test="${!empty acarsClientInfo}">
 <!-- ACARS client system data -->
 <tr class="title">

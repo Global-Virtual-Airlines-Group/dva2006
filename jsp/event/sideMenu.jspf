@@ -4,7 +4,6 @@
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <content:sysdata var="forumName" name="airline.forum" />
 <content:sysdata var="infoEmail" name="airline.mail.info" />
-<content:sysdata var="ts2Enabled" name="airline.voice.ts2.enabled" />
 <content:sysdata var="acarsEnabled" name="acars.enabled" />
 <content:sysdata var="academyEnabled" name="academy.enabled" />
 <content:sysdata var="academyFlights" name="academy.minFlights" />
