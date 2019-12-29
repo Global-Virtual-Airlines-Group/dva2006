@@ -87,8 +87,10 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 			entry.setTimeA(LocalDateTime.of(entry.getStartDate(), LocalTime.parse(ctx.getParameter("timeA"), _tf)));
 			
 			// Get a line number if manual entry
-			if ((src == ScheduleSource.MANUAL) && (srcLine <= 0))
-				entry.setLineNumber(dao.getNextManualEntryLine());
+			if ((src == ScheduleSource.MANUAL) && (srcLine <= 0)) {
+				GetRawScheduleInfo ridao = new GetRawScheduleInfo(con);
+				entry.setLineNumber(ridao.getNextManualEntryLine());
+			}
 			
 			// Write the entry to the database
 			SetSchedule wdao = new SetSchedule(con);
@@ -121,7 +123,7 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 	protected void execEdit(CommandContext ctx) throws CommandException {
 
 		// Get the source/line
-		ScheduleSource src = ScheduleSource.valueOf(ctx.getParameter("src"));
+		ScheduleSource src = ScheduleSource.parse(ctx.getParameter("src"), ScheduleSource.MANUAL);
 		int srcLine = StringUtils.parse(ctx.getParameter("srcLine"), -1);
 		
 		try {
