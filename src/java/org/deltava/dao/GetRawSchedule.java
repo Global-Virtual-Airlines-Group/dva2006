@@ -6,6 +6,7 @@ import java.util.*;
 import java.time.*;
 
 import org.deltava.beans.schedule.*;
+
 import org.deltava.util.system.SystemData;
 
 /**
@@ -97,16 +98,28 @@ public class GetRawSchedule extends DAO {
 	}
 	
 	/**
-	 * Returns the first available &quot;line number&quot; for manually entered raw schedule entries.
-	 * @return the next line number
+	 * Lists all raw schedule entries between two Airports from a particular schedule source.
+	 * @param src a ScheduleSource
+	 * @param aD the departure Airport
+	 * @param aA the arrival Airport, or null for all
+	 * @return a List of RawScheduleEntry beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public int getNextManualEntryLine() throws DAOException {
-		try (PreparedStatement ps = prepareWithoutLimits("SELECT MAX(SRC_LINE) WHERE (SRC=?)")) {
-			ps.setInt(1, ScheduleSource.MANUAL.ordinal());
-			try (ResultSet rs = ps.executeQuery()) {
-				return rs.next() ? rs.getInt(1) + 1 : 1;
-			}
+	public List<RawScheduleEntry> list(ScheduleSource src, Airport aD, Airport aA) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM RAW_SCHEDULE WHERE (SRC=?) AND (AIRPORT_D=?)");
+		if (aA != null)
+			sqlBuf.append(" AND (AIRPORT_A=?)");
+		sqlBuf.append(" ORDER BY SRCLINE");
+		
+		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
+			ps.setInt(1, src.ordinal());
+			ps.setString(2, aD.getIATA());
+			if (aA != null)
+				ps.setString(3, aA.getIATA());
+
+			return execute(ps);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

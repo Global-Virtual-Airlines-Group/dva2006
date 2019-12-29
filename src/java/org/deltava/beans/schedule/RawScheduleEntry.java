@@ -48,6 +48,16 @@ public class RawScheduleEntry extends ScheduleEntry {
 	}
 	
 	/**
+	 * Returns the day codes of the days of the week the flight is operated on.
+	 * @return a set of day codes (1234567)
+	 */
+	public String getDayCodes() {
+		StringBuilder buf = new StringBuilder();
+		_days.stream().mapToInt(DayOfWeek::getValue).forEach(buf::append);
+		return buf.toString();
+	}
+	
+	/**
 	 * Returns a bitmap of the days operated.
 	 * @return a bitmap of ordinal values
 	 */

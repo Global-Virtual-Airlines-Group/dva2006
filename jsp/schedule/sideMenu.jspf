@@ -36,6 +36,7 @@
  <content:subitem><el:cmd url="faachartdl">FAA Chart Download</el:cmd></content:subitem>
 </content:filter></c:if>
  <content:subitem><el:cmd url="routes" op="oceanic">Oceanic Tracks</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="rawbrowse">Raw Schedule Data</el:cmd></content:subitem>
  <content:subitem><el:cmd url="schedimport">Schedule Import</el:cmd></content:subitem>
  <content:subitem><el:cmd url="schedfilter">Schedule Filter</el:cmd></content:subitem>
  <content:subitem><el:cmd url="schedexport">Schedule Export</el:cmd></content:subitem>

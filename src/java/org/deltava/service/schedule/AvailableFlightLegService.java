@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2012, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2012, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.io.IOException;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to return the next available Leg number for a Flight.
  * @author Luke
- * @version 7.3
+ * @version 9.0
  * @since 1.0
  */
 
@@ -41,7 +41,7 @@ public class AvailableFlightLegService extends WebService {
 		
 		int leg = 0;
 		try {
-			GetScheduleInfo dao = new GetScheduleInfo(ctx.getConnection());
+			GetRawScheduleInfo dao = new GetRawScheduleInfo(ctx.getConnection());
 			leg = dao.getNextLeg(a, flight);
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());

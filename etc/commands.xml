@@ -690,13 +690,7 @@
 		<class>org.deltava.commands.schedule.ScheduleImportCommand</class>
 		<roles>Schedule,Operations</roles>
 	</command>
-<!--
-	<command id="schedsync">
-		<name>Schedule Sync</name>
-		<class>org.deltava.commands.schedule.ScheduleSyncCommand</class>
-		<roles>Schedule,Operations</roles>
-	</command>
--->
+
 	<command id="usvcairports">
 		<name>Unserviced Airports</name>
 		<class>org.deltava.commands.schedule.UnservicedAirportsCommand</class>
@@ -706,6 +700,12 @@
 	<command id="importstatus">
 		<name>Raw Schedule Import Status</name>
 		<class>org.deltava.commands.schedule.ImportStatusCommand</class>
+		<roles>Schedule,Operations</roles>
+	</command>
+
+	<command id="rawbrowse">
+		<name>Raw Schedule Browser</name>
+		<class>org.deltava.commands.schedule.RawBrowseCommand</class>
 		<roles>Schedule,Operations</roles>
 	</command>
 

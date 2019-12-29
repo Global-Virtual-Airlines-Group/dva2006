@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2012, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2012, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to return the next available Flight Number in the Flight Schedule.
  * @author Luke
- * @version 7.3
+ * @version 9.0
  * @since 1.0
  */
 
@@ -43,7 +43,7 @@ public class AvailableFlightService extends WebService {
 		
 		Collection<Integer> flights = null;
 		try {
-			GetScheduleInfo dao = new GetScheduleInfo(ctx.getConnection());
+			GetRawScheduleInfo dao = new GetRawScheduleInfo(ctx.getConnection());
 			flights = dao.getFlightNumbers(a, startFlight, endFlight);
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
@@ -54,9 +54,7 @@ public class AvailableFlightService extends WebService {
 		// Find the first available flight number in the range
 		int flightNumber = startFlight + 1;
 		for (Integer fn : flights) {
-			if (flightNumber < fn.intValue())
-				break;
-			
+			if (flightNumber < fn.intValue()) break;
 			flightNumber++;
 		}
 			

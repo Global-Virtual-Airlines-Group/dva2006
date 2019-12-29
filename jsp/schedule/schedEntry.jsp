@@ -72,10 +72,7 @@ golgotha.local.changeAirline = function(combo) {
 	golgotha.airportLoad.changeAirline([f.airportD, f.airportA], golgotha.airportLoad.config);
 	const rows = golgotha.util.getElementsByClass('airportRow');
 	rows.forEach(function(r) { golgotha.util.display(r, (combo.selectedIndex > 0)); });
-	const isHistoric = golgotha.local.historicAirlines[golgotha.util.comboGet(combo)];
-	if (isHistoric)
-		f.isHistoric[0].checked = true;
-
+	f.isHistoric.checked = golgotha.local.historicAirlines[golgotha.form.getCombo(combo)];
 	return true;
 };</c:if>
 
@@ -104,7 +101,7 @@ golgotha.local.historicAirlines = ${historicAL};
 </tr>
 <tr>
  <td class="label top">Flight Number / Leg</td>
- <td class="data"><el:text name="flightNumber" idx="*" required="true" size="3" max="4" value="${entry.flightNumber}" /> <el:text name="flightLeg" idx="*" required="true" size="1" max="1" value="${empty entry ? '1' : entry.leg}" />
+ <td class="data"><el:text name="flightNumber" idx="*" required="true" size="3" max="4" value="${entry.flightNumber}" />&nbsp;<el:text name="flightLeg" idx="*" required="true" size="1" max="1" value="${empty entry ? '1' : entry.leg}" />
 <c:if test="${empty entry}">
 <hr />
 <span class="small">You can search for an available flight number between <el:text name="rangeStart" idx="*" className="small" size="3" max="4" value="" /> and 
@@ -133,8 +130,7 @@ You can search for the next available Flight Leg. <el:button ID="LegSearchButton
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="dontPurge" className="small" idx="*" value="true" label="Don't Purge Flight on Schedule Import" checked="${!entry.canPurge}" /><br />
-<el:box name="isHistoric" className="small" idx="*" value="true" label="This is a Historic Flight" checked="${entry.historic}" />
+ <td class="data"><el:box name="isHistoric" className="small" idx="*" value="true" label="This is a Historic Flight" checked="${entry.historic}" />
 <c:if test="${academyEnabled}"><br /><el:box name="isAcademy" className="small" idx="*" value="true" label="This is a Flight Academy Flight" checked="${entry.academy}" /></c:if></td>
 </tr>
 </el:table>
