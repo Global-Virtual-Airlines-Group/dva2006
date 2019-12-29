@@ -11,26 +11,11 @@
 <content:expire expires="30" />
 <content:css name="main" />
 <content:css name="form" />
+<content:js name="fileSaver" />
 <content:pics />
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script>
-golgotha.local.loadLog = function(id)
-{
-var xmlreq = new XMLHttpRequest();
-xmlreq.open('get', '/error_log/' + id, true);
-xmlreq.onreadystatechange = function() {
-	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
-	var td = document.getElementById('logData');
-	td.innerText = xmlreq.responseText;
-	return true;
-};
-	
-xmlreq.send(null);
-return true;
-};
-</script>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -40,6 +25,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
+<el:form method="get" action="acarserror.do" validate="return false">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2">ACARS CLIENT ERROR REPORT INFORMATION - ERROR #<fmt:int value="${err.ID}" /></td>
@@ -107,7 +93,7 @@ ${k} = ${stateData[k]}<br /></c:forEach></td>
 <c:when test="${err.isLoaded()}">
 <tr>
  <td class="label top">Application Log</td>
- <td id="logData" class="data small"><a href="javascript:golgotha.local.loadLog('${err.hexID}')">SHOW LOG DATA</a></td>
+ <td id="logData" class="data small"><a href="javascript:golgotha.local.loadLog('${err.hexID}')">SHOW LOG DATA</a> <el:box name="saveLog" value="true" checked="false" label="Save Log file locally" /></td>
 </tr>
 </c:when>
 </c:choose>
@@ -148,10 +134,34 @@ ${k} = ${stateData[k]}<br /></c:forEach></td>
  <td><el:cmdbutton url="acarserrordelete" link="${err}" label="DELETE ERROR REPORT" /></td>
 </tr>
 </el:table>
+</el:form>
 <br />
 <content:copyright />
 </content:region>
 </content:page>
 <content:googleAnalytics />
 </body>
+<script async>
+golgotha.local.loadLog = function(id) {
+	const doSave = document.forms[0].saveLog.checked;
+	const xmlreq = new XMLHttpRequest();
+	xmlreq.open('get', '/error_log/' + id, true);
+	xmlreq.onreadystatechange = function() {
+		if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
+		var td = document.getElementById('logData');
+		td.innerText = xmlreq.responseText;
+		if (doSave) {
+			const ct = xmlreq.getResponseHeader('Content-Type');
+			const b = new Blob([xmlreq.response], {type: ct.substring(0, ct.indexOf(';')), endings:'native'});
+			const decID = parseInt(id.substring(2), 16);
+			saveAs(b, 'acarsError_' + decID + '.log');
+		}
+
+		return true;
+	};
+
+	xmlreq.send(null);
+	return true;
+};
+</script>
 </html>
