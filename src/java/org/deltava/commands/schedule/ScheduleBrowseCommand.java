@@ -1,19 +1,24 @@
 // Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
-import java.sql.Connection;
+import java.util.*;
 import java.time.Instant;
+import java.sql.Connection;
 
 import org.deltava.beans.Inclusion;
 import org.deltava.beans.schedule.*;
+
+import org.deltava.comparators.AirportComparator;
+
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to browse the Flight Schedule.
  * @author Luke
- * @version 8.7
+ * @version 9.0
  * @since 1.0
  */
 
@@ -58,8 +63,13 @@ public class ScheduleBrowseCommand extends AbstractViewCommand {
 			
 			// Load airports
 			GetScheduleAirport dao = new GetScheduleAirport(con);
-			ctx.setAttribute("airportsD",dao.getOriginAirports(null), REQUEST);
-			ctx.setAttribute("airportsA", dao.getConnectingAirports(aD, true, null), REQUEST);
+			AirportComparator ac = new AirportComparator(AirportComparator.NAME);
+			List<Airport> airportsD = dao.getOriginAirports(null);
+			List<Airport> airportsA = dao.getConnectingAirports(aD, true, null);
+			Collections.sort(airportsD, ac);
+			Collections.sort(airportsA, ac);
+			ctx.setAttribute("airportsD", airportsD, REQUEST);
+			ctx.setAttribute("airportsA", airportsA, REQUEST);
 
 			// Search the schedule
 			GetScheduleSearch sdao = new GetScheduleSearch(con);

@@ -1,9 +1,13 @@
 // Copyright 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
+import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.schedule.*;
+
+import org.deltava.comparators.AirportComparator;
+
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
@@ -43,9 +47,15 @@ public class RawBrowseCommand extends AbstractViewCommand {
 			Connection con = ctx.getConnection();
 			
 			// Load airports
+			AirportComparator ac = new AirportComparator(AirportComparator.NAME);
 			GetRawScheduleInfo ridao = new GetRawScheduleInfo(con);
-			ctx.setAttribute("airportsD", ridao.getOriginAirports(src, null), REQUEST);
-			ctx.setAttribute("airportsA", ridao.getArrivalAirports(src, aD), REQUEST);
+			List<Airport> airportsD = ridao.getOriginAirports(src, null);
+			List<Airport> airportsA = ridao.getArrivalAirports(src, aD);
+			Collections.sort(airportsD, ac);
+			Collections.sort(airportsA, ac);
+			
+			ctx.setAttribute("airportsD", airportsD, REQUEST);
+			ctx.setAttribute("airportsA", airportsA, REQUEST);
 
 			// Search the schedule
 			GetRawSchedule sdao = new GetRawSchedule(con);
