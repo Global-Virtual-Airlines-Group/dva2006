@@ -42,11 +42,6 @@ public class RawBrowseCommand extends AbstractViewCommand {
 		try {
 			Connection con = ctx.getConnection();
 			
-	         // Load schedule import metadata
-	    	 GetMetadata mddao = new GetMetadata(con);
-	    	 String aCode = SystemData.get("airline.code").toLowerCase();
-	    	 ctx.setAttribute("importDate", mddao.getDate(aCode + ".schedule.import"), REQUEST);
-			
 			// Load airports
 			GetRawScheduleInfo ridao = new GetRawScheduleInfo(con);
 			ctx.setAttribute("airportsD", ridao.getOriginAirports(src, null), REQUEST);

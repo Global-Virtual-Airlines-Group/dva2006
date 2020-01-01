@@ -36,15 +36,6 @@ public enum ScheduleSource implements org.deltava.beans.ComboAlias {
 	}
 	
 	/**
-	 * Creates a Schedule source from a code.
-	 * @param code the code, typically an ordinal value
-	 * @return a ScheduleSource, or null if not found
-	 */
-	public static ScheduleSource fromCode(int code) {
-		return ((code < 0) || (code >= values().length)) ? null : values()[code];
-	}
-	
-	/**
 	 * Exception-safe value parser. 
 	 * @param src a source code
 	 * @param defaultValue the default to return if unparseable

@@ -275,7 +275,7 @@ public class GetSchedule extends DAO {
 					se.setAirportA(sr.getAirportA());
 					se.setTimeD(rs.getTimestamp(5).toLocalDateTime().plusSeconds(_effDate.getEpochSecond()));
 					se.setTimeA(rs.getTimestamp(6).toLocalDateTime().plusSeconds(_effDate.getEpochSecond()));
-					se.setSource(ScheduleSource.fromCode(rs.getInt(7)));
+					se.setSource(ScheduleSource.values()[rs.getInt(7)]);
 				}
 			}
 
@@ -413,7 +413,7 @@ public class GetSchedule extends DAO {
 				entry.setHistoric(rs.getBoolean(11));
 				entry.setCanPurge(rs.getBoolean(12));
 				entry.setAcademy(rs.getBoolean(13));
-				entry.setSource(ScheduleSource.fromCode(rs.getInt(14)));
+				entry.setSource(ScheduleSource.values()[rs.getInt(14)]);
 				entry.setCodeShare(rs.getString(15));
 				results.add(entry);
 			}
