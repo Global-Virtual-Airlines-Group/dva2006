@@ -112,7 +112,7 @@ public class DateFormatTag extends UserSettingsTag {
 		else if (i instanceof ZonedDateTime)
 			_dt = ((ZonedDateTime) i).toInstant();
 		else if (i instanceof LocalDate) {
-			_dt = Instant.ofEpochMilli(((LocalDate) i).toEpochDay() * ChronoUnit.DAYS.getDuration().getSeconds());
+			_dt = Instant.ofEpochSecond(((LocalDate) i).toEpochDay() * ChronoUnit.DAYS.getDuration().getSeconds());
 		} else if (i instanceof LocalDateTime)
 			_dt = ((LocalDateTime) i).toInstant(ZoneOffset.UTC);
 		else if (i != null)
