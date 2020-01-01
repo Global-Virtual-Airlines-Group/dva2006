@@ -63,23 +63,22 @@ public class GetRawScheduleInfo extends DAO {
 	 * Returns departure Airports for a particular raw schedule source.
 	 * @param src the ScheduleSource
 	 * @param aA the arrival Airport, or null for all flights
-	 * @return a Collection of Airport beans
+	 * @return a List of Airport beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<Airport> getOriginAirports(ScheduleSource src, Airport aA) throws DAOException {
+	public List<Airport> getOriginAirports(ScheduleSource src, Airport aA) throws DAOException {
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT DISTINCT AIRPORT_D FROM RAW_SCHEDULE WHERE (SRC=?)");
 		if (aA != null)
 			sqlBuf.append(" AND (AIRPORT_A=?)");
-		sqlBuf.append(" ORDER BY AIRPORT_D");
 		
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			ps.setInt(1, src.ordinal());
 			if (aA != null)
 				ps.setString(2, aA.getIATA());
 			
-			Collection<Airport> results = new LinkedHashSet<Airport>();
+			List<Airport> results = new ArrayList<Airport>();
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
 					results.add(SystemData.getAirport(rs.getString(1)));
@@ -95,23 +94,22 @@ public class GetRawScheduleInfo extends DAO {
 	 * Returns arrival Airports for a particular raw schedule source.
 	 * @param src the ScheduleSource
 	 * @param aD the departure Airport, or null for all flights
-	 * @return a Collection of Airport beans
+	 * @return a List of Airport beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<Airport> getArrivalAirports(ScheduleSource src, Airport aD) throws DAOException {
+	public List<Airport> getArrivalAirports(ScheduleSource src, Airport aD) throws DAOException {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT DISTINCT AIRPORT_A FROM RAW_SCHEDULE WHERE (SRC=?)");
 		if (aD != null)
 			sqlBuf.append(" AND (AIRPORT_D=?)");
-		sqlBuf.append(" ORDER BY AIRPORT_A");
 		
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			ps.setInt(1, src.ordinal());
 			if (aD != null)
 				ps.setString(2, aD.getIATA());
 			
-			Collection<Airport> results = new LinkedHashSet<Airport>();
+			List<Airport> results = new ArrayList<Airport>();
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
 					results.add(SystemData.getAirport(rs.getString(1)));

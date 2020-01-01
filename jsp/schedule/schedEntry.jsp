@@ -86,6 +86,7 @@ golgotha.local.historicAirlines = ${historicAL};
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:sysdata var="airlines" name="airlines" mapValues="true" sort="true" />
 <content:sysdata var="academyEnabled" name="academy.enabled" />
+<content:enum var="daysOfWeek" className="java.time.DayOfWeek" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -107,6 +108,18 @@ golgotha.local.historicAirlines = ${historicAL};
 <span class="small">You can search for an available flight number between <el:text name="rangeStart" idx="*" className="small" size="3" max="4" value="" /> and 
 <el:text name="rangeEnd" idx="*" className="small" size="3" max="4" value="" />&nbsp;<el:button ID="FlightSearchButton" onClick="void golgotha.form.wrap(golgotha.local.getAvailableFlight, document.forms[0])" label="SEARCH" /><br />
 You can search for the next available Flight Leg. <el:button ID="LegSearchButton" onClick="void golgotha.form.wrap(golgotha.local.getAvailableLeg, document.forms[0])" label="SEARCH" /></span></c:if></td>
+</tr>
+<tr>
+ <td class="label">Starts Operation on</td>
+ <td class="data"><el:text name="startDate" idx="*" size="9" max="10" required="true" value="${entry.startDate}" /></td>
+</tr>
+<tr>
+ <td class="label">Ceases Operation on</td>
+ <td class="data"><el:text name="endDate" idx="*" size="9" max="10" required="true" value="${entry.endDate}" /></td>
+</tr>
+<tr>
+ <td class="label">Days of Week</td>
+ <td class="data"><el:check name="days" idx="*" className="small" cols="7" width="80" options="${daysOfWeek}" value="${entry.days}" /></td>
 </tr>
 <tr>
  <td class="label">Equipment Type</td>

@@ -1,12 +1,14 @@
-// Copyright 2005, 2006, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
+
+import java.text.Collator;
 
 import org.deltava.beans.schedule.Airport;
 
 /**
  * A comparator for Airport beans.
  * @author Luke
- * @version 8.0
+ * @version 9.0
  * @since 1.0
  */
 
@@ -17,6 +19,8 @@ public class AirportComparator extends AbstractComparator<Airport> {
     public static final int NAME = 2;
     public static final int LATITUDE = 3;
     public static final int LONGITUDE = 4;
+    
+    private final Collator _cl = Collator.getInstance();
     
     private static final String[] TYPES = {"IATA Code", "ICAO Code", "Airport Name", "Latitude", "Longitude"};
     
@@ -29,6 +33,8 @@ public class AirportComparator extends AbstractComparator<Airport> {
     public AirportComparator(int comparisonType) {
         super(TYPES);
         setComparisonType(comparisonType);
+        _cl.setStrength(Collator.SECONDARY);
+        _cl.setDecomposition(Collator.CANONICAL_DECOMPOSITION);
     }
 
     /**
@@ -53,7 +59,7 @@ public class AirportComparator extends AbstractComparator<Airport> {
         	case ICAO:
         	    return a1.getICAO().compareTo(a2.getICAO());
         	case NAME:
-        		int tmpResult = a1.getName().compareTo(a2.getName()); 
+        		int tmpResult = _cl.compare(a1.getName(), a2.getName()); 
         	    return (tmpResult == 0) ? a1.getIATA().compareTo(a2.getIATA()) : tmpResult;
         	case LATITUDE:
         	    tmpResult = Double.compare(a1.getLatitude(), a2.getLatitude());
@@ -61,7 +67,7 @@ public class AirportComparator extends AbstractComparator<Airport> {
         	case LONGITUDE:
         		tmpResult = Double.compare(a1.getLongitude(), a2.getLongitude());
         		return (tmpResult == 0) ? Double.compare(a1.getLatitude(), a2.getLatitude()) : tmpResult;
-        	default :
+        	default:
         	    return a1.getIATA().compareTo(a2.getIATA());
         }
     }

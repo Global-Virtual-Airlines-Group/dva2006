@@ -46,13 +46,13 @@
 <tr class="title caps">
  <td class="nophone">LINE</td>
  <td style="width:10%">FLIGHT NUMBER</td>
- <td style="width:10%">EFFECTIVE</td>
+ <td style="width:9%">EFFECTIVE</td>
  <td style="width:5%">DAYS</td>
  <td>EQUIPMENT</td>
  <td>AIRPORTS</td>
  <td class="nophone" style="width:6%">DEPARTS</td>
  <td class="nophone" style="width:6%">ARRIVES</td>
- <td class="nophone" style="width:8%">DISTANCE</td>
+ <td class="nophone" style="width:7%">DISTANCE</td>
  <td style="width:6%">DURATION</td>
 </tr>
 
@@ -61,7 +61,7 @@
 <view:row entry="${entry}">
  <td class="small nophone">${entry.lineNumber}</td>
  <td class="pri bld">${entry.flightCode}</td>
- <td class="small"><fmt:date fmt="d" d="MM/dd/yyyy" date="${entry.startDate}" /> - <fmt:date fmt="d" d="MM/dd/yyyy" date="${entry.endDate}" /></td>
+ <td class="small"><fmt:date fmt="d" d="MM/dd/yy" date="${entry.startDate}" /> - <fmt:date fmt="d" d="MM/dd/yy" date="${entry.endDate}" /></td>
  <td class="small sec">${entry.dayCodes}</td>
  <td class="sec bld">${entry.equipmentType}</td>
  <td class="small">${entry.airportD.name} (<el:cmd url="airportinfo" linkID="${entry.airportD.IATA}" className="plain"><fmt:airport airport="${entry.airportD}" /></el:cmd>) to ${entry.airportA.name} (<el:cmd url="airportinfo" linkID="${entry.airportA.IATA}" className="plain"><fmt:airport airport="${entry.airportA}" /></el:cmd>)</td>
@@ -86,7 +86,7 @@
 </body>
 <script async>
 golgotha.local.f = document.forms[0];
-golgotha.local.createParms = function(o) {
+golgotha.local.createParams = function(o) {
 	const params = []; 
 	for (p in o) {
 		if (o.hasOwnProperty(p))
