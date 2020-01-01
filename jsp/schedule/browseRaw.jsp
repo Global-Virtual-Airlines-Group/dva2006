@@ -18,29 +18,6 @@
 <content:googleAnalytics eventSupport="true" />
 <fmt:aptype var="useICAO" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script>
-golgotha.local.setAirportD = function(combo) {
-	self.location = '/browse.do?airportD=' + escape(golgotha.form.getCombo(combo));
-	return true;
-};
-
-golgotha.local.setAirportA = function(combo) {
-	const f = document.forms[0];
-	if (golgotha.form.comboSet(combo))
-		self.location = '/browse.do?airportD=' + escape(golgotha.form.getCombo(f.airportD)) + '&airportA=' + escape(golgotha.form.getCombo(combo));
-	else
-		self.location = '/browse.do?airportD=' + escape(golgotha.form.getCombo(f.airportD));
-
-	return true;
-};
-
-golgotha.onDOMReady(function() {
-	const f = document.forms[0];
-	golgotha.airportLoad.setHelpers(f.airportD);
-	golgotha.airportLoad.setHelpers(f.airportA);
-	return true;
-});
-</script>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -52,15 +29,14 @@ golgotha.onDOMReady(function() {
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="schedule.do" method="post" validate="return false">
-<view:table cmd="browse">
+<view:table cmd="rawbrowse">
 
 <!-- Table Header Bars -->
 <tr class="title">
- <td class="left caps" colspan="10"><span class="nophone"><content:airline /> RAW FLIGHT </span>SCHEDULE<c:if test="${!empty importDate}"> IMPORTED ON <fmt:date date="${importDate}" t="HH:mm" /></c:if>
-<c:if test="${!empty effectiveDate}"> REPLAY OF <fmt:date date="${effectiveDate}" fmt="d" /></c:if></td>
+ <td class="left caps" colspan="10"><span class="nophone"><content:airline />&nbsp;</span>RAW FLIGHT SCHEDULE</td>
 </tr>
 <tr class="title caps">
- <td class="right" colspan="10">SCHEDULE SOURCE <el:combo name="src" idx="*" size="1" required="true" firstEntry="[ SCHEDULE SOURCE ]" value="${src}" options="${sources}" /></td>
+ <td class="right" colspan="10">SCHEDULE SOURCE <el:combo name="src" idx="*" size="1" required="true" firstEntry="[ SCHEDULE SOURCE ]" value="${src}" options="${sources}" onChange="void golgotha.local.setSrc(this)" /></td>
 </tr>
 <tr class="title">
  <td class="right" colspan="10">FLIGHTS FROM <el:combo name="airportD" idx="*" size="1" className="small" options="${airportsD}" value="${airportD}" onChange="void golgotha.local.setAirportD(this)" />
@@ -85,7 +61,7 @@ golgotha.onDOMReady(function() {
 <view:row entry="${entry}">
  <td class="small nophone">${entry.lineNumber}</td>
  <td class="pri bld">${entry.flightCode}</td>
- <td class="small"><fmt:date fmt="d" d="MM/dd" date="${entry.startDate}" /> - <fmt:date fmt="d" d="MM/dd" date="${entry.endDate}" /></td>
+ <td class="small"><fmt:date fmt="d" d="MM/dd/yyyy" date="${entry.startDate}" /> - <fmt:date fmt="d" d="MM/dd/yyyy" date="${entry.endDate}" /></td>
  <td class="small sec">${entry.dayCodes}</td>
  <td class="sec bld">${entry.equipmentType}</td>
  <td class="small">${entry.airportD.name} (<el:cmd url="airportinfo" linkID="${entry.airportD.IATA}" className="plain"><fmt:airport airport="${entry.airportD}" /></el:cmd>) to ${entry.airportA.name} (<el:cmd url="airportinfo" linkID="${entry.airportA.IATA}" className="plain"><fmt:airport airport="${entry.airportA}" /></el:cmd>)</td>
@@ -108,4 +84,43 @@ golgotha.onDOMReady(function() {
 </content:region>
 </content:page>
 </body>
+<script async>
+golgotha.local.f = document.forms[0];
+golgotha.local.createParms = function(o) {
+	const params = []; 
+	for (p in o) {
+		if (o.hasOwnProperty(p))
+			params.push(p + '=' + escape(o[p]));
+	}
+
+	return params.join('&');
+};
+
+golgotha.local.setSrc = function(cb) {
+	self.location = '/rawbrowse.do?src=' + escape(golgotha.form.getCombo(cb));
+	return true;
+};
+
+golgotha.local.setAirportD = function(cb) {
+	const p = {src:golgotha.form.getCombo(golgotha.local.f.src), airportD:golgotha.form.getCombo(cb)};
+	self.location = '/rawbrowse.do?' + golgotha.local.createParams(p);
+	return true;
+};
+
+golgotha.local.setAirportA = function(cb) {
+	const p = {src:golgotha.form.getCombo(golgotha.local.f.src), airportD:golgotha.form.getCombo(golgotha.local.f.airportD)};
+	if (golgotha.form.comboSet(cb))
+		p.airportA = golgotha.form.getCombo(cb);
+
+	self.location = '/rawbrowse.do?' + golgotha.local.createParams(p);
+	return true;
+};
+
+golgotha.onDOMReady(function() {
+	const f = document.forms[0];
+	golgotha.airportLoad.setHelpers(f.airportD);
+	golgotha.airportLoad.setHelpers(f.airportA);
+	return true;
+});
+</script>
 </html>
