@@ -72,6 +72,7 @@ public class GetRawScheduleInfo extends DAO {
 		StringBuilder sqlBuf = new StringBuilder("SELECT DISTINCT AIRPORT_D FROM RAW_SCHEDULE WHERE (SRC=?)");
 		if (aA != null)
 			sqlBuf.append(" AND (AIRPORT_A=?)");
+		sqlBuf.append(" ORDER BY AIRPORT_D");
 		
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			ps.setInt(1, src.ordinal());
@@ -103,6 +104,7 @@ public class GetRawScheduleInfo extends DAO {
 		StringBuilder sqlBuf = new StringBuilder("SELECT DISTINCT AIRPORT_A FROM RAW_SCHEDULE WHERE (SRC=?)");
 		if (aD != null)
 			sqlBuf.append(" AND (AIRPORT_D=?)");
+		sqlBuf.append(" ORDER BY AIRPORT_A");
 		
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			ps.setInt(1, src.ordinal());

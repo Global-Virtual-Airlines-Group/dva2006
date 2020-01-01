@@ -37,7 +37,7 @@ public class GetRawSchedule extends DAO {
 			ScheduleSourceInfo inf = null;
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
-					ScheduleSource ss = ScheduleSource.fromCode(rs.getInt(1));
+					ScheduleSource ss = ScheduleSource.values()[rs.getInt(1)];
 					if ((inf == null) || (ss != inf.getSource())) {
 						inf = new ScheduleSourceInfo(ss);
 						results.add(inf);
@@ -63,7 +63,7 @@ public class GetRawSchedule extends DAO {
 			Map<ScheduleSource, Collection<Airline>> results = new LinkedHashMap<ScheduleSource, Collection<Airline>>();
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
-					ScheduleSource src = ScheduleSource.fromCode(rs.getInt(1));
+					ScheduleSource src = ScheduleSource.values()[rs.getInt(1)];
 					Collection<Airline> airlines = results.get(src);
 					if (airlines == null) {
 						airlines = new LinkedHashSet<Airline>();
@@ -161,7 +161,7 @@ public class GetRawSchedule extends DAO {
 		try (ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
 				RawScheduleEntry se = new RawScheduleEntry(SystemData.getAirline(rs.getString(6)), rs.getInt(7), rs.getInt(8));
-				se.setSource(ScheduleSource.fromCode(rs.getInt(1)));
+				se.setSource(ScheduleSource.values()[rs.getInt(1)]);
 				se.setLineNumber(rs.getInt(2));
 				se.setStartDate(rs.getDate(3).toLocalDate());
 				se.setEndDate(rs.getDate(4).toLocalDate());
