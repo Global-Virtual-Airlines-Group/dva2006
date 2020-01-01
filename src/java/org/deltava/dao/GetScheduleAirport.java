@@ -31,7 +31,7 @@ public class GetScheduleAirport extends DAO {
 	 * @return a Collection of Airport beans, sorted by airport name
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<Airport> getOriginAirports(Airline al) throws DAOException {
+	public List<Airport> getOriginAirports(Airline al) throws DAOException {
 		return getAirports("AIRPORT_D", al);
 	}
 	
@@ -41,7 +41,7 @@ public class GetScheduleAirport extends DAO {
 	 * @return a Collection of Airport beans, sorted by airport name
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<Airport> getDestinationAirports(Airline al) throws DAOException {
+	public List<Airport> getDestinationAirports(Airline al) throws DAOException {
 		return getAirports("AIRPORT_A", al);
 	}
 	
@@ -102,7 +102,7 @@ public class GetScheduleAirport extends DAO {
 	/*
 	 * Returns origin/departure airports for an airline.
 	 */
-	private Collection<Airport> getAirports(String fName, Airline al) throws DAOException {
+	private List<Airport> getAirports(String fName, Airline al) throws DAOException {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT DISTINCT S.");
@@ -113,8 +113,6 @@ public class GetScheduleAirport extends DAO {
 		if (al != null)
 			sqlBuf.append(" AND (S.AIRLINE=?)");
 		
-		sqlBuf.append(" ORDER BY A.NAME");
-
 		try (PreparedStatement ps = prepare(sqlBuf.toString())) {
 			if (al != null)
 				ps.setString(1, al.getCode());
@@ -133,7 +131,7 @@ public class GetScheduleAirport extends DAO {
 	 * @return a Collection of Airport beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<Airport> getConnectingAirports(Airport a, boolean from, Airline al) throws DAOException {
+	public List<Airport> getConnectingAirports(Airport a, boolean from, Airline al) throws DAOException {
 		if (a == null)
 			return from ? getDestinationAirports(al) : getOriginAirports(al);
 
