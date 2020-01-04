@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.io.*;
@@ -35,7 +35,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle editing/saving Flight Reports.
  * @author Luke
- * @version 8.7
+ * @version 9.0
  * @since 1.0
  */
 
@@ -203,7 +203,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				Instant forwardLimit = ZonedDateTime.now().plusDays(SystemData.getInt("users.pirep.maxDays")).toInstant();
 				Instant backwardLimit = ZonedDateTime.now().minusDays(SystemData.getInt("users.pirep.maxDays")).toInstant();
 				if ((fr.getDate().isBefore(backwardLimit)) || (fr.getDate().isAfter(forwardLimit)))
-					throw new CommandException("Invalid Flight Report Date - " + fr.getDate() + " (" + backwardLimit + " - " + forwardLimit, false);
+					throw new CommandException("Invalid Flight Report Date - " + fr.getDate() + " (" + backwardLimit + " - " + forwardLimit + ")", false);
 			}
 			
 			// Start transaction
@@ -342,16 +342,21 @@ public class PIREPCommand extends AbstractFormCommand {
 		}
 
 		// Save PIREP date limitations
-		ctx.setAttribute("forwardDateLimit", today.plusDays(SystemData.getInt("users.pirep.maxDays")), REQUEST);
-		ctx.setAttribute("backwardDateLimit", today.minusDays(SystemData.getInt("users.pirep.maxDays")), REQUEST);
+		int maxRange = SystemData.getInt("users.pirep.maxDays", 7);
+		ctx.setAttribute("forwardDateLimit", today.plusDays(maxRange), REQUEST);
+		ctx.setAttribute("backwardDateLimit", today.minusDays(maxRange), REQUEST);
 		
 		// Set flight years
-		Collection<String> years = new LinkedHashSet<String>();
-		years.add(String.valueOf(today.get(ChronoField.YEAR)));
+		Collection<Integer> years = new TreeSet<Integer>();
+		years.add(Integer.valueOf(today.get(ChronoField.YEAR)));
 
-		// If we're in January/February, add the previous year
-		if (today.get(ChronoField.MONTH_OF_YEAR) < 3)
-			years.add(String.valueOf(today.get(ChronoField.YEAR) - 1));
+		// If we're in the range, add the previous year
+		if (today.get(ChronoField.DAY_OF_YEAR) <= maxRange)
+			years.add(Integer.valueOf(today.get(ChronoField.YEAR) - 1));
+		
+		// If we're new years eve, add next year
+		if ((today.get(ChronoField.MONTH_OF_YEAR) == 12) && (today.get(ChronoField.DAY_OF_MONTH) > 30))
+			years.add(Integer.valueOf(today.get(ChronoField.YEAR) + 1));
 
 		// Save pirep date combobox values
 		ctx.setAttribute("pirepYear", StringUtils.format(today.get(ChronoField.YEAR), "0000"), REQUEST);
