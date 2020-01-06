@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.filter;
 
 import java.io.IOException;
@@ -31,7 +31,7 @@ import org.deltava.util.system.SystemData;
  * @see SecurityCookieGenerator
  */
 
-public class SecurityCookieFilter implements Filter {
+public class SecurityCookieFilter extends HttpFilter {
 
 	private static final Logger log = Logger.getLogger(SecurityCookieFilter.class);
 	
@@ -39,10 +39,6 @@ public class SecurityCookieFilter implements Filter {
 	
 	private ConnectionPool _jdbcPool;
 	
-	/**
-	 * Called by the servlet container when the filter is started. Logs a message and saves the servlet context.
-	 * @param cfg the Filter Configuration
-	 */
 	@Override
 	public void init(FilterConfig cfg) throws ServletException {
 		try {
@@ -76,42 +72,38 @@ public class SecurityCookieFilter implements Filter {
 
 	/**
 	 * Called by the servlet container on each request. Repopulates the session if a cookie is found.
-	 * @param req the Servlet Request
-	 * @param rsp the Servlet Response
+	 * @param req the request
+	 * @param rsp the response
 	 * @param fc the Filter Chain
 	 * @throws IOException if an I/O error occurs
 	 * @throws ServletException if a general error occurs
 	 */
 	@Override
-	public void doFilter(ServletRequest req, ServletResponse rsp, FilterChain fc) throws IOException, ServletException {
+	public void doFilter(HttpServletRequest req, HttpServletResponse rsp, FilterChain fc) throws IOException, ServletException {
 
-		// Cast the request/response since we are doing stuff with them
-		HttpServletRequest hreq = (HttpServletRequest) req;
-		HttpServletResponse hrsp = (HttpServletResponse) rsp;
-		
 		// Check for the authentication cookie
-		String authCookie = getCookie(hreq, AUTH_COOKIE_NAME);
+		String authCookie = getCookie(req, AUTH_COOKIE_NAME);
 		if (StringUtils.isEmpty(authCookie)) {
 			fc.doFilter(req, rsp);
 			return;
 		}
 
 		// Decrypt the cookie
-		HttpSession s = hreq.getSession(true);
+		HttpSession s = req.getSession(true);
 		String remoteAddr = req.getRemoteAddr();
 		SecurityCookieData cData = (SecurityCookieData) s.getAttribute(AUTH_COOKIE_NAME);
 		if (cData == null) {
 			try {
 				cData = SecurityCookieGenerator.readCookie(authCookie);
-				if (!hreq.isSecure() && SystemData.getBoolean("security.cookie.checkIP")) {
+				if (!req.isSecure() && SystemData.getBoolean("security.cookie.checkIP")) {
 					if ((cData != null) && (!remoteAddr.equals(cData.getRemoteAddr())))
 						throw new SecurityException(remoteAddr + " != " + cData.getRemoteAddr());
 				}
 				
 				s.setAttribute(AUTH_COOKIE_NAME, cData);
 			} catch (Exception e) {
-				log.error("Error decrypting security cookie from " + req.getRemoteHost() + " using " + hreq.getHeader("user-agent") + " - " + e.getMessage());
-				hrsp.addCookie(new Cookie(AUTH_COOKIE_NAME, ""));
+				log.error("Error decrypting security cookie from " + req.getRemoteHost() + " using " + req.getHeader("user-agent") + " - " + e.getMessage());
+				rsp.addCookie(new Cookie(AUTH_COOKIE_NAME, ""));
 				cData = null;
 			}
 		}
@@ -120,7 +112,7 @@ public class SecurityCookieFilter implements Filter {
 		Pilot p = (Pilot) s.getAttribute(USER_ATTR_NAME);
 		if ((cData != null) && cData.isExpired()) {
 			log.warn("Cookie for " + cData.getUserID() + " has expired");
-			hrsp.addCookie(new Cookie(AUTH_COOKIE_NAME, ""));
+			rsp.addCookie(new Cookie(AUTH_COOKIE_NAME, ""));
 			req.setAttribute("isExpired", Boolean.TRUE);
 			s.invalidate();
 			cData = null;
@@ -132,7 +124,7 @@ public class SecurityCookieFilter implements Filter {
 			if (timeUntilExpiry < 900_000) {
 				cData.setExpiryDate(cData.getExpiryDate().plusSeconds(3600 * 4));
 				String newCookie = SecurityCookieGenerator.getCookieData(cData);
-				hrsp.addCookie(new Cookie(AUTH_COOKIE_NAME, newCookie));	
+				rsp.addCookie(new Cookie(AUTH_COOKIE_NAME, newCookie));	
 			}
 		}
 
@@ -142,7 +134,7 @@ public class SecurityCookieFilter implements Filter {
 			String savedAddr = (cData == null) ? null : cData.getRemoteAddr();
 			if ((p != null) && UserPool.isBlocked(p))
 				throw new SecurityException(p.getName() + " is blocked");
-			else if (hreq.isRequestedSessionIdFromURL())
+			else if (req.isRequestedSessionIdFromURL())
 				throw new SecurityException(req.getRemoteHost() + " attempting to create HTTP session via URL");
 			else if ((savedAddr != null) && !remoteAddr.equals(savedAddr)) {
 				AddressType sT = NetworkUtils.getType(savedAddr); AddressType rT = NetworkUtils.getType(remoteAddr);
@@ -165,7 +157,7 @@ public class SecurityCookieFilter implements Filter {
 			}
 		} catch (Exception se) {
 			log.warn(se.getMessage());
-			hrsp.addCookie(new Cookie(AUTH_COOKIE_NAME, ""));
+			rsp.addCookie(new Cookie(AUTH_COOKIE_NAME, ""));
 			req.setAttribute("servlet_error", se.getMessage());
 			s.invalidate();
 			cData = null;
@@ -207,7 +199,7 @@ public class SecurityCookieFilter implements Filter {
 			if (p != null) {
 				try {
 					if (p.getStatus() == PilotStatus.ACTIVE) {
-						String userAgent = hreq.getHeader("user-agent");
+						String userAgent = req.getHeader("user-agent");
 						s.setAttribute(USERAGENT_ATTR_NAME, userAgent);
 						s.setAttribute(USER_ATTR_NAME, p);
 						log.info("Restored " + p.getName() + " from Security Cookie");
@@ -219,7 +211,7 @@ public class SecurityCookieFilter implements Filter {
 						throw new SecurityException(p.getName() + " status = " + p.getStatus().getDescription());
 				} catch (SecurityException se) {
 					log.error(se.getMessage());
-					hrsp.addCookie(new Cookie(AUTH_COOKIE_NAME, ""));
+					rsp.addCookie(new Cookie(AUTH_COOKIE_NAME, ""));
 					s.invalidate();
 				}
 			}
@@ -228,9 +220,6 @@ public class SecurityCookieFilter implements Filter {
 		fc.doFilter(req, rsp);
 	}
 
-	/**
-	 * Called by the servlet container when the filter is stopped. Logs a message.
-	 */
 	@Override
 	public void destroy() {
 		log.info("Stopped");

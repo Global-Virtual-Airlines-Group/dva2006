@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.filter;
 
 import java.net.*;
@@ -17,20 +17,16 @@ import org.deltava.util.StringUtils;
 /**
  * A servlet filter to detect the browser type.
  * @author Luke
- * @version 7.2
+ * @version 9.0
  * @since 1.0
  */
 
-public class BrowserTypeFilter implements Filter {
+public class BrowserTypeFilter extends HttpFilter {
 
 	private static final Logger log = Logger.getLogger(BrowserTypeFilter.class);
 
 	private String _defaultCode;
 
-	/**
-	 * Called by the servlet container when the filter is started. Logs a message.
-	 * @param cfg the Filter Configuration
-	 */
 	@Override
 	public void init(FilterConfig cfg) throws ServletException {
 		_defaultCode = cfg.getInitParameter("default");
@@ -39,18 +35,17 @@ public class BrowserTypeFilter implements Filter {
 
 	/**
 	 * Called by the servlet container on each request. Saves the browser type in the request.
-	 * @param req the Servlet Request
-	 * @param rsp the Servlet Response
+	 * @param req the request
+	 * @param rsp the response
 	 * @param fc the Filter Chain
 	 * @throws IOException if an I/O error occurs
 	 * @throws ServletException if a general error occurs
 	 */
 	@Override
-	public void doFilter(ServletRequest req, ServletResponse rsp, FilterChain fc) throws IOException, ServletException {
+	public void doFilter(HttpServletRequest req, HttpServletResponse rsp, FilterChain fc) throws IOException, ServletException {
 
 		// Get the user agent
-		HttpServletRequest hreq = (HttpServletRequest) req;
-		String userAgent = hreq.getHeader("User-Agent");
+		String userAgent = req.getHeader("User-Agent");
 		if ((userAgent == null) && (_defaultCode != null))
 			userAgent = _defaultCode;
 
@@ -67,7 +62,7 @@ public class BrowserTypeFilter implements Filter {
 		ctxt.setJSON((bt == BrowserType.CHROME) || (bt == BrowserType.FIREFOX) || (bt == BrowserType.OPERA) || (bt == BrowserType.WEBKIT));
 
 		// Check for IPv6
-		InetAddress addr = InetAddress.getByName(hreq.getRemoteAddr());
+		InetAddress addr = InetAddress.getByName(req.getRemoteAddr());
 		ctxt.setIPv6((addr instanceof Inet6Address));
 		
 		// Check for HTTP/2
@@ -78,8 +73,7 @@ public class BrowserTypeFilter implements Filter {
 
 		// If we're using IE, set the compatability header
 		if (ver.getType() == BrowserType.IE) {
-			HttpServletResponse hrsp = (HttpServletResponse) rsp;
-			hrsp.setHeader("X-UA-Compatible", "IE=11, IE=edge");
+			rsp.setHeader("X-UA-Compatible", "IE=11, IE=edge");
 			ctxt.setJSON(ctxt.getMajor() > 7);
 			ctxt.setHTML5(ctxt.getMajor() > 10);
 		}
@@ -89,9 +83,6 @@ public class BrowserTypeFilter implements Filter {
 		fc.doFilter(req, rsp);
 	}
 
-	/**
-	 * Called by the servlet container when the filter is stopped. Logs a message.
-	 */
 	@Override
 	public void destroy() {
 		log.info("Stopped");
