@@ -1,4 +1,4 @@
-// Copyright 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -69,7 +69,7 @@ public class ExportService extends WebService {
 		try (PrintWriter out = ctx.getResponse().getWriter()) {
 			// Write the header
 			out.println("; " + aCode + " Flight Schedule - exported on " + StringUtils.format(Instant.now(), "MM/dd/yyyy HH:mm:ss") + " UTC");
-			out.println("SOURCE,LINE,STARTS,ENDS,AIRLINE,NUMBER,LEG,EQTYPE,FROM,DTIME,TO,ATIME,DISTANCE,HISTORIC,PURGE");
+			out.println("; SOURCE,LINE,STARTS,ENDS,AIRLINE,NUMBER,LEG,EQTYPE,FROM,DTIME,TO,ATIME,DISTANCE,HISTORIC,PURGE");
 
 	         for (RawScheduleEntry entry : entries) {
 	             StringBuilder buf = new StringBuilder(entry.getSource().name());
