@@ -218,18 +218,13 @@ public class TransferAirlineCommand extends AbstractCommand {
 			newUser.setPassword(PasswordGenerator.generate(SystemData.getInt("security.password.default", 8)));
 			
 			// Add the new DN to the authenticator with the new password, and remove the old DN
-			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
-			if (auth instanceof SQLAuthenticator)
-				((SQLAuthenticator) auth).setConnection(con);
-			
-			if (auth.contains(newUser))
-				auth.updatePassword(newUser, newUser.getPassword());
-			else
-				auth.add(newUser, newUser.getPassword());
-			
-			// Reset the authenticator
-			if (auth instanceof SQLAuthenticator)
-				((SQLAuthenticator) auth).close();
+			try (Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR)) {
+				if (auth instanceof SQLAuthenticator) ((SQLAuthenticator) auth).setConnection(con);
+				if (auth.contains(newUser))
+					auth.updatePassword(newUser, newUser.getPassword());
+				else
+					auth.add(newUser, newUser.getPassword());
+			}
 			
 			// Commit transaction
 			ctx.commitTX();
