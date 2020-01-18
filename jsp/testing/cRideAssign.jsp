@@ -5,7 +5,7 @@
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <html lang="en">
 <head>
-<title>Assign Check Ride for ${pilot.name}</title>
+<title>Assign Check Ride for ${pilot.rank} ${pilot.name}</title>
 <content:css name="main" />
 <content:css name="form" />
 <content:pics />
@@ -15,9 +15,9 @@
 <script>
 <fmt:js var="golgotha.local.eqAircraft" object="${eqAircraft}" />
 golgotha.local.updateEQ = function(combo) {
-	var eq = golgotha.form.getCombo(combo);
-	var acTypes = golgotha.local.eqAircraft[eq];
-	var acc = document.forms[0].eqType;
+	const eq = golgotha.form.getCombo(combo);
+	const acTypes = golgotha.local.eqAircraft[eq];
+	const acc = document.forms[0].crType;
 	acc.options.length = acTypes.length + 1;
 	acc.selectedIndex = 0;
 	for (var x = 0; x < acTypes.length; x++)
@@ -30,7 +30,7 @@ golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.crType, t:'Aircraft Type'});
 	golgotha.form.validate({f:f.eqType, t:'Equimpment Program'});
-	var hasScript = ((f.doScript) && (f.doScript.value == 'true'));
+	const hasScript = ((f.doScript) && (f.doScript.value == 'true'));
 	if (!hasScript)
 		golgotha.form.validate({f:f.comments, l:6, t:'Check Ride Comments'});
 
@@ -73,8 +73,7 @@ golgotha.local.validate = function(f) {
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:cmdbutton ID="ProfileButton" url="profile" link="${pilot}" label="VIEW PROFILE" /> 
-<el:button ID="AssignButton" type="submit" label="ASSIGN CHECK RIDE" /></td>
+ <td><el:cmdbutton url="profile" link="${pilot}" label="VIEW PROFILE" /> <el:button type="submit" label="ASSIGN CHECK RIDE" /></td>
 </tr>
 </el:table>
 </el:form>
