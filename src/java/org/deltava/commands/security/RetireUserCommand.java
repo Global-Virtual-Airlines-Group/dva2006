@@ -1,4 +1,4 @@
-// Copyright 2010, 2015, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2015, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.sql.Connection;
@@ -67,15 +67,11 @@ public class RetireUserCommand extends AbstractCommand {
 			SetStatusUpdate sudao = new SetStatusUpdate(con);
 			sudao.write(upd);
 			
-			// Get the authenticator
-			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
-			if (auth instanceof SQLAuthenticator) {
-				try (SQLAuthenticator sqlAuth = (SQLAuthenticator) auth) {
-					sqlAuth.setConnection(con);
-					sqlAuth.disable(usr);
-				}
-			} else
+			// Get the authenticator and disable
+			try (Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR)) {
+				if (auth instanceof SQLAuthenticator) ((SQLAuthenticator) auth).setConnection(con);
 				auth.disable(usr);
+			}
 			
 			ctx.commitTX();
 		} catch (DAOException de) {

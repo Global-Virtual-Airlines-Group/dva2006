@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2015, 2016, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2015, 2016, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.util.List;
@@ -130,21 +130,18 @@ public class PasswordResetCommand extends AbstractCommand {
 		// Get the authenticator and update the password
 		try {
 			Connection con = ctx.getConnection();
-			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
-			if (auth instanceof SQLAuthenticator)
-				((SQLAuthenticator)auth).setConnection(con);
+			try (Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR)) {
+				if (auth instanceof SQLAuthenticator) ((SQLAuthenticator)auth).setConnection(con);
+				if (auth.contains(usr))
+					auth.updatePassword(usr, newPwd);
+				else {
+					log.warn(usr.getName() + " not found, adding");
+					auth.add(usr, newPwd);
+				}
 			
-			if (auth.contains(usr))
-				auth.updatePassword(usr, newPwd);
-			else {
-				log.warn(usr.getName() + " not found, adding");
-				auth.add(usr, newPwd);
+				// Validate the password
+				auth.authenticate(usr, newPwd);
 			}
-			
-			// Validate the password
-			auth.authenticate(usr, newPwd);
-			if (auth instanceof SQLAuthenticator)
-				((SQLAuthenticator)auth).close();
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 			ctx.setMessage("Error updating password for " + usr.getDN() + " - " + e.getMessage());

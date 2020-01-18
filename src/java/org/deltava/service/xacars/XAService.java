@@ -1,4 +1,4 @@
-// Copyright 2011, 2015, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2015, 2016, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.xacars;
 
 import java.sql.Connection;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to support XACARS HTTP requests.
  * @author Luke
- * @version 8.5
+ * @version 9.0
  * @since 4.1
  */
 
@@ -102,14 +102,10 @@ abstract class XAService extends WebService {
 				throw new SecurityException("Unknown Pilot ID");
 			
 			// Authenticate the user
-			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
-			if (auth instanceof SQLAuthenticator) {
-				try (SQLAuthenticator sqlAuth = (SQLAuthenticator) auth) {
-					sqlAuth.setConnection(con);
-					sqlAuth.authenticate(usr, pwd);
-				}
-			} else
+			try (Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR)) {
+				if (auth instanceof SQLAuthenticator) ((SQLAuthenticator) auth).setConnection(con);
 				auth.authenticate(usr, pwd);
+			}
 			
 			return usr;
 		} catch (DAOException de) {

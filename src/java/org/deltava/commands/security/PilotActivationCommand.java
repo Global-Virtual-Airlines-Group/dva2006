@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2015, 2016, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2015, 2016, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.sql.Connection;
@@ -135,34 +135,18 @@ public class PilotActivationCommand extends AbstractCommand {
 			sudao.write(upd);
 
 			// Get the authenticator and update the password
-			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
-			if (auth instanceof SQLAuthenticator) {
-				try (SQLAuthenticator sqlAuth = (SQLAuthenticator) auth) {
-					sqlAuth.setConnection(con);
-					if (auth.contains(p))
-						sqlAuth.updatePassword(p, p.getPassword());
-					else
-						sqlAuth.add(p, p.getPassword());
-				}
-			} else {
+			try (Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR)) {
+				if (auth instanceof SQLAuthenticator) ((SQLAuthenticator) auth).setConnection(con);
 				if (auth.contains(p))
 					auth.updatePassword(p, p.getPassword());
 				else
 					auth.add(p, p.getPassword());
+				
+				// Commit the writes and auth to check
+				ctx.commitTX();
+				auth.authenticate(p, p.getPassword());
 			}
 
-			// Commit the transaction
-			ctx.commitTX();
-			
-			// Get the authenticator and chcek
-			if (auth instanceof SQLAuthenticator) {
-				try (SQLAuthenticator sqlAuth = (SQLAuthenticator) auth) {
-					sqlAuth.setConnection(con);
-					sqlAuth.authenticate(p, p.getPassword());
-				}
-			} else
-				auth.authenticate(p, p.getPassword());
-			
 			// Invalidate the Pilot cache across applications
 			EventDispatcher.send(new UserEvent(SystemEvent.Type.USER_INVALIDATE, p.getID()));
 		} catch (SecurityException se) {

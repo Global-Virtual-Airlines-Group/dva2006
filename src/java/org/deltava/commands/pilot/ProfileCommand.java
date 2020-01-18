@@ -503,14 +503,10 @@ public class ProfileCommand extends AbstractFormCommand {
 					updates.add(upd);
 
 					// Rename the user in the Directory if it's not just a case-sensitivity issue
-					Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
-					if (auth instanceof SQLAuthenticator) {
-						try (SQLAuthenticator sqlAuth = (SQLAuthenticator) auth) {
-							sqlAuth.setConnection(con);
-							sqlAuth.rename(p, newDN);
-						}
-					} else
+					try (Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR)) {
+						if (auth instanceof SQLAuthenticator) ((SQLAuthenticator) auth).setConnection(con);
 						auth.rename(p, newDN);
+					}
 
 					p.setDN(newDN);
 					p.setFirstName(p2.getFirstName());

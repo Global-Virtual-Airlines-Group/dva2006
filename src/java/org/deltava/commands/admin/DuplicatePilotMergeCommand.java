@@ -195,21 +195,17 @@ public class DuplicatePilotMergeCommand extends AbstractCommand {
 				usr.setPassword(newPwd);
 			
 				// Get the authenticator and update the password
-				Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
-				if (auth instanceof SQLAuthenticator)
-					((SQLAuthenticator) auth).setConnection(con);
-				
-				if (auth.contains(usr)) {
-					auth.updatePassword(usr, newPwd);
-					ctx.setAttribute("updatePwd", Boolean.TRUE, REQUEST);
-				} else {
-					auth.add(usr, newPwd);
-					ctx.setAttribute("addUser", Boolean.TRUE, REQUEST);
+				try (Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR)) {
+					if (auth instanceof SQLAuthenticator) ((SQLAuthenticator) auth).setConnection(con);
+					if (auth.contains(usr)) {
+						auth.updatePassword(usr, newPwd);
+						ctx.setAttribute("updatePwd", Boolean.TRUE, REQUEST);
+					} else {
+						auth.add(usr, newPwd);
+						ctx.setAttribute("addUser", Boolean.TRUE, REQUEST);
+					}
 				}
 				
-				if (auth instanceof SQLAuthenticator)
-					((SQLAuthenticator) auth).close();
-			
 				// Get the message template
 				GetMessageTemplate mtdao = new GetMessageTemplate(con);
 				mctxt.setTemplate(mtdao.get("PWDRESET"));
