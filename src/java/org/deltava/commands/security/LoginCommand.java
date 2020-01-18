@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2013, 2014, 2015, 2016, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2013, 2014, 2015, 2016, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.util.*;
@@ -157,14 +157,10 @@ public class LoginCommand extends AbstractCommand {
 				p = users.get(0);
 
 			// Get the authenticator and try to authenticate
-			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
-			if (auth instanceof SQLAuthenticator) {
-				try (SQLAuthenticator sqlAuth = (SQLAuthenticator) auth) {
-					sqlAuth.setConnection(con);
-					sqlAuth.authenticate(p, ctx.getParameter("pwd"));
-				}
-			} else
+			try (Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR)) {
+				if (auth instanceof SQLAuthenticator) ((SQLAuthenticator) auth).setConnection(con);
 				auth.authenticate(p, ctx.getParameter("pwd"));
+			}
 
 			// If we're on leave, then reset the status (SetPilotLogin.login() will write it)
 			boolean returnToActive = false;

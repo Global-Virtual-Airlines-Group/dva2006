@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import org.deltava.beans.Person;
@@ -6,11 +6,11 @@ import org.deltava.beans.Person;
 /**
  * An interface for user authenticators.
  * @author Luke
- * @version 2.0
+ * @version 9.0
  * @since 1.0
  */
 
-public interface Authenticator {
+public interface Authenticator extends java.io.Closeable {
    
    /**
     * Default properties file used for authenticator configuration options.
@@ -89,4 +89,9 @@ public interface Authenticator {
      * @throws SecurityException if an error occurs
      */
     public void remove(Person usr) throws SecurityException;
+    
+    @Override
+    public default void close() {
+    	// NOOP
+    }
 }

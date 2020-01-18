@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2012, 2014, 2015, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010, 2012, 2014, 2015, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.sql.*;
@@ -150,7 +150,7 @@ public class ApacheSQLAuthenticator extends SQLAuthenticator {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("REPLACE INTO ");
-		sqlBuf.append(_props.getProperty("apachesql.table", "AUTH"));
+		sqlBuf.append(_props.getProperty("apachesql.table", "common.AUTH"));
 		sqlBuf.append(" (ID, PWD, NAME, ENABLED) VALUES (?, ?, ?, ?)");
 
 		// Generate the password hash
@@ -193,7 +193,7 @@ public class ApacheSQLAuthenticator extends SQLAuthenticator {
 				sqlBuf.append(_props.getProperty("apachesql.alias", "common.AUTH_ALIAS"));
 				sqlBuf.append(" (ID, USERID, ISCODE) VALUES (?, ?, ?)");
 				try (PreparedStatement ps = con.prepareStatement(sqlBuf.toString())) {
-					ps.setInt(1, usr.getID());
+					ps.setInt(1, id);
 					if (!StringUtils.isEmpty(p.getPilotCode())) {
 						ps.setString(2, p.getPilotCode());
 						ps.setBoolean(3, true);
