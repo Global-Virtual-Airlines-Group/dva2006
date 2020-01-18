@@ -46,8 +46,8 @@ golgotha.local.validate = function(f) {
 </tr>
 <c:if test="${!empty eqTypes}">
 <tr>
- <td class="label">Equipment Program</td>
- <td class="data top"><el:combo name="eqType" size="1" idx="*" options="${eqTypes}" firstEntry="[ SELECT ]" /><br />
+ <td class="label top">Equipment Program</td>
+ <td class="data"><el:combo name="eqType" size="1" idx="*" options="${eqTypes}" firstEntry="[ SELECT ]" /><br />
 <c:forEach var="eqType" items="${eqTypes}">
 ${eqType.name} (Stage <fmt:int value="${eqType.stage}" />)<br />
 </c:forEach></td>
