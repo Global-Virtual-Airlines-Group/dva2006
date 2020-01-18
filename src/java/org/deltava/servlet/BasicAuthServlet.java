@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2010, 2012, 2014, 2015, 2017, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2010, 2012, 2014, 2015, 2017, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.sql.Connection;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A servlet that supports basic HTTP authentication.
  * @author Luke
- * @version 8.2
+ * @version 9.0
  * @since 1.0
  */
 
@@ -55,24 +55,16 @@ abstract class BasicAuthServlet extends GenericServlet {
 
 			// Get the DAO and the directory name for this user
 			GetPilotDirectory dao = new GetPilotDirectory(con);
-			UserID id = new UserID(tkns.nextToken()); Pilot usr = null;
-			if (id.hasAirlineCode())
-				usr = dao.getByCode(id.toString());
-			else
-				usr = dao.get(id.getUserID());
-			
+			UserID id = new UserID(tkns.nextToken()); 
+			Pilot usr = id.hasAirlineCode() ? dao.getByCode(id.toString()) : dao.get(id.getUserID());
 			if (usr == null)
 				throw new SecurityException("Unknown User ID - " + id);
 			
 			// Authenticate the user
-			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
-			if (auth instanceof SQLAuthenticator) {
-				try (SQLAuthenticator sqlAuth = (SQLAuthenticator) auth) {
-					sqlAuth.setConnection(con);
-					sqlAuth.authenticate(usr, tkns.nextToken());
-				}
-			} else
+			try (Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR)) {
+				if (auth instanceof SQLAuthenticator) ((SQLAuthenticator) auth).setConnection(con);
 				auth.authenticate(usr, tkns.nextToken());
+			}
 			
 			p = usr;
 		} catch (SecurityException se) {

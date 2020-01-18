@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2010, 2012, 2014, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010, 2012, 2014, 2016, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.util.*;
@@ -156,17 +156,7 @@ public class ApplicantApproveCommand extends AbstractCommand {
 			// Write an inactivity purge entry
 			SetInactivity idao = new SetInactivity(con);
 			idao.setInactivity(a.getPilotID(), SystemData.getInt("users.inactive_new_days", 21), true);
-
-			// Get the authenticator and add the user
-			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
-			if (auth instanceof SQLAuthenticator) {
-				try (SQLAuthenticator sqlAuth = (SQLAuthenticator) auth) {
-					sqlAuth.setConnection(con);
-					sqlAuth.add(a, a.getPassword());
-				}
-			} else
-				auth.add(a, a.getPassword());
-
+			
 			// Get the Pilot and optionally set ACARS-only PIREP flag
 			GetPilot pdao = new GetPilot(con);
 			Pilot p = pdao.get(a.getPilotID()); cp = pdao.get(eq.getCPID());
@@ -176,17 +166,17 @@ public class ApplicantApproveCommand extends AbstractCommand {
 				pwdao.write(p);
 			}
 
-			// Commit the transactions
-			ctx.commitTX();
+			// Get the authenticator and add the user
+			try (Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR)) {
+				if (auth instanceof SQLAuthenticator) ((SQLAuthenticator) auth).setConnection(con);
+				auth.add(a, a.getPassword());
 
-			// Get the authenticator and chcek
-			if (auth instanceof SQLAuthenticator) {
-				try (SQLAuthenticator sqlAuth = (SQLAuthenticator) auth) {
-					sqlAuth.setConnection(con);
-					sqlAuth.authenticate(p, a.getPassword());
-				}
-			} else
+				// Commit the transactions
+				ctx.commitTX();
+
+				// Check that password works
 				auth.authenticate(p, a.getPassword());
+			}
 
 			// Save the applicant in the request
 			ctx.setAttribute("applicant", a, REQUEST);
