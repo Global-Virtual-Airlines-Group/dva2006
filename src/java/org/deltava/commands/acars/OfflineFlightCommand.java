@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import java.io.*;
@@ -32,7 +32,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to allow users to submit Offline Flight Reports.
  * @author Luke
- * @version 8.7
+ * @version 9.0
  * @since 2.4
  */
 
@@ -112,26 +112,50 @@ public class OfflineFlightCommand extends AbstractCommand {
 			if (xml.length() > SystemData.getInt("acars.max_offline_size", 4096000))
 				throw new IllegalArgumentException("XML too large - " + StringUtils.format(xml.length(), ctx.getUser().getNumberFormat()) + " bytes");
 		
-			// Validate the SHA
+			// Validate the hash
 			if (!noValidate) {
-				xml = xml.substring(0, xml.length() - 2);
-				String algo = SystemData.get("security.hash.acars.algorithm"); int pos = sha.indexOf(':');
-				if (pos != -1) {
-					algo = sha.substring(0, pos);
-					sha = sha.substring(pos + 1);
+				Map<String, String> shaData = new HashMap<String, String>();
+				try (BufferedReader br = new BufferedReader(new StringReader(sha))) {
+					String data = br.readLine();
+					while (data != null) {
+						int pos = data.indexOf(':');
+						if (pos > -1)
+							shaData.put(data.substring(0, pos), data.substring(pos + 1));
+						
+						data = br.readLine();
+					}
 				}
 				
-				MessageDigester md = new MessageDigester(algo);
-				md.salt(SystemData.get("security.hash.acars.salt"));
-				String calcHash = MessageDigester.convert(md.digest(xml.getBytes()));
-				if (!calcHash.equals(sha)) {
-					log.warn("ACARS Signature mismatch - expected " + sha + ", calculated " + calcHash);
+				// Calculate length
+				int xmlSize = StringUtils.parse(shaData.getOrDefault("Size", String.valueOf(xml.length())), 0);
+				if (xml.length() != xmlSize) {
+					log.warn("Expected XML size = " + xmlSize + ", actual size = " + xml.length());
+					if (xml.length() > xmlSize)
+						xml = xml.substring(0, xmlSize);
+				}
+				
+				// Calculate hashes
+				Map<String, String> hashData = new HashMap<String, String>(); boolean isHashOK = false;
+				for (Map.Entry<String, String> me : shaData.entrySet()) {
+					if (!me.getKey().startsWith("SHA")) continue;
+					MessageDigester md = new MessageDigester(me.getKey());
+					md.salt(SystemData.get("security.hash.acars.salt"));
+					String calcHash = MessageDigester.convert(md.digest(xml.getBytes()));
+					hashData.put(me.getKey(), calcHash);
+					if (calcHash.equals(me.getValue())) {
+						isHashOK = true;
+						log.info("ACARS " + me.getKey() + " validated - " + calcHash);
+					}
+					else
+						log.warn("ACARS " + me.getKey() + " mismatch - expected " + me.getValue() + ", calculated " + calcHash);
+				}
+				
+				if (!isHashOK) {
 					ctx.setAttribute("hashFailure", Boolean.TRUE, REQUEST);
 					return;
 				}
 			}
 		
-			// Parse the flight
 			flight = OfflineFlightParser.create(xml);
 		} catch (Exception e) {
 			log.error("Error parsing XML - " + e.getMessage(), (e instanceof IllegalArgumentException) ? null : e);
