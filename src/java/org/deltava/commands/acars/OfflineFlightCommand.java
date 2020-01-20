@@ -1,6 +1,8 @@
 // Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
+import static java.nio.charset.StandardCharsets.*;
+
 import java.io.*;
 import java.util.*;
 import java.util.zip.*;
@@ -104,9 +106,9 @@ public class OfflineFlightCommand extends AbstractCommand {
 		boolean noValidate = (ctx.isUserInRole("HR") || ctx.isSuperUser()) && Boolean.valueOf(ctx.getParameter("noValidate")).booleanValue();
 		try {
 			if (sha == null)
-				sha = new String(shaF.getBuffer(), "UTF-8").trim();
+				sha = new String(shaF.getBuffer(), US_ASCII);
 			if (xml == null)
-				xml = new String(xmlF.getBuffer(), "UTF-8");
+				xml = new String(xmlF.getBuffer(), UTF_8);
 			
 			// Sanity check the length
 			if (xml.length() > SystemData.getInt("acars.max_offline_size", 4096000))
@@ -140,7 +142,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 					if (!me.getKey().startsWith("SHA")) continue;
 					MessageDigester md = new MessageDigester(me.getKey());
 					md.salt(SystemData.get("security.hash.acars.salt"));
-					String calcHash = MessageDigester.convert(md.digest(xml.getBytes()));
+					String calcHash = MessageDigester.convert(md.digest(xml.getBytes(UTF_8)));
 					hashData.put(me.getKey(), calcHash);
 					if (calcHash.equals(me.getValue())) {
 						isHashOK = true;
