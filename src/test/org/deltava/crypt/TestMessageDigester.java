@@ -1,8 +1,9 @@
 package org.deltava.crypt;
 
+import static java.nio.charset.StandardCharsets.*;
+
 import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
+import java.util.*;
 
 import junit.framework.*;
 
@@ -65,8 +66,7 @@ public class TestMessageDigester extends TestCase {
 		_md = new MessageDigester("MD5");
 		_md.salt("kosher");
 		MessageDigester md2 = new MessageDigester("MD5");
-		byte[] tData = _md.digest(new ByteArrayInputStream(TESTDATA.getBytes(StandardCharsets.UTF_8)));
-
+		byte[] tData = _md.digest(new ByteArrayInputStream(TESTDATA.getBytes(UTF_8)));
 		md2.reset();
 		md2.salt("kosher");
 		byte[] tData2 = md2.digest(TESTDATA.getBytes());
@@ -115,6 +115,57 @@ public class TestMessageDigester extends TestCase {
 			}
 		}
 	}
+	
+	public void testNewACARSData() throws Exception {
+		
+		File xf = new File("data/acars/ACARS Flight 1494626.xml");
+		assertTrue(xf.exists());
+		byte[] xmlData = null;
+		try (ByteArrayOutputStream dos = new ByteArrayOutputStream()) {
+			try (InputStream is = new FileInputStream(xf)) {
+				 byte[] buffer = new byte[32768];
+				int bytesRead = is.read(buffer);
+				while (bytesRead > 0) {
+					dos.write(buffer, 0, bytesRead);
+					bytesRead = is.read(buffer);
+				}
+			}
+			
+			xmlData = dos.toByteArray();
+			assertTrue(xmlData.length >20);
+		}
+		
+		String xml = new String(xmlData, UTF_8);
+		assertNotNull(xml);
+		
+		File sf = new File("data/acars/ACARS Flight 1494626.sha");
+		assertTrue(sf.exists());
+		Map<String, String> shaData = new HashMap<String, String>();
+		try (FileReader fr = new FileReader(sf, US_ASCII)) {
+			try (BufferedReader br = new BufferedReader(fr)) {
+				String data = br.readLine();
+				while (data != null) {
+					int pos = data.indexOf(':');
+					if (pos > -1)
+						shaData.put(data.substring(0, pos), data.substring(pos + 1));
+					
+					data = br.readLine();
+				}
+			}
+		}
+		
+		assertTrue(shaData.containsKey("SHA-256"));
+		assertTrue(shaData.containsKey("SHA-512"));
+		assertTrue(shaData.containsKey("Size"));
+		
+		assertEquals(Integer.parseInt(shaData.get("Size")), xmlData.length);
+		
+		_md = new MessageDigester("SHA-256");
+		_md.salt("***REMOVED***");
+		String calcHash = MessageDigester.convert(_md.digest(xml.getBytes(UTF_8)));
+		
+		assertEquals(shaData.get("SHA-256"), calcHash);
+	}
 
 	@SuppressWarnings("static-method")
 	public void testHexConversion() {
@@ -139,7 +190,7 @@ public class TestMessageDigester extends TestCase {
 	public void testApacheSHA() {
 		Base64.Encoder b64e = Base64.getEncoder();
 		_md = new MessageDigester("SHA-1");
-		byte[] tData = _md.digest("password".getBytes(StandardCharsets.UTF_8));
+		byte[] tData = _md.digest("password".getBytes(UTF_8));
 		assertEquals("W6ph5Mm5Pz8GgiULbPgzG37mj9g=", b64e.encodeToString(tData));
 	}
 }
