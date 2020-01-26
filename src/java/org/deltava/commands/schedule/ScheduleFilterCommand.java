@@ -1,4 +1,4 @@
-// Copyright 2006, 2009, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -56,8 +56,6 @@ public class ScheduleFilterCommand extends AbstractCommand {
 		}
 
 		// Load import options
-		boolean doPurge = Boolean.valueOf(ctx.getParameter("doPurge")).booleanValue();
-		boolean canPurge = Boolean.valueOf(ctx.getParameter("canPurge")).booleanValue();
 		LocalDate effectiveDate = LocalDate.ofInstant(StringUtils.parseInstant(ctx.getParameter("effDate"), "MM/dd/yyyy"), ZoneOffset.UTC);
 		Collection<ScheduleSource> sources = ctx.getParameters("src", Collections.emptyList()).stream().map(src -> ScheduleSource.valueOf(src)).collect(Collectors.toCollection(TreeSet::new));
 		
@@ -72,24 +70,38 @@ public class ScheduleFilterCommand extends AbstractCommand {
 		Set<RawScheduleEntry> entries = new LinkedHashSet<RawScheduleEntry>();
 		try {
 			Connection con = ctx.getConnection();
+			
+			// Figure out what routePairs to import by source
+			GetRawSchedule rawdao = new GetRawSchedule(con);
+			Map<String, ImportRoute> srcPairs = new HashMap<String, ImportRoute>();
+			for (ScheduleSource src : sources) {
+				Collection<ImportRoute> rts = rawdao.getImportData(src, effectiveDate);
+				for (ImportRoute ir : rts) {
+					String k = ir.createKey();
+					if (!srcPairs.containsKey(k))
+						srcPairs.put(k, ir);
+				}
+			}
 
 			// Start the transaction
 			ctx.startTX();
 			
 			// Load the entries, save source mappings
 			SetSchedule dao = new SetSchedule(con);
-			GetRawSchedule rawdao = new GetRawSchedule(con);
 			for (ScheduleSource src : sources) {
 				Collection<Airline> validAirlines = srcAirlines.getOrDefault(src, Collections.emptyList());
-				Collection<RawScheduleEntry> srcEntries = rawdao.load(src, effectiveDate).stream().filter(se -> validAirlines.contains(se.getAirline())).collect(Collectors.toList());
-				for (Iterator<RawScheduleEntry> i = srcEntries.iterator(); i.hasNext(); ) {
-					RawScheduleEntry rse = i.next();
-					rse.setCanPurge(canPurge);
+				
+				// Get the raw data
+				List<RawScheduleEntry> srcEntries = rawdao.load(src, effectiveDate).stream().filter(se -> validAirlines.contains(se.getAirline())).collect(Collectors.toList());
+				for (RawScheduleEntry rse : srcEntries) {
+					ImportRoute ir = srcPairs.get(rse.createKey());
+					if ((ir == null) || (ir.getSource() != src))
+						continue;
+					
+					rse.setCanPurge(true);
 					boolean isAdded = entries.add(rse);
-					if (!isAdded) {
+					if (!isAdded)
 						log.info(rse.getShortCode() + " already exists");
-						i.remove();
-					}
 				}
 				
 				log.info("Loaded " + srcEntries.size() + " " + src.getDescription() + " schedule entries for " + effectiveDate);
@@ -97,9 +109,12 @@ public class ScheduleFilterCommand extends AbstractCommand {
 			}
 
 			// Save the schedule entries
-			if (doPurge) dao.purge(false);
-			for (RawScheduleEntry rse : entries)
+			AirportServiceMap svcMap = new AirportServiceMap();
+			dao.purge(false);
+			for (RawScheduleEntry rse : entries) {
+				svcMap.add(rse.getAirline(), rse.getAirportD(), rse.getAirportA());
 				dao.write(rse, false);
+			}
 			
 			// Save effective date
 			SetMetadata mdwdao = new SetMetadata(con);
@@ -107,8 +122,6 @@ public class ScheduleFilterCommand extends AbstractCommand {
 			mdwdao.write(aCode + ".schedule.effDate", effectiveDate.atStartOfDay().toInstant(ZoneOffset.UTC));
 			
 			// Determine unserviced airports
-			GetScheduleInfo sidao = new GetScheduleInfo(con);
-			AirportServiceMap svcMap = sidao.getRoutePairs();
 			SetAirportAirline awdao = new SetAirportAirline(con);
 			synchronized (SystemData.class) {
 				Collection<Airport> allAirports = SystemData.getAirports().values();
@@ -133,7 +146,7 @@ public class ScheduleFilterCommand extends AbstractCommand {
 		// Save the status
 		ctx.setAttribute("isFlights", Boolean.TRUE, REQUEST);
 		ctx.setAttribute("entryCount", Integer.valueOf(entries.size()), REQUEST);
-		ctx.setAttribute("doPurge", Boolean.valueOf(doPurge), REQUEST);
+		ctx.setAttribute("doPurge", Boolean.TRUE, REQUEST);
 
 		// Forward to the JSP
 		result.setURL("/jsp/schedule/scheduleUpdate.jsp");

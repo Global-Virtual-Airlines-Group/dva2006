@@ -1,10 +1,10 @@
-// Copyright 2009, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 /**
  * An interface to mark Airport pairs. 
  * @author Luke
- * @version 8.6
+ * @version 9.0
  * @since 2.6
  */
 
@@ -45,5 +45,16 @@ public interface RoutePair {
      */
     default boolean matches(RoutePair rp) {
     	return isPopulated() && getAirportD().equals(rp.getAirportD()) && getAirportA().equals(rp.getAirportA());
+    }
+    
+    /**
+     * Returns a key that describes the route pair.
+     * @return the departure/arrival ICAO codes
+     */
+    default String createKey() {
+		StringBuilder buf = new StringBuilder(getAirportD().getICAO());
+		buf.append('-');
+		buf.append(getAirportA().getICAO());
+		return buf.toString();
     }
 }

@@ -13,7 +13,7 @@
 <content:pics />
 <content:favicon />
 <content:js name="common" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.effDate,l:10,t:'Effective Date'});
@@ -26,6 +26,11 @@ golgotha.local.updateSource = function(cb) {
 	golgotha.util.display(document.getElementById('src-' + cb.value), cb.checked);
 	return true;
 };
+
+golgotha.onDOMReady(function() {
+	const f = document.forms[0];
+	f.src.forEach(function(cb) { golgotha.local.updateSource(cb); });
+});
 </script>
 </head>
 <content:copyright visible="false" />
@@ -70,12 +75,6 @@ golgotha.local.updateSource = function(cb) {
 <tr>
  <td class="label">Effective Date</td>
  <td class="data"><el:text name="effDate" size="9" max="10" required="true" value="${fn:dateFmt(today, 'MM/dd/yyyy')}" /></td>
-</tr>
-<tr>
- <td class="label top">Import Options</td>
- <td class="data"><el:box name="doPurge" idx="*" value="true" checked="true" label="Purge existing Schedule Entries" /><br />
-<el:box name="canPurge" idx="*" value="true" checked="true" label="Mark imported Schedule Entries as Purgeable" /><br />
-<el:box name="updateAirports" idx="*" value="true" checked="true" label="Update Airport/Airline mappings in database" /></td>
 </tr>
 </el:table>
 
