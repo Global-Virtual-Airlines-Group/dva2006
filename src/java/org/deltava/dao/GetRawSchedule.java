@@ -1,4 +1,4 @@
-// Copyright 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -120,6 +120,35 @@ public class GetRawSchedule extends DAO {
 				ps.setString(3, aA.getIATA());
 
 			return execute(ps);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Loads import statistics for a particular schedule source. 
+	 * @param src the ScheduleSource
+	 * @param ld the effective date
+	 * @return a Collection of ImportRoute beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<ImportRoute> getImportData(ScheduleSource src, LocalDate ld) throws DAOException {
+		try (PreparedStatement ps = prepare("SELECT AIRPORT_D, AIRPORT_A, COUNT(*) AS CNT FROM RAW_SCHEDULE WHERE (SRC=?) AND (STARTDATE<=?) AND (ENDDATE>=?) AND ((DAYS & ?) != 0) GROUP BY AIRPORT_D, AIRPORT_A ORDER BY CNT DESC")) {
+			ps.setInt(1, src.ordinal());
+			ps.setTimestamp(2, Timestamp.valueOf(ld.atStartOfDay()));
+			ps.setTimestamp(3, Timestamp.valueOf(ld.atTime(23, 59, 59)));
+			ps.setInt(4, 1 << ld.getDayOfWeek().ordinal());
+			
+			Collection<ImportRoute> results = new ArrayList<ImportRoute>();
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					ImportRoute ir = new ImportRoute(src, SystemData.getAirport(rs.getString(1)), SystemData.getAirport(rs.getString(2)));
+					ir.setFlights(rs.getInt(3));
+					results.add(ir);
+				}
+			}
+
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
