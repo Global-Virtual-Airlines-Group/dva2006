@@ -56,7 +56,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 		result.setURL("/jsp/acars/offlineSubmit.jsp");
 		
 		// Check for a ZIP archive
-		String sha = null; String xml = null;
+		String sha = null; byte[] xml = null;
 		FileUpload zipF = ctx.getFile("zip");
 		if (zipF != null) {
 			try (ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(zipF.getBuffer()))) {
@@ -72,9 +72,9 @@ public class OfflineFlightCommand extends AbstractCommand {
 						}
 						
 						if (name.endsWith(".xml"))
-							xml = new String(out.toByteArray(), "UTF-8");
+							xml = out.toByteArray();
 						else if (name.endsWith(".sha"))
-							sha = new String(out.toByteArray(), "UTF-8").trim();
+							sha = new String(out.toByteArray(), US_ASCII);
 					}
 					
 					ze = zis.getNextEntry();
@@ -105,14 +105,12 @@ public class OfflineFlightCommand extends AbstractCommand {
 		OfflineFlight<ACARSFlightReport, ACARSRouteEntry> flight = null;
 		boolean noValidate = (ctx.isUserInRole("HR") || ctx.isSuperUser()) && Boolean.valueOf(ctx.getParameter("noValidate")).booleanValue();
 		try {
-			if (sha == null)
-				sha = new String(shaF.getBuffer(), US_ASCII);
-			if (xml == null)
-				xml = new String(xmlF.getBuffer(), UTF_8);
+			if (sha == null) sha = new String(shaF.getBuffer(), US_ASCII);
+			if (xml == null) xml = xmlF.getBuffer();
 			
 			// Sanity check the length
-			if (xml.length() > SystemData.getInt("acars.max_offline_size", 4096000))
-				throw new IllegalArgumentException("XML too large - " + StringUtils.format(xml.length(), ctx.getUser().getNumberFormat()) + " bytes");
+			if (xml.length > SystemData.getInt("acars.max_offline_size", 4096000))
+				throw new IllegalArgumentException("XML too large - " + StringUtils.format(xml.length, ctx.getUser().getNumberFormat()) + " bytes");
 		
 			// Validate the hash
 			if (!noValidate) {
@@ -129,11 +127,11 @@ public class OfflineFlightCommand extends AbstractCommand {
 				}
 				
 				// Calculate length
-				int xmlSize = StringUtils.parse(shaData.getOrDefault("Size", String.valueOf(xml.length())), 0);
-				if (xml.length() != xmlSize) {
-					log.warn("Expected XML size = " + xmlSize + ", actual size = " + xml.length());
-					if (xml.length() > xmlSize)
-						xml = xml.substring(0, xmlSize);
+				int xmlSize = StringUtils.parse(shaData.getOrDefault("Size", "0"), 0);
+				if (xml.length != xmlSize) {
+					log.warn("Expected XML size = " + xmlSize + ", actual size = " + xml.length);
+					if (xml.length > xmlSize)
+						xml = Arrays.copyOf(xml, xmlSize);
 				}
 				
 				// Calculate hashes
@@ -142,14 +140,14 @@ public class OfflineFlightCommand extends AbstractCommand {
 					if (!me.getKey().startsWith("SHA")) continue;
 					MessageDigester md = new MessageDigester(me.getKey());
 					md.salt(SystemData.get("security.hash.acars.salt"));
-					String calcHash = MessageDigester.convert(md.digest(xml.getBytes(UTF_8)));
+					String calcHash = MessageDigester.convert(md.digest(xml));
 					hashData.put(me.getKey(), calcHash);
 					if (calcHash.equals(me.getValue())) {
 						isHashOK = true;
 						log.info("ACARS " + me.getKey() + " validated - " + calcHash);
-					}
-					else
+					} else {
 						log.warn("ACARS " + me.getKey() + " mismatch - expected " + me.getValue() + ", calculated " + calcHash);
+					}
 				}
 				
 				if (!isHashOK) {
@@ -158,7 +156,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 				}
 			}
 		
-			flight = OfflineFlightParser.create(xml);
+			flight = OfflineFlightParser.create(new String(xml, UTF_8));
 		} catch (Exception e) {
 			log.error("Error parsing XML - " + e.getMessage(), (e instanceof IllegalArgumentException) ? null : e);
 			ctx.setAttribute("error", e.getCause(), REQUEST);
