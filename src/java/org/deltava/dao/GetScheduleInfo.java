@@ -1,4 +1,4 @@
-// Copyright 2006, 2010, 2011, 2012, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010, 2011, 2012, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -40,8 +40,7 @@ public class GetScheduleInfo extends DAO {
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					Airline a = SystemData.getAirline(rs.getString(1));
-					svcMap.add(a, SystemData.getAirport(rs.getString(2)));
-					svcMap.add(a, SystemData.getAirport(rs.getString(3)));
+					svcMap.add(a, SystemData.getAirport(rs.getString(2)), SystemData.getAirport(rs.getString(3)));
 				}
 			}
 			

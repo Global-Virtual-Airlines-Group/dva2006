@@ -1,4 +1,4 @@
-// Copyright 2012, 2014, 2015, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2014, 2015, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.*;
 /**
  * A bean to store route frequency data.
  * @author Luke
- * @version 8.6
+ * @version 9.0
  * @since 4.1
  */
 
@@ -98,23 +98,13 @@ public abstract class AbstractRoute implements RoutePair, MapEntry {
 		return buf.toString();
 	}
 
-	/**
-	 * Returns the route pair's hash code.
-	 * @see ScheduleRoute#toString()
-	 */
 	@Override
 	public int hashCode() {
 		return _code.hashCode();
 	}
 
-	/**
-	 * Returns the route pair.
-	 */
 	@Override
 	public String toString() {
-		StringBuilder buf = new StringBuilder(_aD.getICAO());
-		buf.append('-');
-		buf.append(_aA.getICAO());
-		return buf.toString();
+		return createKey();
 	}
 }
