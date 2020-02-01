@@ -63,10 +63,10 @@ golgotha.onDOMReady(function() {
 </tr>
 <tr>
  <td class="label">Sources</td>
- <td class="data"><el:check name="src" width="210" options="${sources}" onChange="void golgotha.local.updateSource(this)" /></td>
+ <td class="data"><el:check name="src" width="210" options="${sources}" value="${sources}" onChange="void golgotha.local.updateSource(this)" /></td>
 </tr>
 <c:forEach var="src" items="${sources}">
-<c:set var="selectedAirlines" value="${srcAirlines[src]}" scope="page" />
+<c:set var="selectedAirlines" value="${srcAirlines[src.source]}" scope="page" />
 <tr id="src-${src.source}" style="display:none;">
  <td class="label top">${src.source.description}</td>
  <td class="data"><el:check name="airline-${src.source}"  width="210" cols="5" newLine="true" options="${src.options}" value="${selectedAirlines}" /></td>

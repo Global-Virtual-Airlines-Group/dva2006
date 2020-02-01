@@ -60,13 +60,13 @@ public class GetRawSchedule extends DAO {
 	 */
 	public Map<ScheduleSource, Collection<Airline>> getSourceAirlines() throws DAOException {
 		try (PreparedStatement ps = prepare("SELECT SRC, AIRLINE FROM RAW_SCHEDULE_AIRLINES")) {
-			Map<ScheduleSource, Collection<Airline>> results = new LinkedHashMap<ScheduleSource, Collection<Airline>>();
+			Map<ScheduleSource, Collection<Airline>> results = new TreeMap<ScheduleSource, Collection<Airline>>();
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					ScheduleSource src = ScheduleSource.values()[rs.getInt(1)];
 					Collection<Airline> airlines = results.get(src);
 					if (airlines == null) {
-						airlines = new LinkedHashSet<Airline>();
+						airlines = new TreeSet<Airline>();
 						results.put(src, airlines);
 					}
 					
