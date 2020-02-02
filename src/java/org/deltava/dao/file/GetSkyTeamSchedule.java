@@ -1,4 +1,4 @@
-// Copyright 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -79,8 +79,10 @@ public class GetSkyTeamSchedule extends ScheduleLoadDAO {
 						se.setEquipmentType(getEquipmentType(fd.eqType));
 						se.setSource(ScheduleSource.SKYTEAM);
 						se.setLineNumber(lr.getLineNumber());
-						for (char c : fd.daysOfWeek.toCharArray())
-							se.addDayOfWeek(DayOfWeek.of(Character.getNumericValue(c)));
+						for (char c : fd.daysOfWeek.toCharArray()) {
+							int dayNumber = Character.getNumericValue(c);
+							se.addDayOfWeek((dayNumber == 1) ? DayOfWeek.SUNDAY : DayOfWeek.of(dayNumber - 1));
+						}
 						
 						// Parse dates/times - if start date is more than 100 days in the past, add a year
 						LocalDate sd = LocalDate.parse(fd.startDate, _df);
