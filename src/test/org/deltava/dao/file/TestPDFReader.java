@@ -21,9 +21,9 @@ public class TestPDFReader extends TestCase {
 	}
 
 	@SuppressWarnings("static-method")
-	public void testReadPDF() throws Exception {
+	public void testSkyTeamPDF() throws Exception {
 		
-		File f = new File("C:\\Temp\\Skyteam_Timetable_NA_EU.pdf");
+		File f = new File("C:\\Temp\\Skyteam_Timetable_Q1_2020.pdf");
 		assertTrue(f.exists());
 		
 		String txt = null;
@@ -34,7 +34,31 @@ public class TestPDFReader extends TestCase {
 		}
 		
 		assertNotNull(txt);
-		try (FileWriter fw = new FileWriter(new File("C:\\Temp\\Skyteam_Timetable_NA_EU.txt"))) {
+		try (FileWriter fw = new FileWriter(new File("C:\\Temp\\Skyteam_Timetable.txt"))) {
+			fw.write(txt);
+		}
+		
+		try (LineNumberReader lr = new LineNumberReader(new StringReader(txt))) {
+			String data = lr.readLine();
+			while (data != null)
+				data = lr.readLine();
+		}
+	}
+	
+	@SuppressWarnings("static-method")
+	public void testDeltaPDF() throws Exception {
+		
+		File f = new File("C:\\Temp\\flight_schedules.pdf");
+		assertTrue(f.exists());
+		
+		String txt = null;
+		try (InputStream is = new FileInputStream(f)) {
+			GetPDFText prdao = new GetPDFText(is);
+			txt = prdao.getText();
+		}
+
+		assertNotNull(txt);
+		try (FileWriter fw = new FileWriter(new File("C:\\Temp\\delta_schedule.txt"))) {
 			fw.write(txt);
 		}
 		

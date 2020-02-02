@@ -76,13 +76,6 @@ public class TestDeltaScheduleLoad extends TestCase {
 			txt = prdao.getText();
 		}
 		
-		// Write schedule
-		/* try (OutputStream os = new FileOutputStream(new File("C:\\Temp\\delta_schedule.txt"))) {
-			try (PrintWriter pw = new PrintWriter(os)) {
-				pw.println(txt);
-			}
-		} */
-		
 		Collection<RawScheduleEntry> rawEntries = new ArrayList<RawScheduleEntry>();
 		try (InputStream is = new ByteArrayInputStream(txt.getBytes())) {
 			GetDeltaSchedule dao = new GetDeltaSchedule(is);
