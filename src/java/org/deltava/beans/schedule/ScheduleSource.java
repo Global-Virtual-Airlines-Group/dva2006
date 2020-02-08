@@ -1,4 +1,4 @@
-// Copyright 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 /**
@@ -33,19 +33,5 @@ public enum ScheduleSource implements org.deltava.beans.ComboAlias {
 	@Override
 	public String getComboName() {
 		return _desc;
-	}
-	
-	/**
-	 * Exception-safe value parser. 
-	 * @param src a source code
-	 * @param defaultValue the default to return if unparseable
-	 * @return a ScheduleSource
-	 */
-	public static ScheduleSource parse(String src, ScheduleSource defaultValue) {
-		try {
-			return valueOf(src.toUpperCase());
-		} catch (Exception e) {
-			return defaultValue;
-		}
 	}
 }

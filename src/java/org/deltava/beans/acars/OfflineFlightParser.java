@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to parse XML-format offline Flight Reports.
  * @author Luke
- * @version 8.7
+ * @version 9.0
  * @since 2.4
  */
 
@@ -99,7 +99,7 @@ public final class OfflineFlightParser {
 		inf.setVersion(clientVersion);
 		inf.setClientBuild(clientBuild);
 		inf.setOffline(true);
-		inf.setAutopilotType(AutopilotType.from(ie.getChildTextTrim("autopilotType")));
+		inf.setAutopilotType(EnumUtils.parse(AutopilotType.class, ie.getChildTextTrim("autopilotType"), AutopilotType.DEFAULT));
 		inf.setBeta(StringUtils.parse(re.getAttributeValue("beta"), 0));
 		inf.setEquipmentType(ie.getChildTextTrim("equipment"));
 		inf.setStartTime(StringUtils.parseInstant(ie.getChildTextTrim("startTime"), "MM/dd/yyyy HH:mm:ss"));
