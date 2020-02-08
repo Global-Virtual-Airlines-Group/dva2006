@@ -3,6 +3,9 @@
 	<!-- Server health check -->
 	<service id="healthcheck" class="org.deltava.service.HealthCheckService" />
 
+	<!-- CAPTCHA service -->
+	<service id="recaptcha" class="org.deltava.service.ValidateCAPTCHAService" />
+
 	<!-- Water Cooler Services -->
 	<service id="quote" class="org.deltava.service.CoolerQuoteService" />
 

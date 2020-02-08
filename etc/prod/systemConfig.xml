@@ -405,6 +405,10 @@
 			<googleMaps>AIzaSyAtQn98Rtr9WVU5TCFgYBLgJDWCOiosyA8</googleMaps>
 			<google>AIzaSyDipON4NxnUFpg1wEnqA5OugqaqYxaBXIU</google>
 			<vatsim>1db84fa44417fda98d313a5839f80ba8</vatsim>
+			<recaptcha>
+				<site>6LeME9UUAAAAAJrBAkDrmbXZPtohNT9clL65c0dm</site>
+				<secret>6LeME9UUAAAAAP2XT0uFlsZxZdbhhJpvUt3Mhv05</secret>
+			</recaptcha>
 		</key>
 
 		<list name="roles" attr="role" sorted="true">
@@ -606,7 +610,7 @@
 			<server type="Integer">43</server>
 			<fleet type="Integer">43</fleet>
 			<manuals type="Integer">43</manuals>
-			<examinations type="Integer">43</examinations>
+			<exams type="Integer">43</exams>
 			<acars type="Integer">43</acars>
 			<schedule type="Integer">43</schedule>
 			<dispatch type="Integer">43</dispatch>
