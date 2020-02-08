@@ -15,6 +15,7 @@
 <content:json />
 <content:js name="common" />
 <content:js name="datePicker" />
+<content:captcha action="threadCreate" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <script>
 golgotha.local.imgData = {URLs: [], descs: [], maxSeq:0, seq:[]};

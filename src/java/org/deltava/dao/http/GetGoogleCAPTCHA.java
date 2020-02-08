@@ -7,8 +7,9 @@ import java.io.*;
 
 import org.json.*;
 
+import org.deltava.beans.system.CAPTCHAResult;
 import org.deltava.dao.DAOException;
-
+import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -24,10 +25,10 @@ public class GetGoogleCAPTCHA extends DAO {
 	 * Validates a Google RECAPTCHA response.
 	 * @param response the response
 	 * @param remoteAddr the client IP address
-	 * @return TRUE if valid, otherwise FALSE
+	 * @return a CAPTCHAResult bean
 	 * @throws DAOException if an error occurs
 	 */
-	public boolean validate(String response, String remoteAddr) throws DAOException {
+	public CAPTCHAResult validate(String response, String remoteAddr) throws DAOException {
 		
 		// Build the payload
 		POSTBuilder pb = new POSTBuilder();
@@ -47,7 +48,14 @@ public class GetGoogleCAPTCHA extends DAO {
 			// Parse the response
 			try (InputStream in = getIn()) {
 				JSONObject jo = new JSONObject(new JSONTokener(in));
-				return jo.optBoolean("success");
+				CAPTCHAResult result = new CAPTCHAResult (jo.optBoolean("success"));
+				result.setHostName(jo.optString("hostname"));
+				result.setChallengeTime(StringUtils.parseInstant(jo.getString("challenge_ts"), "yyyy-MM-dd'T'HH:mm:ssZZ"));
+				JSONArray msgs = jo.optJSONArray("error-codes");
+				if (msgs != null)
+					msgs.forEach(msg -> result.addMessage(String.valueOf(msg))); 
+				
+				return result;
 			}
 		} catch (IOException ie) {
 			throw new DAOException(ie);
