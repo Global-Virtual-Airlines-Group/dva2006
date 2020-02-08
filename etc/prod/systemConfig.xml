@@ -405,6 +405,10 @@
 			<googleMaps>***REMOVED***</googleMaps>
 			<google>***REMOVED***</google>
 			<vatsim>***REMOVED***</vatsim>
+			<recaptcha>
+				<site>***REMOVED***</site>
+				<secret>***REMOVED***</secret>
+			</recaptcha>
 		</key>
 
 		<list name="roles" attr="role" sorted="true">
@@ -606,7 +610,7 @@
 			<server type="Integer">43</server>
 			<fleet type="Integer">43</fleet>
 			<manuals type="Integer">43</manuals>
-			<examinations type="Integer">43</examinations>
+			<exams type="Integer">43</exams>
 			<acars type="Integer">43</acars>
 			<schedule type="Integer">43</schedule>
 			<dispatch type="Integer">43</dispatch>

@@ -392,16 +392,10 @@
 			<google>***REMOVED***</google>
 			<vatsim>***REMOVED***</vatsim>
 			<twc>***REMOVED***</twc>
-			<twitter>
-			     <access>
-                    <token>233767315-DbNEky5q2vnms8y6l8tpuG6cBZFfL6QX6Felmvjn</token>
-                    <secret>MI53kqfAwvWVhPp5p6nUQZuGq6owUwcqynajiIDEtiZdh</secret>
-                </access>
-                <consumer>
-                    <key>vJlAlQb6TjZRcxtXTbOnag</key>
-                    <secret>yyYVbThYZ4s0IzWJZEd1zHCDItVanNV7uGoc6Q89ffQ</secret>
-                </consumer>
-			</twitter>
+			<recaptcha>
+				<site>***REMOVED***</site>
+				<secret>***REMOVED***</secret>
+			</recaptcha>
 		</key>
 		
 		<list name="roles" attr="role" sorted="true" unique="true">
@@ -578,7 +572,7 @@
 			<server type="Integer">43</server>
 			<fleet type="Integer">43</fleet>
 			<manuals type="Integer">43</manuals>
-			<examinations type="Integer">43</examinations>
+			<exams type="Integer">43</exams>
 			<acars type="Integer">43</acars>
 			<schedule type="Integer">43</schedule>
 			<dispatch type="Integer">43</dispatch>

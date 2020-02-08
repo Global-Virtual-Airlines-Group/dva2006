@@ -559,6 +559,18 @@
 	</tag>
 
 	<tag>
+		<description>Google RECAPTCHA Tag, for inserting Google RECAPTCHA tokens</description>
+		<name>captcha</name>
+		<tag-class>org.deltava.taglib.content.GoogleCAPTCHATag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<name>action</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+	</tag>
+
+	<tag>
 		<description>Pilot Name Filter Tag, to hide GDPR-forgotten Pilot names</description>
 		<name>pilotName</name>
 		<tag-class>org.deltava.taglib.content.PilotNameTag</tag-class>

@@ -470,6 +470,21 @@ golgotha.nav.init = function() {
 	return false;
 };
 
+golgotha.util.validateCAPTCHA = function(token) {
+	const xreq = new XMLHttpRequest();	
+	xreq.open('post', 'recaptcha.ws', true);
+	xreq.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
+	xreq.onreadystatechange = function() {
+		if (xreq.readyState != 4) return false;
+		const isOK = (xreq.status == 200);
+		if (!isOK) console.log('Error ' + xreq.status + ' validating CAPTCHA!');
+		return isOK;
+	};
+
+	xreq.send(token);
+	return true;
+};
+
 golgotha.onDOMReady(function() {
 	golgotha.nav.init();
 	if (golgotha.nav.sideMenu) {
