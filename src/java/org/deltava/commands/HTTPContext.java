@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015, 2016, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
 /**
  * An abstract class to share command data between different HTTP command contexts.
  * @author Luke
- * @version 7.2
+ * @version 9.0
  * @since 2.4
  */
 
@@ -27,7 +27,7 @@ public abstract class HTTPContext extends ConnectionContext implements SecurityC
 	public static final String SU_ATTR_NAME = "superUser";
 	public static final String USERAGENT_ATTR_NAME = "userAgent";
 	public static final String HTTPCTXT_ATTR_NAME = "httpContext";
-	public static final String SSL_ATTR_NAME = "isSSL";
+	public static final String CAPTCHA_ATTR_NAME = "google$captcha";
 
 	/**
 	 * The HTTP request.
