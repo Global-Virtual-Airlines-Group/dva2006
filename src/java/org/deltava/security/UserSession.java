@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2007, 2009, 2011, 2012, 2015, 2016, 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007, 2009, 2011, 2012, 2015, 2016, 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import org.deltava.beans.*;
@@ -7,7 +7,7 @@ import org.deltava.beans.system.*;
 /**
  * A bean to store data about a User session.
  * @author Luke
- * @version 8.2
+ * @version 9.0
  * @since 1.0
  */
 
@@ -17,7 +17,6 @@ public class UserSession implements java.io.Serializable, Comparable<UserSession
 	private final String _userAgent;
 	private final Pilot _p;
 	private final IPBlock _addrInfo;
-	private final boolean _isSSL;
 
 	/**
 	 * Creates a new User session bean.
@@ -25,15 +24,13 @@ public class UserSession implements java.io.Serializable, Comparable<UserSession
 	 * @param sessionID the HTTP session ID
 	 * @param addrInfo the IP block info
 	 * @param userAgent the user-agent header
-	 * @param isSSL TRUE if user is using SSL, otherwise FALSE
 	 */
-	public UserSession(Pilot p, String sessionID, IPBlock addrInfo, String userAgent, boolean isSSL) {
+	public UserSession(Pilot p, String sessionID, IPBlock addrInfo, String userAgent) {
 		super();
 		_p = p;
 		_sessionID = sessionID;
 		_userAgent = userAgent;
 		_addrInfo = addrInfo;
-		_isSSL = isSSL;
 	}
 
 	/**
@@ -68,14 +65,6 @@ public class UserSession implements java.io.Serializable, Comparable<UserSession
 		return _userAgent;
 	}
 	
-	/**
-	 * Returns whether the session uses SSL.
-	 * @return TRUE if using SSL, otherwise FALSE
-	 */
-	public boolean isSSL() {
-		return _isSSL;
-	}
-
 	@Override
 	public int hashCode() {
 		return _p.hashCode();
