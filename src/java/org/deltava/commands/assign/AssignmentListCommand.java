@@ -1,4 +1,4 @@
-// Copyright 2005, 2009, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2016, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
@@ -11,10 +11,12 @@ import org.deltava.dao.*;
 
 import org.deltava.security.command.AssignmentAccessControl;
 
+import org.deltava.util.EnumUtils;
+
 /**
  * A Web Site Command to list Flight Assignments.
  * @author Luke
- * @version 8.1
+ * @version 9.0
  * @since 1.0
  */
 
@@ -32,7 +34,7 @@ public class AssignmentListCommand extends AbstractViewCommand {
       ViewContext<AssignmentInfo> vc = initView(ctx, AssignmentInfo.class);
       
       // Get status and equipment type
-      AssignmentStatus as = AssignmentStatus.fromName(ctx.getParameter("status"));
+      AssignmentStatus as = EnumUtils.parse(AssignmentStatus.class, ctx.getParameter("status"), null);
       String eqType = ctx.getParameter("eqType");
       if ("-".equals(eqType))
     	  eqType = null;

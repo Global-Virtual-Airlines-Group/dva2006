@@ -1,4 +1,4 @@
-// Copyright 2012, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
@@ -11,13 +11,13 @@ import org.deltava.beans.schedule.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
-import org.deltava.util.ComboUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to build a Flight Assignment from a multi-leg route.
  * @author Luke
- * @version 8.7
+ * @version 9.0
  * @since 4.1
  */
 
@@ -44,7 +44,7 @@ public class RouteAssignmentSearchCommand extends AbstractCommand {
 		}
 		
 		// Get the route pair and type
-		Inclusion allowHistoric = Inclusion.parse(ctx.getParameter("includeHistoric"));
+		Inclusion allowHistoric = EnumUtils.parse(Inclusion.class, ctx.getParameter("includeHistoric"), Inclusion.ALL);
 		ScheduleRoute rp = new ScheduleRoute(SystemData.getAirport(ctx.getParameter("airportD")), SystemData.getAirport(ctx.getParameter("airportA")));
 		rp.setType((allowHistoric == Inclusion.ALL) ? RoutePairType.HYBRID : (allowHistoric == Inclusion.EXCLUDE) ? RoutePairType.PRESENT : RoutePairType.HISTORIC);
 		try {
