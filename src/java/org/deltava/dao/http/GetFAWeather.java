@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2012, 2016, 2017 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2012, 2016, 2017, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.util.HashMap;
@@ -13,12 +13,14 @@ import org.deltava.beans.navdata.AirportLocation;
 import org.deltava.beans.wx.*;
 
 import org.deltava.dao.*;
+
+import org.deltava.util.EnumUtils;
 import org.deltava.util.cache.*;
 
 /**
  * Loads weather data from FlightAware.
  * @author Luke
- * @version 8.0
+ * @version 9.0
  * @since 2.2
  */
 
@@ -81,7 +83,7 @@ public class GetFAWeather extends FlightAwareDAO {
 			result.setWindDirection(mo.optInt("wind_direction"));
 			result.setWindSpeed(mo.optInt("wind_speed"));
 			result.setWindGust(mo.optInt("wind_speed_gust"));
-			Distance d = Distance.from(mo.optString("visibility_units", "sm"), Distance.SM);
+			Distance d = EnumUtils.parse(Distance.class, mo.optString("visibility_units", "sm"), Distance.SM);
 			result.setVisibility(d.getFeet(mo.optInt("visibility", 9999)), false);
 			String bpUnits = mo.optString("pressure_units", "mb");
 			double rawPressure = mo.optDouble("pressure", 29.92);

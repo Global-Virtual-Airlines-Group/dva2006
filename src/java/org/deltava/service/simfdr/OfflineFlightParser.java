@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.simfdr;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to parse simFDR submitted flight reports.
  * @author Luke
- * @version 8.7
+ * @version 9.0
  * @since 7.0
  */
 
@@ -73,7 +73,7 @@ final class OfflineFlightParser {
 		inf.setRemoteHost(ie.getChildTextTrim("remoteHost"));
 		inf.setFlightCode(cs);
 		inf.setRoute(ie.getChildTextTrim("route"));
-		inf.setAutopilotType(AutopilotType.from(ie.getChildTextTrim("autopilotType")));
+		inf.setAutopilotType(EnumUtils.parse(AutopilotType.class, ie.getChildTextTrim("autopilotType"), AutopilotType.DEFAULT));
 		of.setInfo(inf);
 		
 		// Load simulator

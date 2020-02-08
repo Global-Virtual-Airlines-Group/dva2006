@@ -1,14 +1,14 @@
-// Copyright 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 /**
  * An enumeration to store inclusion/exclusion values.
  * @author Luke
- * @version 8.6
+ * @version 9.0
  * @since 8.6
  */
 
-public enum Inclusion implements ComboAlias {
+public enum Inclusion implements ComboAlias, EnumDescription {
 	ALL, INCLUDE, EXCLUDE;
 
 	@Override
@@ -18,19 +18,6 @@ public enum Inclusion implements ComboAlias {
 
 	@Override
 	public String getComboName() {
-		return name().substring(0, 1).concat(name().substring(1).toLowerCase());
-	}
-	
-	/**
-	 * Exception-safe parser.
-	 * @param v the value
-	 * @return an Inclusion
-	 */
-	public static Inclusion parse(String v) {
-		try {
-			return Inclusion.valueOf(v.toUpperCase());
-		} catch (Exception e) {
-			return Inclusion.ALL;
-		}
+		return getDescription();
 	}
 }

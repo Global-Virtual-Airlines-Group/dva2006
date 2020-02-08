@@ -1,4 +1,4 @@
-// Copyright 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 /**
@@ -11,7 +11,8 @@ package org.deltava.beans.acars;
 public enum Capabilities {
 	GSX(0, "GSX", true), RAAS(1, "RAAS", true), XSB(2, "XSquawkbox", true), FUEL_LOAD(3, "Fuel Loading"), PAX_LOAD(4, "Passenger Loading"), 
 	FMC_LOAD(5, "FMC Fuel/Passenger Loaidng"), ANNOUNCE(6, "Cabin Announcements"), AFTERBURNER(7, "Afterburner"), JETWAY(8, "Jetway Control"), 
-	FMC(9, "FMC", true), VPILOT(10, "vPilot", true), XIVAP(11, "X-IvAp", true), IVAP(12, "IvAp", true), CABINSIZE(13, "Cabin Size"), XPILOT(14, "xPilot", true);
+	FMC(9, "FMC", true), VPILOT(10, "vPilot", true), XIVAP(11, "X-IvAp", true), IVAP(12, "IvAp", true), CABINSIZE(13, "Cabin Size"), XPILOT(14, "xPilot", true),
+	REMOTE(15, "RemoteSim", true);
 	
 	private final long _mask;
 	private final String _desc;
@@ -26,6 +27,12 @@ public enum Capabilities {
 		this(bit, desc, false);
 	}
 	
+	/**
+	 * Creates a capability.
+	 * @param bit the bit flag
+	 * @param desc the description
+	 * @param show TRUE to display, otherwise FALSE
+	 */
 	Capabilities(int bit, String desc, boolean show) {
 		_mask = 1 << bit;
 		_desc = desc;
@@ -54,15 +61,6 @@ public enum Capabilities {
 	 */
 	public boolean isVisible() {
 		return _show;
-	}
-	
-	/**
-	 * Adds a flag to a compound bitmap.
-	 * @param flags the bitmap
-	 * @return the bitmap with the flag
-	 */
-	public long add(long flags) {
-		return (flags | _mask);
 	}
 	
 	/**
