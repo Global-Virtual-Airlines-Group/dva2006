@@ -1,10 +1,10 @@
-// Copyright 2018 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2018, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 /**
  * An enumeration to store aircraft autopilot types.
  * @author Luke
- * @version 8.2
+ * @version 9.0
  * @since 8.2
  */
 
@@ -23,18 +23,5 @@ public enum AutopilotType {
 	 */
 	public String getDescription() {
 		return _desc;
-	}
-	
-	/**
-	 * Exception-safe value parser.
-	 * @param ap a type name
-	 * @return the AutopilotType, or DEFAULT if unknown
-	 */
-	public static AutopilotType from(String ap) {
-		try {
-			return AutopilotType.valueOf(ap.toUpperCase());
-		} catch (Exception e) {
-			return DEFAULT;
-		}
 	}
 }
