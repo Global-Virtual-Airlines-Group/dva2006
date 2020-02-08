@@ -1,6 +1,9 @@
 // Copyright 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
+import java.security.Principal;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.*;
 import javax.servlet.jsp.tagext.TagSupport;
 
@@ -17,6 +20,7 @@ import org.deltava.util.system.SystemData;
 public class GoogleCAPTCHATag extends TagSupport {
 	
 	private String _action;
+	private boolean _authOnly;
 	
 	/**
 	 * Updates the action name.
@@ -24,6 +28,14 @@ public class GoogleCAPTCHATag extends TagSupport {
 	 */
 	public void setAction(String name) {
 		_action = name;
+	}
+	
+	/**
+	 * Sets whether to display for authenticated users only.
+	 * @param isAuthOnly TRUE for authenticated users only, otherwise FALSE
+	 */
+	public void setAuthOnly(boolean isAuthOnly) {
+		_authOnly = isAuthOnly;
 	}
 
 	/**
@@ -36,6 +48,14 @@ public class GoogleCAPTCHATag extends TagSupport {
 		String siteKey = SystemData.get("security.key.recaptcha.site");
 		if (StringUtils.isEmpty(siteKey))
 			throw new JspException("No RECAPTCHA Site Key defined");
+		
+		// Check if authenticated
+		if (_authOnly) {
+			HttpServletRequest req = (HttpServletRequest) pageContext.getRequest();
+			Principal usr = req.getUserPrincipal();
+			if (usr == null)
+				return EVAL_BODY_INCLUDE;
+		}
 		
 		try {
 			JspWriter out = pageContext.getOut();
@@ -60,5 +80,11 @@ public class GoogleCAPTCHATag extends TagSupport {
 		}
 		
 		return EVAL_PAGE;
+	}
+	
+	@Override
+	public void release() {
+		_authOnly = false;
+		super.release();
 	}
 }

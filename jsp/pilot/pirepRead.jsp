@@ -18,11 +18,12 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
+<content:captcha action="pirep" authOnly="true" />
 <content:googleAnalytics eventSupport="true" />
 <content:browser human="true"><c:if test="${googleMap}">
 <map:api version="3" /></c:if></content:browser>
 <c:if test="${scoreCR || access.canDispose}">
-<script>
+<script async>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
