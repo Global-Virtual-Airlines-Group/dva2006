@@ -41,13 +41,7 @@ public class GoogleAnalyticsTag extends TagSupport {
 		JspWriter out = pageContext.getOut();
 		
 		// Write the script include tag
-		out.print("<script src=\"http");
-		if (pageContext.getRequest().isSecure())
-			out.print("s://ssl");
-		else
-			out.print("://www");
-		
-		out.println(".google-analytics.com/ga.js\"></script>");
+		out.println("<script src=\"https://ssl.google-analytics.com/ga.js\"></script>");
 		
 		// Write the analytics script
 		out.println("<script>");
