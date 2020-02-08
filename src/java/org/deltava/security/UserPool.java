@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2015, 2016 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012, 2015, 2016, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.beans.system.IPBlock;
 /**
  * A singleton class for tracking connected and blocked users.
  * @author Luke
- * @version 7.2
+ * @version 9.0
  * @since 1.0
  */
 
@@ -36,12 +36,11 @@ public class UserPool {
 	 * @param sessionID the session ID
 	 * @param addrInfo the user's IP address block
 	 * @param userAgent the User-Agent header
-	 * @param isSSL TRUE if using SSL, otherwise FALSE
 	 * @see UserPool#remove(Person, String)
 	 */
-	public static synchronized void add(Pilot p, String sessionID, IPBlock addrInfo, String userAgent, boolean isSSL) {
+	public static synchronized void add(Pilot p, String sessionID, IPBlock addrInfo, String userAgent) {
 		if ((p != null) && (!isBlocked(p))) {
-			UserSession uw = new UserSession(p, sessionID, addrInfo, userAgent, isSSL);
+			UserSession uw = new UserSession(p, sessionID, addrInfo, userAgent);
 			_users.put(Integer.valueOf(p.getID()), uw);
 			if (_users.size() >= _maxSize) {
 				_maxSize = _users.size();
@@ -74,7 +73,7 @@ public class UserPool {
 	 * remove the user from the pool.
 	 * @param p the Person to remove
 	 * @param sessionID the session ID to match
-	 * @see UserPool#add(Pilot, String, IPBlock, String, boolean)
+	 * @see UserPool#add(Pilot, String, IPBlock, String)
 	 */
 	public static void remove(Person p, String sessionID) {
 		UserSession uw = _users.get(p.cacheKey());

@@ -206,7 +206,7 @@ public class SecurityCookieFilter extends HttpFilter {
 							
 						// Check if we are a superUser impersonating someone
 						Pilot su = (Pilot) s.getAttribute(SU_ATTR_NAME);
-						UserPool.add((su != null) ? su : p, s.getId(), addrInfo, userAgent, req.isSecure());
+						UserPool.add((su != null) ? su : p, s.getId(), addrInfo, userAgent);
 					} else
 						throw new SecurityException(p.getName() + " status = " + p.getStatus().getDescription());
 				} catch (SecurityException se) {
