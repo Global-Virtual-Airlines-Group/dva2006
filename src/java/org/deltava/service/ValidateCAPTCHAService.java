@@ -7,6 +7,7 @@ import java.io.*;
 
 import javax.servlet.http.HttpSession;
 
+import org.deltava.beans.system.CAPTCHAResult;
 import org.deltava.commands.HTTPContext;
 import org.deltava.dao.http.GetGoogleCAPTCHA;
 
@@ -31,16 +32,15 @@ public class ValidateCAPTCHAService extends WebService {
 		// If this isn't a post, just return a 400
 		if (!ctx.getRequest().getMethod().equalsIgnoreCase("post"))
 			return SC_BAD_REQUEST;
-
+		
 		// Validate the token
 		try (BufferedReader sr = new BufferedReader(new InputStreamReader(ctx.getRequest().getInputStream()))) {
 			GetGoogleCAPTCHA cdao = new GetGoogleCAPTCHA();
 			cdao.setConnectTimeout(2500);
 			cdao.setReadTimeout(3500);
-			String token = sr.readLine();
-			boolean isOK = cdao.validate(token, ctx.getRequest().getRemoteAddr());
-			HttpSession s = ctx.getRequest().getSession();
-			s.setAttribute(HTTPContext.CAPTCHA_ATTR_NAME, Boolean.valueOf(isOK));	
+			CAPTCHAResult cr = cdao.validate(sr.readLine(), ctx.getRequest().getRemoteAddr());
+			HttpSession s = ctx.getRequest().getSession(true);
+			s.setAttribute(HTTPContext.CAPTCHA_ATTR_NAME, cr);	
 		} catch (Exception e) {
 			throw error(SC_INTERNAL_SERVER_ERROR, e.getMessage());
 		}

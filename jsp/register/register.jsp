@@ -16,10 +16,11 @@
 <content:js name="common" />
 <content:json />
 <content:js name="airportRefresh" />
+<content:captcha action="register" />
 <content:googleAnalytics eventSupport="true" />
 <content:sysdata var="badDomains" name="registration.reject_domain" />
 <c:set var="cspan" value="${!empty manuals ? 3 : 1}" scope="page" />
-<script type="text/javascript">
+<script>
 <fmt:jsarray var="golgotha.form.invalidDomains" items="${badDomains}" />
 golgotha.local.validate = function(f)
 {
@@ -48,7 +49,7 @@ var eMail = f.email.value;
 if ((fN.length < 2) || (lN.length < 2) || (golgotha.local.uniqueCheck)) return false;
 	
 // Create the AJAX request
-var xmlreq = new XMLHttpRequest();
+const xmlreq = new XMLHttpRequest();
 xmlreq.open('GET', 'dupename.ws?fName=' + fN + '&lName=' + lN + "&eMail=" + escape(eMail));
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
@@ -59,10 +60,7 @@ xmlreq.onreadystatechange = function() {
 		rows[x].focus();
 	}
 
-	// Disable form elements
-	for (var x = 0; x < f.elements.length; x++)
-		f.elements[x].disabled = dupes;
-
+	f.elements.forEach(function(e) { e.disabled = dupes; });
 	return true;
 };
 
@@ -73,11 +71,9 @@ return true;
 golgotha.local.resetUniqueCheck = function(isPermanent)
 {
 golgotha.local.uniqueCheck = isPermanent;
-var rows = golgotha.util.getElementsByClass('dupeFound');
-for (var x = 0; x < rows.length; x++)
-	golgotha.util.display(rows[x], false);
-
-var f = document.forms[0];
+const rows = golgotha.util.getElementsByClass('dupeFound');
+rows.forEach(function(r) { golgotha.util.display(r, false); });
+const f = document.forms[0];
 for (var x = 0; x < f.elements.length; x++)
 	f.elements[x].disabled = false;
 
@@ -85,14 +81,14 @@ return true;
 };
 
 golgotha.local.sendDupeInfo = function() {
-	var f = document.forms[0];
+	const f = document.forms[0];
 	self.location = '/register.do?op=dupe&firstName=' + f.firstName.value + '&lastName=' + f.lastName.value + '&email=' + f.email.value;
 	return true;
 };
 
 golgotha.onDOMReady(function() {
-	var f = document.forms[0];
-	var cfg = golgotha.airportLoad.config;
+	const f = document.forms[0];
+	const cfg = golgotha.airportLoad.config;
 	cfg.airline = 'all'; cfg.useSched = false;
 	golgotha.airportLoad.setHelpers(f.homeAirport);
 	f.homeAirport.loadAirports(cfg);
@@ -124,9 +120,8 @@ golgotha.onDOMReady(function() {
  <td colspan="4">THANK YOU FOR YOUR INTEREST IN <content:airline />!</td>
 </tr>
 <tr>
- <td colspan="4" class="pri bld">You'll find that <content:airline /> is one of the largest yet friendliest and most sophisticated virtual airlines
- on the Internet. Many aspects of our operations are significantly different from other virtual airlines, specifically in promotions, ratings and 
- what flights are credited for hours. Please take a few moments to download and review some of our manuals to help determine if <content:airline />
+ <td colspan="4" class="pri bld">You'll find that <content:airline /> is one of the largest yet friendliest and most sophisticated virtual airlines on the Internet. Many aspects of our operations are significantly different 
+ from other virtual airlines, specifically in promotions, ratings and what flights are credited for hours. Please take a few moments to download and review some of our manuals to help determine if <content:airline />
  is the right virtual airline for you.<br />
 <br />
 This is also a good time to review <content:airline />'s <el:cmd url="privacy" className="pri bld">Privacy Policy</el:cmd>.</td>
