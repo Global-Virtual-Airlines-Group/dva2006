@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2016, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2016, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.util.*;
@@ -51,7 +51,7 @@ public class ApplicantListCommand extends AbstractViewCommand {
 			
 			// Figure out which method to call
 			if (ctx.getParameter("status") != null)
-				vc.setResults(dao.getByStatus(ApplicantStatus.fromName(ctx.getParameter("status"), ApplicantStatus.PENDING), "CREATED DESC"));
+				vc.setResults(dao.getByStatus(EnumUtils.parse(ApplicantStatus.class, ctx.getParameter("status"), ApplicantStatus.PENDING), "CREATED DESC"));
 			else if (ctx.getParameter("eqType") != null)
 				vc.setResults(dao.getByEquipmentType(ctx.getParameter("eqType")));
 			else if (!StringUtils.isEmpty(ctx.getParameter("letter")))
