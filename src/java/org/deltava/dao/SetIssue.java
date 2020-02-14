@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2011, 2014, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2011, 2014, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -32,14 +32,14 @@ public class SetIssue extends DAO {
 				ps.setInt(2, i.getAuthorID());
 				ps.setInt(3, i.getAssignedTo());
 				ps.setTimestamp(4, createTimestamp(i.getCreatedOn()));
-				ps.setTimestamp(5, (i.getStatus() == Issue.STATUS_OPEN) ? null : createTimestamp(i.getResolvedOn()));
+				ps.setTimestamp(5, (i.getStatus() == IssueStatus.OPEN) ? null : createTimestamp(i.getResolvedOn()));
 				ps.setString(6, i.getSubject());
 				ps.setString(7, i.getDescription());
-				ps.setInt(8, i.getArea());
-				ps.setInt(9, i.getPriority());
-				ps.setInt(10, i.getStatus());
-				ps.setInt(11, i.getType());
-				ps.setInt(12, i.getSecurity());
+				ps.setInt(8, i.getArea().ordinal());
+				ps.setInt(9, i.getPriority().ordinal());
+				ps.setInt(10, i.getStatus().ordinal());
+				ps.setInt(11, i.getType().ordinal());
+				ps.setInt(12, i.getSecurity().ordinal());
 				ps.setInt(13, i.getMajorVersion());
 				ps.setInt(14, i.getMinorVersion());
 				executeUpdate(ps, 1);
@@ -52,24 +52,23 @@ public class SetIssue extends DAO {
 	 * Helper method to initialize the prepared statement for UPDATEs.
 	 */
 	private void update(Issue i) throws SQLException {
-		try (PreparedStatement ps = prepare("UPDATE common.ISSUES SET ASSIGNEDTO=?, RESOLVED=?, SUBJECT=?, DESCRIPTION=?, "
-				+ "AREA=?, PRIORITY=?, STATUS=?, TYPE=?, SECURITY=?, MAJOR=?, MINOR=? WHERE (ID=?)")) {
+		try (PreparedStatement ps = prepare("UPDATE common.ISSUES SET ASSIGNEDTO=?, RESOLVED=?, SUBJECT=?, DESCRIPTION=?, AREA=?, PRIORITY=?, STATUS=?, TYPE=?, SECURITY=?, MAJOR=?, MINOR=? WHERE (ID=?)")) {
 			ps.setInt(1, i.getAssignedTo());
-			ps.setTimestamp(2, (i.getStatus() == Issue.STATUS_OPEN) ? null : createTimestamp(i.getResolvedOn()));
+			ps.setTimestamp(2, (i.getStatus() == IssueStatus.OPEN) ? null : createTimestamp(i.getResolvedOn()));
 			ps.setString(3, i.getSubject());
 			ps.setString(4, i.getDescription());
-			ps.setInt(5, i.getArea());
-			ps.setInt(6, i.getPriority());
-			ps.setInt(7, i.getStatus());
-			ps.setInt(8, i.getType());
-			ps.setInt(9, i.getSecurity());
+			ps.setInt(5, i.getArea().ordinal());
+			ps.setInt(6, i.getPriority().ordinal());
+			ps.setInt(7, i.getStatus().ordinal());
+			ps.setInt(8, i.getType().ordinal());
+			ps.setInt(9, i.getSecurity().ordinal());
 			ps.setInt(10, i.getMajorVersion());
 			ps.setInt(11, i.getMinorVersion());
 			ps.setInt(12, i.getID());
 			executeUpdate(ps, 1);
 		}
 	}
-
+	
 	/**
 	 * Writes an Issue to the database. This can both update and create issues. New Issue comments are also wrtten.
 	 * @param i the Issue to write
@@ -92,7 +91,23 @@ public class SetIssue extends DAO {
 						write(ic);
 				}
 			}
+
+			// Write airline mappings
+			try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM common.ISSUE_AIRLINES WHERE (ID=?)")) {
+				ps.setInt(1, i.getID());
+				executeUpdate(ps, 0);
+			}
 			
+			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO common.ISSUE_AIRLINES (ID, AIRLINE) VALUES (?, ?)")) {
+				ps.setInt(1, i.getID());
+				for (AirlineInformation ai : i.getAirlines()) {
+					ps.setString(2, ai.getCode());
+					ps.addBatch();
+				}
+				
+				executeUpdate(ps, 1, i.getAirlines().size());
+			}
+
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();

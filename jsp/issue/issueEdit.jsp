@@ -13,7 +13,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
 	if (!golgotha.form.check()) return false;
 	golgotha.form.validate({f:f.subject, l:10, t:'Issue Title'});
@@ -29,6 +29,11 @@ golgotha.local.validate = function(f) {
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:sysdata var="versions" name="issue_track.versions" />
+<content:enum var="areaOpts" className="org.deltava.beans.system.IssueArea" />
+<content:enum var="typeOpts" className="org.deltava.beans.system.Issue$IssueType" />
+<content:enum var="priorityOpts" className="org.deltava.beans.system.IssuePriority" />
+<content:enum var="statusOpts" className="org.deltava.beans.system.IssueStatus" />
+<content:enum var="securityOpts" className="org.deltava.beans.system.IssueSecurity" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -48,19 +53,24 @@ golgotha.local.validate = function(f) {
 <c:set var="author" value="${pilots[issue.authorID]}" scope="page" />
 <tr>
  <td class="label">Reported by</td>
- <td class="data"><span class="bld">${author.name}</span><c:if test="${!empty author.pilotCode}"> (${author.pilotCode})</c:if> on
- <fmt:date date="${issue.createdOn}" /></td>
+ <td class="data"><span class="bld">${author.name}</span><c:if test="${!empty author.pilotCode}"> (${author.pilotCode})</c:if> on <fmt:date date="${issue.createdOn}" /></td>
 </tr>
 <tr>
  <td class="label">Issue Status</td>
 <c:if test="${access.canResolve}">
- <td class="data"><el:combo name="status" className="bld" size="1" idx="1" options="${statuses}" value="${issue.statusName}" /></td>
+ <td class="data"><el:combo name="status" className="bld" size="1" idx="1" options="${statusOpts}" value="${issue.status}" /></td>
 </c:if>
 <c:if test="${!access.canResolve}">
- <td class="data bld">${issue.statusName}</td>
+ <td class="data bld"><fmt:defaultMethod var="${issue.status}" method="description" /></td>
 </c:if>
 </tr>
 </c:if>
+<content:filter roles="Developer">
+<tr>
+ <td class="label">Virtual Airlines</td>
+ <td class="data"><el:check name="apps" cols="3" width="140" idx="*" className="small" checked="${issue.airlines}" options="${allApps}" /></td>
+</tr>
+</content:filter>
 <tr>
  <td class="label">Issue Title</td>
  <td class="data"><el:text name="subject" className="pri bld req" size="64" max="128" idx="*" value="${issue.subject}" /></td>
@@ -68,20 +78,20 @@ golgotha.local.validate = function(f) {
 <content:filter roles="HR,Examination,PIREP,Developer">
 <tr>
  <td class="label">Security</td>
- <td class="data"><el:combo name="security" size="1" idx="*" options="${securityLevels}" value="${issue.securityName}" /></td>
+ <td class="data"><el:combo name="security" size="1" idx="*" options="${securityOpts}" value="${issue.security}" /></td>
 </tr>
 </content:filter>
 <tr>
  <td class="label">Issue Priority</td>
- <td class="data"><el:combo name="priority" size="1" idx="*" options="${priorities}" value="${issue.priorityName}" /></td>
+ <td class="data"><el:combo name="priority" size="1" idx="*" options="${priorityOpts}" value="${issue.priority}" /></td>
 </tr>
 <tr>
  <td class="label">Area</td>
- <td class="data"><el:combo name="area" size="1" idx="*" options="${areas}" value="${issue.areaName}" /></td>
+ <td class="data"><el:combo name="area" size="1" idx="*" options="${areaOpts}" value="${issue.area}" /></td>
 </tr>
 <tr>
  <td class="label">Issue Type</td>
- <td class="data"><el:combo name="issueType" size="1" idx="*" options="${types}" value="${issue.typeName}" /></td>
+ <td class="data"><el:combo name="issueType" size="1" idx="*" options="${typeOpts}" value="${issue.type}" /></td>
 </tr>
 <c:set var="assignee" value="${pilots[issue.assignedTo]}" scope="page" />
 <tr>

@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2011, 2015, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2011, 2015, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
@@ -60,8 +60,8 @@ public class IssueCommentCommand extends AbstractCommand {
 
 			// If the Issue is closed, reopen it
 			SetIssue wdao = new SetIssue(con);
-			if (i.getStatus() != Issue.STATUS_OPEN) {
-				i.setStatus(Issue.STATUS_OPEN);
+			if (i.getStatus() != IssueStatus.OPEN) {
+				i.setStatus(IssueStatus.OPEN);
 				wdao.write(i);
 			}
 

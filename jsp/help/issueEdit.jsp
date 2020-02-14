@@ -13,13 +13,13 @@
 <content:favicon />
 <content:js name="common" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script>
+<script async>
 golgotha.local.validate = function(f)
 {
 if (!golgotha.form.check()) return false;
 
 // Validate response
-var act = f.action;
+const act = f.action;
 if (act.indexOf('hdissue.do') != -1) {
 	golgotha.form.validate({f:f.subject, l:10, t:'Issue Title'});
 	golgotha.form.validate({f:f.body, l:5, t:'Issue Description'});
@@ -47,6 +47,9 @@ golgotha.local.checkAssignee = function(combo) {
 <content:page>
 <%@ include file="/jsp/help/header.jspf" %> 
 <%@ include file="/jsp/help/sideMenu.jspf" %>
+<content:enum var="areaOpts" className="org.deltava.beans.system.IssueArea" />
+<content:enum var="typeOpts" className="org.deltava.beans.system.Issue$IssueType" />
+<content:enum var="priorityOpts" className="org.deltava.beans.system.IssuePriority" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -104,15 +107,15 @@ golgotha.local.checkAssignee = function(combo) {
 </tr>
 <tr>
  <td class="label">Priority</td>
- <td class="data"><el:combo name="priority" idx="*" size="1" options="${priorityNames}" firstEntry="-" /></td>
+ <td class="data"><el:combo name="priority" idx="*" size="1" options="${priorityOpts}" firstEntry="-" /></td>
 </tr>
 <tr>
  <td class="label">Issue Area</td>
- <td class="data"><el:combo name="area" idx="*" size="1" options="${areaNames}" firstEntry="-" /></td>
+ <td class="data"><el:combo name="area" idx="*" size="1" options="${areaOpts}" firstEntry="-" /></td>
 </tr>
 <tr>
  <td class="label">Issue Type</td>
- <td class="data"><el:combo name="type" idx="*" size="1" options="${typeNames}" firstEntry="-" /></td>
+ <td class="data"><el:combo name="type" idx="*" size="1" options="${typeOpts}" firstEntry="-" /></td>
 </tr>
 </c:if>
 
@@ -156,7 +159,7 @@ golgotha.local.checkAssignee = function(combo) {
 </content:region>
 </content:page>
 <c:if test="${access.canUpdateStatus}">
-<script type="text/javascript" defer>
+<script async>
 golgotha.local.originalAssignee = document.forms[0].assignedTo.selectedIndex;
 </script></c:if>
 <content:googleAnalytics />

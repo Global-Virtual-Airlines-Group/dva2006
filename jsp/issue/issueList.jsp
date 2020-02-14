@@ -15,7 +15,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script>
+<script async>
 golgotha.local.doSort = function() { return document.forms[0].submit(); };
 </script>
 </head>
@@ -24,6 +24,8 @@ golgotha.local.doSort = function() { return document.forms[0].submit(); };
 <content:page>
 <%@include file="/jsp/main/header.jspf" %> 
 <%@include file="/jsp/main/sideMenu.jspf" %>
+<content:enum var="statusOpts" className="org.deltava.beans.system.IssueStatus" />
+<content:enum var="areaOpts" className="org.deltava.beans.system.IssueArea" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -35,8 +37,7 @@ golgotha.local.doSort = function() { return document.forms[0].submit(); };
  <td colspan="7">STATUS <el:combo name="op" idx="*" size="1" options="${statusOpts}" firstEntry="[ ALL ]" value="${param.op}" onChange="void golgotha.local.doSort()" />
 <span class="nophone"> AREA <el:combo name="area" idx="*" size="1" options="${areaOpts}" firstEntry="[ ALL ]" value="${param.area}" onChange="void golgotha.local.doSort()" />
  SORT BY <el:combo name="sortType" idx="*" size="1" options="${sortTypes}" value="${viewContext.sortType}" onChange="void golgotha.local.doSort()" />
-&nbsp;&nbsp;<el:cmd url="isearch">SEARCH</el:cmd></span>
-<c:if test="${access.canCreate}"> | <el:cmd url="issue" op="edit">NEW ISSUE</el:cmd></c:if></td>
+&nbsp;&nbsp;<el:cmd url="isearch">SEARCH</el:cmd></span>&nbsp;<c:if test="${access.canCreate}"> | <el:cmd url="issue" op="edit">NEW ISSUE</el:cmd></c:if></td>
 </tr>
 
 <!-- Table Header Bar-->
@@ -57,9 +58,9 @@ golgotha.local.doSort = function() { return document.forms[0].submit(); };
 <view:row entry="${issue}">
  <td class="sec bld"><fmt:int value="${issue.ID}" /></td>
  <td class="small"><el:cmd url="issue" link="${issue}"><fmt:text value="${issue.subject}" /></el:cmd></td>
- <td class="pri bld small">${issue.priorityName}</td>
- <td class="bld small nophone">${issue.areaName}</td>
- <td class="sec bld small nophone">${issue.typeName}</td>
+ <td class="pri bld small"><fmt:defaultMethod var="${issue.priority}" method="description" /></td>
+ <td class="bld small nophone"><fmt:defaultMethod var="${issue.area}" method="description" /></td>
+ <td class="sec bld small nophone"><fmt:defaultMethod var="${issue.type}" method="description" /></td>
  <td><fmt:int value="${issue.commentCount}" /></td>
  <td class="nophone"><fmt:date fmt="d" date="${issue.createdOn}" /></td>
  <td class="sec"><fmt:date fmt="d" date="${issue.lastCommentOn}" default="-" /></td>
