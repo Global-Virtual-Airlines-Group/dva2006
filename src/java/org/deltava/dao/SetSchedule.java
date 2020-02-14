@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015, 2016, 2017, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2015, 2016, 2017, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -134,16 +134,28 @@ public class SetSchedule extends DAO {
 				ps.setInt(1, src.ordinal());
 				executeUpdate(ps, 0);
 			}
-			
+		
 			try (PreparedStatement ps = prepareWithoutLimits("INSERT INTO RAW_SCHEDULE_AIRLINES (SRC, AIRLINE) VALUES (?, ?)")) {
 				ps.setInt(1, src.ordinal());
 				for (Airline a : airlines) {
 					ps.setString(2, a.getCode());
 					ps.addBatch();
 				}
-				
+			
 				executeUpdate(ps, 1, airlines.size());
 			}
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Purges all Raw Schedule source / airline mappings.
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void purgeSourceAirlines() throws DAOException {
+		try (PreparedStatement ps = prepareWithoutLimits("DELETE FROM RAW_SCHEDULE_AIRLINES")) {
+			executeUpdate(ps, 0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
