@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2012, 2015, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2012, 2015, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -92,12 +92,13 @@ public class SetUserData extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void update(AirlineInformation info) throws DAOException {
-		try (PreparedStatement ps = prepare("UPDATE common.AIRLINEINFO SET NAME=?, DOMAIN=?, CAN_TX=?, HIST_RESTRICT=? WHERE (CODE=?)")) {
+		try (PreparedStatement ps = prepare("UPDATE common.AIRLINEINFO SET NAME=?, DOMAIN=?, CAN_TX=?, HIST_RESTRICT=?, ALLOW_MULTI=? WHERE (CODE=?)")) {
 			ps.setString(1, info.getName());
 			ps.setString(2, info.getDomain());
 			ps.setBoolean(3, info.getCanTransfer());
 			ps.setBoolean(4, info.getHistoricRestricted());
-			ps.setString(5, info.getCode());
+			ps.setBoolean(5, info.getAllowMultiAirline());
+			ps.setString(6, info.getCode());
 			executeUpdate(ps, 1);
 		} catch (SQLException se) {
 			throw new DAOException(se);

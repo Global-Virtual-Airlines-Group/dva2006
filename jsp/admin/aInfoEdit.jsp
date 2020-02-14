@@ -12,7 +12,7 @@
 <content:favicon />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <content:js name="common" />
-<script>
+<script async>
 golgotha.local.validate = function(f) {
     if (!golgotha.form.check()) return false;
     golgotha.form.validate({f:f.domain, l:6, t:'Domain Name'});
@@ -54,7 +54,8 @@ golgotha.local.validate = function(f) {
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="canTX" className="small" label="Airline allows inbound Pilot transfers" value="true" checked="${aInfo.canTransfer}" /><br />
-<el:box name="historicRestrict" className="small" label="Historic Routes require Historic Aircraft" value="true" checked="${aInfo.historicRestricted}" /></td>
+<el:box name="historicRestrict" className="small" label="Historic Routes require Historic Aircraft" value="true" checked="${aInfo.historicRestricted}" /><br />
+<el:box name="allowsMulti" className="small" label="Allows membership in multiple Virtual Airlines" value="true" checked="${aInfo.allowMultiAirline}" /></td>
 </tr>
 <%@ include file="/jsp/auditLog.jspf" %>
 </el:table>
@@ -62,7 +63,7 @@ golgotha.local.validate = function(f) {
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="submit" label="SAVE VIRTUAL AIRLNE PROFILE" /></td>
+ <td><el:button type="submit" label="SAVE VIRTUAL AIRLNE PROFILE" /></td>
 </tr>
 </el:table>
 </el:form>

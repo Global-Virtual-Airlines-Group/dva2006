@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2017, 2018, 2019 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2015, 2017, 2018, 2019, 2020 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -224,6 +224,7 @@ public class GetUserData extends DAO {
 				info.setDomain(rs.getString(4));
 				info.setCanTransfer(rs.getBoolean(5));
 				info.setHistoricRestricted(rs.getBoolean(6));
+				info.setAllowMultiAirline(rs.getBoolean(7));
 				results.add(info);
 			}
 		}
